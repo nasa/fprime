@@ -67,7 +67,7 @@ class Memory final : public MemoryInterface {
   public:
 
     //! \brief initialize the singleton
-    void init();
+    static void init();
 
     //! \brief return singleton
     static Memory& getSingleton();

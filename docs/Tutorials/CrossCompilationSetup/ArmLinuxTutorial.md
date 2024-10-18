@@ -16,23 +16,23 @@ scp -r build-artifacts/arm-hf-linux/<name-of-deployment> <username>@<device-addr
 > Users must fill in the username and device address above.
 
 Next run the F´ GDS without launching the native compilation (`-n`) and with the 
-dictionary from the build above (`--dictionary ../build-artifacts/<platform name>/<name-of-deployment>/dict/<.xml document>`).
+dictionary from the build above (`--dictionary ../build-artifacts/<platform name>/<name-of-deployment>/dict/<.json document>`).
 
 ```sh
 # For in-person workshops and ARM 64-bit hardware
 # In: project root folder
-fprime-gds -n --dictionary build-artifacts/aarch64-linux/<name-of-deployment>/dict/<App Dictionary>.xml --ip-client --ip-address <device-address>
+fprime-gds -n --dictionary build-artifacts/aarch64-linux/<name-of-deployment>/dict/<App Dictionary>.json --ip-client --ip-address <device-address>
 
 # For ARM 32-bit hardware
 # In: project root folder
-fprime-gds -n --dictionary build-artifacts/aarch64-linux/<name-of-deployment>/dict/<App Dictionary>.xml --ip-client --ip-address <device-address>
+fprime-gds -n --dictionary build-artifacts/aarch64-linux/<name-of-deployment>/dict/<App Dictionary>.json --ip-client --ip-address <device-address>
 ```
 > This depends on a flight software deployment that uses TcpServer as the communications driver implementation.
 
 In another terminal SSH into the device and run the uploaded software:
 ```sh
 ssh <username>@<device-address>
-sudo deployment/bin/<name-of-deployment> -a 0.0.0.0 -p 50000
+deployment/bin/<name-of-deployment> -a 0.0.0.0 -p 50000
 ```
 > User should fill in the username and device address above and ensure the correct executable is supplied.
 

@@ -1,78 +1,77 @@
-/**
- * IntervalTimer.hpp:
- *
- * Interval timer provides timing over a set interval to the caller. It is one of the core Os
- * package supplied items.
- */
+// ======================================================================
+// \title Os/IntervalTimer.hpp
+// \brief Definition for Os::IntervalTimer
+// ======================================================================
 #ifndef _IntervalTimer_hpp_
 #define _IntervalTimer_hpp_
 
 #include <FpConfig.hpp>
+#include <Os/RawTime.hpp>
 
 namespace Os {
-    class IntervalTimer {
-        public:
-    		/**
-    		 * RawTime:
-    		 *
-    		 * Most time is stored as an upper and lower part of this raw time object. The
-    		 * semantic meaning of this "RawTime" is platform-dependent.
-    		 */
-            typedef struct {
-                U32 upper;  //!< Upper 32-bits part of time value. Platform dependent.
-                U32 lower; //!< Lower 32-bits part of time value. Platform dependent.
-            } RawTime;
+//! \brief Os::IntervalTimer measures time intervals using start/stop functionality.
+//!
+//! The IntervalTimer class provides methods to capture the start and stop times of an interval
+//! and calculate the difference between these times. It is useful for measuring the duration
+//! of operations or events. Intervals can be returned in Fw::TimeInterval or as a microsecond U32.
+//!
+//! \note The caller must ensure that the start() method is called before the stop() method to get
+//! a relevant time interval.
+//!
+//! \example
+//! IntervalTimer timer;
+//! timer.start();
+//! // Perform some operations
+//! timer.stop();
+//! Fw::TimeInterval interval = timer.getTimeInterval();
+class IntervalTimer {
+  public:
+    //! \brief Constructor
+    IntervalTimer();
 
-            IntervalTimer(); //!<  Constructor
-            virtual ~IntervalTimer(); //!<  Destructor
+    //! \brief Destructor
+    ~IntervalTimer() = default;
 
-            //------------ Common Functions ------------
-            // Common functions, typically do not need to be implemented by an OS support package.
-            // Common implementations in IntervalTimerCommon.cpp.
-            //------------------------------------------
-            /**
-             * Capture a start time of the interval timed by the interval timer. This fills the
-             * start RawTime of the interval.
-             */
-            void start();
-            /**
-             * Capture a stop time of the interval timed by the interval timer. This fills the
-             * stop RawTime of the interval.
-             */
-            void stop();
-            /**
-             * Returns the difference in usecond difference between start and stop times. The caller
-             * must have called start and stop previously.
-             * \return U32: microseconds difference in the interval
-             */
-            U32 getDiffUsec();
+    //! \brief Capture the start time of the interval.
+    //!
+    //! This method records the current time as the start time of the interval for this timer instance.
+    void start();
 
-            //------------ Platform Functions ------------
-            // Platform functions, typically do need to be implemented by an OS support package, as
-            // they are dependent on the platform definition of "RawTime".
-            //------------------------------------------
+    //! \brief Capture the stop time of the interval.
+    //!
+    //! This method records the current time as the stop time of the interval for this timer instance.
+    void stop();
 
-            /**
-             * Returns the difference in microseconds between the supplied times t1, and t2. This
-             * calculation is done with respect to the semantic meaning of the times, and thus is
-             * dependent on the platform's representation of the RawTime object.
-             * \return U32 microsecond difference between two supplied values, t1-t2.
-             */
-            static U32 getDiffUsec(const RawTime& t1, const RawTime& t2);
-            /**
-             * Fills the RawTime object supplied with the current raw time in a platform dependent
-             * way.
-             */
-            static void getRawTime(RawTime& time);
-        PRIVATE:
+    //! \brief Get the difference between start and stop times in microseconds.
+    //!
+    //! This method calculates and returns the time difference between the start and stop times
+    //! in microseconds. The start() and stop() methods must be called before calling this method.
+    //!
+    //! \warning Users should prefer the getTimeInterval() method for better error handling.
+    //! \warning This function will return the maximum U32 value if the time difference is too large to fit in a U32.
+    //! \warning This means the largest time difference that can be measured is 2^32 microseconds (about 71 minutes).
+    //!
+    //! \return U32: The time difference in microseconds.
+    U32 getDiffUsec() const;
 
-		    //------------ Internal Member Variables ------------
-            RawTime m_startTime; //!<  Stored start time
-            RawTime m_stopTime; //!<  Stored end time
+    //! \brief Get the time interval between the start and stop times.
+    //!
+    //! This method calculates and returns the time interval between the recorded start and stop times
+    //! as a Fw::TimeInterval object.
+    //!
+    //! \param interval [out] A reference to a Fw::TimeInterval object where the calculated interval will be stored.
+    //! \return bool: True if the interval was successfully calculated, false otherwise.
+    Os::RawTime::Status getTimeInterval(Fw::TimeInterval& interval) const;
 
-            //------------ Disabled (private) Copy Constructor ------------
-            IntervalTimer(IntervalTimer&); //!<  Disabled copy constructor
-    };
-}
+  PRIVATE:
+    RawTime m_startTime;  //!< Stored start time
+    RawTime m_stopTime;   //!< Stored end time
+
+    //! Disabled (private) Copy Constructor
+    IntervalTimer(IntervalTimer&);
+
+};  // class IntervalTimer
+
+}  // namespace Os
 
 #endif

@@ -8,14 +8,19 @@
 #include "Os/Models/MutexStatusEnumAc.hpp"
 #include "Os/Models/DirectoryStatusEnumAc.hpp"
 #include "Os/Models/DirectoryOpenModeEnumAc.hpp"
+#include "Os/Models/RawTimeStatusEnumAc.hpp"
 #include "Os/Models/FileSystemStatusEnumAc.hpp"
 #include "Os/Models/GenericStatusEnumAc.hpp"
+#include "Os/Models/QueueStatusEnumAc.hpp"
+#include "Os/Models/QueueBlockingTypeEnumAc.hpp"
 #include "Os/File.hpp"
 #include "Os/Task.hpp"
 #include "Os/Mutex.hpp"
 #include "Os/Directory.hpp"
 #include "Os/FileSystem.hpp"
 #include "Os/Os.hpp"
+#include "Os/RawTime.hpp"
+#include "Os/Queue.hpp"
 
 // Check consistency of every constant in the Os::File::Status enum
 static_assert(static_cast<FwIndexType>(Os::File::Status::MAX_STATUS) ==
@@ -166,6 +171,45 @@ static_assert(static_cast<Os::FileSystemStatus::T>(Os::FileSystem::Status::NOT_S
               "FileSystem status and FPP shadow enum do not match");
 static_assert(static_cast<Os::FileSystemStatus::T>(Os::FileSystem::Status::OTHER_ERROR) == Os::FileSystemStatus::T::OTHER_ERROR,
               "FileSystem status and FPP shadow enum do not match");
+
+
+// Check consistency of every constant in the Os::RawTime::Status enum
+static_assert(static_cast<Os::RawTimeStatus::T>(Os::RawTime::Status::OP_OK) == Os::RawTimeStatus::T::OP_OK,
+              "RawTime status enums do not match");
+static_assert(static_cast<Os::RawTimeStatus::T>(Os::RawTime::Status::OP_OVERFLOW) == Os::RawTimeStatus::T::OP_OVERFLOW,
+              "RawTime status enums do not match");
+static_assert(static_cast<Os::RawTimeStatus::T>(Os::RawTime::Status::INVALID_PARAMS) == Os::RawTimeStatus::T::INVALID_PARAMS,
+              "RawTime status enums do not match");
+static_assert(static_cast<Os::RawTimeStatus::T>(Os::RawTime::Status::OTHER_ERROR) == Os::RawTimeStatus::T::OTHER_ERROR,
+              "Generic status enums do not match");
+
+// Check consistency of every constant in the Os::Queue::Status enum
+static_assert(static_cast<Os::QueueStatus::T>(Os::Queue::Status::OP_OK) == Os::QueueStatus::T::OP_OK,
+              "Queue status enums do not match");
+static_assert(static_cast<Os::QueueStatus::T>(Os::Queue::Status::ALREADY_CREATED) == Os::QueueStatus::T::ALREADY_CREATED,
+              "Queue status enums do not match");
+static_assert(static_cast<Os::QueueStatus::T>(Os::Queue::Status::EMPTY) == Os::QueueStatus::T::EMPTY,
+              "Queue status enums do not match");
+static_assert(static_cast<Os::QueueStatus::T>(Os::Queue::Status::UNINITIALIZED) == Os::QueueStatus::T::UNINITIALIZED,
+              "Queue status enums do not match");
+static_assert(static_cast<Os::QueueStatus::T>(Os::Queue::Status::SIZE_MISMATCH) == Os::QueueStatus::T::SIZE_MISMATCH,
+              "Queue status enums do not match");
+static_assert(static_cast<Os::QueueStatus::T>(Os::Queue::Status::SEND_ERROR) == Os::QueueStatus::T::SEND_ERROR,
+              "Queue status enums do not match");
+static_assert(static_cast<Os::QueueStatus::T>(Os::Queue::Status::RECEIVE_ERROR) == Os::QueueStatus::T::RECEIVE_ERROR,
+              "Queue status enums do not match");
+static_assert(static_cast<Os::QueueStatus::T>(Os::Queue::Status::INVALID_PRIORITY) == Os::QueueStatus::T::INVALID_PRIORITY,
+              "Queue status enums do not match");
+static_assert(static_cast<Os::QueueStatus::T>(Os::Queue::Status::FULL) == Os::QueueStatus::T::FULL,
+              "Queue status enums do not match");
+static_assert(static_cast<Os::QueueStatus::T>(Os::Queue::Status::UNKNOWN_ERROR) == Os::QueueStatus::T::UNKNOWN_ERROR,
+              "Queue status enums do not match");
+
+// Check consistency of every constant in the Os::Queue::BlockingType enum
+static_assert(static_cast<Os::QueueBlockingType::T>(Os::Queue::BlockingType::BLOCKING) == Os::QueueBlockingType::T::BLOCKING,
+              "Queue BlockingType enums do not match");
+static_assert(static_cast<Os::QueueBlockingType::T>(Os::Queue::BlockingType::NONBLOCKING) == Os::QueueBlockingType::T::NONBLOCKING,
+              "Queue BlockingType enums do not match");
 
 // Check Generic mappings
 static_assert(static_cast<Os::GenericStatus::T>(Os::Generic::Status::OP_OK) == Os::GenericStatus::T::OP_OK,

@@ -147,7 +147,6 @@ PROTECTED:
      * \return SEND_OK on success, SEND_RETRY when critical data should be retried and SEND_ERROR upon error
      */
     Drv::SendStatus send_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer);
-
     Drv::UdpSocket m_socket; //!< Socket implementation
 };
 

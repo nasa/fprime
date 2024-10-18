@@ -27,6 +27,12 @@ namespace Drv {
  */
 class SocketComponentHelper {
   public:
+    enum OpenState{
+        NOT_OPEN,
+        OPENING,
+        OPEN,
+        SKIP
+    };
     /**
      * \brief constructs the socket read task
      */
@@ -55,25 +61,6 @@ class SocketComponentHelper {
                          const Os::Task::ParamType priority = Os::Task::TASK_DEFAULT,
                          const Os::Task::ParamType stack = Os::Task::TASK_DEFAULT,
                          const Os::Task::ParamType cpuAffinity = Os::Task::TASK_DEFAULT);
-
-    /**
-     * \brief startup the socket for communications
-     *
-     * Status of the socket handler.
-     *
-     * Note: this just delegates to the handler
-     *
-     * \return status of open, SOCK_SUCCESS for success, something else on error
-     */
-    SocketIpStatus startup();
-
-    /**
-     * \brief Returns true when the socket is started
-     *
-     * Returns true when the socket is started up sufficiently to be actively listening to clients. Returns false
-     * otherwise. This means `startup()` was called and returned success.
-     */
-    bool isStarted();
 
     /**
      * \brief open the socket for communications
@@ -129,9 +116,7 @@ class SocketComponentHelper {
     /**
      * \brief close the socket communications
      *
-     * Typically stopping the socket read task will shutdown the connection. However, in cases where the read task
-     * will not be started, this function may be used to close the socket. This calls a full `close` on the client
-     * socket.
+     * Close the client connection. This will ensure that the resources used are cleaned-up.
      *
      * Note: this just delegates to the handler
      */
@@ -140,13 +125,17 @@ class SocketComponentHelper {
     /**
      * \brief shutdown the socket communications
      *
-     * Typically stopping the socket read task will shutdown the connection. However, in cases where the read task
-     * will not be started, this function may be used to close the socket. This calls a full `shutdown` on the client
-     * socket.
+     * Shutdown communication. This will begin the process of cleanly closing communications. This process will be
+     * finished with a receive of 0 size and should be followed by a close.
      *
      * Note: this just delegates to the handler
      */
     void shutdown();
+
+    /**
+     * \brief is the read loop running
+     */
+    bool running();
 
     /**
      * \brief stop the socket read task and close the associated socket.
@@ -166,8 +155,11 @@ class SocketComponentHelper {
      */
     Os::Task::Status join();
 
-
   PROTECTED:
+    /**
+     * \brief receive off the TCP socket
+     */
+    virtual void readLoop();
     /**
      * \brief returns a reference to the socket handler
      *
@@ -209,6 +201,7 @@ class SocketComponentHelper {
      */
     virtual void connected() = 0;
 
+
     /**
      * \brief a task designed to read from the socket and output incoming data
      *
@@ -218,13 +211,10 @@ class SocketComponentHelper {
 
     Os::Task m_task;
     Os::Mutex m_lock;
-    NATIVE_INT_TYPE m_fd;
-    bool m_reconnect; //!< Force reconnection
-    bool m_stop; //!< Stops the task when set to true
-    bool m_started; //!< Have we successfully started the socket
-    bool m_open; //!< Have we successfully opened
-
-
+    SocketDescriptor m_descriptor;
+    bool m_reconnect = false; //!< Force reconnection
+    bool m_stop = true; //!< Stops the task when set to true
+    OpenState m_open = OpenState::NOT_OPEN; //!< Have we successfully opened
 };
 }
 #endif  // DRV_SocketComponentHelper_HPP

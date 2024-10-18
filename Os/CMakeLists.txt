@@ -97,15 +97,13 @@ register_fprime_module(Os_Test_File_SyntheticFileSystem)
 
 # Basic source files used in every OSAL layer.  Contains common code and helpers.
 set(SOURCE_FILES
-    "${CMAKE_CURRENT_LIST_DIR}/IntervalTimerCommon.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/Posix/IntervalTimer.cpp"
-
     "${CMAKE_CURRENT_LIST_DIR}/ValidateFileCommon.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/ValidatedFile.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/IntervalTimer.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Types.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/Os.cpp"
 )
 set(SOURCE_HEADERS
-    "${CMAKE_CURRENT_LIST_DIR}/Posix/IntervalTimer.hpp"
     "${CMAKE_CURRENT_LIST_DIR}/ValidatedFile.hpp"
     "${CMAKE_CURRENT_LIST_DIR}/Os.hpp"
 )
@@ -119,6 +117,7 @@ add_named_os_module("Mutex;Condition")
 add_named_os_module(Queue)
 add_named_os_module(Cpu)
 add_named_os_module(Memory)
+add_named_os_module(RawTime Fw_Buffer)
 
 ### UTS ### Note: 3 separate UTs registered here.
 set(UT_SOURCE_FILES

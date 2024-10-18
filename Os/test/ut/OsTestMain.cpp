@@ -11,7 +11,7 @@ const char* filename;
 // (~0.99 s) or longer (~10 sec) than requested, causing the test to fail. The interval timer should
 // be rewritten to not directly utilize the OS clock, but in the mean time disabling this test on
 // Mac OS prevents intermittent unit test failures.
-TEST(Nominal, DISABLED_IntervalTimerTest) {
+TEST(Nominal, IntervalTimerTest) {
    intervalTimerTest();
 }
 TEST(Nominal, ValidateFileTest) {

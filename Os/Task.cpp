@@ -175,6 +175,25 @@ FwSizeType Task::getNumTasks() {
     return num_tasks;
 }
 
+Os::TaskInterface::Status Task::_delay(Fw::TimeInterval interval) {
+    FW_ASSERT(&this->m_delegate == reinterpret_cast<TaskInterface*>(&this->m_handle_storage[0]));
+    return this->m_delegate._delay(interval);
+}
+
+Os::TaskInterface::Status Task::delay(Fw::TimeInterval interval) {
+    return Task::getSingleton()._delay(interval);
+}
+
+void Task::init() {
+    // Force trigger on the fly singleton setup
+    (void) Task::getSingleton();
+}
+
+Task& Task::getSingleton() {
+    static Task s_singleton;
+    return s_singleton;
+}
+
 void Task::registerTaskRegistry(TaskRegistry* registry) {
     Task::s_taskRegistry = registry;
 }

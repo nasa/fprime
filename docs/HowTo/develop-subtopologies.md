@@ -264,6 +264,7 @@ topology MainDeployment {
 
 At this point, we want to now call our subtopology's configure/start/teardown functions within the corresponding functions of our `MainDeployment` topology. So, in `MainDeploymentTopology.cpp`:
 
+<!-- {% raw %} -->
 ```cpp
 // at the top, include our topology.hpp
 #include <MySubtopology/MySubtopologyTopology.hpp>
@@ -293,6 +294,7 @@ void teardownTopology(const TopologyState& state){
     MySubtopology::teardownTopology({})
 }
 ```
+<!-- {% endraw %} -->
 
 Lastly, since our RNG component has some telemetry, we need to include (or ignore) these channels within the `Packets.xml` file in this folder. As with any other component that is added to a deployment, you use the same syntax with the name of the instance followed by the name of the telemetry channel. For example:
 

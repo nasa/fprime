@@ -33,7 +33,7 @@ namespace Svc {
     RateGroupDriverImplTester::~RateGroupDriverImplTester() {
     }
 
-    void RateGroupDriverImplTester::from_CycleOut_handler(NATIVE_INT_TYPE portNum, Svc::TimerVal& cycleStart) {
+    void RateGroupDriverImplTester::from_CycleOut_handler(NATIVE_INT_TYPE portNum, Os::RawTime& cycleStart) {
         this->m_portCalls[portNum] = true;
     }
 
@@ -59,7 +59,7 @@ namespace Svc {
 
         for (NATIVE_INT_TYPE cycle = 0; cycle < iters; cycle++) {
             this->clearPortCalls();
-            TimerVal t;
+            Os::RawTime t;
             this->invoke_to_CycleIn(0,t);
             // make sure ticks are counting correctly
             ASSERT_EQ((cycle+1)%expected_rollover,this->m_impl.m_ticks);

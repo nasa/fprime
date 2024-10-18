@@ -23,17 +23,17 @@
 
 #ifdef TGT_OS_TYPE_VXWORKS
 #include <socket.h>
-    #include <inetLib.h>
-    #include <fioLib.h>
-    #include <hostLib.h>
-    #include <ioLib.h>
-    #include <vxWorks.h>
-    #include <sockLib.h>
-    #include <fioLib.h>
-    #include <taskLib.h>
-    #include <sysLib.h>
-    #include <errnoLib.h>
-    #include <cstring>
+#include <inetLib.h>
+#include <fioLib.h>
+#include <hostLib.h>
+#include <ioLib.h>
+#include <vxWorks.h>
+#include <sockLib.h>
+#include <fioLib.h>
+#include <taskLib.h>
+#include <sysLib.h>
+#include <errnoLib.h>
+#include <cstring>
 #elif defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
 #include <sys/socket.h>
 #include <unistd.h>
@@ -52,7 +52,7 @@ IpSocket::IpSocket() : m_timeoutSeconds(0), m_timeoutMicroseconds(0), m_port(0) 
 
 SocketIpStatus IpSocket::configure(const char* const hostname, const U16 port, const U32 timeout_seconds, const U32 timeout_microseconds) {
     FW_ASSERT(timeout_microseconds < 1000000, static_cast<FwAssertArgType>(timeout_microseconds));
-    FW_ASSERT(this->isValidPort(port));
+    FW_ASSERT(this->isValidPort(port), static_cast<FwAssertArgType>(port));
     FW_ASSERT(hostname != nullptr);
     this->m_timeoutSeconds = timeout_seconds;
     this->m_timeoutMicroseconds = timeout_microseconds;
@@ -65,7 +65,7 @@ bool IpSocket::isValidPort(U16 port) {
     return true;
 }
 
-SocketIpStatus IpSocket::setupTimeouts(NATIVE_INT_TYPE socketFd) {
+SocketIpStatus IpSocket::setupTimeouts(PlatformIntType socketFd) {
 // Get the IP address from host
 #ifdef TGT_OS_TYPE_VXWORKS
     // No timeouts set on Vxworks
@@ -103,38 +103,39 @@ SocketIpStatus IpSocket::addressToIp4(const char* address, void* ip4) {
     return SOCK_SUCCESS;
 }
 
-void IpSocket::close(NATIVE_INT_TYPE fd) {
-    (void)::shutdown(fd, SHUT_RDWR);
-    (void)::close(fd);
+void IpSocket::close(const SocketDescriptor& socketDescriptor) {
+    (void)::close(socketDescriptor.fd);
 }
 
-void IpSocket::shutdown(NATIVE_INT_TYPE fd) {
-    this->close(fd);
+void IpSocket::shutdown(const SocketDescriptor& socketDescriptor) {
+    errno = 0;
+    PlatformIntType status = ::shutdown(socketDescriptor.fd, SHUT_RDWR);
+    // If shutdown fails, go straight to the hard-shutdown
+    if (status != 0) {
+        this->close(socketDescriptor);
+    }
 }
 
-SocketIpStatus IpSocket::startup() {
-    // no op for non-server components
-    return SOCK_SUCCESS;
-}
-
-SocketIpStatus IpSocket::open(NATIVE_INT_TYPE& fd) {
+SocketIpStatus IpSocket::open(SocketDescriptor& socketDescriptor) {
     SocketIpStatus status = SOCK_SUCCESS;
+    errno = 0;
     // Open a TCP socket for incoming commands, and outgoing data if not using UDP
-    status = this->openProtocol(fd);
+    status = this->openProtocol(socketDescriptor);
     if (status != SOCK_SUCCESS) {
-        FW_ASSERT(fd == -1); // Ensure we properly kept closed on error
+        socketDescriptor.fd = -1;
         return status;
     }
     return status;
 }
 
-SocketIpStatus IpSocket::send(NATIVE_INT_TYPE fd, const U8* const data, const U32 size) {
+SocketIpStatus IpSocket::send(const SocketDescriptor& socketDescriptor, const U8* const data, const U32 size) {
     U32 total = 0;
     I32 sent  = 0;
     // Attempt to send out data and retry as necessary
     for (U32 i = 0; (i < SOCKET_MAX_ITERATIONS) && (total < size); i++) {
+        errno = 0;
         // Send using my specific protocol
-        sent = this->sendProtocol(fd, data + total, size - total);
+        sent = this->sendProtocol(socketDescriptor, data + total, size - total);
         // Error is EINTR or timeout just try again
         if (((sent == -1) && (errno == EINTR)) || (sent == 0)) {
             continue;
@@ -159,13 +160,13 @@ SocketIpStatus IpSocket::send(NATIVE_INT_TYPE fd, const U8* const data, const U3
     return SOCK_SUCCESS;
 }
 
-SocketIpStatus IpSocket::recv(NATIVE_INT_TYPE fd, U8* data, U32& req_read) {
+SocketIpStatus IpSocket::recv(const SocketDescriptor& socketDescriptor, U8* data, U32& req_read) {
     I32 size = 0;
-
     // Try to read until we fail to receive data
     for (U32 i = 0; (i < SOCKET_MAX_ITERATIONS) && (size <= 0); i++) {
+        errno = 0;
         // Attempt to recv out data
-        size = this->recvProtocol(fd, data, req_read);
+        size = this->recvProtocol(socketDescriptor, data, req_read);
 
         // Nothing to be received
         if ((size == -1) && ((errno == EAGAIN) || (errno == EWOULDBLOCK))) {

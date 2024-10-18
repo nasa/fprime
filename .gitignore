@@ -2,6 +2,7 @@ build/
 build*/
 gtest/
 docs-cache/
+CMakePresets.json
 
 AutoXML/
 test_harness/src/test_harness-C/application.out
