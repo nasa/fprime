@@ -1,0 +1,29 @@
+; Sequence to create and send some DPs
+
+
+; Have signal generator generate a DP
+R00:00:00 Ref.SG1.Settings, 1, 10, 1, TRIANGLE
+R00:00:02 Ref.SG1.Toggle
+R00:00:05 Ref.SG1.Dp, IMMEDIATE, 10, 10
+R00:00:15 Ref.SG1.Dp, ASYNC, 15, 2
+R00:00:20 Ref.SG1.Dp, IMMEDIATE, 20, 6
+R00:00:25 Ref.SG1.Dp, ASYNC, 25, 2
+R00:00:30 Ref.SG1.Dp, IMMEDIATE, 30, 7
+
+R00:00:00 Ref.cmdDisp.CMD_NO_OP_STRING, "Wait for Build"
+
+; Build the catalog
+R00:00:35 Ref.dpCat.BUILD_CATALOG
+; Send the files
+R00:00:00 Ref.dpCat.START_XMIT_CATALOG, WAIT
+
+; try to send again
+R00:00:00 Ref.dpCat.START_XMIT_CATALOG, WAIT
+
+R00:00:00 Ref.cmdDisp.CMD_NO_OP_STRING, "Wait for 2nd Build"
+
+
+; Build the catalog
+R00:00:00 Ref.dpCat.BUILD_CATALOG
+; Send the files
+R00:00:00 Ref.dpCat.START_XMIT_CATALOG, WAIT

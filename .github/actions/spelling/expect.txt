@@ -247,6 +247,7 @@ DPWRITER
 DRAINBUFFERS
 drv
 dspal
+Dstate
 Duerschmid
 duey
 dumparch
@@ -346,6 +347,7 @@ gencode
 genfile
 GENHUB
 genshi
+getblocks
 getchildren
 getcontext
 getdata
@@ -663,6 +665,7 @@ parseable
 PASSIVERATEGROUP
 PASSIVERATEGROUPIMPLTESTER
 pathmaker
+patsubst
 pbuild
 pcmake
 pcomp
@@ -817,6 +820,7 @@ SENDPARTIAL
 seqgen
 serializables
 setaffinity
+setblocks
 setdata
 setid
 setinheritsched
