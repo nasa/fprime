@@ -8,10 +8,10 @@ Brotli==1.1.0
 certifi==2024.8.30
 chardet==5.2.0
 charset-normalizer==3.4.0
-Cheetah3==3.2.6.post1
 click==8.1.7
 colorlog==6.8.2
 cookiecutter==2.6.0
+CT3==3.3.3.post1
 et-xmlfile==1.1.0
 Flask==3.0.3
 Flask-Compress==1.15
