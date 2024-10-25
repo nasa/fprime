@@ -95,11 +95,17 @@ class Basic : public BasicComponentBase {
     // Member variables
     // ----------------------------------------------------------------------
 
-    //! The history associated with action a of basic
-    SmHarness::History<Basic_Basic::Signal, historySize> m_basic_action_a_history;
+    //! The history associated with action a of basic1
+    SmHarness::History<Basic_Basic::Signal, historySize> m_basic1_action_a_history;
 
-    //! The history associated with action a of smInitialBasic
-    SmHarness::History<SmInitial_Basic::Signal, historySize> m_smInitialBasic_action_a_history;
+    //! The history associated with action a of basic2
+    SmHarness::History<Basic_Basic::Signal, historySize> m_basic2_action_a_history;
+
+    //! The history associated with action a of smInitialBasic1
+    SmHarness::History<SmInitial_Basic::Signal, historySize> m_smInitialBasic1_action_a_history;
+
+    //! The history associated with action a of smInitialBasic2
+    SmHarness::History<SmInitial_Basic::Signal, historySize> m_smInitialBasic2_action_a_history;
 };
 
 }  // namespace SmInstanceInitial
