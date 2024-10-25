@@ -64,7 +64,6 @@ bool SequenceU32::FppTest_SmJunction_SequenceU32_guard_g2(SmId smId,
 // ----------------------------------------------------------------------
 
 void SequenceU32::testG1True() {
-#if 0
     this->m_smJunctionSequenceU32_action_a_history.clear();
     this->m_smJunctionSequenceU32_action_b_history.clear();
     this->m_smJunctionSequenceU32_guard_g1.reset();
@@ -75,7 +74,8 @@ void SequenceU32::testG1True() {
     ASSERT_EQ(this->m_smJunctionSequenceU32_guard_g2.getCallHistory().getSize(), 0);
     ASSERT_EQ(this->m_smJunctionSequenceU32_action_a_history.getSize(), 0);
     ASSERT_EQ(this->m_smJunctionSequenceU32_action_b_history.getSize(), 0);
-    this->smJunctionSequenceU32_sendSignal_s();
+    const U32 value = STest::Pick::any();
+    this->smJunctionSequenceU32_sendSignal_s(value);
     const auto status = this->doDispatch();
     ASSERT_EQ(status, MSG_DISPATCH_OK);
     ASSERT_EQ(this->m_smJunctionSequenceU32_guard_g1.getCallHistory().getSize(), 1);
@@ -84,11 +84,9 @@ void SequenceU32::testG1True() {
     ASSERT_EQ(this->m_smJunctionSequenceU32_action_a_history.getSize(), 0);
     ASSERT_EQ(this->m_smJunctionSequenceU32_action_b_history.getSize(), 0);
     ASSERT_EQ(this->smJunctionSequenceU32_getState(), SmJunction_SequenceU32::State::S2);
-#endif
 }
 
 void SequenceU32::testG1FalseG2True() {
-#if 0
     this->m_smJunctionSequenceU32_action_a_history.clear();
     this->m_smJunctionSequenceU32_action_b_history.clear();
     this->m_smJunctionSequenceU32_guard_g1.reset();
@@ -100,22 +98,24 @@ void SequenceU32::testG1FalseG2True() {
     ASSERT_EQ(this->m_smJunctionSequenceU32_guard_g2.getCallHistory().getSize(), 0);
     ASSERT_EQ(this->m_smJunctionSequenceU32_action_a_history.getSize(), 0);
     ASSERT_EQ(this->m_smJunctionSequenceU32_action_b_history.getSize(), 0);
-    this->smJunctionSequenceU32_sendSignal_s();
+    const U32 value = STest::Pick::any();
+    this->smJunctionSequenceU32_sendSignal_s(value);
     const auto status = this->doDispatch();
-    ASSERT_EQ(status, MSG_DISPATCH_OK);
     ASSERT_EQ(this->m_smJunctionSequenceU32_guard_g1.getCallHistory().getSize(), 1);
     ASSERT_EQ(this->m_smJunctionSequenceU32_guard_g1.getCallHistory().getItemAt(0), SmJunction_SequenceU32::Signal::s);
     ASSERT_EQ(this->m_smJunctionSequenceU32_guard_g2.getCallHistory().getSize(), 1);
-    ASSERT_EQ(this->m_smJunctionSequenceU32_guard_g2.getCallHistory().getItemAt(0), SmJunction_SequenceU32::Signal::s);
+    ASSERT_EQ(this->m_smJunctionSequenceU32_guard_g2.getCallHistory().getSignals().getItemAt(0),
+              SmJunction_SequenceU32::Signal::s);
+    ASSERT_EQ(this->m_smJunctionSequenceU32_guard_g2.getCallHistory().getValues().getItemAt(0), value);
     ASSERT_EQ(this->m_smJunctionSequenceU32_action_a_history.getSize(), 1);
-    ASSERT_EQ(this->m_smJunctionSequenceU32_action_a_history.getItemAt(0), SmJunction_SequenceU32::Signal::s);
+    ASSERT_EQ(this->m_smJunctionSequenceU32_action_a_history.getSignals().getItemAt(0),
+              SmJunction_SequenceU32::Signal::s);
+    ASSERT_EQ(this->m_smJunctionSequenceU32_action_a_history.getValues().getItemAt(0), value);
     ASSERT_EQ(this->m_smJunctionSequenceU32_action_b_history.getSize(), 0);
     ASSERT_EQ(this->smJunctionSequenceU32_getState(), SmJunction_SequenceU32::State::S3);
-#endif
 }
 
 void SequenceU32::testG1FalseG2False() {
-#if 0
     this->m_smJunctionSequenceU32_action_a_history.clear();
     this->m_smJunctionSequenceU32_action_b_history.clear();
     this->m_smJunctionSequenceU32_guard_g1.reset();
@@ -126,18 +126,19 @@ void SequenceU32::testG1FalseG2False() {
     ASSERT_EQ(this->m_smJunctionSequenceU32_guard_g2.getCallHistory().getSize(), 0);
     ASSERT_EQ(this->m_smJunctionSequenceU32_action_a_history.getSize(), 0);
     ASSERT_EQ(this->m_smJunctionSequenceU32_action_b_history.getSize(), 0);
-    this->smJunctionSequenceU32_sendSignal_s();
+    const U32 value = STest::Pick::any();
+    this->smJunctionSequenceU32_sendSignal_s(value);
     const auto status = this->doDispatch();
-    ASSERT_EQ(status, MSG_DISPATCH_OK);
     ASSERT_EQ(this->m_smJunctionSequenceU32_guard_g1.getCallHistory().getSize(), 1);
     ASSERT_EQ(this->m_smJunctionSequenceU32_guard_g1.getCallHistory().getItemAt(0), SmJunction_SequenceU32::Signal::s);
     ASSERT_EQ(this->m_smJunctionSequenceU32_guard_g2.getCallHistory().getSize(), 1);
-    ASSERT_EQ(this->m_smJunctionSequenceU32_guard_g2.getCallHistory().getItemAt(0), SmJunction_SequenceU32::Signal::s);
+    ASSERT_EQ(this->m_smJunctionSequenceU32_guard_g2.getCallHistory().getSignals().getItemAt(0),
+              SmJunction_SequenceU32::Signal::s);
+    ASSERT_EQ(this->m_smJunctionSequenceU32_guard_g2.getCallHistory().getValues().getItemAt(0), value);
     ASSERT_EQ(this->m_smJunctionSequenceU32_action_a_history.getSize(), 0);
     ASSERT_EQ(this->m_smJunctionSequenceU32_action_b_history.getSize(), 1);
     ASSERT_EQ(this->m_smJunctionSequenceU32_action_b_history.getItemAt(0), SmJunction_SequenceU32::Signal::s);
     ASSERT_EQ(this->smJunctionSequenceU32_getState(), SmJunction_SequenceU32::State::S4);
-#endif
 }
 
 }  // namespace SmInstanceJunction
