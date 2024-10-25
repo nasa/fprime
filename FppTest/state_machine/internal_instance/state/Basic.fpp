@@ -2,7 +2,7 @@ module FppTest {
 
   module SmInstanceState {
 
-    active component Basic {
+    queued component Basic {
 
       include "../../internal/state/include/Basic.fppi"
 

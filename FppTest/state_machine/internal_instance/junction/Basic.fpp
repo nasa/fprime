@@ -2,7 +2,7 @@ module FppTest {
 
   module SmInstanceJunction {
 
-    active component Basic {
+    queued component Basic {
 
       include "../../internal/junction/include/Basic.fppi"
 
