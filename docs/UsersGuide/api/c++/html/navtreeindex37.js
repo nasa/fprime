@@ -1,5 +1,6 @@
 var NAVTREEINDEX37 =
 {
+"namespace_os_1_1_generic.html#a7658440e7ab158208b97e002dee0e879a5c7df591daa5bce645990e1e41ee3528":[28,0,5,2,3,0],
 "namespace_os_1_1_generic.html#a7658440e7ab158208b97e002dee0e879a8da171662dc069a7a7330fbc2699f014":[28,0,5,2,3,1],
 "namespace_os_1_1_linux.html":[28,0,5,3],
 "namespace_os_1_1_linux_1_1_cpu.html":[28,0,5,3,0],
@@ -248,6 +249,5 @@ var NAVTREEINDEX37 =
 "struct_os_1_1_generic_1_1_priority_queue_handle.html":[29,0,3,1,0],
 "struct_os_1_1_generic_1_1_priority_queue_handle.html#a097661f4c73ea40a5d01aea742550ff4":[29,0,3,1,0,5],
 "struct_os_1_1_generic_1_1_priority_queue_handle.html#a0efd7721247572428567294e2d4939fd":[29,0,3,1,0,3],
-"struct_os_1_1_generic_1_1_priority_queue_handle.html#a0fe17bfb2c001a609b0c2175fa82ae3c":[29,0,3,1,0,14],
-"struct_os_1_1_generic_1_1_priority_queue_handle.html#a19035d243eceb1bd58e27076164661c7":[29,0,3,1,0,1]
+"struct_os_1_1_generic_1_1_priority_queue_handle.html#a0fe17bfb2c001a609b0c2175fa82ae3c":[29,0,3,1,0,14]
 };

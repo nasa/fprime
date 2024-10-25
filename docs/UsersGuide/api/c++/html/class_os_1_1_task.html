@@ -205,6 +205,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a10dbcb7452d13b3979ab63f19ef7baf6"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#a10dbcb7452d13b3979ab63f19ef7baf6">isCooperative</a> () override</td></tr>
 <tr class="memdesc:a10dbcb7452d13b3979ab63f19ef7baf6"><td class="mdescLeft">&#160;</td><td class="mdescRight">determine if the task is cooperative multitasking (implementation specific)  <a href="class_os_1_1_task.html#a10dbcb7452d13b3979ab63f19ef7baf6">More...</a><br /></td></tr>
 <tr class="separator:a10dbcb7452d13b3979ab63f19ef7baf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a588db2a98078a4b7eaa048010392ae15"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#a588db2a98078a4b7eaa048010392ae15">getPriority</a> ()</td></tr>
+<tr class="memdesc:a588db2a98078a4b7eaa048010392ae15"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the task priority  <a href="class_os_1_1_task.html#a588db2a98078a4b7eaa048010392ae15">More...</a><br /></td></tr>
+<tr class="separator:a588db2a98078a4b7eaa048010392ae15"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4b4bb4dc238f53a683f1a396765a9827"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_os_1_1_task_handle.html">TaskHandle</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_task.html#a4b4bb4dc238f53a683f1a396765a9827">getHandle</a> () override</td></tr>
 <tr class="memdesc:a4b4bb4dc238f53a683f1a396765a9827"><td class="mdescLeft">&#160;</td><td class="mdescRight">return the underlying task handle (implementation specific)  <a href="class_os_1_1_task.html#a4b4bb4dc238f53a683f1a396765a9827">More...</a><br /></td></tr>
 <tr class="separator:a4b4bb4dc238f53a683f1a396765a9827"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -389,7 +392,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="class_os_1_1_task_interface.html#aa49c545968cb923fb1292dcf167ed569">Os::TaskInterface</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00178">178</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00186">186</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
 
 </div>
 </div>
@@ -427,7 +430,7 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>status of the delay </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00183">183</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00191">191</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
 
 </div>
 </div>
@@ -541,7 +544,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="class_os_1_1_task_interface.html#a12afb1c82d1a2131cea2df6d1e509466">Os::TaskInterface</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00166">166</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00174">174</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
 
 </div>
 </div>
@@ -571,7 +574,28 @@ Additional Inherited Members</h2></td></tr>
 <p>get the current number of tasks </p>
 <dl class="section return"><dt>Returns</dt><dd>current number of tasks </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00171">171</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00179">179</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a588db2a98078a4b7eaa048010392ae15"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a588db2a98078a4b7eaa048010392ae15">&#9670;&nbsp;</a></span>getPriority()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="fp_config_8h.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> Os::Task::getPriority </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>get the task priority </p>
+
+<p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00169">169</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
 
 </div>
 </div>
@@ -601,7 +625,7 @@ Additional Inherited Members</h2></td></tr>
 <p>get a reference to singleton </p>
 <dl class="section return"><dt>Returns</dt><dd>reference to singleton </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00192">192</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00200">200</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
 
 </div>
 </div>
@@ -653,7 +677,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>initialize singleton </p>
 
-<p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00187">187</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00195">195</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
 
 </div>
 </div>
@@ -675,7 +699,7 @@ Additional Inherited Members</h2></td></tr>
 <p>invoke the task's routine </p>
 <p>This will invoke the task's routine passing this as the argument to that call. This is used as a helper when running this task (e.g. repetitive cooperative calls). </p>
 
-<p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00127">127</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00130">130</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
 
 </div>
 </div>
@@ -707,7 +731,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="class_os_1_1_task_interface.html#adae636c8e6c92c0ecfe60f743b1e0452">Os::TaskInterface</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00161">161</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00164">164</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
 
 </div>
 </div>
@@ -740,7 +764,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="class_os_1_1_task_interface.html#a74a4ca3cd03099e4325ac92449d7d6f4">Os::TaskInterface</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00131">131</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00134">134</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
 
 </div>
 </div>
@@ -771,7 +795,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="class_os_1_1_task_interface.html#ad80734df88ead1571b6830521d5d3b4c">Os::TaskInterface</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00122">122</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00125">125</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
 
 </div>
 </div>
@@ -829,7 +853,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>register a task registry to track Threads </p>
 
-<p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00197">197</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00205">205</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
 
 </div>
 </div>
@@ -861,7 +885,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="class_os_1_1_task_interface.html#a86946c50ecb92d72c04cb5b78bed26b2">Os::TaskInterface</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00156">156</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00159">159</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
 
 </div>
 </div>
@@ -962,7 +986,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="class_os_1_1_task_interface.html#a478454244337c10daaf2c0811b82ac6a">Os::TaskInterface</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00148">148</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="task_8cpp_source.html#l00151">151</a> of file <a class="el" href="task_8cpp_source.html">Task.cpp</a>.</p>
 
 </div>
 </div>

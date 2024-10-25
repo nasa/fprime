@@ -11,6 +11,7 @@ var class_os_1_1_task =
     [ "DEPRECATED", "class_os_1_1_task.html#a25c99a4e84847caba16f138e3a45fa5d", null ],
     [ "getHandle", "class_os_1_1_task.html#a4b4bb4dc238f53a683f1a396765a9827", null ],
     [ "getNumTasks", "class_os_1_1_task.html#a0b73c8de056bad14c2e0226d5ce4abc1", null ],
+    [ "getPriority", "class_os_1_1_task.html#a588db2a98078a4b7eaa048010392ae15", null ],
     [ "getSingleton", "class_os_1_1_task.html#a62484fa649c866bf538aa1022c68c029", null ],
     [ "getState", "class_os_1_1_task.html#a4e0f8dda9e0ea14212733696bd63dc0b", null ],
     [ "init", "class_os_1_1_task.html#a63a774098e65493e11426ae3b2dc6bb0", null ],
