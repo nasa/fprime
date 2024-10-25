@@ -330,6 +330,9 @@ namespace Os {
         //! \return true if cooperative, false otherwise
         bool isCooperative() override;
 
+        //! \brief get the task priority
+        FwSizeType getPriority();
+
         //! \brief return the underlying task handle (implementation specific)
         //! \return internal task handle representation
         TaskHandle* getHandle() override;
@@ -367,6 +370,7 @@ namespace Os {
         TaskInterface::State m_state = Task::NOT_STARTED;
         Mutex m_lock; //!< Guards state transitions
         TaskRoutineWrapper m_wrapper; //!< Concrete storage for task routine wrapper
+        FwSizeType m_priority = 0; // Storage of priority
 
         bool m_registered = false; //!< Was this task registered
 
