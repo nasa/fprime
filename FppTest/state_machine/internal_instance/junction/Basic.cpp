@@ -41,13 +41,13 @@ void Basic::schedIn_handler(FwIndexType portNum, U32 context) {
 // ----------------------------------------------------------------------
 
 void Basic::FppTest_SmInstanceJunction_Basic_Basic_action_a(SmId smId,
-                                                             FppTest_SmInstanceJunction_Basic_Basic::Signal signal) {
+                                                            FppTest_SmInstanceJunction_Basic_Basic::Signal signal) {
     ASSERT_EQ(smId, SmId::basic);
     this->m_basic_action_a_history.push(signal);
 }
 
 void Basic::FppTest_SmInstanceJunction_Basic_Basic_action_b(SmId smId,
-                                                             FppTest_SmInstanceJunction_Basic_Basic::Signal signal) {
+                                                            FppTest_SmInstanceJunction_Basic_Basic::Signal signal) {
     ASSERT_EQ(smId, SmId::basic);
     this->m_basic_action_b_history.push(signal);
 }
