@@ -137,16 +137,15 @@ module Ref {
   # ----------------------------------------------------------------------
 
   @ Communications driver. May be swapped with other comm drivers like UART
-  @ Note: Here we have TCP reliable uplink and UDP (low latency) downlink
   instance comm: Drv.TcpClient base id 0x4000
 
-  instance downlink: Svc.Framer base id 0x4100
+  instance framer: Svc.Framer base id 0x4100
 
   instance fatalAdapter: Svc.AssertFatalAdapter base id 0x4200
 
   instance fatalHandler: Svc.FatalHandler base id 0x4300
 
-  instance fileUplinkBufferManager: Svc.BufferManager base id 0x4400
+  instance commsBufferManager: Svc.BufferManager base id 0x4400
 
   instance posixTime: Svc.PosixTime base id 0x4500
 
@@ -154,16 +153,19 @@ module Ref {
 
   instance recvBuffComp: Ref.RecvBuff base id 0x4700
 
-  instance staticMemory: Svc.StaticMemory base id 0x4800
+  instance version: Svc.Version base id 0x4800
 
   instance textLogger: Svc.PassiveTextLogger base id 0x4900
 
-  instance uplink: Svc.Deframer base id 0x4A00
+  instance systemResources: Svc.SystemResources base id 0x4A00
 
-  instance systemResources: Svc.SystemResources base id 0x4B00
+  instance dpBufferManager: Svc.BufferManager base id 0x4B00
 
-  instance dpBufferManager: Svc.BufferManager base id 0x4C00
-  
-  instance version: Svc.Version base id 0x4D00 
+  instance frameAccumulator: Svc.FrameAccumulator base id 0x4C00
+
+  instance deframer: Svc.Deframer base id 0x4D00
+
+  instance uplinkRouter: Svc.Router base id 0x4E00
 
 }
+

@@ -16,6 +16,7 @@
 #include <Fw/Types/MallocAllocator.hpp>
 #include <Os/Console.hpp>
 #include <Svc/FramingProtocol/FprimeProtocol.hpp>
+#include <Svc/FrameAccumulator/FrameDetector/FprimeFrameDetector.hpp>
 
 // Used for 1Hz synthetic cycling
 #include <Os/Mutex.hpp>
@@ -33,7 +34,8 @@ Fw::MallocAllocator mallocator;
 // The reference topology uses the F´ packet protocol when communicating with the ground and therefore uses the F´
 // framing and deframing implementations.
 Svc::FprimeFraming framing;
-Svc::FprimeDeframing deframing;
+Svc::FrameDetectors::FprimeFrameDetector frameDetector;
+
 
 // The reference topology divides the incoming clock signal (1Hz) into sub-signals: 1Hz, 1/2Hz, and 1/4Hz and
 // zero offset for all the dividers
@@ -54,12 +56,16 @@ enum TopologyConstants {
     FILE_DOWNLINK_FILE_QUEUE_DEPTH = 10,
     HEALTH_WATCHDOG_CODE = 0x123,
     COMM_PRIORITY = 100,
-    UPLINK_BUFFER_MANAGER_STORE_SIZE = 3000,
-    UPLINK_BUFFER_MANAGER_QUEUE_SIZE = 30,
-    UPLINK_BUFFER_MANAGER_ID = 200,
+    // Buffer manager for Uplink/Downlink
+    COMMS_BUFFER_MANAGER_STORE_SIZE = 2048,
+    COMMS_BUFFER_MANAGER_STORE_COUNT = 20,
+    COMMS_BUFFER_MANAGER_FILE_STORE_SIZE = 3000,
+    COMMS_BUFFER_MANAGER_FILE_QUEUE_SIZE = 30,
+    COMMS_BUFFER_MANAGER_ID = 200,
+    // Buffer manager for Data Products
     DP_BUFFER_MANAGER_STORE_SIZE = 10000,
-    DP_BUFFER_MANAGER_QUEUE_SIZE = 10,
-    DP_BUFFER_MANAGER_ID = 300
+    DP_BUFFER_MANAGER_STORE_COUNT = 10,
+    DP_BUFFER_MANAGER_ID = 300,
 };
 
 // Ping entries are autocoded, however; this code is not properly exported. Thus, it is copied here.
@@ -111,21 +117,23 @@ void configureTopology() {
     health.setPingEntries(pingEntries, FW_NUM_ARRAY_ELEMENTS(pingEntries), HEALTH_WATCHDOG_CODE);
 
     // Buffer managers need a configured set of buckets and an allocator used to allocate memory for those buckets.
-    Svc::BufferManager::BufferBins upBuffMgrBins;
-    memset(&upBuffMgrBins, 0, sizeof(upBuffMgrBins));
-    upBuffMgrBins.bins[0].bufferSize = UPLINK_BUFFER_MANAGER_STORE_SIZE;
-    upBuffMgrBins.bins[0].numBuffers = UPLINK_BUFFER_MANAGER_QUEUE_SIZE;
-    fileUplinkBufferManager.setup(UPLINK_BUFFER_MANAGER_ID, 0, mallocator, upBuffMgrBins);
+    Svc::BufferManager::BufferBins commsBuffMgrBins;
+    memset(&commsBuffMgrBins, 0, sizeof(commsBuffMgrBins));
+    commsBuffMgrBins.bins[0].bufferSize = COMMS_BUFFER_MANAGER_STORE_SIZE;
+    commsBuffMgrBins.bins[0].numBuffers = COMMS_BUFFER_MANAGER_STORE_COUNT;
+    commsBuffMgrBins.bins[1].bufferSize = COMMS_BUFFER_MANAGER_FILE_STORE_SIZE;
+    commsBuffMgrBins.bins[1].numBuffers = COMMS_BUFFER_MANAGER_FILE_QUEUE_SIZE;
+    commsBufferManager.setup(COMMS_BUFFER_MANAGER_ID, 0, mallocator, commsBuffMgrBins);
 
     Svc::BufferManager::BufferBins dpBuffMgrBins;
     memset(&dpBuffMgrBins, 0, sizeof(dpBuffMgrBins));
     dpBuffMgrBins.bins[0].bufferSize = DP_BUFFER_MANAGER_STORE_SIZE;
-    dpBuffMgrBins.bins[0].numBuffers = DP_BUFFER_MANAGER_QUEUE_SIZE;
+    dpBuffMgrBins.bins[0].numBuffers = DP_BUFFER_MANAGER_STORE_COUNT;
     dpBufferManager.setup(DP_BUFFER_MANAGER_ID, 0, mallocator, dpBuffMgrBins);
 
     // Framer and Deframer components need to be passed a protocol handler
-    downlink.setup(framing);
-    uplink.setup(deframing);
+    framer.setup(framing);
+    frameAccumulator.configure(frameDetector, 1, mallocator, 2048);
 
     Fw::FileNameString dpDir("./DpCat");
 
@@ -206,6 +214,6 @@ void teardownTopology(const TopologyState& state) {
 
     // Resource deallocation
     cmdSeq.deallocateBuffer(mallocator);
-    fileUplinkBufferManager.cleanup();
+    commsBufferManager.cleanup();
 }
 };  // namespace Ref

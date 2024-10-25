@@ -119,6 +119,11 @@ typedef U32 FwDpIdType;
 typedef U32 FwDpPriorityType;
 #define PRI_FwDpPriorityType PRIu32
 
+// Type for start word and length word used in fprime framing
+typedef U32 FwFramingTokenType;
+#define PRI_FwFramingTokenType PRIu32
+
+
 // ----------------------------------------------------------------------
 // Derived type aliases
 // By default, these types are aliases of types defined above

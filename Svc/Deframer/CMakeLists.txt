@@ -17,29 +17,3 @@ set(MOD_DEPS
 )
 
 register_fprime_module()
-
-#### UTS ###
-
-# These tests verify the Deframer component against a mock
-# deframing protocol
-set(UT_SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/Deframer.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/DeframerTester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/DeframerTestMain.cpp"
-)
-register_fprime_ut()
-
-# These tests verify the Deframer component against the
-# F Prime deframing protocol located at Svc/FramingProtocol.
-# They also verify the deframing part of the F Prime protocol
-# implementation.
-set(UT_SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/Deframer.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut-fprime-protocol/GenerateFrames.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut-fprime-protocol/SendBuffer.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut-fprime-protocol/DeframerTester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut-fprime-protocol/DeframerTestMain.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut-fprime-protocol/UplinkFrame.cpp"
-)
-set(UT_MOD_DEPS STest)
-register_fprime_ut(Svc_Deframer_fprime_protocol)
