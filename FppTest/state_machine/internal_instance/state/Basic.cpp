@@ -22,6 +22,14 @@ Basic ::Basic(const char* const compName)
 Basic ::~Basic() {}
 
 // ----------------------------------------------------------------------
+// Handler implementations for typed input ports
+// ----------------------------------------------------------------------
+
+void Basic::schedIn_handler(FwIndexType portNum, U32 context) {
+    // Nothing to do
+}
+
+// ----------------------------------------------------------------------
 // Implementations for internal state machine actions
 // ----------------------------------------------------------------------
 
