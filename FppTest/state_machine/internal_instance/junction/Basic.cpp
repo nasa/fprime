@@ -17,7 +17,7 @@ namespace SmInstanceJunction {
 // Component construction and destruction
 // ----------------------------------------------------------------------
 
-Basic ::Basic(const char* const compName)
+Basic::Basic(const char* const compName)
     : BasicComponentBase(compName),
       m_basic_action_a_history(),
       m_basic_action_b_history(),
@@ -26,30 +26,38 @@ Basic ::Basic(const char* const compName)
       m_smJunctionBasic_action_b_history(),
       m_smJunctionBasic_guard_g() {}
 
-Basic ::~Basic() {}
+Basic::~Basic() {}
+
+// ----------------------------------------------------------------------
+// Handler implementations for typed input ports
+// ----------------------------------------------------------------------
+
+void Basic::schedIn_handler(FwIndexType portNum, U32 context) {
+    // Nothing to do
+}
 
 // ----------------------------------------------------------------------
 // Implementations for internal state machine actions
 // ----------------------------------------------------------------------
 
-void Basic ::FppTest_SmInstanceJunction_Basic_Basic_action_a(SmId smId,
+void Basic::FppTest_SmInstanceJunction_Basic_Basic_action_a(SmId smId,
                                                              FppTest_SmInstanceJunction_Basic_Basic::Signal signal) {
     ASSERT_EQ(smId, SmId::basic);
     this->m_basic_action_a_history.push(signal);
 }
 
-void Basic ::FppTest_SmInstanceJunction_Basic_Basic_action_b(SmId smId,
+void Basic::FppTest_SmInstanceJunction_Basic_Basic_action_b(SmId smId,
                                                              FppTest_SmInstanceJunction_Basic_Basic::Signal signal) {
     ASSERT_EQ(smId, SmId::basic);
     this->m_basic_action_b_history.push(signal);
 }
 
-void Basic ::FppTest_SmJunction_Basic_action_a(SmId smId, FppTest_SmJunction_Basic::Signal signal) {
+void Basic::FppTest_SmJunction_Basic_action_a(SmId smId, FppTest_SmJunction_Basic::Signal signal) {
     ASSERT_EQ(smId, SmId::smJunctionBasic);
     this->m_smJunctionBasic_action_a_history.push(signal);
 }
 
-void Basic ::FppTest_SmJunction_Basic_action_b(SmId smId, FppTest_SmJunction_Basic::Signal signal) {
+void Basic::FppTest_SmJunction_Basic_action_b(SmId smId, FppTest_SmJunction_Basic::Signal signal) {
     ASSERT_EQ(smId, SmId::smJunctionBasic);
     this->m_smJunctionBasic_action_b_history.push(signal);
 }
@@ -58,14 +66,14 @@ void Basic ::FppTest_SmJunction_Basic_action_b(SmId smId, FppTest_SmJunction_Bas
 // Implementations for internal state machine guards
 // ----------------------------------------------------------------------
 
-bool Basic ::FppTest_SmInstanceJunction_Basic_Basic_guard_g(
+bool Basic::FppTest_SmInstanceJunction_Basic_Basic_guard_g(
     SmId smId,
     FppTest_SmInstanceJunction_Basic_Basic::Signal signal) const {
     FW_ASSERT(smId == SmId::basic, static_cast<FwAssertArgType>(smId));
     return this->m_basic_guard_g.call(signal);
 }
 
-bool Basic ::FppTest_SmJunction_Basic_guard_g(SmId smId, FppTest_SmJunction_Basic::Signal signal) const {
+bool Basic::FppTest_SmJunction_Basic_guard_g(SmId smId, FppTest_SmJunction_Basic::Signal signal) const {
     FW_ASSERT(smId == SmId::smJunctionBasic, static_cast<FwAssertArgType>(smId));
     return this->m_smJunctionBasic_guard_g.call(signal);
 }
