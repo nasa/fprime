@@ -51,6 +51,7 @@ namespace Fw {
         FW_TYPEID_PRM_BUFF  =    46, //!< Parameter Buffer type id
         FW_TYPEID_PRM_STR   =    47, //!< Parameter string type id
         FW_TYPEID_FILE_BUFF =    48, //!< File piece Buffer type id
+        FW_TYPEID_TRACE_BUFF=    49, //!< Trace Buffer type id
 
         // Other types
 
