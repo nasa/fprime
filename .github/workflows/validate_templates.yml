@@ -15,25 +15,24 @@ jobs:
           submodules: true
           path: ${{ inputs.fprime_location }}
 
-      - name: "Test bootstrap"
+      - name: "Test Bootstrap and build"
         run: |
              pip install fprime-bootstrap
              sudo apt-get install expect
              mkdir test_dev
              cd test_dev
              expect ../.github/workflows/bootstrap.exp
-
-      - name: "Activate Venv and Generate"
-        run: |
-             cd test_dev/MyProject
+             cd MyProject
              . fprime-venv/bin/activate
              fprime-util generate
+             fprime-util build
 
       - name: "Test Deployment and build"
         run: |
              cd test_dev/MyProject
              . fprime-venv/bin/activate
              expect ../../.github/workflows/deployment.exp
+             cd MyDeployment
              fprime-util build
 
       - name: "Test Component and build"
@@ -41,4 +40,5 @@ jobs:
              cd test_dev/MyProject
              . fprime-venv/bin/activate
              expect ../../.github/workflows/component.exp
+             cd MyComponent
              fprime-util build
