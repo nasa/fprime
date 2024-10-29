@@ -1,7 +1,16 @@
 name: validate_templates-actions
 run-name: ${{ github.actor }} running Validate Templates CI actions
-on: [push]
-
+on:
+  push:
+    branches: [ devel, release/** ]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ devel, release/** ]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.github/actions/spelling/**'
+      - '.github/ISSUE_TEMPLATE/**'
 
 jobs:
 
