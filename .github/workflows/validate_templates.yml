@@ -1,16 +1,16 @@
 name: validate_templates-actions
 run-name: ${{ github.actor }} running Validate Templates CI actions
-on:
-  push:
-    branches: [ devel, release/** ]
-  pull_request:
-    # The branches below must be a subset of the branches above
-    branches: [ devel, release/** ]
-    paths-ignore:
-      - 'docs/**'
-      - '**.md'
-      - '.github/actions/spelling/**'
-      - '.github/ISSUE_TEMPLATE/**'
+on: [push]
+#  push:
+#    branches: [ devel, release/** ]
+#  pull_request:
+#    # The branches below must be a subset of the branches above
+#    branches: [ devel, release/** ]
+#    paths-ignore:
+#      - 'docs/**'
+#      - '**.md'
+#      - '.github/actions/spelling/**'
+#      - '.github/ISSUE_TEMPLATE/**'
 
 jobs:
 
@@ -26,7 +26,8 @@ jobs:
 
       - name: "Test Bootstrap and build"
         run: |
-             pip install fprime-bootstrap
+             pip install git+https://github.com/nasa/fprime-tools@devel
+             pip install git+https://github.com/fprime-community/fprime-bootstrap@devel
              sudo apt-get install expect
              mkdir test_dev
              cd test_dev
