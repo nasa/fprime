@@ -161,6 +161,11 @@ namespace Svc {
               const U32 lastSequenceIndex
           );
 
+          //! Record a Duplicate Packet warning
+          void packetDuplicate(
+              const U32 sequenceIndex
+          );
+
           //! Record a File Write warning
           void fileWrite(Fw::LogStringArg& fileName);
 
