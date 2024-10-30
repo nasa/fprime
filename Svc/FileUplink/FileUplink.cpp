@@ -25,6 +25,7 @@ namespace Svc {
       FileUplinkComponentBase(name),
       m_receiveMode(START),
       m_lastSequenceIndex(0),
+      m_lastPacketWriteStatus(Os::File::OP_OK),
       m_filesReceived(this),
       m_packetsReceived(this),
       m_warnings(this)
@@ -136,6 +137,8 @@ namespace Svc {
     if (status != Os::File::OP_OK) {
       this->m_warnings.fileWrite(this->m_file.name);
     }
+
+    this->m_lastPacketWriteStatus = status;
   }
 
   void FileUplink ::

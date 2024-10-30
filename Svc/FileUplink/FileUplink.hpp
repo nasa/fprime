@@ -275,6 +275,9 @@ namespace Svc {
       //! The sequence index of the last packet received
       U32 m_lastSequenceIndex;
 
+      //! The write status of the last packet received
+      Os::File::Status m_lastPacketWriteStatus;
+
       //! The file being assembled
       File m_file;
 
