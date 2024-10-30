@@ -174,6 +174,18 @@ namespace Svc {
     this->m_lastSequenceIndex = sequenceIndex;
   }
 
+  bool FileUplink ::
+    checkDuplicatedPacket(const U32 sequenceIndex)
+  {
+    // check for duplicate packet
+    if (sequenceIndex == this->m_lastSequenceIndex) {
+      this->m_warnings.packetDuplicate(sequenceIndex);
+      return true;
+    }
+
+    return false;
+  }
+
   void FileUplink ::
     compareChecksums(const Fw::FilePacket::EndPacket& endPacket)
   {

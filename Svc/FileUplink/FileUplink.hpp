@@ -251,6 +251,9 @@ namespace Svc {
       //! Check sequence index
       void checkSequenceIndex(const U32 sequenceIndex);
 
+      //! Check if a received packet is a duplicate
+      bool checkDuplicatedPacket(const U32 sequenceIndex);
+
       //! Compare checksums
       void compareChecksums(const Fw::FilePacket::EndPacket& endPacket);
 
