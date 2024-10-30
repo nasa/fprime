@@ -378,6 +378,48 @@ namespace Svc {
   }
 
   void FileUplinkTester ::
+    packetDuplicated()
+  {
+    const char *const sourcePath = "source.bin";
+    const char *const destPath = "dest.bin";
+    U8 packetData[] = { 5, 6, 7, 8, 9 };
+    const size_t fileSize = 2 * PACKET_SIZE;
+
+    // Send the start packet (packet 0)
+    this->sendStartPacket(sourcePath, destPath, fileSize);
+    ASSERT_TLM_SIZE(1);
+    ASSERT_TLM_PacketsReceived(
+        0,
+        ++this->expectedPacketsReceived
+    );
+    ASSERT_EVENTS_SIZE(0);
+
+    // Simulate duplication of packet 0
+    --this->sequenceIndex;
+
+    // capture the checksum after sending the first packet
+    const ::CFDP::Checksum expectedChecksum(component.m_file.m_checksum);
+
+    // Send the data packet (packet 0) again
+    const size_t byteOffset = 0;
+    this->sendDataPacket(byteOffset, packetData);
+    ASSERT_TLM_SIZE(2);
+    ASSERT_TLM_PacketsReceived(
+        0,
+        ++this->expectedPacketsReceived
+    );
+    ASSERT_TLM_Warnings(0, 1);
+
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_PacketDuplicate(0, component.m_lastSequenceIndex);
+
+    // verify that the checksum hasn't changed
+    ASSERT_EQ(expectedChecksum, component.m_file.m_checksum);
+
+    this->removeFile("test.bin");
+  }
+
+  void FileUplinkTester ::
     cancelPacketInStartMode()
   {
 

@@ -80,6 +80,10 @@ namespace Svc {
       //!
       void packetOutOfOrder();
 
+      //! Send a file with an duplicated packet
+      //!
+      void packetDuplicated();
+
       //! Send a CANCEL packet in START mode
       //!
       void cancelPacketInStartMode();
