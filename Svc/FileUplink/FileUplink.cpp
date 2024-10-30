@@ -121,7 +121,15 @@ namespace Svc {
       this->m_warnings.invalidReceiveMode(Fw::FilePacket::T_DATA);
       return;
     }
+
     const U32 sequenceIndex = dataPacket.asHeader().getSequenceIndex();
+
+    // skip this packet if it is a duplicate and it has already been written
+    if (this->m_lastPacketWriteStatus == Os::File::OP_OK &&
+        this->checkDuplicatedPacket(sequenceIndex)) {
+        return;
+    }
+
     this->checkSequenceIndex(sequenceIndex);
     const U32 byteOffset = dataPacket.getByteOffset();
     const U32 dataSize = dataPacket.getDataSize();
