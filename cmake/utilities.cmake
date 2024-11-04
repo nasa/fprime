@@ -587,12 +587,12 @@ function(execute_process_or_fail ERROR_MESSAGE)
         ${OUTPUT_ARGS}
     )
     if (NOT RETURN_CODE EQUAL 0)
-        set(MESSAGE "${ERROR_MESSAGE}:\n${STANDARD_ERROR}")
+        set(FATAL_MESSAGE "${ERROR_MESSAGE}:\n${STANDARD_ERROR}")
         # Ninja pipes stderr to stdout so we have to print stdout to see errors
         if (CMAKE_GENERATOR MATCHES "Ninja")
-            string(APPEND MESSAGE "\n${STANDARD_OUTPUT}")
+            string(APPEND FATAL_MESSAGE "\n${STANDARD_OUTPUT}")
         endif()
-        message(FATAL_ERROR "${MESSAGE}")
+        message(FATAL_ERROR "${FATAL_MESSAGE}")
     endif()
 endfunction()
 
