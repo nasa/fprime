@@ -55,7 +55,7 @@ IpSocket& TcpServerComponentImpl::getSocketHandler() {
 }
 
 Fw::Buffer TcpServerComponentImpl::getBuffer() {
-    return allocate_out(0, 1024);
+    return allocate_out(0, m_allocation_size);
 }
 
 void TcpServerComponentImpl::sendBuffer(Fw::Buffer buffer, SocketIpStatus status) {
