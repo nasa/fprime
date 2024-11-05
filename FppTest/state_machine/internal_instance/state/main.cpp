@@ -23,7 +23,7 @@
 #include "FppTest/state_machine/internal_instance/state/Internal.hpp"
 #include "FppTest/state_machine/internal_instance/state/Polymorphism.hpp"
 #include "FppTest/state_machine/internal_instance/state/StateToChild.hpp"
-#include "FppTest/state_machine/internal_instance/state/StateToJunction.hpp"
+#include "FppTest/state_machine/internal_instance/state/StateToChoice.hpp"
 #include "FppTest/state_machine/internal_instance/state/StateToSelf.hpp"
 #include "FppTest/state_machine/internal_instance/state/StateToState.hpp"
 #include "STest/STest/Random/Random.hpp"
@@ -208,34 +208,34 @@ TEST(StateToChild, S3_to_S2) {
     stateToChild.testS3_to_S2();
 }
 
-TEST(StateToJunction, Init) {
-    FppTest::SmInstanceState::StateToJunction stateToJunction("stateToJunction");
-    stateToJunction.testInit();
+TEST(StateToChoice, Init) {
+    FppTest::SmInstanceState::StateToChoice stateToChoice("stateToChoice");
+    stateToChoice.testInit();
 }
 
-TEST(StateToJunction, S2_to_J) {
-    FppTest::SmInstanceState::StateToJunction stateToJunction("stateToJunction");
-    stateToJunction.testS2_to_J();
+TEST(StateToChoice, S2_to_C) {
+    FppTest::SmInstanceState::StateToChoice stateToChoice("stateToChoice");
+    stateToChoice.testS2_to_C();
 }
 
-TEST(StateToJunction, S2_to_S4) {
-    FppTest::SmInstanceState::StateToJunction stateToJunction("stateToJunction");
-    stateToJunction.testS2_to_S4();
+TEST(StateToChoice, S2_to_S4) {
+    FppTest::SmInstanceState::StateToChoice stateToChoice("stateToChoice");
+    stateToChoice.testS2_to_S4();
 }
 
-TEST(StateToJunction, S2_to_S3) {
-    FppTest::SmInstanceState::StateToJunction stateToJunction("stateToJunction");
-    stateToJunction.testS2_to_S3();
+TEST(StateToChoice, S2_to_S3) {
+    FppTest::SmInstanceState::StateToChoice stateToChoice("stateToChoice");
+    stateToChoice.testS2_to_S3();
 }
 
-TEST(StateToJunction, S3_to_J) {
-    FppTest::SmInstanceState::StateToJunction stateToJunction("stateToJunction");
-    stateToJunction.testS3_to_J();
+TEST(StateToChoice, S3_to_C) {
+    FppTest::SmInstanceState::StateToChoice stateToChoice("stateToChoice");
+    stateToChoice.testS3_to_C();
 }
 
-TEST(StateToJunction, S3_to_S4) {
-    FppTest::SmInstanceState::StateToJunction stateToJunction("stateToJunction");
-    stateToJunction.testS3_to_S4();
+TEST(StateToChoice, S3_to_S4) {
+    FppTest::SmInstanceState::StateToChoice stateToChoice("stateToChoice");
+    stateToChoice.testS3_to_S4();
 }
 
 TEST(StateToSelf, Init) {
