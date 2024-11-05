@@ -13,7 +13,7 @@
 
 #include <gtest/gtest.h>
 
-#include "FppTest/state_machine/internal/junction/BasicU32.hpp"
+#include "FppTest/state_machine/internal/choice/BasicU32.hpp"
 #include "STest/STest/Pick/Pick.hpp"
 
 namespace FppTest {

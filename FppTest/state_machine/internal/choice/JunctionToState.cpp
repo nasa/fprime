@@ -13,7 +13,7 @@
 
 #include <gtest/gtest.h>
 
-#include "FppTest/state_machine/internal/junction/JunctionToState.hpp"
+#include "FppTest/state_machine/internal/choice/JunctionToState.hpp"
 #include "STest/STest/Pick/Pick.hpp"
 
 namespace FppTest {

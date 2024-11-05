@@ -15,7 +15,7 @@
 #define FppTest_State_JunctionToState_HPP
 
 #include "FppTest/state_machine/internal/harness/Harness.hpp"
-#include "FppTest/state_machine/internal/junction/JunctionToStateStateMachineAc.hpp"
+#include "FppTest/state_machine/internal/choice/JunctionToStateStateMachineAc.hpp"
 
 namespace FppTest {
 

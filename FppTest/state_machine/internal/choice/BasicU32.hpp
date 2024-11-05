@@ -1,8 +1,8 @@
 // ======================================================================
 //
-// \title  Basic.hpp
+// \title  BasicU32.hpp
 // \author R. Bocchino
-// \brief  Test class for basic state machine with a junction (header)
+// \brief  Test class for basic state machine with a U32 junction (header)
 //
 // \copyright
 // Copyright 2024, by the California Institute of Technology.
@@ -11,29 +11,30 @@
 //
 // ======================================================================
 
-#ifndef FppTest_State_Basic_HPP
-#define FppTest_State_Basic_HPP
+#ifndef FppTest_State_BasicU32_HPP
+#define FppTest_State_BasicU32_HPP
 
 #include "FppTest/state_machine/internal/harness/Harness.hpp"
-#include "FppTest/state_machine/internal/junction/BasicStateMachineAc.hpp"
+#include "FppTest/state_machine/internal/choice/BasicU32StateMachineAc.hpp"
 
 namespace FppTest {
 
 namespace SmJunction {
 
-//! A basic state machine with a junction
-class Basic final : public BasicStateMachineBase {
+//! A basic state machine with a U32 junction
+class BasicU32 final : public BasicU32StateMachineBase {
   public:
     //! The history size
     static constexpr FwSizeType historySize = 10;
 
   public:
     //! Constructor
-    Basic();
+    BasicU32();
 
   private:
     //! Implementation of action a
-    void action_a(Signal signal  //!< The signal
+    void action_a(Signal signal,  //!< The signal
+                  U32 value       //!< The value
                   ) final;
 
     //! Implementation of action b
@@ -41,8 +42,9 @@ class Basic final : public BasicStateMachineBase {
                   ) final;
 
     //! Implementation of guard g
-    bool guard_g(Signal signal  //!< The signal
-                 ) const final;
+    bool guard_g(Signal signal,  //!< The signal
+                 U32 value       //!< The value
+    ) const final;
 
   public:
     //! Run the test with the true guard
@@ -53,13 +55,13 @@ class Basic final : public BasicStateMachineBase {
 
   private:
     //! The history associated with action a
-    SmHarness::History<Signal, historySize> m_action_a_history;
+    SmHarness::SignalValueHistory<Signal, U32, historySize> m_action_a_history;
 
-    //! The history associated with action b of Basic
+    //! The history associated with action b
     SmHarness::History<Signal, historySize> m_action_b_history;
 
     //! The guard g
-    SmHarness::NoArgGuard<Signal, historySize> m_guard_g;
+    SmHarness::Guard<Signal, U32, historySize> m_guard_g;
 };
 
 }  // namespace SmJunction

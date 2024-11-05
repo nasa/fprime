@@ -4,13 +4,13 @@
 
 #include <gtest/gtest.h>
 
-#include "FppTest/state_machine/internal/junction/Basic.hpp"
-#include "FppTest/state_machine/internal/junction/BasicU32.hpp"
-#include "FppTest/state_machine/internal/junction/InputPairU16U32.hpp"
-#include "FppTest/state_machine/internal/junction/JunctionToJunction.hpp"
-#include "FppTest/state_machine/internal/junction/JunctionToState.hpp"
-#include "FppTest/state_machine/internal/junction/Sequence.hpp"
-#include "FppTest/state_machine/internal/junction/SequenceU32.hpp"
+#include "FppTest/state_machine/internal/choice/Basic.hpp"
+#include "FppTest/state_machine/internal/choice/BasicU32.hpp"
+#include "FppTest/state_machine/internal/choice/InputPairU16U32.hpp"
+#include "FppTest/state_machine/internal/choice/JunctionToJunction.hpp"
+#include "FppTest/state_machine/internal/choice/JunctionToState.hpp"
+#include "FppTest/state_machine/internal/choice/Sequence.hpp"
+#include "FppTest/state_machine/internal/choice/SequenceU32.hpp"
 #include "STest/STest/Random/Random.hpp"
 
 TEST(Basic, True) {

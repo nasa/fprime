@@ -6,7 +6,7 @@ module FppTest {
 
       sync input port schedIn: Svc.Sched
 
-      include "../../internal/junction/include/Basic.fppi"
+      include "../../internal/choice/include/Basic.fppi"
 
       state machine instance basic: Basic
 
