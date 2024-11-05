@@ -562,7 +562,7 @@ endfunction(introspect)
 # - **ERROR_MESSAGE**: message to output should an error occurs
 ####
 function(execute_process_or_fail ERROR_MESSAGE)
-    # Quiet standard output unless we are doing verbose output generate
+    # Quiet standard output unless we are doing verbose output (handled below)
     set(OUTPUT_ARGS OUTPUT_QUIET)
     # Print the invocation if debug output is set
     if (CMAKE_DEBUG_OUTPUT)
@@ -571,19 +571,28 @@ function(execute_process_or_fail ERROR_MESSAGE)
         foreach(ARG IN LISTS ARGN)
             set(COMMAND_AS_STRING "${COMMAND_AS_STRING}\"${ARG}\" ")
         endforeach()
-        
-        #string(REPLACE ";" "\" \"" COMMAND_AS_STRING "${ARGN}")
         message(STATUS "[cli] ${COMMAND_AS_STRING}")
+    endif()
+    # Ninja pipes stderr to stdout so remove quiet output to see errors
+    if (CMAKE_GENERATOR MATCHES "Ninja")
+        set(OUTPUT_ARGS)
     endif()
     execute_process(
         COMMAND ${ARGN}
         RESULT_VARIABLE RETURN_CODE
+        OUTPUT_VARIABLE STANDARD_OUTPUT
         ERROR_VARIABLE STANDARD_ERROR
         ERROR_STRIP_TRAILING_WHITESPACE
+        OUTPUT_STRIP_TRAILING_WHITESPACE
         ${OUTPUT_ARGS}
     )
     if (NOT RETURN_CODE EQUAL 0)
-        message(FATAL_ERROR "${ERROR_MESSAGE}:\n${STANDARD_ERROR}")
+        set(FATAL_MESSAGE "${ERROR_MESSAGE}:\n${STANDARD_ERROR}")
+        # Ninja pipes stderr to stdout so we have to print stdout to see errors
+        if (CMAKE_GENERATOR MATCHES "Ninja")
+            string(APPEND FATAL_MESSAGE "\n${STANDARD_OUTPUT}")
+        endif()
+        message(FATAL_ERROR "${FATAL_MESSAGE}")
     endif()
 endfunction()
 

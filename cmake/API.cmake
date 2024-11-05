@@ -18,6 +18,19 @@ set(FPRIME_UT_TARGET_LIST "" CACHE INTERNAL "FPRIME_UT_TARGET_LIST: custom fprim
 set(FPRIME_AUTOCODER_TARGET_LIST "" CACHE INTERNAL "FPRIME_AUTOCODER_TARGET_LIST: custom fprime targets" FORCE)
 
 ####
+# Macro `skip_on_sub_build`:
+#
+# Skip this remaining code in the current function or file when executing in the context of a sub build. Sub builds
+# execute utility and setup functions in fprime. However, certain CMake functions are not appropriate in this context
+# and should be skipped.
+####
+macro(skip_on_sub_build)
+    if (DEFINED FPRIME_SUB_BUILD_TARGETS)
+        return()
+    endif()
+endmacro()
+
+####
 # Macro `restrict_platforms`:
 #
 # Restricts a CMakeLists.txt file to a given list of platforms. This prevents usage on platforms for which the module
@@ -45,34 +58,6 @@ macro(restrict_platforms)
         get_module_name("${CMAKE_CURRENT_LIST_DIR}")
         message(STATUS "Neither toolchain ${FPRIME_TOOLCHAIN_NAME} nor platform ${FPRIME_PLATFORM} supported for module ${MODULE_NAME}")
         append_list_property("${MODULE_NAME}" GLOBAL PROPERTY RESTRICTED_TARGETS)
-        return()
-    endif()
-endmacro()
-
-####
-# Macro `prevent_prescan`:
-#
-# Prevents a CMakeLists.txt file from being processed in the prescan phase of the project. Will generate fake targets
-# for all those targets specified to ensure that dependencies may be attached to these targets in the larger system.
-#
-# Usage:
-#    prevent_prescan(target1 target2 ...) # Generate fake targets and skip prescan
-#
-# Args:
-#   ARGN: list of targets to synthesize
-#####
-macro(prevent_prescan)
-    set(__CHECKER_TARGETS ${ARGN})
-    if (DEFINED FPRIME_PRESCAN)
-        foreach (__TARGET IN LISTS __CHECKER_TARGETS)
-            # Make prevent prescan safe in the case of multiple calls
-            if (NOT TARGET ${__TARGET})
-                add_custom_target(${__TARGET})
-            endif()
-        endforeach()
-        string(REPLACE ";" " " __SPACE_LIST_TARGETS "${__CHECKER_TARGETS}")
-        get_module_name("${CMAKE_CURRENT_LIST_DIR}")
-        message(STATUS "Skipping ${MODULE_NAME} during prescan, adding faux libraries: ${__SPACE_LIST_TARGETS}")
         return()
     endif()
 endmacro()
@@ -573,7 +558,7 @@ endmacro(register_fprime_list_helper)
 # **TARGET_FILE_PATH:** include path or file path file defining above functions
 ####
 macro(register_fprime_build_autocoder TARGET_FILE_PATH TO_PREPEND)
-    # Normal registered targets don't run in prescan
+    # Normal registered targets don't run in pre-builds
     if (CMAKE_DEBUG_OUTPUT)
         message(STATUS "[autocoder] Registering custom build target autocoder: ${TARGET_FILE_PATH} prepend: ${TO_PREPEND}")
     endif()
@@ -637,7 +622,6 @@ function(register_fprime_implementation IMPLEMENTATION IMPLEMENTOR)
     create_implementation_interface("${IMPLEMENTATION}")
     append_list_property("${IMPLEMENTOR}" GLOBAL PROPERTY "${IMPLEMENTATION}_IMPLEMENTORS")
     append_list_property("${ARGN}" TARGET "${IMPLEMENTOR}" PROPERTY "REQUIRED_SOURCE_FILES")
-    add_dependencies("${IMPLEMENTATION}" "${IMPLEMENTOR}")
 endfunction()
 
 ####

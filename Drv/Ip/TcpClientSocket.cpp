@@ -47,7 +47,7 @@ bool TcpClientSocket::isValidPort(U16 port) {
 }
 
 
-SocketIpStatus TcpClientSocket::openProtocol(NATIVE_INT_TYPE& fd) {
+SocketIpStatus TcpClientSocket::openProtocol(SocketDescriptor& socketDescriptor) {
     NATIVE_INT_TYPE socketFd = -1;
     struct sockaddr_in address;
 
@@ -81,17 +81,17 @@ SocketIpStatus TcpClientSocket::openProtocol(NATIVE_INT_TYPE& fd) {
         ::close(socketFd);
         return SOCK_FAILED_TO_CONNECT;
     }
-    fd = socketFd;
+    socketDescriptor.fd = socketFd;
     Fw::Logger::log("Connected to %s:%hu as a tcp client\n", m_hostname, m_port);
     return SOCK_SUCCESS;
 }
 
-I32 TcpClientSocket::sendProtocol(NATIVE_INT_TYPE fd, const U8* const data, const U32 size) {
-    return static_cast<I32>(::send(fd, data, size, SOCKET_IP_SEND_FLAGS));
+I32 TcpClientSocket::sendProtocol(const SocketDescriptor& socketDescriptor, const U8* const data, const U32 size) {
+    return static_cast<I32>(::send(socketDescriptor.fd, data, size, SOCKET_IP_SEND_FLAGS));
 }
 
-I32 TcpClientSocket::recvProtocol(NATIVE_INT_TYPE fd, U8* const data, const U32 size) {
-    return static_cast<I32>(::recv(fd, data, size, SOCKET_IP_RECV_FLAGS));
+I32 TcpClientSocket::recvProtocol(const SocketDescriptor& socketDescriptor, U8* const data, const U32 size) {
+    return static_cast<I32>(::recv(socketDescriptor.fd, data, size, SOCKET_IP_RECV_FLAGS));
 }
 
 }  // namespace Drv

@@ -103,6 +103,7 @@ Fw::StringUtils::StringToNumberStatus Fw::StringUtils::string_to_number(const CH
 Fw::StringUtils::StringToNumberStatus Fw::StringUtils::string_to_number(const CHAR* input, FwSizeType buffer_size, I8& output, char** next, U8 base) {
     return string_to_number_as_template<I8, long long, strtoll>(input, buffer_size, output, next, base);
 }
+#if FW_HAS_F64
 Fw::StringUtils::StringToNumberStatus Fw::StringUtils::string_to_number(const CHAR* input, FwSizeType buffer_size, F64& output, char** next) {
     char* output_next = nullptr;
     Fw::StringUtils::StringToNumberStatus status = string_to_helper_input_check(input, buffer_size, 0);
@@ -112,6 +113,7 @@ Fw::StringUtils::StringToNumberStatus Fw::StringUtils::string_to_number(const CH
     status = string_to_helper_output_check(status, input, output_next, next);
     return status;
 }
+#endif
 
 Fw::StringUtils::StringToNumberStatus Fw::StringUtils::string_to_number(const CHAR* input, FwSizeType buffer_size, F32& output, char** next) {
     char* output_next = nullptr;

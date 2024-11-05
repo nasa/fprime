@@ -1,5 +1,5 @@
 # Add codegen target to cache
-set(CODEGEN_TARGET "codegen" CACHE INTERNAL "Target for codegen autocoder")
+set(CODEGEN_TARGET "fprime_codegen" CACHE INTERNAL "Target for codegen autocoder")
 set_property(GLOBAL PROPERTY CODEGEN_OUTPUTS)
 
 # Create target for autocoder

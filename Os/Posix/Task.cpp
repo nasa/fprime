@@ -32,8 +32,13 @@ namespace Task {
     PlatformIntType set_stack_size(pthread_attr_t& attributes, const Os::Task::Arguments& arguments) {
         PlatformIntType status = PosixTaskHandle::SUCCESS;
         FwSizeType stack = arguments.m_stackSize;
-        // Check for stack size multiple of page size
+// Check for stack size multiple of page size or skip when the function
+// is unavailable.
+#ifdef _SC_PAGESIZE
         long page_size = sysconf(_SC_PAGESIZE);
+#else
+        long page_size = -1; // Force skip and warning
+#endif
         if (page_size <= 0) {
             Fw::Logger::log(
                     "[WARNING] %s could not determine page size %s. Skipping stack-size check.\n",
@@ -209,6 +214,39 @@ namespace Task {
     void PosixTask::resume() {
         FW_ASSERT(0);
     }
+
+
+    Os::Task::Status PosixTask::_delay(Fw::TimeInterval interval) {
+        Os::Task::Status task_status = Os::Task::OP_OK;
+        timespec sleep_interval;
+        sleep_interval.tv_sec = interval.getSeconds();
+        sleep_interval.tv_nsec = interval.getUSeconds() * 1000;
+
+        timespec remaining_interval;
+        remaining_interval.tv_sec = 0;
+        remaining_interval.tv_nsec = 0;
+
+        while (true) {
+            PlatformIntType status = nanosleep(&sleep_interval, &remaining_interval);
+            // Success, return ok
+            if (0 == status) {
+                break;
+            }
+            // Interrupted, reset sleep and iterate
+            else if (EINTR == errno) {
+                sleep_interval = remaining_interval;
+                continue;
+            }
+            // Anything else is an error
+            else {
+                task_status = Os::Task::Status::DELAY_ERROR;
+                break;
+            }
+        }
+        return task_status;
+    }
+
+
 } // end namespace Task
 } // end namespace Posix
 } // end namespace Os

@@ -1,6 +1,6 @@
-<p align="center">
-<img width="230em" src="docs/img/fprime-logo.png"><br/>
 <h2 align="center">A Flight-Proven, Multi-Platform, Open-Source Flight Software Framework</h2>
+<p align="center"><br/>
+<img width="200em" src="docs/img/fprime-logo.svg"><br/>
 </p>
 
 #

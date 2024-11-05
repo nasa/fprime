@@ -341,8 +341,8 @@ module RPI {
 
     phase Fpp.ToCpp.Phases.configComponents """
     {
-      const bool status = RPI::ledDrv.open(21, Drv::LinuxGpioDriverComponentImpl::GPIO_OUT);
-      if (!status) {
+      const Os::File::Status status = RPI::ledDrv.open("/dev/gpiochip0", 21, Drv::LinuxGpioDriver::GpioConfiguration::GPIO_OUTPUT);
+      if (status != Os::File::Status::OP_OK) {
         Fw::Logger::log("[ERROR] Could not open LED driver\\n");
         Init::status = false;
       }
@@ -356,8 +356,8 @@ module RPI {
 
     phase Fpp.ToCpp.Phases.configComponents """
     {
-      const bool status = RPI::gpio23Drv.open(23, Drv::LinuxGpioDriverComponentImpl::GPIO_OUT);
-      if (!status) {
+      const Os::File::Status status = RPI::gpio23Drv.open("/dev/gpiochip0", 23, Drv::LinuxGpioDriver::GpioConfiguration::GPIO_OUTPUT);
+      if (status != Os::File::Status::OP_OK) {
         Fw::Logger::log("[ERROR] Could not open GPIO 23 driver\\n");
         Init::status = false;
       }
@@ -371,8 +371,8 @@ module RPI {
 
     phase Fpp.ToCpp.Phases.configComponents """
     {
-      const bool status = RPI::gpio24Drv.open(24, Drv::LinuxGpioDriverComponentImpl::GPIO_OUT);
-      if (!status) {
+      const Os::File::Status status = RPI::gpio24Drv.open("/dev/gpiochip0", 24, Drv::LinuxGpioDriver::GpioConfiguration::GPIO_OUTPUT);
+      if (status != Os::File::Status::OP_OK) {
         Fw::Logger::log("[ERROR] Could not open GPIO 24 driver\\n");
         Init::status = false;
       }
@@ -386,8 +386,8 @@ module RPI {
 
     phase Fpp.ToCpp.Phases.configComponents """
     {
-      const bool status = RPI::gpio25Drv.open(25, Drv::LinuxGpioDriverComponentImpl::GPIO_IN);
-      if (!status) {
+      const Os::File::Status status = RPI::gpio25Drv.open("/dev/gpiochip0", 25, Drv::LinuxGpioDriver::GpioConfiguration::GPIO_INPUT);
+      if (status != Os::File::Status::OP_OK) {
         Fw::Logger::log("[ERROR] Could not open GPIO 25 driver\\n");
         Init::status = false;
       }
@@ -401,8 +401,8 @@ module RPI {
 
     phase Fpp.ToCpp.Phases.configComponents """
     {
-      const bool status = RPI::gpio17Drv.open(17, Drv::LinuxGpioDriverComponentImpl::GPIO_IN);
-      if (!status) {
+      const Os::File::Status status = RPI::gpio17Drv.open("/dev/gpiochip0", 17, Drv::LinuxGpioDriver::GpioConfiguration::GPIO_INPUT);
+      if (status != Os::File::Status::OP_OK) {
         Fw::Logger::log("[ERROR] Could not open GPIO 17 driver\\n");
         Init::status = false;
       }
