@@ -1,4 +1,4 @@
-@ A basic state machine with a U32 junction sequence
+@ A basic state machine with a U32 choice sequence
 state machine SequenceU32 {
 
   @ Action a
@@ -28,12 +28,12 @@ state machine SequenceU32 {
   }
 
   @ Junction J1
-  junction J1 {
+  choice J1 {
     if g1 enter S2 else enter J2
   }
 
   @ Junction J2
-  junction J2 {
+  choice J2 {
     if g2 do { a } enter S3 else do { b } enter S4
   }
 

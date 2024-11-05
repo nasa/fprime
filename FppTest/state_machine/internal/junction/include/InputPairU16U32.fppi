@@ -1,4 +1,4 @@
-@ A state machine with two inputs to a junction
+@ A state machine with two inputs to a choice
 state machine InputPairU16U32 {
 
   @ Action a
@@ -28,7 +28,7 @@ state machine InputPairU16U32 {
   }
 
   @ Junction J
-  junction J {
+  choice J {
     if g do { a } enter S2 else do { a } enter S3
   }
 

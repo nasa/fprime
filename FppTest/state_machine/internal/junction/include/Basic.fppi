@@ -1,4 +1,4 @@
-@ A basic state machine with a junction
+@ A basic state machine with a choice
 state machine Basic {
 
   @ Action a
@@ -25,7 +25,7 @@ state machine Basic {
   }
 
   @ Junction J
-  junction J {
+  choice J {
     if g do { a } enter S2 else do { b } enter S3
   }
 

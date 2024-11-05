@@ -1,4 +1,4 @@
-@ A state machine for testing junction-to-state transitions
+@ A state machine for testing choice-to-state transitions
 @ with hierarchy
 state machine JunctionToState {
 
@@ -30,7 +30,7 @@ state machine JunctionToState {
     exit do { exitS1 }
 
     @ Junction J
-    junction J {
+    choice J {
       if g do { a } enter S2 else do { a } enter S2.S3
     }
 
