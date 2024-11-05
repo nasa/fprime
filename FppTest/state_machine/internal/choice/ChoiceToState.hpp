@@ -14,8 +14,8 @@
 #ifndef FppTest_State_ChoiceToState_HPP
 #define FppTest_State_ChoiceToState_HPP
 
-#include "FppTest/state_machine/internal/harness/Harness.hpp"
 #include "FppTest/state_machine/internal/choice/ChoiceToStateStateMachineAc.hpp"
+#include "FppTest/state_machine/internal/harness/Harness.hpp"
 
 namespace FppTest {
 
@@ -30,10 +30,10 @@ class ChoiceToState final : public ChoiceToStateStateMachineBase {
   public:
     //! Action IDs
     enum class ActionId {
-      EXIT_S1,
-      A,
-      ENTER_S2,
-      ENTER_S3,
+        EXIT_S1,
+        A,
+        ENTER_S2,
+        ENTER_S3,
     };
 
   public:

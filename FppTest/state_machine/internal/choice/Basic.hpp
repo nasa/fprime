@@ -14,8 +14,8 @@
 #ifndef FppTest_State_Basic_HPP
 #define FppTest_State_Basic_HPP
 
-#include "FppTest/state_machine/internal/harness/Harness.hpp"
 #include "FppTest/state_machine/internal/choice/BasicStateMachineAc.hpp"
+#include "FppTest/state_machine/internal/harness/Harness.hpp"
 
 namespace FppTest {
 
@@ -42,7 +42,7 @@ class Basic final : public BasicStateMachineBase {
 
     //! Implementation of guard g
     bool guard_g(Signal signal  //!< The signal
-                 ) const final;
+    ) const final;
 
   public:
     //! Run the test with the true guard

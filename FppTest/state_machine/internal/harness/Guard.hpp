@@ -42,7 +42,7 @@ class Guard {
 
     //! Call the guard
     bool call(Signal signal,  //!< The signal
-              const T& arg           //!< The argument
+              const T& arg    //!< The argument
     ) const {
         // Use const cast to update the history
         const_cast<Guard<Signal, T, size>*>(this)->m_callHistory.push(signal, arg);

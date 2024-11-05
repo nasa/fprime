@@ -14,8 +14,8 @@
 #ifndef FppTest_State_InputPairU16U32_HPP
 #define FppTest_State_InputPairU16U32_HPP
 
-#include "FppTest/state_machine/internal/harness/Harness.hpp"
 #include "FppTest/state_machine/internal/choice/InputPairU16U32StateMachineAc.hpp"
+#include "FppTest/state_machine/internal/harness/Harness.hpp"
 
 namespace FppTest {
 

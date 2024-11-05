@@ -29,13 +29,7 @@ class StateToChild final : public StateToChildStateMachineBase {
 
   public:
     //! Action IDs
-    enum class ActionId {
-        EXIT_S2,
-        EXIT_S3,
-        A,
-        ENTER_S2,
-        ENTER_S3
-    };
+    enum class ActionId { EXIT_S2, EXIT_S3, A, ENTER_S2, ENTER_S3 };
 
   public:
     //! Constructor

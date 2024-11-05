@@ -14,8 +14,8 @@
 #ifndef FppTest_State_Sequence_HPP
 #define FppTest_State_Sequence_HPP
 
-#include "FppTest/state_machine/internal/harness/Harness.hpp"
 #include "FppTest/state_machine/internal/choice/SequenceStateMachineAc.hpp"
+#include "FppTest/state_machine/internal/harness/Harness.hpp"
 
 namespace FppTest {
 

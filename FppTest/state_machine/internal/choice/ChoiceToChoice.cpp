@@ -20,8 +20,7 @@ namespace FppTest {
 
 namespace SmChoice {
 
-ChoiceToChoice::ChoiceToChoice()
-    : ChoiceToChoiceStateMachineBase(), m_actionHistory(), m_guard_g1(), m_guard_g2() {}
+ChoiceToChoice::ChoiceToChoice() : ChoiceToChoiceStateMachineBase(), m_actionHistory(), m_guard_g1(), m_guard_g2() {}
 
 void ChoiceToChoice::action_exitS1(Signal signal) {
     this->m_actionHistory.push(signal, ActionId::EXIT_S1);

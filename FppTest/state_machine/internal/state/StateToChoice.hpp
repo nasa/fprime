@@ -70,7 +70,7 @@ class StateToChoice final : public StateToChoiceStateMachineBase {
 
     //! Guard g
     bool guard_g(Signal signal  //!< The signal
-                 ) const final;
+    ) const final;
 
   public:
     //! Test initial transition

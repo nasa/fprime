@@ -41,12 +41,11 @@ struct TestAbsType final : public Fw::Serializable {
 
 #ifdef BUILD_UT
     //! Ostream operator
-    friend std::ostream& operator<<(
-        std::ostream& os, //!< The ostream
-        const TestAbsType& obj //!< The object
+    friend std::ostream& operator<<(std::ostream& os,       //!< The ostream
+                                    const TestAbsType& obj  //!< The object
     );
 #endif
-    
+
     //! Serialize function
     //! \return Status
     Fw::SerializeStatus serialize(Fw::SerializeBufferBase& sbb  //!< The serialize buffer base
@@ -63,11 +62,10 @@ struct TestAbsType final : public Fw::Serializable {
 
 #if FW_SERIALIZABLE_TO_STRING
     //! Convert TestAbsType to string
-    void toString(
-        Fw::StringBase& sb //!< The StringBase object to hold the result
+    void toString(Fw::StringBase& sb  //!< The StringBase object to hold the result
     ) const;
 #endif
-        
+
     //! The data
     U32 m_data;
 };

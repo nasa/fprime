@@ -20,8 +20,7 @@ namespace FppTest {
 
 namespace SmState {
 
-BasicGuardTestEnum::BasicGuardTestEnum()
-    : BasicGuardTestEnumStateMachineBase(), m_action_a_history(), m_guard_g() {}
+BasicGuardTestEnum::BasicGuardTestEnum() : BasicGuardTestEnumStateMachineBase(), m_action_a_history(), m_guard_g() {}
 
 void BasicGuardTestEnum::action_a(Signal signal, const SmHarness::TestEnum& value) {
     this->m_action_a_history.push(signal, value);

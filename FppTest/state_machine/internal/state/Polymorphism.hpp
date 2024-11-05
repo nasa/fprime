@@ -39,7 +39,6 @@ class Polymorphism final : public PolymorphismStateMachineBase {
 
     //! Test polymorphic transition in S3
     void testS3_poly();
-
 };
 
 }  // namespace SmState

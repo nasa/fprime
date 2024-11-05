@@ -37,7 +37,7 @@ class BasicTestStruct final : public BasicTestStructStateMachineBase {
                   ) final;
 
     //! Implementation of action b
-    void action_b(Signal signal,                       //!< The signal
+    void action_b(Signal signal,                      //!< The signal
                   const SmHarness::TestStruct& value  //!< The value
                   ) final;
 

@@ -57,7 +57,7 @@ void StateToChoice::action_enterS4(Signal signal) {
 bool StateToChoice::guard_g(Signal signal) const {
     return this->m_guard_g.call(signal);
 }
-    
+
 void StateToChoice::testInit() {
     this->m_actionHistory.clear();
     const FwEnumStoreType id = SmHarness::Pick::stateMachineId();
@@ -69,7 +69,7 @@ void StateToChoice::testInit() {
     const auto& signals = this->m_actionHistory.getSignals();
     const auto& actions = this->m_actionHistory.getValues();
     for (FwSizeType i = 0; i < expectedSize; i++) {
-      ASSERT_EQ(signals.getItemAt(i), Signal::__FPRIME_AC_INITIAL_TRANSITION);
+        ASSERT_EQ(signals.getItemAt(i), Signal::__FPRIME_AC_INITIAL_TRANSITION);
     }
     ASSERT_EQ(actions.getItemAt(0), ActionId::ENTER_S1);
     ASSERT_EQ(actions.getItemAt(1), ActionId::ENTER_S2);
@@ -89,7 +89,7 @@ void StateToChoice::testS2_to_C() {
     const auto& signals = this->m_actionHistory.getSignals();
     const auto& actions = this->m_actionHistory.getValues();
     for (FwSizeType i = 0; i < expectedSize; i++) {
-      ASSERT_EQ(signals.getItemAt(i), Signal::S1_to_C);
+        ASSERT_EQ(signals.getItemAt(i), Signal::S1_to_C);
     }
     ASSERT_EQ(actions.getItemAt(0), ActionId::EXIT_S2);
     ASSERT_EQ(actions.getItemAt(1), ActionId::EXIT_S1);
@@ -109,7 +109,7 @@ void StateToChoice::testS2_to_S3() {
     const auto& signals = this->m_actionHistory.getSignals();
     const auto& actions = this->m_actionHistory.getValues();
     for (FwSizeType i = 0; i < expectedSize; i++) {
-      ASSERT_EQ(signals.getItemAt(i), Signal::S2_to_S3);
+        ASSERT_EQ(signals.getItemAt(i), Signal::S2_to_S3);
     }
     ASSERT_EQ(actions.getItemAt(0), ActionId::EXIT_S2);
     ASSERT_EQ(actions.getItemAt(1), ActionId::ENTER_S3);
@@ -129,7 +129,7 @@ void StateToChoice::testS2_to_S4() {
     const auto& signals = this->m_actionHistory.getSignals();
     const auto& actions = this->m_actionHistory.getValues();
     for (FwSizeType i = 0; i < expectedSize; i++) {
-      ASSERT_EQ(signals.getItemAt(i), Signal::S1_to_S4);
+        ASSERT_EQ(signals.getItemAt(i), Signal::S1_to_S4);
     }
     ASSERT_EQ(actions.getItemAt(0), ActionId::EXIT_S2);
     ASSERT_EQ(actions.getItemAt(1), ActionId::EXIT_S1);
@@ -151,7 +151,7 @@ void StateToChoice::testS3_to_C() {
     const auto& signals = this->m_actionHistory.getSignals();
     const auto& actions = this->m_actionHistory.getValues();
     for (FwSizeType i = 0; i < expectedSize; i++) {
-      ASSERT_EQ(signals.getItemAt(i), Signal::S1_to_C);
+        ASSERT_EQ(signals.getItemAt(i), Signal::S1_to_C);
     }
     ASSERT_EQ(actions.getItemAt(0), ActionId::EXIT_S3);
     ASSERT_EQ(actions.getItemAt(1), ActionId::EXIT_S1);
@@ -173,7 +173,7 @@ void StateToChoice::testS3_to_S4() {
     const auto& signals = this->m_actionHistory.getSignals();
     const auto& actions = this->m_actionHistory.getValues();
     for (FwSizeType i = 0; i < expectedSize; i++) {
-      ASSERT_EQ(signals.getItemAt(i), Signal::S1_to_S4);
+        ASSERT_EQ(signals.getItemAt(i), Signal::S1_to_S4);
     }
     ASSERT_EQ(actions.getItemAt(0), ActionId::EXIT_S3);
     ASSERT_EQ(actions.getItemAt(1), ActionId::EXIT_S1);

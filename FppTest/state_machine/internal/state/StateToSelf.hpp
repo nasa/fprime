@@ -29,15 +29,7 @@ class StateToSelf final : public StateToSelfStateMachineBase {
 
   public:
     //! Action IDs
-    enum class ActionId {
-        EXIT_S1,
-        EXIT_S2,
-        EXIT_S3,
-        A,
-        ENTER_S1,
-        ENTER_S2,
-        ENTER_S3
-    };
+    enum class ActionId { EXIT_S1, EXIT_S2, EXIT_S3, A, ENTER_S1, ENTER_S2, ENTER_S3 };
 
   public:
     //! Constructor

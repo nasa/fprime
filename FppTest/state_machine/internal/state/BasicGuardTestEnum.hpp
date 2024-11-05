@@ -33,12 +33,12 @@ class BasicGuardTestEnum final : public BasicGuardTestEnumStateMachineBase {
 
   private:
     //! Implementation of action a
-    void action_a(Signal signal,                         //!< The signal
+    void action_a(Signal signal,                    //!< The signal
                   const SmHarness::TestEnum& value  //!< The value
                   ) final;
 
     //! Implementation of guard g
-    bool guard_g(Signal signal,                         //!< The signal
+    bool guard_g(Signal signal,                    //!< The signal
                  const SmHarness::TestEnum& value  //!< The value
     ) const;
 

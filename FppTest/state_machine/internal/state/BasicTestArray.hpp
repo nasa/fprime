@@ -37,7 +37,7 @@ class BasicTestArray final : public BasicTestArrayStateMachineBase {
                   ) final;
 
     //! Implementation of action b
-    void action_b(Signal signal,                       //!< The signal
+    void action_b(Signal signal,                     //!< The signal
                   const SmHarness::TestArray& value  //!< The value
                   ) final;
 

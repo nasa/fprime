@@ -67,7 +67,7 @@ void StateToChild::testS2_to_S2() {
     const auto& signals = this->m_actionHistory.getSignals();
     const auto& actions = this->m_actionHistory.getValues();
     for (FwSizeType i = 0; i < expectedSize; i++) {
-      ASSERT_EQ(signals.getItemAt(i), Signal::S1_to_S2);
+        ASSERT_EQ(signals.getItemAt(i), Signal::S1_to_S2);
     }
     ASSERT_EQ(actions.getItemAt(0), ActionId::EXIT_S2);
     ASSERT_EQ(actions.getItemAt(1), ActionId::A);
@@ -86,7 +86,7 @@ void StateToChild::testS2_to_S3() {
     const auto& signals = this->m_actionHistory.getSignals();
     const auto& actions = this->m_actionHistory.getValues();
     for (FwSizeType i = 0; i < expectedSize; i++) {
-      ASSERT_EQ(signals.getItemAt(i), Signal::S2_to_S3);
+        ASSERT_EQ(signals.getItemAt(i), Signal::S2_to_S3);
     }
     ASSERT_EQ(actions.getItemAt(0), ActionId::EXIT_S2);
     ASSERT_EQ(actions.getItemAt(1), ActionId::ENTER_S3);
@@ -106,7 +106,7 @@ void StateToChild::testS3_to_S2() {
     const auto& signals = this->m_actionHistory.getSignals();
     const auto& actions = this->m_actionHistory.getValues();
     for (FwSizeType i = 0; i < expectedSize; i++) {
-      ASSERT_EQ(signals.getItemAt(i), Signal::S1_to_S2);
+        ASSERT_EQ(signals.getItemAt(i), Signal::S1_to_S2);
     }
     ASSERT_EQ(actions.getItemAt(0), ActionId::EXIT_S3);
     ASSERT_EQ(actions.getItemAt(1), ActionId::A);

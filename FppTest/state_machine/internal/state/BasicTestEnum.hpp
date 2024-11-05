@@ -37,7 +37,7 @@ class BasicTestEnum final : public BasicTestEnumStateMachineBase {
                   ) final;
 
     //! Implementation of action b
-    void action_b(Signal signal,                       //!< The signal
+    void action_b(Signal signal,                    //!< The signal
                   const SmHarness::TestEnum& value  //!< The value
                   ) final;
 

@@ -14,8 +14,8 @@
 #ifndef FppTest_Choice_ChoiceToChoice_HPP
 #define FppTest_Choice_ChoiceToChoice_HPP
 
-#include "FppTest/state_machine/internal/harness/Harness.hpp"
 #include "FppTest/state_machine/internal/choice/ChoiceToChoiceStateMachineAc.hpp"
+#include "FppTest/state_machine/internal/harness/Harness.hpp"
 
 namespace FppTest {
 
