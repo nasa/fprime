@@ -28,29 +28,25 @@ ChoiceToState::~ChoiceToState() {}
 // Implementations for internal state machine actions
 // ----------------------------------------------------------------------
 
-void ChoiceToState::FppTest_SmChoice_ChoiceToState_action_exitS1(
-    SmId smId,
-    FppTest_SmChoice_ChoiceToState::Signal signal) {
+void ChoiceToState::FppTest_SmChoice_ChoiceToState_action_exitS1(SmId smId,
+                                                                 FppTest_SmChoice_ChoiceToState::Signal signal) {
     ASSERT_EQ(smId, SmId::smChoiceChoiceToState);
     this->m_smChoiceChoiceToState_actionHistory.push(signal, ActionId::EXIT_S1);
 }
 
-void ChoiceToState::FppTest_SmChoice_ChoiceToState_action_a(SmId smId,
-                                                                  FppTest_SmChoice_ChoiceToState::Signal signal) {
+void ChoiceToState::FppTest_SmChoice_ChoiceToState_action_a(SmId smId, FppTest_SmChoice_ChoiceToState::Signal signal) {
     ASSERT_EQ(smId, SmId::smChoiceChoiceToState);
     this->m_smChoiceChoiceToState_actionHistory.push(signal, ActionId::A);
 }
 
-void ChoiceToState::FppTest_SmChoice_ChoiceToState_action_enterS2(
-    SmId smId,
-    FppTest_SmChoice_ChoiceToState::Signal signal) {
+void ChoiceToState::FppTest_SmChoice_ChoiceToState_action_enterS2(SmId smId,
+                                                                  FppTest_SmChoice_ChoiceToState::Signal signal) {
     ASSERT_EQ(smId, SmId::smChoiceChoiceToState);
     this->m_smChoiceChoiceToState_actionHistory.push(signal, ActionId::ENTER_S2);
 }
 
-void ChoiceToState::FppTest_SmChoice_ChoiceToState_action_enterS3(
-    SmId smId,
-    FppTest_SmChoice_ChoiceToState::Signal signal) {
+void ChoiceToState::FppTest_SmChoice_ChoiceToState_action_enterS3(SmId smId,
+                                                                  FppTest_SmChoice_ChoiceToState::Signal signal) {
     ASSERT_EQ(smId, SmId::smChoiceChoiceToState);
     this->m_smChoiceChoiceToState_actionHistory.push(signal, ActionId::ENTER_S3);
 }
@@ -59,9 +55,8 @@ void ChoiceToState::FppTest_SmChoice_ChoiceToState_action_enterS3(
 // Implementations for internal state machine guards
 // ----------------------------------------------------------------------
 
-bool ChoiceToState::FppTest_SmChoice_ChoiceToState_guard_g(
-    SmId smId,
-    FppTest_SmChoice_ChoiceToState::Signal signal) const {
+bool ChoiceToState::FppTest_SmChoice_ChoiceToState_guard_g(SmId smId,
+                                                           FppTest_SmChoice_ChoiceToState::Signal signal) const {
     FW_ASSERT(smId == SmId::smChoiceChoiceToState, static_cast<FwAssertArgType>(smId));
     return this->m_smChoiceChoiceToState_guard_g.call(signal);
 }
@@ -82,8 +77,7 @@ void ChoiceToState::testTrue() {
     const auto status = this->doDispatch();
     ASSERT_EQ(status, MSG_DISPATCH_OK);
     ASSERT_EQ(this->m_smChoiceChoiceToState_guard_g.getCallHistory().getSize(), 1);
-    ASSERT_EQ(this->m_smChoiceChoiceToState_guard_g.getCallHistory().getItemAt(0),
-              SmChoice_ChoiceToState::Signal::s);
+    ASSERT_EQ(this->m_smChoiceChoiceToState_guard_g.getCallHistory().getItemAt(0), SmChoice_ChoiceToState::Signal::s);
     const FwIndexType expectedSize = 5;
     ASSERT_EQ(this->m_smChoiceChoiceToState_actionHistory.getSize(), expectedSize);
     const auto& signals = this->m_smChoiceChoiceToState_actionHistory.getSignals();
@@ -110,8 +104,7 @@ void ChoiceToState::testFalse() {
     const auto status = this->doDispatch();
     ASSERT_EQ(status, MSG_DISPATCH_OK);
     ASSERT_EQ(this->m_smChoiceChoiceToState_guard_g.getCallHistory().getSize(), 1);
-    ASSERT_EQ(this->m_smChoiceChoiceToState_guard_g.getCallHistory().getItemAt(0),
-              SmChoice_ChoiceToState::Signal::s);
+    ASSERT_EQ(this->m_smChoiceChoiceToState_guard_g.getCallHistory().getItemAt(0), SmChoice_ChoiceToState::Signal::s);
     const FwIndexType expectedSize = 4;
     ASSERT_EQ(this->m_smChoiceChoiceToState_actionHistory.getSize(), expectedSize);
     const auto& signals = this->m_smChoiceChoiceToState_actionHistory.getSignals();

@@ -29,8 +29,8 @@ InputPairU16U32 ::~InputPairU16U32() {}
 // ----------------------------------------------------------------------
 
 void InputPairU16U32 ::FppTest_SmChoice_InputPairU16U32_action_a(SmId smId,
-                                                                   FppTest_SmChoice_InputPairU16U32::Signal signal,
-                                                                   U32 value) {
+                                                                 FppTest_SmChoice_InputPairU16U32::Signal signal,
+                                                                 U32 value) {
     ASSERT_EQ(smId, SmId::smChoiceInputPairU16U32);
     this->m_smChoiceInputPairU16U32_action_a_history.push(signal, value);
 }
@@ -40,8 +40,8 @@ void InputPairU16U32 ::FppTest_SmChoice_InputPairU16U32_action_a(SmId smId,
 // ----------------------------------------------------------------------
 
 bool InputPairU16U32 ::FppTest_SmChoice_InputPairU16U32_guard_g(SmId smId,
-                                                                  FppTest_SmChoice_InputPairU16U32::Signal signal,
-                                                                  U32 value) const {
+                                                                FppTest_SmChoice_InputPairU16U32::Signal signal,
+                                                                U32 value) const {
     FW_ASSERT(smId == SmId::smChoiceInputPairU16U32, static_cast<FwAssertArgType>(smId));
     return this->m_smChoiceInputPairU16U32_guard_g.call(signal, value);
 }
@@ -108,10 +108,12 @@ void InputPairU16U32::testS2True() {
     const auto status = this->doDispatch();
     ASSERT_EQ(status, MSG_DISPATCH_OK);
     ASSERT_EQ(this->m_smChoiceInputPairU16U32_guard_g.getCallHistory().getSize(), 1);
-    ASSERT_EQ(this->m_smChoiceInputPairU16U32_guard_g.getCallHistory().getSignals().getItemAt(0), SmChoice_InputPairU16U32::Signal::s2);
+    ASSERT_EQ(this->m_smChoiceInputPairU16U32_guard_g.getCallHistory().getSignals().getItemAt(0),
+              SmChoice_InputPairU16U32::Signal::s2);
     ASSERT_EQ(this->m_smChoiceInputPairU16U32_guard_g.getCallHistory().getValues().getItemAt(0), value);
     ASSERT_EQ(this->m_smChoiceInputPairU16U32_action_a_history.getSize(), 1);
-    ASSERT_EQ(this->m_smChoiceInputPairU16U32_action_a_history.getSignals().getItemAt(0), SmChoice_InputPairU16U32::Signal::s2);
+    ASSERT_EQ(this->m_smChoiceInputPairU16U32_action_a_history.getSignals().getItemAt(0),
+              SmChoice_InputPairU16U32::Signal::s2);
     ASSERT_EQ(this->m_smChoiceInputPairU16U32_action_a_history.getValues().getItemAt(0), value);
     ASSERT_EQ(this->smChoiceInputPairU16U32_getState(), SmChoice_InputPairU16U32::State::S2);
 }
@@ -127,10 +129,12 @@ void InputPairU16U32::testS2False() {
     this->smChoiceInputPairU16U32_sendSignal_s2(value);
     const auto status = this->doDispatch();
     ASSERT_EQ(this->m_smChoiceInputPairU16U32_guard_g.getCallHistory().getSize(), 1);
-    ASSERT_EQ(this->m_smChoiceInputPairU16U32_guard_g.getCallHistory().getSignals().getItemAt(0), SmChoice_InputPairU16U32::Signal::s2);
+    ASSERT_EQ(this->m_smChoiceInputPairU16U32_guard_g.getCallHistory().getSignals().getItemAt(0),
+              SmChoice_InputPairU16U32::Signal::s2);
     ASSERT_EQ(this->m_smChoiceInputPairU16U32_guard_g.getCallHistory().getValues().getItemAt(0), value);
     ASSERT_EQ(this->m_smChoiceInputPairU16U32_action_a_history.getSize(), 1);
-    ASSERT_EQ(this->m_smChoiceInputPairU16U32_action_a_history.getSignals().getItemAt(0), SmChoice_InputPairU16U32::Signal::s2);
+    ASSERT_EQ(this->m_smChoiceInputPairU16U32_action_a_history.getSignals().getItemAt(0),
+              SmChoice_InputPairU16U32::Signal::s2);
     ASSERT_EQ(this->m_smChoiceInputPairU16U32_action_a_history.getValues().getItemAt(0), value);
     ASSERT_EQ(this->smChoiceInputPairU16U32_getState(), SmChoice_InputPairU16U32::State::S3);
 }

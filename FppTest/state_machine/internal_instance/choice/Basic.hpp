@@ -71,7 +71,7 @@ class Basic : public BasicComponentBase {
     //!
     //! Action a
     void FppTest_SmInstanceChoice_Basic_Basic_action_a(
-        SmId smId,                                             //!< The state machine id
+        SmId smId,                                           //!< The state machine id
         FppTest_SmInstanceChoice_Basic_Basic::Signal signal  //!< The signal
         ) override;
 
@@ -79,23 +79,23 @@ class Basic : public BasicComponentBase {
     //!
     //! Action b
     void FppTest_SmInstanceChoice_Basic_Basic_action_b(
-        SmId smId,                                             //!< The state machine id
+        SmId smId,                                           //!< The state machine id
         FppTest_SmInstanceChoice_Basic_Basic::Signal signal  //!< The signal
         ) override;
 
     //! Implementation for action a of state machine FppTest_SmChoice_Basic
     //!
     //! Action a
-    void FppTest_SmChoice_Basic_action_a(SmId smId,                               //!< The state machine id
-                                           FppTest_SmChoice_Basic::Signal signal  //!< The signal
-                                           ) override;
+    void FppTest_SmChoice_Basic_action_a(SmId smId,                             //!< The state machine id
+                                         FppTest_SmChoice_Basic::Signal signal  //!< The signal
+                                         ) override;
 
     //! Implementation for action b of state machine FppTest_SmChoice_Basic
     //!
     //! Action b
-    void FppTest_SmChoice_Basic_action_b(SmId smId,                               //!< The state machine id
-                                           FppTest_SmChoice_Basic::Signal signal  //!< The signal
-                                           ) override;
+    void FppTest_SmChoice_Basic_action_b(SmId smId,                             //!< The state machine id
+                                         FppTest_SmChoice_Basic::Signal signal  //!< The signal
+                                         ) override;
 
   PRIVATE:
     // ----------------------------------------------------------------------
@@ -106,15 +106,15 @@ class Basic : public BasicComponentBase {
     //!
     //! Guard g
     bool FppTest_SmInstanceChoice_Basic_Basic_guard_g(
-        SmId smId,                                             //!< The state machine id
+        SmId smId,                                           //!< The state machine id
         FppTest_SmInstanceChoice_Basic_Basic::Signal signal  //!< The signal
     ) const override;
 
     //! Implementation for guard g of state machine FppTest_SmChoice_Basic
     //!
     //! Guard g
-    bool FppTest_SmChoice_Basic_guard_g(SmId smId,                               //!< The state machine id
-                                          FppTest_SmChoice_Basic::Signal signal  //!< The signal
+    bool FppTest_SmChoice_Basic_guard_g(SmId smId,                             //!< The state machine id
+                                        FppTest_SmChoice_Basic::Signal signal  //!< The signal
     ) const override;
 
   public:

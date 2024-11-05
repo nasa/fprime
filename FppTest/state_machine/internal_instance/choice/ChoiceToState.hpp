@@ -65,33 +65,30 @@ class ChoiceToState : public ChoiceToStateComponentBase {
     //! Implementation for action exitS1 of state machine FppTest_SmChoice_ChoiceToState
     //!
     //! Exit S1
-    void FppTest_SmChoice_ChoiceToState_action_exitS1(
-        SmId smId,                                         //!< The state machine id
-        FppTest_SmChoice_ChoiceToState::Signal signal  //!< The signal
-        ) override;
+    void FppTest_SmChoice_ChoiceToState_action_exitS1(SmId smId,  //!< The state machine id
+                                                      FppTest_SmChoice_ChoiceToState::Signal signal  //!< The signal
+                                                      ) override;
 
     //! Implementation for action a of state machine FppTest_SmChoice_ChoiceToState
     //!
     //! Action a
     void FppTest_SmChoice_ChoiceToState_action_a(SmId smId,  //!< The state machine id
-                                                     FppTest_SmChoice_ChoiceToState::Signal signal  //!< The signal
-                                                     ) override;
+                                                 FppTest_SmChoice_ChoiceToState::Signal signal  //!< The signal
+                                                 ) override;
 
     //! Implementation for action enterS2 of state machine FppTest_SmChoice_ChoiceToState
     //!
     //! Enter S2
-    void FppTest_SmChoice_ChoiceToState_action_enterS2(
-        SmId smId,                                         //!< The state machine id
-        FppTest_SmChoice_ChoiceToState::Signal signal  //!< The signal
-        ) override;
+    void FppTest_SmChoice_ChoiceToState_action_enterS2(SmId smId,  //!< The state machine id
+                                                       FppTest_SmChoice_ChoiceToState::Signal signal  //!< The signal
+                                                       ) override;
 
     //! Implementation for action enterS3 of state machine FppTest_SmChoice_ChoiceToState
     //!
     //! Enter S3
-    void FppTest_SmChoice_ChoiceToState_action_enterS3(
-        SmId smId,                                         //!< The state machine id
-        FppTest_SmChoice_ChoiceToState::Signal signal  //!< The signal
-        ) override;
+    void FppTest_SmChoice_ChoiceToState_action_enterS3(SmId smId,  //!< The state machine id
+                                                       FppTest_SmChoice_ChoiceToState::Signal signal  //!< The signal
+                                                       ) override;
 
   PRIVATE:
     // ----------------------------------------------------------------------
@@ -101,8 +98,8 @@ class ChoiceToState : public ChoiceToStateComponentBase {
     //! Implementation for guard g of state machine FppTest_SmChoice_ChoiceToState
     //!
     //! Guard g
-    bool FppTest_SmChoice_ChoiceToState_guard_g(SmId smId,  //!< The state machine id
-                                                    FppTest_SmChoice_ChoiceToState::Signal signal  //!< The signal
+    bool FppTest_SmChoice_ChoiceToState_guard_g(SmId smId,                                     //!< The state machine id
+                                                FppTest_SmChoice_ChoiceToState::Signal signal  //!< The signal
     ) const override;
 
   public:

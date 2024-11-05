@@ -57,17 +57,17 @@ class BasicU32 : public BasicU32ComponentBase {
     //! Implementation for action a of state machine FppTest_SmChoice_BasicU32
     //!
     //! Action a
-    void FppTest_SmChoice_BasicU32_action_a(SmId smId,                                   //!< The state machine id
-                                              FppTest_SmChoice_BasicU32::Signal signal,  //!< The signal
-                                              U32 value                                    //!< The value
-                                              ) override;
+    void FppTest_SmChoice_BasicU32_action_a(SmId smId,                                 //!< The state machine id
+                                            FppTest_SmChoice_BasicU32::Signal signal,  //!< The signal
+                                            U32 value                                  //!< The value
+                                            ) override;
 
     //! Implementation for action b of state machine FppTest_SmChoice_BasicU32
     //!
     //! Action b
-    void FppTest_SmChoice_BasicU32_action_b(SmId smId,                                  //!< The state machine id
-                                              FppTest_SmChoice_BasicU32::Signal signal  //!< The signal
-                                              ) override;
+    void FppTest_SmChoice_BasicU32_action_b(SmId smId,                                //!< The state machine id
+                                            FppTest_SmChoice_BasicU32::Signal signal  //!< The signal
+                                            ) override;
 
   PRIVATE:
     // ----------------------------------------------------------------------
@@ -77,9 +77,9 @@ class BasicU32 : public BasicU32ComponentBase {
     //! Implementation for guard g of state machine FppTest_SmChoice_BasicU32
     //!
     //! Guard g
-    bool FppTest_SmChoice_BasicU32_guard_g(SmId smId,                                   //!< The state machine id
-                                             FppTest_SmChoice_BasicU32::Signal signal,  //!< The signal
-                                             U32 value                                    //!< The value
+    bool FppTest_SmChoice_BasicU32_guard_g(SmId smId,                                 //!< The state machine id
+                                           FppTest_SmChoice_BasicU32::Signal signal,  //!< The signal
+                                           U32 value                                  //!< The value
     ) const override;
 
   public:

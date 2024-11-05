@@ -6,9 +6,9 @@
 
 #include "FppTest/state_machine/internal_instance/choice/Basic.hpp"
 #include "FppTest/state_machine/internal_instance/choice/BasicU32.hpp"
-#include "FppTest/state_machine/internal_instance/choice/InputPairU16U32.hpp"
 #include "FppTest/state_machine/internal_instance/choice/ChoiceToChoice.hpp"
 #include "FppTest/state_machine/internal_instance/choice/ChoiceToState.hpp"
+#include "FppTest/state_machine/internal_instance/choice/InputPairU16U32.hpp"
 #include "FppTest/state_machine/internal_instance/choice/Sequence.hpp"
 #include "FppTest/state_machine/internal_instance/choice/SequenceU32.hpp"
 #include "STest/STest/Random/Random.hpp"
@@ -84,43 +84,43 @@ TEST(ChoiceToChoice, Overflow) {
 }
 
 TEST(ChoiceToState, True) {
-  FppTest::SmInstanceChoice::ChoiceToState choiceToState("choiceToState");
-  choiceToState.testTrue();
+    FppTest::SmInstanceChoice::ChoiceToState choiceToState("choiceToState");
+    choiceToState.testTrue();
 }
 
 TEST(ChoiceToState, False) {
-  FppTest::SmInstanceChoice::ChoiceToState choiceToState("choiceToState");
-  choiceToState.testFalse();
+    FppTest::SmInstanceChoice::ChoiceToState choiceToState("choiceToState");
+    choiceToState.testFalse();
 }
 
 TEST(Sequence, G1True) {
-  FppTest::SmInstanceChoice::Sequence sequence("sequence");
-  sequence.testG1True();
+    FppTest::SmInstanceChoice::Sequence sequence("sequence");
+    sequence.testG1True();
 }
 
 TEST(Sequence, G1FalseG2True) {
-  FppTest::SmInstanceChoice::Sequence sequence("sequence");
-  sequence.testG1FalseG2True();
+    FppTest::SmInstanceChoice::Sequence sequence("sequence");
+    sequence.testG1FalseG2True();
 }
 
 TEST(Sequence, G1FalseG2False) {
-  FppTest::SmInstanceChoice::Sequence sequence("sequence");
-  sequence.testG1FalseG2False();
+    FppTest::SmInstanceChoice::Sequence sequence("sequence");
+    sequence.testG1FalseG2False();
 }
 
 TEST(SequenceU32, G1True) {
-  FppTest::SmInstanceChoice::SequenceU32 sequenceU32("sequenceU32");
-  sequenceU32.testG1True();
+    FppTest::SmInstanceChoice::SequenceU32 sequenceU32("sequenceU32");
+    sequenceU32.testG1True();
 }
 
 TEST(SequenceU32, G1FalseG2True) {
-  FppTest::SmInstanceChoice::SequenceU32 sequenceU32("sequenceU32");
-  sequenceU32.testG1FalseG2True();
+    FppTest::SmInstanceChoice::SequenceU32 sequenceU32("sequenceU32");
+    sequenceU32.testG1FalseG2True();
 }
 
 TEST(SequenceU32, G1FalseG2False) {
-  FppTest::SmInstanceChoice::SequenceU32 sequenceU32("sequenceU32");
-  sequenceU32.testG1FalseG2False();
+    FppTest::SmInstanceChoice::SequenceU32 sequenceU32("sequenceU32");
+    sequenceU32.testG1FalseG2False();
 }
 
 // ----------------------------------------------------------------------

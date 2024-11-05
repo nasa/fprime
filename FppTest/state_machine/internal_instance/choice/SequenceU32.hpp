@@ -57,17 +57,17 @@ class SequenceU32 : public SequenceU32ComponentBase {
     //! Implementation for action a of state machine FppTest_SmChoice_SequenceU32
     //!
     //! Action a
-    void FppTest_SmChoice_SequenceU32_action_a(SmId smId,  //!< The state machine id
-                                                 FppTest_SmChoice_SequenceU32::Signal signal,  //!< The signal
-                                                 U32 value                                       //!< The value
-                                                 ) override;
+    void FppTest_SmChoice_SequenceU32_action_a(SmId smId,                                    //!< The state machine id
+                                               FppTest_SmChoice_SequenceU32::Signal signal,  //!< The signal
+                                               U32 value                                     //!< The value
+                                               ) override;
 
     //! Implementation for action b of state machine FppTest_SmChoice_SequenceU32
     //!
     //! Action b
-    void FppTest_SmChoice_SequenceU32_action_b(SmId smId,  //!< The state machine id
-                                                 FppTest_SmChoice_SequenceU32::Signal signal  //!< The signal
-                                                 ) override;
+    void FppTest_SmChoice_SequenceU32_action_b(SmId smId,                                   //!< The state machine id
+                                               FppTest_SmChoice_SequenceU32::Signal signal  //!< The signal
+                                               ) override;
 
   PRIVATE:
     // ----------------------------------------------------------------------
@@ -77,16 +77,16 @@ class SequenceU32 : public SequenceU32ComponentBase {
     //! Implementation for guard g1 of state machine FppTest_SmChoice_SequenceU32
     //!
     //! Guard g1
-    bool FppTest_SmChoice_SequenceU32_guard_g1(SmId smId,  //!< The state machine id
-                                                 FppTest_SmChoice_SequenceU32::Signal signal  //!< The signal
+    bool FppTest_SmChoice_SequenceU32_guard_g1(SmId smId,                                   //!< The state machine id
+                                               FppTest_SmChoice_SequenceU32::Signal signal  //!< The signal
     ) const override;
 
     //! Implementation for guard g2 of state machine FppTest_SmChoice_SequenceU32
     //!
     //! Guard g2
-    bool FppTest_SmChoice_SequenceU32_guard_g2(SmId smId,  //!< The state machine id
-                                                 FppTest_SmChoice_SequenceU32::Signal signal,  //!< The signal
-                                                 U32 value                                       //!< The value
+    bool FppTest_SmChoice_SequenceU32_guard_g2(SmId smId,                                    //!< The state machine id
+                                               FppTest_SmChoice_SequenceU32::Signal signal,  //!< The signal
+                                               U32 value                                     //!< The value
     ) const override;
 
   public:

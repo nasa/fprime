@@ -64,26 +64,23 @@ class ChoiceToChoice : public ChoiceToChoiceComponentBase {
     //! Implementation for action exitS1 of state machine FppTest_SmChoice_ChoiceToChoice
     //!
     //! Exit S1
-    void FppTest_SmChoice_ChoiceToChoice_action_exitS1(
-        SmId smId,                                            //!< The state machine id
-        FppTest_SmChoice_ChoiceToChoice::Signal signal  //!< The signal
-        ) override;
+    void FppTest_SmChoice_ChoiceToChoice_action_exitS1(SmId smId,  //!< The state machine id
+                                                       FppTest_SmChoice_ChoiceToChoice::Signal signal  //!< The signal
+                                                       ) override;
 
     //! Implementation for action a of state machine FppTest_SmChoice_ChoiceToChoice
     //!
     //! Action a
-    void FppTest_SmChoice_ChoiceToChoice_action_a(
-        SmId smId,                                            //!< The state machine id
-        FppTest_SmChoice_ChoiceToChoice::Signal signal  //!< The signal
-        ) override;
+    void FppTest_SmChoice_ChoiceToChoice_action_a(SmId smId,  //!< The state machine id
+                                                  FppTest_SmChoice_ChoiceToChoice::Signal signal  //!< The signal
+                                                  ) override;
 
     //! Implementation for action enterS2 of state machine FppTest_SmChoice_ChoiceToChoice
     //!
     //! Enter S2
-    void FppTest_SmChoice_ChoiceToChoice_action_enterS2(
-        SmId smId,                                            //!< The state machine id
-        FppTest_SmChoice_ChoiceToChoice::Signal signal  //!< The signal
-        ) override;
+    void FppTest_SmChoice_ChoiceToChoice_action_enterS2(SmId smId,  //!< The state machine id
+                                                        FppTest_SmChoice_ChoiceToChoice::Signal signal  //!< The signal
+                                                        ) override;
 
   PRIVATE:
     // ----------------------------------------------------------------------
@@ -93,17 +90,15 @@ class ChoiceToChoice : public ChoiceToChoiceComponentBase {
     //! Implementation for guard g1 of state machine FppTest_SmChoice_ChoiceToChoice
     //!
     //! Guard g1
-    bool FppTest_SmChoice_ChoiceToChoice_guard_g1(
-        SmId smId,                                            //!< The state machine id
-        FppTest_SmChoice_ChoiceToChoice::Signal signal  //!< The signal
+    bool FppTest_SmChoice_ChoiceToChoice_guard_g1(SmId smId,  //!< The state machine id
+                                                  FppTest_SmChoice_ChoiceToChoice::Signal signal  //!< The signal
     ) const override;
 
     //! Implementation for guard g2 of state machine FppTest_SmChoice_ChoiceToChoice
     //!
     //! Guard g2
-    bool FppTest_SmChoice_ChoiceToChoice_guard_g2(
-        SmId smId,                                            //!< The state machine id
-        FppTest_SmChoice_ChoiceToChoice::Signal signal  //!< The signal
+    bool FppTest_SmChoice_ChoiceToChoice_guard_g2(SmId smId,  //!< The state machine id
+                                                  FppTest_SmChoice_ChoiceToChoice::Signal signal  //!< The signal
     ) const override;
 
   PRIVATE:
@@ -112,10 +107,10 @@ class ChoiceToChoice : public ChoiceToChoiceComponentBase {
     // ----------------------------------------------------------------------
 
     //! Overflow hook implementation for smChoiceChoiceToChoice
-    void smChoiceChoiceToChoice_stateMachineOverflowHook(SmId smId,               //!< The state machine ID
-                                                               FwEnumStoreType signal,  //!< The signal
-                                                               Fw::SerializeBufferBase& buffer  //!< The message buffer
-                                                               ) override;
+    void smChoiceChoiceToChoice_stateMachineOverflowHook(SmId smId,                       //!< The state machine ID
+                                                         FwEnumStoreType signal,          //!< The signal
+                                                         Fw::SerializeBufferBase& buffer  //!< The message buffer
+                                                         ) override;
 
   public:
     // ----------------------------------------------------------------------

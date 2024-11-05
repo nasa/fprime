@@ -44,8 +44,8 @@ void BasicU32 ::FppTest_SmChoice_BasicU32_action_b(SmId smId, FppTest_SmChoice_B
 // ----------------------------------------------------------------------
 
 bool BasicU32 ::FppTest_SmChoice_BasicU32_guard_g(SmId smId,
-                                                    FppTest_SmChoice_BasicU32::Signal signal,
-                                                    U32 value) const {
+                                                  FppTest_SmChoice_BasicU32::Signal signal,
+                                                  U32 value) const {
     FW_ASSERT(smId == SmId::smChoiceBasicU32, static_cast<FwAssertArgType>(smId));
     return this->m_smChoiceBasicU32_guard_g.call(signal, value);
 }
@@ -69,7 +69,8 @@ void BasicU32::testTrue() {
     const auto status = this->doDispatch();
     ASSERT_EQ(status, MSG_DISPATCH_OK);
     ASSERT_EQ(this->m_smChoiceBasicU32_guard_g.getCallHistory().getSize(), 1);
-    ASSERT_EQ(this->m_smChoiceBasicU32_guard_g.getCallHistory().getSignals().getItemAt(0), SmChoice_BasicU32::Signal::s);
+    ASSERT_EQ(this->m_smChoiceBasicU32_guard_g.getCallHistory().getSignals().getItemAt(0),
+              SmChoice_BasicU32::Signal::s);
     ASSERT_EQ(this->m_smChoiceBasicU32_guard_g.getCallHistory().getValues().getItemAt(0), value);
     ASSERT_EQ(this->m_smChoiceBasicU32_action_a_history.getSize(), 1);
     ASSERT_EQ(this->m_smChoiceBasicU32_action_a_history.getSignals().getItemAt(0), SmChoice_BasicU32::Signal::s);
@@ -92,7 +93,8 @@ void BasicU32::testFalse() {
     const auto status = this->doDispatch();
     ASSERT_EQ(status, MSG_DISPATCH_OK);
     ASSERT_EQ(this->m_smChoiceBasicU32_guard_g.getCallHistory().getSize(), 1);
-    ASSERT_EQ(this->m_smChoiceBasicU32_guard_g.getCallHistory().getSignals().getItemAt(0), SmChoice_BasicU32::Signal::s);
+    ASSERT_EQ(this->m_smChoiceBasicU32_guard_g.getCallHistory().getSignals().getItemAt(0),
+              SmChoice_BasicU32::Signal::s);
     ASSERT_EQ(this->m_smChoiceBasicU32_guard_g.getCallHistory().getValues().getItemAt(0), value);
     ASSERT_EQ(this->m_smChoiceBasicU32_action_a_history.getSize(), 0);
     ASSERT_EQ(this->m_smChoiceBasicU32_action_b_history.getSize(), 1);

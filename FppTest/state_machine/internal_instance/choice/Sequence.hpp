@@ -57,16 +57,16 @@ class Sequence : public SequenceComponentBase {
     //! Implementation for action a of state machine FppTest_SmChoice_Sequence
     //!
     //! Action a
-    void FppTest_SmChoice_Sequence_action_a(SmId smId,                                  //!< The state machine id
-                                              FppTest_SmChoice_Sequence::Signal signal  //!< The signal
-                                              ) override;
+    void FppTest_SmChoice_Sequence_action_a(SmId smId,                                //!< The state machine id
+                                            FppTest_SmChoice_Sequence::Signal signal  //!< The signal
+                                            ) override;
 
     //! Implementation for action b of state machine FppTest_SmChoice_Sequence
     //!
     //! Action b
-    void FppTest_SmChoice_Sequence_action_b(SmId smId,                                  //!< The state machine id
-                                              FppTest_SmChoice_Sequence::Signal signal  //!< The signal
-                                              ) override;
+    void FppTest_SmChoice_Sequence_action_b(SmId smId,                                //!< The state machine id
+                                            FppTest_SmChoice_Sequence::Signal signal  //!< The signal
+                                            ) override;
 
   PRIVATE:
     // ----------------------------------------------------------------------
@@ -76,15 +76,15 @@ class Sequence : public SequenceComponentBase {
     //! Implementation for guard g1 of state machine FppTest_SmChoice_Sequence
     //!
     //! Guard g1
-    bool FppTest_SmChoice_Sequence_guard_g1(SmId smId,                                  //!< The state machine id
-                                              FppTest_SmChoice_Sequence::Signal signal  //!< The signal
+    bool FppTest_SmChoice_Sequence_guard_g1(SmId smId,                                //!< The state machine id
+                                            FppTest_SmChoice_Sequence::Signal signal  //!< The signal
     ) const override;
 
     //! Implementation for guard g2 of state machine FppTest_SmChoice_Sequence
     //!
     //! Guard g2
-    bool FppTest_SmChoice_Sequence_guard_g2(SmId smId,                                  //!< The state machine id
-                                              FppTest_SmChoice_Sequence::Signal signal  //!< The signal
+    bool FppTest_SmChoice_Sequence_guard_g2(SmId smId,                                //!< The state machine id
+                                            FppTest_SmChoice_Sequence::Signal signal  //!< The signal
     ) const override;
 
   public:

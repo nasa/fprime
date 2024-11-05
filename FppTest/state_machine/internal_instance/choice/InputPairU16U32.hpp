@@ -58,9 +58,9 @@ class InputPairU16U32 : public InputPairU16U32ComponentBase {
     //!
     //! Action a
     void FppTest_SmChoice_InputPairU16U32_action_a(SmId smId,  //!< The state machine id
-                                                     FppTest_SmChoice_InputPairU16U32::Signal signal,  //!< The signal
-                                                     U32 value                                           //!< The value
-                                                     ) override;
+                                                   FppTest_SmChoice_InputPairU16U32::Signal signal,  //!< The signal
+                                                   U32 value                                         //!< The value
+                                                   ) override;
 
   PRIVATE:
     // ----------------------------------------------------------------------
@@ -71,8 +71,8 @@ class InputPairU16U32 : public InputPairU16U32ComponentBase {
     //!
     //! Guard g
     bool FppTest_SmChoice_InputPairU16U32_guard_g(SmId smId,  //!< The state machine id
-                                                    FppTest_SmChoice_InputPairU16U32::Signal signal,  //!< The signal
-                                                    U32 value                                           //!< The value
+                                                  FppTest_SmChoice_InputPairU16U32::Signal signal,  //!< The signal
+                                                  U32 value                                         //!< The value
     ) const override;
 
   public:
