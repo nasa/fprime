@@ -60,15 +60,15 @@ class Choice : public ChoiceComponentBase {
     //! Implementation for action a of state machine FppTest_SmInitial_Choice
     //!
     //! Action a
-    void FppTest_SmInitial_Choice_action_a(SmId smId,                                 //!< The state machine id
-                                             FppTest_SmInitial_Choice::Signal signal  //!< The signal
-                                             ) override;
+    void FppTest_SmInitial_Choice_action_a(SmId smId,                               //!< The state machine id
+                                           FppTest_SmInitial_Choice::Signal signal  //!< The signal
+                                           ) override;
 
     //! Implementation for action a of state machine FppTest_SmInstanceInitial_Choice_Choice
     //!
     //! Action a
     void FppTest_SmInstanceInitial_Choice_Choice_action_a(
-        SmId smId,                                                  //!< The state machine id
+        SmId smId,                                              //!< The state machine id
         FppTest_SmInstanceInitial_Choice_Choice::Signal signal  //!< The signal
         ) override;
 
@@ -80,15 +80,15 @@ class Choice : public ChoiceComponentBase {
     //! Implementation for guard g of state machine FppTest_SmInitial_Choice
     //!
     //! Guard g
-    bool FppTest_SmInitial_Choice_guard_g(SmId smId,                                 //!< The state machine id
-                                            FppTest_SmInitial_Choice::Signal signal  //!< The signal
+    bool FppTest_SmInitial_Choice_guard_g(SmId smId,                               //!< The state machine id
+                                          FppTest_SmInitial_Choice::Signal signal  //!< The signal
     ) const override;
 
     //! Implementation for guard g of state machine FppTest_SmInstanceInitial_Choice_Choice
     //!
     //! Guard g
     bool FppTest_SmInstanceInitial_Choice_Choice_guard_g(
-        SmId smId,                                                  //!< The state machine id
+        SmId smId,                                              //!< The state machine id
         FppTest_SmInstanceInitial_Choice_Choice::Signal signal  //!< The signal
     ) const override;
 

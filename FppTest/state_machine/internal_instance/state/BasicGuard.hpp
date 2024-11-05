@@ -86,7 +86,7 @@ class BasicGuard : public BasicGuardComponentBase {
 
   private:
     // ----------------------------------------------------------------------
-    // Helper functions 
+    // Helper functions
     // ----------------------------------------------------------------------
 
     //! Helper function for checking actions and guards

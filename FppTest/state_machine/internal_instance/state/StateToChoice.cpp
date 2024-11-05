@@ -18,9 +18,7 @@ namespace SmInstanceState {
 // ----------------------------------------------------------------------
 
 StateToChoice::StateToChoice(const char* const compName)
-    : StateToChoiceComponentBase(compName),
-      m_smStateStateToChoice_actionHistory(),
-      m_smStateStateToChoice_guard_g() {}
+    : StateToChoiceComponentBase(compName), m_smStateStateToChoice_actionHistory(), m_smStateStateToChoice_guard_g() {}
 
 StateToChoice::~StateToChoice() {}
 
@@ -29,49 +27,48 @@ StateToChoice::~StateToChoice() {}
 // ----------------------------------------------------------------------
 
 void StateToChoice::FppTest_SmState_StateToChoice_action_exitS1(SmId smId,
-                                                                    FppTest_SmState_StateToChoice::Signal signal) {
+                                                                FppTest_SmState_StateToChoice::Signal signal) {
     ASSERT_EQ(smId, SmId::smStateStateToChoice);
     this->m_smStateStateToChoice_actionHistory.push(signal, ActionId::EXIT_S1);
 }
 
 void StateToChoice::FppTest_SmState_StateToChoice_action_exitS2(SmId smId,
-                                                                    FppTest_SmState_StateToChoice::Signal signal) {
+                                                                FppTest_SmState_StateToChoice::Signal signal) {
     ASSERT_EQ(smId, SmId::smStateStateToChoice);
     this->m_smStateStateToChoice_actionHistory.push(signal, ActionId::EXIT_S2);
 }
 
 void StateToChoice::FppTest_SmState_StateToChoice_action_exitS3(SmId smId,
-                                                                    FppTest_SmState_StateToChoice::Signal signal) {
+                                                                FppTest_SmState_StateToChoice::Signal signal) {
     ASSERT_EQ(smId, SmId::smStateStateToChoice);
     this->m_smStateStateToChoice_actionHistory.push(signal, ActionId::EXIT_S3);
 }
 
-void StateToChoice::FppTest_SmState_StateToChoice_action_a(SmId smId,
-                                                               FppTest_SmState_StateToChoice::Signal signal) {
+void StateToChoice::FppTest_SmState_StateToChoice_action_a(SmId smId, FppTest_SmState_StateToChoice::Signal signal) {
     ASSERT_EQ(smId, SmId::smStateStateToChoice);
     this->m_smStateStateToChoice_actionHistory.push(signal, ActionId::A);
 }
 
 void StateToChoice::FppTest_SmState_StateToChoice_action_enterS1(SmId smId,
-                                                                     FppTest_SmState_StateToChoice::Signal signal) {
+                                                                 FppTest_SmState_StateToChoice::Signal signal) {
     ASSERT_EQ(smId, SmId::smStateStateToChoice);
     this->m_smStateStateToChoice_actionHistory.push(signal, ActionId::ENTER_S1);
 }
 
 void StateToChoice::FppTest_SmState_StateToChoice_action_enterS2(SmId smId,
-                                                                     FppTest_SmState_StateToChoice::Signal signal) {
+                                                                 FppTest_SmState_StateToChoice::Signal signal) {
     ASSERT_EQ(smId, SmId::smStateStateToChoice);
     this->m_smStateStateToChoice_actionHistory.push(signal, ActionId::ENTER_S2);
 }
 
 void StateToChoice::FppTest_SmState_StateToChoice_action_enterS3(SmId smId,
-                                                                     FppTest_SmState_StateToChoice::Signal signal) {
+                                                                 FppTest_SmState_StateToChoice::Signal signal) {
     ASSERT_EQ(smId, SmId::smStateStateToChoice);
     this->m_smStateStateToChoice_actionHistory.push(signal, ActionId::ENTER_S3);
 }
 
 void StateToChoice::FppTest_SmState_StateToChoice_action_enterS4(SmId smId,
-                                                                     FppTest_SmState_StateToChoice::Signal signal) {
+                                                                 FppTest_SmState_StateToChoice::Signal signal) {
     ASSERT_EQ(smId, SmId::smStateStateToChoice);
     this->m_smStateStateToChoice_actionHistory.push(signal, ActionId::ENTER_S4);
 }
@@ -81,7 +78,7 @@ void StateToChoice::FppTest_SmState_StateToChoice_action_enterS4(SmId smId,
 // ----------------------------------------------------------------------
 
 bool StateToChoice ::FppTest_SmState_StateToChoice_guard_g(SmId smId,
-                                                               FppTest_SmState_StateToChoice::Signal signal) const {
+                                                           FppTest_SmState_StateToChoice::Signal signal) const {
     FW_ASSERT(smId == SmId::smStateStateToChoice, static_cast<FwAssertArgType>(smId));
     return this->m_smStateStateToChoice_guard_g.call(signal);
 }
@@ -120,7 +117,7 @@ void StateToChoice::testS2_to_C() {
     const auto& signals = this->m_smStateStateToChoice_actionHistory.getSignals();
     const auto& actions = this->m_smStateStateToChoice_actionHistory.getValues();
     for (FwSizeType i = 0; i < expectedSize; i++) {
-      ASSERT_EQ(signals.getItemAt(i), SmState_StateToChoice::Signal::S1_to_C);
+        ASSERT_EQ(signals.getItemAt(i), SmState_StateToChoice::Signal::S1_to_C);
     }
     ASSERT_EQ(actions.getItemAt(0), ActionId::EXIT_S2);
     ASSERT_EQ(actions.getItemAt(1), ActionId::EXIT_S1);
@@ -141,7 +138,7 @@ void StateToChoice::testS2_to_S3() {
     const auto& signals = this->m_smStateStateToChoice_actionHistory.getSignals();
     const auto& actions = this->m_smStateStateToChoice_actionHistory.getValues();
     for (FwSizeType i = 0; i < expectedSize; i++) {
-      ASSERT_EQ(signals.getItemAt(i), SmState_StateToChoice::Signal::S2_to_S3);
+        ASSERT_EQ(signals.getItemAt(i), SmState_StateToChoice::Signal::S2_to_S3);
     }
     ASSERT_EQ(actions.getItemAt(0), ActionId::EXIT_S2);
     ASSERT_EQ(actions.getItemAt(1), ActionId::ENTER_S3);
@@ -162,7 +159,7 @@ void StateToChoice::testS2_to_S4() {
     const auto& signals = this->m_smStateStateToChoice_actionHistory.getSignals();
     const auto& actions = this->m_smStateStateToChoice_actionHistory.getValues();
     for (FwSizeType i = 0; i < expectedSize; i++) {
-      ASSERT_EQ(signals.getItemAt(i), SmState_StateToChoice::Signal::S1_to_S4);
+        ASSERT_EQ(signals.getItemAt(i), SmState_StateToChoice::Signal::S1_to_S4);
     }
     ASSERT_EQ(actions.getItemAt(0), ActionId::EXIT_S2);
     ASSERT_EQ(actions.getItemAt(1), ActionId::EXIT_S1);
@@ -192,7 +189,7 @@ void StateToChoice::testS3_to_C() {
     const auto& signals = this->m_smStateStateToChoice_actionHistory.getSignals();
     const auto& actions = this->m_smStateStateToChoice_actionHistory.getValues();
     for (FwSizeType i = 0; i < expectedSize; i++) {
-      ASSERT_EQ(signals.getItemAt(i), SmState_StateToChoice::Signal::S1_to_C);
+        ASSERT_EQ(signals.getItemAt(i), SmState_StateToChoice::Signal::S1_to_C);
     }
     ASSERT_EQ(actions.getItemAt(0), ActionId::EXIT_S3);
     ASSERT_EQ(actions.getItemAt(1), ActionId::EXIT_S1);
@@ -222,7 +219,7 @@ void StateToChoice::testS3_to_S4() {
     const auto& signals = this->m_smStateStateToChoice_actionHistory.getSignals();
     const auto& actions = this->m_smStateStateToChoice_actionHistory.getValues();
     for (FwSizeType i = 0; i < expectedSize; i++) {
-      ASSERT_EQ(signals.getItemAt(i), SmState_StateToChoice::Signal::S1_to_S4);
+        ASSERT_EQ(signals.getItemAt(i), SmState_StateToChoice::Signal::S1_to_S4);
     }
     ASSERT_EQ(actions.getItemAt(0), ActionId::EXIT_S3);
     ASSERT_EQ(actions.getItemAt(1), ActionId::EXIT_S1);

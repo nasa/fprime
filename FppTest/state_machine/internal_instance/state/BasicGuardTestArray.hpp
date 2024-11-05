@@ -58,7 +58,7 @@ class BasicGuardTestArray : public BasicGuardTestArrayComponentBase {
     //!
     //! Action a
     void FppTest_SmState_BasicGuardTestArray_action_a(
-        SmId smId,                                             //!< The state machine id
+        SmId smId,                                           //!< The state machine id
         FppTest_SmState_BasicGuardTestArray::Signal signal,  //!< The signal
         const SmHarness::TestArray& value                    //!< The value
         ) override;
@@ -72,7 +72,7 @@ class BasicGuardTestArray : public BasicGuardTestArrayComponentBase {
     //!
     //! Guard g
     bool FppTest_SmState_BasicGuardTestArray_guard_g(
-        SmId smId,                                             //!< The state machine id
+        SmId smId,                                           //!< The state machine id
         FppTest_SmState_BasicGuardTestArray::Signal signal,  //!< The signal
         const SmHarness::TestArray& value                    //!< The value
     ) const override;

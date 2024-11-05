@@ -16,8 +16,7 @@ namespace SmInstanceState {
 // Component construction and destruction
 // ----------------------------------------------------------------------
 
-Polymorphism::Polymorphism(const char* const compName)
-    : PolymorphismComponentBase(compName) {}
+Polymorphism::Polymorphism(const char* const compName) : PolymorphismComponentBase(compName) {}
 
 Polymorphism::~Polymorphism() {}
 

@@ -84,7 +84,6 @@ class Internal : public InternalComponentBase {
 
     //! The history associated with action a of smStateInternal
     SmHarness::History<SmState_Internal::Signal, historySize> m_smStateInternal_action_a_history;
-
 };
 
 }  // namespace SmInstanceState

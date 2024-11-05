@@ -203,7 +203,7 @@ void StateToState::testS3_to_S5() {
     const auto& signals = this->m_smStateStateToState_actionHistory.getSignals();
     const auto& actions = this->m_smStateStateToState_actionHistory.getValues();
     for (FwSizeType i = 0; i < expectedSize; i++) {
-      ASSERT_EQ(signals.getItemAt(i), SmState_StateToState::Signal::S1_to_S5);
+        ASSERT_EQ(signals.getItemAt(i), SmState_StateToState::Signal::S1_to_S5);
     }
     ASSERT_EQ(actions.getItemAt(0), ActionId::EXIT_S3);
     ASSERT_EQ(actions.getItemAt(1), ActionId::EXIT_S1);

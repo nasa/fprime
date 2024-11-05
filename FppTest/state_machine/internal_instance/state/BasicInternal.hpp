@@ -57,9 +57,9 @@ class BasicInternal : public BasicInternalComponentBase {
     //! Implementation for action a of state machine FppTest_SmState_BasicInternal
     //!
     //! Action a
-    void FppTest_SmState_BasicInternal_action_a(SmId smId,                            //!< The state machine id
-                                        FppTest_SmState_BasicInternal::Signal signal  //!< The signal
-                                        ) override;
+    void FppTest_SmState_BasicInternal_action_a(SmId smId,                                    //!< The state machine id
+                                                FppTest_SmState_BasicInternal::Signal signal  //!< The signal
+                                                ) override;
 
   public:
     // ----------------------------------------------------------------------

@@ -35,9 +35,8 @@ void Choice::FppTest_SmInitial_Choice_action_a(SmId smId, FppTest_SmInitial_Choi
     this->m_smInitialChoice_action_a_history.push(signal);
 }
 
-void Choice::FppTest_SmInstanceInitial_Choice_Choice_action_a(
-    SmId smId,
-    FppTest_SmInstanceInitial_Choice_Choice::Signal signal) {
+void Choice::FppTest_SmInstanceInitial_Choice_Choice_action_a(SmId smId,
+                                                              FppTest_SmInstanceInitial_Choice_Choice::Signal signal) {
     ASSERT_EQ(smId, SmId::choice);
     this->m_choice_action_a_history.push(signal);
 }
@@ -98,8 +97,7 @@ void Choice::checkActionsAndGuards(FwSizeType expectedActionSize, FwSizeType exp
     ASSERT_EQ(this->m_choice_action_a_history.getSize(), expectedActionSize);
     ASSERT_EQ(this->m_smInitialChoice_action_a_history.getSize(), expectedActionSize);
     for (FwSizeType i = 0; i < expectedActionSize; i++) {
-        ASSERT_EQ(this->m_choice_action_a_history.getItemAt(i),
-                  Choice_Choice::Signal::__FPRIME_AC_INITIAL_TRANSITION);
+        ASSERT_EQ(this->m_choice_action_a_history.getItemAt(i), Choice_Choice::Signal::__FPRIME_AC_INITIAL_TRANSITION);
         ASSERT_EQ(this->m_smInitialChoice_action_a_history.getItemAt(i),
                   SmInitial_Choice::Signal::__FPRIME_AC_INITIAL_TRANSITION);
     }

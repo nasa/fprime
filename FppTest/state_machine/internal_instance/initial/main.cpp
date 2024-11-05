@@ -10,30 +10,30 @@
 #include "STest/STest/Random/Random.hpp"
 
 TEST(Basic, Test) {
-  FppTest::SmInstanceInitial::Basic basic("basic");
-  basic.test();
+    FppTest::SmInstanceInitial::Basic basic("basic");
+    basic.test();
 }
 
 TEST(Choice, False) {
-  FppTest::SmInstanceInitial::Choice choice("choice");
-  choice.testFalse();
+    FppTest::SmInstanceInitial::Choice choice("choice");
+    choice.testFalse();
 }
 
 TEST(Choice, True) {
-  FppTest::SmInstanceInitial::Choice choice("choice");
-  choice.testTrue();
+    FppTest::SmInstanceInitial::Choice choice("choice");
+    choice.testTrue();
 }
 
 TEST(Nested, Test) {
-  FppTest::SmInstanceInitial::Nested nested("nested");
-  nested.test();
+    FppTest::SmInstanceInitial::Nested nested("nested");
+    nested.test();
 }
 
 // ----------------------------------------------------------------------
 // Main function
 // ----------------------------------------------------------------------
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     STest::Random::seed();
     return RUN_ALL_TESTS();
