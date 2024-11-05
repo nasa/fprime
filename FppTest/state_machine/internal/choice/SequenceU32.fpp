@@ -1,6 +1,6 @@
 module FppTest {
 
-  module SmJunction {
+  module SmChoice {
 
     include "include/SequenceU32.fppi"
 

@@ -2,7 +2,7 @@
 //
 // \title  Basic.hpp
 // \author R. Bocchino
-// \brief  Test class for basic state machine with a junction (header)
+// \brief  Test class for basic state machine with a choice (header)
 //
 // \copyright
 // Copyright 2024, by the California Institute of Technology.
@@ -19,9 +19,9 @@
 
 namespace FppTest {
 
-namespace SmJunction {
+namespace SmChoice {
 
-//! A basic state machine with a junction
+//! A basic state machine with a choice
 class Basic final : public BasicStateMachineBase {
   public:
     //! The history size
@@ -62,7 +62,7 @@ class Basic final : public BasicStateMachineBase {
     SmHarness::NoArgGuard<Signal, historySize> m_guard_g;
 };
 
-}  // namespace SmJunction
+}  // namespace SmChoice
 
 }  // end namespace FppTest
 

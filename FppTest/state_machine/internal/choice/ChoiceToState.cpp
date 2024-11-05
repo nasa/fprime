@@ -1,8 +1,8 @@
 // ======================================================================
 //
-// \title  JunctionToState.hpp
+// \title  ChoiceToState.hpp
 // \author R. Bocchino
-// \brief  Test class for state machine with a junction-to-state transition (implementation)
+// \brief  Test class for state machine with a choice-to-state transition (implementation)
 //
 // \copyright
 // Copyright 2024, by the California Institute of Technology.
@@ -13,36 +13,36 @@
 
 #include <gtest/gtest.h>
 
-#include "FppTest/state_machine/internal/choice/JunctionToState.hpp"
+#include "FppTest/state_machine/internal/choice/ChoiceToState.hpp"
 #include "STest/STest/Pick/Pick.hpp"
 
 namespace FppTest {
 
-namespace SmJunction {
+namespace SmChoice {
 
-JunctionToState::JunctionToState() : JunctionToStateStateMachineBase(), m_actionHistory(), m_guard_g() {}
+ChoiceToState::ChoiceToState() : ChoiceToStateStateMachineBase(), m_actionHistory(), m_guard_g() {}
 
-void JunctionToState::action_exitS1(Signal signal) {
+void ChoiceToState::action_exitS1(Signal signal) {
     this->m_actionHistory.push(signal, ActionId::EXIT_S1);
 }
 
-void JunctionToState::action_a(Signal signal) {
+void ChoiceToState::action_a(Signal signal) {
     this->m_actionHistory.push(signal, ActionId::A);
 }
 
-bool JunctionToState::guard_g(Signal signal) const {
+bool ChoiceToState::guard_g(Signal signal) const {
     return this->m_guard_g.call(signal);
 }
 
-void JunctionToState::action_enterS2(Signal signal) {
+void ChoiceToState::action_enterS2(Signal signal) {
     this->m_actionHistory.push(signal, ActionId::ENTER_S2);
 }
 
-void JunctionToState::action_enterS3(Signal signal) {
+void ChoiceToState::action_enterS3(Signal signal) {
     this->m_actionHistory.push(signal, ActionId::ENTER_S3);
 }
 
-void JunctionToState::testTrue() {
+void ChoiceToState::testTrue() {
     this->m_actionHistory.clear();
     this->m_guard_g.reset();
     this->m_guard_g.setReturnValue(true);
@@ -70,7 +70,7 @@ void JunctionToState::testTrue() {
     ASSERT_EQ(this->getState(), State::S2_S3);
 }
 
-void JunctionToState::testFalse() {
+void ChoiceToState::testFalse() {
     this->m_actionHistory.clear();
     this->m_guard_g.reset();
     const FwEnumStoreType id = SmHarness::Pick::stateMachineId();
@@ -96,6 +96,6 @@ void JunctionToState::testFalse() {
     ASSERT_EQ(this->getState(), State::S2_S3);
 }
 
-}  // namespace SmJunction
+}  // namespace SmChoice
 
 }  // end namespace FppTest

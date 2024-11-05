@@ -2,7 +2,7 @@
 //
 // \title  InputPairU16U32.hpp
 // \author R. Bocchino
-// \brief  Test class for basic state machine with a U32 junction (implementation)
+// \brief  Test class for basic state machine with a U32 choice (implementation)
 //
 // \copyright
 // Copyright 2024, by the California Institute of Technology.
@@ -18,7 +18,7 @@
 
 namespace FppTest {
 
-namespace SmJunction {
+namespace SmChoice {
 
 InputPairU16U32::InputPairU16U32() : InputPairU16U32StateMachineBase(), m_action_a_history(), m_guard_g() {}
 
@@ -112,6 +112,6 @@ void InputPairU16U32::testS2False() {
     ASSERT_EQ(this->getState(), State::S3);
 }
 
-}  // namespace SmJunction
+}  // namespace SmChoice
 
 }  // end namespace FppTest

@@ -23,17 +23,17 @@ state machine Sequence {
   state S1 {
 
     @ State transition
-    on s enter J1
+    on s enter C1
 
   }
 
-  @ Junction J1
-  choice J1 {
-    if g1 enter S2 else enter J2
+  @ Choice C1
+  choice C1 {
+    if g1 enter S2 else enter C2
   }
 
-  @ Junction J2
-  choice J2 {
+  @ Choice C2
+  choice C2 {
     if g2 do { a } enter S3 else do { b } enter S4
   }
 

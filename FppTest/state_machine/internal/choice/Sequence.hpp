@@ -2,7 +2,7 @@
 //
 // \title  Sequence.hpp
 // \author R. Bocchino
-// \brief  Test class for basic state machine with a junction sequence (header)
+// \brief  Test class for basic state machine with a choice sequence (header)
 //
 // \copyright
 // Copyright 2024, by the California Institute of Technology.
@@ -19,9 +19,9 @@
 
 namespace FppTest {
 
-namespace SmJunction {
+namespace SmChoice {
 
-//! A basic state machine with a junction sequence
+//! A basic state machine with a choice sequence
 class Sequence final : public SequenceStateMachineBase {
   public:
     //! The history size
@@ -72,7 +72,7 @@ class Sequence final : public SequenceStateMachineBase {
     SmHarness::NoArgGuard<Signal, historySize> m_guard_g2;
 };
 
-}  // namespace SmJunction
+}  // namespace SmChoice
 
 }  // end namespace FppTest
 

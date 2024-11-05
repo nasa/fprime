@@ -2,7 +2,7 @@
 //
 // \title  SequenceU32.hpp
 // \author R. Bocchino
-// \brief  Test class for basic state machine with a U32 junction sequence (header)
+// \brief  Test class for basic state machine with a U32 choice sequence (header)
 //
 // \copyright
 // Copyright 2024, by the California Institute of Technology.
@@ -19,9 +19,9 @@
 
 namespace FppTest {
 
-namespace SmJunction {
+namespace SmChoice {
 
-//! A basic state machine with a U32 junction sequence
+//! A basic state machine with a U32 choice sequence
 class SequenceU32 final : public SequenceU32StateMachineBase {
   public:
     //! The history size
@@ -74,7 +74,7 @@ class SequenceU32 final : public SequenceU32StateMachineBase {
     SmHarness::Guard<Signal, U32, historySize> m_guard_g2;
 };
 
-}  // namespace SmJunction
+}  // namespace SmChoice
 
 }  // end namespace FppTest
 

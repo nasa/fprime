@@ -20,12 +20,12 @@ state machine BasicU32 {
   state S1 {
 
     @ State transition
-    on s enter J
+    on s enter C
 
   }
 
-  @ Junction J
-  choice J {
+  @ Choice C
+  choice C {
     if g do { a } enter S2 else do { b } enter S3
   }
 

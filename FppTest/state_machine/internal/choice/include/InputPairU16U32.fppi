@@ -20,15 +20,15 @@ state machine InputPairU16U32 {
   state S1 {
 
     @ State transition on s1
-    on s1 enter J
+    on s1 enter C
 
     @ State transition on s2
-    on s2 enter J
+    on s2 enter C
 
   }
 
-  @ Junction J
-  choice J {
+  @ Choice C
+  choice C {
     if g do { a } enter S2 else do { a } enter S3
   }
 

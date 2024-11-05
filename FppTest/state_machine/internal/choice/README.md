@@ -1,3 +1,3 @@
-# state_machine/internal/junction
+# state_machine/internal/choice
 
-Tests for transitions out of junctions in FPP internal state machines.
+Tests for transitions out of choices in FPP internal state machines.

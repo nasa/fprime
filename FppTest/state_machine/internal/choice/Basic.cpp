@@ -2,7 +2,7 @@
 //
 // \title  Basic.hpp
 // \author R. Bocchino
-// \brief  Test class for basic state machine with a junction (implementation)
+// \brief  Test class for basic state machine with a choice (implementation)
 //
 // \copyright
 // Copyright 2024, by the California Institute of Technology.
@@ -18,7 +18,7 @@
 
 namespace FppTest {
 
-namespace SmJunction {
+namespace SmChoice {
 
 Basic::Basic() : BasicStateMachineBase(), m_action_a_history(), m_action_b_history(), m_guard_g() {}
 
@@ -75,6 +75,6 @@ void Basic::testFalse() {
     ASSERT_EQ(this->getState(), State::S3);
 }
 
-}  // namespace SmJunction
+}  // namespace SmChoice
 
 }  // end namespace FppTest

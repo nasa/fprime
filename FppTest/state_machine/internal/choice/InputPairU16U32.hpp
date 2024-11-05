@@ -2,7 +2,7 @@
 //
 // \title  InputPairU16U32.hpp
 // \author R. Bocchino
-// \brief  Test class for state machine with a pair of junction inputs (header)
+// \brief  Test class for state machine with a pair of choice inputs (header)
 //
 // \copyright
 // Copyright 2024, by the California Institute of Technology.
@@ -19,9 +19,9 @@
 
 namespace FppTest {
 
-namespace SmJunction {
+namespace SmChoice {
 
-//! A basic state machine with a pair of junction inputs
+//! A basic state machine with a pair of choice inputs
 class InputPairU16U32 final : public InputPairU16U32StateMachineBase {
   public:
     //! The history size
@@ -63,7 +63,7 @@ class InputPairU16U32 final : public InputPairU16U32StateMachineBase {
     SmHarness::Guard<Signal, U32, historySize> m_guard_g;
 };
 
-}  // namespace SmJunction
+}  // namespace SmChoice
 
 }  // end namespace FppTest
 

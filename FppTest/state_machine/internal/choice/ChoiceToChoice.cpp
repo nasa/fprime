@@ -1,8 +1,8 @@
 // ======================================================================
 //
-// \title  JunctionToJunction.hpp
+// \title  ChoiceToChoice.hpp
 // \author R. Bocchino
-// \brief  Test class for state machine with a junction-to-junction transition (implementation)
+// \brief  Test class for state machine with a choice-to-choice transition (implementation)
 //
 // \copyright
 // Copyright 2024, by the California Institute of Technology.
@@ -13,37 +13,37 @@
 
 #include <gtest/gtest.h>
 
-#include "FppTest/state_machine/internal/choice/JunctionToJunction.hpp"
+#include "FppTest/state_machine/internal/choice/ChoiceToChoice.hpp"
 #include "STest/STest/Pick/Pick.hpp"
 
 namespace FppTest {
 
-namespace SmJunction {
+namespace SmChoice {
 
-JunctionToJunction::JunctionToJunction()
-    : JunctionToJunctionStateMachineBase(), m_actionHistory(), m_guard_g1(), m_guard_g2() {}
+ChoiceToChoice::ChoiceToChoice()
+    : ChoiceToChoiceStateMachineBase(), m_actionHistory(), m_guard_g1(), m_guard_g2() {}
 
-void JunctionToJunction::action_exitS1(Signal signal) {
+void ChoiceToChoice::action_exitS1(Signal signal) {
     this->m_actionHistory.push(signal, ActionId::EXIT_S1);
 }
 
-void JunctionToJunction::action_a(Signal signal) {
+void ChoiceToChoice::action_a(Signal signal) {
     this->m_actionHistory.push(signal, ActionId::A);
 }
 
-void JunctionToJunction::action_enterS2(Signal signal) {
+void ChoiceToChoice::action_enterS2(Signal signal) {
     this->m_actionHistory.push(signal, ActionId::ENTER_S2);
 }
 
-bool JunctionToJunction::guard_g1(Signal signal) const {
+bool ChoiceToChoice::guard_g1(Signal signal) const {
     return this->m_guard_g1.call(signal);
 }
 
-bool JunctionToJunction::guard_g2(Signal signal) const {
+bool ChoiceToChoice::guard_g2(Signal signal) const {
     return this->m_guard_g2.call(signal);
 }
 
-void JunctionToJunction::testG1True() {
+void ChoiceToChoice::testG1True() {
     this->m_actionHistory.clear();
     this->m_guard_g1.reset();
     this->m_guard_g2.reset();
@@ -72,7 +72,7 @@ void JunctionToJunction::testG1True() {
     ASSERT_EQ(this->getState(), State::S2_S3);
 }
 
-void JunctionToJunction::testG1FalseG2True() {
+void ChoiceToChoice::testG1FalseG2True() {
     this->m_actionHistory.clear();
     this->m_guard_g1.reset();
     this->m_guard_g2.reset();
@@ -102,7 +102,7 @@ void JunctionToJunction::testG1FalseG2True() {
     ASSERT_EQ(this->getState(), State::S2_S3);
 }
 
-void JunctionToJunction::testG1FalseG2False() {
+void ChoiceToChoice::testG1FalseG2False() {
     this->m_actionHistory.clear();
     this->m_guard_g1.reset();
     this->m_guard_g2.reset();
@@ -131,6 +131,6 @@ void JunctionToJunction::testG1FalseG2False() {
     ASSERT_EQ(this->getState(), State::S2_S4);
 }
 
-}  // namespace SmJunction
+}  // namespace SmChoice
 
 }  // end namespace FppTest

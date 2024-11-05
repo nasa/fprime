@@ -1,8 +1,8 @@
 // ======================================================================
 //
-// \title  JunctionToState.hpp
+// \title  ChoiceToState.hpp
 // \author R. Bocchino
-// \brief  Test class for state machine with a junction-to-state transition (header)
+// \brief  Test class for state machine with a choice-to-state transition (header)
 //
 // \copyright
 // Copyright 2024, by the California Institute of Technology.
@@ -11,18 +11,18 @@
 //
 // ======================================================================
 
-#ifndef FppTest_State_JunctionToState_HPP
-#define FppTest_State_JunctionToState_HPP
+#ifndef FppTest_State_ChoiceToState_HPP
+#define FppTest_State_ChoiceToState_HPP
 
 #include "FppTest/state_machine/internal/harness/Harness.hpp"
-#include "FppTest/state_machine/internal/choice/JunctionToStateStateMachineAc.hpp"
+#include "FppTest/state_machine/internal/choice/ChoiceToStateStateMachineAc.hpp"
 
 namespace FppTest {
 
-namespace SmJunction {
+namespace SmChoice {
 
-//! A state machine with a junction-to-state transition
-class JunctionToState final : public JunctionToStateStateMachineBase {
+//! A state machine with a choice-to-state transition
+class ChoiceToState final : public ChoiceToStateStateMachineBase {
   public:
     //! The history size
     static constexpr FwSizeType historySize = 10;
@@ -38,7 +38,7 @@ class JunctionToState final : public JunctionToStateStateMachineBase {
 
   public:
     //! Constructor
-    JunctionToState();
+    ChoiceToState();
 
   private:
     //! Implementation of action exitS1
@@ -76,7 +76,7 @@ class JunctionToState final : public JunctionToStateStateMachineBase {
     SmHarness::NoArgGuard<Signal, historySize> m_guard_g;
 };
 
-}  // namespace SmJunction
+}  // namespace SmChoice
 
 }  // end namespace FppTest
 

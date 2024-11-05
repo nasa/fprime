@@ -2,7 +2,7 @@
 //
 // \title  Sequence.hpp
 // \author R. Bocchino
-// \brief  Test class for basic state machine with junction sequence (implementation)
+// \brief  Test class for basic state machine with choice sequence (implementation)
 //
 // \copyright
 // Copyright 2024, by the California Institute of Technology.
@@ -18,7 +18,7 @@
 
 namespace FppTest {
 
-namespace SmJunction {
+namespace SmChoice {
 
 Sequence::Sequence()
     : SequenceStateMachineBase(), m_action_a_history(), m_action_b_history(), m_guard_g1(), m_guard_g2() {}
@@ -110,6 +110,6 @@ void Sequence::testG1FalseG2False() {
     ASSERT_EQ(this->getState(), State::S4);
 }
 
-}  // namespace SmJunction
+}  // namespace SmChoice
 
 }  // end namespace FppTest
