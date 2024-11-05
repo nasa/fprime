@@ -4,7 +4,7 @@ module FppTest {
 
     active component Junction {
 
-      include "../../internal/initial/include/Junction.fppi"
+      include "../../internal/initial/include/Choice.fppi"
 
       state machine instance $choice: Junction priority 1 assert
 
