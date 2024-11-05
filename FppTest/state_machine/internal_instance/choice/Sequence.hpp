@@ -4,15 +4,15 @@
 // \brief  hpp file for Sequence component implementation class
 // ======================================================================
 
-#ifndef FppTest_SmInstanceJunction_Sequence_HPP
-#define FppTest_SmInstanceJunction_Sequence_HPP
+#ifndef FppTest_SmInstanceChoice_Sequence_HPP
+#define FppTest_SmInstanceChoice_Sequence_HPP
 
 #include "FppTest/state_machine/internal/harness/Harness.hpp"
-#include "FppTest/state_machine/internal_instance/junction/SequenceComponentAc.hpp"
+#include "FppTest/state_machine/internal_instance/choice/SequenceComponentAc.hpp"
 
 namespace FppTest {
 
-namespace SmInstanceJunction {
+namespace SmInstanceChoice {
 
 class Sequence : public SequenceComponentBase {
   private:
@@ -34,8 +34,8 @@ class Sequence : public SequenceComponentBase {
     // Types
     // ----------------------------------------------------------------------
 
-    //! The type FppTest_SmJunction_Sequence
-    using SmJunction_Sequence = FppTest_SmJunction_Sequence;
+    //! The type FppTest_SmChoice_Sequence
+    using SmChoice_Sequence = FppTest_SmChoice_Sequence;
 
   public:
     // ----------------------------------------------------------------------
@@ -54,18 +54,18 @@ class Sequence : public SequenceComponentBase {
     // Implementations for internal state machine actions
     // ----------------------------------------------------------------------
 
-    //! Implementation for action a of state machine FppTest_SmJunction_Sequence
+    //! Implementation for action a of state machine FppTest_SmChoice_Sequence
     //!
     //! Action a
-    void FppTest_SmJunction_Sequence_action_a(SmId smId,                                  //!< The state machine id
-                                              FppTest_SmJunction_Sequence::Signal signal  //!< The signal
+    void FppTest_SmChoice_Sequence_action_a(SmId smId,                                  //!< The state machine id
+                                              FppTest_SmChoice_Sequence::Signal signal  //!< The signal
                                               ) override;
 
-    //! Implementation for action b of state machine FppTest_SmJunction_Sequence
+    //! Implementation for action b of state machine FppTest_SmChoice_Sequence
     //!
     //! Action b
-    void FppTest_SmJunction_Sequence_action_b(SmId smId,                                  //!< The state machine id
-                                              FppTest_SmJunction_Sequence::Signal signal  //!< The signal
+    void FppTest_SmChoice_Sequence_action_b(SmId smId,                                  //!< The state machine id
+                                              FppTest_SmChoice_Sequence::Signal signal  //!< The signal
                                               ) override;
 
   PRIVATE:
@@ -73,18 +73,18 @@ class Sequence : public SequenceComponentBase {
     // Implementations for internal state machine guards
     // ----------------------------------------------------------------------
 
-    //! Implementation for guard g1 of state machine FppTest_SmJunction_Sequence
+    //! Implementation for guard g1 of state machine FppTest_SmChoice_Sequence
     //!
     //! Guard g1
-    bool FppTest_SmJunction_Sequence_guard_g1(SmId smId,                                  //!< The state machine id
-                                              FppTest_SmJunction_Sequence::Signal signal  //!< The signal
+    bool FppTest_SmChoice_Sequence_guard_g1(SmId smId,                                  //!< The state machine id
+                                              FppTest_SmChoice_Sequence::Signal signal  //!< The signal
     ) const override;
 
-    //! Implementation for guard g2 of state machine FppTest_SmJunction_Sequence
+    //! Implementation for guard g2 of state machine FppTest_SmChoice_Sequence
     //!
     //! Guard g2
-    bool FppTest_SmJunction_Sequence_guard_g2(SmId smId,                                  //!< The state machine id
-                                              FppTest_SmJunction_Sequence::Signal signal  //!< The signal
+    bool FppTest_SmChoice_Sequence_guard_g2(SmId smId,                                  //!< The state machine id
+                                              FppTest_SmChoice_Sequence::Signal signal  //!< The signal
     ) const override;
 
   public:
@@ -106,20 +106,20 @@ class Sequence : public SequenceComponentBase {
     // Member variables
     // ----------------------------------------------------------------------
 
-    //! The history associated with action a of smJunctionSequence
-    SmHarness::History<SmJunction_Sequence::Signal, historySize> m_smJunctionSequence_action_a_history;
+    //! The history associated with action a of smChoiceSequence
+    SmHarness::History<SmChoice_Sequence::Signal, historySize> m_smChoiceSequence_action_a_history;
 
-    //! The history associated with action b of smJunctionSequence
-    SmHarness::History<SmJunction_Sequence::Signal, historySize> m_smJunctionSequence_action_b_history;
+    //! The history associated with action b of smChoiceSequence
+    SmHarness::History<SmChoice_Sequence::Signal, historySize> m_smChoiceSequence_action_b_history;
 
-    //! The guard g1 of smJunctionSequence
-    SmHarness::NoArgGuard<SmJunction_Sequence::Signal, historySize> m_smJunctionSequence_guard_g1;
+    //! The guard g1 of smChoiceSequence
+    SmHarness::NoArgGuard<SmChoice_Sequence::Signal, historySize> m_smChoiceSequence_guard_g1;
 
-    //! The guard g2 of smJunctionSequence
-    SmHarness::NoArgGuard<SmJunction_Sequence::Signal, historySize> m_smJunctionSequence_guard_g2;
+    //! The guard g2 of smChoiceSequence
+    SmHarness::NoArgGuard<SmChoice_Sequence::Signal, historySize> m_smChoiceSequence_guard_g2;
 };
 
-}  // namespace SmInstanceJunction
+}  // namespace SmInstanceChoice
 
 }  // namespace FppTest
 

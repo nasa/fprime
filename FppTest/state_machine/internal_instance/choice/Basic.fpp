@@ -1,6 +1,6 @@
 module FppTest {
 
-  module SmInstanceJunction {
+  module SmInstanceChoice {
 
     queued component Basic {
 
@@ -10,7 +10,7 @@ module FppTest {
 
       state machine instance basic: Basic
 
-      state machine instance smJunctionBasic: SmJunction.Basic priority 1 assert
+      state machine instance smChoiceBasic: SmChoice.Basic priority 1 assert
 
     }
 

@@ -4,15 +4,15 @@
 // \brief  hpp file for SequenceU32 component implementation class
 // ======================================================================
 
-#ifndef FppTest_SmInstanceJunction_SequenceU32_HPP
-#define FppTest_SmInstanceJunction_SequenceU32_HPP
+#ifndef FppTest_SmInstanceChoice_SequenceU32_HPP
+#define FppTest_SmInstanceChoice_SequenceU32_HPP
 
 #include "FppTest/state_machine/internal/harness/Harness.hpp"
-#include "FppTest/state_machine/internal_instance/junction/SequenceU32ComponentAc.hpp"
+#include "FppTest/state_machine/internal_instance/choice/SequenceU32ComponentAc.hpp"
 
 namespace FppTest {
 
-namespace SmInstanceJunction {
+namespace SmInstanceChoice {
 
 class SequenceU32 : public SequenceU32ComponentBase {
   private:
@@ -34,8 +34,8 @@ class SequenceU32 : public SequenceU32ComponentBase {
     // Types
     // ----------------------------------------------------------------------
 
-    //! The type FppTest_SmJunction_SequenceU32
-    using SmJunction_SequenceU32 = FppTest_SmJunction_SequenceU32;
+    //! The type FppTest_SmChoice_SequenceU32
+    using SmChoice_SequenceU32 = FppTest_SmChoice_SequenceU32;
 
   public:
     // ----------------------------------------------------------------------
@@ -54,19 +54,19 @@ class SequenceU32 : public SequenceU32ComponentBase {
     // Implementations for internal state machine actions
     // ----------------------------------------------------------------------
 
-    //! Implementation for action a of state machine FppTest_SmJunction_SequenceU32
+    //! Implementation for action a of state machine FppTest_SmChoice_SequenceU32
     //!
     //! Action a
-    void FppTest_SmJunction_SequenceU32_action_a(SmId smId,  //!< The state machine id
-                                                 FppTest_SmJunction_SequenceU32::Signal signal,  //!< The signal
+    void FppTest_SmChoice_SequenceU32_action_a(SmId smId,  //!< The state machine id
+                                                 FppTest_SmChoice_SequenceU32::Signal signal,  //!< The signal
                                                  U32 value                                       //!< The value
                                                  ) override;
 
-    //! Implementation for action b of state machine FppTest_SmJunction_SequenceU32
+    //! Implementation for action b of state machine FppTest_SmChoice_SequenceU32
     //!
     //! Action b
-    void FppTest_SmJunction_SequenceU32_action_b(SmId smId,  //!< The state machine id
-                                                 FppTest_SmJunction_SequenceU32::Signal signal  //!< The signal
+    void FppTest_SmChoice_SequenceU32_action_b(SmId smId,  //!< The state machine id
+                                                 FppTest_SmChoice_SequenceU32::Signal signal  //!< The signal
                                                  ) override;
 
   PRIVATE:
@@ -74,18 +74,18 @@ class SequenceU32 : public SequenceU32ComponentBase {
     // Implementations for internal state machine guards
     // ----------------------------------------------------------------------
 
-    //! Implementation for guard g1 of state machine FppTest_SmJunction_SequenceU32
+    //! Implementation for guard g1 of state machine FppTest_SmChoice_SequenceU32
     //!
     //! Guard g1
-    bool FppTest_SmJunction_SequenceU32_guard_g1(SmId smId,  //!< The state machine id
-                                                 FppTest_SmJunction_SequenceU32::Signal signal  //!< The signal
+    bool FppTest_SmChoice_SequenceU32_guard_g1(SmId smId,  //!< The state machine id
+                                                 FppTest_SmChoice_SequenceU32::Signal signal  //!< The signal
     ) const override;
 
-    //! Implementation for guard g2 of state machine FppTest_SmJunction_SequenceU32
+    //! Implementation for guard g2 of state machine FppTest_SmChoice_SequenceU32
     //!
     //! Guard g2
-    bool FppTest_SmJunction_SequenceU32_guard_g2(SmId smId,  //!< The state machine id
-                                                 FppTest_SmJunction_SequenceU32::Signal signal,  //!< The signal
+    bool FppTest_SmChoice_SequenceU32_guard_g2(SmId smId,  //!< The state machine id
+                                                 FppTest_SmChoice_SequenceU32::Signal signal,  //!< The signal
                                                  U32 value                                       //!< The value
     ) const override;
 
@@ -108,21 +108,21 @@ class SequenceU32 : public SequenceU32ComponentBase {
     // Member variables
     // ----------------------------------------------------------------------
 
-    //! The history associated with action a of smJunctionSequenceU32
-    SmHarness::SignalValueHistory<SmJunction_SequenceU32::Signal, U32, historySize>
-        m_smJunctionSequenceU32_action_a_history;
+    //! The history associated with action a of smChoiceSequenceU32
+    SmHarness::SignalValueHistory<SmChoice_SequenceU32::Signal, U32, historySize>
+        m_smChoiceSequenceU32_action_a_history;
 
-    //! The history associated with action b of smJunctionSequenceU32
-    SmHarness::History<SmJunction_SequenceU32::Signal, historySize> m_smJunctionSequenceU32_action_b_history;
+    //! The history associated with action b of smChoiceSequenceU32
+    SmHarness::History<SmChoice_SequenceU32::Signal, historySize> m_smChoiceSequenceU32_action_b_history;
 
-    //! The guard g1 of smJunctionSequenceU32
-    SmHarness::NoArgGuard<SmJunction_SequenceU32::Signal, historySize> m_smJunctionSequenceU32_guard_g1;
+    //! The guard g1 of smChoiceSequenceU32
+    SmHarness::NoArgGuard<SmChoice_SequenceU32::Signal, historySize> m_smChoiceSequenceU32_guard_g1;
 
-    //! The guard g2 of smJunctionSequenceU32
-    SmHarness::Guard<SmJunction_SequenceU32::Signal, U32, historySize> m_smJunctionSequenceU32_guard_g2;
+    //! The guard g2 of smChoiceSequenceU32
+    SmHarness::Guard<SmChoice_SequenceU32::Signal, U32, historySize> m_smChoiceSequenceU32_guard_g2;
 };
 
-}  // namespace SmInstanceJunction
+}  // namespace SmInstanceChoice
 
 }  // namespace FppTest
 

@@ -1,20 +1,20 @@
 // ======================================================================
-// \title  JunctionToJunction.hpp
+// \title  ChoiceToChoice.hpp
 // \author bocchino
-// \brief  hpp file for JunctionToJunction component implementation class
+// \brief  hpp file for ChoiceToChoice component implementation class
 // ======================================================================
 
-#ifndef FppTest_SmInstanceJunction_JunctionToJunction_HPP
-#define FppTest_SmInstanceJunction_JunctionToJunction_HPP
+#ifndef FppTest_SmInstanceChoice_ChoiceToChoice_HPP
+#define FppTest_SmInstanceChoice_ChoiceToChoice_HPP
 
 #include "FppTest/state_machine/internal/harness/Harness.hpp"
-#include "FppTest/state_machine/internal_instance/junction/JunctionToJunctionComponentAc.hpp"
+#include "FppTest/state_machine/internal_instance/choice/ChoiceToChoiceComponentAc.hpp"
 
 namespace FppTest {
 
-namespace SmInstanceJunction {
+namespace SmInstanceChoice {
 
-class JunctionToJunction : public JunctionToJunctionComponentBase {
+class ChoiceToChoice : public ChoiceToChoiceComponentBase {
   private:
     // ----------------------------------------------------------------------
     // Constants
@@ -41,48 +41,48 @@ class JunctionToJunction : public JunctionToJunctionComponentBase {
         ENTER_S2,
     };
 
-    //! The type FppTest_SmJunction_JunctionToJunction
-    using SmJunction_JunctionToJunction = FppTest_SmJunction_JunctionToJunction;
+    //! The type FppTest_SmChoice_ChoiceToChoice
+    using SmChoice_ChoiceToChoice = FppTest_SmChoice_ChoiceToChoice;
 
   public:
     // ----------------------------------------------------------------------
     // Component construction and destruction
     // ----------------------------------------------------------------------
 
-    //! Construct JunctionToJunction object
-    JunctionToJunction(const char* const compName  //!< The component name
+    //! Construct ChoiceToChoice object
+    ChoiceToChoice(const char* const compName  //!< The component name
     );
 
-    //! Destroy JunctionToJunction object
-    ~JunctionToJunction();
+    //! Destroy ChoiceToChoice object
+    ~ChoiceToChoice();
 
   PRIVATE:
     // ----------------------------------------------------------------------
     // Implementations for internal state machine actions
     // ----------------------------------------------------------------------
 
-    //! Implementation for action exitS1 of state machine FppTest_SmJunction_JunctionToJunction
+    //! Implementation for action exitS1 of state machine FppTest_SmChoice_ChoiceToChoice
     //!
     //! Exit S1
-    void FppTest_SmJunction_JunctionToJunction_action_exitS1(
+    void FppTest_SmChoice_ChoiceToChoice_action_exitS1(
         SmId smId,                                            //!< The state machine id
-        FppTest_SmJunction_JunctionToJunction::Signal signal  //!< The signal
+        FppTest_SmChoice_ChoiceToChoice::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action a of state machine FppTest_SmJunction_JunctionToJunction
+    //! Implementation for action a of state machine FppTest_SmChoice_ChoiceToChoice
     //!
     //! Action a
-    void FppTest_SmJunction_JunctionToJunction_action_a(
+    void FppTest_SmChoice_ChoiceToChoice_action_a(
         SmId smId,                                            //!< The state machine id
-        FppTest_SmJunction_JunctionToJunction::Signal signal  //!< The signal
+        FppTest_SmChoice_ChoiceToChoice::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action enterS2 of state machine FppTest_SmJunction_JunctionToJunction
+    //! Implementation for action enterS2 of state machine FppTest_SmChoice_ChoiceToChoice
     //!
     //! Enter S2
-    void FppTest_SmJunction_JunctionToJunction_action_enterS2(
+    void FppTest_SmChoice_ChoiceToChoice_action_enterS2(
         SmId smId,                                            //!< The state machine id
-        FppTest_SmJunction_JunctionToJunction::Signal signal  //!< The signal
+        FppTest_SmChoice_ChoiceToChoice::Signal signal  //!< The signal
         ) override;
 
   PRIVATE:
@@ -90,20 +90,20 @@ class JunctionToJunction : public JunctionToJunctionComponentBase {
     // Implementations for internal state machine guards
     // ----------------------------------------------------------------------
 
-    //! Implementation for guard g1 of state machine FppTest_SmJunction_JunctionToJunction
+    //! Implementation for guard g1 of state machine FppTest_SmChoice_ChoiceToChoice
     //!
     //! Guard g1
-    bool FppTest_SmJunction_JunctionToJunction_guard_g1(
+    bool FppTest_SmChoice_ChoiceToChoice_guard_g1(
         SmId smId,                                            //!< The state machine id
-        FppTest_SmJunction_JunctionToJunction::Signal signal  //!< The signal
+        FppTest_SmChoice_ChoiceToChoice::Signal signal  //!< The signal
     ) const override;
 
-    //! Implementation for guard g2 of state machine FppTest_SmJunction_JunctionToJunction
+    //! Implementation for guard g2 of state machine FppTest_SmChoice_ChoiceToChoice
     //!
     //! Guard g2
-    bool FppTest_SmJunction_JunctionToJunction_guard_g2(
+    bool FppTest_SmChoice_ChoiceToChoice_guard_g2(
         SmId smId,                                            //!< The state machine id
-        FppTest_SmJunction_JunctionToJunction::Signal signal  //!< The signal
+        FppTest_SmChoice_ChoiceToChoice::Signal signal  //!< The signal
     ) const override;
 
   PRIVATE:
@@ -111,8 +111,8 @@ class JunctionToJunction : public JunctionToJunctionComponentBase {
     // Overflow hook implementations for internal state machines
     // ----------------------------------------------------------------------
 
-    //! Overflow hook implementation for smJunctionJunctionToJunction
-    void smJunctionJunctionToJunction_stateMachineOverflowHook(SmId smId,               //!< The state machine ID
+    //! Overflow hook implementation for smChoiceChoiceToChoice
+    void smChoiceChoiceToChoice_stateMachineOverflowHook(SmId smId,               //!< The state machine ID
                                                                FwEnumStoreType signal,  //!< The signal
                                                                Fw::SerializeBufferBase& buffer  //!< The message buffer
                                                                ) override;
@@ -142,18 +142,18 @@ class JunctionToJunction : public JunctionToJunctionComponentBase {
     //! Whether the overflow hook was called
     bool m_hookCalled = false;
 
-    //! The action history for smJunctionJunctionToJunction
-    SmHarness::SignalValueHistory<SmJunction_JunctionToJunction::Signal, ActionId, historySize>
-        m_smJunctionJunctionToJunction_actionHistory;
+    //! The action history for smChoiceChoiceToChoice
+    SmHarness::SignalValueHistory<SmChoice_ChoiceToChoice::Signal, ActionId, historySize>
+        m_smChoiceChoiceToChoice_actionHistory;
 
-    //! The guard g1 for smJunctionJunctionToJunction
-    SmHarness::NoArgGuard<SmJunction_JunctionToJunction::Signal, historySize> m_smJunctionJunctionToJunction_guard_g1;
+    //! The guard g1 for smChoiceChoiceToChoice
+    SmHarness::NoArgGuard<SmChoice_ChoiceToChoice::Signal, historySize> m_smChoiceChoiceToChoice_guard_g1;
 
-    //! The guard g2 for smJunctionJunctionToJunction
-    SmHarness::NoArgGuard<SmJunction_JunctionToJunction::Signal, historySize> m_smJunctionJunctionToJunction_guard_g2;
+    //! The guard g2 for smChoiceChoiceToChoice
+    SmHarness::NoArgGuard<SmChoice_ChoiceToChoice::Signal, historySize> m_smChoiceChoiceToChoice_guard_g2;
 };
 
-}  // namespace SmInstanceJunction
+}  // namespace SmInstanceChoice
 
 }  // namespace FppTest
 

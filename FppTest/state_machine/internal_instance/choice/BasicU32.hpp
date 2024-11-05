@@ -4,15 +4,15 @@
 // \brief  hpp file for BasicU32 component implementation class
 // ======================================================================
 
-#ifndef FppTest_SmInstanceJunction_BasicU32_HPP
-#define FppTest_SmInstanceJunction_BasicU32_HPP
+#ifndef FppTest_SmInstanceChoice_BasicU32_HPP
+#define FppTest_SmInstanceChoice_BasicU32_HPP
 
 #include "FppTest/state_machine/internal/harness/Harness.hpp"
-#include "FppTest/state_machine/internal_instance/junction/BasicU32ComponentAc.hpp"
+#include "FppTest/state_machine/internal_instance/choice/BasicU32ComponentAc.hpp"
 
 namespace FppTest {
 
-namespace SmInstanceJunction {
+namespace SmInstanceChoice {
 
 class BasicU32 : public BasicU32ComponentBase {
   private:
@@ -34,8 +34,8 @@ class BasicU32 : public BasicU32ComponentBase {
     // Types
     // ----------------------------------------------------------------------
 
-    //! The type FppTest_SmJunction_BasicU32
-    using SmJunction_BasicU32 = FppTest_SmJunction_BasicU32;
+    //! The type FppTest_SmChoice_BasicU32
+    using SmChoice_BasicU32 = FppTest_SmChoice_BasicU32;
 
   public:
     // ----------------------------------------------------------------------
@@ -54,19 +54,19 @@ class BasicU32 : public BasicU32ComponentBase {
     // Implementations for internal state machine actions
     // ----------------------------------------------------------------------
 
-    //! Implementation for action a of state machine FppTest_SmJunction_BasicU32
+    //! Implementation for action a of state machine FppTest_SmChoice_BasicU32
     //!
     //! Action a
-    void FppTest_SmJunction_BasicU32_action_a(SmId smId,                                   //!< The state machine id
-                                              FppTest_SmJunction_BasicU32::Signal signal,  //!< The signal
+    void FppTest_SmChoice_BasicU32_action_a(SmId smId,                                   //!< The state machine id
+                                              FppTest_SmChoice_BasicU32::Signal signal,  //!< The signal
                                               U32 value                                    //!< The value
                                               ) override;
 
-    //! Implementation for action b of state machine FppTest_SmJunction_BasicU32
+    //! Implementation for action b of state machine FppTest_SmChoice_BasicU32
     //!
     //! Action b
-    void FppTest_SmJunction_BasicU32_action_b(SmId smId,                                  //!< The state machine id
-                                              FppTest_SmJunction_BasicU32::Signal signal  //!< The signal
+    void FppTest_SmChoice_BasicU32_action_b(SmId smId,                                  //!< The state machine id
+                                              FppTest_SmChoice_BasicU32::Signal signal  //!< The signal
                                               ) override;
 
   PRIVATE:
@@ -74,11 +74,11 @@ class BasicU32 : public BasicU32ComponentBase {
     // Implementations for internal state machine guards
     // ----------------------------------------------------------------------
 
-    //! Implementation for guard g of state machine FppTest_SmJunction_BasicU32
+    //! Implementation for guard g of state machine FppTest_SmChoice_BasicU32
     //!
     //! Guard g
-    bool FppTest_SmJunction_BasicU32_guard_g(SmId smId,                                   //!< The state machine id
-                                             FppTest_SmJunction_BasicU32::Signal signal,  //!< The signal
+    bool FppTest_SmChoice_BasicU32_guard_g(SmId smId,                                   //!< The state machine id
+                                             FppTest_SmChoice_BasicU32::Signal signal,  //!< The signal
                                              U32 value                                    //!< The value
     ) const override;
 
@@ -98,17 +98,17 @@ class BasicU32 : public BasicU32ComponentBase {
     // Member variables
     // ----------------------------------------------------------------------
 
-    //! The history associated with action a of smJunctionBasicU32
-    SmHarness::SignalValueHistory<SmJunction_BasicU32::Signal, U32, historySize> m_smJunctionBasicU32_action_a_history;
+    //! The history associated with action a of smChoiceBasicU32
+    SmHarness::SignalValueHistory<SmChoice_BasicU32::Signal, U32, historySize> m_smChoiceBasicU32_action_a_history;
 
-    //! The history associated with action b of smJunctionBasicU32
-    SmHarness::History<SmJunction_BasicU32::Signal, historySize> m_smJunctionBasicU32_action_b_history;
+    //! The history associated with action b of smChoiceBasicU32
+    SmHarness::History<SmChoice_BasicU32::Signal, historySize> m_smChoiceBasicU32_action_b_history;
 
-    //! The guard g of smJunctionBasicU32
-    SmHarness::Guard<SmJunction_BasicU32::Signal, U32, historySize> m_smJunctionBasicU32_guard_g;
+    //! The guard g of smChoiceBasicU32
+    SmHarness::Guard<SmChoice_BasicU32::Signal, U32, historySize> m_smChoiceBasicU32_guard_g;
 };
 
-}  // namespace SmInstanceJunction
+}  // namespace SmInstanceChoice
 
 }  // namespace FppTest
 

@@ -4,15 +4,15 @@
 // \brief  hpp file for InputPairU16U32 component implementation class
 // ======================================================================
 
-#ifndef FppTest_SmInstanceJunction_InputPairU16U32_HPP
-#define FppTest_SmInstanceJunction_InputPairU16U32_HPP
+#ifndef FppTest_SmInstanceChoice_InputPairU16U32_HPP
+#define FppTest_SmInstanceChoice_InputPairU16U32_HPP
 
 #include "FppTest/state_machine/internal/harness/Harness.hpp"
-#include "FppTest/state_machine/internal_instance/junction/InputPairU16U32ComponentAc.hpp"
+#include "FppTest/state_machine/internal_instance/choice/InputPairU16U32ComponentAc.hpp"
 
 namespace FppTest {
 
-namespace SmInstanceJunction {
+namespace SmInstanceChoice {
 
 class InputPairU16U32 : public InputPairU16U32ComponentBase {
   private:
@@ -34,8 +34,8 @@ class InputPairU16U32 : public InputPairU16U32ComponentBase {
     // Types
     // ----------------------------------------------------------------------
 
-    //! The type FppTest_SmJunction_InputPairU16U32
-    using SmJunction_InputPairU16U32 = FppTest_SmJunction_InputPairU16U32;
+    //! The type FppTest_SmChoice_InputPairU16U32
+    using SmChoice_InputPairU16U32 = FppTest_SmChoice_InputPairU16U32;
 
   public:
     // ----------------------------------------------------------------------
@@ -54,11 +54,11 @@ class InputPairU16U32 : public InputPairU16U32ComponentBase {
     // Implementations for internal state machine actions
     // ----------------------------------------------------------------------
 
-    //! Implementation for action a of state machine FppTest_SmJunction_InputPairU16U32
+    //! Implementation for action a of state machine FppTest_SmChoice_InputPairU16U32
     //!
     //! Action a
-    void FppTest_SmJunction_InputPairU16U32_action_a(SmId smId,  //!< The state machine id
-                                                     FppTest_SmJunction_InputPairU16U32::Signal signal,  //!< The signal
+    void FppTest_SmChoice_InputPairU16U32_action_a(SmId smId,  //!< The state machine id
+                                                     FppTest_SmChoice_InputPairU16U32::Signal signal,  //!< The signal
                                                      U32 value                                           //!< The value
                                                      ) override;
 
@@ -67,11 +67,11 @@ class InputPairU16U32 : public InputPairU16U32ComponentBase {
     // Implementations for internal state machine guards
     // ----------------------------------------------------------------------
 
-    //! Implementation for guard g of state machine FppTest_SmJunction_InputPairU16U32
+    //! Implementation for guard g of state machine FppTest_SmChoice_InputPairU16U32
     //!
     //! Guard g
-    bool FppTest_SmJunction_InputPairU16U32_guard_g(SmId smId,  //!< The state machine id
-                                                    FppTest_SmJunction_InputPairU16U32::Signal signal,  //!< The signal
+    bool FppTest_SmChoice_InputPairU16U32_guard_g(SmId smId,  //!< The state machine id
+                                                    FppTest_SmChoice_InputPairU16U32::Signal signal,  //!< The signal
                                                     U32 value                                           //!< The value
     ) const override;
 
@@ -97,15 +97,15 @@ class InputPairU16U32 : public InputPairU16U32ComponentBase {
     // Member variables
     // ----------------------------------------------------------------------
 
-    //! The history associated with action a of smJunctionInputPairU16U32
-    SmHarness::SignalValueHistory<SmJunction_InputPairU16U32::Signal, U32, historySize>
-        m_smJunctionInputPairU16U32_action_a_history;
+    //! The history associated with action a of smChoiceInputPairU16U32
+    SmHarness::SignalValueHistory<SmChoice_InputPairU16U32::Signal, U32, historySize>
+        m_smChoiceInputPairU16U32_action_a_history;
 
-    //! The guard g of smJunctionInputPairU16U32
-    SmHarness::Guard<SmJunction_InputPairU16U32::Signal, U32, historySize> m_smJunctionInputPairU16U32_guard_g;
+    //! The guard g of smChoiceInputPairU16U32
+    SmHarness::Guard<SmChoice_InputPairU16U32::Signal, U32, historySize> m_smChoiceInputPairU16U32_guard_g;
 };
 
-}  // namespace SmInstanceJunction
+}  // namespace SmInstanceChoice
 
 }  // namespace FppTest
 

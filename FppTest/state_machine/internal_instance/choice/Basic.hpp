@@ -4,15 +4,15 @@
 // \brief  hpp file for Basic component implementation class
 // ======================================================================
 
-#ifndef FppTest_SmInstanceJunction_Basic_HPP
-#define FppTest_SmInstanceJunction_Basic_HPP
+#ifndef FppTest_SmInstanceChoice_Basic_HPP
+#define FppTest_SmInstanceChoice_Basic_HPP
 
 #include "FppTest/state_machine/internal/harness/Harness.hpp"
-#include "FppTest/state_machine/internal_instance/junction/BasicComponentAc.hpp"
+#include "FppTest/state_machine/internal_instance/choice/BasicComponentAc.hpp"
 
 namespace FppTest {
 
-namespace SmInstanceJunction {
+namespace SmInstanceChoice {
 
 class Basic : public BasicComponentBase {
   private:
@@ -34,11 +34,11 @@ class Basic : public BasicComponentBase {
     // Types
     // ----------------------------------------------------------------------
 
-    //! The type FppTest_SmInstanceJunction_Basic_Basic
-    using Basic_Basic = FppTest_SmInstanceJunction_Basic_Basic;
+    //! The type FppTest_SmInstanceChoice_Basic_Basic
+    using Basic_Basic = FppTest_SmInstanceChoice_Basic_Basic;
 
-    //! The type FppTest_SmJunction_Basic
-    using SmJunction_Basic = FppTest_SmJunction_Basic;
+    //! The type FppTest_SmChoice_Basic
+    using SmChoice_Basic = FppTest_SmChoice_Basic;
 
   public:
     // ----------------------------------------------------------------------
@@ -67,34 +67,34 @@ class Basic : public BasicComponentBase {
     // Implementations for internal state machine actions
     // ----------------------------------------------------------------------
 
-    //! Implementation for action a of state machine FppTest_SmInstanceJunction_Basic_Basic
+    //! Implementation for action a of state machine FppTest_SmInstanceChoice_Basic_Basic
     //!
     //! Action a
-    void FppTest_SmInstanceJunction_Basic_Basic_action_a(
+    void FppTest_SmInstanceChoice_Basic_Basic_action_a(
         SmId smId,                                             //!< The state machine id
-        FppTest_SmInstanceJunction_Basic_Basic::Signal signal  //!< The signal
+        FppTest_SmInstanceChoice_Basic_Basic::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action b of state machine FppTest_SmInstanceJunction_Basic_Basic
+    //! Implementation for action b of state machine FppTest_SmInstanceChoice_Basic_Basic
     //!
     //! Action b
-    void FppTest_SmInstanceJunction_Basic_Basic_action_b(
+    void FppTest_SmInstanceChoice_Basic_Basic_action_b(
         SmId smId,                                             //!< The state machine id
-        FppTest_SmInstanceJunction_Basic_Basic::Signal signal  //!< The signal
+        FppTest_SmInstanceChoice_Basic_Basic::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action a of state machine FppTest_SmJunction_Basic
+    //! Implementation for action a of state machine FppTest_SmChoice_Basic
     //!
     //! Action a
-    void FppTest_SmJunction_Basic_action_a(SmId smId,                               //!< The state machine id
-                                           FppTest_SmJunction_Basic::Signal signal  //!< The signal
+    void FppTest_SmChoice_Basic_action_a(SmId smId,                               //!< The state machine id
+                                           FppTest_SmChoice_Basic::Signal signal  //!< The signal
                                            ) override;
 
-    //! Implementation for action b of state machine FppTest_SmJunction_Basic
+    //! Implementation for action b of state machine FppTest_SmChoice_Basic
     //!
     //! Action b
-    void FppTest_SmJunction_Basic_action_b(SmId smId,                               //!< The state machine id
-                                           FppTest_SmJunction_Basic::Signal signal  //!< The signal
+    void FppTest_SmChoice_Basic_action_b(SmId smId,                               //!< The state machine id
+                                           FppTest_SmChoice_Basic::Signal signal  //!< The signal
                                            ) override;
 
   PRIVATE:
@@ -102,19 +102,19 @@ class Basic : public BasicComponentBase {
     // Implementations for internal state machine guards
     // ----------------------------------------------------------------------
 
-    //! Implementation for guard g of state machine FppTest_SmInstanceJunction_Basic_Basic
+    //! Implementation for guard g of state machine FppTest_SmInstanceChoice_Basic_Basic
     //!
     //! Guard g
-    bool FppTest_SmInstanceJunction_Basic_Basic_guard_g(
+    bool FppTest_SmInstanceChoice_Basic_Basic_guard_g(
         SmId smId,                                             //!< The state machine id
-        FppTest_SmInstanceJunction_Basic_Basic::Signal signal  //!< The signal
+        FppTest_SmInstanceChoice_Basic_Basic::Signal signal  //!< The signal
     ) const override;
 
-    //! Implementation for guard g of state machine FppTest_SmJunction_Basic
+    //! Implementation for guard g of state machine FppTest_SmChoice_Basic
     //!
     //! Guard g
-    bool FppTest_SmJunction_Basic_guard_g(SmId smId,                               //!< The state machine id
-                                          FppTest_SmJunction_Basic::Signal signal  //!< The signal
+    bool FppTest_SmChoice_Basic_guard_g(SmId smId,                               //!< The state machine id
+                                          FppTest_SmChoice_Basic::Signal signal  //!< The signal
     ) const override;
 
   public:
@@ -128,11 +128,11 @@ class Basic : public BasicComponentBase {
     //! Run the basic test with the false guard
     void testBasicFalse();
 
-    //! Run the smJunctionBasic test with the true guard
-    void testSmJunctionBasicTrue();
+    //! Run the smChoiceBasic test with the true guard
+    void testSmChoiceBasicTrue();
 
-    //! Run the smJunctionSmJunctionBasic test with the false guard
-    void testSmJunctionBasicFalse();
+    //! Run the smChoiceSmChoiceBasic test with the false guard
+    void testSmChoiceBasicFalse();
 
   private:
     // ----------------------------------------------------------------------
@@ -148,17 +148,17 @@ class Basic : public BasicComponentBase {
     //! The guard g of basic
     SmHarness::NoArgGuard<Basic_Basic::Signal, historySize> m_basic_guard_g;
 
-    //! The history associated with action a of smJunctionBasic
-    SmHarness::History<SmJunction_Basic::Signal, historySize> m_smJunctionBasic_action_a_history;
+    //! The history associated with action a of smChoiceBasic
+    SmHarness::History<SmChoice_Basic::Signal, historySize> m_smChoiceBasic_action_a_history;
 
-    //! The history associated with action b of smJunctionBasic
-    SmHarness::History<SmJunction_Basic::Signal, historySize> m_smJunctionBasic_action_b_history;
+    //! The history associated with action b of smChoiceBasic
+    SmHarness::History<SmChoice_Basic::Signal, historySize> m_smChoiceBasic_action_b_history;
 
-    //! The guard g of smJunctionBasic
-    SmHarness::NoArgGuard<SmJunction_Basic::Signal, historySize> m_smJunctionBasic_guard_g;
+    //! The guard g of smChoiceBasic
+    SmHarness::NoArgGuard<SmChoice_Basic::Signal, historySize> m_smChoiceBasic_guard_g;
 };
 
-}  // namespace SmInstanceJunction
+}  // namespace SmInstanceChoice
 
 }  // namespace FppTest
 

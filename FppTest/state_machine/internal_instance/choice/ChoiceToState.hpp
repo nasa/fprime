@@ -1,20 +1,20 @@
 // ======================================================================
-// \title  JunctionToState.hpp
+// \title  ChoiceToState.hpp
 // \author bocchino
-// \brief  hpp file for JunctionToState component implementation class
+// \brief  hpp file for ChoiceToState component implementation class
 // ======================================================================
 
-#ifndef FppTest_SmInstanceJunction_JunctionToState_HPP
-#define FppTest_SmInstanceJunction_JunctionToState_HPP
+#ifndef FppTest_SmInstanceChoice_ChoiceToState_HPP
+#define FppTest_SmInstanceChoice_ChoiceToState_HPP
 
 #include "FppTest/state_machine/internal/harness/Harness.hpp"
-#include "FppTest/state_machine/internal_instance/junction/JunctionToStateComponentAc.hpp"
+#include "FppTest/state_machine/internal_instance/choice/ChoiceToStateComponentAc.hpp"
 
 namespace FppTest {
 
-namespace SmInstanceJunction {
+namespace SmInstanceChoice {
 
-class JunctionToState : public JunctionToStateComponentBase {
+class ChoiceToState : public ChoiceToStateComponentBase {
   private:
     // ----------------------------------------------------------------------
     // Constants
@@ -42,55 +42,55 @@ class JunctionToState : public JunctionToStateComponentBase {
         ENTER_S3,
     };
 
-    //! The type FppTest_SmJunction_JunctionToState
-    using SmJunction_JunctionToState = FppTest_SmJunction_JunctionToState;
+    //! The type FppTest_SmChoice_ChoiceToState
+    using SmChoice_ChoiceToState = FppTest_SmChoice_ChoiceToState;
 
   public:
     // ----------------------------------------------------------------------
     // Component construction and destruction
     // ----------------------------------------------------------------------
 
-    //! Construct JunctionToState object
-    JunctionToState(const char* const compName  //!< The component name
+    //! Construct ChoiceToState object
+    ChoiceToState(const char* const compName  //!< The component name
     );
 
-    //! Destroy JunctionToState object
-    ~JunctionToState();
+    //! Destroy ChoiceToState object
+    ~ChoiceToState();
 
   PRIVATE:
     // ----------------------------------------------------------------------
     // Implementations for internal state machine actions
     // ----------------------------------------------------------------------
 
-    //! Implementation for action exitS1 of state machine FppTest_SmJunction_JunctionToState
+    //! Implementation for action exitS1 of state machine FppTest_SmChoice_ChoiceToState
     //!
     //! Exit S1
-    void FppTest_SmJunction_JunctionToState_action_exitS1(
+    void FppTest_SmChoice_ChoiceToState_action_exitS1(
         SmId smId,                                         //!< The state machine id
-        FppTest_SmJunction_JunctionToState::Signal signal  //!< The signal
+        FppTest_SmChoice_ChoiceToState::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action a of state machine FppTest_SmJunction_JunctionToState
+    //! Implementation for action a of state machine FppTest_SmChoice_ChoiceToState
     //!
     //! Action a
-    void FppTest_SmJunction_JunctionToState_action_a(SmId smId,  //!< The state machine id
-                                                     FppTest_SmJunction_JunctionToState::Signal signal  //!< The signal
+    void FppTest_SmChoice_ChoiceToState_action_a(SmId smId,  //!< The state machine id
+                                                     FppTest_SmChoice_ChoiceToState::Signal signal  //!< The signal
                                                      ) override;
 
-    //! Implementation for action enterS2 of state machine FppTest_SmJunction_JunctionToState
+    //! Implementation for action enterS2 of state machine FppTest_SmChoice_ChoiceToState
     //!
     //! Enter S2
-    void FppTest_SmJunction_JunctionToState_action_enterS2(
+    void FppTest_SmChoice_ChoiceToState_action_enterS2(
         SmId smId,                                         //!< The state machine id
-        FppTest_SmJunction_JunctionToState::Signal signal  //!< The signal
+        FppTest_SmChoice_ChoiceToState::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action enterS3 of state machine FppTest_SmJunction_JunctionToState
+    //! Implementation for action enterS3 of state machine FppTest_SmChoice_ChoiceToState
     //!
     //! Enter S3
-    void FppTest_SmJunction_JunctionToState_action_enterS3(
+    void FppTest_SmChoice_ChoiceToState_action_enterS3(
         SmId smId,                                         //!< The state machine id
-        FppTest_SmJunction_JunctionToState::Signal signal  //!< The signal
+        FppTest_SmChoice_ChoiceToState::Signal signal  //!< The signal
         ) override;
 
   PRIVATE:
@@ -98,11 +98,11 @@ class JunctionToState : public JunctionToStateComponentBase {
     // Implementations for internal state machine guards
     // ----------------------------------------------------------------------
 
-    //! Implementation for guard g of state machine FppTest_SmJunction_JunctionToState
+    //! Implementation for guard g of state machine FppTest_SmChoice_ChoiceToState
     //!
     //! Guard g
-    bool FppTest_SmJunction_JunctionToState_guard_g(SmId smId,  //!< The state machine id
-                                                    FppTest_SmJunction_JunctionToState::Signal signal  //!< The signal
+    bool FppTest_SmChoice_ChoiceToState_guard_g(SmId smId,  //!< The state machine id
+                                                    FppTest_SmChoice_ChoiceToState::Signal signal  //!< The signal
     ) const override;
 
   public:
@@ -121,15 +121,15 @@ class JunctionToState : public JunctionToStateComponentBase {
     // Member variables
     // ----------------------------------------------------------------------
 
-    //! The action history for smJunctionJunctionToState
-    SmHarness::SignalValueHistory<SmJunction_JunctionToState::Signal, ActionId, historySize>
-        m_smJunctionJunctionToState_actionHistory;
+    //! The action history for smChoiceChoiceToState
+    SmHarness::SignalValueHistory<SmChoice_ChoiceToState::Signal, ActionId, historySize>
+        m_smChoiceChoiceToState_actionHistory;
 
-    //! The guard g for smJunctionJunctionToState
-    SmHarness::NoArgGuard<SmJunction_JunctionToState::Signal, historySize> m_smJunctionJunctionToState_guard_g;
+    //! The guard g for smChoiceChoiceToState
+    SmHarness::NoArgGuard<SmChoice_ChoiceToState::Signal, historySize> m_smChoiceChoiceToState_guard_g;
 };
 
-}  // namespace SmInstanceJunction
+}  // namespace SmInstanceChoice
 
 }  // namespace FppTest
 
