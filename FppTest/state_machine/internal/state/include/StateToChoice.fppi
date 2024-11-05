@@ -1,6 +1,6 @@
 @ A state machine for testing state-to-choice transitions
 @ with hierarchy
-state machine StateToJunction {
+state machine StateToChoice {
 
   @ Exit S1
   action exitS1
@@ -32,8 +32,8 @@ state machine StateToJunction {
   @ Signal for going from S1 to S4
   signal S1_to_S4
 
-  @ Signal for going from S1 to J
-  signal S1_to_J
+  @ Signal for going from S1 to C
+  signal S1_to_C
 
   @ Signal for going from S2 to S3
   signal S2_to_S3
@@ -81,8 +81,8 @@ state machine StateToJunction {
     @ State transition to S4
     on S1_to_S4 do { a } enter S4
 
-    @ State transition to J
-    on S1_to_J do { a } enter S4.J
+    @ State transition to C
+    on S1_to_C do { a } enter S4.C
 
   }
 
@@ -90,13 +90,13 @@ state machine StateToJunction {
   state S4 {
 
     @ Initial transition
-    initial enter J
+    initial enter C
 
     @ Enter S4
     entry do { enterS4 }
 
-    @ Junction J
-    choice J { if g enter S5 else enter S6 }
+    @ Choice C
+    choice C { if g enter S5 else enter S6 }
 
     @ State S5
     state S5

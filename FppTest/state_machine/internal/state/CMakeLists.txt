@@ -18,7 +18,7 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/Internal.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/Polymorphism.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/StateToChild.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/StateToJunction.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/StateToChoice.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/StateToSelf.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/StateToState.fpp"
 )
@@ -45,7 +45,7 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/Internal.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Polymorphism.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/StateToChild.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/StateToJunction.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/StateToChoice.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/StateToSelf.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/StateToState.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/main.cpp"

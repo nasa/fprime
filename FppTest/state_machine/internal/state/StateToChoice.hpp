@@ -1,8 +1,8 @@
 // ======================================================================
 //
-// \title  StateToJunction.hpp
+// \title  StateToChoice.hpp
 // \author R. Bocchino
-// \brief  Test class for state-to-junction state machine (header)
+// \brief  Test class for state-to-choice state machine (header)
 //
 // \copyright
 // Copyright 2024, by the California Institute of Technology.
@@ -11,18 +11,18 @@
 //
 // ======================================================================
 
-#ifndef FppTest_State_StateToJunction_HPP
-#define FppTest_State_StateToJunction_HPP
+#ifndef FppTest_State_StateToChoice_HPP
+#define FppTest_State_StateToChoice_HPP
 
 #include "FppTest/state_machine/internal/harness/Harness.hpp"
-#include "FppTest/state_machine/internal/state/StateToJunctionStateMachineAc.hpp"
+#include "FppTest/state_machine/internal/state/StateToChoiceStateMachineAc.hpp"
 
 namespace FppTest {
 
 namespace SmState {
 
-//! A state machine for testing state-to-junction transitions with hierarchy
-class StateToJunction final : public StateToJunctionStateMachineBase {
+//! A state machine for testing state-to-choice transitions with hierarchy
+class StateToChoice final : public StateToChoiceStateMachineBase {
   public:
     //! The history size
     static constexpr FwSizeType historySize = 10;
@@ -33,7 +33,7 @@ class StateToJunction final : public StateToJunctionStateMachineBase {
 
   public:
     //! Constructor
-    StateToJunction();
+    StateToChoice();
 
   private:
     //! Exit S1
@@ -76,8 +76,8 @@ class StateToJunction final : public StateToJunctionStateMachineBase {
     //! Test initial transition
     void testInit();
 
-    //! Test transition S2 to J
-    void testS2_to_J();
+    //! Test transition S2 to C
+    void testS2_to_C();
 
     //! Test transition S2 to S3
     void testS2_to_S3();
@@ -85,8 +85,8 @@ class StateToJunction final : public StateToJunctionStateMachineBase {
     //! Test transition S2 to S4
     void testS2_to_S4();
 
-    //! Test transition S3 to J
-    void testS3_to_J();
+    //! Test transition S3 to C
+    void testS3_to_C();
 
     //! Test transition S3 to S4
     void testS3_to_S4();

@@ -23,7 +23,7 @@
 #include "FppTest/state_machine/internal/state/Internal.hpp"
 #include "FppTest/state_machine/internal/state/Polymorphism.hpp"
 #include "FppTest/state_machine/internal/state/StateToChild.hpp"
-#include "FppTest/state_machine/internal/state/StateToJunction.hpp"
+#include "FppTest/state_machine/internal/state/StateToChoice.hpp"
 #include "FppTest/state_machine/internal/state/StateToSelf.hpp"
 #include "FppTest/state_machine/internal/state/StateToState.hpp"
 #include "STest/STest/Random/Random.hpp"
@@ -203,34 +203,34 @@ TEST(StateToChild, S3_to_S2) {
     stateToChild.testS3_to_S2();
 }
 
-TEST(StateToJunction, Init) {
-    FppTest::SmState::StateToJunction stateToJunction;
-    stateToJunction.testInit();
+TEST(StateToChoice, Init) {
+    FppTest::SmState::StateToChoice stateToChoice;
+    stateToChoice.testInit();
 }
 
-TEST(StateToJunction, S2_to_J) {
-    FppTest::SmState::StateToJunction stateToJunction;
-    stateToJunction.testS2_to_J();
+TEST(StateToChoice, S2_to_C) {
+    FppTest::SmState::StateToChoice stateToChoice;
+    stateToChoice.testS2_to_C();
 }
 
-TEST(StateToJunction, S2_to_S4) {
-    FppTest::SmState::StateToJunction stateToJunction;
-    stateToJunction.testS2_to_S4();
+TEST(StateToChoice, S2_to_S4) {
+    FppTest::SmState::StateToChoice stateToChoice;
+    stateToChoice.testS2_to_S4();
 }
 
-TEST(StateToJunction, S2_to_S3) {
-    FppTest::SmState::StateToJunction stateToJunction;
-    stateToJunction.testS2_to_S3();
+TEST(StateToChoice, S2_to_S3) {
+    FppTest::SmState::StateToChoice stateToChoice;
+    stateToChoice.testS2_to_S3();
 }
 
-TEST(StateToJunction, S3_to_J) {
-    FppTest::SmState::StateToJunction stateToJunction;
-    stateToJunction.testS3_to_J();
+TEST(StateToChoice, S3_to_C) {
+    FppTest::SmState::StateToChoice stateToChoice;
+    stateToChoice.testS3_to_C();
 }
 
-TEST(StateToJunction, S3_to_S4) {
-    FppTest::SmState::StateToJunction stateToJunction;
-    stateToJunction.testS3_to_S4();
+TEST(StateToChoice, S3_to_S4) {
+    FppTest::SmState::StateToChoice stateToChoice;
+    stateToChoice.testS3_to_S4();
 }
 
 TEST(StateToSelf, Init) {

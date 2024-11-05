@@ -2,7 +2,7 @@ module FppTest {
 
   module SmState {
 
-    include "include/StateToJunction.fppi"
+    include "include/StateToChoice.fppi"
 
   }
 
