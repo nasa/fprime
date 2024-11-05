@@ -5,7 +5,7 @@
 #include <gtest/gtest.h>
 
 #include "FppTest/state_machine/internal/initial/Basic.hpp"
-#include "FppTest/state_machine/internal/initial/Junction.hpp"
+#include "FppTest/state_machine/internal/initial/Choice.hpp"
 #include "FppTest/state_machine/internal/initial/Nested.hpp"
 #include "STest/STest/Random/Random.hpp"
 
@@ -14,14 +14,14 @@ TEST(Basic, Test) {
   basic.test();
 }
 
-TEST(Junction, False) {
-  FppTest::SmInitial::Junction junction;
-  junction.testFalse();
+TEST(Choice, False) {
+  FppTest::SmInitial::Choice choice;
+  choice.testFalse();
 }
 
-TEST(Junction, True) {
-  FppTest::SmInitial::Junction junction;
-  junction.testTrue();
+TEST(Choice, True) {
+  FppTest::SmInitial::Choice choice;
+  choice.testTrue();
 }
 
 TEST(Nested, Test) {

@@ -1,5 +1,5 @@
 @ A state machine with an initial choice
-state machine Junction {
+state machine Choice {
 
   @ Action a
   action a
@@ -7,10 +7,10 @@ state machine Junction {
   @ Guard g
   guard g
 
-  initial do { a } enter J
+  initial do { a } enter C
 
-  @ Junction J
-  choice J { if g do { a } enter S else do { a, a } enter T }
+  @ Choice C
+  choice C { if g do { a } enter S else do { a, a } enter T }
 
   @ State S
   state S {

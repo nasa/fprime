@@ -8,7 +8,7 @@ register_fprime_module()
 
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/Basic.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/Junction.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/Choice.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Nested.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
 )

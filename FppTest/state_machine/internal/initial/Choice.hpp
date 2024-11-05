@@ -1,8 +1,8 @@
 // ======================================================================
 //
-// \title  Junction.hpp
+// \title  Choice.hpp
 // \author R. Bocchino
-// \brief  Test class for junction state machine (header)
+// \brief  Test class for choice state machine (header)
 //
 // \copyright
 // Copyright 2024, by the California Institute of Technology.
@@ -11,24 +11,24 @@
 //
 // ======================================================================
 
-#ifndef FppTest_Junction_HPP
-#define FppTest_Junction_HPP
+#ifndef FppTest_Choice_HPP
+#define FppTest_Choice_HPP
 
 #include "FppTest/state_machine/internal/harness/Harness.hpp"
-#include "FppTest/state_machine/internal/initial/JunctionStateMachineAc.hpp"
+#include "FppTest/state_machine/internal/initial/ChoiceStateMachineAc.hpp"
 
 namespace FppTest {
 
 namespace SmInitial {
 
-//! Junction state machine
-class Junction final : public JunctionStateMachineBase {
+//! Choice state machine
+class Choice final : public ChoiceStateMachineBase {
   public:
     static constexpr FwSizeType historySize = 10;
 
   public:
     //! Constructor
-    Junction();
+    Choice();
 
   private:
     //! Implementation of action a

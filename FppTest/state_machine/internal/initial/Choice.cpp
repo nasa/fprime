@@ -1,8 +1,8 @@
 // ======================================================================
 //
-// \title  Junction.hpp
+// \title  Choice.hpp
 // \author R. Bocchino
-// \brief  Test class for basic state machine (implementation)
+// \brief  Test class for choice state machine (implementation)
 //
 // \copyright
 // Copyright 2024, by the California Institute of Technology.
@@ -14,24 +14,24 @@
 #include <gtest/gtest.h>
 #include <limits>
 
-#include "FppTest/state_machine/internal/initial/Junction.hpp"
+#include "FppTest/state_machine/internal/initial/Choice.hpp"
 #include "STest/STest/Pick/Pick.hpp"
 
 namespace FppTest {
 
 namespace SmInitial {
 
-Junction::Junction() : JunctionStateMachineBase(), m_action_a_history(), m_guard_g() {}
+Choice::Choice() : ChoiceStateMachineBase(), m_action_a_history(), m_guard_g() {}
 
-void Junction::action_a(Signal signal) {
+void Choice::action_a(Signal signal) {
     this->m_action_a_history.push(signal);
 }
 
-bool Junction::guard_g(Signal signal) const {
+bool Choice::guard_g(Signal signal) const {
     return m_guard_g.call(signal);
 }
 
-void Junction::testFalse() {
+void Choice::testFalse() {
     this->m_action_a_history.clear();
     this->m_guard_g.reset();
     const FwEnumStoreType id = SmHarness::Pick::stateMachineId();
@@ -43,7 +43,7 @@ void Junction::testFalse() {
     this->checkActionsAndGuards(expectedActionSize, expectedGuardSize);
 }
 
-void Junction::testTrue() {
+void Choice::testTrue() {
     this->m_action_a_history.clear();
     this->m_guard_g.reset();
     this->m_guard_g.setReturnValue(true);
@@ -56,7 +56,7 @@ void Junction::testTrue() {
     this->checkActionsAndGuards(expectedActionSize, expectedGuardSize);
 }
 
-void Junction::checkActionsAndGuards(FwSizeType expectedActionSize, FwSizeType expectedGuardSize) {
+void Choice::checkActionsAndGuards(FwSizeType expectedActionSize, FwSizeType expectedGuardSize) {
     ASSERT_EQ(this->m_action_a_history.getSize(), expectedActionSize);
     for (FwSizeType i = 0; i < expectedActionSize; i++) {
         ASSERT_EQ(this->m_action_a_history.getItemAt(i), Signal::__FPRIME_AC_INITIAL_TRANSITION);
