@@ -2,7 +2,7 @@
 // \title Os/Posix/Directory.cpp
 // \brief Posix implementation for Os::Directory
 // ======================================================================
-#include <sys/errno.h>
+#include <errno.h>
 #include <sys/stat.h>
 #include <cstring>
 
