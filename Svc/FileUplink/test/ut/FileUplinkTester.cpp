@@ -394,14 +394,30 @@ namespace Svc {
     );
     ASSERT_EVENTS_SIZE(0);
 
-    // Simulate duplication of packet 0
-    --this->sequenceIndex;
+    ASSERT_EQ(0, component.m_lastSequenceIndex);
+    ASSERT_EQ(1, this->sequenceIndex);
+    ASSERT_EQ(Os::File::MAX_STATUS, component.m_lastPacketWriteStatus);
+
+    // Send data packet 1
+    const size_t byteOffset = 0;
+    this->sendDataPacket(byteOffset, packetData);
+    ASSERT_TLM_SIZE(1);
+    ASSERT_TLM_PacketsReceived(
+        0,
+        ++this->expectedPacketsReceived
+    );
+    ASSERT_TLM_Warnings_SIZE(0);
 
     // capture the checksum after sending the first packet
     const ::CFDP::Checksum expectedChecksum(component.m_file.m_checksum);
 
-    // Send the data packet (packet 0) again
-    const size_t byteOffset = 0;
+    // Simulate duplication of packet 1
+    --this->sequenceIndex;
+
+    ASSERT_EQ(this->sequenceIndex, component.m_lastSequenceIndex);
+    ASSERT_EQ(Os::File::OP_OK, component.m_lastPacketWriteStatus);
+
+    // Send data packet 1 again
     this->sendDataPacket(byteOffset, packetData);
     ASSERT_TLM_SIZE(2);
     ASSERT_TLM_PacketsReceived(
