@@ -32,8 +32,13 @@ namespace Task {
     PlatformIntType set_stack_size(pthread_attr_t& attributes, const Os::Task::Arguments& arguments) {
         PlatformIntType status = PosixTaskHandle::SUCCESS;
         FwSizeType stack = arguments.m_stackSize;
-        // Check for stack size multiple of page size
+// Check for stack size multiple of page size or skip when the function
+// is unavailable.
+#ifdef _SC_PAGESIZE
         long page_size = sysconf(_SC_PAGESIZE);
+#else
+        long page_size = -1; // Force skip and warning
+#endif
         if (page_size <= 0) {
             Fw::Logger::log(
                     "[WARNING] %s could not determine page size %s. Skipping stack-size check.\n",

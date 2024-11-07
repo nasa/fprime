@@ -89,12 +89,6 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Generic")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Linux")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Darwin")
 
-set(SOURCE_FILES
-    "${CMAKE_CURRENT_LIST_DIR}/test/ut/file/SyntheticFileSystem.cpp"
-)
-set(MOD_DEPS config)
-register_fprime_module(Os_Test_File_SyntheticFileSystem)
-
 # Basic source files used in every OSAL layer.  Contains common code and helpers.
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/ValidateFileCommon.cpp"
@@ -127,3 +121,11 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsMutexBasicLockableTest.cpp"
 )
 register_fprime_ut()
+
+if (BUILD_TESTING)
+    set(SOURCE_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/test/ut/file/SyntheticFileSystem.cpp"
+    )
+    set(MOD_DEPS config)
+    register_fprime_module(Os_Test_File_SyntheticFileSystem)
+endif()

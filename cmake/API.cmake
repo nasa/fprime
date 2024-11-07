@@ -18,6 +18,19 @@ set(FPRIME_UT_TARGET_LIST "" CACHE INTERNAL "FPRIME_UT_TARGET_LIST: custom fprim
 set(FPRIME_AUTOCODER_TARGET_LIST "" CACHE INTERNAL "FPRIME_AUTOCODER_TARGET_LIST: custom fprime targets" FORCE)
 
 ####
+# Macro `skip_on_sub_build`:
+#
+# Skip this remaining code in the current function or file when executing in the context of a sub build. Sub builds
+# execute utility and setup functions in fprime. However, certain CMake functions are not appropriate in this context
+# and should be skipped.
+####
+macro(skip_on_sub_build)
+    if (DEFINED FPRIME_SUB_BUILD_TARGETS)
+        return()
+    endif()
+endmacro()
+
+####
 # Macro `restrict_platforms`:
 #
 # Restricts a CMakeLists.txt file to a given list of platforms. This prevents usage on platforms for which the module

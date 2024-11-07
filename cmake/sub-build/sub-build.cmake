@@ -12,6 +12,7 @@
 include_guard()
 include(utilities)
 include(sub-build/sub-build-config)
+include(API)
 
 ####
 # Function `run_sub_build`:
@@ -28,52 +29,51 @@ include(sub-build/sub-build-config)
 # `ARGN`: list of targets to run as part of this sub-build. These will be registered, and run in order.
 #####
 function(run_sub_build SUB_BUILD_NAME)
-    if (NOT DEFINED FPRIME_SUB_BUILD_TARGETS)
-        message(STATUS "[sub-build] Performing sub-build: ${SUB_BUILD_NAME}")
-        _get_call_properties()
+    skip_on_sub_build()
+    message(STATUS "[sub-build] Performing sub-build: ${SUB_BUILD_NAME}")
+    _get_call_properties()
 
-        # Run CMake as efficiently as possible
-        file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/sub-build-${SUB_BUILD_NAME}")
-        message(STATUS "[sub-build] Generating: ${SUB_BUILD_NAME} with ${ARGN}")
-        string(REPLACE ";" "\\;" TARGET_LIST_AS_STRING "${ARGN}")
-        execute_process_or_fail("[sub-build] Failed to generate: ${SUB_BUILD_NAME}"
-            "${CMAKE_COMMAND}"
-            -G "${CMAKE_GENERATOR}"
-            "${CMAKE_CURRENT_SOURCE_DIR}"
-            "-DFPRIME_SUB_BUILD_TARGETS=${TARGET_LIST_AS_STRING}"
-            "-DFPRIME_SKIP_TOOLS_VERSION_CHECK=ON"
-            "-DFPRIME_BINARY_DIR=${CMAKE_BINARY_DIR}"
-            ${CALL_PROPS}
-            RESULT_VARIABLE result
-            WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/sub-build-${SUB_BUILD_NAME}"
-        )
+    # Run CMake as efficiently as possible
+    file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/sub-build-${SUB_BUILD_NAME}")
+    message(STATUS "[sub-build] Generating: ${SUB_BUILD_NAME} with ${ARGN}")
+    string(REPLACE ";" "\\;" TARGET_LIST_AS_STRING "${ARGN}")
+    execute_process_or_fail("[sub-build] Failed to generate: ${SUB_BUILD_NAME}"
+        "${CMAKE_COMMAND}"
+        -G "${CMAKE_GENERATOR}"
+        "${CMAKE_CURRENT_SOURCE_DIR}"
+        "-DFPRIME_SUB_BUILD_TARGETS=${TARGET_LIST_AS_STRING}"
+        "-DFPRIME_SKIP_TOOLS_VERSION_CHECK=ON"
+        "-DFPRIME_BINARY_DIR=${CMAKE_BINARY_DIR}"
+        ${CALL_PROPS}
+        RESULT_VARIABLE result
+        WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/sub-build-${SUB_BUILD_NAME}"
+    )
 
-        set(BUILD_EXTRA_ARGS)
-        # When specified add specific number of jobs to the sub build
-        if (DEFINED FPRIME_SUB_BUILD_JOBS)
-            list(APPEND BUILD_EXTRA_ARGS "--" "--jobs=${FPRIME_SUB_BUILD_JOBS}")
-        # Otherwise specify the MAKEFLAGS variable to speed-up makefile driven systems
-        else()
-            cmake_host_system_information(RESULT CPU_COUNT QUERY NUMBER_OF_PHYSICAL_CORES)
-            if(CPU_COUNT GREATER 0)
-                set(ENV{MAKEFLAGS} "--jobs=${CPU_COUNT}")
-            endif()
+    set(BUILD_EXTRA_ARGS)
+    # When specified add specific number of jobs to the sub build
+    if (DEFINED FPRIME_SUB_BUILD_JOBS)
+        list(APPEND BUILD_EXTRA_ARGS "--" "--jobs=${FPRIME_SUB_BUILD_JOBS}")
+    # Otherwise specify the MAKEFLAGS variable to speed-up makefile driven systems
+    else()
+        cmake_host_system_information(RESULT CPU_COUNT QUERY NUMBER_OF_PHYSICAL_CORES)
+        if(CPU_COUNT GREATER 0)
+            set(ENV{MAKEFLAGS} "--jobs=${CPU_COUNT}")
         endif()
-        foreach (TARGET IN LISTS ARGN)
-            get_filename_component(TARGET_NAME "${TARGET}" NAME_WE)
-            message(STATUS "[sub-build] Executing: ${SUB_BUILD_NAME} with ${TARGET_NAME}")
-            execute_process_or_fail("[sub-build] Failed to execute: ${SUB_BUILD_NAME}/${TARGET_NAME}"
-                "${CMAKE_COMMAND}"
-                --build
-                "${CMAKE_BINARY_DIR}/sub-build-${SUB_BUILD_NAME}"
-                --target
-                "${TARGET_NAME}"
-                ${BUILD_EXTRA_ARGS}
-                RESULT_VARIABLE result
-            )
-        endforeach()
-        message(STATUS "[sub-build] Performing sub-build: ${SUB_BUILD_NAME} - DONE")
     endif()
+    foreach (TARGET IN LISTS ARGN)
+        get_filename_component(TARGET_NAME "${TARGET}" NAME_WE)
+        message(STATUS "[sub-build] Executing: ${SUB_BUILD_NAME} with ${TARGET_NAME}")
+        execute_process_or_fail("[sub-build] Failed to execute: ${SUB_BUILD_NAME}/${TARGET_NAME}"
+            "${CMAKE_COMMAND}"
+            --build
+            "${CMAKE_BINARY_DIR}/sub-build-${SUB_BUILD_NAME}"
+            --target
+            "${TARGET_NAME}"
+            ${BUILD_EXTRA_ARGS}
+            RESULT_VARIABLE result
+        )
+    endforeach()
+    message(STATUS "[sub-build] Performing sub-build: ${SUB_BUILD_NAME} - DONE")
 endfunction(run_sub_build)
 
 ####

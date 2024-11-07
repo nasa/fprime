@@ -6,7 +6,9 @@
 #include "Os/Posix/error.hpp"
 
 #include <dirent.h>
+#ifndef TGT_OS_TYPE_VXWORKS
 #include <sys/statvfs.h>
+#endif
 #include <sys/stat.h>
 #include <unistd.h>
 #include <cstdio>
@@ -16,7 +18,6 @@
 namespace Os {
 namespace Posix {
 namespace FileSystem {
-
 
 PosixFileSystem::Status PosixFileSystem::_removeDirectory(const char* path) {
     Status status = OP_OK;
@@ -58,11 +59,19 @@ PosixFileSystem::Status PosixFileSystem::_changeWorkingDirectory(const char* pat
     return status;
 }
 
-PosixFileSystem::Status PosixFileSystem::_getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBytes) {
+PosixFileSystem::Status PosixFileSystem::_getFreeSpace(const char* path,
+                                                       FwSizeType& totalBytes,
+                                                       FwSizeType& freeBytes) {
+#ifdef TGT_OS_TYPE_VXWORKS
+    return Status::NOT_SUPPORTED;
+#else
     Status stat = OP_OK;
-    static_assert(std::numeric_limits<FwSizeType>::max() >= std::numeric_limits<fsblkcnt_t>::max(), "FwSizeType must be able to hold fsblkcnt_t");
-    static_assert(std::numeric_limits<FwSizeType>::min() <= std::numeric_limits<fsblkcnt_t>::min(), "FwSizeType must be able to hold fsblkcnt_t");
-    static_assert(std::numeric_limits<FwSizeType>::max() >= std::numeric_limits<unsigned long>::max(), "FwSizeType must be able to hold unsigned long");
+    static_assert(std::numeric_limits<FwSizeType>::max() >= std::numeric_limits<fsblkcnt_t>::max(),
+                  "FwSizeType must be able to hold fsblkcnt_t");
+    static_assert(std::numeric_limits<FwSizeType>::min() <= std::numeric_limits<fsblkcnt_t>::min(),
+                  "FwSizeType must be able to hold fsblkcnt_t");
+    static_assert(std::numeric_limits<FwSizeType>::max() >= std::numeric_limits<unsigned long>::max(),
+                  "FwSizeType must be able to hold unsigned long");
     struct statvfs fsStat;
     int ret = statvfs(path, &fsStat);
     if (ret) {
@@ -81,12 +90,13 @@ PosixFileSystem::Status PosixFileSystem::_getFreeSpace(const char* path, FwSizeT
     freeBytes = free_blocks * block_size;
     totalBytes = total_blocks * block_size;
     return stat;
+#endif
 }
 
 FileSystemHandle* PosixFileSystem::getHandle() {
     return &this->m_handle;
 }
 
-} // namespace File
-} // namespace Posix
-} // namespace Os
+}  // namespace FileSystem
+}  // namespace Posix
+}  // namespace Os

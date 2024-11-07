@@ -106,6 +106,9 @@ Task::Status Task::start(const Task::Arguments& arguments) {
 
     Task::Status status = this->m_delegate.start(wrapped_arguments);
     if (status == Task::Status::OP_OK) {
+        Task::m_lock.lock();
+        this->m_priority = wrapped_arguments.m_priority;
+        Task::m_lock.unlock();
         Task::s_taskMutex.lock();
         Task::s_numTasks++;
         Task::s_taskMutex.unlock();
@@ -161,6 +164,11 @@ void Task::resume() {
 bool Task::isCooperative() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<TaskInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate.isCooperative();
+}
+
+FwSizeType Task::getPriority() {
+    Os::ScopeLock lock(this->m_lock);
+    return this->m_priority;
 }
 
 TaskHandle* Task::getHandle() {
