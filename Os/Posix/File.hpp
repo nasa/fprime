@@ -34,6 +34,9 @@ class PosixFile : public FileInterface {
 
     //! \brief copy constructor
 #ifdef TGT_OS_TYPE_VXWORKS
+    // Adding this pound-if-define code to allow building VxWorks for POSIX.
+    // Better than the alternative of copying this entire file to the VxWorks repo
+    // and removing this line.
     PosixFile(const PosixFile& other) = delete;
 #else
     PosixFile(const PosixFile& other);
@@ -41,6 +44,9 @@ class PosixFile : public FileInterface {
 
 //! \brief assignment operator that copies the internal representation
 #ifdef TGT_OS_TYPE_VXWORKS
+    // Adding this pound-if-define code to allow building VxWorks for POSIX.
+    // Better than the alternative of copying this entire file to the VxWorks repo
+    // and removing this line.
     PosixFile& operator=(const PosixFile& other) = delete;
 #else
     PosixFile& operator=(const PosixFile& other);
