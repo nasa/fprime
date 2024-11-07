@@ -169,7 +169,7 @@ namespace Svc {
             // read the directory index
             stat = stateFile.read(buffer, size);
             if (stat != Os::File::OP_OK) {
-                this->log_WARNING_HI_StateFileReadError(this->m_stateFile, stat, fileLoc);
+                this->log_WARNING_HI_StateFileReadError(this->m_stateFile, stat, static_cast<U32>(fileLoc));
                 return Fw::CmdResponse::EXECUTION_ERROR;
             }
 
@@ -182,12 +182,12 @@ namespace Svc {
             // abandon it and finish. We can at least operate on
             // the entries that were read.
             if (size != sizeof(buffer)) {
-                this->log_WARNING_HI_StateFileTruncated(this->m_stateFile, fileLoc, size);
+                this->log_WARNING_HI_StateFileTruncated(this->m_stateFile, static_cast<U32>(fileLoc), static_cast<U32>(size));
                 return Fw::CmdResponse::OK;
             }
 
             // reset the buffer for deserializing the entry
-            entryBuffer.setBuffLen(size);
+            entryBuffer.setBuffLen(static_cast<Fw::Serializable::SizeType>(size));
             entryBuffer.resetDeser();
 
             // deserialization after this point should always work, since
