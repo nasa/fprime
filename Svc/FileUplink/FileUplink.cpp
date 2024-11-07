@@ -25,7 +25,7 @@ namespace Svc {
       FileUplinkComponentBase(name),
       m_receiveMode(START),
       m_lastSequenceIndex(0),
-      m_lastPacketWriteStatus(Os::File::OP_OK),
+      m_lastPacketWriteStatus(Os::File::MAX_STATUS),
       m_filesReceived(this),
       m_packetsReceived(this),
       m_warnings(this)
@@ -217,6 +217,7 @@ namespace Svc {
     this->m_file.osFile.close();
     this->m_receiveMode = START;
     this->m_lastSequenceIndex = 0;
+    this->m_lastPacketWriteStatus = Os::File::MAX_STATUS;
   }
 
   void FileUplink ::
@@ -224,6 +225,7 @@ namespace Svc {
   {
     this->m_receiveMode = DATA;
     this->m_lastSequenceIndex = 0;
+    this->m_lastPacketWriteStatus = Os::File::MAX_STATUS;
   }
 
 }
