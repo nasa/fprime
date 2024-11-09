@@ -12,3 +12,5 @@ viewed through F´.
 | [Package Implementations](./package-implementations.md)                 |
 | [FPP JSON Dictionary Specification](./fpp-json-dict.md)                 |
 | [Integration Test API Design](./integration-test-api.md)                |
+| [Data Products Design](./data-products.md)                              |
+| [State Machines Design](./state-machines.md)                            |
