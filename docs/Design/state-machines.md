@@ -41,10 +41,10 @@ state machines.
 
 To work with internal state machines in FPP, you do the following:
 
-1. Define a state machine *M*, specifying its behavior.
-1. Add an instance *I* of *M* to a component *C*.
-1. In the implementation of *C*, write code that interacts with the
-generated code for *I*.
+1. Define a state machine _M_, specifying its behavior.
+1. Add an instance _I_ of _M_ to a component _C_.
+1. In the implementation of _C_, write code that interacts with the
+generated code for _I_.
 
 Steps 1 and 2 are fully documented in 
 [_The FPP User's Guide_](https://nasa.github.io/fpp/fpp-users-guide.html).
