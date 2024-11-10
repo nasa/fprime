@@ -15,8 +15,8 @@ F Prime supports two kinds of state machines:
 **external state machines** and **internal state machines**.
 An external state machine is specified by an external tool,
 typically the
-[https://github.com/JPLOpenSource/STARS/tree/main](State Autocoding for Real-Time Systems tool),
-or STARS.
+[State Autocoding for Real-Time Systems (STARS) 
+tool](https://github.com/JPLOpenSource/STARS/tree/main).
 An internal state machine is specified in FPP, the modeling language
 for F Prime.
 
