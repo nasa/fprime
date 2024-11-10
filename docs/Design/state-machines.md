@@ -51,15 +51,14 @@ Steps 1 and 2 are fully documented in
 Here we focus on the generated code for state machines and for
 components that include state machine instances.
 
-## 4. State Machines
+## 4. State Machine Definitions
 
-In this section we describe the generated code for state machine instances.
+In this section we describe the generated code for state machine definitions.
 This code is generated into files _M_ `StateMachineAc.hpp` and _M_ 
 `StateMachineAc.cpp`
 when you run `fpp-to-cpp` on an FPP model that includes a definition
 of a state machine _M_.
 
-The purpose of this section is to document the design of the generated code.
 In the ordinary way of programming with F Prime, it is unlikely
 that you will directly interact with the code described here.
 Instead, you will use the component interface to state machine instances
@@ -71,8 +70,8 @@ Each state machine definition _M_ in the FPP model becomes a C++ base class _M_
 `StateMachineBase`.
 This class is enclosed in the namespaces, if any, corresponding to the modules
 that enclose the definition in FPP.
-For example, a state machine named `A.B.M` in FPP becomes a class
-`A::B::MStateMachineBase` in C++.
+For example, a state machine whose qualified name is `A.B.M` in FPP becomes a 
+class `A::B::MStateMachineBase` in C++.
 The base class provides a partial implementation which is completed when
 the state machine is instantiated.
 
@@ -90,9 +89,6 @@ together with a special uninitialized state.
 These are the signals specified in the FPP model together with a
 special signal that represents the initial transition on startup.
 
-**Constructors and destructors:**
-There is a zero-argument constructor and a destructor.
-
 **Member functions:**
 
 * There is a function `getState` for getting the current state
@@ -101,11 +97,58 @@ of the state machine.
 * There is one function `sendSignal` _s_ for each signal _s_
 specified in the FPP model.
 If the signal _s_ carries a value of type _T_, then this function has one
-formal parameter of type _T_; otherwise it has no formal parameters.
+formal parameter of type _paramType(T)_; otherwise it has no formal parameters.
+Here _paramType(T)_ means (1) _T_ if _T_ is a primitive type; otherwise (2)
+`const` reference to `Fw::StringBase` if _T_ is a string type; otherwise
+(3) `const` reference to _T_.
 
+### 4.3. The Protected Interface
 
+**Constructors and destructors:**
+There is a zero-argument constructor and a destructor.
 
-TODO
+**Initialization:**
+There is a function `initBase` with a single formal parameter `id`
+of type `FwEnumStoreType`.
+This function must be called on a state machine instance before
+any signals are sent to the instance.
+The parameter `id` represents the state machine identifier.
+The type is `FwEnumStoreType` because the state machine identifier
+type is an enumeration defined in the subclass.
+
+**Actions:**
+There is one pure virtual function `action_` _a_ for each action
+_a_ specified in the FPP model.
+Each action returns `void` has a formal parameter `signal` of type `Signal`.
+If the action has a type _T_, then there is a second
+formal parameter of type _paramType(T)_.
+
+**Guards:**
+There is one pure virtual `const` function `guard_` _g_ for each guard
+_g_ specified in the FPP model.
+Each guard returns `bool` and has a formal parameter `signal` of type `Signal`.
+If the guard has a type _T_, then there is a second
+formal parameter of type _paramType(T)_.
+
+**Member variables:**
+Each state machine base class has the following member variables:
+
+* A member `m_id` of type `FwEnumStoreType`.
+This variable records the current state of the state machine,
+represented as `FwEnumStoreType`.
+The initial value is zero.
+
+* A member `m_state` of type `State`.
+This variable records the current state of the state machine.
+The initial value is `State::__FPRIME_AC_UNINITIALIZED`.
+
+### 4.4. The Private Interface
+
+For each state _S_ and choice _C_ in the state machine there is one
+entry function for _S_ or _C_.
+This function implements the entry behavior for _S_ or _C_
+as specified in 
+[_The FPP Language Specification_](https://nasa.github.io/fpp/fpp-spec.html).
 
 ## 5. State Machine Instances in Components
 
