@@ -51,10 +51,62 @@ Steps 1 and 2 are fully documented in
 Here we focus on the generated code for state machines and for
 components that include state machine instances.
 
-## 3.1. State Machines
+## 4. State Machines
+
+In this section we describe the generated code for state machine instances.
+This code is generated into files _M_ `StateMachineAc.hpp` and _M_ 
+`StateMachineAc.cpp`
+when you run `fpp-to-cpp` on an FPP model that includes a definition
+of a state machine _M_.
+
+The purpose of this section is to document the design of the generated code.
+In the ordinary way of programming with F Prime, it is unlikely
+that you will directly interact with the code described here.
+Instead, you will use the component interface to state machine instances
+described in the next section.
+
+### 4.1. The State Machine Base Class
+
+Each state machine definition _M_ in the FPP model becomes a C++ base class _M_ 
+`StateMachineBase`.
+This class is enclosed in the namespaces, if any, corresponding to the modules
+that enclose the definition in FPP.
+For example, a state machine named `A.B.M` in FPP becomes a class
+`A::B::MStateMachineBase` in C++.
+The base class provides a partial implementation which is completed when
+the state machine is instantiated.
+
+### 4.2. The Public Interface
+
+Each generated state machine has the following public interface.
+
+**Types:**
+
+* There is an enumeration representing the states of the state machine.
+These are the leaf states specified in the FPP model
+together with a special uninitialized state.
+
+* There is an enumeration representing the signals of the state machine.
+These are the signals specified in the FPP model together with a
+special signal that represents the initial transition on startup.
+
+**Constructors and destructors:**
+There is a zero-argument constructor and a destructor.
+
+**Member functions:**
+
+* There is a function `getState` for getting the current state
+of the state machine.
+
+* There is one function `sendSignal` _s_ for each signal _s_
+specified in the FPP model.
+If the signal _s_ carries a value of type _T_, then this function has one
+formal parameter of type _T_; otherwise it has no formal parameters.
+
+
 
 TODO
 
-## 3.2. State Machine Instances
+## 5. State Machine Instances in Components
 
 TODO
