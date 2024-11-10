@@ -59,10 +59,13 @@ This code is generated into files _M_ `StateMachineAc.hpp` and _M_
 when you run `fpp-to-cpp` on an FPP model that includes a definition
 of a state machine _M_.
 
+The purpose of this section is to document the design.
 In the ordinary way of programming with F Prime, it is unlikely
 that you will directly interact with the code described here.
 Instead, you will use the component interface to state machine instances
 described in the next section.
+Therefore, if your primary interest is to program with F Prime state
+machines, you can skip this section.
 
 ### 4.1. The State Machine Base Class
 
