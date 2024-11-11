@@ -188,9 +188,10 @@ This class has the following properties:
 * It is a protected inner class of the auto-generated base class for _C_.
 
 * Its name is the fully qualified name of the state machine,
-with the dots replaced by underscores.
+converted to a C++ identify by replacing the dots with underscores.
 For example, if a state machine has name `A.B.M` in FPP,
 the C++ name of its implementation class is `A_B_M`.
+We will refer to this name as _fqCppIdent(M)_.
 
 * It is a public derived class of the state machine base
 class for _M_ that we described in the previous section.
@@ -277,13 +278,42 @@ When you generate a C++ component implementation template for _C_, you get
 a stub for each of these functions that you can fill in.
 
 **Action functions:**
-TODO
+For each state machine _M_ instantiated in _C_, for each action _a_
+specified in _M_, there is a pure virtual function _fqCppIdent(M)_ `_action_` _a_.
+Recall that _fqCppIdent(M)_ is the fully qualified name of _M_ represented
+as a C++ identifier, i.e., the fully qualified name of _M_ in FPP with
+the dots replaced by underscores.
+This function always has two formal parameters: the state machine ID
+and the signal.
+If the action requires a value of type _T_, then there is a third
+argument of type _paramType(T)_.
+
+When an instance _m_ of _M_ does action _a_, it calls the action function
+for _a_ in the auto-generated base class of _M_.
+That function calls _fqName(M)_ `_action_` _a_ with the correct state machine 
+ID, signal, and value, if any.
 
 **Guard functions:**
-TODO
+For each state machine _M_ is instantiated in _C_, for each guard _g_
+specified in _M_, there is a pure virtual function _fqName(M)_ `_guard_` _g_.
+This is a `const` function that returns `bool` and has the same formal 
+parameters as an action function that requires the same value type, if any.
+
+When an instance _m_ of _M_ evaluates guard _g_, it calls the guard function
+for _g_ in the auto-generated base class of _M_.
+That function calls _fqName(M)_ `_guard_` _g_ with the correct state machine 
+ID, signal, and value, if any, and returns the resulting Boolean value.
 
 **Overflow hook functions:**
-TODO
+For each state machine instance _m_ that has overflow behavior `hook`,
+there is a pure virtual function _m_ `_stateMachineOverflowHook` with
+the following formal parameters: the state machine ID,
+the signal, and a reference to the message buffer.
+The deserialization pointer of the message buffer points to the start
+of the message data, so the data can be deserialized if needed.
+If the signal that caused the overflow carries no data, then the
+deserialization pointer is at the end of the buffer, and deserializing
+data from the buffer will return a `BUFFER_EMPTY` error.
 
 ### 5.5. Private Member Functions
 
