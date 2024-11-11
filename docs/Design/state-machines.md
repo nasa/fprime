@@ -242,14 +242,14 @@ by that function.
 For each state machine _m_ in the FPP component model, there is
 one private member variable `m_stateMachine_` _m_.
 Its type is the [state machine implementation class](#state-machine-impl)
-corresponding to the type of _m_.
+corresponding to the state machine _M_ instantiated by _m_.
 
 ### 5.4. Protected Member Functions
 
 #### 5.4.1. Implemented Functions
 
-The following functions have complete implementations and are available for you 
-to call in the derived class that implements _C_.
+The following functions have complete implementations.
+They are available to call in the derived class that implements _C_.
 
 **State getter functions:**
 For each state machine instance _m_ in _C_, there is a `const` function
@@ -258,7 +258,7 @@ _m_ `_getState` that gets the current state of _m_.
 **Signal send functions:**
 For each state machine instance _m_, and for each signal _s_ defined
 in the state machine _M_ instantiated by _m_, there is a function
-_m_ `_sendSignal_` _s_ for sending signal _s_ to state machine instance _m_.
+_m_ `_sendSignal_` _s_ for sending _s_ to _m_.
 If _s_ carries data of type _T_, then this function has a single
 formal parameter of type _paramType(T)_; otherwise it has no
 formal parameters.
@@ -293,13 +293,13 @@ specified in _M_, there is a pure virtual function _fqCppIdent(M)_ `_action_` _a
 Recall that _fqCppIdent(M)_ is the fully qualified name of _M_ represented
 as a C++ identifier, i.e., the fully qualified name of _M_ in FPP with
 the dots replaced by underscores.
-This function always has two formal parameters: the state machine ID
+This function has at least two formal parameters: the state machine ID
 and the signal.
 If the action requires a value of type _T_, then there is a third
-argument of type _paramType(T)_.
+formal parameter of type _paramType(T)_.
 
 When an instance _m_ of _M_ does action _a_, it calls the action function
-for _a_ in the auto-generated base class of _M_.
+for _a_ in the [auto-generated base class of _M_](#state-machine-impl).
 That function calls _fqCppIdent(M)_ `_action_` _a_ with the correct state machine 
 ID, signal, and value, if any.
 
@@ -312,7 +312,7 @@ It has the same formal parameters as an action function that requires the same
 value type, if any.
 
 When an instance _m_ of _M_ evaluates guard _g_, it calls the guard function
-for _g_ in the auto-generated base class of _M_.
+for _g_ in the [auto-generated base class of _M_](#state-machine-impl).
 That function calls _fqCppIdent(M)_ `_guard_` _g_ with the correct state machine 
 ID, signal, and value, if any, and returns the resulting Boolean value.
 
