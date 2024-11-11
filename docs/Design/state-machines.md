@@ -280,7 +280,7 @@ Each signal send function does the following:
 1. Call the appropriate [`sendSignalFinish`](#component-private) function to 
 put _B_ onto the component queue and handle overflow.
 
-<a href="component-pure-virtual"></a>
+<a name="component-pure-virtual"></a>
 #### 5.4.2. Pure Virtual Functions
 
 The following functions are pure virtual in the generated base class for _C_.
