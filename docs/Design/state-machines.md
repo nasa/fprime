@@ -31,7 +31,7 @@ the implementation.
 1. In the component implementations, write code that interacts with
 the state machine instances.
 
-Steps 1,2, and 5 are described in the STARS documentation.
+Steps 1, 2, and 5 are described in the STARS documentation.
 Steps 3 and 4 are described in the
 [_The FPP User's Guide_](https://nasa.github.io/fpp/fpp-users-guide.html).
 In the rest of this document, we will focus on the design of internal
@@ -52,7 +52,7 @@ generated code for the instances defined in step 2.
 Steps 1 and 2 are fully documented in 
 [_The FPP User's Guide_](https://nasa.github.io/fpp/fpp-users-guide.html).
 Here we focus on the generated code for state machines and for
-components that include state machine instances.
+state machine instances.
 
 ## 4. State Machine Definitions
 
@@ -65,7 +65,7 @@ when you run `fpp-to-cpp` on an FPP model that includes _D_.
 In the ordinary way of programming with F Prime, it is unlikely
 that you will directly interact with the code described here.
 Instead, you will use the component interface to state machine instances
-described in the next section.
+described in the [next section](#state-machine-instances).
 Therefore, if your primary interest is to program with F Prime state
 machines, you can skip this section.
 
