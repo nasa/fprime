@@ -161,6 +161,7 @@ as specified in
 
 In this section we describe the generated code for instances of state machines
 that are part of a component _C_.
+This code is part of t of the auto-generated base class for _C_.
 Note that in general there may be any number of instances of any number
 of state machines.
 
@@ -171,6 +172,7 @@ that represents the state machine identifiers.
 There is one enumerated constant for each state machine instance
 in _C_.
 
+<a name="state-machine-impl"></a>
 ### 5.2. State Machine Implementation Classes
 
 There is one implementation class for each state machine definition
@@ -235,5 +237,54 @@ It passes in the state machine ID of _m_ and returns the Boolean value returned
 by that function.
 
 ### 5.3. State Machine Instances
+
+For each state machine _m_ in the FPP component model, there is
+one private member variable `m_stateMachine_` _m_.
+Its type is the [state machine implementation class](#state-machine-impl)
+corresponding to the type of _m_.
+
+### 5.4. Protected Member Functions
+
+#### 5.4.1. Implemented Functions
+
+The following functions have complete implementations and are available for you 
+to call in the derived class that implements _C_.
+
+**State getter functions:**
+For each state machine instance _m_ in _C_, there is a `const` function
+_m_ `getState` that gets the current state of _m_.
+
+**Signal send functions:**
+For each state machine instance _m_, and for each signal _s_ defined
+in the state machine _M_ instantiated by _m_, there is a function
+_m_ `sendSignal` _s_ for sending signal _s_ to state machine instance _m_.
+If _s_ carries data of type _T_, then this function has a single
+formal parameter of type _paramType(T)_; otherwise it has no
+formal parameters.
+
+Calling a signal send function puts a message on the queue of the
+current instance of the component _C_.
+When the message is dispatched, the auto-generated code calls
+the function that sends the signal to the state machine.
+This way state machines can safely send signals when they
+are doing actions.
+
+#### 5.4.2. Pure Virtual Functions
+
+The following functions are pure virtual in the generated base class.
+You must implement them.
+When you generate a C++ component implementation template, you get
+a stub for each of these functions that you can fill in.
+
+**Action functions:**
+TODO
+
+**Guard functions:**
+TODO
+
+**Overflow hook functions:**
+TODO
+
+### 5.5. Private Member Functions
 
 TODO
