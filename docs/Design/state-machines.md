@@ -226,14 +226,14 @@ machine ID.
 
 **Actions:** For each action _a_ of _M_, there is one private function that 
 implements the pure virtual function for _a_ defined in the base class.
-The implementation calls the pure virtual function in the interface of _C_
-that corresponds to to _M_ and _a_ (see below).
+The implementation calls the [pure virtual function in the interface of _C_
+that corresponds to to _M_ and _a_](#component-pure-virtual).
 It passes in the state machine ID of _m_.
 
 **Guards:** For each guard _g_ of _M_, there is one private function that 
 implements the pure virtual function for _g_ defined in the base class.
-The implementation calls the pure virtual function in component _C_ that 
-corresponds to to _M_ and _g_ (see below).
+The implementation calls the [pure virtual function in component _C_ that 
+corresponds to to _M_ and _g_](#component-pure-virtual).
 It passes in the state machine ID of _m_ and returns the Boolean value returned 
 by that function.
 
@@ -280,6 +280,7 @@ Each signal send function does the following:
 1. Call the appropriate [`sendSignalFinish`](#component-private) function to 
 put _B_ onto the component queue and handle overflow.
 
+<a href="component-pure-virtual"></a>
 #### 5.4.2. Pure Virtual Functions
 
 The following functions are pure virtual in the generated base class for _C_.
