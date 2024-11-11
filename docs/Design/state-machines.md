@@ -221,14 +221,14 @@ in the base class and casts it to `SmId`.
 Thus it provides a type-safe way to get the state
 machine ID.
 
-**Actions:** For each action _a_ of _M_, there is one function that implements
-the pure virtual function for _a_ defined in the base class.
+**Actions:** For each action _a_ of _M_, there is one private function that 
+implements the pure virtual function for _a_ defined in the base class.
 The implementation calls the pure virtual function in the interface of _C_
 that corresponds to to _M_ and _a_ (see below).
 It passes in the state machine ID of _m_.
 
-**Guards:** For each guard _g_ of _M_, there is one function that implements
-the pure virtual function for _g_ defined in the base class.
+**Guards:** For each guard _g_ of _M_, there is one private function that 
+implements the pure virtual function for _g_ defined in the base class.
 The implementation calls the pure virtual function in component _C_ that 
 corresponds to to _M_ and _g_ (see below).
 It passes in the state machine ID of _m_ and returns the Boolean value returned 
