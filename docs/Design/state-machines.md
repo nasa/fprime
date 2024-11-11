@@ -270,6 +270,16 @@ the function that sends the signal to the state machine.
 This way state machines can safely send signals when they
 are doing actions.
 
+Each signal send function does the following:
+
+1. Call [`sendSignalStart`](#component-private) to begin constructing a message 
+   buffer _B_.
+
+1. If the signal carries data, then serialize the data into _B_.
+
+1. Call the appropriate [`sendSignalFinish`](#component-private) function to 
+put _B_ onto the component queue and handle overflow.
+
 #### 5.4.2. Pure Virtual Functions
 
 The following functions are pure virtual in the generated base class for _C_.
@@ -295,9 +305,11 @@ ID, signal, and value, if any.
 
 **Guard functions:**
 For each state machine _M_ is instantiated in _C_, for each guard _g_
-specified in _M_, there is a pure virtual function _fqCppIdent(M)_ `_guard_` _g_.
-This is a `const` function that returns `bool` and has the same formal 
-parameters as an action function that requires the same value type, if any.
+specified in _M_, there is a pure virtual function _fqCppIdent(M)_ `_guard_` 
+_g_.
+This is a `const` function that returns `bool`.
+It has the same formal parameters as an action function that requires the same 
+value type, if any.
 
 When an instance _m_ of _M_ evaluates guard _g_, it calls the guard function
 for _g_ in the auto-generated base class of _M_.
@@ -315,6 +327,48 @@ If the signal that caused the overflow carries no data, then the
 deserialization pointer is at the end of the buffer, and deserializing
 data from the buffer will return a `BUFFER_EMPTY` error.
 
+<a name="component-private"></a>
 ### 5.5. Private Member Functions
 
-TODO
+The generated base class for _C_ has the following private member functions.
+
+**Send signal helper functions:**
+
+* A function `sendSignalStart`.
+Each signal send function calls this function to begin
+constructing a message buffer for sending a state machine signal.
+This function serializes the following data into the message buffer:
+message type, the port number, the state machine ID, and the signal.
+
+* For each state machine instance _m_, a function _m_ `_sendSignalFinish`.
+This function puts the message buffer on the queue with the correct
+priority and overflow behavior for _m_.
+
+**Helper functions for state machine dispatch:**
+
+* A function `smDispatch` for initial dispatch of a state machine
+signal message from the queue.
+This function does the following:
+
+  1. Call `deserializeSmIdAndSignal` to deserialize the state machine ID and
+     signal from the message buffer as `FwEnumStoreType` values.
+
+  1. Cast the state machine ID to `SmId` and use it to select the
+     target state machine instance _m_.
+
+  1. Cast the signal to the appropriate type for _m_.
+
+  1. Call the appropriate `smDispatch` helper for the state machine _M_ of
+     which _m_ is an instance, passing the message buffer, a reference to 
+     `m_stateMachine_` _m_, and the signal.
+
+* A function `deserializeSmIdAndSignal` for deserializing the state
+  machine ID and signal from the message buffer as `FwEnumStoreType` values.
+
+* For each state machine _M_ that is instantiated in _C_, a function
+  _fqCppIdent(M)_ `_smDispatch` for dispatching signals to state machine
+  instances of type _m_.
+  It takes as arguments the message buffer _B_, a reference _sm_ to a state machine instance,
+  and a signal _s_.
+  It switches on _s_, deserializes the data from _B_ if there is any for _s_,
+  and calls _sm_ `.sendSignal_` _s_, passing in the data, if any.
