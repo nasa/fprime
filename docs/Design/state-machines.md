@@ -252,12 +252,12 @@ to call in the derived class that implements _C_.
 
 **State getter functions:**
 For each state machine instance _m_ in _C_, there is a `const` function
-_m_ `getState` that gets the current state of _m_.
+_m_ `_getState` that gets the current state of _m_.
 
 **Signal send functions:**
 For each state machine instance _m_, and for each signal _s_ defined
 in the state machine _M_ instantiated by _m_, there is a function
-_m_ `sendSignal` _s_ for sending signal _s_ to state machine instance _m_.
+_m_ `_sendSignal_` _s_ for sending signal _s_ to state machine instance _m_.
 If _s_ carries data of type _T_, then this function has a single
 formal parameter of type _paramType(T)_; otherwise it has no
 formal parameters.
