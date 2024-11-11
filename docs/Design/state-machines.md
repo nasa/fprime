@@ -69,6 +69,16 @@ described in the [next section](#state-machine-instances).
 Therefore, if your primary interest is to program with F Prime state
 machines, you can skip this section.
 
+For examples of generated code, you can do the following:
+
+1. In a local installation of the `fprime` repository, go into `FppTest` and 
+run `fprime-util generate --ut` and then `fprime-util check`.
+
+1. Look at the FPP models in `fprime/FppTest/state_machine/internal/state`.
+
+1. Look at the generated files in 
+   `fprime/FppTest/build-fprime-automatic-native-ut/FppTest/state_machine/internal/state`
+
 <a name="sm-base-class"></a>
 ### 4.1. The State Machine Base Class
 
@@ -167,6 +177,17 @@ that are part of a component _C_.
 This code is part of the auto-generated base class for _C_.
 In general there may be any number of instances of any number
 of state machines.
+
+For examples of generated code, you can do the following:
+
+1. In a local installation of the `fprime` repository, go into `FppTest` and 
+run `fprime-util generate --ut` and then `fprime-util check`.
+
+1. Look at the FPP models in 
+   `fprime/FppTest/state_machine/internal_instance/state`.
+
+1. Look at the generated files in 
+   `fprime/FppTest/build-fprime-automatic-native-ut/FppTest/state_machine/internal_instance/state`
 
 ### 5.1. State Machine Identifiers
 
