@@ -80,6 +80,7 @@ becomes a class `A::B::MStateMachineBase` in C++.
 The base class provides a partial implementation which is completed when
 the state machine is [instantiated](#state-machine-instances).
 
+<a name="sm-public"></a>
 ### 4.2. The Public Interface
 
 Each generated state machine has the following public interface.
@@ -263,7 +264,7 @@ For each state machine instance _m_, and for each signal _s_ defined
 in the state machine _M_ instantiated by _m_, there is a function
 _m_ `_sendSignal_` _s_ for sending _s_ to _m_.
 If _s_ carries data of type _T_, then this function has a single
-formal parameter of type _paramType(T)_; otherwise it has no
+formal parameter of type [_paramType(T)_](#sm-public); otherwise it has no
 formal parameters.
 
 Calling a signal send function puts a message on the queue of the
@@ -300,7 +301,7 @@ the dots replaced by underscores.
 This function has at least two formal parameters: the state machine ID
 and the signal.
 If the action requires a value of type _T_, then there is a third
-formal parameter of type _paramType(T)_.
+formal parameter of type [_paramType(T)_](#sm-public).
 
 When an instance _m_ of _M_ does action _a_, it calls the action function
 for _a_ in the [auto-generated base class of _M_](#state-machine-impl).
