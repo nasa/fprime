@@ -41,10 +41,13 @@ state machines.
 
 To work with internal state machines in FPP, you do the following:
 
-1. Define a state machine _M_, specifying its behavior.
-1. Add an instance _I_ of _M_ to a component _C_.
+1. Define one or more state machines, specifying their behavior.
+
+1. Add one or more instances of the state machines defined in step 1 to a 
+   component _C_.
+
 1. In the implementation of _C_, write code that interacts with the
-generated code for _I_.
+generated code for the instances defined in step 2.
 
 Steps 1 and 2 are fully documented in 
 [_The FPP User's Guide_](https://nasa.github.io/fpp/fpp-users-guide.html).
@@ -53,7 +56,8 @@ components that include state machine instances.
 
 ## 4. State Machine Definitions
 
-In this section we describe the generated code for state machine definitions.
+In this section we describe the generated code for a definition of a state
+machine with name _M_.
 This code is generated into files _M_ `StateMachineAc.hpp` and _M_ 
 `StateMachineAc.cpp`
 when you run `fpp-to-cpp` on an FPP model that includes a definition
@@ -154,5 +158,82 @@ as specified in
 [_The FPP Language Specification_](https://nasa.github.io/fpp/fpp-spec.html).
 
 ## 5. State Machine Instances in Components
+
+In this section we describe the generated code for instances of state machines
+that are part of a component _C_.
+Note that in general there may be any number of instances of any number
+of state machines.
+
+### 5.1. State Machine Identifiers
+
+There is an enumeration `SmId` with numeric type `FwEnumStoreType`
+that represents the state machine identifiers.
+There is one enumerated constant for each state machine instance
+in _C_.
+
+### 5.2. State Machine Implementation Classes
+
+There is one implementation class for each state machine definition
+_M_ that is the type of a state machine instance in _C_.
+For example, if a state machine instance
+```
+state machine instance m: M
+```
+appears in _C_, then _C_ contains an implementation class
+for _M_.
+This class has the following properties:
+
+* It is a protected inner class of the auto-generated base class for _C_.
+
+* Its name is the fully qualified name of the state machine,
+with the dots replaced by underscores.
+For example, if a state machine has name `A.B.M` in FPP, its
+the name of its implementation class in C++ is `A_B_M`.
+
+* It is a public derived class of the state machine base
+class for _M_ that we described in the previous section.
+
+Each state machine implementation class has the following
+elements in its interface.
+
+**Member variables:**
+There is a member `m_component` that is a reference to
+the enclosing component instance.
+This way the state machine instance can call into
+the interface of the component instance.
+
+**Construction:** There is a public constructor 
+that takes a reference `*this` to the enclosing component
+as an argument.
+It initializes the member variable described above.
+
+**Initialization:** There is a public function
+`init` with one formal parameter `smId` of type `SmId`.
+This function casts its argument to `FwEnumStoreType`
+and calls the function `initBase` defined in the base class.
+Thus it provides a type-safe way to initialize the state
+machine ID.
+
+**State ID:** There is a public function `getId`
+that returns the state machine ID.
+It gets the value out of the `m_id` field defined
+in the base class and casts it to `SmId`.
+Thus it provides a type-safe way to get the state
+machine ID.
+
+**Actions:** For each action _a_ of _M_, there is one function that implements
+the pure virtual function for _a_ defined in the base class.
+The implementation calls the pure virtual function in the interface of _C_
+that corresponds to to _M_ and _a_ (see below).
+It passes in the state machine ID of _m_.
+
+**Guards:** For each guard _g_ of _M_, there is one function that implements
+the pure virtual function for _g_ defined in the base class.
+The implementation calls the pure virtual function in component _C_ that 
+corresponds to to _M_ and _g_ (see below).
+It passes in the state machine ID of _m_ and returns the Boolean value returned 
+by that function.
+
+### 5.3. State Machine Instances
 
 TODO
