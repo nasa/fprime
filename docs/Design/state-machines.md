@@ -71,12 +71,12 @@ machines, you can skip this section.
 
 ### 4.1. The State Machine Base Class
 
-Each state machine definition _M_ in the FPP model becomes a C++ base class _M_ 
-`StateMachineBase`.
-This class is enclosed in the namespaces, if any, corresponding to the modules
-that enclose the definition in FPP.
-For example, a state machine whose qualified name is `A.B.M` in FPP becomes a 
-class `A::B::MStateMachineBase` in C++.
+Each state machine definition _D_ in the FPP model becomes a C++ base class _M_ 
+`StateMachineBase`, where _M_ is the unqualified name of the definition.
+This class is enclosed in the namespaces, if any, given by the qualified
+name of _D_.
+For example, a state machine definition whose qualified name is `A.B.M` in FPP 
+becomes a class `A::B::MStateMachineBase` in C++.
 The base class provides a partial implementation which is completed when
 the state machine is instantiated.
 
