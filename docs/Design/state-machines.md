@@ -251,6 +251,8 @@ corresponding to the state machine _M_ instantiated by _m_.
 
 ### 5.4. Protected Member Functions
 
+The auto-generated base class for _C_ has the following protected functions.
+
 #### 5.4.1. Implemented Functions
 
 The following functions have complete implementations.
@@ -275,7 +277,7 @@ the function that sends the signal to the state machine.
 This way state machines can safely send signals when they
 are doing actions.
 
-Each signal send function does the following:
+Each send signal function does the following:
 
 1. Call [`sendSignalStart`](#component-private) to begin constructing a message 
    buffer _B_.
@@ -341,7 +343,7 @@ The generated base class for _C_ has the following private member functions.
 **Send signal helper functions:**
 
 * A function `sendSignalStart`.
-Each signal send function calls this function to begin
+Each send signal function calls this function to begin
 constructing a message buffer for sending a state machine signal.
 This function serializes the following data into the message buffer:
 message type, the port number, the state machine ID, and the signal.
@@ -372,9 +374,10 @@ This function does the following:
   machine ID and signal from the message buffer as `FwEnumStoreType` values.
 
 * For each state machine _M_ that is instantiated in _C_, a function
-  _fqCppIdent(M)_ `_smDispatch` for dispatching signals to state machine
-  instances of type _m_.
-  It takes as arguments the message buffer _B_, a reference _sm_ to a state machine instance,
+  _fqCppIdent(M)_ `_smDispatch` finishing the dispatch of a signal to a state machine
+  instance of type _M_.
+  It takes as arguments the message buffer _B_, a reference _sm_ to a state 
+  machine instance,
   and a signal _s_.
   It switches on _s_, deserializes the data from _B_ if there is any for _s_,
   and calls _sm_ `.sendSignal_` _s_, passing in the data, if any.
