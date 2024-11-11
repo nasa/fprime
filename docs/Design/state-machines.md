@@ -69,6 +69,7 @@ described in the [next section](#state-machine-instances).
 Therefore, if your primary interest is to program with F Prime state
 machines, you can skip this section.
 
+<a name="sm-base-class"></a>
 ### 4.1. The State Machine Base Class
 
 Each state machine definition _D_ in the FPP model becomes a C++ base class _M_ 
@@ -164,7 +165,7 @@ as specified in
 In this section we describe the generated code for instances of state machines
 that are part of a component _C_.
 This code is part of the auto-generated base class for _C_.
-Note that in general there may be any number of instances of any number
+In general there may be any number of instances of any number
 of state machines.
 
 ### 5.1. State Machine Identifiers
@@ -183,8 +184,8 @@ For example, if a state machine instance
 ```
 state machine instance m: M
 ```
-appears in _C_, then _C_ contains an implementation class
-for _M_.
+appears in the definition of _C_, then the auto-generated base
+class for _C_ contains an implementation class for _M_.
 This class has the following properties:
 
 * It is a protected inner class of the auto-generated base class for _C_.
@@ -195,8 +196,8 @@ For example, if a state machine has name `A.B.M` in FPP,
 the C++ name of its implementation class is `A_B_M`.
 We will refer to this name as _fqCppIdent(M)_.
 
-* It is a public derived class of the state machine base
-class for _M_ that we described in the previous section.
+* It is a public derived class of the [state machine base
+class for _M_](#sm-base-class).
 
 Each state machine implementation class has the following
 elements in its interface.
