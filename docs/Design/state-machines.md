@@ -161,7 +161,7 @@ as specified in
 
 In this section we describe the generated code for instances of state machines
 that are part of a component _C_.
-This code is part of t of the auto-generated base class for _C_.
+This code is part of the auto-generated base class for _C_.
 Note that in general there may be any number of instances of any number
 of state machines.
 
