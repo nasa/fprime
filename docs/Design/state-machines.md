@@ -272,7 +272,7 @@ are doing actions.
 
 #### 5.4.2. Pure Virtual Functions
 
-The following functions are pure virtual in the generated base class.
+The following functions are pure virtual in the generated base class for _C_.
 You must implement them in the derived class that implements _C_.
 When you generate a C++ component implementation template for _C_, you get
 a stub for each of these functions that you can fill in.
@@ -290,18 +290,18 @@ argument of type _paramType(T)_.
 
 When an instance _m_ of _M_ does action _a_, it calls the action function
 for _a_ in the auto-generated base class of _M_.
-That function calls _fqName(M)_ `_action_` _a_ with the correct state machine 
+That function calls _fqCppIdent(M)_ `_action_` _a_ with the correct state machine 
 ID, signal, and value, if any.
 
 **Guard functions:**
 For each state machine _M_ is instantiated in _C_, for each guard _g_
-specified in _M_, there is a pure virtual function _fqName(M)_ `_guard_` _g_.
+specified in _M_, there is a pure virtual function _fqCppIdent(M)_ `_guard_` _g_.
 This is a `const` function that returns `bool` and has the same formal 
 parameters as an action function that requires the same value type, if any.
 
 When an instance _m_ of _M_ evaluates guard _g_, it calls the guard function
 for _g_ in the auto-generated base class of _M_.
-That function calls _fqName(M)_ `_guard_` _g_ with the correct state machine 
+That function calls _fqCppIdent(M)_ `_guard_` _g_ with the correct state machine 
 ID, signal, and value, if any, and returns the resulting Boolean value.
 
 **Overflow hook functions:**
