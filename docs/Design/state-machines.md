@@ -158,7 +158,7 @@ as specified in
 
 
 <a name="state-machine-instances"></a>
-## 5. State Machine Instances in Components
+## 5. State Machine Instances
 
 In this section we describe the generated code for instances of state machines
 that are part of a component _C_.
@@ -240,7 +240,7 @@ corresponds to to _M_ and _g_](#component-pure-virtual).
 It passes in the state machine ID of _m_ and returns the Boolean value returned 
 by that function.
 
-### 5.3. State Machine Instances
+### 5.3. State Machine Instance Variables
 
 For each state machine _m_ in the FPP component model, there is
 one private member variable `m_stateMachine_` _m_.
