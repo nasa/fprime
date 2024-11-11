@@ -374,10 +374,9 @@ This function does the following:
   machine ID and signal from the message buffer as `FwEnumStoreType` values.
 
 * For each state machine _M_ that is instantiated in _C_, a function
-  _fqCppIdent(M)_ `_smDispatch` finishing the dispatch of a signal to a state machine
-  instance of type _M_.
+  _fqCppIdent(M)_ `_smDispatch` for finishing the dispatch of a signal to a 
+state machine instance of type _M_.
   It takes as arguments the message buffer _B_, a reference _sm_ to a state 
-  machine instance,
-  and a signal _s_.
+machine instance, and a signal _s_.
   It switches on _s_, deserializes the data from _B_ if there is any for _s_,
   and calls _sm_ `.sendSignal_` _s_, passing in the data, if any.
