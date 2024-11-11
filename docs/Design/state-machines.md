@@ -378,5 +378,5 @@ This function does the following:
 state machine instance of type _M_.
   It takes as arguments the message buffer _B_, a reference _sm_ to a state 
 machine instance, and a signal _s_.
-  It switches on _s_, deserializes the data from _B_ if there is any for _s_,
-  and calls _sm_ `.sendSignal_` _s_, passing in the data, if any.
+  It deserializes the data from _B_ if there is any for _s_.
+  Then it calls _sm_ `.sendSignal_` _s_, passing in the data, if any.
