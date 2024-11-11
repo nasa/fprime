@@ -272,8 +272,8 @@ are doing actions.
 #### 5.4.2. Pure Virtual Functions
 
 The following functions are pure virtual in the generated base class.
-You must implement them.
-When you generate a C++ component implementation template, you get
+You must implement them in the derived class that implements _C_.
+When you generate a C++ component implementation template for _C_, you get
 a stub for each of these functions that you can fill in.
 
 **Action functions:**
