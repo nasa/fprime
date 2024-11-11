@@ -188,7 +188,7 @@ This class has the following properties:
 * It is a protected inner class of the auto-generated base class for _C_.
 
 * Its name is the fully qualified name of the state machine,
-converted to a C++ identify by replacing the dots with underscores.
+converted to a C++ identifier by replacing the dots with underscores.
 For example, if a state machine has name `A.B.M` in FPP,
 the C++ name of its implementation class is `A_B_M`.
 We will refer to this name as _fqCppIdent(M)_.
