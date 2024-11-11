@@ -78,7 +78,7 @@ name of _D_.
 For example, a state machine definition whose qualified name is `A.B.M` in FPP 
 becomes a class `A::B::MStateMachineBase` in C++.
 The base class provides a partial implementation which is completed when
-the state machine is instantiated.
+the state machine is [instantiated](#state-machine-instances).
 
 ### 4.2. The Public Interface
 
@@ -155,6 +155,8 @@ This function implements the entry behavior for _S_ or _C_
 as specified in 
 [_The FPP Language Specification_](https://nasa.github.io/fpp/fpp-spec.html).
 
+
+<a name="state-machine-instances"></a>
 ## 5. State Machine Instances in Components
 
 In this section we describe the generated code for instances of state machines
