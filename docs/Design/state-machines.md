@@ -57,11 +57,10 @@ components that include state machine instances.
 ## 4. State Machine Definitions
 
 In this section we describe the generated code for a state machine definition 
-with name _M_.
+_D_ with name _M_.
 This code is generated into files _M_ `StateMachineAc.hpp` and _M_ 
 `StateMachineAc.cpp`
-when you run `fpp-to-cpp` on an FPP model that includes a definition
-of a state machine _M_.
+when you run `fpp-to-cpp` on an FPP model that includes _D_.
 
 In the ordinary way of programming with F Prime, it is unlikely
 that you will directly interact with the code described here.
