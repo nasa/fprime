@@ -187,8 +187,8 @@ This class has the following properties:
 
 * Its name is the fully qualified name of the state machine,
 with the dots replaced by underscores.
-For example, if a state machine has name `A.B.M` in FPP, its
-the name of its implementation class in C++ is `A_B_M`.
+For example, if a state machine has name `A.B.M` in FPP,
+the C++ name of its implementation class is `A_B_M`.
 
 * It is a public derived class of the state machine base
 class for _M_ that we described in the previous section.
