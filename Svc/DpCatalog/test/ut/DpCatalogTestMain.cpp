@@ -200,6 +200,64 @@ TEST(NominalManual, TreeTestManual1_Transmitted) {
 }
 
 
+TEST(NominalManual, TreeTestManual_All_Transmitted) {
+
+    Svc::DpCatalogTester tester;
+    Fw::FileNameString dir;
+
+    Svc::DpCatalog::DpStateEntry inputs[5];
+    Svc::DpCatalog::DpStateEntry outputs[5];
+
+    inputs[0].record.setid(1);
+    inputs[0].record.setpriority(2);
+    inputs[0].record.setstate(Fw::DpState::TRANSMITTED);
+    inputs[0].record.settSec(1000);
+    inputs[0].record.settSub(1500);
+    inputs[0].record.setsize(100);
+
+    inputs[1].record.setid(2);
+    inputs[1].record.setpriority(1);
+    inputs[1].record.setstate(Fw::DpState::TRANSMITTED);
+    inputs[1].record.settSec(1000);
+    inputs[1].record.settSub(1500);
+    inputs[1].record.setsize(100);
+
+    inputs[2].record.setid(3);
+    inputs[2].record.setpriority(3);
+    inputs[2].record.setstate(Fw::DpState::TRANSMITTED);
+    inputs[2].record.settSec(1000);
+    inputs[2].record.settSub(1500);
+    inputs[2].record.setsize(100);
+
+    inputs[3].record.setid(4);
+    inputs[3].record.setpriority(5);
+    inputs[3].record.setstate(Fw::DpState::TRANSMITTED);
+    inputs[3].record.settSec(1000);
+    inputs[3].record.settSub(1500);
+    inputs[3].record.setsize(100);
+
+    inputs[4].record.setid(5);
+    inputs[4].record.setpriority(4);
+    inputs[4].record.setstate(Fw::DpState::TRANSMITTED);
+    inputs[4].record.settSec(1000);
+    inputs[4].record.settSub(1500);
+    inputs[4].record.setsize(100);
+
+    outputs[0].record.setstate(Fw::DpState::TRANSMITTED);
+    outputs[1].record.setstate(Fw::DpState::TRANSMITTED);
+    outputs[2].record.setstate(Fw::DpState::TRANSMITTED);
+    outputs[3].record.setstate(Fw::DpState::TRANSMITTED);
+    outputs[4].record.setstate(Fw::DpState::TRANSMITTED);
+
+
+    tester.testTree(
+        inputs,
+        outputs,
+        FW_NUM_ARRAY_ELEMENTS(inputs)
+    );
+
+}
+
 
 TEST(NominalManual, DISABLED_OneDp) {
 
