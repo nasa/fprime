@@ -709,9 +709,13 @@ namespace Svc {
                 } else {
                     // Step 4 - if the current node is null, pop back up the stack
                     this->m_currentNode = this->m_traverseStack[this->m_currStackEntry--];
-                    found = this->m_currentNode;
+                    if (this->m_currentNode->entry.record.getstate() != Fw::DpState::TRANSMITTED) {
+                        found = this->m_currentNode;
+                    }// check if transmitted
                     this->m_currentNode = this->m_currentNode->right;
-                    return found;
+                    if (found != nullptr) {
+                        return found;
+                    }
                 }
                 break;
             } else {
