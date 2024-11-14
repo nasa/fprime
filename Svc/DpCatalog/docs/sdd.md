@@ -8,14 +8,15 @@
 NOTE: This release has an early prototype that will do the following:
 
 1. Reads the data product files from the specified directory.
-2. Puts them in an unsorted list.
+2. Puts them in priority sorted list.
 3. Sends requests to `Svc/FileDownlink` to downlink each file in the list.
 
 It does not:
 
-1. Sort the data products
-2. Mark them as complete
-3. Any of the future features like modifying/deleting data products.
+1. Stop transmissions in progress
+2. Allow insertion of new products after the catalog is built
+3. Clear the catalog via command
+4. Send data product files in pieces. It only sends whole files, so if the downlink is interrupted, the whole file will have to be retransmitted.
    
 Features and more extended unit testing will be added over time. Use at your own risk!
 
@@ -51,22 +52,26 @@ The design of `DpCatalog` assumes the following:
 
 #### 3.3.1 Role Ports
 
-Name | Type | Role
------| ---- | ----
-`timeCaller` | `Fw::Time` | TimeGet
-`cmdIn` | [`Fw::Cmd`](../../../Fw/Cmd/docs/sdd.md) | Cmd
-`cmdRegOut` | [`Fw::CmdReg`](../../../Fw/Cmd/docs/sdd.md) | CmdReg
-`cmdResponseOut` | [`Fw::CmdResponse`](../../../Fw/Cmd/docs/sdd.md) | CmdResponse
-`tlmOut` | [`Fw::Tlm`](../../../Fw/Tlm/docs/sdd.md) | Telemetry
-`eventOut` | [`Fw::LogEvent`](../../../Fw/Log/docs/sdd.md) | LogEvent
+These ports will be automatically connected in the topology to F Prime services.
+
+|Name|Role|
+|---|---|
+|cmdDisp|Receives commands|
+|CmdReg|Registers commands |
+|CmdStatus|Returns command status|
+|Log|Outputs events for ground|
+|LogText|Outputs events for console|
+|Time|Gets time for time tags|
+|Tlm|Outputs telemetry|
 
 #### 3.3.2 Component-Specific Ports
 
 Name | Type | Kind | Purpose
----- | ---- | ---- | ----
-sendFile|SendFileRequest|output|Send next file to downlink
-fileDone|SendFileComplete|async_input|Last requested file is complete
-newDp|DpNotify|async_input|Notification that a new DP has been generated
+---- | ---- | ---- | ---
+pingIn|async input|Svc.Ping|Ping from Health
+pingout|output|Svc.Ping|Ping response to Health
+fileOut|SendFileRequest|output|Send next file to downlink
+fileDone|SendFileComplete|async input|Last requested file is complete
 
 ### 3.4 Constants
 
@@ -74,27 +79,47 @@ newDp|DpNotify|async_input|Notification that a new DP has been generated
 
 |Constant|Purpose|
 |---|---|
-|MAX_DP_DIRS|Maximum directories that can be provided for DPs
+|DP_MAX_DIRECTORIES|Maximum directories that can be provided for DPs
+|DP_MAX_FILES|Maximum number of files that can be tracked across directories
+
+These constants are located in `DpCatalogCfg.hpp` in the `config` directory.
 
 ### 3.5 Configuration
 
-During initialization, the initialization function takes a set of parameters:
+During initialization, the configuration function takes a set of parameters:
+
+```c++
+        void configure(
+            Fw::FileNameString directories[DP_MAX_DIRECTORIES],
+            FwSizeType numDirs,
+            Fw::FileNameString& stateFile,
+            NATIVE_UINT_TYPE memId,
+            Fw::MemAllocator& allocator
+        );
+```
 
 |Parameter|Purpose|
 |---|---|
-|dpDirs|A set of strings up to `MAX_DP_DIRS` that are directory names where DPs are written
-|maxFiles|Specify the maximum number of files the catalog can track|
-|allocator|Memory allocator for catalog records
-
-### SDD work will continue from here
-
-#### Constants
-
-### 3.6 State
+|`directories`|A set of strings up to `DP_MAX_DIRECTORIES` that are directory names where DPs are written
+|`numDirs`|The number of supplied directories
+|`stateFile`|The location of the file tracking product downlink state
+|`memId`|The id of the RAM memory segment used to store catalog state. Not needed for heap allocation. 
+|`allocator`|Memory allocator for RAM memory storage
 
 
 ### 3.6 Commands
 
+|Command|Arguments|Description|
+|---|---|---|
+|`BUILD_CATALOG`|none|Builds the in-RAM catalog by scanning the directories provided during initialization. Downlink state file will be read in to set downlink state for products|Prerequisite for executing `START_XMIT_CATALOG` command
+|`START_XMIT_CATALOG`| |Start transmitting the catalog to the ground in priority order
+| |wait|Wait for the transmission to complete before sending command completion status. Used when a sequence wishes to wait for completion before issuing subsequent commands.
+|`STOP_XMIT_CATALOG`|none|Stop existing catalog transmission. Will be completed when the current file is done transmitting. __NOT IMPLEMENTED YET__|
+|`CLEAR_CATALOG`|none|Clears existing RAM catalog and resets downlink state. Should be followed by `BUILD_CATALOG`. Used for recovery if state file gets corrupted or out of sync with file system contents. __NOT IMPLEMENTED YET__ |
+
+### 3.7 Algorithms
+
+TODO
 
 ## 4 Checklists
 

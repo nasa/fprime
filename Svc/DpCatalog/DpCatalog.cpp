@@ -159,7 +159,7 @@ namespace Svc {
             return Fw::CmdResponse::EXECUTION_ERROR;
         }
 
-        FwSizeType fileLoc = 0;
+        FwSignedSizeType fileLoc = 0;
         this->m_stateFileEntries = 0;
 
         // read entries from the state file
@@ -169,7 +169,7 @@ namespace Svc {
             // read the directory index
             stat = stateFile.read(buffer, size);
             if (stat != Os::File::OP_OK) {
-                this->log_WARNING_HI_StateFileReadError(this->m_stateFile, stat, static_cast<U32>(fileLoc));
+                this->log_WARNING_HI_StateFileReadError(this->m_stateFile, stat, static_cast<I32>(fileLoc));
                 return Fw::CmdResponse::EXECUTION_ERROR;
             }
 
@@ -182,7 +182,7 @@ namespace Svc {
             // abandon it and finish. We can at least operate on
             // the entries that were read.
             if (size != sizeof(buffer)) {
-                this->log_WARNING_HI_StateFileTruncated(this->m_stateFile, static_cast<U32>(fileLoc), static_cast<U32>(size));
+                this->log_WARNING_HI_StateFileTruncated(this->m_stateFile, static_cast<I32>(fileLoc), static_cast<I32>(size));
                 return Fw::CmdResponse::OK;
             }
 
