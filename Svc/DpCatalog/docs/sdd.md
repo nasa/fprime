@@ -69,7 +69,7 @@ These ports will be automatically connected in the topology to F Prime services.
 Name | Type | Kind | Purpose
 ---- | ---- | ---- | ---
 pingIn|async input|Svc.Ping|Ping from Health
-pingout|output|Svc.Ping|Ping response to Health
+pingOut|output|Svc.Ping|Ping response to Health
 fileOut|SendFileRequest|output|Send next file to downlink
 fileDone|SendFileComplete|async input|Last requested file is complete
 
