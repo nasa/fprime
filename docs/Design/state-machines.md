@@ -82,8 +82,8 @@ run `fprime-util generate --ut` and then `fprime-util check`.
 <a name="sm-base-class"></a>
 ### 4.1. The State Machine Base Class
 
-Each state machine definition _D_ in the FPP model becomes a C++ base class _M_ 
-`StateMachineBase`, where _M_ is the unqualified name of the definition.
+Each state machine definition _D_ in the FPP model becomes a C++ base class
+_M_`StateMachineBase`, where _M_ is the unqualified name of the definition.
 This class is enclosed in the namespaces, if any, given by the qualified
 name of _D_.
 For example, a state machine definition whose qualified name is `A.B.M` in FPP 
