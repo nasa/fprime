@@ -221,7 +221,7 @@ We will refer to this name as _fqCppIdent(M)_.
 class for _M_](#sm-base-class).
 
 The following class diagram shows these properties, for a state
-machine `M` instantiated in a component `C`:
+machine `A.B.M` instantiated in a component `C`:
 
 ![State Machine Implementation Class Diagram](img/sm-impl-class-diagram.png)
 
