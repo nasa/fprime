@@ -7,6 +7,7 @@
 add_definitions(-DTGT_OS_TYPE_DARWIN)
 
 set(FPRIME_USE_POSIX ON)
+set(FPRIME_HAS_SOCKETS ON)
 # Set platform default for stubbed drivers
 if (NOT DEFINED FPRIME_USE_STUBBED_DRIVERS)
    set(FPRIME_USE_STUBBED_DRIVERS ON)

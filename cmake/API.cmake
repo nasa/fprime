@@ -33,11 +33,19 @@ endmacro()
 ####
 # Macro `restrict_platforms`:
 #
-# Restricts a CMakeLists.txt file to a given list of platforms. This prevents usage on platforms for which the module
-# is incapable of being used and replaces the historical pattern of an if-tree detecting unsupported platforms.
+# Restricts a CMakeLists.txt file to a given list of supported platforms, toolchains, and features. This prevents
+# usage on platforms/toolchains  for which the module is incapable of being used and replaces the historical pattern of
+# an if-tree detecting unsupported platforms in most circumstances.
+#
+# Valid inputs include names of platforms (e.g. Linux), names of specific toolchains (e.g. aarch64-linux), and platform
+# supported feature sets (e.g. SOCKETS, which inspects the FPRIME_HAS_SOCKETS flag).
 #
 # Usage:
 #    restrict_platforms(Linux Darwin) # Restricts to Linux and Darwin platforms
+#        -or-
+#    restrict_platforms(Posix) # Restricts to posix systems
+#        -or-
+#    restrict_platforms(SOCKETS) # Restricts to platforms where FPRIME_HAS_SOCKETS is TRUE
 #
 # Args:
 #   ARGN: list of platforms that are supported
@@ -45,6 +53,16 @@ endmacro()
 macro(restrict_platforms)
     set(__CHECKER ${ARGN})
 
+    # Determine if any of the restrict-tos maps to a fprime feature flag of the form FPRIME_HAS_XYZ as set in the
+    # platform support file. If this feature is set and true, then the restriction block may pass.
+    set(__HAS_SUPPORTED_FEATURE FALSE)
+    foreach (__RESTRICTION IN LISTS __CHECKER)
+        string(TOUPPER "${__RESTRICTION}" __RESTRICTION_UPPER)
+        if (FPRIME_HAS_${__RESTRICTION_UPPER})
+            set(__HAS_SUPPORTED_FEATURE TRUE)
+            break()
+        endif()
+    endforeach()
     # Each of these empty if blocks are the valid-case, that is, the platform is supported.
     # However, the reason why this is necessary is that this function is a macro and not a function.
     # Macros copy-paste the code into the calling context. Thus, all these valid cases want to avoid calling return.
@@ -53,6 +71,9 @@ macro(restrict_platforms)
 
     if (FPRIME_TOOLCHAIN_NAME IN_LIST __CHECKER)
     elseif(FPRIME_PLATFORM IN_LIST __CHECKER)
+    # New style FPRIME_HAS_<FEATURE>
+    elseif(__HAS_SUPPORTED_FEATURE)
+    # Old style posix FPRIME_USE_POSIX
     elseif("Posix" IN_LIST __CHECKER AND FPRIME_USE_POSIX)
     else()
         get_module_name("${CMAKE_CURRENT_LIST_DIR}")
