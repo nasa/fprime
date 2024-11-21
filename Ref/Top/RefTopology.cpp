@@ -9,8 +9,8 @@
 // acknowledged.
 // ======================================================================
 // Provides access to autocoded functions
-#include <Ref/Top/RefTopologyAc.hpp>
 #include <Ref/Top/RefPacketsAc.hpp>
+#include <Ref/Top/RefTopologyAc.hpp>
 
 // Necessary project-specified types
 #include <Fw/Types/MallocAllocator.hpp>
@@ -62,24 +62,6 @@ enum TopologyConstants {
     DP_BUFFER_MANAGER_ID = 300
 };
 
-// Ping entries are autocoded, however; this code is not properly exported. Thus, it is copied here.
-Svc::Health::PingEntry pingEntries[] = {
-    {PingEntries::Ref_blockDrv::WARN, PingEntries::Ref_blockDrv::FATAL, "blockDrv"},
-    {PingEntries::Ref_tlmSend::WARN, PingEntries::Ref_tlmSend::FATAL, "chanTlm"},
-    {PingEntries::Ref_cmdDisp::WARN, PingEntries::Ref_cmdDisp::FATAL, "cmdDisp"},
-    {PingEntries::Ref_cmdSeq::WARN, PingEntries::Ref_cmdSeq::FATAL, "cmdSeq"},
-    {PingEntries::Ref_eventLogger::WARN, PingEntries::Ref_eventLogger::FATAL, "eventLogger"},
-    {PingEntries::Ref_fileDownlink::WARN, PingEntries::Ref_fileDownlink::FATAL, "fileDownlink"},
-    {PingEntries::Ref_fileManager::WARN, PingEntries::Ref_fileManager::FATAL, "fileManager"},
-    {PingEntries::Ref_fileUplink::WARN, PingEntries::Ref_fileUplink::FATAL, "fileUplink"},
-    {PingEntries::Ref_pingRcvr::WARN, PingEntries::Ref_pingRcvr::FATAL, "pingRcvr"},
-    {PingEntries::Ref_prmDb::WARN, PingEntries::Ref_prmDb::FATAL, "prmDb"},
-    {PingEntries::Ref_rateGroup1Comp::WARN, PingEntries::Ref_rateGroup1Comp::FATAL, "rateGroup1Comp"},
-    {PingEntries::Ref_rateGroup2Comp::WARN, PingEntries::Ref_rateGroup2Comp::FATAL, "rateGroup2Comp"},
-    {PingEntries::Ref_rateGroup3Comp::WARN, PingEntries::Ref_rateGroup3Comp::FATAL, "rateGroup3Comp"},
-    {PingEntries::Ref_dpCat::WARN, PingEntries::Ref_dpCat::FATAL, "rateGroup3Comp"},
-};
-
 /**
  * \brief configure/setup components in project-specific way
  *
@@ -108,7 +90,8 @@ void configureTopology() {
     prmDb.readParamFile();
 
     // Health is supplied a set of ping entires.
-    health.setPingEntries(pingEntries, FW_NUM_ARRAY_ELEMENTS(pingEntries), HEALTH_WATCHDOG_CODE);
+    health.setPingEntries(ConfigObjects::Ref_health::pingEntries,
+                          FW_NUM_ARRAY_ELEMENTS(ConfigObjects::Ref_health::pingEntries), HEALTH_WATCHDOG_CODE);
 
     // Buffer managers need a configured set of buckets and an allocator used to allocate memory for those buckets.
     Svc::BufferManager::BufferBins upBuffMgrBins;
@@ -132,11 +115,11 @@ void configureTopology() {
     // create the DP directory if it doesn't exist
     Os::FileSystem::createDirectory(dpDir.toChar());
 
-    dpCat.configure(&dpDir,1,0,mallocator);
+    dpCat.configure(&dpDir, 1, 0, mallocator);
     dpWriter.configure(dpDir);
 
     // Note: Uncomment when using Svc:TlmPacketizer
-    //tlmSend.setPacketList(RefPacketsPkts, RefPacketsIgnore, 1);
+    // tlmSend.setPacketList(RefPacketsPkts, RefPacketsIgnore, 1);
 }
 
 // Public functions for use in main program are namespaced with deployment name Ref
