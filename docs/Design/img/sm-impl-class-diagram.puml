@@ -1,17 +1,17 @@
 @startuml
 
-abstract class MStateMachineBase
-class CComponentBase::M
+abstract class A::B::MStateMachineBase
+class CComponentBase::A_B_M
 
-MStateMachineBase <|-- CComponentBase::M
+A::B::MStateMachineBase <|-- CComponentBase::A_B_M
 
 abstract class CComponentBase
 class C
 
 CComponentBase <|-- C
 
-CComponentBase::M --+ CComponentBase
-CComponentBase::M --* CComponentBase
-CComponentBase --o CComponentBase::M
+CComponentBase::A_B_M --+ CComponentBase
+CComponentBase::A_B_M --* CComponentBase
+CComponentBase --o CComponentBase::A_B_M
 
 @enduml
