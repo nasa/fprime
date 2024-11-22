@@ -22,6 +22,7 @@ choose_fprime_implementation(Os/Memory Os/Memory/Linux)
 # Use common linux setup
 add_definitions(-DTGT_OS_TYPE_LINUX)
 set(FPRIME_USE_POSIX ON)
+set(FPRIME_HAS_SOCKETS ON)
 
 # Add Linux specific headers into the system
 include_directories(SYSTEM "${CMAKE_CURRENT_LIST_DIR}/types")
