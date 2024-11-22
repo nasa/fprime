@@ -275,7 +275,7 @@ one private member variable `m_stateMachine_`_m_.
 Its type is the [state machine implementation class](#state-machine-impl)
 corresponding to the state machine _M_ instantiated by _m_.
 
-### 5.4. Component Initialization
+### 5.4. State Machine Initialization
 
 When a component _C_ instantiates one or more state machines,
 the standard _init_ function of _C_ calls the _init_ function
