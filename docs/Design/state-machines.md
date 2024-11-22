@@ -15,7 +15,7 @@ F Prime supports two kinds of state machines:
 **external state machines** and **internal state machines**.
 An external state machine is specified by an external tool,
 typically the
-[State Autocoding for Real-Time Systems (STARS) 
+[State Autocoding for Real-Time Systems (STARS)
 tool](https://github.com/JPLOpenSource/STARS/tree/main).
 An internal state machine is specified in FPP, the modeling language
 for F Prime.
@@ -43,23 +43,23 @@ To work with internal state machines in FPP, you do the following:
 
 1. Define one or more state machines, specifying their behavior.
 
-1. Add one or more instances of the state machines defined in step 1 to a 
+1. Add one or more instances of the state machines defined in step 1 to a
    component _C_.
 
 1. In the implementation of _C_, write code that interacts with the
 generated code for the instances defined in step 2.
 
-Steps 1 and 2 are fully documented in 
+Steps 1 and 2 are fully documented in
 [_The FPP User's Guide_](https://nasa.github.io/fpp/fpp-users-guide.html).
 Here we focus on the generated code for state machines and for
 state machine instances.
 
 ## 4. State Machine Definitions
 
-In this section we describe the generated code for a state machine definition 
+In this section we describe the generated code for a state machine definition
 _D_ with name _M_.
-This code is generated into files _M_ `StateMachineAc.hpp` and _M_ 
-`StateMachineAc.cpp`
+This code is generated into files _M_`StateMachineAc.hpp` and
+_M_`StateMachineAc.cpp`
 when you run `fpp-to-cpp` on an FPP model that includes _D_.
 
 In the ordinary way of programming with F Prime, it is unlikely
@@ -71,12 +71,12 @@ machines, you can skip this section.
 
 For examples of generated code, you can do the following:
 
-1. In a local installation of the `fprime` repository, go into `FppTest` and 
+1. In a local installation of the `fprime` repository, go into `FppTest` and
 run `fprime-util generate --ut` and then `fprime-util check`.
 
 1. Look at the FPP models in `fprime/FppTest/state_machine/internal/state`.
 
-1. Look at the generated files in 
+1. Look at the generated files in
    `fprime/FppTest/build-fprime-automatic-native-ut/FppTest/state_machine/internal/state`.
 
 <a name="sm-base-class"></a>
@@ -86,7 +86,7 @@ Each state machine definition _D_ in the FPP model becomes a C++ base class
 _M_`StateMachineBase`, where _M_ is the unqualified name of the definition.
 This class is enclosed in the namespaces, if any, given by the qualified
 name of _D_.
-For example, a state machine definition whose qualified name is `A.B.M` in FPP 
+For example, a state machine definition whose qualified name is `A.B.M` in FPP
 becomes a class `A::B::MStateMachineBase` in C++.
 The base class provides a partial implementation which is completed when
 the state machine is [instantiated](#state-machine-instances).
@@ -135,14 +135,14 @@ The type is `FwEnumStoreType` because the state machine identifier
 type is an enumeration defined in the subclass.
 
 **Actions:**
-There is one pure virtual function `action_` _a_ for each action
+There is one pure virtual function `action_`_a_ for each action
 _a_ specified in the FPP model.
 Each action returns `void` has a formal parameter `signal` of type `Signal`.
 If the action has a type _T_, then there is a second
 formal parameter of type _paramType(T)_.
 
 **Guards:**
-There is one pure virtual `const` function `guard_` _g_ for each guard
+There is one pure virtual `const` function `guard_`_g_ for each guard
 _g_ specified in the FPP model.
 Each guard returns `bool` and has a formal parameter `signal` of type `Signal`.
 If the guard has a type _T_, then there is a second
@@ -165,7 +165,7 @@ The initial value is `State::__FPRIME_AC_UNINITIALIZED`.
 For each state _S_ and choice _C_ in the state machine there is one
 entry function for _S_ or _C_.
 This function implements the entry behavior for _S_ or _C_
-as specified in 
+as specified in
 [_The FPP Language Specification_](https://nasa.github.io/fpp/fpp-spec.html).
 
 
@@ -180,13 +180,13 @@ of state machines.
 
 For examples of generated code, you can do the following:
 
-1. In a local installation of the `fprime` repository, go into `FppTest` and 
+1. In a local installation of the `fprime` repository, go into `FppTest` and
 run `fprime-util generate --ut` and then `fprime-util check`.
 
-1. Look at the FPP models in 
+1. Look at the FPP models in
    `fprime/FppTest/state_machine/internal_instance/state`.
 
-1. Look at the generated files in 
+1. Look at the generated files in
    `fprime/FppTest/build-fprime-automatic-native-ut/FppTest/state_machine/internal_instance/state`.
 
 ### 5.1. State Machine Identifiers
@@ -234,7 +234,7 @@ the enclosing component instance.
 This way the state machine instance can call into
 the interface of the component instance.
 
-**Construction:** There is a public constructor 
+**Construction:** There is a public constructor
 that takes a reference `*this` to the enclosing component
 as an argument.
 It initializes the member variable described above.
@@ -253,25 +253,25 @@ in the base class and casts it to `SmId`.
 Thus it provides a type-safe way to get the state
 machine ID.
 
-**Actions:** For each action _a_ of _M_, there is one private function that 
-implements the [pure virtual function for _a_ defined in the base 
+**Actions:** For each action _a_ of _M_, there is one private function that
+implements the [pure virtual function for _a_ defined in the base
 class for _M_](#sm-protected).
 The implementation calls the [pure virtual function in the bass class for _C_
 that corresponds to to _M_ and _a_](#component-pure-virtual).
 It passes in the state machine ID of `*this`.
 
-**Guards:** For each guard _g_ of _M_, there is one private function that 
-implements the [pure virtual function for _g_ defined in the base 
+**Guards:** For each guard _g_ of _M_, there is one private function that
+implements the [pure virtual function for _g_ defined in the base
 class for _M_](#sm-protected).
-The implementation calls the [pure virtual function in the base class for _C_ 
+The implementation calls the [pure virtual function in the base class for _C_
 that corresponds to to _M_ and _g_](#component-pure-virtual).
-It passes in the state machine ID of `*this` and returns the Boolean value returned 
+It passes in the state machine ID of `*this` and returns the Boolean value returned
 by that function.
 
 ### 5.3. State Machine Instance Variables
 
 For each state machine _m_ in the FPP component model, there is
-one private member variable `m_stateMachine_` _m_.
+one private member variable `m_stateMachine_`_m_.
 Its type is the [state machine implementation class](#state-machine-impl)
 corresponding to the state machine _M_ instantiated by _m_.
 
@@ -286,12 +286,12 @@ They are available to call in the derived class that implements _C_.
 
 **State getter functions:**
 For each state machine instance _m_ in _C_, there is a `const` function
-_m_ `_getState` that gets the current state of _m_.
+_m_`_getState` that gets the current state of _m_.
 
 **Signal send functions:**
 For each state machine instance _m_, and for each signal _s_ defined
 in the state machine _M_ instantiated by _m_, there is a function
-_m_ `_sendSignal_` _s_ for sending _s_ to _m_.
+_m_`_sendSignal_`_s_ for sending _s_ to _m_.
 If _s_ carries data of type _T_, then this function has a single
 formal parameter of type [_paramType(T)_](#sm-public); otherwise it has no
 formal parameters.
@@ -305,12 +305,12 @@ are doing actions.
 
 Each send signal function does the following:
 
-1. Call [`sendSignalStart`](#component-private) to begin constructing a message 
+1. Call [`sendSignalStart`](#component-private) to begin constructing a message
    buffer _B_.
 
 1. If the signal carries data, then serialize the data into _B_.
 
-1. Call the appropriate [`sendSignalFinish`](#component-private) function to 
+1. Call the appropriate [`sendSignalFinish`](#component-private) function to
 put _B_ onto the component queue and handle overflow.
 
 <a name="component-pure-virtual"></a>
@@ -323,7 +323,7 @@ a stub for each of these functions that you can fill in.
 
 **Action functions:**
 For each state machine _M_ instantiated in _C_, for each action _a_
-specified in _M_, there is a pure virtual function _fqCppIdent(M)_ `_action_` _a_.
+specified in _M_, there is a pure virtual function _fqCppIdent(M)_`_action_`_a_.
 Recall that _fqCppIdent(M)_ is the fully qualified name of _M_ represented
 as a C++ identifier, i.e., the fully qualified name of _M_ in FPP with
 the dots replaced by underscores.
@@ -334,25 +334,24 @@ formal parameter of type [_paramType(T)_](#sm-public).
 
 When an instance _m_ of _M_ does action _a_, it calls the action function
 for _a_ in the [auto-generated base class of _M_](#state-machine-impl).
-That function calls _fqCppIdent(M)_ `_action_` _a_ with the correct state machine 
+That function calls _fqCppIdent(M)_`_action_`_a_ with the correct state machine
 ID, signal, and value, if any.
 
 **Guard functions:**
 For each state machine _M_ is instantiated in _C_, for each guard _g_
-specified in _M_, there is a pure virtual function _fqCppIdent(M)_ `_guard_` 
-_g_.
+specified in _M_, there is a pure virtual function _fqCppIdent(M)_`_guard_`_g_.
 This is a `const` function that returns `bool`.
-It has the same formal parameters as an action function that requires the same 
+It has the same formal parameters as an action function that requires the same
 value type, if any.
 
 When an instance _m_ of _M_ evaluates guard _g_, it calls the guard function
 for _g_ in the [auto-generated base class of _M_](#state-machine-impl).
-That function calls _fqCppIdent(M)_ `_guard_` _g_ with the correct state machine 
+That function calls _fqCppIdent(M)_`_guard_`_g_ with the correct state machine
 ID, signal, and value, if any, and returns the resulting Boolean value.
 
 **Overflow hook functions:**
 For each state machine instance _m_ that has overflow behavior `hook`,
-there is a pure virtual function _m_ `_stateMachineOverflowHook` with
+there is a pure virtual function _m_`_stateMachineOverflowHook` with
 the following formal parameters: the state machine ID,
 the signal, and a reference to the message buffer.
 The deserialization pointer of the message buffer points to the start
@@ -374,7 +373,7 @@ constructing a message buffer for sending a state machine signal.
 This function serializes the following data into the message buffer:
 message type, the port number, the state machine ID, and the signal.
 
-* For each state machine instance _m_, a function _m_ `_sendSignalFinish`.
+* For each state machine instance _m_, a function _m_`_sendSignalFinish`.
 This function puts the message buffer on the queue with the correct
 priority and overflow behavior for _m_.
 
@@ -393,16 +392,16 @@ This function does the following:
   1. Cast the signal to the appropriate type for _m_.
 
   1. Call the appropriate `smDispatch` helper for the state machine _M_ of
-     which _m_ is an instance, passing the message buffer, a reference to 
-     `m_stateMachine_` _m_, and the signal.
+     which _m_ is an instance, passing the message buffer, a reference to
+     `m_stateMachine_`_m_, and the signal.
 
 * A function `deserializeSmIdAndSignal` for deserializing the state
   machine ID and signal from the message buffer as `FwEnumStoreType` values.
 
 * For each state machine _M_ that is instantiated in _C_, a function
-  _fqCppIdent(M)_ `_smDispatch` for finishing the dispatch of a signal to a 
+  _fqCppIdent(M)_`_smDispatch` for finishing the dispatch of a signal to a
 state machine instance of type _M_.
-  It takes as arguments the message buffer _B_, a reference _sm_ to a state 
+  It takes as arguments the message buffer _B_, a reference _sm_ to a state
 machine instance, and a signal _s_.
   It deserializes the data from _B_ if there is any for _s_.
-  Then it calls _sm_ `.sendSignal_` _s_, passing in the data, if any.
+  Then it calls _sm_`.sendSignal_`_s_, passing in the data, if any.
