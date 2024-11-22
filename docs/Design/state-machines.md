@@ -275,11 +275,33 @@ one private member variable `m_stateMachine_`_m_.
 Its type is the [state machine implementation class](#state-machine-impl)
 corresponding to the state machine _M_ instantiated by _m_.
 
-### 5.4. Protected Member Functions
+### 5.4. Component Initialization
+
+When a component _C_ instantiates one or more state machines,
+the standard _init_ function of _C_ calls the _init_ function
+on each state machine instance, passing in the enumerated
+constant corresponding to each one.
+In the standard sequence for F Prime FSW initialization,
+the _init_ function is called before any component instances
+are connected.
+Therefore, the initial transition of any state machine,
+including any entry actions of the initial state, may
+not emit events or telemetry or invoke any output port.
+If you need to emit events or telemetry or invoke an output port
+at the start of steady-state execution, you can have the
+initial state be an _INIT_ state that does nothing but transition to another 
+state _START_ on an RTI signal.
+When the component instance receives an RTI call on its `schedIn` port,
+it can send the RTI signal to the state machine, causing
+the transition to _START_.
+At this point the components are connected, and the transition
+to _START_ can emit events or telemetry or invoke an output port.
+
+### 5.5. Protected Member Functions
 
 The auto-generated base class for _C_ has the following protected functions.
 
-#### 5.4.1. Implemented Functions
+#### 5.5.1. Implemented Functions
 
 The following functions have complete implementations.
 They are available to call in the derived class that implements _C_.
@@ -314,7 +336,7 @@ Each send signal function does the following:
 put _B_ onto the component queue and handle overflow.
 
 <a name="component-pure-virtual"></a>
-#### 5.4.2. Pure Virtual Functions
+#### 5.5.2. Pure Virtual Functions
 
 The following functions are pure virtual in the generated base class for _C_.
 You must implement them in the derived class that implements _C_.
@@ -361,7 +383,7 @@ deserialization pointer is at the end of the buffer, and deserializing
 data from the buffer will return a `BUFFER_EMPTY` error.
 
 <a name="component-private"></a>
-### 5.5. Private Member Functions
+### 5.6. Private Member Functions
 
 The generated base class for _C_ has the following private member functions.
 
