@@ -25,6 +25,7 @@ namespace Svc {
       FileUplinkComponentBase(name),
       m_receiveMode(START),
       m_lastSequenceIndex(0),
+      m_lastPacketWriteStatus(Os::File::MAX_STATUS),
       m_filesReceived(this),
       m_packetsReceived(this),
       m_warnings(this)
@@ -120,7 +121,15 @@ namespace Svc {
       this->m_warnings.invalidReceiveMode(Fw::FilePacket::T_DATA);
       return;
     }
+
     const U32 sequenceIndex = dataPacket.asHeader().getSequenceIndex();
+
+    // skip this packet if it is a duplicate and it has already been written
+    if (this->m_lastPacketWriteStatus == Os::File::OP_OK &&
+        this->checkDuplicatedPacket(sequenceIndex)) {
+        return;
+    }
+
     this->checkSequenceIndex(sequenceIndex);
     const U32 byteOffset = dataPacket.getByteOffset();
     const U32 dataSize = dataPacket.getDataSize();
@@ -136,6 +145,8 @@ namespace Svc {
     if (status != Os::File::OP_OK) {
       this->m_warnings.fileWrite(this->m_file.name);
     }
+
+    this->m_lastPacketWriteStatus = status;
   }
 
   void FileUplink ::
@@ -174,6 +185,18 @@ namespace Svc {
     this->m_lastSequenceIndex = sequenceIndex;
   }
 
+  bool FileUplink ::
+    checkDuplicatedPacket(const U32 sequenceIndex)
+  {
+    // check for duplicate packet
+    if (sequenceIndex == this->m_lastSequenceIndex) {
+      this->m_warnings.packetDuplicate(sequenceIndex);
+      return true;
+    }
+
+    return false;
+  }
+
   void FileUplink ::
     compareChecksums(const Fw::FilePacket::EndPacket& endPacket)
   {
@@ -194,6 +217,7 @@ namespace Svc {
     this->m_file.osFile.close();
     this->m_receiveMode = START;
     this->m_lastSequenceIndex = 0;
+    this->m_lastPacketWriteStatus = Os::File::MAX_STATUS;
   }
 
   void FileUplink ::
@@ -201,6 +225,7 @@ namespace Svc {
   {
     this->m_receiveMode = DATA;
     this->m_lastSequenceIndex = 0;
+    this->m_lastPacketWriteStatus = Os::File::MAX_STATUS;
   }
 
 }

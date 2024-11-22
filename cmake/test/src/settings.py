@@ -31,7 +31,7 @@ STANDARD_MODULES = [
     "Fw_Prm",
     "CFDP_Checksum",
     "Drv_ByteStreamDriverModel",
-    "Drv_DataTypes",
+    "Drv_Ports_DataTypes",
     "Drv_Ip",
     "Drv_TcpClient",
     "Utils_Hash",

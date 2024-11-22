@@ -10,6 +10,7 @@
 //
 // ======================================================================
 
+#include <limits>
 #include <Drv/Udp/UdpComponentImpl.hpp>
 #include <IpCfg.hpp>
 #include <FpConfig.hpp>
@@ -32,7 +33,10 @@ SocketIpStatus UdpComponentImpl::configureSend(const char* hostname,
     return m_socket.configureSend(hostname, port, send_timeout_seconds, send_timeout_microseconds);
 }
 
-SocketIpStatus UdpComponentImpl::configureRecv(const char* hostname, const U16 port) {
+SocketIpStatus UdpComponentImpl::configureRecv(const char* hostname, const U16 port, FwSizeType buffer_size) {
+    FW_ASSERT(buffer_size <= std::numeric_limits<U32>::max(), static_cast<FwAssertArgType>(buffer_size));
+    m_allocation_size = buffer_size; // Store the buffer size
+
     return m_socket.configureRecv(hostname, port);
 }
 
@@ -51,7 +55,7 @@ IpSocket& UdpComponentImpl::getSocketHandler() {
 }
 
 Fw::Buffer UdpComponentImpl::getBuffer() {
-    return allocate_out(0, 1024);
+    return allocate_out(0, static_cast<U32>(m_allocation_size));
 }
 
 void UdpComponentImpl::sendBuffer(Fw::Buffer buffer, SocketIpStatus status) {

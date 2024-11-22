@@ -161,6 +161,11 @@ namespace Svc {
               const U32 lastSequenceIndex
           );
 
+          //! Record a Duplicate Packet warning
+          void packetDuplicate(
+              const U32 sequenceIndex
+          );
+
           //! Record a File Write warning
           void fileWrite(Fw::LogStringArg& fileName);
 
@@ -246,6 +251,9 @@ namespace Svc {
       //! Check sequence index
       void checkSequenceIndex(const U32 sequenceIndex);
 
+      //! Check if a received packet is a duplicate
+      bool checkDuplicatedPacket(const U32 sequenceIndex);
+
       //! Compare checksums
       void compareChecksums(const Fw::FilePacket::EndPacket& endPacket);
 
@@ -266,6 +274,9 @@ namespace Svc {
 
       //! The sequence index of the last packet received
       U32 m_lastSequenceIndex;
+
+      //! The write status of the last packet received
+      Os::File::Status m_lastPacketWriteStatus;
 
       //! The file being assembled
       File m_file;

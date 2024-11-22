@@ -10,6 +10,7 @@
 //
 // ======================================================================
 
+#include <limits>
 #include <Drv/TcpServer/TcpServerComponentImpl.hpp>
 #include <FpConfig.hpp>
 #include "Fw/Types/Assert.hpp"
@@ -27,7 +28,14 @@ TcpServerComponentImpl::TcpServerComponentImpl(const char* const compName)
 SocketIpStatus TcpServerComponentImpl::configure(const char* hostname,
                                                  const U16 port,
                                                  const U32 send_timeout_seconds,
-                                                 const U32 send_timeout_microseconds) {
+                                                 const U32 send_timeout_microseconds,
+	                                         FwSizeType buffer_size) {
+
+    // Check that ensures the configured buffer size fits within the limits fixed-width type, U32
+
+    FW_ASSERT(buffer_size <= std::numeric_limits<U32>::max(), static_cast<FwAssertArgType>(buffer_size));
+    m_allocation_size = buffer_size; // Store the buffer size
+				     //
     (void)m_socket.configure(hostname, port, send_timeout_seconds, send_timeout_microseconds);
     return startup();
 }
@@ -47,7 +55,7 @@ IpSocket& TcpServerComponentImpl::getSocketHandler() {
 }
 
 Fw::Buffer TcpServerComponentImpl::getBuffer() {
-    return allocate_out(0, 1024);
+    return allocate_out(0, static_cast<U32>(m_allocation_size));
 }
 
 void TcpServerComponentImpl::sendBuffer(Fw::Buffer buffer, SocketIpStatus status) {

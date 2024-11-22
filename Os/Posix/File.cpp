@@ -2,14 +2,14 @@
 // \title Os/Posix/File.cpp
 // \brief posix implementation for Os::File
 // ======================================================================
-#include <cerrno>
 #include <fcntl.h>
 #include <unistd.h>
+#include <cerrno>
 #include <limits>
 
+#include <Fw/Types/Assert.hpp>
 #include <Os/File.hpp>
 #include <Os/Posix/File.hpp>
-#include <Fw/Types/Assert.hpp>
 #include <Os/Posix/error.hpp>
 
 namespace Os {
@@ -29,8 +29,10 @@ namespace File {
 #endif
 
 // Ensure size of FwSizeType is large enough to fit eh necessary range
-static_assert(sizeof(FwSignedSizeType) >= sizeof(off_t), "FwSizeType is not large enough to store values of type off_t");
-static_assert(sizeof(FwSignedSizeType) >= sizeof(ssize_t), "FwSizeType is not large enough to store values of type ssize_t");
+static_assert(sizeof(FwSignedSizeType) >= sizeof(off_t),
+              "FwSizeType is not large enough to store values of type off_t");
+static_assert(sizeof(FwSignedSizeType) >= sizeof(ssize_t),
+              "FwSizeType is not large enough to store values of type ssize_t");
 
 // Now check ranges of FwSizeType
 static_assert(std::numeric_limits<FwSignedSizeType>::max() >= std::numeric_limits<off_t>::max(),
@@ -43,19 +45,25 @@ static_assert(std::numeric_limits<FwSignedSizeType>::min() <= std::numeric_limit
               "Minimum value of FwSizeType larger than the minimum value of ssize_t. Configure a larger type.");
 
 //!\brief default copy constructor
+#ifndef TGT_OS_TYPE_VXWORKS
 PosixFile::PosixFile(const PosixFile& other) {
     // Must properly duplicate the file handle
     this->m_handle.m_file_descriptor = ::dup(other.m_handle.m_file_descriptor);
 }
+#endif
 
+#ifndef TGT_OS_TYPE_VXWORKS
 PosixFile& PosixFile::operator=(const PosixFile& other) {
     if (this != &other) {
         this->m_handle.m_file_descriptor = ::dup(other.m_handle.m_file_descriptor);
     }
     return *this;
 }
+#endif
 
-PosixFile::Status PosixFile::open(const char* filepath, PosixFile::Mode requested_mode, PosixFile::OverwriteType overwrite) {
+PosixFile::Status PosixFile::open(const char* filepath,
+                                  PosixFile::Mode requested_mode,
+                                  PosixFile::OverwriteType overwrite) {
     PlatformIntType mode_flags = 0;
     Status status = OP_OK;
     switch (requested_mode) {
@@ -69,7 +77,8 @@ PosixFile::Status PosixFile::open(const char* filepath, PosixFile::Mode requeste
             mode_flags = O_WRONLY | O_CREAT | O_SYNC;
             break;
         case OPEN_CREATE:
-            mode_flags = O_WRONLY | O_CREAT | O_TRUNC | ((overwrite == PosixFile::OverwriteType::OVERWRITE) ? 0 : O_EXCL);
+            mode_flags =
+                O_WRONLY | O_CREAT | O_TRUNC | ((overwrite == PosixFile::OverwriteType::OVERWRITE) ? 0 : O_EXCL);
             break;
         case OPEN_APPEND:
             mode_flags = O_WRONLY | O_CREAT | O_APPEND;
@@ -95,7 +104,7 @@ void PosixFile::close() {
     }
 }
 
-PosixFile::Status  PosixFile::size(FwSignedSizeType& size_result) {
+PosixFile::Status PosixFile::size(FwSignedSizeType& size_result) {
     FwSignedSizeType current_position = 0;
     Status status = this->position(current_position);
     size_result = 0;
@@ -118,7 +127,7 @@ PosixFile::Status  PosixFile::size(FwSignedSizeType& size_result) {
     return status;
 }
 
-PosixFile::Status  PosixFile::position(FwSignedSizeType &position_result) {
+PosixFile::Status PosixFile::position(FwSignedSizeType& position_result) {
     Status status = OP_OK;
     position_result = 0;
     off_t actual = ::lseek(this->m_handle.m_file_descriptor, 0, SEEK_CUR);
@@ -160,7 +169,8 @@ PosixFile::Status PosixFile::preallocate(FwSignedSizeType offset, FwSignedSizeTy
                         // Fill in zeros past size of file to ensure compatibility with fallocate
                         for (FwSignedSizeType i = 0; i < write_length; i++) {
                             FwSignedSizeType write_size = 1;
-                            status = this->write(reinterpret_cast<const U8*>("\0"), write_size, PosixFile::WaitType::NO_WAIT);
+                            status = this->write(reinterpret_cast<const U8*>("\0"), write_size,
+                                                 PosixFile::WaitType::NO_WAIT);
                             if (Status::OP_OK != status || write_size != 1) {
                                 break;
                             }
@@ -179,7 +189,8 @@ PosixFile::Status PosixFile::preallocate(FwSignedSizeType offset, FwSignedSizeTy
 
 PosixFile::Status PosixFile::seek(FwSignedSizeType offset, PosixFile::SeekType seekType) {
     Status status = OP_OK;
-    off_t actual = ::lseek(this->m_handle.m_file_descriptor, offset, (seekType == SeekType::ABSOLUTE) ? SEEK_SET : SEEK_CUR);
+    off_t actual =
+        ::lseek(this->m_handle.m_file_descriptor, offset, (seekType == SeekType::ABSOLUTE) ? SEEK_SET : SEEK_CUR);
     PlatformIntType errno_store = errno;
     if (actual == PosixFileHandle::ERROR_RETURN_VALUE) {
         status = Os::Posix::errno_to_file_status(errno_store);
@@ -198,18 +209,18 @@ PosixFile::Status PosixFile::flush() {
     return status;
 }
 
-PosixFile::Status PosixFile::read(U8* buffer, FwSignedSizeType &size, PosixFile::WaitType wait) {
+PosixFile::Status PosixFile::read(U8* buffer, FwSignedSizeType& size, PosixFile::WaitType wait) {
     Status status = OP_OK;
     FwSignedSizeType accumulated = 0;
     // Loop up to 2 times for each by, bounded to prevent overflow
-    const FwSignedSizeType maximum = (size > (std::numeric_limits<FwSignedSizeType>::max()/2)) ? std::numeric_limits<FwSignedSizeType>::max() : size * 2;
+    const FwSignedSizeType maximum = (size > (std::numeric_limits<FwSignedSizeType>::max() / 2))
+                                         ? std::numeric_limits<FwSignedSizeType>::max()
+                                         : size * 2;
 
     for (FwSignedSizeType i = 0; i < maximum && accumulated < size; i++) {
         // char* for some posix implementations
-        ssize_t read_size = ::read(
-            this->m_handle.m_file_descriptor,
-            reinterpret_cast<CHAR*>(&buffer[accumulated]),
-            static_cast<size_t>(size - accumulated));
+        ssize_t read_size = ::read(this->m_handle.m_file_descriptor, reinterpret_cast<CHAR*>(&buffer[accumulated]),
+                                   static_cast<size_t>(size - accumulated));
         // Non-interrupt error
         if (PosixFileHandle::ERROR_RETURN_VALUE == read_size) {
             PlatformIntType errno_store = errno;
@@ -234,15 +245,19 @@ PosixFile::Status PosixFile::read(U8* buffer, FwSignedSizeType &size, PosixFile:
     return status;
 }
 
-PosixFile::Status PosixFile::write(const U8* buffer, FwSignedSizeType &size, PosixFile::WaitType wait) {
+PosixFile::Status PosixFile::write(const U8* buffer, FwSignedSizeType& size, PosixFile::WaitType wait) {
     Status status = OP_OK;
     FwSignedSizeType accumulated = 0;
     // Loop up to 2 times for each by, bounded to prevent overflow
-    const FwSignedSizeType maximum = (size > (std::numeric_limits<FwSignedSizeType>::max()/2)) ? std::numeric_limits<FwSignedSizeType>::max() : size * 2;
+    const FwSignedSizeType maximum = (size > (std::numeric_limits<FwSignedSizeType>::max() / 2))
+                                         ? std::numeric_limits<FwSignedSizeType>::max()
+                                         : size * 2;
 
     for (FwSignedSizeType i = 0; i < maximum && accumulated < size; i++) {
         // char* for some posix implementations
-        ssize_t write_size = ::write(this->m_handle.m_file_descriptor, reinterpret_cast<const CHAR*>(&buffer[accumulated]), static_cast<size_t>(size - accumulated));
+        ssize_t write_size =
+            ::write(this->m_handle.m_file_descriptor, reinterpret_cast<const CHAR*>(&buffer[accumulated]),
+                    static_cast<size_t>(size - accumulated));
         // Non-interrupt error
         if (PosixFileHandle::ERROR_RETURN_VALUE == write_size) {
             PlatformIntType errno_store = errno;
@@ -258,11 +273,11 @@ PosixFile::Status PosixFile::write(const U8* buffer, FwSignedSizeType &size, Pos
     size = accumulated;
     // When waiting, sync to disk
     if (wait) {
-       PlatformIntType fsync_return = ::fsync(this->m_handle.m_file_descriptor);
-       if (PosixFileHandle::ERROR_RETURN_VALUE == fsync_return) {
+        PlatformIntType fsync_return = ::fsync(this->m_handle.m_file_descriptor);
+        if (PosixFileHandle::ERROR_RETURN_VALUE == fsync_return) {
             PlatformIntType errno_store = errno;
             status = Os::Posix::errno_to_file_status(errno_store);
-       }
+        }
     }
     return status;
 }
@@ -271,7 +286,6 @@ FileHandle* PosixFile::getHandle() {
     return &this->m_handle;
 }
 
-} // namespace File
-} // namespace Posix
-} // namespace Os
-
+}  // namespace File
+}  // namespace Posix
+}  // namespace Os

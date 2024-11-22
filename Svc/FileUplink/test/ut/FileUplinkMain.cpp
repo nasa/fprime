@@ -49,6 +49,11 @@ TEST(FileUplink, PacketOutOfOrder) {
   tester.packetOutOfOrder();
 }
 
+TEST(FileUplink, PacketDuplicated) {
+  Svc::FileUplinkTester tester;
+  tester.packetDuplicated();
+}
+
 TEST(FileUplink, CancelPacketInStartMode) {
   Svc::FileUplinkTester tester;
   tester.cancelPacketInStartMode();

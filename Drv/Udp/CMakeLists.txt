@@ -5,31 +5,31 @@
 # MOD_DEPS: (optional) module dependencies
 #
 ####
-restrict_platforms(Posix)
+restrict_platforms(Posix SOCKETS)
 
 set(SOURCE_FILES
-	"${CMAKE_CURRENT_LIST_DIR}/Udp.fpp"
-	"${CMAKE_CURRENT_LIST_DIR}/UdpComponentImpl.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Udp.fpp"
+    "${CMAKE_CURRENT_LIST_DIR}/UdpComponentImpl.cpp"
 )
 
 # Necessary shared helpers
 set(MOD_DEPS
-	"Fw/Logger"
-	"Drv/ByteStreamDriverModel"
-	"Drv/Ip"
+    "Fw/Logger"
+    "Drv/ByteStreamDriverModel"
+    "Drv/Ip"
 )
 
 register_fprime_module()
 
 ### UTs ###
 set(UT_SOURCE_FILES
-	"${CMAKE_CURRENT_LIST_DIR}/Udp.fpp"
-	"${CMAKE_CURRENT_LIST_DIR}/test/ut/UdpTestMain.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/test/ut/UdpTester.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Udp.fpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/UdpTestMain.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/UdpTester.cpp"
 )
 set(UT_MOD_DEPS
-	STest
-	SocketTestHelper
+    STest
+    SocketTestHelper
 )
 set(UT_AUTO_HELPERS ON)
 register_fprime_ut()
