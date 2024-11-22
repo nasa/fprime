@@ -280,7 +280,7 @@ corresponding to the state machine _M_ instantiated by _m_.
 When a component _C_ instantiates one or more state machines,
 the standard _init_ function of _C_ calls the _init_ function
 on each state machine instance, passing in the enumerated
-constant corresponding to each one.
+constant for each state machine ID.
 In the standard sequence for F Prime FSW initialization,
 the _init_ function is called before any component instances
 are connected.
@@ -289,7 +289,7 @@ including any entry actions of the initial state, may
 not emit events or telemetry or invoke any output port.
 If you need to emit events or telemetry or invoke an output port
 at the start of steady-state execution, you can have the
-initial state be an _INIT_ state that does nothing but transition to another 
+initial state be a state _INIT_ that does nothing but transition to another 
 state _START_ on an RTI signal.
 When the component instance receives an RTI call on its `schedIn` port,
 it can send the RTI signal to the state machine, causing
