@@ -337,16 +337,17 @@ class TlmPacketParser(object):
                     for channel in entry:
                         channel_name = channel.attrib["name"]
                         # TKC 11/20/2024 - In order to work with the ground system,
-                        #  we have to strip off the leading module. This is a 
+                        #  we have to strip off the leading module. This is a
                         #  band-aid until FPP packets are done
                         name_parts = channel_name.split(".")
                         if len(name_parts) != 3:
                             raise TlmPacketParseValueError(
-                                "Channel %s must be of the format \"module.component.channel_name\"" % channel_name
+                                'Channel %s must be of the format "module.component.channel_name"'
+                                % channel_name
                             )
 
-                        (module,component,channel) = name_parts
-                        channel_name = "%s.%s" % (component,channel)
+                        (module, component, channel) = name_parts
+                        channel_name = "%s.%s" % (component, channel)
                         if not channel_name in channel_size_dict:
                             raise TlmPacketParseValueError(
                                 "Channel %s does not exist" % channel_name
@@ -394,16 +395,17 @@ class TlmPacketParser(object):
                     for channel in entry:
                         channel_name = channel.attrib["name"]
                         # TKC 11/20/2024 - In order to work with the ground system,
-                        #  we have to strip off the leading module. This is a 
+                        #  we have to strip off the leading module. This is a
                         #  band-aid until FPP packets are done
                         name_parts = channel_name.split(".")
                         if len(name_parts) != 3:
                             raise TlmPacketParseValueError(
-                                "Channel %s must be of the format \"module.component.channel_name\"" % channel_name
+                                'Channel %s must be of the format "module.component.channel_name"'
+                                % channel_name
                             )
 
-                        (module,component,channel) = name_parts
-                        channel_name = "%s.%s" % (component,channel)
+                        (module, component, channel) = name_parts
+                        channel_name = "%s.%s" % (component, channel)
 
                         if not channel_name in channel_size_dict:
                             raise TlmPacketParseValueError(
