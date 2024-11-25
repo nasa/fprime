@@ -31,7 +31,7 @@ class PortFactory:
     """
     This is a concrete factory method object used to create the interface
     to the code generation.  A single call to create is made that returns
-    a the port object containing all the includes, args, etc.
+    the port object containing all the includes, args, etc.
     """
 
     __parsed = None

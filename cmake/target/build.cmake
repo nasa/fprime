@@ -31,7 +31,7 @@ endfunction(build_add_global_target)
 # build_setup_build_module:
 #
 # Helper function to setup the module. This was the historical core of the CMake system, now embedded as part of this
-# build target. It adds a the target (library, executable), sets up compiler source files, flags generated sources,
+# build target. It adds the target (library, executable), sets up compiler source files, flags generated sources,
 # sets up module and linker dependencies adds the file to the hashes.txt file, sets up include directories, etc.
 #
 # - MODULE: module name being setup
