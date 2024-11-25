@@ -84,7 +84,7 @@ bool Os::Test::FileSystem::Tester::PathNotExists::precondition(const Os::Test::F
 
 void Os::Test::FileSystem::Tester::PathNotExists::action(Os::Test::FileSystem::Tester &state) {
     ASSERT_FALSE(Os::FileSystem::getSingleton().exists("does_not_exist"))
-                << "exists() failed to return false for non-existent path";
+                << "exists() failed to return false for nonexistent path";
 }
 
 // ------------------------------------------------------------------------------------------------------
