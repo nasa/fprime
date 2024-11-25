@@ -8,7 +8,7 @@ takes. Users wanting to alter the build should look here.
 - [API](../../reference/api/cmake/API.md): Module API function documentation
 - [Options](../../reference/api/cmake/options.md): Runtime build options
 
-This documentation is generated from the source code available [here](https://github.com/nasa/fprime/tree/devel/cmake). Below is a description of some of the main API functionalities.
+This documentation is generated from [the source code](https://github.com/nasa/fprime/tree/devel/cmake). Below is a description of some of the main API functionalities.
 
 ## Toolchain and Platform Documentation
 
