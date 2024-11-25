@@ -45,21 +45,17 @@ static_assert(std::numeric_limits<FwSignedSizeType>::min() <= std::numeric_limit
               "Minimum value of FwSizeType larger than the minimum value of ssize_t. Configure a larger type.");
 
 //!\brief default copy constructor
-#ifndef TGT_OS_TYPE_VXWORKS
 PosixFile::PosixFile(const PosixFile& other) {
     // Must properly duplicate the file handle
-    this->m_handle.m_file_descriptor = ::dup(other.m_handle.m_file_descriptor);
+    this->m_handle.m_file_descriptor = fcntl(other.m_handle.m_file_descriptor, F_DUPFD, 0);
 }
-#endif
 
-#ifndef TGT_OS_TYPE_VXWORKS
 PosixFile& PosixFile::operator=(const PosixFile& other) {
     if (this != &other) {
-        this->m_handle.m_file_descriptor = ::dup(other.m_handle.m_file_descriptor);
+        this->m_handle.m_file_descriptor = fcntl(other.m_handle.m_file_descriptor, F_DUPFD, 0);
     }
     return *this;
 }
-#endif
 
 PosixFile::Status PosixFile::open(const char* filepath,
                                   PosixFile::Mode requested_mode,
