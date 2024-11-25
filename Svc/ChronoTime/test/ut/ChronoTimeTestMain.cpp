@@ -6,7 +6,7 @@
 
 #include "ChronoTimeTester.hpp"
 
-TEST(Nominal, toDo) {
+TEST(Nominal, TestBasicTime) {
     Svc::ChronoTimeTester tester;
     tester.test_basic_time();
 }
