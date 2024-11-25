@@ -43,9 +43,9 @@ class TcpServerComponentImpl : public TcpServerComponentBase, public SocketCompo
     // ----------------------------------------------------------------------
 
     /**
-     * \brief Configures the TcpClient settings but does not open the connection
+     * \brief Configures the TcpServer settings but does not open the connection
      *
-     * The TcpClientComponent needs to connect to a remote TCP server. This call configures the hostname, port and
+     * The TcpServerComponent needs to listen for a remote TCP client. This call configures the hostname, port and
      * send timeouts for that socket connection. This call should be performed on system startup before recv or send
      * are called. Note: hostname must be a dot-notation IP address of the form "x.x.x.x". DNS translation is left up
      * to the user.
@@ -103,7 +103,7 @@ class TcpServerComponentImpl : public TcpServerComponentBase, public SocketCompo
      * \brief returns a reference to the socket handler
      *
      * Gets a reference to the current socket handler in order to operate generically on the IpSocket instance. Used for
-     * receive, and open calls. This socket handler will be a TcpClient.
+     * receive, and open calls. This socket handler will be a TcpServer.
      *
      * \return IpSocket reference
      */
@@ -146,9 +146,9 @@ class TcpServerComponentImpl : public TcpServerComponentBase, public SocketCompo
     // ----------------------------------------------------------------------
 
     /**
-     * \brief Send data out of the TcpClient
+     * \brief Send data out of the TcpServer
      *
-     * Passing data to this port will send data from the TcpClient to whatever TCP server this component has connected
+     * Passing data to this port will send data from the TcpServer to whatever TCP client this component has connected
      * to. Should the socket not be opened or was disconnected, then this port call will return SEND_RETRY and critical
      * transmissions should be retried. SEND_ERROR indicates an unresolvable error. SEND_OK is returned when the data
      * has been sent.

@@ -11,11 +11,11 @@ The manager component (typically the ground interface) initiates the transfer of
 The caller will provide a `Fw::Buffer` containing the data to send and the port call will return a status of that send.
 These responses are an enumeration whose values are described in the following table:
 
-| Value | Description |
-|---|---|
-| Drv::SEND_OK    | Send functioned normally. |
-| Drv::SEND_RETRY | Send should be retried, but a subsequent send should return SEND_OK. |
-| Drv::SEND_ERROR | Send produced an error, future sends likely to fail. |
+| Value | Description | Buffer Ownership |
+|---|---|---|
+| Drv::SEND_OK    | Send functioned normally. | Ownership of the `Fw::Buffer` passes to the byte stream driver. |
+| Drv::SEND_RETRY | Send should be retried, but a subsequent send should return SEND_OK. | The caller retains ownership of the `Fw::Buffer`. |
+| Drv::SEND_ERROR | Send produced an error, future sends likely to fail. | Ownership of the `Fw::Buffer` passes to the byte stream driver. |
 
 **Note:** in either formation described below, send will operate as described here.
 

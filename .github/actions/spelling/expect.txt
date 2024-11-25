@@ -472,6 +472,7 @@ jdperez
 jenkins
 jenkinsci
 jishii
+Joaquim
 jobrestrictions
 joshuaa
 jpl
@@ -596,6 +597,7 @@ nogen
 noncomma
 NONINFRINGEMENT
 noparent
+norecords
 normalwidths
 NOSIZE
 NOSPEC
@@ -846,6 +848,7 @@ showinitializer
 sideeffect
 sighandler
 Signedness
+Silveira
 sinc
 Sinha
 sloc

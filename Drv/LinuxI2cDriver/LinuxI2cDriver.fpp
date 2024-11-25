@@ -1,13 +1,9 @@
 module Drv {
 
   passive component LinuxI2cDriver {
+    include "../Interfaces/I2cInterface.fppi"
 
-    guarded input port write: Drv.I2c
-
-    guarded input port read: Drv.I2c
-
-    guarded input port writeRead: Drv.I2cWriteRead
-
-  }
+    
+    }
 
 }
