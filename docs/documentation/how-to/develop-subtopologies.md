@@ -131,7 +131,7 @@ namespace MySubtopology{
 }
 ```
 
-In the phase pattern, these three (as well as others, described in detail [here](https://nasa.github.io/fpp/fpp-users-guide.html#Defining-Component-Instances_Init-Specifiers)) are tied as "init specifiers" to fpp component instances. So, instead of configuring all components in one place, each instance defines its own init specification. 
+In the phase pattern, these three (as well as others, [described in detail](https://nasa.github.io/fpp/fpp-users-guide.html#Defining-Component-Instances_Init-Specifiers)) are tied as "init specifiers" to fpp component instances. So, instead of configuring all components in one place, each instance defines its own init specification. 
 
 This looks like the following example, and can be done inline within your unified fpp file:
 
