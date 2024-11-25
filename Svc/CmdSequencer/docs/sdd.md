@@ -312,11 +312,11 @@ TBD
 
 ## 4 Module Checklists
 
-[Design Checklist](Checklist_Design.xlsx)
-
-[Code Checklist](Checklist_Code.xlsx)
-
-[Unit Test Checklist](Checklist_Unit_Test.xls)
+Checklist |
+-------- |
+[Design](Checklist_Design.xlsx) |
+[Code](Checklist_Code.xlsx) |
+[Unit Test](Checklist_Unit_Test.xls) |
 
 ## 5 Unit Testing
 
