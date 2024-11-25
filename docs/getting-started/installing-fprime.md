@@ -158,7 +158,7 @@ If the user chooses to install CMake directly from the CMake site (not using hom
 ```
 sudo "/Applications/CMake.app/Contents/bin/cmake-gui" --install
 ```
-More information can be found [here](https://stackoverflow.com/questions/30668601/installing-cmake-command-line-tools-on-a-mac).   
+See [installing cmake command line tools on a mac](https://stackoverflow.com/questions/30668601/installing-cmake-command-line-tools-on-a-mac).   
 
 ### SSL Error with Python 3.8+ on macOS
 This fix will not work for Python installed via Homebrew. Try installing Python published at python.org.
