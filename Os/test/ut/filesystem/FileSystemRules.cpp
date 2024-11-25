@@ -301,7 +301,7 @@ void Os::Test::FileSystem::Tester::AppendToNewFile::action(Os::Test::FileSystem:
     std::string dest_path = dest.path;
 
     if (source_path == dest_path) {
-        return; // skip test - can not remove dest if it is the same as source
+        return; // skip test - cannot remove dest if it is the same as source
     }
     // Set up test state: remove dest file from disk and reset contents in test state
     bool createMissingDest = true;
