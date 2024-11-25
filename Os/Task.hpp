@@ -266,7 +266,7 @@ namespace Os {
 
         //! \brief start the task
         //!
-        //! Starts the task given the supplied arguments. This is done via the a task routine wrapper intermediary that
+        //! Starts the task given the supplied arguments. This is done via a task routine wrapper intermediary that
         //! ensures that `setStarted` is called once the task has actually started to run. The task then runs the user
         //! routine. This function may return before the new task begins to run.
         //
