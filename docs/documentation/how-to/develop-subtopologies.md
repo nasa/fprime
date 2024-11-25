@@ -228,7 +228,7 @@ register_fprime_module()
 ...
 ```
 
-Head over to `MainDeplomentTopologyDefs.hpp`. We want to not only include our subtopology's definitions header, but also modify `PingEntires` to use `GlobalDefs::PingEntries`. At the end of `namespace MainDeployment`, include:
+Head over to `MainDeploymentTopologyDefs.hpp`. We want to not only include our subtopology's definitions header, but also modify `PingEntires` to use `GlobalDefs::PingEntries`. At the end of `namespace MainDeployment`, include:
 
 ```cpp
 namespace PingEntries = GlobalDefs::PingEntries;
