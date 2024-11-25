@@ -18,7 +18,7 @@
     <import_port_type>Fw/Prm/PrmSetPortAi.xml</import_port_type>
 
     <import_serializable_type>Autocoders/Python/test/comp_no_namespace/QuaternionSerializableAi.xml</import_serializable_type>
-    <comment>A stressfull component</comment>
+    <comment>A stressful component</comment>
     <ports>
         <port name="CmdDisp" kind="input" data_type="Fw::Cmd" max_number="1" role="Cmd"/>
         <port name="CmdReg" kind="output" data_type="Fw::CmdReg" max_number="1" role="CmdRegistration"/>
