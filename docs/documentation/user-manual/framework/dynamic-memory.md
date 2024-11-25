@@ -91,7 +91,7 @@ FW_ASSERT(my_buffer.getSize() >= 4); // Prevent overrun on next line
 data[3] = 1;
 ```
 
-Full `Fw::Buffer` documentation is available [here](../../reference/api/cpp/html/class_fw_1_1_buffer.html).
+Full [`Fw::Buffer` documentation is available](../../reference/api/cpp/html/class_fw_1_1_buffer.html).
 
 
 ## Topology Consideration
