@@ -374,7 +374,7 @@ namespace Svc {
         // file class instance for processing files
         Os::File dpFile;
         // Working buffer for DP headers
-        U8 dpBuff[Fw::DpContainer::MIN_PACKET_SIZE]; // FIXME: replace magic number
+        U8 dpBuff[Fw::DpContainer::MIN_PACKET_SIZE]; // Header buffer
         Fw::Buffer hdrBuff(dpBuff, sizeof(dpBuff)); // buffer for container header decoding
         Fw::DpContainer container; // container object for extracting header fields
 
