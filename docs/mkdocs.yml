@@ -274,7 +274,6 @@ nav:
   - Getting Started: 
     - getting-started/index.md
     - 'Installing F´': getting-started/installing-fprime.md
-    - 'Installing F´ Console Autocomplete': getting-started/installing-autocomplete.md
     - 'F´ Features': getting-started/features.md
     - 'F´ Projects': getting-started/projects.md
   - Documentation:
