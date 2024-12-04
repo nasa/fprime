@@ -1,6 +1,7 @@
 #!/bin/bash
 ####
 # generate_docs.sh: A crude wrapper for generating fprime documents for API documents.
+# This generates both the doxygen (C++) and CMake API documentation for fprime.
 ####
 SOURCE_DIR=`dirname $BASH_SOURCE`
 
@@ -9,8 +10,6 @@ APIDOCS="${FPRIME}/docs/documentation/reference/api"
 
 DOXY_OUTPUT="${APIDOCS}/cpp"
 CMAKE_OUTPUT="${APIDOCS}/cmake"
-
-VERSIONED_OUTPUT="${1:-}"
 
 DOXYGEN="${2:-$(which doxygen)}"
 if [ ! -x "${DOXYGEN}" ]
@@ -55,12 +54,6 @@ function clobber
         exit 2
     fi
     mkdir -p ${DOXY_OUTPUT}
-
-    # Replace version number in Doxyfile
-    if [[ "${VERSIONED_OUTPUT}" != "" ]]
-    then
-        sed -i "s/^PROJECT_NUMBER[ ]*=.*$/PROJECT_NUMBER=${VERSIONED_OUTPUT}/g" "${FPRIME}/docs/doxygen/Doxyfile"
-    fi
 
     ${DOXYGEN} "${FPRIME}/docs/doxygen/Doxyfile"
     rm -r "${DOCS_CACHE}"
