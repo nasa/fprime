@@ -4,6 +4,6 @@ expect -re {Deployment name.*}
 send "MyDeployment\r"
 expect -re {.*Select communication driver type}
 send "1\r"
-expect -re "Add MyDeployment.*"
+expect -re "Add .*MyDeployment.*"
 send "yes\r"
 expect eof

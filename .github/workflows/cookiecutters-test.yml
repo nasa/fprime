@@ -1,0 +1,76 @@
+name: Cookiecutters Tests
+on: [push]
+#  push:
+#    branches: [ devel, release/** ]
+#  pull_request:
+#    # The branches below must be a subset of the branches above
+#    branches: [ devel, release/** ]
+#    paths-ignore:
+#      - 'docs/**'
+#      - '**.md'
+#      - '.github/actions/spelling/**'
+#      - '.github/ISSUE_TEMPLATE/**'
+
+jobs:
+
+  Validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Retrieve bootstrap.expect file"
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            .github/actions/cookiecutter-check/bootstrap.expect
+          sparse-checkout-cone-mode: false
+          fetch-depth: 0
+
+      - name: "Setup Python"
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: "Install expect and fprime-bootstrap@devel"
+        run: |
+             ls -la
+             sudo apt-get install expect
+             pip install git+https://github.com/fprime-community/fprime-bootstrap@devel
+      
+      - name: "Bootstrap project"
+        run: |
+             expect .github/actions/cookiecutter-check/bootstrap.expect
+
+      - name: "Overlay fprime@devel in new project"
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          path: ./MyProject/fprime
+          fetch-depth: 0
+
+      - name: "Install fprime-tools@devel"
+        run: |
+             cd MyProject
+             . fprime-venv/bin/activate
+             pip install git+https://github.com/nasa/fprime-tools@devel
+
+      - name: "Test Build project"
+        run: |  
+             cd MyProject
+             . fprime-venv/bin/activate
+             fprime-util generate
+             fprime-util build -j4
+
+      - name: "Test Deployment and build"
+        run: |
+             cd MyProject
+             . fprime-venv/bin/activate
+             expect ./fprime/.github/workflows/deployment.exp
+             cd MyDeployment
+             fprime-util build -j4
+
+      - name: "Test Component and build"
+        run: |
+             cd MyProject
+             . fprime-venv/bin/activate
+             expect ./fprime/.github/workflows/component.exp
+             cd MyComponent
+             fprime-util build -j4
