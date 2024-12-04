@@ -1,21 +1,30 @@
 name: Cookiecutters Tests
-on: [push]
-#  push:
-#    branches: [ devel, release/** ]
-#  pull_request:
-#    # The branches below must be a subset of the branches above
-#    branches: [ devel, release/** ]
-#    paths-ignore:
-#      - 'docs/**'
-#      - '**.md'
-#      - '.github/actions/spelling/**'
-#      - '.github/ISSUE_TEMPLATE/**'
+
+on:
+ push:
+   branches: [ devel, release/** ]
+ pull_request:
+   # The branches below must be a subset of the branches above
+   branches: [ devel, release/** ]
+   paths-ignore:
+     - 'docs/**'
+     - '**.md'
+     - '.github/actions/spelling/**'
+     - '.github/ISSUE_TEMPLATE/**'
+
+
+
+# This workflow tests the project bootstrapping and cookiecutter templates by creating 
+# a new project, deployment and component and building them
+# This uses the `expect` utility to feed input into the various cookiecutter prompts
 
 jobs:
 
   Validate:
     runs-on: ubuntu-latest
     steps:
+      # Checkout only the bootstrap.expect file, since the full F´ repo will be 
+      # checked out as part of the fprime-bootstrap process
       - name: "Retrieve bootstrap.expect file"
         uses: actions/checkout@v4
         with:
@@ -31,14 +40,14 @@ jobs:
 
       - name: "Install expect and fprime-bootstrap@devel"
         run: |
-             ls -la
              sudo apt-get install expect
              pip install git+https://github.com/fprime-community/fprime-bootstrap@devel
       
-      - name: "Bootstrap project"
+      - name: "Bootstrap Project"
         run: |
              expect .github/actions/cookiecutter-check/bootstrap.expect
 
+      # Overlay fprime@devel in new project so that we build with fprime devel in the tests
       - name: "Overlay fprime@devel in new project"
         uses: actions/checkout@v4
         with:
@@ -58,14 +67,14 @@ jobs:
              . fprime-venv/bin/activate
              fprime-util version-check
 
-      - name: "Test Build project"
+      - name: "Test Generate and Build Project"
         run: |  
              cd MyProject
              . fprime-venv/bin/activate
              fprime-util generate
              fprime-util build -j4
 
-      - name: "Test Deployment and build"
+      - name: "Test New Deployment and Build"
         run: |
              cd MyProject
              . fprime-venv/bin/activate
@@ -73,7 +82,7 @@ jobs:
              cd MyDeployment
              fprime-util build -j4
 
-      - name: "Test Component and build"
+      - name: "Test New Component and Build"
         run: |
              cd MyProject
              . fprime-venv/bin/activate
