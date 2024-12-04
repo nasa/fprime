@@ -52,6 +52,12 @@ jobs:
              . fprime-venv/bin/activate
              pip install git+https://github.com/nasa/fprime-tools@devel
 
+      - name: "Version Check"
+        run: |
+             cd MyProject
+             . fprime-venv/bin/activate
+             fprime-util version-check
+
       - name: "Test Build project"
         run: |  
              cd MyProject
