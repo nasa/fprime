@@ -55,10 +55,11 @@ jobs:
           path: ./MyProject/fprime
           fetch-depth: 0
 
-      - name: "Install fprime-tools@devel"
+      - name: "Update dependencies and install fprime-tools@devel"
         run: |
              cd MyProject
              . fprime-venv/bin/activate
+             pip install -U -r ./fprime/requirements.txt
              pip install git+https://github.com/nasa/fprime-tools@devel
 
       - name: "Version Check"
