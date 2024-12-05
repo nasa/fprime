@@ -47,8 +47,9 @@ jobs:
         run: |
              expect .github/actions/cookiecutter-check/bootstrap.expect
 
-      # Overlay fprime@devel in new project so that we build with fprime devel in the tests
-      - name: "Overlay fprime@devel in new project"
+      # Overlay fprime@current_rev in new project so that we build with it in the tests
+      # current_rev is devel on the devel branch and the PR revision in PR checks
+      - name: "Overlay fprime@current_rev in new project"
         uses: actions/checkout@v4
         with:
           submodules: true
