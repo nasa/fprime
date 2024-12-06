@@ -271,9 +271,7 @@ nav:
     - 'F´ Projects': overview/projects.md
   - Getting Started: 
     - getting-started/index.md
-    - 'Installing F´': getting-started/installing-fprime.md
-    - 'F´ Features': getting-started/features.md
-    - 'F´ Projects': getting-started/projects.md
+    - 'Installation and Troubleshooting': getting-started/installing-fprime.md
   - Documentation:
     - documentation/index.md
     - Tutorials:
