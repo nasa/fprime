@@ -65,16 +65,16 @@ extra:
   # Event Values
   events:
     # Event 1 Information
-    - date: 'OCT 21-23'
+    - date: 'OCT 13-15 2025'
       name: 'Flight Software Development Workshop'
       location: 'Jet Propulsion Laboratory in Pasadena, California'
-      description: 'This three-day workshop covers the fundamentals of flight software architecture and design, embedded programming, testing, and verification. The workshop includes a tutorial on the F Prime open source flight software ecosystem. A coding exercise provides hands-on experience with F Prime and reinforces the concepts presented in the workshop. The workshop is free; however, seating is limited and is by invitation only. To be considered for an invitation, please click the Request an Invitation button below and complete the form.'
-      button_text: Request an Invitation
-      button_link: './event-request/'
+      description: 'Check back in early 2025 for details and to request an invitation.'
+      button_text: Request an Invitation (coming soon)
+      button_link: '#'
       category: 'Tutorial'
       category_class: event-category-tutorial      # Make sure class matches inputted category
-      image: https://dummyimage.com/200x200/eee/aaa
-      alt: 'Event 2 image'
+      image: '#'
+      alt: ''
   # Project Values
   projects:
     # ISS-RapidScat
