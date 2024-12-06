@@ -219,11 +219,9 @@ plugins:
             docs/img
           ]
         - name: tutorials-arduino-led-blinker
-          import_url: https://github.com/ashleynilo/fprime-tutorial-arduino-blinker?branch=main
+          import_url: https://github.com/ashleynilo/fprime-tutorial-arduino-blinker?branch=devel
           imports: [
             docs/arduino-led-blinker.md,
-            docs/arduino-cli-install.md,
-            uploading-to-board.md
             docs/img
           ]
 
@@ -284,10 +282,7 @@ nav:
       - 'LED Blinker': tutorials-led-blinker/docs/led-blinker.md
       - 'Math Component': tutorials-math-component/docs/math-component.md
       - 'Cross-Compilation Setup Tutorial': documentation/tutorials/cross-compilation.md
-      - Arduino LED Blinker:
-        - tutorials-arduino-led-blinker/docs/arduino-led-blinker.md
-        - 'Arduino CLI Install': tutorials-arduino-led-blinker/docs/arduino-cli-install.md
-        - 'Uploading Binary File to Hardware': tutorials-arduino-led-blinker/docs/uploading-to-board.md
+      - 'Arduino LED Blinker': tutorials-arduino-led-blinker/docs/arduino-led-blinker.md
     - User Manual:
       - documentation/user-manual/index.md
       - Overview:

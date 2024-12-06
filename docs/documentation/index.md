@@ -1,7 +1,5 @@
 # Documentation
 
-This section of the documentation captures how-to guides for various F´ development tasks.
-
 
 <div class="grid cards" markdown>
 
