@@ -503,7 +503,7 @@ endfunction(register_fprime_ut)
 #
 # This function allows users to register custom build targets into the build system.  These targets are defined in a
 # CMake file and consist of three functions that operate on different parts of the build: global, per-module, and
-# per-deployment. See: [Targets]((./target/target.md)).
+# per-deployment. See: [Targets](./target/target.md).
 #
 # This function takes in either a file path to a CMake file defining targets, or an short include path that accomplishes
 # the same thing. Note: make sure the directory is on the CMake include path to use the second form. The supplied file
