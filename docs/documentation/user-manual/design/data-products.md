@@ -121,7 +121,7 @@ FPP provides the following special ports for managing data products:
    product get port productGetOut
    ```
 
-1. A **product request port** of type [`Fw::DpRequest`](../../Fw/Dp/docs/sdd.md).
+1. A **product request port** of type [`Fw::DpRequest`](../../reference/api/cpp/html/_fw_dp.html).
    This is an output port for asynchronously requesting memory
    from a data product manager.
    The request is served on the thread of the data product manager.
@@ -132,14 +132,14 @@ FPP provides the following special ports for managing data products:
    product request port productRequestOut
    ```
 
-1. A **product receive port** of type [`Fw::DpResponse`](../../Fw/Dp/docs/sdd.md).
+1. A **product receive port** of type [`Fw::DpResponse`](../../reference/api/cpp/html/_fw_dp.html).
    This is an input port for receiving an empty container in response
    to an asynchronous request. Example syntax:
    ```
    async product recv port productRecvIn
    ```
 
-1. A **product send port** of type [`Fw::DpSend`](../../Fw/Dp/docs/sdd.md).
+1. A **product send port** of type [`Fw::DpSend`](../../reference/api/cpp/html/_fw_dp.html).
    This is an output port for sending a filled container
    to a data product writer. Example syntax:
    ```
