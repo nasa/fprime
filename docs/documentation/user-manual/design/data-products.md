@@ -213,7 +213,7 @@ the following API elements:
 priorities, and record IDs.
 
 1. A member class _C_ `::DpContainer`. This class is derived from
-[`Fw::DpContainer`](../../Fw/Dp/docs/sdd.md) and represents a container
+[`Fw::DpContainer`](../../reference/api/cpp/html/_fw_dp.html) and represents a container
 specialized to the data products defined in _C_.
 Each instance of _C_ `::DpContainer` is a wrapper for an `Fw::Buffer` _B_,
 which points to allocated memory.
@@ -222,7 +222,7 @@ defined in _C_ into the memory pointed to by _B_.
 There is one operation _C_ `::DpContainer::serialize_` _R_
 for each record _R_ defined in _C_.
 For the serialized format of each record, see the documentation
-for [`Fw::DpContainer`](../../Fw/Dp/docs/sdd.md).
+for [`Fw::DpContainer`](../../reference/api/cpp/html/_fw_dp.html).
 
 1. If _C_ has a `product` `get` port, a member function `dpGet_`
 _c_ for each container _c_ defined in _C_.
