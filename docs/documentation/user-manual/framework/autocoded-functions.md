@@ -1,4 +1,4 @@
-# F´ Component Implementation Classes
+# F´ Autocoded Functions and Component Classes
 
 > [!NOTE]
 > for a hands-on walk-through of build topologies, please see: [Tutorials](../../tutorials/index.md)
