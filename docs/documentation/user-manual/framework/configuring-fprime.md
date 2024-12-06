@@ -338,7 +338,7 @@ are less restrictive in size.
 
 Event functions that are called are turned into two output port calls. One is a binary port that is used to store the
 event to be transported to ground software or a testing interface external to the software. The component also takes
-the format string specified in the XML and populates it with the event arguments, and calls an output port with a
+the format string specified in the FPP and populates it with the event arguments, and calls an output port with a
 readable text version of the event. This is meant to be used for a console interface so the user can see, in text form,
 the same events being stored for transmission. A component with the text logging input port can be used to display the
 text. A very simple implementation of this can be seen in `Svc/PassiveConsoleTextLogger`. In a resource-constrained

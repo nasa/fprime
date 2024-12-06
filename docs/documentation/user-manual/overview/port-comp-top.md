@@ -91,7 +91,7 @@ placed on message queues in the receiving component. In addition command argumen
 serialized buffers so that components that transfer the data can be independent of the definition of the data.
 
 Users can define arbitrary interface argument types and the framework automatically serializes the data for port calls.
-They can also define complex types in XML where a code generator generates classes that are serializable for use
+They can also define complex types in FPP where a code generator generates classes that are serializable for use
 internally, and usable with the F´ supplied ground system.
 
 

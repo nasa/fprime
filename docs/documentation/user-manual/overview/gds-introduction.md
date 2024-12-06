@@ -93,7 +93,7 @@ deployment directory.  The user can simply specify the `--dictionary` for basic 
 be placed in the user's home directory when the `-d`/`--deploy` flag isn't set.
 
 ```bash
-$ fprime-gds -n --dictionary path/to/dictionary/xml
+$ fprime-gds -n --dictionary path/to/dictionary/
 ```
 
 **Note:** `-n` is described below.
