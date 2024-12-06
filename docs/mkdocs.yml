@@ -278,11 +278,11 @@ nav:
     - documentation/index.md
     - Tutorials:
       - 'Tutorials Overview': documentation/tutorials/index.md
-      - 'Hello, World!': tutorials-hello-world/docs/hello-world.md
-      - 'LedBlinker': tutorials-led-blinker/docs/led-blinker.md
+      - 'Hello World': tutorials-hello-world/docs/hello-world.md
+      - 'LED Blinker': tutorials-led-blinker/docs/led-blinker.md
       - 'MathComponent': tutorials-math-component/docs/math-component.md
       - 'Cross-Compilation Setup': documentation/tutorials/cross-compilation.md
-      - 'Arduino LedBlinker': tutorials-arduino-led-blinker/docs/arduino-led-blinker.md
+      - 'Arduino LED Blinker': tutorials-arduino-led-blinker/docs/arduino-led-blinker.md
     - User Manual:
       - documentation/user-manual/index.md
       - Overview:
