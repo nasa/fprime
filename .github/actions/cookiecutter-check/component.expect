@@ -1,0 +1,24 @@
+set timeout 60
+spawn fprime-util new --component
+expect -re {.*Component name.*}
+send "MyComponent\r"
+expect -re {.*Component short description.*}
+send "test component\r"
+expect -re {.*Component namespace.*}
+send "Components\r"
+expect -re {.*Select component kind}
+send "1\r"
+expect -re {.*Enable Commands.*}
+send "1\r"
+expect -re {.*Enable Telemetry.*}
+send "1\r"
+expect -re {.*Enable Events.*}
+send "1\r"
+expect -re {.*Enable Parameters.*}
+send "1\r"
+expect -re {Add MyComponent to.*}
+send "yes\r"
+expect -re {Generate implementation files.*}
+send "yes\r"
+expect -re {.*Created new component.*}
+expect eof

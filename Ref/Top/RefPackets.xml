@@ -3,241 +3,241 @@
     <import_topology>Ref/Top/RefTopologyAppAi.xml</import_topology>
 
     <packet name="CDH" id="1" level="1">
-        <channel name="cmdDisp.CommandsDispatched"/>
-        <channel name="rateGroup1Comp.RgMaxTime"/>
-        <channel name="rateGroup2Comp.RgMaxTime"/>
-        <channel name="rateGroup3Comp.RgMaxTime"/>
-        <channel name="cmdSeq.CS_LoadCommands"/>
-        <channel name="cmdSeq.CS_CancelCommands"/>
-        <channel name="cmdSeq.CS_CommandsExecuted"/>
-        <channel name="cmdSeq.CS_SequencesCompleted"/>
-        <channel name="fileUplink.FilesReceived"/>
-        <channel name="fileUplink.PacketsReceived"/>
-        <channel name="fileUplinkBufferManager.TotalBuffs"/>
-        <channel name="fileUplinkBufferManager.CurrBuffs"/>
-        <channel name="fileUplinkBufferManager.HiBuffs"/>
-        <channel name="fileDownlink.FilesSent"/>
-        <channel name="fileDownlink.PacketsSent"/>
-        <channel name="fileManager.CommandsExecuted"/>
+        <channel name="Ref.cmdDisp.CommandsDispatched"/>
+        <channel name="Ref.rateGroup1Comp.RgMaxTime"/>
+        <channel name="Ref.rateGroup2Comp.RgMaxTime"/>
+        <channel name="Ref.rateGroup3Comp.RgMaxTime"/>
+        <channel name="Ref.cmdSeq.CS_LoadCommands"/>
+        <channel name="Ref.cmdSeq.CS_CancelCommands"/>
+        <channel name="Ref.cmdSeq.CS_CommandsExecuted"/>
+        <channel name="Ref.cmdSeq.CS_SequencesCompleted"/>
+        <channel name="Ref.fileUplink.FilesReceived"/>
+        <channel name="Ref.fileUplink.PacketsReceived"/>
+        <channel name="Ref.fileUplinkBufferManager.TotalBuffs"/>
+        <channel name="Ref.fileUplinkBufferManager.CurrBuffs"/>
+        <channel name="Ref.fileUplinkBufferManager.HiBuffs"/>
+        <channel name="Ref.fileDownlink.FilesSent"/>
+        <channel name="Ref.fileDownlink.PacketsSent"/>
+        <channel name="Ref.fileManager.CommandsExecuted"/>
         <!-- Uncomment to use Svc::TlmPacketizer -->
-        <!--channel name="tlmSend.SendLevel"/-->
+        <!-- channel name="Ref.tlmSend.SendLevel"/-->
     </packet>
 
     <packet name="CDHErrors" id="2" level="1">
-        <channel name="rateGroup1Comp.RgCycleSlips"/>
-        <channel name="rateGroup2Comp.RgCycleSlips"/>
-        <channel name="rateGroup3Comp.RgCycleSlips"/>
-        <channel name="cmdSeq.CS_Errors"/>
-        <channel name="fileUplink.Warnings"/>
-        <channel name="fileDownlink.Warnings"/>
-        <channel name="health.PingLateWarnings"/>
-        <channel name="fileManager.Errors"/>
-        <channel name="fileUplinkBufferManager.NoBuffs"/>
-        <channel name="fileUplinkBufferManager.EmptyBuffs"/>
-        <channel name="fileManager.Errors"/>
+        <channel name="Ref.rateGroup1Comp.RgCycleSlips"/>
+        <channel name="Ref.rateGroup2Comp.RgCycleSlips"/>
+        <channel name="Ref.rateGroup3Comp.RgCycleSlips"/>
+        <channel name="Ref.cmdSeq.CS_Errors"/>
+        <channel name="Ref.fileUplink.Warnings"/>
+        <channel name="Ref.fileDownlink.Warnings"/>
+        <channel name="Ref.health.PingLateWarnings"/>
+        <channel name="Ref.fileManager.Errors"/>
+        <channel name="Ref.fileUplinkBufferManager.NoBuffs"/>
+        <channel name="Ref.fileUplinkBufferManager.EmptyBuffs"/>
+        <channel name="Ref.fileManager.Errors"/>
     </packet>
 
     <packet name="DriveTlm" id="3" level="1">
-        <channel name="pingRcvr.PR_NumPings"/>
-        <channel name="sendBuffComp.PacketsSent"/>
-        <channel name="sendBuffComp.NumErrorsInjected"/>
-        <channel name="sendBuffComp.Parameter3"/>
-        <channel name="sendBuffComp.Parameter4"/>
-        <channel name="sendBuffComp.SendState"/>
-        <channel name="recvBuffComp.PktState"/>
-        <channel name="recvBuffComp.Sensor1"/>
-        <channel name="recvBuffComp.Sensor2"/>
-        <channel name="recvBuffComp.Parameter1"/>
-        <channel name="recvBuffComp.Parameter2"/>
-        <channel name="blockDrv.BD_Cycles"/>
+        <channel name="Ref.pingRcvr.PR_NumPings"/>
+        <channel name="Ref.sendBuffComp.PacketsSent"/>
+        <channel name="Ref.sendBuffComp.NumErrorsInjected"/>
+        <channel name="Ref.sendBuffComp.Parameter3"/>
+        <channel name="Ref.sendBuffComp.Parameter4"/>
+        <channel name="Ref.sendBuffComp.SendState"/>
+        <channel name="Ref.recvBuffComp.PktState"/>
+        <channel name="Ref.recvBuffComp.Sensor1"/>
+        <channel name="Ref.recvBuffComp.Sensor2"/>
+        <channel name="Ref.recvBuffComp.Parameter1"/>
+        <channel name="Ref.recvBuffComp.Parameter2"/>
+        <channel name="Ref.blockDrv.BD_Cycles"/>
     </packet>
 
     <packet name="SigGenSum" id="4" level="1">
-        <channel name="SG1.Output"/>
-        <channel name="SG1.Type"/>
-        <channel name="SG2.Output"/>
-        <channel name="SG2.Type"/>
-        <channel name="SG3.Output"/>
-        <channel name="SG3.Type"/>
-        <channel name="SG4.Output"/>
-        <channel name="SG4.Type"/>
-        <channel name="SG5.Output"/>
-        <channel name="SG5.Type"/>
+        <channel name="Ref.SG1.Output"/>
+        <channel name="Ref.SG1.Type"/>
+        <channel name="Ref.SG2.Output"/>
+        <channel name="Ref.SG2.Type"/>
+        <channel name="Ref.SG3.Output"/>
+        <channel name="Ref.SG3.Type"/>
+        <channel name="Ref.SG4.Output"/>
+        <channel name="Ref.SG4.Type"/>
+        <channel name="Ref.SG5.Output"/>
+        <channel name="Ref.SG5.Type"/>
     </packet>
 
     <packet name="SystemRes1" id="5" level="2">
-        <channel name="systemResources.MEMORY_TOTAL"/>
-        <channel name="systemResources.MEMORY_USED"/>
-        <channel name="systemResources.NON_VOLATILE_TOTAL"/>
-        <channel name="systemResources.NON_VOLATILE_FREE"/>
+        <channel name="Ref.systemResources.MEMORY_TOTAL"/>
+        <channel name="Ref.systemResources.MEMORY_USED"/>
+        <channel name="Ref.systemResources.NON_VOLATILE_TOTAL"/>
+        <channel name="Ref.systemResources.NON_VOLATILE_FREE"/>
     </packet>
 
     <packet name="SystemRes3" id="6" level="2">
-        <channel name="systemResources.CPU"/>
-        <channel name="systemResources.CPU_00"/>
-        <channel name="systemResources.CPU_01"/>
-        <channel name="systemResources.CPU_02"/>
-        <channel name="systemResources.CPU_03"/>
-        <channel name="systemResources.CPU_04"/>
-        <channel name="systemResources.CPU_05"/>
-        <channel name="systemResources.CPU_06"/>
-        <channel name="systemResources.CPU_07"/>
-        <channel name="systemResources.CPU_08"/>
-        <channel name="systemResources.CPU_09"/>
-        <channel name="systemResources.CPU_10"/>
-        <channel name="systemResources.CPU_11"/>
-        <channel name="systemResources.CPU_12"/>
-        <channel name="systemResources.CPU_13"/>
-        <channel name="systemResources.CPU_14"/>
-        <channel name="systemResources.CPU_15"/>
+        <channel name="Ref.systemResources.CPU"/>
+        <channel name="Ref.systemResources.CPU_00"/>
+        <channel name="Ref.systemResources.CPU_01"/>
+        <channel name="Ref.systemResources.CPU_02"/>
+        <channel name="Ref.systemResources.CPU_03"/>
+        <channel name="Ref.systemResources.CPU_04"/>
+        <channel name="Ref.systemResources.CPU_05"/>
+        <channel name="Ref.systemResources.CPU_06"/>
+        <channel name="Ref.systemResources.CPU_07"/>
+        <channel name="Ref.systemResources.CPU_08"/>
+        <channel name="Ref.systemResources.CPU_09"/>
+        <channel name="Ref.systemResources.CPU_10"/>
+        <channel name="Ref.systemResources.CPU_11"/>
+        <channel name="Ref.systemResources.CPU_12"/>
+        <channel name="Ref.systemResources.CPU_13"/>
+        <channel name="Ref.systemResources.CPU_14"/>
+        <channel name="Ref.systemResources.CPU_15"/>
     </packet>
 
     <packet name="SigGen1Info" id="10" level="2">
-        <channel name="SG1.Info"/>
+        <channel name="Ref.SG1.Info"/>
     </packet>
 
     <packet name="SigGen2Info" id="11" level="2">
-        <channel name="SG2.Info"/>
+        <channel name="Ref.SG2.Info"/>
     </packet>
 
     <packet name="SigGen3Info" id="12" level="2">
-        <channel name="SG3.Info"/>
+        <channel name="Ref.SG3.Info"/>
     </packet>
 
     <packet name="SigGen4Info" id="13" level="2">
-        <channel name="SG4.Info"/>
+        <channel name="Ref.SG4.Info"/>
     </packet>
 
     <packet name="SigGen5Info" id="14" level="2">
-        <channel name="SG5.Info"/>
+        <channel name="Ref.SG5.Info"/>
     </packet>
 
     <packet name="SigGen1" id="15" level="3">
-        <channel name="SG1.PairOutput"/>
-        <channel name="SG1.History"/>
-        <channel name="SG1.PairHistory"/>
-        <channel name="SG1.DpBytes"/>
-        <channel name="SG1.DpRecords"/>
+        <channel name="Ref.SG1.PairOutput"/>
+        <channel name="Ref.SG1.History"/>
+        <channel name="Ref.SG1.PairHistory"/>
+        <channel name="Ref.SG1.DpBytes"/>
+        <channel name="Ref.SG1.DpRecords"/>
     </packet>
 
     <packet name="SigGen2" id="16" level="3">
-        <channel name="SG2.PairOutput"/>
-        <channel name="SG2.History"/>
-        <channel name="SG2.PairHistory"/>
-        <channel name="SG2.DpBytes"/>
-        <channel name="SG2.DpRecords"/>
+        <channel name="Ref.SG2.PairOutput"/>
+        <channel name="Ref.SG2.History"/>
+        <channel name="Ref.SG2.PairHistory"/>
+        <channel name="Ref.SG2.DpBytes"/>
+        <channel name="Ref.SG2.DpRecords"/>
     </packet>
 
     <packet name="SigGen3" id="17" level="3">
-        <channel name="SG3.PairOutput"/>
-        <channel name="SG3.History"/>
-        <channel name="SG3.PairHistory"/>
-        <channel name="SG3.DpBytes"/>
-        <channel name="SG3.DpRecords"/>
+        <channel name="Ref.SG3.PairOutput"/>
+        <channel name="Ref.SG3.History"/>
+        <channel name="Ref.SG3.PairHistory"/>
+        <channel name="Ref.SG3.DpBytes"/>
+        <channel name="Ref.SG3.DpRecords"/>
     </packet>
 
     <packet name="SigGen4" id="18" level="3">
-        <channel name="SG4.PairOutput"/>
-        <channel name="SG4.History"/>
-        <channel name="SG4.PairHistory"/>
-        <channel name="SG4.DpBytes"/>
-        <channel name="SG4.DpRecords"/>
+        <channel name="Ref.SG4.PairOutput"/>
+        <channel name="Ref.SG4.History"/>
+        <channel name="Ref.SG4.PairHistory"/>
+        <channel name="Ref.SG4.DpBytes"/>
+        <channel name="Ref.SG4.DpRecords"/>
     </packet>
 
     <packet name="SigGen5" id="19" level="3">
-        <channel name="SG5.PairOutput"/>
-        <channel name="SG5.History"/>
-        <channel name="SG5.PairHistory"/>
-        <channel name="SG5.DpBytes"/>
-        <channel name="SG5.DpRecords"/>
+        <channel name="Ref.SG5.PairOutput"/>
+        <channel name="Ref.SG5.History"/>
+        <channel name="Ref.SG5.PairHistory"/>
+        <channel name="Ref.SG5.DpBytes"/>
+        <channel name="Ref.SG5.DpRecords"/>
     </packet>
 
     <packet name="TypeDemo" id="20" level="3">
-        <channel name="typeDemo.ChoiceCh"/>
-        <channel name="typeDemo.ChoicesCh"/>
-        <channel name="typeDemo.ExtraChoicesCh"/>
-        <channel name="typeDemo.ChoicePairCh"/>
-        <channel name="typeDemo.ChoiceSlurryCh"/>
-        <channel name="typeDemo.Float1Ch"/>
-        <channel name="typeDemo.Float2Ch"/>
-        <channel name="typeDemo.Float3Ch"/>
-        <channel name="typeDemo.FloatSet"/>
+        <channel name="Ref.typeDemo.ChoiceCh"/>
+        <channel name="Ref.typeDemo.ChoicesCh"/>
+        <channel name="Ref.typeDemo.ExtraChoicesCh"/>
+        <channel name="Ref.typeDemo.ChoicePairCh"/>
+        <channel name="Ref.typeDemo.ChoiceSlurryCh"/>
+        <channel name="Ref.typeDemo.Float1Ch"/>
+        <channel name="Ref.typeDemo.Float2Ch"/>
+        <channel name="Ref.typeDemo.Float3Ch"/>
+        <channel name="Ref.typeDemo.FloatSet"/>
     </packet>
 
     <packet name="DataProducts" id="21" level="3">
-        <channel name="dpCat.CatalogDps"/>
-        <channel name="dpCat.DpsSent"/>
-        <channel name="dpMgr.NumSuccessfulAllocations"/>
-        <channel name="dpMgr.NumFailedAllocations"/>
-        <channel name="dpMgr.NumDataProducts"/>
-        <channel name="dpMgr.NumBytes"/>
-        <channel name="dpWriter.NumBuffersReceived"/>
-        <channel name="dpWriter.NumBytesWritten"/>
-        <channel name="dpWriter.NumSuccessfulWrites"/>
-        <channel name="dpWriter.NumFailedWrites"/>
-        <channel name="dpWriter.NumErrors"/>
-        <channel name="dpBufferManager.TotalBuffs"/>
-        <channel name="dpBufferManager.CurrBuffs"/>
-        <channel name="dpBufferManager.HiBuffs"/>
-        <channel name="dpBufferManager.NoBuffs"/>
-        <channel name="dpBufferManager.EmptyBuffs"/>
+        <channel name="Ref.dpCat.CatalogDps"/>
+        <channel name="Ref.dpCat.DpsSent"/>
+        <channel name="Ref.dpMgr.NumSuccessfulAllocations"/>
+        <channel name="Ref.dpMgr.NumFailedAllocations"/>
+        <channel name="Ref.dpMgr.NumDataProducts"/>
+        <channel name="Ref.dpMgr.NumBytes"/>
+        <channel name="Ref.dpWriter.NumBuffersReceived"/>
+        <channel name="Ref.dpWriter.NumBytesWritten"/>
+        <channel name="Ref.dpWriter.NumSuccessfulWrites"/>
+        <channel name="Ref.dpWriter.NumFailedWrites"/>
+        <channel name="Ref.dpWriter.NumErrors"/>
+        <channel name="Ref.dpBufferManager.TotalBuffs"/>
+        <channel name="Ref.dpBufferManager.CurrBuffs"/>
+        <channel name="Ref.dpBufferManager.HiBuffs"/>
+        <channel name="Ref.dpBufferManager.NoBuffs"/>
+        <channel name="Ref.dpBufferManager.EmptyBuffs"/>
     </packet>
     
     <packet name="Version1" id="22" level="2">
-        <channel name="version.FrameworkVersion"/>
-        <channel name="version.ProjectVersion"/>
+        <channel name="Ref.version.FrameworkVersion"/>
+        <channel name="Ref.version.ProjectVersion"/>
     </packet>
 
     <packet name="Version_Library1" id="23" level="2">
-        <channel name="version.LibraryVersion01"/>
-        <channel name="version.LibraryVersion02"/>
+        <channel name="Ref.version.LibraryVersion01"/>
+        <channel name="Ref.version.LibraryVersion02"/>
     </packet>
     <packet name="Version_Library2" id="24" level="2">
-        <channel name="version.LibraryVersion03"/>
-        <channel name="version.LibraryVersion04"/>
+        <channel name="Ref.version.LibraryVersion03"/>
+        <channel name="Ref.version.LibraryVersion04"/>
     </packet>
     <packet name="Version_Library3" id="25" level="2">
-        <channel name="version.LibraryVersion05"/>
-        <channel name="version.LibraryVersion06"/>
+        <channel name="Ref.version.LibraryVersion05"/>
+        <channel name="Ref.version.LibraryVersion06"/>
     </packet>
     <packet name="Version_Library4" id="26" level="2">
-        <channel name="version.LibraryVersion07"/>
-        <channel name="version.LibraryVersion08"/>
+        <channel name="Ref.version.LibraryVersion07"/>
+        <channel name="Ref.version.LibraryVersion08"/>
     </packet>
     <packet name="Version_Library5" id="27" level="2">
-        <channel name="version.LibraryVersion09"/>
-        <channel name="version.LibraryVersion10"/>
+        <channel name="Ref.version.LibraryVersion09"/>
+        <channel name="Ref.version.LibraryVersion10"/>
     </packet>
 
     <packet name="Version_Custom1" id="28" level="2">
-        <channel name="version.CustomVersion01"/>
+        <channel name="Ref.version.CustomVersion01"/>
     </packet>
     <packet name="Version_Custom2" id="29" level="2">
-        <channel name="version.CustomVersion02"/>
+        <channel name="Ref.version.CustomVersion02"/>
     </packet>
     <packet name="Version_Custom3" id="30" level="2">
-        <channel name="version.CustomVersion03"/>
+        <channel name="Ref.version.CustomVersion03"/>
     </packet>
     <packet name="Version_Custom4" id="31" level="2">
-        <channel name="version.CustomVersion04"/>
+        <channel name="Ref.version.CustomVersion04"/>
     </packet>
     <packet name="Version_Custom5" id="32" level="2">
-        <channel name="version.CustomVersion05"/>
+        <channel name="Ref.version.CustomVersion05"/>
     </packet>
     <packet name="Version_Custom6" id="33" level="2">
-        <channel name="version.CustomVersion06"/>
+        <channel name="Ref.version.CustomVersion06"/>
     </packet>
     <packet name="Version_Custom7" id="34" level="2">
-        <channel name="version.CustomVersion07"/>
+        <channel name="Ref.version.CustomVersion07"/>
     </packet>
     <packet name="Version_Custom8" id="35" level="2">
-        <channel name="version.CustomVersion08"/>
+        <channel name="Ref.version.CustomVersion08"/>
     </packet>
     <packet name="Version_Custom9" id="36" level="2">
-        <channel name="version.CustomVersion09"/>
+        <channel name="Ref.version.CustomVersion09"/>
     </packet>
     <packet name="Version_Custom10" id="37" level="2">
-        <channel name="version.CustomVersion10"/>
+        <channel name="Ref.version.CustomVersion10"/>
     </packet>
 
 
@@ -245,6 +245,6 @@
     <!-- Ignored packets -->
 
     <ignore>
-        <channel name="cmdDisp.CommandErrors"/>
+        <channel name="Ref.cmdDisp.CommandErrors"/>
     </ignore>
 </packets>

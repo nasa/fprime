@@ -1,0 +1,93 @@
+name: Cookiecutters Tests
+
+on:
+ push:
+   branches: [ devel, release/** ]
+ pull_request:
+   # The branches below must be a subset of the branches above
+   branches: [ devel, release/** ]
+   paths-ignore:
+     - 'docs/**'
+     - '**.md'
+     - '.github/actions/spelling/**'
+     - '.github/ISSUE_TEMPLATE/**'
+
+
+
+# This workflow tests the project bootstrapping and cookiecutter templates by creating 
+# a new project, deployment and component and building them
+# This uses the `expect` utility to feed input into the various cookiecutter prompts
+
+jobs:
+
+  Validate:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout only the bootstrap.expect file, since the full F´ repo will be 
+      # checked out as part of the fprime-bootstrap process
+      - name: "Retrieve bootstrap.expect file"
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            .github/actions/cookiecutter-check/bootstrap.expect
+          sparse-checkout-cone-mode: false
+          fetch-depth: 0
+
+      - name: "Setup Python"
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: "Install expect and fprime-bootstrap@devel"
+        run: |
+             sudo apt-get install expect
+             pip install git+https://github.com/fprime-community/fprime-bootstrap@devel
+      
+      - name: "Bootstrap Project"
+        run: |
+             expect .github/actions/cookiecutter-check/bootstrap.expect
+
+      # Overlay fprime@current_rev in new project so that we build with it in the tests
+      # current_rev is devel on the devel branch and the PR revision in PR checks
+      - name: "Overlay fprime@current_rev in new project"
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          path: ./MyProject/fprime
+          fetch-depth: 0
+
+      - name: "Update dependencies and install fprime-tools@devel"
+        run: |
+             cd MyProject
+             . fprime-venv/bin/activate
+             pip install -U -r ./fprime/requirements.txt
+             pip install git+https://github.com/nasa/fprime-tools@devel
+
+      - name: "Version Check"
+        run: |
+             cd MyProject
+             . fprime-venv/bin/activate
+             fprime-util version-check
+
+      - name: "Test Generate and Build Project"
+        run: |  
+             cd MyProject
+             . fprime-venv/bin/activate
+             fprime-util generate
+             fprime-util build -j4
+
+      - name: "Test New Deployment and Build"
+        run: |
+             cd MyProject
+             . fprime-venv/bin/activate
+             expect ./fprime/.github/actions/cookiecutter-check/deployment.expect
+             cd MyDeployment
+             fprime-util build -j4
+
+      - name: "Test New Component and Build"
+        run: |
+             cd MyProject
+             . fprime-venv/bin/activate
+             expect ./fprime/.github/actions/cookiecutter-check/component.expect
+             cd MyComponent
+             fprime-util build -j4
