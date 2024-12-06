@@ -39,7 +39,7 @@ If the UART port is not set up correctly, there will be a file open error.
 
 **Install the packages necessary to run the demo.** 
 
-Please see [INSTALL.md](../docs/INSTALL.md) to ensure that the F´ application has been installed and tested with the basic Ref. Additionally, the
+Please see [install guide](../docs/getting-started/installing-fprime.md) to ensure that the F´ application has been installed and tested with the basic Ref. Additionally, the
 cross-compilers need to be installed. This is done by installing the `gcc-arm-linux-gnueabihf` and `g++-arm-linux-gnueabihf` packages on the host
 system. This is shown on Ubuntu below.
 
@@ -52,7 +52,7 @@ sudo apt update && sudo apt install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnu
 
 **Crosscompiling using CMake:**
 
-The following commands are described at length in the getting started [tutorial](../docs/Tutorials/README.md). These commands will
+The following commands are described at length in the [HelloWorld tutorial](../docs/documentation/tutorials/). These commands will
 go to the RPI directory and generate a build directory for the RPI example. This step generates a CMake Cache, sets the toolchain use to build the
 code and does an initial scan of the source tree. Since the RPI example sets a default F´ toolchain file in its CMakeLists.txt, we do not need to 
 supply one on the command line when generating the build. This only needs to be done once to prepare for the build because CMake will detect

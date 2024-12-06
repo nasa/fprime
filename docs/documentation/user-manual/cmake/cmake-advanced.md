@@ -1,8 +1,7 @@
 # Advanced F´ CMake Usage
 
 The CMake system has several advanced usages, described here.  This document walks through the CMake usage and settings
-for users ignoring `fprime-util` and trying to run the CMake system directly.  If a user just wants to configure an IDE
-integration to use CMake directly, see [IDE Configuration](../dev/configure-ide.md) first.
+for users ignoring `fprime-util` and trying to run the CMake system directly.
 
 **Note:** `fprime-util` was designed to ease use of the F´ cmake system by wrapping all of the developer-level processes
            freeing users from running these steps directly. This automatically handles the two build types using the

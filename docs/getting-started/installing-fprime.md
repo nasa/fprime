@@ -63,7 +63,7 @@ fprime-bootstrap project
 
 This command will ask for some input. Sample responses are below:
 ```
-  [1/1] Project name (MyProject): MyProject # (1)
+  [1/1] Project name (MyProject): MyProject
 ```
 
 1.  This commands perform the following actions:
@@ -92,14 +92,14 @@ Sometimes users wish to work with existing F´ projects. Once the project has be
 
 2. Download the project
 
-    > [!NOTE]
-    > When using `git` and submodules, remember to run `git submodule update --init --recursive`
+> [!NOTE]
+> When using `git` and submodules, remember to run `git submodule update --init --recursive`
 
 3. Install the required F´ tools version
 `pip install -r <project>/fprime/requirements.txt`
 
-    > [!NOTE]
-    > Some projects ship their own `requirements.txt`.  Install using that file if it exists.
+> [!NOTE]
+> Some projects ship their own `requirements.txt`.  Install using that file if it exists.
 
 
 ## Troubleshooting

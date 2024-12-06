@@ -16,6 +16,6 @@ developed to run on a new platform:
     interfaces to be supported.
 
 4.  OSAL support. Should a non-Linux operating system be needed to run
-    on the platform, OSAL support files must be developed. See: [OS File Descriptions](os-docs.md)
+    on the platform, OSAL support files must be developed.
 
 Once these areas are implemented, the user should be able to run on a new system or platform.

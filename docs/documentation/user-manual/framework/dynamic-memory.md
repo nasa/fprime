@@ -91,7 +91,7 @@ FW_ASSERT(my_buffer.getSize() >= 4); // Prevent overrun on next line
 data[3] = 1;
 ```
 
-Full `Fw::Buffer` documentation is available [here](../api/cpp/html/class_fw_1_1_buffer.html).
+Full `Fw::Buffer` documentation is available [here](../../reference/api/cpp/html/class_fw_1_1_buffer.html).
 
 
 ## Topology Consideration
@@ -113,7 +113,7 @@ This component is designed for simplicity of implementation. System memory usage
 multiplied by the size of the memory regions. This memory is allocated as a large array on the stack. Valid memory 
 allocations will always be returned or a software error will be tripped.
 
-Svc.StaticMemory is described in more detail [here](../api/cpp/html/svc_static_memory_component.html).
+Svc.StaticMemory is described in more detail [here](../../reference/api/cpp/html/_svc_static_memory_component.html).
 
 **When To Use Svc.StaticMemory**
 
@@ -161,7 +161,7 @@ size larger than the request for an available buffer, which it then marks as use
 
 There is no restriction on the ordering of calls for allocation and deallocation. Clients may have multiple outstanding allocations and thus asynchronous usage of these allocations is supported.
 
-Svc.BufferManager is described in more detail [here](../api/cpp/html/svc_buffer_manager_component.html).
+For more details, see the [Svc.BufferManager Doxygen documentation](../../reference/api/cpp/html/_svc_buffer_manager_component.html).
 
 **When To Use Svc.BufferManager**
 
@@ -202,9 +202,9 @@ The number of sub allocations is configured in the `BufferManagerComponentImplCf
 `BUFFERMGR_MAX_NUM_BINS` value.
 
 When using Svc.BufferManager the `Svc::BufferManagerComponentImpl.setup()` method must be called supplying a U16 manager
-ID, a buffer id, an implementation of [Fw::MemAllocator](../api/cpp/html/class_fw_1_1_mem_allocator.html) used to
+ID, a buffer id, an implementation of [Fw::MemAllocator](../../reference/api/cpp/html/class_fw_1_1_mem_allocator.html) used to
 allocate memory for the sub-allocations, and a
-[Svc::BufferManagerComponentImpl::BufferBins](../api/cpp/html/struct_svc_1_1_buffer_manager_component_impl_1_1_buffer_bin.html)
+[Svc::BufferManagerComponentImpl::BufferBins](../../reference/api/cpp/html/struct_svc_1_1_buffer_manager_component_impl_1_1_buffer_bin.html)
 struct configuring the sub allocations.
 
 The Svc::BufferManagerComponentImpl::BufferBins is a table specifying N buffers of M size per bin. Up to MAX_NUM_BINS
