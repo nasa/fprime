@@ -64,7 +64,7 @@ be found here: [CMake API](./cmake-api.md).
 ## Build Options
 
 Options describe the runtime options that the CMake system takes. Users wanting to alter the build should look here.
-The list of all available options can be found here: [CMake Options](../api/cmake/options.md)
+The list of all available options can be found here: [CMake Options](../../reference/api/cmake/options.md)
 
 ## Toolchains and Platforms
 

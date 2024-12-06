@@ -56,17 +56,17 @@ components:
    1. A **data product manager**.
       This component allocates memory for empty containers.
       It also forwards filled containers to the data product writer.
-      See [`Svc::DpManager`](../../Svc/DpManager/docs/sdd.md).
+      See [`Svc::DpManager`](../../reference/api/cpp/html/_svc_dp_manager_component.html).
 
    1. A **data product writer**.
       This component receives filled containers from data product
       producers. It writes the contents of the containers to non-volatile
-      storage. See [`Svc::DpWriter`](../../Svc/DpWriter/docs/sdd.md).
+      storage. See [`Svc::DpWriter`](../../reference/api/cpp/html/_svc_dp_writer_component.html).
 
    1. A **data product catalog**.
       This component maintains a database of available data
       products. By command, it downlinks and deletes data products.
-      See [`Svc::DpCatalog`](../../Svc/DpCatalog/docs/sdd.md).
+      See [`Svc::DpCatalog`](../../reference/api/cpp/html/_svc_dp_catalog_component.html).
 
    1. A **data product processor**.
       This component is not yet developed.
@@ -111,7 +111,7 @@ and [_The FPP Language Specification_](https://nasa.github.io/fpp/fpp-spec.html)
 
 FPP provides the following special ports for managing data products:
 
-1. A **product get port** of type [`Fw::DpGet`](../../Fw/Dp/docs/sdd.md).
+1. A **product get port** of type [`Fw::DpGet`](../../reference/api/cpp/html/_fw_dp.html).
    This is an output port for synchronously requesting
    memory from a buffer manager.
    The request is served on the thread that invokes the port
@@ -452,19 +452,19 @@ data products.
 
 **Requesting and sending data products:**
 See the example uses in the documentation for
-[`Svc::DpManager`](../../Svc/DpManager/docs/sdd.md#5-example-uses).
+[`Svc::DpManager`](../../reference/api/cpp/html/_svc_dp_manager_component.html).
 The component referred to as `producer` in that document
 is a data product producer.
 
 **Writing data products to non-volatile storage:**
 See the example uses in the documentation for
-[`Svc::DpWriter`](../../Svc/DpWriter/docs/sdd.md#6-example-uses).
+[`Svc::DpWriter`](../../reference/api/cpp/html/_svc_dp_writer_component.html).
 The component referred to as `producer` in that document
 is a data product producer.
 
 **Cataloging and downlinking data products:**
 For a preliminary implementation of the data product catalog,
-see [`Svc::DpCatalog`](../../Svc/DpCatalog/docs/sdd.md).
+see [`Svc::DpCatalog`](../../reference/api/cpp/html/_svc_dp_catalog_component.html).
 
 **Processing data products:**
 TODO

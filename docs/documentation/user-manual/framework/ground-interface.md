@@ -134,7 +134,7 @@ Here the protocol starts a frame with `0xdeadbeef`, followed by the data size, a
 
 Svc::DeframingProtocol implementors need to implement one function: deframe, taking in a circular buffer supplying data,
 filling the needed variable, and returning a status. The base class supplies a
-[DeframingProtocolInterface](../api/cpp/html/class_svc_1_1_deframing_protocol_interface.html) member variable, `m_interface`,
+[DeframingProtocolInterface](../../reference/api/cpp/html/class_svc_1_1_deframing_protocol_interface.html) member variable, `m_interface`,
 that allows implementors to call out for allocating data and routing the deframed data. A minimal implementation is:
 
 ```c++

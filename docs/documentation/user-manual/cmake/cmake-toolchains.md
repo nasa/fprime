@@ -11,5 +11,5 @@ To create a new toolchain, copy the toolchain.template.cmake file and fill it ou
 platform directory. Other CMake toolchains (from CMake, other CMake-based projects, etc) can be used. The appropriate
 platform file must be created if it does not exist.
 
-To understand the toolchain template: [Toolchain Template File](../api/cmake/toolchain/toolchain-template.md)
+To understand the toolchain template: [Toolchain Template File](../../reference/api/cmake/toolchain/toolchain-template.md)
 To use the template: [fprime Toolchain Template](https://github.com/nasa/fprime/blob/devel/cmake/toolchain/toolchain.cmake.template)

@@ -5,7 +5,7 @@
 # implemented in this file. This includes the ability to setup targets, builds, and handle information passing back and
 # forth between the modules.
 #
-# This file runs CMake on fprime, but registering only a set of target: (e.g. [fpp_locs](./target/fpp_locs.cmake) that
+# This file runs CMake on fprime, but registering only a set of target: (e.g. fpp_locs that
 # do the work on the build. This allows CMake to generate build information to be consumed at the generate phase while
 # maintaining the efficiency of properly expressed builds.
 ####
