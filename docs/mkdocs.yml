@@ -219,7 +219,7 @@ plugins:
             docs/img
           ]
         - name: tutorials-arduino-led-blinker
-          import_url: https://github.com/ashleynilo/fprime-tutorial-arduino-blinker?branch=devel
+          import_url: https://github.com/fprime-community/fprime-tutorial-arduino-blinker?branch=main
           imports: [
             docs/arduino-led-blinker.md,
             docs/img
@@ -278,22 +278,22 @@ nav:
     - documentation/index.md
     - Tutorials:
       - 'Tutorials Overview': documentation/tutorials/index.md
-      - 'Hello World': tutorials-hello-world/docs/hello-world.md
-      - 'LED Blinker': tutorials-led-blinker/docs/led-blinker.md
-      - 'Math Component': tutorials-math-component/docs/math-component.md
-      - 'Cross-Compilation Setup Tutorial': documentation/tutorials/cross-compilation.md
-      - 'Arduino LED Blinker': tutorials-arduino-led-blinker/docs/arduino-led-blinker.md
+      - 'Hello, World!': tutorials-hello-world/docs/hello-world.md
+      - 'LedBlinker': tutorials-led-blinker/docs/led-blinker.md
+      - 'MathComponent': tutorials-math-component/docs/math-component.md
+      - 'Cross-Compilation Setup': documentation/tutorials/cross-compilation.md
+      - 'Arduino LedBlinker': tutorials-arduino-led-blinker/docs/arduino-led-blinker.md
     - User Manual:
       - documentation/user-manual/index.md
       - Overview:
-        - 'A More Complete Introduction to F´': documentation/user-manual/overview/full-intro.md
-        - 'A Brief Guide to the F´ Ground Data System': documentation/user-manual/overview/gds-introduction.md
+        - 'Introduction to F´': documentation/user-manual/overview/full-intro.md
+        - 'The F´ Ground Data System': documentation/user-manual/overview/gds-introduction.md
         - 'F´ Development Process': documentation/user-manual/overview/development-practice.md
         - 'A Tour of the Source Tree': documentation/user-manual/overview/source-tree.md
         - 'Projects and Deployments': documentation/user-manual/overview/proj-dep.md
         - 'Core Constructs: Ports, Components, and Topologies': documentation/user-manual/overview/port-comp-top.md
-        - 'Data Types and Data Structures: Primitive Types, Enums, Arrays, and Serializables': documentation/user-manual/overview/enum-arr-ser.md
-        - 'Data Constructs: Commands, Events, Channels, and Parameters': documentation/user-manual/overview/cmd-evt-chn-prm.md
+        - 'Data Constructs': documentation/user-manual/overview/cmd-evt-chn-prm.md
+        - 'Data Types and Data Structures': documentation/user-manual/overview/enum-arr-ser.md
         - 'Unit Testing F´ Components': documentation/user-manual/overview/unit-testing.md
       - Framework:
         - 'Configuring F´': documentation/user-manual/framework/configuring-fprime.md
@@ -304,12 +304,12 @@ nav:
         - 'Application, Manager, Driver Pattern': documentation/user-manual/framework/app-man-drv.md
         - 'Ground Interface': documentation/user-manual/framework/ground-interface.md
         - 'Dynamic Memory and Buffer Management': documentation/user-manual/framework/dynamic-memory.md
-        - 'A Quick Look at the Hub Pattern': documentation/user-manual/framework/hub-pattern.md
+        - 'The Hub Pattern': documentation/user-manual/framework/hub-pattern.md
         - 'settings.ini: Build Settings Configuration': documentation/user-manual/framework/settings.md
         - 'The F´ CMake Build System': documentation/user-manual/cmake/cmake-intro.md
       - 'FPP': 'https://nasa.github.io/fpp/fpp-users-guide.html'
       - GDS:
-        - "The Discerning User's Guide to the F´ GDS CLI": documentation/user-manual/gds/gds-cli.md
+        - "The GDS CLI": documentation/user-manual/gds/gds-cli.md
         - 'The GDS Dashboard': documentation/user-manual/gds/gds-custom-dashboards.md
         - 'GDS Dashboard Reference': documentation/user-manual/gds/gds-dashboard-reference.md
         - 'Integration Test API': documentation/user-manual/gds/gds-test-api-guide.md
