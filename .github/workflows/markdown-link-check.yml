@@ -2,7 +2,7 @@ name: Check Markdown links
 
 on: 
   push:
-    branches: [devel]
+    branches: [devel, docs/new-website]
   pull_request:
     branches: [devel]
 
@@ -15,7 +15,9 @@ jobs:
     - uses: ./.github/actions/setup
 
     - name: 'Generate Doxygen and CMake docs'
-      run: ./docs/doxygen/generate_docs.bash
+      run: |
+        sudo apt-get install -y doxygen
+        ./docs/doxygen/generate_docs.bash
 
     - uses: gaurav-nelson/github-action-markdown-link-check@v1
       with:
