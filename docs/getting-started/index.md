@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Getting Started with F Prime
 
 F´ (F Prime) is a component-driven framework that enables rapid development and deployment of spaceflight and other embedded software applications. Originally developed at the Jet Propulsion Laboratory, F´ has been successfully deployed on several space applications. It is tailored but not limited to small-scale spaceflight systems such as CubeSats, SmallSats, and instruments.
@@ -18,5 +23,5 @@ New users should start with the [Hello World tutorial](../tutorials-hello-world/
 ## Further References
 
 Here are some additional references to continue learning about F´:
-- [More tutorials]((../documentation/tutorials/))
+- [More tutorials](../documentation/tutorials/)
 - [F´ User Manual](../documentation/user-manual/)
