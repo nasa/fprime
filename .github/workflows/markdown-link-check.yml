@@ -11,6 +11,12 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v4
+
+    - uses: ./.github/actions/setup
+
+    - name: 'Generate Doxygen and CMake docs'
+      run: ./docs/doxygen/generate_docs.bash
+
     - uses: gaurav-nelson/github-action-markdown-link-check@v1
       with:
           use-quiet-mode: 'yes'
