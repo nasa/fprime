@@ -503,7 +503,7 @@ endfunction(register_fprime_ut)
 #
 # This function allows users to register custom build targets into the build system.  These targets are defined in a
 # CMake file and consist of three functions that operate on different parts of the build: global, per-module, and
-# per-deployment. See: [Targets](targets.md).
+# per-deployment. See: [Targets](./target/target.md).
 #
 # This function takes in either a file path to a CMake file defining targets, or an short include path that accomplishes
 # the same thing. Note: make sure the directory is on the CMake include path to use the second form. The supplied file
@@ -571,7 +571,6 @@ endmacro(register_fprime_list_helper)
 # 1. Call one of `autocoder_setup_for_individual_sources()` or `autocoder_setup_for_multiple_sources()` from file scope
 # 2. Implement `<autocoder name>_is_supported(AC_POSSIBLE_INPUT_FILE)` returning true the autocoder processes given source 
 # 3. Implement `<autocoder name>_setup_autocode AC_INPUT_FILE)` to run the autocoder on files filter by item 2. 
-# See: [Autocoders](dev/autocoder_integration.md).
 #
 # This function takes in either a file path to a CMake file defining an autocoder target, or an short include path that accomplishes
 # the same thing. Note: make sure the directory is on the CMake include path to use the second form.
@@ -676,11 +675,10 @@ endfunction()
 
 #### Documentation links
 # Next Topics:
-#  - Setting Options: [Options](Options.md) are used to vary a CMake build.
-#  - Adding Deployments: [Deployments](deployment.md) create fprime builds.
+#  - Setting Options: [Options](options.md) are used to vary a CMake build.
 #  - Adding Modules: [Modules](module.md) register fprime Ports, Components, etc.
-#  - Creating Toolchains: [Toolchains](toolchain.md) setup standard CMake Cross-Compiling.
-#  - Adding Platforms: [Platforms](platform.md) help fprime set Cross-Compiling specific items.
-#  - Adding Targets: [Targets](targets.md) for help defining custom build targets
-#  - Implementation Packages Design: [Implementation Packages](/Design/package-implementor.md)
+#  - Creating Toolchains: [Toolchains](../../../user-manual/cmake/cmake-toolchains.md) setup standard CMake Cross-Compiling.
+#  - Adding Platforms: [Platforms](../../../user-manual/cmake/cmake-platforms.md) help fprime set Cross-Compiling specific items.
+#  - Adding Targets: [Targets](./target/target.md) for help defining custom build targets
+#  - Implementation Packages Design: [Implementation Packages](../../../user-manual/design/package-implementations.md)
 ####

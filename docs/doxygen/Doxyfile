@@ -13,6 +13,15 @@
 # TAG += value [value, ...]
 # Values that contain spaces should be placed between quotes (\" \").
 
+
+#---------------------------------------------------------------------------
+# F Prime extra options
+#---------------------------------------------------------------------------
+
+HTML_COLORSTYLE = "LIGHT"
+
+
+
 #---------------------------------------------------------------------------
 # Project related configuration options
 #---------------------------------------------------------------------------
@@ -38,8 +47,7 @@ PROJECT_NAME           = "F´ Flight Software - C/C++ Documentation"
 # could be handy for archiving the generated documentation or if some version
 # control system is used.
 
-# Replaced with version number by ./generate_docs.bash <VERSION>
-PROJECT_NUMBER         = devel
+PROJECT_NUMBER         =
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer a
@@ -52,14 +60,14 @@ PROJECT_BRIEF          = "A framework for building embedded system applications 
 # pixels and the maximum width should not exceed 200 pixels. Doxygen will copy
 # the logo to the output directory.
 
-PROJECT_LOGO           = ./docs/doxygen/logo.png
+PROJECT_LOGO           = ./docs/doxygen/small-logo.png
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) path
 # into which the generated documentation will be written. If a relative path is
 # entered, it will be relative to the location where doxygen was started. If
 # left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = ./docs/UsersGuide/api/c++
+OUTPUT_DIRECTORY       = ./docs/documentation/reference/api/cpp
 
 # If the CREATE_SUBDIRS tag is set to YES then doxygen will create 4096 sub-
 # directories (in 2 levels) under the output directory of each output format and
@@ -897,9 +905,9 @@ RECURSIVE              = YES
 # Note that relative paths are relative to the directory from which doxygen is
 # run.
 
-EXCLUDE                = ./docs/Architecture/ ./docs/UsersGuide/ ./docs/Tutorials/ \
-                         ./docs/INSTALL.md ./docs/projects.md ./docs/index.md ./docs/_config.yml \
-                         ./docs/upcoming.md ./docs/latest.md ./docs/documentation.md ./docs/features.md \
+# ./docs need to be excluded individually because ./docs/doxygen/mainpage.md needs to be included
+EXCLUDE                = ./docs/documentation ./docs/events ./docs/getting-started \
+                         ./docs/overview ./docs/support \
                          *CMakeFiles/* ./Autocoders ./cmake ./gtest ./Ref ./RPI ./FppTest \
                          STest ./mk ./README.md ./CONTRIBUTORS.md ./CONTRIBUTING.md ./SECURITY.md \
                          ./googletest/
@@ -1011,7 +1019,7 @@ FILTER_SOURCE_PATTERNS =
 # (index.html). This can be useful if you have a project on for instance GitHub
 # and want to reuse the introduction page also for the doxygen output.
 
-USE_MDFILE_AS_MAINPAGE = ./docs/doxygen/mainpage.md
+USE_MDFILE_AS_MAINPAGE = ./mainpage.md
 
 #---------------------------------------------------------------------------
 # Configuration options related to source browsing

@@ -1,0 +1,343 @@
+site_name: F Prime
+site_url: https://fprime.jpl.nasa.gov/
+repo_url: https://github.com/nasa/fprime
+repo_name: nasa/fprime
+
+theme:
+  name: material # enables the material theme, DO NOT CHANGE
+  language: en
+  logo: assets/images/logo-fprime-jpl.svg
+  favicon: assets/images/favicon.svg
+  custom_dir: overrides
+  icon:
+    annotation: material/information-slab-circle  # custom icon for annotations
+
+  features:
+    - navigation.tabs # enables tabs
+    - navigation.top # enables back to top button
+    - navigation.tabs.sticky # makes tabs sticky
+    # - navigation.expand # expands all navigation links with dropdowns by default
+    - navigation.footer # enables previous/next page navigation links by the footer
+    - navigation.instant # instant loading
+    - navigation.indexes # enables overview pages for sections
+    - navigation.tracking # URL in the address bar is automatically updated with the active anchor as highlighted in the table of contents
+    - content.code.copy # enable code copy for all code blocks
+    - content.code.annotate # enable code annotations for all code blocks
+    - content.tooltips # replaces the browser's rendering logic for title attribute with tooltips (for content, header, navigation)
+    - content.tabs.link # all content tabs across the whole documentation site will be linked and switch to the same label when the user clicks on a tab
+
+  palette:
+
+    # Palette toggle for automatic mode
+    - media: "(prefers-color-scheme)"
+      primary: custom
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/lightbulb-on
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      toggle:
+        icon: material/lightbulb-off
+        name: Switch to system preference
+
+
+
+# Adds extra settings
+extra:
+  version:
+      provider: mike
+      alias: true
+  generator: false # removes "Made with Material for Mkdocs"
+  analytics:
+    provider: custom
+  # Event Values
+  events:
+    # Event 1 Information
+    - date: 'OCT 13-15 2025'
+      name: 'Flight Software Development Workshop'
+      location: 'Jet Propulsion Laboratory in Pasadena, California'
+      description: 'Check back in early 2025 for details and to request an invitation.'
+      button_text: Request an Invitation (coming soon)
+      button_link: '#'
+      category: 'Tutorial'
+      category_class: event-category-tutorial      # Make sure class matches inputted category
+      image: '#'
+      alt: ''
+  # Project Values
+  projects:
+    # ISS-RapidScat
+    - bg_image: '../../assets/images/projects/iss-rapidscat.png'
+      bg_position: 50% 50%
+      name: 'ISS-RapidScat (International Space Station Rapid Scatterometer)'
+      type: 'Instrument'
+      nasa_center_company: 'NASA JPL'
+      os: '-'
+      hw_platform: '-'
+      start_date: 'Sep. 21, 2014'
+      end_date: 'Nov. 18, 2018'
+      target: 'Earth'
+      link: 'https://www.jpl.nasa.gov/missions/international-space-station-rapid-scatterometer-iss-rapidscat'
+      image_credit: 'JSC'
+    # ASTERIA
+    - bg_image: '../../assets/images/projects/asteria.png'
+      bg_position: 50% 75%
+      name: 'ASTERIA (Arcsecond Space Telescope Enabling Research in Astrophysics)'
+      type: 'Technology Demonstration, CubeSat/SmallSat'
+      nasa_center_company: 'NASA JPL'
+      os: 'Linux'
+      hw_platform: 'PowerPC'
+      start_date: 'Aug. 14, 2017'
+      end_date: 'End of Feb. 2020'
+      target: 'Exoplanets'
+      link: 'https://www.jpl.nasa.gov/missions/arcsecond-space-telescope-enabling-research-in-astrophysics-asteria'
+      image_credit: 'NASA/JPL-Caltech'
+    # Mars Ingenuity
+    - bg_image: '../../assets/images/projects/ingenuity.png'
+      bg_position: 50% 50%
+      name: 'Mars Helicopter (Ingenuity)'
+      type: 'Airborne'
+      nasa_center_company: 'NASA JPL'
+      os: 'Linux'
+      hw_platform: 'Qualcomm’s Snapdragon 801'
+      start_date: 'Jul. 30, 2020'
+      end_date: 'Ongoing'
+      target: 'Mars'
+      link: 'https://mars.nasa.gov/technology/helicopter/'
+      image_credit: 'NASA/JPL-Caltech'
+    # Lunar Flashlight
+    - bg_image: '../../assets/images/projects/lunar-flashlight.png'
+      bg_position: 50% 50%
+      name: 'Lunar Flashlight CubeSat'
+      type: 'Technology Demonstration, CubeSat/SmallSat'
+      nasa_center_company: 'NASA JPL'
+      os: 'VxWorks'
+      hw_platform: 'Sphinx (GR712 - LEON3FT SPARC)'
+      start_date: 'Dec. 11, 2022'
+      end_date: 'Ongoing'
+      target: "Earth's Moon"
+      link: 'https://www.jpl.nasa.gov/missions/lunar-flashlight'
+      image_credit: 'NASA/JPL-Caltech'
+    # NEA Scout
+    - bg_image: '../../assets/images/projects/nea-scout.png'
+      bg_position: 50% 50%
+      name: 'Near Earth Asteroid Scout CubeSat'
+      type: 'Technology Demonstration, CubeSat/SmallSat'
+      nasa_center_company: 'NASA JPL'
+      os: 'VxWorks'
+      hw_platform: 'Sphinx (GR712 - LEON3FT SPARC)'
+      start_date: 'Nov. 16, 2022'
+      end_date: 'Ongoing'
+      target: 'Asteroids and Comets'
+      link: 'https://www.jpl.nasa.gov/missions/near-earth-asteroid-scout-neascout'
+      image_credit: 'MSFC, EMMETT GIVEN'
+    # OWLS
+    - bg_image: '../../assets/images/projects/owls.png'
+      bg_position: 50% 25%
+      name: 'OWLS (Ocean Worlds Life Surveyor instrument)'
+      type: 'Instrument'
+      nasa_center_company: 'NASA JPL'
+      os: '-'
+      hw_platform: '-'
+      start_date: '-'
+      end_date: '-'
+      target: 'Ocean  Worlds'
+      link: 'https://www.jpl.nasa.gov/go/owls'
+      image_credit: 'NASA/JPL-Caltech'
+    # CADRE
+    - bg_image: '../../assets/images/projects/cadre.png'
+      bg_position: 50% 15%
+      name: 'CADRE (Cooperative Autonomous Distributed Robotic Explorers)'
+      type: 'Rover, Technology Demonstration'
+      nasa_center_company: 'NASA JPL'
+      os: '-'
+      hw_platform: '-'
+      start_date: '2025'
+      end_date: '-'
+      target: "Earth's Moon"
+      link: 'https://www.jpl.nasa.gov/missions/cadre'
+      image_credit: 'NASA/JPL-Caltech'
+    - bg_image: '../../assets/images/projects/coldarm.png'
+      bg_position: 50% 50%
+      name: 'COLDArm (Cold Operable Lunar Deployable Arm)'
+      type: 'Robotic arm'
+      nasa_center_company: 'NASA JPL'
+      os: '-'
+      hw_platform: '-'
+      start_date: '-'
+      end_date: '-'
+      target: 'N/A'
+      link: 'https://www.nasa.gov/feature/cold-operable-lunar-deployable-arm-coldarm/'
+      image_credit: 'NASA/JPL-Caltech'
+
+
+
+
+# Link to custom css
+extra_css:
+  - assets/stylesheets/extra.css
+
+# Adds material for mkdocs plugins
+plugins:
+  - search # enables search
+  - mike:
+      # symlink are not allowed in our usage of GH Pages so we have to use copy
+      # see https://github.blog/changelog/2023-02-21-github-pages-deprecating-symlinks-in-non-actions-builds/
+      alias_type: copy
+      canonical_version: latest
+  - open-in-new-tab
+  - multirepo:
+      cleanup: true
+      nav_repos:
+        - name: tutorials-hello-world
+          import_url: https://github.com/fprime-community/fprime-tutorial-hello-world?branch=devel
+          imports: [
+            docs/hello-world.md
+          ]
+        - name: tutorials-led-blinker
+          import_url: https://github.com/fprime-community/fprime-workshop-led-blinker?branch=devel
+          imports: [
+            docs/led-blinker.md,
+            docs/hardware.md
+            docs/img
+          ]
+        - name: tutorials-math-component
+          import_url: https://github.com/fprime-community/fprime-tutorial-math-component?branch=devel
+          imports: [
+            docs/math-component.md
+            docs/img
+          ]
+        - name: tutorials-arduino-led-blinker
+          import_url: https://github.com/fprime-community/fprime-tutorial-arduino-blinker?branch=main
+          imports: [
+            docs/arduino-led-blinker.md,
+            docs/img
+          ]
+
+
+markdown_extensions: 
+  - toc:
+      toc_depth: 2
+  - attr_list # allows to add HTML attributes and CSS classes to almost every Markdown inline- and block-level element with a special syntax
+  - md_in_html # allows for writing Markdown inside of HTML
+  - tables # enables markdown tables
+  # enables syntax highlighting on code blocks and inline code blocks
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+  # adds support for admonitions/call-outs
+  - admonition
+  - pymdownx.details
+  - github-callouts # enables GitHub-style Markdown alerts (e.g. > [!NOTE])
+  # enables the use of definition lists and tasks lists
+  - def_list
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  # enables abbreviations and allows to build a simple project-wide glossary, sourcing definitions from a central location.
+  - abbr
+  - pymdownx.snippets
+  # enables tabs
+  - pymdownx.tabbed:
+      alternate_style: true
+  # enables the use of icons and emojis by using simple shortcodes
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+
+
+
+# Custom navigation
+nav:
+  - Home: 'index.md'
+  - Overview:
+    - overview/index.md
+    - 'Powerful Software Architecture': overview/powerful-swa.md
+    - 'Streamline Software Development': overview/streamline-sd.md
+    - 'F´ Projects': overview/projects.md
+  - Getting Started: 
+    - getting-started/index.md
+    - 'Installing F´': getting-started/installing-fprime.md
+    - 'F´ Features': getting-started/features.md
+    - 'F´ Projects': getting-started/projects.md
+  - Documentation:
+    - documentation/index.md
+    - Tutorials:
+      - 'Tutorials Overview': documentation/tutorials/index.md
+      - 'Hello World': tutorials-hello-world/docs/hello-world.md
+      - 'LED Blinker': tutorials-led-blinker/docs/led-blinker.md
+      - 'MathComponent': tutorials-math-component/docs/math-component.md
+      - 'Cross-Compilation Setup': documentation/tutorials/cross-compilation.md
+      - 'Arduino LED Blinker': tutorials-arduino-led-blinker/docs/arduino-led-blinker.md
+    - User Manual:
+      - documentation/user-manual/index.md
+      - Overview:
+        - 'Introduction to F´': documentation/user-manual/overview/full-intro.md
+        - 'The F´ Ground Data System': documentation/user-manual/overview/gds-introduction.md
+        - 'F´ Development Process': documentation/user-manual/overview/development-practice.md
+        - 'A Tour of the Source Tree': documentation/user-manual/overview/source-tree.md
+        - 'Projects and Deployments': documentation/user-manual/overview/proj-dep.md
+        - 'Core Constructs: Ports, Components, and Topologies': documentation/user-manual/overview/port-comp-top.md
+        - 'Data Constructs': documentation/user-manual/overview/cmd-evt-chn-prm.md
+        - 'Data Types and Data Structures': documentation/user-manual/overview/enum-arr-ser.md
+        - 'Unit Testing F´ Components': documentation/user-manual/overview/unit-testing.md
+      - Framework:
+        - 'Configuring F´': documentation/user-manual/framework/configuring-fprime.md
+        - 'F´ Implementation Classes': documentation/user-manual/framework/implementation.md
+        - 'Constructing the F´ Topology': documentation/user-manual/framework/building-topology.md
+        - 'Asserts in F´': documentation/user-manual/framework/assert.md
+        - 'F´ On Baremetal and Multi-Core Systems': documentation/user-manual/framework/baremetal-multicore.md
+        - 'Application, Manager, Driver Pattern': documentation/user-manual/framework/app-man-drv.md
+        - 'Ground Interface': documentation/user-manual/framework/ground-interface.md
+        - 'Dynamic Memory and Buffer Management': documentation/user-manual/framework/dynamic-memory.md
+        - 'The Hub Pattern': documentation/user-manual/framework/hub-pattern.md
+        - 'settings.ini: Build Settings Configuration': documentation/user-manual/framework/settings.md
+        - 'The F´ CMake Build System': documentation/user-manual/cmake/cmake-intro.md
+      - 'FPP': 'https://nasa.github.io/fpp/fpp-users-guide.html'
+      - GDS:
+        - "The GDS CLI": documentation/user-manual/gds/gds-cli.md
+        - 'The GDS Dashboard': documentation/user-manual/gds/gds-custom-dashboards.md
+        - 'GDS Dashboard Reference': documentation/user-manual/gds/gds-dashboard-reference.md
+        - 'Integration Test API': documentation/user-manual/gds/gds-test-api-guide.md
+        - 'Sequencing in F´': documentation/user-manual/gds/seqgen.md
+      - Design:
+        - 'F´ Software Architecture': documentation/user-manual/design/fprime-architecture.md
+        - 'Numerical Types Design': documentation/user-manual/design/numerical-types.md
+        - 'Communication Adapter Interface': documentation/user-manual/design/communication-adapter-interface.md
+        - 'Package Implementations': documentation/user-manual/design/package-implementations.md
+        - 'FPP JSON Dictionary Specification': documentation/user-manual/design/fpp-json-dict.md
+        - 'Rate Groups and Timeliness': documentation/user-manual/design/rate-group.md
+        - 'F´ Data Products': documentation/user-manual/design/data-products.md
+    - How To: 
+      - documentation/how-to/index.md
+      - 'F´ Library Development': documentation/how-to/develop-fprime-libraries.md
+      - 'F´ Subtopology Development': documentation/how-to/develop-subtopologies.md
+      - 'F´ GDS Plugin Development': documentation/how-to/develop-gds-plugins.md
+      - 'Porting F´ To a New Platform': documentation/how-to/porting-guide.md
+    - Reference:
+      - documentation/reference/index.md
+      - 'C++ Documentation': 'documentation/reference/api/cpp/html/index.html'
+      - 'FPP Language Specification': https://nasa.github.io/fpp/fpp-spec.html
+      - 'CMake User API': 'documentation/user-manual/cmake/cmake-api.md'
+      - 'GDS Developers Guide': documentation/reference/gds-cli-dev.md
+  - Support:
+    - support/index.md
+    - 'Publications': support/publications.md
+  - Events:
+    - events/index.md
+    - events/event-request.md
+

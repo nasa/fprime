@@ -6,7 +6,7 @@
 This build module defines FPP ports and C++ classes that support
 the collection and storage of data products.
 For more information on data products and records, see the
-[data products documentation](../../../docs/Design/data-products.md).
+[data products documentation](../../../docs/documentation/user-manual/design/data-products.md).
 
 ## 2. Configuration
 

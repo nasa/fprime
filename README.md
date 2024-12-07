@@ -17,7 +17,7 @@ F´ (F Prime) is a component-driven framework that enables rapid development and
 - A growing collection of ready-to-use components
 - Testing tools for testing flight software at the unit and integration levels.
 
-Learn more about F' key features [here](https://nasa.github.io/fprime/features.html).
+Learn more about F´ key features [here](https://nasa.github.io/fprime/features.html).
 
 
 ## System Requirements
