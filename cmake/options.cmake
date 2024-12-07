@@ -198,11 +198,13 @@ option(FPRIME_CHECK_FRAMEWORK_VERSION "(Internal) Check framework version when b
 #
 # **Values:**
 # - ON: enables AddressSanitizer.
-# - OFF: (default) does not enable AddressSanitizer.
+# - OFF: does not enable AddressSanitizer.
 #
-# e.g. `-DENABLE_SANITIZER_ADDRESS=ON`
+# Defaults to ON when BUILD_TESTING is ON
+#
+# e.g. `-DENABLE_SANITIZER_ADDRESS=OFF`
 ####
-option(ENABLE_SANITIZER_ADDRESS "Enable address sanitizer" OFF)
+option(ENABLE_SANITIZER_ADDRESS "Enable address sanitizer" BUILD_TESTING)
 
 ####
 # `ENABLE_SANITIZER_LEAK:`
@@ -215,11 +217,13 @@ option(ENABLE_SANITIZER_ADDRESS "Enable address sanitizer" OFF)
 #
 # **Values:**
 # - ON: enables LeakSanitizer.
-# - OFF: (default) does not enable LeakSanitizer.
+# - OFF: does not enable LeakSanitizer.
 #
-# e.g. `-DENABLE_SANITIZER_LEAK=ON`
+# Defaults to ON when BUILD_TESTING is ON
+#
+# e.g. `-DENABLE_SANITIZER_LEAK=OFF`
 ####
-option(ENABLE_SANITIZER_LEAK "Enable leak sanitizer" OFF)
+option(ENABLE_SANITIZER_LEAK "Enable leak sanitizer" BUILD_TESTING)
 
 ####
 # `ENABLE_SANITIZER_UNDEFINED_BEHAVIOR:`
@@ -230,11 +234,13 @@ option(ENABLE_SANITIZER_LEAK "Enable leak sanitizer" OFF)
 #
 # **Values:**
 # - ON: enables UndefinedBehaviorSanitizer.
-# - OFF: (default) does not enable UndefinedBehaviorSanitizer.
+# - OFF: does not enable UndefinedBehaviorSanitizer.
+#
+# Defaults to ON when BUILD_TESTING is ON
 #
 # e.g. `-DENABLE_SANITIZER_UNDEFINED_BEHAVIOR=ON`
 ####
-option(ENABLE_SANITIZER_UNDEFINED_BEHAVIOR "Enable undefined behavior sanitizer" OFF)
+option(ENABLE_SANITIZER_UNDEFINED_BEHAVIOR "Enable undefined behavior sanitizer" BUILD_TESTING)
 
 ####
 # `ENABLE_SANITIZER_THREAD:`

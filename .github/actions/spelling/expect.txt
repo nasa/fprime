@@ -952,6 +952,7 @@ Thhmmss
 thiscol
 thisdirdoesnotexist
 thisfiledoesnotexist
+Thu
 timebase
 timerfd
 timetag
