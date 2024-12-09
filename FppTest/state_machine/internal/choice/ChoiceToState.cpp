@@ -53,6 +53,7 @@ void ChoiceToState::testTrue() {
     ASSERT_EQ(this->m_guard_g.getCallHistory().getSize(), 0);
     ASSERT_EQ(this->m_actionHistory.getSize(), 0);
     this->sendSignal_s();
+    this->sendSignal_s();
     ASSERT_EQ(this->m_guard_g.getCallHistory().getSize(), 1);
     ASSERT_EQ(this->m_guard_g.getCallHistory().getItemAt(0), Signal::s);
     const FwIndexType expectedSize = 5;

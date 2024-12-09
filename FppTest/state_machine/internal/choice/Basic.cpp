@@ -47,6 +47,7 @@ void Basic::testTrue() {
     ASSERT_EQ(this->m_action_a_history.getSize(), 0);
     ASSERT_EQ(this->m_action_b_history.getSize(), 0);
     this->sendSignal_s();
+    this->sendSignal_s();
     ASSERT_EQ(this->m_guard_g.getCallHistory().getSize(), 1);
     ASSERT_EQ(this->m_guard_g.getCallHistory().getItemAt(0), Signal::s);
     ASSERT_EQ(this->m_action_a_history.getSize(), 1);
@@ -66,6 +67,7 @@ void Basic::testFalse() {
     ASSERT_EQ(this->m_guard_g.getCallHistory().getSize(), 0);
     ASSERT_EQ(this->m_action_a_history.getSize(), 0);
     ASSERT_EQ(this->m_action_b_history.getSize(), 0);
+    this->sendSignal_s();
     this->sendSignal_s();
     ASSERT_EQ(this->m_guard_g.getCallHistory().getSize(), 1);
     ASSERT_EQ(this->m_guard_g.getCallHistory().getItemAt(0), Signal::s);

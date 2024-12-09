@@ -54,6 +54,7 @@ void SequenceU32::testG1True() {
     ASSERT_EQ(this->m_action_b_history.getSize(), 0);
     const U32 value = STest::Pick::any();
     this->sendSignal_s(value);
+    this->sendSignal_s(value);
     ASSERT_EQ(this->m_guard_g1.getCallHistory().getSize(), 1);
     ASSERT_EQ(this->m_guard_g1.getCallHistory().getItemAt(0), Signal::s);
     ASSERT_EQ(this->m_guard_g2.getCallHistory().getSize(), 0);
@@ -77,6 +78,7 @@ void SequenceU32::testG1FalseG2True() {
     ASSERT_EQ(this->m_action_a_history.getSize(), 0);
     ASSERT_EQ(this->m_action_b_history.getSize(), 0);
     const U32 value = STest::Pick::any();
+    this->sendSignal_s(value);
     this->sendSignal_s(value);
     ASSERT_EQ(this->m_guard_g1.getCallHistory().getSize(), 1);
     ASSERT_EQ(this->m_guard_g1.getCallHistory().getItemAt(0), Signal::s);
@@ -104,6 +106,7 @@ void SequenceU32::testG1FalseG2False() {
     ASSERT_EQ(this->m_action_a_history.getSize(), 0);
     ASSERT_EQ(this->m_action_b_history.getSize(), 0);
     const U32 value = STest::Pick::any();
+    this->sendSignal_s(value);
     this->sendSignal_s(value);
     ASSERT_EQ(this->m_guard_g1.getCallHistory().getSize(), 1);
     ASSERT_EQ(this->m_guard_g1.getCallHistory().getItemAt(0), Signal::s);

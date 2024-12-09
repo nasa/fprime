@@ -48,6 +48,7 @@ void BasicU32::testTrue() {
     ASSERT_EQ(this->m_action_b_history.getSize(), 0);
     const U32 value = STest::Pick::any();
     this->sendSignal_s(value);
+    this->sendSignal_s(value);
     ASSERT_EQ(this->m_guard_g.getCallHistory().getSize(), 1);
     ASSERT_EQ(this->m_guard_g.getCallHistory().getSignals().getItemAt(0), Signal::s);
     ASSERT_EQ(this->m_guard_g.getCallHistory().getValues().getItemAt(0), value);
@@ -70,6 +71,7 @@ void BasicU32::testFalse() {
     ASSERT_EQ(this->m_action_a_history.getSize(), 0);
     ASSERT_EQ(this->m_action_b_history.getSize(), 0);
     const U32 value = STest::Pick::any();
+    this->sendSignal_s(value);
     this->sendSignal_s(value);
     ASSERT_EQ(this->m_guard_g.getCallHistory().getSize(), 1);
     ASSERT_EQ(this->m_guard_g.getCallHistory().getSignals().getItemAt(0), Signal::s);

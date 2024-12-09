@@ -53,6 +53,7 @@ void Sequence::testG1True() {
     ASSERT_EQ(this->m_action_a_history.getSize(), 0);
     ASSERT_EQ(this->m_action_b_history.getSize(), 0);
     this->sendSignal_s();
+    this->sendSignal_s();
     ASSERT_EQ(this->m_guard_g1.getCallHistory().getSize(), 1);
     ASSERT_EQ(this->m_guard_g1.getCallHistory().getItemAt(0), Signal::s);
     ASSERT_EQ(this->m_guard_g2.getCallHistory().getSize(), 0);
@@ -75,6 +76,7 @@ void Sequence::testG1FalseG2True() {
     ASSERT_EQ(this->m_guard_g2.getCallHistory().getSize(), 0);
     ASSERT_EQ(this->m_action_a_history.getSize(), 0);
     ASSERT_EQ(this->m_action_b_history.getSize(), 0);
+    this->sendSignal_s();
     this->sendSignal_s();
     ASSERT_EQ(this->m_guard_g1.getCallHistory().getSize(), 1);
     ASSERT_EQ(this->m_guard_g1.getCallHistory().getItemAt(0), Signal::s);
@@ -99,6 +101,7 @@ void Sequence::testG1FalseG2False() {
     ASSERT_EQ(this->m_guard_g2.getCallHistory().getSize(), 0);
     ASSERT_EQ(this->m_action_a_history.getSize(), 0);
     ASSERT_EQ(this->m_action_b_history.getSize(), 0);
+    this->sendSignal_s();
     this->sendSignal_s();
     ASSERT_EQ(this->m_guard_g1.getCallHistory().getSize(), 1);
     ASSERT_EQ(this->m_guard_g1.getCallHistory().getItemAt(0), Signal::s);

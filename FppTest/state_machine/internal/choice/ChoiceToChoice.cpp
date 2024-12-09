@@ -55,6 +55,7 @@ void ChoiceToChoice::testG1True() {
     ASSERT_EQ(this->m_guard_g2.getCallHistory().getSize(), 0);
     ASSERT_EQ(this->m_actionHistory.getSize(), 0);
     this->sendSignal_s();
+    this->sendSignal_s();
     ASSERT_EQ(this->m_guard_g1.getCallHistory().getSize(), 1);
     ASSERT_EQ(this->m_guard_g1.getCallHistory().getItemAt(0), Signal::s);
     ASSERT_EQ(this->m_guard_g2.getCallHistory().getSize(), 0);
@@ -112,6 +113,7 @@ void ChoiceToChoice::testG1FalseG2False() {
     ASSERT_EQ(this->m_guard_g1.getCallHistory().getSize(), 0);
     ASSERT_EQ(this->m_guard_g2.getCallHistory().getSize(), 0);
     ASSERT_EQ(this->m_actionHistory.getSize(), 0);
+    this->sendSignal_s();
     this->sendSignal_s();
     ASSERT_EQ(this->m_guard_g1.getCallHistory().getSize(), 1);
     ASSERT_EQ(this->m_guard_g1.getCallHistory().getItemAt(0), Signal::s);
