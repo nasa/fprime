@@ -28,13 +28,6 @@ theme:
 
   palette:
 
-    # Palette toggle for automatic mode
-    - media: "(prefers-color-scheme)"
-      primary: custom
-      toggle:
-        icon: material/brightness-auto
-        name: Switch to light mode
-
     # Palette toggle for light mode
     - media: "(prefers-color-scheme: light)"
       scheme: default
@@ -50,7 +43,7 @@ theme:
       primary: custom
       toggle:
         icon: material/lightbulb-off
-        name: Switch to system preference
+        name: Switch to light mode
 
 
 
@@ -161,8 +154,8 @@ extra:
       name: 'CADRE (Cooperative Autonomous Distributed Robotic Explorers)'
       type: 'Rover, Technology Demonstration'
       nasa_center_company: 'NASA JPL'
-      os: '-'
-      hw_platform: '-'
+      os: 'Linux'
+      hw_platform: 'Snapdragon 821'
       start_date: '2025'
       end_date: '-'
       target: "Earth's Moon"
@@ -273,7 +266,6 @@ nav:
     - getting-started/index.md
     - 'Installing F´': getting-started/installing-fprime.md
     - 'F´ Features': getting-started/features.md
-    - 'F´ Projects': getting-started/projects.md
   - Documentation:
     - documentation/index.md
     - Tutorials:
