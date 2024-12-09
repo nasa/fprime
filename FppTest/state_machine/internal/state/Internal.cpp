@@ -52,6 +52,7 @@ void Internal::testS2_to_S3() {
     this->initBase(id);
     ASSERT_EQ(this->getState(), State::S1_S2);
     this->sendSignal_S2_to_S3();
+    this->sendSignal_S2_to_S3();
     ASSERT_EQ(this->getState(), State::S1_S3);
     ASSERT_EQ(this->m_action_a_history.getSize(), 0);
 }

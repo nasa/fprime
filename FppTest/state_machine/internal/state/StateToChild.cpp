@@ -80,6 +80,7 @@ void StateToChild::testS2_to_S3() {
     this->initBase(id);
     this->m_actionHistory.clear();
     this->sendSignal_S2_to_S3();
+    this->sendSignal_S2_to_S3();
     ASSERT_EQ(this->getState(), State::S1_S3);
     const FwSizeType expectedSize = 2;
     ASSERT_EQ(this->m_actionHistory.getSize(), expectedSize);

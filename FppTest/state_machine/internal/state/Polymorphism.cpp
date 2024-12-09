@@ -34,6 +34,8 @@ void Polymorphism::testS2_poly() {
     this->initBase(id);
     ASSERT_EQ(this->getState(), State::S1_S2);
     this->sendSignal_poly();
+    this->sendSignal_poly();
+    this->sendSignal_S2_to_S3();
     ASSERT_EQ(this->getState(), State::S4);
 }
 
@@ -41,6 +43,7 @@ void Polymorphism::testS2_to_S3() {
     const FwEnumStoreType id = SmHarness::Pick::stateMachineId();
     this->initBase(id);
     ASSERT_EQ(this->getState(), State::S1_S2);
+    this->sendSignal_S2_to_S3();
     this->sendSignal_S2_to_S3();
     ASSERT_EQ(this->getState(), State::S1_S3);
 }
@@ -51,6 +54,8 @@ void Polymorphism::testS3_poly() {
     this->sendSignal_S2_to_S3();
     ASSERT_EQ(this->getState(), State::S1_S3);
     this->sendSignal_poly();
+    this->sendSignal_poly();
+    this->sendSignal_S2_to_S3();
     ASSERT_EQ(this->getState(), State::S5);
 }
 
