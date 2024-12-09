@@ -61,6 +61,8 @@ void BasicGuardTestStruct::testTrue() {
     const SmHarness::TestStruct value = SmHarness::Pick::testStruct();
     this->sendSignal_s(value);
     ASSERT_EQ(this->getState(), State::T);
+    this->sendSignal_s(value);
+    ASSERT_EQ(this->getState(), State::T);
     ASSERT_EQ(this->m_guard_g.getCallHistory().getSize(), 1);
     ASSERT_EQ(this->m_guard_g.getCallHistory().getSignals().getItemAt(0), Signal::s);
     ASSERT_EQ(this->m_guard_g.getCallHistory().getValues().getItemAt(0), value);

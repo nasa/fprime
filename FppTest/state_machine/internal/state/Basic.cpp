@@ -35,6 +35,8 @@ void Basic::test() {
     ASSERT_EQ(this->m_action_a_history.getSize(), 0);
     this->sendSignal_s();
     ASSERT_EQ(this->getState(), State::T);
+    this->sendSignal_s();
+    ASSERT_EQ(this->getState(), State::T);
     const FwSizeType expectedSize = 6;
     ASSERT_EQ(this->m_action_a_history.getSize(), expectedSize);
     for (FwSizeType i = 0; i < expectedSize; i++) {
