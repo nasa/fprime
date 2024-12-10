@@ -45,6 +45,7 @@ argtype
 arijitdas
 arinc
 arpa
+ASize
 ASTRING
 ATester
 ATL
@@ -105,6 +106,7 @@ caselessmatch
 Catchen
 CBF
 CBLOCK
+CComponent
 CCSDS
 ccsparc
 cdefs
@@ -284,9 +286,9 @@ ethanchee
 eturn
 EVENTARRAY
 EVENTBOOL
+eventflags
 EVENTID
 eventname
-eventflags
 EVENTPRIMITIVE
 evr
 evt
@@ -564,6 +566,7 @@ mscfile
 mseconds
 mstarch
 mstat
+MState
 mstring
 mtype
 multiarch
