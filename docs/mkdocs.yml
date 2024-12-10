@@ -322,6 +322,7 @@ nav:
         - 'FPP JSON Dictionary Specification': documentation/user-manual/design/fpp-json-dict.md
         - 'Rate Groups and Timeliness': documentation/user-manual/design/rate-group.md
         - 'F´ Data Products': documentation/user-manual/design/data-products.md
+        - 'State Machines': documentation/user-manual/design/state-machines.md
     - How To: 
       - documentation/how-to/index.md
       - 'F´ Library Development': documentation/how-to/develop-fprime-libraries.md
