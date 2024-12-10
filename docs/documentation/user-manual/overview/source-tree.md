@@ -6,60 +6,10 @@ Details on each module can be seen in the docs/sdd.md (or html)
 subdirectory. When the code generator is run in a particular directory,
 it will generate files with the suffixes Ac.hpp and Ac.cpp. These files
 are not described since they are considered build products. They are
-automatically incorporated into the build by the build system. The
-following files in Table 1 are produced by the code generator.
+automatically incorporated into the build by the build system.
 
-**Table 1.** Files produced by the code generator.
 
-| Source                     | Generates                        | Description                  |
-| -------------------------- | -------------------------------- | ---------------------------- |
-| \<Name\>SerializableAi.xml | \<Name\>SerializableAc.hpp(.cpp) | Autocoded serializable files |
-| \<Name\>PortAi.xml         | \<Name\>PortAc.hpp(.cpp)         | Autocoded port files         |
-| \<Name\>ComponentAi.xml    | \<Name\>ComponentAc.hpp(.cpp)    | Autocoded component files    |
-| \<Name\>TopologyAi.xml     | \<Name\>TopologyAc.hpp(.cpp)     | Autocoded topology files     |
-
-## Autocoders
-
-The Autocoders directory contains the scripts that are used to generate
-source for the components. It is implemented as a set of Python 2.x
-scripts that process the XML files used to describe the various entities
-in the system. The directory also contains the C language version of the
-hierarchical state machine (HSM) framework that has been flown on
-several missions at JPL. The HSM is not needed by the framework or the
-code generation, but is available for use by developers writing
-component adaptations if they wish to use HSM for implementing state
-machines. Developers do not need to study the implementation of the
-autocoder in order to utilize it. The following directories are of
-interest to developers:
-
-### Templates
-
-This directory has examples of the XML files that the developer would
-write for each entity in the system. Each file will be covered in detail
-in subsequent sections. Their function in the architecture is described
-in the architecture document. The files are as follows:
-
-  - Example2SerializableAi.xml—An example of a serializable type
-
-  - ExampleSerializableAi.xml—An example of a more complicated
-    serializable type
-
-  - ExamplePortAi.xml—An example of a port type
-
-  - AnotherPortAi.xml—A second port definition
-
-  - ExampleComponentAi.xml—An example of a component type
-
-  - ExampleType.hpp(.cpp)—Not XML, but an example of a user-written
-    serializable
-
-  - ExampleComponentImpl.hpp(.cpp)—An example of a user-written
-    component class
-
-The user can copy these files and use them as a basis for their own XML
-files.
-
-## Docs
+## docs
 
 The Docs directory contains documentation related to the design and
 usage of the F′ framework.
@@ -67,8 +17,7 @@ usage of the F′ framework.
 ## Fw
 
 The Fw directory is the location of framework code and base classes.
-This code should not be modified (with one exception, see Cfg in Section
-5.3.1) by developers using the framework. The code generation relies on
+This code should not be modified by developers using the framework. The code generation relies on
 the types declared to construct the entities in the architecture.
 
 ### config

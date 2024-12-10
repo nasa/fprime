@@ -1,6 +1,10 @@
-# F´ A Flight Software and Embedded Systems Framework
+---
+hide:
+  - toc
+---
 
-## Overview
+# Getting Started with F Prime
+
 F´ (F Prime) is a component-driven framework that enables rapid development and deployment of spaceflight and other embedded software applications. Originally developed at the Jet Propulsion Laboratory, F´ has been successfully deployed on several space applications. It is tailored but not limited to small-scale spaceflight systems such as CubeSats, SmallSats, and instruments.
 
 F´ has the following features:
@@ -11,13 +15,13 @@ F´ has the following features:
 - A standard library of flight-worthy components
 - Testing tools for unit and system-level testing
 
-## F´ External Resources
-- [GitHub Repository](https://github.com/nasa/fprime)
-- [Discussions](https://github.com/nasa/fprime/discussions)
-- [Issues](https://github.com/nasa/fprime/issues)
-- [Community GitHub Organization](https://github.com/fprime-community)
+## Hello, World!
+
+New users should start with the [Hello World tutorial](../tutorials-hello-world/docs/hello-world//). This tutorial walks through the F´ installation process, how to create a new project and how to design, implement, and test a basic F Prime application.
 
 
 ## Further References
 
-To start with F´, follow the [installation guide](installing-fprime.md). Then follow our [tutorials](../documentation/tutorials/index.md), or inspect our [reference applications](https://github.com/fprime-community#references).
+Here are some additional references to continue learning about F´:
+- [More tutorials](../documentation/tutorials/)
+- [F´ User Manual](../documentation/user-manual/)

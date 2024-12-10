@@ -264,8 +264,7 @@ nav:
     - 'F´ Projects': overview/projects.md
   - Getting Started: 
     - getting-started/index.md
-    - 'Installing F´': getting-started/installing-fprime.md
-    - 'F´ Features': getting-started/features.md
+    - 'Installation and Troubleshooting': getting-started/installing-fprime.md
   - Documentation:
     - documentation/index.md
     - Tutorials:
@@ -289,7 +288,7 @@ nav:
         - 'Unit Testing F´ Components': documentation/user-manual/overview/unit-testing.md
       - Framework:
         - 'Configuring F´': documentation/user-manual/framework/configuring-fprime.md
-        - 'F´ Implementation Classes': documentation/user-manual/framework/implementation.md
+        - 'Autocoded Functions': documentation/user-manual/framework/autocoded-functions.md
         - 'Constructing the F´ Topology': documentation/user-manual/framework/building-topology.md
         - 'Asserts in F´': documentation/user-manual/framework/assert.md
         - 'F´ On Baremetal and Multi-Core Systems': documentation/user-manual/framework/baremetal-multicore.md
