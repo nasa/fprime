@@ -93,7 +93,7 @@ namespace Svc {
         // end of the free list.
         //
         // 4) Place the state file data in memory after the binary tree traverse
-        // stack by indexing the the traverse stack to one element past the end of 
+        // stack by indexing the traverse stack to one element past the end of 
         // the traverse tree.
 
         if (
