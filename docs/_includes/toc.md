@@ -1,3 +1,7 @@
+<h4>A new website is available!</h4>
+<h4><a href="https://fprime.jpl.nasa.gov/">Switch to the new F´ website</a></h4>
+<br>
+<hr>
 <h4><a href="/fprime/GettingStarted/README.html">Getting Started</a></h4>
   <ul>
     <li><a href="/fprime/INSTALL.html">Installing F´</a></li>
