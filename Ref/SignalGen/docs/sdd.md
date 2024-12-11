@@ -26,7 +26,7 @@ The `Ref::SignalGen` component has the following component diagram:
 
 #### 3.1.2 Data Products
 
-The `Ref::SignalGen` component will generate data products using the `SignalGen_Dp` command.
+The `Ref::SignalGen` component will generate data products using the `Dp` command.
 It will demonstrate the two different ways to request data product buffers and will generate
 a data product based on storing a commanded number of 
 

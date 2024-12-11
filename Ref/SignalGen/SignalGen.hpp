@@ -52,7 +52,7 @@ namespace Ref {
             U32 cmdSeq /*!< The command sequence number*/
         ) final;
 
-        //! Handler implementation for command SignalGen_Dp
+        //! Handler implementation for command Dp
         //!
         //! Signal Generator Settings
         void Dp_cmdHandler(
