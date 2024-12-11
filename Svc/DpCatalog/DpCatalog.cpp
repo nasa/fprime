@@ -63,9 +63,13 @@ namespace Svc {
         FW_ASSERT(numDirs <= DP_MAX_DIRECTORIES, static_cast<FwAssertArgType>(numDirs));
         this->m_stateFile = stateFile;
 
-        // request memory for catalog
-        // = number of file slots * (Free list entry + traverse stack entry)
-        // FIXME: Memory size hack
+        // request memory for catalog which is DP_MAX_FILES * slot size.
+        // 
+        // A "slot" consists of a set of three memory locations for each data product consisting
+        // an entry in the binary tree, an entry in the binary tree traversal stack, and 
+        // an entry in the state file data. These may not be fully used in a given 
+        // situation based on the number of actual data products, but this provides room for the
+        // maximum possible.
         static const FwSizeType slotSize = sizeof(DpBtreeNode) + sizeof(DpBtreeNode**) + sizeof(DpDstateFileEntry);
         this->m_memSize = DP_MAX_FILES * slotSize;
         bool notUsed; // we don't need to recover the catalog.
@@ -73,18 +77,36 @@ namespace Svc {
         this->m_memPtr = allocator.allocate(memId, this->m_memSize, notUsed);
         // adjust to actual size if less allocated and only initialize
         // if there is enough room for at least one record and memory
-        // was allocated
+        // was allocated.
+
+        // Since we are given a monolithic block of memory, the data structures
+        // are interspersed in the memory using the following method:
+        //
+        // 1) Recompute how many slots can fit in the provided memory if we 
+        // don't get the full amount requested. This allows for graceful degradation
+        // if there are memory issues.
+        //
+        // 2) Place the binary tree free list at the beginning of the memory.
+        //
+        // 3) Place the binary tree traverse stack in memory just after the binary
+        // tree free list by indexing the free list as an array one element past the
+        // end of the free list.
+        //
+        // 4) Place the state file data in memory after the binary tree traverse
+        // stack by indexing the the traverse stack to one element past the end of 
+        // the traverse tree.
+
         if (
             (this->m_memSize >= sizeof(DpBtreeNode)) and
             (this->m_memPtr != nullptr)
             ) {
             // set the number of available record slots based on how much memory we actually got
-            this->m_numDpSlots = this->m_memSize / slotSize;
-            this->resetBinaryTree();
-            // assign pointer for the stack
+            this->m_numDpSlots = this->m_memSize / slotSize; // Step 1.
+            this->resetBinaryTree(); // Step 2
+            // assign pointer for the stack - Step 3
             this->m_traverseStack = reinterpret_cast<DpBtreeNode**>(&this->m_freeListHead[this->m_numDpSlots]);
             this->resetTreeStack();
-            // assign pointer for the state file storage
+            // assign pointer for the state file storage - Step 4
             this->m_stateFileData = reinterpret_cast<DpDstateFileEntry*>(&this->m_traverseStack[this->m_numDpSlots]);
         }
         else {
@@ -107,7 +129,8 @@ namespace Svc {
 
     void DpCatalog::resetBinaryTree() {
         // initialize data structures in the free list
-        this->m_freeListHead = static_cast<DpBtreeNode*>(this->m_memPtr);
+        // Step 2 in memory partition (see configure() comments)
+        this->m_freeListHead = static_cast<DpBtreeNode*>(this->m_memPtr); 
         for (FwSizeType slot = 0; slot < this->m_numDpSlots; slot++) {
             // overlay new instance of the DpState entry on the memory
             (void) new(&this->m_freeListHead[slot]) DpBtreeNode();
@@ -205,9 +228,6 @@ namespace Svc {
             fileLoc += size;
             this->m_stateFileEntries++;
         }
-
-        // close the state file
-        stateFile.close();
 
         return Fw::CmdResponse::OK;
     }
