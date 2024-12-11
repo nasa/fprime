@@ -67,7 +67,7 @@ Fw::SerializeStatus PosixRawTime::deserialize(Fw::SerializeBufferBase& buffer) {
     if (status != Fw::SerializeStatus::FW_SERIALIZE_OK) {
         return status;
     }
-    this->m_handle.m_timespec = {sec, nsec};
+    this->m_handle.m_timespec = {static_cast<time_t>(sec), static_cast<long>(nsec)};
     return Fw::SerializeStatus::FW_SERIALIZE_OK;
 }
 
