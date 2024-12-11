@@ -255,9 +255,7 @@ def test_active_logger_filter(fprime_test_api):
 
 def test_signal_generation(fprime_test_api):
     """Tests the behavior of signal gen component"""
-    fprime_test_api.send_and_assert_command(
-        "Ref.SG4.Settings", [1, 5, 0, "SQUARE"]
-    )
+    fprime_test_api.send_and_assert_command("Ref.SG4.Settings", [1, 5, 0, "SQUARE"])
     # First telemetry item should fill only the first slot of the history
     history = [0, 0, 0, 5]
     pair_history = [{"time": 0, "value": value} for value in history]
