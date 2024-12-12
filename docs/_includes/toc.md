@@ -1,4 +1,4 @@
-<h4>A new website is available!</h4>
+<h4 style="color: #fff;">A new website is available!</h4>
 <h4><a href="https://fprime.jpl.nasa.gov/">Switch to the new F´ website</a></h4>
 <br>
 <hr>
