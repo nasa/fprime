@@ -62,7 +62,7 @@ Get input port pointer:
 where
 
 > \<PortType\> = The full port type specified in the data\_type
-> attribute in the definition of the port in the component XML.
+> attribute in the definition of the port in the component FPP.
 >
 > \<port name\> = The name of the port in the name attribute of the port
 > definition.
@@ -81,7 +81,7 @@ section is given to an output port of the same type by calling:
 where
 
 > \<PortType\> = The full port type specified in the data\_type
-> attribute in the definition of the port in the component XML.
+> attribute in the definition of the port in the component FPP.
 >
 > \<port name\> = The name of the port in the name attribute of the port
 > definition.

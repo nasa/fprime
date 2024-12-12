@@ -8,14 +8,15 @@
 NOTE: This release has an early prototype that will do the following:
 
 1. Reads the data product files from the specified directory.
-2. Puts them in an unsorted list.
+2. Puts them in priority sorted list.
 3. Sends requests to `Svc/FileDownlink` to downlink each file in the list.
 
 It does not:
 
-1. Sort the data products
-2. Mark them as complete
-3. Any of the future features like modifying/deleting data products.
+1. Stop transmissions in progress
+2. Allow insertion of new products after the catalog is built
+3. Clear the catalog via command
+4. Send data product files in pieces. It only sends whole files, so if the downlink is interrupted, the whole file will have to be retransmitted.
    
 Features and more extended unit testing will be added over time. Use at your own risk!
 
@@ -24,7 +25,7 @@ Features and more extended unit testing will be added over time. Use at your own
 Requirement | Description | Rationale | Verification Method
 ---- | ---- | ---- | ----
 SVC-DPCAT-001 | `DpCatalog` shall read a set of directories and build a catalog of data products. | `DpCatalog` needs to know at least one directory where data products reside | Test
-SVC-DPCAT-002 | `DpCatalog` shall sort data products first based on the internally recorded priority. | `DpCatalog` needs to downlink highest priority items first | Test
+SVC-DPCAT-002 | `DpCatalog` shall sort data products first based on the internally recorded priority where the highest priority is represented by the lowest number. | `DpCatalog` needs to downlink highest priority items first | Test
 SVC-DPCAT-003 | `DpCatalog` shall sort data products second based on the internally recorded time with oldest products as higher priority. | `DpCatalog` needs to downlink oldest items first | Test
 SVC-DPCAT-004 | `DpCatalog` shall sort data products third based on the internally recorded product ID with the lowest as higher priority. | `DpCatalog` needs to resolve case where priority and time match | Test
 SVC-DPCAT-005 | `DpCatalog` shall update the data product metadata once download is complete | `DpCatalog` needs to track completion status to avoid duplicate downloads | Test
@@ -51,22 +52,26 @@ The design of `DpCatalog` assumes the following:
 
 #### 3.3.1 Role Ports
 
-Name | Type | Role
------| ---- | ----
-`timeCaller` | `Fw::Time` | TimeGet
-`cmdIn` | [`Fw::Cmd`](../../../Fw/Cmd/docs/sdd.md) | Cmd
-`cmdRegOut` | [`Fw::CmdReg`](../../../Fw/Cmd/docs/sdd.md) | CmdReg
-`cmdResponseOut` | [`Fw::CmdResponse`](../../../Fw/Cmd/docs/sdd.md) | CmdResponse
-`tlmOut` | [`Fw::Tlm`](../../../Fw/Tlm/docs/sdd.md) | Telemetry
-`eventOut` | [`Fw::LogEvent`](../../../Fw/Log/docs/sdd.md) | LogEvent
+These ports will be automatically connected in the topology to F Prime services.
+
+|Name|Role|
+|---|---|
+|cmdDisp|Receives commands|
+|CmdReg|Registers commands |
+|CmdStatus|Returns command status|
+|Log|Outputs events for ground|
+|LogText|Outputs events for console|
+|Time|Gets time for time tags|
+|Tlm|Outputs telemetry|
 
 #### 3.3.2 Component-Specific Ports
 
 Name | Type | Kind | Purpose
----- | ---- | ---- | ----
-sendFile|SendFileRequest|output|Send next file to downlink
-fileDone|SendFileComplete|async_input|Last requested file is complete
-newDp|DpNotify|async_input|Notification that a new DP has been generated
+---- | ---- | ---- | ---
+pingIn|async input|Svc.Ping|Ping from Health
+pingOut|output|Svc.Ping|Ping response to Health
+fileOut|SendFileRequest|output|Send next file to downlink
+fileDone|SendFileComplete|async input|Last requested file is complete
 
 ### 3.4 Constants
 
@@ -74,32 +79,74 @@ newDp|DpNotify|async_input|Notification that a new DP has been generated
 
 |Constant|Purpose|
 |---|---|
-|MAX_DP_DIRS|Maximum directories that can be provided for DPs
+|DP_MAX_DIRECTORIES|Maximum directories that can be provided for DPs
+|DP_MAX_FILES|Maximum number of files that can be tracked across directories
+
+These constants are located in `DpCatalogCfg.hpp` in the `config` directory.
 
 ### 3.5 Configuration
 
-During initialization, the initialization function takes a set of parameters:
+During initialization, the configuration function takes a set of parameters:
+
+```c++
+        void configure(
+            Fw::FileNameString directories[DP_MAX_DIRECTORIES],
+            FwSizeType numDirs,
+            Fw::FileNameString& stateFile,
+            NATIVE_UINT_TYPE memId,
+            Fw::MemAllocator& allocator
+        );
+```
 
 |Parameter|Purpose|
 |---|---|
-|dpDirs|A set of strings up to `MAX_DP_DIRS` that are directory names where DPs are written
-|maxFiles|Specify the maximum number of files the catalog can track|
-|allocator|Memory allocator for catalog records
-
-### SDD work will continue from here
-
-#### Constants
-
-### 3.6 State
+|`directories`|A set of strings up to `DP_MAX_DIRECTORIES` that are directory names where DPs are written
+|`numDirs`|The number of supplied directories
+|`stateFile`|The location of the file tracking product downlink state
+|`memId`|The id of the RAM memory segment used to store catalog state. Not needed for heap allocation. 
+|`allocator`|Memory allocator for RAM memory storage
 
 
 ### 3.6 Commands
 
+|Command|Arguments|Description|
+|---|---|---|
+|`BUILD_CATALOG`|none|Builds the in-RAM catalog by scanning the directories provided during initialization. Downlink state file will be read in to set downlink state for products|Prerequisite for executing `START_XMIT_CATALOG` command
+|`START_XMIT_CATALOG`| |Start transmitting the catalog to the ground in priority order
+| |wait|Wait for the transmission to complete before sending command completion status. Used when a sequence wishes to wait for completion before issuing subsequent commands.
+|`STOP_XMIT_CATALOG`|none|Stop existing catalog transmission. Will be completed when the current file is done transmitting. __NOT IMPLEMENTED YET__|
+|`CLEAR_CATALOG`|none|Clears existing RAM catalog and resets downlink state. Should be followed by `BUILD_CATALOG`. Used for recovery if state file gets corrupted or out of sync with file system contents. __NOT IMPLEMENTED YET__ |
 
-## 4 Checklists
+#### Sequence of Commands
 
-TODO
+When the software is first started, the catalog data structure is empty. The catalog must be built before starting downlink. The `BUILD_CATALOG` command was implemented separately from the `START_XMIT_CATALOG` command to start downlinking so the software could build the catalog prior to a communication session and execute the downlink during communication. Downlink can be halted by issuing the `STOP_XMIT_COMMAND` in the middle of the downlink. If for some reason the state in the state file, the contents of the tree and the data products get out of sync, a `CLEAR_CATALOG` command can be issued. Then the `BUILD_CATALOG` command can be invoked to rebuild the state based on the existing set of data product files only. This will caused downlinked state to be lost, so data products not deleted after downlink would be readded to the pending list of downlinks.
+
+### 3.7 Algorithms
+
+#### 3.7.1 Data Product Sorting
+
+Data Products are sorted based on the following metadata in the following order.
+1. Data Product Priority - Data products are generated with a a priority, where the lower the number the higher the priority.
+2. Data Product Generation Time - If priorities are the same, the older data is prioritized over the newer.
+3. Data Product ID - If priorities and time are the same (highly unlikely), then lower IDs are prioritized first.
+
+#### 3.7.2 Reading Files
+
+The `initialize()` function is provided an array of directories where data product files are generated by `Svc/DpWriter`. When the `BUILD_CATALOG` command is executed, the headers of the data product files are read and the metadata in their headers is processed and stored as a data structure for sorting. The file name is not stored to conserve memory.
+
+#### 3.7.2 Sorting Algorithm
+
+The data products are sorted using an unbalanced, non-recursive binary tree algorithm based on the following description:
+
+https://codestandard.net/articles/binary-tree-inorder-traversal/
+
+#### 3.7.2 Tree Traversal for Downlink
+
+When data products are downlinked, the tree is traversed using a stack as described. As each node is visited, the file is downlinked and the node in the tree is marked with a completed status. In subsequent traversals, the node is passed over.
+
+#### 3.7.3 State File
+
+When a data product is downlinked, it is marked in the node as completed, but the state is also written to a file so that downlinked state is preserved across restarts of the software. When the catalog is built, the state file is first read into a data structure in memory. Then, as 
 
 ## 6 Unit Testing
 
-TODO

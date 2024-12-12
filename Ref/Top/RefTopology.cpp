@@ -111,11 +111,12 @@ void configureTopology() {
     uplink.setup(deframing);
 
     Fw::FileNameString dpDir("./DpCat");
+    Fw::FileNameString dpState("./DpCat/DpState.dat");
 
     // create the DP directory if it doesn't exist
     Os::FileSystem::createDirectory(dpDir.toChar());
 
-    dpCat.configure(&dpDir, 1, 0, mallocator);
+    dpCat.configure(&dpDir,1,dpState,0,mallocator);
     dpWriter.configure(dpDir);
 
     // Note: Uncomment when using Svc:TlmPacketizer
