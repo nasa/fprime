@@ -346,6 +346,46 @@ namespace Svc {
 
   }
 
+  void ActiveTextLoggerTester ::
+    testWorkstationTimestamp()
+  {
+      printf("Testing workstation timestamp\n");
+
+      // Setup file for writing to:
+      const char* logFileName = "test_file";
+      bool stat = this->component.set_log_file(logFileName,512);
+      ASSERT_TRUE(stat);
+      ASSERT_TRUE(this->component.m_log_file.m_openFile);
+
+      // Log message:
+      FwEventIdType id = 1;
+      Fw::Time timeTag(TB_WORKSTATION_TIME, 3, 6);
+      Fw::LogSeverity severity = Fw::LogSeverity::ACTIVITY_HI;
+      const char* severityString = "ACTIVITY_HI";
+      Fw::TextLogString text("This line has a valid timestamp.");
+      this->invoke_to_TextLogger(0, id, timeTag, severity, text);
+      this->component.doDispatch();
+
+      // Read file to verify contents:
+      std::ifstream logStream(logFileName);
+      while(logStream) {
+          char buf[256];
+          logStream.getline(buf, 256);
+          if (logStream) {
+              std::cout << "readLine: " << buf << std::endl;
+              char textStr[512];
+              snprintf(textStr, sizeof(textStr),
+                      "EVENT: (%d) (%d:%d,%d) %s: %s",
+                       id,timeTag.getTimeBase(), timeTag.getSeconds(), timeTag.getUSeconds(), severityString, text.toChar());
+              ASSERT_EQ(0, strcmp(textStr, buf));
+          }
+      }
+      logStream.close();
+
+      // Clean up:
+      remove(logFileName);
+  }
+
   // ----------------------------------------------------------------------
   // Helper methods
   // ----------------------------------------------------------------------
@@ -359,9 +399,6 @@ namespace Svc {
         0,
         this->component.get_TextLogger_InputPort(0)
     );
-
-
-
 
   }
 

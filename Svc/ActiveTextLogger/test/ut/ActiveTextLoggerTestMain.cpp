@@ -12,6 +12,11 @@ TEST(Nominal, Logging) {
     tester.runNominalTest();
 }
 
+TEST(Nominal, WorkstationTime) {
+    Svc::ActiveTextLoggerTester tester;
+    tester.testWorkstationTimestamp();
+}
+
 TEST(OffNominal, FileHandling) {
     Svc::ActiveTextLoggerTester tester;
     tester.runOffNominalTest();
