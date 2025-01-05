@@ -17,6 +17,6 @@ register_fprime_module()
 set(UT_SOURCE_FILES
   "${FPRIME_FRAMEWORK_PATH}/Svc/ActiveTextLogger/ActiveTextLogger.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/ActiveTextLoggerTester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/ActiveTextLoggerTester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/ActiveTextLoggerTestMain.cpp"
 )
 register_fprime_ut()
