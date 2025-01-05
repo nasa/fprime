@@ -38,7 +38,7 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   void ActiveTextLoggerTester ::
-  run_nominal_test()
+  runNominalTest()
   {
       printf("Testing writing to console\n");
 
@@ -160,7 +160,7 @@ namespace Svc {
   }
 
   void ActiveTextLoggerTester ::
-  run_off_nominal_test()
+  runOffNominalTest()
   {
       // TODO file errors- use the Os/Stubs?
 

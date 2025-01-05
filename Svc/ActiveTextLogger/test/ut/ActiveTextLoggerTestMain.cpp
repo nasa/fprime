@@ -9,12 +9,12 @@
 
 TEST(Nominal, Logging) {
     Svc::ActiveTextLoggerTester tester;
-    tester.run_nominal_test();
+    tester.runNominalTest();
 }
 
 TEST(OffNominal, FileHandling) {
     Svc::ActiveTextLoggerTester tester;
-    tester.run_off_nominal_test();
+    tester.runOffNominalTest();
 }
 
 int main(int argc, char** argv) {
