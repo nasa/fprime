@@ -327,7 +327,6 @@ namespace Svc {
       // Create 11th which will fail and re-use the original:
       stat = this->component.set_log_file(baseName,50);
 
-      snprintf(baseNameWithSuffix, sizeof(baseNameWithSuffix), "%s%d",baseName,i);
       ASSERT_TRUE(stat);
       ASSERT_TRUE(this->component.m_log_file.m_openFile);
       printf("<< %s %s\n",baseName,this->component.m_log_file.m_fileName.toChar());
