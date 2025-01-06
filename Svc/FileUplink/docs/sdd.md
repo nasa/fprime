@@ -169,11 +169,11 @@ TBD
 
 ## 5 Checklists
 
-Document | Link
--------- | ----
-Design | [Link](Checklist/design.xlsx)
-Code | [Link](Checklist/code.xlsx)
-Unit Test | [Link](Checklist/unit_test.xls)
+Checklist |
+-------- |
+[Design](Checklist/design.xlsx) |
+[Code](Checklist/code.xlsx) |
+[Unit Test](Checklist/unit_test.xls) |
 
 ## 6 Unit Testing
 

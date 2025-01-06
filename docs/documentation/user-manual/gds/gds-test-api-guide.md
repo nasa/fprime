@@ -609,7 +609,7 @@ The following table summarizes the color meanings from API-generated messages.
 
 ### Predicates
 
-The integration test API uses predicates for filtering, searching and asserting. A predicate is a callable class that evaluates if an object/value satisfies a certain property. Predicates used by the API are defined [here](https://github.com/fprime-community/fprime-gds/blob/devel/src/fprime_gds/common/testing_fw/predicates.py). The API uses Duck Typing to determine what can and cannot be used as a predicate; therefore, a user of the API can very easily create their own. Below is a table of how predicates are organized with a brief summary of each section:
+The integration test API uses predicates for filtering, searching and asserting. A predicate is a callable class that evaluates if an object/value satisfies a certain property. Predicates used by the API are defined in [testing_fw/predicates.py](https://github.com/fprime-community/fprime-gds/blob/devel/src/fprime_gds/common/testing_fw/predicates.py). The API uses Duck Typing to determine what can and cannot be used as a predicate; therefore, a user of the API can very easily create their own. Below is a table of how predicates are organized with a brief summary of each section:
 
 | Predicate Section| Section Description| Functions/predicates|
 | :----| :----| :----|

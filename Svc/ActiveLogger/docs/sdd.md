@@ -13,8 +13,8 @@ The requirements for `Svc::ActiveLogger` are as follows:
 
 Requirement | Description | Verification Method
 ----------- | ----------- | -------------------
-AL-001 | The `Svc::ActiveLogger` component shall receive events and compose ter events based on event severity. | Unithem into downlink packets. | Inspection; Unit Test
-AL-002 | The `Svc::ActiveLogger` component shall have commands to filt Test
+AL-001 | The `Svc::ActiveLogger` component shall receive events and compose them into downlink packets. | Inspection; Unit Test
+AL-002 | The `Svc::ActiveLogger` component shall have commands to filter events based on event severity. | Unit Test
 AL-003 | The `Svc::ActiveLogger` component shall have commands to filter events based on the event ID. | Unit Test 
 AL-004 | The `Svc::ActiveLogger` component shall call fatalOut port when FATAL is received | Inspection; Unit Test
 
@@ -94,11 +94,11 @@ TBD
 
 ## 5. Module Checklists
 
-Document | Link
--------- | ----
-Design Checklist | [Link](Checklist_Design.xlsx)
-Code Checklist | [Link](Checklist_Code.xlsx)
-Unit Test Checklist | [Link](Checklist_Unit_Test.xls)
+Checklist |
+-------- |
+[Design](Checklist_Design.xlsx) |
+[Code](Checklist_Code.xlsx) |
+[Unit Test](Checklist_Unit_Test.xls) |
 
 ## 6. Unit Testing
 

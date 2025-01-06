@@ -127,7 +127,7 @@ class Topology:
     def set_single_instance_prepend_instance_name(self, prepend_instance_name):
         """
         Only sets this variable if instance_dict is running.
-        This is used to turn off prepeneding instance names onto chan/event/commands
+        This is used to turn off prepending instance names onto chan/event/commands
         """
         self.__prepend_instance_name = prepend_instance_name
 

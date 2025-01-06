@@ -249,7 +249,7 @@ This rule invokes `productSendIn` with nominal input.
    Invoke `productSendIn` with a random port number _N_, with a random id _I_,
    and with a buffer _B_ of of size _S_.
 1. Assert that the event history is empty.
-1. Increment `NumDataBroducts`.
+1. Increment `NumDataProducts`.
 1. Increase `NumBytes` by the size of _B_.
 1. Assert that the from port history contains one item.
 1. Assert that the `productSendOut` history contains one item.

@@ -139,7 +139,7 @@ Os::File::Status LinuxGpioDriver ::setupLineHandle(const PlatformIntType chip_de
     struct gpiohandle_request request;
     (void) ::memset(&request, 0, sizeof request);
     request.lineoffsets[0] = gpio;
-    Fw::StringUtils::string_copy(request.consumer_label, this->getObjName(),
+    Fw::StringUtils::string_copy(request.consumer_label, FW_OPTIONAL_NAME(this->getObjName()),
                                  static_cast<FwSizeType>(sizeof request.consumer_label));
     request.default_values[0] = (default_state == Fw::Logic::HIGH) ? 1 : 0;
     request.fd = -1;
@@ -165,7 +165,7 @@ Os::File::Status LinuxGpioDriver ::setupLineEvent(const PlatformIntType chip_des
     struct gpioevent_request event;
     (void) ::memset(&event, 0, sizeof event);
     event.lineoffset = gpio;
-    Fw::StringUtils::string_copy(event.consumer_label, this->getObjName(),
+    Fw::StringUtils::string_copy(event.consumer_label, FW_OPTIONAL_NAME(this->getObjName()),
                                  static_cast<FwSizeType>(sizeof event.consumer_label));
     event.fd = -1;
     event.handleflags = configuration_to_handler_flags(configuration);

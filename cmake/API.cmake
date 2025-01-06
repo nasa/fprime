@@ -377,7 +377,7 @@ endfunction(register_fprime_executable)
 #
 # ### Standard fprime Deployment Example ###
 #
-# To create a standard fprime deployment, an the user must call `register_fprime_deployment()` after defining
+# To create a standard fprime deployment, the user must call `register_fprime_deployment()` after defining
 # SOURCE_FILES and MOD_DEPS.
 #
 # ```
