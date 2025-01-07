@@ -28,6 +28,8 @@ jobs:
         fetch-depth: 0
         submodules: true
     - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12' 
     - uses: ./.github/actions/setup
     - name: F prime CI step
       run: ./ci/tests/Framework.bash
@@ -53,6 +55,8 @@ jobs:
         fetch-depth: 0
         submodules: true
     - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12' 
     - uses: ./.github/actions/setup
     - name: F prime CI step
       run: ./ci/tests/Ref.bash
@@ -77,6 +81,8 @@ jobs:
         fetch-depth: 0
         submodules: true
     - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12' 
     - uses: ./.github/actions/setup
     - name: Install coreutils
       run: brew install coreutils
