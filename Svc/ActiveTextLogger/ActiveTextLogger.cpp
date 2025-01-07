@@ -78,7 +78,7 @@ namespace Svc {
 
         (void) snprintf(textStr,
                         FW_INTERNAL_INTERFACE_STRING_MAX_SIZE,
-                        "EVENT: (%" PRI_FwEventIdType ") (%" PRI_FwTimeBaseStoreType ":%" PRId32 ",%" PRId32 ") %s: %s\n",
+                        "EVENT: (%" PRI_FwEventIdType ") (%" PRI_FwTimeBaseStoreType ":%" PRIu32 ",%" PRIu32 ") %s: %s\n",
                         id, static_cast<FwTimeBaseStoreType>(timeTag.getTimeBase()), timeTag.getSeconds(), timeTag.getUSeconds(),
                         severityString, text.toChar());
 
