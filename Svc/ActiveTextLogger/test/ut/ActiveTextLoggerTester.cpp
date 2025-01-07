@@ -106,7 +106,7 @@ namespace Svc {
               snprintf(textStr, sizeof(textStr),
                       "EVENT: (%d) (%d:%d,%d) %s: %s",
                        id,timeTag.getTimeBase(),timeTag.getSeconds(),timeTag.getUSeconds(),severityString,text.toChar());
-              ASSERT_EQ(0,strcmp(textStr,buf));
+              ASSERT_STREQ(textStr,buf);
               (void) Fw::StringUtils::string_copy(oldLine, buf, static_cast<FwSizeType>(sizeof(oldLine)));
           }
       }
