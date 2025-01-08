@@ -10,14 +10,14 @@ if (NOT BUILD_TESTING)
 endif ()
 add_custom_target("${FPRIME_CURRENT_MODULE}")
 
-add_fprime_supplied_os_module("File;FileSystem;Directory" Test_Stub)
-add_fprime_supplied_os_module(Console Test_Stub)
-add_fprime_supplied_os_module(Task Test_Stub)
-add_fprime_supplied_os_module("Mutex;ConditionVariable" Test_Stub)
-add_fprime_supplied_os_module(Cpu Test_Stub)
-add_fprime_supplied_os_module(Memory Test_Stub)
-add_fprime_supplied_os_module(Queue Test_Stub)
-add_fprime_supplied_os_module(RawTime Test_Stub) # add Fw_Buffer here?
+register_os_implementation("File;FileSystem;Directory" Test_Stub)
+register_os_implementation(Console Test_Stub)
+register_os_implementation(Task Test_Stub)
+register_os_implementation("Mutex;ConditionVariable" Test_Stub)
+register_os_implementation(Cpu Test_Stub)
+register_os_implementation(Memory Test_Stub)
+register_os_implementation(Queue Test_Stub)
+register_os_implementation(RawTime Test_Stub) # add Fw_Buffer here?
 
 #### File Stub Testing ####
 set(UT_SOURCE_FILES
