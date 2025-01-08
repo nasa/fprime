@@ -293,8 +293,8 @@ void LinuxGpioDriver ::pollLoop() {
     //       in both cases the cast is safe because max() returns nonnegative value.
     static_assert(GPIO_POLL_TIMEOUT < static_cast<unsigned int>(std::numeric_limits<int>::max()), "Poll timeout would overflow");
     static_assert(sizeof(struct gpioevent_data) < std::numeric_limits<FwSizeType>::max(), "FwSizeType too small");
-    typedef std::make_unsigned<ssize_t>::type unsigned_ssize;
-    static_assert(static_cast<unsigned_ssize>(std::numeric_limits<ssize_t>::max()) <= std::numeric_limits<FwSizeType>::max(), "FwSizeType too small");
+    typedef std::make_unsigned<ssize_t>::type unsigned_ssize_t;
+    static_assert(static_cast<unsigned_ssize_t>(std::numeric_limits<ssize_t>::max()) <= std::numeric_limits<FwSizeType>::max(), "FwSizeType too small");
     // Setup poll information
     pollfd file_descriptors[1];
     // Loop forever
