@@ -645,6 +645,25 @@ function(register_fprime_implementation IMPLEMENTATION IMPLEMENTOR)
 endfunction()
 
 ####
+# Adds a named os implementation.
+#
+# Assumptions:
+#   1. NAMES is a list of 1 or more named files separated by ;
+#   2. There exists a file named Default${FIRST_ITEM}, where FIRST_ITEM is the first element in NAME, in the same
+#       directory where this cmake function was called
+#   3. For each item e listed in NAMES, there exists a file called ${e}.hpp and ${e}.cpp in the same directory
+#       where this cmake function was called
+#
+# NAMES: list of named files to add to this module.  The first will be treated as the name of the module.
+#        i.e. File;Directory;FileSystem will contain the file, directory, and filesystem files in a module called File.
+# SUFFIX: suffix to implementation (e.g. Posix)
+# ARGN: extra MOD_DEPS to add (e.g. Fw_Time)
+####
+function(register_os_implementation NAMES SUFFIX)
+    add_fprime_supplied_os_module("${NAMES}" "${SUFFIX}" "${ARGN}")
+endfunction()
+
+####
 # Function `choose_fprime_implementation`:
 #
 # Designates that the given implementor is the selected implementor for the needed implementation. Platforms must call
