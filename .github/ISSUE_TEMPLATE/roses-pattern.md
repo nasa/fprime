@@ -15,7 +15,7 @@ Deliverables (completed before closing issue):
   - [ ] How-To
   - [ ] Tutorial
   - [ ] Other (tool, fill-in, etc)
-- Create documentation
-- Create example in examples repository
-- Pass expert review
-- Pass user review
+- [ ] Create documentation
+- [ ] Create example in examples repository
+- [ ] Pass expert review
+- [ ] Pass user review
