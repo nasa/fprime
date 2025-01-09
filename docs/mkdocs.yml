@@ -180,6 +180,8 @@ nav:
         - 'F´ Data Products': docs/user-manual/framework/data-products.md
         - 'State Machines': docs/user-manual/framework/state-machines.md
       - 'FPP': 'https://nasa.github.io/fpp/fpp-users-guide.html'
+      - 'Design Patterns':
+        - 'Common Port Patterns': documentation/user-manual/design-patterns/common-port-patterns.md
       - GDS:
         - "The GDS CLI": docs/user-manual/gds/gds-cli.md
         - 'The GDS Dashboard': docs/user-manual/gds/gds-custom-dashboards.md

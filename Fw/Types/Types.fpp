@@ -74,7 +74,13 @@ module Fw {
 
   @ Wait or don't wait for something
   enum Wait {
-    WAIT,
-    NO_WAIT
+    WAIT @< Wait for something
+    NO_WAIT @< Don't wait for something
+  }
+
+  enum Completed {
+    COMPLETED @< Completed successfully
+    CANCELED @< Canceled before completion
+    FAILED @< Failed to complete
   }
 }
