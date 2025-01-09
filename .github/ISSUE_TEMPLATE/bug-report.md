@@ -2,10 +2,11 @@
 name: Bug Report
 about: Report a problem using F´
 title: ''
-labels: bug
+labels: bug, ROSES Candidate
 assignees: ''
 
 ---
+
 | | |
 |:---|:---|
 |**_F´ Version_**| |
