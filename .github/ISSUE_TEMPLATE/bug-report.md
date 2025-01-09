@@ -2,7 +2,7 @@
 name: Bug Report
 about: Report a problem using F´
 title: ''
-labels: bug, ROSES Candidate
+labels: bug
 assignees: ''
 
 ---
