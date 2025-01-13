@@ -7,9 +7,10 @@ assignees: ''
 
 ---
 
+### Description
 [Describe pattern here].
 
-Deliverables (completed before closing issue):
+### Deliverables (completed before closing issue):
 - [ ] Select deliverable type
   - [ ] Reference guide
   - [ ] How-To
