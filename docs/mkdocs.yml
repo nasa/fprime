@@ -321,6 +321,7 @@ nav:
     - Reference:
       - documentation/reference/index.md
       - 'C++ Documentation': 'documentation/reference/api/cpp/html/index.html'
+      - 'Software Design Documents': 'documentation/reference/sdd/index.md'
       - 'FPP Language Specification': https://nasa.github.io/fpp/fpp-spec.html
       - 'CMake User API': 'documentation/user-manual/cmake/cmake-api.md'
       - 'GDS Developers Guide': documentation/reference/gds-cli-dev.md

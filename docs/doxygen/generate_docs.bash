@@ -75,3 +75,26 @@ for image in $(find "${FPRIME}/Fw" "${FPRIME}/Svc" "${FPRIME}/Drv" \( -name '*.j
 do
     cp "${image}" "${IMG_DIR}"
 done
+
+
+# Aggregate and index SDDs so they are rendered in the website
+SDD_DIR="${FPRIME}/docs/documentation/reference/sdd/"
+mkdir -p "${SDD_DIR}"
+
+# Find all sdd.md files and process them
+for file in $(find . -type f -path '*/docs/sdd.md'); do
+    # Get the 2nd-parent directory name
+    second_parent=$(basename "$(dirname "$(dirname "$file")")")
+    third_parent=$(basename "$(dirname "$(dirname "$(dirname "$file")")")")
+
+    if [ "$third_parent" == "." ] || [ "$third_parent" == "Ref" ]; then
+        continue
+    fi
+
+    # Construct the new file name
+    new_filename="${third_parent}_${second_parent}_sdd.md"
+
+    # Move and rename the file
+    cp "$file" "${SDD_DIR}/$new_filename"
+    echo "- [${third_parent}::${second_parent}](${new_filename})" >> "${SDD_DIR}/index.md"
+done
