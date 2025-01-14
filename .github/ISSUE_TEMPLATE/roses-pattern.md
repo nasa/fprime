@@ -12,7 +12,8 @@ assignees: ''
 
 ### Deliverables (completed before closing issue):
 - [ ] Select deliverable type
-  - [ ] Reference guide
+  - [ ] Reference
+  - [ ] User Guide
   - [ ] How-To
   - [ ] Tutorial
   - [ ] Other (tool, fill-in, etc)
