@@ -80,7 +80,7 @@ jobs:
         run: |
              cd MyProject
              . fprime-venv/bin/activate
-             expect ./fprime/.github/actions/cookiecutter-check/deployment.expect
+             expect ./lib/fprime/.github/actions/cookiecutter-check/deployment.expect
              cd MyDeployment
              fprime-util build -j4
 
@@ -88,6 +88,6 @@ jobs:
         run: |
              cd MyProject
              . fprime-venv/bin/activate
-             expect ./fprime/.github/actions/cookiecutter-check/component.expect
+             expect ./lib/fprime/.github/actions/cookiecutter-check/component.expect
              cd MyComponent
              fprime-util build -j4
