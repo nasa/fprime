@@ -42,9 +42,7 @@ SVC-DPWRITER-006 | `Svc::DpManager` shall provide telemetry that reports the num
 
 The diagram below shows the `DpWriter` component.
 
-<div>
-<img src="img/DpWriter.png" width=700/>
-</div>
+![DpWriter](img/DpWriter.png)
 
 ### 3.2. Ports
 
@@ -205,9 +203,7 @@ The diagrams use the following instances:
 
 * `producer`: A component that produces data products.
 
-<div>
-<img src="./img/top/product-write.png" width=800/>
-</div>
+![product-write](./img/top/product-write.png)
 
 ### 6.2. Sequence Diagrams
 

@@ -41,9 +41,7 @@ SVC-DPMANAGER-004 | `Svc::DpManager` shall provide telemetry that reports the nu
 
 The diagram below shows the `DpManager` component.
 
-<div>
-<img src="img/DpManager.png" width=700/>
-</div>
+![DpManager](img/DpManager.png)
 
 ### 3.2. Ports
 
