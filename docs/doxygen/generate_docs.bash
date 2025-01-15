@@ -87,7 +87,10 @@ for file in $(find . -type f -path '*/docs/sdd.md'); do
     second_parent=$(basename "$(dirname "$(dirname "$file")")")
     third_parent=$(basename "$(dirname "$(dirname "$(dirname "$file")")")")
 
-    if [ "$third_parent" == "." ] || [ "$third_parent" == "Ref" ]; then
+    if [ "$third_parent" == "." ] || 
+        [ "$third_parent" == "fprime" ] ||
+        [ "$third_parent" == "Ref" ] ||
+        [[ "$third_parent" == cookiecutter-* ]] ||; then
         continue
     fi
 
