@@ -11,7 +11,7 @@ data products.
 They typically pass through an instance of
 [`Svc::DpManager`](../../DpManager/docs/sdd.md), and possibly through
 an instance of
-[`Svc::BufferAccumulator`](../../BufferAccumulator/docs/BufferAccumulator.md),
+[`Svc::BufferAccumulator`](../../BufferAccumulator/docs/sdd.md),
 before reaching `DpWriter`.
 
 1. For each buffer _B_ received in step 1:
@@ -206,7 +206,7 @@ The diagrams use the following instances:
 * `producer`: A component that produces data products.
 
 <div>
-<img src="img/top/product-write.png" width=800/>
+<img src="./img/top/product-write.png" width=800/>
 </div>
 
 ### 6.2. Sequence Diagrams

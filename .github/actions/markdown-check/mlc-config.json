@@ -11,6 +11,9 @@
       },
       {
         "pattern": "^\\.\\./tree/HEAD/"
+      },
+      {
+        "pattern": ".*\\.[chf]pp"
       }
     ]
 }

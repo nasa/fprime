@@ -21,7 +21,7 @@ It does the following:
 client components.
 Upon receiving a buffer, send the buffer out on a port.
 Another component such as
-[`Svc::BufferAccumulator`](../../BufferAccumulator/docs/BufferAccumulator.md)
+[`Svc::BufferAccumulator`](../../BufferAccumulator/docs/sdd.md)
 or [`Svc::DpWriter`](../../DpWriter/docs/sdd.md)
 will process the buffer and then send it back to the buffer manager
 for deallocation.

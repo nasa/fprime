@@ -10,7 +10,7 @@ with open(Path(SDD_DIR) / 'index.md', 'a') as index_file:
 
     # Find all sdd.md files and process them
     for file in list(Path('.').rglob('*/docs/sdd.md')):
-        # Get module name and parent directory directory name
+        # Get module name and parent directory name
         second_parent = file.parents[1].name
         third_parent = file.parents[2].name
 
