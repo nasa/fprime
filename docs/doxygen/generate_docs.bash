@@ -78,7 +78,7 @@ done
 
 
 # Aggregate and index SDDs so they are rendered in the website
-SDD_DIR="${FPRIME}/docs/documentation/reference/sdd"
+SDD_DIR="./docs/documentation/reference/sdd"
 mkdir -p "${SDD_DIR}"
 
 # Find all sdd.md files and process them
@@ -92,9 +92,9 @@ for file in $(find . -type f -path '*/docs/sdd.md'); do
     fi
 
     source_dir="$(dirname "$(dirname "$file")")/docs"
-    dest_dir="${SDD_DIR}/${third_parent}/${second_parent}/docs"
+    dest_dir="${SDD_DIR}/${third_parent}/${second_parent}/"
 
     mkdir -p "${dest_dir}"
     cp -r "${source_dir}/" "${dest_dir}/"
-    echo "- [${third_parent}::${second_parent}](${dest_dir}/sdd.md)" >> "${SDD_DIR}/index.md"
+    echo "- [${third_parent}::${second_parent}](${dest_dir}/docs/sdd.md)" >> "${SDD_DIR}/index.md"
 done
