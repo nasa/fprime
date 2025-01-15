@@ -84,7 +84,7 @@ nothing to retry.
 
 Uplink handles received data, unpacks F´ data types, and routes these to the greater F´ system. In a typical formation,
 these com buffers are sent to the command dispatcher and raw buffers are sent to the file uplink. Uplink is implemented with
-the [Svc.Deframer](../../reference/api/cpp/html/_svc_deframer_component.html) component. This component may be rate group driven in which case
+the [Svc.Deframer](../../reference/sdd/Svc/Deframer/docs/sdd.md) component. This component may be rate group driven in which case
 it polls for data or it may be driven by a driver's receive output port in which case it handles the data on that
 incoming port call. Svc.Deframer implements the
 [DeframingProtocolInterface](../../reference/api/cpp/html/class_svc_1_1_deframing_protocol_interface.html).
@@ -99,7 +99,7 @@ complete. This buffer is updated with the latest data and then processed for mes
 ### Downlink
 
 Downlink takes in F´ data and wraps the data with bytes supporting the necessary protocol. This assembled data is then
-sent to the driver for handling. Downlink is implemented with the [Svc.Framer](../../reference/api/cpp/html/_svc_framer_component.html)
+sent to the driver for handling. Downlink is implemented with the [Svc.Framer](../../reference/sdd/Svc/Framer/docs/sdd.md)
 component, which implements the [FramingProtocolInterface](../../reference/api/cpp/html/class_svc_1_1_framing_protocol_interface.html).
 
 Svc.Framer packs F´ data using a [Svc::FramingProtocol](../../reference/api/cpp/html/class_svc_1_1_framing_protocol.html), which

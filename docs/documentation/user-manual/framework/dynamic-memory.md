@@ -113,7 +113,7 @@ This component is designed for simplicity of implementation. System memory usage
 multiplied by the size of the memory regions. This memory is allocated as a large array on the stack. Valid memory 
 allocations will always be returned or a software error will be tripped.
 
-[Svc.StaticMemory is described in more detail](../../reference/api/cpp/html/_svc_static_memory_component.html).
+[Svc.StaticMemory is described in more detail](../../reference/sdd/Svc/StaticMemory/docs/sdd.md).
 
 **When To Use Svc.StaticMemory**
 
@@ -161,7 +161,7 @@ size larger than the request for an available buffer, which it then marks as use
 
 There is no restriction on the ordering of calls for allocation and deallocation. Clients may have multiple outstanding allocations and thus asynchronous usage of these allocations is supported.
 
-For more details, see the [Svc.BufferManager Doxygen documentation](../../reference/api/cpp/html/_svc_buffer_manager_component.html).
+For more details, see the [Svc.BufferManager SDD](../../reference/sdd/Svc/BufferManager/docs/sdd.md).
 
 **When To Use Svc.BufferManager**
 
