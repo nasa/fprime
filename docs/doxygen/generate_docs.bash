@@ -90,7 +90,7 @@ for file in $(find . -type f -path '*/docs/sdd.md'); do
     if [ "$third_parent" == "." ] || 
         [ "$third_parent" == "fprime" ] ||
         [ "$third_parent" == "Ref" ] ||
-        [[ "$third_parent" == cookiecutter-* ]] ||; then
+        [[ "$third_parent" == cookiecutter-* ]]; then
         continue
     fi
 
