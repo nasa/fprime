@@ -907,6 +907,7 @@ suseconds
 SVCLOGFILE
 SVCLOGFILEL
 swcaegitadmin
+syft
 synchronicity
 synopsys
 sysconf

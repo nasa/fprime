@@ -303,6 +303,8 @@ nav:
         - 'GDS Dashboard Reference': documentation/user-manual/gds/gds-dashboard-reference.md
         - 'Integration Test API': documentation/user-manual/gds/gds-test-api-guide.md
         - 'Sequencing in F´': documentation/user-manual/gds/seqgen.md
+      - Security:
+        - 'Software Bill of Materials Generation': documentation/user-manual/security/software-bill-of-materials.md
       - Design:
         - 'F´ Software Architecture': documentation/user-manual/design/fprime-architecture.md
         - 'Numerical Types Design': documentation/user-manual/design/numerical-types.md

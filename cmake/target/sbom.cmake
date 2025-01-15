@@ -11,7 +11,6 @@ set(REDIRECTOR "${CMAKE_CURRENT_LIST_DIR}/tools/redirector.py")
 # 
 # Used to register a global target that will build with "all" and generates the SBOM.
 #
-# TODO: will this install correctly, or do I need an install global target?
 #####
 function(sbom_add_global_target TARGET)
     find_program(SYFT NAMES syft)
@@ -19,7 +18,7 @@ function(sbom_add_global_target TARGET)
     if (SYFT)
         add_custom_target("${TARGET}" ALL
             COMMAND
-            # Redirector to cleanly capture standard out
+            # Redirect to cleanly capture standard out
             ${PYTHON} ${REDIRECTOR} "${CMAKE_BINARY_DIR}/${PROJECT_NAME}_sbom.json"
             # syft arguments
             "${SYFT}" "dir:${FPRIME_PROJECT_ROOT}" -o spdx-json
@@ -38,12 +37,14 @@ endfunction()
 
 # For deployments
 function(sbom_add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPENDENCIES)
-    append_list_property("${MODULE}" TARGET "${TARGET}" PROPERTY SBOM_DEPENDENCIES)
-    get_property(VAR1 TARGET "${TARGET}" PROPERTY SBOM_DEPENDENCIES)
+    if (TARGET "${TARGET}")
+        append_list_property("${MODULE}" TARGET "${TARGET}" PROPERTY SBOM_DEPENDENCIES)
+    endif()
 endfunction()
 
 # Used to register all modules
 function(sbom_add_module_target MODULE TARGET SOURCE_FILES DEPENDENCIES)
-    append_list_property("${MODULE}" TARGET "${TARGET}" PROPERTY SBOM_DEPENDENCIES)
-    get_property(VAR1 TARGET "${TARGET}" PROPERTY SBOM_DEPENDENCIES)
+    if (TARGET "${TARGET}")
+        append_list_property("${MODULE}" TARGET "${TARGET}" PROPERTY SBOM_DEPENDENCIES)
+    endif()
 endfunction()
