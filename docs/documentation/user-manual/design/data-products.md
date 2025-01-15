@@ -56,17 +56,17 @@ components:
    1. A **data product manager**.
       This component allocates memory for empty containers.
       It also forwards filled containers to the data product writer.
-      See [`Svc::DpManager`](../../reference/api/cpp/html/_svc_dp_manager_component.html).
+      See [`Svc::DpManager`](../../reference/sdd/Svc/DpManager/docs/sdd.md).
 
    1. A **data product writer**.
       This component receives filled containers from data product
       producers. It writes the contents of the containers to non-volatile
-      storage. See [`Svc::DpWriter`](../../reference/api/cpp/html/_svc_dp_writer_component.html).
+      storage. See [`Svc::DpWriter`](../../reference/sdd/Svc/DpWriter/docs/sdd.md).
 
    1. A **data product catalog**.
       This component maintains a database of available data
       products. By command, it downlinks and deletes data products.
-      See [`Svc::DpCatalog`](../../reference/api/cpp/html/_svc_dp_catalog_component.html).
+      See [`Svc::DpCatalog`](../../reference/sdd/Svc/DpCatalog/docs/sdd.md).
 
    1. A **data product processor**.
       This component is not yet developed.
@@ -111,7 +111,7 @@ and [_The FPP Language Specification_](https://nasa.github.io/fpp/fpp-spec.html)
 
 FPP provides the following special ports for managing data products:
 
-1. A **product get port** of type [`Fw::DpGet`](../../reference/api/cpp/html/_fw_dp.html).
+1. A **product get port** of type [`Fw::DpGet`](../../reference/sdd/Fw/Dp/docs/sdd.md).
    This is an output port for synchronously requesting
    memory from a buffer manager.
    The request is served on the thread that invokes the port
@@ -121,7 +121,7 @@ FPP provides the following special ports for managing data products:
    product get port productGetOut
    ```
 
-1. A **product request port** of type [`Fw::DpRequest`](../../reference/api/cpp/html/_fw_dp.html).
+1. A **product request port** of type [`Fw::DpRequest`](../../reference/sdd/Fw/Dp/docs/sdd.md).
    This is an output port for asynchronously requesting memory
    from a data product manager.
    The request is served on the thread of the data product manager.
@@ -132,14 +132,14 @@ FPP provides the following special ports for managing data products:
    product request port productRequestOut
    ```
 
-1. A **product receive port** of type [`Fw::DpResponse`](../../reference/api/cpp/html/_fw_dp.html).
+1. A **product receive port** of type [`Fw::DpResponse`](../../reference/sdd/Fw/Dp/docs/sdd.md).
    This is an input port for receiving an empty container in response
    to an asynchronous request. Example syntax:
    ```
    async product recv port productRecvIn
    ```
 
-1. A **product send port** of type [`Fw::DpSend`](../../reference/api/cpp/html/_fw_dp.html).
+1. A **product send port** of type [`Fw::DpSend`](../../reference/sdd/Fw/Dp/docs/sdd.md).
    This is an output port for sending a filled container
    to a data product writer. Example syntax:
    ```
@@ -213,7 +213,7 @@ the following API elements:
 priorities, and record IDs.
 
 1. A member class _C_ `::DpContainer`. This class is derived from
-[`Fw::DpContainer`](../../reference/api/cpp/html/_fw_dp.html) and represents a container
+[`Fw::DpContainer`](../../reference/sdd/Fw/Dp/docs/sdd.md) and represents a container
 specialized to the data products defined in _C_.
 Each instance of _C_ `::DpContainer` is a wrapper for an `Fw::Buffer` _B_,
 which points to allocated memory.
@@ -222,7 +222,7 @@ defined in _C_ into the memory pointed to by _B_.
 There is one operation _C_ `::DpContainer::serialize_` _R_
 for each record _R_ defined in _C_.
 For the serialized format of each record, see the documentation
-for [`Fw::DpContainer`](../../reference/api/cpp/html/_fw_dp.html).
+for [`Fw::DpContainer`](../../reference/sdd/Fw/Dp/docs/sdd.md).
 
 1. If _C_ has a `product` `get` port, a member function `dpGet_`
 _c_ for each container _c_ defined in _C_.
@@ -452,19 +452,19 @@ data products.
 
 **Requesting and sending data products:**
 See the example uses in the documentation for
-[`Svc::DpManager`](../../reference/api/cpp/html/_svc_dp_manager_component.html).
+[`Svc::DpManager`](../../reference/sdd/Svc/DpManager/docs/sdd.md).
 The component referred to as `producer` in that document
 is a data product producer.
 
 **Writing data products to non-volatile storage:**
 See the example uses in the documentation for
-[`Svc::DpWriter`](../../reference/api/cpp/html/_svc_dp_writer_component.html).
+[`Svc::DpWriter`](../../reference/sdd/Svc/DpWriter/docs/sdd.md).
 The component referred to as `producer` in that document
 is a data product producer.
 
 **Cataloging and downlinking data products:**
 For a preliminary implementation of the data product catalog,
-see [`Svc::DpCatalog`](../../reference/api/cpp/html/_svc_dp_catalog_component.html).
+see [`Svc::DpCatalog`](../../reference/sdd/Svc/DpCatalog/docs/sdd.md).
 
 **Processing data products:**
 TODO
