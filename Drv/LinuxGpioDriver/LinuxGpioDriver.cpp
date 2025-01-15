@@ -20,6 +20,7 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include <cerrno>
+#include <type_traits>
 
 namespace Drv {
 
@@ -287,9 +288,13 @@ Drv::GpioStatus LinuxGpioDriver ::gpioWrite_handler(const NATIVE_INT_TYPE portNu
 }
 
 void LinuxGpioDriver ::pollLoop() {
-    static_assert(GPIO_POLL_TIMEOUT < std::numeric_limits<int>::max(), "Poll timeout would overflow");
+    // Ensure size of FwSizeType is large enough to fit the necessary ranges
+    // NOTE: casts to unsigned types for int and ssize_t are made to avoid sign-compare warning;
+    //       in both cases the cast is safe because max() returns nonnegative value.
+    static_assert(GPIO_POLL_TIMEOUT < static_cast<unsigned int>(std::numeric_limits<int>::max()), "Poll timeout would overflow");
     static_assert(sizeof(struct gpioevent_data) < std::numeric_limits<FwSizeType>::max(), "FwSizeType too small");
-    static_assert(std::numeric_limits<ssize_t>::max() <= std::numeric_limits<FwSizeType>::max(), "FwSizeType too small");
+    using unsigned_ssize_t = std::make_unsigned<ssize_t>::type;
+    static_assert(static_cast<unsigned_ssize_t>(std::numeric_limits<ssize_t>::max()) <= std::numeric_limits<FwSizeType>::max(), "FwSizeType too small");
     // Setup poll information
     pollfd file_descriptors[1];
     // Loop forever
