@@ -78,26 +78,4 @@ done
 
 
 # Aggregate and index SDDs so they are rendered in the website
-SDD_DIR="./docs/documentation/reference/sdd"
-mkdir -p "${SDD_DIR}"
-
-# Find all sdd.md files and process them
-for file in $(find . -type f -path '*/docs/sdd.md'); do
-    # Get module name and parent directory directory name
-    second_parent=$(basename "$(dirname "$(dirname "$file")")")
-    third_parent=$(basename "$(dirname "$(dirname "$(dirname "$file")")")")
-
-    if [ "$third_parent" == "." ] || 
-        [ "$third_parent" == "fprime" ] ||
-        [ "$third_parent" == "Ref" ] ||
-        [[ "$third_parent" == cookiecutter-* ]]; then
-        continue
-    fi
-
-    source_dir="$(dirname "$(dirname "$file")")/docs"
-    dest_dir="${SDD_DIR}/${third_parent}/${second_parent}/"
-
-    mkdir -p "${dest_dir}"
-    cp -r "${source_dir}/" "${dest_dir}/"
-    echo "- [${third_parent}::${second_parent}](${third_parent}/${second_parent}/docs/sdd)" >> "${SDD_DIR}/index.md"
-done
+python3 "${FPRIME}/docs/doxygen/sdd_processing.py"
