@@ -196,21 +196,16 @@ connections.
 
 #### 5.1.1. Synchronously Getting Data Product Buffers
 
-<div>
-<img src="img/top/buffer-get.png" width=800/>
-</div>
+![Buffer Get](img/top/buffer-get.png)
 
 #### 5.1.2. Asynchronously Requesting Data Product Buffers
 
-<div>
-<img src="img/top/buffer-request.png" width=800/>
-</div>
+![Buffer Request](img/top/buffer-request.png)
+
 
 #### 5.1.3. Sending Data Products
 
-<div>
-<img src="img/top/product-send.png" width=1000/>
-</div>
+![Product Send](img/top/product-send.png)
 
 ### 5.2. Sequence Diagrams
 
