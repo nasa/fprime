@@ -1,4 +1,3 @@
-\page SvcDpManagerComponent Svc::DpManager Component
 # Svc::DpManager (Active Component)
 
 ## 1. Introduction

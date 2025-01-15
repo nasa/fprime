@@ -1,4 +1,3 @@
-\page SvcPosixTime Svc::PosixTime Component
 # Svc::PosixTime Component
 
 ## 1. Introduction

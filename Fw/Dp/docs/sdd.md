@@ -1,5 +1,4 @@
-\page FwDp Framework Support for Data Products
-# Framework Support for Data Products
+# Fw::Dp Framework Support for Data Products
 
 ## 1. Introduction
 

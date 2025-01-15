@@ -1,4 +1,3 @@
-\page DrvTcpClient Drv::TcpClient Component
 # Drv::TcpClient TCP Client Component
 
 The TCP client component bridges the byte stream driver model interface to a remote TCP server to which this tcp client

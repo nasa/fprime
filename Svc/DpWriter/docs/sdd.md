@@ -1,4 +1,3 @@
-\page SvcDpWriterComponent Svc::DpWriter Component
 # Svc::DpWriter (Active Component)
 
 ## 1. Introduction

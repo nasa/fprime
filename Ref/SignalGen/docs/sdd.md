@@ -1,4 +1,3 @@
-\page RefSignalGenComponent Ref::SignalGen Component
 # Ref::SignalGen Component
 
 ## 1. Introduction

@@ -1,4 +1,3 @@
-\page SvcStaticMemoryComponent Svc::StaticMemory Component
 # Svc::StaticMemory Component
 
 The StaticMemory component is a drop in replacement for Svc::BufferManager that allocates memory out of a static pool of

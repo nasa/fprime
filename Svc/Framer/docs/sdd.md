@@ -1,4 +1,3 @@
-\page SvcFramerComponent Svc::Framer Component
 # Svc::Framer (Passive Component)
 
 ## 1. Introduction

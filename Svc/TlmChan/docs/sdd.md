@@ -1,4 +1,3 @@
-\page SvcTlmChanComponent Svc::TlmChan Component
 # Svc::TlmChan Component
 
 ## 1. Introduction

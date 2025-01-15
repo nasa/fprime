@@ -1,4 +1,3 @@
-\page SvcActiveRateGroupComponent Svc::ActiveRateGroup Component
 # Svc::ActiveRateGroup Component
 
 ## 1. Introduction

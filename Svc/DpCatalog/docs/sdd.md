@@ -1,4 +1,3 @@
-\page SvcDpCatalogComponent Svc::DpCatalog Component
 # Svc::DpCatalog Component
 
 ## 1 Introduction
