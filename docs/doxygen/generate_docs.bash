@@ -78,12 +78,12 @@ done
 
 
 # Aggregate and index SDDs so they are rendered in the website
-SDD_DIR="${FPRIME}/docs/documentation/reference/sdd/"
+SDD_DIR="${FPRIME}/docs/documentation/reference/sdd"
 mkdir -p "${SDD_DIR}"
 
 # Find all sdd.md files and process them
 for file in $(find . -type f -path '*/docs/sdd.md'); do
-    # Get the 2nd-parent directory name
+    # Get module name and parent directory directory name
     second_parent=$(basename "$(dirname "$(dirname "$file")")")
     third_parent=$(basename "$(dirname "$(dirname "$(dirname "$file")")")")
 
@@ -91,10 +91,10 @@ for file in $(find . -type f -path '*/docs/sdd.md'); do
         continue
     fi
 
-    # Construct the new file name
-    new_filename="${third_parent}_${second_parent}_sdd.md"
+    source_dir="$(dirname "$(dirname "$file")")/docs"
+    dest_dir="${SDD_DIR}/${third_parent}/${second_parent}/docs"
 
-    # Move and rename the file
-    cp "$file" "${SDD_DIR}/$new_filename"
-    echo "- [${third_parent}::${second_parent}](${new_filename})" >> "${SDD_DIR}/index.md"
+    mkdir -p "${dest_dir}"
+    cp -r "${source_dir}/" "${dest_dir}/"
+    echo "- [${third_parent}::${second_parent}](${dest_dir}/sdd.md)" >> "${SDD_DIR}/index.md"
 done
