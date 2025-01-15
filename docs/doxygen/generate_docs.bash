@@ -96,5 +96,5 @@ for file in $(find . -type f -path '*/docs/sdd.md'); do
 
     mkdir -p "${dest_dir}"
     cp -r "${source_dir}/" "${dest_dir}/"
-    echo "- [${third_parent}::${second_parent}](${dest_dir}/docs/sdd.md)" >> "${SDD_DIR}/index.md"
+    echo "- [${third_parent}::${second_parent}](${third_parent}/${second_parent}/docs/sdd)" >> "${SDD_DIR}/index.md"
 done
