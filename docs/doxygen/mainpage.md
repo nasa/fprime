@@ -1,8 +1,8 @@
  \mainpage
 
-This is the F´ automatically generated documentation. 
+This is the F´ automatically generated C++ documentation. 
 The Namespace and Classes sections link to the documentation of the C++ code. 
-Software Design Documents (SDDs) for each component can be found in 
+Software Design Documents (SDDs) for each component can be found in the Reference part of the documentation at https://fprime.jpl.nasa.gov/
 
 
 The Fw package provides the core classes, components, and ports to support F´. These classes allow
