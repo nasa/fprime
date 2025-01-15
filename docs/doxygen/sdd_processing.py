@@ -23,4 +23,4 @@ with open(Path(SDD_DIR) / 'index.md', 'a') as index_file:
         os.makedirs(dest_dir, exist_ok=True)
         shutil.copytree(source_dir, dest_dir, dirs_exist_ok=True)
 
-        index_file.write(f"- [{third_parent}::{second_parent}]({third_parent}/{second_parent}/docs/sdd.md)\n")
+        index_file.write(f"- [{third_parent}::{second_parent}]({third_parent}/{second_parent}/docs/sdd)\n")
