@@ -28,7 +28,7 @@ void SocketComponentHelper::start(const Fw::StringBase &name,
                                      const Os::Task::ParamType cpuAffinity) {
     FW_ASSERT(m_task.getState() == Os::Task::State::NOT_STARTED);  // It is a coding error to start this task multiple times
     this->m_stop = false;
-    this->setAutoconnect(reconnect);
+    this->setAutoConnect(reconnect);
     // Note: the first step is for the IP socket to open the port
     Os::Task::Arguments arguments(name, SocketComponentHelper::readTask, this, priority, stack, cpuAffinity);
     Os::Task::Status stat = m_task.start(arguments);
