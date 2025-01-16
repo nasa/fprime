@@ -13,7 +13,7 @@
 #include <Drv/LinuxSpiDriver/LinuxSpiDriverComponentImpl.hpp>
 #include <FpConfig.hpp>
 #include <Fw/Types/Assert.hpp>
-
+#include <Fw/Types/ExternalString.hpp>
 #include <cstdint>
 #include <unistd.h>
 #include <cstdio>
@@ -23,6 +23,8 @@
 #include <linux/types.h>
 #include <linux/spi/spidev.h>
 #include <cerrno>
+
+static_assert(FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING, "Cannot use SPI driver without full string formatting");
 
 //#define DEBUG_PRINT(...) printf(##__VA_ARGS__); fflush(stdout)
 #define DEBUG_PRINT(...)
@@ -80,9 +82,8 @@ namespace Drv {
 
         // Open:
         char devName[256];
-        snprintf(devName,sizeof(devName),"/dev/spidev%d.%d",device,select);
-        // null terminate
-        devName[sizeof(devName)-1] = 0;
+        Fw::ExternalString deviceString(devName, sizeof devName);
+        deviceString.format("/dev/spidev%d.%d",device,select);
         DEBUG_PRINT("Opening SPI device %s\n",devName);
 
         fd = ::open(devName, O_RDWR);
