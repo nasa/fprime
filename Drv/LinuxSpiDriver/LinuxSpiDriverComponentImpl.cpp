@@ -13,7 +13,7 @@
 #include <Drv/LinuxSpiDriver/LinuxSpiDriverComponentImpl.hpp>
 #include <FpConfig.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <Fw/Types/ExternalString.hpp>
+#include <Fw/Types/StringUtils.hpp>
 #include <cstdint>
 #include <unistd.h>
 #include <cstdio>
@@ -82,8 +82,7 @@ namespace Drv {
 
         // Open:
         char devName[256];
-        Fw::ExternalString deviceString(devName, sizeof devName);
-        deviceString.format("/dev/spidev%d.%d",device,select);
+        Fw::StringUtils::format(devName, sizeof devName, "/dev/spidev%d.%d", device, select);
         DEBUG_PRINT("Opening SPI device %s\n",devName);
 
         fd = ::open(devName, O_RDWR);
