@@ -11,7 +11,13 @@
 
 Os::Console logger;
 
-void test_with_loop(U32 iterations, bool duplex) {
+enum UdpMode {
+    DUPLEX,
+    SEND,
+    RECEIVE
+};
+
+void test_with_loop(U32 iterations, UdpMode udp_mode) {
     Drv::SocketIpStatus status1 = Drv::SOCK_SUCCESS;
     Drv::SocketIpStatus status2 = Drv::SOCK_SUCCESS;
 
@@ -33,15 +39,19 @@ void test_with_loop(U32 iterations, bool duplex) {
     for (U32 i = 0; i < iterations; i++) {
         Drv::UdpSocket udp1;
         Drv::UdpSocket udp2;
-        udp2.configureRecv("127.0.0.1", port1);
-        // If simplex, test only half the channel
-        if (duplex) {
+        ASSERT_TRUE(udp_mode == SEND || udp_mode == RECEIVE || udp_mode == DUPLEX) << "Invalid udp mode supplied";
+        // Configure send for SEND and DUPLEX
+        if ((udp_mode == SEND) || (udp_mode == DUPLEX)) {
             udp2.configureSend("127.0.0.1", port2, 0, 100);
+        }
+        // Configure receive for RECEIVE and DUPLEX
+        if ((udp_mode == RECEIVE) || (udp_mode == DUPLEX)) {
+            udp2.configureRecv("127.0.0.1", port1);
         }
         status2 = udp2.open(udp2_fd);
         ASSERT_EQ(status2, Drv::SOCK_SUCCESS);
 
-        udp1.configureSend("127.0.0.1", udp2.getRecvPort(), 0, 100);
+        udp1.configureSend("127.0.0.1", port1, 0, 100);
         udp1.configureRecv("127.0.0.1", port2);
         status1 = udp1.open(udp1_fd);
         ASSERT_EQ(status1, Drv::SOCK_SUCCESS);
@@ -51,9 +61,12 @@ void test_with_loop(U32 iterations, bool duplex) {
             // Force the sockets not to hang, if at all possible
             Drv::Test::force_recv_timeout(udp1_fd.fd, udp1);
             Drv::Test::force_recv_timeout(udp2_fd.fd, udp2);
-            Drv::Test::send_recv(udp1, udp2, udp1_fd, udp2_fd);
-            // Allow duplex connections
-            if (duplex) {
+            // Test UDP receiving for RECEIVE and DUPLEX
+            if ((udp_mode == RECEIVE) || (udp_mode == DUPLEX)) {
+                Drv::Test::send_recv(udp1, udp2, udp1_fd, udp2_fd);
+            }
+            // Test UDP sending for RECEIVE and DUPLEX
+            if ((udp_mode == SEND) || (udp_mode == DUPLEX)) {
                 Drv::Test::send_recv(udp2, udp1, udp2_fd, udp1_fd);
             }
         }
@@ -63,19 +76,27 @@ void test_with_loop(U32 iterations, bool duplex) {
 }
 
 TEST(Nominal, TestNominalUdp) {
-    test_with_loop(1, false);
+    test_with_loop(1, DUPLEX);
 }
 
 TEST(Nominal, TestMultipleUdp) {
-    test_with_loop(100, false);
+    test_with_loop(100, DUPLEX);
 }
 
-TEST(SingleSide, TestSingleSideUdp) {
-    test_with_loop(1, true);
+TEST(SingleSide, TestSingleSideReceiveUdp) {
+    test_with_loop(1, RECEIVE);
 }
 
-TEST(SingleSide, TestSingleSideMultipleUdp) {
-    test_with_loop(100, true);
+TEST(SingleSide, TestSingleSideMultipleReceiveUdp) {
+    test_with_loop(100, RECEIVE);
+}
+
+TEST(SingleSide, TestSingleSideSendUdp) {
+    test_with_loop(1, SEND);
+}
+
+TEST(SingleSide, TestSingleSideMultipleSendUdp) {
+    test_with_loop(100, SEND);
 }
 
 int main(int argc, char** argv) {
