@@ -85,7 +85,7 @@ void SocketComponentHelper::setAutoConnect(bool auto_connect) {
 SocketIpStatus SocketComponentHelper::reconnect() {
     SocketIpStatus status = SOCK_SUCCESS;
     if (not this->isOpened()) {
-        // Check for autoconnect before attempting to reconnect
+        // Check for auto-connect before attempting to reconnect
         bool reconnect = false;
         {
             Os::ScopeLock scopedLock(this->m_lock);
@@ -213,7 +213,7 @@ void SocketComponentHelper::readLoop() {
             this->sendBuffer(buffer, status);
         }
     }
-    // This will loop until stopped. If autoconnect is disabled, this will break at the moment of reconnect
+    // This will loop until stopped. If auto-connect is disabled, this will break at the moment of reconnect
     while (this->running());
     // Close the socket
     this->close(); // Close the port entirely

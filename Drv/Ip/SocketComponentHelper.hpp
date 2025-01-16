@@ -88,7 +88,7 @@ class SocketComponentHelper {
     /**
      * \brief set the socket to automatically connect or reconnect
      *
-     * Set the autoconnect flag to automatically connect or reconnect the socket when it is closed. This is useful for
+     * Set the auto-connect flag to automatically connect or reconnect the socket when it is closed. This is useful for
      * allowing the socket to reconnect when a disconnection event happens
      * 
      * \param auto_connect: true to automatically connect, false otherwise
