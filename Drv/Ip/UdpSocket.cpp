@@ -151,22 +151,33 @@ SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
         memcpy(&this->m_state->m_addr_send, &address, sizeof(this->m_state->m_addr_send));
     }
 
-    // When we are setting up for receiving as well, then we must bind to a port
-    if ((status = this->bind(socketFd)) != SOCK_SUCCESS) {
-        ::close(socketFd);
-        return status; // Not closing FD as it is still a valid send FD
-    }
+    // Receive port set up only done when configure receive was called
     U16 recv_port = this->m_recv_port;
+    if (recv_port != 0) {
+        // When we are setting up for receiving as well, then we must bind to a port
+        if ((status = this->bind(socketFd)) != SOCK_SUCCESS) {
+            ::close(socketFd); // Closing FD as a retry will reopen send side
+            return status;
+        }
+    }
+
     // Log message for UDP
-    if (port == 0) {
-        Fw::Logger::log("Setup to receive udp at %s:%hu\n", m_recv_hostname,
+    if ((port == 0) && (recv_port > 0)) {
+        Fw::Logger::log("Setup to only receive udp at %s:%hu\n", m_recv_hostname,
                            recv_port);
-    } else {
+    } else if ((port > 0) && (recv_port == 0))  {
+        Fw::Logger::log("Setup to only send udp at %s:%hu\n", m_hostname,
+                           port);
+    } else if ((port > 0) && (recv_port > 0))  {
         Fw::Logger::log("Setup to receive udp at %s:%hu and send to %s:%hu\n",
                            m_recv_hostname,
                            recv_port,
                            m_hostname,
                            port);
+    }
+    // Neither configuration method was called
+    else {
+        FW_ASSERT(port > 0 || recv_port > 0, port, recv_port);
     }
     FW_ASSERT(status == SOCK_SUCCESS, status);
     socketDescriptor.fd = socketFd;
