@@ -1,4 +1,3 @@
-\page FwLogLogText Fw::Log, Fw::LogText Ports
 # Fw::Log / Fw::LogText Ports
 
 ## 1. Introduction

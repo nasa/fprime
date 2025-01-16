@@ -110,7 +110,11 @@ markdown_extensions:
       line_spans: __span
       pygments_lang_class: true
   - pymdownx.inlinehilite
-  - pymdownx.superfences
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
   # adds support for admonitions/call-outs
   - admonition
   - pymdownx.details
@@ -188,6 +192,7 @@ nav:
         - 'FPP JSON Dictionary Specification': documentation/user-manual/design/fpp-json-dict.md
         - 'Rate Groups and Timeliness': documentation/user-manual/design/rate-group.md
         - 'F´ Data Products': documentation/user-manual/design/data-products.md
+        - 'State Machines': documentation/user-manual/design/state-machines.md
     - How To: 
       - documentation/how-to/index.md
       - 'F´ Library Development': documentation/how-to/develop-fprime-libraries.md
@@ -197,6 +202,7 @@ nav:
     - Reference:
       - documentation/reference/index.md
       - 'C++ Documentation': 'documentation/reference/api/cpp/html/index.html'
+      - 'Software Design Documents': 'documentation/reference/sdd/index.md'
       - 'FPP Language Specification': https://nasa.github.io/fpp/fpp-spec.html
       - 'CMake User API': 'documentation/user-manual/cmake/cmake-api.md'
       - 'GDS Developers Guide': documentation/reference/gds-cli-dev.md

@@ -75,3 +75,7 @@ for image in $(find "${FPRIME}/Fw" "${FPRIME}/Svc" "${FPRIME}/Drv" \( -name '*.j
 do
     cp "${image}" "${IMG_DIR}"
 done
+
+
+# Aggregate and index SDDs so they are rendered in the website
+python3 "${FPRIME}/docs/doxygen/sdd_processing.py"

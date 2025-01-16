@@ -1,4 +1,3 @@
-\page SvcPolyDbComponent Svc::PolyDb Component
 # Svc::PolyDb Component
 
 ## 1. Introduction

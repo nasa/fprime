@@ -1,4 +1,3 @@
-\page SvcFramerComponent Svc::Framer Component
 # Svc::Framer (Passive Component)
 
 ## 1. Introduction
@@ -193,25 +192,19 @@ The diagrams use the following instances:
 
 **Topology 1: Telemetry packets:**
 
-<div>
-<img src="img/top/tlm.png" width=1000/>
-</div>
+![tlm](img/top/tlm.png)
 
 The `chanTlm` instance sends telemetry packets to the `framer` instance.
 
 **Topology 2: Event packets:**
 
-<div>
-<img src="img/top/event.png" width=1000/>
-</div>
+![event](img/top/event.png)
 
 The `eventLogger` instance sends event packets to the `framer` instance.
 
 **Topology 3: File packets:**
 
-<div>
-<img src="img/top/framer-file.png" width=1000/>
-</div>
+![file](img/top/framer-file.png)
 
 The `fileDownlink` instance sends a sequence of file packets,
 representing a complete file, to the `framer` instance.
@@ -232,9 +225,7 @@ can handle the packets.
 
 **Topology 4: Framed data:**
 
-<div>
-<img src="img/top/framed.png" width=1000/>
-</div>
+![framed](img/top/framed.png)
 
 `framer` allocates frame buffers from `buffMgr`.
 It sends buffers containing frames to `comm`.

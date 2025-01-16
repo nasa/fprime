@@ -100,3 +100,4 @@
 ^\Qdocs/Tutorials/FullSystemTutorial/Tutorial.md\E$
 ^\QSvc/FileUplink/test/ut/dest.bin\E$
 ignore$
+mlc-config.json

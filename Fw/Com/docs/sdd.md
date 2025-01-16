@@ -1,4 +1,3 @@
-\page FwComPort Fw::Com Port
 # Fw::Com Port
 
 ## 1. Introduction

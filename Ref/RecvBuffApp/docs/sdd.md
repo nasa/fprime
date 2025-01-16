@@ -1,4 +1,3 @@
-\page RefRecvBuffAppComponent Ref::RecvBuffApp Component
 # Ref::RecvBuffApp Component
 
 ## 1. Introduction

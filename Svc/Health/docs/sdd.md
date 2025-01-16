@@ -1,4 +1,3 @@
-\page SvcHealthComponent Svc::Health Component
 # Svc::Health Component
 
 ## 1. Introduction

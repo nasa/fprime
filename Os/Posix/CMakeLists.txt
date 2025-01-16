@@ -22,11 +22,11 @@ set(MOD_DEPS config)
 register_fprime_module(Os_Posix_Shared)
 
 # Set up Posix implementations
-add_fprime_supplied_os_module("File;FileSystem;Directory" Posix Os_Posix_Shared)
-add_fprime_supplied_os_module("Console" Posix)
-add_fprime_supplied_os_module("Task" Posix Os_Posix_Shared Fw_Time)
-add_fprime_supplied_os_module("Mutex;ConditionVariable" Posix Os_Posix_Shared)
-add_fprime_supplied_os_module("RawTime" Posix Os_Posix_Shared)
+register_os_implementation("File;FileSystem;Directory" Posix Os_Posix_Shared)
+register_os_implementation("Console" Posix)
+register_os_implementation("Task" Posix Os_Posix_Shared Fw_Time)
+register_os_implementation("Mutex;ConditionVariable" Posix Os_Posix_Shared)
+register_os_implementation("RawTime" Posix Os_Posix_Shared)
 
 # -----------------------------------------
 ### Os/File/Posix Test Section

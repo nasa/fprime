@@ -1,4 +1,3 @@
-\page SvcRateGroupDriverComponent Svc::RateGroupDriver Component
 # Svc::RateGroupDriver Component
 
 ## 1. Introduction

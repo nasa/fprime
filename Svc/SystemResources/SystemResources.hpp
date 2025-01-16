@@ -35,7 +35,7 @@ class SystemResources : public SystemResourcesComponentBase {
     //!
     ~SystemResources(void);
 
-    typedef void (SystemResourcesComponentBase::*cpuTlmFunc)(F32, Fw::Time);
+    typedef void (SystemResourcesComponentBase::*cpuTlmFunc)(F32, Fw::Time) const;
 
     PRIVATE :
 

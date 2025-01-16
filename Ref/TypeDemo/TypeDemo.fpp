@@ -60,14 +60,14 @@ module Ref {
         @ Single choice command
         sync command CHOICE(
             @ A single choice
-            choice: Choice
+            $choice: Choice
         )
 
         @ Single choice channel
         telemetry ChoiceCh: Choice
 
         @ Single choice event
-        event ChoiceEv(choice: Choice) severity activity high format "Choice: {}"
+        event ChoiceEv($choice: Choice) severity activity high format "Choice: {}"
 
         @ Single enumeration parameter
         param CHOICE_PRM: Choice
@@ -189,7 +189,7 @@ module Ref {
         #####
 
         @ Single choice parameter event
-        event ChoicePrmEv(choice: Choice, validity: Fw.ParamValid) severity activity high \
+        event ChoicePrmEv($choice: Choice, validity: Fw.ParamValid) severity activity high \
             format "CHOICE_PRM: {} with validity: {}"
 
         @ Multiple choice parameter event via Array

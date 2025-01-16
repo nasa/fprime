@@ -16,7 +16,7 @@ jobs:
     runs-on: ${{ matrix.runner }}
     strategy:
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
         # macos-13 is the last Intel-family runner; macos-latest is ARM
         runner: [macos-13, macos-latest, ubuntu-22.04, ubuntu-latest]
     steps:
