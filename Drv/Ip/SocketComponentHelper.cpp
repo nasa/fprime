@@ -181,7 +181,12 @@ void SocketComponentHelper::readLoop() {
         // Prevent transmission before connection, or after a disconnect
         if ((not this->isOpened()) and this->running()) {
             status = this->reconnect();
-            if (status != SOCK_SUCCESS) {
+            // When reconnect is disabled, just break as this is a exit condition for the loop
+            if (status == SOCK_AUTOCONNECT_DISABLED) {
+                break;
+            }
+            // If the reconnection failed in any other way, warn, wait, and retry
+            else if (status != SOCK_SUCCESS) {
                 Fw::Logger::log("[WARNING] Failed to open port with status %d and errno %d\n", status, errno);
                 (void)Os::Task::delay(SOCKET_RETRY_INTERVAL);
                 continue;
@@ -208,9 +213,8 @@ void SocketComponentHelper::readLoop() {
             this->sendBuffer(buffer, status);
         }
     }
-    // As long as not told to stop, and we are successful interrupted or ordered to retry, keep receiving
-    while (this->running() &&
-           (status == SOCK_SUCCESS || (status == SOCK_NO_DATA_AVAILABLE) || status == SOCK_INTERRUPTED_TRY_AGAIN || this->m_reconnect));
+    // This will loop until stopped. If autoconnect is disabled, this will break at the moment of reconnect
+    while (this->running());
     // Close the socket
     this->close(); // Close the port entirely
 }
