@@ -20,8 +20,6 @@
 #include <FpConfig.hpp>
 #include <Fw/Types/Serializable.hpp>
 
-//#define CIRCULAR_DEBUG
-
 namespace Types {
 
 class CircularBuffer {
