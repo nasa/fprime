@@ -15,7 +15,6 @@
 #include <Os/File.hpp>
 #include <Os/FileSystem.hpp>
 #include <Utils/Hash/Hash.hpp>
-#include <Fw/Types/ExternalString.hpp>
 #include <Fw/Types/StringUtils.hpp>
 
 namespace Utils {
@@ -91,7 +90,7 @@ namespace Utils {
 
     // open checksum file
     FW_ASSERT(CRC_MAX_FILENAME_SIZE > (Fw::StringUtils::string_length(fname, CRC_MAX_FILENAME_SIZE) +  sizeof HASH_EXTENSION_STRING));
-    Fw::ExternalString(hashFilename,  CRC_MAX_FILENAME_SIZE).format("%s%s", fname, HASH_EXTENSION_STRING);
+    Fw::StringUtils::format(hashFilename, CRC_MAX_FILENAME_SIZE, "%s%s", fname, HASH_EXTENSION_STRING);
 
     stat = f.open(hashFilename, Os::File::OPEN_WRITE);
     if(stat != Os::File::OP_OK)
@@ -121,7 +120,7 @@ namespace Utils {
       FW_ASSERT(fname != nullptr);
       // open checksum file
       FW_ASSERT(CRC_MAX_FILENAME_SIZE > (Fw::StringUtils::string_length(fname, CRC_MAX_FILENAME_SIZE) + sizeof HASH_EXTENSION_STRING));
-      Fw::ExternalString(hashFilename,  CRC_MAX_FILENAME_SIZE).format("%s%s", fname, HASH_EXTENSION_STRING);
+      Fw::StringUtils::format(hashFilename,  CRC_MAX_FILENAME_SIZE, "%s%s", fname, HASH_EXTENSION_STRING);
 
       stat = f.open(hashFilename, Os::File::OPEN_READ);
       if(stat != Os::File::OP_OK)

@@ -1,6 +1,7 @@
 #ifndef FW_STRINGUTILS_HPP
 #define FW_STRINGUTILS_HPP
 #include <FpConfig.hpp>
+#include <Fw/Types/StringBase.hpp>
 
 namespace Fw {
 namespace StringUtils {
@@ -43,6 +44,21 @@ FwSizeType string_length(const CHAR* source, FwSizeType buffer_size);
  * \return index of substring, -1 if not found
  */
 FwSignedSizeType substring_find(const CHAR* source_string, FwSizeType source_size, const CHAR* sub_string, FwSizeType sub_size);
+
+//! \brief format a string and store into a destination buffer
+//!
+//! This function will format a string into a destination buffer. The destination buffer must be large enough to hold
+//! the formatted string. The format delegates to the standard C library function vsnprintf underneath the hood.
+//!
+//! \warning if used in execution (i.e. a file path), assert FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING.
+//!          ```
+//!          static_assert(FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING, "String formatting disabled")
+//!          ```
+//! \param destination: destination buffer to hold formatted string
+//! \param size: size of the destination buffer. Output will be truncated to this length
+//! \param format: constant format string
+//! \param ...: variable arguments to to pass to the format string
+void format(CHAR* destination, StringBase::SizeType size, const CHAR* format, ...);
 
 enum StringToNumberStatus {
     SUCCESSFUL_CONVERSION, //!< Output should be valid

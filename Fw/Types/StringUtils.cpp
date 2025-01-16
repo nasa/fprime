@@ -2,6 +2,7 @@
 #include <Fw/Types/Assert.hpp>
 #include <cstring>
 #include <limits>
+#include <Fw/Types/ExternalString.hpp>
 
 char* Fw::StringUtils::string_copy(char* destination, const char* source, FwSizeType num) {
     // Handle self-copy and 0 bytes copy
@@ -71,4 +72,11 @@ FwSignedSizeType Fw::StringUtils::substring_find(const CHAR* source_string,
 
     // if we make it here, no matches were found
     return -1;
+}
+
+void Fw::StringUtils::format(CHAR* destination, Fw::StringBase::SizeType size, const CHAR* format, ...) {
+    va_list args;
+    va_start(args, format);
+    Fw::ExternalString(destination,  size).vformat(format, args);
+    va_end(args);
 }
