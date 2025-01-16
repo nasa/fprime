@@ -154,9 +154,10 @@ SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
     // Receive port set up only done when configure receive was called
     U16 recv_port = this->m_recv_port;
     if (recv_port != 0) {
+        status = this->bind(socketFd);
         // When we are setting up for receiving as well, then we must bind to a port
-        if ((status = this->bind(socketFd)) != SOCK_SUCCESS) {
-            ::close(socketFd); // Closing FD as a retry will reopen send side
+        if (status != SOCK_SUCCESS) {
+            (void) ::close(socketFd); // Closing FD as a retry will reopen send side
             return status;
         }
     }

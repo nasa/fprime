@@ -43,7 +43,8 @@ enum SocketIpStatus {
     SOCK_NOT_STARTED = -14,                  //!< Socket has not been started
     SOCK_FAILED_TO_READ_BACK_PORT = -15,     //!< Failed to read back port from connection
     SOCK_NO_DATA_AVAILABLE = -16,            //!< No data available or read operation would block
-    SOCK_ANOTHER_THREAD_OPENING = -17        //!< Another thread is opening
+    SOCK_ANOTHER_THREAD_OPENING = -17,       //!< Another thread is opening
+    SOCK_AUTOCONNECT_DISABLED = -18          //!< Automatic connections are disabled
 };
 
 /**

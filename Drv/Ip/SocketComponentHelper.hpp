@@ -51,7 +51,7 @@ class SocketComponentHelper {
      * to the Os::Task::start call.
      *
      * \param name: name of the task
-     * \param reconnect: automatically reconnect socket when closed. Default: true.
+     * \param reconnect: automatically (re)connect socket when closed. Default: true.
      * \param priority: priority of the started task. See: Os::Task::start. Default: TASK_DEFAULT, not prioritized
      * \param stack: stack size provided to the task. See: Os::Task::start. Default: TASK_DEFAULT, posix threads default
      * \param cpuAffinity: cpu affinity provided to task. See: Os::Task::start. Default: TASK_DEFAULT, don't care
@@ -84,6 +84,16 @@ class SocketComponentHelper {
      * \return true if socket is open, false otherwise
      */
     bool isOpened();
+
+    /**
+     * \brief set the socket to automatically connect or reconnect
+     *
+     * Set the autoconnect flag to automatically connect or reconnect the socket when it is closed. This is useful for
+     * allowing the socket to reconnect when a disconnection event happens
+     * 
+     * \param auto_connect: true to automatically connect, false otherwise
+     */
+    void setAutoConnect(bool auto_connect);
 
      /**
      * \brief Re-open port if it has been disconnected
@@ -212,7 +222,7 @@ class SocketComponentHelper {
     Os::Task m_task;
     Os::Mutex m_lock;
     SocketDescriptor m_descriptor;
-    bool m_reconnect = false; //!< Force reconnection
+    bool m_reconnect = true; //!< Force reconnection
     bool m_stop = true; //!< Stops the task when set to true
     OpenState m_open = OpenState::NOT_OPEN; //!< Have we successfully opened
 };

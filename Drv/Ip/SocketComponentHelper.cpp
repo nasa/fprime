@@ -28,7 +28,7 @@ void SocketComponentHelper::start(const Fw::StringBase &name,
                                      const Os::Task::ParamType cpuAffinity) {
     FW_ASSERT(m_task.getState() == Os::Task::State::NOT_STARTED);  // It is a coding error to start this task multiple times
     this->m_stop = false;
-    m_reconnect = reconnect;
+    this->setAutoconnect(reconnect);
     // Note: the first step is for the IP socket to open the port
     Os::Task::Arguments arguments(name, SocketComponentHelper::readTask, this, priority, stack, cpuAffinity);
     Os::Task::Status stat = m_task.start(arguments);
@@ -77,13 +77,28 @@ bool SocketComponentHelper::isOpened() {
     return is_open;
 }
 
+void SocketComponentHelper::setAutoConnect(bool auto_connect) {
+    Os::ScopeLock scopedLock(this->m_lock);
+    this->m_reconnect = auto_connect;
+}
+
 SocketIpStatus SocketComponentHelper::reconnect() {
     SocketIpStatus status = SOCK_SUCCESS;
-    // Open a network connection if it has not already been open
     if (not this->isOpened()) {
-        status = this->open();
-        if (status == SocketIpStatus::SOCK_ANOTHER_THREAD_OPENING) {
-            status = SocketIpStatus::SOCK_SUCCESS;
+        // Check for autoconnect before attempting to reconnect
+        bool reconnect = false;
+        {
+            Os::ScopeLock scopedLock(this->m_lock);
+            reconnect = this->m_reconnect;
+        }
+        // Open a network connection if it has not already been open
+        if (not reconnect) {
+            status = SOCK_AUTOCONNECT_DISABLED;
+        } else {
+            status = this->open();
+            if (status == SocketIpStatus::SOCK_ANOTHER_THREAD_OPENING) {
+                status = SocketIpStatus::SOCK_SUCCESS;
+            }
         }
     }
     return status;
