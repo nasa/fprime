@@ -93,7 +93,7 @@ SocketIpStatus SocketComponentHelper::reconnect() {
         }
         // Open a network connection if it has not already been open
         if (not reconnect) {
-            status = SOCK_AUTOCONNECT_DISABLED;
+            status = SOCK_AUTO_CONNECT_DISABLED;
         } else {
             status = this->open();
             if (status == SocketIpStatus::SOCK_ANOTHER_THREAD_OPENING) {
@@ -182,7 +182,7 @@ void SocketComponentHelper::readLoop() {
         if ((not this->isOpened()) and this->running()) {
             status = this->reconnect();
             // When reconnect is disabled, just break as this is a exit condition for the loop
-            if (status == SOCK_AUTOCONNECT_DISABLED) {
+            if (status == SOCK_AUTO_CONNECT_DISABLED) {
                 break;
             }
             // If the reconnection failed in any other way, warn, wait, and retry

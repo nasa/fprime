@@ -62,7 +62,7 @@ class TcpServerComponentImpl : public TcpServerComponentBase, public SocketCompo
                              const U16 port,
                              const U32 send_timeout_seconds = SOCKET_SEND_TIMEOUT_SECONDS,
                              const U32 send_timeout_microseconds = SOCKET_SEND_TIMEOUT_MICROSECONDS,
-			     FwSizeType buffer_size = 1024);
+                             FwSizeType buffer_size = 1024);
 
     /**
      * \brief is started

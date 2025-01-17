@@ -51,6 +51,7 @@ namespace Drv {
       // Tests
       // ----------------------------------------------------------------------
 
+      void setup_helper(bool recv_thread, bool reconnect);
 
       //! Test basic messaging
       //!
@@ -70,6 +71,10 @@ namespace Drv {
 
       // Helpers
       void test_with_loop(U32 iterations, bool recv_thread=false);
+ 
+      void test_no_automatic_send_connection();
+
+      void test_no_automatic_recv_connection();
 
       bool wait_on_change(bool open, U32 iterations);
       bool wait_on_started(bool open, U32 iterations);

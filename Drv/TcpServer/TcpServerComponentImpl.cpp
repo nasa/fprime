@@ -115,9 +115,9 @@ void TcpServerComponentImpl::readLoop() {
     if (this->running() && status == SOCK_SUCCESS) {
         // Perform the nominal read loop
         SocketComponentHelper::readLoop();
-        // Terminate the server
-        this->terminate();
     }
+    // Terminate the server
+    this->terminate();
 }
 
 // ----------------------------------------------------------------------
