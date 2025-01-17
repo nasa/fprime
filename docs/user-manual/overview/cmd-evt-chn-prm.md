@@ -52,7 +52,7 @@ When commands are defined for a component, the autocoder automatically adds port
 commands, and reporting an execution status when finished. Each component that handles commands should be hooked up to
 the command dispatcher connecting the registration, dispatch, and response ports in parallel.
 
-![Command Dispatcher](../../../img/data_model1.png)
+![Command Dispatcher](../../img/data_model1.png)
 
 **Figure 4. Command dispatcher.** The command dispatcher receives the raw buffer containing the command and arguments.
 The command opcode is extracted, and a lookup table is used to find the handling component. The argument buffer is then
@@ -65,7 +65,7 @@ to the command dispatcher through the command sequencer is an alternate path to 
 
 ### Command Sequencing
 
-![Command Sequencer](../../../img/data_model2.png)
+![Command Sequencer](../../img/data_model2.png)
 
 **Figure 5. Command sequence.** The command sequencer loads a sequence file from the file system, sends the command,
  and waits for the response for each command in the sequence. A failed response terminates the sequence,
@@ -112,7 +112,7 @@ Events first acquire a time tag to represent when they occurred and then are typ
 component on their way to be sent down to the ground. This logger component both processes the event and also recognizes
 and begins responses for FATAL severity events.
 
-![Active Logger](../../../img/data_model3.png)
+![Active Logger](../../img/data_model3.png)
 
 **Figure 6. Event log.** The component implementation calls a function to generate the event. The base class retrieves the
 time tag from the time source component. The component sends the event to the event log component, which reads it from
@@ -140,7 +140,7 @@ The telemetry database acts as a double-buffered store for telemetry values. Com
 any time; however, the current value will be read from the telemetry database and sent to the ground at a set rate.
 Components using this service should hook up the telemetry port to the telemetry database (`Svc::TlmChan`).
 
-![Telemetry Database](../../../img/data_model4.png)
+![Telemetry Database](../../img/data_model4.png)
 
 **Figure 7. Telemetry database.** The telemetry database has a double-buffered array of telemetry buffers. The base
 class function retrieves the time tag from the time source component and then writes the updated value to the telemetry
@@ -169,7 +169,7 @@ implementation class can retrieve the value whenever the parameter value is need
 The framework provides the ability to store these parameters in the parameter database (`Svc::PrmDb`). This component
 provides ports to get and set parameters, which are stored in a file to persist across reboots.
 
-![Parameter Database](../../../img/data_model5.png)
+![Parameter Database](../../img/data_model5.png)
 
 **Figure 8. Parameter manager.** The parameter manager or database loads the file containing parameters from the file
 system during initialization. The initialization subsequently calls *loadParameters()* on components with parameters.

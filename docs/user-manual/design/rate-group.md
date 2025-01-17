@@ -7,7 +7,7 @@ groups". The `ActiveRateGroup` component contains multiple output `Sched` ports 
 rate. Thus, components having an input `Sched` port can run a repeated action at this rate. Rate groups are driven by a
 central rate group driver and achieve their rates by dividing the incoming signal from the rate group driver.
 
-![Rate Groups](../../../img/rate_group.png)
+![Rate Groups](../../img/rate_group.png)
 
 ## Rate Group Driver
 

@@ -23,7 +23,7 @@ A more complete reference is available here: [GDS Dashboard Reference](gds-dashb
 - [An Example Dashboard Configuration](#an-example-dashboard-configuration)
 - [Conclusion](#conclusion)
 
-![Dashboard Intro](../../../img/dashboard_header.png)
+![Dashboard Intro](../../img/dashboard_header.png)
 
 ## How to Use the Dashboard
 
@@ -114,7 +114,7 @@ This section will provide an example dashboard configuration file. It shows how 
 structural components as well as examples of using the existing F´ display components.  The dashboard we will explore
 will be rendered into the following display.
 
-![Example ](../../../img/example_dashboard.png)
+![Example ](../../img/example_dashboard.png)
 
 This view was rendered from the following XML.  It is designed to be somewhat self-descriptive and should act as a good
 starting point for building your own dashboards.

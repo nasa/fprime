@@ -24,6 +24,6 @@ New users should start with the [Hello World tutorial](../tutorials-hello-world/
 
 Here are some additional references to continue learning about F´:
 
-- [More tutorials](../documentation/tutorials/)
-- [F´ User Manual](../documentation/user-manual/)
+- [More tutorials](../tutorials/)
+- [F´ User Manual](../user-manual/)
 - [Installation and Troubleshooting](./installing-fprime.md)

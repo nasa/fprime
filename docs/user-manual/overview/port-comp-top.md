@@ -43,7 +43,7 @@ synchronous nature of the port along with the directionality is combined in the 
 Finally, a port can be defined as "guarded", which means invocations into the port are limited to a single invocation
 at a time by a component-wide mutex. This is also combined into the "kind" attribute.
 
-![Port Image](../../../img/core1.png)
+![Port Image](../../img/core1.png)
 
 **Figure 1. Port connectivity.** Ports are connected to ports of the same type. When used by a *component*, the ports
 can define directionality. Using *serialized ports* (see below), serializes the call and passes it to a data buffer
@@ -68,7 +68,7 @@ design and is known as the "kind" of port's instantiation.
 > [!NOTE]
 > A port's type (aka data_type) is dependent on the design and usage in the deployment.
 
-![Port Instance Kinds](../../../img/core2.png)
+![Port Instance Kinds](../../img/core2.png)
 
 **Figure 2. Port Kinds Used on a Component.** For the *synchronous port*, the call directly invokes derived functions
 without the use of a queue. For a *guarded port*, the call directly invokes derived functions, but only after locking a
@@ -106,7 +106,7 @@ ports with return types. These ports allow serialized data to be passed around b
 the type contained. The [Hub pattern](../framework/hub-pattern.md) often uses serialized ports such that data can be routed
 across an address-space gap in a generic fashion.
 
-![Serialization Ports](../../../img/core3.png)
+![Serialization Ports](../../img/core3.png)
 
 **Figure 3. Serialization ports.** Input ports input the serialized buffer, while the output ports output
 the serialized buffer.
@@ -124,7 +124,7 @@ The F′ architecture is based on decomposing the system into modules called com
 a discrete portion of the system's logic (Figure 10); The component architecture implies usage patterns, as well as
 usage constraints.
 
-![Component Architecture](../../../img/core10.png)
+![Component Architecture](../../img/core10.png)
 
 **Figure 10. Example of F′ component architecture pattern.**
 
@@ -133,7 +133,7 @@ specific interactions with other components using ports. There should be no non-
 Components are responsible for handling the invocations of ports used in the component. They may also define and handle
 commands as well as emit telemetry and events.
 
-![Example Component](../../../img/core11.png)
+![Example Component](../../img/core11.png)
 
 **Figure 11. Encapsulation of Behavior** The component handles the port behaviors as well as executes the commands and
 then produces the telemetry. It does not directly interact with other components.
@@ -178,7 +178,7 @@ class and contains only the user-specific implementation for the component.
 
 These are shown in Figure 12.
 
-![Component Class Hierarchy](../../../img/core12.png)
+![Component Class Hierarchy](../../img/core12.png)
 
 **Figure 12. Example of component class hierarchy.**
 
@@ -218,7 +218,7 @@ software. There should be no code dependencies between the components, only depe
 component's ability to communicate with other components is enabled through the interconnections specified in the
 topology. Alternate implementations can therefore easily be swapped, for example with simulation versions.
 
-![Example Topology](../../../img/core13.png)
+![Example Topology](../../img/core13.png)
 
 **Figure 13. Example of a topology.**
 

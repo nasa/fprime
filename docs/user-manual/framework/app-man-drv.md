@@ -40,7 +40,7 @@ are typically three layers to this design pattern:
 These layers are further discussed below using the example shown in Figure 1. Each layer defines components for only
 that layer’s functionality.
 
-![Application Manager Driver](../../../img/app_man_drv1.png)
+![Application Manager Driver](../../img/app_man_drv1.png)
 
 **Figure 1.** The three layers to a component model as shown in an example that drives a robotic arm using four servos
 attached to an I2C bus.

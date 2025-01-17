@@ -1,5 +1,5 @@
 site_name: F Prime
-site_url: https://fprime.jpl.nasa.gov/documentation
+site_url: https://fprime.jpl.nasa.gov/docs
 repo_url: https://github.com/nasa/fprime
 repo_name: nasa/fprime
 docs_dir: .
@@ -69,7 +69,7 @@ plugins:
       # see https://github.blog/changelog/2023-02-21-github-pages-deprecating-symlinks-in-non-actions-builds/
       alias_type: copy
       canonical_version: latest
-      deploy_prefix: documentation
+      deploy_prefix: docs
   - open-in-new-tab
   - multirepo:
       cleanup: true
@@ -141,8 +141,8 @@ markdown_extensions:
 
 # Custom navigation
 nav:
-  - Home: 'https://github.jpl.nasa.gov/pages/chammard/fprime-website-mkdocs/'
-  - Overview: 'https://github.jpl.nasa.gov/pages/chammard/fprime-website-mkdocs/overview/'
+  - Home: '/dev/'
+  - Overview: '/dev/overview/'
   - Getting Started: 
     - getting-started/index.md
     - 'Installation and Troubleshooting': getting-started/installing-fprime.md
@@ -208,5 +208,5 @@ nav:
       - 'FPP Language Specification': https://nasa.github.io/fpp/fpp-spec.html
       - 'CMake User API': 'user-manual/cmake/cmake-api.md'
       - 'GDS Developers Guide': reference/gds-cli-dev.md
-  - Support: 'https://github.jpl.nasa.gov/pages/chammard/fprime-website-mkdocs/support'
-  - Events: 'https://github.jpl.nasa.gov/pages/chammard/fprime-website-mkdocs/events'
+  - Support: '/dev/support'
+  - Events: '/dev/events'

@@ -12,7 +12,7 @@ have two layers: framing and driver.  Uplink handles data coming from the remote
 data going to the remote interface, framing handles serializing and deserializing data to and from byte buffers, and the
 driver layer handles writing data to and from the hardware.
 
-![Ground Interface Block Diagram](../../../img/ground-interface.jpg)
+![Ground Interface Block Diagram](../../img/ground-interface.jpg)
 
 
 Also of note is the framing protocol, which breaks out the handling of the byte serialization for quick adaptation. Each

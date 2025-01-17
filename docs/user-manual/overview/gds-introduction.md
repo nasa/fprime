@@ -25,7 +25,7 @@ will give you a quick introduction to what the F´ GDS is and how you can use it
     - [Dashboard](#dashboard)
   - [Conclusion](#conclusion)
 
-![GDS Image](../../../img/gds_gui_events.png)
+![GDS Image](../../img/gds_gui_events.png)
 
 ## What is the GDS?
 
@@ -194,7 +194,7 @@ optional arguments:
 When running the GDS using the default UI, the GDS should launch a browser tab that looks similar to the following. In
 general, the available tabs are listed across the top and each view can be selected by clicking on those tabs.
 
-![Launched Browser Window](../../../img/gds_gui_commanding.png)
+![Launched Browser Window](../../img/gds_gui_commanding.png)
 
 Across the top of the screen is a series of tabs: "Commanding", "Events", etc. Each of those tabs represents a piece of
 the GDS's functionality. Each view opens when you click on it. Next, we'll go through each tab's functions in more
@@ -225,7 +225,7 @@ arguments through the GDS and to the embedded system, while "Clear Arguments" wi
 to their default values.  Should an error occur in the GDS, it will be shown below the inputs.  The commanding tab is
 shown below. See: [Commands](cmd-evt-chn-prm.md#commands)
 
-![Commanding Tab](../../../img/gds_gui_commanding.png)
+![Commanding Tab](../../img/gds_gui_commanding.png)
 
 
 Below the command input is the "Command History" table. This records all the commands sent with their associated
@@ -240,7 +240,7 @@ sending component and is useful to retry the transmission of a command.
 The Events tab will display a table of all the "Events" that have happened on the embedded system and been received by
 the GDS. See: [Events](cmd-evt-chn-prm.md#events). The Events tab is shown below.
 
-![Events Tab](../../../img/gds_gui_events.png)
+![Events Tab](../../img/gds_gui_events.png)
 
 Each event is color-coded based on its "Event Severity;" there are 7 different kinds of severities:
 
@@ -266,7 +266,7 @@ embedded system. These represent the latest values and, by default, only telemet
 by the GDS are shown. Channels with no received value are not displayed but can be configured (described below). Only
 the most recently received value for each channel is shown. This view can be seen below.
 
-![Channel GUIs](../../../img/gds_gui_channels.png)
+![Channel GUIs](../../img/gds_gui_channels.png)
 
 If you want to view a full list of all available channels, set a view to watch specific channels, or monitor all
 channels even those which have not arrived, you can click on the "Edit View". This will show all available channels
@@ -275,7 +275,7 @@ To apply the view, click the "Done".  Import and Export allow downloading and up
 views such that they may be saved. The "Edit View" is shown below.
 
 
-![Channel Edit GUIs](../../../img/gds_gui_channels_edit.png)
+![Channel Edit GUIs](../../img/gds_gui_channels_edit.png)
 
 
 Just like the other tables, you can sort or filter these channel items.
@@ -289,7 +289,7 @@ before committing to an uplink. Finally, the user should press the "Submit Uplin
 add them to the outgoing queue, and start the uplink.  Uplink progress can be monitored and the queue can be paused to
 temporarily stop the uplink. Files are limited to no more than 32Mb.
 
-![Uplink Tab](../../../img/gds_gui_uplink.png)
+![Uplink Tab](../../img/gds_gui_uplink.png)
 
 ### Downlink
 
@@ -297,7 +297,7 @@ The downlink tab monitors the downlink of files into the GDS. Any files that hav
 `fileDownlink.FileDownlink_SendFile` command will be tracked in this tab once the packets arrive in the F´ GDS. The
 progress of this download is tracked, and once the file has been downlinked, the user has the ability to download the files.
 
-![Downlink](../../../img/gds_gui_downlink.png)
+![Downlink](../../img/gds_gui_downlink.png)
 
 ### Logs
 
@@ -305,7 +305,7 @@ The logs tab allows the user to monitor logs produced on-disk by the GDS. This i
 see those without going to the GDS server's ground system. Select a log from the list to see its contents, which update
 in real time.
 
-![Logs](../../../img/gds_gui_logs.png)
+![Logs](../../img/gds_gui_logs.png)
 
 There are several standard logs that appear:
 - `ThreadedTCP.log`: log from the GDS middleware server linking comm to the GDS actual
@@ -322,7 +322,7 @@ The dashboard lets users combine the tools from the other tabs onto a single scr
 interface for working with the GDS. You can learn more about how this works in the
 [Dashboard guide](../gds/gds-custom-dashboards.md).  An example is shown below:
 
-![Dashboard](../../../img/dashboard_header.png)
+![Dashboard](../../img/dashboard_header.png)
 
 
 ## Conclusion

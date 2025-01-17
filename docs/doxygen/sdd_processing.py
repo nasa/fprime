@@ -2,7 +2,7 @@ import os
 import shutil
 from pathlib import Path
 
-SDD_DIR = "./docs/documentation/reference/sdd"
+SDD_DIR = "./docs/reference/sdd"
 os.makedirs(SDD_DIR, exist_ok=True)
 
 # Append the new file path to index.md

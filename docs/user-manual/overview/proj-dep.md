@@ -15,7 +15,7 @@ explanation of projects and deployments and how they differ is explained in this
 To illustrate this, the Mars Helicopter project is an excellent example. Mars Helicopter uses one project that defines
 two deployments: one for a base station, and one for the mobile helicopter. This is shown in Figure 1.
 
-![Mars Helicopter](../../../img/proj_dep1.png)
+![Mars Helicopter](../../img/proj_dep1.png)
 **Figure 1. Mars Helicopter flight software components.**
 
 ## Projects

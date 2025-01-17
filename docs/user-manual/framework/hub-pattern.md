@@ -8,7 +8,7 @@ connected to the Hub's serialization ports. These ports allow any inputs which s
 across the divide. On the other side of the divide, the Hub unwraps the calls back into the typed ports. In this way,
 typed ports are connected to typed ports using the Hub as an intermediary to get across the divide.
 
-![Hub Pattern](../../../img/data_model6.png)
+![Hub Pattern](../../img/data_model6.png)
 
 **Figure 9. Hub pattern.** Each hub instance is responsible for connecting to a remote node. Input port calls are
 repeated to corresponding output ports on a remote hub. These hubs have been demonstrated on Sockets,

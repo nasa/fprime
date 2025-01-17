@@ -6,7 +6,7 @@
 #
 F´ (F Prime) is a component-driven framework that enables rapid development and deployment of spaceflight and other embedded software applications. Originally developed at the [Jet Propulsion Laboratory](https://www.jpl.nasa.gov/), F´ has been successfully deployed on [several space applications](https://nasa.github.io/fprime/projects.html). It is tailored but not limited to small-scale spaceflight systems such as CubeSats, SmallSats, and instruments.
 
-**Please Visit the F´ Website:** [https://fprime.jpl.gov/latest](https://fprime.jpl.nasa.gov/latest/) for more information.
+**Please Visit the F´ Website:** [https://fprime.jpl.gov/](https://fprime.jpl.nasa.gov/) for more information.
 
 
 ## What does F´ provide
@@ -17,7 +17,7 @@ F´ (F Prime) is a component-driven framework that enables rapid development and
 - A growing collection of ready-to-use components
 - Testing tools for testing flight software at the unit and integration levels.
 
-Learn more about [F´ key features](https://fprime.jpl.nasa.gov/latest/).
+Learn more about [F´ key features](https://fprime.jpl.nasa.gov/).
 
 
 ## System Requirements

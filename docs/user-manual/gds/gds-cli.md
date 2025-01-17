@@ -21,7 +21,7 @@ in more environments.
     - [events](#events)
 - [Conclusion](#conclusion)
 
-![Landing Image](../../../img/gds_cli_user_guide_cover.png)
+![Landing Image](../../img/gds_cli_user_guide_cover.png)
 
 ## What is `fprime-cli`?
 

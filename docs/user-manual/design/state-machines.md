@@ -223,7 +223,7 @@ class for _M_](#sm-base-class).
 The following class diagram shows these properties, for a state
 machine `A.B.M` instantiated in a component `C`:
 
-![State Machine Implementation Class Diagram](../../../img/sm-impl-class-diagram.png)
+![State Machine Implementation Class Diagram](../../img/sm-impl-class-diagram.png)
 
 Each state machine implementation class has the following
 elements in its interface.
