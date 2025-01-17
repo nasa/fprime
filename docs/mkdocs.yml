@@ -10,7 +10,7 @@ theme:
   language: en
   logo: assets/images/logo-fprime-jpl.svg
   favicon: assets/images/favicon.svg
-  custom_dir: overrides
+  custom_dir: ../../overrides
   icon:
     annotation: material/information-slab-circle  # custom icon for annotations
 
