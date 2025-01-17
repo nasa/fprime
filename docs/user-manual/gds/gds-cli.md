@@ -46,7 +46,7 @@ Let's see how you can use these for yourself!
 
 `fprime-cli` is automatically installed when installing F´. In order to use it, make sure that your virtual environment
 has been activated. To ensure the tool is ready, run `fprime-cli -h` and you should see the help usage. If an error is
-received, ensure F´ is properly installed via [the installation guide](../../../getting-started/installing-fprime.md) and that your virtual
+received, ensure F´ is properly installed via [the installation guide](../../getting-started/installing-fprime.md) and that your virtual
 environment has been activated.
 
 `fprime-cli` connects to the `fprime-gds` ground system layer. Should the user wish to run `fprime-cli` make sure to

@@ -46,7 +46,7 @@ project too!
 ## Getting Started
 
 The F´ GDS is a minimal amount of Python code and JavaScript that is automatically installed when you run the F´
-installation instructions in the [installation guide](../../../getting-started/installing-fprime.md). This guide will walk the user through running
+installation instructions in the [installation guide](../../getting-started/installing-fprime.md). This guide will walk the user through running
 the GDS, setting options, and letting the user loose to run the system.
 
 
