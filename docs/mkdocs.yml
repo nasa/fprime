@@ -1,5 +1,5 @@
 site_name: F Prime
-site_url: https://fprime.jpl.nasa.gov/latest/
+site_url: https://fprime.jpl.nasa.gov/UAT
 repo_url: https://github.com/nasa/fprime
 repo_name: nasa/fprime
 docs_dir: ..
@@ -142,8 +142,8 @@ markdown_extensions:
 
 # Custom navigation
 nav:
-  - Home: 'docs/index.md'
-  - Overview: '/overview'
+  - Home: '../'
+  - Overview: '../overview'
   - Getting Started: 
     - docs/getting-started/index.md
     - 'Installation and Troubleshooting': docs/getting-started/installing-fprime.md
@@ -205,9 +205,9 @@ nav:
     - Reference:
       - docs/reference/index.md
       - 'C++ Documentation': docs/reference/api/cpp/html/index.html
-      - 'Software Design Documents': docs/reference/sdd/index.md
+      - 'Software Design Documents': docs/reference/sdd.md
       - 'FPP Language Specification': https://nasa.github.io/fpp/fpp-spec.html
       - 'CMake User API': docs/user-manual/cmake/cmake-api.md
       - 'GDS Developers Guide': docs/reference/gds-cli-dev.md
-  - Support: '/support'
-  - Events: '/events'
+  - Support: '../support'
+  - Events: '../events'
