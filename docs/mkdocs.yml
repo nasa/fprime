@@ -1,5 +1,5 @@
 site_name: F Prime
-site_url: https://fprime.jpl.nasa.gov/UAT
+site_url: https://fprime.jpl.nasa.gov/
 repo_url: https://github.com/nasa/fprime
 repo_name: nasa/fprime
 docs_dir: ..
