@@ -26,7 +26,7 @@ Technical reference for the F Prime C++ API, CMake API, FPP language specificati
 
     [View SDD Index](sdd.md){ .md-button .md-button--primary }
 
--   <span class="card-title">__FPP Language Specification</span>
+-   <span class="card-title">__FPP Language Specification__</span>
 
     ---
 
