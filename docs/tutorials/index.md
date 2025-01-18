@@ -15,7 +15,7 @@ Tutorials walk through the essentials of F Prime development, starting with the 
 
     The Hello World tutorial shows how to create an F Prime project and how to design, implement, and test a basic F Prime component. We recommend that new users of F Prime start with this tutorial.
 
-    [View Hello World Tutorial](../tutorials-hello-world/docs/hello-world/){ .md-button .md-button--primary }
+    [View Hello World Tutorial](../../tutorials-hello-world/docs/hello-world/){ .md-button .md-button--primary }
 
 -   <span class="card-title">__LED Blinker__</span>
 
@@ -26,7 +26,7 @@ Tutorials walk through the essentials of F Prime development, starting with the 
     > [!NOTE]
     > This tutorial can be run without hardware with the exception of section 6 “Running on Hardware”.
 
-    [View LED Blinker Tutorial](../tutorials-led-blinker/docs/led-blinker/){ .md-button .md-button--primary }
+    [View LED Blinker Tutorial](../../tutorials-led-blinker/docs/led-blinker/){ .md-button .md-button--primary }
 
 -   <span class="card-title">__Math Component__</span>
 
@@ -34,7 +34,7 @@ Tutorials walk through the essentials of F Prime development, starting with the 
 
     The Math Component tutorial shows how to construct an F Prime application with user-defined ports and data types. It covers more advanced uses of events, telemetry, commands, and parameters. It also covers unit testing of F Prime components.
 
-    [View Math Component Tutorial](../tutorials-math-component/docs/math-component/){ .md-button .md-button--primary }
+    [View Math Component Tutorial](../../tutorials-math-component/docs/math-component/){ .md-button .md-button--primary }
 
 -   <span class="card-title">__Cross-Compilation Setup Tutorial__</span>
 
@@ -50,7 +50,7 @@ Tutorials walk through the essentials of F Prime development, starting with the 
 
     This project is an implementation of the F´ LED Blinker ARM Linux Tutorial which will allow you to test on Arduino-based microcontrollers using the `fprime-arduino` toolchain instead of `fprime-arm-linux`.
 
-    [View Arduino LED Blinker Tutorial](../tutorials-arduino-led-blinker/docs/arduino-led-blinker/){ .md-button .md-button--primary }
+    [View Arduino LED Blinker Tutorial](../../tutorials-arduino-led-blinker/docs/arduino-led-blinker/){ .md-button .md-button--primary }
 
 
 </div>
