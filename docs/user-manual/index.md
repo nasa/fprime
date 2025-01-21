@@ -19,5 +19,8 @@ In-depth user guide and language specification for FPP
 ## __Ground Data System (GDS)__
 Dive into the F´ GDS and its testing framework
 
+## __Security__
+Security documentation spanning the F Prime ecosystem
+
 ## __Design__
 Explanation of the F Prime architecture and design philosophies

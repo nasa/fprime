@@ -60,7 +60,7 @@ namespace Fw {
         taskName = this->getObjName();
 #else
         char taskNameChar[FW_TASK_NAME_BUFFER_SIZE];
-        (void)snprintf(taskNameChar,sizeof(taskNameChar),"ActComp_%d",Os::Task::getNumTasks());
+        (void)snprintf(taskNameChar,sizeof(taskNameChar),"ActComp_%" PRI_FwSizeType,Os::Task::getNumTasks());
         taskName = taskNameChar;
 #endif
         // Cooperative threads tasks externalize the task loop, and as such use the state machine as their task function

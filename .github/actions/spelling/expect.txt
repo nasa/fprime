@@ -806,6 +806,7 @@ saveop
 sbb
 SBF
 SBINDIR
+sbom
 Scatterometer
 scc
 schematron
@@ -866,6 +867,7 @@ sourceforge
 Sourcetrail
 sourcing
 spacetech
+spdx
 SPHINXBUILD
 SPHINXOPTS
 spi
@@ -907,6 +909,7 @@ suseconds
 SVCLOGFILE
 SVCLOGFILEL
 swcaegitadmin
+syft
 synchronicity
 synopsys
 sysconf
