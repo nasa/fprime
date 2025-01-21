@@ -27,5 +27,5 @@ Once `grype` is installed, you can scan the bill of materials using the followin
 grype ./build-artifacts/*_sbom.json
 ```
 
-![WARNING]
-! `grype` is just one tool to look for vulnerabilities in your project. Vulnerabilities may be found by other means.
+>[!WARNING]
+> `grype` is just one tool to look for vulnerabilities in your project. Vulnerabilities may be found by other means.
