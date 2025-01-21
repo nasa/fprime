@@ -879,6 +879,7 @@ STAMEM
 startloc
 startuml
 stdbool
+stdc
 STDC
 stddef
 stdint
