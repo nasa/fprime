@@ -1,4 +1,3 @@
-\page SvcComStubComponent Svc::ComStub Component
 # Svc::ComStub (Passive Component)
 
 ## 1. Introduction

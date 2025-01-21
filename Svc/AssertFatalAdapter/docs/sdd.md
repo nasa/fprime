@@ -1,4 +1,3 @@
-\page SvcAssertFatalAdapterComponent Svc::AssertFatalAdapter Component
 # Svc::AssertFatalAdapter Component
 
 ## 1. Introduction

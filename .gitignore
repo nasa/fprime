@@ -84,3 +84,5 @@ depend
 /venv/
 
 Packet-Views
+docs/documentation/reference/api/cpp
+docs/documentation/reference/api/cmake

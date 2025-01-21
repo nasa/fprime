@@ -48,6 +48,22 @@ endfunction()
 function(add_fprime_supplied_os_module NAMES SUFFIX)
     # Get first element of list
     list(GET NAMES 0 FIRST_ITEM)
+
+    # Ensure expected files with expected filenames exist
+    if(NOT EXISTS "${CMAKE_CURRENT_LIST_DIR}/Default${FIRST_ITEM}.cpp")
+        message(FATAL_ERROR "${CMAKE_CURRENT_LIST_DIR}/Default${FIRST_ITEM}.cpp does not exist.")
+    endif()
+
+    foreach (NAME IN LISTS NAMES)
+        if(NOT EXISTS "${CMAKE_CURRENT_LIST_DIR}/${NAME}.cpp")
+            message(FATAL_ERROR "${CMAKE_CURRENT_LIST_DIR}/${NAME}.cpp does not exist.")
+        endif()
+        if(NOT EXISTS "${CMAKE_CURRENT_LIST_DIR}/${NAME}.hpp")
+            message(FATAL_ERROR "${CMAKE_CURRENT_LIST_DIR}/${NAME}.hpp does not exist.")
+        endif()
+    endforeach()
+
+    # Setup variables
     set(OS_MODULE_NAME "Os_${FIRST_ITEM}_${SUFFIX}")
     # Clear variables
     set(SOURCE_FILES)

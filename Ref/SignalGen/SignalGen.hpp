@@ -43,6 +43,14 @@ namespace Ref {
         ) final;
 
         void Toggle_cmdHandler(
+<<<<<<< HEAD
+            FwOpcodeType opCode, /*!< The opcode*/
+            U32 cmdSeq /*!< The command sequence number*/
+        ) final;
+
+        void Skip_cmdHandler(
+=======
+>>>>>>> upstream/devel
             FwOpcodeType opCode, /*!< The opcode*/
             U32 cmdSeq /*!< The command sequence number*/
         ) final;
@@ -52,7 +60,7 @@ namespace Ref {
             U32 cmdSeq /*!< The command sequence number*/
         ) final;
 
-        //! Handler implementation for command SignalGen_Dp
+        //! Handler implementation for command Dp
         //!
         //! Signal Generator Settings
         void Dp_cmdHandler(

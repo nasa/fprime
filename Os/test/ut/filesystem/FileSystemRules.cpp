@@ -84,7 +84,7 @@ bool Os::Test::FileSystem::Tester::PathNotExists::precondition(const Os::Test::F
 
 void Os::Test::FileSystem::Tester::PathNotExists::action(Os::Test::FileSystem::Tester &state) {
     ASSERT_FALSE(Os::FileSystem::getSingleton().exists("does_not_exist"))
-                << "exists() failed to return false for non-existent path";
+                << "exists() failed to return false for nonexistent path";
 }
 
 // ------------------------------------------------------------------------------------------------------
@@ -301,7 +301,7 @@ void Os::Test::FileSystem::Tester::AppendToNewFile::action(Os::Test::FileSystem:
     std::string dest_path = dest.path;
 
     if (source_path == dest_path) {
-        return; // skip test - can not remove dest if it is the same as source
+        return; // skip test - cannot remove dest if it is the same as source
     }
     // Set up test state: remove dest file from disk and reset contents in test state
     bool createMissingDest = true;

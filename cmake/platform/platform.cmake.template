@@ -9,7 +9,7 @@
 # to remove the platform-failsafe (step 1) and fill in all <SOMETHING> tags.
 #
 # **Note:** If the user desires to set compiler paths, and other CMake toolchain settings, a
-#           toolchain file should be constructed. See: [toolchain.md](toolchain.md)
+#           toolchain file should be constructed. See: toolchain.md
 #
 # ### Platform File Loading ###
 #

@@ -83,7 +83,7 @@
       be filtered out, except for 0..9, a..f and A..F. The remaining characters
       will be paired, and every pair of two characters represent the hexadecimal
       value to be used for one byte in the CRC calculation. The result if an
-      odd number of valud characters is provided is undefined.
+      odd number of valued characters is provided is undefined.
 
       Example input string: 41 42 43
          CRC16              = 0x4521

@@ -1,4 +1,3 @@
-\page SvcRateGroupDriverComponent Svc::RateGroupDriver Component
 # Svc::RateGroupDriver Component
 
 ## 1. Introduction
@@ -82,11 +81,11 @@ No dictionary for this module
 
 ## 5. Module Checklists
 
-Document | Link
--------- | ----
-Design Checklist | [Link](Checklist_Design.xlsx)
-Code Review Checklist | [Link](Checklist_Code.xlsx)
-Unit Test Checklist | [Link](Checklist_Unit_Test.xls)
+Checklist |
+-------- |
+[Design](Checklist_Design.xlsx) |
+[Code](Checklist_Code.xlsx) |
+[Unit Test](Checklist_Unit_Test.xls) |
 
 ## 6. Unit Testing
 

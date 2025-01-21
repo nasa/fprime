@@ -1,4 +1,3 @@
-\page SvcDeframerComponent Svc::Deframer Component
 # Svc::Deframer (Passive Component)
 
 ## 1. Introduction
@@ -95,9 +94,7 @@ SVC-DEFRAMER-011 | `Svc::Deframer` shall operate nominally when its port for sen
 
 The diagram below shows the `Deframer` component.
 
-<div>
-<img src="img/Deframer.png" width=700/>
-</div>
+![Deframer](img/Deframer.png)
 
 ### 4.2. Ports
 
@@ -349,24 +346,18 @@ optional.
 
 **Topology 1a: Buffers containing framed data (active byte stream driver):**
 
-<div>
-<img src="img/top/framed-active.png" width=1000/>
-</div>
+![active](img/top/framed-active.png)
 
 **Topology 1b: Buffers containing framed data (passive byte stream driver):**
 
-<div>
-<img src="img/top/framed-passive.png" width=1000/>
-</div>
+![passive](img/top/framed-passive.png)
 
 Revise the port number of `rateGroup.RateGroupMemberOut` as
 appropriate for your application.
 
 **Topology 2: Command packets and command responses:**
 
-<div>
-<img src="img/top/cmd.png" width=800/>
-</div>
+![cmd](img/top/cmd.png)
 
 Revise the port numbers of `cmdDisp.seqCmdBuff` and
 `cmdDisp.compCmdStat` as appropriate for your application.
@@ -375,9 +366,7 @@ assign these numbers.
 
 **Topology 3: Buffers containing packet data:**
 
-<div>
-<img src="img/top/deframer-file.png" width=1000/>
-</div>
+![file](img/top/deframer-file.png)
 
 ### 6.2. Sequence Diagrams
 
@@ -507,17 +496,13 @@ instance `hub` of type `Svc::GenericHub`.
 
 **Topology 2: Command packets**
 
-<div>
-<img src="img/top/hub-cmd.png" width=800/>
-</div>
+![hub-cmd](img/top/hub-cmd.png)
 
 Revise the port number of `hub.portIn` as appropriate for your application.
 
 **Topology 3: Buffers containing packet data**
 
-<div>
-<img src="img/top/hub-file.png" width=1000/>
-</div>
+![file](img/top/hub-file.png)
 
 Revise the port number of `hub.buffersIn` as appropriate for your application.
 When `hub` receives a buffer on `buffersIn`, it copies the data across
