@@ -2,7 +2,7 @@ site_name: F Prime
 site_url: https://fprime.jpl.nasa.gov/
 repo_url: https://github.com/nasa/fprime
 repo_name: nasa/fprime
-docs_dir: ..
+docs_dir: .. # using ./fprime/ as the root directory to host all source files in the website
 site_dir: ../../site
 edit_uri: edit/devel/
 
@@ -11,7 +11,7 @@ theme:
   language: en
   logo: assets/images/logo-fprime-jpl.svg
   favicon: assets/images/favicon.svg
-  custom_dir: ../../overrides
+  custom_dir: ../../overrides # external directory
   icon:
     annotation: material/information-slab-circle  # custom icon for annotations
 
@@ -55,7 +55,7 @@ extra:
       provider: mike
       alias: true
   generator: false # removes "Made with Material for Mkdocs"
-
+  homepage: https://fprime.jpl.nasa.gov/ # Forces homepage link not to include versioning info
 
 
 
@@ -67,11 +67,10 @@ extra_css:
 plugins:
   - search # enables search
   - mike:
-      # symlink are not allowed in our usage of GH Pages so we have to use copy
+      # symlink are not allowed in GH Pages so if website needs to be deployed on GH Pages, use `copy` instead
       # see https://github.blog/changelog/2023-02-21-github-pages-deprecating-symlinks-in-non-actions-builds/
-      alias_type: copy
+      alias_type: symlink
       canonical_version: latest
-      # deploy_prefix: 
   - open-in-new-tab
   - multirepo:
       cleanup: true
