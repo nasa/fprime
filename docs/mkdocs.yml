@@ -4,6 +4,7 @@ repo_url: https://github.com/nasa/fprime
 repo_name: nasa/fprime
 docs_dir: ..
 site_dir: ../../site
+edit_uri: edit/devel/
 
 theme:
   name: material # enables the material theme, DO NOT CHANGE
@@ -27,7 +28,7 @@ theme:
     - content.code.annotate # enable code annotations for all code blocks
     - content.tooltips # replaces the browser's rendering logic for title attribute with tooltips (for content, header, navigation)
     - content.tabs.link # all content tabs across the whole documentation site will be linked and switch to the same label when the user clicks on a tab
-    - content.action.view
+    - content.action.view # display a "View Source" button on the top right of the page
 
   palette:
 
