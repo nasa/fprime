@@ -44,7 +44,8 @@ enum SocketIpStatus {
     SOCK_FAILED_TO_READ_BACK_PORT = -15,     //!< Failed to read back port from connection
     SOCK_NO_DATA_AVAILABLE = -16,            //!< No data available or read operation would block
     SOCK_ANOTHER_THREAD_OPENING = -17,       //!< Another thread is opening
-    SOCK_AUTO_CONNECT_DISABLED = -18          //!< Automatic connections are disabled
+    SOCK_AUTO_CONNECT_DISABLED = -18,        //!< Automatic connections are disabled
+    SOCK_INVALID_CALL = -19                  //!< Operation is invalid
 };
 
 /**

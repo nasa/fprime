@@ -32,7 +32,8 @@ void TcpServerTester ::setup_helper(bool recv_thread, bool reconnect) {
     // Start up a receive thread
     if (recv_thread) {
         Os::TaskString name("receiver thread");
-        this->component.start(name, reconnect, Os::Task::TASK_DEFAULT, Os::Task::TASK_DEFAULT);
+        this->component.setAutomaticOpen(reconnect);
+        this->component.start(name, Os::Task::TASK_DEFAULT, Os::Task::TASK_DEFAULT);
     }
     // Component should always launch the listening server on configure
     // The thread will retry if the configure fails
@@ -179,7 +180,7 @@ void TcpServerTester ::test_no_automatic_send_connection() {
     
     // Set up the server without automatic connection
     this->setup_helper(false, true);
-    this->component.setAutoConnect(false);
+    this->component.setAutomaticOpen(false);
     Drv::Test::force_recv_timeout(client_fd.fd, client);
 
     // Connect a client to the server so it is waiting in the "listen" queue

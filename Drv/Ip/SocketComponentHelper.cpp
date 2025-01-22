@@ -22,13 +22,11 @@ SocketComponentHelper::SocketComponentHelper() {}
 SocketComponentHelper::~SocketComponentHelper() {}
 
 void SocketComponentHelper::start(const Fw::StringBase &name,
-                                     const bool reconnect,
-                                     const Os::Task::ParamType priority,
-                                     const Os::Task::ParamType stack,
-                                     const Os::Task::ParamType cpuAffinity) {
+                                  const Os::Task::ParamType priority,
+                                  const Os::Task::ParamType stack,
+                                  const Os::Task::ParamType cpuAffinity) {
     FW_ASSERT(m_task.getState() == Os::Task::State::NOT_STARTED);  // It is a coding error to start this task multiple times
     this->m_stop = false;
-    this->setAutoConnect(reconnect);
     // Note: the first step is for the IP socket to open the port
     Os::Task::Arguments arguments(name, SocketComponentHelper::readTask, this, priority, stack, cpuAffinity);
     Os::Task::Status stat = m_task.start(arguments);
@@ -77,22 +75,22 @@ bool SocketComponentHelper::isOpened() {
     return is_open;
 }
 
-void SocketComponentHelper::setAutoConnect(bool auto_connect) {
+void SocketComponentHelper::setAutomaticOpen(bool auto_open) {
     Os::ScopeLock scopedLock(this->m_lock);
-    this->m_reconnect = auto_connect;
+    this->m_reopen = auto_open;
 }
 
-SocketIpStatus SocketComponentHelper::reconnect() {
+SocketIpStatus SocketComponentHelper::reopen() {
     SocketIpStatus status = SOCK_SUCCESS;
     if (not this->isOpened()) {
-        // Check for auto-connect before attempting to reconnect
-        bool reconnect = false;
+        // Check for auto-open before attempting to reopen
+        bool reopen = false;
         {
             Os::ScopeLock scopedLock(this->m_lock);
-            reconnect = this->m_reconnect;
+            reopen = this->m_reopen;
         }
         // Open a network connection if it has not already been open
-        if (not reconnect) {
+        if (not reopen) {
             status = SOCK_AUTO_CONNECT_DISABLED;
         } else {
             status = this->open();
@@ -111,12 +109,12 @@ SocketIpStatus SocketComponentHelper::send(const U8* const data, const U32 size)
     this->m_lock.unlock();
     // Prevent transmission before connection, or after a disconnect
     if (descriptor.fd == -1) {
-        status = this->reconnect();
-        // if reconnect wasn't successful, pass the that up to the caller
+        status = this->reopen();
+        // if reopen wasn't successful, pass the that up to the caller
         if(status != SOCK_SUCCESS) {
             return status;
         }
-        // Refresh local copy after reconnect
+        // Refresh local copy after reopen
         this->m_lock.lock();
         descriptor = this->m_descriptor;
         this->m_lock.unlock();
@@ -180,8 +178,8 @@ void SocketComponentHelper::readLoop() {
     do {
         // Prevent transmission before connection, or after a disconnect
         if ((not this->isOpened()) and this->running()) {
-            status = this->reconnect();
-            // When reconnect is disabled, just break as this is a exit condition for the loop
+            status = this->reopen();
+            // When reopen is disabled, just break as this is a exit condition for the loop
             if (status == SOCK_AUTO_CONNECT_DISABLED) {
                 break;
             }
@@ -213,7 +211,7 @@ void SocketComponentHelper::readLoop() {
             this->sendBuffer(buffer, status);
         }
     }
-    // This will loop until stopped. If auto-connect is disabled, this will break at the moment of reconnect
+    // This will loop until stopped. If auto-open is disabled, this will break when reopen returns disabled status
     while (this->running());
     // Close the socket
     this->close(); // Close the port entirely

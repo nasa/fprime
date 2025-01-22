@@ -61,6 +61,7 @@ UdpSocket::~UdpSocket() {
 
 SocketIpStatus UdpSocket::configure(const char* const hostname, const U16 port, const U32 timeout_seconds, const U32 timeout_microseconds) {
     FW_ASSERT(0); // Must use configureSend and/or configureRecv
+    return SocketIpStatus::SOCK_INVALID_CALL;
 }
 
 

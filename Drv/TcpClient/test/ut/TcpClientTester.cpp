@@ -39,7 +39,8 @@ void TcpClientTester ::setup_helper(Drv::TcpServerSocket& server, Drv::SocketDes
     // Start up a receive thread
     if (recv_thread) {
         Os::TaskString name("receiver thread");
-        this->component.start(name, reconnect, Os::Task::TASK_DEFAULT, Os::Task::TASK_DEFAULT);
+        this->component.setAutomaticOpen(reconnect);
+        this->component.start(name, Os::Task::TASK_DEFAULT, Os::Task::TASK_DEFAULT);
     }
 }
 
@@ -156,7 +157,7 @@ void TcpClientTester ::test_no_automatic_send_connection() {
     Drv::TcpServerSocket server;
     Drv::SocketDescriptor server_fd;
     this->setup_helper(server, server_fd, false, false);
-    this->component.setAutoConnect(false);
+    this->component.setAutomaticOpen(false);
     ASSERT_EQ(this->component.send(reinterpret_cast<const U8*>("a"), 1), Drv::SOCK_AUTO_CONNECT_DISABLED);
     ASSERT_FALSE(this->component.isOpened());
     // Clean-up even if the send worked

@@ -38,9 +38,11 @@ This status is an enumeration whose values are described in the following table:
 
 
 The Drv::TcpClientComponentImpl must be configured with the address of the remote connection using the `configure` method.
-The sockets must also be opened to send and receive data using `open`. When the component is set to automatically connect,
-`open` is called via the frist send or receive. Users declining to use automatic connection or who wish to control when open
+The sockets must also be opened to send and receive data using `open`. When the component is set to automatically open,
+`open` is called via the first send or receive. Users declining to use automatic opening or who wish to control when open
 initially happens should call `open` before any send or receive. 
+
+Automatic opening is the default.  Call `setAutomaticOpen(false);` to disable this behavior.
 
 Users desiring to receive via TCP should start the receive thread using `start`, may stop the thread using `stop` and may
 wait for the thread to exit using `join`.

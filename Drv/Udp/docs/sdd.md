@@ -38,9 +38,11 @@ This status is an enumeration whose values are described in the following table:
 
 The Drv::UdpComponentImpl must be configured with the address(es) of the remote entity. Users can configure send and
 receive independently using `configureSend` and `configureRecv`.  The sockets must also be opened to send and receive
-data using the `open` call. When the component is set to automatically connect `open` is called via the first send or
-receive call. Users declining to use automatic connection or who wish to control when open initially happens should call
-`open` before sending or receiving. 
+data using the `open` call. When the component is set to automatically open, `open` is called via the first send or
+receive call. Users declining to use automatic opening or who wish to control when open initially happens should call
+`open` before sending or receiving.
+
+Automatic opening is the default.  Call `setAutomaticOpen(false);` to disable this behavior.
 
 Users desiring to receive via UDP should start the receive thread using `start`, may stop the thread using `stop` and may
 wait for the thread to exit using `join`.
