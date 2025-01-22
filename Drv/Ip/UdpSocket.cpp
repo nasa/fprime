@@ -59,6 +59,11 @@ UdpSocket::~UdpSocket() {
     delete m_state;
 }
 
+SocketIpStatus UdpSocket::configure(const char* const hostname, const U16 port, const U32 timeout_seconds, const U32 timeout_microseconds) {
+    FW_ASSERT(0); // Must use configureSend and/or configureRecv
+}
+
+
 SocketIpStatus UdpSocket::configureSend(const char* const hostname, const U16 port, const U32 timeout_seconds, const U32 timeout_microseconds) {
     //Timeout is for the send, so configure send will work with the base class
     FW_ASSERT(port != 0, port); // Send cannot be on port 0

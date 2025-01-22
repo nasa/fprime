@@ -95,14 +95,6 @@ class SocketComponentHelper {
      */
     void setAutoConnect(bool auto_connect);
 
-     /**
-     * \brief Re-open port if it has been disconnected
-     *
-     *
-     * \return status of reconnect, SOCK_SUCCESS for success, something else on error
-     */
-    SocketIpStatus reconnect();
-
     /**
      * \brief send data to the IP socket from the given buffer
      *
@@ -219,6 +211,19 @@ class SocketComponentHelper {
      */
     static void readTask(void* pointer);
 
+  PRIVATE:
+    /**
+     * \brief Re-open port if it has been disconnected
+     *
+     * This function is a helper to handle the situations where this code needs to safely call reconnect. User code should
+     * connect using the `open` call. This is for connecting/reconnecting in situations where automatic reconnect is performed
+     * by framework code.
+     *
+     * \return status of reconnect, SOCK_SUCCESS for success, something else on error
+     */
+    SocketIpStatus reconnect();
+
+  PROTECTED:
     Os::Task m_task;
     Os::Mutex m_lock;
     SocketDescriptor m_descriptor;

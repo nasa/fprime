@@ -75,8 +75,8 @@ class IpSocket {
      * \param send_timeout_microseconds: send timeout microseconds portion. Must be less than 1000000
      * \return status of configure
      */
-    SocketIpStatus configure(const char* hostname, const U16 port, const U32 send_timeout_seconds,
-                             const U32 send_timeout_microseconds);
+    virtual SocketIpStatus configure(const char* hostname, const U16 port, const U32 send_timeout_seconds,
+                                     const U32 send_timeout_microseconds);
 
     /**
      * \brief open the IP socket for communications
