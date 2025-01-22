@@ -58,6 +58,17 @@ namespace Svc {
   }
 
   void FileUplink::Warnings ::
+    packetDuplicate(
+        const U32 sequenceIndex
+    )
+  {
+    this->m_fileUplink->log_WARNING_HI_PacketDuplicate(
+        sequenceIndex
+    );
+    this->warning();
+  }
+
+  void FileUplink::Warnings ::
     fileWrite(Fw::LogStringArg& fileName)
   {
     this->m_fileUplink->log_WARNING_HI_FileWriteError(fileName);

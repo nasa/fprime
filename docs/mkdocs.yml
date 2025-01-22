@@ -1,0 +1,215 @@
+site_name: F Prime
+site_url: https://fprime.jpl.nasa.gov/
+repo_url: https://github.com/nasa/fprime
+repo_name: nasa/fprime
+docs_dir: .. # using ./fprime/ as the root directory to host all source files in the website
+site_dir: ../../site
+edit_uri: edit/devel/ # for "Edit Source" button (see content.action.edit)
+
+theme:
+  name: material # enables the material theme, DO NOT CHANGE
+  language: en
+  logo: assets/images/logo-fprime-jpl.svg
+  favicon: assets/images/favicon.svg
+  custom_dir: ../../overrides # external directory
+  icon:
+    annotation: material/information-slab-circle  # custom icon for annotations
+
+  features:
+    - navigation.tabs # enables tabs
+    - navigation.top # enables back to top button
+    - navigation.tabs.sticky # makes tabs sticky
+    # - navigation.expand # expands all navigation links with dropdowns by default
+    - navigation.footer # enables previous/next page navigation links by the footer
+    - navigation.instant # instant loading
+    - navigation.indexes # enables overview pages for sections
+    - navigation.tracking # URL in the address bar is automatically updated with the active anchor as highlighted in the table of contents
+    - content.code.copy # enable code copy for all code blocks
+    - content.code.annotate # enable code annotations for all code blocks
+    - content.tooltips # replaces the browser's rendering logic for title attribute with tooltips (for content, header, navigation)
+    - content.tabs.link # all content tabs across the whole documentation site will be linked and switch to the same label when the user clicks on a tab
+    - content.action.edit # display a "Edit Source" button on the top right of the page
+
+  palette:
+
+    # Palette toggle for light mode
+    - scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/lightbulb-on
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - scheme: slate
+      primary: custom
+      toggle:
+        icon: material/lightbulb-off
+        name: Switch to light mode
+
+
+
+# Adds extra settings
+extra:
+  version:
+      provider: mike
+      alias: true
+  generator: false # removes "Made with Material for Mkdocs"
+  homepage: https://fprime.jpl.nasa.gov/ # Forces homepage link not to include versioning info
+
+
+
+# Link to custom css
+extra_css:
+  - assets/stylesheets/extra.css
+
+# Adds material for mkdocs plugins
+plugins:
+  - search # enables search
+  - mike:
+      # symlink are not allowed in GH Pages so if website needs to be deployed on GH Pages, use `copy` instead
+      # see https://github.blog/changelog/2023-02-21-github-pages-deprecating-symlinks-in-non-actions-builds/
+      alias_type: symlink
+      canonical_version: latest
+  - open-in-new-tab
+  - multirepo:
+      cleanup: true
+      nav_repos:
+        - name: tutorials-hello-world
+          import_url: https://github.com/fprime-community/fprime-tutorial-hello-world?branch=devel
+          imports: [
+            docs/hello-world.md
+          ]
+        - name: tutorials-led-blinker
+          import_url: https://github.com/fprime-community/fprime-workshop-led-blinker?branch=devel
+          imports: [
+            docs/led-blinker.md,
+            docs/hardware.md
+            docs/img
+          ]
+        - name: tutorials-math-component
+          import_url: https://github.com/fprime-community/fprime-tutorial-math-component?branch=devel
+          imports: [
+            docs/math-component.md
+            docs/img
+          ]
+        - name: tutorials-arduino-led-blinker
+          import_url: https://github.com/fprime-community/fprime-tutorial-arduino-blinker?branch=main
+          imports: [
+            docs/arduino-led-blinker.md,
+            docs/img
+          ]
+
+
+markdown_extensions: 
+  - toc:
+      toc_depth: 2
+  - attr_list # allows to add HTML attributes and CSS classes to almost every Markdown inline- and block-level element with a special syntax
+  - md_in_html # allows for writing Markdown inside of HTML
+  - tables # enables markdown tables
+  # enables syntax highlighting on code blocks and inline code blocks
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  # adds support for admonitions/call-outs
+  - admonition
+  - pymdownx.details
+  - github-callouts # enables GitHub-style Markdown alerts (e.g. > [!NOTE])
+  # enables the use of definition lists and tasks lists
+  - def_list
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  # enables abbreviations and allows to build a simple project-wide glossary, sourcing definitions from a central location.
+  - abbr
+  - pymdownx.snippets
+  # enables tabs
+  - pymdownx.tabbed:
+      alternate_style: true
+  # enables the use of icons and emojis by using simple shortcodes
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+
+
+
+# Custom navigation
+nav:
+  - Home: '../'
+  - Overview: '../overview'
+  - Getting Started: 
+    - docs/getting-started/index.md
+    - 'Installation and Troubleshooting': docs/getting-started/installing-fprime.md
+  - Documentation:
+    - docs/index.md
+    - Tutorials:
+      - 'Tutorials Overview': docs/tutorials/index.md
+      - 'Hello World': tutorials-hello-world/docs/hello-world.md
+      - 'LED Blinker': tutorials-led-blinker/docs/led-blinker.md
+      - 'MathComponent': tutorials-math-component/docs/math-component.md
+      - 'Cross-Compilation Setup': docs/tutorials/cross-compilation.md
+      - 'Arduino LED Blinker': tutorials-arduino-led-blinker/docs/arduino-led-blinker.md
+    - User Manual:
+      - docs/user-manual/index.md
+      - Overview:
+        - 'Introduction to F´': docs/user-manual/overview/full-intro.md
+        - 'The F´ Ground Data System': docs/user-manual/overview/gds-introduction.md
+        - 'F´ Development Process': docs/user-manual/overview/development-practice.md
+        - 'A Tour of the Source Tree': docs/user-manual/overview/source-tree.md
+        - 'Projects and Deployments': docs/user-manual/overview/proj-dep.md
+        - 'Core Constructs: Ports, Components, and Topologies': docs/user-manual/overview/port-comp-top.md
+        - 'Data Constructs': docs/user-manual/overview/cmd-evt-chn-prm.md
+        - 'Data Types and Data Structures': docs/user-manual/overview/enum-arr-ser.md
+        - 'Unit Testing F´ Components': docs/user-manual/overview/unit-testing.md
+      - Framework:
+        - 'Configuring F´': docs/user-manual/framework/configuring-fprime.md
+        - 'Autocoded Functions': docs/user-manual/framework/autocoded-functions.md
+        - 'Constructing the F´ Topology': docs/user-manual/framework/building-topology.md
+        - 'Asserts in F´': docs/user-manual/framework/assert.md
+        - 'F´ On Baremetal and Multi-Core Systems': docs/user-manual/framework/baremetal-multicore.md
+        - 'Application, Manager, Driver Pattern': docs/user-manual/framework/app-man-drv.md
+        - 'Ground Interface': docs/user-manual/framework/ground-interface.md
+        - 'Dynamic Memory and Buffer Management': docs/user-manual/framework/dynamic-memory.md
+        - 'The Hub Pattern': docs/user-manual/framework/hub-pattern.md
+        - 'settings.ini: Build Settings Configuration': docs/user-manual/framework/settings.md
+        - 'The F´ CMake Build System': docs/user-manual/cmake/cmake-intro.md
+      - 'FPP': 'https://nasa.github.io/fpp/fpp-users-guide.html'
+      - GDS:
+        - "The GDS CLI": docs/user-manual/gds/gds-cli.md
+        - 'The GDS Dashboard': docs/user-manual/gds/gds-custom-dashboards.md
+        - 'GDS Dashboard Reference': docs/user-manual/gds/gds-dashboard-reference.md
+        - 'Integration Test API': docs/user-manual/gds/gds-test-api-guide.md
+        - 'Sequencing in F´': docs/user-manual/gds/seqgen.md
+      - Security:
+        - 'Software Bill of Materials': docs/user-manual/security/software-bill-of-materials.md
+      - Design:
+        - 'F´ Software Architecture': docs/user-manual/design/fprime-architecture.md
+        - 'Numerical Types Design': docs/user-manual/design/numerical-types.md
+        - 'Communication Adapter Interface': docs/user-manual/design/communication-adapter-interface.md
+        - 'Package Implementations': docs/user-manual/design/package-implementations.md
+        - 'FPP JSON Dictionary Specification': docs/user-manual/design/fpp-json-dict.md
+        - 'Rate Groups and Timeliness': docs/user-manual/design/rate-group.md
+        - 'F´ Data Products': docs/user-manual/design/data-products.md
+        - 'State Machines': docs/user-manual/design/state-machines.md
+    - How To: 
+      - docs/how-to/index.md
+      - 'F´ Library Development': docs/how-to/develop-fprime-libraries.md
+      - 'F´ Subtopology Development': docs/how-to/develop-subtopologies.md
+      - 'F´ GDS Plugin Development': docs/how-to/develop-gds-plugins.md
+      - 'Porting F´ To a New Platform': docs/how-to/porting-guide.md
+    - Reference:
+      - docs/reference/index.md
+      - 'C++ Documentation': docs/reference/api/cpp/html/index.html
+      - 'F´ Components SDDs': docs/reference/sdd.md
+      - 'FPP Language Specification': https://nasa.github.io/fpp/fpp-spec.html
+      - 'CMake User API': docs/user-manual/cmake/cmake-api.md
+      - 'GDS Developers Guide': docs/reference/gds-cli-dev.md
+  - Support: '../support'
+  - Events: '../events'

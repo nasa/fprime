@@ -10,6 +10,10 @@
 
 #include <FpConfig.h>
 
+#ifdef  __cplusplus
+extern "C" {
+#endif
+
 #if FW_ASSERT_LEVEL == FW_NO_ASSERT
 
 #define FW_CASSERT(...)
@@ -28,4 +32,9 @@ I32 CAssert0(FILE_NAME_ARG file, U32 lineNo);                        //!< C asse
 I32 CAssert1(FILE_NAME_ARG file, U32 lineNo, NATIVE_INT_TYPE arg1);  //!< C assert function 1
 
 #endif  // ASSERT is defined
+
+#ifdef  __cplusplus
+}
+#endif
+
 #endif  /* FWCASSERT_HPP_ */

@@ -62,7 +62,7 @@ class PosixFile : public FileInterface {
     //! \param overwrite: overwrite existing file on create
     //! \return: status of the open
     //!
-    Os::FileInterface::Status open(const char *path, Mode mode, OverwriteType overwrite) override;
+    Os::FileInterface::Status open(const char* path, Mode mode, OverwriteType overwrite) override;
 
     //! \brief close the file, if not opened then do nothing
     //!
@@ -77,7 +77,7 @@ class PosixFile : public FileInterface {
     //! \param size: output parameter for size.
     //! \return OP_OK on success otherwise error status
     //!
-    Status size(FwSignedSizeType &size_result) override;
+    Status size(FwSignedSizeType& size_result) override;
 
     //! \brief get file pointer position of the currently open file
     //!
@@ -85,7 +85,7 @@ class PosixFile : public FileInterface {
     //! \param position: output parameter for size.
     //! \return OP_OK on success otherwise error status
     //!
-    Status position(FwSignedSizeType &position_result) override;
+    Status position(FwSignedSizeType& position_result) override;
 
     //! \brief pre-allocate file storage
     //!
@@ -139,7 +139,7 @@ class PosixFile : public FileInterface {
     //! \param wait: `WAIT` to wait for data, `NO_WAIT` to return what is currently available
     //! \return OP_OK on success otherwise error status
     //!
-    Status read(U8 *buffer, FwSignedSizeType &size, WaitType wait) override;
+    Status read(U8* buffer, FwSignedSizeType& size, WaitType wait) override;
 
     //! \brief read data from this file into supplied buffer bounded by size
     //!
@@ -159,7 +159,7 @@ class PosixFile : public FileInterface {
     //! \param wait: `WAIT` to wait for data to write to disk, `NO_WAIT` to return what is currently available
     //! \return OP_OK on success otherwise error status
     //!
-    Status write(const U8 *buffer, FwSignedSizeType &size, WaitType wait) override;
+    Status write(const U8* buffer, FwSignedSizeType& size, WaitType wait) override;
 
     //! \brief returns the raw file handle
     //!
@@ -168,15 +168,14 @@ class PosixFile : public FileInterface {
     //!
     //! \return raw file handle
     //!
-    FileHandle *getHandle() override;
-
+    FileHandle* getHandle() override;
 
   private:
     //! File handle for PosixFile
     PosixFileHandle m_handle;
 };
-} // namespace File
-} // namespace Posix
-} // namespace Os
+}  // namespace File
+}  // namespace Posix
+}  // namespace Os
 
-#endif // OS_POSIX_FILE_HPP
+#endif  // OS_POSIX_FILE_HPP

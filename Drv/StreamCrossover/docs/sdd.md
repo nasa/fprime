@@ -1,4 +1,3 @@
-\page DrvStreamCrossover Drv::StreamCrossover Stream Crossover Component
 # Drv::StreamCrossover Stream Crossover Component
 
 The Stream Crossover component allows a connection of byte stream driver model ports of type ByteStreamRecv and

@@ -6,7 +6,7 @@
 #define Os_Task_hpp_
 
 #include <FpConfig.hpp>
-#include <Fw/Time/Time.hpp>
+#include <Fw/Time/TimeInterval.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <Os/Os.hpp>
 #include <Os/TaskString.hpp>
@@ -47,6 +47,7 @@ namespace Os {
 
             enum State {
                 NOT_STARTED,
+                STARTING,
                 RUNNING,
                 SUSPENDED_INTENTIONALLY,
                 SUSPENDED_UNINTENTIONALLY,
@@ -104,15 +105,6 @@ namespace Os {
             // Implementation functions (static) to be supplied by the linker
             // =================
 
-            //! \brief delay the current task
-            //!
-            //! Delays, or sleeps, the current task by the supplied time interval. In non-preempting os implementations
-            //! the task will resume no earlier than expected but an exact wake-up time is not guaranteed.
-            //!
-            //! \param interval: delay time
-            //! \return status of the delay
-            static Status delay(Fw::Time interval);
-
             //! \brief provide a pointer to a task delegate object
             //!
             //! This function must return a pointer to a `TaskInterface` object that contains the real implementation of the file
@@ -132,7 +124,7 @@ namespace Os {
             //!
             //! \return result of placement new, must be equivalent to `aligned_placement_new_memory`
             //!
-            static TaskInterface* getDelegate(HandleStorage& aligned_placement_new_memory);
+            static TaskInterface* getDelegate(TaskHandleStorage& aligned_placement_new_memory);
 
             // =================
             // Implementation functions (instance) to be supplied by the Os::TaskInterface children
@@ -163,6 +155,15 @@ namespace Os {
             //! Resumes this task. Not started, running, and exited tasks take no action.
             //!
             virtual void resume() = 0;
+
+            //! \brief delay the currently scheduled task using the given architecture
+            //!
+            //! Delays, or sleeps, the current task by the supplied time interval. In non-preempting os implementations
+            //! the task will resume no earlier than expected but an exact wake-up time is not guaranteed.
+            //!
+            //! \param interval: delay time
+            //! \return status of the delay
+            virtual Status _delay(Fw::TimeInterval interval) = 0;
 
             //! \brief determine if the task requires cooperative multitasking
             //!
@@ -265,7 +266,7 @@ namespace Os {
 
         //! \brief start the task
         //!
-        //! Starts the task given the supplied arguments. This is done via the a task routine wrapper intermediary that
+        //! Starts the task given the supplied arguments. This is done via a task routine wrapper intermediary that
         //! ensures that `setStarted` is called once the task has actually started to run. The task then runs the user
         //! routine. This function may return before the new task begins to run.
         //
@@ -316,13 +317,28 @@ namespace Os {
         //!
         void resume() override;
 
+        //! \brief delay the current task
+        //!
+        //! Delays, or sleeps, the current task by the supplied time interval. In non-preempting os implementations
+        //! the task will resume no earlier than expected but an exact wake-up time is not guaranteed.
+        //!
+        //! \param interval: delay time
+        //! \return status of the delay
+        Status _delay(Fw::TimeInterval interval) override;
+
         //! \brief determine if the task is cooperative multitasking (implementation specific)
         //! \return true if cooperative, false otherwise
         bool isCooperative() override;
 
+        //! \brief get the task priority
+        FwSizeType getPriority();
+
         //! \brief return the underlying task handle (implementation specific)
         //! \return internal task handle representation
         TaskHandle* getHandle() override;
+
+        //! \brief initialize singleton
+        static void init();
 
         //! \brief get the current number of tasks
         //! \return current number of tasks
@@ -331,6 +347,19 @@ namespace Os {
         //! \brief register a task registry to track Threads
         //!
         static void registerTaskRegistry(TaskRegistry* registry);
+
+        //! \brief get a reference to singleton
+        //! \return reference to singleton
+        static Task& getSingleton();
+
+        //! \brief delay the current task
+        //!
+        //! Delays, or sleeps, the current task by the supplied time interval. In non-preempting os implementations
+        //! the task will resume no earlier than expected but an exact wake-up time is not guaranteed.
+        //!
+        //! \param interval: delay time
+        //! \return status of the delay
+        static Status delay(Fw::TimeInterval interval);
 
       PRIVATE:
         static TaskRegistry* s_taskRegistry; //!< Pointer to registered task registry
@@ -341,6 +370,7 @@ namespace Os {
         TaskInterface::State m_state = Task::NOT_STARTED;
         Mutex m_lock; //!< Guards state transitions
         TaskRoutineWrapper m_wrapper; //!< Concrete storage for task routine wrapper
+        FwSizeType m_priority = 0; // Storage of priority
 
         bool m_registered = false; //!< Was this task registered
 
@@ -348,7 +378,7 @@ namespace Os {
         // opaque and thus normal allocation cannot be done. Instead, we allow the implementor to store then handle in
         // the byte-array here and set `handle` to that address for storage.
         //
-        alignas(FW_HANDLE_ALIGNMENT) HandleStorage m_handle_storage; //!< Storage for aligned FileHandle data
+        alignas(FW_HANDLE_ALIGNMENT) TaskHandleStorage m_handle_storage; //!< Storage for aligned FileHandle data
         TaskInterface& m_delegate; //!< Delegate for the real implementation
     };
 

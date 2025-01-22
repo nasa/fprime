@@ -13,6 +13,10 @@
 
 #include <Fw/Types/BasicTypes.h>
 
+#ifdef  __cplusplus
+extern "C" {
+#endif
+
 // ----------------------------------------------------------------------
 // Type aliases
 // ----------------------------------------------------------------------
@@ -42,6 +46,14 @@ typedef PlatformIntType FwNativeIntType;
 // The type of a machine unsigned integer. Ordinarily this should be unsigned int.
 typedef PlatformUIntType FwNativeUIntType;
 #define PRI_FwNativeUIntType PRI_PlatformUIntType
+
+// Task priority type
+typedef PlatformTaskPriorityType FwTaskPriorityType;
+#define PRI_FwTaskPriorityType PRI_PlatformTaskPriorityType
+
+// Queue priority type
+typedef PlatformQueuePriorityType FwQueuePriorityType;
+#define PRI_FwQueuePriorityType PRI_PlatformQueuePriorityType
 
 // The type used to serialize a size value
 typedef U16 FwSizeStoreType;
@@ -83,6 +95,10 @@ typedef U32 FwOpcodeType;
 typedef U32 FwChanIdType;
 #define PRI_FwChanIdType PRIu32
 
+// The type of a trace identifier
+typedef U32 FwTraceIdType;
+#define PRI_FwTraceIdType PRIu32
+
 // The type of an event identifier
 typedef U32 FwEventIdType;
 #define PRI_FwEventIdType PRIu32
@@ -94,10 +110,6 @@ typedef U32 FwPrmIdType;
 // The type of a telemetry packet identifier
 typedef U16 FwTlmPacketizeIdType;
 #define PRI_FwTlmPacketizeIdType PRIu16
-
-// The type of a queue priority
-typedef I32 FwQueuePriorityType;
-#define PRI_FwQueuePriorityType PRId32
 
 // The type of a data product identifier
 typedef U32 FwDpIdType;
@@ -227,15 +239,8 @@ typedef FwIndexType FwQueueSizeType;
 //   4. FW_RELATIVE_PATH_ASSERT: asserts report a relative path within F´ or F´ library and line number
 //
 // Note: users who want alternate asserts should set assert level to FW_NO_ASSERT and define FW_ASSERT in this header
-#define FW_ASSERT_DFL_MSG_LEN 256  //!< Maximum assert message length when using the default assert handler
 #ifndef FW_ASSERT_LEVEL
 #define FW_ASSERT_LEVEL FW_FILENAME_ASSERT  //!< Defines the type of assert used
-#endif
-
-// Define max length of assert string
-// Note: This constant truncates file names in assertion failure event reports
-#ifndef FW_ASSERT_TEXT_SIZE
-#define FW_ASSERT_TEXT_SIZE 256  //!< Size of string used to store assert description
 #endif
 
 // Adjust various configuration parameters in the architecture. Some of the above enables may disable some of the values
@@ -388,17 +393,52 @@ typedef FwIndexType FwQueueSizeType;
 #endif
 
 // OS configuration
+#ifndef FW_CONSOLE_HANDLE_MAX_SIZE
+#define FW_CONSOLE_HANDLE_MAX_SIZE 24  //!< Maximum size of a handle for OS queues
+#endif
 
-#ifndef FW_HANDLE_MAX_SIZE
-#define FW_HANDLE_MAX_SIZE 72  //!< Maximum size of a handle for OS resources (files, queues, locks, etc.)
+#ifndef FW_TASK_HANDLE_MAX_SIZE
+#define FW_TASK_HANDLE_MAX_SIZE 24  //!< Maximum size of a handle for OS queues
+#endif
+
+#ifndef FW_FILE_HANDLE_MAX_SIZE
+#define FW_FILE_HANDLE_MAX_SIZE 16  //!< Maximum size of a handle for OS queues
+#endif
+
+#ifndef FW_MUTEX_HANDLE_MAX_SIZE
+#define FW_MUTEX_HANDLE_MAX_SIZE 72  //!< Maximum size of a handle for OS queues
+#endif
+
+#ifndef FW_QUEUE_HANDLE_MAX_SIZE
+#define FW_QUEUE_HANDLE_MAX_SIZE 352  //!< Maximum size of a handle for OS queues
 #endif
 
 #ifndef FW_DIRECTORY_HANDLE_MAX_SIZE
-#define FW_DIRECTORY_HANDLE_MAX_SIZE 72  //!< Maximum size of a handle for OS resources (files, queues, locks, etc.)
+#define FW_DIRECTORY_HANDLE_MAX_SIZE 16  //!< Maximum size of a handle for OS resources (files, queues, locks, etc.)
 #endif
 
 #ifndef FW_FILESYSTEM_HANDLE_MAX_SIZE
-#define FW_FILESYSTEM_HANDLE_MAX_SIZE 72  //!< Maximum size of a handle for OS resources (files, queues, locks, etc.)
+#define FW_FILESYSTEM_HANDLE_MAX_SIZE 16  //!< Maximum size of a handle for OS resources (files, queues, locks, etc.)
+#endif
+
+#ifndef FW_RAW_TIME_HANDLE_MAX_SIZE
+#define FW_RAW_TIME_HANDLE_MAX_SIZE 24  //!< Maximum size of a handle for OS::RawTime objects
+#endif
+
+#ifndef FW_RAW_TIME_SERIALIZATION_MAX_SIZE
+#define FW_RAW_TIME_SERIALIZATION_MAX_SIZE 8  //!< Maximum allowed serialization size for Os::RawTime objects
+#endif
+
+#ifndef FW_CONDITION_VARIABLE_HANDLE_MAX_SIZE
+#define FW_CONDITION_VARIABLE_HANDLE_MAX_SIZE 56  //!< Maximum size of a handle for OS condition variables
+#endif
+
+#ifndef FW_CPU_HANDLE_MAX_SIZE
+#define FW_CPU_HANDLE_MAX_SIZE 16  //!< Maximum size of a handle for OS cpu
+#endif
+
+#ifndef FW_MEMORY_HANDLE_MAX_SIZE
+#define FW_MEMORY_HANDLE_MAX_SIZE 16  //!< Maximum size of a handle for OS memory
 #endif
 
 #ifndef FW_HANDLE_ALIGNMENT
@@ -416,4 +456,9 @@ typedef FwIndexType FwQueueSizeType;
 // DO NOT TOUCH.  These types are specified for backwards naming compatibility.
 typedef FwSizeStoreType FwBuffSizeType;
 #define PRI_FwBuffSizeType PRI_FwSizeStoreType
+
+#ifdef  __cplusplus
+}
+#endif
+
 #endif

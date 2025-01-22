@@ -58,7 +58,7 @@ namespace Task {
 
         //! \brief start the task
         //!
-        //! Starts the task given the supplied arguments. This is done via the a task routine wrapper intermediary that
+        //! Starts the task given the supplied arguments. This is done via a task routine wrapper intermediary that
         //! ensures that `setStarted` is called once the task has actually started to run. The task then runs the user
         //! routine. This function may return before the new task begins to run.
         //
@@ -90,6 +90,15 @@ namespace Task {
         //! Resumes this task. Not started, running, and exited tasks take no action.
         //!
         void resume() override;
+
+        //! \brief delay the current task
+        //!
+        //! Delays, or sleeps, the current task by the supplied time interval. In non-preempting os implementations
+        //! the task will resume no earlier than expected but an exact wake-up time is not guaranteed.
+        //!
+        //! \param interval: delay time
+        //! \return status of the delay
+        Status _delay(Fw::TimeInterval interval) override;
 
         //! \brief return the underlying task handle (implementation specific)
         //! \return internal task handle representation

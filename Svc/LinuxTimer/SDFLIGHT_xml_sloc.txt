@@ -1,3 +1,0 @@
-    sloc     ncsl comments       ;,   file
-      21       19        0        4   /home/tcanham/source/leonardo-fsw/Svc/LinuxTimer/LinuxTimerComponentAi.xml
-      21       19        0        4  total 	[ncsl:sloc     86%]

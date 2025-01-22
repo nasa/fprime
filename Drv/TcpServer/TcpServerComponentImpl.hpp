@@ -43,9 +43,9 @@ class TcpServerComponentImpl : public TcpServerComponentBase, public SocketCompo
     // ----------------------------------------------------------------------
 
     /**
-     * \brief Configures the TcpClient settings but does not open the connection
+     * \brief Configures the TcpServer settings but does not open the connection
      *
-     * The TcpClientComponent needs to connect to a remote TCP server. This call configures the hostname, port and
+     * The TcpServerComponent needs to listen for a remote TCP client. This call configures the hostname, port and
      * send timeouts for that socket connection. This call should be performed on system startup before recv or send
      * are called. Note: hostname must be a dot-notation IP address of the form "x.x.x.x". DNS translation is left up
      * to the user.
@@ -55,12 +55,34 @@ class TcpServerComponentImpl : public TcpServerComponentBase, public SocketCompo
      * \param send_timeout_seconds: send timeout seconds component. Defaults to: SOCKET_TIMEOUT_SECONDS
      * \param send_timeout_microseconds: send timeout microseconds component. Must be less than 1000000. Defaults to:
      * SOCKET_TIMEOUT_MICROSECONDS
+     * \param buffer_size: size of the buffer to be allocated. Defaults to 1024.
      * \return status of the configure
      */
     SocketIpStatus configure(const char* hostname,
                              const U16 port,
                              const U32 send_timeout_seconds = SOCKET_SEND_TIMEOUT_SECONDS,
-                             const U32 send_timeout_microseconds = SOCKET_SEND_TIMEOUT_MICROSECONDS);
+                             const U32 send_timeout_microseconds = SOCKET_SEND_TIMEOUT_MICROSECONDS,
+			     FwSizeType buffer_size = 1024);
+
+    /**
+     * \brief is started
+     */
+     bool isStarted();
+
+    /**
+     * \brief startup the server socket for communications
+     *
+     * Start up the server socket by listening on a port. Note: does not accept clients, this is done in open to
+     * facilitate re-connection of clients.
+     */
+    SocketIpStatus startup();
+
+    /**
+     * \brief terminate the server socket
+     *
+     * Close the server socket. Should be done after all clients are shutdown and closed.
+     */
+    void terminate();
 
     /**
      * \brief get the port being listened on
@@ -81,11 +103,11 @@ class TcpServerComponentImpl : public TcpServerComponentBase, public SocketCompo
      * \brief returns a reference to the socket handler
      *
      * Gets a reference to the current socket handler in order to operate generically on the IpSocket instance. Used for
-     * receive, and open calls. This socket handler will be a TcpClient.
+     * receive, and open calls. This socket handler will be a TcpServer.
      *
      * \return IpSocket reference
      */
-    IpSocket& getSocketHandler();
+    IpSocket& getSocketHandler() override;
 
     /**
      * \brief returns a buffer to fill with data
@@ -95,7 +117,7 @@ class TcpServerComponentImpl : public TcpServerComponentBase, public SocketCompo
      *
      * \return Fw::Buffer to fill with data
      */
-    Fw::Buffer getBuffer();
+    Fw::Buffer getBuffer() override;
 
     /**
      * \brief sends a buffer to be filled with data
@@ -105,13 +127,17 @@ class TcpServerComponentImpl : public TcpServerComponentBase, public SocketCompo
      *
      * \return Fw::Buffer filled with data to send out
      */
-    void sendBuffer(Fw::Buffer buffer, SocketIpStatus status);
+    void sendBuffer(Fw::Buffer buffer, SocketIpStatus status) override;
 
     /**
      * \brief called when the IPv4 system has been connected
     */
-    void connected();
+    void connected() override;
 
+    /**
+     * \brief read from the socket, overridden to start and terminate the server socket
+     */
+    void readLoop() override;
 
   PRIVATE:
 
@@ -120,9 +146,9 @@ class TcpServerComponentImpl : public TcpServerComponentBase, public SocketCompo
     // ----------------------------------------------------------------------
 
     /**
-     * \brief Send data out of the TcpClient
+     * \brief Send data out of the TcpServer
      *
-     * Passing data to this port will send data from the TcpClient to whatever TCP server this component has connected
+     * Passing data to this port will send data from the TcpServer to whatever TCP client this component has connected
      * to. Should the socket not be opened or was disconnected, then this port call will return SEND_RETRY and critical
      * transmissions should be retried. SEND_ERROR indicates an unresolvable error. SEND_OK is returned when the data
      * has been sent.
@@ -134,9 +160,11 @@ class TcpServerComponentImpl : public TcpServerComponentBase, public SocketCompo
      * \param fwBuffer: buffer containing data to be sent
      * \return SEND_OK on success, SEND_RETRY when critical data should be retried and SEND_ERROR upon error
      */
-    Drv::SendStatus send_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer);
+    Drv::SendStatus send_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) override;
 
     Drv::TcpServerSocket m_socket; //!< Socket implementation
+
+    FwSizeType m_allocation_size; //!< Member variable to store the buffer size
 };
 
 }  // end namespace Drv

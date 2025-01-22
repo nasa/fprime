@@ -207,7 +207,7 @@ namespace Os {
             //!
             //! \return result of placement new, must be equivalent to `aligned_placement_new_memory`
             //!
-            static FileInterface* getDelegate(HandleStorage& aligned_placement_new_memory, const FileInterface* to_copy=nullptr);
+            static FileInterface* getDelegate(FileHandleStorage& aligned_placement_new_memory, const FileInterface* to_copy=nullptr);
     };
 
 
@@ -382,9 +382,27 @@ namespace Os {
         //! \param buffer: memory location to store data read from file
         //! \param size: size of data to read
         //! \param wait: `WAIT` to wait for data, `NO_WAIT` to return what is currently available
-        //! \return OP_OK on success otherwise error status
+
         //!
         Status read(U8* buffer, FwSignedSizeType &size, WaitType wait) override;
+
+        //! \brief read a line from the file using `\n` as the delimiter
+        //!
+        //! Reads a single line from the file including the terminating '\n'. This will return an error if no line is
+        //! found within the specified buffer size. In the case of EOF, the line is read without the terminating '\n'.
+        //!
+        //! In the case of an error, this function will seek to the original location in the file. Otherwise, the
+        //! pointer will point to the first character after the `\n` or EOF in the case of no `\n`.
+        //!
+        //! It is invalid to send a null buffer.
+        //! It is invalid to send a size less than 0.
+        //! It is an error if the file is not opened for reading.
+        //!
+        //! \param buffer: memory location to store data read from file
+        //! \param size: maximum size of buffer to store the new line
+        //! \param wait: `WAIT` to wait for data, `NO_WAIT` to return what is currently available
+        //! \return OP_OK on success otherwise error status
+        Status readline(U8* buffer, FwSignedSizeType &size, WaitType wait);
 
         //! \brief read data from this file into supplied buffer bounded by size
         //!
@@ -485,7 +503,7 @@ namespace Os {
         // opaque and thus normal allocation cannot be done. Instead, we allow the implementor to store then handle in
         // the byte-array here and set `handle` to that address for storage.
         //
-        alignas(FW_HANDLE_ALIGNMENT) HandleStorage m_handle_storage; //!< Storage for aligned FileHandle data
+        alignas(FW_HANDLE_ALIGNMENT) FileHandleStorage m_handle_storage; //!< Storage for aligned FileHandle data
         FileInterface& m_delegate; //!< Delegate for the real implementation
     };
 }

@@ -130,6 +130,17 @@ namespace Svc {
     );
     component.error();
   }
+  
+  void CmdSequencerComponentImpl::Sequence::Events ::
+    noRecords()
+  {
+    Fw::LogStringArg& logFileName = this->m_sequence.getLogFileName();
+    CmdSequencerComponentImpl& component = this->m_sequence.m_component;
+    component.log_WARNING_LO_CS_NoRecords(
+      logFileName
+    );
+    component.error();
+  }
 
 }
 

@@ -11,7 +11,7 @@ void wait_for_state_with_timeout(Os::Test::Task::TestTaskInfo &info, const Os::T
     // Loop waiting for transition in preparation for join (with timeout)
     FwSizeType i = 0;
     for (i = 0; i < (delay_ms * 100); i++) {
-        Os::Task::delay(Fw::Time(0, 10));
+        Os::Task::delay(Fw::TimeInterval(0, 10));
         if (info.stage() == stage) {
             break;
         }
@@ -43,6 +43,7 @@ void Os::Test::Task::Tester::Start::action(
         Os::Test::Task::Tester &state //!< The test state
 ) {
     std::shared_ptr<TestTaskInfo> new_task = std::make_shared<TestTaskInfo>();
+    new_task->m_state = Os::Task::State::STARTING;
     state.m_tasks.push_back(new_task);
 
 
@@ -150,7 +151,7 @@ void Os::Test::Task::Tester::Delay::action(
         Os::Test::Task::Tester &state //!< The test state
 ) {
     const U32 delay_micro_seconds = 5; //STest::Pick::lowerUpper(0, MAX_DELAY_MICRO_SECONDS);
-    Fw::Time delay(delay_micro_seconds / 1000000, delay_micro_seconds % 1000000);
+    Fw::TimeInterval delay(delay_micro_seconds / 1000000, delay_micro_seconds % 1000000);
 
     timeval start;
     timeval end;

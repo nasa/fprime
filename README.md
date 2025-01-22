@@ -1,12 +1,12 @@
-<p align="center">
-<img width="230em" src="docs/img/fprime-logo.png"><br/>
 <h2 align="center">A Flight-Proven, Multi-Platform, Open-Source Flight Software Framework</h2>
+<p align="center"><br/>
+<img width="200em" src="docs/img/fprime-logo.svg"><br/>
 </p>
 
 #
 F´ (F Prime) is a component-driven framework that enables rapid development and deployment of spaceflight and other embedded software applications. Originally developed at the [Jet Propulsion Laboratory](https://www.jpl.nasa.gov/), F´ has been successfully deployed on [several space applications](https://nasa.github.io/fprime/projects.html). It is tailored but not limited to small-scale spaceflight systems such as CubeSats, SmallSats, and instruments.
 
-**Please Visit the F´ Website:** [https://nasa.github.io/fprime](https://nasa.github.io/fprime/) for more information.
+**Please Visit the F´ Website:** [https://fprime.jpl.gov/](https://fprime.jpl.nasa.gov/) for more information.
 
 
 ## What does F´ provide
@@ -17,16 +17,16 @@ F´ (F Prime) is a component-driven framework that enables rapid development and
 - A growing collection of ready-to-use components
 - Testing tools for testing flight software at the unit and integration levels.
 
-Learn more about F' key features [here](https://nasa.github.io/fprime/features.html).
+Learn more about [F´ key features](https://fprime.jpl.nasa.gov/).
 
 
 ## System Requirements
 
 1. Linux, Windows with WSL, or macOS operating system
-2. git
+2. [git](https://git-scm.com/)
 3. [CMake 3.16+](https://cmake.org/download/). CLI tool must be available on the system path.
-4. Clang or GNU C and C++ compilers (e.g. gcc and g++)
-5. [Python 3.8+](https://www.python.org/downloads/), virtual environments, and PIP
+4. [Clang](https://clang.llvm.org/) or [GNU C and C++ compilers](https://gcc.gnu.org/) (e.g. gcc and g++)
+5. [Python 3.8+](https://www.python.org/downloads/), [virtual environments](https://docs.python.org/3/library/venv.html), and [PIP](https://pypi.org/project/pip/)
 
 
 ## Getting Started

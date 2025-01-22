@@ -34,7 +34,7 @@ namespace Fw {
             virtual ~QueuedComponentBase(); //!< Destructor
             void init(NATIVE_INT_TYPE instance); //!< initialization function
             Os::Queue m_queue; //!< queue object for active component
-            Os::Queue::QueueStatus createQueue(NATIVE_INT_TYPE depth, NATIVE_INT_TYPE msgSize);
+            Os::Queue::Status createQueue(FwSizeType depth, FwSizeType msgSize);
             virtual MsgDispatchStatus doDispatch()=0; //!< method to dispatch a single message in the queue.
 #if FW_OBJECT_TO_STRING == 1
             virtual void toString(char* str, NATIVE_INT_TYPE size); //!< dump string representation of component

@@ -1,8 +1,5 @@
-//
-// Created by Michael Starch on 4/12/24.
-//
-
 #include "Os/Stub/test/Task.hpp"
+#include <sys/time.h>
 namespace Os {
 namespace Stub {
 namespace Task {
@@ -44,6 +41,29 @@ Os::TaskHandle *TestTask::getHandle() {
 Os::TaskInterface::Status TestTask::start(const Os::TaskInterface::Arguments &arguments) {
     StaticData::data.lastCalled = StaticData::LastFn::START_FN;
     return StaticData::data.startStatus;
+}
+
+Os::Task::Status TestTask::_delay(Fw::TimeInterval interval) {
+    Os::Stub::Task::Test::StaticData::data.lastCalled = Os::Stub::Task::Test::StaticData::LastFn::DELAY_FN;
+    Os::Stub::Task::Test::StaticData::data.delay = interval;
+
+    // For testing stub, the default implementation of delay for a "task" is a busy wait. This acts as a synthetic
+    // albeit inefficient implementation.
+    timeval start;
+    timeval end;
+    if (gettimeofday(&start, nullptr) == 0) {
+        end.tv_usec = (start.tv_usec + interval.getUSeconds()) % 1000000;
+        end.tv_sec = start.tv_sec + interval.getSeconds() + (start.tv_usec + interval.getUSeconds())/1000000;
+        // Bounded busy wait
+        for (U64 wait = 0; wait < std::numeric_limits<U64>::max(); wait++) {
+            gettimeofday(&start, nullptr);
+            if (((start.tv_sec >= end.tv_sec) && (start.tv_usec >= end.tv_usec)) ||
+                (start.tv_sec > end.tv_sec)) {
+                break;
+            }
+        }
+    }
+    return Os::Stub::Task::Test::StaticData::data.delayStatus;
 }
 
 bool TestTask::isCooperative() {

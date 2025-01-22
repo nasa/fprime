@@ -91,7 +91,7 @@ namespace Svc {
   }
 
   void CmdSequencerComponentImpl::FPrimeSequence ::
-     nextRecord(Record& record)
+    nextRecord(Record& record)
   {
     Fw::SerializeStatus status = this->deserializeRecord(record);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
@@ -422,6 +422,12 @@ namespace Svc {
     Fw::SerializeBufferBase& buffer = this->m_buffer;
     const U32 numRecords = this->m_header.m_numRecords;
     Sequence::Record record;
+
+    if (numRecords == 0)
+    {
+      this->m_events.noRecords();
+      return false;
+    }
 
     // Deserialize all records
     for (NATIVE_UINT_TYPE recordNumber = 0; recordNumber < numRecords; recordNumber++) {

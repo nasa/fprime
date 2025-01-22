@@ -32,8 +32,8 @@ SystemResourcesTester ::~SystemResourcesTester() {}
 // ----------------------------------------------------------------------
 
 void SystemResourcesTester ::test_tlm(bool enabled) {
-    U32 count = 0;
-    if (Os::SystemResources::getCpuCount(count) == Os::SystemResources::SYSTEM_RESOURCES_OK) {
+    FwSizeType count = 0;
+    if (Os::Cpu::getCount(count) == Os::Generic::OP_OK) {
         this->invoke_to_run(0, 0);
         count = (count <= 16) ? count : 16;
         // All cascades expected
@@ -89,11 +89,11 @@ void SystemResourcesTester ::test_tlm(bool enabled) {
             default:
                 FwSizeType free = 0;
                 FwSizeType total = 0;
-                Os::SystemResources::MemUtil memory_info;
+                Os::Memory::Usage memory_info;
                 ASSERT_TLM_CPU_SIZE((enabled) ? 1 : 0);
 
                 // Check that the filesystem reads well before asserting telemetry
-                if (enabled && Os::SystemResources::getMemUtil(memory_info) == Os::SystemResources::SYSTEM_RESOURCES_OK) {
+                if (enabled && Os::Memory::getUsage(memory_info) == Os::Generic::OP_OK) {
                     ASSERT_TLM_MEMORY_USED_SIZE(1);
                     ASSERT_TLM_MEMORY_TOTAL_SIZE(1);
                     count += 2;

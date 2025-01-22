@@ -69,7 +69,7 @@ void teardownTopology(const TopologyState& state);
  *
  * The reference topology does not have a true 1Hz input clock for the rate group driver because it is designed to
  * operate across various computing endpoints (e.g. laptops) where a clear 1Hz source may not be easily and generically
- * achieved. This function mimics the cycling via a Task::delay(Fw::Time()) loop that manually invokes the ISR call
+ * achieved. This function mimics the cycling via a Task::delay(Fw::TimeInterval()) loop that manually invokes the ISR call
  * to the example block driver.
  *
  * This loop is stopped via a startSimulatedCycle call.
@@ -77,7 +77,7 @@ void teardownTopology(const TopologyState& state);
  * Note: projects should replace this with a component that produces an output port call at the appropriate frequency.
  *
  */
-void startSimulatedCycle(Fw::Time interval);
+void startSimulatedCycle(Fw::TimeInterval interval);
 
 /**
  * \brief stop the simulated cycle started by startSimulatedCycle

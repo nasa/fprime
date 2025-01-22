@@ -61,7 +61,7 @@ int main(int argc, char* argv[]) {
     // Time to exit the program.
     // Give time for threads to exit.
     (void) printf("Waiting for threads...\n");
-    Os::Task::delay(Fw::Time(1, 0));
+    Os::Task::delay(Fw::TimeInterval(1, 0));
 
     (void) printf("Exiting...\n");
 

@@ -8,7 +8,6 @@
 #include <Fw/Types/Serializable.hpp>
 #include <Fw/Types/String.hpp>
 #include <Fw/Types/StringTemplate.hpp>
-#include <Os/InterruptLock.hpp>
 #include <Os/IntervalTimer.hpp>
 //
 // Created by mstarch on 12/7/20.
@@ -657,9 +656,6 @@ TEST(PerformanceTest, SerPerfTest) {
     MySerializable out;
     SerializeTestBuffer buff;
 
-    Os::InterruptLock intLock;
-
-    intLock.lock();
     timer.start();
 
     I32 iterations = 1000000;
@@ -669,7 +665,6 @@ TEST(PerformanceTest, SerPerfTest) {
     }
 
     timer.stop();
-    intLock.unLock();
 
     printf("%d iterations took %d us (%f each).\n", iterations, timer.getDiffUsec(),
            static_cast<F32>(timer.getDiffUsec()) / static_cast<F32>(iterations));
@@ -679,10 +674,8 @@ TEST(PerformanceTest, StructCopyTest) {
     char buff[sizeof(TestStruct)];
     TestStruct ts;
 
-    Os::InterruptLock intLock;
     Os::IntervalTimer timer;
 
-    intLock.lock();
     timer.start();
 
     I32 iterations = 1000000;
@@ -699,7 +692,6 @@ TEST(PerformanceTest, StructCopyTest) {
     }
 
     timer.stop();
-    intLock.unLock();
 
     printf("%d iterations took %d us (%f each).\n", iterations, timer.getDiffUsec(),
            static_cast<F32>(timer.getDiffUsec()) / static_cast<F32>(iterations));
@@ -709,10 +701,8 @@ TEST(PerformanceTest, ClassCopyTest) {
     char buff[sizeof(MySerializable)];
     MySerializable ms;
 
-    Os::InterruptLock intLock;
     Os::IntervalTimer timer;
 
-    intLock.lock();
     timer.start();
 
     I32 iterations = 1000000;
@@ -722,7 +712,6 @@ TEST(PerformanceTest, ClassCopyTest) {
     }
 
     timer.stop();
-    intLock.unLock();
 
     printf("%d iterations took %d us (%f each).\n", iterations, timer.getDiffUsec(),
            static_cast<F32>(timer.getDiffUsec()) / static_cast<F32>(iterations));

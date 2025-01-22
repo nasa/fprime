@@ -13,3 +13,4 @@ type FwSizeType
 type FwTimeBaseStoreType
 type FwTimeContextStoreType
 type FwTlmPacketizeIdType
+type FwTraceIdType

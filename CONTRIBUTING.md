@@ -7,9 +7,6 @@ through how to contribute and the process contributions follow. Remember, we may
 your submission the best it can be. Fear not! Your submission is still valued! You may even comment on other submissions
 to help them improve.
 
-Make sure to review our [style guidelines](./docs/UsersGuide/dev/code-style.md) when developing code to ensure it meets
-the standards for F´´
-
 ## Ways of Contributing
 
 The best way to contribute to F´ is to remain positive and engaged. Just about every contribution needs some improvement
@@ -45,8 +42,7 @@ To contribute to the F´ framework directly, consider writing
 [needed documentation](https://github.com/nasa/fprime/issues?q=is%3Aissue+is%3Aopen+label%3ADocumentation) or starting
 with an [easy first issue](https://github.com/nasa/fprime/issues?q=is%3Aissue+is%3Aopen+label%3A%22Easy+First+Issue%22).
 When starting to modify F´ directly, ask questions, seek help, and be patient. Remember to review the project structure,
-development process, and helpful tips sections below. Following the
-[style guidelines](./docs/UsersGuide/dev/code-style.md) is a must for contributing code to F´.
+development process, and helpful tips sections below.
 
 ## Project Structure
 

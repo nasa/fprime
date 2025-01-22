@@ -26,6 +26,10 @@
 #include <inttypes.h>
 #include <stdint.h>
 
+#ifdef  __cplusplus
+extern "C" {
+#endif
+
 // Define what types and checks are supported by this platform
 #define FW_HAS_64_BIT 1                   //!< Architecture supports 64 bit integers
 #define FW_HAS_32_BIT 1                   //!< Architecture supports 32 bit integers
@@ -56,6 +60,12 @@ typedef uint64_t PlatformSizeType;
 typedef PlatformIntType PlatformAssertArgType;
 #define PRI_PlatformAssertArgType PRI_PlatformIntType
 
+typedef PlatformIntType PlatformTaskPriorityType;
+#define PRI_PlatformTaskPriorityType PRI_PlatformIntType
+
+typedef PlatformIntType PlatformQueuePriorityType;
+#define PRI_PlatformQueuePriorityType PRI_PlatformIntType
+
 // Linux/Darwin definitions for pointer have various sizes across platforms
 // and since these definitions need to be consistent we must ask the size.
 #ifndef PLATFORM_POINTER_CAST_TYPE_DEFINED
@@ -80,5 +90,10 @@ typedef uint8_t PlatformPointerCastType;
 #else
 #error "Expected __SIZEOF_POINTER__ to be one of 8, 4, 2, or 1"
 #endif
+#endif  // PLATFORM_POINTER_CAST_TYPE_DEFINED
+
+#ifdef  __cplusplus
+}
 #endif
+
 #endif  // PLATFORM_TYPES_H_

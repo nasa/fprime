@@ -1,4 +1,3 @@
-\page SvcGenericHubComponent Svc::GenericHub Component
 # Svc::GenericHub Generic Hub Component
 
 The Generic Hub component is an implementation of the F´ [hub pattern](https://nasa.github.io/fprime/UsersGuide/best/hub-pattern.html).

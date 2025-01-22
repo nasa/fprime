@@ -32,9 +32,9 @@ void Task::TaskRoutineWrapper::run(void* wrapper_pointer) {
     wrapper.m_task.m_lock.lock();
     Task::State state = wrapper.m_task.m_state;
     wrapper.m_task.m_lock.unlock();
-
+    FW_ASSERT(state != Task::State::NOT_STARTED);
     // Run once start code
-    if (state == Task::State::NOT_STARTED) {
+    if (state == Task::State::STARTING) {
         wrapper.m_task.m_lock.lock();
         wrapper.m_task.m_state = Task::State::RUNNING;
         wrapper.m_task.m_lock.unlock();
@@ -95,6 +95,7 @@ Task::Status Task::start(const Task::Arguments& arguments) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<TaskInterface*>(&this->m_handle_storage[0]));
     FW_ASSERT(arguments.m_routine != nullptr);
     this->m_name = arguments.m_name;
+    this->m_state = State::STARTING;
 
     Arguments wrapped_arguments = arguments;
     // Intercept routine and argument with the local wrapper
@@ -105,6 +106,9 @@ Task::Status Task::start(const Task::Arguments& arguments) {
 
     Task::Status status = this->m_delegate.start(wrapped_arguments);
     if (status == Task::Status::OP_OK) {
+        Task::m_lock.lock();
+        this->m_priority = wrapped_arguments.m_priority;
+        Task::m_lock.unlock();
         Task::s_taskMutex.lock();
         Task::s_numTasks++;
         Task::s_taskMutex.unlock();
@@ -131,7 +135,7 @@ Task::Status Task::join() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<TaskInterface*>(&this->m_handle_storage[0]));
     Task::Status status = Task::Status::INVALID_STATE;
     Task::State state = this->getState();
-    if (state == Task::RUNNING) {
+    if (state == Task::RUNNING || state == STARTING) {
         status = this->m_delegate.join();
         this->m_lock.lock();
         if (status == Task::Status::OP_OK) {
@@ -162,6 +166,11 @@ bool Task::isCooperative() {
     return this->m_delegate.isCooperative();
 }
 
+FwSizeType Task::getPriority() {
+    Os::ScopeLock lock(this->m_lock);
+    return this->m_priority;
+}
+
 TaskHandle* Task::getHandle() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<TaskInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate.getHandle();
@@ -172,6 +181,25 @@ FwSizeType Task::getNumTasks() {
     FwSizeType num_tasks = Task::s_numTasks;
     Task::s_taskMutex.unlock();
     return num_tasks;
+}
+
+Os::TaskInterface::Status Task::_delay(Fw::TimeInterval interval) {
+    FW_ASSERT(&this->m_delegate == reinterpret_cast<TaskInterface*>(&this->m_handle_storage[0]));
+    return this->m_delegate._delay(interval);
+}
+
+Os::TaskInterface::Status Task::delay(Fw::TimeInterval interval) {
+    return Task::getSingleton()._delay(interval);
+}
+
+void Task::init() {
+    // Force trigger on the fly singleton setup
+    (void) Task::getSingleton();
+}
+
+Task& Task::getSingleton() {
+    static Task s_singleton;
+    return s_singleton;
 }
 
 void Task::registerTaskRegistry(TaskRegistry* registry) {

@@ -36,7 +36,7 @@ namespace FppTest {
         }
 
         char getChar() {
-            return static_cast<char>(STest::Pick::lowerUpper(32, 127));
+            return static_cast<char>(STest::Pick::lowerUpper(32, 126));
         }
 
         void setString(char* buf, FwSizeType capacity, FwSizeType minLength) {

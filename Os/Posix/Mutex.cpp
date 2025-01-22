@@ -17,7 +17,7 @@ PosixMutex::PosixMutex() : Os::MutexInterface(), m_handle() {
     FW_ASSERT(status == 0, status);
 
     // set to normal mutex type
-    status = pthread_mutexattr_settype(&attribute, PTHREAD_MUTEX_NORMAL);
+    status = pthread_mutexattr_settype(&attribute, PTHREAD_MUTEX_ERRORCHECK);
     FW_ASSERT(status == 0, status);
 
     // set to check for priority inheritance

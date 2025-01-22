@@ -39,8 +39,8 @@ std::shared_ptr<std::string> get_test_filename(bool random) {
     if (random) {
         filename = buffer;
         size_t i = 0;
-        for (i = 0; i < STest::Pick::lowerUpper(1, (sizeof buffer) - 1); i++) {
-            char selected_character = static_cast<char>(STest::Pick::lowerUpper(32, 126));
+        for (i = 0; i < STest::Pick::lowerUpper(2, (sizeof buffer) - 1); i++) {
+            char selected_character = static_cast<char>(STest::Pick::lowerUpper(48, 126));
             selected_character =
                 (selected_character == '/') ? static_cast<char>(selected_character + 1) : selected_character;
             buffer[i] = selected_character;

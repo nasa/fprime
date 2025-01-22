@@ -111,6 +111,9 @@ namespace Svc {
                   const FwTimeContextStoreType seqTimeContext //!< The sequence file time context
               );
 
+              // No Records 
+              void noRecords();
+
             PRIVATE:
 
               //! The enclosing component

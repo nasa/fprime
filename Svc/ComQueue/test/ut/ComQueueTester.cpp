@@ -27,7 +27,7 @@ ComQueueTester ::ComQueueTester() : ComQueueGTestBase("Tester", MAX_HISTORY_SIZE
 ComQueueTester ::~ComQueueTester() {}
 
 void ComQueueTester ::dispatchAll() {
-    while (this->component.m_queue.getNumMsgs() > 0) {
+    while (this->component.m_queue.getMessagesAvailable() > 0) {
         this->component.doDispatch();
     }
 }
@@ -264,12 +264,12 @@ void ComQueueTester::testInternalQueueOverflow() {
     Fw::Buffer buffer(data, sizeof(data));
 
     const NATIVE_INT_TYPE queueNum = ComQueue::COM_PORT_COUNT;
-    const NATIVE_INT_TYPE msgCountMax = this->component.m_queue.getQueueSize();
+    const FwSizeType msgCountMax = this->component.m_queue.getDepth();
     QueueType overflow_type;
     NATIVE_INT_TYPE portNum;
 
     // fill the queue
-    for (NATIVE_INT_TYPE msgCount = 0; msgCount < msgCountMax; msgCount++) {
+    for (FwSizeType msgCount = 0; msgCount < msgCountMax; msgCount++) {
         sendByQueueNumber(buffer, queueNum, portNum, overflow_type);
         ASSERT_EQ(overflow_type, QueueType::BUFFER_QUEUE);
     }

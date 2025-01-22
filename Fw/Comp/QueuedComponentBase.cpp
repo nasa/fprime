@@ -30,14 +30,14 @@ namespace Fw {
     }
 #endif
 
-    Os::Queue::QueueStatus QueuedComponentBase::createQueue(NATIVE_INT_TYPE depth, NATIVE_INT_TYPE msgSize) {
+    Os::Queue::Queue::Status QueuedComponentBase::createQueue(FwSizeType depth, FwSizeType msgSize) {
 
         Os::QueueString queueName;
 #if FW_OBJECT_NAMES == 1
         queueName = this->m_objName;
 #else
         char queueNameChar[FW_QUEUE_NAME_BUFFER_SIZE];
-        (void)snprintf(queueNameChar,sizeof(queueNameChar),"CompQ_%d",Os::Queue::getNumQueues());
+        (void)snprintf(queueNameChar,sizeof(queueNameChar),"CompQ_%" PRI_FwSizeType,Os::Queue::getNumQueues());
         queueName = queueNameChar;
 #endif
     	return this->m_queue.create(queueName, depth, msgSize);

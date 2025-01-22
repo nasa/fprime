@@ -4,22 +4,22 @@
 
 #include "UdpTester.hpp"
 
-TEST(Nominal, BasicMessaging) {
+TEST(Nominal, UdpBasicMessaging) {
     Drv::UdpTester tester;
     tester.test_basic_messaging();
 }
 
-TEST(Nominal, BasicReceiveThread) {
+TEST(Nominal, UdpBasicReceiveThread) {
     Drv::UdpTester tester;
     tester.test_receive_thread();
 }
 
-TEST(Reconnect, MultiMessaging) {
+TEST(Reconnect, UdpMultiMessaging) {
     Drv::UdpTester tester;
     tester.test_multiple_messaging();
 }
 
-TEST(Reconnect, ReceiveThreadReconnect) {
+TEST(Reconnect, UdpReceiveThreadReconnect) {
     Drv::UdpTester tester;
     tester.test_advanced_reconnect();
 }

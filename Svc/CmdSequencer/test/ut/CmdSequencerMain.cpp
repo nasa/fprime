@@ -13,6 +13,7 @@
 #include "Svc/CmdSequencer/test/ut/Immediate.hpp"
 #include "Svc/CmdSequencer/test/ut/ImmediateEOS.hpp"
 #include "Svc/CmdSequencer/test/ut/InvalidFiles.hpp"
+#include "Svc/CmdSequencer/test/ut/NoRecords.hpp"
 #include "Svc/CmdSequencer/test/ut/NoFiles.hpp"
 #include "Svc/CmdSequencer/test/ut/Relative.hpp"
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/SequenceFiles.hpp"
@@ -316,6 +317,7 @@ TEST(InvalidFiles, USecFieldTooShort) {
   tester.USecFieldTooShort();
 }
 
+
 TEST(Mixed, AutoByCommand) {
   TEST_CASE(103.1.4,"Nominal Timed Relative Commands");
   Svc::Mixed::CmdSequencerTester tester;
@@ -390,6 +392,15 @@ TEST(JoinWait, JoinWaitWithActiveSeq) {
     tester.test_join_wait_with_active_seq();
 }
 
+TEST(InvalidFiles, RunNoRecords) {
+  Svc::NoRecords::CmdSequencerTester tester;
+  tester.RunNoRecords();
+}
+
+TEST(InvalidFiles, ValidateNoRecords) {
+  Svc::NoRecords::CmdSequencerTester tester;
+  tester.ValidateNoRecords();
+}
 
 int main(int argc, char **argv) {
   // Create ./bin directory for test files

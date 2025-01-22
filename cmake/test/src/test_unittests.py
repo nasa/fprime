@@ -167,6 +167,9 @@ def test_unittest_module_ut_info(UT_BUILD):
         "SignalGenTesterBase.cpp",
         "SignalGenTesterBase.hpp",
         "SignalGenTesterHelpers.cpp",
+        "SignalGen_DpReqTypeEnumAc.cpp",
+        "SignalGen_DpReqTypeEnumAc.hpp",
+        "SignalGen_DpReqTypeEnumAi.xml",
     ]
     actual_gen = [Path(source).name for source in generated]
     assert sorted(expected_gen) == sorted(

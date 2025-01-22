@@ -1,4 +1,3 @@
-\page SvcComQueueComponent Svc::ComQueue Component
 # Svc::ComQueue (Active Component)
 
 ## 1. Introduction

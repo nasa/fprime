@@ -9,7 +9,7 @@
     <import_port_type>Autocoders/Python/test/stress/TestPortAi.xml</import_port_type>
     <import_port_type>Autocoders/Python/test/stress/Test2PortAi.xml</import_port_type>
     <import_serializable_type>Autocoders/Python/test/stress/QuaternionSerializableAi.xml</import_serializable_type>
-    <comment>A stressfull component tester</comment>
+    <comment>A stressful component tester</comment>
     <ports>
         <port name="aport" data_type="Another::Test" kind="output" >
             <comment>

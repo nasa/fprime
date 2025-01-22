@@ -18,13 +18,34 @@ set(FPRIME_UT_TARGET_LIST "" CACHE INTERNAL "FPRIME_UT_TARGET_LIST: custom fprim
 set(FPRIME_AUTOCODER_TARGET_LIST "" CACHE INTERNAL "FPRIME_AUTOCODER_TARGET_LIST: custom fprime targets" FORCE)
 
 ####
+# Macro `skip_on_sub_build`:
+#
+# Skip this remaining code in the current function or file when executing in the context of a sub build. Sub builds
+# execute utility and setup functions in fprime. However, certain CMake functions are not appropriate in this context
+# and should be skipped.
+####
+macro(skip_on_sub_build)
+    if (DEFINED FPRIME_SUB_BUILD_TARGETS)
+        return()
+    endif()
+endmacro()
+
+####
 # Macro `restrict_platforms`:
 #
-# Restricts a CMakeLists.txt file to a given list of platforms. This prevents usage on platforms for which the module
-# is incapable of being used and replaces the historical pattern of an if-tree detecting unsupported platforms.
+# Restricts a CMakeLists.txt file to a given list of supported platforms, toolchains, and features. This prevents
+# usage on platforms/toolchains  for which the module is incapable of being used and replaces the historical pattern of
+# an if-tree detecting unsupported platforms in most circumstances.
+#
+# Valid inputs include names of platforms (e.g. Linux), names of specific toolchains (e.g. aarch64-linux), and platform
+# supported feature sets (e.g. SOCKETS, which inspects the FPRIME_HAS_SOCKETS flag).
 #
 # Usage:
 #    restrict_platforms(Linux Darwin) # Restricts to Linux and Darwin platforms
+#        -or-
+#    restrict_platforms(Posix) # Restricts to posix systems
+#        -or-
+#    restrict_platforms(SOCKETS) # Restricts to platforms where FPRIME_HAS_SOCKETS is TRUE
 #
 # Args:
 #   ARGN: list of platforms that are supported
@@ -32,6 +53,16 @@ set(FPRIME_AUTOCODER_TARGET_LIST "" CACHE INTERNAL "FPRIME_AUTOCODER_TARGET_LIST
 macro(restrict_platforms)
     set(__CHECKER ${ARGN})
 
+    # Determine if any of the restrict-tos maps to a fprime feature flag of the form FPRIME_HAS_XYZ as set in the
+    # platform support file. If this feature is set and true, then the restriction block may pass.
+    set(__HAS_SUPPORTED_FEATURE FALSE)
+    foreach (__RESTRICTION IN LISTS __CHECKER)
+        string(TOUPPER "${__RESTRICTION}" __RESTRICTION_UPPER)
+        if (FPRIME_HAS_${__RESTRICTION_UPPER})
+            set(__HAS_SUPPORTED_FEATURE TRUE)
+            break()
+        endif()
+    endforeach()
     # Each of these empty if blocks are the valid-case, that is, the platform is supported.
     # However, the reason why this is necessary is that this function is a macro and not a function.
     # Macros copy-paste the code into the calling context. Thus, all these valid cases want to avoid calling return.
@@ -40,39 +71,14 @@ macro(restrict_platforms)
 
     if (FPRIME_TOOLCHAIN_NAME IN_LIST __CHECKER)
     elseif(FPRIME_PLATFORM IN_LIST __CHECKER)
+    # New style FPRIME_HAS_<FEATURE>
+    elseif(__HAS_SUPPORTED_FEATURE)
+    # Old style posix FPRIME_USE_POSIX
     elseif("Posix" IN_LIST __CHECKER AND FPRIME_USE_POSIX)
     else()
         get_module_name("${CMAKE_CURRENT_LIST_DIR}")
         message(STATUS "Neither toolchain ${FPRIME_TOOLCHAIN_NAME} nor platform ${FPRIME_PLATFORM} supported for module ${MODULE_NAME}")
         append_list_property("${MODULE_NAME}" GLOBAL PROPERTY RESTRICTED_TARGETS)
-        return()
-    endif()
-endmacro()
-
-####
-# Macro `prevent_prescan`:
-#
-# Prevents a CMakeLists.txt file from being processed in the prescan phase of the project. Will generate fake targets
-# for all those targets specified to ensure that dependencies may be attached to these targets in the larger system.
-#
-# Usage:
-#    prevent_prescan(target1 target2 ...) # Generate fake targets and skip prescan
-#
-# Args:
-#   ARGN: list of targets to synthesize
-#####
-macro(prevent_prescan)
-    set(__CHECKER_TARGETS ${ARGN})
-    if (DEFINED FPRIME_PRESCAN)
-        foreach (__TARGET IN LISTS __CHECKER_TARGETS)
-            # Make prevent prescan safe in the case of multiple calls
-            if (NOT TARGET ${__TARGET})
-                add_custom_target(${__TARGET})
-            endif()
-        endforeach()
-        string(REPLACE ";" " " __SPACE_LIST_TARGETS "${__CHECKER_TARGETS}")
-        get_module_name("${CMAKE_CURRENT_LIST_DIR}")
-        message(STATUS "Skipping ${MODULE_NAME} during prescan, adding faux libraries: ${__SPACE_LIST_TARGETS}")
         return()
     endif()
 endmacro()
@@ -237,6 +243,9 @@ function(register_fprime_module)
     endif()
     # Explicit call to module register
     generate_library("${MODULE_NAME}" "${SOURCE_FILES}" "${MOD_DEPS}")
+    if (TARGET "${MODULE_NAME}")
+        add_dependencies("${MODULE_NAME}" config)
+    endif()
 endfunction(register_fprime_module)
 
 ####
@@ -368,7 +377,7 @@ endfunction(register_fprime_executable)
 #
 # ### Standard fprime Deployment Example ###
 #
-# To create a standard fprime deployment, an the user must call `register_fprime_deployment()` after defining
+# To create a standard fprime deployment, the user must call `register_fprime_deployment()` after defining
 # SOURCE_FILES and MOD_DEPS.
 #
 # ```
@@ -494,7 +503,7 @@ endfunction(register_fprime_ut)
 #
 # This function allows users to register custom build targets into the build system.  These targets are defined in a
 # CMake file and consist of three functions that operate on different parts of the build: global, per-module, and
-# per-deployment. See: [Targets](targets.md).
+# per-deployment. See: [Targets](./target/target.md).
 #
 # This function takes in either a file path to a CMake file defining targets, or an short include path that accomplishes
 # the same thing. Note: make sure the directory is on the CMake include path to use the second form. The supplied file
@@ -562,7 +571,6 @@ endmacro(register_fprime_list_helper)
 # 1. Call one of `autocoder_setup_for_individual_sources()` or `autocoder_setup_for_multiple_sources()` from file scope
 # 2. Implement `<autocoder name>_is_supported(AC_POSSIBLE_INPUT_FILE)` returning true the autocoder processes given source 
 # 3. Implement `<autocoder name>_setup_autocode AC_INPUT_FILE)` to run the autocoder on files filter by item 2. 
-# See: [Autocoders](dev/autocoder_integration.md).
 #
 # This function takes in either a file path to a CMake file defining an autocoder target, or an short include path that accomplishes
 # the same thing. Note: make sure the directory is on the CMake include path to use the second form.
@@ -570,7 +578,7 @@ endmacro(register_fprime_list_helper)
 # **TARGET_FILE_PATH:** include path or file path file defining above functions
 ####
 macro(register_fprime_build_autocoder TARGET_FILE_PATH TO_PREPEND)
-    # Normal registered targets don't run in prescan
+    # Normal registered targets don't run in pre-builds
     if (CMAKE_DEBUG_OUTPUT)
         message(STATUS "[autocoder] Registering custom build target autocoder: ${TARGET_FILE_PATH} prepend: ${TO_PREPEND}")
     endif()
@@ -612,7 +620,6 @@ function(require_fprime_implementation IMPLEMENTATION)
     endif()
     resolve_dependencies(IMPLEMENTATION "${IMPLEMENTATION}")
     resolve_dependencies(REQUESTER "${REQUESTER}")
-
     create_implementation_interface("${IMPLEMENTATION}")
     append_list_property("${IMPLEMENTATION}" GLOBAL PROPERTY "REQUIRED_IMPLEMENTATIONS")
     add_dependencies("${REQUESTER}" "${IMPLEMENTATION}")
@@ -635,7 +642,25 @@ function(register_fprime_implementation IMPLEMENTATION IMPLEMENTOR)
     create_implementation_interface("${IMPLEMENTATION}")
     append_list_property("${IMPLEMENTOR}" GLOBAL PROPERTY "${IMPLEMENTATION}_IMPLEMENTORS")
     append_list_property("${ARGN}" TARGET "${IMPLEMENTOR}" PROPERTY "REQUIRED_SOURCE_FILES")
-    add_dependencies("${IMPLEMENTATION}" "${IMPLEMENTOR}")
+endfunction()
+
+####
+# Adds a named os implementation.
+#
+# Assumptions:
+#   1. NAMES is a list of 1 or more named files separated by ;
+#   2. There exists a file named Default${FIRST_ITEM}, where FIRST_ITEM is the first element in NAME, in the same
+#       directory where this cmake function was called
+#   3. For each item e listed in NAMES, there exists a file called ${e}.hpp and ${e}.cpp in the same directory
+#       where this cmake function was called
+#
+# NAMES: list of named files to add to this module.  The first will be treated as the name of the module.
+#        i.e. File;Directory;FileSystem will contain the file, directory, and filesystem files in a module called File.
+# SUFFIX: suffix to implementation (e.g. Posix)
+# ARGN: extra MOD_DEPS to add (e.g. Fw_Time)
+####
+function(register_os_implementation NAMES SUFFIX)
+    add_fprime_supplied_os_module("${NAMES}" "${SUFFIX}" "${ARGN}")
 endfunction()
 
 ####
@@ -669,11 +694,10 @@ endfunction()
 
 #### Documentation links
 # Next Topics:
-#  - Setting Options: [Options](Options.md) are used to vary a CMake build.
-#  - Adding Deployments: [Deployments](deployment.md) create fprime builds.
+#  - Setting Options: [Options](options.md) are used to vary a CMake build.
 #  - Adding Modules: [Modules](module.md) register fprime Ports, Components, etc.
-#  - Creating Toolchains: [Toolchains](toolchain.md) setup standard CMake Cross-Compiling.
-#  - Adding Platforms: [Platforms](platform.md) help fprime set Cross-Compiling specific items.
-#  - Adding Targets: [Targets](targets.md) for help defining custom build targets
-#  - Implementation Packages Design: [Implementation Packages](/Design/package-implementor.md)
+#  - Creating Toolchains: [Toolchains](../../../user-manual/cmake/cmake-toolchains.md) setup standard CMake Cross-Compiling.
+#  - Adding Platforms: [Platforms](../../../user-manual/cmake/cmake-platforms.md) help fprime set Cross-Compiling specific items.
+#  - Adding Targets: [Targets](./target/target.md) for help defining custom build targets
+#  - Implementation Packages Design: [Implementation Packages](../../../user-manual/design/package-implementations.md)
 ####

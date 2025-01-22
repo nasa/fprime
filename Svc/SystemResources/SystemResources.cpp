@@ -33,7 +33,7 @@ SystemResources ::SystemResources(const char* const compName)
         m_cpu_prev[i].total = 0;
     }
 
-    if (Os::SystemResources::getCpuCount(m_cpu_count) == Os::SystemResources::SYSTEM_RESOURCES_ERROR) {
+    if (Os::Cpu::getCount(m_cpu_count) == Os::Generic::ERROR) {
         m_cpu_count = 0;
     }
 
@@ -82,7 +82,7 @@ void SystemResources ::ENABLE_cmdHandler(const FwOpcodeType opCode,
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
-F32 SystemResources::compCpuUtil(Os::SystemResources::CpuTicks current, Os::SystemResources::CpuTicks previous) {
+F32 SystemResources::compCpuUtil(Os::Cpu::Ticks current, Os::Cpu::Ticks previous) {
     F32 util = 100.0f;
     // Prevent divide by zero on fast-sample
     if ((current.total - previous.total) != 0) {
@@ -99,9 +99,9 @@ void SystemResources::Cpu() {
     F32 cpuAvg = 0;
 
     for (U32 i = 0; i < m_cpu_count && i < CPU_COUNT; i++) {
-        Os::SystemResources::SystemResourcesStatus status = Os::SystemResources::getCpuTicks(m_cpu[i], i);
+        Os::Cpu::Status status = Os::Cpu::getTicks(m_cpu[i], i);
         // Best-effort calculations and telemetry
-        if (status == Os::SystemResources::SYSTEM_RESOURCES_OK) {
+        if (status == Os::Generic::OP_OK) {
             F32 cpuUtil = compCpuUtil(m_cpu[i], m_cpu_prev[i]);
             cpuAvg += cpuUtil;
 
@@ -120,7 +120,7 @@ void SystemResources::Cpu() {
 }
 
 void SystemResources::Mem() {
-    if (Os::SystemResources::getMemUtil(m_mem) == Os::SystemResources::SYSTEM_RESOURCES_OK) {
+    if (Os::Memory::getUsage(m_mem) == Os::Generic::OP_OK) {
         this->tlmWrite_MEMORY_TOTAL(m_mem.total / 1024);
         this->tlmWrite_MEMORY_USED(m_mem.used / 1024);
     }

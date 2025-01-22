@@ -42,4 +42,13 @@ void Mutex::unLock() {
     Mutex::Status status = this->release();
     FW_ASSERT(status == Mutex::Status::OP_OK, status);
 }
+
+ScopeLock::ScopeLock(Mutex& mutex) : m_mutex(mutex) {
+    this->m_mutex.lock();
+}
+
+ScopeLock::~ScopeLock() {
+    this->m_mutex.release();
+}
+
 }  // namespace Os

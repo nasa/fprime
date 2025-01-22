@@ -23,8 +23,7 @@ namespace Drv {
 // ----------------------------------------------------------------------
 
 TcpClientComponentImpl::TcpClientComponentImpl(const char* const compName)
-    : TcpClientComponentBase(compName),
-      SocketComponentHelper() {}
+    : TcpClientComponentBase(compName) {}
 
 SocketIpStatus TcpClientComponentImpl::configure(const char* hostname,
                                                  const U16 port,
@@ -35,7 +34,6 @@ SocketIpStatus TcpClientComponentImpl::configure(const char* hostname,
     // Check that ensures the configured buffer size fits within the limits fixed-width type, U32                                                
     FW_ASSERT(buffer_size <= std::numeric_limits<U32>::max(), static_cast<FwAssertArgType>(buffer_size));                                                   
     m_allocation_size = buffer_size; // Store the buffer size
-    (void)startup();
     return m_socket.configure(hostname, port, send_timeout_seconds, send_timeout_microseconds);
 }
 
@@ -54,7 +52,16 @@ Fw::Buffer TcpClientComponentImpl::getBuffer() {
 }
 
 void TcpClientComponentImpl::sendBuffer(Fw::Buffer buffer, SocketIpStatus status) {
-    Drv::RecvStatus recvStatus = (status == SOCK_SUCCESS) ? RecvStatus::RECV_OK : RecvStatus::RECV_ERROR;
+    Drv::RecvStatus recvStatus = RecvStatus::RECV_ERROR;
+    if (status == SOCK_SUCCESS) {
+        recvStatus = RecvStatus::RECV_OK;
+    }
+    else if (status == SOCK_NO_DATA_AVAILABLE) {
+        recvStatus = RecvStatus::RECV_NO_DATA;
+    }
+    else {
+        recvStatus = RecvStatus::RECV_ERROR;
+    }
     this->recv_out(0, buffer, recvStatus);
 }
 

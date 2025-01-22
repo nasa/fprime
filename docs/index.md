@@ -1,46 +1,39 @@
----
-title: "F´ A Flight Software and Embedded Systems Framework"
-layout: default
----
+# Documentation
 
-F´ (or F Prime) is a software framework for the rapid development and deployment of embedded systems and spaceflight applications.
-Originally developed at NASA's Jet Propulsion Laboratory, F´ is open-source software that has been successfully deployed
-for several space applications. It has been used for but is not limited to, CubeSats, SmallSats, instruments, and
-deployables.
 
-F´ has the following features:
+<div class="grid cards" markdown>
 
-- Component architecture with well-defined interfaces
-- C++ framework providing core capabilities like queues, threads, and operating-system abstraction
-- Tools for designing systems and automatically generating code from systems design
-- A standard library of flight-worthy components
-- Testing tools for unit and system-level testing
+-   <span class="card-title">__Tutorials__</span> *Learning-oriented*
 
-## F´ Information and External Resources
+    ---
 
-- [Features](./features.md)
-- [Projects](./projects.md)
-- [Upcoming Events](./upcoming.md)
-- [GitHub Repository](https://github.com/nasa/fprime)
-- [Discussions](https://github.com/nasa/fprime/discussions)
-- [Issues](https://github.com/nasa/fprime/issues)
-- [Community GitHub Organization](https://github.com/fprime-community)
-- [User Guide](./UsersGuide/guide.md)
+    Tutorials walk through the essentials of F Prime development, starting with the canonical HelloWorld example and progressing to cross-compiling and deploying on hardware.
 
-## F´ Documentation
+    [Visit Tutorials](tutorials/index.md){ .md-button .md-button--primary }
 
-### F´ Release
-- [Latest Documentation](./latest.md)
-- [v3.4.0 Documentation](https://nasa.github.io/fprime/v3.4.0)
-- [v3.3.0 Documentation](https://nasa.github.io/fprime/v3.3.0)
-- [v3.2.0 Documentation](https://nasa.github.io/fprime/v3.2.0)
-- [v3.1.0 Documentation](https://nasa.github.io/fprime/v3.1.0)
-- [v3.0.0 Documentation](https://nasa.github.io/fprime/v3.0.0)
-- [v2.1.0 Documentation](https://nasa.github.io/fprime/v2.1.0)
-- [v2.0.1 Documentation](https://nasa.github.io/fprime/v2.0.1)
-- [v2.0.0 Documentation](https://nasa.github.io/fprime/v2.0.0)
-- [v1.5 Series Documentation](https://nasa.github.io/fprime/v1.5)
+-   <span class="card-title">__User Manual__</span> *Understanding-oriented*
 
-## Further References
+    ---
 
-To start with F´, follow the [installation guide](./INSTALL.md). Then follow our [tutorials](Tutorials/README.md), or inspect our [reference applications](https://github.com/fprime-community#references).
+    The User Manual dives into F Prime design philosophy and architectural principles, providing a deep understanding of how the framework operates.
+
+    [Visit User Manual](user-manual/index.md){ .md-button .md-button--primary }
+
+-   <span class="card-title">__How To__</span> *Task-oriented*
+
+    ---
+
+    How-To guides offer step-by-step instructions for specific development tasks in F Prime.
+
+    [Visit How Tos](how-to/index.md){ .md-button .md-button--primary }
+
+-   <span class="card-title">__Reference__</span> *Information-oriented*
+
+    ---
+
+    Technical reference for the F Prime C++ API, CMake API, FPP language specification and more.
+
+    [Visit Reference](reference/index.md){ .md-button .md-button--primary }
+
+
+</div>

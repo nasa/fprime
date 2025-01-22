@@ -6,8 +6,6 @@
 #include <Fw/Types/Assert.hpp>
 
 namespace Os {
-    Console* Console::s_singleton;
-
     Console::Console() : ConsoleInterface(), Fw::Logger(), m_handle_storage(), m_delegate(*ConsoleInterface::getDelegate(m_handle_storage)) {}
 
     Console::~Console() {

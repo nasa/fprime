@@ -3,11 +3,10 @@
 // \brief tests using stub implementation for Os::Task interface testing
 // ======================================================================
 #include <gtest/gtest.h>
-#include "Os/Models/Models.hpp"
+#include "Fw/Types/String.hpp"
+#include "Os/Stub/test/Task.hpp"
 #include "Os/test/ut/task/CommonTests.hpp"
 #include "Os/test/ut/task/RulesHeaders.hpp"
-#include "Os/Stub/test/Task.hpp"
-#include "Os/Models/Models.hpp"
 
 using namespace Os::Stub::Task::Test;
 
@@ -117,7 +116,7 @@ TEST_F(Interface, GetHandle) {
 TEST_F(Interface, Delay) {
     Os::Task task;
     StaticData::data.delayStatus = Os::Task::Status::DELAY_ERROR;
-    ASSERT_EQ(Os::Task::delay(Fw::Time(0, 1)), StaticData::data.delayStatus);
+    ASSERT_EQ(Os::Task::delay(Fw::TimeInterval(0, 1)), StaticData::data.delayStatus);
     ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::DELAY_FN);
 }
 

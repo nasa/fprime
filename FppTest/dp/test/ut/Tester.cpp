@@ -63,6 +63,7 @@ Tester::~Tester() {}
 // ----------------------------------------------------------------------
 
 void Tester::schedIn_OK() {
+    this->clearHistory();
     this->invoke_to_schedIn(0, 0);
     this->component.doDispatch();
     ASSERT_PRODUCT_REQUEST_SIZE(6);
@@ -83,6 +84,8 @@ void Tester::schedIn_OK() {
 void Tester::productRecvIn_Container1_SUCCESS() {
     Fw::Buffer buffer;
     FwSizeType expectedNumElts;
+    // Clear the history
+    this->clearHistory();
     // Check the record size
     constexpr FwSizeType recordSize = DpTestComponentBase::SIZE_OF_U32Record_RECORD;
     ASSERT_EQ(recordSize, sizeof(FwDpIdType) + sizeof(U32));
@@ -107,12 +110,15 @@ void Tester::productRecvIn_Container1_SUCCESS() {
 }
 
 void Tester::productRecvIn_Container1_FAILURE() {
+    this->clearHistory();
     productRecvIn_CheckFailure(DpTest::ContainerId::Container1, this->container1Buffer);
 }
 
 void Tester::productRecvIn_Container2_SUCCESS() {
     Fw::Buffer buffer;
     FwSizeType expectedNumElts;
+    // Clear the history
+    this->clearHistory();
     // Check the record size
     constexpr FwSizeType recordSize = DpTestComponentBase::SIZE_OF_DataRecord_RECORD;
     ASSERT_EQ(recordSize, sizeof(FwDpIdType) + DpTest_Data::SERIALIZED_SIZE);
@@ -137,12 +143,15 @@ void Tester::productRecvIn_Container2_SUCCESS() {
 }
 
 void Tester::productRecvIn_Container2_FAILURE() {
+    this->clearHistory();
     productRecvIn_CheckFailure(DpTest::ContainerId::Container2, this->container2Buffer);
 }
 
 void Tester::productRecvIn_Container3_SUCCESS() {
     Fw::Buffer buffer;
     FwSizeType expectedNumElts;
+    // Clear the history
+    this->clearHistory();
     // Compute the data element size
     const FwSizeType arraySize = this->u8ArrayRecordData.size();
     const FwSizeType dataEltSize = sizeof(FwSizeStoreType) + arraySize;
@@ -178,12 +187,15 @@ void Tester::productRecvIn_Container3_SUCCESS() {
 }
 
 void Tester::productRecvIn_Container3_FAILURE() {
+    this->clearHistory();
     productRecvIn_CheckFailure(DpTest::ContainerId::Container3, this->container3Buffer);
 }
 
 void Tester::productRecvIn_Container4_SUCCESS() {
     Fw::Buffer buffer;
     FwSizeType expectedNumElts;
+    // Clear the history
+    this->clearHistory();
     // Compute the data element size
     const FwSizeType arraySize = this->u32ArrayRecordData.size();
     const FwSizeType dataEltSize = sizeof(FwSizeStoreType) + arraySize * sizeof(U32);
@@ -220,11 +232,14 @@ void Tester::productRecvIn_Container4_SUCCESS() {
 
 void Tester::productRecvIn_Container4_FAILURE() {
     productRecvIn_CheckFailure(DpTest::ContainerId::Container4, this->container4Buffer);
+    this->clearHistory();
 }
 
 void Tester::productRecvIn_Container5_SUCCESS() {
     Fw::Buffer buffer;
     FwSizeType expectedNumElts;
+    // Clear the history
+    this->clearHistory();
     // Compute the data element size
     const FwSizeType arraySize = this->dataArrayRecordData.size();
     const FwSizeType dataEltSize = sizeof(FwSizeStoreType) + arraySize * DpTest_Data::SERIALIZED_SIZE;
@@ -260,12 +275,15 @@ void Tester::productRecvIn_Container5_SUCCESS() {
 }
 
 void Tester::productRecvIn_Container5_FAILURE() {
+    this->clearHistory();
     productRecvIn_CheckFailure(DpTest::ContainerId::Container5, this->container5Buffer);
 }
 
 void Tester::productRecvIn_Container6_SUCCESS() {
     Fw::Buffer buffer;
     FwSizeType expectedNumElts;
+    // Clear the history
+    this->clearHistory();
     // Check the record size
     constexpr FwSizeType recordSize = DpTestComponentBase::SIZE_OF_StringRecord_RECORD;
     ASSERT_EQ(recordSize, sizeof(FwDpIdType) + Fw::StringBase::STATIC_SERIALIZED_SIZE(DpTest_stringSize));
@@ -293,12 +311,15 @@ void Tester::productRecvIn_Container6_SUCCESS() {
 }
 
 void Tester::productRecvIn_Container6_FAILURE() {
+    this->clearHistory();
     productRecvIn_CheckFailure(DpTest::ContainerId::Container6, this->container6Buffer);
 }
 
 void Tester::productRecvIn_Container7_SUCCESS() {
     Fw::Buffer buffer;
     FwSizeType expectedNumElts;
+    // Clear the history
+    this->clearHistory();
     // Check the record size
     const FwSizeType arraySize = DpTest::STRING_ARRAY_RECORD_ARRAY_SIZE;
     const FwSizeType recordSize = DpTestComponentBase::SIZE_OF_StringArrayRecord_RECORD(arraySize);
@@ -337,6 +358,7 @@ void Tester::productRecvIn_Container7_SUCCESS() {
 }
 
 void Tester::productRecvIn_Container7_FAILURE() {
+    this->clearHistory();
     productRecvIn_CheckFailure(DpTest::ContainerId::Container7, this->container7Buffer);
 }
 

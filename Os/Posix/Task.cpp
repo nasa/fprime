@@ -32,8 +32,13 @@ namespace Task {
     PlatformIntType set_stack_size(pthread_attr_t& attributes, const Os::Task::Arguments& arguments) {
         PlatformIntType status = PosixTaskHandle::SUCCESS;
         FwSizeType stack = arguments.m_stackSize;
-        // Check for stack size multiple of page size
+// Check for stack size multiple of page size or skip when the function
+// is unavailable.
+#ifdef _SC_PAGESIZE
         long page_size = sysconf(_SC_PAGESIZE);
+#else
+        long page_size = -1; // Force skip and warning
+#endif
         if (page_size <= 0) {
             Fw::Logger::log(
                     "[WARNING] %s could not determine page size %s. Skipping stack-size check.\n",
@@ -106,8 +111,10 @@ namespace Task {
 
     PlatformIntType set_cpu_affinity(pthread_attr_t& attributes, const Os::Task::Arguments& arguments) {
         PlatformIntType status = 0;
-// Feature set check for _GNU_SOURCE before using GNU only features
-#ifdef _GNU_SOURCE
+// pthread_attr_setaffinity_np is a non-POSIX function. Notably, it is not available on musl.
+// Limit its use to builds that involve glibc, on Linux, with _GNU_SOURCE defined.
+// That's the circumstance in which we expect this feature to work.
+#if defined(TGT_OS_TYPE_LINUX) && defined(__GLIBC__) && defined(_GNU_SOURCE)
         const FwSizeType affinity = arguments.m_cpuAffinity;
         cpu_set_t cpu_set;
         CPU_ZERO(&cpu_set);
@@ -209,6 +216,39 @@ namespace Task {
     void PosixTask::resume() {
         FW_ASSERT(0);
     }
+
+
+    Os::Task::Status PosixTask::_delay(Fw::TimeInterval interval) {
+        Os::Task::Status task_status = Os::Task::OP_OK;
+        timespec sleep_interval;
+        sleep_interval.tv_sec = interval.getSeconds();
+        sleep_interval.tv_nsec = interval.getUSeconds() * 1000;
+
+        timespec remaining_interval;
+        remaining_interval.tv_sec = 0;
+        remaining_interval.tv_nsec = 0;
+
+        while (true) {
+            PlatformIntType status = nanosleep(&sleep_interval, &remaining_interval);
+            // Success, return ok
+            if (0 == status) {
+                break;
+            }
+            // Interrupted, reset sleep and iterate
+            else if (EINTR == errno) {
+                sleep_interval = remaining_interval;
+                continue;
+            }
+            // Anything else is an error
+            else {
+                task_status = Os::Task::Status::DELAY_ERROR;
+                break;
+            }
+        }
+        return task_status;
+    }
+
+
 } // end namespace Task
 } // end namespace Posix
 } // end namespace Os

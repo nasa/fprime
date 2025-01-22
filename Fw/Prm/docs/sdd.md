@@ -1,4 +1,3 @@
-\page FwPrmGetPrmSet Fw::PrmGet / PrmSet Ports
 # Fw::PrmGet / PrmSet Ports
 
 ## 1. Introduction

@@ -4,10 +4,9 @@
 // ======================================================================
 #include <gtest/gtest.h>
 #include "Os/File.hpp"
-#include "Os/Models/Models.hpp"
+#include "Os/Stub/test/File.hpp"
 #include "Os/test/ut/file/CommonTests.hpp"
 #include "Os/test/ut/file/RulesHeaders.hpp"
-#include "Os/Stub/test/File.hpp"
 
 namespace Os {
 namespace Test {
@@ -189,24 +188,6 @@ TEST_F(Interface, Write) {
     ASSERT_EQ(Os::Stub::File::Test::StaticData::data.writeBuffer, buffer);
     ASSERT_EQ(Os::Stub::File::Test::StaticData::data.writeSize, original_size);
     ASSERT_EQ(Os::Stub::File::Test::StaticData::data.writeWait, Os::File::WaitType::WAIT);
-}
-
-// Ensure that FPP shadow enumeration matches
-TEST(FppTypes, FileStatusEnum) {
-    for (FwIndexType i = static_cast<FwIndexType>(Os::File::Status::OP_OK); i < static_cast<FwIndexType>(Os::File::Status::MAX_STATUS); i++){
-        Os::File::Status status = static_cast<Os::File::Status>(i);
-        Os::FileStatus fpp_status = static_cast<Os::FileStatus::T>(status);
-        ASSERT_TRUE(fpp_status.isValid());
-    }
-}
-
-// Ensure that FPP shadow enumeration matches
-TEST(FppTypes, FileModeEnum) {
-    for (FwIndexType i = static_cast<FwIndexType>(Os::File::Mode::OPEN_CREATE); i < static_cast<FwIndexType>(Os::File::Mode::MAX_OPEN_MODE); i++){
-        Os::File::Mode mode = static_cast<Os::File::Mode>(i);
-        Os::FileMode fpp_mode = static_cast<Os::FileMode::T>(mode);
-        ASSERT_TRUE(fpp_mode.isValid());
-    }
 }
 
 int main(int argc, char **argv) {

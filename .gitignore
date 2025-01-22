@@ -2,6 +2,7 @@ build/
 build*/
 gtest/
 docs-cache/
+CMakePresets.json
 
 AutoXML/
 test_harness/src/test_harness-C/application.out
@@ -83,3 +84,6 @@ depend
 /venv/
 
 Packet-Views
+docs/reference/api/cpp
+docs/reference/api/cmake
+temp_dir/
