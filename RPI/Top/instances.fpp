@@ -252,12 +252,18 @@ module RPI {
     };
     """
 
+    phase Fpp.ToCpp.Phases.configComponents """
+    // Configure socket server if and only if there is a valid specification
+    if (state.hostName != nullptr && state.portNumber != 0) {
+        RPI::comm.configure(state.hostName, state.portNumber);
+    }
+    """
+
     phase Fpp.ToCpp.Phases.startTasks """
     // Initialize socket server if and only if there is a valid specification
     if (state.hostName != nullptr && state.portNumber != 0) {
-        Os::TaskString name("ReceiveTask");
         // Uplink is configured for receive so a socket task is started
-        RPI::comm.configure(state.hostName, state.portNumber);
+        Os::TaskString name("ReceiveTask");
         RPI::comm.start(
             name,
             ConfigConstants::RPI_comm::PRIORITY,
