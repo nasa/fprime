@@ -41,7 +41,7 @@ Port Data Type | Name | Direction | Kind | Usage
 
 The `Svc::ActiveLogger` component provides an event logging function for the software. The framework autocoder allows
 developers to specify a set of events in the component XML
-(see [Events](https://nasa.github.io/fprime/UsersGuide/user/cmd-evt-chn-prm.html#Events)). For these components, the
+(see [Events](../../../docs/user-manual/overview/cmd-evt-chn-prm.md). For these components, the
 autocoder will add an `Fw::Log` output port to send events in serialized form. The ActiveLogger receives these port
 calls and provides commands to filter these events. The filtered events are sent to other components such as the ground
 interface. 
