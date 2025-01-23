@@ -9,10 +9,11 @@ namespace Os {
 namespace Stub {
 namespace Mutex {
 
-void StubConditionVariable::wait(Os::Mutex& mutex) {
+StubConditionVariable::Status StubConditionVariable::pend(Os::Mutex& mutex) {
     // This stub implementation can only be used in deployments that never need to wait on any ConditionVariable.
     // Trigger an assertion if anyone ever tries to wait.
     FW_ASSERT(0);
+    return StubConditionVariable::Status::ERROR_OTHER;
 }
 void StubConditionVariable::notify() {
     // Nobody is waiting, because we assert if anyone tries to wait.
@@ -27,6 +28,6 @@ ConditionVariableHandle* StubConditionVariable::getHandle() {
     return &m_handle;
 }
 
-}
-}
-}
+}  // namespace Mutex
+}  // namespace Stub
+}  // namespace Os
