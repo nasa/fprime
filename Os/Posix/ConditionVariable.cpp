@@ -5,6 +5,7 @@
 #include "Os/Posix/ConditionVariable.hpp"
 #include "Fw/Types/Assert.hpp"
 #include "Os/Posix/Mutex.hpp"
+#include "Os/Posix/error.hpp"
 
 namespace Os {
 namespace Posix {
@@ -18,16 +19,10 @@ PosixConditionVariable::~PosixConditionVariable() {
     (void)pthread_cond_destroy(&this->m_handle.m_condition);
 }
 
-Status PosixConditionVariable::pend(Os::Mutex& mutex) {
+PosixConditionVariable::Status PosixConditionVariable::pend(Os::Mutex& mutex) {
     PosixMutexHandle* mutex_handle = reinterpret_cast<PosixMutexHandle*>(mutex.getHandle());
     PlatformIntType status = pthread_cond_wait(&this->m_handle.m_condition, &mutex_handle->m_mutex_descriptor);
-    if (status == EPERM) {
-        return Status::ERROR_MUTEX_NOT_HELD;
-    } else if (status != 0) {
-        return Status::ERROR_OTHER;
-    } else {
-        return Status::OP_OK;
-    }
+    return posix_status_to_conditional_status(status);
 }
 void PosixConditionVariable::notify() {
     FW_ASSERT(pthread_cond_signal(&this->m_handle.m_condition) == 0);
