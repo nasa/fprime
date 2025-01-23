@@ -210,7 +210,9 @@ namespace Svc {
             }
 
             // reset the buffer for deserializing the entry
-            entryBuffer.setBuffLen(static_cast<Fw::Serializable::SizeType>(size));
+            Fw::SerializeStatus serStat = entryBuffer.setBuffLen(static_cast<Fw::Serializable::SizeType>(size));
+            // should always fit
+            FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat,serStat);
             entryBuffer.resetDeser();
 
             // deserialization after this point should always work, since
@@ -290,8 +292,12 @@ namespace Svc {
                 // reset the buffer for serializing the entry
                 entryBuffer.resetSer();
                 // serialize the file directory index
-                entryBuffer.serialize(this->m_stateFileData[entry].entry.dir);
-                entryBuffer.serialize(this->m_stateFileData[entry].entry.record);
+                Fw::SerializeStatus serStat = entryBuffer.serialize(this->m_stateFileData[entry].entry.dir);
+                // Should always fit
+                FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat,serStat);
+                serStat = entryBuffer.serialize(this->m_stateFileData[entry].entry.record);
+                // Should always fit
+                FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat,serStat);
                 // write the entry
                 FwSignedSizeType size = entryBuffer.getBuffLength();
                 stat = stateFile.write(buffer, size);
@@ -310,7 +316,7 @@ namespace Svc {
         FW_ASSERT(this->m_stateFileData);
 
         // We will append state to the existing state file
-        // FIXME: Have to handle case where state file has partially transmitted
+        // TODO: Have to handle case where state file has partially transmitted
         // state already
 
         // open the state file
@@ -323,13 +329,17 @@ namespace Svc {
         }
 
         // buffer for writing entries
-        BYTE buffer[sizeof(FwIndexType)+DpRecord::SERIALIZED_SIZE];
+        BYTE buffer[sizeof(entry.dir)+sizeof(entry.record)];
         Fw::ExternalSerializeBuffer entryBuffer(buffer, sizeof(buffer));
         // reset the buffer for serializing the entry
         entryBuffer.resetSer();
         // serialize the file directory index
-        entryBuffer.serialize(entry.dir);
-        entryBuffer.serialize(entry.record);
+        Fw::SerializeStatus serStat = entryBuffer.serialize(entry.dir);
+        // should fit
+        FW_ASSERT(serStat == Fw::FW_SERIALIZE_OK,serStat);
+        serStat = entryBuffer.serialize(entry.record);
+        // should fit
+        FW_ASSERT(serStat == Fw::FW_SERIALIZE_OK,serStat);
         // write the entry
         FwSignedSizeType size = entryBuffer.getBuffLength();
         stat = stateFile.write(buffer, size);
