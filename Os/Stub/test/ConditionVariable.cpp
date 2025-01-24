@@ -23,6 +23,8 @@ TestConditionVariable::~TestConditionVariable() {
 TestConditionVariable::Status TestConditionVariable::pend(Os::Mutex& mutex) {
     StaticData::data.lastCalled = StaticData::LastFn::WAIT_FN;
     StaticData::data.passed = &mutex;
+    // Need to take mutex because we expect conditional var wait API to grab mutex
+    mutex.take();
     return TestConditionVariable::Status::OP_OK;
 }
 
