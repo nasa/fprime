@@ -63,5 +63,5 @@ cd fprime/Ref/build-artifacts/<platform>/bin/
 - The F´ utility's build command can build individual components too.
 - The 'generate' command can take a toolchain argument for quickly generating a cross-compile `fprime-util generate raspberrypi` for example.
 
-Further work with the F´ utility can be found in the [HelloWorld tutorial](../docs/documentation/tutorials/) tutorial.
+Further work with the F´ utility can be found in the [HelloWorld tutorial](../docs/tutorials/index.md) tutorial.
 

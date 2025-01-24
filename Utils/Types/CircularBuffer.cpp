@@ -16,10 +16,6 @@
 #include <Fw/Types/Assert.hpp>
 #include <Utils/Types/CircularBuffer.hpp>
 
-#ifdef CIRCULAR_DEBUG
-    #include <Fw/Logger/Logger.hpp>
-#endif
-
 namespace Types {
 
 CircularBuffer :: CircularBuffer() :
@@ -166,15 +162,4 @@ void CircularBuffer ::clear_high_water_mark() {
     m_high_water_mark = 0;
 }
 
-#ifdef CIRCULAR_DEBUG
-void CircularBuffer :: print() {
-    NATIVE_UINT_TYPE idx = m_head_idx;
-    Fw::Logger::log("Ring: ");
-    for (NATIVE_UINT_TYPE i = 0; i < m_allocated_size; ++i) {
-        Fw::Logger::log("%02x ", m_store[idx]);
-        idx = advance_idx(idx);
-    }
-    Fw::Logger::log("\n");
-}
-#endif
 } //End Namespace Types

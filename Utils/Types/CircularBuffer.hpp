@@ -20,8 +20,6 @@
 #include <FpConfig.hpp>
 #include <Fw/Types/Serializable.hpp>
 
-//#define CIRCULAR_DEBUG
-
 namespace Types {
 
 class CircularBuffer {
@@ -134,9 +132,6 @@ class CircularBuffer {
          */
         void clear_high_water_mark();
 
-#ifdef CIRCULAR_DEBUG
-        void print();
-#endif
     PRIVATE:
         /**
          * Returns a wrap-advanced index into the store.

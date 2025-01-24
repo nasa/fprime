@@ -17,13 +17,13 @@ F´ has the following features:
 
 ## Hello, World!
 
-New users should start with the [Hello World tutorial](../tutorials-hello-world/docs/hello-world//). This tutorial walks through the F´ installation process, how to create a new project and how to design, implement, and test a basic F Prime application.
+New users should start with the [Hello World tutorial](../../tutorials-hello-world/docs/hello-world.md). This tutorial walks through the F´ installation process, how to create a new project and how to design, implement, and test a basic F Prime application.
 
 
 ## Further References
 
 Here are some additional references to continue learning about F´:
 
-- [More tutorials](../documentation/tutorials/)
-- [F´ User Manual](../documentation/user-manual/)
+- [More tutorials](../tutorials/index.md)
+- [F´ User Manual](../user-manual/index.md)
 - [Installation and Troubleshooting](./installing-fprime.md)
