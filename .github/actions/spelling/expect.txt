@@ -259,6 +259,7 @@ dps
 DPWRITER
 DRAINBUFFERS
 drv
+drvtcpserversocket
 dsdl
 dspal
 Dstate
