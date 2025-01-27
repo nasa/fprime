@@ -27,7 +27,7 @@ TEST(Interface, WaitNotHeld) {
     Os::ConditionVariable variable;
     auto status = variable.pend(mutex);
     ASSERT_EQ(Os::ConditionVariable::Status::OP_OK, status);
-    ASSERT_EQ(Os::Stub::Mutex::Test::StaticData::data.lastCalled, Os::Stub::Mutex::Test::StaticData::TAKE_FN);
+    ASSERT_EQ(Os::Stub::Mutex::Test::StaticData::data.lastCalled, Os::Stub::Mutex::Test::StaticData::CONSTRUCT_FN);
     ASSERT_EQ(Os::Stub::ConditionVariable::Test::StaticData::data.lastCalled,
               Os::Stub::ConditionVariable::Test::StaticData::WAIT_FN);
 }

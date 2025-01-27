@@ -11,9 +11,8 @@ namespace Mutex {
 
 StubConditionVariable::Status StubConditionVariable::pend(Os::Mutex& mutex) {
     // This stub implementation can only be used in deployments that never need to wait on any ConditionVariable.
-    // Trigger an assertion if anyone ever tries to wait.
-    FW_ASSERT(0);
-    return StubConditionVariable::Status::ERROR_OTHER;
+    // Return error if anyone ever tries to wait.
+    return StubConditionVariable::Status::ERROR_NOT_IMPLEMENTED;
 }
 void StubConditionVariable::notify() {
     // Nobody is waiting, because we assert if anyone tries to wait.
