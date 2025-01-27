@@ -5,8 +5,8 @@ connects and sends/receives bytes. It implements the callback formation (shown b
 and producing the callback port call. Since it is a server, it must startup and listen for client connections. Designed
 for single client communication, it does not permit a queue of connecting clients.
 
-For more information on the supporting TCP implementation see: [Drv::TcpServerSocket]().
-For more information on the ByteStreamModelDriver see: Drv::ByteStreamDriverModel.
+For more information on the supporting TCP implementation see: [Drv::TcpServerSocket](../../Ip/docs/sdd.md#drvtcpserversocket-class).
+For more information on the ByteStreamModelDriver see: [Drv::ByteStreamDriverModel](../..//ByteStreamDriverModel/docs/sdd.md).
 
 ## Design
 
