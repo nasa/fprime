@@ -1,17 +1,21 @@
 # Data Types and Data Structures: Primitive Types, Enums, Arrays, and Serializables
 
 This guide will describe the types available in F´.  F´ defines both useful short names for primitive types as well as
-a set of autocoded complex types.  The types describe here are available to both the flight software and the ground
+a set of autocoded complex types.  The types described here are available to both the flight software and the ground
 system unless otherwise noted. Included in this document:
 
-- [Primitive Types](#primitive-types)
-- [Polymorphic Type](#polymorphic-type)
-- [Complex Types](#complex-types)
+- [Data Types and Data Structures: Primitive Types, Enums, Arrays, and Serializables](#data-types-and-data-structures-primitive-types-enums-arrays-and-serializables)
+  - [Primitive Types](#primitive-types)
+  - [Polymorphic Type](#polymorphic-type)
+    - [Setting Polymorphic Values](#setting-polymorphic-values)
+    - [Getting Polymorphic Values](#getting-polymorphic-values)
+    - [Checking Polymorphic Values](#checking-polymorphic-values)
+  - [Complex Types](#complex-types)
     - [Enums](#enums)
     - [Arrays](#arrays)
     - [Serializables](#serializables)
     - [C++ Classes](#c-classes)
-- [Conclusion](#conclusion)
+  - [Conclusion](#conclusion)
 
 ## Primitive Types
 
