@@ -6,7 +6,7 @@
 # UT_SOURCE_FILES: list of source files for unit tests
 #
 # More information in the F´ CMake API documentation:
-# https://nasa.github.io/fprime/UsersGuide/api/cmake/API.html
+# https://fprime.jpl.nasa.gov/latest/docs/user-manual/cmake/cmake-api/
 #
 ####
 

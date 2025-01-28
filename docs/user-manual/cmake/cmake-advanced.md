@@ -78,9 +78,6 @@ provide libraries and executables to the system.
 Top-level deployment directories (`Ref` folder) use the deployment templates. It is there to setup
 the entry point to the build system.
 
-For more on Modules, see: [module.md](https://nasa.github.io/fprime/UsersGuide/api/cmake/module.html)
-For more on Deployments, see: [deployment.md](https://nasa.github.io/fprime/UsersGuide/api/cmake/deployment-CMakeLists.txt-template.html)
-
 
 ## Cross-Compiling With CMake
 

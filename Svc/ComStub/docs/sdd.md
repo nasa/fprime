@@ -3,7 +3,7 @@
 ## 1. Introduction
 
 `Svc::ComStub` is an example  F´ component implementing the
-[communication adapter interface](https://nasa.github.io/fprime/Design/communication-adapter-interface.html) required
+[communication adapter interface](../../../docs/user-manual/design/communication-adapter-interface.md) required
 to work with F´ communication components. Projects and users may choose to replace this with a complete communication
 implementation (i.e. a component managing a specific radio) once ready. As long as any communication implementation
 implements the communication adapter interface it can drop in and work with the standard F´ uplink and downlink setup.
@@ -38,7 +38,7 @@ used alongside the other F´ communication components (`Svc::Framer`, `Svc::Defr
 
 
 `Svc::ComStub` implements the
-[communication adapter interface](https://nasa.github.io/fprime/Design/communication-adapter-interface.html) by
+[communication adapter interface](../../../docs/user-manual/design/communication-adapter-interface.md) by
 delegation to a `Drv::ByteStreamDriverModel` as a way to transmit data and receive data. Other communication
 adapter implementations may follow-suite.
 
@@ -72,7 +72,7 @@ be useful
 
 `Svc::ComStub` has only stores a boolean `m_reinitialize` indicating when it should send `Fw::Success::SUCCESS` in
 response to a driver reconnection event. This is to implement the  Communication Adapter Protocol of a
-[communication adapter interface](https://nasa.github.io/fprime/Design/communication-adapter-interface.html#Communication_Adapter_Protocol).
+[communication adapter interface](../../../docs/user-manual/design/communication-adapter-interface.md).
 
 ### 4.3. Port Handlers
 
