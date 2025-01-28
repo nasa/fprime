@@ -46,27 +46,26 @@ class SocketComponentHelper {
     /**
      * \brief start the socket read task to start producing data
      *
-     * Starts up the socket reading task and opens socket. This should be called before send calls are expected to
-     * work. Will connect to the previously configured port and host. priority, stack, and cpuAffinity are provided
-     * to the Os::Task::start call.
+     * Starts up the socket reading task and when reopen was configured, will open up the socket. 
+     * 
+     * \note: users must now use `setAutomaticOpen` to configure the socket to automatically open connections. The
+     *        default behavior is to automatically open connections.
      *
      * \param name: name of the task
-     * \param reconnect: automatically reconnect socket when closed. Default: true.
      * \param priority: priority of the started task. See: Os::Task::start. Default: TASK_DEFAULT, not prioritized
      * \param stack: stack size provided to the task. See: Os::Task::start. Default: TASK_DEFAULT, posix threads default
      * \param cpuAffinity: cpu affinity provided to task. See: Os::Task::start. Default: TASK_DEFAULT, don't care
      */
     void start(const Fw::StringBase &name,
-                         const bool reconnect = true,
-                         const Os::Task::ParamType priority = Os::Task::TASK_DEFAULT,
-                         const Os::Task::ParamType stack = Os::Task::TASK_DEFAULT,
-                         const Os::Task::ParamType cpuAffinity = Os::Task::TASK_DEFAULT);
+               const Os::Task::ParamType priority = Os::Task::TASK_DEFAULT,
+               const Os::Task::ParamType stack = Os::Task::TASK_DEFAULT,
+               const Os::Task::ParamType cpuAffinity = Os::Task::TASK_DEFAULT);
 
     /**
      * \brief open the socket for communications
      *
-     * Typically the socket read task will open the connection and keep it open. However, in cases where the read task
-     * will not be started, this function may be used to open the socket.
+     * Typically the socket read task will open the connection and keep it open. However, in cases where the socket is
+     * not automatically opening, this call will open the socket. This will block until the socket is opened.
      *
      * Note: this just delegates to the handler
      *
@@ -85,13 +84,15 @@ class SocketComponentHelper {
      */
     bool isOpened();
 
-     /**
-     * \brief Re-open port if it has been disconnected
+    /**
+     * \brief set socket to automatically open connections when true, or not when false
      *
-     *
-     * \return status of reconnect, SOCK_SUCCESS for success, something else on error
+     * When passed `true`, this instructs the socket to automatically open a socket and reopen socket failed connections. When passed `false`
+     * the user must explicitly call the `open` method to open the socket initially and when a socket fails.  
+     * 
+     * \param auto_open: true to automatically open and reopen sockets, false otherwise
      */
-    SocketIpStatus reconnect();
+    void setAutomaticOpen(bool auto_open);
 
     /**
      * \brief send data to the IP socket from the given buffer
@@ -209,10 +210,23 @@ class SocketComponentHelper {
      */
     static void readTask(void* pointer);
 
+  PRIVATE:
+    /**
+     * \brief Re-open port if it has been disconnected
+     *
+     * This function is a helper to handle the situations where this code needs to safely reopen a socket. User code should
+     * connect using the `open` call. This is for opening/reopening in situations where automatic open is performed
+     * within this socket helper.
+     *
+     * \return status of reconnect, SOCK_SUCCESS for success, something else on error
+     */
+    SocketIpStatus reopen();
+
+  PROTECTED:
     Os::Task m_task;
     Os::Mutex m_lock;
     SocketDescriptor m_descriptor;
-    bool m_reconnect = false; //!< Force reconnection
+    bool m_reopen = true; //!< Force reopen on disconnect
     bool m_stop = true; //!< Stops the task when set to true
     OpenState m_open = OpenState::NOT_OPEN; //!< Have we successfully opened
 };

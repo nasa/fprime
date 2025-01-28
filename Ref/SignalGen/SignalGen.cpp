@@ -135,16 +135,9 @@ namespace Ref {
 
         // if a Data product is being generated, store a record
         if (this->m_dpInProgress) {
-            // printf("DP1: %u %u %lu %u\n",
-            //     this->m_dpContainer.getBuffer().getSize(),
-            //     SignalInfo::SERIALIZED_SIZE,
-            //     this->m_dpContainer.getDataSize(),
-            //     this->m_dpContainer.getBuffer().getSerializeRepr().getBuffLeft()
-            //     );
             Fw::SerializeStatus stat = this->m_dpContainer.serializeRecord_DataRecord(sigInfo);
             this->m_currDp++;
             this->m_dpBytes += SignalInfo::SERIALIZED_SIZE;
-            // printf("DP2: %u %u %lu\n",this->m_dpContainer.getBuffer().getSize(),this->m_dpBytes,this->m_dpContainer.getDataSize());
             // check for full data product
             if (Fw::SerializeStatus::FW_SERIALIZE_NO_ROOM_LEFT == stat) {
                 this->log_WARNING_LO_DpRecordFull(this->m_currDp,this->m_dpBytes);

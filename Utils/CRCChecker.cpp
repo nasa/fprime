@@ -10,12 +10,12 @@
 // ======================================================================
 
 #include <FpConfig.hpp>
-#include <cstdio> // For snprintf
 #include <Utils/CRCChecker.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Os/File.hpp>
 #include <Os/FileSystem.hpp>
 #include <Utils/Hash/Hash.hpp>
+#include <Fw/Types/StringUtils.hpp>
 
 namespace Utils {
 
@@ -32,7 +32,6 @@ namespace Utils {
     Os::File::Status stat;
     Utils::Hash hash;
     U32 checksum;
-    I32 s_stat;
     FwSignedSizeType int_file_size;
     FwSignedSizeType bytes_to_read;
     FwSignedSizeType bytes_to_write;
@@ -90,8 +89,8 @@ namespace Utils {
     hash.final(checksum);
 
     // open checksum file
-    s_stat = snprintf(hashFilename,  CRC_MAX_FILENAME_SIZE, "%s%s", fname, HASH_EXTENSION_STRING);
-    FW_ASSERT(s_stat > 0);
+    FW_ASSERT(CRC_MAX_FILENAME_SIZE > (Fw::StringUtils::string_length(fname, CRC_MAX_FILENAME_SIZE) +  sizeof HASH_EXTENSION_STRING));
+    Fw::StringUtils::format(hashFilename, CRC_MAX_FILENAME_SIZE, "%s%s", fname, HASH_EXTENSION_STRING);
 
     stat = f.open(hashFilename, Os::File::OPEN_WRITE);
     if(stat != Os::File::OP_OK)
@@ -120,8 +119,8 @@ namespace Utils {
       char hashFilename[CRC_MAX_FILENAME_SIZE];
       FW_ASSERT(fname != nullptr);
       // open checksum file
-      I32 s_stat = snprintf(hashFilename,  CRC_MAX_FILENAME_SIZE, "%s%s", fname, HASH_EXTENSION_STRING);
-      FW_ASSERT(s_stat > 0);
+      FW_ASSERT(CRC_MAX_FILENAME_SIZE > (Fw::StringUtils::string_length(fname, CRC_MAX_FILENAME_SIZE) + sizeof HASH_EXTENSION_STRING));
+      Fw::StringUtils::format(hashFilename,  CRC_MAX_FILENAME_SIZE, "%s%s", fname, HASH_EXTENSION_STRING);
 
       stat = f.open(hashFilename, Os::File::OPEN_READ);
       if(stat != Os::File::OP_OK)

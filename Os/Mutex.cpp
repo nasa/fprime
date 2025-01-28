@@ -48,7 +48,7 @@ ScopeLock::ScopeLock(Mutex& mutex) : m_mutex(mutex) {
 }
 
 ScopeLock::~ScopeLock() {
-    this->m_mutex.release();
+    this->m_mutex.unLock();
 }
 
 }  // namespace Os

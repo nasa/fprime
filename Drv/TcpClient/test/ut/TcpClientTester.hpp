@@ -51,6 +51,8 @@ namespace Drv {
       // Tests
       // ----------------------------------------------------------------------
 
+      void setup_helper(Drv::TcpServerSocket& server, Drv::SocketDescriptor& server_fd, bool recv_thread, bool reconnect);
+
       void test_basic_messaging();
 
       void test_multiple_messaging();
@@ -58,6 +60,10 @@ namespace Drv {
       void test_receive_thread();
 
       void test_advanced_reconnect();
+
+      void test_no_automatic_send_connection();
+
+      void test_no_automatic_recv_connection();
 
       void test_with_loop(U32 iterations, bool recv_thread=false);
 
