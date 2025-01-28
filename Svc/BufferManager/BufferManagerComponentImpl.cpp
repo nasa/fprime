@@ -87,7 +87,7 @@ namespace Svc {
       // however, empty non-null buffers could potentially be previously allocated
       // buffers with their size reduced. the user is allowed to make buffers smaller.
       if (fwBuffer.getData() == nullptr && fwBuffer.getSize() == 0) {
-          this->log_WARNING_HI_ZeroSizeBuffer();
+          this->log_WARNING_HI_NullEmptyBuffer();
           this->m_emptyBuffs++;
           return;
       }
