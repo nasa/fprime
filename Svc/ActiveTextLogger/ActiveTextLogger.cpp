@@ -72,19 +72,14 @@ namespace Svc {
                 severityString = "SEVERITY ERROR";
                 break;
         }
-
-        // TODO: Add calling task id to format string
-        char textStr[FW_INTERNAL_INTERFACE_STRING_MAX_SIZE];
-
-        (void) snprintf(textStr,
-                        FW_INTERNAL_INTERFACE_STRING_MAX_SIZE,
-                        "EVENT: (%" PRI_FwEventIdType ") (%" PRI_FwTimeBaseStoreType ":%" PRIu32 ",%" PRIu32 ") %s: %s\n",
-                        id, static_cast<FwTimeBaseStoreType>(timeTag.getTimeBase()), timeTag.getSeconds(), timeTag.getUSeconds(),
-                        severityString, text.toChar());
+        // Overflow is allowed and truncation accepted
+        Fw::InternalInterfaceString intText;
+        (void) intText.format("EVENT: (%" PRI_FwEventIdType ") (%" PRI_FwTimeBaseStoreType ":%" PRIu32 ",%" PRIu32 ") %s: %s\n",
+                              id, static_cast<FwTimeBaseStoreType>(timeTag.getTimeBase()), timeTag.getSeconds(), timeTag.getUSeconds(),
+                              severityString, text.toChar());
 
         // Call internal interface so that everything else is done on component thread,
         // this helps ensure consistent ordering of the printed text:
-        Fw::InternalInterfaceString intText(textStr);
         this->TextQueue_internalInterfaceInvoke(intText);
     }
 

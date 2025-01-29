@@ -138,7 +138,7 @@ namespace Svc {
         // A new file should have been opened from the previous loop iteration:
         if( j > 0 ) {
           ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
-          ASSERT_TRUE(strcmp(static_cast<char*>(comLogger.m_fileName), fileName) == 0 );
+          ASSERT_TRUE(strcmp(comLogger.m_fileName.toChar(), fileName) == 0 );
         }
 
         // Make sure we got a closed file event:
@@ -261,7 +261,7 @@ namespace Svc {
         // A new file should have been opened from the previous loop iteration:
         if( j > 0 ) {
           ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
-          ASSERT_TRUE(strcmp(static_cast<char*>(comLogger.m_fileName), fileName) == 0 );
+          ASSERT_TRUE(strcmp(comLogger.m_fileName.toChar(), fileName) == 0 );
         }
 
         // Make sure we got a closed file event:
@@ -323,7 +323,7 @@ namespace Svc {
       memset(filePrefix, 0, sizeof(filePrefix));
       snprintf(filePrefix, sizeof(filePrefix), "illegal/fname?;\\*");
 
-      strncpy(static_cast<char*>(comLogger.m_filePrefix), filePrefix, sizeof(comLogger.m_filePrefix));
+      comLogger.m_filePrefix = filePrefix;
 
       ASSERT_TRUE(comLogger.m_fileMode == ComLogger::CLOSED);
       ASSERT_EVENTS_SIZE(0);
@@ -358,7 +358,7 @@ namespace Svc {
       memset(filePrefix, 0, sizeof(filePrefix));
       snprintf(filePrefix, sizeof(filePrefix), "good_");
 
-      strncpy(comLogger.m_filePrefix, filePrefix, sizeof(comLogger.m_filePrefix));
+      comLogger.m_filePrefix = filePrefix;
 
       ASSERT_TRUE(comLogger.m_fileMode == ComLogger::CLOSED);
 
@@ -381,8 +381,7 @@ namespace Svc {
       memset(fileName, 0, sizeof(fileName));
       memset(filePrefix, 0, sizeof(filePrefix));
       snprintf(filePrefix, sizeof(filePrefix), "illegal/fname?;\\*");
-
-      strncpy(static_cast<char*>(comLogger.m_filePrefix), filePrefix, sizeof(comLogger.m_filePrefix));
+      comLogger.m_filePrefix = filePrefix;
 
       ASSERT_TRUE(comLogger.m_fileMode == ComLogger::CLOSED);
 
@@ -628,7 +627,7 @@ namespace Svc {
       // A new file should have been opened from the previous loop iteration:
       if( j > 0 ) {
         ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
-        ASSERT_TRUE(strcmp(static_cast<char*>(comLogger.m_fileName), fileName) == 0 );
+        ASSERT_TRUE(strcmp(comLogger.m_fileName.toChar(), fileName) == 0 );
       }
 
       // Make sure we got a closed file event:

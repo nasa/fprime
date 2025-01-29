@@ -13,7 +13,7 @@
 #include <Drv/LinuxSpiDriver/LinuxSpiDriverComponentImpl.hpp>
 #include <FpConfig.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <Fw/Types/StringUtils.hpp>
+#include <Fw/Types/FileNameString.hpp>
 #include <cstdint>
 #include <unistd.h>
 #include <cstdio>
@@ -76,10 +76,11 @@ namespace Drv {
         NATIVE_INT_TYPE ret;
 
         // Open:
-        char devName[256];
-        Fw::StringUtils::format(devName, sizeof devName, "/dev/spidev%d.%d", device, select);
+        Fw::FileNameString devString;
+        Fw::FormatStatus formatStatus = devString.format("/dev/spidev%d.%d", device, select);
+        FW_ASSERT(formatStatus == Fw::FormatStatus::SUCCESS);
 
-        fd = ::open(devName, O_RDWR);
+        fd = ::open(devString.toChar(), O_RDWR);
         if (fd == -1) {
             this->log_WARNING_HI_SPI_OpenError(device,select,fd);
             return false;

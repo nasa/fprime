@@ -6,7 +6,7 @@
 #ifndef SVCLOGFILE_HPP_
 #define SVCLOGFILE_HPP_
 
-#include <Fw/Types/String.hpp>
+#include <Fw/Types/FileNameString.hpp>
 #include <Os/File.hpp>
 #include <Os/FileSystem.hpp>
 
@@ -55,7 +55,7 @@ namespace Svc {
         // ----------------------------------------------------------------------
 
         // The name of the file to text logs to:
-        Fw::String m_fileName;
+        Fw::FileNameString m_fileName;
 
         // The file to write text logs to:
         Os::File m_file;

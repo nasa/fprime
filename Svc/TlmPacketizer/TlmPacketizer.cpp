@@ -221,7 +221,6 @@ void TlmPacketizer ::TlmRecv_handler(const NATIVE_INT_TYPE portNum,
         // check if current packet has this channel
         if (entryToUse->packetOffset[pkt] != -1) {
             // get destination address
-            // printf("PK %d CH: %d\n",this->m_fillBuffers[pkt].id,id);
             this->m_lock.lock();
             this->m_fillBuffers[pkt].updated = true;
             this->m_fillBuffers[pkt].latestTime = timeTag;
