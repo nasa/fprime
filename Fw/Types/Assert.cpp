@@ -13,7 +13,8 @@
 namespace Fw {
 
 void defaultPrintAssert(const CHAR* msg) {
-    Fw::Logger::log("%s", msg);
+    //Fw::Logger::log("%s", msg);
+    fprintf(stderr, "%s", msg);
 }
 
 void defaultReportAssert(FILE_NAME_ARG file,

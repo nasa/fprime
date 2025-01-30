@@ -37,7 +37,7 @@ namespace Fw {
     }
 
 #if FW_OBJECT_TO_STRING == 1
-    const char* getToStringFormatString() {
+    const char* InputSerializePort::getToStringFormatString() {
         return "Input Serial Port: %s %s->(%s)";
     }
 #endif

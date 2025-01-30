@@ -26,7 +26,7 @@ namespace Fw {
     }
 
 #if FW_OBJECT_TO_STRING == 1
-    const char* getToStringFormatString() {
+    const char* InputPortBase::getToStringFormatString() {
         return "Input Port: %s %s->(%s)";
     }
 #endif

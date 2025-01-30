@@ -19,6 +19,8 @@ register_os_implementation(Memory Test_Stub)
 register_os_implementation(Queue Test_Stub)
 register_os_implementation(RawTime Test_Stub) # add Fw_Buffer here?
 
+# Use the error console for this
+choose_fprime_implementation(Os_Console Os_Console_PosixError)
 #### File Stub Testing ####
 set(UT_SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/ut/StubFileTests.cpp"

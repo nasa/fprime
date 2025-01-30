@@ -3,6 +3,7 @@
 // \brief tests using stub implementation for Os::File interface testing
 // ======================================================================
 #include <gtest/gtest.h>
+#include "Os/Os.hpp"
 #include "Os/File.hpp"
 #include "Os/Stub/test/File.hpp"
 #include "Os/test/ut/file/CommonTests.hpp"
@@ -191,6 +192,7 @@ TEST_F(Interface, Write) {
 }
 
 int main(int argc, char **argv) {
+    Os::init();
     ::testing::InitGoogleTest(&argc, argv);
     STest::Random::seed();
     return RUN_ALL_TESTS();

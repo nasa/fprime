@@ -170,6 +170,7 @@ endmacro(fprime_initialize_build_system)
 # registered.
 ####
 function(fprime_setup_included_code)
+    choose_fprime_implementation(Fw_StringFormat snprintf-format FRAMEWORK_DEFAULT) # Default choice is snprintf
     # Must be done before code is registered but after custom target registration
     setup_global_targets()
     # For BUILD_TESTING builds then set up libraries that support testing

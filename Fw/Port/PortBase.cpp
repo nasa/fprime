@@ -77,7 +77,7 @@ namespace Fw {
 #endif // FW_PORT_TRACING
 
 #if FW_OBJECT_TO_STRING == 1
-    const char* getToStringFormatString() {
+    const char* PortBase::getToStringFormatString() {
         return "Port: %s %s->(%s)";
     }
 

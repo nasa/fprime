@@ -35,7 +35,7 @@ namespace Fw {
 #endif
 
 #if FW_OBJECT_TO_STRING == 1
-    const char* getToStringFormatString() {
+    const char* OutputPortBase::getToStringFormatString() {
         return "Output Port: %s %s->(%s)";
     }
 #endif

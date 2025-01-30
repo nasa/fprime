@@ -21,7 +21,7 @@ namespace Fw {
 
 #if FW_OBJECT_TO_STRING == 1
     const char* QueuedComponentBase::getToStringFormatString() {
-        return "QueueComp: %s", this->m_objName.toChar());
+        return "QueueComp: %s";
     }
 #endif
 
