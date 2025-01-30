@@ -1,7 +1,8 @@
 #include <FpConfig.hpp>
 #include <Fw/Types/Assert.hpp>
+#include <Fw/Types/ExternalString.hpp>
+#include <Fw/Logger/Logger.hpp>
 #include <cassert>
-#include <cstdio>
 
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
 #define fileIdFs "Assert: 0x%08" PRIx32 ":%" PRI_PlatformUIntType
@@ -12,7 +13,7 @@
 namespace Fw {
 
 void defaultPrintAssert(const CHAR* msg) {
-    (void)fprintf(stderr, "%s\n", msg);
+    Fw::Logger::log("%s", msg);
 }
 
 void defaultReportAssert(FILE_NAME_ARG file,
@@ -26,36 +27,37 @@ void defaultReportAssert(FILE_NAME_ARG file,
                          FwAssertArgType arg6,
                          CHAR* destBuffer,
                          NATIVE_INT_TYPE buffSize) {
+    Fw::ExternalString external(destBuffer, static_cast<Fw::ExternalString::SizeType>(buffSize));
     switch (numArgs) {
         case 0:
-            (void)snprintf(destBuffer, static_cast<size_t>(buffSize), fileIdFs, file, lineNo);
+            (void)external.format(fileIdFs, file, lineNo);
             break;
         case 1:
-            (void)snprintf(destBuffer, static_cast<size_t>(buffSize), fileIdFs " %" PRI_FwAssertArgType, file, lineNo, arg1);
+            (void)external.format(fileIdFs " %" PRI_FwAssertArgType, file, lineNo, arg1);
             break;
         case 2:
-            (void)snprintf(destBuffer, static_cast<size_t>(buffSize), fileIdFs " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType, file,
+            (void)external.format(fileIdFs " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType, file,
                            lineNo, arg1, arg2);
             break;
         case 3:
-            (void)snprintf(destBuffer, static_cast<size_t>(buffSize),
+            (void)external.format(
                            fileIdFs " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType, file,
                            lineNo, arg1, arg2, arg3);
             break;
         case 4:
-            (void)snprintf(destBuffer, static_cast<size_t>(buffSize),
+            (void)external.format(
                            fileIdFs " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType
                                     " %" PRI_FwAssertArgType,
                            file, lineNo, arg1, arg2, arg3, arg4);
             break;
         case 5:
-            (void)snprintf(destBuffer, static_cast<size_t>(buffSize),
+            (void)external.format(
                            fileIdFs " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType
                                     " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType,
                            file, lineNo, arg1, arg2, arg3, arg4, arg5);
             break;
         case 6:
-            (void)snprintf(destBuffer, static_cast<size_t>(buffSize),
+            (void)external.format(
                            fileIdFs " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType
                                     " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType,
                            file, lineNo, arg1, arg2, arg3, arg4, arg5, arg6);
@@ -63,9 +65,6 @@ void defaultReportAssert(FILE_NAME_ARG file,
         default:  // in an assert already, what can we do?
             break;
     }
-
-    // null terminate
-    destBuffer[buffSize - 1] = 0;
 }
 
 void AssertHook::printAssert(const CHAR* msg) {

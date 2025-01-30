@@ -14,9 +14,9 @@ namespace Fw {
             InputSerializePort();
             virtual ~InputSerializePort();
 
-            void init();
+            void init() override;
 
-            SerializeStatus invokeSerial(SerializeBufferBase &buffer); // !< invoke the port with a serialized version of the call
+            SerializeStatus invokeSerial(SerializeBufferBase &buffer) override; // !< invoke the port with a serialized version of the call
 
             typedef void (*CompFuncPtr)(Fw::PassiveComponentBase* callComp, NATIVE_INT_TYPE portNum, SerializeBufferBase &arg); //!< port callback definition
             void addCallComp(Fw::PassiveComponentBase* callComp, CompFuncPtr funcPtr); //!< call to register a component
@@ -24,7 +24,7 @@ namespace Fw {
         protected:
 
 #if FW_OBJECT_TO_STRING == 1
-            virtual void toString(char* str, NATIVE_INT_TYPE size);
+            const char* getToStringFormatString() override; //!< Get format string for toString call
 #endif
 
         private:

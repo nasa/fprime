@@ -19,10 +19,10 @@ namespace Fw {
 
             OutputPortBase(); // constructor
             virtual ~OutputPortBase(); // destructor
-            virtual void init();
+            void init() override;
 
 #if FW_OBJECT_TO_STRING == 1
-            virtual void toString(char* str, NATIVE_INT_TYPE size);
+            const char* getToStringFormatString() override; //!< Get format string for toString call
 #endif
 
 #if FW_PORT_SERIALIZATION == 1

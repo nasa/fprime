@@ -50,7 +50,7 @@ class ActiveComponentBase : public QueuedComponentBase {
     Os::Task m_task;           //!< task object for active component
 
 #if FW_OBJECT_TO_STRING == 1
-    virtual void toString(char* str, NATIVE_INT_TYPE size);  //!< create string description of component
+    virtual const char* getToStringFormatString(); //!< Format string for toString function
 #endif
   PRIVATE:
     Lifecycle m_stage;         //!< Lifecycle stage of the component

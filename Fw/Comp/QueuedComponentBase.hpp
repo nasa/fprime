@@ -37,7 +37,7 @@ namespace Fw {
             Os::Queue::Status createQueue(FwSizeType depth, FwSizeType msgSize);
             virtual MsgDispatchStatus doDispatch()=0; //!< method to dispatch a single message in the queue.
 #if FW_OBJECT_TO_STRING == 1
-            virtual void toString(char* str, NATIVE_INT_TYPE size); //!< dump string representation of component
+            virtual const char* getToStringFormatString(); //!< Format string for toString function
 #endif
             NATIVE_INT_TYPE getNumMsgsDropped(); //!< return number of messages dropped
             void incNumMsgDropped(); //!< increment the number of messages dropped

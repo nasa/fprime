@@ -33,7 +33,9 @@ namespace Fw {
             Fw::ObjBase* m_connObj; // !< object port is connected to
 
 #if FW_OBJECT_TO_STRING
-            virtual void toString(char* str, NATIVE_INT_TYPE size);
+            virtual const char* getToStringFormatString(); //!< Get format string for toString call
+
+            void toString(char* str, NATIVE_INT_TYPE size) override; //!< Unified port toString method
 #endif
 
 
