@@ -12,11 +12,18 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/FrameAccumulator.cpp"
 )
 
-# Uncomment and add any modules that this component depends on, else
-# they might not be available when cmake tries to build this component.
-
-# set(MOD_DEPS
-#     Add your dependencies here
-# )
-
 register_fprime_module()
+
+#### UTS ####
+set(UT_SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/FrameAccumulator.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/FrameAccumulatorTester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/FrameAccumulatorTestMain.cpp"
+)
+set(UT_MOD_DEPS
+    Utils/Types
+    STest
+)
+set(UT_AUTO_HELPERS ON)
+
+register_fprime_ut()

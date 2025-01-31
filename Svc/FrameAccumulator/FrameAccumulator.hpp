@@ -8,6 +8,7 @@
 #define Svc_FrameAccumulator_HPP
 
 #include "Fw/Types/MemAllocator.hpp"
+#include "Utils/Types/CircularBuffer.hpp"
 #include "Svc/FrameAccumulator/FrameAccumulatorComponentAc.hpp"
 #include "Svc/FrameAccumulator/FrameDetector.hpp"
 
@@ -46,7 +47,7 @@ class FrameAccumulator : public FrameAccumulatorComponentBase {
     void dataIn_handler(FwIndexType portNum,  //!< The port number
                         Fw::Buffer& recvBuffer,
                         const Drv::RecvStatus& recvStatus) override;
-  private:
+  PRIVATE:
     //! \brief process raw buffer
     //! \return raw data buffer
     void processBuffer(Fw::Buffer& buffer);

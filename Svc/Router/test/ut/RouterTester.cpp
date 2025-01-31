@@ -61,7 +61,8 @@ void RouterTester::mockReceivePacketType(Fw::ComPacket::ComPacketType packetType
     U8 data[sizeof descriptorType];
     Fw::Buffer buffer(data, sizeof(data));
     buffer.getSerializeRepr().serialize(descriptorType);
-    this->invoke_to_bufferIn(0, buffer);
+    Fw::Buffer nullContext;
+    this->invoke_to_dataIn(0, buffer, nullContext);
 }
 
 }  // namespace Svc
