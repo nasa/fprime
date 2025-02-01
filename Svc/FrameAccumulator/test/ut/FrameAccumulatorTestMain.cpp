@@ -22,6 +22,27 @@ TEST(FrameAccumulator, TestNoFrameDetected) {
     tester.testNoFrameDetected();
 }
 
+TEST(FrameAccumulator, TestReceiveZeroSizeBuffer) {
+    Svc::FrameAccumulatorTester tester;
+    tester.testReceiveZeroSizeBuffer();
+}
+
+TEST(FrameAccumulator, TestAccumulateTwoBuffers) {
+    Svc::FrameAccumulatorTester tester;
+    tester.testAccumulateTwoBuffers();
+}
+
+TEST(FrameAccumulator, testAccumulateBuffersEmitFrame) {
+    Svc::FrameAccumulatorTester tester;
+    tester.testAccumulateBuffersEmitFrame();
+}
+
+TEST(FrameAccumulator, testAccumulateBuffersEmitManyFrames) {
+    Svc::FrameAccumulatorTester tester;
+    tester.testAccumulateBuffersEmitManyFrames();
+}
+
+
 int main(int argc, char** argv) {
     STest::Random::seed();
     ::testing::InitGoogleTest(&argc, argv);
