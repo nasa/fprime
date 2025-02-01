@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  RouterTester.cpp
-// \author chammard
+// \author thomas-bc
 // \brief  cpp file for Router component test harness implementation class
 // ======================================================================
 

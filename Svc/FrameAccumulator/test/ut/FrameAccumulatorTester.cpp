@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  FrameAccumulatorTester.cpp
-// \author chammard
+// \author thomas-bc
 // \brief  cpp file for FrameAccumulator component test harness implementation class
 // ======================================================================
 

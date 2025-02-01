@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  DeframerTester.hpp
-// \author chammard
+// \author thomas-bc
 // \brief  hpp file for Deframer component test harness implementation class
 // ======================================================================
 

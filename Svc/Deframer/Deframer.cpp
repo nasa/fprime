@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  Deframer.cpp
-// \author chammard
+// \author thomas-bc
 // \brief  cpp file for Deframer component implementation class
 // ======================================================================
 

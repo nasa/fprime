@@ -1,66 +1,30 @@
 # Svc::FrameAccumulator
 
-Accumulates data into frames
+The `Svc::FrameAccumulator` component accumulates a stream of data into frames.
 
 ## Usage Examples
-Add usage examples here
+
+The `Svc::FrameAccumulator` component is used in the uplink stack of many reference F´ application such as the tutorials reference code.
 
 ### Diagrams
-Add diagrams here
-
-### Typical Usage
-And the typical usage of the component here
 
 ## Class Diagram
-Add a class diagram here
 
-## Port Descriptions
-| Name | Description |
-|---|---|
-|---|---|
-
-## Component States
-Add component states in the chart below
-| Name | Description |
-|---|---|
-|---|---|
-
-## Sequence Diagrams
-Add sequence diagrams here
-
-## Parameters
-| Name | Description |
-|---|---|
-|---|---|
-
-## Commands
-| Name | Description |
-|---|---|
-|---|---|
-
-## Events
-| Name | Description |
-|---|---|
-|---|---|
-
-## Telemetry
-| Name | Description |
-|---|---|
-|---|---|
-
-## Unit Tests
-Add unit test descriptions in the chart below
-| Name | Description | Output | Coverage |
-|---|---|---|---|
-|---|---|---|---|
+```mermaid
+classDiagram
+    class FrameAccumulator~PassiveComponent~ {
+        + void configure(FrameDetector& detector, NATIVE_UINT_TYPE allocationId, Fw::MemAllocator& allocator, FwSizeType store_size)
+        + void dataIn_handler(FwIndexType portNum, Fw::Buffer& recvBuffer, const Drv::RecvStatus& recvStatus)
+        + void processBuffer(Fw::Buffer& buffer)
+        + void processRing()
+    }
+```
 
 ## Requirements
-Add requirements in the chart below
-| Name | Description | Validation |
-|---|---|---|
-|---|---|---|
 
-## Change Log
-| Date | Description |
-|---|---|
-|---| Initial Draft |
+Requirement | Description | Rationale | Verification Method
+----------- | ----------- | ----------| -------------------
+SVC-FRAMEACCUMULATOR-001 | `Svc::FrameAccumulator` shall accumulate a sequence of byte buffers until their sequence forms a full frame | FrameAccumulator is designed to re-assemble frames from sequence of bytes | Unit test
+SVC-FRAMEACCUMULATOR-002 | `Svc::FrameAccumulator` shall detect once the accumulated buffers form a full frame and emit said frame | Pass frames to other parts of the system | Unit test
+SVC-FRAMEACCUMULATOR-003 | `Svc::FrameAccumulator` shall accept byte buffers containing frames that are not aligned on a buffer boundary. | For flexibility, we do not require that the frames be aligned on a buffer boundary. | Unit test
+SVC-FRAMEACCUMULATOR-004 | `Svc::FrameAccumulator` shall accept byte buffers containing frames that span one or more buffers. | For flexibility, we do not require each frame to fit in a single buffer. | Unit test

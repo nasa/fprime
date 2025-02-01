@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  DeframerTestMain.cpp
-// \author chammard
+// \author thomas-bc
 // \brief  cpp file for Deframer component test main function
 // ======================================================================
 

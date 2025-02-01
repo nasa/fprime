@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  RouterTester.hpp
-// \author chammard
+// \author thomas-bc
 // \brief  hpp file for Router component test harness implementation class
 // ======================================================================
 

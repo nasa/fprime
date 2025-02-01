@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  RouterTestMain.cpp
-// \author chammard
+// \author thomas-bc
 // \brief  cpp file for Router component test main function
 // ======================================================================
 

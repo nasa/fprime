@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  Deframer.hpp
-// \author chammard
+// \author thomas-bc
 // \brief  hpp file for Deframer component implementation class
 // ======================================================================
 

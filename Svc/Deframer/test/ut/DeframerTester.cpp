@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  DeframerTester.cpp
-// \author chammard
+// \author thomas-bc
 // \brief  cpp file for Deframer component test harness implementation class
 // ======================================================================
 
@@ -26,6 +26,7 @@ DeframerTester ::~DeframerTester() {}
 // ----------------------------------------------------------------------
 
 void DeframerTester ::testNominalFrame() {
+    // TODO: make this test multiple times with different random bytes and lengths
     // Get random byte of data
     U8 randomByte = STest::Random::lowerUpper(0, 255);
     //           |  F´ start word        |     Length (= 1)      |   Data     |   Checksum (4 bytes)   |
