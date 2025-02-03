@@ -14,7 +14,7 @@ set(SOURCE_FILES
 
 register_fprime_module()
 
-#### UTS ####
+#### UTs ####
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/FrameAccumulator.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/FrameAccumulatorTester.cpp"
@@ -27,3 +27,14 @@ set(UT_MOD_DEPS
 set(UT_AUTO_HELPERS ON)
 
 register_fprime_ut()
+
+#### FprimeFrameDetector tests ####
+
+set(UT_HEADER_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/FrameDetector/FprimeFrameDetector.hpp"
+)
+set(UT_SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/detectors/FprimeFrameDetectorTestMain.cpp"
+)
+
+register_fprime_ut("Svc_FrameAccumulator_FprimeFrameDetector_test")
