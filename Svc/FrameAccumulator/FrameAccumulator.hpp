@@ -24,10 +24,10 @@ class FrameAccumulator : public FrameAccumulatorComponentBase {
     FrameAccumulator(const char* const compName  //!< The component name
     );
 
-    //! \breif Destroy FrameAccumulator object
+    //! \brief Destroy FrameAccumulator object
     ~FrameAccumulator();
 
-    //! \breif configure memory allocation for the circular buffer
+    //! \brief configure memory allocation for the circular buffer
     //!
     //! Takes in parameters used in the Fw::MemAllocator pattern and configures a memory allocation for storing the
     //! circular buffer.

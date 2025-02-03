@@ -6,6 +6,7 @@
 #ifndef SVC_FRAMEACCUCULATOR_FRAME_DETECTOR_STARTLENGTHCHECKSUMDETECTOR_HPP
 #define SVC_FRAMEACCUCULATOR_FRAME_DETECTOR_STARTLENGTHCHECKSUMDETECTOR_HPP
 #include "Fw/Types/PolyType.hpp"
+#include "Fw/Types/Assert.hpp"
 #include "Svc/FrameAccumulator/FrameDetector.hpp"
 #include <type_traits>
 
@@ -27,10 +28,10 @@ enum Endianness {
 static_assert(sizeof(unsigned long) >= sizeof(U32), "CRC32 cannot fit in CRC32 library chosen types");
 static_assert(sizeof(unsigned short) >= sizeof(U16), "CRC16 cannot fit in CRC16 library chosen types");
 
-//! \breif base template definition of a "token"
+//! \brief base template definition of a "token"
 //!
 //! A token is a field that can be read from the circular buffer in order to detect a frame. These tokens could be start
-//! words, lengths, crcs, etc. Tokens are static with respect to a given framing protocol, but are parameterized across
+//! words, lengths, CRCs, etc. Tokens are static with respect to a given framing protocol, but are parameterized across
 //! several concepts:
 //!   1. Token type: type of the token's containing word (e.g. U32, U16, U8)
 //!   2. Token mask: mask used to pull the token from the containing word. Used for bit fields.
@@ -116,7 +117,7 @@ template <typename TokenType,
           Endianness TokenEndianness = Endianness::BIG>
 class StartToken : public Token<TokenType, TokenMask, TokenEndianness> {
   public:
-    //! \breif read start token and determine if match with expected start token
+    //! \brief read start token and determine if match with expected start token
     //!
     //! This will read the start token from the circular buffer. It then compares to expected to determine if there is
     //! a frame start or no. This will return FRAME_DETECTED if the start word is detected. It will return
@@ -135,7 +136,7 @@ class StartToken : public Token<TokenType, TokenMask, TokenEndianness> {
     }
 };
 
-//! \breif token representing data length
+//! \brief token representing data length
 //!
 //! Length of the data field is found somewhere in the data payload at a specified offset. This template has the
 //! standard Token functions and an additional template parameter "Offset" used to show the offset of the length token.
@@ -151,7 +152,7 @@ template <typename TokenType,
           Endianness TokenEndianness = Endianness::BIG>
 class LengthToken : public Token<TokenType, TokenMask, TokenEndianness> {
   public:
-    //! \breif read length token and return total size of packet through length token
+    //! \brief read length token and return total size of packet through length token
     //!
     //! This reads the length token from the buffer and returns the total needed size up through the length token. If
     //! the length exceeds the maximum, then NO_FRAME_DETECTED is returned. size_out does not include the length of the
@@ -287,7 +288,7 @@ class CRC : public Token<TokenType, std::numeric_limits<TokenType>::max(), BIG> 
     FwSizeType m_stored_offset;
     TokenType m_expected;
 };
-//! \breif start/length/crc detector template
+//! \brief start/length/crc detector template
 //!
 //! Most packets are of the form start token, length token, data, and a trailing CRC. This template is used to quickly
 //! implement detectors that follow the above pattern by supplying configured tokens for each concept. In shor, a dev

@@ -108,7 +108,7 @@ module RPI {
       rpiDemo.SpiReadWrite -> spiDrv.SpiReadWrite
     }
 
-    connections MemoryMgmt {
+    connections MemoryAllocations {
       comm.allocate -> commsBufferManager.bufferGetCallee
       comm.deallocate -> commsBufferManager.bufferSendIn
       downlink.framedAllocate -> commsBufferManager.bufferGetCallee
