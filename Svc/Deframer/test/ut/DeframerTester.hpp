@@ -60,6 +60,7 @@ class DeframerTester : public DeframerGTestBase {
     //! Initialize components
     void initComponents();
 
+    //! Sends a buffer of supplied data and size on the component input port
     void mockReceiveData(U8* data, FwSizeType size);
 
 

@@ -7,10 +7,10 @@
 #ifndef Svc_FrameAccumulatorTester_HPP
 #define Svc_FrameAccumulatorTester_HPP
 
+#include "Fw/Types/MallocAllocator.hpp"
 #include "Svc/FrameAccumulator/FrameAccumulator.hpp"
 #include "Svc/FrameAccumulator/FrameAccumulatorGTestBase.hpp"
 #include "Svc/FrameAccumulator/FrameDetector/FprimeFrameDetector.hpp"
-#include "Fw/Types/MallocAllocator.hpp"
 
 namespace Svc {
 
@@ -70,7 +70,7 @@ class FrameAccumulatorTester : public FrameAccumulatorGTestBase {
 
     //! Send a series of random-size buffers, terminated by a buffer that
     //! will be detected as a full frame by the MockDetector
-    //! frame_size and buffer_count are updated with the size of the frame and the number of buffers sent
+    //! (output) frame_size and buffer_count are updated with the size of the frame and the number of buffers sent
     void mockAccumulateFullFrame(U32& frame_size, U32& buffer_count);
 
     //! Connect ports
@@ -117,7 +117,7 @@ class FrameAccumulatorTester : public FrameAccumulatorGTestBase {
     MockDetector mockDetector;
     Fw::MallocAllocator mallocator;
 
-    Fw::Buffer m_buffer; // buffer to be returned by mocked frameAllocate call
+    Fw::Buffer m_buffer;  // buffer to be returned by mocked frameAllocate call
     U8 m_buffer_slot[2048];
 };
 

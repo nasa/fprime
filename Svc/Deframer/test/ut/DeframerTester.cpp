@@ -29,6 +29,7 @@ void DeframerTester ::testNominalFrame() {
     // TODO: make this test multiple times with different random bytes and lengths
     // Get random byte of data
     U8 randomByte = STest::Random::lowerUpper(0, 255);
+    // Note: the content of the frame header/footer doesn't actually matter in these tests
     //           |  F´ start word        |     Length (= 1)      |   Data     |   Checksum (4 bytes)   |
     U8 data[13] = {0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0x00, 0x00, 0x01,  randomByte,  0x00, 0x00, 0x00, 0x00};
     this->mockReceiveData(data, sizeof(data));

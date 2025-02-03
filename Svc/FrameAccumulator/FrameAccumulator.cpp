@@ -15,7 +15,7 @@ namespace Svc {
 // ----------------------------------------------------------------------
 
 FrameAccumulator ::FrameAccumulator(const char* const compName) : FrameAccumulatorComponentBase(compName),
-    m_detector(nullptr), m_memoryAllocator(nullptr), m_memory(nullptr), m_allocatorId(-1) {}
+    m_detector(nullptr), m_memoryAllocator(nullptr), m_memory(nullptr), m_allocatorId(0) {}
 
 FrameAccumulator ::~FrameAccumulator() {
     // If configuration happened, we must deallocate
@@ -129,11 +129,12 @@ void FrameAccumulator ::processBuffer(Fw::Buffer& buffer) {
                         size_out <= remaining,
                         static_cast<FwAssertArgType>(size_out),
                         static_cast<FwAssertArgType>(remaining));
-                Fw::Buffer buffer = this->frameAllocate_out(0, size_out);
+                // REVIEW NOTE: size_out needs to be cast down in multiple places below - is this ok?
+                Fw::Buffer buffer = this->frameAllocate_out(0, static_cast<U32>(size_out));
                 if (buffer.isValid()) {
                     // Copy out data and rotate
-                    FW_ASSERT(this->m_inRing.peek(buffer.getData(), size_out) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-                    buffer.setSize(size_out);
+                    FW_ASSERT(this->m_inRing.peek(buffer.getData(), static_cast<NATIVE_UINT_TYPE>(size_out)) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+                    buffer.setSize(static_cast<U32>(size_out));
                     m_inRing.rotate(static_cast<U32>(size_out));
                     FW_ASSERT(
                             m_inRing.get_allocated_size() == static_cast<U32>(remaining - size_out),

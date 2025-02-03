@@ -25,23 +25,23 @@ RouterTester ::~RouterTester() {}
 
 void RouterTester ::testRouteComInterface() {
     this->mockReceivePacketType(Fw::ComPacket::FW_PACKET_COMMAND);
-    ASSERT_from_commandOut_SIZE(1);
-    ASSERT_from_fileOut_SIZE(0);
-    ASSERT_from_bufferDeallocate_SIZE(1);
+    ASSERT_from_commandOut_SIZE(1); // one command packet emitted
+    ASSERT_from_fileOut_SIZE(0); // no file packet emitted
+    ASSERT_from_bufferDeallocate_SIZE(1); // command packets are deallocated by the router
 }
 
 void RouterTester ::testRouteFileInterface() {
     this->mockReceivePacketType(Fw::ComPacket::FW_PACKET_FILE);
-    ASSERT_from_commandOut_SIZE(0);
-    ASSERT_from_fileOut_SIZE(1);
-    ASSERT_from_bufferDeallocate_SIZE(0);
+    ASSERT_from_commandOut_SIZE(0); // no command packet emitted
+    ASSERT_from_fileOut_SIZE(1); // one file packet emitted
+    ASSERT_from_bufferDeallocate_SIZE(0); // no deallocation (file packets' ownership is transferred to the receiver)
 }
 
 void RouterTester ::testRouteUnknownPacket() {
     this->mockReceivePacketType(Fw::ComPacket::FW_PACKET_UNKNOWN);
-    ASSERT_from_commandOut_SIZE(0);
-    ASSERT_from_fileOut_SIZE(0);
-    ASSERT_from_bufferDeallocate_SIZE(1);
+    ASSERT_from_commandOut_SIZE(0); // no command packet emitted
+    ASSERT_from_fileOut_SIZE(0); // no file packet emitted
+    ASSERT_from_bufferDeallocate_SIZE(1); // unknown packets are deallocated and dropped
 }
 
 void RouterTester ::testCommandResponse() {
