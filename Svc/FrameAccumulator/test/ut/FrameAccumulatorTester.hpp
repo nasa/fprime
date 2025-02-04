@@ -35,7 +35,7 @@ class FrameAccumulatorTester : public FrameAccumulatorGTestBase {
     FrameAccumulatorTester();
 
     //! Destroy object FrameAccumulatorTester
-    ~FrameAccumulatorTester();
+    ~FrameAccumulatorTester() = default;
 
   public:
     // ----------------------------------------------------------------------
@@ -92,7 +92,7 @@ class FrameAccumulatorTester : public FrameAccumulatorGTestBase {
     // ----------------------------------------------------------------------
 
     //! The component under test
-    FrameAccumulator component;
+    Svc::FrameAccumulator component;
 
     //! MockDetector is used to control the behavior of the component under test
     //! by controlling what the FrameDetector will report without needing to craft
