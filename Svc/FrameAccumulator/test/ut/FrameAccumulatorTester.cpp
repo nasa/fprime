@@ -121,14 +121,14 @@ void FrameAccumulatorTester ::testAccumulateBuffersEmitFrame() {
 }
 
 void FrameAccumulatorTester ::testAccumulateBuffersEmitManyFrames() {
-    U32 iters = STest::Random::lowerUpper(1, 10);
+    U32 max_iters = STest::Random::lowerUpper(1, 10);
     U32 total_buffer_received = 0;
 
     U32 frame_size = 0;
     U32 buffer_count = 0;
 
     // Send frames successively, perform some checks after each frame
-    for (U32 i = 0; i < iters; i++) {
+    for (U32 i = 0; i < max_iters; i++) {
         this->mockAccumulateFullFrame(frame_size, buffer_count);
         total_buffer_received += buffer_count;
 
@@ -139,7 +139,7 @@ void FrameAccumulatorTester ::testAccumulateBuffersEmitManyFrames() {
     }
     // Final checks
     ASSERT_from_dataDeallocate_SIZE(total_buffer_received); // all input buffers deallocated
-    ASSERT_from_frameOut_SIZE(iters); // Exactly one frame was sent out
+    ASSERT_from_frameOut_SIZE(max_iters); // Exactly max_iters frames were sent out
     ASSERT_EQ(this->component.m_inRing.get_allocated_size(), 0); // No data left in ring buffer
 }
 

@@ -8,7 +8,6 @@ module Svc {
         @ Port for deallocating buffers received on dataIn.
         output port dataDeallocate: Fw.BufferSend
 
-
         @ Port for allocating buffer to hold extracted frame
         output port frameAllocate: Fw.BufferGet
 
