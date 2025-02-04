@@ -54,7 +54,7 @@ void FrameAccumulator ::dataIn_handler(FwIndexType portNum, Fw::Buffer& buffer, 
         this->processBuffer(buffer);
     }
     // Deallocate the buffer
-    this->dataDeallocate_out(0, buffer);
+    this->bufferDeallocate_out(0, buffer);
 }
 
 void FrameAccumulator ::processBuffer(Fw::Buffer& buffer) {
@@ -130,7 +130,7 @@ void FrameAccumulator ::processBuffer(Fw::Buffer& buffer) {
                         static_cast<FwAssertArgType>(size_out),
                         static_cast<FwAssertArgType>(remaining));
                 // REVIEW NOTE: size_out needs to be cast down in multiple places below - is this ok?
-                Fw::Buffer buffer = this->frameAllocate_out(0, static_cast<U32>(size_out));
+                Fw::Buffer buffer = this->bufferAllocate_out(0, static_cast<U32>(size_out));
                 if (buffer.isValid()) {
                     // Copy out data and rotate
                     FW_ASSERT(this->m_inRing.peek(buffer.getData(), static_cast<NATIVE_UINT_TYPE>(size_out)) == Fw::SerializeStatus::FW_SERIALIZE_OK);

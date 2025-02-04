@@ -152,8 +152,8 @@ module Ref {
       comm.$recv -> frameAccumulator.dataIn
 
       frameAccumulator.frameOut -> deframer.framedIn
-      frameAccumulator.frameAllocate -> commsBufferManager.bufferGetCallee
-      frameAccumulator.dataDeallocate -> commsBufferManager.bufferSendIn
+      frameAccumulator.bufferAllocate -> commsBufferManager.bufferGetCallee
+      frameAccumulator.bufferDeallocate -> commsBufferManager.bufferSendIn
       deframer.deframedOut -> uplinkRouter.dataIn
 
       uplinkRouter.commandOut -> cmdDisp.seqCmdBuff

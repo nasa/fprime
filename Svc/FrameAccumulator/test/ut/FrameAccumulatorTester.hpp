@@ -83,8 +83,8 @@ class FrameAccumulatorTester : public FrameAccumulatorGTestBase {
     // ----------------------------------------------------------------------
     // Port handler overrides
     // ----------------------------------------------------------------------
-    //! Overriding frameAllocate handler to be able to request a buffer in component tests
-    Fw::Buffer from_frameAllocate_handler(FwIndexType portNum, U32 size) override;
+    //! Overriding bufferAllocate handler to be able to request a buffer in component tests
+    Fw::Buffer from_bufferAllocate_handler(FwIndexType portNum, U32 size) override;
 
   private:
     // ----------------------------------------------------------------------
@@ -117,7 +117,7 @@ class FrameAccumulatorTester : public FrameAccumulatorGTestBase {
     MockDetector mockDetector;
     Fw::MallocAllocator mallocator;
 
-    Fw::Buffer m_buffer;  // buffer to be returned by mocked frameAllocate call
+    Fw::Buffer m_buffer;  // buffer to be returned by mocked bufferAllocate call
     U8 m_buffer_slot[2048];
 };
 

@@ -113,8 +113,8 @@ module RPI {
       comm.deallocate -> commsBufferManager.bufferSendIn
       downlink.framedAllocate -> commsBufferManager.bufferGetCallee
       fileUplink.bufferSendOut -> commsBufferManager.bufferSendIn
-      frameAccumulator.frameAllocate -> commsBufferManager.bufferGetCallee
-      frameAccumulator.dataDeallocate -> commsBufferManager.bufferSendIn
+      frameAccumulator.bufferAllocate -> commsBufferManager.bufferGetCallee
+      frameAccumulator.bufferDeallocate -> commsBufferManager.bufferSendIn
       uplinkRouter.bufferDeallocate -> commsBufferManager.bufferSendIn
     }
 
