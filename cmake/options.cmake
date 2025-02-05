@@ -204,7 +204,7 @@ option(FPRIME_CHECK_FRAMEWORK_VERSION "(Internal) Check framework version when b
 #
 # e.g. `-DENABLE_SANITIZER_ADDRESS=OFF`
 ####
-option(ENABLE_SANITIZER_ADDRESS "Enable address sanitizer" BUILD_TESTING)
+option(ENABLE_SANITIZER_ADDRESS "Enable address sanitizer" ${BUILD_TESTING})
 
 ####
 # `ENABLE_SANITIZER_LEAK:`
@@ -223,7 +223,7 @@ option(ENABLE_SANITIZER_ADDRESS "Enable address sanitizer" BUILD_TESTING)
 #
 # e.g. `-DENABLE_SANITIZER_LEAK=OFF`
 ####
-option(ENABLE_SANITIZER_LEAK "Enable leak sanitizer" BUILD_TESTING)
+option(ENABLE_SANITIZER_LEAK "Enable leak sanitizer" ${BUILD_TESTING})
 
 ####
 # `ENABLE_SANITIZER_UNDEFINED_BEHAVIOR:`
@@ -240,7 +240,7 @@ option(ENABLE_SANITIZER_LEAK "Enable leak sanitizer" BUILD_TESTING)
 #
 # e.g. `-DENABLE_SANITIZER_UNDEFINED_BEHAVIOR=ON`
 ####
-option(ENABLE_SANITIZER_UNDEFINED_BEHAVIOR "Enable undefined behavior sanitizer" BUILD_TESTING)
+option(ENABLE_SANITIZER_UNDEFINED_BEHAVIOR "Enable undefined behavior sanitizer" ${BUILD_TESTING})
 
 ####
 # `ENABLE_SANITIZER_THREAD:`
