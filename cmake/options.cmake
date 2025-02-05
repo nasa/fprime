@@ -259,12 +259,6 @@ option(ENABLE_SANITIZER_UNDEFINED_BEHAVIOR "Enable undefined behavior sanitizer"
 ####
 option(ENABLE_SANITIZER_THREAD "Enable thread sanitizer" OFF)
 
-# Backwards compatibility, when build type=TESTING BUILD_TESTING is on
-string(TOUPPER "${CMAKE_BUILD_TYPE}" FPRIME_BUILD_TYPE)
-if (FPRIME_BUILD_TYPE STREQUAL "TESTING")
-else()
-    option(BUILD_TESTING OFF)
-endif()
 include(CTest)
 
 ####
