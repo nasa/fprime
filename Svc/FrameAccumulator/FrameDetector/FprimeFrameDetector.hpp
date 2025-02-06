@@ -7,6 +7,8 @@
 #define SVC_FRAME_ACCUMULATOR_FRAME_DETECTOR_FPRIME_FRAME_DETECTOR
 #include "FpConfig.h"
 #include "Svc/FrameAccumulator/FrameDetector/StartLengthCrcDetector.hpp"
+#include "FppConstantsAc.hpp"
+
 namespace Svc {
 namespace FrameDetectors {
 

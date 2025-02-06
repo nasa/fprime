@@ -20,8 +20,8 @@ FrameAccumulator ::FrameAccumulator(const char* const compName) : FrameAccumulat
 FrameAccumulator ::~FrameAccumulator() {
     // If configuration happened, we must deallocate
     if (this->m_memoryAllocator != nullptr) {
-        //TODO: after this line we have ownership of a deallocated buffer
         this->m_memoryAllocator->deallocate(this->m_allocatorId, this->m_memory);
+        this->m_memory = nullptr;
     }
 }
 
@@ -32,7 +32,8 @@ void FrameAccumulator ::configure(const FrameDetector& detector, NATIVE_UINT_TYP
     bool recoverable = false;
     FW_ASSERT(std::numeric_limits<NATIVE_INT_TYPE>::max() >= store_size, static_cast<FwAssertArgType>(store_size));
     NATIVE_UINT_TYPE store_size_int = static_cast<NATIVE_UINT_TYPE>(store_size);
-    U8* data = reinterpret_cast<U8*>(allocator.allocate(allocationId, store_size_int, recoverable));
+    void* data_void = allocator.allocate(allocationId, store_size_int, recoverable);
+    U8* data = new(data_void) U8[store_size_int];
     FW_ASSERT(data != nullptr);
     FW_ASSERT(store_size_int >= store_size);
     m_inRing.setup(data, store_size_int);
