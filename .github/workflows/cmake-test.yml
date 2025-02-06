@@ -41,4 +41,4 @@ jobs:
           export CMAKE_INSTALL_DIRECTORY="${GITHUB_WORKSPACE}/tools-override"
           export PATH="${CMAKE_INSTALL_DIRECTORY}/bin:${PATH}"
           cmake --version
-          pytest
+          pytest -s
