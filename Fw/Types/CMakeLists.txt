@@ -38,5 +38,5 @@ register_fprime_ut()
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/GTest")
 
 # Create an empty interface library and use it to register an implementation
-add_library(snprintf-format INTERFACE)
+add_library(snprintf-format ${VALID_EMPTY})
 register_fprime_implementation(Fw_StringFormat snprintf-format "${CMAKE_CURRENT_LIST_DIR}/snprintf_format.cpp")
