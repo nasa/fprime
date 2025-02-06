@@ -259,6 +259,9 @@ option(ENABLE_SANITIZER_UNDEFINED_BEHAVIOR "Enable undefined behavior sanitizer"
 ####
 option(ENABLE_SANITIZER_THREAD "Enable thread sanitizer" OFF)
 
+# CTest inclusion will default BUILD_TESTING to ON but F Prime uses a default of OFF instead
+# Must come before include(CTest)
+option(BUILD_TESTING "Enable unit testing in the build" OFF)
 include(CTest)
 
 ####
