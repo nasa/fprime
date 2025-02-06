@@ -25,13 +25,6 @@ register_fprime_module(Os_Posix_Shared)
 register_os_implementation("File;FileSystem;Directory" Posix Os_Posix_Shared)
 register_os_implementation("Console" Posix)
 
-# Special error console
-set(MOD_DEPS "Os_Console_Common")
-add_library("Os_Console_PosixError" INTERFACE)
-add_dependencies("Os_Console_PosixError" "Os_Console_Common" "Os_Console_Posix")
-target_link_libraries("Os_Console_PosixError" INTERFACE "Os_Console_Common" "Os_Console_Posix")
-register_fprime_implementation("Os_Console" "Os_Console_PosixError" "${CMAKE_CURRENT_LIST_DIR}/DefaultErrorConsole.cpp")
-
 register_os_implementation("Task" Posix Os_Posix_Shared Fw_Time)
 register_os_implementation("Mutex;ConditionVariable" Posix Os_Posix_Shared)
 register_os_implementation("RawTime" Posix Os_Posix_Shared)

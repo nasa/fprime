@@ -85,7 +85,7 @@ namespace Fw {
         FW_ASSERT(size > 0);
         // Get the port-custom format string
         const char* formatString = this->getToStringFormatString();
-        // Determine this port object name (or use "UNKOWN")
+        // Determine this port object name (or use "UNKNOWN")
         const char* object_name =
 #if FW_OBJECT_NAMES == 1
                 this->m_objName.toChar();
@@ -95,7 +95,7 @@ namespace Fw {
         // Get the C/NC for connected or not
         const char* this_is_connected = this->isConnected() ? "C" : "NC";
 
-        // Get the name of the connectioned object, "UNKNNOWN" or "NONE"
+        // Get the name of the connection object, "UNKNOWN" or "NONE"
         const char* connected_to = this->isConnected() ?
 #if FW_OBJECT_NAMES == 1
             this->m_connObj->getObjName()

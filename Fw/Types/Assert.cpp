@@ -1,8 +1,9 @@
 #include <FpConfig.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/ExternalString.hpp>
-#include <Fw/Logger/Logger.hpp>
+#include <Fw/Types/StringUtils.hpp>
 #include <cassert>
+#include <cstdio>
 
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
 #define fileIdFs "Assert: 0x%08" PRIx32 ":%" PRI_PlatformUIntType
@@ -13,7 +14,7 @@
 namespace Fw {
 
 void defaultPrintAssert(const CHAR* msg) {
-    Fw::Logger::log("%s", msg);
+    (void) fwrite(msg, sizeof(CHAR), static_cast<size_t>(Fw::StringUtils::string_length(msg, FW_ASSERT_TEXT_SIZE)), stderr);
 }
 
 void defaultReportAssert(FILE_NAME_ARG file,

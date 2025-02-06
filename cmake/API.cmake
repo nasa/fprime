@@ -669,7 +669,7 @@ endfunction()
 # Designates that the given implementor is the selected implementor for the needed implementation. Platforms must call
 # this function once for each defined IMPLEMENTATION. An executable/deployment/unit-test may call this function to set
 # a specific implementor for any needed implementation. FRAMEWORK_DEFAULT may be supplied to indicate a default choice
-# set by the framework, which can be overriden by the platform and module selections.
+# set by the framework, which can be overridden by the platform and module selections.
 #
 # **IMPLEMENTATION:** implementation module name that is implemented by IMPLEMENTOR
 # **IMPLEMENTOR:** implementor of IMPLEMENTATION
