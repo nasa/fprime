@@ -39,6 +39,6 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/GTest")
 
 # Create an empty interface library and use it to register an implementation
 add_library(snprintf-format ${VALID_EMPTY})
-# Must surpress empty library warnings
+# Must suppress empty library warnings
 target_compile_options(snprintf-format PRIVATE $<$<COMPILE_LANGUAGE:CXX>:-Wno-unused-const-variable>)
 register_fprime_implementation(Fw_StringFormat snprintf-format "${CMAKE_CURRENT_LIST_DIR}/snprintf_format.cpp")
