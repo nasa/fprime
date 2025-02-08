@@ -13,7 +13,7 @@
 #include <Drv/LinuxSpiDriver/LinuxSpiDriverComponentImpl.hpp>
 #include <FpConfig.hpp>
 #include <Fw/Types/Assert.hpp>
-
+#include <Fw/Types/FileNameString.hpp>
 #include <cstdint>
 #include <unistd.h>
 #include <cstdio>
@@ -24,8 +24,7 @@
 #include <linux/spi/spidev.h>
 #include <cerrno>
 
-//#define DEBUG_PRINT(...) printf(##__VA_ARGS__); fflush(stdout)
-#define DEBUG_PRINT(...)
+static_assert(FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING, "Cannot use SPI driver without full string formatting");
 
 namespace Drv {
 
@@ -40,8 +39,6 @@ namespace Drv {
         if (this->m_fd == -1) {
             return;
         }
-
-        DEBUG_PRINT("Writing %d bytes to SPI\n",writeBuffer.getSize());
 
         spi_ioc_transfer tr;
         // Zero for unused fields:
@@ -79,19 +76,14 @@ namespace Drv {
         NATIVE_INT_TYPE ret;
 
         // Open:
-        char devName[256];
-        snprintf(devName,sizeof(devName),"/dev/spidev%d.%d",device,select);
-        // null terminate
-        devName[sizeof(devName)-1] = 0;
-        DEBUG_PRINT("Opening SPI device %s\n",devName);
+        Fw::FileNameString devString;
+        Fw::FormatStatus formatStatus = devString.format("/dev/spidev%d.%d", device, select);
+        FW_ASSERT(formatStatus == Fw::FormatStatus::SUCCESS);
 
-        fd = ::open(devName, O_RDWR);
+        fd = ::open(devString.toChar(), O_RDWR);
         if (fd == -1) {
-            DEBUG_PRINT("open SPI device %d.%d failed. %d\n",device,select,errno);
             this->log_WARNING_HI_SPI_OpenError(device,select,fd);
             return false;
-        } else {
-            DEBUG_PRINT("Successfully opened SPI device %s fd %d\n",devName,fd);
         }
 
         this->m_fd = fd;
@@ -123,20 +115,14 @@ namespace Drv {
 
         ret = ioctl(fd, SPI_IOC_WR_MODE, &mode);
         if (ret == -1) {
-            DEBUG_PRINT("ioctl SPI_IOC_WR_MODE fd %d failed. %d\n",fd,errno);
             this->log_WARNING_HI_SPI_ConfigError(device,select,ret);
             return false;
-        } else {
-            DEBUG_PRINT("SPI fd %d WR mode successfully configured to %d\n",fd,mode);
         }
 
         ret = ioctl(fd, SPI_IOC_RD_MODE, &mode);
         if (ret == -1) {
-            DEBUG_PRINT("ioctl SPI_IOC_RD_MODE fd %d failed. %d\n",fd,errno);
             this->log_WARNING_HI_SPI_ConfigError(device,select,ret);
             return false;
-        } else {
-            DEBUG_PRINT("SPI fd %d RD mode successfully configured to %d\n",fd,mode);
         }
 
         /*
@@ -145,20 +131,14 @@ namespace Drv {
         U8 bits = 8;
         ret = ioctl(fd, SPI_IOC_WR_BITS_PER_WORD, &bits);
         if (ret == -1) {
-            DEBUG_PRINT("ioctl SPI_IOC_WR_BITS_PER_WORD fd %d failed. %d\n",fd,errno);
             this->log_WARNING_HI_SPI_ConfigError(device,select,ret);
             return false;
-        } else {
-            DEBUG_PRINT("SPI fd %d WR bits per word successfully configured to %d\n",fd,bits);
         }
 
         ret = ioctl(fd, SPI_IOC_RD_BITS_PER_WORD, &bits);
         if (ret == -1) {
-            DEBUG_PRINT("ioctl SPI_IOC_RD_BITS_PER_WORD fd %d failed. %d\n",fd,errno);
             this->log_WARNING_HI_SPI_ConfigError(device,select,ret);
             return false;
-        } else {
-            DEBUG_PRINT("SPI fd %d RD bits per word successfully configured to %d\n",fd,bits);
         }
 
         /*
@@ -166,20 +146,14 @@ namespace Drv {
          */
         ret = ioctl(fd, SPI_IOC_WR_MAX_SPEED_HZ, &clock);
         if (ret == -1) {
-            DEBUG_PRINT("ioctl SPI_IOC_WR_MAX_SPEED_HZ fd %d failed. %d\n",fd,errno);
             this->log_WARNING_HI_SPI_ConfigError(device,select,ret);
             return false;
-        } else {
-            DEBUG_PRINT("SPI fd %d WR freq successfully configured to %d\n",fd,clock);
         }
 
         ret = ioctl(fd, SPI_IOC_RD_MAX_SPEED_HZ, &clock);
         if (ret == -1) {
-           DEBUG_PRINT("ioctl SPI_IOC_RD_MAX_SPEED_HZ fd %d failed. %d\n",fd,errno);
            this->log_WARNING_HI_SPI_ConfigError(device,select,ret);
            return false;
-        } else {
-           DEBUG_PRINT("SPI fd %d RD freq successfully configured to %d\n",fd,clock);
         }
 
         return true;
@@ -187,7 +161,6 @@ namespace Drv {
     }
 
     LinuxSpiDriverComponentImpl::~LinuxSpiDriverComponentImpl() {
-        DEBUG_PRINT("Closing SPI device %d\n",this->m_fd);
         (void) close(this->m_fd);
     }
 

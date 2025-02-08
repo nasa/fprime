@@ -22,9 +22,6 @@
 #include <arpa/inet.h>
 #include <Os/TaskString.hpp>
 
-//#define DEBUG_PRINT(...) printf(##__VA_ARGS__)
-#define DEBUG_PRINT(...)
-
 namespace Svc {
 
   // ----------------------------------------------------------------------
@@ -193,7 +190,6 @@ namespace Svc {
       }
 
       // call output port
-      DEBUG_PRINT("Calling port %d with %d bytes.\n",portNum,this->m_portBuff.getBuffLength());
       if (this->isConnected_PortsOut_OutputPort(portNum)) {
 
           Fw::SerializeStatus stat = this->PortsOut_out(portNum,this->m_portBuff);

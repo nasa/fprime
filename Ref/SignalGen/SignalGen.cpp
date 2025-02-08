@@ -138,6 +138,7 @@ namespace Ref {
             Fw::SerializeStatus stat = this->m_dpContainer.serializeRecord_DataRecord(sigInfo);
             this->m_currDp++;
             this->m_dpBytes += SignalInfo::SERIALIZED_SIZE;
+            // check for full data product
             if (Fw::SerializeStatus::FW_SERIALIZE_NO_ROOM_LEFT == stat) {
                 this->log_WARNING_LO_DpRecordFull(this->m_currDp,this->m_dpBytes);
                 this->cleanupAndSendDp();

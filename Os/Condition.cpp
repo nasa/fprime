@@ -8,14 +8,17 @@ ConditionVariable::~ConditionVariable() {
     m_delegate.~ConditionVariableInterface();
 }
 
-void ConditionVariable::wait(Os::Mutex& mutex) {
+ConditionVariable::Status ConditionVariable::pend(Os::Mutex& mutex) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<ConditionVariableInterface*>(&this->m_handle_storage[0]));
-    FW_ASSERT(this->m_lock == nullptr || this->m_lock == &mutex); // Confirm the same mutex used across waits
+    if (this->m_lock != nullptr && this->m_lock != &mutex) {
+        return Status::ERROR_DIFFERENT_MUTEX;
+    };
     this->m_lock = &mutex;
-    // Attempt to lock the mutex and ensure that this was successful or the lock was already held
-    Mutex::Status lock_status = this->m_lock->take();
-    FW_ASSERT(lock_status == Mutex::Status::OP_OK || lock_status == Mutex::Status::ERROR_DEADLOCK);
-    this->m_delegate.wait(mutex);
+    return this->m_delegate.pend(mutex);
+}
+void ConditionVariable::wait(Os::Mutex& mutex) {
+    Status status = this->pend(mutex);
+    FW_ASSERT(status == Status::OP_OK, static_cast<FwAssertArgType>(status));
 }
 void ConditionVariable::notify() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<ConditionVariableInterface*>(&this->m_handle_storage[0]));
@@ -26,9 +29,9 @@ void ConditionVariable::notifyAll() {
     this->m_delegate.notifyAll();
 }
 
-ConditionVariableHandle* ConditionVariable::getHandle(){
+ConditionVariableHandle* ConditionVariable::getHandle() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<const ConditionVariableInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate.getHandle();
 }
 
-}
+}  // namespace Os

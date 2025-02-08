@@ -82,10 +82,12 @@ namespace Svc {
       // make sure component has been set up
       FW_ASSERT(this->m_setup);
       FW_ASSERT(m_buffers);
-      // check for empty buffers - this is just a warning since this component returns
-      // empty buffers if it can't allocate one.
-      if (fwBuffer.getSize() == 0) {
-          this->log_WARNING_HI_ZeroSizeBuffer();
+      // check for null, empty buffers - this is a warning because this component returns
+      // null, empty buffers if it can't allocate one.
+      // however, empty non-null buffers could potentially be previously allocated
+      // buffers with their size reduced. the user is allowed to make buffers smaller.
+      if (fwBuffer.getData() == nullptr && fwBuffer.getSize() == 0) {
+          this->log_WARNING_HI_NullEmptyBuffer();
           this->m_emptyBuffs++;
           return;
       }

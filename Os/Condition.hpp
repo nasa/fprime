@@ -19,6 +19,14 @@ class ConditionVariableHandle {};
 //! reacquiring the mutex once the condition has been notified.
 class ConditionVariableInterface {
   public:
+    enum Status {
+        OP_OK,                  //!<  Operation was successful
+        ERROR_MUTEX_NOT_HELD,   //!< When trying to wait but we don't hold the mutex
+        ERROR_DIFFERENT_MUTEX,  //!< When trying to use a different mutex than expected mutex
+        ERROR_NOT_IMPLEMENTED,  //!< When trying to use a feature that isn't implemented
+        ERROR_OTHER             //!< All other errors
+    };
+
     //! Default constructor
     ConditionVariableInterface() = default;
     //! Default destructor
@@ -37,7 +45,8 @@ class ConditionVariableInterface {
     //! thread of execution.
     //!
     //! \param mutex: mutex to unlock as part of this operation
-    virtual void wait(Os::Mutex& mutex) = 0;
+    //! \return status of the conditional wait
+    virtual Status pend(Os::Mutex& mutex) = 0;
 
     //! \brief notify a single waiter on this condition variable
     //!
@@ -88,10 +97,24 @@ class ConditionVariable final : public ConditionVariableInterface {
     //!
     //! \warning it is invalid to supply a mutex different from those supplied by others
     //! \warning conditions *must* be rechecked after the condition variable unlocks
-    //! \note unlocked mutexes will be locked before waiting and will be relocked before this function returns
+    //! \warning the mutex must be locked by the calling task
     //!
     //! \param mutex: mutex to unlock as part of this operation
-    void wait(Os::Mutex& mutex) override;
+    //! \return status of the conditional wait
+    Status pend(Os::Mutex& mutex) override;
+
+    //! \brief wait on a condition variable
+    //!
+    //! Wait on a condition variable. This function will atomically unlock the provided mutex and block on the condition
+    //! in one step. Blocking will occur until a future `notify` or `notifyAll` call is made to this variable on another
+    //! thread of execution. This function delegates to the underlying implementation.
+    //!
+    //! \warning it is invalid to supply a mutex different from those supplied by others
+    //! \warning conditions *must* be rechecked after the condition variable unlocks
+    //! \warning the mutex must be locked by the calling task
+    //!
+    //! \param mutex: mutex to unlock as part of this operation
+    void wait(Os::Mutex& mutex);
 
     //! \brief notify a single waiter on this condition variable
     //!
@@ -118,8 +141,9 @@ class ConditionVariable final : public ConditionVariableInterface {
     // This section is used to store the implementation-defined file handle. To Os::File and fprime, this type is
     // opaque and thus normal allocation cannot be done. Instead, we allow the implementor to store then handle in
     // the byte-array here and set `handle` to that address for storage.
-    alignas(FW_HANDLE_ALIGNMENT) ConditionVariableHandleStorage m_handle_storage; //!< Storage for aligned FileHandle data
-    ConditionVariableInterface& m_delegate;                                       //!< Delegate for the real implementation
+    alignas(FW_HANDLE_ALIGNMENT)
+        ConditionVariableHandleStorage m_handle_storage;  //!< Storage for aligned FileHandle data
+    ConditionVariableInterface& m_delegate;               //!< Delegate for the real implementation
 };
-}
-#endif //OS_CONDITION_HPP_
+}  // namespace Os
+#endif  // OS_CONDITION_HPP_

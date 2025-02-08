@@ -259,6 +259,7 @@ dps
 DPWRITER
 DRAINBUFFERS
 drv
+drvtcpserversocket
 dsdl
 dspal
 Dstate
@@ -364,6 +365,8 @@ getcontext
 getdata
 getdefaultencoding
 getextern
+getf
+geti
 getinput
 getm
 getquaternion
@@ -806,6 +809,7 @@ saveop
 sbb
 SBF
 SBINDIR
+sbom
 Scatterometer
 scc
 schematron
@@ -866,6 +870,7 @@ sourceforge
 Sourcetrail
 sourcing
 spacetech
+spdx
 SPHINXBUILD
 SPHINXOPTS
 spi
@@ -908,6 +913,7 @@ suseconds
 SVCLOGFILE
 SVCLOGFILEL
 swcaegitadmin
+syft
 synchronicity
 synopsys
 sysconf

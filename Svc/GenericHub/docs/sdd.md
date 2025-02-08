@@ -1,6 +1,6 @@
 # Svc::GenericHub Generic Hub Component
 
-The Generic Hub component is an implementation of the F´ [hub pattern](https://nasa.github.io/fprime/UsersGuide/best/hub-pattern.html).
+The Generic Hub component is an implementation of the F´ [hub pattern](../../../docs/user-manual/framework/hub-pattern.md).
 This pattern (and component) is used to bridge across an address space barrier between F´ deployments and route F´ port
 calls to the remote deployment. It also receives incoming port calls from the remote component. Essentially, it is a
 port multiplexer/demultiplexer that serializes the port calls to an `Fw::Buffer` object and outputs this data to an 

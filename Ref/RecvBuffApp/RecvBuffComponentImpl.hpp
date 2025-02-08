@@ -23,7 +23,6 @@ namespace Ref {
             U32 m_errBuffs; // !< number of buffers with errors received
             F32 m_sensor1;
             F32 m_sensor2;
-            void toString(char* str, I32 buffer_size);
 
             // parameter update notification
             void parameterUpdated(FwPrmIdType id);

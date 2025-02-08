@@ -47,8 +47,6 @@ namespace Ref {
             U32 m_currPacketId; //!< current packet ID to be sent
             bool m_firstPacketSent; //!< set if first packet
 
-            void toString(char* str, I32 buffer_size); //!< writes a string representation of the object
-
             // buffer data
             Drv::DataBuffer m_testBuff; //!< data buffer to send
 

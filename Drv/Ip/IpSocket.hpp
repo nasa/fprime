@@ -43,7 +43,9 @@ enum SocketIpStatus {
     SOCK_NOT_STARTED = -14,                  //!< Socket has not been started
     SOCK_FAILED_TO_READ_BACK_PORT = -15,     //!< Failed to read back port from connection
     SOCK_NO_DATA_AVAILABLE = -16,            //!< No data available or read operation would block
-    SOCK_ANOTHER_THREAD_OPENING = -17        //!< Another thread is opening
+    SOCK_ANOTHER_THREAD_OPENING = -17,       //!< Another thread is opening
+    SOCK_AUTO_CONNECT_DISABLED = -18,        //!< Automatic connections are disabled
+    SOCK_INVALID_CALL = -19                  //!< Operation is invalid
 };
 
 /**
@@ -74,8 +76,8 @@ class IpSocket {
      * \param send_timeout_microseconds: send timeout microseconds portion. Must be less than 1000000
      * \return status of configure
      */
-    SocketIpStatus configure(const char* hostname, const U16 port, const U32 send_timeout_seconds,
-                             const U32 send_timeout_microseconds);
+    virtual SocketIpStatus configure(const char* hostname, const U16 port, const U32 send_timeout_seconds,
+                                     const U32 send_timeout_microseconds);
 
     /**
      * \brief open the IP socket for communications

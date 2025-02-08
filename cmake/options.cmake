@@ -204,7 +204,7 @@ option(FPRIME_CHECK_FRAMEWORK_VERSION "(Internal) Check framework version when b
 #
 # e.g. `-DENABLE_SANITIZER_ADDRESS=OFF`
 ####
-option(ENABLE_SANITIZER_ADDRESS "Enable address sanitizer" BUILD_TESTING)
+option(ENABLE_SANITIZER_ADDRESS "Enable address sanitizer" ${BUILD_TESTING})
 
 ####
 # `ENABLE_SANITIZER_LEAK:`
@@ -223,7 +223,7 @@ option(ENABLE_SANITIZER_ADDRESS "Enable address sanitizer" BUILD_TESTING)
 #
 # e.g. `-DENABLE_SANITIZER_LEAK=OFF`
 ####
-option(ENABLE_SANITIZER_LEAK "Enable leak sanitizer" BUILD_TESTING)
+option(ENABLE_SANITIZER_LEAK "Enable leak sanitizer" ${BUILD_TESTING})
 
 ####
 # `ENABLE_SANITIZER_UNDEFINED_BEHAVIOR:`
@@ -240,7 +240,7 @@ option(ENABLE_SANITIZER_LEAK "Enable leak sanitizer" BUILD_TESTING)
 #
 # e.g. `-DENABLE_SANITIZER_UNDEFINED_BEHAVIOR=ON`
 ####
-option(ENABLE_SANITIZER_UNDEFINED_BEHAVIOR "Enable undefined behavior sanitizer" BUILD_TESTING)
+option(ENABLE_SANITIZER_UNDEFINED_BEHAVIOR "Enable undefined behavior sanitizer" ${BUILD_TESTING})
 
 ####
 # `ENABLE_SANITIZER_THREAD:`
@@ -259,12 +259,9 @@ option(ENABLE_SANITIZER_UNDEFINED_BEHAVIOR "Enable undefined behavior sanitizer"
 ####
 option(ENABLE_SANITIZER_THREAD "Enable thread sanitizer" OFF)
 
-# Backwards compatibility, when build type=TESTING BUILD_TESTING is on
-string(TOUPPER "${CMAKE_BUILD_TYPE}" FPRIME_BUILD_TYPE)
-if (FPRIME_BUILD_TYPE STREQUAL "TESTING")
-else()
-    option(BUILD_TESTING OFF)
-endif()
+# CTest inclusion will default BUILD_TESTING to ON but F Prime uses a default of OFF instead
+# Must come before include(CTest)
+option(BUILD_TESTING "Enable unit testing in the build" OFF)
 include(CTest)
 
 ####

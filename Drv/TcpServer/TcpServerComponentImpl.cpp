@@ -110,14 +110,14 @@ void TcpServerComponentImpl::readLoop() {
              continue;
          }
     }
-    while (this->running() && status != SOCK_SUCCESS && this->m_reconnect);
+    while (this->running() && status != SOCK_SUCCESS && this->m_reopen);
     // If start up was successful then perform normal operations
     if (this->running() && status == SOCK_SUCCESS) {
         // Perform the nominal read loop
         SocketComponentHelper::readLoop();
-        // Terminate the server
-        this->terminate();
     }
+    // Terminate the server
+    this->terminate();
 }
 
 // ----------------------------------------------------------------------

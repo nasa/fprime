@@ -1,3 +1,8 @@
+/**
+ * Fw/Types/StringUtils.hpp:
+ *
+ * C-string helper utilities. Note: wherever possible, use Fw::StringBase and derived classes instead of raw C-strings.
+ */
 #ifndef FW_STRINGUTILS_HPP
 #define FW_STRINGUTILS_HPP
 #include <FpConfig.hpp>

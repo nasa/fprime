@@ -14,8 +14,6 @@
 #include <FpConfig.hpp>
 #include <Drv/LinuxI2cDriver/LinuxI2cDriver.hpp>
 
-#define DEBUG_PRINT 0
-
 namespace Drv {
 
   // ----------------------------------------------------------------------

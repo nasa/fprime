@@ -6,7 +6,7 @@
 SOURCE_DIR=`dirname $BASH_SOURCE`
 
 FPRIME=`cd ${SOURCE_DIR}/../../; pwd`
-APIDOCS="${FPRIME}/docs/documentation/reference/api"
+APIDOCS="${FPRIME}/docs/reference/api"
 
 DOXY_OUTPUT="${APIDOCS}/cpp"
 CMAKE_OUTPUT="${APIDOCS}/cmake"

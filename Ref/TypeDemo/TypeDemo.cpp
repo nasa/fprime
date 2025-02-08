@@ -134,6 +134,17 @@ void TypeDemo ::DUMP_FLOATS_cmdHandler(const FwOpcodeType opCode, const U32 cmdS
 
 void TypeDemo ::SEND_SCALARS_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, Ref::ScalarStruct scalar_input) {
     this->log_ACTIVITY_HI_ScalarStructEv(scalar_input);
+    this->tlmWrite_ScalarStructCh(scalar_input);
+    this->tlmWrite_ScalarU8Ch(scalar_input.getu8());
+    this->tlmWrite_ScalarU16Ch(scalar_input.getu16());
+    this->tlmWrite_ScalarU32Ch(scalar_input.getu32());
+    this->tlmWrite_ScalarU64Ch(scalar_input.getu64());
+    this->tlmWrite_ScalarI8Ch(scalar_input.geti8());
+    this->tlmWrite_ScalarI16Ch(scalar_input.geti16());
+    this->tlmWrite_ScalarI32Ch(scalar_input.geti32());
+    this->tlmWrite_ScalarI64Ch(scalar_input.geti64());
+    this->tlmWrite_ScalarF32Ch(scalar_input.getf32());
+    this->tlmWrite_ScalarF64Ch(scalar_input.getf64());
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 

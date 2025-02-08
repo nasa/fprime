@@ -38,6 +38,14 @@ class UdpSocket : public IpSocket {
     virtual ~UdpSocket();
 
     /**
+     * \brief configure is disabled
+     * 
+     * \warning configure is disabled for UdpSocket. Use configureSend and configureRecv instead.
+     */
+    SocketIpStatus configure(const char* hostname, const U16 port, const U32 send_timeout_seconds,
+                             const U32 send_timeout_microseconds) override;
+
+    /**
      * \brief configure the udp socket for outgoing transmissions
      *
      * Configures the UDP handler to use the given hostname and port for outgoing transmissions. Incoming hostname

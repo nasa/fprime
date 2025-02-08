@@ -67,7 +67,7 @@ PROJECT_LOGO           = ./docs/doxygen/small-logo.png
 # entered, it will be relative to the location where doxygen was started. If
 # left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = ./docs/documentation/reference/api/cpp
+OUTPUT_DIRECTORY       = ./docs/reference/api/cpp
 
 # If the CREATE_SUBDIRS tag is set to YES then doxygen will create 4096 sub-
 # directories (in 2 levels) under the output directory of each output format and
@@ -906,8 +906,8 @@ RECURSIVE              = YES
 # run.
 
 # ./docs need to be excluded individually because ./docs/doxygen/mainpage.md needs to be included
-EXCLUDE                = ./docs/documentation ./docs/events ./docs/getting-started \
-                         ./docs/overview ./docs/support \
+EXCLUDE                = ./docs/how-to ./docs/reference ./docs/tutorials ./docs/user-manual \
+                         ./docs/events ./docs/getting-started ./docs/overview ./docs/support \
                          *CMakeFiles/* ./Autocoders ./cmake ./gtest ./Ref ./RPI ./FppTest \
                          STest ./mk ./README.md ./CONTRIBUTORS.md ./CONTRIBUTING.md ./SECURITY.md \
                          ./googletest/ ./CODE_OF_CONDUCT.md ./LICENSE.md ./docs/INSTALL.md

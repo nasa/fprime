@@ -56,13 +56,9 @@ namespace Svc {
     if( this->m_storeBufferLength ) {
       FW_ASSERT(maxFileSize > sizeof(U16), static_cast<FwAssertArgType>(maxFileSize));
     }
-
-    FW_ASSERT(Fw::StringUtils::string_length(incomingFilePrefix, static_cast<FwSizeType>(sizeof(this->m_filePrefix))) < sizeof(this->m_filePrefix),
-      static_cast<FwAssertArgType>(Fw::StringUtils::string_length(incomingFilePrefix, static_cast<FwSizeType>(sizeof(this->m_filePrefix)))),
-      static_cast<FwAssertArgType>(sizeof(this->m_filePrefix))); // ensure that file prefix is not too big
-
-    (void)Fw::StringUtils::string_copy(this->m_filePrefix, incomingFilePrefix, static_cast<FwSizeType>(sizeof(this->m_filePrefix)));
-
+    // Assign the prefix checking if it is too big
+    Fw::FormatStatus formatStatus = this->m_filePrefix.format("%s", incomingFilePrefix);
+    FW_ASSERT(formatStatus == Fw::FormatStatus::SUCCESS);
     this->m_initialized = true;
   }
 
@@ -165,42 +161,23 @@ namespace Svc {
         return;
     }
 
-    U32 bytesCopied;
-
     // Create filename:
     Fw::Time timestamp = getTime();
-    memset(this->m_fileName, 0, sizeof(this->m_fileName));
-    bytesCopied = static_cast<U32>(snprintf(
-      this->m_fileName,
-      sizeof(this->m_fileName),
-      "%s_%" PRI_FwTimeBaseStoreType "_%" PRIu32 "_%06" PRIu32 ".com",
-      this->m_filePrefix,
-      static_cast<FwTimeBaseStoreType>(timestamp.getTimeBase()),
-      timestamp.getSeconds(),
-      timestamp.getUSeconds()));
+    Fw::FormatStatus formatStatus = this->m_fileName.format(
+            "%s_%" PRI_FwTimeBaseStoreType "_%" PRIu32 "_%06" PRIu32 ".com",
+            this->m_filePrefix.toChar(),
+            static_cast<FwTimeBaseStoreType>(timestamp.getTimeBase()),
+            timestamp.getSeconds(),
+            timestamp.getUSeconds());
+    FW_ASSERT(formatStatus == Fw::FormatStatus::SUCCESS);
+    this->m_hashFileName.format("%s%s", this->m_fileName.toChar(), Utils::Hash::getFileExtensionString());
+    FW_ASSERT(formatStatus == Fw::FormatStatus::SUCCESS);
 
-    // "A return value of size or more means that the output was truncated"
-    // See here: http://linux.die.net/man/3/snprintf
-    FW_ASSERT( bytesCopied < sizeof(this->m_fileName) );
-
-    // Create sha filename:
-    bytesCopied = static_cast<U32>(snprintf(
-      this->m_hashFileName,
-      sizeof(this->m_hashFileName),
-      "%s_%" PRI_FwTimeBaseStoreType "_%" PRIu32 "_%06" PRIu32 ".com%s",
-      this->m_filePrefix,
-      static_cast<FwTimeBaseStoreType>(timestamp.getTimeBase()),
-      timestamp.getSeconds(),
-      timestamp.getUSeconds(),
-      Utils::Hash::getFileExtensionString()));
-    FW_ASSERT( bytesCopied < sizeof(this->m_hashFileName) );
-
-    Os::File::Status ret = m_file.open(this->m_fileName, Os::File::OPEN_WRITE);
+    Os::File::Status ret = m_file.open(this->m_fileName.toChar(), Os::File::OPEN_WRITE);
     if( Os::File::OP_OK != ret ) {
       if( !this->m_openErrorOccurred ) { // throttle this event, otherwise a positive
                                        // feedback event loop can occur!
-        Fw::LogStringArg logStringArg(this->m_fileName);
-        this->log_WARNING_HI_FileOpenError(ret, logStringArg);
+        this->log_WARNING_HI_FileOpenError(ret, this->m_fileName);
       }
       this->m_openErrorOccurred = true;
     } else {
@@ -230,8 +207,7 @@ namespace Svc {
       this->m_fileMode = CLOSED;
 
       // Send event:
-      Fw::LogStringArg logStringArg(this->m_fileName);
-      this->log_DIAGNOSTIC_FileClosed(logStringArg);
+      this->log_DIAGNOSTIC_FileClosed(this->m_fileName);
     }
   }
 
@@ -271,8 +247,7 @@ namespace Svc {
     if( Os::File::OP_OK != ret || size != static_cast<NATIVE_INT_TYPE>(length) ) {
       if( !this->m_writeErrorOccurred ) { // throttle this event, otherwise a positive
                                         // feedback event loop can occur!
-        Fw::LogStringArg logStringArg(this->m_fileName);
-        this->log_WARNING_HI_FileWriteError(ret, static_cast<U32>(size), length, logStringArg);
+        this->log_WARNING_HI_FileWriteError(ret, static_cast<U32>(size), length, this->m_fileName);
       }
       this->m_writeErrorOccurred = true;
       return false;
@@ -287,11 +262,9 @@ namespace Svc {
     )
   {
     Os::ValidateFile::Status validateStatus;
-    validateStatus = Os::ValidateFile::createValidation(this->m_fileName, this->m_hashFileName);
+    validateStatus = Os::ValidateFile::createValidation(this->m_fileName.toChar(), this->m_hashFileName.toChar());
     if( Os::ValidateFile::VALIDATION_OK != validateStatus ) {
-      Fw::LogStringArg logStringArg1(this->m_fileName);
-      Fw::LogStringArg logStringArg2(this->m_hashFileName);
-      this->log_WARNING_LO_FileValidationError(logStringArg1, logStringArg2, validateStatus);
+      this->log_WARNING_LO_FileValidationError(this->m_fileName, this->m_hashFileName, validateStatus);
     }
   }
 }

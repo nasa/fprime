@@ -5,8 +5,8 @@ connects and sends/receives bytes. It implements the callback formation (shown b
 and producing the callback port call. Since it is a server, it must startup and listen for client connections. Designed
 for single client communication, it does not permit a queue of connecting clients.
 
-For more information on the supporting TCP implementation see: Drv::TcpServerSocket.
-For more information on the ByteStreamModelDriver see: Drv::ByteStreamDriverModel.
+For more information on the supporting TCP implementation see: [Drv::TcpServerSocket](../../Ip/docs/sdd.md#drvtcpserversocket-class).
+For more information on the ByteStreamModelDriver see: [Drv::ByteStreamDriverModel](../..//ByteStreamDriverModel/docs/sdd.md).
 
 ## Design
 
@@ -37,36 +37,47 @@ This status is an enumeration whose values are described in the following table:
 
 ## Usage
 
+The Drv::TcpClientComponentImpl must be configured with the address of the remote connection using the `configure` method.
+The `configure` method will also start the TCP server listening for remote connections. However, clients will not be accepted
+until the connection is opened. Sockets are opened using `open`. When the component is set to automatically open,
+`open` is called done via the first send or receive. Users declining to use automatic opening or who wish to control when
+open initially happens should call `open` before any send or receive.  
+
+Automatic opening is the default.  Call `setAutomaticOpen(false);` to disable this behavior.
+
+Users desiring to receive via TCP should start the receive thread using `start`, may stop the thread using `stop` and may
+wait for the thread to exit using `join`.
+
 The Drv::TcpServerComponentImpl must be configured with the address of the remote connection, and the socket must be
-open to begin. Usually, the user runs the Drv::TcpServerComponentImpl engaging its read thread, which will automatically
-open the  connection. The component is passive and has no commands meaning users should `init`, `configure`, and
-`startSocketTask`. In addition to these methods shared with the Drv::TcpClientComponentImpl, the server provides
-`startup` and `shutdown` methods to start and stop the listening socket. It `startup` must be run before the read task
-is started and `shutdown` should be called before the task is stopped.
+open to begin. When the user calls `configure` the listening port of the TCP server is automatically connected and begins
+listening for incoming connections.
 
-Upon shutdown, the `stopSocketThread` and `joinSocketThread` methods should be called to ensure
-proper resource deallocation. This typical usage is shown in the C++ snippet below.
+When configured to automatically connect as is the default, the single queued client will be accepted on the first send
+data call, or when the receive thread is started. Usually, the user runs the Drv::TcpServerComponentImpl's read thread
+with automatic connection enabled, which will automatically accept the client connection.
 
+`configure` must be called before any data is sent or received. `start` must be called for the component to receive data.
+
+
+Users should call `stop` to stop the receive task and `join` to wait for it to exit.
+
+Users turning off automatic connection must call `open` to open the connection.
 
 ```c++
 Drv::TcpServerComponentImpl comm = Drv::TcpServerComponentImpl("TCP Server");
 
 bool constructApp(bool dump, U32 port_number, char* hostname) {
+    ... configure 
+    comm.configure(hostname, port_number);
     ...
-    comm.init(0);
-    ...
-    if (hostname != nullptr && port_number != 0) {
-        Os::TaskString name("ReceiveTask");
-        comm.configure(hostname, port_number);
-        comm.startSocketTask(name);
-    }
+    Os::TaskString name("ReceiveTask");
+    comm.start(name);
 }
 
 void exitTasks() {
     ...
-    comm.shutdown();
-    comm.stopSocketTask();
-    (void) comm.joinSocketTask(nullptr);
+    comm.stop();
+    (void) comm.join();
 }
 ```
 ## Class Diagram
@@ -79,10 +90,3 @@ void exitTasks() {
 | TCP-SERVER-COMP-001 | The tcp server component shall implement the ByteStreamDriverModel  | inspection |
 | TCP-SERVER-COMP-002 | The tcp server component shall provide a read thread | unit test |
 | TCP-SERVER-COMP-003 | The tcp server component shall provide bidirectional communication with a tcp client | unit test |
-
-## Change Log
-
-| Date | Description |
-|---|---|
-| 2020-12-21 | Initial Draft |
-| 2021-01-28 | Updated |

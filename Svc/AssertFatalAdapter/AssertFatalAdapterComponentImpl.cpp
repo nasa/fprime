@@ -118,9 +118,7 @@ namespace Svc {
 
       CHAR msg[Fw::StringBase::BUFFER_SIZE(FW_ASSERT_TEXT_SIZE)] = {0};
       Fw::defaultReportAssert(file,lineNo,numArgs,arg1,arg2,arg3,arg4,arg5,arg6,msg,sizeof(msg));
-      // fprintf(stderr... allocates large buffers on stack as stderr is unbuffered by the OS
-      // and this can conflict with the traditionally smaller stack sizes.
-      printf("%s\n", msg);
+      Fw::Logger::log("%s\n", msg);
 
       // Handle the case where the ports aren't connected yet
       if (not this->isConnected_Log_OutputPort(0)) {
