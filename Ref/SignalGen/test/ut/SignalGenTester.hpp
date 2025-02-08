@@ -67,6 +67,18 @@ namespace Ref {
 
     private:
 
+      //! Handle a data product get from the component under test
+      //!
+      //! By default, (1) call pushProductGetEntry; (2) do not allocate a buffer
+      //! and return FAILURE. You can override this behavior, e.g., to call
+      //! pushProductGetEntry, allocate a buffer and return SUCCESS.
+      virtual Fw::Success::T productGet_handler(
+        FwDpIdType id, //!< The container ID (input)
+        FwSizeType dataSize, //!< The data size of the requested buffer (input)
+        Fw::Buffer& buffer //!< The buffer (output)
+      );
+
+
       // ----------------------------------------------------------------------
       // Variables
       // ----------------------------------------------------------------------
@@ -74,6 +86,16 @@ namespace Ref {
       //! The component under test
       //!
       SignalGen component;
+
+      void textLogIn(
+        FwEventIdType id, //!< The event ID
+        const Fw::Time& timeTag, //!< The time
+        const Fw::LogSeverity severity, //!< The severity
+        const Fw::TextLogString& text //!< The event string
+      ) override;
+
+      U8 m_dpBuff[1024];
+      Fw::Buffer m_reqDpBuff;
 
   };
 
