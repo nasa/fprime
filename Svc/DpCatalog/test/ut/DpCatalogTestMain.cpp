@@ -7,7 +7,6 @@
 #include "DpCatalogTester.hpp"
 #include <Svc/DpCatalog/DpCatalog.hpp>
 #include <list>
-#include <bits/stdc++.h>
 
 TEST(NominalManual, initTest) {
     Svc::DpCatalogTester tester;
@@ -289,7 +288,7 @@ TEST(NominalManual, TreeTestRandomPriority) {
 
         std::list<Svc::DpCatalog::DpStateEntry> entryList;
 
-        srand(time(0));
+        srand(time(nullptr));
 
         // fill the input entries with random priorities
         for (FwIndexType entry = 0; entry < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(inputs)); entry++) {
@@ -341,7 +340,7 @@ TEST(NominalManual, TreeTestRandomTime) {
 
         std::list<Svc::DpCatalog::DpStateEntry> entryList;
 
-        srand(time(0));
+        srand(time(nullptr));
 
         // fill the input entries with random priorities
         for (FwIndexType entry = 0; entry < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(inputs)); entry++) {
@@ -393,7 +392,7 @@ TEST(NominalManual, TreeTestRandomId) {
 
         std::list<Svc::DpCatalog::DpStateEntry> entryList;
 
-        srand(time(0));
+        srand(time(nullptr));
 
         // fill the input entries with random priorities
         for (FwIndexType entry = 0; entry < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(inputs)); entry++) {
@@ -445,7 +444,7 @@ TEST(NominalManual, TreeTestRandomPrioIdTime) {
 
         std::list<Svc::DpCatalog::DpStateEntry> entryList;
 
-        srand(time(0));
+        srand(time(nullptr));
 
         // fill the input entries with random priorities
         for (FwIndexType entry = 0; entry < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(inputs)); entry++) {
@@ -499,7 +498,7 @@ TEST(NominalManual, DISABLED_TreeTestRandomTransmitted) {
 
         std::list<Svc::DpCatalog::DpStateEntry> entryList;
 
-        srand(time(0));
+        srand(time(nullptr));
 
         // fill the input entries with random priorities
         for (FwIndexType entry = 0; entry < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(inputs)); entry++) {
