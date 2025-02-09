@@ -318,7 +318,10 @@ namespace Svc {
 
     void DpCatalog::appendFileState(const DpStateEntry& entry) {
         FW_ASSERT(this->m_stateFileData);
-        FW_ASSERT(entry.dir < static_cast<FwIndexType>(this->m_numDirectories),entry.dir,this->m_numDirectories);
+        FW_ASSERT(entry.dir < static_cast<FwIndexType>(this->m_numDirectories),
+            entry.dir,
+            static_cast<FwAssertArgType>(this->m_numDirectories)
+        );
 
         // We will append state to the existing state file
         // TODO: Have to handle case where state file has partially transmitted
