@@ -61,6 +61,7 @@ namespace Svc {
 
         // Do some assertion checks
         FW_ASSERT(numDirs <= DP_MAX_DIRECTORIES, static_cast<FwAssertArgType>(numDirs));
+        FW_ASSERT(stateFile.length());
         this->m_stateFile = stateFile;
 
         // request memory for catalog which is DP_MAX_FILES * slot size.
@@ -130,6 +131,7 @@ namespace Svc {
     void DpCatalog::resetBinaryTree() {
         // initialize data structures in the free list
         // Step 2 in memory partition (see configure() comments)
+        FW_ASSERT(this->m_memPtr);
         this->m_freeListHead = static_cast<DpBtreeNode*>(this->m_memPtr); 
         for (FwSizeType slot = 0; slot < this->m_numDpSlots; slot++) {
             // overlay new instance of the DpState entry on the memory
@@ -147,6 +149,8 @@ namespace Svc {
         this->m_dpTree = nullptr;
         // reset number of records
         this->m_numDpRecords = 0;
+        // reset number of files
+        
     }
 
     void DpCatalog::resetStateFileData() {
@@ -314,6 +318,7 @@ namespace Svc {
 
     void DpCatalog::appendFileState(const DpStateEntry& entry) {
         FW_ASSERT(this->m_stateFileData);
+        FW_ASSERT(entry.dir < static_cast<FwIndexType>(this->m_numDirectories),entry.dir,this->m_numDirectories);
 
         // We will append state to the existing state file
         // TODO: Have to handle case where state file has partially transmitted
@@ -385,6 +390,9 @@ namespace Svc {
         // fill the binary tree with DP files
         response = this->fillBinaryTree();
         if (response != Fw::CmdResponse::OK) {
+            // clean up the binary tree
+            this->resetBinaryTree();
+            this->resetStateFileData();
             return response;
         }
 
@@ -524,8 +532,12 @@ namespace Svc {
                 this->getFileState(entry);
 
                 // insert entry into sorted list. if can't insert, quit
-                if (not this->insertEntry(entry)) {
+                bool insertedOk = this->insertEntry(entry);
+                if (not insertedOk) {
                     this->log_WARNING_HI_DpInsertError(entry.record);
+                    // clean up and return
+                    this->resetBinaryTree();
+                    this->resetStateFileData();
                     break;
                 }
 
@@ -577,7 +589,10 @@ namespace Svc {
 
         // if the tree is empty, add the first entry
         if (this->m_dpTree == nullptr) {
-            this->allocateNode(this->m_dpTree,entry);
+            bool goodInsert = this->allocateNode(this->m_dpTree,entry);
+            if (not goodInsert) {
+                return false;
+            }
         // otherwise, search depth-first to sort the entry
         } else {
             // to avoid recursion, loop through a max of the number of available records
@@ -629,7 +644,8 @@ namespace Svc {
     DpCatalog::CheckStat DpCatalog::checkLeftRight(bool condition, DpBtreeNode* &node, const DpStateEntry& newEntry) {
         if (condition) {
             if (node->left == nullptr) {
-                if (!this->allocateNode(node->left,newEntry)) {
+                bool allocated = this->allocateNode(node->left,newEntry);
+                if (not allocated) {
                     return CheckStat::CHECK_ERROR;
                 }
                 return CheckStat::CHECK_OK;
@@ -639,7 +655,8 @@ namespace Svc {
             }
         } else {
             if (node->right == nullptr) {
-                if (!this->allocateNode(node->right,newEntry)) {
+                bool allocated = this->allocateNode(node->right,newEntry);
+                if (not allocated) {
                     return CheckStat::CHECK_ERROR;
                 }
                 return CheckStat::CHECK_OK;
@@ -711,7 +728,13 @@ namespace Svc {
                 static_cast<U32>(this->m_currentXmitNode->entry.record.getsize()),
                 this->m_currentXmitNode->entry.record.getpriority()
                 );
-            this->fileOut_out(0, this->m_currXmitFileName, this->m_currXmitFileName, 0, 0);
+            Svc::SendFileResponse resp = this->fileOut_out(0, this->m_currXmitFileName, this->m_currXmitFileName, 0, 0);
+            if (resp.getstatus() != Svc::SendFileStatus::STATUS_OK) {
+                // warn, but keep going since it may be an issue with this file but others could
+                // make it
+                this->log_WARNING_HI_DpFileSendError(this->m_currXmitFileName,resp.getstatus());
+            }
+
         }
 
     } // end sendNextEntry()
@@ -812,7 +835,7 @@ namespace Svc {
 
         // check file status
         if (resp.getstatus() != Svc::SendFileStatus::STATUS_OK) {
-            this->log_WARNING_HI_StateFileXmitError(this->m_currXmitFileName,resp.getstatus());
+            this->log_WARNING_HI_DpFileXmitError(this->m_currXmitFileName,resp.getstatus());
             this->m_xmitInProgress = false;
             this->cmdResponse_out(this->m_xmitOpCode,this->m_xmitCmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
         }
