@@ -2,11 +2,6 @@
 // \title  format.cpp
 // \author mstarch
 // \brief  cpp file for c-string format function as a implementation using snprintf
-//
-// \copyright
-// Copyright (C) 2025 California Institute of Technology.
-// ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged.
 // ======================================================================
 #include <Fw/Types/format.hpp>
 #include <limits>
@@ -14,6 +9,8 @@
 
 Fw::FormatStatus Fw::stringFormat(char* destination, const FwSizeType maximumSize, const char* formatString, va_list args) {
     Fw::FormatStatus formatStatus = Fw::FormatStatus::SUCCESS;
+    // Force null termination in error cases
+    destination[0] = 0;
     // Check format string
     if (formatString == nullptr) {
         formatStatus = Fw::FormatStatus::INVALID_FORMAT_STRING;
