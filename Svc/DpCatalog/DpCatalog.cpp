@@ -149,7 +149,6 @@ namespace Svc {
         this->m_dpTree = nullptr;
         // reset number of records
         this->m_numDpRecords = 0;
-        // reset number of files
         
     }
 
