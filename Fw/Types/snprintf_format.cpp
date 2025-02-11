@@ -7,6 +7,14 @@
 #include <limits>
 #include <cstdio>
 
+Fw::FormatStatus Fw::stringFormat(char* destination, const FwSizeType maximumSize, const char* formatString, ...) {
+    va_list args;
+    va_start(args, formatString);
+    FormatStatus status = Fw::stringFormat(destination, maximumSize, formatString, args);
+    va_end(args);
+    return status;
+}
+
 Fw::FormatStatus Fw::stringFormat(char* destination, const FwSizeType maximumSize, const char* formatString, va_list args) {
     Fw::FormatStatus formatStatus = Fw::FormatStatus::SUCCESS;
     // Force null termination in error cases

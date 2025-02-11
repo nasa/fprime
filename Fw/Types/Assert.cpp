@@ -30,7 +30,8 @@ void defaultReportAssert(FILE_NAME_ARG file,
                          FwAssertArgType arg6,
                          CHAR* destBuffer,
                          NATIVE_INT_TYPE buffSize) {
-    static_assert(std::numeric_limits<FwSizeType>::mac() >= std::numeric_limits<NATIVE_INT_TYPE>(buffSize));
+    static_assert(std::numeric_limits<FwSizeType>::max() >= std::numeric_limits<NATIVE_INT_TYPE>::max(),
+                  "NATIVE_INT_TYPE cannot fit into FwSizeType");
     switch (numArgs) {
         case 0:
             (void)stringFormat(destBuffer,  static_cast<FwSizeType>(buffSize), fileIdFs, file, lineNo);
