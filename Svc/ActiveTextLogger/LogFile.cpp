@@ -87,60 +87,40 @@ namespace Svc {
             this->m_openFile = false;
             this->m_file.close();
         }
+        Fw::FileNameString searchFilename;
+        Fw::FormatStatus formatStatus = searchFilename.format("%s", fileName);
 
         // If file name is too large, return failure:
-        FwSizeType fileNameSize = Fw::StringUtils::string_length(fileName, static_cast<FwSizeType>(Fw::String::STRING_SIZE));
-        if (fileNameSize == Fw::String::STRING_SIZE) {
+        if (formatStatus != Fw::FormatStatus::SUCCESS) {
             return false;
         }
 
-        U32 suffix = 0;
-        FwSignedSizeType tmp;
-        char fileNameFinal[Fw::String::STRING_SIZE];
-        (void) strncpy(fileNameFinal,fileName,
-                       Fw::String::STRING_SIZE);
-        fileNameFinal[Fw::String::STRING_SIZE-1] = 0;
-
         // Check if file already exists, and if it does try to tack on a suffix.
-        // Quit after 10 suffix addition tries (first try is w/ the original name).
+        // Quit after maxBackups suffix addition tries (first try is w/ the original name).
+        U32 suffix = 0;
         bool failedSuffix = false;
-        while (Os::FileSystem::getFileSize(fileNameFinal,tmp) == Os::FileSystem::OP_OK) {
-
-            // If the file name was the max size, then can't append a suffix,
-            // so just fail:
-            if (fileNameSize == (Fw::String::STRING_SIZE-1)) {
-                return false;
-            }
-
+        FwSignedSizeType fileSize = 0;
+        while (Os::FileSystem::getFileSize(searchFilename.toChar(), fileSize) == Os::FileSystem::OP_OK) {
             // Not able to create a new non-existing file in maxBackups tries, then mark that it failed:
             if (suffix >= maxBackups) {
                 failedSuffix = true;
                 break;
             }
-
-            NATIVE_INT_TYPE stat = snprintf(fileNameFinal,Fw::String::STRING_SIZE,
-                                            "%s%" PRIu32,fileName,suffix);
-
-            // If there was error, then just fail:
-            if (stat <= 0) {
+            // Format and check for error and overflows
+            formatStatus = searchFilename.format("%s%" PRIu32, fileName, suffix);
+            if (formatStatus != Fw::FormatStatus::SUCCESS) {
                 return false;
             }
-
-            // There should never be truncation:
-            FW_ASSERT(stat < Fw::String::STRING_SIZE);
-
             ++suffix;
         }
 
         // If failed trying to make a new file, just use the original file
         if (failedSuffix) {
-            (void) strncpy(fileNameFinal,fileName,
-                           Fw::String::STRING_SIZE);
-            fileNameFinal[Fw::String::STRING_SIZE-1] = 0;
+            searchFilename = fileName;
         }
 
         // Open the file (using CREATE so that it truncates an already existing file):
-        Os::File::Status stat = this->m_file.open(fileNameFinal, Os::File::OPEN_CREATE, Os::File::OverwriteType::OVERWRITE);
+        Os::File::Status stat = this->m_file.open(searchFilename.toChar(), Os::File::OPEN_CREATE, Os::File::OverwriteType::OVERWRITE);
 
         // Bad status when trying to open the file:
         if (stat != Os::File::OP_OK) {
@@ -149,7 +129,7 @@ namespace Svc {
 
         this->m_currentFileSize = 0;
         this->m_maxFileSize = maxSize;
-        this->m_fileName = fileNameFinal;
+        this->m_fileName = searchFilename;
         this->m_openFile = true;
 
         return true;

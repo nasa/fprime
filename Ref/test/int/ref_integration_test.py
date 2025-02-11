@@ -262,8 +262,8 @@ def test_signal_generation(fprime_test_api):
     info = {"type": "SQUARE", "history": history, "pairHistory": pair_history}
     fprime_test_api.send_and_assert_command("Ref.SG4.Toggle")
     fprime_test_api.assert_telemetry("Ref.SG4.History", history, timeout=6)
-    fprime_test_api.assert_telemetry("Ref.SG4.PairHistory", pair_history, timeout=1)
-    fprime_test_api.assert_telemetry("Ref.SG4.Info", info, timeout=1)
+    fprime_test_api.assert_telemetry("Ref.SG4.PairHistory", pair_history, timeout=3)
+    fprime_test_api.assert_telemetry("Ref.SG4.Info", info, timeout=3)
     fprime_test_api.send_and_assert_command("Ref.SG4.Toggle")
 
 

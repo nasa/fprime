@@ -73,10 +73,3 @@ FwSignedSizeType Fw::StringUtils::substring_find(const CHAR* source_string,
     // if we make it here, no matches were found
     return -1;
 }
-
-void Fw::StringUtils::format(CHAR* destination, Fw::StringBase::SizeType size, const CHAR* format, ...) {
-    va_list args;
-    va_start(args, format);
-    Fw::ExternalString(destination,  size).vformat(format, args);
-    va_end(args);
-}

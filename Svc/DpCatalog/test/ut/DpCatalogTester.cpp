@@ -12,6 +12,7 @@
 #include "Fw/Test/UnitTest.hpp"
 #include "Fw/Types/FileNameString.hpp"
 #include "config/DpCfg.hpp"
+#include <list>
 namespace Svc {
 
     // ----------------------------------------------------------------------
@@ -93,6 +94,7 @@ namespace Svc {
             } else {
                 ASSERT_TRUE(res != nullptr);
             }
+            //printf("CE: %u\n",entry);
             // should match expected entry
             ASSERT_EQ(res->entry.record,output[entry].record);
         }

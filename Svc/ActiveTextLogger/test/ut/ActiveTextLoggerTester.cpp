@@ -253,13 +253,13 @@ namespace Svc {
 
       printf("Testing file name larger than string size\n");
 
-      // Setup filename larger than 80 char:
-      char longFileName[Fw::String::STRING_SIZE + 1];
-      for (U32 i = 0; i < Fw::String::STRING_SIZE; ++i) {
+      // Setup filename larger than file name string can accept
+      // Maximum valid file name is Fw::FileNameString::STRING_SIZE, add 1 to be too long, and an extra for the \0
+      char longFileName[Fw::FileNameString::STRING_SIZE + 2];
+      for (U32 i = 0; i < Fw::FileNameString::STRING_SIZE + 1; ++i) {
           longFileName[i] = 'a';
       }
-      longFileName[Fw::String::STRING_SIZE] = 0;
-
+      longFileName[Fw::FileNameString::STRING_SIZE + 1] = 0;
       stat = this->component.set_log_file(longFileName,50);
 
       // Verify file not made:
@@ -269,11 +269,12 @@ namespace Svc {
                Os::FileSystem::getFileSize(longFileName,tmp));
 
       printf("Testing file name of max size and file already exists\n");
-      char longFileNameDup[Fw::String::STRING_SIZE];
-      for (U32 i = 0; i < Fw::String::STRING_SIZE; ++i) {
+      // Maximum valid file name is Fw::FileNameString::STRING_SIZE add one for \0
+      char longFileNameDup[Fw::FileNameString::STRING_SIZE + 1];
+      for (U32 i = 0; i < Fw::FileNameString::STRING_SIZE; ++i) {
           longFileNameDup[i] = 'a';
       }
-      longFileNameDup[Fw::String::STRING_SIZE-1] = 0;
+      longFileNameDup[Fw::FileNameString::STRING_SIZE] = 0;
 
       stat = this->component.set_log_file(longFileNameDup,50);
 
@@ -311,9 +312,6 @@ namespace Svc {
       char baseNameWithSuffix[128];
       U32 i;
       for (i = 0; i < 10; ++i) {
-
-          //printf("<< %i\n",i);
-
           stat = this->component.set_log_file(baseName,50);
 
           snprintf(baseNameWithSuffix, sizeof(baseNameWithSuffix), "%s%d",baseName,i);

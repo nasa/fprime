@@ -12,24 +12,10 @@
 #include <Os/Mutex.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Utils/Hash/Hash.hpp>
-
+#include <Fw/Types/FileNameString.hpp>
 #include <limits.h>
 #include <cstdio>
 #include <cstdarg>
-
-// some limits.h don't have PATH_MAX
-#ifdef PATH_MAX
-#define COMLOGGER_PATH_MAX PATH_MAX
-#else
-#define COMLOGGER_PATH_MAX 255
-#endif
-
-// some limits.h don't have NAME_MAX
-#ifdef NAME_MAX
-#define COMLOGGER_NAME_MAX NAME_MAX
-#else
-#define COMLOGGER_NAME_MAX 255
-#endif
 
 namespace Svc {
 
@@ -90,17 +76,8 @@ namespace Svc {
           U32 key /*!< Value to return to pinger*/
       );
 
-      // ----------------------------------------------------------------------
-      // Constants:
-      // ----------------------------------------------------------------------
-      // The maximum size of a filename
-      enum {
-        MAX_FILENAME_SIZE = COMLOGGER_NAME_MAX,
-        MAX_PATH_SIZE = COMLOGGER_PATH_MAX
-      };
-
       // The filename data:
-      CHAR m_filePrefix[MAX_FILENAME_SIZE + MAX_PATH_SIZE];
+      Fw::FileNameString m_filePrefix;
       U32 m_maxFileSize;
 
       // ----------------------------------------------------------------------
@@ -113,8 +90,9 @@ namespace Svc {
 
       FileMode m_fileMode;
       Os::File m_file;
-      CHAR m_fileName[MAX_FILENAME_SIZE + MAX_PATH_SIZE];
-      CHAR m_hashFileName[MAX_FILENAME_SIZE + MAX_PATH_SIZE];
+
+      Fw::FileNameString m_fileName;
+      Fw::FileNameString m_hashFileName;
       U32 m_byteCount;
       bool m_writeErrorOccurred;
       bool m_openErrorOccurred;

@@ -1,4 +1,4 @@
-<packets name="RefPackets" namespace="Ref" size="111">
+<packets name="RefPackets" namespace="Ref" size="191">
 
     <import_topology>Ref/Top/RefTopologyAppAi.xml</import_topology>
 
@@ -162,6 +162,17 @@
         <channel name="Ref.typeDemo.Float2Ch"/>
         <channel name="Ref.typeDemo.Float3Ch"/>
         <channel name="Ref.typeDemo.FloatSet"/>
+        <channel name="Ref.typeDemo.ScalarStructCh"/>
+        <channel name="Ref.typeDemo.ScalarU8Ch"/>
+        <channel name="Ref.typeDemo.ScalarU16Ch"/>
+        <channel name="Ref.typeDemo.ScalarU32Ch"/>
+        <channel name="Ref.typeDemo.ScalarU64Ch"/>
+        <channel name="Ref.typeDemo.ScalarI8Ch"/>
+        <channel name="Ref.typeDemo.ScalarI16Ch"/>
+        <channel name="Ref.typeDemo.ScalarI32Ch"/>
+        <channel name="Ref.typeDemo.ScalarI64Ch"/>
+        <channel name="Ref.typeDemo.ScalarF32Ch"/>
+        <channel name="Ref.typeDemo.ScalarF64Ch"/>
     </packet>
 
     <packet name="DataProducts" id="21" level="3">

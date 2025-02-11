@@ -365,6 +365,8 @@ getcontext
 getdata
 getdefaultencoding
 getextern
+getf
+geti
 getinput
 getm
 getquaternion

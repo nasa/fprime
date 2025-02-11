@@ -15,9 +15,11 @@
 #include <Os/File.hpp>
 #include <Os/FileSystem.hpp>
 #include <Utils/Hash/Hash.hpp>
-#include <Fw/Types/StringUtils.hpp>
+#include <Fw/Types/FileNameString.hpp>
 
 namespace Utils {
+static_assert(FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING,
+        "Cannot use CRC checker without full string formatting");
 
   crc_stat_t create_checksum_file(const char* const fname)
   {
@@ -35,7 +37,7 @@ namespace Utils {
     FwSignedSizeType int_file_size;
     FwSignedSizeType bytes_to_read;
     FwSignedSizeType bytes_to_write;
-    CHAR hashFilename[CRC_MAX_FILENAME_SIZE];
+    Fw::FileNameString hashFilename;
     U8 block_data[CRC_FILE_READ_BLOCK];
 
     fs_stat = Os::FileSystem::getFileSize(fname, filesize);
@@ -89,10 +91,10 @@ namespace Utils {
     hash.final(checksum);
 
     // open checksum file
-    FW_ASSERT(CRC_MAX_FILENAME_SIZE > (Fw::StringUtils::string_length(fname, CRC_MAX_FILENAME_SIZE) +  sizeof HASH_EXTENSION_STRING));
-    Fw::StringUtils::format(hashFilename, CRC_MAX_FILENAME_SIZE, "%s%s", fname, HASH_EXTENSION_STRING);
+    Fw::FormatStatus formatStatus = hashFilename.format("%s%s", fname, HASH_EXTENSION_STRING);
+    FW_ASSERT(formatStatus == Fw::FormatStatus::SUCCESS);
 
-    stat = f.open(hashFilename, Os::File::OPEN_WRITE);
+    stat = f.open(hashFilename.toChar(), Os::File::OPEN_WRITE);
     if(stat != Os::File::OP_OK)
     {
       return FAILED_FILE_CRC_OPEN;
@@ -116,13 +118,13 @@ namespace Utils {
   crc_stat_t read_crc32_from_file(const char* const fname, U32 &checksum_from_file) {
       Os::File f;
       Os::File::Status stat;
-      char hashFilename[CRC_MAX_FILENAME_SIZE];
+      Fw::FileNameString hashFilename;
       FW_ASSERT(fname != nullptr);
       // open checksum file
-      FW_ASSERT(CRC_MAX_FILENAME_SIZE > (Fw::StringUtils::string_length(fname, CRC_MAX_FILENAME_SIZE) + sizeof HASH_EXTENSION_STRING));
-      Fw::StringUtils::format(hashFilename,  CRC_MAX_FILENAME_SIZE, "%s%s", fname, HASH_EXTENSION_STRING);
+      Fw::FormatStatus formatStatus = hashFilename.format("%s%s", fname, HASH_EXTENSION_STRING);
+      FW_ASSERT(formatStatus == Fw::FormatStatus::SUCCESS);
 
-      stat = f.open(hashFilename, Os::File::OPEN_READ);
+      stat = f.open(hashFilename.toChar(), Os::File::OPEN_READ);
       if(stat != Os::File::OP_OK)
       {
         return FAILED_FILE_CRC_OPEN;
