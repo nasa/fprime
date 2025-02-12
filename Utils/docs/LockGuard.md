@@ -1,4 +1,3 @@
-\page UtilsLockGuardClass Utils::LockGuard Class
 # Utils::LockGuard
 
 ## 1 Introduction
