@@ -47,6 +47,8 @@ struct PriorityQueueHandle : public QueueHandle {
 };
 //! \brief generic priority queue implementation
 //!
+//! \warning This Priority Queue is not ISR safe
+//!
 //! A generic implementation of a priority queue to support the Os::QueueInterface. This queue uses OSAL mutexes,
 //! and condition variables to provide for a task-safe blocking queue implementation. Data is stored in heap memory.
 //!
