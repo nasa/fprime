@@ -1,3 +1,8 @@
+---
+search:
+  boost: 0.4
+---
+
 # A Tour of the Source Tree
 
 The following directories constitute the demonstration code. The
