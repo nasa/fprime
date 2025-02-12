@@ -32,8 +32,8 @@ fprime-fpp-to-cpp==2.3.0
 fprime-fpp-to-dict==2.3.0
 fprime-fpp-to-json==2.3.0
 fprime-fpp-to-xml==2.3.0
-fprime-gds==3.5.2a2
-fprime-tools==3.5.1
+fprime-gds==3.6.0
+fprime-tools==3.6.0
 fprime-visual==1.0.2
 gcovr==8.2
 idna==3.10
