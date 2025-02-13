@@ -5,34 +5,55 @@ hide:
 
 # User Manual
 
-The User Manual dives into F Prime architectural principles, providing a deep understanding of how the framework operates. The different chapters are listed below.
+The User Manual dives into F Prime concepts and usage, providing a deep understanding of how the framework operates. The different chapters are listed below.
 
-### __Overview__
 
-Technical overview of the F´ ecosystem and its core principles.
+<div class="grid cards boring" markdown>
 
-### __Framework__
+-   <span class="card-title">__Overview__</span>
 
-Learn concepts and mechanisms needed to build and use an F´ application.
+    ---
 
-### __FPP User's Guide__
+    Technical overview of the F´ ecosystem.
 
-In-depth user guide for F Prime Prime (FPP), the F´ modeling language.
 
-### __F´ GDS__
+-   <span class="card-title">__Framework__</span>
 
-Learn how to use the GDS and how it can be used to test F´ applications.
+    ---
 
-### __Build System__
+    Learn concepts and mechanisms needed to build and use an F´ application.
 
-Learn about the F´ build system and how to customize it.
 
-### __Security__
+-   <span class="card-title">__FPP User's Guide__</span>
 
-Security considerations when designing and developing F´ applications.
+    ---
 
-### __Design Patterns__
+    In-depth user guide for F Prime Prime (FPP), the F´ modeling language.
 
-Learn about common design patterns used in F´ applications.
+-   <span class="card-title">__F´ GDS__</span>
 
-<hr>
+    ---
+
+    Learn how to use the GDS and how it can be used to test F´ applications.
+
+-   <span class="card-title">__Build System__</span>
+
+    ---
+
+    Learn about the F´ build system and how to customize it.
+
+
+-   <span class="card-title">__Security__</span>
+
+    ---
+
+    Security considerations when designing and developing F´ applications.
+
+
+-   <span class="card-title">__Design Patterns__</span>
+
+    ---
+
+    Learn about common design patterns used in F´ applications.
+
+</div>
