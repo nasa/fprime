@@ -96,7 +96,7 @@ make
 
 Sometimes users need to crack open the CMake structure in order to do things like adding an external
 library/build system, adding custom make targets, building utilities, etc. These issues are described
-here: [Customization](Customization.md)
+here: [Customization](./cmake-customization.md)
 
 
-Further documentation can be found in the SDD: [SDD.md](https://github.com/nasa/fprime/blob/devel/cmake/docs/sdd.md)
+Further documentation can be found in the CMake SDD: [SDD.md](https://github.com/nasa/fprime/blob/devel/cmake/docs/sdd.md)
