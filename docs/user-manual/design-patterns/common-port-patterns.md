@@ -58,7 +58,7 @@ F32 getTemperature_handler() {
     return this->m_previously_set_temperature;
 }
 ```
-> ![NOTE]
+> [!NOTE]
 > This snippet used the `guarded` kind to ensure data member protection provided through the `guarded` port's mutex.
 
 ### Conclusion
