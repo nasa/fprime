@@ -194,6 +194,7 @@ nav:
         - 'CMake User API': docs/user-manual/build-system/cmake-api.md
         - 'CMake Targets': docs/user-manual/build-system/cmake-targets.md
         - 'CMake Customization': docs/user-manual/build-system/cmake-customization.md
+        - 'Advanced CMake usage': docs/user-manual/build-system/cmake-advanced.md
         - 'Package Implementations': docs/user-manual/build-system/package-implementations.md
       - Security:
         - 'Software Bill of Materials': docs/user-manual/security/software-bill-of-materials.md
