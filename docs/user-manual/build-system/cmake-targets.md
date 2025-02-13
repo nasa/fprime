@@ -14,9 +14,9 @@ For projects generating GNU make files, these targets can be executed with the `
 ## Built-In Targets
 
 The CMake system supplies several targets that are useful for all projects and thus are included
-as part of the CMake system. These targets are described in the [index](cmake-api.md)
+as part of the CMake system. These targets are defined in [cmake/target](https://github.com/nasa/fprime/tree/devel/cmake/target).
 
 
 ## Adding Custom Targets
 
-See the [Customization Guide](Customization.md) for a description of adding custom targets.
+See the [Customization Guide](cmake-customization.md) for a description of adding custom targets.

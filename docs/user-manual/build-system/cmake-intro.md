@@ -71,9 +71,3 @@ support file to the F´ CMake system. These steps can be reviewed here:
 [CMake Toolchains](./cmake-toolchains.md): F´ CMake toolchain file usage
 [F´ Platforms](./cmake-platforms.md): F´ CMake platform files
 
-## Advanced CMake Usage
-
-Most users don't need the CMake advanced usage, as they use `fprime-util`.  However, to use CMake without `fprime-util`
-please see: [CMake Advanced Usage](./cmake-advanced.md)
-
-Should a user want to run the unit tests that check CMake, see [CMake UTs](./cmake-uts.md).
