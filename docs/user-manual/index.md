@@ -5,56 +5,34 @@ hide:
 
 # User Manual
 
-The User Manual dives into F Prime design philosophy and architectural principles, providing a deep understanding of how the framework operates. Below are the different topics you can find under the User Manual. 
+The User Manual dives into F Prime architectural principles, providing a deep understanding of how the framework operates. The different chapters are listed below.
 
+### __Overview__
 
-<div class="grid cards" markdown>
+Technical overview of the F´ ecosystem and its core principles.
 
--   <span class="card-title">__Overview__</span>
+### __Framework__
 
-    ---
+Learn concepts and mechanisms needed to build and use an F´ application.
 
-    Technical overview of the F´ ecosystem.
+### __FPP User's Guide__
 
+In-depth user guide for F Prime Prime (FPP), the F´ modeling language.
 
--   <span class="card-title">__Framework__</span>
+### __F´ GDS__
 
-    ---
+Learn how to use the GDS and how it can be used to test F´ applications.
 
-    Learn concepts and mechanisms needed to build and use an F´ application.
+### __Build System__
 
+Learn about the F´ build system and how to customize it.
 
--   <span class="card-title">__FPP User's Guide__</span>
+### __Security__
 
-    ---
+Security considerations when designing and developing F´ applications.
 
-    In-depth user guide for F Prime Prime (FPP), the F´ modeling language.
+### __Design Patterns__
 
--   <span class="card-title">__F´ GDS__</span>
+Learn about common design patterns used in F´ applications.
 
-    ---
-
-    Learn how to use the GDS and how it can be used to test F´ applications.
-
--   <span class="card-title">__Build System__</span>
-
-    ---
-
-    Learn about the F´ build system and how to customize it.
-
-
--   <span class="card-title">__Security__</span>
-
-    ---
-
-    Security considerations when designing and developing F´ applications.
-
-
--   <span class="card-title">__Design Patterns__</span>
-
-    ---
-
-    Learn about common design patterns used in F´ applications.
-
-
-</div>
+<hr>
