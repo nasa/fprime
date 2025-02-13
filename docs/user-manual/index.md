@@ -36,12 +36,17 @@ The User Manual dives into F Prime concepts and usage, providing a deep understa
 
     Learn how to use the GDS and how it can be used to test F´ applications.
 
+-   <span class="card-title">__Design Patterns__</span>
+
+    ---
+
+    Learn about common design patterns used in F´ applications.
+
 -   <span class="card-title">__Build System__</span>
 
     ---
 
     Learn about the F´ build system and how to customize it.
-
 
 -   <span class="card-title">__Security__</span>
 
@@ -50,10 +55,5 @@ The User Manual dives into F Prime concepts and usage, providing a deep understa
     Security considerations when designing and developing F´ applications.
 
 
--   <span class="card-title">__Design Patterns__</span>
-
-    ---
-
-    Learn about common design patterns used in F´ applications.
 
 </div>

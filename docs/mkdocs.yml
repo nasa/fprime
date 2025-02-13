@@ -180,14 +180,17 @@ nav:
         - 'F´ Data Products': docs/user-manual/framework/data-products.md
         - 'State Machines': docs/user-manual/framework/state-machines.md
       - 'FPP': 'https://nasa.github.io/fpp/fpp-users-guide.html'
-      - 'Design Patterns':
-        - 'Common Port Patterns': documentation/user-manual/design-patterns/common-port-patterns.md
       - GDS:
         - "The GDS CLI": docs/user-manual/gds/gds-cli.md
         - 'The GDS Dashboard': docs/user-manual/gds/gds-custom-dashboards.md
         - 'GDS Dashboard Reference': docs/user-manual/gds/gds-dashboard-reference.md
         - 'Integration Test API': docs/user-manual/gds/gds-test-api-guide.md
         - 'Sequencing in F´': docs/user-manual/gds/seqgen.md
+      - Design Patterns:
+        - 'Application, Manager, Driver Pattern': docs/user-manual/design-patterns/app-man-drv.md
+        - 'Rate Groups and Timeliness': docs/user-manual/design-patterns/rate-group.md
+        - 'The Hub Pattern': docs/user-manual/design-patterns/hub-pattern.md
+        - 'Common Port Patterns': documentation/user-manual/design-patterns/common-port-patterns.md
       - Build System:
         - 'The F´ CMake Build System': docs/user-manual/build-system/cmake-intro.md
         - 'settings.ini: Build Settings Configuration': docs/user-manual/build-system/settings.md
@@ -201,10 +204,6 @@ nav:
         - 'Package Implementations': docs/user-manual/build-system/package-implementations.md
       - Security:
         - 'Software Bill of Materials': docs/user-manual/security/software-bill-of-materials.md
-      - Design Patterns:
-        - 'Application, Manager, Driver Pattern': docs/user-manual/design-patterns/app-man-drv.md
-        - 'Rate Groups and Timeliness': docs/user-manual/design-patterns/rate-group.md
-        - 'The Hub Pattern': docs/user-manual/design-patterns/hub-pattern.md
     - How To: 
       - docs/how-to/index.md
       - 'F´ Library Development': docs/how-to/develop-fprime-libraries.md
