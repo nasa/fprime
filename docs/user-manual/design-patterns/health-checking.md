@@ -53,7 +53,7 @@ void CriticalComponent ::pingIn_handler(FwIndexType portNum, U32 key) {
 }
 ```
 
-> ![NOTE]
+> [!NOTE]
 > This implementation of a component's `pingIn_handler` is always the same.  It is safe to copy the above code verbatim as long as `CriticalComponent` is replaced with your component's name.
 
 At the system topology level, you must specify a component handling system health.
@@ -80,7 +80,7 @@ namespace MyTopology {
     }
 }
 ```
-> ![NOTE]
+> [!NOTE]
 > This configuration is set for **each instance** of the component.  In this example `criticalComponent` is an instance of `CriticalComponent`
 
 ## Conclusion
