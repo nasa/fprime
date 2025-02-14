@@ -123,25 +123,25 @@ class ComQueue : public ComQueueComponentBase {
 
     //! Receive and queue a Fw::Buffer
     //!
-    void buffQueueIn_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    void buffQueueIn_handler(const FwIndexType portNum, /*!< The port number*/
                              Fw::Buffer& fwBuffer /*!< Buffer containing packet data*/);
 
     //! Receive and queue a Fw::ComBuffer
     //!
-    void comQueueIn_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    void comQueueIn_handler(const FwIndexType portNum, /*!< The port number*/
                             Fw::ComBuffer& data,           /*!< Buffer containing packet data*/
                             U32 context                    /*!< Call context value; meaning chosen by user*/
     );
 
     //! Handle the status of the last sent message
     //!
-    void comStatusIn_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    void comStatusIn_handler(const FwIndexType portNum, /*!< The port number*/
                              Fw::Success& condition         /*!<Status of communication state*/
     );
 
     //! Schedules the transmission of telemetry
     //!
-    void run_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    void run_handler(const FwIndexType portNum, /*!< The port number*/
                      U32 context                    /*!<The call order*/
     );
 

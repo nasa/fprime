@@ -41,7 +41,7 @@ namespace Svc {
 
     }
 
-    void RateGroupDriver::CycleIn_handler(NATIVE_INT_TYPE portNum, Os::RawTime& cycleStart) {
+    void RateGroupDriver::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleStart) {
 
         // Make sure that the dividers have been configured:
         // If this asserts, add the configure() call to initialization.

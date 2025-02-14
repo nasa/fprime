@@ -58,7 +58,7 @@ void SeqDispatcher::runSequence(FwIndexType sequencerIdx,
 }
 
 void SeqDispatcher::seqStartIn_handler(
-    NATIVE_INT_TYPE portNum, //!< The port number
+    FwIndexType portNum, //!< The port number
     const Fw::StringBase& fileName //!< The sequence file name
 ) {
   FW_ASSERT(portNum >= 0 && portNum < SeqDispatcherSequencerPorts, portNum);
@@ -91,7 +91,7 @@ void SeqDispatcher::seqStartIn_handler(
 }
 
 void SeqDispatcher::seqDoneIn_handler(
-    NATIVE_INT_TYPE portNum,         //!< The port number
+    FwIndexType portNum,         //!< The port number
     FwOpcodeType opCode,             //!< Command Op Code
     U32 cmdSeq,                      //!< Command Sequence
     const Fw::CmdResponse& response  //!< The command response argument
@@ -136,7 +136,7 @@ void SeqDispatcher::seqDoneIn_handler(
 }
 
 //! Handler for input port seqRunIn
-void SeqDispatcher::seqRunIn_handler(NATIVE_INT_TYPE portNum,
+void SeqDispatcher::seqRunIn_handler(FwIndexType portNum,
                                      const Fw::StringBase& fileName) {
   FwIndexType idx = this->getNextAvailableSequencerIdx();
   // no available sequencers

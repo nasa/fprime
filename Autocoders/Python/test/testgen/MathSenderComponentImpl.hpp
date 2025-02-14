@@ -53,7 +53,7 @@ namespace Ref {
       //! Handler implementation for mathIn
       //!
       void mathIn_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          const FwIndexType portNum, /*!< The port number*/
           F32 result /*!< the result of the operation*/
       );
 

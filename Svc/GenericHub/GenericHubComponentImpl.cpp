@@ -52,12 +52,12 @@ void GenericHubComponentImpl ::send_data(const HubType type,
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void GenericHubComponentImpl ::buffersIn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
+void GenericHubComponentImpl ::buffersIn_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
     send_data(HUB_TYPE_BUFFER, portNum, fwBuffer.getData(), fwBuffer.getSize());
     bufferDeallocate_out(0, fwBuffer);
 }
 
-void GenericHubComponentImpl ::dataIn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
+void GenericHubComponentImpl ::dataIn_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
     HubType type = HUB_TYPE_MAX;
     U32 type_in = 0;
     U32 port = 0;
@@ -138,7 +138,7 @@ void GenericHubComponentImpl ::dataIn_handler(const NATIVE_INT_TYPE portNum, Fw:
     }
 }
 
-void GenericHubComponentImpl ::LogRecv_handler(const NATIVE_INT_TYPE portNum,
+void GenericHubComponentImpl ::LogRecv_handler(const FwIndexType portNum,
                                   FwEventIdType id,
                                   Fw::Time& timeTag,
                                   const Fw::LogSeverity& severity,
@@ -160,7 +160,7 @@ void GenericHubComponentImpl ::LogRecv_handler(const NATIVE_INT_TYPE portNum,
 
 }
 
-void GenericHubComponentImpl ::TlmRecv_handler(const NATIVE_INT_TYPE portNum,
+void GenericHubComponentImpl ::TlmRecv_handler(const FwIndexType portNum,
                                   FwChanIdType id,
                                   Fw::Time& timeTag,
                                   Fw::TlmBuffer& val) {
@@ -182,7 +182,7 @@ void GenericHubComponentImpl ::TlmRecv_handler(const NATIVE_INT_TYPE portNum,
 // Handler implementations for user-defined serial input ports
 // ----------------------------------------------------------------------
 
-void GenericHubComponentImpl ::portIn_handler(NATIVE_INT_TYPE portNum,        /*!< The port number*/
+void GenericHubComponentImpl ::portIn_handler(FwIndexType portNum,        /*!< The port number*/
                                               Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
 ) {
     send_data(HUB_TYPE_PORT, portNum, Buffer.getBuffAddr(), Buffer.getBuffLength());

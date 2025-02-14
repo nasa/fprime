@@ -46,7 +46,7 @@ namespace Svc {
       //! Handler implementation for FatalReceive
       //!
       void FatalReceive_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          const FwIndexType portNum, /*!< The port number*/
           FwEventIdType Id /*!< The ID of the FATAL event*/
       );
 

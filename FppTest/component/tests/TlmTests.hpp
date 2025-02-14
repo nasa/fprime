@@ -14,7 +14,7 @@
 // Telemetry test declarations
 // ----------------------------------------------------------------------
 
-#define TLM_TEST_DECL(TYPE) void testTelemetry(NATIVE_INT_TYPE portNum, FppTest::Types::TYPE##Param& data);
+#define TLM_TEST_DECL(TYPE) void testTelemetry(FwIndexType portNum, FppTest::Types::TYPE##Param& data);
 
 #define TLM_TEST_DECLS       \
     TLM_TEST_DECL(U32)       \
@@ -29,7 +29,7 @@
 // ----------------------------------------------------------------------
 
 #define TLM_TEST_DEF(TYPE)                                                                    \
-    void Tester ::testTelemetry(NATIVE_INT_TYPE portNum, FppTest::Types::TYPE##Param& data) { \
+    void Tester ::testTelemetry(FwIndexType portNum, FppTest::Types::TYPE##Param& data) { \
         ASSERT_TRUE(component.isConnected_tlmOut_OutputPort(portNum));                        \
                                                                                               \
         component.tlmWrite_Channel##TYPE(data.args.val);                                      \
@@ -50,7 +50,7 @@
     TLM_TEST_DEF(U32)                                                                            \
     TLM_TEST_DEF(F32)                                                                            \
                                                                                                  \
-    void Tester ::testTelemetry(NATIVE_INT_TYPE portNum, FppTest::Types::TlmStringParam& data) { \
+    void Tester ::testTelemetry(FwIndexType portNum, FppTest::Types::TlmStringParam& data) { \
         ASSERT_TRUE(component.isConnected_tlmOut_OutputPort(portNum));                           \
                                                                                                  \
         component.tlmWrite_ChannelString(data.args.val);                                         \

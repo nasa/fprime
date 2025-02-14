@@ -15,7 +15,7 @@ TestLogRecvImpl::TestLogRecvImpl(const char* name) : LogTextImpl(name)
 TestLogRecvImpl::~TestLogRecvImpl() {
 }
 
-void TestLogRecvImpl::logRecvPort_handler(NATIVE_INT_TYPE portNum, FwEventIdType id, Fw::Time &timeTag, Fw::LogSeverity severity, Fw::LogBuffer &args) {
+void TestLogRecvImpl::logRecvPort_handler(FwIndexType portNum, FwEventIdType id, Fw::Time &timeTag, Fw::LogSeverity severity, Fw::LogBuffer &args) {
     printf("Received log %d, Time (%d,%d:%d) severity %d\n",id,timeTag.getTimeBase(),timeTag.getSeconds(),timeTag.getUSeconds(),severity);
     I32 arg1;
     F32 arg2;

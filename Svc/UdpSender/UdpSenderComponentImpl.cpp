@@ -79,7 +79,7 @@ namespace Svc {
 
   void UdpSenderComponentImpl ::
     Sched_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 context
     )
   {
@@ -93,7 +93,7 @@ namespace Svc {
 
   void UdpSenderComponentImpl ::
     PortsIn_handler(
-        NATIVE_INT_TYPE portNum, /*!< The port number*/
+        FwIndexType portNum, /*!< The port number*/
         Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
     )
   {

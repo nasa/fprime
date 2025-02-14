@@ -72,7 +72,7 @@ namespace Svc {
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
 
-    void HealthImpl::PingReturn_handler(const NATIVE_INT_TYPE portNum, U32 key) {
+    void HealthImpl::PingReturn_handler(const FwIndexType portNum, U32 key) {
         // verify the key value
         if (key != this->m_pingTrackerEntries[portNum].key) {
             Fw::LogStringArg _arg = this->m_pingTrackerEntries[portNum].entry.entryName;
@@ -85,7 +85,7 @@ namespace Svc {
 
     }
 
-    void HealthImpl::Run_handler(const NATIVE_INT_TYPE portNum, U32 context) {
+    void HealthImpl::Run_handler(const FwIndexType portNum, U32 context) {
         //dispatch messages
         for (NATIVE_UINT_TYPE i = 0; i < this->queue_depth; i++) {
             MsgDispatchStatus stat = this->doDispatch();

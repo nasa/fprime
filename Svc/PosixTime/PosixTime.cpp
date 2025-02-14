@@ -19,7 +19,7 @@ namespace Svc {
     }
 
     void PosixTime::timeGetPort_handler(
-            NATIVE_INT_TYPE portNum, /*!< The port number*/
+            FwIndexType portNum, /*!< The port number*/
             Fw::Time &time /*!< The U32 cmd argument*/
         ) {
         timespec stime;

@@ -81,7 +81,7 @@ namespace Svc {
 
             //! downcall for input port
             //! NOTE: This port can execute in ISR context.
-            void CycleIn_handler(NATIVE_INT_TYPE portNum, Os::RawTime& cycleStart);
+            void CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleStart);
 
             //! divider array
             Divider m_dividers[NUM_CYCLEOUT_OUTPUT_PORTS];

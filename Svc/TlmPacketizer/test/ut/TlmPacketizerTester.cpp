@@ -904,11 +904,11 @@ void TlmPacketizerTester ::pingTest() {
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-void TlmPacketizerTester ::from_PktSend_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& data, U32 context) {
+void TlmPacketizerTester ::from_PktSend_handler(const FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
     this->pushFromPortEntry_PktSend(data, context);
 }
 
-void TlmPacketizerTester ::from_pingOut_handler(const NATIVE_INT_TYPE portNum, U32 key) {
+void TlmPacketizerTester ::from_pingOut_handler(const FwIndexType portNum, U32 key) {
     this->pushFromPortEntry_pingOut(key);
 }
 

@@ -24,6 +24,6 @@ void TestTlmImpl::genTlm(U32 val) {
     this->tlmWrite_somechan(val);
 }
 
-void TestTlmImpl::aport_handler(NATIVE_INT_TYPE portNum, I32 arg4, F32 arg5, U8 arg6) {
+void TestTlmImpl::aport_handler(FwIndexType portNum, I32 arg4, F32 arg5, U8 arg6) {
 
 }

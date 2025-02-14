@@ -11,7 +11,7 @@ namespace Fw {
 
     class InputPortBase : public PortBase {
         public:
-            void setPortNum(NATIVE_INT_TYPE portNum); // !< set the port number
+            void setPortNum(FwIndexType portNum); // !< set the port number
 
 #if FW_PORT_SERIALIZATION
             virtual SerializeStatus invokeSerial(SerializeBufferBase &buffer) = 0; // !< invoke the port with a serialized version of the call

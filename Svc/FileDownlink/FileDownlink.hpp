@@ -296,7 +296,7 @@ namespace Svc {
       //! Handler implementation for Run
       //!
       void Run_handler(
-          const NATIVE_INT_TYPE portNum, //!< The port number
+          const FwIndexType portNum, //!< The port number
           U32 context //!< The call order
       );
 
@@ -304,7 +304,7 @@ namespace Svc {
       //! Handler implementation for SendFile
       //!
       Svc::SendFileResponse SendFile_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          const FwIndexType portNum, /*!< The port number*/
           const Fw::StringBase& sourceFilename, /*!< Path of file to downlink*/
           const Fw::StringBase& destFilename, /*!< Path to store downlinked file at*/
           U32 offset, /*!< Amount of data in bytes to downlink from file. 0 to read until end of file*/
@@ -314,14 +314,14 @@ namespace Svc {
       //! Handler implementation for bufferReturn
       //!
       void bufferReturn_handler(
-          const NATIVE_INT_TYPE portNum, //!< The port number
+          const FwIndexType portNum, //!< The port number
           Fw::Buffer &fwBuffer
       );
 
       //! Handler implementation for pingIn
       //!
       void pingIn_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          const FwIndexType portNum, /*!< The port number*/
           U32 key /*!< Value to return to pinger*/
       );
 

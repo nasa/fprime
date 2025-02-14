@@ -75,7 +75,7 @@ namespace Svc {
 
   void BufferManagerComponentImpl ::
     bufferSendIn_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         Fw::Buffer &fwBuffer
     )
   {
@@ -129,7 +129,7 @@ namespace Svc {
 
   Fw::Buffer BufferManagerComponentImpl ::
     bufferGetCallee_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 size
     )
   {
@@ -238,7 +238,7 @@ namespace Svc {
 
   void BufferManagerComponentImpl ::
     schedIn_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 context
     )
   {

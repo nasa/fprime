@@ -76,7 +76,7 @@ class Tester : public ActiveTestGTestBase {
 
     //! Handler for from_arrayArgsOut
     //!
-    void from_arrayArgsOut_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    void from_arrayArgsOut_handler(const FwIndexType portNum, /*!< The port number*/
                                    const FormalParamArray& a,     /*!<
                                    An array
                                    */
@@ -87,7 +87,7 @@ class Tester : public ActiveTestGTestBase {
 
     //! Handler for from_arrayReturnOut
     //!
-    FormalParamArray from_arrayReturnOut_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    FormalParamArray from_arrayReturnOut_handler(const FwIndexType portNum, /*!< The port number*/
                                                  const FormalParamArray& a,     /*!<
                                                  An array
                                                  */
@@ -98,7 +98,7 @@ class Tester : public ActiveTestGTestBase {
 
     //! Handler for from_enumArgsOut
     //!
-    void from_enumArgsOut_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    void from_enumArgsOut_handler(const FwIndexType portNum, /*!< The port number*/
                                   const FormalParamEnum& en,     /*!<
                                   An enum
                                   */
@@ -109,7 +109,7 @@ class Tester : public ActiveTestGTestBase {
 
     //! Handler for from_enumReturnOut
     //!
-    FormalParamEnum from_enumReturnOut_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    FormalParamEnum from_enumReturnOut_handler(const FwIndexType portNum, /*!< The port number*/
                                                const FormalParamEnum& en,     /*!<
                                                An enum
                                                */
@@ -120,17 +120,17 @@ class Tester : public ActiveTestGTestBase {
 
     //! Handler for from_noArgsOut
     //!
-    void from_noArgsOut_handler(const NATIVE_INT_TYPE portNum /*!< The port number*/
+    void from_noArgsOut_handler(const FwIndexType portNum /*!< The port number*/
     ) final;
 
     //! Handler for from_noArgsReturnOut
     //!
-    bool from_noArgsReturnOut_handler(const NATIVE_INT_TYPE portNum /*!< The port number*/
+    bool from_noArgsReturnOut_handler(const FwIndexType portNum /*!< The port number*/
     ) final;
 
     //! Handler for from_primitiveArgsOut
     //!
-    void from_primitiveArgsOut_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    void from_primitiveArgsOut_handler(const FwIndexType portNum, /*!< The port number*/
                                        U32 u32,
                                        U32& u32Ref,
                                        F32 f32,
@@ -140,7 +140,7 @@ class Tester : public ActiveTestGTestBase {
 
     //! Handler for from_primitiveReturnOut
     //!
-    U32 from_primitiveReturnOut_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    U32 from_primitiveReturnOut_handler(const FwIndexType portNum, /*!< The port number*/
                                         U32 u32,
                                         U32& u32Ref,
                                         F32 f32,
@@ -150,7 +150,7 @@ class Tester : public ActiveTestGTestBase {
 
     //! Handler for from_prmGetIn
     //!
-    Fw::ParamValid from_prmGetIn_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    Fw::ParamValid from_prmGetIn_handler(const FwIndexType portNum, /*!< The port number*/
                                          FwPrmIdType id,                /*!<
                                                     Parameter ID
                                                     */
@@ -161,7 +161,7 @@ class Tester : public ActiveTestGTestBase {
 
     //! Handler for from_prmGetIn
     //!
-    void from_prmSetIn_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    void from_prmSetIn_handler(const FwIndexType portNum, /*!< The port number*/
                                FwPrmIdType id,                /*!<
                                           Parameter ID
                                           */
@@ -172,7 +172,7 @@ class Tester : public ActiveTestGTestBase {
 
     //! Handler for from_structArgsOut
     //!
-    void from_structArgsOut_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    void from_structArgsOut_handler(const FwIndexType portNum, /*!< The port number*/
                                     const FormalParamStruct& s,    /*!<
                                    A struct
                                    */
@@ -183,7 +183,7 @@ class Tester : public ActiveTestGTestBase {
 
     //! Handler for from_structReturnOut
     //!
-    FormalParamStruct from_structReturnOut_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    FormalParamStruct from_structReturnOut_handler(const FwIndexType portNum, /*!< The port number*/
                                                    const FormalParamStruct& s,    /*!<
                                                   A struct
                                                   */
@@ -192,7 +192,7 @@ class Tester : public ActiveTestGTestBase {
                                                       */
     ) final;
 
-    void from_enumArgsHookOverflowed_handler(const NATIVE_INT_TYPE portNum,
+    void from_enumArgsHookOverflowed_handler(const FwIndexType portNum,
                                              const FormalParamEnum& en,
                                              FormalParamEnum& enRef);
 
@@ -203,7 +203,7 @@ class Tester : public ActiveTestGTestBase {
 
     //! Handler for from_serialOut
     //!
-    void from_serialOut_handler(NATIVE_INT_TYPE portNum,        /*!< The port number*/
+    void from_serialOut_handler(FwIndexType portNum,        /*!< The port number*/
                                 Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
     ) final;
 

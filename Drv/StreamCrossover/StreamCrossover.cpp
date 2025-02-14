@@ -34,7 +34,7 @@ namespace Drv {
 
   void StreamCrossover ::
     streamIn_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         Fw::Buffer &recvBuffer,
         const Drv::RecvStatus &recvStatus
     )

@@ -571,7 +571,7 @@ namespace Svc {
 
       //! Handler for input port cmdResponseIn
       void cmdResponseIn_handler(
-          NATIVE_INT_TYPE portNum, //!< The port number
+          FwIndexType portNum, //!< The port number
           FwOpcodeType opcode, //!< The command opcode
           U32 cmdSeq, //!< The command sequence number
           const Fw::CmdResponse& response //!< The command response
@@ -579,26 +579,26 @@ namespace Svc {
 
       //! Handler for input port schedIn
       void schedIn_handler(
-          NATIVE_INT_TYPE portNum, //!< The port number
+          FwIndexType portNum, //!< The port number
           NATIVE_UINT_TYPE order //!< The call order
       );
 
       //! Handler for input port seqRunIn
       void seqRunIn_handler(
-          NATIVE_INT_TYPE portNum, //!< The port number
+          FwIndexType portNum, //!< The port number
           const Fw::StringBase& filename //!< The sequence file
       );
 
       //! Handler for ping port
       void pingIn_handler(
-          NATIVE_INT_TYPE portNum, //!< The port number
+          FwIndexType portNum, //!< The port number
           U32 key //!< Value to return to pinger
       );
 
       //! Handler implementation for seqCancelIn
       //!
       void seqCancelIn_handler(
-          const NATIVE_INT_TYPE portNum /*!< The port number*/
+          const FwIndexType portNum /*!< The port number*/
       );
 
     PRIVATE:

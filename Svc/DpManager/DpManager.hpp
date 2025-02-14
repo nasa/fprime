@@ -63,26 +63,26 @@ class DpManager : public DpManagerComponentBase {
     // ----------------------------------------------------------------------
 
     //! Handler implementation for productGetIn
-    Fw::Success productGetIn_handler(const NATIVE_INT_TYPE portNum,  //!< The port number
+    Fw::Success productGetIn_handler(const FwIndexType portNum,  //!< The port number
                                      FwDpIdType id,                  //!< The container ID
                                      FwSizeType size,                //!< The size of the requested buffer
                                      Fw::Buffer& buffer              //!< The buffer
                                      ) final;
 
     //! Handler implementation for productRequestIn
-    void productRequestIn_handler(const NATIVE_INT_TYPE portNum,  //!< The port number
+    void productRequestIn_handler(const FwIndexType portNum,  //!< The port number
                                   FwDpIdType id,                  //!< The container ID
                                   FwSizeType size                 //!< The size of the requested buffer
                                   ) final;
 
     //! Handler implementation for productSendIn
-    void productSendIn_handler(const NATIVE_INT_TYPE portNum,  //!< The port number
+    void productSendIn_handler(const FwIndexType portNum,  //!< The port number
                                FwDpIdType id,                  //!< The container ID
                                const Fw::Buffer& buffer        //!< The buffer
                                ) final;
 
     //! Handler implementation for schedIn
-    void schedIn_handler(const NATIVE_INT_TYPE portNum,  //!< The port number
+    void schedIn_handler(const FwIndexType portNum,  //!< The port number
                          U32 context                     //!< The call order
                          ) final;
 

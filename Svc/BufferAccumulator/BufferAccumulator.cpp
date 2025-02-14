@@ -67,7 +67,7 @@ void BufferAccumulator ::deallocateQueue(Fw::MemAllocator& allocator) {
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void BufferAccumulator ::bufferSendInFill_handler(const NATIVE_INT_TYPE portNum,
+void BufferAccumulator ::bufferSendInFill_handler(const FwIndexType portNum,
                                                   Fw::Buffer& buffer) {
 
   const bool status = this->m_bufferQueue.enqueue(buffer);
@@ -90,7 +90,7 @@ void BufferAccumulator ::bufferSendInFill_handler(const NATIVE_INT_TYPE portNum,
 }
 
 void BufferAccumulator ::bufferSendInReturn_handler(
-    const NATIVE_INT_TYPE portNum, Fw::Buffer& buffer) {
+    const FwIndexType portNum, Fw::Buffer& buffer) {
 
   this->bufferSendOutReturn_out(0, buffer);
   this->m_waitForBuffer = false;
@@ -102,7 +102,7 @@ void BufferAccumulator ::bufferSendInReturn_handler(
   }
 }
 
-void BufferAccumulator ::pingIn_handler(const NATIVE_INT_TYPE portNum,
+void BufferAccumulator ::pingIn_handler(const FwIndexType portNum,
                                         U32 key) {
   this->pingOut_out(0, key);
 }

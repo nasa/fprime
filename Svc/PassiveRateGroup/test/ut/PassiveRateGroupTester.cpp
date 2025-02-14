@@ -22,7 +22,7 @@
 void connectPorts(Svc::PassiveRateGroup& impl, Svc::PassiveRateGroupTester& tester) {
     tester.connect_to_CycleIn(0, impl.get_CycleIn_InputPort(0));
 
-    for (NATIVE_INT_TYPE portNum = 0;
+    for (FwIndexType portNum = 0;
          portNum < static_cast<NATIVE_INT_TYPE>(FW_NUM_ARRAY_ELEMENTS(impl.m_RateGroupMemberOut_OutputPort)); portNum++) {
         impl.set_RateGroupMemberOut_OutputPort(portNum, tester.get_from_RateGroupMemberOut(portNum));
     }

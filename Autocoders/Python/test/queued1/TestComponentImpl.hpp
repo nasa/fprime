@@ -17,8 +17,8 @@ namespace SvcTest {
             TestComponentImpl(const char* compName);
             virtual ~TestComponentImpl();
         private:
-            void aport_handler(NATIVE_INT_TYPE portNum, I32 arg4, F32 arg5, U8 arg6);
-            void aport2_handler(NATIVE_INT_TYPE portNum, I32 arg4, F32 arg5, bool arg6);
+            void aport_handler(FwIndexType portNum, I32 arg4, F32 arg5, U8 arg6);
+            void aport2_handler(FwIndexType portNum, I32 arg4, F32 arg5, bool arg6);
 
     };
 

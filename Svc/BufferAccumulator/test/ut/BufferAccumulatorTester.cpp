@@ -61,17 +61,17 @@ BufferAccumulatorTester ::~BufferAccumulatorTester() {
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-void BufferAccumulatorTester ::from_bufferSendOutDrain_handler(const NATIVE_INT_TYPE portNum,
+void BufferAccumulatorTester ::from_bufferSendOutDrain_handler(const FwIndexType portNum,
                                               Fw::Buffer& fwBuffer) {
   this->pushFromPortEntry_bufferSendOutDrain(fwBuffer);
 }
 
-void BufferAccumulatorTester ::from_bufferSendOutReturn_handler(const NATIVE_INT_TYPE portNum,
+void BufferAccumulatorTester ::from_bufferSendOutReturn_handler(const FwIndexType portNum,
                                                Fw::Buffer& fwBuffer) {
   this->pushFromPortEntry_bufferSendOutReturn(fwBuffer);
 }
 
-void BufferAccumulatorTester ::from_pingOut_handler(const NATIVE_INT_TYPE portNum, U32 key) {
+void BufferAccumulatorTester ::from_pingOut_handler(const FwIndexType portNum, U32 key) {
   this->pushFromPortEntry_pingOut(key);
 }
 

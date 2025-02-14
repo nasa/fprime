@@ -41,12 +41,12 @@ class StaticMemoryComponentImpl : public StaticMemoryComponentBase {
 
     //! Handler implementation for bufferDeallocate
     //!
-    void bufferDeallocate_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    void bufferDeallocate_handler(const FwIndexType portNum, /*!< The port number*/
                                   Fw::Buffer& fwBuffer);
 
     //! Handler implementation for bufferAllocate
     //!
-    Fw::Buffer bufferAllocate_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    Fw::Buffer bufferAllocate_handler(const FwIndexType portNum, /*!< The port number*/
                                       U32 size);
 
     bool m_allocated[NUM_BUFFERALLOCATE_INPUT_PORTS];

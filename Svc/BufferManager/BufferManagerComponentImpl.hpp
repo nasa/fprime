@@ -108,19 +108,19 @@ namespace Svc
         //!
         void
         bufferSendIn_handler(
-            const NATIVE_INT_TYPE portNum, /*!< The port number*/
+            const FwIndexType portNum, /*!< The port number*/
             Fw::Buffer &fwBuffer);
 
         //! Handler implementation for bufferGetCallee
         //!
         Fw::Buffer bufferGetCallee_handler(
-            const NATIVE_INT_TYPE portNum, /*!< The port number*/
+            const FwIndexType portNum, /*!< The port number*/
             U32 size);
 
         //! Handler implementation for schedIn
         //!
         void schedIn_handler(
-            const NATIVE_INT_TYPE portNum, /*!< The port number*/
+            const FwIndexType portNum, /*!< The port number*/
             U32 context /*!< The call order*/
         );
 

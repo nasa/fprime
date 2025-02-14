@@ -96,7 +96,7 @@ namespace Svc {
     // ----------------------------------------------------------------------
 
     void DeframerTester ::from_comOut_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         Fw::ComBuffer& data,
         U32 context
     ) {
@@ -120,7 +120,7 @@ namespace Svc {
     }
 
     void DeframerTester ::from_bufferOut_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         Fw::Buffer& fwBuffer
     ) {
         // Check that a received frame is expected
@@ -151,7 +151,7 @@ namespace Svc {
     }
 
     Fw::Buffer DeframerTester ::from_bufferAllocate_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 size
     ) {
         this->pushFromPortEntry_bufferAllocate(size);
@@ -162,7 +162,7 @@ namespace Svc {
     }
 
     void DeframerTester ::from_bufferDeallocate_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         Fw::Buffer& fwBuffer
     ) {
         delete[] fwBuffer.getData();
@@ -170,14 +170,14 @@ namespace Svc {
     }
 
     void DeframerTester ::from_framedDeallocate_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         Fw::Buffer& fwBuffer
     ) {
         this->pushFromPortEntry_framedDeallocate(fwBuffer);
     }
 
     Drv::PollStatus DeframerTester ::from_framedPoll_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         Fw::Buffer& pollBuffer
     ) {
         this->pushFromPortEntry_framedPoll(pollBuffer);

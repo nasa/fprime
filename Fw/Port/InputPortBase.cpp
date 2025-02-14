@@ -20,7 +20,7 @@ namespace Fw {
 
     }
 
-    void InputPortBase::setPortNum(NATIVE_INT_TYPE portNum) {
+    void InputPortBase::setPortNum(FwIndexType portNum) {
         FW_ASSERT(portNum >= 0,portNum);
         this->m_portNum = portNum;
     }

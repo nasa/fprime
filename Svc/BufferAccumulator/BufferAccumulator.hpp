@@ -120,18 +120,18 @@ namespace Svc {
         //!
         void
             bufferSendInFill_handler(
-                    const NATIVE_INT_TYPE portNum,  //!< The port number
+                    const FwIndexType portNum,  //!< The port number
                     Fw::Buffer& buffer);
 
         //! Handler implementation for bufferSendInReturn
         //!
         void bufferSendInReturn_handler(
-                const NATIVE_INT_TYPE portNum,  //!< The port number
+                const FwIndexType portNum,  //!< The port number
                 Fw::Buffer& buffer);
 
         //! Handler implementation for pingIn
         //!
-        void pingIn_handler(const NATIVE_INT_TYPE portNum,  //!< The port number
+        void pingIn_handler(const FwIndexType portNum,  //!< The port number
                             U32 key  //!< Value to return to pinger
                             );
 

@@ -62,7 +62,7 @@ void Deframer ::setup(DeframingProtocol& protocol) {
 // ----------------------------------------------------------------------
 
 void Deframer ::cmdResponseIn_handler(
-    NATIVE_INT_TYPE portNum,
+    FwIndexType portNum,
     FwOpcodeType opcode,
     U32 cmdSeq,
     const Fw::CmdResponse& response
@@ -71,7 +71,7 @@ void Deframer ::cmdResponseIn_handler(
 }
 
 void Deframer ::framedIn_handler(
-    const NATIVE_INT_TYPE portNum,
+    const FwIndexType portNum,
     Fw::Buffer& recvBuffer,
     const Drv::RecvStatus& recvStatus
 ) {
@@ -85,7 +85,7 @@ void Deframer ::framedIn_handler(
 }
 
 void Deframer ::schedIn_handler(
-    const NATIVE_INT_TYPE portNum,
+    const FwIndexType portNum,
     U32 context
 ) {
     // Check for data

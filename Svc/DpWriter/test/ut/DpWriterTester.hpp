@@ -45,7 +45,7 @@ class DpWriterTester : public DpWriterGTestBase {
     // ----------------------------------------------------------------------
 
     //! Handler implementation for procBufferSendOut
-    void from_procBufferSendOut_handler(NATIVE_INT_TYPE portNum,  //!< The port number
+    void from_procBufferSendOut_handler(FwIndexType portNum,  //!< The port number
                                         Fw::Buffer& fwBuffer      //!< The buffer
     ) final;
 

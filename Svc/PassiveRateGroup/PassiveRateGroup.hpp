@@ -62,7 +62,7 @@ class PassiveRateGroup : public PassiveRateGroupComponentBase {
     //!
     //!  \param portNum incoming port call. For this class, should always be zero
     //!  \param cycleStart value stored by the cycle driver, used to compute execution time.
-    void CycleIn_handler(NATIVE_INT_TYPE portNum, Os::RawTime& cycleStart);
+    void CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleStart);
 
     U32 m_cycles;                                                     //!< cycles executed
     U32 m_maxTime;                                                    //!< maximum execution time in microseconds

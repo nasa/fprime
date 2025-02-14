@@ -34,7 +34,7 @@ namespace Svc {
     }
 
     void ActiveLoggerImplTester::from_PktSend_handler(
-            const NATIVE_INT_TYPE portNum, //!< The port number
+            const FwIndexType portNum, //!< The port number
             Fw::ComBuffer &data, //!< Buffer containing packet data
             U32 context //!< context; not used
         ) {
@@ -43,7 +43,7 @@ namespace Svc {
     }
 
     void ActiveLoggerImplTester::from_FatalAnnounce_handler(
-                          const NATIVE_INT_TYPE portNum, //!< The port number
+                          const FwIndexType portNum, //!< The port number
                           FwEventIdType Id //!< The ID of the FATAL event
                       ) {
         this->m_receivedFatalEvent = true;
@@ -620,7 +620,7 @@ namespace Svc {
     }
     void ActiveLoggerImplTester ::
       from_pingOut_handler(
-          const NATIVE_INT_TYPE portNum,
+          const FwIndexType portNum,
           U32 key
       )
     {

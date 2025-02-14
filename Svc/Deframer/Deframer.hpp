@@ -66,7 +66,7 @@ class Deframer :
 
     //! Handler for input port cmdResponseIn
     void cmdResponseIn_handler(
-        NATIVE_INT_TYPE portNum, //!< The port number
+        FwIndexType portNum, //!< The port number
         FwOpcodeType opcode, //!< The command opcode
         U32 cmdSeq, //!< The command sequence number
         const Fw::CmdResponse& response //!< The command response
@@ -74,14 +74,14 @@ class Deframer :
 
     //! Handler implementation for framedIn
     void framedIn_handler(
-        const NATIVE_INT_TYPE portNum, //!< The port number
+        const FwIndexType portNum, //!< The port number
         Fw::Buffer& recvBuffer, //!< Buffer containing framed data
         const Drv::RecvStatus& recvStatus //!< Status of the bytes
     );
 
     //! Handler implementation for schedIn
     void schedIn_handler(
-        const NATIVE_INT_TYPE portNum, //!< The port number
+        const FwIndexType portNum, //!< The port number
         U32 context //!< The call order
     );
 

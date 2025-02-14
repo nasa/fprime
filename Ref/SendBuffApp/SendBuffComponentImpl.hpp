@@ -16,7 +16,7 @@ namespace Ref {
 
         private:
 
-            void SchedIn_handler(NATIVE_INT_TYPE portNum, U32 context); //!< downcall for input port
+            void SchedIn_handler(FwIndexType portNum, U32 context); //!< downcall for input port
             void SB_START_PKTS_cmdHandler(FwOpcodeType opcode, U32 cmdSeq); //!< START_PKTS command handler
             void SB_INJECT_PKT_ERROR_cmdHandler(FwOpcodeType opcode, U32 cmdSeq); //!< START_PKTS command handler
             void SB_GEN_FATAL_cmdHandler(

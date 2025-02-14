@@ -16,7 +16,7 @@
 // Event tests
 // ----------------------------------------------------------------------
 
-void Tester ::testEvent(NATIVE_INT_TYPE portNum, FppTest::Types::NoParams& data) {
+void Tester ::testEvent(FwIndexType portNum, FppTest::Types::NoParams& data) {
     ASSERT_TRUE(component.isConnected_eventOut_OutputPort(portNum));
     ASSERT_TRUE(component.isConnected_textEventOut_OutputPort(portNum));
 
@@ -28,7 +28,7 @@ void Tester ::testEvent(NATIVE_INT_TYPE portNum, FppTest::Types::NoParams& data)
     this->printTextLogHistory(stdout);
 }
 
-void Tester ::testEventHelper(NATIVE_INT_TYPE portNum, FppTest::Types::PrimitiveParams& data, NATIVE_UINT_TYPE size) {
+void Tester ::testEventHelper(FwIndexType portNum, FppTest::Types::PrimitiveParams& data, NATIVE_UINT_TYPE size) {
     component.log_ACTIVITY_LO_EventPrimitive(data.args.val1, data.args.val2, data.args.val3, data.args.val4,
                                              data.args.val5, data.args.val6);
 
@@ -38,7 +38,7 @@ void Tester ::testEventHelper(NATIVE_INT_TYPE portNum, FppTest::Types::Primitive
                                  data.args.val5, data.args.val6);
 }
 
-void Tester ::testEvent(NATIVE_INT_TYPE portNum, FppTest::Types::PrimitiveParams& data) {
+void Tester ::testEvent(FwIndexType portNum, FppTest::Types::PrimitiveParams& data) {
     ASSERT_TRUE(component.isConnected_eventOut_OutputPort(portNum));
     ASSERT_TRUE(component.isConnected_textEventOut_OutputPort(portNum));
 
@@ -56,7 +56,7 @@ void Tester ::testEvent(NATIVE_INT_TYPE portNum, FppTest::Types::PrimitiveParams
     this->printTextLogHistory(stdout);
 }
 
-void Tester ::testEvent(NATIVE_INT_TYPE portNum, FppTest::Types::LogStringParams& data) {
+void Tester ::testEvent(FwIndexType portNum, FppTest::Types::LogStringParams& data) {
     component.log_COMMAND_EventString(data.args.val1, data.args.val2);
 
     ASSERT_EVENTS_SIZE(1);
@@ -68,7 +68,7 @@ void Tester ::testEvent(NATIVE_INT_TYPE portNum, FppTest::Types::LogStringParams
     this->printTextLogHistory(stdout);
 }
 
-void Tester ::testEvent(NATIVE_INT_TYPE portNum, FppTest::Types::EnumParam& data) {
+void Tester ::testEvent(FwIndexType portNum, FppTest::Types::EnumParam& data) {
     ASSERT_TRUE(component.isConnected_eventOut_OutputPort(portNum));
     ASSERT_TRUE(component.isConnected_textEventOut_OutputPort(portNum));
 
@@ -81,7 +81,7 @@ void Tester ::testEvent(NATIVE_INT_TYPE portNum, FppTest::Types::EnumParam& data
     this->printTextLogHistory(stdout);
 }
 
-void Tester ::testEventHelper(NATIVE_INT_TYPE portNum, FppTest::Types::ArrayParam& data, NATIVE_UINT_TYPE size) {
+void Tester ::testEventHelper(FwIndexType portNum, FppTest::Types::ArrayParam& data, NATIVE_UINT_TYPE size) {
     ASSERT_TRUE(component.isConnected_eventOut_OutputPort(portNum));
     ASSERT_TRUE(component.isConnected_textEventOut_OutputPort(portNum));
 
@@ -92,7 +92,7 @@ void Tester ::testEventHelper(NATIVE_INT_TYPE portNum, FppTest::Types::ArrayPara
     ASSERT_EVENTS_EventArray(portNum, data.args.val);
 }
 
-void Tester ::testEvent(NATIVE_INT_TYPE portNum, FppTest::Types::ArrayParam& data) {
+void Tester ::testEvent(FwIndexType portNum, FppTest::Types::ArrayParam& data) {
     ASSERT_TRUE(component.isConnected_eventOut_OutputPort(portNum));
     ASSERT_TRUE(component.isConnected_textEventOut_OutputPort(portNum));
 
@@ -110,7 +110,7 @@ void Tester ::testEvent(NATIVE_INT_TYPE portNum, FppTest::Types::ArrayParam& dat
     this->printTextLogHistory(stdout);
 }
 
-void Tester ::testEvent(NATIVE_INT_TYPE portNum, FppTest::Types::StructParam& data) {
+void Tester ::testEvent(FwIndexType portNum, FppTest::Types::StructParam& data) {
     ASSERT_TRUE(component.isConnected_eventOut_OutputPort(portNum));
     ASSERT_TRUE(component.isConnected_textEventOut_OutputPort(portNum));
 
@@ -123,7 +123,7 @@ void Tester ::testEvent(NATIVE_INT_TYPE portNum, FppTest::Types::StructParam& da
     this->printTextLogHistory(stdout);
 }
 
-void Tester ::testEventHelper(NATIVE_INT_TYPE portNum, FppTest::Types::BoolParam& data, NATIVE_UINT_TYPE size) {
+void Tester ::testEventHelper(FwIndexType portNum, FppTest::Types::BoolParam& data, NATIVE_UINT_TYPE size) {
     ASSERT_TRUE(component.isConnected_eventOut_OutputPort(portNum));
     ASSERT_TRUE(component.isConnected_textEventOut_OutputPort(portNum));
 
@@ -134,7 +134,7 @@ void Tester ::testEventHelper(NATIVE_INT_TYPE portNum, FppTest::Types::BoolParam
     ASSERT_EVENTS_EventBool(portNum, data.args.val);
 }
 
-void Tester ::testEvent(NATIVE_INT_TYPE portNum, FppTest::Types::BoolParam& data) {
+void Tester ::testEvent(FwIndexType portNum, FppTest::Types::BoolParam& data) {
     ASSERT_TRUE(component.isConnected_eventOut_OutputPort(portNum));
     ASSERT_TRUE(component.isConnected_textEventOut_OutputPort(portNum));
 

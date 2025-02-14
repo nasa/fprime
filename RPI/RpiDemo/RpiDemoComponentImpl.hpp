@@ -59,14 +59,14 @@ namespace RPI {
       //! Handler implementation for Run
       //!
       void Run_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          const FwIndexType portNum, /*!< The port number*/
           U32 context /*!< The call order*/
       ) override;
 
       //! Handler implementation for UartRead
       //!
       void UartRead_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          const FwIndexType portNum, /*!< The port number*/
           Fw::Buffer &serBuffer, /*!< Buffer containing data*/
           const Drv::RecvStatus &status /*!< Status of read*/
       ) override;

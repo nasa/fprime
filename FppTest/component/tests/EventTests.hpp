@@ -14,10 +14,10 @@
 // Event test declarations
 // ----------------------------------------------------------------------
 
-#define EVENT_TEST_DECL(TYPE) void testEvent(NATIVE_INT_TYPE portNum, FppTest::Types::TYPE& data);
+#define EVENT_TEST_DECL(TYPE) void testEvent(FwIndexType portNum, FppTest::Types::TYPE& data);
 
 #define EVENT_TEST_HELPER_DECL(TYPE) \
-    void testEventHelper(NATIVE_INT_TYPE portNum, FppTest::Types::TYPE& data, NATIVE_UINT_TYPE size);
+    void testEventHelper(FwIndexType portNum, FppTest::Types::TYPE& data, NATIVE_UINT_TYPE size);
 
 #define EVENT_TEST_DECLS                    \
     EVENT_TEST_DECL(NoParams)               \

@@ -827,7 +827,7 @@ namespace Svc {
 
     void DpCatalog ::
         fileDone_handler(
-            NATIVE_INT_TYPE portNum,
+            FwIndexType portNum,
             const Svc::SendFileResponse& resp
         )
     {
@@ -856,7 +856,7 @@ namespace Svc {
 
     void DpCatalog ::
         pingIn_handler(
-            NATIVE_INT_TYPE portNum,
+            FwIndexType portNum,
             U32 key
         )
     {

@@ -49,7 +49,7 @@ namespace ExampleComponents {
 
   void ExampleComponentImpl ::
     noArgPort_handler(
-        const NATIVE_INT_TYPE portNum
+        const FwIndexType portNum
     )
   {
     // TODO
@@ -57,7 +57,7 @@ namespace ExampleComponents {
 
   void ExampleComponentImpl ::
     asyncNoArgPort_handler(
-        const NATIVE_INT_TYPE portNum
+        const FwIndexType portNum
     )
   {
     // TODO
@@ -65,7 +65,7 @@ namespace ExampleComponents {
 
   void ExampleComponentImpl ::
     guardedNoArgPort_handler(
-        const NATIVE_INT_TYPE portNum
+        const FwIndexType portNum
     )
   {
     // TODO
@@ -73,7 +73,7 @@ namespace ExampleComponents {
 
   U32 ExampleComponentImpl ::
     exampleInput_handler(
-        const NATIVE_INT_TYPE portNum
+        const FwIndexType portNum
     )
   {
     return 0;

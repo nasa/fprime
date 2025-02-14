@@ -88,7 +88,7 @@ namespace Drv {
       //! Handler for from_recv
       //!
       void from_recv_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          const FwIndexType portNum, /*!< The port number*/
           Fw::Buffer &recvBuffer,
           const RecvStatus &recvStatus
       );
@@ -96,20 +96,20 @@ namespace Drv {
       //! Handler for from_ready
       //!
       void from_ready_handler(
-          const NATIVE_INT_TYPE portNum /*!< The port number*/
+          const FwIndexType portNum /*!< The port number*/
       );
 
       //! Handler for from_allocate
       //!
       Fw::Buffer from_allocate_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          const FwIndexType portNum, /*!< The port number*/
           U32 size
       );
 
       //! Handler for from_deallocate
       //!
       void from_deallocate_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          const FwIndexType portNum, /*!< The port number*/
           Fw::Buffer &fwBuffer
       );
 

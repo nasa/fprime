@@ -81,7 +81,7 @@ namespace Svc {
 
   void Tester ::
     from_PortsOut_handler(
-        NATIVE_INT_TYPE portNum, /*!< The port number*/
+        FwIndexType portNum, /*!< The port number*/
         Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
     )
   {

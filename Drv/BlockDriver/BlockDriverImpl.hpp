@@ -20,12 +20,12 @@ namespace Drv {
 
         // downcalls for input ports
         void InterruptReport_internalInterfaceHandler(U32 ip);
-        void BufferIn_handler(NATIVE_INT_TYPE portNum, Drv::DataBuffer& buffer);
-        void Sched_handler(NATIVE_INT_TYPE portNum, U32 context);
+        void BufferIn_handler(FwIndexType portNum, Drv::DataBuffer& buffer);
+        void Sched_handler(FwIndexType portNum, U32 context);
         //! Handler implementation for PingIn
         //!
         void PingIn_handler(
-            const NATIVE_INT_TYPE portNum, /*!< The port number*/
+            const FwIndexType portNum, /*!< The port number*/
             U32 key /*!< Value to return to pinger*/
         );
 

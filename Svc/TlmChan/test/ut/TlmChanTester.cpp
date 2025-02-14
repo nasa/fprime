@@ -136,14 +136,14 @@ void TlmChanTester::runOffNominal() {
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-void TlmChanTester ::from_PktSend_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& data, U32 context) {
+void TlmChanTester ::from_PktSend_handler(const FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
     this->pushFromPortEntry_PktSend(data, context);
     this->m_bufferRecv = true;
     this->m_rcvdBuffer[this->m_numBuffs] = data;
     this->m_numBuffs++;
 }
 
-void TlmChanTester ::from_pingOut_handler(const NATIVE_INT_TYPE portNum, U32 key) {
+void TlmChanTester ::from_pingOut_handler(const FwIndexType portNum, U32 key) {
     this->pushFromPortEntry_pingOut(key);
 }
 

@@ -14,7 +14,7 @@ class ATester : public Log::LogTesterGTestBase {
     }
 
   void from_Time_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         Fw::Time &time
     )
   {

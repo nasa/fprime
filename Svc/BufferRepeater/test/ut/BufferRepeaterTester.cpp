@@ -104,7 +104,7 @@ void BufferRepeaterTester ::testFailure(BufferRepeater::BufferRepeaterFailureOpt
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-Fw::Buffer BufferRepeaterTester ::from_allocate_handler(const NATIVE_INT_TYPE portNum, U32 size) {
+Fw::Buffer BufferRepeaterTester ::from_allocate_handler(const FwIndexType portNum, U32 size) {
     this->pushFromPortEntry_allocate(size);
     Fw::Buffer new_buffer;
 
@@ -118,12 +118,12 @@ Fw::Buffer BufferRepeaterTester ::from_allocate_handler(const NATIVE_INT_TYPE po
     return new_buffer;
 }
 
-void BufferRepeaterTester ::from_deallocate_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
+void BufferRepeaterTester ::from_deallocate_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
     this->pushFromPortEntry_deallocate(fwBuffer);
     EXPECT_EQ(fwBuffer.getData(), m_initial_buffer.getData()) << "Deallocated non-initial buffer";
 }
 
-void BufferRepeaterTester ::from_portOut_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
+void BufferRepeaterTester ::from_portOut_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
     this->m_port_index_history.push_back(portNum);
     this->pushFromPortEntry_portOut(fwBuffer);
     EXPECT_NE(fwBuffer.getData(), nullptr) << "Passed invalid buffer out port";

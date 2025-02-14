@@ -53,17 +53,17 @@ class GenericHubComponentImpl : public GenericHubComponentBase {
 
     //! Handler implementation for buffersIn
     //!
-    void buffersIn_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    void buffersIn_handler(const FwIndexType portNum, /*!< The port number*/
                            Fw::Buffer& fwBuffer);
 
     //! Handler implementation for dataIn
     //!
-    void dataIn_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    void dataIn_handler(const FwIndexType portNum, /*!< The port number*/
                         Fw::Buffer& fwBuffer);
 
     //! Handler implementation for LogRecv
     //!
-    void LogRecv_handler(const NATIVE_INT_TYPE portNum,   /*!< The port number*/
+    void LogRecv_handler(const FwIndexType portNum,   /*!< The port number*/
                          FwEventIdType id,                /*!< Log ID */
                          Fw::Time& timeTag,               /*!< Time Tag */
                          const Fw::LogSeverity& severity, /*!< The severity argument */
@@ -72,7 +72,7 @@ class GenericHubComponentImpl : public GenericHubComponentBase {
 
     //! Handler implementation for TlmRecv
     //!
-    void TlmRecv_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    void TlmRecv_handler(const FwIndexType portNum, /*!< The port number*/
                          FwChanIdType id,               /*!< Telemetry Channel ID */
                          Fw::Time& timeTag,             /*!< Time Tag */
                          Fw::TlmBuffer& val             /*!< Buffer containing serialized telemetry value */
@@ -84,7 +84,7 @@ class GenericHubComponentImpl : public GenericHubComponentBase {
 
     //! Handler implementation for portIn
     //!
-    void portIn_handler(NATIVE_INT_TYPE portNum,        /*!< The port number*/
+    void portIn_handler(FwIndexType portNum,        /*!< The port number*/
                         Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
     );
 

@@ -55,7 +55,7 @@ namespace TestComponents {
       //! Handler for from_SerialOut
       //!
       void from_SerialOut_handler(
-        NATIVE_INT_TYPE portNum, //!< The port number
+        FwIndexType portNum, //!< The port number
         Fw::SerializeBufferBase &Buffer //!< The serialization buffer
       );
 

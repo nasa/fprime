@@ -60,7 +60,7 @@ namespace Svc {
     // If ports are no longer guarded, these accesses need to be protected from each other
     // If there are a lot of accesses, perhaps an interrupt lock could be used instead of guarded ports
 
-    Fw::ParamValid PrmDbImpl::getPrm_handler(NATIVE_INT_TYPE portNum, FwPrmIdType id, Fw::ParamBuffer &val) {
+    Fw::ParamValid PrmDbImpl::getPrm_handler(FwIndexType portNum, FwPrmIdType id, Fw::ParamBuffer &val) {
         // search for entry
         Fw::ParamValid stat = Fw::ParamValid::INVALID;
 
@@ -82,7 +82,7 @@ namespace Svc {
         return stat;
     }
 
-    void PrmDbImpl::setPrm_handler(NATIVE_INT_TYPE portNum, FwPrmIdType id, Fw::ParamBuffer &val) {
+    void PrmDbImpl::setPrm_handler(FwIndexType portNum, FwPrmIdType id, Fw::ParamBuffer &val) {
 
         this->lock();
 
@@ -377,7 +377,7 @@ namespace Svc {
         this->log_ACTIVITY_HI_PrmFileLoadComplete(recordNum);
     }
 
-    void PrmDbImpl::pingIn_handler(NATIVE_INT_TYPE portNum, U32 key) {
+    void PrmDbImpl::pingIn_handler(FwIndexType portNum, U32 key) {
         // respond to ping
         this->pingOut_out(0,key);
     }

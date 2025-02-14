@@ -40,7 +40,7 @@ namespace Drv {
       //! Handler implementation for streamIn
       //!
       void streamIn_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          const FwIndexType portNum, /*!< The port number*/
           Fw::Buffer &recvBuffer, 
           const Drv::RecvStatus &recvStatus 
       );

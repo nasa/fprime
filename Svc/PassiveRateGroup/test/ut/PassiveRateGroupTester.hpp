@@ -31,7 +31,7 @@ namespace Svc {
 
         private:
 
-            void from_RateGroupMemberOut_handler(NATIVE_INT_TYPE portNum, U32 context);
+            void from_RateGroupMemberOut_handler(FwIndexType portNum, U32 context);
 
             Svc::PassiveRateGroup& m_impl;
 

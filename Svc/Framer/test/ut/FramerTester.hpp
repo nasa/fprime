@@ -80,26 +80,26 @@ class FramerTester : public FramerGTestBase {
 
     //! Handler for from_bufferDeallocate
     void from_bufferDeallocate_handler(
-        const NATIVE_INT_TYPE portNum, //!< The port number
+        const FwIndexType portNum, //!< The port number
         Fw::Buffer& fwBuffer //!< The buffer
     );
 
     //! Handler for from_framedAllocate
     Fw::Buffer from_framedAllocate_handler(
-        const NATIVE_INT_TYPE portNum, //!< The port number
+        const FwIndexType portNum, //!< The port number
         U32 size //!< The size
     );
 
     //! Handler for from_framedOut
     Drv::SendStatus from_framedOut_handler(
-        const NATIVE_INT_TYPE portNum, //!< The port number
+        const FwIndexType portNum, //!< The port number
         Fw::Buffer& sendBuffer //!< The buffer containing framed data
     );
 
     //! Handler for from_comStatusOut
     //!
     void from_comStatusOut_handler(
-        const NATIVE_INT_TYPE portNum, /*!< The port number*/
+        const FwIndexType portNum, /*!< The port number*/
         Fw::Success &condition /*!< Condition success/failure */
     );
 

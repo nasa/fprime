@@ -524,7 +524,7 @@ namespace Svc {
 
   void FileUplinkTester ::
     from_bufferSendOut_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         Fw::Buffer& buffer
     )
   {
@@ -533,7 +533,7 @@ namespace Svc {
 
   void FileUplinkTester ::
     from_pingOut_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 key
     )
   {

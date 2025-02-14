@@ -13,7 +13,7 @@ class ATester : public ExampleComponents::ExampleComponentGTestBase {
 
 
    void from_exampleOutput_handler(
-		const NATIVE_INT_TYPE portNum, //!< The port number
+		const FwIndexType portNum, //!< The port number
 		I32 arg1, //!< A built-in type argument
 		const ANameSpace::UserSerializer& arg2 //!< A user-defined type argument
 	);
@@ -22,7 +22,7 @@ class ATester : public ExampleComponents::ExampleComponentGTestBase {
 
 
 void ATester::from_exampleOutput_handler(
-	const NATIVE_INT_TYPE portNum, //!< The port number
+	const FwIndexType portNum, //!< The port number
 	I32 arg1, //!< A built-in type argument
 	const ANameSpace::UserSerializer& arg2 //!< A user-defined type argument
 ) {

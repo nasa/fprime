@@ -168,29 +168,29 @@ void DeframerTester ::testBufferOutUnconnected() {
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-void DeframerTester ::from_comOut_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& data, U32 context) {
+void DeframerTester ::from_comOut_handler(const FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
     this->pushFromPortEntry_comOut(data, context);
 }
 
-void DeframerTester ::from_bufferOut_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
+void DeframerTester ::from_bufferOut_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
     this->pushFromPortEntry_bufferOut(fwBuffer);
 }
 
-Fw::Buffer DeframerTester ::from_bufferAllocate_handler(const NATIVE_INT_TYPE portNum, U32 size) {
+Fw::Buffer DeframerTester ::from_bufferAllocate_handler(const FwIndexType portNum, U32 size) {
     this->pushFromPortEntry_bufferAllocate(size);
     Fw::Buffer buffer(nullptr, size);
     return buffer;
 }
 
-void DeframerTester ::from_bufferDeallocate_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
+void DeframerTester ::from_bufferDeallocate_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
     this->pushFromPortEntry_bufferDeallocate(fwBuffer);
 }
 
-void DeframerTester ::from_framedDeallocate_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
+void DeframerTester ::from_framedDeallocate_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
     this->pushFromPortEntry_framedDeallocate(fwBuffer);
 }
 
-Drv::PollStatus DeframerTester ::from_framedPoll_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& pollBuffer) {
+Drv::PollStatus DeframerTester ::from_framedPoll_handler(const FwIndexType portNum, Fw::Buffer& pollBuffer) {
     this->pushFromPortEntry_framedPoll(pollBuffer);
     return Drv::PollStatus::POLL_OK;
 }

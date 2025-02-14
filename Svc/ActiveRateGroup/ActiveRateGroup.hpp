@@ -69,7 +69,7 @@ namespace Svc {
             //!  \param portNum incoming port call. For this class, should always be zero
             //!  \param cycleStart value stored by the cycle driver, used to compute execution time.
 
-            void CycleIn_handler(NATIVE_INT_TYPE portNum, Os::RawTime& cycleStart);
+            void CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleStart);
 
             //!  \brief Input cycle port pre message hook
             //!
@@ -79,7 +79,7 @@ namespace Svc {
             //!  \param portNum incoming port call. For this class, should always be zero
             //!  \param cycleStart value stored by the cycle driver, used to compute execution time.
 
-            void CycleIn_preMsgHook(NATIVE_INT_TYPE portNum, Os::RawTime& cycleStart); //!< CycleIn pre-message hook
+            void CycleIn_preMsgHook(FwIndexType portNum, Os::RawTime& cycleStart); //!< CycleIn pre-message hook
 
             //!  \brief Input ping port handler
             //!
@@ -88,7 +88,7 @@ namespace Svc {
             //!  \param portNum incoming port call. For this class, should always be zero
             //!  \param key value returned to health task to verify round trip
 
-            void PingIn_handler(NATIVE_INT_TYPE portNum, U32 key);
+            void PingIn_handler(FwIndexType portNum, U32 key);
 
             //!  \brief Task preamble
             //!

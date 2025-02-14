@@ -52,17 +52,17 @@ class BufferRepeaterTester : public BufferRepeaterGTestBase {
 
     //! Handler for from_allocate
     //!
-    Fw::Buffer from_allocate_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    Fw::Buffer from_allocate_handler(const FwIndexType portNum, /*!< The port number*/
                                      U32 size);
 
     //! Handler for from_deallocate
     //!
-    void from_deallocate_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    void from_deallocate_handler(const FwIndexType portNum, /*!< The port number*/
                                  Fw::Buffer& fwBuffer);
 
     //! Handler for from_portOut
     //!
-    void from_portOut_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    void from_portOut_handler(const FwIndexType portNum, /*!< The port number*/
                               Fw::Buffer& fwBuffer);
 
   private:

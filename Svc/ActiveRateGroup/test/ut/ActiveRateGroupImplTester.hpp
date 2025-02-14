@@ -34,12 +34,12 @@ namespace Svc {
 
         private:
 
-            void from_RateGroupMemberOut_handler(NATIVE_INT_TYPE portNum, U32 context);
+            void from_RateGroupMemberOut_handler(FwIndexType portNum, U32 context);
 
             //! Handler for from_PingOut
             //!
             void from_PingOut_handler(
-              const NATIVE_INT_TYPE portNum, /*!< The port number*/
+              const FwIndexType portNum, /*!< The port number*/
               U32 key /*!< Value to return to pinger*/
             );
 

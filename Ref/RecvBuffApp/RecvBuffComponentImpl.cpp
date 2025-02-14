@@ -23,7 +23,7 @@ namespace Ref {
 
     }
 
-    void RecvBuffImpl::Data_handler(NATIVE_INT_TYPE portNum, Drv::DataBuffer &buff) {
+    void RecvBuffImpl::Data_handler(FwIndexType portNum, Drv::DataBuffer &buff) {
 
         this->m_stats.setBuffRecv(++this->m_buffsReceived);
         // reset deserialization of buffer

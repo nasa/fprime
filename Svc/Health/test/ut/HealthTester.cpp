@@ -47,7 +47,7 @@ namespace Svc {
 
   void HealthTester ::
     from_PingSend_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 key
     )
   {
@@ -68,7 +68,7 @@ namespace Svc {
 
   void HealthTester ::
     from_WdogStroke_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 code
     )
   {

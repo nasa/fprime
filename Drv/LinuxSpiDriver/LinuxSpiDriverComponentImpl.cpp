@@ -33,7 +33,7 @@ namespace Drv {
     // ----------------------------------------------------------------------
 
     void LinuxSpiDriverComponentImpl::SpiReadWrite_handler(
-            const NATIVE_INT_TYPE portNum, Fw::Buffer &writeBuffer,
+            const FwIndexType portNum, Fw::Buffer &writeBuffer,
             Fw::Buffer &readBuffer) {
 
         if (this->m_fd == -1) {

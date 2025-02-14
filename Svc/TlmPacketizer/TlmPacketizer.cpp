@@ -180,7 +180,7 @@ TlmPacketizer::TlmEntry* TlmPacketizer::findBucket(FwChanIdType id) {
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void TlmPacketizer ::TlmRecv_handler(const NATIVE_INT_TYPE portNum,
+void TlmPacketizer ::TlmRecv_handler(const FwIndexType portNum,
                                      FwChanIdType id,
                                      Fw::Time& timeTag,
                                      Fw::TlmBuffer& val) {
@@ -231,7 +231,7 @@ void TlmPacketizer ::TlmRecv_handler(const NATIVE_INT_TYPE portNum,
     }
 }
 
-void TlmPacketizer ::Run_handler(const NATIVE_INT_TYPE portNum, U32 context) {
+void TlmPacketizer ::Run_handler(const FwIndexType portNum, U32 context) {
     FW_ASSERT(this->m_configured);
 
     // Only write packets if connected
@@ -278,7 +278,7 @@ void TlmPacketizer ::Run_handler(const NATIVE_INT_TYPE portNum, U32 context) {
     }
 }
 
-void TlmPacketizer ::pingIn_handler(const NATIVE_INT_TYPE portNum, U32 key) {
+void TlmPacketizer ::pingIn_handler(const FwIndexType portNum, U32 key) {
     // return key
     this->pingOut_out(0, key);
 }

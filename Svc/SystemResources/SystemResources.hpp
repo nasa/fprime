@@ -46,7 +46,7 @@ class SystemResources : public SystemResourcesComponentBase {
         //! Handler implementation for run
         //!
         void
-        run_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+        run_handler(const FwIndexType portNum, /*!< The port number*/
                     U32 context                    /*!< The call order*/
         );
 

@@ -26,14 +26,14 @@ DpManager::~DpManager() {}
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-Fw::Success DpManager::productGetIn_handler(const NATIVE_INT_TYPE portNum,
+Fw::Success DpManager::productGetIn_handler(const FwIndexType portNum,
                                             FwDpIdType id,
                                             FwSizeType size,
                                             Fw::Buffer& buffer) {
     return this->getBuffer(portNum, id, size, buffer);
 }
 
-void DpManager::productRequestIn_handler(const NATIVE_INT_TYPE portNum, FwDpIdType id, FwSizeType size) {
+void DpManager::productRequestIn_handler(const FwIndexType portNum, FwDpIdType id, FwSizeType size) {
     // Get a buffer
     Fw::Buffer buffer;
     const Fw::Success status = this->getBuffer(portNum, id, size, buffer);
@@ -41,7 +41,7 @@ void DpManager::productRequestIn_handler(const NATIVE_INT_TYPE portNum, FwDpIdTy
     this->productResponseOut_out(portNum, id, buffer, status);
 }
 
-void DpManager::productSendIn_handler(const NATIVE_INT_TYPE portNum, FwDpIdType id, const Fw::Buffer& buffer) {
+void DpManager::productSendIn_handler(const FwIndexType portNum, FwDpIdType id, const Fw::Buffer& buffer) {
     // id is unused
     (void)id;
     // Update state variables
@@ -52,7 +52,7 @@ void DpManager::productSendIn_handler(const NATIVE_INT_TYPE portNum, FwDpIdType 
     this->productSendOut_out(portNum, sendBuffer);
 }
 
-void DpManager::schedIn_handler(const NATIVE_INT_TYPE portNum, U32 context) {
+void DpManager::schedIn_handler(const FwIndexType portNum, U32 context) {
     // Emit telemetry
     this->tlmWrite_NumSuccessfulAllocations(this->numSuccessfulAllocations);
     this->tlmWrite_NumFailedAllocations(this->numFailedAllocations);

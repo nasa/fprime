@@ -24,7 +24,7 @@ namespace Svc {
     // ----------------------------------------------------------------------
 
     void FatalHandlerComponentImpl::FatalReceive_handler(
-            const NATIVE_INT_TYPE portNum,
+            const FwIndexType portNum,
             FwEventIdType Id) {
         // for **nix, delay then exit with error code
         Fw::Logger::log("FATAL %d handled.\n",Id);
