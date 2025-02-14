@@ -1,6 +1,6 @@
 # Builds and runs UTs on https://github.com/fprime-community/fprime-tutorial-math-component
 
-name: "Tutorial: MathComponent"
+name: "External repo: Tutorial: MathComponent"
 
 on:
   push:
