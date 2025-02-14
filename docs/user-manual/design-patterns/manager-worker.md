@@ -58,10 +58,10 @@ active component Manager {
     ...
 }
 ```
-> ![NOTE]
+> [!NOTE]
 > Any port types can be used to start work and signal completion as long as the worker component matches.
 
-> ![NOTE]
+> [!NOTE]
 > The manager component typically has commands, port calls, and other design elements. This above snippet just represents the interaction with the worker.
 
 **Worker Model Snippet**
@@ -75,7 +75,7 @@ active component Manager {
 }
 ```
 
-> ![NOTE]
+> [!NOTE]
 > Workers typically have no inputs (commands, ports) except those that are controlled by the manager component.
 
 The [synchronous cancel port](./common-port-patterns.md#synchronous-cancel) pattern can be applied to the manager and worker components should the worker need to support the ability to cancel ongoing work.
@@ -95,7 +95,7 @@ instance worker: ManagerWorker.Worker base id 0x1000 \
     priority 20 # Low-priority (Linux) for the Worker
 ```
 
-> ![NOTE]
+> [!NOTE]
 > Actual priorities should be determined relative to the other instances in the system. 
 
 ## Conclusion
