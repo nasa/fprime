@@ -194,7 +194,7 @@ namespace Svc {
     // make sure the memory returns was non-zero and the size requested
     FW_ASSERT(memory != nullptr && memorySize == allocatedSize,
       mgrId, memId,
-      static_cast<FwAssertArgType>(reinterpret_cast<FwSizeType>(memory)),
+      static_cast<FwAssertArgType>(reinterpret_cast<PlatformPointerCastType>(memory)),
       static_cast<FwAssertArgType>(memorySize),
       static_cast<FwAssertArgType>(allocatedSize));
     // structs will be at beginning of memory
