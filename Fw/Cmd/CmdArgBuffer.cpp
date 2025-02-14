@@ -5,7 +5,7 @@ namespace Fw {
 
     CmdArgBuffer::CmdArgBuffer(const U8 *args, NATIVE_UINT_TYPE size) {
         SerializeStatus stat = this->setBuff(args,size);
-        FW_ASSERT(FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
+        FW_ASSERT(FW_SERIALIZE_OK == stat,static_cast<FwAssertArgType>(stat));
     }
 
     CmdArgBuffer::CmdArgBuffer() {
@@ -16,7 +16,7 @@ namespace Fw {
 
     CmdArgBuffer::CmdArgBuffer(const CmdArgBuffer& other) : Fw::SerializeBufferBase() {
         SerializeStatus stat = this->setBuff(other.m_bufferData,other.getBuffLength());
-        FW_ASSERT(FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
+        FW_ASSERT(FW_SERIALIZE_OK == stat,static_cast<FwAssertArgType>(stat));
     }
 
     CmdArgBuffer& CmdArgBuffer::operator=(const CmdArgBuffer& other) {
@@ -25,7 +25,7 @@ namespace Fw {
         }
 
         SerializeStatus stat = this->setBuff(other.m_bufferData,other.getBuffLength());
-        FW_ASSERT(FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
+        FW_ASSERT(FW_SERIALIZE_OK == stat,static_cast<FwAssertArgType>(stat));
         return *this;
     }
 

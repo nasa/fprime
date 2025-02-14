@@ -79,7 +79,7 @@ namespace Svc {
                 }
                 break;
             default:
-                FW_ASSERT(0,static_cast<NATIVE_INT_TYPE>(severity.e));
+                FW_ASSERT(0,static_cast<FwAssertArgType>(severity.e));
                 return;
         }
 
@@ -112,7 +112,7 @@ namespace Svc {
         this->m_logPacket.setLogBuffer(args);
         this->m_comBuffer.resetSer();
         Fw::SerializeStatus stat = this->m_logPacket.serialize(this->m_comBuffer);
-        FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
+        FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<FwAssertArgType>(stat));
 
         if (this->isConnected_PktSend_OutputPort(0)) {
             this->PktSend_out(0, this->m_comBuffer,0);

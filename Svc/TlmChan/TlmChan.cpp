@@ -162,12 +162,12 @@ void TlmChan::Run_handler(FwIndexType portNum, U32 context) {
                 stat = pkt.addValue(p_entry->id, p_entry->lastUpdate, p_entry->buffer);
                 // if this doesn't work, that means packet isn't big enough for
                 // even one channel, so assert
-                FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<NATIVE_INT_TYPE>(stat));
+                FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
             } else if (Fw::FW_SERIALIZE_OK == stat) {
                 // if there was still room, do nothing move on to the next channel in the packet
             } else  // any other status is an assert, since it shouldn't happen
             {
-                FW_ASSERT(0, static_cast<NATIVE_INT_TYPE>(stat));
+                FW_ASSERT(0, static_cast<FwAssertArgType>(stat));
             }
             // flag as updated
             p_entry->updated = false;

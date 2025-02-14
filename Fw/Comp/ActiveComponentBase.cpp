@@ -56,13 +56,13 @@ namespace Fw {
         Os::Task::taskRoutine routine = (m_task.isCooperative()) ? this->s_taskStateMachine : this->s_taskLoop;
         Os::Task::Arguments arguments(taskName, routine, this, priority, stackSize, cpuAffinity, static_cast<PlatformUIntType>(identifier));
         Os::Task::Status status = this->m_task.start(arguments);
-        FW_ASSERT(status == Os::Task::Status::OP_OK,static_cast<NATIVE_INT_TYPE>(status));
+        FW_ASSERT(status == Os::Task::Status::OP_OK,static_cast<FwAssertArgType>(status));
     }
 
     void ActiveComponentBase::exit() {
         ActiveComponentExitSerializableBuffer exitBuff;
         SerializeStatus stat = exitBuff.serialize(static_cast<I32>(ACTIVE_COMPONENT_EXIT));
-        FW_ASSERT(FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
+        FW_ASSERT(FW_SERIALIZE_OK == stat,static_cast<FwAssertArgType>(stat));
         (void)this->m_queue.send(exitBuff,0,Os::Queue::BlockingType::NONBLOCKING);
     }
 

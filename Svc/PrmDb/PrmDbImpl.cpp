@@ -170,7 +170,7 @@ namespace Svc {
                 buff.resetSer();
                 Fw::SerializeStatus serStat = buff.serialize(recordSize);
                 // should always work
-                FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat,static_cast<NATIVE_INT_TYPE>(serStat));
+                FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat,static_cast<FwAssertArgType>(serStat));
 
                 // write record size
                 writeSize = buff.getBuffLength();
@@ -198,7 +198,7 @@ namespace Svc {
 
                 serStat = buff.serialize(this->m_db[entry].id);
                 // should always work
-                FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat,static_cast<NATIVE_INT_TYPE>(serStat));
+                FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat,static_cast<FwAssertArgType>(serStat));
 
                 // write parameter ID
                 writeSize = buff.getBuffLength();
@@ -312,7 +312,7 @@ namespace Svc {
             // set serialized size to read size
             Fw::SerializeStatus desStat = buff.setBuffLen(static_cast<Fw::Serializable::SizeType>(readSize));
             // should never fail
-            FW_ASSERT(Fw::FW_SERIALIZE_OK == desStat,static_cast<NATIVE_INT_TYPE>(desStat));
+            FW_ASSERT(Fw::FW_SERIALIZE_OK == desStat,static_cast<FwAssertArgType>(desStat));
             // reset deserialization
             buff.resetDeser();
             // deserialize, since record size is serialized in file
@@ -343,7 +343,7 @@ namespace Svc {
             // set serialized size to read parameter ID
             desStat = buff.setBuffLen(static_cast<Fw::Serializable::SizeType>(readSize));
             // should never fail
-            FW_ASSERT(Fw::FW_SERIALIZE_OK == desStat,static_cast<NATIVE_INT_TYPE>(desStat));
+            FW_ASSERT(Fw::FW_SERIALIZE_OK == desStat,static_cast<FwAssertArgType>(desStat));
             // reset deserialization
             buff.resetDeser();
             // deserialize, since parameter ID is serialized in file
@@ -369,7 +369,7 @@ namespace Svc {
             // set serialized size to read size
             desStat = this->m_db[entry].val.setBuffLen(static_cast<Fw::Serializable::SizeType>(readSize));
             // should never fail
-            FW_ASSERT(Fw::FW_SERIALIZE_OK == desStat,static_cast<NATIVE_INT_TYPE>(desStat));
+            FW_ASSERT(Fw::FW_SERIALIZE_OK == desStat,static_cast<FwAssertArgType>(desStat));
             recordNum++;
 
         }

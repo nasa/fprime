@@ -47,7 +47,7 @@ TEST_F(FunctionalityTester, PosixMutexDataProtection) {
     Os::Task test_task;
     Os::Task::Arguments arguments(Fw::String("MutexTestLockTask"), testTaskRoutine, static_cast<void*>(tester.get()));
     Os::Task::Status stat = test_task.start(arguments);
-    FW_ASSERT(Os::Task::OP_OK == stat, static_cast<NATIVE_INT_TYPE>(stat));
+    FW_ASSERT(Os::Task::OP_OK == stat, static_cast<FwAssertArgType>(stat));
 
     Os::Test::Mutex::Tester::ProtectDataCheck protect_data_rule;
 

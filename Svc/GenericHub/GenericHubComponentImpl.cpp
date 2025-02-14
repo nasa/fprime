@@ -39,11 +39,11 @@ void GenericHubComponentImpl ::send_data(const HubType type,
     Fw::SerializeBufferBase& serialize = outgoing.getSerializeRepr();
     // Write data to our buffer
     status = serialize.serialize(static_cast<U32>(type));
-    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     status = serialize.serialize(static_cast<U32>(port));
-    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     status = serialize.serialize(data, size);
-    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     outgoing.setSize(serialize.getBuffLength());
     dataOut_out(0, outgoing);
 }
@@ -70,15 +70,15 @@ void GenericHubComponentImpl ::dataIn_handler(const FwIndexType portNum, Fw::Buf
 
     // Must inform buffer that there is *real* data in the buffer
     status = incoming.setBuffLen(fwBuffer.getSize());
-    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     status = incoming.deserialize(type_in);
-    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     type = static_cast<HubType>(type_in);
     FW_ASSERT(type < HUB_TYPE_MAX, type);
     status = incoming.deserialize(port);
-    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     status = incoming.deserialize(size);
-    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
 
     // invokeSerial deserializes arguments before calling a normal invoke, this will return ownership immediately
     U8* rawData = fwBuffer.getData() + sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType);
@@ -88,7 +88,7 @@ void GenericHubComponentImpl ::dataIn_handler(const FwIndexType portNum, Fw::Buf
         // Com buffer representations should be copied before the call returns, so we need not "allocate" new data
         Fw::ExternalSerializeBuffer wrapper(rawData, rawSize);
         status = wrapper.setBuffLen(rawSize);
-        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
+        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
         portOut_out(static_cast<FwIndexType>(port), wrapper);
         // Deallocate the existing buffer
         dataInDeallocate_out(0, fwBuffer);
@@ -104,13 +104,13 @@ void GenericHubComponentImpl ::dataIn_handler(const FwIndexType portNum, Fw::Buf
 
         // Deserialize tokens for events
         status = incoming.deserialize(id);
-        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
+        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
         status = incoming.deserialize(timeTag);
-        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
+        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
         status = incoming.deserialize(severity);
-        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
+        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
         status = incoming.deserialize(args);
-        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
+        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
 
         // Send it!
         this->LogSend_out(static_cast<FwIndexType>(port), id, timeTag, severity, args);
@@ -124,11 +124,11 @@ void GenericHubComponentImpl ::dataIn_handler(const FwIndexType portNum, Fw::Buf
 
         // Deserialize tokens for channels
         status = incoming.deserialize(id);
-        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
+        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
         status = incoming.deserialize(timeTag);
-        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
+        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
         status = incoming.deserialize(val);
-        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
+        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
 
         // Send it!
         this->TlmSend_out(static_cast<FwIndexType>(port), id, timeTag, val);
