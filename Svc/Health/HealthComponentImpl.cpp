@@ -206,7 +206,7 @@ namespace Svc {
     NATIVE_INT_TYPE HealthImpl::findEntry(const Fw::CmdStringArg& entry) {
 
         // walk through entries
-        for (NATIVE_UINT_TYPE tableEntry = 0; tableEntry < NUM_PINGSEND_OUTPUT_PORTS; tableEntry++) {
+        for (FwIndexType tableEntry = 0; tableEntry < NUM_PINGSEND_OUTPUT_PORTS; tableEntry++) {
             if (entry == this->m_pingTrackerEntries[tableEntry].entry.entryName) {
                 return static_cast<NATIVE_INT_TYPE>(tableEntry);
             }

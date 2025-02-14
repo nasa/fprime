@@ -28,7 +28,7 @@ ComQueue ::ComQueue(const char* const compName)
       m_allocator(nullptr),
       m_allocation(nullptr) {
     // Initialize throttles to "off"
-    for (NATIVE_UINT_TYPE i = 0; i < TOTAL_PORT_COUNT; i++) {
+    for (FwIndexType i = 0; i < TOTAL_PORT_COUNT; i++) {
         this->m_throttle[i] = false;
     }
 }
@@ -131,7 +131,7 @@ void ComQueue::comQueueIn_handler(const FwIndexType portNum, Fw::ComBuffer& data
 }
 
 void ComQueue::buffQueueIn_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
-    const NATIVE_INT_TYPE queueNum = portNum + COM_PORT_COUNT;
+    const FwIndexType queueNum = portNum + COM_PORT_COUNT;
     // Ensure that the port number of buffQueueIn is consistent with the expectation
     FW_ASSERT(portNum >= 0 && portNum < BUFFER_PORT_COUNT, portNum);
     FW_ASSERT(queueNum < TOTAL_PORT_COUNT);

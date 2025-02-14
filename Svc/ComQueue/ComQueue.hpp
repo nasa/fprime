@@ -13,6 +13,7 @@
 #include <Utils/Types/Queue.hpp>
 #include "Fw/Types/MemAllocator.hpp"
 #include "Os/Mutex.hpp"
+#include <limits>
 
 namespace Svc {
 
@@ -28,6 +29,8 @@ class ComQueue : public ComQueueComponentBase {
     //!< Count of Fw::Buffer input ports and thus Fw::Buffer queues
     static const FwIndexType BUFFER_PORT_COUNT = ComQueueComponentBase::NUM_BUFFQUEUEIN_INPUT_PORTS;
 
+    static_assert((COM_PORT_COUNT + BUFFER_PORT_COUNT) <= std::numeric_limits<FwIndexType>::max(),
+                  "FwIndexType not large enough to hold com and buffer ports");
     //!< Total count of input buffer ports and thus total queues
     static const FwIndexType TOTAL_PORT_COUNT = COM_PORT_COUNT + BUFFER_PORT_COUNT;
 

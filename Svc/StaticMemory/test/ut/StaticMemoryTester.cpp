@@ -70,7 +70,7 @@ namespace Svc {
   {
 
     // bufferDeallocate
-    for (NATIVE_INT_TYPE i = 0; i < StaticMemoryComponentBase::NUM_BUFFERALLOCATE_INPUT_PORTS; ++i) {
+    for (FwIndexType i = 0; i < StaticMemoryComponentBase::NUM_BUFFERALLOCATE_INPUT_PORTS; ++i) {
       this->connect_to_bufferDeallocate(
           i,
           this->component.get_bufferDeallocate_InputPort(i)
@@ -78,7 +78,7 @@ namespace Svc {
     }
 
     // bufferAllocate
-    for (NATIVE_INT_TYPE i = 0; i < StaticMemoryComponentBase::NUM_BUFFERALLOCATE_INPUT_PORTS; ++i) {
+    for (FwIndexType i = 0; i < StaticMemoryComponentBase::NUM_BUFFERALLOCATE_INPUT_PORTS; ++i) {
       this->connect_to_bufferAllocate(
           i,
           this->component.get_bufferAllocate_InputPort(i)

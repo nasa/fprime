@@ -129,7 +129,7 @@ namespace Svc {
     );
 
     // Output serial ports
-    for (NATIVE_UINT_TYPE port = 0; port < UdpReceiverComponentImpl::NUM_PORTSOUT_OUTPUT_PORTS; port++) {
+    for (FwIndexType port = 0; port < UdpReceiverComponentImpl::NUM_PORTSOUT_OUTPUT_PORTS; port++) {
         this->component.set_PortsOut_OutputPort(port,this->get_from_PortsOut(port));
     }
 

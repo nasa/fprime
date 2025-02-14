@@ -34,7 +34,7 @@ void ComQueueTester ::dispatchAll() {
 
 void ComQueueTester ::configure() {
     ComQueue::QueueConfigurationTable configurationTable;
-    for (NATIVE_UINT_TYPE i = 0; i < ComQueue::TOTAL_PORT_COUNT; i++){
+    for (FwIndexType i = 0; i < ComQueue::TOTAL_PORT_COUNT; i++){
         configurationTable.entries[i].priority = i;
         configurationTable.entries[i].depth = 3;
     }
@@ -135,7 +135,7 @@ void ComQueueTester ::testPrioritySend() {
 
     ComQueue::QueueConfigurationTable configurationTable;
 
-    for (NATIVE_UINT_TYPE i = 0; i < ComQueue::TOTAL_PORT_COUNT; i++) {
+    for (FwIndexType i = 0; i < ComQueue::TOTAL_PORT_COUNT; i++) {
         configurationTable.entries[i].priority = ComQueue::TOTAL_PORT_COUNT - i - 1;
         configurationTable.entries[i].depth = 3;
         data[i][0] = ComQueue::TOTAL_PORT_COUNT - i - 1;
@@ -162,7 +162,7 @@ void ComQueueTester ::testPrioritySend() {
     ASSERT_from_buffQueueSend_SIZE(0);
     ASSERT_from_comQueueSend_SIZE(0);
 
-    for (NATIVE_INT_TYPE index = 0; index < ComQueue::TOTAL_PORT_COUNT; index++) {
+    for (FwIndexType index = 0; index < ComQueue::TOTAL_PORT_COUNT; index++) {
         U8 orderKey;
         U32 previousComSize = fromPortHistory_comQueueSend->size();
         U32 previousBufSize = fromPortHistory_buffQueueSend->size();
@@ -192,7 +192,7 @@ void ComQueueTester::testExternalQueueOverflow() {
     ComQueueDepth expectedComDepth;
     BuffQueueDepth expectedBuffDepth;
 
-    for (NATIVE_UINT_TYPE i = 0; i < ComQueue::TOTAL_PORT_COUNT; i++) {
+    for (FwIndexType i = 0; i < ComQueue::TOTAL_PORT_COUNT; i++) {
         configurationTable.entries[i].priority = i;
         configurationTable.entries[i].depth = 2;
 
@@ -209,7 +209,7 @@ void ComQueueTester::testExternalQueueOverflow() {
     U8 data[BUFFER_LENGTH] = {0xde, 0xad, 0xbe};
     Fw::Buffer buffer(&data[0], sizeof(data));
 
-    for (NATIVE_INT_TYPE queueNum = 0; queueNum < ComQueue::TOTAL_PORT_COUNT; queueNum++) {
+    for (FwIndexType queueNum = 0; queueNum < ComQueue::TOTAL_PORT_COUNT; queueNum++) {
         QueueType overflow_type;
         FwIndexType portNum;
         // queue[portNum].depth + 2 to deliberately cause overflow and check throttle of exactly 1
@@ -263,7 +263,7 @@ void ComQueueTester::testInternalQueueOverflow() {
     U8 data[BUFFER_LENGTH] = {0xde, 0xad, 0xbe};
     Fw::Buffer buffer(data, sizeof(data));
 
-    const NATIVE_INT_TYPE queueNum = ComQueue::COM_PORT_COUNT;
+    const FwIndexType queueNum = ComQueue::COM_PORT_COUNT;
     const FwSizeType msgCountMax = this->component.m_queue.getDepth();
     QueueType overflow_type;
     FwIndexType portNum;

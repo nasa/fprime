@@ -34,7 +34,7 @@ namespace Svc {
 
         public:
             //! Size of the divider table, provided as a constants to users passing the table in
-            static const NATIVE_UINT_TYPE DIVIDER_SIZE = NUM_CYCLEOUT_OUTPUT_PORTS;
+            static const FwIndexType DIVIDER_SIZE = NUM_CYCLEOUT_OUTPUT_PORTS;
 
             //! \class Divider
             //! \brief Struct describing a divider

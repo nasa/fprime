@@ -30,7 +30,7 @@ namespace Svc {
 
     class ActiveRateGroup : public ActiveRateGroupComponentBase {
         public:
-            static constexpr NATIVE_INT_TYPE CONNECTION_COUNT_MAX = NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS;
+            static constexpr FwIndexType CONNECTION_COUNT_MAX = NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS;
 
             //!  \brief ActiveRateGroup constructor
             //!
