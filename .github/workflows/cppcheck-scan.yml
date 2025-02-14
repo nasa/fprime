@@ -1,5 +1,5 @@
 # Adapted from https://github.com/nasa/cFS/blob/c36aa2c1df0fb47a3838577908af3d0d0ab0ef54/.github/workflows/static-analysis.yml
-name: "Cppcheck Scan"
+name: "Code Scan: CppCheck"
 
 on:
   push:
