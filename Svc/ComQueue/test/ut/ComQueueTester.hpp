@@ -22,10 +22,10 @@ class ComQueueTester : public ComQueueGTestBase {
     // ----------------------------------------------------------------------
 
     // Instance ID supplied to the component instance under test
-    static const NATIVE_INT_TYPE TEST_INSTANCE_ID = 0;
+    static const FwEnumStoreType TEST_INSTANCE_ID = 0;
 
     // Queue depth supplied to the component instance under test
-    static const NATIVE_INT_TYPE TEST_INSTANCE_QUEUE_DEPTH = 10;
+    static const FwSizeType TEST_INSTANCE_QUEUE_DEPTH = 10;
 
   private:
     // ----------------------------------------------------------------------
