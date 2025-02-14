@@ -30,3 +30,4 @@ jobs:
       build_location: FlightExamples
       run_unit_tests: true
       target_ref: ${{ needs.get-branch.outputs.target-branch }}
+      fprime_location: ./FlightExamples/lib/fprime
