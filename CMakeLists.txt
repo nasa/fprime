@@ -25,13 +25,12 @@ add_compile_options(
 )
 
 # Add -Wshadow, -Wconversion and -pedantic only for framework code, not the unit tests
-# TODO: uncomment -Wdouble-promotion once fpp is fixed
 if (NOT BUILD_TESTING)
     add_compile_options(
         -Wshadow
         -pedantic
         -Wconversion
-#        -Wdouble-promotion
+        -Wdouble-promotion
     )
 endif()
 

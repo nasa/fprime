@@ -21,6 +21,7 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/struct/")
 add_compile_options(
     -Wall
     -Wconversion
+    -Wdouble-promotion
     -Werror
     -Wextra
     -Wno-unused-parameter
