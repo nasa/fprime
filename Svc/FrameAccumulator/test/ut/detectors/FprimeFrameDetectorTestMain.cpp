@@ -18,10 +18,10 @@ U32 CIRCULAR_BUFFER_TEST_SIZE = 2048;
 FwSizeType generate_random_fprime_frame(Types::CircularBuffer& circular_buffer) {
     constexpr FwSizeType FRAME_HEADER_SIZE = 8;
     constexpr FwSizeType FRAME_FOOTER_SIZE = 4;
-
     // Generate random packet size (1-1024 bytes; because 0 would trigger undefined behavior warnings)
     // 1024 is max length as per FrameAccumulator/FrameDetector/FprimeFrameDetector @ LengthToken::MaximumLength
     U32 packet_size = STest::Random::lowerUpper(1, 1024);
+    printf("Generating random F´ frame of size %u bytes\n", packet_size);
     U8 data[packet_size];
     // Generate random data of random size
     for (FwSizeType i = 0; i < packet_size; i++) {
@@ -86,6 +86,25 @@ TEST(FprimeFrameDetector, TestFrameDetected) {
     EXPECT_EQ(size_out, frame_size);
 }
 
+TEST(FprimeFrameDetector, TestManyFrameDetected) {
+    U32 MAX_ITERS = 1000;
+    Svc::FrameDetectors::FprimeFrameDetector fprime_detector;
+    U8 buffer[CIRCULAR_BUFFER_TEST_SIZE];
+    ::memset(buffer, 0, CIRCULAR_BUFFER_TEST_SIZE);
+    Types::CircularBuffer circular_buffer(buffer, CIRCULAR_BUFFER_TEST_SIZE);
+
+    for (U32 i = 0; i < MAX_ITERS; i++) {
+        FwSizeType frame_size = generate_random_fprime_frame(circular_buffer);
+        Svc::FrameDetector::Status status;
+        FwSizeType size_out = 0;
+        status = fprime_detector.detect(circular_buffer, size_out);
+    
+        EXPECT_EQ(status, Svc::FrameDetector::Status::FRAME_DETECTED);
+        EXPECT_EQ(size_out, frame_size);
+        circular_buffer.rotate(size_out); // clear up used data
+    }
+
+}
 
 TEST(FprimeFrameDetector, TestNoFrameDetected) {
     Svc::FrameDetectors::FprimeFrameDetector fprime_detector;

@@ -1,4 +1,4 @@
-module Fprime {
+module FprimeProtocol {
 
     @ TODO
     struct FrameHeader {

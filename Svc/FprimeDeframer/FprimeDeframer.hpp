@@ -1,26 +1,18 @@
 // ======================================================================
-// \title  Deframer.hpp
+// \title  FprimeDeframer.hpp
 // \author thomas-bc
-// \brief  hpp file for Deframer component implementation class
+// \brief  hpp file for FprimeDeframer component implementation class
 // ======================================================================
 
-#ifndef Svc_Deframer_HPP
-#define Svc_Deframer_HPP
+#ifndef Svc_FprimeDeframer_HPP
+#define Svc_FprimeDeframer_HPP
 
-#include "Svc/Deframer/DeframerComponentAc.hpp"
+#include "Svc/FprimeDeframer/FprimeDeframerComponentAc.hpp"
 #include "Utils/Hash/Hash.hpp"
 
 namespace Svc {
 
-
-namespace FrameConfig {
-  //! Token type for F Prime frame header
-  typedef U32 TokenType;
-  static const U8 HEADER_SIZE = sizeof(TokenType) * 2;
-  static const U32 CHECKSUM_SIZE = HASH_DIGEST_LENGTH;
-}
-
-class Deframer : public DeframerComponentBase {
+class FprimeDeframer : public FprimeDeframerComponentBase {
 
 
   public:
@@ -28,12 +20,12 @@ class Deframer : public DeframerComponentBase {
     // Component construction and destruction
     // ----------------------------------------------------------------------
 
-    //! Construct Deframer object
-    Deframer(const char* const compName  //!< The component name
+    //! Construct FprimeDeframer object
+    FprimeDeframer(const char* const compName  //!< The component name
     );
 
-    //! Destroy Deframer object
-    ~Deframer();
+    //! Destroy FprimeDeframer object
+    ~FprimeDeframer();
 
   PRIVATE:
     // ----------------------------------------------------------------------

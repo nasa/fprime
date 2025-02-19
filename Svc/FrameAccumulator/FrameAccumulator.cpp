@@ -131,7 +131,6 @@ void FrameAccumulator ::processBuffer(Fw::Buffer& buffer) {
                         size_out <= remaining,
                         static_cast<FwAssertArgType>(size_out),
                         static_cast<FwAssertArgType>(remaining));
-                // REVIEW NOTE: size_out needs to be cast down in multiple places below - is this ok?
                 Fw::Buffer buffer = this->bufferAllocate_out(0, static_cast<U32>(size_out));
                 if (buffer.isValid()) {
                     // Copy out data and rotate

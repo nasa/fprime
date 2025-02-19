@@ -7,8 +7,8 @@
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/Deframer.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/Deframer.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/FprimeDeframer.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/FprimeDeframer.cpp"
 )
 
 set(MOD_DEPS
@@ -21,9 +21,9 @@ register_fprime_module()
 
 #### UTs ####
 set(UT_SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/Deframer.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/DeframerTester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/DeframerTestMain.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/FprimeDeframer.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/FprimeDeframerTester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/FprimeDeframerTestMain.cpp"
 )
 set(UT_MOD_DEPS
     STest

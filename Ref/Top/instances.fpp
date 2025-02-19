@@ -163,7 +163,7 @@ module Ref {
 
   instance frameAccumulator: Svc.FrameAccumulator base id 0x4C00
 
-  instance deframer: Svc.Deframer base id 0x4D00
+  instance deframer: Svc.FprimeDeframer base id 0x4D00
 
   instance uplinkRouter: Svc.Router base id 0x4E00
 

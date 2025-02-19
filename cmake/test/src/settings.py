@@ -46,7 +46,7 @@ REF_MODULES = [
     "Svc_CmdDispatcher",
     "Svc_CmdSequencer",
     "Svc_Cycle",
-    "Svc_Deframer",
+    "Svc_FprimeDeframer",
     "Svc_Fatal",
     "Svc_FatalHandler",
     "Svc_FileDownlink",

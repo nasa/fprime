@@ -10,6 +10,7 @@
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/FrameAccumulator.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/FrameAccumulator.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/FrameDetector/FprimeFrameDetector.cpp"
 )
 
 register_fprime_module()

@@ -44,63 +44,12 @@ class FprimeFrameDetector : public FrameDetector {
     //! \param data: circular buffer with read-only access
     //! \param size_out: set as output to caller indicating size when appropriate
     //! \return status of the detection to be paired with size_out
-    Status detect(const Types::CircularBuffer& data, FwSizeType& size_out) const override {
-        FprimeProtocol::FrameHeader header;
-        FprimeProtocol::FrameFooter footer;
+    Status detect(const Types::CircularBuffer& data, FwSizeType& size_out) const override;
 
-        // decltype(header.m_length) length_value;
-        U32 u32_data = 0; // TODO: don't hardcode U32; use the info from the FPP type instead
-
-        // Issues:
-        // 1. Can't retrieve the type info directly? Have to make something of size SERIALIZED_SIZE ?
-        //        Not a huge deal, but not as efficient ?
-        // 2. Can't use the serialization magic since CircularBuffer is not a SierializeBufferBase ???
-        for (U32 i = 0; i < data.get_allocated_size(); i++) {
-            // Read header
-            Fw::SerializeStatus status = data.peek(u32_data, i);
-            if (status != Fw::FW_SERIALIZE_OK) {
-                return Status::NO_FRAME_DETECTED;
-            }
-            if (u32_data != header.getstart_word()) {
-                continue;
-            }
-            status = data.peek(u32_data, i + sizeof(U32));
-            if (status != Fw::FW_SERIALIZE_OK) {
-                size_out = i + sizeof(U32); // can't really use the FPP type ? Or harvest info from nested data types ?
-                // We detected the start word, but no length yet. Request more data
-                return Status::MORE_DATA_NEEDED;
-            }
-            U32 packetLength = u32_data;
-            Utils::Hash hash;
-            Utils::HashBuffer hashBuffer;
-
-            hash.init();
-            data.peek(u32_data, packetLength + FprimeProtocol::FrameHeader::SERIALIZED_SIZE);
-            U32 transmitted_crc = u32_data;
-
-            // Read footer
-            U8 byte;
-            for (U32 i = 0; i < packetLength + FprimeProtocol::FrameHeader::SERIALIZED_SIZE; i++) {
-                status = data.peek(byte, i);
-                FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
-                hash.update(&byte, 1);
-            }
-            hash.final(hashBuffer);
-            U32 computed_crc = hashBuffer.asBigEndianU32();
-            printf("transmitted_crc: %08X\n", transmitted_crc);
-            printf("computed_crc: %08X\n", computed_crc);
-            if (transmitted_crc != computed_crc) {
-                return Status::MORE_DATA_NEEDED;
-            }
-            size_out = packetLength + FprimeProtocol::FrameHeader::SERIALIZED_SIZE + FprimeProtocol::FrameFooter::SERIALIZED_SIZE;
-            return Status::FRAME_DETECTED;
-        }
-        return Status::NO_FRAME_DETECTED;
-
+};  // class FprimeFrameDetector
 };  // namespace FrameDetectors
 };  // namespace Svc
-};
-}
+
 #endif  // SVC_FRAME_ACCUMULATOR_FRAME_DETECTOR_FPRIME_FRAME_DETECTOR
 
 

@@ -227,7 +227,7 @@ module RPI {
 
   }
 
-  instance deframer: Svc.Deframer base id 1240
+  instance deframer: Svc.FprimeDeframer base id 1240
 
   instance comm: Drv.TcpClient base id 1260 \
   {
