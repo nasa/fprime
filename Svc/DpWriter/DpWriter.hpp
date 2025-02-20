@@ -43,13 +43,13 @@ class DpWriter : public DpWriterComponentBase {
 
     //! Handler implementation for bufferSendIn
     //!
-    void bufferSendIn_handler(const NATIVE_INT_TYPE portNum,  //!< The port number
+    void bufferSendIn_handler(const FwIndexType portNum,  //!< The port number
                               Fw::Buffer& fwBuffer            //!< The buffer
                               ) final;
 
     //! Handler implementation for schedIn
     //!
-    void schedIn_handler(const NATIVE_INT_TYPE portNum,  //!< The port number
+    void schedIn_handler(const FwIndexType portNum,  //!< The port number
                          U32 context                     //!< The call order
                          ) final;
 

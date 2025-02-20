@@ -24,6 +24,7 @@ register_fprime_module(Os_Posix_Shared)
 # Set up Posix implementations
 register_os_implementation("File;FileSystem;Directory" Posix Os_Posix_Shared)
 register_os_implementation("Console" Posix)
+
 register_os_implementation("Task" Posix Os_Posix_Shared Fw_Time)
 register_os_implementation("Mutex;ConditionVariable" Posix Os_Posix_Shared)
 register_os_implementation("RawTime" Posix Os_Posix_Shared)

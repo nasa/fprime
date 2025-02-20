@@ -29,7 +29,7 @@ DpWriterTester ::~DpWriterTester() {}
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-void DpWriterTester::from_procBufferSendOut_handler(NATIVE_INT_TYPE portNum, Fw::Buffer& buffer) {
+void DpWriterTester::from_procBufferSendOut_handler(FwIndexType portNum, Fw::Buffer& buffer) {
     this->pushFromPortEntry_procBufferSendOut(buffer);
     this->abstractState.m_procTypes |= (1 << portNum);
 }

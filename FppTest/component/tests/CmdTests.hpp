@@ -36,7 +36,7 @@
     CMD_TEST_INVOKE_DECL(ArrayParam, Async)                              \
     CMD_TEST_INVOKE_DECL(StructParam, Async)
 
-#define CMD_TEST_DECL(TYPE, ASYNC) void test##ASYNC##Command(NATIVE_INT_TYPE portNum, FppTest::Types::TYPE& data);
+#define CMD_TEST_DECL(TYPE, ASYNC) void test##ASYNC##Command(FwIndexType portNum, FppTest::Types::TYPE& data);
 
 #define CMD_TEST_DECLS               \
     CMD_TEST_INVOKE_DECLS            \
@@ -156,7 +156,7 @@
     }
 
 #define CMD_TEST_DEFS(ASYNC, _ASYNC)                                                                        \
-    void Tester ::test##ASYNC##Command(NATIVE_INT_TYPE portNum, FppTest::Types::NoParams& data) {           \
+    void Tester ::test##ASYNC##Command(FwIndexType portNum, FppTest::Types::NoParams& data) {           \
         ASSERT_TRUE(this->isConnected_to_cmdIn(portNum));                                                   \
         ASSERT_TRUE(component.isConnected_cmdRegOut_OutputPort(portNum));                                   \
         ASSERT_TRUE(component.isConnected_cmdResponseOut_OutputPort(portNum));                              \
@@ -177,7 +177,7 @@
         ASSERT_CMD_RESPONSE(1, component.OPCODE_CMD##_ASYNC##_NO_ARGS, 1, Fw::CmdResponse::FORMAT_ERROR);   \
     }                                                                                                       \
                                                                                                             \
-    void Tester ::test##ASYNC##Command(NATIVE_INT_TYPE portNum, FppTest::Types::PrimitiveParams& data) {    \
+    void Tester ::test##ASYNC##Command(FwIndexType portNum, FppTest::Types::PrimitiveParams& data) {    \
         ASSERT_TRUE(this->isConnected_to_cmdIn(portNum));                                                   \
         ASSERT_TRUE(component.isConnected_cmdRegOut_OutputPort(portNum));                                   \
         ASSERT_TRUE(component.isConnected_cmdResponseOut_OutputPort(portNum));                              \
@@ -241,7 +241,7 @@
         ASSERT_CMD_RESPONSE(7, component.OPCODE_CMD##_ASYNC##_PRIMITIVE, 1, Fw::CmdResponse::FORMAT_ERROR); \
     }                                                                                                       \
                                                                                                             \
-    void Tester ::test##ASYNC##Command(NATIVE_INT_TYPE portNum, FppTest::Types::CmdStringParams& data) {    \
+    void Tester ::test##ASYNC##Command(FwIndexType portNum, FppTest::Types::CmdStringParams& data) {    \
         ASSERT_TRUE(this->isConnected_to_cmdIn(portNum));                                                   \
         ASSERT_TRUE(component.isConnected_cmdRegOut_OutputPort(portNum));                                   \
         ASSERT_TRUE(component.isConnected_cmdResponseOut_OutputPort(portNum));                              \
@@ -277,7 +277,7 @@
         ASSERT_CMD_RESPONSE(3, component.OPCODE_CMD##_ASYNC##_STRINGS, 1, Fw::CmdResponse::FORMAT_ERROR);   \
     }                                                                                                       \
                                                                                                             \
-    void Tester ::test##ASYNC##Command(NATIVE_INT_TYPE portNum, FppTest::Types::EnumParam& data) {          \
+    void Tester ::test##ASYNC##Command(FwIndexType portNum, FppTest::Types::EnumParam& data) {          \
         ASSERT_TRUE(this->isConnected_to_cmdIn(portNum));                                                   \
         ASSERT_TRUE(component.isConnected_cmdRegOut_OutputPort(portNum));                                   \
         ASSERT_TRUE(component.isConnected_cmdResponseOut_OutputPort(portNum));                              \
@@ -306,7 +306,7 @@
         ASSERT_CMD_RESPONSE(2, component.OPCODE_CMD##_ASYNC##_ENUM, 1, Fw::CmdResponse::FORMAT_ERROR);      \
     }                                                                                                       \
                                                                                                             \
-    void Tester ::test##ASYNC##Command(NATIVE_INT_TYPE portNum, FppTest::Types::ArrayParam& data) {         \
+    void Tester ::test##ASYNC##Command(FwIndexType portNum, FppTest::Types::ArrayParam& data) {         \
         ASSERT_TRUE(this->isConnected_to_cmdIn(portNum));                                                   \
         ASSERT_TRUE(component.isConnected_cmdRegOut_OutputPort(portNum));                                   \
         ASSERT_TRUE(component.isConnected_cmdResponseOut_OutputPort(portNum));                              \
@@ -335,7 +335,7 @@
         ASSERT_CMD_RESPONSE(2, component.OPCODE_CMD##_ASYNC##_ARRAY, 1, Fw::CmdResponse::FORMAT_ERROR);     \
     }                                                                                                       \
                                                                                                             \
-    void Tester ::test##ASYNC##Command(NATIVE_INT_TYPE portNum, FppTest::Types::StructParam& data) {        \
+    void Tester ::test##ASYNC##Command(FwIndexType portNum, FppTest::Types::StructParam& data) {        \
         ASSERT_TRUE(this->isConnected_to_cmdIn(portNum));                                                   \
         ASSERT_TRUE(component.isConnected_cmdRegOut_OutputPort(portNum));                                   \
         ASSERT_TRUE(component.isConnected_cmdResponseOut_OutputPort(portNum));                              \

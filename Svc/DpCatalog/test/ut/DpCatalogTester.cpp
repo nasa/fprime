@@ -257,7 +257,7 @@ namespace Svc {
 
     Svc::SendFileResponse DpCatalogTester ::
         from_fileOut_handler(
-            NATIVE_INT_TYPE portNum,
+            FwIndexType portNum,
             const Fw::StringBase& sourceFileName,
             const Fw::StringBase& destFileName,
             U32 offset,
@@ -271,7 +271,7 @@ namespace Svc {
 
     void DpCatalogTester ::
         from_pingOut_handler(
-            NATIVE_INT_TYPE portNum,
+            FwIndexType portNum,
             U32 key
         )
     {

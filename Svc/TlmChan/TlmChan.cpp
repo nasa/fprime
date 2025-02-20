@@ -46,12 +46,12 @@ NATIVE_UINT_TYPE TlmChan::doHash(FwChanIdType id) {
     return (id % TLMCHAN_HASH_MOD_VALUE) % TLMCHAN_NUM_TLM_HASH_SLOTS;
 }
 
-void TlmChan::pingIn_handler(const NATIVE_INT_TYPE portNum, U32 key) {
+void TlmChan::pingIn_handler(const FwIndexType portNum, U32 key) {
     // return key
     this->pingOut_out(0, key);
 }
 
-void TlmChan::TlmGet_handler(NATIVE_INT_TYPE portNum, FwChanIdType id, Fw::Time& timeTag, Fw::TlmBuffer& val) {
+void TlmChan::TlmGet_handler(FwIndexType portNum, FwChanIdType id, Fw::Time& timeTag, Fw::TlmBuffer& val) {
     // Compute index for entry
 
     NATIVE_UINT_TYPE index = this->doHash(id);
@@ -78,7 +78,7 @@ void TlmChan::TlmGet_handler(NATIVE_INT_TYPE portNum, FwChanIdType id, Fw::Time&
     }
 }
 
-void TlmChan::TlmRecv_handler(NATIVE_INT_TYPE portNum, FwChanIdType id, Fw::Time& timeTag, Fw::TlmBuffer& val) {
+void TlmChan::TlmRecv_handler(FwIndexType portNum, FwChanIdType id, Fw::Time& timeTag, Fw::TlmBuffer& val) {
     // Compute index for entry
 
     NATIVE_UINT_TYPE index = this->doHash(id);
@@ -128,7 +128,7 @@ void TlmChan::TlmRecv_handler(NATIVE_INT_TYPE portNum, FwChanIdType id, Fw::Time
     entryToUse->buffer = val;
 }
 
-void TlmChan::Run_handler(NATIVE_INT_TYPE portNum, U32 context) {
+void TlmChan::Run_handler(FwIndexType portNum, U32 context) {
     // Only write packets if connected
     if (not this->isConnected_PktSend_OutputPort(0)) {
         return;
@@ -162,12 +162,12 @@ void TlmChan::Run_handler(NATIVE_INT_TYPE portNum, U32 context) {
                 stat = pkt.addValue(p_entry->id, p_entry->lastUpdate, p_entry->buffer);
                 // if this doesn't work, that means packet isn't big enough for
                 // even one channel, so assert
-                FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<NATIVE_INT_TYPE>(stat));
+                FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
             } else if (Fw::FW_SERIALIZE_OK == stat) {
                 // if there was still room, do nothing move on to the next channel in the packet
             } else  // any other status is an assert, since it shouldn't happen
             {
-                FW_ASSERT(0, static_cast<NATIVE_INT_TYPE>(stat));
+                FW_ASSERT(0, static_cast<FwAssertArgType>(stat));
             }
             // flag as updated
             p_entry->updated = false;

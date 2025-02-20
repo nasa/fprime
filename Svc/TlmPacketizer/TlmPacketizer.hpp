@@ -45,7 +45,7 @@ class TlmPacketizer : public TlmPacketizerComponentBase {
 
     //! Handler implementation for TlmRecv
     //!
-    void TlmRecv_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    void TlmRecv_handler(const FwIndexType portNum, /*!< The port number*/
                          FwChanIdType id,               /*!< Telemetry Channel ID*/
                          Fw::Time& timeTag,             /*!< Time Tag*/
                          Fw::TlmBuffer& val             /*!< Buffer containing serialized telemetry value*/
@@ -53,13 +53,13 @@ class TlmPacketizer : public TlmPacketizerComponentBase {
 
     //! Handler implementation for Run
     //!
-    void Run_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    void Run_handler(const FwIndexType portNum, /*!< The port number*/
                      U32 context                    /*!< The call order*/
     );
 
     //! Handler implementation for pingIn
     //!
-    void pingIn_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    void pingIn_handler(const FwIndexType portNum, /*!< The port number*/
                         U32 key                        /*!< Value to return to pinger*/
     );
 

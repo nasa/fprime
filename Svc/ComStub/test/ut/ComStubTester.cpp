@@ -121,17 +121,17 @@ void ComStubTester ::test_retry() {
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-void ComStubTester ::from_comDataOut_handler(const NATIVE_INT_TYPE portNum,
+void ComStubTester ::from_comDataOut_handler(const FwIndexType portNum,
                                       Fw::Buffer& recvBuffer,
                                       const Drv::RecvStatus& recvStatus) {
     this->pushFromPortEntry_comDataOut(recvBuffer, recvStatus);
 }
 
-void ComStubTester ::from_comStatus_handler(const NATIVE_INT_TYPE portNum, Fw::Success& condition) {
+void ComStubTester ::from_comStatus_handler(const FwIndexType portNum, Fw::Success& condition) {
     this->pushFromPortEntry_comStatus(condition);
 }
 
-Drv::SendStatus ComStubTester ::from_drvDataOut_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& sendBuffer) {
+Drv::SendStatus ComStubTester ::from_drvDataOut_handler(const FwIndexType portNum, Fw::Buffer& sendBuffer) {
     this->pushFromPortEntry_drvDataOut(sendBuffer);
     m_retries = (m_send_mode == Drv::SendStatus::SEND_RETRY) ? (m_retries + 1) : m_retries;
     if (m_retries < RETRIES) {

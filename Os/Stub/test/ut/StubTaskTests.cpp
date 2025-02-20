@@ -7,6 +7,7 @@
 #include "Os/Stub/test/Task.hpp"
 #include "Os/test/ut/task/CommonTests.hpp"
 #include "Os/test/ut/task/RulesHeaders.hpp"
+#include "Os/Os.hpp"
 
 using namespace Os::Stub::Task::Test;
 
@@ -137,6 +138,7 @@ TEST_F(Interface, RegistryRemove) {
 }
 
 int main(int argc, char **argv) {
+    Os::init();
     ::testing::InitGoogleTest(&argc, argv);
     STest::Random::seed();
     return RUN_ALL_TESTS();

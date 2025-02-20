@@ -83,7 +83,7 @@ namespace Svc {
         //! Handler for input port TextLogger
         //
         virtual void TextLogger_handler(
-            NATIVE_INT_TYPE portNum, /*!< The port number*/
+            FwIndexType portNum, /*!< The port number*/
             FwEventIdType id, /*!< Log ID*/
             Fw::Time &timeTag, /*!< Time Tag*/
             const Fw::LogSeverity& severity, /*!< The severity argument*/

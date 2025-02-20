@@ -255,7 +255,7 @@ Os::File::Status LinuxGpioDriver ::open(const char* device,
     return status;
 }
 
-Drv::GpioStatus LinuxGpioDriver ::gpioRead_handler(const NATIVE_INT_TYPE portNum, Fw::Logic& state) {
+Drv::GpioStatus LinuxGpioDriver ::gpioRead_handler(const FwIndexType portNum, Fw::Logic& state) {
     Drv::GpioStatus status = Drv::GpioStatus::INVALID_MODE;
     if (this->m_configuration == GpioConfiguration::GPIO_INPUT) {
         struct gpiohandle_data values;
@@ -271,7 +271,7 @@ Drv::GpioStatus LinuxGpioDriver ::gpioRead_handler(const NATIVE_INT_TYPE portNum
     return status;
 }
 
-Drv::GpioStatus LinuxGpioDriver ::gpioWrite_handler(const NATIVE_INT_TYPE portNum, const Fw::Logic& state) {
+Drv::GpioStatus LinuxGpioDriver ::gpioWrite_handler(const FwIndexType portNum, const Fw::Logic& state) {
     Drv::GpioStatus status = Drv::GpioStatus::INVALID_MODE;
     if (this->m_configuration == GpioConfiguration::GPIO_OUTPUT) {
         struct gpiohandle_data values;

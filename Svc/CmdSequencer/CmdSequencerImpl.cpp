@@ -156,7 +156,7 @@ namespace Svc {
 
     //! Handler for input port seqRunIn
     void CmdSequencerComponentImpl::seqRunIn_handler(
-           NATIVE_INT_TYPE portNum,
+           FwIndexType portNum,
            const Fw::StringBase& filename
        ) {
 
@@ -199,7 +199,7 @@ namespace Svc {
 
     void CmdSequencerComponentImpl ::
       seqCancelIn_handler(
-          const NATIVE_INT_TYPE portNum
+          const FwIndexType portNum
       ) {
         if (RUNNING == this->m_runMode) {
             this->performCmd_Cancel();
@@ -285,7 +285,7 @@ namespace Svc {
 
     void CmdSequencerComponentImpl ::
       cmdResponseIn_handler(
-          NATIVE_INT_TYPE portNum,
+          FwIndexType portNum,
           FwOpcodeType opcode,
           U32 cmdSeq,
           const Fw::CmdResponse& response
@@ -322,7 +322,7 @@ namespace Svc {
     }
 
     void CmdSequencerComponentImpl ::
-      schedIn_handler(NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE order)
+      schedIn_handler(FwIndexType portNum, NATIVE_UINT_TYPE order)
     {
 
         Fw::Time currTime = this->getTime();
@@ -514,7 +514,7 @@ namespace Svc {
 
     void CmdSequencerComponentImpl ::
       pingIn_handler(
-          NATIVE_INT_TYPE portNum, /*!< The port number*/
+          FwIndexType portNum, /*!< The port number*/
           U32 key /*!< Value to return to pinger*/
       )
     {

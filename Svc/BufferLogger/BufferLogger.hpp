@@ -183,14 +183,14 @@ namespace Svc {
       //! Handler implementation for bufferSendIn
       //!
       void bufferSendIn_handler(
-          const NATIVE_INT_TYPE portNum, //!< The port number
+          const FwIndexType portNum, //!< The port number
           Fw::Buffer& fwBuffer
       );
 
       //! Handler implementation for comIn
       //!
       void comIn_handler(
-          const NATIVE_INT_TYPE portNum, //!< The port number
+          const FwIndexType portNum, //!< The port number
           Fw::ComBuffer &data, //!< Buffer containing packet data
           U32 context //!< Call context value; meaning chosen by user
       );
@@ -198,14 +198,14 @@ namespace Svc {
       //! Handler implementation for pingIn
       //!
       void pingIn_handler(
-          const NATIVE_INT_TYPE portNum, //!< The port number
+          const FwIndexType portNum, //!< The port number
           U32 key //!< Value to return to pinger
       );
 
       //! Handler implementation for schedIn
       //!
       void schedIn_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          const FwIndexType portNum, /*!< The port number*/
           U32 context /*!< The call order*/
       );
 

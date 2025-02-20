@@ -59,7 +59,7 @@ namespace Svc {
       //! Handler for from_PortsOut
       //!
       void from_PortsOut_handler(
-        NATIVE_INT_TYPE portNum, /*!< The port number*/
+        FwIndexType portNum, /*!< The port number*/
         Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
       );
 

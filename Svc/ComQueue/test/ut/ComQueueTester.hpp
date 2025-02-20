@@ -22,10 +22,10 @@ class ComQueueTester : public ComQueueGTestBase {
     // ----------------------------------------------------------------------
 
     // Instance ID supplied to the component instance under test
-    static const NATIVE_INT_TYPE TEST_INSTANCE_ID = 0;
+    static const FwEnumStoreType TEST_INSTANCE_ID = 0;
 
     // Queue depth supplied to the component instance under test
-    static const NATIVE_INT_TYPE TEST_INSTANCE_QUEUE_DEPTH = 10;
+    static const FwSizeType TEST_INSTANCE_QUEUE_DEPTH = 10;
 
   private:
     // ----------------------------------------------------------------------
@@ -86,12 +86,12 @@ class ComQueueTester : public ComQueueGTestBase {
 
     //! Handler for from_buffQueueSend
     //!
-    void from_buffQueueSend_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    void from_buffQueueSend_handler(const FwIndexType portNum, /*!< The port number*/
                                     Fw::Buffer& fwBuffer);
 
     //! Handler for from_comQueueSend
     //!
-    void from_comQueueSend_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    void from_comQueueSend_handler(const FwIndexType portNum, /*!< The port number*/
                                    Fw::ComBuffer& data,           /*!< Buffer containing packet data*/
                                    U32 context                    /*!< Call context value; meaning chosen by user*/
     );

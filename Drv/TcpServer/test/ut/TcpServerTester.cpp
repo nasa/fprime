@@ -218,7 +218,7 @@ void TcpServerTester ::test_no_automatic_recv_connection() {
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-void TcpServerTester ::from_recv_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& recvBuffer, const RecvStatus& recvStatus) {
+void TcpServerTester ::from_recv_handler(const FwIndexType portNum, Fw::Buffer& recvBuffer, const RecvStatus& recvStatus) {
     // this function will still receive a status of error because the recv port is always called
     this->pushFromPortEntry_recv(recvBuffer, recvStatus);
     if (recvStatus == RecvStatus::RECV_OK) {
@@ -230,13 +230,13 @@ void TcpServerTester ::from_recv_handler(const NATIVE_INT_TYPE portNum, Fw::Buff
     delete[] recvBuffer.getData();
 }
 
-void TcpServerTester ::from_ready_handler(const NATIVE_INT_TYPE portNum) {
+void TcpServerTester ::from_ready_handler(const FwIndexType portNum) {
     this->pushFromPortEntry_ready();
 }
 
 Fw::Buffer TcpServerTester ::
     from_allocate_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 size
     )
   {
@@ -247,7 +247,7 @@ Fw::Buffer TcpServerTester ::
 
   void TcpServerTester ::
     from_deallocate_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         Fw::Buffer &fwBuffer
     )
   {

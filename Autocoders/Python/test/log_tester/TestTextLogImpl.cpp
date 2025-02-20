@@ -19,7 +19,7 @@ void LogTextImpl::init() {
     Log::LogTesterComponentBase::init();
 }
 
-void LogTextImpl::textLogRecvPort_handler(NATIVE_INT_TYPE portNum, FwEventIdType id, Fw::Time &timeTag, const Fw::LogSeverity &severity, Fw::TextLogString &text) {
+void LogTextImpl::textLogRecvPort_handler(FwIndexType portNum, FwEventIdType id, Fw::Time &timeTag, const Fw::LogSeverity &severity, Fw::TextLogString &text) {
     printf("Log id %d, time (%d,%d:%d), severity %d, text \"%s\"",id,timeTag.getTimeBase(),timeTag.getSeconds(),timeTag.getUSeconds(),severity.e,text.toChar());
 }
 

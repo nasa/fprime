@@ -12,7 +12,7 @@ public:
         }
 
         void from_testOut_handler(
-                const NATIVE_INT_TYPE portNum, //!< The port number
+                const FwIndexType portNum, //!< The port number
                 I32 arg1, //!< A built-in type argument
                 AnotherExample::arg2String &arg2, //!< A string argument
                 const AnotherExample::arg3Buffer &arg3 //!< A buffer argument
@@ -21,7 +21,7 @@ public:
 
 
     void ATester::from_testOut_handler(
-            const NATIVE_INT_TYPE portNum, //!< The port number
+            const FwIndexType portNum, //!< The port number
             I32 arg1, //!< A built-in type argument
             AnotherExample::arg2String &arg2, //!< A string argument
             const AnotherExample::arg3Buffer &arg3 //!< A buffer argument

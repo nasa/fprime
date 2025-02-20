@@ -20,7 +20,7 @@ namespace ExampleComponents {
         ExampleComponentBase::init(queueDepth,instance);
     }
 
-    void ExampleComponentImpl::exampleInput_handler(NATIVE_INT_TYPE portNum, I32 arg1, const ANameSpace::mytype& arg2, U8 arg3, const Example3::ExampleSerializable& arg4, AnotherExample::SomeEnum arg5) {
+    void ExampleComponentImpl::exampleInput_handler(FwIndexType portNum, I32 arg1, const ANameSpace::mytype& arg2, U8 arg3, const Example3::ExampleSerializable& arg4, AnotherExample::SomeEnum arg5) {
         //Fw::TlmString arg = "A string arg";
         // write some telemetry
         U32 chan = 0;

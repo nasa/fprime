@@ -71,7 +71,7 @@ After copying the Ref app, both in-tree and standalone deployments need to creat
 `settings.ini` file in the root of the deployment to set the deployment toolchain, library
 locations, and for standalone deployments, the location of the F´ framework.
 
-For details on configuring the `settings.ini` file, see the [user guide page](../framework/settings.md).
+For details on configuring the `settings.ini` file, see the [user guide page](../build-system/settings.md).
 
 
 ## Develop Ports and Components

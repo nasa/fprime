@@ -50,7 +50,7 @@ namespace Svc {
 
   void BufferLogger ::
     bufferSendIn_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         Fw::Buffer& fwBuffer
     )
   {
@@ -64,7 +64,7 @@ namespace Svc {
 
   void BufferLogger ::
     comIn_handler(
-        NATIVE_INT_TYPE portNum,
+        FwIndexType portNum,
         Fw::ComBuffer &data,
         U32 context
     )
@@ -77,14 +77,14 @@ namespace Svc {
   }
 
   void BufferLogger ::
-    pingIn_handler(NATIVE_INT_TYPE portNum, U32 key)
+    pingIn_handler(FwIndexType portNum, U32 key)
   {
     this->pingOut_out(0, key);
   }
 
   void BufferLogger ::
     schedIn_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 context
     )
   {

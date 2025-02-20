@@ -82,7 +82,7 @@ class DpTest : public DpTestComponentBase {
     // ----------------------------------------------------------------------
 
     //! Handler implementation for schedIn
-    void schedIn_handler(const NATIVE_INT_TYPE portNum,  //!< The port number
+    void schedIn_handler(const FwIndexType portNum,  //!< The port number
                          U32 context                     //!< The call order
                          ) final;
 

@@ -32,7 +32,7 @@ namespace Svc {
 
   void ComSplitter ::
     comIn_handler(
-        NATIVE_INT_TYPE portNum,
+        FwIndexType portNum,
         Fw::ComBuffer &data,
         U32 context
     )

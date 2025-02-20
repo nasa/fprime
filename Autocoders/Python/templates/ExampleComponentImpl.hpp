@@ -19,8 +19,8 @@ namespace ExampleComponents {
             virtual ~ExampleComponentImpl();
         protected:
         private:
-            void exampleInput_handler(NATIVE_INT_TYPE portNum, I32 arg1, const ANameSpace::mytype& arg2, U8 arg3, const Example3::ExampleSerializable& arg4, AnotherExample::SomeEnum arg5);
-            SomeOtherNamespace::AnotherEnum anotherInput_handler(NATIVE_INT_TYPE portNum, I32 arg1, F64 arg2, SomeOtherNamespace::SomeEnum arg3);
+            void exampleInput_handler(FwIndexType portNum, I32 arg1, const ANameSpace::mytype& arg2, U8 arg3, const Example3::ExampleSerializable& arg4, AnotherExample::SomeEnum arg5);
+            SomeOtherNamespace::AnotherEnum anotherInput_handler(FwIndexType portNum, I32 arg1, F64 arg2, SomeOtherNamespace::SomeEnum arg3);
             void TEST_CMD_1_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, I32 arg1, ExampleComponentBase::CmdEnum arg2, const Fw::CmdStringArg& arg3);
             void TEST_CMD_2_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, I32 arg1, F32 arg2);
 

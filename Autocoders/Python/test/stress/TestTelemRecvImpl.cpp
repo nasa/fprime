@@ -17,7 +17,7 @@ TestTelemRecvImpl::TestTelemRecvImpl(const char* name) : Tlm::TelemTesterCompone
 TestTelemRecvImpl::~TestTelemRecvImpl() {
 }
 
-void TestTelemRecvImpl::tlmRecvPort_handler(NATIVE_INT_TYPE portNum, FwChanIdType id, Fw::Time &timeTag, Fw::TlmBuffer &val) {
+void TestTelemRecvImpl::tlmRecvPort_handler(FwIndexType portNum, FwChanIdType id, Fw::Time &timeTag, Fw::TlmBuffer &val) {
     Ref::Gnc::Quaternion tlmVal;
     val.deserialize(tlmVal);
     Fw::String str;

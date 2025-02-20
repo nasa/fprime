@@ -30,14 +30,14 @@ namespace Svc {
     CommandDispatcherImplTester::~CommandDispatcherImplTester() {
     }
 
-    void CommandDispatcherImplTester::from_compCmdSend_handler(NATIVE_INT_TYPE portNum, FwOpcodeType opCode, U32 cmdSeq, Fw::CmdArgBuffer &args) {
+    void CommandDispatcherImplTester::from_compCmdSend_handler(FwIndexType portNum, FwOpcodeType opCode, U32 cmdSeq, Fw::CmdArgBuffer &args) {
         this->m_cmdSendOpCode = opCode;
         this->m_cmdSendCmdSeq = cmdSeq;
         this->m_cmdSendArgs = args;
         this->m_cmdSendRcvd = true;
     }
 
-    void CommandDispatcherImplTester::from_seqCmdStatus_handler(NATIVE_INT_TYPE portNum, FwOpcodeType opCode, U32 cmdSeq, const Fw::CmdResponse &response) {
+    void CommandDispatcherImplTester::from_seqCmdStatus_handler(FwIndexType portNum, FwOpcodeType opCode, U32 cmdSeq, const Fw::CmdResponse &response) {
         this->m_seqStatusRcvd = true;
         this->m_seqStatusOpCode = opCode;
         this->m_seqStatusCmdSeq = cmdSeq;
@@ -882,7 +882,7 @@ namespace Svc {
     }
 
     void CommandDispatcherImplTester::from_pingOut_handler(
-              const NATIVE_INT_TYPE portNum, /*!< The port number*/
+              const FwIndexType portNum, /*!< The port number*/
               U32 key /*!< Value to return to pinger*/
           ) {
 

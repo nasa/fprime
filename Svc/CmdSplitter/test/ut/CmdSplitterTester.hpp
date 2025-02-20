@@ -19,9 +19,9 @@ class CmdSplitterTester : public CmdSplitterGTestBase {
 
   public:
     // Maximum size of histories storing events, telemetry, and port outputs
-    static const NATIVE_INT_TYPE MAX_HISTORY_SIZE = 10;
+    static const U32 MAX_HISTORY_SIZE = 10;
     // Instance ID supplied to the component instance under test
-    static const NATIVE_INT_TYPE TEST_INSTANCE_ID = 0;
+    static const FwEnumStoreType TEST_INSTANCE_ID = 0;
 
     //! Construct object CmdSplitterTester
     //!
@@ -67,21 +67,21 @@ class CmdSplitterTester : public CmdSplitterGTestBase {
 
     //! Handler for from_LocalCmd
     //!
-    void from_LocalCmd_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    void from_LocalCmd_handler(const FwIndexType portNum, /*!< The port number*/
                                Fw::ComBuffer& data,           /*!< Buffer containing packet data */
                                U32 context                    /*!< Call context value; meaning chosen by user */
     );
 
     //! Handler for from_RemoteCmd
     //!
-    void from_RemoteCmd_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    void from_RemoteCmd_handler(const FwIndexType portNum, /*!< The port number*/
                                 Fw::ComBuffer& data,           /*!< Buffer containing packet data */
                                 U32 context                    /*!< Call context value; meaning chosen by user */
     );
 
     //! Handler for from_forwardSeqCmdStatus
     //!
-    void from_forwardSeqCmdStatus_handler(const NATIVE_INT_TYPE portNum,  /*!< The port number*/
+    void from_forwardSeqCmdStatus_handler(const FwIndexType portNum,  /*!< The port number*/
                                           FwOpcodeType opCode,            /*!< Command Op Code */
                                           U32 cmdSeq,                     /*!< Command Sequence */
                                           const Fw::CmdResponse& response /*!< The command response argument */

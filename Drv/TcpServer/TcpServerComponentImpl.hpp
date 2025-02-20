@@ -160,7 +160,7 @@ class TcpServerComponentImpl : public TcpServerComponentBase, public SocketCompo
      * \param fwBuffer: buffer containing data to be sent
      * \return SEND_OK on success, SEND_RETRY when critical data should be retried and SEND_ERROR upon error
      */
-    Drv::SendStatus send_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) override;
+    Drv::SendStatus send_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) override;
 
     Drv::TcpServerSocket m_socket; //!< Socket implementation
 

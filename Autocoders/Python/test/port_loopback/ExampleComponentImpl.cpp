@@ -50,7 +50,7 @@ namespace ExampleComponents {
 
   void ExampleComponentImpl ::
     exampleInput_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         I32 arg1,
         AnotherExample::SomeEnum arg2,
         const AnotherExample::arg6String& arg6

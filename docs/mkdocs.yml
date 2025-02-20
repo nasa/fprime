@@ -161,6 +161,7 @@ nav:
       - Overview:
         - 'Introduction to F´': docs/user-manual/overview/full-intro.md
         - 'The F´ Ground Data System': docs/user-manual/overview/gds-introduction.md
+        - 'F´ Software Architecture': docs/user-manual/overview/fprime-architecture.md
         - 'F´ Development Process': docs/user-manual/overview/development-practice.md
         - 'A Tour of the Source Tree': docs/user-manual/overview/source-tree.md
         - 'Projects and Deployments': docs/user-manual/overview/proj-dep.md
@@ -174,12 +175,10 @@ nav:
         - 'Constructing the F´ Topology': docs/user-manual/framework/building-topology.md
         - 'Asserts in F´': docs/user-manual/framework/assert.md
         - 'F´ On Baremetal and Multi-Core Systems': docs/user-manual/framework/baremetal-multicore.md
-        - 'Application, Manager, Driver Pattern': docs/user-manual/framework/app-man-drv.md
         - 'Ground Interface': docs/user-manual/framework/ground-interface.md
         - 'Dynamic Memory and Buffer Management': docs/user-manual/framework/dynamic-memory.md
-        - 'The Hub Pattern': docs/user-manual/framework/hub-pattern.md
-        - 'settings.ini: Build Settings Configuration': docs/user-manual/framework/settings.md
-        - 'The F´ CMake Build System': docs/user-manual/cmake/cmake-intro.md
+        - 'F´ Data Products': docs/user-manual/framework/data-products.md
+        - 'State Machines': docs/user-manual/framework/state-machines.md
       - 'FPP': 'https://nasa.github.io/fpp/fpp-users-guide.html'
       - GDS:
         - "The GDS CLI": docs/user-manual/gds/gds-cli.md
@@ -187,17 +186,24 @@ nav:
         - 'GDS Dashboard Reference': docs/user-manual/gds/gds-dashboard-reference.md
         - 'Integration Test API': docs/user-manual/gds/gds-test-api-guide.md
         - 'Sequencing in F´': docs/user-manual/gds/seqgen.md
+      - Design Patterns:
+        - 'Application, Manager, Driver Pattern': docs/user-manual/design-patterns/app-man-drv.md
+        - 'Rate Groups and Timeliness': docs/user-manual/design-patterns/rate-group.md
+        - 'The Hub Pattern': docs/user-manual/design-patterns/hub-pattern.md
+        - 'Common Port Patterns': documentation/user-manual/design-patterns/common-port-patterns.md
+      - Build System:
+        - 'The F´ CMake Build System': docs/user-manual/build-system/cmake-intro.md
+        - 'settings.ini: Build Settings Configuration': docs/user-manual/build-system/settings.md
+        - 'CMake Platforms': docs/user-manual/build-system/cmake-platforms.md
+        - 'CMake Toolchains': docs/user-manual/build-system/cmake-toolchains.md
+        - 'CMake User API': docs/user-manual/build-system/cmake-api.md
+        - 'CMake Targets': docs/user-manual/build-system/cmake-targets.md
+        - 'CMake Customization': docs/user-manual/build-system/cmake-customization.md
+        - 'Advanced CMake usage': docs/user-manual/build-system/cmake-advanced.md
+        - 'CMake Unit Testing': docs/user-manual/build-system/cmake-uts.md
+        - 'Package Implementations': docs/user-manual/build-system/package-implementations.md
       - Security:
         - 'Software Bill of Materials': docs/user-manual/security/software-bill-of-materials.md
-      - Design:
-        - 'F´ Software Architecture': docs/user-manual/design/fprime-architecture.md
-        - 'Numerical Types Design': docs/user-manual/design/numerical-types.md
-        - 'Communication Adapter Interface': docs/user-manual/design/communication-adapter-interface.md
-        - 'Package Implementations': docs/user-manual/design/package-implementations.md
-        - 'FPP JSON Dictionary Specification': docs/user-manual/design/fpp-json-dict.md
-        - 'Rate Groups and Timeliness': docs/user-manual/design/rate-group.md
-        - 'F´ Data Products': docs/user-manual/design/data-products.md
-        - 'State Machines': docs/user-manual/design/state-machines.md
     - How To: 
       - docs/how-to/index.md
       - 'F´ Library Development': docs/how-to/develop-fprime-libraries.md
@@ -209,7 +215,9 @@ nav:
       - 'C++ Documentation': docs/reference/api/cpp/html/index.html
       - 'F´ Components SDDs': docs/reference/sdd.md
       - 'FPP Language Specification': https://nasa.github.io/fpp/fpp-spec.html
-      - 'CMake User API': docs/user-manual/cmake/cmake-api.md
+      - 'FPP JSON Dictionary Specification': docs/reference/fpp-json-dict.md
+      - 'Numerical Types Design': docs/reference/numerical-types.md
+      - 'Communication Adapter Interface': docs/reference/communication-adapter-interface.md
       - 'GDS Developers Guide': docs/reference/gds-cli-dev.md
   - Support: '../support'
   - Events: '../events'

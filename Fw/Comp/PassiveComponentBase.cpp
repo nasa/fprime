@@ -2,19 +2,30 @@
 #include <Fw/Types/Assert.hpp>
 #include <FpConfig.hpp>
 
-#include <cstdio>
+#include <Fw/Types/ExternalString.hpp>
 
 namespace Fw {
 
     PassiveComponentBase::PassiveComponentBase(const char* name) : Fw::ObjBase(name), m_idBase(0), m_instance(0) {
     }
 
-#if FW_OBJECT_TO_STRING == 1 && FW_OBJECT_NAMES == 1
+#if FW_OBJECT_TO_STRING == 1
+    const char* PassiveComponentBase::getToStringFormatString() {
+        return "Comp: %s";
+    }
+
     void PassiveComponentBase::toString(char* buffer, NATIVE_INT_TYPE size) {
         FW_ASSERT(size > 0);
         FW_ASSERT(buffer != nullptr);
-        PlatformIntType status = snprintf(buffer, static_cast<size_t>(size), "Comp: %s", this->m_objName.toChar());
-        if (status < 0) {
+        Fw::FormatStatus status = Fw::ExternalString(buffer, static_cast<Fw::ExternalString::SizeType>(size)).format(
+            this->getToStringFormatString(),
+#if FW_OBJECT_NAMES == 1
+            this->m_objName.toChar()
+#else
+            "UNKNOWN"
+#endif
+        );
+        if (status != Fw::FormatStatus::SUCCESS) {
             buffer[0] = 0;
         }
     }

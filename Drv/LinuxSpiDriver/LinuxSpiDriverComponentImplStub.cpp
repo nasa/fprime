@@ -28,7 +28,7 @@ namespace Drv {
     // ----------------------------------------------------------------------
 
     void LinuxSpiDriverComponentImpl::SpiReadWrite_handler(
-            const NATIVE_INT_TYPE portNum, Fw::Buffer &WriteBuffer,
+            const FwIndexType portNum, Fw::Buffer &WriteBuffer,
             Fw::Buffer &readBuffer) {
         // TODO
     }

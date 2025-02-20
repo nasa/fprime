@@ -34,7 +34,7 @@ generically integrated to support both module-level and global targets building 
 F´ "target".  For example, the "dict" target may build local dictionary fragments and then roll
 them into a global dictionary.
 
-[Target](./Targets.md): target subsystem documentation
+[CMake Customization](./cmake-customization.md): Custom Build-System Commands (Make Targets)
 
 ## CMake Support Code Documentation
 

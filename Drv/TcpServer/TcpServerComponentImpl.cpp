@@ -124,7 +124,7 @@ void TcpServerComponentImpl::readLoop() {
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-Drv::SendStatus TcpServerComponentImpl::send_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
+Drv::SendStatus TcpServerComponentImpl::send_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
     Drv::SocketIpStatus status = this->send(fwBuffer.getData(), fwBuffer.getSize());
     // Only deallocate buffer when the caller is not asked to retry
     if (status == SOCK_INTERRUPTED_TRY_AGAIN) {

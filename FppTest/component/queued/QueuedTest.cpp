@@ -34,7 +34,7 @@
 
   void QueuedTest ::
     arrayArgsAsync_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         const FormalParamArray &a,
         FormalParamArray &aRef
     )
@@ -44,7 +44,7 @@
 
   void QueuedTest ::
     enumArgsAsync_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         const FormalParamEnum &en,
         FormalParamEnum &enRef
     )
@@ -54,7 +54,7 @@
 
   void QueuedTest ::
     noArgsAsync_handler(
-        const NATIVE_INT_TYPE portNum
+        const FwIndexType portNum
     )
   {
     this->noArgsOut_out(portNum);
@@ -62,7 +62,7 @@
 
   void QueuedTest ::
     primitiveArgsAsync_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 u32,
         U32 &u32Ref,
         F32 f32,
@@ -84,7 +84,7 @@
 
   void QueuedTest ::
     structArgsAsync_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         const FormalParamStruct &s,
         FormalParamStruct &sRef
     )
@@ -93,7 +93,7 @@
   }
   void QueuedTest ::
     stringArgsAsync_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         const Fw::StringBase &str80,
         Fw::StringBase &str80Ref,
         const Fw::StringBase &str100,
@@ -111,7 +111,7 @@
 
   void QueuedTest ::
     arrayArgsGuarded_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         const FormalParamArray &a,
         FormalParamArray &aRef
     )
@@ -121,7 +121,7 @@
 
   void QueuedTest ::
     arrayArgsSync_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         const FormalParamArray &a,
         FormalParamArray &aRef
     )
@@ -131,7 +131,7 @@
 
   FormalParamArray QueuedTest ::
     arrayReturnGuarded_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         const FormalParamArray &a,
         FormalParamArray &aRef
     )
@@ -141,7 +141,7 @@
 
   FormalParamArray QueuedTest ::
     arrayReturnSync_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         const FormalParamArray &a,
         FormalParamArray &aRef
     )
@@ -151,7 +151,7 @@
 
   void QueuedTest :: 
     cmdOut_handler(
-        NATIVE_INT_TYPE portNum,
+        FwIndexType portNum,
         FwOpcodeType opCode,
         U32 cmdSeq,
         Fw::CmdArgBuffer& args
@@ -161,7 +161,7 @@
 
   void QueuedTest ::
     enumArgsGuarded_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         const FormalParamEnum &en,
         FormalParamEnum &enRef
     )
@@ -171,7 +171,7 @@
 
   void QueuedTest ::
     enumArgsSync_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         const FormalParamEnum &en,
         FormalParamEnum &enRef
     )
@@ -181,7 +181,7 @@
 
   FormalParamEnum QueuedTest ::
     enumReturnGuarded_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         const FormalParamEnum &en,
         FormalParamEnum &enRef
     )
@@ -191,7 +191,7 @@
 
   FormalParamEnum QueuedTest ::
     enumReturnSync_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         const FormalParamEnum &en,
         FormalParamEnum &enRef
     )
@@ -201,7 +201,7 @@
 
   void QueuedTest ::
     noArgsGuarded_handler(
-        const NATIVE_INT_TYPE portNum
+        const FwIndexType portNum
     )
   {
     this->noArgsOut_out(portNum);
@@ -209,7 +209,7 @@
 
   bool QueuedTest ::
     noArgsReturnGuarded_handler(
-        const NATIVE_INT_TYPE portNum
+        const FwIndexType portNum
     )
   {
     return this->noArgsReturnOut_out(portNum);
@@ -217,7 +217,7 @@
 
   bool QueuedTest ::
     noArgsReturnSync_handler(
-        const NATIVE_INT_TYPE portNum
+        const FwIndexType portNum
     )
   {
     return this->noArgsReturnOut_out(portNum);
@@ -225,7 +225,7 @@
 
   void QueuedTest ::
     noArgsSync_handler(
-        const NATIVE_INT_TYPE portNum
+        const FwIndexType portNum
     )
   {
     this->noArgsOut_out(portNum);
@@ -233,7 +233,7 @@
 
   void QueuedTest ::
     primitiveArgsGuarded_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 u32,
         U32 &u32Ref,
         F32 f32,
@@ -255,7 +255,7 @@
 
   void QueuedTest ::
     primitiveArgsSync_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 u32,
         U32 &u32Ref,
         F32 f32,
@@ -277,7 +277,7 @@
 
   U32 QueuedTest ::
     primitiveReturnGuarded_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 u32,
         U32 &u32Ref,
         F32 f32,
@@ -299,7 +299,7 @@
 
   U32 QueuedTest ::
     primitiveReturnSync_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 u32,
         U32 &u32Ref,
         F32 f32,
@@ -321,7 +321,7 @@
 
   void QueuedTest ::
     stringArgsGuarded_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         const Fw::StringBase &str80,
         Fw::StringBase &str80Ref,
         const Fw::StringBase &str100,
@@ -339,7 +339,7 @@
 
   void QueuedTest ::
     stringArgsSync_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         const Fw::StringBase &str80,
         Fw::StringBase &str80Ref,
         const Fw::StringBase &str100,
@@ -357,7 +357,7 @@
 
   void QueuedTest ::
     structArgsGuarded_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         const FormalParamStruct &s,
         FormalParamStruct &sRef
     )
@@ -367,7 +367,7 @@
 
   void QueuedTest ::
     structArgsSync_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         const FormalParamStruct &s,
         FormalParamStruct &sRef
     )
@@ -377,7 +377,7 @@
 
   FormalParamStruct QueuedTest ::
     structReturnGuarded_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         const FormalParamStruct &s,
         FormalParamStruct &sRef
     )
@@ -387,7 +387,7 @@
 
   FormalParamStruct QueuedTest ::
     structReturnSync_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         const FormalParamStruct &s,
         FormalParamStruct &sRef
     )
@@ -398,7 +398,7 @@
 
   void QueuedTest ::
       enumArgsHook_handler(
-          const NATIVE_INT_TYPE portNum,
+          const FwIndexType portNum,
           const FormalParamEnum &en,
           FormalParamEnum &enRef
       )
@@ -410,7 +410,7 @@
 
   void QueuedTest ::
     serialAsync_handler(
-        NATIVE_INT_TYPE portNum, /*!< The port number*/
+        FwIndexType portNum, /*!< The port number*/
         Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
     )
   {
@@ -419,7 +419,7 @@
 
   void QueuedTest ::
     serialAsyncAssert_handler(
-        NATIVE_INT_TYPE portNum, /*!< The port number*/
+        FwIndexType portNum, /*!< The port number*/
         Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
     )
   {
@@ -428,7 +428,7 @@
 
   void QueuedTest ::
     serialAsyncBlockPriority_handler(
-        NATIVE_INT_TYPE portNum, /*!< The port number*/
+        FwIndexType portNum, /*!< The port number*/
         Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
     )
   {
@@ -437,7 +437,7 @@
 
   void QueuedTest ::
     serialAsyncDropPriority_handler(
-        NATIVE_INT_TYPE portNum, /*!< The port number*/
+        FwIndexType portNum, /*!< The port number*/
         Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
     )
   {
@@ -446,7 +446,7 @@
 
   void QueuedTest ::
     serialGuarded_handler(
-        NATIVE_INT_TYPE portNum, /*!< The port number*/
+        FwIndexType portNum, /*!< The port number*/
         Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
     )
   {
@@ -455,7 +455,7 @@
 
   void QueuedTest ::
     serialSync_handler(
-        NATIVE_INT_TYPE portNum, /*!< The port number*/
+        FwIndexType portNum, /*!< The port number*/
         Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
     )
   {
@@ -702,7 +702,7 @@
 
   void QueuedTest ::
       enumArgsHook_overflowHook(
-          const NATIVE_INT_TYPE portNum,
+          const FwIndexType portNum,
           const FormalParamEnum &en,
           FormalParamEnum &enRef
       )

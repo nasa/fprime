@@ -54,20 +54,20 @@ class Framer : public FramerComponentBase, public FramingProtocolInterface {
 
     //! Handler implementation for comIn
     //!
-    void comIn_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    void comIn_handler(const FwIndexType portNum, /*!< The port number*/
                        Fw::ComBuffer& data,           /*!< Buffer containing packet data*/
                        U32 context                    /*!< Call context value; meaning chosen by user*/
     );
 
     //! Handler implementation for bufferIn
     //!
-    void bufferIn_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    void bufferIn_handler(const FwIndexType portNum, /*!< The port number*/
                           Fw::Buffer& fwBuffer           /*!< The buffer*/
     );
 
     //! Handler implementation for comStatusIn
     //!
-    void comStatusIn_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    void comStatusIn_handler(const FwIndexType portNum, /*!< The port number*/
                              Fw::Success& condition /*!< The condition*/);
 
     // ----------------------------------------------------------------------

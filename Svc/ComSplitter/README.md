@@ -1,4 +1,3 @@
-\page SvcComSplitterComponent Svc::ComSplitter Component
 # Svc::ComSplitter
 
 This is the build directory for the ComSplitter component.

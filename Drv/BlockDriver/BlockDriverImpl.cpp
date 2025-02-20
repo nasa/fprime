@@ -25,12 +25,12 @@ namespace Drv {
         this->m_cycles++;
     }
 
-    void BlockDriverImpl::BufferIn_handler(NATIVE_INT_TYPE portNum, Drv::DataBuffer& buffer) {
+    void BlockDriverImpl::BufferIn_handler(FwIndexType portNum, Drv::DataBuffer& buffer) {
         // just a pass-through
         this->BufferOut_out(0,buffer);
     }
 
-    void BlockDriverImpl::Sched_handler(NATIVE_INT_TYPE portNum, U32 context) {
+    void BlockDriverImpl::Sched_handler(FwIndexType portNum, U32 context) {
     }
 
     void BlockDriverImpl::callIsr() {
@@ -45,7 +45,7 @@ namespace Drv {
     }
 
     void BlockDriverImpl::PingIn_handler(
-            const NATIVE_INT_TYPE portNum,
+            const FwIndexType portNum,
             U32 key
         )
       {

@@ -12,7 +12,7 @@
 
 #ifndef FW_STRING_BASE_HPP
 #define FW_STRING_BASE_HPP
-
+#include <Fw/Types/format.hpp>
 #include <FpConfig.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <cstdarg>
@@ -21,14 +21,6 @@
 #endif
 
 namespace Fw {
-
-//! \brief status of format
-enum class FormatStatus {
-    SUCCESS, //!< Format worked
-    OVERFLOWED, //!< Format overflowed
-    INVALID_FORMAT_STRING, //!< Format provided invalid format string
-    OTHER_ERROR //!< An error was returned from an underlying call
-};
 
 class StringBase : public Serializable {
   public:

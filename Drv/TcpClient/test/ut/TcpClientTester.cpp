@@ -185,7 +185,7 @@ void TcpClientTester ::test_no_automatic_recv_connection() {
 
   void TcpClientTester ::
     from_recv_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         Fw::Buffer &recvBuffer,
         const RecvStatus &recvStatus
     )
@@ -201,13 +201,13 @@ void TcpClientTester ::test_no_automatic_recv_connection() {
     delete[] recvBuffer.getData();
 }
 
-void TcpClientTester ::from_ready_handler(const NATIVE_INT_TYPE portNum) {
+void TcpClientTester ::from_ready_handler(const FwIndexType portNum) {
     this->pushFromPortEntry_ready();
 }
 
 Fw::Buffer TcpClientTester ::
     from_allocate_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 size
     )
   {
@@ -219,7 +219,7 @@ Fw::Buffer TcpClientTester ::
 
   void TcpClientTester ::
     from_deallocate_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         Fw::Buffer &fwBuffer
     )
   {

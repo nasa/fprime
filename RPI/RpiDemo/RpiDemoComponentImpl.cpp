@@ -71,7 +71,7 @@ namespace RPI {
 
   void RpiDemoComponentImpl ::
     Run_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 context
     )
   {
@@ -104,7 +104,7 @@ namespace RPI {
 
   void RpiDemoComponentImpl ::
     UartRead_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         Fw::Buffer &serBuffer,
         const Drv::RecvStatus &status
     )

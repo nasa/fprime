@@ -68,7 +68,7 @@ class BufferRepeater : public BufferRepeaterComponentBase {
 
     //! Handler implementation for portIn
     //!
-    void portIn_handler(NATIVE_INT_TYPE portNum, /*!< The port number*/
+    void portIn_handler(FwIndexType portNum, /*!< The port number*/
                         Fw::Buffer& Buffer       /*!< The serialization buffer*/
     );
 

@@ -82,7 +82,7 @@ namespace Svc {
 
   void ComSplitterTester ::
     from_comOut_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         Fw::ComBuffer &data,
         U32 context
     )

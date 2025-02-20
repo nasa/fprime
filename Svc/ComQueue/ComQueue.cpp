@@ -28,7 +28,7 @@ ComQueue ::ComQueue(const char* const compName)
       m_allocator(nullptr),
       m_allocation(nullptr) {
     // Initialize throttles to "off"
-    for (NATIVE_UINT_TYPE i = 0; i < TOTAL_PORT_COUNT; i++) {
+    for (FwIndexType i = 0; i < TOTAL_PORT_COUNT; i++) {
         this->m_throttle[i] = false;
     }
 }
@@ -124,14 +124,14 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void ComQueue::comQueueIn_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& data, U32 context) {
+void ComQueue::comQueueIn_handler(const FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
     // Ensure that the port number of comQueueIn is consistent with the expectation
     FW_ASSERT(portNum >= 0 && portNum < COM_PORT_COUNT, portNum);
     (void)this->enqueue(portNum, QueueType::COM_QUEUE, reinterpret_cast<const U8*>(&data), sizeof(Fw::ComBuffer));
 }
 
-void ComQueue::buffQueueIn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
-    const NATIVE_INT_TYPE queueNum = portNum + COM_PORT_COUNT;
+void ComQueue::buffQueueIn_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
+    const FwIndexType queueNum = portNum + COM_PORT_COUNT;
     // Ensure that the port number of buffQueueIn is consistent with the expectation
     FW_ASSERT(portNum >= 0 && portNum < BUFFER_PORT_COUNT, portNum);
     FW_ASSERT(queueNum < TOTAL_PORT_COUNT);
@@ -142,7 +142,7 @@ void ComQueue::buffQueueIn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fw
     }
 }
 
-void ComQueue::comStatusIn_handler(const NATIVE_INT_TYPE portNum, Fw::Success& condition) {
+void ComQueue::comStatusIn_handler(const FwIndexType portNum, Fw::Success& condition) {
     switch (this->m_state) {
         // On success, the queue should be processed. On failure, the component should still wait.
         case WAITING:
@@ -163,7 +163,7 @@ void ComQueue::comStatusIn_handler(const NATIVE_INT_TYPE portNum, Fw::Success& c
     }
 }
 
-void ComQueue::run_handler(const NATIVE_INT_TYPE portNum, U32 context) {
+void ComQueue::run_handler(const FwIndexType portNum, U32 context) {
     // Downlink the high-water marks for the Fw::ComBuffer array types
     ComQueueDepth comQueueDepth;
     for (U32 i = 0; i < comQueueDepth.SIZE; i++) {

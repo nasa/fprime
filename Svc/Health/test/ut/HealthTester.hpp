@@ -62,14 +62,14 @@ namespace Svc {
       //! Handler for from_PingSend
       //!
       void from_PingSend_handler(
-          const NATIVE_INT_TYPE portNum, //!< The port number
+          const FwIndexType portNum, //!< The port number
           U32 key //!< Value to return to pinger
       ) override;
 
       //! Handler for from_WdogStroke
       //!
       void from_WdogStroke_handler(
-          const NATIVE_INT_TYPE portNum, //!< The port number
+          const FwIndexType portNum, //!< The port number
           U32 code //!< Watchdog stroke code
       ) override;
 

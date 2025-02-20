@@ -11,14 +11,14 @@ HashBuffer::HashBuffer() {}
 
 HashBuffer::HashBuffer(const U8* args, NATIVE_UINT_TYPE size) : Fw::SerializeBufferBase() {
     Fw::SerializeStatus stat = Fw::SerializeBufferBase::setBuff(args, size);
-    FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<NATIVE_INT_TYPE>(stat));
+    FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
 }
 
 HashBuffer::~HashBuffer() {}
 
 HashBuffer::HashBuffer(const HashBuffer& other) : Fw::SerializeBufferBase() {
     Fw::SerializeStatus stat = Fw::SerializeBufferBase::setBuff(other.m_bufferData, other.getBuffLength());
-    FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<NATIVE_INT_TYPE>(stat));
+    FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
 }
 
 HashBuffer& HashBuffer::operator=(const HashBuffer& other) {
@@ -27,7 +27,7 @@ HashBuffer& HashBuffer::operator=(const HashBuffer& other) {
     }
 
     Fw::SerializeStatus stat = Fw::SerializeBufferBase::setBuff(other.m_bufferData, other.getBuffLength());
-    FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<NATIVE_INT_TYPE>(stat));
+    FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
     return *this;
 }
 

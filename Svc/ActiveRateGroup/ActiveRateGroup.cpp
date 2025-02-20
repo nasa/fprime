@@ -52,7 +52,7 @@ namespace Svc {
         this->log_DIAGNOSTIC_RateGroupStarted();
     }
 
-    void ActiveRateGroup::CycleIn_handler(NATIVE_INT_TYPE portNum, Os::RawTime& cycleStart) {
+    void ActiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleStart) {
 
         // Make sure it's been configured
         FW_ASSERT(this->m_numContexts);
@@ -106,12 +106,12 @@ namespace Svc {
 
     }
 
-    void ActiveRateGroup::CycleIn_preMsgHook(NATIVE_INT_TYPE portNum, Os::RawTime& cycleStart) {
+    void ActiveRateGroup::CycleIn_preMsgHook(FwIndexType portNum, Os::RawTime& cycleStart) {
         // set flag to indicate cycle has started. Check in thread for overflow.
         this->m_cycleStarted = true;
     }
 
-    void ActiveRateGroup::PingIn_handler(NATIVE_INT_TYPE portNum, U32 key) {
+    void ActiveRateGroup::PingIn_handler(FwIndexType portNum, U32 key) {
         // return the key to health
         this->PingOut_out(0,key);
     }

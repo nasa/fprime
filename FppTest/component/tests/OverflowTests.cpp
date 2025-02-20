@@ -68,7 +68,7 @@ void Tester ::testOverflowHook() {
 // Handler to support overflow hook test
 // ----------------------------------------------------------------------
 
-void Tester ::from_enumArgsHookOverflowed_handler(const NATIVE_INT_TYPE portNum,
+void Tester ::from_enumArgsHookOverflowed_handler(const FwIndexType portNum,
                                                   const FormalParamEnum& en,
                                                   FormalParamEnum& enRef) {
     this->pushFromPortEntry_enumArgsHookOverflowed(en, enRef);

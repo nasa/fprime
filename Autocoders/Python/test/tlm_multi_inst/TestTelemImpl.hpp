@@ -17,7 +17,7 @@ class TestTlmImpl: public Tlm::TestTlmComponentBase {
         virtual ~TestTlmImpl();
         void init();
     protected:
-        void aport_handler(NATIVE_INT_TYPE portNum, I32 arg4, F32 arg5, U8 arg6);
+        void aport_handler(FwIndexType portNum, I32 arg4, F32 arg5, U8 arg6);
 };
 
 #endif /* TESTCOMMAND1IMPL_HPP_ */

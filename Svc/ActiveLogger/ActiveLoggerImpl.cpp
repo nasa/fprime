@@ -40,7 +40,7 @@ namespace Svc {
     ActiveLoggerImpl::~ActiveLoggerImpl() {
     }
 
-    void ActiveLoggerImpl::LogRecv_handler(NATIVE_INT_TYPE portNum, FwEventIdType id, Fw::Time &timeTag, const Fw::LogSeverity& severity, Fw::LogBuffer &args) {
+    void ActiveLoggerImpl::LogRecv_handler(FwIndexType portNum, FwEventIdType id, Fw::Time &timeTag, const Fw::LogSeverity& severity, Fw::LogBuffer &args) {
 
         // make sure ID is not zero. Zero is reserved for ID filter.
         FW_ASSERT(id != 0);
@@ -79,7 +79,7 @@ namespace Svc {
                 }
                 break;
             default:
-                FW_ASSERT(0,static_cast<NATIVE_INT_TYPE>(severity.e));
+                FW_ASSERT(0,static_cast<FwAssertArgType>(severity.e));
                 return;
         }
 
@@ -112,7 +112,7 @@ namespace Svc {
         this->m_logPacket.setLogBuffer(args);
         this->m_comBuffer.resetSer();
         Fw::SerializeStatus stat = this->m_logPacket.serialize(this->m_comBuffer);
-        FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
+        FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<FwAssertArgType>(stat));
 
         if (this->isConnected_PktSend_OutputPort(0)) {
             this->PktSend_out(0, this->m_comBuffer,0);
@@ -194,7 +194,7 @@ namespace Svc {
     }
 
     void ActiveLoggerImpl::pingIn_handler(
-          const NATIVE_INT_TYPE portNum,
+          const FwIndexType portNum,
           U32 key
       )
     {

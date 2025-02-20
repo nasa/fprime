@@ -82,7 +82,7 @@ namespace Svc {
 
   void FileDownlink ::
     Run_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 context
     )
   {
@@ -139,7 +139,7 @@ namespace Svc {
 
   Svc::SendFileResponse FileDownlink ::
     SendFile_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         const Fw::StringBase& sourceFilename, // lgtm[cpp/large-parameter] dictated by command architecture
         const Fw::StringBase& destFilename, // lgtm[cpp/large-parameter] dictated by command architecture
         U32 offset,
@@ -171,7 +171,7 @@ namespace Svc {
 
   void FileDownlink ::
     pingIn_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 key
     )
   {
@@ -180,7 +180,7 @@ namespace Svc {
 
   void FileDownlink ::
     bufferReturn_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         Fw::Buffer &fwBuffer
     )
   {

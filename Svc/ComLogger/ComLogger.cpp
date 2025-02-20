@@ -94,7 +94,7 @@ namespace Svc {
 
   void ComLogger ::
     comIn_handler(
-        NATIVE_INT_TYPE portNum,
+        FwIndexType portNum,
         Fw::ComBuffer &data,
         U32 context
     )
@@ -142,7 +142,7 @@ namespace Svc {
 
   void ComLogger ::
     pingIn_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 key
     )
   {

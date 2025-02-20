@@ -16,7 +16,6 @@
 #include <Fw/Types/Serializable.hpp>
 #if FW_SERIALIZABLE_TO_STRING
     #include <Fw/Types/StringType.hpp>
-    #include <cstdio> // snprintf
     #ifdef BUILD_UT
         #include <iostream>
         #include <Fw/Types/String.hpp>

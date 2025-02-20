@@ -1,5 +1,4 @@
-\page UtilsTypesLibrary Utils::Types Library
-# Utils/Types
+# Utils::Types
 
 This directory contains a library of helper types.
 

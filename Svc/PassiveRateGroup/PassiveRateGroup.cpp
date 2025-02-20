@@ -38,7 +38,7 @@ void PassiveRateGroup::configure(NATIVE_INT_TYPE contexts[], NATIVE_INT_TYPE num
 }
 
 
-void PassiveRateGroup::CycleIn_handler(NATIVE_INT_TYPE portNum, Os::RawTime& cycleStart) {
+void PassiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleStart) {
     Os::RawTime endTime;
     FW_ASSERT(this->m_numContexts);
 

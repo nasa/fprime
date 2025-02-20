@@ -245,7 +245,7 @@ namespace Svc {
 
   void FileManager ::
     pingIn_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 key
     )
   {

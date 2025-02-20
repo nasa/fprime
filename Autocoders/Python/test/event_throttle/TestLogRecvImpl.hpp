@@ -16,7 +16,7 @@ class TestLogRecvImpl: public LogTextImpl {
         virtual ~TestLogRecvImpl();
         void init();
     protected:
-        void logRecvPort_handler(NATIVE_INT_TYPE portNum, FwEventIdType id, Fw::Time &timeTag, Fw::LogSeverity severity, Fw::LogBuffer &args);
+        void logRecvPort_handler(FwIndexType portNum, FwEventIdType id, Fw::Time &timeTag, Fw::LogSeverity severity, Fw::LogBuffer &args);
     private:
 };
 

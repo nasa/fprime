@@ -20,24 +20,14 @@ namespace Fw {
 
     }
 
-    void InputPortBase::setPortNum(NATIVE_INT_TYPE portNum) {
+    void InputPortBase::setPortNum(FwIndexType portNum) {
         FW_ASSERT(portNum >= 0,portNum);
         this->m_portNum = portNum;
     }
 
 #if FW_OBJECT_TO_STRING == 1
-    void InputPortBase::toString(char* buffer, NATIVE_INT_TYPE size) {
-#if FW_OBJECT_NAMES == 1
-        FW_ASSERT(size > 0);
-        FW_ASSERT(buffer != nullptr);
-        PlatformIntType status = snprintf(buffer, static_cast<size_t>(size), "InputPort: %s->%s", this->m_objName.toChar(),
-                                        this->isConnected() ? this->m_connObj->getObjName() : "None");
-        if (status < 0) {
-            buffer[0] = 0;
-        }
-#else
-        (void)snprintf(buffer,size,"%s","Unnamed Input port");
-#endif
+    const char* InputPortBase::getToStringFormatString() {
+        return "Input Port: %s %s->(%s)";
     }
 #endif
 

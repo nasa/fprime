@@ -20,9 +20,9 @@ You can use the standard F Prime downlink protocol implementation.
 This implementation works with the F Prime ground data system (GDS).
 
 `Svc::Framer` is designed to act alongside instances of the
-[communication adapter interface](../../../docs/user-manual/design/communication-adapter-interface.md). In order
+[communication adapter interface](../../../docs/reference/communication-adapter-interface.md). In order
 to work well with communication adapters, `Svc::Framer` implements the framer status
-[protocol](../../../docs/user-manual/design/communication-adapter-interface.md#framer-status-protocol).
+[protocol](../../../docs/reference/communication-adapter-interface.md#framer-status-protocol).
 
 ## 2. Assumptions
 

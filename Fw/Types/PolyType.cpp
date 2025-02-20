@@ -1,7 +1,6 @@
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/PolyType.hpp>
-#include <cstdio>
-#define __STDC_FORMAT_MACROS
+#include <Fw/Types/ExternalString.hpp>
 
 namespace Fw {
 
@@ -605,68 +604,66 @@ void PolyType::toString(StringBase& dest) const {
 }
 
 void PolyType::toString(StringBase& dest, bool append) const {
-    char valString[80];
+    char format[21]; // U64 max fits into 20 decimal digits + 1 null terminator
+    Fw::ExternalString external(format, sizeof format);
     switch (this->m_dataType) {
         case TYPE_U8:
-            (void)snprintf(valString, sizeof(valString), "%" PRIu8 " ", this->m_val.u8Val);
+            (void)external.format("%" PRIu8 " ", this->m_val.u8Val);
             break;
         case TYPE_I8:
-            (void)snprintf(valString, sizeof(valString), "%" PRId8 " ", this->m_val.i8Val);
+            (void)external.format("%" PRId8 " ", this->m_val.i8Val);
             break;
 #if FW_HAS_16_BIT
         case TYPE_U16:
-            (void)snprintf(valString, sizeof(valString), "%" PRIu16 " ", this->m_val.u16Val);
+            (void)external.format("%" PRIu16 " ", this->m_val.u16Val);
             break;
         case TYPE_I16:
-            (void)snprintf(valString, sizeof(valString), "%" PRId16 " ", this->m_val.i16Val);
+            (void)external.format("%" PRId16 " ", this->m_val.i16Val);
             break;
 #endif
 #if FW_HAS_32_BIT
         case TYPE_U32:
-            (void)snprintf(valString, sizeof(valString), "%" PRIu32 " ", this->m_val.u32Val);
+            (void)external.format("%" PRIu32 " ", this->m_val.u32Val);
             break;
         case TYPE_I32:
-            (void)snprintf(valString, sizeof(valString), "%" PRId32 " ", this->m_val.i32Val);
+            (void)external.format("%" PRId32 " ", this->m_val.i32Val);
             break;
 #endif
 #if FW_HAS_64_BIT
         case TYPE_U64:
-            (void)snprintf(valString, sizeof(valString), "%" PRIu64 " ", this->m_val.u64Val);
+            (void)external.format("%" PRIu64 " ", this->m_val.u64Val);
             break;
         case TYPE_I64:
-            (void)snprintf(valString, sizeof(valString), "%" PRId64 " ", this->m_val.i64Val);
+            (void)external.format("%" PRId64 " ", this->m_val.i64Val);
             break;
 #endif
 #if FW_HAS_F64
         case TYPE_F64:
-            (void)snprintf(valString, sizeof(valString), "%g ", this->m_val.f64Val);
+            (void)external.format("%g ", this->m_val.f64Val);
             break;
         case TYPE_F32:
-            (void)snprintf(valString, sizeof(valString), "%g ", static_cast<F64>(this->m_val.f32Val));
+            (void)external.format("%g ", static_cast<F64>(this->m_val.f32Val));
             break;
 #else
         case TYPE_F32:
-            (void)snprintf(valString, sizeof(valString), "%g ", this->m_val.f32Val);
+            (void)external.format("%g ", this->m_val.f32Val);
             break;
 #endif
         case TYPE_BOOL:
-            (void)snprintf(valString, sizeof(valString), "%s ", this->m_val.boolVal ? "T" : "F");
+            (void)external.format("%s ", this->m_val.boolVal ? "T" : "F");
             break;
         case TYPE_PTR:
-            (void)snprintf(valString, sizeof(valString), "%p ", this->m_val.ptrVal);
+            (void)external.format("%p ", this->m_val.ptrVal);
             break;
         default:
-            (void)snprintf(valString, sizeof(valString), "%s ", "NT");
+            (void)external.format("%s ", "NT");
             break;
     }
 
-    // NULL terminate
-    valString[sizeof(valString) - 1] = 0;
-
     if (append) {
-        dest += valString;
+        dest += external;
     } else {
-        dest = valString;
+        dest = external;
     }
 }
 

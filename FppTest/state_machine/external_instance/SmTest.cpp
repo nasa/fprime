@@ -24,7 +24,7 @@ SmTest ::~SmTest() {}
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void SmTest::schedIn_handler(const NATIVE_INT_TYPE portNum, U32 context) {
+void SmTest::schedIn_handler(const FwIndexType portNum, U32 context) {
     Fw::SmSignalBuffer data;
 
     device1_stateMachineInvoke(DeviceSm_Interface::DeviceSm_Signals::RTI_SIG, data);

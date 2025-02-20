@@ -14,7 +14,7 @@
 // Parameter test declarations
 // ----------------------------------------------------------------------
 
-#define PARAM_CMD_TEST_DECL(TYPE) void testParamCommand(NATIVE_INT_TYPE portNum, FppTest::Types::TYPE& data);
+#define PARAM_CMD_TEST_DECL(TYPE) void testParamCommand(FwIndexType portNum, FppTest::Types::TYPE& data);
 
 #define PARAM_CMD_TEST_DECLS            \
     PARAM_CMD_TEST_DECL(BoolParam)      \

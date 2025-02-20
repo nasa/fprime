@@ -34,7 +34,7 @@ void ComQueueTester ::dispatchAll() {
 
 void ComQueueTester ::configure() {
     ComQueue::QueueConfigurationTable configurationTable;
-    for (NATIVE_UINT_TYPE i = 0; i < ComQueue::TOTAL_PORT_COUNT; i++){
+    for (FwIndexType i = 0; i < ComQueue::TOTAL_PORT_COUNT; i++){
         configurationTable.entries[i].priority = i;
         configurationTable.entries[i].depth = 3;
     }
@@ -86,13 +86,13 @@ void ComQueueTester ::testQueueSend() {
     Fw::Buffer buffer(&data[0], sizeof(data));
     configure();
 
-    for(NATIVE_INT_TYPE portNum = 0; portNum < ComQueue::COM_PORT_COUNT; portNum++){
+    for(FwIndexType portNum = 0; portNum < ComQueue::COM_PORT_COUNT; portNum++){
         invoke_to_comQueueIn(portNum, comBuffer, 0);
         emitOneAndCheck(portNum, QueueType::COM_QUEUE, comBuffer, buffer);
     }
     clearFromPortHistory();
 
-    for(NATIVE_INT_TYPE portNum = 0; portNum < ComQueue::BUFFER_PORT_COUNT; portNum++){
+    for(FwIndexType portNum = 0; portNum < ComQueue::BUFFER_PORT_COUNT; portNum++){
         invoke_to_buffQueueIn(portNum, buffer);
         emitOneAndCheck(portNum, QueueType::BUFFER_QUEUE, comBuffer, buffer);
     }
@@ -106,7 +106,7 @@ void ComQueueTester ::testQueuePause() {
     Fw::Buffer buffer(&data[0], sizeof(data));
     configure();
 
-    for(NATIVE_INT_TYPE portNum = 0; portNum < ComQueue::COM_PORT_COUNT; portNum++){
+    for(FwIndexType portNum = 0; portNum < ComQueue::COM_PORT_COUNT; portNum++){
         invoke_to_comQueueIn(portNum, comBuffer, 0);
         // Send a bunch of failures
         Fw::Success state = Fw::Success::FAILURE;
@@ -117,7 +117,7 @@ void ComQueueTester ::testQueuePause() {
     }
     clearFromPortHistory();
 
-    for(NATIVE_INT_TYPE portNum = 0; portNum < ComQueue::BUFFER_PORT_COUNT; portNum++){
+    for(FwIndexType portNum = 0; portNum < ComQueue::BUFFER_PORT_COUNT; portNum++){
         invoke_to_buffQueueIn(portNum, buffer);
         // Send a bunch of failures
         Fw::Success state = Fw::Success::FAILURE;
@@ -135,7 +135,7 @@ void ComQueueTester ::testPrioritySend() {
 
     ComQueue::QueueConfigurationTable configurationTable;
 
-    for (NATIVE_UINT_TYPE i = 0; i < ComQueue::TOTAL_PORT_COUNT; i++) {
+    for (FwIndexType i = 0; i < ComQueue::TOTAL_PORT_COUNT; i++) {
         configurationTable.entries[i].priority = ComQueue::TOTAL_PORT_COUNT - i - 1;
         configurationTable.entries[i].depth = 3;
         data[i][0] = ComQueue::TOTAL_PORT_COUNT - i - 1;
@@ -148,12 +148,12 @@ void ComQueueTester ::testPrioritySend() {
 
     component.configure(configurationTable, 0, mallocAllocator);
 
-    for(NATIVE_INT_TYPE portNum = 0; portNum < ComQueue::COM_PORT_COUNT; portNum++){
+    for(FwIndexType portNum = 0; portNum < ComQueue::COM_PORT_COUNT; portNum++){
         Fw::ComBuffer comBuffer(&data[portNum][0], BUFFER_LENGTH);
         invoke_to_comQueueIn(portNum, comBuffer, 0);
     }
 
-    for (NATIVE_INT_TYPE portNum = 0; portNum < ComQueue::BUFFER_PORT_COUNT; portNum++) {
+    for (FwIndexType portNum = 0; portNum < ComQueue::BUFFER_PORT_COUNT; portNum++) {
         Fw::Buffer buffer(&data[portNum + ComQueue::COM_PORT_COUNT][0], BUFFER_LENGTH);
         invoke_to_buffQueueIn(portNum, buffer);
     }
@@ -162,7 +162,7 @@ void ComQueueTester ::testPrioritySend() {
     ASSERT_from_buffQueueSend_SIZE(0);
     ASSERT_from_comQueueSend_SIZE(0);
 
-    for (NATIVE_INT_TYPE index = 0; index < ComQueue::TOTAL_PORT_COUNT; index++) {
+    for (FwIndexType index = 0; index < ComQueue::TOTAL_PORT_COUNT; index++) {
         U8 orderKey;
         U32 previousComSize = fromPortHistory_comQueueSend->size();
         U32 previousBufSize = fromPortHistory_buffQueueSend->size();
@@ -192,7 +192,7 @@ void ComQueueTester::testExternalQueueOverflow() {
     ComQueueDepth expectedComDepth;
     BuffQueueDepth expectedBuffDepth;
 
-    for (NATIVE_UINT_TYPE i = 0; i < ComQueue::TOTAL_PORT_COUNT; i++) {
+    for (FwIndexType i = 0; i < ComQueue::TOTAL_PORT_COUNT; i++) {
         configurationTable.entries[i].priority = i;
         configurationTable.entries[i].depth = 2;
 
@@ -209,9 +209,9 @@ void ComQueueTester::testExternalQueueOverflow() {
     U8 data[BUFFER_LENGTH] = {0xde, 0xad, 0xbe};
     Fw::Buffer buffer(&data[0], sizeof(data));
 
-    for (NATIVE_INT_TYPE queueNum = 0; queueNum < ComQueue::TOTAL_PORT_COUNT; queueNum++) {
+    for (FwIndexType queueNum = 0; queueNum < ComQueue::TOTAL_PORT_COUNT; queueNum++) {
         QueueType overflow_type;
-        NATIVE_INT_TYPE portNum;
+        FwIndexType portNum;
         // queue[portNum].depth + 2 to deliberately cause overflow and check throttle of exactly 1
         for (NATIVE_UINT_TYPE msgCount = 0; msgCount < configurationTable.entries[queueNum].depth + 2; msgCount++) {
             sendByQueueNumber(buffer, queueNum, portNum, overflow_type);
@@ -263,10 +263,10 @@ void ComQueueTester::testInternalQueueOverflow() {
     U8 data[BUFFER_LENGTH] = {0xde, 0xad, 0xbe};
     Fw::Buffer buffer(data, sizeof(data));
 
-    const NATIVE_INT_TYPE queueNum = ComQueue::COM_PORT_COUNT;
+    const FwIndexType queueNum = ComQueue::COM_PORT_COUNT;
     const FwSizeType msgCountMax = this->component.m_queue.getDepth();
     QueueType overflow_type;
-    NATIVE_INT_TYPE portNum;
+    FwIndexType portNum;
 
     // fill the queue
     for (FwSizeType msgCount = 0; msgCount < msgCountMax; msgCount++) {
@@ -296,7 +296,7 @@ void ComQueueTester ::testReadyFirst() {
     Fw::Buffer buffer(&data[0], sizeof(data));
     configure();
 
-    for(NATIVE_INT_TYPE portNum = 0; portNum < ComQueue::COM_PORT_COUNT; portNum++){
+    for(FwIndexType portNum = 0; portNum < ComQueue::COM_PORT_COUNT; portNum++){
         emitOne();
         invoke_to_comQueueIn(portNum, comBuffer, 0);
         dispatchAll();
@@ -304,7 +304,7 @@ void ComQueueTester ::testReadyFirst() {
     }
     clearFromPortHistory();
 
-    for(NATIVE_INT_TYPE portNum = 0; portNum < ComQueue::BUFFER_PORT_COUNT; portNum++){
+    for(FwIndexType portNum = 0; portNum < ComQueue::BUFFER_PORT_COUNT; portNum++){
         emitOne();
         invoke_to_buffQueueIn(portNum, buffer);
         dispatchAll();
@@ -318,11 +318,11 @@ void ComQueueTester ::testReadyFirst() {
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-void ComQueueTester ::from_buffQueueSend_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
+void ComQueueTester ::from_buffQueueSend_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
     this->pushFromPortEntry_buffQueueSend(fwBuffer);
 }
 
-void ComQueueTester ::from_comQueueSend_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& data, U32 context) {
+void ComQueueTester ::from_comQueueSend_handler(const FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
     this->pushFromPortEntry_comQueueSend(data, context);
 }
 

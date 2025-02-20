@@ -106,7 +106,7 @@ namespace Svc {
 
   void UdpReceiverComponentImpl ::
     Sched_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 context
     )
   {

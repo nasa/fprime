@@ -37,35 +37,35 @@ class PassiveTest :
 
     //! Handler implementation for arrayArgsGuarded
     void arrayArgsGuarded_handler(
-        NATIVE_INT_TYPE portNum, //!< The port number
+        FwIndexType portNum, //!< The port number
         const FormalParamArray& a, //!< An array
         FormalParamArray& aRef //!< An array ref
     );
 
     //! Handler implementation for arrayArgsSync
     void arrayArgsSync_handler(
-        NATIVE_INT_TYPE portNum, //!< The port number
+        FwIndexType portNum, //!< The port number
         const FormalParamArray& a, //!< An array
         FormalParamArray& aRef //!< An array ref
     );
 
     //! Handler implementation for arrayReturnGuarded
     FormalParamArray arrayReturnGuarded_handler(
-        NATIVE_INT_TYPE portNum, //!< The port number
+        FwIndexType portNum, //!< The port number
         const FormalParamArray& a, //!< An array
         FormalParamArray& aRef //!< An array ref
     );
 
     //! Handler implementation for arrayReturnSync
     FormalParamArray arrayReturnSync_handler(
-        NATIVE_INT_TYPE portNum, //!< The port number
+        FwIndexType portNum, //!< The port number
         const FormalParamArray& a, //!< An array
         FormalParamArray& aRef //!< An array ref
     );
 
     //! Handler implementation for cmdOut
     void cmdOut_handler(
-        NATIVE_INT_TYPE portNum, //!< The port number
+        FwIndexType portNum, //!< The port number
         FwOpcodeType opCode, //!< Command Op Code
         U32 cmdSeq, //!< Command Sequence
         Fw::CmdArgBuffer& args //!< Buffer containing arguments
@@ -73,55 +73,55 @@ class PassiveTest :
 
     //! Handler implementation for enumArgsGuarded
     void enumArgsGuarded_handler(
-        NATIVE_INT_TYPE portNum, //!< The port number
+        FwIndexType portNum, //!< The port number
         const FormalParamEnum& en, //!< An enum
         FormalParamEnum& enRef //!< An enum ref
     );
 
     //! Handler implementation for enumArgsSync
     void enumArgsSync_handler(
-        NATIVE_INT_TYPE portNum, //!< The port number
+        FwIndexType portNum, //!< The port number
         const FormalParamEnum& en, //!< An enum
         FormalParamEnum& enRef //!< An enum ref
     );
 
     //! Handler implementation for enumReturnGuarded
     FormalParamEnum enumReturnGuarded_handler(
-        NATIVE_INT_TYPE portNum, //!< The port number
+        FwIndexType portNum, //!< The port number
         const FormalParamEnum& en, //!< An enum
         FormalParamEnum& enRef //!< An enum ref
     );
 
     //! Handler implementation for enumReturnSync
     FormalParamEnum enumReturnSync_handler(
-        NATIVE_INT_TYPE portNum, //!< The port number
+        FwIndexType portNum, //!< The port number
         const FormalParamEnum& en, //!< An enum
         FormalParamEnum& enRef //!< An enum ref
     );
 
     //! Handler implementation for noArgsGuarded
     void noArgsGuarded_handler(
-        NATIVE_INT_TYPE portNum //!< The port number
+        FwIndexType portNum //!< The port number
     );
 
     //! Handler implementation for noArgsReturnGuarded
     bool noArgsReturnGuarded_handler(
-        NATIVE_INT_TYPE portNum //!< The port number
+        FwIndexType portNum //!< The port number
     );
 
     //! Handler implementation for noArgsReturnSync
     bool noArgsReturnSync_handler(
-        NATIVE_INT_TYPE portNum //!< The port number
+        FwIndexType portNum //!< The port number
     );
 
     //! Handler implementation for noArgsSync
     void noArgsSync_handler(
-        NATIVE_INT_TYPE portNum //!< The port number
+        FwIndexType portNum //!< The port number
     );
 
     //! Handler implementation for primitiveArgsGuarded
     void primitiveArgsGuarded_handler(
-        NATIVE_INT_TYPE portNum, //!< The port number
+        FwIndexType portNum, //!< The port number
         U32 u32,
         U32& u32Ref,
         F32 f32,
@@ -132,7 +132,7 @@ class PassiveTest :
 
     //! Handler implementation for primitiveArgsSync
     void primitiveArgsSync_handler(
-        NATIVE_INT_TYPE portNum, //!< The port number
+        FwIndexType portNum, //!< The port number
         U32 u32,
         U32& u32Ref,
         F32 f32,
@@ -143,7 +143,7 @@ class PassiveTest :
 
     //! Handler implementation for primitiveReturnGuarded
     U32 primitiveReturnGuarded_handler(
-        NATIVE_INT_TYPE portNum, //!< The port number
+        FwIndexType portNum, //!< The port number
         U32 u32,
         U32& u32Ref,
         F32 f32,
@@ -154,7 +154,7 @@ class PassiveTest :
 
     //! Handler implementation for primitiveReturnSync
     U32 primitiveReturnSync_handler(
-        NATIVE_INT_TYPE portNum, //!< The port number
+        FwIndexType portNum, //!< The port number
         U32 u32,
         U32& u32Ref,
         F32 f32,
@@ -165,7 +165,7 @@ class PassiveTest :
 
     //! Handler implementation for stringArgsGuarded
     void stringArgsGuarded_handler(
-        NATIVE_INT_TYPE portNum, //!< The port number
+        FwIndexType portNum, //!< The port number
         const Fw::StringBase& str80, //!< A string of size 80
         Fw::StringBase& str80Ref,
         const Fw::StringBase& str100, //!< A string of size 100
@@ -174,7 +174,7 @@ class PassiveTest :
 
     //! Handler implementation for stringArgsSync
     void stringArgsSync_handler(
-        NATIVE_INT_TYPE portNum, //!< The port number
+        FwIndexType portNum, //!< The port number
         const Fw::StringBase& str80, //!< A string of size 80
         Fw::StringBase& str80Ref,
         const Fw::StringBase& str100, //!< A string of size 100
@@ -183,28 +183,28 @@ class PassiveTest :
 
     //! Handler implementation for structArgsGuarded
     void structArgsGuarded_handler(
-        NATIVE_INT_TYPE portNum, //!< The port number
+        FwIndexType portNum, //!< The port number
         const FormalParamStruct& s, //!< A struct
         FormalParamStruct& sRef //!< A struct ref
     );
 
     //! Handler implementation for structArgsSync
     void structArgsSync_handler(
-        NATIVE_INT_TYPE portNum, //!< The port number
+        FwIndexType portNum, //!< The port number
         const FormalParamStruct& s, //!< A struct
         FormalParamStruct& sRef //!< A struct ref
     );
 
     //! Handler implementation for structReturnGuarded
     FormalParamStruct structReturnGuarded_handler(
-        NATIVE_INT_TYPE portNum, //!< The port number
+        FwIndexType portNum, //!< The port number
         const FormalParamStruct& s, //!< A struct
         FormalParamStruct& sRef //!< A struct ref
     );
 
     //! Handler implementation for structReturnSync
     FormalParamStruct structReturnSync_handler(
-        NATIVE_INT_TYPE portNum, //!< The port number
+        FwIndexType portNum, //!< The port number
         const FormalParamStruct& s, //!< A struct
         FormalParamStruct& sRef //!< A struct ref
     );
@@ -217,13 +217,13 @@ class PassiveTest :
 
     //! Handler implementation for serialGuarded
     void serialGuarded_handler(
-        NATIVE_INT_TYPE portNum, //!< The port number
+        FwIndexType portNum, //!< The port number
         Fw::SerializeBufferBase& buffer //!< The serialization buffer
     );
 
     //! Handler implementation for serialSync
     void serialSync_handler(
-        NATIVE_INT_TYPE portNum, //!< The port number
+        FwIndexType portNum, //!< The port number
         Fw::SerializeBufferBase& buffer //!< The serialization buffer
     );
 

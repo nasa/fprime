@@ -54,7 +54,7 @@ namespace Svc {
 
   void CmdSequencerTester ::
     from_seqDone_handler(
-      const NATIVE_INT_TYPE portNum,
+      const FwIndexType portNum,
       FwOpcodeType opCode,
       U32 cmdSeq,
       const Fw::CmdResponse& response
@@ -65,7 +65,7 @@ namespace Svc {
 
   void CmdSequencerTester ::
     from_comCmdOut_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         Fw::ComBuffer &data,
         U32 context
     )
@@ -75,7 +75,7 @@ namespace Svc {
 
   void CmdSequencerTester ::
     from_pingOut_handler(
-      const NATIVE_INT_TYPE portNum,
+      const FwIndexType portNum,
       U32 key
     )
   {

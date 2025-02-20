@@ -129,20 +129,20 @@ void FramerTester ::check_last_buffer(Fw::Buffer buffer) {
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-void FramerTester ::from_bufferDeallocate_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
+void FramerTester ::from_bufferDeallocate_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
     this->pushFromPortEntry_bufferDeallocate(fwBuffer);
     m_returned = true;
     delete[] fwBuffer.getData();
 }
 
-Fw::Buffer FramerTester ::from_framedAllocate_handler(const NATIVE_INT_TYPE portNum, U32 size) {
+Fw::Buffer FramerTester ::from_framedAllocate_handler(const FwIndexType portNum, U32 size) {
     this->pushFromPortEntry_framedAllocate(size);
     Fw::Buffer buffer(new U8[size], size);
     m_buffer = buffer;
     return buffer;
 }
 
-Drv::SendStatus FramerTester ::from_framedOut_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& sendBuffer) {
+Drv::SendStatus FramerTester ::from_framedOut_handler(const FwIndexType portNum, Fw::Buffer& sendBuffer) {
     this->pushFromPortEntry_framedOut(sendBuffer);
     this->check_last_buffer(sendBuffer);
     delete[] sendBuffer.getData();
@@ -153,7 +153,7 @@ Drv::SendStatus FramerTester ::from_framedOut_handler(const NATIVE_INT_TYPE port
     return m_sendStatus;
 }
 
-void FramerTester ::from_comStatusOut_handler(const NATIVE_INT_TYPE portNum, Fw::Success& condition) {
+void FramerTester ::from_comStatusOut_handler(const FwIndexType portNum, Fw::Success& condition) {
     this->pushFromPortEntry_comStatusOut(condition);
 }
 

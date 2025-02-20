@@ -128,17 +128,17 @@ void CmdSplitterTester ::test_response_forwarding() {
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-void CmdSplitterTester ::from_LocalCmd_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& data, U32 context) {
+void CmdSplitterTester ::from_LocalCmd_handler(const FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
     EXPECT_EQ(this->active_command_source, portNum) << "Command source not respected";
     this->pushFromPortEntry_LocalCmd(data, context);
 }
 
-void CmdSplitterTester ::from_RemoteCmd_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& data, U32 context) {
+void CmdSplitterTester ::from_RemoteCmd_handler(const FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
     EXPECT_EQ(this->active_command_source, portNum) << "Command source not respected";
     this->pushFromPortEntry_RemoteCmd(data, context);
 }
 
-void CmdSplitterTester ::from_forwardSeqCmdStatus_handler(const NATIVE_INT_TYPE portNum,
+void CmdSplitterTester ::from_forwardSeqCmdStatus_handler(const FwIndexType portNum,
                                                FwOpcodeType opCode,
                                                U32 cmdSeq,
                                                const Fw::CmdResponse& response) {

@@ -6,7 +6,7 @@ to operate with the standard F´ uplink and downlink components.
 
 Implementors of this interface are referred to as *Communication Adapters*.
 
-![Communication Adapter Interface](../../img/com-adapter.png)
+![Communication Adapter Interface](../img/com-adapter.png)
 
 The communication adapter interface protocol is designed to work alongside the framer status protocol and the com queue
 protocol to ensure that data messages do not overload a communication interface. These protocols are discussed below.

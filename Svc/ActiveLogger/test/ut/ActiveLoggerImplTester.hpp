@@ -33,12 +33,12 @@ namespace Svc {
         private:
 
             void from_PktSend_handler(
-                    const NATIVE_INT_TYPE portNum, //!< The port number
+                    const FwIndexType portNum, //!< The port number
                     Fw::ComBuffer &data, //!< Buffer containing packet data
                     U32 context //!< context (not used)
                 ) override;
             void from_FatalAnnounce_handler(
-                      const NATIVE_INT_TYPE portNum, //!< The port number
+                      const FwIndexType portNum, //!< The port number
                       FwEventIdType Id //!< The ID of the FATAL event
                   ) override;
 
@@ -83,7 +83,7 @@ namespace Svc {
             //! Handler for from_pingOut
             //!
             void from_pingOut_handler(
-                const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                const FwIndexType portNum, /*!< The port number*/
                 U32 key /*!< Value to return to pinger*/
             ) override;
     };

@@ -46,7 +46,7 @@ LinuxI2cDriver ::LinuxI2cDriver(
 
   I2cStatus LinuxI2cDriver ::
     write_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 addr,
         Fw::Buffer &serBuffer
     )
@@ -56,7 +56,7 @@ LinuxI2cDriver ::LinuxI2cDriver(
 
   Drv::I2cStatus LinuxI2cDriver ::
     read_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 addr,
         Fw::Buffer &serBuffer
     )
@@ -66,7 +66,7 @@ LinuxI2cDriver ::LinuxI2cDriver(
 
   Drv::I2cStatus LinuxI2cDriver ::
     writeRead_handler(
-      const NATIVE_INT_TYPE portNum, /*!< The port number*/
+      const FwIndexType portNum, /*!< The port number*/
       U32 addr,
       Fw::Buffer &writeBuffer,
       Fw::Buffer &readBuffer

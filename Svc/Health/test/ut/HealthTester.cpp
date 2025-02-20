@@ -47,7 +47,7 @@ namespace Svc {
 
   void HealthTester ::
     from_PingSend_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 key
     )
   {
@@ -68,7 +68,7 @@ namespace Svc {
 
   void HealthTester ::
     from_WdogStroke_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 code
     )
   {
@@ -168,7 +168,7 @@ namespace Svc {
         QUEUE_DEPTH, INSTANCE
     );
 
-    for (NATIVE_UINT_TYPE entry = 0; entry < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; entry++) {
+    for (FwIndexType entry = 0; entry < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; entry++) {
         this->pingEntries[entry].warnCycles = Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS+entry;
         this->pingEntries[entry].fatalCycles = Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS*2+entry+1;
         this->pingEntries[entry].entryName.format("task%d",entry);
@@ -209,14 +209,14 @@ namespace Svc {
 	  ASSERT_TLM_SIZE(0);
 	  ASSERT_CMD_RESPONSE_SIZE(0);
 
-	  for (NATIVE_UINT_TYPE port = 0; port < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; port++) {
+	  for (FwIndexType port = 0; port < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; port++) {
 	      this->keys[port] = port;
 	  }
 
 	  //invoke run handler same number as number of ports
 	  for (U32 i = 0; i < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; i++) {
 		  this->invoke_to_Run(0,0);
-	      for (NATIVE_UINT_TYPE port = 0; port < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; port++) {
+	      for (FwIndexType port = 0; port < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; port++) {
 	          this->keys[port] += Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS;
 	      }
 
@@ -248,7 +248,7 @@ namespace Svc {
       //invoke run handler enough times for warnings
       for (U32 i = 0; i < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS*2; i++) {
           this->invoke_to_Run(0,0);
-          for (NATIVE_UINT_TYPE port = 0; port < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; port++) {
+          for (FwIndexType port = 0; port < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; port++) {
               ASSERT_EQ(i+1,this->component.m_pingTrackerEntries[port].cycleCount);
           }
       }
@@ -258,7 +258,7 @@ namespace Svc {
       ASSERT_TLM_SIZE(Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS);
       ASSERT_EVENTS_HLTH_PING_WARN_SIZE(Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS);
 
-      for (NATIVE_UINT_TYPE port = 0; port < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; port++) {
+      for (FwIndexType port = 0; port < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; port++) {
           char name[80];
           snprintf(name, sizeof(name), "task%d",port);
           ASSERT_EVENTS_HLTH_PING_WARN(port,name);
@@ -282,7 +282,7 @@ namespace Svc {
       //invoke run handler enough times for warnings
       for (U32 i = 0; i < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS*2; i++) {
           this->invoke_to_Run(0,0);
-          for (NATIVE_UINT_TYPE port = 0; port < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; port++) {
+          for (FwIndexType port = 0; port < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; port++) {
               ASSERT_EQ(i+1,this->component.m_pingTrackerEntries[port].cycleCount);
           }
       }
@@ -292,7 +292,7 @@ namespace Svc {
       ASSERT_TLM_SIZE(Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS);
       ASSERT_EVENTS_HLTH_PING_WARN_SIZE(Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS);
 
-      for (NATIVE_UINT_TYPE port = 0; port < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; port++) {
+      for (FwIndexType port = 0; port < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; port++) {
           char name[80];
           snprintf(name, sizeof(name), "task%d",port);
           ASSERT_EVENTS_HLTH_PING_WARN(port,name);
@@ -304,7 +304,7 @@ namespace Svc {
       //invoke run handler enough times for FATALs
       for (U32 i = 0; i < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; i++) {
           this->invoke_to_Run(0,0);
-          for (NATIVE_UINT_TYPE port = 0; port < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; port++) {
+          for (FwIndexType port = 0; port < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; port++) {
               ASSERT_EQ(Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS*2+i+1,this->component.m_pingTrackerEntries[port].cycleCount);
           }
       }
@@ -314,7 +314,7 @@ namespace Svc {
       ASSERT_EVENTS_SIZE(Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS);
       ASSERT_EVENTS_HLTH_PING_LATE_SIZE(Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS);
 
-      for (NATIVE_UINT_TYPE port = 0; port < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; port++) {
+      for (FwIndexType port = 0; port < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; port++) {
           char name[80];
           snprintf(name, sizeof(name), "task%d",port);
           ASSERT_EVENTS_HLTH_PING_LATE(port,name);
@@ -337,14 +337,14 @@ namespace Svc {
       //invoke run handler
       for (U32 i = 0; i < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS*2; i++) {
           this->invoke_to_Run(0,0);
-          for (NATIVE_INT_TYPE entry = 0; entry < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; entry++) {
+          for (FwIndexType entry = 0; entry < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; entry++) {
               ASSERT_EQ(i+1,this->component.m_pingTrackerEntries[entry].cycleCount);
           }
       }
 
       ASSERT_EVENTS_SIZE(Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS);
       ASSERT_EVENTS_HLTH_PING_WARN_SIZE(Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS);
-      for (NATIVE_INT_TYPE entry = 0; entry < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; entry++) {
+      for (FwIndexType entry = 0; entry < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; entry++) {
           char name[80];
           snprintf(name, sizeof(name), "task%d",entry);
           ASSERT_EVENTS_HLTH_PING_WARN(entry, name);
@@ -395,7 +395,7 @@ namespace Svc {
       // check that cycle counts increase again
       for (U32 i = 0; i < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; i++) {
           this->invoke_to_Run(0,0);
-          for (NATIVE_INT_TYPE entry = 0; entry < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; entry++) {
+          for (FwIndexType entry = 0; entry < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; entry++) {
               ASSERT_EQ(Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS*2+1+i,this->component.m_pingTrackerEntries[entry].cycleCount);
           }
       }
@@ -404,7 +404,7 @@ namespace Svc {
       // Should be FATAL timeouts
       ASSERT_EVENTS_SIZE(Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS);
       ASSERT_EVENTS_HLTH_PING_LATE_SIZE(Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS);
-      for (NATIVE_INT_TYPE entry = 0; entry < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; entry++) {
+      for (FwIndexType entry = 0; entry < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; entry++) {
           char name[80];
           snprintf(name,sizeof(name), "task%d",entry);
           ASSERT_EVENTS_HLTH_PING_LATE(entry,name);
@@ -426,11 +426,11 @@ namespace Svc {
 
       // disable monitoring one at a time
 
-      for (NATIVE_INT_TYPE entry = 0; entry < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; entry++) {
+      for (FwIndexType entry = 0; entry < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; entry++) {
           this->clearEvents();
           this->clearHistory();
           // reset cycle count
-          for (NATIVE_INT_TYPE e2 = 0; e2 < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; e2++) {
+          for (FwIndexType e2 = 0; e2 < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; e2++) {
               this->component.m_pingTrackerEntries[e2].cycleCount = 0;
           }
           // disable entry
@@ -446,13 +446,13 @@ namespace Svc {
           ASSERT_EVENTS_HLTH_CHECK_PING(0,Fw::Enabled::DISABLED,name);
 
           // run a few cycles
-          for (NATIVE_INT_TYPE cycle = 0; cycle < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; cycle++) {
+          for (FwIndexType cycle = 0; cycle < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; cycle++) {
 
               // run a cycle
               this->invoke_to_Run(0,0);
 
               // verify only enable entries count up
-              for (NATIVE_INT_TYPE e3 = 0; e3 < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; e3++) {
+              for (FwIndexType e3 = 0; e3 < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; e3++) {
                   if (e3 == entry) {
                       // shouldn't be counting up
                       ASSERT_EQ(0u,this->component.m_pingTrackerEntries[e3].cycleCount);
@@ -488,7 +488,7 @@ namespace Svc {
       ASSERT_TLM_SIZE(0);
       ASSERT_CMD_RESPONSE_SIZE(0);
 
-      for (NATIVE_UINT_TYPE entry = 0; entry < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; entry++) {
+      for (FwIndexType entry = 0; entry < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; entry++) {
           this->clearEvents();
           this->clearHistory();
           // verify previous value
@@ -596,7 +596,7 @@ namespace Svc {
 	  ASSERT_EVENTS_SIZE(0);
 	  ASSERT_TLM_SIZE(0);
 
-	  for (NATIVE_INT_TYPE entry = 0; entry < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; entry++) {
+	  for (FwIndexType entry = 0; entry < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; entry++) {
 	      this->keys[entry] = entry;
 	  }
 
@@ -654,7 +654,7 @@ namespace Svc {
       //check for expected EVRs
       ASSERT_EVENTS_SIZE(Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS);
       ASSERT_EVENTS_HLTH_PING_WRONG_KEY_SIZE(Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS);
-      for (NATIVE_INT_TYPE port = 0; port < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; port++) {
+      for (FwIndexType port = 0; port < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; port++) {
           char name[80];
           snprintf(name, sizeof(name), "task%d",port);
           ASSERT_EVENTS_HLTH_PING_WRONG_KEY(port,name,FLAG_KEY_VALUE);
@@ -717,7 +717,7 @@ namespace Svc {
       ASSERT_EVENTS_SIZE(0);
 
       //set up the correct keys for all ports except last
-      for (NATIVE_INT_TYPE port = 0; port < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS - 1; port++) {
+      for (FwIndexType port = 0; port < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS - 1; port++) {
           this->keys[port] = port;
       }
       this->keys[Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS - 1] = 9999;
@@ -735,7 +735,7 @@ namespace Svc {
           //invoke schedIn
           this->invoke_to_Run(0,0);
 
-          for (NATIVE_INT_TYPE port = 0; port < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS - 1; port++) {
+          for (FwIndexType port = 0; port < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS - 1; port++) {
               if (i == 0) {
                   this->keys[port] += Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS;
               } else {

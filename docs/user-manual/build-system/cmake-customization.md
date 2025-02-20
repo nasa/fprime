@@ -29,8 +29,8 @@ add targets that don't have both per-module and global steps.
 See:
   - [add_custom_target](https://cmake.org/cmake/help/latest/command/add_custom_target.html) to view
 information on CMake targets.
-  - [Target](Targets.md) for the format of the target file
   - [API](cmake-api.md) for the syntax of the register call
+  - [Targets](cmake-targets.md) for information on the built-in targets
   - [F´ standard targets](https://github.com/nasa/fprime/tree/devel/cmake/target) as an example of adding targets
 
 **Example (Raw Global Target):**
