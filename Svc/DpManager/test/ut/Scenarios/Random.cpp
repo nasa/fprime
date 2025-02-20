@@ -36,7 +36,7 @@ Rules::SchedIn::OK schedInOK;
 // Tests
 // ----------------------------------------------------------------------
 
-void Tester ::run(FwSizeType maxNumSteps) {
+void Tester ::run(U32 maxNumSteps) {
     STest::Rule<TestState>* rules[] = {
         &bufferGetStatusInvalid,
         &bufferGetStatusValid,

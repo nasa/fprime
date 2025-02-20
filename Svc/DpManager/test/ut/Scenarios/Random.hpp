@@ -27,7 +27,7 @@ class Tester {
     // ----------------------------------------------------------------------
 
     //! Run the random scenario
-    void run(FwSizeType maxNumSteps  //!< The maximum number of steps
+    void run(U32 maxNumSteps  //!< The maximum number of steps
     );
 
   private:

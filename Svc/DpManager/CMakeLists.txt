@@ -1,9 +1,3 @@
-if (BUILD_TESTING)
-    add_compile_options(
-        -Wno-conversion
-    )
-endif()
-
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/DpManager.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/DpManager.cpp"

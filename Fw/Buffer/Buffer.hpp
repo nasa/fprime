@@ -43,6 +43,9 @@ class Buffer : public Fw::Serializable {
 
 public:
 
+    //! The size type for a buffer
+    using SizeType = U32;
+
     enum {
         SERIALIZED_SIZE = sizeof(U32) + sizeof(U32) + sizeof(U8*), //!< Size of Fw::Buffer when serialized
         NO_CONTEXT = 0xFFFFFFFF //!< Value representing no context
