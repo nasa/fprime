@@ -185,7 +185,7 @@ namespace Svc {
         const U32 size = m_incomingBuffer.getSize();
         U8* outgoing = pollBuffer.getData();
         const U32 maxSize = pollBuffer.getSize();
-        FW_ASSERT(size <= maxSize, size, maxSize);
+        FW_ASSERT(size <= maxSize, static_cast<FwAssertArgType>(size), static_cast<FwAssertArgType>(maxSize));
         memcpy(outgoing, incoming, size);
         pollBuffer.setSize(size);
         return Drv::PollStatus::POLL_OK;

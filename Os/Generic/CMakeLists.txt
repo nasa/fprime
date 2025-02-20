@@ -14,6 +14,12 @@ set(HEADER_FILES
 register_fprime_module(Os_Generic_PriorityQueue)
 register_fprime_implementation(Os/Queue Os_Generic_PriorityQueue "${CMAKE_CURRENT_LIST_DIR}/DefaultPriorityQueue.cpp")
 
+if (BUILD_TESTING)
+    add_compile_options(
+        -Wno-conversion
+    )
+endif()
+
 set(UT_SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/PriorityQueueTests.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/../test/ut/queue/CommonTests.cpp"

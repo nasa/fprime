@@ -34,9 +34,9 @@ ComStubTester ::~ComStubTester() {}
 // Helpers
 // ----------------------------------------------------------------------
 void ComStubTester ::fill(Fw::Buffer& buffer_to_fill) {
-    U8 size = STest::Pick::lowerUpper(1, sizeof(buffer_to_fill.getSize()));
+    U8 size = static_cast<U8>(STest::Pick::lowerUpper(1, sizeof(buffer_to_fill.getSize())));
     for (U32 i = 0; i < size; i++) {
-        buffer_to_fill.getData()[i] = STest::Pick::any();
+        buffer_to_fill.getData()[i] = static_cast<U8>(STest::Pick::any());
     }
     buffer_to_fill.setSize(size);
 }

@@ -17,22 +17,16 @@ include("${CMAKE_CURRENT_LIST_DIR}/cmake/FPrime.cmake")
 # build.
 
 add_compile_options(
-    -Wall
-    -Wextra
-    -Werror
     $<$<COMPILE_LANGUAGE:CXX>:-Wold-style-cast>
+    -Wall
+    -Wconversion
+    -Wdouble-promotion
+    -Werror
+    -Wextra
     -Wno-unused-parameter
     -Wshadow
-    -Wdouble-promotion
     -pedantic
 )
-
-# Some unit test code performs implicit conversions
-if (NOT BUILD_TESTING)
-    add_compile_options(
-        -Wconversion
-    )
-endif()
 
 # Turn on pedantic checks for clang, but disable specific checks that F' doesn't comply with.
 # GCC doesn't support disabling specific pedantic checks, so skip pedantic on GCC for now.

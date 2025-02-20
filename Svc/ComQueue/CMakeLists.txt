@@ -6,6 +6,12 @@
 #
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
+if (BUILD_TESTING)
+    add_compile_options(
+        -Wno-conversion
+    )
+endif()
+
 set(MOD_DEPS
         Utils/Types
         Fw/Buffer

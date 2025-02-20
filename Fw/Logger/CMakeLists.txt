@@ -5,6 +5,12 @@
 # MOD_DEPS: (optional) module dependencies
 #
 ####
+if (BUILD_TESTING)
+    add_compile_options(
+        -Wno-conversion
+    )
+endif()
+
 set(MOD_DEPS
     Fw/Cfg
     Fw/Types

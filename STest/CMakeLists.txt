@@ -1,5 +1,9 @@
 # Module subdirectories
 
+add_compile_options(
+    -Wno-conversion
+)
+
 # Port subdirectories
 add_library(
     "STest"

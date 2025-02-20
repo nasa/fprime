@@ -5,6 +5,12 @@
 # MOD_DEPS: (optional) module dependencies
 #
 ####
+if (BUILD_TESTING)
+    add_compile_options(
+        -Wno-conversion
+    )
+endif()
+
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/CircularBuffer.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Queue.cpp"

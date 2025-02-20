@@ -7,6 +7,12 @@
 ####
 restrict_platforms(Posix SOCKETS)
 
+if (BUILD_TESTING)
+    add_compile_options(
+        -Wno-conversion
+    )
+endif()
+
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/TcpClient.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/TcpClientComponentImpl.cpp"

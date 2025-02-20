@@ -6,6 +6,12 @@
 #
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
+if (BUILD_TESTING)
+    add_compile_options(
+        -Wno-conversion
+    )
+endif()
+
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/CmdSequencer.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/CmdSequencerImpl.cpp"

@@ -6,6 +6,12 @@ set(MOD_DEPS
 )
 register_fprime_module()
 
+if (BUILD_TESTING)
+    add_compile_options(
+        -Wno-conversion
+    )
+endif()
+
 # Rules based unit testing
 set(UT_MOD_DEPS
         STest

@@ -25,7 +25,7 @@ namespace Svc {
     this->fprimeFraming.setup(this->interface);
     // Fill in random data
     for (U32 i = 0; i < sizeof(this->data); ++i) {
-      this->data[i] = STest::Pick::lowerUpper(0, 0xFF);
+      this->data[i] = static_cast<U8>(STest::Pick::lowerUpper(0, 0xFF));
     }
     memset(this->bufferStorage, 0, sizeof this->bufferStorage);
   }
@@ -143,7 +143,7 @@ namespace Svc {
     Utils::Hash hash;
     Utils::HashBuffer hashBuffer;
     const U32 localDataSize = FpFrameHeader::SIZE + packetSize;
-    hash.update(this->bufferStorage,  localDataSize);
+    hash.update(this->bufferStorage, static_cast<NATIVE_INT_TYPE>(localDataSize));
     hash.final(hashBuffer);
     const U8 *const hashAddr = hashBuffer.getBuffAddr();
     const I32 result = memcmp(

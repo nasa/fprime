@@ -1,3 +1,9 @@
+if (BUILD_TESTING)
+    add_compile_options(
+        -Wno-conversion
+    )
+endif()
+
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/DpWriter.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/DpWriter.fpp"

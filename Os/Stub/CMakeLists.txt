@@ -20,6 +20,11 @@ register_os_implementation(RawTime Stub)
 if (NOT BUILD_TESTING)
     return()
 endif ()
+
+add_compile_options(
+    -Wno-conversion
+)
+
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test")
 
 ## Stubs test: checks that all the no-op stubs can be selected and compile ##

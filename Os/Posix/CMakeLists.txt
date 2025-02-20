@@ -12,6 +12,12 @@ add_custom_target("${FPRIME_CURRENT_MODULE}")
 ## Shared Section
 # -----------------------------------------
 
+if (BUILD_TESTING)
+    add_compile_options(
+        -Wno-conversion
+    )
+endif()
+
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/error.cpp"
 )

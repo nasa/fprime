@@ -1,3 +1,9 @@
+if (BUILD_TESTING)
+    add_compile_options(
+        -Wno-conversion
+    )
+endif()
+
 #Source files
 set(SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/RateLimiter.cpp"
