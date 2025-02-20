@@ -12,11 +12,11 @@ namespace FrameDetectors {
 FrameDetector::Status FprimeFrameDetector::detect(const Types::CircularBuffer& data, FwSizeType& size_out) const {
 
     FprimeProtocol::FrameHeader header;
-    FprimeProtocol::FrameFooter footer;
+    FprimeProtocol::FrameTrailer footer;
 
     // If not enough data for header + footer, report MORE_DATA_NEEDED
-    if (data.get_allocated_size() < FprimeProtocol::FrameHeader::SERIALIZED_SIZE + FprimeProtocol::FrameFooter::SERIALIZED_SIZE) {
-        size_out = FprimeProtocol::FrameHeader::SERIALIZED_SIZE + FprimeProtocol::FrameFooter::SERIALIZED_SIZE;
+    if (data.get_allocated_size() < FprimeProtocol::FrameHeader::SERIALIZED_SIZE + FprimeProtocol::FrameTrailer::SERIALIZED_SIZE) {
+        size_out = FprimeProtocol::FrameHeader::SERIALIZED_SIZE + FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
         return Status::MORE_DATA_NEEDED;
     }
 
@@ -40,19 +40,19 @@ FrameDetector::Status FprimeFrameDetector::detect(const Types::CircularBuffer& d
         return Status::NO_FRAME_DETECTED;
     }
     // If the deserialized length token can not fit in current allocated size -> MORE_DATA_NEEDED
-    if (data.get_allocated_size() < FprimeProtocol::FrameHeader::SERIALIZED_SIZE + header.getlength() + FprimeProtocol::FrameFooter::SERIALIZED_SIZE) {
-        size_out = header.getlength() + FprimeProtocol::FrameHeader::SERIALIZED_SIZE + FprimeProtocol::FrameFooter::SERIALIZED_SIZE;
+    if (data.get_allocated_size() < FprimeProtocol::FrameHeader::SERIALIZED_SIZE + header.getlength() + FprimeProtocol::FrameTrailer::SERIALIZED_SIZE) {
+        size_out = header.getlength() + FprimeProtocol::FrameHeader::SERIALIZED_SIZE + FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
         return Status::MORE_DATA_NEEDED;
     }
 
     // ---------------- Frame Footer ----------------
-    U8 footer_data[FprimeProtocol::FrameFooter::SERIALIZED_SIZE];
-    Fw::ExternalSerializeBuffer footer_ser_buffer(footer_data, FprimeProtocol::FrameFooter::SERIALIZED_SIZE);
-    status = data.peek(footer_data, FprimeProtocol::FrameFooter::SERIALIZED_SIZE, FprimeProtocol::FrameHeader::SERIALIZED_SIZE + header.getlength());
+    U8 footer_data[FprimeProtocol::FrameTrailer::SERIALIZED_SIZE];
+    Fw::ExternalSerializeBuffer footer_ser_buffer(footer_data, FprimeProtocol::FrameTrailer::SERIALIZED_SIZE);
+    status = data.peek(footer_data, FprimeProtocol::FrameTrailer::SERIALIZED_SIZE, FprimeProtocol::FrameHeader::SERIALIZED_SIZE + header.getlength());
     if (status != Fw::FW_SERIALIZE_OK) {
         return Status::NO_FRAME_DETECTED;
     }
-    footer_ser_buffer.setBuffLen(FprimeProtocol::FrameFooter::SERIALIZED_SIZE);
+    footer_ser_buffer.setBuffLen(FprimeProtocol::FrameTrailer::SERIALIZED_SIZE);
     // Desiralize header from circular buffer (peeked data) into footer object
     footer.deserialize(footer_ser_buffer);
     if (status != Fw::FW_SERIALIZE_OK) {
@@ -80,7 +80,7 @@ FrameDetector::Status FprimeFrameDetector::detect(const Types::CircularBuffer& d
         FW_ASSERT(footer.getcrc() == hashBuffer.asBigEndianU32());
         return Status::NO_FRAME_DETECTED;
     }
-    size_out = header.getlength() + FprimeProtocol::FrameHeader::SERIALIZED_SIZE + FprimeProtocol::FrameFooter::SERIALIZED_SIZE;
+    size_out = header.getlength() + FprimeProtocol::FrameHeader::SERIALIZED_SIZE + FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
     return Status::FRAME_DETECTED;
 
     

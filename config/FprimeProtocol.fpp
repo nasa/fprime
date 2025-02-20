@@ -8,8 +8,8 @@ module FprimeProtocol {
         start_word = 0xdeadbeef
     }
 
-    @ Describes the frame footer format for the F Prime communications protocol
-    struct FrameFooter {
+    @ Describes the frame trailer format for the F Prime communications protocol
+    struct FrameTrailer {
         crc: U32
     }
 

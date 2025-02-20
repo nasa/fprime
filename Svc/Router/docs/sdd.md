@@ -12,7 +12,7 @@ The `Svc::Router` component is used in the uplink stack of many reference F´ ap
 
 In the canonical uplink communications stack, `Svc::Router` is connected to a [Svc::CmdDispatcher](../../CmdDispatcher/docs/sdd.md) and a [Svc::FileUplink](../../FileUplink/docs/sdd.md) component, to receive Command and File packets respectively.
 
-![uplink_stack](../../Deframer/docs/img/deframer_uplink_stack.png)
+![uplink_stack](../../FprimeDeframer/docs/img/deframer_uplink_stack.png)
 
 ## Class Diagram
 

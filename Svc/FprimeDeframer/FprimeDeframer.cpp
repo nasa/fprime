@@ -9,7 +9,7 @@
 #include "Fw/Types/Assert.hpp"
 
 #include "config/FrameHeaderSerializableAc.hpp"
-#include "config/FrameFooterSerializableAc.hpp"
+#include "config/FrameTrailerSerializableAc.hpp"
 
 
 namespace Svc {
@@ -28,10 +28,10 @@ FprimeDeframer ::~FprimeDeframer() {}
 
 void FprimeDeframer ::framedIn_handler(FwIndexType portNum, Fw::Buffer& data, Fw::Buffer& context) {
 
-    FW_ASSERT(data.getSize() >= FprimeProtocol::FrameHeader::SERIALIZED_SIZE + FprimeProtocol::FrameFooter::SERIALIZED_SIZE);
+    FW_ASSERT(data.getSize() >= FprimeProtocol::FrameHeader::SERIALIZED_SIZE + FprimeProtocol::FrameTrailer::SERIALIZED_SIZE);
 
     data.setData(data.getData() + FprimeProtocol::FrameHeader::SERIALIZED_SIZE);
-    data.setSize(data.getSize() - FprimeProtocol::FrameHeader::SERIALIZED_SIZE - FprimeProtocol::FrameFooter::SERIALIZED_SIZE);
+    data.setSize(data.getSize() - FprimeProtocol::FrameHeader::SERIALIZED_SIZE - FprimeProtocol::FrameTrailer::SERIALIZED_SIZE);
 
     this->deframedOut_out(0, data, context);
 }

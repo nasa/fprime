@@ -14,7 +14,7 @@
 #include "Utils/Hash/Hash.hpp"
 
 #include "config/FrameHeaderSerializableAc.hpp"
-#include "config/FrameFooterSerializableAc.hpp"
+#include "config/FrameTrailerSerializableAc.hpp"
 
 namespace Svc {
 namespace FrameDetectors {
