@@ -6,6 +6,13 @@
 #
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
+# Work around an issue in unit test code gen
+if (BUILD_TESTING)
+    add_compile_options(
+        -Wno-shadow
+    )
+endif()
+
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/ActiveLogger.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/ActiveLoggerImpl.cpp"

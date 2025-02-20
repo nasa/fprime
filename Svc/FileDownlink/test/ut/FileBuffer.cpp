@@ -20,17 +20,17 @@ namespace Svc {
         const U8 *const data,
         const size_t size
     ) :
-      index(0)
+      m_index(0)
   {
     this->push(data, size);
-    FW_ASSERT(this->index == size);
+    FW_ASSERT(this->m_index == size);
   }
 
   FileDownlinkTester::FileBuffer ::
     FileBuffer(
         const History<Fw::FilePacket::DataPacket>& dataPackets
     ) :
-      index(0)
+      m_index(0)
   {
     size_t numPackets = dataPackets.size();
     for (size_t i = 0; i < numPackets; ++i) {
@@ -45,9 +45,9 @@ namespace Svc {
       const size_t size
     )
   {
-    FW_ASSERT(this->index + size <= FILE_BUFFER_CAPACITY);
-    memcpy(&this->data[index], data, size);
-    this->index += size;
+    FW_ASSERT(this->m_index + size <= FILE_BUFFER_CAPACITY);
+    memcpy(&this->m_data[this->m_index], data, size);
+    this->m_index += size;
   }
 
   void FileDownlinkTester::FileBuffer ::
@@ -60,9 +60,9 @@ namespace Svc {
     status = file.open(fileName, Os::File::OPEN_WRITE);
     FW_ASSERT(status == Os::File::OP_OK);
 
-    const U32 size = this->index;
+    const U32 size = this->m_index;
     FwSignedSizeType intSize = size;
-    status = file.write(this->data, intSize);
+    status = file.write(this->m_data, intSize);
     FW_ASSERT(status == Os::File::OP_OK);
     FW_ASSERT(static_cast<U32>(intSize) == size);
 
@@ -74,7 +74,7 @@ namespace Svc {
     getChecksum(CFDP::Checksum& checksum)
   {
     CFDP::Checksum c;
-    c.update(this->data, 0, this->index);
+    c.update(this->m_data, 0, this->m_index);
     checksum = c;
   }
 
@@ -82,18 +82,18 @@ namespace Svc {
     compare(const FileBuffer& fb1, const FileBuffer& fb2)
   {
 
-    if (fb1.index != fb2.index) {
+    if (fb1.m_index != fb2.m_index) {
       fprintf(
           stderr,
           "FileBuffer: sizes do not match (%lu vs %lu)\n",
-          fb1.index,
-          fb2.index
+          fb1.m_index,
+          fb2.m_index
       );
       return false;
     }
 
-    FW_ASSERT(fb1.index <= FILE_BUFFER_CAPACITY);
-    if (memcmp(fb1.data, fb2.data, fb1.index) != 0) {
+    FW_ASSERT(fb1.m_index <= FILE_BUFFER_CAPACITY);
+    if (memcmp(fb1.m_data, fb2.m_data, fb1.m_index) != 0) {
       fprintf(stderr, "FileBuffer: data does not match\n");
       return false;
     }

@@ -667,7 +667,7 @@ TEST(PerformanceTest, SerPerfTest) {
     timer.stop();
 
     printf("%d iterations took %d us (%f each).\n", iterations, timer.getDiffUsec(),
-           static_cast<F32>(timer.getDiffUsec()) / static_cast<F32>(iterations));
+           static_cast<F64>(static_cast<F32>(timer.getDiffUsec()) / static_cast<F32>(iterations)));
 }
 
 TEST(PerformanceTest, StructCopyTest) {
@@ -694,7 +694,7 @@ TEST(PerformanceTest, StructCopyTest) {
     timer.stop();
 
     printf("%d iterations took %d us (%f each).\n", iterations, timer.getDiffUsec(),
-           static_cast<F32>(timer.getDiffUsec()) / static_cast<F32>(iterations));
+           static_cast<F64>(static_cast<F32>(timer.getDiffUsec()) / static_cast<F32>(iterations)));
 }
 
 TEST(PerformanceTest, ClassCopyTest) {
@@ -714,7 +714,7 @@ TEST(PerformanceTest, ClassCopyTest) {
     timer.stop();
 
     printf("%d iterations took %d us (%f each).\n", iterations, timer.getDiffUsec(),
-           static_cast<F32>(timer.getDiffUsec()) / static_cast<F32>(iterations));
+           static_cast<F64>(static_cast<F32>(timer.getDiffUsec()) / static_cast<F32>(iterations)));
 }
 
 void printSizes() {
@@ -1216,7 +1216,7 @@ TEST(PerformanceTest, F64SerPerfTest) {
     timer.stop();
 
     printf("%d iterations took %d us (%f us each).\n", iters, timer.getDiffUsec(),
-           static_cast<F32>(timer.getDiffUsec()) / static_cast<F32>(iters));
+           static_cast<F64>(static_cast<F32>(timer.getDiffUsec()) / static_cast<F32>(iters)));
 }
 
 TEST(AllocatorTest, MallocAllocatorTest) {

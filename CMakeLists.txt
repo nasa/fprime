@@ -22,15 +22,15 @@ add_compile_options(
     -Werror
     $<$<COMPILE_LANGUAGE:CXX>:-Wold-style-cast>
     -Wno-unused-parameter
+    -Wshadow
+    -Wdouble-promotion
+    -pedantic
 )
 
-# Add -Wshadow, -Wconversion and -pedantic only for framework code, not the unit tests
+# Some unit test code performs implicit conversions
 if (NOT BUILD_TESTING)
     add_compile_options(
-        -Wshadow
-        -pedantic
         -Wconversion
-        -Wdouble-promotion
     )
 endif()
 
