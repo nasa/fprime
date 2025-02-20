@@ -68,7 +68,7 @@ void DpWriterTester::constructDpFileName(FwDpIdType id, const Fw::Time& timeTag,
 }
 
 void DpWriterTester::checkProcTypes(const Fw::DpContainer& container) {
-    FwIndexType expectedNumProcTypes = 0;
+    U32 expectedNumProcTypes = 0;
     const Fw::DpCfg::ProcType::SerialType procTypes = container.getProcTypes();
     for (FwIndexType i = 0; i < Fw::DpCfg::ProcType::NUM_CONSTANTS; i++) {
         if (procTypes & (1 << i)) {
