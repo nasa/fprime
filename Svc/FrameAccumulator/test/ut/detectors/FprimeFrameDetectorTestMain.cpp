@@ -8,8 +8,9 @@
 #include "Svc/FrameAccumulator/FrameDetector/StartLengthCrcDetector.hpp"
 #include "Svc/FrameAccumulator/FrameDetector/FprimeFrameDetector.hpp"
 #include "STest/Random/Random.hpp"
+#include "Utils/Hash/Hash.hpp"
 
-U32 CIRCULAR_BUFFER_TEST_SIZE = 2048;
+constexpr U32 CIRCULAR_BUFFER_TEST_SIZE = 2048;
 
 //! \brief Create an F´ frame and serialize it into the supplied circular buffer
 //! \param circular_buffer The circular buffer to serialize the frame into
@@ -21,11 +22,11 @@ FwSizeType generate_random_fprime_frame(Types::CircularBuffer& circular_buffer) 
     // Generate random packet size (1-1024 bytes; because 0 would trigger undefined behavior warnings)
     // 1024 is max length as per FrameAccumulator/FrameDetector/FprimeFrameDetector @ LengthToken::MaximumLength
     U32 packet_size = STest::Random::lowerUpper(1, 1024);
-    printf("Generating random F´ frame of size %u bytes\n", packet_size);
-    U8 data[packet_size];
-    // Generate random data of random size
+
+    U8 packet_data[packet_size];
+    // Generate random packet_data of random size
     for (FwSizeType i = 0; i < packet_size; i++) {
-        data[i] = STest::Random::lowerUpper(0, 255);
+        packet_data[i] = STest::Random::lowerUpper(0, 255);
     }
     // Frame header                      |  Start Word 4 bytes  |   Length (4 bytes)   |
     U8 frame_header[FRAME_HEADER_SIZE] = {0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0x00, 0x00, 0x00};
@@ -34,30 +35,27 @@ FwSizeType generate_random_fprime_frame(Types::CircularBuffer& circular_buffer) 
         frame_header[i + 4] = static_cast<U8>(packet_size >> (8 * (3 - i)));
     }
 
-    // Calculate CRC on header + data
-    Svc::FrameDetectors::CRC32 crc_calculator;
-    for (FwSizeType i = 0; i < FRAME_HEADER_SIZE; i++) {
-        crc_calculator.update(frame_header[i]);
-    }
-    for (FwSizeType i = 0; i < packet_size; i++) {
-        crc_calculator.update(data[i]);
-    }
-    U32 crc = crc_calculator.finalize();
+    // Calculate CRC on header + packet_data
+    Utils::Hash crc_calculator;
+    Utils::HashBuffer crc_result;
+    crc_calculator.update(frame_header, FRAME_HEADER_SIZE);
+    crc_calculator.update(packet_data, packet_size);
+    crc_calculator.final(crc_result);
     // printf("crc: %08X\n", crc);
 
-    // Concatenate all data to create the full frame (byte array)
+    // Concatenate all packet_data to create the full frame (byte array)
     FwSizeType fprime_frame_size = FRAME_HEADER_SIZE + packet_size + FRAME_FOOTER_SIZE;
     U8 fprime_frame[fprime_frame_size];
-    // Copy header, data, and CRC into the full frame
+    // Copy header, packet_data, and CRC into the full frame
     for (FwIndexType i = 0; i < static_cast<FwIndexType>(FRAME_HEADER_SIZE); i++) {
         fprime_frame[i] = frame_header[i];
     }
     for (FwIndexType i = 0; i < static_cast<FwIndexType>(packet_size); i++) {
-        fprime_frame[i + FRAME_HEADER_SIZE] = data[i];
+        fprime_frame[i + FRAME_HEADER_SIZE] = packet_data[i];
     }
     for (FwIndexType i = 0; i < static_cast<FwIndexType>(FRAME_FOOTER_SIZE); i++) {
         // crc is a U32; unpack into 4 bytes (shift by 24->-16->8->0 bits, mask with 0xFF)
-        fprime_frame[i + FRAME_HEADER_SIZE + packet_size] = (crc >> (8 * (3 - i))) & 0xFF;
+        fprime_frame[i + FRAME_HEADER_SIZE + packet_size] = (crc_result.asBigEndianU32() >> (8 * (3 - i))) & 0xFF;
     }
     // Serialize frame into circular buffer
     circular_buffer.serialize(fprime_frame, fprime_frame_size);
@@ -103,7 +101,6 @@ TEST(FprimeFrameDetector, TestManyFrameDetected) {
         EXPECT_EQ(size_out, frame_size);
         circular_buffer.rotate(size_out); // clear up used data
     }
-
 }
 
 TEST(FprimeFrameDetector, TestNoFrameDetected) {
