@@ -20,6 +20,9 @@ namespace Svc {
             MORE_DATA_NEEDED   //!< More data is needed to detect a frame. Keep current data and return with more.
         };
 
+        //! \brief virtual destructor
+        virtual ~FrameDetector() = default;
+
         //! \brief detect if a frame is available within the circular buffer
         //!
         //! Function implemented by sub classes used to determine if a frame is available at the current position of the
