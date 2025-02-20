@@ -3,8 +3,8 @@
 // \author mstarch
 // \brief  hpp interface specification for FrameDetector
 // ======================================================================
-#ifndef FPRIME_FRAMEDETECTOR_HPP
-#define FPRIME_FRAMEDETECTOR_HPP
+#ifndef SVC_FPRIME_FRAME_DETECTOR_HPP
+#define SVC_FPRIME_FRAME_DETECTOR_HPP
 #include <FpConfig.hpp>
 #include <Utils/Types/CircularBuffer.hpp>
 
@@ -47,4 +47,4 @@ namespace Svc {
 
 } // Svc
 
-#endif //FPRIME_FRAMEDETECTOR_HPP
+#endif //SVC_FPRIME_FRAME_DETECTOR_HPP

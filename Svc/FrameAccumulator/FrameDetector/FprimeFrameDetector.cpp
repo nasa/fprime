@@ -39,7 +39,7 @@ FrameDetector::Status FprimeFrameDetector::detect(const Types::CircularBuffer& d
     Fw::ExternalSerializeBuffer header_ser_buffer(header_data, FprimeProtocol::FrameHeader::SERIALIZED_SIZE);
     header_ser_buffer.setBuffLen(FprimeProtocol::FrameHeader::SERIALIZED_SIZE);
     // Attempt to deserialize data into the FrameHeader object
-    header.deserialize(header_ser_buffer);
+    status = header.deserialize(header_ser_buffer);
     if (status != Fw::FW_SERIALIZE_OK) {
         return Status::NO_FRAME_DETECTED;
     }
@@ -62,8 +62,8 @@ FrameDetector::Status FprimeFrameDetector::detect(const Types::CircularBuffer& d
         return Status::NO_FRAME_DETECTED;
     }
     trailer_ser_buffer.setBuffLen(FprimeProtocol::FrameTrailer::SERIALIZED_SIZE);
-    // Desiralize header from circular buffer (peeked data) into trailer object
-    trailer.deserialize(trailer_ser_buffer);
+    // Deserialize header from circular buffer (peeked data) into trailer object
+    status = trailer.deserialize(trailer_ser_buffer);
     if (status != Fw::FW_SERIALIZE_OK) {
         return Status::NO_FRAME_DETECTED;
     }
@@ -80,24 +80,14 @@ FrameDetector::Status FprimeFrameDetector::detect(const Types::CircularBuffer& d
     }
     hash.final(hashBuffer);
 
-    // printf("transmitted_crc: %08X\n", trailer.getcrc());
-    // printf("computed_crc: %08X\n", hashBuffer.asBigEndianU32());
     // Compare the transmitted CRC with the computed one
     if (trailer.getcrc() != hashBuffer.asBigEndianU32()) {
         // Note: CRC mismatch - there likely was data corruption
         // Should there be an event / telemetry for frames dropped ??
-        FW_ASSERT(trailer.getcrc() == hashBuffer.asBigEndianU32());
         return Status::NO_FRAME_DETECTED;
     }
     size_out = header.getlength() + FprimeProtocol::FrameHeader::SERIALIZED_SIZE + FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
     return Status::FRAME_DETECTED;
-
-    
-    // Issues:
-    // 1. Can't retrieve the type info directly? Have to make something of size SERIALIZED_SIZE ?
-    //        Not a huge deal, but not as efficient ?
-    // 2. Can't use the serialization magic since CircularBuffer is not a SierializeBufferBase ???
-
 
 }
 

@@ -22,7 +22,7 @@ Following this frame specification, the `Svc::FprimeDeframer` removes the 32-bit
 
 The `Svc::FprimeDeframer` component is an implementation of the [DeframerInterface](../../Interfaces/DeframerInterface.fppi) for the F´ communications protocol. It receives an F´ frame (in a [Fw::Buffer](../../../Fw/Buffer/docs/sdd.md) object) on its `framedIn` input port, modifies the input buffer to remove the header and trailer, and sends it out through its `deframedOut` output port. 
 
-Ownership of the buffer is transferred to the component connected to the `deframedOut` output port. The input buffer is modified by substracting the header and trailer size from the buffer's length, and offsetting the buffer's data pointer to point to the start of the packet data.
+Ownership of the buffer is transferred to the component connected to the `deframedOut` output port. The input buffer is modified by subtracting the header and trailer size from the buffer's length, and offsetting the buffer's data pointer to point to the start of the packet data.
 
 The `Svc::FprimeDeframer` component does not perform any validation of the frame. It is expected that the frame is valid and well-formed. The validation should be performed by an upstream component, such as [`Svc::FrameAccumulator`](../../FrameAccumulator/docs/sdd.md).
 
