@@ -1,24 +1,24 @@
 // ======================================================================
-// \title  DeframerTestMain.cpp
+// \title  FprimeDeframerTestMain.cpp
 // \author thomas-bc
-// \brief  cpp file for Deframer component test main function
+// \brief  cpp file for FprimeDeframer component test main function
 // ======================================================================
 
-#include "DeframerTester.hpp"
+#include "FprimeDeframerTester.hpp"
 #include "STest/Random/Random.hpp"
 
-TEST(Deframer, NominalFrame) {
-    Svc::DeframerTester tester;
+TEST(FprimeDeframer, NominalFrame) {
+    Svc::FprimeDeframerTester tester;
     tester.testNominalFrame();
 }
 
-TEST(Deframer, TruncatedFrame) {
-    Svc::DeframerTester tester;
+TEST(FprimeDeframer, TruncatedFrame) {
+    Svc::FprimeDeframerTester tester;
     tester.testTruncatedFrame();
 }
 
-TEST(Deframer, ZeroSizeFrame) {
-    Svc::DeframerTester tester;
+TEST(FprimeDeframer, ZeroSizeFrame) {
+    Svc::FprimeDeframerTester tester;
     tester.testZeroSizeFrame();
 }
 

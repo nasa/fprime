@@ -1,18 +1,18 @@
 // ======================================================================
-// \title  DeframerTester.hpp
+// \title  FprimeDeframerTester.hpp
 // \author thomas-bc
-// \brief  hpp file for Deframer component test harness implementation class
+// \brief  hpp file for FprimeDeframer component test harness implementation class
 // ======================================================================
 
-#ifndef Svc_DeframerTester_HPP
-#define Svc_DeframerTester_HPP
+#ifndef Svc_FprimeDeframerTester_HPP
+#define Svc_FprimeDeframerTester_HPP
 
-#include "Svc/Deframer/Deframer.hpp"
-#include "Svc/Deframer/DeframerGTestBase.hpp"
+#include "Svc/FprimeDeframer/FprimeDeframer.hpp"
+#include "Svc/FprimeDeframer/FprimeDeframerGTestBase.hpp"
 
 namespace Svc {
 
-class DeframerTester : public DeframerGTestBase {
+class FprimeDeframerTester : public FprimeDeframerGTestBase {
   public:
     // ----------------------------------------------------------------------
     // Constants
@@ -29,11 +29,11 @@ class DeframerTester : public DeframerGTestBase {
     // Construction and destruction
     // ----------------------------------------------------------------------
 
-    //! Construct object DeframerTester
-    DeframerTester();
+    //! Construct object FprimeDeframerTester
+    FprimeDeframerTester();
 
-    //! Destroy object DeframerTester
-    ~DeframerTester();
+    //! Destroy object FprimeDeframerTester
+    ~FprimeDeframerTester();
 
   public:
     // ----------------------------------------------------------------------
@@ -70,7 +70,7 @@ class DeframerTester : public DeframerGTestBase {
     // ----------------------------------------------------------------------
 
     //! The component under test
-    Deframer component;
+    FprimeDeframer component;
 };
 
 }  // namespace Svc
