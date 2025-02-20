@@ -5,7 +5,6 @@
 // ======================================================================
 
 #include "gtest/gtest.h"
-#include "Svc/FrameAccumulator/FrameDetector/StartLengthCrcDetector.hpp"
 #include "Svc/FrameAccumulator/FrameDetector/FprimeFrameDetector.hpp"
 #include "STest/Random/Random.hpp"
 #include "Utils/Hash/Hash.hpp"

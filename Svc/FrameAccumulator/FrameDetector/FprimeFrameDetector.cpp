@@ -37,7 +37,8 @@ FrameDetector::Status FprimeFrameDetector::detect(const Types::CircularBuffer& d
         return Status::NO_FRAME_DETECTED;
     }
     Fw::ExternalSerializeBuffer header_ser_buffer(header_data, FprimeProtocol::FrameHeader::SERIALIZED_SIZE);
-    header_ser_buffer.setBuffLen(FprimeProtocol::FrameHeader::SERIALIZED_SIZE);
+    status = header_ser_buffer.setBuffLen(FprimeProtocol::FrameHeader::SERIALIZED_SIZE);
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     // Attempt to deserialize data into the FrameHeader object
     status = header.deserialize(header_ser_buffer);
     if (status != Fw::FW_SERIALIZE_OK) {
@@ -48,7 +49,7 @@ FrameDetector::Status FprimeFrameDetector::detect(const Types::CircularBuffer& d
     if (header.getstart_word() != default_value.getstart_word()) {
         return Status::NO_FRAME_DETECTED;
     }
-    // If the deserialized length token can not fit in current allocated size -> MORE_DATA_NEEDED
+    // If the deserialized length token can't fit in current allocated size -> MORE_DATA_NEEDED
     if (data.get_allocated_size() < FprimeProtocol::FrameHeader::SERIALIZED_SIZE + header.getlength() + FprimeProtocol::FrameTrailer::SERIALIZED_SIZE) {
         size_out = header.getlength() + FprimeProtocol::FrameHeader::SERIALIZED_SIZE + FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
         return Status::MORE_DATA_NEEDED;
@@ -61,7 +62,8 @@ FrameDetector::Status FprimeFrameDetector::detect(const Types::CircularBuffer& d
     if (status != Fw::FW_SERIALIZE_OK) {
         return Status::NO_FRAME_DETECTED;
     }
-    trailer_ser_buffer.setBuffLen(FprimeProtocol::FrameTrailer::SERIALIZED_SIZE);
+    status = trailer_ser_buffer.setBuffLen(FprimeProtocol::FrameTrailer::SERIALIZED_SIZE);
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     // Deserialize header from circular buffer (peeked data) into trailer object
     status = trailer.deserialize(trailer_ser_buffer);
     if (status != Fw::FW_SERIALIZE_OK) {
@@ -71,8 +73,9 @@ FrameDetector::Status FprimeFrameDetector::detect(const Types::CircularBuffer& d
     Utils::HashBuffer hashBuffer;
 
     // Compute CRC over the transmitted data (header + body)
+    FwSizeType hash_field_size = header.getlength() + FprimeProtocol::FrameHeader::SERIALIZED_SIZE;
     hash.init();
-    for (U32 i = 0; i < FprimeProtocol::FrameHeader::SERIALIZED_SIZE + header.getlength(); i++) {
+    for (U32 i = 0; i < hash_field_size; i++) {
         U8 byte = 0;
         status = data.peek(byte, i);
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);

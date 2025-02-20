@@ -166,7 +166,7 @@ void FrameAccumulator ::processBuffer(Fw::Buffer& buffer) {
             // No frame was detected or an unknown status was received
             else {
                 // Discard a single byte of data and start again
-                m_inRing.rotate(1);
+                (void) m_inRing.rotate(1);
                 FW_ASSERT(
                         m_inRing.get_allocated_size() == remaining - 1,
                         static_cast<FwAssertArgType>(m_inRing.get_allocated_size()),
