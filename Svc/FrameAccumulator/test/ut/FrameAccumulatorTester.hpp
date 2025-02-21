@@ -90,10 +90,6 @@ class FrameAccumulatorTester : public FrameAccumulatorGTestBase {
     // ----------------------------------------------------------------------
     // Member variables
     // ----------------------------------------------------------------------
-
-    //! The component under test
-    Svc::FrameAccumulator component;
-
     //! MockDetector is used to control the behavior of the component under test
     //! by controlling what the FrameDetector will report without needing to craft
     //! legitimate frames from specific to a protocol
@@ -117,9 +113,13 @@ class FrameAccumulatorTester : public FrameAccumulatorGTestBase {
     MockDetector mockDetector;
     Fw::MallocAllocator mallocator;
 
+    //! The component under test (should be listed after mallocator for safe destruction)
+    Svc::FrameAccumulator component;
+
     Fw::Buffer m_buffer;  // buffer to be returned by mocked bufferAllocate call
     U8 m_buffer_slot[2048];
 };
+
 
 }  // namespace Svc
 
