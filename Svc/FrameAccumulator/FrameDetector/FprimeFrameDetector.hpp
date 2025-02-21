@@ -47,8 +47,8 @@ class FprimeFrameDetector : public FrameDetector {
     Status detect(const Types::CircularBuffer& data, FwSizeType& size_out) const override;
 
 };  // class FprimeFrameDetector
-};  // namespace FrameDetectors
-};  // namespace Svc
+}  // namespace FrameDetectors
+}  // namespace Svc
 
 #endif  // SVC_FRAME_ACCUMULATOR_FRAME_DETECTOR_FPRIME_FRAME_DETECTOR
 

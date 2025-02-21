@@ -94,6 +94,6 @@ FrameDetector::Status FprimeFrameDetector::detect(const Types::CircularBuffer& d
 
 }
 
-};  // namespace FrameDetectors
-};  // namespace Svc
+}  // namespace FrameDetectors
+}  // namespace Svc
 

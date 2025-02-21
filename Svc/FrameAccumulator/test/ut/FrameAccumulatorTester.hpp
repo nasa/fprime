@@ -104,9 +104,9 @@ class FrameAccumulatorTester : public FrameAccumulatorGTestBase {
             return next_status;
         }
 
-        void set_next_result(Status next_status, FwSizeType next_size_out) {
-            this->next_size_out = next_size_out;
-            this->next_status = next_status;
+        void set_next_result(Status status, FwSizeType size_out) {
+            this->next_size_out = size_out;
+            this->next_status = status;
         }
 
         Status next_status = Status::FRAME_DETECTED;
