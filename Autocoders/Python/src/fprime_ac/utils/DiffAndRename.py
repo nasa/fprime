@@ -38,8 +38,9 @@ def compare_except_lines(file1, file2, linesOkToBeDifferent):
     if missingFile:
         return -1
 
-    old = open(file1).readlines()
-    new = open(file2).readlines()
+    with open(file1) as f1, open(file2) as f2:
+        old = f1.readlines()
+        new = f2.readlines()
 
     # print "LEN OLD = %d " % len(old)
     # print "LEN NEW = %d " % len(new)
@@ -153,8 +154,9 @@ def DiffAndRename(filename, dated_files_enable=True):
         print("... done creating new %s" % filename)
         return
 
-    old = open(filename).readlines()
-    new = open(filename + ".new").readlines()
+    with open(filename) as f_old, open(filename + ".new") as f_new:
+        old = f_old.readlines()
+        new = f_new.readlines()
 
     # print "LEN OLD = %d " % len(old)
     # print "LEN NEW = %d " % len(new)
@@ -272,10 +274,9 @@ last time here
     print()
     print("Test 2:")
     print("expect '... done creating new %s" % filename)
-    new = open("foo.new", "w")
-    new.write(now.ctime())
-    new.write(data)
-    new.close()
+    with open("foo.new", "w") as new:
+        new.write(now.ctime())
+        new.write(data)
     removeJunk = True
     DiffAndRename("foo")
     if not os.path.exists("foo"):
@@ -289,11 +290,10 @@ last time here
     print("Test 3:")
     print("expect '... new %s did not differ from old file." % filename)
     origstatinfo = os.stat("foo")
-    new = open("foo.new", "w")
-    now += delta
-    new.write(now.ctime())
-    new.write(data)
-    new.close()
+    with open("foo.new", "w") as new:
+        now += delta
+        new.write(now.ctime())
+        new.write(data)
     removeJunk = True
     DiffAndRename("foo")
     if not os.path.exists("foo"):
@@ -312,12 +312,11 @@ last time here
     print()
     print("Test 4:")
     print("expect '...  replaced old with new %s" % filename)
-    new = open("foo.new", "w")
-    now += delta
-    new.write(now.ctime())
-    new.write(data)
-    new.write(data)
-    new.close()
+    with open("foo.new", "w") as new:
+        now += delta
+        new.write(now.ctime())
+        new.write(data)
+        new.write(data)
     removeJunk = True
     DiffAndRename("foo")
     if not os.path.exists("foo"):
@@ -346,10 +345,9 @@ last time here
     print()
     print("Test 6:")
     print("expect '... done creating new %s" % filename)
-    new = open("foo.new", "w")
-    new.write(now.ctime())
-    new.write(data)
-    new.close()
+    with open("foo.new", "w") as new:
+        new.write(now.ctime())
+        new.write(data)
     removeJunk = False
     DiffAndRename("foo")
     if not os.path.exists("foo"):
@@ -366,11 +364,10 @@ last time here
     print("expect '... new foo did not differ from old file.")
     print("and    '... keeping new file as foo.new.yyyymmddThhmmss")
     origstatinfo = os.stat("foo")
-    new = open("foo.new", "w")
-    now += delta
-    new.write(now.ctime())
-    new.write(data)
-    new.close()
+    with open("foo.new", "w") as new:
+        now += delta
+        new.write(now.ctime())
+        new.write(data)
     removeJunk = False
     DiffAndRename("foo")
     if not os.path.exists("foo"):
@@ -392,12 +389,11 @@ last time here
     print("Test 8:")
     print("expect '... moved old file to %s.old.timestamp" % filename)
     print("and    '... and replaced old with new %s" % filename)
-    new = open("foo.new", "w")
-    now += delta
-    new.write(now.ctime())
-    new.write(data)
-    new.write(data)
-    new.close()
+    with open("foo.new", "w") as new:
+        now += delta
+        new.write(now.ctime())
+        new.write(data)
+        new.write(data)
     removeJunk = False
     DiffAndRename("foo")
     if not os.path.exists("foo"):
@@ -424,13 +420,12 @@ last time here
         print("ERROR -- too many old files.")
     before_stat_foo_old = os.stat(files[0])
     before_stat_foo = os.stat("foo")
-    new = open("foo.new", "w")
-    now += delta
-    new.write(now.ctime())
-    new.write(data)
-    new.write(data)
-    new.write(data)
-    new.close()
+    with open("foo.new", "w") as new:
+        now += delta
+        new.write(now.ctime())
+        new.write(data)
+        new.write(data)
+        new.write(data)
     before_stat_foo_new = os.stat("foo.new")
     removeJunk = False
     DiffAndRename("foo")

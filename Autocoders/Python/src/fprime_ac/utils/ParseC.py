@@ -64,10 +64,8 @@ def ParseNumDefine(defname, filename, loadfile=True):
         if not os.path.isfile(filename):
             raise OSError("%r: file not found." % filename)
 
-        fd = open(filename)
-
-        data = fd.read()
-        fd.close()
+        with open(filename) as fd:
+            data = fd.read()
 
     else:
         # The file is already in memory. We just need to get
@@ -156,10 +154,8 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
                 print(str)
                 raise OSError(str)
 
-        fd = open(filename)
-
-        data = fd.read()
-        fd.close()
+        with open(filename) as fd:
+            data = fd.read()
 
     else:
         # The file is already in memory.  We just need to get
