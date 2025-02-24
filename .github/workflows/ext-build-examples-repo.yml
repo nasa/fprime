@@ -1,6 +1,6 @@
 # Builds and runs UTs on https://github.com/fprime-community/fprime-examples
 
-name: "External Build: fprime-examples"
+name: "External Repo: fprime-examples"
 
 on:
   push:
