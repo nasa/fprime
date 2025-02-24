@@ -2,7 +2,7 @@
 
 The manager/worker pattern is used to perform long-running background work within a component that needs to remain highly responsive to the rest of the system. It is an adoption of the "worker thread" pattern (commonly seen in Computer Science) into the F Prime architecture.
 
-The fprime-examples repository provides an example of the [Manager/Worker Pattern](http://github.com/fprime-community/fprime-examples/tree/devel/FlightExamples/ManagerWorker).
+The fprime-examples repository provides an example of the [Manager/Worker Pattern](http://github.com/nasa/fprime-examples/tree/devel/FlightExamples/ManagerWorker).
 
 ## Applicability
 

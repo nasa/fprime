@@ -2,7 +2,7 @@
 
 Certain services in flight software are critical for the correct execution of the system. For example, command dispatching is crucial to maintain control of the system. It is good practice to monitor these services to ensure they remain responsive during execution of the system. The health checking pattern is used to establish a component as a critical component of the system and periodically check it for responsiveness. 
 
-The fprime-examples repository provides an example of the health checking pattern through its [Manager Component](http://github.com/fprime-community/fprime-examples/tree/devel/FlightExamples/ManagerWorker) as the Manager is intended to stay responsive at all times.
+The fprime-examples repository provides an example of the health checking pattern in its [Manager Component](http://github.com/nasa/fprime-examples/tree/devel/FlightExamples/ManagerWorker) as the Manager is intended to stay responsive at all times.
 
 ## Applicability
 
@@ -27,11 +27,11 @@ sequenceDiagram
     Component->>-Health: Ping Response
 ```
 
-`Svc.Health` tracks how long it takes for the component to respond to the ping message placed on its queue.  `Svc.Health` will produce a `WARNING_HI` event after a configurable amount of time followed by `FATAL` event after a longer configured time. Thus the system will warn if a component is responsive and follow-up with a system reset if the component remains unresponsive.
+`Svc.Health` tracks how long it takes for the component to respond to the ping message placed on its queue.  `Svc.Health` will produce a `WARNING_HI` event after a configurable amount of time followed by `FATAL` event after a longer configured time. Thus the system will issue a WARNING_HI event if a component does not respond, and escalate to a FATAL event (triggering a reset or other FATAL handling) if the component remains unresponsive.
 
 ## Implementation
 
-Implementation of the health checking pattern involves placing a pair of of `Svc.Ping` ports on your `active` component one as an `async input` and the other as an `output`.  Typically these ports are named `pingIn` and `pingOut` respectively.
+Implementation of the health checking pattern involves placing a pair of `Svc.Ping` ports on your `active` component, one as an `async input` and the other as an `output`.  Typically these ports are named `pingIn` and `pingOut` respectively.
 
 **Component Model Snippet**
 ```
@@ -83,8 +83,16 @@ namespace MyTopology {
 > [!NOTE]
 > This configuration is set for **each instance** of the component.  In this example `criticalComponent` is an instance of `CriticalComponent`
 
+## Testing and Verification
+
+The health checking pattern can be tested by a combination of unit and integration tests. For basic functionality, invoke the `input` Svc.Ping port in a unit test, dispatch the component, and assert the `output` Svc.Ping port returned the supplied key.
+
+Integration tests can be used to test this pattern alongside the Svc.Health component. Set the ping timeout of the component below the minimum time for the component using `HLTH_CHNG_PING` and assert that appropriate WARNING and/or FATAL events occur.
+
+## Other Considerations
+
+The health checking pattern can be used to test any active component, not just critical ones.  However, care should be taken with configured values as Svc.Health will FATAL the system in response to unresponsive components leading to system reset or other FATAL handling actions.
+
 ## Conclusion
 
-The health checking pattern can be used to ensure critical services within the system remain responsive of the course of the software's execution. Should the component fail to respond for a pair of configurable durations, a WARNING_HI and FATAL event will respectively result.
-
-
+The health checking pattern can be used to ensure critical services within the system remain responsive over the course of the software's execution. Should the component fail to respond for a pair of configurable durations, a WARNING_HI and FATAL event will respectively result.
