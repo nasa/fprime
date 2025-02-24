@@ -1,6 +1,6 @@
 # Builds and runs UTs on https://github.com/fprime-community/fprime-examples
 
-name: "External repo: fprime-examples"
+name: "External Build: fprime-examples"
 
 on:
   push:
@@ -13,6 +13,7 @@ on:
       - '**.md'
       - '.github/actions/spelling/**'
       - '.github/ISSUE_TEMPLATE/**'
+      - '.gitignore'
 
 jobs:
   get-branch:
