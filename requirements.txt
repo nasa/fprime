@@ -31,6 +31,7 @@ fprime-fpp-syntax==2.3.0
 fprime-fpp-to-cpp==2.3.0
 fprime-fpp-to-dict==2.3.0
 fprime-fpp-to-json==2.3.0
+fprime-fpp-to-layout==2.3.0
 fprime-fpp-to-xml==2.3.0
 fprime-gds==3.6.0
 fprime-tools==3.6.0
