@@ -51,7 +51,7 @@ TEST(FwTlmTest,TlmPacketSerializeFill) {
 
     // fill a telemetry packet
 
-    for (NATIVE_UINT_TYPE entry = 0; entry < NUM_ENTRIES; entry++) {
+    for (FwSizeType entry = 0; entry < NUM_ENTRIES; entry++) {
 
         // Serialize data
 
@@ -81,7 +81,7 @@ TEST(FwTlmTest,TlmPacketSerializeFill) {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,pktOut.resetPktDeser());
 
     // empty the packet of entries
-    for (NATIVE_UINT_TYPE entry = 0; entry < NUM_ENTRIES; entry++) {
+    for (FwSizeType entry = 0; entry < NUM_ENTRIES; entry++) {
         // Deserialize data
         Fw::TlmBuffer buffOut;
         Fw::Time timeOut;

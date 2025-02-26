@@ -42,11 +42,11 @@ namespace Fw {
             //! set the internal buffer for deserializing values
             void setBuffer(Fw::ComBuffer& buffer);
             //! get the number of packets added via addValue()
-            NATIVE_UINT_TYPE getNumEntries();
+            FwSizeType getNumEntries();
 
         PRIVATE:
             ComBuffer m_tlmBuffer; //!< serialized data
-            NATIVE_UINT_TYPE m_numEntries; //!< number of entries stored during addValue()
+            FwSizeType m_numEntries; //!< number of entries stored during addValue()
     };
 
 } /* namespace Fw */
