@@ -51,8 +51,8 @@ namespace Test {
 
     void UnitTestAssert::reportAssert(
             FILE_NAME_ARG file,
-            NATIVE_UINT_TYPE lineNo,
-            NATIVE_UINT_TYPE numArgs,
+            FwSizeType lineNo,
+            FwSizeType numArgs,
             FwAssertArgType arg1,
             FwAssertArgType arg2,
             FwAssertArgType arg3,
@@ -80,8 +80,8 @@ namespace Test {
 
     void UnitTestAssert::retrieveAssert(
                     File& file,
-                    NATIVE_UINT_TYPE& lineNo,
-                    NATIVE_UINT_TYPE& numArgs,
+                    FwSizeType& lineNo,
+                    FwSizeType& numArgs,
                     FwAssertArgType& arg1,
                     FwAssertArgType& arg2,
                     FwAssertArgType& arg3,

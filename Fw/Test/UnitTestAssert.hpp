@@ -32,8 +32,8 @@ namespace Test {
             void doAssert();
             void reportAssert(
                     FILE_NAME_ARG file,
-                    NATIVE_UINT_TYPE lineNo,
-                    NATIVE_UINT_TYPE numArgs,
+                    FwSizeType lineNo,
+                    FwSizeType numArgs,
                     FwAssertArgType arg1,
                     FwAssertArgType arg2,
                     FwAssertArgType arg3,
@@ -44,8 +44,8 @@ namespace Test {
             // retrieves assertion failure values
             void retrieveAssert(
                 File& file,
-                NATIVE_UINT_TYPE& lineNo,
-                NATIVE_UINT_TYPE& numArgs,
+                FwSizeType& lineNo,
+                FwSizeType& numArgs,
                 FwAssertArgType& arg1,
                 FwAssertArgType& arg2,
                 FwAssertArgType& arg3,
@@ -62,8 +62,8 @@ namespace Test {
 
         private:
             File m_file;
-            NATIVE_UINT_TYPE m_lineNo;
-            NATIVE_UINT_TYPE m_numArgs;
+            FwSizeType m_lineNo;
+            FwSizeType m_numArgs;
             FwAssertArgType m_arg1;
             FwAssertArgType m_arg2;
             FwAssertArgType m_arg3;

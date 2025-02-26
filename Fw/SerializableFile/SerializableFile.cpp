@@ -50,7 +50,7 @@ namespace Fw {
 
     this->reset();
     SerializeStatus serStatus;
-    serStatus = this->m_buffer.setBuffLen(static_cast<NATIVE_UINT_TYPE>(length));
+    serStatus = this->m_buffer.setBuffLen(length);
     FW_ASSERT(FW_SERIALIZE_OK == serStatus, serStatus);
     serStatus = serializable.deserialize(this->m_buffer);
     if(FW_SERIALIZE_OK != serStatus) {

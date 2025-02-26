@@ -49,7 +49,7 @@ namespace Fw {
         return Fw::FW_SERIALIZE_OK;
     }
 
-    NATIVE_UINT_TYPE TlmPacket::getNumEntries() {
+    FwSizeType TlmPacket::getNumEntries() {
         return this->m_numEntries;
     }
 

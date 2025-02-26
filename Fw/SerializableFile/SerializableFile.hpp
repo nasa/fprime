@@ -42,7 +42,7 @@ namespace Fw {
     void reset();
     MemAllocator* m_allocator;
     bool m_recoverable; // don't care; for allocator
-    NATIVE_UINT_TYPE m_actualSize; // for checking
+    FwSizeType m_actualSize; // for checking
     SerialBuffer m_buffer;
   };
 }

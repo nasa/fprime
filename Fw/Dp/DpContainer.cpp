@@ -203,7 +203,7 @@ Utils::HashBuffer DpContainer::computeDataHash() const {
     FW_ASSERT(DATA_OFFSET + dataSize <= bufferSize, static_cast<FwAssertArgType>(DATA_OFFSET + dataSize),
               static_cast<FwAssertArgType>(bufferSize));
     Utils::HashBuffer computedHash;
-    Utils::Hash::hash(dataAddr, static_cast<NATIVE_INT_TYPE>(dataSize), computedHash);
+    Utils::Hash::hash(dataAddr, dataSize, computedHash);
     return computedHash;
 }
 

@@ -39,7 +39,7 @@ class MmapAllocator : public MemAllocator {
     void deallocate(const NATIVE_UINT_TYPE identifier, void* ptr);
 
   private:
-    NATIVE_UINT_TYPE m_length;
+    FwSizeType m_length;
 };
 
 } /* namespace Fw */

@@ -50,7 +50,7 @@ namespace Fw {
     }
 
     SerializeStatus AmpcsEvrLogPacket::deserialize(SerializeBufferBase& buffer) {
-        NATIVE_UINT_TYPE len;
+        FwSizeType len;
 
         SerializeStatus stat;
 
