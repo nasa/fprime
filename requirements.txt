@@ -41,7 +41,7 @@ idna==3.10
 importlib-metadata==6.7.0
 iniconfig==2.0.0
 itsdangerous==2.2.0
-Jinja2==3.1.4
+Jinja2==3.1.5
 legacy-cgi==2.6.1; python_version >= "3.13"
 lxml==5.3.0
 Markdown==3.7
@@ -72,6 +72,6 @@ tomli==2.0.1
 types-python-dateutil==2.9.0.20241003
 typing-extensions==4.12.2
 urllib3==1.26.20
-Werkzeug==3.0.4
-zipp==3.15.0
+Werkzeug==3.0.6
+zipp==3.19.1
 zstandard==0.23.0
