@@ -8,10 +8,9 @@
 
 #include "Svc/FrameAccumulator/FrameDetector.hpp"
 
-
 #include "Fw/Buffer/Buffer.hpp"
-#include "config/FpConfig.h"
 #include "Utils/Hash/Hash.hpp"
+#include "config/FpConfig.h"
 
 #include "config/FrameHeaderSerializableAc.hpp"
 #include "config/FrameTrailerSerializableAc.hpp"
@@ -51,7 +50,6 @@ class FprimeFrameDetector : public FrameDetector {
 }  // namespace Svc
 
 #endif  // SVC_FRAME_ACCUMULATOR_FRAME_DETECTOR_FPRIME_FRAME_DETECTOR
-
 
 //! fprime framing start word is a configurable type and matched against 0xdeadbeef as cast into the appropriate type
 // using FprimeStartWord = StartToken<FwFramingTokenType, static_cast<FwFramingTokenType>(0xdeadbeef)>;

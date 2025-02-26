@@ -30,7 +30,9 @@ void FprimeDeframer ::framedIn_handler(FwIndexType portNum, Fw::Buffer& data, Fw
 
     FW_ASSERT(data.getSize() >= FprimeProtocol::FrameHeader::SERIALIZED_SIZE + FprimeProtocol::FrameTrailer::SERIALIZED_SIZE);
 
+    // Shift data pointer to effectively remove the header
     data.setData(data.getData() + FprimeProtocol::FrameHeader::SERIALIZED_SIZE);
+    // Shrunk size to effectively remove the trailer (also removes the header)
     data.setSize(data.getSize() - FprimeProtocol::FrameHeader::SERIALIZED_SIZE - FprimeProtocol::FrameTrailer::SERIALIZED_SIZE);
 
     this->deframedOut_out(0, data, context);

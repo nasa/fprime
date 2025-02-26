@@ -8,9 +8,9 @@
 #define Svc_FrameAccumulator_HPP
 
 #include "Fw/Types/MemAllocator.hpp"
-#include "Utils/Types/CircularBuffer.hpp"
 #include "Svc/FrameAccumulator/FrameAccumulatorComponentAc.hpp"
 #include "Svc/FrameAccumulator/FrameDetector.hpp"
+#include "Utils/Types/CircularBuffer.hpp"
 
 namespace Svc {
 
@@ -31,11 +31,12 @@ class FrameAccumulator : public FrameAccumulatorComponentBase {
     //!
     //! Takes in parameters used in the Fw::MemAllocator pattern and configures a memory allocation for storing the
     //! circular buffer.
-    void configure(const FrameDetector& detector, //!< Frame detector helper instance
-                   NATIVE_UINT_TYPE allocationId,        //!< Identifier used  when dealing with the Fw::MemAllocator
-                   Fw::MemAllocator& allocator,          //!< Fw::MemAllocator used to acquire memory
-                   FwSizeType store_size                 //!< Size to request for circular buffer
+    void configure(const FrameDetector& detector,  //!< Frame detector helper instance
+                   NATIVE_UINT_TYPE allocationId,  //!< Identifier used  when dealing with the Fw::MemAllocator
+                   Fw::MemAllocator& allocator,    //!< Fw::MemAllocator used to acquire memory
+                   FwSizeType store_size           //!< Size to request for circular buffer
     );
+
   PRIVATE:
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
@@ -47,6 +48,7 @@ class FrameAccumulator : public FrameAccumulatorComponentBase {
     void dataIn_handler(FwIndexType portNum,  //!< The port number
                         Fw::Buffer& recvBuffer,
                         const Drv::RecvStatus& recvStatus) override;
+
   PRIVATE:
     //! \brief process raw buffer
     //! \return raw data buffer
@@ -69,7 +71,6 @@ class FrameAccumulator : public FrameAccumulatorComponentBase {
 
     //! Identification used with the memory allocator
     NATIVE_UINT_TYPE m_allocatorId;
-
 };
 
 }  // namespace Svc
