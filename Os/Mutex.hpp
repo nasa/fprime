@@ -14,11 +14,12 @@ struct MutexHandle {};
 
 class MutexInterface {
   public:
-    enum Status { 
-      OP_OK, //!<  Operation was successful
-      ERROR_BUSY, //!<  Mutex is busy
-      ERROR_DEADLOCK, //!< Deadlock condition detected
-      ERROR_OTHER //!< All other errors
+    enum Status {
+        OP_OK,           //!< Operation was successful
+        ERROR_BUSY,      //!< Mutex is busy
+        ERROR_DEADLOCK,  //!< Deadlock condition detected
+        NOT_SUPPORTED,   //!< Mutex does not support operation
+        ERROR_OTHER      //!< All other errors
     };
 
     //! \brief default constructor
@@ -97,7 +98,7 @@ class ScopeLock {
     ScopeLock& operator=(const ScopeLock& other) = delete;
 
   private:
-    Mutex& m_mutex; //!< Stores the mutex reference
+    Mutex& m_mutex;  //!< Stores the mutex reference
 };
 }  // namespace Os
 
