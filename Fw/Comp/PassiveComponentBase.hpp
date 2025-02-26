@@ -26,7 +26,7 @@ namespace Fw {
 
 #if FW_OBJECT_TO_STRING == 1
             virtual const char* getToStringFormatString(); //!< Return the format  for a generic component toString
-            void toString(char* str, NATIVE_INT_TYPE size) override; //!< returns string description of component
+            void toString(char* str, FwSizeType size) override; //!< returns string description of component
 #endif
         PRIVATE:
             U32 m_idBase; //!< ID base for opcodes etc.

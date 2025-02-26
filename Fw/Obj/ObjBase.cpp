@@ -44,7 +44,7 @@ namespace Fw {
         this->m_objName = name;
     }
 #if FW_OBJECT_TO_STRING == 1
-    void ObjBase::toString(char* str, NATIVE_INT_TYPE size) {
+    void ObjBase::toString(char* str, FwSizeType size) {
         FW_ASSERT(size > 0);
         FW_ASSERT(str != nullptr);
         Fw::FormatStatus formatStatus = Fw::ExternalString(str, static_cast<Fw::ExternalString::SizeType>(size)).format("Obj: %s", this->m_objName.toChar());

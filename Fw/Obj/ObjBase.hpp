@@ -61,7 +61,7 @@ namespace Fw {
             //!
             //!  \param str destination buffer where string description is placed
             //!  \param size destination buffer size (including terminator). String should be terminated
-            virtual void toString(char* str, NATIVE_INT_TYPE size); //!< virtual method to get description of object
+            virtual void toString(char* str, FwSizeType size); //!< virtual method to get description of object
 #endif // FW_OBJECT_TO_STRING
 #endif // FW_OBJECT_NAMES
 

@@ -35,7 +35,7 @@ namespace Fw {
 #if FW_OBJECT_TO_STRING
             virtual const char* getToStringFormatString(); //!< Get format string for toString call
 
-            void toString(char* str, NATIVE_INT_TYPE size) override; //!< Unified port toString method
+            void toString(char* str, FwSizeType size) override; //!< Unified port toString method
 #endif
 
 
