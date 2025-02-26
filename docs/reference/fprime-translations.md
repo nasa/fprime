@@ -1,4 +1,4 @@
-# F PRime Translation Guide: Software Engineering Terminology to F Prime Nomenclature
+# F Prime Translation Guide: Software Engineering Terminology to F Prime Nomenclature
 
 This guide provides a mapping between common software engineering concepts and their equivalent implementations in the F´ framework. It serves as a reference for developers new to F´ development.
 
@@ -7,7 +7,7 @@ This guide provides a mapping between common software engineering concepts and t
 | Software Concept | F Prime Equivalent | Notes |
 |-----------------|-------------------|--------|
 | String | Fw::String | Safe string implementation with size limits |
-| Buffer | Fw::Buffer | Memory buffer with size tracking |
+| Buffer | [Fw::Buffer](../../Fw/Buffer/docs/sdd.md) | Memory buffer with size tracking |
 | Queue | Os::Queue | Thread-safe queue implementation |
 
 > [!NOTE]
@@ -33,8 +33,8 @@ This guide provides a mapping between common software engineering concepts and t
 |-----------------|-------------------|--------|
 | Stack Allocation | Local variables | Standard stack allocation |
 | Heap Allocation | Fw::MemAllocator | Managed heap allocation |
-| Memory Pooling | Svc::BufferManager | Fixed-size buffer management |
-| Smart Pointer | Fw::Buffer | Buffer containing pointer, size, and context |
+| Memory Pooling | [Svc::BufferManager](../../Svc/BufferManager/docs/sdd.md) | Fixed-size buffer management |
+| Smart Pointer | [Fw::Buffer](../../Fw/Buffer/docs/sdd.md) | Buffer containing pointer, size, and context |
 
 ## System Architecture
 
