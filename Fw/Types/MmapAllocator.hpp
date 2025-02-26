@@ -31,12 +31,12 @@ class MmapAllocator : public MemAllocator {
     //! \param identifier: identifier to use with allocation
     //! \param size: size of memory to be allocated
     //! \param recoverable: (output) is this memory recoverable after a reset. Always false for mmap.
-    void* allocate(const NATIVE_UINT_TYPE identifier, FwSizeType& size, bool& recoverable);
+    void* allocate(const FwEnumStoreType identifier, FwSizeType& size, bool& recoverable);
 
     //! Deallocation of memory using the mmap allocator
     //! \param identifier: identifier used at allocation
     //! \param ptr: pointer to memory being deallocated
-    void deallocate(const NATIVE_UINT_TYPE identifier, void* ptr);
+    void deallocate(const FwEnumStoreType identifier, void* ptr);
 
   private:
     FwSizeType m_length;
