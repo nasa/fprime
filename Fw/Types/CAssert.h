@@ -28,8 +28,7 @@ extern "C" {
 #define FW_CASSERT(cond) ((void)((cond) ? (0) : (CAssert0((FILE_NAME_ARG)(__FILE__), __LINE__))))
 #endif
 
-I32 CAssert0(FILE_NAME_ARG file, U32 lineNo);                        //!< C assert function
-I32 CAssert1(FILE_NAME_ARG file, U32 lineNo, NATIVE_INT_TYPE arg1);  //!< C assert function 1
+I8 CAssert0(FILE_NAME_ARG file, FwSizeType lineNo);  //!< C assert function
 
 #endif  // ASSERT is defined
 
