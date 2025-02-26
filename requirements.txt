@@ -73,5 +73,5 @@ types-python-dateutil==2.9.0.20241003
 typing-extensions==4.12.2
 urllib3==1.26.20
 Werkzeug==3.0.4
-zipp==3.15.0
+zipp==3.19.1
 zstandard==0.23.0
