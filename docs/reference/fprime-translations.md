@@ -1,4 +1,4 @@
-# F´ Translation Guide: Software Engineering to F Prime Nomenclature
+# F PRime Translation Guide: Software Engineering Terminology to F Prime Nomenclature
 
 This guide provides a mapping between common software engineering concepts and their equivalent implementations in the F´ framework. It serves as a reference for developers new to F´ development.
 
@@ -6,20 +6,26 @@ This guide provides a mapping between common software engineering concepts and t
 
 | Software Concept | F Prime Equivalent | Notes |
 |-----------------|-------------------|--------|
-| Queue | Os::Queue | Thread-safe queue implementation |
 | String | Fw::String | Safe string implementation with size limits |
 | Buffer | Fw::Buffer | Memory buffer with size tracking |
+| Queue | Os::Queue | Thread-safe queue implementation |
+
+> [!NOTE]
+> `Os::Queue` is rarely used directly but rather is used via `async` port calls.
 
 ## Communication & Synchronization
 
 | Software Concept | F Prime Equivalent | Notes |
 |-----------------|-------------------|--------|
 | Function Call | Synchronous Port | Direct component-to-component calls |
-| Callback | Port Registration | Components register ports for callbacks |
-| Event Loop | Active Component | Components with their own execution thread |
 | Message Queue | Async Port | Asynchronous component communication supported by a queue |
+| Event Loop | Active Component | Components with their own execution thread |
 | Mutex | Os::Mutex | Thread synchronization primitive |
 | Thread | Os::Task | OS task abstraction |
+
+
+> [!NOTE]
+> `Os::Task` is rarely used directly but rather is contained  within `active` components.
 
 ## Memory Management
 
@@ -27,7 +33,7 @@ This guide provides a mapping between common software engineering concepts and t
 |-----------------|-------------------|--------|
 | Stack Allocation | Local variables | Standard stack allocation |
 | Heap Allocation | Fw::MemAllocator | Managed heap allocation |
-| Memory Pool | Svc::BufferManager | Fixed-size buffer management |
+| Memory Pooling | Svc::BufferManager | Fixed-size buffer management |
 | Smart Pointer | Fw::Buffer | Buffer containing pointer, size, and context |
 
 ## System Architecture
@@ -35,10 +41,10 @@ This guide provides a mapping between common software engineering concepts and t
 | Software Concept | F Prime Equivalent | Notes |
 |-----------------|-------------------|--------|
 | Module | Component | Basic unit of functionality |
-| Interface | Port | Component communication interface |
-| Service | Service Component | Components providing system services |
+| Interface | Port(s) | Component communication interface |
+| System Service | Service Component | Components providing system services |
 | Driver | Driver Component | Hardware abstraction components |
-| Configuration | Parameters | Component configuration management via ground-commanded parameters |
+| Runtime Configuration | Parameters | Component configuration management via ground-commanded parameters |
 
 ## Error Handling
 
