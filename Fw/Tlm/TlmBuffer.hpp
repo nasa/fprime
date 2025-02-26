@@ -25,7 +25,7 @@ namespace Fw {
                 SERIALIZED_SIZE = FW_TLM_BUFFER_MAX_SIZE + sizeof(FwBuffSizeType)
             };
 
-            TlmBuffer(const U8 *args, NATIVE_UINT_TYPE size);
+            TlmBuffer(const U8 *args, FwSizeType size);
             TlmBuffer();
             TlmBuffer(const TlmBuffer& other);
             virtual ~TlmBuffer();

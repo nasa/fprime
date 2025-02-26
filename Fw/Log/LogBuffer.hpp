@@ -26,7 +26,7 @@ namespace Fw {
                 SERIALIZED_SIZE = FW_LOG_BUFFER_MAX_SIZE + sizeof(FwBuffSizeType)
             };
 
-            LogBuffer(const U8 *args, NATIVE_UINT_TYPE size);
+            LogBuffer(const U8 *args, FwSizeType size);
             LogBuffer();
             LogBuffer(const LogBuffer& other);
             virtual ~LogBuffer();

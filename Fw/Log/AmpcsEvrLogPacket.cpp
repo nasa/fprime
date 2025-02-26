@@ -75,7 +75,7 @@ namespace Fw {
             return stat;
         }
 
-        NATIVE_UINT_TYPE size = buffer.getBuffLeft();
+        FwSizeType size = buffer.getBuffLeft();
         stat = buffer.deserialize(this->m_logBuffer.getBuffAddr(),size,true);
         if (stat == FW_SERIALIZE_OK) {
             // Shouldn't fail

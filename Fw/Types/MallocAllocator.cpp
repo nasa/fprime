@@ -19,7 +19,7 @@ MallocAllocator::MallocAllocator() {}
 
 MallocAllocator::~MallocAllocator() {}
 
-void* MallocAllocator::allocate(const NATIVE_UINT_TYPE identifier, NATIVE_UINT_TYPE& size, bool& recoverable) {
+void* MallocAllocator::allocate(const NATIVE_UINT_TYPE identifier, FwSizeType& size, bool& recoverable) {
     // don't use identifier
     // heap memory is never recoverable
     recoverable = false;

@@ -97,7 +97,7 @@ namespace Fw {
     }
 
             // extract telemetry value
-    SerializeStatus TlmPacket::extractValue(FwChanIdType &id, Time& timeTag, TlmBuffer& buffer, NATIVE_UINT_TYPE bufferSize) {
+    SerializeStatus TlmPacket::extractValue(FwChanIdType &id, Time& timeTag, TlmBuffer& buffer, FwSizeType bufferSize) {
 
         // deserialize items out of buffer
 
@@ -147,7 +147,7 @@ namespace Fw {
             return stat;
         }
         // deserialize the channel value entry buffers
-        NATIVE_UINT_TYPE size = buffer.getBuffLeft();
+        FwSizeType size = buffer.getBuffLeft();
         stat = buffer.deserialize(this->m_tlmBuffer.getBuffAddr(),size,true);
         if (stat == FW_SERIALIZE_OK) {
             // Shouldn't fail

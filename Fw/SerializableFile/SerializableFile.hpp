@@ -32,7 +32,7 @@ namespace Fw {
     };
 
     // NOTE!: This should not be used with an allocator that can return a smaller buffer than requested
-    SerializableFile(MemAllocator* allocator, NATIVE_UINT_TYPE maxSerializedSize);
+    SerializableFile(MemAllocator* allocator, FwSizeType maxSerializedSize);
     ~SerializableFile();
 
     Status load(const char* fileName, Serializable& serializable);

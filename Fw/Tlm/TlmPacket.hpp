@@ -31,7 +31,7 @@ namespace Fw {
             SerializeStatus addValue(FwChanIdType id, Time& timeTag, TlmBuffer& buffer);
             //! extract telemetry value - since there are potentially multiple channel values in the packet, 
             //! the size of the entry must be known
-            SerializeStatus extractValue(FwChanIdType &id, Time& timeTag, TlmBuffer& buffer, NATIVE_UINT_TYPE bufferSize);
+            SerializeStatus extractValue(FwChanIdType &id, Time& timeTag, TlmBuffer& buffer, FwSizeType bufferSize);
 
             //! Reset serialization of values. This should be done when starting to accumulate a new set of values.
             SerializeStatus resetPktSer(); 

@@ -25,7 +25,7 @@ namespace Fw {
                 SERIALIZED_SIZE = FW_COM_BUFFER_MAX_SIZE + sizeof(FwBuffSizeType)  // size of buffer + storage of size word
             };
 
-            ComBuffer(const U8 *args, NATIVE_UINT_TYPE size);
+            ComBuffer(const U8 *args, FwSizeType size);
             ComBuffer();
             ComBuffer(const ComBuffer& other);
             virtual ~ComBuffer();

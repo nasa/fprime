@@ -37,7 +37,7 @@ class MallocAllocator : public MemAllocator {
      * \param recoverable - flag to indicate the memory could be recoverable (always set to false)
      * \return the pointer to memory. Zero if unable to allocate.
      */
-    void* allocate(const NATIVE_UINT_TYPE identifier, NATIVE_UINT_TYPE& size, bool& recoverable);
+    void* allocate(const NATIVE_UINT_TYPE identifier, FwSizeType& size, bool& recoverable);
     //! Deallocate memory
     /*!
      * \param identifier the memory segment identifier (not used)

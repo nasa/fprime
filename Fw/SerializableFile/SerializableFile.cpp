@@ -16,7 +16,7 @@
 
 namespace Fw {
 
-  SerializableFile::SerializableFile(MemAllocator* allocator, NATIVE_UINT_TYPE maxSerializedSize) :
+  SerializableFile::SerializableFile(MemAllocator* allocator, FwSizeType maxSerializedSize) :
     m_allocator(allocator),
     m_recoverable(false), // for compiler; not used
     m_actualSize(maxSerializedSize),

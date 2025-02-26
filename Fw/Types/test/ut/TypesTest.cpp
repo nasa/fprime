@@ -1223,7 +1223,7 @@ TEST(AllocatorTest, MallocAllocatorTest) {
     // Since it is a wrapper around malloc, the test consists of requesting
     // memory and verifying a non-zero pointer, unchanged size, and not recoverable.
     Fw::MallocAllocator allocator;
-    NATIVE_UINT_TYPE size = 100;  // one hundred bytes
+    FwSizeType size = 100;  // one hundred bytes
     bool recoverable;
     void* ptr = allocator.allocate(10, size, recoverable);
     ASSERT_EQ(100, size);

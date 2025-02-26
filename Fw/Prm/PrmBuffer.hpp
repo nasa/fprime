@@ -32,7 +32,7 @@ namespace Fw {
                 SERIALIZED_SIZE = FW_PARAM_BUFFER_MAX_SIZE + sizeof(FwBuffSizeType)
             };
 
-            ParamBuffer(const U8 *args, NATIVE_UINT_TYPE size);
+            ParamBuffer(const U8 *args, FwSizeType size);
             ParamBuffer();
             ParamBuffer(const ParamBuffer& other);
             virtual ~ParamBuffer();
