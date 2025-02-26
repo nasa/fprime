@@ -1,7 +1,7 @@
 /**
  * \brief DefaultTypes.hpp provides fallback defaults for the platform types
  *
- * This fill contains default implementations for types typically defined in
+ * This file contains default implementations for types typically defined in
  * PlatformTypes.hpp. These default implementations are based on x86_64 Linux
  * but are often appropriate for most systems.
  */
