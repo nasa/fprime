@@ -14,7 +14,8 @@ module Os {
         SEND_ERROR,        @<  message send error
         RECEIVE_ERROR,     @<  message receive error
         INVALID_PRIORITY,  @<  invalid priority requested
-        FULL,              @<  queue was full when attempting to send a message
+        FULL,              @<  Queue was full when attempting to send a message
+        NOT_SUPPORTED,     @<  Queue feature is not supported
         UNKNOWN_ERROR      @<  Unexpected error; can't match with returns
     }
 
