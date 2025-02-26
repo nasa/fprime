@@ -34,12 +34,12 @@ namespace Fw {
     PassiveComponentBase::~PassiveComponentBase() {
     }
 
-    void PassiveComponentBase::init(NATIVE_INT_TYPE instance) {
+    void PassiveComponentBase::init(FwEnumStoreType instance) {
         ObjBase::init();
         this->m_instance = instance;
     }
 
-    NATIVE_INT_TYPE PassiveComponentBase::getInstance() const {
+    FwEnumStoreType PassiveComponentBase::getInstance() const {
         return this->m_instance;
     }
 
