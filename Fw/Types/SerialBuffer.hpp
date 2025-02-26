@@ -53,13 +53,13 @@ class SerialBuffer : public SerializeBufferBase {
     void fill();
 
     //! Push n bytes onto the buffer
-    SerializeStatus pushBytes(const U8* const addr,     //!< Address of bytes to push
-                              const NATIVE_UINT_TYPE n  //!< Number of bytes
+    SerializeStatus pushBytes(const U8* const addr, //!< Address of bytes to push
+                              const FwSizeType n    //!< Number of bytes
     );
 
     //! Pop n bytes off the buffer
-    SerializeStatus popBytes(U8* const addr,     //!< Address of bytes to pop
-                             NATIVE_UINT_TYPE n  //!< Number of bytes to pop
+    SerializeStatus popBytes(U8* const addr, //!< Address of bytes to pop
+                             FwSizeType n    //!< Number of bytes to pop
     );
 
   private:

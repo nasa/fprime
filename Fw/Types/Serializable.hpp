@@ -25,7 +25,7 @@ class SerializeBufferBase;  //!< forward declaration
 class Serializable {
   public:
     // Size type for backwards compatibility
-    using SizeType = NATIVE_UINT_TYPE;
+    using SizeType = FwSizeType;
 
   public:
     virtual SerializeStatus serialize(SerializeBufferBase& buffer) const = 0;  //!< serialize contents
