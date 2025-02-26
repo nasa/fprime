@@ -29,7 +29,7 @@ namespace Fw {
         return *this;
     }
 
-    NATIVE_UINT_TYPE ParamBuffer::getBuffCapacity() const {
+    FwSizeType ParamBuffer::getBuffCapacity() const {
         return sizeof(this->m_bufferData);
     }
 

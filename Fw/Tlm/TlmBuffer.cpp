@@ -29,7 +29,7 @@ namespace Fw {
         return *this;
     }
 
-    NATIVE_UINT_TYPE TlmBuffer::getBuffCapacity() const {
+    FwSizeType TlmBuffer::getBuffCapacity() const {
         return sizeof(this->m_bufferData);
     }
 

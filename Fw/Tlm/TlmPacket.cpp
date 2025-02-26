@@ -63,7 +63,7 @@ namespace Fw {
 
     SerializeStatus TlmPacket::addValue(FwChanIdType id, Time& timeTag, TlmBuffer& buffer) {
         // check to make sure there is room for all the fields
-        NATIVE_UINT_TYPE left = this->m_tlmBuffer.getBuffCapacity()-this->m_tlmBuffer.getBuffLength();
+        FwSizeType left = this->m_tlmBuffer.getBuffCapacity()-this->m_tlmBuffer.getBuffLength();
         if (
             (sizeof(FwChanIdType) + Time::SERIALIZED_SIZE + buffer.getBuffLength()) > left
         ) {

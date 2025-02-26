@@ -32,7 +32,7 @@ namespace Fw {
             virtual ~CmdArgBuffer();  //!< destructor
             CmdArgBuffer& operator=(const CmdArgBuffer& other);  //!< Equal operator
 
-            NATIVE_UINT_TYPE getBuffCapacity() const;  //!< return capacity of buffer (how much it can hold)
+            FwSizeType getBuffCapacity() const;  //!< return capacity of buffer (how much it can hold)
             U8* getBuffAddr();  //!< return address of buffer (non const version)
             const U8* getBuffAddr() const;  //!< return address of buffer (const version)
 

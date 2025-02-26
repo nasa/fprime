@@ -38,7 +38,7 @@ class SerialBuffer : public SerializeBufferBase {
     // Pure virtual methods from SerializeBufferBase
     // ----------------------------------------------------------------------
 
-    NATIVE_UINT_TYPE getBuffCapacity() const;
+    FwSizeType getBuffCapacity() const;
 
     U8* getBuffAddr();
 
