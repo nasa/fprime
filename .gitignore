@@ -27,6 +27,7 @@ RemoteSystemsTempFiles
 Dict
 *.core
 
+**/coverage/
 *.gcov
 !**/test/ut/output/*.gcov
 GTestBase.*
