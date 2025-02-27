@@ -103,7 +103,7 @@ namespace Svc {
         //! Give the class a memory buffer. Should be called after constructor
         //! and init, but before task is spawned.
         void allocateQueue(
-                NATIVE_INT_TYPE identifier, Fw::MemAllocator& allocator,
+                FwEnumStoreType identifier, Fw::MemAllocator& allocator,
                 NATIVE_UINT_TYPE maxNumBuffers  //!< The maximum number of buffers
                 );
 
@@ -204,7 +204,7 @@ namespace Svc {
         U32 m_cmdSeq;
 
         //! The allocator ID
-        NATIVE_INT_TYPE m_allocatorId;
+        FwEnumStoreType m_allocatorId;
     };
 
 }  // namespace Svc

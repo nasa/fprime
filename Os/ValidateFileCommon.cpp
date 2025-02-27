@@ -78,7 +78,7 @@ namespace Os {
         if( File::OP_OK != status ) {
             return status;
         }
-        if( size != static_cast<FwSignedSizeType>(hashBuffer.getBuffCapacity()) ) {
+        if(static_cast<FwSizeType>(size) != hashBuffer.getBuffCapacity()) {
             return File::BAD_SIZE;
         }
         hashFile.close();
@@ -105,7 +105,7 @@ namespace Os {
         if( File::OP_OK != status ) {
             return status;
         }
-        if( size != static_cast<FwSignedSizeType>(hashBuffer.getBuffLength()) ) {
+        if(static_cast<FwSizeType>(size) != hashBuffer.getBuffLength()) {
             return File::BAD_SIZE;
         }
         hashFile.close();

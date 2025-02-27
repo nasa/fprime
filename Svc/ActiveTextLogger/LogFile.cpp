@@ -68,7 +68,7 @@ namespace Svc {
                 FW_ASSERT(stat != Os::File::NOT_OPENED);
 
                 // Only return a good status if the write was valid
-                status = (static_cast<FwSizeType>(writeSize) == size);
+                status = (stat == Os::File::OP_OK) && (static_cast<FwSizeType>(writeSize) == size);
 
                 this->m_currentFileSize += static_cast<FwSizeType>(writeSize);
             }
