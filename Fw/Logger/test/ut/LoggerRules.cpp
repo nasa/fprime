@@ -128,7 +128,7 @@ bool LogGoodStringObject::precondition(const MockLogging::FakeLogger& truth) {
 void LogGoodStringObject::action(MockLogging::FakeLogger& truth) {
     Fw::String my_string;
     U32 random = STest::Pick::lowerUpper(0, my_string.getCapacity() - 1);
-    for (int i = 0; i < random; ++i) {
+    for (U32 i = 0; i < random; ++i) {
         const_cast<char*>(my_string.toChar())[i] =
             static_cast<char>(STest::Pick::lowerUpper(0, std::numeric_limits<unsigned char>::max()));
     }

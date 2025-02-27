@@ -1215,7 +1215,7 @@ TEST(PerformanceTest, F64SerPerfTest) {
 
     timer.stop();
 
-    printf("%d iterations took %d us (%f us each).\n", iters, timer.getDiffUsec(),
+    printf("%" PRI_FwSizeType " iterations took %d us (%f us each).\n", iters, timer.getDiffUsec(),
            static_cast<F32>(timer.getDiffUsec()) / static_cast<F32>(iters));
 }
 

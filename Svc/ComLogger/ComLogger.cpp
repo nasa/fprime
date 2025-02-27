@@ -223,7 +223,7 @@ namespace Svc {
       serialLength.serialize(size);
       if(this->writeToFile(serialLength.getBuffAddr(),
               static_cast<U16>(serialLength.getBuffLength()))) {
-        this->m_byteCount += serialLength.getBuffLength();
+        this->m_byteCount += static_cast<U32>(serialLength.getBuffLength());
       }
       else {
         return;
