@@ -9,7 +9,7 @@ namespace Utils {
 
 HashBuffer::HashBuffer() {}
 
-HashBuffer::HashBuffer(const U8* args, NATIVE_UINT_TYPE size) : Fw::SerializeBufferBase() {
+HashBuffer::HashBuffer(const U8* args, FwSizeType size) : Fw::SerializeBufferBase() {
     Fw::SerializeStatus stat = Fw::SerializeBufferBase::setBuff(args, size);
     FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
 }
@@ -51,7 +51,7 @@ U8* HashBuffer::getBuffAddr() {
     return this->m_bufferData;
 }
 
-NATIVE_UINT_TYPE HashBuffer::getBuffCapacity() const {
+FwSizeType HashBuffer::getBuffCapacity() const {
     return sizeof(this->m_bufferData);
 }
 

@@ -85,7 +85,7 @@ namespace Svc
 
         void setup(
             NATIVE_UINT_TYPE mgrID,      //!< ID of manager for buffer checking
-            NATIVE_UINT_TYPE memID,      //!< Memory segment identifier
+            FwEnumStoreType memID,      //!< Memory segment identifier
             Fw::MemAllocator &allocator, //!< memory allocator. MUST be persistent for later deallocation.
                                          //!  MUST persist past destructor if cleanup() not called explicitly.
             const BufferBins &bins       //!< Set of user bins
@@ -141,7 +141,7 @@ namespace Svc
 
         AllocatedBuffer *m_buffers;    //!< pointer to allocated buffer space
         Fw::MemAllocator *m_allocator; //!< allocator for memory
-        NATIVE_UINT_TYPE m_memId; //!< identifier for allocator
+        FwEnumStoreType m_memId; //!< identifier for allocator
         NATIVE_UINT_TYPE m_numStructs; //!< number of allocated structs
 
         // stats

@@ -30,7 +30,7 @@ class SerialBuffer : public SerializeBufferBase {
     //! Construct a SerialBuffer
     //!
     SerialBuffer(U8* const data,     //!< Pointer to the data
-                 const U32 capacity  //!< The buffer capacity
+                 const FwSizeType capacity  //!< The buffer capacity
     );
 
   public:
@@ -71,7 +71,7 @@ class SerialBuffer : public SerializeBufferBase {
     U8* const m_data;
 
     //! The capacity
-    const U32 m_capacity;
+    const FwSizeType m_capacity;
 };
 
 }  // namespace Fw

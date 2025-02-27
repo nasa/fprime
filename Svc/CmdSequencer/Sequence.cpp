@@ -75,9 +75,9 @@ namespace Svc {
 
     void CmdSequencerComponentImpl::Sequence ::
       allocateBuffer(
-          NATIVE_INT_TYPE identifier,
+          FwEnumStoreType identifier,
           Fw::MemAllocator& allocator,
-          NATIVE_UINT_TYPE bytes
+          FwSizeType bytes
       )
     {
         // has to be at least as big as a header
@@ -85,7 +85,7 @@ namespace Svc {
         bool recoverable;
         this->m_allocatorId = identifier;
         this->m_buffer.setExtBuffer(
-            static_cast<U8*>(allocator.allocate(static_cast<NATIVE_UINT_TYPE>(identifier),bytes,recoverable)),
+            static_cast<U8*>(allocator.allocate(identifier,bytes,recoverable)),
             bytes
         );
     }
@@ -94,7 +94,7 @@ namespace Svc {
       deallocateBuffer(Fw::MemAllocator& allocator)
     {
         allocator.deallocate(
-            static_cast<NATIVE_UINT_TYPE>(this->m_allocatorId),
+            this->m_allocatorId,
             this->m_buffer.getBuffAddr()
         );
         this->m_buffer.clear();

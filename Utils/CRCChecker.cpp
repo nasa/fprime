@@ -67,7 +67,7 @@ static_assert(FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING,
         return  FAILED_FILE_READ;
       }
 
-      hash.update(block_data, static_cast<NATIVE_INT_TYPE>(bytes_to_read));
+      hash.update(block_data, static_cast<FwSizeType>(bytes_to_read));
     }
 
     remaining_bytes = int_file_size % CRC_FILE_READ_BLOCK;
@@ -81,7 +81,7 @@ static_assert(FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING,
         return FAILED_FILE_READ;
       }
 
-      hash.update(block_data, static_cast<NATIVE_INT_TYPE>(remaining_bytes));
+      hash.update(block_data, static_cast<FwSizeType>(remaining_bytes));
     }
 
     // close file
@@ -150,7 +150,7 @@ static_assert(FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING,
 
     FwSignedSizeType i;
     FwSignedSizeType blocks;
-    PlatformIntType remaining_bytes;
+    FwSignedSizeType remaining_bytes;
     FwSignedSizeType filesize;
     Os::File f;
     Os::FileSystem::Status fs_stat;
@@ -168,7 +168,7 @@ static_assert(FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING,
       return FAILED_FILE_SIZE;
     }
 
-    int_file_size = static_cast<NATIVE_INT_TYPE>(filesize);
+    int_file_size = static_cast<FwSignedSizeType>(filesize);
     if(static_cast<FwSignedSizeType>(int_file_size) != filesize)
     {
       return FAILED_FILE_SIZE_CAST;
@@ -193,10 +193,10 @@ static_assert(FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING,
         return  FAILED_FILE_READ;
       }
 
-      hash.update(block_data, static_cast<NATIVE_INT_TYPE>(bytes_to_read));
+      hash.update(block_data, static_cast<FwSizeType>(bytes_to_read));
     }
 
-    remaining_bytes = static_cast<PlatformIntType>(int_file_size % CRC_FILE_READ_BLOCK);
+    remaining_bytes = int_file_size % CRC_FILE_READ_BLOCK;
     bytes_to_read = remaining_bytes;
     if(remaining_bytes > 0)
     {
@@ -207,7 +207,7 @@ static_assert(FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING,
         return FAILED_FILE_READ;
       }
 
-      hash.update(block_data, remaining_bytes);
+      hash.update(block_data, static_cast<FwSizeType>(remaining_bytes));
     }
 
     // close file

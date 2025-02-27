@@ -55,7 +55,7 @@ namespace Svc {
         Fw::FileNameString directories[DP_MAX_DIRECTORIES],
         FwSizeType numDirs,
         Fw::FileNameString& stateFile,
-        NATIVE_UINT_TYPE memId,
+        FwEnumStoreType memId,
         Fw::MemAllocator& allocator
     ) {
 
@@ -302,7 +302,10 @@ namespace Svc {
                 // Should always fit
                 FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat,serStat);
                 // write the entry
-                FwSignedSizeType size = entryBuffer.getBuffLength();
+                FwSizeType unsignedSize = entryBuffer.getBuffLength();
+                // Protect against overflow
+                FW_ASSERT(unsignedSize < std::numeric_limits<FwSignedSizeType>::max(), static_cast<FwAssertArgType>(unsignedSize));
+                FwSignedSizeType size = static_cast<FwSignedSizeType>(unsignedSize);
                 stat = stateFile.write(buffer, size);
                 if (stat != Os::File::OP_OK) {
                     this->log_WARNING_HI_StateFileWriteError(this->m_stateFile, stat);
@@ -348,7 +351,10 @@ namespace Svc {
         // should fit
         FW_ASSERT(serStat == Fw::FW_SERIALIZE_OK,serStat);
         // write the entry
-        FwSignedSizeType size = entryBuffer.getBuffLength();
+        FwSizeType unsignedSize = entryBuffer.getBuffLength();
+        // Protect against overflow
+        FW_ASSERT(unsignedSize < std::numeric_limits<FwSignedSizeType>::max(), static_cast<FwAssertArgType>(unsignedSize));
+        FwSignedSizeType size = static_cast<FwSignedSizeType>(unsignedSize);
         stat = stateFile.write(buffer, size);
         if (stat != Os::File::OP_OK) {
             this->log_WARNING_HI_StateFileWriteError(this->m_stateFile, stat);

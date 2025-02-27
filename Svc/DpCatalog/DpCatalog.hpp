@@ -49,7 +49,7 @@ namespace Svc {
             Fw::FileNameString directories[DP_MAX_DIRECTORIES],
             FwSizeType numDirs,
             Fw::FileNameString& stateFile,
-            NATIVE_UINT_TYPE memId,
+            FwEnumStoreType memId,
             Fw::MemAllocator& allocator
         );
 
@@ -240,9 +240,9 @@ namespace Svc {
         DpDstateFileEntry* m_stateFileData; //!< DP state loaded from file
         FwSizeType m_stateFileEntries; //!< size of state file data
 
-        NATIVE_UINT_TYPE m_memSize; //!< size of allocated buffer
+        FwSizeType m_memSize; //!< size of allocated buffer
         void* m_memPtr; //!< stored for shutdown
-        NATIVE_UINT_TYPE m_allocatorId; //!< stored for shutdown
+        FwEnumStoreType m_allocatorId; //!< stored for shutdown
         Fw::MemAllocator* m_allocator; //!< stored for shutdown
 
         bool m_xmitInProgress; //!< set if DP files are in the process of being sent

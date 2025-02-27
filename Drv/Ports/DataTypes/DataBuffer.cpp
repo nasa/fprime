@@ -29,7 +29,7 @@ namespace Drv {
         return *this;
     }
 
-    NATIVE_UINT_TYPE DataBuffer::getBuffCapacity() const {
+    FwSizeType DataBuffer::getBuffCapacity() const {
         return sizeof(this->m_data);
     }
 
