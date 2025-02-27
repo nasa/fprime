@@ -9,8 +9,6 @@
 // acknowledged.
 // ======================================================================
 
-
-#include <sys/cdefs.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>

@@ -24,6 +24,7 @@ class ConditionVariableInterface {
         ERROR_MUTEX_NOT_HELD,   //!< When trying to wait but we don't hold the mutex
         ERROR_DIFFERENT_MUTEX,  //!< When trying to use a different mutex than expected mutex
         ERROR_NOT_IMPLEMENTED,  //!< When trying to use a feature that isn't implemented
+        NOT_SUPPORTED,          //!< ConditionVariable does not support operation
         ERROR_OTHER             //!< All other errors
     };
 

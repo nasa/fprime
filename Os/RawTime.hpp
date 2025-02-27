@@ -6,29 +6,27 @@
 #define OS_RAWTIME_HPP_
 
 #include <FpConfig.hpp>
-#include <Fw/Types/Serializable.hpp>
 #include <Fw/Time/TimeInterval.hpp>
+#include <Fw/Types/Serializable.hpp>
 #include <Os/Os.hpp>
-
 
 namespace Os {
 
 struct RawTimeHandle {};
 
-class RawTime; // Forward declaration
+class RawTime;  // Forward declaration
 
 class RawTimeInterface : public Fw::Serializable {
-  
   public:
-
     // Serialization size for RawTime objects, configured in config/FpConfig.h
     static const FwSizeType SERIALIZED_SIZE = FW_RAW_TIME_SERIALIZATION_MAX_SIZE;
 
     enum Status {
-      OP_OK, //!<  Operation was successful
-      OP_OVERFLOW, //!< Operation result caused an overflow
-      INVALID_PARAMS, //!< Parameters invalid for current platform
-      OTHER_ERROR //!< All other errors
+        OP_OK,           //!< Operation was successful
+        OP_OVERFLOW,     //!< Operation result caused an overflow
+        INVALID_PARAMS,  //!< Parameters invalid for current platform
+        NOT_SUPPORTED,   //!< RawTime does not support operation
+        OTHER_ERROR      //!< All other errors
     };
 
     //! \brief default constructor
@@ -42,7 +40,8 @@ class RawTimeInterface : public Fw::Serializable {
     virtual RawTimeHandle* getHandle() = 0;
 
     //! \brief provide a pointer to a RawTime delegate object
-    static RawTimeInterface* getDelegate(RawTimeHandleStorage& aligned_new_memory, const RawTimeInterface* to_copy=nullptr);
+    static RawTimeInterface* getDelegate(RawTimeHandleStorage& aligned_new_memory,
+                                         const RawTimeInterface* to_copy = nullptr);
 
     // ------------------------------------------------------------------
     // RawTime operations to be implemented by an OSAL implementation
