@@ -8,13 +8,13 @@ body:
 
         Please use this form to submit an F Prime pattern you would like to see documented.
 
-        This work is funded through NASA ROSES.
+        This work is funded through a [NASA ROSES grant](https://github.com/nasa/fprime/discussions/3041).
         
         > [!TIP]
         > The above **Title** may be the only thing the community sees when voting on your pattern.
 
         ### Instructions
-           1. Title: **Summerize** the pattern. Be as clear and consise as possible.
+           1. Title: **Summarize** the pattern. Be as clear and concise as possible.
            2. Pattern: Describe **what** you want documented. 
            3. Rationale: (Optional) Describe **why** you want it documented.
   - type: textarea
@@ -33,7 +33,7 @@ body:
     id: rationale
     attributes:
       label: Rationale
-      description: "(Optional) Describe wht you want it documented. Sell it to the community."
+      description: "(Optional) Describe why you want it documented. Sell it to the community."
     validations:
       required: false
   - type: markdown
