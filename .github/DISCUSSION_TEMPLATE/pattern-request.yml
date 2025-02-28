@@ -7,16 +7,12 @@ body:
         > [!TIP]
         > The **Title** may be the only thing the community sees when voting on your pattern.
        
-        ### Instructions
-           1. Title: **Summarize** the pattern. Be as clear and concise as possible.
-           2. Pattern: Describe **what** you want documented. 
-           3. Rationale: (Optional) Describe **why** you want it documented.
         This work is funded through [NASA ROSES](https://github.com/nasa/fprime/discussions/3041).
   - type: textarea
     id: pattern
     attributes:
       label: Pattern
-      description: "Describe what you want documented in F Prime"
+      description: "Describe what you want documented."
     validations:
       required: true
   - type: markdown
