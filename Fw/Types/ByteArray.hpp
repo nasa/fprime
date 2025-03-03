@@ -27,10 +27,10 @@ struct ByteArray {
 
     //! Construct a ByteArray
     //!
-    ByteArray(U8* const bytes,  //!< Pointer to the bytes
-              const U32 size    //!< The array size
+    ByteArray(U8* const a_bytes,  //!< Pointer to the bytes
+              const U32 a_size    //!< The array size
               )
-        : bytes(bytes), size(size) {}
+        : bytes(a_bytes), size(a_size) {}
 
     // ----------------------------------------------------------------------
     // Data
