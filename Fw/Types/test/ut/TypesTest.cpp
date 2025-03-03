@@ -81,7 +81,7 @@ TEST(SerializationTest, Serialization1) {
     ASSERT_EQ(0, buff.m_serLoc);
     ASSERT_EQ(0, buff.m_deserLoc);
 
-    I8 i8t1 = 0xFF;
+    I8 i8t1 = static_cast<I8>(0xFF);
     I8 i8t2 = 0;
 
     stat1 = buff.serialize(i8t1);
@@ -135,7 +135,7 @@ TEST(SerializationTest, Serialization1) {
     printf("I16 test\n");
 #endif
 
-    I16 i16t1 = 0xABCD;
+    I16 i16t1 = static_cast<I16>(0xABCD);
     I16 i16t2 = 0;
 
     buff.resetSer();
