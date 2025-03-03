@@ -30,14 +30,10 @@ add_compile_options(
     -Werror
     -Wextra
     -Wno-unused-parameter
+    -Wno-vla
     -Wshadow
     -pedantic
 )
-if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    add_compile_options(
-        $<$<COMPILE_LANGUAGE:CXX>:-Wno-vla-extension>
-    )
-endif()
 # Section 2: F prime Core
 #
 # This includes all of the F prime core components, and imports the make-system. F prime core
