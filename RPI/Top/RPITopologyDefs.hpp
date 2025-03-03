@@ -32,11 +32,11 @@ namespace RPI {
 
     }
     TopologyState(
-        const char *hostName,
-        U16 portNumber
+        const char *a_hostName,
+        U16 a_portNumber
     ) :
-      hostName(hostName),
-      portNumber(portNumber)
+      hostName(a_hostName),
+      portNumber(a_portNumber)
     {
 
     }
