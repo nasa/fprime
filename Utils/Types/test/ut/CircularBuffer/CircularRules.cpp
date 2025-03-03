@@ -206,4 +206,4 @@ namespace Types {
     void RotateBadRule::action(MockTypes::CircularState& state) {
         ASSERT_EQ(state.getTestBuffer().rotate(state.getRandomSize()), Fw::FW_DESERIALIZE_BUFFER_EMPTY);
     }
-};
+}
