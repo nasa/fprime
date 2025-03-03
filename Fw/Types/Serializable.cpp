@@ -656,7 +656,7 @@ SerializeStatus SerializeBufferBase::setBuff(const U8* src, Serializable::SizeTy
     } else {
         FW_ASSERT(src);
         FW_ASSERT(this->getBuffAddr());
-        memcpy(this->getBuffAddr(), src, static_cast<size_t>(length));
+        (void)memcpy(this->getBuffAddr(), src, static_cast<size_t>(length));
         this->m_serLoc = length;
         this->m_deserLoc = 0;
         return FW_SERIALIZE_OK;
