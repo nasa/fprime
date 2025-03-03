@@ -34,6 +34,15 @@ add_compile_options(
     -Wshadow
     -pedantic
 )
+
+# Turn off -Wshadow for now in unit testing
+# The generated code needs additional fixes
+if (BUILD_TESTING)
+    add_compile_options(
+        -Wno-shadow
+    )
+endif()
+
 # Section 2: F prime Core
 #
 # This includes all of the F prime core components, and imports the make-system. F prime core
