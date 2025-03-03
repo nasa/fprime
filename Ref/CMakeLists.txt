@@ -22,6 +22,22 @@ cmake_minimum_required(VERSION 3.16)
 cmake_policy(SET CMP0048 NEW)
 project(Ref VERSION 1.0.0 LANGUAGES C CXX)
 ##
+add_compile_options(
+    $<$<COMPILE_LANGUAGE:CXX>:-Wold-style-cast>
+    -Wall
+    -Wconversion
+    -Wdouble-promotion
+    -Werror
+    -Wextra
+    -Wno-unused-parameter
+    -Wshadow
+    -pedantic
+)
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    add_compile_options(
+        $<$<COMPILE_LANGUAGE:CXX>:-Wno-vla-extension>
+    )
+endif()
 # Section 2: F prime Core
 #
 # This includes all of the F prime core components, and imports the make-system. F prime core
