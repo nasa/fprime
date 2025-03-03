@@ -108,5 +108,5 @@ namespace MockTypes {
             Types::CircularBuffer m_test_buffer;
     };
 
-};
+}
 #endif //FPRIME_CIRCULARSTATE_HPP
