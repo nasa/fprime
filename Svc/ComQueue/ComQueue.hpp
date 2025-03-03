@@ -21,7 +21,7 @@ namespace Svc {
 // Types
 // ----------------------------------------------------------------------
 
-class ComQueue : public ComQueueComponentBase {
+class ComQueue final : public ComQueueComponentBase {
   public:
     //!< Count of Fw::Com input ports and thus Fw::Com queues
     static const FwIndexType COM_PORT_COUNT = ComQueueComponentBase::NUM_COMQUEUEIN_INPUT_PORTS;

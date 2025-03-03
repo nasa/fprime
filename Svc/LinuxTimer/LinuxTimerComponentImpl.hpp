@@ -18,7 +18,7 @@
 
 namespace Svc {
 
-  class LinuxTimerComponentImpl :
+  class LinuxTimerComponentImpl final :
     public LinuxTimerComponentBase
   {
 

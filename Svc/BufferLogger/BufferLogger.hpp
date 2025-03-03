@@ -22,7 +22,7 @@
 
 namespace Svc {
 
-  class BufferLogger :
+  class BufferLogger final :
     public BufferLoggerComponentBase
   {
 

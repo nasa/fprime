@@ -17,7 +17,7 @@
 
 namespace Fw {
 
-    class ComBuffer : public SerializeBufferBase {
+    class ComBuffer final : public SerializeBufferBase {
         public:
 
             enum {

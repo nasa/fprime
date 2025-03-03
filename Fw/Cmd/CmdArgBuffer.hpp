@@ -18,7 +18,7 @@
 
 namespace Fw {
 
-    class CmdArgBuffer : public SerializeBufferBase {
+    class CmdArgBuffer final : public SerializeBufferBase {
         public:
 
             enum {

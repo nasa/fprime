@@ -53,7 +53,7 @@ namespace Svc
     // destructor of BufferManager if cleanup() is not called. If a project-specific manual memory
     // allocator is not needed, Fw::MallocAllocator can be used.
 
-    class BufferManagerComponentImpl : public BufferManagerComponentBase
+    class BufferManagerComponentImpl final : public BufferManagerComponentBase
     {
 
     public:

@@ -1,4 +1,4 @@
-name: "Cpplint Scan"
+name: "Code Scan: Cpplint"
 
 on:
   push:

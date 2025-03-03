@@ -28,7 +28,7 @@ namespace Svc {
  * Using this component, projects can implement and supply a fresh FramingProtocol implementation
  * without changing the reference topology.
  */
-class Framer : public FramerComponentBase, public FramingProtocolInterface {
+class Framer final : public FramerComponentBase, public FramingProtocolInterface {
   public:
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction

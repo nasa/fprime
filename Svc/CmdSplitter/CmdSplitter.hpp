@@ -12,7 +12,7 @@
 
 namespace Svc {
 
-class CmdSplitter : public CmdSplitterComponentBase {
+class CmdSplitter final : public CmdSplitterComponentBase {
   public:
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction

@@ -21,7 +21,7 @@
 
 namespace Svc {
 
-  class UdpSenderComponentImpl :
+  class UdpSenderComponentImpl final :
     public UdpSenderComponentBase
   {
 

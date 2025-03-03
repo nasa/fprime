@@ -17,7 +17,7 @@
 
 namespace Svc {
 
-  class AssertFatalAdapterComponentImpl :
+  class AssertFatalAdapterComponentImpl final :
     public AssertFatalAdapterComponentBase
   {
 

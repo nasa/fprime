@@ -70,7 +70,7 @@ Synchronous get ports are used to return values from one component in the F Prim
 
 The callback port patten is used to separate a request port invocation from a following response port invocation allowing the requestor to return to other work while the request is completed. The ports used may be of any type and may contain port arguments to communicate results.
 
-An example of this pattern can be found as part of the [Manager/Worker](https://github.com/fprime-community/fprime-examples/tree/devel/FlightExamples/ManagerWorker) interaction seen in F Prime examples.
+An example of this pattern can be found as part of the [Manager/Worker](https://github.com/nasa/fprime-examples/tree/devel/FlightExamples/ManagerWorker) interaction seen in F Prime examples.
 
 ```mermaid
 sequenceDiagram
@@ -212,7 +212,7 @@ Asynchronous components performing long-running work inside an `async` port hand
 
 This situation can be remedied by using a `sync` port call to set a cancel flag, which the long-running work can poll to determine if the work should be stopped early.
 
-An example of this pattern can be found as part of the [Worker Component](https://github.com/fprime-community/fprime-examples/tree/devel/FlightExamples/ManagerWorker/Worker) in F Prime examples.
+An example of this pattern can be found as part of the [Worker Component](https://github.com/nasa/fprime-examples/tree/devel/FlightExamples/ManagerWorker/Worker) in F Prime examples.
 
 ```mermaid
 sequenceDiagram

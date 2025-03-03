@@ -18,7 +18,7 @@
 
 namespace Svc {
 
-    class DpCatalog :
+    class DpCatalog final :
         public DpCatalogComponentBase
     {
 

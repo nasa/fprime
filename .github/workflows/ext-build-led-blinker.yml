@@ -1,6 +1,6 @@
 # Builds and runs UTs on https://github.com/fprime-community/fprime-workshop-led-blinker
 
-name: "Tutorial: LedBlinker"
+name: "External Repo: Tutorial: LedBlinker"
 
 on:
   push:

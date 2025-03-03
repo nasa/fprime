@@ -17,7 +17,7 @@
 
 namespace Fw {
 
-    class TlmBuffer : public SerializeBufferBase {
+    class TlmBuffer final : public SerializeBufferBase {
         public:
 
             enum {

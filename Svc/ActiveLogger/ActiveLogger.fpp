@@ -37,7 +37,6 @@ module Svc {
                             $severity: Fw.LogSeverity @< The severity argument
                             args: Fw.LogBuffer @< Buffer containing serialized log entry
                           ) \
-      priority 1 \
       drop
 
     # ----------------------------------------------------------------------

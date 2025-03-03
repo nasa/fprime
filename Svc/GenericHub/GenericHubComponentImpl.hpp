@@ -17,7 +17,7 @@
 
 namespace Svc {
 
-class GenericHubComponentImpl : public GenericHubComponentBase {
+class GenericHubComponentImpl final : public GenericHubComponentBase {
   public:
     /**
      * HubType:

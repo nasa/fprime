@@ -22,7 +22,7 @@
 
 namespace Ref {
 
-    class SignalGen :
+    class SignalGen final :
         public SignalGenComponentBase
     {
 

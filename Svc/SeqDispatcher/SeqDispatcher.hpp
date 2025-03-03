@@ -15,7 +15,7 @@
 
 namespace Svc {
 
-class SeqDispatcher : public SeqDispatcherComponentBase {
+class SeqDispatcher final : public SeqDispatcherComponentBase {
   public:
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction

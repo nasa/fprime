@@ -18,7 +18,7 @@
 
 namespace Svc {
 
-  class FileManager :
+  class FileManager final :
     public FileManagerComponentBase
   {
 

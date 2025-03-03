@@ -29,7 +29,7 @@ namespace Svc {
     //! is connected to the seqCmdStatus port with the same number
     //! as the port that submitted the command, the command status will be returned.
 
-    class CommandDispatcherImpl : public CommandDispatcherComponentBase {
+    class CommandDispatcherImpl final : public CommandDispatcherComponentBase {
         public:
             //!  \brief Command Dispatcher constructor
             //!

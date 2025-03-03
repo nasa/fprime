@@ -12,7 +12,7 @@
 
 namespace Svc {
 
-class PosixTime: public PosixTimeComponentBase {
+class PosixTime final : public PosixTimeComponentBase {
     public:
         explicit PosixTime(const char* compName);
         virtual ~PosixTime();

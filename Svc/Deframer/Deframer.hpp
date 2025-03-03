@@ -35,7 +35,7 @@ namespace Svc {
  * Implementation uses a circular buffer to store incoming data, which is drained one framed packet
  * at a time into buffers dispatched to the rest of the system.
  */
-class Deframer :
+class Deframer final :
   public DeframerComponentBase,
   public DeframingProtocolInterface
 {

@@ -11,7 +11,7 @@
 
 namespace Drv {
 
-  class StreamCrossover :
+  class StreamCrossover final :
     public StreamCrossoverComponentBase
   {
 

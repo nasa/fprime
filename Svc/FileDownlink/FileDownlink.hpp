@@ -22,7 +22,7 @@
 
 namespace Svc {
 
-  class FileDownlink :
+  class FileDownlink final :
     public FileDownlinkComponentBase
   {
 
