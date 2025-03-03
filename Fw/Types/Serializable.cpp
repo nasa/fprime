@@ -250,7 +250,7 @@ SerializeStatus SerializeBufferBase::serialize(const U8* buff, FwSizeType length
     }
 
     // copy buffer to our buffer
-    (void)memcpy(&this->getBuffAddr()[this->m_serLoc], buff, length);
+    (void)memcpy(&this->getBuffAddr()[this->m_serLoc], buff, static_cast<size_t>(length));
     this->m_serLoc += static_cast<Serializable::SizeType>(length);
     this->m_deserLoc = 0;
 
