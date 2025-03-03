@@ -32,7 +32,8 @@ add_compile_options(
 )
 
 # Turn off -Wshadow for now in unit testing
-# The generated code needs additional fixes
+# * The FPP-generated code needs more fixes
+# * STest needs more fixes
 if (BUILD_TESTING)
     add_compile_options(
         -Wno-shadow
