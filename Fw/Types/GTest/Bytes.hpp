@@ -45,7 +45,7 @@ class Bytes {
     const size_t size;
 };
 
-};  // namespace GTest
+}  // namespace GTest
 
 }  // namespace Fw
 
