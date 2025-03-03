@@ -7,7 +7,7 @@ namespace Ref {
 
     /// This component sends a data buffer to a driver each time it is invoked by a scheduler
 
-    class SendBuffImpl : public SendBuffComponentBase {
+    class SendBuffImpl final : public SendBuffComponentBase {
         public:
 
             // Only called by derived class

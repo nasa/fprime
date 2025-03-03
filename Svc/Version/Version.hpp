@@ -11,7 +11,7 @@
 
 namespace Svc {
 
-class Version : public VersionComponentBase {
+class Version final : public VersionComponentBase {
   public:
     // ----------------------------------------------------------------------
     // Component construction and destruction

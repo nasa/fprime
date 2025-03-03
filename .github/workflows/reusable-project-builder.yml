@@ -69,7 +69,7 @@ jobs:
       - name: "Build"
         working-directory: ${{ inputs.build_location }}
         run: |
-          fprime-util build ${{ runner.debug == '1' && '--verbose' || '' }} ${{ inputs.target_platform }}
+          fprime-util build -j8 ${{ runner.debug == '1' && '--verbose' || '' }} ${{ inputs.target_platform }}
         shell: bash
 
   runUT:
@@ -100,11 +100,11 @@ jobs:
       - name: "Build UTs"
         working-directory: ${{ inputs.build_location }}
         run: |
-          fprime-util build --ut ${{ runner.debug == '1' && '--verbose' || '' }} ${{ inputs.target_platform }}
+          fprime-util build --ut -j8 ${{ runner.debug == '1' && '--verbose' || '' }} ${{ inputs.target_platform }}
         shell: bash
       - name: "Run Unit Tests"
         working-directory: ${{ inputs.build_location }}
         run: |
-          fprime-util check ${{ runner.debug == '1' && '--verbose' || '' }} ${{ inputs.target_platform }}
+          fprime-util check -j8 ${{ runner.debug == '1' && '--verbose' || '' }} ${{ inputs.target_platform }}
         shell: bash
 

@@ -20,7 +20,7 @@
 
 namespace Svc {
 
-    class BufferAccumulator : public BufferAccumulatorComponentBase {
+    class BufferAccumulator final : public BufferAccumulatorComponentBase {
       PRIVATE:
 
         // ----------------------------------------------------------------------

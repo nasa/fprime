@@ -21,7 +21,7 @@ namespace Svc {
     //! consistent ordering.  It also provides the option to write the text
     //! to a file as well.
 
-    class ActiveTextLogger: public ActiveTextLoggerComponentBase {
+    class ActiveTextLogger final : public ActiveTextLoggerComponentBase {
 
         public:
 

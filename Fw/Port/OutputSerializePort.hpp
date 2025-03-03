@@ -9,7 +9,7 @@
 
 namespace Fw {
 
-    class OutputSerializePort : public OutputPortBase {
+    class OutputSerializePort final : public OutputPortBase {
         public:
             OutputSerializePort();
             virtual ~OutputSerializePort();

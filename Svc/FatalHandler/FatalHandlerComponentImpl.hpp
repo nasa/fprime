@@ -17,7 +17,7 @@
 
 namespace Svc {
 
-  class FatalHandlerComponentImpl :
+  class FatalHandlerComponentImpl final :
     public FatalHandlerComponentBase
   {
 

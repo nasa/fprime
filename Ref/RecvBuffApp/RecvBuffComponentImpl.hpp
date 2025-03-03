@@ -5,7 +5,7 @@
 
 namespace Ref {
 
-    class RecvBuffImpl : public RecvBuffComponentBase {
+    class RecvBuffImpl final : public RecvBuffComponentBase {
         public:
 
             // Only called by derived class

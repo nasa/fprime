@@ -5,7 +5,7 @@
 
 namespace Svc {
 
-	class ConsoleTextLoggerImpl : public PassiveTextLoggerComponentBase  {
+	class ConsoleTextLoggerImpl final : public PassiveTextLoggerComponentBase  {
 
 	public:
 

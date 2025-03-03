@@ -19,7 +19,7 @@
 
 namespace Svc {
 
-  class ComLogger :
+  class ComLogger final :
     public ComLoggerComponentBase
   {
       // ----------------------------------------------------------------------

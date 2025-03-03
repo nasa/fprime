@@ -18,7 +18,7 @@
 
 namespace Svc {
 
-class StaticMemoryComponentImpl : public StaticMemoryComponentBase {
+class StaticMemoryComponentImpl final : public StaticMemoryComponentBase {
   public:
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction

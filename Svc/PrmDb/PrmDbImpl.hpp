@@ -27,7 +27,7 @@ namespace Svc {
     //! for components.
     //!
 
-    class PrmDbImpl : public PrmDbComponentBase {
+    class PrmDbImpl final : public PrmDbComponentBase {
         public:
 
             friend class PrmDbImplTester;

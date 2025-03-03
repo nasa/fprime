@@ -30,7 +30,7 @@ namespace Svc {
     //! Output rate is CycleIn rate/divider[port]
     //!
 
-    class RateGroupDriver : public RateGroupDriverComponentBase {
+    class RateGroupDriver final : public RateGroupDriverComponentBase {
 
         public:
             //! Size of the divider table, provided as a constants to users passing the table in

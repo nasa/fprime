@@ -27,7 +27,7 @@ namespace Svc {
     //! to ENs (Engineering Numbers) to decouple the conversion as well.
     //!
 
-    class PolyDb : public PolyDbComponentBase {
+    class PolyDb final : public PolyDbComponentBase {
     public:
         //!  \brief PolyDbImpl constructor
         //!

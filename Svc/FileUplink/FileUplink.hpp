@@ -19,7 +19,7 @@
 
 namespace Svc {
 
-  class FileUplink :
+  class FileUplink final :
     public FileUplinkComponentBase
   {
 

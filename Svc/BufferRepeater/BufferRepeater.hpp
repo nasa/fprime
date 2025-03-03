@@ -17,7 +17,7 @@
 
 namespace Svc {
 
-class BufferRepeater : public BufferRepeaterComponentBase {
+class BufferRepeater final : public BufferRepeaterComponentBase {
   public:
     /**
      * Set of responses to failures to allocate a buffer when requested

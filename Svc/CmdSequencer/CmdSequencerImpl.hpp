@@ -19,7 +19,7 @@
 
 namespace Svc {
 
-  class CmdSequencerComponentImpl :
+  class CmdSequencerComponentImpl final :
     public CmdSequencerComponentBase
   {
 

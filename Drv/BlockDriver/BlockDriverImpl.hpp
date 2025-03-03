@@ -5,7 +5,7 @@
 
 namespace Drv {
 
-    class BlockDriverImpl : public BlockDriverComponentBase  {
+    class BlockDriverImpl final : public BlockDriverComponentBase  {
 
     public:
 

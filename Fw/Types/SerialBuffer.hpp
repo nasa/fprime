@@ -21,7 +21,7 @@ namespace Fw {
 //! \class SerialBuffer
 //! \brief A variable-length serializable buffer
 //!
-class SerialBuffer : public SerializeBufferBase {
+class SerialBuffer final : public SerializeBufferBase {
   public:
     // ----------------------------------------------------------------------
     // Construction

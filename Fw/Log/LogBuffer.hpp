@@ -18,7 +18,7 @@
 
 namespace Fw {
 
-    class LogBuffer : public SerializeBufferBase {
+    class LogBuffer final : public SerializeBufferBase {
         public:
 
             enum {

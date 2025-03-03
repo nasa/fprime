@@ -29,7 +29,7 @@ namespace Svc {
     //!  against warning and fault thresholds. A watchdog is
     //!  always stroked in the run handler.
 
-    class HealthImpl: public HealthComponentBase {
+    class HealthImpl final : public HealthComponentBase {
 
         public:
             //!  \brief struct for ping entry

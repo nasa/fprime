@@ -17,7 +17,7 @@
 
 namespace Drv {
 
-  class LinuxI2cDriver :
+  class LinuxI2cDriver final :
     public LinuxI2cDriverComponentBase
   {
 

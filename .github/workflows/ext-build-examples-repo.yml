@@ -20,14 +20,14 @@ jobs:
     name: "Get target branch"
     uses: ./.github/workflows/reusable-get-pr-branch.yml
     with:
-      target_repository: fprime-community/fprime-examples
+      target_repository: nasa/fprime-examples
 
   run:
     needs: get-branch
     name: ""
     uses: ./.github/workflows/reusable-project-builder.yml
     with: 
-      target_repository: fprime-community/fprime-examples
+      target_repository: nasa/fprime-examples
       build_location: FlightExamples
       run_unit_tests: true
       target_ref: ${{ needs.get-branch.outputs.target-branch }}

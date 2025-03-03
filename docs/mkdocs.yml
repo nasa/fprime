@@ -213,6 +213,7 @@ nav:
       - 'Porting F´ To a New Platform': docs/how-to/porting-guide.md
     - Reference:
       - docs/reference/index.md
+      - 'Software Engineering Terminology to F´ Nomenclature': docs/reference/fprime-translations.md
       - 'C++ Documentation': docs/reference/api/cpp/html/index.html
       - 'F´ Components SDDs': docs/reference/sdd.md
       - 'FPP Language Specification': https://nasa.github.io/fpp/fpp-spec.html

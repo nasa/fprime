@@ -14,7 +14,7 @@
 
 namespace Fw {
 
-class ParamString : public StringBase {
+class ParamString final : public StringBase {
   public:
     enum {
         SERIALIZED_TYPE_ID = FW_TYPEID_PRM_STR,
