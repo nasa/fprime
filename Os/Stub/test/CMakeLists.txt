@@ -12,7 +12,6 @@ add_custom_target("${FPRIME_CURRENT_MODULE}")
 
 add_compile_options(
     -Wno-conversion
-    -Wno-vla
 )
 
 register_os_implementation("File;FileSystem;Directory" Test_Stub)

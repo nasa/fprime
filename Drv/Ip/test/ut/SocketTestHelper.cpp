@@ -91,5 +91,5 @@ U64 get_configured_delay_ms() {
            (static_cast<U64>(SOCKET_RETRY_INTERVAL.getUSeconds()) / 1000);
 }
 
-};
-};
+}
+}

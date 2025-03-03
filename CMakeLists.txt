@@ -26,6 +26,7 @@ add_compile_options(
     -Werror
     -Wextra
     -Wno-unused-parameter
+    -Wno-vla
     -Wshadow
     -pedantic
 )
