@@ -26,10 +26,10 @@ namespace GTest {
 class Bytes {
   public:
     //! Construct a Bytes object
-    Bytes(const U8* const bytes,  //!< The byte array
-          const size_t size       //!< The size
+    Bytes(const U8* const a_bytes,  //!< The byte array
+          const size_t a_size       //!< The size
           )
-        : bytes(bytes), size(size) {}
+        : bytes(a_bytes), size(a_size) {}
 
   public:
     //! Compare two Bytes objects
