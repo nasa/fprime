@@ -22,6 +22,22 @@ project(RPI C CXX)
 cmake_minimum_required(VERSION 3.16)
 set(FPRIME_FRAMEWORK_PATH "${CMAKE_CURRENT_LIST_DIR}/.." CACHE PATH "Location of F prime framework" FORCE)
 set(FPRIME_PROJECT_ROOT "${CMAKE_CURRENT_LIST_DIR}/.." CACHE PATH "Root path of F prime project" FORCE)
+add_compile_options(
+    $<$<COMPILE_LANGUAGE:CXX>:-Wold-style-cast>
+    -Wall
+    -Wconversion
+    -Wdouble-promotion
+    -Werror
+    -Wextra
+    -Wno-unused-parameter
+    -Wshadow
+    -pedantic
+)
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    add_compile_options(
+        $<$<COMPILE_LANGUAGE:CXX>:-Wno-vla-extension>
+    )
+endif()
 
 ##
 # Section 2: F prime Core

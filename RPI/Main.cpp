@@ -31,7 +31,7 @@ int main(int argc, char* argv[]) {
                 return 0;
                 break;
             case 'p':
-                state.portNumber = static_cast<U32>(atoi(optarg));
+                state.portNumber = static_cast<U16>(atoi(optarg));
                 break;
             case 'a':
                 state.hostName = optarg;

@@ -33,7 +33,7 @@ namespace RPI {
     }
     TopologyState(
         const char *hostName,
-        U32 portNumber
+        U16 portNumber
     ) :
       hostName(hostName),
       portNumber(portNumber)
@@ -41,7 +41,7 @@ namespace RPI {
 
     }
     const char* hostName;
-    U32 portNumber;
+    U16 portNumber;
   };
 
   // Health ping entries
