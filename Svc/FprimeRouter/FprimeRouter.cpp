@@ -95,9 +95,9 @@ void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer
 }
 
 void FprimeRouter ::cmdResponseIn_handler(FwIndexType portNum,
-                                    FwOpcodeType opcode,
-                                    U32 cmdSeq,
-                                    const Fw::CmdResponse& response) {
+                                          FwOpcodeType opcode,
+                                          U32 cmdSeq,
+                                          const Fw::CmdResponse& response) {
     // Nothing to do
 }
 }  // namespace Svc

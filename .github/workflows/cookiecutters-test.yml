@@ -53,7 +53,7 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: "Install expect and fprime-bootstrap@devel"
+      - name: "Install expect and fprime-bootstrap"
         run: |
              sudo apt-get install expect
              pip install git+https://github.com/fprime-community/fprime-bootstrap@${{ needs.get-bootstrap-branch.outputs.target-branch }}
@@ -71,7 +71,7 @@ jobs:
           path: ./MyProject/lib/fprime
           fetch-depth: 0
 
-      - name: "Update dependencies and install fprime-tools@devel"
+      - name: "Update dependencies and install fprime-tools"
         run: |
              cd MyProject
              . fprime-venv/bin/activate

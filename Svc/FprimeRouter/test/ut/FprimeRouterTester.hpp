@@ -32,7 +32,9 @@ class FprimeRouterTester : public FprimeRouterGTestBase {
     // ----------------------------------------------------------------------
 
     //! Construct object FprimeRouterTester
-    FprimeRouterTester(bool disconnect_unknownData_port = false);
+    //! \param disconnect_unknownData_port if set to true, the unknownData output port will not be connected
+    //! in the test harness setup. If false (default), all ports will be connected.
+    explicit FprimeRouterTester(bool disconnect_unknownData_port = false);
 
     //! Destroy object FprimeRouterTester
     ~FprimeRouterTester();
