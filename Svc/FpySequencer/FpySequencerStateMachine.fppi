@@ -50,8 +50,6 @@ state machine SequencerStateMachine {
     action resetRuntime
     @ performs all steps necessary for sequence validation, and raises a signal result_success or result_failure
     action validate
-    @ closes the open sequence file
-    action closeSequenceFile
 
     @ reports that a sequence succeeded
     action report_seqSucceeded
@@ -96,7 +94,7 @@ state machine SequencerStateMachine {
     @ sequencer is ready to load, validate and run a sequence
     state IDLE {
         # start with an unset sequence file, and unset goal state
-        entry do { closeSequenceFile, resetRuntime, setGoalState_IDLE }
+        entry do { resetRuntime, setGoalState_IDLE }
         # -->
         # wait for a cmd
 
@@ -120,7 +118,7 @@ state machine SequencerStateMachine {
 
         on result_failure do { report_invalidSeq, cmdResponseOut_EXECUTION_ERROR } enter IDLE
         # close the sequence file now that it's in memory
-        on result_success do { closeSequenceFile } enter VALID
+        on result_success enter VALID
 
         ####################
         # commands         #

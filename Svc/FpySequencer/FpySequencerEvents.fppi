@@ -31,30 +31,19 @@ event FileReadDeserializeError(
     severity warning high \
     format "Deserialize error encountered while reading {}: {} ({} bytes left out of {})"
 
-event ReadHeaderSuccess(
-    filePath: string
-) \
-    severity diagnostic \
-    format "Successfully read header of {}"
-
-event ReadBodySuccess(
-    filePath: string
-) \
-    severity diagnostic \
-    format "Successfully read body of {}"
-
-event ReadFooterSuccess(
-    filePath: string
-) \
-    severity diagnostic \
-    format "Successfully read footer of {}"
-
 event WrongSchemaVersion(
-    expected: U8,
+    expected: U8
     actual: U8
 ) \
     severity warning low \
     format "Expected schema version {}, found {}"
+
+event WrongCRC(
+    expected: U32
+    actual: U32
+) \
+    severity warning low \
+    format "Expected CRC {}, actual was {}"
 
 event InvalidSequence(filePath: string) \
     severity warning high \

@@ -29,18 +29,6 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_setSequenceBloc
     m_sequenceBlockState = value.getblock();
 }
 
-//! Implementation for action closeSequenceFile of state machine
-//! Svc_FpySequencer_SequencerStateMachine
-//!
-//! closes the open sequence file
-void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_closeSequenceFile(
-    SmId smId,                                             //!< The state machine id
-    Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
-) {
-    // don't bother checking if it's open already, succeed regardless
-    m_sequenceFileObj.close();
-}
-
 //! Implementation for action report_seqSucceeded of state machine
 //! Svc_FpySequencer_SequencerStateMachine
 //!
@@ -212,22 +200,7 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_validate(
     SmId smId,                                             //!< The state machine id
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) {
-    bool result = this->openSequenceFile();
-    if (!result) {
-        this->sequencer_sendSignal_result_failure();
-        return;
-    }
-    result = this->readHeader();
-    if (!result) {
-        this->sequencer_sendSignal_result_failure();
-        return;
-    }
-    result = this->readBody();
-    if (!result) {
-        this->sequencer_sendSignal_result_failure();
-        return;
-    }
-    result = this->readFooter();
+    bool result = this->validate();
     if (!result) {
         this->sequencer_sendSignal_result_failure();
         return;

@@ -9,6 +9,11 @@ module Svc {
             WAIT_ABS = 0x00000002,
         }
 
+        enum StatementType : U8 {
+            DIRECTIVE = 0,
+            COMMAND = 1
+        }
+
         struct Header {
             @ the major version of the FSW
             majorVersion: U8
@@ -35,8 +40,11 @@ module Svc {
         }
 
         struct Statement {
+            @ directive or command
+            $type: StatementType
             opCode: FwOpcodeType
-            args: Fw.CmdArgBuffer
+            argBufSize: FwSizeStoreType
+            argBuf: [MAX_STATEMENT_ARG_BUF_SIZE] U8
         }
 
         struct Sequence {

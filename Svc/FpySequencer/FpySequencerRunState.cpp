@@ -1,6 +1,7 @@
 #include "Fw/Com/ComPacket.hpp"
 #include "Fw/Time/Time.hpp"
 #include "Svc/FpySequencer/FpySequencer.hpp"
+#include "Svc/FpySequencer/StatementTypeEnumAc.hpp"
 namespace Svc {
 
 void FpySequencer::stepStatement() {
@@ -26,10 +27,9 @@ void FpySequencer::stepStatement() {
 
     // based on the statement type (directive or cmd)
     // send it to where it needs to go
-    bool isDirective = checkOpcodeIsDirective(nextStatement.getopCode());
     bool result = false;
 
-    if (isDirective) {
+    if (nextStatement.gettype() == Fpy::StatementType::DIRECTIVE) {
         result = dispatchDirective(nextStatement);
     } else {
         result = dispatchCommand(nextStatement);
@@ -56,12 +56,28 @@ bool FpySequencer::dispatchCommand(const Fpy::Statement& stmt) {
                                             sizeof(Fw::ComPacket::FW_PACKET_COMMAND), stat);
         return false;
     }
-    stat = cmdBuf.serialize(stmt);
+    stat = cmdBuf.serialize(stmt.getopCode());
     if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
-        this->log_WARNING_HI_SerializeError(cmdBuf.getBuffCapacity(), cmdBuf.getBuffLength(),
-                                            sizeof(stmt.getopCode()) + sizeof(stmt.getargs().getBuffLength()), stat);
+        this->log_WARNING_HI_SerializeError(cmdBuf.getBuffCapacity(), cmdBuf.getBuffLength(), sizeof(stmt.getopCode()),
+                                            stat);
         return false;
     }
+
+    stat = cmdBuf.serialize(stmt.getargBufSize());
+
+    if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
+        this->log_WARNING_HI_SerializeError(cmdBuf.getBuffCapacity(), cmdBuf.getBuffLength(),
+                                            sizeof(stmt.getargBufSize()), stat);
+        return false;
+    }
+
+    stat = cmdBuf.serialize(stmt.getargBuf(), stmt.getargBufSize(), true);
+    if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
+        this->log_WARNING_HI_SerializeError(cmdBuf.getBuffCapacity(), cmdBuf.getBuffLength(), stmt.getargBufSize(),
+                                            stat);
+        return false;
+    }
+
     this->cmdOut_out(0, cmdBuf, 0);
     return true;
 }
@@ -83,12 +99,8 @@ void FpySequencer::handleStatementResult(FwOpcodeType opCode,             //!< C
     this->sequencer_sendSignal_statementResponseIn(FpySequencer_StatementResponse(opCode, response));
 }
 
-bool FpySequencer::checkOpcodeIsDirective(FwOpcodeType opcode) {
-    return opcode < Fpy::DirectiveId::MAX_DIRECTIVE_ID;
-}
-
 bool FpySequencer::dispatchDirective(const Fpy::Statement& stmt) {
-    switch (stmt.opcode) {
+    switch (stmt.getopCode()) {
         case Fpy::DirectiveId::WAIT_REL: {
             return handleDirective_WAIT_REL(stmt);
         }
@@ -97,7 +109,7 @@ bool FpySequencer::dispatchDirective(const Fpy::Statement& stmt) {
         }
         default: {
             // unsure what this opcode is. check compiler version?
-            this->log_WARNING_HI_UnknownSequencerDirective(stmt.opcode);
+            this->log_WARNING_HI_UnknownSequencerDirective(stmt.getopCode());
             return false;
         }
     }
@@ -106,10 +118,11 @@ bool FpySequencer::dispatchDirective(const Fpy::Statement& stmt) {
 bool FpySequencer::handleDirective_WAIT_REL(const Fpy::Statement& stmt) {
     Fw::Time currentTime = getTime();
     Fw::Time duration;
-    Fw::ExternalSerializeBuffer deser(const_cast<U8*>(stmt.args.getBuffAddr()), stmt.args.getBuffLength());
+    Fw::ExternalSerializeBuffer deser(const_cast<U8*>(stmt.getargBuf()), stmt.getargBufSize());
     Fw::SerializeStatus stat = deser.deserialize(duration);
     if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
-        this->log_WARNING_HI_DirectiveDeserializeError(stmt.opcode, stat, deser.getBuffLeft(), deser.getBuffLength());
+        this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), stat, deser.getBuffLeft(),
+                                                       deser.getBuffLength());
         return false;
     }
 
@@ -119,10 +132,11 @@ bool FpySequencer::handleDirective_WAIT_REL(const Fpy::Statement& stmt) {
 
 bool FpySequencer::handleDirective_WAIT_ABS(const Fpy::Statement& stmt) {
     Fw::Time wakeupTime;
-    Fw::ExternalSerializeBuffer deser(const_cast<U8*>(stmt.args.getBuffAddr()), stmt.args.getBuffLength());
+    Fw::ExternalSerializeBuffer deser(const_cast<U8*>(stmt.getargBuf()), stmt.getargBufSize());
     Fw::SerializeStatus stat = deser.deserialize(wakeupTime);
     if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
-        this->log_WARNING_HI_DirectiveDeserializeError(stmt.opcode, stat, deser.getBuffLeft(), deser.getBuffLength());
+        this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), stat, deser.getBuffLeft(),
+                                                       deser.getBuffLength());
         return false;
     }
 

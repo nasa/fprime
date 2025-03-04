@@ -115,15 +115,6 @@ class FpySequencer : public FpySequencerComponentBase {
         Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action closeSequenceFile of state machine
-    //! Svc_FpySequencer_SequencerStateMachine
-    //!
-    //! closes the open sequence file
-    void Svc_FpySequencer_SequencerStateMachine_action_closeSequenceFile(
-        SmId smId,                                             //!< The state machine id
-        Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
-        ) override;
-
     //! Implementation for action report_seqSucceeded of state machine
     //! Svc_FpySequencer_SequencerStateMachine
     //!
@@ -348,13 +339,8 @@ class FpySequencer : public FpySequencerComponentBase {
     // return true if sequence is valid
     bool validate();
 
-    // reads the header of the sequence file. return true if success
-    bool readHeader(Os::File& file);
-    // reads the body of the sequence file. return true if success
-    bool readBody(Os::File& file);
-    // reads the footer of the sequence file. return true if success
-    bool readFooter(Os::File& file);
-
+    // reads some bytes from the open file into the m_sequenceBuffer.
+    // return true if successful
     bool readBytes(Os::File& file, FwSizeType readLen);
 
     // ----------------------------------------------------------------------
@@ -362,8 +348,6 @@ class FpySequencer : public FpySequencerComponentBase {
     // ----------------------------------------------------------------------
 
     void stepStatement();
-
-    bool checkOpcodeIsDirective(FwOpcodeType opcode);
 
     // dispatches a command out via port.
     // return true if successfully dispatched.
