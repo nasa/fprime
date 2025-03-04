@@ -7,6 +7,9 @@
 #
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
+add_compile_options(
+    -Wno-double-promotion
+)
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/CmdDispatcher.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/CommandDispatcherImpl.cpp"

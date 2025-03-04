@@ -160,7 +160,7 @@ namespace Svc {
 
   void BufferManagerComponentImpl::setup(
     NATIVE_UINT_TYPE mgrId, //!< manager ID
-    NATIVE_UINT_TYPE memId, //!< Memory segment identifier
+    FwEnumStoreType memId, //!< Memory segment identifier
     Fw::MemAllocator& allocator, //!< memory allocator
     const BufferBins& bins //!< Set of user bins
   ) {
@@ -186,7 +186,7 @@ namespace Svc {
         }
     }
 
-    NATIVE_UINT_TYPE allocatedSize = memorySize;
+    FwSizeType allocatedSize = memorySize;
     bool recoverable = false; //!< don't care if it is recoverable since they are a pool of user buffers
 
     // allocate memory

@@ -25,7 +25,7 @@ class SerializeBufferBase;  //!< forward declaration
 class Serializable {
   public:
     // Size type for backwards compatibility
-    using SizeType = NATIVE_UINT_TYPE;
+    using SizeType = FwSizeType;
 
   public:
     virtual SerializeStatus serialize(SerializeBufferBase& buffer) const = 0;  //!< serialize contents
@@ -85,9 +85,9 @@ class SerializeBufferBase {
         const void* val);  //!< serialize pointer (careful, only pointer value, not contents are serialized)
 
     //! serialize data buffer
-    SerializeStatus serialize(const U8* buff, NATIVE_UINT_TYPE length, bool noLength);
+    SerializeStatus serialize(const U8* buff, FwSizeType length, bool noLength);
     //! serialize data buffer
-    SerializeStatus serialize(const U8* buff, NATIVE_UINT_TYPE length);
+    SerializeStatus serialize(const U8* buff, FwSizeType length);
 
     //! \brief serialize a byte buffer of a given length
     //!
@@ -133,10 +133,10 @@ class SerializeBufferBase {
     SerializeStatus deserialize(void*& val);  //!< deserialize point value (careful, pointer value only, not contents)
 
     //! deserialize data buffer
-    SerializeStatus deserialize(U8* buff, NATIVE_UINT_TYPE& length, bool noLength);
+    SerializeStatus deserialize(U8* buff, FwSizeType& length, bool noLength);
 
     //! deserialize data buffer
-    SerializeStatus deserialize(U8* buff, NATIVE_UINT_TYPE& length);
+    SerializeStatus deserialize(U8* buff, FwSizeType& length);
     //! \brief deserialize a byte buffer of a given length
     //!
     //! Deserialize bytes into `buff` of `length` bytes.  If `serializationMode` is set to `INCLUDE_LENGTH` then

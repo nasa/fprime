@@ -25,9 +25,9 @@ namespace Svc {
 DeframerTester::MockDeframer::MockDeframer(DeframerTester& parent) : m_status(DeframingProtocol::DEFRAMING_STATUS_SUCCESS) {}
 
 DeframerTester::MockDeframer::DeframingStatus DeframerTester::MockDeframer::deframe(Types::CircularBuffer& ring_buffer, U32& needed) {
-    needed = ring_buffer.get_allocated_size();
+    needed = static_cast<U32>(ring_buffer.get_allocated_size());
     if (m_status == DeframingProtocol::DEFRAMING_MORE_NEEDED) {
-        needed = ring_buffer.get_allocated_size() + 1; // Obey the rules
+        needed = static_cast<U32>(ring_buffer.get_allocated_size() + 1); // Obey the rules
     }
     return m_status;
 }

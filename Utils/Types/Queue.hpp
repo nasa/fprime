@@ -73,14 +73,14 @@ class Queue {
     /**
      * Return the largest tracked allocated size
      */
-    NATIVE_UINT_TYPE get_high_water_mark() const;
+    FwSizeType get_high_water_mark() const;
 
     /**
      * Clear tracking of the largest allocated size
      */
     void clear_high_water_mark();
 
-    NATIVE_UINT_TYPE getQueueSize() const;
+    FwSizeType getQueueSize() const;
 
   private:
     CircularBuffer m_internal;

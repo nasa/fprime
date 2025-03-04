@@ -34,7 +34,7 @@ namespace Ref {
         FW_ASSERT(stat == Fw::FW_SERIALIZE_OK,static_cast<FwAssertArgType>(stat));
         // deserialize data
         U8 testData[24] = {0};
-        NATIVE_UINT_TYPE size = sizeof(testData);
+        FwSizeType size = sizeof(testData);
         stat = buff.deserialize(testData,size);
         FW_ASSERT(stat == Fw::FW_SERIALIZE_OK,static_cast<FwAssertArgType>(stat));
         // deserialize checksum

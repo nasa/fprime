@@ -176,7 +176,7 @@ void DeframerTester::UplinkFrame::updateHash() {
     Utils::Hash hash;
     Utils::HashBuffer hashBuffer;
     const U32 dataSize = FpFrameHeader::SIZE + packetSize;
-    hash.update(data, static_cast<Utils::Hash::SizeType>(dataSize));
+    hash.update(data, dataSize);
     hash.final(hashBuffer);
     const U8* const hashAddr = hashBuffer.getBuffAddr();
     memcpy(&data[dataSize], hashAddr, HASH_DIGEST_LENGTH);

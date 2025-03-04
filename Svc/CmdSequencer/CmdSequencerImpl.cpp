@@ -56,9 +56,9 @@ namespace Svc {
 
     void CmdSequencerComponentImpl ::
       allocateBuffer(
-          const NATIVE_INT_TYPE identifier,
+          const FwEnumStoreType identifier,
           Fw::MemAllocator& allocator,
-          const NATIVE_UINT_TYPE bytes
+          const FwSizeType bytes
       )
     {
         this->m_sequence->allocateBuffer(identifier, allocator, bytes);

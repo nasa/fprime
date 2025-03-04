@@ -16,7 +16,7 @@ namespace Utils {
       extendedName.format("%s%s", baseName.toChar(), HASH_EXTENSION_STRING);
     }
 
-    NATIVE_UINT_TYPE Hash ::
+    FwSizeType Hash ::
         getFileExtensionLength()
     {
         // Size of returns the size including the '\0' character.

@@ -123,7 +123,7 @@ void Deframer ::route(Fw::Buffer& packetBuffer) {
     // Process the packet
     if (status == Fw::FW_SERIALIZE_OK) {
         U8 *const packetData = packetBuffer.getData();
-        const U32 packetSize = packetBuffer.getSize();
+        const FwSizeType packetSize = packetBuffer.getSize();
         switch (packetType) {
             // Handle a command packet
             case Fw::ComPacket::FW_PACKET_COMMAND: {
@@ -148,6 +148,8 @@ void Deframer ::route(Fw::Buffer& packetBuffer) {
                 // If the file uplink output port is connected,
                 // send the file packet. Otherwise take no action.
                 if (isConnected_bufferOut_OutputPort(0)) {
+                    FW_ASSERT((packetSize - sizeof(packetType)) < std::numeric_limits<U32>::max(),
+                              static_cast<FwAssertArgType>(packetSize - sizeof(packetType)));
                     // Shift the packet buffer to skip the packet type
                     // The FileUplink component does not expect the packet
                     // type to be there.
@@ -185,22 +187,22 @@ void Deframer ::route(Fw::Buffer& packetBuffer) {
 
 void Deframer ::processBuffer(Fw::Buffer& buffer) {
 
-    const U32 bufferSize = buffer.getSize();
+    const FwSizeType bufferSize = buffer.getSize();
     U8 *const bufferData = buffer.getData();
     // Current offset into buffer
-    U32 offset = 0;
+    FwSizeType offset = 0;
     // Remaining data in buffer
-    U32 remaining = bufferSize;
+    FwSizeType remaining = bufferSize;
 
-    for (U32 i = 0; i < bufferSize; ++i) {
+    for (FwSizeType i = 0; i < bufferSize; ++i) {
         // If there is no data left, exit the loop
         if (remaining == 0) {
             break;
         }
         // Compute the size of data to serialize
-        const NATIVE_UINT_TYPE ringFreeSize = m_inRing.get_free_size();
-        const NATIVE_UINT_TYPE serSize = (ringFreeSize <= remaining) ?
-            ringFreeSize : static_cast<NATIVE_UINT_TYPE>(remaining);
+        const FwSizeType ringFreeSize = m_inRing.get_free_size();
+        const FwSizeType serSize = (ringFreeSize <= remaining) ?
+            ringFreeSize : static_cast<FwSizeType>(remaining);
         // Serialize data into the ring buffer
         const Fw::SerializeStatus status =
             m_inRing.serialize(&bufferData[offset], serSize);
@@ -229,15 +231,15 @@ void Deframer ::processRing() {
     FW_ASSERT(m_protocol != nullptr);
 
     // The number of remaining bytes in the ring buffer
-    U32 remaining = 0;
+    FwSizeType remaining = 0;
     // The protocol status
     DeframingProtocol::DeframingStatus status =
         DeframingProtocol::DEFRAMING_STATUS_SUCCESS;
     // The ring buffer capacity
-    const NATIVE_UINT_TYPE ringCapacity = m_inRing.get_capacity();
+    const FwSizeType ringCapacity = m_inRing.get_capacity();
 
     // Process the ring buffer looking for at least the header
-    for (U32 i = 0; i < ringCapacity; i++) {
+    for (FwSizeType i = 0; i < ringCapacity; i++) {
         // Get the number of bytes remaining in the ring buffer
         remaining = m_inRing.get_allocated_size();
         // If there are none, we are done

@@ -155,7 +155,7 @@ namespace Svc {
       U8 frameData[MAX_FRAME_SIZE];
 
       //! The frame size
-      U32 frameSize;
+      FwSizeType frameSize;
 
       //! Storage for the circular buffer
       U8* cbStorage;

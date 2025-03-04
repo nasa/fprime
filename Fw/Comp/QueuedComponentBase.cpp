@@ -15,7 +15,7 @@ namespace Fw {
 
     }
 
-    void QueuedComponentBase::init(NATIVE_INT_TYPE instance) {
+    void QueuedComponentBase::init(FwEnumStoreType instance) {
         PassiveComponentBase::init(instance);
     }
 
@@ -36,7 +36,7 @@ namespace Fw {
     	return this->m_queue.create(queueName, depth, msgSize);
     }
 
-    NATIVE_INT_TYPE QueuedComponentBase::getNumMsgsDropped() {
+    FwSizeType QueuedComponentBase::getNumMsgsDropped() {
         return this->m_msgsDropped;
     }
 

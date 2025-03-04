@@ -15,9 +15,9 @@
 
 namespace Fw {
 
-SerialBuffer ::SerialBuffer(U8* const data, const U32 capacity) : m_data(data), m_capacity(capacity) {}
+SerialBuffer ::SerialBuffer(U8* const data, const FwSizeType capacity) : m_data(data), m_capacity(capacity) {}
 
-NATIVE_UINT_TYPE SerialBuffer ::getBuffCapacity() const {
+FwSizeType SerialBuffer ::getBuffCapacity() const {
     return m_capacity;
 }
 
@@ -34,12 +34,12 @@ void SerialBuffer ::fill() {
     FW_ASSERT(status == FW_SERIALIZE_OK);
 }
 
-SerializeStatus SerialBuffer ::pushBytes(const U8* const addr, const NATIVE_UINT_TYPE n) {
+SerializeStatus SerialBuffer ::pushBytes(const U8* const addr, const FwSizeType n) {
     // "true" means "just push the bytes"
     return this->serialize(const_cast<U8*>(addr), n, true);
 }
 
-SerializeStatus SerialBuffer ::popBytes(U8* const addr, NATIVE_UINT_TYPE n) {
+SerializeStatus SerialBuffer ::popBytes(U8* const addr, FwSizeType n) {
     // "true" means "just pop the bytes"
     return this->deserialize(addr, n, true);
 }

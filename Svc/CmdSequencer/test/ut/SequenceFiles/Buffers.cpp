@@ -19,7 +19,7 @@ namespace Svc {
 
     namespace Buffers {
 
-      NATIVE_UINT_TYPE FileBuffer ::
+      FwSizeType FileBuffer ::
         getBuffCapacity() const
       {
         return sizeof(m_buff);

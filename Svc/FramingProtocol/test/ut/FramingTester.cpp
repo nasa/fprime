@@ -143,7 +143,7 @@ namespace Svc {
     Utils::Hash hash;
     Utils::HashBuffer hashBuffer;
     const U32 localDataSize = FpFrameHeader::SIZE + packetSize;
-    hash.update(this->bufferStorage, static_cast<NATIVE_INT_TYPE>(localDataSize));
+    hash.update(this->bufferStorage, localDataSize);
     hash.final(hashBuffer);
     const U8 *const hashAddr = hashBuffer.getBuffAddr();
     const I32 result = memcmp(

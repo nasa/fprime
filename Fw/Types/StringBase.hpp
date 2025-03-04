@@ -24,7 +24,7 @@ namespace Fw {
 
 class StringBase : public Serializable {
   public:
-    using SizeType = NATIVE_UINT_TYPE;
+    using SizeType = FwSizeType;
     virtual const CHAR* toChar() const = 0;    //<! Convert to a C-style char*
     virtual SizeType getCapacity() const = 0;  //!< return size of buffer
     SizeType length() const;                   //!< Get length of string

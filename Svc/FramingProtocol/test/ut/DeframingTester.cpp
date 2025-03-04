@@ -68,14 +68,14 @@ Fw::ByteArray DeframingTester ::constructRandomFrame(U32 packetSize) {
         status = sb.serialize(byte);
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
     }
-    const U32 buffLength = sb.getBuffLength();
-    const U32 dataSize = FpFrameHeader::SIZE + packetSize;
+    const FwSizeType buffLength = sb.getBuffLength();
+    const FwSizeType dataSize = FpFrameHeader::SIZE + packetSize;
     FW_ASSERT(buffLength == dataSize, static_cast<FwAssertArgType>(buffLength), static_cast<FwAssertArgType>(dataSize));
     // Compute the hash value
     Utils::Hash hash;
     Utils::HashBuffer hashBuffer;
     hash.init();
-    hash.update(&this->frameData, static_cast<NATIVE_INT_TYPE>(dataSize));
+    hash.update(&this->frameData, dataSize);
     hash.final(hashBuffer);
     // Copy the hash value into place
     const U8* const buffAddr = hashBuffer.getBuffAddr();
@@ -100,7 +100,7 @@ void DeframingTester ::checkPacketData() {
               static_cast<FwAssertArgType>(MAX_FRAME_SIZE));
     FW_ASSERT(this->frameSize >= NON_PACKET_DATA_SIZE, static_cast<FwAssertArgType>(this->frameSize),
               static_cast<FwAssertArgType>(NON_PACKET_DATA_SIZE));
-    const U32 packetSize = this->frameSize - NON_PACKET_DATA_SIZE;
+    const FwSizeType packetSize = this->frameSize - NON_PACKET_DATA_SIZE;
     Fw::Buffer buffer = this->interface.getRoutedBuffer();
     ASSERT_EQ(buffer.getSize(), packetSize);
     const int result = memcmp(&this->frameData[FpFrameHeader::SIZE], buffer.getData(), packetSize);

@@ -27,8 +27,8 @@ struct ByteArray {
 
     //! Construct a ByteArray
     //!
-    ByteArray(U8* const a_bytes,  //!< Pointer to the bytes
-              const U32 a_size    //!< The array size
+    ByteArray(U8* const a_bytes,       //!< Pointer to the bytes
+              const FwSizeType a_size  //!< The array size
               )
         : bytes(a_bytes), size(a_size) {}
 
@@ -40,7 +40,7 @@ struct ByteArray {
     U8* const bytes;
 
     //! The size
-    const U32 size;
+    const FwSizeType size;
 };
 
 }  // namespace Fw

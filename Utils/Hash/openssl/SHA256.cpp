@@ -26,7 +26,7 @@ namespace Utils {
     }
 
     void Hash ::
-        hash(const void *const data, const NATIVE_INT_TYPE len, HashBuffer& buffer)
+        hash(const void *const data, const FwSizeType len, HashBuffer& buffer)
     {
         U8 out[SHA256_DIGEST_LENGTH];
         U8* ret = SHA256(static_cast<const U8*>(data), len, out);
@@ -43,7 +43,7 @@ namespace Utils {
     }
 
     void Hash ::
-        update(const void *const data, NATIVE_INT_TYPE len)
+        update(const void *const data, FwSizeType len)
     {
         int ret = SHA256_Update(&this->hash_handle, static_cast<const U8*>(data), len);
         FW_ASSERT(ret == 1);

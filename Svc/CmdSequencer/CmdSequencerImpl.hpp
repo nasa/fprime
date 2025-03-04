@@ -217,9 +217,9 @@ namespace Svc {
 
           //! Give the sequence representation a memory buffer
           void allocateBuffer(
-              NATIVE_INT_TYPE identifier, //!< The identifier
+              FwEnumStoreType identifier, //!< The identifier
               Fw::MemAllocator& allocator, //!< The allocator
-              NATIVE_UINT_TYPE bytes //!< The number of bytes
+              FwSizeType bytes //!< The number of bytes
           );
 
           //! Deallocate the buffer
@@ -291,7 +291,7 @@ namespace Svc {
           Fw::ExternalSerializeBuffer m_buffer;
 
           //! The allocator ID
-          NATIVE_INT_TYPE m_allocatorId;
+          FwEnumStoreType m_allocatorId;
 
           //! The sequence header
           Header m_header;
@@ -325,7 +325,7 @@ namespace Svc {
             //! Update computed CRC
             void update(
                 const BYTE* buffer, //!< The buffer
-                NATIVE_UINT_TYPE bufferSize //!< The buffer size
+                FwSizeType bufferSize //!< The buffer size
             );
 
             //! Finalize computed CRC
@@ -544,9 +544,9 @@ namespace Svc {
       //! Call this after constructor and init, and after setting
       //! the sequence format, but before task is spawned.
       void allocateBuffer(
-          const NATIVE_INT_TYPE identifier, //!< The identifier
+          const FwEnumStoreType identifier, //!< The identifier
           Fw::MemAllocator& allocator, //!< The allocator
-          const NATIVE_UINT_TYPE bytes //!< The number of bytes
+          const FwSizeType bytes //!< The number of bytes
       );
 
       //! (Optional) Load a sequence to run later.

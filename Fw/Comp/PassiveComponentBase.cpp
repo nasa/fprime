@@ -14,7 +14,7 @@ namespace Fw {
         return "Comp: %s";
     }
 
-    void PassiveComponentBase::toString(char* buffer, NATIVE_INT_TYPE size) {
+    void PassiveComponentBase::toString(char* buffer, FwSizeType size) {
         FW_ASSERT(size > 0);
         FW_ASSERT(buffer != nullptr);
         Fw::FormatStatus status = Fw::ExternalString(buffer, static_cast<Fw::ExternalString::SizeType>(size)).format(
@@ -34,12 +34,12 @@ namespace Fw {
     PassiveComponentBase::~PassiveComponentBase() {
     }
 
-    void PassiveComponentBase::init(NATIVE_INT_TYPE instance) {
+    void PassiveComponentBase::init(FwEnumStoreType instance) {
         ObjBase::init();
         this->m_instance = instance;
     }
 
-    NATIVE_INT_TYPE PassiveComponentBase::getInstance() const {
+    FwEnumStoreType PassiveComponentBase::getInstance() const {
         return this->m_instance;
     }
 

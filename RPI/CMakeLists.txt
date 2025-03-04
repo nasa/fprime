@@ -41,6 +41,7 @@ add_compile_options(
 if (BUILD_TESTING)
     add_compile_options(
         -Wno-shadow
+        -Wno-sign-conversion
     )
 endif()
 

@@ -81,7 +81,7 @@ namespace Fw {
         return "Port: %s %s->(%s)";
     }
 
-    void PortBase::toString(char* buffer, NATIVE_INT_TYPE size) {
+    void PortBase::toString(char* buffer, FwSizeType size) {
         FW_ASSERT(size > 0);
         // Get the port-custom format string
         const char* formatString = this->getToStringFormatString();

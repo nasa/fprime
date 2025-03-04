@@ -23,7 +23,7 @@
  * A random hopper for rules. Apply STEP_COUNT times.
  */
 TEST(CircularBufferTests, RandomCircularTests) {
-    F64 max_addr_mem = sizeof(NATIVE_UINT_TYPE) * 8.0;
+    F64 max_addr_mem = sizeof(FwSizeType) * 8.0;
     max_addr_mem = pow(2.0, max_addr_mem);
     // Ensure the maximum memory use is less that the max addressable memory
     F64 max_used_mem = static_cast<double>(STEP_COUNT) * static_cast<double>(MAX_BUFFER_SIZE);
@@ -107,7 +107,7 @@ TEST(CircularBufferTests, BasicPeekTest) {
     state.getTestBuffer().serialize(reinterpret_cast<U8*>(&peek_char), sizeof(peek_char));
     state.addInfinite(&peek_u8, sizeof(peek_u8));
     state.getTestBuffer().serialize(&peek_u8, sizeof(peek_u8));
-    for (NATIVE_UINT_TYPE i = sizeof(U32); i > 0; i--) {
+    for (FwSizeType i = sizeof(U32); i > 0; i--) {
         U8 byte = peek_u32 >> ((i - 1) * 8);
         state.addInfinite(&byte, sizeof(byte));
         state.getTestBuffer().serialize(&byte, sizeof(byte));

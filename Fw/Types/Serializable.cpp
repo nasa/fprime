@@ -222,7 +222,7 @@ SerializeStatus SerializeBufferBase::serialize(const void* val) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
     }
 
-    return this->serialize(reinterpret_cast<POINTER_CAST>(val));
+    return this->serialize(reinterpret_cast<PlatformPointerCastType>(val));
 }
 
 SerializeStatus SerializeBufferBase::serialize(const U8* buff, Serializable::SizeType length) {

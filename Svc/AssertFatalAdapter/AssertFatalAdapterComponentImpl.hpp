@@ -40,8 +40,8 @@ namespace Svc {
       //! Report the assert as a FATAL
       void reportAssert(
           FILE_NAME_ARG file,
-          NATIVE_UINT_TYPE lineNo,
-          NATIVE_UINT_TYPE numArgs,
+          FwSizeType lineNo,
+          FwSizeType numArgs,
           FwAssertArgType arg1,
           FwAssertArgType arg2,
           FwAssertArgType arg3,
@@ -60,8 +60,8 @@ namespace Svc {
           private:
               void reportAssert(
                   FILE_NAME_ARG file,
-                  NATIVE_UINT_TYPE lineNo,
-                  NATIVE_UINT_TYPE numArgs,
+                  FwSizeType lineNo,
+                  FwSizeType numArgs,
                   FwAssertArgType arg1,
                   FwAssertArgType arg2,
                   FwAssertArgType arg3,

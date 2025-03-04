@@ -37,7 +37,7 @@ namespace Svc {
     // Member Functions
     // ----------------------------------------------------------------------
 
-    bool LogFile::write_to_log(const char *const buf, const U32 size)
+    bool LogFile::write_to_log(const char *const buf, const FwSizeType size)
     {
 
         FW_ASSERT(buf != nullptr);
@@ -50,9 +50,9 @@ namespace Svc {
             // Make sure we won't exceed the maximum size:
             // Note: second condition in if statement is true if there is overflow
             // in the addition below
-            U32 projectedSize = this->m_currentFileSize + size;
+            FwSizeType projectedSize = this->m_currentFileSize + size;
             if ( projectedSize > this->m_maxFileSize ||
-                (this->m_currentFileSize > (std::numeric_limits<U32>::max() - size)) ) {
+                (this->m_currentFileSize > (std::numeric_limits<FwSizeType>::max() - size)) ) {
 
                 status = false;
                 this->m_openFile = false;
@@ -61,16 +61,16 @@ namespace Svc {
             // Won't exceed max size, so write to file:
             else {
 
-                FwSignedSizeType writeSize = size;
+                FwSignedSizeType writeSize = static_cast<FwSignedSizeType>(size);
                 Os::File::Status stat = this->m_file.write(reinterpret_cast<const U8*>(buf),writeSize,Os::File::WAIT);
 
                 // Assert that we are not trying to write to a file we never opened:
                 FW_ASSERT(stat != Os::File::NOT_OPENED);
 
                 // Only return a good status if the write was valid
-                status = (writeSize > 0);
+                status = (stat == Os::File::OP_OK) && (static_cast<FwSizeType>(writeSize) == size);
 
-                this->m_currentFileSize += static_cast<U32>(writeSize);
+                this->m_currentFileSize += static_cast<FwSizeType>(writeSize);
             }
         }
 
@@ -78,7 +78,7 @@ namespace Svc {
     }
 
 
-    bool LogFile::set_log_file(const char* fileName, const U32 maxSize, const U32 maxBackups)
+    bool LogFile::set_log_file(const char* fileName, const FwSizeType maxSize, const FwSizeType maxBackups)
     {
         FW_ASSERT(fileName != nullptr);
 

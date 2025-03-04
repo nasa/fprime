@@ -55,48 +55,48 @@
 
 namespace Fw {
 //! Assert with no arguments
-NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo) CLANG_ANALYZER_NORETURN;
+I8 SwAssert(FILE_NAME_ARG file, FwSizeType lineNo) CLANG_ANALYZER_NORETURN;
 
 //! Assert with one argument
-NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, FwAssertArgType arg1, NATIVE_UINT_TYPE lineNo) CLANG_ANALYZER_NORETURN;
+I8 SwAssert(FILE_NAME_ARG file, FwAssertArgType arg1, FwSizeType lineNo) CLANG_ANALYZER_NORETURN;
 
 //! Assert with two arguments
-NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, FwAssertArgType arg1, FwAssertArgType arg2, NATIVE_UINT_TYPE lineNo)
+I8 SwAssert(FILE_NAME_ARG file, FwAssertArgType arg1, FwAssertArgType arg2, FwSizeType lineNo)
     CLANG_ANALYZER_NORETURN;
 
 //! Assert with three arguments
-NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file,
+I8 SwAssert(FILE_NAME_ARG file,
                          FwAssertArgType arg1,
                          FwAssertArgType arg2,
                          FwAssertArgType arg3,
-                         NATIVE_UINT_TYPE lineNo) CLANG_ANALYZER_NORETURN;
+                         FwSizeType lineNo) CLANG_ANALYZER_NORETURN;
 
 //! Assert with four arguments
-NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file,
+I8 SwAssert(FILE_NAME_ARG file,
                          FwAssertArgType arg1,
                          FwAssertArgType arg2,
                          FwAssertArgType arg3,
                          FwAssertArgType arg4,
-                         NATIVE_UINT_TYPE lineNo) CLANG_ANALYZER_NORETURN;
+                         FwSizeType lineNo) CLANG_ANALYZER_NORETURN;
 
 //! Assert with five arguments
-NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file,
+I8 SwAssert(FILE_NAME_ARG file,
                          FwAssertArgType arg1,
                          FwAssertArgType arg2,
                          FwAssertArgType arg3,
                          FwAssertArgType arg4,
                          FwAssertArgType arg5,
-                         NATIVE_UINT_TYPE lineNo) CLANG_ANALYZER_NORETURN;
+                         FwSizeType lineNo) CLANG_ANALYZER_NORETURN;
 
 //! Assert with six arguments
-NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file,
+I8 SwAssert(FILE_NAME_ARG file,
                          FwAssertArgType arg1,
                          FwAssertArgType arg2,
                          FwAssertArgType arg3,
                          FwAssertArgType arg4,
                          FwAssertArgType arg5,
                          FwAssertArgType arg6,
-                         NATIVE_UINT_TYPE lineNo) CLANG_ANALYZER_NORETURN;
+                         FwSizeType lineNo) CLANG_ANALYZER_NORETURN;
 }  // namespace Fw
 
 // Base class for declaring an assert hook
@@ -111,8 +111,8 @@ class AssertHook {
     virtual ~AssertHook(){};                 //!< destructor
     // override this function to intercept asserts
     virtual void reportAssert(FILE_NAME_ARG file,
-                              NATIVE_UINT_TYPE lineNo,
-                              NATIVE_UINT_TYPE numArgs,
+                              FwSizeType lineNo,
+                              FwSizeType numArgs,
                               FwAssertArgType arg1,
                               FwAssertArgType arg2,
                               FwAssertArgType arg3,
