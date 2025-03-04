@@ -12,11 +12,13 @@ void FpySequencer::stepStatement() {
     // dispatch that statement
 
     if (m_runtime.cancelNextStatement) {
+        printf("cancel\n");
         this->sequencer_sendSignal_result_stepStatement_cancelled();
         return;
     }
 
     if (m_runtime.statementIndex == m_sequenceObj.getheader().getstatementCount()) {
+        printf("no more %d %d\n", m_runtime.statementIndex, m_sequenceObj.getheader().getstatementCount());
         this->sequencer_sendSignal_result_stepStatement_noMoreStatements();
         return;
     }
@@ -60,14 +62,6 @@ bool FpySequencer::dispatchCommand(const Fpy::Statement& stmt) {
     if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
         this->log_WARNING_HI_SerializeError(cmdBuf.getBuffCapacity(), cmdBuf.getBuffLength(), sizeof(stmt.getopCode()),
                                             stat);
-        return false;
-    }
-
-    stat = cmdBuf.serialize(stmt.getargBufSize());
-
-    if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
-        this->log_WARNING_HI_SerializeError(cmdBuf.getBuffCapacity(), cmdBuf.getBuffLength(),
-                                            sizeof(stmt.getargBufSize()), stat);
         return false;
     }
 

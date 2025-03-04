@@ -223,6 +223,18 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_validate(
 // Functions to implement for internal state machine guards
 // ----------------------------------------------------------------------
 
+//! Implementation for guard statementSuccessful of state machine Svc_FpySequencer_SequencerStateMachine
+//!
+//! given a statement response, return true if the
+//! statement successfully executed
+bool FpySequencer::Svc_FpySequencer_SequencerStateMachine_guard_statementSuccessful(
+    SmId smId,                                              //!< The state machine id
+    Svc_FpySequencer_SequencerStateMachine::Signal signal,  //!< The signal
+    const Svc::FpySequencer_StatementResponse& value        //!< The value
+) const {
+    return value.getresponse() == Fw::CmdResponse::OK;
+}
+
 //! Implementation for guard goalStateIs_RUNNING of state machine
 //! Svc_FpySequencer_SequencerStateMachine
 //!

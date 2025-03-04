@@ -77,23 +77,23 @@ bool FpySequencer::validate() {
 
     // deser body:
     // deser arg mappings
-    U8 remainingArgMappings = m_sequenceObj.getheader().getargumentCount();
-    while (remainingArgMappings > 0) {
-        // local variable index of arg $remainingArgMappings - 1
-        deserStatus = m_sequenceBuffer.deserialize(m_sequenceObj.getargs()[remainingArgMappings - 1]);
+    U8 argMappingIdx = 0;
+    while (argMappingIdx < m_sequenceObj.getheader().getargumentCount()) {
+        // local variable index of arg $argMappingIdx
+        deserStatus = m_sequenceBuffer.deserialize(m_sequenceObj.getargs()[argMappingIdx]);
         if (deserStatus != Fw::FW_SERIALIZE_OK) {
             this->log_WARNING_HI_FileReadDeserializeError(m_sequenceFilePath, static_cast<I32>(deserStatus),
                                                           m_sequenceBuffer.getBuffLeft(),
                                                           m_sequenceBuffer.getBuffLength());
             return false;
         }
-        remainingArgMappings--;
+        argMappingIdx++;
     }
 
     // deser statements
-    U16 remainingStatements = m_sequenceObj.getheader().getstatementCount();
-    while (remainingStatements > 0) {
-        Fpy::Statement& statement = m_sequenceObj.getstatements()[remainingStatements - 1];
+    U16 statementIdx = 0;
+    while (statementIdx < m_sequenceObj.getheader().getstatementCount()) {
+        Fpy::Statement& statement = m_sequenceObj.getstatements()[statementIdx];
 
         // statement type (directive or cmd)
         Fpy::StatementType type;
@@ -139,7 +139,13 @@ bool FpySequencer::validate() {
             return false;
         }
 
-        remainingStatements--;
+        statementIdx++;
+    }
+
+    // read footer bytes (but don't include in CRC)
+    readStatus = readBytes(sequenceFile, Fpy::Footer::SERIALIZED_SIZE, false);
+    if (!readStatus) {
+        return false;
     }
 
     U32 crc;
@@ -164,9 +170,9 @@ bool FpySequencer::validate() {
 
 // reads some bytes from the open file into the m_sequenceBuffer.
 // return true if successful
-bool FpySequencer::readBytes(Os::File& file, FwSizeType readLen) {
+bool FpySequencer::readBytes(Os::File& file, FwSizeType readLen, bool updateCRC) {
     FW_ASSERT(file.isOpen());
-    FwSignedSizeType actualReadLen = Fpy::Header::SERIALIZED_SIZE;
+    FwSignedSizeType actualReadLen = static_cast<FwSignedSizeType>(readLen);
 
     const NATIVE_UINT_TYPE capacity = m_sequenceBuffer.getBuffCapacity();
     FW_ASSERT(capacity >= static_cast<NATIVE_UINT_TYPE>(actualReadLen), static_cast<FwAssertArgType>(capacity),
@@ -186,7 +192,9 @@ bool FpySequencer::readBytes(Os::File& file, FwSizeType readLen) {
     Fw::SerializeStatus serializeStatus = m_sequenceBuffer.setBuffLen(static_cast<Fw::Serializable::SizeType>(readLen));
     FW_ASSERT(serializeStatus == Fw::FW_SERIALIZE_OK, serializeStatus);
 
-    updateComputedCRC(m_sequenceBuffer.getBuffAddr(), readLen);
+    if (updateCRC) {
+        updateComputedCRC(m_sequenceBuffer.getBuffAddr(), readLen);
+    }
 
     return true;
 }

@@ -12,13 +12,13 @@
 #include "Fw/Types/StringBase.hpp"
 #include "Fw/Types/WaitEnumAc.hpp"
 #include "Os/File.hpp"
+#include "Svc/FpySequencer/DirectiveIdEnumAc.hpp"
+#include "Svc/FpySequencer/FooterSerializableAc.hpp"
 #include "Svc/FpySequencer/FpySequencerComponentAc.hpp"
 #include "Svc/FpySequencer/FpySequencer_GoalStateEnumAc.hpp"
+#include "Svc/FpySequencer/HeaderSerializableAc.hpp"
 #include "Svc/FpySequencer/SequenceSerializableAc.hpp"
 #include "Svc/FpySequencer/StatementSerializableAc.hpp"
-#include "Svc/FpySequencer/HeaderSerializableAc.hpp"
-#include "Svc/FpySequencer/FooterSerializableAc.hpp"
-#include "Svc/FpySequencer/DirectiveIdEnumAc.hpp"
 
 namespace Svc {
 
@@ -80,9 +80,9 @@ class FpySequencer : public FpySequencerComponentBase {
     //!
     //! simply raises the "entered" signal
     void Svc_FpySequencer_SequencerStateMachine_action_signalEntered(
-        SmId smId, //!< The state machine id
-        Svc_FpySequencer_SequencerStateMachine::Signal signal //!< The signal
-    ) override;
+        SmId smId,                                             //!< The state machine id
+        Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
+        ) override;
 
     //! Implementation for action setSequenceFilePath of state machine
     //! Svc_FpySequencer_SequencerStateMachine
@@ -258,6 +258,16 @@ class FpySequencer : public FpySequencerComponentBase {
             Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
         ) const override;
 
+    //! Implementation for guard statementSuccessful of state machine Svc_FpySequencer_SequencerStateMachine
+    //!
+    //! given a statement response, return true if the
+    //! statement successfully executed
+    bool Svc_FpySequencer_SequencerStateMachine_guard_statementSuccessful(
+        SmId smId,                                              //!< The state machine id
+        Svc_FpySequencer_SequencerStateMachine::Signal signal,  //!< The signal
+        const Svc::FpySequencer_StatementResponse& value        //!< The value
+    ) const override;
+
     // ----------------------------------------------------------------------
     // Handlers to implement for typed input ports
     // ----------------------------------------------------------------------
@@ -279,7 +289,13 @@ class FpySequencer : public FpySequencerComponentBase {
                         U32 key               //!< Value to return to pinger
                         ) override;
 
-    static constexpr U32 CRC_INITIAL_VALUE = 0xFFFFFFFFU;
+  public:
+    void allocateBuffer(NATIVE_INT_TYPE identifier, Fw::MemAllocator& allocator, NATIVE_UINT_TYPE bytes);
+
+    void deallocateBuffer(Fw::MemAllocator& allocator);
+    PRIVATE :
+
+        static constexpr U32 CRC_INITIAL_VALUE = 0xFFFFFFFFU;
 
     // allocated at runtime
     Fw::ExternalSerializeBuffer m_sequenceBuffer;
@@ -331,10 +347,6 @@ class FpySequencer : public FpySequencerComponentBase {
         Fw::Time wakeupTime = Fw::Time();
     } m_runtime;
 
-    void allocateBuffer(NATIVE_INT_TYPE identifier, Fw::MemAllocator& allocator, NATIVE_UINT_TYPE bytes);
-
-    void deallocateBuffer(Fw::MemAllocator& allocator);
-
     void initializeComputedCRC();
 
     void updateComputedCRC(const U8* buffer,      //!< The buffer
@@ -348,8 +360,10 @@ class FpySequencer : public FpySequencerComponentBase {
     bool validate();
 
     // reads some bytes from the open file into the m_sequenceBuffer.
+    // updates the CRC by default, but can be turned off if the contents
+    // aren't included in CRC.
     // return true if successful
-    bool readBytes(Os::File& file, FwSizeType readLen);
+    bool readBytes(Os::File& file, FwSizeType readLen, bool updateCRC = true);
 
     // ----------------------------------------------------------------------
     // Runtime

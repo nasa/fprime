@@ -162,6 +162,8 @@ class TlmPacketParser(object):
             return 8
         elif type_name == "bool":
             return 1
+        elif type_name == "FwOpcodeType":
+            return 4
         else:
             return None
 

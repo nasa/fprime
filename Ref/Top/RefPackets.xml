@@ -7,10 +7,7 @@
         <channel name="Ref.rateGroup1Comp.RgMaxTime"/>
         <channel name="Ref.rateGroup2Comp.RgMaxTime"/>
         <channel name="Ref.rateGroup3Comp.RgMaxTime"/>
-        <channel name="Ref.cmdSeq.CS_LoadCommands"/>
-        <channel name="Ref.cmdSeq.CS_CancelCommands"/>
-        <channel name="Ref.cmdSeq.CS_CommandsExecuted"/>
-        <channel name="Ref.cmdSeq.CS_SequencesCompleted"/>
+        <channel name="Ref.fpySeq.CompletedCount"/>
         <channel name="Ref.fileUplink.FilesReceived"/>
         <channel name="Ref.fileUplink.PacketsReceived"/>
         <channel name="Ref.fileUplinkBufferManager.TotalBuffs"/>
@@ -27,7 +24,6 @@
         <channel name="Ref.rateGroup1Comp.RgCycleSlips"/>
         <channel name="Ref.rateGroup2Comp.RgCycleSlips"/>
         <channel name="Ref.rateGroup3Comp.RgCycleSlips"/>
-        <channel name="Ref.cmdSeq.CS_Errors"/>
         <channel name="Ref.fileUplink.Warnings"/>
         <channel name="Ref.fileDownlink.Warnings"/>
         <channel name="Ref.health.PingLateWarnings"/>
