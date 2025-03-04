@@ -195,4 +195,4 @@ void LogBad::action(MockLogging::FakeLogger& truth) {
     truth.check("");
     truth.reset();
 }
-};  // namespace LoggerRules
+}  // namespace LoggerRules
