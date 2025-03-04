@@ -39,9 +39,14 @@ state machine SequencerStateMachine {
     @ generic success of an action
     signal result_success
 
+    @ generic entry of a state
+    signal entered
+
     ####################
     # actions          #
     ####################
+    @ simply raises the "entered" signal
+    action signalEntered
     @ sets the current sequence file path member var
     action setSequenceFilePath: SequenceExecutionArgs
     @ sets the block state of the sequence to be run
@@ -114,10 +119,13 @@ state machine SequencerStateMachine {
 
     state VALIDATING {
 
-        entry do { validate }
+        # do it this way so we are only running validate while we
+        # are in the VALIDATING state... although TODO does this matter?
+        entry do { signalEntered }
 
+        on entered do { validate }
+        # -->
         on result_failure do { report_invalidSeq, cmdResponseOut_EXECUTION_ERROR } enter IDLE
-        # close the sequence file now that it's in memory
         on result_success enter VALID
 
         ####################

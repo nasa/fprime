@@ -5,6 +5,16 @@ namespace Svc {
 // Functions to implement for internal state machine actions
 // ----------------------------------------------------------------------
 
+//! Implementation for action signalEntered of state machine Svc_FpySequencer_SequencerStateMachine
+//!
+//! simply raises the "entered" signal
+void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_signalEntered(
+    SmId smId,                                             //!< The state machine id
+    Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
+) {
+    this->sequencer_sendSignal_entered();
+}
+
 //! Implementation for action setSequenceFilePath of state machine
 //! Svc_FpySequencer_SequencerStateMachine
 //!
@@ -83,7 +93,8 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_report_unexpect
     Svc_FpySequencer_SequencerStateMachine::Signal signal,  //!< The signal
     const Svc::FpySequencer_StatementResponse& value        //!< The value
 ) {
-    this->log_WARNING_LO_UnexpectedStatementResponseForState(static_cast<I32>(sequencer_getState()), value.getopcode(), value.getresponse());
+    this->log_WARNING_LO_UnexpectedStatementResponseForState(static_cast<I32>(sequencer_getState()), value.getopcode(),
+                                                             value.getresponse());
 }
 
 //! Implementation for action report_seqFailed of state machine

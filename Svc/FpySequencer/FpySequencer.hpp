@@ -76,6 +76,14 @@ class FpySequencer : public FpySequencerComponentBase {
     // Functions to implement for internal state machine actions
     // ----------------------------------------------------------------------
 
+    //! Implementation for action signalEntered of state machine Svc_FpySequencer_SequencerStateMachine
+    //!
+    //! simply raises the "entered" signal
+    void Svc_FpySequencer_SequencerStateMachine_action_signalEntered(
+        SmId smId, //!< The state machine id
+        Svc_FpySequencer_SequencerStateMachine::Signal signal //!< The signal
+    ) override;
+
     //! Implementation for action setSequenceFilePath of state machine
     //! Svc_FpySequencer_SequencerStateMachine
     //!
