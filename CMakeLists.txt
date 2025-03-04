@@ -18,6 +18,9 @@ include("${CMAKE_CURRENT_LIST_DIR}/cmake/FPrime.cmake")
 # so unused method parameters are common in the F prime code base. Eventually all intentionally
 # unused parameters should be annotated to avoid this error.
 #
+# -Wno-vla: Variable length arrays are required to support sending to async serializable
+# ports. https://github.com/nasa/fprime/issues/945
+#
 add_compile_options(
     $<$<COMPILE_LANGUAGE:CXX>:-Wold-style-cast>
     -Wall
@@ -34,27 +37,22 @@ add_compile_options(
 # Turn off -Wshadow for now in unit testing
 # * The FPP-generated code needs more fixes
 # * STest needs more fixes
-#if (BUILD_TESTING)
-#    add_compile_options(
-#        -Wno-shadow
-#    )
-#endif()
-
-# Disable compiler-specific checks that F' doesn't comply with.
-#
-# -Wno-vla-extension: Variable length arrays are required to support sending to async serializable
-# ports. https://github.com/nasa/fprime/issues/945
-#
-if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+if (BUILD_TESTING)
     add_compile_options(
-        $<$<COMPILE_LANGUAGE:CXX>:-Wno-vla-extension>
-    )
-elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU" AND NOT DEFINED CMAKE_CXX_CLANG_TIDY)
-    # The following is not supported by clang, which also causes issues when using clang-tidy
-    add_compile_options(
-        -Wno-format-truncation
+        -Wno-shadow
     )
 endif()
+
+#if(
+#    (NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang") AND
+#    CMAKE_CXX_COMPILER_ID MATCHES "GNU" AND
+#    (NOT DEFINED CMAKE_CXX_CLANG_TIDY)
+#)
+#    # The following is not supported by clang, which also causes issues when using clang-tidy
+#    add_compile_options(
+#        -Wno-format-truncation
+#    )
+#endif()
 
 find_program(VALGRIND valgrind) # Find valgrind, and use it instead of leak check
 # Enable sanitizers
