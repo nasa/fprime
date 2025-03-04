@@ -24,7 +24,7 @@ ANamespace
 anotherchan
 anotherparam
 apad
-APID
+apid
 APIDOCS
 aports
 apos
