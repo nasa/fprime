@@ -7,16 +7,29 @@ module Svc {
         # ----------------------------------------------------------------------
         include "../Interfaces/RouterInterface.fppi"
 
+        @ Port for forwarding non-recognized packet types
+        output port unknownDataOut: Fw.DataWithContext
+
         @ Port for deallocating buffers
         output port bufferDeallocate: Fw.BufferSend
 
-        @ Port for receiving command responses from a command dispatcher.
-        @ Invoking this port does nothing. The port exists to allow the matching
-        @ connection in the topology.
-        sync input port cmdResponseIn: Fw.CmdResponse
+        @ An error occurred while serializing a com buffer
+        event SerializationError(
+                status: U32 @< The status of the operation
+            ) \
+            severity warning high \
+            format "Serializing com buffer failed with status {}"
+
+        @ An error occurred while deserializing a packet
+        event DeserializationError(
+                status: U32 @< The status of the operation
+            ) \
+            severity warning high \
+            format "Deserializing packet type failed with status {}"
+
 
         ###############################################################################
-        # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #
+        # Standard AC Ports for Events 
         ###############################################################################
         @ Port for requesting the current time
         time get port timeCaller
@@ -26,9 +39,6 @@ module Svc {
 
         @ Port for sending events to downlink
         event port logOut
-
-        @ Port for sending telemetry channels to downlink
-        telemetry port tlmOut
 
     }
 }

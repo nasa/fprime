@@ -11,7 +11,7 @@
 
 namespace Svc {
 
-class Router : public RouterComponentBase {
+class Router final : public RouterComponentBase {
   public:
     // ----------------------------------------------------------------------
     // Component construction and destruction
@@ -31,7 +31,7 @@ class Router : public RouterComponentBase {
 
     //! Handler implementation for bufferIn
     //! Receiving Fw::Buffer from Deframer
-    void dataIn_handler(NATIVE_INT_TYPE portNum,  //!< The port number
+    void dataIn_handler(FwIndexType portNum,  //!< The port number
                           Fw::Buffer& packetBuffer, //!< The packet buffer
                           Fw::Buffer& contextBuffer //!< The context buffer
                           ) override;
@@ -39,7 +39,7 @@ class Router : public RouterComponentBase {
     // ! Handler for input port cmdResponseIn
     // ! This is a no-op because Router does not need to handle command responses
     // ! but the port must be connected
-    void cmdResponseIn_handler(NATIVE_INT_TYPE portNum,         //!< The port number
+    void cmdResponseIn_handler(FwIndexType portNum,         //!< The port number
                                FwOpcodeType opcode,             //!< The command opcode
                                U32 cmdSeq,                      //!< The command sequence number
                                const Fw::CmdResponse& response  //!< The command response

@@ -14,7 +14,7 @@
 
 namespace Svc {
 
-class FrameAccumulator : public FrameAccumulatorComponentBase {
+class FrameAccumulator final : public FrameAccumulatorComponentBase {
   public:
     // ----------------------------------------------------------------------
     // Component construction and destruction
@@ -32,7 +32,7 @@ class FrameAccumulator : public FrameAccumulatorComponentBase {
     //! Takes in parameters used in the Fw::MemAllocator pattern and configures a memory allocation for storing the
     //! circular buffer.
     void configure(const FrameDetector& detector,  //!< Frame detector helper instance
-                   NATIVE_UINT_TYPE allocationId,  //!< Identifier used  when dealing with the Fw::MemAllocator
+                   FwEnumStoreType allocationId,  //!< Identifier used  when dealing with the Fw::MemAllocator
                    Fw::MemAllocator& allocator,    //!< Fw::MemAllocator used to acquire memory
                    FwSizeType store_size           //!< Size to request for circular buffer
     );
@@ -70,7 +70,7 @@ class FrameAccumulator : public FrameAccumulatorComponentBase {
     U8* m_memory;
 
     //! Identification used with the memory allocator
-    NATIVE_UINT_TYPE m_allocatorId;
+    FwEnumStoreType m_allocatorId;
 };
 
 }  // namespace Svc

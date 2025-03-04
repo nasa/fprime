@@ -39,7 +39,7 @@ sequenceDiagram
         alt MORE_DATA_NEEDED
             A-->A: break
         else NO_FRAME_DETECTED
-            A-->>A: ring.rotate()
+            A-->>A: ring.rotate(1)
         else FRAME_DETECTED
             create participant Z as Output
             A-->>Z: Frame

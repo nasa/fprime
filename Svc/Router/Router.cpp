@@ -23,7 +23,7 @@ Router ::~Router() {}
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void Router ::dataIn_handler(NATIVE_INT_TYPE portNum, Fw::Buffer& packetBuffer, Fw::Buffer& contextBuffer) {
+void Router ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer, Fw::Buffer& contextBuffer) {
     // Read the packet type from the packet buffer
     FwPacketDescriptorType packetType = Fw::ComPacket::FW_PACKET_UNKNOWN;
     Fw::SerializeStatus status = Fw::FW_SERIALIZE_OK;
@@ -49,11 +49,11 @@ void Router ::dataIn_handler(NATIVE_INT_TYPE portNum, Fw::Buffer& packetBuffer, 
                 // Copy the contents of the packet buffer into the com buffer
                 status = com.setBuff(packetData, packetSize);
                 if (status == Fw::FW_SERIALIZE_OK) {
-                    // Send the com buffer
+                    // Send the com buffer - critical functionality so it is considered an error not to
+                    // have the port connected. This is why we don't check isConnected() before sending.
                     commandOut_out(0, com, 0);
-                    // REVIEW NOTE: Deframer did not check if the output port was connected, should it?
                 } else {
-                    Fw::Logger::log("[ERROR] Serializing com buffer failed with status %d\n", status);
+                    this->log_WARNING_HI_SerializationError(status);
                 }
                 break;
             }
@@ -69,17 +69,23 @@ void Router ::dataIn_handler(NATIVE_INT_TYPE portNum, Fw::Buffer& packetBuffer, 
                     packetBuffer.setSize(static_cast<U32>(packetSize - sizeof(packetType)));
                     // Send the packet buffer
                     fileOut_out(0, packetBuffer);
-                    // Transfer ownership of the buffer to the receiver
+                    // Transfer ownership of the packetBuffer to the receiver
                     deallocate = false;
                 }
                 break;
             }
-            // Take no action for other packet types
-            default:
-                break;
+            default: {
+                // Packet type is not known to the F Prime protocol. If the unknownDataOut port is
+                // connected, forward packet and context for further processing
+                if (isConnected_unknownDataOut_OutputPort(0)) {
+                    unknownDataOut_out(0, packetBuffer, contextBuffer);
+                    // Transfer ownership of the packetBuffer to the receiver
+                    deallocate = false;
+                }
+            }
         }
     } else {
-        Fw::Logger::log("[ERROR] Deserializing packet type failed with status %d\n", status);
+        this->log_WARNING_HI_DeserializationError(status);
     }
 
     if (deallocate) {
@@ -88,7 +94,7 @@ void Router ::dataIn_handler(NATIVE_INT_TYPE portNum, Fw::Buffer& packetBuffer, 
     }
 }
 
-void Router ::cmdResponseIn_handler(NATIVE_INT_TYPE portNum,
+void Router ::cmdResponseIn_handler(FwIndexType portNum,
                                     FwOpcodeType opcode,
                                     U32 cmdSeq,
                                     const Fw::CmdResponse& response) {

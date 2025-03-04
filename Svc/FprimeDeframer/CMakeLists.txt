@@ -12,7 +12,6 @@ set(SOURCE_FILES
 )
 
 set(MOD_DEPS
-    Svc/FramingProtocol
     Utils/Types
 )
 

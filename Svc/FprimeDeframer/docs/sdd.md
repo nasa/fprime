@@ -6,7 +6,7 @@ The `Svc::FprimeDeframer` component receives F´ frames on its input port, takes
 
 ```mermaid
 ---
-title: "F Prime Frame Format"
+title: "Default F Prime Frame Format"
 ---
 packet-beta
   0-31: "Start word: 0xDEADBEEF [4 bytes]"
@@ -16,7 +16,7 @@ packet-beta
 
 ```
 
-Following this frame specification, the `Svc::FprimeDeframer` removes the 32-bit start word, the 32-bit packet length, and the 32-bit CRC from the frame, and outputs the encapsulated packet data.
+Following this frame specification, in its default configuration, the `Svc::FprimeDeframer` removes the header (32-bit start word, 32-bit packet length) and the trailer (32-bit CRC) from the frame, and outputs the encapsulated packet data.
 
 ## Internals
 
@@ -27,6 +27,10 @@ Ownership of the buffer is transferred to the component connected to the `defram
 The `Svc::FprimeDeframer` component does not perform any validation of the frame. It is expected that the frame is valid and well-formed. The validation should be performed by an upstream component, such as [`Svc::FrameAccumulator`](../../FrameAccumulator/docs/sdd.md).
 
 The `Svc::FprimeDeframer` does not support deframing multiple packets in a single frame (i.e. concatenated packets) as this is not supported by the F´ communications protocol.
+
+### Custom Configuration
+
+
 
 
 ## Usage Examples
@@ -55,7 +59,7 @@ classDiagram
 
 Requirement | Description | Rationale | Verification Method
 ----------- | ----------- | ----------| -------------------
-SVC-DEFRAMER-001 | `Svc::FprimeDeframer` shall remove the header and trailer from and F´ frame | Purpose of the component | Unit test |
+SVC-DEFRAMER-001 | `Svc::FprimeDeframer` shall remove the header and trailer from an F´ frame | Purpose of the component | Unit test |
 
 ## Port Descriptions
 

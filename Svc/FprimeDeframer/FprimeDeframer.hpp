@@ -12,7 +12,7 @@
 
 namespace Svc {
 
-class FprimeDeframer : public FprimeDeframerComponentBase {
+class FprimeDeframer final : public FprimeDeframerComponentBase {
 
 
   public:

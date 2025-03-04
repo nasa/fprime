@@ -10,12 +10,6 @@ module Ref {
       rateGroup3
     }
 
-    enum Ports_StaticMemory {
-      downlink
-      uplink
-      accumulator
-    }
-
   topology Ref {
 
     # ----------------------------------------------------------------------

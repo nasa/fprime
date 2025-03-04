@@ -13,5 +13,24 @@ module Svc {
 
         @ Port for sending an extracted frame out
         output port frameOut: Fw.DataWithContext
+
+        @ An error occurred while deserializing a packet
+        event NoBufferAvailable \
+            severity warning high \
+            format "Could not allocate a valid buffer to fit the detected frame"
+
+
+        ###############################################################################
+        # Standard AC Ports for Events 
+        ###############################################################################
+        @ Port for requesting the current time
+        time get port timeCaller
+
+        @ Port for sending textual representation of events
+        text event port logTextOut
+
+        @ Port for sending events to downlink
+        event port logOut
+
     }
 }

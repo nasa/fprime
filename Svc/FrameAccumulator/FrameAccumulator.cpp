@@ -31,7 +31,7 @@ FrameAccumulator ::~FrameAccumulator() {
 }
 
 void FrameAccumulator ::configure(const FrameDetector& detector,
-                                  NATIVE_UINT_TYPE allocationId,
+                                  FwEnumStoreType allocationId,
                                   Fw::MemAllocator& allocator,
                                   FwSizeType store_size) {
     bool recoverable = false;
@@ -126,6 +126,8 @@ void FrameAccumulator ::processRing() {
             FW_ASSERT(size_out != 0);
             FW_ASSERT(size_out <= remaining, static_cast<FwAssertArgType>(size_out),
                       static_cast<FwAssertArgType>(remaining));
+            // check for overflow before casting down to U32
+            FW_ASSERT(size_out <= std::numeric_limits<U32>::max());
             Fw::Buffer buffer = this->bufferAllocate_out(0, static_cast<U32>(size_out));
             if (buffer.isValid()) {
                 // Copy out data and rotate
@@ -140,6 +142,7 @@ void FrameAccumulator ::processRing() {
                 this->frameOut_out(0, buffer, nullContext);
             } else {
                 // No buffer is available, we need to exit and try again later
+                this->log_WARNING_HI_NoBufferAvailable();
                 break;
             }
         }

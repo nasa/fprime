@@ -2,7 +2,9 @@
 
 The `Svc::Router` component routes F´ packets (such as command or file packets) to other components.
 
-The `Svc::Router` component receives F´ packets (as [Fw::Buffer](../../../Fw/Buffer/docs/sdd.md) objects) and routes them to other components through synchronous port calls. The `Svc::Router` component supports `Fw::ComPacket::FW_PACKET_COMMAND` and `Fw::ComPacket::FW_PACKET_FILE` packet types.
+The `Svc::Router` component receives F´ packets (as [Fw::Buffer](../../../Fw/Buffer/docs/sdd.md) objects) and routes them to other components through synchronous port calls. The input port of type `Fw.DataWithContext` passes this Fw.Buffer object along with optional context data which can help for routing. The current F Prime protocol does not use this context data, but is nevertheless present in the interface for compatibility with other protocols which may for example pass APIDs in the frame headers.
+
+The `Svc::Router` component supports `Fw::ComPacket::FW_PACKET_COMMAND` and `Fw::ComPacket::FW_PACKET_FILE` packet types. Unknown packet types are forwarded on the `unknownDataOut` port, which a project-specific component can connect to for custom routing. In the case of unknown data being forwarded, the ownership of the packet data `Fw::Buffer` object is passed to the receiver.
 
 ## Usage Examples
 
@@ -39,5 +41,7 @@ classDiagram
 | Name | Description | Rationale | Validation |
 |---|---|---|---|
 SVC-ROUTER-001 | `Svc::Router` shall route packets based on their packet type as indicated by the packet header | Routing mechanism of the F´ comms protocol | Unit test |
-SVC-ROUTER-002 | `Svc::Router` shall route packets with the following types: `Fw::ComPacket::FW_PACKET_COMMAND`, `Fw::ComPacket::FW_PACKET_FILE`. | These are the packet types used for uplink. | Unit test |
-SVC-ROUTER-003 | `Svc::Router` shall route command and file packets to the `commandOut` and `fileOut` ports, respectively | Routing mechanism as dictated by the F´ point-to-point architecture. | Unit test |
+SVC-ROUTER-002 | `Svc::Router` shall route packets of type `Fw::ComPacket::FW_PACKET_COMMAND` to the `commandOut` output port. | Routing command packets | Unit test |
+SVC-ROUTER-003 | `Svc::Router` shall route packets of type `Fw::ComPacket::FW_PACKET_FILE` to the `fileOut` output port. | Routing file packets | Unit test |
+SVC-ROUTER-004 | `Svc::Router` shall route data that is neither `Fw::ComPacket::FW_PACKET_COMMAND` nor `Fw::ComPacket::FW_PACKET_FILE` to the `unknownDataOut` output port. | Allows for projects to provide custom routing for additional (project-specific) uplink data types | Unit test |
+SVC-ROUTER-005 | `Svc::Router` shall emit warning events if serialization errors occur during processing of incoming packets | Aid in diagnosing uplink issues | Unit test |
