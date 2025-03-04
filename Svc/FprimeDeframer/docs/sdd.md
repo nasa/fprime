@@ -40,7 +40,7 @@ The `Svc::FprimeDeframer` component is used in the uplink stack of many referenc
 
 ## Diagrams
 
-The below diagram shows a typical configuration in which the `Svc::FprimeDeframer` can be used. This is the configuration used in the [the tutorials source code](https://github.com/fprime-community#tutorials). It is receiving accumulated frames from a [Svc::FrameAccumulator](../../FrameAccumulator/docs/sdd.md) and passes packets to a [Svc::Router](../../Router/docs/sdd.md) for routing to other components.
+The below diagram shows a typical configuration in which the `Svc::FprimeDeframer` can be used. This is the configuration used in the [the tutorials source code](https://github.com/fprime-community#tutorials). It is receiving accumulated frames from a [Svc::FrameAccumulator](../../FrameAccumulator/docs/sdd.md) and passes packets to a [Svc::FprimeRouter](../../FprimeRouter/docs/sdd.md) for routing to other components.
 
 ![./img/deframer_uplink_stack.png](./img/deframer_uplink_stack.png)
 

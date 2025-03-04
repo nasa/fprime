@@ -1,28 +1,28 @@
 // ======================================================================
-// \title  Router.hpp
+// \title  FprimeRouter.hpp
 // \author thomas-bc
-// \brief  hpp file for Router component implementation class
+// \brief  hpp file for FprimeRouter component implementation class
 // ======================================================================
 
-#ifndef Svc_Router_HPP
-#define Svc_Router_HPP
+#ifndef Svc_FprimeRouter_HPP
+#define Svc_FprimeRouter_HPP
 
-#include "Svc/Router/RouterComponentAc.hpp"
+#include "Svc/FprimeRouter/FprimeRouterComponentAc.hpp"
 
 namespace Svc {
 
-class Router final : public RouterComponentBase {
+class FprimeRouter final : public FprimeRouterComponentBase {
   public:
     // ----------------------------------------------------------------------
     // Component construction and destruction
     // ----------------------------------------------------------------------
 
-    //! Construct Router object
-    Router(const char* const compName  //!< The component name
+    //! Construct FprimeRouter object
+    FprimeRouter(const char* const compName  //!< The component name
     );
 
-    //! Destroy Router object
-    ~Router();
+    //! Destroy FprimeRouter object
+    ~FprimeRouter();
 
   PRIVATE:
     // ----------------------------------------------------------------------
@@ -37,7 +37,7 @@ class Router final : public RouterComponentBase {
                           ) override;
 
     // ! Handler for input port cmdResponseIn
-    // ! This is a no-op because Router does not need to handle command responses
+    // ! This is a no-op because FprimeRouter does not need to handle command responses
     // ! but the port must be connected
     void cmdResponseIn_handler(FwIndexType portNum,         //!< The port number
                                FwOpcodeType opcode,             //!< The command opcode

@@ -8,17 +8,17 @@
 ####
 
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/Router.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/Router.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/FprimeRouter.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/FprimeRouter.cpp"
 )
 register_fprime_module()
 
 
 #### UTS ####
 set(UT_SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/Router.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/RouterTester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/RouterTestMain.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/FprimeRouter.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/FprimeRouterTester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/FprimeRouterTestMain.cpp"
 )
 set(UT_AUTO_HELPERS ON)
 

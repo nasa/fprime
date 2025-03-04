@@ -1,10 +1,10 @@
 // ======================================================================
-// \title  Router.cpp
+// \title  FprimeRouter.cpp
 // \author thomas-bc
-// \brief  cpp file for Router component implementation class
+// \brief  cpp file for FprimeRouter component implementation class
 // ======================================================================
 
-#include "Svc/Router/Router.hpp"
+#include "Svc/FprimeRouter/FprimeRouter.hpp"
 #include "FpConfig.hpp"
 #include "Fw/Com/ComPacket.hpp"
 #include "Fw/Logger/Logger.hpp"
@@ -15,15 +15,15 @@ namespace Svc {
 // Component construction and destruction
 // ----------------------------------------------------------------------
 
-Router ::Router(const char* const compName) : RouterComponentBase(compName) {}
+FprimeRouter ::FprimeRouter(const char* const compName) : FprimeRouterComponentBase(compName) {}
 
-Router ::~Router() {}
+FprimeRouter ::~FprimeRouter() {}
 
 // ----------------------------------------------------------------------
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void Router ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer, Fw::Buffer& contextBuffer) {
+void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer, Fw::Buffer& contextBuffer) {
     // Read the packet type from the packet buffer
     FwPacketDescriptorType packetType = Fw::ComPacket::FW_PACKET_UNKNOWN;
     Fw::SerializeStatus status = Fw::FW_SERIALIZE_OK;
@@ -94,7 +94,7 @@ void Router ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer, Fw::
     }
 }
 
-void Router ::cmdResponseIn_handler(FwIndexType portNum,
+void FprimeRouter ::cmdResponseIn_handler(FwIndexType portNum,
                                     FwOpcodeType opcode,
                                     U32 cmdSeq,
                                     const Fw::CmdResponse& response) {

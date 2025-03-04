@@ -1,20 +1,20 @@
 // ======================================================================
-// \title  RouterTester.hpp
+// \title  FprimeRouterTester.hpp
 // \author thomas-bc
-// \brief  hpp file for Router component test harness implementation class
+// \brief  hpp file for FprimeRouter component test harness implementation class
 // ======================================================================
 
-#ifndef Svc_RouterTester_HPP
-#define Svc_RouterTester_HPP
+#ifndef Svc_FprimeRouterTester_HPP
+#define Svc_FprimeRouterTester_HPP
 
-#include "Svc/Router/Router.hpp"
-#include "Svc/Router/RouterGTestBase.hpp"
+#include "Svc/FprimeRouter/FprimeRouter.hpp"
+#include "Svc/FprimeRouter/FprimeRouterGTestBase.hpp"
 
 #include <Fw/Com/ComPacket.hpp>
 
 namespace Svc {
 
-class RouterTester : public RouterGTestBase {
+class FprimeRouterTester : public FprimeRouterGTestBase {
   public:
     // ----------------------------------------------------------------------
     // Constants
@@ -31,11 +31,11 @@ class RouterTester : public RouterGTestBase {
     // Construction and destruction
     // ----------------------------------------------------------------------
 
-    //! Construct object RouterTester
-    RouterTester();
+    //! Construct object FprimeRouterTester
+    FprimeRouterTester(bool disconnect_unknownData_port = false);
 
-    //! Destroy object RouterTester
-    ~RouterTester();
+    //! Destroy object FprimeRouterTester
+    ~FprimeRouterTester();
 
   public:
     // ----------------------------------------------------------------------
@@ -51,6 +51,9 @@ class RouterTester : public RouterGTestBase {
     //! Route a packet of unknown type
     void testRouteUnknownPacket();
 
+    //! Route a packet of unknown type
+    void testRouteUnknownPacketUnconnected();
+
     //! Invoke the command response input port
     void testCommandResponse();
 
@@ -59,8 +62,11 @@ class RouterTester : public RouterGTestBase {
     // Helper functions
     // ----------------------------------------------------------------------
 
-    //! Connect ports
+    //! Connect all ports
     void connectPorts();
+
+    //! Connect all ports except unknownDataOut output port
+    void connectPortsExceptUnknownData();
 
     //! Initialize components
     void initComponents();
@@ -74,7 +80,7 @@ class RouterTester : public RouterGTestBase {
     // ----------------------------------------------------------------------
 
     //! The component under test
-    Router component;
+    FprimeRouter component;
 };
 
 }  // namespace Svc

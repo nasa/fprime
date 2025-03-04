@@ -1,6 +1,6 @@
 module Svc {
     @ Routes packets deframed by the Deframer to the rest of the system
-    passive component Router {
+    passive component FprimeRouter {
 
         # ----------------------------------------------------------------------
         # Router interface
