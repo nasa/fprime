@@ -34,11 +34,11 @@ add_compile_options(
 # Turn off -Wshadow for now in unit testing
 # * The FPP-generated code needs more fixes
 # * STest needs more fixes
-if (BUILD_TESTING)
-    add_compile_options(
-        -Wno-shadow
-    )
-endif()
+#if (BUILD_TESTING)
+#    add_compile_options(
+#        -Wno-shadow
+#    )
+#endif()
 
 # Disable compiler-specific checks that F' doesn't comply with.
 #
