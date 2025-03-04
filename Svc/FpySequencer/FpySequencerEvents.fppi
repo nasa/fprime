@@ -49,6 +49,13 @@ event ReadFooterSuccess(
     severity diagnostic \
     format "Successfully read footer of {}"
 
+event WrongSchemaVersion(
+    expected: U8,
+    actual: U8
+) \
+    severity warning low \
+    format "Expected schema version {}, found {}"
+
 event InvalidSequence(filePath: string) \
     severity warning high \
     format "Failed to validate sequence {}"

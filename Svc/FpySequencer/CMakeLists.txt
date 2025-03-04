@@ -9,8 +9,10 @@
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/FpySequencer.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/FpySequencer.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/FpySequencerTypes.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/FpySequencerStateMachine.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/FpySequencerRuntime.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/FpySequencerRunState.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/FpySequencerValidationState.cpp"
 )
 
 register_fprime_module()

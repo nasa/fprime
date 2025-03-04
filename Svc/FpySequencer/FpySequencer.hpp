@@ -8,13 +8,17 @@
 #define FpySequencer_HPP
 
 #include "FppConstantsAc.hpp"
-#include "FpySequencerTypes.hpp"
 #include "Fw/Types/MemAllocator.hpp"
 #include "Fw/Types/StringBase.hpp"
 #include "Fw/Types/WaitEnumAc.hpp"
 #include "Os/File.hpp"
 #include "Svc/FpySequencer/FpySequencerComponentAc.hpp"
 #include "Svc/FpySequencer/FpySequencer_GoalStateEnumAc.hpp"
+#include "Svc/FpySequencer/SequenceSerializableAc.hpp"
+#include "Svc/FpySequencer/StatementSerializableAc.hpp"
+#include "Svc/FpySequencer/HeaderSerializableAc.hpp"
+#include "Svc/FpySequencer/FooterSerializableAc.hpp"
+#include "Svc/FpySequencer/DirectiveIdEnumAc.hpp"
 
 namespace Svc {
 
@@ -276,7 +280,7 @@ class FpySequencer : public FpySequencerComponentBase {
                         U32 key               //!< Value to return to pinger
                         ) override;
 
-    enum { CRC_INITIAL_VALUE = 0xFFFFFFFFU };
+    static constexpr U32 CRC_INITIAL_VALUE = 0xFFFFFFFFU;
 
     // allocated at runtime
     Fw::ExternalSerializeBuffer m_sequenceBuffer;
@@ -285,8 +289,6 @@ class FpySequencer : public FpySequencerComponentBase {
 
     // assigned by the user
     Fw::String m_sequenceFilePath;
-    // used to open and read the m_sequenceFilePath
-    Os::File m_sequenceFileObj;
     // the sequence, loaded in memory
     Fpy::Sequence m_sequenceObj;
     // live running computation of CRC (updated as we read)
@@ -310,7 +312,25 @@ class FpySequencer : public FpySequencerComponentBase {
     // this is distinct from the state of the sequencer. the
     // sequencer and all its state is really just a shell to load
     // and execute this runtime.
-    Fpy::Runtime m_runtime;
+    struct {
+        // the index of the next statement to be executed
+        U32 statementIndex = 0;
+
+        // the opcode of the statement that is currently executing
+        FwOpcodeType currentStatementOpcode = Fpy::DirectiveId::INVALID;
+
+        // whether we should cancel the sequence execution before trying to start
+        // the next statement
+        bool cancelNextStatement = false;
+
+        // whether the sequencer is waiting passively for
+        // the wakeupTime to run out before returning a
+        // statement response
+        bool sleeping = false;
+        // the absolute time we should wait for until returning
+        // a statement response
+        Fw::Time wakeupTime = Fw::Time();
+    } m_runtime;
 
     void allocateBuffer(NATIVE_INT_TYPE identifier, Fw::MemAllocator& allocator, NATIVE_UINT_TYPE bytes);
 
@@ -318,20 +338,24 @@ class FpySequencer : public FpySequencerComponentBase {
 
     void initializeComputedCRC();
 
-    void updateComputedCRC(const BYTE* buffer,          //!< The buffer
-                           NATIVE_UINT_TYPE bufferSize  //!< The buffer size
+    void updateComputedCRC(const U8* buffer,      //!< The buffer
+                           FwSizeType bufferSize  //!< The buffer size
     );
 
     void finalizeComputedCRC();
 
-    // opens the sequence file. return true if success
-    bool openSequenceFile();
+    // loads the sequence in memory, and does header/crc/integrity checks.
+    // return true if sequence is valid
+    bool validate();
+
     // reads the header of the sequence file. return true if success
-    bool readHeader();
+    bool readHeader(Os::File& file);
     // reads the body of the sequence file. return true if success
-    bool readBody();
+    bool readBody(Os::File& file);
     // reads the footer of the sequence file. return true if success
-    bool readFooter();
+    bool readFooter(Os::File& file);
+
+    bool readBytes(Os::File& file, FwSizeType readLen);
 
     // ----------------------------------------------------------------------
     // Runtime

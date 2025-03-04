@@ -15,18 +15,18 @@ void FpySequencer::stepStatement() {
         return;
     }
 
-    if (m_runtime.statementIndex == m_sequenceObj.header.statementCount) {
+    if (m_runtime.statementIndex == m_sequenceObj.getheader().getstatementCount()) {
         this->sequencer_sendSignal_result_stepStatement_noMoreStatements();
         return;
     }
 
     // check to make sure no array out of bounds
-    FW_ASSERT(m_runtime.statementIndex < m_sequenceObj.header.statementCount);
-    Fpy::Statement nextStatement = m_sequenceObj.statementArray[m_runtime.statementIndex];
+    FW_ASSERT(m_runtime.statementIndex < m_sequenceObj.getheader().getstatementCount());
+    Fpy::Statement nextStatement = m_sequenceObj.getstatements()[m_runtime.statementIndex];
 
     // based on the statement type (directive or cmd)
     // send it to where it needs to go
-    bool isDirective = checkOpcodeIsDirective(nextStatement.opcode);
+    bool isDirective = checkOpcodeIsDirective(nextStatement.getopCode());
     bool result = false;
 
     if (isDirective) {
@@ -37,7 +37,7 @@ void FpySequencer::stepStatement() {
 
     m_runtime.statementIndex++;
 
-    m_runtime.currentStatementOpcode = nextStatement.opcode;
+    m_runtime.currentStatementOpcode = nextStatement.getopCode();
 
     if (result) {
         this->sequencer_sendSignal_result_stepStatement_success();
@@ -56,16 +56,10 @@ bool FpySequencer::dispatchCommand(const Fpy::Statement& stmt) {
                                             sizeof(Fw::ComPacket::FW_PACKET_COMMAND), stat);
         return false;
     }
-    stat = cmdBuf.serialize(stmt.opcode);
+    stat = cmdBuf.serialize(stmt);
     if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
-        this->log_WARNING_HI_SerializeError(cmdBuf.getBuffCapacity(), cmdBuf.getBuffLength(), sizeof(stmt.opcode),
-                                            stat);
-        return false;
-    }
-    stat = cmdBuf.serialize(stmt.args.getBuffAddr(), stmt.args.getBuffLength(), true);
-    if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
-        this->log_WARNING_HI_SerializeError(cmdBuf.getBuffCapacity(), cmdBuf.getBuffLength(), stmt.args.getBuffLength(),
-                                            stat);
+        this->log_WARNING_HI_SerializeError(cmdBuf.getBuffCapacity(), cmdBuf.getBuffLength(),
+                                            sizeof(stmt.getopCode()) + sizeof(stmt.getargs().getBuffLength()), stat);
         return false;
     }
     this->cmdOut_out(0, cmdBuf, 0);
