@@ -36,7 +36,7 @@ module RPI {
     instance textLogger
     instance uartDrv
     instance uartBufferManager
-    instance uplinkRouter
+    instance fprimeRouter
 
     # ----------------------------------------------------------------------
     # Pattern graph specifiers
@@ -115,7 +115,7 @@ module RPI {
       fileUplink.bufferSendOut -> commsBufferManager.bufferSendIn
       frameAccumulator.bufferAllocate -> commsBufferManager.bufferGetCallee
       frameAccumulator.bufferDeallocate -> commsBufferManager.bufferSendIn
-      uplinkRouter.bufferDeallocate -> commsBufferManager.bufferSendIn
+      fprimeRouter.bufferDeallocate -> commsBufferManager.bufferSendIn
     }
 
     connections UART {
@@ -129,12 +129,12 @@ module RPI {
       comm.$recv -> frameAccumulator.dataIn
 
       frameAccumulator.frameOut -> deframer.framedIn
-      deframer.deframedOut -> uplinkRouter.dataIn
+      deframer.deframedOut -> fprimeRouter.dataIn
 
-      uplinkRouter.commandOut -> cmdDisp.seqCmdBuff
-      uplinkRouter.fileOut -> fileUplink.bufferSendIn
+      fprimeRouter.commandOut -> cmdDisp.seqCmdBuff
+      fprimeRouter.fileOut -> fileUplink.bufferSendIn
 
-      cmdDisp.seqCmdStatus -> uplinkRouter.cmdResponseIn
+      cmdDisp.seqCmdStatus -> fprimeRouter.cmdResponseIn
     }
 
   }

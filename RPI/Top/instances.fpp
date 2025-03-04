@@ -466,6 +466,6 @@ module RPI {
     """
   }
 
-  instance uplinkRouter: Svc.Router base id 3000
+  instance fprimeRouter: Svc.FprimeRouter base id 3000
 
 }

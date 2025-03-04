@@ -45,7 +45,7 @@ module Ref {
     instance rateGroup3Comp
     instance rateGroupDriverComp
     instance recvBuffComp
-    instance uplinkRouter
+    instance fprimeRouter
     instance sendBuffComp
     instance textLogger
     instance typeDemo
@@ -148,13 +148,13 @@ module Ref {
       frameAccumulator.frameOut -> deframer.framedIn
       frameAccumulator.bufferAllocate -> commsBufferManager.bufferGetCallee
       frameAccumulator.bufferDeallocate -> commsBufferManager.bufferSendIn
-      deframer.deframedOut -> uplinkRouter.dataIn
+      deframer.deframedOut -> fprimeRouter.dataIn
 
-      uplinkRouter.commandOut -> cmdDisp.seqCmdBuff
-      uplinkRouter.fileOut -> fileUplink.bufferSendIn
-      uplinkRouter.bufferDeallocate -> commsBufferManager.bufferSendIn
+      fprimeRouter.commandOut -> cmdDisp.seqCmdBuff
+      fprimeRouter.fileOut -> fileUplink.bufferSendIn
+      fprimeRouter.bufferDeallocate -> commsBufferManager.bufferSendIn
 
-      cmdDisp.seqCmdStatus -> uplinkRouter.cmdResponseIn
+      cmdDisp.seqCmdStatus -> fprimeRouter.cmdResponseIn
 
       fileUplink.bufferSendOut -> commsBufferManager.bufferSendIn
 
