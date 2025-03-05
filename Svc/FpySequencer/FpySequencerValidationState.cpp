@@ -6,7 +6,7 @@ extern "C" {
 }
 namespace Svc {
 
-void FpySequencer::allocateBuffer(NATIVE_INT_TYPE identifier, Fw::MemAllocator& allocator, NATIVE_UINT_TYPE bytes) {
+void FpySequencer::allocateBuffer(FwEnumStoreType identifier, Fw::MemAllocator& allocator, FwSizeType bytes) {
     // if this assertion fails, you aren't allocating enough bytes for the
     // FpySequencer. this is because you must have a buffer big enough to fit the
     // header of a sequence
@@ -14,20 +14,20 @@ void FpySequencer::allocateBuffer(NATIVE_INT_TYPE identifier, Fw::MemAllocator& 
     bool recoverable = false;
     this->m_allocatorId = identifier;
     U8* allocatedMemory =
-        static_cast<U8*>(allocator.allocate(static_cast<NATIVE_UINT_TYPE>(identifier), bytes, recoverable));
+        static_cast<U8*>(allocator.allocate(identifier, bytes, recoverable));
     // if this fails, unable to allocate the memory
     FW_ASSERT(bytes > 0);
     this->m_sequenceBuffer.setExtBuffer(allocatedMemory, bytes);
 }
 
 void FpySequencer::deallocateBuffer(Fw::MemAllocator& allocator) {
-    allocator.deallocate(static_cast<NATIVE_UINT_TYPE>(this->m_allocatorId), this->m_sequenceBuffer.getBuffAddr());
+    allocator.deallocate(this->m_allocatorId, this->m_sequenceBuffer.getBuffAddr());
     this->m_sequenceBuffer.clear();
 }
 
 void FpySequencer::updateComputedCRC(const U8* buffer, FwSizeType bufferSize) {
     FW_ASSERT(buffer);
-    for (NATIVE_UINT_TYPE index = 0; index < bufferSize; index++) {
+    for (FwSizeType index = 0; index < bufferSize; index++) {
         this->m_computedCRC = static_cast<U32>(update_crc_32(this->m_computedCRC, static_cast<char>(buffer[index])));
     }
 }

@@ -295,7 +295,7 @@ class FpySequencer : public FpySequencerComponentBase {
                           ) override;
 
   public:
-    void allocateBuffer(NATIVE_INT_TYPE identifier, Fw::MemAllocator& allocator, NATIVE_UINT_TYPE bytes);
+    void allocateBuffer(FwEnumStoreType identifier, Fw::MemAllocator& allocator, FwSizeType bytes);
 
     void deallocateBuffer(Fw::MemAllocator& allocator);
     PRIVATE :
@@ -305,7 +305,7 @@ class FpySequencer : public FpySequencerComponentBase {
     // allocated at runtime
     Fw::ExternalSerializeBuffer m_sequenceBuffer;
     // id of allocator that gave us m_sequenceBuffer
-    NATIVE_INT_TYPE m_allocatorId;
+    FwEnumStoreType m_allocatorId;
 
     // assigned by the user
     Fw::String m_sequenceFilePath;

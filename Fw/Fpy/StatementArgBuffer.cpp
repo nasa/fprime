@@ -30,7 +30,7 @@ namespace Fw {
         return *this;
     }
 
-    NATIVE_UINT_TYPE StatementArgBuffer::getBuffCapacity() const {
+    Serializable::SizeType StatementArgBuffer::getBuffCapacity() const {
         return sizeof(this->m_bufferData);
     }
 

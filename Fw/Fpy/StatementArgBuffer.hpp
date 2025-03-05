@@ -21,7 +21,7 @@ namespace Fw {
             virtual ~StatementArgBuffer();
             StatementArgBuffer& operator=(const StatementArgBuffer& other);
 
-            NATIVE_UINT_TYPE getBuffCapacity() const; // !< returns capacity, not current size, of buffer
+            Serializable::SizeType getBuffCapacity() const; // !< returns capacity, not current size, of buffer
             U8* getBuffAddr();
             const U8* getBuffAddr() const;
             bool operator==(const StatementArgBuffer& other) const;

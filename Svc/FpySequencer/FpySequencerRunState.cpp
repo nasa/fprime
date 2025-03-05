@@ -81,7 +81,7 @@ void FpySequencer::handleStatementResult(FwOpcodeType opCode,             //!< C
 ) {
     if (opCode != this->m_runtime.currentStatementOpcode) {
         // just got an opcode back for a cmd that we didn't expect
-        this->log_WARNING_LO_UnexpectedStatementResponseOpcode(m_runtime.currentStatementOpcode, opCode, response);
+        this->log_WARNING_LO_WrongStatementResponseOpcode(m_runtime.currentStatementOpcode, opCode, response);
         // keep on waiting for the one we're looking for...
         return;
     }

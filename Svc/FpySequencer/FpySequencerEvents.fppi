@@ -96,7 +96,7 @@ event UnexpectedStatementResponseForState(
     severity warning low \
     format "Received a statement response while in state {} (opcode {} response code {})"
 
-event UnexpectedStatementResponseOpcode(
+event WrongStatementResponseOpcode(
     expectedOpcode: U32
     $opcode: U32
     response: Fw.CmdResponse
