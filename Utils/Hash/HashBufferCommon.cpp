@@ -33,7 +33,7 @@ HashBuffer& HashBuffer::operator=(const HashBuffer& other) {
 
 bool HashBuffer::operator==(const HashBuffer& other) const {
     if ((this->getBuffLength() == other.getBuffLength()) &&
-        (memcmp(this->getBuffAddr(), other.getBuffAddr(), this->getBuffLength()) != 0)) {
+        (memcmp(this->getBuffAddr(), other.getBuffAddr(), static_cast<size_t>(this->getBuffLength())) != 0)) {
         return false;
     }
     return true;
