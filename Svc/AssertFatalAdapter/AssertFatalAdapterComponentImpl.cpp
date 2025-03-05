@@ -22,8 +22,8 @@ namespace Fw {
     void defaultReportAssert
             (
             FILE_NAME_ARG file,
-            NATIVE_UINT_TYPE lineNo,
-            NATIVE_UINT_TYPE numArgs,
+            FwSizeType lineNo,
+            FwSizeType numArgs,
             FwAssertArgType arg1,
             FwAssertArgType arg2,
             FwAssertArgType arg3,
@@ -31,7 +31,7 @@ namespace Fw {
             FwAssertArgType arg5,
             FwAssertArgType arg6,
             CHAR* destBuffer,
-            NATIVE_INT_TYPE buffSize
+            FwSizeType buffSize
             );
 
 }
@@ -62,8 +62,8 @@ namespace Svc {
 
   void AssertFatalAdapterComponentImpl::AssertFatalAdapter::reportAssert(
           FILE_NAME_ARG file,
-          NATIVE_UINT_TYPE lineNo,
-          NATIVE_UINT_TYPE numArgs,
+          FwSizeType lineNo,
+          FwSizeType numArgs,
           FwAssertArgType arg1,
           FwAssertArgType arg2,
           FwAssertArgType arg3,
@@ -98,8 +98,8 @@ namespace Svc {
 
   void AssertFatalAdapterComponentImpl::reportAssert(
           FILE_NAME_ARG file,
-          NATIVE_UINT_TYPE lineNo,
-          NATIVE_UINT_TYPE numArgs,
+          FwSizeType lineNo,
+          FwSizeType numArgs,
           FwAssertArgType arg1,
           FwAssertArgType arg2,
           FwAssertArgType arg3,
@@ -117,7 +117,7 @@ namespace Svc {
 #endif
 
       CHAR msg[Fw::StringBase::BUFFER_SIZE(FW_ASSERT_TEXT_SIZE)] = {0};
-      Fw::defaultReportAssert(file,lineNo,numArgs,arg1,arg2,arg3,arg4,arg5,arg6,msg,sizeof(msg));
+      Fw::defaultReportAssert(file,static_cast<U32>(lineNo),numArgs,arg1,arg2,arg3,arg4,arg5,arg6,msg,sizeof(msg));
       Fw::Logger::log("%s\n", msg);
 
       // Handle the case where the ports aren't connected yet
@@ -130,25 +130,25 @@ namespace Svc {
           case 0:
               this->log_FATAL_AF_ASSERT_0(
                 fileArg,
-                lineNo);
+                static_cast<U32>(lineNo));
               break;
           case 1:
               this->log_FATAL_AF_ASSERT_1(
                 fileArg,
-                lineNo,
+                static_cast<U32>(lineNo),
                 static_cast<U32>(arg1));
               break;
           case 2:
               this->log_FATAL_AF_ASSERT_2(
                 fileArg,
-                lineNo,
+                static_cast<U32>(lineNo),
                 static_cast<U32>(arg1),
                 static_cast<U32>(arg2));
               break;
           case 3:
               this->log_FATAL_AF_ASSERT_3(
                 fileArg,
-                lineNo,
+                static_cast<U32>(lineNo),
                 static_cast<U32>(arg1),
                 static_cast<U32>(arg2),
                 static_cast<U32>(arg3));
@@ -156,7 +156,7 @@ namespace Svc {
           case 4:
               this->log_FATAL_AF_ASSERT_4(
                 fileArg,
-                lineNo,
+                static_cast<U32>(lineNo),
                 static_cast<U32>(arg1),
                 static_cast<U32>(arg2),
                 static_cast<U32>(arg3),
@@ -165,7 +165,7 @@ namespace Svc {
           case 5:
               this->log_FATAL_AF_ASSERT_5(
                 fileArg,
-                lineNo,
+                static_cast<U32>(lineNo),
                 static_cast<U32>(arg1),
                 static_cast<U32>(arg2),
                 static_cast<U32>(arg3),
@@ -175,7 +175,7 @@ namespace Svc {
           case 6:
               this->log_FATAL_AF_ASSERT_6(
                 fileArg,
-                lineNo,
+                static_cast<U32>(lineNo),
                 static_cast<U32>(arg1),
                 static_cast<U32>(arg2),
                 static_cast<U32>(arg3),
@@ -184,7 +184,7 @@ namespace Svc {
                 static_cast<U32>(arg6));
               break;
           default:
-              this->log_FATAL_AF_UNEXPECTED_ASSERT(fileArg,lineNo,numArgs);
+              this->log_FATAL_AF_UNEXPECTED_ASSERT(fileArg,static_cast<U32>(lineNo),static_cast<U32>(numArgs));
               break;
       }
 

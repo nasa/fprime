@@ -34,7 +34,6 @@ static_assert(FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING,
     Os::File::Status stat;
     Utils::Hash hash;
     U32 checksum;
-    FwSignedSizeType int_file_size;
     FwSignedSizeType bytes_to_read;
     FwSignedSizeType bytes_to_write;
     Fw::FileNameString hashFilename;
@@ -46,8 +45,6 @@ static_assert(FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING,
       return FAILED_FILE_SIZE;
     }
 
-    int_file_size = filesize;
-
     // Open file
     stat = f.open(fname, Os::File::OPEN_READ);
     if(stat != Os::File::OP_OK)
@@ -57,7 +54,7 @@ static_assert(FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING,
 
     // Read file
     bytes_to_read = CRC_FILE_READ_BLOCK;
-    blocks = int_file_size / CRC_FILE_READ_BLOCK;
+    blocks = filesize / CRC_FILE_READ_BLOCK;
     for(i = 0; i < blocks; i++)
     {
       stat = f.read(block_data, bytes_to_read);
@@ -67,10 +64,10 @@ static_assert(FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING,
         return  FAILED_FILE_READ;
       }
 
-      hash.update(block_data, static_cast<NATIVE_INT_TYPE>(bytes_to_read));
+      hash.update(block_data, static_cast<FwSizeType>(bytes_to_read));
     }
 
-    remaining_bytes = int_file_size % CRC_FILE_READ_BLOCK;
+    remaining_bytes = filesize % CRC_FILE_READ_BLOCK;
     bytes_to_read = remaining_bytes;
     if(remaining_bytes > 0)
     {
@@ -81,7 +78,7 @@ static_assert(FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING,
         return FAILED_FILE_READ;
       }
 
-      hash.update(block_data, static_cast<NATIVE_INT_TYPE>(remaining_bytes));
+      hash.update(block_data, static_cast<FwSizeType>(remaining_bytes));
     }
 
     // close file
@@ -150,7 +147,7 @@ static_assert(FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING,
 
     FwSignedSizeType i;
     FwSignedSizeType blocks;
-    PlatformIntType remaining_bytes;
+    FwSignedSizeType remaining_bytes;
     FwSignedSizeType filesize;
     Os::File f;
     Os::FileSystem::Status fs_stat;
@@ -158,7 +155,6 @@ static_assert(FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING,
     Utils::Hash hash;
     U32 checksum;
     U32 checksum_from_file;
-    FwSignedSizeType int_file_size;
     FwSignedSizeType bytes_to_read;
     U8 block_data[CRC_FILE_READ_BLOCK];
 
@@ -166,12 +162,6 @@ static_assert(FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING,
     if(fs_stat != Os::FileSystem::OP_OK)
     {
       return FAILED_FILE_SIZE;
-    }
-
-    int_file_size = static_cast<NATIVE_INT_TYPE>(filesize);
-    if(static_cast<FwSignedSizeType>(int_file_size) != filesize)
-    {
-      return FAILED_FILE_SIZE_CAST;
     }
 
     // Open file
@@ -193,10 +183,10 @@ static_assert(FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING,
         return  FAILED_FILE_READ;
       }
 
-      hash.update(block_data, static_cast<NATIVE_INT_TYPE>(bytes_to_read));
+      hash.update(block_data, static_cast<FwSizeType>(bytes_to_read));
     }
 
-    remaining_bytes = static_cast<PlatformIntType>(int_file_size % CRC_FILE_READ_BLOCK);
+    remaining_bytes = filesize % CRC_FILE_READ_BLOCK;
     bytes_to_read = remaining_bytes;
     if(remaining_bytes > 0)
     {
@@ -207,7 +197,7 @@ static_assert(FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING,
         return FAILED_FILE_READ;
       }
 
-      hash.update(block_data, remaining_bytes);
+      hash.update(block_data, static_cast<FwSizeType>(remaining_bytes));
     }
 
     // close file

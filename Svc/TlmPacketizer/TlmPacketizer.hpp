@@ -18,7 +18,7 @@
 
 namespace Svc {
 
-class TlmPacketizer : public TlmPacketizerComponentBase {
+class TlmPacketizer final : public TlmPacketizerComponentBase {
   public:
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction

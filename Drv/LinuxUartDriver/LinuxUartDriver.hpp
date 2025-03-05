@@ -21,7 +21,7 @@
 
 namespace Drv {
 
-class LinuxUartDriver : public LinuxUartDriverComponentBase {
+class LinuxUartDriver final : public LinuxUartDriverComponentBase {
   public:
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction

@@ -14,7 +14,7 @@
 
 namespace Svc {
 
-    class ActiveLoggerImpl: public ActiveLoggerComponentBase {
+    class ActiveLoggerImpl final : public ActiveLoggerComponentBase {
         public:
             ActiveLoggerImpl(const char* compName); //!< constructor
             virtual ~ActiveLoggerImpl(); //!< destructor

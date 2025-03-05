@@ -20,7 +20,7 @@
 
 namespace Drv {
 
-class LinuxGpioDriver : public LinuxGpioDriverComponentBase {
+class LinuxGpioDriver final : public LinuxGpioDriverComponentBase {
   public:
     static constexpr FwSizeType GPIO_POLL_TIMEOUT = 500;  // Timeout looking for interrupts to check for shutdown
     // ----------------------------------------------------------------------

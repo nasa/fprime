@@ -70,7 +70,7 @@ namespace Types {
 
 
     bool PeekOkRule::precondition(const MockTypes::CircularState& state) {
-        NATIVE_UINT_TYPE peek_available = (MAX_BUFFER_SIZE - state.getRemainingSize());
+        FwSizeType peek_available = (MAX_BUFFER_SIZE - state.getRemainingSize());
         if (state.getPeekType() == 0 ) {
             return peek_available >= sizeof(I8) + state.getPeekOffset();
         }
@@ -120,7 +120,7 @@ namespace Types {
             ASSERT_TRUE(state.peek(buffer, state.getRandomSize(), state.getPeekOffset()));
             ASSERT_EQ(state.getTestBuffer().peek(peek_buffer, state.getRandomSize(), state.getPeekOffset()),
                     Fw::FW_SERIALIZE_OK);
-            for (NATIVE_UINT_TYPE i = 0; i < state.getRandomSize(); i++) {
+            for (FwSizeType i = 0; i < state.getRandomSize(); i++) {
                 ASSERT_EQ(buffer[i], peek_buffer[i]);
             }
         }
@@ -135,7 +135,7 @@ namespace Types {
 
 
     bool PeekBadRule::precondition(const MockTypes::CircularState& state) {
-        NATIVE_UINT_TYPE peek_available = (MAX_BUFFER_SIZE - state.getRemainingSize());
+        FwSizeType peek_available = (MAX_BUFFER_SIZE - state.getRemainingSize());
         if (state.getPeekType() == 0 ) {
             return peek_available < sizeof(I8) + state.getPeekOffset();
         }
@@ -181,7 +181,7 @@ namespace Types {
 
 
     bool RotateOkRule::precondition(const MockTypes::CircularState& state) {
-        NATIVE_UINT_TYPE rotate_available = (MAX_BUFFER_SIZE - state.getRemainingSize());
+        FwSizeType rotate_available = (MAX_BUFFER_SIZE - state.getRemainingSize());
         return rotate_available >= state.getRandomSize();
     }
 
@@ -199,7 +199,7 @@ namespace Types {
 
 
     bool RotateBadRule::precondition(const MockTypes::CircularState& state) {
-        NATIVE_UINT_TYPE rotate_available = (MAX_BUFFER_SIZE - state.getRemainingSize());
+        FwSizeType rotate_available = (MAX_BUFFER_SIZE - state.getRemainingSize());
         return rotate_available < state.getRandomSize();
     }
 

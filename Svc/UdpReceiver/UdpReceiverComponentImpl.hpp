@@ -18,7 +18,7 @@
 
 namespace Svc {
 
-  class UdpReceiverComponentImpl :
+  class UdpReceiverComponentImpl final :
     public UdpReceiverComponentBase
   {
 

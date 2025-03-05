@@ -43,7 +43,7 @@ The `CircularBuffer` type provides the following operations.
 ### Constructor
 
 ```c++
-CircularBuffer(U8* const buffer, const NATIVE_UINT_TYPE size)
+CircularBuffer(U8* const buffer, const FwSizeType size)
 ```
 
 Construct a circular buffer with the given physical store,
@@ -52,7 +52,7 @@ specified as a starting pointer and a size in bytes.
 ### Adding Data
 
 ```c++
-Fw::SerializeStatus serialize(const U8* const buffer, const NATIVE_UINT_TYPE size);
+Fw::SerializeStatus serialize(const U8* const buffer, const FwSizeType size);
 ```
 
 If the current logical store size plus `size` exceeds
@@ -67,7 +67,7 @@ No data is actually serialized (the data is copied byte for byte).
 ### Reading Data
 
 ```c++
-Fw::SerializeStatus peek(char& value, NATIVE_UINT_TYPE offset = 0) const;
+Fw::SerializeStatus peek(char& value, FwSizeType offset = 0) const;
 ```
 
 If `offset` is not a valid address of the logical store,
@@ -76,13 +76,13 @@ Otherwise read a `char` value at address `offset` of the logical store
 and store the result into `value`.
 
 ```c++
-Fw::SerializeStatus peek(U8& value, NATIVE_UINT_TYPE offset = 0) const;
+Fw::SerializeStatus peek(U8& value, FwSizeType offset = 0) const;
 ```
 
 Same as previous, but read a `U8` value.
 
 ```c++
-Fw::SerializeStatus peek(U32& value, NATIVE_UINT_TYPE offset = 0) const;
+Fw::SerializeStatus peek(U32& value, FwSizeType offset = 0) const;
 ```
 
 If `offset` through `offset` + 3 are not valid addresses
@@ -92,7 +92,7 @@ interpret them as an unsigned 32-bit integer in big endian order,
 and store the result into `value`.
 
 ```c++
-Fw::SerializeStatus peek(U8* buffer, NATIVE_UINT_TYPE size, NATIVE_UINT_TYPE offset = 0) const;
+Fw::SerializeStatus peek(U8* buffer, FwSizeType size, FwSizeType offset = 0) const;
 ```
 
 If `offset` through `offset + size - 1` are not all valid
@@ -103,7 +103,7 @@ the memory starting at `buffer`.
 ### Deleting Data
 
 ```c++
-Fw::SerializeStatus rotate(NATIVE_UINT_TYPE amount);
+Fw::SerializeStatus rotate(FwSizeType amount);
 ```
 
 If the logical store size _s_ is less than `amount`, then
@@ -116,7 +116,7 @@ and set the logical store size to _s_ - `amount`.
 ### Querying Buffer State
 
 ```c++
-NATIVE_UINT_TYPE get_allocated_size() const;
+FwSizeType get_allocated_size() const;
 ```
 
 Return the number of allocated bytes, i.e., the
@@ -125,7 +125,7 @@ This is the maximum number of bytes that may be read from
 the logical store without adding data.
 
 ```c++
-NATIVE_UINT_TYPE get_free_size() const;
+FwSizeType get_free_size() const;
 ```
 
 Return the number of free bytes, i.e., the
@@ -134,7 +134,7 @@ This is the number of bytes that may be added to the logical
 store without deleting data.
 
 ```c++
-NATIVE_UINT_TYPE get_capacity() const;
+FwSizeType get_capacity() const;
 ```
 
 Return the maximum logical store size (equal to the physical store size).

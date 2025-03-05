@@ -9,7 +9,7 @@
 
 namespace Fw {
 
-    class InputSerializePort : public InputPortBase {
+    class InputSerializePort final : public InputPortBase {
         public:
             InputSerializePort();
             virtual ~InputSerializePort();

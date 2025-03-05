@@ -17,7 +17,7 @@ U8 CIRCULAR_BUFFER_MEMORY[MAX_BUFFER_SIZE];
 namespace MockTypes {
 
     CircularState::CircularState() :
-        m_remaining_size(static_cast<NATIVE_UINT_TYPE>(sizeof(CIRCULAR_BUFFER_MEMORY))),
+        m_remaining_size(static_cast<FwSizeType>(sizeof(CIRCULAR_BUFFER_MEMORY))),
         m_random_size(MAX_BUFFER_SIZE),
         m_peek_offset(0),
         m_peek_type(0),
@@ -25,7 +25,7 @@ namespace MockTypes {
         m_infinite_read(0),
         m_infinite_write(0),
         m_infinite_size(0),
-        m_test_buffer(CIRCULAR_BUFFER_MEMORY, static_cast<NATIVE_UINT_TYPE>(sizeof(CIRCULAR_BUFFER_MEMORY)))
+        m_test_buffer(CIRCULAR_BUFFER_MEMORY, static_cast<FwSizeType>(sizeof(CIRCULAR_BUFFER_MEMORY)))
     {
         memset(m_buffer, 0, sizeof m_buffer);
     }
@@ -37,10 +37,10 @@ namespace MockTypes {
     }
 
     // Generates a random buffer
-    NATIVE_UINT_TYPE CircularState::generateRandomBuffer() {
-        m_peek_offset = static_cast<NATIVE_UINT_TYPE>(STest::Pick::lowerUpper(0, sizeof(m_buffer)));
-        m_peek_type = static_cast<NATIVE_UINT_TYPE>(STest::Pick::lowerUpper(0, 4));
-        NATIVE_UINT_TYPE random_size = static_cast<NATIVE_UINT_TYPE>(STest::Pick::lowerUpper(0, sizeof(m_buffer)));
+    FwSizeType CircularState::generateRandomBuffer() {
+        m_peek_offset = static_cast<FwSizeType>(STest::Pick::lowerUpper(0, sizeof(m_buffer)));
+        m_peek_type = static_cast<FwSizeType>(STest::Pick::lowerUpper(0, 4));
+        FwSizeType random_size = static_cast<FwSizeType>(STest::Pick::lowerUpper(0, sizeof(m_buffer)));
         for (U32 i = 0; i < random_size; i++) {
             m_buffer[i] = static_cast<U8>(STest::Pick::lowerUpper(0, 256));
         }
@@ -48,21 +48,21 @@ namespace MockTypes {
         return random_size;
     }
 
-    void CircularState::setRandom(NATIVE_UINT_TYPE random, NATIVE_UINT_TYPE peek_type, NATIVE_UINT_TYPE peek_offset) {
+    void CircularState::setRandom(FwSizeType random, FwSizeType peek_type, FwSizeType peek_offset) {
         m_random_size = random;
         m_peek_type = peek_type;
         m_peek_offset = peek_offset;
     }
 
-    NATIVE_UINT_TYPE CircularState::getPeekOffset() const {
+    FwSizeType CircularState::getPeekOffset() const {
         return m_peek_offset;
     }
 
-    NATIVE_UINT_TYPE CircularState::getPeekType() const {
+    FwSizeType CircularState::getPeekType() const {
         return m_peek_type;
     }
 
-    bool CircularState::addInfinite(const U8* buffer, NATIVE_UINT_TYPE size) {
+    bool CircularState::addInfinite(const U8* buffer, FwSizeType size) {
         // If we are out of "infinite space" add another MB, and check allocation
         if ((m_infinite_write + size) > m_infinite_size) {
             void* new_pointer = std::realloc(m_infinite_store, m_infinite_size + 1048576);
@@ -77,8 +77,8 @@ namespace MockTypes {
         return true;
     }
 
-    bool CircularState::peek(U8*& buffer, NATIVE_UINT_TYPE size, NATIVE_UINT_TYPE offset) {
-        NATIVE_UINT_TYPE final_offset = m_infinite_read + offset;
+    bool CircularState::peek(U8*& buffer, FwSizeType size, FwSizeType offset) {
+        FwSizeType final_offset = m_infinite_read + offset;
         if ((final_offset + size) > m_infinite_write) {
             return false;
         }
@@ -86,7 +86,7 @@ namespace MockTypes {
         return true;
     }
 
-    bool CircularState::rotate(NATIVE_UINT_TYPE size) {
+    bool CircularState::rotate(FwSizeType size) {
         // Fail if we try to rotate too far
         if ((m_infinite_read + size) > m_infinite_write) {
             return false;
@@ -95,7 +95,7 @@ namespace MockTypes {
         return true;
     }
 
-    NATIVE_UINT_TYPE CircularState::getRandomSize() const {
+    FwSizeType CircularState::getRandomSize() const {
         return m_random_size;
     }
 
@@ -103,11 +103,11 @@ namespace MockTypes {
         return m_buffer;
     }
 
-    NATIVE_UINT_TYPE CircularState::getRemainingSize() const {
+    FwSizeType CircularState::getRemainingSize() const {
         return m_remaining_size;
     }
 
-    void CircularState::setRemainingSize(NATIVE_UINT_TYPE mRemainingSize) {
+    void CircularState::setRemainingSize(FwSizeType mRemainingSize) {
         m_remaining_size = mRemainingSize;
     }
 
@@ -116,7 +116,7 @@ namespace MockTypes {
     }
 
     void CircularState::checkSizes() const {
-        const NATIVE_UINT_TYPE allocated_size = (MAX_BUFFER_SIZE - m_remaining_size);
+        const FwSizeType allocated_size = (MAX_BUFFER_SIZE - m_remaining_size);
         ASSERT_EQ(m_test_buffer.get_free_size(), m_remaining_size);
         ASSERT_EQ(m_test_buffer.get_allocated_size(), allocated_size);
     }

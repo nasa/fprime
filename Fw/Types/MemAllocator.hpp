@@ -52,13 +52,13 @@ class MemAllocator {
      * \param recoverable - flag to indicate the memory could be recoverable
      * \return the pointer to memory. Zero if unable to allocate
      */
-    virtual void* allocate(const NATIVE_UINT_TYPE identifier, NATIVE_UINT_TYPE& size, bool& recoverable) = 0;
+    virtual void* allocate(const FwEnumStoreType identifier, FwSizeType& size, bool& recoverable) = 0;
     //! Deallocate memory
     /*!
      * \param identifier the memory segment identifier, each identifier is to be used in once single allocation
      * \param ptr the pointer to memory returned by allocate()
      */
-    virtual void deallocate(const NATIVE_UINT_TYPE identifier, void* ptr) = 0;
+    virtual void deallocate(const FwEnumStoreType identifier, void* ptr) = 0;
 
   protected:
     MemAllocator();

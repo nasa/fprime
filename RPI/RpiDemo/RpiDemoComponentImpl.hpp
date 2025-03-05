@@ -18,7 +18,7 @@
 
 namespace RPI {
 
-  class RpiDemoComponentImpl :
+  class RpiDemoComponentImpl final :
     public RpiDemoComponentBase
   {
 

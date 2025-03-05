@@ -48,7 +48,8 @@ void Framer ::handle_framing(const U8* const data, const U32 size, Fw::ComPacket
 // ----------------------------------------------------------------------
 
 void Framer ::comIn_handler(const FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
-    this->handle_framing(data.getBuffAddr(), data.getBuffLength(), Fw::ComPacket::FW_PACKET_UNKNOWN);
+    FW_ASSERT(data.getBuffLength() < std::numeric_limits<U32>::max(), static_cast<FwAssertArgType>(data.getBuffLength()));
+    this->handle_framing(data.getBuffAddr(), static_cast<U32>(data.getBuffLength()), Fw::ComPacket::FW_PACKET_UNKNOWN);
 }
 
 void Framer ::bufferIn_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {

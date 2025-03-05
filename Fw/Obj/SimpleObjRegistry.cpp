@@ -13,7 +13,7 @@ namespace Fw {
         ObjBase::setObjRegistry(this);
         this->m_numEntries = 0;
         // Initialize pointer array
-        for (NATIVE_INT_TYPE entry = 0; entry < FW_OBJ_SIMPLE_REG_ENTRIES; entry++) {
+        for (FwSizeType entry = 0; entry < FW_OBJ_SIMPLE_REG_ENTRIES; entry++) {
             this->m_objPtrArray[entry] = nullptr;
         }
     }
@@ -23,7 +23,7 @@ namespace Fw {
     }
 
     void SimpleObjRegistry::dump() {
-        for (NATIVE_INT_TYPE obj = 0; obj < this->m_numEntries; obj++) {
+        for (FwSizeType obj = 0; obj < this->m_numEntries; obj++) {
 #if FW_OBJECT_NAMES == 1
 #if FW_OBJECT_TO_STRING == 1
             char objDump[FW_OBJ_SIMPLE_REG_BUFF_SIZE];
@@ -43,7 +43,7 @@ namespace Fw {
 
 #if FW_OBJECT_NAMES == 1
     void SimpleObjRegistry::dump(const char* objName) {
-        for (NATIVE_INT_TYPE obj = 0; obj < this->m_numEntries; obj++) {
+        for (FwSizeType obj = 0; obj < this->m_numEntries; obj++) {
             char objDump[FW_OBJ_SIMPLE_REG_BUFF_SIZE];
             if (strncmp(objName,this->m_objPtrArray[obj]->getObjName(),sizeof(objDump)) == 0) {
 #if FW_OBJECT_TO_STRING == 1

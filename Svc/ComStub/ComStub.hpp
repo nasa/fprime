@@ -11,7 +11,7 @@
 
 namespace Svc {
 
-class ComStub : public ComStubComponentBase {
+class ComStub final : public ComStubComponentBase {
   public:
     const NATIVE_UINT_TYPE RETRY_LIMIT = 10;
     // ----------------------------------------------------------------------

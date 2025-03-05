@@ -16,7 +16,7 @@
 
 namespace Utils {
 
-  static const NATIVE_INT_TYPE CRC_FILE_READ_BLOCK = 2048;
+  static const FwSignedSizeType CRC_FILE_READ_BLOCK = 2048;
   static const U32 CRC_MAX_FILENAME_SIZE = 128; // TODO use a config variable
 
   typedef enum

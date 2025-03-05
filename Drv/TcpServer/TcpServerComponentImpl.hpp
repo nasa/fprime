@@ -21,7 +21,7 @@
 
 namespace Drv {
 
-class TcpServerComponentImpl : public TcpServerComponentBase, public SocketComponentHelper {
+class TcpServerComponentImpl final : public TcpServerComponentBase, public SocketComponentHelper {
   public:
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction

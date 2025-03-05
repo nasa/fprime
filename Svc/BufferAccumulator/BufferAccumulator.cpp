@@ -15,7 +15,7 @@
 #include <sys/time.h>
 
 #include "Fw/Types/BasicTypes.hpp"
-
+#include <limits>
 
 namespace Svc {
 
@@ -46,21 +46,25 @@ BufferAccumulator ::~BufferAccumulator() {}
 // ----------------------------------------------------------------------
 
 void BufferAccumulator ::allocateQueue(
-    NATIVE_INT_TYPE identifier, Fw::MemAllocator& allocator,
+    FwEnumStoreType identifier, Fw::MemAllocator& allocator,
     NATIVE_UINT_TYPE maxNumBuffers  //!< The maximum number of buffers
 ) {
 
   this->m_allocatorId = identifier;
-  NATIVE_UINT_TYPE memSize = static_cast<NATIVE_UINT_TYPE>(sizeof(Fw::Buffer) * maxNumBuffers);
+  // Overflow protection
+  FW_ASSERT(
+      (std::numeric_limits<FwSizeType>::max() / maxNumBuffers) >= sizeof(Fw::Buffer)
+  );
+  FwSizeType memSize = static_cast<FwSizeType>(sizeof(Fw::Buffer) * maxNumBuffers);
   bool recoverable = false;
   this->m_bufferMemory = static_cast<Fw::Buffer*>(
-      allocator.allocate(static_cast<NATIVE_UINT_TYPE>(identifier), memSize, recoverable));
+      allocator.allocate(identifier, memSize, recoverable));
   //TODO: Fail gracefully here
   m_bufferQueue.init(this->m_bufferMemory, maxNumBuffers);
 }
 
 void BufferAccumulator ::deallocateQueue(Fw::MemAllocator& allocator) {
-  allocator.deallocate(static_cast<NATIVE_UINT_TYPE>(this->m_allocatorId), this->m_bufferMemory);
+  allocator.deallocate(static_cast<FwEnumStoreType>(this->m_allocatorId), this->m_bufferMemory);
 }
 
 // ----------------------------------------------------------------------

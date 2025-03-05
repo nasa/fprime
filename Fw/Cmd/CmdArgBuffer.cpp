@@ -3,7 +3,7 @@
 
 namespace Fw {
 
-    CmdArgBuffer::CmdArgBuffer(const U8 *args, NATIVE_UINT_TYPE size) {
+    CmdArgBuffer::CmdArgBuffer(const U8 *args, FwSizeType size) {
         SerializeStatus stat = this->setBuff(args,size);
         FW_ASSERT(FW_SERIALIZE_OK == stat,static_cast<FwAssertArgType>(stat));
     }
@@ -29,7 +29,7 @@ namespace Fw {
         return *this;
     }
 
-    NATIVE_UINT_TYPE CmdArgBuffer::getBuffCapacity() const {
+    FwSizeType CmdArgBuffer::getBuffCapacity() const {
         return sizeof(this->m_bufferData);
     }
 

@@ -20,7 +20,7 @@
 
 namespace Svc {
 
-class SystemResources : public SystemResourcesComponentBase {
+class SystemResources final : public SystemResourcesComponentBase {
   public:
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction

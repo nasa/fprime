@@ -44,8 +44,8 @@ class TestAllocator: public Fw::MemAllocator {
           * \return the pointer to memory. Zero if unable to allocate.
           */
         void *allocate(
-                const NATIVE_UINT_TYPE identifier,
-                NATIVE_UINT_TYPE &size,
+                const FwEnumStoreType identifier,
+                FwSizeType &size,
                 bool& recoverable) {
             this->m_reqId = identifier;
             this->m_reqSize = size;
@@ -58,7 +58,7 @@ class TestAllocator: public Fw::MemAllocator {
           * \ptr the pointer to memory returned by allocate()
           */
         void deallocate(
-                const NATIVE_UINT_TYPE identifier,
+                const FwEnumStoreType identifier,
                 void* ptr) {
             this->m_alloc.deallocate(identifier,ptr);
         }
@@ -77,8 +77,8 @@ class TestAllocator: public Fw::MemAllocator {
 
         private:
           Fw::MallocAllocator m_alloc;
-          NATIVE_UINT_TYPE m_reqId;
-          NATIVE_UINT_TYPE m_reqSize;
+          FwEnumStoreType m_reqId;
+          FwSizeType m_reqSize;
           void* m_mem;
 
 };

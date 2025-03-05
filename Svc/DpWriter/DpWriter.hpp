@@ -17,7 +17,7 @@
 
 namespace Svc {
 
-class DpWriter : public DpWriterComponentBase {
+class DpWriter final : public DpWriterComponentBase {
   public:
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction

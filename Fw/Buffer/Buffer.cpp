@@ -116,7 +116,7 @@ Fw::SerializeStatus Buffer::serialize(Fw::SerializeBufferBase& buffer) const {
         return stat;
     }
 #endif
-    stat = buffer.serialize(reinterpret_cast<POINTER_CAST>(this->m_bufferData));
+    stat = buffer.serialize(reinterpret_cast<PlatformPointerCastType>(this->m_bufferData));
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;
     }
@@ -146,7 +146,7 @@ Fw::SerializeStatus Buffer::deserialize(Fw::SerializeBufferBase& buffer) {
         return Fw::FW_DESERIALIZE_TYPE_MISMATCH;
     }
 #endif
-    POINTER_CAST pointer;
+    PlatformPointerCastType pointer;
     stat = buffer.deserialize(pointer);
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;

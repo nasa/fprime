@@ -28,7 +28,7 @@ namespace Svc {
     //! time of the rate group and detects overruns.
     //!
 
-    class ActiveRateGroup : public ActiveRateGroupComponentBase {
+    class ActiveRateGroup final : public ActiveRateGroupComponentBase {
         public:
             static constexpr FwIndexType CONNECTION_COUNT_MAX = NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS;
 

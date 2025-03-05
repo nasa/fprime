@@ -20,7 +20,7 @@
 
 namespace Drv {
 
-class TcpClientComponentImpl : public TcpClientComponentBase, public SocketComponentHelper {
+class TcpClientComponentImpl final : public TcpClientComponentBase, public SocketComponentHelper {
   public:
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction

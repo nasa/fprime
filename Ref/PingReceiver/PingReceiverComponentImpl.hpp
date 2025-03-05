@@ -17,7 +17,7 @@
 
 namespace Ref {
 
-  class PingReceiverComponentImpl :
+  class PingReceiverComponentImpl final :
     public PingReceiverComponentBase
   {
 

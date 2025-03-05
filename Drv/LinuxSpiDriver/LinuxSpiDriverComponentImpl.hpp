@@ -52,7 +52,7 @@ namespace Drv {
         SPI_MODE_CPOL_HIGH_CPHA_HIGH,///< (CPOL = 1, CPHA = 1)
     };
 
-    class LinuxSpiDriverComponentImpl: public LinuxSpiDriverComponentBase {
+    class LinuxSpiDriverComponentImpl final : public LinuxSpiDriverComponentBase {
 
         public:
 

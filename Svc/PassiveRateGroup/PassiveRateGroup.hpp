@@ -27,7 +27,7 @@ namespace Svc {
 //! time of the rate group and detects overruns.
 //!
 
-class PassiveRateGroup : public PassiveRateGroupComponentBase {
+class PassiveRateGroup final : public PassiveRateGroupComponentBase {
   public:
     //!  \brief PassiveRateGroupImpl constructor
     //!

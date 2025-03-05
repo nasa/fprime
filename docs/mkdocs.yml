@@ -190,7 +190,8 @@ nav:
         - 'Application, Manager, Driver Pattern': docs/user-manual/design-patterns/app-man-drv.md
         - 'Rate Groups and Timeliness': docs/user-manual/design-patterns/rate-group.md
         - 'The Hub Pattern': docs/user-manual/design-patterns/hub-pattern.md
-        - 'Common Port Patterns': documentation/user-manual/design-patterns/common-port-patterns.md
+        - 'Common Port Patterns': docs/user-manual/design-patterns/common-port-patterns.md
+        - 'Manager/Worker Pattern': docs/user-manual/design-patterns/manager-worker.md
       - Build System:
         - 'The F´ CMake Build System': docs/user-manual/build-system/cmake-intro.md
         - 'settings.ini: Build Settings Configuration': docs/user-manual/build-system/settings.md
@@ -212,6 +213,7 @@ nav:
       - 'Porting F´ To a New Platform': docs/how-to/porting-guide.md
     - Reference:
       - docs/reference/index.md
+      - 'Software Engineering Terminology to F´ Nomenclature': docs/reference/fprime-translations.md
       - 'C++ Documentation': docs/reference/api/cpp/html/index.html
       - 'F´ Components SDDs': docs/reference/sdd.md
       - 'FPP Language Specification': https://nasa.github.io/fpp/fpp-spec.html

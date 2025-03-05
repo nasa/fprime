@@ -14,7 +14,7 @@
 
 namespace Svc {
 
-class DpManager : public DpManagerComponentBase {
+class DpManager final : public DpManagerComponentBase {
   private:
     // ----------------------------------------------------------------------
     // Static assertions against the assumptions about the model

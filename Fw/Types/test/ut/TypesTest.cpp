@@ -29,7 +29,7 @@
 
 class SerializeTestBuffer : public Fw::SerializeBufferBase {
   public:
-    NATIVE_UINT_TYPE getBuffCapacity() const {  // !< returns capacity, not current size, of buffer
+    FwSizeType getBuffCapacity() const {  // !< returns capacity, not current size, of buffer
         return sizeof(m_testBuff);
     }
 
@@ -742,8 +742,8 @@ void AssertTest() {
         TestAssertHook() {}
         virtual ~TestAssertHook() {}
         void reportAssert(FILE_NAME_ARG file,
-                          NATIVE_UINT_TYPE lineNo,
-                          NATIVE_UINT_TYPE numArgs,
+                          FwSizeType lineNo,
+                          FwSizeType numArgs,
                           FwAssertArgType arg1,
                           FwAssertArgType arg2,
                           FwAssertArgType arg3,
@@ -765,9 +765,9 @@ void AssertTest() {
 
         FILE_NAME_ARG getFile() { return this->m_file; }
 
-        NATIVE_UINT_TYPE getLineNo() { return this->m_lineNo; }
+        FwSizeType getLineNo() { return this->m_lineNo; }
 
-        NATIVE_UINT_TYPE getNumArgs() { return this->m_numArgs; }
+        FwSizeType getNumArgs() { return this->m_numArgs; }
 
         FwAssertArgType getArg1() { return this->m_arg1; }
 
@@ -793,8 +793,8 @@ void AssertTest() {
 #else
         FILE_NAME_ARG m_file = nullptr;
 #endif
-        NATIVE_UINT_TYPE m_lineNo = 0;
-        NATIVE_UINT_TYPE m_numArgs = 0;
+        FwSizeType m_lineNo = 0;
+        FwSizeType m_numArgs = 0;
         FwAssertArgType m_arg1 = 0;
         FwAssertArgType m_arg2 = 0;
         FwAssertArgType m_arg3 = 0;
@@ -1202,12 +1202,12 @@ TEST(PerformanceTest, F64SerPerfTest) {
     F64 in = 10000.0;
     F64 out = 0;
 
-    NATIVE_INT_TYPE iters = 1000000;
+    FwSizeType iters = 1000000;
 
     Os::IntervalTimer timer;
     timer.start();
 
-    for (NATIVE_INT_TYPE iter = 0; iter < iters; iter++) {
+    for (FwSizeType iter = 0; iter < iters; iter++) {
         buff.resetSer();
         buff.serialize(in);
         buff.deserialize(out);
@@ -1215,7 +1215,7 @@ TEST(PerformanceTest, F64SerPerfTest) {
 
     timer.stop();
 
-    printf("%d iterations took %d us (%f us each).\n", iters, timer.getDiffUsec(),
+    printf("%" PRI_FwSizeType " iterations took %d us (%f us each).\n", iters, timer.getDiffUsec(),
            static_cast<F32>(timer.getDiffUsec()) / static_cast<F32>(iters));
 }
 
@@ -1223,7 +1223,7 @@ TEST(AllocatorTest, MallocAllocatorTest) {
     // Since it is a wrapper around malloc, the test consists of requesting
     // memory and verifying a non-zero pointer, unchanged size, and not recoverable.
     Fw::MallocAllocator allocator;
-    NATIVE_UINT_TYPE size = 100;  // one hundred bytes
+    FwSizeType size = 100;  // one hundred bytes
     bool recoverable;
     void* ptr = allocator.allocate(10, size, recoverable);
     ASSERT_EQ(100, size);

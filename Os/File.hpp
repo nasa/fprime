@@ -443,6 +443,8 @@ namespace Os {
         //!
         //! On error crc will be set to 0.
         //!
+        //! \note: the file pointer will be positioned at the end of the file after this call.
+        //!
         //! This function is equivalent to the following pseudo-code:
         //!
         //! ```

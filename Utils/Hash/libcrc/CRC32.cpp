@@ -26,13 +26,13 @@ namespace Utils {
     }
 
     void Hash ::
-        hash(const void *const data, const NATIVE_INT_TYPE len, HashBuffer& buffer)
+        hash(const void *const data, const FwSizeType len, HashBuffer& buffer)
     {
         HASH_HANDLE_TYPE local_hash_handle;
         local_hash_handle = 0xffffffffL;
         FW_ASSERT(data);
         char c;
-        for(int index = 0; index < len; index++) {
+        for(FwSizeType index = 0; index < len; index++) {
             c = static_cast<const char*>(data)[index];
             local_hash_handle = static_cast<HASH_HANDLE_TYPE>(update_crc_32(local_hash_handle, c));
         }
@@ -50,11 +50,11 @@ namespace Utils {
     }
 
     void Hash ::
-        update(const void *const data, NATIVE_INT_TYPE len)
+        update(const void *const data, FwSizeType len)
     {
         FW_ASSERT(data);
         char c;
-        for(int index = 0; index < len; index++) {
+        for(FwSizeType index = 0; index < len; index++) {
             c = static_cast<const char*>(data)[index];
             this->hash_handle = static_cast<HASH_HANDLE_TYPE>(update_crc_32(this->hash_handle, c));
         }

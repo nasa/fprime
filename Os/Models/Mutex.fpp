@@ -9,6 +9,7 @@ module Os {
         OP_OK,          @< Operation was successful
         ERROR_BUSY,     @< Mutex is busy
         ERROR_DEADLOCK, @< Deadlock condition detected
+        NOT_SUPPORTED,  @< Mutex feature is not supported
         ERROR_OTHER     @< All other errors
     }
 }

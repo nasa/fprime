@@ -12,7 +12,7 @@
 
 namespace Svc {
 
-  class ComSplitter :
+  class ComSplitter final :
     public ComSplitterComponentBase
   {
 

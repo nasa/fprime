@@ -24,7 +24,7 @@ ComQueue ::QueueConfigurationTable ::QueueConfigurationTable() {
 ComQueue ::ComQueue(const char* const compName)
     : ComQueueComponentBase(compName),
       m_state(WAITING),
-      m_allocationId(static_cast<NATIVE_UINT_TYPE>(-1)),
+      m_allocationId(static_cast<FwEnumStoreType>(-1)),
       m_allocator(nullptr),
       m_allocation(nullptr) {
     // Initialize throttles to "off"
@@ -43,10 +43,10 @@ void ComQueue ::cleanup() {
 }
 
 void ComQueue::configure(QueueConfigurationTable queueConfig,
-                         NATIVE_UINT_TYPE allocationId,
+                         FwEnumStoreType allocationId,
                          Fw::MemAllocator& allocator) {
     FwIndexType currentPriorityIndex = 0;
-    NATIVE_UINT_TYPE totalAllocation = 0;
+    FwSizeType totalAllocation = 0;
 
     // Store/initialize allocator members
     this->m_allocator = &allocator;
@@ -167,7 +167,7 @@ void ComQueue::run_handler(const FwIndexType portNum, U32 context) {
     // Downlink the high-water marks for the Fw::ComBuffer array types
     ComQueueDepth comQueueDepth;
     for (U32 i = 0; i < comQueueDepth.SIZE; i++) {
-        comQueueDepth[i] = this->m_queues[i].get_high_water_mark();
+        comQueueDepth[i] = static_cast<U32>(this->m_queues[i].get_high_water_mark());
         this->m_queues[i].clear_high_water_mark();
     }
     this->tlmWrite_comQueueDepth(comQueueDepth);
@@ -175,7 +175,7 @@ void ComQueue::run_handler(const FwIndexType portNum, U32 context) {
     // Downlink the high-water marks for the Fw::Buffer array types
     BuffQueueDepth buffQueueDepth;
     for (U32 i = 0; i < buffQueueDepth.SIZE; i++) {
-        buffQueueDepth[i] = this->m_queues[i + COM_PORT_COUNT].get_high_water_mark();
+        buffQueueDepth[i] = static_cast<U32>(this->m_queues[i + COM_PORT_COUNT].get_high_water_mark());
         this->m_queues[i + COM_PORT_COUNT].clear_high_water_mark();
     }
     this->tlmWrite_buffQueueDepth(buffQueueDepth);

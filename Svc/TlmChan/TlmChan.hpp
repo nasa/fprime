@@ -19,7 +19,7 @@
 
 namespace Svc {
 
-class TlmChan : public TlmChanComponentBase {
+class TlmChan final : public TlmChanComponentBase {
   public:
     TlmChan(const char* compName);
     virtual ~TlmChan();

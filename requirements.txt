@@ -32,15 +32,16 @@ fprime-fpp-to-cpp==2.3.0
 fprime-fpp-to-dict==2.3.0
 fprime-fpp-to-json==2.3.0
 fprime-fpp-to-xml==2.3.0
-fprime-gds==3.6.0
-fprime-tools==3.6.0
+fprime-fpp-to-layout==2.3.0
+fprime-gds==3.6.1
+fprime-tools==3.6.1
 fprime-visual==1.0.2
 gcovr==8.2
 idna==3.10
 importlib-metadata==6.7.0
 iniconfig==2.0.0
 itsdangerous==2.2.0
-Jinja2==3.1.4
+Jinja2==3.1.5
 legacy-cgi==2.6.1; python_version >= "3.13"
 lxml==5.3.0
 Markdown==3.7
@@ -71,6 +72,6 @@ tomli==2.0.1
 types-python-dateutil==2.9.0.20241003
 typing-extensions==4.12.2
 urllib3==1.26.20
-Werkzeug==3.0.4
-zipp==3.15.0
+Werkzeug==3.0.6
+zipp==3.19.1
 zstandard==0.23.0

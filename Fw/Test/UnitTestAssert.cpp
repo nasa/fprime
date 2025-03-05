@@ -45,14 +45,14 @@ namespace Test {
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
         (void)fprintf(stderr,"Assert: 0x%" PRIx32 ":%" PRI_PlatformUIntType "\n", this->m_file, this->m_lineNo);
 #else
-        (void)fprintf(stderr,"Assert: %s:%" PRI_PlatformUIntType "\n", this->m_file.toChar(), this->m_lineNo);
+        (void)fprintf(stderr,"Assert: %s:%" PRI_FwSizeType "\n", this->m_file.toChar(), this->m_lineNo);
 #endif
     }
 
     void UnitTestAssert::reportAssert(
             FILE_NAME_ARG file,
-            NATIVE_UINT_TYPE lineNo,
-            NATIVE_UINT_TYPE numArgs,
+            FwSizeType lineNo,
+            FwSizeType numArgs,
             FwAssertArgType arg1,
             FwAssertArgType arg2,
             FwAssertArgType arg3,
@@ -80,8 +80,8 @@ namespace Test {
 
     void UnitTestAssert::retrieveAssert(
                     File& file,
-                    NATIVE_UINT_TYPE& lineNo,
-                    NATIVE_UINT_TYPE& numArgs,
+                    FwSizeType& lineNo,
+                    FwSizeType& numArgs,
                     FwAssertArgType& arg1,
                     FwAssertArgType& arg2,
                     FwAssertArgType& arg3,
