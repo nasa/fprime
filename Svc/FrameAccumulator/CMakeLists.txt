@@ -12,6 +12,10 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/FrameAccumulator.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/FrameDetector/FprimeFrameDetector.cpp"
 )
+set(MOD_DEPS
+    Utils/Types
+    Svc/FprimeProtocol
+)
 
 register_fprime_module()
 

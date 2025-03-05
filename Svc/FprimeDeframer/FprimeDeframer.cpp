@@ -8,8 +8,8 @@
 #include "FpConfig.hpp"
 #include "Fw/Types/Assert.hpp"
 
-#include "config/FrameHeaderSerializableAc.hpp"
-#include "config/FrameTrailerSerializableAc.hpp"
+#include "Svc/FprimeProtocol/FrameHeaderSerializableAc.hpp"
+#include "Svc/FprimeProtocol/FrameTrailerSerializableAc.hpp"
 
 
 namespace Svc {

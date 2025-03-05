@@ -12,8 +12,8 @@
 #include "Utils/Hash/Hash.hpp"
 #include "config/FpConfig.h"
 
-#include "config/FrameHeaderSerializableAc.hpp"
-#include "config/FrameTrailerSerializableAc.hpp"
+#include "Svc/FprimeProtocol/FrameHeaderSerializableAc.hpp"
+#include "Svc/FprimeProtocol/FrameTrailerSerializableAc.hpp"
 
 namespace Svc {
 namespace FrameDetectors {

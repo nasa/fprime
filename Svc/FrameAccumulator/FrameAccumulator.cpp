@@ -35,13 +35,10 @@ void FrameAccumulator ::configure(const FrameDetector& detector,
                                   Fw::MemAllocator& allocator,
                                   FwSizeType store_size) {
     bool recoverable = false;
-    FW_ASSERT(std::numeric_limits<NATIVE_INT_TYPE>::max() >= store_size, static_cast<FwAssertArgType>(store_size));
-    NATIVE_UINT_TYPE store_size_int = static_cast<NATIVE_UINT_TYPE>(store_size);
-    void* data_void = allocator.allocate(allocationId, store_size_int, recoverable);
-    U8* data = new (data_void) U8[store_size_int];
+    void* data_void = allocator.allocate(allocationId, store_size, recoverable);
+    U8* data = new (data_void) U8[store_size];
     FW_ASSERT(data != nullptr);
-    FW_ASSERT(store_size_int >= store_size);
-    m_inRing.setup(data, store_size_int);
+    m_inRing.setup(data, store_size);
 
     this->m_detector = &detector;
     this->m_allocatorId = allocationId;
@@ -103,7 +100,7 @@ void FrameAccumulator ::processRing() {
     // The protocol status
     FrameDetector::Status status = FrameDetector::Status::FRAME_DETECTED;
     // The ring buffer capacity
-    const NATIVE_UINT_TYPE ringCapacity = this->m_inRing.get_capacity();
+    const FwSizeType ringCapacity = this->m_inRing.get_capacity();
 
     // Process the ring buffer looking for at least the header
     for (FwSizeType i = 0; i < ringCapacity; i++) {
@@ -131,11 +128,11 @@ void FrameAccumulator ::processRing() {
             Fw::Buffer buffer = this->bufferAllocate_out(0, static_cast<U32>(size_out));
             if (buffer.isValid()) {
                 // Copy out data and rotate
-                FW_ASSERT(this->m_inRing.peek(buffer.getData(), static_cast<NATIVE_UINT_TYPE>(size_out)) ==
+                FW_ASSERT(this->m_inRing.peek(buffer.getData(), size_out) ==
                           Fw::SerializeStatus::FW_SERIALIZE_OK);
                 buffer.setSize(static_cast<U32>(size_out));
-                m_inRing.rotate(static_cast<U32>(size_out));
-                FW_ASSERT(m_inRing.get_allocated_size() == static_cast<U32>(remaining - size_out),
+                m_inRing.rotate(size_out);
+                FW_ASSERT(m_inRing.get_allocated_size() == remaining - size_out,
                           static_cast<FwAssertArgType>(m_inRing.get_allocated_size()),
                           static_cast<FwAssertArgType>(remaining), static_cast<FwAssertArgType>(size_out));
                 Fw::Buffer nullContext;

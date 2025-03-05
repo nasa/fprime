@@ -2,21 +2,7 @@
 
 The `Svc::FprimeDeframer` component receives F´ frames on its input port, takes off the header and trailer (or "footer"), and passes the encapsulated payload to other components of the system.
 
-## F Prime frame format
-
-```mermaid
----
-title: "Default F Prime Frame Format"
----
-packet-beta
-  0-31: "Start word: 0xDEADBEEF [4 bytes]"
-  32-63: "Packet length [4 bytes]"
-  64-95: "Packet data [variable length]"
-  96-127: "CRC [4 bytes]"
-
-```
-
-Following this frame specification, in its default configuration, the `Svc::FprimeDeframer` removes the header (32-bit start word, 32-bit packet length) and the trailer (32-bit CRC) from the frame, and outputs the encapsulated packet data.
+Following the [F Prime Protocol frame specification](../../FprimeProtocol/docs/sdd.md), the `Svc::FprimeDeframer` removes the header (32-bit start word, 32-bit packet length) and the trailer (32-bit CRC) from the frame, and outputs the encapsulated packet data.
 
 ## Internals
 

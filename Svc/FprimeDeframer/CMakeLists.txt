@@ -13,6 +13,7 @@ set(SOURCE_FILES
 
 set(MOD_DEPS
     Utils/Types
+    Svc/FprimeProtocol
 )
 
 register_fprime_module()
