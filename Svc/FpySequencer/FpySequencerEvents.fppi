@@ -80,25 +80,25 @@ event UnknownSequencerDirective(
     format "Unknown sequencer directive id {}"
 
 event SerializeError(
-    bufCapacity: U32, 
-    curPos: U32, 
-    writeSize: U32, 
+    bufCapacity: U32
+    curPos: U32
+    writeSize: U32
     errorCode: U8
 ) \
     severity warning high \
     format "Serialization failure: buf capacity {}, cur write pos {}, write size {}, error code {}"
 
 event UnexpectedStatementResponseForState(
-    $state: I32,
-    $opcode: U32,
+    $state: I32
+    $opcode: U32
     response: Fw.CmdResponse
 ) \
     severity warning low \
     format "Received a statement response while in state {} (opcode {} response code {})"
 
 event UnexpectedStatementResponseOpcode(
-    expectedOpcode: U32,
-    $opcode: U32,
+    expectedOpcode: U32
+    $opcode: U32
     response: Fw.CmdResponse
 ) \
     severity warning low \
@@ -112,3 +112,17 @@ event DirectiveDeserializeError(
 ) \
     severity warning high \
     format "Deserialize error encountered while reading directive opcode {}: {} ({} bytes left out of {})"
+
+event MismatchedTimeBase(
+    internalTimeBase: I32
+    otherTimeBase: I32
+) \
+    severity warning low \
+    format "getTime() time base was {}, but tried to operate on it with time base {}"
+
+event MismatchedTimeContext(
+    internalTimeContext: I32
+    otherTimeContext: I32
+) \
+    severity warning low \
+    format "getTime() time context was {}, but tried to operate on it with time context {}"

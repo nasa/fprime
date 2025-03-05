@@ -119,6 +119,16 @@ bool FpySequencer::handleDirective_WAIT_REL(Fpy::Statement& stmt) {
         return false;
     }
 
+    if (currentTime.getTimeBase() != duration.getTimeBase()) {
+        this->log_WARNING_LO_MismatchedTimeBase(currentTime.getTimeBase(), duration.getTimeBase());
+        return false;
+    }
+
+    if (currentTime.getContext() != duration.getContext()) {
+        this->log_WARNING_LO_MismatchedTimeContext(currentTime.getContext(), duration.getContext());
+        return false;
+    }
+
     sleepUntil(Fw::Time::add(currentTime, duration));
     return true;
 }
@@ -156,6 +166,30 @@ void FpySequencer::checkShouldWakeUp() {
     // okay, we are sleeping
 
     Fw::Time currentTime = getTime();
+
+    if (currentTime.getTimeBase() != m_runtime.wakeupTime.getTimeBase()) {
+        // cannot compare these times. break out of sleep with a failure
+        m_runtime.sleeping = false;
+        m_runtime.wakeupTime = Fw::Time();
+
+        this->log_WARNING_LO_MismatchedTimeBase(currentTime.getTimeBase(), m_runtime.wakeupTime.getTimeBase());
+
+        this->sequencer_sendSignal_statementResponseIn(
+            FpySequencer_StatementResponse(m_runtime.currentStatementOpcode, Fw::CmdResponse::EXECUTION_ERROR));
+        return;
+    }
+
+    if (currentTime.getContext() != m_runtime.wakeupTime.getContext()) {
+        // cannot compare these times. break out of sleep with a failure
+        m_runtime.sleeping = false;
+        m_runtime.wakeupTime = Fw::Time();
+
+        this->log_WARNING_LO_MismatchedTimeContext(currentTime.getContext(), m_runtime.wakeupTime.getContext());
+
+        this->sequencer_sendSignal_statementResponseIn(
+            FpySequencer_StatementResponse(m_runtime.currentStatementOpcode, Fw::CmdResponse::EXECUTION_ERROR));
+        return;
+    }
 
     if (currentTime < m_runtime.wakeupTime) {
         // not time to wake up!

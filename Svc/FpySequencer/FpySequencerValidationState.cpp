@@ -138,6 +138,9 @@ bool FpySequencer::readBytes(Os::File& file, FwSizeType readLen, bool updateCRC)
     FwSignedSizeType actualReadLen = static_cast<FwSignedSizeType>(readLen);
 
     const NATIVE_UINT_TYPE capacity = m_sequenceBuffer.getBuffCapacity();
+
+    // if this asserts, then you need to give the sequencer more buffer memory. pass in a bigger number
+    // to fpySeq.allocateBuffer(). This is usually done in topology setup CPP
     FW_ASSERT(capacity >= static_cast<NATIVE_UINT_TYPE>(actualReadLen), static_cast<FwAssertArgType>(capacity),
               static_cast<FwAssertArgType>(actualReadLen));
     Os::File::Status fileStatus = file.read(m_sequenceBuffer.getBuffAddr(), actualReadLen);
