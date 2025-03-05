@@ -174,8 +174,7 @@ void FpySequencer::checkShouldWakeUp() {
 
         this->log_WARNING_LO_MismatchedTimeBase(currentTime.getTimeBase(), m_runtime.wakeupTime.getTimeBase());
 
-        this->sequencer_sendSignal_statementResponseIn(
-            FpySequencer_StatementResponse(m_runtime.currentStatementOpcode, Fw::CmdResponse::EXECUTION_ERROR));
+        handleStatementResult(m_runtime.currentStatementOpcode, Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
 
@@ -186,8 +185,7 @@ void FpySequencer::checkShouldWakeUp() {
 
         this->log_WARNING_LO_MismatchedTimeContext(currentTime.getContext(), m_runtime.wakeupTime.getContext());
 
-        this->sequencer_sendSignal_statementResponseIn(
-            FpySequencer_StatementResponse(m_runtime.currentStatementOpcode, Fw::CmdResponse::EXECUTION_ERROR));
+        handleStatementResult(m_runtime.currentStatementOpcode, Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
 
@@ -201,7 +199,6 @@ void FpySequencer::checkShouldWakeUp() {
     m_runtime.wakeupTime = Fw::Time();
 
     // say we've finished our sleep
-    this->sequencer_sendSignal_statementResponseIn(
-        FpySequencer_StatementResponse(m_runtime.currentStatementOpcode, Fw::CmdResponse::OK));
+    handleStatementResult(m_runtime.currentStatementOpcode, Fw::CmdResponse::OK);
 }
 }  // namespace Svc
