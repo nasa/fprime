@@ -40,7 +40,7 @@ void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer
     // Process the packet
     if (status == Fw::FW_SERIALIZE_OK) {
         U8* const packetData = packetBuffer.getData();
-        const U32 packetSize = packetBuffer.getSize();
+        const FwSizeType packetSize = packetBuffer.getSize();
         switch (packetType) {
             // Handle a command packet
             case Fw::ComPacket::FW_PACKET_COMMAND: {
@@ -62,6 +62,9 @@ void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer
                 // If the file uplink output port is connected,
                 // send the file packet. Otherwise take no action.
                 if (isConnected_fileOut_OutputPort(0)) {
+                    // Make sure we can cast down to U32 without overflow
+                    FW_ASSERT((packetSize - sizeof(packetType)) < std::numeric_limits<U32>::max(),
+                              static_cast<FwAssertArgType>(packetSize - sizeof(packetType)));
                     // Shift the packet buffer to skip the packet type
                     // The FileUplink component does not expect the packet
                     // type to be there.

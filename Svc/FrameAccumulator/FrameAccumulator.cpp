@@ -64,22 +64,22 @@ void FrameAccumulator ::dataIn_handler(FwIndexType portNum, Fw::Buffer& buffer, 
 }
 
 void FrameAccumulator ::processBuffer(Fw::Buffer& buffer) {
-    const U32 bufferSize = buffer.getSize();
+    const FwSizeType bufferSize = buffer.getSize();
     U8* const bufferData = buffer.getData();
     // Current offset into buffer
-    U32 offset = 0;
+    FwSizeType offset = 0;
     // Remaining data in buffer
-    U32 remaining = bufferSize;
+    FwSizeType remaining = bufferSize;
 
-    for (U32 i = 0; i < bufferSize; ++i) {
+    for (FwSizeType i = 0; i < bufferSize; ++i) {
         // If there is no data left or no space, exit the loop
         if (remaining == 0 || this->m_inRing.get_free_size() == 0) {
             break;
         }
         // Compute the size of data to serialize
-        const NATIVE_UINT_TYPE ringFreeSize = this->m_inRing.get_free_size();
-        const NATIVE_UINT_TYPE serSize =
-            (ringFreeSize <= remaining) ? ringFreeSize : static_cast<NATIVE_UINT_TYPE>(remaining);
+        const FwSizeType ringFreeSize = this->m_inRing.get_free_size();
+        const FwSizeType serSize =
+            (ringFreeSize <= remaining) ? ringFreeSize : remaining;
         // Serialize data into the ring buffer
         const Fw::SerializeStatus status = this->m_inRing.serialize(&bufferData[offset], serSize);
         // If data does not fit, there is a coding error
@@ -99,14 +99,14 @@ void FrameAccumulator ::processRing() {
     FW_ASSERT(this->m_detector != nullptr);
 
     // The number of remaining bytes in the ring buffer
-    U32 remaining = 0;
+    FwSizeType remaining = 0;
     // The protocol status
     FrameDetector::Status status = FrameDetector::Status::FRAME_DETECTED;
     // The ring buffer capacity
     const NATIVE_UINT_TYPE ringCapacity = this->m_inRing.get_capacity();
 
     // Process the ring buffer looking for at least the header
-    for (U32 i = 0; i < ringCapacity; i++) {
+    for (FwSizeType i = 0; i < ringCapacity; i++) {
         // Get the number of bytes remaining in the ring buffer
         remaining = this->m_inRing.get_allocated_size();
         // If there are none, we are done
