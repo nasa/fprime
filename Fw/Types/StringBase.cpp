@@ -115,7 +115,7 @@ void StringBase::appendBuff(const CHAR* buff, SizeType size) {
         remaining = size;
     }
     FW_ASSERT(remaining < capacity, static_cast<FwAssertArgType>(remaining), static_cast<FwAssertArgType>(capacity));
-    (void)strncat(const_cast<CHAR*>(this->toChar()), buff, remaining);
+    (void)strncat(const_cast<CHAR*>(this->toChar()), buff, static_cast<size_t>(remaining));
 }
 
 StringBase::SizeType StringBase::length() const {
