@@ -48,7 +48,7 @@ bool StringBase::operator==(const CHAR* other) const {
     }
 
     const SizeType capacity = this->getCapacity();
-    const size_t result = static_cast<size_t>(strncmp(us, other, capacity));
+    const size_t result = static_cast<size_t>(strncmp(us, other, static_cast<size_t>(capacity)));
     return (result == 0);
 }
 
