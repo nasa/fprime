@@ -27,7 +27,7 @@ bool Register::precondition(const MockLogging::FakeLogger& truth) {
 // Register NULL or truth as the system logger
 void Register::action(MockLogging::FakeLogger& truth) {
     // Select a registration value: 1 -> logger, 0 -> NULL
-    NATIVE_INT_TYPE random = STest::Pick::lowerUpper(0, 1);
+    U32 random = STest::Pick::lowerUpper(0, 1);
     if (random == 1) {
         Fw::Logger::registerLogger(&truth);
         truth.s_current = &truth;
@@ -48,8 +48,8 @@ bool LogGood::precondition(const MockLogging::FakeLogger& truth) {
 
 // Log valid messages
 void LogGood::action(MockLogging::FakeLogger& truth) {
-    NATIVE_INT_TYPE random = STest::Pick::lowerUpper(0, 10);
-    NATIVE_INT_TYPE ra[10];
+    U32 random = STest::Pick::lowerUpper(0, 10);
+    U32 ra[10];
     for (int i = 0; i < 10; ++i) {
         ra[i] = STest::Pick::lowerUpper(0, 0xffffffff);
     }
@@ -127,8 +127,8 @@ bool LogGoodStringObject::precondition(const MockLogging::FakeLogger& truth) {
 // Log valid messages
 void LogGoodStringObject::action(MockLogging::FakeLogger& truth) {
     Fw::String my_string;
-    NATIVE_INT_TYPE random = STest::Pick::lowerUpper(0, my_string.getCapacity() - 1);
-    for (int i = 0; i < random; ++i) {
+    U32 random = STest::Pick::lowerUpper(0, my_string.getCapacity() - 1);
+    for (U32 i = 0; i < random; ++i) {
         const_cast<char*>(my_string.toChar())[i] =
             static_cast<char>(STest::Pick::lowerUpper(0, std::numeric_limits<unsigned char>::max()));
     }
@@ -149,8 +149,8 @@ bool LogBad::precondition(const MockLogging::FakeLogger& truth) {
 
 // Log valid messages
 void LogBad::action(MockLogging::FakeLogger& truth) {
-    NATIVE_INT_TYPE random = STest::Pick::lowerUpper(0, 10);
-    NATIVE_INT_TYPE ra[10];
+    U32 random = STest::Pick::lowerUpper(0, 10);
+    U32 ra[10];
     for (int i = 0; i < 10; ++i) {
         ra[i] = STest::Pick::lowerUpper(0, 0xffffffff);
     }

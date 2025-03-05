@@ -102,11 +102,11 @@ namespace Svc {
     FW_ASSERT(portNum == 0);
 
     // Get length of buffer:
-    U32 size32 = data.getBuffLength();
+    FwSizeType sizeNative = data.getBuffLength();
     // ComLogger only writes 16-bit sizes to save space
     // on disk:
-    FW_ASSERT(size32 < 65536, static_cast<FwAssertArgType>(size32));
-    U16 size = size32 & 0xFFFF;
+    FW_ASSERT(sizeNative < 65536, static_cast<FwAssertArgType>(sizeNative));
+    U16 size = sizeNative & 0xFFFF;
 
     // Close the file if it will be too big:
     if( OPEN == this->m_fileMode ) {
@@ -223,7 +223,7 @@ namespace Svc {
       serialLength.serialize(size);
       if(this->writeToFile(serialLength.getBuffAddr(),
               static_cast<U16>(serialLength.getBuffLength()))) {
-        this->m_byteCount += serialLength.getBuffLength();
+        this->m_byteCount += static_cast<U32>(serialLength.getBuffLength());
       }
       else {
         return;

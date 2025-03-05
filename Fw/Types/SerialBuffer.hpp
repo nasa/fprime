@@ -30,7 +30,7 @@ class SerialBuffer final : public SerializeBufferBase {
     //! Construct a SerialBuffer
     //!
     SerialBuffer(U8* const data,     //!< Pointer to the data
-                 const U32 capacity  //!< The buffer capacity
+                 const FwSizeType capacity  //!< The buffer capacity
     );
 
   public:
@@ -38,7 +38,7 @@ class SerialBuffer final : public SerializeBufferBase {
     // Pure virtual methods from SerializeBufferBase
     // ----------------------------------------------------------------------
 
-    NATIVE_UINT_TYPE getBuffCapacity() const;
+    FwSizeType getBuffCapacity() const;
 
     U8* getBuffAddr();
 
@@ -53,13 +53,13 @@ class SerialBuffer final : public SerializeBufferBase {
     void fill();
 
     //! Push n bytes onto the buffer
-    SerializeStatus pushBytes(const U8* const addr,     //!< Address of bytes to push
-                              const NATIVE_UINT_TYPE n  //!< Number of bytes
+    SerializeStatus pushBytes(const U8* const addr, //!< Address of bytes to push
+                              const FwSizeType n    //!< Number of bytes
     );
 
     //! Pop n bytes off the buffer
-    SerializeStatus popBytes(U8* const addr,     //!< Address of bytes to pop
-                             NATIVE_UINT_TYPE n  //!< Number of bytes to pop
+    SerializeStatus popBytes(U8* const addr, //!< Address of bytes to pop
+                             FwSizeType n    //!< Number of bytes to pop
     );
 
   private:
@@ -71,7 +71,7 @@ class SerialBuffer final : public SerializeBufferBase {
     U8* const m_data;
 
     //! The capacity
-    const U32 m_capacity;
+    const FwSizeType m_capacity;
 };
 
 }  // namespace Fw

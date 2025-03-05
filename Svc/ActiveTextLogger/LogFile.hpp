@@ -40,7 +40,7 @@ namespace Svc {
         //!  \param maxBackups The max backups for the file. Default: 10
         //!
         //!  \return true if creating the file was successful, false otherwise
-        bool set_log_file(const char* fileName, const U32 maxSize, const U32 maxBackups = 10);
+        bool set_log_file(const char* fileName, const FwSizeType maxSize, const FwSizeType maxBackups = 10);
 
         //!  \brief Write the passed buf to the log if possible
         //!
@@ -48,7 +48,7 @@ namespace Svc {
         //!  \param size The size of buf
         //!
         //!  \return true if writing to the file was successful, false otherwise
-        bool write_to_log(const char *const buf, const U32 size);
+        bool write_to_log(const char *const buf, const FwSizeType size);
 
         // ----------------------------------------------------------------------
         // Member Variables
@@ -61,13 +61,13 @@ namespace Svc {
         Os::File m_file;
 
         // The max size of the text log file:
-        U32 m_maxFileSize;
+        FwSizeType m_maxFileSize;
 
         // True if there is currently an open file to write text logs to:
         bool m_openFile;
 
         // Current size of the file:
-        U32 m_currentFileSize;
+        FwSizeType m_currentFileSize;
     };
 
 }

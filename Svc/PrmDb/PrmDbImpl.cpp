@@ -23,7 +23,7 @@ namespace Svc {
         class WorkingBuffer : public Fw::SerializeBufferBase {
             public:
 
-                NATIVE_UINT_TYPE getBuffCapacity() const {
+                FwSizeType getBuffCapacity() const {
                     return sizeof(m_buff);
                 }
 
@@ -173,7 +173,7 @@ namespace Svc {
                 FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat,static_cast<FwAssertArgType>(serStat));
 
                 // write record size
-                writeSize = buff.getBuffLength();
+                writeSize = static_cast<FwSignedSizeType>(buff.getBuffLength());
                 stat = paramFile.write(buff.getBuffAddr(),writeSize,Os::File::WaitType::WAIT);
                 if (stat != Os::File::OP_OK) {
                     this->unLock();
@@ -201,7 +201,7 @@ namespace Svc {
                 FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat,static_cast<FwAssertArgType>(serStat));
 
                 // write parameter ID
-                writeSize = buff.getBuffLength();
+                writeSize = static_cast<FwSignedSizeType>(buff.getBuffLength());
                 stat = paramFile.write(buff.getBuffAddr(),writeSize,Os::File::WaitType::WAIT);
                 if (stat != Os::File::OP_OK) {
                     this->unLock();
@@ -221,7 +221,7 @@ namespace Svc {
 
                 // write serialized parameter value
 
-                writeSize = this->m_db[entry].val.getBuffLength();
+                writeSize = static_cast<FwSignedSizeType>(this->m_db[entry].val.getBuffLength());
                 stat = paramFile.write(this->m_db[entry].val.getBuffAddr(),writeSize,Os::File::WaitType::WAIT);
                 if (stat != Os::File::OP_OK) {
                     this->unLock();

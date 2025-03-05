@@ -22,7 +22,7 @@ void Queue::setup(U8* const storage, const FwSizeType storage_size, const FwSize
         static_cast<FwAssertArgType>(storage_size),
         static_cast<FwAssertArgType>(depth),
         static_cast<FwAssertArgType>(message_size));
-    m_internal.setup(storage, static_cast<NATIVE_UINT_TYPE>(total_needed_size));
+    m_internal.setup(storage, total_needed_size);
     m_message_size = message_size;
 }
 
@@ -32,7 +32,7 @@ Fw::SerializeStatus Queue::enqueue(const U8* const message, const FwSizeType siz
         m_message_size == size,
         static_cast<FwAssertArgType>(size),
         static_cast<FwAssertArgType>(m_message_size)); // Message size is as expected
-    return m_internal.serialize(message, static_cast<NATIVE_UINT_TYPE>(m_message_size));
+    return m_internal.serialize(message, m_message_size);
 }
 
 Fw::SerializeStatus Queue::dequeue(U8* const message, const FwSizeType size) {
@@ -41,25 +41,25 @@ Fw::SerializeStatus Queue::dequeue(U8* const message, const FwSizeType size) {
         m_message_size <= size,
         static_cast<FwAssertArgType>(size),
         static_cast<FwAssertArgType>(m_message_size)); // Sufficient storage space for read message
-    Fw::SerializeStatus result = m_internal.peek(message, static_cast<NATIVE_UINT_TYPE>(m_message_size), 0);
+    Fw::SerializeStatus result = m_internal.peek(message, m_message_size, 0);
     if (result != Fw::FW_SERIALIZE_OK) {
         return result;
     }
-    return m_internal.rotate(static_cast<NATIVE_UINT_TYPE>(m_message_size));
+    return m_internal.rotate(m_message_size);
 }
 
-NATIVE_UINT_TYPE Queue::get_high_water_mark() const {
+FwSizeType Queue::get_high_water_mark() const {
     FW_ASSERT(m_message_size > 0, static_cast<FwAssertArgType>(m_message_size));
-    return static_cast<NATIVE_UINT_TYPE>(m_internal.get_high_water_mark() / m_message_size);
+    return m_internal.get_high_water_mark() / m_message_size;
 }
 
 void Queue::clear_high_water_mark() {
     m_internal.clear_high_water_mark();
 }
 
-NATIVE_UINT_TYPE Queue::getQueueSize() const {
+FwSizeType Queue::getQueueSize() const {
     FW_ASSERT(m_message_size > 0, static_cast<FwAssertArgType>(m_message_size));
-    return static_cast<NATIVE_UINT_TYPE>(m_internal.get_allocated_size() / m_message_size);
+    return m_internal.get_allocated_size() / m_message_size;
 }
 
 

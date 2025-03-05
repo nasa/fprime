@@ -31,10 +31,10 @@ namespace Svc {
   }
 
   void CmdSequencerComponentImpl::FPrimeSequence::CRC ::
-    update(const BYTE* buffer, NATIVE_UINT_TYPE bufferSize)
+    update(const BYTE* buffer, FwSizeType bufferSize)
   {
     FW_ASSERT(buffer);
-    for(NATIVE_UINT_TYPE index = 0; index < bufferSize; index++) {
+    for(FwSizeType index = 0; index < bufferSize; index++) {
       this->m_computed = static_cast<U32>(update_crc_32(this->m_computed, static_cast<char>(buffer[index])));
     }
   }
@@ -148,7 +148,7 @@ namespace Svc {
         and this->extractCRC();
     }
     if (status) {
-      const NATIVE_UINT_TYPE buffLen = this->m_buffer.getBuffLength();
+      const FwSizeType buffLen = this->m_buffer.getBuffLength();
       this->m_crc.update(buffAddr, buffLen);
       this->m_crc.finalize();
     }
@@ -166,9 +166,9 @@ namespace Svc {
     FwSignedSizeType readLen = Sequence::Header::SERIALIZED_SIZE;
     FW_ASSERT(readLen >= 0, static_cast<FwAssertArgType>(readLen));
 
-    const NATIVE_UINT_TYPE capacity = buffer.getBuffCapacity();
+    const FwSizeType capacity = buffer.getBuffCapacity();
     FW_ASSERT(
-        capacity >= static_cast<NATIVE_UINT_TYPE>(readLen),
+        capacity >= static_cast<FwSizeType>(readLen),
         static_cast<FwAssertArgType>(capacity),
         static_cast<FwAssertArgType>(readLen)
     );
@@ -260,10 +260,10 @@ namespace Svc {
     readRecordsAndCRC()
   {
     Os::File& file = this->m_sequenceFile;
-    const NATIVE_UINT_TYPE size = this->m_header.m_fileSize;
+    const FwSizeType size = this->m_header.m_fileSize;
     Fw::SerializeBufferBase& buffer = this->m_buffer;
 
-    FwSignedSizeType readLen = size;
+    FwSignedSizeType readLen = static_cast<FwSignedSizeType>(size);
     Os::File::Status fileStatus = file.read(
       buffer.getBuffAddr(),
       readLen
@@ -277,7 +277,7 @@ namespace Svc {
       return false;
     }
     // check read size
-    if (static_cast<NATIVE_INT_TYPE>(size) != readLen) {
+    if (size != static_cast<FwSizeType>(readLen)) {
       this->m_events.fileInvalid(
           CmdSequencer_FileReadStage::READ_SEQ_DATA_SIZE,
           static_cast<I32>(readLen)
@@ -298,8 +298,8 @@ namespace Svc {
     U32& crc = this->m_crc.m_stored;
 
     // Compute the data size
-    const U32 buffSize = buffer.getBuffLength();
-    const U32 crcSize = sizeof(crc);
+    const FwSizeType buffSize = buffer.getBuffLength();
+    const FwSizeType crcSize = sizeof(crc);
     U8 *const buffAddr = buffer.getBuffAddr();
     if (buffSize < crcSize) {
       this->m_events.fileInvalid(
@@ -309,7 +309,7 @@ namespace Svc {
       return false;
     }
     FW_ASSERT(buffSize >= crcSize, static_cast<FwAssertArgType>(buffSize), crcSize);
-    const NATIVE_UINT_TYPE dataSize = buffSize - crcSize;
+    const FwSizeType dataSize = buffSize - crcSize;
     // Create a CRC buffer pointing at the CRC in the main buffer, after the data
     Fw::ExternalSerializeBuffer crcBuff(&buffAddr[dataSize], crcSize);
     Fw::SerializeStatus status = crcBuff.setBuffLen(crcSize);
@@ -409,7 +409,7 @@ namespace Svc {
   {
     Fw::SerializeBufferBase& buffer = this->m_buffer;
     comBuffer.resetSer();
-    NATIVE_UINT_TYPE size = recordSize;
+    FwSizeType size = recordSize;
     Fw::SerializeStatus status = comBuffer.setBuffLen(recordSize);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
     status = buffer.deserialize(comBuffer.getBuffAddr(), size, true);
@@ -430,7 +430,7 @@ namespace Svc {
     }
 
     // Deserialize all records
-    for (NATIVE_UINT_TYPE recordNumber = 0; recordNumber < numRecords; recordNumber++) {
+    for (U32 recordNumber = 0; recordNumber < numRecords; recordNumber++) {
       Fw::SerializeStatus status = this->deserializeRecord(record);
       if (status != Fw::FW_SERIALIZE_OK) {
         this->m_events.recordInvalid(recordNumber, status);
@@ -438,9 +438,9 @@ namespace Svc {
       }
     }
     // Check there is no data left
-    const U32 buffLeftSize = buffer.getBuffLeft();
+    const FwSizeType buffLeftSize = buffer.getBuffLeft();
     if (buffLeftSize > 0) {
-      this->m_events.recordMismatch(numRecords, buffLeftSize);
+      this->m_events.recordMismatch(numRecords, static_cast<U32>(buffLeftSize));
       return false;
     }
     // Rewind deserialization

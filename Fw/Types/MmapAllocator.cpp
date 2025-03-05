@@ -21,7 +21,7 @@ MmapAllocator::MmapAllocator() : m_length(0) {}
 
 MmapAllocator::~MmapAllocator() {}
 
-void* MmapAllocator::allocate(const NATIVE_UINT_TYPE identifier, NATIVE_UINT_TYPE& size, bool& recoverable) {
+void* MmapAllocator::allocate(const FwEnumStoreType identifier, FwSizeType& size, bool& recoverable) {
     void* addr = mmap(nullptr, size, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
     if (addr == MAP_FAILED) {
         size = 0;
@@ -35,7 +35,7 @@ void* MmapAllocator::allocate(const NATIVE_UINT_TYPE identifier, NATIVE_UINT_TYP
     return addr;
 }
 
-void MmapAllocator::deallocate(const NATIVE_UINT_TYPE identifier, void* ptr) {
+void MmapAllocator::deallocate(const FwEnumStoreType identifier, void* ptr) {
     if (this->m_length) {
         int stat = munmap(ptr, this->m_length);
         FW_ASSERT(stat == 0, stat);

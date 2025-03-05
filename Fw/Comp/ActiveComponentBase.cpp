@@ -8,7 +8,7 @@ namespace Fw {
     class ActiveComponentExitSerializableBuffer : public Fw::SerializeBufferBase {
 
         public:
-            NATIVE_UINT_TYPE getBuffCapacity() const {
+            FwSizeType getBuffCapacity() const {
                 return sizeof(m_buff);
             }
 
@@ -33,7 +33,7 @@ namespace Fw {
     ActiveComponentBase::~ActiveComponentBase() {
     }
 
-    void ActiveComponentBase::init(NATIVE_INT_TYPE instance) {
+    void ActiveComponentBase::init(FwEnumStoreType instance) {
         QueuedComponentBase::init(instance);
     }
 

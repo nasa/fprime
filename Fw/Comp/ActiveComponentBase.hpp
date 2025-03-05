@@ -43,7 +43,7 @@ class ActiveComponentBase : public QueuedComponentBase {
 
     explicit ActiveComponentBase(const char* name);  //!< Constructor
     virtual ~ActiveComponentBase();                  //!< Destructor
-    void init(NATIVE_INT_TYPE instance);             //!< initialization code
+    void init(FwEnumStoreType instance);             //!< initialization code
     virtual void preamble();   //!< A function that will be called before the event loop is entered
     MsgDispatchStatus dispatch(); //!< The function that will dispatching messages
     virtual void finalizer();  //!< A function that will be called after exiting the loop

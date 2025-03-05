@@ -32,7 +32,7 @@ class GenericHubComponentImpl final : public GenericHubComponentBase {
         HUB_TYPE_MAX
     };
 
-    const static U32 GENERIC_HUB_DATA_SIZE = 1024;
+    constexpr static FwSizeType GENERIC_HUB_DATA_SIZE = 1024;
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction
     // ----------------------------------------------------------------------
@@ -89,7 +89,7 @@ class GenericHubComponentImpl final : public GenericHubComponentBase {
     );
 
     // Helpers and members
-    void send_data(const HubType type, const NATIVE_INT_TYPE port, const U8* data, const U32 size);
+    void send_data(const HubType type, const FwIndexType port, const U8* data, const FwSizeType size);
 };
 
 }  // end namespace Svc

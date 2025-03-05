@@ -57,7 +57,7 @@ void testValidateFile(const char* fileName) {
     	return;
     }
     Utils::HashBuffer buf;
-    EXPECT_TRUE(fileSize == buf.getBuffCapacity());
+    EXPECT_TRUE(static_cast<FwSizeType>(fileSize) == buf.getBuffCapacity());
 
     // Validate file:
     printf("Validating file %s against hash file %s\n", fileName, hashFileName);

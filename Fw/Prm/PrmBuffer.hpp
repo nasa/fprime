@@ -32,13 +32,13 @@ namespace Fw {
                 SERIALIZED_SIZE = FW_PARAM_BUFFER_MAX_SIZE + sizeof(FwBuffSizeType)
             };
 
-            ParamBuffer(const U8 *args, NATIVE_UINT_TYPE size);
+            ParamBuffer(const U8 *args, FwSizeType size);
             ParamBuffer();
             ParamBuffer(const ParamBuffer& other);
             virtual ~ParamBuffer();
             ParamBuffer& operator=(const ParamBuffer& other);
 
-            NATIVE_UINT_TYPE getBuffCapacity() const; // !< returns capacity, not current size, of buffer
+            FwSizeType getBuffCapacity() const; // !< returns capacity, not current size, of buffer
             U8* getBuffAddr();
             const U8* getBuffAddr() const;
 
