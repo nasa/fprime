@@ -43,8 +43,7 @@ module Svc {
             @ directive or command
             $type: StatementType
             opCode: FwOpcodeType
-            argBufSize: FwSizeStoreType
-            argBuf: [MAX_STATEMENT_ARG_BUF_SIZE] U8
+            argBuf: Fw.StatementArgBuffer
         }
 
         struct Sequence {

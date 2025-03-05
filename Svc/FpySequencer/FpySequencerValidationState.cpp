@@ -93,45 +93,8 @@ bool FpySequencer::validate() {
     // deser statements
     U16 statementIdx = 0;
     while (statementIdx < m_sequenceObj.getheader().getstatementCount()) {
-        Fpy::Statement& statement = m_sequenceObj.getstatements()[statementIdx];
-
-        // statement type (directive or cmd)
-        Fpy::StatementType type;
-        deserStatus = m_sequenceBuffer.deserialize(type);
-        if (deserStatus != Fw::FW_SERIALIZE_OK) {
-            this->log_WARNING_HI_FileReadDeserializeError(m_sequenceFilePath, static_cast<I32>(deserStatus),
-                                                          m_sequenceBuffer.getBuffLeft(),
-                                                          m_sequenceBuffer.getBuffLength());
-            return false;
-        }
-        statement.settype(type);
-
-        // statement opcode
-        FwOpcodeType opCode;
-        deserStatus = m_sequenceBuffer.deserialize(opCode);
-        if (deserStatus != Fw::FW_SERIALIZE_OK) {
-            this->log_WARNING_HI_FileReadDeserializeError(m_sequenceFilePath, static_cast<I32>(deserStatus),
-                                                          m_sequenceBuffer.getBuffLeft(),
-                                                          m_sequenceBuffer.getBuffLength());
-            return false;
-        }
-        statement.setopCode(opCode);
-
-        // arg buf size
-        FwSizeStoreType argBufSize;
-        deserStatus = m_sequenceBuffer.deserialize(argBufSize);
-        if (deserStatus != Fw::FW_SERIALIZE_OK) {
-            this->log_WARNING_HI_FileReadDeserializeError(m_sequenceFilePath, static_cast<I32>(deserStatus),
-                                                          m_sequenceBuffer.getBuffLeft(),
-                                                          m_sequenceBuffer.getBuffLength());
-            return false;
-        }
-        statement.setargBufSize(argBufSize);
-
-        // need this for now... can remove when deserialize signature is updated
-        NATIVE_UINT_TYPE argBufSizeUint = static_cast<NATIVE_UINT_TYPE>(argBufSize);
-        // deser directly into arg buf
-        deserStatus = m_sequenceBuffer.deserialize(statement.getargBuf(), argBufSizeUint, true);
+        // deser statement
+        deserStatus = m_sequenceBuffer.deserialize(m_sequenceObj.getstatements()[statementIdx]);
         if (deserStatus != Fw::FW_SERIALIZE_OK) {
             this->log_WARNING_HI_FileReadDeserializeError(m_sequenceFilePath, static_cast<I32>(deserStatus),
                                                           m_sequenceBuffer.getBuffLeft(),

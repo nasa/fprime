@@ -65,10 +65,10 @@ bool FpySequencer::dispatchCommand(const Fpy::Statement& stmt) {
         return false;
     }
 
-    stat = cmdBuf.serialize(stmt.getargBuf(), stmt.getargBufSize(), true);
+    stat = cmdBuf.serialize(stmt.getargBuf().getBuffAddr(), stmt.getargBuf().getBuffLength(), true);
     if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
-        this->log_WARNING_HI_SerializeError(cmdBuf.getBuffCapacity(), cmdBuf.getBuffLength(), stmt.getargBufSize(),
-                                            stat);
+        this->log_WARNING_HI_SerializeError(cmdBuf.getBuffCapacity(), cmdBuf.getBuffLength(),
+                                            stmt.getargBuf().getBuffLength(), stat);
         return false;
     }
 
@@ -112,7 +112,8 @@ bool FpySequencer::dispatchDirective(const Fpy::Statement& stmt) {
 bool FpySequencer::handleDirective_WAIT_REL(const Fpy::Statement& stmt) {
     Fw::Time currentTime = getTime();
     Fw::Time duration;
-    Fw::ExternalSerializeBuffer deser(const_cast<U8*>(stmt.getargBuf()), stmt.getargBufSize());
+    Fw::ExternalSerializeBuffer deser(const_cast<U8*>(stmt.getargBuf().getBuffAddr()),
+                                      stmt.getargBuf().getBuffLength());
     Fw::SerializeStatus stat = deser.deserialize(duration);
     if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
         this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), stat, deser.getBuffLeft(),
@@ -126,7 +127,8 @@ bool FpySequencer::handleDirective_WAIT_REL(const Fpy::Statement& stmt) {
 
 bool FpySequencer::handleDirective_WAIT_ABS(const Fpy::Statement& stmt) {
     Fw::Time wakeupTime;
-    Fw::ExternalSerializeBuffer deser(const_cast<U8*>(stmt.getargBuf()), stmt.getargBufSize());
+    Fw::ExternalSerializeBuffer deser(const_cast<U8*>(stmt.getargBuf().getBuffAddr()),
+                                      stmt.getargBuf().getBuffLength());
     Fw::SerializeStatus stat = deser.deserialize(wakeupTime);
     if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
         this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), stat, deser.getBuffLeft(),
