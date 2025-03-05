@@ -1,5 +1,8 @@
 @ Number of sequences completed
-telemetry CompletedCount: U32
+telemetry SequencesCompleted: U32 update always
+
+@ Number of statements dispatched
+telemetry StatementsDispatched: U32 update always
 # telemetry GoalState: GoalState
 
 #@ The number of Load commands executed

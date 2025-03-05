@@ -289,6 +289,11 @@ class FpySequencer : public FpySequencerComponentBase {
                         U32 key               //!< Value to return to pinger
                         ) override;
 
+    //! Handler for input port tlmWrite
+    void tlmWrite_handler(FwIndexType portNum,  //!< The port number
+                          U32 context           //!< The call order
+                          ) override;
+
   public:
     void allocateBuffer(NATIVE_INT_TYPE identifier, Fw::MemAllocator& allocator, NATIVE_UINT_TYPE bytes);
 
@@ -327,7 +332,7 @@ class FpySequencer : public FpySequencerComponentBase {
     // this is distinct from the state of the sequencer. the
     // sequencer and all its state is really just a shell to load
     // and execute this runtime.
-    struct {
+    struct Runtime {
         // the index of the next statement to be executed
         U32 statementIndex = 0;
 
@@ -345,15 +350,21 @@ class FpySequencer : public FpySequencerComponentBase {
         // the absolute time we should wait for until returning
         // a statement response
         Fw::Time wakeupTime = Fw::Time();
-    } m_runtime;
+    };
 
-    void initializeComputedCRC();
+    Runtime m_runtime;
+
+    struct {
+        // the number of statements dispatched total
+        U32 statementsDispatched = 0;
+
+        // the number of sequences successfully completed
+        U32 sequencesCompleted = 0;
+    } m_tlm;
 
     void updateComputedCRC(const U8* buffer,      //!< The buffer
                            FwSizeType bufferSize  //!< The buffer size
     );
-
-    void finalizeComputedCRC();
 
     // loads the sequence in memory, and does header/crc/integrity checks.
     // return true if sequence is valid
@@ -377,7 +388,7 @@ class FpySequencer : public FpySequencerComponentBase {
 
     // dispatches a sequencer directive to the right handler.
     // return true if successfully handled.
-    bool dispatchDirective(const Fpy::Statement& stmt);
+    bool dispatchDirective(Fpy::Statement& stmt);
 
     // pause returning a directive response until the given
     // absolute time
@@ -391,9 +402,9 @@ class FpySequencer : public FpySequencerComponentBase {
     // Sequence directive handlers
     // return true if no error was encountered
     // ----------------------------------------------------------------------
-    bool handleDirective_WAIT_REL(const Fpy::Statement& stmt);
+    bool handleDirective_WAIT_REL(Fpy::Statement& stmt);
 
-    bool handleDirective_WAIT_ABS(const Fpy::Statement& stmt);
+    bool handleDirective_WAIT_ABS(Fpy::Statement& stmt);
 
     void handleStatementResult(FwOpcodeType opCode,             //!< Command Op Code
                                const Fw::CmdResponse& response  //!< The command response argument

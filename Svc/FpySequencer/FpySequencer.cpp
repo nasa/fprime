@@ -116,7 +116,6 @@ void FpySequencer::CANCEL_cmdHandler(FwOpcodeType opCode,  //!< The opcode
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
-
 //! Handler for input port checkTimer
 void FpySequencer::checkTimer_handler(FwIndexType portNum,  //!< The port number
                                       U32 context           //!< The call order
@@ -138,6 +137,14 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
                                          const Fw::CmdResponse& response  //!< The command response argument
 ) {
     this->handleStatementResult(opCode, response);
+}
+
+//! Handler for input port tlmWrite
+void FpySequencer::tlmWrite_handler(FwIndexType portNum,  //!< The port number
+                                    U32 context           //!< The call order
+) {
+    this->tlmWrite_StatementsDispatched(m_tlm.statementsDispatched);
+    this->tlmWrite_SequencesCompleted(m_tlm.sequencesCompleted);
 }
 
 }  // namespace Svc

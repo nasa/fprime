@@ -7,7 +7,8 @@
         <channel name="Ref.rateGroup1Comp.RgMaxTime"/>
         <channel name="Ref.rateGroup2Comp.RgMaxTime"/>
         <channel name="Ref.rateGroup3Comp.RgMaxTime"/>
-        <channel name="Ref.fpySeq.CompletedCount"/>
+        <channel name="Ref.fpySeq.SequencesCompleted"/>
+        <channel name="Ref.fpySeq.StatementsDispatched"/>
         <channel name="Ref.fileUplink.FilesReceived"/>
         <channel name="Ref.fileUplink.PacketsReceived"/>
         <channel name="Ref.fileUplinkBufferManager.TotalBuffs"/>

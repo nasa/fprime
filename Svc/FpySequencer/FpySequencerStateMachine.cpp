@@ -200,7 +200,9 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_cmdResponseOut_
 void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_resetRuntime(
     SmId smId,                                             //!< The state machine id
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
-) {}
+) {
+    m_runtime = Runtime();
+}
 
 //! Implementation for action validate of state machine
 //! Svc_FpySequencer_SequencerStateMachine

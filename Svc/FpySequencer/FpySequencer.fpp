@@ -44,6 +44,9 @@ module Svc {
         @ continue executing or keep on sleeping
         async input port checkTimer: Svc.Sched
 
+        @ port to write all telemetry
+        async input port tlmWrite: Svc.Sched
+
         @ Ping out port
         output port pingOut: Svc.Ping
 
