@@ -75,8 +75,7 @@ void FrameAccumulator ::processBuffer(Fw::Buffer& buffer) {
         }
         // Compute the size of data to serialize
         const FwSizeType ringFreeSize = this->m_inRing.get_free_size();
-        const FwSizeType serSize =
-            (ringFreeSize <= remaining) ? ringFreeSize : remaining;
+        const FwSizeType serSize = (ringFreeSize <= remaining) ? ringFreeSize : remaining;
         // Serialize data into the ring buffer
         const Fw::SerializeStatus status = this->m_inRing.serialize(&bufferData[offset], serSize);
         // If data does not fit, there is a coding error
@@ -128,10 +127,9 @@ void FrameAccumulator ::processRing() {
             Fw::Buffer buffer = this->bufferAllocate_out(0, static_cast<U32>(size_out));
             if (buffer.isValid()) {
                 // Copy out data and rotate
-                FW_ASSERT(this->m_inRing.peek(buffer.getData(), size_out) ==
-                          Fw::SerializeStatus::FW_SERIALIZE_OK);
+                FW_ASSERT(this->m_inRing.peek(buffer.getData(), size_out) == Fw::SerializeStatus::FW_SERIALIZE_OK);
                 buffer.setSize(static_cast<U32>(size_out));
-                m_inRing.rotate(size_out);
+                (void)this->m_inRing.rotate(size_out);
                 FW_ASSERT(m_inRing.get_allocated_size() == remaining - size_out,
                           static_cast<FwAssertArgType>(m_inRing.get_allocated_size()),
                           static_cast<FwAssertArgType>(remaining), static_cast<FwAssertArgType>(size_out));
@@ -156,7 +154,7 @@ void FrameAccumulator ::processRing() {
         // No frame was detected or an unknown status was received
         else {
             // Discard a single byte of data and start again
-            (void)m_inRing.rotate(1);
+            (void)this->m_inRing.rotate(1);
             FW_ASSERT(m_inRing.get_allocated_size() == remaining - 1,
                       static_cast<FwAssertArgType>(m_inRing.get_allocated_size()),
                       static_cast<FwAssertArgType>(remaining));

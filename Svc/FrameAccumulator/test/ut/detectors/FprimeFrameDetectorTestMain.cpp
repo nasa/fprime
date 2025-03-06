@@ -4,10 +4,10 @@
 // \brief  cpp file for FrameAccumulator component test main function
 // ======================================================================
 
-#include "gtest/gtest.h"
-#include "Svc/FrameAccumulator/FrameDetector/FprimeFrameDetector.hpp"
 #include "STest/Random/Random.hpp"
+#include "Svc/FrameAccumulator/FrameDetector/FprimeFrameDetector.hpp"
 #include "Utils/Hash/Hash.hpp"
+#include "gtest/gtest.h"
 
 constexpr U32 CIRCULAR_BUFFER_TEST_SIZE = 2048;
 
@@ -67,6 +67,27 @@ FwSizeType generate_random_fprime_frame(Types::CircularBuffer& circular_buffer) 
     return fprime_frame_size;
 }
 
+TEST(FprimeFrameDetector, TestBufferTooSmall) {
+    Svc::FrameDetectors::FprimeFrameDetector fprime_detector;
+    U8 buffer[CIRCULAR_BUFFER_TEST_SIZE];
+    ::memset(buffer, 0, CIRCULAR_BUFFER_TEST_SIZE);
+    Types::CircularBuffer circular_buffer(buffer, CIRCULAR_BUFFER_TEST_SIZE);
+
+    // Anything smaller than the size of header + trailer is invalid
+    U32 minimum_valid_size = FprimeProtocol::FrameHeader::SERIALIZED_SIZE + FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
+    U32 invalid_size = STest::Random::lowerUpper(1, minimum_valid_size - 1);
+    // Set the circular buffer to hold data of invalid size
+    circular_buffer.serialize(buffer, invalid_size);
+
+    Svc::FrameDetector::Status status;
+    FwSizeType size_out = 0;
+    status = fprime_detector.detect(circular_buffer, size_out);
+
+    // Expect that the detector reports that more data is needed
+    EXPECT_EQ(status, Svc::FrameDetector::Status::MORE_DATA_NEEDED);
+    EXPECT_EQ(size_out, minimum_valid_size);
+}
+
 TEST(FprimeFrameDetector, TestFrameDetected) {
     Svc::FrameDetectors::FprimeFrameDetector fprime_detector;
     U8 buffer[CIRCULAR_BUFFER_TEST_SIZE];
@@ -95,10 +116,10 @@ TEST(FprimeFrameDetector, TestManyFrameDetected) {
         Svc::FrameDetector::Status status;
         FwSizeType size_out = 0;
         status = fprime_detector.detect(circular_buffer, size_out);
-    
+
         EXPECT_EQ(status, Svc::FrameDetector::Status::FRAME_DETECTED);
         EXPECT_EQ(size_out, frame_size);
-        circular_buffer.rotate(size_out); // clear up used data
+        circular_buffer.rotate(size_out);  // clear up used data
     }
 }
 
@@ -108,7 +129,7 @@ TEST(FprimeFrameDetector, TestNoFrameDetected) {
     ::memset(buffer, 0, CIRCULAR_BUFFER_TEST_SIZE);
     Types::CircularBuffer circular_buffer(buffer, CIRCULAR_BUFFER_TEST_SIZE);
 
-    (void) generate_random_fprime_frame(circular_buffer);
+    (void)generate_random_fprime_frame(circular_buffer);
     // Remove 1 byte from the beginning of the frame, making it invalid
     circular_buffer.rotate(1);
 
@@ -125,8 +146,8 @@ TEST(FprimeFrameDetector, TestMoreDataNeeded) {
     ::memset(buffer, 0, CIRCULAR_BUFFER_TEST_SIZE);
     Types::CircularBuffer circular_buffer(buffer, CIRCULAR_BUFFER_TEST_SIZE);
 
-    (void) generate_random_fprime_frame(circular_buffer);
-    circular_buffer.m_allocated_size--; // Remove 1 byte from the end of the frame to trigger "more data needed"
+    (void)generate_random_fprime_frame(circular_buffer);
+    circular_buffer.m_allocated_size--;  // Remove 1 byte from the end of the frame to trigger "more data needed"
 
     Svc::FrameDetector::Status status;
     FwSizeType unused = 0;
@@ -134,7 +155,6 @@ TEST(FprimeFrameDetector, TestMoreDataNeeded) {
 
     EXPECT_EQ(status, Svc::FrameDetector::Status::MORE_DATA_NEEDED);
 }
-
 
 int main(int argc, char** argv) {
     STest::Random::seed();

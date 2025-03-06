@@ -49,11 +49,12 @@ FrameDetector::Status FprimeFrameDetector::detect(const Types::CircularBuffer& d
     if (header.getstart_word() != default_value.getstart_word()) {
         return Status::NO_FRAME_DETECTED;
     }
-    // If the deserialized length token can't fit in current allocated size -> MORE_DATA_NEEDED
-    if (data.get_allocated_size() < FprimeProtocol::FrameHeader::SERIALIZED_SIZE + header.getlength() +
-                                        FprimeProtocol::FrameTrailer::SERIALIZED_SIZE) {
-        size_out = header.getlength() + FprimeProtocol::FrameHeader::SERIALIZED_SIZE +
-                   FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
+    // We expect the frame size to be size of header + body (of size specified in header) + trailer
+    const FwSizeType expected_frame_size = FprimeProtocol::FrameHeader::SERIALIZED_SIZE + header.getlength() +
+                                           FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
+    // If the current allocated size can't hold the expected_frame_size -> MORE_DATA_NEEDED
+    if (data.get_allocated_size() < expected_frame_size) {
+        size_out = expected_frame_size;
         return Status::MORE_DATA_NEEDED;
     }
 
@@ -88,13 +89,13 @@ FrameDetector::Status FprimeFrameDetector::detect(const Types::CircularBuffer& d
 
     // Compare the transmitted CRC with the computed one
     if (trailer.getcrc() != hashBuffer.asBigEndianU32()) {
-        // Note: CRC mismatch - there likely was data corruption
-        // Should there be an event / telemetry for frames dropped ??
-        // Add Status::DATA_ERROR , and use it for deserialization errors as well?
+        // CRC mismatch - there likely was data corruption. The F Prime protocol
+        // being very simple, we don't have a way to recover from this.
+        // So we report NO_FRAME_DETECTED and drop the frame
         return Status::NO_FRAME_DETECTED;
     }
-    size_out = header.getlength() + FprimeProtocol::FrameHeader::SERIALIZED_SIZE +
-               FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
+    // All checks passed - we have detected a frame of size expected_frame_size
+    size_out = expected_frame_size;
     return Status::FRAME_DETECTED;
 }
 

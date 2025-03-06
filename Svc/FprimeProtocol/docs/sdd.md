@@ -1,6 +1,6 @@
 # The F Prime communications protocol
 
-The F Prime protocol is a minimal communications protocol that is used by default in by F Prime applications. It is a protocol that is used for both uplink and downlink communications, designed to get started with the F´ GDS quickly. It does not provide any advanced features and is primarly meant for testing purposes. is used to encapsulate packets of data that are sent between the ground and the spacecraft. It is implemented on both the spacecraft and the Ground (GDS) side.
+The F Prime protocol is a minimal communications protocol that is used by default in by F Prime applications. It is a protocol that is used for both uplink and downlink communications, designed to get started with the F´ GDS quickly. It does not provide any advanced features and is primarily meant for testing purposes. is used to encapsulate packets of data that are sent between the ground and the spacecraft. It is implemented on both the spacecraft and the Ground (GDS) side.
 
 A frame for F Prime protocol consists of 4 fields:
 - Start word: A 32-bit start word that is used to identify the start of a frame. The start word is always `0xDEADBEEF`.
@@ -22,3 +22,6 @@ packet-beta
   64-95: "Packet data [variable length]"
   96-127: "CRC [4 bytes]"
 ```
+
+> [!NOTE]
+> Because the packet length token is 4 bytes long, the F Prime protocol does not support packets larger than 2^32 - 1 bytes (~4 GB).

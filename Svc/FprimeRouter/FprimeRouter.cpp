@@ -51,7 +51,7 @@ void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer
                 if (status == Fw::FW_SERIALIZE_OK) {
                     // Send the com buffer - critical functionality so it is considered an error not to
                     // have the port connected. This is why we don't check isConnected() before sending.
-                    commandOut_out(0, com, 0);
+                    this->commandOut_out(0, com, 0);
                 } else {
                     this->log_WARNING_HI_SerializationError(status);
                 }
@@ -61,7 +61,7 @@ void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer
             case Fw::ComPacket::FW_PACKET_FILE: {
                 // If the file uplink output port is connected,
                 // send the file packet. Otherwise take no action.
-                if (isConnected_fileOut_OutputPort(0)) {
+                if (this->isConnected_fileOut_OutputPort(0)) {
                     // Make sure we can cast down to U32 without overflow
                     FW_ASSERT((packetSize - sizeof(packetType)) < std::numeric_limits<U32>::max(),
                               static_cast<FwAssertArgType>(packetSize - sizeof(packetType)));
@@ -71,7 +71,7 @@ void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer
                     packetBuffer.setData(packetData + sizeof(packetType));
                     packetBuffer.setSize(static_cast<U32>(packetSize - sizeof(packetType)));
                     // Send the packet buffer
-                    fileOut_out(0, packetBuffer);
+                    this->fileOut_out(0, packetBuffer);
                     // Transfer ownership of the packetBuffer to the receiver
                     deallocate = false;
                 }
@@ -80,8 +80,8 @@ void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer
             default: {
                 // Packet type is not known to the F Prime protocol. If the unknownDataOut port is
                 // connected, forward packet and context for further processing
-                if (isConnected_unknownDataOut_OutputPort(0)) {
-                    unknownDataOut_out(0, packetBuffer, contextBuffer);
+                if (this->isConnected_unknownDataOut_OutputPort(0)) {
+                    this->unknownDataOut_out(0, packetBuffer, contextBuffer);
                     // Transfer ownership of the packetBuffer to the receiver
                     deallocate = false;
                 }
@@ -93,7 +93,7 @@ void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer
 
     if (deallocate) {
         // Deallocate the packet buffer
-        bufferDeallocate_out(0, packetBuffer);
+        this->bufferDeallocate_out(0, packetBuffer);
     }
 }
 
