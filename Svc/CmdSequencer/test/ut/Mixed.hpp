@@ -31,7 +31,7 @@ namespace Svc {
 
         //! Construct object CmdSequencerTester
         CmdSequencerTester(
-            const SequenceFiles::File::Format::t format =
+            const SequenceFiles::File::Format::t a_format =
             SequenceFiles::File::Format::F_PRIME //!< The file format to use
         );
 

@@ -40,9 +40,9 @@ class FramingTester {
     class Interface : public FramingProtocolInterface {
       public:
         //! Construct an Interface
-        Interface(FramingTester& framingTester  //!< The enclosing FramingTester
+        Interface(FramingTester& a_framingTester  //!< The enclosing FramingTester
                   )
-            : framingTester(framingTester), sentBuffer(nullptr) {}
+            : framingTester(a_framingTester), sentBuffer(nullptr) {}
 
       public:
         //! Allocate the buffer
@@ -73,7 +73,7 @@ class FramingTester {
     // ----------------------------------------------------------------------
 
     //! Construct a FramingTester
-    FramingTester(Fw::ComPacket::ComPacketType packetType  //!< The packet type
+    FramingTester(Fw::ComPacket::ComPacketType a_packetType  //!< The packet type
     );
 
   public:

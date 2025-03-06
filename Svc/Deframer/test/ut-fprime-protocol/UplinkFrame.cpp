@@ -17,8 +17,8 @@ namespace Svc {
 // Constructor
 // ----------------------------------------------------------------------
 
-DeframerTester::UplinkFrame::UplinkFrame(Fw::ComPacket::ComPacketType packetType, U32 packetSize)
-    : packetType(packetType), packetSize(packetSize), copyOffset(0), valid(false) {
+DeframerTester::UplinkFrame::UplinkFrame(Fw::ComPacket::ComPacketType a_packetType, U32 a_packetSize)
+    : packetType(a_packetType), packetSize(a_packetSize), copyOffset(0), valid(false) {
     // Fill in random data
     for (U32 i = 0; i < sizeof data; ++i) {
         data[i] = static_cast<U8>(STest::Pick::lowerUpper(0, 0xFF));

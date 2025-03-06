@@ -87,8 +87,8 @@ namespace Svc {
 
             //! Construct an uplink frame
             UplinkFrame(
-                Fw::ComPacket::ComPacketType packetType, //!< The packet type
-                U32 packetSize //!< The packet size
+                Fw::ComPacket::ComPacketType a_packetType, //!< The packet type
+                U32 a_packetSize //!< The packet size
             );
 
           public:

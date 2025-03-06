@@ -27,8 +27,8 @@ namespace Svc {
 
         //! Construct a SizeFieldTooLargeFile
         SizeFieldTooLargeFile(
-            const U32 bufferSize, //!< The buffer size
-            const Format::t format //!< The file format
+            const U32 a_bufferSize, //!< The buffer size
+            const Format::t a_format //!< The file format
         );
 
       public:

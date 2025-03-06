@@ -34,14 +34,14 @@ add_compile_options(
     -pedantic
 )
 
-# Turn off these warnings for now in unit testing
-# The FPP-generated code needs more fixes
-if (BUILD_TESTING)
-    add_compile_options(
-        -Wno-shadow
-        -Wno-sign-conversion
-    )
-endif()
+## Turn off these warnings for now in unit testing
+## The FPP-generated code needs more fixes
+#if (BUILD_TESTING)
+#    add_compile_options(
+#        -Wno-shadow
+#        -Wno-sign-conversion
+#    )
+#endif()
 
 find_program(VALGRIND valgrind) # Find valgrind, and use it instead of leak check
 # Enable sanitizers

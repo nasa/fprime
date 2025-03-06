@@ -91,13 +91,13 @@ namespace Svc {
 
         //! Construct a File with default initialization
         File(
-            const Format::t format = Format::F_PRIME //!< The file format
+            const Format::t a_format = Format::F_PRIME //!< The file format
         );
 
         //! Construct a File with the given base name
         File(
             const char* const baseName, //!< The base name
-            const Format::t format = Format::F_PRIME //!< The file format
+            const Format::t a_format = Format::F_PRIME //!< The file format
         );
 
         //! Destroy a file

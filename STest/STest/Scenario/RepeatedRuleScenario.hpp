@@ -29,10 +29,10 @@ namespace STest {
 
       //! Construct object RepeatedRuleScenario
       RepeatedRuleScenario(
-          Rule<State>& rule //!< The rule
+          Rule<State>& a_rule //!< The rule
       ) :
-        Scenario<State>(rule.getName()),
-        rule(rule)
+        Scenario<State>(a_rule.getName()),
+        rule(a_rule)
       {
 
       }

@@ -48,7 +48,7 @@ class DeframerTester : public DeframerGTestBase {
   public:
     //! Construct object DeframerTester
     //!
-    DeframerTester(ConnectStatus::t bufferOutStatus = ConnectStatus::CONNECTED);
+    DeframerTester(ConnectStatus::t a_bufferOutStatus = ConnectStatus::CONNECTED);
 
     //! Destroy object DeframerTester
     //!

@@ -42,11 +42,11 @@ void DeframerTester::MockDeframer::test_interface(Fw::ComPacket::ComPacketType c
 }
 
 
-DeframerTester ::DeframerTester(ConnectStatus::t bufferOutStatus)
+DeframerTester ::DeframerTester(ConnectStatus::t a_bufferOutStatus)
     : DeframerGTestBase("Tester", MAX_HISTORY_SIZE),
       component("Deframer"),
       m_mock(*this),
-      bufferOutStatus(bufferOutStatus) {
+      bufferOutStatus(a_bufferOutStatus) {
     this->initComponents();
     this->connectPorts();
     component.setup(this->m_mock);

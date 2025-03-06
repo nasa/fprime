@@ -19,8 +19,8 @@ namespace Svc {
   namespace SequenceFiles {
 
     MissingCRCFile ::
-      MissingCRCFile(const Format::t format) :
-        File("invalid_record", format)
+      MissingCRCFile(const Format::t a_format) :
+        File("invalid_record", a_format)
     {
 
     }

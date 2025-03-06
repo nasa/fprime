@@ -47,9 +47,9 @@ namespace Svc {
 
           //! Construct an Interface
           Interface(
-              DeframingTester& deframingTester //!< The enclosing DeframingTester
+              DeframingTester& a_deframingTester //!< The enclosing DeframingTester
           ) :
-            deframingTester(deframingTester)
+            deframingTester(a_deframingTester)
           {
 
           }

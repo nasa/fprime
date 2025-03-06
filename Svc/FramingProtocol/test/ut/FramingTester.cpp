@@ -15,10 +15,10 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   FramingTester ::
-    FramingTester(Fw::ComPacket::ComPacketType packetType) :
+    FramingTester(Fw::ComPacket::ComPacketType a_packetType) :
       // Pick a random data size
       dataSize(STest::Pick::lowerUpper(1, MAX_DATA_SIZE)),
-      packetType(packetType),
+      packetType(a_packetType),
       interface(*this)
   {
     FW_ASSERT(this->dataSize <= MAX_DATA_SIZE);
