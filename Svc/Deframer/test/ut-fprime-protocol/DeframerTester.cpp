@@ -134,7 +134,7 @@ namespace Svc {
         // Check the packet data
         for (U32 i = 0; i < fwBuffer.getSize(); i++) {
             // Deframer strips type before sending to FileUplink
-            const U32 frameOffset =
+            const FwSizeType frameOffset =
                 FpFrameHeader::SIZE + sizeof(FwPacketDescriptorType) + i;
             ASSERT_EQ(
                 (fwBuffer.getData())[i],

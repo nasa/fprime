@@ -83,7 +83,7 @@ namespace Svc {
   void FramingTester ::
     checkPacketSize(FpFrameHeader::TokenType packetSize)
   {
-    U32 expectedPacketSize = this->dataSize;
+    FwSizeType expectedPacketSize = this->dataSize;
     if (this->packetType != Fw::ComPacket::FW_PACKET_UNKNOWN) {
       // Packet type is stored in header
       expectedPacketSize += sizeof(SerialPacketType);
@@ -124,7 +124,7 @@ namespace Svc {
   void FramingTester ::
     checkData()
   {
-    U32 dataOffset = PACKET_TYPE_OFFSET;
+    FwSizeType dataOffset = PACKET_TYPE_OFFSET;
     if (this->packetType != Fw::ComPacket::FW_PACKET_UNKNOWN) {
       // Packet type is stored in header
       dataOffset += sizeof(SerialPacketType);

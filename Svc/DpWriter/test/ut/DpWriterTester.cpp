@@ -31,7 +31,8 @@ DpWriterTester ::~DpWriterTester() {}
 
 void DpWriterTester::from_procBufferSendOut_handler(FwIndexType portNum, Fw::Buffer& buffer) {
     this->pushFromPortEntry_procBufferSendOut(buffer);
-    this->abstractState.m_procTypes |= static_cast<Fw::DpCfg::ProcType::SerialType>(1 << portNum);
+    this->abstractState.m_procTypes =
+        static_cast<Fw::DpCfg::ProcType::SerialType>(this->abstractState.m_procTypes | (1 << portNum));
 }
 
 // ----------------------------------------------------------------------

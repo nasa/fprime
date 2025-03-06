@@ -58,7 +58,7 @@ TEST(FwTlmTest,TlmPacketSerializeFill) {
         Fw::TlmBuffer buffIn;
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,buffIn.serialize(static_cast<U32>(entry)));
         Fw::Time timeIn(TB_WORKSTATION_TIME,entry+1,entry+2);
-        U32 id = NUM_ENTRIES-entry;
+        U32 id = static_cast<U32>(NUM_ENTRIES-entry);
 
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,pktIn.addValue(id,timeIn,buffIn));
     }

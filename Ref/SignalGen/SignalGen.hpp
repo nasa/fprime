@@ -109,5 +109,5 @@ namespace Ref {
         FwDpPriorityType m_dpPriority; //!< stored priority for current DP
 
     };
-};
+}
 #endif

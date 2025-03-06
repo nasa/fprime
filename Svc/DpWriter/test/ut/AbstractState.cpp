@@ -49,7 +49,7 @@ Fw::Buffer AbstractState::getDpBuffer() {
     for (FwIndexType i = 0; i < Fw::DpCfg::ProcType::NUM_CONSTANTS; i++) {
         const bool selector = static_cast<bool>(STest::Pick::lowerUpper(0, 1));
         if (selector) {
-            procTypes |= static_cast<Fw::DpCfg::ProcType::SerialType>(1 << i);
+            procTypes = static_cast<Fw::DpCfg::ProcType::SerialType>(procTypes | (1 << i));
         }
     }
     container.setProcTypes(procTypes);
