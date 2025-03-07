@@ -116,8 +116,8 @@ void FpySequencer::CANCEL_cmdHandler(FwOpcodeType opCode,  //!< The opcode
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
-//! Handler for input port checkTimer
-void FpySequencer::checkTimer_handler(FwIndexType portNum,  //!< The port number
+//! Handler for input port checkShouldWake
+void FpySequencer::checkShouldWake_handler(FwIndexType portNum,  //!< The port number
                                       U32 context           //!< The call order
 ) {
     this->checkShouldWakeUp();

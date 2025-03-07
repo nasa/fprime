@@ -272,8 +272,8 @@ class FpySequencer : public FpySequencerComponentBase {
     // Handlers to implement for typed input ports
     // ----------------------------------------------------------------------
 
-    //! Handler for input port checkTimer
-    void checkTimer_handler(FwIndexType portNum,  //!< The port number
+    //! Handler for input port checkShouldWake
+    void checkShouldWake_handler(FwIndexType portNum,  //!< The port number
                             U32 context           //!< The call order
                             ) override;
 

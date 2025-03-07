@@ -42,7 +42,7 @@ void FpySequencer::stepStatement() {
 
     if (result) {
         this->sequencer_sendSignal_result_stepStatement_success();
-        
+
     } else {
         this->sequencer_sendSignal_result_stepStatement_failure();
     }
@@ -90,7 +90,7 @@ void FpySequencer::handleStatementResult(FwOpcodeType opCode,             //!< C
     // clear the opcode we're currently executing
     m_runtime.currentStatementOpcode = Fpy::DirectiveId::INVALID;
     // send signal that we got a response
-    this->sequencer_sendSignal_statementResponseIn(FpySequencer_StatementResponse(opCode, response));
+    this->sequencer_sendSignal_cmdResponseIn(FpySequencer_StatementResponse(opCode, response));
 }
 
 bool FpySequencer::dispatchDirective(Fpy::Statement& stmt) {

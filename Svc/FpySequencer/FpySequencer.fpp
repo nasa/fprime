@@ -14,16 +14,6 @@ module Svc {
             IDLE
         }
 
-        struct StatementResponse {
-            $opcode: FwOpcodeType
-            response: Fw.CmdResponse
-        }
-
-        struct SequenceExecutionArgs {
-            filePath: string
-            $block: BlockState
-        }
-
         include "FpySequencerCommands.fppi"
         include "FpySequencerTelemetry.fppi"
         include "FpySequencerEvents.fppi"
@@ -42,7 +32,7 @@ module Svc {
 
         @ port to trigger a wakeup and check if we should
         @ continue executing or keep on sleeping
-        async input port checkTimer: Svc.Sched
+        async input port checkShouldWake: Svc.Sched
 
         @ port to write all telemetry
         async input port tlmWrite: Svc.Sched

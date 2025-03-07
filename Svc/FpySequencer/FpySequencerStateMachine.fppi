@@ -1,3 +1,14 @@
+
+struct StatementResponse {
+    $opcode: FwOpcodeType
+    response: Fw.CmdResponse
+}
+
+struct SequenceExecutionArgs {
+    filePath: string
+    $block: BlockState
+}
+
 state machine SequencerStateMachine {
     ####################
     # guards           #
@@ -5,10 +16,6 @@ state machine SequencerStateMachine {
     @ return true if the goal state is RUNNING
     # see explanation in FpySequencer::m_goalState
     guard goalStateIs_RUNNING
-
-    @ given a statement response, return true if the
-    @ statement successfully executed
-    guard statementSuccessful: StatementResponse
 
     ####################
     # signals          #
@@ -23,16 +30,7 @@ state machine SequencerStateMachine {
     signal cmd_CANCEL
 
     @ called when a statement response comes in
-    signal statementResponseIn: StatementResponse
-
-    @ called in stepStatement method when a statement was successfully dispatched
-    signal result_stepStatement_success
-    @ called in stepStatement method when a statement was unable to be sent out
-    signal result_stepStatement_failure
-    @ called in stepStatement method when there were no more statements in the sequence
-    signal result_stepStatement_noMoreStatements
-    @ called in stepStatement method when the sequence execution was cancelled
-    signal result_stepStatement_cancelled
+    signal cmdResponseIn: StatementResponse
 
     @ generic failure of an action
     signal result_failure
@@ -51,8 +49,6 @@ state machine SequencerStateMachine {
     action setSequenceFilePath: SequenceExecutionArgs
     @ sets the block state of the sequence to be run
     action setSequenceBlockState: SequenceExecutionArgs
-    @ resets the sequence runtime
-    action resetRuntime
     @ performs all steps necessary for sequence validation, and raises a signal result_success or result_failure
     action validate
 
@@ -70,12 +66,6 @@ state machine SequencerStateMachine {
     @ warns that a statement response came in unexpectedly
     action report_unexpectedStatementResponse: StatementResponse
 
-    @ iterates to the next statement and dispatches it
-    action stepStatement
-    
-    @ indicates to the component that the next call to stepStatement should cancel
-    action cancelNextStepStatement
-
     @ sets the goal state to RUNNING
     # see explanation in FpySequencer::m_goalState
     action setGoalState_RUNNING
@@ -91,15 +81,13 @@ state machine SequencerStateMachine {
     @ responds to the calling command with EXECUTION_ERROR
     action cmdResponseOut_EXECUTION_ERROR
 
-    ####################
-    # topology         #
-    ####################
+
     initial enter IDLE
 
     @ sequencer is ready to load, validate and run a sequence
     state IDLE {
-        # start with an unset sequence file, and unset goal state
-        entry do { resetRuntime, setGoalState_IDLE }
+        # start with an unset goal state
+        entry do { setGoalState_IDLE }
         # -->
         # wait for a cmd
 
@@ -114,7 +102,7 @@ state machine SequencerStateMachine {
         ####################
         # misc             #
         ####################
-        on statementResponseIn do { report_unexpectedStatementResponse }
+        on cmdResponseIn do { report_unexpectedStatementResponse }
     }
 
     state VALIDATING {
@@ -132,12 +120,16 @@ state machine SequencerStateMachine {
         # commands         #
         ####################
         @ cancelled the sequence while it was validating
+        # TODO remove support for this? validate is an atomic action, so we still wait for
+        # validate to complete... but if we don't have this, then it means if we send RUN
+        # and then CANCEL, and the CANCEL arrives in VALIDATING, the seq doesn't get cancelled..
+        # i think we have to have it here...
         on cmd_CANCEL do { report_seqCancelled, cmdResponseOut_EXECUTION_ERROR } enter IDLE
 
         ####################
         # misc             #
         ####################
-        on statementResponseIn do { report_unexpectedStatementResponse }
+        on cmdResponseIn do { report_unexpectedStatementResponse }
     }
 
     @ decide whether we should stop after validating, or proceed to running
@@ -166,32 +158,84 @@ state machine SequencerStateMachine {
         ####################
         # misc             #
         ####################
-        on statementResponseIn do { report_unexpectedStatementResponse }
+        on cmdResponseIn do { report_unexpectedStatementResponse }
     }
+
+
+    ###############
+    # runtime     #    
+    ###############
+
+    @ given a statement response, return true if the
+    @ statement successfully executed
+    guard statementSuccessful: StatementResponse
+    @ return true if the sleep is over
+    guard shouldWake
+
+    @ iterates to the next statement and dispatches it
+    action stepStatement
+    @ indicates to the component that the next call to stepStatement should cancel
+    action cancelNextStepStatement
+    @ resets the sequence runtime
+    action resetRuntime
+
+    @ called in stepStatement method when a statement was successfully dispatched
+    signal result_stepStatement_dispatchedCmd
+    @ called in stepStatement method when a statement has put us to sleep
+    signal result_stepStatement_beginSleep
+    @ called in stepStatement method when a statement was unable to be sent out
+    signal result_stepStatement_failure
+    @ called in stepStatement method when there were no more statements in the sequence
+    signal result_stepStatement_noMoreStatements
+    @ called in stepStatement method when the sequence execution was cancelled
+    signal result_stepStatement_cancelled
+    @ raised whenever the checkShouldWake port is called
+    signal checkShouldWake
+    @ raised when an operation could not be performed on a Fw::Time object due to a
+    @ mismatched time base
+    signal mismatchedTimeBase
+    @ raised when an operation could not be performed on a Fw::Time object due to a
+    @ mismatched time context
+    signal mismatchedTimeContext
 
     @ sequencer is executing all statements in the sequence
     state RUNNING {
+        @ start with a fresh baked runtime
+        entry do { resetRuntime }
+
         initial enter STEP_STATEMENT
 
-        @ sequencer is stepping into a single statement and sending it out to the dispatcher
+        @ sequencer is stepping into a single statement and dispatching it
         state STEP_STATEMENT {
             entry do { stepStatement }
             # -->
             on result_stepStatement_cancelled do { report_seqCancelled, cmdResponseOut_EXECUTION_ERROR } enter IDLE
             on result_stepStatement_noMoreStatements do { report_seqSucceeded, cmdResponseOut_OK } enter IDLE
             on result_stepStatement_failure do { report_seqFailed, cmdResponseOut_EXECUTION_ERROR } enter IDLE
-            on result_stepStatement_success enter AWAITING_STATEMENT_RESPONSE
+            on result_stepStatement_beginSleep enter SLEEPING
+            on result_stepStatement_dispatchedCmd enter AWAITING_CMD_RESPONSE
+            # these can occur if the dispatch needs to compare a serialized time with the internal time (WAIT_REL)
+            on mismatchedTimeBase do { report_seqFailed, cmdResponseOut_EXECUTION_ERROR } enter IDLE
+            on mismatchedTimeContext do { report_seqFailed, cmdResponseOut_EXECUTION_ERROR } enter IDLE
 
+            @ we got a cmd response in but we weren't waiting for one
+            on cmdResponseIn do { report_unexpectedStatementResponse }
+        }
 
-            on statementResponseIn do { report_unexpectedStatementResponse }
+        @ sequencer is not taking any action, waiting for a time in the future to continue
+        state SLEEPING {
+            on checkShouldWake if shouldWake enter STEP_STATEMENT
+
+            on mismatchedTimeBase do { report_seqFailed, cmdResponseOut_EXECUTION_ERROR } enter IDLE
+            on mismatchedTimeContext do { report_seqFailed, cmdResponseOut_EXECUTION_ERROR } enter IDLE
         }
         
-        @ sequencer is awaiting the execution result of a directive
-        state AWAITING_STATEMENT_RESPONSE {
-            on statementResponseIn enter STATEMENT_DONE
+        @ sequencer is awaiting the execution result of a command
+        state AWAITING_CMD_RESPONSE {
+            on cmdResponseIn enter CMD_RESPONSE_RECEIVED
         }
 
-        choice STATEMENT_DONE {
+        choice CMD_RESPONSE_RECEIVED {
             if statementSuccessful enter STEP_STATEMENT else do { report_seqFailed, cmdResponseOut_EXECUTION_ERROR } enter IDLE
         }
 
