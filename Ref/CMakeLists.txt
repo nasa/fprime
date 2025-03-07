@@ -35,15 +35,6 @@ add_compile_options(
     -pedantic
 )
 
-## Turn off these warnings for now in unit testing
-## The FPP-generated code needs more fixes
-#if (BUILD_TESTING)
-#    add_compile_options(
-#        -Wno-shadow
-#        -Wno-sign-conversion
-#    )
-#endif()
-
 # Section 2: F prime Core
 #
 # This includes all of the F prime core components, and imports the make-system. F prime core
