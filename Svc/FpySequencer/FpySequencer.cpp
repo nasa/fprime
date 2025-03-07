@@ -143,8 +143,10 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
 void FpySequencer::tlmWrite_handler(FwIndexType portNum,  //!< The port number
                                     U32 context           //!< The call order
 ) {
-    this->tlmWrite_StatementsDispatched(m_tlm.statementsDispatched);
-    this->tlmWrite_SequencesCompleted(m_tlm.sequencesCompleted);
+        this->tlmWrite_StatementsDispatched(m_tlm.statementsDispatched);
+        this->tlmWrite_StatementsFailed(m_tlm.statementsFailed);
+        this->tlmWrite_SequencesSucceeded(m_tlm.sequencesSucceeded);
+        this->tlmWrite_SequencesFailed(m_tlm.sequencesFailed);
 }
 
 }  // namespace Svc

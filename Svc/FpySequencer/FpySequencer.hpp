@@ -334,7 +334,7 @@ class FpySequencer : public FpySequencerComponentBase {
     // and execute this runtime.
     struct Runtime {
         // the index of the next statement to be executed
-        U32 statementIndex = 0;
+        U32 nextStatementIndex = 0;
 
         // the opcode of the statement that is currently executing
         FwOpcodeType currentStatementOpcode = Fpy::DirectiveId::INVALID;
@@ -356,10 +356,16 @@ class FpySequencer : public FpySequencerComponentBase {
 
     struct {
         // the number of statements dispatched total
-        U32 statementsDispatched = 0;
+        U64 statementsDispatched = 0;
+
+        // the number of statements that failed to dispatch or execute
+        U64 statementsFailed = 0;
 
         // the number of sequences successfully completed
-        U32 sequencesCompleted = 0;
+        U64 sequencesSucceeded = 0;
+
+        // the number of sequences that failed to validate or execute, or were cancelled
+        U64 sequencesFailed = 0;
     } m_tlm;
 
     void updateComputedCRC(const U8* buffer,      //!< The buffer

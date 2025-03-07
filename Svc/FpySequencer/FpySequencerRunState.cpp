@@ -16,14 +16,17 @@ void FpySequencer::stepStatement() {
         return;
     }
 
-    if (m_runtime.statementIndex == m_sequenceObj.getheader().getstatementCount()) {
+    if (m_runtime.nextStatementIndex == m_sequenceObj.getheader().getstatementCount()) {
         this->sequencer_sendSignal_result_stepStatement_noMoreStatements();
         return;
     }
 
     // check to make sure no array out of bounds
-    FW_ASSERT(m_runtime.statementIndex < m_sequenceObj.getheader().getstatementCount());
-    Fpy::Statement nextStatement = m_sequenceObj.getstatements()[m_runtime.statementIndex];
+    FW_ASSERT(m_runtime.nextStatementIndex < m_sequenceObj.getheader().getstatementCount());
+
+    Fpy::Statement nextStatement = m_sequenceObj.getstatements()[m_runtime.nextStatementIndex];
+    m_runtime.nextStatementIndex++;
+    m_runtime.currentStatementOpcode = nextStatement.getopCode();
 
     // based on the statement type (directive or cmd)
     // send it to where it needs to go
@@ -35,14 +38,11 @@ void FpySequencer::stepStatement() {
         result = dispatchCommand(nextStatement);
     }
 
-    m_runtime.statementIndex++;
-
-    m_runtime.currentStatementOpcode = nextStatement.getopCode();
-
     m_tlm.statementsDispatched++;
 
     if (result) {
         this->sequencer_sendSignal_result_stepStatement_success();
+        
     } else {
         this->sequencer_sendSignal_result_stepStatement_failure();
     }

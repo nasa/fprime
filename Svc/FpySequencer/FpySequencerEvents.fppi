@@ -25,8 +25,8 @@ event EndOfFileError(
 event FileReadDeserializeError(
     filePath: string
     errorCode: I32
-    buffLeft: U32
-    buffLength: U32
+    buffLeft: U64
+    buffLength: U64
 ) \
     severity warning high \
     format "Deserialize error encountered while reading {}: {} ({} bytes left out of {})"
@@ -80,9 +80,9 @@ event UnknownSequencerDirective(
     format "Unknown sequencer directive id {}"
 
 event SerializeError(
-    bufCapacity: U32
-    curPos: U32
-    writeSize: U32
+    bufCapacity: U64
+    curPos: U64
+    writeSize: U64
     errorCode: U8
 ) \
     severity warning high \
@@ -107,8 +107,8 @@ event WrongStatementResponseOpcode(
 event DirectiveDeserializeError(
     $opcode: U32
     errorCode: I32
-    buffLeft: U32
-    buffLength: U32
+    buffLeft: U64
+    buffLength: U64
 ) \
     severity warning high \
     format "Deserialize error encountered while reading directive opcode {}: {} ({} bytes left out of {})"

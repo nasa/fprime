@@ -47,6 +47,7 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_report_seqSucce
     SmId smId,                                             //!< The state machine id
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) {
+    m_tlm.sequencesSucceeded++;
     this->log_ACTIVITY_HI_SequenceDone(m_sequenceFilePath);
 }
 
@@ -58,6 +59,7 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_report_seqCance
     SmId smId,                                             //!< The state machine id
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) {
+    m_tlm.sequencesFailed++;
     this->log_ACTIVITY_HI_SequenceCancelled(m_sequenceFilePath);
 }
 
@@ -105,6 +107,7 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_report_seqFaile
     SmId smId,                                             //!< The state machine id
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) {
+    m_tlm.sequencesFailed++;
     this->log_WARNING_LO_SequenceFailed(m_sequenceFilePath);
 }
 
