@@ -17,7 +17,7 @@ The following table list platforms expected to be supported in the future
 | Hardware    | Operating System | Expected Support | Notes |
 |----------------|-----------|---------|----------------------|
 | ATSAMV71Q21 | Baremetal | TBD | Work has not started |
-| CubeSTEP | Linux | rBD | Work has not started |
+| CubeSTEP | Linux | TBD | Work has not started |
 | HPSC | Linux | TBD | In development |
 | HPSC | VxWorks 7 | TBD | In development |
 | PolarFire SoC  | VxWorks 7 | TBD | In development     |
