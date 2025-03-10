@@ -118,7 +118,7 @@ void FpySequencer::CANCEL_cmdHandler(FwOpcodeType opCode,  //!< The opcode
 
 //! Handler for input port checkShouldWake
 void FpySequencer::checkShouldWake_handler(FwIndexType portNum,  //!< The port number
-                                      U32 context           //!< The call order
+                                           U32 context           //!< The call order
 ) {
     this->checkShouldWakeUp();
 }
@@ -136,17 +136,27 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
                                          U32 cmdSeq,                      //!< Command Sequence
                                          const Fw::CmdResponse& response  //!< The command response argument
 ) {
-    this->handleStatementResult(opCode, response);
+    if (sequencer_getState() !=
+        FpySequencer_SequencerStateMachineStateMachineBase::State::RUNNING_AWAITING_CMD_RESPONSE) {
+        this->log_WARNING_LO_UnexpectedStatementResponseForState(static_cast<I32>(sequencer_getState()), opCode,
+                                                                 response);
+        return;
+    }
+    if (opCode != m_runtime.currentStatementOpcode) {
+        this->log_WARNING_LO_WrongStatementResponseOpcode(m_runtime.currentStatementOpcode, opCode, response);
+        return;
+    }
+    this->sequencer_sendSignal_cmdResponseIn(FpySequencer_CmdResponse(opCode, response));
 }
 
 //! Handler for input port tlmWrite
 void FpySequencer::tlmWrite_handler(FwIndexType portNum,  //!< The port number
                                     U32 context           //!< The call order
 ) {
-        this->tlmWrite_StatementsDispatched(m_tlm.statementsDispatched);
-        this->tlmWrite_StatementsFailed(m_tlm.statementsFailed);
-        this->tlmWrite_SequencesSucceeded(m_tlm.sequencesSucceeded);
-        this->tlmWrite_SequencesFailed(m_tlm.sequencesFailed);
+    this->tlmWrite_StatementsDispatched(m_tlm.statementsDispatched);
+    this->tlmWrite_StatementsFailed(m_tlm.statementsFailed);
+    this->tlmWrite_SequencesSucceeded(m_tlm.sequencesSucceeded);
+    this->tlmWrite_SequencesFailed(m_tlm.sequencesFailed);
 }
 
 }  // namespace Svc

@@ -178,11 +178,11 @@ class FpySequencer : public FpySequencerComponentBase {
         const Svc::FpySequencer_StatementResponse& value        //!< The value
         ) override;
 
-    //! Implementation for action stepStatement of state machine
+    //! Implementation for action dispatchStatement of state machine
     //! Svc_FpySequencer_SequencerStateMachine
     //!
     //! iterates to the next statement and dispatches it
-    void Svc_FpySequencer_SequencerStateMachine_action_stepStatement(
+    void Svc_FpySequencer_SequencerStateMachine_action_dispatchStatement(
         SmId smId,                                             //!< The state machine id
         Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
         ) override;
@@ -190,7 +190,7 @@ class FpySequencer : public FpySequencerComponentBase {
     //! Implementation for action cancelNextStepStatement of state machine
     //! Svc_FpySequencer_SequencerStateMachine
     //!
-    //! indicates to the component that the next call to stepStatement should
+    //! indicates to the component that the next call to dispatchStatement should
     //! cancel
     void Svc_FpySequencer_SequencerStateMachine_action_cancelNextStepStatement(
         SmId smId,                                             //!< The state machine id
@@ -274,8 +274,8 @@ class FpySequencer : public FpySequencerComponentBase {
 
     //! Handler for input port checkShouldWake
     void checkShouldWake_handler(FwIndexType portNum,  //!< The port number
-                            U32 context           //!< The call order
-                            ) override;
+                                 U32 context           //!< The call order
+                                 ) override;
 
     //! Handler for input port cmdResponseIn
     void cmdResponseIn_handler(FwIndexType portNum,             //!< The port number
@@ -293,6 +293,12 @@ class FpySequencer : public FpySequencerComponentBase {
     void tlmWrite_handler(FwIndexType portNum,  //!< The port number
                           U32 context           //!< The call order
                           ) override;
+
+    //! Internal interface handler for directive_waitAbs
+    void directive_waitAbs_internalInterfaceHandler(const Svc::FpySequencer_WaitAbsDirective& directive) override;
+
+    //! Internal interface handler for directive_waitRel
+    void directive_waitRel_internalInterfaceHandler(const Svc::FpySequencer_WaitRelDirective& directive) override;
 
   public:
     void allocateBuffer(FwEnumStoreType identifier, Fw::MemAllocator& allocator, FwSizeType bytes);
@@ -343,10 +349,6 @@ class FpySequencer : public FpySequencerComponentBase {
         // the next statement
         bool cancelNextStatement = false;
 
-        // whether the sequencer is waiting passively for
-        // the wakeupTime to run out before returning a
-        // statement response
-        bool sleeping = false;
         // the absolute time we should wait for until returning
         // a statement response
         Fw::Time wakeupTime = Fw::Time();
@@ -355,10 +357,10 @@ class FpySequencer : public FpySequencerComponentBase {
     Runtime m_runtime;
 
     struct {
-        // the number of statements dispatched total
+        // the number of statements successfully dispatched total
         U64 statementsDispatched = 0;
 
-        // the number of statements that failed to dispatch or execute
+        // the number of statements that failed to execute
         U64 statementsFailed = 0;
 
         // the number of sequences successfully completed
@@ -386,7 +388,8 @@ class FpySequencer : public FpySequencerComponentBase {
     // Runtime
     // ----------------------------------------------------------------------
 
-    void stepStatement();
+    // dispatches the next statement
+    void dispatchStatement();
 
     // dispatches a command out via port.
     // return true if successfully dispatched.
@@ -396,21 +399,9 @@ class FpySequencer : public FpySequencerComponentBase {
     // return true if successfully handled.
     bool dispatchDirective(Fpy::Statement& stmt);
 
-    // pause returning a directive response until the given
-    // absolute time
-    void sleepUntil(const Fw::Time& time);
-
     // checks whether we are still sleeping, and if we are no
     // longer sleeping, returns a directive response
     void checkShouldWakeUp();
-
-    // ----------------------------------------------------------------------
-    // Sequence directive handlers
-    // return true if no error was encountered
-    // ----------------------------------------------------------------------
-    bool handleDirective_WAIT_REL(Fpy::Statement& stmt);
-
-    bool handleDirective_WAIT_ABS(Fpy::Statement& stmt);
 
     void handleStatementResult(FwOpcodeType opCode,             //!< Command Op Code
                                const Fw::CmdResponse& response  //!< The command response argument

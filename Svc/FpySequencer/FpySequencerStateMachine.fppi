@@ -1,5 +1,5 @@
 
-struct StatementResponse {
+struct CmdResponse {
     $opcode: FwOpcodeType
     response: Fw.CmdResponse
 }
@@ -20,17 +20,14 @@ state machine SequencerStateMachine {
     ####################
     # signals          #
     ####################
-    @ called on VALIDATE cmd with the path of the sequence file to validate
+    @ called on VALIDATE cmd with the path of the sequence file to validate. only raised in IDLE state
     signal cmd_VALIDATE: SequenceExecutionArgs
-    @ called on RUN cmd with the path of the sequence file to run
+    @ called on RUN cmd with the path of the sequence file to run. only raised in IDLE state
     signal cmd_RUN: SequenceExecutionArgs
-    @ called on RUN_VALIDATED cmd
+    @ called on RUN_VALIDATED cmd. only raised in AWAITING_CMD_RUN_VALIDATED state
     signal cmd_RUN_VALIDATED: SequenceExecutionArgs
-    @ called on CANCEL cmd
+    @ called on CANCEL cmd. raised in all states except IDLE
     signal cmd_CANCEL
-
-    @ called when a statement response comes in
-    signal cmdResponseIn: StatementResponse
 
     @ generic failure of an action
     signal result_failure
@@ -63,8 +60,8 @@ state machine SequencerStateMachine {
     action report_invalidCmd
     @ warns that the sequence failed validation
     action report_invalidSeq
-    @ warns that a statement response came in unexpectedly
-    action report_unexpectedStatementResponse: StatementResponse
+    @ warns that a cmd response came in unexpectedly
+    action report_unexpectedCmdResponse: CmdResponse
 
     @ sets the goal state to RUNNING
     # see explanation in FpySequencer::m_goalState
@@ -98,11 +95,6 @@ state machine SequencerStateMachine {
         on cmd_VALIDATE do { setGoalState_VALID, setSequenceFilePath } enter VALIDATING
         # run takes both path and block state
         on cmd_RUN do { setGoalState_RUNNING, setSequenceFilePath, setSequenceBlockState } enter VALIDATING
-
-        ####################
-        # misc             #
-        ####################
-        on cmdResponseIn do { report_unexpectedStatementResponse }
     }
 
     state VALIDATING {
@@ -125,11 +117,6 @@ state machine SequencerStateMachine {
         # and then CANCEL, and the CANCEL arrives in VALIDATING, the seq doesn't get cancelled..
         # i think we have to have it here...
         on cmd_CANCEL do { report_seqCancelled, cmdResponseOut_EXECUTION_ERROR } enter IDLE
-
-        ####################
-        # misc             #
-        ####################
-        on cmdResponseIn do { report_unexpectedStatementResponse }
     }
 
     @ decide whether we should stop after validating, or proceed to running
@@ -154,11 +141,6 @@ state machine SequencerStateMachine {
         on cmd_CANCEL do { report_seqCancelled } enter IDLE
         @ the sequence path has already been decided on, so only set the sequenceShouldBlock var
         on cmd_RUN_VALIDATED do { setSequenceBlockState } enter RUNNING
-
-        ####################
-        # misc             #
-        ####################
-        on cmdResponseIn do { report_unexpectedStatementResponse }
     }
 
 
@@ -166,77 +148,90 @@ state machine SequencerStateMachine {
     # runtime     #    
     ###############
 
-    @ given a statement response, return true if the
-    @ statement successfully executed
-    guard statementSuccessful: StatementResponse
+    @ given a cmd response, return true if the
+    @ cmd successfully executed
+    guard cmdSuccessful: CmdResponse
     @ return true if the sleep is over
     guard shouldWake
+    @ given a cmd response, return true if we
+    @ were expecting this cmd to respond
+    guard expectedCmd: CmdResponse
 
     @ iterates to the next statement and dispatches it
-    action stepStatement
-    @ indicates to the component that the next call to stepStatement should cancel
+    action dispatchStatement
+    @ indicates to the component that the next call to dispatchStatement should cancel
     action cancelNextStepStatement
     @ resets the sequence runtime
     action resetRuntime
+    @ reports that the wrong cmd opcode came in thru the cmdResponseIn port
+    action report_wrongCmdResponse
 
-    @ called in stepStatement method when a statement was successfully dispatched
-    signal result_stepStatement_dispatchedCmd
-    @ called in stepStatement method when a statement has put us to sleep
-    signal result_stepStatement_beginSleep
-    @ called in stepStatement method when a statement was unable to be sent out
-    signal result_stepStatement_failure
-    @ called in stepStatement method when there were no more statements in the sequence
-    signal result_stepStatement_noMoreStatements
-    @ called in stepStatement method when the sequence execution was cancelled
-    signal result_stepStatement_cancelled
+    @ called in dispatchStatement method when a statement was successfully dispatched
+    signal result_dispatchStatement_dispatchedCmd
+    @ called in dispatchStatement method when a statement has put us to sleep
+    signal result_dispatchStatement_beginSleep
+    @ called in dispatchStatement method when a statement was unable to be sent out
+    signal result_dispatchStatement_failure
+    @ called in dispatchStatement method when there were no more statements in the sequence
+    signal result_dispatchStatement_noMoreStatements
+    @ called in dispatchStatement method when the sequence execution was cancelled
+    signal result_dispatchStatement_cancelled
     @ raised whenever the checkShouldWake port is called
     signal checkShouldWake
     @ raised when an operation could not be performed on a Fw::Time object due to a
-    @ mismatched time base
-    signal mismatchedTimeBase
-    @ raised when an operation could not be performed on a Fw::Time object due to a
-    @ mismatched time context
-    signal mismatchedTimeContext
+    @ mismatched time base or context
+    signal timeOperationError
+    signal directiveResponse_beginSleep
+    @ called when the expected cmd response comes in, and it is OK. only raised in the RUNNING.AWAITING_CMD_RESPONSE state
+    signal cmdResponse_success: CmdResponse
+    @ called when the expected cmd response comes in, and it is not OK. only raised in the RUNNING.AWAITING_CMD_RESPONSE state
+    signal cmdResponse_failure: CmdResponse
 
     @ sequencer is executing all statements in the sequence
     state RUNNING {
         @ start with a fresh baked runtime
         entry do { resetRuntime }
 
-        initial enter STEP_STATEMENT
+        initial enter DISPATCH_STATEMENT
 
         @ sequencer is stepping into a single statement and dispatching it
-        state STEP_STATEMENT {
-            entry do { stepStatement }
+        state DISPATCH_STATEMENT {
+            entry do { dispatchStatement }
             # -->
-            on result_stepStatement_cancelled do { report_seqCancelled, cmdResponseOut_EXECUTION_ERROR } enter IDLE
-            on result_stepStatement_noMoreStatements do { report_seqSucceeded, cmdResponseOut_OK } enter IDLE
-            on result_stepStatement_failure do { report_seqFailed, cmdResponseOut_EXECUTION_ERROR } enter IDLE
-            on result_stepStatement_beginSleep enter SLEEPING
-            on result_stepStatement_dispatchedCmd enter AWAITING_CMD_RESPONSE
-            # these can occur if the dispatch needs to compare a serialized time with the internal time (WAIT_REL)
-            on mismatchedTimeBase do { report_seqFailed, cmdResponseOut_EXECUTION_ERROR } enter IDLE
-            on mismatchedTimeContext do { report_seqFailed, cmdResponseOut_EXECUTION_ERROR } enter IDLE
+            on result_dispatchStatement_cancelled do { report_seqCancelled, cmdResponseOut_EXECUTION_ERROR } enter IDLE
+            on result_dispatchStatement_noMoreStatements do { report_seqSucceeded, cmdResponseOut_OK } enter IDLE
+            on result_dispatchStatement_failure do { report_seqFailed, cmdResponseOut_EXECUTION_ERROR } enter IDLE
+            on result_dispatchStatement_success enter AWAITING_RESPONSE
 
             @ we got a cmd response in but we weren't waiting for one
-            on cmdResponseIn do { report_unexpectedStatementResponse }
+            on cmdResponseIn do { report_unexpectedCmdResponse }
+        }
+
+        state AWAITING_RESPONSE {
+            on cmdResponse do 
+            on beginSleep
         }
 
         @ sequencer is not taking any action, waiting for a time in the future to continue
         state SLEEPING {
-            on checkShouldWake if shouldWake enter STEP_STATEMENT
+            on checkShouldWake if shouldWake enter DISPATCH_STATEMENT
+            # TODO what to do if CANCEL while sleeping?
 
-            on mismatchedTimeBase do { report_seqFailed, cmdResponseOut_EXECUTION_ERROR } enter IDLE
-            on mismatchedTimeContext do { report_seqFailed, cmdResponseOut_EXECUTION_ERROR } enter IDLE
+            # this can occur if the time base/ctx changes, or was invalid from the start
+            on timeOperationError do { report_seqFailed, cmdResponseOut_EXECUTION_ERROR } enter IDLE
         }
         
         @ sequencer is awaiting the execution result of a command
         state AWAITING_CMD_RESPONSE {
-            on cmdResponseIn enter CMD_RESPONSE_RECEIVED
+            on cmdResponseIn if expectedCmd enter SOME_CMD_RESPONSE_RECEIVED
         }
-
-        choice CMD_RESPONSE_RECEIVED {
-            if statementSuccessful enter STEP_STATEMENT else do { report_seqFailed, cmdResponseOut_EXECUTION_ERROR } enter IDLE
+        # -->
+        choice SOME_CMD_RESPONSE_RECEIVED {
+            if expectedCmd enter RIGHT_CMD_RESPONSE_RECEIVED else do { report_wrongCmdResponse } enter IDLE
+        }
+        # -->
+        choice RIGHT_CMD_RESPONSE_RECEIVED {
+            if cmdSuccessful enter DISPATCH_STATEMENT else do { report_seqFailed, cmdResponseOut_EXECUTION_ERROR } enter IDLE
         }
 
         ####################

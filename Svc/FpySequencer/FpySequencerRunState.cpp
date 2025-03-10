@@ -4,7 +4,7 @@
 #include "Svc/FpySequencer/StatementTypeEnumAc.hpp"
 namespace Svc {
 
-void FpySequencer::stepStatement() {
+void FpySequencer::dispatchStatement() {
     // conops:
     // check should cancel
     // check no more statements
@@ -12,12 +12,12 @@ void FpySequencer::stepStatement() {
     // dispatch that statement
 
     if (m_runtime.cancelNextStatement) {
-        this->sequencer_sendSignal_result_stepStatement_cancelled();
+        this->sequencer_sendSignal_result_dispatchStatement_cancelled();
         return;
     }
 
     if (m_runtime.nextStatementIndex == m_sequenceObj.getheader().getstatementCount()) {
-        this->sequencer_sendSignal_result_stepStatement_noMoreStatements();
+        this->sequencer_sendSignal_result_dispatchStatement_noMoreStatements();
         return;
     }
 
@@ -28,24 +28,34 @@ void FpySequencer::stepStatement() {
     m_runtime.nextStatementIndex++;
     m_runtime.currentStatementOpcode = nextStatement.getopCode();
 
+    bool result;
+
     // based on the statement type (directive or cmd)
     // send it to where it needs to go
-    bool result = false;
-
     if (nextStatement.gettype() == Fpy::StatementType::DIRECTIVE) {
+        // the problem is that this is both parsing and completely executing
+        // the directive. i think we need to split it up into parsing and
+        // executing. by the time this line executes, the directive could be completely done
         result = dispatchDirective(nextStatement);
     } else {
+        // whereas this one just sends the cmd out. there's no chance we see the signal
+        // come in until this func finishes, cuz it has to go on the queue
         result = dispatchCommand(nextStatement);
     }
 
-    m_tlm.statementsDispatched++;
-
     if (result) {
-        this->sequencer_sendSignal_result_stepStatement_success();
-
+        m_tlm.statementsDispatched++;
+        this->sequencer_sendSignal_result_dispatchStatement_success();
     } else {
-        this->sequencer_sendSignal_result_stepStatement_failure();
+        this->sequencer_sendSignal_result_dispatchStatement_failure();
     }
+    // was it dispatched successfully?
+    // no -> IDLE
+    // what state should we go to next?
+    // (await cmd, sleep, step statement)
+    // cmd -> await cmd
+    // wait_rel/abs -> sleep
+    // if, goto, etc -> step statement
 }
 
 // dispatches a command out via port.
@@ -72,7 +82,14 @@ bool FpySequencer::dispatchCommand(const Fpy::Statement& stmt) {
         return false;
     }
 
+    // this->cmdOut_out(0, cmdBuf, 0);
+
+    // TODO what happens if cmdOut returns a response before we execute this next line?
+    // ANSWER: make sm sigs higher prio than cmd response
+    // this way we're guaranteed to be in the right state before we process the cmd response
+
     this->cmdOut_out(0, cmdBuf, 0);
+
     return true;
 }
 
@@ -90,16 +107,19 @@ void FpySequencer::handleStatementResult(FwOpcodeType opCode,             //!< C
     // clear the opcode we're currently executing
     m_runtime.currentStatementOpcode = Fpy::DirectiveId::INVALID;
     // send signal that we got a response
-    this->sequencer_sendSignal_cmdResponseIn(FpySequencer_StatementResponse(opCode, response));
 }
 
 bool FpySequencer::dispatchDirective(Fpy::Statement& stmt) {
     switch (stmt.getopCode()) {
         case Fpy::DirectiveId::WAIT_REL: {
-            return handleDirective_WAIT_REL(stmt);
+            FpySequencer_WaitRelDirective directive;
+            stmt.getargBuf().deserialize(directive);
+            directive_waitRel_internalInterfaceInvoke(directive);
         }
         case Fpy::DirectiveId::WAIT_ABS: {
-            return handleDirective_WAIT_ABS(stmt);
+            FpySequencer_WaitAbsDirective directive;
+            stmt.getargBuf().deserialize(directive);
+            directive_waitAbs_internalInterfaceInvoke(directive);
         }
         default: {
             // unsure what this opcode is. check compiler version?
@@ -107,58 +127,13 @@ bool FpySequencer::dispatchDirective(Fpy::Statement& stmt) {
             return false;
         }
     }
-}
-
-bool FpySequencer::handleDirective_WAIT_REL(Fpy::Statement& stmt) {
-    Fw::Time currentTime = getTime();
-    Fw::Time duration;
-    Fw::SerializeStatus stat = stmt.getargBuf().deserialize(duration);
-    if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
-        this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), stat, stmt.getargBuf().getBuffLeft(),
-                                                       stmt.getargBuf().getBuffLength());
-        return false;
-    }
-
-    if (currentTime.getTimeBase() != duration.getTimeBase()) {
-        this->log_WARNING_LO_MismatchedTimeBase(currentTime.getTimeBase(), duration.getTimeBase());
-        return false;
-    }
-
-    if (currentTime.getContext() != duration.getContext()) {
-        this->log_WARNING_LO_MismatchedTimeContext(currentTime.getContext(), duration.getContext());
-        return false;
-    }
-
-    sleepUntil(Fw::Time::add(currentTime, duration));
     return true;
-}
-
-bool FpySequencer::handleDirective_WAIT_ABS(Fpy::Statement& stmt) {
-    Fw::Time wakeupTime;
-    Fw::SerializeStatus stat = stmt.getargBuf().deserialize(wakeupTime);
-    if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
-        this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), stat, stmt.getargBuf().getBuffLeft(),
-                                                       stmt.getargBuf().getBuffLength());
-        return false;
-    }
-
-    sleepUntil(wakeupTime);
-    return true;
-}
-
-// pause returning a directive response until the given
-// absolute time
-void FpySequencer::sleepUntil(const Fw::Time& time) {
-    FW_ASSERT(!m_runtime.sleeping);  // already sleeping!! should be impossible to start another sleep
-
-    m_runtime.sleeping = true;
-    m_runtime.wakeupTime = time;
 }
 
 // checks whether we are still sleeping, and if we are no
 // longer sleeping, returns a directive response
 void FpySequencer::checkShouldWakeUp() {
-    if (!m_runtime.sleeping) {
+    if (sequencer_getState() != FpySequencer_SequencerStateMachineStateMachineBase::State::RUNNING_SLEEPING) {
         // we are not sleeping
         return;
     }
@@ -169,7 +144,6 @@ void FpySequencer::checkShouldWakeUp() {
 
     if (currentTime.getTimeBase() != m_runtime.wakeupTime.getTimeBase()) {
         // cannot compare these times. break out of sleep with a failure
-        m_runtime.sleeping = false;
         m_runtime.wakeupTime = Fw::Time();
 
         this->log_WARNING_LO_MismatchedTimeBase(currentTime.getTimeBase(), m_runtime.wakeupTime.getTimeBase());
@@ -180,7 +154,6 @@ void FpySequencer::checkShouldWakeUp() {
 
     if (currentTime.getContext() != m_runtime.wakeupTime.getContext()) {
         // cannot compare these times. break out of sleep with a failure
-        m_runtime.sleeping = false;
         m_runtime.wakeupTime = Fw::Time();
 
         this->log_WARNING_LO_MismatchedTimeContext(currentTime.getContext(), m_runtime.wakeupTime.getContext());

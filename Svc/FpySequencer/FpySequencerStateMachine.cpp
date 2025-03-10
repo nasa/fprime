@@ -95,8 +95,6 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_report_unexpect
     Svc_FpySequencer_SequencerStateMachine::Signal signal,  //!< The signal
     const Svc::FpySequencer_StatementResponse& value        //!< The value
 ) {
-    this->log_WARNING_LO_UnexpectedStatementResponseForState(static_cast<I32>(sequencer_getState()), value.getopcode(),
-                                                             value.getresponse());
 }
 
 //! Implementation for action report_seqFailed of state machine
@@ -111,21 +109,21 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_report_seqFaile
     this->log_WARNING_LO_SequenceFailed(m_sequenceFilePath);
 }
 
-//! Implementation for action stepStatement of state machine
+//! Implementation for action dispatchStatement of state machine
 //! Svc_FpySequencer_SequencerStateMachine
 //!
 //! iterates to the next statement and dispatches it
-void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_stepStatement(
+void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_dispatchStatement(
     SmId smId,                                             //!< The state machine id
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) {
-    this->stepStatement();
+    this->dispatchStatement();
 }
 
 //! Implementation for action cancelNextStepStatement of state machine
 //! Svc_FpySequencer_SequencerStateMachine
 //!
-//! indicates to the component that the next call to stepStatement should
+//! indicates to the component that the next call to dispatchStatement should
 //! cancel
 void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_cancelNextStepStatement(
     SmId smId,                                             //!< The state machine id
