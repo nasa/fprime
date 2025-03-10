@@ -22,13 +22,7 @@ FrameAccumulator ::FrameAccumulator(const char* const compName)
       m_memory(nullptr),
       m_allocatorId(0) {}
 
-FrameAccumulator ::~FrameAccumulator() {
-    // If configuration happened, we must deallocate
-    if (this->m_memoryAllocator != nullptr) {
-        this->m_memoryAllocator->deallocate(this->m_allocatorId, this->m_memory);
-        this->m_memory = nullptr;
-    }
-}
+FrameAccumulator ::~FrameAccumulator() {}
 
 void FrameAccumulator ::configure(const FrameDetector& detector,
                                   FwEnumStoreType allocationId,
@@ -44,6 +38,14 @@ void FrameAccumulator ::configure(const FrameDetector& detector,
     this->m_allocatorId = allocationId;
     this->m_memoryAllocator = &allocator;
     this->m_memory = data;
+}
+
+void FrameAccumulator ::cleanup() {
+    // If configuration happened, we must deallocate
+    if (this->m_memoryAllocator != nullptr) {
+        this->m_memoryAllocator->deallocate(this->m_allocatorId, this->m_memory);
+        this->m_memory = nullptr;
+    }
 }
 
 // ----------------------------------------------------------------------

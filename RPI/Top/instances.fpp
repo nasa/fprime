@@ -460,10 +460,16 @@ module RPI {
 
     phase Fpp.ToCpp.Phases.configComponents """
     {
-        frameAccumulator.configure(ConfigObjects::RPI_frameAccumulator::fprimeFrameDetector, 1, Allocation::mallocator, 2048);
+      RPI::frameAccumulator.configure(ConfigObjects::RPI_frameAccumulator::fprimeFrameDetector, 1, Allocation::mallocator, 2048);
     }
-
     """
+
+    phase Fpp.ToCpp.Phases.tearDownComponents """
+    {
+      RPI::frameAccumulator.cleanup();
+    }
+    """
+
   }
 
   instance fprimeRouter: Svc.FprimeRouter base id 3000

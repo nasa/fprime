@@ -37,6 +37,10 @@ class FrameAccumulator final : public FrameAccumulatorComponentBase {
                    FwSizeType store_size           //!< Size to request for circular buffer
     );
 
+    //! \brief Deallocate internal resources (set up by configure() call)
+    void cleanup();
+
+
   PRIVATE:
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports

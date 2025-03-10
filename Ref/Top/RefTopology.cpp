@@ -201,5 +201,6 @@ void teardownTopology(const TopologyState& state) {
     // Resource deallocation
     cmdSeq.deallocateBuffer(mallocator);
     commsBufferManager.cleanup();
+    frameAccumulator.cleanup();
 }
 };  // namespace Ref
