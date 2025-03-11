@@ -1,9 +1,3 @@
-if (BUILD_TESTING)
-    add_compile_options(
-        -Wno-conversion
-    )
-endif()
-
 #Source files
 set(SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/RateLimiter.cpp"
@@ -30,6 +24,9 @@ set(UT_MOD_DEPS
         Os
         )
 register_fprime_ut()
+if (BUILD_TESTING)
+    target_compile_options("${FPRIME_CURRENT_MODULE}_ut_exe" PRIVATE -Wno-conversion)
+endif()
 
 # Module subdirectories
 

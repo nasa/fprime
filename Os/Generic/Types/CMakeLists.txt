@@ -6,12 +6,6 @@ set(MOD_DEPS
 )
 register_fprime_module()
 
-if (BUILD_TESTING)
-    add_compile_options(
-        -Wno-conversion
-    )
-endif()
-
 # Rules based unit testing
 set(UT_MOD_DEPS
         STest
@@ -21,4 +15,8 @@ set(UT_MOD_DEPS
 set(UT_SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/MaxHeap/MaxHeapTest.cpp"
 )
-register_fprime_ut("Types_Max_Heap_test")
+set(TARGET_NAME "Types_Max_Heap_test")
+register_fprime_ut("${TARGET_NAME}")
+if (BUILD_TESTING)
+    target_compile_options("${TARGET_NAME}" PRIVATE -Wno-conversion)
+endif()

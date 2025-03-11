@@ -5,11 +5,6 @@
 # MOD_DEPS: (optional) module dependencies
 #
 ####
-if (BUILD_TESTING)
-    add_compile_options(
-        -Wno-conversion
-    )
-endif()
 
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/CircularBuffer.cpp"
@@ -31,4 +26,8 @@ set(UT_SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/CircularBuffer/Main.cpp"
 )
 # STest Includes for this UT
-register_fprime_ut("Types_Circular_Buffer_ut_exe")
+set (TARGET_NAME "Types_Circular_Buffer_ut_exe")
+register_fprime_ut("${TARGET_NAME}")
+if (BUILD_TESTING)
+    target_compile_options("${TARGET_NAME}" PRIVATE -Wno-conversion)
+endif()
