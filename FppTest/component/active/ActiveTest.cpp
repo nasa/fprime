@@ -82,19 +82,23 @@
     );
   }
 
-  Fw::String ActiveTest ::stringReturnGuarded_handler(FwIndexType portNum,
-                                                      const Fw::StringBase& str80,
-                                                      Fw::StringBase& str80Ref,
-                                                      const Fw::StringBase& str100,
-                                                      Fw::StringBase& str100Ref) {
+  Fw::String ActiveTest ::stringReturnGuarded_handler(
+      FwIndexType portNum,
+      const Fw::StringBase& str80,
+      Fw::StringBase& str80Ref,
+      const Fw::StringBase& str100,
+      Fw::StringBase& str100Ref
+  ) {
       return this->stringReturnOut_out(portNum, str80, str80Ref, str100, str100Ref);
   }
 
-  Fw::String ActiveTest ::stringReturnSync_handler(FwIndexType portNum,
-                                                   const Fw::StringBase& str80,
-                                                   Fw::StringBase& str80Ref,
-                                                   const Fw::StringBase& str100,
-                                                   Fw::StringBase& str100Ref) {
+  Fw::String ActiveTest ::stringReturnSync_handler(
+      FwIndexType portNum,
+      const Fw::StringBase& str80,
+      Fw::StringBase& str80Ref,
+      const Fw::StringBase& str100,
+      Fw::StringBase& str100Ref
+  ) {
       return this->stringReturnOut_out(portNum, str80, str80Ref, str100, str100Ref);
   }
 

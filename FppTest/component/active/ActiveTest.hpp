@@ -227,18 +227,22 @@ class ActiveTest :
     ) override;
 
     //! Handler implementation for stringReturnGuarded
-    Fw::String stringReturnGuarded_handler(FwIndexType portNum,          //!< The port number
-                                           const Fw::StringBase& str80,  //!< A string of size 80
-                                           Fw::StringBase& str80Ref,
-                                           const Fw::StringBase& str100,  //!< A string of size 100
-                                           Fw::StringBase& str100Ref) override;
+    Fw::String stringReturnGuarded_handler(
+        FwIndexType portNum,          //!< The port number
+        const Fw::StringBase& str80,  //!< A string of size 80
+        Fw::StringBase& str80Ref,
+        const Fw::StringBase& str100,  //!< A string of size 100
+        Fw::StringBase& str100Ref
+    ) override;
 
     //! Handler implementation for stringReturnSync
-    Fw::String stringReturnSync_handler(FwIndexType portNum,          //!< The port number
-                                        const Fw::StringBase& str80,  //!< A string of size 80
-                                        Fw::StringBase& str80Ref,
-                                        const Fw::StringBase& str100,  //!< A string of size 100
-                                        Fw::StringBase& str100Ref) override;
+    Fw::String stringReturnSync_handler(
+        FwIndexType portNum,          //!< The port number
+        const Fw::StringBase& str80,  //!< A string of size 80
+        Fw::StringBase& str80Ref,
+        const Fw::StringBase& str100,  //!< A string of size 100
+        Fw::StringBase& str100Ref
+    ) override;
 
     //! Handler implementation for structArgsSync
     void structArgsSync_handler(

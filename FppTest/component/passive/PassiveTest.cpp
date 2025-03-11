@@ -71,16 +71,6 @@
     return this->arrayReturnOut_out(portNum, a, aRef);
   }
 
-  void PassiveTest :: 
-    cmdOut_handler(
-        FwIndexType portNum,
-        FwOpcodeType opCode,
-        U32 cmdSeq,
-        Fw::CmdArgBuffer& args
-    )
-  {
-  }
-
   void PassiveTest ::
     enumArgsGuarded_handler(
         const FwIndexType portNum,
@@ -119,6 +109,26 @@
     )
   {
     return this->enumReturnOut_out(portNum, en, enRef);
+  }
+
+  Fw::String PassiveTest ::stringReturnGuarded_handler(
+      FwIndexType portNum,
+      const Fw::StringBase& str80,
+      Fw::StringBase& str80Ref,
+      const Fw::StringBase& str100,
+      Fw::StringBase& str100Ref
+  ) {
+      return this->stringReturnOut_out(portNum, str80, str80Ref, str100, str100Ref);
+  }
+
+  Fw::String PassiveTest ::stringReturnSync_handler(
+      FwIndexType portNum,
+      const Fw::StringBase& str80,
+      Fw::StringBase& str80Ref,
+      const Fw::StringBase& str100,
+      Fw::StringBase& str100Ref
+  ) {
+      return this->stringReturnOut_out(portNum, str80, str80Ref, str100, str100Ref);
   }
 
   void PassiveTest ::

@@ -207,6 +207,19 @@ struct PrmStringTypes {
     Fw::ParamString val2;
 };
 
+struct StringType {
+    StringType();
+
+    Fw::String val;
+};
+
+struct StringTypes {
+    StringTypes();
+
+    Fw::String val1;
+    Fw::String val2;
+};
+
 // ----------------------------------------------------------------------
 // Serial type
 // ----------------------------------------------------------------------

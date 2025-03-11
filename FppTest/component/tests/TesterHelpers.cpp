@@ -52,6 +52,12 @@ void Tester ::connectPorts() {
     // enumReturnSync
     this->connect_to_enumReturnSync(0, this->component.get_enumReturnSync_InputPort(0));
 
+    // stringReturnGuarded
+    this->connect_to_stringReturnGuarded(0, this->component.get_stringReturnGuarded_InputPort(0));
+
+    // stringReturnSync
+    this->connect_to_stringReturnSync(0, this->component.get_stringReturnSync_InputPort(0));
+
     // noArgsGuarded
     for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
         this->connect_to_noArgsGuarded(i, this->component.get_noArgsGuarded_InputPort(i));
