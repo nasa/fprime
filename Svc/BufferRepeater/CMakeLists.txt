@@ -5,11 +5,6 @@
 # MOD_DEPS: (optional) module dependencies
 #
 ####
-if (BUILD_TESTING)
-    add_compile_options(
-        -Wno-conversion
-    )
-endif()
 
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/BufferRepeater.fpp"
@@ -25,3 +20,6 @@ set(UT_SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/BufferRepeaterTester.cpp"
 )
 register_fprime_ut()
+if (BUILD_TESTING)
+    target_compile_options("${FPRIME_CURRENT_MODULE}_ut_exe" PRIVATE -Wno-conversion)
+endif()
