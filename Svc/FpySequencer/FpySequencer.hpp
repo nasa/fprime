@@ -84,8 +84,7 @@ class FpySequencer : public FpySequencerComponentBase {
         Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action setSequenceFilePath of state machine
-    //! Svc_FpySequencer_SequencerStateMachine
+    //! Implementation for action setSequenceFilePath of state machine Svc_FpySequencer_SequencerStateMachine
     //!
     //! sets the current sequence file path member var
     void Svc_FpySequencer_SequencerStateMachine_action_setSequenceFilePath(
@@ -94,8 +93,7 @@ class FpySequencer : public FpySequencerComponentBase {
         const Svc::FpySequencer_SequenceExecutionArgs& value    //!< The value
         ) override;
 
-    //! Implementation for action setSequenceBlockState of state machine
-    //! Svc_FpySequencer_SequencerStateMachine
+    //! Implementation for action setSequenceBlockState of state machine Svc_FpySequencer_SequencerStateMachine
     //!
     //! sets the block state of the sequence to be run
     void Svc_FpySequencer_SequencerStateMachine_action_setSequenceBlockState(
@@ -104,27 +102,15 @@ class FpySequencer : public FpySequencerComponentBase {
         const Svc::FpySequencer_SequenceExecutionArgs& value    //!< The value
         ) override;
 
-    //! Implementation for action resetRuntime of state machine
-    //! Svc_FpySequencer_SequencerStateMachine
+    //! Implementation for action validate of state machine Svc_FpySequencer_SequencerStateMachine
     //!
-    //! resets the sequence runtime
-    void Svc_FpySequencer_SequencerStateMachine_action_resetRuntime(
-        SmId smId,                                             //!< The state machine id
-        Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
-        ) override;
-
-    //! Implementation for action validate of state machine
-    //! Svc_FpySequencer_SequencerStateMachine
-    //!
-    //! performs all steps necessary for sequence validation, and raises a signal
-    //! result_success or result_failure
+    //! performs all steps necessary for sequence validation, and raises a signal result_success or result_failure
     void Svc_FpySequencer_SequencerStateMachine_action_validate(
         SmId smId,                                             //!< The state machine id
         Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action report_seqSucceeded of state machine
-    //! Svc_FpySequencer_SequencerStateMachine
+    //! Implementation for action report_seqSucceeded of state machine Svc_FpySequencer_SequencerStateMachine
     //!
     //! reports that a sequence succeeded
     void Svc_FpySequencer_SequencerStateMachine_action_report_seqSucceeded(
@@ -132,8 +118,7 @@ class FpySequencer : public FpySequencerComponentBase {
         Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action report_seqCancelled of state machine
-    //! Svc_FpySequencer_SequencerStateMachine
+    //! Implementation for action report_seqCancelled of state machine Svc_FpySequencer_SequencerStateMachine
     //!
     //! reports that a sequence was cancelled
     void Svc_FpySequencer_SequencerStateMachine_action_report_seqCancelled(
@@ -141,8 +126,7 @@ class FpySequencer : public FpySequencerComponentBase {
         Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action report_seqFailed of state machine
-    //! Svc_FpySequencer_SequencerStateMachine
+    //! Implementation for action report_seqFailed of state machine Svc_FpySequencer_SequencerStateMachine
     //!
     //! reports that a sequence failed
     void Svc_FpySequencer_SequencerStateMachine_action_report_seqFailed(
@@ -150,8 +134,7 @@ class FpySequencer : public FpySequencerComponentBase {
         Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action report_invalidCmd of state machine
-    //! Svc_FpySequencer_SequencerStateMachine
+    //! Implementation for action report_invalidCmd of state machine Svc_FpySequencer_SequencerStateMachine
     //!
     //! warns that the user cmd was invalid
     void Svc_FpySequencer_SequencerStateMachine_action_report_invalidCmd(
@@ -159,8 +142,7 @@ class FpySequencer : public FpySequencerComponentBase {
         Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action report_invalidSeq of state machine
-    //! Svc_FpySequencer_SequencerStateMachine
+    //! Implementation for action report_invalidSeq of state machine Svc_FpySequencer_SequencerStateMachine
     //!
     //! warns that the sequence failed validation
     void Svc_FpySequencer_SequencerStateMachine_action_report_invalidSeq(
@@ -168,37 +150,7 @@ class FpySequencer : public FpySequencerComponentBase {
         Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action report_unexpectedStatementResponse of state machine
-    //! Svc_FpySequencer_SequencerStateMachine
-    //!
-    //! warns that a statement response came in unexpectedly
-    void Svc_FpySequencer_SequencerStateMachine_action_report_unexpectedStatementResponse(
-        SmId smId,                                              //!< The state machine id
-        Svc_FpySequencer_SequencerStateMachine::Signal signal,  //!< The signal
-        const Svc::FpySequencer_StatementResponse& value        //!< The value
-        ) override;
-
-    //! Implementation for action dispatchStatement of state machine
-    //! Svc_FpySequencer_SequencerStateMachine
-    //!
-    //! iterates to the next statement and dispatches it
-    void Svc_FpySequencer_SequencerStateMachine_action_dispatchStatement(
-        SmId smId,                                             //!< The state machine id
-        Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
-        ) override;
-
-    //! Implementation for action cancelNextStepStatement of state machine
-    //! Svc_FpySequencer_SequencerStateMachine
-    //!
-    //! indicates to the component that the next call to dispatchStatement should
-    //! cancel
-    void Svc_FpySequencer_SequencerStateMachine_action_cancelNextStepStatement(
-        SmId smId,                                             //!< The state machine id
-        Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
-        ) override;
-
-    //! Implementation for action setGoalState_RUNNING of state machine
-    //! Svc_FpySequencer_SequencerStateMachine
+    //! Implementation for action setGoalState_RUNNING of state machine Svc_FpySequencer_SequencerStateMachine
     //!
     //! sets the goal state to RUNNING
     void Svc_FpySequencer_SequencerStateMachine_action_setGoalState_RUNNING(
@@ -206,8 +158,7 @@ class FpySequencer : public FpySequencerComponentBase {
         Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action setGoalState_VALID of state machine
-    //! Svc_FpySequencer_SequencerStateMachine
+    //! Implementation for action setGoalState_VALID of state machine Svc_FpySequencer_SequencerStateMachine
     //!
     //! sets the goal state to VALID
     void Svc_FpySequencer_SequencerStateMachine_action_setGoalState_VALID(
@@ -215,8 +166,7 @@ class FpySequencer : public FpySequencerComponentBase {
         Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action setGoalState_IDLE of state machine
-    //! Svc_FpySequencer_SequencerStateMachine
+    //! Implementation for action setGoalState_IDLE of state machine Svc_FpySequencer_SequencerStateMachine
     //!
     //! sets the goal state to IDLE
     void Svc_FpySequencer_SequencerStateMachine_action_setGoalState_IDLE(
@@ -224,22 +174,54 @@ class FpySequencer : public FpySequencerComponentBase {
         Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action cmdResponseOut_OK of state machine
-    //! Svc_FpySequencer_SequencerStateMachine
+    //! Implementation for action sendCmdResponse_OK of state machine Svc_FpySequencer_SequencerStateMachine
     //!
     //! responds to the calling command with OK
-    void Svc_FpySequencer_SequencerStateMachine_action_cmdResponseOut_OK(
+    void Svc_FpySequencer_SequencerStateMachine_action_sendCmdResponse_OK(
         SmId smId,                                             //!< The state machine id
         Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action cmdResponseOut_EXECUTION_ERROR of state machine
+    //! Implementation for action sendCmdResponse_EXECUTION_ERROR of state machine
     //! Svc_FpySequencer_SequencerStateMachine
     //!
     //! responds to the calling command with EXECUTION_ERROR
-    void Svc_FpySequencer_SequencerStateMachine_action_cmdResponseOut_EXECUTION_ERROR(
+    void Svc_FpySequencer_SequencerStateMachine_action_sendCmdResponse_EXECUTION_ERROR(
         SmId smId,                                             //!< The state machine id
         Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
+        ) override;
+
+    //! Implementation for action dispatchStatement of state machine Svc_FpySequencer_SequencerStateMachine
+    //!
+    //! iterates to the next statement and dispatches it
+    void Svc_FpySequencer_SequencerStateMachine_action_dispatchStatement(
+        SmId smId,                                             //!< The state machine id
+        Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
+        ) override;
+
+    //! Implementation for action checkShouldWake of state machine Svc_FpySequencer_SequencerStateMachine
+    //!
+    //! checks if sequencer should wake from sleep
+    void Svc_FpySequencer_SequencerStateMachine_action_checkShouldWake(
+        SmId smId,                                             //!< The state machine id
+        Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
+        ) override;
+
+    //! Implementation for action resetRuntime of state machine Svc_FpySequencer_SequencerStateMachine
+    //!
+    //! resets the sequence runtime
+    void Svc_FpySequencer_SequencerStateMachine_action_resetRuntime(
+        SmId smId,                                             //!< The state machine id
+        Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
+        ) override;
+
+    //! Implementation for action setWakeupTime of state machine Svc_FpySequencer_SequencerStateMachine
+    //!
+    //! sets the wakeup time of the sequencer
+    void Svc_FpySequencer_SequencerStateMachine_action_setWakeupTime(
+        SmId smId,                                              //!< The state machine id
+        Svc_FpySequencer_SequencerStateMachine::Signal signal,  //!< The signal
+        const Fw::Time& value                                   //!< The value
         ) override;
 
     PROTECTED :
@@ -248,8 +230,7 @@ class FpySequencer : public FpySequencerComponentBase {
         // Functions to implement for internal state machine guards
         // ----------------------------------------------------------------------
 
-        //! Implementation for guard goalStateIs_RUNNING of state machine
-        //! Svc_FpySequencer_SequencerStateMachine
+        //! Implementation for guard goalStateIs_RUNNING of state machine Svc_FpySequencer_SequencerStateMachine
         //!
         //! return true if the goal state is RUNNING
         bool
@@ -257,16 +238,6 @@ class FpySequencer : public FpySequencerComponentBase {
             SmId smId,                                             //!< The state machine id
             Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
         ) const override;
-
-    //! Implementation for guard statementSuccessful of state machine Svc_FpySequencer_SequencerStateMachine
-    //!
-    //! given a statement response, return true if the
-    //! statement successfully executed
-    bool Svc_FpySequencer_SequencerStateMachine_guard_statementSuccessful(
-        SmId smId,                                              //!< The state machine id
-        Svc_FpySequencer_SequencerStateMachine::Signal signal,  //!< The signal
-        const Svc::FpySequencer_StatementResponse& value        //!< The value
-    ) const override;
 
     // ----------------------------------------------------------------------
     // Handlers to implement for typed input ports
@@ -345,10 +316,6 @@ class FpySequencer : public FpySequencerComponentBase {
         // the opcode of the statement that is currently executing
         FwOpcodeType currentStatementOpcode = Fpy::DirectiveId::INVALID;
 
-        // whether we should cancel the sequence execution before trying to start
-        // the next statement
-        bool cancelNextStatement = false;
-
         // the absolute time we should wait for until returning
         // a statement response
         Fw::Time wakeupTime = Fw::Time();
@@ -398,14 +365,6 @@ class FpySequencer : public FpySequencerComponentBase {
     // dispatches a sequencer directive to the right handler.
     // return true if successfully handled.
     bool dispatchDirective(Fpy::Statement& stmt);
-
-    // checks whether we are still sleeping, and if we are no
-    // longer sleeping, returns a directive response
-    void checkShouldWakeUp();
-
-    void handleStatementResult(FwOpcodeType opCode,             //!< Command Op Code
-                               const Fw::CmdResponse& response  //!< The command response argument
-    );
 };
 
 }  // namespace Svc

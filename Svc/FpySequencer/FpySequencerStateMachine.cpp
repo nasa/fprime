@@ -86,17 +86,6 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_report_invalidS
     this->log_WARNING_HI_InvalidSequence(m_sequenceFilePath);
 }
 
-//! Implementation for action report_unexpectedStatementResponse of state machine
-//! Svc_FpySequencer_SequencerStateMachine
-//!
-//! warns that a statement response came in unexpectedly
-void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_report_unexpectedStatementResponse(
-    SmId smId,                                              //!< The state machine id
-    Svc_FpySequencer_SequencerStateMachine::Signal signal,  //!< The signal
-    const Svc::FpySequencer_StatementResponse& value        //!< The value
-) {
-}
-
 //! Implementation for action report_seqFailed of state machine
 //! Svc_FpySequencer_SequencerStateMachine
 //!
@@ -118,19 +107,6 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_dispatchStateme
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) {
     this->dispatchStatement();
-}
-
-//! Implementation for action cancelNextStepStatement of state machine
-//! Svc_FpySequencer_SequencerStateMachine
-//!
-//! indicates to the component that the next call to dispatchStatement should
-//! cancel
-void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_cancelNextStepStatement(
-    SmId smId,                                             //!< The state machine id
-    Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
-) {
-    m_runtime.cancelNextStatement = true;
-    this->log_DIAGNOSTIC_CancellingOnNextStatement();
 }
 
 //! Implementation for action setGoalState_RUNNING of state machine
@@ -166,11 +142,11 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_setGoalState_ID
     m_goalState = FpySequencer_GoalState::IDLE;
 }
 
-//! Implementation for action cmdResponseOut_OK of state machine
+//! Implementation for action sendCmdResponse_OK of state machine
 //! Svc_FpySequencer_SequencerStateMachine
 //!
 //! responds to the calling command with OK
-void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_cmdResponseOut_OK(
+void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_sendCmdResponse_OK(
     SmId smId,                                             //!< The state machine id
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) {
@@ -180,11 +156,11 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_cmdResponseOut_
     }
 }
 
-//! Implementation for action cmdResponseOut_EXECUTION_ERROR of state machine
+//! Implementation for action sendCmdResponse_EXECUTION_ERROR of state machine
 //! Svc_FpySequencer_SequencerStateMachine
 //!
 //! responds to the calling command with EXECUTION_ERROR
-void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_cmdResponseOut_EXECUTION_ERROR(
+void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_sendCmdResponse_EXECUTION_ERROR(
     SmId smId,                                             //!< The state machine id
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) {
@@ -222,21 +198,54 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_validate(
     this->sequencer_sendSignal_result_success();
 }
 
+//! Implementation for action checkShouldWake of state machine Svc_FpySequencer_SequencerStateMachine
+//!
+//! checks if sequencer should wake from sleep
+void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_checkShouldWake(
+    SmId smId,                                             //!< The state machine id
+    Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
+) {
+    Fw::Time currentTime = this->getTime();
+
+    if (currentTime.getTimeBase() != m_runtime.wakeupTime.getTimeBase()) {
+        // cannot compare these times.
+        this->log_WARNING_LO_MismatchedTimeBase(currentTime.getTimeBase(), m_runtime.wakeupTime.getTimeBase());
+
+        this->sequencer_sendSignal_result_checkShouldWake_timeOpFailed();
+        return;
+    }
+
+    if (currentTime.getContext() != m_runtime.wakeupTime.getContext()) {
+        // cannot compare these times.
+        this->log_WARNING_LO_MismatchedTimeContext(currentTime.getContext(), m_runtime.wakeupTime.getContext());
+
+        this->sequencer_sendSignal_result_checkShouldWake_timeOpFailed();
+        return;
+    }
+
+    if (currentTime < m_runtime.wakeupTime) {
+        // not time to wake up!
+        return;
+    }
+
+    // say we've finished our sleep
+    this->sequencer_sendSignal_result_checkShouldWake_wakeup();
+}
+
+//! Implementation for action setWakeupTime of state machine Svc_FpySequencer_SequencerStateMachine
+//!
+//! sets the wakeup time of the sequencer
+void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_setWakeupTime(
+    SmId smId,                                              //!< The state machine id
+    Svc_FpySequencer_SequencerStateMachine::Signal signal,  //!< The signal
+    const Fw::Time& value                                   //!< The value
+) {
+    m_runtime.wakeupTime = value;
+}
+
 // ----------------------------------------------------------------------
 // Functions to implement for internal state machine guards
 // ----------------------------------------------------------------------
-
-//! Implementation for guard statementSuccessful of state machine Svc_FpySequencer_SequencerStateMachine
-//!
-//! given a statement response, return true if the
-//! statement successfully executed
-bool FpySequencer::Svc_FpySequencer_SequencerStateMachine_guard_statementSuccessful(
-    SmId smId,                                              //!< The state machine id
-    Svc_FpySequencer_SequencerStateMachine::Signal signal,  //!< The signal
-    const Svc::FpySequencer_StatementResponse& value        //!< The value
-) const {
-    return value.getresponse() == Fw::CmdResponse::OK;
-}
 
 //! Implementation for guard goalStateIs_RUNNING of state machine
 //! Svc_FpySequencer_SequencerStateMachine

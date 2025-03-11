@@ -5,17 +5,6 @@
 namespace Svc {
 
 void FpySequencer::dispatchStatement() {
-    // conops:
-    // check should cancel
-    // check no more statements
-    // get next statement
-    // dispatch that statement
-
-    if (m_runtime.cancelNextStatement) {
-        this->sequencer_sendSignal_result_dispatchStatement_cancelled();
-        return;
-    }
-
     if (m_runtime.nextStatementIndex == m_sequenceObj.getheader().getstatementCount()) {
         this->sequencer_sendSignal_result_dispatchStatement_noMoreStatements();
         return;
@@ -82,47 +71,44 @@ bool FpySequencer::dispatchCommand(const Fpy::Statement& stmt) {
         return false;
     }
 
-    // this->cmdOut_out(0, cmdBuf, 0);
-
-    // TODO what happens if cmdOut returns a response before we execute this next line?
-    // ANSWER: make sm sigs higher prio than cmd response
-    // this way we're guaranteed to be in the right state before we process the cmd response
-
+    // little note--theoretically this could produce a cmdResponse before we send the
+    // dispatchSuccess signal. however b/c of priorities the dispatchSuccess signal will
+    // always get processed first, leaving us in the right state for the cmdresponse
     this->cmdOut_out(0, cmdBuf, 0);
 
     return true;
 }
 
-void FpySequencer::handleStatementResult(FwOpcodeType opCode,             //!< Command Op Code
-                                         const Fw::CmdResponse& response  //!< The command response argument
-) {
-    if (opCode != this->m_runtime.currentStatementOpcode) {
-        // just got an opcode back for a cmd that we didn't expect
-        this->log_WARNING_LO_WrongStatementResponseOpcode(m_runtime.currentStatementOpcode, opCode, response);
-        // keep on waiting for the one we're looking for...
-        return;
-    }
-
-    // okay got a response back for our cmd
-    // clear the opcode we're currently executing
-    m_runtime.currentStatementOpcode = Fpy::DirectiveId::INVALID;
-    // send signal that we got a response
-}
-
 bool FpySequencer::dispatchDirective(Fpy::Statement& stmt) {
+    Fw::SerializeStatus status;
+
     switch (stmt.getopCode()) {
         case Fpy::DirectiveId::WAIT_REL: {
             FpySequencer_WaitRelDirective directive;
-            stmt.getargBuf().deserialize(directive);
+            status = stmt.getargBuf().deserialize(directive);
+            if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || stmt.getargBuf().getBuffLeft() != 0) {
+                this->log_WARNING_HI_DirectiveDeserializeError(
+                    stmt.getopCode(), Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR, stmt.getargBuf().getBuffLeft(),
+                    stmt.getargBuf().getBuffLength());
+                return false;
+            }
             directive_waitRel_internalInterfaceInvoke(directive);
+            break;
         }
         case Fpy::DirectiveId::WAIT_ABS: {
             FpySequencer_WaitAbsDirective directive;
-            stmt.getargBuf().deserialize(directive);
+            status = stmt.getargBuf().deserialize(directive);
+            if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || stmt.getargBuf().getBuffLeft() != 0) {
+                this->log_WARNING_HI_DirectiveDeserializeError(
+                    stmt.getopCode(), Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR, stmt.getargBuf().getBuffLeft(),
+                    stmt.getargBuf().getBuffLength());
+                return false;
+            }
             directive_waitAbs_internalInterfaceInvoke(directive);
+            break;
         }
         default: {
-            // unsure what this opcode is. check compiler version?
+            // unsure what this opcode is. check compiler version matches sequencer
             this->log_WARNING_HI_UnknownSequencerDirective(stmt.getopCode());
             return false;
         }
@@ -130,48 +116,4 @@ bool FpySequencer::dispatchDirective(Fpy::Statement& stmt) {
     return true;
 }
 
-// checks whether we are still sleeping, and if we are no
-// longer sleeping, returns a directive response
-void FpySequencer::checkShouldWakeUp() {
-    if (sequencer_getState() != FpySequencer_SequencerStateMachineStateMachineBase::State::RUNNING_SLEEPING) {
-        // we are not sleeping
-        return;
-    }
-
-    // okay, we are sleeping
-
-    Fw::Time currentTime = getTime();
-
-    if (currentTime.getTimeBase() != m_runtime.wakeupTime.getTimeBase()) {
-        // cannot compare these times. break out of sleep with a failure
-        m_runtime.wakeupTime = Fw::Time();
-
-        this->log_WARNING_LO_MismatchedTimeBase(currentTime.getTimeBase(), m_runtime.wakeupTime.getTimeBase());
-
-        handleStatementResult(m_runtime.currentStatementOpcode, Fw::CmdResponse::EXECUTION_ERROR);
-        return;
-    }
-
-    if (currentTime.getContext() != m_runtime.wakeupTime.getContext()) {
-        // cannot compare these times. break out of sleep with a failure
-        m_runtime.wakeupTime = Fw::Time();
-
-        this->log_WARNING_LO_MismatchedTimeContext(currentTime.getContext(), m_runtime.wakeupTime.getContext());
-
-        handleStatementResult(m_runtime.currentStatementOpcode, Fw::CmdResponse::EXECUTION_ERROR);
-        return;
-    }
-
-    if (currentTime < m_runtime.wakeupTime) {
-        // not time to wake up!
-        return;
-    }
-
-    // okay, time to wake up
-    m_runtime.sleeping = false;
-    m_runtime.wakeupTime = Fw::Time();
-
-    // say we've finished our sleep
-    handleStatementResult(m_runtime.currentStatementOpcode, Fw::CmdResponse::OK);
-}
 }  // namespace Svc

@@ -5,7 +5,6 @@ module Svc {
         enum BlockState {
             BLOCK
             NO_BLOCK
-            UNSPECIFIED
         }
 
         enum GoalState {

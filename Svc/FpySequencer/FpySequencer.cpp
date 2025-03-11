@@ -120,7 +120,7 @@ void FpySequencer::CANCEL_cmdHandler(FwOpcodeType opCode,  //!< The opcode
 void FpySequencer::checkShouldWake_handler(FwIndexType portNum,  //!< The port number
                                            U32 context           //!< The call order
 ) {
-    this->checkShouldWakeUp();
+    this->sequencer_sendSignal_checkShouldWakeIn();
 }
 
 void FpySequencer::pingIn_handler(FwIndexType portNum, /*!< The port number*/
@@ -137,16 +137,25 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
                                          const Fw::CmdResponse& response  //!< The command response argument
 ) {
     if (sequencer_getState() !=
-        FpySequencer_SequencerStateMachineStateMachineBase::State::RUNNING_AWAITING_CMD_RESPONSE) {
+        FpySequencer_SequencerStateMachineStateMachineBase::State::RUNNING_AWAITING_STATEMENT_RESPONSE) {
         this->log_WARNING_LO_UnexpectedStatementResponseForState(static_cast<I32>(sequencer_getState()), opCode,
                                                                  response);
+        // ignore it, hopefully that wasn't important :D
         return;
     }
     if (opCode != m_runtime.currentStatementOpcode) {
         this->log_WARNING_LO_WrongStatementResponseOpcode(m_runtime.currentStatementOpcode, opCode, response);
+        // uh oh... we're awaiting a cmd but got the wrong one back...
+        // not much we can do but keep waiting
         return;
     }
-    this->sequencer_sendSignal_cmdResponseIn(FpySequencer_CmdResponse(opCode, response));
+
+    // okay, got the right cmd back
+    if (response == Fw::CmdResponse::OK) {
+        this->sequencer_sendSignal_cmdResponse_success();
+    } else {
+        this->sequencer_sendSignal_cmdResponse_failure();
+    }
 }
 
 //! Handler for input port tlmWrite

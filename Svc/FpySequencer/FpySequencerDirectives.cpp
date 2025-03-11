@@ -7,13 +7,11 @@ void FpySequencer::directive_waitRel_internalInterfaceHandler(const Svc::FpySequ
     Fw::Time wakeupTime = getTime();
 
     wakeupTime.add(directive.getduration().getSeconds(), directive.getduration().getUSeconds());
-
-    m_runtime.wakeupTime = wakeupTime;
-    
+    this->sequencer_sendSignal_directiveResponse_beginSleep(wakeupTime);
 }
 
 //! Internal interface handler for directive_waitAbs
 void FpySequencer::directive_waitAbs_internalInterfaceHandler(const Svc::FpySequencer_WaitAbsDirective& directive) {
-    m_runtime.wakeupTime = directive.getwakeupTime();
+    this->sequencer_sendSignal_directiveResponse_beginSleep(directive.getwakeupTime());
 }
 }  // namespace Svc

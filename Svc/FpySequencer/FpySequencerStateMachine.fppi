@@ -1,9 +1,3 @@
-
-struct CmdResponse {
-    $opcode: FwOpcodeType
-    response: Fw.CmdResponse
-}
-
 struct SequenceExecutionArgs {
     filePath: string
     $block: BlockState
@@ -60,8 +54,6 @@ state machine SequencerStateMachine {
     action report_invalidCmd
     @ warns that the sequence failed validation
     action report_invalidSeq
-    @ warns that a cmd response came in unexpectedly
-    action report_unexpectedCmdResponse: CmdResponse
 
     @ sets the goal state to RUNNING
     # see explanation in FpySequencer::m_goalState
@@ -74,9 +66,9 @@ state machine SequencerStateMachine {
     action setGoalState_IDLE
 
     @ responds to the calling command with OK
-    action cmdResponseOut_OK
+    action sendCmdResponse_OK
     @ responds to the calling command with EXECUTION_ERROR
-    action cmdResponseOut_EXECUTION_ERROR
+    action sendCmdResponse_EXECUTION_ERROR
 
 
     initial enter IDLE
@@ -105,7 +97,7 @@ state machine SequencerStateMachine {
 
         on entered do { validate }
         # -->
-        on result_failure do { report_invalidSeq, cmdResponseOut_EXECUTION_ERROR } enter IDLE
+        on result_failure do { report_invalidSeq, sendCmdResponse_EXECUTION_ERROR } enter IDLE
         on result_success enter VALID
 
         ####################
@@ -116,7 +108,7 @@ state machine SequencerStateMachine {
         # validate to complete... but if we don't have this, then it means if we send RUN
         # and then CANCEL, and the CANCEL arrives in VALIDATING, the seq doesn't get cancelled..
         # i think we have to have it here...
-        on cmd_CANCEL do { report_seqCancelled, cmdResponseOut_EXECUTION_ERROR } enter IDLE
+        on cmd_CANCEL do { report_seqCancelled, sendCmdResponse_EXECUTION_ERROR } enter IDLE
     }
 
     @ decide whether we should stop after validating, or proceed to running
@@ -131,7 +123,7 @@ state machine SequencerStateMachine {
         # we can only get to this state if we explicitly ran the VALIDATE cmd
         # that means now's the time to return a response, as VALIDATE always waits
         # until completion to return response
-        entry do { cmdResponseOut_OK }
+        entry do { sendCmdResponse_OK }
         # wait here until we get the RUN_VALIDATED cmd
 
         ####################
@@ -148,44 +140,38 @@ state machine SequencerStateMachine {
     # runtime     #    
     ###############
 
-    @ given a cmd response, return true if the
-    @ cmd successfully executed
-    guard cmdSuccessful: CmdResponse
-    @ return true if the sleep is over
-    guard shouldWake
-    @ given a cmd response, return true if we
-    @ were expecting this cmd to respond
-    guard expectedCmd: CmdResponse
-
+    @ checks if sequencer should wake from sleep
+    action checkShouldWake
     @ iterates to the next statement and dispatches it
     action dispatchStatement
-    @ indicates to the component that the next call to dispatchStatement should cancel
-    action cancelNextStepStatement
     @ resets the sequence runtime
     action resetRuntime
-    @ reports that the wrong cmd opcode came in thru the cmdResponseIn port
-    action report_wrongCmdResponse
+    @ sets the wakeup time of the sequencer
+    action setWakeupTime: Fw.Time
 
     @ called in dispatchStatement method when a statement was successfully dispatched
-    signal result_dispatchStatement_dispatchedCmd
-    @ called in dispatchStatement method when a statement has put us to sleep
-    signal result_dispatchStatement_beginSleep
+    signal result_dispatchStatement_success
     @ called in dispatchStatement method when a statement was unable to be sent out
     signal result_dispatchStatement_failure
     @ called in dispatchStatement method when there were no more statements in the sequence
     signal result_dispatchStatement_noMoreStatements
-    @ called in dispatchStatement method when the sequence execution was cancelled
-    signal result_dispatchStatement_cancelled
     @ raised whenever the checkShouldWake port is called
-    signal checkShouldWake
+    signal checkShouldWakeIn
+    @ raised when we are done sleeping
+    signal result_checkShouldWake_wakeup
     @ raised when an operation could not be performed on a Fw::Time object due to a
     @ mismatched time base or context
-    signal timeOperationError
-    signal directiveResponse_beginSleep
+    signal result_checkShouldWake_timeOpFailed
+    @ a directive is telling the sequencer to go to sleep, with a given wakeup time
+    signal directiveResponse_beginSleep: Fw.Time
+    @ a directive successfully executed
+    signal directiveResponse_success
+    @ a directive failed to execute
+    signal directiveResponse_failure
     @ called when the expected cmd response comes in, and it is OK. only raised in the RUNNING.AWAITING_CMD_RESPONSE state
-    signal cmdResponse_success: CmdResponse
+    signal cmdResponse_success
     @ called when the expected cmd response comes in, and it is not OK. only raised in the RUNNING.AWAITING_CMD_RESPONSE state
-    signal cmdResponse_failure: CmdResponse
+    signal cmdResponse_failure
 
     @ sequencer is executing all statements in the sequence
     state RUNNING {
@@ -198,48 +184,34 @@ state machine SequencerStateMachine {
         state DISPATCH_STATEMENT {
             entry do { dispatchStatement }
             # -->
-            on result_dispatchStatement_cancelled do { report_seqCancelled, cmdResponseOut_EXECUTION_ERROR } enter IDLE
-            on result_dispatchStatement_noMoreStatements do { report_seqSucceeded, cmdResponseOut_OK } enter IDLE
-            on result_dispatchStatement_failure do { report_seqFailed, cmdResponseOut_EXECUTION_ERROR } enter IDLE
-            on result_dispatchStatement_success enter AWAITING_RESPONSE
-
-            @ we got a cmd response in but we weren't waiting for one
-            on cmdResponseIn do { report_unexpectedCmdResponse }
+            on result_dispatchStatement_noMoreStatements do { report_seqSucceeded, sendCmdResponse_OK } enter IDLE
+            on result_dispatchStatement_failure do { report_seqFailed, sendCmdResponse_EXECUTION_ERROR } enter IDLE
+            on result_dispatchStatement_success enter AWAITING_STATEMENT_RESPONSE
         }
 
-        state AWAITING_RESPONSE {
-            on cmdResponse do 
-            on beginSleep
+        state AWAITING_STATEMENT_RESPONSE {
+            on cmdResponse_success enter DISPATCH_STATEMENT
+            on cmdResponse_failure do { report_seqFailed, sendCmdResponse_EXECUTION_ERROR } enter IDLE
+
+            on directiveResponse_success enter DISPATCH_STATEMENT
+            on directiveResponse_beginSleep do { setWakeupTime } enter SLEEPING
+            on directiveResponse_failure do { report_seqFailed, sendCmdResponse_EXECUTION_ERROR } enter IDLE
         }
 
         @ sequencer is not taking any action, waiting for a time in the future to continue
         state SLEEPING {
-            on checkShouldWake if shouldWake enter DISPATCH_STATEMENT
-            # TODO what to do if CANCEL while sleeping?
-
+            on checkShouldWakeIn do { checkShouldWake }
+            # -->
+            on result_checkShouldWake_wakeup enter DISPATCH_STATEMENT
             # this can occur if the time base/ctx changes, or was invalid from the start
-            on timeOperationError do { report_seqFailed, cmdResponseOut_EXECUTION_ERROR } enter IDLE
-        }
-        
-        @ sequencer is awaiting the execution result of a command
-        state AWAITING_CMD_RESPONSE {
-            on cmdResponseIn if expectedCmd enter SOME_CMD_RESPONSE_RECEIVED
-        }
-        # -->
-        choice SOME_CMD_RESPONSE_RECEIVED {
-            if expectedCmd enter RIGHT_CMD_RESPONSE_RECEIVED else do { report_wrongCmdResponse } enter IDLE
-        }
-        # -->
-        choice RIGHT_CMD_RESPONSE_RECEIVED {
-            if cmdSuccessful enter DISPATCH_STATEMENT else do { report_seqFailed, cmdResponseOut_EXECUTION_ERROR } enter IDLE
+            on result_checkShouldWake_timeOpFailed do { report_seqFailed, sendCmdResponse_EXECUTION_ERROR } enter IDLE
+            # if neither is raised, just stay asleep
         }
 
         ####################
         # commands         #
         ####################
-        # don't immediately enter cancellation. the only valid cancellation
-        # point during the run loop is just before we're about to send out
-        # a statement
-        on cmd_CANCEL do { cancelNextStepStatement }
+        # TODO is it okay to cancel if we're awaiting a cmd? or sleeping?
+        on cmd_CANCEL do { report_seqCancelled, sendCmdResponse_EXECUTION_ERROR } enter IDLE
     }
 }

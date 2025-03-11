@@ -164,6 +164,10 @@ class TlmPacketParser(object):
             return 1
         elif type_name == "FwOpcodeType":
             return 4
+        elif type_name == "Fw::Time":
+            return 11
+        elif type_name == "Fw::TimeInterval":
+            return 8
         else:
             return None
 
