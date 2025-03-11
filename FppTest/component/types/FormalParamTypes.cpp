@@ -136,12 +136,12 @@ PrmStringTypes::PrmStringTypes() {
 }
 
 StringType::StringType() {
-    setRandomString(val, Fw::String::STRING_SIZE);
+    setRandomString(val, String1::STRING_SIZE);
 }
 
 StringTypes::StringTypes() {
-    setRandomString(val1, Fw::String::STRING_SIZE / 2);
-    setRandomString(val2, Fw::String::STRING_SIZE / 2);
+    setRandomString(val1, String1::STRING_SIZE / 2);
+    setRandomString(val2, String1::STRING_SIZE / 2);
 }
 
 // ----------------------------------------------------------------------

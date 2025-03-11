@@ -136,6 +136,9 @@ void Tester ::connectPorts() {
     // enumReturnOut
     this->component.set_enumReturnOut_OutputPort(0, this->get_from_enumReturnOut(0));
 
+    // stringReturnOut
+    this->component.set_stringReturnOut_OutputPort(0, this->get_from_stringReturnOut(0));
+
     // eventOut
     this->component.set_eventOut_OutputPort(0, this->get_from_eventOut(0));
 

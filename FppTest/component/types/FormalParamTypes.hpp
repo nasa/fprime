@@ -210,14 +210,14 @@ struct PrmStringTypes {
 struct StringType {
     StringType();
 
-    Fw::String val;
+    String1 val;
 };
 
 struct StringTypes {
     StringTypes();
 
-    Fw::String val1;
-    Fw::String val2;
+    String1 val1;
+    String1 val2;
 };
 
 // ----------------------------------------------------------------------
