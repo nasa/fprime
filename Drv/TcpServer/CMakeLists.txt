@@ -7,12 +7,6 @@
 ####
 restrict_platforms(Posix SOCKETS)
 
-if (BUILD_TESTING)
-    add_compile_options(
-        -Wno-conversion
-    )
-endif()
-
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/TcpServer.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/TcpServerComponentImpl.cpp"
@@ -39,3 +33,6 @@ set(UT_MOD_DEPS
 )
 set(UT_AUTO_HELPERS ON)
 register_fprime_ut()
+if (BUILD_TESTING)
+    target_compile_options("${FPRIME_CURRENT_MODULE}_ut_exe" PRIVATE -Wno-conversion)
+endif()
