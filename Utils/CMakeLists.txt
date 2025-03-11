@@ -24,8 +24,9 @@ set(UT_MOD_DEPS
         Os
         )
 register_fprime_ut()
-if (BUILD_TESTING)
-    target_compile_options("${FPRIME_CURRENT_MODULE}_ut_exe" PRIVATE -Wno-conversion)
+set (UT_TARGET "${FPRIME_CURRENT_MODULE}_ut_exe")
+if (TARGET "${UT_TARGET}")
+    target_compile_options("${UT_TARGET}" PRIVATE -Wno-conversion)
 endif()
 
 # Module subdirectories
