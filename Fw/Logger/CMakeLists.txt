@@ -5,12 +5,6 @@
 # MOD_DEPS: (optional) module dependencies
 #
 ####
-if (BUILD_TESTING)
-    add_compile_options(
-        -Wno-conversion
-    )
-endif()
-
 set(MOD_DEPS
     Fw/Cfg
     Fw/Types
@@ -32,3 +26,6 @@ set(UT_SOURCE_FILES
 )
 # STest Includes for this UT
 register_fprime_ut()
+if (BUILD_TESTING)
+    target_compile_options("${FPRIME_CURRENT_MODULE}_ut_exe" PRIVATE -Wno-conversion)
+endif()

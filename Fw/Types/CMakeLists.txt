@@ -7,12 +7,6 @@
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
 
-if (BUILD_TESTING)
-    add_compile_options(
-        -Wno-conversion
-    )
-endif()
-
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/Assert.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/MallocAllocator.cpp"
@@ -39,6 +33,9 @@ set(UT_MOD_DEPS
   "${FPRIME_FRAMEWORK_PATH}/Os"
 )
 register_fprime_ut()
+if (BUILD_TESTING)
+    target_compile_options("${FPRIME_CURRENT_MODULE}_ut_exe" PRIVATE -Wno-conversion)
+endif()
 
 # Non-test directory
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/GTest")

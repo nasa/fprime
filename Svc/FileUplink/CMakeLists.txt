@@ -6,11 +6,6 @@
 #
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
-if (BUILD_TESTING)
-    add_compile_options(
-        -Wno-conversion
-    )
-endif()
 
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/FileUplink.fpp"
@@ -34,3 +29,6 @@ set(UT_SOURCE_FILES
   ${CMAKE_CURRENT_LIST_DIR}/test/ut/FileUplinkMain.cpp
 )
 register_fprime_ut()
+if (BUILD_TESTING)
+    target_compile_options("${FPRIME_CURRENT_MODULE}_ut_exe" PRIVATE -Wno-conversion)
+endif()
