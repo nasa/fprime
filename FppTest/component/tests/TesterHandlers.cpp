@@ -53,11 +53,10 @@ void Tester ::from_stringArgsOut_handler(
 
 Fw::String Tester ::from_stringReturnOut_handler(
     const FwIndexType portNum,
-    const Fw::StringBase &str80,
-    Fw::StringBase &str80Ref,
-    const Fw::StringBase &str100,
-    Fw::StringBase &str100Ref) {
-    this->pushFromPortEntry_stringReturnOut(str80, str80Ref, str100, str100Ref);
+    const Fw::StringBase &str,
+    Fw::StringBase &strRef
+) {
+    this->pushFromPortEntry_stringReturnOut(str, strRef);
     return stringReturnVal.val;
 }
 

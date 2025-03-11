@@ -120,10 +120,9 @@ class Tester : public PassiveTestGTestBase {
     //!
     Fw::String from_stringReturnOut_handler(
         const FwIndexType portNum,
-        const Fw::StringBase &str80,
-        Fw::StringBase &str80Ref,
-        const Fw::StringBase &str100,
-        Fw::StringBase &str100Ref) final;
+        const Fw::StringBase &str,
+        Fw::StringBase &strRef
+    ) final;
 
     //! Handler for from_noArgsOut
     //!
