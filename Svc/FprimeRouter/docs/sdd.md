@@ -35,7 +35,7 @@ classDiagram
 | `commandOut: Fw.Com` | Port for sending command packets as Fw::ComBuffers | `output` |
 | `fileOut: Fw.BufferSend` | Port for sending file packets as Fw::Buffer (ownership passed to receiver) | `output` |
 | `unknownDataOut: Fw.DataWithContext` | Port forwarding unknown data (useful for adding custom routing rules with a project-defined router) | `output` |
-
+| `output`| bufferDeallocate | `Fw.BufferSend` | Port for deallocating buffers once routed |
 
 ## Requirements
 

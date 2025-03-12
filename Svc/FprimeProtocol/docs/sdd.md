@@ -4,8 +4,8 @@ The F Prime protocol is a minimal communications protocol that is used by defaul
 
 A frame for F Prime protocol consists of 4 fields:
 - Start word: A 32-bit start word that is used to identify the start of a frame. The start word is always `0xDEADBEEF`.
-- Packet length: A 32-bit field that specifies the length of the packet data in bytes.
-- Packet data: A variable-length field that contains the packet data, of length specified by the packet length field.
+- Payload length: A 32-bit field that specifies the length of the payload data in bytes.
+- Payload data: A variable-length field that contains the payload data (usually an [F Prime packet](../../../Fw/Com/ComPacket.hpp)), of length specified by the payload length field.
 - CRC: A 32-bit CRC field that is used to verify the integrity of the frame.
 
 ## F Prime frame format
@@ -18,10 +18,10 @@ title: "Default F Prime Frame Format"
 ---
 packet-beta
   0-31: "Start word: 0xDEADBEEF [4 bytes]"
-  32-63: "Packet length [4 bytes]"
-  64-95: "Packet data [variable length]"
+  32-63: "Payload length [4 bytes]"
+  64-95: "Payload data [variable length]"
   96-127: "CRC [4 bytes]"
 ```
 
 > [!NOTE]
-> Because the packet length token is 4 bytes long, the F Prime protocol does not support packets larger than 2^32 - 1 bytes (~4 GB).
+> Because the payload length token is 4 bytes long, the F Prime protocol does not support packets larger than 2^32 - 1 bytes (~4 GB).

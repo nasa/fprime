@@ -128,10 +128,14 @@ void FrameAccumulator ::processRing() {
             FW_ASSERT(size_out <= std::numeric_limits<U32>::max());
             Fw::Buffer buffer = this->bufferAllocate_out(0, static_cast<U32>(size_out));
             if (buffer.isValid()) {
-                // Copy out data and rotate
-                FW_ASSERT(this->m_inRing.peek(buffer.getData(), size_out) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-                buffer.setSize(static_cast<U32>(size_out));
-                (void)this->m_inRing.rotate(size_out);
+                // Copy data out of ring buffer into the allocated buffer
+                Fw::SerializeStatus serialize_status = this->m_inRing.peek(buffer.getData(), size_out);
+                FW_ASSERT(serialize_status == Fw::SerializeStatus::FW_SERIALIZE_OK);
+                buffer.getSerializeRepr().setBuffLen(size_out); // REVIEW NOTE: Why do I need to do this manually?? Ok I think I get it now
+                // buffer.setSize(static_cast<U32>(size_out)); // REVIEW NOTE: Apparently I don't need this one since it's set by BufferManager ?
+                // Consume (rotate) the data from the ring buffer
+                serialize_status = this->m_inRing.rotate(size_out);
+                FW_ASSERT(serialize_status == Fw::SerializeStatus::FW_SERIALIZE_OK);
                 FW_ASSERT(m_inRing.get_allocated_size() == remaining - size_out,
                           static_cast<FwAssertArgType>(m_inRing.get_allocated_size()),
                           static_cast<FwAssertArgType>(remaining), static_cast<FwAssertArgType>(size_out));

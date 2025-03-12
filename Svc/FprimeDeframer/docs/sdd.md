@@ -1,8 +1,8 @@
 # Svc::FprimeDeframer
 
-The `Svc::FprimeDeframer` component receives F´ frames on its input port, takes off the header and trailer (or "footer"), and passes the encapsulated payload to other components of the system.
+The `Svc::FprimeDeframer` component receives F´ frames on its input port, takes off the header and trailer (sometimes referred to as "footer"), and passes the encapsulated payload to a downstream component (usually the [`Svc.FprimeRouter`](../../FprimeRouter/docs/sdd.md)).
 
-Following the [F Prime Protocol frame specification](../../FprimeProtocol/docs/sdd.md), the `Svc::FprimeDeframer` removes the header (32-bit start word, 32-bit packet length) and the trailer (32-bit CRC) from the frame, and outputs the encapsulated packet data.
+Following the [F Prime Protocol frame specification](../../FprimeProtocol/docs/sdd.md), the `Svc::FprimeDeframer` validates the passed in `Fw.Buffer` to ensure it represents a valid frame (see [Frame validation](#frame-validation)), extract the payload from the frame, and outputs the payload on the `deframedOut` output port.
 
 ## Internals
 
@@ -14,10 +14,15 @@ The `Svc::FprimeDeframer` component does not perform any validation of the frame
 
 The `Svc::FprimeDeframer` does not support deframing multiple packets in a single frame (i.e. concatenated packets) as this is not supported by the F´ communications protocol.
 
-### Custom Configuration
+### Frame validation
 
+The passed-in `data` field (of type `Fw::Buffer`) of the `Fw.DataWithContext` input port is validated for the following conditions:
+- The buffer is large enough to contain the header and trailer
+- The buffer starts with the F´ start word
+- The buffer length is equal to (or larger than) the packet length field in the frame header
+- The CRC field of the frame is equal to the CRC calculated over the frame header and payload
 
-
+If any of these conditions are not met, the frame is dropped meaning no payload is passed to the output port and the input `Fw::Buffer` is deallocated.
 
 ## Usage Examples
 
@@ -45,7 +50,8 @@ classDiagram
 
 Requirement | Description | Rationale | Verification Method
 ----------- | ----------- | ----------| -------------------
-SVC-DEFRAMER-001 | `Svc::FprimeDeframer` shall remove the header and trailer from an F´ frame | Purpose of the component | Unit test |
+SVC-DEFRAMER-001 | `Svc::FprimeDeframer` shall extract the payload field from input buffers that represent a valid F Prime frame as specified by the [F Prime Protocol](../../FprimeProtocol/docs/sdd.md) | Deframe valid frames and extract payload | Unit test |
+SVC-DEFRAMER-002 | `Svc::FprimeDeframer` shall deallocate input buffers that are not a valid F Prime frame as specified by the [F Prime Protocol](../../FprimeProtocol/docs/sdd.md) | Drop invalid frames | Unit test |
 
 ## Port Descriptions
 
@@ -53,3 +59,4 @@ SVC-DEFRAMER-001 | `Svc::FprimeDeframer` shall remove the header and trailer fro
 |---|---|---|---|
 | `guarded input` | framedIn | `Fw.DataWithContext` | Receives a frame with optional context data |
 | `output` | deframedOut | `Fw.DataWithContext` | Receives a frame with optional context data |
+| `output` | bufferDeallocate | `Fw.BufferSend` | Port for deallocating dropped frames |

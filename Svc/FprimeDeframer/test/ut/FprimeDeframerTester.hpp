@@ -49,6 +49,15 @@ class FprimeDeframerTester : public FprimeDeframerGTestBase {
     //! Test receiving a zero size frame
     void testZeroSizeFrame();
 
+    //! Test receiving a frame with an incorrect length token (too long for the data)
+    void testIncorrectLengthToken();
+
+    //! Test receiving a frame with an incorrect start word
+    void testIncorrectStartWord();
+
+    //! Test receiving a frame with an incorrect Crc field
+    void testIncorrectCrc();
+
   private:
     // ----------------------------------------------------------------------
     // Helper functions
@@ -59,6 +68,10 @@ class FprimeDeframerTester : public FprimeDeframerGTestBase {
 
     //! Initialize components
     void initComponents();
+
+    //! Takes in a buffer of data and size, and injects a checksum into the buffer
+    //! If the buffer doesn't have enough room for the checksum (4 bytes), the buffer is left unchanged
+    void injectChecksum(U8* data, FwSizeType size);
 
     //! Sends a buffer of supplied data and size on the component input port
     void mockReceiveData(U8* data, FwSizeType size);

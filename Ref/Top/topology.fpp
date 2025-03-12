@@ -148,6 +148,7 @@ module Ref {
       frameAccumulator.frameOut -> deframer.framedIn
       frameAccumulator.bufferAllocate -> commsBufferManager.bufferGetCallee
       frameAccumulator.bufferDeallocate -> commsBufferManager.bufferSendIn
+      deframer.bufferDeallocate -> commsBufferManager.bufferSendIn
       deframer.deframedOut -> fprimeRouter.dataIn
 
       fprimeRouter.commandOut -> cmdDisp.seqCmdBuff

@@ -22,6 +22,21 @@ TEST(FprimeDeframer, ZeroSizeFrame) {
     tester.testZeroSizeFrame();
 }
 
+TEST(FprimeDeframer, testIncorrectLengthToken) {
+    Svc::FprimeDeframerTester tester;
+    tester.testIncorrectLengthToken();
+}
+
+TEST(FprimeDeframer, testIncorrectStartWord) {
+    Svc::FprimeDeframerTester tester;
+    tester.testIncorrectStartWord();
+}
+
+TEST(FprimeDeframer, testIncorrectCrc) {
+    Svc::FprimeDeframerTester tester;
+    tester.testIncorrectCrc();
+}
+
 int main(int argc, char** argv) {
     STest::Random::seed();
     ::testing::InitGoogleTest(&argc, argv);

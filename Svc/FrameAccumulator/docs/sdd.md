@@ -49,6 +49,10 @@ sequenceDiagram
     destroy O
 ```
 
+### Cleanup
+
+The `cleanup()` method must be called to deallocate the memory used by the `Svc::FrameAccumulator` component safely before shutdown. This method deallocates the circular buffer that was set up during the `configure()` method.
+
 
 ## Usage Examples
 

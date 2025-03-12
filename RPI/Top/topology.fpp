@@ -116,6 +116,7 @@ module RPI {
       frameAccumulator.bufferAllocate -> commsBufferManager.bufferGetCallee
       frameAccumulator.bufferDeallocate -> commsBufferManager.bufferSendIn
       fprimeRouter.bufferDeallocate -> commsBufferManager.bufferSendIn
+      deframer.bufferDeallocate -> commsBufferManager.bufferSendIn
     }
 
     connections UART {
