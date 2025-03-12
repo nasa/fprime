@@ -131,7 +131,8 @@ void FrameAccumulator ::processRing() {
                 // Copy data out of ring buffer into the allocated buffer
                 Fw::SerializeStatus serialize_status = this->m_inRing.peek(buffer.getData(), size_out);
                 FW_ASSERT(serialize_status == Fw::SerializeStatus::FW_SERIALIZE_OK);
-                buffer.getSerializeRepr().setBuffLen(size_out); // REVIEW NOTE: Why do I need to do this manually?? Ok I think I get it now
+                serialize_status = buffer.getSerializeRepr().setBuffLen(size_out); // REVIEW NOTE: Why do I need to do this manually?? Ok I think I get it now
+                FW_ASSERT(serialize_status == Fw::SerializeStatus::FW_SERIALIZE_OK);
                 // buffer.setSize(static_cast<U32>(size_out)); // REVIEW NOTE: Apparently I don't need this one since it's set by BufferManager ?
                 // Consume (rotate) the data from the ring buffer
                 serialize_status = this->m_inRing.rotate(size_out);
