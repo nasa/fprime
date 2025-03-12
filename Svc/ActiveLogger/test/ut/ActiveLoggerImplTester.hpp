@@ -19,8 +19,6 @@ namespace Svc {
             ActiveLoggerImplTester(Svc::ActiveLoggerImpl& inst);
             virtual ~ActiveLoggerImplTester();
 
-            void init(NATIVE_INT_TYPE instance = 0) override;
-
             void runEventNominal();
             void runFilterEventNominal();
             void runFilterIdNominal();

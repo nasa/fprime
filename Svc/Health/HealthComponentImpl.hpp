@@ -61,7 +61,7 @@ namespace Svc {
             //!
             //!  \param queueDepth Depth of queue
             //!  \param instance The instance number
-            void init(const FwSizeType queueDepth, const NATIVE_INT_TYPE instance);
+            void init(const FwSizeType queueDepth, const FwEnumStoreType instance);
 
             //! \brief Set ping entry tables
             //!

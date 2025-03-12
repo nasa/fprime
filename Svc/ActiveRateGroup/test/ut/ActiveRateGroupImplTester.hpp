@@ -26,8 +26,6 @@ namespace Svc {
             ActiveRateGroupImplTester(Svc::ActiveRateGroup& inst);
             virtual ~ActiveRateGroupImplTester();
 
-            void init(NATIVE_INT_TYPE instance = 0);
-
             void runNominal(NATIVE_INT_TYPE contexts[], NATIVE_INT_TYPE numContexts, NATIVE_INT_TYPE instance);
             void runCycleOverrun(NATIVE_INT_TYPE contexts[], NATIVE_INT_TYPE numContexts, NATIVE_INT_TYPE instance);
             void runPingTest();

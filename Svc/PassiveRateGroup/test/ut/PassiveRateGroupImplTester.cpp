@@ -22,10 +22,6 @@
 
 namespace Svc {
 
-void PassiveRateGroupTester::init(NATIVE_INT_TYPE instance) {
-    PassiveRateGroupGTestBase::init();
-}
-
 PassiveRateGroupTester::PassiveRateGroupTester(Svc::PassiveRateGroup& inst)
     : PassiveRateGroupGTestBase("testerbase", 100), m_impl(inst), m_callOrder(0) {
     this->clearPortCalls();

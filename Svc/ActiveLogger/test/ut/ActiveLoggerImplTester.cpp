@@ -19,10 +19,6 @@ namespace Svc {
     typedef ActiveLogger_Enabled Enabled;
     typedef ActiveLogger_FilterSeverity FilterSeverity;
 
-    void ActiveLoggerImplTester::init(NATIVE_INT_TYPE instance) {
-        Svc::ActiveLoggerGTestBase::init();
-    }
-
     ActiveLoggerImplTester::ActiveLoggerImplTester(Svc::ActiveLoggerImpl& inst) :
             Svc::ActiveLoggerGTestBase("testerbase",100),
             m_impl(inst),

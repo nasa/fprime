@@ -28,9 +28,6 @@ namespace Svc {
             void runFileWriteError();
 
             void runRefPrmFile();
-
-            void init(NATIVE_INT_TYPE instance = 0);
-
         private:
             //! Handler for from_pingOut
             //!

@@ -36,7 +36,7 @@ namespace Svc {
         }
     }
 
-    void HealthImpl::init(const FwSizeType queueDepth, const NATIVE_INT_TYPE instance) {
+    void HealthImpl::init(const FwSizeType queueDepth, const FwEnumStoreType instance) {
         HealthComponentBase::init(queueDepth, instance);
         this->queue_depth = queueDepth;
 

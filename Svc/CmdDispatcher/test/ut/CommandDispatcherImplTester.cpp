@@ -17,11 +17,6 @@
 
 
 namespace Svc {
-
-    void CommandDispatcherImplTester::init(NATIVE_INT_TYPE instance) {
-        CommandDispatcherGTestBase::init();
-    }
-
     CommandDispatcherImplTester::CommandDispatcherImplTester(Svc::CommandDispatcherImpl& inst) :
         CommandDispatcherGTestBase("testerbase",100),
         m_impl(inst) {

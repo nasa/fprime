@@ -22,11 +22,6 @@
 #include <cstring>
 
 namespace Svc {
-
-    void ActiveRateGroupImplTester::init(NATIVE_INT_TYPE instance) {
-        ActiveRateGroupGTestBase::init();
-    }
-
     ActiveRateGroupImplTester::ActiveRateGroupImplTester(Svc::ActiveRateGroup& inst) :
             ActiveRateGroupGTestBase("testerbase",100),
             m_impl(inst),m_causeOverrun(false),m_callOrder(0) {

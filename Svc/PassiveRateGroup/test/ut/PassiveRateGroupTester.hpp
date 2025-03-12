@@ -25,8 +25,6 @@ namespace Svc {
             PassiveRateGroupTester(Svc::PassiveRateGroup& inst);
             virtual ~PassiveRateGroupTester();
 
-            void init(NATIVE_INT_TYPE instance = 0);
-
             void runNominal(NATIVE_INT_TYPE contexts[], U32 numContexts, NATIVE_INT_TYPE instance);
 
         private:
