@@ -52,13 +52,13 @@ class ComQueueTester : public ComQueueGTestBase {
     void configure();
 
     void sendByQueueNumber(Fw::Buffer& buffer,
-                           NATIVE_INT_TYPE queueNumber,
-                           NATIVE_INT_TYPE& portNum,
+                           FwIndexType queueNumber,
+                           FwIndexType& portNum,
                            QueueType& queueType);
 
     void emitOne();
 
-    void emitOneAndCheck(NATIVE_UINT_TYPE expectedIndex,
+    void emitOneAndCheck(FwIndexType expectedIndex,
                          QueueType expectedType,
                          Fw::ComBuffer& expectedCom,
                          Fw::Buffer& expectedBuff);
