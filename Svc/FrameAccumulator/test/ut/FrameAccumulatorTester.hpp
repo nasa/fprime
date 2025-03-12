@@ -106,7 +106,7 @@ class FrameAccumulatorTester : public FrameAccumulatorGTestBase {
         }
 
         Status next_status = Status::FRAME_DETECTED;
-        U32 next_size_out = 0;
+        FwSizeType next_size_out = 0;
     };
 
     //! Instances required by the component under test

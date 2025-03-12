@@ -26,9 +26,8 @@ FprimeDeframerTester ::~FprimeDeframerTester() {}
 // ----------------------------------------------------------------------
 
 void FprimeDeframerTester ::testNominalFrame() {
-    // TODO: make this test multiple times with different random bytes and lengths
     // Get random byte of data
-    U8 randomByte = STest::Random::lowerUpper(0, 255);
+    U8 randomByte = static_cast<U8>(STest::Random::lowerUpper(0, 255));
     //           |  F´ start word        |     Length (= 1)      |   Data     |   Checksum (4 bytes)   |
     U8 data[13] = {0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0x00, 0x00, 0x01,  randomByte,  0x00, 0x00, 0x00, 0x00};
     // Inject the checksum into the data and send it to the component under test
@@ -39,6 +38,7 @@ void FprimeDeframerTester ::testNominalFrame() {
     ASSERT_from_bufferDeallocate_SIZE(0); // nothing emitted on bufferDeallocate
     // Assert that the data that was emitted on deframedOut is equal to Data field above (randomByte)
     ASSERT_EQ(this->fromPortHistory_deframedOut->at(0).data.getData()[0], randomByte);
+    ASSERT_EVENTS_SIZE(0); // no events emitted
 }
 
 void FprimeDeframerTester ::testIncorrectLengthToken() {
@@ -50,7 +50,9 @@ void FprimeDeframerTester ::testIncorrectLengthToken() {
 
     ASSERT_from_deframedOut_SIZE(0); // nothing emitted on deframedOut
     ASSERT_from_bufferDeallocate_SIZE(1); // invalid buffer was deallocated
-    ASSERT_EVENTS_InvalidBufferReceived_SIZE(1); // event was emitted for invalid buffer
+    // Check which event was emitted
+    ASSERT_EVENTS_SIZE(1); // exactly 1 event emitted
+    ASSERT_EVENTS_InvalidLengthReceived_SIZE(1); // event was emitted for invalid length
 }
 
 void FprimeDeframerTester ::testIncorrectStartWord() {
@@ -62,7 +64,9 @@ void FprimeDeframerTester ::testIncorrectStartWord() {
 
     ASSERT_from_deframedOut_SIZE(0); // nothing emitted on deframedOut
     ASSERT_from_bufferDeallocate_SIZE(1); // invalid buffer was deallocated
-    ASSERT_EVENTS_InvalidBufferReceived_SIZE(1); // event was emitted for invalid buffer
+    // Check which event was emitted
+    ASSERT_EVENTS_SIZE(1); // exactly 1 event emitted
+    ASSERT_EVENTS_InvalidStartWord_SIZE(1); // event was emitted for invalid start word
 }
 
 void FprimeDeframerTester ::testIncorrectCrc() {
@@ -71,7 +75,9 @@ void FprimeDeframerTester ::testIncorrectCrc() {
     this->mockReceiveData(data, sizeof(data));
     ASSERT_from_deframedOut_SIZE(0); // nothing emitted on deframedOut
     ASSERT_from_bufferDeallocate_SIZE(1); // invalid buffer was deallocated
-    ASSERT_EVENTS_InvalidBufferReceived_SIZE(1); // event was emitted for invalid buffer
+    // Check which event was emitted
+    ASSERT_EVENTS_SIZE(1); // exactly 1 event emitted
+    ASSERT_EVENTS_InvalidChecksum_SIZE(1); // event was emitted for invalid checksum
 }
 
 void FprimeDeframerTester::testTruncatedFrame() {
@@ -80,19 +86,20 @@ void FprimeDeframerTester::testTruncatedFrame() {
     this->mockReceiveData(data, sizeof(data));
     ASSERT_from_deframedOut_SIZE(0); // nothing emitted on deframedOut
     ASSERT_from_bufferDeallocate_SIZE(1); // invalid buffer was deallocated
+    // Check which event was emitted
+    ASSERT_EVENTS_SIZE(1); // exactly 1 event emitted
     ASSERT_EVENTS_InvalidBufferReceived_SIZE(1); // event was emitted for invalid buffer
 }
 
 void FprimeDeframerTester::testZeroSizeFrame() {
-    // Send a null frame, too short to be valid
-    U8 data[0] = {};
-    this->mockReceiveData(data, sizeof(data));
+    // Send an empty frame, too short to be valid
+    this->mockReceiveData(nullptr, 0);
     ASSERT_from_deframedOut_SIZE(0); // nothing emitted on deframedOut
     ASSERT_from_bufferDeallocate_SIZE(1); // invalid buffer was deallocated
+    // Check which event was emitted
+    ASSERT_EVENTS_SIZE(1); // exactly 1 event emitted
     ASSERT_EVENTS_InvalidBufferReceived_SIZE(1); // event was emitted for invalid buffer
 }
-
-// TODO: test CRC validation etc.
 
 // ----------------------------------------------------------------------
 // Test Helpers
@@ -116,8 +123,8 @@ void FprimeDeframerTester::injectChecksum(U8* data, FwSizeType size) {
 
 void FprimeDeframerTester::mockReceiveData(U8* data, FwSizeType size) {
     Fw::Buffer nullContext;
-    Fw::Buffer buffer(data, size);
-    buffer.getSerializeRepr().setBuffLen(size); // REVIEW NOTE: is it normal I need to set that manually?
+    Fw::Buffer buffer(data, static_cast<Fw::Buffer::SizeType>(size));
+    buffer.getSerializeRepr().setBuffLen(size);
     this->invoke_to_framedIn(0, buffer, nullContext);
 }
 

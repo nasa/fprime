@@ -93,8 +93,8 @@ void FrameAccumulatorTester ::testReceiveZeroSizeBuffer() {
 }
 
 void FrameAccumulatorTester ::testAccumulateTwoBuffers() {
-    FwSizeType buffer1_size = 10;
-    FwSizeType buffer2_size = 20;
+    Fw::Buffer::SizeType buffer1_size = 10;
+    Fw::Buffer::SizeType buffer2_size = 20;
     U8 data1[buffer1_size];
     U8 data2[buffer2_size];
     Fw::Buffer buffer1(data1, buffer1_size);
