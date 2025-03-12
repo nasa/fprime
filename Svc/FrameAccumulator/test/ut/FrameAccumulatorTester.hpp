@@ -35,7 +35,7 @@ class FrameAccumulatorTester : public FrameAccumulatorGTestBase {
     FrameAccumulatorTester();
 
     //! Destroy object FrameAccumulatorTester
-    ~FrameAccumulatorTester() = default;
+    ~FrameAccumulatorTester();
 
   public:
     // ----------------------------------------------------------------------

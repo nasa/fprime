@@ -40,7 +40,7 @@ void FprimeDeframer ::framedIn_handler(FwIndexType portNum, Fw::Buffer& data, Fw
     // ---------------- Validate Frame Header ----------------
     // Deserialize transmitted header into the header object
     Fw::SerializeStatus status = header.deserialize(data.getSerializeRepr());
-    if (status != Fw::FW_SERIALIZE_OK) {
+    if (status != Fw::SerializeStatus::FW_SERIALIZE_OK) {
         this->log_WARNING_HI_InvalidBufferReceived();
         this->bufferDeallocate_out(0, data);
         return;
@@ -65,6 +65,7 @@ void FprimeDeframer ::framedIn_handler(FwIndexType portNum, Fw::Buffer& data, Fw
     // Deserialize transmitted trailer: trailer is at offset = len(header) + len(body)
     data.getSerializeRepr().moveDeserToOffset(FprimeProtocol::FrameHeader::SERIALIZED_SIZE + header.getlengthField());
     status = trailer.deserialize(data.getSerializeRepr());
+    FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK, status);
     // Compute CRC over the transmitted data (header + body)
     Utils::Hash hash;
     Utils::HashBuffer computedCrc;

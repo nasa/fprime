@@ -23,6 +23,11 @@ FrameAccumulatorTester ::FrameAccumulatorTester()
     this->connectPorts();
 }
 
+
+FrameAccumulatorTester ::~FrameAccumulatorTester() {
+    component.cleanup();
+}
+
 // ----------------------------------------------------------------------
 // Tests
 // ----------------------------------------------------------------------
