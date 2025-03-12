@@ -89,10 +89,9 @@ bool FpySequencer::dispatchDirective(const Fpy::Statement& stmt) {
         case Fpy::DirectiveId::WAIT_REL: {
             FpySequencer_WaitRelDirective directive;
             status = argBuf.deserialize(directive);
-            if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || stmt.getargBuf().getBuffLeft() != 0) {
-                this->log_WARNING_HI_DirectiveDeserializeError(
-                    stmt.getopCode(), Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR, stmt.getargBuf().getBuffLeft(),
-                    stmt.getargBuf().getBuffLength());
+            if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || argBuf.getBuffLeft() != 0) {
+                this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), status, argBuf.getBuffLeft(),
+                                                               argBuf.getBuffLength());
                 return false;
             }
             directive_waitRel_internalInterfaceInvoke(directive);
@@ -101,10 +100,9 @@ bool FpySequencer::dispatchDirective(const Fpy::Statement& stmt) {
         case Fpy::DirectiveId::WAIT_ABS: {
             FpySequencer_WaitAbsDirective directive;
             status = argBuf.deserialize(directive);
-            if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || stmt.getargBuf().getBuffLeft() != 0) {
-                this->log_WARNING_HI_DirectiveDeserializeError(
-                    stmt.getopCode(), Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR, stmt.getargBuf().getBuffLeft(),
-                    stmt.getargBuf().getBuffLength());
+            if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || argBuf.getBuffLeft() != 0) {
+                this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), status, argBuf.getBuffLeft(),
+                                                               argBuf.getBuffLength());
                 return false;
             }
             directive_waitAbs_internalInterfaceInvoke(directive);
