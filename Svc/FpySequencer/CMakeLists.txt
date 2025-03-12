@@ -22,7 +22,13 @@ register_fprime_module()
 set(UT_AUTO_HELPERS ON)
 
 set(UT_SOURCE_FILES
-  "${FPRIME_FRAMEWORK_PATH}/Svc/FpySequencer/FpySequencer.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/FpySequencer.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/FpySequencer.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/FpySequencerTypes.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/FpySequencerStateMachine.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/FpySequencerDirectives.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/FpySequencerRunState.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/FpySequencerValidationState.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/FpySequencerTester.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/FpySequencerTestMain.cpp"
 )

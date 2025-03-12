@@ -11,6 +11,7 @@
         <channel name="Ref.fpySeq.StatementsDispatched"/>
         <channel name="Ref.fpySeq.SequencesFailed"/>
         <channel name="Ref.fpySeq.StatementsFailed"/>
+        <channel name="Ref.fpySeq.STATEMENT_TIMEOUT_SECS"/>
         <channel name="Ref.fileUplink.FilesReceived"/>
         <channel name="Ref.fileUplink.PacketsReceived"/>
         <channel name="Ref.fileUplinkBufferManager.TotalBuffs"/>

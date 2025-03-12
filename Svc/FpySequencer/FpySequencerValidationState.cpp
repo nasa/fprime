@@ -10,13 +10,13 @@ void FpySequencer::allocateBuffer(FwEnumStoreType identifier, Fw::MemAllocator& 
     // if this assertion fails, you aren't allocating enough bytes for the
     // FpySequencer. this is because you must have a buffer big enough to fit the
     // header of a sequence
-    FW_ASSERT(bytes >= Fpy::Header::SERIALIZED_SIZE);
+    FW_ASSERT(bytes >= Fpy::Header::SERIALIZED_SIZE, static_cast<FwAssertArgType>(bytes));
+    FwSizeType originalBytes = bytes;
     bool recoverable = false;
     this->m_allocatorId = identifier;
-    U8* allocatedMemory =
-        static_cast<U8*>(allocator.allocate(identifier, bytes, recoverable));
-    // if this fails, unable to allocate the memory
-    FW_ASSERT(bytes > 0);
+    U8* allocatedMemory = static_cast<U8*>(allocator.allocate(identifier, bytes, recoverable));
+    // if this fails, unable to allocate the requested amount of money
+    FW_ASSERT(bytes >= originalBytes, static_cast<FwAssertArgType>(bytes));
     this->m_sequenceBuffer.setExtBuffer(allocatedMemory, bytes);
 }
 
@@ -69,6 +69,16 @@ bool FpySequencer::validate() {
         return false;
     }
 
+    if (m_sequenceObj.getheader().getargumentCount() > Fpy::MAX_SEQUENCE_ARG_COUNT) {
+        this->log_WARNING_HI_TooManyArgs(m_sequenceObj.getheader().getargumentCount(), Fpy::MAX_SEQUENCE_ARG_COUNT);
+        return false;
+    }
+
+    if (m_sequenceObj.getheader().getstatementCount() > Fpy::MAX_SEQUENCE_STATEMENT_COUNT) {
+        this->log_WARNING_HI_TooManyStatements(m_sequenceObj.getheader().getstatementCount(), Fpy::MAX_SEQUENCE_STATEMENT_COUNT);
+        return false;
+    }
+
     // read body bytes
     readStatus = readBytes(sequenceFile, m_sequenceObj.getheader().getbodySize());
     if (!readStatus) {
@@ -77,8 +87,7 @@ bool FpySequencer::validate() {
 
     // deser body:
     // deser arg mappings
-    U8 argMappingIdx = 0;
-    while (argMappingIdx < m_sequenceObj.getheader().getargumentCount()) {
+    for (U8 argMappingIdx = 0; argMappingIdx < m_sequenceObj.getheader().getargumentCount(); argMappingIdx++) {
         // local variable index of arg $argMappingIdx
         deserStatus = m_sequenceBuffer.deserialize(m_sequenceObj.getargs()[argMappingIdx]);
         if (deserStatus != Fw::FW_SERIALIZE_OK) {
@@ -87,12 +96,10 @@ bool FpySequencer::validate() {
                                                           m_sequenceBuffer.getBuffLength());
             return false;
         }
-        argMappingIdx++;
     }
 
     // deser statements
-    U16 statementIdx = 0;
-    while (statementIdx < m_sequenceObj.getheader().getstatementCount()) {
+    for (U16 statementIdx = 0; statementIdx < m_sequenceObj.getheader().getstatementCount(); statementIdx++) {
         // deser statement
         deserStatus = m_sequenceBuffer.deserialize(m_sequenceObj.getstatements()[statementIdx]);
         if (deserStatus != Fw::FW_SERIALIZE_OK) {
@@ -101,24 +108,22 @@ bool FpySequencer::validate() {
                                                           m_sequenceBuffer.getBuffLength());
             return false;
         }
-
-        statementIdx++;
     }
 
     // read footer bytes (but don't include in CRC)
+    // TODO i think if we read the crc into the crc, it has the mathematical property
+    // that the new crc will be 0. why not check this instead of comparing crcs?
     readStatus = readBytes(sequenceFile, Fpy::Footer::SERIALIZED_SIZE, false);
     if (!readStatus) {
         return false;
     }
 
-    U32 crc;
-    deserStatus = m_sequenceBuffer.deserialize(crc);
+    deserStatus = m_sequenceBuffer.deserialize(m_sequenceObj.getfooter());
     if (deserStatus != Fw::FW_SERIALIZE_OK) {
         this->log_WARNING_HI_FileReadDeserializeError(m_sequenceFilePath, static_cast<I32>(deserStatus),
                                                       m_sequenceBuffer.getBuffLeft(), m_sequenceBuffer.getBuffLength());
         return false;
     }
-    m_sequenceObj.getfooter().setcrc(crc);
 
     // need this for some reason to "finalize" the crc TODO get an explanation on this
     this->m_computedCRC = ~this->m_computedCRC;
@@ -137,23 +142,29 @@ bool FpySequencer::readBytes(Os::File& file, FwSizeType readLen, bool updateCRC)
     FW_ASSERT(file.isOpen());
     // this has to be fwsignedsizetype cuz that's what file.read takes
     // it also has to be declared a var because file.read must take a ref
-    FwSignedSizeType actualReadLen = readLen;
+    FwSignedSizeType expectedReadLen = readLen;
 
     const FwSizeType capacity = m_sequenceBuffer.getBuffCapacity();
 
     // if this asserts, then you need to give the sequencer more buffer memory. pass in a bigger number
     // to fpySeq.allocateBuffer(). This is usually done in topology setup CPP
-    FW_ASSERT(static_cast<FwSignedSizeType>(capacity) >= actualReadLen, static_cast<FwAssertArgType>(capacity),
-              static_cast<FwAssertArgType>(actualReadLen));
-    Os::File::Status fileStatus = file.read(m_sequenceBuffer.getBuffAddr(), actualReadLen);
+    FW_ASSERT(static_cast<FwSignedSizeType>(capacity) >= expectedReadLen, static_cast<FwAssertArgType>(capacity),
+              static_cast<FwAssertArgType>(expectedReadLen));
+    Os::File::Status fileStatus = file.read(m_sequenceBuffer.getBuffAddr(), expectedReadLen);
 
     if (fileStatus != Os::File::OP_OK) {
         this->log_WARNING_HI_FileReadError(m_sequenceFilePath, static_cast<I32>(fileStatus));
         return false;
     }
 
-    if (static_cast<FwSignedSizeType>(readLen) != actualReadLen) {
+    if (static_cast<FwSignedSizeType>(readLen) < expectedReadLen) {
         this->log_WARNING_HI_EndOfFileError(m_sequenceFilePath);
+        return false;
+    }
+
+    if (static_cast<FwSignedSizeType>(readLen) > expectedReadLen) {
+        // somehow we read in MORE bytes than we asked for... should probably fail
+        this->log_WARNING_HI_FileReadError(m_sequenceFilePath, static_cast<I32>(Os::File::Status::OTHER_ERROR));
         return false;
     }
 

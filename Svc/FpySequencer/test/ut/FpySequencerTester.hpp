@@ -55,6 +55,9 @@ class FpySequencerTester : public FpySequencerGTestBase {
   //!
   void initComponents();
 
+  void test_waitRel();
+  void test_waitAbs();
+
  private:
   // ----------------------------------------------------------------------
   // Variables

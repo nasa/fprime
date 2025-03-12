@@ -297,12 +297,12 @@ class FpySequencer : public FpySequencerComponentBase {
 
         static constexpr U32 CRC_INITIAL_VALUE = 0xFFFFFFFFU;
 
-    // allocated at runtime
+    // allocated at startup
     Fw::ExternalSerializeBuffer m_sequenceBuffer;
     // id of allocator that gave us m_sequenceBuffer
     FwEnumStoreType m_allocatorId;
 
-    // assigned by the user
+    // assigned by the user via cmd
     Fw::String m_sequenceFilePath;
     // the sequence, loaded in memory
     Fpy::Sequence m_sequenceObj;
@@ -384,7 +384,7 @@ class FpySequencer : public FpySequencerComponentBase {
 
     // dispatches a sequencer directive to the right handler.
     // return true if successfully handled.
-    bool dispatchDirective(Fpy::Statement& stmt);
+    bool dispatchDirective(const Fpy::Statement& stmt);
 };
 
 }  // namespace Svc

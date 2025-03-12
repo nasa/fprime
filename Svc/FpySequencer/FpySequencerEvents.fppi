@@ -132,3 +132,17 @@ event SequenceTimedOut(
 ) \
     severity warning low \
     format "A statement timed out in sequence {}, causing the sequence to fail"
+
+event TooManyArgs(
+    count: U8
+    max: U8
+) \
+    severity warning high \
+    format "A sequence specified it had {} args but the max was {}"
+
+event TooManyStatements(
+    count: U16
+    max: U16
+) \
+    severity warning high \
+    format "A sequence specified it had {} statements but the max was {}"

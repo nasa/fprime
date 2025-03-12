@@ -13,7 +13,7 @@ void FpySequencer::dispatchStatement() {
     // check to make sure no array out of bounds
     FW_ASSERT(m_runtime.nextStatementIndex < m_sequenceObj.getheader().getstatementCount());
 
-    Fpy::Statement nextStatement = m_sequenceObj.getstatements()[m_runtime.nextStatementIndex];
+    const Fpy::Statement& nextStatement = m_sequenceObj.getstatements()[m_runtime.nextStatementIndex];
     m_runtime.nextStatementIndex++;
     m_runtime.currentStatementOpcode = nextStatement.getopCode();
 
@@ -63,7 +63,6 @@ bool FpySequencer::dispatchCommand(const Fpy::Statement& stmt) {
                                             stat);
         return false;
     }
-
     stat = cmdBuf.serialize(stmt.getargBuf().getBuffAddr(), stmt.getargBuf().getBuffLength(), true);
     if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
         this->log_WARNING_HI_SerializeError(cmdBuf.getBuffCapacity(), cmdBuf.getBuffLength(),
@@ -79,13 +78,17 @@ bool FpySequencer::dispatchCommand(const Fpy::Statement& stmt) {
     return true;
 }
 
-bool FpySequencer::dispatchDirective(Fpy::Statement& stmt) {
+bool FpySequencer::dispatchDirective(const Fpy::Statement& stmt) {
     Fw::SerializeStatus status;
+    // make our own esb so we can deser from stmt without breaking its constness
+    Fw::ExternalSerializeBuffer argBuf(const_cast<U8*>(stmt.getargBuf().getBuffAddr()),
+                                       stmt.getargBuf().getBuffLength());
+    argBuf.setBuffLen(stmt.getargBuf().getBuffLength());
 
     switch (stmt.getopCode()) {
         case Fpy::DirectiveId::WAIT_REL: {
             FpySequencer_WaitRelDirective directive;
-            status = stmt.getargBuf().deserialize(directive);
+            status = argBuf.deserialize(directive);
             if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || stmt.getargBuf().getBuffLeft() != 0) {
                 this->log_WARNING_HI_DirectiveDeserializeError(
                     stmt.getopCode(), Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR, stmt.getargBuf().getBuffLeft(),
@@ -97,7 +100,7 @@ bool FpySequencer::dispatchDirective(Fpy::Statement& stmt) {
         }
         case Fpy::DirectiveId::WAIT_ABS: {
             FpySequencer_WaitAbsDirective directive;
-            status = stmt.getargBuf().deserialize(directive);
+            status = argBuf.deserialize(directive);
             if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || stmt.getargBuf().getBuffLeft() != 0) {
                 this->log_WARNING_HI_DirectiveDeserializeError(
                     stmt.getopCode(), Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR, stmt.getargBuf().getBuffLeft(),
