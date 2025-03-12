@@ -36,18 +36,13 @@ void FprimeDeframer ::framedIn_handler(FwIndexType portNum, Fw::Buffer& data, Fw
     // Header and Trailer objects to hold the deserialized data (types are autocoded by FPP)
     FprimeProtocol::FrameHeader header;
     FprimeProtocol::FrameTrailer trailer;
-    
+
     // ---------------- Validate Frame Header ----------------
     // Deserialize transmitted header into the header object
     Fw::SerializeStatus status = header.deserialize(data.getSerializeRepr());
-    if (status != Fw::SerializeStatus::FW_SERIALIZE_OK) {
-        // REVIEW NOTE: should this be an assert instead?
-        this->log_WARNING_HI_InvalidBufferReceived();
-        this->bufferDeallocate_out(0, data);
-        return;
-    }
+    FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK, status);
     // Check that deserialized start_word token matches expected value (default start_word value in the FPP object)
-    FprimeProtocol::FrameHeader defaultValue;
+    const FprimeProtocol::FrameHeader defaultValue;
     if (header.getstartWord() != defaultValue.getstartWord()) {
         this->log_WARNING_HI_InvalidStartWord();
         this->bufferDeallocate_out(0, data);
@@ -74,7 +69,7 @@ void FprimeDeframer ::framedIn_handler(FwIndexType portNum, Fw::Buffer& data, Fw
     FwSizeType fieldToHashSize = header.getlengthField() + FprimeProtocol::FrameHeader::SERIALIZED_SIZE;
     hash.init();
     // Add byte by byte to the hash
-    for (U32 i = 0; i < fieldToHashSize; i++) {
+    for (FwSizeType i = 0; i < fieldToHashSize; i++) {
         hash.update(data.getData() + i, 1);
     }
     hash.final(computedCrc);
