@@ -18,6 +18,7 @@ module Svc {
         include "FpySequencerEvents.fppi"
         include "FpySequencerStateMachine.fppi"
         include "FpySequencerDirectives.fppi"
+        include "FpySequencerParams.fppi"
 
         # sm signals have highest priority besides ping
         state machine instance sequencer: SequencerStateMachine priority 9 assert
@@ -33,10 +34,10 @@ module Svc {
         # TODO should ping have highest prio? or lowest?
         async input port pingIn: Svc.Ping priority 10 assert
 
-        @ port to trigger a wakeup and check if we should
-        @ continue executing or keep on sleeping
-        # wakeup timer check has lower prio than sm sigs, cmds, cmd resp and ping
-        async input port checkShouldWake: Svc.Sched priority 4 assert
+        @ port to trigger a wakeup or timeout check. increase frequency
+        @ to increase temporal resolution of sequencer
+        # timer check has lower prio than sm sigs, cmds, cmd resp and ping
+        async input port checkTimers: Svc.Sched priority 4 assert
 
         @ port to write all telemetry
         # least important, lowest prio
@@ -68,6 +69,10 @@ module Svc {
 
         @ Port for sending telemetry channels to downlink
         telemetry port tlmOut
+
+        param get port prmGet
+
+        param set port prmSet
 
     }
 }

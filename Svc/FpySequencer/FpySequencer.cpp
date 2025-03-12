@@ -116,11 +116,11 @@ void FpySequencer::CANCEL_cmdHandler(FwOpcodeType opCode,  //!< The opcode
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
-//! Handler for input port checkShouldWake
-void FpySequencer::checkShouldWake_handler(FwIndexType portNum,  //!< The port number
-                                           U32 context           //!< The call order
+//! Handler for input port checkTimers
+void FpySequencer::checkTimers_handler(FwIndexType portNum,  //!< The port number
+                                       U32 context           //!< The call order
 ) {
-    this->sequencer_sendSignal_checkShouldWakeIn();
+    this->sequencer_sendSignal_checkTimersIn();
 }
 
 void FpySequencer::pingIn_handler(FwIndexType portNum, /*!< The port number*/
@@ -166,6 +166,26 @@ void FpySequencer::tlmWrite_handler(FwIndexType portNum,  //!< The port number
     this->tlmWrite_StatementsFailed(m_tlm.statementsFailed);
     this->tlmWrite_SequencesSucceeded(m_tlm.sequencesSucceeded);
     this->tlmWrite_SequencesFailed(m_tlm.sequencesFailed);
+}
+
+void FpySequencer::parametersLoaded() {
+    Fw::ParamValid valid;
+    this->paramGet_STATEMENT_TIMEOUT_SECS(valid);
+    // check for coding errors--should have a default
+    FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT);
+}
+
+void FpySequencer::parameterUpdated(FwPrmIdType id) {
+    Fw::ParamValid valid;
+    switch (id) {
+        case PARAMID_STATEMENT_TIMEOUT_SECS: {
+            this->tlmWrite_STATEMENT_TIMEOUT_SECS(this->paramGet_STATEMENT_TIMEOUT_SECS(valid));
+            break;
+        }
+        default: {
+            FW_ASSERT(0, id);  // coding error, forgot to include in switch statement
+        }
+    }
 }
 
 }  // namespace Svc

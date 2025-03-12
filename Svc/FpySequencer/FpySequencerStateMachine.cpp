@@ -242,6 +242,55 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_setWakeupTime(
 ) {
     m_runtime.wakeupTime = value;
 }
+//! Implementation for action checkStatementTimeout of state machine Svc_FpySequencer_SequencerStateMachine
+//!
+//! checks if the current statement has timed out
+void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_checkStatementTimeout(
+    SmId smId,                                             //!< The state machine id
+    Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
+) {
+    Fw::ParamValid valid;
+    F32 timeout = this->paramGet_STATEMENT_TIMEOUT_SECS(valid);
+    if (timeout <= 0) {
+        // no timeout
+        return;
+    }
+
+    Fw::Time currentTime = getTime();
+
+    if (currentTime.getTimeBase() != m_runtime.currentStatementDispatchTime.getTimeBase()) {
+        // can't compare time base. must have changed
+        this->log_WARNING_LO_MismatchedTimeBase(currentTime.getTimeBase(),
+                                                m_runtime.currentStatementDispatchTime.getTimeBase());
+        return;
+    }
+    if (currentTime.getContext() != m_runtime.currentStatementDispatchTime.getContext()) {
+        // can't compare time ctx. must have changed
+        this->log_WARNING_LO_MismatchedTimeContext(currentTime.getContext(),
+                                                   m_runtime.currentStatementDispatchTime.getContext());
+        return;
+    }
+
+    F64 currentTimeSecs =
+        static_cast<F64>(currentTime.getSeconds()) + static_cast<F64>(currentTime.getUSeconds()) / 1000000;
+    F64 dispatchTimeSecs = static_cast<F64>(m_runtime.currentStatementDispatchTime.getSeconds()) +
+                           static_cast<F64>(m_runtime.currentStatementDispatchTime.getUSeconds()) / 1000000;
+
+    if (currentTimeSecs - dispatchTimeSecs >= timeout) {
+        // timed out
+        this->sequencer_sendSignal_statementTimeout();
+    }
+}
+
+//! Implementation for action report_seqTimedOut of state machine Svc_FpySequencer_SequencerStateMachine
+//!
+//! reports that the sequence timed out
+void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_report_seqTimedOut(
+    SmId smId,                                             //!< The state machine id
+    Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
+) {
+    this->log_WARNING_LO_SequenceTimedOut(m_sequenceFilePath);
+}
 
 // ----------------------------------------------------------------------
 // Functions to implement for internal state machine guards

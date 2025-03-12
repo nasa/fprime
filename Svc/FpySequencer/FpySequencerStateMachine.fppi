@@ -148,6 +148,10 @@ state machine SequencerStateMachine {
     action resetRuntime
     @ sets the wakeup time of the sequencer
     action setWakeupTime: Fw.Time
+    @ checks if the current statement has timed out
+    action checkStatementTimeout
+    @ reports that the sequence timed out
+    action report_seqTimedOut
 
     @ called in dispatchStatement method when a statement was successfully dispatched
     signal result_dispatchStatement_success
@@ -155,8 +159,8 @@ state machine SequencerStateMachine {
     signal result_dispatchStatement_failure
     @ called in dispatchStatement method when there were no more statements in the sequence
     signal result_dispatchStatement_noMoreStatements
-    @ raised whenever the checkShouldWake port is called
-    signal checkShouldWakeIn
+    @ raised whenever the checkTimers port is called
+    signal checkTimersIn
     @ raised when we are done sleeping
     signal result_checkShouldWake_wakeup
     @ raised when an operation could not be performed on a Fw::Time object due to a
@@ -172,6 +176,8 @@ state machine SequencerStateMachine {
     signal cmdResponse_success
     @ called when the expected cmd response comes in, and it is not OK. only raised in the RUNNING.AWAITING_CMD_RESPONSE state
     signal cmdResponse_failure
+    @ raised when the statement times out, according to the timeout parameter
+    signal statementTimeout
 
     @ sequencer is executing all statements in the sequence
     state RUNNING {
@@ -190,6 +196,10 @@ state machine SequencerStateMachine {
         }
 
         state AWAITING_STATEMENT_RESPONSE {
+            on checkTimersIn do { checkStatementTimeout }
+            # -->
+            on statementTimeout do { }
+
             on cmdResponse_success enter DISPATCH_STATEMENT
             on cmdResponse_failure do { report_seqFailed, sendCmdResponse_EXECUTION_ERROR } enter IDLE
 
@@ -200,7 +210,7 @@ state machine SequencerStateMachine {
 
         @ sequencer is not taking any action, waiting for a time in the future to continue
         state SLEEPING {
-            on checkShouldWakeIn do { checkShouldWake }
+            on checkTimersIn do { checkShouldWake }
             # -->
             on result_checkShouldWake_wakeup enter DISPATCH_STATEMENT
             # this can occur if the time base/ctx changes, or was invalid from the start

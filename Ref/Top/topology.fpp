@@ -115,7 +115,7 @@ module Ref {
       rateGroup1Comp.RateGroupMemberOut[2] -> tlmSend.Run
       rateGroup1Comp.RateGroupMemberOut[3] -> fileDownlink.Run
       rateGroup1Comp.RateGroupMemberOut[4] -> systemResources.run
-      rateGroup1Comp.RateGroupMemberOut[5] -> fpySeq.checkShouldWake
+      rateGroup1Comp.RateGroupMemberOut[5] -> fpySeq.checkTimers
       rateGroup1Comp.RateGroupMemberOut[6] -> fpySeq.tlmWrite
 
       # Rate group 2

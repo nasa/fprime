@@ -224,6 +224,21 @@ class FpySequencer : public FpySequencerComponentBase {
         const Fw::Time& value                                   //!< The value
         ) override;
 
+    //! Implementation for action checkStatementTimeout of state machine Svc_FpySequencer_SequencerStateMachine
+    //!
+    //! checks if the current statement has timed out
+    void Svc_FpySequencer_SequencerStateMachine_action_checkStatementTimeout(
+        SmId smId,                                             //!< The state machine id
+        Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
+        ) override;
+
+    //! Implementation for action report_seqTimedOut of state machine Svc_FpySequencer_SequencerStateMachine
+    //!
+    //! reports that the sequence timed out
+    void Svc_FpySequencer_SequencerStateMachine_action_report_seqTimedOut(
+        SmId smId,                                             //!< The state machine id
+        Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
+        ) override;
     PROTECTED :
 
         // ----------------------------------------------------------------------
@@ -243,10 +258,10 @@ class FpySequencer : public FpySequencerComponentBase {
     // Handlers to implement for typed input ports
     // ----------------------------------------------------------------------
 
-    //! Handler for input port checkShouldWake
-    void checkShouldWake_handler(FwIndexType portNum,  //!< The port number
-                                 U32 context           //!< The call order
-                                 ) override;
+    //! Handler for input port checkTimers
+    void checkTimers_handler(FwIndexType portNum,  //!< The port number
+                             U32 context           //!< The call order
+                             ) override;
 
     //! Handler for input port cmdResponseIn
     void cmdResponseIn_handler(FwIndexType portNum,             //!< The port number
@@ -270,6 +285,9 @@ class FpySequencer : public FpySequencerComponentBase {
 
     //! Internal interface handler for directive_waitRel
     void directive_waitRel_internalInterfaceHandler(const Svc::FpySequencer_WaitRelDirective& directive) override;
+
+    void parametersLoaded() override;
+    void parameterUpdated(FwPrmIdType id) override;
 
   public:
     void allocateBuffer(FwEnumStoreType identifier, Fw::MemAllocator& allocator, FwSizeType bytes);
@@ -315,6 +333,8 @@ class FpySequencer : public FpySequencerComponentBase {
 
         // the opcode of the statement that is currently executing
         FwOpcodeType currentStatementOpcode = Fpy::DirectiveId::INVALID;
+        // the time we dispatched the statement that is currently executing
+        Fw::Time currentStatementDispatchTime = Fw::Time();
 
         // the absolute time we should wait for until returning
         // a statement response

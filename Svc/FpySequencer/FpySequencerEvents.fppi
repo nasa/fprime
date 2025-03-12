@@ -126,3 +126,9 @@ event MismatchedTimeContext(
 ) \
     severity warning low \
     format "getTime() time context was {}, but tried to operate on it with time context {}"
+
+event SequenceTimedOut(
+    filePath: string
+) \
+    severity warning low \
+    format "A statement timed out in sequence {}, causing the sequence to fail"
