@@ -10,6 +10,10 @@
 #include <Fw/Types/Assert.hpp>
 #include <cstdio>
 
+// Check the CMD_DISPATCHER_DISPATCH_TABLE_SIZE and CMD_DISPATCHER_SEQUENCER_TABLE_SIZE for overflow
+static_assert(CMD_DISPATCHER_DISPATCH_TABLE_SIZE <= std::numeric_limits<U32>::max(), "Opcode table limited to opcode range: 0 - 0xFFFFFFFF");
+static_assert(CMD_DISPATCHER_SEQUENCER_TABLE_SIZE <= std::numeric_limits<U32>::max(), "Sequencer table limited to range of U32");
+
 namespace Svc {
     CommandDispatcherImpl::CommandDispatcherImpl(const char* name) :
         CommandDispatcherComponentBase(name),
@@ -58,7 +62,7 @@ namespace Svc {
             this->log_COMMAND_OpCodeError(opCode,response);
         }
         // look for command source
-        NATIVE_INT_TYPE portToCall = -1;
+        FwIndexType portToCall = -1;
         U32 context;
         for (U32 pending = 0; pending < FW_NUM_ARRAY_ELEMENTS(this->m_sequenceTracker); pending++) {
             if (
@@ -180,7 +184,7 @@ namespace Svc {
 
     void CommandDispatcherImpl::CMD_CLEAR_TRACKING_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
         // clear tracking table
-        for (NATIVE_INT_TYPE entry = 0; entry < CMD_DISPATCHER_SEQUENCER_TABLE_SIZE; entry++) {
+        for (U32 entry = 0; entry < CMD_DISPATCHER_SEQUENCER_TABLE_SIZE; entry++) {
             this->m_sequenceTracker[entry].used = false;
         }
         this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
