@@ -125,7 +125,7 @@ void TestState ::action__BufferSendIn__BufferTooSmallForPacket() {
     // Construct a buffer that is too small to hold a data packet
     const FwSizeType minPacketSize = Fw::DpContainer::MIN_PACKET_SIZE;
     ASSERT_GT(minPacketSize, 1);
-    const FwSizeType bufferSize = STest::Pick::lowerUpper(1, minPacketSize - 1);
+    const U32 bufferSize = STest::Pick::lowerUpper(1, minPacketSize - 1);
     Fw::Buffer buffer(this->abstractState.m_bufferData, bufferSize);
     // Send the buffer
     this->invoke_to_bufferSendIn(0, buffer);
@@ -269,7 +269,7 @@ void TestState ::action__BufferSendIn__BufferTooSmallForData() {
     // Check events
     if (this->abstractState.m_bufferTooSmallForDataEventCount < DpWriterComponentBase::EVENTID_INVALIDHEADER_THROTTLE) {
         ASSERT_EVENTS_SIZE(1);
-        ASSERT_EVENTS_BufferTooSmallForData(0, buffer.getSize(), container.getPacketSize());
+        ASSERT_EVENTS_BufferTooSmallForData(0, buffer.getSize(), static_cast<U32>(container.getPacketSize()));
         this->abstractState.m_bufferTooSmallForDataEventCount++;
     } else {
         ASSERT_EVENTS_SIZE(0);
@@ -363,7 +363,7 @@ void TestState ::action__BufferSendIn__FileWriteError() {
     U8* const savedWriteResult = fileData.writeResult;
     fileData.writeResult = nullptr;
     // Adjust size result of write
-    fileData.writeSizeResult = STest::Pick::lowerUpper(0, fileSize);
+    fileData.writeSizeResult = STest::Pick::lowerUpper(0, static_cast<U32>(fileSize));
     // Send the buffer
     this->invoke_to_bufferSendIn(0, buffer);
     this->component.doDispatch();

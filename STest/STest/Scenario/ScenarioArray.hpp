@@ -29,11 +29,11 @@ namespace STest {
 
       //! Construct a ScenarioArray object
       ScenarioArray (
-          Scenario<State>** scenarios, //!< The scenarios in the array
-          const U32 size //!< The number of scenarios in the array
+          Scenario<State>** a_scenarios, //!< The scenarios in the array
+          const U32 a_size //!< The number of scenarios in the array
       ) :
-        size(size),
-        scenarios(scenarios),
+        size(a_size),
+        scenarios(a_scenarios),
         sequenceIndex(0)
       {
 

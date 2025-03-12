@@ -112,7 +112,7 @@ PosixFile::Status PosixFile::size(FwSignedSizeType& size_result) {
             status = Os::Posix::errno_to_file_status(errno_store);
         } else {
             // Return the file pointer back to the original position
-            off_t original = ::lseek(this->m_handle.m_file_descriptor, current_position, SEEK_SET);
+            off_t original = ::lseek(this->m_handle.m_file_descriptor, static_cast<off_t>(current_position), SEEK_SET);
             if ((PosixFileHandle::ERROR_RETURN_VALUE == original) || (current_position != original)) {
                 PlatformIntType errno_store = errno;
                 status = Os::Posix::errno_to_file_status(errno_store);
@@ -142,7 +142,7 @@ PosixFile::Status PosixFile::preallocate(FwSignedSizeType offset, FwSignedSizeTy
     // an attempt will be made to called posix_fallocate, and should that still return NOT_SUPPORTED then fallback
     // code is engaged to synthesize this behavior.
 #if _POSIX_C_SOURCE >= 200112L
-    PlatformIntType errno_status = ::posix_fallocate(this->m_handle.m_file_descriptor, offset, length);
+    PlatformIntType errno_status = ::posix_fallocate(this->m_handle.m_file_descriptor, static_cast<off_t>(offset), static_cast<off_t>(length));
     status = Os::Posix::errno_to_file_status(errno_status);
 #endif
     // When the operation is not supported or posix-API is not sufficient, fallback to a slower algorithm
@@ -186,7 +186,7 @@ PosixFile::Status PosixFile::preallocate(FwSignedSizeType offset, FwSignedSizeTy
 PosixFile::Status PosixFile::seek(FwSignedSizeType offset, PosixFile::SeekType seekType) {
     Status status = OP_OK;
     off_t actual =
-        ::lseek(this->m_handle.m_file_descriptor, offset, (seekType == SeekType::ABSOLUTE) ? SEEK_SET : SEEK_CUR);
+        ::lseek(this->m_handle.m_file_descriptor, static_cast<off_t>(offset), (seekType == SeekType::ABSOLUTE) ? SEEK_SET : SEEK_CUR);
     PlatformIntType errno_store = errno;
     if (actual == PosixFileHandle::ERROR_RETURN_VALUE) {
         status = Os::Posix::errno_to_file_status(errno_store);

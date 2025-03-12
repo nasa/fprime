@@ -6,6 +6,7 @@
 #
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
+
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/SystemResources.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/SystemResources.cpp"
@@ -22,8 +23,13 @@ set(UT_SOURCE_FILES
 )
 register_fprime_ut()
 get_module_name("${CMAKE_CURRENT_LIST_DIR}")
-# Implementation requires switch cascade
 if (TARGET ${MODULE_NAME}_ut_exe)
-    target_compile_options(${MODULE_NAME}_ut_exe PRIVATE -Wno-implicit-fallthrough)
+    target_compile_options(
+        ${MODULE_NAME}_ut_exe
+        PRIVATE
+        -Wno-conversion
+	# Implementation requires switch cascade
+        -Wno-implicit-fallthrough
+    )
 endif()
 

@@ -114,13 +114,13 @@ struct DpContainerHeader {
 
     //! Check the data hash
     void checkDataHash(const char* const file,  //!< The call site file name
-                              const U32 line,          //!< The call site line number
-                              Fw::Buffer& buffer       //!< The packet buffer
+                       const U32 line,          //!< The call site line number
+                       Fw::Buffer& buffer       //!< The packet buffer
     ) {
         Utils::HashBuffer computedHashBuffer;
         U8* const buffAddrBase = buffer.getData();
         U8* const dataAddr = &buffAddrBase[DpContainer::DATA_OFFSET];
-        Utils::Hash::hash(dataAddr, static_cast<U32>(this->m_dataSize), computedHashBuffer);
+        Utils::Hash::hash(dataAddr, this->m_dataSize, computedHashBuffer);
         DpContainer container(this->m_id, buffer);
         container.setDataSize(this->m_dataSize);
         const FwSizeType dataHashOffset = container.getDataHashOffset();

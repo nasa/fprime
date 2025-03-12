@@ -21,12 +21,12 @@ namespace Svc {
   namespace SequenceFiles {
 
     RelativeFile ::
-      RelativeFile(const U32 n, const Format::t format) :
-        File(format),
-        n(n)
+      RelativeFile(const U32 a_n, const Format::t a_format) :
+        File(a_format),
+        n(a_n)
     {
       Fw::String s;
-      s.format("relative_%u", n);
+      s.format("relative_%u", a_n);
       this->setName(s.toChar());
     }
 

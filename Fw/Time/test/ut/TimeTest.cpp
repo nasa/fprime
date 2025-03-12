@@ -76,7 +76,7 @@ TEST(TimeTestNominal,CopyTest) {
     // make time that's guaranteed to be different from default
     Fw::Time time1(
         (time0.getTimeBase() != TB_NONE ? TB_NONE : TB_PROC_TIME),
-        time0.getContext()+1,
+        static_cast<FwTimeContextStoreType>(time0.getContext()+1),
         time0.getSeconds()+1,
         time0.getUSeconds()+1
     );

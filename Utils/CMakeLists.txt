@@ -24,6 +24,10 @@ set(UT_MOD_DEPS
         Os
         )
 register_fprime_ut()
+set (UT_TARGET_NAME "${FPRIME_CURRENT_MODULE}_ut_exe")
+if (TARGET "${UT_TARGET_NAME}")
+    target_compile_options("${UT_TARGET_NAME}" PRIVATE -Wno-conversion)
+endif()
 
 # Module subdirectories
 

@@ -51,14 +51,14 @@ TEST(FwTlmTest,TlmPacketSerializeFill) {
 
     // fill a telemetry packet
 
-    for (FwSizeType entry = 0; entry < NUM_ENTRIES; entry++) {
+    for (U32 entry = 0; entry < NUM_ENTRIES; entry++) {
 
         // Serialize data
 
         Fw::TlmBuffer buffIn;
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,buffIn.serialize(static_cast<U32>(entry)));
         Fw::Time timeIn(TB_WORKSTATION_TIME,entry+1,entry+2);
-        U32 id = NUM_ENTRIES-entry;
+        U32 id = static_cast<U32>(NUM_ENTRIES-entry);
 
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,pktIn.addValue(id,timeIn,buffIn));
     }
@@ -81,7 +81,7 @@ TEST(FwTlmTest,TlmPacketSerializeFill) {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,pktOut.resetPktDeser());
 
     // empty the packet of entries
-    for (FwSizeType entry = 0; entry < NUM_ENTRIES; entry++) {
+    for (U32 entry = 0; entry < NUM_ENTRIES; entry++) {
         // Deserialize data
         Fw::TlmBuffer buffOut;
         Fw::Time timeOut;

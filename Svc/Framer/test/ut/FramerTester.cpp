@@ -57,7 +57,7 @@ FramerTester ::~FramerTester() {}
 void FramerTester ::test_com(U32 iterations) {
     for (U32 i = 0; i < iterations; i++) {
         Fw::ComBuffer com;
-        m_buffer.set(com.getBuffAddr(), com.getBuffLength());
+        m_buffer.set(com.getBuffAddr(), static_cast<Fw::Buffer::SizeType>(com.getBuffLength()));
         m_framed = false;
         m_sent = false;
         m_returned = false;

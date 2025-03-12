@@ -30,11 +30,11 @@ namespace STest {
 
       //! Construct a RandomScenario from an array of rules
       RandomScenario(
-          const char *const name, //!< The name of the scenario
+          const char *const a_name, //!< The name of the scenario
           Rule<State>** rules, //!< The rules in the array
           const U32 size //!< The size of the array
       ) :
-        InterleavedScenario<State>(name, new Scenario<State>*[size], size)
+        InterleavedScenario<State>(a_name, new Scenario<State>*[size], size)
       {
         assert(this->scenarioArray != nullptr);
         Scenario<State>** scenarios = this->scenarioArray->getScenarios();

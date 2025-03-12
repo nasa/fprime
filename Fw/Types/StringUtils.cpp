@@ -16,7 +16,7 @@ char* Fw::StringUtils::string_copy(char* destination, const char* source, FwSize
     FwSizeType source_len = string_length(source, num) + 1;
     FW_ASSERT(source + source_len <= destination || destination + num <= source);
 
-    char* returned = strncpy(destination, source, num);
+    char* returned = strncpy(destination, source, static_cast<size_t>(num));
     destination[num - 1] = '\0';
     return returned;
 }

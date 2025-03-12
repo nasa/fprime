@@ -38,7 +38,7 @@ Os::QueueInterface::Status Tester::shadow_send(const U8* buffer,
     QueueMessage qm;
     qm.priority = priority;
     qm.size = size;
-    std::memcpy(qm.data, buffer, size);
+    std::memcpy(qm.data, buffer, static_cast<size_t>(size));
     if (size > this->shadow.messageSize) {
         return QueueInterface::Status::SIZE_MISMATCH;
     } else if ((this->shadow.queue.size() == this->shadow.depth) &&
@@ -78,7 +78,7 @@ Os::QueueInterface::Status Tester::shadow_receive(U8* destination,
         return QueueInterface::Status::EMPTY;
     } else {
         const QueueMessage& qm = shadow.queue.top();
-        std::memcpy(destination, qm.data, qm.size);
+        std::memcpy(destination, qm.data, static_cast<size_t>(qm.size));
         actualSize = qm.size;
         priority = qm.priority;
         shadow.queue.pop();
@@ -94,7 +94,7 @@ void Tester::shadow_receive_unblock() {
 
     // Fill the outputs stored in the shadow receive buffer
     const QueueMessage& qm = shadow.queue.top();
-    std::memcpy(this->shadow.receive_block.destination, qm.data, qm.size);
+    std::memcpy(this->shadow.receive_block.destination, qm.data, static_cast<size_t>(qm.size));
     *this->shadow.receive_block.size = qm.size;
     *this->shadow.receive_block.priority = qm.priority;
     shadow.queue.pop();

@@ -5,6 +5,9 @@
 # MOD_DEPS: (optional) module dependencies
 #
 ####
+add_compile_options(
+  -Wno-double-promotion
+)
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/TypeDemo.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/TypeDemo.cpp"

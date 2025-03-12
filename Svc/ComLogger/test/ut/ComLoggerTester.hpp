@@ -52,6 +52,6 @@ namespace Svc {
       ComLogger comLogger;
   };
 
-};
+}
 
 #endif

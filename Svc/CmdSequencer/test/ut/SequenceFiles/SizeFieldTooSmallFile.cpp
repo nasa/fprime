@@ -18,8 +18,8 @@ namespace Svc {
   namespace SequenceFiles {
 
     SizeFieldTooSmallFile ::
-      SizeFieldTooSmallFile(const Format::t format) :
-        File("size_field_too_small", format)
+      SizeFieldTooSmallFile(const Format::t a_format) :
+        File("size_field_too_small", a_format)
     {
 
     }

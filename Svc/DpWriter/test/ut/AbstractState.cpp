@@ -33,7 +33,7 @@ Fw::Buffer AbstractState::getDpBuffer() {
     FW_ASSERT(bufferSize <= MAX_BUFFER_SIZE, static_cast<FwAssertArgType>(bufferSize),
               static_cast<FwAssertArgType>(MAX_BUFFER_SIZE));
     // Create the buffer
-    Fw::Buffer buffer(this->m_bufferData, bufferSize);
+    Fw::Buffer buffer(this->m_bufferData, static_cast<Fw::Buffer::SizeType>(bufferSize));
     // Create the container
     Fw::DpContainer container(id, buffer);
     // Update the priority
@@ -49,7 +49,7 @@ Fw::Buffer AbstractState::getDpBuffer() {
     for (FwIndexType i = 0; i < Fw::DpCfg::ProcType::NUM_CONSTANTS; i++) {
         const bool selector = static_cast<bool>(STest::Pick::lowerUpper(0, 1));
         if (selector) {
-            procTypes |= (1 << i);
+            procTypes = static_cast<Fw::DpCfg::ProcType::SerialType>(procTypes | (1 << i));
         }
     }
     container.setProcTypes(procTypes);
@@ -60,7 +60,8 @@ Fw::Buffer AbstractState::getDpBuffer() {
     // Randomize the data
     U8* const dataPtr = &this->m_bufferData[Fw::DpContainer::DATA_OFFSET];
     const FwSizeType dataUpperBound = Fw::DpContainer::DATA_OFFSET + dataSize;
-    FW_ASSERT(dataUpperBound <= bufferSize, dataUpperBound, bufferSize);
+    FW_ASSERT(dataUpperBound <= bufferSize, static_cast<FwAssertArgType>(dataUpperBound),
+              static_cast<FwAssertArgType>(bufferSize));
     for (FwSizeType i = 0; i <= dataSize; i++) {
         dataPtr[i] = static_cast<U8>(STest::Pick::any());
     }

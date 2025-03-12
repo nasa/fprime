@@ -42,6 +42,6 @@ namespace Svc {
 
   };
 
-};
+}
 
 #endif

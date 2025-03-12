@@ -75,10 +75,10 @@ namespace Svc {
         private:
 
           //! The data
-          U8 data[FILE_BUFFER_CAPACITY];
+          U8 m_data[FILE_BUFFER_CAPACITY];
 
           //! The index into the buffer
-          size_t index;
+          size_t m_index;
 
       };
 
