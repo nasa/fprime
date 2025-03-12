@@ -108,7 +108,7 @@ class CmdSplitterTester : public CmdSplitterGTestBase {
     //! The component under test
     //!
     CmdSplitter component;
-    NATIVE_INT_TYPE active_command_source;
+    FwIndexType active_command_source;
 };
 
 }  // end namespace Svc
