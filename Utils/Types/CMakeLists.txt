@@ -27,6 +27,7 @@ set(UT_SOURCE_FILES
 )
 # STest Includes for this UT
 set (UT_TARGET "Types_Circular_Buffer_ut_exe")
+register_fprime_ut("${UT_TARGET}")
 if (TARGET "${UT_TARGET}")
     target_compile_options("${UT_TARGET}" PRIVATE -Wno-conversion)
 endif()
