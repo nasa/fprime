@@ -15,8 +15,8 @@ set(UT_MOD_DEPS
 set(UT_SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/MaxHeap/MaxHeapTest.cpp"
 )
-set(TARGET_NAME "Types_Max_Heap_test")
-register_fprime_ut("${TARGET_NAME}")
-if (BUILD_TESTING)
-    target_compile_options("${TARGET_NAME}" PRIVATE -Wno-conversion)
+set(UT_TARGET "Types_Max_Heap_test")
+register_fprime_ut("${UT_TARGET}")
+if (TARGET "${UT_TARGET}")
+    target_compile_options("${UT_TARGET}" PRIVATE -Wno-conversion)
 endif()
