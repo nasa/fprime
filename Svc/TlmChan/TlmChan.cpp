@@ -16,14 +16,19 @@
 
 namespace Svc {
 
+// Definition of TLMCHAN_HASH_BUCKETS is >= number of telemetry ids
+static_assert(std::numeric_limits<FwChanIdType>::max() >= TLMCHAN_HASH_BUCKETS, "Cannot have more hash buckets than maximum telemetry ids in the system");
+// TLMCHAN_HASH_BUCKETS >= TLMCHAN_NUM_TLM_HASH_SLOTS >= 0
+static_assert(std::numeric_limits<FwChanIdType>::max() >= TLMCHAN_NUM_TLM_HASH_SLOTS, "Cannot have more hash slots than maximum telemetry ids in the system");
+
 TlmChan::TlmChan(const char* name) : TlmChanComponentBase(name), m_activeBuffer(0) {
     // clear slot pointers
-    for (NATIVE_UINT_TYPE entry = 0; entry < TLMCHAN_NUM_TLM_HASH_SLOTS; entry++) {
+    for (FwChanIdType entry = 0; entry < TLMCHAN_NUM_TLM_HASH_SLOTS; entry++) {
         this->m_tlmEntries[0].slots[entry] = nullptr;
         this->m_tlmEntries[1].slots[entry] = nullptr;
     }
     // clear buckets
-    for (NATIVE_UINT_TYPE entry = 0; entry < TLMCHAN_HASH_BUCKETS; entry++) {
+    for (FwChanIdType entry = 0; entry < TLMCHAN_HASH_BUCKETS; entry++) {
         this->m_tlmEntries[0].buckets[entry].used = false;
         this->m_tlmEntries[0].buckets[entry].updated = false;
         this->m_tlmEntries[0].buckets[entry].bucketNo = entry;
@@ -42,7 +47,7 @@ TlmChan::TlmChan(const char* name) : TlmChanComponentBase(name), m_activeBuffer(
 
 TlmChan::~TlmChan() {}
 
-NATIVE_UINT_TYPE TlmChan::doHash(FwChanIdType id) {
+FwChanIdType TlmChan::doHash(FwChanIdType id) {
     return (id % TLMCHAN_HASH_MOD_VALUE) % TLMCHAN_NUM_TLM_HASH_SLOTS;
 }
 
@@ -54,11 +59,11 @@ void TlmChan::pingIn_handler(const FwIndexType portNum, U32 key) {
 void TlmChan::TlmGet_handler(FwIndexType portNum, FwChanIdType id, Fw::Time& timeTag, Fw::TlmBuffer& val) {
     // Compute index for entry
 
-    NATIVE_UINT_TYPE index = this->doHash(id);
+    FwChanIdType index = this->doHash(id);
 
     // Search to see if channel has been stored
     TlmEntry* entryToUse = this->m_tlmEntries[this->m_activeBuffer].slots[index];
-    for (NATIVE_UINT_TYPE bucket = 0; bucket < TLMCHAN_HASH_BUCKETS; bucket++) {
+    for (FwChanIdType bucket = 0; bucket < TLMCHAN_HASH_BUCKETS; bucket++) {
         if (entryToUse) {  // If bucket exists, check id
             if (entryToUse->id == id) {
                 break;
@@ -81,14 +86,14 @@ void TlmChan::TlmGet_handler(FwIndexType portNum, FwChanIdType id, Fw::Time& tim
 void TlmChan::TlmRecv_handler(FwIndexType portNum, FwChanIdType id, Fw::Time& timeTag, Fw::TlmBuffer& val) {
     // Compute index for entry
 
-    NATIVE_UINT_TYPE index = this->doHash(id);
+    FwChanIdType index = this->doHash(id);
     TlmEntry* entryToUse = nullptr;
     TlmEntry* prevEntry = nullptr;
 
     // Search to see if channel has already been stored or a bucket needs to be added
     if (this->m_tlmEntries[this->m_activeBuffer].slots[index]) {
         entryToUse = this->m_tlmEntries[this->m_activeBuffer].slots[index];
-        for (NATIVE_UINT_TYPE bucket = 0; bucket < TLMCHAN_HASH_BUCKETS; bucket++) {
+        for (FwChanIdType bucket = 0; bucket < TLMCHAN_HASH_BUCKETS; bucket++) {
             if (entryToUse) {
                 if (entryToUse->id == id) {  // found the matching entry
                     break;
