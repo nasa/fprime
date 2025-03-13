@@ -44,8 +44,8 @@ void BufferRepeaterTester ::testRepeater() {
     ASSERT_EVENTS_AllocationSoftFailure_SIZE(0);
     ASSERT_from_portOut_SIZE(this->component.getNum_portOut_OutputPorts());
     ASSERT_EQ(fromPortHistory_portOut->size(), this->m_port_index_history.size());
-    for (NATIVE_INT_TYPE i = 0; i < this->component.getNum_portOut_OutputPorts(); i++) {
-        NATIVE_INT_TYPE port_index = this->m_port_index_history.at(i);
+    for (FwIndexType i = 0; i < this->component.getNum_portOut_OutputPorts(); i++) {
+        FwIndexType port_index = this->m_port_index_history.at(i);
         ASSERT_EQ(i, port_index);
         Fw::Buffer buffer_under_test = this->fromPortHistory_portOut->at(i).fwBuffer;
         ASSERT_EQ(buffer_under_test.getSize(), m_initial_buffer.getSize());
@@ -153,7 +153,7 @@ void BufferRepeaterTester ::connectPorts() {
     this->component.set_deallocate_OutputPort(0, this->get_from_deallocate(0));
 
     // portOut
-    for (NATIVE_INT_TYPE i = 0; i < this->component.getNum_portOut_OutputPorts(); ++i) {
+    for (FwIndexType i = 0; i < this->component.getNum_portOut_OutputPorts(); ++i) {
         this->component.set_portOut_OutputPort(i, this->get_from_portOut(i));
     }
 }
