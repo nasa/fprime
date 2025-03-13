@@ -84,7 +84,7 @@ namespace Svc {
   {
 
     // PingReturn
-    for (NATIVE_INT_TYPE i = 0; i < this->component.getNum_PingReturn_InputPorts(); ++i) {
+    for (FwIndexType i = 0; i < this->component.getNum_PingReturn_InputPorts(); ++i) {
         this->connect_to_PingReturn(
             i,
             this->component.get_PingReturn_InputPort(i)
@@ -104,7 +104,7 @@ namespace Svc {
     );
 
     // PingSend
-    for (NATIVE_INT_TYPE i = 0; i < this->component.getNum_PingSend_OutputPorts(); ++i) {
+    for (FwIndexType i = 0; i < this->component.getNum_PingSend_OutputPorts(); ++i) {
       this->component.set_PingSend_OutputPort(
           i,
           this->get_from_PingSend(i)
@@ -178,7 +178,7 @@ namespace Svc {
     this->override = false;
     this->override_key = 0;
 
-    for (U32 i = 0; i < this->numPingEntries; i++) {
+    for (FwIndexType i = 0; i < this->numPingEntries; i++) {
         this->keys[i] = 100000;
     }
   }
@@ -726,7 +726,7 @@ namespace Svc {
       this->component.m_key = 0;
 
       //reset cycle counts
-      for (U32 i = 0; i < this->numPingEntries; i++) {
+      for (FwIndexType i = 0; i < this->numPingEntries; i++) {
           this->component.m_pingTrackerEntries[i].cycleCount = 0;
       }
 
