@@ -11,7 +11,7 @@
 #include <cstdio>
 
 // Check the CMD_DISPATCHER_DISPATCH_TABLE_SIZE and CMD_DISPATCHER_SEQUENCER_TABLE_SIZE for overflow
-static_assert(CMD_DISPATCHER_DISPATCH_TABLE_SIZE <= std::numeric_limits<U32>::max(), "Opcode table limited to opcode range: 0 - 0xFFFFFFFF");
+static_assert(CMD_DISPATCHER_DISPATCH_TABLE_SIZE <= std::numeric_limits<FwOpcodeType>::max(), "Opcode table limited to opcode range");
 static_assert(CMD_DISPATCHER_SEQUENCER_TABLE_SIZE <= std::numeric_limits<U32>::max(), "Sequencer table limited to range of U32");
 
 namespace Svc {
@@ -31,7 +31,7 @@ namespace Svc {
     void CommandDispatcherImpl::compCmdReg_handler(FwIndexType portNum, FwOpcodeType opCode) {
         // search for an empty slot
         bool slotFound = false;
-        for (U32 slot = 0; slot < FW_NUM_ARRAY_ELEMENTS(this->m_entryTable); slot++) {
+        for (FwOpcodeType slot = 0; slot < FW_NUM_ARRAY_ELEMENTS(this->m_entryTable); slot++) {
             if ((not this->m_entryTable[slot].used) and (not slotFound)) {
                 this->m_entryTable[slot].opcode = opCode;
                 this->m_entryTable[slot].port = portNum;
@@ -101,7 +101,7 @@ namespace Svc {
         }
 
         // search for opcode in dispatch table
-        U32 entry;
+        FwOpcodeType entry;
         bool entryFound = false;
 
         for (entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_entryTable); entry++) {
@@ -184,7 +184,7 @@ namespace Svc {
 
     void CommandDispatcherImpl::CMD_CLEAR_TRACKING_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
         // clear tracking table
-        for (U32 entry = 0; entry < CMD_DISPATCHER_SEQUENCER_TABLE_SIZE; entry++) {
+        for (FwOpcodeType entry = 0; entry < CMD_DISPATCHER_SEQUENCER_TABLE_SIZE; entry++) {
             this->m_sequenceTracker[entry].used = false;
         }
         this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);

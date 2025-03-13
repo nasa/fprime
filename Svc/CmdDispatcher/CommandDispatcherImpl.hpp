@@ -132,7 +132,7 @@ namespace Svc {
 
             struct DispatchEntry {
                     bool used; //!< if entry has been used yet
-                    U32 opcode; //!< opcode of entry
+                    FwOpcodeType opcode; //!< opcode of entry
                     FwIndexType port; //!< which port the entry invokes
             } m_entryTable[CMD_DISPATCHER_DISPATCH_TABLE_SIZE]; //!< table of dispatch entries
 

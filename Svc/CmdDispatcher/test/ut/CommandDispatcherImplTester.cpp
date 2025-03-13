@@ -43,7 +43,7 @@ namespace Svc {
     void CommandDispatcherImplTester::runNominalDispatch() {
 
         // verify dispatch table is empty
-        for (U32 entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
+        for (FwOpcodeType entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
             ASSERT_TRUE(this->m_impl.m_entryTable[entry].used == false);
         }
 
@@ -164,7 +164,7 @@ namespace Svc {
     void CommandDispatcherImplTester::runNopCommands() {
 
         // verify dispatch table is empty
-        for (U32 entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
+        for (FwOpcodeType entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
             ASSERT_TRUE(this->m_impl.m_entryTable[entry].used == false);
         }
 
@@ -326,7 +326,7 @@ namespace Svc {
     void CommandDispatcherImplTester::runInvalidOpcodeDispatch() {
 
         // verify dispatch table is empty
-        for (U32 entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
+        for (FwOpcodeType entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
             ASSERT_TRUE(this->m_impl.m_entryTable[entry].used == false);
         }
 
@@ -408,7 +408,7 @@ namespace Svc {
     void CommandDispatcherImplTester::runFailedCommand() {
 
         // verify dispatch table is empty
-        for (U32 entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
+        for (FwOpcodeType entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
             ASSERT_TRUE(this->m_impl.m_entryTable[entry].used == false);
         }
 
@@ -627,7 +627,7 @@ namespace Svc {
 
     void CommandDispatcherImplTester::runInvalidCommand() {
         // verify dispatch table is empty
-        for (U32 entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
+        for (FwOpcodeType entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
             ASSERT_TRUE(this->m_impl.m_entryTable[entry].used == false);
         }
 
@@ -662,7 +662,7 @@ namespace Svc {
     void CommandDispatcherImplTester::runOverflowCommands() {
 
         // verify dispatch table is empty
-        for (U32 entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
+        for (FwOpcodeType entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
             ASSERT_TRUE(this->m_impl.m_entryTable[entry].used == false);
         }
 
@@ -760,7 +760,7 @@ namespace Svc {
     void CommandDispatcherImplTester::runClearCommandTracking() {
 
         // verify dispatch table is empty
-        for (U32 entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
+        for (FwOpcodeType entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
             ASSERT_TRUE(this->m_impl.m_entryTable[entry].used == false);
         }
 
