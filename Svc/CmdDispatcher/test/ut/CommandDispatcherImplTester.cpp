@@ -15,7 +15,7 @@
 #include <gtest/gtest.h>
 #include <Fw/Test/UnitTest.hpp>
 
-static_assert(CMD_DISPATCHER_SEQUENCER_TABLE_SIZE + 1 <= std::numeric_limits<U32>::max(), "Unit test depends on CMD_DISPATCHER_SEQUENCER_TABLE_SIZE + 1 fiting int U32");
+static_assert(CMD_DISPATCHER_SEQUENCER_TABLE_SIZE + 1 <= std::numeric_limits<U32>::max(), "Unit test depends on CMD_DISPATCHER_SEQUENCER_TABLE_SIZE + 1 within range of U32");
 
 namespace Svc {
     CommandDispatcherImplTester::CommandDispatcherImplTester(Svc::CommandDispatcherImpl& inst) :
