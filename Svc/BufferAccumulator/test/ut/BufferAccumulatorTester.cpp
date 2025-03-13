@@ -41,8 +41,8 @@ BufferAccumulatorTester ::BufferAccumulatorTester(bool doAllocateQueue)
 
   // Witch to BufferAccumulator_OpState::DRAIN at start so we don't have to
   // change ut
-  component.mode = BufferAccumulator_OpState::DRAIN;
-  component.send = true;
+  component.m_mode = BufferAccumulator_OpState::DRAIN;
+  component.m_send = true;
 
   if (this->doAllocateQueue) {
     Fw::MallocAllocator buffAccumMallocator;
