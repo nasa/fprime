@@ -26,10 +26,12 @@ namespace Svc {
 
       /* Create the timer */
       fd = timerfd_create (CLOCK_MONOTONIC, 0);
-
-      itval.it_interval.tv_sec = static_cast<I32>(interval/1000);
+      const FwSizeType interval_secs = interval/1000;
+      FW_ASSERT(static_cast<FwSizeType>(std::numeric_limits<I32>::max()) >= interval_secs,
+                static_cast<FwAssertArgType>(interval));
+      itval.it_interval.tv_sec = static_cast<I32>(interval_secs);
       itval.it_interval.tv_nsec = static_cast<I32>((interval*1000000)%1000000000);
-      itval.it_value.tv_sec = static_cast<I32>(interval/1000);
+      itval.it_value.tv_sec = static_cast<I32>(interval_secs);
       itval.it_value.tv_nsec = static_cast<I32>((interval*1000000)%1000000000);
 
       timerfd_settime (fd, 0, &itval, nullptr);

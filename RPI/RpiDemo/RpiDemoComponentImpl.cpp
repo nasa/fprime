@@ -229,7 +229,7 @@ namespace RPI {
       out.setData(reinterpret_cast<U8*>(const_cast<char*>(data.toChar())));
       out.setSize(data.length());
       this->SpiReadWrite_out(0, out, in);
-      for (FwSizeType byte = 0; byte < sizeof(inBuf); byte++) {
+      for (FwSizeType byte = 0; byte < static_cast<FwSizeType>(sizeof(inBuf)); byte++) {
           inBuf[byte] = isalpha(inBuf[byte])?inBuf[byte]:'*';
       }
       inBuf[sizeof(inBuf)-1] = 0;

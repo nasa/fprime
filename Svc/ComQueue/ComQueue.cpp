@@ -83,7 +83,10 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
                 // Message size is determined by the type of object being stored, which in turn is determined by the
                 // index of the entry. Those lower than COM_PORT_COUNT are Fw::ComBuffers and those larger Fw::Buffer.
                 entry.msgSize = (entryIndex < COM_PORT_COUNT) ? sizeof(Fw::ComBuffer) : sizeof(Fw::Buffer);
-                // Overflow check
+                // Overflow checks
+                FW_ASSERT((std::numeric_limits<FwSizeType>::max()/entry.depth) >= entry.msgSize,
+                          static_cast<FwAssertArgType>(entry.depth),
+                          static_cast<FwAssertArgType>(entry.msgSize));
                 FW_ASSERT(std::numeric_limits<FwSizeType>::max() - (entry.depth * entry.msgSize) >= totalAllocation);
                 totalAllocation += entry.depth * entry.msgSize;
                 currentPriorityIndex++;

@@ -100,7 +100,7 @@ class TlmPacketizer final : public TlmPacketizerComponentBase {
         FwChanIdType id;  //!< telemetry id stored in slot
         // Offsets into packet buffers.
         // -1 means that channel is not in that packet
-        FwSignedSizeType packetOffset[MAX_PACKETIZER_PACKETS];  //TODO: what to do here?
+        FwSignedSizeType packetOffset[MAX_PACKETIZER_PACKETS];
         TlmEntry* next;             //!< pointer to next bucket in table
         bool used;                  //!< if entry has been used
         bool ignored;               //!< ignored packet id

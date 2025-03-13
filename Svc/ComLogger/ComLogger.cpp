@@ -12,7 +12,8 @@
 #include <cstdio>
 
 namespace Svc {
-
+  static_assert(std::numeric_limits<U16>::max() <= std::numeric_limits<FwSignedSizeType>::max(),
+      "U16 must fit in the positive range of FwSignedSizeType");
   // ----------------------------------------------------------------------
   // Construction, initialization, and destruction
   // ----------------------------------------------------------------------
