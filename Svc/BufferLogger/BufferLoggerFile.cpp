@@ -205,7 +205,7 @@ namespace Svc {
     FwSignedSizeType size = static_cast<FwSignedSizeType>(length);
     const Os::File::Status fileStatus = this->m_osFile.write(reinterpret_cast<const U8*>(data), size);
     bool status;
-    if (fileStatus == Os::File::OP_OK && size == static_cast<FwSizeType>(length)) {
+    if (fileStatus == Os::File::OP_OK && static_cast<FwSizeType>(size) == length) {
       this->m_bytesWritten += length;
       status = true;
     }
