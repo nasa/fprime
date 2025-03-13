@@ -30,7 +30,7 @@ namespace Utils {
       // ----------------------------------------------------------------------
 
       //! The size type
-      using SizeType = NATIVE_INT_TYPE;
+      using SizeType = FwSizeType;
 
     public:
 

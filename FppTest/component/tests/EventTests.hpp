@@ -17,7 +17,7 @@
 #define EVENT_TEST_DECL(TYPE) void testEvent(FwIndexType portNum, FppTest::Types::TYPE& data);
 
 #define EVENT_TEST_HELPER_DECL(TYPE) \
-    void testEventHelper(FwIndexType portNum, FppTest::Types::TYPE& data, NATIVE_UINT_TYPE size);
+    void testEventHelper(FwIndexType portNum, FppTest::Types::TYPE& data, FwSizeType size);
 
 #define EVENT_TEST_DECLS                    \
     EVENT_TEST_DECL(NoParams)               \
