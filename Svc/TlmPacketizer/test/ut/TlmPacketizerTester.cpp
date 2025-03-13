@@ -866,7 +866,7 @@ void TlmPacketizerTester ::nonPacketizedChannelTest() {
     Fw::TlmBuffer buff;
 
     // start at non-used channel
-    for (NATIVE_UINT_TYPE channel = 1000; channel < 1000 + TLMPACKETIZER_MAX_MISSING_TLM_CHECK; channel++) {
+    for (FwChanIdType channel = 1000; channel < 1000 + TLMPACKETIZER_MAX_MISSING_TLM_CHECK; channel++) {
         this->clearEvents();
         this->invoke_to_TlmRecv(0, channel, ts, buff);
         ASSERT_EVENTS_SIZE(1);
@@ -882,7 +882,7 @@ void TlmPacketizerTester ::nonPacketizedChannelTest() {
 
     // sending the missing channels again should emit no events
 
-    for (NATIVE_UINT_TYPE channel = 1000; channel < 1000 + TLMPACKETIZER_MAX_MISSING_TLM_CHECK; channel++) {
+    for (FwChanIdType channel = 1000; channel < 1000 + TLMPACKETIZER_MAX_MISSING_TLM_CHECK; channel++) {
         this->clearEvents();
         this->invoke_to_TlmRecv(0, channel, ts, buff);
         ASSERT_EVENTS_SIZE(0);

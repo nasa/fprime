@@ -20,19 +20,19 @@ namespace Svc {
 
 struct TlmPacketizerChannelEntry {
     FwChanIdType id;        //!< Id of channel
-    NATIVE_UINT_TYPE size;  //!< serialized size of channel in bytes
+    FwSizeType size;  //!< serialized size of channel in bytes
 };
 
 struct TlmPacketizerPacket {
     const TlmPacketizerChannelEntry* list;  //!< pointer to a channel entry
     FwTlmPacketizeIdType id;                //!< packet ID
-    NATIVE_UINT_TYPE level;                 //!< packet level - used to select set of packets to send
-    NATIVE_UINT_TYPE numEntries;            //!< number of channels in packet
+    FwChanIdType level;                 //!< packet level - used to select set of packets to send
+    FwChanIdType numEntries;            //!< number of channels in packet
 };
 
 struct TlmPacketizerPacketList {
     const TlmPacketizerPacket* list[MAX_PACKETIZER_PACKETS];  //!<
-    NATIVE_UINT_TYPE numEntries;
+    FwChanIdType numEntries;
 };
 }  // namespace Svc
 
