@@ -528,8 +528,8 @@ namespace Svc {
   void FileManagerTester ::
     system(const char *const cmd)
   {
-    const NATIVE_INT_TYPE status = ::system(cmd);
-    ASSERT_EQ(static_cast<NATIVE_INT_TYPE>(0), status);
+    const PlatformIntType status = ::system(cmd);
+    ASSERT_EQ(static_cast<PlatformIntType>(0), status);
   }
 
   void FileManagerTester ::

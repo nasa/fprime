@@ -175,7 +175,7 @@ namespace Svc {
         ) {
 
         // first, iterate through severity filters
-        for (NATIVE_UINT_TYPE filter = 0; filter < FilterSeverity::NUM_CONSTANTS; filter++) {
+        for (FwEnumStoreType filter = 0; filter < FilterSeverity::NUM_CONSTANTS; filter++) {
            FilterSeverity filterState(static_cast<FilterSeverity::t>(filter));
            this->log_ACTIVITY_LO_SEVERITY_FILTER_STATE(
                     filterState,

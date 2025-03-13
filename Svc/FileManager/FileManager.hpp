@@ -119,7 +119,7 @@ namespace Svc {
 
       //! A system command with no arguments
       //!
-      NATIVE_INT_TYPE systemCall(
+      PlatformIntType systemCall(
           const Fw::CmdStringArg& command, //!< The command
           const Fw::CmdStringArg& logFileName //!< The log file name
       ) const;
