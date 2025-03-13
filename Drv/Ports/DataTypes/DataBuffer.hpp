@@ -15,7 +15,7 @@ namespace Drv {
                 SERIALIZED_SIZE = DATA_BUFFER_SIZE + sizeof(FwBuffSizeType)
             };
 
-            DataBuffer(const U8 *args, NATIVE_UINT_TYPE size);
+            DataBuffer(const U8 *args, FwSizeType size);
             DataBuffer();
             DataBuffer(const DataBuffer& other);
             virtual ~DataBuffer();

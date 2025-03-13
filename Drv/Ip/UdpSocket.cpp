@@ -120,7 +120,7 @@ SocketIpStatus UdpSocket::bind(const PlatformIntType fd) {
 
 SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
     SocketIpStatus status = SOCK_SUCCESS;
-    NATIVE_INT_TYPE socketFd = -1;
+    PlatformIntType socketFd = -1;
     struct sockaddr_in address;
 
     U16 port = this->m_port;

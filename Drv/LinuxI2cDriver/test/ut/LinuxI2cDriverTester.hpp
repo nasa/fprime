@@ -44,7 +44,7 @@ namespace Drv {
 
       //! To do
       //!
-      void sendData(U32 addr, U8* data, NATIVE_INT_TYPE size);
+      void sendData(U32 addr, U8* data, Fw::Buffer::SizeType size);
 
       void open(const char* device);
 

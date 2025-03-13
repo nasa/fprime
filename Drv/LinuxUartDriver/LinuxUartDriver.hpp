@@ -97,7 +97,7 @@ class LinuxUartDriver final : public LinuxUartDriverComponentBase {
                                  Fw::Buffer& serBuffer);
 
 
-    NATIVE_INT_TYPE m_fd;  //!< file descriptor returned for I/O device
+    PlatformIntType m_fd;  //!< file descriptor returned for I/O device
     U32 m_allocationSize; //!< size of allocation request to memory manager
     const char* m_device;  //!< original device path
 

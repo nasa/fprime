@@ -71,8 +71,8 @@ namespace Drv {
             ~LinuxSpiDriverComponentImpl();
 
             //! Open device
-            bool open(NATIVE_INT_TYPE device,
-                      NATIVE_INT_TYPE select,
+            bool open(FwIndexType device,
+                      FwIndexType select,
                       SpiFrequency clock,
                       SpiMode spiMode = SpiMode::SPI_MODE_CPOL_LOW_CPHA_LOW);
 
@@ -87,9 +87,9 @@ namespace Drv {
             void SpiReadWrite_handler(const FwIndexType portNum, /*!< The port number*/
             Fw::Buffer &WriteBuffer, Fw::Buffer &readBuffer);
 
-            NATIVE_INT_TYPE m_fd;
-            NATIVE_INT_TYPE m_device;
-            NATIVE_INT_TYPE m_select;
+            PlatformIntType m_fd;
+            FwIndexType m_device;
+            FwIndexType m_select;
             U32 m_bytes;
 
     };

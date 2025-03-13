@@ -3,7 +3,7 @@
 
 namespace Drv {
 
-    DataBuffer::DataBuffer(const U8 *args, NATIVE_UINT_TYPE size) {
+    DataBuffer::DataBuffer(const U8 *args, FwSizeType size) {
         Fw::SerializeStatus stat = Fw::SerializeBufferBase::setBuff(args,size);
         FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<FwAssertArgType>(stat));
     }
