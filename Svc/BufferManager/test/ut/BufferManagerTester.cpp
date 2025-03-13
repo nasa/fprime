@@ -20,16 +20,16 @@
 
 
 // Bin buffer sizes/numbers
-static const NATIVE_UINT_TYPE BIN0_BUFFER_SIZE = 10;
-static const NATIVE_UINT_TYPE BIN0_NUM_BUFFERS = 2;
-static const NATIVE_UINT_TYPE BIN1_BUFFER_SIZE = 12;
-static const NATIVE_UINT_TYPE BIN1_NUM_BUFFERS = 4;
-static const NATIVE_UINT_TYPE BIN2_BUFFER_SIZE = 100;
-static const NATIVE_UINT_TYPE BIN2_NUM_BUFFERS = 3;
+static const Fw::Buffer::SizeType BIN0_BUFFER_SIZE = 10;
+static const U16 BIN0_NUM_BUFFERS = 2;
+static const Fw::Buffer::SizeType BIN1_BUFFER_SIZE = 12;
+static const U16 BIN1_NUM_BUFFERS = 4;
+static const Fw::Buffer::SizeType BIN2_BUFFER_SIZE = 100;
+static const U16 BIN2_NUM_BUFFERS = 3;
 
 // Other constants
-static const NATIVE_UINT_TYPE MEM_ID = 49;
-static const NATIVE_UINT_TYPE MGR_ID = 32;
+static const FwEnumStoreType MEM_ID = 49;
+static const U16 MGR_ID = 32;
 
 // Define our own instrumented allocator for testing
 class TestAllocator: public Fw::MemAllocator {
@@ -63,11 +63,11 @@ class TestAllocator: public Fw::MemAllocator {
             this->m_alloc.deallocate(identifier,ptr);
         }
 
-        NATIVE_UINT_TYPE getId() {
+        FwEnumStoreType getId() {
             return this->m_reqId;
         }
 
-        NATIVE_UINT_TYPE getSize() {
+        FwSizeType getSize() {
             return this->m_reqSize;
         }
 
@@ -142,7 +142,7 @@ namespace Svc {
       REQUIREMENT("FPRIME-BM-005");
 
       // check that enough memory was requested
-      NATIVE_UINT_TYPE memSize =
+      FwSizeType memSize =
         (BIN0_NUM_BUFFERS + BIN1_NUM_BUFFERS + BIN2_NUM_BUFFERS)*sizeof(Svc::BufferManagerComponentImpl::AllocatedBuffer) +
         (BIN0_NUM_BUFFERS*BIN0_BUFFER_SIZE + BIN1_NUM_BUFFERS*BIN1_BUFFER_SIZE + BIN2_NUM_BUFFERS*BIN2_BUFFER_SIZE);
       ASSERT_EQ(memSize,alloc.getSize());
@@ -154,7 +154,7 @@ namespace Svc {
       U8 *mem = reinterpret_cast<U8*>(alloc.getMem()) + this->component.m_numStructs*sizeof(Svc::BufferManagerComponentImpl::AllocatedBuffer); ;
 
       // check the buffer properties
-      for (NATIVE_UINT_TYPE entry = 0; entry < this->component.m_numStructs; entry++) {
+      for (U16 entry = 0; entry < this->component.m_numStructs; entry++) {
           // check context ID
           ASSERT_EQ(this->component.m_buffers[entry].buff.getContext(),((MGR_ID << 16)| entry));
           // check allocation state
@@ -199,7 +199,7 @@ namespace Svc {
 
       Fw::Buffer buffs[BIN1_NUM_BUFFERS];
 
-      for (NATIVE_UINT_TYPE b=0; b<BIN1_NUM_BUFFERS; b++) {
+      for (U16 b=0; b<BIN1_NUM_BUFFERS; b++) {
           // Get the buffers
           buffs[b] = this->invoke_to_bufferGetCallee(0,BIN1_BUFFER_SIZE);
           // check allocation state
@@ -240,8 +240,8 @@ namespace Svc {
 
       bool returned[BIN1_NUM_BUFFERS] = {false};
 
-      for (NATIVE_UINT_TYPE b=0; b<BIN1_NUM_BUFFERS; b++) {
-          NATIVE_UINT_TYPE entry;
+      for (U16 b=0; b<BIN1_NUM_BUFFERS; b++) {
+          U16 entry;
           while (true) {
               entry = rand() % BIN1_NUM_BUFFERS;
               if (not returned[entry]) {
@@ -273,7 +273,7 @@ namespace Svc {
       ASSERT_TLM_EmptyBuffs(0,1);
 
       // all buffers should be deallocated
-      for (NATIVE_UINT_TYPE b=0; b<this->component.m_numStructs; b++) {
+      for (U16 b=0; b<this->component.m_numStructs; b++) {
           ASSERT_FALSE(this->component.m_buffers[b].allocated);
       }
 
@@ -304,7 +304,7 @@ namespace Svc {
       // BufferManager should be able to provide the whole pool worth of buffers
       // for a requested size smaller than the smallest bin.
 
-      for (NATIVE_UINT_TYPE b=0; b<BIN0_NUM_BUFFERS+BIN1_NUM_BUFFERS+BIN2_NUM_BUFFERS; b++) {
+      for (U16 b=0; b<BIN0_NUM_BUFFERS+BIN1_NUM_BUFFERS+BIN2_NUM_BUFFERS; b++) {
           // Get the buffers
           buffs[b] = this->invoke_to_bufferGetCallee(0,BIN0_BUFFER_SIZE);
           // check allocation state
@@ -339,7 +339,7 @@ namespace Svc {
       this->clearHistory();
 
 
-      for (NATIVE_UINT_TYPE b=0; b<BIN0_NUM_BUFFERS+BIN1_NUM_BUFFERS+BIN2_NUM_BUFFERS; b++) {
+      for (U16 b=0; b<BIN0_NUM_BUFFERS+BIN1_NUM_BUFFERS+BIN2_NUM_BUFFERS; b++) {
           // return the buffer
           this->invoke_to_bufferSendIn(0,buffs[b]);
           // check allocation state
@@ -368,7 +368,7 @@ namespace Svc {
       this->clearHistory();
 
       // all buffers should be deallocated
-      for (NATIVE_UINT_TYPE b=0; b<this->component.m_numStructs; b++) {
+      for (U16 b=0; b<this->component.m_numStructs; b++) {
           ASSERT_FALSE(this->component.m_buffers[b].allocated);
       }
 
@@ -378,7 +378,7 @@ namespace Svc {
       // BufferManager should be able to provide the BIN1 and BIN2 worth of buffers
       // for a requested size just smaller than the BIN1 size
 
-      for (NATIVE_UINT_TYPE b=0; b<BIN1_NUM_BUFFERS+BIN2_NUM_BUFFERS; b++) {
+      for (U16 b=0; b<BIN1_NUM_BUFFERS+BIN2_NUM_BUFFERS; b++) {
           // Get the buffers
           buffs[b] = this->invoke_to_bufferGetCallee(0,BIN1_BUFFER_SIZE);
           // check allocation state - should be allocating from bin 1
@@ -404,7 +404,7 @@ namespace Svc {
       // clear histories
       this->clearHistory();
 
-      for (NATIVE_UINT_TYPE b=0; b<BIN1_NUM_BUFFERS+BIN2_NUM_BUFFERS; b++) {
+      for (U16 b=0; b<BIN1_NUM_BUFFERS+BIN2_NUM_BUFFERS; b++) {
           // return the buffer
           this->invoke_to_bufferSendIn(0,buffs[b]);
           // check allocation state - should be freeing from bin 1
@@ -430,14 +430,14 @@ namespace Svc {
       this->clearHistory();
 
       // all buffers should be deallocated
-      for (NATIVE_UINT_TYPE b=0; b<this->component.m_numStructs; b++) {
+      for (U16 b=0; b<this->component.m_numStructs; b++) {
           ASSERT_FALSE(this->component.m_buffers[b].allocated);
       }
 
       // BufferManager should be able to provide the BIN2 worth of buffers
       // for a requested size just smaller than the BIN2 size
 
-      for (NATIVE_UINT_TYPE b=0; b<BIN2_NUM_BUFFERS; b++) {
+      for (U16 b=0; b<BIN2_NUM_BUFFERS; b++) {
           // Get the buffers
           buffs[b] = this->invoke_to_bufferGetCallee(0,BIN2_BUFFER_SIZE);
           // check allocation state - should be allocating from bin 1
@@ -464,7 +464,7 @@ namespace Svc {
       this->clearHistory();
 
 
-      for (NATIVE_UINT_TYPE b=0; b<BIN2_NUM_BUFFERS; b++) {
+      for (U16 b=0; b<BIN2_NUM_BUFFERS; b++) {
           // return the buffer
           this->invoke_to_bufferSendIn(0,buffs[b]);
           // check allocation state - should be freeing from bin 1
@@ -487,7 +487,7 @@ namespace Svc {
       ASSERT_TLM_EmptyBuffs(0,3);
 
       // all buffers should be deallocated
-      for (NATIVE_UINT_TYPE b=0; b<this->component.m_numStructs; b++) {
+      for (U16 b=0; b<this->component.m_numStructs; b++) {
           ASSERT_FALSE(this->component.m_buffers[b].allocated);
       }
 
