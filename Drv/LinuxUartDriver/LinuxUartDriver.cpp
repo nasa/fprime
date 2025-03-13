@@ -302,11 +302,11 @@ Drv::SendStatus LinuxUartDriver ::send_handler(const FwIndexType portNum, Fw::Bu
                   static_cast<FwAssertArgType>(serBuffer.getSize()));
         size_t xferSize = static_cast<size_t>(serBuffer.getSize());
 
-        PlatformIntType stat = ::write(this->m_fd, data, xferSize);
+        ssize_t stat = ::write(this->m_fd, data, xferSize);
 
-        if (-1 == stat || stat != xferSize) {
+        if (-1 == stat || static_cast<size_t>(stat) != xferSize) {
           Fw::LogStringArg _arg = this->m_device;
-          this->log_WARNING_HI_WriteError(_arg, stat);
+          this->log_WARNING_HI_WriteError(_arg, static_cast<I32>(stat));
           status = Drv::SendStatus::SEND_ERROR;
         }
     }
