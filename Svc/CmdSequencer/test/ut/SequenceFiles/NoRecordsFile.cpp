@@ -26,7 +26,7 @@ namespace Svc {
 
         void NoRecordsFile::serializeFPrime(Fw::SerializeBufferBase& buffer) {
             // Header
-            const NATIVE_INT_TYPE numRecs = 0;
+            const FwSizeType numRecs = 0;
             const U32 recordDataSize = numRecs * FPrime::Records::STANDARD_SIZE;
             const U32 dataSize = recordDataSize + FPrime::CRCs::SIZE;
             const TimeBase timeBase = TB_WORKSTATION_TIME;

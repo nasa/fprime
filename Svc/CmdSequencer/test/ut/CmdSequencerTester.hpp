@@ -39,7 +39,7 @@ namespace Svc {
       // Constants
       // ----------------------------------------------------------------------
 
-      static const NATIVE_UINT_TYPE TEST_SEQ_BUFFER_SIZE = 255;
+      static const FwSizeType TEST_SEQ_BUFFER_SIZE = 255;
 
     protected:
 

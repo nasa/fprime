@@ -529,7 +529,7 @@ namespace Svc {
       //! Sequence will quit if a command takes longer than the number of
       //! seconds in the timeout value.
       void setTimeout(
-          const NATIVE_UINT_TYPE seconds //!< The number of seconds
+          const U32 seconds //!< The number of seconds
       );
 
       //! (Optional) Set the sequence format.
@@ -580,7 +580,7 @@ namespace Svc {
       //! Handler for input port schedIn
       void schedIn_handler(
           FwIndexType portNum, //!< The port number
-          NATIVE_UINT_TYPE order //!< The call order
+          U32 order //!< The call order
       );
 
       //! Handler for input port seqRunIn
@@ -768,7 +768,7 @@ namespace Svc {
       U32 m_sequencesCompletedCount;
 
       //! timeout value
-      NATIVE_UINT_TYPE m_timeout;
+      U32 m_timeout;
 
       //! timeout timer
       Timer m_cmdTimeoutTimer;

@@ -77,7 +77,7 @@ namespace Svc {
       Fw::Time testTime(TB_WORKSTATION_TIME, 1, 1);
       this->setTestTime(testTime);
       // Write the file
-      NATIVE_INT_TYPE numRecords = 1;
+      FwSizeType numRecords = 1;
       SequenceFiles::BadDescriptorFile file(numRecords, this->format);
       file.write();
       // Validate the file
@@ -127,7 +127,7 @@ namespace Svc {
       Fw::Time testTime(TB_WORKSTATION_TIME, 1, 1);
       this->setTestTime(testTime);
       // Write the file
-      const NATIVE_INT_TYPE numRecords = 5;
+      const FwSizeType numRecords = 5;
       SequenceFiles::BadTimeBaseFile file(numRecords, this->format);
       file.write();
       // Validate the file
