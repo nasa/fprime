@@ -14,7 +14,8 @@ In F´, fixed width types map to the standard definitions either in the C standa
 below. Since platforms are not guaranteed to support all types (e.g. 64bits integers) these types can be turned off
 by setting a configuration field to `0` in the platform-supplied `PlatformTypes.h` header.  These types are on by
 default and users must turn off types their compiler or platform does not support. Each type also defines a matching 
-format specifier for use with the `printf` family of functions.
+format specifier for use with the `printf` family of functions. Note that C/C++ always promotes floats to doubles so
+the correct format specifier for a F32 is PRI_F64 as indicated in the table below.
 
 
 | F´ Type | Equivalent   | Format Specifier | `PlatformTypes.h` Configuration Field |
@@ -27,7 +28,7 @@ format specifier for use with the `printf` family of functions.
 | U16     | uint16_t     | PRI_U16          | FW_HAS_16_BIT                         |
 | U32     | uint32_t     | PRI_U32          | FW_HAS_32_BIT                         |
 | U64     | uint64_t     | PRI_U64          | FW_HAS_64_BIT                         |
-| F32     | float        | PRI_F32          | n/a                                   |
+| F32     | float        | PRI_F64          | n/a                                   |
 | F64     | double       | PRI_F64          | FW_HAS_F64                            |
 
 Platform developers should include `stdint.h` or equivalent in their `PlatformTypes.h` to ensure F´ can construct a
