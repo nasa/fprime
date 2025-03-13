@@ -13,21 +13,22 @@ This document describes: fixed-width types and logical types.
 In F´, fixed width types map to the standard definitions either in the C standard or in the `stdint.h` header as seen
 below. Since platforms are not guaranteed to support all types (e.g. 64bits integers) these types can be turned off
 by setting a configuration field to `0` in the platform-supplied `PlatformTypes.h` header.  These types are on by
-default and users must turn off types their compiler or platform does not support.
+default and users must turn off types their compiler or platform does not support. Each type also defines a matching 
+format specifier for use with the `printf` family of functions.
 
 
-| F´ Type | Equivalent   | `PlatformTypes.h` Configuration Field |
-|---------|--------------|---------------------------------------|
-| I8      | int8_t       | n/a                                   |
-| I16     | int16_t      | FW_HAS_16_BIT                         |
-| I32     | int32_t      | FW_HAS_32_BIT                         |
-| I64     | int64_t      | FW_HAS_64_BIT                         |
-| U8      | uint8_t      | n/a                                   |
-| U16     | uint16_t     | FW_HAS_16_BIT                         |
-| U32     | uint32_t     | FW_HAS_32_BIT                         |
-| U64     | uint64_t     | FW_HAS_64_BIT                         |
-| F32     | float        | n/a                                   |
-| F64     | double       | FW_HAS_F64                            |
+| F´ Type | Equivalent   | Format Specifier | `PlatformTypes.h` Configuration Field |
+|---------|--------------|------------------|---------------------------------------|
+| I8      | int8_t       | PRI_I8           | n/a                                   |
+| I16     | int16_t      | PRI_I16          | FW_HAS_16_BIT                         |
+| I32     | int32_t      | PRI_I32          | FW_HAS_32_BIT                         |
+| I64     | int64_t      | PRI_I64          | FW_HAS_64_BIT                         |
+| U8      | uint8_t      | PRI_U8           | n/a                                   |
+| U16     | uint16_t     | PRI_U16          | FW_HAS_16_BIT                         |
+| U32     | uint32_t     | PRI_U32          | FW_HAS_32_BIT                         |
+| U64     | uint64_t     | PRI_U64          | FW_HAS_64_BIT                         |
+| F32     | float        | PRI_F32          | n/a                                   |
+| F64     | double       | PRI_F64          | FW_HAS_F64                            |
 
 Platform developers should include `stdint.h` or equivalent in their `PlatformTypes.h` to ensure F´ can construct a
 mapping from the C equivalents to the F´ type. If for some reason that header does not exist or does not define all
