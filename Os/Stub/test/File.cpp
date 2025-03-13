@@ -105,7 +105,7 @@ FileInterface::Status TestFile::read(U8 *buffer, FwSignedSizeType &size, WaitTyp
     // Copy read data if set
     if (nullptr != StaticData::data.readResult) {
         size = FW_MIN(size, StaticData::data.readResultSize - StaticData::data.pointer);
-        (void) ::memcpy(buffer, StaticData::data.readResult + StaticData::data.pointer, size);
+        (void) ::memcpy(buffer, StaticData::data.readResult + StaticData::data.pointer, static_cast<size_t>(size));
         StaticData::data.pointer += size;
     } else {
         size = StaticData::data.readSizeResult;
@@ -121,7 +121,7 @@ FileInterface::Status TestFile::write(const U8* buffer, FwSignedSizeType &size, 
     // Copy read data if set
     if (nullptr != StaticData::data.writeResult) {
         size = FW_MIN(size, StaticData::data.writeResultSize - StaticData::data.pointer);
-        (void) ::memcpy(StaticData::data.writeResult + StaticData::data.pointer, buffer, size);
+        (void) ::memcpy(StaticData::data.writeResult + StaticData::data.pointer, buffer, static_cast<size_t>(size));
         StaticData::data.pointer += size;
     } else {
         size = StaticData::data.writeSizeResult;

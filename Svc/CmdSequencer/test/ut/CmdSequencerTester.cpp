@@ -23,10 +23,10 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   CmdSequencerTester ::
-    CmdSequencerTester(const SequenceFiles::File::Format::t format) :
+    CmdSequencerTester(const SequenceFiles::File::Format::t a_format) :
       CmdSequencerGTestBase("Tester", MAX_HISTORY_SIZE),
       component("CmdSequencer"),
-      format(format),
+      format(a_format),
       sequences(this->component)
   {
     this->initComponents();

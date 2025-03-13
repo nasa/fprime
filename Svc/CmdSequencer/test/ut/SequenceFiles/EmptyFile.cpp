@@ -18,8 +18,8 @@ namespace Svc {
   namespace SequenceFiles {
 
     EmptyFile ::
-      EmptyFile(const Format::t format) :
-        File("empty", format)
+      EmptyFile(const Format::t a_format) :
+        File("empty", a_format)
     {
 
     }

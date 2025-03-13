@@ -81,7 +81,7 @@ TEST(SerializationTest, Serialization1) {
     ASSERT_EQ(0, buff.m_serLoc);
     ASSERT_EQ(0, buff.m_deserLoc);
 
-    I8 i8t1 = 0xFF;
+    I8 i8t1 = static_cast<I8>(0xFF);
     I8 i8t2 = 0;
 
     stat1 = buff.serialize(i8t1);
@@ -135,7 +135,7 @@ TEST(SerializationTest, Serialization1) {
     printf("I16 test\n");
 #endif
 
-    I16 i16t1 = 0xABCD;
+    I16 i16t1 = static_cast<I16>(0xABCD);
     I16 i16t2 = 0;
 
     buff.resetSer();
@@ -667,7 +667,7 @@ TEST(PerformanceTest, SerPerfTest) {
     timer.stop();
 
     printf("%d iterations took %d us (%f each).\n", iterations, timer.getDiffUsec(),
-           static_cast<F32>(timer.getDiffUsec()) / static_cast<F32>(iterations));
+           static_cast<F64>(timer.getDiffUsec()) / iterations);
 }
 
 TEST(PerformanceTest, StructCopyTest) {
@@ -694,7 +694,7 @@ TEST(PerformanceTest, StructCopyTest) {
     timer.stop();
 
     printf("%d iterations took %d us (%f each).\n", iterations, timer.getDiffUsec(),
-           static_cast<F32>(timer.getDiffUsec()) / static_cast<F32>(iterations));
+           static_cast<F64>(timer.getDiffUsec()) / iterations);
 }
 
 TEST(PerformanceTest, ClassCopyTest) {
@@ -714,7 +714,7 @@ TEST(PerformanceTest, ClassCopyTest) {
     timer.stop();
 
     printf("%d iterations took %d us (%f each).\n", iterations, timer.getDiffUsec(),
-           static_cast<F32>(timer.getDiffUsec()) / static_cast<F32>(iterations));
+           static_cast<F64>(timer.getDiffUsec()) / iterations);
 }
 
 void printSizes() {
@@ -1216,7 +1216,7 @@ TEST(PerformanceTest, F64SerPerfTest) {
     timer.stop();
 
     printf("%" PRI_FwSizeType " iterations took %d us (%f us each).\n", iters, timer.getDiffUsec(),
-           static_cast<F32>(timer.getDiffUsec()) / static_cast<F32>(iters));
+           static_cast<F64>(timer.getDiffUsec()) / static_cast<F64>(iters));
 }
 
 TEST(AllocatorTest, MallocAllocatorTest) {

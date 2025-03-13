@@ -34,7 +34,8 @@ void checkHeader(FwDpIdType id, Fw::Buffer& buffer, DpContainer& container) {
     container.setTimeTag(timeTag);
     // Set the processing types
     const FwSizeType numProcTypeStates = 1 << DpCfg::ProcType::NUM_CONSTANTS;
-    const DpCfg::ProcType::SerialType procTypes = STest::Pick::startLength(0, numProcTypeStates);
+    const auto procTypes =
+      static_cast<DpCfg::ProcType::SerialType>(STest::Pick::startLength(0, numProcTypeStates));
     container.setProcTypes(procTypes);
     // Set the user data
     for (U8& data : userData) {

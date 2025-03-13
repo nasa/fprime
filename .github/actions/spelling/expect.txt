@@ -24,7 +24,7 @@ ANamespace
 anotherchan
 anotherparam
 apad
-APID
+apid
 APIDOCS
 aports
 apos
@@ -362,14 +362,17 @@ genshi
 getblocks
 getchildren
 getcontext
+getcrc
 getdata
 getdefaultencoding
 getextern
 getf
 geti
 getinput
+getlength
 getm
 getquaternion
+getstart
 gett
 gettime
 getty
@@ -517,6 +520,7 @@ listdir
 Listst
 LJR
 lld
+llu
 LOCALSTATEDIR
 LOGGERRULES
 loglvl
