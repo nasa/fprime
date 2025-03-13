@@ -78,6 +78,10 @@ functions.
 | PlatformIntType         | PRI_PlatformIntType         | Deprecated (see note)       |
 | PlatformUIntType        | PRI_PlatformUIntType        | Deprecated (see note)       |
 
+
+> [!WARNING]
+> `PlatformPointerCastType` values shall never be sent nor used outside the address space where a value was initialized because these values represent pointers only valid in a single address space.
+
 A complete definition of each type for a given platform must be supplied within `PlatformTypes.h` as shown in the
 example below. Notice the type is defined along with a format specifier.
 
