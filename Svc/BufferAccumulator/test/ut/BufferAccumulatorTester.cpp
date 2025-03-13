@@ -26,7 +26,7 @@ namespace Svc {
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-BufferAccumulatorTester ::BufferAccumulatorTester(bool doAllocateQueue)
+BufferAccumulatorTester ::BufferAccumulatorTester(bool a_doAllocateQueue)
     :
 #if FW_OBJECT_NAMES == 1
       BufferAccumulatorGTestBase("Tester", MAX_HISTORY_SIZE),
@@ -35,7 +35,7 @@ BufferAccumulatorTester ::BufferAccumulatorTester(bool doAllocateQueue)
       BufferAccumulatorGTestBase(MAX_HISTORY_SIZE),
       component(),
 #endif
-      doAllocateQueue(doAllocateQueue) {
+      doAllocateQueue(a_doAllocateQueue) {
   this->initComponents();
   this->connectPorts();
 

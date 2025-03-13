@@ -184,7 +184,7 @@ namespace Svc {
                 (static_cast<FwSizeType>(sizeof(AllocatedBuffer)) * this->m_bufferBins.bins[bin].numBuffers); // allocate the structs to track the buffers
             // Total structures is bounded by U16 maximum value to fit in half of context (U32)
             FW_ASSERT((std::numeric_limits<U16>::max() - this->m_numStructs) >= this->m_bufferBins.bins[bin].numBuffers);
-            this->m_numStructs += this->m_bufferBins.bins[bin].numBuffers;
+            this->m_numStructs = static_cast<U16>(this->m_numStructs + this->m_bufferBins.bins[bin].numBuffers);
         }
     }
 

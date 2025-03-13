@@ -117,7 +117,7 @@ void FprimeDeframerTester::injectChecksum(U8* data, FwSizeType size) {
     crc_calculator.final(crc_result);
     // Inject the checksum into the data
     for (FwSizeType i = 0; i < 4; i++) {
-        data[size - 4 + i] = (crc_result.asBigEndianU32() >> (8 * (3 - i)) & 0xFF);
+        data[size - 4 + i] = static_cast<U8>(crc_result.asBigEndianU32() >> (8 * (3 - i)) & 0xFF);
     }
 }
 
