@@ -27,10 +27,10 @@ namespace Svc {
       /* Create the timer */
       fd = timerfd_create (CLOCK_MONOTONIC, 0);
 
-      itval.it_interval.tv_sec = interval/1000;
-      itval.it_interval.tv_nsec = (interval*1000000)%1000000000;
-      itval.it_value.tv_sec = interval/1000;
-      itval.it_value.tv_nsec = (interval*1000000)%1000000000;
+      itval.it_interval.tv_sec = static_cast<I32>(interval/1000);
+      itval.it_interval.tv_nsec = static_cast<I32>((interval*1000000)%1000000000);
+      itval.it_value.tv_sec = static_cast<I32>(interval/1000);
+      itval.it_value.tv_nsec = static_cast<I32>((interval*1000000)%1000000000);
 
       timerfd_settime (fd, 0, &itval, nullptr);
 
