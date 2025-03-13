@@ -64,7 +64,7 @@ typedef float F32;  //!< 32-bit floating point
 
 #if FW_HAS_F64
 typedef double F64;  //!< 64-bit floating point
-#define PRI_F64 "f"
+#define PRI_F64 "lf"
 #endif
 
 // Backwards-compatibility definitions
