@@ -23,7 +23,7 @@ module RPI {
   {
 
     phase Fpp.ToCpp.Phases.configObjects """
-    NATIVE_INT_TYPE context[] = { RpiDemo::RG_CONTEXT_10Hz, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    U32 context[] = { RpiDemo::RG_CONTEXT_10Hz, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     """
 
     phase Fpp.ToCpp.Phases.configComponents """
@@ -100,7 +100,7 @@ module RPI {
   {
 
     phase Fpp.ToCpp.Phases.configObjects """
-    NATIVE_INT_TYPE context[] = { 0, 0, RpiDemo::RG_CONTEXT_1Hz, 0, 0, 0, 0, 0, 0, 0 };
+    U32 context[] = { 0, 0, RpiDemo::RG_CONTEXT_1Hz, 0, 0, 0, 0, 0, 0, 0 };
     """
 
     phase Fpp.ToCpp.Phases.configComponents """
