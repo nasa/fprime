@@ -39,10 +39,10 @@ namespace Svc {
   {
     FW_ASSERT(portNum == 0);
 
-    NATIVE_INT_TYPE numPorts = getNum_comOut_OutputPorts();
+    FwIndexType numPorts = getNum_comOut_OutputPorts();
     FW_ASSERT(numPorts > 0);
 
-    for(NATIVE_INT_TYPE i = 0; i < numPorts; i++) {
+    for(FwIndexType i = 0; i < numPorts; i++) {
       if( isConnected_comOut_OutputPort(i) ) {
         // Need to make a copy because we are passing by reference!:
         Fw::ComBuffer dataToSend = data;
