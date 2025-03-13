@@ -20,7 +20,7 @@
 
 namespace Svc {
 
-  void LinuxTimerComponentImpl::startTimer(NATIVE_INT_TYPE interval) {
+  void LinuxTimerComponentImpl::startTimer(FwSizeType interval) {
       int fd;
       struct itimerspec itval;
 

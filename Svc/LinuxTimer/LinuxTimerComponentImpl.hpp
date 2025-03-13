@@ -39,7 +39,7 @@ namespace Svc {
       ~LinuxTimerComponentImpl();
 
       //! Start timer
-      void startTimer(NATIVE_INT_TYPE interval); //!< interval in milliseconds
+      void startTimer(FwSizeType interval); //!< interval in milliseconds
 
       //! Quit timer
       void quit();
