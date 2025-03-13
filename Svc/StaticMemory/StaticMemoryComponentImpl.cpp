@@ -15,15 +15,16 @@
 #include "Fw/Types/Assert.hpp"
 
 namespace Svc {
-static_assert((StaticMemoryComponentBase::NUM_BUFFERALLOCATE_INPUT_PORTS >= 0) &&
-              (StaticMemoryComponentBase::NUM_BUFFERALLOCATE_INPUT_PORTS <= std::numeric_limits<FwIndexType>::max()),
-              "NUM_BUFFERALLOCATE_INPUT_PORTS must fit in the positive range of FwIndexType");
+
 // ----------------------------------------------------------------------
 // Construction, initialization, and destruction
 // ----------------------------------------------------------------------
 
 StaticMemoryComponentImpl ::StaticMemoryComponentImpl(const char* const compName)
     : StaticMemoryComponentBase(compName) {
+    static_assert((StaticMemoryComponentBase::NUM_BUFFERALLOCATE_INPUT_PORTS >= 0) &&
+        (StaticMemoryComponentBase::NUM_BUFFERALLOCATE_INPUT_PORTS <= std::numeric_limits<FwIndexType>::max()),
+        "NUM_BUFFERALLOCATE_INPUT_PORTS must fit in the positive range of FwIndexType");
     for (FwIndexType i = 0; i < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(m_allocated)); i++) {
         m_allocated[i] = false;
     }

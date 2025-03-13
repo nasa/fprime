@@ -230,8 +230,8 @@ namespace Svc {
     FW_ASSERT(CURR_PTR == END_PTR,
         static_cast<FwAssertArgType>(mgrId),
         static_cast<FwAssertArgType>(memId),
-        static_cast<FwAssertArgType>(reinterpret_cast<PointerCastType>(CURR_PTR)),
-        static_cast<FwAssertArgType>(reinterpret_cast<PointerCastType>(END_PTR)));
+        static_cast<FwAssertArgType>(reinterpret_cast<PlatformPointerCastType>(CURR_PTR)),
+        static_cast<FwAssertArgType>(reinterpret_cast<PlatformPointerCastType>(END_PTR)));
     // secondary init verification
     FW_ASSERT(
       currStruct == this->m_numStructs,

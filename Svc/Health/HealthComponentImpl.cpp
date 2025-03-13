@@ -15,7 +15,7 @@
 #include <Fw/Types/Assert.hpp>
 
 namespace Svc {
-    static_assert((HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS >= 0) && (HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS <= std::numeric_limits<FwIndexType>::max()), "NUM_PINGSEND_OUTPUT_PORTS must fit in the positive range of FwIndexType");
+    
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction
     // ----------------------------------------------------------------------
@@ -28,6 +28,7 @@ namespace Svc {
             m_warnings(0),
             m_enabled(Fw::Enabled::ENABLED),
             queue_depth(0) {
+        static_assert((HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS >= 0) && (HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS <= std::numeric_limits<FwIndexType>::max()), "NUM_PINGSEND_OUTPUT_PORTS must fit in the positive range of FwIndexType");
         // clear tracker by disabling pings
         for (FwIndexType entry = 0;
                 entry < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(this->m_pingTrackerEntries));
