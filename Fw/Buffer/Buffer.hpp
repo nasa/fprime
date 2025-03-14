@@ -43,8 +43,11 @@ class Buffer : public Fw::Serializable {
 
 public:
 
+    //! The size type for a buffer
+    using SizeType = U32;
+
     enum {
-        SERIALIZED_SIZE = sizeof(U32) + sizeof(U32) + sizeof(U8*), //!< Size of Fw::Buffer when serialized
+        SERIALIZED_SIZE = sizeof(SizeType) + sizeof(U32) + sizeof(U8*), //!< Size of Fw::Buffer when serialized
         NO_CONTEXT = 0xFFFFFFFF //!< Value representing no context
     };
 
@@ -65,7 +68,7 @@ public:
     //! \param data: data pointer to wrap
     //! \param size: size of data located at data pointer
     //! \param context: user-specified context to track creation. Default: no context
-    Buffer(U8* data, U32 size, U32 context=NO_CONTEXT);
+    Buffer(U8* data, SizeType size, U32 context=NO_CONTEXT);
 
     //! Assignment operator to set given buffer's members from another without copying wrapped data
     //!
@@ -127,7 +130,7 @@ public:
 
     //! Returns size of wrapped data
     //!
-    U32 getSize() const;
+    SizeType getSize() const;
 
     //! Returns creation context
     //!
@@ -139,17 +142,17 @@ public:
 
     //! Sets pointer to wrapped data and the size of the given data
     //!
-    void setSize(U32 size);
+    void setSize(SizeType size);
 
     //! Sets creation context
     //!
-    void setContext(U32 context);
+    void setContext(SizeType context);
 
     //! Sets all values
     //! \param data: data pointer to wrap
     //! \param size: size of data located at data pointer
     //! \param context: user-specified context to track creation. Default: no context
-    void set(U8* data, U32 size, U32 context=NO_CONTEXT);
+    void set(U8* data, SizeType size, U32 context=NO_CONTEXT);
 
 #if FW_SERIALIZABLE_TO_STRING || BUILD_UT
     //! Supports writing this buffer to a string representation
@@ -165,7 +168,7 @@ public:
 PRIVATE:
     Fw::ExternalSerializeBuffer m_serialize_repr; //<! Representation for serialization and deserialization functions
     U8* m_bufferData; //<! data - A pointer to the data
-    U32 m_size; //<! size - The data size in bytes
+    SizeType m_size; //<! size - The data size in bytes
     U32 m_context; //!< Creation context for disposal
 
 };

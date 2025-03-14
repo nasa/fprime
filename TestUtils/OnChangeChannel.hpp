@@ -28,7 +28,7 @@ template <typename T>
 class OnChangeChannel {
   public:
     //! Constructor
-    explicit OnChangeChannel(T value) : value(value) {}
+    explicit OnChangeChannel(T a_value) : value(a_value) {}
     //! Update the previous value
     OnChangeStatus updatePrev() {
         const auto status = ((!this->prev.hasValue()) || (this->value != this->prev.get()))

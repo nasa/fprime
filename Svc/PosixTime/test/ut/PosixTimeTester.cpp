@@ -48,4 +48,4 @@ namespace Svc {
     ASSERT_LE(time.getUSeconds(), 999999U);
   }
 
-};
+}

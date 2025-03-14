@@ -10,6 +10,10 @@ if (NOT BUILD_TESTING)
 endif ()
 add_custom_target("${FPRIME_CURRENT_MODULE}")
 
+add_compile_options(
+    -Wno-conversion
+)
+
 register_os_implementation("File;FileSystem;Directory" Test_Stub)
 register_os_implementation(Console Test_Stub)
 register_os_implementation(Task Test_Stub)

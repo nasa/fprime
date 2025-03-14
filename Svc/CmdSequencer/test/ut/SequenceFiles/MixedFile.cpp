@@ -19,8 +19,8 @@ namespace Svc {
   namespace SequenceFiles {
 
     MixedFile ::
-      MixedFile(const Format::t format) :
-        File("mixed", format)
+      MixedFile(const Format::t a_format) :
+        File("mixed", a_format)
     {
 
     }

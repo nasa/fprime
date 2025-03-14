@@ -27,26 +27,41 @@ extern "C" {
 /* Type definitions:     I8, U8, I16, U16, ..., I64, U64, F32, and F64        */
 /*----------------------------------------------------------------------------*/
 typedef int8_t I8;   //!< 8-bit signed integer
+#define PRI_I8 PRIi8
+
 typedef uint8_t U8;  //!< 8-bit unsigned integer
+#define PRI_U8 PRIu8
+
 typedef U8 BYTE;     //!< byte type
+#define PRI_BYTE PRIu8
+
 typedef char CHAR;
+#define PRI_CHAR "c"
 
 #if FW_HAS_16_BIT
 typedef int16_t I16;   //!< 16-bit signed integer
+#define PRI_I16 PRIi16
 typedef uint16_t U16;  //!< 16-bit unsigned integer
+#define PRI_U16 PRIu16
 #endif
 
 #if FW_HAS_32_BIT
 typedef int32_t I32;   //!< 32-bit signed integer
+#define PRI_I32 PRIi32
 typedef uint32_t U32;  //!< 32-bit unsigned integer
+#define PRI_U32 PRIu32
 #endif
 
 #if FW_HAS_64_BIT
 typedef int64_t I64;   //!< 64-bit signed integer
+#define PRI_I64 PRIi64
 typedef uint64_t U64;  //!< 64-bit unsigned integer
+#define PRI_U64 PRIu64
 #endif
 
 typedef float F32;  //!< 32-bit floating point
+#define PRI_F64 "lf"
+
 #if FW_HAS_F64
 typedef double F64;  //!< 64-bit floating point
 #endif

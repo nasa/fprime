@@ -20,8 +20,23 @@ on:
 
 jobs:
 
+  # -------- Retrieve target branches for fprime-tools and fprime-bootstrap --------
+  get-tools-branch:
+    name: "Get fprime-tools target branch"
+    uses: ./.github/workflows/reusable-get-pr-branch.yml
+    with:
+      target_repository: nasa/fprime-tools
+
+  get-bootstrap-branch:
+    name: "Get fprime-bootstrap target branch"
+    uses: ./.github/workflows/reusable-get-pr-branch.yml
+    with:
+      target_repository: nasa/fprime-bootstrap
+
+  # -------- Install target versions of the cookiecutter templates and validate -------
   Validate:
     runs-on: ubuntu-latest
+    needs: [ get-tools-branch, get-bootstrap-branch ]
     steps:
       # Checkout only the bootstrap.expect file, since the full F´ repo will be 
       # checked out as part of the fprime-bootstrap process
@@ -38,11 +53,11 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: "Install expect and fprime-bootstrap@devel"
+      - name: "Install expect and fprime-bootstrap"
         run: |
              sudo apt-get install expect
-             pip install git+https://github.com/fprime-community/fprime-bootstrap@devel
-      
+             pip install git+https://github.com/fprime-community/fprime-bootstrap@${{ needs.get-bootstrap-branch.outputs.target-branch }}
+
       - name: "Bootstrap Project"
         run: |
              expect .github/actions/cookiecutter-check/bootstrap.expect
@@ -56,12 +71,12 @@ jobs:
           path: ./MyProject/lib/fprime
           fetch-depth: 0
 
-      - name: "Update dependencies and install fprime-tools@devel"
+      - name: "Update dependencies and install fprime-tools"
         run: |
              cd MyProject
              . fprime-venv/bin/activate
              pip install -U -r ./lib/fprime/requirements.txt
-             pip install git+https://github.com/nasa/fprime-tools@devel
+             pip install git+https://github.com/nasa/fprime-tools@${{ needs.get-tools-branch.outputs.target-branch }}
 
       - name: "Version Check"
         run: |

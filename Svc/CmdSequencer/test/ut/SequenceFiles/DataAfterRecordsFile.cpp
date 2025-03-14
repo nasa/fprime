@@ -20,9 +20,9 @@ namespace Svc {
   namespace SequenceFiles {
 
     DataAfterRecordsFile ::
-      DataAfterRecordsFile(const U32 n, const Format::t format) :
-        File(format),
-        n(n)
+      DataAfterRecordsFile(const U32 a_n, const Format::t a_format) :
+        File(a_format),
+        n(a_n)
     {
       Fw::String s;
       s.format("data_after_records_%u", n);

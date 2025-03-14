@@ -22,35 +22,35 @@ class Option {
     enum class State { VALUE, NO_VALUE };
 
   public:
-    explicit Option(T value) : state(State::VALUE), value(value) {}
-    Option() : state(State::NO_VALUE), value(noValue) {}
+    explicit Option(T value) : m_state(State::VALUE), m_value(value) {}
+    Option() : m_state(State::NO_VALUE), m_value(noValue) {}
 
   public:
     static Option<T> some(T value) { return Option(value); }
     static constexpr Option<T> none() { return Option(); }
 
   public:
-    bool hasValue() const { return this->state == State::VALUE; }
+    bool hasValue() const { return this->m_state == State::VALUE; }
     void set(T value) {
-        this->state = State::VALUE;
-        this->value = value;
+        this->m_state = State::VALUE;
+        this->m_value = value;
     }
     void clear() { this->state = State::NO_VALUE; }
     T get() const {
         FW_ASSERT(this->hasValue());
-        return this->value;
+        return this->m_value;
     }
     T getOrElse(T value) const {
         T result = value;
         if (this->hasValue()) {
-            result = this->value;
+            result = this->m_value;
         }
         return result;
     }
 
   private:
-    State state;
-    T value;
+    State m_state;
+    T m_value;
 };
 
 }  // namespace TestUtils

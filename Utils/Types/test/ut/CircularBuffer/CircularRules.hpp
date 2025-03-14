@@ -139,5 +139,5 @@ namespace Types {
         // Action that tests the buffer's ability to rotate
         void action(MockTypes::CircularState& state);
     };
-};
+}
 #endif //FPRIME_GROUNDINTERFACERULES_HPP

@@ -110,17 +110,12 @@ namespace Utils {
   void RateLimiterTester ::
     testCounterAndTimeTriggering()
   {
-    RateLimiter limiter;
-
     U32 testCounterCycles[] = {37, 981, 4110};
     U32 testTimeCycles[] = {12, 294, 1250};
     for (U32 i = 0; i < (FW_NUM_ARRAY_ELEMENTS(testCounterCycles) * FW_NUM_ARRAY_ELEMENTS(testTimeCycles)); i++) {
       const U32 counterCycles = testCounterCycles[i % FW_NUM_ARRAY_ELEMENTS(testCounterCycles)];
       const U32 timeCycles = testTimeCycles[i / FW_NUM_ARRAY_ELEMENTS(testCounterCycles)];
       Fw::Time timeCyclesTime(timeCycles, 0);
-      limiter.setCounterCycle(counterCycles);
-      limiter.setTimeCycle(timeCycles);
-      limiter.reset();
 
       // triggers at the beginning
       RateLimiter limiter(counterCycles, timeCycles);

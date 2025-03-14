@@ -20,8 +20,8 @@ namespace Svc {
   namespace SequenceFiles {
 
     BadCRCFile ::
-      BadCRCFile(const Format::t format) :
-        File("bad_crc", format)
+      BadCRCFile(const Format::t a_format) :
+        File("bad_crc", a_format)
     {
 
     }

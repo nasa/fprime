@@ -46,5 +46,5 @@ class FakeLogger : public Fw::Logger {
     //!< Logger to use within the system
     static Fw::Logger* s_current;
 };
-};      // namespace MockLogging
+}       // namespace MockLogging
 #endif  // FPRIME_FAKELOGGER_HPP

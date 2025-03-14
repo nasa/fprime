@@ -225,7 +225,7 @@ void TlmPacketizer ::TlmRecv_handler(const FwIndexType portNum,
             this->m_fillBuffers[pkt].updated = true;
             this->m_fillBuffers[pkt].latestTime = timeTag;
             U8* ptr = &this->m_fillBuffers[pkt].buffer.getBuffAddr()[entryToUse->packetOffset[pkt]];
-            memcpy(ptr, val.getBuffAddr(), val.getBuffLength());
+            (void)memcpy(ptr, val.getBuffAddr(), static_cast<size_t>(val.getBuffLength()));
             this->m_lock.unLock();
         }
     }

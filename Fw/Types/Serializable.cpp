@@ -48,7 +48,7 @@ void SerializeBufferBase::copyFrom(const SerializeBufferBase& src) {
     // destination has to be same or bigger
     FW_ASSERT(src.getBuffLength() <= this->getBuffCapacity(), static_cast<FwAssertArgType>(src.getBuffLength()),
               static_cast<FwAssertArgType>(this->getBuffLength()));
-    (void)memcpy(this->getBuffAddr(), src.getBuffAddr(), this->m_serLoc);
+    (void)memcpy(this->getBuffAddr(), src.getBuffAddr(), static_cast<size_t>(this->m_serLoc));
 }
 
 // Copy constructor doesn't make sense in this virtual class as there is nothing to copy. Derived classes should
@@ -250,7 +250,7 @@ SerializeStatus SerializeBufferBase::serialize(const U8* buff, FwSizeType length
     }
 
     // copy buffer to our buffer
-    (void)memcpy(&this->getBuffAddr()[this->m_serLoc], buff, length);
+    (void)memcpy(&this->getBuffAddr()[this->m_serLoc], buff, static_cast<size_t>(length));
     this->m_serLoc += static_cast<Serializable::SizeType>(length);
     this->m_deserLoc = 0;
 
@@ -277,7 +277,7 @@ SerializeStatus SerializeBufferBase::serialize(const SerializeBufferBase& val) {
     FW_ASSERT(this->getBuffAddr());
     FW_ASSERT(val.getBuffAddr());
     // serialize buffer
-    (void)memcpy(&this->getBuffAddr()[this->m_serLoc], val.getBuffAddr(), size);
+    (void)memcpy(&this->getBuffAddr()[this->m_serLoc], val.getBuffAddr(), static_cast<size_t>(size));
     this->m_serLoc += size;
     this->m_deserLoc = 0;
 
@@ -536,7 +536,7 @@ SerializeStatus SerializeBufferBase::deserialize(U8* buff, FwSizeType& length, S
             return FW_DESERIALIZE_SIZE_MISMATCH;
         }
 
-        (void)memcpy(buff, &this->getBuffAddr()[this->m_deserLoc], storedLength);
+        (void)memcpy(buff, &this->getBuffAddr()[this->m_deserLoc], static_cast<size_t>(storedLength));
 
         length = static_cast<FwSizeType>(storedLength);
 
@@ -546,7 +546,7 @@ SerializeStatus SerializeBufferBase::deserialize(U8* buff, FwSizeType& length, S
             return FW_DESERIALIZE_SIZE_MISMATCH;
         }
 
-        (void)memcpy(buff, &this->getBuffAddr()[this->m_deserLoc], length);
+        (void)memcpy(buff, &this->getBuffAddr()[this->m_deserLoc], static_cast<size_t>(length));
     }
 
     this->m_deserLoc += static_cast<Serializable::SizeType>(length);
@@ -576,7 +576,7 @@ SerializeStatus SerializeBufferBase::deserialize(SerializeBufferBase& val) {
     }
 
     FW_ASSERT(this->getBuffAddr());
-    (void)memcpy(val.getBuffAddr(), &this->getBuffAddr()[this->m_deserLoc], storedLength);
+    (void)memcpy(val.getBuffAddr(), &this->getBuffAddr()[this->m_deserLoc], static_cast<size_t>(storedLength));
 
     stat = val.setBuffLen(storedLength);
 
@@ -656,7 +656,7 @@ SerializeStatus SerializeBufferBase::setBuff(const U8* src, Serializable::SizeTy
     } else {
         FW_ASSERT(src);
         FW_ASSERT(this->getBuffAddr());
-        memcpy(this->getBuffAddr(), src, length);
+        (void)memcpy(this->getBuffAddr(), src, static_cast<size_t>(length));
         this->m_serLoc = length;
         this->m_deserLoc = 0;
         return FW_SERIALIZE_OK;

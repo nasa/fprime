@@ -34,7 +34,7 @@ Fw::ComBuffer CmdSplitterTester ::build_command_around_opcode(FwOpcodeType opcod
 
     Fw::CmdArgBuffer args;
 
-    U32 random_size = STest::Pick::lowerUpper(0, args.getBuffCapacity());
+    U32 random_size = STest::Pick::lowerUpper(0, static_cast<U32>(args.getBuffCapacity()));
     args.resetSer();
     for (FwSizeType i = 0; i < random_size; i++) {
         args.serialize(static_cast<U8>(STest::Pick::any()));

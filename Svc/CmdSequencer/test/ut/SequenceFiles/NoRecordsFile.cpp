@@ -19,8 +19,8 @@ namespace Svc {
     namespace SequenceFiles {
 
         NoRecordsFile ::
-            NoRecordsFile(const Format::t format) :
-            File("norecords", format)
+            NoRecordsFile(const Format::t a_format) :
+            File("norecords", a_format)
         {
         }
 

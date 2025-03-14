@@ -90,6 +90,6 @@ bool wait_on_started(Drv::IpSocket &socket, bool open, U32 iterations);
  */
 U64 get_configured_delay_ms();
 
-};
-};
+}
+}
 #endif

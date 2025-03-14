@@ -87,7 +87,6 @@ namespace Svc {
       CHAR hashFileName[2048];
       CHAR prevHashFileName[2048];
       U8 buf[1024];
-      FwSignedSizeType length;
       U16 bufferSize = 0;
       Os::File::Status ret;
       Os::File file;
@@ -186,7 +185,7 @@ namespace Svc {
         }
 
         // Make sure we reached the end of the file:
-        length = sizeof(NATIVE_INT_TYPE);
+        FwSignedSizeType length = sizeof(NATIVE_INT_TYPE);
         ret = file.read(buf, length);
         ASSERT_EQ(Os::File::OP_OK,ret);
         ASSERT_EQ(length, 0);
@@ -209,7 +208,6 @@ namespace Svc {
       CHAR hashFileName[2048];
       CHAR prevHashFileName[2048];
       U8 buf[1024];
-      FwSignedSizeType length;
       Os::File::Status ret;
       Os::File file;
 
@@ -298,7 +296,7 @@ namespace Svc {
         }
 
         // Make sure we reached the end of the file:
-        length = sizeof(NATIVE_INT_TYPE);
+        FwSignedSizeType length = sizeof(NATIVE_INT_TYPE);
         ret = file.read(buf, length);
         ASSERT_EQ(Os::File::OP_OK,ret);
         ASSERT_EQ(length, 0);
@@ -574,7 +572,6 @@ namespace Svc {
     CHAR hashFileName[2048];
     CHAR prevHashFileName[2048];
     U8 buf[1024];
-    FwSignedSizeType length;
     U16 bufferSize = 0;
     Os::File::Status ret;
     Os::File file;
@@ -671,7 +668,7 @@ namespace Svc {
       }
 
       // Make sure we reached the end of the file:
-      length = sizeof(NATIVE_INT_TYPE);
+      FwSignedSizeType length = sizeof(NATIVE_INT_TYPE);
       ret = file.read(buf, length);
       ASSERT_EQ(Os::File::OP_OK,ret);
       ASSERT_EQ(length, 0);
@@ -715,4 +712,4 @@ namespace Svc {
   {
     this->pushFromPortEntry_pingOut(key);
   }
-};
+}
