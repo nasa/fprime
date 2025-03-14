@@ -55,7 +55,7 @@ FwSizeType generate_random_fprime_frame(Types::CircularBuffer& circular_buffer) 
     for (FwIndexType i = 0; i < static_cast<FwIndexType>(FRAME_FOOTER_SIZE); i++) {
         // crc is a U32; unpack into 4 bytes (shift by 24->-16->8->0 bits, mask with 0xFF)
         fprime_frame[i + FRAME_HEADER_SIZE + static_cast<FwIndexType>(packet_size)] =
-            (crc_result.asBigEndianU32() >> (8 * (3 - i))) & 0xFF;
+            static_cast<U8>((crc_result.asBigEndianU32() >> (8 * (3 - i))) & 0xFF);
     }
     // Serialize frame into circular buffer
     circular_buffer.serialize(fprime_frame, fprime_frame_size);
