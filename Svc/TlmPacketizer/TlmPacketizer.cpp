@@ -59,7 +59,6 @@ void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
     // table
     for (FwChanIdType pktEntry = 0; pktEntry < packetList.numEntries; pktEntry++) {
         // Initial size is packetized telemetry descriptor + size of time tag + sizeof packet ID
-        //TODO: do I add a check here
         FwSizeType packetLen =
             sizeof(FwPacketDescriptorType) + Fw::Time::SERIALIZED_SIZE + sizeof(FwTlmPacketizeIdType);
         FW_ASSERT(packetList.list[pktEntry]->list, static_cast<FwAssertArgType>(pktEntry));
