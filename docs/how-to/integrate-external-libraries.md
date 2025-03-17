@@ -22,7 +22,7 @@ It is common practice to use third-party libraries in F´ projects. CMake provid
 
 A pre-compiled library is a library that has already been compiled and is ready to be used, often named `lib<libName>.a` or `lib<libName>.so`. There are many ways to obtain pre-compiled libraries, such as downloading them from a vendor repository or building them from source yourself.
 
-To integrate a pre-compiled library, you need to add the path of that library file to `MOD_DEPS` of the module(s) that depend on it (MOD_DEPS: module dependencies). The following example demonstrates how to integrate a the OpenSSL `libcrypto` library into an F´ wrapper component:
+To integrate a pre-compiled library, you need to add the path of that library file to `MOD_DEPS` of the module(s) that depend on it (MOD_DEPS: module dependencies). The following example demonstrates how to integrate the OpenSSL `libcrypto` library into an F´ wrapper component:
 
 ```cmake
 set(SOURCE_FILES
@@ -43,7 +43,7 @@ This assumes that the `libcrypto.a` is available in the `lib/libssl/` directory 
 |     |     |
 | --- | --- |
 | **Benefits** | Very easy to set up; portable |
-| **Drawbacks** | Not guaranteed to handle transitive dependencies |
+| **Drawbacks** |  |
 | **Considerations** | Recommended approach if available |
 
 Many popular libraries are available through the [FetchContent module](https://cmake.org/cmake/help/v3.31/module/FetchContent.html), allowing for very simple integration. This module will download and build the library as part of your project according to the library author's specifications.
@@ -143,7 +143,7 @@ The component or module can now use the library as needed by including its heade
 > This section is using the OpenSSL library to illustrate. However, should you need OpenSSL in your project, note that OpenSSL is also available through the find_package() API mentioned above.
 
 > [!WARNING]
-> A library may have dependencies that are not installed by its build process. This can lead to hard-to-debug errors for users that use different systems. As an example, on RedHat 8 the OpenSSL library can not be built without `perl-IPC-Cmd` and a few other PERL yum package.
+> A library may have dependencies that are not installed by its build process. This can lead to hard-to-debug errors for users that use different systems. As an example, on RedHat 8 the OpenSSL library cannot be built without `perl-IPC-Cmd` and a few other PERL yum package.
 
 The ExternalProject module is highly flexible and allows you to build external projects as part of your CMake project, regardless of their build process. The full documentation can be found here: [https://cmake.org/cmake/help/v3.31/module/ExternalProject.html](https://cmake.org/cmake/help/v3.31/module/ExternalProject.html).
 

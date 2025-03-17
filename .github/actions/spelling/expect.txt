@@ -297,6 +297,7 @@ errornum
 ert
 esb
 ethanchee
+etl
 EVENTARRAY
 EVENTBOOL
 eventflags
@@ -638,6 +639,7 @@ ONLN
 OPCODEBASE
 openmct
 openpyxl
+openssldir
 oper
 optarg
 optind
