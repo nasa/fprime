@@ -208,6 +208,7 @@ nav:
     - How To: 
       - docs/how-to/index.md
       - 'F´ Library Development': docs/how-to/develop-fprime-libraries.md
+      - 'External Library Integration': docs/how-to/integrate-external-libraries.md
       - 'F´ Subtopology Development': docs/how-to/develop-subtopologies.md
       - 'F´ GDS Plugin Development': docs/how-to/develop-gds-plugins.md
       - 'Porting F´ To a New Platform': docs/how-to/porting-guide.md
