@@ -90,16 +90,21 @@ set(MOD_DEPS
 register_fprime_module()
 ```
 
+The component or module can now use the library as needed by including its headers. You may refer to the library's documentation to find the correct target names.
+
 
 ## Approach 3: Install once and integrate with find_package()
 
 |     |     |
 | --- | --- |
 | **Benefits** | Easier than approach 4 |
-| **Drawbacks** | Additional step managed outside of CMake |
+| **Drawbacks** | Additional step and versioning managed outside of CMake |
 | **Considerations** | Need to ensure developers will install the dependency |
 
 Some libraries may not be available with [`FetchContent`](https://cmake.org/cmake/help/v3.31/module/FetchContent.html). In this case, you may choose to install the library manually on your machine and use [`find_package()`](https://cmake.org/cmake/help/v3.31/command/find_package.html) in CMake to locate it. This is a common approach for libraries that have complex build requirements.
+
+> [!NOTE]
+> The source code for this example can be found in the [ImageProcessor example component](https://github.com/nasa/fprime-examples/tree/devel/FlightExamples/ExternalLibraryIntegration/ImageProcessor/CMakeLists.txt).
 
 ### Step 1: Install the library on your system
 
@@ -109,7 +114,7 @@ There can be many ways to install the library, such as using a package manager (
 
 CMake will look for installed packages in standard locations as well as additional locations based on your PATH. Should you install the library in a non-standard location, you may need to set the [`CMAKE_PREFIX_PATH`](https://cmake.org/cmake/help/latest/variable/CMAKE_PREFIX_PATH.html) variable to point to the directory containing the library's CMake configuration files (in the form `<libName>Config.cmake` or `<libName>-config.cmake`).
 
-The [OpenCvWrapper component](https://github.com/nasa/fprime-examples/tree/devel/FlightExamples/ExternalLibraryIntegration/OpenCvWrapper) component demonstrates this approach by encapsulating the OpenCV library after it has been installed on the system. The following code shows how to integrate the OpenCV library using `find_package()`:
+The [ImageProcessor component](https://github.com/nasa/fprime-examples/tree/devel/FlightExamples/ExternalLibraryIntegration/ImageProcessor) component demonstrates this approach by encapsulating the OpenCV library after it has been installed on the system. The following code shows how to integrate the OpenCV library using `find_package()`:
 
 ```cmake
 # The following requires that OpenCV is installed on the system and may need to be added to CMAKE_MODULE_PATH
@@ -122,6 +127,8 @@ register_fprime_module()
 
 The `find_package()` command searches for the OpenCV library and sets the `OpenCV_LIBS` variable to the appropriate libraries. You may refer to your own library's documentation to find the correct variable or direct library names to use.  
 Should the OpenCV package be needed my multiple modules, that directive can be placed in the root `project.cmake` file instead.
+
+The component or module can now use the library as needed by including its headers.
 
 > [!IMPORTANT]
 > When using this approach, you must ensure that users of your project have the library installed on their system. This can be done by providing instructions in your project's documentation.
@@ -139,10 +146,12 @@ Should the OpenCV package be needed my multiple modules, that directive can be p
 > This section is using the OpenSSL library to illustrate. However, should you need OpenSSL in your project, note that OpenSSL is also available through the find_package() API mentioned above.
 
 > [!WARNING]
-> This approach is essentially building and installing the library, from source, as part of your project. This has some downsides:
-> * A library may have dependencies that are not installed by its build process. This can lead to hard-to-debug errors for users that use different systems. As an example, on RedHat 8 the OpenSSL library can not be built without `perl-IPC-Cmd` and a few other PERL yum package.
+> A library may have dependencies that are not installed by its build process. This can lead to hard-to-debug errors for users that use different systems. As an example, on RedHat 8 the OpenSSL library can not be built without `perl-IPC-Cmd` and a few other PERL yum package.
 
 The ExternalProject module is highly flexible and allows you to build external projects as part of your CMake project, regardless of their build process. The full documentation can be found here: [https://cmake.org/cmake/help/v3.31/module/ExternalProject.html](https://cmake.org/cmake/help/v3.31/module/ExternalProject.html).
+
+> [!NOTE]
+> The source code for this example can be found at [ExternalLibraryIntegration/CMakeLists.txt](https://github.com/nasa/fprime-examples/tree/devel/FlightExamples/ExternalLibraryIntegration/CMakeLists.txt) and is used within the [OpenSslWrapper](https://github.com/nasa/fprime-examples/tree/devel/FlightExamples/ExternalLibraryIntegration/OpenSslWrapper).
 
 ### Step 1: Understand the library's build process
 
@@ -188,10 +197,6 @@ set_property(TARGET OpenSSL::Crypto PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${OPE
 add_dependencies(OpenSSL::Crypto OpenSSL)
 ```
 
-> [!NOTE]
-> The source code for this example can be found at [ExternalLibraryIntegration/OpenSslWrapper](https://github.com/nasa/fprime-examples/tree/devel/FlightExamples/ExternalLibraryIntegration/CMakeLists.txt).
-
-
 ### Step 3: Set the library as a dependency of the module/component
 
 Any component or module that depends on OpenSSL can now link against it by adding the following entry to its `MOD_DEPS`:
@@ -208,10 +213,6 @@ set(MOD_DEPS
 register_fprime_module()
 ```
 
-> [!NOTE]
-> The source code for this example can be found at [ExternalLibraryIntegration/OpenSslWrapper](https://github.com/nasa/fprime-examples/tree/devel/FlightExamples/ExternalLibraryIntegration/OpenSslWrapper).
-
-
 ## Patterns for using a library in the F´ architecture
 
 When integrating a library into your F´ project, you may want to consider how the library will be used within the F´ architecture. The following patterns are common when using libraries in F´:
@@ -222,7 +223,7 @@ A wrapper component is a component that encapsulates the library's functionality
 
 ### 2. Global library usage
 
-You may wish to use library code in multiple places, without wrapping it in a component. This can be the case for libraries that provide utilities that are not tied to a specific component or unit of behavior. This can for example be the case for the [ETL library](https://github.com/ETLCPP/etl) – used in both `OpenSslWrapper`  and `OpenCvWrapper` – which provides a set of utilities for working with C++ containers and algorithms in embedded systems. In this case, each component that needs to use the library can define it in their `MOD_DEPS` for direct usage.
+You may wish to use library code in multiple places, without wrapping it in a component. This can be the case for libraries that provide utilities that are not tied to a specific component or unit of behavior. This can for example be the case for the [ETL library](https://github.com/ETLCPP/etl) – used in both `OpenSslWrapper`  and `ImageProcessor` – which provides a set of utilities for working with C++ containers and algorithms in embedded systems. In this case, each component that needs to use the library can define it in their `MOD_DEPS` for direct usage.
 
 ### 3. Others
 
