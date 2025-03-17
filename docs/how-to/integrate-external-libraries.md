@@ -11,9 +11,6 @@ It is common practice to use third-party libraries in F´ projects. CMake provid
 > [!NOTE]
 > The source code for the examples shown in this guide can be found in our examples repo here: [https://github.com/nasa/fprime-examples/tree/devel/FlightExamples/ExternalLibraryIntegration](https://github.com/nasa/fprime-examples/tree/devel/FlightExamples/ExternalLibraryIntegration)
 
-## Common considerations
-
-For each of the following approaches, one
 
 ## Approach 1: Pre-compiled library files
 
