@@ -55,7 +55,7 @@ Many popular libraries are available through the [FetchContent module](https://c
 > Just because a library is built by CMake does not mean it is compatible with `FetchContent`. OpenCV, for example, is not compatible with `FetchContent` (as of March 2025). In such cases, you will need to use `find_package()` or `ExternalProject_Add` as described in the sections below.
 
 
-##### Step 1: Use FetchContent to include the library in your project.
+### Step 1: Use FetchContent to include the library in your project.
 
 The following excerpt demonstrates how to integrate the [ETL libraries](https://github.com/ETLCPP/etl) using `FetchContent`:
 
@@ -74,7 +74,7 @@ FetchContent_MakeAvailable(etl)
 In the `fprime-examples` repository, this is done in [ExternalLibraryIntegration/CMakeLists.txt](https://github.com/nasa/fprime-examples/tree/devel/FlightExamples/ExternalLibraryIntegration/CMakeLists.txt) file. This allows any module within the ExternalLibraryIntegration module to use `etl` library.
 If the library is only needed by a single component, it is also acceptable to place the `FetchContent` code directly in that component's `CMakeLists.txt` file. If the library is needed at the project level, it is best to place the `FetchContent` code in the root `project.cmake` file.
 
-##### Step 2: Set the library as a dependency of the module
+### Step 2: Set the library as a dependency of the module
 
 Any component or module that depends on ETL can now link against it by adding the following entry to its `MOD_DEPS`:
 
@@ -101,11 +101,11 @@ register_fprime_module()
 
 Some libraries may not be available with [`FetchContent`](https://cmake.org/cmake/help/v3.31/module/FetchContent.html). In this case, you may choose to install the library manually on your machine and use [`find_package()`](https://cmake.org/cmake/help/v3.31/command/find_package.html) in CMake to locate it. This is a common approach for libraries that have complex build requirements.
 
-##### Step 1: Install the library on your system
+### Step 1: Install the library on your system
 
 There can be many ways to install the library, such as using a package manager (e.g., `apt`, `brew`, `yum`, `conda`, etc.), or building from source. Refer to each the library installation instructions to decide which fits your project best.
 
-##### Step 2: Use find_package() to locate the library
+### Step 2: Use find_package() to locate the library
 
 CMake will look for installed packages in standard locations as well as additional locations based on your PATH. Should you install the library in a non-standard location, you may need to set the [`CMAKE_PREFIX_PATH`](https://cmake.org/cmake/help/latest/variable/CMAKE_PREFIX_PATH.html) variable to point to the directory containing the library's CMake configuration files (in the form `<libName>Config.cmake` or `<libName>-config.cmake`).
 
@@ -144,11 +144,11 @@ Should the OpenCV package be needed my multiple modules, that directive can be p
 
 The ExternalProject module is highly flexible and allows you to build external projects as part of your CMake project, regardless of their build process. The full documentation can be found here: [https://cmake.org/cmake/help/v3.31/module/ExternalProject.html](https://cmake.org/cmake/help/v3.31/module/ExternalProject.html).
 
-#### Step 1: Understand the library's build process
+### Step 1: Understand the library's build process
 
 Before you can use `ExternalProject_Add`, you need to understand how the library is built. This includes knowing the build system it uses (e.g., CMake, Makefile, etc.), any dependencies it may have, any configuration options that need to be set, as well as where the installation artifacts are placed.
 
-#### Step 2: Use ExternalProject_Add to build the library within CMake
+### Step 2: Use ExternalProject_Add to build the library within CMake
 
 The library source code must be made available to the ExternalProject_Add command. This can be done with a local path (e.g. a git submodule or local tarball) or by specifying a remote URL. 
 
@@ -192,7 +192,7 @@ add_dependencies(OpenSSL::Crypto OpenSSL)
 > The source code for this example can be found at [ExternalLibraryIntegration/OpenSslWrapper](https://github.com/nasa/fprime-examples/tree/devel/FlightExamples/ExternalLibraryIntegration/CMakeLists.txt).
 
 
-#### Step 3: Set the library as a dependency of the module/component
+### Step 3: Set the library as a dependency of the module/component
 
 Any component or module that depends on OpenSSL can now link against it by adding the following entry to its `MOD_DEPS`:
 
