@@ -280,7 +280,6 @@ endfunction()
 #
 # 1. Linker flags: starts with -l
 # 2. Existing Files: accounts for preexisting libraries shared and otherwise
-# 3. Absolute paths starting with / : accounts for libraries that are built at project build-time
 #
 # OUTPUT_VAR: variable to set in PARENT_SCOPE to TRUE/FALSE
 # TOKEN: token to check if "linker only"
@@ -288,8 +287,7 @@ endfunction()
 function(linker_only OUTPUT_VAR TOKEN)
     set("${OUTPUT_VAR}" FALSE PARENT_SCOPE)
     starts_with(IS_LINKER_FLAG "${TOKEN}" "-l")
-    starts_with(IS_ABSOLUTE_PATH "${TOKEN}" "/")
-    if (IS_LINKER_FLAG OR IS_ABSOLUTE_PATH OR (EXISTS "${TOKEN}" AND NOT IS_DIRECTORY "${TOKEN}"))
+    if (IS_LINKER_FLAG OR (EXISTS "${TOKEN}" AND NOT IS_DIRECTORY "${TOKEN}"))
         set("${OUTPUT_VAR}" TRUE PARENT_SCOPE)
     endif()
 endfunction()

@@ -62,7 +62,6 @@ function(fprime_setup_global_includes)
     include_directories("${FPRIME_FRAMEWORK_PATH}")
     include_directories("${FPRIME_CONFIG_DIR}")
     include_directories("${FPRIME_PROJECT_ROOT}")
-    include_directories("${FPRIME_PROJECT_ROOT}/lib/include")
 
     # Setup the include directories that exist within the build-cache
     include_directories("${CMAKE_BINARY_DIR}")
