@@ -13,7 +13,7 @@ namespace Test {
 
 U16 get_free_port(bool udp) {
     struct sockaddr_in address;
-    NATIVE_INT_TYPE socketFd = -1;
+    PlatformIntType socketFd = -1;
     // Acquire a socket, or return error
     if ((socketFd = ::socket(AF_INET, (udp) ? SOCK_DGRAM : SOCK_STREAM, 0)) == -1) {
         return 0;

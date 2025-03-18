@@ -29,7 +29,7 @@ namespace Svc {
       serializeFPrime(Fw::SerializeBufferBase& buffer)
     {
       // Header
-      const NATIVE_INT_TYPE numRecs = 4;
+      const FwSizeType numRecs = 4;
       const U32 recordDataSize = 
         numRecs * FPrime::Records::STANDARD_SIZE;
       const U32 dataSize = recordDataSize + FPrime::CRCs::SIZE;

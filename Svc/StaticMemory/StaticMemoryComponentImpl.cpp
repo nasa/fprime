@@ -22,7 +22,10 @@ namespace Svc {
 
 StaticMemoryComponentImpl ::StaticMemoryComponentImpl(const char* const compName)
     : StaticMemoryComponentBase(compName) {
-    for (U32 i = 0; i < FW_NUM_ARRAY_ELEMENTS(m_allocated); i++) {
+    static_assert((StaticMemoryComponentBase::NUM_BUFFERALLOCATE_INPUT_PORTS >= 0) &&
+        (StaticMemoryComponentBase::NUM_BUFFERALLOCATE_INPUT_PORTS <= std::numeric_limits<FwIndexType>::max()),
+        "NUM_BUFFERALLOCATE_INPUT_PORTS must fit in the positive range of FwIndexType");
+    for (FwIndexType i = 0; i < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(m_allocated)); i++) {
         m_allocated[i] = false;
     }
 }
@@ -34,7 +37,7 @@ StaticMemoryComponentImpl ::~StaticMemoryComponentImpl() {}
 // ----------------------------------------------------------------------
 
 void StaticMemoryComponentImpl ::bufferDeallocate_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
-    FW_ASSERT(static_cast<NATIVE_UINT_TYPE>(portNum) < FW_NUM_ARRAY_ELEMENTS(m_static_memory));
+    FW_ASSERT(portNum < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(m_static_memory)));
     FW_ASSERT(m_allocated[portNum], portNum); // It is also an error to deallocate before returning
     // Check the memory returned is within the region
     FW_ASSERT(fwBuffer.getData() >= m_static_memory[portNum]);
@@ -45,8 +48,8 @@ void StaticMemoryComponentImpl ::bufferDeallocate_handler(const FwIndexType port
     m_allocated[portNum] = false;
 }
 
-Fw::Buffer StaticMemoryComponentImpl ::bufferAllocate_handler(const FwIndexType portNum, U32 size) {
-    FW_ASSERT(static_cast<NATIVE_UINT_TYPE>(portNum) < FW_NUM_ARRAY_ELEMENTS(m_static_memory));
+Fw::Buffer StaticMemoryComponentImpl ::bufferAllocate_handler(const FwIndexType portNum, Fw::Buffer::SizeType size) {
+    FW_ASSERT(portNum < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(m_static_memory)));
     FW_ASSERT(size <= sizeof(m_static_memory[portNum])); // It is a topology error to ask for too much from this component
     FW_ASSERT(not m_allocated[portNum], portNum); // It is also an error to allocate again before returning
     m_allocated[portNum] = true;

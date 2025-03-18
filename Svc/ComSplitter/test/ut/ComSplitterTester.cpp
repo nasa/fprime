@@ -106,7 +106,7 @@ namespace Svc {
 
     // Just connect 3 of 5:
     // comOut
-    for (NATIVE_INT_TYPE i = 0; i < 3; ++i) {
+    for (FwIndexType i = 0; i < 3; ++i) {
       this->component.set_comOut_OutputPort(
           i,
           this->get_from_comOut(i)

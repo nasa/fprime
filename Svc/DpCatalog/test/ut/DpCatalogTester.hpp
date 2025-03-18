@@ -56,7 +56,7 @@ namespace Svc {
         void testTree(
             DpCatalog::DpStateEntry* list, 
             DpCatalog::DpStateEntry* output,
-            NATIVE_INT_TYPE numEntries);
+            FwIndexType numEntries);
 
         struct DpSet {
             FwDpIdType id;

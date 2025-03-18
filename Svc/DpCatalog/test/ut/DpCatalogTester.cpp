@@ -54,7 +54,7 @@ namespace Svc {
     void DpCatalogTester::testTree(
             DpCatalog::DpStateEntry* input, 
             DpCatalog::DpStateEntry* output, 
-            NATIVE_INT_TYPE numEntries) {
+            FwIndexType numEntries) {
         ASSERT_TRUE(input != nullptr);
         ASSERT_TRUE(output != nullptr);
         ASSERT_TRUE(numEntries > 0);

@@ -69,15 +69,15 @@ Platform developers must define the following logical types in the `PlatformType
 CMake platform and toolchain files. Each type also defines a format specifier for use with the `printf` family of
 functions.
 
-| Platform Logical Type   | Format Specifier            | Notes                       | 
-|-------------------------|-----------------------------|-----------------------------|
-| PlatformIndexType       | PRI_PlatformIndexType       | Ports indices               | 
-| PlatformSizeType        | PRI_PlatformSizeType        | Sizes                       |
-| PlatformPointerCastType | PRI_PlatformPointerCastType | Pointers stored as integers |
-| PlatformAssertArgType   | PRI_PlatformAssertArgType   | Argument to FW_ASSERT       |
-| PlatformIntType         | PRI_PlatformIntType         | Deprecated (see note)       |
-| PlatformUIntType        | PRI_PlatformUIntType        | Deprecated (see note)       |
-
+| Platform Logical Type   | Logical Use                   | Format Specifier            | Signed | Size            |
+|-------------------------|-------------------------------|-----------------------------|--------|-----------------|
+| PlatformIndexType       | Ports and small array indices | PRI_PlatformIndexType       | Yes    | Minimum 1 Byte  |
+| PlatformSizeType        | Sizes                         | PRI_PlatformSizeType        | No     | Minimum 4 Bytes |
+| PlatformSignedSizeType  | Signed sizes                  | PRI_PlatformSignedSizeType  | Yes    | Minimum 4 Bytes |
+| PlatformPointerCastType | Pointers stored as integers   | PRI_PlatformPointerCastType | No     | sizeof(void*)   |
+| PlatformAssertArgType   | Argument to FW_ASSERT         | PRI_PlatformAssertArgType   | Yes/No | Any             |
+| PlatformIntType         | Deprecated (see note)         | PRI_PlatformIntType         | Yes    | sizeof(int)     |
+| PlatformUIntType        | Deprecated (see note)         | PRI_PlatformUIntType        | Yes    | sizeof(int)     |
 
 > [!WARNING]
 > `PlatformPointerCastType` values shall never be sent nor used outside the address space where a value was initialized because these values represent pointers only valid in a single address space.
@@ -104,18 +104,19 @@ printf("Index %" PRI_PlatformIndexType ". Min %" PRI_PlatformIndexType, index, s
 ```
 
 > [!NOTE]
-> in order for F´ to compile without warnings it is necessary that each of the platform types are elements in the set of integers supplied by the C standard integers header (`stdint.h`). i.e. each type must be an `int8_t`, `int16_t`, `int32_t`, `int64_t` or unsigned variants. On some compilers `int` and `unsigned int` are not members of that set and on those platforms it is imperative that both `PlatformIntType` and `PlatformUIntType` be set to some fixed size type instead.
+> in order for F´ to compile without warnings it is necessary that each of the platform types are elements in the set of integers supplied by the C standard integers header (`stdint.h`). i.e. each type must be an `int8_t`, `int16_t`, `int32_t`, `int64_t` or unsigned variants.
 
 ### Configurable Integer Types
 
 Project may configure the framework types that the framework and components use for implementation through
 `FpConfig.h`. The default configuration as supplied with F´ uses the above platform types where applicable.
 
-| Framework Type  | Logical Usage        | Default               | Format Specifier    | Notes |
-|-----------------|----------------------|-----------------------|---------------------|-------|
-| FwIndexType     | Port indices         | PlatformIndexType     | PRI_FwIndexType     |       |
-| FwSizeType      | Sizes                | PlatformSizeType      | PRI_FwSizeType      |       |
-| FwAssertArgType | Arguments to asserts | PlatformAssertArgType | PRI_FwAssertArgType |       |
+| Framework Type   | Logical Usage                | Default                | Format Specifier     | Signed | Size            |
+|------------------|------------------------------|------------------------|----------------------|--------|-----------------|
+| FwIndexType      | Port and small array indices | PlatformIndexType      | PRI_FwIndexType      | Yes    | Minimum 1 Byte  |
+| FwSizeType       | Sizes                        | PlatformSizeType       | PRI_FwSizeType       | No     | Minimum 4 Bytes |
+| FwSignedSizeType | Signed sizes                 | PlatformSignedSizeType | PRI_FwSignedSizeType | Yes    | Minimum 4 Bytes |
+| FwAssertArgType  | Arguments to asserts         | PlatformAssertArgType  | PRI_FwAssertArgType  | Yes/No | Any             |
 
 There is also a set of framework types that are used across F´ deployments and specifically interact with ground data
 systems. These GDS types have defaults based on configurable platform independent fixed-widths as shown below:

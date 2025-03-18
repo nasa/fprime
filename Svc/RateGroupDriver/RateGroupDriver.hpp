@@ -1,5 +1,4 @@
 /**
- * \file
  * \author T. Canham
  * \brief RateGroupDivider component implementation
  *
@@ -43,13 +42,13 @@ namespace Svc {
                 Divider() : divisor(0), offset(0)
                 {}
                 //! Initializes divisor and offset to passed-in pair 
-                Divider(NATIVE_INT_TYPE divisorIn, NATIVE_INT_TYPE offsetIn) :
+                Divider(FwSizeType divisorIn, FwSizeType offsetIn) :
                     divisor(divisorIn), offset(offsetIn)
                 {}
                 //! Divisor
-                NATIVE_INT_TYPE divisor;
+                FwSizeType divisor;
                 //! Offset
-                NATIVE_INT_TYPE offset;
+                FwSizeType offset;
             };
 
             //! \class DividerSet
@@ -87,10 +86,10 @@ namespace Svc {
             Divider m_dividers[NUM_CYCLEOUT_OUTPUT_PORTS];
 
             //! tick counter
-            NATIVE_INT_TYPE m_ticks;
+            FwSizeType m_ticks;
 
             //! rollover counter
-            NATIVE_INT_TYPE m_rollover;
+            FwSizeType m_rollover;
 
             //! has the configure method been called
             bool m_configured;

@@ -713,7 +713,8 @@ namespace Svc {
   void FileUplinkTester ::
     removeFile(const char *const path)
   {
-    const NATIVE_INT_TYPE status = ::unlink(path);
+    // status from unlink is a platform integer
+    const PlatformIntType status = ::unlink(path);
     if (status != 0) {
       ASSERT_EQ(ENOENT, errno);
     }

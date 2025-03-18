@@ -37,12 +37,12 @@ BufferAccumulator::ArrayFIFOBuffer ::~ArrayFIFOBuffer() {}
 // ----------------------------------------------------------------------
 
 void BufferAccumulator::ArrayFIFOBuffer ::init(Fw::Buffer* const elements,
-                                               NATIVE_UINT_TYPE capacity) {
+                                               FwSizeType capacity) {
   this->m_elements = elements;
   this->m_capacity = capacity;
 
   // Construct all elements
-  for (NATIVE_UINT_TYPE idx = 0; idx < capacity; idx++) {
+  for (FwSizeType idx = 0; idx < capacity; idx++) {
       new (&this->m_elements[idx]) Fw::Buffer;
   }
 }
@@ -91,11 +91,11 @@ bool BufferAccumulator::ArrayFIFOBuffer ::dequeue(Fw::Buffer& e) {
   return status;
 }
 
-U32 BufferAccumulator::ArrayFIFOBuffer ::getSize() const {
+FwSizeType BufferAccumulator::ArrayFIFOBuffer ::getSize() const {
   return this->m_size;
 }
 
-U32 BufferAccumulator::ArrayFIFOBuffer ::getCapacity() const {
+FwSizeType BufferAccumulator::ArrayFIFOBuffer ::getCapacity() const {
   return this->m_capacity;
 }
 

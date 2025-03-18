@@ -67,7 +67,7 @@ void CmdSplitterTester ::test_local_routing() {
     Fw::ComBuffer testBuffer = this->build_command_around_opcode(local_opcode);
 
     U32 context = static_cast<U32>(STest::Pick::any());
-    this->active_command_source = static_cast<NATIVE_INT_TYPE>(STest::Pick::lowerUpper(
+    this->active_command_source = static_cast<FwIndexType>(STest::Pick::lowerUpper(
         0, CmdSplitterPorts));
     this->invoke_to_CmdBuff(this->active_command_source, testBuffer, context);
     ASSERT_from_RemoteCmd_SIZE(0);
@@ -84,7 +84,7 @@ void CmdSplitterTester ::test_remote_routing() {
     Fw::ComBuffer testBuffer = this->build_command_around_opcode(remote_opcode);
 
     U32 context = static_cast<U32>(STest::Pick::any());
-    this->active_command_source = static_cast<NATIVE_INT_TYPE>(STest::Pick::lowerUpper(
+    this->active_command_source = static_cast<FwIndexType>(STest::Pick::lowerUpper(
         0, CmdSplitterPorts));
     this->invoke_to_CmdBuff(this->active_command_source, testBuffer, context);
     ASSERT_from_LocalCmd_SIZE(0);
@@ -98,7 +98,7 @@ void CmdSplitterTester ::test_error_routing() {
     REQUIREMENT("SVC-CMD-SPLITTER-004");
     Fw::ComBuffer testBuffer;  // Intentionally left empty
     U32 context = static_cast<U32>(STest::Pick::any());
-    this->active_command_source = static_cast<NATIVE_INT_TYPE>(STest::Pick::lowerUpper(
+    this->active_command_source = static_cast<FwIndexType>(STest::Pick::lowerUpper(
         0, CmdDispatcherSequencePorts));
     this->invoke_to_CmdBuff(this->active_command_source, testBuffer, context);
     ASSERT_from_RemoteCmd_SIZE(0);
@@ -116,7 +116,7 @@ void CmdSplitterTester ::test_response_forwarding() {
     Fw::CmdResponse response;
     response.e = static_cast<Fw::CmdResponse::T>(STest::Pick::lowerUpper(0, Fw::CmdResponse::NUM_CONSTANTS));
     U32 cmdSeq = static_cast<U32>(STest::Pick::any());
-    this->active_command_source = static_cast<NATIVE_INT_TYPE>(STest::Pick::startLength(
+    this->active_command_source = static_cast<FwIndexType>(STest::Pick::startLength(
         0, CmdDispatcherSequencePorts));
 
     this->invoke_to_seqCmdStatus(this->active_command_source, opcode, cmdSeq, response);

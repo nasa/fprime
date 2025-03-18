@@ -27,7 +27,7 @@ void TestState::action__CLEAR_EVENT_THROTTLE__OK() {
     // Clear history
     this->clearHistory();
     // Send the command
-    const NATIVE_INT_TYPE instance = static_cast<NATIVE_INT_TYPE>(STest::Pick::any());
+    const FwEnumStoreType instance = static_cast<FwEnumStoreType>(STest::Pick::any());
     const U32 cmdSeq = STest::Pick::any();
     this->sendCmd_CLEAR_EVENT_THROTTLE(instance, cmdSeq);
     this->component.doDispatch();

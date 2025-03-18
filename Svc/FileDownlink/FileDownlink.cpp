@@ -318,7 +318,7 @@ namespace Svc {
     if(this->m_curEntry.source == FileDownlink::COMMAND) {
       this->cmdResponse_out(this->m_curEntry.opCode, this->m_curEntry.cmdSeq, statusToCmdResp(resp));
     } else {
-      for(NATIVE_INT_TYPE i = 0; i < this->getNum_FileComplete_OutputPorts(); i++) {
+      for(FwIndexType i = 0; i < this->getNum_FileComplete_OutputPorts(); i++) {
         if(this->isConnected_FileComplete_OutputPort(i)) {
           this->FileComplete_out(i, Svc::SendFileResponse(resp, this->m_curEntry.context));
         }

@@ -56,7 +56,7 @@ namespace Drv {
             .pad = 0
 */
 
-        NATIVE_INT_TYPE stat = ioctl(this->m_fd, SPI_IOC_MESSAGE(1), &tr);
+        PlatformIntType stat = ioctl(this->m_fd, SPI_IOC_MESSAGE(1), &tr);
 
         if (stat < 1) {
             this->log_WARNING_HI_SPI_WriteError(this->m_device,this->m_select,stat);
@@ -65,19 +65,21 @@ namespace Drv {
         this->tlmWrite_SPI_Bytes(this->m_bytes);
     }
 
-    bool LinuxSpiDriverComponentImpl::open(NATIVE_INT_TYPE device,
-                                           NATIVE_INT_TYPE select,
+    bool LinuxSpiDriverComponentImpl::open(FwIndexType device,
+                                           FwIndexType select,
                                            SpiFrequency clock,
                                            SpiMode spiMode) {
+        FW_ASSERT(device >= 0, static_cast<FwAssertArgType>(device));
+        FW_ASSERT(select >= 0, static_cast<FwAssertArgType>(select));
 
         this->m_device = device;
         this->m_select = select;
-        NATIVE_INT_TYPE fd;
-        NATIVE_INT_TYPE ret;
+        PlatformIntType fd;
+        PlatformIntType ret;
 
         // Open:
         Fw::FileNameString devString;
-        Fw::FormatStatus formatStatus = devString.format("/dev/spidev%d.%d", device, select);
+        Fw::FormatStatus formatStatus = devString.format("/dev/spidev%" PRI_FwIndexType ".%" PRI_FwIndexType, device, select);
         FW_ASSERT(formatStatus == Fw::FormatStatus::SUCCESS);
 
         fd = ::open(devString.toChar(), O_RDWR);

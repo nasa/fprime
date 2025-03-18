@@ -18,9 +18,7 @@ namespace Svc {
             RateGroupDriverImplTester(Svc::RateGroupDriver& inst);
             virtual ~RateGroupDriverImplTester();
 
-            void init(NATIVE_INT_TYPE instance = 0);
-
-            void runSchedNominal(Svc::RateGroupDriver::DividerSet dividersSet, NATIVE_INT_TYPE numDividers);
+            void runSchedNominal(Svc::RateGroupDriver::DividerSet dividersSet, FwIndexType numDividers);
 
         private:
 

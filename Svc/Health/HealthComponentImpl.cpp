@@ -15,7 +15,7 @@
 #include <Fw/Types/Assert.hpp>
 
 namespace Svc {
-
+    
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction
     // ----------------------------------------------------------------------
@@ -28,31 +28,32 @@ namespace Svc {
             m_warnings(0),
             m_enabled(Fw::Enabled::ENABLED),
             queue_depth(0) {
+        static_assert((HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS >= 0) && (HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS <= std::numeric_limits<FwIndexType>::max()), "NUM_PINGSEND_OUTPUT_PORTS must fit in the positive range of FwIndexType");
         // clear tracker by disabling pings
-        for (NATIVE_UINT_TYPE entry = 0;
-                entry < FW_NUM_ARRAY_ELEMENTS(this->m_pingTrackerEntries);
+        for (FwIndexType entry = 0;
+                entry < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(this->m_pingTrackerEntries));
                 entry++) {
             this->m_pingTrackerEntries[entry].enabled = Fw::Enabled::DISABLED;
         }
     }
 
-    void HealthImpl::init(const FwSizeType queueDepth, const NATIVE_INT_TYPE instance) {
+    void HealthImpl::init(const FwSizeType queueDepth, const FwEnumStoreType instance) {
         HealthComponentBase::init(queueDepth, instance);
         this->queue_depth = queueDepth;
 
     }
 
-    void HealthImpl::setPingEntries(PingEntry* pingEntries, NATIVE_INT_TYPE numPingEntries, U32 watchDogCode) {
+    void HealthImpl::setPingEntries(PingEntry* pingEntries, FwIndexType numPingEntries, U32 watchDogCode) {
 
         FW_ASSERT(pingEntries);
         // make sure not asking for more pings than ports
         FW_ASSERT(numPingEntries <= NUM_PINGSEND_OUTPUT_PORTS);
 
-        this->m_numPingEntries = static_cast<U32>(numPingEntries);
+        this->m_numPingEntries = numPingEntries;
         this->m_watchDogCode = watchDogCode;
 
         // copy entries to private data
-        for (NATIVE_INT_TYPE entry = 0; entry < numPingEntries; entry++) {
+        for (FwIndexType entry = 0; entry < numPingEntries; entry++) {
             FW_ASSERT(
                 pingEntries[entry].warnCycles <= pingEntries[entry].fatalCycles,
                 static_cast<FwAssertArgType>(pingEntries[entry].warnCycles),
@@ -87,7 +88,7 @@ namespace Svc {
 
     void HealthImpl::Run_handler(const FwIndexType portNum, U32 context) {
         //dispatch messages
-        for (NATIVE_UINT_TYPE i = 0; i < this->queue_depth; i++) {
+        for (FwSizeType i = 0; i < this->queue_depth; i++) {
             MsgDispatchStatus stat = this->doDispatch();
             if (MSG_DISPATCH_EMPTY == stat) {
                 break;
@@ -100,7 +101,7 @@ namespace Svc {
             // for ports that are awaiting a reply, decrement their counters
             // and check for violations
 
-            for (NATIVE_UINT_TYPE entry = 0; entry < this->m_numPingEntries; entry++) {
+            for (FwIndexType entry = 0; entry < this->m_numPingEntries; entry++) {
                 if (Fw::Enabled::ENABLED == this->m_pingTrackerEntries[entry].enabled) {
                     // If clear entry
                     if (0 == this->m_pingTrackerEntries[entry].cycleCount) {
@@ -161,7 +162,7 @@ namespace Svc {
 
     void HealthImpl::HLTH_PING_ENABLE_cmdHandler(const FwOpcodeType opCode, U32 cmdSeq, const Fw::CmdStringArg& entry, Fw::Enabled enable) {
         // check to see if entry is in range
-        NATIVE_INT_TYPE entryIndex = this->findEntry(entry);
+        FwIndexType entryIndex = this->findEntry(entry);
 
         if (-1 == entryIndex) {
             this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::VALIDATION_ERROR);
@@ -181,7 +182,7 @@ namespace Svc {
 
     void HealthImpl::HLTH_CHNG_PING_cmdHandler(const FwOpcodeType opCode, U32 cmdSeq, const Fw::CmdStringArg& entry, U32 warningValue, U32 fatalValue) {
         // check to see if entry is in range
-        NATIVE_INT_TYPE entryIndex = this->findEntry(entry);
+        FwIndexType entryIndex = this->findEntry(entry);
         if (-1 == entryIndex) {
             this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::VALIDATION_ERROR);
             return;
@@ -203,12 +204,12 @@ namespace Svc {
         this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
     }
 
-    NATIVE_INT_TYPE HealthImpl::findEntry(const Fw::CmdStringArg& entry) {
-
+    FwIndexType HealthImpl::findEntry(const Fw::CmdStringArg& entry) {
+        static_assert(std::numeric_limits<FwIndexType>::is_signed, "FwIndexType must be signed to return -1 for error");
         // walk through entries
         for (FwIndexType tableEntry = 0; tableEntry < NUM_PINGSEND_OUTPUT_PORTS; tableEntry++) {
             if (entry == this->m_pingTrackerEntries[tableEntry].entry.entryName) {
-                return static_cast<NATIVE_INT_TYPE>(tableEntry);
+                return static_cast<FwIndexType>(tableEntry);
             }
         }
         Fw::LogStringArg arg = entry;

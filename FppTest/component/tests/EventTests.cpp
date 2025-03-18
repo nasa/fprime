@@ -28,7 +28,7 @@ void Tester ::testEvent(FwIndexType portNum, FppTest::Types::NoParams& data) {
     this->printTextLogHistory(stdout);
 }
 
-void Tester ::testEventHelper(FwIndexType portNum, FppTest::Types::PrimitiveParams& data, NATIVE_UINT_TYPE size) {
+void Tester ::testEventHelper(FwIndexType portNum, FppTest::Types::PrimitiveParams& data, FwSizeType size) {
     component.log_ACTIVITY_LO_EventPrimitive(data.args.val1, data.args.val2, data.args.val3, data.args.val4,
                                              data.args.val5, data.args.val6);
 
@@ -81,7 +81,7 @@ void Tester ::testEvent(FwIndexType portNum, FppTest::Types::EnumParam& data) {
     this->printTextLogHistory(stdout);
 }
 
-void Tester ::testEventHelper(FwIndexType portNum, FppTest::Types::ArrayParam& data, NATIVE_UINT_TYPE size) {
+void Tester ::testEventHelper(FwIndexType portNum, FppTest::Types::ArrayParam& data, FwSizeType size) {
     ASSERT_TRUE(component.isConnected_eventOut_OutputPort(portNum));
     ASSERT_TRUE(component.isConnected_textEventOut_OutputPort(portNum));
 
@@ -123,7 +123,7 @@ void Tester ::testEvent(FwIndexType portNum, FppTest::Types::StructParam& data) 
     this->printTextLogHistory(stdout);
 }
 
-void Tester ::testEventHelper(FwIndexType portNum, FppTest::Types::BoolParam& data, NATIVE_UINT_TYPE size) {
+void Tester ::testEventHelper(FwIndexType portNum, FppTest::Types::BoolParam& data, FwSizeType size) {
     ASSERT_TRUE(component.isConnected_eventOut_OutputPort(portNum));
     ASSERT_TRUE(component.isConnected_textEventOut_OutputPort(portNum));
 

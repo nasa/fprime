@@ -18,12 +18,12 @@
 
 void Tester ::connectPorts() {
     // arrayArgsGuarded
-    for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
+    for (FwIndexType i = 0; i < 2; ++i) {
         this->connect_to_arrayArgsGuarded(i, this->component.get_arrayArgsGuarded_InputPort(i));
     }
 
     // arrayArgsSync
-    for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
+    for (FwIndexType i = 0; i < 2; ++i) {
         this->connect_to_arrayArgsSync(i, this->component.get_arrayArgsSync_InputPort(i));
     }
 
@@ -37,12 +37,12 @@ void Tester ::connectPorts() {
     this->connect_to_cmdIn(0, this->component.get_cmdIn_InputPort(0));
 
     // enumArgsGuarded
-    for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
+    for (FwIndexType i = 0; i < 2; ++i) {
         this->connect_to_enumArgsGuarded(i, this->component.get_enumArgsGuarded_InputPort(i));
     }
 
     // enumArgsSync
-    for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
+    for (FwIndexType i = 0; i < 2; ++i) {
         this->connect_to_enumArgsSync(i, this->component.get_enumArgsSync_InputPort(i));
     }
 
@@ -59,7 +59,7 @@ void Tester ::connectPorts() {
     this->connect_to_stringReturnSync(0, this->component.get_stringReturnSync_InputPort(0));
 
     // noArgsGuarded
-    for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
+    for (FwIndexType i = 0; i < 2; ++i) {
         this->connect_to_noArgsGuarded(i, this->component.get_noArgsGuarded_InputPort(i));
     }
 
@@ -70,17 +70,17 @@ void Tester ::connectPorts() {
     this->connect_to_noArgsReturnSync(0, this->component.get_noArgsReturnSync_InputPort(0));
 
     // noArgsSync
-    for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
+    for (FwIndexType i = 0; i < 2; ++i) {
         this->connect_to_noArgsSync(i, this->component.get_noArgsSync_InputPort(i));
     }
 
     // primitiveArgsGuarded
-    for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
+    for (FwIndexType i = 0; i < 2; ++i) {
         this->connect_to_primitiveArgsGuarded(i, this->component.get_primitiveArgsGuarded_InputPort(i));
     }
 
     // primitiveArgsSync
-    for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
+    for (FwIndexType i = 0; i < 2; ++i) {
         this->connect_to_primitiveArgsSync(i, this->component.get_primitiveArgsSync_InputPort(i));
     }
 
@@ -91,22 +91,22 @@ void Tester ::connectPorts() {
     this->connect_to_primitiveReturnSync(0, this->component.get_primitiveReturnSync_InputPort(0));
 
     // stringArgsGuarded
-    for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
+    for (FwIndexType i = 0; i < 2; ++i) {
         this->connect_to_stringArgsGuarded(i, this->component.get_stringArgsGuarded_InputPort(i));
     }
 
     // stringArgsSync
-    for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
+    for (FwIndexType i = 0; i < 2; ++i) {
         this->connect_to_stringArgsSync(i, this->component.get_stringArgsSync_InputPort(i));
     }
 
     // structArgsGuarded
-    for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
+    for (FwIndexType i = 0; i < 2; ++i) {
         this->connect_to_structArgsGuarded(i, this->component.get_structArgsGuarded_InputPort(i));
     }
 
     // structArgsSync
-    for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
+    for (FwIndexType i = 0; i < 2; ++i) {
         this->connect_to_structArgsSync(i, this->component.get_structArgsSync_InputPort(i));
     }
 
@@ -222,12 +222,12 @@ void Tester ::connectPorts() {
     // ----------------------------------------------------------------------
 
     // serialGuarded
-    for (NATIVE_INT_TYPE i = 0; i < 6; ++i) {
+    for (FwSizeType i = 0; i < 6; ++i) {
         this->connect_to_serialGuarded(i, this->component.get_serialGuarded_InputPort(i));
     }
 
     // serialSync
-    for (NATIVE_INT_TYPE i = 0; i < 6; ++i) {
+    for (FwSizeType i = 0; i < 6; ++i) {
         this->connect_to_serialSync(i, this->component.get_serialSync_InputPort(i));
     }
 }

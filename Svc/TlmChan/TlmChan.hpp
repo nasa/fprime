@@ -26,7 +26,7 @@ class TlmChan final : public TlmChanComponentBase {
 
   PROTECTED:
     // can be overridden for alternate algorithms
-    virtual NATIVE_UINT_TYPE doHash(FwChanIdType id);
+    virtual FwChanIdType doHash(FwChanIdType id);
 
   PRIVATE:
     // Port functions
@@ -46,13 +46,13 @@ class TlmChan final : public TlmChanComponentBase {
         Fw::TlmBuffer buffer;       //!< buffer to store serialized telemetry
         tlmEntry* next;             //!< pointer to next bucket in table
         bool used;                  //!< if entry has been used
-        NATIVE_UINT_TYPE bucketNo;  //!< for testing
+        FwChanIdType bucketNo;  //!< for testing
     } TlmEntry;
 
     struct TlmSet {
         TlmEntry* slots[TLMCHAN_NUM_TLM_HASH_SLOTS];  //!< set of hash slots in hash table
         TlmEntry buckets[TLMCHAN_HASH_BUCKETS];       //!< set of buckets used in hash table
-        NATIVE_INT_TYPE free;                         //!< next free bucket
+        FwChanIdType free;                            //!< next free bucket
     } m_tlmEntries[2];
 
     U32 m_activeBuffer;  // !< which buffer is active for storing telemetry

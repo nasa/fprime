@@ -87,7 +87,7 @@ SocketIpStatus IpSocket::addressToIp4(const char* address, void* ip4) {
     FW_ASSERT(ip4 != nullptr);
     // Get the IP address from host
 #ifdef TGT_OS_TYPE_VXWORKS
-    NATIVE_INT_TYPE ip = inet_addr(address);
+    PlatformIntType ip = inet_addr(address);
     if (ip == ERROR) {
         return SOCK_INVALID_IP_ADDRESS;
     }

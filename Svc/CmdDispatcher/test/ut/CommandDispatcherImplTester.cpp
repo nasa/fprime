@@ -15,13 +15,9 @@
 #include <gtest/gtest.h>
 #include <Fw/Test/UnitTest.hpp>
 
+static_assert(CMD_DISPATCHER_SEQUENCER_TABLE_SIZE + 1 <= std::numeric_limits<U32>::max(), "Unit test depends on CMD_DISPATCHER_SEQUENCER_TABLE_SIZE + 1 within range of U32");
 
 namespace Svc {
-
-    void CommandDispatcherImplTester::init(NATIVE_INT_TYPE instance) {
-        CommandDispatcherGTestBase::init();
-    }
-
     CommandDispatcherImplTester::CommandDispatcherImplTester(Svc::CommandDispatcherImpl& inst) :
         CommandDispatcherGTestBase("testerbase",100),
         m_impl(inst) {
@@ -47,13 +43,13 @@ namespace Svc {
     void CommandDispatcherImplTester::runNominalDispatch() {
 
         // verify dispatch table is empty
-        for (NATIVE_UINT_TYPE entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
+        for (FwOpcodeType entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
             ASSERT_TRUE(this->m_impl.m_entryTable[entry].used == false);
         }
 
         // verify sequence tracker table is empty
 
-        for (NATIVE_UINT_TYPE entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_sequenceTracker); entry++) {
+        for (U32 entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_sequenceTracker); entry++) {
             ASSERT_TRUE(this->m_impl.m_sequenceTracker[entry].used == false);
         }
         // clear reg events
@@ -168,13 +164,13 @@ namespace Svc {
     void CommandDispatcherImplTester::runNopCommands() {
 
         // verify dispatch table is empty
-        for (NATIVE_UINT_TYPE entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
+        for (FwOpcodeType entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
             ASSERT_TRUE(this->m_impl.m_entryTable[entry].used == false);
         }
 
         // verify sequence tracker table is empty
 
-        for (NATIVE_UINT_TYPE entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_sequenceTracker); entry++) {
+        for (U32 entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_sequenceTracker); entry++) {
             ASSERT_TRUE(this->m_impl.m_sequenceTracker[entry].used == false);
         }
 
@@ -330,13 +326,13 @@ namespace Svc {
     void CommandDispatcherImplTester::runInvalidOpcodeDispatch() {
 
         // verify dispatch table is empty
-        for (NATIVE_UINT_TYPE entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
+        for (FwOpcodeType entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
             ASSERT_TRUE(this->m_impl.m_entryTable[entry].used == false);
         }
 
         // verify sequence tracker table is empty
 
-        for (NATIVE_UINT_TYPE entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_sequenceTracker); entry++) {
+        for (U32 entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_sequenceTracker); entry++) {
             ASSERT_TRUE(this->m_impl.m_sequenceTracker[entry].used == false);
         }
         // clear reg events
@@ -412,13 +408,13 @@ namespace Svc {
     void CommandDispatcherImplTester::runFailedCommand() {
 
         // verify dispatch table is empty
-        for (NATIVE_UINT_TYPE entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
+        for (FwOpcodeType entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
             ASSERT_TRUE(this->m_impl.m_entryTable[entry].used == false);
         }
 
         // verify sequence tracker table is empty
 
-        for (NATIVE_UINT_TYPE entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_sequenceTracker); entry++) {
+        for (U32 entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_sequenceTracker); entry++) {
             ASSERT_TRUE(this->m_impl.m_sequenceTracker[entry].used == false);
         }
         // clear reg events
@@ -631,13 +627,13 @@ namespace Svc {
 
     void CommandDispatcherImplTester::runInvalidCommand() {
         // verify dispatch table is empty
-        for (NATIVE_UINT_TYPE entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
+        for (FwOpcodeType entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
             ASSERT_TRUE(this->m_impl.m_entryTable[entry].used == false);
         }
 
         // verify sequence tracker table is empty
 
-        for (NATIVE_UINT_TYPE entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_sequenceTracker); entry++) {
+        for (U32 entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_sequenceTracker); entry++) {
             ASSERT_TRUE(this->m_impl.m_sequenceTracker[entry].used == false);
         }
         // clear reg events
@@ -666,13 +662,13 @@ namespace Svc {
     void CommandDispatcherImplTester::runOverflowCommands() {
 
         // verify dispatch table is empty
-        for (NATIVE_UINT_TYPE entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
+        for (FwOpcodeType entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
             ASSERT_TRUE(this->m_impl.m_entryTable[entry].used == false);
         }
 
         // verify sequence tracker table is empty
 
-        for (NATIVE_UINT_TYPE entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_sequenceTracker); entry++) {
+        for (U32 entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_sequenceTracker); entry++) {
             ASSERT_TRUE(this->m_impl.m_sequenceTracker[entry].used == false);
         }
         // clear reg events
@@ -718,7 +714,7 @@ namespace Svc {
         ASSERT_EVENTS_OpCodeRegistered_SIZE(1);
         ASSERT_EVENTS_OpCodeRegistered(0,testOpCode,0,4);
 
-        for (NATIVE_UINT_TYPE disp = 0; disp < CMD_DISPATCHER_SEQUENCER_TABLE_SIZE + 1; disp++) {
+        for (U32 disp = 0; disp < CMD_DISPATCHER_SEQUENCER_TABLE_SIZE + 1; disp++) {
             // dispatch a test command
             U32 testCmdArg = 100;
             U32 testContext = 13;
@@ -764,12 +760,12 @@ namespace Svc {
     void CommandDispatcherImplTester::runClearCommandTracking() {
 
         // verify dispatch table is empty
-        for (NATIVE_UINT_TYPE entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
+        for (FwOpcodeType entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
             ASSERT_TRUE(this->m_impl.m_entryTable[entry].used == false);
         }
 
         // verify sequence tracker table is empty
-        for (NATIVE_UINT_TYPE entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_sequenceTracker); entry++) {
+        for (U32 entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_sequenceTracker); entry++) {
             ASSERT_TRUE(this->m_impl.m_sequenceTracker[entry].used == false);
         }
         // clear reg events
@@ -867,7 +863,7 @@ namespace Svc {
         // dispatch command from dispatcher to command handler
         ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK,this->m_impl.doDispatch());
         // verify tracking table empty
-        for (NATIVE_UINT_TYPE entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_sequenceTracker); entry++) {
+        for (U32 entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_sequenceTracker); entry++) {
             ASSERT_TRUE(this->m_impl.m_sequenceTracker[entry].used == false);
         }
 

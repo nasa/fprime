@@ -97,13 +97,13 @@ namespace Drv {
       printTextLogHistoryEntry(e, stdout);
   }
 
-  void LinuxSpiDriverTester::sendBuffer(BYTE* buffer, NATIVE_INT_TYPE size) {
+  void LinuxSpiDriverTester::sendBuffer(BYTE* buffer, FwSizeType size) {
       Fw::Buffer w;
-      w.setdata(reinterpret_cast<POINTER_CAST>(buffer));
+      w.setdata(reinterpret_cast<PlatformPointerCastType>(buffer));
       w.setsize(size);
 
       printf("WRITE: ");
-      for (NATIVE_INT_TYPE byte = 0; byte < size; byte++) {
+      for (FwSizeType byte = 0; byte < size; byte++) {
           printf("0x%02X ",buffer[byte]);
       }
       printf("\n");
@@ -113,13 +113,13 @@ namespace Drv {
 
       FW_ASSERT(rb);
 
-      Fw::Buffer r(0,0, reinterpret_cast<POINTER_CAST>(rb),size);
+      Fw::Buffer r(0,0, reinterpret_cast<PlatformPointerCastType>(rb),size);
 
       this->invoke_to_SpiReadWrite(0,w,r);
 
       BYTE* d = (BYTE*)r.getdata();
       printf("READ: ");
-      for (NATIVE_INT_TYPE byte = 0; byte < size; byte++) {
+      for (FwSizeType byte = 0; byte < size; byte++) {
           printf("0x%02X ",d[byte]);
       }
       printf("\n");

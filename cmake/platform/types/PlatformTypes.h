@@ -68,7 +68,6 @@ typedef PlatformIntType PlatformQueuePriorityType;
 
 // Linux/Darwin definitions for pointer have various sizes across platforms
 // and since these definitions need to be consistent we must ask the size.
-#ifndef PLATFORM_POINTER_CAST_TYPE_DEFINED
 // Check for __SIZEOF_POINTER__ or cause error
 #ifndef __SIZEOF_POINTER__
 #error "Compiler does not support __SIZEOF_POINTER__, cannot use Linux/Darwin types"
@@ -90,7 +89,6 @@ typedef uint8_t PlatformPointerCastType;
 #else
 #error "Expected __SIZEOF_POINTER__ to be one of 8, 4, 2, or 1"
 #endif
-#endif  // PLATFORM_POINTER_CAST_TYPE_DEFINED
 
 #ifdef  __cplusplus
 }

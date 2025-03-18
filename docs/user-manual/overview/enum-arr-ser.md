@@ -34,9 +34,9 @@ following table and are available to both the ground system, events, channels, a
 | U32     | uint32_t   | unsigned 32-bit integer |
 | F32     | float      | 32-bit floating point   |
 | F64     | double     | 64-bit floating point   |
-| NATIVE_INT_TYPE  | int           | architecture dependent integer |
-| NATIVE_UINT_TYPE | unsigned int  | architecture dependent unsigned integer |
-| POINTER_CAST     |               | integer of sufficient size to store a pointer for the architecture |
+
+> [!NOTE]
+> For a full description of numerical types available to F´ see: [Numerical Types](../../reference/numerical-types.md).
 
 > [!NOTE]
 > C/C++ types come from `stdint.h` and `stdbool.h`.  The last three types above are not of set size but are architecture-dependent. Should a project's architecture not support all these types, see: [Configuring F´: Architecture Supported Primitive Types](../framework/configuring-fprime.md)

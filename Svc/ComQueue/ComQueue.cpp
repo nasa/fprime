@@ -15,7 +15,8 @@ namespace Svc {
 // ----------------------------------------------------------------------
 
 ComQueue ::QueueConfigurationTable ::QueueConfigurationTable() {
-    for (NATIVE_UINT_TYPE i = 0; i < FW_NUM_ARRAY_ELEMENTS(this->entries); i++) {
+    static_assert(std::numeric_limits<FwIndexType>::max() >= FW_NUM_ARRAY_ELEMENTS(this->entries), "Number of entries must fit into FwIndexType");
+    for (FwIndexType i = 0; i < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(this->entries)); i++) {
         this->entries[i].priority = 0;
         this->entries[i].depth = 0;
     }
@@ -82,7 +83,12 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
                 // Message size is determined by the type of object being stored, which in turn is determined by the
                 // index of the entry. Those lower than COM_PORT_COUNT are Fw::ComBuffers and those larger Fw::Buffer.
                 entry.msgSize = (entryIndex < COM_PORT_COUNT) ? sizeof(Fw::ComBuffer) : sizeof(Fw::Buffer);
-                totalAllocation += static_cast<NATIVE_UINT_TYPE>(entry.depth * entry.msgSize);
+                // Overflow checks
+                FW_ASSERT((std::numeric_limits<FwSizeType>::max()/entry.depth) >= entry.msgSize,
+                          static_cast<FwAssertArgType>(entry.depth),
+                          static_cast<FwAssertArgType>(entry.msgSize));
+                FW_ASSERT(std::numeric_limits<FwSizeType>::max() - (entry.depth * entry.msgSize) >= totalAllocation);
+                totalAllocation += entry.depth * entry.msgSize;
                 currentPriorityIndex++;
             }
         }

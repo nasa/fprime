@@ -42,8 +42,8 @@ void ComQueueTester ::configure() {
 }
 
 void ComQueueTester ::sendByQueueNumber(Fw::Buffer& buffer,
-                                        NATIVE_INT_TYPE queueNum,
-                                        NATIVE_INT_TYPE& portNum,
+                                        FwIndexType queueNum,
+                                        FwIndexType& portNum,
                                         QueueType& queueType) {
     if (queueNum < ComQueue::COM_PORT_COUNT) {
         Fw::ComBuffer comBuffer(buffer.getData(), buffer.getSize());
@@ -63,7 +63,7 @@ void ComQueueTester ::emitOne() {
     dispatchAll();
 }
 
-void ComQueueTester ::emitOneAndCheck(NATIVE_UINT_TYPE expectedIndex,
+void ComQueueTester ::emitOneAndCheck(FwIndexType expectedIndex,
                               QueueType expectedType,
                               Fw::ComBuffer& expectedCom,
                               Fw::Buffer& expectedBuff) {
@@ -213,7 +213,7 @@ void ComQueueTester::testExternalQueueOverflow() {
         QueueType overflow_type;
         FwIndexType portNum;
         // queue[portNum].depth + 2 to deliberately cause overflow and check throttle of exactly 1
-        for (NATIVE_UINT_TYPE msgCount = 0; msgCount < configurationTable.entries[queueNum].depth + 2; msgCount++) {
+        for (FwSizeType msgCount = 0; msgCount < configurationTable.entries[queueNum].depth + 2; msgCount++) {
             sendByQueueNumber(buffer, queueNum, portNum, overflow_type);
             dispatchAll();
         }
@@ -244,7 +244,7 @@ void ComQueueTester::testExternalQueueOverflow() {
         ASSERT_EVENTS_QueueOverflow(1, overflow_type, portNum);
 
         // Drain the queue again such that we have a clean slate before the next queue
-        for (NATIVE_UINT_TYPE msgCount = 0; msgCount < configurationTable.entries[queueNum].depth; msgCount++) {
+        for (FwSizeType msgCount = 0; msgCount < configurationTable.entries[queueNum].depth; msgCount++) {
             emitOne();
         }
         clearEvents();

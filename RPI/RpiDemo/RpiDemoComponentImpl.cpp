@@ -114,7 +114,7 @@ namespace RPI {
           char uMsg[serBuffer.getSize() + 1];
           char *bPtr = reinterpret_cast<char *>(serBuffer.getData());
 
-          for (NATIVE_UINT_TYPE byte = 0; byte < serBuffer.getSize(); byte++) {
+          for (FwSizeType byte = 0; byte < serBuffer.getSize(); byte++) {
             uMsg[byte] = isalpha(bPtr[byte]) ? bPtr[byte] : '*';
           }
           uMsg[sizeof(uMsg) - 1] = 0;
@@ -160,7 +160,7 @@ namespace RPI {
         Fw::Logic value
     )
   {
-      NATIVE_INT_TYPE port;
+      FwIndexType port;
       // convert to connected ports
       switch (output.e) {
           case RpiDemo_GpioOutNum::PIN_23:
@@ -191,7 +191,7 @@ namespace RPI {
         RpiDemo_GpioInNum input /*!< Input GPIO*/
     )
   {
-      NATIVE_INT_TYPE port;
+      FwIndexType port;
       // convert to connected ports
       switch (input.e) {
           case RpiDemo_GpioInNum::PIN_25:
@@ -229,7 +229,7 @@ namespace RPI {
       out.setData(reinterpret_cast<U8*>(const_cast<char*>(data.toChar())));
       out.setSize(data.length());
       this->SpiReadWrite_out(0, out, in);
-      for (NATIVE_UINT_TYPE byte = 0; byte < sizeof(inBuf); byte++) {
+      for (FwSizeType byte = 0; byte < static_cast<FwSizeType>(sizeof(inBuf)); byte++) {
           inBuf[byte] = isalpha(inBuf[byte])?inBuf[byte]:'*';
       }
       inBuf[sizeof(inBuf)-1] = 0;

@@ -23,7 +23,7 @@ PassiveRateGroup::PassiveRateGroup(const char* compName)
 
 PassiveRateGroup::~PassiveRateGroup() {}
 
-void PassiveRateGroup::configure(NATIVE_INT_TYPE contexts[], NATIVE_INT_TYPE numContexts) {
+void PassiveRateGroup::configure(U32 contexts[], FwIndexType numContexts) {
     FW_ASSERT(contexts);
     FW_ASSERT(numContexts == this->getNum_RateGroupMemberOut_OutputPorts(),numContexts,this->getNum_RateGroupMemberOut_OutputPorts());
     FW_ASSERT(FW_NUM_ARRAY_ELEMENTS(this->m_contexts) == this->getNum_RateGroupMemberOut_OutputPorts(),
@@ -32,7 +32,7 @@ void PassiveRateGroup::configure(NATIVE_INT_TYPE contexts[], NATIVE_INT_TYPE num
 
     this->m_numContexts = numContexts;
     // copy context values
-    for (NATIVE_INT_TYPE entry = 0; entry < this->m_numContexts; entry++) {
+    for (FwIndexType entry = 0; entry < this->m_numContexts; entry++) {
         this->m_contexts[entry] = static_cast<U32>(contexts[entry]);
     }
 }
@@ -43,7 +43,7 @@ void PassiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleSt
     FW_ASSERT(this->m_numContexts);
 
     // invoke any members of the rate group
-    for (NATIVE_INT_TYPE port = 0; port < this->getNum_RateGroupMemberOut_OutputPorts(); port++) {
+    for (FwIndexType port = 0; port < this->getNum_RateGroupMemberOut_OutputPorts(); port++) {
         if (this->isConnected_RateGroupMemberOut_OutputPort(port)) {
             this->RateGroupMemberOut_out(port, this->m_contexts[port]);
         }

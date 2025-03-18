@@ -57,8 +57,8 @@ namespace Ref {
             this->tlmWrite_PacketsSent(this->m_buffsSent);
             // write data
             U8 testData[24];
-            NATIVE_UINT_TYPE dataSize = sizeof(testData);
-            memset(testData,0xFF,dataSize);
+            FwSizeType dataSize = static_cast<FwSizeType>(sizeof(testData));
+            memset(testData,0xFF,static_cast<size_t>(dataSize));
             // compute checksum
             U32 csum = 0;
             for (U32 byte = 0; byte < dataSize; byte++) {

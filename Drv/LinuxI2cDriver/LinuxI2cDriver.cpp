@@ -150,7 +150,7 @@ namespace Drv {
     rdwr_data.nmsgs = 2;
 
     //Use ioctl to perform the combined write/read transaction
-    NATIVE_INT_TYPE stat = ioctl(this->m_fd, I2C_RDWR, &rdwr_data);
+    PlatformIntType stat = ioctl(this->m_fd, I2C_RDWR, &rdwr_data);
 
     if(stat == -1){
       //Because we're using ioctl to perform the transaction we dont know exactly the type of error that occurred

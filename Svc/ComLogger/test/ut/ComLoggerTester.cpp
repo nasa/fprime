@@ -165,7 +165,7 @@ namespace Svc {
           FwSignedSizeType length = sizeof(U16);
           ret = file.read(buf, length);
           ASSERT_EQ(Os::File::OP_OK, ret);
-          ASSERT_EQ(length, static_cast<NATIVE_INT_TYPE>(sizeof(U16)));
+          ASSERT_EQ(length, static_cast<FwSignedSizeType>(sizeof(U16)));
           Fw::SerialBuffer comBuffLength(buf, length);
           comBuffLength.fill();
           stat = comBuffLength.deserialize(bufferSize);
@@ -176,7 +176,7 @@ namespace Svc {
           length = bufferSize;
           ret = file.read(buf, length);
           ASSERT_EQ(Os::File::OP_OK,ret);
-          ASSERT_EQ(length, static_cast<NATIVE_INT_TYPE>(bufferSize));
+          ASSERT_EQ(length, static_cast<FwSignedSizeType>(bufferSize));
           ASSERT_EQ(memcmp(buf, data, COM_BUFFER_LENGTH), 0);
 
           //for(int k=0; k < 4; k++)
@@ -185,7 +185,7 @@ namespace Svc {
         }
 
         // Make sure we reached the end of the file:
-        FwSignedSizeType length = sizeof(NATIVE_INT_TYPE);
+        FwSignedSizeType length = static_cast<FwSignedSizeType>(sizeof(FwSignedSizeType));
         ret = file.read(buf, length);
         ASSERT_EQ(Os::File::OP_OK,ret);
         ASSERT_EQ(length, 0);
@@ -296,7 +296,7 @@ namespace Svc {
         }
 
         // Make sure we reached the end of the file:
-        FwSignedSizeType length = sizeof(NATIVE_INT_TYPE);
+        FwSignedSizeType length = sizeof(FwSignedSizeType);
         ret = file.read(buf, length);
         ASSERT_EQ(Os::File::OP_OK,ret);
         ASSERT_EQ(length, 0);
@@ -652,7 +652,7 @@ namespace Svc {
         FwSignedSizeType length = sizeof(U16);
         ret = file.read(buf, length);
         ASSERT_EQ(Os::File::OP_OK, ret);
-        ASSERT_EQ(length, static_cast<NATIVE_INT_TYPE>(sizeof(U16)));
+        ASSERT_EQ(length, static_cast<FwSignedSizeType>(sizeof(U16)));
         Fw::SerialBuffer comBuffLength(buf, length);
         comBuffLength.fill();
         stat = comBuffLength.deserialize(bufferSize);
@@ -663,12 +663,12 @@ namespace Svc {
         length = bufferSize;
         ret = file.read(buf, length);
         ASSERT_EQ(Os::File::OP_OK,ret);
-        ASSERT_EQ(length, static_cast<NATIVE_INT_TYPE>(bufferSize));
+        ASSERT_EQ(length, static_cast<FwSignedSizeType>(bufferSize));
         ASSERT_EQ(memcmp(buf, data, COM_BUFFER_LENGTH), 0);
       }
 
       // Make sure we reached the end of the file:
-      FwSignedSizeType length = sizeof(NATIVE_INT_TYPE);
+      FwSignedSizeType length = sizeof(FwSignedSizeType);
       ret = file.read(buf, length);
       ASSERT_EQ(Os::File::OP_OK,ret);
       ASSERT_EQ(length, 0);

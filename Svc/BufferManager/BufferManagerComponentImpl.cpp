@@ -58,7 +58,7 @@ namespace Svc {
 
       if (not this->m_cleaned) {
           // walk through Fw::Buffer instances and delete them
-          for (NATIVE_UINT_TYPE entry = 0; entry < this->m_numStructs; entry++) {
+          for (U16 entry = 0; entry < this->m_numStructs; entry++) {
               this->m_buffers[entry].buff.~Buffer();
           }
           this->m_cleaned = true;
@@ -130,14 +130,14 @@ namespace Svc {
   Fw::Buffer BufferManagerComponentImpl ::
     bufferGetCallee_handler(
         const FwIndexType portNum,
-        U32 size
+        Fw::Buffer::SizeType size
     )
   {
       // make sure component has been set up
       FW_ASSERT(this->m_setup);
       FW_ASSERT(m_buffers);
       // find smallest buffer based on size.
-      for (NATIVE_UINT_TYPE buff = 0; buff < this->m_numStructs; buff++) {
+      for (U16 buff = 0; buff < this->m_numStructs; buff++) {
           if ((not this->m_buffers[buff].allocated) and (size <= this->m_buffers[buff].size)) {
               this->m_buffers[buff].allocated = true;
               this->m_currBuffs++;
@@ -159,7 +159,7 @@ namespace Svc {
   }
 
   void BufferManagerComponentImpl::setup(
-    NATIVE_UINT_TYPE mgrId, //!< manager ID
+    U16 mgrId, //!< manager ID
     FwEnumStoreType memId, //!< Memory segment identifier
     Fw::MemAllocator& allocator, //!< memory allocator
     const BufferBins& bins //!< Set of user bins
@@ -174,15 +174,17 @@ namespace Svc {
     this->m_bufferBins = bins;
 
     // compute the amount of memory needed
-    NATIVE_UINT_TYPE memorySize = 0; // track needed memory
+    FwSizeType memorySize = 0; // track needed memory
     this->m_numStructs = 0; // size the number of tracking structs
     // walk through bins and add up the sizes
-    for (NATIVE_UINT_TYPE bin = 0; bin < BUFFERMGR_MAX_NUM_BINS; bin++) {
+    for (U16 bin = 0; bin < BUFFERMGR_MAX_NUM_BINS; bin++) {
         if (this->m_bufferBins.bins[bin].numBuffers) {
             memorySize +=
                 (this->m_bufferBins.bins[bin].bufferSize * this->m_bufferBins.bins[bin].numBuffers) + // allocate each set of buffer memory
-                (static_cast<NATIVE_UINT_TYPE>(sizeof(AllocatedBuffer)) * this->m_bufferBins.bins[bin].numBuffers); // allocate the structs to track the buffers
-            this->m_numStructs += this->m_bufferBins.bins[bin].numBuffers;
+                (static_cast<FwSizeType>(sizeof(AllocatedBuffer)) * this->m_bufferBins.bins[bin].numBuffers); // allocate the structs to track the buffers
+            // Total structures is bounded by U16 maximum value to fit in half of context (U32)
+            FW_ASSERT((std::numeric_limits<U16>::max() - this->m_numStructs) >= this->m_bufferBins.bins[bin].numBuffers);
+            this->m_numStructs = static_cast<U16>(this->m_numStructs + this->m_bufferBins.bins[bin].numBuffers);
         }
     }
 
@@ -205,13 +207,13 @@ namespace Svc {
     U8* bufferMem = reinterpret_cast<U8*>(&this->m_buffers[this->m_numStructs]);
 
     // walk through entries and initialize them
-    NATIVE_UINT_TYPE currStruct = 0;
-    for (NATIVE_UINT_TYPE bin = 0; bin < BUFFERMGR_MAX_NUM_BINS; bin++) {
+    U16 currStruct = 0;
+    for (U16 bin = 0; bin < BUFFERMGR_MAX_NUM_BINS; bin++) {
         if (this->m_bufferBins.bins[bin].numBuffers) {
-            for (NATIVE_UINT_TYPE binEntry = 0; binEntry < this->m_bufferBins.bins[bin].numBuffers; binEntry++) {
+            for (U16 binEntry = 0; binEntry < this->m_bufferBins.bins[bin].numBuffers; binEntry++) {
                 // placement new for Fw::Buffer instance. We don't need the new() return value,
                 // because we know where the Fw::Buffer instance is
-                U32 context = (this->m_mgrId << 16) | currStruct;
+                U32 context = (static_cast<U32>(this->m_mgrId) << 16) | static_cast<U32>(currStruct);
                 (void) new(&this->m_buffers[currStruct].buff) Fw::Buffer(bufferMem,this->m_bufferBins.bins[bin].bufferSize,context);
                 this->m_buffers[currStruct].allocated = false;
                 this->m_buffers[currStruct].memory = bufferMem;
@@ -228,8 +230,8 @@ namespace Svc {
     FW_ASSERT(CURR_PTR == END_PTR,
         static_cast<FwAssertArgType>(mgrId),
         static_cast<FwAssertArgType>(memId),
-        static_cast<FwAssertArgType>(reinterpret_cast<POINTER_CAST>(CURR_PTR)),
-        static_cast<FwAssertArgType>(reinterpret_cast<POINTER_CAST>(END_PTR)));
+        static_cast<FwAssertArgType>(reinterpret_cast<PlatformPointerCastType>(CURR_PTR)),
+        static_cast<FwAssertArgType>(reinterpret_cast<PlatformPointerCastType>(END_PTR)));
     // secondary init verification
     FW_ASSERT(
       currStruct == this->m_numStructs,
