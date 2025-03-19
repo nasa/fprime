@@ -20,11 +20,11 @@ class DpManagerTester : public DpManagerGTestBase {
     // ----------------------------------------------------------------------
 
     // Maximum size of histories storing events, telemetry, and port outputs
-    static const NATIVE_INT_TYPE MAX_HISTORY_SIZE = 10;
+    static const U32 MAX_HISTORY_SIZE = 10;
     // Instance ID supplied to the component instance under test
-    static const NATIVE_INT_TYPE TEST_INSTANCE_ID = 0;
+    static const FwEnumStoreType TEST_INSTANCE_ID = 0;
     // Queue depth supplied to component instance under test
-    static const NATIVE_INT_TYPE TEST_INSTANCE_QUEUE_DEPTH = 10;
+    static const FwSizeType TEST_INSTANCE_QUEUE_DEPTH = 10;
 
     //! Construct object DpManagerTester
     DpManagerTester();
@@ -38,19 +38,19 @@ class DpManagerTester : public DpManagerGTestBase {
     // ----------------------------------------------------------------------
 
     //! Handler for from_bufferGetOut
-    Fw::Buffer from_bufferGetOut_handler(const NATIVE_INT_TYPE portNum,  //!< The port number
+    Fw::Buffer from_bufferGetOut_handler(const FwIndexType portNum,  //!< The port number
                                          U32 size                        //!< The size
     );
 
     //! Handler for from_productResponseOut
-    void from_productResponseOut_handler(const NATIVE_INT_TYPE portNum,  //!< The port number
+    void from_productResponseOut_handler(const FwIndexType portNum,  //!< The port number
                                          FwDpIdType id,                  //!< The container ID
                                          const Fw::Buffer& buffer,       //!< The buffer
                                          const Fw::Success& status       //!< The status
     );
 
     //! Handler for from_productSendOut
-    void from_productSendOut_handler(const NATIVE_INT_TYPE portNum,  //!< The port number
+    void from_productSendOut_handler(const FwIndexType portNum,  //!< The port number
                                      Fw::Buffer& fwBuffer            //!< The buffer
     );
 

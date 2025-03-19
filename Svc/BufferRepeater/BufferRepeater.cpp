@@ -59,7 +59,7 @@ bool BufferRepeater ::check_allocation(FwIndexType index,
 // Handler implementations for user-defined serial input ports
 // ----------------------------------------------------------------------
 
-void BufferRepeater ::portIn_handler(NATIVE_INT_TYPE portNum, /*!< The port number*/
+void BufferRepeater ::portIn_handler(FwIndexType portNum, /*!< The port number*/
                                      Fw::Buffer& buffer       /*!< The serialization buffer*/
 ) {
     FW_ASSERT(this->m_allocation_failure_response < NUM_BUFFER_REPEATER_FAILURE_OPTIONS);

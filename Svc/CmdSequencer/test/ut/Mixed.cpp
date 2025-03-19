@@ -21,8 +21,8 @@ namespace Svc {
     // ----------------------------------------------------------------------
 
     CmdSequencerTester ::
-      CmdSequencerTester(const SequenceFiles::File::Format::t format) :
-        MixedRelativeBase::CmdSequencerTester(format)
+      CmdSequencerTester(const SequenceFiles::File::Format::t a_format) :
+        MixedRelativeBase::CmdSequencerTester(a_format)
     {
 
     }

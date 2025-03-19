@@ -1,4 +1,4 @@
-<packets name="RefPackets" namespace="Ref" size="111">
+<packets name="RefPackets" namespace="Ref" size="191">
 
     <import_topology>Ref/Top/RefTopologyAppAi.xml</import_topology>
 
@@ -13,9 +13,9 @@
         <channel name="Ref.cmdSeq.CS_SequencesCompleted"/>
         <channel name="Ref.fileUplink.FilesReceived"/>
         <channel name="Ref.fileUplink.PacketsReceived"/>
-        <channel name="Ref.fileUplinkBufferManager.TotalBuffs"/>
-        <channel name="Ref.fileUplinkBufferManager.CurrBuffs"/>
-        <channel name="Ref.fileUplinkBufferManager.HiBuffs"/>
+        <channel name="Ref.commsBufferManager.TotalBuffs"/>
+        <channel name="Ref.commsBufferManager.CurrBuffs"/>
+        <channel name="Ref.commsBufferManager.HiBuffs"/>
         <channel name="Ref.fileDownlink.FilesSent"/>
         <channel name="Ref.fileDownlink.PacketsSent"/>
         <channel name="Ref.fileManager.CommandsExecuted"/>
@@ -32,8 +32,8 @@
         <channel name="Ref.fileDownlink.Warnings"/>
         <channel name="Ref.health.PingLateWarnings"/>
         <channel name="Ref.fileManager.Errors"/>
-        <channel name="Ref.fileUplinkBufferManager.NoBuffs"/>
-        <channel name="Ref.fileUplinkBufferManager.EmptyBuffs"/>
+        <channel name="Ref.commsBufferManager.NoBuffs"/>
+        <channel name="Ref.commsBufferManager.EmptyBuffs"/>
         <channel name="Ref.fileManager.Errors"/>
     </packet>
 
@@ -162,6 +162,17 @@
         <channel name="Ref.typeDemo.Float2Ch"/>
         <channel name="Ref.typeDemo.Float3Ch"/>
         <channel name="Ref.typeDemo.FloatSet"/>
+        <channel name="Ref.typeDemo.ScalarStructCh"/>
+        <channel name="Ref.typeDemo.ScalarU8Ch"/>
+        <channel name="Ref.typeDemo.ScalarU16Ch"/>
+        <channel name="Ref.typeDemo.ScalarU32Ch"/>
+        <channel name="Ref.typeDemo.ScalarU64Ch"/>
+        <channel name="Ref.typeDemo.ScalarI8Ch"/>
+        <channel name="Ref.typeDemo.ScalarI16Ch"/>
+        <channel name="Ref.typeDemo.ScalarI32Ch"/>
+        <channel name="Ref.typeDemo.ScalarI64Ch"/>
+        <channel name="Ref.typeDemo.ScalarF32Ch"/>
+        <channel name="Ref.typeDemo.ScalarF64Ch"/>
     </packet>
 
     <packet name="DataProducts" id="21" level="3">

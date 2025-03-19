@@ -20,6 +20,7 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include <cerrno>
+#include <type_traits>
 
 namespace Drv {
 
@@ -139,7 +140,7 @@ Os::File::Status LinuxGpioDriver ::setupLineHandle(const PlatformIntType chip_de
     struct gpiohandle_request request;
     (void) ::memset(&request, 0, sizeof request);
     request.lineoffsets[0] = gpio;
-    Fw::StringUtils::string_copy(request.consumer_label, this->getObjName(),
+    Fw::StringUtils::string_copy(request.consumer_label, FW_OPTIONAL_NAME(this->getObjName()),
                                  static_cast<FwSizeType>(sizeof request.consumer_label));
     request.default_values[0] = (default_state == Fw::Logic::HIGH) ? 1 : 0;
     request.fd = -1;
@@ -165,7 +166,7 @@ Os::File::Status LinuxGpioDriver ::setupLineEvent(const PlatformIntType chip_des
     struct gpioevent_request event;
     (void) ::memset(&event, 0, sizeof event);
     event.lineoffset = gpio;
-    Fw::StringUtils::string_copy(event.consumer_label, this->getObjName(),
+    Fw::StringUtils::string_copy(event.consumer_label, FW_OPTIONAL_NAME(this->getObjName()),
                                  static_cast<FwSizeType>(sizeof event.consumer_label));
     event.fd = -1;
     event.handleflags = configuration_to_handler_flags(configuration);
@@ -254,7 +255,7 @@ Os::File::Status LinuxGpioDriver ::open(const char* device,
     return status;
 }
 
-Drv::GpioStatus LinuxGpioDriver ::gpioRead_handler(const NATIVE_INT_TYPE portNum, Fw::Logic& state) {
+Drv::GpioStatus LinuxGpioDriver ::gpioRead_handler(const FwIndexType portNum, Fw::Logic& state) {
     Drv::GpioStatus status = Drv::GpioStatus::INVALID_MODE;
     if (this->m_configuration == GpioConfiguration::GPIO_INPUT) {
         struct gpiohandle_data values;
@@ -270,7 +271,7 @@ Drv::GpioStatus LinuxGpioDriver ::gpioRead_handler(const NATIVE_INT_TYPE portNum
     return status;
 }
 
-Drv::GpioStatus LinuxGpioDriver ::gpioWrite_handler(const NATIVE_INT_TYPE portNum, const Fw::Logic& state) {
+Drv::GpioStatus LinuxGpioDriver ::gpioWrite_handler(const FwIndexType portNum, const Fw::Logic& state) {
     Drv::GpioStatus status = Drv::GpioStatus::INVALID_MODE;
     if (this->m_configuration == GpioConfiguration::GPIO_OUTPUT) {
         struct gpiohandle_data values;
@@ -287,9 +288,13 @@ Drv::GpioStatus LinuxGpioDriver ::gpioWrite_handler(const NATIVE_INT_TYPE portNu
 }
 
 void LinuxGpioDriver ::pollLoop() {
-    static_assert(GPIO_POLL_TIMEOUT < std::numeric_limits<int>::max(), "Poll timeout would overflow");
+    // Ensure size of FwSizeType is large enough to fit the necessary ranges
+    // NOTE: casts to unsigned types for int and ssize_t are made to avoid sign-compare warning;
+    //       in both cases the cast is safe because max() returns nonnegative value.
+    static_assert(GPIO_POLL_TIMEOUT < static_cast<unsigned int>(std::numeric_limits<int>::max()), "Poll timeout would overflow");
     static_assert(sizeof(struct gpioevent_data) < std::numeric_limits<FwSizeType>::max(), "FwSizeType too small");
-    static_assert(std::numeric_limits<ssize_t>::max() <= std::numeric_limits<FwSizeType>::max(), "FwSizeType too small");
+    using unsigned_ssize_t = std::make_unsigned<ssize_t>::type;
+    static_assert(static_cast<unsigned_ssize_t>(std::numeric_limits<ssize_t>::max()) <= std::numeric_limits<FwSizeType>::max(), "FwSizeType too small");
     // Setup poll information
     pollfd file_descriptors[1];
     // Loop forever

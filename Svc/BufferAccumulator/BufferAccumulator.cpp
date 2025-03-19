@@ -15,7 +15,7 @@
 #include <sys/time.h>
 
 #include "Fw/Types/BasicTypes.hpp"
-
+#include <limits>
 
 namespace Svc {
 
@@ -46,28 +46,32 @@ BufferAccumulator ::~BufferAccumulator() {}
 // ----------------------------------------------------------------------
 
 void BufferAccumulator ::allocateQueue(
-    NATIVE_INT_TYPE identifier, Fw::MemAllocator& allocator,
-    NATIVE_UINT_TYPE maxNumBuffers  //!< The maximum number of buffers
+    FwEnumStoreType identifier, Fw::MemAllocator& allocator,
+    FwSizeType maxNumBuffers  //!< The maximum number of buffers
 ) {
 
   this->m_allocatorId = identifier;
-  NATIVE_UINT_TYPE memSize = static_cast<NATIVE_UINT_TYPE>(sizeof(Fw::Buffer) * maxNumBuffers);
+  // Overflow protection
+  FW_ASSERT(
+      (std::numeric_limits<FwSizeType>::max() / maxNumBuffers) >= sizeof(Fw::Buffer)
+  );
+  FwSizeType memSize = static_cast<FwSizeType>(sizeof(Fw::Buffer) * maxNumBuffers);
   bool recoverable = false;
   this->m_bufferMemory = static_cast<Fw::Buffer*>(
-      allocator.allocate(static_cast<NATIVE_UINT_TYPE>(identifier), memSize, recoverable));
+      allocator.allocate(identifier, memSize, recoverable));
   //TODO: Fail gracefully here
   m_bufferQueue.init(this->m_bufferMemory, maxNumBuffers);
 }
 
 void BufferAccumulator ::deallocateQueue(Fw::MemAllocator& allocator) {
-  allocator.deallocate(static_cast<NATIVE_UINT_TYPE>(this->m_allocatorId), this->m_bufferMemory);
+  allocator.deallocate(static_cast<FwEnumStoreType>(this->m_allocatorId), this->m_bufferMemory);
 }
 
 // ----------------------------------------------------------------------
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void BufferAccumulator ::bufferSendInFill_handler(const NATIVE_INT_TYPE portNum,
+void BufferAccumulator ::bufferSendInFill_handler(const FwIndexType portNum,
                                                   Fw::Buffer& buffer) {
 
   const bool status = this->m_bufferQueue.enqueue(buffer);
@@ -86,11 +90,11 @@ void BufferAccumulator ::bufferSendInFill_handler(const NATIVE_INT_TYPE portNum,
     this->sendStoredBuffer();
   }
 
-  this->tlmWrite_BA_NumQueuedBuffers(this->m_bufferQueue.getSize());
+  this->tlmWrite_BA_NumQueuedBuffers(static_cast<U32>(this->m_bufferQueue.getSize()));
 }
 
 void BufferAccumulator ::bufferSendInReturn_handler(
-    const NATIVE_INT_TYPE portNum, Fw::Buffer& buffer) {
+    const FwIndexType portNum, Fw::Buffer& buffer) {
 
   this->bufferSendOutReturn_out(0, buffer);
   this->m_waitForBuffer = false;
@@ -102,7 +106,7 @@ void BufferAccumulator ::bufferSendInReturn_handler(
   }
 }
 
-void BufferAccumulator ::pingIn_handler(const NATIVE_INT_TYPE portNum,
+void BufferAccumulator ::pingIn_handler(const FwIndexType portNum,
                                         U32 key) {
   this->pingOut_out(0, key);
 }
@@ -141,7 +145,7 @@ void BufferAccumulator ::BA_DrainBuffers_cmdHandler(
     BufferAccumulator_BlockMode blockMode) {
 
   if (this->m_numDrained < this->m_numToDrain) {
-    this->log_WARNING_HI_BA_StillDraining(this->m_numDrained, this->m_numToDrain);
+    this->log_WARNING_HI_BA_StillDraining(static_cast<U32>(this->m_numDrained), static_cast<U32>(this->m_numToDrain));
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::BUSY);
     return;
   }
@@ -161,14 +165,14 @@ void BufferAccumulator ::BA_DrainBuffers_cmdHandler(
   this->m_opCode = opCode;
   this->m_cmdSeq = cmdSeq;
   this->m_numDrained = 0;
-  this->m_numToDrain = numToDrain;
+  this->m_numToDrain = static_cast<FwSizeType>(numToDrain);
 
   if (blockMode == BufferAccumulator_BlockMode::NOBLOCK) {
-    U32 numBuffers = this->m_bufferQueue.getSize();
+    FwSizeType numBuffers = this->m_bufferQueue.getSize();
 
-    if (numBuffers < numToDrain) {
+    if (numBuffers < static_cast<FwSizeType>(numToDrain)) {
       this->m_numToDrain = numBuffers;
-      this->log_WARNING_LO_BA_NonBlockDrain(this->m_numToDrain, numToDrain);
+      this->log_WARNING_LO_BA_NonBlockDrain(static_cast<U32>(this->m_numToDrain), numToDrain);
     }
 
     /* OK if there were 0 buffers queued, and we
@@ -206,7 +210,7 @@ void BufferAccumulator ::sendStoredBuffer() {
       this->m_waitForBuffer = true;
       this->m_send = false;
     } else if (this->m_numToDrain > 0) {
-      this->log_WARNING_HI_BA_DrainStalled(this->m_numDrained, this->m_numToDrain);
+      this->log_WARNING_HI_BA_DrainStalled(static_cast<U32>(this->m_numDrained), static_cast<U32>(this->m_numToDrain));
     }
   }
 
@@ -217,7 +221,7 @@ void BufferAccumulator ::sendStoredBuffer() {
   if ((this->m_numToDrain > 0) &&  // we are doing a partial drain
       (this->m_numDrained == this->m_numToDrain)) {  // AND we just finished draining
                                                  //
-    this->log_ACTIVITY_HI_BA_PartialDrainDone(this->m_numDrained);
+    this->log_ACTIVITY_HI_BA_PartialDrainDone(static_cast<U32>(this->m_numDrained));
     // reset counters for partial buffer drain
     this->m_numToDrain = 0;
     this->m_numDrained = 0;
@@ -225,7 +229,7 @@ void BufferAccumulator ::sendStoredBuffer() {
     this->cmdResponse_out(this->m_opCode, this->m_cmdSeq, Fw::CmdResponse::OK);
   }
 
-  this->tlmWrite_BA_NumQueuedBuffers(this->m_bufferQueue.getSize());
+  this->tlmWrite_BA_NumQueuedBuffers(static_cast<U32>(this->m_bufferQueue.getSize()));
 }
 
 }  // namespace Svc

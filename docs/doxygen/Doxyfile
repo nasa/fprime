@@ -67,7 +67,7 @@ PROJECT_LOGO           = ./docs/doxygen/small-logo.png
 # entered, it will be relative to the location where doxygen was started. If
 # left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = ./docs/documentation/reference/api/cpp
+OUTPUT_DIRECTORY       = ./docs/reference/api/cpp
 
 # If the CREATE_SUBDIRS tag is set to YES then doxygen will create 4096 sub-
 # directories (in 2 levels) under the output directory of each output format and
@@ -574,7 +574,7 @@ INTERNAL_DOCS          = NO
 # If the CASE_SENSE_NAMES tag is set to NO then doxygen will only generate file
 # names in lower-case letters. If set to YES, upper-case letters are also
 # allowed. This is useful if you have classes or files whose names only differ
-# in case and if your file system supports case sensitive file names. Windows
+# in case and if your file system supports case-sensitive file names. Windows
 # (including Cygwin) and Mac users are advised to set this option to NO.
 # The default value is: system dependent.
 
@@ -906,11 +906,11 @@ RECURSIVE              = YES
 # run.
 
 # ./docs need to be excluded individually because ./docs/doxygen/mainpage.md needs to be included
-EXCLUDE                = ./docs/documentation ./docs/events ./docs/getting-started \
-                         ./docs/overview ./docs/support \
+EXCLUDE                = ./docs/how-to ./docs/reference ./docs/tutorials ./docs/user-manual \
+                         ./docs/events ./docs/getting-started ./docs/overview ./docs/support \
                          *CMakeFiles/* ./Autocoders ./cmake ./gtest ./Ref ./RPI ./FppTest \
                          STest ./mk ./README.md ./CONTRIBUTORS.md ./CONTRIBUTING.md ./SECURITY.md \
-                         ./googletest/
+                         ./googletest/ ./CODE_OF_CONDUCT.md ./LICENSE.md ./docs/INSTALL.md
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
@@ -926,7 +926,7 @@ EXCLUDE_SYMLINKS       = NO
 # Note that the wildcards are matched against the file with absolute path, so to
 # exclude all test directories for example use the pattern */test/*
 
-EXCLUDE_PATTERNS       = */test/* */GTest/* */build-*/* */cmake/* */docs/v*.* */docs/_* 
+EXCLUDE_PATTERNS       = */test/* */GTest/* */build-*/* */cmake/* */docs/v*.* */docs/_* */sdd.md */index.md */docs/*.md */README.md
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
 # (namespaces, classes, functions, etc.) that should be excluded from the

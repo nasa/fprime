@@ -20,7 +20,7 @@ namespace Fw {
             void ovrTrace(bool ovr, bool trace); // !< override tracing for a particular port
 #endif
 
-            bool isConnected();
+            bool isConnected() const;
         protected:
             // Should only be accessed by derived classes
             PortBase(); // Constructor
@@ -28,12 +28,14 @@ namespace Fw {
             virtual void init(); // !< initialization function
 
 #if FW_PORT_TRACING == 1
-            void trace(); // !<  trace port calls if active
+            void trace() const; // !<  trace port calls if active
 #endif
             Fw::ObjBase* m_connObj; // !< object port is connected to
 
 #if FW_OBJECT_TO_STRING
-            virtual void toString(char* str, NATIVE_INT_TYPE size);
+            virtual const char* getToStringFormatString(); //!< Get format string for toString call
+
+            void toString(char* str, FwSizeType size) override; //!< Unified port toString method
 #endif
 
 

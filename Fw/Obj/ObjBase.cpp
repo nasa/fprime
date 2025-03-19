@@ -1,8 +1,7 @@
 #include <FpConfig.hpp>
 #include <Fw/Obj/ObjBase.hpp>
-#include <cstring>
-#include <cstdio>
 #include <Fw/Types/Assert.hpp>
+#include <Fw/Types/ExternalString.hpp>
 
 namespace Fw {
 
@@ -45,11 +44,11 @@ namespace Fw {
         this->m_objName = name;
     }
 #if FW_OBJECT_TO_STRING == 1
-    void ObjBase::toString(char* str, NATIVE_INT_TYPE size) {
+    void ObjBase::toString(char* str, FwSizeType size) {
         FW_ASSERT(size > 0);
         FW_ASSERT(str != nullptr);
-        PlatformIntType status = snprintf(str, static_cast<size_t>(size), "Obj: %s", this->m_objName.toChar());
-        if (status < 0) {
+        Fw::FormatStatus formatStatus = Fw::ExternalString(str, static_cast<Fw::ExternalString::SizeType>(size)).format("Obj: %s", this->m_objName.toChar());
+        if (formatStatus != Fw::FormatStatus::SUCCESS) {
             str[0] = 0;
         }
     }

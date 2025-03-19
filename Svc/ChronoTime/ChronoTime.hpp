@@ -11,7 +11,7 @@
 
 namespace Svc {
 
-class ChronoTime : public ChronoTimeComponentBase {
+class ChronoTime final : public ChronoTimeComponentBase {
   public:
     // ----------------------------------------------------------------------
     // Component construction and destruction

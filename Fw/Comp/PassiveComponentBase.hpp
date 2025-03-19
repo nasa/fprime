@@ -20,14 +20,17 @@ namespace Fw {
         PROTECTED:
             PassiveComponentBase(const char* name); //!< Named constructor
             virtual ~PassiveComponentBase(); //!< Destructor
-            void init(NATIVE_INT_TYPE instance); //!< Initialization function
-            NATIVE_INT_TYPE getInstance() const;
+            void init(FwEnumStoreType instance); //!< Initialization function
+            FwEnumStoreType getInstance() const;
+
+
 #if FW_OBJECT_TO_STRING == 1
-            virtual void toString(char* str, NATIVE_INT_TYPE size); //!< returns string description of component
+            virtual const char* getToStringFormatString(); //!< Return the format  for a generic component toString
+            void toString(char* str, FwSizeType size) override; //!< returns string description of component
 #endif
         PRIVATE:
             U32 m_idBase; //!< ID base for opcodes etc.
-            NATIVE_INT_TYPE m_instance; //!< instance of component object
+            FwEnumStoreType m_instance; //!< instance of component object
 
 
     };

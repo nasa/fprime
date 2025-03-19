@@ -11,62 +11,31 @@ set(FPRIME_PROJECT_ROOT "${CMAKE_CURRENT_LIST_DIR}" CACHE PATH "Root path of F p
 # Include the build for F prime.
 include("${CMAKE_CURRENT_LIST_DIR}/cmake/FPrime.cmake")
 
-# This cmake project is only intended to be used by CI and developers to test F-prime. We enable
-# -Wall and -Wextra on this particular project as a canary to warn about compilation
-# errors without impacting real projects, where a warning from an untested compiler could break the
-# build.
-
-add_compile_options(
-    -Wall
-    -Wextra
-    -Werror
-    $<$<COMPILE_LANGUAGE:CXX>:-Wold-style-cast>
-    -Wno-unused-parameter
-)
-
-# Add -Wshadow, -Wconversion and -pedantic only for framework code, not the unit tests
-# TODO: uncomment -Wdouble-promotion once fpp is fixed
-if (NOT BUILD_TESTING)
-    add_compile_options(
-        -Wshadow
-        -pedantic
-        -Wconversion
-#        -Wdouble-promotion
-    )
-endif()
-
-# Turn on pedantic checks for clang, but disable specific checks that F' doesn't comply with.
-# GCC doesn't support disabling specific pedantic checks, so skip pedantic on GCC for now.
+# Set default warning flags for all builds
+# Specific build modules that do not comply with these flags can disable one or more of them
 #
 # -Wno-unused-parameter: Disable the unused parameter warning for now. F' has a lot of interfaces,
 # so unused method parameters are common in the F prime code base. Eventually all intentionally
 # unused parameters should be annotated to avoid this error.
 #
-# -Wno-gnu-zero-variadic-macro-arguments: gnu extension required to allow FW_ASSERT to support 0+
-# optional arguments
-#
-# -Wno-vla-extension: Variable length arrays are required to support sending to async serializable
+# -Wno-vla: Variable length arrays are required to support sending to async serializable
 # ports. https://github.com/nasa/fprime/issues/945
 #
-# -Wno-zero-length-array: maximum port message size calculated by using sizeof on an array the size
-# of all the port's arguments. When port has no argument array is zero sized. Array is used at
-# compile time only.
-if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    add_compile_options(
-        -pedantic
-        -Wno-gnu-zero-variadic-macro-arguments
-        $<$<COMPILE_LANGUAGE:CXX>:-Wno-vla-extension>
-        $<$<COMPILE_LANGUAGE:CXX>:-Wno-zero-length-array>
-    )
-elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU" AND NOT DEFINED CMAKE_CXX_CLANG_TIDY)
-    # The following is not supported by clang, which also causes issues when using clang-tidy
-    add_compile_options(
-        -Wno-format-truncation
-    )
-endif()
+add_compile_options(
+    $<$<COMPILE_LANGUAGE:CXX>:-Wold-style-cast>
+    -Wall
+    -Wconversion
+    -Wdouble-promotion
+    -Werror
+    -Wextra
+    -Wno-unused-parameter
+    -Wno-vla
+    -Wshadow
+    -pedantic
+)
 
 find_program(VALGRIND valgrind) # Find valgrind, and use it instead of leak check
-# For this testing cmake project, enable AddressSanitizer, a runtime memory sanitizer, on all unit tests
+# Enable sanitizers
 if (BUILD_TESTING AND NOT VALGRIND)
     add_compile_options(-fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined)
     add_link_options(-fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined)

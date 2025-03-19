@@ -23,17 +23,11 @@ namespace Drv {
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-void TcpClientTester ::test_with_loop(U32 iterations, bool recv_thread) {
-    U8 buffer[sizeof(m_data_storage)] = {};
-    Drv::SocketIpStatus status1 = Drv::SOCK_SUCCESS;
-    Drv::SocketIpStatus status2 = Drv::SOCK_SUCCESS;
+void TcpClientTester ::setup_helper(Drv::TcpServerSocket& server, Drv::SocketDescriptor& server_fd, bool recv_thread, bool reconnect) {
     Drv::SocketIpStatus serverStat = Drv::SOCK_SUCCESS;
 
     U16 port =  0;
-
-    Drv::TcpServerSocket server;
     server.configure("127.0.0.1", port, 0, 100);
-    Drv::SocketDescriptor server_fd;
 
     serverStat = server.startup(server_fd);
     this->component.configure("127.0.0.1", server.getListenPort(), 0, 100);
@@ -45,8 +39,20 @@ void TcpClientTester ::test_with_loop(U32 iterations, bool recv_thread) {
     // Start up a receive thread
     if (recv_thread) {
         Os::TaskString name("receiver thread");
-        this->component.start(name, true, Os::Task::TASK_DEFAULT, Os::Task::TASK_DEFAULT);
+        this->component.setAutomaticOpen(reconnect);
+        this->component.start(name, Os::Task::TASK_DEFAULT, Os::Task::TASK_DEFAULT);
     }
+}
+
+
+void TcpClientTester ::test_with_loop(U32 iterations, bool recv_thread) {
+    U8 buffer[sizeof(m_data_storage)] = {};
+    Drv::SocketIpStatus status1 = Drv::SOCK_SUCCESS;
+    Drv::SocketIpStatus status2 = Drv::SOCK_SUCCESS;
+
+    Drv::TcpServerSocket server;
+    Drv::SocketDescriptor server_fd;
+    setup_helper(server, server_fd, recv_thread, true);
 
     // Loop through a bunch of client disconnects
     for (U32 i = 0; i < iterations; i++) {
@@ -147,13 +153,39 @@ void TcpClientTester ::test_advanced_reconnect() {
     test_with_loop(10, true); // Up to 10 * RECONNECT_MS
 }
 
+void TcpClientTester ::test_no_automatic_send_connection() {
+    Drv::TcpServerSocket server;
+    Drv::SocketDescriptor server_fd;
+    this->setup_helper(server, server_fd, false, false);
+    this->component.setAutomaticOpen(false);
+    ASSERT_EQ(this->component.send(reinterpret_cast<const U8*>("a"), 1), Drv::SOCK_AUTO_CONNECT_DISABLED);
+    ASSERT_FALSE(this->component.isOpened());
+    // Clean-up even if the send worked
+    Drv::Test::drain(server, server_fd);
+    server.terminate(server_fd);
+}
+
+void TcpClientTester ::test_no_automatic_recv_connection() {
+    Drv::TcpServerSocket server;
+    Drv::SocketDescriptor server_fd;
+    this->setup_helper(server, server_fd, true, false);
+    // Wait for connection to not start
+    EXPECT_FALSE(this->wait_on_change(this->component.getSocketHandler(), true, Drv::Test::get_configured_delay_ms()/10 + 1));
+    ASSERT_FALSE(this->component.isOpened());
+    // Clean-up even if the thread (incorrectly) started
+    this->component.stop();
+    this->component.join();
+    Drv::Test::drain(server, server_fd);
+    server.terminate(server_fd);
+}
+
 // ----------------------------------------------------------------------
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
   void TcpClientTester ::
     from_recv_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         Fw::Buffer &recvBuffer,
         const RecvStatus &recvStatus
     )
@@ -169,13 +201,13 @@ void TcpClientTester ::test_advanced_reconnect() {
     delete[] recvBuffer.getData();
 }
 
-void TcpClientTester ::from_ready_handler(const NATIVE_INT_TYPE portNum) {
+void TcpClientTester ::from_ready_handler(const FwIndexType portNum) {
     this->pushFromPortEntry_ready();
 }
 
 Fw::Buffer TcpClientTester ::
     from_allocate_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 size
     )
   {
@@ -187,7 +219,7 @@ Fw::Buffer TcpClientTester ::
 
   void TcpClientTester ::
     from_deallocate_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         Fw::Buffer &fwBuffer
     )
   {

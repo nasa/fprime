@@ -71,7 +71,7 @@ namespace Drv {
 
   Drv::SendStatus StreamCrossoverTester ::
     from_streamOut_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         Fw::Buffer &sendBuffer
     )
   {
@@ -90,7 +90,7 @@ namespace Drv {
 
   void StreamCrossoverTester ::
     from_errorDeallocate_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         Fw::Buffer &fwBuffer
     )
   {

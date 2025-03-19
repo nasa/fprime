@@ -16,7 +16,7 @@ TestTelemRecvImpl::TestTelemRecvImpl(const char* name) : Tlm::TelemTesterCompone
 TestTelemRecvImpl::~TestTelemRecvImpl() {
 }
 
-void TestTelemRecvImpl::tlmRecvPort_handler(NATIVE_INT_TYPE portNum, FwChanIdType id, Fw::Time &timeTag, Fw::TlmBuffer &val) {
+void TestTelemRecvImpl::tlmRecvPort_handler(FwIndexType portNum, FwChanIdType id, Fw::Time &timeTag, Fw::TlmBuffer &val) {
     U32 tlmVal;
     val.deserialize(tlmVal);
     printf("ID: %d TLM value is %d. Time is %d:%d base: %d\n",id,tlmVal,timeTag.getSeconds(),timeTag.getUSeconds(),timeTag.getTimeBase());

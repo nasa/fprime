@@ -53,25 +53,25 @@ namespace ExampleComponents {
       //! Handler implementation for noArgPort
       //!
       void noArgPort_handler(
-          const NATIVE_INT_TYPE portNum /*!< The port number*/
+          const FwIndexType portNum /*!< The port number*/
       );
 
       //! Handler implementation for asyncNoArgPort
       //!
       void asyncNoArgPort_handler(
-          const NATIVE_INT_TYPE portNum /*!< The port number*/
+          const FwIndexType portNum /*!< The port number*/
       );
 
       //! Handler implementation for guardedNoArgPort
       //!
       void guardedNoArgPort_handler(
-          const NATIVE_INT_TYPE portNum /*!< The port number*/
+          const FwIndexType portNum /*!< The port number*/
       );
 
       //! Handler implementation for exampleInput
       //!
       U32 exampleInput_handler(
-          const NATIVE_INT_TYPE portNum /*!< The port number*/
+          const FwIndexType portNum /*!< The port number*/
       );
 
 

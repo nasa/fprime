@@ -1,4 +1,3 @@
-\page SvcDpCatalogComponent Svc::DpCatalog Component
 # Svc::DpCatalog Component
 
 ## 1 Introduction
@@ -93,7 +92,7 @@ During initialization, the configuration function takes a set of parameters:
             Fw::FileNameString directories[DP_MAX_DIRECTORIES],
             FwSizeType numDirs,
             Fw::FileNameString& stateFile,
-            NATIVE_UINT_TYPE memId,
+            FwEnumStoreType memId,
             Fw::MemAllocator& allocator
         );
 ```
@@ -126,7 +125,7 @@ When the software is first started, the catalog data structure is empty. The cat
 #### 3.7.1 Data Product Sorting
 
 Data Products are sorted based on the following metadata in the following order.
-1. Data Product Priority - Data products are generated with a a priority, where the lower the number the higher the priority.
+1. Data Product Priority - Data products are generated with a priority, where the lower the number the higher the priority.
 2. Data Product Generation Time - If priorities are the same, the older data is prioritized over the newer.
 3. Data Product ID - If priorities and time are the same (highly unlikely), then lower IDs are prioritized first.
 

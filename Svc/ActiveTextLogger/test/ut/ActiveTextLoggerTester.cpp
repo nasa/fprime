@@ -38,7 +38,7 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   void ActiveTextLoggerTester ::
-  run_nominal_test()
+  runNominalTest()
   {
       printf("Testing writing to console\n");
 
@@ -106,7 +106,7 @@ namespace Svc {
               snprintf(textStr, sizeof(textStr),
                       "EVENT: (%d) (%d:%d,%d) %s: %s",
                        id,timeTag.getTimeBase(),timeTag.getSeconds(),timeTag.getUSeconds(),severityString,text.toChar());
-              ASSERT_EQ(0,strcmp(textStr,buf));
+              ASSERT_STREQ(textStr,buf);
               (void) Fw::StringUtils::string_copy(oldLine, buf, static_cast<FwSizeType>(sizeof(oldLine)));
           }
       }
@@ -160,7 +160,7 @@ namespace Svc {
   }
 
   void ActiveTextLoggerTester ::
-  run_off_nominal_test()
+  runOffNominalTest()
   {
       // TODO file errors- use the Os/Stubs?
 
@@ -253,13 +253,13 @@ namespace Svc {
 
       printf("Testing file name larger than string size\n");
 
-      // Setup filename larger than 80 char:
-      char longFileName[Fw::String::STRING_SIZE + 1];
-      for (U32 i = 0; i < Fw::String::STRING_SIZE; ++i) {
+      // Setup filename larger than file name string can accept
+      // Maximum valid file name is Fw::FileNameString::STRING_SIZE, add 1 to be too long, and an extra for the \0
+      char longFileName[Fw::FileNameString::STRING_SIZE + 2];
+      for (U32 i = 0; i < Fw::FileNameString::STRING_SIZE + 1; ++i) {
           longFileName[i] = 'a';
       }
-      longFileName[Fw::String::STRING_SIZE] = 0;
-
+      longFileName[Fw::FileNameString::STRING_SIZE + 1] = 0;
       stat = this->component.set_log_file(longFileName,50);
 
       // Verify file not made:
@@ -269,11 +269,12 @@ namespace Svc {
                Os::FileSystem::getFileSize(longFileName,tmp));
 
       printf("Testing file name of max size and file already exists\n");
-      char longFileNameDup[Fw::String::STRING_SIZE];
-      for (U32 i = 0; i < Fw::String::STRING_SIZE; ++i) {
+      // Maximum valid file name is Fw::FileNameString::STRING_SIZE add one for \0
+      char longFileNameDup[Fw::FileNameString::STRING_SIZE + 1];
+      for (U32 i = 0; i < Fw::FileNameString::STRING_SIZE; ++i) {
           longFileNameDup[i] = 'a';
       }
-      longFileNameDup[Fw::String::STRING_SIZE-1] = 0;
+      longFileNameDup[Fw::FileNameString::STRING_SIZE] = 0;
 
       stat = this->component.set_log_file(longFileNameDup,50);
 
@@ -311,9 +312,6 @@ namespace Svc {
       char baseNameWithSuffix[128];
       U32 i;
       for (i = 0; i < 10; ++i) {
-
-          //printf("<< %i\n",i);
-
           stat = this->component.set_log_file(baseName,50);
 
           snprintf(baseNameWithSuffix, sizeof(baseNameWithSuffix), "%s%d",baseName,i);
@@ -327,7 +325,6 @@ namespace Svc {
       // Create 11th which will fail and re-use the original:
       stat = this->component.set_log_file(baseName,50);
 
-      snprintf(baseNameWithSuffix, sizeof(baseNameWithSuffix), "%s%d",baseName,i);
       ASSERT_TRUE(stat);
       ASSERT_TRUE(this->component.m_log_file.m_openFile);
       printf("<< %s %s\n",baseName,this->component.m_log_file.m_fileName.toChar());
@@ -347,6 +344,46 @@ namespace Svc {
 
   }
 
+  void ActiveTextLoggerTester ::
+    testWorkstationTimestamp()
+  {
+      printf("Testing workstation timestamp\n");
+
+      // Setup file for writing to:
+      const char* logFileName = "test_file";
+      bool stat = this->component.set_log_file(logFileName,512);
+      ASSERT_TRUE(stat);
+      ASSERT_TRUE(this->component.m_log_file.m_openFile);
+
+      // Log message:
+      FwEventIdType id = 1;
+      Fw::Time timeTag(TB_WORKSTATION_TIME, 3, 6);
+      Fw::LogSeverity severity = Fw::LogSeverity::ACTIVITY_HI;
+      const char* severityString = "ACTIVITY_HI";
+      Fw::TextLogString text("This line has a valid timestamp.");
+      this->invoke_to_TextLogger(0, id, timeTag, severity, text);
+      this->component.doDispatch();
+
+      // Read file to verify contents:
+      std::ifstream logStream(logFileName);
+      while(logStream) {
+          char buf[256];
+          logStream.getline(buf, 256);
+          if (logStream) {
+              std::cout << "readLine: " << buf << std::endl;
+              char textStr[512];
+              snprintf(textStr, sizeof(textStr),
+                      "EVENT: (%d) (%d:%d,%d) %s: %s",
+                       id,timeTag.getTimeBase(), timeTag.getSeconds(), timeTag.getUSeconds(), severityString, text.toChar());
+              ASSERT_EQ(0, strcmp(textStr, buf));
+          }
+      }
+      logStream.close();
+
+      // Clean up:
+      remove(logFileName);
+  }
+
   // ----------------------------------------------------------------------
   // Helper methods
   // ----------------------------------------------------------------------
@@ -360,9 +397,6 @@ namespace Svc {
         0,
         this->component.get_TextLogger_InputPort(0)
     );
-
-
-
 
   }
 

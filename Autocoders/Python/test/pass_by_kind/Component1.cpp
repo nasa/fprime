@@ -20,7 +20,7 @@ namespace Example {
         Component1ComponentBase::init(queueDepth);
     }
 
-    void Component1::AsyncPort_handler(NATIVE_INT_TYPE portNum,U32 *arg1, U32 &arg2, U32 arg3,
+    void Component1::AsyncPort_handler(FwIndexType portNum,U32 *arg1, U32 &arg2, U32 arg3,
         ExampleType *arg4, ExampleType &arg5, const ExampleType &arg6,
         Arg7String *arg7, Arg8String &arg8, const Arg9String &arg9) {
         *arg1 = 1;
@@ -34,7 +34,7 @@ namespace Example {
         // arg9 is a const ref -- compiler won't let us modify through it
     }
 
-    void Component1::SyncPort_handler(NATIVE_INT_TYPE portNum,U32 *arg1, U32 &arg2, U32 arg3,
+    void Component1::SyncPort_handler(FwIndexType portNum,U32 *arg1, U32 &arg2, U32 arg3,
         ExampleType *arg4, ExampleType &arg5, const ExampleType &arg6,
         Arg7String *arg7, Arg8String &arg8, const Arg9String &arg9) {
         *arg1 = 1;

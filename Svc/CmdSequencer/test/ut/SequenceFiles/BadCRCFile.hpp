@@ -28,7 +28,7 @@ namespace Svc {
 
         //! Construct a BadCRCFile
         BadCRCFile(
-            const Format::t format //!< The file format
+            const Format::t a_format //!< The file format
         );
 
       public:

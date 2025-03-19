@@ -34,13 +34,13 @@ Mutex::Status Mutex::release() {
 void Mutex::lock() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<MutexInterface*>(&this->m_handle_storage[0]));
     Mutex::Status status = this->take();
-    FW_ASSERT(status == Mutex::Status::OP_OK, status);
+    FW_ASSERT(status == Mutex::Status::OP_OK, static_cast<FwAssertArgType>(reinterpret_cast<PlatformPointerCastType>(this)), status);
 }
 
 void Mutex::unLock() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<MutexInterface*>(&this->m_handle_storage[0]));
     Mutex::Status status = this->release();
-    FW_ASSERT(status == Mutex::Status::OP_OK, status);
+    FW_ASSERT(status == Mutex::Status::OP_OK, static_cast<FwAssertArgType>(reinterpret_cast<PlatformPointerCastType>(this)), status);
 }
 
 ScopeLock::ScopeLock(Mutex& mutex) : m_mutex(mutex) {
@@ -48,7 +48,7 @@ ScopeLock::ScopeLock(Mutex& mutex) : m_mutex(mutex) {
 }
 
 ScopeLock::~ScopeLock() {
-    this->m_mutex.release();
+    this->m_mutex.unLock();
 }
 
 }  // namespace Os

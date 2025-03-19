@@ -24,7 +24,7 @@ namespace Drain {
 // ----------------------------------------------------------------------
 
 void BufferAccumulatorTester ::OK() {
-  ASSERT_EQ(BufferAccumulator_OpState::DRAIN, this->component.mode.e);
+  ASSERT_EQ(BufferAccumulator_OpState::DRAIN, this->component.m_mode.e);
   Fw::Buffer buffers[MAX_NUM_BUFFERS];
   // Buffer needs a valid pointer
   U8* data = new U8[10];
@@ -52,7 +52,7 @@ void BufferAccumulatorTester ::PartialDrainOK() {
   ASSERT_CMD_RESPONSE_SIZE(1);
   ASSERT_CMD_RESPONSE(0, BufferAccumulator::OPCODE_BA_SETMODE, 0,
                       Fw::CmdResponse::OK);
-  ASSERT_EQ(BufferAccumulator_OpState::ACCUMULATE, this->component.mode.e);
+  ASSERT_EQ(BufferAccumulator_OpState::ACCUMULATE, this->component.m_mode.e);
   ASSERT_FROM_PORT_HISTORY_SIZE(0);
 
   Fw::Buffer buffers[MAX_NUM_BUFFERS];
@@ -144,10 +144,10 @@ void BufferAccumulatorTester ::PartialDrainOK() {
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
   }
 
-  ASSERT_EQ(BufferAccumulator_OpState::ACCUMULATE, this->component.mode.e);
+  ASSERT_EQ(BufferAccumulator_OpState::ACCUMULATE, this->component.m_mode.e);
   ASSERT_FROM_PORT_HISTORY_SIZE(0);
-  ASSERT_EQ(0u, this->component.numDrained);
-  ASSERT_EQ(0u, this->component.numToDrain);
+  ASSERT_EQ(0u, this->component.m_numDrained);
+  ASSERT_EQ(0u, this->component.m_numToDrain);
 
   ASSERT_EVENTS_BA_PartialDrainDone_SIZE(0);
   this->sendCmd_BA_DrainBuffers(0, 0, MAX_NUM_BUFFERS,
@@ -161,8 +161,8 @@ void BufferAccumulatorTester ::PartialDrainOK() {
     buffers[i] = b;
 
     if (i + 1 < MAX_NUM_BUFFERS) {
-      ASSERT_EQ(i + 1, this->component.numDrained);
-      ASSERT_EQ(MAX_NUM_BUFFERS, this->component.numToDrain);
+      ASSERT_EQ(i + 1, this->component.m_numDrained);
+      ASSERT_EQ(MAX_NUM_BUFFERS, this->component.m_numToDrain);
       ASSERT_EVENTS_BA_PartialDrainDone_SIZE(0);
     }
 

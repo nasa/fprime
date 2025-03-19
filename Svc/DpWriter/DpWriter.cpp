@@ -31,7 +31,7 @@ void DpWriter::configure(const Fw::StringBase& dpFileNamePrefix) {
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void DpWriter::bufferSendIn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& buffer) {
+void DpWriter::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& buffer) {
     Fw::Success::T status = Fw::Success::SUCCESS;
     // portNum is unused
     (void)portNum;
@@ -112,7 +112,7 @@ void DpWriter::bufferSendIn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& b
     }
 }
 
-void DpWriter::schedIn_handler(const NATIVE_INT_TYPE portNum, U32 context) {
+void DpWriter::schedIn_handler(const FwIndexType portNum, U32 context) {
     // portNum and context are not used
     (void)portNum;
     (void)context;

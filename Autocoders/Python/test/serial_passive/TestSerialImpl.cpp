@@ -51,7 +51,7 @@ namespace TestComponents {
 
   void TestSerialImpl ::
     SerialInSync_handler(
-        NATIVE_INT_TYPE portNum, //!< The port number
+        FwIndexType portNum, //!< The port number
         Fw::SerializeBufferBase &Buffer //!< The serialization buffer
     )
   {
@@ -60,7 +60,7 @@ namespace TestComponents {
 
   void TestSerialImpl ::
     SerialInGuarded_handler(
-        NATIVE_INT_TYPE portNum, //!< The port number
+        FwIndexType portNum, //!< The port number
         Fw::SerializeBufferBase &Buffer //!< The serialization buffer
     )
   {
@@ -69,7 +69,7 @@ namespace TestComponents {
 
   void TestSerialImpl ::
     SerialInAsync_handler(
-        NATIVE_INT_TYPE portNum, //!< The port number
+        FwIndexType portNum, //!< The port number
         Fw::SerializeBufferBase &Buffer //!< The serialization buffer
     )
   {

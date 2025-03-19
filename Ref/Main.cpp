@@ -55,7 +55,7 @@ static void signalHandler(int signum) {
  */
 int main(int argc, char* argv[]) {
     Os::init();
-    U32 port_number = 0;
+    U16 port_number = 0;
     I32 option = 0;
     char* hostname = nullptr;
 
@@ -68,7 +68,7 @@ int main(int argc, char* argv[]) {
                 break;
             // Handle the -p port number argument
             case 'p':
-                port_number = static_cast<U32>(atoi(optarg));
+                port_number = static_cast<U16>(atoi(optarg));
                 break;
             // Cascade intended: help output
             case 'h':

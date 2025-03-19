@@ -37,6 +37,7 @@ namespace Os {
                 JOIN_ERROR, //!< error trying to join the task
                 ERROR_RESOURCES, //!< unable to allocate more tasks
                 ERROR_PERMISSION, //!< permissions error setting-up tasks
+                NOT_SUPPORTED,     //!< Task feature is not supported
                 INVALID_STATE, //!< Task is in an invalid state for the operation
             };
 
@@ -266,7 +267,7 @@ namespace Os {
 
         //! \brief start the task
         //!
-        //! Starts the task given the supplied arguments. This is done via the a task routine wrapper intermediary that
+        //! Starts the task given the supplied arguments. This is done via a task routine wrapper intermediary that
         //! ensures that `setStarted` is called once the task has actually started to run. The task then runs the user
         //! routine. This function may return before the new task begins to run.
         //

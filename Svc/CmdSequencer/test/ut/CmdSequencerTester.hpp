@@ -39,7 +39,7 @@ namespace Svc {
       // Constants
       // ----------------------------------------------------------------------
 
-      static const NATIVE_UINT_TYPE TEST_SEQ_BUFFER_SIZE = 255;
+      static const FwSizeType TEST_SEQ_BUFFER_SIZE = 255;
 
     protected:
 
@@ -172,7 +172,7 @@ namespace Svc {
 
       //! Construct object CmdSequencerTester
       CmdSequencerTester(
-          const SequenceFiles::File::Format::t format =
+          const SequenceFiles::File::Format::t a_format =
           SequenceFiles::File::Format::F_PRIME //!< The file format to use
       );
 
@@ -188,7 +188,7 @@ namespace Svc {
       //! Handler for from_seqDone
       //!
       void from_seqDone_handler(
-          const NATIVE_INT_TYPE portNum, //!< The port number
+          const FwIndexType portNum, //!< The port number
           FwOpcodeType opCode, //!< Command Op Code
           U32 cmdSeq, //!< Command Sequence
           const Fw::CmdResponse& response //!< The command response argument
@@ -197,7 +197,7 @@ namespace Svc {
       //! Handler for from_comCmdOut
       //!
       void from_comCmdOut_handler(
-          const NATIVE_INT_TYPE portNum, //!< The port number
+          const FwIndexType portNum, //!< The port number
           Fw::ComBuffer &data, //!< Buffer containing packet data
           U32 context //!< Call context value; meaning chosen by user
       );
@@ -205,7 +205,7 @@ namespace Svc {
       //! Handler for from_pingOut
       //!
       void from_pingOut_handler(
-          const NATIVE_INT_TYPE portNum, //!< The port number
+          const FwIndexType portNum, //!< The port number
           U32 key //!< Value to return to pinger
       );
 

@@ -20,7 +20,7 @@ void TestLogImpl::init(NATIVE_INT_TYPE instance) {
 }
 
 
-void TestLogImpl::aport_handler(NATIVE_INT_TYPE portNum, I32 arg4, F32 arg5, U8 arg6) {
+void TestLogImpl::aport_handler(FwIndexType portNum, I32 arg4, F32 arg5, U8 arg6) {
 
 }
 

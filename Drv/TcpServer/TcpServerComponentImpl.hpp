@@ -21,7 +21,7 @@
 
 namespace Drv {
 
-class TcpServerComponentImpl : public TcpServerComponentBase, public SocketComponentHelper {
+class TcpServerComponentImpl final : public TcpServerComponentBase, public SocketComponentHelper {
   public:
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction
@@ -62,7 +62,7 @@ class TcpServerComponentImpl : public TcpServerComponentBase, public SocketCompo
                              const U16 port,
                              const U32 send_timeout_seconds = SOCKET_SEND_TIMEOUT_SECONDS,
                              const U32 send_timeout_microseconds = SOCKET_SEND_TIMEOUT_MICROSECONDS,
-			     FwSizeType buffer_size = 1024);
+                             FwSizeType buffer_size = 1024);
 
     /**
      * \brief is started
@@ -160,7 +160,7 @@ class TcpServerComponentImpl : public TcpServerComponentBase, public SocketCompo
      * \param fwBuffer: buffer containing data to be sent
      * \return SEND_OK on success, SEND_RETRY when critical data should be retried and SEND_ERROR upon error
      */
-    Drv::SendStatus send_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) override;
+    Drv::SendStatus send_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) override;
 
     Drv::TcpServerSocket m_socket; //!< Socket implementation
 

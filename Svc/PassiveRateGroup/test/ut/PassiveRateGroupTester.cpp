@@ -22,8 +22,8 @@
 void connectPorts(Svc::PassiveRateGroup& impl, Svc::PassiveRateGroupTester& tester) {
     tester.connect_to_CycleIn(0, impl.get_CycleIn_InputPort(0));
 
-    for (NATIVE_INT_TYPE portNum = 0;
-         portNum < static_cast<NATIVE_INT_TYPE>(FW_NUM_ARRAY_ELEMENTS(impl.m_RateGroupMemberOut_OutputPort)); portNum++) {
+    for (FwIndexType portNum = 0;
+         portNum < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(impl.m_RateGroupMemberOut_OutputPort)); portNum++) {
         impl.set_RateGroupMemberOut_OutputPort(portNum, tester.get_from_RateGroupMemberOut(portNum));
     }
 
@@ -32,8 +32,8 @@ void connectPorts(Svc::PassiveRateGroup& impl, Svc::PassiveRateGroupTester& test
 }
 
 TEST(PassiveRateGroupTest, NominalSchedule) {
-    for (NATIVE_INT_TYPE inst = 0; inst < 3; inst++) {
-        NATIVE_INT_TYPE contexts[FppConstant_PassiveRateGroupOutputPorts::PassiveRateGroupOutputPorts] = {1, 2, 3, 4, 5};
+    for (FwEnumStoreType inst = 0; inst < 3; inst++) {
+        U32 contexts[FppConstant_PassiveRateGroupOutputPorts::PassiveRateGroupOutputPorts] = {1, 2, 3, 4, 5};
 
         Svc::PassiveRateGroup impl("PassiveRateGroup");
         impl.configure(contexts, FW_NUM_ARRAY_ELEMENTS(contexts));

@@ -1,6 +1,6 @@
 # Builds and runs UTs on https://github.com/fprime-community/fprime-tutorial-hello-world
 
-name: "Tutorial: HelloWorld"
+name: "External Repo: Tutorial: HelloWorld"
 
 on:
   push:

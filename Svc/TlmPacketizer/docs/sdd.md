@@ -1,4 +1,3 @@
-\page SvcTlmPacketizerComponent Svc::TlmPacketizer Component
 # Svc::TlmPacketizer Component
 
 ## 1. Introduction

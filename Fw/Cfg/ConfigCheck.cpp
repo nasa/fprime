@@ -54,3 +54,32 @@ static_assert(std::numeric_limits<FwBuffSizeType>::max() == std::numeric_limits<
 static_assert(std::numeric_limits<FwSizeType>::max() >= std::numeric_limits<FwSizeStoreType>::max() &&
                   std::numeric_limits<FwSizeType>::min() <= std::numeric_limits<FwSizeStoreType>::min(),
               "FwSizeType cannot entirely store values of type FwExternalSizeType");
+
+
+// Check platform defined types for required invariants
+static_assert(sizeof(PlatformPointerCastType) == sizeof(void*), "PlatformPointerCastType must be the same size as pointers");
+static_assert(std::numeric_limits<PlatformSizeType>::max() >= std::numeric_limits<unsigned int>::max(),
+                "PlatformSizeType must be at least as large as unsigned int");
+static_assert(std::numeric_limits<PlatformSignedSizeType>::max() >= std::numeric_limits<int>::max(),
+                "PlatformSignedSizeType must be at least as large as int"); 
+static_assert(std::numeric_limits<PlatformSignedSizeType>::min() <= std::numeric_limits<int>::min(),
+                "PlatformSignedSizeType must be at least as small as int");
+static_assert(std::numeric_limits<PlatformIndexType>::is_signed, "PlatformIndexType must be signed");
+static_assert(not std::numeric_limits<PlatformSizeType>::is_signed, "PlatformSizeType must be unsigned");
+static_assert(std::numeric_limits<PlatformSignedSizeType>::is_signed, "PlatformSignedSizeType must be signed");
+static_assert(std::numeric_limits<PlatformSizeType>::max() >= std::numeric_limits<U32>::max(), "PlatformSizeType must be at least as large as U32");
+static_assert(sizeof(PlatformSizeType) == sizeof(PlatformSignedSizeType), "PlatformSizeType must be the same size as PlatformSignedSizeType");
+
+// Check framework configured types for required invariants
+static_assert(std::numeric_limits<FwSizeType>::max() >= std::numeric_limits<unsigned int>::max(),
+                "FwSizeType must be at least as large as unsigned int");
+static_assert(std::numeric_limits<FwSignedSizeType>::max() >= std::numeric_limits<int>::max(),
+                "FwSignedSizeType must be at least as large as int"); 
+static_assert(std::numeric_limits<FwSignedSizeType>::min() <= std::numeric_limits<int>::min(),
+                "FwSignedSizeType must be at least as large as int");
+static_assert(std::numeric_limits<FwIndexType>::is_signed, "FwIndexType must be signed");
+static_assert(not std::numeric_limits<FwSizeType>::is_signed, "FwSizeType must be unsigned");
+static_assert(std::numeric_limits<FwSignedSizeType>::is_signed, "FwSignedSizeType must be signed");
+static_assert(std::numeric_limits<FwSizeType>::max() >= std::numeric_limits<U32>::max(), "FwSizeType must be at least as large as U32");
+static_assert(sizeof(FwSizeType) == sizeof(FwSignedSizeType), "FwSizeType must be the same size as FwSignedSizeType");
+

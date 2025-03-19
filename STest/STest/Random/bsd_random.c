@@ -210,7 +210,7 @@ static inline uint32_t good_rand (int32_t x)
 	x = 16807 * lo - 2836 * hi;
 	if (x < 0)
 		x += 0x7fffffff;
-	return (x);
+	return (uint32_t) (x);
 }
 
 /*
@@ -235,7 +235,7 @@ bsd_srandom(unsigned x)
 		lim = NSHUFF;
 	else {
 		for (i = 1; i < rand_deg; i++)
-			state[i] = good_rand(state[i - 1]);
+			state[i] = good_rand((int)state[i - 1]);
 		fptr = &state[rand_sep];
 		rptr = &state[0];
 		lim = 10 * rand_deg;
@@ -277,9 +277,9 @@ bsd_initstate(
 	uint32_t *int_arg_state = (uint32_t *)arg_state;
 
 	if (rand_type == TYPE_0)
-		state[-1] = rand_type;
+		state[-1] = (uint32_t)rand_type;
 	else
-		state[-1] = MAX_TYPES * (rptr - state) + rand_type;
+		state[-1] = (uint32_t)(MAX_TYPES * (rptr - state) + rand_type);
 	if (n < BREAK_0) {
 		(void)fprintf(stderr,
 		    "random: not enough state (%zd bytes); ignored.\n", n);
@@ -310,9 +310,9 @@ bsd_initstate(
 	end_ptr = &state[rand_deg];	/* must set end_ptr before srandom */
 	bsd_srandom(seed);
 	if (rand_type == TYPE_0)
-		int_arg_state[0] = rand_type;
+		int_arg_state[0] = (uint32_t)rand_type;
 	else
-		int_arg_state[0] = MAX_TYPES * (rptr - state) + rand_type;
+		int_arg_state[0] = (uint32_t)(MAX_TYPES * (rptr - state) + rand_type);
 	return(ostate);
 }
 
@@ -345,16 +345,16 @@ bsd_setstate(
 	char *ostate = (char *)(&state[-1]);
 
 	if (rand_type == TYPE_0)
-		state[-1] = rand_type;
+		state[-1] = (uint32_t)rand_type;
 	else
-		state[-1] = MAX_TYPES * (rptr - state) + rand_type;
+		state[-1] = (uint32_t)(MAX_TYPES * (rptr - state) + rand_type);
 	switch(type) {
 	case TYPE_0:
 	case TYPE_1:
 	case TYPE_2:
 	case TYPE_3:
 	case TYPE_4:
-		rand_type = type;
+		rand_type = (int)type;
 		rand_deg = degrees[type];
 		rand_sep = seps[type];
 		break;
@@ -365,7 +365,7 @@ bsd_setstate(
 	state = new_state + 1;
 	if (rand_type != TYPE_0) {
 		rptr = &state[rear];
-		fptr = &state[(rear + rand_sep) % rand_deg];
+		fptr = &state[(rear + ((uint32_t)rand_sep)) % ((uint32_t)rand_deg)];
 	}
 	end_ptr = &state[rand_deg];		/* set end_ptr too */
 	return(ostate);
@@ -396,7 +396,7 @@ bsd_random(void)
 
 	if (rand_type == TYPE_0) {
 		i = state[0];
-		state[0] = i = (good_rand(i)) & 0x7fffffff;
+		state[0] = i = (good_rand((int32_t)(i))) & 0x7fffffff;
 	} else {
 		/*
 		 * Use local variables rather than static variables for speed.

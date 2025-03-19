@@ -25,12 +25,12 @@ class StubConditionVariable : public ConditionVariableInterface {
     //! \brief destructor
     //!
     ~StubConditionVariable() override = default;
-    
+
     //! \brief assignment operator is forbidden
     ConditionVariableInterface& operator=(const ConditionVariableInterface& other) override = delete;
 
     //! \brief wait releasing mutex
-    void wait(Os::Mutex& mutex) override;
+    StubConditionVariable::Status pend(Os::Mutex& mutex) override;
 
     //! \brief notify a single waiter
     void notify() override;
@@ -47,6 +47,6 @@ class StubConditionVariable : public ConditionVariableInterface {
 };
 
 }  // namespace Mutex
-}  // namespace Posix
+}  // namespace Stub
 }  // namespace Os
 #endif  // OS_STUB_CONDITION_VARIABLE_HPP

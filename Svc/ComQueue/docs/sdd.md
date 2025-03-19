@@ -1,4 +1,3 @@
-\page SvcComQueueComponent Svc::ComQueue Component
 # Svc::ComQueue (Active Component)
 
 ## 1. Introduction
@@ -12,9 +11,9 @@ passing in a configuration table at initialization. Queued messages from the hig
 first and a round-robin algorithm is used to balance between ports of shared priority.
 
 `Svc::ComQueue` is designed to act alongside instances of the
-[communication adapter interface](https://nasa.github.io/fprime/Design/communication-adapter-interface.html) and
+[communication adapter interface](../../../docs/reference/communication-adapter-interface.md) and
 implements the communication queue
-[protocol](https://nasa.github.io/fprime/Design/communication-adapter-interface.html#communication-queue-protocol).
+[protocol](../../../docs/reference/communication-adapter-interface.md#communication-queue-protocol).
 
 ## 2. Assumptions
 
@@ -22,7 +21,7 @@ implements the communication queue
 2. Data is considered to be successfully sent when a `Fw::Success::SUCCESS` signal was received
 3. The com adapter is responsible for any retransmission of failed data
 4. The system includes downstream components implementing the
- [communications adapter](https://nasa.github.io/fprime/Design/communication-adapter-interface.html)
+ [communications adapter](../../../docs/reference/communication-adapter-interface.md)
 
 
 ## 3. Requirements

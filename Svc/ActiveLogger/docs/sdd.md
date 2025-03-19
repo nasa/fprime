@@ -1,4 +1,3 @@
-\page SvcActiveLoggerComponent Svc::ActiveLogger Component
 # Svc::ActiveLogger Component
 
 ## 1. Introduction
@@ -13,8 +12,8 @@ The requirements for `Svc::ActiveLogger` are as follows:
 
 Requirement | Description | Verification Method
 ----------- | ----------- | -------------------
-AL-001 | The `Svc::ActiveLogger` component shall receive events and compose ter events based on event severity. | Unithem into downlink packets. | Inspection; Unit Test
-AL-002 | The `Svc::ActiveLogger` component shall have commands to filt Test
+AL-001 | The `Svc::ActiveLogger` component shall receive events and compose them into downlink packets. | Inspection; Unit Test
+AL-002 | The `Svc::ActiveLogger` component shall have commands to filter events based on event severity. | Unit Test
 AL-003 | The `Svc::ActiveLogger` component shall have commands to filter events based on the event ID. | Unit Test 
 AL-004 | The `Svc::ActiveLogger` component shall call fatalOut port when FATAL is received | Inspection; Unit Test
 
@@ -42,7 +41,7 @@ Port Data Type | Name | Direction | Kind | Usage
 
 The `Svc::ActiveLogger` component provides an event logging function for the software. The framework autocoder allows
 developers to specify a set of events in the component XML
-(see [Events](https://nasa.github.io/fprime/UsersGuide/user/cmd-evt-chn-prm.html#Events)). For these components, the
+(see [Events](../../../docs/user-manual/overview/cmd-evt-chn-prm.md). For these components, the
 autocoder will add an `Fw::Log` output port to send events in serialized form. The ActiveLogger receives these port
 calls and provides commands to filter these events. The filtered events are sent to other components such as the ground
 interface. 
@@ -94,11 +93,11 @@ TBD
 
 ## 5. Module Checklists
 
-Document | Link
--------- | ----
-Design Checklist | [Link](Checklist_Design.xlsx)
-Code Checklist | [Link](Checklist_Code.xlsx)
-Unit Test Checklist | [Link](Checklist_Unit_Test.xls)
+Checklist |
+-------- |
+[Design](Checklist_Design.xlsx) |
+[Code](Checklist_Code.xlsx) |
+[Unit Test](Checklist_Unit_Test.xls) |
 
 ## 6. Unit Testing
 

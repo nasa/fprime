@@ -15,7 +15,7 @@
 
 namespace Fw {
 
-    class SmSignalBuffer : public SerializeBufferBase {
+    class SmSignalBuffer final : public SerializeBufferBase {
         public:
 
             enum {

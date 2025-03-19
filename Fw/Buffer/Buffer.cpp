@@ -38,7 +38,7 @@ Buffer::Buffer(const Buffer& src) : Serializable(),
     }
 }
 
-Buffer::Buffer(U8* data, U32 size, U32 context) : Serializable(),
+Buffer::Buffer(U8* data, SizeType size, U32 context) : Serializable(),
     m_serialize_repr(),
     m_bufferData(data),
     m_size(size),
@@ -69,7 +69,7 @@ U8* Buffer::getData() const {
     return this->m_bufferData;
 }
 
-U32 Buffer::getSize() const {
+Buffer::SizeType Buffer::getSize() const {
     return this->m_size;
 }
 
@@ -84,7 +84,7 @@ void Buffer::setData(U8* const data) {
     }
 }
 
-void Buffer::setSize(const U32 size) {
+void Buffer::setSize(const SizeType size) {
     this->m_size = size;
     if (m_bufferData != nullptr) {
         this->m_serialize_repr.setExtBuffer(this->m_bufferData, this->m_size);
@@ -95,7 +95,7 @@ void Buffer::setContext(const U32 context) {
     this->m_context = context;
 }
 
-void Buffer::set(U8* const data, const U32 size, const U32 context) {
+void Buffer::set(U8* const data, const SizeType size, const U32 context) {
     this->m_bufferData = data;
     this->m_size = size;
     if (m_bufferData != nullptr) {
@@ -116,7 +116,7 @@ Fw::SerializeStatus Buffer::serialize(Fw::SerializeBufferBase& buffer) const {
         return stat;
     }
 #endif
-    stat = buffer.serialize(reinterpret_cast<POINTER_CAST>(this->m_bufferData));
+    stat = buffer.serialize(reinterpret_cast<PlatformPointerCastType>(this->m_bufferData));
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;
     }
@@ -146,7 +146,7 @@ Fw::SerializeStatus Buffer::deserialize(Fw::SerializeBufferBase& buffer) {
         return Fw::FW_DESERIALIZE_TYPE_MISMATCH;
     }
 #endif
-    POINTER_CAST pointer;
+    PlatformPointerCastType pointer;
     stat = buffer.deserialize(pointer);
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;

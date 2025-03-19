@@ -23,6 +23,7 @@ set(MOD_DEPS
   Fw/Cfg
 )
 register_fprime_module()
+require_fprime_implementation("Fw_StringFormat")
 ### UTs ###
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/ExternalSerializeBufferTest.cpp"
@@ -32,6 +33,16 @@ set(UT_MOD_DEPS
   "${FPRIME_FRAMEWORK_PATH}/Os"
 )
 register_fprime_ut()
+set (UT_TARGET_NAME "${FPRIME_CURRENT_MODULE}_ut_exe")
+if (TARGET "${UT_TARGET_NAME}")
+    target_compile_options("${UT_TARGET_NAME}" PRIVATE -Wno-conversion)
+endif()
 
 # Non-test directory
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/GTest")
+
+# Create an empty interface library and use it to register an implementation
+add_library(snprintf-format ${VALID_EMPTY})
+# Must suppress empty library warnings
+target_compile_options(snprintf-format PRIVATE $<$<COMPILE_LANGUAGE:CXX>:-Wno-unused-const-variable>)
+register_fprime_implementation(Fw_StringFormat snprintf-format "${CMAKE_CURRENT_LIST_DIR}/snprintf_format.cpp")

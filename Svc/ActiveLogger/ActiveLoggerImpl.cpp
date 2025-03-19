@@ -12,7 +12,7 @@
 #include <Os/File.hpp>
 
 namespace Svc {
-
+    static_assert(std::numeric_limits<FwSizeType>::max() >= TELEM_ID_FILTER_SIZE, "TELEM_ID_FILTER_SIZE must fit within range of FwSizeType");
     typedef ActiveLogger_Enabled Enabled;
     typedef ActiveLogger_FilterSeverity FilterSeverity;
 
@@ -40,7 +40,7 @@ namespace Svc {
     ActiveLoggerImpl::~ActiveLoggerImpl() {
     }
 
-    void ActiveLoggerImpl::LogRecv_handler(NATIVE_INT_TYPE portNum, FwEventIdType id, Fw::Time &timeTag, const Fw::LogSeverity& severity, Fw::LogBuffer &args) {
+    void ActiveLoggerImpl::LogRecv_handler(FwIndexType portNum, FwEventIdType id, Fw::Time &timeTag, const Fw::LogSeverity& severity, Fw::LogBuffer &args) {
 
         // make sure ID is not zero. Zero is reserved for ID filter.
         FW_ASSERT(id != 0);
@@ -79,12 +79,12 @@ namespace Svc {
                 }
                 break;
             default:
-                FW_ASSERT(0,static_cast<NATIVE_INT_TYPE>(severity.e));
+                FW_ASSERT(0,static_cast<FwAssertArgType>(severity.e));
                 return;
         }
 
         // check ID filters
-        for (NATIVE_INT_TYPE entry = 0; entry < TELEM_ID_FILTER_SIZE; entry++) {
+        for (FwSizeType entry = 0; entry < TELEM_ID_FILTER_SIZE; entry++) {
             if (
               (m_filteredIDs[entry] == id) &&
               (severity != Fw::LogSeverity::FATAL)
@@ -112,7 +112,7 @@ namespace Svc {
         this->m_logPacket.setLogBuffer(args);
         this->m_comBuffer.resetSer();
         Fw::SerializeStatus stat = this->m_logPacket.serialize(this->m_comBuffer);
-        FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
+        FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<FwAssertArgType>(stat));
 
         if (this->isConnected_PktSend_OutputPort(0)) {
             this->PktSend_out(0, this->m_comBuffer,0);
@@ -133,7 +133,7 @@ namespace Svc {
 
         if (Enabled::ENABLED == idEnabled.e) { // add ID
             // search list for existing entry
-            for (NATIVE_INT_TYPE entry = 0; entry < TELEM_ID_FILTER_SIZE; entry++) {
+            for (FwSizeType entry = 0; entry < TELEM_ID_FILTER_SIZE; entry++) {
                 if (this->m_filteredIDs[entry] == ID) {
                     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
                     this->log_ACTIVITY_HI_ID_FILTER_ENABLED(ID);
@@ -141,7 +141,7 @@ namespace Svc {
                 }
             }
             // if not already a match, search for an open slot
-            for (NATIVE_INT_TYPE entry = 0; entry < TELEM_ID_FILTER_SIZE; entry++) {
+            for (FwSizeType entry = 0; entry < TELEM_ID_FILTER_SIZE; entry++) {
                 if (this->m_filteredIDs[entry] == 0) {
                     this->m_filteredIDs[entry] = ID;
                     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
@@ -154,7 +154,7 @@ namespace Svc {
             this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
         } else { // remove ID
             // search list for existing entry
-            for (NATIVE_INT_TYPE entry = 0; entry < TELEM_ID_FILTER_SIZE; entry++) {
+            for (FwSizeType entry = 0; entry < TELEM_ID_FILTER_SIZE; entry++) {
                 if (this->m_filteredIDs[entry] == ID) {
                     this->m_filteredIDs[entry] = 0; // zero entry
                     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
@@ -175,7 +175,7 @@ namespace Svc {
         ) {
 
         // first, iterate through severity filters
-        for (NATIVE_UINT_TYPE filter = 0; filter < FilterSeverity::NUM_CONSTANTS; filter++) {
+        for (FwEnumStoreType filter = 0; filter < FilterSeverity::NUM_CONSTANTS; filter++) {
            FilterSeverity filterState(static_cast<FilterSeverity::t>(filter));
            this->log_ACTIVITY_LO_SEVERITY_FILTER_STATE(
                     filterState,
@@ -184,7 +184,7 @@ namespace Svc {
         }
 
         // iterate through ID filter
-        for (NATIVE_INT_TYPE entry = 0; entry < TELEM_ID_FILTER_SIZE; entry++) {
+        for (FwSizeType entry = 0; entry < TELEM_ID_FILTER_SIZE; entry++) {
             if (this->m_filteredIDs[entry] != 0) {
                 this->log_ACTIVITY_HI_ID_FILTER_ENABLED(this->m_filteredIDs[entry]);
             }
@@ -194,7 +194,7 @@ namespace Svc {
     }
 
     void ActiveLoggerImpl::pingIn_handler(
-          const NATIVE_INT_TYPE portNum,
+          const FwIndexType portNum,
           U32 key
       )
     {

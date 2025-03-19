@@ -349,10 +349,6 @@ namespace Svc {
 
     }
 
-    void PrmDbImplTester::init(NATIVE_INT_TYPE instance) {
-        PrmDbGTestBase::init();
-    }
-
     PrmDbImplTester* PrmDbImplTester::PrmDbTestFile::s_tester = nullptr;
 
     void PrmDbImplTester::PrmDbTestFile::setTester(Svc::PrmDbImplTester *tester) {
@@ -624,7 +620,7 @@ namespace Svc {
 
     void PrmDbImplTester ::
       from_pingOut_handler(
-          const NATIVE_INT_TYPE portNum,
+          const FwIndexType portNum,
           U32 key
       )
     {

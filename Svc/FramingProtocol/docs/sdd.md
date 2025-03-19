@@ -1,4 +1,3 @@
-\page SvcFramingProtocol Svc::FramingProtocol Protocol
 # Svc::FramingProtocol Library
 
 The `FramingProtocol` library defines the interfaces to the

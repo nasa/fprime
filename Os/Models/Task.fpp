@@ -16,6 +16,7 @@ enum TaskStatus {
     JOIN_ERROR,        @< error trying to join the task
     ERROR_RESOURCES,   @< unable to allocate more tasks
     ERROR_PERMISSION,  @< permissions error setting-up tasks
+    NOT_SUPPORTED,     @< Task feature is not supported
     INVALID_STATE,     @< Task is in an invalid state for the operation
 }
 }

@@ -16,7 +16,7 @@
 
 namespace Fw {
 
-  SerializableFile::SerializableFile(MemAllocator* allocator, NATIVE_UINT_TYPE maxSerializedSize) :
+  SerializableFile::SerializableFile(MemAllocator* allocator, FwSizeType maxSerializedSize) :
     m_allocator(allocator),
     m_recoverable(false), // for compiler; not used
     m_actualSize(maxSerializedSize),
@@ -50,7 +50,7 @@ namespace Fw {
 
     this->reset();
     SerializeStatus serStatus;
-    serStatus = this->m_buffer.setBuffLen(static_cast<NATIVE_UINT_TYPE>(length));
+    serStatus = this->m_buffer.setBuffLen(static_cast<FwSizeType>(length));
     FW_ASSERT(FW_SERIALIZE_OK == serStatus, serStatus);
     serStatus = serializable.deserialize(this->m_buffer);
     if(FW_SERIALIZE_OK != serStatus) {

@@ -1,4 +1,3 @@
-\page SvcFileManagerComponent Svc::FileManager Component
 # Svc::FileManager Component
 
 ## 1. Introduction

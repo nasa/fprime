@@ -47,6 +47,8 @@ struct PriorityQueueHandle : public QueueHandle {
 };
 //! \brief generic priority queue implementation
 //!
+//! \warning This Priority Queue is not ISR safe
+//!
 //! A generic implementation of a priority queue to support the Os::QueueInterface. This queue uses OSAL mutexes,
 //! and condition variables to provide for a task-safe blocking queue implementation. Data is stored in heap memory.
 //!
@@ -88,6 +90,7 @@ class PriorityQueue : public Os::QueueInterface {
     //!
     //! \warning It is invalid to send a null buffer
     //! \warning This method will block if the queue is full and blockType is set to BLOCKING
+    //! \warning This method is not ISR safe
     //!
     //! \param buffer: message data
     //! \param size: size of message data
@@ -123,6 +126,8 @@ class PriorityQueue : public Os::QueueInterface {
     FwSizeType getMessagesAvailable() const override;
 
     //! \brief get maximum messages stored at any given time
+    //!
+    //! \warning This method is not ISR safe
     //!
     //! Returns the maximum number of messages in this queue at any given time. This is the high-water mark for this
     //! queue.

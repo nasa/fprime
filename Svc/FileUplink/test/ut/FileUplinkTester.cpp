@@ -524,7 +524,7 @@ namespace Svc {
 
   void FileUplinkTester ::
     from_bufferSendOut_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         Fw::Buffer& buffer
     )
   {
@@ -533,7 +533,7 @@ namespace Svc {
 
   void FileUplinkTester ::
     from_pingOut_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 key
     )
   {
@@ -713,7 +713,8 @@ namespace Svc {
   void FileUplinkTester ::
     removeFile(const char *const path)
   {
-    const NATIVE_INT_TYPE status = ::unlink(path);
+    // status from unlink is a platform integer
+    const PlatformIntType status = ::unlink(path);
     if (status != 0) {
       ASSERT_EQ(ENOENT, errno);
     }

@@ -111,8 +111,10 @@ namespace Task {
 
     PlatformIntType set_cpu_affinity(pthread_attr_t& attributes, const Os::Task::Arguments& arguments) {
         PlatformIntType status = 0;
-// Feature set check for _GNU_SOURCE before using GNU only features
-#ifdef _GNU_SOURCE
+// pthread_attr_setaffinity_np is a non-POSIX function. Notably, it is not available on musl.
+// Limit its use to builds that involve glibc, on Linux, with _GNU_SOURCE defined.
+// That's the circumstance in which we expect this feature to work.
+#if defined(TGT_OS_TYPE_LINUX) && defined(__GLIBC__) && defined(_GNU_SOURCE)
         const FwSizeType affinity = arguments.m_cpuAffinity;
         cpu_set_t cpu_set;
         CPU_ZERO(&cpu_set);

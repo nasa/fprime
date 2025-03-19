@@ -16,7 +16,7 @@ namespace Svc {
     // ----------------------------------------------------------------------
 
     void FatalHandlerComponentImpl::FatalReceive_handler(
-            const NATIVE_INT_TYPE portNum,
+            const FwIndexType portNum,
             FwEventIdType Id) {
         Fw::Logger::log("FATAL %" PRI_FwEventIdType "handled.\n",Id);
         while (true) {} // Returning might be bad

@@ -14,7 +14,6 @@
 #include <Fw/Types/StringType.hpp>
 #include <Fw/Types/StringUtils.hpp>
 #include <cstdarg>
-#include <cstdio>
 #include <cstring>
 
 namespace Fw {
@@ -49,29 +48,26 @@ bool StringBase::operator==(const CHAR* other) const {
     }
 
     const SizeType capacity = this->getCapacity();
-    const size_t result = static_cast<size_t>(strncmp(us, other, capacity));
+    const size_t result = static_cast<size_t>(strncmp(us, other, static_cast<size_t>(capacity)));
     return (result == 0);
 }
 
-void StringBase::format(const CHAR* formatString, ...) {
+FormatStatus StringBase::format(const CHAR* formatString, ...) {
     va_list args;
     va_start(args, formatString);
-    this->vformat(formatString, args);
+    FormatStatus status = this->vformat(formatString, args);
     va_end(args);
+    return status;
 }
 
-void StringBase::vformat(const CHAR* formatString, va_list args) {
+FormatStatus StringBase::vformat(const CHAR* formatString, va_list args) {
     CHAR* us = const_cast<CHAR*>(this->toChar());
     SizeType cap = this->getCapacity();
     FW_ASSERT(us != nullptr);
-    FW_ASSERT(formatString != nullptr);
-#if FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING
-    (void) vsnprintf(us, cap, formatString, args);
-#else
-    *this = formatString;
-#endif
-    // Force null terminate
-    us[cap - 1] = 0;
+    // Needed until SizeType an FwSizeType are the same
+    static_assert(std::numeric_limits<FwSizeType>::max() >= std::numeric_limits<SizeType>::max(),
+                  "String size type must fit into FwSizeType");
+    return Fw::stringFormat(us, static_cast<FwSizeType>(cap), formatString, args);
 }
 
 bool StringBase::operator!=(const StringBase& other) const {
@@ -119,7 +115,7 @@ void StringBase::appendBuff(const CHAR* buff, SizeType size) {
         remaining = size;
     }
     FW_ASSERT(remaining < capacity, static_cast<FwAssertArgType>(remaining), static_cast<FwAssertArgType>(capacity));
-    (void)strncat(const_cast<CHAR*>(this->toChar()), buff, remaining);
+    (void)strncat(const_cast<CHAR*>(this->toChar()), buff, static_cast<size_t>(remaining));
 }
 
 StringBase::SizeType StringBase::length() const {

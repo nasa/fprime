@@ -25,11 +25,11 @@ namespace Drv {
     public UdpGTestBase
   {
       // Maximum size of histories storing events, telemetry, and port outputs
-      static const NATIVE_INT_TYPE MAX_HISTORY_SIZE = 1000;
+      static const U32 MAX_HISTORY_SIZE = 1000;
       // Instance ID supplied to the component instance under test
-      static const NATIVE_INT_TYPE TEST_INSTANCE_ID = 0;
+      static const FwEnumStoreType TEST_INSTANCE_ID = 0;
       // Queue depth supplied to component instance under test
-      static const NATIVE_INT_TYPE TEST_INSTANCE_QUEUE_DEPTH = 100;
+      static const FwSizeType TEST_INSTANCE_QUEUE_DEPTH = 100;
 
       // ----------------------------------------------------------------------
       // Construction and destruction
@@ -83,7 +83,7 @@ namespace Drv {
       //! Handler for from_recv
       //!
       void from_recv_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          const FwIndexType portNum, /*!< The port number*/
           Fw::Buffer &recvBuffer,
           const RecvStatus &recvStatus
       );
@@ -91,20 +91,20 @@ namespace Drv {
       //! Handler for from_ready
       //!
       void from_ready_handler(
-          const NATIVE_INT_TYPE portNum /*!< The port number*/
+          const FwIndexType portNum /*!< The port number*/
       );
 
       //! Handler for from_allocate
       //!
       Fw::Buffer from_allocate_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          const FwIndexType portNum, /*!< The port number*/
           U32 size
       );
 
       //! Handler for from_deallocate
       //!
       void from_deallocate_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          const FwIndexType portNum, /*!< The port number*/
           Fw::Buffer &fwBuffer
       );
 

@@ -7,7 +7,7 @@ namespace Ref {
 
     /// This component sends a data buffer to a driver each time it is invoked by a scheduler
 
-    class SendBuffImpl : public SendBuffComponentBase {
+    class SendBuffImpl final : public SendBuffComponentBase {
         public:
 
             // Only called by derived class
@@ -16,7 +16,7 @@ namespace Ref {
 
         private:
 
-            void SchedIn_handler(NATIVE_INT_TYPE portNum, U32 context); //!< downcall for input port
+            void SchedIn_handler(FwIndexType portNum, U32 context); //!< downcall for input port
             void SB_START_PKTS_cmdHandler(FwOpcodeType opcode, U32 cmdSeq); //!< START_PKTS command handler
             void SB_INJECT_PKT_ERROR_cmdHandler(FwOpcodeType opcode, U32 cmdSeq); //!< START_PKTS command handler
             void SB_GEN_FATAL_cmdHandler(
@@ -46,8 +46,6 @@ namespace Ref {
             bool m_sendPackets; //!< If true, send packets
             U32 m_currPacketId; //!< current packet ID to be sent
             bool m_firstPacketSent; //!< set if first packet
-
-            void toString(char* str, I32 buffer_size); //!< writes a string representation of the object
 
             // buffer data
             Drv::DataBuffer m_testBuff; //!< data buffer to send

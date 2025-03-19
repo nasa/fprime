@@ -125,6 +125,7 @@ macro(fprime_setup_standard_targets)
         register_fprime_target(target/version)
         register_fprime_target(target/install)
         register_fprime_ut_target(target/ut)
+        register_fprime_target(target/sbom)
 
         if (FPRIME_ENABLE_UTIL_TARGETS)
             register_fprime_target(target/refresh_cache)
@@ -169,6 +170,7 @@ endmacro(fprime_initialize_build_system)
 # registered.
 ####
 function(fprime_setup_included_code)
+    choose_fprime_implementation(Fw_StringFormat snprintf-format FRAMEWORK_DEFAULT) # Default choice is snprintf
     # Must be done before code is registered but after custom target registration
     setup_global_targets()
     # For BUILD_TESTING builds then set up libraries that support testing
@@ -177,6 +179,12 @@ function(fprime_setup_included_code)
             message(FATAL_ERROR "googletest submodule not initialized or corrupted. Please run `git submodule update --init --recursive`.")
         endif()
         add_subdirectory("${FPRIME_FRAMEWORK_PATH}/googletest/" "${CMAKE_BINARY_DIR}/F-Prime/googletest")
+        # Flags attached to GTest compile: disable conversion warnings
+        set(GTEST_FLAGS "-Wno-conversion")
+        target_compile_options(gmock      PRIVATE "${GTEST_FLAGS}")
+        target_compile_options(gmock_main PRIVATE "${GTEST_FLAGS}")
+        target_compile_options(gtest      PRIVATE "${GTEST_FLAGS}")
+        target_compile_options(gtest_main PRIVATE "${GTEST_FLAGS}")
     endif()
     if (BUILD_TESTING)
         add_subdirectory("${FPRIME_FRAMEWORK_PATH}/STest/" "${CMAKE_BINARY_DIR}/F-Prime/STest")

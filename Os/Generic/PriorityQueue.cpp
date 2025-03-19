@@ -27,7 +27,7 @@ void PriorityQueueHandle ::store_data(FwSizeType index, const U8* data, FwSizeTy
     FW_ASSERT(index < this->m_depth);
 
     FwSizeType offset = this->m_maxSize * index;
-    ::memcpy(this->m_data + offset, data, size);
+    (void)::memcpy(this->m_data + offset, data, static_cast<size_t>(size));
     this->m_sizes[index] = size;
 }
 
@@ -35,7 +35,7 @@ void PriorityQueueHandle ::load_data(FwSizeType index, U8* destination, FwSizeTy
     FW_ASSERT(size <= this->m_maxSize);
     FW_ASSERT(index < this->m_depth);
     FwSizeType offset = this->m_maxSize * index;
-    ::memcpy(destination, this->m_data + offset, size);
+    (void)::memcpy(destination, this->m_data + offset, static_cast<size_t>(size));
 }
 
 PriorityQueue::~PriorityQueue() {

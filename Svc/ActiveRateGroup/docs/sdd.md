@@ -1,4 +1,3 @@
-\page SvcActiveRateGroupComponent Svc::ActiveRateGroup Component
 # Svc::ActiveRateGroup Component
 
 ## 1. Introduction
@@ -45,7 +44,7 @@ The `Svc::ActiveRateGroup` component has one input port that is called to wake u
 A set of context values are passed in as an array to the configure function:
 
 ```
-void configure(NATIVE_INT_TYPE contexts[], NATIVE_INT_TYPE numContexts);
+void configure(U32 contexts[], FwIndexType numContexts);
 ```
 
 A context value can be used by a component to discriminate between more than one call in the rate group.
@@ -94,11 +93,11 @@ TBD
 
 ## 5. Module Checklists
 
-Document | Link
--------- | ----
-Design Checklist | [Link](Checklist_Design.xlsx)
-Code Checklist | [Link](Checklist_Code.xlsx)
-Unit Test Checklist | [Link](Checklist_Unit_Test.xls)
+Checklist |
+-------- |
+[Design](Checklist_Design.xlsx) |
+[Code](Checklist_Code.xlsx) |
+[Unit Test](Checklist_Unit_Test.xls) |
 
 ## 6. Unit Testing
 

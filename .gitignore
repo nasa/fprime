@@ -1,5 +1,6 @@
 build/
-build*/
+build-fprime-*/
+build-artifacts/
 gtest/
 docs-cache/
 CMakePresets.json
@@ -26,6 +27,7 @@ RemoteSystemsTempFiles
 Dict
 *.core
 
+**/coverage/
 *.gcov
 !**/test/ut/output/*.gcov
 GTestBase.*
@@ -84,5 +86,6 @@ depend
 /venv/
 
 Packet-Views
-docs/documentation/reference/api/cpp
-docs/documentation/reference/api/cmake
+docs/reference/api/cpp
+docs/reference/api/cmake
+temp_dir/

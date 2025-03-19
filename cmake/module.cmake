@@ -11,6 +11,7 @@ include_guard()
 include(target/target)
 include(implementation)
 set(EMPTY "${FPRIME_FRAMEWORK_PATH}/cmake/empty.cpp")
+set(VALID_EMPTY "${FPRIME_FRAMEWORK_PATH}/cmake/valid-empty.cpp")
 
 ####
 # Function `generate_base_module_properties`:

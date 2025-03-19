@@ -22,14 +22,14 @@
 
 namespace Ref {
 
-    class SignalGen :
+    class SignalGen final :
         public SignalGenComponentBase
     {
 
     private:
 
         void schedIn_handler(
-            NATIVE_INT_TYPE portNum, /*!< The port number*/
+            FwIndexType portNum, /*!< The port number*/
             U32 context /*!< The call order*/
         ) final;
 
@@ -52,7 +52,7 @@ namespace Ref {
             U32 cmdSeq /*!< The command sequence number*/
         ) final;
 
-        //! Handler implementation for command SignalGen_Dp
+        //! Handler implementation for command Dp
         //!
         //! Signal Generator Settings
         void Dp_cmdHandler(
@@ -108,10 +108,6 @@ namespace Ref {
         U32 m_dpBytes; //!< currently serialized records
         FwDpPriorityType m_dpPriority; //!< stored priority for current DP
 
-        // for async DP
-        FwOpcodeType m_opCode;
-        U32 m_cmdSeq;
-
     };
-};
+}
 #endif

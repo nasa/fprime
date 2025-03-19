@@ -13,6 +13,8 @@
 #include <cstring>
 #include <cstdio>
 
+static_assert(std::numeric_limits<FwSizeType>::max() >= PRMDB_NUM_DB_ENTRIES, "PRMDB_NUM_DB_ENTRIES must fit within range of FwSizeType");
+
 namespace Svc {
 
 
@@ -23,7 +25,7 @@ namespace Svc {
         class WorkingBuffer : public Fw::SerializeBufferBase {
             public:
 
-                NATIVE_UINT_TYPE getBuffCapacity() const {
+                FwSizeType getBuffCapacity() const {
                     return sizeof(m_buff);
                 }
 
@@ -51,7 +53,7 @@ namespace Svc {
     }
 
     void PrmDbImpl::clearDb() {
-        for (I32 entry = 0; entry < PRMDB_NUM_DB_ENTRIES; entry++) {
+        for (FwSizeType entry = 0; entry < PRMDB_NUM_DB_ENTRIES; entry++) {
             this->m_db[entry].used = false;
             this->m_db[entry].id = 0;
         }
@@ -60,11 +62,11 @@ namespace Svc {
     // If ports are no longer guarded, these accesses need to be protected from each other
     // If there are a lot of accesses, perhaps an interrupt lock could be used instead of guarded ports
 
-    Fw::ParamValid PrmDbImpl::getPrm_handler(NATIVE_INT_TYPE portNum, FwPrmIdType id, Fw::ParamBuffer &val) {
+    Fw::ParamValid PrmDbImpl::getPrm_handler(FwIndexType portNum, FwPrmIdType id, Fw::ParamBuffer &val) {
         // search for entry
         Fw::ParamValid stat = Fw::ParamValid::INVALID;
 
-        for (I32 entry = 0; entry < PRMDB_NUM_DB_ENTRIES; entry++) {
+        for (FwSizeType entry = 0; entry < PRMDB_NUM_DB_ENTRIES; entry++) {
             if (this->m_db[entry].used) {
                 if (this->m_db[entry].id == id) {
                     val = this->m_db[entry].val;
@@ -82,7 +84,7 @@ namespace Svc {
         return stat;
     }
 
-    void PrmDbImpl::setPrm_handler(NATIVE_INT_TYPE portNum, FwPrmIdType id, Fw::ParamBuffer &val) {
+    void PrmDbImpl::setPrm_handler(FwIndexType portNum, FwPrmIdType id, Fw::ParamBuffer &val) {
 
         this->lock();
 
@@ -91,7 +93,7 @@ namespace Svc {
         bool existingEntry = false;
         bool noSlots = true;
 
-        for (NATIVE_INT_TYPE entry = 0; entry < PRMDB_NUM_DB_ENTRIES; entry++) {
+        for (FwSizeType entry = 0; entry < PRMDB_NUM_DB_ENTRIES; entry++) {
             if ((this->m_db[entry].used) && (id == this->m_db[entry].id)) {
                 this->m_db[entry].val = val;
                 existingEntry = true;
@@ -101,7 +103,7 @@ namespace Svc {
 
         // if there is no existing entry, add one
         if (!existingEntry) {
-            for (I32 entry = 0; entry < PRMDB_NUM_DB_ENTRIES; entry++) {
+            for (FwSizeType entry = 0; entry < PRMDB_NUM_DB_ENTRIES; entry++) {
                 if (!(this->m_db[entry].used)) {
                     this->m_db[entry].val = val;
                     this->m_db[entry].id = id;
@@ -142,7 +144,7 @@ namespace Svc {
 
         U32 numRecords = 0;
 
-        for (NATIVE_UINT_TYPE entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_db); entry++) {
+        for (FwSizeType entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_db); entry++) {
             if (this->m_db[entry].used) {
                 // write delimiter
                 static const U8 delim = PRMDB_ENTRY_DELIMITER;
@@ -170,10 +172,10 @@ namespace Svc {
                 buff.resetSer();
                 Fw::SerializeStatus serStat = buff.serialize(recordSize);
                 // should always work
-                FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat,static_cast<NATIVE_INT_TYPE>(serStat));
+                FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat,static_cast<FwAssertArgType>(serStat));
 
                 // write record size
-                writeSize = buff.getBuffLength();
+                writeSize = static_cast<FwSignedSizeType>(buff.getBuffLength());
                 stat = paramFile.write(buff.getBuffAddr(),writeSize,Os::File::WaitType::WAIT);
                 if (stat != Os::File::OP_OK) {
                     this->unLock();
@@ -198,10 +200,10 @@ namespace Svc {
 
                 serStat = buff.serialize(this->m_db[entry].id);
                 // should always work
-                FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat,static_cast<NATIVE_INT_TYPE>(serStat));
+                FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat,static_cast<FwAssertArgType>(serStat));
 
                 // write parameter ID
-                writeSize = buff.getBuffLength();
+                writeSize = static_cast<FwSignedSizeType>(buff.getBuffLength());
                 stat = paramFile.write(buff.getBuffAddr(),writeSize,Os::File::WaitType::WAIT);
                 if (stat != Os::File::OP_OK) {
                     this->unLock();
@@ -221,7 +223,7 @@ namespace Svc {
 
                 // write serialized parameter value
 
-                writeSize = this->m_db[entry].val.getBuffLength();
+                writeSize = static_cast<FwSignedSizeType>(this->m_db[entry].val.getBuffLength());
                 stat = paramFile.write(this->m_db[entry].val.getBuffAddr(),writeSize,Os::File::WaitType::WAIT);
                 if (stat != Os::File::OP_OK) {
                     this->unLock();
@@ -268,7 +270,7 @@ namespace Svc {
 
         this->clearDb();
 
-        for (NATIVE_INT_TYPE entry = 0; entry < PRMDB_NUM_DB_ENTRIES; entry++)  {
+        for (FwSizeType entry = 0; entry < PRMDB_NUM_DB_ENTRIES; entry++)  {
 
             U8 delimiter;
             FwSignedSizeType readSize = static_cast<FwSignedSizeType>(sizeof(delimiter));
@@ -312,7 +314,7 @@ namespace Svc {
             // set serialized size to read size
             Fw::SerializeStatus desStat = buff.setBuffLen(static_cast<Fw::Serializable::SizeType>(readSize));
             // should never fail
-            FW_ASSERT(Fw::FW_SERIALIZE_OK == desStat,static_cast<NATIVE_INT_TYPE>(desStat));
+            FW_ASSERT(Fw::FW_SERIALIZE_OK == desStat,static_cast<FwAssertArgType>(desStat));
             // reset deserialization
             buff.resetDeser();
             // deserialize, since record size is serialized in file
@@ -343,7 +345,7 @@ namespace Svc {
             // set serialized size to read parameter ID
             desStat = buff.setBuffLen(static_cast<Fw::Serializable::SizeType>(readSize));
             // should never fail
-            FW_ASSERT(Fw::FW_SERIALIZE_OK == desStat,static_cast<NATIVE_INT_TYPE>(desStat));
+            FW_ASSERT(Fw::FW_SERIALIZE_OK == desStat,static_cast<FwAssertArgType>(desStat));
             // reset deserialization
             buff.resetDeser();
             // deserialize, since parameter ID is serialized in file
@@ -369,7 +371,7 @@ namespace Svc {
             // set serialized size to read size
             desStat = this->m_db[entry].val.setBuffLen(static_cast<Fw::Serializable::SizeType>(readSize));
             // should never fail
-            FW_ASSERT(Fw::FW_SERIALIZE_OK == desStat,static_cast<NATIVE_INT_TYPE>(desStat));
+            FW_ASSERT(Fw::FW_SERIALIZE_OK == desStat,static_cast<FwAssertArgType>(desStat));
             recordNum++;
 
         }
@@ -377,7 +379,7 @@ namespace Svc {
         this->log_ACTIVITY_HI_PrmFileLoadComplete(recordNum);
     }
 
-    void PrmDbImpl::pingIn_handler(NATIVE_INT_TYPE portNum, U32 key) {
+    void PrmDbImpl::pingIn_handler(FwIndexType portNum, U32 key) {
         // respond to ping
         this->pingOut_out(0,key);
     }

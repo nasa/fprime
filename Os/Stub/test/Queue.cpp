@@ -60,7 +60,7 @@ QueueInterface::Status InjectableStlQueue::send(const U8* buffer, FwSizeType siz
     }
 
     InjectableStlQueueHandle::Message message;
-    (void) std::memcpy(message.data, buffer, size);
+    (void) std::memcpy(message.data, buffer, static_cast<size_t>(size));
     message.priority = priority;
     message.size = size;
     this->m_handle.m_storage.push(message);
@@ -90,7 +90,7 @@ QueueInterface::Status InjectableStlQueue::receive(U8* destination,
     if (message.size > capacity) {
         return QueueInterface::Status::SIZE_MISMATCH;
     }
-    std::memcpy(destination, message.data, message.size);
+    std::memcpy(destination, message.data, static_cast<size_t>(message.size));
     priority = message.priority;
     actualSize = message.size;
     this->m_handle.m_storage.pop();

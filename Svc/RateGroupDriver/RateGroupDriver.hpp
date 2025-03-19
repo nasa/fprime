@@ -1,5 +1,4 @@
 /**
- * \file
  * \author T. Canham
  * \brief RateGroupDivider component implementation
  *
@@ -30,11 +29,11 @@ namespace Svc {
     //! Output rate is CycleIn rate/divider[port]
     //!
 
-    class RateGroupDriver : public RateGroupDriverComponentBase {
+    class RateGroupDriver final : public RateGroupDriverComponentBase {
 
         public:
             //! Size of the divider table, provided as a constants to users passing the table in
-            static const NATIVE_UINT_TYPE DIVIDER_SIZE = NUM_CYCLEOUT_OUTPUT_PORTS;
+            static const FwIndexType DIVIDER_SIZE = NUM_CYCLEOUT_OUTPUT_PORTS;
 
             //! \class Divider
             //! \brief Struct describing a divider
@@ -43,13 +42,13 @@ namespace Svc {
                 Divider() : divisor(0), offset(0)
                 {}
                 //! Initializes divisor and offset to passed-in pair 
-                Divider(NATIVE_INT_TYPE divisorIn, NATIVE_INT_TYPE offsetIn) :
+                Divider(FwSizeType divisorIn, FwSizeType offsetIn) :
                     divisor(divisorIn), offset(offsetIn)
                 {}
                 //! Divisor
-                NATIVE_INT_TYPE divisor;
+                FwSizeType divisor;
                 //! Offset
-                NATIVE_INT_TYPE offset;
+                FwSizeType offset;
             };
 
             //! \class DividerSet
@@ -81,16 +80,16 @@ namespace Svc {
 
             //! downcall for input port
             //! NOTE: This port can execute in ISR context.
-            void CycleIn_handler(NATIVE_INT_TYPE portNum, Os::RawTime& cycleStart);
+            void CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleStart);
 
             //! divider array
             Divider m_dividers[NUM_CYCLEOUT_OUTPUT_PORTS];
 
             //! tick counter
-            NATIVE_INT_TYPE m_ticks;
+            FwSizeType m_ticks;
 
             //! rollover counter
-            NATIVE_INT_TYPE m_rollover;
+            FwSizeType m_rollover;
 
             //! has the configure method been called
             bool m_configured;

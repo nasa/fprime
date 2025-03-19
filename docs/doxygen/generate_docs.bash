@@ -6,7 +6,7 @@
 SOURCE_DIR=`dirname $BASH_SOURCE`
 
 FPRIME=`cd ${SOURCE_DIR}/../../; pwd`
-APIDOCS="${FPRIME}/docs/documentation/reference/api"
+APIDOCS="${FPRIME}/docs/reference/api"
 
 DOXY_OUTPUT="${APIDOCS}/cpp"
 CMAKE_OUTPUT="${APIDOCS}/cmake"
@@ -75,3 +75,7 @@ for image in $(find "${FPRIME}/Fw" "${FPRIME}/Svc" "${FPRIME}/Drv" \( -name '*.j
 do
     cp "${image}" "${IMG_DIR}"
 done
+
+
+# Aggregate and index SDDs so they are rendered in the website
+python3 "${FPRIME}/docs/doxygen/sdd_processing.py"

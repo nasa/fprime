@@ -8,7 +8,7 @@
 <component name="Test" kind="queued" namespace="AQueuedTest">
     <import_port_type>Autocoders/Python/test/queued1/TestPortAi.xml</import_port_type>
     <import_port_type>Autocoders/Python/test/queued1/Test2PortAi.xml</import_port_type>
-    <comment>A stressfull component</comment>
+    <comment>A stressful component</comment>
     <ports>
         <port name="aport" data_type="Another::Test" kind="sync_input" >
             <comment>

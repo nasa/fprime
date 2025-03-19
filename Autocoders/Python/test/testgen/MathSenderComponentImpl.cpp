@@ -49,7 +49,7 @@ namespace Ref {
 
   void MathSenderComponentImpl ::
     mathIn_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         F32 result
     )
   {

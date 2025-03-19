@@ -37,7 +37,7 @@ namespace Svc {
     initLog(
         const char *const logFilePrefix,
         const char *const logFileSuffix,
-        const U32 maxFileSize,
+        const FwSizeType maxFileSize,
         const U8 sizeOfSize
     )
   {
@@ -50,13 +50,13 @@ namespace Svc {
 
   void BufferLogger ::
     bufferSendIn_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         Fw::Buffer& fwBuffer
     )
   {
     if (m_state == LogState::LOGGING_ON) {
       const U8 *const addr = fwBuffer.getData();
-      const U32 size = fwBuffer.getSize();
+      const FwSizeType size = fwBuffer.getSize();
       m_file.logBuffer(addr, size);
     }
     this->bufferSendOut_out(0, fwBuffer);
@@ -64,27 +64,27 @@ namespace Svc {
 
   void BufferLogger ::
     comIn_handler(
-        NATIVE_INT_TYPE portNum,
+        FwIndexType portNum,
         Fw::ComBuffer &data,
         U32 context
     )
   {
     if (m_state == LogState::LOGGING_ON) {
       const U8 *const addr = data.getBuffAddr();
-      const U32 size = data.getBuffLength();
+      const FwSizeType size = data.getBuffLength();
       m_file.logBuffer(addr, size);
     }
   }
 
   void BufferLogger ::
-    pingIn_handler(NATIVE_INT_TYPE portNum, U32 key)
+    pingIn_handler(FwIndexType portNum, U32 key)
   {
     this->pingOut_out(0, key);
   }
 
   void BufferLogger ::
     schedIn_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 context
     )
   {

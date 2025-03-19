@@ -8,8 +8,8 @@
 restrict_platforms(Darwin)
 add_custom_target("${FPRIME_CURRENT_MODULE}")
 
-add_fprime_supplied_os_module(Cpu Darwin)
-add_fprime_supplied_os_module(Memory Darwin)
+register_os_implementation(Cpu Darwin)
+register_os_implementation(Memory Darwin)
 
 # -----------------------------------------
 ### Os/Darwin/Cpu Section

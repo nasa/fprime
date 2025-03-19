@@ -1,10 +1,9 @@
 
 #ifndef OS_STUB_TEST_CONDITION_VARIABLE_HPP
 #define OS_STUB_TEST_CONDITION_VARIABLE_HPP
-#include "Os/Condition.hpp"
-#include <queue>
 #include <deque>
-
+#include <queue>
+#include "Os/Condition.hpp"
 
 namespace Os {
 namespace Stub {
@@ -16,15 +15,7 @@ namespace Test {
 struct StaticData {
     //! Enumeration of last function called
     //!
-    enum LastFn {
-        NONE_FN,
-        CONSTRUCT_FN,
-        DESTRUCT_FN,
-        WAIT_FN,
-        NOTIFY_FN,
-        NOTIFY_ALL_FN,
-        HANDLE_FN
-    };
+    enum LastFn { NONE_FN, CONSTRUCT_FN, DESTRUCT_FN, WAIT_FN, NOTIFY_FN, NOTIFY_ALL_FN, HANDLE_FN };
     StaticData() = default;
     ~StaticData() = default;
 
@@ -36,7 +27,6 @@ struct StaticData {
     // Singleton data
     static StaticData data;
 };
-
 
 struct TestConditionVariableHandle : public ConditionVariableHandle {};
 
@@ -59,7 +49,7 @@ class TestConditionVariable : public ConditionVariableInterface {
     ConditionVariableInterface& operator=(const ConditionVariableInterface& other) override = delete;
 
     //! \brief wait releasing mutex
-    void wait(Os::Mutex& mutex) override;
+    TestConditionVariable::Status pend(Os::Mutex& mutex) override;
 
     //! \brief notify a single waiter
     void notify() override;
@@ -73,7 +63,7 @@ class TestConditionVariable : public ConditionVariableInterface {
 };
 
 }  // namespace Test
-}  // namespace Queue
+}  // namespace ConditionVariable
 }  // namespace Stub
 }  // namespace Os
 

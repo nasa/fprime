@@ -18,8 +18,8 @@ namespace Svc {
   namespace SequenceFiles {
 
     USecFieldTooShortFile ::
-      USecFieldTooShortFile(const Format::t format) :
-        File("usec_field_too_short", format)
+      USecFieldTooShortFile(const Format::t a_format) :
+        File("usec_field_too_short", a_format)
     {
 
     }

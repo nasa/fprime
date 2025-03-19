@@ -10,6 +10,10 @@
 #include <Fw/Types/Assert.hpp>
 #include <cstdio>
 
+// Check the CMD_DISPATCHER_DISPATCH_TABLE_SIZE and CMD_DISPATCHER_SEQUENCER_TABLE_SIZE for overflow
+static_assert(CMD_DISPATCHER_DISPATCH_TABLE_SIZE <= std::numeric_limits<FwOpcodeType>::max(), "Opcode table limited to opcode range");
+static_assert(CMD_DISPATCHER_SEQUENCER_TABLE_SIZE <= std::numeric_limits<U32>::max(), "Sequencer table limited to range of U32");
+
 namespace Svc {
     CommandDispatcherImpl::CommandDispatcherImpl(const char* name) :
         CommandDispatcherComponentBase(name),
@@ -24,10 +28,10 @@ namespace Svc {
     CommandDispatcherImpl::~CommandDispatcherImpl() {
     }
 
-    void CommandDispatcherImpl::compCmdReg_handler(NATIVE_INT_TYPE portNum, FwOpcodeType opCode) {
+    void CommandDispatcherImpl::compCmdReg_handler(FwIndexType portNum, FwOpcodeType opCode) {
         // search for an empty slot
         bool slotFound = false;
-        for (U32 slot = 0; slot < FW_NUM_ARRAY_ELEMENTS(this->m_entryTable); slot++) {
+        for (FwOpcodeType slot = 0; slot < FW_NUM_ARRAY_ELEMENTS(this->m_entryTable); slot++) {
             if ((not this->m_entryTable[slot].used) and (not slotFound)) {
                 this->m_entryTable[slot].opcode = opCode;
                 this->m_entryTable[slot].port = portNum;
@@ -47,7 +51,7 @@ namespace Svc {
         FW_ASSERT(slotFound,static_cast<FwAssertArgType>(opCode));
     }
 
-    void CommandDispatcherImpl::compCmdStat_handler(NATIVE_INT_TYPE portNum, FwOpcodeType opCode, U32 cmdSeq, const Fw::CmdResponse &response) {
+    void CommandDispatcherImpl::compCmdStat_handler(FwIndexType portNum, FwOpcodeType opCode, U32 cmdSeq, const Fw::CmdResponse &response) {
         // check response and log
         if (Fw::CmdResponse::OK == response.e) {
             this->log_COMMAND_OpCodeCompleted(opCode);
@@ -58,7 +62,7 @@ namespace Svc {
             this->log_COMMAND_OpCodeError(opCode,response);
         }
         // look for command source
-        NATIVE_INT_TYPE portToCall = -1;
+        FwIndexType portToCall = -1;
         U32 context;
         for (U32 pending = 0; pending < FW_NUM_ARRAY_ELEMENTS(this->m_sequenceTracker); pending++) {
             if (
@@ -82,7 +86,7 @@ namespace Svc {
         }
     }
 
-    void CommandDispatcherImpl::seqCmdBuff_handler(NATIVE_INT_TYPE portNum, Fw::ComBuffer &data, U32 context) {
+    void CommandDispatcherImpl::seqCmdBuff_handler(FwIndexType portNum, Fw::ComBuffer &data, U32 context) {
 
         Fw::CmdPacket cmdPkt;
         Fw::SerializeStatus stat = cmdPkt.deserialize(data);
@@ -97,7 +101,7 @@ namespace Svc {
         }
 
         // search for opcode in dispatch table
-        U32 entry;
+        FwOpcodeType entry;
         bool entryFound = false;
 
         for (entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_entryTable); entry++) {
@@ -180,13 +184,13 @@ namespace Svc {
 
     void CommandDispatcherImpl::CMD_CLEAR_TRACKING_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
         // clear tracking table
-        for (NATIVE_INT_TYPE entry = 0; entry < CMD_DISPATCHER_SEQUENCER_TABLE_SIZE; entry++) {
+        for (FwOpcodeType entry = 0; entry < CMD_DISPATCHER_SEQUENCER_TABLE_SIZE; entry++) {
             this->m_sequenceTracker[entry].used = false;
         }
         this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
     }
 
-    void CommandDispatcherImpl::pingIn_handler(NATIVE_INT_TYPE portNum, U32 key) {
+    void CommandDispatcherImpl::pingIn_handler(FwIndexType portNum, U32 key) {
         // respond to ping
         this->pingOut_out(0,key);
     }

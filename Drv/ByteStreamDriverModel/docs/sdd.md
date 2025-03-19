@@ -1,4 +1,3 @@
-\page DrvByteStreamDriverModel Drv::ByteStreamDriverModel Byte Stream Driver Model
 # Drv::ByteStreamDriverModel Byte Stream Driver Model
 
 The byte stream driver is a generic model for drivers implementing a "stream of bytes" interface. Typically these

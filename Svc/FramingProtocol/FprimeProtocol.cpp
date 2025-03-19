@@ -50,7 +50,7 @@ void FprimeFraming::frame(const U8* const data, const U32 size, Fw::ComPacket::C
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     // Calculate and add transmission hash
-    Utils::Hash::hash(buffer.getData(), static_cast<NATIVE_INT_TYPE>(total - HASH_DIGEST_LENGTH), hash);
+    Utils::Hash::hash(buffer.getData(), static_cast<FwSizeType>(total - HASH_DIGEST_LENGTH), hash);
     status = serializer.serialize(hash.getBuffAddr(), HASH_DIGEST_LENGTH, true);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 

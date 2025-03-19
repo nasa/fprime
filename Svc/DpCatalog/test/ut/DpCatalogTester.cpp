@@ -12,6 +12,7 @@
 #include "Fw/Test/UnitTest.hpp"
 #include "Fw/Types/FileNameString.hpp"
 #include "config/DpCfg.hpp"
+#include <list>
 namespace Svc {
 
     // ----------------------------------------------------------------------
@@ -53,7 +54,7 @@ namespace Svc {
     void DpCatalogTester::testTree(
             DpCatalog::DpStateEntry* input, 
             DpCatalog::DpStateEntry* output, 
-            NATIVE_INT_TYPE numEntries) {
+            FwIndexType numEntries) {
         ASSERT_TRUE(input != nullptr);
         ASSERT_TRUE(output != nullptr);
         ASSERT_TRUE(numEntries > 0);
@@ -93,6 +94,7 @@ namespace Svc {
             } else {
                 ASSERT_TRUE(res != nullptr);
             }
+            //printf("CE: %u\n",entry);
             // should match expected entry
             ASSERT_EQ(res->entry.record,output[entry].record);
         }
@@ -255,7 +257,7 @@ namespace Svc {
 
     Svc::SendFileResponse DpCatalogTester ::
         from_fileOut_handler(
-            NATIVE_INT_TYPE portNum,
+            FwIndexType portNum,
             const Fw::StringBase& sourceFileName,
             const Fw::StringBase& destFileName,
             U32 offset,
@@ -269,7 +271,7 @@ namespace Svc {
 
     void DpCatalogTester ::
         from_pingOut_handler(
-            NATIVE_INT_TYPE portNum,
+            FwIndexType portNum,
             U32 key
         )
     {

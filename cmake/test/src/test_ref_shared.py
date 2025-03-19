@@ -141,6 +141,9 @@ def test_ref_module_info(REF_BUILD):
         "SignalSetArrayAc.hpp",
         "SignalTypeEnumAc.cpp",
         "SignalTypeEnumAc.hpp",
+        "SignalGen_DpReqTypeEnumAc.cpp",
+        "SignalGen_DpReqTypeEnumAc.hpp",
+        "SignalGen_DpReqTypeEnumAi.xml",
     ]
     actual_gen = [Path(source).name for source in generated]
     assert sorted(expected_gen) == sorted(

@@ -148,7 +148,7 @@ namespace Svc {
     Sequence::Record record;
 
     // Deserialize all records and count the records
-    const NATIVE_UINT_TYPE loopBound = buffer.getBuffLeft();
+    const U32 loopBound = static_cast<U32>(buffer.getBuffLeft());
     U32 numRecords = 0;
     for ( ; numRecords < loopBound; ++numRecords) {
       if (not this->hasMoreRecords()) {
@@ -254,7 +254,7 @@ namespace Svc {
     }
     if (status) {
       U8 *const buffAddr = this->m_buffer.getBuffAddr();
-      const NATIVE_UINT_TYPE buffLen = this->m_buffer.getBuffLength();
+      const FwSizeType buffLen = this->m_buffer.getBuffLength();
       FW_ASSERT(
           buffLen == this->m_header.m_fileSize,
           static_cast<FwAssertArgType>(buffLen),
@@ -305,17 +305,17 @@ namespace Svc {
     readRecords()
   {
     Os::File& file = this->m_sequenceFile;
-    const NATIVE_UINT_TYPE size = this->m_header.m_fileSize;
+    const FwSizeType size = this->m_header.m_fileSize;
     Fw::SerializeBufferBase& buffer = this->m_buffer;
     U8 *const addr = buffer.getBuffAddr();
 
     // Check file size
     if (size > this->m_buffer.getBuffCapacity()) {
-      this->m_events.fileSizeError(size);
+      this->m_events.fileSizeError(static_cast<U32>(size));
       return false;
     }
 
-    FwSignedSizeType readLen = size;
+    FwSignedSizeType readLen = static_cast<FwSignedSizeType>(size);
     const Os::File::Status fileStatus = file.read(addr, readLen);
     // Check read status
     if (fileStatus != Os::File::OP_OK) {
@@ -326,7 +326,7 @@ namespace Svc {
       return false;
     }
     // Check read size
-    const NATIVE_UINT_TYPE readLenUint = static_cast<NATIVE_UINT_TYPE>(readLen);
+    const FwSizeType readLenUint = static_cast<FwSizeType>(readLen);
     if (readLenUint != size) {
       this->m_events.fileInvalid(
           CmdSequencer_FileReadStage::READ_SEQ_DATA_SIZE,
@@ -433,7 +433,7 @@ namespace Svc {
     status = comBuffer.serialize(zeros);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
     // Set the buffer length
-    const U32 fixedBuffLen = comBuffer.getBuffLength();
+    const U32 fixedBuffLen = static_cast<U32>(comBuffer.getBuffLength());
     FW_ASSERT(
         fixedBuffLen == sizeof(cmdDescriptor) + sizeof(zeros),
         static_cast<FwAssertArgType>(fixedBuffLen)
@@ -442,7 +442,7 @@ namespace Svc {
     status = comBuffer.setBuffLen(totalBuffLen);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
     // Copy the opcode and argument bytes
-    NATIVE_UINT_TYPE size = cmdLength;
+    FwSizeType size = cmdLength;
     U8 *const addr = comBuffer.getBuffAddr();
     FW_ASSERT(addr != nullptr);
     // true means "don't serialize the length"

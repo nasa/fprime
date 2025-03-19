@@ -4,7 +4,7 @@ codegen.py Autocoder Tool to support F1 code generation
 
 The codegen.py code generation produces four types of ISF codes.
 These are: Component, Ports, Serializable, and Topology construction.
-Each type of code has it's own unique custom XML syntax. To date
+Each type of code has its own unique custom XML syntax. To date
 there is no schema for the XML so users should use the examples
 under the test folder for guidance.
 

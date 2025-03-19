@@ -26,6 +26,11 @@ namespace Utils {
     public:
 
       // ----------------------------------------------------------------------
+      // Types
+      // ----------------------------------------------------------------------
+    public:
+
+      // ----------------------------------------------------------------------
       // Construction and destruction
       // ----------------------------------------------------------------------
 
@@ -49,7 +54,7 @@ namespace Utils {
       //! \param buffer: filled with resulting hash value
       static void hash(
           const void *data,
-          const NATIVE_INT_TYPE len,
+          const FwSizeType len,
           HashBuffer& buffer
       );
 
@@ -74,7 +79,7 @@ namespace Utils {
       //! \param len: length of data to add to hash calculation
       void update(
           const void *const data,
-          const NATIVE_INT_TYPE len
+          const FwSizeType len
       );
 
       //! Finalize an incremental computation and return the result
@@ -101,7 +106,7 @@ namespace Utils {
 
       //! Get the length of the file extension string
       //!
-      static NATIVE_UINT_TYPE getFileExtensionLength();
+      static FwSizeType getFileExtensionLength();
 
     private:
 

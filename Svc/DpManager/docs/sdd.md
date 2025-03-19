@@ -1,4 +1,3 @@
-\page SvcDpManagerComponent Svc::DpManager Component
 # Svc::DpManager (Active Component)
 
 ## 1. Introduction
@@ -22,7 +21,7 @@ It does the following:
 client components.
 Upon receiving a buffer, send the buffer out on a port.
 Another component such as
-[`Svc::BufferAccumulator`](../../BufferAccumulator/docs/BufferAccumulator.md)
+[`Svc::BufferAccumulator`](../../BufferAccumulator/docs/sdd.md)
 or [`Svc::DpWriter`](../../DpWriter/docs/sdd.md)
 will process the buffer and then send it back to the buffer manager
 for deallocation.
@@ -42,9 +41,7 @@ SVC-DPMANAGER-004 | `Svc::DpManager` shall provide telemetry that reports the nu
 
 The diagram below shows the `DpManager` component.
 
-<div>
-<img src="img/DpManager.png" width=700/>
-</div>
+![DpManager](img/DpManager.png)
 
 ### 3.2. Ports
 
@@ -197,21 +194,16 @@ connections.
 
 #### 5.1.1. Synchronously Getting Data Product Buffers
 
-<div>
-<img src="img/top/buffer-get.png" width=800/>
-</div>
+![Buffer Get](img/top/buffer-get.png)
 
 #### 5.1.2. Asynchronously Requesting Data Product Buffers
 
-<div>
-<img src="img/top/buffer-request.png" width=800/>
-</div>
+![Buffer Request](img/top/buffer-request.png)
+
 
 #### 5.1.3. Sending Data Products
 
-<div>
-<img src="img/top/product-send.png" width=1000/>
-</div>
+![Product Send](img/top/product-send.png)
 
 ### 5.2. Sequence Diagrams
 

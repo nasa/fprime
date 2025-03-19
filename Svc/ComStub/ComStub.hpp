@@ -11,9 +11,9 @@
 
 namespace Svc {
 
-class ComStub : public ComStubComponentBase {
+class ComStub final : public ComStubComponentBase {
   public:
-    const NATIVE_UINT_TYPE RETRY_LIMIT = 10;
+    const FwIndexType RETRY_LIMIT = 10;
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction
     // ----------------------------------------------------------------------
@@ -34,16 +34,16 @@ class ComStub : public ComStubComponentBase {
 
     //! Handler implementation for comDataIn
     //!
-    Drv::SendStatus comDataIn_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    Drv::SendStatus comDataIn_handler(const FwIndexType portNum, /*!< The port number*/
                                       Fw::Buffer& sendBuffer) override;
 
     //! Handler implementation for drvConnected
     //!
-    void drvConnected_handler(const NATIVE_INT_TYPE portNum) override;
+    void drvConnected_handler(const FwIndexType portNum) override;
 
     //! Handler implementation for drvDataIn
     //!
-    void drvDataIn_handler(const NATIVE_INT_TYPE portNum,
+    void drvDataIn_handler(const FwIndexType portNum,
                            /*!< The port number*/ Fw::Buffer& recvBuffer,
                            const Drv::RecvStatus& recvStatus) override;
 

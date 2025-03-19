@@ -377,7 +377,7 @@ endfunction(register_fprime_executable)
 #
 # ### Standard fprime Deployment Example ###
 #
-# To create a standard fprime deployment, an the user must call `register_fprime_deployment()` after defining
+# To create a standard fprime deployment, the user must call `register_fprime_deployment()` after defining
 # SOURCE_FILES and MOD_DEPS.
 #
 # ```
@@ -645,11 +645,31 @@ function(register_fprime_implementation IMPLEMENTATION IMPLEMENTOR)
 endfunction()
 
 ####
+# Adds a named os implementation.
+#
+# Assumptions:
+#   1. NAMES is a list of 1 or more named files separated by ;
+#   2. There exists a file named Default${FIRST_ITEM}, where FIRST_ITEM is the first element in NAME, in the same
+#       directory where this cmake function was called
+#   3. For each item e listed in NAMES, there exists a file called ${e}.hpp and ${e}.cpp in the same directory
+#       where this cmake function was called
+#
+# NAMES: list of named files to add to this module.  The first will be treated as the name of the module.
+#        i.e. File;Directory;FileSystem will contain the file, directory, and filesystem files in a module called File.
+# SUFFIX: suffix to implementation (e.g. Posix)
+# ARGN: extra MOD_DEPS to add (e.g. Fw_Time)
+####
+function(register_os_implementation NAMES SUFFIX)
+    add_fprime_supplied_os_module("${NAMES}" "${SUFFIX}" "${ARGN}")
+endfunction()
+
+####
 # Function `choose_fprime_implementation`:
 #
 # Designates that the given implementor is the selected implementor for the needed implementation. Platforms must call
 # this function once for each defined IMPLEMENTATION. An executable/deployment/unit-test may call this function to set
-# a specific implementor for any needed implementation
+# a specific implementor for any needed implementation. FRAMEWORK_DEFAULT may be supplied to indicate a default choice
+# set by the framework, which can be overridden by the platform and module selections.
 #
 # **IMPLEMENTATION:** implementation module name that is implemented by IMPLEMENTOR
 # **IMPLEMENTOR:** implementor of IMPLEMENTATION
@@ -677,8 +697,8 @@ endfunction()
 # Next Topics:
 #  - Setting Options: [Options](options.md) are used to vary a CMake build.
 #  - Adding Modules: [Modules](module.md) register fprime Ports, Components, etc.
-#  - Creating Toolchains: [Toolchains](../../../user-manual/cmake/cmake-toolchains.md) setup standard CMake Cross-Compiling.
-#  - Adding Platforms: [Platforms](../../../user-manual/cmake/cmake-platforms.md) help fprime set Cross-Compiling specific items.
+#  - Creating Toolchains: [Toolchains](../../../user-manual/build-system/cmake-toolchains.md) setup standard CMake Cross-Compiling.
+#  - Adding Platforms: [Platforms](../../../user-manual/build-system/cmake-platforms.md) help fprime set Cross-Compiling specific items.
 #  - Adding Targets: [Targets](./target/target.md) for help defining custom build targets
-#  - Implementation Packages Design: [Implementation Packages](../../../user-manual/design/package-implementations.md)
+#  - Implementation Packages Design: [Implementation Packages](../../../user-manual/build-system/package-implementations.md)
 ####

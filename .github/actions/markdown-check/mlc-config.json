@@ -8,6 +8,15 @@
       },
       {
         "pattern": "./tutorials-"
+      },
+      {
+        "pattern": "^\\.\\./tree/HEAD/"
+      },
+      {
+        "pattern": ".*\\.[chf]pp"
+      },
+      {
+        "pattern": "../../../.."
       }
     ]
 }

@@ -3,6 +3,7 @@
 #include <Fw/Logger/Logger.hpp>
 #include <cstdio>
 #include "Fw/Types/Assert.hpp"
+#include "Fw/Types/ExternalString.hpp"
 
 #if FW_PORT_TRACING
 void setConnTrace(bool trace) {
@@ -38,13 +39,13 @@ namespace Fw {
 
     }
 
-    bool PortBase::isConnected() {
+    bool PortBase::isConnected() const {
         return m_connObj == nullptr?false:true;
     }
 
 #if FW_PORT_TRACING == 1
 
-    void PortBase::trace() {
+    void PortBase::trace() const {
         bool do_trace = false;
 
         if (this->m_ovr_trace) {
@@ -75,17 +76,43 @@ namespace Fw {
 
 #endif // FW_PORT_TRACING
 
-#if FW_OBJECT_NAMES == 1
 #if FW_OBJECT_TO_STRING == 1
-    void PortBase::toString(char* buffer, NATIVE_INT_TYPE size) {
+    const char* PortBase::getToStringFormatString() {
+        return "Port: %s %s->(%s)";
+    }
+
+    void PortBase::toString(char* buffer, FwSizeType size) {
         FW_ASSERT(size > 0);
-        if (snprintf(buffer, static_cast<size_t>(size), "Port: %s %s->(%s)", this->m_objName.toChar(), this->m_connObj ? "C" : "NC",
-                     this->m_connObj ? this->m_connObj->getObjName() : "None") < 0) {
+        // Get the port-custom format string
+        const char* formatString = this->getToStringFormatString();
+        // Determine this port object name (or use "UNKNOWN")
+        const char* object_name =
+#if FW_OBJECT_NAMES == 1
+                this->m_objName.toChar();
+#else
+                "UNKNOWN";
+#endif
+        // Get the C/NC for connected or not
+        const char* this_is_connected = this->isConnected() ? "C" : "NC";
+
+        // Get the name of the connection object, "UNKNOWN" or "NONE"
+        const char* connected_to = this->isConnected() ?
+#if FW_OBJECT_NAMES == 1
+            this->m_connObj->getObjName()
+#else
+            "UNKNOWN"
+#endif
+            : "None";
+        // Format the external string or use "" on error
+        if (Fw::ExternalString(buffer, static_cast<Fw::ExternalString::SizeType>(size)).format(
+                formatString,
+                object_name,
+                this_is_connected,
+                connected_to) != Fw::FormatStatus::SUCCESS) {
             buffer[0] = 0;
         }
     }
 #endif // FW_OBJECT_TO_STRING
-#endif // FW_OBJECT_NAMES
 
 
 }

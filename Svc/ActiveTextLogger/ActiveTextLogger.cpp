@@ -30,7 +30,7 @@ namespace Svc {
     // Handlers to implement for typed input ports
     // ----------------------------------------------------------------------
 
-    void ActiveTextLogger::TextLogger_handler(NATIVE_INT_TYPE portNum,
+    void ActiveTextLogger::TextLogger_handler(FwIndexType portNum,
                                                   FwEventIdType id,
                                                   Fw::Time &timeTag,
                                                   const Fw::LogSeverity& severity,
@@ -72,39 +72,14 @@ namespace Svc {
                 severityString = "SEVERITY ERROR";
                 break;
         }
-
-        // TODO: Add calling task id to format string
-        char textStr[FW_INTERNAL_INTERFACE_STRING_MAX_SIZE];
-
-        if (timeTag.getTimeBase() == TB_WORKSTATION_TIME) {
-
-            time_t t = timeTag.getSeconds();
-            // Using localtime_r prevents any other calls to localtime (from another thread for example) from
-            // interfering with our time object before we use it. However, the null pointer check is still needed
-            // to ensure a successful call
-            tm tm;
-            if (localtime_r(&t, &tm) == nullptr) {
-                return;
-            }
-
-            (void) snprintf(textStr,
-                            FW_INTERNAL_INTERFACE_STRING_MAX_SIZE,
-                            "EVENT: (%" PRI_FwEventIdType ") (%04d-%02d-%02dT%02d:%02d:%02d.%06" PRIu32 ") %s: %s\n",
-                            id, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour,
-                            tm.tm_min,tm.tm_sec,timeTag.getUSeconds(),
-                            severityString,text.toChar());
-        }
-        else {
-
-            (void) snprintf(textStr,
-                            FW_INTERNAL_INTERFACE_STRING_MAX_SIZE,
-                            "EVENT: (%" PRI_FwEventIdType ") (%" PRI_FwTimeBaseStoreType ":%" PRId32 ",%" PRId32 ") %s: %s\n",
-                            id, static_cast<FwTimeBaseStoreType>(timeTag.getTimeBase()),timeTag.getSeconds(),timeTag.getUSeconds(),severityString,text.toChar());
-        }
+        // Overflow is allowed and truncation accepted
+        Fw::InternalInterfaceString intText;
+        (void) intText.format("EVENT: (%" PRI_FwEventIdType ") (%" PRI_FwTimeBaseStoreType ":%" PRIu32 ",%" PRIu32 ") %s: %s\n",
+                              id, static_cast<FwTimeBaseStoreType>(timeTag.getTimeBase()), timeTag.getSeconds(), timeTag.getUSeconds(),
+                              severityString, text.toChar());
 
         // Call internal interface so that everything else is done on component thread,
         // this helps ensure consistent ordering of the printed text:
-        Fw::InternalInterfaceString intText(textStr);
         this->TextQueue_internalInterfaceInvoke(intText);
     }
 

@@ -1,12 +1,11 @@
-\page FwDp Framework Support for Data Products
-# Framework Support for Data Products
+# Fw::Dp Framework Support for Data Products
 
 ## 1. Introduction
 
 This build module defines FPP ports and C++ classes that support
 the collection and storage of data products.
 For more information on data products and records, see the
-[data products documentation](../../../docs/documentation/user-manual/design/data-products.md).
+[data products documentation](../../../docs/user-manual/framework/data-products.md).
 
 ## 2. Configuration
 

@@ -30,7 +30,7 @@ namespace Svc {
             m_cycleSlips(0) {
     }
 
-    void ActiveRateGroup::configure( NATIVE_INT_TYPE contexts[], NATIVE_INT_TYPE numContexts) {
+    void ActiveRateGroup::configure(U32 contexts[], FwIndexType numContexts) {
         FW_ASSERT(contexts);
         FW_ASSERT(numContexts == this->getNum_RateGroupMemberOut_OutputPorts(),numContexts,this->getNum_RateGroupMemberOut_OutputPorts());
         FW_ASSERT(FW_NUM_ARRAY_ELEMENTS(this->m_contexts) == this->getNum_RateGroupMemberOut_OutputPorts(),
@@ -39,7 +39,7 @@ namespace Svc {
 
         this->m_numContexts = numContexts;
         // copy context values
-        for (NATIVE_INT_TYPE entry = 0; entry < this->m_numContexts; entry++) {
+        for (FwIndexType entry = 0; entry < this->m_numContexts; entry++) {
             this->m_contexts[entry] = contexts[entry];
         }
     }
@@ -52,7 +52,7 @@ namespace Svc {
         this->log_DIAGNOSTIC_RateGroupStarted();
     }
 
-    void ActiveRateGroup::CycleIn_handler(NATIVE_INT_TYPE portNum, Os::RawTime& cycleStart) {
+    void ActiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleStart) {
 
         // Make sure it's been configured
         FW_ASSERT(this->m_numContexts);
@@ -62,7 +62,7 @@ namespace Svc {
         this->m_cycleStarted = false;
 
         // invoke any members of the rate group
-        for (NATIVE_INT_TYPE port = 0; port < this->m_numContexts; port++) {
+        for (FwIndexType port = 0; port < this->m_numContexts; port++) {
             if (this->isConnected_RateGroupMemberOut_OutputPort(port)) {
                 this->RateGroupMemberOut_out(port, static_cast<U32>(this->m_contexts[port]));
             }
@@ -106,12 +106,12 @@ namespace Svc {
 
     }
 
-    void ActiveRateGroup::CycleIn_preMsgHook(NATIVE_INT_TYPE portNum, Os::RawTime& cycleStart) {
+    void ActiveRateGroup::CycleIn_preMsgHook(FwIndexType portNum, Os::RawTime& cycleStart) {
         // set flag to indicate cycle has started. Check in thread for overflow.
         this->m_cycleStarted = true;
     }
 
-    void ActiveRateGroup::PingIn_handler(NATIVE_INT_TYPE portNum, U32 key) {
+    void ActiveRateGroup::PingIn_handler(FwIndexType portNum, U32 key) {
         // return the key to health
         this->PingOut_out(0,key);
     }

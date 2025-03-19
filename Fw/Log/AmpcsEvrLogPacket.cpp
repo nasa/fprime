@@ -50,7 +50,7 @@ namespace Fw {
     }
 
     SerializeStatus AmpcsEvrLogPacket::deserialize(SerializeBufferBase& buffer) {
-        NATIVE_UINT_TYPE len;
+        FwSizeType len;
 
         SerializeStatus stat;
 
@@ -75,12 +75,12 @@ namespace Fw {
             return stat;
         }
 
-        NATIVE_UINT_TYPE size = buffer.getBuffLeft();
+        FwSizeType size = buffer.getBuffLeft();
         stat = buffer.deserialize(this->m_logBuffer.getBuffAddr(),size,true);
         if (stat == FW_SERIALIZE_OK) {
             // Shouldn't fail
             stat = this->m_logBuffer.setBuffLen(size);
-            FW_ASSERT(stat == FW_SERIALIZE_OK,static_cast<NATIVE_INT_TYPE>(stat));
+            FW_ASSERT(stat == FW_SERIALIZE_OK,static_cast<FwAssertArgType>(stat));
         }
         return stat;
     }

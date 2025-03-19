@@ -12,6 +12,9 @@ Os::PriorityQueue is an in-memory implementation of Os::Queue. It allows project
 
 For memory protection, Os::PriorityQueue delegates to Os::Mutex and Os::ConditionVariable.
 
+> [!WARNING]
+> This Queue implementation is insufficient to be used for sending messages in ISR context due to the use of Os::Mutex as mentioned in above.
+
 ### Os::PriorityQueue Key Algorithms
 
 Os::PriorityQueue stores messages in a set of dynamically allocated unordered parallel arrays. These arrays store: message data, and message data size respectively. There is also an index-free list that stores the indices that are available for storage in the fixed size arrays.

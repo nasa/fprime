@@ -1,7 +1,7 @@
 # Cross-compile https://github.com/fprime-community/fprime-workshop-led-blinker
 # Runs integration tests on RaspberryPi
 
-name: "RPI LedBlinker"
+name: "External Repo: RPI LedBlinker"
 
 on:
   push:

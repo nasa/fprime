@@ -10,14 +10,16 @@
 // ======================================================================
 
 #include <FpConfig.hpp>
-#include <cstdio> // For snprintf
 #include <Utils/CRCChecker.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Os/File.hpp>
 #include <Os/FileSystem.hpp>
 #include <Utils/Hash/Hash.hpp>
+#include <Fw/Types/FileNameString.hpp>
 
 namespace Utils {
+static_assert(FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING,
+        "Cannot use CRC checker without full string formatting");
 
   crc_stat_t create_checksum_file(const char* const fname)
   {
@@ -32,11 +34,9 @@ namespace Utils {
     Os::File::Status stat;
     Utils::Hash hash;
     U32 checksum;
-    I32 s_stat;
-    FwSignedSizeType int_file_size;
     FwSignedSizeType bytes_to_read;
     FwSignedSizeType bytes_to_write;
-    CHAR hashFilename[CRC_MAX_FILENAME_SIZE];
+    Fw::FileNameString hashFilename;
     U8 block_data[CRC_FILE_READ_BLOCK];
 
     fs_stat = Os::FileSystem::getFileSize(fname, filesize);
@@ -44,8 +44,6 @@ namespace Utils {
     {
       return FAILED_FILE_SIZE;
     }
-
-    int_file_size = filesize;
 
     // Open file
     stat = f.open(fname, Os::File::OPEN_READ);
@@ -56,7 +54,7 @@ namespace Utils {
 
     // Read file
     bytes_to_read = CRC_FILE_READ_BLOCK;
-    blocks = int_file_size / CRC_FILE_READ_BLOCK;
+    blocks = filesize / CRC_FILE_READ_BLOCK;
     for(i = 0; i < blocks; i++)
     {
       stat = f.read(block_data, bytes_to_read);
@@ -66,10 +64,10 @@ namespace Utils {
         return  FAILED_FILE_READ;
       }
 
-      hash.update(block_data, static_cast<NATIVE_INT_TYPE>(bytes_to_read));
+      hash.update(block_data, static_cast<FwSizeType>(bytes_to_read));
     }
 
-    remaining_bytes = int_file_size % CRC_FILE_READ_BLOCK;
+    remaining_bytes = filesize % CRC_FILE_READ_BLOCK;
     bytes_to_read = remaining_bytes;
     if(remaining_bytes > 0)
     {
@@ -80,7 +78,7 @@ namespace Utils {
         return FAILED_FILE_READ;
       }
 
-      hash.update(block_data, static_cast<NATIVE_INT_TYPE>(remaining_bytes));
+      hash.update(block_data, static_cast<FwSizeType>(remaining_bytes));
     }
 
     // close file
@@ -90,10 +88,10 @@ namespace Utils {
     hash.final(checksum);
 
     // open checksum file
-    s_stat = snprintf(hashFilename,  CRC_MAX_FILENAME_SIZE, "%s%s", fname, HASH_EXTENSION_STRING);
-    FW_ASSERT(s_stat > 0);
+    Fw::FormatStatus formatStatus = hashFilename.format("%s%s", fname, HASH_EXTENSION_STRING);
+    FW_ASSERT(formatStatus == Fw::FormatStatus::SUCCESS);
 
-    stat = f.open(hashFilename, Os::File::OPEN_WRITE);
+    stat = f.open(hashFilename.toChar(), Os::File::OPEN_WRITE);
     if(stat != Os::File::OP_OK)
     {
       return FAILED_FILE_CRC_OPEN;
@@ -117,13 +115,13 @@ namespace Utils {
   crc_stat_t read_crc32_from_file(const char* const fname, U32 &checksum_from_file) {
       Os::File f;
       Os::File::Status stat;
-      char hashFilename[CRC_MAX_FILENAME_SIZE];
+      Fw::FileNameString hashFilename;
       FW_ASSERT(fname != nullptr);
       // open checksum file
-      I32 s_stat = snprintf(hashFilename,  CRC_MAX_FILENAME_SIZE, "%s%s", fname, HASH_EXTENSION_STRING);
-      FW_ASSERT(s_stat > 0);
+      Fw::FormatStatus formatStatus = hashFilename.format("%s%s", fname, HASH_EXTENSION_STRING);
+      FW_ASSERT(formatStatus == Fw::FormatStatus::SUCCESS);
 
-      stat = f.open(hashFilename, Os::File::OPEN_READ);
+      stat = f.open(hashFilename.toChar(), Os::File::OPEN_READ);
       if(stat != Os::File::OP_OK)
       {
         return FAILED_FILE_CRC_OPEN;
@@ -149,7 +147,7 @@ namespace Utils {
 
     FwSignedSizeType i;
     FwSignedSizeType blocks;
-    PlatformIntType remaining_bytes;
+    FwSignedSizeType remaining_bytes;
     FwSignedSizeType filesize;
     Os::File f;
     Os::FileSystem::Status fs_stat;
@@ -157,7 +155,6 @@ namespace Utils {
     Utils::Hash hash;
     U32 checksum;
     U32 checksum_from_file;
-    FwSignedSizeType int_file_size;
     FwSignedSizeType bytes_to_read;
     U8 block_data[CRC_FILE_READ_BLOCK];
 
@@ -165,12 +162,6 @@ namespace Utils {
     if(fs_stat != Os::FileSystem::OP_OK)
     {
       return FAILED_FILE_SIZE;
-    }
-
-    int_file_size = static_cast<NATIVE_INT_TYPE>(filesize);
-    if(static_cast<FwSignedSizeType>(int_file_size) != filesize)
-    {
-      return FAILED_FILE_SIZE_CAST;
     }
 
     // Open file
@@ -192,10 +183,10 @@ namespace Utils {
         return  FAILED_FILE_READ;
       }
 
-      hash.update(block_data, static_cast<NATIVE_INT_TYPE>(bytes_to_read));
+      hash.update(block_data, static_cast<FwSizeType>(bytes_to_read));
     }
 
-    remaining_bytes = static_cast<PlatformIntType>(int_file_size % CRC_FILE_READ_BLOCK);
+    remaining_bytes = filesize % CRC_FILE_READ_BLOCK;
     bytes_to_read = remaining_bytes;
     if(remaining_bytes > 0)
     {
@@ -206,7 +197,7 @@ namespace Utils {
         return FAILED_FILE_READ;
       }
 
-      hash.update(block_data, remaining_bytes);
+      hash.update(block_data, static_cast<FwSizeType>(remaining_bytes));
     }
 
     // close file

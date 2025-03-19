@@ -18,7 +18,7 @@
 
 namespace RPI {
 
-  class RpiDemoComponentImpl :
+  class RpiDemoComponentImpl final :
     public RpiDemoComponentBase
   {
 
@@ -59,14 +59,14 @@ namespace RPI {
       //! Handler implementation for Run
       //!
       void Run_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          const FwIndexType portNum, /*!< The port number*/
           U32 context /*!< The call order*/
       ) override;
 
       //! Handler implementation for UartRead
       //!
       void UartRead_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          const FwIndexType portNum, /*!< The port number*/
           Fw::Buffer &serBuffer, /*!< Buffer containing data*/
           const Drv::RecvStatus &status /*!< Status of read*/
       ) override;
@@ -138,7 +138,6 @@ namespace RPI {
       Fw::Logic m_currLedVal;
       // serial buffers
       Fw::Buffer m_recvBuffers[NUM_RPI_UART_BUFFERS];
-      BYTE m_uartBuffers[NUM_RPI_UART_BUFFERS][RPI_UART_READ_BUFF_SIZE];
       // LED enabled
       bool m_ledOn;
       // toggle LED divider

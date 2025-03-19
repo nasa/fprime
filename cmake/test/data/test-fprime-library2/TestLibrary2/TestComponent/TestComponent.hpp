@@ -9,10 +9,9 @@ class TestComponent : public TestComponentComponentBase
 {
   public:
     TestComponent(const char* name);
-    void init(const NATIVE_INT_TYPE instance);
     ~TestComponent();
   private:
-    void schedIn_handler(NATIVE_INT_TYPE portNum, U32 context);
+    void schedIn_handler(FwIndexType portNum, U32 context);
 };
 
 };

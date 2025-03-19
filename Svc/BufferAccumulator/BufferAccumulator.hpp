@@ -20,7 +20,7 @@
 
 namespace Svc {
 
-    class BufferAccumulator : public BufferAccumulatorComponentBase {
+    class BufferAccumulator final : public BufferAccumulatorComponentBase {
       PRIVATE:
 
         // ----------------------------------------------------------------------
@@ -37,7 +37,7 @@ namespace Svc {
                 ~ArrayFIFOBuffer();
 
                 void init(Fw::Buffer* const elements,  //!< The array elements
-                          NATIVE_UINT_TYPE capacity    //!< The capacity
+                          FwSizeType capacity    //!< The capacity
                         );
 
                 //! Enqueue an index.
@@ -53,11 +53,11 @@ namespace Svc {
 
                 //! Get the size of the queue
                 //! \return The size
-                U32 getSize() const;
+                FwSizeType getSize() const;
 
                 //! Get the capacity of the queue
                 //! \return The capacity
-                U32 getCapacity() const;
+                FwSizeType getCapacity() const;
 
       PRIVATE:
 
@@ -69,16 +69,16 @@ namespace Svc {
                 Fw::Buffer* m_elements;
 
                 //! The capacity of the queue
-                NATIVE_UINT_TYPE m_capacity;
+                FwSizeType m_capacity;
 
                 //! The enqueue index
-                NATIVE_UINT_TYPE m_enqueueIndex;
+                FwSizeType m_enqueueIndex;
 
                 //! The dequeue index
-                NATIVE_UINT_TYPE m_dequeueIndex;
+                FwSizeType m_dequeueIndex;
 
                 //! The size of the queue
-                NATIVE_UINT_TYPE m_size;
+                FwSizeType m_size;
         };  // class ArrayFIFOBuffer
 
         public:
@@ -103,8 +103,8 @@ namespace Svc {
         //! Give the class a memory buffer. Should be called after constructor
         //! and init, but before task is spawned.
         void allocateQueue(
-                NATIVE_INT_TYPE identifier, Fw::MemAllocator& allocator,
-                NATIVE_UINT_TYPE maxNumBuffers  //!< The maximum number of buffers
+                FwEnumStoreType identifier, Fw::MemAllocator& allocator,
+                FwSizeType maxNumBuffers  //!< The maximum number of buffers
                 );
 
         //! Return allocated queue. Should be done during shutdown
@@ -120,18 +120,18 @@ namespace Svc {
         //!
         void
             bufferSendInFill_handler(
-                    const NATIVE_INT_TYPE portNum,  //!< The port number
+                    const FwIndexType portNum,  //!< The port number
                     Fw::Buffer& buffer);
 
         //! Handler implementation for bufferSendInReturn
         //!
         void bufferSendInReturn_handler(
-                const NATIVE_INT_TYPE portNum,  //!< The port number
+                const FwIndexType portNum,  //!< The port number
                 Fw::Buffer& buffer);
 
         //! Handler implementation for pingIn
         //!
-        void pingIn_handler(const NATIVE_INT_TYPE portNum,  //!< The port number
+        void pingIn_handler(const FwIndexType portNum,  //!< The port number
                             U32 key  //!< Value to return to pinger
                             );
 
@@ -192,10 +192,10 @@ namespace Svc {
         U32 m_numWarnings;
 
         //! The number of buffers drained in a partial drain command
-        U32 m_numDrained;
+        FwSizeType m_numDrained;
 
         //! The number of buffers TO drain in a partial drain command
-        U32 m_numToDrain;
+        FwSizeType m_numToDrain;
 
         //! The DrainBuffers opcode to respond to
         FwOpcodeType m_opCode;
@@ -204,7 +204,7 @@ namespace Svc {
         U32 m_cmdSeq;
 
         //! The allocator ID
-        NATIVE_INT_TYPE m_allocatorId;
+        FwEnumStoreType m_allocatorId;
     };
 
 }  // namespace Svc
