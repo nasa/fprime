@@ -30,7 +30,7 @@ namespace File {
         return status;
     }
 
-    StubFile::Status StubFile::seek(FwSizeType offset, SeekType seekType) {
+    StubFile::Status StubFile::seek(FwSignedSizeType offset, SeekType seekType) {
         Status status = Status::NOT_SUPPORTED;
         return status;
     }

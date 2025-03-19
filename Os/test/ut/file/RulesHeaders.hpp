@@ -72,7 +72,7 @@ struct Tester {
 
     //! Perform the "seek" action on the shadow state given.
     //!
-    void shadow_seek(const FwSizeType offset, const bool absolute);
+    void shadow_seek(const FwSignedSizeType offset, const bool absolute);
 
     //! Perform the "preallocate" action on the shadow state.
     //!
@@ -130,7 +130,7 @@ struct Tester {
 
     //! Assert a file seek
     //!
-    void assert_file_seek(const FwSizeType original_position, const FwSizeType seek_desired, const bool absolute);
+    void assert_file_seek(const FwSizeType original_position, const FwSignedSizeType seek_desired, const bool absolute);
 
     //! File under test
     Os::File m_file;

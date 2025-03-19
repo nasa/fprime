@@ -91,7 +91,7 @@ class SyntheticFile : public FileInterface {
     //! \param bool: absolute
     //! \return status of the seek
     //!
-    Os::File::Status seek(const FwSizeType offset, const File::SeekType absolute) override;
+    Os::File::Status seek(const FwSignedSizeType offset, const File::SeekType absolute) override;
 
     //! \brief preallocate data within file
     //!

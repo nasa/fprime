@@ -180,7 +180,7 @@ Os::File::Status SyntheticFile::write(const U8* buffer, FwSizeType& size, WaitTy
     return Os::File::Status::OP_OK;
 }
 
-Os::File::Status SyntheticFile::seek(const FwSizeType offset, const SeekType absolute) {
+Os::File::Status SyntheticFile::seek(const FwSignedSizeType offset, const SeekType absolute) {
     FW_ASSERT(this->m_data != nullptr);
     Os::File::Status status = Os::File::Status::OP_OK;
     // Cannot do a seek with a negative offset in absolute mode

@@ -85,7 +85,7 @@ FileInterface::Status TestFile::preallocate(FwSizeType offset, FwSizeType length
     return StaticData::data.preallocateStatus;
 }
 
-FileInterface::Status TestFile::seek(FwSizeType offset, SeekType seekType) {
+FileInterface::Status TestFile::seek(FwSignedSizeType offset, SeekType seekType) {
     StaticData::data.seekOffset = offset;
     StaticData::data.seekType = seekType;
     StaticData::data.lastCalled = StaticData::SEEK_FN;

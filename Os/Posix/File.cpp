@@ -183,7 +183,7 @@ PosixFile::Status PosixFile::preallocate(FwSizeType offset, FwSizeType length) {
     return status;
 }
 
-PosixFile::Status PosixFile::seek(FwSizeType offset, PosixFile::SeekType seekType) {
+PosixFile::Status PosixFile::seek(FwSignedSizeType offset, PosixFile::SeekType seekType) {
     Status status = OP_OK;
     off_t actual =
         ::lseek(this->m_handle.m_file_descriptor, static_cast<off_t>(offset), (seekType == SeekType::ABSOLUTE) ? SEEK_SET : SEEK_CUR);

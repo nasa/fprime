@@ -125,7 +125,7 @@ namespace Os {
             //! \param seekType: `ABSOLUTE` for seeking from beginning of file, `CURRENT` to use current position.
             //! \return OP_OK on success otherwise error status
             //!
-            virtual Status seek(FwSizeType offset, SeekType seekType) = 0;
+            virtual Status seek(FwSignedSizeType offset, SeekType seekType) = 0;
 
             //! \brief flush file contents to storage
             //!
@@ -355,7 +355,7 @@ namespace Os {
         //! \param seekType: `ABSOLUTE` for seeking from beginning of file, `CURRENT` to use current position.
         //! \return OP_OK on success otherwise error status
         //!
-        Status seek(FwSizeType offset, SeekType seekType) override;
+        Status seek(FwSignedSizeType offset, SeekType seekType) override;
 
         //! \brief flush file contents to storage
         //!

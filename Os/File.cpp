@@ -115,7 +115,7 @@ File::Status File::preallocate(FwSizeType offset, FwSizeType length) {
     return this->m_delegate.preallocate(offset, length);
 }
 
-File::Status File::seek(FwSizeType offset, File::SeekType seekType) {
+File::Status File::seek(FwSignedSizeType offset, File::SeekType seekType) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
     FW_ASSERT((0 <= seekType) && (seekType < SeekType::MAX_SEEK_TYPE));
     // Cannot do a seek with a negative offset in absolute mode

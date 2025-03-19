@@ -53,7 +53,7 @@ void Os::Test::File::Tester::shadow_write(const std::vector<U8>& write_data) {
     ASSERT_EQ(size, original_size);
 }
 
-void Os::Test::File::Tester::shadow_seek(const FwSizeType offset, const bool absolute) {
+void Os::Test::File::Tester::shadow_seek(const FwSignedSizeType offset, const bool absolute) {
     Os::File::Status status = m_shadow.seek(offset, absolute ?Os::File::SeekType::ABSOLUTE : Os::File::SeekType::RELATIVE);
     ASSERT_EQ(status, Os::File::Status::OP_OK);
 }
@@ -223,7 +223,7 @@ void Os::Test::File::Tester::assert_file_write(const std::vector<U8>& write_data
     ASSERT_EQ(file_position, shadow_position);
 }
 
-void Os::Test::File::Tester::assert_file_seek(const FwSizeType original_position, const FwSizeType seek_desired, const bool absolute) {
+void Os::Test::File::Tester::assert_file_seek(const FwSizeType original_position, const FwSignedSizeType seek_desired, const bool absolute) {
     FwSizeType new_position = 0;
     FwSizeType shadow_position = 0;
 
