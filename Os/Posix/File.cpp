@@ -29,19 +29,19 @@ namespace File {
 #endif
 
 // Ensure size of FwSizeType is large enough to fit eh necessary range
-static_assert(sizeof(FwSignedSizeType) >= sizeof(off_t),
+static_assert(sizeof(FwSizeType) >= sizeof(off_t),
               "FwSizeType is not large enough to store values of type off_t");
-static_assert(sizeof(FwSignedSizeType) >= sizeof(ssize_t),
+static_assert(sizeof(FwSizeType) >= sizeof(ssize_t),
               "FwSizeType is not large enough to store values of type ssize_t");
 
 // Now check ranges of FwSizeType
-static_assert(std::numeric_limits<FwSignedSizeType>::max() >= std::numeric_limits<off_t>::max(),
+static_assert(std::numeric_limits<FwSizeType>::max() >= std::numeric_limits<off_t>::max(),
               "Maximum value of FwSizeType less than the maximum value of off_t. Configure a larger type.");
-static_assert(std::numeric_limits<FwSignedSizeType>::max() >= std::numeric_limits<ssize_t>::max(),
+static_assert(std::numeric_limits<FwSizeType>::max() >= std::numeric_limits<ssize_t>::max(),
               "Maximum value of FwSizeType less than the maximum value of ssize_t. Configure a larger type.");
-static_assert(std::numeric_limits<FwSignedSizeType>::min() <= std::numeric_limits<off_t>::min(),
+static_assert(std::numeric_limits<FwSizeType>::min() <= std::numeric_limits<off_t>::min(),
               "Minimum value of FwSizeType larger than the minimum value of off_t. Configure a larger type.");
-static_assert(std::numeric_limits<FwSignedSizeType>::min() <= std::numeric_limits<ssize_t>::min(),
+static_assert(std::numeric_limits<FwSizeType>::min() <= std::numeric_limits<ssize_t>::min(),
               "Minimum value of FwSizeType larger than the minimum value of ssize_t. Configure a larger type.");
 
 //!\brief default copy constructor
@@ -100,8 +100,8 @@ void PosixFile::close() {
     }
 }
 
-PosixFile::Status PosixFile::size(FwSignedSizeType& size_result) {
-    FwSignedSizeType current_position = 0;
+PosixFile::Status PosixFile::size(FwSizeType& size_result) {
+    FwSizeType current_position = 0;
     Status status = this->position(current_position);
     size_result = 0;
     if (Os::File::Status::OP_OK == status) {
@@ -123,7 +123,7 @@ PosixFile::Status PosixFile::size(FwSignedSizeType& size_result) {
     return status;
 }
 
-PosixFile::Status PosixFile::position(FwSignedSizeType& position_result) {
+PosixFile::Status PosixFile::position(FwSizeType& position_result) {
     Status status = OP_OK;
     position_result = 0;
     off_t actual = ::lseek(this->m_handle.m_file_descriptor, 0, SEEK_CUR);
@@ -131,11 +131,11 @@ PosixFile::Status PosixFile::position(FwSignedSizeType& position_result) {
         PlatformIntType errno_store = errno;
         status = Os::Posix::errno_to_file_status(errno_store);
     }
-    position_result = static_cast<FwSignedSizeType>(actual);
+    position_result = static_cast<FwSizeType>(actual);
     return status;
 }
 
-PosixFile::Status PosixFile::preallocate(FwSignedSizeType offset, FwSignedSizeType length) {
+PosixFile::Status PosixFile::preallocate(FwSizeType offset, FwSizeType length) {
     PosixFile::Status status = Os::File::Status::NOT_SUPPORTED;
     // posix_fallocate is only available with the posix C-API post version 200112L, however; it is not guaranteed that
     // this call is properly implemented. This code starts with a status of "NOT_SUPPORTED".  When the standard is met
@@ -148,23 +148,23 @@ PosixFile::Status PosixFile::preallocate(FwSignedSizeType offset, FwSignedSizeTy
     // When the operation is not supported or posix-API is not sufficient, fallback to a slower algorithm
     if (Os::File::Status::NOT_SUPPORTED == status) {
         // Calculate size
-        FwSignedSizeType file_size = 0;
+        FwSizeType file_size = 0;
         status = this->size(file_size);
         if (Os::File::Status::OP_OK == status) {
             // Calculate current position
-            FwSignedSizeType file_position = 0;
+            FwSizeType file_position = 0;
             status = this->position(file_position);
             if (Os::File::Status::OP_OK == status) {
                 // Check for integer overflow
-                if ((std::numeric_limits<FwSignedSizeType>::max() - offset - length) < 0) {
+                if ((std::numeric_limits<FwSizeType>::max() - offset - length) < 0) {
                     status = PosixFile::NO_SPACE;
                 } else if (file_size < (offset + length)) {
-                    const FwSignedSizeType write_length = (offset + length) - file_size;
+                    const FwSizeType write_length = (offset + length) - file_size;
                     status = this->seek(file_size, PosixFile::SeekType::ABSOLUTE);
                     if (Os::File::Status::OP_OK == status) {
                         // Fill in zeros past size of file to ensure compatibility with fallocate
-                        for (FwSignedSizeType i = 0; i < write_length; i++) {
-                            FwSignedSizeType write_size = 1;
+                        for (FwSizeType i = 0; i < write_length; i++) {
+                            FwSizeType write_size = 1;
                             status = this->write(reinterpret_cast<const U8*>("\0"), write_size,
                                                  PosixFile::WaitType::NO_WAIT);
                             if (Status::OP_OK != status || write_size != 1) {
@@ -183,7 +183,7 @@ PosixFile::Status PosixFile::preallocate(FwSignedSizeType offset, FwSignedSizeTy
     return status;
 }
 
-PosixFile::Status PosixFile::seek(FwSignedSizeType offset, PosixFile::SeekType seekType) {
+PosixFile::Status PosixFile::seek(FwSizeType offset, PosixFile::SeekType seekType) {
     Status status = OP_OK;
     off_t actual =
         ::lseek(this->m_handle.m_file_descriptor, static_cast<off_t>(offset), (seekType == SeekType::ABSOLUTE) ? SEEK_SET : SEEK_CUR);
@@ -205,15 +205,15 @@ PosixFile::Status PosixFile::flush() {
     return status;
 }
 
-PosixFile::Status PosixFile::read(U8* buffer, FwSignedSizeType& size, PosixFile::WaitType wait) {
+PosixFile::Status PosixFile::read(U8* buffer, FwSizeType& size, PosixFile::WaitType wait) {
     Status status = OP_OK;
-    FwSignedSizeType accumulated = 0;
+    FwSizeType accumulated = 0;
     // Loop up to 2 times for each by, bounded to prevent overflow
-    const FwSignedSizeType maximum = (size > (std::numeric_limits<FwSignedSizeType>::max() / 2))
-                                         ? std::numeric_limits<FwSignedSizeType>::max()
+    const FwSizeType maximum = (size > (std::numeric_limits<FwSizeType>::max() / 2))
+                                         ? std::numeric_limits<FwSizeType>::max()
                                          : size * 2;
 
-    for (FwSignedSizeType i = 0; i < maximum && accumulated < size; i++) {
+    for (FwSizeType i = 0; i < maximum && accumulated < size; i++) {
         // char* for some posix implementations
         ssize_t read_size = ::read(this->m_handle.m_file_descriptor, reinterpret_cast<CHAR*>(&buffer[accumulated]),
                                    static_cast<size_t>(size - accumulated));
@@ -241,15 +241,15 @@ PosixFile::Status PosixFile::read(U8* buffer, FwSignedSizeType& size, PosixFile:
     return status;
 }
 
-PosixFile::Status PosixFile::write(const U8* buffer, FwSignedSizeType& size, PosixFile::WaitType wait) {
+PosixFile::Status PosixFile::write(const U8* buffer, FwSizeType& size, PosixFile::WaitType wait) {
     Status status = OP_OK;
-    FwSignedSizeType accumulated = 0;
+    FwSizeType accumulated = 0;
     // Loop up to 2 times for each by, bounded to prevent overflow
-    const FwSignedSizeType maximum = (size > (std::numeric_limits<FwSignedSizeType>::max() / 2))
-                                         ? std::numeric_limits<FwSignedSizeType>::max()
+    const FwSizeType maximum = (size > (std::numeric_limits<FwSizeType>::max() / 2))
+                                         ? std::numeric_limits<FwSizeType>::max()
                                          : size * 2;
 
-    for (FwSignedSizeType i = 0; i < maximum && accumulated < size; i++) {
+    for (FwSizeType i = 0; i < maximum && accumulated < size; i++) {
         // char* for some posix implementations
         ssize_t write_size =
             ::write(this->m_handle.m_file_descriptor, reinterpret_cast<const CHAR*>(&buffer[accumulated]),

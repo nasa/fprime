@@ -92,7 +92,7 @@ namespace Os {
             //! \param size: output parameter for size.
             //! \return OP_OK on success otherwise error status
             //!
-            virtual Status size(FwSignedSizeType& size_result) = 0;
+            virtual Status size(FwSizeType& size_result) = 0;
 
             //! \brief get file pointer position of the currently open file
             //!
@@ -100,7 +100,7 @@ namespace Os {
             //! \param position: output parameter for size.
             //! \return OP_OK on success otherwise error status
             //!
-            virtual Status position(FwSignedSizeType& position_result) = 0;
+            virtual Status position(FwSizeType& position_result) = 0;
 
             //! \brief pre-allocate file storage
             //!
@@ -114,7 +114,7 @@ namespace Os {
             //! \param length: length after offset to preallocate
             //! \return OP_OK on success otherwise error status
             //!
-            virtual Status preallocate(FwSignedSizeType offset, FwSignedSizeType length) = 0;
+            virtual Status preallocate(FwSizeType offset, FwSizeType length) = 0;
 
             //! \brief seek the file pointer to the given offset
             //!
@@ -125,7 +125,7 @@ namespace Os {
             //! \param seekType: `ABSOLUTE` for seeking from beginning of file, `CURRENT` to use current position.
             //! \return OP_OK on success otherwise error status
             //!
-            virtual Status seek(FwSignedSizeType offset, SeekType seekType) = 0;
+            virtual Status seek(FwSizeType offset, SeekType seekType) = 0;
 
             //! \brief flush file contents to storage
             //!
@@ -154,7 +154,7 @@ namespace Os {
             //! \param wait: `WAIT` to wait for data, `NO_WAIT` to return what is currently available
             //! \return OP_OK on success otherwise error status
             //!
-            virtual Status read(U8* buffer, FwSignedSizeType &size, WaitType wait) = 0;
+            virtual Status read(U8* buffer, FwSizeType &size, WaitType wait) = 0;
 
             //! \brief read data from this file into supplied buffer bounded by size
             //!
@@ -174,7 +174,7 @@ namespace Os {
             //! \param wait: `WAIT` to wait for data to write to disk, `NO_WAIT` to return what is currently available
             //! \return OP_OK on success otherwise error status
             //!
-            virtual Status write(const U8* buffer, FwSignedSizeType &size, WaitType wait) = 0;
+            virtual Status write(const U8* buffer, FwSizeType &size, WaitType wait) = 0;
 
             //! \brief returns the raw file handle
             //!
@@ -267,7 +267,7 @@ namespace Os {
         //! \param size: size of data to read
         //! \return OP_OK on success otherwise error status
         //!
-        Status read(U8* buffer, FwSignedSizeType &size);
+        Status read(U8* buffer, FwSizeType &size);
 
         //! \brief write data to this file from the supplied buffer bounded by size
         //!
@@ -284,7 +284,7 @@ namespace Os {
         //! \param size: size of data to write
         //! \return OP_OK on success otherwise error status
         //!
-        Status write(const U8* buffer, FwSignedSizeType &size);
+        Status write(const U8* buffer, FwSizeType &size);
 
 
         // ------------------------------------
@@ -322,7 +322,7 @@ namespace Os {
         //! \param size: output parameter for size.
         //! \return OP_OK on success otherwise error status
         //!
-        Status size(FwSignedSizeType& size_result) override;
+        Status size(FwSizeType& size_result) override;
 
         //! \brief get file pointer position of the currently open file
         //!
@@ -330,7 +330,7 @@ namespace Os {
         //! \param position: output parameter for size.
         //! \return OP_OK on success otherwise error status
         //!
-        Status position(FwSignedSizeType& position_result) override;
+        Status position(FwSizeType& position_result) override;
 
         //! \brief pre-allocate file storage
         //!
@@ -344,7 +344,7 @@ namespace Os {
         //! \param length: length after offset to preallocate
         //! \return OP_OK on success otherwise error status
         //!
-        Status preallocate(FwSignedSizeType offset, FwSignedSizeType length) override;
+        Status preallocate(FwSizeType offset, FwSizeType length) override;
 
         //! \brief seek the file pointer to the given offset
         //!
@@ -355,7 +355,7 @@ namespace Os {
         //! \param seekType: `ABSOLUTE` for seeking from beginning of file, `CURRENT` to use current position.
         //! \return OP_OK on success otherwise error status
         //!
-        Status seek(FwSignedSizeType offset, SeekType seekType) override;
+        Status seek(FwSizeType offset, SeekType seekType) override;
 
         //! \brief flush file contents to storage
         //!
@@ -384,7 +384,7 @@ namespace Os {
         //! \param wait: `WAIT` to wait for data, `NO_WAIT` to return what is currently available
 
         //!
-        Status read(U8* buffer, FwSignedSizeType &size, WaitType wait) override;
+        Status read(U8* buffer, FwSizeType &size, WaitType wait) override;
 
         //! \brief read a line from the file using `\n` as the delimiter
         //!
@@ -402,7 +402,7 @@ namespace Os {
         //! \param size: maximum size of buffer to store the new line
         //! \param wait: `WAIT` to wait for data, `NO_WAIT` to return what is currently available
         //! \return OP_OK on success otherwise error status
-        Status readline(U8* buffer, FwSignedSizeType &size, WaitType wait);
+        Status readline(U8* buffer, FwSizeType &size, WaitType wait);
 
         //! \brief read data from this file into supplied buffer bounded by size
         //!
@@ -422,7 +422,7 @@ namespace Os {
         //! \param wait: `WAIT` to wait for data to write to disk, `NO_WAIT` to return what is currently available
         //! \return OP_OK on success otherwise error status
         //!
-        Status write(const U8* buffer, FwSignedSizeType &size, WaitType wait) override;
+        Status write(const U8* buffer, FwSizeType &size, WaitType wait) override;
 
         //! \brief returns the raw file handle
         //!
@@ -475,7 +475,7 @@ namespace Os {
         //! \param size: size of data to read for CRC
         //! \return: status of the CRC calculation
         //!
-        Status incrementalCrc(FwSignedSizeType& size);
+        Status incrementalCrc(FwSizeType& size);
 
         //! \brief finalize and retrieve the CRC value
         //!

@@ -19,7 +19,7 @@ class FileSystemInterface {
   public:
 
     // Size of file chunks to use for file system operations (e.g. copyFile)
-    static constexpr FwSignedSizeType FILE_SYSTEM_FILE_CHUNK_SIZE = FW_FILE_CHUNK_SIZE; //!< Size of file system chunk
+    static constexpr FwSizeType FILE_SYSTEM_FILE_CHUNK_SIZE = FW_FILE_CHUNK_SIZE; //!< Size of file system chunk
 
     enum Status {
         OP_OK, //!<  Operation was successful
@@ -339,7 +339,7 @@ class FileSystem final : public FileSystemInterface {
     //! \param path The path of the file
     //! \param size Reference to store the size of the file
     //! \return Status of the operation
-    static Status getFileSize(const char* path, FwSignedSizeType& size);
+    static Status getFileSize(const char* path, FwSizeType& size);
 
 
   public:
@@ -371,7 +371,7 @@ class FileSystem final : public FileSystemInterface {
     //! @param source File to copy data from
     //! @param destination File to copy data to
     //! @param size The number of bytes to copy
-    static Status copyFileData(File& source, File& destination, FwSignedSizeType size);
+    static Status copyFileData(File& source, File& destination, FwSizeType size);
 
   private:
     // This section is used to store the implementation-defined FileSystem handle. To Os::FileSystem and fprime, this type is

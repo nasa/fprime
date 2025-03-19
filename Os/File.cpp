@@ -82,7 +82,7 @@ bool File::isOpen() const {
     return this->m_mode != Mode::OPEN_NO_MODE;
 }
 
-File::Status File::size(FwSignedSizeType& size_result) {
+File::Status File::size(FwSizeType& size_result) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
     FW_ASSERT((0 <= this->m_mode) && (this->m_mode < Mode::MAX_OPEN_MODE));
     if (OPEN_NO_MODE == this->m_mode) {
@@ -91,7 +91,7 @@ File::Status File::size(FwSignedSizeType& size_result) {
     return this->m_delegate.size(size_result);
 }
 
-File::Status File::position(FwSignedSizeType &position_result) {
+File::Status File::position(FwSizeType &position_result) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
     FW_ASSERT((0 <= this->m_mode) && (this->m_mode < Mode::MAX_OPEN_MODE));
     // Check that the file is open before attempting operation
@@ -101,7 +101,7 @@ File::Status File::position(FwSignedSizeType &position_result) {
     return this->m_delegate.position(position_result);
 }
 
-File::Status File::preallocate(FwSignedSizeType offset, FwSignedSizeType length) {
+File::Status File::preallocate(FwSizeType offset, FwSizeType length) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
     FW_ASSERT(offset >= 0);
     FW_ASSERT(length >= 0);
@@ -115,7 +115,7 @@ File::Status File::preallocate(FwSignedSizeType offset, FwSignedSizeType length)
     return this->m_delegate.preallocate(offset, length);
 }
 
-File::Status File::seek(FwSignedSizeType offset, File::SeekType seekType) {
+File::Status File::seek(FwSizeType offset, File::SeekType seekType) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
     FW_ASSERT((0 <= seekType) && (seekType < SeekType::MAX_SEEK_TYPE));
     // Cannot do a seek with a negative offset in absolute mode
@@ -140,11 +140,11 @@ File::Status File::flush() {
     return this->m_delegate.flush();
 }
 
-File::Status File::read(U8* buffer, FwSignedSizeType &size) {
+File::Status File::read(U8* buffer, FwSizeType &size) {
     return this->read(buffer, size, WaitType::WAIT);
 }
 
-File::Status File::read(U8* buffer, FwSignedSizeType &size, File::WaitType wait) {
+File::Status File::read(U8* buffer, FwSizeType &size, File::WaitType wait) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
     FW_ASSERT(buffer != nullptr);
     FW_ASSERT(size >= 0);
@@ -160,12 +160,12 @@ File::Status File::read(U8* buffer, FwSignedSizeType &size, File::WaitType wait)
     return this->m_delegate.read(buffer, size, wait);
 }
 
-File::Status File::write(const U8* buffer, FwSignedSizeType &size) {
+File::Status File::write(const U8* buffer, FwSizeType &size) {
     return this->write(buffer, size, WaitType::WAIT);
 }
 
 
-File::Status File::write(const U8* buffer, FwSignedSizeType &size, File::WaitType wait) {
+File::Status File::write(const U8* buffer, FwSizeType &size, File::WaitType wait) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
     FW_ASSERT(buffer != nullptr);
     FW_ASSERT(size >= 0);
@@ -188,7 +188,7 @@ FileHandle* File::getHandle() {
 
 File::Status File::calculateCrc(U32 &crc) {
     File::Status status = File::Status::OP_OK;
-    FwSignedSizeType size = FW_FILE_CHUNK_SIZE;
+    FwSizeType size = FW_FILE_CHUNK_SIZE;
     crc = 0;
     for (FwSizeType i = 0; i < std::numeric_limits<FwSizeType>::max(); i++) {
         status = this->incrementalCrc(size);
@@ -204,7 +204,7 @@ File::Status File::calculateCrc(U32 &crc) {
     return status;
 }
 
-File::Status File::incrementalCrc(FwSignedSizeType &size) {
+File::Status File::incrementalCrc(FwSizeType &size) {
     File::Status status = File::Status::OP_OK;
     FW_ASSERT(size >= 0);
     FW_ASSERT(size <= FW_FILE_CHUNK_SIZE);
@@ -216,7 +216,7 @@ File::Status File::incrementalCrc(FwSignedSizeType &size) {
         // Read data without waiting for additional data to be available
         status = this->read(this->m_crc_buffer, size, File::WaitType::NO_WAIT);
         if (OP_OK == status) {
-            for (FwSignedSizeType i = 0; i < size && i < FW_FILE_CHUNK_SIZE; i++) {
+            for (FwSizeType i = 0; i < size && i < FW_FILE_CHUNK_SIZE; i++) {
                 this->m_crc =
                     static_cast<U32>(
                         update_crc_32(this->m_crc, static_cast<CHAR>(this->m_crc_buffer[i]))
@@ -234,8 +234,8 @@ File::Status File::finalizeCrc(U32 &crc) {
     return status;
 }
 
-File::Status File::readline(U8* buffer, FwSignedSizeType &size, File::WaitType wait) {
-    const FwSignedSizeType requested_size = size;
+File::Status File::readline(U8* buffer, FwSizeType &size, File::WaitType wait) {
+    const FwSizeType requested_size = size;
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
     FW_ASSERT(buffer != nullptr);
     FW_ASSERT(size >= 0);
@@ -248,16 +248,16 @@ File::Status File::readline(U8* buffer, FwSignedSizeType &size, File::WaitType w
         size = 0;
         return File::Status::INVALID_MODE;
     }
-    FwSignedSizeType original_location;
+    FwSizeType original_location;
     File::Status status = this->position(original_location);
     if (status != Os::File::Status::OP_OK) {
         size = 0;
         return status;
     }
-    FwSignedSizeType read = 0;
+    FwSizeType read = 0;
     // Loop reading chunk by chunk
-    for (FwSignedSizeType i = 0; i < size; i += read) {
-        FwSignedSizeType current_chunk_size = FW_MIN(size - i, FW_FILE_CHUNK_SIZE);
+    for (FwSizeType i = 0; i < size; i += read) {
+        FwSizeType current_chunk_size = FW_MIN(size - i, FW_FILE_CHUNK_SIZE);
         read = current_chunk_size;
         status = this->read(buffer + i, read, wait);
         if (status != File::Status::OP_OK) {
@@ -270,7 +270,7 @@ File::Status File::readline(U8* buffer, FwSignedSizeType &size, File::WaitType w
             return Os::File::Status::OP_OK;
         }
         // Loop from i to i + current_chunk_size looking for `\n`
-        for (FwSignedSizeType j = i; j < (i + read); j++) {
+        for (FwSizeType j = i; j < (i + read); j++) {
             // Newline seek back to after it, return the size read
             if (buffer[j] == '\n') {
                 size = j + 1;

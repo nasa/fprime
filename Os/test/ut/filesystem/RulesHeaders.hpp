@@ -102,7 +102,7 @@ struct Tester {
     bool validate_contents_on_disk(TestFile& file) {
         Os::File os_file;
         os_file.open(file.path.c_str(), Os::File::OPEN_READ);
-        FwSignedSizeType size;
+        FwSizeType size;
         os_file.size(size);
         if (size == 0) {
             os_file.close();
@@ -130,7 +130,7 @@ struct Tester {
         // Create and write files
         for (TestFile& file_track : this->m_test_files) {
             file.open(file_track.path.c_str(), Os::File::OPEN_CREATE);
-            FwSignedSizeType bytesRead = file_track.contents.size();
+            FwSizeType bytesRead = file_track.contents.size();
             file.write(reinterpret_cast<const U8*>(file_track.contents.c_str()), bytesRead);
             file.close();
             this->m_counter++;

@@ -15,22 +15,22 @@ namespace File {
 
     void StubFile::close() {}
 
-    StubFile::Status StubFile::size(FwSignedSizeType &size_result) {
+    StubFile::Status StubFile::size(FwSizeType &size_result) {
         Status status = Status::NOT_SUPPORTED;
         return status;
     }
 
-    StubFile::Status StubFile::position(FwSignedSizeType &position_result) {
+    StubFile::Status StubFile::position(FwSizeType &position_result) {
         Status status = Status::NOT_SUPPORTED;
         return status;
     }
 
-    StubFile::Status StubFile::preallocate(FwSignedSizeType offset, FwSignedSizeType length) {
+    StubFile::Status StubFile::preallocate(FwSizeType offset, FwSizeType length) {
         Status status = Status::NOT_SUPPORTED;
         return status;
     }
 
-    StubFile::Status StubFile::seek(FwSignedSizeType offset, SeekType seekType) {
+    StubFile::Status StubFile::seek(FwSizeType offset, SeekType seekType) {
         Status status = Status::NOT_SUPPORTED;
         return status;
     }
@@ -40,12 +40,12 @@ namespace File {
         return status;
     }
 
-    StubFile::Status StubFile::read(U8 *buffer, FwSignedSizeType &size, StubFile::WaitType wait) {
+    StubFile::Status StubFile::read(U8 *buffer, FwSizeType &size, StubFile::WaitType wait) {
         Status status = Status::NOT_SUPPORTED;
         return status;
     }
 
-    StubFile::Status StubFile::write(const U8 *buffer, FwSignedSizeType &size, StubFile::WaitType wait) {
+    StubFile::Status StubFile::write(const U8 *buffer, FwSizeType &size, StubFile::WaitType wait) {
         Status status = Status::NOT_SUPPORTED;
         return status;
     }

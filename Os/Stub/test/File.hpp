@@ -37,28 +37,28 @@ struct StaticData {
     //! Overwrite of last open call
     Os::File::OverwriteType openOverwrite = Os::File::OverwriteType::NO_OVERWRITE;
     //! Offset of last preallocate call
-    FwSignedSizeType preallocateOffset = -1;
+    FwSizeType preallocateOffset = -1;
     //! Length of last preallocate call
-    FwSignedSizeType preallocateLength = -1;
+    FwSizeType preallocateLength = -1;
     //! Offset of last seek call
-    FwSignedSizeType seekOffset = -1;
+    FwSizeType seekOffset = -1;
     //! Absolute of last seek call
     Os::File::SeekType seekType = Os::File::SeekType::ABSOLUTE;
     //! Buffer of last read call
     U8 *readBuffer = nullptr;
     //! Size of last read call
-    FwSignedSizeType readSize = -1;
+    FwSizeType readSize = -1;
     //! Wait of last read call
     Os::File::WaitType readWait = Os::File::WaitType::NO_WAIT;
     //! Buffer of last write call
     const void *writeBuffer = nullptr;
     //! Size of last write call
-    FwSignedSizeType writeSize = -1;
+    FwSizeType writeSize = -1;
     //! Wait of last write call
     Os::File::WaitType  writeWait = Os::File::WaitType::NO_WAIT;
 
     //! File pointer
-    FwSignedSizeType pointer = 0;
+    FwSizeType pointer = 0;
 
     //! Status to return from open
     Os::File::Status openStatus = Os::File::Status::OP_OK;
@@ -78,21 +78,21 @@ struct StaticData {
     Os::File::Status writeStatus = Os::File::Status::OP_OK;
 
     //! Return of next size call
-    FwSignedSizeType sizeResult = -1;
+    FwSizeType sizeResult = -1;
     //! Return of next position call
-    FwSignedSizeType positionResult = 0;
+    FwSizeType positionResult = 0;
     //! Result of next read call
     U8 *readResult = nullptr;
     //! Size result of next read data
-    FwSignedSizeType readResultSize = -1;
+    FwSizeType readResultSize = -1;
     //! Size result of next read call
-    FwSignedSizeType readSizeResult = -1;
+    FwSizeType readSizeResult = -1;
     //! Result holding buffer of next write call
     U8 *writeResult = nullptr;
     //! Size result of next write data
-    FwSignedSizeType writeResultSize = -1;
+    FwSizeType writeResultSize = -1;
     //! Size result of next read call
-    FwSignedSizeType writeSizeResult = -1;
+    FwSizeType writeSizeResult = -1;
 
     // Singleton data
     static StaticData data;
@@ -101,22 +101,22 @@ struct StaticData {
     static void setNextStatus(Os::File::Status status);
 
     //! Set next size to result
-    static void setSizeResult(FwSignedSizeType size);
+    static void setSizeResult(FwSizeType size);
 
     //! Set next position to result
-    static void setPositionResult(FwSignedSizeType position);
+    static void setPositionResult(FwSizeType position);
 
     //! Set next read result
-    static void setReadResult(U8 *buffer, FwSignedSizeType size);
+    static void setReadResult(U8 *buffer, FwSizeType size);
 
     //! Set next read size result
-    static void setReadSize(FwSignedSizeType size);
+    static void setReadSize(FwSizeType size);
 
     //! Set next write result
-    static void setWriteResult(U8 *buffer, FwSignedSizeType size);
+    static void setWriteResult(U8 *buffer, FwSizeType size);
 
     //! Set next write size result
-    static void setWriteSize(FwSignedSizeType size);
+    static void setWriteSize(FwSizeType size);
 };
 
 class TestFileHandle : public FileHandle {};
@@ -172,7 +172,7 @@ class TestFile : public FileInterface {
     //! \param size: output parameter for size.
     //! \return OP_OK on success otherwise error status
     //!
-    Status size(FwSignedSizeType &size_result) override;
+    Status size(FwSizeType &size_result) override;
 
     //! \brief get file pointer position of the currently open file
     //!
@@ -180,7 +180,7 @@ class TestFile : public FileInterface {
     //! \param position: output parameter for size.
     //! \return OP_OK on success otherwise error status
     //!
-    Status position(FwSignedSizeType &position_result) override;
+    Status position(FwSizeType &position_result) override;
 
     //! \brief pre-allocate file storage
     //!
@@ -194,7 +194,7 @@ class TestFile : public FileInterface {
     //! \param length: length after offset to preallocate
     //! \return OP_OK on success otherwise error status
     //!
-    Status preallocate(FwSignedSizeType offset, FwSignedSizeType length) override;
+    Status preallocate(FwSizeType offset, FwSizeType length) override;
 
     //! \brief seek the file pointer to the given offset
     //!
@@ -205,7 +205,7 @@ class TestFile : public FileInterface {
     //! \param seekType: `ABSOLUTE` for seeking from beginning of file, `CURRENT` to use current position.
     //! \return OP_OK on success otherwise error status
     //!
-    Status seek(FwSignedSizeType offset, SeekType seekType) override;
+    Status seek(FwSizeType offset, SeekType seekType) override;
 
     //! \brief flush file contents to storage
     //!
@@ -234,7 +234,7 @@ class TestFile : public FileInterface {
     //! \param wait: `WAIT` to wait for data, `NO_WAIT` to return what is currently available
     //! \return OP_OK on success otherwise error status
     //!
-    Status read(U8 *buffer, FwSignedSizeType &size, WaitType wait) override;
+    Status read(U8 *buffer, FwSizeType &size, WaitType wait) override;
 
     //! \brief read data from this file into supplied buffer bounded by size
     //!
@@ -254,7 +254,7 @@ class TestFile : public FileInterface {
     //! \param wait: `WAIT` to wait for data to write to disk, `NO_WAIT` to return what is currently available
     //! \return OP_OK on success otherwise error status
     //!
-    Status write(const U8 *buffer, FwSignedSizeType &size, WaitType wait) override;
+    Status write(const U8 *buffer, FwSizeType &size, WaitType wait) override;
 
     //! \brief returns the raw file handle
     //!
