@@ -357,6 +357,19 @@ namespace Os {
         //!
         Status seek(FwSignedSizeType offset, SeekType seekType) override;
 
+        //! \brief seek the file pointer to the given offset absolutely with the full range
+        //!
+        //! Seek the file pointer to the given `offset` absolutely from the beginning of the file. This function is
+        //! equivalent to calling `seek` with `ABSOLUTE` as the `seekType` with the exception that it can handle the
+        //! full range of `FwSizeType` values as returned by `size` and `position` calls.
+        //!
+        //! Internally, it will perform multiple seeks to reach the desired offset while never exceeding the signed
+        //! limit of the basic `seek` function.
+        //!
+        //! \param offset_unsigned: offset to absolutely seek to
+        //! \return OP_OK on success otherwise error status
+        Status seek_absolute(FwSizeType offset_unsigned);
+
         //! \brief flush file contents to storage
         //!
         //! Flushes the file contents to storage (i.e. out of the OS cache to disk). Does nothing in implementations

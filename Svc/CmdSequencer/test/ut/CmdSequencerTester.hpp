@@ -135,7 +135,7 @@ namespace Svc {
 
                 Os::FileInterface::Status open(const char *path, Mode mode, OverwriteType overwrite) override;
 
-                Status read(U8 *buffer, FwSignedSizeType &size, WaitType wait) override;
+                Status read(U8 *buffer, FwSizeType &size, WaitType wait) override;
 
                 //! Current interceptor
                 static Interceptor* s_current_interceptor;

@@ -128,6 +128,31 @@ File::Status File::seek(FwSignedSizeType offset, File::SeekType seekType) {
     return this->m_delegate.seek(offset, seekType);
 }
 
+File::Status File::seek_absolute(FwSizeType offset) {
+    Os::File::Status status = File::Status::OTHER_ERROR;
+    // If the offset can be represented by a signed value, then we can perform a single seek
+    if (static_cast<FwSizeType>(std::numeric_limits<FwSignedSizeType>::max()) >= offset) {
+        status = this->seek(static_cast<FwSignedSizeType>(offset), File::SeekType::ABSOLUTE);
+    }
+    // Otherwise, a full seek to any value represented by FwSizeType can be performed
+    // by at most 3 seeks of a FwSignedSizeType. Two half seeks (rounded down) that are
+    // strictly bounded by std::numeric_limits<FwSignedSizeType>::max() and one seek of
+    // a possibile "odd" byte to ensure odds offsets do not introduce an off-by-one-error.
+    // Thus we perform 3 seeks to guarantee that we can reach any position.
+    else {
+        FwSignedSizeType half_offset = static_cast<FwSignedSizeType>(offset >> 1);
+        bool is_odd = (offset % 2) == 1;
+        status = this->seek(half_offset, File::SeekType::ABSOLUTE);
+        if (status == File::Status::OP_OK) {
+            status = this->seek(half_offset, File::SeekType::RELATIVE);
+        }
+        if (status == File::Status::OP_OK) {
+            status = this->seek((is_odd) ? 1 : 0, File::SeekType::RELATIVE);
+        }
+    }
+    return status;
+}
+
 File::Status File::flush() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
     FW_ASSERT(this->m_mode < Mode::MAX_OPEN_MODE);
@@ -252,6 +277,7 @@ File::Status File::readline(U8* buffer, FwSizeType &size, File::WaitType wait) {
     File::Status status = this->position(original_location);
     if (status != Os::File::Status::OP_OK) {
         size = 0;
+        (void) this->seek_absolute(original_location);
         return status;
     }
     FwSizeType read = 0;
@@ -261,7 +287,6 @@ File::Status File::readline(U8* buffer, FwSizeType &size, File::WaitType wait) {
         read = current_chunk_size;
         status = this->read(buffer + i, read, wait);
         if (status != File::Status::OP_OK) {
-            (void) this->seek(original_location, File::SeekType::ABSOLUTE);
             return status;
         }
         // EOF break out now
@@ -274,9 +299,10 @@ File::Status File::readline(U8* buffer, FwSizeType &size, File::WaitType wait) {
             // Newline seek back to after it, return the size read
             if (buffer[j] == '\n') {
                 size = j + 1;
-                // Ensure that the computation worked
+                // Ensure that the computation worked and there is not overflow
                 FW_ASSERT(size <= requested_size);
-                (void) this->seek(original_location + j + 1, File::SeekType::ABSOLUTE);
+                FW_ASSERT(std::numeric_limits<FwSizeType>::max() - size >= original_location);
+                (void) this->seek_absolute(original_location + j + 1);
                 return Os::File::Status::OP_OK;
             }
         }

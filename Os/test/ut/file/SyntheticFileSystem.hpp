@@ -23,7 +23,7 @@ struct SyntheticFileData : public FileHandle {
     //! Data stored in the file
     std::vector<U8> m_data;
     //! Pointer of the file
-    FwSizeType m_pointer = -1;
+    FwSizeType m_pointer = std::numeric_limits<FwSizeType>::max();
     //! Separate mode tracking
     File::Mode m_mode = File::OPEN_NO_MODE;
 };

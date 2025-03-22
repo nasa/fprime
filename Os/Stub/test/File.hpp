@@ -37,23 +37,23 @@ struct StaticData {
     //! Overwrite of last open call
     Os::File::OverwriteType openOverwrite = Os::File::OverwriteType::NO_OVERWRITE;
     //! Offset of last preallocate call
-    FwSizeType preallocateOffset = -1;
+    FwSizeType preallocateOffset = std::numeric_limits<FwSizeType>::max();
     //! Length of last preallocate call
-    FwSizeType preallocateLength = -1;
+    FwSizeType preallocateLength = std::numeric_limits<FwSizeType>::max();
     //! Offset of last seek call
-    FwSizeType seekOffset = -1;
+    FwSizeType seekOffset = std::numeric_limits<FwSizeType>::max();
     //! Absolute of last seek call
     Os::File::SeekType seekType = Os::File::SeekType::ABSOLUTE;
     //! Buffer of last read call
     U8 *readBuffer = nullptr;
     //! Size of last read call
-    FwSizeType readSize = -1;
+    FwSizeType readSize = std::numeric_limits<FwSizeType>::max();
     //! Wait of last read call
     Os::File::WaitType readWait = Os::File::WaitType::NO_WAIT;
     //! Buffer of last write call
     const void *writeBuffer = nullptr;
     //! Size of last write call
-    FwSizeType writeSize = -1;
+    FwSizeType writeSize = std::numeric_limits<FwSizeType>::max();
     //! Wait of last write call
     Os::File::WaitType  writeWait = Os::File::WaitType::NO_WAIT;
 
@@ -78,21 +78,21 @@ struct StaticData {
     Os::File::Status writeStatus = Os::File::Status::OP_OK;
 
     //! Return of next size call
-    FwSizeType sizeResult = -1;
+    FwSizeType sizeResult = std::numeric_limits<FwSizeType>::max();
     //! Return of next position call
     FwSizeType positionResult = 0;
     //! Result of next read call
     U8 *readResult = nullptr;
     //! Size result of next read data
-    FwSizeType readResultSize = -1;
+    FwSizeType readResultSize = std::numeric_limits<FwSizeType>::max();
     //! Size result of next read call
-    FwSizeType readSizeResult = -1;
+    FwSizeType readSizeResult = std::numeric_limits<FwSizeType>::max();
     //! Result holding buffer of next write call
     U8 *writeResult = nullptr;
     //! Size result of next write data
-    FwSizeType writeResultSize = -1;
+    FwSizeType writeResultSize = std::numeric_limits<FwSizeType>::max();
     //! Size result of next read call
-    FwSizeType writeSizeResult = -1;
+    FwSizeType writeSizeResult = std::numeric_limits<FwSizeType>::max();
 
     // Singleton data
     static StaticData data;

@@ -80,16 +80,16 @@ namespace Svc {
     getFileSize(const Fw::StringBase& seqFileName)
   {
     bool status = true;
-    FwSignedSizeType fileSize;
+    FwSizeType fileSize;
     this->setFileName(seqFileName);
     const Os::FileSystem::Status fileStatus =
       Os::FileSystem::getFileSize(this->m_fileName.toChar(), fileSize);
     if (
         fileStatus == Os::FileSystem::OP_OK and
-        fileSize >= static_cast<FwSignedSizeType>(sizeof(this->m_sequenceHeader))
+        fileSize >= static_cast<FwSizeType>(sizeof(this->m_sequenceHeader))
     ) {
       this->m_header.m_fileSize =
-        static_cast<U32>(fileSize - static_cast<FwSignedSizeType>(sizeof(this->m_sequenceHeader)));
+        static_cast<U32>(fileSize - static_cast<FwSizeType>(sizeof(this->m_sequenceHeader)));
     }
     else {
       this->m_events.fileInvalid(
@@ -202,7 +202,7 @@ namespace Svc {
     bool status = true;
     Fw::SerializeStatus ser_status;
 
-    FwSignedSizeType readLen = sizeof(U32);
+    FwSizeType readLen = sizeof(U32);
     FW_ASSERT(readLen >= 0, static_cast<FwAssertArgType>(readLen));
 
     ser_status = buffer.setBuffLen(static_cast<Fw::Serializable::SizeType>(readLen));
@@ -274,7 +274,7 @@ namespace Svc {
 
     bool status = true;
 
-    FwSignedSizeType readLen = sizeof this->m_sequenceHeader;
+    FwSizeType readLen = sizeof this->m_sequenceHeader;
     const Os::File::Status fileStatus = file.read(
         this->m_sequenceHeader,
         readLen
@@ -315,7 +315,7 @@ namespace Svc {
       return false;
     }
 
-    FwSignedSizeType readLen = static_cast<FwSignedSizeType>(size);
+    FwSizeType readLen = size;
     const Os::File::Status fileStatus = file.read(addr, readLen);
     // Check read status
     if (fileStatus != Os::File::OP_OK) {

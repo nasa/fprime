@@ -85,7 +85,7 @@ void Os::Test::File::Tester::shadow_partial_crc(FwSizeType& size) {
 
     // Calculate CRC on full file starting at m_pointer
     const FwSizeType bound = FW_MIN(static_cast<FwSizeType>(data.m_pointer) + size, data.m_data.size());
-    size = FW_MAX(0, static_cast<FwSizeType>(bound - data.m_pointer));
+    size = (data.m_pointer >= bound) ? 0 : static_cast<FwSizeType>(bound - data.m_pointer);
     for (FwSizeType i = data.m_pointer; i < bound; i++) {
         this->m_independent_crc = update_crc_32(this->m_independent_crc, static_cast<char>(data.m_data.at(i)));
         this->m_shadow.seek(1, Os::File::SeekType::RELATIVE);
@@ -808,46 +808,6 @@ void Os::Test::File::Tester::OpenIllegalMode::action(Os::Test::File::Tester &sta
 }
 
 // ------------------------------------------------------------------------------------------------------
-// Rule:  PreallocateIllegalOffset
-//
-// ------------------------------------------------------------------------------------------------------
-
-Os::Test::File::Tester::PreallocateIllegalOffset::PreallocateIllegalOffset()
-        : Os::Test::File::Tester::AssertRule("PreallocateIllegalOffset") {}
-
-void Os::Test::File::Tester::PreallocateIllegalOffset::action(Os::Test::File::Tester &state  //!< The test state
-) {
-    printf("--> Rule: %s \n", this->getName());
-    state.assert_file_consistent();
-    FwSizeType length = static_cast<FwSizeType>(STest::Pick::any());
-    FwSizeType invalid_offset =
-            -1 * static_cast<FwSizeType>(STest::Pick::lowerUpper(0, std::numeric_limits<U32>::max()));
-    ASSERT_DEATH_IF_SUPPORTED(state.m_file.preallocate(invalid_offset, length),
-                              Os::Test::File::Tester::ASSERT_IN_FILE_CPP) << "With offset: " << invalid_offset;
-    state.assert_file_consistent();
-}
-
-// ------------------------------------------------------------------------------------------------------
-// Rule:  PreallocateIllegalLength
-//
-// ------------------------------------------------------------------------------------------------------
-
-Os::Test::File::Tester::PreallocateIllegalLength::PreallocateIllegalLength()
-        : Os::Test::File::Tester::AssertRule("PreallocateIllegalLength") {}
-
-void Os::Test::File::Tester::PreallocateIllegalLength::action(Os::Test::File::Tester &state  //!< The test state
-) {
-    printf("--> Rule: %s \n", this->getName());
-    state.assert_file_consistent();
-    FwSizeType offset = static_cast<FwSizeType>(STest::Pick::any());
-    FwSizeType invalid_length =
-            -1 * static_cast<FwSizeType>(STest::Pick::lowerUpper(0, std::numeric_limits<U32>::max()));
-    ASSERT_DEATH_IF_SUPPORTED(state.m_file.preallocate(offset, invalid_length),
-                              Os::Test::File::Tester::ASSERT_IN_FILE_CPP);
-    state.assert_file_consistent();
-}
-
-// ------------------------------------------------------------------------------------------------------
 // Rule:  SeekIllegal
 //
 // ------------------------------------------------------------------------------------------------------
@@ -883,27 +843,6 @@ void Os::Test::File::Tester::ReadIllegalBuffer::action(Os::Test::File::Tester &s
 }
 
 // ------------------------------------------------------------------------------------------------------
-// Rule:  ReadIllegalSize
-//
-// ------------------------------------------------------------------------------------------------------
-
-Os::Test::File::Tester::ReadIllegalSize::ReadIllegalSize() : Os::Test::File::Tester::AssertRule("ReadIllegalSize") {}
-
-void Os::Test::File::Tester::ReadIllegalSize::action(Os::Test::File::Tester &state  //!< The test state
-) {
-    printf("--> Rule: %s \n", this->getName());
-    U8 buffer[10] = {};
-    state.assert_file_consistent();
-    FwSizeType invalid_size = -1 * static_cast<FwSizeType>(STest::Pick::lowerUpper(0, std::numeric_limits<U32>::max()));
-    bool random_wait = static_cast<bool>(STest::Pick::lowerUpper(0, 1));
-    ASSERT_DEATH_IF_SUPPORTED(
-            state.m_file.read(buffer, invalid_size,
-                              random_wait ? Os::File::WaitType::WAIT : Os::File::WaitType::NO_WAIT),
-            Os::Test::File::Tester::ASSERT_IN_FILE_CPP);
-    state.assert_file_consistent();
-}
-
-// ------------------------------------------------------------------------------------------------------
 // Rule:  WriteIllegalBuffer
 //
 // ------------------------------------------------------------------------------------------------------
@@ -919,26 +858,6 @@ void Os::Test::File::Tester::WriteIllegalBuffer::action(Os::Test::File::Tester &
     bool random_wait = static_cast<bool>(STest::Pick::lowerUpper(0, 1));
     ASSERT_DEATH_IF_SUPPORTED(
             state.m_file.write(nullptr, size, random_wait ? Os::File::WaitType::WAIT : Os::File::WaitType::NO_WAIT),
-            Os::Test::File::Tester::ASSERT_IN_FILE_CPP);
-    state.assert_file_consistent();
-}
-
-// ------------------------------------------------------------------------------------------------------
-// Rule:  WriteIllegalSize
-//
-// ------------------------------------------------------------------------------------------------------
-
-Os::Test::File::Tester::WriteIllegalSize::WriteIllegalSize() : Os::Test::File::Tester::AssertRule("WriteIllegalSize") {}
-
-void Os::Test::File::Tester::WriteIllegalSize::action(Os::Test::File::Tester &state  //!< The test state
-) {
-    printf("--> Rule: %s \n", this->getName());
-    U8 buffer[10] = {};
-    state.assert_file_consistent();
-    FwSizeType invalid_size = -1 * static_cast<FwSizeType>(STest::Pick::lowerUpper(0, std::numeric_limits<U32>::max()));
-    bool random_wait = static_cast<bool>(STest::Pick::lowerUpper(0, 1));
-    ASSERT_DEATH_IF_SUPPORTED(
-            state.m_file.read(buffer, invalid_size, random_wait ? Os::File::WaitType::WAIT : Os::File::WaitType::NO_WAIT),
             Os::Test::File::Tester::ASSERT_IN_FILE_CPP);
     state.assert_file_consistent();
 }

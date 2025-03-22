@@ -104,21 +104,18 @@ PosixFile::Status PosixFile::size(FwSizeType& size_result) {
     FwSizeType current_position = 0;
     Status status = this->position(current_position);
     size_result = 0;
+    // Must be a coding error if current_position is larger than off_t max in Posix File
+    FW_ASSERT(current_position <= std::numeric_limits<off_t>::max());
     if (Os::File::Status::OP_OK == status) {
         // Seek to the end of the file to determine size
         off_t end_of_file = ::lseek(this->m_handle.m_file_descriptor, 0, SEEK_END);
         if (PosixFileHandle::ERROR_RETURN_VALUE == end_of_file) {
             PlatformIntType errno_store = errno;
             status = Os::Posix::errno_to_file_status(errno_store);
-        } else {
-            // Return the file pointer back to the original position
-            off_t original = ::lseek(this->m_handle.m_file_descriptor, static_cast<off_t>(current_position), SEEK_SET);
-            if ((PosixFileHandle::ERROR_RETURN_VALUE == original) || (current_position != original)) {
-                PlatformIntType errno_store = errno;
-                status = Os::Posix::errno_to_file_status(errno_store);
-            }
         }
-        size_result = end_of_file;
+        // Return to original position
+        (void) ::lseek(this->m_handle.m_file_descriptor, static_cast<off_t>(current_position), SEEK_SET);
+        size_result = static_cast<FwSizeType>(end_of_file);
     }
     return status;
 }
@@ -156,7 +153,7 @@ PosixFile::Status PosixFile::preallocate(FwSizeType offset, FwSizeType length) {
             status = this->position(file_position);
             if (Os::File::Status::OP_OK == status) {
                 // Check for integer overflow
-                if ((std::numeric_limits<FwSizeType>::max() - offset - length) < 0) {
+                if ((std::numeric_limits<FwSizeType>::max() - offset) < length) {
                     status = PosixFile::NO_SPACE;
                 } else if (file_size < (offset + length)) {
                     const FwSizeType write_length = (offset + length) - file_size;
