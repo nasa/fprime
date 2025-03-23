@@ -2,16 +2,51 @@
 
 namespace Svc {
 
-//! Internal interface handler for directive_waitRel
-void FpySequencer::directive_waitRel_internalInterfaceHandler(const Svc::FpySequencer_WaitRelDirective& directive) {
-    Fw::Time wakeupTime = getTime();
+using Signal = FpySequencer_SequencerStateMachineStateMachineBase::Signal;
 
-    wakeupTime.add(directive.getduration().getSeconds(), directive.getduration().getUSeconds());
-    this->sequencer_sendSignal_directiveResponse_beginSleep(wakeupTime);
+void FpySequencer::sendSignal(Signal signal) {
+    switch (signal) {
+        case Signal::directiveResponse_beginSleep: {
+            this->sequencer_sendSignal_directiveResponse_beginSleep();
+            break;
+        }
+        case Signal::directiveResponse_success: {
+            this->sequencer_sendSignal_directiveResponse_success();
+            break;
+        }
+        case Signal::directiveResponse_failure: {
+            this->sequencer_sendSignal_directiveResponse_failure();
+            break;
+        }
+        default: {
+            FW_ASSERT(0, static_cast<FwAssertArgType>(signal));
+        }
+    }
+}
+
+//! Internal interface handler for directive_waitRel
+void FpySequencer::directive_waitRel_internalInterfaceHandler(const FpySequencer_WaitRelDirective& directive) {
+    this->sendSignal(this->waitRel_directiveHandler(directive));
 }
 
 //! Internal interface handler for directive_waitAbs
-void FpySequencer::directive_waitAbs_internalInterfaceHandler(const Svc::FpySequencer_WaitAbsDirective& directive) {
-    this->sequencer_sendSignal_directiveResponse_beginSleep(directive.getwakeupTime());
+void FpySequencer::directive_waitAbs_internalInterfaceHandler(const FpySequencer_WaitAbsDirective& directive) {
+    this->sendSignal(this->waitAbs_directiveHandler(directive));
 }
+
+//! Internal interface handler for directive_waitRel
+Signal FpySequencer::waitRel_directiveHandler(const FpySequencer_WaitRelDirective& directive) {
+    Fw::Time wakeupTime = this->getTime();
+
+    wakeupTime.add(directive.getduration().getSeconds(), directive.getduration().getUSeconds());
+    this->m_runtime.wakeupTime = wakeupTime;
+    return Signal::directiveResponse_beginSleep;
+}
+
+//! Internal interface handler for directive_waitAbs
+Signal FpySequencer::waitAbs_directiveHandler(const FpySequencer_WaitAbsDirective& directive) {
+    this->m_runtime.wakeupTime = directive.getwakeupTime();
+    return Signal::directiveResponse_beginSleep;
+}
+
 }  // namespace Svc

@@ -199,6 +199,14 @@ class FpySequencer : public FpySequencerComponentBase {
         Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
         ) override;
 
+    //! Implementation for action clearSequenceFile of state machine Svc_FpySequencer_SequencerStateMachine
+    //!
+    //! clears all variables related to the loading/validating of the sequence file
+    void Svc_FpySequencer_SequencerStateMachine_action_clearSequenceFile(
+        SmId smId,                                             //!< The state machine id
+        Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
+        ) override;
+
     //! Implementation for action checkShouldWake of state machine Svc_FpySequencer_SequencerStateMachine
     //!
     //! checks if sequencer should wake from sleep
@@ -213,15 +221,6 @@ class FpySequencer : public FpySequencerComponentBase {
     void Svc_FpySequencer_SequencerStateMachine_action_resetRuntime(
         SmId smId,                                             //!< The state machine id
         Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
-        ) override;
-
-    //! Implementation for action setWakeupTime of state machine Svc_FpySequencer_SequencerStateMachine
-    //!
-    //! sets the wakeup time of the sequencer
-    void Svc_FpySequencer_SequencerStateMachine_action_setWakeupTime(
-        SmId smId,                                              //!< The state machine id
-        Svc_FpySequencer_SequencerStateMachine::Signal signal,  //!< The signal
-        const Fw::Time& value                                   //!< The value
         ) override;
 
     //! Implementation for action checkStatementTimeout of state machine Svc_FpySequencer_SequencerStateMachine
@@ -281,10 +280,10 @@ class FpySequencer : public FpySequencerComponentBase {
                           ) override;
 
     //! Internal interface handler for directive_waitAbs
-    void directive_waitAbs_internalInterfaceHandler(const Svc::FpySequencer_WaitAbsDirective& directive) override;
+    void directive_waitAbs_internalInterfaceHandler(const FpySequencer_WaitAbsDirective& directive) override;
 
     //! Internal interface handler for directive_waitRel
-    void directive_waitRel_internalInterfaceHandler(const Svc::FpySequencer_WaitRelDirective& directive) override;
+    void directive_waitRel_internalInterfaceHandler(const FpySequencer_WaitRelDirective& directive) override;
 
     void parametersLoaded() override;
     void parameterUpdated(FwPrmIdType id) override;
@@ -357,6 +356,10 @@ class FpySequencer : public FpySequencerComponentBase {
         U64 sequencesFailed = 0;
     } m_tlm;
 
+    // ----------------------------------------------------------------------
+    // Validation state
+    // ----------------------------------------------------------------------
+
     void updateComputedCRC(const U8* buffer,      //!< The buffer
                            FwSizeType bufferSize  //!< The buffer size
     );
@@ -372,7 +375,7 @@ class FpySequencer : public FpySequencerComponentBase {
     bool readBytes(Os::File& file, FwSizeType readLen, bool updateCRC = true);
 
     // ----------------------------------------------------------------------
-    // Runtime
+    // Run state
     // ----------------------------------------------------------------------
 
     // dispatches the next statement
@@ -385,6 +388,20 @@ class FpySequencer : public FpySequencerComponentBase {
     // dispatches a sequencer directive to the right handler.
     // return true if successfully handled.
     bool dispatchDirective(const Fpy::Statement& stmt);
+
+    // ----------------------------------------------------------------------
+    // Directives
+    // ----------------------------------------------------------------------
+
+    using Signal = FpySequencer_SequencerStateMachineStateMachineBase::Signal;
+
+    // sends a signal based on a signal id
+    void sendSignal(Signal signal);
+
+    // we split these functions up into the internalInterfaceInvoke and these custom member funcs
+    // so that we can unit test them easier
+    Signal waitRel_directiveHandler(const FpySequencer_WaitRelDirective& directive);
+    Signal waitAbs_directiveHandler(const FpySequencer_WaitAbsDirective& directive);
 };
 
 }  // namespace Svc

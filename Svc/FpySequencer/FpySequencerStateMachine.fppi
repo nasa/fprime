@@ -70,13 +70,15 @@ state machine SequencerStateMachine {
     @ responds to the calling command with EXECUTION_ERROR
     action sendCmdResponse_EXECUTION_ERROR
 
+    @ clears all variables related to the loading/validating of the sequence file
+    action clearSequenceFile
 
     initial enter IDLE
 
     @ sequencer is ready to load, validate and run a sequence
     state IDLE {
         # start with an unset goal state
-        entry do { setGoalState_IDLE }
+        entry do { setGoalState_IDLE, clearSequenceFile }
         # -->
         # wait for a cmd
 
@@ -146,8 +148,6 @@ state machine SequencerStateMachine {
     action dispatchStatement
     @ resets the sequence runtime
     action resetRuntime
-    @ sets the wakeup time of the sequencer
-    action setWakeupTime: Fw.Time
     @ checks if the current statement has timed out
     action checkStatementTimeout
     @ reports that the sequence timed out
@@ -165,9 +165,9 @@ state machine SequencerStateMachine {
     signal result_checkShouldWake_wakeup
     @ raised when an operation could not be performed on a Fw::Time object due to a
     @ mismatched time base or context
-    signal result_checkShouldWake_timeOpFailed
-    @ a directive is telling the sequencer to go to sleep, with a given wakeup time
-    signal directiveResponse_beginSleep: Fw.Time
+    signal result_timeOpFailed
+    @ a directive is telling the sequencer to go to sleep
+    signal directiveResponse_beginSleep
     @ a directive successfully executed
     signal directiveResponse_success
     @ a directive failed to execute
@@ -198,13 +198,14 @@ state machine SequencerStateMachine {
         state AWAITING_STATEMENT_RESPONSE {
             on checkTimersIn do { checkStatementTimeout }
             # -->
-            on statementTimeout do { }
+            on statementTimeout do { report_seqTimedOut, sendCmdResponse_EXECUTION_ERROR } enter IDLE
+            on result_timeOpFailed do { report_seqFailed, sendCmdResponse_EXECUTION_ERROR } enter IDLE
 
             on cmdResponse_success enter DISPATCH_STATEMENT
             on cmdResponse_failure do { report_seqFailed, sendCmdResponse_EXECUTION_ERROR } enter IDLE
 
             on directiveResponse_success enter DISPATCH_STATEMENT
-            on directiveResponse_beginSleep do { setWakeupTime } enter SLEEPING
+            on directiveResponse_beginSleep enter SLEEPING
             on directiveResponse_failure do { report_seqFailed, sendCmdResponse_EXECUTION_ERROR } enter IDLE
         }
 
@@ -214,7 +215,7 @@ state machine SequencerStateMachine {
             # -->
             on result_checkShouldWake_wakeup enter DISPATCH_STATEMENT
             # this can occur if the time base/ctx changes, or was invalid from the start
-            on result_checkShouldWake_timeOpFailed do { report_seqFailed, sendCmdResponse_EXECUTION_ERROR } enter IDLE
+            on result_timeOpFailed do { report_seqFailed, sendCmdResponse_EXECUTION_ERROR } enter IDLE
             # if neither is raised, just stay asleep
         }
 

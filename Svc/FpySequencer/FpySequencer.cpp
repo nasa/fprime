@@ -166,6 +166,7 @@ void FpySequencer::tlmWrite_handler(FwIndexType portNum,  //!< The port number
     this->tlmWrite_StatementsFailed(m_tlm.statementsFailed);
     this->tlmWrite_SequencesSucceeded(m_tlm.sequencesSucceeded);
     this->tlmWrite_SequencesFailed(m_tlm.sequencesFailed);
+    this->tlmWrite_SeqPath(m_sequenceFilePath);
 }
 
 void FpySequencer::parametersLoaded() {

@@ -211,7 +211,7 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_checkShouldWake
         // cannot compare these times.
         this->log_WARNING_LO_MismatchedTimeBase(currentTime.getTimeBase(), m_runtime.wakeupTime.getTimeBase());
 
-        this->sequencer_sendSignal_result_checkShouldWake_timeOpFailed();
+        this->sequencer_sendSignal_result_timeOpFailed();
         return;
     }
 
@@ -219,7 +219,7 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_checkShouldWake
         // cannot compare these times.
         this->log_WARNING_LO_MismatchedTimeContext(currentTime.getContext(), m_runtime.wakeupTime.getContext());
 
-        this->sequencer_sendSignal_result_checkShouldWake_timeOpFailed();
+        this->sequencer_sendSignal_result_timeOpFailed();
         return;
     }
 
@@ -232,16 +232,6 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_checkShouldWake
     this->sequencer_sendSignal_result_checkShouldWake_wakeup();
 }
 
-//! Implementation for action setWakeupTime of state machine Svc_FpySequencer_SequencerStateMachine
-//!
-//! sets the wakeup time of the sequencer
-void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_setWakeupTime(
-    SmId smId,                                              //!< The state machine id
-    Svc_FpySequencer_SequencerStateMachine::Signal signal,  //!< The signal
-    const Fw::Time& value                                   //!< The value
-) {
-    m_runtime.wakeupTime = value;
-}
 //! Implementation for action checkStatementTimeout of state machine Svc_FpySequencer_SequencerStateMachine
 //!
 //! checks if the current statement has timed out
@@ -262,12 +252,14 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_checkStatementT
         // can't compare time base. must have changed
         this->log_WARNING_LO_MismatchedTimeBase(currentTime.getTimeBase(),
                                                 m_runtime.currentStatementDispatchTime.getTimeBase());
+        this->sequencer_sendSignal_result_timeOpFailed();
         return;
     }
     if (currentTime.getContext() != m_runtime.currentStatementDispatchTime.getContext()) {
         // can't compare time ctx. must have changed
         this->log_WARNING_LO_MismatchedTimeContext(currentTime.getContext(),
                                                    m_runtime.currentStatementDispatchTime.getContext());
+        this->sequencer_sendSignal_result_timeOpFailed();
         return;
     }
 
@@ -289,7 +281,18 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_report_seqTimed
     SmId smId,                                             //!< The state machine id
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) {
+    m_tlm.sequencesFailed++;
     this->log_WARNING_LO_SequenceTimedOut(m_sequenceFilePath);
+}
+
+//! Implementation for action clearSequenceFile of state machine Svc_FpySequencer_SequencerStateMachine
+//!
+//! clears all variables related to the loading/validating of the sequence file
+void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_clearSequenceFile(
+    SmId smId,                                             //!< The state machine id
+    Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
+) {
+    this->m_sequenceFilePath = "";
 }
 
 // ----------------------------------------------------------------------
