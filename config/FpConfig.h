@@ -349,7 +349,8 @@ typedef FwIndexType FwQueueSizeType;
 #define FW_INTERNAL_INTERFACE_STRING_MAX_SIZE 256  //!< Max size of interface string parameter type
 #endif
 
-// enables text logging of events as well as data logging. Adds a second logging port for text output.
+// Enables text logging of events as well as data logging. Adds a second logging port for text output.
+// In order to set this to 0, FPRIME_ENABLE_TEXT_LOGGERS must be set to OFF.
 #ifndef FW_ENABLE_TEXT_LOGGING
 #define FW_ENABLE_TEXT_LOGGING 1  //!< Indicates whether text logging is turned on
 #endif
