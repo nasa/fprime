@@ -142,7 +142,9 @@ PosixFile::Status PosixFile::position(FwSizeType& position_result) {
 PosixFile::Status PosixFile::preallocate(FwSizeType offset, FwSizeType length) {
     PosixFile::Status status = Os::File::Status::NOT_SUPPORTED;
     // Check for larger size than posix supports
-    if (length > std::numeric_limits<off_t>::max()) {
+    if ((length > std::numeric_limits<off_t>::max()) ||
+        (offset > std::numeric_limits<off_t>::max()) ||
+        (std::numeric_limits<off_t>::max() - length) < offset) {
         status = Os::File::Status::BAD_SIZE;
     }
     // posix_fallocate is only available with the posix C-API post version 200112L, however; it is not guaranteed that
@@ -164,27 +166,28 @@ PosixFile::Status PosixFile::preallocate(FwSizeType offset, FwSizeType length) {
             // Calculate current position
             FwSizeType file_position = 0;
             status = this->position(file_position);
-            if (Os::File::Status::OP_OK == status) {
-                // Check for integer overflow
-                if ((std::numeric_limits<FwSizeType>::max() - offset) < length) {
-                    status = PosixFile::NO_SPACE;
-                } else if (file_size < (offset + length)) {
-                    const FwSizeType write_length = (offset + length) - file_size;
-                    status = this->seek(file_size, PosixFile::SeekType::ABSOLUTE);
+            // Check for overflow in seek calls
+            if (file_position > std::numeric_limits<FwSignedSizeType>::max() ||
+                file_size > std::numeric_limits<FwSignedSizeType>::max()) {
+                status = Os::File::Status::BAD_SIZE;
+            }
+            // Only allocate when the file is smaller than the allocation
+            else if ((Os::File::Status::OP_OK == status) && (file_size < (offset + length))) {
+                const FwSizeType write_length = (offset + length) - file_size;
+                status = this->seek(static_cast<FwSignedSizeType>(file_size), PosixFile::SeekType::ABSOLUTE);
+                if (Os::File::Status::OP_OK == status) {
+                    // Fill in zeros past size of file to ensure compatibility with fallocate
+                    for (FwSizeType i = 0; i < write_length; i++) {
+                        FwSizeType write_size = 1;
+                        status = this->write(reinterpret_cast<const U8*>("\0"), write_size,
+                                             PosixFile::WaitType::NO_WAIT);
+                        if (Status::OP_OK != status || write_size != 1) {
+                            break;
+                        }
+                    }
+                    // Return to original position
                     if (Os::File::Status::OP_OK == status) {
-                        // Fill in zeros past size of file to ensure compatibility with fallocate
-                        for (FwSizeType i = 0; i < write_length; i++) {
-                            FwSizeType write_size = 1;
-                            status = this->write(reinterpret_cast<const U8*>("\0"), write_size,
-                                                 PosixFile::WaitType::NO_WAIT);
-                            if (Status::OP_OK != status || write_size != 1) {
-                                break;
-                            }
-                        }
-                        // Return to original position
-                        if (Os::File::Status::OP_OK == status) {
-                            status = this->seek(file_position, PosixFile::SeekType::ABSOLUTE);
-                        }
+                        status = this->seek(static_cast<FwSignedSizeType>(file_position), PosixFile::SeekType::ABSOLUTE);
                     }
                 }
             }
@@ -250,7 +253,7 @@ PosixFile::Status PosixFile::read(U8* buffer, FwSizeType& size, PosixFile::WaitT
         else if (read_size == 0) {
             break;
         }
-        accumulated += read_size;
+        accumulated += static_cast<FwSizeType>(read_size);
         // Stop looping when we had a good read and are not waiting
         if (not wait) {
             break;
@@ -279,16 +282,16 @@ PosixFile::Status PosixFile::write(const U8* buffer, FwSizeType& size, PosixFile
             ::write(this->m_handle.m_file_descriptor, reinterpret_cast<const CHAR*>(&buffer[accumulated]),
                     static_cast<size_t>(size - accumulated));
         // Non-interrupt error
-        if (PosixFileHandle::ERROR_RETURN_VALUE == write_size) {
+        if (PosixFileHandle::ERROR_RETURN_VALUE == write_size || write_size < 0) {
             PlatformIntType errno_store = errno;
-            // Interrupted w/o read, try again
+            // Interrupted w/o write, try again
             if (EINTR != errno_store) {
                 continue;
             }
             status = Os::Posix::errno_to_file_status(errno_store);
             break;
         }
-        accumulated += write_size;
+        accumulated += static_cast<FwSizeType>(write_size);
     }
     size = accumulated;
     // When waiting, sync to disk
