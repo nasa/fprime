@@ -230,7 +230,7 @@ void Os::Test::File::Tester::assert_file_seek(const FwSizeType original_position
     ASSERT_EQ(this->m_file.position(new_position), Os::File::Status::OP_OK);
     ASSERT_EQ(this->m_shadow.position(shadow_position), Os::File::Status::OP_OK);
 
-    const FwSizeType expected_offset = (absolute) ? seek_desired : (original_position + seek_desired);
+    const FwSignedSizeType expected_offset = (absolute) ? seek_desired : (original_position + seek_desired);
     if (expected_offset >= 0) {
         ASSERT_EQ(new_position, expected_offset);
     } else {

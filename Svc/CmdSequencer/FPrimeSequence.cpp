@@ -164,7 +164,6 @@ namespace Svc {
     bool status = true;
 
     FwSizeType readLen = Sequence::Header::SERIALIZED_SIZE;
-    FW_ASSERT(readLen >= 0, static_cast<FwAssertArgType>(readLen));
 
     const FwSizeType capacity = buffer.getBuffCapacity();
     FW_ASSERT(

@@ -103,8 +103,6 @@ File::Status File::position(FwSizeType &position_result) {
 
 File::Status File::preallocate(FwSizeType offset, FwSizeType length) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
-    FW_ASSERT(offset >= 0);
-    FW_ASSERT(length >= 0);
     FW_ASSERT((0 <= this->m_mode) && (this->m_mode < Mode::MAX_OPEN_MODE));
     // Check that the file is open before attempting operation
     if (OPEN_NO_MODE == this->m_mode) {
@@ -172,7 +170,6 @@ File::Status File::read(U8* buffer, FwSizeType &size) {
 File::Status File::read(U8* buffer, FwSizeType &size, File::WaitType wait) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
     FW_ASSERT(buffer != nullptr);
-    FW_ASSERT(size >= 0);
     FW_ASSERT(this->m_mode < Mode::MAX_OPEN_MODE);
     // Check that the file is open before attempting operation
     if (OPEN_NO_MODE == this->m_mode) {
@@ -193,7 +190,6 @@ File::Status File::write(const U8* buffer, FwSizeType &size) {
 File::Status File::write(const U8* buffer, FwSizeType &size, File::WaitType wait) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
     FW_ASSERT(buffer != nullptr);
-    FW_ASSERT(size >= 0);
     FW_ASSERT(this->m_mode < Mode::MAX_OPEN_MODE);
     // Check that the file is open before attempting operation
     if (OPEN_NO_MODE == this->m_mode) {
@@ -231,7 +227,6 @@ File::Status File::calculateCrc(U32 &crc) {
 
 File::Status File::incrementalCrc(FwSizeType &size) {
     File::Status status = File::Status::OP_OK;
-    FW_ASSERT(size >= 0);
     FW_ASSERT(size <= FW_FILE_CHUNK_SIZE);
     if (OPEN_NO_MODE == this->m_mode) {
         status = File::Status::NOT_OPENED;
@@ -263,7 +258,6 @@ File::Status File::readline(U8* buffer, FwSizeType &size, File::WaitType wait) {
     const FwSizeType requested_size = size;
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
     FW_ASSERT(buffer != nullptr);
-    FW_ASSERT(size >= 0);
     FW_ASSERT(this->m_mode < Mode::MAX_OPEN_MODE);
     // Check that the file is open before attempting operation
     if (OPEN_NO_MODE == this->m_mode) {

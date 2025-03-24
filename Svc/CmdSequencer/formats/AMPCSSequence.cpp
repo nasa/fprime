@@ -202,9 +202,7 @@ namespace Svc {
     bool status = true;
     Fw::SerializeStatus ser_status;
 
-    FwSizeType readLen = sizeof(U32);
-    FW_ASSERT(readLen >= 0, static_cast<FwAssertArgType>(readLen));
-
+    FwSizeType readLen = static_cast<FwSizeType>(sizeof(U32));
     ser_status = buffer.setBuffLen(static_cast<Fw::Serializable::SizeType>(readLen));
     FW_ASSERT(ser_status == Fw::FW_SERIALIZE_OK, ser_status);
 

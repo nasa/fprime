@@ -203,4 +203,4 @@ void teardownTopology(const TopologyState& state) {
     commsBufferManager.cleanup();
     frameAccumulator.cleanup();
 }
-};  // namespace Ref
+}  // namespace Ref

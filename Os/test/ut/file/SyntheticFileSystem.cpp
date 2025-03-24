@@ -93,7 +93,6 @@ Os::File::Status SyntheticFile::read(U8* buffer, FwSizeType& size, WaitType wait
     (void) wait;
     FW_ASSERT(this->m_data != nullptr);
     FW_ASSERT(buffer != nullptr);
-    FW_ASSERT(size >= 0);
     FW_ASSERT(this->m_data->m_mode < Os::File::Mode::MAX_OPEN_MODE);
     // Check that the file is open before attempting operation
     if (Os::File::Mode::OPEN_NO_MODE == this->m_data->m_mode) {
@@ -127,7 +126,6 @@ Os::File::Status SyntheticFile::write(const U8* buffer, FwSizeType& size, WaitTy
     (void) wait;
     FW_ASSERT(this->m_data != nullptr);
     FW_ASSERT(buffer != nullptr);
-    FW_ASSERT(size >= 0);
     FW_ASSERT(this->m_data->m_mode < Os::File::Mode::MAX_OPEN_MODE);
     // Check that the file is open before attempting operation
     if (Os::File::Mode::OPEN_NO_MODE == this->m_data->m_mode) {
@@ -190,8 +188,8 @@ Os::File::Status SyntheticFile::seek(const FwSignedSizeType offset, const SeekTy
     if (Os::File::Mode::OPEN_NO_MODE == this->m_data->m_mode) {
         status = Os::File::Status::NOT_OPENED;
     } else {
-        FwSizeType new_offset = (absolute) ? static_cast<FwSizeType>(offset) : (static_cast<FwSizeType>(offset) + this->m_data->m_pointer);
-        if (new_offset >= 0) {
+        FwSizeType new_offset = (absolute) ? static_cast<FwSizeType>(offset) : (offset + this->m_data->m_pointer);
+        if ((offset >= 0) || (this->m_data->m_pointer >= static_cast<FwSizeType>(-1 * offset))) {
             this->m_data->m_pointer = new_offset;
         } else {
             status = Os::File::Status::INVALID_ARGUMENT;
@@ -203,8 +201,6 @@ Os::File::Status SyntheticFile::seek(const FwSignedSizeType offset, const SeekTy
 Os::File::Status SyntheticFile::preallocate(const FwSizeType offset, const FwSizeType length) {
     FW_ASSERT(this->m_data != nullptr);
     Os::File::Status status = Os::File::Status::OP_OK;
-    FW_ASSERT(offset >= 0);
-    FW_ASSERT(length >= 0);
     FW_ASSERT(this->m_data->m_mode < Os::File::Mode::MAX_OPEN_MODE);
     // Check that the file is open before attempting operation
     if (Os::File::Mode::OPEN_NO_MODE == this->m_data->m_mode) {
