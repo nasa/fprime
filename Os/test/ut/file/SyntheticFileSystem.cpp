@@ -188,11 +188,23 @@ Os::File::Status SyntheticFile::seek(const FwSignedSizeType offset, const SeekTy
     if (Os::File::Mode::OPEN_NO_MODE == this->m_data->m_mode) {
         status = Os::File::Status::NOT_OPENED;
     } else {
-        FwSizeType new_offset = (absolute) ? static_cast<FwSizeType>(offset) : static_cast<FwSizeType>(offset + this->m_data->m_pointer);
-        if ((offset >= 0) || (this->m_data->m_pointer >= static_cast<FwSizeType>(-1 * offset))) {
-            this->m_data->m_pointer = new_offset;
-        } else {
+        if (absolute) {
+            this->m_data->m_pointer = static_cast<FwSizeType>(offset);
+        }
+        // Seek to < 0
+        else if ((offset < 0) && ((static_cast<FwSizeType>(-1 * offset) > this->m_data->m_pointer) || (offset == std::numeric_limits<FwSignedSizeType>::min()))) {
             status = Os::File::Status::INVALID_ARGUMENT;
+        }
+        // Other negative offsets
+        else if (offset < 0) {
+            this->m_data->m_pointer -= static_cast<FwSizeType>(-1*offset);
+        }
+        // Overflow
+        else if ((std::numeric_limits<FwSizeType>::max() - this->m_data->m_pointer) < static_cast<FwSizeType>(offset)) {
+            status = Os::File::Status::BAD_SIZE;
+        }
+        else {
+            this->m_data->m_pointer += static_cast<FwSizeType>(offset);
         }
     }
     return status;

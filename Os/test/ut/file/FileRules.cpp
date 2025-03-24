@@ -108,7 +108,7 @@ Os::Test::File::Tester::FileState Os::Test::File::Tester::current_file_state() {
         EXPECT_EQ(this->m_file.position(state.position), Os::File::Status::OP_OK);
         EXPECT_EQ(this->m_file.size(state.size), Os::File::Status::OP_OK);
         // Extra check to ensure size does not alter pointer
-        FwSizeType new_position = -1;
+        FwSizeType new_position = std::numeric_limits<FwSizeType>::max();
         EXPECT_EQ(this->m_file.position(new_position), Os::File::Status::OP_OK);
         EXPECT_EQ(new_position, state.position);
     }
@@ -172,7 +172,7 @@ void Os::Test::File::Tester::assert_file_opened(const std::string &path, Os::Fil
     if (not path.empty() && Os::File::Mode::OPEN_NO_MODE != newly_opened_mode) {
         // Assert file pointer always at beginning when functional
         if (functional() ) {
-            FwSizeType file_position = -1;
+            FwSizeType file_position = std::numeric_limits<FwSizeType>::max();
             ASSERT_EQ(this->m_file.position(file_position), Os::File::Status::OP_OK);
             ASSERT_EQ(file_position, 0);
         }
@@ -183,7 +183,7 @@ void Os::Test::File::Tester::assert_file_opened(const std::string &path, Os::Fil
         const bool truncate = (Os::File::Mode::OPEN_CREATE == newly_opened_mode) && overwrite;
         if (truncate) {
             if (this->functional()) {
-                FwSizeType file_size = -1;
+                FwSizeType file_size = std::numeric_limits<FwSizeType>::max();
                 ASSERT_EQ(this->m_file.size(file_size), Os::File::Status::OP_OK);
                 ASSERT_EQ(file_size, 0);
             }
@@ -201,8 +201,8 @@ void Os::Test::File::Tester::assert_file_read(const std::vector<U8>& state_data,
     if (functional()) {
         ASSERT_EQ(size_read, state_data.size());
         ASSERT_EQ(std::vector<U8>(read_data, read_data + size_read), state_data);
-        FwSizeType position = -1;
-        FwSizeType shadow_position = -1;
+        FwSizeType position = std::numeric_limits<FwSizeType>::max();
+        FwSizeType shadow_position = std::numeric_limits<FwSizeType>::max();
         ASSERT_EQ(this->m_file.position(position), Os::File::Status::OP_OK);
         ASSERT_EQ(this->m_shadow.position(shadow_position), Os::File::Status::OP_OK);
         ASSERT_EQ(position, shadow_position);
@@ -216,8 +216,8 @@ void Os::Test::File::Tester::assert_file_write(const std::vector<U8>& write_data
     ASSERT_EQ(this->m_file.size(file_size), Os::File::Status::OP_OK);
     ASSERT_EQ(this->m_shadow.size(shadow_size), Os::File::Status::OP_OK);
     ASSERT_EQ(file_size, shadow_size);
-    FwSizeType file_position = -1;
-    FwSizeType shadow_position = -1;
+    FwSizeType file_position = std::numeric_limits<FwSizeType>::max();
+    FwSizeType shadow_position = std::numeric_limits<FwSizeType>::max();
     ASSERT_EQ(this->m_file.position(file_position), Os::File::Status::OP_OK);
     ASSERT_EQ(this->m_shadow.position(shadow_position), Os::File::Status::OP_OK);
     ASSERT_EQ(file_position, shadow_position);
@@ -455,7 +455,7 @@ void Os::Test::File::Tester::Seek::action(
         Os::Test::File::Tester &state //!< The test state
 ) {
     printf("--> Rule: %s \n", this->getName());
-    FwSizeType seek_offset = 0;
+    FwSignedSizeType seek_offset = 0;
     state.assert_file_consistent();
     FileState original_file_state = state.current_file_state();
 
@@ -622,7 +622,7 @@ void Os::Test::File::Tester::SeekWithoutOpen::action(Os::Test::File::Tester &sta
     // Check initial file state
     state.assert_file_closed();
     // Open file of given filename
-    FwSizeType random_offset = STest::Pick::lowerUpper(0, std::numeric_limits<U32>::max());
+    FwSignedSizeType random_offset = STest::Pick::lowerUpper(0, std::numeric_limits<U32>::max());
     bool random_absolute = static_cast<bool>(STest::Pick::lowerUpper(0, 1));
 
     Os::File::Status status = state.m_file.seek(random_offset, random_absolute ? Os::File::SeekType::ABSOLUTE : Os::File::SeekType::RELATIVE);
@@ -639,7 +639,12 @@ Os::Test::File::Tester::SeekInvalidSize::SeekInvalidSize() : STest::Rule<Os::Tes
 
 bool Os::Test::File::Tester::SeekInvalidSize::precondition(const Os::Test::File::Tester &state  //!< The test state
 ) {
-    return Os::File::Mode::OPEN_NO_MODE < state.m_mode;;
+    FwSizeType position = 0;
+    // Operation is effectively constant
+    Os::File::Status status = const_cast<Os::Test::File::Tester&>(state).m_file.position(position);
+    return (Os::File::Mode::OPEN_NO_MODE < state.m_mode) &&
+       // Limitation of the test harness: max random value is U32_MAX, thus we need at least 1 byte headroom
+       (status == Os::File::Status::OP_OK) && (position < std::numeric_limits<U32>::max());
 }
 
 void Os::Test::File::Tester::SeekInvalidSize::action(Os::Test::File::Tester &state  //!< The test state
@@ -648,7 +653,7 @@ void Os::Test::File::Tester::SeekInvalidSize::action(Os::Test::File::Tester &sta
     state.assert_file_consistent();
     FileState original_file_state = state.current_file_state();
     // Open file of given filename
-    FwSizeType random_offset = STest::Pick::lowerUpper(original_file_state.position + 1, std::numeric_limits<U32>::max());
+    FwSignedSizeType random_offset = STest::Pick::lowerUpper(original_file_state.position + 1, std::numeric_limits<U32>::max());
     ASSERT_GT(random_offset, original_file_state.position);
 
     Os::File::Status status = state.m_file.seek(-1 * random_offset, Os::File::SeekType::RELATIVE);
