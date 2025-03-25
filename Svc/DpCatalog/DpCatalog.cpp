@@ -322,7 +322,7 @@ namespace Svc {
     void DpCatalog::appendFileState(const DpStateEntry& entry) {
         FW_ASSERT(this->m_stateFileData);
         FW_ASSERT(entry.dir < static_cast<FwIndexType>(this->m_numDirectories),
-            entry.dir,
+            static_cast<FwAssertArgType>(entry.dir),
             static_cast<FwAssertArgType>(this->m_numDirectories)
         );
 

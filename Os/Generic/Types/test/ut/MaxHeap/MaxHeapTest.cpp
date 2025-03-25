@@ -88,7 +88,9 @@ TEST(Nominal, PushPop) {
 
     printf("Testing pop...\n");
     //heap.print();
-    for(FwQueuePriorityType ii = DEPTH-1; ii >= 0; --ii) {
+    for(FwSizeType i = 0; i < DEPTH; i++) {
+        ASSERT_TRUE(DEPTH - 1 >= i);
+        FwSizeType ii = DEPTH - 1 - i;
         ret = heap.pop(value, id);
         ASSERT_TRUE(ret);
         ASSERT_EQ(id, static_cast<FwSizeType>(ii));
