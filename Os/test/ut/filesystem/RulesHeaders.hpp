@@ -50,7 +50,7 @@ struct Tester {
     std::vector<TestDirectory> m_test_dirs;
     std::vector<TestFile> m_test_files;
 
-    FwIndexType m_counter; //!< Counter for generating unique file/directory names
+    U64 m_counter; //!< Counter for generating unique file/directory names
 
     // ---------------------------------------------------------------
     // Functions to manipulate the state of the Tester w.r.t filesystem
@@ -84,9 +84,11 @@ struct Tester {
     // Helper functions for testing
     // ----------------------------------------------------------------
     std::string get_new_filename() {
+        assert(m_counter != std::numeric_limits<U64>::max());
         return "test_file_" + std::to_string(m_counter++);
     }
     std::string get_new_dirname() {
+        assert(m_counter != std::numeric_limits<U64>::max());
         return "test_dir_" + std::to_string(m_counter++);
     }
     TestFile& get_random_file() {

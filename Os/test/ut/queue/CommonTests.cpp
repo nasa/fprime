@@ -15,6 +15,7 @@ namespace Os {
 namespace Test {
 namespace Queue {
 FwSizeType Tester::QueueState::queues = 0;
+U64 Tester::QueueMessage::order_counter = 0;
 
 PriorityCompare const Tester::QueueMessageComparer::HELPER = PriorityCompare();
 
@@ -38,6 +39,10 @@ Os::QueueInterface::Status Tester::shadow_send(const U8* buffer,
     QueueMessage qm;
     qm.priority = priority;
     qm.size = size;
+    qm.order = QueueMessage::order_counter++;
+    // Overflow imminent, fail now!
+    assert(QueueMessage::order_counter != std::numeric_limits<U64>::max());
+
     std::memcpy(qm.data, buffer, static_cast<size_t>(size));
     if (size > this->shadow.messageSize) {
         return QueueInterface::Status::SIZE_MISMATCH;

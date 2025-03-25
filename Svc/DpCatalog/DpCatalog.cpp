@@ -14,7 +14,8 @@
 #include <new> // placement new
 
 namespace Svc {
-
+    static_assert(DP_MAX_DIRECTORIES > 0, "Configuration DP_MAX_DIRECTORIES must be positive");
+    static_assert(DP_MAX_FILES > 0, "Configuration DP_MAX_FILES must be positive");
     // ----------------------------------------------------------------------
     // Component construction and destruction
     // ----------------------------------------------------------------------
