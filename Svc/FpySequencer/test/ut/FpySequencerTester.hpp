@@ -37,6 +37,22 @@ class FpySequencerTester : public FpySequencerGTestBase {
   // ----------------------------------------------------------------------
   // Tests
   // ----------------------------------------------------------------------
+
+  void test_waitRel();
+  void test_waitAbs();
+
+  void test_checkShouldWake();
+  void test_checkShouldWakeMismatchBase();
+  void test_checkShouldWakeMismatchContext();
+
+  void test_checkStatementTimeout();
+  void test_checkStatementTimeoutMismatchBase();
+  void test_checkStatementTimeoutMismatchContext();
+  
+  void test_cmd_RUN();
+  void test_cmd_VALIDATE();
+  void test_cmd_RUN_VALIDATED();
+  void test_cmd_CANCEL();
  private:
   // ----------------------------------------------------------------------
   // Handlers for typed from ports
@@ -54,9 +70,6 @@ class FpySequencerTester : public FpySequencerGTestBase {
   //! Initialize components
   //!
   void initComponents();
-
-  void test_waitRel();
-  void test_waitAbs();
 
  private:
   // ----------------------------------------------------------------------
