@@ -118,7 +118,7 @@ TEST(InterfaceUninitialized, SendPointer) {
     Os::Queue queue;
     Fw::String name = "My queue";
     const FwSizeType messageSize = 200;
-    const FwQueuePriorityType priority = 300;
+    const FwQueuePriorityType priority = 127;
     U8 buffer[messageSize];
 
     Os::QueueInterface::Status status =
@@ -130,7 +130,7 @@ TEST(InterfaceUninitialized, SendBuffer) {
     Os::Queue queue;
     Fw::String name = "My queue";
     const FwSizeType messageSize = 200;
-    const FwQueuePriorityType priority = 300;
+    const FwQueuePriorityType priority = 127;
     U8 storage[messageSize];
     Fw::ExternalSerializeBuffer buffer(storage, sizeof storage);
 
@@ -178,7 +178,7 @@ TEST(InterfaceInvalid, SendPointerNull) {
     Os::Queue queue;
     Fw::String name = "My queue";
     const FwSizeType messageSize = 200;
-    const FwQueuePriorityType priority = 300;
+    const FwQueuePriorityType priority = 127;
     ASSERT_DEATH_IF_SUPPORTED(queue.send(nullptr, messageSize, priority, Os::QueueInterface::BlockingType::BLOCKING),
                               "Assert:.*Queue\\.cpp");
 }
@@ -187,7 +187,7 @@ TEST(InterfaceInvalid, SendInvalidEnum) {
     Os::Queue queue;
     Fw::String name = "My queue";
     const FwSizeType messageSize = 200;
-    const FwQueuePriorityType priority = 300;
+    const FwQueuePriorityType priority = 127;
     Os::QueueInterface::BlockingType blockingType =
         static_cast<Os::QueueInterface::BlockingType>(Os::QueueInterface::BlockingType::BLOCKING + 1);
     ASSERT_DEATH_IF_SUPPORTED(queue.send(nullptr, messageSize, priority, blockingType), "Assert:.*Queue\\.cpp");

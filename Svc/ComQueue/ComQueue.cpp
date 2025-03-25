@@ -137,7 +137,8 @@ void ComQueue::comQueueIn_handler(const FwIndexType portNum, Fw::ComBuffer& data
 }
 
 void ComQueue::buffQueueIn_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
-    const FwIndexType queueNum = portNum + COM_PORT_COUNT;
+    FW_ASSERT(std::numeric_limits<FwIndexType>::max() - COM_PORT_COUNT > portNum);
+    const FwIndexType queueNum = static_cast<FwIndexType>(portNum + COM_PORT_COUNT);
     // Ensure that the port number of buffQueueIn is consistent with the expectation
     FW_ASSERT(portNum >= 0 && portNum < BUFFER_PORT_COUNT, static_cast<FwAssertArgType>(portNum));
     FW_ASSERT(queueNum < TOTAL_PORT_COUNT);
@@ -204,7 +205,9 @@ bool ComQueue::enqueue(const FwIndexType queueNum, QueueType queueType, const U8
     // Enqueue the given message onto the matching queue. When no space is available then emit the queue overflow event,
     // set the appropriate throttle, and move on. Will assert if passed a message for a depth 0 queue.
     const FwSizeType expectedSize = (queueType == QueueType::COM_QUEUE) ? sizeof(Fw::ComBuffer) : sizeof(Fw::Buffer);
-    const FwIndexType portNum = queueNum - ((queueType == QueueType::COM_QUEUE) ? 0 : COM_PORT_COUNT);
+    FW_ASSERT((queueType == QueueType::COM_QUEUE) || (queueNum >= COM_PORT_COUNT),
+              static_cast<FwAssertArgType>(queueType), static_cast<FwAssertArgType>(queueNum));
+    const FwIndexType portNum = static_cast<FwIndexType>(queueNum - ((queueType == QueueType::COM_QUEUE) ? 0 : COM_PORT_COUNT));
     bool rvStatus = true;
     FW_ASSERT(
         expectedSize == size,
