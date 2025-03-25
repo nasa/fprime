@@ -204,7 +204,7 @@ namespace Svc {
         size = dataSize;
         stat = dpFile.write(dpData,size);
         if (stat != Os::File::Status::OP_OK) {
-            printf("Error writing DP file data %s: status: %" PRI_FwNativeIntType "\n",fileName.toChar(),stat);
+            printf("Error writing DP file data %s: status: %" PRI_FwEnumStoreType "\n",fileName.toChar(),static_cast<FwEnumStoreType>(stat));
             return;
         }
         if (static_cast<FwSizeType>(size) != dataSize) {

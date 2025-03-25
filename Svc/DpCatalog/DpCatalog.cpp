@@ -460,7 +460,7 @@ namespace Svc {
                 static_cast<FwAssertArgType>(this->m_numDpSlots - totalFiles));
 
             // extract metadata for each file
-            for (FwNativeUIntType file = 0; file < filesRead; file++) {
+            for (FwSizeType file = 0; file < filesRead; file++) {
 
                 // only consider files with the DP extension
             
