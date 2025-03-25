@@ -6,16 +6,16 @@ using Signal = FpySequencer_SequencerStateMachineStateMachineBase::Signal;
 
 void FpySequencer::sendSignal(Signal signal) {
     switch (signal) {
-        case Signal::directiveResponse_beginSleep: {
-            this->sequencer_sendSignal_directiveResponse_beginSleep();
+        case Signal::stmtResponse_beginSleep: {
+            this->sequencer_sendSignal_stmtResponse_beginSleep();
             break;
         }
-        case Signal::directiveResponse_success: {
-            this->sequencer_sendSignal_directiveResponse_success();
+        case Signal::stmtResponse_success: {
+            this->sequencer_sendSignal_stmtResponse_success();
             break;
         }
-        case Signal::directiveResponse_failure: {
-            this->sequencer_sendSignal_directiveResponse_failure();
+        case Signal::stmtResponse_failure: {
+            this->sequencer_sendSignal_stmtResponse_failure();
             break;
         }
         default: {
@@ -40,13 +40,13 @@ Signal FpySequencer::waitRel_directiveHandler(const FpySequencer_WaitRelDirectiv
 
     wakeupTime.add(directive.getduration().getSeconds(), directive.getduration().getUSeconds());
     this->m_runtime.wakeupTime = wakeupTime;
-    return Signal::directiveResponse_beginSleep;
+    return Signal::stmtResponse_beginSleep;
 }
 
 //! Internal interface handler for directive_waitAbs
 Signal FpySequencer::waitAbs_directiveHandler(const FpySequencer_WaitAbsDirective& directive) {
     this->m_runtime.wakeupTime = directive.getwakeupTime();
-    return Signal::directiveResponse_beginSleep;
+    return Signal::stmtResponse_beginSleep;
 }
 
 }  // namespace Svc

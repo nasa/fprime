@@ -152,9 +152,9 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
 
     // okay, got the right cmd back
     if (response == Fw::CmdResponse::OK) {
-        this->sequencer_sendSignal_cmdResponse_success();
+        this->sequencer_sendSignal_stmtResponse_success();
     } else {
-        this->sequencer_sendSignal_cmdResponse_failure();
+        this->sequencer_sendSignal_stmtResponse_failure();
     }
 }
 

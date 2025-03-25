@@ -107,7 +107,24 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_dispatchStateme
     SmId smId,                                             //!< The state machine id
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) {
-    this->dispatchStatement();
+    Signal result = this->dispatchStatement();
+    switch (result) {
+        case Signal::result_dispatchStatement_noMoreStatements: {
+            this->sequencer_sendSignal_result_dispatchStatement_noMoreStatements();
+            break;
+        }
+        case Signal::result_dispatchStatement_success: {
+            this->sequencer_sendSignal_result_dispatchStatement_success();
+            break;
+        }
+        case Signal::result_dispatchStatement_failure: {
+            this->sequencer_sendSignal_result_dispatchStatement_failure();
+            break;
+        }
+        default: {
+            FW_ASSERT(0, static_cast<FwAssertArgType>(result));
+        }
+    }
 }
 
 //! Implementation for action setGoalState_RUNNING of state machine
@@ -208,31 +225,24 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_checkShouldWake
     SmId smId,                                             //!< The state machine id
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) {
-    Fw::Time currentTime = this->getTime();
-
-    if (currentTime.getTimeBase() != this->m_runtime.wakeupTime.getTimeBase()) {
-        // cannot compare these times.
-        this->log_WARNING_LO_MismatchedTimeBase(currentTime.getTimeBase(), this->m_runtime.wakeupTime.getTimeBase());
-
-        this->sequencer_sendSignal_result_timeOpFailed();
-        return;
+    Signal result = this->checkShouldWake();
+    switch (result) {
+        case Signal::result_checkShouldWake_keepSleeping: {
+            this->sequencer_sendSignal_result_checkShouldWake_keepSleeping();
+            break;
+        }
+        case Signal::result_checkShouldWake_wakeup: {
+            this->sequencer_sendSignal_result_checkShouldWake_wakeup();
+            break;
+        }
+        case Signal::result_timeOpFailed: {
+            this->sequencer_sendSignal_result_timeOpFailed();
+            break;
+        }
+        default: {
+            FW_ASSERT(0, static_cast<FwAssertArgType>(result));
+        }
     }
-
-    if (currentTime.getContext() != this->m_runtime.wakeupTime.getContext()) {
-        // cannot compare these times.
-        this->log_WARNING_LO_MismatchedTimeContext(currentTime.getContext(), this->m_runtime.wakeupTime.getContext());
-
-        this->sequencer_sendSignal_result_timeOpFailed();
-        return;
-    }
-
-    if (currentTime < this->m_runtime.wakeupTime) {
-        // not time to wake up!
-        return;
-    }
-
-    // say we've finished our sleep
-    this->sequencer_sendSignal_result_checkShouldWake_wakeup();
 }
 
 //! Implementation for action checkStatementTimeout of state machine Svc_FpySequencer_SequencerStateMachine
@@ -242,38 +252,23 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_checkStatementT
     SmId smId,                                             //!< The state machine id
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) {
-    Fw::ParamValid valid;
-    F32 timeout = this->paramGet_STATEMENT_TIMEOUT_SECS(valid);
-    if (timeout <= 0) {
-        // no timeout
-        return;
-    }
-
-    Fw::Time currentTime = getTime();
-
-    if (currentTime.getTimeBase() != this->m_runtime.currentStatementDispatchTime.getTimeBase()) {
-        // can't compare time base. must have changed
-        this->log_WARNING_LO_MismatchedTimeBase(currentTime.getTimeBase(),
-                                                this->m_runtime.currentStatementDispatchTime.getTimeBase());
-        this->sequencer_sendSignal_result_timeOpFailed();
-        return;
-    }
-    if (currentTime.getContext() != this->m_runtime.currentStatementDispatchTime.getContext()) {
-        // can't compare time ctx. must have changed
-        this->log_WARNING_LO_MismatchedTimeContext(currentTime.getContext(),
-                                                   this->m_runtime.currentStatementDispatchTime.getContext());
-        this->sequencer_sendSignal_result_timeOpFailed();
-        return;
-    }
-
-    F64 currentTimeSecs =
-        static_cast<F64>(currentTime.getSeconds()) + static_cast<F64>(currentTime.getUSeconds()) / 1000000;
-    F64 dispatchTimeSecs = static_cast<F64>(this->m_runtime.currentStatementDispatchTime.getSeconds()) +
-                           static_cast<F64>(this->m_runtime.currentStatementDispatchTime.getUSeconds()) / 1000000;
-
-    if (currentTimeSecs - dispatchTimeSecs >= timeout) {
-        // timed out
-        this->sequencer_sendSignal_statementTimeout();
+    Signal result = this->checkStatementTimeout();
+    switch (result) {
+        case Signal::result_checkStatementTimeout_noTimeout: {
+            this->sequencer_sendSignal_result_checkStatementTimeout_noTimeout();
+            break;
+        }
+        case Signal::result_checkStatementTimeout_statementTimeout: {
+            this->sequencer_sendSignal_result_checkStatementTimeout_statementTimeout();
+            break;
+        }
+        case Signal::result_timeOpFailed: {
+            this->sequencer_sendSignal_result_timeOpFailed();
+            break;
+        }
+        default: {
+            FW_ASSERT(0, static_cast<FwAssertArgType>(result));
+        }
     }
 }
 

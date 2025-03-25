@@ -342,11 +342,9 @@ class FpySequencer : public FpySequencerComponentBase {
         // the absolute time we should wait for until returning
         // a statement response
         Fw::Time wakeupTime = Fw::Time();
-    };
+    } m_runtime;
 
-    Runtime m_runtime;
-
-    struct {
+    struct Telemetry {
         // the number of statements successfully dispatched total
         U64 statementsDispatched = 0;
 
@@ -382,8 +380,10 @@ class FpySequencer : public FpySequencerComponentBase {
     // Run state
     // ----------------------------------------------------------------------
 
+    using Signal = FpySequencer_SequencerStateMachineStateMachineBase::Signal;
+
     // dispatches the next statement
-    void dispatchStatement();
+    Signal dispatchStatement();
 
     // dispatches a command out via port.
     // return success if successfully dispatched.
@@ -393,11 +393,14 @@ class FpySequencer : public FpySequencerComponentBase {
     // return success if successfully handled.
     Fw::Success dispatchDirective(const Fpy::Statement& stmt);
 
+    // checks whether the currently executing statement timed out
+    Signal checkStatementTimeout();
+    // checks whether the sequencer should wake from sleeping
+    Signal checkShouldWake();
+
     // ----------------------------------------------------------------------
     // Directives
     // ----------------------------------------------------------------------
-
-    using Signal = FpySequencer_SequencerStateMachineStateMachineBase::Signal;
 
     // sends a signal based on a signal id
     void sendSignal(Signal signal);

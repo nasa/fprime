@@ -1,4 +1,4 @@
-<packets name="RefPackets" namespace="Ref" size="191">
+<packets name="RefPackets" namespace="Ref" size="303">
 
     <import_topology>Ref/Top/RefTopologyAppAi.xml</import_topology>
 
@@ -12,6 +12,7 @@
         <channel name="Ref.fpySeq.SequencesFailed"/>
         <channel name="Ref.fpySeq.StatementsFailed"/>
         <channel name="Ref.fpySeq.STATEMENT_TIMEOUT_SECS"/>
+        <channel name="Ref.fpySeq.SeqPath"/>
         <channel name="Ref.fileUplink.FilesReceived"/>
         <channel name="Ref.fileUplink.PacketsReceived"/>
         <channel name="Ref.fileUplinkBufferManager.TotalBuffs"/>

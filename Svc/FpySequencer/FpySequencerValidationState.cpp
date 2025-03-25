@@ -111,8 +111,6 @@ Fw::Success FpySequencer::validate() {
     }
 
     // read footer bytes (but don't include in CRC)
-    // TODO i think if we read the crc into the crc, it has the mathematical property
-    // that the new crc will be 0. why not check this instead of comparing crcs?
     readStatus = this->readBytes(sequenceFile, Fpy::Footer::SERIALIZED_SIZE, false);
     if (!readStatus) {
         return Fw::Success::FAILURE;
@@ -133,6 +131,18 @@ Fw::Success FpySequencer::validate() {
         return Fw::Success::FAILURE;
     }
 
+    // make sure we're at EOF
+    FwSignedSizeType sequenceFileSize;
+    FW_ASSERT(sequenceFile.size(sequenceFileSize) == Os::File::Status::OP_OK);
+
+    FwSignedSizeType sequenceFilePosition;
+    FW_ASSERT(sequenceFile.position(sequenceFilePosition) == Os::File::Status::OP_OK);
+
+    if (sequenceFileSize != sequenceFilePosition) {
+        this->log_WARNING_LO_TooManyBytes(static_cast<U32>(sequenceFileSize - sequenceFilePosition));
+        return Fw::Success::FAILURE;
+    }
+
     return Fw::Success::SUCCESS;
 }
 
@@ -148,7 +158,7 @@ Fw::Success FpySequencer::readBytes(Os::File& file, FwSizeType readLen, bool upd
 
     // if this asserts, then you need to give the sequencer more buffer memory. pass in a bigger number
     // to fpySeq.allocateBuffer(). This is usually done in topology setup CPP
-    FW_ASSERT(static_cast<FwSignedSizeType>(capacity) >= expectedReadLen, static_cast<FwAssertArgType>(capacity),
+    FW_ASSERT(capacity >= static_cast<FwSizeType>(expectedReadLen), static_cast<FwAssertArgType>(capacity),
               static_cast<FwAssertArgType>(expectedReadLen));
     Os::File::Status fileStatus = file.read(this->m_sequenceBuffer.getBuffAddr(), expectedReadLen);
 
@@ -162,11 +172,8 @@ Fw::Success FpySequencer::readBytes(Os::File& file, FwSizeType readLen, bool upd
         return Fw::Success::FAILURE;
     }
 
-    if (static_cast<FwSignedSizeType>(readLen) > expectedReadLen) {
-        // somehow we read in MORE bytes than we asked for... should probably fail
-        this->log_WARNING_HI_FileReadError(this->m_sequenceFilePath, static_cast<I32>(Os::File::Status::OTHER_ERROR));
-        return Fw::Success::FAILURE;
-    }
+    // should probably fail if we read in MORE bytes than we ask for
+    FW_ASSERT(readLen == static_cast<FwSizeType>(expectedReadLen), static_cast<FwAssertArgType>(readLen), static_cast<FwAssertArgType>(expectedReadLen));
 
     Fw::SerializeStatus serializeStatus = this->m_sequenceBuffer.setBuffLen(static_cast<Fw::Serializable::SizeType>(readLen));
     FW_ASSERT(serializeStatus == Fw::FW_SERIALIZE_OK, serializeStatus);

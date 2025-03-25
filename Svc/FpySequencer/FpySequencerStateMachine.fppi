@@ -106,10 +106,6 @@ state machine SequencerStateMachine {
         # commands         #
         ####################
         @ cancelled the sequence while it was validating
-        # TODO remove support for this? validate is an atomic action, so we still wait for
-        # validate to complete... but if we don't have this, then it means if we send RUN
-        # and then CANCEL, and the CANCEL arrives in VALIDATING, the seq doesn't get cancelled..
-        # i think we have to have it here...
         on cmd_CANCEL do { report_seqCancelled, sendCmdResponse_EXECUTION_ERROR } enter IDLE
     }
 
@@ -163,21 +159,21 @@ state machine SequencerStateMachine {
     signal checkTimersIn
     @ raised when we are done sleeping
     signal result_checkShouldWake_wakeup
+    @ raised when we should keep sleeping
+    signal result_checkShouldWake_keepSleeping
     @ raised when an operation could not be performed on a Fw::Time object due to a
     @ mismatched time base or context
     signal result_timeOpFailed
-    @ a directive is telling the sequencer to go to sleep
-    signal directiveResponse_beginSleep
-    @ a directive successfully executed
-    signal directiveResponse_success
-    @ a directive failed to execute
-    signal directiveResponse_failure
-    @ called when the expected cmd response comes in, and it is OK. only raised in the RUNNING.AWAITING_CMD_RESPONSE state
-    signal cmdResponse_success
-    @ called when the expected cmd response comes in, and it is not OK. only raised in the RUNNING.AWAITING_CMD_RESPONSE state
-    signal cmdResponse_failure
+    @ a statement is telling the sequencer to go to sleep
+    signal stmtResponse_beginSleep
+    @ called when the expected statement response comes in, and it is OK. only raised in the RUNNING.AWAITING_CMD_RESPONSE state
+    signal stmtResponse_success
+    @ called when the expected statement response comes in, and it is not OK. only raised in the RUNNING.AWAITING_CMD_RESPONSE state
+    signal stmtResponse_failure
     @ raised when the statement times out, according to the timeout parameter
-    signal statementTimeout
+    signal result_checkStatementTimeout_statementTimeout
+    @ raised when the statement has not timed out yet
+    signal result_checkStatementTimeout_noTimeout
 
     @ sequencer is executing all statements in the sequence
     state RUNNING {
@@ -198,15 +194,13 @@ state machine SequencerStateMachine {
         state AWAITING_STATEMENT_RESPONSE {
             on checkTimersIn do { checkStatementTimeout }
             # -->
-            on statementTimeout do { report_seqTimedOut, sendCmdResponse_EXECUTION_ERROR } enter IDLE
+            on result_checkStatementTimeout_statementTimeout do { report_seqTimedOut, sendCmdResponse_EXECUTION_ERROR } enter IDLE
             on result_timeOpFailed do { report_seqFailed, sendCmdResponse_EXECUTION_ERROR } enter IDLE
+            # result_checkStatementTimeout_noTimeout not handled, no need
 
-            on cmdResponse_success enter DISPATCH_STATEMENT
-            on cmdResponse_failure do { report_seqFailed, sendCmdResponse_EXECUTION_ERROR } enter IDLE
-
-            on directiveResponse_success enter DISPATCH_STATEMENT
-            on directiveResponse_beginSleep enter SLEEPING
-            on directiveResponse_failure do { report_seqFailed, sendCmdResponse_EXECUTION_ERROR } enter IDLE
+            on stmtResponse_success enter DISPATCH_STATEMENT
+            on stmtResponse_failure do { report_seqFailed, sendCmdResponse_EXECUTION_ERROR } enter IDLE
+            on stmtResponse_beginSleep enter SLEEPING
         }
 
         @ sequencer is not taking any action, waiting for a time in the future to continue
@@ -216,7 +210,7 @@ state machine SequencerStateMachine {
             on result_checkShouldWake_wakeup enter DISPATCH_STATEMENT
             # this can occur if the time base/ctx changes, or was invalid from the start
             on result_timeOpFailed do { report_seqFailed, sendCmdResponse_EXECUTION_ERROR } enter IDLE
-            # if neither is raised, just stay asleep
+            # if keepSleeping is raised, stay asleep
         }
 
         ####################

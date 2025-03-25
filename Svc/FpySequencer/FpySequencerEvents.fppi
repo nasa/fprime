@@ -45,6 +45,12 @@ event WrongCRC(
     severity warning low \
     format "Expected CRC {}, actual was {}"
 
+event TooManyBytes(
+    remaining: U32
+) \
+    severity warning low \
+    format "File had {} extra bytes at the end"
+
 event InvalidSequence(filePath: string) \
     severity warning high \
     format "Failed to validate sequence {}"

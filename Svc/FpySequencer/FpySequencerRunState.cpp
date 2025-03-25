@@ -4,10 +4,11 @@
 #include "Svc/FpySequencer/StatementTypeEnumAc.hpp"
 namespace Svc {
 
-void FpySequencer::dispatchStatement() {
+using Signal = FpySequencer_SequencerStateMachineStateMachineBase::Signal;
+
+Signal FpySequencer::dispatchStatement() {
     if (this->m_runtime.nextStatementIndex == this->m_sequenceObj.getheader().getstatementCount()) {
-        this->sequencer_sendSignal_result_dispatchStatement_noMoreStatements();
-        return;
+        return Signal::result_dispatchStatement_noMoreStatements;
     }
 
     // check to make sure no array out of bounds
@@ -22,29 +23,17 @@ void FpySequencer::dispatchStatement() {
     // based on the statement type (directive or cmd)
     // send it to where it needs to go
     if (nextStatement.gettype() == Fpy::StatementType::DIRECTIVE) {
-        // the problem is that this is both parsing and completely executing
-        // the directive. i think we need to split it up into parsing and
-        // executing. by the time this line executes, the directive could be completely done
         result = this->dispatchDirective(nextStatement);
     } else {
-        // whereas this one just sends the cmd out. there's no chance we see the signal
-        // come in until this func finishes, cuz it has to go on the queue
         result = this->dispatchCommand(nextStatement);
     }
 
     if (result == Fw::Success::SUCCESS) {
         this->m_tlm.statementsDispatched++;
-        this->sequencer_sendSignal_result_dispatchStatement_success();
+        return Signal::result_dispatchStatement_success;
     } else {
-        this->sequencer_sendSignal_result_dispatchStatement_failure();
+        return Signal::result_dispatchStatement_failure;
     }
-    // was it dispatched successfully?
-    // no -> IDLE
-    // what state should we go to next?
-    // (await cmd, sleep, step statement)
-    // cmd -> await cmd
-    // wait_rel/abs -> sleep
-    // if, goto, etc -> step statement
 }
 
 // dispatches a command out via port.
@@ -115,6 +104,84 @@ Fw::Success FpySequencer::dispatchDirective(const Fpy::Statement& stmt) {
         }
     }
     return Fw::Success::SUCCESS;
+}
+
+Signal FpySequencer::checkShouldWake() {
+    Fw::Time currentTime = this->getTime();
+
+    if (currentTime.getTimeBase() != this->m_runtime.wakeupTime.getTimeBase()) {
+        // cannot compare these times.
+        this->log_WARNING_LO_MismatchedTimeBase(currentTime.getTimeBase(), this->m_runtime.wakeupTime.getTimeBase());
+
+        return Signal::result_timeOpFailed;
+    }
+
+    if (currentTime.getContext() != this->m_runtime.wakeupTime.getContext()) {
+        // cannot compare these times.
+        this->log_WARNING_LO_MismatchedTimeContext(currentTime.getContext(), this->m_runtime.wakeupTime.getContext());
+
+        return Signal::result_timeOpFailed;
+    }
+
+    printf("wakeup %d %d current %d %d\n", m_runtime.wakeupTime.getSeconds(), m_runtime.wakeupTime.getUSeconds(), currentTime.getSeconds(), currentTime.getUSeconds());
+
+    if (currentTime < this->m_runtime.wakeupTime) {
+        // not time to wake up!
+        return Signal::result_checkShouldWake_keepSleeping;
+    }
+
+    // say we've finished our sleep
+    return Signal::result_checkShouldWake_wakeup;
+}
+
+// checks whether the currently executing statement timed out
+Signal FpySequencer::checkStatementTimeout() {
+    Fw::ParamValid valid;
+    F32 timeout = this->paramGet_STATEMENT_TIMEOUT_SECS(valid);
+    if (timeout <= 0 || timeout > static_cast<F32>(std::numeric_limits<U32>::max())) {
+        // no timeout
+        return Signal::result_checkStatementTimeout_noTimeout;
+    }
+
+    Fw::Time currentTime = getTime();
+
+    if (currentTime.getTimeBase() != this->m_runtime.currentStatementDispatchTime.getTimeBase()) {
+        // can't compare time base. must have changed
+        this->log_WARNING_LO_MismatchedTimeBase(currentTime.getTimeBase(),
+                                                this->m_runtime.currentStatementDispatchTime.getTimeBase());
+        return Signal::result_timeOpFailed;
+    }
+    if (currentTime.getContext() != this->m_runtime.currentStatementDispatchTime.getContext()) {
+        // can't compare time ctx. must have changed
+        this->log_WARNING_LO_MismatchedTimeContext(currentTime.getContext(),
+                                                   this->m_runtime.currentStatementDispatchTime.getContext());
+        return Signal::result_timeOpFailed;
+    }
+
+    if (this->m_runtime.currentStatementDispatchTime.getSeconds() > currentTime.getSeconds()) {
+        // somehow we've gone back in time... just ignore it and move on. should get fixed
+        // if we wait I guess
+        return Signal::result_checkStatementTimeout_noTimeout;
+    }
+
+    if (this->m_runtime.currentStatementDispatchTime.getSeconds() == currentTime.getSeconds() && 
+        this->m_runtime.currentStatementDispatchTime.getUSeconds() > currentTime.getUSeconds()) {
+        // same as above
+        return Signal::result_checkStatementTimeout_noTimeout;
+    }
+
+    U64 currentUSeconds = currentTime.getSeconds() * 1000000 + currentTime.getUSeconds();
+    U64 dispatchUSeconds = this->m_runtime.currentStatementDispatchTime.getSeconds() * 1000000 + 
+                           this->m_runtime.currentStatementDispatchTime.getUSeconds();
+
+    U64 timeoutUSeconds = static_cast<U64>(timeout * 1000000.0f);
+
+    if (currentUSeconds - dispatchUSeconds < timeoutUSeconds) {
+        // not over timeout
+        return Signal::result_checkStatementTimeout_noTimeout;
+    }
+
+    return Signal::result_checkStatementTimeout_statementTimeout;
 }
 
 }  // namespace Svc
