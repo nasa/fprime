@@ -162,7 +162,7 @@ namespace Svc {
         for(int i = 0; i < 5; i++)
         {
           // Get length of buffer to read
-          FwSizeType length = sizeof(U16);
+          FwSizeType length = static_cast<FwSizeType>(sizeof(U16));
           ret = file.read(buf, length);
           ASSERT_EQ(Os::File::OP_OK, ret);
           ASSERT_EQ(length, static_cast<FwSizeType>(sizeof(U16)));
@@ -185,7 +185,7 @@ namespace Svc {
         }
 
         // Make sure we reached the end of the file:
-        FwSizeType length = static_cast<FwSizeType>(sizeof(FwSizeType));
+        FwSizeType length = static_cast<FwSizeType>(sizeof(U16));
         ret = file.read(buf, length);
         ASSERT_EQ(Os::File::OP_OK,ret);
         ASSERT_EQ(length, 0);
@@ -296,7 +296,7 @@ namespace Svc {
         }
 
         // Make sure we reached the end of the file:
-        FwSizeType length = sizeof(FwSizeType);
+        FwSizeType length = static_cast<FwSizeType>(sizeof(U16));
         ret = file.read(buf, length);
         ASSERT_EQ(Os::File::OP_OK,ret);
         ASSERT_EQ(length, 0);

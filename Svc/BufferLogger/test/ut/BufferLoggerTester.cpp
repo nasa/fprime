@@ -284,7 +284,7 @@ namespace Svc {
     U8 buf[expectedSize];
     for (U32 i = 0; i < expectedNumBuffers; ++i) {
       // Get length of buffer to read
-      FwSizeType length = sizeof(SIZE_TYPE);
+      FwSizeType length = static_cast<FwSizeType>(sizeof(SIZE_TYPE));
       Os::File::Status status = file.read(buf, length);
       ASSERT_EQ(Os::File::OP_OK, status);
       ASSERT_EQ(sizeof(SIZE_TYPE), static_cast<U32>(length));

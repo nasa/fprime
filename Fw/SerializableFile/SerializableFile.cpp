@@ -35,7 +35,7 @@ namespace Fw {
     Os::File file;
     Os::File::Status status;
     status = file.open(fileName, Os::File::OPEN_READ);
-    if( Os::File::OP_OK != status ) {
+    if(Os::File::OP_OK != status) {
       return FILE_OPEN_ERROR;
     }
 
@@ -73,7 +73,7 @@ namespace Fw {
 
     FwSizeType length = this->m_buffer.getBuffLength();
     status = file.write(this->m_buffer.getBuffAddr(), length);
-    if(Os::File::OP_OK != status) {
+    if((Os::File::OP_OK != status) || (length != this->m_buffer.getBuffLength())) {
       file.close();
       return FILE_WRITE_ERROR;
     }

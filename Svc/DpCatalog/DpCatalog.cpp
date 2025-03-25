@@ -350,7 +350,6 @@ namespace Svc {
         FW_ASSERT(serStat == Fw::FW_SERIALIZE_OK,serStat);
         // write the entry
         FwSizeType size = entryBuffer.getBuffLength();
-        // Protect against overflow
         stat = stateFile.write(buffer, size);
         if (stat != Os::File::OP_OK) {
             this->log_WARNING_HI_StateFileWriteError(this->m_stateFile, stat);

@@ -23,8 +23,8 @@ struct Tester {
     //! State data for an open OS file.
     //!
     struct FileState {
-        FwSizeType size = -1;
-        FwSizeType position = -1;
+        FwSizeType size = std::numeric_limits<FwSizeType>::max();
+        FwSizeType position = std::numeric_limits<FwSizeType>::max();
     };
 
     //! Assert in File.cpp for searching death text

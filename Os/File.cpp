@@ -130,6 +130,8 @@ File::Status File::seek_absolute(FwSizeType offset) {
     Os::File::Status status = File::Status::OTHER_ERROR;
     // If the offset can be represented by a signed value, then we can perform a single seek
     if (static_cast<FwSizeType>(std::numeric_limits<FwSignedSizeType>::max()) >= offset) {
+        // Check that the bounding above is correct
+        FW_ASSERT(static_cast<FwSignedSizeType>(offset) >= 0);
         status = this->seek(static_cast<FwSignedSizeType>(offset), File::SeekType::ABSOLUTE);
     }
     // Otherwise, a full seek to any value represented by FwSizeType can be performed
