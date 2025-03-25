@@ -102,7 +102,7 @@ TEST_F(Interface, Close) {
 
 // Ensure that Os::File properly routes close calls to the `sizeInternal` function.
 TEST_F(Interface, Size) {
-    FwSizeType sizeResult = -1;
+    FwSizeType sizeResult = std::numeric_limits<FwSizeType>::max();
     Os::File file;
     Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
     ASSERT_EQ(file.open("/does/not/matter", Os::File::OPEN_CREATE, Os::File::OverwriteType::OVERWRITE), Os::File::OP_OK);
@@ -114,7 +114,7 @@ TEST_F(Interface, Size) {
 
 // Ensure that Os::File properly routes close calls to the `positionInternal` function.
 TEST_F(Interface, Position) {
-    FwSizeType positionResult = -1;
+    FwSizeType positionResult = std::numeric_limits<FwSizeType>::max();
     Os::File file;
     Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
     ASSERT_EQ(file.open("/does/not/matter", Os::File::OPEN_CREATE, Os::File::OverwriteType::OVERWRITE), Os::File::OP_OK);
