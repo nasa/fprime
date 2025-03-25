@@ -123,8 +123,6 @@ Signal FpySequencer::checkShouldWake() {
         return Signal::result_timeOpFailed;
     }
 
-    printf("wakeup %d %d current %d %d\n", m_runtime.wakeupTime.getSeconds(), m_runtime.wakeupTime.getUSeconds(), currentTime.getSeconds(), currentTime.getUSeconds());
-
     if (currentTime < this->m_runtime.wakeupTime) {
         // not time to wake up!
         return Signal::result_checkShouldWake_keepSleeping;
