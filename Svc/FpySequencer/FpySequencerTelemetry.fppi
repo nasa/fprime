@@ -10,7 +10,8 @@ telemetry StatementsDispatched: U64 update always
 @ the number of statements that failed to execute
 telemetry StatementsFailed: U64 update always
 
-telemetry SeqPath: string size 240 update always
+@ the currently running sequence
+telemetry SeqPath: string size FileNameStringSize update always
 
 @ value of prm STATEMENT_TIMEOUT_SECS
 telemetry STATEMENT_TIMEOUT_SECS: F32 update always

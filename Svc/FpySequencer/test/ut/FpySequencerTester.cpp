@@ -30,6 +30,8 @@ void FpySequencerTester::test_waitRel() {
     setTestTime(testTime);
     component.directive_waitRel_internalInterfaceInvoke(directive);
     component.doDispatch();
+
+    
     // TODO how to assert on sm signal?
 }
 

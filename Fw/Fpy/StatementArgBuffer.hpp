@@ -15,7 +15,7 @@ namespace Fw {
                 SERIALIZED_SIZE = FW_STATEMENT_ARG_BUFFER_MAX_SIZE + sizeof(FwBuffSizeType)
             };
 
-            StatementArgBuffer(const U8 *args, NATIVE_UINT_TYPE size);
+            StatementArgBuffer(const U8 *args, FwSizeType size);
             StatementArgBuffer();
             StatementArgBuffer(const StatementArgBuffer& other);
             virtual ~StatementArgBuffer();

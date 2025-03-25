@@ -4,7 +4,7 @@
 
 namespace Fw {
 
-    StatementArgBuffer::StatementArgBuffer(const U8 *args, NATIVE_UINT_TYPE size) {
+    StatementArgBuffer::StatementArgBuffer(const U8 *args, FwSizeType size) {
         SerializeStatus stat = SerializeBufferBase::setBuff(args,size);
         FW_ASSERT(FW_SERIALIZE_OK == stat,static_cast<FwAssertArgType>(stat));
     }
@@ -64,7 +64,7 @@ namespace Fw {
 
 #if FW_SERIALIZABLE_TO_STRING
     void StatementArgBuffer::toString(Fw::StringBase& text) const {
-        static const char * formatString = "(data = %p, size = %u)";
+        static const char * formatString = "(data = %p, size = %" PRI_FwSizeType ")";
         text.format(formatString, &this->m_bufferData, this->getBuffLength());
     }
 #endif

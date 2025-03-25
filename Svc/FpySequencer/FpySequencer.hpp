@@ -20,6 +20,9 @@
 #include "Svc/FpySequencer/SequenceSerializableAc.hpp"
 #include "Svc/FpySequencer/StatementSerializableAc.hpp"
 
+static_assert(Svc::Fpy::MAX_SEQUENCE_ARG_COUNT <= std::numeric_limits<U8>::max(), "Sequence arg count must be below U8 max");
+static_assert(Svc::Fpy::MAX_SEQUENCE_STATEMENT_COUNT <= std::numeric_limits<U16>::max(), "Sequence statement count must be below U16 max");
+
 namespace Svc {
 
 class FpySequencer : public FpySequencerComponentBase {

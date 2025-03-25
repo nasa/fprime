@@ -196,7 +196,7 @@ typedef FwIndexType FwQueueSizeType;
 
 // This allows tracing calls through ports for debugging
 #ifndef FW_PORT_TRACING
-#define FW_PORT_TRACING 0  //!< Indicates whether port calls are traced (more code, more visibility into execution)
+#define FW_PORT_TRACING 1  //!< Indicates whether port calls are traced (more code, more visibility into execution)
 #endif
 
 // This generates code to connect to serialized ports

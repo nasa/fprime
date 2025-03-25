@@ -33,8 +33,8 @@ void FpySequencer::RUN_cmdHandler(FwOpcodeType opCode,               //!< The op
 
     if (block == FpySequencer_BlockState::BLOCK) {
         // save the opCode and cmdSeq so we can respond later
-        m_savedOpCode = opCode;
-        m_savedCmdSeq = cmdSeq;
+        this->m_savedOpCode = opCode;
+        this->m_savedCmdSeq = cmdSeq;
     }
 
     this->sequencer_sendSignal_cmd_RUN(FpySequencer_SequenceExecutionArgs(fileName, block));
@@ -61,8 +61,8 @@ void FpySequencer::VALIDATE_cmdHandler(FwOpcodeType opCode,              //!< Th
 
     // validate always blocks until finished, so save opcode/cmdseq
     // so we can respond once done
-    m_savedOpCode = opCode;
-    m_savedCmdSeq = cmdSeq;
+    this->m_savedOpCode = opCode;
+    this->m_savedCmdSeq = cmdSeq;
 
     this->sequencer_sendSignal_cmd_VALIDATE(
         FpySequencer_SequenceExecutionArgs(fileName, FpySequencer_BlockState::BLOCK));
@@ -85,8 +85,8 @@ void FpySequencer::RUN_VALIDATED_cmdHandler(
 
     if (block == FpySequencer_BlockState::BLOCK) {
         // save the opCode and cmdSeq so we can respond later
-        m_savedOpCode = opCode;
-        m_savedCmdSeq = cmdSeq;
+        this->m_savedOpCode = opCode;
+        this->m_savedCmdSeq = cmdSeq;
     }
 
     this->sequencer_sendSignal_cmd_RUN_VALIDATED(FpySequencer_SequenceExecutionArgs(m_sequenceFilePath, block));
@@ -136,15 +136,15 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
                                          U32 cmdSeq,                      //!< Command Sequence
                                          const Fw::CmdResponse& response  //!< The command response argument
 ) {
-    if (sequencer_getState() !=
+    if (this->sequencer_getState() !=
         FpySequencer_SequencerStateMachineStateMachineBase::State::RUNNING_AWAITING_STATEMENT_RESPONSE) {
-        this->log_WARNING_LO_UnexpectedStatementResponseForState(static_cast<I32>(sequencer_getState()), opCode,
+        this->log_WARNING_LO_UnexpectedStatementResponseForState(static_cast<I32>(this->sequencer_getState()), opCode,
                                                                  response);
         // ignore it, hopefully that wasn't important :D
         return;
     }
-    if (opCode != m_runtime.currentStatementOpcode) {
-        this->log_WARNING_LO_WrongStatementResponseOpcode(m_runtime.currentStatementOpcode, opCode, response);
+    if (opCode != this->m_runtime.currentStatementOpcode) {
+        this->log_WARNING_LO_WrongStatementResponseOpcode(this->m_runtime.currentStatementOpcode, opCode, response);
         // uh oh... we're awaiting a cmd but got the wrong one back...
         // not much we can do but keep waiting
         return;
@@ -162,11 +162,11 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
 void FpySequencer::tlmWrite_handler(FwIndexType portNum,  //!< The port number
                                     U32 context           //!< The call order
 ) {
-    this->tlmWrite_StatementsDispatched(m_tlm.statementsDispatched);
-    this->tlmWrite_StatementsFailed(m_tlm.statementsFailed);
-    this->tlmWrite_SequencesSucceeded(m_tlm.sequencesSucceeded);
-    this->tlmWrite_SequencesFailed(m_tlm.sequencesFailed);
-    this->tlmWrite_SeqPath(m_sequenceFilePath);
+    this->tlmWrite_StatementsDispatched(this->m_tlm.statementsDispatched);
+    this->tlmWrite_StatementsFailed(this->m_tlm.statementsFailed);
+    this->tlmWrite_SequencesSucceeded(this->m_tlm.sequencesSucceeded);
+    this->tlmWrite_SequencesFailed(this->m_tlm.sequencesFailed);
+    this->tlmWrite_SeqPath(this->m_sequenceFilePath);
 }
 
 void FpySequencer::parametersLoaded() {

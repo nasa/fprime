@@ -1,5 +1,5 @@
 struct SequenceExecutionArgs {
-    filePath: string
+    filePath: string size FileNameStringSize
     $block: BlockState
 }
 

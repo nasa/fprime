@@ -5,17 +5,17 @@
 namespace Svc {
 
 void FpySequencer::dispatchStatement() {
-    if (m_runtime.nextStatementIndex == m_sequenceObj.getheader().getstatementCount()) {
+    if (this->m_runtime.nextStatementIndex == this->m_sequenceObj.getheader().getstatementCount()) {
         this->sequencer_sendSignal_result_dispatchStatement_noMoreStatements();
         return;
     }
 
     // check to make sure no array out of bounds
-    FW_ASSERT(m_runtime.nextStatementIndex < m_sequenceObj.getheader().getstatementCount());
+    FW_ASSERT(this->m_runtime.nextStatementIndex < this->m_sequenceObj.getheader().getstatementCount());
 
-    const Fpy::Statement& nextStatement = m_sequenceObj.getstatements()[m_runtime.nextStatementIndex];
-    m_runtime.nextStatementIndex++;
-    m_runtime.currentStatementOpcode = nextStatement.getopCode();
+    const Fpy::Statement& nextStatement = this->m_sequenceObj.getstatements()[this->m_runtime.nextStatementIndex];
+    this->m_runtime.nextStatementIndex++;
+    this->m_runtime.currentStatementOpcode = nextStatement.getopCode();
 
     bool result;
 
@@ -25,15 +25,15 @@ void FpySequencer::dispatchStatement() {
         // the problem is that this is both parsing and completely executing
         // the directive. i think we need to split it up into parsing and
         // executing. by the time this line executes, the directive could be completely done
-        result = dispatchDirective(nextStatement);
+        result = this->dispatchDirective(nextStatement);
     } else {
         // whereas this one just sends the cmd out. there's no chance we see the signal
         // come in until this func finishes, cuz it has to go on the queue
-        result = dispatchCommand(nextStatement);
+        result = this->dispatchCommand(nextStatement);
     }
 
     if (result) {
-        m_tlm.statementsDispatched++;
+        this->m_tlm.statementsDispatched++;
         this->sequencer_sendSignal_result_dispatchStatement_success();
     } else {
         this->sequencer_sendSignal_result_dispatchStatement_failure();
@@ -94,7 +94,7 @@ bool FpySequencer::dispatchDirective(const Fpy::Statement& stmt) {
                                                                argBuf.getBuffLength());
                 return false;
             }
-            directive_waitRel_internalInterfaceInvoke(directive);
+            this->directive_waitRel_internalInterfaceInvoke(directive);
             break;
         }
         case Fpy::DirectiveId::WAIT_ABS: {
@@ -105,7 +105,7 @@ bool FpySequencer::dispatchDirective(const Fpy::Statement& stmt) {
                                                                argBuf.getBuffLength());
                 return false;
             }
-            directive_waitAbs_internalInterfaceInvoke(directive);
+            this->directive_waitAbs_internalInterfaceInvoke(directive);
             break;
         }
         default: {

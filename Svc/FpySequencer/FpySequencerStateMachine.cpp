@@ -24,7 +24,7 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_setSequenceFile
     Svc_FpySequencer_SequencerStateMachine::Signal signal,  //!< The signal
     const Svc::FpySequencer_SequenceExecutionArgs& value    //!< The value
 ) {
-    m_sequenceFilePath = value.getfilePath();
+    this->m_sequenceFilePath = value.getfilePath();
 }
 
 //! Implementation for action setSequenceBlockState of state machine
@@ -36,7 +36,7 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_setSequenceBloc
     Svc_FpySequencer_SequencerStateMachine::Signal signal,  //!< The signal
     const Svc::FpySequencer_SequenceExecutionArgs& value    //!< The value
 ) {
-    m_sequenceBlockState = value.getblock();
+    this->m_sequenceBlockState = value.getblock();
 }
 
 //! Implementation for action report_seqSucceeded of state machine
@@ -47,8 +47,8 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_report_seqSucce
     SmId smId,                                             //!< The state machine id
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) {
-    m_tlm.sequencesSucceeded++;
-    this->log_ACTIVITY_HI_SequenceDone(m_sequenceFilePath);
+    this->m_tlm.sequencesSucceeded++;
+    this->log_ACTIVITY_HI_SequenceDone(this->m_sequenceFilePath);
 }
 
 //! Implementation for action report_seqCancelled of state machine
@@ -59,8 +59,8 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_report_seqCance
     SmId smId,                                             //!< The state machine id
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) {
-    m_tlm.sequencesFailed++;
-    this->log_ACTIVITY_HI_SequenceCancelled(m_sequenceFilePath);
+    this->m_tlm.sequencesFailed++;
+    this->log_ACTIVITY_HI_SequenceCancelled(this->m_sequenceFilePath);
 }
 
 //! Implementation for action report_invalidCmd of state machine
@@ -83,7 +83,7 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_report_invalidS
     SmId smId,                                             //!< The state machine id
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) {
-    this->log_WARNING_HI_InvalidSequence(m_sequenceFilePath);
+    this->log_WARNING_HI_InvalidSequence(this->m_sequenceFilePath);
 }
 
 //! Implementation for action report_seqFailed of state machine
@@ -94,8 +94,8 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_report_seqFaile
     SmId smId,                                             //!< The state machine id
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) {
-    m_tlm.sequencesFailed++;
-    this->log_WARNING_LO_SequenceFailed(m_sequenceFilePath);
+    this->m_tlm.sequencesFailed++;
+    this->log_WARNING_LO_SequenceFailed(this->m_sequenceFilePath);
 }
 
 //! Implementation for action dispatchStatement of state machine
@@ -117,7 +117,7 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_setGoalState_RU
     SmId smId,                                             //!< The state machine id
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) {
-    m_goalState = FpySequencer_GoalState::RUNNING;
+    this->m_goalState = FpySequencer_GoalState::RUNNING;
 }
 
 //! Implementation for action setGoalState_VALID of state machine
@@ -128,7 +128,7 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_setGoalState_VA
     SmId smId,                                             //!< The state machine id
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) {
-    m_goalState = FpySequencer_GoalState::VALID;
+    this->m_goalState = FpySequencer_GoalState::VALID;
 }
 
 //! Implementation for action setGoalState_IDLE of state machine
@@ -139,7 +139,7 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_setGoalState_ID
     SmId smId,                                             //!< The state machine id
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) {
-    m_goalState = FpySequencer_GoalState::IDLE;
+    this->m_goalState = FpySequencer_GoalState::IDLE;
 }
 
 //! Implementation for action sendCmdResponse_OK of state machine
@@ -152,7 +152,7 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_sendCmdResponse
 ) {
     if (this->m_sequenceBlockState == FpySequencer_BlockState::BLOCK) {
         // respond if we were waiting on a response
-        this->cmdResponse_out(m_savedOpCode, m_savedCmdSeq, Fw::CmdResponse::OK);
+        this->cmdResponse_out(this->m_savedOpCode, this->m_savedCmdSeq, Fw::CmdResponse::OK);
     }
 }
 
@@ -166,7 +166,7 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_sendCmdResponse
 ) {
     if (this->m_sequenceBlockState == FpySequencer_BlockState::BLOCK) {
         // respond if we were waiting on a response
-        this->cmdResponse_out(m_savedOpCode, m_savedCmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        this->cmdResponse_out(this->m_savedOpCode, this->m_savedCmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
     }
 }
 
@@ -178,7 +178,7 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_resetRuntime(
     SmId smId,                                             //!< The state machine id
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) {
-    m_runtime = Runtime();
+    this->m_runtime = Runtime();
 }
 
 //! Implementation for action validate of state machine
@@ -207,23 +207,23 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_checkShouldWake
 ) {
     Fw::Time currentTime = this->getTime();
 
-    if (currentTime.getTimeBase() != m_runtime.wakeupTime.getTimeBase()) {
+    if (currentTime.getTimeBase() != this->m_runtime.wakeupTime.getTimeBase()) {
         // cannot compare these times.
-        this->log_WARNING_LO_MismatchedTimeBase(currentTime.getTimeBase(), m_runtime.wakeupTime.getTimeBase());
+        this->log_WARNING_LO_MismatchedTimeBase(currentTime.getTimeBase(), this->m_runtime.wakeupTime.getTimeBase());
 
         this->sequencer_sendSignal_result_timeOpFailed();
         return;
     }
 
-    if (currentTime.getContext() != m_runtime.wakeupTime.getContext()) {
+    if (currentTime.getContext() != this->m_runtime.wakeupTime.getContext()) {
         // cannot compare these times.
-        this->log_WARNING_LO_MismatchedTimeContext(currentTime.getContext(), m_runtime.wakeupTime.getContext());
+        this->log_WARNING_LO_MismatchedTimeContext(currentTime.getContext(), this->m_runtime.wakeupTime.getContext());
 
         this->sequencer_sendSignal_result_timeOpFailed();
         return;
     }
 
-    if (currentTime < m_runtime.wakeupTime) {
+    if (currentTime < this->m_runtime.wakeupTime) {
         // not time to wake up!
         return;
     }
@@ -248,25 +248,25 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_checkStatementT
 
     Fw::Time currentTime = getTime();
 
-    if (currentTime.getTimeBase() != m_runtime.currentStatementDispatchTime.getTimeBase()) {
+    if (currentTime.getTimeBase() != this->m_runtime.currentStatementDispatchTime.getTimeBase()) {
         // can't compare time base. must have changed
         this->log_WARNING_LO_MismatchedTimeBase(currentTime.getTimeBase(),
-                                                m_runtime.currentStatementDispatchTime.getTimeBase());
+                                                this->m_runtime.currentStatementDispatchTime.getTimeBase());
         this->sequencer_sendSignal_result_timeOpFailed();
         return;
     }
-    if (currentTime.getContext() != m_runtime.currentStatementDispatchTime.getContext()) {
+    if (currentTime.getContext() != this->m_runtime.currentStatementDispatchTime.getContext()) {
         // can't compare time ctx. must have changed
         this->log_WARNING_LO_MismatchedTimeContext(currentTime.getContext(),
-                                                   m_runtime.currentStatementDispatchTime.getContext());
+                                                   this->m_runtime.currentStatementDispatchTime.getContext());
         this->sequencer_sendSignal_result_timeOpFailed();
         return;
     }
 
     F64 currentTimeSecs =
         static_cast<F64>(currentTime.getSeconds()) + static_cast<F64>(currentTime.getUSeconds()) / 1000000;
-    F64 dispatchTimeSecs = static_cast<F64>(m_runtime.currentStatementDispatchTime.getSeconds()) +
-                           static_cast<F64>(m_runtime.currentStatementDispatchTime.getUSeconds()) / 1000000;
+    F64 dispatchTimeSecs = static_cast<F64>(this->m_runtime.currentStatementDispatchTime.getSeconds()) +
+                           static_cast<F64>(this->m_runtime.currentStatementDispatchTime.getUSeconds()) / 1000000;
 
     if (currentTimeSecs - dispatchTimeSecs >= timeout) {
         // timed out
@@ -281,8 +281,8 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_report_seqTimed
     SmId smId,                                             //!< The state machine id
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) {
-    m_tlm.sequencesFailed++;
-    this->log_WARNING_LO_SequenceTimedOut(m_sequenceFilePath);
+    this->m_tlm.sequencesFailed++;
+    this->log_WARNING_LO_SequenceTimedOut(this->m_sequenceFilePath);
 }
 
 //! Implementation for action clearSequenceFile of state machine Svc_FpySequencer_SequencerStateMachine
@@ -307,7 +307,7 @@ bool FpySequencer::Svc_FpySequencer_SequencerStateMachine_guard_goalStateIs_RUNN
     SmId smId,                                             //!< The state machine id
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) const {
-    return m_goalState == FpySequencer_GoalState::RUNNING;
+    return this->m_goalState == FpySequencer_GoalState::RUNNING;
 }
 
 }  // namespace Svc
