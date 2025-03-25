@@ -11,6 +11,7 @@
 #include "Fw/Types/MemAllocator.hpp"
 #include "Fw/Types/StringBase.hpp"
 #include "Fw/Types/WaitEnumAc.hpp"
+#include "Fw/Types/SuccessEnumAc.hpp"
 #include "Os/File.hpp"
 #include "Svc/FpySequencer/DirectiveIdEnumAc.hpp"
 #include "Svc/FpySequencer/FooterSerializableAc.hpp"
@@ -368,14 +369,14 @@ class FpySequencer : public FpySequencerComponentBase {
     );
 
     // loads the sequence in memory, and does header/crc/integrity checks.
-    // return true if sequence is valid
-    bool validate();
+    // return success if sequence is valid
+    Fw::Success validate();
 
     // reads some bytes from the open file into the m_sequenceBuffer.
     // updates the CRC by default, but can be turned off if the contents
     // aren't included in CRC.
-    // return true if successful
-    bool readBytes(Os::File& file, FwSizeType readLen, bool updateCRC = true);
+    // return success if successful
+    Fw::Success readBytes(Os::File& file, FwSizeType readLen, bool updateCRC = true);
 
     // ----------------------------------------------------------------------
     // Run state
@@ -385,12 +386,12 @@ class FpySequencer : public FpySequencerComponentBase {
     void dispatchStatement();
 
     // dispatches a command out via port.
-    // return true if successfully dispatched.
-    bool dispatchCommand(const Fpy::Statement& stmt);
+    // return success if successfully dispatched.
+    Fw::Success dispatchCommand(const Fpy::Statement& stmt);
 
     // dispatches a sequencer directive to the right handler.
-    // return true if successfully handled.
-    bool dispatchDirective(const Fpy::Statement& stmt);
+    // return success if successfully handled.
+    Fw::Success dispatchDirective(const Fpy::Statement& stmt);
 
     // ----------------------------------------------------------------------
     // Directives

@@ -1,3 +1,4 @@
+#include <new>
 #include "Svc/FpySequencer/FpySequencer.hpp"
 namespace Svc {
 
@@ -178,7 +179,9 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_resetRuntime(
     SmId smId,                                             //!< The state machine id
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) {
-    this->m_runtime = Runtime();
+    // explicitly call dtor
+    this->m_runtime.~Runtime();
+    new (&this->m_runtime) Runtime();
 }
 
 //! Implementation for action validate of state machine
@@ -190,8 +193,8 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_validate(
     SmId smId,                                             //!< The state machine id
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) {
-    bool result = this->validate();
-    if (!result) {
+    Fw::Success result = this->validate();
+    if (result == Fw::Success::FAILURE) {
         this->sequencer_sendSignal_result_failure();
         return;
     }

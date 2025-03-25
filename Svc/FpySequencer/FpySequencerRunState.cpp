@@ -17,7 +17,7 @@ void FpySequencer::dispatchStatement() {
     this->m_runtime.nextStatementIndex++;
     this->m_runtime.currentStatementOpcode = nextStatement.getopCode();
 
-    bool result;
+    Fw::Success result;
 
     // based on the statement type (directive or cmd)
     // send it to where it needs to go
@@ -32,7 +32,7 @@ void FpySequencer::dispatchStatement() {
         result = this->dispatchCommand(nextStatement);
     }
 
-    if (result) {
+    if (result == Fw::Success::SUCCESS) {
         this->m_tlm.statementsDispatched++;
         this->sequencer_sendSignal_result_dispatchStatement_success();
     } else {
@@ -49,25 +49,25 @@ void FpySequencer::dispatchStatement() {
 
 // dispatches a command out via port.
 // return true if successfully dispatched.
-bool FpySequencer::dispatchCommand(const Fpy::Statement& stmt) {
+Fw::Success FpySequencer::dispatchCommand(const Fpy::Statement& stmt) {
     Fw::ComBuffer cmdBuf;
     Fw::SerializeStatus stat = cmdBuf.serialize(Fw::ComPacket::FW_PACKET_COMMAND);
     if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
         this->log_WARNING_HI_SerializeError(cmdBuf.getBuffCapacity(), cmdBuf.getBuffLength(),
                                             sizeof(Fw::ComPacket::FW_PACKET_COMMAND), stat);
-        return false;
+        return Fw::Success::FAILURE;
     }
     stat = cmdBuf.serialize(stmt.getopCode());
     if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
         this->log_WARNING_HI_SerializeError(cmdBuf.getBuffCapacity(), cmdBuf.getBuffLength(), sizeof(stmt.getopCode()),
                                             stat);
-        return false;
+        return Fw::Success::FAILURE;
     }
     stat = cmdBuf.serialize(stmt.getargBuf().getBuffAddr(), stmt.getargBuf().getBuffLength(), true);
     if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
         this->log_WARNING_HI_SerializeError(cmdBuf.getBuffCapacity(), cmdBuf.getBuffLength(),
                                             stmt.getargBuf().getBuffLength(), stat);
-        return false;
+        return Fw::Success::FAILURE;
     }
 
     // little note--theoretically this could produce a cmdResponse before we send the
@@ -75,10 +75,10 @@ bool FpySequencer::dispatchCommand(const Fpy::Statement& stmt) {
     // always get processed first, leaving us in the right state for the cmdresponse
     this->cmdOut_out(0, cmdBuf, 0);
 
-    return true;
+    return Fw::Success::SUCCESS;
 }
 
-bool FpySequencer::dispatchDirective(const Fpy::Statement& stmt) {
+Fw::Success FpySequencer::dispatchDirective(const Fpy::Statement& stmt) {
     Fw::SerializeStatus status;
     // make our own esb so we can deser from stmt without breaking its constness
     Fw::ExternalSerializeBuffer argBuf(const_cast<U8*>(stmt.getargBuf().getBuffAddr()),
@@ -92,7 +92,7 @@ bool FpySequencer::dispatchDirective(const Fpy::Statement& stmt) {
             if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || argBuf.getBuffLeft() != 0) {
                 this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), status, argBuf.getBuffLeft(),
                                                                argBuf.getBuffLength());
-                return false;
+                return Fw::Success::FAILURE;
             }
             this->directive_waitRel_internalInterfaceInvoke(directive);
             break;
@@ -103,7 +103,7 @@ bool FpySequencer::dispatchDirective(const Fpy::Statement& stmt) {
             if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || argBuf.getBuffLeft() != 0) {
                 this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), status, argBuf.getBuffLeft(),
                                                                argBuf.getBuffLength());
-                return false;
+                return Fw::Success::FAILURE;
             }
             this->directive_waitAbs_internalInterfaceInvoke(directive);
             break;
@@ -111,10 +111,10 @@ bool FpySequencer::dispatchDirective(const Fpy::Statement& stmt) {
         default: {
             // unsure what this opcode is. check compiler version matches sequencer
             this->log_WARNING_HI_UnknownSequencerDirective(stmt.getopCode());
-            return false;
+            return Fw::Success::FAILURE;
         }
     }
-    return true;
+    return Fw::Success::SUCCESS;
 }
 
 }  // namespace Svc
