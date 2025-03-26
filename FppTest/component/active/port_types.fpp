@@ -50,15 +50,11 @@ port PrimitiveReturn(
   ref bRef: bool
 ) -> U32
 
-# Commented out because of bug in Python component autocoder
-# Will be tested with the FPP component autocoder
-# @ A port returning a string type
-# port StringReturn(
-#   str80: string @< A string of size 80
-#   ref str80Ref: string
-#   str100: string size 100 @< A string of size 100
-#   ref str100Ref: string size 100
-# ) -> string
+@ A port returning a string type
+port StringReturn(
+  str: string @< A string
+  ref strRef: string @< A string ref
+) -> string
 
 @ A port returning an enum type
 port EnumReturn(

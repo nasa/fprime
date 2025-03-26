@@ -22,9 +22,9 @@ template<Fw::StringBase::SizeType size> class StringTemplate final : public Stri
 
     StringTemplate() : StringBase() { *this = ""; }
 
-    explicit StringTemplate(const StringTemplate& src) : StringBase() { *this = src; }
+    StringTemplate(const StringTemplate& src) : StringBase() { *this = src; }
 
-    explicit StringTemplate(const StringBase& src) : StringBase() { *this = src; }
+    StringTemplate(const StringBase& src) : StringBase() { *this = src; }
 
     explicit StringTemplate(const char* src) : StringBase() { *this = src; }
 
