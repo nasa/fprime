@@ -52,6 +52,12 @@ void Tester ::connectPorts() {
     // enumReturnSync
     this->connect_to_enumReturnSync(0, this->component.get_enumReturnSync_InputPort(0));
 
+    // stringReturnGuarded
+    this->connect_to_stringReturnGuarded(0, this->component.get_stringReturnGuarded_InputPort(0));
+
+    // stringReturnSync
+    this->connect_to_stringReturnSync(0, this->component.get_stringReturnSync_InputPort(0));
+
     // noArgsGuarded
     for (FwIndexType i = 0; i < 2; ++i) {
         this->connect_to_noArgsGuarded(i, this->component.get_noArgsGuarded_InputPort(i));
@@ -129,6 +135,9 @@ void Tester ::connectPorts() {
 
     // enumReturnOut
     this->component.set_enumReturnOut_OutputPort(0, this->get_from_enumReturnOut(0));
+
+    // stringReturnOut
+    this->component.set_stringReturnOut_OutputPort(0, this->get_from_stringReturnOut(0));
 
     // eventOut
     this->component.set_eventOut_OutputPort(0, this->get_from_eventOut(0));

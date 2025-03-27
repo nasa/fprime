@@ -82,6 +82,22 @@
     );
   }
 
+  Fw::String ActiveTest ::stringReturnGuarded_handler(
+      FwIndexType portNum,
+      const Fw::StringBase& str,
+      Fw::StringBase& strRef
+  ) {
+      return this->stringReturnOut_out(portNum, str, strRef);
+  }
+
+  Fw::String ActiveTest ::stringReturnSync_handler(
+      FwIndexType portNum,
+      const Fw::StringBase& str,
+      Fw::StringBase& strRef
+  ) {
+      return this->stringReturnOut_out(portNum, str, strRef);
+  }
+
   void ActiveTest ::
     structArgsAsync_handler(
         const FwIndexType portNum,
@@ -91,6 +107,7 @@
   {
     this->structArgsOut_out(portNum, s, sRef);
   }
+
   void ActiveTest ::
     stringArgsAsync_handler(
         const FwIndexType portNum,
@@ -147,16 +164,6 @@
     )
   {
     return this->arrayReturnOut_out(portNum, a, aRef);
-  }
-
-  void ActiveTest :: 
-    cmdOut_handler(
-        FwIndexType portNum,
-        FwOpcodeType opCode,
-        U32 cmdSeq,
-        Fw::CmdArgBuffer& args
-    )
-  {
   }
 
   void ActiveTest ::

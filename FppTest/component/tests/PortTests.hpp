@@ -31,6 +31,7 @@
     PORT_TEST_INVOKE_DECL(PORT_KIND, NoParamReturn)    \
     PORT_TEST_INVOKE_DECL(PORT_KIND, PrimitiveReturn)  \
     PORT_TEST_INVOKE_DECL(PORT_KIND, EnumReturn)       \
+    PORT_TEST_INVOKE_DECL(PORT_KIND, StringReturn)     \
     PORT_TEST_INVOKE_DECL(PORT_KIND, ArrayReturn)      \
     PORT_TEST_INVOKE_DECL(PORT_KIND, StructReturn)
 
@@ -60,6 +61,7 @@
     PORT_TEST_CHECK_DECL(PORT_KIND, NoParamReturn)    \
     PORT_TEST_CHECK_DECL(PORT_KIND, PrimitiveReturn)  \
     PORT_TEST_CHECK_DECL(PORT_KIND, EnumReturn)       \
+    PORT_TEST_CHECK_DECL(PORT_KIND, StringReturn)     \
     PORT_TEST_CHECK_DECL(PORT_KIND, ArrayReturn)      \
     PORT_TEST_CHECK_DECL(PORT_KIND, StructReturn)
 
@@ -162,6 +164,16 @@
         FormalParamEnum returnVal = this->invoke_to_enumReturn##PORT_KIND(portNum, port.args.val1, port.args.val2);   \
                                                                                                                       \
         ASSERT_EQ(returnVal, this->enumReturnVal.val);                                                                \
+    }                                                                                                                 \
+                                                                                                                      \
+    void Tester ::test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::StringReturn& port) {          \
+        ASSERT_TRUE(component.isConnected_stringReturnOut_OutputPort(portNum));                                       \
+        ASSERT_TRUE(this->isConnected_to_stringReturn##PORT_KIND(portNum));                                           \
+                                                                                                                      \
+        decltype(this->stringReturnVal.val) returnVal =                                                               \
+            this->invoke_to_stringReturn##PORT_KIND(portNum, port.args.val1, port.args.val2);                         \
+                                                                                                                      \
+        ASSERT_EQ(returnVal, this->stringReturnVal.val);                                                              \
     }                                                                                                                 \
                                                                                                                       \
     void Tester ::test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::ArrayReturn& port) {           \
@@ -610,6 +622,12 @@
         ASSERT_FROM_PORT_HISTORY_SIZE(1);                                                                 \
         ASSERT_from_enumReturnOut_SIZE(1);                                                                \
         ASSERT_from_enumReturnOut(0, port.args.val1, port.args.val2);                                     \
+    }                                                                                                     \
+                                                                                                          \
+    void Tester ::test##PORT_KIND##PortCheck(FppTest::Types::StringReturn& port) {                        \
+        ASSERT_FROM_PORT_HISTORY_SIZE(1);                                                                 \
+        ASSERT_from_stringReturnOut_SIZE(1);                                                              \
+        ASSERT_from_stringReturnOut(0, port.args.val1, port.args.val2);                                   \
     }                                                                                                     \
                                                                                                           \
     void Tester ::test##PORT_KIND##PortCheck(FppTest::Types::ArrayReturn& port) {                         \

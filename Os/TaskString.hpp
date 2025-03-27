@@ -19,9 +19,9 @@ class TaskString final : public Fw::StringBase {
 
     TaskString() : StringBase() { *this = ""; }
 
-    explicit TaskString(const TaskString& src) : StringBase() { *this = src; }
+    TaskString(const TaskString& src) : StringBase() { *this = src; }
 
-    explicit TaskString(const StringBase& src) : StringBase() { *this = src; }
+    TaskString(const StringBase& src) : StringBase() { *this = src; }
 
     explicit TaskString(const char* src) : StringBase() { *this = src; }
 

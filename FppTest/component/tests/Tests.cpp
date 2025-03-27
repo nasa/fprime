@@ -31,6 +31,7 @@ using TypedPortTestImplementations = ::testing::Types<FppTest::Types::NoParams,
                                                       FppTest::Types::NoParamReturn,
                                                       FppTest::Types::PrimitiveReturn,
                                                       FppTest::Types::EnumReturn,
+                                                      FppTest::Types::StringReturn,
                                                       FppTest::Types::ArrayReturn,
                                                       FppTest::Types::StructReturn>;
 

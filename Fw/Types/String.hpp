@@ -24,9 +24,9 @@ class String final : public StringBase {
 
     String() : StringBase() { *this = ""; }
 
-    explicit String(const String& src) : StringBase() { *this = src; }
+    String(const String& src) : StringBase() { *this = src; }
 
-    explicit String(const StringBase& src) : StringBase() { *this = src; }
+    String(const StringBase& src) : StringBase() { *this = src; }
 
     String(const char* src) : StringBase() { *this = src; }
 

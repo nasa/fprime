@@ -31,7 +31,7 @@ jobs:
       - uses: ./.github/actions/setup
 
       - name: Install cppcheck
-        run: sudo apt-get install cppcheck xsltproc -y
+        run: sudo apt-get update && sudo apt-get install cppcheck xsltproc -y
 
       - name: Install sarif tool
         run: npm i -g @microsoft/sarif-multitool

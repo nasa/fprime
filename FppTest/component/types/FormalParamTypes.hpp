@@ -207,6 +207,19 @@ struct PrmStringTypes {
     Fw::ParamString val2;
 };
 
+struct StringType {
+    StringType();
+
+    String1 val;
+};
+
+struct StringTypes {
+    StringTypes();
+
+    String1 val1;
+    String1 val2;
+};
+
 // ----------------------------------------------------------------------
 // Serial type
 // ----------------------------------------------------------------------
@@ -260,6 +273,7 @@ typedef FormalParams<SerialType> SerialParam;
 typedef FormalParamsWithReturn<Empty, BoolType> NoParamReturn;
 typedef FormalParamsWithReturn<PrimitiveTypes, U32Type> PrimitiveReturn;
 typedef FormalParamsWithReturn<EnumTypes, EnumType> EnumReturn;
+typedef FormalParamsWithReturn<StringTypes, StringType> StringReturn;
 typedef FormalParamsWithReturn<ArrayTypes, ArrayType> ArrayReturn;
 typedef FormalParamsWithReturn<StructTypes, StructType> StructReturn;
 
