@@ -1,10 +1,18 @@
 #include <FpConfig.hpp>
 #include <gtest/gtest.h>
 
-#undef ASSERT_RELATIVE_PATH
+/**
+ * \file: AssertTypesTest.h
+ * \author Vince Woo
+ * \brief Tests for FW_ASSERT_LEVEL fall back when ASSERT_FILE_ID or 
+ *        ASSERT_RELATIVE_PATH are missing. 
+ */
 
-#undef FW_ASSERT_LEVEL
-#define FW_ASSERT_LEVEL FW_RELATIVE_PATH_ASSERT
+#if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
+#undef ASSERT_FILE_ID
+#elif FW_ASSERT_LEVEL == FW_RELATIVE_PATH_ASSERT
+#undef ASSERT_RELATIVE_PATH
+#endif
 
 #include <Fw/Types/Assert.hpp>
 
@@ -26,11 +34,6 @@ class TestAssertHook : public Fw::AssertHook {
             this->m_lineNo = lineNo;
             this->m_numArgs = numArgs;
             this->m_arg1 = arg1;
-            this->m_arg2 = arg2;
-            this->m_arg3 = arg3;
-            this->m_arg4 = arg4;
-            this->m_arg5 = arg5;
-            this->m_arg6 = arg6;
         };
 
         void doAssert() { this->m_asserted = true; }
@@ -43,16 +46,6 @@ class TestAssertHook : public Fw::AssertHook {
 
         FwAssertArgType getArg1() { return this->m_arg1; }
 
-        FwAssertArgType getArg2() { return this->m_arg2; }
-
-        FwAssertArgType getArg3() { return this->m_arg3; }
-
-        FwAssertArgType getArg4() { return this->m_arg4; }
-
-        FwAssertArgType getArg5() { return this->m_arg5; }
-
-        FwAssertArgType getArg6() { return this->m_arg6; }
-
         bool asserted() {
             bool didAssert = this->m_asserted;
             this->m_asserted = false;
@@ -60,27 +53,37 @@ class TestAssertHook : public Fw::AssertHook {
         }
 
     private:
+#if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
+        // Setting this to a non-zero initially as the test
+        // should set it to 0.
+        FILE_NAME_ARG m_file = 1; 
+#else
         FILE_NAME_ARG m_file = nullptr;
+#endif
         FwSizeType m_lineNo = 0;
         FwSizeType m_numArgs = 0;
         FwAssertArgType m_arg1 = 0;
-        FwAssertArgType m_arg2 = 0;
-        FwAssertArgType m_arg3 = 0;
-        FwAssertArgType m_arg4 = 0;
-        FwAssertArgType m_arg5 = 0;
-        FwAssertArgType m_arg6 = 0;
         bool m_asserted = false;
     };
 
-TEST(RelativePathAssertTest, RelativePathAssertTest) {
+
+//
+TEST(AssertTypesTest, FileDefaultTest) {
     // register the class
     TestAssertHook hook;
     hook.registerHook();
 
     // issue an assert
-    FW_ASSERT(0==1);
+    FW_ASSERT(0);
     // hook should have intercepted it
     ASSERT_TRUE(hook.asserted());
-    // file saved in assert should be eq to __FILE__
-    ASSERT_STREQ(__FILE__, hook.getFile());
+
+#if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
+    // ASSERT_FILE_ID was undefined above, it should have defaulted to 0
+    ASSERT_EQ(0, hook.getFile());
+#elif FW_ASSERT_LEVEL == FW_RELATIVE_PATH_ASSERT
+    // ASSERT_RELATIVE_PATH was undefined above, it should have defaulted
+    // to the full path
+    ASSERT_EQ(__FILE__, hook.getFile());
+#endif
 }
