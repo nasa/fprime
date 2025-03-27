@@ -9,7 +9,6 @@
 // acknowledged.
 // ======================================================================
 // Provides access to autocoded functions
-#include <Ref/Top/RefPacketsAc.hpp>
 #include <Ref/Top/RefTopologyAc.hpp>
 
 // Necessary project-specified types
