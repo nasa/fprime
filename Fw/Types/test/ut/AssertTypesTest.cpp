@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 
 /**
- * \file: AssertTypesTest.h
+ * \file AssertTypesTest.h
  * \author Vince Woo
  * \brief Tests for FW_ASSERT_LEVEL fall back when ASSERT_FILE_ID or 
  *        ASSERT_RELATIVE_PATH are missing. 
