@@ -11,11 +11,10 @@
 #ifndef FPCONFIG_H_
 #define FPCONFIG_H_
 
-#include <Fw/Types/BasicTypes.h>
-
 #ifdef  __cplusplus
 extern "C" {
 #endif
+#include <types/PlatformTypes.h>
 
 // ----------------------------------------------------------------------
 // Type aliases

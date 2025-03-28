@@ -205,6 +205,8 @@ function(fprime_setup_included_code)
     add_library(Fpp INTERFACE)
 
     # Specific configuration handling
+    set(FPRIME_CURRENT_MODULE FPrimePlatformTypes)
+    add_subdirectory("${FPRIME_PLATFORM_MODULE_DIRECTORY}")
     set(FPRIME_CURRENT_MODULE config)
     add_subdirectory("${FPRIME_CONFIG_DIR}" "${CMAKE_BINARY_DIR}/config")
 
