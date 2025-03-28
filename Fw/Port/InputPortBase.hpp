@@ -1,7 +1,7 @@
 #ifndef FW_INPUT_PORT_BASE_HPP
 #define FW_INPUT_PORT_BASE_HPP
 
-#include <FpConfig.hpp>
+#include <Fw/Types.hpp>
 #include <Fw/Obj/ObjBase.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <Fw/Comp/PassiveComponentBase.hpp>

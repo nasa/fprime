@@ -6,7 +6,7 @@
 
 
 #include "ActiveTest.hpp"
-#include <FpConfig.hpp>
+#include <Fw/Types.hpp>
 
 #include "FppTest/component/active/SerialPortIndexEnumAc.hpp"
 

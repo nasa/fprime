@@ -11,7 +11,7 @@
 // ======================================================================
 
 #include <RPI/RpiDemo/RpiDemoComponentImpl.hpp>
-#include <FpConfig.hpp>
+#include <Fw/Types.hpp>
 #include <ctype.h>
 
 namespace RPI {

@@ -1,6 +1,6 @@
 #include <Fw/Comp/PassiveComponentBase.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <FpConfig.hpp>
+#include <Fw/Types.hpp>
 
 #include <Fw/Types/ExternalString.hpp>
 

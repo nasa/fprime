@@ -7,7 +7,7 @@
  * @author mstarch
  */
 
-#include <FpConfig.hpp>
+#include <Fw/Types.hpp>
 #include <Utils/Types/CircularBuffer.hpp>
 
 #ifndef FPRIME_CIRCULARSTATE_HPP

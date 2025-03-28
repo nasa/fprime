@@ -11,7 +11,7 @@
 // ======================================================================
 
 #include <Svc/Health/HealthComponentImpl.hpp>
-#include <FpConfig.hpp>
+#include <Fw/Types.hpp>
 #include <Fw/Types/Assert.hpp>
 
 namespace Svc {

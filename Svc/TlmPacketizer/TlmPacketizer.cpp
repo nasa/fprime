@@ -8,7 +8,7 @@
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
 
-#include <FpConfig.hpp>
+#include <Fw/Types.hpp>
 #include <Fw/Com/ComPacket.hpp>
 #include <Svc/TlmPacketizer/TlmPacketizer.hpp>
 

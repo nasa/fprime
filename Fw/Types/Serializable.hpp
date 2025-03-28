@@ -5,7 +5,7 @@
 #include <iostream>
 #endif
 
-#include <FpConfig.hpp>
+#include <Fw/Types.hpp>
 #include "Fw/Deprecate.hpp"
 
 namespace Fw {

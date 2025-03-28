@@ -1,4 +1,4 @@
-#include <FpConfig.hpp>
+#include <Fw/Types.hpp>
 #include <Fw/Comp/ActiveComponentBase.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Os/TaskString.hpp>

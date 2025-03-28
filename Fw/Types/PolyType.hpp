@@ -1,7 +1,7 @@
 #ifndef FW_POLY_TYPE_HPP
 #define FW_POLY_TYPE_HPP
 
-#include <FpConfig.hpp>
+#include <Fw/Types.hpp>
 #include <Fw/Cfg/SerIds.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <Fw/Types/StringType.hpp>

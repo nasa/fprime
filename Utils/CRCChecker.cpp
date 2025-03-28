@@ -9,7 +9,7 @@
 // acknowledged.
 // ======================================================================
 
-#include <FpConfig.hpp>
+#include <Fw/Types.hpp>
 #include <Utils/CRCChecker.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Os/File.hpp>

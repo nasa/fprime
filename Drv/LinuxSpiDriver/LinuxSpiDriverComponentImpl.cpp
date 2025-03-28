@@ -11,7 +11,7 @@
 // ======================================================================
 
 #include <Drv/LinuxSpiDriver/LinuxSpiDriverComponentImpl.hpp>
-#include <FpConfig.hpp>
+#include <Fw/Types.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/FileNameString.hpp>
 #include <cstdint>

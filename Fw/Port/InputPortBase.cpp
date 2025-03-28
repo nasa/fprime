@@ -1,4 +1,4 @@
-#include <FpConfig.hpp>
+#include <Fw/Types.hpp>
 #include <Fw/Port/InputPortBase.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <cstdio>

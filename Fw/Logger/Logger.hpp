@@ -8,7 +8,7 @@
  */
 #ifndef Fw_Logger_hpp_
 #define Fw_Logger_hpp_
-#include <FpConfig.hpp>
+#include <Fw/Types.hpp>
 #include <Fw/Deprecate.hpp>
 #include <Fw/Types/StringBase.hpp>
 

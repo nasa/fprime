@@ -5,7 +5,7 @@
 // ======================================================================
 #ifndef SVC_FPRIME_FRAME_DETECTOR_HPP
 #define SVC_FPRIME_FRAME_DETECTOR_HPP
-#include <FpConfig.hpp>
+#include <Fw/Types.hpp>
 #include <Utils/Types/CircularBuffer.hpp>
 
 namespace Svc {

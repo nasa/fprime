@@ -10,7 +10,7 @@
 //
 // ======================================================================
 
-#include <FpConfig.hpp>
+#include <Fw/Types.hpp>
 #include <Svc/Framer/Framer.hpp>
 #include "Fw/Logger/Logger.hpp"
 #include "Utils/Hash/Hash.hpp"

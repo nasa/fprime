@@ -1,4 +1,4 @@
-#include <FpConfig.hpp>
+#include <Fw/Types.hpp>
 
 #include <Autocoders/Python/test/stress/TestCommandImpl.hpp>
 #include <Autocoders/Python/test/stress/TestCommandSourceImpl.hpp>
