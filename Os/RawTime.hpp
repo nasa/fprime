@@ -5,7 +5,7 @@
 #ifndef OS_RAWTIME_HPP_
 #define OS_RAWTIME_HPP_
 
-#include <Fw/Types.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Time/TimeInterval.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <Os/Os.hpp>

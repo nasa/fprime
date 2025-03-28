@@ -1,5 +1,5 @@
 #include <Ref/RecvBuffApp/RecvBuffComponentImpl.hpp>
-#include <Fw/Types.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Os/Console.hpp>
 #include <Fw/Types/Assert.hpp>
 

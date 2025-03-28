@@ -12,7 +12,7 @@
 
 #include <Svc/FileUplink/FileUplink.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <Fw/Types.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 namespace Svc {
 

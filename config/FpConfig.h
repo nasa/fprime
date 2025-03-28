@@ -14,7 +14,9 @@
 #ifdef  __cplusplus
 extern "C" {
 #endif
-#include <types/PlatformTypes.h>
+#include <Platform/PlatformTypes.h>
+#include <Fw/Types/BasicTypes.h>
+
 
 // ----------------------------------------------------------------------
 // Type aliases

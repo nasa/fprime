@@ -14,7 +14,7 @@
 
 #include <Svc/ActiveRateGroup/ActiveRateGroup.hpp>
 #include <ActiveRateGroupCfg.hpp>
-#include <Fw/Types.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Os/Console.hpp>
 

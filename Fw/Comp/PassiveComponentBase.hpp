@@ -3,7 +3,7 @@
 
 #include <Fw/Obj/ObjBase.hpp>
 #include <Fw/Types/Serializable.hpp>
-#include <Fw/Types.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 namespace Fw {
 

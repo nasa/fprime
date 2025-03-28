@@ -12,7 +12,7 @@
 
 #include <limits>
 #include <Drv/TcpServer/TcpServerComponentImpl.hpp>
-#include <Fw/Types.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include "Fw/Types/Assert.hpp"
 #include "Fw/Logger/Logger.hpp"
 

@@ -5,7 +5,7 @@
  */
 #ifndef FW_STRINGUTILS_HPP
 #define FW_STRINGUTILS_HPP
-#include <Fw/Types.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 namespace Fw {
 namespace StringUtils {

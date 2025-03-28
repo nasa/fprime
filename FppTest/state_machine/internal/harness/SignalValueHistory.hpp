@@ -14,7 +14,7 @@
 #ifndef FppTest_SmHarness_SignalValueHistory_HPP
 #define FppTest_SmHarness_SignalValueHistory_HPP
 
-#include <Fw/Types.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <array>
 
 #include "FppTest/state_machine/internal/harness/History.hpp"

@@ -12,7 +12,7 @@
 
 
 #include <Svc/FatalHandler/FatalHandlerComponentImpl.hpp>
-#include <Fw/Types.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 namespace Svc {
 

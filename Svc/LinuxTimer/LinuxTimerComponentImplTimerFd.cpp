@@ -12,7 +12,7 @@
 
 #include <Fw/Logger/Logger.hpp>
 #include <Svc/LinuxTimer/LinuxTimerComponentImpl.hpp>
-#include <Fw/Types.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <sys/timerfd.h>
 #include <unistd.h>
 #include <cerrno>

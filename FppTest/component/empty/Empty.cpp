@@ -6,7 +6,7 @@
 
 
 #include "Empty.hpp"
-#include <Fw/Types.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 
 // ----------------------------------------------------------------------

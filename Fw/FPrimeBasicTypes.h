@@ -1,27 +1,30 @@
 // ======================================================================
-// \title  Fw/Types.hpp
+// \title  Fw/FPrimeBasicTypes.h
 // \author mstarch
-// \brief  hpp file for core types used in F Prime
+// \brief  header file for basic types used in F Prime
 //
 // \copyright
-// Copyright 2024, by the California Institute of Technology.
+// Copyright 2025, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
 //
-// FPrime defines a numer of baisic types, platfrom configurable types,
+// FPrime defines a numer of basic types, platform configurable types,
 // and project configurable types. This file provides a single header
 // users can import for using these types.
 //
 // This header is intended to be C-compatible.
 //
 // ======================================================================
-#ifndef FW_TYPES_H
-#define FW_TYPES_H
+#ifndef FPRIME_BASIC_TYPES_H
+#define FPRIME_BASIC_TYPES_H
 
 #ifdef  __cplusplus
 extern "C" {
 #endif
+#include <Fw/Types/BasicTypes.hpp>
+#include <Platform/PlatformTypes.h>
 #include <FpConfig.h>
+
 
 // ----------------------------------------------------------------------
 // Type aliases defined by FPP
@@ -49,11 +52,11 @@ extern "C" {
 #include <config/FwTlmPacketizeIdTypeAliasAc.h>
 #include <config/FwTraceIdTypeAliasAc.h>
 
-// DO NOT TOUCH.  These types are specified for backwards naming compatibility.
+// Backwards naming compatibility.
 typedef FwSizeStoreType FwBuffSizeType;
 #define PRI_FwBuffSizeType PRI_FwSizeStoreType
 
 #ifdef  __cplusplus
 }
 #endif
-#endif  // FW_TYPES_H
+#endif // FPRIME_BASIC_TYPES_H

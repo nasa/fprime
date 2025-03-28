@@ -5,7 +5,7 @@
 // ======================================================================
 
 #include "Svc/FprimeDeframer/FprimeDeframer.hpp"
-#include "Fw/Types.hpp"
+#include "Fw/FPrimeBasicTypes.hpp"
 #include "Fw/Types/Assert.hpp"
 
 #include "Svc/FprimeProtocol/FrameHeaderSerializableAc.hpp"

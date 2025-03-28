@@ -10,7 +10,7 @@
 #define DEVICESM_H_
                                 
 #include <Fw/Sm/SmSignalBuffer.hpp>
-#include <Fw/Types.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
                                  
 namespace FppTest {
 

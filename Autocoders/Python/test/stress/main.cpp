@@ -1,4 +1,4 @@
-#include <Fw/Types.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 #include <Autocoders/Python/test/stress/TestCommandImpl.hpp>
 #include <Autocoders/Python/test/stress/TestCommandSourceImpl.hpp>

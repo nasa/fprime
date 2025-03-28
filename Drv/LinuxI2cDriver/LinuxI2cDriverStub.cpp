@@ -11,7 +11,7 @@
 // ======================================================================
 
 #include "Fw/Types/Assert.hpp"
-#include <Fw/Types.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Drv/LinuxI2cDriver/LinuxI2cDriver.hpp>
 
 namespace Drv {

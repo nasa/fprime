@@ -11,7 +11,7 @@
  *   acknowledged.
  */
 
-#include <Fw/Types.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Os/Console.hpp>
 #include <Svc/PassiveRateGroup/PassiveRateGroup.hpp>

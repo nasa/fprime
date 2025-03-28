@@ -1,7 +1,7 @@
 // ======================================================================
-// \title  Fw/Types/BasicTypes.hpp
+// \title  Fw/Types/BasicTypes.h
 // \author mstarch
-// \brief  hpp file for FPrime basic numerical aliases (I8, U64, etc.)
+// \brief  h file for FPrime basic numerical aliases (I8, U64, etc.)
 //
 // \copyright
 // Copyright 2024, by the California Institute of Technology.

@@ -1,5 +1,5 @@
 #include <Fw/Port/PortBase.hpp>
-#include <Fw/Types.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Logger/Logger.hpp>
 #include <cstdio>
 #include "Fw/Types/Assert.hpp"

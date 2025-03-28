@@ -1,5 +1,5 @@
 # ======================================================================
-# \title  Fw/Types.hpp
+# \title  Fw/FPrimeBasicTypes.hpp
 # \author tumbar, mstarch
 # \brief  FPP alias configuration file
 #

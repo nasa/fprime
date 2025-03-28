@@ -5,7 +5,7 @@
 #ifndef Os_Queue_hpp_
 #define Os_Queue_hpp_
 
-#include <Fw/Types.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Obj/ObjBase.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <Os/Mutex.hpp>

@@ -12,7 +12,7 @@
 
 #include <limits>
 #include <Drv/TcpClient/TcpClientComponentImpl.hpp>
-#include <Fw/Types.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include "Fw/Types/Assert.hpp"
 
 

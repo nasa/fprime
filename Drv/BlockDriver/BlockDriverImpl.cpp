@@ -1,5 +1,5 @@
 #include <Drv/BlockDriver/BlockDriverImpl.hpp>
-#include <Fw/Types.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
 
 namespace Drv {

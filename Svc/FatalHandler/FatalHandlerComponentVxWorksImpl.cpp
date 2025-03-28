@@ -11,7 +11,7 @@
 // ======================================================================
 
 #include <Svc/FatalHandler/FatalHandlerComponentImpl.hpp>
-#include <Fw/Types.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <taskLib.h>
 #include <Fw/Logger/Logger.hpp>
 

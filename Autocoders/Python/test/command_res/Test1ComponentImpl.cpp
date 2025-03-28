@@ -12,7 +12,7 @@
 
 
 #include <Autocoders/Python/test/command_res/Test1ComponentImpl.hpp>
-#include <Fw/Types.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 namespace Cmd {
 

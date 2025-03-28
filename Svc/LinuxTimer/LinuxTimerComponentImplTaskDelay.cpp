@@ -12,7 +12,7 @@
 
 
 #include <Svc/LinuxTimer/LinuxTimerComponentImpl.hpp>
-#include <Fw/Types.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Os/Task.hpp>
 
 namespace Svc {

@@ -7,7 +7,7 @@
 #ifndef FW_STRING_TEMPLATE_HPP
 #define FW_STRING_TEMPLATE_HPP
 
-#include <Fw/Types.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 #include "Fw/Types/StringBase.hpp"
 

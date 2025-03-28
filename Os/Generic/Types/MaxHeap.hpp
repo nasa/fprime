@@ -13,7 +13,7 @@
 #ifndef UTILS_TYPES_MAX_HEAP_HPP
 #define UTILS_TYPES_MAX_HEAP_HPP
 
-#include <Fw/Types.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 namespace Types {
 

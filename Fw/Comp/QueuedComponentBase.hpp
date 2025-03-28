@@ -14,7 +14,7 @@
 #include <Fw/Comp/PassiveComponentBase.hpp>
 #include <Os/Queue.hpp>
 #include <Os/Task.hpp>
-#include <Fw/Types.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 
 namespace Fw {

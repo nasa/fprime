@@ -5,7 +5,7 @@
 #ifndef Os_Mutex_hpp
 #define Os_Mutex_hpp
 
-#include <Fw/Types.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Os/Os.hpp>
 
 namespace Os {

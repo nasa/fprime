@@ -12,7 +12,7 @@
 #include <Drv/Ip/UdpSocket.hpp>
 #include <Fw/Logger/Logger.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <Fw/Types.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/StringUtils.hpp>
 
 #ifdef TGT_OS_TYPE_VXWORKS

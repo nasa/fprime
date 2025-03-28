@@ -12,7 +12,7 @@
 
 
 #include <Svc/BufferManager/BufferManagerComponentImpl.hpp>
-#include <Fw/Types.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Buffer/Buffer.hpp>
 #include <new>
