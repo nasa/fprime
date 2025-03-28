@@ -15,15 +15,45 @@
 // This header is intended to be C-compatible.
 //
 // ======================================================================
-#ifndef FW_BASIC_TYPES_H
-#define FW_BASIC_TYPES_H
+#ifndef FW_TYPES_H
+#define FW_TYPES_H
 
 #ifdef  __cplusplus
 extern "C" {
 #endif
 #include <FpConfig.h>
 
+// ----------------------------------------------------------------------
+// Type aliases defined by FPP
+// ----------------------------------------------------------------------
+
+#include <config/FwIndexTypeAliasAc.h>
+#include <config/FwSizeTypeAliasAc.h>
+#include <config/FwSignedSizeTypeAliasAc.h>
+#include <config/FwAssertArgTypeAliasAc.h>
+#include <config/FwTaskPriorityTypeAliasAc.h>
+#include <config/FwQueuePriorityTypeAliasAc.h>
+
+#include <config/FwChanIdTypeAliasAc.h>
+#include <config/FwDpIdTypeAliasAc.h>
+#include <config/FwDpPriorityTypeAliasAc.h>
+#include <config/FwEnumStoreTypeAliasAc.h>
+#include <config/FwEventIdTypeAliasAc.h>
+#include <config/FwOpcodeTypeAliasAc.h>
+#include <config/FwPacketDescriptorTypeAliasAc.h>
+#include <config/FwPrmIdTypeAliasAc.h>
+#include <config/FwSizeStoreTypeAliasAc.h>
+#include <config/FwSizeTypeAliasAc.h>
+#include <config/FwTimeBaseStoreTypeAliasAc.h>
+#include <config/FwTimeContextStoreTypeAliasAc.h>
+#include <config/FwTlmPacketizeIdTypeAliasAc.h>
+#include <config/FwTraceIdTypeAliasAc.h>
+
+// DO NOT TOUCH.  These types are specified for backwards naming compatibility.
+typedef FwSizeStoreType FwBuffSizeType;
+#define PRI_FwBuffSizeType PRI_FwSizeStoreType
+
 #ifdef  __cplusplus
 }
 #endif
-#endif  // FW_BASIC_TYPES_H
+#endif  // FW_TYPES_H

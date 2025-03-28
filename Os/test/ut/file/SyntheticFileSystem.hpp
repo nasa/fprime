@@ -2,7 +2,7 @@
 // \title Os/test/ut/file/SyntheticFileSystem.hpp
 // \brief standard template library driven synthetic file system definitions
 // ======================================================================
-#include <FpConfig.h>
+#include <Fw/Types.hpp>
 #include "Os/File.hpp"
 #include <map>
 #include <memory>

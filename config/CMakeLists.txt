@@ -10,7 +10,4 @@ set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/PolyDbCfg.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/VersionCfg.fpp"
 )
-set(MOD_DEPS
-    FPrimePlatformTypes
-)
 register_fprime_module(config)

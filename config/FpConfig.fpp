@@ -1,3 +1,49 @@
+# ======================================================================
+# \title  Fw/Types.hpp
+# \author tumbar, mstarch
+# \brief  FPP alias configuration file
+#
+# \copyright
+# Copyright 2025, by the California Institute of Technology.
+# ALL RIGHTS RESERVED.  United States Government Sponsorship
+# acknowledged.
+#
+# FPrime uses FPP to define a set of type aliases for various named types
+# used throughout the system. This file is used to configure those types.
+# ======================================================================
+
+####
+# Interger type aliases:
+# Used for the project to override types supplied by the platform for things like sizes, indicies, etc.
+####
+
+@ The unsigned type of larger sizes internal to the software,
+@ e.g., memory buffer sizes, file sizes. Must be unsigned.
+type FwSizeType = PlatformSizeType
+
+@ The signed type of larger sizes internal to the software, used
+@ for signed offsets, e.g., file seek offsets. Must be signed.
+type FwSignedSizeType = PlatformSignedSizeType
+
+@ The type of smaller indicies internal to the software, used
+@ for array indicies, e.g., port indicies. Must be signed.
+type FwIndexType = PlatformIndexType
+
+@ The type of arguments to assert functions.
+type FwAssertArgType = PlatformAssertArgType
+
+@ The type of task priorities used.
+type FwTaskPriorityType = PlatformTaskPriorityType;
+
+@ The type of queue priorities used.
+type FwQueuePriorityType = PlatformQueuePriorityType
+
+
+####
+# GDS type aliases:
+# Used for the project to override types shared with GDSes and other remote systems.
+####
+
 @ The type of a telemetry channel identifier
 type FwChanIdType = U32
 
@@ -21,10 +67,6 @@ type FwPrmIdType = U32
 
 @ The type used to serialize a size value
 type FwSizeStoreType = U16
-
-@ The unsigned type of larger sizes internal to the software,
-@ e.g., memory buffer sizes, file sizes
-type FwSizeType = U32
 
 @ The type used to serialize a time base value
 type FwTimeBaseStoreType = U16

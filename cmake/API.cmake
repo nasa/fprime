@@ -244,7 +244,7 @@ function(register_fprime_module)
     endif()
     # Explicit call to module register
     generate_library("${MODULE_NAME}" "${SOURCE_FILES}" "${MOD_DEPS}")
-    if (TARGET "${MODULE_NAME}" AND NOT MODULE_NAME STREQUAL "FPrimePlatformTypes" )
+    if (TARGET "${MODULE_NAME}" AND NOT MODULE_NAME MATCHES "cmake_platform.*" )
         add_dependencies("${MODULE_NAME}" config)
     endif()
 endfunction(register_fprime_module)

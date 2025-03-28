@@ -4,7 +4,7 @@
 #include <config/FppConstantsAc.hpp>
 #include <limits>
 extern "C" {
-    #include <Fw/Types.hpp>
+    #include <Fw/Types.h>
 }
 
 
@@ -13,4 +13,4 @@ extern "C" {
 #ifndef FW_ASSERT_TEXT_SIZE
 #define FW_ASSERT_TEXT_SIZE FwAssertTextSize  //!< Size of string used to store assert description
 #endif
-#endif
+#endif // FW_TYPES_HPP

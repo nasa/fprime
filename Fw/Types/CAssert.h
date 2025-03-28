@@ -8,7 +8,7 @@
 #ifndef FWCASSERT_HPP_
 #define FWCASSERT_HPP_
 
-#include <FpConfig.h>
+#include <Fw/Types.h>
 
 #ifdef  __cplusplus
 extern "C" {
