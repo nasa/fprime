@@ -62,7 +62,7 @@ namespace Svc {
       this->m_maxSize = maxFileSize;
       this->m_sizeOfSize = sizeOfSize;
 
-      FW_ASSERT(sizeOfSize <= sizeof(FwSizeType), sizeOfSize);
+      FW_ASSERT(sizeOfSize <= sizeof(FwSizeType), static_cast<FwAssertArgType>(sizeOfSize));
       FW_ASSERT(m_maxSize > sizeOfSize, static_cast<FwAssertArgType>(m_maxSize));
   }
 

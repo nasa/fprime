@@ -25,9 +25,9 @@ class FileNameString final : public StringBase {
 
     FileNameString() : StringBase() { *this = ""; }
 
-    explicit FileNameString(const FileNameString& src) : StringBase() { *this = src; }
+    FileNameString(const FileNameString& src) : StringBase() { *this = src; }
 
-    explicit FileNameString(const StringBase& src) : StringBase() { *this = src; }
+    FileNameString(const StringBase& src) : StringBase() { *this = src; }
 
     explicit FileNameString(const char* src) : StringBase() { *this = src; }
 

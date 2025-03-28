@@ -61,7 +61,7 @@ namespace Svc {
       static_cast<FwSizeType>(fileQueueDepth),
       static_cast<FwSizeType>(sizeof(struct FileEntry))
     );
-    FW_ASSERT(stat == Os::Queue::OP_OK, stat);
+    FW_ASSERT(stat == Os::Queue::OP_OK, static_cast<FwAssertArgType>(stat));
   }
 
   void FileDownlink ::
@@ -191,7 +191,8 @@ namespace Svc {
 		  return;
 	  }
 	  //Non-ignored buffers cannot be returned in "DOWNLINK" and "IDLE" state.  Only in "WAIT", "CANCEL" state.
-	  FW_ASSERT(this->m_mode.get() == Mode::WAIT || this->m_mode.get() == Mode::CANCEL, this->m_mode.get());
+	  FW_ASSERT(this->m_mode.get() == Mode::WAIT || this->m_mode.get() == Mode::CANCEL,
+                    static_cast<FwAssertArgType>(this->m_mode.get()));
       //If the last packet has been sent (and is returning now) then finish the file
 	  if (this->m_lastCompletedType == Fw::FilePacket::T_END ||
           this->m_lastCompletedType == Fw::FilePacket::T_CANCEL) {
@@ -494,8 +495,9 @@ namespace Svc {
   void FileDownlink ::
     downlinkPacket()
   {
-      FW_ASSERT(this->m_lastCompletedType != Fw::FilePacket::T_NONE, this->m_lastCompletedType);
-      FW_ASSERT(this->m_mode.get() == Mode::CANCEL || this->m_mode.get() == Mode::DOWNLINK, this->m_mode.get());
+      FW_ASSERT(this->m_lastCompletedType != Fw::FilePacket::T_NONE, static_cast<FwAssertArgType>(this->m_lastCompletedType));
+      FW_ASSERT(this->m_mode.get() == Mode::CANCEL || this->m_mode.get() == Mode::DOWNLINK,
+                static_cast<FwAssertArgType>(this->m_mode.get()));
       //If canceled mode and currently downlinking data then send a cancel packet
       if (this->m_mode.get() == Mode::CANCEL && this->m_lastCompletedType == Fw::FilePacket::T_START) {
           this->sendCancelPacket();
@@ -540,7 +542,7 @@ namespace Svc {
     getBuffer(Fw::Buffer& buffer, PacketType type)
   {
       //Check type is correct
-      FW_ASSERT(type < COUNT_PACKET_TYPE && type >= 0, type);
+      FW_ASSERT(type < COUNT_PACKET_TYPE && type >= 0, static_cast<FwAssertArgType>(type));
       // Wrap the buffer around our indexed memory.
       buffer.setData(this->m_memoryStore[type]);
       buffer.setSize(FILEDOWNLINK_INTERNAL_BUFFER_SIZE);

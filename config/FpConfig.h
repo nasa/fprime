@@ -39,14 +39,6 @@ typedef PlatformSizeType FwSizeType;
 typedef PlatformAssertArgType FwAssertArgType;
 #define PRI_FwAssertArgType PRI_PlatformAssertArgType
 
-// The type of a machine integer. Ordinarily this should be int.
-typedef PlatformIntType FwNativeIntType;
-#define PRI_FwNativeIntType PRI_PlatformIntType
-
-// The type of a machine unsigned integer. Ordinarily this should be unsigned int.
-typedef PlatformUIntType FwNativeUIntType;
-#define PRI_FwNativeUIntType PRI_PlatformUIntType
-
 // Task priority type
 typedef PlatformTaskPriorityType FwTaskPriorityType;
 #define PRI_FwTaskPriorityType PRI_PlatformTaskPriorityType

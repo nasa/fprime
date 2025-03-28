@@ -170,6 +170,23 @@ class Tester : public QueuedTestGTestBase {
                                      */
     );
 
+    //! Handler for from_stringArgsOut
+    //!
+    void from_stringArgsOut_handler(
+        const FwIndexType portNum,
+        const Fw::StringBase &str80,
+        Fw::StringBase &str80Ref,
+        const Fw::StringBase &str100,
+        Fw::StringBase &str100Ref) final;
+
+    //! Handler for from_stringReturnOut
+    //!
+    Fw::String from_stringReturnOut_handler(
+        const FwIndexType portNum,
+        const Fw::StringBase &str,
+        Fw::StringBase &strRef
+    ) final;
+
     //! Handler for from_structArgsOut
     //!
     void from_structArgsOut_handler(const FwIndexType portNum, /*!< The port number*/
@@ -259,6 +276,7 @@ class Tester : public QueuedTestGTestBase {
     FppTest::Types::EnumType enumReturnVal;
     FppTest::Types::ArrayType arrayReturnVal;
     FppTest::Types::StructType structReturnVal;
+    FppTest::Types::StringType stringReturnVal;
 
     // Buffers from serial output ports;
     U8 primitiveData[InputPrimitiveArgsPort::SERIALIZED_SIZE];

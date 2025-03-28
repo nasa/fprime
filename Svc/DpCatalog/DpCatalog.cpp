@@ -14,7 +14,8 @@
 #include <new> // placement new
 
 namespace Svc {
-
+    static_assert(DP_MAX_DIRECTORIES > 0, "Configuration DP_MAX_DIRECTORIES must be positive");
+    static_assert(DP_MAX_FILES > 0, "Configuration DP_MAX_FILES must be positive");
     // ----------------------------------------------------------------------
     // Component construction and destruction
     // ----------------------------------------------------------------------
@@ -319,7 +320,7 @@ namespace Svc {
     void DpCatalog::appendFileState(const DpStateEntry& entry) {
         FW_ASSERT(this->m_stateFileData);
         FW_ASSERT(entry.dir < static_cast<FwIndexType>(this->m_numDirectories),
-            entry.dir,
+            static_cast<FwAssertArgType>(entry.dir),
             static_cast<FwAssertArgType>(this->m_numDirectories)
         );
 
@@ -454,7 +455,7 @@ namespace Svc {
                 static_cast<FwAssertArgType>(this->m_numDpSlots - totalFiles));
 
             // extract metadata for each file
-            for (FwNativeUIntType file = 0; file < filesRead; file++) {
+            for (FwSizeType file = 0; file < filesRead; file++) {
 
                 // only consider files with the DP extension
             

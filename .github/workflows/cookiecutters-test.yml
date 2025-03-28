@@ -55,6 +55,7 @@ jobs:
 
       - name: "Install expect and fprime-bootstrap"
         run: |
+             sudo apt-get update
              sudo apt-get install expect
              pip install git+https://github.com/fprime-community/fprime-bootstrap@${{ needs.get-bootstrap-branch.outputs.target-branch }}
 
