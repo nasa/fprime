@@ -17,6 +17,7 @@ telemetry packets RefPackets {
     Ref.fileDownlink.FilesSent
     Ref.fileDownlink.PacketsSent
     Ref.fileManager.CommandsExecuted
+    # Ref.tlmSend.SendLevel
   }
 
   packet CDHErrors id 2 group 1 {

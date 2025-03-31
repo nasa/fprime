@@ -127,7 +127,7 @@ void configureTopology() {
     dpWriter.configure(dpDir);
 
     // Note: Uncomment when using Svc:TlmPacketizer
-    // tlmSend.setPacketList(RefPacketsPkts, RefPacketsIgnore, 1);
+    // tlmSend.setPacketList(Ref::Ref_RefPacketsTlmPackets::packetList, Ref::Ref_RefPacketsTlmPackets::omittedChannels, 1);
 }
 
 // Public functions for use in main program are namespaced with deployment name Ref
