@@ -33,7 +33,6 @@ Fw::MallocAllocator mallocator;
 
 // The reference topology uses the F´ packet protocol when communicating with the ground and therefore uses the F´
 // framing and deframing implementations.
-Svc::FprimeFraming framing;
 Svc::FrameDetectors::FprimeFrameDetector frameDetector;
 
 
@@ -114,8 +113,6 @@ void configureTopology() {
     dpBuffMgrBins.bins[0].numBuffers = DP_BUFFER_MANAGER_STORE_COUNT;
     dpBufferManager.setup(DP_BUFFER_MANAGER_ID, 0, mallocator, dpBuffMgrBins);
 
-    // Framer and Deframer components need to be passed a protocol handler
-    framer.setup(framing);
     frameAccumulator.configure(frameDetector, 1, mallocator, 2048);
 
     Fw::FileNameString dpDir("./DpCat");

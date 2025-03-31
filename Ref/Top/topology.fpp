@@ -36,7 +36,8 @@ module Ref {
     instance fileUplink
     instance commsBufferManager
     instance frameAccumulator
-    instance framer
+    instance fprimePacketizer
+    instance fprimeFramer
     instance posixTime
     instance pingRcvr
     instance prmDb
@@ -80,13 +81,15 @@ module Ref {
 
     connections Downlink {
 
-      tlmSend.PktSend -> framer.comIn
-      eventLogger.PktSend -> framer.comIn
-      fileDownlink.bufferSendOut -> framer.bufferIn
+      tlmSend.PktSend -> fprimePacketizer.comBufferIn
+      eventLogger.PktSend -> fprimePacketizer.comBufferIn
+      fileDownlink.bufferSendOut -> fprimePacketizer.fileBufferIn
 
-      framer.framedAllocate -> commsBufferManager.bufferGetCallee
-      framer.framedOut -> comm.$send
-      framer.bufferDeallocate -> fileDownlink.bufferReturn
+      fprimePacketizer.packetOut -> fprimeFramer.dataIn
+      fprimePacketizer.fileBufferReturn -> fileDownlink.bufferReturn
+
+      fprimeFramer.bufferAllocate -> commsBufferManager.bufferGetCallee
+      fprimeFramer.framedStreamOut -> comm.$send
 
       comm.deallocate -> commsBufferManager.bufferSendIn
 
