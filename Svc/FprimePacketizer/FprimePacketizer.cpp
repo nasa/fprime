@@ -23,25 +23,27 @@ FprimePacketizer ::~FprimePacketizer() {}
 // ----------------------------------------------------------------------
 
 void FprimePacketizer ::comBufferIn_handler(FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
-    FW_ASSERT(data.getBuffLength() < std::numeric_limits<U32>::max(),
-              static_cast<FwAssertArgType>(data.getBuffLength()));
+    FW_ASSERT(data.getBuffLength() < FW_COM_BUFFER_MAX_SIZE);
     this->packetizeData(data.getBuffAddr(), data.getBuffLength(), NeedTypeSerialization::NO,
                         Fw::ComPacket::FW_PACKET_UNKNOWN);
 }
 
 void FprimePacketizer ::fileBufferIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
+    FW_ASSERT(data.getBuffLength() < FW_COM_BUFFER_MAX_SIZE);
     this->packetizeData(fwBuffer.getData(), fwBuffer.getSize(), NeedTypeSerialization::YES,
                         Fw::ComPacket::FW_PACKET_FILE);
-    this->fileBufferReturn_out(0, fwBuffer);  // goes back to FileDownlink component
+    this->fileBufferReturn_out(0, fwBuffer);  // hand ownership back to FileDownlink component
 }
 
 void FprimePacketizer ::rawDataIn_handler(FwIndexType portNum, Fw::Buffer& data, Fw::Buffer& context) {
-    // TODO: figure out how to actually serialize FW_PACKET_UNKNOWN in this case, instead of using
-    // it as a special value that indicates type is present in ComBuffer
-
-    // Also check size, since we likely will limit to low sizes ... or only allocate/deallocate if big size?
-    this->packetizeData(data.getData(), data.getSize(), NeedTypeSerialization::YES, Fw::ComPacket::FW_PACKET_UNKNOWN);
-    // this->bufferDeallocate_out(0, data);
+    if (data.getSize() > INTERNAL_PACKET_BUFF_MAX_SIZE) {
+        Fw::Logger::log("FprimePacketizer: rawDataIn buffer too large, not sending (size=%d)\n", data.getSize());
+    } else {
+        this->packetizeData(data.getData(), data.getSize(), NeedTypeSerialization::YES, Fw::ComPacket::FW_PACKET_UNKNOWN);
+    }
+    // What to check size against? Should we allocate a new buffer if size is too big? (probably yes?)
+    // memory ownership... what if FprimePacketizer accepts no ownership? Makes interface easier to think about
+    // copies out all the time, and ownership is left to the caller
 }
 
 void FprimePacketizer ::comStatusIn_handler(FwIndexType portNum, Fw::Success& condition) {
@@ -79,6 +81,7 @@ void FprimePacketizer::packetizeData(const U8* const data,
 
     Fw::Buffer context;
     this->packetOut_out(0, m_packetBuffer, context);
+    // TODO: should we zero the buffer here out of safety ?
 }
 
 }  // namespace Svc

@@ -15,7 +15,6 @@ module Svc {
         @ Port receiving indicating the status of framer for receiving more data
         output port comStatusOut: Fw.SuccessCondition
 
-
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #
         ###############################################################################

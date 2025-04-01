@@ -28,27 +28,33 @@ void FprimeFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, Fw::Bu
     FprimeProtocol::FrameHeader header;
     FprimeProtocol::FrameTrailer trailer;
 
+    // Full size of the frame will be size of header + data + trailer
     FwSizeType frameSize = FprimeProtocol::FrameHeader::SERIALIZED_SIZE + data.getSize() + FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
-    // check frame size can be held into Fw::Buffer::Size
-    header.setlengthField(data.getSize());
+    FW_ASSERT(frameSize <= std::numeric_limits<U32>::max(), static_cast<FwAssertArgType>(frameSize));
+    FW_ASSERT(frameSize <= std::numeric_limits<Fw::Buffer::SizeType>::max(), static_cast<FwAssertArgType>(frameSize));
 
+    // Allocate frame buffer
     Fw::Buffer frameBuffer = this->bufferAllocate_out(0, static_cast<Fw::Buffer::SizeType>(frameSize));
-    Fw::SerializeBufferBase& bufferSerializer = frameBuffer.getSerializeRepr();
-
+    Fw::SerializeBufferBase& frameSerializer = frameBuffer.getSerializeRepr();
     Fw::SerializeStatus status;
-    status = bufferSerializer.serialize(header);
+
+    // Serialize the header
+    header.setlengthField(data.getSize());
+    status = frameSerializer.serialize(header);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
-    status = bufferSerializer.serialize(data.getData(), data.getSize(), Fw::Serialization::OMIT_LENGTH);
+    // Serialize the data
+    status = frameSerializer.serialize(data.getData(), data.getSize(), Fw::Serialization::OMIT_LENGTH);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
-    // Calculate and add transmission hash
-    Utils::HashBuffer hash;
-    Utils::Hash::hash(frameBuffer.getData(), frameSize - HASH_DIGEST_LENGTH, hash);
-    trailer.setcrcField(hash.asBigEndianU32());
-    status = bufferSerializer.serialize(trailer);
+    // Serialize the trailer (and calculate the CRC)
+    Utils::HashBuffer hashBuffer;
+    Utils::Hash::hash(frameBuffer.getData(), frameSize - HASH_DIGEST_LENGTH, hashBuffer);
+    trailer.setcrcField(hashBuffer.asBigEndianU32());
+    status = frameSerializer.serialize(trailer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
+    // Send the full frame to the output ports
     this->framedOut_helper(frameBuffer, context);
 }
 

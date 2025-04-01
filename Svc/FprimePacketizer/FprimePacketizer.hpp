@@ -15,10 +15,16 @@ namespace Svc {
 
 class FprimePacketizer final : public FprimePacketizerComponentBase {
 
-  enum NeedTypeSerialization {
-    NO,    //!< Indicates that the packet type does not need to be serialized
-    YES    //!< Indicates that the packet type needs to be serialized (prepended) before the data
-  };
+  public:
+    // ----------------------------------------------------------------------
+    // Types and constants
+    // ----------------------------------------------------------------------
+    enum NeedTypeSerialization {
+      NO,    //!< Indicates that the packet type does not need to be serialized
+      YES    //!< Indicates that the packet type needs to be serialized (prepended) before the data
+    };
+    // TODO: we likely want to make this configurable
+    constexpr static FwSizeType INTERNAL_PACKET_BUFF_MAX_SIZE = FW_MAX(FW_COM_BUFFER_MAX_SIZE, FW_FILE_BUFFER_MAX_SIZE);
 
   public:
     // ----------------------------------------------------------------------
@@ -70,9 +76,10 @@ class FprimePacketizer final : public FprimePacketizerComponentBase {
 
     void packetizeData(const U8* const data, const FwSizeType size, NeedTypeSerialization need_serialization, Fw::ComPacket::ComPacketType packet_type);
 
-    // TODO: figure out correct MAX_SIZE
-    // should be max of COM_BUFFER_MAX and FILE_BUFFER_MAX (and set a RAW_BUFFER_MAX)
-    U8 m_internalBuffer[1024];  //!< Internal buffer for packetization
+
+    // ----------------------------------------------------------------------
+
+    U8 m_internalBuffer[INTERNAL_PACKET_BUFF_MAX_SIZE];  //!< Internal buffer for packetization
     Fw::Buffer m_packetBuffer;                    //!< Buffer for packetization
 };
 }  // namespace Svc
