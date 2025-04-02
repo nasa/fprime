@@ -14,7 +14,6 @@ include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime-Code.cmake")
 add_compile_options(
     -Wall
     -Wdouble-promotion
-    -Wno-sign-compare
     -Wno-zero-length-array
     -Werror
     -Wextra
