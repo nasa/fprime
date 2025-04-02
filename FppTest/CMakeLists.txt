@@ -11,24 +11,27 @@ project(FppTest C CXX)
 include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime-Code.cmake")
 
+add_compile_options(
+    -Wall
+    -Wdouble-promotion
+    -Wno-sign-compare
+    -Wno-zero-length-array
+    -Werror
+    -Wextra
+    -Wno-unused-parameter
+    -Wno-variadic-macro-arguments-omitted
+    -Wno-vla
+    -Wold-style-cast
+    -Wshadow
+    -pedantic
+)
+
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/array/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/component/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/dp/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/state_machine/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/enum/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/struct/")
-
-add_compile_options(
-    -Wall
-    -Wconversion
-    -Wdouble-promotion
-    -Werror
-    -Wextra
-    -Wno-unused-parameter
-    -Wold-style-cast
-    -Wshadow
-    -pedantic
-)
 
 set(SOURCE_FILES "source.cpp")
 set(MOD_DEPS

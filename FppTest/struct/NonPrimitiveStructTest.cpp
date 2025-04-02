@@ -265,7 +265,7 @@ TEST_F(NonPrimitiveStructTest, Serialization) {
                    testStruct, testU32Arr, testStructArr);
     NonPrimitive sCopy;
 
-    U32 stringSerializedSize = testString.length() + sizeof(FwBuffSizeType);
+    U32 stringSerializedSize = static_cast<U32>(testString.length() + sizeof(FwBuffSizeType));
     U32 serializedSize = NonPrimitive::SERIALIZED_SIZE
                          - Fw::StringBase::STATIC_SERIALIZED_SIZE(80)
                          + stringSerializedSize;

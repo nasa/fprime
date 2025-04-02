@@ -176,7 +176,6 @@ void Tester::productRecvIn_Container3_SUCCESS() {
         status = serialRepr.deserializeSize(size);
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(size, this->u8ArrayRecordData.size());
-        const U8* const buffAddr = serialRepr.getBuffAddr();
         for (FwSizeType j = 0; j < size; ++j) {
             U8 byte;
             status = serialRepr.deserialize(byte);
@@ -220,7 +219,6 @@ void Tester::productRecvIn_Container4_SUCCESS() {
         status = serialRepr.deserializeSize(size);
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(size, this->u32ArrayRecordData.size());
-        const U8* const buffAddr = serialRepr.getBuffAddr();
         for (FwSizeType j = 0; j < size; ++j) {
             U32 elt;
             status = serialRepr.deserialize(elt);
@@ -264,7 +262,6 @@ void Tester::productRecvIn_Container5_SUCCESS() {
         status = serialRepr.deserializeSize(size);
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(size, this->dataArrayRecordData.size());
-        const U8* const buffAddr = serialRepr.getBuffAddr();
         for (FwSizeType j = 0; j < size; ++j) {
             DpTest_Data elt;
             status = serialRepr.deserialize(elt);
@@ -347,7 +344,6 @@ void Tester::productRecvIn_Container7_SUCCESS() {
         status = serialRepr.deserializeSize(size);
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(size, arraySize);
-        const U8* const buffAddr = serialRepr.getBuffAddr();
         for (FwSizeType j = 0; j < size; ++j) {
             Fw::String elt;
             status = serialRepr.deserialize(elt);

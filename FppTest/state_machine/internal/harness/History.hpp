@@ -62,7 +62,7 @@ class History {
     //! Get the history item at an index
     const T& getItemAt(FwIndexType index  //!< The index
     ) const {
-        FW_ASSERT(index < this->m_size);
+        FW_ASSERT(static_cast<FwSizeType>(index) < this->m_size);
         return this->m_items[index];
     }
 
