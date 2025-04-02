@@ -148,7 +148,7 @@ SocketIpStatus IpSocket::send(const SocketDescriptor& socketDescriptor, const U8
         else if (sent == -1) {
             return SOCK_SEND_ERROR;
         }
-        FW_ASSERT(sent > 0, sent);
+        FW_ASSERT(sent > 0, static_cast<FwAssertArgType>(sent));
         total += static_cast<U32>(sent);
     }
     // Failed to retry enough to send all data

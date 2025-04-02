@@ -47,7 +47,7 @@ static inline TestAbsType testAbsType() {
 static inline TestArray testArray() {
     TestArray result;
     for (FwIndexType i = 0; i < TestArray::SIZE; i++) {
-        result[i] = STest::Pick::any();
+        result[static_cast<U32>(i)] = STest::Pick::any();
     }
     return result;
 }
@@ -69,7 +69,7 @@ static inline TestStruct testStruct() {
 static inline void string(Fw::StringBase& s,                           //!< The string value (output)
                           FwSizeType maxLen = Fw::String::STRING_SIZE  //!< The max string length
 ) {
-    const U32 size = STest::Pick::lowerUpper(0, maxLen);
+    const U32 size = STest::Pick::lowerUpper(0, static_cast<U32>(maxLen));
     s = "";
     for (U32 i = 0; i < size; i++) {
         char c = static_cast<char>(STest::Pick::lowerUpper(32, 126));

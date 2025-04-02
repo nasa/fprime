@@ -48,23 +48,23 @@ typedef int PlatformIntType;
 typedef unsigned int PlatformUIntType;
 #define PRI_PlatformUIntType "u"
 
-typedef PlatformIntType PlatformIndexType;
-#define PRI_PlatformIndexType PRI_PlatformIntType
+typedef int16_t PlatformIndexType;
+#define PRI_PlatformIndexType PRIi16
 
 typedef int64_t PlatformSignedSizeType;
-#define PRI_PlatformSignedSizeType PRId64
+#define PRI_PlatformSignedSizeType PRIi64
 
 typedef uint64_t PlatformSizeType;
 #define PRI_PlatformSizeType PRIu64
 
-typedef PlatformIntType PlatformAssertArgType;
-#define PRI_PlatformAssertArgType PRI_PlatformIntType
+typedef int32_t PlatformAssertArgType;
+#define PRI_PlatformAssertArgType PRIi32
 
-typedef PlatformIntType PlatformTaskPriorityType;
-#define PRI_PlatformTaskPriorityType PRI_PlatformIntType
+typedef uint8_t PlatformTaskPriorityType;
+#define PRI_PlatformTaskPriorityType PRIu8
 
-typedef PlatformIntType PlatformQueuePriorityType;
-#define PRI_PlatformQueuePriorityType PRI_PlatformIntType
+typedef uint8_t PlatformQueuePriorityType;
+#define PRI_PlatformQueuePriorityType PRIu8
 
 // Linux/Darwin definitions for pointer have various sizes across platforms
 // and since these definitions need to be consistent we must ask the size.

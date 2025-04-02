@@ -62,7 +62,7 @@ namespace Svc {
       this->m_maxSize = maxFileSize;
       this->m_sizeOfSize = sizeOfSize;
 
-      FW_ASSERT(sizeOfSize <= sizeof(FwSizeType), sizeOfSize);
+      FW_ASSERT(sizeOfSize <= sizeof(FwSizeType), static_cast<FwAssertArgType>(sizeOfSize));
       FW_ASSERT(m_maxSize > sizeOfSize, static_cast<FwAssertArgType>(m_maxSize));
   }
 
@@ -201,8 +201,7 @@ namespace Svc {
         const FwSizeType length
     )
   {
-    FW_ASSERT((length > 0) and (length <= std::numeric_limits<FwSignedSizeType>::max()), static_cast<FwAssertArgType>(length));
-    FwSignedSizeType size = static_cast<FwSignedSizeType>(length);
+    FwSizeType size = length;
     const Os::File::Status fileStatus = this->m_osFile.write(reinterpret_cast<const U8*>(data), size);
     bool status;
     if (fileStatus == Os::File::OP_OK && static_cast<FwSizeType>(size) == length) {

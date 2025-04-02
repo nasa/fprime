@@ -280,13 +280,9 @@ TEST_F(Functionality, RandomizedInterfaceTesting) {
     Os::Test::File::Tester::WriteInvalidModes write_invalid_modes_rule;
     Os::Test::File::Tester::OpenIllegalPath open_illegal_path;
     Os::Test::File::Tester::OpenIllegalMode open_illegal_mode;
-    Os::Test::File::Tester::PreallocateIllegalOffset preallocate_illegal_offset;
-    Os::Test::File::Tester::PreallocateIllegalLength preallocate_illegal_length;
     Os::Test::File::Tester::SeekIllegal seek_illegal;
     Os::Test::File::Tester::ReadIllegalBuffer read_illegal_buffer;
-    Os::Test::File::Tester::ReadIllegalSize read_illegal_size;
     Os::Test::File::Tester::WriteIllegalBuffer write_illegal_buffer;
-    Os::Test::File::Tester::WriteIllegalSize write_illegal_size;
     Os::Test::File::Tester::IncrementalCrcInvalidModes incremental_invalid_mode_rule;
     Os::Test::File::Tester::FullCrcInvalidModes full_invalid_mode_rule;
 
@@ -304,13 +300,9 @@ TEST_F(Functionality, RandomizedInterfaceTesting) {
             &write_invalid_modes_rule,
             &open_illegal_path,
             &open_illegal_mode,
-            &preallocate_illegal_offset,
-            &preallocate_illegal_length,
             &seek_illegal,
             &read_illegal_buffer,
-            &read_illegal_size,
             &write_illegal_buffer,
-            &write_illegal_size,
             &incremental_invalid_mode_rule,
             &full_invalid_mode_rule
     };
@@ -437,18 +429,6 @@ TEST_F(InvalidArguments, OpenBadMode) {
     rule.apply(*tester);
 }
 
-// Ensure preallocate prevents bad offset
-TEST_F(InvalidArguments, PreallocateBadOffset) {
-    Os::Test::File::Tester::PreallocateIllegalOffset rule;
-    rule.apply(*tester);
-}
-
-// Ensure preallocate prevents bad length
-TEST_F(InvalidArguments, PreallocateBadLength) {
-    Os::Test::File::Tester::PreallocateIllegalLength rule;
-    rule.apply(*tester);
-}
-
 // Ensure preallocate prevents bad length
 TEST_F(InvalidArguments, SeekAbsoluteWithNegativeLength) {
     Os::Test::File::Tester::SeekIllegal rule;
@@ -461,20 +441,8 @@ TEST_F(InvalidArguments, ReadInvalidBuffer) {
     rule.apply(*tester);
 }
 
-// Ensure read prevents bad sizes
-TEST_F(InvalidArguments, ReadInvalidSize) {
-    Os::Test::File::Tester::ReadIllegalSize rule;
-    rule.apply(*tester);
-}
-
 // Ensure write prevents bad buffer pointers
 TEST_F(InvalidArguments, WriteInvalidBuffer) {
     Os::Test::File::Tester::WriteIllegalBuffer rule;
-    rule.apply(*tester);
-}
-
-// Ensure write prevents bad sizes
-TEST_F(InvalidArguments, WriteInvalidSize) {
-    Os::Test::File::Tester::WriteIllegalSize rule;
     rule.apply(*tester);
 }

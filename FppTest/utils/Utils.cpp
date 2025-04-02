@@ -45,7 +45,7 @@ namespace FppTest {
             FW_ASSERT(capacity > 0);
             // min length must fit within capacity
             FW_ASSERT(minLength < capacity);
-            U32 length = STest::Pick::lowerUpper(minLength, capacity - 1);
+            U32 length = STest::Pick::lowerUpper(static_cast<U32>(minLength), static_cast<U32>(capacity - 1));
 
             for (U32 i = 0; i < length; i++) {
                 FW_ASSERT(i < capacity);

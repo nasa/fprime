@@ -196,10 +196,10 @@ namespace Fw {
       )
     {
 #if FW_USE_TIME_BASE
-      FW_ASSERT(a.getTimeBase() == b.getTimeBase(), a.getTimeBase(), b.getTimeBase() );
+      FW_ASSERT(a.getTimeBase() == b.getTimeBase(), static_cast<FwAssertArgType>(a.getTimeBase()), static_cast<FwAssertArgType>(b.getTimeBase()) );
 #endif
 #if FW_USE_TIME_CONTEXT
-      FW_ASSERT(a.getContext() == b.getContext(), a.getContext(), b.getContext() );
+      FW_ASSERT(a.getContext() == b.getContext(), static_cast<FwAssertArgType>(a.getContext()), static_cast<FwAssertArgType>(b.getContext()) );
 #endif
       U32 seconds = a.getSeconds() + b.getSeconds();
       U32 uSeconds = a.getUSeconds() + b.getUSeconds();
@@ -219,10 +219,10 @@ namespace Fw {
     )
     {
 #if FW_USE_TIME_BASE
-      FW_ASSERT(minuend.getTimeBase() == subtrahend.getTimeBase(), minuend.getTimeBase(), subtrahend.getTimeBase());
+      FW_ASSERT(minuend.getTimeBase() == subtrahend.getTimeBase(), static_cast<FwAssertArgType>(minuend.getTimeBase()), static_cast<FwAssertArgType>(subtrahend.getTimeBase()));
 #endif
 #if FW_USE_TIME_CONTEXT
-      FW_ASSERT(minuend.getContext() == subtrahend.getContext(), minuend.getContext(), subtrahend.getContext());
+      FW_ASSERT(minuend.getContext() == subtrahend.getContext(), static_cast<FwAssertArgType>(minuend.getContext()), static_cast<FwAssertArgType>(subtrahend.getContext()));
 #endif
       // Assert minuend is greater than subtrahend
       FW_ASSERT(minuend >= subtrahend);

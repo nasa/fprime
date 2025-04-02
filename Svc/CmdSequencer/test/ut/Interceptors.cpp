@@ -42,7 +42,7 @@ namespace Svc {
 
     Os::File::Status CmdSequencerTester::Interceptor::PosixFileInterceptor::read(
             U8 *buffer,
-            FwSignedSizeType &requestSize,
+            FwSizeType &requestSize,
             Os::File::WaitType waitType
     ) {
         (void) waitType;

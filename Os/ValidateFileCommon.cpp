@@ -18,19 +18,19 @@ namespace Os {
 
         // Get the file size:
         FileSystem::Status fs_status;
-        FwSignedSizeType fileSize = 0;
+        FwSizeType fileSize = 0;
         fs_status = FileSystem::getFileSize(fileName, fileSize); //!< gets the size of the file (in bytes) at location path
         if( FileSystem::OP_OK != fs_status) {
             return File::BAD_SIZE;
         }
-        const FwSignedSizeType max_itr = (fileSize/VFILE_HASH_CHUNK_SIZE + 1);
+        const FwSizeType max_itr = (fileSize/VFILE_HASH_CHUNK_SIZE + 1);
 
         // Read all data from file and update hash:
         Utils::Hash hash;
         hash.init();
         U8 buffer[VFILE_HASH_CHUNK_SIZE];
-        FwSignedSizeType size = 0;
-        FwSignedSizeType cnt = 0;
+        FwSizeType size = 0;
+        FwSizeType cnt = 0;
         while( cnt <= max_itr ) {
             // Read out chunk from file:
             size = sizeof(buffer);
@@ -73,7 +73,7 @@ namespace Os {
 
         // Read hash from checksum file:
         unsigned char savedHash[HASH_DIGEST_LENGTH];
-        FwSignedSizeType size = static_cast<FwSignedSizeType>(hashBuffer.getBuffCapacity());
+        FwSizeType size = static_cast<FwSizeType>(hashBuffer.getBuffCapacity());
         status = hashFile.read(savedHash, size);
         if( File::OP_OK != status ) {
             return status;
@@ -100,7 +100,7 @@ namespace Os {
         }
 
         // Write out the hash
-        FwSignedSizeType size = static_cast<FwSignedSizeType>(hashBuffer.getBuffLength());
+        FwSizeType size = static_cast<FwSizeType>(hashBuffer.getBuffLength());
         status = hashFile.write(hashBuffer.getBuffAddr(), size, Os::File::WaitType::NO_WAIT);
         if( File::OP_OK != status ) {
             return status;

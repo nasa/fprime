@@ -54,7 +54,7 @@ class DeviceSm {
                                  
   public:
                                  
-    DeviceSm(DeviceSm_Interface* parent) : parent(parent) {}
+    DeviceSm(DeviceSm_Interface* a_parent) : parent(a_parent) {}
   
     enum DeviceSm_States {
       OFF,

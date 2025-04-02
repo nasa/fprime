@@ -12,8 +12,8 @@
 #include <cstdio>
 
 namespace Svc {
-  static_assert(std::numeric_limits<U16>::max() <= std::numeric_limits<FwSignedSizeType>::max(),
-      "U16 must fit in the positive range of FwSignedSizeType");
+  static_assert(std::numeric_limits<U16>::max() <= std::numeric_limits<FwSizeType>::max(),
+      "U16 must fit in the positive range of FwSizeType");
   // ----------------------------------------------------------------------
   // Construction, initialization, and destruction
   // ----------------------------------------------------------------------
@@ -243,9 +243,9 @@ namespace Svc {
       U16 length
     )
   {
-    FwSignedSizeType size = length;
+    FwSizeType size = length;
     Os::File::Status ret = m_file.write(reinterpret_cast<const U8*>(data), size);
-    if( Os::File::OP_OK != ret || size != static_cast<FwSignedSizeType>(length) ) {
+    if((Os::File::OP_OK != ret) || (size != length)) {
       if( !this->m_writeErrorOccurred ) { // throttle this event, otherwise a positive
                                         // feedback event loop can occur!
         this->log_WARNING_HI_FileWriteError(ret, static_cast<U32>(size), length, this->m_fileName);

@@ -35,7 +35,7 @@ class Option {
         this->m_state = State::VALUE;
         this->m_value = value;
     }
-    void clear() { this->state = State::NO_VALUE; }
+    void clear() { this->m_state = State::NO_VALUE; }
     T get() const {
         FW_ASSERT(this->hasValue());
         return this->m_value;

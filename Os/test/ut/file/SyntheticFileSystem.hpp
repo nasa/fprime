@@ -23,7 +23,7 @@ struct SyntheticFileData : public FileHandle {
     //! Data stored in the file
     std::vector<U8> m_data;
     //! Pointer of the file
-    FwSignedSizeType m_pointer = -1;
+    FwSizeType m_pointer = std::numeric_limits<FwSizeType>::max();
     //! Separate mode tracking
     File::Mode m_mode = File::OPEN_NO_MODE;
 };
@@ -70,7 +70,7 @@ class SyntheticFile : public FileInterface {
     //! \param wait: wait, unused
     //! \return status of the read
     //!
-    Os::File::Status read(U8 *buffer, FwSignedSizeType &size, File::WaitType wait) override;
+    Os::File::Status read(U8 *buffer, FwSizeType &size, File::WaitType wait) override;
 
     //! \brief write data to the file
     //!
@@ -81,7 +81,7 @@ class SyntheticFile : public FileInterface {
     //! \param bool: wait, unused
     //! \return status of the write
     //!
-    Os::File::Status write(const U8 *buffer, FwSignedSizeType &size, File::WaitType wait) override;
+    Os::File::Status write(const U8 *buffer, FwSizeType &size, File::WaitType wait) override;
 
     //! \brief seek pointer within file
     //!
@@ -101,17 +101,17 @@ class SyntheticFile : public FileInterface {
     //! \param length: length of the pre-allocation
     //! \return status of the preallocate
     //!
-    Os::File::Status preallocate(const FwSignedSizeType offset, const FwSignedSizeType length) override;
+    Os::File::Status preallocate(const FwSizeType offset, const FwSizeType length) override;
 
     //! \brief flush is no-op
     //!
     Os::File::Status flush() override;
 
     //! \brief pointer getter
-    Os::File::Status position(FwSignedSizeType& position) override;
+    Os::File::Status position(FwSizeType& position) override;
 
     //! \brief size getter
-    Os::File::Status size(FwSignedSizeType& size) override;
+    Os::File::Status size(FwSizeType& size) override;
 
     //! \brief silt data handle
     FileHandle* getHandle() override;

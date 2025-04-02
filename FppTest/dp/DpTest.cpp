@@ -16,19 +16,19 @@ namespace FppTest {
 // ----------------------------------------------------------------------
 
 DpTest::DpTest(const char* const compName,
-               U32 u32RecordData,
-               U16 dataRecordData,
-               const U8ArrayRecordData& u8ArrayRecordData,
-               const U32ArrayRecordData& u32ArrayRecordData,
-               const DataArrayRecordData& dataArrayRecordData,
+               U32 a_u32RecordData,
+               U16 a_dataRecordData,
+               const U8ArrayRecordData& a_u8ArrayRecordData,
+               const U32ArrayRecordData& a_u32ArrayRecordData,
+               const DataArrayRecordData& a_dataArrayRecordData,
                const Fw::StringBase& a_stringRecordData)
     : DpTestComponentBase(compName),
       m_container(),
-      u32RecordData(u32RecordData),
-      dataRecordData(dataRecordData),
-      u8ArrayRecordData(u8ArrayRecordData),
-      u32ArrayRecordData(u32ArrayRecordData),
-      dataArrayRecordData(dataArrayRecordData),
+      u32RecordData(a_u32RecordData),
+      dataRecordData(a_dataRecordData),
+      u8ArrayRecordData(a_u8ArrayRecordData),
+      u32ArrayRecordData(a_u32ArrayRecordData),
+      dataArrayRecordData(a_dataArrayRecordData),
       stringRecordData(a_stringRecordData),
       sendTime(Fw::ZERO_TIME) {
     for (auto& elt : this->stringArrayRecordData) {
@@ -58,7 +58,7 @@ void DpTest::schedIn_handler(const FwIndexType portNum, U32 context) {
     // Get a buffer for Container 1
     {
         Fw::Success status = this->dpGet_Container1(CONTAINER_1_DATA_SIZE, this->m_container);
-        FW_ASSERT(status == Fw::Success::SUCCESS, status);
+        FW_ASSERT(status == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(status));
         // Check the container
         this->checkContainer(this->m_container, ContainerId::Container1, CONTAINER_1_PACKET_SIZE,
                              DpTest::ContainerPriority::Container1);
@@ -110,7 +110,7 @@ void DpTest ::dpRecv_Container1_handler(DpContainer& container, Fw::Success::T s
             if (serializeStatus == Fw::FW_SERIALIZE_NO_ROOM_LEFT) {
                 break;
             }
-            FW_ASSERT(serializeStatus == Fw::FW_SERIALIZE_OK, status);
+            FW_ASSERT(serializeStatus == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
         }
         // Use the time stamp from the time get port
         this->dpSend(this->m_container);
@@ -131,7 +131,7 @@ void DpTest ::dpRecv_Container2_handler(DpContainer& container, Fw::Success::T s
             if (serializeStatus == Fw::FW_SERIALIZE_NO_ROOM_LEFT) {
                 break;
             }
-            FW_ASSERT(serializeStatus == Fw::FW_SERIALIZE_OK, status);
+            FW_ASSERT(serializeStatus == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
         }
         // Provide an explicit time stamp
         this->dpSend(this->m_container, this->sendTime);
@@ -152,7 +152,7 @@ void DpTest ::dpRecv_Container3_handler(DpContainer& container, Fw::Success::T s
             if (serializeStatus == Fw::FW_SERIALIZE_NO_ROOM_LEFT) {
                 break;
             }
-            FW_ASSERT(serializeStatus == Fw::FW_SERIALIZE_OK, status);
+            FW_ASSERT(serializeStatus == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
         }
         // Use the time stamp from the time get port
         this->dpSend(this->m_container);
@@ -173,7 +173,7 @@ void DpTest ::dpRecv_Container4_handler(DpContainer& container, Fw::Success::T s
             if (serializeStatus == Fw::FW_SERIALIZE_NO_ROOM_LEFT) {
                 break;
             }
-            FW_ASSERT(serializeStatus == Fw::FW_SERIALIZE_OK, status);
+            FW_ASSERT(serializeStatus == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
         }
         // Use the time stamp from the time get port
         this->dpSend(this->m_container);
@@ -194,7 +194,7 @@ void DpTest ::dpRecv_Container5_handler(DpContainer& container, Fw::Success::T s
             if (serializeStatus == Fw::FW_SERIALIZE_NO_ROOM_LEFT) {
                 break;
             }
-            FW_ASSERT(serializeStatus == Fw::FW_SERIALIZE_OK, status);
+            FW_ASSERT(serializeStatus == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
         }
         // Use the time stamp from the time get port
         this->dpSend(this->m_container);
@@ -214,7 +214,7 @@ void DpTest ::dpRecv_Container6_handler(DpContainer& container, Fw::Success::T s
             if (serializeStatus == Fw::FW_SERIALIZE_NO_ROOM_LEFT) {
                 break;
             }
-            FW_ASSERT(serializeStatus == Fw::FW_SERIALIZE_OK, status);
+            FW_ASSERT(serializeStatus == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
         }
         // Use the time stamp from the time get port
         this->dpSend(this->m_container);
@@ -235,7 +235,7 @@ void DpTest ::dpRecv_Container7_handler(DpContainer& container, Fw::Success::T s
             if (serializeStatus == Fw::FW_SERIALIZE_NO_ROOM_LEFT) {
                 break;
             }
-            FW_ASSERT(serializeStatus == Fw::FW_SERIALIZE_OK, status);
+            FW_ASSERT(serializeStatus == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
         }
         // Use the time stamp from the time get port
         this->dpSend(this->m_container);
@@ -263,11 +263,15 @@ void DpTest::checkContainer(const DpContainer& container,
                             FwSizeType size,
                             FwDpPriorityType priority) const {
     this->checkContainerEmpty(container);
-    FW_ASSERT(container.getBaseId() == this->getIdBase(), container.getBaseId(), this->getIdBase());
-    FW_ASSERT(container.getId() == container.getBaseId() + localId, container.getId(), container.getBaseId(),
-              ContainerId::Container1);
-    FW_ASSERT(container.getBuffer().getSize() == size, container.getBuffer().getSize(), size);
-    FW_ASSERT(container.getPriority() == priority, container.getPriority(), priority);
+    FW_ASSERT(container.getBaseId() == this->getIdBase(), static_cast<FwAssertArgType>(container.getBaseId()),
+              static_cast<FwAssertArgType>(this->getIdBase()));
+    FW_ASSERT(container.getId() == container.getBaseId() + localId, static_cast<FwAssertArgType>(container.getId()),
+              static_cast<FwAssertArgType>(container.getBaseId()),
+              static_cast<FwAssertArgType>(ContainerId::Container1));
+    FW_ASSERT(container.getBuffer().getSize() == size, static_cast<FwAssertArgType>(container.getBuffer().getSize()),
+              static_cast<FwAssertArgType>(size));
+    FW_ASSERT(container.getPriority() == priority, static_cast<FwAssertArgType>(container.getPriority()),
+              static_cast<FwAssertArgType>(priority));
 }
 
 }  // end namespace FppTest

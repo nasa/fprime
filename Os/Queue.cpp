@@ -41,7 +41,7 @@ QueueInterface::Status Queue ::create(const Fw::StringBase& name, FwSizeType dep
 
 QueueInterface::Status Queue::send(const U8* buffer,
                                    FwSizeType size,
-                                   PlatformIntType priority,
+                                   FwQueuePriorityType priority,
                                    QueueInterface::BlockingType blockType) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<QueueInterface*>(&this->m_handle_storage[0]));
     FW_ASSERT(buffer != nullptr);
@@ -60,7 +60,7 @@ QueueInterface::Status Queue::receive(U8* destination,
                                       FwSizeType capacity,
                                       QueueInterface::BlockingType blockType,
                                       FwSizeType& actualSize,
-                                      PlatformIntType& priority) {
+                                      FwQueuePriorityType& priority) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<QueueInterface*>(&this->m_handle_storage[0]));
     FW_ASSERT(destination != nullptr);
     // Check if initialized
@@ -90,14 +90,14 @@ QueueHandle* Queue::getHandle(){
 }
 
 QueueInterface::Status Queue::send(const Fw::SerializeBufferBase& message,
-                                   PlatformIntType priority,
+                                   FwQueuePriorityType priority,
                                    QueueInterface::BlockingType blockType) {
     return this->send(message.getBuffAddr(), message.getBuffLength(), priority, blockType);
 }
 
 QueueInterface::Status Queue::receive(Fw::SerializeBufferBase& destination,
                                       QueueInterface::BlockingType blockType,
-                                      PlatformIntType& priority) {
+                                      FwQueuePriorityType& priority) {
     FwSizeType actualSize = 0;
     destination.resetSer();  // Reset the buffer
     QueueInterface::Status status =

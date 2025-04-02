@@ -32,10 +32,12 @@ namespace Svc {
 
     void ActiveRateGroup::configure(U32 contexts[], FwIndexType numContexts) {
         FW_ASSERT(contexts);
-        FW_ASSERT(numContexts == this->getNum_RateGroupMemberOut_OutputPorts(),numContexts,this->getNum_RateGroupMemberOut_OutputPorts());
+        FW_ASSERT(numContexts == this->getNum_RateGroupMemberOut_OutputPorts(),
+                  static_cast<FwAssertArgType>(numContexts),
+                  static_cast<FwAssertArgType>(this->getNum_RateGroupMemberOut_OutputPorts()));
         FW_ASSERT(FW_NUM_ARRAY_ELEMENTS(this->m_contexts) == this->getNum_RateGroupMemberOut_OutputPorts(),
-                FW_NUM_ARRAY_ELEMENTS(this->m_contexts),
-                this->getNum_RateGroupMemberOut_OutputPorts());
+                static_cast<FwAssertArgType>(FW_NUM_ARRAY_ELEMENTS(this->m_contexts)),
+                static_cast<FwAssertArgType>(this->getNum_RateGroupMemberOut_OutputPorts()));
 
         this->m_numContexts = numContexts;
         // copy context values

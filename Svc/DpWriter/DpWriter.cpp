@@ -192,13 +192,13 @@ Fw::Success::T DpWriter::writeFile(const Fw::DpContainer& container,
         // Set write size to file size
         // On entry to the write call, this is the number of bytes to write
         // On return from the write call, this is the number of bytes written
-        FwSignedSizeType writeSize = static_cast<FwSignedSizeType>(fileSize);
+        FwSizeType writeSize = static_cast<FwSizeType>(fileSize);
         fileStatus = file.write(buffer.getData(), writeSize);
         // If a successful write occurred, then update the number of bytes written
         if (fileStatus == Os::File::OP_OK) {
             this->m_numBytesWritten += static_cast<U64>(writeSize);
         }
-        if ((fileStatus == Os::File::OP_OK) and (writeSize == static_cast<FwSignedSizeType>(fileSize))) {
+        if ((fileStatus == Os::File::OP_OK) and (writeSize == static_cast<FwSizeType>(fileSize))) {
             // If the write status is success, and the number of bytes written
             // is the expected number, then record the success
             this->log_ACTIVITY_LO_FileWritten(

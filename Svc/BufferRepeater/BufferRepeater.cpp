@@ -32,7 +32,7 @@ void BufferRepeater ::configure(BufferRepeater::BufferRepeaterFailureOption allo
 bool BufferRepeater ::check_allocation(FwIndexType index,
                                        const Fw::Buffer& new_allocation,
                                        const Fw::Buffer& incoming_buffer) {
-    FW_ASSERT(index < NUM_PORTOUT_OUTPUT_PORTS, index);
+    FW_ASSERT(index < NUM_PORTOUT_OUTPUT_PORTS, static_cast<FwAssertArgType>(index));
     bool is_valid = (new_allocation.getData() != nullptr) && (new_allocation.getSize() >= incoming_buffer.getSize());
 
     // Respond to invalid buffer allocation
