@@ -29,9 +29,11 @@ add_compile_options(
 )
 
 # Required by Google Test typed tests
-add_compile_options(
-    -Wno-variadic-macro-arguments-omitted
-)
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    add_compile_options(
+        -Wno-variadic-macro-arguments-omitted
+    )
+endif()
 
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/array/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/component/")

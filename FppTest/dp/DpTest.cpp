@@ -16,19 +16,19 @@ namespace FppTest {
 // ----------------------------------------------------------------------
 
 DpTest::DpTest(const char* const compName,
-               U32 u32RecordData,
-               U16 dataRecordData,
-               const U8ArrayRecordData& u8ArrayRecordData,
-               const U32ArrayRecordData& u32ArrayRecordData,
-               const DataArrayRecordData& dataArrayRecordData,
+               U32 a_u32RecordData,
+               U16 a_dataRecordData,
+               const U8ArrayRecordData& a_u8ArrayRecordData,
+               const U32ArrayRecordData& a_u32ArrayRecordData,
+               const DataArrayRecordData& a_dataArrayRecordData,
                const Fw::StringBase& a_stringRecordData)
     : DpTestComponentBase(compName),
       m_container(),
-      u32RecordData(u32RecordData),
-      dataRecordData(dataRecordData),
-      u8ArrayRecordData(u8ArrayRecordData),
-      u32ArrayRecordData(u32ArrayRecordData),
-      dataArrayRecordData(dataArrayRecordData),
+      u32RecordData(a_u32RecordData),
+      dataRecordData(a_dataRecordData),
+      u8ArrayRecordData(a_u8ArrayRecordData),
+      u32ArrayRecordData(a_u32ArrayRecordData),
+      dataArrayRecordData(a_dataArrayRecordData),
       stringRecordData(a_stringRecordData),
       sendTime(Fw::ZERO_TIME) {
     for (auto& elt : this->stringArrayRecordData) {

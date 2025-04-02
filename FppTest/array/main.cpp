@@ -132,7 +132,7 @@ U32 FppTest::Array::getSerializedSize<::String>
     U32 serializedSize = 0;
 
     for (U32 i = 0; i < ::String::SIZE; i++) {
-        serializedSize += a[i].serializedSize();
+        serializedSize += static_cast<U32>(a[i].serializedSize());
     }
 
     return serializedSize;
