@@ -17,12 +17,20 @@ add_compile_options(
     -Wdouble-promotion
     -Werror
     -Wextra
-    -Wno-unused-parameter
-    -Wno-variadic-macro-arguments-omitted
-    -Wno-vla
     -Wold-style-cast
     -Wshadow
     -pedantic
+)
+
+# Required by F Prime
+add_compile_options(
+    -Wno-unused-parameter
+    -Wno-vla
+)
+
+# Required by Google Test typed tests
+add_compile_options(
+    -Wno-variadic-macro-arguments-omitted
 )
 
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/array/")
