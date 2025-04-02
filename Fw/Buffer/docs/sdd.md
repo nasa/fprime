@@ -66,7 +66,7 @@ To check validity, you can call the interface function `isValid()`.
 
 Users can obtain a serialization buffer, `sb`, by calling either `getSerializer()` or `getDeserializer()`. 
 Note that both of these methods return a `Fw::ExternalSerializeBufferWithMemberCopy` object that is meant to be 
-managed by the caller and does not inadvertently affect the original `Fw::Buffer` parent object.
+managed by the caller and only affects the data of the underlying buffer.
 
 **Serializing to `Fw::Buffer`**
 ```c++

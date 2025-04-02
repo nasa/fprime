@@ -97,11 +97,15 @@ public:
 
     //! Returns a ExternalSerializeBufferWithMemberCopy representation of the wrapped data for serializing
     //!
+    //! \warning Assumes that this buffer is entirely empty.
+    //!
     //! \return representation of the wrapped data to aid in serializing to it
     ExternalSerializeBufferWithMemberCopy getSerializer();
 
 
     //! Returns a ExternalSerializeBufferWithMemberCopy representation of the wrapped data for deserializing
+    //! 
+    //! \warning The entire buffer (up to getSize) is available for deserialization.
     //!
     //! \return representation of the wrapped data to aid in deserializing to it
     ExternalSerializeBufferWithMemberCopy getDeserializer();

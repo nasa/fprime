@@ -117,7 +117,8 @@ Fw::ExternalSerializeBufferWithMemberCopy Buffer::getSerializer() {
 Fw::ExternalSerializeBufferWithMemberCopy Buffer::getDeserializer() {
     if (this->isValid()) {
         Fw::ExternalSerializeBufferWithMemberCopy esb(this->m_bufferData, static_cast<Fw::Serializable::SizeType>(this->m_size));
-        esb.setBuffLen(this->getSize());
+        Fw::SerializeStatus stat = esb.setBuffLen(this->getSize());
+        FW_ASSERT(stat == Fw::FW_SERIALIZE_OK);
         return esb;
     } else {
         return ExternalSerializeBufferWithMemberCopy();
