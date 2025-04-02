@@ -94,16 +94,16 @@ void Tester::productRecvIn_Container1_SUCCESS() {
                                              DpTest::ContainerPriority::Container1, this->container1Buffer, buffer,
                                              expectedNumElts);
     // Check the data
-    Fw::SerializeBufferBase& serialRepr = buffer.getSerializeRepr();
-    Fw::TestUtil::DpContainerHeader::checkDeserialAtOffset(serialRepr, Fw::DpContainer::DATA_OFFSET);
+    Fw::ExternalSerializeBufferWithMemberCopy deserializer = buffer.getDeserializer();
+    Fw::TestUtil::DpContainerHeader::checkDeserialAtOffset(deserializer, Fw::DpContainer::DATA_OFFSET);
     for (FwSizeType i = 0; i < expectedNumElts; ++i) {
         FwDpIdType id;
         U32 elt;
-        auto status = serialRepr.deserialize(id);
+        auto status = deserializer.deserialize(id);
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
         const FwDpIdType expectedId = this->component.getIdBase() + DpTest::RecordId::U32Record;
         ASSERT_EQ(id, expectedId);
-        status = serialRepr.deserialize(elt);
+        status = deserializer.deserialize(elt);
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(elt, this->component.u32RecordData);
     }
@@ -127,16 +127,16 @@ void Tester::productRecvIn_Container2_SUCCESS() {
                                              DpTest::ContainerPriority::Container2, this->container2Buffer, buffer,
                                              expectedNumElts);
     // Check the data
-    Fw::SerializeBufferBase& serialRepr = buffer.getSerializeRepr();
-    Fw::TestUtil::DpContainerHeader::checkDeserialAtOffset(serialRepr, Fw::DpContainer::DATA_OFFSET);
+    Fw::ExternalSerializeBufferWithMemberCopy deserializer = buffer.getDeserializer();
+    Fw::TestUtil::DpContainerHeader::checkDeserialAtOffset(deserializer, Fw::DpContainer::DATA_OFFSET);
     for (FwSizeType i = 0; i < expectedNumElts; ++i) {
         FwDpIdType id;
         DpTest_Data elt;
-        auto status = serialRepr.deserialize(id);
+        auto status = deserializer.deserialize(id);
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
         const FwDpIdType expectedId = this->component.getIdBase() + DpTest::RecordId::DataRecord;
         ASSERT_EQ(id, expectedId);
-        status = serialRepr.deserialize(elt);
+        status = deserializer.deserialize(elt);
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(elt.getu16Field(), this->component.dataRecordData);
     }
@@ -164,22 +164,22 @@ void Tester::productRecvIn_Container3_SUCCESS() {
                                              expectedNumElts);
 
     // Check the data
-    Fw::SerializeBufferBase& serialRepr = buffer.getSerializeRepr();
-    Fw::TestUtil::DpContainerHeader::checkDeserialAtOffset(serialRepr, Fw::DpContainer::DATA_OFFSET);
+    Fw::ExternalSerializeBufferWithMemberCopy deserializer = buffer.getDeserializer();
+    Fw::TestUtil::DpContainerHeader::checkDeserialAtOffset(deserializer, Fw::DpContainer::DATA_OFFSET);
     for (FwSizeType i = 0; i < expectedNumElts; ++i) {
         FwDpIdType id;
-        auto status = serialRepr.deserialize(id);
+        auto status = deserializer.deserialize(id);
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
         const FwDpIdType expectedId = this->component.getIdBase() + DpTest::RecordId::U8ArrayRecord;
         ASSERT_EQ(id, expectedId);
         FwSizeType size;
-        status = serialRepr.deserializeSize(size);
+        status = deserializer.deserializeSize(size);
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(size, this->u8ArrayRecordData.size());
-        const U8* const buffAddr = serialRepr.getBuffAddr();
+        const U8* const buffAddr = deserializer.getBuffAddr();
         for (FwSizeType j = 0; j < size; ++j) {
             U8 byte;
-            status = serialRepr.deserialize(byte);
+            status = deserializer.deserialize(byte);
             ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
             ASSERT_EQ(byte, this->u8ArrayRecordData.at(j));
         }
@@ -208,22 +208,22 @@ void Tester::productRecvIn_Container4_SUCCESS() {
                                              expectedNumElts);
 
     // Check the data
-    Fw::SerializeBufferBase& serialRepr = buffer.getSerializeRepr();
-    Fw::TestUtil::DpContainerHeader::checkDeserialAtOffset(serialRepr, Fw::DpContainer::DATA_OFFSET);
+    Fw::ExternalSerializeBufferWithMemberCopy deserializer = buffer.getDeserializer();
+    Fw::TestUtil::DpContainerHeader::checkDeserialAtOffset(deserializer, Fw::DpContainer::DATA_OFFSET);
     for (FwSizeType i = 0; i < expectedNumElts; ++i) {
         FwDpIdType id;
-        auto status = serialRepr.deserialize(id);
+        auto status = deserializer.deserialize(id);
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
         const FwDpIdType expectedId = this->component.getIdBase() + DpTest::RecordId::U32ArrayRecord;
         ASSERT_EQ(id, expectedId);
         FwSizeType size;
-        status = serialRepr.deserializeSize(size);
+        status = deserializer.deserializeSize(size);
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(size, this->u32ArrayRecordData.size());
-        const U8* const buffAddr = serialRepr.getBuffAddr();
+        const U8* const buffAddr = deserializer.getBuffAddr();
         for (FwSizeType j = 0; j < size; ++j) {
             U32 elt;
-            status = serialRepr.deserialize(elt);
+            status = deserializer.deserialize(elt);
             ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
             ASSERT_EQ(elt, this->u32ArrayRecordData.at(j));
         }
@@ -252,22 +252,22 @@ void Tester::productRecvIn_Container5_SUCCESS() {
                                              expectedNumElts);
 
     // Check the data
-    Fw::SerializeBufferBase& serialRepr = buffer.getSerializeRepr();
-    Fw::TestUtil::DpContainerHeader::checkDeserialAtOffset(serialRepr, Fw::DpContainer::DATA_OFFSET);
+    Fw::ExternalSerializeBufferWithMemberCopy deserializer = buffer.getDeserializer();
+    Fw::TestUtil::DpContainerHeader::checkDeserialAtOffset(deserializer, Fw::DpContainer::DATA_OFFSET);
     for (FwSizeType i = 0; i < expectedNumElts; ++i) {
         FwDpIdType id;
-        auto status = serialRepr.deserialize(id);
+        auto status = deserializer.deserialize(id);
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
         const FwDpIdType expectedId = this->component.getIdBase() + DpTest::RecordId::DataArrayRecord;
         ASSERT_EQ(id, expectedId);
         FwSizeType size;
-        status = serialRepr.deserializeSize(size);
+        status = deserializer.deserializeSize(size);
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(size, this->dataArrayRecordData.size());
-        const U8* const buffAddr = serialRepr.getBuffAddr();
+        const U8* const buffAddr = deserializer.getBuffAddr();
         for (FwSizeType j = 0; j < size; ++j) {
             DpTest_Data elt;
-            status = serialRepr.deserialize(elt);
+            status = deserializer.deserialize(elt);
             ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
             ASSERT_EQ(elt, this->dataArrayRecordData.at(j));
         }
@@ -295,16 +295,16 @@ void Tester::productRecvIn_Container6_SUCCESS() {
                                              DpTest::ContainerPriority::Container6, this->container6Buffer, buffer,
                                              expectedNumElts);
     // Check the data
-    Fw::SerializeBufferBase& serialRepr = buffer.getSerializeRepr();
-    Fw::TestUtil::DpContainerHeader::checkDeserialAtOffset(serialRepr, Fw::DpContainer::DATA_OFFSET);
+    Fw::ExternalSerializeBufferWithMemberCopy deserializer = buffer.getDeserializer();
+    Fw::TestUtil::DpContainerHeader::checkDeserialAtOffset(deserializer, Fw::DpContainer::DATA_OFFSET);
     for (FwSizeType i = 0; i < expectedNumElts; ++i) {
         FwDpIdType id;
         Fw::String elt;
-        auto status = serialRepr.deserialize(id);
+        auto status = deserializer.deserialize(id);
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
         const FwDpIdType expectedId = this->component.getIdBase() + DpTest::RecordId::StringRecord;
         ASSERT_EQ(id, expectedId);
-        status = serialRepr.deserialize(elt);
+        status = deserializer.deserialize(elt);
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(elt, es);
     }
@@ -335,22 +335,22 @@ void Tester::productRecvIn_Container7_SUCCESS() {
                                              DpTest::ContainerPriority::Container7, this->container7Buffer, buffer,
                                              expectedNumElts);
     // Check the data
-    Fw::SerializeBufferBase& serialRepr = buffer.getSerializeRepr();
-    Fw::TestUtil::DpContainerHeader::checkDeserialAtOffset(serialRepr, Fw::DpContainer::DATA_OFFSET);
+    Fw::ExternalSerializeBufferWithMemberCopy deserializer = buffer.getDeserializer();
+    Fw::TestUtil::DpContainerHeader::checkDeserialAtOffset(deserializer, Fw::DpContainer::DATA_OFFSET);
     for (FwSizeType i = 0; i < expectedNumElts; ++i) {
         FwDpIdType id;
-        auto status = serialRepr.deserialize(id);
+        auto status = deserializer.deserialize(id);
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
         const FwDpIdType expectedId = this->component.getIdBase() + DpTest::RecordId::StringArrayRecord;
         ASSERT_EQ(id, expectedId);
         FwSizeType size;
-        status = serialRepr.deserializeSize(size);
+        status = deserializer.deserializeSize(size);
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(size, arraySize);
-        const U8* const buffAddr = serialRepr.getBuffAddr();
+        const U8* const buffAddr = deserializer.getBuffAddr();
         for (FwSizeType j = 0; j < size; ++j) {
             Fw::String elt;
-            status = serialRepr.deserialize(elt);
+            status = deserializer.deserialize(elt);
             ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
             ASSERT_EQ(elt, es);
         }

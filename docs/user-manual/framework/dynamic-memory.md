@@ -59,21 +59,23 @@ followed by the usage in C++.
 
 ### Working With F´ Buffers
 
-`Fw::Buffer` objects function as a wrapper for generic memory regions. They consist of a pointer to memory and the size of the memory region pointed to by the pointer. An easy way to work with an `Fw::Buffer` is to use the serialization
-representation of the buffer. This allows users to serialize and deserialize from the buffer's data using methods. 
+`Fw::Buffer` objects function as a wrapper for generic memory regions. They consist of a pointer to memory and the 
+size of the memory region pointed to by the pointer. An easy way to work with an `Fw::Buffer` is to use the 
+serialization representation of the buffer. 
 
-To use this method, get a representation using the `Fw::Buffer.getSerializeRepr()` and then call `.serialize()` or
-`.deserialize()` on the returned object.
+To use this method, get either a serializer or deserializer using the `Fw::Buffer.getSerializer()` 
+or `Fw::Buffer.getDeserializer()` methods. Both of these methods return a `Fw::ExternalSerializeBufferWithMemberCopy` 
+object which you can then call `.serialize()` or `.deserialize()` on.
 
 **Example Using Serialization and Deserialization Methods**
 
 ```c++
 U32 my_value = 123;
 Fw::Buffer my_buffer = ...;
-my_buffer.getSerializeRepr().serialize(mv_value);
+my_buffer.getSerializer().serialize(mv_value);
 
 U32 my_value_again = 0;
-my_buffer.getSerializeRepr().deserialize(mv_value_again);
+my_buffer.getDeserializer().deserialize(mv_value_again);
 ```
 > [!NOTE]
 > To use this method types must inherit from `Fw::Serializable` or be basic types.

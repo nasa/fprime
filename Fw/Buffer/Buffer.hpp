@@ -93,7 +93,18 @@ public:
     //! to the wrapped buffer. Once obtained the user should call one of two functions: `sbb.resetSer();` to setup for
     //! serialization, or `sbb.setBuffLen(buffer.getSize());` to setup for deserializing.
     //! \return representation of the wrapped data to aid in serializing to it
-    SerializeBufferBase& getSerializeRepr();
+    DEPRECATED(SerializeBufferBase& getSerializeRepr(), "Switch to .getSerializer() and .getDeserializer()");
+
+    //! Returns a ExternalSerializeBufferWithMemberCopy representation of the wrapped data for serializing
+    //!
+    //! \return representation of the wrapped data to aid in serializing to it
+    ExternalSerializeBufferWithMemberCopy getSerializer();
+
+
+    //! Returns a ExternalSerializeBufferWithMemberCopy representation of the wrapped data for deserializing
+    //!
+    //! \return representation of the wrapped data to aid in deserializing to it
+    ExternalSerializeBufferWithMemberCopy getDeserializer();
 
     //! Serializes this buffer to a SerializeBufferBase
     //!

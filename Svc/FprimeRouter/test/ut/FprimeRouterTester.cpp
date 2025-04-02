@@ -76,7 +76,8 @@ void FprimeRouterTester::mockReceivePacketType(Fw::ComPacket::ComPacketType pack
     const FwPacketDescriptorType descriptorType = packetType;
     U8 data[sizeof descriptorType];
     Fw::Buffer buffer(data, sizeof(data));
-    buffer.getSerializeRepr().serialize(descriptorType);
+    Fw::ExternalSerializeBufferWithMemberCopy esb = buffer.getSerializer();
+    esb.serialize(descriptorType);
     Fw::Buffer nullContext;
     this->invoke_to_dataIn(0, buffer, nullContext);
 }
