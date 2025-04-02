@@ -16,6 +16,7 @@
 
 #include <FpConfig.hpp>
 #include <array>
+#include <cstdlib>
 
 #include "Fw/Types/Assert.hpp"
 
