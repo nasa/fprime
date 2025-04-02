@@ -63,7 +63,7 @@ TEST_F(FormatTest, U8) {
 
     buf1 << a;
     for (U32 i = 0; i < FormatU8::SIZE; i++) {
-        buf2 << "a " << (U16) testVals[i] << " b ";
+        buf2 << "a " << static_cast<U16>(testVals[i]) << " b ";
     }
     buf2 << "]";
 
@@ -129,7 +129,7 @@ TEST_F(FormatTest, I8) {
 
     buf1 << a;
     for (U32 i = 0; i < FormatI8::SIZE; i++) {
-        buf2 << "a " << (I16) testVals[i] << " b ";
+        buf2 << "a " << static_cast<I16>(testVals[i]) << " b ";
     }
     buf2 << "]";
 

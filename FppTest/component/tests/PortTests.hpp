@@ -242,7 +242,7 @@
     void Tester ::test##PORT_KIND##PortInvokeSerial(FwIndexType portNum, FppTest::Types::NoParams& port) {         \
         ASSERT_TRUE(component.isConnected_serialOut_OutputPort(portNum));                                              \
                                                                                                                        \
-        U8 data[0];                                                                                                    \
+        U8 data[1];                                                                                                    \
         Fw::SerialBuffer buf(data, sizeof(data));                                                                      \
                                                                                                                        \
         this->invoke##PORT_KIND##SerialPort(SerialPortIndex::NO_ARGS, buf);                                            \
@@ -254,7 +254,7 @@
         Fw::SerializeStatus status;                                                                                    \
                                                                                                                        \
         /* Check unsuccessful deserialization of first parameter */                                                    \
-        U8 invalidData1[0];                                                                                            \
+        U8 invalidData1[1];                                                                                            \
         Fw::SerialBuffer invalidBuf1(invalidData1, sizeof(invalidData1));                                              \
                                                                                                                        \
         this->invoke##PORT_KIND##SerialPort(SerialPortIndex::PRIMITIVE, invalidBuf1);                                  \
@@ -379,7 +379,7 @@
         Fw::SerializeStatus status;                                                                                    \
                                                                                                                        \
         /* Check unsuccessful deserialization of first parameter */                                                    \
-        U8 invalidData1[0];                                                                                            \
+        U8 invalidData1[1];                                                                                            \
         Fw::SerialBuffer invalidBuf1(invalidData1, sizeof(invalidData1));                                              \
                                                                                                                        \
         this->invoke##PORT_KIND##SerialPort(SerialPortIndex::STRING, invalidBuf1);                                     \
@@ -455,7 +455,7 @@
         Fw::SerializeStatus status;                                                                                    \
                                                                                                                        \
         /* Check unsuccessful deserialization of first parameter */                                                    \
-        U8 invalidData1[0];                                                                                            \
+        U8 invalidData1[1];                                                                                            \
         Fw::SerialBuffer invalidBuf1(invalidData1, sizeof(invalidData1));                                              \
                                                                                                                        \
         this->invoke##PORT_KIND##SerialPort(SerialPortIndex::ENUM, invalidBuf1);                                       \
@@ -494,7 +494,7 @@
         Fw::SerializeStatus status;                                                                                    \
                                                                                                                        \
         /* Check unsuccessful deserialization of first parameter */                                                    \
-        U8 invalidData1[0];                                                                                            \
+        U8 invalidData1[1];                                                                                            \
         Fw::SerialBuffer invalidBuf1(invalidData1, sizeof(invalidData1));                                              \
                                                                                                                        \
         this->invoke##PORT_KIND##SerialPort(SerialPortIndex::ARRAY, invalidBuf1);                                      \
@@ -532,7 +532,7 @@
         Fw::SerializeStatus status;                                                                                    \
                                                                                                                        \
         /* Check unsuccessful deserialization of first parameter */                                                    \
-        U8 invalidData1[0];                                                                                            \
+        U8 invalidData1[1];                                                                                            \
         Fw::SerialBuffer invalidBuf1(invalidData1, sizeof(invalidData1));                                              \
                                                                                                                        \
         this->invoke##PORT_KIND##SerialPort(SerialPortIndex::STRUCT, invalidBuf1);                                     \

@@ -75,7 +75,7 @@ protected:
         }
     }
 
-    void assertUnsuccessfulSerialization(NonPrimitive& s, U32 bufSize) {
+    void assertUnsuccessfulSerialization(NonPrimitive& s, FwSizeType bufSize) {
         U8 data[bufSize];
         Fw::SerialBuffer buf(data, sizeof(data));
         Fw::SerializeStatus status;
@@ -265,10 +265,12 @@ TEST_F(NonPrimitiveStructTest, Serialization) {
                    testStruct, testU32Arr, testStructArr);
     NonPrimitive sCopy;
 
-    U32 stringSerializedSize = testString.length() + sizeof(FwBuffSizeType);
-    U32 serializedSize = NonPrimitive::SERIALIZED_SIZE
-                         - Fw::StringBase::STATIC_SERIALIZED_SIZE(80)
-                         + stringSerializedSize;
+    U32 stringSerializedSize = static_cast<U32>(testString.length() + sizeof(FwBuffSizeType));
+    U32 serializedSize = static_cast<U32>(
+			    NonPrimitive::SERIALIZED_SIZE
+                            - Fw::StringBase::STATIC_SERIALIZED_SIZE(80)
+                            + stringSerializedSize
+                         );
     Fw::SerializeStatus status;
 
     // Test successful serialization

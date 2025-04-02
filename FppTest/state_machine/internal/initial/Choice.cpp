@@ -56,13 +56,13 @@ void Choice::testTrue() {
     this->checkActionsAndGuards(expectedActionSize, expectedGuardSize);
 }
 
-void Choice::checkActionsAndGuards(FwSizeType expectedActionSize, FwSizeType expectedGuardSize) {
+void Choice::checkActionsAndGuards(FwIndexType expectedActionSize, FwIndexType expectedGuardSize) {
     ASSERT_EQ(this->m_action_a_history.getSize(), expectedActionSize);
-    for (FwSizeType i = 0; i < expectedActionSize; i++) {
+    for (FwIndexType i = 0; i < expectedActionSize; i++) {
         ASSERT_EQ(this->m_action_a_history.getItemAt(i), Signal::__FPRIME_AC_INITIAL_TRANSITION);
     }
     ASSERT_EQ(this->m_guard_g.getCallHistory().getSize(), expectedGuardSize);
-    for (FwSizeType i = 0; i < expectedGuardSize; i++) {
+    for (FwIndexType i = 0; i < expectedGuardSize; i++) {
         ASSERT_EQ(this->m_guard_g.getCallHistory().getItemAt(i), Signal::__FPRIME_AC_INITIAL_TRANSITION);
     }
 }
