@@ -15,7 +15,6 @@ add_compile_options(
     -Wall
     -Wconversion
     -Wdouble-promotion
-    -Wno-zero-length-array
     -Werror
     -Wextra
     -Wno-unused-parameter
