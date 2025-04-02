@@ -35,7 +35,7 @@ Tester::Tester()
       container7Buffer(this->container7Data, sizeof this->container7Data),
       component("DpTest",
                 STest::Pick::any(),
-                STest::Pick::any(),
+                static_cast<U16>(STest::Pick::any()),
                 this->u8ArrayRecordData,
                 this->u32ArrayRecordData,
                 this->dataArrayRecordData,
@@ -436,7 +436,7 @@ void Tester::productRecvIn_CheckFailure(FwDpIdType id, Fw::Buffer buffer) {
 Fw::Success::T Tester::productGet_handler(FwDpIdType id, FwSizeType size, Fw::Buffer& buffer) {
     this->pushProductGetEntry(id, size);
     Fw::Success status = Fw::Success::FAILURE;
-    FW_ASSERT(id >= ID_BASE, id, ID_BASE);
+    FW_ASSERT(id >= ID_BASE, static_cast<FwAssertArgType>(id), static_cast<FwAssertArgType>(ID_BASE));
     const FwDpIdType localId = id - ID_BASE;
     switch (localId) {
         case DpTest::ContainerId::Container1:

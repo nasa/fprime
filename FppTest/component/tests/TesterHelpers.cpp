@@ -222,12 +222,12 @@ void Tester ::connectPorts() {
     // ----------------------------------------------------------------------
 
     // serialGuarded
-    for (FwSizeType i = 0; i < 6; ++i) {
+    for (FwIndexType i = 0; i < 6; ++i) {
         this->connect_to_serialGuarded(i, this->component.get_serialGuarded_InputPort(i));
     }
 
     // serialSync
-    for (FwSizeType i = 0; i < 6; ++i) {
+    for (FwIndexType i = 0; i < 6; ++i) {
         this->connect_to_serialSync(i, this->component.get_serialSync_InputPort(i));
     }
 }

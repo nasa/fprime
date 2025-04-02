@@ -69,8 +69,8 @@ void Choice::testFalse() {
     this->init(queueDepth, instanceId);
     ASSERT_EQ(this->choice_getState(), Choice_Choice::State::T);
     ASSERT_EQ(this->smInitialChoice_getState(), SmInitial_Choice::State::T);
-    const FwSizeType expectedActionSize = 5;
-    const FwSizeType expectedGuardSize = 1;
+    const FwIndexType expectedActionSize = 5;
+    const FwIndexType expectedGuardSize = 1;
     this->checkActionsAndGuards(expectedActionSize, expectedGuardSize);
 }
 
@@ -84,8 +84,8 @@ void Choice::testTrue() {
     this->init(queueDepth, instanceId);
     ASSERT_EQ(this->choice_getState(), Choice_Choice::State::S);
     ASSERT_EQ(this->smInitialChoice_getState(), SmInitial_Choice::State::S);
-    const FwSizeType expectedActionSize = 3;
-    const FwSizeType expectedGuardSize = 1;
+    const FwIndexType expectedActionSize = 3;
+    const FwIndexType expectedGuardSize = 1;
     this->checkActionsAndGuards(expectedActionSize, expectedGuardSize);
 }
 
@@ -93,17 +93,17 @@ void Choice::testTrue() {
 // Helper functions
 // ----------------------------------------------------------------------
 
-void Choice::checkActionsAndGuards(FwSizeType expectedActionSize, FwSizeType expectedGuardSize) {
+void Choice::checkActionsAndGuards(FwIndexType expectedActionSize, FwIndexType expectedGuardSize) {
     ASSERT_EQ(this->m_choice_action_a_history.getSize(), expectedActionSize);
     ASSERT_EQ(this->m_smInitialChoice_action_a_history.getSize(), expectedActionSize);
-    for (FwSizeType i = 0; i < expectedActionSize; i++) {
+    for (FwIndexType i = 0; i < expectedActionSize; i++) {
         ASSERT_EQ(this->m_choice_action_a_history.getItemAt(i), Choice_Choice::Signal::__FPRIME_AC_INITIAL_TRANSITION);
         ASSERT_EQ(this->m_smInitialChoice_action_a_history.getItemAt(i),
                   SmInitial_Choice::Signal::__FPRIME_AC_INITIAL_TRANSITION);
     }
     ASSERT_EQ(this->m_choice_guard_g.getCallHistory().getSize(), expectedGuardSize);
     ASSERT_EQ(this->m_smInitialChoice_guard_g.getCallHistory().getSize(), expectedGuardSize);
-    for (FwSizeType i = 0; i < expectedGuardSize; i++) {
+    for (FwIndexType i = 0; i < expectedGuardSize; i++) {
         ASSERT_EQ(this->m_choice_guard_g.getCallHistory().getItemAt(i),
                   Choice_Choice::Signal::__FPRIME_AC_INITIAL_TRANSITION);
         ASSERT_EQ(this->m_smInitialChoice_guard_g.getCallHistory().getItemAt(i),

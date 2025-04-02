@@ -85,10 +85,14 @@ Explicit::T FppTest::Enum::getInvalidValue<Explicit>() {
                 std::numeric_limits<Explicit::SerialType>::max()
             ));
         default:
-            return static_cast<Explicit::T>(STest::Pick::lowerUpper(
-                (Explicit::A - 1) * (-1),
-                std::numeric_limits<Explicit::SerialType>::max()
-            ) * (-1));
+            return static_cast<Explicit::T>(
+                static_cast<I32>(
+                    STest::Pick::lowerUpper(
+                        (Explicit::A - 1) * (-1),
+                        std::numeric_limits<Explicit::SerialType>::max()
+                    )
+                ) * (-1)
+            );
     }
 }
 
