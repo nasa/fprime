@@ -22,7 +22,7 @@ ComStub::~ComStub() {}
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-Drv::SendStatus ComStub::comDataIn_handler(const FwIndexType portNum, Fw::Buffer& sendBuffer) {
+void ComStub::comDataIn_handler(const FwIndexType portNum, Fw::Buffer& sendBuffer, Fw::Buffer& context) {
     FW_ASSERT(!this->m_reinitialize || !this->isConnected_comStatus_OutputPort(0));  // A message should never get here if we need to reinitialize is needed
     Drv::SendStatus driverStatus = Drv::SendStatus::SEND_RETRY;
     for (FwIndexType i = 0; driverStatus == Drv::SendStatus::SEND_RETRY && i < RETRY_LIMIT; i++) {
@@ -34,7 +34,6 @@ Drv::SendStatus ComStub::comDataIn_handler(const FwIndexType portNum, Fw::Buffer
     if (this->isConnected_comStatus_OutputPort(0)) {
         this->comStatus_out(0, comSuccess);
     }
-    return Drv::SendStatus::SEND_OK;  // Always send ok to deframer as it does not handle this anyway
 }
 
 void ComStub::drvConnected_handler(const FwIndexType portNum) {

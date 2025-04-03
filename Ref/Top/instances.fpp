@@ -102,8 +102,13 @@ module Ref {
     stack size Default.STACK_SIZE \
     priority 96
 
+  instance comQueue: Svc.ComQueue base id 0x1100 \
+      queue size Default.QUEUE_SIZE \
+      stack size Default.STACK_SIZE \
+      priority 100 \
 
-  instance typeDemo: Ref.TypeDemo base id 0x1100
+
+  instance typeDemo: Ref.TypeDemo base id 0x1200
 
   # ----------------------------------------------------------------------
   # Queued component instances
@@ -137,7 +142,7 @@ module Ref {
   # ----------------------------------------------------------------------
 
   @ Communications driver. May be swapped with other comm drivers like UART
-  instance comm: Drv.TcpClient base id 0x4000
+  instance comDriver: Drv.TcpClient base id 0x4000
 
   instance fatalAdapter: Svc.AssertFatalAdapter base id 0x4100
 
@@ -165,10 +170,11 @@ module Ref {
 
   instance fprimeRouter: Svc.FprimeRouter base id 0x4D00
 
-  instance fprimePacketizer: Svc.FprimePacketizer base id 0x4E00
+  # instance fprimePacketizer: Svc.FprimePacketizer base id 0x4E00
 
   instance fprimeFramer: Svc.FprimeFramer base id 0x4F00
 
+  instance comStub: Svc.ComStub base id 0x5000
 
 }
 

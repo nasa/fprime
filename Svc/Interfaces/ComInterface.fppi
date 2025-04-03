@@ -1,5 +1,5 @@
 @ Data coming in from the framing component
-sync input port comDataIn: Drv.ByteStreamSend
+sync input port comDataIn: Fw.DataWithContext
 
 @ Status of the last radio transmission
 output port comStatus: Fw.SuccessCondition

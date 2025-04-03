@@ -6,3 +6,13 @@ output port framedDataOut: Fw.DataWithContext
 
 @ Port to output framed data to a ByteStream interface
 output port framedStreamOut: Drv.ByteStreamSend
+
+# ----------------------------------------------------------------------
+# Handling of of ready signals
+# ----------------------------------------------------------------------
+@ Port receiving the general status from the downstream component
+@ indicating it is ready or not-ready for more input
+sync input port comStatusIn: Fw.SuccessCondition
+
+@ Port receiving indicating the status of framer for receiving more data
+output port comStatusOut: Fw.SuccessCondition

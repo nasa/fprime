@@ -6,6 +6,7 @@
 
 #include <Fw/Types/Assert.hpp>
 #include <Svc/ComQueue/ComQueue.hpp>
+#include <Fw/Com/ComPacket.hpp>
 #include "Fw/Types/BasicTypes.hpp"
 
 namespace Svc {
@@ -27,7 +28,8 @@ ComQueue ::ComQueue(const char* const compName)
       m_state(WAITING),
       m_allocationId(static_cast<FwEnumStoreType>(-1)),
       m_allocator(nullptr),
-      m_allocation(nullptr) {
+      m_allocation(nullptr),
+      m_contextBuffer(m_contextBufferData, sizeof(m_contextBufferData)) {
     // Initialize throttles to "off"
     for (FwIndexType i = 0; i < TOTAL_PORT_COUNT; i++) {
         this->m_throttle[i] = false;
@@ -141,9 +143,9 @@ void ComQueue::buffQueueIn_handler(const FwIndexType portNum, Fw::Buffer& fwBuff
     // Ensure that the port number of buffQueueIn is consistent with the expectation
     FW_ASSERT(portNum >= 0 && portNum < BUFFER_PORT_COUNT, portNum);
     FW_ASSERT(queueNum < TOTAL_PORT_COUNT);
-    bool status =
+    bool success =
         this->enqueue(queueNum, QueueType::BUFFER_QUEUE, reinterpret_cast<const U8*>(&fwBuffer), sizeof(Fw::Buffer));
-    if (!status) {
+    if (!success) {
         this->deallocate_out(portNum, fwBuffer);
     }
 }
@@ -228,16 +230,59 @@ bool ComQueue::enqueue(const FwIndexType queueNum, QueueType queueType, const U8
     return rvStatus;
 }
 
-void ComQueue::sendComBuffer(Fw::ComBuffer& comBuffer) {
+void ComQueue::serializeIntoContext(FwIndexType value) {
+    Fw::SerializeStatus status;
+    // Pass queue index as context buffer so downstream framers know where the data is coming from
+    Fw::SerializeBufferBase& contextSerializer = this->m_contextBuffer.getSerializeRepr();
+    this->m_contextBuffer.setSize(sizeof(FwIndexType));
+    status = contextSerializer.serialize(value); 
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
+}
+
+void ComQueue::sendComBuffer(Fw::ComBuffer& comBuffer, FwIndexType queueIndex) {
     FW_ASSERT(this->m_state == READY);
-    this->comQueueSend_out(0, comBuffer, 0);
+    Fw::SerializeStatus status;
+
+    Fw::Buffer outBuffer = this->allocate_out(0, static_cast<Fw::Buffer::SizeType>(comBuffer.getBuffLength()));
+    Fw::SerializeBufferBase& serializer = outBuffer.getSerializeRepr();
+    status = serializer.serialize(comBuffer.getBuffAddr(), comBuffer.getBuffLength(), Fw::Serialization::OMIT_LENGTH);
+    FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK);
+
+    this->serializeIntoContext(queueIndex); // Serialize the queue index into the context buffer
+    this->queueSend_out(0, outBuffer, this->m_contextBuffer);
+
+    this->deallocate_out(0, outBuffer); // Deallocate the temporary buffer used for sending the ComBuffer
     this->m_state = WAITING;
 }
 
-void ComQueue::sendBuffer(Fw::Buffer& buffer) {
+void ComQueue::sendBuffer(Fw::Buffer& buffer, FwIndexType queueIndex) {
     // Retry buffer expected to be cleared as we are either transferring ownership or have already deallocated it.
     FW_ASSERT(this->m_state == READY);
-    this->buffQueueSend_out(0, buffer);
+    Fw::SerializeStatus status;
+
+    // FIXME: remove I32 once FileDownlink is fixed
+    Fw::Buffer::SizeType packetSize = static_cast<Fw::Buffer::SizeType>(buffer.getSize()) + sizeof(I32);
+    Fw::Buffer outBuffer = this->allocate_out(0, packetSize);
+    Fw::SerializeBufferBase& serializer = outBuffer.getSerializeRepr();
+
+    // --------------------------------------------------------
+    // REMOVE ME: This is temporary, while FileDownlink doesn't do it by itself. To be removed once fixed in FileDownlink
+    status = serializer.serialize(static_cast<I32>(Fw::ComPacket::FW_PACKET_FILE));  // I32 used for enum storage
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
+    // --------------------------------------------------------
+
+    status = serializer.serialize(buffer.getData(), buffer.getSize(), Fw::Serialization::OMIT_LENGTH);
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
+
+    this->serializeIntoContext(queueIndex); // Serialize the queue index into the context buffer
+    this->queueSend_out(0, outBuffer, this->m_contextBuffer);
+
+    // We probably shouldn't do the bufferReturn here if we want to support potential async ?
+    this->fileBufferReturn_out(0, buffer); // Return the buffer to FileDownlink
+    this->deallocate_out(0, outBuffer);    // Deallocate the temporary buffer used for sending the ComBuffer
+
+    // TODO: Re-evaluate how to do context info ? Could maybe be an FPP type ?
+    // instead of a Fw::Buffer
     this->m_state = WAITING;
 }
 
@@ -262,11 +307,11 @@ void ComQueue::processQueue() {
         if (entry.index < COM_PORT_COUNT) {
             Fw::ComBuffer comBuffer;
             queue.dequeue(reinterpret_cast<U8*>(&comBuffer), sizeof(comBuffer));
-            this->sendComBuffer(comBuffer);
+            this->sendComBuffer(comBuffer, entry.index);
         } else {
             Fw::Buffer buffer;
             queue.dequeue(reinterpret_cast<U8*>(&buffer), sizeof(buffer));
-            this->sendBuffer(buffer);
+            this->sendBuffer(buffer, entry.index);
         }
 
         // Update the throttle and the index that was just sent

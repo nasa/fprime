@@ -172,17 +172,25 @@ class ComQueue final : public ComQueueComponentBase {
 
     //! Send a chosen Fw::ComBuffer
     //!
-    void sendComBuffer(Fw::ComBuffer& comBuffer  //!< Reference to buffer to send
+    void sendComBuffer(Fw::ComBuffer& comBuffer,  //!< Reference to buffer to send
+                       FwIndexType queueIndex     //!< Index of the queue emitting the message
     );
 
     //! Send a chosen Fw::Buffer
     //!
-    void sendBuffer(Fw::Buffer& buffer  //!< Reference to buffer to send
+    void sendBuffer(Fw::Buffer& buffer,     //!< Reference to buffer to send
+                    FwIndexType queueIndex  //!< Index of the queue emitting the message  
     );
 
     //! Process the queues to select the next priority message
     //!
     void processQueue();
+
+    //! Serialize the given value into the member context buffer
+    void serializeIntoContext(
+        FwIndexType value  //!< Index of the queue to serialize
+    );
+
     // ----------------------------------------------------------------------
     // Member variables
     // ----------------------------------------------------------------------
@@ -195,6 +203,11 @@ class ComQueue final : public ComQueueComponentBase {
     FwEnumStoreType m_allocationId;  //!< Component's allocation ID
     Fw::MemAllocator* m_allocator;    //!< Pointer to Fw::MemAllocator instance for deallocation
     void* m_allocation;               //!< Pointer to allocated memory
+
+    // Storage for context buffer
+    // TODO: figure out size and if this is the right approach
+    Fw::Buffer m_contextBuffer;  //!< Fw::Buffer used for passing context information
+    U8 m_contextBufferData[64];  //!< Data buffer used to store context information
 };
 
 }  // end namespace Svc

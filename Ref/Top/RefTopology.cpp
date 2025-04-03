@@ -46,6 +46,8 @@ U32 rateGroup1Context[Svc::ActiveRateGroup::CONNECTION_COUNT_MAX] = {};
 U32 rateGroup2Context[Svc::ActiveRateGroup::CONNECTION_COUNT_MAX] = {};
 U32 rateGroup3Context[Svc::ActiveRateGroup::CONNECTION_COUNT_MAX] = {};
 
+Svc::ComQueue::QueueConfigurationTable configurationTable;
+
 // A number of constants are needed for construction of the topology. These are specified here.
 enum TopologyConstants {
     CMD_SEQ_BUFFER_SIZE = 5 * 1024,
@@ -124,8 +126,19 @@ void configureTopology() {
     dpCat.configure(&dpDir,1,dpState,0,mallocator);
     dpWriter.configure(dpDir);
 
-    // Note: Uncomment when using Svc:TlmPacketizer
-    // tlmSend.setPacketList(RefPacketsPkts, RefPacketsIgnore, 1);
+    // ComQueue configuration
+    // Events (highest-priority)
+    configurationTable.entries[0].depth = 100;
+    configurationTable.entries[0].priority = 0;
+    // Telemetry
+    configurationTable.entries[1].depth = 500;
+    configurationTable.entries[1].priority = 2;
+    // File Downlink
+    configurationTable.entries[2].depth = 100;
+    configurationTable.entries[2].priority = 1;
+    // Allocation identifier is 0 as the MallocAllocator discards it
+    comQueue.configure(configurationTable, 0, mallocator);
+
 }
 
 // Public functions for use in main program are namespaced with deployment name Ref
@@ -142,7 +155,7 @@ void setupTopology(const TopologyState& state) {
     // Autocoded configuration. Function provided by autocoder.
     configComponents(state);
     if (state.hostname != nullptr && state.port != 0) {
-        comm.configure(state.hostname, state.port);
+        comDriver.configure(state.hostname, state.port);
     }
     // Project-specific component configuration. Function provided above. May be inlined, if desired.
     configureTopology();
@@ -156,7 +169,7 @@ void setupTopology(const TopologyState& state) {
     if (state.hostname != nullptr && state.port != 0) {
         Os::TaskString name("ReceiveTask");
         // Uplink is configured for receive so a socket task is started
-        comm.start(name, COMM_PRIORITY, Default::STACK_SIZE);
+        comDriver.start(name, COMM_PRIORITY, Default::STACK_SIZE);
     }
 }
 
@@ -192,8 +205,8 @@ void teardownTopology(const TopologyState& state) {
     freeThreads(state);
 
     // Other task clean-up.
-    comm.stop();
-    (void)comm.join();
+    comDriver.stop();
+    (void)comDriver.join();
 
     // Resource deallocation
     cmdSeq.deallocateBuffer(mallocator);

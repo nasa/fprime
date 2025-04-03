@@ -19,6 +19,8 @@
         <channel name="Ref.fileDownlink.FilesSent"/>
         <channel name="Ref.fileDownlink.PacketsSent"/>
         <channel name="Ref.fileManager.CommandsExecuted"/>
+        <channel name="Ref.comQueue.comQueueDepth"/>
+        <channel name="Ref.comQueue.buffQueueDepth"/>
         <!-- Uncomment to use Svc::TlmPacketizer -->
         <!-- channel name="Ref.tlmSend.SendLevel"/-->
     </packet>

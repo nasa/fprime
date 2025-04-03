@@ -47,29 +47,20 @@ void FprimeFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, Fw::Bu
     status = frameSerializer.serialize(data.getData(), data.getSize(), Fw::Serialization::OMIT_LENGTH);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
-    // Serialize the trailer (and calculate the CRC)
+    // Serialize the trailer (with CRC computation)
     Utils::HashBuffer hashBuffer;
     Utils::Hash::hash(frameBuffer.getData(), frameSize - HASH_DIGEST_LENGTH, hashBuffer);
     trailer.setcrcField(hashBuffer.asBigEndianU32());
     status = frameSerializer.serialize(trailer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
-    // Send the full frame to the output ports
-    this->framedOut_helper(frameBuffer, context);
+    // Send the full frame out - this port shall always be connected
+    this->framedDataOut_out(0, frameBuffer, context);
 }
 
 void FprimeFramer ::comStatusIn_handler(FwIndexType portNum, Fw::Success& condition) {
     if (this->isConnected_comStatusOut_OutputPort(portNum)) {
         this->comStatusOut_out(portNum, condition);
-    }
-}
-
-void FprimeFramer ::framedOut_helper(Fw::Buffer& frameBuffer, Fw::Buffer& context) {
-    if (this->isConnected_framedStreamOut_OutputPort(0)) {
-        this->framedStreamOut_out(0, frameBuffer);
-    }
-    if (this->isConnected_framedDataOut_OutputPort(0)) {
-        this->framedDataOut_out(0, frameBuffer, context);
     }
 }
 

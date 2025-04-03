@@ -34,8 +34,9 @@ class ComStub final : public ComStubComponentBase {
 
     //! Handler implementation for comDataIn
     //!
-    Drv::SendStatus comDataIn_handler(const FwIndexType portNum, /*!< The port number*/
-                                      Fw::Buffer& sendBuffer) override;
+    void comDataIn_handler(const FwIndexType portNum, /*!< The port number*/
+                                      Fw::Buffer& sendBuffer,
+                                      Fw::Buffer& context) override;
 
     //! Handler implementation for drvConnected
     //!

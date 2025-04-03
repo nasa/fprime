@@ -26,7 +26,9 @@ module Ref {
     instance tlmSend
     instance cmdDisp
     instance cmdSeq
-    instance comm
+    instance comDriver
+    instance comStub
+    instance comQueue
     instance deframer
     instance eventLogger
     instance fatalAdapter
@@ -36,7 +38,6 @@ module Ref {
     instance fileUplink
     instance commsBufferManager
     instance frameAccumulator
-    instance fprimePacketizer
     instance fprimeFramer
     instance posixTime
     instance pingRcvr
@@ -81,21 +82,27 @@ module Ref {
 
     connections Downlink {
 
-      tlmSend.PktSend -> fprimePacketizer.comBufferIn
-      eventLogger.PktSend -> fprimePacketizer.comBufferIn
-      fileDownlink.bufferSendOut -> fprimePacketizer.fileBufferIn
+      eventLogger.PktSend -> comQueue.comQueueIn[0]
+      tlmSend.PktSend -> comQueue.comQueueIn[1]
+      fileDownlink.bufferSendOut -> comQueue.buffQueueIn[0]
 
-      fprimePacketizer.packetOut -> fprimeFramer.dataIn
-      fprimePacketizer.fileBufferReturn -> fileDownlink.bufferReturn
+      comQueue.queueSend -> fprimeFramer.dataIn
+      comQueue.allocate -> commsBufferManager.bufferGetCallee
+      comQueue.deallocate -> commsBufferManager.bufferSendIn
+      comQueue.fileBufferReturn -> fileDownlink.bufferReturn
 
       fprimeFramer.bufferAllocate -> commsBufferManager.bufferGetCallee
-      fprimeFramer.framedStreamOut -> comm.$send
+      fprimeFramer.framedDataOut -> comStub.comDataIn
 
-      comm.deallocate -> commsBufferManager.bufferSendIn
+      comDriver.deallocate -> commsBufferManager.bufferSendIn
+      comDriver.ready -> comStub.drvConnected
 
       dpCat.fileOut -> fileDownlink.SendFile
       fileDownlink.FileComplete -> dpCat.fileDone
+      comStub.drvDataOut -> comDriver.$send
 
+      comStub.comStatus -> fprimeFramer.comStatusIn
+      fprimeFramer.comStatusOut -> comQueue.comStatusIn
     }
 
     connections FaultProtection {
@@ -114,6 +121,7 @@ module Ref {
       rateGroup1Comp.RateGroupMemberOut[2] -> tlmSend.Run
       rateGroup1Comp.RateGroupMemberOut[3] -> fileDownlink.Run
       rateGroup1Comp.RateGroupMemberOut[4] -> systemResources.run
+      rateGroup1Comp.RateGroupMemberOut[5] -> comQueue.run
 
       # Rate group 2
       rateGroupDriverComp.CycleOut[Ports_RateGroups.rateGroup2] -> rateGroup2Comp.CycleIn
@@ -145,14 +153,15 @@ module Ref {
 
     connections Uplink {
 
-      comm.allocate -> commsBufferManager.bufferGetCallee
-      comm.$recv -> frameAccumulator.dataIn
+      comDriver.allocate -> commsBufferManager.bufferGetCallee
+      comDriver.$recv -> comStub.drvDataIn
+      comStub.comDataOut -> frameAccumulator.dataIn
 
-      frameAccumulator.frameOut -> deframer.framedIn
-      frameAccumulator.bufferAllocate -> commsBufferManager.bufferGetCallee
       frameAccumulator.bufferDeallocate -> commsBufferManager.bufferSendIn
-      deframer.bufferDeallocate -> commsBufferManager.bufferSendIn
+      frameAccumulator.bufferAllocate -> commsBufferManager.bufferGetCallee
+      frameAccumulator.frameOut -> deframer.framedIn
       deframer.deframedOut -> fprimeRouter.dataIn
+      deframer.bufferDeallocate -> commsBufferManager.bufferSendIn
 
       fprimeRouter.commandOut -> cmdDisp.seqCmdBuff
       fprimeRouter.fileOut -> fileUplink.bufferSendIn

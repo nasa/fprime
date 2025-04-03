@@ -16,11 +16,14 @@ module Svc {
       # General ports
       # ----------------------------------------------------------------------
 
-      @ Fw::ComBuffer output port
-      output port comQueueSend: Fw.Com
+      @ Port for emitting data ready to be sent
+      output port queueSend: Fw.DataWithContext
 
-      @ Fw::Buffer output port
-      output port buffQueueSend: Fw.BufferSend
+      @ Port for allocating Fw::Buffer to be sent down
+      output port allocate: Fw.BufferGet
+
+      @ Port for returning a File Buffer to its sender
+      output port fileBufferReturn: Fw.BufferSend
 
       @ Port for deallocating Fw::Buffer on queue overflow
       output port deallocate: Fw.BufferSend
