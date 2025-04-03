@@ -184,5 +184,6 @@ void SeqDispatcher::LOG_STATUS_cmdHandler(
   for(FwIndexType idx = 0; idx < SeqDispatcherSequencerPorts; idx++) {
     this->log_ACTIVITY_LO_LogSequencerStatus(static_cast<U16>(idx), this->m_entryTable[idx].state, Fw::LogStringArg(this->m_entryTable[idx].sequenceRunning));
   }
+  this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 }  // end namespace components
