@@ -33,7 +33,7 @@ type FwIndexType = PlatformIndexType
 type FwAssertArgType = PlatformAssertArgType
 
 @ The type of task priorities used.
-type FwTaskPriorityType = PlatformTaskPriorityType;
+type FwTaskPriorityType = PlatformTaskPriorityType
 
 @ The type of queue priorities used.
 type FwQueuePriorityType = PlatformQueuePriorityType
