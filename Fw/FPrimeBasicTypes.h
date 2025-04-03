@@ -8,7 +8,7 @@
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
 //
-// FPrime defines a numer of basic types, platform configurable types,
+// FPrime defines a number of basic types, platform configurable types,
 // and project configurable types. This file provides a single header
 // users can import for using these types.
 //

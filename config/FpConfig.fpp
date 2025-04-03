@@ -1,6 +1,6 @@
 # ======================================================================
 # \title  Fw/FPrimeBasicTypes.hpp
-# \author tumbar, mstarch
+# \author mstarch
 # \brief  FPP alias configuration file
 #
 # \copyright
@@ -13,8 +13,8 @@
 # ======================================================================
 
 ####
-# Interger type aliases:
-# Used for the project to override types supplied by the platform for things like sizes, indicies, etc.
+# Integer type aliases:
+# Used for the project to override types supplied by the platform for things like sizes, indices, etc.
 ####
 
 @ The unsigned type of larger sizes internal to the software,
@@ -25,8 +25,8 @@ type FwSizeType = PlatformSizeType
 @ for signed offsets, e.g., file seek offsets. Must be signed.
 type FwSignedSizeType = PlatformSignedSizeType
 
-@ The type of smaller indicies internal to the software, used
-@ for array indicies, e.g., port indicies. Must be signed.
+@ The type of smaller indices internal to the software, used
+@ for array indices, e.g., port indices. Must be signed.
 type FwIndexType = PlatformIndexType
 
 @ The type of arguments to assert functions.

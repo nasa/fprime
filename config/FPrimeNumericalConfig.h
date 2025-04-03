@@ -10,8 +10,8 @@
 //
 // FPrime projects are allowed to turn on or off the use of 16, 32, and 64
 // bit integers. This is done to allow projects to disable support for types
-// that are not supported by the target platform, or peform inefficient
-// computations to sythensize these types.
+// that are not supported by the target platform, or perform inefficient
+// computations to synthesize these types.
 //
 // Users should set the properties in this file to 1 or 0 to enable or disable
 // the feature.

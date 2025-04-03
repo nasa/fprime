@@ -14,8 +14,8 @@ type PlatformSizeType = U64
 @ for signed offsets, e.g., file seek offsets. Must be signed.
 type PlatformSignedSizeType = I64
 
-@ The type of smaller indicies internal to the software, used
-@ for array indicies, e.g., port indicies. Must be signed.
+@ The type of smaller indices internal to the software, used
+@ for array indices, e.g., port indices. Must be signed.
 type PlatformIndexType = I16
 
 @ The type of arguments to assert functions. Supplied by platform,
