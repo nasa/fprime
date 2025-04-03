@@ -10,7 +10,7 @@
 //
 // ======================================================================
 #include "FprimeProtocol.hpp"
-#include "FpConfig.hpp"
+#include "Fw/FPrimeBasicTypes.hpp"
 #include "Utils/Hash/Hash.hpp"
 
 namespace Svc {

@@ -1,5 +1,5 @@
 #include <Ref/SendBuffApp/SendBuffComponentImpl.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Os/Console.hpp>
 #include <cstring>

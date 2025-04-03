@@ -10,7 +10,7 @@
 //
 // ======================================================================
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Svc/BufferRepeater/BufferRepeater.hpp>
 
 namespace Svc {

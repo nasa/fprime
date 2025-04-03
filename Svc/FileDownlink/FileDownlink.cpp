@@ -11,7 +11,7 @@
 
 #include <Svc/FileDownlink/FileDownlink.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/StringUtils.hpp>
 #include <Os/QueueString.hpp>
 #include <limits>

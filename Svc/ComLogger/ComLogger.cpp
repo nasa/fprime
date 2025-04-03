@@ -5,7 +5,7 @@
 // ----------------------------------------------------------------------
 
 #include <Svc/ComLogger/ComLogger.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/SerialBuffer.hpp>
 #include <Fw/Types/StringUtils.hpp>
 #include <Os/ValidateFile.hpp>

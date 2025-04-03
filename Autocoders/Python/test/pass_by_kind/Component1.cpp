@@ -1,6 +1,6 @@
 #include <Autocoders/Python/test/pass_by_kind/Component1.hpp>
 #include <Autocoders/Python/test/pass_by_kind/ExampleTypeSerializableAc.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/SerialBuffer.hpp>
 #include <cstdio>
 #include <iostream>

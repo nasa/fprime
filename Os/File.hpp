@@ -5,7 +5,7 @@
 #ifndef Os_File_hpp_
 #define Os_File_hpp_
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Os/Os.hpp>
 
 namespace Os {

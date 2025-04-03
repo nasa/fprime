@@ -11,50 +11,18 @@
 #ifndef FPCONFIG_H_
 #define FPCONFIG_H_
 
-#include <Fw/Types/BasicTypes.h>
-
 #ifdef  __cplusplus
 extern "C" {
 #endif
+#include <Platform/PlatformTypes.h>
+#include <Fw/Types/BasicTypes.h>
+
 
 // ----------------------------------------------------------------------
 // Type aliases
 // ----------------------------------------------------------------------
 
-// The type of port indices and smaller sizes internal to the software
-typedef PlatformIndexType FwIndexType;
-#define PRI_FwIndexType PRI_PlatformIndexType
 
-// The signed type of larger sizes internal to the software, e.g., memory buffer sizes,
-// file sizes
-typedef PlatformSignedSizeType FwSignedSizeType;
-#define PRI_FwSignedSizeType PRI_PlatformSignedSizeType
-
-// The unsigned type of larger sizes internal to the software, e.g., memory buffer sizes,
-// file sizes
-typedef PlatformSizeType FwSizeType;
-#define PRI_FwSizeType PRI_PlatformSizeType
-
-// The type of an assertion argument
-typedef PlatformAssertArgType FwAssertArgType;
-#define PRI_FwAssertArgType PRI_PlatformAssertArgType
-
-// Task priority type
-typedef PlatformTaskPriorityType FwTaskPriorityType;
-#define PRI_FwTaskPriorityType PRI_PlatformTaskPriorityType
-
-// Queue priority type
-typedef PlatformQueuePriorityType FwQueuePriorityType;
-#define PRI_FwQueuePriorityType PRI_PlatformQueuePriorityType
-
-// The type used to serialize a size value
-typedef U16 FwSizeStoreType;
-#define PRI_FwSizeStoreType PRIu16
-
-// The type used to serialize a C++ enumeration constant
-// FPP enumerations are serialized according to their representation types
-typedef I32 FwEnumStoreType;
-#define PRI_FwEnumStoreType PRId32
 
 // Define enumeration for Time base types
 // Note: maintaining C-style
@@ -66,61 +34,6 @@ typedef enum {
         0xFFFF  //!< Don't care value for sequences. If FwTimeBaseStoreType is changed, value should be changed
 } TimeBase;
 #define FW_CONTEXT_DONT_CARE 0xFF  //!< Don't care value for time contexts in sequences
-
-// The type used to serialize a time base value
-typedef U16 FwTimeBaseStoreType;
-#define PRI_FwTimeBaseStoreType PRIu16
-
-// The type used to serialize a time context value
-typedef U8 FwTimeContextStoreType;
-#define PRI_FwTimeContextStoreType PRIu8
-
-// The type of a com packet descriptor
-typedef U32 FwPacketDescriptorType;
-#define PRI_FwPacketDescriptorType PRIu32
-
-// The type of a command opcode
-typedef U32 FwOpcodeType;
-#define PRI_FwOpcodeType PRIu32
-
-// The type of a telemetry channel identifier
-typedef U32 FwChanIdType;
-#define PRI_FwChanIdType PRIu32
-
-// The type of a trace identifier
-typedef U32 FwTraceIdType;
-#define PRI_FwTraceIdType PRIu32
-
-// The type of an event identifier
-typedef U32 FwEventIdType;
-#define PRI_FwEventIdType PRIu32
-
-// The type of a parameter identifier
-typedef U32 FwPrmIdType;
-#define PRI_FwPrmIdType PRIu32
-
-// The type of a telemetry packet identifier
-typedef U16 FwTlmPacketizeIdType;
-#define PRI_FwTlmPacketizeIdType PRIu16
-
-// The type of a data product identifier
-typedef U32 FwDpIdType;
-#define PRI_FwDpIdType PRIu32
-
-// The type of a data product priority
-typedef U32 FwDpPriorityType;
-#define PRI_FwDpPriorityType PRIu32
-
-// ----------------------------------------------------------------------
-// Derived type aliases
-// By default, these types are aliases of types defined above
-// If necessary, you can change these definitions
-// In most cases, the defaults should work
-// ----------------------------------------------------------------------
-
-// The type of a queue size
-typedef FwIndexType FwQueueSizeType;
-#define PRI_FwQueueSizeType PRI_FwIndexType
 
 // ----------------------------------------------------------------------
 // Configuration switches
@@ -440,11 +353,6 @@ typedef FwIndexType FwQueueSizeType;
 
 // *** NOTE configuration checks are in Fw/Cfg/ConfigCheck.cpp in order to have
 // the type definitions in Fw/Types/BasicTypes available.
-
-// DO NOT TOUCH.  These types are specified for backwards naming compatibility.
-typedef FwSizeStoreType FwBuffSizeType;
-#define PRI_FwBuffSizeType PRI_FwSizeStoreType
-
 #ifdef  __cplusplus
 }
 #endif

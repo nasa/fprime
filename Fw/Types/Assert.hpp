@@ -1,7 +1,7 @@
 #ifndef FW_ASSERT_HPP
 #define FW_ASSERT_HPP
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 // Return only the first argument passed to the macro.
 #define FW_ASSERT_FIRST_ARG(ARG_0, ...) ARG_0

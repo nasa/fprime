@@ -11,7 +11,7 @@
 #include "Svc/DpWriter/DpWriter.hpp"
 #include "Utils/Hash/Hash.hpp"
 #include "config/DpCfg.hpp"
-#include "config/FpConfig.hpp"
+#include "Fw/FPrimeBasicTypes.hpp"
 
 namespace Svc {
 

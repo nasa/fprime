@@ -1,5 +1,5 @@
 #include <Fw/Time/Time.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 namespace Fw {
     const Time ZERO_TIME = Time();

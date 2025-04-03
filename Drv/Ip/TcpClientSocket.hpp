@@ -12,7 +12,7 @@
 #ifndef DRV_TCPCLIENT_TCPHELPER_HPP_
 #define DRV_TCPCLIENT_TCPHELPER_HPP_
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Drv/Ip/IpSocket.hpp>
 #include <IpCfg.hpp>
 

@@ -12,7 +12,7 @@
 
 
 #include <Ref/PingReceiver/PingReceiverComponentImpl.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 namespace Ref {
 

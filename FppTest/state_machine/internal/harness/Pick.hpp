@@ -14,7 +14,7 @@
 #ifndef FppTest_SmHarness_Pick_HPP
 #define FppTest_SmHarness_Pick_HPP
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <limits>
 
 #include "FppTest/state_machine/internal/harness/TestAbsType.hpp"

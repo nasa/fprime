@@ -7,7 +7,7 @@
 #ifndef FW_EXTERNAL_STRING_HPP
 #define FW_EXTERNAL_STRING_HPP
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 #include "Fw/Types/StringBase.hpp"
 

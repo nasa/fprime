@@ -6,7 +6,7 @@
 
 
 #include "QueuedTest.hpp"
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 #include "FppTest/component/active/SerialPortIndexEnumAc.hpp"
 

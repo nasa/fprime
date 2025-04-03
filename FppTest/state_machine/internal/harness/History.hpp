@@ -14,7 +14,7 @@
 #ifndef FppTest_SmHarness_History_HPP
 #define FppTest_SmHarness_History_HPP
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <array>
 #include <cstdlib>
 

@@ -4,7 +4,7 @@
 // \brief  cpp file for DpCatalog component implementation class
 // ======================================================================
 
-#include "FpConfig.hpp"
+#include "Fw/FPrimeBasicTypes.hpp"
 #include "Fw/Dp/DpContainer.hpp"
 #include "Svc/DpCatalog/DpCatalog.hpp"
 

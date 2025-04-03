@@ -7,7 +7,7 @@
  * @author mstarch
  */
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/String.hpp>
 #include <Fw/Logger/Logger.hpp>
 #include <string>

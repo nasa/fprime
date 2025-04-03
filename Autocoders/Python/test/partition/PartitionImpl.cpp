@@ -1,5 +1,5 @@
 #include <Autocoders/Python/test/partition/PartitionImpl.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <iostream>
 #include <cstdio>
 

@@ -6,7 +6,7 @@
 
 #ifndef SVC_DPCATALOG_CONFIG_HPP_
 #define SVC_DPCATALOG_CONFIG_HPP_
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 namespace Svc {
     // Sets the maximum number of directories where

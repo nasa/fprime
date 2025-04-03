@@ -10,7 +10,7 @@
 #define HACKSM_H_
                                 
 #include <Fw/Sm/SmSignalBuffer.hpp>
-#include <config/FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
                                  
 namespace FppTest {
 

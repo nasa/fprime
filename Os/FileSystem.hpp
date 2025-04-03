@@ -6,7 +6,7 @@
 #ifndef _OS_FILESYSTEM_HPP_
 #define _OS_FILESYSTEM_HPP_
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Os/Os.hpp>
 #include <Os/Directory.hpp>
 #include <Os/File.hpp>
