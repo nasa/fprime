@@ -1,5 +1,5 @@
 # ======================================================================
-# \title  Fw/FPrimeBasicTypes.hpp
+# \title  config/FpConfig.fpp
 # \author mstarch
 # \brief  FPP alias configuration file
 #
