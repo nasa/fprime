@@ -117,8 +117,7 @@ function(setup_single_target TARGET_FILE MODULE SOURCES DEPENDENCIES)
     else()
         get_target_property(RECURSIVE_DEPENDENCIES "${MODULE}" FP_RECURSIVE_DEPS)
         if (NOT RECURSIVE_DEPENDENCIES)
-            resolve_dependencies(RESOLVED ${DEPENDENCIES})
-            recurse_targets("${MODULE}" RECURSIVE_DEPENDENCIES "" ${RESOLVED})
+            recurse_targets("${MODULE}" RECURSIVE_DEPENDENCIES "" ${DEPENDENCIES})
             set_target_properties("${MODULE}" PROPERTIES FP_RECURSIVE_DEPS "${RECURSIVE_DEPENDENCIES}")
         endif()
         cmake_language(CALL "${TARGET_NAME}_add_deployment_target" "${MODULE}" "${TARGET_NAME}" "${SOURCES}" "${DEPENDENCIES}" "${RECURSIVE_DEPENDENCIES}")
@@ -135,24 +134,32 @@ endfunction(setup_single_target)
 # - SOURCES: sources specified with `set(SOURCE_FILES ...)` in module's CMakeLists.txt
 # - DEPENDENCIES: dependencies and link libraries specified with `set(MOD_DEPS ...)` in module's CMakeLists.txt
 ####
-function(setup_module_targets MODULE SOURCES DEPENDENCIES)
+function(setup_module_targets BUILD_TARGET)
     # Grab the list of targets
     set(LIST_NAME FPRIME_TARGET_LIST)
-    get_target_property(MODULE_TYPE "${MODULE}" FP_TYPE)
+
+    # Read target properties
+    foreach(PROPERTY IN ITEMS FP_TYPE SOURCES LINK_LIBRARIES)
+        get_target_property("MODULE_${PROPERTY}" "${BUILD_TARGET}" "${PROPERTY}")
+        if (NOT MODULE_${PROPERTY})
+            set("MODULE_${PROPERTY}")
+        endif()
+    endforeach()
+
 
     # Get both normal and ut target lists
     get_property(TARGETS GLOBAL PROPERTY FPRIME_TARGET_LIST)
     get_property(UT_TARGETS GLOBAL PROPERTY FPRIME_UT_TARGET_LIST)
     # UT targets are the only targets run on unit tests, and are included in deployments
-    if (MODULE_TYPE STREQUAL "Deployment")
+    if (MODULE_FP_TYPE STREQUAL "Deployment")
         list(APPEND TARGETS ${UT_TARGETS})
-    elseif (MODULE_TYPE STREQUAL "Unit Test")
+    elseif (MODULE_FP_TYPE STREQUAL "Unit Test")
         set(TARGETS "${UT_TARGETS}")
     endif()
 
     # Now run through each of the determined targets
-    foreach(TARGET IN LISTS TARGETS)
-        setup_single_target("${TARGET}" "${MODULE}" "${SOURCES}" "${DEPENDENCIES}")
+    foreach(FPRIME_TARGET IN LISTS TARGETS)
+        setup_single_target("${FPRIME_TARGET}" "${BUILD_TARGET}" "${MODULE_SOURCES}" "${MODULE_LINK_LIBRARIES}")
     endforeach()
 endfunction(setup_module_targets)
 

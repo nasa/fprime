@@ -19,7 +19,7 @@ include(autocoder/helpers)
 # SOURCES: source file input list
 # ...: autocoder include
 ####
-function (run_ac_set SOURCES)
+function (run_ac_set MODULE_NAME SOURCES)
     # Get the source list, if passed in
     set(AC_LIST)
     if (ARGN)

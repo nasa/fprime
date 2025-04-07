@@ -65,7 +65,7 @@ macro(restrict_platforms)
         endif()
     endforeach()
     # Each of these empty if blocks are the valid-case, that is, the platform is supported.
-    # However, the reason why this is necessary is that this function is a macro and not a function.
+    # However, the reason why this is necessary is that this is implemented as a macro and not a function.
     # Macros copy-paste the code into the calling context. Thus, all these valid cases want to avoid calling return.
     # The return call  in the else block returns from the calling context (i.e. a restricted CMakeList.txt will
     # return and not process the component setup). We do not want this return when the platform is allowed.
@@ -228,25 +228,10 @@ endfunction(add_fprime_subdirectory)
 #
 ####
 function(register_fprime_module)
-    if(NOT DEFINED SOURCE_FILES)
-        message(FATAL_ERROR "'SOURCE_FILES' not defined in '${CMAKE_CURRENT_LIST_FILE}'.")
-    endif()
-    get_nearest_build_root(${CMAKE_CURRENT_LIST_DIR})
-    if (${ARGC} GREATER 0)
-        set(MODULE_NAME ${ARGV0})
-    else()
-        # Check to be sure before using
-        if (NOT DEFINED FPRIME_CURRENT_MODULE)
-            message(FATAL_ERROR "FPRIME_CURRENT_MODULE not defined. Please supply name to: register_fprime_module()")
-        endif()
-
-        set(MODULE_NAME ${FPRIME_CURRENT_MODULE})
-    endif()
-    # Explicit call to module register
-    generate_library("${MODULE_NAME}" "${SOURCE_FILES}" "${MOD_DEPS}")
-    if (TARGET "${MODULE_NAME}" AND NOT MODULE_NAME MATCHES "cmake_platform.*" )
-        add_dependencies("${MODULE_NAME}" config)
-    endif()
+    fprime__process_module_setup("INTERFACE" ${ARGN})
+    fprime__add_build_system_target("${INTERNAL_MODULE_NAME}" "Library" "${INTERNAL_SOURCES}" "${INTERNAL_HEADERS}" "${INTERNAL_DEPENDS}" "${INTERNAL_EXCLUDE_FROM_ALL}")
+    # Set up target/ targets for this module
+    setup_module_targets("${INTERNAL_MODULE_NAME}")
 endfunction(register_fprime_module)
 
 ####
@@ -314,23 +299,14 @@ endfunction(register_fprime_module)
 # ```
 ####
 function(register_fprime_executable)
-    if (NOT DEFINED SOURCE_FILES AND NOT DEFINED MOD_DEPS)
-        message(FATAL_ERROR "SOURCE_FILES or MOD_DEPS must be defined when registering an executable")
-    elseif (NOT DEFINED EXECUTABLE_NAME AND ARGC LESS 1 AND TARGET "${FPRIME_CURRENT_MODULE}")
-        message(FATAL_ERROR "EXECUTABLE_NAME must be set or passed in. Use register_fprime_deployment() for deployments")
+    if (DEFINED EXECUTABLE_NAME)
+        fprime_fatal_cmake_error("EXECUTABLE_NAME variable no longer supported")
     endif()
-    # MODULE_NAME is used for the executable name, unless otherwise specified.
-    if(NOT DEFINED EXECUTABLE_NAME AND ARGC GREATER 0)
-        set(EXECUTABLE_NAME "${ARGV0}")
-    elseif(NOT DEFINED EXECUTABLE_NAME)
-        # Check to be sure before using
-        if (NOT DEFINED FPRIME_CURRENT_MODULE)
-            message(FATAL_ERROR "FPRIME_CURRENT_MODULE not defined. Please supply name to: register_fprime_executable()")
-        endif()
-        set(EXECUTABLE_NAME "${FPRIME_CURRENT_MODULE}")
-    endif()
-    get_nearest_build_root(${CMAKE_CURRENT_LIST_DIR})
-    generate_executable("${EXECUTABLE_NAME}" "${SOURCE_FILES}" "${MOD_DEPS}")
+    fprime__process_module_setup("INTERFACE" ${ARGN})
+    fprime__add_build_system_target("${INTERNAL_MODULE_NAME}" "Executable" "${INTERNAL_SOURCES}" "${INTERNAL_HEADERS}" "${INTERNAL_DEPENDS}" "${INTERNAL_EXCLUDE_FROM_ALL}")
+
+    # Set up target/ targets for this module
+    setup_module_targets("${INTERNAL_MODULE_NAME}")
 endfunction(register_fprime_executable)
 
 
@@ -393,15 +369,15 @@ endfunction(register_fprime_executable)
 # ```
 ####
 function(register_fprime_deployment)
-    if (NOT DEFINED SOURCE_FILES AND NOT DEFINED MOD_DEPS)
-        message(FATAL_ERROR "SOURCE_FILES or MOD_DEPS must be defined when registering an executable")
-    endif()
     # Fallback to PROJECT_NAME when it is not set
     if (NOT DEFINED FPRIME_CURRENT_MODULE)
         set(FPRIME_CURRENT_MODULE "${PROJECT_NAME}")
     endif()
-    get_nearest_build_root(${CMAKE_CURRENT_LIST_DIR})
-    generate_deployment("${FPRIME_CURRENT_MODULE}" "${SOURCE_FILES}" "${MOD_DEPS}")
+    fprime__process_module_setup("INTERFACE" ${ARGN})
+    fprime__add_build_system_target("${INTERNAL_MODULE_NAME}" "Deployment" "${INTERNAL_SOURCES}" "${INTERNAL_HEADERS}" "${INTERNAL_DEPENDS}" "${INTERNAL_EXCLUDE_FROM_ALL}")
+
+    # Set up target/ targets for this module
+    setup_module_targets("${INTERNAL_MODULE_NAME}")
 endfunction(register_fprime_deployment)
 
 
@@ -468,35 +444,29 @@ endfunction(register_fprime_deployment)
 # ```
 ####
 function(register_fprime_ut)
-    #### CHECK UT BUILD ####
+    # Bail out if not doing a unit test build
+    # TODO: should this add a fake target?
     if (NOT BUILD_TESTING OR __FPRIME_NO_UT_GEN__)
         return()
-    elseif(NOT DEFINED UT_SOURCE_FILES)
-        message(FATAL_ERROR "UT_SOURCE_FILES not defined. Cannot register unittest without sources")
-    elseif(${ARGC} GREATER 1)
-        message(FATAL_ERROR "register_fprime_ut accepts only one optional argument: test name")
     endif()
-    get_module_name(${CMAKE_CURRENT_LIST_DIR})
-    # UT name is passed in or is the module name with _ut_exe added
-    if (${ARGC} GREATER 0)
-        set(UT_NAME "${ARGV0}")
-    elseif (NOT DEFINED UT_NAME)
-        set(UT_NAME "${MODULE_NAME}_ut_exe")
+    set(FPRIME_CURRENT_MODULE_OLD "${FPRIME_CURRENT_MODULE}")
+    set(FPRIME_CURRENT_MODULE "${FPRIME_CURRENT_MODULE}_ut_exe")
+    unset(SOURCE_FILES)
+    unset(MOD_DEPS)
+    # Remap old variable names
+    if (DEFINED UT_SOURCE_FILES)
+        set(SOURCE_FILES "${UT_SOURCE_FILES}")
     endif()
-    set(MD_IFS ${MODULE_NAME} ${UT_MOD_DEPS})
-    get_nearest_build_root(${CMAKE_CURRENT_LIST_DIR})
-    # Turn allow turning GTest on/off
-    set(INCLUDE_GTEST ON)
-    if (DEFINED UT_INCLUDE_GTEST)
-        set(INCLUDE_GTEST ${UT_INCLUDE_GTEST})
-    endif()
-    # Check no multiple UTs
-    if (TARGET UT_NAME)
-        message(FATAL_ERROR "${UT_NAME} already used. Please supply a unique name using 'register_fprime_ut(NAME)'")
+    if (DEFINED UT_MOD_DEPS)
+        set(MOD_DEPS "${UT_MOD_DEPS}")
     endif()
 
-    # Explicit call to module register
-    generate_ut("${UT_NAME}" "${UT_SOURCE_FILES}" "${MD_IFS}")
+    fprime__process_module_setup("INCLUDE_GTEST" ${ARGN})
+    set(FPRIME_CURRENT_MODULE "${FPRIME_CURRENT_MODULE_OLD}")
+    fprime__add_build_system_target("${INTERNAL_MODULE_NAME}" "Unit Test" "${INTERNAL_SOURCES}" "${INTERNAL_HEADERS}" "${INTERNAL_DEPENDS}" "${INTERNAL_EXCLUDE_FROM_ALL}")
+
+    # Set up target/ targets for this module
+    setup_module_targets("${INTERNAL_MODULE_NAME}")
 endfunction(register_fprime_ut)
 
 ####

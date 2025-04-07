@@ -678,3 +678,153 @@ function(resolve_path_variables)
         set("${INPUT_NAME}" "${NEW_LIST}" PARENT_SCOPE)
     endforeach()
 endfunction(resolve_path_variables)
+
+####
+# Function `fprime_fatal_cmake_error`:
+#
+# Prints a fatal error message to the user, highlighted with ---- to make it obvious.
+#
+# - **MESSAGE**: message to print
+####
+function(fprime_fatal_cmake_error MESSAGE)
+    fprime_cmake_clear_message(FATAL_ERROR "${MESSAGE}")
+endfunction(fprime_fatal_cmake_error)
+
+####
+# Function `fprime_cmake_debug_message`:
+#
+# Prints a debug message.
+#
+# - **MESSAGE**: message to print
+####
+function(fprime_cmake_debug_message MESSAGE)
+    if (CMAKE_DEBUG_OUTPUT)
+        message(" [DEBUG] ${MESSAGE}")
+    endif()
+endfunction(fprime_cmake_debug_message)
+
+####
+# Function `fprime__cmake_clear_message`:
+#
+# Prints a message to the user, highlighted with ---- to make it obvious and including the list file
+# that is failing.
+#
+# - **SEVERITY**: message severity to use
+# - **MESSAGE**: message to print
+####
+function(fprime_cmake_clear_message SEVERITY MESSAGE)
+    message("${SEVERITY}" " ----------------------------------------\n"
+                        " ${MESSAGE} in:\n"
+                        "     ${CMAKE_CURRENT_LIST_FILE}\n"
+                        " ----------------------------------------\n")
+endfunction()
+
+####
+# Macro `fprime_cmake_ASSERT`:
+#
+# Checks condition, prints message. This is a macro so the condition is pasted into the message as well as
+# the conditional clause.
+#
+# - **CONDITION**: condition to evaluate with if (${CONDITION})
+####
+macro(fprime_cmake_ASSERT)
+    # Simplify the evaluation of the condition by not placing NOT in front. Just have a no-op if clause
+    # where the else prints the FATAL message.
+    if (${ARGN})
+    else ()
+        string(REPLACE ";" " " FPRIME_INTERNAL_STRING_FROM_ARGN "${ARGN}")
+        message(FATAL_ERROR " ----------------------------------------\n"
+            " Assertion (${FPRIME_INTERNAL_STRING_FROM_ARGN}) failed. In:\n"
+            "     ${CMAKE_CURRENT_FUNCTION_LIST_FILE}:${CMAKE_CURRENT_FUNCTION_LIST_LINE}\n"
+            " ----------------------------------------\n")
+    endif()
+endmacro()
+####
+# Function `fprime__process_module_setup`:
+#
+# This function is used to process the module setup. It takes a list of arguments and sorts them into
+# SOURCES, HEADERS, and DEPENDS. It also sets the module name based on the first argument or the
+# FPRIME_CURRENT_MODULE variable. If neither is provided, it will throw an error.
+#
+# - **ARGN**: list of arguments to process.
+####
+function(fprime__process_module_setup ADDITIONAL_CONTROL_SETS)
+    # Initial setup 
+    set(INPUT_ARGUMENTS ${ARGN})
+    list(GET INPUT_ARGUMENTS 0 FIRST_ARGUMENT)
+    list(LENGTH INPUT_ARGUMENTS INPUT_COUNT)
+
+    # List of control words
+    set(CONTROL_SETS "HEADERS" "SOURCES" "DEPENDS" "EXCLUDE_FROM_ALL" ${ADDITIONAL_CONTROL_SETS})
+    # Set module name as passed in, then defaulting to FPRIME_CURRENT_MODULE
+    if (${INPUT_COUNT} GREATER 0 AND NOT FIRST_ARGUMENT IN_LIST CONTROL_SETS)
+        list(POP_FRONT INPUT_ARGUMENTS MODULE_NAME)
+    elseif(DEFINED FPRIME_CURRENT_MODULE)
+        set(MODULE_NAME ${FPRIME_CURRENT_MODULE})
+    else()
+        fprime_fatal_cmake_error("FPRIME_CURRENT_MODULE not defined. Please supply name to: register_fprime_module(<module name>)")
+    endif()
+    list(LENGTH INPUT_ARGUMENTS INPUT_COUNT)
+
+    # Support the old structure where SOURCE_FILES and MOD_DEPS were set to specify module lists
+    if (INPUT_COUNT EQUAL 0 AND NOT DEFINED SOURCE_FILES)
+        fprime_fatal_cmake_error("Must supply SOURCES to register_fprime_module")
+    elseif (INPUT_COUNT EQUAL 0 AND DEFINED SOURCE_FILES)
+        set(SOURCES "${SOURCE_FILES}")
+        set(HEADERS "${HEADER_FILES}")
+        resolve_dependencies(MOD_DEPS_RESOLVED "${MOD_DEPS}")
+        set(DEPENDS "${MOD_DEPS_RESOLVED}")
+    # Check other definitions
+    elseif (DEFINED SOURCE_FILES)
+        fprime_fatal_cmake_error("Cannot both set SOURCE_FILES and supply source list to register_fprime_module")
+    elseif (DEFINED MOD_DEPS)
+        fprime_fatal_cmake_error("Cannot both set MOD_DEPS and supply a dependency list to register_fprime_module")
+    elseif (DEFINED HEADER_FILES)
+        fprime_fatal_cmake_error("Cannot both set HEADER_FILES and supply a dependency list to register_fprime_module")
+    else()
+        # Unset all the control lists so the module can track what controls were passed in along with their arguments
+        # allowing signal control sets that do not take arguments.
+        foreach(CONTROL_SET IN LISTS CONTROL_SETS)
+            unset("${CONTROL_SET}")
+        endforeach()        
+    endif()
+    unset(CURRENT_LIST_NAME)
+    # Process all arguments and fill in the module sources
+    foreach (ARGUMENT IN LISTS INPUT_ARGUMENTS)
+        # If the argument is one of our control tokens, and the list is already defined, this means the user has specified
+        # the argument twice. This is likely an error.
+        if (ARGUMENT IN_LIST CONTROL_SETS AND DEFINED "${ARGUMENT}")
+            fprime_fatal_cmake_error("${ARGUMENT} supplied multiple times in call to register_fprime_module")
+        # Now update the current list and define the backing store for it. This will allow us to capture arguments
+        # between this and other control words.
+        elseif(ARGUMENT IN_LIST CONTROL_SETS)
+            set(CURRENT_LIST_NAME "${ARGUMENT}")
+            set("${CURRENT_LIST_NAME}")
+        # Add in an element to the active control list
+        elseif(DEFINED CURRENT_LIST_NAME)
+            list(APPEND "${CURRENT_LIST_NAME}" "${ARGUMENT}")
+        # Handle arguments supplied before any control word
+        else()
+            string(REPLACE ";" " " CONTROL_SETS_STRING "${CONTROL_SETS}")
+            fprime_fatal_cmake_error("One of ${CONTROL_SETS_STRING} must be specified before list elements: ${ARGUMENT}")
+        endif()
+    endforeach()
+    # Update caller scope with the new variables
+    set(INTERNAL_MODULE_NAME "${MODULE_NAME}" PARENT_SCOPE)
+    foreach(CONTROL_SET IN LISTS CONTROL_SETS)
+        # Define listed argument in parent scope only when they were defined within this file. This will unused control
+        # words to be undefined lists in parent scope distinguishing them from empty words.
+        if (DEFINED "${CONTROL_SET}")
+            set(INTERNAL_${CONTROL_SET} "${${CONTROL_SET}}" PARENT_SCOPE)
+        endif()
+    endforeach(CONTROL_SET IN LISTS CONTROL_SETS)
+    # Register variable watch to detect uses of old variables
+    # TODO: use these to track down non-compliance
+    unset(MOD_DEPS PARENT_SCOPE)
+    unset(SOURCE_FILES PARENT_SCOPE)
+    unset(HEADER_FILES PARENT_SCOPE)
+
+    #variable_watch(MOD_DEPS)
+    #variable_watch(SOURCE_FILES)
+    #variable_watch(SOURCE_HEADERS)
+endfunction(fprime__process_module_setup)

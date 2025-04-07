@@ -10,95 +10,46 @@
 include_guard()
 include(target/target)
 include(implementation)
-set(EMPTY "${FPRIME_FRAMEWORK_PATH}/cmake/empty.cpp")
+include(utilities)
+set(FPRIME__INTERNAL_EMPTY_CPP "${FPRIME_FRAMEWORK_PATH}/cmake/empty.cpp")
 set(VALID_EMPTY "${FPRIME_FRAMEWORK_PATH}/cmake/valid-empty.cpp")
 
-####
-# Function `generate_base_module_properties`:
-#
-# Helper used to generate the base module properties in the system along with the core target that can be adjusted
-# later.
-# - **TARGET_NAME**: target name being generated
-# - **SOURCE_FILES**: source files as defined by user, unfiltered. Includes autocode and source inputs.
-# - **DEPENDENCIES**: dependencies as defined by user, unfiltered. Includes target names and link flags.
-####
-function(generate_base_module_properties TARGET_TYPE TARGET_NAME SOURCE_FILES DEPENDENCIES)
-    set_property(GLOBAL PROPERTY MODULE_DETECTION TRUE)
+# Name of the F Prime implicit dependency of all modules (our project config)
+set(FPRIME_IMPLICIT_DEPENDENCY config)
 
-    # Add the base elements to the system
-    if (TARGET_TYPE STREQUAL "Executable" OR TARGET_TYPE STREQUAL "Deployment")
-        add_executable("${TARGET_NAME}" "${EMPTY}")
-    elseif(TARGET_TYPE STREQUAL "Unit Test")
-        add_executable("${TARGET_NAME}" "${EMPTY}")
-    elseif(TARGET_TYPE STREQUAL "Library")
-        add_library("${TARGET_NAME}" "${EMPTY}")
+
+function(fprime__add_build_system_target TARGET_NAME TYPE SOURCES HEADERS DEPENDENCIES EXTRA_CMAKE_DIRECTIVES)
+    # Remap F Prime target type to CMake targe type
+    if (TYPE STREQUAL "Executable" OR TYPE STREQUAL "Deployment" OR TYPE STREQUAL "Unit Test")
+        set(MODULE_CMAKE_TYPE executable)
+    elseif(TYPE STREQUAL "Library")
+        set(MODULE_CMAKE_TYPE library)
     else()
-        message(FATAL_ERROR "Module ${FPRIME_CURRENT_MODULE} cannot register object of type ${TARGET_TYPE}")
+        fprime_fatal_cmake_error("Cannot register compilation target of type ${TYPE}")
     endif()
+    # Add implicit dependency and filter out self-dependencies 
+    list(APPEND DEPENDENCIES config)
+    list(REMOVE_ITEM DEPENDENCIES "${TARGET_NAME}")
 
-    # Modules properties for posterity
-    set_target_properties("${TARGET_NAME}" PROPERTIES FP_TYPE "${TARGET_TYPE}")
+    # Historical status message for posterity...and to prevent panic amongst users
+    message(STATUS "Adding ${TYPE}: ${TARGET_NAME}")
+    
+    # Add cmake target and attach basic properties
+    cmake_language(CALL "add_${MODULE_CMAKE_TYPE}" "${TARGET_NAME}" ${EXTRA_CMAKE_DIRECTIVES} "${SOURCES}")
+    # TODO: this is needed because sub-builds still attempt register targets, but without the build target to add back in the
+    #       autocoding output. Thus empty must be substituted. Would it be possible to force the library to be an INTERFACE
+    #       instead?  Or only add empty on sub-builds? 
+    target_sources("${TARGET_NAME}" PRIVATE "${FPRIME__INTERNAL_EMPTY_CPP}")
+    target_link_libraries("${TARGET_NAME}" PUBLIC ${DEPENDENCIES})
+    set_target_properties("${TARGET_NAME}"
+        PROPERTIES
+            HEADERS "${HEADERS}"
+            FP_TYPE "${TYPE}"
+            DEPENDENCIES "${DEPENDENCIES}"
+    )
+
+    # System-wide properties
+    set_property(GLOBAL PROPERTY MODULE_DETECTION TRUE)
     set_property(GLOBAL APPEND PROPERTY FPRIME_MODULES "${TARGET_NAME}")
-
-    setup_module_targets("${TARGET_NAME}" "${SOURCE_FILES}" "${DEPENDENCIES}")
-endfunction(generate_base_module_properties)
-
-####
-# Function `generate_deployment:`
-#
-# Top-level executable generation. Core allows for generation of UT specifics without affecting API.
-#
-# - **EXECUTABLE_NAME:** name of executable to be generated.
-# - **SOURCE_FILES:** source files for this executable, split into AC and normal sources
-# - **DEPENDENCIES:** specified module-level dependencies
-####
-function(generate_deployment EXECUTABLE_NAME SOURCE_FILES DEPENDENCIES)
-    generate_base_module_properties("Deployment" "${EXECUTABLE_NAME}" "${SOURCE_FILES}" "${DEPENDENCIES}")
-endfunction(generate_deployment)
-####
-# Function `generate_executable:`
-#
-# Top-level executable generation. Core allows for generation of UT specifics without affecting API.
-#
-# - **EXECUTABLE_NAME:** name of executable to be generated.
-# - **SOURCE_FILES:** source files for this executable, split into AC and normal sources
-# - **DEPENDENCIES:** specified module-level dependencies
-####
-function(generate_executable EXECUTABLE_NAME SOURCE_FILES DEPENDENCIES)
-    generate_base_module_properties("Executable" "${EXECUTABLE_NAME}" "${SOURCE_FILES}" "${DEPENDENCIES}")
-endfunction(generate_executable)
-
-####
-# Function `generate_library`:
-#
-# Generates a library as part of F prime. This runs the AC and all the other items for the build.
-# It takes SOURCE_FILES_INPUT and DEPS_INPUT, splits them up into ac sources, sources, mod deps,
-# and library deps.
-# - *MODULE_NAME:* module name of library to build
-# - *SOURCE_FILES:* source files that will be split into AC and normal sources.
-# - *DEPENDENCIES:* dependencies bound for link and cmake dependencies
-#
-####
-function(generate_library MODULE_NAME SOURCE_FILES DEPENDENCIES)
-  generate_base_module_properties("Library" "${MODULE_NAME}" "${SOURCE_FILES}" "${DEPENDENCIES}")
-endfunction(generate_library)
-
-####
-# Function `generate_ut`:
-#
-# Generates a unit test as part of F prime. This runs the AC and all the other items for the build.
-# It takes SOURCE_FILES_INPUT and DEPS_INPUT, splits them up into ac sources, sources, mod deps,
-# and library deps.
-# - *UT_EXE_NAME:* exe name of unit test to build
-# - *UT_SOURCES_FILE:* source files that will be split into AC and normal sources.
-# - *DEPENDENCIES:* dependencies bound for link and cmake dependencies
-#
-####
-function(generate_ut UT_EXE_NAME UT_SOURCES_FILE UT_DEPENDENCIES)
-    # Only for BUILD_TESTING
-    if (BUILD_TESTING)
-        get_module_name("${CMAKE_CURRENT_LIST_DIR}")
-        generate_base_module_properties("Unit Test" "${UT_EXE_NAME}" "${UT_SOURCES_FILE}" "${UT_DEPENDENCIES}")
-    endif()
-endfunction(generate_ut)
+endfunction(fprime__add_build_system_target)
 

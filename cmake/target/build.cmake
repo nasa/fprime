@@ -19,6 +19,69 @@ if (FPRIME_ENABLE_UT_COVERAGE)
     list(APPEND FPRIME_TESTING_REQUIRED_LINK_FLAGS --coverage)
 endif()
 
+function(fprime__internal_TECH_DEBT_module_setup BUILD_MODULE_NAME NORMAL_SOURCES GENERATED_SOURCES DEPENDENCIES AC_FILE_DEPENDENCIES)
+    #### Create module-info.txt ####
+    # module-info.txt is used as a cache to enable build system quasi-dependent tools to work as expected.
+    # However, this really ought to be implemented as an autocoder itself, as it depends on nothing other
+    # than the input sources, and previous autocoder runs.
+    #
+    # To do this correctly, headers should be passed to autocoders **and** autocoders would need to be
+    # registered in-between this "last autocoder" and the other pre-autocoders.
+    #
+    # Create lists of hand-coded and generated sources. This should be handled in the autocoder sub-system
+    # and not pushed to the build module.
+    #
+    # HEADER_FILES should not be read from a variable.
+    filter_lists("${AC_SOURCES}" NORMAL_SOURCES AC_GENERATED)
+    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/module-info.txt"
+        "${HEADER_FILES}\n${NORMAL_SOURCES}\n${AC_GENERATED}\n${AC_FILE_DEPENDENCIES}\n${DEPENDENCIES}\n"
+    )
+    #### End module-info.txt ####
+
+    #### Add Generated Sources ####
+    # This section adds generated sources to the module. This is TECH_DEBT that should eventually
+    # be replaced by functionality in the autocoders themselves. The autocoders know what is generated
+    # and what is not generated. They should update the target_source property directly.
+    target_sources("${BUILD_MODULE_NAME}" PRIVATE ${GENERATED})
+    # Set those files as generated to prevent build errors
+    foreach(SOURCE IN LISTS GENERATED)
+        set_source_files_properties(${SOURCE} PROPERTIES GENERATED TRUE)
+    endforeach()
+    #### End Add Generated Sources ####
+
+    #### Remove empty.cpp ####
+    # This section removes empty.cpp "fake source" from the various modules. This source is added to make
+    # sub-builds work correctly (targets need at least one source, even if they are there just to be a name).
+    # A better approach would be to add fprime_modules as "INTERFACE" targets during sub-builds thus making them
+    # not require sources while still providing the name. 
+    get_target_property(MODULE_SOURCES "${MODULE}" SOURCES)
+    list(REMOVE_ITEM MODULE_SOURCES "${FPRIME__INTERNAL_EMPTY_CPP}")
+    set_target_properties(
+        ${MODULE}
+        PROPERTIES
+        SOURCES "${MODULE_SOURCES};${AC_GENERATED}"
+    )
+    #### End Remove empty.cpp ####
+
+    #### Set FPRIME_TARGET_DEPENDENCIES ####
+    # Can this be removed or simplified?  It is used for recursing dependencies. Perhaps we can do this with
+    # add_dependencies and recursive targets instead? 
+    list(REMOVE_DUPLICATES DEPENDENCIES)
+    list(FILTER DEPENDENCIES EXCLUDE REGEX "^-.*")
+    set_property(TARGET "${MODULE}" PROPERTY FPRIME_TARGET_DEPENDENCIES ${DEPENDENCIES})
+    #### End set FPRIME_TARGET_DEPENDENCIES ####
+endfunction()
+
+
+function(fprime__internal_check_restrictions MODULE_NAME DEPENDENCIES)
+    get_property(RESTRICTED_TARGETS GLOBAL PROPERTY "RESTRICTED_TARGETS")
+    foreach(DEPENDENCY IN LISTS DEPENDENCIES)
+        if (DEPENDENCY IN_LIST RESTRICTED_TARGETS)
+            fprime_fatal_cmake_error("${DEPENDENCY} is not available on platform '${FPRIME_PLATFORM}' nor toolchain '${FPRIME_TOOLCHAIN}'")
+        endif()
+    endforeach()
+endfunction()
+
 ####
 # Build function `add_global_target`:
 #
@@ -26,95 +89,6 @@ endif()
 ####
 function(build_add_global_target TARGET)
 endfunction(build_add_global_target)
-
-####
-# build_setup_build_module:
-#
-# Helper function to setup the module. This was the historical core of the CMake system, now embedded as part of this
-# build target. It adds the target (library, executable), sets up compiler source files, flags generated sources,
-# sets up module and linker dependencies adds the file to the hashes.txt file, sets up include directories, etc.
-#
-# - MODULE: module name being setup
-# - SOURCES: hand-specified source files
-# - GENERATED: generated sources
-# - EXCLUDED_SOURCES: sources already "consumed", that is, processed by an autocoder
-# - DEPENDENCIES: dependencies of this module. Also link flags and libraries.
-####
-function(build_setup_build_module MODULE SOURCES GENERATED DEPENDENCIES)
-    target_sources("${MODULE}" PRIVATE ${SOURCES} ${GENERATED})
-
-    # Set those files as generated to prevent build errors
-    foreach(SOURCE IN LISTS GENERATED)
-        set_source_files_properties(${SOURCE} PROPERTIES GENERATED TRUE)
-    endforeach()
-
-    get_target_property(MODULE_SOURCES "${MODULE}" SOURCES)
-    list(REMOVE_ITEM MODULE_SOURCES "${EMPTY}")
-    # Only update module sources if the list is not empty. Otherwise we keep empty.c as the only source.
-    if (NOT "${MODULE_SOURCES}" STREQUAL "")
-        set_target_properties(
-                ${MODULE}
-                PROPERTIES
-                SOURCES "${MODULE_SOURCES}"
-        )
-        # Setup the hash file for our sources
-        foreach(SRC_FILE IN LISTS MODULE_SOURCES)
-            set_assert_flags("${SRC_FILE}")
-        endforeach()
-    endif()
-    get_property(RESTRICTED_TARGETS GLOBAL PROPERTY "RESTRICTED_TARGETS")
-    # For every detected dependency, add them to the supplied module. This enforces build order.
-    # Also set the link dependencies on this module. CMake rolls-up link dependencies, and thus
-    # this prevents the need for manually specifying link orders.
-    set(TARGET_DEPENDENCIES)
-    foreach(DEPENDENCY ${DEPENDENCIES})
-        linker_only(LINKER_ONLY "${DEPENDENCY}")
-        # Add a cmake dependency as long as this is not to be supplied only to the linker
-        if (NOT LINKER_ONLY)
-            # If the dependency was restricted, produce an error
-            if (DEPENDENCY IN_LIST RESTRICTED_TARGETS)
-                set(EXTRA_DATA)
-                if (FPRIME_TOOLCHAIN)
-                    set(EXTRA_DATA " nor toolchain ${FPRIME_TOOLCHAIN}")
-                endif()
-                message(FATAL_ERROR "${MODULE} depends on ${DEPENDENCY}, which is unavailable for platform ${FPRIME_PLATFORM}${EXTRA_DATA}")
-            endif()
-            add_dependencies(${MODULE} "${DEPENDENCY}")
-            list(APPEND TARGET_DEPENDENCIES "${DEPENDENCY}")
-        endif()
-        # Linker accepts all only linker items (e.g. linker flags, pre-built libraries, etc) and anything that is
-        # defined as a library within cmake, and all undefined targets. This has several implications:
-        #
-        # 1. Targets that will exist, but do not exist at the time of this call will be assumed to be a library
-        # 2. EXECUTABLE and UTILITY targets can only be added to MOD_DEPS when they are pre-defined
-        is_target_library(IS_LIB_DEP "${DEPENDENCY}")
-        if (LINKER_ONLY OR NOT TARGET "${DEPENDENCY}" OR IS_LIB_DEP)
-            target_link_libraries(${MODULE} PUBLIC "${DEPENDENCY}")
-        endif()
-    endforeach()
-
-
-    # Extra source files, dependencies, and link libraries need to be added to executables to account for the chosen
-    # implementations. First, for modules whose names differ from FPRIME_CURRENT_MODULE the chosen implementation is
-    # remapped to them. Then the implementation set are calculated and sources, link libraries and dependencies added.
-    is_target_library(IS_LIB "${MODULE}")
-    if (NOT IS_LIB)
-        # Handle updates when the types have diverged
-        if (NOT MODULE STREQUAL "${FPRIME_CURRENT_MODULE}")
-            # Update implementation choices
-            remap_implementation_choices("${FPRIME_CURRENT_MODULE}" "${MODULE}")
-        endif()
-        setup_executable_implementations("${MODULE}")
-    endif ()
-
-
-    set_property(TARGET "${MODULE}" PROPERTY FPRIME_TARGET_DEPENDENCIES ${TARGET_DEPENDENCIES})
-    # Special flags applied to modules when compiling with testing enabled
-    if (BUILD_TESTING)
-        target_compile_options("${MODULE}" PRIVATE ${FPRIME_TESTING_REQUIRED_COMPILE_FLAGS})
-        target_link_libraries("${MODULE}" PRIVATE ${FPRIME_TESTING_REQUIRED_LINK_FLAGS})
-    endif()
-endfunction()
 
 ####
 # Function `add_deployment_target`:
@@ -137,19 +111,53 @@ endfunction()
 # - **DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
 ####
 function(build_add_module_target MODULE TARGET SOURCES DEPENDENCIES)
+    # Assert the pre-conditions of the autocoder run
+    fprime_cmake_ASSERT(NOT DEFINED AC_SOURCES)
+    fprime_cmake_ASSERT(NOT DEFINED AC_GENERATED)
+    fprime_cmake_ASSERT(NOT DEFINED AC_FILE_DEPENDENCIES)
+    fprime_cmake_ASSERT(NOT DEFINED AC_DEPENDENCIES)
+    get_property(BUILD_AUTOCODERS GLOBAL PROPERTY FPRIME_AUTOCODER_TARGET_LIST)
+    run_ac_set("${MODULE}" "${SOURCES}" ${BUILD_AUTOCODERS})
+    # Assert the post-conditions of the autocoder run
+    fprime_cmake_ASSERT(DEFINED AC_SOURCES)
+    fprime_cmake_ASSERT(DEFINED AC_GENERATED) 
+    fprime_cmake_ASSERT(DEFINED AC_FILE_DEPENDENCIES)
+    fprime_cmake_ASSERT(DEFINED AC_DEPENDENCIES)
+    set(DEPENDENCIES ${DEPENDENCIES} ${AC_DEPENDENCIES})
+    list(REMOVE_DUPLICATES DEPENDENCIES)
+
+    fprime__internal_TECH_DEBT_module_setup("${MODULE}" "${SOURCES}" "${AC_SOURCES}" "${DEPENDENCIES}" "${AC_FILE_DEPENDENCIES}")
+
+    # **Must** come after the TECH_DEBT section above
+    # Adds in assertion compile flags (U32 for CRC, file paths for files)
+    foreach(SRC_FILE IN LISTS SOURCES AC_SOURCES)
+        set_assert_flags("${SRC_FILE}")
+    endforeach()
+
+    # Check for restricted dependencies
+    fprime__internal_check_restrictions("${MODULE}" "${DEPENDENCIES}")
+    target_link_libraries(${MODULE} PUBLIC ${DEPENDENCIES})
+
+    # Extra source files, dependencies, and link libraries need to be added to executables to account for the chosen
+    # implementations. First, for modules whose names differ from FPRIME_CURRENT_MODULE the chosen implementation is
+    # remapped to them. Then the implementation set are calculated and sources, link libraries and dependencies added.
     get_target_property(MODULE_TYPE "${MODULE}" FP_TYPE)
-    message(STATUS "Adding ${MODULE_TYPE}: ${MODULE}")
-    get_property(CUSTOM_AUTOCODERS GLOBAL PROPERTY FPRIME_AUTOCODER_TARGET_LIST)
-    run_ac_set("${SOURCES}" ${CUSTOM_AUTOCODERS})
-    resolve_dependencies(RESOLVED ${DEPENDENCIES} ${AC_DEPENDENCIES})
+    if (NOT ${MODULE_TYPE} STREQUAL "Library")
+        # Handle updates when the types have diverged
+        if (NOT MODULE STREQUAL "${FPRIME_CURRENT_MODULE}")
+            # Update implementation choices
+            remap_implementation_choices("${FPRIME_CURRENT_MODULE}" "${MODULE}")
+        endif()
+        setup_executable_implementations("${MODULE}")
+    endif ()
 
-    # Create lists of hand-coded and generated sources not "consumed" by an autocoder
-    filter_lists("${AC_SOURCES}" SOURCES AC_GENERATED)
-    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/module-info.txt"
-        "${HEADER_FILES}\n${SOURCES_FILTERED}\n${AC_GENERATED}\n${AC_FILE_DEPENDENCIES}\n${DEPENDENCIES}\n"
-    )
-    build_setup_build_module("${MODULE}" "${SOURCES_FILTERED}" "${AC_GENERATED_FILTERED}" "${RESOLVED}")
+    # Special flags applied to modules when compiling with testing enabled
+    if (BUILD_TESTING)
+        target_compile_options("${MODULE}" PRIVATE ${FPRIME_TESTING_REQUIRED_COMPILE_FLAGS})
+        target_link_libraries("${MODULE}" PRIVATE ${FPRIME_TESTING_REQUIRED_LINK_FLAGS})
+    endif()
 
+    # Introspection prints
     if (CMAKE_DEBUG_OUTPUT)
         introspect("${MODULE}")
     endif()

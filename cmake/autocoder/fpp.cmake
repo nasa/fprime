@@ -87,7 +87,7 @@ function(fpp_get_framework_dependency_helper MODULE_NAME FRAMEWORK)
     if (MODULE_NAME STREQUAL "config" OR MODULE_NAME MATCHES "cmake_platform.*")
         # config has no automatic dependencies
     elseif (NOT DEFINED FPRIME_FRAMEWORK_MODULES)
-        message(FATAL_ERROR "Fw/CMakeLists.txt not included in deployment")
+        fprime_fatal_cmake_error("${MODULE_NAME} Fw/CMakeLists.txt not included in deployment")
     elseif (MODULE_NAME STREQUAL Fw_Cfg)
         # Skip Fw_Cfg as it is the root dependency 
     elseif (NOT TARGET Fw OR MODULE_NAME IN_LIST FPRIME_FRAMEWORK_MODULES)
