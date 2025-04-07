@@ -1,0 +1,26 @@
+nav:
+ - Home: '../'
+ - Overview: '../overview'
+ - Getting Started: 
+   - docs/getting-started/index.md
+   - 'Installation and Troubleshooting': docs/getting-started/installing-fprime.md
+ - Documentation:
+   - docs/index.md
+   - Tutorials:
+     - Tutorials Overview: docs/tutorials/index.md
+     - 'Hello World': tutorials-hello-world/docs/hello-world.md
+     - 'LED Blinker': tutorials-led-blinker/docs/led-blinker.md
+     - 'MathComponent': tutorials-math-component/docs/math-component.md
+     - 'Cross-Compilation Setup': docs/tutorials/cross-compilation.md
+     - 'Arduino LED Blinker': tutorials-arduino-led-blinker/docs/arduino-led-blinker.md
+   - User Manual: 
+     - Overview: docs/user-manual/overview/
+     - Framework: docs/user-manual/framework/
+     - FPP: 'https://nasa.github.io/fpp/fpp-users-guide.html'
+     - GDS: docs/user-manual/gds
+     - Security: docs/user-manual/security/
+     - Design: docs/user-manual/design/
+   - How To: docs/how-to
+   - Reference: docs/reference
+ - Support: '../support'
+ - Events: '../events'
