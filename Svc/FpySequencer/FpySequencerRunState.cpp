@@ -109,19 +109,23 @@ Fw::Success FpySequencer::dispatchDirective(const Fpy::Statement& stmt) {
 Signal FpySequencer::checkShouldWake() {
     Fw::Time currentTime = this->getTime();
 
+#ifdef FW_USE_TIME_BASE
     if (currentTime.getTimeBase() != this->m_runtime.wakeupTime.getTimeBase()) {
         // cannot compare these times.
         this->log_WARNING_LO_MismatchedTimeBase(currentTime.getTimeBase(), this->m_runtime.wakeupTime.getTimeBase());
 
         return Signal::result_timeOpFailed;
     }
+#endif
 
+#ifdef FW_USE_TIME_CONTEXT
     if (currentTime.getContext() != this->m_runtime.wakeupTime.getContext()) {
         // cannot compare these times.
         this->log_WARNING_LO_MismatchedTimeContext(currentTime.getContext(), this->m_runtime.wakeupTime.getContext());
 
         return Signal::result_timeOpFailed;
     }
+#endif
 
     if (currentTime < this->m_runtime.wakeupTime) {
         // not time to wake up!
@@ -143,18 +147,22 @@ Signal FpySequencer::checkStatementTimeout() {
 
     Fw::Time currentTime = getTime();
 
+#ifdef FW_USE_TIME_BASE
     if (currentTime.getTimeBase() != this->m_runtime.currentStatementDispatchTime.getTimeBase()) {
         // can't compare time base. must have changed
         this->log_WARNING_LO_MismatchedTimeBase(currentTime.getTimeBase(),
                                                 this->m_runtime.currentStatementDispatchTime.getTimeBase());
         return Signal::result_timeOpFailed;
     }
+#endif
+#ifdef FW_USE_TIME_CONTEXT
     if (currentTime.getContext() != this->m_runtime.currentStatementDispatchTime.getContext()) {
         // can't compare time ctx. must have changed
         this->log_WARNING_LO_MismatchedTimeContext(currentTime.getContext(),
                                                    this->m_runtime.currentStatementDispatchTime.getContext());
         return Signal::result_timeOpFailed;
     }
+#endif
 
     if (this->m_runtime.currentStatementDispatchTime.getSeconds() > currentTime.getSeconds()) {
         // somehow we've gone back in time... just ignore it and move on. should get fixed

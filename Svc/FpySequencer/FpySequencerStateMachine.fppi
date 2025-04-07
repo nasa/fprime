@@ -94,7 +94,7 @@ state machine SequencerStateMachine {
     state VALIDATING {
 
         # do it this way so we are only running validate while we
-        # are in the VALIDATING state... although TODO does this matter?
+        # are in the VALIDATING state
         entry do { signalEntered }
 
         on entered do { validate }

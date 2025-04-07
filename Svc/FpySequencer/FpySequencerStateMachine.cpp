@@ -60,7 +60,7 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_report_seqCance
     SmId smId,                                             //!< The state machine id
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) {
-    this->m_tlm.sequencesFailed++;
+    this->m_tlm.sequencesCancelled++;
     this->log_ACTIVITY_HI_SequenceCancelled(this->m_sequenceFilePath);
 }
 

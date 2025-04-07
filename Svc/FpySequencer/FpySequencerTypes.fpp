@@ -49,7 +49,7 @@ module Svc {
         struct Sequence {
             header: Header
             @ an array of size m_header.argumentCount mapping argument position to local
-            @ variable count
+            @ variable index
             args: [MAX_SEQUENCE_ARG_COUNT] U8
             statements: [MAX_SEQUENCE_STATEMENT_COUNT] Statement
             footer: Footer

@@ -53,6 +53,7 @@ class FpySequencerTester : public FpySequencerGTestBase {
   void test_cmd_VALIDATE();
   void test_cmd_RUN_VALIDATED();
   void test_cmd_CANCEL();
+
  private:
   // ----------------------------------------------------------------------
   // Handlers for typed from ports

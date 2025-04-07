@@ -12,7 +12,20 @@ namespace Svc {
 // Construction, initialization, and destruction
 // ----------------------------------------------------------------------
 
-FpySequencer ::FpySequencer(const char* const compName) : FpySequencerComponentBase(compName) {}
+FpySequencer ::FpySequencer(const char* const compName) : 
+    FpySequencerComponentBase(compName), 
+    m_sequenceBuffer(),
+    m_allocatorId(0),
+    m_sequenceFilePath("<invalid_seq>"),
+    m_sequenceObj(),
+    m_computedCRC(0),
+    m_sequenceBlockState(),
+    m_savedOpCode(0),
+    m_savedCmdSeq(0),
+    m_goalState(),
+    m_runtime(),
+    m_tlm()
+{}
 
 FpySequencer ::~FpySequencer() {}
 
@@ -164,6 +177,7 @@ void FpySequencer::tlmWrite_handler(FwIndexType portNum,  //!< The port number
 ) {
     this->tlmWrite_StatementsDispatched(this->m_tlm.statementsDispatched);
     this->tlmWrite_StatementsFailed(this->m_tlm.statementsFailed);
+    this->tlmWrite_SequencesCancelled(this->m_tlm.sequencesCancelled);
     this->tlmWrite_SequencesSucceeded(this->m_tlm.sequencesSucceeded);
     this->tlmWrite_SequencesFailed(this->m_tlm.sequencesFailed);
     this->tlmWrite_SeqPath(this->m_sequenceFilePath);

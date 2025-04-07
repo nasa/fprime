@@ -139,7 +139,7 @@ Fw::Success FpySequencer::validate() {
     FW_ASSERT(sequenceFile.position(sequenceFilePosition) == Os::File::Status::OP_OK);
 
     if (sequenceFileSize != sequenceFilePosition) {
-        this->log_WARNING_LO_TooManyBytes(static_cast<U32>(sequenceFileSize - sequenceFilePosition));
+        this->log_WARNING_LO_ExtraBytesInSequence(static_cast<U32>(sequenceFileSize - sequenceFilePosition));
         return Fw::Success::FAILURE;
     }
 
@@ -156,8 +156,13 @@ Fw::Success FpySequencer::readBytes(Os::File& file, FwSizeType readLen, bool upd
 
     const FwSizeType capacity = this->m_sequenceBuffer.getBuffCapacity();
 
-    // if this asserts, then you need to give the sequencer more buffer memory. pass in a bigger number
+    // if this fails, then you need to give the sequencer more buffer memory. pass in a bigger number
     // to fpySeq.allocateBuffer(). This is usually done in topology setup CPP
+    if (capacity < static_cast<FwSizeType>(expectedReadLen)) {
+        this->log_WARNING_LO_OutOfBufferSpace(capacity, this->m_sequenceFilePath);
+        return Fw::Success::FAILURE;
+    }
+
     FW_ASSERT(capacity >= static_cast<FwSizeType>(expectedReadLen), static_cast<FwAssertArgType>(capacity),
               static_cast<FwAssertArgType>(expectedReadLen));
     Os::File::Status fileStatus = file.read(this->m_sequenceBuffer.getBuffAddr(), expectedReadLen);

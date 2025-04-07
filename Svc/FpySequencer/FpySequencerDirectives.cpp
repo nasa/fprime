@@ -2,8 +2,6 @@
 
 namespace Svc {
 
-using Signal = FpySequencer_SequencerStateMachineStateMachineBase::Signal;
-
 void FpySequencer::sendSignal(Signal signal) {
     switch (signal) {
         case Signal::stmtResponse_beginSleep: {

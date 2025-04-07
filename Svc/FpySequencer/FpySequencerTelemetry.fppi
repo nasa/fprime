@@ -1,8 +1,11 @@
 @ the number of sequences successfully completed
 telemetry SequencesSucceeded: U64 update on change
 
-@ the number of sequences that failed to validate or execute, or were cancelled
+@ the number of sequences that failed to validate or execute
 telemetry SequencesFailed: U64 update on change
+
+@ the number of sequences that were cancelled
+telemetry SequencesCancelled: U64 update on change
 
 @ the number of statements successfully dispatched total
 telemetry StatementsDispatched: U64 update on change

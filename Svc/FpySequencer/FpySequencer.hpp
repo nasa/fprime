@@ -26,6 +26,8 @@ static_assert(Svc::Fpy::MAX_SEQUENCE_STATEMENT_COUNT <= std::numeric_limits<U16>
 
 namespace Svc {
 
+using Signal = FpySequencer_SequencerStateMachineStateMachineBase::Signal;
+
 class FpySequencer : public FpySequencerComponentBase {
   public:
     // ----------------------------------------------------------------------
@@ -354,8 +356,11 @@ class FpySequencer : public FpySequencerComponentBase {
         // the number of sequences successfully completed
         U64 sequencesSucceeded = 0;
 
-        // the number of sequences that failed to validate or execute, or were cancelled
+        // the number of sequences that failed to validate or execute
         U64 sequencesFailed = 0;
+
+        // the number of sequences that have been cancelled
+        U64 sequencesCancelled = 0;
     } m_tlm;
 
     // ----------------------------------------------------------------------
@@ -379,8 +384,6 @@ class FpySequencer : public FpySequencerComponentBase {
     // ----------------------------------------------------------------------
     // Run state
     // ----------------------------------------------------------------------
-
-    using Signal = FpySequencer_SequencerStateMachineStateMachineBase::Signal;
 
     // dispatches the next statement
     Signal dispatchStatement();
