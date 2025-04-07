@@ -10,7 +10,7 @@
 
 #include "Fw/Buffer/Buffer.hpp"
 #include "Utils/Hash/Hash.hpp"
-#include "config/FpConfig.h"
+#include "Fw/FPrimeBasicTypes.hpp"
 
 #include "Svc/FprimeProtocol/FrameHeaderSerializableAc.hpp"
 #include "Svc/FprimeProtocol/FrameTrailerSerializableAc.hpp"

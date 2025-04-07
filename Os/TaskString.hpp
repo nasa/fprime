@@ -7,7 +7,7 @@
 #ifndef OS_TASK_STRING_HPP
 #define OS_TASK_STRING_HPP
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 #include "Fw/Types/StringBase.hpp"
 

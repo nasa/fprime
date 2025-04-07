@@ -6,7 +6,7 @@
 
 
 #include "PassiveTest.hpp"
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 
   // ----------------------------------------------------------------------

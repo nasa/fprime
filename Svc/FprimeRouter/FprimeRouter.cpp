@@ -5,7 +5,7 @@
 // ======================================================================
 
 #include "Svc/FprimeRouter/FprimeRouter.hpp"
-#include "FpConfig.hpp"
+#include "Fw/FPrimeBasicTypes.hpp"
 #include "Fw/Com/ComPacket.hpp"
 #include "Fw/Logger/Logger.hpp"
 

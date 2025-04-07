@@ -2,7 +2,7 @@
 // Created by mstarch on 11/13/20.
 //
 #include "Fw/Buffer/Buffer.hpp"
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <gtest/gtest.h>
 
 

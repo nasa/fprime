@@ -12,7 +12,7 @@
 #ifndef DRV_IP_IPHELPER_HPP_
 #define DRV_IP_IPHELPER_HPP_
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <IpCfg.hpp>
 #include <Os/Mutex.hpp>
 

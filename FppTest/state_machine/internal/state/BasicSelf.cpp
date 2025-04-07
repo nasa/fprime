@@ -37,9 +37,9 @@ void BasicSelf::test() {
     this->m_action_a_history.clear();
     this->sendSignal_s();
     ASSERT_EQ(this->getState(), State::S);
-    const FwSizeType expectedSize = 6;
+    const FwIndexType expectedSize = 6;
     ASSERT_EQ(this->m_action_a_history.getSize(), expectedSize);
-    for (FwSizeType i = 0; i < expectedSize; i++) {
+    for (FwIndexType i = 0; i < expectedSize; i++) {
         ASSERT_EQ(this->m_action_a_history.getItemAt(i), Signal::s);
     }
 }

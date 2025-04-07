@@ -1,7 +1,7 @@
 #ifndef _DrvDataBuffer_hpp_
 #define _DrvDataBuffer_hpp_
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Serializable.hpp>
 
 namespace Drv {

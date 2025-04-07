@@ -12,7 +12,7 @@
 
 
 #include <Autocoders/Python/test/serial_passive/TestSerialImpl.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 namespace TestComponents {
 

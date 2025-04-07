@@ -578,7 +578,7 @@ namespace Svc {
 
         // first read should be delimiter
         BYTE de;
-        FwSignedSizeType readSize = sizeof(de);
+        FwSizeType readSize = static_cast<FwSizeType>(sizeof(de));
 
         ASSERT_EQ(file.read(&de,readSize,Os::File::WaitType::WAIT),Os::File::OP_OK);
         ASSERT_EQ(delimiter,de);

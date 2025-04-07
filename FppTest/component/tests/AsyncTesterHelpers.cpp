@@ -49,7 +49,7 @@ void Tester ::connectAsyncPorts() {
     }
 
     // serialAsync
-    for (FwSizeType i = 0; i < 3; ++i) {
+    for (FwIndexType i = 0; i < 3; ++i) {
         this->connect_to_serialAsync(i, this->component.get_serialAsync_InputPort(i));
     }
 

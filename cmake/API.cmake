@@ -13,6 +13,7 @@
 ####
 include_guard()
 include(utilities)
+include(module)
 set(FPRIME_TARGET_LIST "" CACHE INTERNAL "FPRIME_TARGET_LIST: custom fprime targets" FORCE)
 set(FPRIME_UT_TARGET_LIST "" CACHE INTERNAL "FPRIME_UT_TARGET_LIST: custom fprime targets" FORCE)
 set(FPRIME_AUTOCODER_TARGET_LIST "" CACHE INTERNAL "FPRIME_AUTOCODER_TARGET_LIST: custom fprime targets" FORCE)
@@ -243,7 +244,7 @@ function(register_fprime_module)
     endif()
     # Explicit call to module register
     generate_library("${MODULE_NAME}" "${SOURCE_FILES}" "${MOD_DEPS}")
-    if (TARGET "${MODULE_NAME}")
+    if (TARGET "${MODULE_NAME}" AND NOT MODULE_NAME MATCHES "cmake_platform.*" )
         add_dependencies("${MODULE_NAME}" config)
     endif()
 endfunction(register_fprime_module)

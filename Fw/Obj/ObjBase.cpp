@@ -1,4 +1,4 @@
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Obj/ObjBase.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/ExternalString.hpp>

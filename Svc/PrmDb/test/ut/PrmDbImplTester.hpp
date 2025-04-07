@@ -61,9 +61,9 @@ namespace Svc {
       public:
         class PrmDbTestFile : public Os::Stub::File::Test::TestFile {
           public:
-            Status read(U8 *buffer, FwSignedSizeType &size, WaitType wait) override;
+            Status read(U8 *buffer, FwSizeType &size, WaitType wait) override;
 
-            Status write(const U8 *buffer, FwSignedSizeType &size, WaitType wait) override;
+            Status write(const U8 *buffer, FwSizeType &size, WaitType wait) override;
 
             // Tracks the current tester
             static void setTester(PrmDbImplTester* tester);

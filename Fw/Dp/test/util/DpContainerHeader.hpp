@@ -9,7 +9,7 @@
 
 #include "gtest/gtest.h"
 
-#include "FpConfig.hpp"
+#include "Fw/FPrimeBasicTypes.hpp"
 #include "Fw/Com/ComPacket.hpp"
 #include "Fw/Dp/DpContainer.hpp"
 

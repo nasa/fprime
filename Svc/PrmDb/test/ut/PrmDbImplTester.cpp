@@ -356,7 +356,7 @@ namespace Svc {
         s_tester = tester;
     }
 
-    Os::File::Status PrmDbImplTester::PrmDbTestFile::read(U8 *buffer, FwSignedSizeType &size, Os::File::WaitType wait) {
+    Os::File::Status PrmDbImplTester::PrmDbTestFile::read(U8 *buffer, FwSizeType &size, Os::File::WaitType wait) {
         EXPECT_NE(s_tester, nullptr);
         Os::File::Status status = this->Os::Stub::File::Test::TestFile::read(buffer, size, wait);
         if (s_tester->m_waits == 0) {
@@ -379,7 +379,7 @@ namespace Svc {
         return status;
     }
 
-    Os::File::Status PrmDbImplTester::PrmDbTestFile::write(const U8* buffer, FwSignedSizeType &size, Os::File::WaitType wait) {
+    Os::File::Status PrmDbImplTester::PrmDbTestFile::write(const U8* buffer, FwSizeType &size, Os::File::WaitType wait) {
         EXPECT_NE(s_tester, nullptr);
         Os::File::Status status = this->Os::Stub::File::Test::TestFile::write(buffer, size, wait);
         if (s_tester->m_waits == 0) {

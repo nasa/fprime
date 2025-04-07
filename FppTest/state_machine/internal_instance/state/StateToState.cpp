@@ -78,11 +78,11 @@ void StateToState::testInit() {
     this->m_smStateStateToState_actionHistory.clear();
     this->init(queueDepth, instanceId);
     ASSERT_EQ(this->smStateStateToState_getState(), SmState_StateToState::State::S1_S2);
-    const FwSizeType expectedSize = 2;
+    const FwIndexType expectedSize = 2;
     ASSERT_EQ(this->m_smStateStateToState_actionHistory.getSize(), expectedSize);
     const auto& signals = this->m_smStateStateToState_actionHistory.getSignals();
     const auto& actions = this->m_smStateStateToState_actionHistory.getValues();
-    for (FwSizeType i = 0; i < expectedSize; i++) {
+    for (FwIndexType i = 0; i < expectedSize; i++) {
         ASSERT_EQ(signals.getItemAt(i), SmState_StateToState::Signal::__FPRIME_AC_INITIAL_TRANSITION);
     }
     ASSERT_EQ(actions.getItemAt(0), ActionId::ENTER_S1);
@@ -97,11 +97,11 @@ void StateToState::testS2_to_S3() {
     const auto status = this->doDispatch();
     ASSERT_EQ(status, MSG_DISPATCH_OK);
     ASSERT_EQ(this->smStateStateToState_getState(), SmState_StateToState::State::S1_S3);
-    const FwSizeType expectedSize = 2;
+    const FwIndexType expectedSize = 2;
     ASSERT_EQ(this->m_smStateStateToState_actionHistory.getSize(), expectedSize);
     const auto& signals = this->m_smStateStateToState_actionHistory.getSignals();
     const auto& actions = this->m_smStateStateToState_actionHistory.getValues();
-    for (FwSizeType i = 0; i < expectedSize; i++) {
+    for (FwIndexType i = 0; i < expectedSize; i++) {
         ASSERT_EQ(signals.getItemAt(i), SmState_StateToState::Signal::S2_to_S3);
     }
     ASSERT_EQ(actions.getItemAt(0), ActionId::EXIT_S2);
@@ -116,11 +116,11 @@ void StateToState::testS2_to_S4() {
     const auto status = this->doDispatch();
     ASSERT_EQ(status, MSG_DISPATCH_OK);
     ASSERT_EQ(this->smStateStateToState_getState(), SmState_StateToState::State::S4_S5);
-    const FwSizeType expectedSize = 5;
+    const FwIndexType expectedSize = 5;
     ASSERT_EQ(this->m_smStateStateToState_actionHistory.getSize(), expectedSize);
     const auto& signals = this->m_smStateStateToState_actionHistory.getSignals();
     const auto& actions = this->m_smStateStateToState_actionHistory.getValues();
-    for (FwSizeType i = 0; i < expectedSize; i++) {
+    for (FwIndexType i = 0; i < expectedSize; i++) {
         ASSERT_EQ(signals.getItemAt(i), SmState_StateToState::Signal::S1_to_S4);
     }
     ASSERT_EQ(actions.getItemAt(0), ActionId::EXIT_S2);
@@ -138,11 +138,11 @@ void StateToState::testS2_to_S5() {
     const auto status = this->doDispatch();
     ASSERT_EQ(status, MSG_DISPATCH_OK);
     ASSERT_EQ(this->smStateStateToState_getState(), SmState_StateToState::State::S4_S5);
-    const FwSizeType expectedSize = 5;
+    const FwIndexType expectedSize = 5;
     ASSERT_EQ(this->m_smStateStateToState_actionHistory.getSize(), expectedSize);
     const auto& signals = this->m_smStateStateToState_actionHistory.getSignals();
     const auto& actions = this->m_smStateStateToState_actionHistory.getValues();
-    for (FwSizeType i = 0; i < expectedSize; i++) {
+    for (FwIndexType i = 0; i < expectedSize; i++) {
         ASSERT_EQ(signals.getItemAt(i), SmState_StateToState::Signal::S1_to_S5);
     }
     ASSERT_EQ(actions.getItemAt(0), ActionId::EXIT_S2);
@@ -168,11 +168,11 @@ void StateToState::testS3_to_S4() {
         ASSERT_EQ(status, MSG_DISPATCH_OK);
     }
     ASSERT_EQ(this->smStateStateToState_getState(), SmState_StateToState::State::S4_S5);
-    const FwSizeType expectedSize = 5;
+    const FwIndexType expectedSize = 5;
     ASSERT_EQ(this->m_smStateStateToState_actionHistory.getSize(), expectedSize);
     const auto& signals = this->m_smStateStateToState_actionHistory.getSignals();
     const auto& actions = this->m_smStateStateToState_actionHistory.getValues();
-    for (FwSizeType i = 0; i < expectedSize; i++) {
+    for (FwIndexType i = 0; i < expectedSize; i++) {
         ASSERT_EQ(signals.getItemAt(i), SmState_StateToState::Signal::S1_to_S4);
     }
     ASSERT_EQ(actions.getItemAt(0), ActionId::EXIT_S3);
@@ -198,11 +198,11 @@ void StateToState::testS3_to_S5() {
         ASSERT_EQ(status, MSG_DISPATCH_OK);
     }
     ASSERT_EQ(this->smStateStateToState_getState(), SmState_StateToState::State::S4_S5);
-    const FwSizeType expectedSize = 5;
+    const FwIndexType expectedSize = 5;
     ASSERT_EQ(this->m_smStateStateToState_actionHistory.getSize(), expectedSize);
     const auto& signals = this->m_smStateStateToState_actionHistory.getSignals();
     const auto& actions = this->m_smStateStateToState_actionHistory.getValues();
-    for (FwSizeType i = 0; i < expectedSize; i++) {
+    for (FwIndexType i = 0; i < expectedSize; i++) {
         ASSERT_EQ(signals.getItemAt(i), SmState_StateToState::Signal::S1_to_S5);
     }
     ASSERT_EQ(actions.getItemAt(0), ActionId::EXIT_S3);

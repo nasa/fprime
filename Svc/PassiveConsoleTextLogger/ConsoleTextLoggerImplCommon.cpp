@@ -1,5 +1,5 @@
 #include <Svc/PassiveConsoleTextLogger/ConsoleTextLoggerImpl.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Logger/Logger.hpp>
 

@@ -11,7 +11,7 @@
 // ======================================================================
 
 #include <Svc/Health/HealthComponentImpl.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <cstdio>
 #include <Fw/Types/Assert.hpp>
 

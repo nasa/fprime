@@ -6,7 +6,7 @@
 
 #include "Svc/FrameAccumulator/FrameAccumulator.hpp"
 #include <new>  // required for placement new in configure() member function
-#include "FpConfig.hpp"
+#include "Fw/FPrimeBasicTypes.hpp"
 #include "Fw/Types/Assert.hpp"
 
 namespace Svc {

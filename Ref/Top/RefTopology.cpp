@@ -9,7 +9,6 @@
 // acknowledged.
 // ======================================================================
 // Provides access to autocoded functions
-#include <Ref/Top/RefPacketsAc.hpp>
 #include <Ref/Top/RefTopologyAc.hpp>
 
 // Necessary project-specified types
@@ -139,6 +138,8 @@ void configureTopology() {
     // Allocation identifier is 0 as the MallocAllocator discards it
     comQueue.configure(configurationTable, 0, mallocator);
 
+    // Note: Uncomment when using Svc:TlmPacketizer
+    // tlmSend.setPacketList(Ref::Ref_RefPacketsTlmPackets::packetList, Ref::Ref_RefPacketsTlmPackets::omittedChannels, 1);
 }
 
 // Public functions for use in main program are namespaced with deployment name Ref
@@ -213,4 +214,4 @@ void teardownTopology(const TopologyState& state) {
     commsBufferManager.cleanup();
     frameAccumulator.cleanup();
 }
-};  // namespace Ref
+}  // namespace Ref

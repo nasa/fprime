@@ -12,7 +12,7 @@
 #ifndef CRC_CHECKER_HPP
 #define CRC_CHECKER_HPP
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 namespace Utils {
 

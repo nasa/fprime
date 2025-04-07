@@ -76,10 +76,13 @@ void SeqDispatcherTester ::testDispatch() {
 void SeqDispatcherTester::testLogStatus() {
   this->sendCmd_RUN(0,0, Fw::String("test"), Fw::Wait::WAIT);
   this->component.doDispatch();
+  this->clearHistory();
   this->sendCmd_LOG_STATUS(0,0);
   this->component.doDispatch();
   ASSERT_EVENTS_SIZE(SeqDispatcherSequencerPorts);
   ASSERT_EVENTS_LogSequencerStatus(0, 0, SeqDispatcher_CmdSequencerState::RUNNING_SEQUENCE_BLOCK, "test");
+  ASSERT_CMD_RESPONSE_SIZE(1);
+  ASSERT_CMD_RESPONSE(0, SeqDispatcher::OPCODE_LOG_STATUS, 0, Fw::CmdResponse::OK);
 }
 
 void SeqDispatcherTester::seqRunOut_handler(

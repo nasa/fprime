@@ -5,7 +5,7 @@
 #include <iostream>
 #endif
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include "Fw/Deprecate.hpp"
 
 namespace Fw {
@@ -76,9 +76,7 @@ class SerializeBufferBase {
     SerializeStatus serialize(I64 val);  //!< serialize 64-bit signed int
 #endif
     SerializeStatus serialize(F32 val);  //!< serialize 32-bit floating point
-#if FW_HAS_F64
     SerializeStatus serialize(F64 val);  //!< serialize 64-bit floating point
-#endif
     SerializeStatus serialize(bool val);  //!< serialize boolean
 
     SerializeStatus serialize(
@@ -125,9 +123,7 @@ class SerializeBufferBase {
     SerializeStatus deserialize(I64& val);  //!< deserialize 64-bit signed int
 #endif
     SerializeStatus deserialize(F32& val);  //!< deserialize 32-bit floating point
-#if FW_HAS_F64
     SerializeStatus deserialize(F64& val);  //!< deserialize 64-bit floating point
-#endif
     SerializeStatus deserialize(bool& val);  //!< deserialize boolean
 
     SerializeStatus deserialize(void*& val);  //!< deserialize point value (careful, pointer value only, not contents)

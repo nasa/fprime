@@ -4,7 +4,7 @@
 #include <Fw/Port/FwInputPortBase.hpp>
 #include <Fw/Port/FwOutputPortBase.hpp>
 #include <Fw/Comp/FwCompBase.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 namespace Drv {
 

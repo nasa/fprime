@@ -7,7 +7,7 @@
 #include <cstdlib>
 #include <Fw/Logger/Logger.hpp>
 #include <Svc/FatalHandler/FatalHandlerComponentImpl.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 namespace Svc {
 
