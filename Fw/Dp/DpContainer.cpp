@@ -37,7 +37,7 @@ DpContainer::DpContainer()
 
 Fw::SerializeStatus DpContainer::deserializeHeader() {
     FW_ASSERT(this->m_buffer.isValid());
-    Fw::ExternalSerializeBufferWithMemberCopy deserializer = this->m_buffer.getDeserializer();
+    auto deserializer = this->m_buffer.getDeserializer();
 
     // Reset deserialization
     Fw::SerializeStatus status = deserializer.moveDeserToOffset(Header::PACKET_DESCRIPTOR_OFFSET);
@@ -88,7 +88,7 @@ Fw::SerializeStatus DpContainer::deserializeHeader() {
 
 void DpContainer::serializeHeader() {
     FW_ASSERT(this->m_buffer.isValid());
-    Fw::ExternalSerializeBufferWithMemberCopy serializer = this->m_buffer.getSerializer();
+    auto serializer = this->m_buffer.getSerializer();
     // Serialize the packet type
     Fw::SerializeStatus status =
         serializer.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacket::FW_PACKET_DP));

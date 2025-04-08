@@ -66,7 +66,7 @@ TEST_F(Interface, GetTimeInterval) {
 TEST_F(Interface, Serialize) {
     Os::RawTime rawtime;
     Fw::Buffer buffer;
-    Fw::ExternalSerializeBufferWithMemberCopy esb = buffer.getSerializer();
+    auto esb = buffer.getSerializer();
     ASSERT_EQ(rawtime.serialize(esb), Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::SERIALIZE_FN);
 }
@@ -75,7 +75,7 @@ TEST_F(Interface, Serialize) {
 TEST_F(Interface, Deserialize) {
     Os::RawTime rawtime;
     Fw::Buffer buffer;
-    Fw::ExternalSerializeBufferWithMemberCopy esb = buffer.getDeserializer();
+    auto esb = buffer.getDeserializer();
     ASSERT_EQ(rawtime.deserialize(esb), Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::DESERIALIZE_FN);
 }

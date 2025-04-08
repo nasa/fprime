@@ -47,7 +47,7 @@ struct DpContainerHeader {
                      const U32 line,          //!< The call site line number
                      Fw::Buffer& buffer       //!< The packet buffer
     ) {
-        Fw::ExternalSerializeBufferWithMemberCopy deserializer = buffer.getDeserializer();
+        auto deserializer = buffer.getDeserializer();
         // Deserialize the packet descriptor
         FwPacketDescriptorType packetDescriptor = Fw::ComPacket::FW_PACKET_UNKNOWN;
         // Deserialize the packet descriptor

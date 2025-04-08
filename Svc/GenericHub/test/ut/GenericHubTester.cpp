@@ -132,7 +132,7 @@ void GenericHubTester ::send_random_buffer(U32 port) {
     U32 max_random_size = STest::Pick::lowerUpper(0, DATA_SIZE - (sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType)));
     m_buffer.set(m_data_store, sizeof(m_data_store));
     ASSERT_GE(m_buffer.getSize(), max_random_size);
-    Fw::ExternalSerializeBufferWithMemberCopy serializer = m_buffer.getSerializer();
+    auto serializer = m_buffer.getSerializer();
     random_fill(serializer, max_random_size);
     m_buffer.setSize(max_random_size);
     m_current_port = port;

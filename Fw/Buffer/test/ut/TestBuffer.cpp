@@ -76,7 +76,7 @@ void test_representations() {
     buffer.setContext(1234);
 
     // Test serialization and that it stops before overflowing
-    Fw::ExternalSerializeBufferWithMemberCopy serializer = buffer.getSerializer();
+    auto serializer = buffer.getSerializer();
     for (U32 i = 0; i < sizeof(data)/4; i++) {
         ASSERT_EQ(serializer.serialize(i), Fw::FW_SERIALIZE_OK);
     }
@@ -88,7 +88,7 @@ void test_representations() {
     ASSERT_EQ(serializer.serialize(0), Fw::FW_SERIALIZE_OK);
 
     // Now deserialize all the things
-    Fw::ExternalSerializeBufferWithMemberCopy deserializer = buffer.getDeserializer();
+    auto deserializer = buffer.getDeserializer();
     U32 out;
     for (U32 i = 0; i < sizeof(data)/4; i++) {
         ASSERT_EQ(deserializer.deserialize(out), Fw::FW_SERIALIZE_OK);

@@ -72,7 +72,7 @@ managed by the caller and only affects the data of the underlying buffer.
 ```c++
 U32 my_data = 10001;
 U8  my_byte = 2;
-Fw::ExternalSerializeBufferWithMemberCopy sb = my_fw_buffer.getSerializer();
+auto sb = my_fw_buffer.getSerializer();
 sb.serialize(my_data);
 sb.serialize(my_byte);
 ```
@@ -81,7 +81,7 @@ sb.serialize(my_byte);
 ```c++
 U32 my_data = 0;
 U8  my_byte = 0;
-Fw::ExternalSerializeBufferWithMemberCopy sb = my_fw_buffer.getDeserializer();
+auto sb = my_fw_buffer.getDeserializer();
 sb.deserialize(my_data);
 sb.deserialize(my_byte);
 ```

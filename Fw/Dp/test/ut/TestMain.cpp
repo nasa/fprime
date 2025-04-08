@@ -165,7 +165,7 @@ TEST(Header, BadPacketDescriptor) {
     // Create a buffer
     Fw::Buffer buffer(bufferData, sizeof bufferData);
     // Set the packet descriptor to a bad value
-    Fw::ExternalSerializeBufferWithMemberCopy serializer = buffer.getSerializer();
+    auto serializer = buffer.getSerializer();
     const FwPacketDescriptorType badPacketDescriptor = Fw::ComPacket::FW_PACKET_DP + 1;
     Fw::SerializeStatus status = serializer.serialize(badPacketDescriptor);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);

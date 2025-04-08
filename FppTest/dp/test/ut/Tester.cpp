@@ -94,7 +94,7 @@ void Tester::productRecvIn_Container1_SUCCESS() {
                                              DpTest::ContainerPriority::Container1, this->container1Buffer, buffer,
                                              expectedNumElts);
     // Check the data
-    Fw::ExternalSerializeBufferWithMemberCopy deserializer = buffer.getDeserializer();
+    auto deserializer = buffer.getDeserializer();
     Fw::TestUtil::DpContainerHeader::checkDeserialAtOffset(deserializer, Fw::DpContainer::DATA_OFFSET);
     for (FwSizeType i = 0; i < expectedNumElts; ++i) {
         FwDpIdType id;
@@ -127,7 +127,7 @@ void Tester::productRecvIn_Container2_SUCCESS() {
                                              DpTest::ContainerPriority::Container2, this->container2Buffer, buffer,
                                              expectedNumElts);
     // Check the data
-    Fw::ExternalSerializeBufferWithMemberCopy deserializer = buffer.getDeserializer();
+    auto deserializer = buffer.getDeserializer();
     Fw::TestUtil::DpContainerHeader::checkDeserialAtOffset(deserializer, Fw::DpContainer::DATA_OFFSET);
     for (FwSizeType i = 0; i < expectedNumElts; ++i) {
         FwDpIdType id;
@@ -164,7 +164,7 @@ void Tester::productRecvIn_Container3_SUCCESS() {
                                              expectedNumElts);
 
     // Check the data
-    Fw::ExternalSerializeBufferWithMemberCopy deserializer = buffer.getDeserializer();
+    auto deserializer = buffer.getDeserializer();
     Fw::TestUtil::DpContainerHeader::checkDeserialAtOffset(deserializer, Fw::DpContainer::DATA_OFFSET);
     for (FwSizeType i = 0; i < expectedNumElts; ++i) {
         FwDpIdType id;
@@ -207,7 +207,7 @@ void Tester::productRecvIn_Container4_SUCCESS() {
                                              expectedNumElts);
 
     // Check the data
-    Fw::ExternalSerializeBufferWithMemberCopy deserializer = buffer.getDeserializer();
+    auto deserializer = buffer.getDeserializer();
     Fw::TestUtil::DpContainerHeader::checkDeserialAtOffset(deserializer, Fw::DpContainer::DATA_OFFSET);
     for (FwSizeType i = 0; i < expectedNumElts; ++i) {
         FwDpIdType id;
@@ -250,7 +250,7 @@ void Tester::productRecvIn_Container5_SUCCESS() {
                                              expectedNumElts);
 
     // Check the data
-    Fw::ExternalSerializeBufferWithMemberCopy deserializer = buffer.getDeserializer();
+    auto deserializer = buffer.getDeserializer();
     Fw::TestUtil::DpContainerHeader::checkDeserialAtOffset(deserializer, Fw::DpContainer::DATA_OFFSET);
     for (FwSizeType i = 0; i < expectedNumElts; ++i) {
         FwDpIdType id;
@@ -292,7 +292,7 @@ void Tester::productRecvIn_Container6_SUCCESS() {
                                              DpTest::ContainerPriority::Container6, this->container6Buffer, buffer,
                                              expectedNumElts);
     // Check the data
-    Fw::ExternalSerializeBufferWithMemberCopy deserializer = buffer.getDeserializer();
+    auto deserializer = buffer.getDeserializer();
     Fw::TestUtil::DpContainerHeader::checkDeserialAtOffset(deserializer, Fw::DpContainer::DATA_OFFSET);
     for (FwSizeType i = 0; i < expectedNumElts; ++i) {
         FwDpIdType id;
@@ -332,7 +332,7 @@ void Tester::productRecvIn_Container7_SUCCESS() {
                                              DpTest::ContainerPriority::Container7, this->container7Buffer, buffer,
                                              expectedNumElts);
     // Check the data
-    Fw::ExternalSerializeBufferWithMemberCopy deserializer = buffer.getDeserializer();
+    auto deserializer = buffer.getDeserializer();
     Fw::TestUtil::DpContainerHeader::checkDeserialAtOffset(deserializer, Fw::DpContainer::DATA_OFFSET);
     for (FwSizeType i = 0; i < expectedNumElts; ++i) {
         FwDpIdType id;

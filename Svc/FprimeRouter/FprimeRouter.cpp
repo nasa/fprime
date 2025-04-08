@@ -28,7 +28,7 @@ void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer
     FwPacketDescriptorType packetType = Fw::ComPacket::FW_PACKET_UNKNOWN;
     Fw::SerializeStatus status = Fw::FW_SERIALIZE_OK;
     {
-        Fw::ExternalSerializeBufferWithMemberCopy esb = packetBuffer.getDeserializer();
+        auto esb = packetBuffer.getDeserializer();
         status = esb.deserialize(packetType);
     }
 

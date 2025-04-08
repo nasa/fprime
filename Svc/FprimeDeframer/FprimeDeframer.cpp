@@ -39,7 +39,7 @@ void FprimeDeframer ::framedIn_handler(FwIndexType portNum, Fw::Buffer& data, Fw
 
     // ---------------- Validate Frame Header ----------------
     // Deserialize transmitted header into the header object
-    Fw::ExternalSerializeBufferWithMemberCopy deserializer = data.getDeserializer();
+    auto deserializer = data.getDeserializer();
     Fw::SerializeStatus status = header.deserialize(deserializer);
     FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK, status);
     // Check that deserialized start_word token matches expected value (default start_word value in the FPP object)
