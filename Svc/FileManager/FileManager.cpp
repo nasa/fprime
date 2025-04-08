@@ -13,9 +13,10 @@
 #include <cstdio>
 #include <cstdlib>
 
+#include "Fw/Types/ExternalString.hpp"
 #include "Svc/FileManager/FileManager.hpp"
 #include "Fw/Types/Assert.hpp"
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 namespace Svc {
 
@@ -164,7 +165,7 @@ namespace Svc {
     this->log_ACTIVITY_HI_ShellCommandStarted(
           logStringCommand
       );
-    NATIVE_INT_TYPE status =
+    PlatformIntType status =
       this->systemCall(command, logFileName);
     if (status == 0) {
       this->log_ACTIVITY_HI_ShellCommandSucceeded(
@@ -226,7 +227,7 @@ namespace Svc {
     Fw::LogStringArg logStringFileName(fileName.toChar());
     this->log_ACTIVITY_HI_FileSizeStarted(logStringFileName);
 
-    FwSignedSizeType size_arg;
+    FwSizeType size_arg;
     const Os::FileSystem::Status status =
       Os::FileSystem::getFileSize(fileName.toChar(), size_arg);
     if (status != Os::FileSystem::OP_OK) {
@@ -244,7 +245,7 @@ namespace Svc {
 
   void FileManager ::
     pingIn_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 key
     )
   {
@@ -255,24 +256,26 @@ namespace Svc {
   // Helper methods
   // ----------------------------------------------------------------------
 
-  NATIVE_INT_TYPE FileManager ::
+  PlatformIntType FileManager ::
     systemCall(
         const Fw::CmdStringArg& command,
         const Fw::CmdStringArg& logFileName
     ) const
   {
+    // Create a buffer of at least enough size for storing the eval string less the 2 %s tokens, two command strings,
+    // and a null terminator at the end
     const char evalStr[] = "eval '%s' 1>>%s 2>&1\n";
-    const U32 bufferSize = sizeof(evalStr) - 4 + 2 * FW_CMD_STRING_MAX_SIZE;
+    constexpr U32 bufferSize = (sizeof(evalStr) - 4) + (2 * FW_CMD_STRING_MAX_SIZE) + 1;
     char buffer[bufferSize];
 
-    NATIVE_INT_TYPE bytesCopied = snprintf(
-        buffer, sizeof(buffer), evalStr,
-        command.toChar(),
-        logFileName.toChar()
-    );
-    FW_ASSERT(static_cast<NATIVE_UINT_TYPE>(bytesCopied) < sizeof(buffer));
+    // Wrap that buffer in an external string for formatting purposes
+    Fw::ExternalString stringBuffer(buffer, bufferSize);
+    Fw::FormatStatus formatStatus = stringBuffer.format(evalStr, command.toChar(), logFileName.toChar());
+    // Since the buffer is exactly sized, the only error can occur is a software error not caused by ground
+    FW_ASSERT(formatStatus == Fw::FormatStatus::SUCCESS);
 
-    const int status = system(buffer);
+    // Call the system
+    const int status = system(stringBuffer.toChar());
     return status;
   }
 

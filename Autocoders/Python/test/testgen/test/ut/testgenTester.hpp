@@ -49,7 +49,7 @@ namespace Ref {
       //! Handler for from_mathOut
       //!
       void from_mathOut_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          const FwIndexType portNum, /*!< The port number*/
           F32 val1,
           F32 val2,
           MathOperation operation /*!< operation argument*/

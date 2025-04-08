@@ -14,7 +14,7 @@
 #include <Fw/Comp/PassiveComponentBase.hpp>
 #include <Os/Queue.hpp>
 #include <Os/Task.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 
 namespace Fw {
@@ -32,17 +32,17 @@ namespace Fw {
         PROTECTED:
             QueuedComponentBase(const char* name); //!< Constructor
             virtual ~QueuedComponentBase(); //!< Destructor
-            void init(NATIVE_INT_TYPE instance); //!< initialization function
+            void init(FwEnumStoreType instance); //!< initialization function
             Os::Queue m_queue; //!< queue object for active component
             Os::Queue::Status createQueue(FwSizeType depth, FwSizeType msgSize);
             virtual MsgDispatchStatus doDispatch()=0; //!< method to dispatch a single message in the queue.
 #if FW_OBJECT_TO_STRING == 1
-            virtual void toString(char* str, NATIVE_INT_TYPE size); //!< dump string representation of component
+            virtual const char* getToStringFormatString(); //!< Format string for toString function
 #endif
-            NATIVE_INT_TYPE getNumMsgsDropped(); //!< return number of messages dropped
+            FwSizeType getNumMsgsDropped(); //!< return number of messages dropped
             void incNumMsgDropped(); //!< increment the number of messages dropped
         PRIVATE:
-            NATIVE_INT_TYPE m_msgsDropped; //!< number of messages dropped from full queue
+            FwSizeType m_msgsDropped; //!< number of messages dropped from full queue
     };
 
 }

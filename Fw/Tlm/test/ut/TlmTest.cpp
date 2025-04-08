@@ -40,25 +40,25 @@ TEST(FwTlmTest,TlmPacketSerializeFill) {
 
     // compute a single entry size assuming for the test that the value of the telemetry channel
     // is a U32
-    static const NATIVE_UINT_TYPE SIZE_OF_ENTRY = sizeof(FwChanIdType) + Fw::Time::SERIALIZED_SIZE + sizeof(U32);
+    static const FwSizeType SIZE_OF_ENTRY = sizeof(FwChanIdType) + Fw::Time::SERIALIZED_SIZE + sizeof(U32);
 
     // compute the number of entries that should fit - will equal rounded down value of 
     // ComBuffer size - size of telemetry packet id / size of an entry
-    static const NATIVE_UINT_TYPE NUM_ENTRIES = (FW_COM_BUFFER_MAX_SIZE - sizeof(FwPacketDescriptorType))/SIZE_OF_ENTRY;
+    static const FwSizeType NUM_ENTRIES = (FW_COM_BUFFER_MAX_SIZE - sizeof(FwPacketDescriptorType))/SIZE_OF_ENTRY;
 
     Fw::TlmPacket pktIn;
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,pktIn.resetPktSer());
 
     // fill a telemetry packet
 
-    for (NATIVE_UINT_TYPE entry = 0; entry < NUM_ENTRIES; entry++) {
+    for (U32 entry = 0; entry < NUM_ENTRIES; entry++) {
 
         // Serialize data
 
         Fw::TlmBuffer buffIn;
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,buffIn.serialize(static_cast<U32>(entry)));
         Fw::Time timeIn(TB_WORKSTATION_TIME,entry+1,entry+2);
-        U32 id = NUM_ENTRIES-entry;
+        U32 id = static_cast<U32>(NUM_ENTRIES-entry);
 
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,pktIn.addValue(id,timeIn,buffIn));
     }
@@ -81,7 +81,7 @@ TEST(FwTlmTest,TlmPacketSerializeFill) {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,pktOut.resetPktDeser());
 
     // empty the packet of entries
-    for (NATIVE_UINT_TYPE entry = 0; entry < NUM_ENTRIES; entry++) {
+    for (U32 entry = 0; entry < NUM_ENTRIES; entry++) {
         // Deserialize data
         Fw::TlmBuffer buffOut;
         Fw::Time timeOut;

@@ -12,7 +12,7 @@
 
 #include <cmath>  //isnan()
 #include <Svc/SystemResources/SystemResources.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 namespace Svc {
 
@@ -63,7 +63,7 @@ SystemResources ::~SystemResources() {}
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void SystemResources ::run_handler(const NATIVE_INT_TYPE portNum, U32 tick_time_hz) {
+void SystemResources ::run_handler(const FwIndexType portNum, U32 tick_time_hz) {
     if (m_enable) {
         Cpu();
         Mem();

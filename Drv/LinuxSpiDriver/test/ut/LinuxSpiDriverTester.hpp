@@ -44,7 +44,7 @@ namespace Drv {
 
       //! To do
       //!
-      void sendBuffer(U8* buffer, NATIVE_INT_TYPE size);
+      void sendBuffer(U8* buffer, FwSizeType size);
 
     private:
 

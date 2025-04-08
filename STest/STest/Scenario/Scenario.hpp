@@ -32,9 +32,9 @@ namespace STest {
 
       //! Construct a Scenario object
       Scenario(
-          const char *const name //!< The name of the scenario
+          const char *const a_name //!< The name of the scenario
       ) :
-        name(name),
+        name(a_name),
         showRules(false)
       {
         this->setShowRules();

@@ -160,7 +160,7 @@ void UdpTester ::test_advanced_reconnect() {
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-void UdpTester ::from_recv_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& recvBuffer, const RecvStatus& recvStatus) {
+void UdpTester ::from_recv_handler(const FwIndexType portNum, Fw::Buffer& recvBuffer, const RecvStatus& recvStatus) {
     this->pushFromPortEntry_recv(recvBuffer, recvStatus);
     // Make sure we can get to unblocking the spinner
     if (recvStatus == RecvStatus::RECV_OK){
@@ -171,13 +171,13 @@ void UdpTester ::from_recv_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& re
     delete[] recvBuffer.getData();
 }
 
-void UdpTester ::from_ready_handler(const NATIVE_INT_TYPE portNum) {
+void UdpTester ::from_ready_handler(const FwIndexType portNum) {
     this->pushFromPortEntry_ready();
 }
 
 Fw::Buffer UdpTester ::
     from_allocate_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 size
     )
   {
@@ -189,7 +189,7 @@ Fw::Buffer UdpTester ::
 
   void UdpTester ::
     from_deallocate_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         Fw::Buffer &fwBuffer
     )
   {

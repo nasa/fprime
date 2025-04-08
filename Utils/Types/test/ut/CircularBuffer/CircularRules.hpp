@@ -19,7 +19,7 @@
 #ifndef FPRIME_GROUNDINTERFACERULES_HPP
 #define FPRIME_GROUNDINTERFACERULES_HPP
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/String.hpp>
 #include <Utils/Types/test/ut/CircularBuffer/CircularState.hpp>
 #include <STest/STest/Rule/Rule.hpp>
@@ -139,5 +139,5 @@ namespace Types {
         // Action that tests the buffer's ability to rotate
         void action(MockTypes::CircularState& state);
     };
-};
+}
 #endif //FPRIME_GROUNDINTERFACERULES_HPP

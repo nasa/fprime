@@ -149,7 +149,7 @@ void GenericHubTester ::send_random_buffer(U32 port) {
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-void GenericHubTester ::from_LogSend_handler(const NATIVE_INT_TYPE portNum,
+void GenericHubTester ::from_LogSend_handler(const FwIndexType portNum,
                                    FwEventIdType id,
                                    Fw::Time& timeTag,
                                    const Fw::LogSeverity& severity,
@@ -157,14 +157,14 @@ void GenericHubTester ::from_LogSend_handler(const NATIVE_INT_TYPE portNum,
     this->pushFromPortEntry_LogSend(id, timeTag, severity, args);
 }
 
-void GenericHubTester ::from_TlmSend_handler(const NATIVE_INT_TYPE portNum,
+void GenericHubTester ::from_TlmSend_handler(const FwIndexType portNum,
                                    FwChanIdType id,
                                    Fw::Time& timeTag,
                                    Fw::TlmBuffer& val) {
     this->pushFromPortEntry_TlmSend(id, timeTag, val);
 }
 
-void GenericHubTester ::from_dataOut_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
+void GenericHubTester ::from_dataOut_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
     ASSERT_NE(fwBuffer.getData(), nullptr) << "Empty buffer to deallocate";
     ASSERT_GE(fwBuffer.getData(), m_data_for_allocation) << "Incorrect data pointer deallocated";
     ASSERT_LT(fwBuffer.getData(), m_data_for_allocation + sizeof(m_data_for_allocation))
@@ -178,7 +178,7 @@ void GenericHubTester ::from_dataOut_handler(const NATIVE_INT_TYPE portNum, Fw::
 // Handlers for serial from ports
 // ----------------------------------------------------------------------
 
-void GenericHubTester ::from_buffersOut_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
+void GenericHubTester ::from_buffersOut_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
     m_buffer_out++;
     // Assert the buffer came through exactly on the right port
     ASSERT_EQ(portNum, m_current_port);
@@ -192,7 +192,7 @@ void GenericHubTester ::from_buffersOut_handler(const NATIVE_INT_TYPE portNum, F
     this->from_dataInDeallocate_handler(0, fwBuffer);
 }
 
-void GenericHubTester ::from_portOut_handler(NATIVE_INT_TYPE portNum,        /*!< The port number*/
+void GenericHubTester ::from_portOut_handler(FwIndexType portNum,        /*!< The port number*/
                                    Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
 ) {
     m_comm_out++;
@@ -205,21 +205,21 @@ void GenericHubTester ::from_portOut_handler(NATIVE_INT_TYPE portNum,        /*!
     ASSERT_from_buffersOut_SIZE(0);
 }
 
-Fw::Buffer GenericHubTester ::from_dataOutAllocate_handler(const NATIVE_INT_TYPE portNum, const U32 size) {
+Fw::Buffer GenericHubTester ::from_dataOutAllocate_handler(const FwIndexType portNum, const U32 size) {
     EXPECT_EQ(m_allocate.getData(), nullptr) << "Allocation buffer is still in use";
     EXPECT_LE(size, sizeof(m_data_for_allocation)) << "Allocation buffer is still in use";
     m_allocate.set(m_data_for_allocation, size);
     return m_allocate;
 }
 
-void GenericHubTester ::from_bufferDeallocate_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
+void GenericHubTester ::from_bufferDeallocate_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
     // Check buffer deallocations here
     ASSERT_EQ(fwBuffer.getData(), m_buffer.getData()) << "Ensure that the buffer was deallocated";
     ASSERT_EQ(fwBuffer.getSize(), m_buffer.getSize()) << "Ensure that the buffer was deallocated";
     this->pushFromPortEntry_bufferDeallocate(fwBuffer);
 }
 
-void GenericHubTester ::from_dataInDeallocate_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
+void GenericHubTester ::from_dataInDeallocate_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
     ASSERT_NE(fwBuffer.getData(), nullptr) << "Empty buffer to deallocate";
     ASSERT_GE(fwBuffer.getData(), m_data_for_allocation) << "Incorrect data pointer deallocated";
     ASSERT_LT(fwBuffer.getData(), m_data_for_allocation + sizeof(m_data_for_allocation))

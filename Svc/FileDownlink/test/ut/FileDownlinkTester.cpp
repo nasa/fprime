@@ -395,7 +395,7 @@ namespace Svc {
 
    void FileDownlinkTester ::
     from_bufferSendOut_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         Fw::Buffer& buffer
     )
   {
@@ -413,7 +413,7 @@ namespace Svc {
 
    void FileDownlinkTester ::
      from_pingOut_handler(
-         const NATIVE_INT_TYPE portNum,
+         const FwIndexType portNum,
          U32 key
     )
     {
@@ -422,7 +422,7 @@ namespace Svc {
 
     void FileDownlinkTester ::
       from_FileComplete_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          const FwIndexType portNum, /*!< The port number*/
           const Svc::SendFileResponse& response
       )
     {
@@ -602,7 +602,7 @@ namespace Svc {
   void FileDownlinkTester ::
     removeFile(const char *const name)
   {
-    const NATIVE_INT_TYPE status = ::unlink(name);
+    const PlatformIntType status = ::unlink(name);
     if (status != 0) {
       // OK if file is not there
       ASSERT_EQ(ENOENT, errno);

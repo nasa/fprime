@@ -27,7 +27,7 @@ namespace Svc {
 //! time of the rate group and detects overruns.
 //!
 
-class PassiveRateGroup : public PassiveRateGroupComponentBase {
+class PassiveRateGroup final : public PassiveRateGroupComponentBase {
   public:
     //!  \brief PassiveRateGroupImpl constructor
     //!
@@ -46,7 +46,7 @@ class PassiveRateGroup : public PassiveRateGroupComponentBase {
     //!         to each member component. The index of the array corresponds to the
     //!         output port number.
     //!  \param numContexts The number of elements in the context array.
-    void configure(NATIVE_INT_TYPE contexts[], NATIVE_INT_TYPE numContexts);
+    void configure(U32 contexts[], FwIndexType numContexts);
 
     //!  \brief PassiveRateGroupImpl destructor
     //!
@@ -62,11 +62,11 @@ class PassiveRateGroup : public PassiveRateGroupComponentBase {
     //!
     //!  \param portNum incoming port call. For this class, should always be zero
     //!  \param cycleStart value stored by the cycle driver, used to compute execution time.
-    void CycleIn_handler(NATIVE_INT_TYPE portNum, Os::RawTime& cycleStart);
+    void CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleStart);
 
     U32 m_cycles;                                                     //!< cycles executed
     U32 m_maxTime;                                                    //!< maximum execution time in microseconds
-    NATIVE_INT_TYPE m_numContexts;                                    //!< number of contexts
+    FwIndexType m_numContexts;                                    //!< number of contexts
     U32 m_contexts[NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS];              //!< Must match number of output ports
 };
 

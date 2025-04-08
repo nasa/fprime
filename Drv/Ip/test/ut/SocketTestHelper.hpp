@@ -1,7 +1,7 @@
 //
 // Created by mstarch on 12/10/20.
 //
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw//Buffer/Buffer.hpp>
 #include <Drv/Ip/IpSocket.hpp>
 
@@ -19,7 +19,7 @@ static constexpr U16 MAX_ITER = 10;
  * @param fd: socket file descriptor
  * @param socket: socket to make timeout
  */
-void force_recv_timeout(NATIVE_INT_TYPE fd, Drv::IpSocket &socket);
+void force_recv_timeout(PlatformIntType fd, Drv::IpSocket &socket);
 
 /**
  * Validate random data from data against truth
@@ -90,6 +90,6 @@ bool wait_on_started(Drv::IpSocket &socket, bool open, U32 iterations);
  */
 U64 get_configured_delay_ms();
 
-};
-};
+}
+}
 #endif

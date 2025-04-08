@@ -184,5 +184,21 @@ Mutex::Status posix_status_to_mutex_status(PlatformIntType posix_status){
     }
     return status;
 }
+
+ConditionVariable::Status posix_status_to_conditional_status(PlatformIntType posix_status) {
+    ConditionVariable::Status status = ConditionVariable::Status::ERROR_OTHER;
+    switch (posix_status) {
+        case 0:
+            status = ConditionVariable::Status::OP_OK;
+            break;
+        case EPERM:
+            status =  ConditionVariable::Status::ERROR_MUTEX_NOT_HELD;
+            break;
+        default:
+            status =  ConditionVariable::Status::ERROR_OTHER;
+            break;
+    }
+    return status;
+}
 }
 }

@@ -64,12 +64,12 @@ void Basic::test() {
     this->init(queueDepth, instanceId);
     ASSERT_EQ(this->basic1_getState(), Basic_Basic::State::S);
     ASSERT_EQ(this->smInitialBasic1_getState(), SmInitial_Basic::State::S);
-    const FwSizeType expectedSize = 3;
+    const FwIndexType expectedSize = 3;
     ASSERT_EQ(this->m_basic1_action_a_history.getSize(), expectedSize);
     ASSERT_EQ(this->m_basic2_action_a_history.getSize(), expectedSize);
     ASSERT_EQ(this->m_smInitialBasic1_action_a_history.getSize(), expectedSize);
     ASSERT_EQ(this->m_smInitialBasic2_action_a_history.getSize(), expectedSize);
-    for (FwSizeType i = 0; i < expectedSize; i++) {
+    for (FwIndexType i = 0; i < expectedSize; i++) {
         ASSERT_EQ(this->m_basic1_action_a_history.getItemAt(i), Basic_Basic::Signal::__FPRIME_AC_INITIAL_TRANSITION);
         ASSERT_EQ(this->m_basic2_action_a_history.getItemAt(i), Basic_Basic::Signal::__FPRIME_AC_INITIAL_TRANSITION);
         ASSERT_EQ(this->m_smInitialBasic1_action_a_history.getItemAt(i),

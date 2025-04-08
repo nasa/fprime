@@ -27,7 +27,7 @@ namespace Svc {
 
         //! Construct a MissingFile
         MissingFile(
-            const Format::t format //!< The file format
+            const Format::t a_format //!< The file format
         );
 
       public:

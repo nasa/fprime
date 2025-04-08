@@ -40,7 +40,7 @@ Technical reference for the F Prime C++ API, CMake API, FPP language specificati
 
     This section of the documentation captures step by step how tos for various F´ development tasks.
 
-    [View CMake User API Documentation](../user-manual/cmake/cmake-api.md){ .md-button .md-button--primary }
+    [View CMake User API Documentation](../user-manual/build-system/cmake-api.md){ .md-button .md-button--primary }
 
 
 </div>

@@ -10,7 +10,7 @@
 //
 // ======================================================================
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Svc/BufferRepeater/BufferRepeater.hpp>
 
 namespace Svc {
@@ -32,7 +32,7 @@ void BufferRepeater ::configure(BufferRepeater::BufferRepeaterFailureOption allo
 bool BufferRepeater ::check_allocation(FwIndexType index,
                                        const Fw::Buffer& new_allocation,
                                        const Fw::Buffer& incoming_buffer) {
-    FW_ASSERT(index < NUM_PORTOUT_OUTPUT_PORTS, index);
+    FW_ASSERT(index < NUM_PORTOUT_OUTPUT_PORTS, static_cast<FwAssertArgType>(index));
     bool is_valid = (new_allocation.getData() != nullptr) && (new_allocation.getSize() >= incoming_buffer.getSize());
 
     // Respond to invalid buffer allocation
@@ -59,7 +59,7 @@ bool BufferRepeater ::check_allocation(FwIndexType index,
 // Handler implementations for user-defined serial input ports
 // ----------------------------------------------------------------------
 
-void BufferRepeater ::portIn_handler(NATIVE_INT_TYPE portNum, /*!< The port number*/
+void BufferRepeater ::portIn_handler(FwIndexType portNum, /*!< The port number*/
                                      Fw::Buffer& buffer       /*!< The serialization buffer*/
 ) {
     FW_ASSERT(this->m_allocation_failure_response < NUM_BUFFER_REPEATER_FAILURE_OPTIONS);

@@ -5,7 +5,7 @@
 #ifndef Os_Task_hpp_
 #define Os_Task_hpp_
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Time/TimeInterval.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <Os/Os.hpp>
@@ -37,6 +37,7 @@ namespace Os {
                 JOIN_ERROR, //!< error trying to join the task
                 ERROR_RESOURCES, //!< unable to allocate more tasks
                 ERROR_PERMISSION, //!< permissions error setting-up tasks
+                NOT_SUPPORTED,     //!< Task feature is not supported
                 INVALID_STATE, //!< Task is in an invalid state for the operation
             };
 

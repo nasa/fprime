@@ -11,7 +11,7 @@
 
 #include <Svc/FileDownlink/FileDownlink.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/StringUtils.hpp>
 #include <Os/QueueString.hpp>
 #include <limits>
@@ -61,7 +61,7 @@ namespace Svc {
       static_cast<FwSizeType>(fileQueueDepth),
       static_cast<FwSizeType>(sizeof(struct FileEntry))
     );
-    FW_ASSERT(stat == Os::Queue::OP_OK, stat);
+    FW_ASSERT(stat == Os::Queue::OP_OK, static_cast<FwAssertArgType>(stat));
   }
 
   void FileDownlink ::
@@ -82,7 +82,7 @@ namespace Svc {
 
   void FileDownlink ::
     Run_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 context
     )
   {
@@ -139,7 +139,7 @@ namespace Svc {
 
   Svc::SendFileResponse FileDownlink ::
     SendFile_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         const Fw::StringBase& sourceFilename, // lgtm[cpp/large-parameter] dictated by command architecture
         const Fw::StringBase& destFilename, // lgtm[cpp/large-parameter] dictated by command architecture
         U32 offset,
@@ -171,7 +171,7 @@ namespace Svc {
 
   void FileDownlink ::
     pingIn_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 key
     )
   {
@@ -180,7 +180,7 @@ namespace Svc {
 
   void FileDownlink ::
     bufferReturn_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         Fw::Buffer &fwBuffer
     )
   {
@@ -191,7 +191,8 @@ namespace Svc {
 		  return;
 	  }
 	  //Non-ignored buffers cannot be returned in "DOWNLINK" and "IDLE" state.  Only in "WAIT", "CANCEL" state.
-	  FW_ASSERT(this->m_mode.get() == Mode::WAIT || this->m_mode.get() == Mode::CANCEL, this->m_mode.get());
+	  FW_ASSERT(this->m_mode.get() == Mode::WAIT || this->m_mode.get() == Mode::CANCEL,
+                    static_cast<FwAssertArgType>(this->m_mode.get()));
       //If the last packet has been sent (and is returning now) then finish the file
 	  if (this->m_lastCompletedType == Fw::FilePacket::T_END ||
           this->m_lastCompletedType == Fw::FilePacket::T_CANCEL) {
@@ -318,7 +319,7 @@ namespace Svc {
     if(this->m_curEntry.source == FileDownlink::COMMAND) {
       this->cmdResponse_out(this->m_curEntry.opCode, this->m_curEntry.cmdSeq, statusToCmdResp(resp));
     } else {
-      for(NATIVE_INT_TYPE i = 0; i < this->getNum_FileComplete_OutputPorts(); i++) {
+      for(FwIndexType i = 0; i < this->getNum_FileComplete_OutputPorts(); i++) {
         if(this->isConnected_FileComplete_OutputPort(i)) {
           this->FileComplete_out(i, Svc::SendFileResponse(resp, this->m_curEntry.context));
         }
@@ -494,8 +495,9 @@ namespace Svc {
   void FileDownlink ::
     downlinkPacket()
   {
-      FW_ASSERT(this->m_lastCompletedType != Fw::FilePacket::T_NONE, this->m_lastCompletedType);
-      FW_ASSERT(this->m_mode.get() == Mode::CANCEL || this->m_mode.get() == Mode::DOWNLINK, this->m_mode.get());
+      FW_ASSERT(this->m_lastCompletedType != Fw::FilePacket::T_NONE, static_cast<FwAssertArgType>(this->m_lastCompletedType));
+      FW_ASSERT(this->m_mode.get() == Mode::CANCEL || this->m_mode.get() == Mode::DOWNLINK,
+                static_cast<FwAssertArgType>(this->m_mode.get()));
       //If canceled mode and currently downlinking data then send a cancel packet
       if (this->m_mode.get() == Mode::CANCEL && this->m_lastCompletedType == Fw::FilePacket::T_START) {
           this->sendCancelPacket();
@@ -540,7 +542,7 @@ namespace Svc {
     getBuffer(Fw::Buffer& buffer, PacketType type)
   {
       //Check type is correct
-      FW_ASSERT(type < COUNT_PACKET_TYPE && type >= 0, type);
+      FW_ASSERT(type < COUNT_PACKET_TYPE && type >= 0, static_cast<FwAssertArgType>(type));
       // Wrap the buffer around our indexed memory.
       buffer.setData(this->m_memoryStore[type]);
       buffer.setSize(FILEDOWNLINK_INTERNAL_BUFFER_SIZE);

@@ -147,7 +147,7 @@ class function retrieves the time tag from the time source component and then wr
 database component. The telemetry database is called periodically to send the current set of telemetry to the ground.
 
 > [!NOTE]
-> the periodic call to the telemetry database is typically made by a [rate group](../design/rate-group.md).
+> the periodic call to the telemetry database is typically made by a [rate group](../design-patterns/rate-group.md).
 
 ## Parameters
 

@@ -14,11 +14,11 @@ namespace Example {
         void init(NATIVE_INT_TYPE queueDepth);
 
     private:
-        void AsyncPort_handler(NATIVE_INT_TYPE portNum,U32 *arg1, U32 &arg2, U32 arg3,
+        void AsyncPort_handler(FwIndexType portNum,U32 *arg1, U32 &arg2, U32 arg3,
         ExampleType *arg4, ExampleType &arg5, const ExampleType &arg6,
         Arg7String *arg7, Arg8String &arg8, const Arg9String &arg9);
 
-        void SyncPort_handler(NATIVE_INT_TYPE portNum,U32 *arg1, U32 &arg2, U32 arg3,
+        void SyncPort_handler(FwIndexType portNum,U32 *arg1, U32 &arg2, U32 arg3,
         ExampleType *arg4, ExampleType &arg5, const ExampleType &arg6,
         Arg7String *arg7, Arg8String &arg8, const Arg9String &arg9);
     };

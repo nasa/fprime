@@ -22,13 +22,11 @@ SocketComponentHelper::SocketComponentHelper() {}
 SocketComponentHelper::~SocketComponentHelper() {}
 
 void SocketComponentHelper::start(const Fw::StringBase &name,
-                                     const bool reconnect,
-                                     const Os::Task::ParamType priority,
-                                     const Os::Task::ParamType stack,
-                                     const Os::Task::ParamType cpuAffinity) {
+                                  const Os::Task::ParamType priority,
+                                  const Os::Task::ParamType stack,
+                                  const Os::Task::ParamType cpuAffinity) {
     FW_ASSERT(m_task.getState() == Os::Task::State::NOT_STARTED);  // It is a coding error to start this task multiple times
     this->m_stop = false;
-    m_reconnect = reconnect;
     // Note: the first step is for the IP socket to open the port
     Os::Task::Arguments arguments(name, SocketComponentHelper::readTask, this, priority, stack, cpuAffinity);
     Os::Task::Status stat = m_task.start(arguments);
@@ -77,13 +75,28 @@ bool SocketComponentHelper::isOpened() {
     return is_open;
 }
 
-SocketIpStatus SocketComponentHelper::reconnect() {
+void SocketComponentHelper::setAutomaticOpen(bool auto_open) {
+    Os::ScopeLock scopedLock(this->m_lock);
+    this->m_reopen = auto_open;
+}
+
+SocketIpStatus SocketComponentHelper::reopen() {
     SocketIpStatus status = SOCK_SUCCESS;
-    // Open a network connection if it has not already been open
     if (not this->isOpened()) {
-        status = this->open();
-        if (status == SocketIpStatus::SOCK_ANOTHER_THREAD_OPENING) {
-            status = SocketIpStatus::SOCK_SUCCESS;
+        // Check for auto-open before attempting to reopen
+        bool reopen = false;
+        {
+            Os::ScopeLock scopedLock(this->m_lock);
+            reopen = this->m_reopen;
+        }
+        // Open a network connection if it has not already been open
+        if (not reopen) {
+            status = SOCK_AUTO_CONNECT_DISABLED;
+        } else {
+            status = this->open();
+            if (status == SocketIpStatus::SOCK_ANOTHER_THREAD_OPENING) {
+                status = SocketIpStatus::SOCK_SUCCESS;
+            }
         }
     }
     return status;
@@ -96,12 +109,12 @@ SocketIpStatus SocketComponentHelper::send(const U8* const data, const U32 size)
     this->m_lock.unlock();
     // Prevent transmission before connection, or after a disconnect
     if (descriptor.fd == -1) {
-        status = this->reconnect();
-        // if reconnect wasn't successful, pass the that up to the caller
+        status = this->reopen();
+        // if reopen wasn't successful, pass the that up to the caller
         if(status != SOCK_SUCCESS) {
             return status;
         }
-        // Refresh local copy after reconnect
+        // Refresh local copy after reopen
         this->m_lock.lock();
         descriptor = this->m_descriptor;
         this->m_lock.unlock();
@@ -165,8 +178,13 @@ void SocketComponentHelper::readLoop() {
     do {
         // Prevent transmission before connection, or after a disconnect
         if ((not this->isOpened()) and this->running()) {
-            status = this->reconnect();
-            if (status != SOCK_SUCCESS) {
+            status = this->reopen();
+            // When reopen is disabled, just break as this is a exit condition for the loop
+            if (status == SOCK_AUTO_CONNECT_DISABLED) {
+                break;
+            }
+            // If the reconnection failed in any other way, warn, wait, and retry
+            else if (status != SOCK_SUCCESS) {
                 Fw::Logger::log("[WARNING] Failed to open port with status %d and errno %d\n", status, errno);
                 (void)Os::Task::delay(SOCKET_RETRY_INTERVAL);
                 continue;
@@ -193,9 +211,8 @@ void SocketComponentHelper::readLoop() {
             this->sendBuffer(buffer, status);
         }
     }
-    // As long as not told to stop, and we are successful interrupted or ordered to retry, keep receiving
-    while (this->running() &&
-           (status == SOCK_SUCCESS || (status == SOCK_NO_DATA_AVAILABLE) || status == SOCK_INTERRUPTED_TRY_AGAIN || this->m_reconnect));
+    // This will loop until stopped. If auto-open is disabled, this will break when reopen returns disabled status
+    while (this->running());
     // Close the socket
     this->close(); // Close the port entirely
 }

@@ -29,9 +29,10 @@ DpWriterTester ::~DpWriterTester() {}
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-void DpWriterTester::from_procBufferSendOut_handler(NATIVE_INT_TYPE portNum, Fw::Buffer& buffer) {
+void DpWriterTester::from_procBufferSendOut_handler(FwIndexType portNum, Fw::Buffer& buffer) {
     this->pushFromPortEntry_procBufferSendOut(buffer);
-    this->abstractState.m_procTypes |= (1 << portNum);
+    this->abstractState.m_procTypes =
+        static_cast<Fw::DpCfg::ProcType::SerialType>(this->abstractState.m_procTypes | (1 << portNum));
 }
 
 // ----------------------------------------------------------------------
@@ -68,7 +69,7 @@ void DpWriterTester::constructDpFileName(FwDpIdType id, const Fw::Time& timeTag,
 }
 
 void DpWriterTester::checkProcTypes(const Fw::DpContainer& container) {
-    FwIndexType expectedNumProcTypes = 0;
+    U32 expectedNumProcTypes = 0;
     const Fw::DpCfg::ProcType::SerialType procTypes = container.getProcTypes();
     for (FwIndexType i = 0; i < Fw::DpCfg::ProcType::NUM_CONSTANTS; i++) {
         if (procTypes & (1 << i)) {

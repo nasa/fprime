@@ -27,7 +27,7 @@ namespace Svc {
     //! to ENs (Engineering Numbers) to decouple the conversion as well.
     //!
 
-    class PolyDb : public PolyDbComponentBase {
+    class PolyDb final : public PolyDbComponentBase {
     public:
         //!  \brief PolyDbImpl constructor
         //!
@@ -60,7 +60,7 @@ namespace Svc {
         //!  \param val value of latest measurement
 
         void getValue_handler(
-            NATIVE_INT_TYPE portNum, //!< The port number
+            FwIndexType portNum, //!< The port number
             const Svc::PolyDbCfg::PolyDbEntry& entry, //!< The entry to access
             Svc::MeasurementStatus& status, //!< The command response argument
             Fw::Time& time, //!< The time of the measurement
@@ -79,7 +79,7 @@ namespace Svc {
         //!  \param val value of new measurement
 
         void setValue_handler(
-            NATIVE_INT_TYPE portNum, //!< The port number
+            FwIndexType portNum, //!< The port number
             const Svc::PolyDbCfg::PolyDbEntry& entry, //!< The entry to access
             Svc::MeasurementStatus& status, //!< The command response argument
             Fw::Time& time, //!< The time of the measurement

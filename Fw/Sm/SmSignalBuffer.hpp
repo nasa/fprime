@@ -10,12 +10,12 @@
 #ifndef FW_SM_SIGNAL_BUFFER_HPP
 #define FW_SM_SIGNAL_BUFFER_HPP
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Serializable.hpp>
 
 namespace Fw {
 
-    class SmSignalBuffer : public SerializeBufferBase {
+    class SmSignalBuffer final : public SerializeBufferBase {
         public:
 
             enum {

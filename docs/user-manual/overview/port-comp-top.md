@@ -103,7 +103,7 @@ input port type. This allows strongly-typed ports to connect to generic "pass-an
 in Figure 3. For input ports, the calling port detects a connection and serializes arguments. For the output ports,
 the serialized port calls an interface on the typed port that deserializes arguments. Serialization ports do not support
 ports with return types. These ports allow serialized data to be passed around by generic components that do not know
-the type contained. The [Hub pattern](../framework/hub-pattern.md) often uses serialized ports such that data can be routed
+the type contained. The [Hub pattern](../design-patterns/hub-pattern.md) often uses serialized ports such that data can be routed
 across an address-space gap in a generic fashion.
 
 ![Serialization Ports](../../img/core3.png)

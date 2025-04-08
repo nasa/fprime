@@ -52,7 +52,7 @@ namespace Drv {
         SPI_MODE_CPOL_HIGH_CPHA_HIGH,///< (CPOL = 1, CPHA = 1)
     };
 
-    class LinuxSpiDriverComponentImpl: public LinuxSpiDriverComponentBase {
+    class LinuxSpiDriverComponentImpl final : public LinuxSpiDriverComponentBase {
 
         public:
 
@@ -71,8 +71,8 @@ namespace Drv {
             ~LinuxSpiDriverComponentImpl();
 
             //! Open device
-            bool open(NATIVE_INT_TYPE device,
-                      NATIVE_INT_TYPE select,
+            bool open(FwIndexType device,
+                      FwIndexType select,
                       SpiFrequency clock,
                       SpiMode spiMode = SpiMode::SPI_MODE_CPOL_LOW_CPHA_LOW);
 
@@ -84,12 +84,12 @@ namespace Drv {
 
             //! Handler implementation for SpiReadWrite
             //!
-            void SpiReadWrite_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+            void SpiReadWrite_handler(const FwIndexType portNum, /*!< The port number*/
             Fw::Buffer &WriteBuffer, Fw::Buffer &readBuffer);
 
-            NATIVE_INT_TYPE m_fd;
-            NATIVE_INT_TYPE m_device;
-            NATIVE_INT_TYPE m_select;
+            PlatformIntType m_fd;
+            FwIndexType m_device;
+            FwIndexType m_select;
             U32 m_bytes;
 
     };

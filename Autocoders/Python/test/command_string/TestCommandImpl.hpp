@@ -15,7 +15,7 @@ class TestCommand1Impl: public AcTest::TestCommandComponentBase {
         TestCommand1Impl(const char* compName);
         void init(NATIVE_INT_TYPE queueDepth);
         virtual ~TestCommand1Impl();
-        void aport_handler(NATIVE_INT_TYPE portNum, I32 arg4, F32 arg5, U8 arg6);
+        void aport_handler(FwIndexType portNum, I32 arg4, F32 arg5, U8 arg6);
         void TEST_CMD_1_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, I32 arg1, const Fw::CmdStringArg& arg2, SomeEnum arg3);
 };
 

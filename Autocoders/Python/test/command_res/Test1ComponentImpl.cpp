@@ -12,7 +12,7 @@
 
 
 #include <Autocoders/Python/test/command_res/Test1ComponentImpl.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 namespace Cmd {
 
@@ -50,7 +50,7 @@ namespace Cmd {
 
   void Test1ComponentImpl ::
     aport_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         I32 arg4,
         F32 arg5,
         U8 arg6

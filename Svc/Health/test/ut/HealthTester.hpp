@@ -62,14 +62,14 @@ namespace Svc {
       //! Handler for from_PingSend
       //!
       void from_PingSend_handler(
-          const NATIVE_INT_TYPE portNum, //!< The port number
+          const FwIndexType portNum, //!< The port number
           U32 key //!< Value to return to pinger
       ) override;
 
       //! Handler for from_WdogStroke
       //!
       void from_WdogStroke_handler(
-          const NATIVE_INT_TYPE portNum, //!< The port number
+          const FwIndexType portNum, //!< The port number
           U32 code //!< Watchdog stroke code
       ) override;
 
@@ -95,7 +95,7 @@ namespace Svc {
       // Variables
       // ----------------------------------------------------------------------
 
-      NATIVE_UINT_TYPE numPingEntries;
+      FwIndexType numPingEntries;
       HealthImpl::PingEntry pingEntries[Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS];
       U32 watchDogCode;
       U32 keys[Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS];

@@ -5,6 +5,9 @@
 # MOD_DEPS: (optional) module dependencies
 #
 ####
+add_compile_options(
+    -Wno-conversion
+)
 set(SOURCE_FILES
 	"${CMAKE_CURRENT_LIST_DIR}/RpiDemo.fpp"
 	"${CMAKE_CURRENT_LIST_DIR}/RpiDemoComponentImpl.cpp"

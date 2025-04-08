@@ -1,18 +1,14 @@
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Comp/ActiveComponentBase.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Os/TaskString.hpp>
-#include <cstdio>
-
-//#define DEBUG_PRINT(...) printf(##__VA_ARGS__); fflush(stdout)
-#define DEBUG_PRINT(...)
 
 namespace Fw {
 
     class ActiveComponentExitSerializableBuffer : public Fw::SerializeBufferBase {
 
         public:
-            NATIVE_UINT_TYPE getBuffCapacity() const {
+            FwSizeType getBuffCapacity() const {
                 return sizeof(m_buff);
             }
 
@@ -35,21 +31,15 @@ namespace Fw {
     }
 
     ActiveComponentBase::~ActiveComponentBase() {
-        DEBUG_PRINT("ActiveComponent %s destructor.\n",this->getObjName());
     }
 
-    void ActiveComponentBase::init(NATIVE_INT_TYPE instance) {
+    void ActiveComponentBase::init(FwEnumStoreType instance) {
         QueuedComponentBase::init(instance);
     }
 
-#if FW_OBJECT_TO_STRING == 1 && FW_OBJECT_NAMES == 1
-    void ActiveComponentBase::toString(char* buffer, NATIVE_INT_TYPE size) {
-        FW_ASSERT(size > 0);
-        FW_ASSERT(buffer != nullptr);
-        PlatformIntType status = snprintf(buffer, static_cast<size_t>(size), "ActComp: %s", this->m_objName.toChar());
-        if (status < 0) {
-            buffer[0] = 0;
-        }
+#if FW_OBJECT_TO_STRING == 1
+    const char* ActiveComponentBase::getToStringFormatString() {
+            return "ActComp: %s";
     }
 #endif
 
@@ -59,28 +49,24 @@ namespace Fw {
 #if FW_OBJECT_NAMES == 1
         taskName = this->getObjName();
 #else
-        char taskNameChar[FW_TASK_NAME_BUFFER_SIZE];
-        (void)snprintf(taskNameChar,sizeof(taskNameChar),"ActComp_%" PRI_FwSizeType,Os::Task::getNumTasks());
-        taskName = taskNameChar;
+        (void) taskName.format("ActComp_%" PRI_FwSizeType, Os::Task::getNumTasks());
 #endif
         // Cooperative threads tasks externalize the task loop, and as such use the state machine as their task function
         // Standard multithreading tasks use the task loop to respectively call the state machine
         Os::Task::taskRoutine routine = (m_task.isCooperative()) ? this->s_taskStateMachine : this->s_taskLoop;
         Os::Task::Arguments arguments(taskName, routine, this, priority, stackSize, cpuAffinity, static_cast<PlatformUIntType>(identifier));
         Os::Task::Status status = this->m_task.start(arguments);
-        FW_ASSERT(status == Os::Task::Status::OP_OK,static_cast<NATIVE_INT_TYPE>(status));
+        FW_ASSERT(status == Os::Task::Status::OP_OK,static_cast<FwAssertArgType>(status));
     }
 
     void ActiveComponentBase::exit() {
         ActiveComponentExitSerializableBuffer exitBuff;
         SerializeStatus stat = exitBuff.serialize(static_cast<I32>(ACTIVE_COMPONENT_EXIT));
-        FW_ASSERT(FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
+        FW_ASSERT(FW_SERIALIZE_OK == stat,static_cast<FwAssertArgType>(stat));
         (void)this->m_queue.send(exitBuff,0,Os::Queue::BlockingType::NONBLOCKING);
-        DEBUG_PRINT("exit %s\n", this->getObjName());
     }
 
     Os::Task::Status ActiveComponentBase::join() {
-        DEBUG_PRINT("join %s\n", this->getObjName());
         return this->m_task.join();
     }
 

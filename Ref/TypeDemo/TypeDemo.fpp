@@ -37,8 +37,8 @@ module Ref {
 
     @ Set of floating points to emit
     array FloatSet = [3] F32;
-   
-    @ All scalar inputs 
+
+    @ All scalar inputs
     struct ScalarStruct {
         i8: I8,
         i16: I16,
@@ -240,6 +240,38 @@ module Ref {
         event ScalarStructEv(scalar_argument: ScalarStruct) severity activity high \
             format "ScalarStruct: {}"
 
+        @ Scalar struct channel
+        telemetry ScalarStructCh: ScalarStruct
+
+        @ Scalar U8 channel
+        telemetry ScalarU8Ch: U8
+
+        @ Scalar U16 channel
+        telemetry ScalarU16Ch: U16
+
+        @ Scalar U32 channel
+        telemetry ScalarU32Ch: U32
+
+        @ Scalar U64 channel
+        telemetry ScalarU64Ch: U64
+
+        @ Scalar I8 channel
+        telemetry ScalarI8Ch: I8
+
+        @ Scalar I16 channel
+        telemetry ScalarI16Ch: I16
+
+        @ Scalar I32 channel
+        telemetry ScalarI32Ch: I32
+
+        @ Scalar I64 channel
+        telemetry ScalarI64Ch: I64
+
+        @ Scalar F32 channel
+        telemetry ScalarF32Ch: F32
+
+        @ Scalar F64 channel
+        telemetry ScalarF64Ch: F64
 
 
         # ----------------------------------------------------------------------

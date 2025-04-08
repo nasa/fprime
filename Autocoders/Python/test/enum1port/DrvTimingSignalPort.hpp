@@ -4,7 +4,7 @@
 #include <Fw/Port/FwInputPortBase.hpp>
 #include <Fw/Port/FwOutputPortBase.hpp>
 #include <Fw/Comp/FwCompBase.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 namespace Drv {
 
@@ -14,7 +14,7 @@ namespace Drv {
 
     class InputTimingSignalPort : public Fw::InputPortBase {
       public:
-        typedef void (*CompFuncPtr)(Fw::ComponentBase* callComp, NATIVE_INT_TYPE portNum, TimingSignal signal);
+        typedef void (*CompFuncPtr)(Fw::ComponentBase* callComp, FwIndexType portNum, TimingSignal signal);
 
         InputTimingSignalPort();
         void init();

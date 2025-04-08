@@ -12,7 +12,7 @@
 #include <Drv/Ip/UdpSocket.hpp>
 #include <Fw/Logger/Logger.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/StringUtils.hpp>
 
 #ifdef TGT_OS_TYPE_VXWORKS
@@ -59,9 +59,15 @@ UdpSocket::~UdpSocket() {
     delete m_state;
 }
 
+SocketIpStatus UdpSocket::configure(const char* const hostname, const U16 port, const U32 timeout_seconds, const U32 timeout_microseconds) {
+    FW_ASSERT(0); // Must use configureSend and/or configureRecv
+    return SocketIpStatus::SOCK_INVALID_CALL;
+}
+
+
 SocketIpStatus UdpSocket::configureSend(const char* const hostname, const U16 port, const U32 timeout_seconds, const U32 timeout_microseconds) {
     //Timeout is for the send, so configure send will work with the base class
-    FW_ASSERT(port != 0, port); // Send cannot be on port 0
+    FW_ASSERT(port != 0, static_cast<FwAssertArgType>(port)); // Send cannot be on port 0
     FW_ASSERT(hostname != nullptr);
     return this->IpSocket::configure(hostname, port, timeout_seconds, timeout_microseconds);
 }
@@ -106,7 +112,7 @@ SocketIpStatus UdpSocket::bind(const PlatformIntType fd) {
         return SOCK_FAILED_TO_READ_BACK_PORT;
     }
 
-    FW_ASSERT(sizeof(this->m_state->m_addr_recv) == sizeof(address), sizeof(this->m_state->m_addr_recv), sizeof(address));
+    FW_ASSERT(sizeof(this->m_state->m_addr_recv) == sizeof(address), static_cast<FwAssertArgType>(sizeof(this->m_state->m_addr_recv)), static_cast<FwAssertArgType>(sizeof(address)));
     memcpy(&this->m_state->m_addr_recv, &address, sizeof(this->m_state->m_addr_recv));
 
     return SOCK_SUCCESS;
@@ -114,7 +120,7 @@ SocketIpStatus UdpSocket::bind(const PlatformIntType fd) {
 
 SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
     SocketIpStatus status = SOCK_SUCCESS;
-    NATIVE_INT_TYPE socketFd = -1;
+    PlatformIntType socketFd = -1;
     struct sockaddr_in address;
 
     U16 port = this->m_port;
@@ -146,29 +152,41 @@ SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
             ::close(socketFd);
             return status;
         }
-        FW_ASSERT(sizeof(this->m_state->m_addr_send) == sizeof(address), sizeof(this->m_state->m_addr_send),
-                  sizeof(address));
+        FW_ASSERT(sizeof(this->m_state->m_addr_send) == sizeof(address), static_cast<FwAssertArgType>(sizeof(this->m_state->m_addr_send)),
+                  static_cast<FwAssertArgType>(sizeof(address)));
         memcpy(&this->m_state->m_addr_send, &address, sizeof(this->m_state->m_addr_send));
     }
 
-    // When we are setting up for receiving as well, then we must bind to a port
-    if ((status = this->bind(socketFd)) != SOCK_SUCCESS) {
-        ::close(socketFd);
-        return status; // Not closing FD as it is still a valid send FD
-    }
+    // Receive port set up only done when configure receive was called
     U16 recv_port = this->m_recv_port;
+    if (recv_port != 0) {
+        status = this->bind(socketFd);
+        // When we are setting up for receiving as well, then we must bind to a port
+        if (status != SOCK_SUCCESS) {
+            (void) ::close(socketFd); // Closing FD as a retry will reopen send side
+            return status;
+        }
+    }
+
     // Log message for UDP
-    if (port == 0) {
-        Fw::Logger::log("Setup to receive udp at %s:%hu\n", m_recv_hostname,
+    if ((port == 0) && (recv_port > 0)) {
+        Fw::Logger::log("Setup to only receive udp at %s:%hu\n", m_recv_hostname,
                            recv_port);
-    } else {
+    } else if ((port > 0) && (recv_port == 0))  {
+        Fw::Logger::log("Setup to only send udp at %s:%hu\n", m_hostname,
+                           port);
+    } else if ((port > 0) && (recv_port > 0))  {
         Fw::Logger::log("Setup to receive udp at %s:%hu and send to %s:%hu\n",
                            m_recv_hostname,
                            recv_port,
                            m_hostname,
                            port);
     }
-    FW_ASSERT(status == SOCK_SUCCESS, status);
+    // Neither configuration method was called
+    else {
+        FW_ASSERT(port > 0 || recv_port > 0, static_cast<FwAssertArgType>(port), static_cast<FwAssertArgType>(recv_port));
+    }
+    FW_ASSERT(status == SOCK_SUCCESS, static_cast<FwAssertArgType>(status));
     socketDescriptor.fd = socketFd;
     return status;
 }

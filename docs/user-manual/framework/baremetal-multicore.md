@@ -36,7 +36,7 @@ of that delegated execution context comes next.
 Since the OS is not around to execute F´, the implementer of the F´ project must choose an execution context for F´ to
 run on. That is, ensuring that some call invokes all of the **Components** that compose the F´ system. Otherwise, some
 components will not run. Typically, this is handled by composing an F´ baremetal system into components that are all
-driven by [rate groups](../design/rate-group.md). Designing the system this way ensures that all execution is derived from
+driven by [rate groups](../design-patterns/rate-group.md). Designing the system this way ensures that all execution is derived from
 one source: the rate group driver and thus reducing the problem to supplying an execution context to the rate group
 driver at a set rate.  All calls needed will execute during a sweep through the rate groups and their derived rates.
 
@@ -76,7 +76,7 @@ components to designated cores.  In general, these systems behave just fine.
 When running F´ on multi-platform systems, users typically define a deployment for each platform in the system. These
 deployments are then linked over the platform's inter-communication architecture.  Should  users want F´ execution
 across these deployments to look like a single F´ deployment, users are advised to adopt the
-[hub pattern](hub-pattern.md) to invoke F´ port calls across multiple devices.
+[hub pattern](../design-patterns/hub-pattern.md) to invoke F´ port calls across multiple devices.
 
 ## Thread Virtualization
 

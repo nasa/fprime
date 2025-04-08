@@ -75,10 +75,10 @@ namespace Svc {
         private:
 
           //! The data
-          U8 data[FILE_BUFFER_CAPACITY];
+          U8 m_data[FILE_BUFFER_CAPACITY];
 
           //! The index into the buffer
-          size_t index;
+          size_t m_index;
 
       };
 
@@ -144,21 +144,21 @@ namespace Svc {
       //! Handler for from_bufferSendOut
       //!
       void from_bufferSendOut_handler(
-          const NATIVE_INT_TYPE portNum, //!< The port number
+          const FwIndexType portNum, //!< The port number
           Fw::Buffer& buffer
       );
 
       //! Handler for from_bufferSendOut
       //!
       void from_pingOut_handler(
-          const NATIVE_INT_TYPE portNum,
+          const FwIndexType portNum,
           U32 key
       );
 
       //! Handler for from_FileComplete
       //!
       void from_FileComplete_handler(
-          const NATIVE_INT_TYPE portNum,
+          const FwIndexType portNum,
           const Svc::SendFileResponse& resp
       );
 

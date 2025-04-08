@@ -12,7 +12,7 @@
 #ifndef DRV_IP_UDPSOCKET_HPP_
 #define DRV_IP_UDPSOCKET_HPP_
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Drv/Ip/IpSocket.hpp>
 #include <IpCfg.hpp>
 
@@ -36,6 +36,14 @@ class UdpSocket : public IpSocket {
      * \brief to cleanup state created at instantiation
      */
     virtual ~UdpSocket();
+
+    /**
+     * \brief configure is disabled
+     * 
+     * \warning configure is disabled for UdpSocket. Use configureSend and configureRecv instead.
+     */
+    SocketIpStatus configure(const char* hostname, const U16 port, const U32 send_timeout_seconds,
+                             const U32 send_timeout_microseconds) override;
 
     /**
      * \brief configure the udp socket for outgoing transmissions

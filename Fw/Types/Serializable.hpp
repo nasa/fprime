@@ -5,7 +5,7 @@
 #include <iostream>
 #endif
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include "Fw/Deprecate.hpp"
 
 namespace Fw {
@@ -25,7 +25,7 @@ class SerializeBufferBase;  //!< forward declaration
 class Serializable {
   public:
     // Size type for backwards compatibility
-    using SizeType = NATIVE_UINT_TYPE;
+    using SizeType = FwSizeType;
 
   public:
     virtual SerializeStatus serialize(SerializeBufferBase& buffer) const = 0;  //!< serialize contents
@@ -76,18 +76,16 @@ class SerializeBufferBase {
     SerializeStatus serialize(I64 val);  //!< serialize 64-bit signed int
 #endif
     SerializeStatus serialize(F32 val);  //!< serialize 32-bit floating point
-#if FW_HAS_F64
     SerializeStatus serialize(F64 val);  //!< serialize 64-bit floating point
-#endif
     SerializeStatus serialize(bool val);  //!< serialize boolean
 
     SerializeStatus serialize(
         const void* val);  //!< serialize pointer (careful, only pointer value, not contents are serialized)
 
     //! serialize data buffer
-    SerializeStatus serialize(const U8* buff, NATIVE_UINT_TYPE length, bool noLength);
+    SerializeStatus serialize(const U8* buff, FwSizeType length, bool noLength);
     //! serialize data buffer
-    SerializeStatus serialize(const U8* buff, NATIVE_UINT_TYPE length);
+    SerializeStatus serialize(const U8* buff, FwSizeType length);
 
     //! \brief serialize a byte buffer of a given length
     //!
@@ -125,18 +123,16 @@ class SerializeBufferBase {
     SerializeStatus deserialize(I64& val);  //!< deserialize 64-bit signed int
 #endif
     SerializeStatus deserialize(F32& val);  //!< deserialize 32-bit floating point
-#if FW_HAS_F64
     SerializeStatus deserialize(F64& val);  //!< deserialize 64-bit floating point
-#endif
     SerializeStatus deserialize(bool& val);  //!< deserialize boolean
 
     SerializeStatus deserialize(void*& val);  //!< deserialize point value (careful, pointer value only, not contents)
 
     //! deserialize data buffer
-    SerializeStatus deserialize(U8* buff, NATIVE_UINT_TYPE& length, bool noLength);
+    SerializeStatus deserialize(U8* buff, FwSizeType& length, bool noLength);
 
     //! deserialize data buffer
-    SerializeStatus deserialize(U8* buff, NATIVE_UINT_TYPE& length);
+    SerializeStatus deserialize(U8* buff, FwSizeType& length);
     //! \brief deserialize a byte buffer of a given length
     //!
     //! Deserialize bytes into `buff` of `length` bytes.  If `serializationMode` is set to `INCLUDE_LENGTH` then

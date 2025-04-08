@@ -24,7 +24,7 @@ namespace Fw {
         this->m_numEntries = 0;
         // make sure packet type is correct before serializing. It should
         // never be anything but FW_PACKET_TELEM, so assert.
-        FW_ASSERT(FW_PACKET_TELEM == this->m_type,this->m_type);
+        FW_ASSERT(FW_PACKET_TELEM == this->m_type, static_cast<FwAssertArgType>(this->m_type));
         // serialize descriptor
         // The function serializeBase inherited from ComPacket converts this->m_type
         // to type FwPacketDescriptorType and serializes the result into this->m_tlmBuffer.
@@ -49,7 +49,7 @@ namespace Fw {
         return Fw::FW_SERIALIZE_OK;
     }
 
-    NATIVE_UINT_TYPE TlmPacket::getNumEntries() {
+    FwSizeType TlmPacket::getNumEntries() {
         return this->m_numEntries;
     }
 
@@ -63,7 +63,7 @@ namespace Fw {
 
     SerializeStatus TlmPacket::addValue(FwChanIdType id, Time& timeTag, TlmBuffer& buffer) {
         // check to make sure there is room for all the fields
-        NATIVE_UINT_TYPE left = this->m_tlmBuffer.getBuffCapacity()-this->m_tlmBuffer.getBuffLength();
+        FwSizeType left = this->m_tlmBuffer.getBuffCapacity()-this->m_tlmBuffer.getBuffLength();
         if (
             (sizeof(FwChanIdType) + Time::SERIALIZED_SIZE + buffer.getBuffLength()) > left
         ) {
@@ -97,7 +97,7 @@ namespace Fw {
     }
 
             // extract telemetry value
-    SerializeStatus TlmPacket::extractValue(FwChanIdType &id, Time& timeTag, TlmBuffer& buffer, NATIVE_UINT_TYPE bufferSize) {
+    SerializeStatus TlmPacket::extractValue(FwChanIdType &id, Time& timeTag, TlmBuffer& buffer, FwSizeType bufferSize) {
 
         // deserialize items out of buffer
 
@@ -147,12 +147,12 @@ namespace Fw {
             return stat;
         }
         // deserialize the channel value entry buffers
-        NATIVE_UINT_TYPE size = buffer.getBuffLeft();
+        FwSizeType size = buffer.getBuffLeft();
         stat = buffer.deserialize(this->m_tlmBuffer.getBuffAddr(),size,true);
         if (stat == FW_SERIALIZE_OK) {
             // Shouldn't fail
             stat = this->m_tlmBuffer.setBuffLen(size);
-            FW_ASSERT(stat == FW_SERIALIZE_OK,static_cast<NATIVE_INT_TYPE>(stat));
+            FW_ASSERT(stat == FW_SERIALIZE_OK,static_cast<FwAssertArgType>(stat));
         }
         return stat;
     }

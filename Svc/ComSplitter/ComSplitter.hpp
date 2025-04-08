@@ -12,7 +12,7 @@
 
 namespace Svc {
 
-  class ComSplitter :
+  class ComSplitter final :
     public ComSplitterComponentBase
   {
 
@@ -39,7 +39,7 @@ namespace Svc {
     private:
 
       void comIn_handler(
-          NATIVE_INT_TYPE portNum,
+          FwIndexType portNum,
           Fw::ComBuffer &data,
           U32 context
       );

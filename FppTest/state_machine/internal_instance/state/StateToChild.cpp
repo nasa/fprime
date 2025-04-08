@@ -73,11 +73,11 @@ void StateToChild::testS2_to_S2() {
     const auto status = this->doDispatch();
     ASSERT_EQ(status, MSG_DISPATCH_OK);
     ASSERT_EQ(this->smStateStateToChild_getState(), SmState_StateToChild::State::S1_S2);
-    const FwSizeType expectedSize = 3;
+    const FwIndexType expectedSize = 3;
     ASSERT_EQ(this->m_smStateStateToChild_actionHistory.getSize(), expectedSize);
     const auto& signals = this->m_smStateStateToChild_actionHistory.getSignals();
     const auto& actions = this->m_smStateStateToChild_actionHistory.getValues();
-    for (FwSizeType i = 0; i < expectedSize; i++) {
+    for (FwIndexType i = 0; i < expectedSize; i++) {
         ASSERT_EQ(signals.getItemAt(i), SmState_StateToChild::Signal::S1_to_S2);
     }
     ASSERT_EQ(actions.getItemAt(0), ActionId::EXIT_S2);
@@ -93,11 +93,11 @@ void StateToChild::testS2_to_S3() {
     const auto status = this->doDispatch();
     ASSERT_EQ(status, MSG_DISPATCH_OK);
     ASSERT_EQ(this->smStateStateToChild_getState(), SmState_StateToChild::State::S1_S3);
-    const FwSizeType expectedSize = 2;
+    const FwIndexType expectedSize = 2;
     ASSERT_EQ(this->m_smStateStateToChild_actionHistory.getSize(), expectedSize);
     const auto& signals = this->m_smStateStateToChild_actionHistory.getSignals();
     const auto& actions = this->m_smStateStateToChild_actionHistory.getValues();
-    for (FwSizeType i = 0; i < expectedSize; i++) {
+    for (FwIndexType i = 0; i < expectedSize; i++) {
         ASSERT_EQ(signals.getItemAt(i), SmState_StateToChild::Signal::S2_to_S3);
     }
     ASSERT_EQ(actions.getItemAt(0), ActionId::EXIT_S2);
@@ -121,11 +121,11 @@ void StateToChild::testS3_to_S2() {
         ASSERT_EQ(status, MSG_DISPATCH_OK);
         ASSERT_EQ(this->smStateStateToChild_getState(), SmState_StateToChild::State::S1_S2);
     }
-    const FwSizeType expectedSize = 3;
+    const FwIndexType expectedSize = 3;
     ASSERT_EQ(this->m_smStateStateToChild_actionHistory.getSize(), expectedSize);
     const auto& signals = this->m_smStateStateToChild_actionHistory.getSignals();
     const auto& actions = this->m_smStateStateToChild_actionHistory.getValues();
-    for (FwSizeType i = 0; i < expectedSize; i++) {
+    for (FwIndexType i = 0; i < expectedSize; i++) {
         ASSERT_EQ(signals.getItemAt(i), SmState_StateToChild::Signal::S1_to_S2);
     }
     ASSERT_EQ(actions.getItemAt(0), ActionId::EXIT_S3);

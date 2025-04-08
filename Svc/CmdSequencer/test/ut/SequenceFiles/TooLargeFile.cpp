@@ -20,9 +20,9 @@ namespace Svc {
   namespace SequenceFiles {
 
     TooLargeFile ::
-      TooLargeFile(const U32 bufferSize, const Format::t format) :
-        File("too_large", format),
-        bufferSize(bufferSize)
+      TooLargeFile(const U32 a_bufferSize, const Format::t a_format) :
+        File("too_large", a_format),
+        bufferSize(a_bufferSize)
     {
 
     }

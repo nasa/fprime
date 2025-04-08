@@ -80,11 +80,17 @@ endfunction()
 #    MODULE: module to setup implementation choices for
 #####
 function(setup_executable_implementation IMPLEMENTATION MODULE)
-    # Get the chosen implementor and fallback to the platform choice
+    # Get the chosen implementor for the module
     get_property(IMPLEMENTOR GLOBAL PROPERTY "${MODULE}_${IMPLEMENTATION}")
+    # Fallback to the platform in the case that the module does not specify
     if (NOT IMPLEMENTOR)
         get_property(IMPLEMENTOR GLOBAL PROPERTY "${FPRIME_PLATFORM}_${IMPLEMENTATION}")
     endif()
+    # Fallback to the FRAMEWORK_DEFAULT in the case that the platform does not specify
+    if (NOT IMPLEMENTOR)
+        get_property(IMPLEMENTOR GLOBAL PROPERTY "FRAMEWORK_DEFAULT_${IMPLEMENTATION}")
+    endif()
+   
     # Handle a failure to choose anything
     if (NOT IMPLEMENTOR)
         get_property(LOCAL_IMPLEMENTATIONS GLOBAL PROPERTY "${IMPLEMENTATION}_IMPLEMENTORS")

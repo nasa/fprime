@@ -53,7 +53,7 @@ namespace TestComponents {
 
   void serial_passiveTester ::
     from_SerialOut_handler(
-        NATIVE_INT_TYPE portNum, //!< The port number
+        FwIndexType portNum, //!< The port number
         Fw::SerializeBufferBase &Buffer //!< The serialization buffer
     )
   {

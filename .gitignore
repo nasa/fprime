@@ -1,5 +1,6 @@
 build/
-build*/
+build-fprime-*/
+build-artifacts/
 gtest/
 docs-cache/
 CMakePresets.json
@@ -26,6 +27,7 @@ RemoteSystemsTempFiles
 Dict
 *.core
 
+**/coverage/
 *.gcov
 !**/test/ut/output/*.gcov
 GTestBase.*

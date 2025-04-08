@@ -21,7 +21,7 @@
 
 namespace Drv {
 
-class LinuxUartDriver : public LinuxUartDriverComponentBase {
+class LinuxUartDriver final : public LinuxUartDriverComponentBase {
   public:
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction
@@ -93,11 +93,11 @@ class LinuxUartDriver : public LinuxUartDriverComponentBase {
 
     //! Handler implementation for serialSend
     //!
-    Drv::SendStatus send_handler(NATIVE_INT_TYPE portNum, /*!< The port number*/
+    Drv::SendStatus send_handler(FwIndexType portNum, /*!< The port number*/
                                  Fw::Buffer& serBuffer);
 
 
-    NATIVE_INT_TYPE m_fd;  //!< file descriptor returned for I/O device
+    PlatformIntType m_fd;  //!< file descriptor returned for I/O device
     U32 m_allocationSize; //!< size of allocation request to memory manager
     const char* m_device;  //!< original device path
 

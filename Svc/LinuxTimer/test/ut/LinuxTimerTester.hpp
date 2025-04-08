@@ -55,7 +55,7 @@ namespace Svc {
       //! Handler for from_CycleOut
       //!
       void from_CycleOut_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          const FwIndexType portNum, /*!< The port number*/
           Os::RawTime &cycleStart /*!< Cycle start timer value*/
       );
 
@@ -83,7 +83,7 @@ namespace Svc {
       //!
       LinuxTimerComponentImpl component;
 
-      NATIVE_INT_TYPE m_numCalls;
+      U32 m_numCalls;
 
   };
 

@@ -20,11 +20,11 @@ void TestCommand1Impl::init(NATIVE_INT_TYPE queueDepth) {
 TestCommand1Impl::~TestCommand1Impl() {
 }
 
-void TestCommand1Impl::aport_handler(NATIVE_INT_TYPE portNum, I32 arg4, F32 arg5, U8 arg6) {
+void TestCommand1Impl::aport_handler(FwIndexType portNum, I32 arg4, F32 arg5, U8 arg6) {
     printf("Received aport_Test_handler call with %i %f %d\n",arg4,arg5,arg6);
 }
 
-void TestCommand1Impl::aport2_handler(NATIVE_INT_TYPE portNum, I32 arg4, F32 arg5, const Ref::Gnc::Quaternion& arg6) {
+void TestCommand1Impl::aport2_handler(FwIndexType portNum, I32 arg4, F32 arg5, const Ref::Gnc::Quaternion& arg6) {
     Fw::String str;
     arg6.toString(str);
     printf("Received aport2_Test2_handler call with %i %f %s\n",arg4,arg5,str.toChar());

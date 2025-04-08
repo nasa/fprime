@@ -69,7 +69,7 @@ class GenericHubTester : public GenericHubGTestBase {
 
     //! Handler for from_LogSend
     //!
-    void from_LogSend_handler(const NATIVE_INT_TYPE portNum,   /*!< The port number*/
+    void from_LogSend_handler(const FwIndexType portNum,   /*!< The port number*/
                               FwEventIdType id,                /*!< Log ID */
                               Fw::Time& timeTag,               /*!< Time Tag  */
                               const Fw::LogSeverity& severity, /*!< The severity argument */
@@ -79,7 +79,7 @@ class GenericHubTester : public GenericHubGTestBase {
     //! Handler for from_TlmSend
     //!
     void from_TlmSend_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          const FwIndexType portNum, /*!< The port number*/
           FwChanIdType id, /*!< Telemetry Channel ID */
           Fw::Time &timeTag, /*!< Time Tag */
           Fw::TlmBuffer &val /*!< Buffer containing serialized telemetry value */
@@ -87,27 +87,27 @@ class GenericHubTester : public GenericHubGTestBase {
 
     //! Handler for from_buffersOut
     //!
-    void from_buffersOut_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    void from_buffersOut_handler(const FwIndexType portNum, /*!< The port number*/
                                  Fw::Buffer& fwBuffer);
 
     //! Handler for from_bufferDeallocate
     //!
-    void from_bufferDeallocate_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    void from_bufferDeallocate_handler(const FwIndexType portNum, /*!< The port number*/
                                        Fw::Buffer& fwBuffer);
 
     //! Handler for from_dataOutAllocate
     //!
-    Fw::Buffer from_dataOutAllocate_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    Fw::Buffer from_dataOutAllocate_handler(const FwIndexType portNum, /*!< The port number*/
                                             U32 size);
 
     //! Handler for from_dataOut
     //!
-    void from_dataOut_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    void from_dataOut_handler(const FwIndexType portNum, /*!< The port number*/
                               Fw::Buffer& fwBuffer);
 
     //! Handler for from_dataDeallocate
     //!
-    void from_dataInDeallocate_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    void from_dataInDeallocate_handler(const FwIndexType portNum, /*!< The port number*/
                                      Fw::Buffer& fwBuffer);
 
   private:
@@ -117,7 +117,7 @@ class GenericHubTester : public GenericHubGTestBase {
 
     //! Handler for from_portOut
     //!
-    void from_portOut_handler(NATIVE_INT_TYPE portNum,        /*!< The port number*/
+    void from_portOut_handler(FwIndexType portNum,        /*!< The port number*/
                               Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
     );
 

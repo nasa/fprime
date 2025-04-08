@@ -10,7 +10,7 @@
 //
 // ======================================================================
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Svc/Framer/Framer.hpp>
 #include "Fw/Logger/Logger.hpp"
 #include "Utils/Hash/Hash.hpp"
@@ -47,17 +47,18 @@ void Framer ::handle_framing(const U8* const data, const U32 size, Fw::ComPacket
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void Framer ::comIn_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& data, U32 context) {
-    this->handle_framing(data.getBuffAddr(), data.getBuffLength(), Fw::ComPacket::FW_PACKET_UNKNOWN);
+void Framer ::comIn_handler(const FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
+    FW_ASSERT(data.getBuffLength() < std::numeric_limits<U32>::max(), static_cast<FwAssertArgType>(data.getBuffLength()));
+    this->handle_framing(data.getBuffAddr(), static_cast<U32>(data.getBuffLength()), Fw::ComPacket::FW_PACKET_UNKNOWN);
 }
 
-void Framer ::bufferIn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
+void Framer ::bufferIn_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
     this->handle_framing(fwBuffer.getData(), fwBuffer.getSize(), Fw::ComPacket::FW_PACKET_FILE);
     // Deallocate the buffer after it was processed by the framing protocol
     this->bufferDeallocate_out(0, fwBuffer);
 }
 
-void Framer ::comStatusIn_handler(const NATIVE_INT_TYPE portNum, Fw::Success& condition) {
+void Framer ::comStatusIn_handler(const FwIndexType portNum, Fw::Success& condition) {
     if (this->isConnected_comStatusOut_OutputPort(portNum)) {
         this->comStatusOut_out(portNum, condition);
     }

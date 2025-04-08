@@ -23,23 +23,32 @@ namespace Drv {
 // Construction and destruction
 // ----------------------------------------------------------------------
 
+void TcpServerTester ::setup_helper(bool recv_thread, bool reconnect) {
+    Drv::SocketIpStatus status1 = Drv::SOCK_SUCCESS;
+    U16 port =  0;
+    EXPECT_FALSE(component.isStarted());
+    status1 = this->component.configure("127.0.0.1", port, 0, 100);
+    EXPECT_EQ(status1, Drv::SOCK_SUCCESS);
+    // Start up a receive thread
+    if (recv_thread) {
+        Os::TaskString name("receiver thread");
+        this->component.setAutomaticOpen(reconnect);
+        this->component.start(name, Os::Task::TASK_DEFAULT, Os::Task::TASK_DEFAULT);
+    }
+    // Component should always launch the listening server on configure
+    // The thread will retry if the configure fails
+    EXPECT_TRUE(this->wait_on_started(true, Drv::Test::get_configured_delay_ms()/10 + 1));
+    EXPECT_TRUE(component.isStarted());
+}
+
 void TcpServerTester ::test_with_loop(U32 iterations, bool recv_thread) {
     U8 buffer[sizeof(m_data_storage)] = {};
     Drv::SocketIpStatus status1 = Drv::SOCK_SUCCESS;
     Drv::SocketIpStatus status2 = Drv::SOCK_SUCCESS;
-
-    U16 port =  0;
     Drv::SocketDescriptor client_fd;
-    status1 = this->component.configure("127.0.0.1", port, 0, 100);
-    EXPECT_EQ(status1, Drv::SOCK_SUCCESS);
 
-    // Start up a receive thread
-    if (recv_thread) {
-        Os::TaskString name("receiver thread");
-        this->component.start(name, true, Os::Task::TASK_DEFAULT, Os::Task::TASK_DEFAULT);
-        EXPECT_TRUE(this->wait_on_started(true, Drv::Test::get_configured_delay_ms()/10 + 1));
-    }
-    EXPECT_TRUE(component.isStarted());
+    this->setup_helper(recv_thread, recv_thread);
+
     // Loop through a bunch of client disconnects
     for (U32 i = 0; i < iterations && status1 == SOCK_SUCCESS; i++) {
         Drv::TcpClientSocket client;
@@ -165,11 +174,51 @@ void TcpServerTester ::test_advanced_reconnect() {
     test_with_loop(10, true); // Up to 10 * RECONNECT_MS
 }
 
+void TcpServerTester ::test_no_automatic_send_connection() {
+    Drv::TcpClientSocket client;
+    Drv::SocketDescriptor client_fd;
+    
+    // Set up the server without automatic connection
+    this->setup_helper(false, true);
+    this->component.setAutomaticOpen(false);
+    Drv::Test::force_recv_timeout(client_fd.fd, client);
+
+    // Connect a client to the server so it is waiting in the "listen" queue
+    client.configure("127.0.0.1", this->component.getListenPort(), 0, 100);
+    ASSERT_EQ(client.open(client_fd), Drv::SOCK_SUCCESS);
+
+    // Send a message from the server and ensure that the server is not opened
+    ASSERT_EQ(this->component.send(reinterpret_cast<const U8*>("a"), 1), Drv::SOCK_AUTO_CONNECT_DISABLED);
+    ASSERT_FALSE(this->component.isOpened());
+
+    // Clean-up even if the send worked
+    client.close(client_fd);
+    this->component.terminate();
+}
+
+void TcpServerTester ::test_no_automatic_recv_connection() {
+    Drv::TcpClientSocket client;
+    Drv::SocketDescriptor client_fd;
+
+    // Set up the server without automatic connection
+    this->setup_helper(true, false);
+
+    // Connect a client to the server so it is waiting in the "listen" queue
+    // The read thread should not automatically connect and will thus exit with a failure
+    client.configure("127.0.0.1", this->component.getListenPort(), 0, 100);
+    ASSERT_EQ(client.open(client_fd), Drv::SOCK_FAILED_TO_CONNECT);
+    ASSERT_FALSE(this->component.isOpened());
+
+    // Clean-up even if the receive worked
+    client.close(client_fd);
+    this->component.terminate();
+}
+
 // ----------------------------------------------------------------------
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-void TcpServerTester ::from_recv_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& recvBuffer, const RecvStatus& recvStatus) {
+void TcpServerTester ::from_recv_handler(const FwIndexType portNum, Fw::Buffer& recvBuffer, const RecvStatus& recvStatus) {
     // this function will still receive a status of error because the recv port is always called
     this->pushFromPortEntry_recv(recvBuffer, recvStatus);
     if (recvStatus == RecvStatus::RECV_OK) {
@@ -181,13 +230,13 @@ void TcpServerTester ::from_recv_handler(const NATIVE_INT_TYPE portNum, Fw::Buff
     delete[] recvBuffer.getData();
 }
 
-void TcpServerTester ::from_ready_handler(const NATIVE_INT_TYPE portNum) {
+void TcpServerTester ::from_ready_handler(const FwIndexType portNum) {
     this->pushFromPortEntry_ready();
 }
 
 Fw::Buffer TcpServerTester ::
     from_allocate_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 size
     )
   {
@@ -198,7 +247,7 @@ Fw::Buffer TcpServerTester ::
 
   void TcpServerTester ::
     from_deallocate_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         Fw::Buffer &fwBuffer
     )
   {

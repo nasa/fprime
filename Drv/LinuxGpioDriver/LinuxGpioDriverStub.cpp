@@ -11,7 +11,7 @@
 // ======================================================================
 
 #include <Drv/LinuxGpioDriver/LinuxGpioDriver.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Time/Time.hpp>
 
 namespace Drv {
@@ -44,11 +44,11 @@ Os::File::Status LinuxGpioDriver ::open(const char* device,
     return Os::File::Status::NOT_SUPPORTED;
 }
 
-Drv::GpioStatus LinuxGpioDriver ::gpioRead_handler(const NATIVE_INT_TYPE portNum, Fw::Logic& state) {
+Drv::GpioStatus LinuxGpioDriver ::gpioRead_handler(const FwIndexType portNum, Fw::Logic& state) {
     return Drv::GpioStatus::UNKNOWN_ERROR;
 }
 
-Drv::GpioStatus LinuxGpioDriver ::gpioWrite_handler(const NATIVE_INT_TYPE portNum, const Fw::Logic& state) {
+Drv::GpioStatus LinuxGpioDriver ::gpioWrite_handler(const FwIndexType portNum, const Fw::Logic& state) {
     return Drv::GpioStatus::UNKNOWN_ERROR;
 }
 

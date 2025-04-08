@@ -255,7 +255,7 @@ namespace Ref {
 
   void testgenTester ::
     from_mathOut_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         F32 val1,
         F32 val2,
         MathOperation operation

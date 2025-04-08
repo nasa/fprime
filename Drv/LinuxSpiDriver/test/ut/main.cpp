@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
 
     // scan args for bytes
 
-    for (NATIVE_INT_TYPE byte = 0; byte < argc-1; byte++) {
+    for (int byte = 0; byte < argc-1; byte++) {
         buffer[byte] = strtol(argv[1+byte],0,0);
     }
 

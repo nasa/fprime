@@ -12,7 +12,7 @@
 
 #include <Svc/FileUplink/FileUplink.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 namespace Svc {
 
@@ -45,7 +45,7 @@ namespace Svc {
 
   void FileUplink ::
     bufferSendIn_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         Fw::Buffer& buffer
     )
   {
@@ -78,7 +78,7 @@ namespace Svc {
 
   void FileUplink ::
     pingIn_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 key
     )
   {

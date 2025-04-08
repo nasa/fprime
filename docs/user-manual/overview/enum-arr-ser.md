@@ -1,17 +1,21 @@
 # Data Types and Data Structures: Primitive Types, Enums, Arrays, and Serializables
 
 This guide will describe the types available in F´.  F´ defines both useful short names for primitive types as well as
-a set of autocoded complex types.  The types describe here are available to both the flight software and the ground
+a set of autocoded complex types.  The types described here are available to both the flight software and the ground
 system unless otherwise noted. Included in this document:
 
-- [Primitive Types](#primitive-types)
-- [Polymorphic Type](#polymorphic-type)
-- [Complex Types](#complex-types)
+- [Data Types and Data Structures: Primitive Types, Enums, Arrays, and Serializables](#data-types-and-data-structures-primitive-types-enums-arrays-and-serializables)
+  - [Primitive Types](#primitive-types)
+  - [Polymorphic Type](#polymorphic-type)
+    - [Setting Polymorphic Values](#setting-polymorphic-values)
+    - [Getting Polymorphic Values](#getting-polymorphic-values)
+    - [Checking Polymorphic Values](#checking-polymorphic-values)
+  - [Complex Types](#complex-types)
     - [Enums](#enums)
     - [Arrays](#arrays)
     - [Serializables](#serializables)
     - [C++ Classes](#c-classes)
-- [Conclusion](#conclusion)
+  - [Conclusion](#conclusion)
 
 ## Primitive Types
 
@@ -30,9 +34,9 @@ following table and are available to both the ground system, events, channels, a
 | U32     | uint32_t   | unsigned 32-bit integer |
 | F32     | float      | 32-bit floating point   |
 | F64     | double     | 64-bit floating point   |
-| NATIVE_INT_TYPE  | int           | architecture dependent integer |
-| NATIVE_UINT_TYPE | unsigned int  | architecture dependent unsigned integer |
-| POINTER_CAST     |               | integer of sufficient size to store a pointer for the architecture |
+
+> [!NOTE]
+> For a full description of numerical types available to F´ see: [Numerical Types](../../reference/numerical-types.md).
 
 > [!NOTE]
 > C/C++ types come from `stdint.h` and `stdbool.h`.  The last three types above are not of set size but are architecture-dependent. Should a project's architecture not support all these types, see: [Configuring F´: Architecture Supported Primitive Types](../framework/configuring-fprime.md)

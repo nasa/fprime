@@ -38,7 +38,7 @@ constructs (e.g. radios, spacecraft buses). From the perspective of F´, the dri
 data and handle outgoing data.
 
 > [!NOTE]
-> typically projects use a single driver to handle both input and output, however; two drivers may be used to if differing behavior is needed for uplink and downlink.(e.g. UDP downlink for speed and  Tcp uplink reliability).
+> typically projects use a single driver to handle both input and output, however; two drivers may be used too if differing behavior is needed for uplink and downlink.(e.g. UDP downlink for speed and  Tcp uplink reliability).
 
 All drivers implement an input port receiving data from the framer. The driver should write input data to the hardware
 the driver manages. Drivers implement at least one of two methods to retrieve data from hardware: an input port

@@ -7,6 +7,7 @@
 #include "Os/Queue.hpp"
 #include "Os/Stub/test/Queue.hpp"
 #include "STest/Random/Random.hpp"
+#include "Os/Os.hpp"
 
 
 void resetInjections() {
@@ -235,6 +236,7 @@ TEST(Interface, QueueHandle) {
 }
 
 int main(int argc, char** argv) {
+    Os::init();
     ::testing::InitGoogleTest(&argc, argv);
     STest::Random::seed();
     return RUN_ALL_TESTS();

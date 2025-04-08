@@ -12,14 +12,14 @@ public:
         }
 
         void from_aport_handler(
-                const NATIVE_INT_TYPE portNum, //!< The port number
+                const FwIndexType portNum, //!< The port number
                 I32 arg4, //!< The first argument
                 F32 arg5, //!< The second argument
                 U8 arg6 //!< The third argument
         );
 
         void from_aport2_handler(
-                const NATIVE_INT_TYPE portNum, //!< The port number
+                const FwIndexType portNum, //!< The port number
                 I32 arg4, //!< The first argument
                 F32 arg5, //!< The second argument
                 const Ref::Gnc::Quaternion& arg6 //!< The third argument
@@ -28,7 +28,7 @@ public:
 
 
     void ATester::from_aport_handler(
-            const NATIVE_INT_TYPE portNum, //!< The port number
+            const FwIndexType portNum, //!< The port number
             I32 arg4, //!< The first argument
             F32 arg5, //!< The second argument
             U8 arg6 //!< The third argument
@@ -37,7 +37,7 @@ public:
     }
 
     void ATester::from_aport2_handler(
-            const NATIVE_INT_TYPE portNum, //!< The port number
+            const FwIndexType portNum, //!< The port number
             I32 arg4, //!< The first argument
             F32 arg5, //!< The second argument
             const Ref::Gnc::Quaternion& arg6 //!< The third argument

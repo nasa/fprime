@@ -4,9 +4,9 @@
 </p>
 
 #
-F´ (F Prime) is a component-driven framework that enables rapid development and deployment of spaceflight and other embedded software applications. Originally developed at the [Jet Propulsion Laboratory](https://www.jpl.nasa.gov/), F´ has been successfully deployed on [several space applications](https://nasa.github.io/fprime/projects.html). It is tailored but not limited to small-scale spaceflight systems such as CubeSats, SmallSats, and instruments.
+F´ (F Prime) is a component-driven framework that enables rapid development and deployment of spaceflight and other embedded software applications. Originally developed at the [Jet Propulsion Laboratory](https://www.jpl.nasa.gov/), F´ has been successfully deployed on [several space applications](https://fprime.jpl.nasa.gov/overview/projects/). It is tailored but not limited to small-scale spaceflight systems such as CubeSats, SmallSats, and instruments.
 
-**Please Visit the F´ Website:** [https://fprime.jpl.gov/](https://fprime.jpl.nasa.gov/) for more information.
+**Please Visit the F´ Website:** [https://fprime.jpl.nasa.gov](https://fprime.jpl.nasa.gov/) for more information.
 
 
 ## What does F´ provide
@@ -17,7 +17,7 @@ F´ (F Prime) is a component-driven framework that enables rapid development and
 - A growing collection of ready-to-use components
 - Testing tools for testing flight software at the unit and integration levels.
 
-Learn more about [F´ key features](https://fprime.jpl.nasa.gov/).
+Learn more about [F´ key features](https://fprime.jpl.nasa.gov/overview).
 
 
 ## System Requirements
@@ -41,9 +41,9 @@ Then, create a new project with:
 fprime-bootstrap project
 ```
 
-See the [HelloWorld Tutorial](https://fprime-community.github.io/fprime-tutorial-hello-world/) to guide you through all the steps of developing an F´ project.
+See the [HelloWorld Tutorial](https://fprime.jpl.nasa.gov/latest/tutorials-hello-world/docs/hello-world/) to guide you through all the steps of developing an F´ project.
 
-New users are encouraged to read through the [User Guide](https://nasa.github.io/fprime/UsersGuide/guide.html) and explore the [other tutorials](https://nasa.github.io/fprime/Tutorials/README.html).
+New users are encouraged to read through the [User Manual](https://fprime.jpl.nasa.gov/latest/docs/user-manual/) and explore the [other tutorials](https://fprime.jpl.nasa.gov/latest/docs/tutorials/).
 
 
 ## Getting Help
@@ -57,8 +57,8 @@ The [F´ Community](https://github.com/fprime-community) GitHub Organization con
 
 
 ## Resources
-- [User Guide](https://nasa.github.io/fprime/UsersGuide/guide.html)
-- [Tutorials](https://nasa.github.io/fprime/Tutorials/README.html)
+- [User Manual](https://fprime.jpl.nasa.gov/latest/docs/user-manual/)
+- [Tutorials](https://fprime.jpl.nasa.gov/latest/docs/tutorials/)
 - [Discussions](https://github.com/nasa/fprime/discussions)
 - [Submit an Issue](https://github.com/nasa/fprime/issues)
 - [F´ Community](https://github.com/fprime-community)

@@ -1,7 +1,7 @@
 #ifndef _DrvDataBuffer_hpp_
 #define _DrvDataBuffer_hpp_
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Serializable.hpp>
 
 namespace Drv {
@@ -15,13 +15,13 @@ namespace Drv {
                 SERIALIZED_SIZE = DATA_BUFFER_SIZE + sizeof(FwBuffSizeType)
             };
 
-            DataBuffer(const U8 *args, NATIVE_UINT_TYPE size);
+            DataBuffer(const U8 *args, FwSizeType size);
             DataBuffer();
             DataBuffer(const DataBuffer& other);
             virtual ~DataBuffer();
             DataBuffer& operator=(const DataBuffer& other);
 
-            NATIVE_UINT_TYPE getBuffCapacity() const; // !< returns capacity, not current size, of buffer
+            FwSizeType getBuffCapacity() const; // !< returns capacity, not current size, of buffer
             U8* getBuffAddr();
             const U8* getBuffAddr() const;
 

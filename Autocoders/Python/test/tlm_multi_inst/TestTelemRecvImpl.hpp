@@ -16,7 +16,7 @@ class TestTelemRecvImpl: public Tlm::TelemTesterComponentBase {
         virtual ~TestTelemRecvImpl();
         void init();
     protected:
-        void tlmRecvPort_handler(NATIVE_INT_TYPE portNum, FwChanIdType id, Fw::Time &timeTag, Fw::TlmBuffer &val);
+        void tlmRecvPort_handler(FwIndexType portNum, FwChanIdType id, Fw::Time &timeTag, Fw::TlmBuffer &val);
     private:
 };
 

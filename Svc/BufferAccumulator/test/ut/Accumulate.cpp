@@ -21,10 +21,10 @@ namespace Accumulate {
 // ----------------------------------------------------------------------
 
 void BufferAccumulatorTester ::OK() {
-  ASSERT_EQ(BufferAccumulator_OpState::DRAIN, this->component.mode.e);
+  ASSERT_EQ(BufferAccumulator_OpState::DRAIN, this->component.m_mode.e);
   this->sendCmd_BA_SetMode(0, 0, BufferAccumulator_OpState::ACCUMULATE);
   this->component.doDispatch();
-  ASSERT_EQ(BufferAccumulator_OpState::ACCUMULATE, this->component.mode.e);
+  ASSERT_EQ(BufferAccumulator_OpState::ACCUMULATE, this->component.m_mode.e);
   ASSERT_FROM_PORT_HISTORY_SIZE(0);
 
   Fw::Buffer buffers[MAX_NUM_BUFFERS];
@@ -41,7 +41,7 @@ void BufferAccumulatorTester ::OK() {
 
   this->sendCmd_BA_SetMode(0, 0, BufferAccumulator_OpState::DRAIN);
   this->component.doDispatch();
-  ASSERT_EQ(BufferAccumulator_OpState::DRAIN, this->component.mode.e);
+  ASSERT_EQ(BufferAccumulator_OpState::DRAIN, this->component.m_mode.e);
   ASSERT_FROM_PORT_HISTORY_SIZE(1);
   ASSERT_from_bufferSendOutDrain_SIZE(1);
   ASSERT_from_bufferSendOutDrain(0, buffers[0]);

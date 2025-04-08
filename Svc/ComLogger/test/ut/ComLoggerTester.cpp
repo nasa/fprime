@@ -87,7 +87,6 @@ namespace Svc {
       CHAR hashFileName[2048];
       CHAR prevHashFileName[2048];
       U8 buf[1024];
-      FwSignedSizeType length;
       U16 bufferSize = 0;
       Os::File::Status ret;
       Os::File file;
@@ -138,7 +137,7 @@ namespace Svc {
         // A new file should have been opened from the previous loop iteration:
         if( j > 0 ) {
           ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
-          ASSERT_TRUE(strcmp(static_cast<char*>(comLogger.m_fileName), fileName) == 0 );
+          ASSERT_TRUE(strcmp(comLogger.m_fileName.toChar(), fileName) == 0 );
         }
 
         // Make sure we got a closed file event:
@@ -150,7 +149,7 @@ namespace Svc {
 
         // Make sure the file size is smaller or equal to the limit:
         Os::FileSystem::Status fsStat;
-        FwSignedSizeType fileSize = 0;
+        FwSizeType fileSize = 0;
         fsStat = Os::FileSystem::getFileSize(fileName, fileSize); //!< gets the size of the file (in bytes) at location path
         ASSERT_EQ(fsStat, Os::FileSystem::OP_OK);
         ASSERT_LE(fileSize, MAX_BYTES_PER_FILE);
@@ -163,10 +162,10 @@ namespace Svc {
         for(int i = 0; i < 5; i++)
         {
           // Get length of buffer to read
-          FwSignedSizeType length = sizeof(U16);
+          FwSizeType length = static_cast<FwSizeType>(sizeof(U16));
           ret = file.read(buf, length);
           ASSERT_EQ(Os::File::OP_OK, ret);
-          ASSERT_EQ(length, static_cast<NATIVE_INT_TYPE>(sizeof(U16)));
+          ASSERT_EQ(length, static_cast<FwSizeType>(sizeof(U16)));
           Fw::SerialBuffer comBuffLength(buf, length);
           comBuffLength.fill();
           stat = comBuffLength.deserialize(bufferSize);
@@ -177,7 +176,7 @@ namespace Svc {
           length = bufferSize;
           ret = file.read(buf, length);
           ASSERT_EQ(Os::File::OP_OK,ret);
-          ASSERT_EQ(length, static_cast<NATIVE_INT_TYPE>(bufferSize));
+          ASSERT_EQ(length, static_cast<FwSizeType>(bufferSize));
           ASSERT_EQ(memcmp(buf, data, COM_BUFFER_LENGTH), 0);
 
           //for(int k=0; k < 4; k++)
@@ -186,7 +185,7 @@ namespace Svc {
         }
 
         // Make sure we reached the end of the file:
-        length = sizeof(NATIVE_INT_TYPE);
+        FwSizeType length = static_cast<FwSizeType>(sizeof(U16));
         ret = file.read(buf, length);
         ASSERT_EQ(Os::File::OP_OK,ret);
         ASSERT_EQ(length, 0);
@@ -209,7 +208,6 @@ namespace Svc {
       CHAR hashFileName[2048];
       CHAR prevHashFileName[2048];
       U8 buf[1024];
-      FwSignedSizeType length;
       Os::File::Status ret;
       Os::File file;
 
@@ -261,7 +259,7 @@ namespace Svc {
         // A new file should have been opened from the previous loop iteration:
         if( j > 0 ) {
           ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
-          ASSERT_TRUE(strcmp(static_cast<char*>(comLogger.m_fileName), fileName) == 0 );
+          ASSERT_TRUE(strcmp(comLogger.m_fileName.toChar(), fileName) == 0 );
         }
 
         // Make sure we got a closed file event:
@@ -273,7 +271,7 @@ namespace Svc {
 
         // Make sure the file size is smaller or equal to the limit:
         Os::FileSystem::Status fsStat;
-        FwSignedSizeType fileSize = 0;
+        FwSizeType fileSize = 0;
         fsStat = Os::FileSystem::getFileSize(fileName, fileSize); //!< gets the size of the file (in bytes) at location path
         ASSERT_EQ(fsStat, Os::FileSystem::OP_OK);
         ASSERT_LE(fileSize, MAX_BYTES_PER_FILE);
@@ -286,7 +284,7 @@ namespace Svc {
         for(int i = 0; i < 5; i++)
         {
           // Get length of buffer to read
-          FwSignedSizeType length = COM_BUFFER_LENGTH;
+          FwSizeType length = COM_BUFFER_LENGTH;
           ret = file.read(buf, length);
           ASSERT_EQ(Os::File::OP_OK,ret);
           ASSERT_EQ(length, COM_BUFFER_LENGTH);
@@ -298,7 +296,7 @@ namespace Svc {
         }
 
         // Make sure we reached the end of the file:
-        length = sizeof(NATIVE_INT_TYPE);
+        FwSizeType length = static_cast<FwSizeType>(sizeof(U16));
         ret = file.read(buf, length);
         ASSERT_EQ(Os::File::OP_OK,ret);
         ASSERT_EQ(length, 0);
@@ -323,7 +321,7 @@ namespace Svc {
       memset(filePrefix, 0, sizeof(filePrefix));
       snprintf(filePrefix, sizeof(filePrefix), "illegal/fname?;\\*");
 
-      strncpy(static_cast<char*>(comLogger.m_filePrefix), filePrefix, sizeof(comLogger.m_filePrefix));
+      comLogger.m_filePrefix = filePrefix;
 
       ASSERT_TRUE(comLogger.m_fileMode == ComLogger::CLOSED);
       ASSERT_EVENTS_SIZE(0);
@@ -358,7 +356,7 @@ namespace Svc {
       memset(filePrefix, 0, sizeof(filePrefix));
       snprintf(filePrefix, sizeof(filePrefix), "good_");
 
-      strncpy(comLogger.m_filePrefix, filePrefix, sizeof(comLogger.m_filePrefix));
+      comLogger.m_filePrefix = filePrefix;
 
       ASSERT_TRUE(comLogger.m_fileMode == ComLogger::CLOSED);
 
@@ -381,8 +379,7 @@ namespace Svc {
       memset(fileName, 0, sizeof(fileName));
       memset(filePrefix, 0, sizeof(filePrefix));
       snprintf(filePrefix, sizeof(filePrefix), "illegal/fname?;\\*");
-
-      strncpy(static_cast<char*>(comLogger.m_filePrefix), filePrefix, sizeof(comLogger.m_filePrefix));
+      comLogger.m_filePrefix = filePrefix;
 
       ASSERT_TRUE(comLogger.m_fileMode == ComLogger::CLOSED);
 
@@ -575,7 +572,6 @@ namespace Svc {
     CHAR hashFileName[2048];
     CHAR prevHashFileName[2048];
     U8 buf[1024];
-    FwSignedSizeType length;
     U16 bufferSize = 0;
     Os::File::Status ret;
     Os::File file;
@@ -628,7 +624,7 @@ namespace Svc {
       // A new file should have been opened from the previous loop iteration:
       if( j > 0 ) {
         ASSERT_TRUE(comLogger.m_fileMode == ComLogger::OPEN);
-        ASSERT_TRUE(strcmp(static_cast<char*>(comLogger.m_fileName), fileName) == 0 );
+        ASSERT_TRUE(strcmp(comLogger.m_fileName.toChar(), fileName) == 0 );
       }
 
       // Make sure we got a closed file event:
@@ -640,7 +636,7 @@ namespace Svc {
 
       // Make sure the file size is smaller or equal to the limit:
       Os::FileSystem::Status fsStat;
-      FwSignedSizeType fileSize = 0;
+      FwSizeType fileSize = 0;
       fsStat = Os::FileSystem::getFileSize(fileName, fileSize); //!< gets the size of the file (in bytes) at location path
       ASSERT_EQ(fsStat, Os::FileSystem::OP_OK);
       ASSERT_LE(fileSize, MAX_BYTES_PER_FILE);
@@ -653,10 +649,10 @@ namespace Svc {
       for(int i = 0; i < 5; i++)
       {
         // Get length of buffer to read
-        FwSignedSizeType length = sizeof(U16);
+        FwSizeType length = sizeof(U16);
         ret = file.read(buf, length);
         ASSERT_EQ(Os::File::OP_OK, ret);
-        ASSERT_EQ(length, static_cast<NATIVE_INT_TYPE>(sizeof(U16)));
+        ASSERT_EQ(length, static_cast<FwSizeType>(sizeof(U16)));
         Fw::SerialBuffer comBuffLength(buf, length);
         comBuffLength.fill();
         stat = comBuffLength.deserialize(bufferSize);
@@ -667,12 +663,12 @@ namespace Svc {
         length = bufferSize;
         ret = file.read(buf, length);
         ASSERT_EQ(Os::File::OP_OK,ret);
-        ASSERT_EQ(length, static_cast<NATIVE_INT_TYPE>(bufferSize));
+        ASSERT_EQ(length, static_cast<FwSizeType>(bufferSize));
         ASSERT_EQ(memcmp(buf, data, COM_BUFFER_LENGTH), 0);
       }
 
       // Make sure we reached the end of the file:
-      length = sizeof(NATIVE_INT_TYPE);
+      FwSizeType length = sizeof(FwSizeType);
       ret = file.read(buf, length);
       ASSERT_EQ(Os::File::OP_OK,ret);
       ASSERT_EQ(length, 0);
@@ -710,10 +706,10 @@ namespace Svc {
 
   void ComLoggerTester ::
     from_pingOut_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 key
     )
   {
     this->pushFromPortEntry_pingOut(key);
   }
-};
+}

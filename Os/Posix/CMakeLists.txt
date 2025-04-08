@@ -12,6 +12,12 @@ add_custom_target("${FPRIME_CURRENT_MODULE}")
 ## Shared Section
 # -----------------------------------------
 
+if (BUILD_TESTING)
+    add_compile_options(
+        -Wno-conversion
+    )
+endif()
+
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/error.cpp"
 )
@@ -24,6 +30,7 @@ register_fprime_module(Os_Posix_Shared)
 # Set up Posix implementations
 register_os_implementation("File;FileSystem;Directory" Posix Os_Posix_Shared)
 register_os_implementation("Console" Posix)
+
 register_os_implementation("Task" Posix Os_Posix_Shared Fw_Time)
 register_os_implementation("Mutex;ConditionVariable" Posix Os_Posix_Shared)
 register_os_implementation("RawTime" Posix Os_Posix_Shared)

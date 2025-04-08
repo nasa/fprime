@@ -20,7 +20,7 @@ void ExampleComponentImpl::init(NATIVE_INT_TYPE queueDepth) {
 ExampleComponentImpl::~ExampleComponentImpl() {
 }
 
-void ExampleComponentImpl::exampleInput_handler(NATIVE_INT_TYPE portNum, I32 arg1, const ANameSpace::UserSerializer& arg2) {
+void ExampleComponentImpl::exampleInput_handler(FwIndexType portNum, I32 arg1, const ANameSpace::UserSerializer& arg2) {
 
     Fw::String str;
     arg2.toString(str);

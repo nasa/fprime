@@ -1,4 +1,3 @@
-\page SvcComLoggerComponent Svc::ComLogger Component
 # Svc::ComLogger Component
 
 This is the build directory for the ISF ComLogger component.

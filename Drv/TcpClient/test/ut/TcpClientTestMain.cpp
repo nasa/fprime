@@ -25,6 +25,16 @@ TEST(Reconnect, TcpClientReceiveThreadReconnect) {
     tester.test_advanced_reconnect();
 }
 
+TEST(AutoConnect, AutoConnectOnSendOff) {
+    Drv::TcpClientTester tester;
+    tester.test_no_automatic_send_connection();
+}
+
+TEST(AutoConnect, AutoConnectOnRecvOff) {
+    Drv::TcpClientTester tester;
+    tester.test_no_automatic_recv_connection();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

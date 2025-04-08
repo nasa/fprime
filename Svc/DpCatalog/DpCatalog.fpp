@@ -347,13 +347,23 @@ module Svc {
       id 40 \
       format "State file {} doesn't exist"
 
-    event StateFileXmitError(
+    event DpFileXmitError(
                             file: string size 80 @< The file
                             stat: Svc.SendFileStatus
                           ) \
       severity warning high \
       id 41 \
-      format "Error transmitting DP file {}, stat {}. Halting xmit."
+      format "Error transmitting DP file {}, stat {}. Halting xmit." \
+      throttle 10
+
+    event DpFileSendError(
+                            file: string size 80 @< The file
+                            stat: Svc.SendFileStatus
+                          ) \
+      severity warning high \
+      id 42 \
+      format "Error sending DP file {}, stat {}. Halting xmit." \
+      throttle 10
 
 
 

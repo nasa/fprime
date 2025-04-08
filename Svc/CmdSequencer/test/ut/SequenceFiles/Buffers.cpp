@@ -19,7 +19,7 @@ namespace Svc {
 
     namespace Buffers {
 
-      NATIVE_UINT_TYPE FileBuffer ::
+      FwSizeType FileBuffer ::
         getBuffCapacity() const
       {
         return sizeof(m_buff);
@@ -43,7 +43,7 @@ namespace Svc {
       ) {
         Os::File file;
         ASSERT_EQ(file.open(fileName, Os::File::OPEN_WRITE), Os::File::OP_OK);
-        FwSignedSizeType size = buffer.getBuffLength();
+        FwSizeType size = buffer.getBuffLength();
         const U32 expectedSize = size;
         const U8 *const buffAddr = buffer.getBuffAddr();
         ASSERT_EQ(

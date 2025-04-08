@@ -20,7 +20,7 @@
 
 namespace Drv {
 
-class LinuxGpioDriver : public LinuxGpioDriverComponentBase {
+class LinuxGpioDriver final : public LinuxGpioDriverComponentBase {
   public:
     static constexpr FwSizeType GPIO_POLL_TIMEOUT = 500;  // Timeout looking for interrupts to check for shutdown
     // ----------------------------------------------------------------------
@@ -112,12 +112,12 @@ class LinuxGpioDriver : public LinuxGpioDriverComponentBase {
 
     //! Handler implementation for gpioRead
     //!
-    Drv::GpioStatus gpioRead_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    Drv::GpioStatus gpioRead_handler(const FwIndexType portNum, /*!< The port number*/
                                      Fw::Logic& state);
 
     //! Handler implementation for gpioWrite
     //!
-    Drv::GpioStatus gpioWrite_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    Drv::GpioStatus gpioWrite_handler(const FwIndexType portNum, /*!< The port number*/
                                       const Fw::Logic& state);
     //! Task to run interrupt polling
     Os::Task m_poller;

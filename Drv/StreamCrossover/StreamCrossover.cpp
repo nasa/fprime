@@ -6,7 +6,7 @@
 
 
 #include <Drv/StreamCrossover/StreamCrossover.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 namespace Drv {
 
@@ -34,7 +34,7 @@ namespace Drv {
 
   void StreamCrossover ::
     streamIn_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         Fw::Buffer &recvBuffer,
         const Drv::RecvStatus &recvStatus
     )

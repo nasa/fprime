@@ -19,18 +19,18 @@ MallocAllocator::MallocAllocator() {}
 
 MallocAllocator::~MallocAllocator() {}
 
-void* MallocAllocator::allocate(const NATIVE_UINT_TYPE identifier, NATIVE_UINT_TYPE& size, bool& recoverable) {
+void* MallocAllocator::allocate(const FwEnumStoreType identifier, FwSizeType& size, bool& recoverable) {
     // don't use identifier
     // heap memory is never recoverable
     recoverable = false;
-    void* mem = ::malloc(size);
+    void* mem = ::malloc(static_cast<size_t>(size));
     if (nullptr == mem) {
         size = 0;  // set to zero if can't get memory
     }
     return mem;
 }
 
-void MallocAllocator::deallocate(const NATIVE_UINT_TYPE identifier, void* ptr) {
+void MallocAllocator::deallocate(const FwEnumStoreType identifier, void* ptr) {
     ::free(ptr);
 }
 

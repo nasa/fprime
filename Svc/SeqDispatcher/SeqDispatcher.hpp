@@ -15,7 +15,7 @@
 
 namespace Svc {
 
-class SeqDispatcher : public SeqDispatcherComponentBase {
+class SeqDispatcher final : public SeqDispatcherComponentBase {
   public:
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction
@@ -34,19 +34,19 @@ class SeqDispatcher : public SeqDispatcherComponentBase {
 
     //! Handler for input port seqDoneIn
     void
-    seqDoneIn_handler(NATIVE_INT_TYPE portNum,         //!< The port number
+    seqDoneIn_handler(FwIndexType portNum,         //!< The port number
                       FwOpcodeType opCode,             //!< Command Op Code
                       U32 cmdSeq,                      //!< Command Sequence
                       const Fw::CmdResponse& response  //!< The command response argument
     );
 
     //! Handler for input port seqStartIn
-    void seqStartIn_handler(NATIVE_INT_TYPE portNum, //!< The port number
+    void seqStartIn_handler(FwIndexType portNum, //!< The port number
                             const Fw::StringBase& fileName //!< The sequence file
     );
 
     //! Handler for input port seqRunIn
-    void seqRunIn_handler(NATIVE_INT_TYPE portNum, //!< The port number
+    void seqRunIn_handler(FwIndexType portNum, //!< The port number
                           const Fw::StringBase& fileName //!< The sequence file
     );
 

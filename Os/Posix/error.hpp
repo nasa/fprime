@@ -9,6 +9,7 @@
 #include "Os/FileSystem.hpp"
 #include "Os/Directory.hpp"
 #include "Os/RawTime.hpp"
+#include "Os/Condition.hpp"
 
 namespace Os {
 namespace Posix {
@@ -48,6 +49,13 @@ Os::Task::Status posix_status_to_task_status(PlatformIntType posix_status);
 //! \return: Os::Mutex::Status representation of the error
 //!
 Os::Mutex::Status posix_status_to_mutex_status(PlatformIntType posix_status);
+
+//! Convert a Posix return status (int) for Conditional Variable operations to the Os::ConditionVariable::Status
+//! representation.
+//! \param posix_status: return status
+//! \return: Os::ConditionVariable::Status representation of the error
+//!
+Os::ConditionVariable::Status posix_status_to_conditional_status(PlatformIntType posix_status);
 
 }
 }

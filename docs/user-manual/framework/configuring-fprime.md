@@ -30,7 +30,7 @@ All configurable files (top-level and component-specific) for F´ are available 
 Projects can also take ownership of the `config` directory to provide their own `AcConstants.fpp`
 and configuration `*.hpp` files. To do so, copy the `config` directory into your project and use the
 `config_directory` options in the project's `settings.ini` file.
-See the [settings.ini guide](settings.md) for more details.
+See the [settings.ini guide](../build-system/settings.md) for more details.
 
 The `FpConfig.h` file is a C header allowing the user to define global settings.
 Where components allow specific configuration, a `<component>Cfg.hpp` is available to be modified as well.
@@ -77,7 +77,7 @@ e.g.
 Many architectures support different sizes of types. In addition, projects may wish to change the size of the various
 custom types specified in the framework. This section will describe these settings. These are typically provided by the
 and can be changed in the `FpConfig.h` header.  These types are described in the
-[numerical types design document](../design/numerical-types.md#configurable-integer-types).
+[numerical types design document](../../reference/numerical-types.md).
 
 The above document also describes the methods for configuring the configurable types used to adjust various fprime
 types.

@@ -33,7 +33,7 @@ Feel free to contribute any way that suits your skills and enjoy.
 ## Where to Start
 
 First, contributors should build some understanding of F´. Read through the documentation, try a tutorial, or run a
-reference application. Contributors can find information in our [documentation](https://nasa.github.io/fprime/). Keep
+reference application. Contributors can find information in our [documentation](https://fprime.jpl.nasa.gov/latest/docs). Keep
 track of inconsistencies or bugs as these should be reported!
 
 When you are ready to join discussions and submit bug reports use one of the above links!

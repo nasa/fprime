@@ -13,7 +13,7 @@
 #include <Drv/Ip/TcpClientSocket.hpp>
 #include <Fw/Logger/Logger.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 #ifdef TGT_OS_TYPE_VXWORKS
     #include <socket.h>
@@ -48,7 +48,7 @@ bool TcpClientSocket::isValidPort(U16 port) {
 
 
 SocketIpStatus TcpClientSocket::openProtocol(SocketDescriptor& socketDescriptor) {
-    NATIVE_INT_TYPE socketFd = -1;
+    PlatformIntType socketFd = -1;
     struct sockaddr_in address;
 
     // Acquire a socket, or return error

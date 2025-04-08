@@ -25,13 +25,11 @@ namespace Svc {
             PassiveRateGroupTester(Svc::PassiveRateGroup& inst);
             virtual ~PassiveRateGroupTester();
 
-            void init(NATIVE_INT_TYPE instance = 0);
-
-            void runNominal(U32 contexts[], U32 numContexts, NATIVE_INT_TYPE instance);
+            void runNominal(U32 contexts[], U32 numContexts, FwEnumStoreType instance);
 
         private:
 
-            void from_RateGroupMemberOut_handler(NATIVE_INT_TYPE portNum, U32 context);
+            void from_RateGroupMemberOut_handler(FwIndexType portNum, U32 context);
 
             Svc::PassiveRateGroup& m_impl;
 
@@ -40,11 +38,11 @@ namespace Svc {
             struct {
                 bool portCalled;
                 U32 contextVal;
-                NATIVE_UINT_TYPE order;
+                FwIndexType order;
             } m_callLog[Svc::PassiveRateGroupComponentBase::NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS];
 
             bool m_causeOverrun; //!< flag to cause an overrun during a rate group member port call
-            NATIVE_UINT_TYPE m_callOrder; //!< tracks order of port call.
+            FwIndexType m_callOrder; //!< tracks order of port call.
 
     };
 

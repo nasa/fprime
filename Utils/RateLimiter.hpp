@@ -13,7 +13,7 @@
 #ifndef RateLimiter_HPP
 #define RateLimiter_HPP
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Time/Time.hpp>
 
 namespace Utils {

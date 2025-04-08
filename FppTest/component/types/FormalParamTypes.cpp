@@ -135,6 +135,15 @@ PrmStringTypes::PrmStringTypes() {
     setRandomString(val2, FW_PARAM_STRING_MAX_SIZE / 2);
 }
 
+StringType::StringType() {
+    setRandomString(val, decltype(val)::STRING_SIZE);
+}
+
+StringTypes::StringTypes() {
+    setRandomString(val1, decltype(val1)::STRING_SIZE / 2);
+    setRandomString(val2, decltype(val2)::STRING_SIZE / 2);
+}
+
 // ----------------------------------------------------------------------
 // Serial type
 // ----------------------------------------------------------------------
