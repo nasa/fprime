@@ -64,15 +64,22 @@ void ComQueueTester ::emitOne() {
 }
 
 void ComQueueTester ::emitOneAndCheck(FwIndexType expectedIndex,
-                              QueueType expectedType,
-                              Fw::ComBuffer& expectedCom,
-                              Fw::Buffer& expectedBuff) {
+                              U8* expectedData,
+                              FwSizeType expectedSize,
+                              bool isFileBuffer) {
     emitOne();
-
-    if (expectedType == QueueType::COM_QUEUE) {
-        ASSERT_from_comQueueSend(expectedIndex, expectedCom, 0);
+    FwSizeType outSize = this->fromPortHistory_queueSend->at(expectedIndex).data.getSize();
+    // Need to handle case where the data is a file buffer differently since we prepend the FW_PACKET_FILE token (I32)
+    if (isFileBuffer) {
+        ASSERT_EQ(outSize, expectedSize + sizeof(I32));
+        for (FwSizeType i = 0; i < expectedSize; i++) {
+            ASSERT_EQ(this->fromPortHistory_queueSend->at(expectedIndex).data.getData()[i + sizeof(I32)], expectedData[i]);
+        }
     } else {
-        ASSERT_from_buffQueueSend(expectedIndex, expectedBuff);
+        ASSERT_EQ(outSize, expectedSize);
+        for (FwSizeType i = 0; i < expectedSize; i++) {
+            ASSERT_EQ(this->fromPortHistory_queueSend->at(expectedIndex).data.getData()[i], expectedData[i]);
+        }
     }
 }
 
@@ -88,13 +95,15 @@ void ComQueueTester ::testQueueSend() {
 
     for(FwIndexType portNum = 0; portNum < ComQueue::COM_PORT_COUNT; portNum++){
         invoke_to_comQueueIn(portNum, comBuffer, 0);
-        emitOneAndCheck(portNum, QueueType::COM_QUEUE, comBuffer, buffer);
+        emitOneAndCheck(portNum, comBuffer.getBuffAddr(), comBuffer.getBuffLength());
     }
     clearFromPortHistory();
 
     for(FwIndexType portNum = 0; portNum < ComQueue::BUFFER_PORT_COUNT; portNum++){
         invoke_to_buffQueueIn(portNum, buffer);
-        emitOneAndCheck(portNum, QueueType::BUFFER_QUEUE, comBuffer, buffer);
+        // Serializing a buffer is currently done after serializing FW_PACKET_FILE token
+        bool isFileBuffer = true;
+        emitOneAndCheck(portNum, buffer.getData(), buffer.getSize(), isFileBuffer);
     }
     clearFromPortHistory();
     component.cleanup();
@@ -113,7 +122,7 @@ void ComQueueTester ::testQueuePause() {
         invoke_to_comStatusIn(0, state);
         invoke_to_comStatusIn(0, state);
         invoke_to_comStatusIn(0, state);
-        emitOneAndCheck(portNum, QueueType::COM_QUEUE, comBuffer, buffer);
+        emitOneAndCheck(portNum, comBuffer.getBuffAddr(), comBuffer.getBuffLength());
     }
     clearFromPortHistory();
 
@@ -124,7 +133,8 @@ void ComQueueTester ::testQueuePause() {
         invoke_to_comStatusIn(0, state);
         invoke_to_comStatusIn(0, state);
         invoke_to_comStatusIn(0, state);
-        emitOneAndCheck(portNum, QueueType::BUFFER_QUEUE, comBuffer, buffer);
+        bool isFileBuffer = true;
+        emitOneAndCheck(portNum, buffer.getData(), buffer.getSize(), isFileBuffer);
     }
     clearFromPortHistory();
     component.cleanup();
@@ -159,27 +169,20 @@ void ComQueueTester ::testPrioritySend() {
     }
 
     // Check that nothing has yet been sent
-    ASSERT_from_buffQueueSend_SIZE(0);
-    ASSERT_from_comQueueSend_SIZE(0);
+    ASSERT_from_queueSend_SIZE(0);
 
     for (FwIndexType index = 0; index < ComQueue::TOTAL_PORT_COUNT; index++) {
         U8 orderKey;
-        U32 previousComSize = fromPortHistory_comQueueSend->size();
-        U32 previousBufSize = fromPortHistory_buffQueueSend->size();
+        U32 previousSize = fromPortHistory_queueSend->size();
         emitOne();
-        ASSERT_EQ(fromPortHistory_comQueueSend->size() + fromPortHistory_buffQueueSend->size(), (index + 1));
+        ASSERT_EQ(fromPortHistory_queueSend->size(), (index + 1));
+        // Check that the size changed by exactly one
+        ASSERT_EQ(fromPortHistory_queueSend->size(), (previousSize + 1));
 
-        // Check that the sizes changed by exactly one
-        ASSERT_TRUE((previousComSize == fromPortHistory_comQueueSend->size()) ^
-                    (previousBufSize == fromPortHistory_buffQueueSend->size()));
-
-        // Look for which type had arrived
-        if (fromPortHistory_comQueueSend->size() > previousComSize) {
-            orderKey = fromPortHistory_comQueueSend->at(fromPortHistory_comQueueSend->size() - 1).data.getBuffAddr()[0];
+        if (index == 1) { // FIXME: this is again due to FW_PACKET_FILE serialization
+            orderKey = fromPortHistory_queueSend->at(index).data.getData()[sizeof(I32)];
         } else {
-            orderKey =
-                fromPortHistory_buffQueueSend->at(fromPortHistory_buffQueueSend->size() - 1).fwBuffer.getData()[0];
-
+            orderKey = fromPortHistory_queueSend->at(index).data.getData()[0];
         }
         ASSERT_EQ(orderKey, index);
     }
@@ -212,20 +215,21 @@ void ComQueueTester::testExternalQueueOverflow() {
     for (FwIndexType queueNum = 0; queueNum < ComQueue::TOTAL_PORT_COUNT; queueNum++) {
         QueueType overflow_type;
         FwIndexType portNum;
-        // queue[portNum].depth + 2 to deliberately cause overflow and check throttle of exactly 1
+        // queue[portNum].depth + 2 to deliberately cause overflow of 2, in order to also test the throttle
         for (FwSizeType msgCount = 0; msgCount < configurationTable.entries[queueNum].depth + 2; msgCount++) {
             sendByQueueNumber(buffer, queueNum, portNum, overflow_type);
             dispatchAll();
         }
+        // Throttle functions and we only emitted 1 event, even though we overflowed twice
+        ASSERT_EVENTS_QueueOverflow_SIZE(1);
+        ASSERT_EVENTS_QueueOverflow(0, overflow_type, portNum);
 
         if (QueueType::BUFFER_QUEUE == overflow_type) {
+            // Two messages overflowed, so two buffers should be deallocated
             ASSERT_from_deallocate_SIZE(2);
             ASSERT_from_deallocate(0, buffer);
             ASSERT_from_deallocate(1, buffer);
         }
-
-        ASSERT_EVENTS_QueueOverflow_SIZE(1);
-        ASSERT_EVENTS_QueueOverflow(0, overflow_type, portNum);
 
         // Drain a message, and see if throttle resets
         emitOne();
@@ -236,10 +240,14 @@ void ComQueueTester::testExternalQueueOverflow() {
         dispatchAll();
 
         if (QueueType::BUFFER_QUEUE == overflow_type) {
-            ASSERT_from_deallocate_SIZE(3);
-            ASSERT_from_deallocate(2, buffer);
+            // Third deallocation was in sendBuffer (emitOne) so it must have the prefix FW_FILE_PACKET (I32)
+            EXPECT_EQ(fromPortHistory_deallocate->at(2).fwBuffer.getSize(), buffer.getSize() + sizeof(I32)); 
+            // Fourth deallocation was from the overflow
+            ASSERT_from_deallocate_SIZE(4);
+            ASSERT_from_deallocate(3, buffer);
         }
 
+        // We have overflowed, then emitOne() reset the throttle, then overflow again. So expect 2 events
         ASSERT_EVENTS_QueueOverflow_SIZE(2);
         ASSERT_EVENTS_QueueOverflow(1, overflow_type, portNum);
 
@@ -300,7 +308,12 @@ void ComQueueTester ::testReadyFirst() {
         emitOne();
         invoke_to_comQueueIn(portNum, comBuffer, 0);
         dispatchAll();
-        ASSERT_from_comQueueSend(portNum, comBuffer, 0);
+
+        Fw::Buffer emittedBuffer = this->fromPortHistory_queueSend->at(portNum).data;
+        ASSERT_EQ(emittedBuffer.getSize(), comBuffer.getBuffLength());
+        for (FwSizeType i = 0; i < emittedBuffer.getSize(); i++) {
+            ASSERT_EQ(emittedBuffer.getData()[i], comBuffer.getBuffAddr()[i]);
+        }
     }
     clearFromPortHistory();
 
@@ -308,7 +321,12 @@ void ComQueueTester ::testReadyFirst() {
         emitOne();
         invoke_to_buffQueueIn(portNum, buffer);
         dispatchAll();
-        ASSERT_from_buffQueueSend(portNum, buffer);
+        Fw::Buffer emittedBuffer = this->fromPortHistory_queueSend->at(portNum).data;
+        // Handling FW_PACKET_FILE serialization with sizeof(I32)
+        ASSERT_EQ(emittedBuffer.getSize(), buffer.getSize() + sizeof(I32));
+        for (FwSizeType i = 0; i < buffer.getSize(); i++) {
+            ASSERT_EQ(buffer.getData()[i], emittedBuffer.getData()[i + sizeof(I32)]);
+        }
     }
     clearFromPortHistory();
     component.cleanup();
@@ -318,16 +336,12 @@ void ComQueueTester ::testReadyFirst() {
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-void ComQueueTester ::from_buffQueueSend_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
-    this->pushFromPortEntry_buffQueueSend(fwBuffer);
+Fw::Buffer ComQueueTester ::from_allocate_handler(FwIndexType portNum, U32 size){
+    this->pushFromPortEntry_allocate(size);
+    this->m_buffer.setData(this->m_buffer_slot);
+    this->m_buffer.setSize(size);
+    ::memset(this->m_buffer.getData(), 0, size);
+    return this->m_buffer;
 }
-
-void ComQueueTester ::from_comQueueSend_handler(const FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
-    this->pushFromPortEntry_comQueueSend(data, context);
-}
-
-// ----------------------------------------------------------------------
-// Helper methods
-// ----------------------------------------------------------------------
 
 }  // end namespace Svc

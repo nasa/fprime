@@ -191,6 +191,7 @@ class ComQueue final : public ComQueueComponentBase {
         FwIndexType value  //!< Index of the queue to serialize
     );
 
+  PRIVATE:
     // ----------------------------------------------------------------------
     // Member variables
     // ----------------------------------------------------------------------

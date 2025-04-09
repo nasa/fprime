@@ -59,9 +59,9 @@ class ComQueueTester : public ComQueueGTestBase {
     void emitOne();
 
     void emitOneAndCheck(FwIndexType expectedIndex,
-                         QueueType expectedType,
-                         Fw::ComBuffer& expectedCom,
-                         Fw::Buffer& expectedBuff);
+                         U8* expectedData,
+                         FwSizeType expectedDataSize,
+                         bool isFileBuffer = false);
 
     // ----------------------------------------------------------------------
     // Tests
@@ -84,17 +84,19 @@ class ComQueueTester : public ComQueueGTestBase {
     // Handlers for typed from ports
     // ----------------------------------------------------------------------
 
-    //! Handler for from_buffQueueSend
-    //!
-    void from_buffQueueSend_handler(const FwIndexType portNum, /*!< The port number*/
-                                    Fw::Buffer& fwBuffer);
+    // //! Handler for from_buffQueueSend
+    // //!
+    // void from_buffQueueSend_handler(const FwIndexType portNum, /*!< The port number*/
+    //                                 Fw::Buffer& fwBuffer);
 
-    //! Handler for from_comQueueSend
-    //!
-    void from_comQueueSend_handler(const FwIndexType portNum, /*!< The port number*/
-                                   Fw::ComBuffer& data,           /*!< Buffer containing packet data*/
-                                   U32 context                    /*!< Call context value; meaning chosen by user*/
-    );
+    // //! Handler for from_comQueueSend
+    // //!
+    // void from_comQueueSend_handler(const FwIndexType portNum, /*!< The port number*/
+    //                                Fw::ComBuffer& data,           /*!< Buffer containing packet data*/
+    //                                U32 context                    /*!< Call context value; meaning chosen by user*/
+    // );
+
+    Fw::Buffer from_allocate_handler(FwIndexType portNum, U32 size) override;
 
   private:
     // ----------------------------------------------------------------------
@@ -117,6 +119,9 @@ class ComQueueTester : public ComQueueGTestBase {
     //! The component under test
     //!
     ComQueue component;
+
+    U8 m_buffer_slot[2048];
+    Fw::Buffer m_buffer;  // buffer to be returned by mocked allocate call
 };
 
 }  // end namespace Svc

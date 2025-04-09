@@ -244,17 +244,12 @@ void ComQueue::serializeIntoContext(FwIndexType value) {
 
 void ComQueue::sendComBuffer(Fw::ComBuffer& comBuffer, FwIndexType queueIndex) {
     FW_ASSERT(this->m_state == READY);
-    Fw::SerializeStatus status;
 
-    Fw::Buffer outBuffer = this->allocate_out(0, static_cast<Fw::Buffer::SizeType>(comBuffer.getBuffLength()));
-    Fw::SerializeBufferBase& serializer = outBuffer.getSerializeRepr();
-    status = serializer.serialize(comBuffer.getBuffAddr(), comBuffer.getBuffLength(), Fw::Serialization::OMIT_LENGTH);
-    FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    Fw::Buffer outBuffer(comBuffer.getBuffAddr(), static_cast<Fw::Buffer::SizeType>(comBuffer.getBuffLength()));
 
     this->serializeIntoContext(queueIndex); // Serialize the queue index into the context buffer
     this->queueSend_out(0, outBuffer, this->m_contextBuffer);
 
-    this->deallocate_out(0, outBuffer); // Deallocate the temporary buffer used for sending the ComBuffer
     this->m_state = WAITING;
 }
 
