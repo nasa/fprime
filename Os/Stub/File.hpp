@@ -85,7 +85,7 @@ class StubFile : public FileInterface {
     //! This implementation does nothing but return NOT_IMPLEMENTED.
     //!
     //! \param offset: offset to seek to
-    //! \param seekType: `ABSOLUTE` for seeking from beginning of file, `CURRENT` to use current position.
+    //! \param seekType: `ABSOLUTE` for seeking from beginning of file, `RELATIVE` to use current position.
     //! \return NOT_IMPLEMENTED
     //!
     Status seek(FwSignedSizeType offset, SeekType seekType) override;
