@@ -11,6 +11,11 @@ TEST(Nominal, testComStatusPassThrough) {
     tester.testComStatusPassThrough();
 }
 
+TEST(Nominal, testNominalFraming) {
+    Svc::FprimeFramerTester tester;
+    tester.testNominalFraming();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

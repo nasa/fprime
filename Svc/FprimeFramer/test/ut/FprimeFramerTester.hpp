@@ -55,6 +55,12 @@ class FprimeFramerTester final : public FprimeFramerGTestBase {
     //! Initialize components
     void initComponents();
 
+    // ----------------------------------------------------------------------
+    // Test Harness: Handler implementations for output ports
+    // ----------------------------------------------------------------------
+
+    Fw::Buffer from_bufferAllocate_handler(FwIndexType portNum, U32 size) override;
+
   private:
     // ----------------------------------------------------------------------
     // Member variables
@@ -62,6 +68,9 @@ class FprimeFramerTester final : public FprimeFramerGTestBase {
 
     //! The component under test
     FprimeFramer component;
+
+    U8 m_buffer_slot[2048];
+    Fw::Buffer m_buffer;  // buffer to be returned by mocked allocate call
 };
 
 }  // namespace Svc

@@ -48,16 +48,38 @@ void FprimeFramerTester ::testNominalFraming() {
     for (U32 i = 0; i < sizeof(bufferData); ++i) {
         bufferData[i] = static_cast<U8>(i);
     }
-    buffer.setSize(sizeof(bufferData));
 
     // Send the buffer to the component
     this->invoke_to_dataIn(0, buffer, context);
     ASSERT_from_framedDataOut_SIZE(1);
-    ASSERT_from_framedStreamOut_SIZE(1);
 
+    Fw::Buffer outputBuffer = this->fromPortHistory_framedDataOut->at(0).data;
     // Check the size of the output buffer
-    Fw::Buffer outputBuffer = this->fromPortHistory_framedStreamOut->at(0).sendBuffer;
     ASSERT_EQ(outputBuffer.getSize(), sizeof(bufferData) + FprimeProtocol::FrameHeader::SERIALIZED_SIZE + FprimeProtocol::FrameTrailer::SERIALIZED_SIZE);
+    // Check header
+    FprimeProtocol::FrameHeader defaultHeader;
+    FprimeProtocol::FrameHeader outputHeader;
+    outputBuffer.getSerializeRepr().setBuffLen(outputBuffer.getSize());
+    outputHeader.deserialize(outputBuffer.getSerializeRepr());
+    ASSERT_EQ(outputHeader.getstartWord(), defaultHeader.getstartWord());
+    ASSERT_EQ(outputHeader.getlengthField(), sizeof(bufferData));
+    // Check data
+    for (U32 i = 0; i < sizeof(bufferData); ++i) {
+        ASSERT_EQ(outputBuffer.getData()[i + FprimeProtocol::FrameHeader::SERIALIZED_SIZE], bufferData[i]);
+    }
+}
+
+// ----------------------------------------------------------------------
+// Test Harness: Handler implementations for output ports
+// ----------------------------------------------------------------------
+
+Fw::Buffer FprimeFramerTester::from_bufferAllocate_handler(FwIndexType portNum, U32 size){
+    this->pushFromPortEntry_bufferAllocate(size);
+    this->m_buffer.setData(this->m_buffer_slot);
+    this->m_buffer.setSize(size);
+    this->m_buffer.getSerializeRepr().setBuffLen(size);
+    ::memset(this->m_buffer.getData(), 0, size);
+    return this->m_buffer;
 }
 
 }  // namespace Svc
