@@ -429,9 +429,16 @@ namespace Svc {
     Fw::FilePacket filePacket;
     filePacket.fromCancelPacket(cancelPacket);
     this->getBuffer(buffer, CANCEL_PACKET);
-
-    const Fw::SerializeStatus status = filePacket.toBuffer(buffer);
+    // ########################################################################
+    // # FileDownlink HOTFIX - do not merge - wait for nasa/fprime#3467     ###
+    // ########################################################################
+    Fw::SerializeStatus status = buffer.getSerializeRepr().serialize(Fw::ComPacket::FW_PACKET_FILE);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
+    Fw::Buffer offsetBuffer(this->m_buffer.getData() + sizeof(FwPacketDescriptorType), filePacket.bufferSize());
+    status = filePacket.toBuffer(offsetBuffer);
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
+    // ########################################################################
+    // ########################################################################
     this->bufferSendOut_out(0, buffer);
     this->m_packetsSent.packetSent();
   }
