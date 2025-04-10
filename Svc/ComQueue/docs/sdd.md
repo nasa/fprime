@@ -31,7 +31,7 @@ implements the communication queue
 |------------------|-----------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------|---------------------|
 | SVC-COMQUEUE-001 | `Svc::ComQueue` shall queue `Fw::Buffer` and `Fw::ComBuffer` received on incoming ports.                                                | The purpose of the queue is to store messages.                          | Unit Test           |
 | SVC-COMQUEUE-002 | `Svc::ComQueue` shall output exactly one `Fw::Buffer` or `Fw::ComBuffer` message on a received `Fw::Success::SUCCESS` signal.           | `Svc::ComQueue` obeys the communication adapter interface protocol.     | Unit Test           |
-| SVC-COMQUEUE-003 | `Svc::ComQueue` shall pause sending  on the  `Fw::Success::FAILURE` and restart on the next `Fw::Success::SUCCESS` signal.              | `Svc::ComQueue` should not sent to a failing communication adapter.     | Unit Test           |
+| SVC-COMQUEUE-003 | `Svc::ComQueue` shall pause sending on the  `Fw::Success::FAILURE` and restart on the next `Fw::Success::SUCCESS` signal.               | `Svc::ComQueue` should not sent to a failing communication adapter.     | Unit Test           |
 | SVC-COMQUEUE-004 | `Svc::ComQueue` shall have a configurable number of `Fw::Com` and `Fw::Buffer` input ports.                                             | `Svc::ComQueue` should be adaptable for a number of projects.           | Inspection          |
 | SVC-COMQUEUE-005 | `Svc::ComQueue` shall select and send the next priority `Fw::Buffer` and `Fw::ComBuffer` message in response to `Fw::Success::SUCCESS`. | `Svc::ComQueue` obeys the communication adapter interface protocol.     | Unit test           |
 | SVC-COMQUEUE-006 | `Svc::ComQueue` shall periodically telemeter the number of queued messages per-port in response to a `run` port invocation.             | `Svc::ComQueue` should provide useful telemetry.                        | Unit Test           | 
@@ -47,19 +47,18 @@ The diagram below shows the `Svc::ComQueue` component.
 ### 4.1. Ports
 `Svc::ComQueue` has the following ports:
 
-| Kind          | Name              | Port Type                             | Usage                                                  |
-|---------------|-------------------|---------------------------------------|--------------------------------------------------------|
-| `output`      | `comQueueSend`    | `Fw.Com`                              | Fw::ComBuffer output port                              |
-| `output`      | `buffQueueSend`   | `Fw.BufferSend`                       | Fw::Buffer output port                                 |
-| `output`      | `deallocate`      | `Fw.BufferSend`                       | Port for deallocating Fw::Buffer on queue overflow     |
-| `async input` | `comStatusIn`     | `Fw.SuccessCondition`                 | Port for receiving the status signal                   |
-| `async input` | `comQueueIn`      | `[ComQueueComPorts] Fw.Com`           | Port array for receiving Fw::ComBuffers                |
-| `async input` | `buffQueueIn`     | `[ComQueueBufferPorts] Fw.BufferSend` | Port array for receiving Fw::Buffers                   |
-| `async input` | `run`             | `Svc.Sched`                           | Port for scheduling telemetry output                   |
-| `event`       | `Log`             | `Fw.Log`                              | Port for emitting events                               |
-| `text event`  | `LogText`         | `Fw.LogText`                          | Port for emitting text events                          |
-| `time get`    | `Time`            | `Fw.Time`                             | Port for getting the time                              |
-| `telemetry`   | `Tlm`             | `Fw.Tlm`                              | Port for emitting telemetry                            |
+| Kind          | Name              | Port Type                             | Usage                                                    |
+|---------------|-------------------|---------------------------------------|----------------------------------------------------------|
+| `output`      | `queueSend`       | `Fw.DataWithContext`                  | Fw::DataWithContext output port, emitting queued messages|
+| `output`      | `deallocate`      | `Fw.BufferSend`                       | Port for deallocating Fw::Buffer on queue overflow       |
+| `async input` | `comStatusIn`     | `Fw.SuccessCondition`                 | Port for receiving the status signal                     |
+| `async input` | `comQueueIn`      | `[ComQueueComPorts] Fw.Com`           | Port array for receiving Fw::ComBuffers                  |
+| `async input` | `buffQueueIn`     | `[ComQueueBufferPorts] Fw.BufferSend` | Port array for receiving Fw::Buffers                     |
+| `async input` | `run`             | `Svc.Sched`                           | Port for scheduling telemetry output                     |
+| `event`       | `Log`             | `Fw.Log`                              | Port for emitting events                                 |
+| `text event`  | `LogText`         | `Fw.LogText`                          | Port for emitting text events                            |
+| `time get`    | `Time`            | `Fw.Time`                             | Port for getting the time                                |
+| `telemetry`   | `Tlm`             | `Fw.Tlm`                              | Port for emitting telemetry                              |
 
 
 ### 4.2. State
