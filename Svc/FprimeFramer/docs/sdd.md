@@ -2,17 +2,25 @@
 
 The `Svc::FprimeFramer` is an implementation of the [FramerInterface](../../Interfaces/docs/sdd.md#svcframerinterface) for the F Prime protocol. 
 
-It receives data (an F´ packet) on input and produces an [F´ frame](../../FprimeProtocol/docs/sdd.md) on its output port as a result. Please refer to the [F´ frame specification](../../FprimeProtocol/docs/sdd.md) for details on the frame format.
-
-## Internals
-
-
+It receives data (an F´ packet) on input and produces an [F´ frame](../../FprimeProtocol/docs/sdd.md) on its output port as a result. Please refer to the [F Prime frame specification](../../FprimeProtocol/docs/sdd.md) for details on the frame format.
 
 ### Diagrams
 
 Below is the common configuration in which the `Svc::FprimeFramer` can be used. It is receiving packets from a [`Svc::ComQueue`](../../ComQueue/docs/sdd.md) and passes frames to a [Communications Adapter](../../Interfaces/docs/sdd.md#svccominterface), such as a Radio manager component (or a [`Svc::ComStub`](../../ComStub/docs/sdd.md)), for transmission.
 
 ![./img/framer-topology.png](./img/framer-topology.png)
+
+## Internals
+
+The `Svc::FprimeFramer` receives data packets of type `Fw.DataWithContext`. These contain both a `Fw::Buffer` containing the packet data, and an optional `context: DataLinkContext` that contains contextual information about the data packet (such as an APID). In the F Prime frame specification, the `context` object is not used and the `Svc::FprimeFramer` therefore does not read the context, but it is nonetheless passed through to the output.
+
+On receiving a data packet, the `Svc::FprimeFramer` performs the following actions:
+
+1. Allocates a new _`outBuffer`_ (of type `Fw::Buffer`) to hold the F´ frame, of size _`size(dataPacket) + size(FprimeHeader) + size(FprimeTrailer)`_
+2. Serializes the F´ start word (`0xDEADBEEF`) and length token (`size(dataPacket)`) into _`outBuffer`_
+3. Serializes the F´ packet data into _`outBuffer`_
+4. Computes and serializes a CRC32 checksum into _`outBuffer`_
+5. Emits the _`outBuffer`_ on the `framedDataOut` output port. Ownership of _`outBuffer`_ is handed to the receiver
 
 ## Port Descriptions
 
