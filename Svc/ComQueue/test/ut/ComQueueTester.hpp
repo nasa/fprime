@@ -60,8 +60,7 @@ class ComQueueTester : public ComQueueGTestBase {
 
     void emitOneAndCheck(FwIndexType expectedIndex,
                          U8* expectedData,
-                         FwSizeType expectedDataSize,
-                         bool isFileBuffer = false);
+                         FwSizeType expectedDataSize);
 
     // ----------------------------------------------------------------------
     // Tests

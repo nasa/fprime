@@ -65,21 +65,11 @@ void ComQueueTester ::emitOne() {
 
 void ComQueueTester ::emitOneAndCheck(FwIndexType expectedIndex,
                               U8* expectedData,
-                              FwSizeType expectedSize,
-                              bool isFileBuffer) {
+                              FwSizeType expectedSize) {
     emitOne();
-    FwSizeType outSize = this->fromPortHistory_queueSend->at(expectedIndex).data.getSize();
-    // Need to handle case where the data is a file buffer differently since we prepend the FW_PACKET_FILE token (I32)
-    if (isFileBuffer) {
-        ASSERT_EQ(outSize, expectedSize + sizeof(I32));
-        for (FwSizeType i = 0; i < expectedSize; i++) {
-            ASSERT_EQ(this->fromPortHistory_queueSend->at(expectedIndex).data.getData()[i + sizeof(I32)], expectedData[i]);
-        }
-    } else {
-        ASSERT_EQ(outSize, expectedSize);
-        for (FwSizeType i = 0; i < expectedSize; i++) {
-            ASSERT_EQ(this->fromPortHistory_queueSend->at(expectedIndex).data.getData()[i], expectedData[i]);
-        }
+    ASSERT_EQ(expectedSize, this->fromPortHistory_queueSend->at(expectedIndex).data.getSize());
+    for (FwSizeType i = 0; i < expectedSize; i++) {
+        ASSERT_EQ(this->fromPortHistory_queueSend->at(expectedIndex).data.getData()[i], expectedData[i]);
     }
 }
 
@@ -101,9 +91,7 @@ void ComQueueTester ::testQueueSend() {
 
     for(FwIndexType portNum = 0; portNum < ComQueue::BUFFER_PORT_COUNT; portNum++){
         invoke_to_buffQueueIn(portNum, buffer);
-        // Serializing a buffer is currently done after serializing FW_PACKET_FILE token
-        bool isFileBuffer = true;
-        emitOneAndCheck(portNum, buffer.getData(), buffer.getSize(), isFileBuffer);
+        emitOneAndCheck(portNum, buffer.getData(), buffer.getSize());
     }
     clearFromPortHistory();
     component.cleanup();
@@ -133,8 +121,7 @@ void ComQueueTester ::testQueuePause() {
         invoke_to_comStatusIn(0, state);
         invoke_to_comStatusIn(0, state);
         invoke_to_comStatusIn(0, state);
-        bool isFileBuffer = true;
-        emitOneAndCheck(portNum, buffer.getData(), buffer.getSize(), isFileBuffer);
+        emitOneAndCheck(portNum, buffer.getData(), buffer.getSize());
     }
     clearFromPortHistory();
     component.cleanup();
@@ -179,11 +166,7 @@ void ComQueueTester ::testPrioritySend() {
         // Check that the size changed by exactly one
         ASSERT_EQ(fromPortHistory_queueSend->size(), (previousSize + 1));
 
-        if (index == 1) { // FIXME: this is again due to FW_PACKET_FILE serialization
-            orderKey = fromPortHistory_queueSend->at(index).data.getData()[sizeof(I32)];
-        } else {
-            orderKey = fromPortHistory_queueSend->at(index).data.getData()[0];
-        }
+        orderKey = fromPortHistory_queueSend->at(index).data.getData()[0];
         ASSERT_EQ(orderKey, index);
     }
     clearFromPortHistory();
@@ -240,14 +223,12 @@ void ComQueueTester::testExternalQueueOverflow() {
         dispatchAll();
 
         if (QueueType::BUFFER_QUEUE == overflow_type) {
-            // Third deallocation was in sendBuffer (emitOne) so it must have the prefix FW_FILE_PACKET (I32)
-            EXPECT_EQ(fromPortHistory_deallocate->at(2).fwBuffer.getSize(), buffer.getSize() + sizeof(I32)); 
-            // Fourth deallocation was from the overflow
-            ASSERT_from_deallocate_SIZE(4);
-            ASSERT_from_deallocate(3, buffer);
+            // Third deallocation because of one more overflow
+            ASSERT_from_deallocate_SIZE(3);
+            ASSERT_from_deallocate(2, buffer);
         }
 
-        // We have overflowed, then emitOne() reset the throttle, then overflow again. So expect 2 events
+        // emitOne() reset the throttle, then overflow again. So expect a second everflow event
         ASSERT_EVENTS_QueueOverflow_SIZE(2);
         ASSERT_EVENTS_QueueOverflow(1, overflow_type, portNum);
 
@@ -322,10 +303,9 @@ void ComQueueTester ::testReadyFirst() {
         invoke_to_buffQueueIn(portNum, buffer);
         dispatchAll();
         Fw::Buffer emittedBuffer = this->fromPortHistory_queueSend->at(portNum).data;
-        // Handling FW_PACKET_FILE serialization with sizeof(I32)
-        ASSERT_EQ(emittedBuffer.getSize(), buffer.getSize() + sizeof(I32));
+        ASSERT_EQ(emittedBuffer.getSize(), buffer.getSize());
         for (FwSizeType i = 0; i < buffer.getSize(); i++) {
-            ASSERT_EQ(buffer.getData()[i], emittedBuffer.getData()[i + sizeof(I32)]);
+            ASSERT_EQ(buffer.getData()[i], emittedBuffer.getData()[i]);
         }
     }
     clearFromPortHistory();
