@@ -78,22 +78,12 @@ class ComQueueTester : public ComQueueGTestBase {
 
     void testReadyFirst();
 
+    void testContextData();
+
   private:
     // ----------------------------------------------------------------------
     // Handlers for typed from ports
     // ----------------------------------------------------------------------
-
-    // //! Handler for from_buffQueueSend
-    // //!
-    // void from_buffQueueSend_handler(const FwIndexType portNum, /*!< The port number*/
-    //                                 Fw::Buffer& fwBuffer);
-
-    // //! Handler for from_comQueueSend
-    // //!
-    // void from_comQueueSend_handler(const FwIndexType portNum, /*!< The port number*/
-    //                                Fw::ComBuffer& data,           /*!< Buffer containing packet data*/
-    //                                U32 context                    /*!< Call context value; meaning chosen by user*/
-    // );
 
     Fw::Buffer from_allocate_handler(FwIndexType portNum, U32 size) override;
 

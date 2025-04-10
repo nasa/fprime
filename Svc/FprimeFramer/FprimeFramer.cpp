@@ -24,7 +24,7 @@ FprimeFramer ::~FprimeFramer() {}
 // Handler implementations for typed input ports
 // ----------------------------------------------------------------------
 
-void FprimeFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, Fw::Buffer& context) {
+void FprimeFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, FprimeProtocol::DataLinkContext& context) {
     FprimeProtocol::FrameHeader header;
     FprimeProtocol::FrameTrailer trailer;
 

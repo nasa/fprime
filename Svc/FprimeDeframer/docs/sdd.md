@@ -41,7 +41,7 @@ The below diagram shows a typical configuration in which the `Svc::FprimeDeframe
 ```mermaid
 classDiagram
     class FprimeDeframer~PassiveComponent~ {
-        + void framedIn_handler(FwIndexType portNum, Fw::Buffer& data, Fw::Buffer& context)
+        + void framedIn_handler(FwIndexType portNum, Fw::Buffer& data, FprimeProtocol::DataLinkContext& context)
     }
 ```
 

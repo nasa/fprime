@@ -67,9 +67,11 @@ void ComQueueTester ::emitOneAndCheck(FwIndexType expectedIndex,
                               U8* expectedData,
                               FwSizeType expectedSize) {
     emitOne();
-    ASSERT_EQ(expectedSize, this->fromPortHistory_queueSend->at(expectedIndex).data.getSize());
+    // Check that the data buffers are identifcal (size + data)
+    Fw::Buffer emittedBuffer = this->fromPortHistory_queueSend->at(expectedIndex).data;
+    ASSERT_EQ(expectedSize, emittedBuffer.getSize());
     for (FwSizeType i = 0; i < expectedSize; i++) {
-        ASSERT_EQ(this->fromPortHistory_queueSend->at(expectedIndex).data.getData()[i], expectedData[i]);
+        ASSERT_EQ(emittedBuffer.getData()[i], expectedData[i]);
     }
 }
 
@@ -203,7 +205,7 @@ void ComQueueTester::testExternalQueueOverflow() {
             sendByQueueNumber(buffer, queueNum, portNum, overflow_type);
             dispatchAll();
         }
-        // Throttle functions and we only emitted 1 event, even though we overflowed twice
+        // Throttle should make it that we emitted only 1 event, even though we overflowed twice
         ASSERT_EVENTS_QueueOverflow_SIZE(1);
         ASSERT_EVENTS_QueueOverflow(0, overflow_type, portNum);
 
@@ -307,6 +309,34 @@ void ComQueueTester ::testReadyFirst() {
         for (FwSizeType i = 0; i < buffer.getSize(); i++) {
             ASSERT_EQ(buffer.getData()[i], emittedBuffer.getData()[i]);
         }
+    }
+    clearFromPortHistory();
+    component.cleanup();
+}
+
+void ComQueueTester ::testContextData() {
+    U8 data[BUFFER_LENGTH] = {0xde, 0xad, 0xbe};
+    Fw::ComBuffer comBuffer(&data[0], sizeof(data));
+    Fw::Buffer buffer(&data[0], sizeof(data));
+    configure();
+
+    for(FwIndexType portNum = 0; portNum < ComQueue::COM_PORT_COUNT; portNum++){
+        invoke_to_comQueueIn(portNum, comBuffer, 0);
+        emitOne();
+        // Currently, the APID is set to the queue index, which is the same as the port number for COM ports
+        U32 expectedApid = portNum;
+        auto emittedContext = this->fromPortHistory_queueSend->at(portNum).context;
+        ASSERT_EQ(expectedApid, emittedContext.getapid());
+    }
+    clearFromPortHistory();
+
+    for(FwIndexType portNum = 0; portNum < ComQueue::BUFFER_PORT_COUNT; portNum++){
+        invoke_to_buffQueueIn(portNum, buffer);
+        emitOne();
+        // APID is queue index, which is COM_PORT_COUNT + portNum for BUFFER ports
+        U32 expectedApid = portNum + ComQueue::COM_PORT_COUNT;
+        auto emittedContext = this->fromPortHistory_queueSend->at(portNum).context;
+        ASSERT_EQ(expectedApid, emittedContext.getapid());
     }
     clearFromPortHistory();
     component.cleanup();

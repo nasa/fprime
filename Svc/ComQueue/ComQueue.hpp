@@ -186,10 +186,6 @@ class ComQueue final : public ComQueueComponentBase {
     //!
     void processQueue();
 
-    //! Serialize the given value into the member context buffer
-    void serializeIntoContext(
-        FwIndexType value  //!< Index of the queue to serialize
-    );
 
   PRIVATE:
     // ----------------------------------------------------------------------
@@ -205,10 +201,6 @@ class ComQueue final : public ComQueueComponentBase {
     Fw::MemAllocator* m_allocator;    //!< Pointer to Fw::MemAllocator instance for deallocation
     void* m_allocation;               //!< Pointer to allocated memory
 
-    // Storage for context buffer
-    // TODO: figure out size and if this is the right approach
-    Fw::Buffer m_contextBuffer;  //!< Fw::Buffer used for passing context information
-    U8 m_contextBufferData[64];  //!< Data buffer used to store context information
 };
 
 }  // end namespace Svc

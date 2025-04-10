@@ -34,6 +34,11 @@ TEST(Nominal, ReadyFirst) {
     tester.testReadyFirst();
 }
 
+TEST(Nominal, ContextData) {
+    Svc::ComQueueTester tester;
+    tester.testContextData();
+}
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

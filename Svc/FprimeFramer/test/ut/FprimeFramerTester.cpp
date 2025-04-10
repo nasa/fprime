@@ -41,7 +41,8 @@ void FprimeFramerTester ::testComStatusPassThrough() {
 void FprimeFramerTester ::testNominalFraming() {
     U8 bufferData[100];
     Fw::Buffer buffer(bufferData, sizeof(bufferData));
-    Fw::Buffer context;
+    FprimeProtocol::DataLinkContext context;
+
 
     // Fill the buffer with some data
     for (U32 i = 0; i < sizeof(bufferData); ++i) {

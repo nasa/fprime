@@ -28,8 +28,7 @@ ComQueue ::ComQueue(const char* const compName)
       m_state(WAITING),
       m_allocationId(static_cast<FwEnumStoreType>(-1)),
       m_allocator(nullptr),
-      m_allocation(nullptr),
-      m_contextBuffer(m_contextBufferData, sizeof(m_contextBufferData)) {
+      m_allocation(nullptr) {
     // Initialize throttles to "off"
     for (FwIndexType i = 0; i < TOTAL_PORT_COUNT; i++) {
         this->m_throttle[i] = false;
@@ -233,23 +232,16 @@ bool ComQueue::enqueue(const FwIndexType queueNum, QueueType queueType, const U8
     return rvStatus;
 }
 
-void ComQueue::serializeIntoContext(FwIndexType value) {
-    Fw::SerializeStatus status;
-    // Pass queue index as context buffer so downstream framers know where the data is coming from
-    Fw::SerializeBufferBase& contextSerializer = this->m_contextBuffer.getSerializeRepr();
-    this->m_contextBuffer.setSize(sizeof(FwIndexType));
-    status = contextSerializer.serialize(value); 
-    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
-}
-
 void ComQueue::sendComBuffer(Fw::ComBuffer& comBuffer, FwIndexType queueIndex) {
     FW_ASSERT(this->m_state == READY);
 
     Fw::Buffer outBuffer(comBuffer.getBuffAddr(), static_cast<Fw::Buffer::SizeType>(comBuffer.getBuffLength()));
 
-    this->serializeIntoContext(queueIndex); // Serialize the queue index into the context buffer
-    this->queueSend_out(0, outBuffer, this->m_contextBuffer);
-
+    // Context APID is set to the queue index for now. A future implementation may want this to be configurable
+    FprimeProtocol::DataLinkContext context;
+    context.setapid(static_cast<U32>(queueIndex));
+    this->queueSend_out(0, outBuffer, context);
+    // Set state to WAITING for the status to come back
     this->m_state = WAITING;
 }
 
@@ -257,14 +249,13 @@ void ComQueue::sendBuffer(Fw::Buffer& buffer, FwIndexType queueIndex) {
     // Retry buffer expected to be cleared as we are either transferring ownership or have already deallocated it.
     FW_ASSERT(this->m_state == READY);
 
-    this->serializeIntoContext(queueIndex); // Serialize the queue index into the context buffer
-    this->queueSend_out(0, buffer, this->m_contextBuffer);
-
-    // We probably shouldn't do the bufferReturn here if we want to support potential async ?
+    // Context APID is set to the queue index for now. A future implementation may want this to be configurable
+    FprimeProtocol::DataLinkContext context;
+    context.setapid(static_cast<U32>(queueIndex));
+    this->queueSend_out(0, buffer, context);
+    // REVIEW NOTE: fileBufferReturn done here means we are expecting queueSend_out to be synchronous. Is this ok?
     this->fileBufferReturn_out(0, buffer); // Return the buffer to FileDownlink
-
-    // TODO: Re-evaluate how to do context info ? Could maybe be an FPP type ?
-    // instead of a Fw::Buffer
+    // Set state to WAITING for the status to come back
     this->m_state = WAITING;
 }
 
