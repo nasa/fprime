@@ -79,11 +79,11 @@ endfunction(setup_global_targets)
 function(check_unknown_links DEPLOYMENT_NAME)
     # Check all links that they exist or are valid 
     foreach(LINK IN LISTS ARGN)
-        # When a link is not a file and is not a link flag, then the target must already exist as a target in the CMake
-        # system to be used as part of recursive dependency lists.
-        if (NOT EXISTS "${LINK}" AND NOT "${LINK}" MATCHES "^-.*")
+        # When a link is not a file, not a link flag, and not a generator expression then the target must already exist
+        # as a target in the CMake system to be used as part of recursive dependency lists.
+        if (NOT EXISTS "${LINK}" AND NOT "${LINK}" MATCHES "^[-$].*")
             fprime_cmake_fatal_error(
-                "F Prime/CMake target '${LINK}' not available to deployment '${DEPLOYMENT_NAME}'.'${LINK}' must:\n"
+                "F Prime/CMake target '${LINK}' not available to deployment '${DEPLOYMENT_NAME}'. '${LINK}' must:\n"
                 "    1. Must be defined somewhere in the F Prime project\n"
                 "    2. Must be defined before '${DEPLOYMENT_NAME}' deployment (register_fprime_deployment)\n"
                 "'${LINK}' is undefined, or included via `add_fprime_subdirectory` after `register_fprime_deployment`."
@@ -181,40 +181,6 @@ function(setup_module_targets BUILD_TARGET)
         setup_single_target("${FPRIME_TARGET}" "${BUILD_TARGET}" "${MODULE_SOURCES}" "${MODULE_LINK_LIBRARIES};${MODULE_INTERFACE_LINK_LIBRARIES}")
     endforeach()
 endfunction(setup_module_targets)
-
-####
-# Function `recurse_targets`:
-#
-# A helper that pulls out module dependencies that are also fprime modules.
-####
-function(recurse_targets TARGET OUTPUT BOUND)
-    get_property(ALL_MODULES GLOBAL PROPERTY FPRIME_MODULES)
-    set(TARGET_DEPENDENCIES)
-    if (TARGET "${TARGET}")
-        get_property(TARGET_DEPENDENCIES TARGET "${TARGET}" PROPERTY FPRIME_TARGET_DEPENDENCIES)
-    endif()
-    # Extra dependencies
-    list(APPEND TARGET_DEPENDENCIES ${ARGN})
-    if (TARGET_DEPENDENCIES)
-        list(REMOVE_DUPLICATES TARGET_DEPENDENCIES)
-    endif()
-
-    set(RESULTS_LOCAL)
-    foreach(NEW_TARGET IN LISTS TARGET_DEPENDENCIES)
-        if (NOT NEW_TARGET IN_LIST BOUND AND NEW_TARGET IN_LIST ALL_MODULES)
-            list(APPEND BOUND "${NEW_TARGET}")
-            recurse_targets("${NEW_TARGET}" RESULTS "${BOUND}")
-            list(APPEND RESULTS_LOCAL ${RESULTS} "${NEW_TARGET}")
-            set(BOUND "${__BOUND__INTERNAL__}")
-        endif()
-    endforeach()
-    if (RESULTS_LOCAL)
-        list(REMOVE_DUPLICATES RESULTS_LOCAL)
-    endif()
-    set(__BOUND__INTERNAL__ "${BOUND}" PARENT_SCOPE)
-    set(${OUTPUT} "${RESULTS_LOCAL}" PARENT_SCOPE)
-endfunction()
-
 #### Documentation links
 # See Also:
 #  - API: [API](../API.md) describes the `register_fprime_target` function

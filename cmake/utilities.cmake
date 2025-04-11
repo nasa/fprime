@@ -763,7 +763,7 @@ function(recurse_target_property CMAKE_BUILD_TARGET_NAME PROPERTY_NAME TRANSITIV
 
     # If the current item is not a target, tell the parent that this is a non-existent entity
     if (NOT TARGET "${CMAKE_BUILD_TARGET_NAME}")
-        set("${NON_EXISTENT_DEPENDENCIES_OUTPUT}" "${CMAKE_BUILD_TARGET_NAME}" PARENT_SCOPE)
+        set("${NON_EXISTENT_LINKS_OUTPUT}" "${CMAKE_BUILD_TARGET_NAME}" PARENT_SCOPE)
         set("${TRANSITIVE_LINKS_OUTPUT}" PARENT_SCOPE)
         return()
     endif()
@@ -771,7 +771,7 @@ function(recurse_target_property CMAKE_BUILD_TARGET_NAME PROPERTY_NAME TRANSITIV
     get_target_property(PROPERTY_LIST "${CMAKE_BUILD_TARGET_NAME}" INTERFACE_LINK_LIBRARIES)
     # When there are no other link libraries below this one, return current target as the singular dependency
     if (NOT PROPERTY_LIST)
-        set("${NON_EXISTENT_DEPENDENCIES_OUTPUT}" PARENT_SCOPE)
+        set("${NON_EXISTENT_LINKS_OUTPUT}" PARENT_SCOPE)
         set("${TRANSITIVE_LINKS_OUTPUT}" "${CMAKE_BUILD_TARGET_NAME}" PARENT_SCOPE)
         return()
     endif()
@@ -784,12 +784,13 @@ function(recurse_target_property CMAKE_BUILD_TARGET_NAME PROPERTY_NAME TRANSITIV
         unset(INTERNAL_TRANSITIVE)
         unset(INTERNAL_UNKNOWN)
         # Prevent redundant recursion
-        if (NOT LINK IN_LIST PREVIOUSLY_RECURSED)
+        if (NOT LINK IN_LIST PREVIOUSLY_RECURSED AND NOT LINK STREQUAL "")
+            fprime_cmake_ASSERT("'${LINK}' is a null dependency of '${CMAKE_BUILD_TARGET_NAME}'" LINK)
             # Recurse through each link and append the recursively determined additions to the list
             # while ensuring there are no duplicates
             recurse_target_property("${LINK}" "${PROPERTY_NAME}" INTERNAL_TRANSITIVE INTERNAL_UNKNOWN ${PREVIOUSLY_RECURSED})
             # The current link must occur in one list or the other
-            fprime_cmake_ASSERT("${LINK} must appear in '${INTERNAL_TRANSITIVE}' or '${INTERNAL_UNKNOWN}'"
+            fprime_cmake_ASSERT("'${LINK}' must appear in '${INTERNAL_TRANSITIVE}' or '${INTERNAL_UNKNOWN}'"
                 LINK IN_LIST INTERNAL_TRANSITIVE OR LINK IN_LIST INTERNAL_UNKNOWN)
             # Append the lists to the aggregated output
             list(APPEND RECURSED_TRANSITIVE ${INTERNAL_TRANSITIVE})
@@ -802,34 +803,6 @@ function(recurse_target_property CMAKE_BUILD_TARGET_NAME PROPERTY_NAME TRANSITIV
         endif()
     endforeach()
     # Return the results of this stage of the recursion
-    set("${NON_EXISTENT_DEPENDENCIES_OUTPUT}" ${RECURSED_UNKNOWN} PARENT_SCOPE)
+    set("${NON_EXISTENT_LINKS_OUTPUT}" ${RECURSED_UNKNOWN} PARENT_SCOPE)
     set("${TRANSITIVE_LINKS_OUTPUT}" ${CMAKE_BUILD_TARGET_NAME} ${RECURSED_TRANSITIVE} PARENT_SCOPE)
-endfunction()
-
-function(recurse_targets TARGET OUTPUT BOUND)
-    get_property(ALL_MODULES GLOBAL PROPERTY FPRIME_MODULES)
-    set(TARGET_DEPENDENCIES)
-    if (TARGET "${TARGET}")
-        get_property(TARGET_DEPENDENCIES TARGET "${TARGET}" PROPERTY FPRIME_TARGET_DEPENDENCIES)
-    endif()
-    # Extra dependencies
-    list(APPEND TARGET_DEPENDENCIES ${ARGN})
-    if (TARGET_DEPENDENCIES)
-        list(REMOVE_DUPLICATES TARGET_DEPENDENCIES)
-    endif()
-
-    set(RESULTS_LOCAL)
-    foreach(NEW_TARGET IN LISTS TARGET_DEPENDENCIES)
-        if (NOT NEW_TARGET IN_LIST BOUND AND NEW_TARGET IN_LIST ALL_MODULES)
-            list(APPEND BOUND "${NEW_TARGET}")
-            recurse_targets("${NEW_TARGET}" RESULTS "${BOUND}")
-            list(APPEND RESULTS_LOCAL ${RESULTS} "${NEW_TARGET}")
-            set(BOUND "${__BOUND__INTERNAL__}")
-        endif()
-    endforeach()
-    if (RESULTS_LOCAL)
-        list(REMOVE_DUPLICATES RESULTS_LOCAL)
-    endif()
-    set(__BOUND__INTERNAL__ "${BOUND}" PARENT_SCOPE)
-    set(${OUTPUT} "${RESULTS_LOCAL}" PARENT_SCOPE)
 endfunction()

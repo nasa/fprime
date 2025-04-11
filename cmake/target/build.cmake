@@ -22,7 +22,7 @@ endif()
 function(fprime__internal_TECH_DEBT_module_setup BUILD_MODULE_NAME MODULE_NAME_HELPER)
     #### Load target properties ####
     # This switches the following code to use new properties.
-    foreach(PROPERTY IN ITEMS FPRIME_TYPE SOURCES AC_GENERATED LINK_LIBRARIES HEADERS)
+    foreach(PROPERTY IN ITEMS FPRIME_TYPE SOURCES SUPPLIED_SOURCES AC_GENERATED LINK_LIBRARIES SUPPLIED_HEADERS AC_FILE_DEPENDENCIES)
         get_target_property("MODULE_${PROPERTY}" "${BUILD_MODULE_NAME}" "${PROPERTY}")
         if (NOT MODULE_${PROPERTY})
             set("MODULE_${PROPERTY}")
@@ -45,7 +45,7 @@ function(fprime__internal_TECH_DEBT_module_setup BUILD_MODULE_NAME MODULE_NAME_H
     #
     # HEADER_FILES should not be read from a variable.
     file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/module${MODULE_NAME_HELPER}-info.txt"
-        "${MODULE_HEADERS}\n${MODULE_SOURCES}\n${MODULE_AC_GENERATED}\n${MODULE_AC_FILE_DEPENDENCIES}\n${MODULE_LINK_LIBRARIES}\n"
+        "${MODULE_SUPPLIED_HEADERS}\n${MODULE_SUPPLIED_SOURCES}\n${MODULE_AC_GENERATED}\n${MODULE_AC_FILE_DEPENDENCIES}\n${MODULE_LINK_LIBRARIES}\n"
     )
     #### End module-info.txt ####
 
