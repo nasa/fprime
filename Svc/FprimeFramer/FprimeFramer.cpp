@@ -9,7 +9,6 @@
 #include "Svc/FprimeProtocol/FrameTrailerSerializableAc.hpp"
 #include "Utils/Hash/Hash.hpp"
 
-
 namespace Svc {
 
 // ----------------------------------------------------------------------
@@ -24,12 +23,13 @@ FprimeFramer ::~FprimeFramer() {}
 // Handler implementations for typed input ports
 // ----------------------------------------------------------------------
 
-void FprimeFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, FprimeProtocol::DataLinkContext& context) {
+void FprimeFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, CommsCfg::FrameContext& context) {
     FprimeProtocol::FrameHeader header;
     FprimeProtocol::FrameTrailer trailer;
 
     // Full size of the frame will be size of header + data + trailer
-    FwSizeType frameSize = FprimeProtocol::FrameHeader::SERIALIZED_SIZE + data.getSize() + FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
+    FwSizeType frameSize =
+        FprimeProtocol::FrameHeader::SERIALIZED_SIZE + data.getSize() + FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
     FW_ASSERT(frameSize <= std::numeric_limits<U32>::max(), static_cast<FwAssertArgType>(frameSize));
     FW_ASSERT(frameSize <= std::numeric_limits<Fw::Buffer::SizeType>::max(), static_cast<FwAssertArgType>(frameSize));
 
@@ -56,6 +56,8 @@ void FprimeFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, Fprime
 
     // Send the full frame out - this port shall always be connected
     this->framedDataOut_out(0, frameBuffer, context);
+    // Return original data buffer ownership back to its sender - always connected
+    this->dataReturn_out(0, data, context);
 }
 
 void FprimeFramer ::comStatusIn_handler(FwIndexType portNum, Fw::Success& condition) {

@@ -17,16 +17,7 @@ module Svc {
       # ----------------------------------------------------------------------
 
       @ Port for emitting data ready to be sent
-      output port queueSend: Fw.DataWithContext
-
-      @ Port for allocating Fw::Buffer to be sent down
-      output port allocate: Fw.BufferGet
-
-      @ Port for returning a File Buffer to its sender
-      output port fileBufferReturn: Fw.BufferSend
-
-      @ Port for deallocating Fw::Buffer on queue overflow
-      output port deallocate: Fw.BufferSend
+      output port queueSend: Svc.DataWithContext
 
       @ Port for receiving the status signal
       async input port comStatusIn: Fw.SuccessCondition
@@ -36,6 +27,14 @@ module Svc {
 
       @ Port array for receiving Fw::Buffers
       async input port buffQueueIn: [ComQueueBufferPorts] Fw.BufferSend hook
+
+      @ Port array for returning ownership of Fw::Buffer to its original sender
+      output port bufferReturnOut: [ComQueueBufferPorts] Fw.BufferSend
+
+      @ Port for receiving Fw::Buffer whose ownership needs to be handed back
+      # REVIEW NOTE: sync sounds like less troubles - might as well happen on deframing thread anyways,
+      # plus we don't have to worry about if the message queue overflows
+      sync input port bufferReturnIn: Svc.DataWithContext
 
       @ Port for scheduling telemetry output
       async input port run: Svc.Sched drop

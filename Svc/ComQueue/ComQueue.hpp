@@ -127,26 +127,34 @@ class ComQueue final : public ComQueueComponentBase {
     //! Receive and queue a Fw::Buffer
     //!
     void buffQueueIn_handler(const FwIndexType portNum, /*!< The port number*/
-                             Fw::Buffer& fwBuffer /*!< Buffer containing packet data*/);
+                             Fw::Buffer& fwBuffer /*!< Buffer containing packet data*/) override;
 
     //! Receive and queue a Fw::ComBuffer
     //!
     void comQueueIn_handler(const FwIndexType portNum, /*!< The port number*/
                             Fw::ComBuffer& data,           /*!< Buffer containing packet data*/
                             U32 context                    /*!< Call context value; meaning chosen by user*/
-    );
+    ) override;
 
     //! Handle the status of the last sent message
     //!
     void comStatusIn_handler(const FwIndexType portNum, /*!< The port number*/
                              Fw::Success& condition         /*!<Status of communication state*/
-    );
+    ) override;
 
     //! Schedules the transmission of telemetry
     //!
     void run_handler(const FwIndexType portNum, /*!< The port number*/
                      U32 context                    /*!<The call order*/
-    );
+    ) override;
+
+    //! Handler implementation for bufferReturnIn
+    //!
+    //! Port for returning ownership of Fw::Buffer to its sender
+    void bufferReturnIn_handler(FwIndexType portNum,  //!< The port number
+      Fw::Buffer& data,
+      CommsCfg::FrameContext& context) override;
+
 
     // ----------------------------------------------------------------------
     // Hook implementations for typed async input ports
@@ -156,7 +164,7 @@ class ComQueue final : public ComQueueComponentBase {
     //!
     void buffQueueIn_overflowHook(FwIndexType portNum, //!< The port number
                                   Fw::Buffer& fwBuffer //!< The buffer
-    );
+    ) override;
 
     // ----------------------------------------------------------------------
     // Helper Functions

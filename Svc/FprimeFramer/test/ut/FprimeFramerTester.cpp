@@ -41,7 +41,7 @@ void FprimeFramerTester ::testComStatusPassThrough() {
 void FprimeFramerTester ::testNominalFraming() {
     U8 bufferData[100];
     Fw::Buffer buffer(bufferData, sizeof(bufferData));
-    FprimeProtocol::DataLinkContext context;
+    CommsCfg::FrameContext context;
 
 
     // Fill the buffer with some data
@@ -51,7 +51,8 @@ void FprimeFramerTester ::testNominalFraming() {
 
     // Send the buffer to the component
     this->invoke_to_dataIn(0, buffer, context);
-    ASSERT_from_framedDataOut_SIZE(1);
+    ASSERT_from_framedDataOut_SIZE(1); // One frame emitted
+    ASSERT_from_dataReturn_SIZE(1); // Original data buffer ownership returned
 
     Fw::Buffer outputBuffer = this->fromPortHistory_framedDataOut->at(0).data;
     // Check the size of the output buffer

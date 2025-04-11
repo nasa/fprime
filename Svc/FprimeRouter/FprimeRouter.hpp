@@ -33,7 +33,7 @@ class FprimeRouter final : public FprimeRouterComponentBase {
     //! Receiving Fw::Buffer from Deframer
     void dataIn_handler(FwIndexType portNum,  //!< The port number
                           Fw::Buffer& packetBuffer, //!< The packet buffer
-                          FprimeProtocol::DataLinkContext& context //!< The context object
+                          CommsCfg::FrameContext& context //!< The context object
                           ) override;
 
     // ! Handler for input port cmdResponseIn

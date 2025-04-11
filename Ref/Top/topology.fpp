@@ -93,9 +93,8 @@ module Ref {
       fileDownlink.bufferSendOut -> comQueue.buffQueueIn[0]
 
       comQueue.queueSend -> fprimeFramer.dataIn
-      comQueue.allocate -> commsBufferManager.bufferGetCallee
-      comQueue.deallocate -> commsBufferManager.bufferSendIn
-      comQueue.fileBufferReturn -> fileDownlink.bufferReturn
+      fprimeFramer.dataReturn -> comQueue.bufferReturnIn
+      comQueue.bufferReturnOut[0] -> fileDownlink.bufferReturn
 
       fprimeFramer.bufferAllocate -> commsBufferManager.bufferGetCallee
       fprimeFramer.framedDataOut -> comStub.comDataIn

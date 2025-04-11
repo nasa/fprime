@@ -42,6 +42,8 @@ class FprimeFramerTester final : public FprimeFramerGTestBase {
 
     //! Test pass through of comStatusIn to comStatusOut
     void testComStatusPassThrough();
+
+    //! Test framing of data
     void testNominalFraming();
 
   private:

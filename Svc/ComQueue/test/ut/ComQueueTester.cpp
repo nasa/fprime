@@ -176,6 +176,8 @@ void ComQueueTester ::testPrioritySend() {
 }
 
 void ComQueueTester::testExternalQueueOverflow() {
+    // "External" queue is ComQueue's managed queue for input Com/Buffers
+    // as opposed to the "internal" message queue for async input ports
     ComQueue::QueueConfigurationTable configurationTable;
     ComQueueDepth expectedComDepth;
     BuffQueueDepth expectedBuffDepth;
@@ -210,10 +212,10 @@ void ComQueueTester::testExternalQueueOverflow() {
         ASSERT_EVENTS_QueueOverflow(0, overflow_type, portNum);
 
         if (QueueType::BUFFER_QUEUE == overflow_type) {
-            // Two messages overflowed, so two buffers should be deallocated
-            ASSERT_from_deallocate_SIZE(2);
-            ASSERT_from_deallocate(0, buffer);
-            ASSERT_from_deallocate(1, buffer);
+            // Two messages overflowed, so two buffers should be returned
+            ASSERT_from_bufferReturnOut_SIZE(2);
+            ASSERT_from_bufferReturnOut(0, buffer);
+            ASSERT_from_bufferReturnOut(1, buffer);
         }
 
         // Drain a message, and see if throttle resets
@@ -225,9 +227,9 @@ void ComQueueTester::testExternalQueueOverflow() {
         dispatchAll();
 
         if (QueueType::BUFFER_QUEUE == overflow_type) {
-            // Third deallocation because of one more overflow
-            ASSERT_from_deallocate_SIZE(3);
-            ASSERT_from_deallocate(2, buffer);
+            // Third message overflowed, so third bufferReturnOut
+            ASSERT_from_bufferReturnOut_SIZE(3);
+            ASSERT_from_bufferReturnOut(2, buffer);
         }
 
         // emitOne() reset the throttle, then overflow again. So expect a second everflow event
@@ -251,6 +253,7 @@ void ComQueueTester::testExternalQueueOverflow() {
 }
 
 void ComQueueTester::testInternalQueueOverflow() {
+    // Internal queue is the message queue for async input ports
     U8 data[BUFFER_LENGTH] = {0xde, 0xad, 0xbe};
     Fw::Buffer buffer(data, sizeof(data));
 
@@ -268,15 +271,15 @@ void ComQueueTester::testInternalQueueOverflow() {
     // send one more to overflow the queue
     sendByQueueNumber(buffer, queueNum, portNum, overflow_type);
 
-    ASSERT_from_deallocate_SIZE(1);
-    ASSERT_from_deallocate(0, buffer);
+    ASSERT_from_bufferReturnOut_SIZE(1);
+    ASSERT_from_bufferReturnOut(0, buffer);
 
     // send another
     sendByQueueNumber(buffer, queueNum, portNum, overflow_type);
 
-    ASSERT_from_deallocate_SIZE(2);
-    ASSERT_from_deallocate(0, buffer);
-    ASSERT_from_deallocate(1, buffer);
+    ASSERT_from_bufferReturnOut_SIZE(2);
+    ASSERT_from_bufferReturnOut(0, buffer);
+    ASSERT_from_bufferReturnOut(1, buffer);
 
     component.cleanup();
 }
@@ -342,16 +345,26 @@ void ComQueueTester ::testContextData() {
     component.cleanup();
 }
 
-// ----------------------------------------------------------------------
-// Handlers for typed from ports
-// ----------------------------------------------------------------------
+void ComQueueTester ::testBufferQueueReturn() {
+    U8 data[BUFFER_LENGTH] = {0xde, 0xad, 0xbe};
+    Fw::Buffer buffer(&data[0], sizeof(data));
+    CommsCfg::FrameContext context;
+    configure();
 
-Fw::Buffer ComQueueTester ::from_allocate_handler(FwIndexType portNum, U32 size){
-    this->pushFromPortEntry_allocate(size);
-    this->m_buffer.setData(this->m_buffer_slot);
-    this->m_buffer.setSize(size);
-    ::memset(this->m_buffer.getData(), 0, size);
-    return this->m_buffer;
+    for(FwIndexType portNum = 0; portNum < ComQueue::TOTAL_PORT_COUNT; portNum++){
+        clearFromPortHistory();
+        context.setapid(portNum);
+        invoke_to_bufferReturnIn(0, buffer, context);
+        // APIDs that correspond to an buffer originating from a Fw.Com port
+        // do no get deallocated – APIDs that correspond to a Fw.Buffer do
+        if (portNum < ComQueue::COM_PORT_COUNT) {
+            ASSERT_from_bufferReturnOut_SIZE(0);
+        } else {
+            ASSERT_from_bufferReturnOut_SIZE(1);
+            ASSERT_from_bufferReturnOut(0, buffer);
+        }
+    }
+    component.cleanup();
 }
 
 }  // end namespace Svc

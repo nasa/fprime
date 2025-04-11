@@ -1,8 +1,18 @@
+# ----------------------------------------------------------------------
+# Framing
+# ----------------------------------------------------------------------
 @ Port to receive data to frame, in a Fw::Buffer with optional context
-guarded input port dataIn: Fw.DataWithContext
+guarded input port dataIn: Svc.DataWithContext
 
 @ Port to output framed data, with optional context, for follow-up framing
-output port framedDataOut: Fw.DataWithContext
+output port framedDataOut: Svc.DataWithContext
+
+# ----------------------------------------------------------------------
+# Data ownership
+# ----------------------------------------------------------------------
+@ Port for returning ownership of the incoming Fw::Buffer to its sender
+@ once framing is handled
+output port dataReturn: Svc.DataWithContext
 
 # ----------------------------------------------------------------------
 # Handling of of ready signals

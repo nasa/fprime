@@ -16,10 +16,4 @@ module Fw {
                   $size: U32
                 ) -> Fw.Buffer
 
-
-    @ Port for sending data buffer along with context buffer
-    @ This is useful for passing data that needs context to be interpreted
-    # Review note: I thought using a ref for context could be neat, maybe we don't want that
-    # For example, a downstream framer could theoretically "send context back" by modifying the reference...
-    port DataWithContext(ref data: Fw.Buffer, ref context: FprimeProtocol.DataLinkContext)
 }

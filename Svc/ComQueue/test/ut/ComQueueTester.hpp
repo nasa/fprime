@@ -80,12 +80,7 @@ class ComQueueTester : public ComQueueGTestBase {
 
     void testContextData();
 
-  private:
-    // ----------------------------------------------------------------------
-    // Handlers for typed from ports
-    // ----------------------------------------------------------------------
-
-    Fw::Buffer from_allocate_handler(FwIndexType portNum, U32 size) override;
+    void testBufferQueueReturn();
 
   private:
     // ----------------------------------------------------------------------
@@ -109,8 +104,6 @@ class ComQueueTester : public ComQueueGTestBase {
     //!
     ComQueue component;
 
-    U8 m_buffer_slot[2048];
-    Fw::Buffer m_buffer;  // buffer to be returned by mocked allocate call
 };
 
 }  // end namespace Svc

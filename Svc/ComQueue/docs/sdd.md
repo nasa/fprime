@@ -49,7 +49,7 @@ The diagram below shows the `Svc::ComQueue` component.
 
 | Kind          | Name              | Port Type                             | Usage                                                    |
 |---------------|-------------------|---------------------------------------|----------------------------------------------------------|
-| `output`      | `queueSend`       | `Fw.DataWithContext`                  | Fw::DataWithContext output port, emitting queued messages|
+| `output`      | `queueSend`       | `Svc.DataWithContext`                 | Port emitting queued messages                            |
 | `output`      | `deallocate`      | `Fw.BufferSend`                       | Port for deallocating Fw::Buffer on queue overflow       |
 | `async input` | `comStatusIn`     | `Fw.SuccessCondition`                 | Port for receiving the status signal                     |
 | `async input` | `comQueueIn`      | `[ComQueueComPorts] Fw.Com`           | Port array for receiving Fw::ComBuffers                  |
