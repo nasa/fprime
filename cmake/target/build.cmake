@@ -19,30 +19,18 @@ if (FPRIME_ENABLE_UT_COVERAGE)
     list(APPEND FPRIME_TESTING_REQUIRED_LINK_FLAGS --coverage)
 endif()
 
-function(fprime__internal_TECH_DEBT_module_setup BUILD_MODULE_NAME GENERATED_SOURCES AC_DEPENDENCIES AC_FILE_DEPENDENCIES MODULE_NAME_HELPER)
-    #### Missing and Incomplete Properties Patch ####
-    # Patch in missing properties that **should** have been set by the autocoder. This sets the generated sources, original
-    # supplied sources, file dependencies, and updates link libraries and sources.
-    get_target_property("MODULE_SUPPLIED_SOURCES" "${BUILD_MODULE_NAME}" SOURCES)
-    filter_lists("${AC_SOURCES}" NORMAL_SOURCES AC_GENERATED)
-    set_target_properties("${BUILD_MODULE_NAME}" PROPERTIES
-        SUPPLIED_SOURCES "${MODULE_SUPPLIED_SOURCES}"
-        GENERATED_SOURCES "${AC_GENERATED}"
-        AC_FILE_DEPENDENCIES "${AC_FILE_DEPENDENCIES}"
-    )
-    target_link_libraries("${BUILD_MODULE_NAME}" PUBLIC ${AC_DEPENDENCIES})
-    target_sources("${BUILD_MODULE_NAME}" PRIVATE ${GENERATED_SOURCES})
-    #### End Missing and Incomplete Properties Patch ####
-    
-
+function(fprime__internal_TECH_DEBT_module_setup BUILD_MODULE_NAME MODULE_NAME_HELPER)
     #### Load target properties ####
     # This switches the following code to use new properties.
-    foreach(PROPERTY IN ITEMS FP_TYPE SUPPLIED_SOURCES GENERATED_SOURCES LINK_LIBRARIES HEADERS)
+    foreach(PROPERTY IN ITEMS FPRIME_TYPE SOURCES AC_GENERATED LINK_LIBRARIES HEADERS)
         get_target_property("MODULE_${PROPERTY}" "${BUILD_MODULE_NAME}" "${PROPERTY}")
         if (NOT MODULE_${PROPERTY})
             set("MODULE_${PROPERTY}")
         endif()
     endforeach()
+
+    #TODO:
+    # Filter LINK_LIBRARIES and INTERFACE_LINK_LIBRARIES
 
     #### Create module-info.txt ####
     # module-info.txt is used as a cache to enable build system quasi-dependent tools to work as expected.
@@ -57,20 +45,9 @@ function(fprime__internal_TECH_DEBT_module_setup BUILD_MODULE_NAME GENERATED_SOU
     #
     # HEADER_FILES should not be read from a variable.
     file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/module${MODULE_NAME_HELPER}-info.txt"
-        "${MODULE_HEADERS}\n${MODULE_SUPPLIED_SOURCES}\n${MODULE_GENERATED_SOURCES}\n${MODULE_AC_FILE_DEPENDENCIES}\n${MODULE_DEPENDENCIES}\n"
+        "${MODULE_HEADERS}\n${MODULE_SOURCES}\n${MODULE_AC_GENERATED}\n${MODULE_AC_FILE_DEPENDENCIES}\n${MODULE_LINK_LIBRARIES}\n"
     )
     #### End module-info.txt ####
-
-    #### Add Generated Sources ####
-    # This section adds generated sources to the module. This is TECH_DEBT that should eventually
-    # be replaced by functionality in the autocoders themselves. The autocoders know what is generated
-    # and what is not generated. They should update the target_source property directly.
-
-    # Set those files as generated to prevent build errors
-    foreach(SOURCE IN LISTS MODULE_GENERATED_SOURCES)
-        set_source_files_properties(${SOURCE} PROPERTIES GENERATED TRUE)
-    endforeach()
-    #### End Add Generated Sources ####
 
     #### Remove empty.cpp ####
     # This section removes empty.cpp "fake source" from the various modules. This source is added to make
@@ -81,7 +58,7 @@ function(fprime__internal_TECH_DEBT_module_setup BUILD_MODULE_NAME GENERATED_SOU
     set_target_properties(
         ${BUILD_MODULE_NAME}
         PROPERTIES
-        SOURCES "${MODULE_SOURCES};${AC_GENERATED}"
+        SOURCES "${MODULE_SOURCES}"
     )
     #### End Remove empty.cpp ####
 
@@ -121,23 +98,25 @@ function(fprime__internal_check_restrictions MODULE_NAME DEPENDENCIES)
     endforeach()
 endfunction()
 
-function(fprime__internal_standard_module_setup MODULE SUPPLIED_SOURCES GENERATED_SOURCES DEPENDENCIES AC_FILE_DEPENDENCIES MODULE_NAME_HELPER)
-    fprime__internal_TECH_DEBT_module_setup("${MODULE}" "${SUPPLIED_SOURCES}" "${GENERATED_SOURCES}" "${DEPENDENCIES}" "${AC_FILE_DEPENDENCIES}" "${MODULE_NAME_HELPER}")
+function(fprime__internal_standard_build_target_setup BUILD_TARGET_NAME MODULE_NAME_HELPER)
+    fprime__internal_TECH_DEBT_module_setup("${BUILD_TARGET_NAME}" "${MODULE_NAME_HELPER}")
 
     # **Must** come after the TECH_DEBT section above
     # Adds in assertion compile flags (U32 for CRC, file paths for files)
-    foreach(SRC_FILE IN LISTS SUPPLIED_SOURCES GENERATED_SOURCES)
+    get_target_property(BUILDABLE_SOURCES "${BUILD_TARGET_NAME}" SOURCES)
+    foreach(SRC_FILE IN LISTS BUILDABLE_SOURCES)
         set_assert_flags("${SRC_FILE}")
     endforeach()
 
     # Check for restricted dependencies in the module's linked list
-    get_target_property(TARGET_LINK_DEPENDENCIES "${MODULE}" LINK_LIBRARIES)
-    fprime__internal_check_restrictions("${MODULE}" "${TARGET_LINK_DEPENDENCIES}")
+    get_target_property(TARGET_LINK_DEPENDENCIES "${BUILD_TARGET_NAME}" LINK_LIBRARIES)
+    get_target_property(TARGET_INTERFACE_DEPENDENCIES "${BUILD_TARGET_NAME}" INTERFACE_LINK_LIBRARIES)
+    fprime__internal_check_restrictions("${BUILD_TARGET_NAME}" "${TARGET_LINK_DEPENDENCIES};${TARGET_INTERFACE_DEPENDENCIES}")
 
     # Special flags applied to modules when compiling with testing enabled
     if (BUILD_TESTING)
-        target_compile_options("${MODULE}" PRIVATE ${FPRIME_TESTING_REQUIRED_COMPILE_FLAGS})
-        target_link_libraries("${MODULE}" PRIVATE ${FPRIME_TESTING_REQUIRED_LINK_FLAGS})
+        target_compile_options("${BUILD_TARGET_NAME}" PRIVATE ${FPRIME_TESTING_REQUIRED_COMPILE_FLAGS})
+        target_link_libraries("${BUILD_TARGET_NAME}" PRIVATE ${FPRIME_TESTING_REQUIRED_LINK_FLAGS})
     endif()
 endfunction()
 
@@ -169,23 +148,11 @@ endfunction()
 # - **SOURCES:** list of source file inputs from the CMakeLists.txt setup
 # - **DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
 ####
-function(build_add_module_target MODULE TARGET SOURCES DEPENDENCIES)
-    # Assert the pre-conditions of the autocoder run
-    fprime_cmake_ASSERT(NOT DEFINED AC_SOURCES)
-    fprime_cmake_ASSERT(NOT DEFINED AC_GENERATED)
-    fprime_cmake_ASSERT(NOT DEFINED AC_FILE_DEPENDENCIES)
-    fprime_cmake_ASSERT(NOT DEFINED AC_DEPENDENCIES)
+function(build_add_module_target BUILD_TARGET_NAME TARGET SOURCES DEPENDENCIES)
     get_property(BUILD_AUTOCODERS GLOBAL PROPERTY FPRIME_AUTOCODER_TARGET_LIST)
-    run_ac_set("${MODULE}" "${SOURCES}" ${BUILD_AUTOCODERS})
-    # Assert the post-conditions of the autocoder run
-    fprime_cmake_ASSERT(DEFINED AC_SOURCES)
-    fprime_cmake_ASSERT(DEFINED AC_GENERATED) 
-    fprime_cmake_ASSERT(DEFINED AC_FILE_DEPENDENCIES)
-    fprime_cmake_ASSERT(DEFINED AC_DEPENDENCIES)
-    set(DEPENDENCIES ${DEPENDENCIES} ${AC_DEPENDENCIES})
-    list(REMOVE_DUPLICATES DEPENDENCIES)
+    run_ac_set("${MODULE}" ${BUILD_AUTOCODERS})
 
-    fprime__internal_standard_module_setup("${MODULE}" "${SOURCES}" "${AC_SOURCES}" "${DEPENDENCIES}" "${AC_FILE_DEPENDENCIES}" "")
+    fprime__internal_standard_build_target_setup("${BUILD_TARGET_NAME}" "")
 
     # Introspection prints
     if (CMAKE_DEBUG_OUTPUT)

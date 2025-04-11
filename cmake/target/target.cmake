@@ -76,6 +76,23 @@ function(setup_global_targets)
 endfunction(setup_global_targets)
 
 
+function(check_unknown_links DEPLOYMENT_NAME)
+    # Check all links that they exist or are valid 
+    foreach(LINK IN LISTS ARGN)
+        # When a link is not a file and is not a link flag, then the target must already exist as a target in the CMake
+        # system to be used as part of recursive dependency lists.
+        if (NOT EXISTS "${LINK}" AND NOT "${LINK}" MATCHES "^-.*")
+            fprime_cmake_fatal_error(
+                "F Prime/CMake target '${LINK}' not available to deployment '${DEPLOYMENT_NAME}'.'${LINK}' must:\n"
+                "    1. Must be defined somewhere in the F Prime project\n"
+                "    2. Must be defined before '${DEPLOYMENT_NAME}' deployment (register_fprime_deployment)\n"
+                "'${LINK}' is undefined, or included via `add_fprime_subdirectory` after `register_fprime_deployment`."
+            )
+        endif()
+    endforeach()
+endfunction()
+
+
 ####
 # Function `setup_global_target`:
 #
@@ -110,17 +127,19 @@ function(setup_single_target TARGET_FILE MODULE SOURCES DEPENDENCIES)
     if (CMAKE_DEBUG_OUTPUT)
         message(STATUS "[target] Setting up '${TARGET_NAME}' on all module ${MODULE}")
     endif()
-    get_target_property(MODULE_TYPE "${MODULE}" FP_TYPE)
+    get_target_property(MODULE_TYPE "${MODULE}" FPRIME_TYPE)
 
     if (NOT MODULE_TYPE STREQUAL "Deployment")
         cmake_language(CALL "${TARGET_NAME}_add_module_target" "${MODULE}" "${TARGET_NAME}" "${SOURCES}" "${DEPENDENCIES}")
     else()
-        get_target_property(RECURSIVE_DEPENDENCIES "${MODULE}" FP_RECURSIVE_DEPS)
-        if (NOT RECURSIVE_DEPENDENCIES)
-            recurse_targets("${MODULE}" RECURSIVE_DEPENDENCIES "" ${DEPENDENCIES})
-            set_target_properties("${MODULE}" PROPERTIES FP_RECURSIVE_DEPS "${RECURSIVE_DEPENDENCIES}")
+        get_target_property(TRANSITIVE_LINK_LIBRARIES "${MODULE}" TRANSITIVE_LINK_LIBRARIES)
+        # Recalculate recursive dependencies
+        if (NOT TRANSITIVE_LINK_LIBRARIES)
+            recurse_target_property("${MODULE}" INTERFACE_LINK_LIBRARIES KNOWN_TRANSITIVE_LINKS UNKNOWN_LINKS)
+            check_unknown_links("${MODULE}" ${UNKNOWN_LINKS})
+            set_target_properties("${MODULE}" PROPERTIES TRANSITIVE_LINK_LIBRARIES "${KNOWN_TRANSITIVE_LINKS}")
         endif()
-        cmake_language(CALL "${TARGET_NAME}_add_deployment_target" "${MODULE}" "${TARGET_NAME}" "${SOURCES}" "${DEPENDENCIES}" "${RECURSIVE_DEPENDENCIES}")
+        cmake_language(CALL "${TARGET_NAME}_add_deployment_target" "${MODULE}" "${TARGET_NAME}" "${SOURCES}" "${DEPENDENCIES}" "${TRANSITIVE_LINK_LIBRARIES}")
     endif()
 endfunction(setup_single_target)
 
@@ -139,7 +158,7 @@ function(setup_module_targets BUILD_TARGET)
     set(LIST_NAME FPRIME_TARGET_LIST)
 
     # Read target properties
-    foreach(PROPERTY IN ITEMS FP_TYPE SOURCES LINK_LIBRARIES)
+    foreach(PROPERTY IN ITEMS FPRIME_TYPE SOURCES LINK_LIBRARIES INTERFACE_LINK_LIBRARIES)
         get_target_property("MODULE_${PROPERTY}" "${BUILD_TARGET}" "${PROPERTY}")
         if (NOT MODULE_${PROPERTY})
             set("MODULE_${PROPERTY}")
@@ -151,15 +170,15 @@ function(setup_module_targets BUILD_TARGET)
     get_property(TARGETS GLOBAL PROPERTY FPRIME_TARGET_LIST)
     get_property(UT_TARGETS GLOBAL PROPERTY FPRIME_UT_TARGET_LIST)
     # UT targets are the only targets run on unit tests, and are included in deployments
-    if (MODULE_FP_TYPE STREQUAL "Deployment")
+    if (MODULE_FPRIME_TYPE STREQUAL "Deployment")
         list(APPEND TARGETS ${UT_TARGETS})
-    elseif (MODULE_FP_TYPE STREQUAL "Unit Test")
+    elseif (MODULE_FPRIME_TYPE STREQUAL "Unit Test")
         set(TARGETS "${UT_TARGETS}")
     endif()
 
     # Now run through each of the determined targets
     foreach(FPRIME_TARGET IN LISTS TARGETS)
-        setup_single_target("${FPRIME_TARGET}" "${BUILD_TARGET}" "${MODULE_SOURCES}" "${MODULE_LINK_LIBRARIES}")
+        setup_single_target("${FPRIME_TARGET}" "${BUILD_TARGET}" "${MODULE_SOURCES}" "${MODULE_LINK_LIBRARIES};${MODULE_INTERFACE_LINK_LIBRARIES}")
     endforeach()
 endfunction(setup_module_targets)
 

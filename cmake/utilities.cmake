@@ -4,6 +4,18 @@
 # Utility and support functions for the fprime CMake build system.
 ####
 include_guard()
+set_property(GLOBAL PROPERTY C_CPP_ASM_REGEX ".*\.(c|cpp|cc|cxx|S|asm)$")
+
+
+function(sort_buildable_from_non_buildable_sources BUILDABLE_SOURCE_OUTPUT NON_BUILDABLE_SOURCE_OUTPUT)
+    get_property(SORT_REGEX GLOBAL PROPERTY C_CPP_ASM_REGEX )
+    set(CPP_LIST_NAME ${ARGN})
+    set(NON_CPP_LIST_NAME ${ARGN})
+    list(FILTER CPP_LIST_NAME INCLUDE REGEX "${SORT_REGEX}")
+    list(FILTER NON_CPP_LIST_NAME EXCLUDE REGEX "${SORT_REGEX}")
+    set("${BUILDABLE_SOURCE_OUTPUT}" ${CPP_LIST_NAME} PARENT_SCOPE)
+    set("${NON_BUILDABLE_SOURCE_OUTPUT}" ${NON_CPP_LIST_NAME} PARENT_SCOPE)
+endfunction()
 
 ####
 # Function `plugin_name`:
@@ -548,6 +560,7 @@ function(introspect MODULE_NAME)
     print_property("${MODULE_NAME}" SOURCES)
     print_property("${MODULE_NAME}" INCLUDE_DIRECTORIES)
     print_property("${MODULE_NAME}" LINK_LIBRARIES)
+    print_property("${MODULE_NAME}" INTERFACE_LINK_LIBRARIES)
 endfunction(introspect)
 
 ####
@@ -680,15 +693,16 @@ function(resolve_path_variables)
 endfunction(resolve_path_variables)
 
 ####
-# Function `fprime_fatal_cmake_error`:
+# Function `fprime_cmake_fatal_error`:
 #
-# Prints a fatal error message to the user, highlighted with ---- to make it obvious.
+# Prints a fatal error message to the user, highlighted with ---- to make it obvious. For multi-line
+# messages, place a \n at the end of the previous message.
 #
-# - **MESSAGE**: message to print
+# - **ARGN**: message(s) to print separated by ' 's 
 ####
-function(fprime_fatal_cmake_error MESSAGE)
-    fprime_cmake_clear_message(FATAL_ERROR "${MESSAGE}")
-endfunction(fprime_fatal_cmake_error)
+function(fprime_cmake_fatal_error)
+    fprime_cmake_clear_message(FATAL_ERROR ${ARGN})
+endfunction(fprime_cmake_fatal_error)
 
 ####
 # Function `fprime_cmake_debug_message`:
@@ -699,7 +713,7 @@ endfunction(fprime_fatal_cmake_error)
 ####
 function(fprime_cmake_debug_message MESSAGE)
     if (CMAKE_DEBUG_OUTPUT)
-        message(" [DEBUG] ${MESSAGE}")
+        message(STATUS " [DEBUG] ${MESSAGE}")
     endif()
 endfunction(fprime_cmake_debug_message)
 
@@ -707,12 +721,13 @@ endfunction(fprime_cmake_debug_message)
 # Function `fprime__cmake_clear_message`:
 #
 # Prints a message to the user, highlighted with ---- to make it obvious and including the list file
-# that is failing.
+# that is failing. For multi-line messages, place a \n at the end of the previous message.
 #
 # - **SEVERITY**: message severity to use
-# - **MESSAGE**: message to print
+# - **ARGN**: message(s) to print separated by ' 's 
 ####
-function(fprime_cmake_clear_message SEVERITY MESSAGE)
+function(fprime_cmake_clear_message SEVERITY)
+    string(REPLACE ";" " " MESSAGE "${ARGN}")
     message("${SEVERITY}" " ----------------------------------------\n"
                         " ${MESSAGE} in:\n"
                         "     ${CMAKE_CURRENT_LIST_FILE}\n"
@@ -727,104 +742,94 @@ endfunction()
 #
 # - **CONDITION**: condition to evaluate with if (${CONDITION})
 ####
-macro(fprime_cmake_ASSERT)
+macro(fprime_cmake_ASSERT MESSAGE)
     # Simplify the evaluation of the condition by not placing NOT in front. Just have a no-op if clause
     # where the else prints the FATAL message.
     if (${ARGN})
     else ()
         string(REPLACE ";" " " FPRIME_INTERNAL_STRING_FROM_ARGN "${ARGN}")
         message(FATAL_ERROR " ----------------------------------------\n"
-            " Assertion (${FPRIME_INTERNAL_STRING_FROM_ARGN}) failed. In:\n"
+            " Assertion (${FPRIME_INTERNAL_STRING_FROM_ARGN}) failed with message '${MESSAGE}'. In:\n"
             "     ${CMAKE_CURRENT_FUNCTION_LIST_FILE}:${CMAKE_CURRENT_FUNCTION_LIST_LINE}\n"
             " ----------------------------------------\n")
     endif()
 endmacro()
-####
-# Function `fprime__process_module_setup`:
-#
-# This function is used to process the module setup. It takes a list of arguments and sorts them into
-# SOURCES, HEADERS, and DEPENDS. It also sets the module name based on the first argument or the
-# FPRIME_CURRENT_MODULE variable. If neither is provided, it will throw an error.
-#
-# - **ARGN**: list of arguments to process.
-####
-function(fprime__process_module_setup ADDITIONAL_CONTROL_SETS)
-    # Initial setup 
-    set(INPUT_ARGUMENTS ${ARGN})
-    list(GET INPUT_ARGUMENTS 0 FIRST_ARGUMENT)
-    list(LENGTH INPUT_ARGUMENTS INPUT_COUNT)
 
-    # List of control words
-    set(CONTROL_SETS "HEADERS" "SOURCES" "DEPENDS" "EXCLUDE_FROM_ALL" ${ADDITIONAL_CONTROL_SETS})
-    # Set module name as passed in, then defaulting to FPRIME_CURRENT_MODULE
-    if (${INPUT_COUNT} GREATER 0 AND NOT FIRST_ARGUMENT IN_LIST CONTROL_SETS)
-        list(POP_FRONT INPUT_ARGUMENTS MODULE_NAME)
-    elseif(DEFINED FPRIME_CURRENT_MODULE)
-        set(MODULE_NAME ${FPRIME_CURRENT_MODULE})
-    else()
-        fprime_fatal_cmake_error("FPRIME_CURRENT_MODULE not defined. Please supply name to: register_fprime_module(<module name>)")
-    endif()
-    list(LENGTH INPUT_ARGUMENTS INPUT_COUNT)
 
-    # Support the old structure where SOURCE_FILES and MOD_DEPS were set to specify module lists
-    if (INPUT_COUNT EQUAL 0 AND NOT DEFINED SOURCE_FILES)
-        fprime_fatal_cmake_error("Must supply SOURCES to register_fprime_module")
-    elseif (INPUT_COUNT EQUAL 0 AND DEFINED SOURCE_FILES)
-        set(SOURCES "${SOURCE_FILES}")
-        set(HEADERS "${HEADER_FILES}")
-        resolve_dependencies(MOD_DEPS_RESOLVED "${MOD_DEPS}")
-        set(DEPENDS "${MOD_DEPS_RESOLVED}")
-    # Check other definitions
-    elseif (DEFINED SOURCE_FILES)
-        fprime_fatal_cmake_error("Cannot both set SOURCE_FILES and supply source list to register_fprime_module")
-    elseif (DEFINED MOD_DEPS)
-        fprime_fatal_cmake_error("Cannot both set MOD_DEPS and supply a dependency list to register_fprime_module")
-    elseif (DEFINED HEADER_FILES)
-        fprime_fatal_cmake_error("Cannot both set HEADER_FILES and supply a dependency list to register_fprime_module")
-    else()
-        # Unset all the control lists so the module can track what controls were passed in along with their arguments
-        # allowing signal control sets that do not take arguments.
-        foreach(CONTROL_SET IN LISTS CONTROL_SETS)
-            unset("${CONTROL_SET}")
-        endforeach()        
+function(recurse_target_property CMAKE_BUILD_TARGET_NAME PROPERTY_NAME TRANSITIVE_LINKS_OUTPUT NON_EXISTENT_LINKS_OUTPUT)
+    # Recursive leafs:
+    #  1. This is not a known target
+    #  2. This target has not further links
+
+    # If the current item is not a target, tell the parent that this is a non-existent entity
+    if (NOT TARGET "${CMAKE_BUILD_TARGET_NAME}")
+        set("${NON_EXISTENT_DEPENDENCIES_OUTPUT}" "${CMAKE_BUILD_TARGET_NAME}" PARENT_SCOPE)
+        set("${TRANSITIVE_LINKS_OUTPUT}" PARENT_SCOPE)
+        return()
     endif()
-    unset(CURRENT_LIST_NAME)
-    # Process all arguments and fill in the module sources
-    foreach (ARGUMENT IN LISTS INPUT_ARGUMENTS)
-        # If the argument is one of our control tokens, and the list is already defined, this means the user has specified
-        # the argument twice. This is likely an error.
-        if (ARGUMENT IN_LIST CONTROL_SETS AND DEFINED "${ARGUMENT}")
-            fprime_fatal_cmake_error("${ARGUMENT} supplied multiple times in call to register_fprime_module")
-        # Now update the current list and define the backing store for it. This will allow us to capture arguments
-        # between this and other control words.
-        elseif(ARGUMENT IN_LIST CONTROL_SETS)
-            set(CURRENT_LIST_NAME "${ARGUMENT}")
-            set("${CURRENT_LIST_NAME}")
-        # Add in an element to the active control list
-        elseif(DEFINED CURRENT_LIST_NAME)
-            list(APPEND "${CURRENT_LIST_NAME}" "${ARGUMENT}")
-        # Handle arguments supplied before any control word
-        else()
-            string(REPLACE ";" " " CONTROL_SETS_STRING "${CONTROL_SETS}")
-            fprime_fatal_cmake_error("One of ${CONTROL_SETS_STRING} must be specified before list elements: ${ARGUMENT}")
+    # Get the externally visible link libraries for the given target
+    get_target_property(PROPERTY_LIST "${CMAKE_BUILD_TARGET_NAME}" INTERFACE_LINK_LIBRARIES)
+    # When there are no other link libraries below this one, return current target as the singular dependency
+    if (NOT PROPERTY_LIST)
+        set("${NON_EXISTENT_DEPENDENCIES_OUTPUT}" PARENT_SCOPE)
+        set("${TRANSITIVE_LINKS_OUTPUT}" "${CMAKE_BUILD_TARGET_NAME}" PARENT_SCOPE)
+        return()
+    endif()
+    set(PREVIOUSLY_RECURSED ${ARGN} ${CMAKE_BUILD_TARGET_NAME})
+    
+    # Look through each current link library using a recursive call
+    set(RECURSED_TRANSITIVE)
+    set(RECURSED_UNKNOWN)
+    foreach(LINK IN LISTS PROPERTY_LIST)
+        unset(INTERNAL_TRANSITIVE)
+        unset(INTERNAL_UNKNOWN)
+        # Prevent redundant recursion
+        if (NOT LINK IN_LIST PREVIOUSLY_RECURSED)
+            # Recurse through each link and append the recursively determined additions to the list
+            # while ensuring there are no duplicates
+            recurse_target_property("${LINK}" "${PROPERTY_NAME}" INTERNAL_TRANSITIVE INTERNAL_UNKNOWN ${PREVIOUSLY_RECURSED})
+            # The current link must occur in one list or the other
+            fprime_cmake_ASSERT("${LINK} must appear in '${INTERNAL_TRANSITIVE}' or '${INTERNAL_UNKNOWN}'"
+                LINK IN_LIST INTERNAL_TRANSITIVE OR LINK IN_LIST INTERNAL_UNKNOWN)
+            # Append the lists to the aggregated output
+            list(APPEND RECURSED_TRANSITIVE ${INTERNAL_TRANSITIVE})
+            list(APPEND RECURSED_UNKNOWN ${INTERNAL_UNKNOWN})
+            list(REMOVE_DUPLICATES RECURSED_TRANSITIVE)
+            list(REMOVE_DUPLICATES RECURSED_UNKNOWN)
+            # Update previously touched modules
+            list(APPEND PREVIOUSLY_RECURSED ${INTERNAL_TRANSITIVE} ${INTERNAL_UNKNOWN})
+            list(REMOVE_DUPLICATES PREVIOUSLY_RECURSED)
         endif()
     endforeach()
-    # Update caller scope with the new variables
-    set(INTERNAL_MODULE_NAME "${MODULE_NAME}" PARENT_SCOPE)
-    foreach(CONTROL_SET IN LISTS CONTROL_SETS)
-        # Define listed argument in parent scope only when they were defined within this file. This will unused control
-        # words to be undefined lists in parent scope distinguishing them from empty words.
-        if (DEFINED "${CONTROL_SET}")
-            set(INTERNAL_${CONTROL_SET} "${${CONTROL_SET}}" PARENT_SCOPE)
-        endif()
-    endforeach(CONTROL_SET IN LISTS CONTROL_SETS)
-    # Register variable watch to detect uses of old variables
-    # TODO: use these to track down non-compliance
-    unset(MOD_DEPS PARENT_SCOPE)
-    unset(SOURCE_FILES PARENT_SCOPE)
-    unset(HEADER_FILES PARENT_SCOPE)
+    # Return the results of this stage of the recursion
+    set("${NON_EXISTENT_DEPENDENCIES_OUTPUT}" ${RECURSED_UNKNOWN} PARENT_SCOPE)
+    set("${TRANSITIVE_LINKS_OUTPUT}" ${CMAKE_BUILD_TARGET_NAME} ${RECURSED_TRANSITIVE} PARENT_SCOPE)
+endfunction()
 
-    #variable_watch(MOD_DEPS)
-    #variable_watch(SOURCE_FILES)
-    #variable_watch(SOURCE_HEADERS)
-endfunction(fprime__process_module_setup)
+function(recurse_targets TARGET OUTPUT BOUND)
+    get_property(ALL_MODULES GLOBAL PROPERTY FPRIME_MODULES)
+    set(TARGET_DEPENDENCIES)
+    if (TARGET "${TARGET}")
+        get_property(TARGET_DEPENDENCIES TARGET "${TARGET}" PROPERTY FPRIME_TARGET_DEPENDENCIES)
+    endif()
+    # Extra dependencies
+    list(APPEND TARGET_DEPENDENCIES ${ARGN})
+    if (TARGET_DEPENDENCIES)
+        list(REMOVE_DUPLICATES TARGET_DEPENDENCIES)
+    endif()
+
+    set(RESULTS_LOCAL)
+    foreach(NEW_TARGET IN LISTS TARGET_DEPENDENCIES)
+        if (NOT NEW_TARGET IN_LIST BOUND AND NEW_TARGET IN_LIST ALL_MODULES)
+            list(APPEND BOUND "${NEW_TARGET}")
+            recurse_targets("${NEW_TARGET}" RESULTS "${BOUND}")
+            list(APPEND RESULTS_LOCAL ${RESULTS} "${NEW_TARGET}")
+            set(BOUND "${__BOUND__INTERNAL__}")
+        endif()
+    endforeach()
+    if (RESULTS_LOCAL)
+        list(REMOVE_DUPLICATES RESULTS_LOCAL)
+    endif()
+    set(__BOUND__INTERNAL__ "${BOUND}" PARENT_SCOPE)
+    set(${OUTPUT} "${RESULTS_LOCAL}" PARENT_SCOPE)
+endfunction()

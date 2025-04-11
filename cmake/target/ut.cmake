@@ -114,12 +114,15 @@ function(ut_add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCIES)
     set_property(DIRECTORY APPEND PROPERTY
         TEST_INCLUDE_FILES "${UT_CLEAN_SCRIPT}"
     )
-    run_ac_set("${SOURCE_FILES}" autocoder/fpp autocoder/fpp_ut)
-    resolve_dependencies(RESOLVED gtest_main ${DEPENDENCIES} ${AC_DEPENDENCIES})
+    run_ac_set("${UT_EXECUTABLE_TARGET}" autocoder/fpp autocoder/fpp_ut)
 
     # Create lists of hand-coded and generated sources not "consumed" by an autocoder
-    fprime__internal_standard_module_setup("${UT_EXECUTABLE_TARGET}" "${SOURCE_FILES}" "${AC_GENERATED_FILTERED}" "${DEPENDENCIES}" "${AC_FILE_DEPENDENCIES}" "-ut")
-
+    fprime__internal_standard_build_target_setup("${UT_EXECUTABLE_TARGET}" "-ut")
+    target_link_libraries("${UT_EXECUTABLE_TARGET}" PUBLIC gtest_main)
+    is_target_library(IS_LIBRARY "${FPRIME_CURRENT_MODULE}")
+    if (IS_LIBRARY)
+        target_link_libraries("${UT_EXECUTABLE_TARGET}" PUBLIC "${FPRIME_CURRENT_MODULE}")
+    endif()
     ut_setup_unit_test_include_directories("${UT_EXECUTABLE_TARGET}" "${SOURCE_FILES}")
     add_test(NAME ${UT_EXECUTABLE_TARGET} COMMAND ${UT_EXECUTABLE_TARGET})
 
@@ -135,6 +138,6 @@ function(ut_add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCIES)
     endif()
     # Link library list output on per-module basis
     if (CMAKE_DEBUG_OUTPUT)
-        introspect("${UT_MODULE_TARGET}")
+        introspect("${UT_EXECUTABLE_TARGET}")
     endif()
 endfunction(ut_add_module_target)

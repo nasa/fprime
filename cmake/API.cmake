@@ -228,11 +228,16 @@ endfunction(add_fprime_subdirectory)
 #
 ####
 function(register_fprime_module)
-    fprime__process_module_setup("INTERFACE" ${ARGN})
-    fprime__add_build_system_target("${INTERNAL_MODULE_NAME}" "Library" "${INTERNAL_SOURCES}" "${INTERNAL_HEADERS}" "${INTERNAL_DEPENDS}" "${INTERNAL_EXCLUDE_FROM_ALL}")
+    fprime_add_library_build_target(${ARGN})
     # Set up target/ targets for this module
     setup_module_targets("${INTERNAL_MODULE_NAME}")
 endfunction(register_fprime_module)
+
+
+function(fprime_add_library_build_target)
+    fprime__internal_add_build_target("Library" "INTERFACE" ${ARGN})
+    set(INTERNAL_MODULE_NAME "${INTERNAL_MODULE_NAME}" PARENT_SCOPE)
+endfunction()
 
 ####
 # Function `register_fprime_executable`:
@@ -302,12 +307,16 @@ function(register_fprime_executable)
     if (DEFINED EXECUTABLE_NAME)
         fprime_fatal_cmake_error("EXECUTABLE_NAME variable no longer supported")
     endif()
-    fprime__process_module_setup("INTERFACE" ${ARGN})
-    fprime__add_build_system_target("${INTERNAL_MODULE_NAME}" "Executable" "${INTERNAL_SOURCES}" "${INTERNAL_HEADERS}" "${INTERNAL_DEPENDS}" "${INTERNAL_EXCLUDE_FROM_ALL}")
+    fprime_add_exectuable_build_target(${ARGN})
 
     # Set up target/ targets for this module
     setup_module_targets("${INTERNAL_MODULE_NAME}")
 endfunction(register_fprime_executable)
+
+function(fprime_add_executable_build_target)
+    fprime__internal_add_build_target("Executable" "INTERFACE" ${ARGN})
+    set(INTERNAL_MODULE_NAME "${INTERNAL_MODULE_NAME}" PARENT_SCOPE)
+endfunction()
 
 
 ####
@@ -373,12 +382,18 @@ function(register_fprime_deployment)
     if (NOT DEFINED FPRIME_CURRENT_MODULE)
         set(FPRIME_CURRENT_MODULE "${PROJECT_NAME}")
     endif()
-    fprime__process_module_setup("INTERFACE" ${ARGN})
-    fprime__add_build_system_target("${INTERNAL_MODULE_NAME}" "Deployment" "${INTERNAL_SOURCES}" "${INTERNAL_HEADERS}" "${INTERNAL_DEPENDS}" "${INTERNAL_EXCLUDE_FROM_ALL}")
+    fprime_add_deployment_build_target(${ARGN})
 
     # Set up target/ targets for this module
     setup_module_targets("${INTERNAL_MODULE_NAME}")
 endfunction(register_fprime_deployment)
+
+
+function(fprime_add_deployment_build_target)
+    fprime__internal_add_build_target("Deployment" "INTERFACE" ${ARGN})
+    set(INTERNAL_MODULE_NAME "${INTERNAL_MODULE_NAME}" PARENT_SCOPE)
+endfunction()
+
 
 
 ####
@@ -460,14 +475,18 @@ function(register_fprime_ut)
     if (DEFINED UT_MOD_DEPS)
         set(MOD_DEPS "${UT_MOD_DEPS}")
     endif()
-
-    fprime__process_module_setup("INCLUDE_GTEST" ${ARGN})
+    fprime_add_unit_test_build_target(${ARGN})
     set(FPRIME_CURRENT_MODULE "${FPRIME_CURRENT_MODULE_OLD}")
-    fprime__add_build_system_target("${INTERNAL_MODULE_NAME}" "Unit Test" "${INTERNAL_SOURCES}" "${INTERNAL_HEADERS}" "${INTERNAL_DEPENDS}" "${INTERNAL_EXCLUDE_FROM_ALL}")
-
     # Set up target/ targets for this module
     setup_module_targets("${INTERNAL_MODULE_NAME}")
 endfunction(register_fprime_ut)
+
+
+function(fprime_add_unit_test_build_target)
+    fprime__internal_add_build_target("Unit Test" "INCLUDE_GTEST" ${ARGN})
+    set(INTERNAL_MODULE_NAME "${INTERNAL_MODULE_NAME}" PARENT_SCOPE)
+endfunction()
+
 
 ####
 # Macro `register_fprime_target`:
