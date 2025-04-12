@@ -589,6 +589,7 @@ Mutexed
 mval
 MVC
 mycompany
+NACI
 nasafprime
 nbits
 ncsl
@@ -953,6 +954,7 @@ testerbase
 testgen
 TESTLIST
 TESTLOGRECVIMPL
+testmark
 TESTPARAMIMPL
 TESTPARAMRECVIMPL
 TESTPTSOURCEIMPL
