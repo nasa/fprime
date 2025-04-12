@@ -61,9 +61,10 @@ void FileUplink ::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& bu
     }
 
     // Deserialize the file packet contents into Fw::FilePacket (remove packet type token)
-    Fw::Buffer packetContents(buffer.getData() + sizeof(packetType), buffer.getSize() - sizeof(packetType));
+    Fw::Buffer packetBuffer(buffer.getData() + sizeof(packetType),
+                            buffer.getSize() - static_cast<Fw::Buffer::SizeType>(sizeof(packetType)));
     Fw::FilePacket filePacket;
-    status = filePacket.fromBuffer(packetContents);
+    status = filePacket.fromBuffer(packetBuffer);
     if (status != Fw::FW_SERIALIZE_OK) {
         this->log_WARNING_HI_DecodeError(status);
     } else {
