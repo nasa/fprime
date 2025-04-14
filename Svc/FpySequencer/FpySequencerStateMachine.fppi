@@ -47,13 +47,6 @@ state machine SequencerStateMachine {
     action report_seqSucceeded
     @ reports that a sequence was cancelled
     action report_seqCancelled
-    @ reports that a sequence failed
-    action report_seqFailed
-
-    @ warns that the user cmd was invalid
-    action report_invalidCmd
-    @ warns that the sequence failed validation
-    action report_invalidSeq
 
     @ sets the goal state to RUNNING
     # see explanation in FpySequencer::m_goalState
@@ -99,7 +92,7 @@ state machine SequencerStateMachine {
 
         on entered do { validate }
         # -->
-        on result_failure do { report_invalidSeq, sendCmdResponse_EXECUTION_ERROR } enter IDLE
+        on result_failure do { sendCmdResponse_EXECUTION_ERROR } enter IDLE
         on result_success enter VALID
 
         ####################
@@ -146,8 +139,6 @@ state machine SequencerStateMachine {
     action resetRuntime
     @ checks if the current statement has timed out
     action checkStatementTimeout
-    @ reports that the sequence timed out
-    action report_seqTimedOut
 
     @ called in dispatchStatement method when a statement was successfully dispatched
     signal result_dispatchStatement_success
@@ -187,19 +178,19 @@ state machine SequencerStateMachine {
             entry do { dispatchStatement }
             # -->
             on result_dispatchStatement_noMoreStatements do { report_seqSucceeded, sendCmdResponse_OK } enter IDLE
-            on result_dispatchStatement_failure do { report_seqFailed, sendCmdResponse_EXECUTION_ERROR } enter IDLE
+            on result_dispatchStatement_failure do { sendCmdResponse_EXECUTION_ERROR } enter IDLE
             on result_dispatchStatement_success enter AWAITING_STATEMENT_RESPONSE
         }
 
         state AWAITING_STATEMENT_RESPONSE {
             on checkTimersIn do { checkStatementTimeout }
             # -->
-            on result_checkStatementTimeout_statementTimeout do { report_seqTimedOut, sendCmdResponse_EXECUTION_ERROR } enter IDLE
-            on result_timeOpFailed do { report_seqFailed, sendCmdResponse_EXECUTION_ERROR } enter IDLE
+            on result_checkStatementTimeout_statementTimeout do { sendCmdResponse_EXECUTION_ERROR } enter IDLE
+            on result_timeOpFailed do { sendCmdResponse_EXECUTION_ERROR } enter IDLE
             # result_checkStatementTimeout_noTimeout not handled, no need
 
             on stmtResponse_success enter DISPATCH_STATEMENT
-            on stmtResponse_failure do { report_seqFailed, sendCmdResponse_EXECUTION_ERROR } enter IDLE
+            on stmtResponse_failure do { sendCmdResponse_EXECUTION_ERROR } enter IDLE
             on stmtResponse_beginSleep enter SLEEPING
         }
 
@@ -209,7 +200,7 @@ state machine SequencerStateMachine {
             # -->
             on result_checkShouldWake_wakeup enter DISPATCH_STATEMENT
             # this can occur if the time base/ctx changes, or was invalid from the start
-            on result_timeOpFailed do { report_seqFailed, sendCmdResponse_EXECUTION_ERROR } enter IDLE
+            on result_timeOpFailed do { sendCmdResponse_EXECUTION_ERROR } enter IDLE
             # if keepSleeping is raised, stay asleep
         }
 

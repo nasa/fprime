@@ -42,20 +42,20 @@ Fw::Success FpySequencer::dispatchCommand(const Fpy::Statement& stmt) {
     Fw::ComBuffer cmdBuf;
     Fw::SerializeStatus stat = cmdBuf.serialize(Fw::ComPacket::FW_PACKET_COMMAND);
     if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
-        this->log_WARNING_HI_SerializeError(cmdBuf.getBuffCapacity(), cmdBuf.getBuffLength(),
-                                            sizeof(Fw::ComPacket::FW_PACKET_COMMAND), stat);
+        this->log_WARNING_HI_CommandSerializeError(stmt.getopCode(), cmdBuf.getBuffCapacity(), cmdBuf.getBuffLength(),
+                                            sizeof(Fw::ComPacket::FW_PACKET_COMMAND), stat, this->m_runtime.nextStatementIndex - 1);
         return Fw::Success::FAILURE;
     }
     stat = cmdBuf.serialize(stmt.getopCode());
     if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
-        this->log_WARNING_HI_SerializeError(cmdBuf.getBuffCapacity(), cmdBuf.getBuffLength(), sizeof(stmt.getopCode()),
-                                            stat);
+        this->log_WARNING_HI_CommandSerializeError(stmt.getopCode(), cmdBuf.getBuffCapacity(), cmdBuf.getBuffLength(), sizeof(stmt.getopCode()),
+                                                stat, this->m_runtime.nextStatementIndex - 1);
         return Fw::Success::FAILURE;
     }
     stat = cmdBuf.serialize(stmt.getargBuf().getBuffAddr(), stmt.getargBuf().getBuffLength(), true);
     if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
-        this->log_WARNING_HI_SerializeError(cmdBuf.getBuffCapacity(), cmdBuf.getBuffLength(),
-                                            stmt.getargBuf().getBuffLength(), stat);
+        this->log_WARNING_HI_CommandSerializeError(stmt.getopCode(), cmdBuf.getBuffCapacity(), cmdBuf.getBuffLength(),
+                                                   stmt.getargBuf().getBuffLength(), stat, this->m_runtime.nextStatementIndex - 1);
         return Fw::Success::FAILURE;
     }
 
@@ -79,7 +79,7 @@ Fw::Success FpySequencer::dispatchDirective(const Fpy::Statement& stmt) {
             FpySequencer_WaitRelDirective directive;
             status = argBuf.deserialize(directive);
             if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || argBuf.getBuffLeft() != 0) {
-                this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), status, argBuf.getBuffLeft(),
+                this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), this->m_runtime.nextStatementIndex - 1, status, argBuf.getBuffLeft(),
                                                                argBuf.getBuffLength());
                 return Fw::Success::FAILURE;
             }
@@ -90,7 +90,7 @@ Fw::Success FpySequencer::dispatchDirective(const Fpy::Statement& stmt) {
             FpySequencer_WaitAbsDirective directive;
             status = argBuf.deserialize(directive);
             if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || argBuf.getBuffLeft() != 0) {
-                this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), status, argBuf.getBuffLeft(),
+                this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), this->m_runtime.nextStatementIndex - 1, status, argBuf.getBuffLeft(),
                                                                argBuf.getBuffLength());
                 return Fw::Success::FAILURE;
             }
@@ -112,7 +112,7 @@ Signal FpySequencer::checkShouldWake() {
 #ifdef FW_USE_TIME_BASE
     if (currentTime.getTimeBase() != this->m_runtime.wakeupTime.getTimeBase()) {
         // cannot compare these times.
-        this->log_WARNING_LO_MismatchedTimeBase(currentTime.getTimeBase(), this->m_runtime.wakeupTime.getTimeBase());
+        this->log_WARNING_HI_MismatchedTimeBase(currentTime.getTimeBase(), this->m_runtime.wakeupTime.getTimeBase());
 
         return Signal::result_timeOpFailed;
     }
@@ -121,7 +121,7 @@ Signal FpySequencer::checkShouldWake() {
 #ifdef FW_USE_TIME_CONTEXT
     if (currentTime.getContext() != this->m_runtime.wakeupTime.getContext()) {
         // cannot compare these times.
-        this->log_WARNING_LO_MismatchedTimeContext(currentTime.getContext(), this->m_runtime.wakeupTime.getContext());
+        this->log_WARNING_HI_MismatchedTimeContext(currentTime.getContext(), this->m_runtime.wakeupTime.getContext());
 
         return Signal::result_timeOpFailed;
     }
@@ -150,7 +150,7 @@ Signal FpySequencer::checkStatementTimeout() {
 #ifdef FW_USE_TIME_BASE
     if (currentTime.getTimeBase() != this->m_runtime.currentStatementDispatchTime.getTimeBase()) {
         // can't compare time base. must have changed
-        this->log_WARNING_LO_MismatchedTimeBase(currentTime.getTimeBase(),
+        this->log_WARNING_HI_MismatchedTimeBase(currentTime.getTimeBase(),
                                                 this->m_runtime.currentStatementDispatchTime.getTimeBase());
         return Signal::result_timeOpFailed;
     }
@@ -158,7 +158,7 @@ Signal FpySequencer::checkStatementTimeout() {
 #ifdef FW_USE_TIME_CONTEXT
     if (currentTime.getContext() != this->m_runtime.currentStatementDispatchTime.getContext()) {
         // can't compare time ctx. must have changed
-        this->log_WARNING_LO_MismatchedTimeContext(currentTime.getContext(),
+        this->log_WARNING_HI_MismatchedTimeContext(currentTime.getContext(),
                                                    this->m_runtime.currentStatementDispatchTime.getContext());
         return Signal::result_timeOpFailed;
     }
@@ -187,6 +187,10 @@ Signal FpySequencer::checkStatementTimeout() {
         return Signal::result_checkStatementTimeout_noTimeout;
     }
 
+    this->log_WARNING_HI_StatementTimedOut(this->m_runtime.currentStatementType, 
+                                           this->m_runtime.currentStatementOpcode, 
+                                           this->m_runtime.nextStatementIndex - 1, 
+                                           this->m_sequenceFilePath);
     return Signal::result_checkStatementTimeout_statementTimeout;
 }
 

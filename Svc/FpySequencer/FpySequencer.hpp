@@ -132,30 +132,6 @@ class FpySequencer : public FpySequencerComponentBase {
         Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action report_seqFailed of state machine Svc_FpySequencer_SequencerStateMachine
-    //!
-    //! reports that a sequence failed
-    void Svc_FpySequencer_SequencerStateMachine_action_report_seqFailed(
-        SmId smId,                                             //!< The state machine id
-        Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
-        ) override;
-
-    //! Implementation for action report_invalidCmd of state machine Svc_FpySequencer_SequencerStateMachine
-    //!
-    //! warns that the user cmd was invalid
-    void Svc_FpySequencer_SequencerStateMachine_action_report_invalidCmd(
-        SmId smId,                                             //!< The state machine id
-        Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
-        ) override;
-
-    //! Implementation for action report_invalidSeq of state machine Svc_FpySequencer_SequencerStateMachine
-    //!
-    //! warns that the sequence failed validation
-    void Svc_FpySequencer_SequencerStateMachine_action_report_invalidSeq(
-        SmId smId,                                             //!< The state machine id
-        Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
-        ) override;
-
     //! Implementation for action setGoalState_RUNNING of state machine Svc_FpySequencer_SequencerStateMachine
     //!
     //! sets the goal state to RUNNING
@@ -237,13 +213,6 @@ class FpySequencer : public FpySequencerComponentBase {
         Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action report_seqTimedOut of state machine Svc_FpySequencer_SequencerStateMachine
-    //!
-    //! reports that the sequence timed out
-    void Svc_FpySequencer_SequencerStateMachine_action_report_seqTimedOut(
-        SmId smId,                                             //!< The state machine id
-        Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
-        ) override;
     PROTECTED :
 
         // ----------------------------------------------------------------------
@@ -338,6 +307,8 @@ class FpySequencer : public FpySequencerComponentBase {
 
         // the opcode of the statement that is currently executing
         FwOpcodeType currentStatementOpcode = Fpy::DirectiveId::INVALID;
+        // the stmt type of the stmt currently executing (cmd or directive)
+        Fpy::StatementType currentStatementType = Fpy::StatementType::DIRECTIVE;
         // the time we dispatched the statement that is currently executing
         Fw::Time currentStatementDispatchTime = Fw::Time();
 

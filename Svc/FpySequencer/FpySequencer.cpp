@@ -39,7 +39,7 @@ void FpySequencer::RUN_cmdHandler(FwOpcodeType opCode,               //!< The op
 ) {
     // can only run a seq while in idle
     if (sequencer_getState() != FpySequencer_SequencerStateMachineStateMachineBase::State::IDLE) {
-        this->log_WARNING_LO_InvalidCommand(static_cast<I32>(sequencer_getState()));
+        this->log_WARNING_HI_InvalidCommand(static_cast<I32>(sequencer_getState()));
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
@@ -67,7 +67,7 @@ void FpySequencer::VALIDATE_cmdHandler(FwOpcodeType opCode,              //!< Th
 ) {
     // can only validate a seq while in idle
     if (sequencer_getState() != FpySequencer_SequencerStateMachineStateMachineBase::State::IDLE) {
-        this->log_WARNING_LO_InvalidCommand(static_cast<I32>(sequencer_getState()));
+        this->log_WARNING_HI_InvalidCommand(static_cast<I32>(sequencer_getState()));
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
@@ -91,7 +91,7 @@ void FpySequencer::RUN_VALIDATED_cmdHandler(
 ) {
     // can only RUN_VALIDATED if we have validated and are awaiting this exact cmd
     if (sequencer_getState() != FpySequencer_SequencerStateMachineStateMachineBase::State::AWAITING_CMD_RUN_VALIDATED) {
-        this->log_WARNING_LO_InvalidCommand(static_cast<I32>(sequencer_getState()));
+        this->log_WARNING_HI_InvalidCommand(static_cast<I32>(sequencer_getState()));
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
@@ -102,7 +102,7 @@ void FpySequencer::RUN_VALIDATED_cmdHandler(
         this->m_savedCmdSeq = cmdSeq;
     }
 
-    this->sequencer_sendSignal_cmd_RUN_VALIDATED(FpySequencer_SequenceExecutionArgs(m_sequenceFilePath, block));
+    this->sequencer_sendSignal_cmd_RUN_VALIDATED(FpySequencer_SequenceExecutionArgs(this->m_sequenceFilePath, block));
 
     // only respond if the user doesn't want us to block further execution
     if (block == FpySequencer_BlockState::NO_BLOCK) {
@@ -118,7 +118,7 @@ void FpySequencer::CANCEL_cmdHandler(FwOpcodeType opCode,  //!< The opcode
 ) {
     // only state you can't cancel in is IDLE
     if (sequencer_getState() == FpySequencer_SequencerStateMachineStateMachineBase::State::IDLE) {
-        this->log_WARNING_LO_InvalidCommand(static_cast<I32>(sequencer_getState()));
+        this->log_WARNING_HI_InvalidCommand(static_cast<I32>(sequencer_getState()));
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
@@ -151,13 +151,13 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
 ) {
     if (this->sequencer_getState() !=
         FpySequencer_SequencerStateMachineStateMachineBase::State::RUNNING_AWAITING_STATEMENT_RESPONSE) {
-        this->log_WARNING_LO_UnexpectedStatementResponseForState(static_cast<I32>(this->sequencer_getState()), opCode,
+        this->log_WARNING_HI_UnexpectedStatementResponseForState(static_cast<I32>(this->sequencer_getState()), opCode,
                                                                  response);
         // ignore it, hopefully that wasn't important :D
         return;
     }
-    if (opCode != this->m_runtime.currentStatementOpcode) {
-        this->log_WARNING_LO_WrongStatementResponseOpcode(this->m_runtime.currentStatementOpcode, opCode, response);
+    if (opCode != this->m_runtime.currentStatementOpcode || this->m_runtime.currentStatementType != Fpy::StatementType::COMMAND) {
+        this->log_WARNING_HI_WrongStatementResponseOpcode(this->m_runtime.currentStatementOpcode, this->m_runtime.currentStatementType, opCode, response);
         // uh oh... we're awaiting a cmd but got the wrong one back...
         // not much we can do but keep waiting
         return;
@@ -167,6 +167,8 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
     if (response == Fw::CmdResponse::OK) {
         this->sequencer_sendSignal_stmtResponse_success();
     } else {
+        this->log_WARNING_HI_StatementFailed(Fpy::StatementType::COMMAND, opCode, this->m_runtime.nextStatementIndex - 1, 
+                                             this->m_sequenceFilePath, response);
         this->sequencer_sendSignal_stmtResponse_failure();
     }
 }

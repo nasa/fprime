@@ -64,41 +64,6 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_report_seqCance
     this->log_ACTIVITY_HI_SequenceCancelled(this->m_sequenceFilePath);
 }
 
-//! Implementation for action report_invalidCmd of state machine
-//! Svc_FpySequencer_SequencerStateMachine
-//!
-//! warns that the user cmd was invalid
-void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_report_invalidCmd(
-    SmId smId,                                             //!< The state machine id
-    Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
-) {
-    FwEnumStoreType stateIdx = static_cast<FwEnumStoreType>(this->sequencer_getState());
-    this->log_WARNING_LO_InvalidCommand(stateIdx);
-}
-
-//! Implementation for action report_invalidSeq of state machine
-//! Svc_FpySequencer_SequencerStateMachine
-//!
-//! warns that the sequence failed validation
-void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_report_invalidSeq(
-    SmId smId,                                             //!< The state machine id
-    Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
-) {
-    this->log_WARNING_HI_InvalidSequence(this->m_sequenceFilePath);
-}
-
-//! Implementation for action report_seqFailed of state machine
-//! Svc_FpySequencer_SequencerStateMachine
-//!
-//! reports that a sequence failed
-void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_report_seqFailed(
-    SmId smId,                                             //!< The state machine id
-    Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
-) {
-    this->m_tlm.sequencesFailed++;
-    this->log_WARNING_LO_SequenceFailed(this->m_sequenceFilePath);
-}
-
 //! Implementation for action dispatchStatement of state machine
 //! Svc_FpySequencer_SequencerStateMachine
 //!
@@ -270,17 +235,6 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_checkStatementT
             FW_ASSERT(0, static_cast<FwAssertArgType>(result));
         }
     }
-}
-
-//! Implementation for action report_seqTimedOut of state machine Svc_FpySequencer_SequencerStateMachine
-//!
-//! reports that the sequence timed out
-void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_report_seqTimedOut(
-    SmId smId,                                             //!< The state machine id
-    Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
-) {
-    this->m_tlm.sequencesFailed++;
-    this->log_WARNING_LO_SequenceTimedOut(this->m_sequenceFilePath);
 }
 
 //! Implementation for action clearSequenceFile of state machine Svc_FpySequencer_SequencerStateMachine

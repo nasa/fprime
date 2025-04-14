@@ -65,17 +65,17 @@ Fw::Success FpySequencer::validate() {
 
     // check matching schema version
     if (this->m_sequenceObj.getheader().getschemaVersion() != Fpy::SCHEMA_VERSION) {
-        this->log_WARNING_LO_WrongSchemaVersion(Fpy::SCHEMA_VERSION, this->m_sequenceObj.getheader().getschemaVersion());
+        this->log_WARNING_HI_WrongSchemaVersion(Fpy::SCHEMA_VERSION, this->m_sequenceObj.getheader().getschemaVersion());
         return Fw::Success::FAILURE;
     }
 
     if (this->m_sequenceObj.getheader().getargumentCount() > Fpy::MAX_SEQUENCE_ARG_COUNT) {
-        this->log_WARNING_HI_TooManyArgs(m_sequenceObj.getheader().getargumentCount(), Fpy::MAX_SEQUENCE_ARG_COUNT);
+        this->log_WARNING_HI_TooManySequenceArgs(m_sequenceObj.getheader().getargumentCount(), Fpy::MAX_SEQUENCE_ARG_COUNT);
         return Fw::Success::FAILURE;
     }
 
     if (this->m_sequenceObj.getheader().getstatementCount() > Fpy::MAX_SEQUENCE_STATEMENT_COUNT) {
-        this->log_WARNING_HI_TooManyStatements(this->m_sequenceObj.getheader().getstatementCount(), Fpy::MAX_SEQUENCE_STATEMENT_COUNT);
+        this->log_WARNING_HI_TooManySequenceStatements(this->m_sequenceObj.getheader().getstatementCount(), Fpy::MAX_SEQUENCE_STATEMENT_COUNT);
         return Fw::Success::FAILURE;
     }
 
@@ -127,7 +127,7 @@ Fw::Success FpySequencer::validate() {
     this->m_computedCRC = ~this->m_computedCRC;
 
     if (this->m_computedCRC != this->m_sequenceObj.getfooter().getcrc()) {
-        this->log_WARNING_LO_WrongCRC(this->m_sequenceObj.getfooter().getcrc(), this->m_computedCRC);
+        this->log_WARNING_HI_WrongCRC(this->m_sequenceObj.getfooter().getcrc(), this->m_computedCRC);
         return Fw::Success::FAILURE;
     }
 
@@ -139,7 +139,7 @@ Fw::Success FpySequencer::validate() {
     FW_ASSERT(sequenceFile.position(sequenceFilePosition) == Os::File::Status::OP_OK);
 
     if (sequenceFileSize != sequenceFilePosition) {
-        this->log_WARNING_LO_ExtraBytesInSequence(static_cast<U32>(sequenceFileSize - sequenceFilePosition));
+        this->log_WARNING_HI_ExtraBytesInSequence(static_cast<U32>(sequenceFileSize - sequenceFilePosition));
         return Fw::Success::FAILURE;
     }
 
@@ -158,13 +158,11 @@ Fw::Success FpySequencer::readBytes(Os::File& file, FwSizeType readLen, bool upd
 
     // if this fails, then you need to give the sequencer more buffer memory. pass in a bigger number
     // to fpySeq.allocateBuffer(). This is usually done in topology setup CPP
-    if (capacity < static_cast<FwSizeType>(expectedReadLen)) {
-        this->log_WARNING_LO_OutOfBufferSpace(capacity, this->m_sequenceFilePath);
+    if (static_cast<FwSizeType>(expectedReadLen) > capacity) {
+        this->log_WARNING_HI_InsufficientBufferSpace(capacity, this->m_sequenceFilePath);
         return Fw::Success::FAILURE;
     }
 
-    FW_ASSERT(capacity >= static_cast<FwSizeType>(expectedReadLen), static_cast<FwAssertArgType>(capacity),
-              static_cast<FwAssertArgType>(expectedReadLen));
     Os::File::Status fileStatus = file.read(this->m_sequenceBuffer.getBuffAddr(), expectedReadLen);
 
     if (fileStatus != Os::File::OP_OK) {
