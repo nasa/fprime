@@ -97,7 +97,9 @@ public:
 
     //! Returns a ExternalSerializeBufferWithMemberCopy representation of the wrapped data for serializing
     //!
-    //! \warning Assumes that this buffer is entirely empty.
+    //! \warning Assumes that this buffer is entirely empty. If the buffer is not empty it is still possible to 
+    //! \warning manipulate the serialization offsets with moveSerToOffset and serializeSkip methods inherited 
+    //! \warning from SerializableBufferBase.
     //!
     //! \return representation of the wrapped data to aid in serializing to it
     ExternalSerializeBufferWithMemberCopy getSerializer();

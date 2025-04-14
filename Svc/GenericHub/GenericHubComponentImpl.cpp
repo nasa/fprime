@@ -66,11 +66,6 @@ void GenericHubComponentImpl ::dataIn_handler(const FwIndexType portNum, Fw::Buf
 
     // Representation of incoming data prepped for serialization
     auto incoming = fwBuffer.getDeserializer();
-    FW_ASSERT(incoming.setBuffLen(fwBuffer.getSize()) == Fw::FW_SERIALIZE_OK);
-
-    // Must inform buffer that there is *real* data in the buffer
-    status = incoming.setBuffLen(fwBuffer.getSize());
-    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     status = incoming.deserialize(type_in);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     type = static_cast<HubType>(type_in);
