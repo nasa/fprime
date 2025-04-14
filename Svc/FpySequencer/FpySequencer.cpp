@@ -159,7 +159,7 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
         && this->sequencer_getState() != State::RUNNING_DISPATCH_STATEMENT
         && this->sequencer_getState() != State::RUNNING_SLEEPING) {
         // must be a coding error.
-        this->log_WARNING_HI_CmdResponseWhileNotRunningSequence(static_cast<I32>(this->sequencer_getState()), opCode,
+        this->log_WARNING_LO_CmdResponseWhileNotRunningSequence(static_cast<I32>(this->sequencer_getState()), opCode,
                                                                 response);
         // ignore it, hopefully that wasn't important :D
         return;
@@ -196,26 +196,34 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
     // first, make sure we're actually awaiting a command
     if (this->sequencer_getState() != State::RUNNING_AWAITING_STATEMENT_RESPONSE) {
         // okay, crap. something from this sequence responded, and we weren't awaiting anything. end it all
-        // TODO add event for this
+        this->log_WARNING_HI_CmdResponseWhileNotAwaiting(opCode, response);
         this->sequencer_sendSignal_stmtResponse_unexpected();
         return;
     }
 
     // okay, we were awaiting a command. were we awaiting this opcode?
     if (opCode != this->m_runtime.currentStatementOpcode || this->m_runtime.currentStatementType != Fpy::StatementType::COMMAND) {
-        this->log_WARNING_HI_WrongCmdResponseOpcode(this->m_runtime.currentStatementOpcode, opCode, response);
-        // uh oh... we're awaiting a cmd but got the wrong one back...
-        // not much we can do but keep waiting
+        // we were not awaiting this opcode. coding error, likely on the part of the repsonding component or cmd dispatcher
+        this->log_WARNING_HI_WrongCmdResponseOpcode(opCode, response, this->m_runtime.currentStatementOpcode);
+        this->sequencer_sendSignal_stmtResponse_unexpected();
         return;
     }
 
-    // if it was from a different cmd:
+    // okay, we were awaiting this opcode. but was it from this exact statement, or a different one with the same opcode
+    // in the same file?
     if (cmdIndex != currentCmdIndex) {
-        this->log_WARNING_LO_CmdResponseFromOldSequence(opCode, response, sequenceIndex, currentSequenceIndex);
+        // we were not awaiting this exact statement, it was a different one with the same opcode. coding error
+        this->log_WARNING_HI_WrongCmdResponseIndex(opCode, response, cmdIndex, currentCmdIndex);
+        this->sequencer_sendSignal_stmtResponse_unexpected();
         return;
     }
 
-    // okay, got the right cmd back
+    // okay, got the right cmd back. we have verified:
+    // 1) we are in the RUNNING state
+    // 2) the response is from this sequence
+    // 3) the response is from the correct opcode
+    // 4) the response is from the correct instance of that opcode in the sequence
+
     if (response == Fw::CmdResponse::OK) {
         this->sequencer_sendSignal_stmtResponse_success();
     } else {

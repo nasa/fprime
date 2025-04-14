@@ -106,16 +106,8 @@ event CmdResponseWhileNotRunningSequence(
     $opcode: U32
     response: Fw.CmdResponse
 ) \
-    severity warning high \
+    severity warning low \
     format "Received a command response while not running a sequence (was in state {} opcode was {} response code {})"
-
-event WrongCmdResponseOpcode(
-    expectedOpcode: U32
-    $opcode: U32
-    response: Fw.CmdResponse
-) \
-    severity warning high \
-    format "Was expecting a response from command opcode {}, but got one for opcode {} (response code {})"
 
 event CmdResponseFromOldSequence(
     $opcode: U32
@@ -124,7 +116,31 @@ event CmdResponseFromOldSequence(
     currentSequenceIdx: U16
 ) \
     severity warning low \
-    format "Command opcode {} responded {}, but it was from a previous sequence (old idx: {}, current idx: {})"
+    format "Received a response from cmd opcode {} (response {}), but it was from a previous sequence, not the current one (old idx: {}, current idx: {})"
+
+event CmdResponseWhileNotAwaiting(
+    $opcode: U32
+    response: Fw.CmdResponse
+) \
+    severity warning high \
+    format "Received a response from cmd opcode {} (response {}) from this sequence, but was not awaiting a response"
+
+event WrongCmdResponseOpcode(
+    $opcode: U32
+    response: Fw.CmdResponse
+    expectedOpcode: U32
+) \
+    severity warning high \
+    format "Received a response from cmd opcode {} (response {}) from this sequence, but was expecting a response from command opcode {}"
+
+event WrongCmdResponseIndex(
+    $opcode: U32
+    response: Fw.CmdResponse
+    actualCmdIdx: U16
+    expectedCmdIdx: U16
+) \
+    severity warning high \
+    format "Received a response from the correct cmd (opcode {} response {}), but it was for a different instance of that opcode in the same sequence (actual idx {} expected {})"
 
 # TODO make sure to call this with appropriate stmt idx when directive is dynamically constructed
 event DirectiveDeserializeError(
