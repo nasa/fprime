@@ -17,6 +17,7 @@ Signal FpySequencer::dispatchStatement() {
     const Fpy::Statement& nextStatement = this->m_sequenceObj.getstatements()[this->m_runtime.nextStatementIndex];
     this->m_runtime.nextStatementIndex++;
     this->m_runtime.currentStatementOpcode = nextStatement.getopCode();
+    this->m_runtime.currentStatementType = nextStatement.gettype();
 
     Fw::Success result;
 
@@ -99,7 +100,7 @@ Fw::Success FpySequencer::dispatchDirective(const Fpy::Statement& stmt) {
         }
         default: {
             // unsure what this opcode is. check compiler version matches sequencer
-            this->log_WARNING_HI_UnknownSequencerDirective(stmt.getopCode());
+            this->log_WARNING_HI_UnknownSequencerDirective(stmt.getopCode(), this->m_runtime.nextStatementIndex - 1, this->m_sequenceFilePath);
             return Fw::Success::FAILURE;
         }
     }

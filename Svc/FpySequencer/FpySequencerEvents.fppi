@@ -84,9 +84,11 @@ event SequenceCancelled(
 
 event UnknownSequencerDirective(
     $opcode: U32
+    stmtIdx: U32
+    filePath: string
 ) \
     severity warning high \
-    format "Unknown sequencer directive id {}"
+    format "Unknown sequencer directive id {} at index {} in file {}"
 
 event CommandSerializeError(
     cmdOpcode: U32
@@ -99,22 +101,21 @@ event CommandSerializeError(
     severity warning high \
     format "Failure while serializing cmd opcode {}: buf capacity {}, cur write pos {}, write size {}, error code {}, current statement index {}"
 
-event UnexpectedStatementResponseForState(
+event UnexpectedCmdResponseForState(
     $state: I32
     $opcode: U32
     response: Fw.CmdResponse
 ) \
     severity warning high \
-    format "Received a statement response while in state {} (opcode {} response code {})"
+    format "Received a command response while in state {} (opcode was {} response code {})"
 
-event WrongStatementResponseOpcode(
+event WrongCmdResponseOpcode(
     expectedOpcode: U32
-    expectedType: Fpy.StatementType
     $opcode: U32
     response: Fw.CmdResponse
 ) \
     severity warning high \
-    format "Was expecting a response from statement opcode {} type {}, but got one for opcode {} (response code {})"
+    format "Was expecting a response from command opcode {}, but got one for opcode {} (response code {})"
 
 # TODO make sure to call this with appropriate stmt idx when directive is dynamically constructed
 event DirectiveDeserializeError(

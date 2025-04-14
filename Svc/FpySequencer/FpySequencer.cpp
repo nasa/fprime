@@ -151,13 +151,13 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
 ) {
     if (this->sequencer_getState() !=
         FpySequencer_SequencerStateMachineStateMachineBase::State::RUNNING_AWAITING_STATEMENT_RESPONSE) {
-        this->log_WARNING_HI_UnexpectedStatementResponseForState(static_cast<I32>(this->sequencer_getState()), opCode,
-                                                                 response);
+        this->log_WARNING_HI_UnexpectedCmdResponseForState(static_cast<I32>(this->sequencer_getState()), opCode,
+                                                           response);
         // ignore it, hopefully that wasn't important :D
         return;
     }
     if (opCode != this->m_runtime.currentStatementOpcode || this->m_runtime.currentStatementType != Fpy::StatementType::COMMAND) {
-        this->log_WARNING_HI_WrongStatementResponseOpcode(this->m_runtime.currentStatementOpcode, this->m_runtime.currentStatementType, opCode, response);
+        this->log_WARNING_HI_WrongStatementResponseOpcode(this->m_runtime.currentStatementOpcode, opCode, response);
         // uh oh... we're awaiting a cmd but got the wrong one back...
         // not much we can do but keep waiting
         return;
