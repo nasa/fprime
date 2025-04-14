@@ -27,6 +27,7 @@ static_assert(Svc::Fpy::MAX_SEQUENCE_STATEMENT_COUNT <= std::numeric_limits<U16>
 namespace Svc {
 
 using Signal = FpySequencer_SequencerStateMachineStateMachineBase::Signal;
+using State = FpySequencer_SequencerStateMachineStateMachineBase::State;
 
 class FpySequencer : public FpySequencerComponentBase {
   public:
@@ -213,6 +214,14 @@ class FpySequencer : public FpySequencerComponentBase {
         Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
         ) override;
 
+    //! Implementation for action incrementSequenceCounter of state machine Svc_FpySequencer_SequencerStateMachine
+    //!
+    //! increments the m_sequencesStarted counter
+    void Svc_FpySequencer_SequencerStateMachine_action_incrementSequenceCounter(
+        SmId smId, //!< The state machine id
+        Svc_FpySequencer_SequencerStateMachine::Signal signal //!< The signal
+        ) override;
+
     PROTECTED :
 
         // ----------------------------------------------------------------------
@@ -296,6 +305,12 @@ class FpySequencer : public FpySequencerComponentBase {
     // sequence. if it's VALID, we should wait after VALIDATING
     FpySequencer_GoalState m_goalState;
 
+    // the total number of sequences this sequencer has started since construction
+    U64 m_sequencesStarted;
+    // the total number of statements this sequencer has dispatched, successfully or
+    // otherwise, since construction
+    U64 m_statementsDispatched;
+
     // the runtime state of the sequence. encapsulates all state
     // needed to run the sequence.
     // this is distinct from the state of the sequencer. the
@@ -318,9 +333,6 @@ class FpySequencer : public FpySequencerComponentBase {
     } m_runtime;
 
     struct Telemetry {
-        // the number of statements successfully dispatched total
-        U64 statementsDispatched = 0;
-
         // the number of statements that failed to execute
         U64 statementsFailed = 0;
 

@@ -237,6 +237,16 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_checkStatementT
     }
 }
 
+//! Implementation for action incrementSequenceCounter of state machine Svc_FpySequencer_SequencerStateMachine
+//!
+//! increments the m_sequencesStarted counter
+void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_incrementSequenceCounter(
+    SmId smId, //!< The state machine id
+    Svc_FpySequencer_SequencerStateMachine::Signal signal //!< The signal
+) {
+    this->m_sequencesStarted++;
+}
+
 //! Implementation for action clearSequenceFile of state machine Svc_FpySequencer_SequencerStateMachine
 //!
 //! clears all variables related to the loading/validating of the sequence file

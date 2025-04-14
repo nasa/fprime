@@ -101,13 +101,13 @@ event CommandSerializeError(
     severity warning high \
     format "Failure while serializing cmd opcode {}: buf capacity {}, cur write pos {}, write size {}, error code {}, current statement index {}"
 
-event UnexpectedCmdResponseForState(
+event CmdResponseWhileNotRunningSequence(
     $state: I32
     $opcode: U32
     response: Fw.CmdResponse
 ) \
     severity warning high \
-    format "Received a command response while in state {} (opcode was {} response code {})"
+    format "Received a command response while not running a sequence (was in state {} opcode was {} response code {})"
 
 event WrongCmdResponseOpcode(
     expectedOpcode: U32
@@ -116,6 +116,15 @@ event WrongCmdResponseOpcode(
 ) \
     severity warning high \
     format "Was expecting a response from command opcode {}, but got one for opcode {} (response code {})"
+
+event CmdResponseFromOldSequence(
+    $opcode: U32
+    response: Fw.CmdResponse
+    oldSequenceIdx: U16
+    currentSequenceIdx: U16
+) \
+    severity warning low \
+    format "Command opcode {} responded {}, but it was from a previous sequence (old idx: {}, current idx: {})"
 
 # TODO make sure to call this with appropriate stmt idx when directive is dynamically constructed
 event DirectiveDeserializeError(

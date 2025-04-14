@@ -139,6 +139,8 @@ state machine SequencerStateMachine {
     action resetRuntime
     @ checks if the current statement has timed out
     action checkStatementTimeout
+    @ increments the m_sequencesStarted counter
+    action incrementSequenceCounter
 
     @ called in dispatchStatement method when a statement was successfully dispatched
     signal result_dispatchStatement_success
@@ -161,6 +163,8 @@ state machine SequencerStateMachine {
     signal stmtResponse_success
     @ called when the expected statement response comes in, and it is not OK. only raised in the RUNNING.AWAITING_CMD_RESPONSE state
     signal stmtResponse_failure
+    @ called when an unexpected or incorrect statement response comes in. only raised in the RUNNING state
+    signal stmtResponse_unexpected
     @ raised when the statement times out, according to the timeout parameter
     signal result_checkStatementTimeout_statementTimeout
     @ raised when the statement has not timed out yet
@@ -168,8 +172,9 @@ state machine SequencerStateMachine {
 
     @ sequencer is executing all statements in the sequence
     state RUNNING {
-        @ start with a fresh baked runtime
-        entry do { resetRuntime }
+        @ start with a fresh baked runtime, and tick up the
+        @ sequence counter
+        entry do { resetRuntime, incrementSequenceCounter }
 
         initial enter DISPATCH_STATEMENT
 
@@ -203,6 +208,13 @@ state machine SequencerStateMachine {
             on result_timeOpFailed do { sendCmdResponse_EXECUTION_ERROR } enter IDLE
             # if keepSleeping is raised, stay asleep
         }
+
+        @ fail the sequence if we got an unexpected statement response while running it.
+        @ the definition of unexpected is complicated, see FpySequencer::cmdResponseIn_handler.
+        @ in general, it is "unexpected" if there isn't a nominal way of producing this response.
+        @ sometimes, we can produce responses in strange situations nominally by cancelling and
+        @ quickly running sequences. this signal does not cover such cases.
+        on stmtResponse_unexpected do { sendCmdResponse_EXECUTION_ERROR } enter IDLE
 
         ####################
         # commands         #

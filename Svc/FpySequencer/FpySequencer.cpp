@@ -23,6 +23,8 @@ FpySequencer ::FpySequencer(const char* const compName) :
     m_savedOpCode(0),
     m_savedCmdSeq(0),
     m_goalState(),
+    m_sequencesStarted(0),
+    m_statementsDispatched(0),
     m_runtime(),
     m_tlm()
 {}
@@ -38,7 +40,7 @@ void FpySequencer::RUN_cmdHandler(FwOpcodeType opCode,               //!< The op
                                   FpySequencer_BlockState block      //!< Return command status when complete or not
 ) {
     // can only run a seq while in idle
-    if (sequencer_getState() != FpySequencer_SequencerStateMachineStateMachineBase::State::IDLE) {
+    if (sequencer_getState() != State::IDLE) {
         this->log_WARNING_HI_InvalidCommand(static_cast<I32>(sequencer_getState()));
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
@@ -66,7 +68,7 @@ void FpySequencer::VALIDATE_cmdHandler(FwOpcodeType opCode,              //!< Th
                                        const Fw::CmdStringArg& fileName  //!< The name of the sequence file
 ) {
     // can only validate a seq while in idle
-    if (sequencer_getState() != FpySequencer_SequencerStateMachineStateMachineBase::State::IDLE) {
+    if (sequencer_getState() != State::IDLE) {
         this->log_WARNING_HI_InvalidCommand(static_cast<I32>(sequencer_getState()));
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
@@ -90,7 +92,7 @@ void FpySequencer::RUN_VALIDATED_cmdHandler(
     FpySequencer_BlockState block  //!< Return command status when complete or not
 ) {
     // can only RUN_VALIDATED if we have validated and are awaiting this exact cmd
-    if (sequencer_getState() != FpySequencer_SequencerStateMachineStateMachineBase::State::AWAITING_CMD_RUN_VALIDATED) {
+    if (sequencer_getState() != State::AWAITING_CMD_RUN_VALIDATED) {
         this->log_WARNING_HI_InvalidCommand(static_cast<I32>(sequencer_getState()));
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
@@ -117,7 +119,7 @@ void FpySequencer::CANCEL_cmdHandler(FwOpcodeType opCode,  //!< The opcode
                                      U32 cmdSeq            //!< The command sequence number
 ) {
     // only state you can't cancel in is IDLE
-    if (sequencer_getState() == FpySequencer_SequencerStateMachineStateMachineBase::State::IDLE) {
+    if (sequencer_getState() == State::IDLE) {
         this->log_WARNING_HI_InvalidCommand(static_cast<I32>(sequencer_getState()));
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
@@ -149,17 +151,67 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
                                          U32 cmdSeq,                      //!< Command Sequence
                                          const Fw::CmdResponse& response  //!< The command response argument
 ) {
-    if (this->sequencer_getState() !=
-        FpySequencer_SequencerStateMachineStateMachineBase::State::RUNNING_AWAITING_STATEMENT_RESPONSE) {
-        this->log_WARNING_HI_UnexpectedCmdResponseForState(static_cast<I32>(this->sequencer_getState()), opCode,
-                                                           response);
+    // TODO ask Rob if there's a better way to check if we're in a superstate. I don't want to have
+    // to update this every time I add a new substate to the RUNNING state.
+
+    // if we aren't in the RUNNING state:
+    if (this->sequencer_getState() != State::RUNNING_AWAITING_STATEMENT_RESPONSE
+        && this->sequencer_getState() != State::RUNNING_DISPATCH_STATEMENT
+        && this->sequencer_getState() != State::RUNNING_SLEEPING) {
+        // must be a coding error.
+        this->log_WARNING_HI_CmdResponseWhileNotRunningSequence(static_cast<I32>(this->sequencer_getState()), opCode,
+                                                                response);
         // ignore it, hopefully that wasn't important :D
         return;
     }
+
+    // okay, we're running a sequence. now let's use the cmdUid to check if the response was for a cmd
+    // from this sequence
+
+    // the cmdSeq arg is confusingly not the cmdSeq in this case, according to the current implementation
+    // of the CmdDisp. instead, it is the context that we passed in when we originally sent the cmd out.
+    // this context is in turn the cmdUid that we calculated just before sending it. rename the variable for
+    // clarity's sake
+    U32 cmdUid = cmdSeq;
+
+    // pull the sequence index (modulo 2^16) out of the cmdUid. see the comment in FpySequencer::dispatchCommand
+    // for info on the binary format of this cmdUid. as a reminder, this should be equal to the first 16 bits of
+    // the m_sequencesStarted variable
+    U16 sequenceIndex = (cmdUid & 0xFFFF0000) >> 16;
+    // pull the cmd index (modulo 2^16) out of cmdUid. this should be equal to the first 16 bits of the 
+    // m_statementsDispatched variable
+    U16 cmdIndex = (cmdUid & 0xFFFF);
+
+    U16 currentSequenceIndex = this->m_sequencesStarted & 0xFFFF;
+    U16 currentCmdIndex = this->m_statementsDispatched & 0xFFFF;
+
+    // if it was from a different sequence:
+    if (sequenceIndex != currentSequenceIndex) {
+        this->log_WARNING_LO_CmdResponseFromOldSequence(opCode, response, sequenceIndex, currentSequenceIndex);
+        return;
+    }
+
+    // okay, it was from this sequence. now if anything's wrong from this point on we should fail the sequence
+
+    // first, make sure we're actually awaiting a command
+    if (this->sequencer_getState() != State::RUNNING_AWAITING_STATEMENT_RESPONSE) {
+        // okay, crap. something from this sequence responded, and we weren't awaiting anything. end it all
+        // TODO add event for this
+        this->sequencer_sendSignal_stmtResponse_unexpected();
+        return;
+    }
+
+    // okay, we were awaiting a command. were we awaiting this opcode?
     if (opCode != this->m_runtime.currentStatementOpcode || this->m_runtime.currentStatementType != Fpy::StatementType::COMMAND) {
-        this->log_WARNING_HI_WrongStatementResponseOpcode(this->m_runtime.currentStatementOpcode, opCode, response);
+        this->log_WARNING_HI_WrongCmdResponseOpcode(this->m_runtime.currentStatementOpcode, opCode, response);
         // uh oh... we're awaiting a cmd but got the wrong one back...
         // not much we can do but keep waiting
+        return;
+    }
+
+    // if it was from a different cmd:
+    if (cmdIndex != currentCmdIndex) {
+        this->log_WARNING_LO_CmdResponseFromOldSequence(opCode, response, sequenceIndex, currentSequenceIndex);
         return;
     }
 
@@ -177,7 +229,7 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
 void FpySequencer::tlmWrite_handler(FwIndexType portNum,  //!< The port number
                                     U32 context           //!< The call order
 ) {
-    this->tlmWrite_StatementsDispatched(this->m_tlm.statementsDispatched);
+    this->tlmWrite_StatementsDispatched(this->m_statementsDispatched);
     this->tlmWrite_StatementsFailed(this->m_tlm.statementsFailed);
     this->tlmWrite_SequencesCancelled(this->m_tlm.sequencesCancelled);
     this->tlmWrite_SequencesSucceeded(this->m_tlm.sequencesSucceeded);

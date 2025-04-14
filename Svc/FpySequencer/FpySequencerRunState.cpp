@@ -4,8 +4,6 @@
 #include "Svc/FpySequencer/StatementTypeEnumAc.hpp"
 namespace Svc {
 
-using Signal = FpySequencer_SequencerStateMachineStateMachineBase::Signal;
-
 Signal FpySequencer::dispatchStatement() {
     if (this->m_runtime.nextStatementIndex == this->m_sequenceObj.getheader().getstatementCount()) {
         return Signal::result_dispatchStatement_noMoreStatements;
@@ -29,8 +27,9 @@ Signal FpySequencer::dispatchStatement() {
         result = this->dispatchCommand(nextStatement);
     }
 
+    this->m_statementsDispatched++;
+
     if (result == Fw::Success::SUCCESS) {
-        this->m_tlm.statementsDispatched++;
         return Signal::result_dispatchStatement_success;
     } else {
         return Signal::result_dispatchStatement_failure;
@@ -60,10 +59,19 @@ Fw::Success FpySequencer::dispatchCommand(const Fpy::Statement& stmt) {
         return Fw::Success::FAILURE;
     }
 
+    // calculate the unique command identifier:
+    // cmd UID is formatted like XXYY, where XX are the first two bytes of the m_sequencesStarted counter
+    // and YY are the first two bytes of the m_statementsDispatched counter.
+    // this way, we know when we get a cmd back A) whether or not it's from this sequence (modulo 2^16) and B)
+    // whether or not it's this specific instance of the cmd in the sequence, and not another one with the same opcode
+    // somewhere else in the file.
+    // if we put this uid in the context we send to the cmdDisp, we will get it back when the cmd returns
+    U32 cmdUid = ((this->m_sequencesStarted & 0xFFFF) << 16) | (this->m_statementsDispatched & 0xFFFF);
+
     // little note--theoretically this could produce a cmdResponse before we send the
     // dispatchSuccess signal. however b/c of priorities the dispatchSuccess signal will
     // always get processed first, leaving us in the right state for the cmdresponse
-    this->cmdOut_out(0, cmdBuf, 0);
+    this->cmdOut_out(0, cmdBuf, cmdUid);
 
     return Fw::Success::SUCCESS;
 }
