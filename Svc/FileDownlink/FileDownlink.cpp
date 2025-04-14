@@ -10,7 +10,6 @@
 // ======================================================================
 
 #include <Svc/FileDownlink/FileDownlink.hpp>
-#include <Fw/Com/ComPacket.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/StringUtils.hpp>
@@ -387,9 +386,9 @@ namespace Svc {
     sendDataPacket(U32 &byteOffset)
   {
     FW_ASSERT(byteOffset < this->m_endOffset);
-    const U32 maxDataSize = FILEDOWNLINK_INTERNAL_BUFFER_SIZE - Fw::FilePacket::DataPacket::HEADERSIZE - sizeof(FwPacketDescriptorType);
+    const U32 maxDataSize = FILEDOWNLINK_INTERNAL_BUFFER_SIZE - Fw::FilePacket::DataPacket::HEADERSIZE;
     const U32 dataSize = (byteOffset + maxDataSize > this->m_endOffset) ? (this->m_endOffset - byteOffset) : maxDataSize;
-    U8 buffer[FILEDOWNLINK_INTERNAL_BUFFER_SIZE - Fw::FilePacket::DataPacket::HEADERSIZE - sizeof(FwPacketDescriptorType)];
+    U8 buffer[FILEDOWNLINK_INTERNAL_BUFFER_SIZE - Fw::FilePacket::DataPacket::HEADERSIZE];
     //This will be last data packet sent
     if (dataSize + byteOffset == this->m_endOffset) {
         this->m_lastCompletedType = Fw::FilePacket::T_DATA;
@@ -429,16 +428,9 @@ namespace Svc {
     Fw::FilePacket filePacket;
     filePacket.fromCancelPacket(cancelPacket);
     this->getBuffer(buffer, CANCEL_PACKET);
-    // ########################################################################
-    // # FileDownlink HOTFIX - do not merge - wait for nasa/fprime#3467     ###
-    // ########################################################################
-    Fw::SerializeStatus status = buffer.getSerializeRepr().serialize(Fw::ComPacket::FW_PACKET_FILE);
+
+    const Fw::SerializeStatus status = filePacket.toBuffer(buffer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
-    Fw::Buffer offsetBuffer(this->m_buffer.getData() + sizeof(FwPacketDescriptorType), filePacket.bufferSize());
-    status = filePacket.toBuffer(offsetBuffer);
-    FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
-    // ########################################################################
-    // ########################################################################
     this->bufferSendOut_out(0, buffer);
     this->m_packetsSent.packetSent();
   }
@@ -475,21 +467,13 @@ namespace Svc {
   void FileDownlink ::
     sendFilePacket(const Fw::FilePacket& filePacket)
   {
-    const U32 bufferSize = filePacket.bufferSize() + sizeof(FwPacketDescriptorType);
+    const U32 bufferSize = filePacket.bufferSize();
     FW_ASSERT(this->m_buffer.getData() != nullptr);
     FW_ASSERT(
       this->m_buffer.getSize() >= bufferSize,
       static_cast<FwAssertArgType>(bufferSize),
       static_cast<FwAssertArgType>(this->m_buffer.getSize()));
-    // ########################################################################
-    // # FileDownlink HOTFIX - do not merge - wait for nasa/fprime#3467     ###
-    // ########################################################################
-    Fw::SerializeStatus status = this->m_buffer.getSerializeRepr().serialize(Fw::ComPacket::FW_PACKET_FILE);
-    FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
-    Fw::Buffer offsetBuffer(this->m_buffer.getData() + sizeof(FwPacketDescriptorType), filePacket.bufferSize());
-    status = filePacket.toBuffer(offsetBuffer);
-    // ########################################################################
-    // ########################################################################
+    const Fw::SerializeStatus status = filePacket.toBuffer(this->m_buffer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
     // set the buffer size to the packet size
     this->m_buffer.setSize(bufferSize);
