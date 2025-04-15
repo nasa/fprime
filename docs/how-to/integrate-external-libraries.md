@@ -30,6 +30,8 @@ The following summarizes recommendation on which approach to use based on these 
 
 Note that these are mere recommendations, and that you may choose to use a different approach based on your project's needs or the library's requirements. The following sections will cover each of these approaches in detail, along with their benefits and drawbacks.
 
+---
+
 ## Approach 1: Pre-compiled library files
 
 |     |     |
@@ -55,6 +57,8 @@ target_include_directories(${FPRIME_CURRENT_MODULE} PUBLIC "${FPRIME_PROJECT_ROO
 ```
 
 This assumes that the `libcrypto.a` is available in the `lib/openssl/` directory of your F´ project root, and that the necessary header files are in `lib/openssl/include/`.
+
+---
 
 ## Approach 2: CMake library with FetchContent or add_subdirectory
 
@@ -107,6 +111,7 @@ set(MOD_DEPS
 register_fprime_module()
 ```
 
+---
 
 ## Approach 3: Install once and integrate with find_package()
 
@@ -142,6 +147,7 @@ The `find_package()` command searches for the OpenCV library and sets the `OpenC
 > [!IMPORTANT]
 > When using this approach, you must ensure that users of your project have the library installed on their system. This can be done by providing instructions in your project's documentation.
 
+---
 
 ## Approach 4: Build from source alongside your project with ExternalProject_Add
 
@@ -227,6 +233,7 @@ register_fprime_module()
 > [!NOTE]
 > The source code for this example can be found at [ExternalLibs/OpenSslWrapper](https://github.com/nasa/fprime-examples/tree/devel/FlightExamples/ExternalLibs/OpenSslWrapper).
 
+---
 
 ## Patterns for using a library in the F´ architecture
 
