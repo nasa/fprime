@@ -45,12 +45,8 @@ void FileUplink ::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& bu
     }
 
     // Read the packet type from the packet buffer
-    FwPacketDescriptorType packetType = Fw::ComPacket::FW_PACKET_UNKNOWN;
-    Fw::SerializeStatus status = Fw::FW_DESERIALIZE_FORMAT_ERROR;
-    Fw::SerializeBufferBase& serial = buffer.getSerializeRepr();
-    status = serial.setBuffLen(buffer.getSize());
-    FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
-    status = serial.deserialize(packetType);
+    FwPacketDescriptorType packetType;
+    Fw::SerializeStatus status = buffer.getDeserializer().deserialize(packetType);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     // If packet type is not a file packet, log + deallocate and return

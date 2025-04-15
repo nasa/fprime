@@ -431,7 +431,7 @@ namespace Svc {
     this->getBuffer(buffer, CANCEL_PACKET);
 
     // Serialize the packet descriptor FW_PACKET_FILE to the buffer
-    Fw::SerializeStatus status = buffer.getSerializeRepr().serialize(Fw::ComPacket::FW_PACKET_FILE);
+    Fw::SerializeStatus status = buffer.getSerializer().serialize(Fw::ComPacket::FW_PACKET_FILE);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
     Fw::Buffer offsetBuffer(buffer.getData() + sizeof(FwPacketDescriptorType), filePacket.bufferSize());
     // Serialize the filePacket content into the buffer
@@ -480,7 +480,7 @@ namespace Svc {
       static_cast<FwAssertArgType>(bufferSize),
       static_cast<FwAssertArgType>(this->m_buffer.getSize()));
     // Serialize packet descriptor FW_PACKET_FILE to the buffer
-    Fw::SerializeStatus status = this->m_buffer.getSerializeRepr().serialize(Fw::ComPacket::FW_PACKET_FILE);
+    Fw::SerializeStatus status = this->m_buffer.getSerializer().serialize(Fw::ComPacket::FW_PACKET_FILE);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
     // Serialize the filePacket content into the buffer, offset by the size of the packet descriptor
     Fw::Buffer offsetBuffer(this->m_buffer.getData() + sizeof(FwPacketDescriptorType), filePacket.bufferSize());
