@@ -28,10 +28,8 @@ void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer
     FwPacketDescriptorType packetType = Fw::ComPacket::FW_PACKET_UNKNOWN;
     Fw::SerializeStatus status = Fw::FW_SERIALIZE_OK;
     {
-        Fw::SerializeBufferBase& serial = packetBuffer.getSerializeRepr();
-        status = serial.setBuffLen(packetBuffer.getSize());
-        FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
-        status = serial.deserialize(packetType);
+        auto esb = packetBuffer.getDeserializer();
+        status = esb.deserialize(packetType);
     }
 
     // Whether to deallocate the packet buffer

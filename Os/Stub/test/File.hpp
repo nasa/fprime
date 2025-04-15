@@ -1,5 +1,5 @@
-#include "Os/File.hpp"
 #include <string.h>
+#include "Os/File.hpp"
 
 #ifndef OS_STUB_FILE_TEST_HPP
 #define OS_STUB_FILE_TEST_HPP
@@ -31,7 +31,7 @@ struct StaticData {
     //! Last function called
     LastFn lastCalled = NONE_FN;
     //! Path of last open call
-    const char *openPath = nullptr;
+    const char* openPath = nullptr;
     //! Mode of last open call
     Os::File::Mode openMode = Os::File::MAX_OPEN_MODE;
     //! Overwrite of last open call
@@ -45,17 +45,17 @@ struct StaticData {
     //! Absolute of last seek call
     Os::File::SeekType seekType = Os::File::SeekType::ABSOLUTE;
     //! Buffer of last read call
-    U8 *readBuffer = nullptr;
+    U8* readBuffer = nullptr;
     //! Size of last read call
     FwSizeType readSize = std::numeric_limits<FwSizeType>::max();
     //! Wait of last read call
     Os::File::WaitType readWait = Os::File::WaitType::NO_WAIT;
     //! Buffer of last write call
-    const void *writeBuffer = nullptr;
+    const void* writeBuffer = nullptr;
     //! Size of last write call
     FwSizeType writeSize = std::numeric_limits<FwSizeType>::max();
     //! Wait of last write call
-    Os::File::WaitType  writeWait = Os::File::WaitType::NO_WAIT;
+    Os::File::WaitType writeWait = Os::File::WaitType::NO_WAIT;
 
     //! File pointer
     FwSizeType pointer = 0;
@@ -82,13 +82,13 @@ struct StaticData {
     //! Return of next position call
     FwSizeType positionResult = 0;
     //! Result of next read call
-    U8 *readResult = nullptr;
+    U8* readResult = nullptr;
     //! Size result of next read data
     FwSizeType readResultSize = std::numeric_limits<FwSizeType>::max();
     //! Size result of next read call
     FwSizeType readSizeResult = std::numeric_limits<FwSizeType>::max();
     //! Result holding buffer of next write call
-    U8 *writeResult = nullptr;
+    U8* writeResult = nullptr;
     //! Size result of next write data
     FwSizeType writeResultSize = std::numeric_limits<FwSizeType>::max();
     //! Size result of next read call
@@ -107,13 +107,13 @@ struct StaticData {
     static void setPositionResult(FwSizeType position);
 
     //! Set next read result
-    static void setReadResult(U8 *buffer, FwSizeType size);
+    static void setReadResult(U8* buffer, FwSizeType size);
 
     //! Set next read size result
     static void setReadSize(FwSizeType size);
 
     //! Set next write result
-    static void setWriteResult(U8 *buffer, FwSizeType size);
+    static void setWriteResult(U8* buffer, FwSizeType size);
 
     //! Set next write size result
     static void setWriteSize(FwSizeType size);
@@ -123,8 +123,8 @@ class TestFileHandle : public FileHandle {};
 
 //! \brief tracking implementation of Os::File
 //!
-//! Tracking implementation of `FileInterface` for use as a delegate class handling test file operations. Posix files use
-//! standard `open`, `read`, and `write` posix calls. The handle is represented as a `PosixFileHandle` which wraps a
+//! Tracking implementation of `FileInterface` for use as a delegate class handling test file operations. Posix files
+//! use standard `open`, `read`, and `write` posix calls. The handle is represented as a `PosixFileHandle` which wraps a
 //! single `int` type file descriptor used in those API calls.
 //!
 class TestFile : public FileInterface {
@@ -157,7 +157,7 @@ class TestFile : public FileInterface {
     //! \param overwrite: overwrite existing file on create
     //! \return: status of the open
     //!
-    Os::FileInterface::Status open(const char *path, Mode mode, OverwriteType overwrite) override;
+    Os::FileInterface::Status open(const char* path, Mode mode, OverwriteType overwrite) override;
 
     //! \brief close the file, if not opened then do nothing
     //!
@@ -172,7 +172,7 @@ class TestFile : public FileInterface {
     //! \param size: output parameter for size.
     //! \return OP_OK on success otherwise error status
     //!
-    Status size(FwSizeType &size_result) override;
+    Status size(FwSizeType& size_result) override;
 
     //! \brief get file pointer position of the currently open file
     //!
@@ -180,7 +180,7 @@ class TestFile : public FileInterface {
     //! \param position: output parameter for size.
     //! \return OP_OK on success otherwise error status
     //!
-    Status position(FwSizeType &position_result) override;
+    Status position(FwSizeType& position_result) override;
 
     //! \brief pre-allocate file storage
     //!
@@ -199,10 +199,10 @@ class TestFile : public FileInterface {
     //! \brief seek the file pointer to the given offset
     //!
     //! Seek the file pointer to the given `offset`. If `seekType` is set to `ABSOLUTE` then the offset is calculated
-    //! from the start of the file, and if it is set to `CURRENT` it is calculated from the current position.
+    //! from the start of the file, and if it is set to `RELATIVE` it is calculated from the current position.
     //!
     //! \param offset: offset to seek to
-    //! \param seekType: `ABSOLUTE` for seeking from beginning of file, `CURRENT` to use current position.
+    //! \param seekType: `ABSOLUTE` for seeking from beginning of file, `RELATIVE` to use current position.
     //! \return OP_OK on success otherwise error status
     //!
     Status seek(FwSignedSizeType offset, SeekType seekType) override;
@@ -234,7 +234,7 @@ class TestFile : public FileInterface {
     //! \param wait: `WAIT` to wait for data, `NO_WAIT` to return what is currently available
     //! \return OP_OK on success otherwise error status
     //!
-    Status read(U8 *buffer, FwSizeType &size, WaitType wait) override;
+    Status read(U8* buffer, FwSizeType& size, WaitType wait) override;
 
     //! \brief read data from this file into supplied buffer bounded by size
     //!
@@ -254,7 +254,7 @@ class TestFile : public FileInterface {
     //! \param wait: `WAIT` to wait for data to write to disk, `NO_WAIT` to return what is currently available
     //! \return OP_OK on success otherwise error status
     //!
-    Status write(const U8 *buffer, FwSizeType &size, WaitType wait) override;
+    Status write(const U8* buffer, FwSizeType& size, WaitType wait) override;
 
     //! \brief returns the raw file handle
     //!
@@ -263,17 +263,15 @@ class TestFile : public FileInterface {
     //!
     //! \return raw file handle
     //!
-    FileHandle *getHandle() override;
+    FileHandle* getHandle() override;
 
-
-private:
+  private:
     //! File handle for PosixFile
     TestFileHandle m_handle;
 };
 
-
-} // namespace Test
-} // namespace File
-} // namespace Stub
-} // namespace Os
-#endif // OS_STUB_FILE_TEST_HPP
+}  // namespace Test
+}  // namespace File
+}  // namespace Stub
+}  // namespace Os
+#endif  // OS_STUB_FILE_TEST_HPP

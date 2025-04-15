@@ -27,7 +27,6 @@ Name | Type | Accessors | Purpose
 `m_bufferData` | `U8*` | `getData()`/`setData()`       | Pointer to the raw memory wrapped by this buffer
 `m_size`       | `U32` | `getSize()`/`setSize()`       | Size of the raw memory region wrapped by this buffer
 `m_context`    | `U32` | `getContext()`/`setContext()` | Context of buffer's origin. Used to track buffers created by [`BufferManager`](../../../Svc/BufferManager/docs/sdd.md)
-`m_serialize_repr` | `Fw::ExternalSerializeBuffer` | `getSerializeRepr()` | Interface for serialization to internal buffer
 
 A value _B_ of type `Fw::Buffer` is **valid** if `m_bufferData != nullptr` and
 `m_size > 0`; otherwise it is **invalid**.
@@ -35,12 +34,8 @@ The interface function `isValid` reports whether a buffer is valid.
 Calling this function on a buffer _B_ returns `true` if _B_ is valid, otherwise `false`.
 
 If a buffer _B_ is invalid, then the pointer returned by _B_ `.getData()` and the
-serialization interface returned by
-_B_ `.getSerializeRepr()` are considered invalid and should not be used.
-
-The `getSerializeRepr()` function may be used to interact with the wrapped data buffer by serializing types to and from
-the data region.
-
+serialization interfaces returned by
+_B_ `.getSerializer()` and _B_ `.getDeserializer()` are considered invalid and should not be used.
 
 ### 2.2 The Port Fw::BufferGet
 
@@ -69,34 +64,24 @@ To check validity, you can call the interface function `isValid()`.
 
 ### Serializing and Deserializing with `Fw::Buffer`
 
-Users can obtain a SerializeBuffer, `sb`, by calling `getSerializeRepr()`. This serialize buffer is backed by the memory
-of the `Fw::Buffer` and is initially empty.  Users can serialize and deserialize through `sb` to copy to/from the backed
-memory.
-
-The state of `sb` persists as long as the current `Fw::Buffer` object exists as it is stored as a member. However, all
-`Fw::Buffer` constructors initialize `sb` to an empty state including the `Fw::Buffer` copy constructor. Thus, if an
-`Fw::Buffer` is sent through a port call, passed by-value to a function call, or otherwise copied, the state of the new
-buffer's `sb` member is empty.
+Users can obtain a serialization buffer, `sb`, by calling either `getSerializer()` or `getDeserializer()`. 
+Note that both of these methods return a `Fw::ExternalSerializeBufferWithMemberCopy` object that is meant to be 
+managed by the caller and only affects the data of the underlying buffer.
 
 **Serializing to `Fw::Buffer`**
 ```c++
 U32 my_data = 10001;
 U8  my_byte = 2;
-Fw::ExternalSerializeBuffer& sb = my_fw_buffer.getSerializeRepr();
-sb.resetSer();  // Return the serialization to the beginning of the memory region
+auto sb = my_fw_buffer.getSerializer();
 sb.serialize(my_data);
 sb.serialize(my_byte);
 ```
-
-Since the initial state of `sb` is empty, deserialization requires setting the size of the data available for
-deserialization. This can be done with the `sb.setBuffLen()` method passing in the `Fw::Buffer` size.
 
 **Deserializing from `Fw::Buffer`**
 ```c++
 U32 my_data = 0;
 U8  my_byte = 0;
-Fw::ExternalSerializeBuffer& sb = my_fw_buffer.getSerializeRepr();
-sb.setBuffLen(buffer.getSize());  // Set available data for deserialization to the whole memory region
+auto sb = my_fw_buffer.getDeserializer();
 sb.deserialize(my_data);
 sb.deserialize(my_byte);
 ```
