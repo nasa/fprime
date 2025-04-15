@@ -97,9 +97,10 @@ public:
 
     //! Returns a ExternalSerializeBufferWithMemberCopy representation of the wrapped data for serializing
     //!
-    //! \warning Assumes that this buffer is entirely empty. If the buffer is not empty it is still possible to 
-    //! \warning manipulate the serialization offsets with moveSerToOffset and serializeSkip methods inherited 
-    //! \warning from SerializableBufferBase.
+    //! \warning The serialization pointer of the returned ExternalSerializeBufferWithMemberCopy object is set to zero
+    //! \warning so that serialization will start at the beginning of the memory pointed to by the Fw::Buffer. If that 
+    //! \warning behavior is not desired the caller may manipulate the serialization offsets with moveSerToOffset 
+    //! \warning and serializeSkip methods prior to serialization.
     //!
     //! \return representation of the wrapped data to aid in serializing to it
     ExternalSerializeBufferWithMemberCopy getSerializer();
