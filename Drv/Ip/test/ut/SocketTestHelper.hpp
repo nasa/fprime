@@ -1,7 +1,7 @@
 //
 // Created by mstarch on 12/10/20.
 //
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw//Buffer/Buffer.hpp>
 #include <Drv/Ip/IpSocket.hpp>
 

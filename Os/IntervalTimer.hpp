@@ -5,7 +5,7 @@
 #ifndef _IntervalTimer_hpp_
 #define _IntervalTimer_hpp_
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Os/RawTime.hpp>
 
 namespace Os {

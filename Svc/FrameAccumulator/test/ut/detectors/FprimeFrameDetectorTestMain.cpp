@@ -16,8 +16,8 @@ constexpr U32 CIRCULAR_BUFFER_TEST_SIZE = 2048;
 //! \note The frame is generated with random data of random size
 //! \return The size of the generated frame
 FwSizeType generate_random_fprime_frame(Types::CircularBuffer& circular_buffer) {
-    constexpr FwIndexType FRAME_HEADER_SIZE = 8;
-    constexpr FwIndexType FRAME_FOOTER_SIZE = 4;
+    constexpr FwSizeType FRAME_HEADER_SIZE = 8;
+    constexpr FwSizeType FRAME_FOOTER_SIZE = 4;
     // Generate random packet size (1-1024 bytes; because 0 would trigger undefined behavior warnings)
     // 1024 is max length as per FrameAccumulator/FrameDetector/FprimeFrameDetector @ LengthToken::MaximumLength
     U32 packet_size = STest::Random::lowerUpper(1, 1024);
@@ -46,15 +46,15 @@ FwSizeType generate_random_fprime_frame(Types::CircularBuffer& circular_buffer) 
     FwSizeType fprime_frame_size = FRAME_HEADER_SIZE + packet_size + FRAME_FOOTER_SIZE;
     U8 fprime_frame[fprime_frame_size];
     // Copy header, packet_data, and CRC into the full frame
-    for (FwIndexType i = 0; i < static_cast<FwIndexType>(FRAME_HEADER_SIZE); i++) {
+    for (FwSizeType i = 0; i < static_cast<FwSizeType>(FRAME_HEADER_SIZE); i++) {
         fprime_frame[i] = frame_header[i];
     }
-    for (FwIndexType i = 0; i < static_cast<FwIndexType>(packet_size); i++) {
+    for (FwSizeType i = 0; i < static_cast<FwSizeType>(packet_size); i++) {
         fprime_frame[i + FRAME_HEADER_SIZE] = packet_data[i];
     }
-    for (FwIndexType i = 0; i < static_cast<FwIndexType>(FRAME_FOOTER_SIZE); i++) {
+    for (FwSizeType i = 0; i < static_cast<FwSizeType>(FRAME_FOOTER_SIZE); i++) {
         // crc is a U32; unpack into 4 bytes (shift by 24->-16->8->0 bits, mask with 0xFF)
-        fprime_frame[i + FRAME_HEADER_SIZE + static_cast<FwIndexType>(packet_size)] =
+        fprime_frame[i + FRAME_HEADER_SIZE + static_cast<FwSizeType>(packet_size)] =
             static_cast<U8>((crc_result.asBigEndianU32() >> (8 * (3 - i))) & 0xFF);
     }
     // Serialize frame into circular buffer
@@ -62,7 +62,7 @@ FwSizeType generate_random_fprime_frame(Types::CircularBuffer& circular_buffer) 
 
     // Uncomment for debugging
     // printf("Serialized %llu bytes:\n", fprime_frame_size);
-    // for (FwIndexType i = 0; i < static_cast<FwIndexType>(fprime_frame_size); i++) {
+    // for (FwSizeType i = 0; i < static_cast<FwSizeType>(fprime_frame_size); i++) {
     //     printf("%02X ", fprime_frame[i]);
     // }
     return fprime_frame_size;

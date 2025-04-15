@@ -1,5 +1,5 @@
 #include <Fw/Time/TimeInterval.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 namespace Fw {
     TimeInterval::TimeInterval(const TimeInterval& other) : Serializable() {

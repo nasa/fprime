@@ -13,7 +13,7 @@
 #ifndef Fw_SerialBuffer_HPP
 #define Fw_SerialBuffer_HPP
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include "Fw/Types/Serializable.hpp"
 
 namespace Fw {

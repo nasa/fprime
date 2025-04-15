@@ -105,7 +105,7 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
         // Get current queue's allocation size and safety check the values
         FwSizeType allocationSize = this->m_prioritizedList[i].depth * this->m_prioritizedList[i].msgSize;
         FW_ASSERT(this->m_prioritizedList[i].index < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(this->m_queues)),
-                  this->m_prioritizedList[i].index);
+                  static_cast<FwAssertArgType>(this->m_prioritizedList[i].index));
         FW_ASSERT(
             (allocationSize + allocationOffset) <= totalAllocation,
             static_cast<FwAssertArgType>(allocationSize),
@@ -132,14 +132,15 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
 
 void ComQueue::comQueueIn_handler(const FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
     // Ensure that the port number of comQueueIn is consistent with the expectation
-    FW_ASSERT(portNum >= 0 && portNum < COM_PORT_COUNT, portNum);
+    FW_ASSERT(portNum >= 0 && portNum < COM_PORT_COUNT, static_cast<FwAssertArgType>(portNum));
     (void)this->enqueue(portNum, QueueType::COM_QUEUE, reinterpret_cast<const U8*>(&data), sizeof(Fw::ComBuffer));
 }
 
 void ComQueue::buffQueueIn_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
-    const FwIndexType queueNum = portNum + COM_PORT_COUNT;
+    FW_ASSERT(std::numeric_limits<FwIndexType>::max() - COM_PORT_COUNT > portNum);
+    const FwIndexType queueNum = static_cast<FwIndexType>(portNum + COM_PORT_COUNT);
     // Ensure that the port number of buffQueueIn is consistent with the expectation
-    FW_ASSERT(portNum >= 0 && portNum < BUFFER_PORT_COUNT, portNum);
+    FW_ASSERT(portNum >= 0 && portNum < BUFFER_PORT_COUNT, static_cast<FwAssertArgType>(portNum));
     FW_ASSERT(queueNum < TOTAL_PORT_COUNT);
     bool status =
         this->enqueue(queueNum, QueueType::BUFFER_QUEUE, reinterpret_cast<const U8*>(&fwBuffer), sizeof(Fw::Buffer));
@@ -156,7 +157,7 @@ void ComQueue::comStatusIn_handler(const FwIndexType portNum, Fw::Success& condi
                 this->m_state = READY;
                 this->processQueue();
                 // A message may or may not be sent. Thus, READY or WAITING are acceptable final states.
-                FW_ASSERT((this->m_state == WAITING || this->m_state == READY), this->m_state);
+                FW_ASSERT((this->m_state == WAITING || this->m_state == READY), static_cast<FwAssertArgType>(this->m_state));
             } else {
                 this->m_state = WAITING;
             }
@@ -164,7 +165,7 @@ void ComQueue::comStatusIn_handler(const FwIndexType portNum, Fw::Success& condi
         // Both READY and unknown states should not be possible at this point. To receive a status message we must be
         // one of the WAITING or RETRY states.
         default:
-            FW_ASSERT(0, this->m_state);
+            FW_ASSERT(0, static_cast<FwAssertArgType>(this->m_state));
             break;
     }
 }
@@ -192,7 +193,7 @@ void ComQueue::run_handler(const FwIndexType portNum, U32 context) {
 // ----------------------------------------------------------------------
 
 void ComQueue::buffQueueIn_overflowHook(FwIndexType portNum, Fw::Buffer& fwBuffer) {
-    FW_ASSERT(portNum >= 0 && portNum < BUFFER_PORT_COUNT, portNum);
+    FW_ASSERT(portNum >= 0 && portNum < BUFFER_PORT_COUNT, static_cast<FwAssertArgType>(portNum));
     this->deallocate_out(portNum, fwBuffer);
 }
 
@@ -204,13 +205,15 @@ bool ComQueue::enqueue(const FwIndexType queueNum, QueueType queueType, const U8
     // Enqueue the given message onto the matching queue. When no space is available then emit the queue overflow event,
     // set the appropriate throttle, and move on. Will assert if passed a message for a depth 0 queue.
     const FwSizeType expectedSize = (queueType == QueueType::COM_QUEUE) ? sizeof(Fw::ComBuffer) : sizeof(Fw::Buffer);
-    const FwIndexType portNum = queueNum - ((queueType == QueueType::COM_QUEUE) ? 0 : COM_PORT_COUNT);
+    FW_ASSERT((queueType == QueueType::COM_QUEUE) || (queueNum >= COM_PORT_COUNT),
+              static_cast<FwAssertArgType>(queueType), static_cast<FwAssertArgType>(queueNum));
+    const FwIndexType portNum = static_cast<FwIndexType>(queueNum - ((queueType == QueueType::COM_QUEUE) ? 0 : COM_PORT_COUNT));
     bool rvStatus = true;
     FW_ASSERT(
         expectedSize == size,
         static_cast<FwAssertArgType>(size),
         static_cast<FwAssertArgType>(expectedSize));
-    FW_ASSERT(portNum >= 0, portNum);
+    FW_ASSERT(portNum >= 0, static_cast<FwAssertArgType>(portNum));
     Fw::SerializeStatus status = this->m_queues[queueNum].enqueue(data, size);
     if (status == Fw::FW_SERIALIZE_NO_ROOM_LEFT) {
         if (!this->m_throttle[queueNum]) {

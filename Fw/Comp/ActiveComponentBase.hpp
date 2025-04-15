@@ -11,7 +11,7 @@
 #ifndef FW_ACTIVE_COMPONENT_BASE_HPP
 #define FW_ACTIVE_COMPONENT_BASE_HPP
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Comp/QueuedComponentBase.hpp>
 #include <Fw/Deprecate.hpp>
 #include <Os/Task.hpp>

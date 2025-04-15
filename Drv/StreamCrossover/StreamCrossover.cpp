@@ -6,7 +6,7 @@
 
 
 #include <Drv/StreamCrossover/StreamCrossover.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 namespace Drv {
 

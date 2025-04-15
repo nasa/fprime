@@ -19,29 +19,29 @@ void StaticData::setNextStatus(Os::File::Status status) {
     StaticData::data.writeStatus = status;
 }
 
-void StaticData::setSizeResult(FwSignedSizeType size) {
+void StaticData::setSizeResult(FwSizeType size) {
     StaticData::data.sizeResult = size;
 }
 
-void StaticData::setPositionResult(FwSignedSizeType position) {
+void StaticData::setPositionResult(FwSizeType position) {
     StaticData::data.positionResult = position;
 }
 
-void StaticData::setReadResult(U8 *buffer, FwSignedSizeType size) {
+void StaticData::setReadResult(U8 *buffer, FwSizeType size) {
     StaticData::data.readResult = buffer;
     StaticData::data.readResultSize = size;
 }
 
-void StaticData::setReadSize(FwSignedSizeType size) {
+void StaticData::setReadSize(FwSizeType size) {
     StaticData::data.readSizeResult = size;
 }
 
-void StaticData::setWriteResult(U8 *buffer, FwSignedSizeType size) {
+void StaticData::setWriteResult(U8 *buffer, FwSizeType size) {
     StaticData::data.writeResult = buffer;
     StaticData::data.writeResultSize = size;
 }
 
-void StaticData::setWriteSize(FwSignedSizeType size) {
+void StaticData::setWriteSize(FwSizeType size) {
     StaticData::data.writeSizeResult = size;
 }
 
@@ -66,19 +66,19 @@ void TestFile::close() {
     StaticData::data.lastCalled = StaticData::CLOSE_FN;
 }
 
-FileInterface::Status TestFile::size(FwSignedSizeType& size_result) {
+FileInterface::Status TestFile::size(FwSizeType& size_result) {
     StaticData::data.lastCalled = StaticData::SIZE_FN;
     size_result = StaticData::data.sizeResult;
     return StaticData::data.sizeStatus;
 }
 
-FileInterface::Status TestFile::position(FwSignedSizeType& position_result) {
+FileInterface::Status TestFile::position(FwSizeType& position_result) {
     StaticData::data.lastCalled = StaticData::POSITION_FN;
     position_result = StaticData::data.positionResult;
     return StaticData::data.positionStatus;
 }
 
-FileInterface::Status TestFile::preallocate(FwSignedSizeType offset, FwSignedSizeType length) {
+FileInterface::Status TestFile::preallocate(FwSizeType offset, FwSizeType length) {
     StaticData::data.preallocateOffset = offset;
     StaticData::data.preallocateLength = length;
     StaticData::data.lastCalled = StaticData::PREALLOCATE_FN;
@@ -97,7 +97,7 @@ FileInterface::Status TestFile::flush() {
     return StaticData::data.flushStatus;
 }
 
-FileInterface::Status TestFile::read(U8 *buffer, FwSignedSizeType &size, WaitType wait) {
+FileInterface::Status TestFile::read(U8 *buffer, FwSizeType &size, WaitType wait) {
     StaticData::data.readBuffer = buffer;
     StaticData::data.readSize = size;
     StaticData::data.readWait = wait;
@@ -113,7 +113,7 @@ FileInterface::Status TestFile::read(U8 *buffer, FwSignedSizeType &size, WaitTyp
     return StaticData::data.readStatus;
 }
 
-FileInterface::Status TestFile::write(const U8* buffer, FwSignedSizeType &size, WaitType wait) {
+FileInterface::Status TestFile::write(const U8* buffer, FwSizeType &size, WaitType wait) {
     StaticData::data.writeBuffer = buffer;
     StaticData::data.writeSize = size;
     StaticData::data.writeWait = wait;

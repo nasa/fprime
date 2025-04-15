@@ -7,7 +7,7 @@
 #ifndef FW_INTERNAL_INTERFACE_STRING_HPP
 #define FW_INTERNAL_INTERFACE_STRING_HPP
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 #include "Fw/Cfg/SerIds.hpp"
 #include "Fw/Types/StringBase.hpp"
@@ -25,9 +25,9 @@ class InternalInterfaceString final : public StringBase {
 
     InternalInterfaceString() : StringBase() { *this = ""; }
 
-    explicit InternalInterfaceString(const InternalInterfaceString& src) : StringBase() { *this = src; }
+    InternalInterfaceString(const InternalInterfaceString& src) : StringBase() { *this = src; }
 
-    explicit InternalInterfaceString(const StringBase& src) : StringBase() { *this = src; }
+    InternalInterfaceString(const StringBase& src) : StringBase() { *this = src; }
 
     explicit InternalInterfaceString(const char* src) : StringBase() { *this = src; }
 

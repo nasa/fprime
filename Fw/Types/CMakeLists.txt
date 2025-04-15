@@ -27,10 +27,11 @@ require_fprime_implementation("Fw_StringFormat")
 ### UTs ###
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/ExternalSerializeBufferTest.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/AssertTypesTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/TypesTest.cpp"
 )
 set(UT_MOD_DEPS
-  "${FPRIME_FRAMEWORK_PATH}/Os"
+  Os
 )
 register_fprime_ut()
 set (UT_TARGET_NAME "${FPRIME_CURRENT_MODULE}_ut_exe")

@@ -1,7 +1,7 @@
 //
 // Created by mstarch on 12/10/20.
 //
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 #ifndef DRV_TEST_PORTSELECTOR_HPP
 #define DRV_TEST_PORTSELECTOR_HPP

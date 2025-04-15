@@ -10,7 +10,7 @@
 //
 // ======================================================================
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Svc/GenericHub/GenericHubComponentImpl.hpp>
 #include "Fw/Logger/Logger.hpp"
 #include "Fw/Types/Assert.hpp"

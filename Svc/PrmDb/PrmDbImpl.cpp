@@ -148,7 +148,7 @@ namespace Svc {
             if (this->m_db[entry].used) {
                 // write delimiter
                 static const U8 delim = PRMDB_ENTRY_DELIMITER;
-                FwSignedSizeType writeSize = static_cast<FwSignedSizeType>(sizeof(delim));
+                FwSizeType writeSize = static_cast<FwSizeType>(sizeof(delim));
                 stat = paramFile.write(&delim,writeSize,Os::File::WaitType::WAIT);
                 if (stat != Os::File::OP_OK) {
                     this->unLock();
@@ -175,7 +175,7 @@ namespace Svc {
                 FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat,static_cast<FwAssertArgType>(serStat));
 
                 // write record size
-                writeSize = static_cast<FwSignedSizeType>(buff.getBuffLength());
+                writeSize = static_cast<FwSizeType>(buff.getBuffLength());
                 stat = paramFile.write(buff.getBuffAddr(),writeSize,Os::File::WaitType::WAIT);
                 if (stat != Os::File::OP_OK) {
                     this->unLock();
@@ -203,7 +203,7 @@ namespace Svc {
                 FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat,static_cast<FwAssertArgType>(serStat));
 
                 // write parameter ID
-                writeSize = static_cast<FwSignedSizeType>(buff.getBuffLength());
+                writeSize = static_cast<FwSizeType>(buff.getBuffLength());
                 stat = paramFile.write(buff.getBuffAddr(),writeSize,Os::File::WaitType::WAIT);
                 if (stat != Os::File::OP_OK) {
                     this->unLock();
@@ -211,7 +211,7 @@ namespace Svc {
                     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
                     return;
                 }
-                if (writeSize != static_cast<FwSignedSizeType>(buff.getBuffLength())) {
+                if (writeSize != static_cast<FwSizeType>(buff.getBuffLength())) {
                     this->unLock();
                     this->log_WARNING_HI_PrmFileWriteError(
                         PrmWriteError::PARAMETER_ID_SIZE,
@@ -223,7 +223,7 @@ namespace Svc {
 
                 // write serialized parameter value
 
-                writeSize = static_cast<FwSignedSizeType>(this->m_db[entry].val.getBuffLength());
+                writeSize = static_cast<FwSizeType>(this->m_db[entry].val.getBuffLength());
                 stat = paramFile.write(this->m_db[entry].val.getBuffAddr(),writeSize,Os::File::WaitType::WAIT);
                 if (stat != Os::File::OP_OK) {
                     this->unLock();
@@ -231,7 +231,7 @@ namespace Svc {
                     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
                     return;
                 }
-                if (writeSize != static_cast<FwSignedSizeType>(this->m_db[entry].val.getBuffLength())) {
+                if (writeSize != static_cast<FwSizeType>(this->m_db[entry].val.getBuffLength())) {
                     this->unLock();
                     this->log_WARNING_HI_PrmFileWriteError(
                         PrmWriteError::PARAMETER_VALUE_SIZE,
@@ -273,7 +273,7 @@ namespace Svc {
         for (FwSizeType entry = 0; entry < PRMDB_NUM_DB_ENTRIES; entry++)  {
 
             U8 delimiter;
-            FwSignedSizeType readSize = static_cast<FwSignedSizeType>(sizeof(delimiter));
+            FwSizeType readSize = static_cast<FwSizeType>(sizeof(delimiter));
 
             // read delimiter
             Os::File::Status fStat = paramFile.read(&delimiter,readSize,Os::File::WaitType::WAIT);
@@ -330,7 +330,7 @@ namespace Svc {
 
             // read the parameter ID
             FwPrmIdType parameterId = 0;
-            readSize = static_cast<FwSignedSizeType>(sizeof(FwPrmIdType));
+            readSize = static_cast<FwSizeType>(sizeof(FwPrmIdType));
 
             fStat = paramFile.read(buff.getBuffAddr(),readSize,Os::File::WaitType::WAIT);
             if (fStat != Os::File::OP_OK) {

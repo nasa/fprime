@@ -32,9 +32,9 @@ void Basic::test() {
     this->initBase(id);
     ASSERT_EQ(this->m_id, id);
     ASSERT_EQ(this->getState(), State::S);
-    const FwSizeType expectedSize = 3;
+    const FwIndexType expectedSize = 3;
     ASSERT_EQ(this->m_action_a_history.getSize(), expectedSize);
-    for (FwSizeType i = 0; i < expectedSize; i++) {
+    for (FwIndexType i = 0; i < expectedSize; i++) {
         ASSERT_EQ(this->m_action_a_history.getItemAt(i), Signal::__FPRIME_AC_INITIAL_TRANSITION);
     }
 }

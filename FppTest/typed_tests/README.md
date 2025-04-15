@@ -11,7 +11,7 @@ serial-to-serial port connections
 
 **Note on the StringTest suite:**
 In an earlier version of the C++ back end, FPP generated string classes.
-In that version, `StringTest` suite was used to provide code coverage for those
+In that version, the `StringTest` suite was used to provide code coverage for those
 classes.
 The code generation strategy for strings has changed, and FPP no longer generates
 string classes.

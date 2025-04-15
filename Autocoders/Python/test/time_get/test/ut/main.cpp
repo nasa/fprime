@@ -1,5 +1,5 @@
 #include "time_getGTestBase.hpp"
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Autocoders/Python/test/time_get/TestTimeGetImpl.hpp>
 
 // Very minimal to test autocoder. Some day they'll be actual unit test code

@@ -17,7 +17,7 @@
 #ifndef TYPES_CIRCULAR_BUFFER_HPP
 #define TYPES_CIRCULAR_BUFFER_HPP
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Serializable.hpp>
 
 namespace Types {

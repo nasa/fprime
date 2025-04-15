@@ -6,7 +6,7 @@
 #ifndef _OS_DIRECTORY_HPP_
 #define _OS_DIRECTORY_HPP_
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Os/Os.hpp>
 #include <Fw/Types/String.hpp>
 

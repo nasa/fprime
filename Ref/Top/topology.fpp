@@ -75,6 +75,12 @@ module Ref {
     health connections instance $health
 
     # ----------------------------------------------------------------------
+    # Telemetry packets
+    # ----------------------------------------------------------------------
+
+    include "RefPackets.fppi"
+
+    # ----------------------------------------------------------------------
     # Direct graph specifiers
     # ----------------------------------------------------------------------
 
@@ -168,7 +174,7 @@ module Ref {
       dpWriter.deallocBufferSendOut -> dpBufferManager.bufferSendIn
 
       # Component DP connections
-      
+
       # Synchronous request. Will have both request kinds for demo purposes, not typical
       SG1.productGetOut -> dpMgr.productGetIn[0]
       # Asynchronous request
@@ -176,7 +182,7 @@ module Ref {
       dpMgr.productResponseOut[0] -> SG1.productRecvIn
       # Send filled DP
       SG1.productSendOut -> dpMgr.productSendIn[0]
-      
+
     }
 
   }

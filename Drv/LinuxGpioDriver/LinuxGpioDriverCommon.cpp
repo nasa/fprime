@@ -11,7 +11,7 @@
 // ======================================================================
 
 #include <Drv/LinuxGpioDriver/LinuxGpioDriver.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 namespace Drv {
 

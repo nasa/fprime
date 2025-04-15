@@ -11,6 +11,7 @@ namespace Queue {
 namespace Test {
 
 StaticData StaticData::data;
+U64 InjectableStlQueueHandle::Message::order_counter = 0;
 
 InjectableStlQueueHandle::InjectableStlQueueHandle() :
       // Creates the necessary handle on the heap to keep the handle size small
@@ -63,6 +64,7 @@ QueueInterface::Status InjectableStlQueue::send(const U8* buffer, FwSizeType siz
     (void) std::memcpy(message.data, buffer, static_cast<size_t>(size));
     message.priority = priority;
     message.size = size;
+    message.order = InjectableStlQueueHandle::Message::order_counter++;
     this->m_handle.m_storage.push(message);
     this->m_handle.m_high_water = FW_MAX(this->m_handle.m_high_water, this->m_handle.m_storage.size());
     return QueueInterface::Status::OP_OK;
