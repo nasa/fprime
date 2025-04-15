@@ -27,7 +27,7 @@ void FprimeFraming::frame(const U8* const data, const U32 size, Fw::ComPacket::C
 
     FpFrameHeader::TokenType totalSize = size + FpFrameHeader::SIZE + HASH_DIGEST_LENGTH;
     Fw::Buffer buffer = m_interface->allocate(totalSize);
-    Fw::SerializeBufferBase& serializer = buffer.getSerializeRepr();
+    auto serializer = buffer.getSerializer();
     Utils::HashBuffer hash;
 
     // Serialize start word

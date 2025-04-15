@@ -109,10 +109,14 @@ void Os::Test::RawTime::Tester::Serialization::action(Os::Test::RawTime::Tester 
 
     FwIndexType index = state.pick_random_index();
 
-    state.m_times[index].serialize(buffer.getSerializeRepr());
+    auto serializer = buffer.getSerializer();
+
+    state.m_times[index].serialize(serializer);
+
+    auto deserializer = buffer.getDeserializer();
 
     Os::RawTime raw_time;
-    raw_time.deserialize(buffer.getSerializeRepr());
+    raw_time.deserialize(deserializer);
 
     // We make sure that serialization and deserialization are successful by deserializing
     // into a new Os::RawTime object and comparing the difference between the original RawTime
