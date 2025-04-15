@@ -31,7 +31,9 @@ function(check_add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEP
     set(ALL_UTS)
     foreach(DEPENDENCY IN LISTS FULL_DEPENDENCIES)
         get_target_property(DEPENDENCY_UTS "${DEPENDENCY}" FPRIME_UTS)
-        list(APPEND ALL_UTS ${DEPENDENCY_UTS})
+        if (DEPENDENCY_UTS)
+            list(APPEND ALL_UTS ${DEPENDENCY_UTS})
+        endif()
     endforeach()
     # Only run deployment UTs when some are defined
     if (ALL_UTS)
@@ -70,7 +72,9 @@ function(check_add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCI
         )
     endif()
     get_target_property(DEPENDENCY_UTS "${FPRIME_CURRENT_MODULE}" FPRIME_UTS)
-    add_dependencies("${CHECK_TARGET_NAME}" ${DEPENDENCY_UTS})
-    # Dependencies for the check target should be added via UT directories
-    add_dependencies(check ${DEPENDENCY_UTS})
+    if (DEPENDENCY_UTS)
+        add_dependencies("${CHECK_TARGET_NAME}" ${DEPENDENCY_UTS})
+        # Dependencies for the check target should be added via UT directories
+        add_dependencies(check ${DEPENDENCY_UTS})
+    endif()
 endfunction(check_add_module_target)

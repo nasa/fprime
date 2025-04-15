@@ -81,7 +81,12 @@ function(check_unknown_links DEPLOYMENT_NAME)
     foreach(LINK IN LISTS ARGN)
         # When a link is not a file, not a link flag, and not a generator expression then the target must already exist
         # as a target in the CMake system to be used as part of recursive dependency lists.
-        if (NOT EXISTS "${LINK}" AND NOT "${LINK}" MATCHES "^[-$].*")
+        if (EXISTS "${LINK}" AND NOT IS_DIRECTORY "${LINK}")
+            # File detected, skip dependency
+        elseif("${LINK}" MATCHES "^[-$].*")
+            # Link library of some form detected
+        else()
+            # Internal dependency name, must exist thus a failure
             fprime_cmake_fatal_error(
                 "F Prime/CMake target '${LINK}' not available to deployment '${DEPLOYMENT_NAME}'. '${LINK}' must:\n"
                 "    1. Must be defined somewhere in the F Prime project\n"

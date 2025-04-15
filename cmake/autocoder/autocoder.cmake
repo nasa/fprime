@@ -23,7 +23,6 @@ include(autocoder/helpers)
 function (run_ac_set BUILD_TARGET_NAME)
     # Get all sources available for autocode processing
     get_target_property(AUTOCODER_INPUT_SOURCES "${BUILD_TARGET_NAME}" AUTOCODER_INPUTS)
-
     # Get the source list, if passed in
     set(AC_LIST)
     if (ARGN)

@@ -121,7 +121,6 @@ function(fprime__internal_add_build_target_helper TARGET_NAME TYPE SOURCES AUTOC
     # Add implicit dependency and filter out self-dependencies
     list(APPEND DEPENDENCIES config)
     list(REMOVE_ITEM DEPENDENCIES "${TARGET_NAME}")
-
     # Remap F Prime target type to CMake targe type
     if (TYPE STREQUAL "Executable" OR TYPE STREQUAL "Deployment" OR TYPE STREQUAL "Unit Test")
         add_executable("${TARGET_NAME}" ${EXTRA_CMAKE_DIRECTIVES} "${SOURCES}")
