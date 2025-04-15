@@ -33,7 +33,7 @@ endfunction()
 # - **ARGN**: list of arguments to process.
 ####
 function(fprime__process_module_setup ADDITIONAL_CONTROL_SETS)
-    # Initial setup 
+    # Initial setup
     set(INPUT_ARGUMENTS ${ARGN})
     list(GET INPUT_ARGUMENTS 0 FIRST_ARGUMENT)
     list(LENGTH INPUT_ARGUMENTS INPUT_COUNT)
@@ -72,7 +72,7 @@ function(fprime__process_module_setup ADDITIONAL_CONTROL_SETS)
         # allowing signal control sets that do not take arguments.
         foreach(CONTROL_SET IN LISTS CONTROL_SETS)
             unset("${CONTROL_SET}")
-        endforeach()        
+        endforeach()
     endif()
     unset(CURRENT_LIST_NAME)
     # Process all arguments and fill in the module sources
@@ -118,23 +118,21 @@ endfunction()
 function(fprime__internal_add_build_target_helper TARGET_NAME TYPE SOURCES AUTOCODER_INPUTS HEADERS DEPENDENCIES EXTRA_CMAKE_DIRECTIVES)
     # Historical status message for posterity...and to prevent panic amongst users
     message(STATUS "Adding ${TYPE}: ${TARGET_NAME}")
+    # Add implicit dependency and filter out self-dependencies
+    list(APPEND DEPENDENCIES config)
+    list(REMOVE_ITEM DEPENDENCIES "${TARGET_NAME}")
+
     # Remap F Prime target type to CMake targe type
     if (TYPE STREQUAL "Executable" OR TYPE STREQUAL "Deployment" OR TYPE STREQUAL "Unit Test")
-        set(MODULE_CMAKE_TYPE executable)
+        add_executable("${TARGET_NAME}" ${EXTRA_CMAKE_DIRECTIVES} "${SOURCES}")
     elseif(TYPE STREQUAL "Library")
-        set(MODULE_CMAKE_TYPE library)
+        add_library("${TARGET_NAME}" ${EXTRA_CMAKE_DIRECTIVES} "${SOURCES}")
     else()
         fprime_fatal_cmake_error("Cannot register compilation target of type ${TYPE}")
     endif()
-    # Add implicit dependency and filter out self-dependencies 
-    list(APPEND DEPENDENCIES config)
-    list(REMOVE_ITEM DEPENDENCIES "${TARGET_NAME}")
-    
-    # Add cmake target and attach basic properties
-    cmake_language(CALL "add_${MODULE_CMAKE_TYPE}" "${TARGET_NAME}" ${EXTRA_CMAKE_DIRECTIVES} "${SOURCES}")
     # TODO: this is needed because sub-builds still attempt register targets, but without the build target to add back in the
     #       autocoding output. Thus empty must be substituted. Would it be possible to force the library to be an INTERFACE
-    #       instead?  Or only add empty on sub-builds? 
+    #       instead?  Or only add empty on sub-builds?
     target_sources("${TARGET_NAME}" PRIVATE "${FPRIME__INTERNAL_EMPTY_CPP}")
     target_sources("${TARGET_NAME}" PRIVATE ${SOURCES})
     target_link_libraries("${TARGET_NAME}" PUBLIC ${DEPENDENCIES})
