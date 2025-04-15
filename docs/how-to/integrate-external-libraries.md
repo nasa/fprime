@@ -26,7 +26,7 @@ The following summarizes recommendation on which approach to use based on these 
 2. **Source**:
   a) If the library uses CMake, use `FetchContent / add_subdirectory` (Approach 2).
   b) If the library does not use CMake but provides CMake integration, use `find_package()` (Approach 3) or `ExternalProject_Add()` (Approach 4).
-  c) If the the library does not use CMake and provides no CMake integration, use `ExternalProject_Add()` (Approach 4).
+  c) If the library does not use CMake and provides no CMake integration, use `ExternalProject_Add()` (Approach 4).
 
 Note that these are mere recommendations, and that you may choose to use a different approach based on your project's needs or the library's requirements. The following sections will cover each of these approaches in detail, along with their benefits and drawbacks.
 
@@ -42,7 +42,7 @@ Note that these are mere recommendations, and that you may choose to use a diffe
 
 A pre-compiled library is a library that has already been compiled and is ready to be used, often named `lib<libName>.a` or `lib<libName>.so`. There are many ways to obtain pre-compiled libraries, such as downloading them from a vendor repository or building them from source yourself.
 
-To integrate a pre-compiled library, you need to add the path of that library file to `MOD_DEPS` of the module(s) that depend on it (MOD_DEPS: module dependencies). The following example demonstrates how to integrate a the OpenSSL `libcrypto` library into an F´ wrapper component:
+To integrate a pre-compiled library, you need to add the path of that library file to `MOD_DEPS` of the module(s) that depend on it (MOD_DEPS: module dependencies). The following example demonstrates how to integrate the OpenSSL `libcrypto` library into an F´ wrapper component:
 
 ```cmake
 set(SOURCE_FILES
