@@ -1,4 +1,4 @@
-# How-To: Integrate an external Library into your F´ Project
+# How-To: Integrate a Third-Party Library
 
 > [!IMPORTANT]
 > For this How-To guide and many other advanced F´ CMake use cases, it is recommended to have a basic understanding of CMake. If you are unfamiliar with CMake, please refer to the [CMake documentation](https://cmake.org/getting-started/). They provide a [great tutorial to get you started](https://cmake.org/cmake/help/latest/guide/tutorial/index.html).
