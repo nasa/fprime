@@ -77,7 +77,7 @@ endfunction(setup_global_targets)
 
 
 function(check_unknown_links DEPLOYMENT_NAME)
-    # Check all links that they exist or are valid 
+    # Check all links that they exist or are valid
     foreach(LINK IN LISTS ARGN)
         # When a link is not a file, not a link flag, and not a generator expression then the target must already exist
         # as a target in the CMake system to be used as part of recursive dependency lists.
@@ -140,7 +140,16 @@ function(setup_single_target TARGET_FILE MODULE SOURCES DEPENDENCIES)
         get_target_property(TRANSITIVE_LINK_LIBRARIES "${MODULE}" TRANSITIVE_LINK_LIBRARIES)
         # Recalculate recursive dependencies
         if (NOT TRANSITIVE_LINK_LIBRARIES)
-            recurse_target_property("${MODULE}" INTERFACE_LINK_LIBRARIES KNOWN_TRANSITIVE_LINKS UNKNOWN_LINKS)
+            recurse_target_property("${MODULE}" INTERFACE_LINK_LIBRARIES KNOWN_TRANSITIVE_LINKS EXTERNAL_LINKS UNKNOWN_LINKS)
+            # Report all detected recursive dependencies
+            if (CMAKE_DEBUG_OUTPUT)
+                foreach(LIST_PRINT IN ITEMS EXTERNAL_LINKS KNOWN_TRANSITIVE_LINKS UNKNOWN_LINKS)
+                    message(STATUS "'${MODULE}' Recursive Links: ${LIST_PRINT}")
+                    foreach(ITEM_PRINT IN LISTS ${LIST_PRINT})
+                        message(STATUS "    ${ITEM_PRINT}")
+                    endforeach()
+                endforeach()
+            endif()
             check_unknown_links("${MODULE}" ${UNKNOWN_LINKS})
             set_target_properties("${MODULE}" PROPERTIES TRANSITIVE_LINK_LIBRARIES "${KNOWN_TRANSITIVE_LINKS}")
         endif()

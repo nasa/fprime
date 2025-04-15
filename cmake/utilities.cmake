@@ -756,7 +756,7 @@ macro(fprime_cmake_ASSERT MESSAGE)
 endmacro()
 
 
-function(recurse_target_property CMAKE_BUILD_TARGET_NAME PROPERTY_NAME TRANSITIVE_LINKS_OUTPUT NON_EXISTENT_LINKS_OUTPUT)
+function(recurse_target_property CMAKE_BUILD_TARGET_NAME PROPERTY_NAME TRANSITIVE_LINKS_OUTPUT EXTERNAL_LINKS_OUTPUT NON_EXISTENT_LINKS_OUTPUT)
     # Recursive leafs:
     #  1. This is not a known target
     #  2. This target has not further links
@@ -765,6 +765,15 @@ function(recurse_target_property CMAKE_BUILD_TARGET_NAME PROPERTY_NAME TRANSITIV
     if (NOT TARGET "${CMAKE_BUILD_TARGET_NAME}")
         set("${NON_EXISTENT_LINKS_OUTPUT}" "${CMAKE_BUILD_TARGET_NAME}" PARENT_SCOPE)
         set("${TRANSITIVE_LINKS_OUTPUT}" PARENT_SCOPE)
+	set("${EXTERNAL_LINKS_OUTPUT}" PARENT_SCOPE)
+        return()
+    endif()
+    # If the target is imported, tell the parent that this is an external target
+    get_target_property(IMPORTED_TARGET "${CMAKE_BUILD_TARGET_NAME}" IMPORTED)
+    if (IMPORTED_TARGET)
+        set("${NON_EXISTENT_LINKS_OUTPUT}" PARENT_SCOPE)
+        set("${TRANSITIVE_LINKS_OUTPUT}" PARENT_SCOPE)
+	set("${EXTERNAL_LINKS_OUTPUT}" "${CMAKE_BUILD_TARGET_NAME}" PARENT_SCOPE)
         return()
     endif()
     # Get the externally visible link libraries for the given target
@@ -773,6 +782,7 @@ function(recurse_target_property CMAKE_BUILD_TARGET_NAME PROPERTY_NAME TRANSITIV
     if (NOT PROPERTY_LIST)
         set("${NON_EXISTENT_LINKS_OUTPUT}" PARENT_SCOPE)
         set("${TRANSITIVE_LINKS_OUTPUT}" "${CMAKE_BUILD_TARGET_NAME}" PARENT_SCOPE)
+	set("${EXTERNAL_LINKS_OUTPUT}" PARENT_SCOPE)
         return()
     endif()
     set(PREVIOUSLY_RECURSED ${ARGN} ${CMAKE_BUILD_TARGET_NAME})
@@ -780,6 +790,7 @@ function(recurse_target_property CMAKE_BUILD_TARGET_NAME PROPERTY_NAME TRANSITIV
     # Look through each current link library using a recursive call
     set(RECURSED_TRANSITIVE)
     set(RECURSED_UNKNOWN)
+    set(RECURSED_EXTERNAL)
     foreach(LINK IN LISTS PROPERTY_LIST)
         unset(INTERNAL_TRANSITIVE)
         unset(INTERNAL_UNKNOWN)
@@ -788,21 +799,24 @@ function(recurse_target_property CMAKE_BUILD_TARGET_NAME PROPERTY_NAME TRANSITIV
             fprime_cmake_ASSERT("'${LINK}' is a null dependency of '${CMAKE_BUILD_TARGET_NAME}'" LINK)
             # Recurse through each link and append the recursively determined additions to the list
             # while ensuring there are no duplicates
-            recurse_target_property("${LINK}" "${PROPERTY_NAME}" INTERNAL_TRANSITIVE INTERNAL_UNKNOWN ${PREVIOUSLY_RECURSED})
+            recurse_target_property("${LINK}" "${PROPERTY_NAME}" INTERNAL_TRANSITIVE INTERNAL_EXTERNAL INTERNAL_UNKNOWN ${PREVIOUSLY_RECURSED})
             # The current link must occur in one list or the other
             fprime_cmake_ASSERT("'${LINK}' must appear in '${INTERNAL_TRANSITIVE}' or '${INTERNAL_UNKNOWN}'"
-                LINK IN_LIST INTERNAL_TRANSITIVE OR LINK IN_LIST INTERNAL_UNKNOWN)
+		    LINK IN_LIST INTERNAL_TRANSITIVE OR LINK IN_LIST INTERNAL_UNKNOWN OR LINK IN_LIST INTERNAL_EXTERNAL)
             # Append the lists to the aggregated output
             list(APPEND RECURSED_TRANSITIVE ${INTERNAL_TRANSITIVE})
             list(APPEND RECURSED_UNKNOWN ${INTERNAL_UNKNOWN})
+	    list(APPEND RECURSED_EXTERNAL ${INTERNAL_EXTERNAL})
             list(REMOVE_DUPLICATES RECURSED_TRANSITIVE)
             list(REMOVE_DUPLICATES RECURSED_UNKNOWN)
+	    list(REMOVE_DUPLICATES RECURSED_EXTERNAL)
             # Update previously touched modules
-            list(APPEND PREVIOUSLY_RECURSED ${INTERNAL_TRANSITIVE} ${INTERNAL_UNKNOWN})
+	    list(APPEND PREVIOUSLY_RECURSED ${INTERNAL_TRANSITIVE} ${INTERNAL_UNKNOWN} ${INTERNAL_EXTERNAL})
             list(REMOVE_DUPLICATES PREVIOUSLY_RECURSED)
         endif()
     endforeach()
     # Return the results of this stage of the recursion
     set("${NON_EXISTENT_LINKS_OUTPUT}" ${RECURSED_UNKNOWN} PARENT_SCOPE)
     set("${TRANSITIVE_LINKS_OUTPUT}" ${CMAKE_BUILD_TARGET_NAME} ${RECURSED_TRANSITIVE} PARENT_SCOPE)
+    set("${EXTERNAL_LINKS_OUTPUT}" ${RECURSED_EXTERNAL} PARENT_SCOPE)
 endfunction()
