@@ -507,6 +507,7 @@ lestarch
 levelname
 lflag
 lhash
+LIBCRYPTO
 LIBDIR
 LIBEXECDIR
 LIBLOC
