@@ -60,8 +60,7 @@ void FprimeFramerTester ::testNominalFraming() {
     // Check header
     FprimeProtocol::FrameHeader defaultHeader;
     FprimeProtocol::FrameHeader outputHeader;
-    outputBuffer.getSerializeRepr().setBuffLen(outputBuffer.getSize());
-    outputHeader.deserialize(outputBuffer.getSerializeRepr());
+    outputHeader.deserialize(outputBuffer.getDeserializer());
     ASSERT_EQ(outputHeader.getstartWord(), defaultHeader.getstartWord());
     ASSERT_EQ(outputHeader.getlengthField(), sizeof(bufferData));
     // Check data
@@ -78,7 +77,6 @@ Fw::Buffer FprimeFramerTester::from_bufferAllocate_handler(FwIndexType portNum, 
     this->pushFromPortEntry_bufferAllocate(size);
     this->m_buffer.setData(this->m_buffer_slot);
     this->m_buffer.setSize(size);
-    this->m_buffer.getSerializeRepr().setBuffLen(size);
     ::memset(this->m_buffer.getData(), 0, size);
     return this->m_buffer;
 }

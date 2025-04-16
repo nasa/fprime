@@ -35,7 +35,7 @@ void FprimeFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, CommsC
 
     // Allocate frame buffer
     Fw::Buffer frameBuffer = this->bufferAllocate_out(0, static_cast<Fw::Buffer::SizeType>(frameSize));
-    Fw::SerializeBufferBase& frameSerializer = frameBuffer.getSerializeRepr();
+    Fw::SerializeBufferBase& frameSerializer = frameBuffer.getSerializer();
     Fw::SerializeStatus status;
 
     // Serialize the header
