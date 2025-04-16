@@ -8,6 +8,7 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PolyIf/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Sched/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Seq/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/WatchDog/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Ports/")
 
 # Components
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ActiveLogger/")
@@ -52,7 +53,6 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/StaticMemory/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/TlmChan/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/TlmPacketizer/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SystemResources/")
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Ports/")
 
 # Text logger components included by default, 
 # but can be disabled if FW_ENABLE_TEXT_LOGGING=0 is desired.
