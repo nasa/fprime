@@ -196,7 +196,7 @@ void ComQueue ::bufferReturnIn_handler(FwIndexType portNum,
     // the first COM_PORT_COUNT queues are for ComBuffer. So we have for buffer queues:
     // queueNum = portNum + COM_PORT_COUNT
     // Since queueNum is used as APID, we can retrieve the original portNum like such:
-    FwIndexType bufferReturnPortNum = static_cast<FwIndexType>(context.getapid()) - ComQueue::COM_PORT_COUNT;
+    FwIndexType bufferReturnPortNum = static_cast<FwIndexType>(context.getapid()) - static_cast<FwIndexType>(ComQueue::COM_PORT_COUNT);
     // Failing this assert means that context.apid was modified since ComQueue set it, which should not happen
     FW_ASSERT(bufferReturnPortNum < BUFFER_PORT_COUNT,
               static_cast<FwAssertArgType>(bufferReturnPortNum));
