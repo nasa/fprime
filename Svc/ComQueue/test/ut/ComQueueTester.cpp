@@ -67,7 +67,7 @@ void ComQueueTester ::emitOneAndCheck(FwIndexType expectedIndex,
                               U8* expectedData,
                               FwSizeType expectedSize) {
     emitOne();
-    // Check that the data buffers are identifcal (size + data)
+    // Check that the data buffers are identical (size + data)
     Fw::Buffer emittedBuffer = this->fromPortHistory_queueSend->at(expectedIndex).data;
     ASSERT_EQ(expectedSize, emittedBuffer.getSize());
     for (FwSizeType i = 0; i < expectedSize; i++) {
@@ -232,7 +232,7 @@ void ComQueueTester::testExternalQueueOverflow() {
             ASSERT_from_bufferReturnOut(2, buffer);
         }
 
-        // emitOne() reset the throttle, then overflow again. So expect a second everflow event
+        // emitOne() reset the throttle, then overflow again. So expect a second overflow event
         ASSERT_EVENTS_QueueOverflow_SIZE(2);
         ASSERT_EVENTS_QueueOverflow(1, overflow_type, portNum);
 

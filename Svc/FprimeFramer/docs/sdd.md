@@ -1,12 +1,12 @@
 # Svc::FprimeFramer
 
-The `Svc::FprimeFramer` is an implementation of the [FramerInterface](../../Interfaces/docs/sdd.md#svcframerinterface) for the F Prime protocol. 
+The `Svc::FprimeFramer` is an implementation of the [FramerInterface](../../Interfaces/docs/sdd.md) for the F Prime protocol. 
 
 It receives data (an F´ packet) on input and produces an [F´ frame](../../FprimeProtocol/docs/sdd.md) on its output port as a result. Please refer to the [F Prime frame specification](../../FprimeProtocol/docs/sdd.md) for details on the frame format.
 
 ### Diagrams
 
-Below is the common configuration in which the `Svc::FprimeFramer` can be used. It is receiving packets from a [`Svc::ComQueue`](../../ComQueue/docs/sdd.md) and passes frames to a [Communications Adapter](../../Interfaces/docs/sdd.md#svccominterface), such as a Radio manager component (or a [`Svc::ComStub`](../../ComStub/docs/sdd.md)), for transmission.
+Below is the common configuration in which the `Svc::FprimeFramer` can be used. It is receiving packets from a [`Svc::ComQueue`](../../ComQueue/docs/sdd.md) and passes frames to a [Communications Adapter](../../Interfaces/docs/sdd.md), such as a Radio manager component (or a [`Svc::ComStub`](../../ComStub/docs/sdd.md)), for transmission.
 
 ![./img/framer-topology.png](./img/framer-topology.png)
 

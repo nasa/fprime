@@ -359,6 +359,7 @@ gencode
 genfile
 GENHUB
 genshi
+getapid
 getblocks
 getchildren
 getcontext
@@ -828,7 +829,9 @@ SENDPARTIAL
 seqgen
 serializables
 setaffinity
+setapid
 setblocks
+setcrc
 setdata
 setid
 setinheritsched

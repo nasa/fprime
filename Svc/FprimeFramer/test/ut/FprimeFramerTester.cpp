@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  FprimeFramerTester.cpp
-// \author chammard
+// \author thomas-bc
 // \brief  cpp file for FprimeFramer component test harness implementation class
 // ======================================================================
 

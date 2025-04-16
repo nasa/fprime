@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  FprimeFramerTester.hpp
-// \author chammard
+// \author thomas-bc
 // \brief  hpp file for FprimeFramer component test harness implementation class
 // ======================================================================
 

@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  FprimeFramerTestMain.cpp
-// \author chammard
+// \author thomas-bc
 // \brief  cpp file for FprimeFramer component test main function
 // ======================================================================
 
