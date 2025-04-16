@@ -6,7 +6,16 @@
 include_guard()
 set_property(GLOBAL PROPERTY C_CPP_ASM_REGEX ".*\.(c|cpp|cc|cxx|S|asm)$")
 
-
+####
+# Function `sort_buildable_from_non_buildable_sources`:
+#
+# Sorts C/C++ "buildable" sources from other sources. This uses the GLOBAL property C_CPP_ASM_REGEX to
+# determine how to sort. Ideally users would use SOURCES and AUTOCODER_INPUTS to distinguish but this
+# provides some backwards compatibility with the merged SOURCE_FILES variable.
+#
+# - **BUILDABLE_SOURCE_OUTPUT**: output name for buildable sources to be set in parent scope
+# - **NON_BUILDABLE_SOURCE_OUTPUT**: output name for non-buildable sources to be set in parent scope
+####
 function(sort_buildable_from_non_buildable_sources BUILDABLE_SOURCE_OUTPUT NON_BUILDABLE_SOURCE_OUTPUT)
     get_property(SORT_REGEX GLOBAL PROPERTY C_CPP_ASM_REGEX )
     set(CPP_LIST_NAME ${ARGN})
@@ -15,6 +24,26 @@ function(sort_buildable_from_non_buildable_sources BUILDABLE_SOURCE_OUTPUT NON_B
     list(FILTER NON_CPP_LIST_NAME EXCLUDE REGEX "${SORT_REGEX}")
     set("${BUILDABLE_SOURCE_OUTPUT}" ${CPP_LIST_NAME} PARENT_SCOPE)
     set("${NON_BUILDABLE_SOURCE_OUTPUT}" ${NON_CPP_LIST_NAME} PARENT_SCOPE)
+endfunction()
+
+####
+# Macro `clear_historical_variables`:
+#
+# Clears old variables `MOD_DEPS`, `SOURCE_FILES`, `HEADER_FILES`, etc. from the scope of the
+# caller. This removes accidental uses of these variables within the refactored system from this
+# scope and below.
+#
+# This is a macro to ensure the caller's scope is affected.
+#
+# **ARGN:** passed to the `unset` calls (for things like PARENT_SCOPE) 
+####
+function(clear_historical_variables)
+    unset(SOURCE_FILES ${ARGN})
+    unset(MOD_DEPS ${ARGN})
+    unset(HEADER_FILES ${ARGN})
+    unset(UT_SOURCE_FILES ${ARGN})
+    unset(UT_MOD_DEPS ${ARGN})
+    unset(UT_HEADER_FILES ${ARGN})
 endfunction()
 
 ####
@@ -755,8 +784,26 @@ macro(fprime_cmake_ASSERT MESSAGE)
     endif()
 endmacro()
 
-
-function(recurse_target_property CMAKE_BUILD_TARGET_NAME PROPERTY_NAME TRANSITIVE_LINKS_OUTPUT EXTERNAL_LINKS_OUTPUT NON_EXISTENT_LINKS_OUTPUT)
+####
+# Function `recurse_target_properties`:
+#
+# Recurses the supplied PROPERTY_NAMES of the CMAKE_BUILD_TARGET_NAME target. Sets three variables TRANSITIVE_LINKS_OUTPUT, EXTERNAL_LINKS_OUTPUT,
+# and NON_EXISTENT_LINKS_OUTPUT. Where TRANSITIVE_LINKS_OUTPUT holds the transitive values of target/links found in those properties (recursively),
+# EXTERNAL_LINKS_OUTPUT holds IMPORTED type targets found in the recursion, and NON_EXISTENT_LINKS_OUTPUT holds unknown/non-target values found
+# (recursively).
+#
+# NON_EXISTENT_LINKS_OUTPUT will include directly linked files, linker flags, and other non-target values.
+#
+# > [!WARNING]
+# > Properties supplied through PROPERTY_NAMES must be composed of mostly target names (e.g. LINK_LIBRARIES, MANUALLY_ADDED_DEPENDENCIES, etc.)
+#
+# - **CMAKE_BUILD_TARGET_NAME**: name of the target in the CMake system
+# - **PROPERTY_NAMES**: list of properties containing other CMake target names to be read recursively
+# - **TRANSITIVE_LINKS_OUTPUT**: name of output to write transitive links/dependencies in PARENT_SCOPE
+# - **EXTERNAL_LINKS_OUTPUT**: name of output to write external (IMPORTED) links/dependencies in PARENT_SCOPE
+# - **NON_EXISTENT_LINKS_OUTPUT**: name of output to write non-target links/dependencies in PARENT_SCOPE
+####
+function(recurse_target_properties CMAKE_BUILD_TARGET_NAME PROPERTY_NAMES TRANSITIVE_LINKS_OUTPUT EXTERNAL_LINKS_OUTPUT NON_EXISTENT_LINKS_OUTPUT)
     # Recursive leafs:
     #  1. This is not a known target
     #  2. This target has not further links
@@ -776,8 +823,15 @@ function(recurse_target_property CMAKE_BUILD_TARGET_NAME PROPERTY_NAME TRANSITIV
 	set("${EXTERNAL_LINKS_OUTPUT}" "${CMAKE_BUILD_TARGET_NAME}" PARENT_SCOPE)
         return()
     endif()
-    # Get the externally visible link libraries for the given target
-    get_target_property(PROPERTY_LIST "${CMAKE_BUILD_TARGET_NAME}" INTERFACE_LINK_LIBRARIES)
+    # Read all supplied properties and add them to the list of items to recurse
+    set(PROPERTY_LIST)
+    foreach(PROPERTY_NAME IN LISTS PROPERTY_NAMES)
+        get_target_property(PROPERTY_LIST_LOOPED "${CMAKE_BUILD_TARGET_NAME}" "${PROPERTY_NAME}")
+        if (PROPERTY_LIST_LOOPED)
+            list(APPEND PROPERTY_LIST ${PROPERTY_LIST_LOOPED})
+        endif()
+    endforeach()
+    list(REMOVE_DUPLICATES PROPERTY_LIST)
     # When there are no other link libraries below this one, return current target as the singular dependency
     if (NOT PROPERTY_LIST)
         set("${NON_EXISTENT_LINKS_OUTPUT}" PARENT_SCOPE)
@@ -799,7 +853,7 @@ function(recurse_target_property CMAKE_BUILD_TARGET_NAME PROPERTY_NAME TRANSITIV
             fprime_cmake_ASSERT("'${LINK}' is a null dependency of '${CMAKE_BUILD_TARGET_NAME}'" LINK)
             # Recurse through each link and append the recursively determined additions to the list
             # while ensuring there are no duplicates
-            recurse_target_property("${LINK}" "${PROPERTY_NAME}" INTERNAL_TRANSITIVE INTERNAL_EXTERNAL INTERNAL_UNKNOWN ${PREVIOUSLY_RECURSED})
+            recurse_target_properties("${LINK}" "${PROPERTY_NAMES}" INTERNAL_TRANSITIVE INTERNAL_EXTERNAL INTERNAL_UNKNOWN ${PREVIOUSLY_RECURSED})
             # The current link must occur in one list or the other
             fprime_cmake_ASSERT("'${LINK}' must appear in '${INTERNAL_TRANSITIVE}' or '${INTERNAL_UNKNOWN}'"
 		    LINK IN_LIST INTERNAL_TRANSITIVE OR LINK IN_LIST INTERNAL_UNKNOWN OR LINK IN_LIST INTERNAL_EXTERNAL)

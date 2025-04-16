@@ -62,14 +62,6 @@ function(fprime__internal_TECH_DEBT_module_setup BUILD_MODULE_NAME MODULE_NAME_H
     )
     #### End Remove empty.cpp ####
 
-    #### Set FPRIME_TARGET_DEPENDENCIES ####
-    # Can this be removed or simplified?  It is used for recursing dependencies. Perhaps we can do this with
-    # add_dependencies and recursive targets instead? 
-    list(REMOVE_DUPLICATES MODULE_DEPENDENCIES)
-    list(FILTER MODULE_DEPENDENCIES EXCLUDE REGEX "^-.*")
-    set_property(TARGET "${BUILD_MODULE_NAME}" PROPERTY FPRIME_TARGET_DEPENDENCIES ${MODULE_DEPENDENCIES})
-    #### End set FPRIME_TARGET_DEPENDENCIES ####
-
     #### Set Implementation Choices ####
     # Extra source files, dependencies, and link libraries need to be added to executables to account for the chosen
     # implementations. First, for modules whose names differ from FPRIME_CURRENT_MODULE the chosen implementation is
@@ -93,7 +85,7 @@ function(fprime__internal_check_restrictions MODULE_NAME DEPENDENCIES)
     get_property(RESTRICTED_TARGETS GLOBAL PROPERTY "RESTRICTED_TARGETS")
     foreach(DEPENDENCY IN LISTS DEPENDENCIES)
         if (DEPENDENCY IN_LIST RESTRICTED_TARGETS)
-            fprime_fatal_cmake_error("${DEPENDENCY} is not available on platform '${FPRIME_PLATFORM}' nor toolchain '${FPRIME_TOOLCHAIN}'")
+            fprime_cmake_fatal_error("${DEPENDENCY} is not available on platform '${FPRIME_PLATFORM}' nor toolchain '${FPRIME_TOOLCHAIN}'")
         endif()
     endforeach()
 endfunction()

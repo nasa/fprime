@@ -75,7 +75,16 @@ function(setup_global_targets)
     endif ()
 endfunction(setup_global_targets)
 
-
+####
+# Function `check_unknown_links`:
+#
+# Checks all ARGN supplied arguments to determine if they **should have** existed for deployment recursion to work
+# properly. If an argument is a file (i.e. a library or other file), a linker flag (-*), a generator expression
+# ($*) then these are passed. Anything else results in an error.
+#
+# - **DEPLOYMENT_NAME:** name of deployment being recursed for cleaner error messages
+# - **ARGN:** list of unknown targets to check
+####
 function(check_unknown_links DEPLOYMENT_NAME)
     # Check all links that they exist or are valid
     foreach(LINK IN LISTS ARGN)
@@ -137,10 +146,12 @@ function(setup_single_target TARGET_FILE MODULE SOURCES DEPENDENCIES)
     if (NOT MODULE_TYPE STREQUAL "Deployment")
         cmake_language(CALL "${TARGET_NAME}_add_module_target" "${MODULE}" "${TARGET_NAME}" "${SOURCES}" "${DEPENDENCIES}")
     else()
-        get_target_property(TRANSITIVE_LINK_LIBRARIES "${MODULE}" TRANSITIVE_LINK_LIBRARIES)
+        get_target_property(TRANSITIVE_DEPENDENCIES "${MODULE}" TRANSITIVE_DEPENDENCIES)
         # Recalculate recursive dependencies
-        if (NOT TRANSITIVE_LINK_LIBRARIES)
-            recurse_target_property("${MODULE}" INTERFACE_LINK_LIBRARIES KNOWN_TRANSITIVE_LINKS EXTERNAL_LINKS UNKNOWN_LINKS)
+        if (NOT TRANSITIVE_DEPENDENCIES)
+            set(RECURSED_PROPERTY_NAMES INTERFACE_LINK_LIBRARIES MANUALLY_ADDED_DEPENDENCIES)
+            recurse_target_properties("${MODULE}" "${RECURSED_PROPERTY_NAMES}" KNOWN_TRANSITIVE_LINKS EXTERNAL_LINKS UNKNOWN_LINKS)
+            
             # Report all detected recursive dependencies
             if (CMAKE_DEBUG_OUTPUT)
                 foreach(LIST_PRINT IN ITEMS EXTERNAL_LINKS KNOWN_TRANSITIVE_LINKS UNKNOWN_LINKS)
@@ -151,9 +162,10 @@ function(setup_single_target TARGET_FILE MODULE SOURCES DEPENDENCIES)
                 endforeach()
             endif()
             check_unknown_links("${MODULE}" ${UNKNOWN_LINKS})
-            set_target_properties("${MODULE}" PROPERTIES TRANSITIVE_LINK_LIBRARIES "${KNOWN_TRANSITIVE_LINKS}")
+            set_target_properties("${MODULE}" PROPERTIES TRANSITIVE_DEPENDENCIES "${KNOWN_TRANSITIVE_LINKS}")
+            set(TRANSITIVE_DEPENDENCIES "${KNOWN_TRANSITIVE_LINKS}")
         endif()
-        cmake_language(CALL "${TARGET_NAME}_add_deployment_target" "${MODULE}" "${TARGET_NAME}" "${SOURCES}" "${DEPENDENCIES}" "${TRANSITIVE_LINK_LIBRARIES}")
+        cmake_language(CALL "${TARGET_NAME}_add_deployment_target" "${MODULE}" "${TARGET_NAME}" "${SOURCES}" "${DEPENDENCIES}" "${TRANSITIVE_DEPENDENCIES}")
     endif()
 endfunction(setup_single_target)
 

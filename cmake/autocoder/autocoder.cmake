@@ -44,6 +44,8 @@ function (run_ac_set BUILD_TARGET_NAME)
     append_list_property("${GENERATED_FILE_LIST}" TARGET "${BUILD_TARGET_NAME}" PROPERTY AC_GENERATED)
     append_list_property("${FILE_DEPENDENCY_LIST}" TARGET "${BUILD_TARGET_NAME}" PROPERTY AC_FILE_DEPENDENCIES)
     append_list_property("${AUTOCODER_INPUT_SOURCES}" TARGET "${BUILD_TARGET_NAME}" PROPERTY AUTOCODER_INPUTS)
+    # Cannot use `target_sources` as it does not respect the "GENERATED" flag. Thus the sources need to be added
+    # to the SOURCES property directly.
     append_list_property("${BUILD_SOURCES_LIST}" TARGET "${BUILD_TARGET_NAME}" PROPERTY SOURCES)
     append_list_property("${MODULE_DEPENDENCIES_LIST}" TARGET "${BUILD_TARGET_NAME}" PROPERTY LINK_LIBRARIES)
     append_list_property("${MODULE_DEPENDENCIES_LIST}" TARGET "${BUILD_TARGET_NAME}" PROPERTY INTERFACE_LINK_LIBRARIES)

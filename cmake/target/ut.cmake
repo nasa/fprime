@@ -4,7 +4,7 @@
 # UTs target implementation.
 ####
 include(target/build) # Borrows some implementation
-set(UT_TARGET "ut_exe") # For historical reasons
+set(FPRIME__INTERNAL_UT_TARGET "ut_exe") # For historical reasons
 set(UT_CLEAN_SCRIPT "${CMAKE_BINARY_DIR}/clean.cmake")
 
 
@@ -34,7 +34,7 @@ endfunction(_ut_setup_clean_file)
 ####
 function(ut_add_global_target TARGET)
     if (FPRIME_ENABLE_UTIL_TARGETS)
-        add_custom_target(${UT_TARGET})
+        add_custom_target(${FPRIME__INTERNAL_UT_TARGET})
     endif()
     _ut_setup_clean_file()
 endfunction(ut_add_global_target)
@@ -57,11 +57,11 @@ function(ut_add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPEND
     set_property(DIRECTORY APPEND PROPERTY
         TEST_INCLUDE_FILES "${UT_CLEAN_SCRIPT}"
     )
-    add_custom_target("${MODULE}_${UT_TARGET}")
+    add_custom_target("${MODULE}_${FPRIME__INTERNAL_UT_TARGET}")
     foreach(DEPENDENCY IN LISTS FULL_DEPENDENCIES)
         get_property(DEPENDENCY_UTS TARGET "${DEPENDENCY}" PROPERTY FPRIME_UTS)
         if (DEPENDENCY_UTS)
-            add_dependencies("${MODULE}_${UT_TARGET}" ${DEPENDENCY_UTS})
+            add_dependencies("${MODULE}_${FPRIME__INTERNAL_UT_TARGET}" ${DEPENDENCY_UTS})
         endif()
     endforeach()
 endfunction(ut_add_deployment_target)
@@ -109,7 +109,7 @@ function(ut_add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCIES)
     endif()
     # Set some local variables
     set(UT_EXECUTABLE_TARGET "${MODULE_NAME}")
-    set(UT_MODULE_TARGET "${FPRIME_CURRENT_MODULE}_${UT_TARGET}")
+    set(UT_MODULE_TARGET "${FPRIME_CURRENT_MODULE}_${FPRIME__INTERNAL_UT_TARGET}")
     message(STATUS "Adding Unit Test: ${UT_EXECUTABLE_TARGET}")
     set_property(DIRECTORY APPEND PROPERTY
         TEST_INCLUDE_FILES "${UT_CLEAN_SCRIPT}"
@@ -133,7 +133,7 @@ function(ut_add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCIES)
     # Add module level target dependencies to this UT
     if (FPRIME_ENABLE_UTIL_TARGETS)
         add_dependencies("${UT_MODULE_TARGET}" "${UT_EXECUTABLE_TARGET}")
-        add_dependencies("${UT_TARGET}" "${UT_EXECUTABLE_TARGET}")
+        add_dependencies("${FPRIME__INTERNAL_UT_TARGET}" "${UT_EXECUTABLE_TARGET}")
         set_property(TARGET "${FPRIME_CURRENT_MODULE}" APPEND PROPERTY FPRIME_UTS "${UT_MODULE_TARGET}")
     endif()
     # Link library list output on per-module basis
