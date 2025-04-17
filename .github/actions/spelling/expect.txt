@@ -310,11 +310,13 @@ EXAMPLECOMPONENTIMPL
 excinfo
 Exoplanets
 exprtokens
+externalproject
 Fabcdef
 FAKELOGGER
 fbuild
 fdp
 FEEDNAME
+fetchcontent
 ffff
 Ffs
 FILEDOWNLINK
