@@ -16,7 +16,6 @@
 #include <Fw/Types/MallocAllocator.hpp>
 #include <Os/Console.hpp>
 #include <Svc/FramingProtocol/FprimeProtocol.hpp>
-#include "config/FppConstantsAc.hpp"
 
 // Used for 1Hz synthetic cycling
 #include <Os/Mutex.hpp>
@@ -48,8 +47,7 @@ NATIVE_INT_TYPE rateGroup3Context[Svc::ActiveRateGroup::CONNECTION_COUNT_MAX] = 
 
 // A number of constants are needed for construction of the topology. These are specified here.
 enum TopologyConstants {
-    // make sure we can hold the max possible number of statements given our settings
-    CMD_SEQ_BUFFER_SIZE = Svc::Fpy::MAX_SEQUENCE_STATEMENT_COUNT * (FW_STATEMENT_ARG_BUFFER_MAX_SIZE + 40) + 100,
+    CMD_SEQ_BUFFER_SIZE = 5 * 1024,
     FILE_DOWNLINK_TIMEOUT = 1000,
     FILE_DOWNLINK_COOLDOWN = 1000,
     FILE_DOWNLINK_CYCLE_TIME = 1000,
@@ -73,7 +71,7 @@ enum TopologyConstants {
  */
 void configureTopology() {
     // Command sequencer needs to allocate memory to hold contents of command sequences
-    fpySeq.allocateBuffer(0, mallocator, CMD_SEQ_BUFFER_SIZE);
+    cmdSeq.allocateBuffer(0, mallocator, CMD_SEQ_BUFFER_SIZE);
 
     // Rate group driver needs a divisor list
     rateGroupDriverComp.configure(rateGroupDivisorsSet);
@@ -193,7 +191,7 @@ void teardownTopology(const TopologyState& state) {
     (void)comm.join();
 
     // Resource deallocation
-    fpySeq.deallocateBuffer(mallocator);
+    cmdSeq.deallocateBuffer(mallocator);
     fileUplinkBufferManager.cleanup();
 }
 };  // namespace Ref

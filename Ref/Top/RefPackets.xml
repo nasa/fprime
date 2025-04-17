@@ -1,4 +1,4 @@
-<packets name="RefPackets" namespace="Ref" size="303">
+<packets name="RefPackets" namespace="Ref" size="191">
 
     <import_topology>Ref/Top/RefTopologyAppAi.xml</import_topology>
 
@@ -7,12 +7,10 @@
         <channel name="Ref.rateGroup1Comp.RgMaxTime"/>
         <channel name="Ref.rateGroup2Comp.RgMaxTime"/>
         <channel name="Ref.rateGroup3Comp.RgMaxTime"/>
-        <channel name="Ref.fpySeq.SequencesSucceeded"/>
-        <channel name="Ref.fpySeq.StatementsDispatched"/>
-        <channel name="Ref.fpySeq.SequencesFailed"/>
-        <channel name="Ref.fpySeq.StatementsFailed"/>
-        <channel name="Ref.fpySeq.STATEMENT_TIMEOUT_SECS"/>
-        <channel name="Ref.fpySeq.SeqPath"/>
+        <channel name="Ref.cmdSeq.CS_LoadCommands"/>
+        <channel name="Ref.cmdSeq.CS_CancelCommands"/>
+        <channel name="Ref.cmdSeq.CS_CommandsExecuted"/>
+        <channel name="Ref.cmdSeq.CS_SequencesCompleted"/>
         <channel name="Ref.fileUplink.FilesReceived"/>
         <channel name="Ref.fileUplink.PacketsReceived"/>
         <channel name="Ref.fileUplinkBufferManager.TotalBuffs"/>
@@ -29,6 +27,7 @@
         <channel name="Ref.rateGroup1Comp.RgCycleSlips"/>
         <channel name="Ref.rateGroup2Comp.RgCycleSlips"/>
         <channel name="Ref.rateGroup3Comp.RgCycleSlips"/>
+        <channel name="Ref.cmdSeq.CS_Errors"/>
         <channel name="Ref.fileUplink.Warnings"/>
         <channel name="Ref.fileDownlink.Warnings"/>
         <channel name="Ref.health.PingLateWarnings"/>

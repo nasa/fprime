@@ -30,6 +30,7 @@ module Ref {
     instance blockDrv
     instance tlmSend
     instance cmdDisp
+    instance cmdSeq
     instance comm
     instance downlink
     instance eventLogger
@@ -58,7 +59,6 @@ module Ref {
     instance dpWriter
     instance dpBufferManager
     instance version
-    instance fpySeq
 
     # ----------------------------------------------------------------------
     # Pattern graph specifiers
@@ -115,14 +115,13 @@ module Ref {
       rateGroup1Comp.RateGroupMemberOut[2] -> tlmSend.Run
       rateGroup1Comp.RateGroupMemberOut[3] -> fileDownlink.Run
       rateGroup1Comp.RateGroupMemberOut[4] -> systemResources.run
-      rateGroup1Comp.RateGroupMemberOut[5] -> fpySeq.checkTimers
-      rateGroup1Comp.RateGroupMemberOut[6] -> fpySeq.tlmWrite
 
       # Rate group 2
       rateGroupDriverComp.CycleOut[Ports_RateGroups.rateGroup2] -> rateGroup2Comp.CycleIn
-      rateGroup2Comp.RateGroupMemberOut[0] -> sendBuffComp.SchedIn
-      rateGroup2Comp.RateGroupMemberOut[1] -> SG3.schedIn
-      rateGroup2Comp.RateGroupMemberOut[2] -> SG4.schedIn
+      rateGroup2Comp.RateGroupMemberOut[0] -> cmdSeq.schedIn
+      rateGroup2Comp.RateGroupMemberOut[1] -> sendBuffComp.SchedIn
+      rateGroup2Comp.RateGroupMemberOut[2] -> SG3.schedIn
+      rateGroup2Comp.RateGroupMemberOut[3] -> SG4.schedIn
 
       # Rate group 3
       rateGroupDriverComp.CycleOut[Ports_RateGroups.rateGroup3] -> rateGroup3Comp.CycleIn
@@ -141,8 +140,8 @@ module Ref {
     }
 
     connections Sequencer {
-      fpySeq.cmdOut -> cmdDisp.seqCmdBuff
-      cmdDisp.seqCmdStatus -> fpySeq.cmdResponseIn
+      cmdSeq.comCmdOut -> cmdDisp.seqCmdBuff
+      cmdDisp.seqCmdStatus -> cmdSeq.cmdResponseIn
     }
 
     connections Uplink {

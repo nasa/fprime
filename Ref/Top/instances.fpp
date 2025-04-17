@@ -102,10 +102,6 @@ module Ref {
     stack size Default.STACK_SIZE \
     priority 96
 
-  instance fpySeq: Svc.FpySequencer base id 0x1200 \
-    queue size Default.QUEUE_SIZE \
-    stack size Default.STACK_SIZE \
-    priority 96
 
   instance typeDemo: Ref.TypeDemo base id 0x1100
 

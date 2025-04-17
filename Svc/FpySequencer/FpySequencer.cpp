@@ -158,10 +158,11 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
     if (this->sequencer_getState() != State::RUNNING_AWAITING_STATEMENT_RESPONSE
         && this->sequencer_getState() != State::RUNNING_DISPATCH_STATEMENT
         && this->sequencer_getState() != State::RUNNING_SLEEPING) {
-        // must be a coding error.
+        // must be a coding error from an outside component (off nom), or due to CANCEL while running a command (nom).
+        // because we can't be sure that it wasn't a nominal sequence of events leading to this, don't fail the 
+        // sequence, just report it
         this->log_WARNING_LO_CmdResponseWhileNotRunningSequence(static_cast<I32>(this->sequencer_getState()), opCode,
                                                                 response);
-        // ignore it, hopefully that wasn't important :D
         return;
     }
 
@@ -178,12 +179,7 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
     // for info on the binary format of this cmdUid. as a reminder, this should be equal to the first 16 bits of
     // the m_sequencesStarted variable
     U16 sequenceIndex = (cmdUid & 0xFFFF0000) >> 16;
-    // pull the cmd index (modulo 2^16) out of cmdUid. this should be equal to the first 16 bits of the 
-    // m_statementsDispatched variable
-    U16 cmdIndex = (cmdUid & 0xFFFF);
-
     U16 currentSequenceIndex = this->m_sequencesStarted & 0xFFFF;
-    U16 currentCmdIndex = this->m_statementsDispatched & 0xFFFF;
 
     // if it was from a different sequence:
     if (sequenceIndex != currentSequenceIndex) {
@@ -211,6 +207,14 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
 
     // okay, we were awaiting this opcode. but was it from this exact statement, or a different one with the same opcode
     // in the same file?
+
+    // pull the cmd index (modulo 2^16) out of cmdUid. this should be equal to the first 16 bits of the 
+    // m_statementsDispatched variable - 1. the -1 is because 
+    U16 cmdIndex = (cmdUid & 0xFFFF);
+    // check for coding errors. at this point in the function, we have definitely dispatched a stmt
+    FW_ASSERT(this->m_statementsDispatched > 0);
+    U16 currentCmdIndex = (this->m_statementsDispatched - 1) & 0xFFFF;
+
     if (cmdIndex != currentCmdIndex) {
         // we were not awaiting this exact statement, it was a different one with the same opcode. coding error
         this->log_WARNING_HI_WrongCmdResponseIndex(opCode, response, cmdIndex, currentCmdIndex);

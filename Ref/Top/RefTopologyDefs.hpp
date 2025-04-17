@@ -62,7 +62,7 @@ enum { WARN = 3, FATAL = 5 };
 namespace Ref_cmdDisp {
 enum { WARN = 3, FATAL = 5 };
 }
-namespace Ref_fpySeq {
+namespace Ref_cmdSeq {
 enum { WARN = 3, FATAL = 5 };
 }
 namespace Ref_eventLogger {
