@@ -179,6 +179,12 @@ function(fprime_setup_included_code)
             message(FATAL_ERROR "googletest submodule not initialized or corrupted. Please run `git submodule update --init --recursive`.")
         endif()
         add_subdirectory("${FPRIME_FRAMEWORK_PATH}/googletest/" "${CMAKE_BINARY_DIR}/F-Prime/googletest")
+        # Flags attached to GTest compile: disable conversion warnings
+        set(GTEST_FLAGS "-Wno-conversion")
+        target_compile_options(gmock      PRIVATE "${GTEST_FLAGS}")
+        target_compile_options(gmock_main PRIVATE "${GTEST_FLAGS}")
+        target_compile_options(gtest      PRIVATE "${GTEST_FLAGS}")
+        target_compile_options(gtest_main PRIVATE "${GTEST_FLAGS}")
     endif()
     if (BUILD_TESTING)
         add_subdirectory("${FPRIME_FRAMEWORK_PATH}/STest/" "${CMAKE_BINARY_DIR}/F-Prime/STest")
@@ -198,7 +204,15 @@ function(fprime_setup_included_code)
     # Faux libraries used as interfaces to non-autocoded fpp items
     add_library(Fpp INTERFACE)
 
-    # Specific configuration handling
+    # Specific configuration module handling:
+    #
+    # add_fprime_subdirectory cannot be run until later in the build process. Otherwise detection
+    # for model specific post processing is messed up. Thus we synthesize the behavior by setting
+    # the current module and then calling stock "add_subdirectory".
+    get_module_name("${FPRIME_PLATFORM_MODULE_DIRECTORY}")
+    set(FPRIME_CURRENT_MODULE "${MODULE_NAME}")
+    string(REPLACE "_" "/" PLATFORM_MODULE_PATH "${FPRIME_CURRENT_MODULE}")
+    add_subdirectory("${FPRIME_PLATFORM_MODULE_DIRECTORY}" "${CMAKE_BINARY_DIR}/${PLATFORM_MODULE_PATH}")
     set(FPRIME_CURRENT_MODULE config)
     add_subdirectory("${FPRIME_CONFIG_DIR}" "${CMAKE_BINARY_DIR}/config")
 

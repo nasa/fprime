@@ -30,7 +30,7 @@ namespace Ref {
  */
 struct TopologyState {
     const char* hostname;
-    U32 port;
+    U16 port;
 };
 
 /**

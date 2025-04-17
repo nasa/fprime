@@ -47,9 +47,9 @@ namespace Svc {
 
           //! Construct an Interface
           Interface(
-              DeframingTester& deframingTester //!< The enclosing DeframingTester
+              DeframingTester& a_deframingTester //!< The enclosing DeframingTester
           ) :
-            deframingTester(deframingTester)
+            deframingTester(a_deframingTester)
           {
 
           }
@@ -155,7 +155,7 @@ namespace Svc {
       U8 frameData[MAX_FRAME_SIZE];
 
       //! The frame size
-      U32 frameSize;
+      FwSizeType frameSize;
 
       //! Storage for the circular buffer
       U8* cbStorage;

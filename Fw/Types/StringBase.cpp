@@ -48,7 +48,7 @@ bool StringBase::operator==(const CHAR* other) const {
     }
 
     const SizeType capacity = this->getCapacity();
-    const size_t result = static_cast<size_t>(strncmp(us, other, capacity));
+    const size_t result = static_cast<size_t>(strncmp(us, other, static_cast<size_t>(capacity)));
     return (result == 0);
 }
 
@@ -115,7 +115,7 @@ void StringBase::appendBuff(const CHAR* buff, SizeType size) {
         remaining = size;
     }
     FW_ASSERT(remaining < capacity, static_cast<FwAssertArgType>(remaining), static_cast<FwAssertArgType>(capacity));
-    (void)strncat(const_cast<CHAR*>(this->toChar()), buff, remaining);
+    (void)strncat(const_cast<CHAR*>(this->toChar()), buff, static_cast<size_t>(remaining));
 }
 
 StringBase::SizeType StringBase::length() const {

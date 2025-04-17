@@ -32,7 +32,7 @@ class TlmPacketizer final : public TlmPacketizerComponentBase {
     void setPacketList(
         const TlmPacketizerPacketList& packetList,   // channels to packetize
         const Svc::TlmPacketizerPacket& ignoreList,  // channels to ignore (i.e. no warning event if not packetized)
-        const NATIVE_UINT_TYPE startLevel);          // starting level of packets to send
+        const FwChanIdType startLevel);          // starting level of packets to send
 
     //! Destroy object TlmPacketizer
     //!
@@ -78,15 +78,15 @@ class TlmPacketizer final : public TlmPacketizerComponentBase {
     );
 
     // number of packets to fill
-    NATIVE_UINT_TYPE m_numPackets;
+    FwChanIdType m_numPackets;
     // Array of packet buffers to send
     // Double-buffered to fill one while sending one
 
     struct BufferEntry {
         Fw::ComBuffer buffer;    //!< buffer for packetized channels
         Fw::Time latestTime;     //!< latest update time
-        NATIVE_UINT_TYPE id;     //!< channel id
-        NATIVE_UINT_TYPE level;  //!< channel level
+        FwChanIdType id;     //!< channel id
+        FwChanIdType level;  //!< channel level
         bool updated;            //!< if packet had any updates during last cycle
         bool requested;          //!< if the packet was requested with SEND_PKT in the last cycle
     };
@@ -100,21 +100,21 @@ class TlmPacketizer final : public TlmPacketizerComponentBase {
         FwChanIdType id;  //!< telemetry id stored in slot
         // Offsets into packet buffers.
         // -1 means that channel is not in that packet
-        NATIVE_INT_TYPE packetOffset[MAX_PACKETIZER_PACKETS];
+        FwSignedSizeType packetOffset[MAX_PACKETIZER_PACKETS];
         TlmEntry* next;             //!< pointer to next bucket in table
         bool used;                  //!< if entry has been used
         bool ignored;               //!< ignored packet id
-        NATIVE_UINT_TYPE bucketNo;  //!< for testing
+        FwChanIdType bucketNo;  //!< for testing
     };
 
     struct TlmSet {
         TlmEntry* slots[TLMPACKETIZER_NUM_TLM_HASH_SLOTS];  //!< set of hash slots in hash table
         TlmEntry buckets[TLMPACKETIZER_HASH_BUCKETS];       //!< set of buckets used in hash table
-        NATIVE_UINT_TYPE free;                              //!< next free bucket
+        FwChanIdType free;                              //!< next free bucket
     } m_tlmEntries;
 
     // hash function for looking up telemetry channel
-    NATIVE_UINT_TYPE doHash(FwChanIdType id);
+    FwChanIdType doHash(FwChanIdType id);
 
     Os::Mutex m_lock;  //!< used to lock access to packet buffers
 
@@ -129,8 +129,8 @@ class TlmPacketizer final : public TlmPacketizerComponentBase {
 
     TlmEntry* findBucket(FwChanIdType id);
 
-    NATIVE_UINT_TYPE m_startLevel;  //!< initial level for sending packets
-    NATIVE_UINT_TYPE m_maxLevel;    //!< maximum level in all packets
+    FwChanIdType m_startLevel;  //!< initial level for sending packets
+    FwChanIdType m_maxLevel;    //!< maximum level in all packets
 };
 
 }  // end namespace Svc

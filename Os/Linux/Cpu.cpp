@@ -46,7 +46,7 @@ CpuInterface::Status getCpuData(FwSizeType cpu_index, ProcCpuData data) {
     char proc_stat_line[LINE_SIZE + 1];
     // File starts with cpu line, then individual CPUs.
     for (FwSizeType i = 0; i < cpu_index + 2; i++) {
-        FwSignedSizeType read_size = sizeof proc_stat_line - 1;
+        FwSizeType read_size = sizeof proc_stat_line - 1;
         Os::File::Status file_status = file.readline(reinterpret_cast<U8*>(proc_stat_line), read_size,
                                                      Os::File::WaitType::NO_WAIT);
         proc_stat_line[read_size + 1] = '\0'; // Null terminate

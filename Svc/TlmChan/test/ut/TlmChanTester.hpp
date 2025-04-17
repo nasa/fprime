@@ -68,7 +68,7 @@ class TlmChanTester : public TlmChanGTestBase {
 
     void sendBuff(FwChanIdType id, U32 val);
     bool doRun(bool check);
-    void checkBuff(NATIVE_UINT_TYPE chanNum, NATIVE_UINT_TYPE totalChan, FwChanIdType id, U32 val);
+    void checkBuff(FwChanIdType chanNum, FwChanIdType totalChan, FwChanIdType id, U32 val);
 
     void clearBuffs();
 
@@ -85,7 +85,7 @@ class TlmChanTester : public TlmChanGTestBase {
     //!
     TlmChan component;
     // Keep a history
-    NATIVE_UINT_TYPE m_numBuffs;
+    FwChanIdType m_numBuffs;
     Fw::ComBuffer m_rcvdBuffer[TLMCHAN_HASH_BUCKETS];
     bool m_bufferRecv;
 };

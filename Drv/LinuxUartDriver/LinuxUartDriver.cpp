@@ -37,8 +37,8 @@ bool LinuxUartDriver::open(const char* const device,
                            UartParity parity,
                            U32 allocationSize) {
     FW_ASSERT(device != nullptr);
-    NATIVE_INT_TYPE fd = -1;
-    NATIVE_INT_TYPE stat = -1;
+    PlatformIntType fd = -1;
+    PlatformIntType stat = -1;
     this->m_allocationSize = allocationSize;
 
     this->m_device = device;
@@ -126,7 +126,7 @@ bool LinuxUartDriver::open(const char* const device,
         }
     }
 
-    NATIVE_INT_TYPE relayRate = B0;
+    PlatformIntType relayRate = B0;
     switch (baud) {
         case BAUD_9600:
             relayRate = B9600;
@@ -298,13 +298,15 @@ Drv::SendStatus LinuxUartDriver ::send_handler(const FwIndexType portNum, Fw::Bu
         status = Drv::SendStatus::SEND_ERROR;
     } else {
         unsigned char *data = serBuffer.getData();
-        NATIVE_INT_TYPE xferSize = static_cast<NATIVE_INT_TYPE>(serBuffer.getSize());
+        FW_ASSERT(static_cast<size_t>(serBuffer.getSize()) <= std::numeric_limits<size_t>::max(),
+                  static_cast<FwAssertArgType>(serBuffer.getSize()));
+        size_t xferSize = static_cast<size_t>(serBuffer.getSize());
 
-        NATIVE_INT_TYPE stat = static_cast<NATIVE_INT_TYPE>(::write(this->m_fd, data, static_cast<size_t>(xferSize)));
+        ssize_t stat = ::write(this->m_fd, data, xferSize);
 
-        if (-1 == stat || stat != xferSize) {
+        if (-1 == stat || static_cast<size_t>(stat) != xferSize) {
           Fw::LogStringArg _arg = this->m_device;
-          this->log_WARNING_HI_WriteError(_arg, stat);
+          this->log_WARNING_HI_WriteError(_arg, static_cast<I32>(stat));
           status = Drv::SendStatus::SEND_ERROR;
         }
     }

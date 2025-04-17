@@ -175,4 +175,4 @@ def test_unittest_module_ut_info(UT_BUILD):
     assert sorted(expected_gen) == sorted(
         actual_gen
     ), "Did not find expected autocoder generated sources"
-    assert dependencies == ["Ref_SignalGen"], "Did not find expected dependencies"
+    assert "Ref_SignalGen" in dependencies, "Did not find expected dependencies"

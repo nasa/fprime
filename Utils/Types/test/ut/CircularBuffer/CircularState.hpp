@@ -7,7 +7,7 @@
  * @author mstarch
  */
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Utils/Types/CircularBuffer.hpp>
 
 #ifndef FPRIME_CIRCULARSTATE_HPP
@@ -108,5 +108,5 @@ namespace MockTypes {
             Types::CircularBuffer m_test_buffer;
     };
 
-};
+}
 #endif //FPRIME_CIRCULARSTATE_HPP

@@ -1,7 +1,7 @@
 //
 // Created by mstarch on 12/10/20.
 //
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 #ifndef DRV_TEST_PORTSELECTOR_HPP
 #define DRV_TEST_PORTSELECTOR_HPP
@@ -23,6 +23,6 @@ namespace Test {
  * \return 0 on error, or a free port on success
  */
 U16 get_free_port(bool is_udp = false);
-};
-};
+}
+}
 #endif  // DRV_TEST_PORTSELECTOR_HPP

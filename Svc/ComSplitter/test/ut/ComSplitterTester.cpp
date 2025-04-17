@@ -51,10 +51,10 @@ namespace Svc {
 
       ASSERT_from_comOut_SIZE(9);
 
-      for(int i = 0; i < 3; i++){
+      for(U8 i = 0; i < 3; i++){
         d[0] = i;
         Fw::ComBuffer data(d, sizeof(d));
-        for(int j = 0; j < 3; j++){
+        for(U8 j = 0; j < 3; j++){
           assert_comOut(i*3 + j, data);
         }
       }
@@ -106,7 +106,7 @@ namespace Svc {
 
     // Just connect 3 of 5:
     // comOut
-    for (NATIVE_INT_TYPE i = 0; i < 3; ++i) {
+    for (FwIndexType i = 0; i < 3; ++i) {
       this->component.set_comOut_OutputPort(
           i,
           this->get_from_comOut(i)

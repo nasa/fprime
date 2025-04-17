@@ -4,7 +4,7 @@
 // \brief  cpp file for TypeDemo component implementation class
 // ======================================================================
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Ref/TypeDemo/TypeDemo.hpp>
 #include <limits>
 

@@ -12,7 +12,7 @@
 #include <cstring>
 #include <Drv/Ip/IpSocket.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/StringUtils.hpp>
 #include <sys/time.h>
 
@@ -87,7 +87,7 @@ SocketIpStatus IpSocket::addressToIp4(const char* address, void* ip4) {
     FW_ASSERT(ip4 != nullptr);
     // Get the IP address from host
 #ifdef TGT_OS_TYPE_VXWORKS
-    NATIVE_INT_TYPE ip = inet_addr(address);
+    PlatformIntType ip = inet_addr(address);
     if (ip == ERROR) {
         return SOCK_INVALID_IP_ADDRESS;
     }
@@ -148,7 +148,7 @@ SocketIpStatus IpSocket::send(const SocketDescriptor& socketDescriptor, const U8
         else if (sent == -1) {
             return SOCK_SEND_ERROR;
         }
-        FW_ASSERT(sent > 0, sent);
+        FW_ASSERT(sent > 0, static_cast<FwAssertArgType>(sent));
         total += static_cast<U32>(sent);
     }
     // Failed to retry enough to send all data

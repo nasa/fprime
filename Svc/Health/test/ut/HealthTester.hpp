@@ -95,7 +95,7 @@ namespace Svc {
       // Variables
       // ----------------------------------------------------------------------
 
-      NATIVE_UINT_TYPE numPingEntries;
+      FwIndexType numPingEntries;
       HealthImpl::PingEntry pingEntries[Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS];
       U32 watchDogCode;
       U32 keys[Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS];

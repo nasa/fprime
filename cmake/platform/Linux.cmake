@@ -25,5 +25,5 @@ set(FPRIME_USE_POSIX ON)
 set(FPRIME_HAS_SOCKETS ON)
 
 # Add Linux specific headers into the system
-include_directories(SYSTEM "${CMAKE_CURRENT_LIST_DIR}/types")
-
+include_directories(SYSTEM "${CMAKE_CURRENT_LIST_DIR}/unix")
+set(FPRIME_PLATFORM_MODULE_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/unix")

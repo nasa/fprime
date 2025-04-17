@@ -14,8 +14,9 @@
 #ifndef FppTest_SmHarness_History_HPP
 #define FppTest_SmHarness_History_HPP
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <array>
+#include <cstdlib>
 
 #include "Fw/Types/Assert.hpp"
 
@@ -62,8 +63,8 @@ class History {
     //! Get the history item at an index
     const T& getItemAt(FwIndexType index  //!< The index
     ) const {
-        FW_ASSERT(index < this->m_size);
-        return this->m_items[index];
+        FW_ASSERT(static_cast<FwSizeType>(index) < this->m_size);
+        return this->m_items[static_cast<size_t>(index)];
     }
 
   private:

@@ -23,7 +23,7 @@ void* MallocAllocator::allocate(const FwEnumStoreType identifier, FwSizeType& si
     // don't use identifier
     // heap memory is never recoverable
     recoverable = false;
-    void* mem = ::malloc(size);
+    void* mem = ::malloc(static_cast<size_t>(size));
     if (nullptr == mem) {
         size = 0;  // set to zero if can't get memory
     }

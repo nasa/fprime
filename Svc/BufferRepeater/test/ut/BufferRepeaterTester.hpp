@@ -86,7 +86,7 @@ class BufferRepeaterTester : public BufferRepeaterGTestBase {
     //! The component under test
     //!
     BufferRepeater component;
-    History<NATIVE_INT_TYPE> m_port_index_history;
+    History<U64> m_port_index_history;
     Fw::Buffer m_initial_buffer;
     bool m_failure;
 };

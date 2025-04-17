@@ -1,4 +1,4 @@
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/ExternalString.hpp>
 #include <Fw/Types/InternalInterfaceString.hpp>
@@ -81,7 +81,7 @@ TEST(SerializationTest, Serialization1) {
     ASSERT_EQ(0, buff.m_serLoc);
     ASSERT_EQ(0, buff.m_deserLoc);
 
-    I8 i8t1 = 0xFF;
+    I8 i8t1 = static_cast<I8>(0xFF);
     I8 i8t2 = 0;
 
     stat1 = buff.serialize(i8t1);
@@ -135,7 +135,7 @@ TEST(SerializationTest, Serialization1) {
     printf("I16 test\n");
 #endif
 
-    I16 i16t1 = 0xABCD;
+    I16 i16t1 = static_cast<I16>(0xABCD);
     I16 i16t2 = 0;
 
     buff.resetSer();
@@ -667,7 +667,7 @@ TEST(PerformanceTest, SerPerfTest) {
     timer.stop();
 
     printf("%d iterations took %d us (%f each).\n", iterations, timer.getDiffUsec(),
-           static_cast<F32>(timer.getDiffUsec()) / static_cast<F32>(iterations));
+           static_cast<F64>(timer.getDiffUsec()) / iterations);
 }
 
 TEST(PerformanceTest, StructCopyTest) {
@@ -694,7 +694,7 @@ TEST(PerformanceTest, StructCopyTest) {
     timer.stop();
 
     printf("%d iterations took %d us (%f each).\n", iterations, timer.getDiffUsec(),
-           static_cast<F32>(timer.getDiffUsec()) / static_cast<F32>(iterations));
+           static_cast<F64>(timer.getDiffUsec()) / iterations);
 }
 
 TEST(PerformanceTest, ClassCopyTest) {
@@ -714,7 +714,7 @@ TEST(PerformanceTest, ClassCopyTest) {
     timer.stop();
 
     printf("%d iterations took %d us (%f each).\n", iterations, timer.getDiffUsec(),
-           static_cast<F32>(timer.getDiffUsec()) / static_cast<F32>(iterations));
+           static_cast<F64>(timer.getDiffUsec()) / iterations);
 }
 
 void printSizes() {
@@ -1192,6 +1192,62 @@ TEST(TypesTest, StringFormatTest) {
     ASSERT_STREQ(str.toChar(), "Int 10 String foo");
 }
 
+TEST(TypesTest, FormatSpecifierTest) {
+    Fw::String str;
+
+    U8 numU8 = 10;
+    str.format("U8: %" PRI_U8, numU8);
+    ASSERT_STREQ(str.toChar(), "U8: 10");
+
+    I8 numI8 = -10;
+    str.format("I8: %" PRI_I8, numI8);
+    ASSERT_STREQ(str.toChar(), "I8: -10");
+
+    #if FW_HAS_16_BIT
+    U16 numU16 = 10;
+    str.format("U16: %" PRI_U16, numU16);
+    ASSERT_STREQ(str.toChar(), "U16: 10");
+
+    I16 numI16 = -10;
+    str.format("I16: %" PRI_I16, numI16);
+    ASSERT_STREQ(str.toChar(), "I16: -10");
+    #endif
+
+    #if FW_HAS_32_BIT
+    U32 numU32 = 10;
+    str.format("U32: %" PRI_U32, numU32);
+    ASSERT_STREQ(str.toChar(), "U32: 10");
+
+    I32 numI32 = -10;
+    str.format("I32: %" PRI_I32, numI32);
+    ASSERT_STREQ(str.toChar(), "I32: -10");
+    #endif
+
+    #if FW_HAS_64_BIT
+    U64 numU64 = 10;
+    str.format("U64: %" PRI_U64, numU64);
+    ASSERT_STREQ(str.toChar(), "U64: 10");
+
+    I64 numI64 = -10;
+    str.format("I64: %" PRI_I64, numI64);
+    ASSERT_STREQ(str.toChar(), "I64: -10");
+    #endif
+
+    F32 numF32 = 12.3456789;
+    str.format("F32: %" PRI_F64, static_cast<double>(numF32));
+    ASSERT_STREQ(str.toChar(), "F32: 12.345679");
+
+    #if FW_HAS_F64
+    F64 numF64 = 12.3456789;
+    str.format("F64: %" PRI_F64, numF64);
+    ASSERT_STREQ(str.toChar(), "F64: 12.345679");
+    #endif
+
+    char c = 'A';
+    str.format("CHAR: %" PRI_CHAR, c);
+    ASSERT_STREQ(str.toChar(), "CHAR: A");
+}
+
 TEST(PerformanceTest, F64SerPerfTest) {
     SerializeTestBuffer buff;
 
@@ -1216,7 +1272,7 @@ TEST(PerformanceTest, F64SerPerfTest) {
     timer.stop();
 
     printf("%" PRI_FwSizeType " iterations took %d us (%f us each).\n", iters, timer.getDiffUsec(),
-           static_cast<F32>(timer.getDiffUsec()) / static_cast<F32>(iters));
+           static_cast<F64>(timer.getDiffUsec()) / static_cast<F64>(iters));
 }
 
 TEST(AllocatorTest, MallocAllocatorTest) {

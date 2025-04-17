@@ -5,7 +5,7 @@
 #ifndef Os_Console_hpp_
 #define Os_Console_hpp_
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Logger/Logger.hpp>
 #include <Os/Console.hpp>
 #include <Os/Os.hpp>

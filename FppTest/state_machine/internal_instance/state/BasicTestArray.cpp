@@ -52,9 +52,9 @@ void BasicTestArray::test() {
     const auto status = this->doDispatch();
     ASSERT_EQ(status, MSG_DISPATCH_OK);
     ASSERT_EQ(this->smStateBasicTestArray_getState(), SmState_BasicTestArray::State::T);
-    const FwSizeType expectedASize = 5;
+    const FwIndexType expectedASize = 5;
     ASSERT_EQ(this->m_smStateBasicTestArray_action_a_history.getSize(), expectedASize);
-    for (FwSizeType i = 0; i < expectedASize; i++) {
+    for (FwIndexType i = 0; i < expectedASize; i++) {
         ASSERT_EQ(this->m_smStateBasicTestArray_action_a_history.getItemAt(i), SmState_BasicTestArray::Signal::s);
     }
     ASSERT_EQ(this->m_smStateBasicTestArray_action_b_history.getSize(), 1);

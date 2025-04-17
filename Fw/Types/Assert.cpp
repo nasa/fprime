@@ -1,4 +1,4 @@
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/format.hpp>
 #include <Fw/Types/StringUtils.hpp>

@@ -5,7 +5,7 @@
 #include <iostream>
 #endif
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include "Fw/Deprecate.hpp"
 
 namespace Fw {
@@ -76,9 +76,7 @@ class SerializeBufferBase {
     SerializeStatus serialize(I64 val);  //!< serialize 64-bit signed int
 #endif
     SerializeStatus serialize(F32 val);  //!< serialize 32-bit floating point
-#if FW_HAS_F64
     SerializeStatus serialize(F64 val);  //!< serialize 64-bit floating point
-#endif
     SerializeStatus serialize(bool val);  //!< serialize boolean
 
     SerializeStatus serialize(
@@ -125,9 +123,7 @@ class SerializeBufferBase {
     SerializeStatus deserialize(I64& val);  //!< deserialize 64-bit signed int
 #endif
     SerializeStatus deserialize(F32& val);  //!< deserialize 32-bit floating point
-#if FW_HAS_F64
     SerializeStatus deserialize(F64& val);  //!< deserialize 64-bit floating point
-#endif
     SerializeStatus deserialize(bool& val);  //!< deserialize boolean
 
     SerializeStatus deserialize(void*& val);  //!< deserialize point value (careful, pointer value only, not contents)
@@ -192,14 +188,14 @@ class SerializeBufferBase {
 
   PROTECTED:
     SerializeBufferBase();  //!< default constructor
+    Serializable::SizeType m_serLoc;                //!< current offset in buffer of serialized data
+    Serializable::SizeType m_deserLoc;              //!< current offset for deserialization
 
   PRIVATE:
     // Copy constructor can be used only by the implementation
     SerializeBufferBase(const SerializeBufferBase& src);  //!< constructor with buffer as source
 
     void copyFrom(const SerializeBufferBase& src);  //!< copy data from source buffer
-    Serializable::SizeType m_serLoc;                //!< current offset in buffer of serialized data
-    Serializable::SizeType m_deserLoc;              //!< current offset for deserialization
 };
 
 // Helper classes for building buffers with external storage
@@ -258,12 +254,17 @@ class ExternalSerializeBufferWithMemberCopy final : public ExternalSerializeBuff
         : ExternalSerializeBuffer(buffPtr, size) {}
     ExternalSerializeBufferWithMemberCopy() : ExternalSerializeBuffer() {}
     ~ExternalSerializeBufferWithMemberCopy() {}
-    explicit ExternalSerializeBufferWithMemberCopy(const ExternalSerializeBufferWithMemberCopy& src)
-        : ExternalSerializeBuffer(src.m_buff, src.m_buffSize) {}
+    ExternalSerializeBufferWithMemberCopy(const ExternalSerializeBufferWithMemberCopy& src)
+        : ExternalSerializeBuffer(src.m_buff, src.m_buffSize) {
+        this->m_serLoc = src.m_serLoc;
+        this->m_deserLoc = src.m_deserLoc;
+    }
     ExternalSerializeBufferWithMemberCopy& operator=(const ExternalSerializeBufferWithMemberCopy& src) {
         // Ward against self-assignment
         if (this != &src) {
             this->setExtBuffer(src.m_buff, src.m_buffSize);
+            this->m_serLoc = src.m_serLoc;
+            this->m_deserLoc = src.m_deserLoc;
         }
         return *this;
     }

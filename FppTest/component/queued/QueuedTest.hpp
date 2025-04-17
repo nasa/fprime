@@ -40,103 +40,95 @@ class QueuedTest :
         FwIndexType portNum, //!< The port number
         const FormalParamArray& a, //!< An array
         FormalParamArray& aRef //!< An array ref
-    );
+    ) override;
 
     //! Handler implementation for arrayArgsGuarded
     void arrayArgsGuarded_handler(
         FwIndexType portNum, //!< The port number
         const FormalParamArray& a, //!< An array
         FormalParamArray& aRef //!< An array ref
-    );
+    ) override;
 
     //! Handler implementation for arrayArgsSync
     void arrayArgsSync_handler(
         FwIndexType portNum, //!< The port number
         const FormalParamArray& a, //!< An array
         FormalParamArray& aRef //!< An array ref
-    );
+    ) override;
 
     //! Handler implementation for arrayReturnGuarded
     FormalParamArray arrayReturnGuarded_handler(
         FwIndexType portNum, //!< The port number
         const FormalParamArray& a, //!< An array
         FormalParamArray& aRef //!< An array ref
-    );
+    ) override;
 
     //! Handler implementation for arrayReturnSync
     FormalParamArray arrayReturnSync_handler(
         FwIndexType portNum, //!< The port number
         const FormalParamArray& a, //!< An array
         FormalParamArray& aRef //!< An array ref
-    );
-
-    //! Handler implementation for cmdOut
-    void cmdOut_handler(
-        FwIndexType portNum, //!< The port number
-        FwOpcodeType opCode, //!< Command Op Code
-        U32 cmdSeq, //!< Command Sequence
-        Fw::CmdArgBuffer& args //!< Buffer containing arguments
-    );
+    ) override;
 
     //! Handler implementation for enumArgsAsync
     void enumArgsAsync_handler(
         FwIndexType portNum, //!< The port number
         const FormalParamEnum& en, //!< An enum
         FormalParamEnum& enRef //!< An enum ref
-    );
+    ) override;
 
     //! Handler implementation for enumArgsGuarded
     void enumArgsGuarded_handler(
         FwIndexType portNum, //!< The port number
         const FormalParamEnum& en, //!< An enum
         FormalParamEnum& enRef //!< An enum ref
-    );
+    ) override;
 
     //! Handler implementation for enumArgsSync
     void enumArgsSync_handler(
         FwIndexType portNum, //!< The port number
         const FormalParamEnum& en, //!< An enum
         FormalParamEnum& enRef //!< An enum ref
-    );
+    ) override;
 
     //! Handler implementation for enumReturnGuarded
     FormalParamEnum enumReturnGuarded_handler(
         FwIndexType portNum, //!< The port number
         const FormalParamEnum& en, //!< An enum
         FormalParamEnum& enRef //!< An enum ref
-    );
+    ) override;
 
     //! Handler implementation for enumReturnSync
     FormalParamEnum enumReturnSync_handler(
         FwIndexType portNum, //!< The port number
         const FormalParamEnum& en, //!< An enum
         FormalParamEnum& enRef //!< An enum ref
-    );
+    ) override;
 
     //! Handler implementation for noArgsAsync
     void noArgsAsync_handler(
         FwIndexType portNum //!< The port number
-    );
+    ) override;
 
     //! Handler implementation for noArgsGuarded
     void noArgsGuarded_handler(
         FwIndexType portNum //!< The port number
-    );
+    ) override;
 
     //! Handler implementation for noArgsReturnGuarded
     bool noArgsReturnGuarded_handler(
         FwIndexType portNum //!< The port number
-    );
+    ) override;
 
     //! Handler implementation for noArgsReturnSync
     bool noArgsReturnSync_handler(
         FwIndexType portNum //!< The port number
-    );
+    ) override;
 
     //! Handler implementation for noArgsSync
     void noArgsSync_handler(
         FwIndexType portNum //!< The port number
-    );
+    ) override;
 
     //! Handler implementation for primitiveArgsAsync
     void primitiveArgsAsync_handler(
@@ -147,7 +139,7 @@ class QueuedTest :
         F32& f32Ref,
         bool b,
         bool& bRef
-    );
+    ) override;
 
     //! Handler implementation for primitiveArgsGuarded
     void primitiveArgsGuarded_handler(
@@ -158,7 +150,7 @@ class QueuedTest :
         F32& f32Ref,
         bool b,
         bool& bRef
-    );
+    ) override;
 
     //! Handler implementation for primitiveArgsSync
     void primitiveArgsSync_handler(
@@ -169,7 +161,7 @@ class QueuedTest :
         F32& f32Ref,
         bool b,
         bool& bRef
-    );
+    ) override;
 
     //! Handler implementation for primitiveReturnGuarded
     U32 primitiveReturnGuarded_handler(
@@ -180,7 +172,7 @@ class QueuedTest :
         F32& f32Ref,
         bool b,
         bool& bRef
-    );
+    ) override;
 
     //! Handler implementation for primitiveReturnSync
     U32 primitiveReturnSync_handler(
@@ -191,7 +183,7 @@ class QueuedTest :
         F32& f32Ref,
         bool b,
         bool& bRef
-    );
+    ) override;
 
     //! Handler implementation for stringArgsAsync
     void stringArgsAsync_handler(
@@ -200,7 +192,7 @@ class QueuedTest :
         Fw::StringBase& str80Ref,
         const Fw::StringBase& str100, //!< A string of size 100
         Fw::StringBase& str100Ref
-    );
+    ) override;
 
     //! Handler implementation for stringArgsGuarded
     void stringArgsGuarded_handler(
@@ -209,7 +201,7 @@ class QueuedTest :
         Fw::StringBase& str80Ref,
         const Fw::StringBase& str100, //!< A string of size 100
         Fw::StringBase& str100Ref
-    );
+    ) override;
 
     //! Handler implementation for stringArgsSync
     void stringArgsSync_handler(
@@ -218,49 +210,63 @@ class QueuedTest :
         Fw::StringBase& str80Ref,
         const Fw::StringBase& str100, //!< A string of size 100
         Fw::StringBase& str100Ref
-    );
+    ) override;
+
+    //! Handler implementation for stringReturnGuarded
+    Fw::String stringReturnGuarded_handler(
+        FwIndexType portNum,          //!< The port number
+        const Fw::StringBase& str,    //!< A string
+        Fw::StringBase& strRef        //!< A string ref
+    ) override;
+
+    //! Handler implementation for stringReturnSync
+    Fw::String stringReturnSync_handler(
+        FwIndexType portNum,          //!< The port number
+        const Fw::StringBase& str,    //!< A string
+        Fw::StringBase& strRef        //!< A string ref
+    ) override;
 
     //! Handler implementation for structArgsAsync
     void structArgsAsync_handler(
         FwIndexType portNum, //!< The port number
         const FormalParamStruct& s, //!< A struct
         FormalParamStruct& sRef //!< A struct ref
-    );
+    ) override;
 
     //! Handler implementation for structArgsGuarded
     void structArgsGuarded_handler(
         FwIndexType portNum, //!< The port number
         const FormalParamStruct& s, //!< A struct
         FormalParamStruct& sRef //!< A struct ref
-    );
+    ) override;
 
     //! Handler implementation for structArgsSync
     void structArgsSync_handler(
         FwIndexType portNum, //!< The port number
         const FormalParamStruct& s, //!< A struct
         FormalParamStruct& sRef //!< A struct ref
-    );
+    ) override;
 
     //! Handler implementation for structReturnGuarded
     FormalParamStruct structReturnGuarded_handler(
         FwIndexType portNum, //!< The port number
         const FormalParamStruct& s, //!< A struct
         FormalParamStruct& sRef //!< A struct ref
-    );
+    ) override;
 
     //! Handler implementation for structReturnSync
     FormalParamStruct structReturnSync_handler(
         FwIndexType portNum, //!< The port number
         const FormalParamStruct& s, //!< A struct
         FormalParamStruct& sRef //!< A struct ref
-    );
+    ) override;
 
     //! Handler implementation for enumArgsOverflow
     void enumArgsHook_handler(
         FwIndexType portNum, //!< The port number
         const FormalParamEnum& en, //!< An enum
         FormalParamEnum& enRef //!< An enum ref
-    );
+    ) override;
 
   PRIVATE:
 
@@ -272,37 +278,37 @@ class QueuedTest :
     void serialAsync_handler(
         FwIndexType portNum, //!< The port number
         Fw::SerializeBufferBase& buffer //!< The serialization buffer
-    );
+    ) override;
 
     //! Handler implementation for serialAsyncAssert
     void serialAsyncAssert_handler(
         FwIndexType portNum, //!< The port number
         Fw::SerializeBufferBase& buffer //!< The serialization buffer
-    );
+    ) override;
 
     //! Handler implementation for serialAsyncBlockPriority
     void serialAsyncBlockPriority_handler(
         FwIndexType portNum, //!< The port number
         Fw::SerializeBufferBase& buffer //!< The serialization buffer
-    );
+    ) override;
 
     //! Handler implementation for serialAsyncDropPriority
     void serialAsyncDropPriority_handler(
         FwIndexType portNum, //!< The port number
         Fw::SerializeBufferBase& buffer //!< The serialization buffer
-    );
+    ) override;
 
     //! Handler implementation for serialGuarded
     void serialGuarded_handler(
         FwIndexType portNum, //!< The port number
         Fw::SerializeBufferBase& buffer //!< The serialization buffer
-    );
+    ) override;
 
     //! Handler implementation for serialSync
     void serialSync_handler(
         FwIndexType portNum, //!< The port number
         Fw::SerializeBufferBase& buffer //!< The serialization buffer
-    );
+    ) override;
 
   PRIVATE:
 
@@ -314,7 +320,7 @@ class QueuedTest :
     void CMD_NO_ARGS_cmdHandler(
         FwOpcodeType opCode, //!< The opcode
         U32 cmdSeq //!< The command sequence number
-    );
+    ) override;
 
     //! Handler implementation for command CMD_PRIMITIVE
     void CMD_PRIMITIVE_cmdHandler(
@@ -326,7 +332,7 @@ class QueuedTest :
         F32 f32_2, //!< An F32
         bool b1, //!< A boolean
         bool b2 //!< A boolean
-    );
+    ) override;
 
     //! Handler implementation for command CMD_STRINGS
     void CMD_STRINGS_cmdHandler(
@@ -334,34 +340,34 @@ class QueuedTest :
         U32 cmdSeq, //!< The command sequence number
         const Fw::CmdStringArg& str1, //!< A string
         const Fw::CmdStringArg& str2 //!< Another string
-    );
+    ) override;
 
     //! Handler implementation for command CMD_ENUM
     void CMD_ENUM_cmdHandler(
         FwOpcodeType opCode, //!< The opcode
         U32 cmdSeq, //!< The command sequence number
         FormalParamEnum en //!< An enum
-    );
+    ) override;
 
     //! Handler implementation for command CMD_ARRAY
     void CMD_ARRAY_cmdHandler(
         FwOpcodeType opCode, //!< The opcode
         U32 cmdSeq, //!< The command sequence number
         FormalParamArray arr //!< An array
-    );
+    ) override;
 
     //! Handler implementation for command CMD_STRUCT
     void CMD_STRUCT_cmdHandler(
         FwOpcodeType opCode, //!< The opcode
         U32 cmdSeq, //!< The command sequence number
         FormalParamStruct str //!< A struct
-    );
+    ) override;
 
     //! Handler implementation for command CMD_ASYNC_NO_ARGS
     void CMD_ASYNC_NO_ARGS_cmdHandler(
         FwOpcodeType opCode, //!< The opcode
         U32 cmdSeq //!< The command sequence number
-    );
+    ) override;
 
     //! Handler implementation for command CMD_ASYNC_PRIMITIVE
     void CMD_ASYNC_PRIMITIVE_cmdHandler(
@@ -373,7 +379,7 @@ class QueuedTest :
         F32 f32_2, //!< An F32
         bool b1, //!< A boolean
         bool b2 //!< A boolean
-    );
+    ) override;
 
     //! Handler implementation for command CMD_ASYNC_STRINGS
     void CMD_ASYNC_STRINGS_cmdHandler(
@@ -381,28 +387,28 @@ class QueuedTest :
         U32 cmdSeq, //!< The command sequence number
         const Fw::CmdStringArg& str1, //!< A string
         const Fw::CmdStringArg& str2 //!< Another string
-    );
+    ) override;
 
     //! Handler implementation for command CMD_ASYNC_ENUM
     void CMD_ASYNC_ENUM_cmdHandler(
         FwOpcodeType opCode, //!< The opcode
         U32 cmdSeq, //!< The command sequence number
         FormalParamEnum en //!< An enum
-    );
+    ) override;
 
     //! Handler implementation for command CMD_ASYNC_ARRAY
     void CMD_ASYNC_ARRAY_cmdHandler(
         FwOpcodeType opCode, //!< The opcode
         U32 cmdSeq, //!< The command sequence number
         FormalParamArray arr //!< An array
-    );
+    ) override;
 
     //! Handler implementation for command CMD_ASYNC_STRUCT
     void CMD_ASYNC_STRUCT_cmdHandler(
         FwOpcodeType opCode, //!< The opcode
         U32 cmdSeq, //!< The command sequence number
         FormalParamStruct str //!< A struct
-    );
+    ) override;
 
   PRIVATE:
 
@@ -413,15 +419,15 @@ class QueuedTest :
     //! Handler implementation for internalArray
     void internalArray_internalInterfaceHandler(
         const FormalParamArray& arr //!< An array
-    );
+    ) override;
 
     //! Handler implementation for internalEnum
     void internalEnum_internalInterfaceHandler(
         const FormalParamEnum& en //!< An enum
-    );
+    ) override;
 
     //! Handler implementation for internalNoArgs
-    void internalNoArgs_internalInterfaceHandler();
+    void internalNoArgs_internalInterfaceHandler() override;
 
     //! Handler implementation for internalPrimitive
     void internalPrimitive_internalInterfaceHandler(
@@ -431,18 +437,18 @@ class QueuedTest :
         F32 f32_2, //!< An F32
         bool b1, //!< A boolean
         bool b2 //!< A boolean
-    );
+    ) override;
 
     //! Handler implementation for internalString
     void internalString_internalInterfaceHandler(
         const Fw::InternalInterfaceString& str1, //!< A string
         const Fw::InternalInterfaceString& str2 //!< Another string
-    );
+    ) override;
 
     //! Handler implementation for internalStruct
     void internalStruct_internalInterfaceHandler(
         const FormalParamStruct& str //!< A struct
-    );
+    ) override;
 
   PRIVATE:
 
@@ -455,8 +461,7 @@ class QueuedTest :
         FwIndexType portNum, //!< The port number
         const FormalParamEnum& en, //!< An enum
         FormalParamEnum& enRef //!< An enum ref
-    );
-
+    ) override;
 
   public:
 

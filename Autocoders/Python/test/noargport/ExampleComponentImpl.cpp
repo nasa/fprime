@@ -12,7 +12,7 @@
 
 
 #include <Autocoders/Python/test/noargport/ExampleComponentImpl.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 namespace ExampleComponents {
 

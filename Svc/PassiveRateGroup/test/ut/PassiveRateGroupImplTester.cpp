@@ -22,10 +22,6 @@
 
 namespace Svc {
 
-void PassiveRateGroupTester::init(NATIVE_INT_TYPE instance) {
-    PassiveRateGroupGTestBase::init();
-}
-
 PassiveRateGroupTester::PassiveRateGroupTester(Svc::PassiveRateGroup& inst)
     : PassiveRateGroupGTestBase("testerbase", 100), m_impl(inst), m_callOrder(0) {
     this->clearPortCalls();
@@ -39,7 +35,7 @@ void PassiveRateGroupTester::clearPortCalls() {
 PassiveRateGroupTester::~PassiveRateGroupTester() {}
 
 void PassiveRateGroupTester::from_RateGroupMemberOut_handler(FwIndexType portNum, U32 context) {
-    ASSERT_TRUE(portNum < static_cast<NATIVE_INT_TYPE>(FW_NUM_ARRAY_ELEMENTS(m_impl.m_RateGroupMemberOut_OutputPort)));
+    ASSERT_TRUE(portNum < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(m_impl.m_RateGroupMemberOut_OutputPort)));
     this->m_callLog[portNum].portCalled = true;
     this->m_callLog[portNum].contextVal = context;
     this->m_callLog[portNum].order = this->m_callOrder++;
@@ -47,9 +43,9 @@ void PassiveRateGroupTester::from_RateGroupMemberOut_handler(FwIndexType portNum
     usleep(1);
 }
 
-void PassiveRateGroupTester::runNominal(NATIVE_INT_TYPE contexts[],
-                                            NATIVE_UINT_TYPE numContexts,
-                                            NATIVE_INT_TYPE instance) {
+void PassiveRateGroupTester::runNominal(U32 contexts[],
+                                            FwIndexType numContexts,
+                                            FwEnumStoreType instance) {
     TEST_CASE(101.1.1, "Run nominal rate group execution");
 
     // clear events
@@ -68,8 +64,8 @@ void PassiveRateGroupTester::runNominal(NATIVE_INT_TYPE contexts[],
 
     // check calls
     REQUIREMENT("FPRIME-PRG-002");
-    for (NATIVE_UINT_TYPE portNum = 0;
-         portNum < static_cast<NATIVE_INT_TYPE>(FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_RateGroupMemberOut_OutputPort)); portNum++) {
+    for (FwIndexType portNum = 0;
+         portNum < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_RateGroupMemberOut_OutputPort)); portNum++) {
         ASSERT_TRUE(this->m_callLog[portNum].portCalled);
         ASSERT_EQ(this->m_callLog[portNum].contextVal, contexts[portNum]);
         ASSERT_EQ(this->m_callLog[portNum].order, portNum);

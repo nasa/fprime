@@ -7,7 +7,7 @@
 #ifndef FW_TEXT_LOG_STRING_HPP
 #define FW_TEXT_LOG_STRING_HPP
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 #include "Fw/Cfg/SerIds.hpp"
 #include "Fw/Types/StringBase.hpp"

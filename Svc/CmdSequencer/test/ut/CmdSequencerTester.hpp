@@ -39,7 +39,7 @@ namespace Svc {
       // Constants
       // ----------------------------------------------------------------------
 
-      static const NATIVE_UINT_TYPE TEST_SEQ_BUFFER_SIZE = 255;
+      static const FwSizeType TEST_SEQ_BUFFER_SIZE = 255;
 
     protected:
 
@@ -135,7 +135,7 @@ namespace Svc {
 
                 Os::FileInterface::Status open(const char *path, Mode mode, OverwriteType overwrite) override;
 
-                Status read(U8 *buffer, FwSignedSizeType &size, WaitType wait) override;
+                Status read(U8 *buffer, FwSizeType &size, WaitType wait) override;
 
                 //! Current interceptor
                 static Interceptor* s_current_interceptor;
@@ -172,7 +172,7 @@ namespace Svc {
 
       //! Construct object CmdSequencerTester
       CmdSequencerTester(
-          const SequenceFiles::File::Format::t format =
+          const SequenceFiles::File::Format::t a_format =
           SequenceFiles::File::Format::F_PRIME //!< The file format to use
       );
 

@@ -97,7 +97,7 @@ TEST(CircularBufferTests, BasicOverflowTest) {
  * Test that the most basic peeks work.
  */
 TEST(CircularBufferTests, BasicPeekTest) {
-    char peek_char = 0x85;
+    char peek_char = static_cast<char>(0x85);
     U8 peek_u8 = 0x95;
     U32 peek_u32 = 0xdeadc0de;
     U8 buffer[1024] = {};   // Clear out memory to appease valgrind

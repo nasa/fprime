@@ -15,7 +15,7 @@
 #ifndef FPRIME_LOGGERRULES_HPP
 #define FPRIME_LOGGERRULES_HPP
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Logger/test/ut/FakeLogger.hpp>
 #include <Fw/Types/String.hpp>
 #include <STest/STest/Pick/Pick.hpp>
@@ -87,5 +87,5 @@ struct LogGoodStringObject : public STest::Rule<MockLogging::FakeLogger> {
     // Log valid messages
     void action(MockLogging::FakeLogger& truth);
 };
-};      // namespace LoggerRules
+}       // namespace LoggerRules
 #endif  // FPRIME_LOGGERRULES_HPP

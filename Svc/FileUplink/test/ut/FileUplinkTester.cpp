@@ -14,6 +14,7 @@
 #include <cstring>
 
 #include "FileUplinkTester.hpp"
+#include "Fw/Com/ComPacket.hpp"
 
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 10
@@ -611,11 +612,17 @@ namespace Svc {
 
     this->clearHistory();
 
-    const size_t bufferSize = filePacket.bufferSize();
+    const size_t bufferSize = filePacket.bufferSize() + sizeof(FwPacketDescriptorType);
     U8 bufferData[bufferSize];
     Fw::Buffer buffer(bufferData, bufferSize);
 
-    const Fw::SerializeStatus status = filePacket.toBuffer(buffer);
+    // Serialize the packet descriptor FW_PACKET_FILE to the buffer
+    Fw::SerializeStatus status = buffer.getSerializer().serialize(Fw::ComPacket::FW_PACKET_FILE);
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
+    // Serialize the filePacket content into the buffer after the packet descriptor token
+    Fw::Buffer offsetBuffer(buffer.getData() + sizeof(FwPacketDescriptorType),
+                            bufferSize - sizeof(FwPacketDescriptorType));
+    status = filePacket.toBuffer(offsetBuffer);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, status);
 
     this->invoke_to_bufferSendIn(0, buffer);
@@ -699,7 +706,7 @@ namespace Svc {
 
     file.open(path, Os::File::OPEN_READ);
 
-    FwSignedSizeType intSize = static_cast<FwSignedSizeType>(dataSize);
+    FwSizeType intSize = static_cast<FwSizeType>(dataSize);
     const Os::File::Status status = file.read(fileData, intSize);
 
     ASSERT_EQ(Os::File::OP_OK, status);
@@ -713,7 +720,8 @@ namespace Svc {
   void FileUplinkTester ::
     removeFile(const char *const path)
   {
-    const NATIVE_INT_TYPE status = ::unlink(path);
+    // status from unlink is a platform integer
+    const PlatformIntType status = ::unlink(path);
     if (status != 0) {
       ASSERT_EQ(ENOENT, errno);
     }

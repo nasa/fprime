@@ -164,7 +164,7 @@ FileSystem::Status FileSystem::copyFile(const char* sourcePath, const char* dest
         return FileSystem::handleFileError(fileStatus);
     }
 
-    FwSignedSizeType sourceFileSize = 0;
+    FwSizeType sourceFileSize = 0;
     FileSystem::Status fs_status = FileSystem::getFileSize(sourcePath, sourceFileSize);
     if (fs_status != FileSystem::Status::OP_OK) {
         return fs_status;
@@ -195,7 +195,7 @@ FileSystem::Status FileSystem::appendFile(const char* sourcePath, const char* de
 
     FileSystem::Status fs_status = FileSystem::OP_OK;
 
-    FwSignedSizeType sourceFileSize = 0;
+    FwSizeType sourceFileSize = 0;
     fs_status = FileSystem::getFileSize(sourcePath, sourceFileSize);
     if (fs_status != FileSystem::Status::OP_OK) {
         return fs_status;
@@ -224,7 +224,7 @@ FileSystem::Status FileSystem::moveFile(const char* source, const char* destinat
     return status;
 }
 
-FileSystem::Status FileSystem::getFileSize(const char* path, FwSignedSizeType& size) {
+FileSystem::Status FileSystem::getFileSize(const char* path, FwSizeType& size) {
     Os::File file;
     Os::File::Status status = file.open(path, Os::File::OPEN_READ);
     if (status != File::Status::OP_OK) {
@@ -283,13 +283,13 @@ FileSystem::Status FileSystem::handleDirectoryError(Directory::Status dirStatus)
     return status;
 } // end handleFileError
 
-FileSystem::Status FileSystem::copyFileData(File& source, File& destination, FwSignedSizeType size) {
+FileSystem::Status FileSystem::copyFileData(File& source, File& destination, FwSizeType size) {
     static_assert(FILE_SYSTEM_FILE_CHUNK_SIZE != 0, "FILE_SYSTEM_FILE_CHUNK_SIZE must be >0");
     U8 fileBuffer[FILE_SYSTEM_FILE_CHUNK_SIZE];
     File::Status file_status;
 
-    FwSignedSizeType copiedSize = 0;
-    FwSignedSizeType chunkSize = FILE_SYSTEM_FILE_CHUNK_SIZE;
+    FwSizeType copiedSize = 0;
+    FwSizeType chunkSize = FILE_SYSTEM_FILE_CHUNK_SIZE;
 
     // Copy the file in chunks - loop until all data is copied
     for (copiedSize = 0; copiedSize < size; copiedSize += chunkSize) {

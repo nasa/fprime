@@ -33,11 +33,11 @@ namespace STest {
 
       //! Construct an InterleavedScenario object
       InterleavedScenario(
-          const char *const name, //!< The name of the scenario
+          const char *const a_name, //!< The name of the scenario
           Scenario<State>** scenarios, //!< An array containing the scenarios to interleave
           const U32 size //!< The size of the array
       ) :
-        Scenario<State>(name),
+        Scenario<State>(a_name),
         scenarioArray(new ScenarioArray<State>(scenarios, size)),
         seen(new bool[size])
       {

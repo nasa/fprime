@@ -27,7 +27,7 @@ namespace Svc {
 
         //! Construct a SizeFieldTooSmallFile
         SizeFieldTooSmallFile(
-            const Format::t format //!< The file format
+            const Format::t m_format //!< The file format
         );
 
       public:

@@ -37,87 +37,83 @@ DpContainer::DpContainer()
 
 Fw::SerializeStatus DpContainer::deserializeHeader() {
     FW_ASSERT(this->m_buffer.isValid());
-    Fw::SerializeBufferBase& serializeRepr = this->m_buffer.getSerializeRepr();
-    // Set buffer length
-    Fw::SerializeStatus status = serializeRepr.setBuffLen(this->m_buffer.getSize());
+    auto deserializer = this->m_buffer.getDeserializer();
+
     // Reset deserialization
-    if (status == Fw::FW_SERIALIZE_OK) {
-        status = serializeRepr.moveDeserToOffset(Header::PACKET_DESCRIPTOR_OFFSET);
-    }
+    Fw::SerializeStatus status = deserializer.moveDeserToOffset(Header::PACKET_DESCRIPTOR_OFFSET);
+
     // Deserialize the packet type
     if (status == Fw::FW_SERIALIZE_OK) {
         FwPacketDescriptorType packetDescriptor;
-        status = serializeRepr.deserialize(packetDescriptor);
+        status = deserializer.deserialize(packetDescriptor);
         if (packetDescriptor != Fw::ComPacket::FW_PACKET_DP) {
             status = Fw::FW_SERIALIZE_FORMAT_ERROR;
         }
     }
     // Deserialize the container id
     if (status == Fw::FW_SERIALIZE_OK) {
-        status = serializeRepr.deserialize(this->m_id);
+        status = deserializer.deserialize(this->m_id);
     }
     // Deserialize the priority
     if (status == Fw::FW_SERIALIZE_OK) {
-        status = serializeRepr.deserialize(this->m_priority);
+        status = deserializer.deserialize(this->m_priority);
     }
     // Deserialize the time tag
     if (status == Fw::FW_SERIALIZE_OK) {
-        status = serializeRepr.deserialize(this->m_timeTag);
+        status = deserializer.deserialize(this->m_timeTag);
     }
     // Deserialize the processing types
     if (status == Fw::FW_SERIALIZE_OK) {
-        status = serializeRepr.deserialize(this->m_procTypes);
+        status = deserializer.deserialize(this->m_procTypes);
     }
     // Deserialize the user data
     if (status == Fw::FW_SERIALIZE_OK) {
         const FwSizeType requestedSize = sizeof this->m_userData;
         FwSizeType receivedSize = requestedSize;
-        status = serializeRepr.deserialize(this->m_userData, receivedSize, Fw::Serialization::OMIT_LENGTH);
+        status = deserializer.deserialize(this->m_userData, receivedSize, Fw::Serialization::OMIT_LENGTH);
         if (receivedSize != requestedSize) {
             status = Fw::FW_DESERIALIZE_SIZE_MISMATCH;
         }
     }
     // Deserialize the data product state
     if (status == Fw::FW_SERIALIZE_OK) {
-        status = serializeRepr.deserialize(this->m_dpState);
+        status = deserializer.deserialize(this->m_dpState);
     }
     // Deserialize the data size
     if (status == Fw::FW_SERIALIZE_OK) {
-        status = serializeRepr.deserializeSize(this->m_dataSize);
+        status = deserializer.deserializeSize(this->m_dataSize);
     }
     return status;
 }
 
 void DpContainer::serializeHeader() {
     FW_ASSERT(this->m_buffer.isValid());
-    Fw::SerializeBufferBase& serializeRepr = this->m_buffer.getSerializeRepr();
-    // Reset serialization
-    serializeRepr.resetSer();
+    auto serializer = this->m_buffer.getSerializer();
     // Serialize the packet type
     Fw::SerializeStatus status =
-        serializeRepr.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacket::FW_PACKET_DP));
+        serializer.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacket::FW_PACKET_DP));
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     // Serialize the container id
-    status = serializeRepr.serialize(this->m_id);
+    status = serializer.serialize(this->m_id);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     // Serialize the priority
-    status = serializeRepr.serialize(this->m_priority);
+    status = serializer.serialize(this->m_priority);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     // Serialize the time tag
-    status = serializeRepr.serialize(this->m_timeTag);
+    status = serializer.serialize(this->m_timeTag);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     // Serialize the processing types
-    status = serializeRepr.serialize(this->m_procTypes);
+    status = serializer.serialize(this->m_procTypes);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     // Serialize the user data
-    status = serializeRepr.serialize(this->m_userData, static_cast<FwSizeType>(sizeof this->m_userData),
+    status = serializer.serialize(this->m_userData, static_cast<FwSizeType>(sizeof this->m_userData),
                                      Fw::Serialization::OMIT_LENGTH);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     // Serialize the data product state
-    status = serializeRepr.serialize(this->m_dpState);
+    status = serializer.serialize(this->m_dpState);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     // Serialize the data size
-    status = serializeRepr.serializeSize(this->m_dataSize);
+    status = serializer.serializeSize(this->m_dataSize);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     // Update the header hash
     this->updateHeaderHash();

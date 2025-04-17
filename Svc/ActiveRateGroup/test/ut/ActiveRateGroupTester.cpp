@@ -27,7 +27,7 @@ void connectPorts(Svc::ActiveRateGroup& impl, Svc::ActiveRateGroupImplTester& te
 
     tester.connect_to_CycleIn(0,impl.get_CycleIn_InputPort(0));
 
-    for (NATIVE_UINT_TYPE portNum = 0; portNum < static_cast<NATIVE_UINT_TYPE>(FW_NUM_ARRAY_ELEMENTS(impl.m_RateGroupMemberOut_OutputPort)); portNum++) {
+    for (FwIndexType portNum = 0; portNum < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(impl.m_RateGroupMemberOut_OutputPort)); portNum++) {
         impl.set_RateGroupMemberOut_OutputPort(portNum,tester.get_from_RateGroupMemberOut(portNum));
     }
 
@@ -49,9 +49,9 @@ void connectPorts(Svc::ActiveRateGroup& impl, Svc::ActiveRateGroupImplTester& te
 
 TEST(ActiveRateGroupTest,NominalSchedule) {
 
-    for (NATIVE_INT_TYPE inst = 0; inst < 3; inst++) {
+    for (FwEnumStoreType inst = 0; inst < 3; inst++) {
 
-        NATIVE_INT_TYPE contexts[Svc::ActiveRateGroupComponentBase::NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS];
+        U32 contexts[Svc::ActiveRateGroupComponentBase::NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS];
         for (U32 i = 0; i < Svc::ActiveRateGroupComponentBase::NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS; i++) {
             contexts[i] = i + 1;
         }
@@ -75,9 +75,9 @@ TEST(ActiveRateGroupTest,NominalSchedule) {
 
 TEST(ActiveRateGroupTest,CycleOverrun) {
 
-    for (NATIVE_INT_TYPE inst = 0; inst < 3; inst++) {
+    for (FwEnumStoreType inst = 0; inst < 3; inst++) {
 
-        NATIVE_INT_TYPE contexts[Svc::ActiveRateGroupComponentBase::NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS];
+        U32 contexts[Svc::ActiveRateGroupComponentBase::NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS];
         for (U32 i = 0; i < Svc::ActiveRateGroupComponentBase::NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS; i++) {
             contexts[i] = i + 1;
         }
@@ -100,8 +100,8 @@ TEST(ActiveRateGroupTest,CycleOverrun) {
 
 TEST(ActiveRateGroupTest,PingPort) {
 
-    NATIVE_INT_TYPE contexts[Svc::ActiveRateGroupComponentBase::NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS];
-    for (U32 i = 0; i < Svc::ActiveRateGroupComponentBase::NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS; i++) {
+    U32 contexts[Svc::ActiveRateGroupComponentBase::NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS];
+    for (FwIndexType i = 0; i < Svc::ActiveRateGroupComponentBase::NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS; i++) {
         contexts[i] = i + 1;
     }
 

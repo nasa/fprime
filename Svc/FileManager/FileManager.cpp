@@ -16,7 +16,7 @@
 #include "Fw/Types/ExternalString.hpp"
 #include "Svc/FileManager/FileManager.hpp"
 #include "Fw/Types/Assert.hpp"
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 namespace Svc {
 
@@ -165,7 +165,7 @@ namespace Svc {
     this->log_ACTIVITY_HI_ShellCommandStarted(
           logStringCommand
       );
-    NATIVE_INT_TYPE status =
+    PlatformIntType status =
       this->systemCall(command, logFileName);
     if (status == 0) {
       this->log_ACTIVITY_HI_ShellCommandSucceeded(
@@ -227,7 +227,7 @@ namespace Svc {
     Fw::LogStringArg logStringFileName(fileName.toChar());
     this->log_ACTIVITY_HI_FileSizeStarted(logStringFileName);
 
-    FwSignedSizeType size_arg;
+    FwSizeType size_arg;
     const Os::FileSystem::Status status =
       Os::FileSystem::getFileSize(fileName.toChar(), size_arg);
     if (status != Os::FileSystem::OP_OK) {
@@ -256,7 +256,7 @@ namespace Svc {
   // Helper methods
   // ----------------------------------------------------------------------
 
-  NATIVE_INT_TYPE FileManager ::
+  PlatformIntType FileManager ::
     systemCall(
         const Fw::CmdStringArg& command,
         const Fw::CmdStringArg& logFileName

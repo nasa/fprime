@@ -27,8 +27,8 @@ namespace Svc {
 
         //! Construct a DataAfterRecordsFile
         DataAfterRecordsFile(
-            const U32 n, //!< The number of records
-            const Format::t format //!< The file format
+            const U32 a_n, //!< The number of records
+            const Format::t a_format //!< The file format
         );
 
       public:

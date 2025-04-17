@@ -26,7 +26,7 @@ namespace Svc {
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-BufferAccumulatorTester ::BufferAccumulatorTester(bool doAllocateQueue)
+BufferAccumulatorTester ::BufferAccumulatorTester(bool a_doAllocateQueue)
     :
 #if FW_OBJECT_NAMES == 1
       BufferAccumulatorGTestBase("Tester", MAX_HISTORY_SIZE),
@@ -35,14 +35,14 @@ BufferAccumulatorTester ::BufferAccumulatorTester(bool doAllocateQueue)
       BufferAccumulatorGTestBase(MAX_HISTORY_SIZE),
       component(),
 #endif
-      doAllocateQueue(doAllocateQueue) {
+      doAllocateQueue(a_doAllocateQueue) {
   this->initComponents();
   this->connectPorts();
 
   // Witch to BufferAccumulator_OpState::DRAIN at start so we don't have to
   // change ut
-  component.mode = BufferAccumulator_OpState::DRAIN;
-  component.send = true;
+  component.m_mode = BufferAccumulator_OpState::DRAIN;
+  component.m_send = true;
 
   if (this->doAllocateQueue) {
     Fw::MallocAllocator buffAccumMallocator;

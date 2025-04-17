@@ -19,14 +19,14 @@ namespace Svc {
     namespace SequenceFiles {
 
         NoRecordsFile ::
-            NoRecordsFile(const Format::t format) :
-            File("norecords", format)
+            NoRecordsFile(const Format::t a_format) :
+            File("norecords", a_format)
         {
         }
 
         void NoRecordsFile::serializeFPrime(Fw::SerializeBufferBase& buffer) {
             // Header
-            const NATIVE_INT_TYPE numRecs = 0;
+            const FwSizeType numRecs = 0;
             const U32 recordDataSize = numRecs * FPrime::Records::STANDARD_SIZE;
             const U32 dataSize = recordDataSize + FPrime::CRCs::SIZE;
             const TimeBase timeBase = TB_WORKSTATION_TIME;

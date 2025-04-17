@@ -13,6 +13,8 @@
 #include <cstring>
 #include <cstdio>
 
+static_assert(std::numeric_limits<FwSizeType>::max() >= PRMDB_NUM_DB_ENTRIES, "PRMDB_NUM_DB_ENTRIES must fit within range of FwSizeType");
+
 namespace Svc {
 
 
@@ -51,7 +53,7 @@ namespace Svc {
     }
 
     void PrmDbImpl::clearDb() {
-        for (I32 entry = 0; entry < PRMDB_NUM_DB_ENTRIES; entry++) {
+        for (FwSizeType entry = 0; entry < PRMDB_NUM_DB_ENTRIES; entry++) {
             this->m_db[entry].used = false;
             this->m_db[entry].id = 0;
         }
@@ -64,7 +66,7 @@ namespace Svc {
         // search for entry
         Fw::ParamValid stat = Fw::ParamValid::INVALID;
 
-        for (I32 entry = 0; entry < PRMDB_NUM_DB_ENTRIES; entry++) {
+        for (FwSizeType entry = 0; entry < PRMDB_NUM_DB_ENTRIES; entry++) {
             if (this->m_db[entry].used) {
                 if (this->m_db[entry].id == id) {
                     val = this->m_db[entry].val;
@@ -91,7 +93,7 @@ namespace Svc {
         bool existingEntry = false;
         bool noSlots = true;
 
-        for (NATIVE_INT_TYPE entry = 0; entry < PRMDB_NUM_DB_ENTRIES; entry++) {
+        for (FwSizeType entry = 0; entry < PRMDB_NUM_DB_ENTRIES; entry++) {
             if ((this->m_db[entry].used) && (id == this->m_db[entry].id)) {
                 this->m_db[entry].val = val;
                 existingEntry = true;
@@ -101,7 +103,7 @@ namespace Svc {
 
         // if there is no existing entry, add one
         if (!existingEntry) {
-            for (I32 entry = 0; entry < PRMDB_NUM_DB_ENTRIES; entry++) {
+            for (FwSizeType entry = 0; entry < PRMDB_NUM_DB_ENTRIES; entry++) {
                 if (!(this->m_db[entry].used)) {
                     this->m_db[entry].val = val;
                     this->m_db[entry].id = id;
@@ -142,11 +144,11 @@ namespace Svc {
 
         U32 numRecords = 0;
 
-        for (NATIVE_UINT_TYPE entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_db); entry++) {
+        for (FwSizeType entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_db); entry++) {
             if (this->m_db[entry].used) {
                 // write delimiter
                 static const U8 delim = PRMDB_ENTRY_DELIMITER;
-                FwSignedSizeType writeSize = static_cast<FwSignedSizeType>(sizeof(delim));
+                FwSizeType writeSize = static_cast<FwSizeType>(sizeof(delim));
                 stat = paramFile.write(&delim,writeSize,Os::File::WaitType::WAIT);
                 if (stat != Os::File::OP_OK) {
                     this->unLock();
@@ -173,7 +175,7 @@ namespace Svc {
                 FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat,static_cast<FwAssertArgType>(serStat));
 
                 // write record size
-                writeSize = static_cast<FwSignedSizeType>(buff.getBuffLength());
+                writeSize = static_cast<FwSizeType>(buff.getBuffLength());
                 stat = paramFile.write(buff.getBuffAddr(),writeSize,Os::File::WaitType::WAIT);
                 if (stat != Os::File::OP_OK) {
                     this->unLock();
@@ -201,7 +203,7 @@ namespace Svc {
                 FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat,static_cast<FwAssertArgType>(serStat));
 
                 // write parameter ID
-                writeSize = static_cast<FwSignedSizeType>(buff.getBuffLength());
+                writeSize = static_cast<FwSizeType>(buff.getBuffLength());
                 stat = paramFile.write(buff.getBuffAddr(),writeSize,Os::File::WaitType::WAIT);
                 if (stat != Os::File::OP_OK) {
                     this->unLock();
@@ -209,7 +211,7 @@ namespace Svc {
                     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
                     return;
                 }
-                if (writeSize != static_cast<FwSignedSizeType>(buff.getBuffLength())) {
+                if (writeSize != static_cast<FwSizeType>(buff.getBuffLength())) {
                     this->unLock();
                     this->log_WARNING_HI_PrmFileWriteError(
                         PrmWriteError::PARAMETER_ID_SIZE,
@@ -221,7 +223,7 @@ namespace Svc {
 
                 // write serialized parameter value
 
-                writeSize = static_cast<FwSignedSizeType>(this->m_db[entry].val.getBuffLength());
+                writeSize = static_cast<FwSizeType>(this->m_db[entry].val.getBuffLength());
                 stat = paramFile.write(this->m_db[entry].val.getBuffAddr(),writeSize,Os::File::WaitType::WAIT);
                 if (stat != Os::File::OP_OK) {
                     this->unLock();
@@ -229,7 +231,7 @@ namespace Svc {
                     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
                     return;
                 }
-                if (writeSize != static_cast<FwSignedSizeType>(this->m_db[entry].val.getBuffLength())) {
+                if (writeSize != static_cast<FwSizeType>(this->m_db[entry].val.getBuffLength())) {
                     this->unLock();
                     this->log_WARNING_HI_PrmFileWriteError(
                         PrmWriteError::PARAMETER_VALUE_SIZE,
@@ -268,10 +270,10 @@ namespace Svc {
 
         this->clearDb();
 
-        for (NATIVE_INT_TYPE entry = 0; entry < PRMDB_NUM_DB_ENTRIES; entry++)  {
+        for (FwSizeType entry = 0; entry < PRMDB_NUM_DB_ENTRIES; entry++)  {
 
             U8 delimiter;
-            FwSignedSizeType readSize = static_cast<FwSignedSizeType>(sizeof(delimiter));
+            FwSizeType readSize = static_cast<FwSizeType>(sizeof(delimiter));
 
             // read delimiter
             Os::File::Status fStat = paramFile.read(&delimiter,readSize,Os::File::WaitType::WAIT);
@@ -328,7 +330,7 @@ namespace Svc {
 
             // read the parameter ID
             FwPrmIdType parameterId = 0;
-            readSize = static_cast<FwSignedSizeType>(sizeof(FwPrmIdType));
+            readSize = static_cast<FwSizeType>(sizeof(FwPrmIdType));
 
             fStat = paramFile.read(buff.getBuffAddr(),readSize,Os::File::WaitType::WAIT);
             if (fStat != Os::File::OP_OK) {

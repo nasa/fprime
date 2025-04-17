@@ -128,7 +128,7 @@ namespace Svc {
           Fw::String m_baseName;
 
           //! The counter to use for the same file name
-          NATIVE_UINT_TYPE m_fileCounter;
+          FwSizeType m_fileCounter;
 
           //! The maximum file size
           FwSizeType m_maxSize;

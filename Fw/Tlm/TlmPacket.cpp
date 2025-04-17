@@ -24,7 +24,7 @@ namespace Fw {
         this->m_numEntries = 0;
         // make sure packet type is correct before serializing. It should
         // never be anything but FW_PACKET_TELEM, so assert.
-        FW_ASSERT(FW_PACKET_TELEM == this->m_type,this->m_type);
+        FW_ASSERT(FW_PACKET_TELEM == this->m_type, static_cast<FwAssertArgType>(this->m_type));
         // serialize descriptor
         // The function serializeBase inherited from ComPacket converts this->m_type
         // to type FwPacketDescriptorType and serializes the result into this->m_tlmBuffer.

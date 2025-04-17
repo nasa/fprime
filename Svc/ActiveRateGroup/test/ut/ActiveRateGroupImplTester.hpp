@@ -26,10 +26,8 @@ namespace Svc {
             ActiveRateGroupImplTester(Svc::ActiveRateGroup& inst);
             virtual ~ActiveRateGroupImplTester();
 
-            void init(NATIVE_INT_TYPE instance = 0);
-
-            void runNominal(NATIVE_INT_TYPE contexts[], NATIVE_INT_TYPE numContexts, NATIVE_INT_TYPE instance);
-            void runCycleOverrun(NATIVE_INT_TYPE contexts[], NATIVE_INT_TYPE numContexts, NATIVE_INT_TYPE instance);
+            void runNominal(U32 contexts[], FwIndexType numContexts, FwEnumStoreType instance);
+            void runCycleOverrun(U32 contexts[], FwIndexType numContexts, FwEnumStoreType instance);
             void runPingTest();
 
         private:
@@ -50,11 +48,11 @@ namespace Svc {
             struct {
                 bool portCalled;
                 U32 contextVal;
-                NATIVE_UINT_TYPE order;
+                FwIndexType order;
             } m_callLog[Svc::ActiveRateGroupComponentBase::NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS];
 
             bool m_causeOverrun; //!< flag to cause an overrun during a rate group member port call
-            NATIVE_UINT_TYPE m_callOrder; //!< tracks order of port call.
+            FwIndexType m_callOrder; //!< tracks order of port call.
 
     };
 

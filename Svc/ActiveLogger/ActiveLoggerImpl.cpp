@@ -12,7 +12,7 @@
 #include <Os/File.hpp>
 
 namespace Svc {
-
+    static_assert(std::numeric_limits<FwSizeType>::max() >= TELEM_ID_FILTER_SIZE, "TELEM_ID_FILTER_SIZE must fit within range of FwSizeType");
     typedef ActiveLogger_Enabled Enabled;
     typedef ActiveLogger_FilterSeverity FilterSeverity;
 
@@ -84,7 +84,7 @@ namespace Svc {
         }
 
         // check ID filters
-        for (NATIVE_INT_TYPE entry = 0; entry < TELEM_ID_FILTER_SIZE; entry++) {
+        for (FwSizeType entry = 0; entry < TELEM_ID_FILTER_SIZE; entry++) {
             if (
               (m_filteredIDs[entry] == id) &&
               (severity != Fw::LogSeverity::FATAL)
@@ -133,7 +133,7 @@ namespace Svc {
 
         if (Enabled::ENABLED == idEnabled.e) { // add ID
             // search list for existing entry
-            for (NATIVE_INT_TYPE entry = 0; entry < TELEM_ID_FILTER_SIZE; entry++) {
+            for (FwSizeType entry = 0; entry < TELEM_ID_FILTER_SIZE; entry++) {
                 if (this->m_filteredIDs[entry] == ID) {
                     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
                     this->log_ACTIVITY_HI_ID_FILTER_ENABLED(ID);
@@ -141,7 +141,7 @@ namespace Svc {
                 }
             }
             // if not already a match, search for an open slot
-            for (NATIVE_INT_TYPE entry = 0; entry < TELEM_ID_FILTER_SIZE; entry++) {
+            for (FwSizeType entry = 0; entry < TELEM_ID_FILTER_SIZE; entry++) {
                 if (this->m_filteredIDs[entry] == 0) {
                     this->m_filteredIDs[entry] = ID;
                     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
@@ -154,7 +154,7 @@ namespace Svc {
             this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
         } else { // remove ID
             // search list for existing entry
-            for (NATIVE_INT_TYPE entry = 0; entry < TELEM_ID_FILTER_SIZE; entry++) {
+            for (FwSizeType entry = 0; entry < TELEM_ID_FILTER_SIZE; entry++) {
                 if (this->m_filteredIDs[entry] == ID) {
                     this->m_filteredIDs[entry] = 0; // zero entry
                     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
@@ -175,7 +175,7 @@ namespace Svc {
         ) {
 
         // first, iterate through severity filters
-        for (NATIVE_UINT_TYPE filter = 0; filter < FilterSeverity::NUM_CONSTANTS; filter++) {
+        for (FwEnumStoreType filter = 0; filter < FilterSeverity::NUM_CONSTANTS; filter++) {
            FilterSeverity filterState(static_cast<FilterSeverity::t>(filter));
            this->log_ACTIVITY_LO_SEVERITY_FILTER_STATE(
                     filterState,
@@ -184,7 +184,7 @@ namespace Svc {
         }
 
         // iterate through ID filter
-        for (NATIVE_INT_TYPE entry = 0; entry < TELEM_ID_FILTER_SIZE; entry++) {
+        for (FwSizeType entry = 0; entry < TELEM_ID_FILTER_SIZE; entry++) {
             if (this->m_filteredIDs[entry] != 0) {
                 this->log_ACTIVITY_HI_ID_FILTER_ENABLED(this->m_filteredIDs[entry]);
             }

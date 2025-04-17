@@ -19,10 +19,6 @@ namespace Svc {
     typedef ActiveLogger_Enabled Enabled;
     typedef ActiveLogger_FilterSeverity FilterSeverity;
 
-    void ActiveLoggerImplTester::init(NATIVE_INT_TYPE instance) {
-        Svc::ActiveLoggerGTestBase::init();
-    }
-
     ActiveLoggerImplTester::ActiveLoggerImplTester(Svc::ActiveLoggerImpl& inst) :
             Svc::ActiveLoggerGTestBase("testerbase",100),
             m_impl(inst),
@@ -229,7 +225,7 @@ namespace Svc {
 
         REQUIREMENT("AL-003");
 
-        for (NATIVE_INT_TYPE filterID = 1; filterID <= TELEM_ID_FILTER_SIZE; filterID++) {
+        for (FwSizeType filterID = 1; filterID <= TELEM_ID_FILTER_SIZE; filterID++) {
             this->clearHistory();
             this->clearEvents();
             this->sendCmd_SET_ID_FILTER(0,cmdSeq,filterID,Enabled::ENABLED);
@@ -265,7 +261,7 @@ namespace Svc {
         }
 
         // Try to send the IDs that are filtered
-        for (NATIVE_INT_TYPE filterID = 1; filterID <= TELEM_ID_FILTER_SIZE; filterID++) {
+        for (FwSizeType filterID = 1; filterID <= TELEM_ID_FILTER_SIZE; filterID++) {
             this->clearHistory();
             this->clearEvents();
 
@@ -325,7 +321,7 @@ namespace Svc {
 
         // Now clear them
 
-        for (NATIVE_INT_TYPE filterID = 1; filterID <= TELEM_ID_FILTER_SIZE; filterID++) {
+        for (FwSizeType filterID = 1; filterID <= TELEM_ID_FILTER_SIZE; filterID++) {
             this->clearHistory();
             this->clearEvents();
             this->sendCmd_SET_ID_FILTER(0,cmdSeq,filterID,Enabled::DISABLED);
@@ -582,7 +578,7 @@ namespace Svc {
 
         // first read should be delimiter
         BYTE de;
-        FwSignedSizeType readSize = sizeof(de);
+        FwSizeType readSize = static_cast<FwSizeType>(sizeof(de));
 
         ASSERT_EQ(file.read(&de,readSize,Os::File::WaitType::WAIT),Os::File::OP_OK);
         ASSERT_EQ(delimiter,de);

@@ -92,7 +92,7 @@ During initialization, the configuration function takes a set of parameters:
             Fw::FileNameString directories[DP_MAX_DIRECTORIES],
             FwSizeType numDirs,
             Fw::FileNameString& stateFile,
-            NATIVE_UINT_TYPE memId,
+            FwEnumStoreType memId,
             Fw::MemAllocator& allocator
         );
 ```

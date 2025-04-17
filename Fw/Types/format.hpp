@@ -10,7 +10,7 @@
 // ======================================================================
 #ifndef FW_TYPES_FORMAT_HPP_
 #define FW_TYPES_FORMAT_HPP_
-#include <FpConfig.h>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <cstdarg>
 namespace Fw {
 

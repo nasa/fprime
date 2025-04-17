@@ -25,9 +25,7 @@ namespace Svc {
             PassiveRateGroupTester(Svc::PassiveRateGroup& inst);
             virtual ~PassiveRateGroupTester();
 
-            void init(NATIVE_INT_TYPE instance = 0);
-
-            void runNominal(NATIVE_INT_TYPE contexts[], U32 numContexts, NATIVE_INT_TYPE instance);
+            void runNominal(U32 contexts[], FwIndexType numContexts, FwEnumStoreType instance);
 
         private:
 
@@ -40,10 +38,10 @@ namespace Svc {
             struct {
                 bool portCalled;
                 U32 contextVal;
-                NATIVE_UINT_TYPE order;
+                FwIndexType order;
             } m_callLog[Svc::PassiveRateGroupComponentBase::NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS];
 
-            U32 m_callOrder; //!< tracks order of port call.
+            FwIndexType m_callOrder; //!< tracks order of port call.
 
     };
 

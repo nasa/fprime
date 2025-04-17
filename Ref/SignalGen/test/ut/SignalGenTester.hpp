@@ -72,11 +72,11 @@ namespace Ref {
       //! By default, (1) call pushProductGetEntry; (2) do not allocate a buffer
       //! and return FAILURE. You can override this behavior, e.g., to call
       //! pushProductGetEntry, allocate a buffer and return SUCCESS.
-      virtual Fw::Success::T productGet_handler(
+      Fw::Success::T productGet_handler (
         FwDpIdType id, //!< The container ID (input)
         FwSizeType dataSize, //!< The data size of the requested buffer (input)
         Fw::Buffer& buffer //!< The buffer (output)
-      );
+      ) override;
 
 
       // ----------------------------------------------------------------------

@@ -43,8 +43,8 @@ namespace Svc {
             //!  event. A descriptive name is stored in entryName
             //!  for events.
             struct PingEntry {
-                NATIVE_UINT_TYPE warnCycles; //!< number of cycles before WARNING
-                NATIVE_UINT_TYPE fatalCycles; //!< number of cycles before FATAL
+                FwSizeType warnCycles; //!< number of cycles before WARNING
+                FwSizeType fatalCycles; //!< number of cycles before FATAL
                 Fw::String entryName; //!< the name of the entry
             };
 
@@ -61,7 +61,7 @@ namespace Svc {
             //!
             //!  \param queueDepth Depth of queue
             //!  \param instance The instance number
-            void init(const FwSizeType queueDepth, const NATIVE_INT_TYPE instance);
+            void init(const FwSizeType queueDepth, const FwEnumStoreType instance);
 
             //! \brief Set ping entry tables
             //!
@@ -70,7 +70,7 @@ namespace Svc {
             //!  \param pingEntries Pointer to provided ping table entries
             //!  \param numPingEntries Number of ping entries in table
             //!  \param watchDogCode Value that is sent to watchdog
-            void setPingEntries(PingEntry* pingEntries, NATIVE_INT_TYPE numPingEntries, U32 watchDogCode);
+            void setPingEntries(PingEntry* pingEntries, FwIndexType numPingEntries, U32 watchDogCode);
 
             //!  \brief Component destructor
             //!
@@ -142,10 +142,10 @@ namespace Svc {
                 Fw::Enabled::t enabled; //!< if current ping result is checked
             } m_pingTrackerEntries[NUM_PINGSEND_OUTPUT_PORTS];
 
-            NATIVE_INT_TYPE findEntry(const Fw::CmdStringArg& entry);
+            FwIndexType findEntry(const Fw::CmdStringArg& entry);
 
             //!  Private member data
-            U32 m_numPingEntries; //!< stores number of entries passed to constructor
+            FwIndexType m_numPingEntries; //!< stores number of entries passed to constructor
             U32 m_key; //!< current key value. Just increments for each ping entry.
             U32 m_watchDogCode; //!< stores code used for watchdog stroking
             U32 m_warnings; //!< number of slip warnings issued

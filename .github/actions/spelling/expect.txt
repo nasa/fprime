@@ -24,7 +24,7 @@ ANamespace
 anotherchan
 anotherparam
 apad
-APID
+apid
 APIDOCS
 aports
 apos
@@ -362,14 +362,17 @@ genshi
 getblocks
 getchildren
 getcontext
+getcrc
 getdata
 getdefaultencoding
 getextern
 getf
 geti
 getinput
+getlength
 getm
 getquaternion
+getstart
 gett
 gettime
 getty
@@ -460,6 +463,7 @@ INVALIDHEADERHASH
 invisi
 ioc
 ioctl
+ipas
 IPCFG
 IPHELPER
 ipriority
@@ -492,6 +496,7 @@ jsonable
 kermit
 kevin
 kislyuk
+kubiak
 Lammert
 lammertbies
 LASTLOG
@@ -517,6 +522,7 @@ listdir
 Listst
 LJR
 lld
+llu
 LOCALSTATEDIR
 LOGGERRULES
 loglvl
@@ -584,6 +590,7 @@ Mutexed
 mval
 MVC
 mycompany
+NACI
 nasafprime
 nbits
 ncsl
@@ -648,6 +655,7 @@ osaves
 osets
 ossw
 ostate
+OSTIME
 otherdictitems
 otheritems
 otherside
@@ -764,6 +772,7 @@ RATEGROUPDRIVERIMPLTESTER
 RATEGROUPMEMBEROUT
 RATELIMITERTESTER
 rawtime
+RAWTIMETESTER
 RBF
 RCHILD
 rcvd
@@ -948,6 +957,7 @@ testerbase
 testgen
 TESTLIST
 TESTLOGRECVIMPL
+testmark
 TESTPARAMIMPL
 TESTPARAMRECVIMPL
 TESTPTSOURCEIMPL

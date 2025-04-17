@@ -83,7 +83,7 @@ namespace Svc {
       //!
       LinuxTimerComponentImpl component;
 
-      NATIVE_INT_TYPE m_numCalls;
+      U32 m_numCalls;
 
   };
 

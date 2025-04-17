@@ -1,6 +1,6 @@
 #include <Fw/Logger/Logger.hpp>
 #include <Fw/Obj/SimpleObjRegistry.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <cstdio>
 #include <cstring>

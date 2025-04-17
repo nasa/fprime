@@ -20,13 +20,14 @@ register_os_implementation(RawTime Stub)
 if (NOT BUILD_TESTING)
     return()
 endif ()
+
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test")
 
 ## Stubs test: checks that all the no-op stubs can be selected and compile ##
 set(UT_SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/StubTests.cpp"
 )
-set(UT_MOD_DEPS Os Os_Models)
+set(UT_MOD_DEPS Os Os_Models Fw_Time)
 choose_fprime_implementation(Os/Task Os_Task_Stub)
 choose_fprime_implementation(Os/Mutex Os_Mutex_Stub)
 choose_fprime_implementation(Os/File Os_File_Stub)
@@ -35,3 +36,6 @@ choose_fprime_implementation(Os/Cpu Os_Cpu_Stub)
 choose_fprime_implementation(Os/Memory Os_Memory_Stub)
 choose_fprime_implementation(Os/RawTime Os_RawTime_Stub)
 register_fprime_ut(StubTest)
+if (TARGET StubTest)
+    target_compile_options(StubTest PRIVATE -Wno-conversion)
+endif()

@@ -1,6 +1,6 @@
 #include <Fw/Comp/QueuedComponentBase.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Os/QueueString.hpp>
 
 #include <cstdio>

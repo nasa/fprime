@@ -14,7 +14,7 @@
 #ifndef FppTest_SmHarness_Guard_HPP
 #define FppTest_SmHarness_Guard_HPP
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include "FppTest/state_machine/internal/harness/SignalValueHistory.hpp"
 
 namespace FppTest {

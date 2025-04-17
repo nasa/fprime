@@ -1,7 +1,7 @@
 #ifndef FW_TIME_INTERVAL_HPP
 #define FW_TIME_INTERVAL_HPP
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/Serializable.hpp>
 

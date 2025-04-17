@@ -6,7 +6,7 @@
 
 
 #include "QueuedTest.hpp"
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 #include "FppTest/component/active/SerialPortIndexEnumAc.hpp"
 
@@ -147,16 +147,6 @@
     )
   {
     return this->arrayReturnOut_out(portNum, a, aRef);
-  }
-
-  void QueuedTest :: 
-    cmdOut_handler(
-        FwIndexType portNum,
-        FwOpcodeType opCode,
-        U32 cmdSeq,
-        Fw::CmdArgBuffer& args
-    )
-  {
   }
 
   void QueuedTest ::
@@ -353,6 +343,22 @@
       str100,
       str100Ref
     );
+  }
+
+  Fw::String QueuedTest ::stringReturnGuarded_handler(
+      FwIndexType portNum,
+      const Fw::StringBase& str,
+      Fw::StringBase& strRef
+  ) {
+      return this->stringReturnOut_out(portNum, str, strRef);
+  }
+
+  Fw::String QueuedTest ::stringReturnSync_handler(
+      FwIndexType portNum,
+      const Fw::StringBase& str,
+      Fw::StringBase& strRef
+  ) {
+      return this->stringReturnOut_out(portNum, str, strRef);
   }
 
   void QueuedTest ::

@@ -13,21 +13,23 @@ This document describes: fixed-width types and logical types.
 In F´, fixed width types map to the standard definitions either in the C standard or in the `stdint.h` header as seen
 below. Since platforms are not guaranteed to support all types (e.g. 64bits integers) these types can be turned off
 by setting a configuration field to `0` in the platform-supplied `PlatformTypes.h` header.  These types are on by
-default and users must turn off types their compiler or platform does not support.
+default and users must turn off types their compiler or platform does not support. Each type also defines a matching 
+format specifier for use with the `printf` family of functions. Note that C/C++ always promotes floats to doubles so
+the correct format specifier for a F32 is PRI_F64 as indicated in the table below.
 
 
-| F´ Type | Equivalent   | `PlatformTypes.h` Configuration Field |
-|---------|--------------|---------------------------------------|
-| I8      | int8_t       | n/a                                   |
-| I16     | int16_t      | FW_HAS_16_BIT                         |
-| I32     | int32_t      | FW_HAS_32_BIT                         |
-| I64     | int64_t      | FW_HAS_64_BIT                         |
-| U8      | uint8_t      | n/a                                   |
-| U16     | uint16_t     | FW_HAS_16_BIT                         |
-| U32     | uint32_t     | FW_HAS_32_BIT                         |
-| U64     | uint64_t     | FW_HAS_64_BIT                         |
-| F32     | float        | n/a                                   |
-| F64     | double       | FW_HAS_F64                            |
+| F´ Type | Equivalent   | Format Specifier | `PlatformTypes.h` Configuration Field |
+|---------|--------------|------------------|---------------------------------------|
+| I8      | int8_t       | PRI_I8           | n/a                                   |
+| I16     | int16_t      | PRI_I16          | FW_HAS_16_BIT                         |
+| I32     | int32_t      | PRI_I32          | FW_HAS_32_BIT                         |
+| I64     | int64_t      | PRI_I64          | FW_HAS_64_BIT                         |
+| U8      | uint8_t      | PRI_U8           | n/a                                   |
+| U16     | uint16_t     | PRI_U16          | FW_HAS_16_BIT                         |
+| U32     | uint32_t     | PRI_U32          | FW_HAS_32_BIT                         |
+| U64     | uint64_t     | PRI_U64          | FW_HAS_64_BIT                         |
+| F32     | float        | PRI_F64          | n/a                                   |
+| F64     | double       | PRI_F64          | FW_HAS_F64                            |
 
 Platform developers should include `stdint.h` or equivalent in their `PlatformTypes.h` to ensure F´ can construct a
 mapping from the C equivalents to the F´ type. If for some reason that header does not exist or does not define all
@@ -67,14 +69,18 @@ Platform developers must define the following logical types in the `PlatformType
 CMake platform and toolchain files. Each type also defines a format specifier for use with the `printf` family of
 functions.
 
-| Platform Logical Type   | Format Specifier            | Notes                       | 
-|-------------------------|-----------------------------|-----------------------------|
-| PlatformIndexType       | PRI_PlatformIndexType       | Ports indices               | 
-| PlatformSizeType        | PRI_PlatformSizeType        | Sizes                       |
-| PlatformPointerCastType | PRI_PlatformPointerCastType | Pointers stored as integers |
-| PlatformAssertArgType   | PRI_PlatformAssertArgType   | Argument to FW_ASSERT       |
-| PlatformIntType         | PRI_PlatformIntType         | Deprecated (see note)       |
-| PlatformUIntType        | PRI_PlatformUIntType        | Deprecated (see note)       |
+| Platform Logical Type   | Logical Use                   | Format Specifier            | Signed | Size            |
+|-------------------------|-------------------------------|-----------------------------|--------|-----------------|
+| PlatformIndexType       | Ports and small array indices | PRI_PlatformIndexType       | Yes    | Minimum 1 Byte  |
+| PlatformSizeType        | Sizes                         | PRI_PlatformSizeType        | No     | Minimum 4 Bytes |
+| PlatformSignedSizeType  | Signed sizes                  | PRI_PlatformSignedSizeType  | Yes    | Minimum 4 Bytes |
+| PlatformPointerCastType | Pointers stored as integers   | PRI_PlatformPointerCastType | No     | sizeof(void*)   |
+| PlatformAssertArgType   | Argument to FW_ASSERT         | PRI_PlatformAssertArgType   | Yes/No | Any             |
+| PlatformIntType         | Deprecated (see note)         | PRI_PlatformIntType         | Yes    | sizeof(int)     |
+| PlatformUIntType        | Deprecated (see note)         | PRI_PlatformUIntType        | Yes    | sizeof(int)     |
+
+> [!WARNING]
+> `PlatformPointerCastType` values shall never be sent nor used outside the address space where a value was initialized because these values represent pointers only valid in a single address space.
 
 A complete definition of each type for a given platform must be supplied within `PlatformTypes.h` as shown in the
 example below. Notice the type is defined along with a format specifier.
@@ -98,18 +104,19 @@ printf("Index %" PRI_PlatformIndexType ". Min %" PRI_PlatformIndexType, index, s
 ```
 
 > [!NOTE]
-> in order for F´ to compile without warnings it is necessary that each of the platform types are elements in the set of integers supplied by the C standard integers header (`stdint.h`). i.e. each type must be an `int8_t`, `int16_t`, `int32_t`, `int64_t` or unsigned variants. On some compilers `int` and `unsigned int` are not members of that set and on those platforms it is imperative that both `PlatformIntType` and `PlatformUIntType` be set to some fixed size type instead.
+> in order for F´ to compile without warnings it is necessary that each of the platform types are elements in the set of integers supplied by the C standard integers header (`stdint.h`). i.e. each type must be an `int8_t`, `int16_t`, `int32_t`, `int64_t` or unsigned variants.
 
 ### Configurable Integer Types
 
 Project may configure the framework types that the framework and components use for implementation through
 `FpConfig.h`. The default configuration as supplied with F´ uses the above platform types where applicable.
 
-| Framework Type  | Logical Usage        | Default               | Format Specifier    | Notes |
-|-----------------|----------------------|-----------------------|---------------------|-------|
-| FwIndexType     | Port indices         | PlatformIndexType     | PRI_FwIndexType     |       |
-| FwSizeType      | Sizes                | PlatformSizeType      | PRI_FwSizeType      |       |
-| FwAssertArgType | Arguments to asserts | PlatformAssertArgType | PRI_FwAssertArgType |       |
+| Framework Type   | Logical Usage                | Default                | Format Specifier     | Signed | Size            |
+|------------------|------------------------------|------------------------|----------------------|--------|-----------------|
+| FwIndexType      | Port and small array indices | PlatformIndexType      | PRI_FwIndexType      | Yes    | Minimum 1 Byte  |
+| FwSizeType       | Sizes                        | PlatformSizeType       | PRI_FwSizeType       | No     | Minimum 4 Bytes |
+| FwSignedSizeType | Signed sizes                 | PlatformSignedSizeType | PRI_FwSignedSizeType | Yes    | Minimum 4 Bytes |
+| FwAssertArgType  | Arguments to asserts         | PlatformAssertArgType  | PRI_FwAssertArgType  | Yes/No | Any             |
 
 There is also a set of framework types that are used across F´ deployments and specifically interact with ground data
 systems. These GDS types have defaults based on configurable platform independent fixed-widths as shown below:

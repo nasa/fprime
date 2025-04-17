@@ -18,8 +18,6 @@ namespace Svc {
             CommandDispatcherImplTester(Svc::CommandDispatcherImpl& inst);
             virtual ~CommandDispatcherImplTester();
 
-            void init(NATIVE_INT_TYPE instance = 0);
-
             void runNominalDispatch();
             void runInvalidOpcodeDispatch();
             void runCommandReregister();

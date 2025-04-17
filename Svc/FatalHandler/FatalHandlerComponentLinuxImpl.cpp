@@ -15,7 +15,7 @@
 #include <Fw/Logger/Logger.hpp>
 #include <Svc/FatalHandler/FatalHandlerComponentImpl.hpp>
 #include <Os/Task.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 namespace Svc {
 

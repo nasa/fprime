@@ -34,7 +34,8 @@ void checkHeader(FwDpIdType id, Fw::Buffer& buffer, DpContainer& container) {
     container.setTimeTag(timeTag);
     // Set the processing types
     const FwSizeType numProcTypeStates = 1 << DpCfg::ProcType::NUM_CONSTANTS;
-    const DpCfg::ProcType::SerialType procTypes = STest::Pick::startLength(0, numProcTypeStates);
+    const auto procTypes =
+      static_cast<DpCfg::ProcType::SerialType>(STest::Pick::startLength(0, numProcTypeStates));
     container.setProcTypes(procTypes);
     // Set the user data
     for (U8& data : userData) {
@@ -164,9 +165,9 @@ TEST(Header, BadPacketDescriptor) {
     // Create a buffer
     Fw::Buffer buffer(bufferData, sizeof bufferData);
     // Set the packet descriptor to a bad value
-    Fw::SerializeBufferBase& serialRepr = buffer.getSerializeRepr();
+    auto serializer = buffer.getSerializer();
     const FwPacketDescriptorType badPacketDescriptor = Fw::ComPacket::FW_PACKET_DP + 1;
-    Fw::SerializeStatus status = serialRepr.serialize(badPacketDescriptor);
+    Fw::SerializeStatus status = serializer.serialize(badPacketDescriptor);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
     // Use the buffer to create a container
     DpContainer container;

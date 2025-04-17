@@ -19,8 +19,6 @@ namespace Svc {
             ActiveLoggerImplTester(Svc::ActiveLoggerImpl& inst);
             virtual ~ActiveLoggerImplTester();
 
-            void init(NATIVE_INT_TYPE instance = 0) override;
-
             void runEventNominal();
             void runFilterEventNominal();
             void runFilterIdNominal();
@@ -55,24 +53,13 @@ namespace Svc {
             void writeEvent(FwEventIdType id, Fw::LogSeverity severity, U32 value);
             void readEvent(FwEventIdType id, Fw::LogSeverity severity, U32 value, Os::File& file);
 
-            // open call modifiers
-
-            static bool OpenInterceptor(Os::File::Status &stat, const char* fileName, Os::File::Mode mode, void* ptr);
-            Os::File::Status m_testOpenStatus;
-
-            // write call modifiers
-
-            static bool WriteInterceptor(Os::File::Status &status, const void * buffer, NATIVE_INT_TYPE &size, bool waitForDone, void* ptr);
-            Os::File::Status m_testWriteStatus;
-            // How many read calls to let pass before modifying
-            NATIVE_INT_TYPE m_writesToWait;
             // enumeration to tell what kind of error to inject
             typedef enum {
                 FILE_WRITE_WRITE_ERROR, // return a bad read status
                 FILE_WRITE_SIZE_ERROR, // return a bad size
             } FileWriteTestType;
             FileWriteTestType m_writeTestType;
-            NATIVE_INT_TYPE m_writeSize;
+            FwSizeType m_writeSize;
 
             void textLogIn(const FwEventIdType id, //!< The event ID
                       const Fw::Time& timeTag, //!< The time

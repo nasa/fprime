@@ -33,6 +33,8 @@ struct Tester {
         U8 data[QUEUE_MESSAGE_SIZE_UPPER_BOUND];
         FwQueuePriorityType priority = 0;
         FwSizeType size = 0;
+        U64 order = 0;
+        static U64 order_counter;
     };
 
     struct ReceiveMessage {
@@ -42,7 +44,16 @@ struct Tester {
     };
 
     struct QueueMessageComparer {
-        bool operator()(const QueueMessage& a, const QueueMessage& b) { return HELPER(a.priority, b.priority); }
+        bool operator()(const QueueMessage& a, const QueueMessage& b){
+            // Compare priority for unequal priority
+            if (a.priority != b.priority) {
+                return HELPER(a.priority, b.priority);
+            }
+            // Cannot have like ordered items
+            assert(a.order != b.order);
+            // Compare received order for unequal received orders
+            return a.order > b.order;
+        }
 
       private:
         static const PriorityCompare HELPER;

@@ -64,11 +64,11 @@ void StateToChoice::testInit() {
     this->initBase(id);
     ASSERT_EQ(this->m_id, id);
     ASSERT_EQ(this->getState(), State::S1_S2);
-    const FwSizeType expectedSize = 2;
+    const FwIndexType expectedSize = 2;
     ASSERT_EQ(this->m_actionHistory.getSize(), expectedSize);
     const auto& signals = this->m_actionHistory.getSignals();
     const auto& actions = this->m_actionHistory.getValues();
-    for (FwSizeType i = 0; i < expectedSize; i++) {
+    for (FwIndexType i = 0; i < expectedSize; i++) {
         ASSERT_EQ(signals.getItemAt(i), Signal::__FPRIME_AC_INITIAL_TRANSITION);
     }
     ASSERT_EQ(actions.getItemAt(0), ActionId::ENTER_S1);
@@ -86,11 +86,11 @@ void StateToChoice::testS2_to_C() {
     this->sendSignal_S1_to_C();
     this->sendSignal_S2_to_S3();
     ASSERT_EQ(this->getState(), State::S4_S5);
-    const FwSizeType expectedSize = 4;
+    const FwIndexType expectedSize = 4;
     ASSERT_EQ(this->m_actionHistory.getSize(), expectedSize);
     const auto& signals = this->m_actionHistory.getSignals();
     const auto& actions = this->m_actionHistory.getValues();
-    for (FwSizeType i = 0; i < expectedSize; i++) {
+    for (FwIndexType i = 0; i < expectedSize; i++) {
         ASSERT_EQ(signals.getItemAt(i), Signal::S1_to_C);
     }
     ASSERT_EQ(actions.getItemAt(0), ActionId::EXIT_S2);
@@ -107,11 +107,11 @@ void StateToChoice::testS2_to_S3() {
     this->sendSignal_S2_to_S3();
     this->sendSignal_S2_to_S3();
     ASSERT_EQ(this->getState(), State::S1_S3);
-    const FwSizeType expectedSize = 2;
+    const FwIndexType expectedSize = 2;
     ASSERT_EQ(this->m_actionHistory.getSize(), expectedSize);
     const auto& signals = this->m_actionHistory.getSignals();
     const auto& actions = this->m_actionHistory.getValues();
-    for (FwSizeType i = 0; i < expectedSize; i++) {
+    for (FwIndexType i = 0; i < expectedSize; i++) {
         ASSERT_EQ(signals.getItemAt(i), Signal::S2_to_S3);
     }
     ASSERT_EQ(actions.getItemAt(0), ActionId::EXIT_S2);
@@ -128,11 +128,11 @@ void StateToChoice::testS2_to_S4() {
     this->sendSignal_S1_to_S4();
     this->sendSignal_S1_to_S4();
     ASSERT_EQ(this->getState(), State::S4_S5);
-    const FwSizeType expectedSize = 4;
+    const FwIndexType expectedSize = 4;
     ASSERT_EQ(this->m_actionHistory.getSize(), expectedSize);
     const auto& signals = this->m_actionHistory.getSignals();
     const auto& actions = this->m_actionHistory.getValues();
-    for (FwSizeType i = 0; i < expectedSize; i++) {
+    for (FwIndexType i = 0; i < expectedSize; i++) {
         ASSERT_EQ(signals.getItemAt(i), Signal::S1_to_S4);
     }
     ASSERT_EQ(actions.getItemAt(0), ActionId::EXIT_S2);
@@ -152,11 +152,11 @@ void StateToChoice::testS3_to_C() {
     this->sendSignal_S1_to_C();
     this->sendSignal_S2_to_S3();
     ASSERT_EQ(this->getState(), State::S4_S6);
-    const FwSizeType expectedSize = 4;
+    const FwIndexType expectedSize = 4;
     ASSERT_EQ(this->m_actionHistory.getSize(), expectedSize);
     const auto& signals = this->m_actionHistory.getSignals();
     const auto& actions = this->m_actionHistory.getValues();
-    for (FwSizeType i = 0; i < expectedSize; i++) {
+    for (FwIndexType i = 0; i < expectedSize; i++) {
         ASSERT_EQ(signals.getItemAt(i), Signal::S1_to_C);
     }
     ASSERT_EQ(actions.getItemAt(0), ActionId::EXIT_S3);
@@ -175,11 +175,11 @@ void StateToChoice::testS3_to_S4() {
     this->sendSignal_S1_to_S4();
     this->sendSignal_S1_to_S4();
     ASSERT_EQ(this->getState(), State::S4_S6);
-    const FwSizeType expectedSize = 4;
+    const FwIndexType expectedSize = 4;
     ASSERT_EQ(this->m_actionHistory.getSize(), expectedSize);
     const auto& signals = this->m_actionHistory.getSignals();
     const auto& actions = this->m_actionHistory.getValues();
-    for (FwSizeType i = 0; i < expectedSize; i++) {
+    for (FwIndexType i = 0; i < expectedSize; i++) {
         ASSERT_EQ(signals.getItemAt(i), Signal::S1_to_S4);
     }
     ASSERT_EQ(actions.getItemAt(0), ActionId::EXIT_S3);

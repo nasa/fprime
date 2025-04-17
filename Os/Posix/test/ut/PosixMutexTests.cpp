@@ -15,7 +15,7 @@
 static void testTaskRoutine(void* pointer) {
     Os::Test::Mutex::Tester* tester = reinterpret_cast<Os::Test::Mutex::Tester*>(pointer);
     
-    for (FwIndexType i = 0; i < 100000; i++) {
+    for (FwSizeType i = 0; i < 100000; i++) {
         tester->m_mutex.lock();
         tester->m_state = Os::Test::Mutex::Tester::MutexState::LOCKED;
 
@@ -51,7 +51,7 @@ TEST_F(FunctionalityTester, PosixMutexDataProtection) {
 
     Os::Test::Mutex::Tester::ProtectDataCheck protect_data_rule;
 
-    for (FwIndexType i = 0; i < 100000; i++) {
+    for (FwSizeType i = 0; i < 100000; i++) {
         protect_data_rule.apply(*tester);
     }
 
