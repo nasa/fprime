@@ -150,8 +150,7 @@ Fw::Success FpySequencer::validate() {
 // return true if successful
 Fw::Success FpySequencer::readBytes(Os::File& file, FwSizeType readLen, bool updateCRC) {
     FW_ASSERT(file.isOpen());
-    // this has to be fwsignedsizetype cuz that's what file.read takes
-    // it also has to be declared a var because file.read must take a ref
+    // this has to be declared a var because file.read must take a ref
     FwSizeType expectedReadLen = readLen;
 
     const FwSizeType capacity = this->m_sequenceBuffer.getBuffCapacity();
