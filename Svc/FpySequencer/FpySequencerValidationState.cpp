@@ -132,10 +132,10 @@ Fw::Success FpySequencer::validate() {
     }
 
     // make sure we're at EOF
-    FwSignedSizeType sequenceFileSize;
+    FwSizeType sequenceFileSize;
     FW_ASSERT(sequenceFile.size(sequenceFileSize) == Os::File::Status::OP_OK);
 
-    FwSignedSizeType sequenceFilePosition;
+    FwSizeType sequenceFilePosition;
     FW_ASSERT(sequenceFile.position(sequenceFilePosition) == Os::File::Status::OP_OK);
 
     if (sequenceFileSize != sequenceFilePosition) {
@@ -152,14 +152,14 @@ Fw::Success FpySequencer::readBytes(Os::File& file, FwSizeType readLen, bool upd
     FW_ASSERT(file.isOpen());
     // this has to be fwsignedsizetype cuz that's what file.read takes
     // it also has to be declared a var because file.read must take a ref
-    FwSignedSizeType expectedReadLen = readLen;
+    FwSizeType expectedReadLen = readLen;
 
     const FwSizeType capacity = this->m_sequenceBuffer.getBuffCapacity();
 
     // if this fails, then you need to give the sequencer more buffer memory. pass in a bigger number
     // to fpySeq.allocateBuffer(). This is usually done in topology setup CPP
-    if (static_cast<FwSizeType>(expectedReadLen) > capacity) {
-        this->log_WARNING_HI_InsufficientBufferSpace(capacity, this->m_sequenceFilePath);
+    if (expectedReadLen > capacity) {
+        this->log_WARNING_HI_InsufficientBufferSpace(static_cast<U64>(capacity), this->m_sequenceFilePath);
         return Fw::Success::FAILURE;
     }
 
@@ -170,13 +170,13 @@ Fw::Success FpySequencer::readBytes(Os::File& file, FwSizeType readLen, bool upd
         return Fw::Success::FAILURE;
     }
 
-    if (static_cast<FwSignedSizeType>(readLen) < expectedReadLen) {
+    if (readLen < expectedReadLen) {
         this->log_WARNING_HI_EndOfFileError(this->m_sequenceFilePath);
         return Fw::Success::FAILURE;
     }
 
     // should probably fail if we read in MORE bytes than we ask for
-    FW_ASSERT(readLen == static_cast<FwSizeType>(expectedReadLen), static_cast<FwAssertArgType>(readLen), static_cast<FwAssertArgType>(expectedReadLen));
+    FW_ASSERT(readLen == expectedReadLen, static_cast<FwAssertArgType>(readLen), static_cast<FwAssertArgType>(expectedReadLen));
 
     Fw::SerializeStatus serializeStatus = this->m_sequenceBuffer.setBuffLen(static_cast<Fw::Serializable::SizeType>(readLen));
     FW_ASSERT(serializeStatus == Fw::FW_SERIALIZE_OK, serializeStatus);

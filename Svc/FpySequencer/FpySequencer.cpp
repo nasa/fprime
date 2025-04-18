@@ -178,8 +178,8 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
     // pull the sequence index (modulo 2^16) out of the cmdUid. see the comment in FpySequencer::dispatchCommand
     // for info on the binary format of this cmdUid. as a reminder, this should be equal to the first 16 bits of
     // the m_sequencesStarted variable
-    U16 sequenceIndex = (cmdUid & 0xFFFF0000) >> 16;
-    U16 currentSequenceIndex = this->m_sequencesStarted & 0xFFFF;
+    U16 sequenceIndex = static_cast<U16>((cmdUid & 0xFFFF0000) >> 16);
+    U16 currentSequenceIndex = static_cast<U16>(this->m_sequencesStarted & 0xFFFF);
 
     // if it was from a different sequence:
     if (sequenceIndex != currentSequenceIndex) {
@@ -210,10 +210,10 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
 
     // pull the cmd index (modulo 2^16) out of cmdUid. this should be equal to the first 16 bits of the 
     // m_statementsDispatched variable - 1. the -1 is because 
-    U16 cmdIndex = (cmdUid & 0xFFFF);
+    U16 cmdIndex = static_cast<U16>(cmdUid & 0xFFFF);
     // check for coding errors. at this point in the function, we have definitely dispatched a stmt
     FW_ASSERT(this->m_statementsDispatched > 0);
-    U16 currentCmdIndex = (this->m_statementsDispatched - 1) & 0xFFFF;
+    U16 currentCmdIndex = static_cast<U16>((this->m_statementsDispatched - 1) & 0xFFFF);
 
     if (cmdIndex != currentCmdIndex) {
         // we were not awaiting this exact statement, it was a different one with the same opcode. coding error

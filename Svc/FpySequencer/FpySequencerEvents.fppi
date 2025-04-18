@@ -52,7 +52,7 @@ event ExtraBytesInSequence(
     format "File had {} extra bytes at the end"
 
 event InsufficientBufferSpace(
-    bufferSize: U32
+    bufferSize: U64
     filePath: string
 ) \
     severity warning high \
