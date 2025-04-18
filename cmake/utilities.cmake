@@ -280,6 +280,7 @@ endfunction(resolve_dependencies)
 # Function `is_target_real`:
 #
 # Does this target represent a real item (executable, library)? OUTPUT is set to TRUE when real, and FALSE otherwise.
+# Non-real targets include TARGET_TYPE=UTILITY and ALIASED_TARGET.
 #
 # OUTPUT: variable to set
 # TEST_TARGET: target to set
@@ -288,7 +289,8 @@ function(is_target_real OUTPUT TEST_TARGET)
     if (TARGET "${DEPENDENCY}")
         get_target_property(TARGET_TYPE "${DEPENDENCY}" TYPE)
         # Make sure this is not a utility target
-        if (NOT TARGET_TYPE STREQUAL "UTILITY")
+        get_target_property(IS_ALIAS "${TEST_TARGET}" ALIASED_TARGET)
+        if (NOT TARGET_TYPE STREQUAL "UTILITY" AND NOT IS_ALIAS)
             set("${OUTPUT}" TRUE PARENT_SCOPE)
             return()
         endif()
