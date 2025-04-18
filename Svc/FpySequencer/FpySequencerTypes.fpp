@@ -1,6 +1,6 @@
 module Svc {
     module Fpy {
-        @ the current schema verison (must be representable in U8)
+        @ the current schema version (must be representable in U8)
         constant SCHEMA_VERSION = 1;
 
         enum DirectiveId {

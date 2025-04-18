@@ -199,7 +199,7 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
 
     // okay, we were awaiting a command. were we awaiting this opcode?
     if (opCode != this->m_runtime.currentStatementOpcode || this->m_runtime.currentStatementType != Fpy::StatementType::COMMAND) {
-        // we were not awaiting this opcode. coding error, likely on the part of the repsonding component or cmd dispatcher
+        // we were not awaiting this opcode. coding error, likely on the part of the responding component or cmd dispatcher
         this->log_WARNING_HI_WrongCmdResponseOpcode(opCode, response, this->m_runtime.currentStatementOpcode);
         this->sequencer_sendSignal_stmtResponse_unexpected();
         return;
