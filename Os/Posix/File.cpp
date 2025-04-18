@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <cerrno>
 #include <limits>
+#include <type_traits>
 
 #include <Fw/Types/Assert.hpp>
 #include <Os/File.hpp>
@@ -28,6 +29,13 @@ namespace File {
 #define USER_FLAGS (0)
 #endif
 
+// Create constants for the max limits of the signed types
+// These constants are used for comparisons with complementary unsigned types to avoid sign-compare warning
+using UnsignedOffT = std::make_unsigned<off_t>::type;
+static const UnsignedOffT OFF_T_MAX_LIMIT = static_cast<UnsignedOffT>(std::numeric_limits<off_t>::max());
+using UnsignedSSizeT = std::make_unsigned<ssize_t>::type;
+static const UnsignedSSizeT SSIZE_T_MAX_LIMIT = static_cast<UnsignedSSizeT>(std::numeric_limits<ssize_t>::max());
+
 // Ensure size of FwSizeType is large enough to fit eh necessary range
 static_assert(sizeof(FwSignedSizeType) >= sizeof(off_t),
               "FwSignedSizeType is not large enough to store values of type off_t");
@@ -39,7 +47,7 @@ static_assert(sizeof(FwSizeType) >= sizeof(size_t),
 // Now check ranges of FwSizeType
 static_assert(std::numeric_limits<FwSignedSizeType>::max() >= std::numeric_limits<off_t>::max(),
               "Maximum value of FwSignedSizeType less than the maximum value of off_t. Configure a larger type.");
-static_assert(std::numeric_limits<FwSizeType>::max() >= std::numeric_limits<off_t>::max(),
+static_assert(std::numeric_limits<FwSizeType>::max() >= OFF_T_MAX_LIMIT,
               "Maximum value of FwSizeType less than the maximum value of off_t. Configure a larger type.");
 static_assert(std::numeric_limits<FwSignedSizeType>::max() >= std::numeric_limits<ssize_t>::max(),
               "Maximum value of FwSignedSizeType less than the maximum value of ssize_t. Configure a larger type.");
@@ -112,7 +120,7 @@ PosixFile::Status PosixFile::size(FwSizeType& size_result) {
     size_result = 0;
     if (Os::File::Status::OP_OK == status) {
         // Must be a coding error if current_position is larger than off_t max in Posix File
-        FW_ASSERT(current_position <= std::numeric_limits<off_t>::max());
+        FW_ASSERT(current_position <= OFF_T_MAX_LIMIT);
         // Seek to the end of the file to determine size
         off_t end_of_file = ::lseek(this->m_handle.m_file_descriptor, 0, SEEK_END);
         if (PosixFileHandle::ERROR_RETURN_VALUE == end_of_file) {
@@ -142,8 +150,8 @@ PosixFile::Status PosixFile::position(FwSizeType& position_result) {
 PosixFile::Status PosixFile::preallocate(FwSizeType offset, FwSizeType length) {
     PosixFile::Status status = Os::File::Status::NOT_SUPPORTED;
     // Check for larger size than posix supports
-    if ((length > std::numeric_limits<off_t>::max()) ||
-        (offset > std::numeric_limits<off_t>::max()) ||
+    if ((length > OFF_T_MAX_LIMIT) ||
+        (offset > OFF_T_MAX_LIMIT) ||
         (std::numeric_limits<off_t>::max() - length) < offset) {
         status = Os::File::Status::BAD_SIZE;
     }
@@ -167,8 +175,8 @@ PosixFile::Status PosixFile::preallocate(FwSizeType offset, FwSizeType length) {
             FwSizeType file_position = 0;
             status = this->position(file_position);
             // Check for overflow in seek calls
-            if (file_position > std::numeric_limits<FwSignedSizeType>::max() ||
-                file_size > std::numeric_limits<FwSignedSizeType>::max()) {
+            if (file_position > static_cast<FwSizeType>(std::numeric_limits<FwSignedSizeType>::max()) ||
+                file_size > static_cast<FwSizeType>(std::numeric_limits<FwSignedSizeType>::max())) {
                 status = Os::File::Status::BAD_SIZE;
             }
             // Only allocate when the file is smaller than the allocation
@@ -231,7 +239,7 @@ PosixFile::Status PosixFile::read(U8* buffer, FwSizeType& size, PosixFile::WaitT
                                          : size * 2;
     // POSIX APIs are implementation dependent when dealing with sizes larger than the signed return value
     // thus we ensure a clear decision: BAD_SIZE
-    if (size > std::numeric_limits<ssize_t>::max()) {
+    if (size > SSIZE_T_MAX_LIMIT) {
         return BAD_SIZE;
     }
 
@@ -272,7 +280,7 @@ PosixFile::Status PosixFile::write(const U8* buffer, FwSizeType& size, PosixFile
                                          : size * 2;
     // POSIX APIs are implementation dependent when dealing with sizes larger than the signed return value
     // thus we ensure a clear decision: BAD_SIZE
-    if (size > std::numeric_limits<ssize_t>::max()) {
+    if (size > SSIZE_T_MAX_LIMIT) {
         return BAD_SIZE;
     }
 
