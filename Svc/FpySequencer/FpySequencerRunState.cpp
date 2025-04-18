@@ -66,7 +66,7 @@ Fw::Success FpySequencer::dispatchCommand(const Fpy::Statement& stmt) {
     // whether or not it's this specific instance of the cmd in the sequence, and not another one with the same opcode
     // somewhere else in the file.
     // if we put this uid in the context we send to the cmdDisp, we will get it back when the cmd returns
-    U32 cmdUid = ((this->m_sequencesStarted & 0xFFFF) << 16) | (this->m_statementsDispatched & 0xFFFF);
+    U32 cmdUid = static_cast<U32>(((this->m_sequencesStarted & 0xFFFF) << 16) | (this->m_statementsDispatched & 0xFFFF));
 
     // little note--theoretically this could produce a cmdResponse before we send the
     // dispatchSuccess signal. however b/c of priorities the dispatchSuccess signal will
