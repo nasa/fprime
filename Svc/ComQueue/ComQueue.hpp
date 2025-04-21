@@ -153,7 +153,7 @@ class ComQueue final : public ComQueueComponentBase {
     //! Port for returning ownership of Fw::Buffer to its sender
     void bufferReturnIn_handler(FwIndexType portNum,  //!< The port number
       Fw::Buffer& data,
-      CommsCfg::FrameContext& context) override;
+      const CommsCfg::FrameContext& context) override;
 
 
     // ----------------------------------------------------------------------

@@ -191,7 +191,7 @@ void ComQueue::run_handler(const FwIndexType portNum, U32 context) {
 
 void ComQueue ::bufferReturnIn_handler(FwIndexType portNum,
                                           Fw::Buffer& data,
-                                          CommsCfg::FrameContext& context) {
+                                          const CommsCfg::FrameContext& context) {
     // For the buffer queues, the index of the queue is portNum offset by COM_PORT_COUNT since
     // the first COM_PORT_COUNT queues are for ComBuffer. So we have for buffer queues:
     // queueNum = portNum + COM_PORT_COUNT
