@@ -393,7 +393,7 @@ void FileDownlink ::sendStartPacket() {
 }
 
 void FileDownlink ::sendFilePacket(const Fw::FilePacket& filePacket) {
-    const U32 bufferSize = filePacket.bufferSize() + sizeof(FwPacketDescriptorType);
+    const U32 bufferSize = filePacket.bufferSize() + static_cast<U32>(sizeof(FwPacketDescriptorType));
     FW_ASSERT(this->m_buffer.getData() != nullptr);
     FW_ASSERT(this->m_buffer.getSize() >= bufferSize, static_cast<FwAssertArgType>(bufferSize),
               static_cast<FwAssertArgType>(this->m_buffer.getSize()));

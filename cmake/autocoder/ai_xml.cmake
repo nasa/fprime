@@ -83,7 +83,7 @@ endmacro(__ai_info)
 #
 # Required function, sets up a custom command to produce Ac.hpp and Ac.cpp files.
 ####
-function(ai_xml_setup_autocode AC_INPUT_FILE)
+function(ai_xml_setup_autocode MODULE_NAME AC_INPUT_FILE)
     __ai_info("${AC_INPUT_FILE}" "${MODULE_NAME}")
     ai_shared_setup("${CMAKE_CURRENT_BINARY_DIR}")
     set(GENERATED_FILES
@@ -119,4 +119,7 @@ function(ai_xml_setup_autocode AC_INPUT_FILE)
     set(AUTOCODER_GENERATED "${GENERATED_FILES}" PARENT_SCOPE)
     set(AUTOCODER_DEPENDENCIES "${MODULE_DEPENDENCIES}" PARENT_SCOPE)
     set(AUTOCODER_INCLUDES "${FILE_DEPENDENCIES}" PARENT_SCOPE)
+
+    set(AUTOCODER_BUILD_SOURCES "${GENERATED_FILES}" PARENT_SCOPE)
+    set(AUTOCODER_NEW_AUTOCODER_INPUTS "" PARENT_SCOPE)
 endfunction(ai_xml_setup_autocode)

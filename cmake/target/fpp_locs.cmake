@@ -59,8 +59,9 @@ endfunction(fpp_locs_add_deployment_target)
 # - **DEPENDENCIES:** module dependencies, unused.
 ####
 function(fpp_locs_add_module_target MODULE TARGET SOURCES DEPENDENCIES)
+    get_target_property(AUTOCODER_INPUTS "${MODULE}" AUTOCODER_INPUTS)
     # Check each source for FPP support
-    foreach(SOURCE IN LISTS SOURCES)
+    foreach(SOURCE IN LISTS AUTOCODER_INPUTS)
         fpp_is_supported("${SOURCE}")
         if (IS_SUPPORTED)
             append_list_property("${SOURCE}" TARGET "${TARGET_NAME}" PROPERTY GLOBAL_FPP_FILES)

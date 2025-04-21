@@ -53,10 +53,8 @@ set(MOD_DEPS
     ${PROJECT_NAME}/enum
     ${PROJECT_NAME}/state_machine/external_instance
     ${PROJECT_NAME}/state_machine/internal/initial
-    ${PROJECT_NAME}/state_machine/internal/junction
     ${PROJECT_NAME}/state_machine/internal/state
     ${PROJECT_NAME}/state_machine/internal_instance/initial
-    ${PROJECT_NAME}/state_machine/internal_instance/junction
     ${PROJECT_NAME}/state_machine/internal_instance/state
     ${PROJECT_NAME}/struct
 )

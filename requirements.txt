@@ -9,6 +9,8 @@ certifi==2024.8.30
 chardet==5.2.0
 charset-normalizer==3.4.0
 click==8.1.7
+# CMake versions prior to 3.24.2 were not signed correctly for modern macOS versions
+cmake==3.24.2
 colorlog==6.8.2
 cookiecutter==2.6.0
 CT3==3.3.3.post1

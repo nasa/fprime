@@ -27,7 +27,7 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test")
 set(UT_SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/StubTests.cpp"
 )
-set(UT_MOD_DEPS Os Os_Models)
+set(UT_MOD_DEPS Os Os_Models Fw_Time)
 choose_fprime_implementation(Os/Task Os_Task_Stub)
 choose_fprime_implementation(Os/Mutex Os_Mutex_Stub)
 choose_fprime_implementation(Os/File Os_File_Stub)
