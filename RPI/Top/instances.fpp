@@ -148,6 +148,28 @@ module RPI {
     stack size Default.stackSize \
     priority 30
 
+  instance comQueue: Svc.ComQueue base id 0x1100 \
+      queue size 50 \
+      stack size Default.stackSize \
+      priority 100 \
+  {
+    # RPI::ComQueueCfg is defined in RPITopologyDefs.cpp
+    phase Fpp.ToCpp.Phases.configComponents """
+      // Events (highest-priority)
+      RPI::ComQueueCfg::configurationTable.entries[0].depth = 100;
+      RPI::ComQueueCfg::configurationTable.entries[0].priority = 0;
+      // Telemetry
+      RPI::ComQueueCfg::configurationTable.entries[1].depth = 500;
+      RPI::ComQueueCfg::configurationTable.entries[1].priority = 2;
+      // File Downlink
+      RPI::ComQueueCfg::configurationTable.entries[2].depth = 100;
+      RPI::ComQueueCfg::configurationTable.entries[2].priority = 1;
+
+      RPI::comQueue.configure(RPI::ComQueueCfg::configurationTable, 0, Allocation::mallocator);
+    """
+  }
+
+
   # ----------------------------------------------------------------------
   # Queued component instances
   # ----------------------------------------------------------------------
@@ -214,18 +236,7 @@ module RPI {
 
   instance fatalAdapter: Svc.AssertFatalAdapter base id 1000
 
-  instance downlink: Svc.Framer base id 1220 \
-  {
-
-    phase Fpp.ToCpp.Phases.configObjects """
-    Svc::FprimeFraming framing;
-    """
-
-    phase Fpp.ToCpp.Phases.configComponents """
-    RPI::downlink.setup(ConfigObjects::RPI_downlink::framing);
-    """
-
-  }
+  instance framer: Svc.FprimeFramer base id 1220
 
   instance deframer: Svc.FprimeDeframer base id 1240
 
@@ -473,5 +484,8 @@ module RPI {
   }
 
   instance fprimeRouter: Svc.FprimeRouter base id 3000
+
+  instance comStub: Svc.ComStub base id 3100
+
 
 }

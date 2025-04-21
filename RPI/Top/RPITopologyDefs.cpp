@@ -8,6 +8,12 @@ namespace RPI {
 
   }
 
+  namespace ComQueueCfg {
+
+    Svc::ComQueue::QueueConfigurationTable configurationTable;
+
+  }
+
   namespace Init {
 
     bool status = true;

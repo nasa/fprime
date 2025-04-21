@@ -10,9 +10,11 @@ module RPI {
     instance chanTlm
     instance cmdDisp
     instance cmdSeq
+    instance comQueue
     instance comm
+    instance comStub
     instance deframer
-    instance downlink
+    instance framer
     instance eventLogger
     instance fatalAdapter
     instance fatalHandler
@@ -61,11 +63,22 @@ module RPI {
     # ----------------------------------------------------------------------
 
     connections Downlink {
-      chanTlm.PktSend -> downlink.comIn
-      downlink.bufferDeallocate -> fileDownlink.bufferReturn
-      downlink.framedOut -> comm.$send
-      eventLogger.PktSend -> downlink.comIn
-      fileDownlink.bufferSendOut -> downlink.bufferIn
+      eventLogger.PktSend -> comQueue.comQueueIn[0]
+      chanTlm.PktSend -> comQueue.comQueueIn[1]
+      fileDownlink.bufferSendOut -> comQueue.buffQueueIn[0]
+
+      comQueue.queueSend -> framer.dataIn
+      framer.dataReturn -> comQueue.bufferReturnIn
+      comQueue.bufferReturnOut[0] -> fileDownlink.bufferReturn
+
+      # framer.bufferAllocate -> commsBufferManager.bufferGetCallee
+      framer.framedDataOut -> comStub.comDataIn
+
+      comm.ready -> comStub.drvConnected
+      comStub.drvDataOut -> comm.$send
+
+      comStub.comStatus -> framer.comStatusIn
+      framer.comStatusOut -> comQueue.comStatusIn
     }
 
     connections FaultProtection {
@@ -111,7 +124,7 @@ module RPI {
     connections MemoryAllocations {
       comm.allocate -> commsBufferManager.bufferGetCallee
       comm.deallocate -> commsBufferManager.bufferSendIn
-      downlink.framedAllocate -> commsBufferManager.bufferGetCallee
+      framer.bufferAllocate -> commsBufferManager.bufferGetCallee
       fileUplink.bufferSendOut -> commsBufferManager.bufferSendIn
       frameAccumulator.bufferAllocate -> commsBufferManager.bufferGetCallee
       frameAccumulator.bufferDeallocate -> commsBufferManager.bufferSendIn
