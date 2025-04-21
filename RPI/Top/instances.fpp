@@ -153,19 +153,21 @@ module RPI {
       stack size Default.stackSize \
       priority 100 \
   {
-    # RPI::ComQueueCfg is defined in RPITopologyDefs.cpp
+    phase Fpp.ToCpp.Phases.configObjects """
+      Svc::ComQueue::QueueConfigurationTable configurationTable;
+      """
     phase Fpp.ToCpp.Phases.configComponents """
       // Events (highest-priority)
-      RPI::ComQueueCfg::configurationTable.entries[0].depth = 100;
-      RPI::ComQueueCfg::configurationTable.entries[0].priority = 0;
+      ConfigObjects::RPI_comQueue::configurationTable.entries[0].depth = 100;
+      ConfigObjects::RPI_comQueue::configurationTable.entries[0].priority = 0;
       // Telemetry
-      RPI::ComQueueCfg::configurationTable.entries[1].depth = 500;
-      RPI::ComQueueCfg::configurationTable.entries[1].priority = 2;
+      ConfigObjects::RPI_comQueue::configurationTable.entries[1].depth = 500;
+      ConfigObjects::RPI_comQueue::configurationTable.entries[1].priority = 2;
       // File Downlink
-      RPI::ComQueueCfg::configurationTable.entries[2].depth = 100;
-      RPI::ComQueueCfg::configurationTable.entries[2].priority = 1;
+      ConfigObjects::RPI_comQueue::configurationTable.entries[2].depth = 100;
+      ConfigObjects::RPI_comQueue::configurationTable.entries[2].priority = 1;
 
-      RPI::comQueue.configure(RPI::ComQueueCfg::configurationTable, 0, Allocation::mallocator);
+      RPI::comQueue.configure(ConfigObjects::RPI_comQueue::configurationTable, 0, Allocation::mallocator);
     """
   }
 

@@ -6,7 +6,6 @@
 #include "RPI/Top/FppConstantsAc.hpp"
 #include "Svc/FramingProtocol/FprimeProtocol.hpp"
 #include "Svc/LinuxTimer/LinuxTimer.hpp"
-#include "Svc/ComQueue/ComQueue.hpp"
 #include <Svc/FrameAccumulator/FrameDetector/FprimeFrameDetector.hpp>
 
 namespace RPI {
@@ -17,11 +16,6 @@ namespace RPI {
     extern Fw::MallocAllocator mallocator;
 
   }
-
-  namespace ComQueueCfg {
-    extern Svc::ComQueue::QueueConfigurationTable configurationTable;
-  }
-
 
   namespace Init {
 
