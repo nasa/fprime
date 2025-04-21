@@ -36,7 +36,7 @@ void GenericHubComponentImpl ::send_data(const HubType type,
     Fw::SerializeStatus status;
     // Buffer to send and a buffer used to write to it
     Fw::Buffer outgoing = dataOutAllocate_out(0, static_cast<U32>(size + sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType)));
-    Fw::SerializeBufferBase& serialize = outgoing.getSerializeRepr();
+    auto serialize = outgoing.getSerializer();
     // Write data to our buffer
     status = serialize.serialize(static_cast<U32>(type));
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
@@ -65,12 +65,7 @@ void GenericHubComponentImpl ::dataIn_handler(const FwIndexType portNum, Fw::Buf
     Fw::SerializeStatus status = Fw::FW_SERIALIZE_OK;
 
     // Representation of incoming data prepped for serialization
-    Fw::SerializeBufferBase& incoming = fwBuffer.getSerializeRepr();
-    FW_ASSERT(incoming.setBuffLen(fwBuffer.getSize()) == Fw::FW_SERIALIZE_OK);
-
-    // Must inform buffer that there is *real* data in the buffer
-    status = incoming.setBuffLen(fwBuffer.getSize());
-    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
+    auto incoming = fwBuffer.getDeserializer();
     status = incoming.deserialize(type_in);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     type = static_cast<HubType>(type_in);

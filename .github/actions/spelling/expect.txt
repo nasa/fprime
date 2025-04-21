@@ -466,6 +466,7 @@ INVALIDHEADERHASH
 invisi
 ioc
 ioctl
+ipas
 IPCFG
 IPHELPER
 ipriority
@@ -498,6 +499,7 @@ jsonable
 kermit
 kevin
 kislyuk
+kubiak
 Lammert
 lammertbies
 LASTLOG
@@ -592,6 +594,7 @@ Mutexed
 mval
 MVC
 mycompany
+NACI
 nasafprime
 nbits
 ncsl
@@ -657,6 +660,7 @@ osaves
 osets
 ossw
 ostate
+OSTIME
 otherdictitems
 otheritems
 otherside
@@ -773,6 +777,7 @@ RATEGROUPDRIVERIMPLTESTER
 RATEGROUPMEMBEROUT
 RATELIMITERTESTER
 rawtime
+RAWTIMETESTER
 RBF
 RCHILD
 rcvd
@@ -957,6 +962,7 @@ testerbase
 testgen
 TESTLIST
 TESTLOGRECVIMPL
+testmark
 TESTPARAMIMPL
 TESTPARAMRECVIMPL
 TESTPTSOURCEIMPL

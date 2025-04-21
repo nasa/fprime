@@ -28,10 +28,8 @@ void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer
     FwPacketDescriptorType packetType = Fw::ComPacket::FW_PACKET_UNKNOWN;
     Fw::SerializeStatus status = Fw::FW_SERIALIZE_OK;
     {
-        Fw::SerializeBufferBase& serial = packetBuffer.getSerializeRepr();
-        status = serial.setBuffLen(packetBuffer.getSize());
-        FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
-        status = serial.deserialize(packetType);
+        auto esb = packetBuffer.getDeserializer();
+        status = esb.deserialize(packetType);
     }
 
     // Whether to deallocate the packet buffer
@@ -62,14 +60,6 @@ void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer
                 // If the file uplink output port is connected,
                 // send the file packet. Otherwise take no action.
                 if (this->isConnected_fileOut_OutputPort(0)) {
-                    // Make sure we can cast down to U32 without overflow
-                    FW_ASSERT((packetSize - sizeof(packetType)) < std::numeric_limits<U32>::max(),
-                              static_cast<FwAssertArgType>(packetSize - sizeof(packetType)));
-                    // Shift the packet buffer to skip the packet type
-                    // The FileUplink component does not expect the packet
-                    // type to be there.
-                    packetBuffer.setData(packetData + sizeof(packetType));
-                    packetBuffer.setSize(static_cast<U32>(packetSize - sizeof(packetType)));
                     // Send the packet buffer
                     this->fileOut_out(0, packetBuffer);
                     // Transfer ownership of the packetBuffer to the receiver

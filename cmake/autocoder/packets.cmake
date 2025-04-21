@@ -38,7 +38,7 @@ endfunction(determine_topology_files)
 #
 # Required function, sets up a custom command to produce Ac.hpp and Ac.cpp files.
 ####
-function(packets_setup_autocode AC_INPUT_FILE)
+function(packets_setup_autocode MODULE_NAME AC_INPUT_FILE)
     determine_topology_files("${AC_INPUT_FILE}")
     get_filename_component(AC_INPUT_FILE_NO_PATH "${AC_INPUT_FILE}" NAME)
 
@@ -63,4 +63,7 @@ function(packets_setup_autocode AC_INPUT_FILE)
     )
     set(AUTOCODER_GENERATED "${GENERATED_FILES}" PARENT_SCOPE)
     set(AUTOCODER_DEPENDENCIES "" PARENT_SCOPE)
+    sort_buildable_from_non_buildable_sources(BUILD_SOURCES NON_BUILD_SOURCES ${GENERATED_FILES})
+    set(AUTOCODER_BUILD_SOURCES "${BUILD_SOURCES}" PARENT_SCOPE)
+    set(AUTOCODER_NEW_AUTOCODER_INPUTS "${NON_BUILD_SOURCES}" PARENT_SCOPE)
 endfunction(packets_setup_autocode)

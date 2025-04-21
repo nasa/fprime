@@ -323,7 +323,7 @@ typedef enum {
 #endif
 
 #ifndef FW_RAW_TIME_HANDLE_MAX_SIZE
-#define FW_RAW_TIME_HANDLE_MAX_SIZE 24  //!< Maximum size of a handle for OS::RawTime objects
+#define FW_RAW_TIME_HANDLE_MAX_SIZE 32  //!< Maximum size of a handle for OS::RawTime objects
 #endif
 
 #ifndef FW_RAW_TIME_SERIALIZATION_MAX_SIZE

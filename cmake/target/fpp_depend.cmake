@@ -34,10 +34,11 @@ endfunction(fpp_depend_add_deployment_target)
 # - **SOURCES:** list of sources filtered to .fpp
 # - **DEPENDENCIES:** module dependencies, unused.
 ####
-function(fpp_depend_add_module_target MODULE TARGET SOURCES DEPENDENCIES)
+function(fpp_depend_add_module_target MODULE TARGET SOURCES_UNUSED DEPENDENCIES)
+    get_target_property(AUTOCODER_INPUTS "${MODULE}" AUTOCODER_INPUTS)
     set(FPP_SOURCES "")
     # Check each source for FPP support
-    foreach(SOURCE IN LISTS SOURCES)
+    foreach(SOURCE IN LISTS AUTOCODER_INPUTS)
         fpp_is_supported("${SOURCE}")
         if (IS_SUPPORTED)
             list(APPEND FPP_SOURCES "${SOURCE}")

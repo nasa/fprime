@@ -32,15 +32,12 @@ struct DpContainerHeader {
     //! Move the buffer deserialization to the specified offset
     static void moveDeserToOffset(const char* const file,  //!< The call site file name
                                   const U32 line,          //!< The call site line number
-                                  Buffer& buffer,          //!< The buffer
+                                  ExternalSerializeBufferWithMemberCopy &deserializer,          //!< The buffer
                                   FwSizeType offset        //!< The offset
     ) {
-        Fw::SerializeBufferBase& serializeRepr = buffer.getSerializeRepr();
         // Reset deserialization
-        Fw::SerializeStatus status = serializeRepr.setBuffLen(buffer.getSize());
-        DP_CONTAINER_HEADER_ASSERT_EQ(status, FW_SERIALIZE_OK);
-        status = serializeRepr.moveDeserToOffset(offset);
-        DP_CONTAINER_HEADER_ASSERT_EQ(status, FW_SERIALIZE_OK);
+        deserializer.resetDeser();
+        deserializer.moveDeserToOffset(offset);
     }
 
     //! Deserialize a header from a packet buffer
@@ -50,54 +47,54 @@ struct DpContainerHeader {
                      const U32 line,          //!< The call site line number
                      Fw::Buffer& buffer       //!< The packet buffer
     ) {
-        Fw::SerializeBufferBase& serializeRepr = buffer.getSerializeRepr();
+        auto deserializer = buffer.getDeserializer();
         // Deserialize the packet descriptor
         FwPacketDescriptorType packetDescriptor = Fw::ComPacket::FW_PACKET_UNKNOWN;
         // Deserialize the packet descriptor
-        DpContainerHeader::moveDeserToOffset(file, line, buffer, DpContainer::Header::PACKET_DESCRIPTOR_OFFSET);
-        Fw::SerializeStatus status = serializeRepr.deserialize(packetDescriptor);
+        DpContainerHeader::moveDeserToOffset(file, line, deserializer, DpContainer::Header::PACKET_DESCRIPTOR_OFFSET);
+        Fw::SerializeStatus status = deserializer.deserialize(packetDescriptor);
         DP_CONTAINER_HEADER_ASSERT_EQ(status, FW_SERIALIZE_OK);
         DP_CONTAINER_HEADER_ASSERT_EQ(packetDescriptor, Fw::ComPacket::FW_PACKET_DP);
         // Deserialize the container id
-        DpContainerHeader::moveDeserToOffset(file, line, buffer, DpContainer::Header::ID_OFFSET);
-        status = serializeRepr.deserialize(this->m_id);
+        DpContainerHeader::moveDeserToOffset(file, line, deserializer, DpContainer::Header::ID_OFFSET);
+        status = deserializer.deserialize(this->m_id);
         DP_CONTAINER_HEADER_ASSERT_EQ(status, FW_SERIALIZE_OK);
         // Deserialize the priority
-        DpContainerHeader::moveDeserToOffset(file, line, buffer, DpContainer::Header::PRIORITY_OFFSET);
-        status = serializeRepr.deserialize(this->m_priority);
+        DpContainerHeader::moveDeserToOffset(file, line, deserializer, DpContainer::Header::PRIORITY_OFFSET);
+        status = deserializer.deserialize(this->m_priority);
         DP_CONTAINER_HEADER_ASSERT_EQ(status, FW_SERIALIZE_OK);
         // Deserialize the time tag
-        DpContainerHeader::moveDeserToOffset(file, line, buffer, DpContainer::Header::TIME_TAG_OFFSET);
-        status = serializeRepr.deserialize(this->m_timeTag);
+        DpContainerHeader::moveDeserToOffset(file, line, deserializer, DpContainer::Header::TIME_TAG_OFFSET);
+        status = deserializer.deserialize(this->m_timeTag);
         DP_CONTAINER_HEADER_ASSERT_EQ(status, FW_SERIALIZE_OK);
         // Deserialize the processing type
-        DpContainerHeader::moveDeserToOffset(file, line, buffer, DpContainer::Header::PROC_TYPES_OFFSET);
-        status = serializeRepr.deserialize(this->m_procTypes);
+        DpContainerHeader::moveDeserToOffset(file, line, deserializer, DpContainer::Header::PROC_TYPES_OFFSET);
+        status = deserializer.deserialize(this->m_procTypes);
         DP_CONTAINER_HEADER_ASSERT_EQ(status, FW_SERIALIZE_OK);
         // Deserialize the user data
-        DpContainerHeader::moveDeserToOffset(file, line, buffer, DpContainer::Header::USER_DATA_OFFSET);
+        DpContainerHeader::moveDeserToOffset(file, line, deserializer, DpContainer::Header::USER_DATA_OFFSET);
         FwSizeType size = sizeof this->m_userData;
         const bool omitLength = true;
-        status = serializeRepr.deserialize(this->m_userData, size, omitLength);
+        status = deserializer.deserialize(this->m_userData, size, omitLength);
         DP_CONTAINER_HEADER_ASSERT_EQ(status, FW_SERIALIZE_OK);
         DP_CONTAINER_HEADER_ASSERT_EQ(size, sizeof this->m_userData);
         // Deserialize the data product state
-        DpContainerHeader::moveDeserToOffset(file, line, buffer, DpContainer::Header::DP_STATE_OFFSET);
-        status = serializeRepr.deserialize(this->m_dpState);
+        DpContainerHeader::moveDeserToOffset(file, line, deserializer, DpContainer::Header::DP_STATE_OFFSET);
+        status = deserializer.deserialize(this->m_dpState);
         DP_CONTAINER_HEADER_ASSERT_EQ(status, FW_SERIALIZE_OK);
         // Deserialize the data size
-        DpContainerHeader::moveDeserToOffset(file, line, buffer, DpContainer::Header::DATA_SIZE_OFFSET);
-        status = serializeRepr.deserializeSize(this->m_dataSize);
+        DpContainerHeader::moveDeserToOffset(file, line, deserializer, DpContainer::Header::DATA_SIZE_OFFSET);
+        status = deserializer.deserializeSize(this->m_dataSize);
         DP_CONTAINER_HEADER_ASSERT_EQ(status, FW_SERIALIZE_OK);
         // After deserializing time, the deserialization index should be at
         // the header hash offset
-        checkDeserialAtOffset(serializeRepr, DpContainer::HEADER_HASH_OFFSET);
+        checkDeserialAtOffset(deserializer, DpContainer::HEADER_HASH_OFFSET);
         // Check the header hash
         checkHeaderHash(file, line, buffer);
         // Check the data hash
         this->checkDataHash(file, line, buffer);
         // Move the deserialization pointer to the data offset
-        DpContainerHeader::moveDeserToOffset(file, line, buffer, DpContainer::DATA_OFFSET);
+        DpContainerHeader::moveDeserToOffset(file, line, deserializer, DpContainer::DATA_OFFSET);
     }
 
     //! Check the header hash

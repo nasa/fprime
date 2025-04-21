@@ -87,7 +87,7 @@ function(fpp_get_framework_dependency_helper MODULE_NAME FRAMEWORK)
     if (MODULE_NAME STREQUAL "config" OR MODULE_NAME MATCHES "cmake_platform.*")
         # config has no automatic dependencies
     elseif (NOT DEFINED FPRIME_FRAMEWORK_MODULES)
-        message(FATAL_ERROR "Fw/CMakeLists.txt not included in deployment")
+        fprime_fatal_cmake_error("${MODULE_NAME} Fw/CMakeLists.txt not included in deployment")
     elseif (MODULE_NAME STREQUAL Fw_Cfg)
         # Skip Fw_Cfg as it is the root dependency 
     elseif (NOT TARGET Fw OR MODULE_NAME IN_LIST FPRIME_FRAMEWORK_MODULES)
@@ -117,7 +117,7 @@ endfunction(fpp_get_framework_dependency_helper)
 #
 # AC_INPUT_FILES: list of supported autocoder input files
 ####
-function(fpp_info AC_INPUT_FILES)
+function(fpp_info MODULE_NAME AC_INPUT_FILES)
     find_program(FPP_DEPEND fpp-depend)
     if (DEFINED FPP_TO_DEPEND-NOTFOUND)
         message(FATAL_ERROR "fpp tools not found, please install them onto your system path")
@@ -190,11 +190,11 @@ endfunction(fpp_info)
 #
 # AC_INPUT_FILES: list of supported autocoder input files
 ####
-function(fpp_setup_autocode AC_INPUT_FILES)
+function(fpp_setup_autocode MODULE_NAME AC_INPUT_FILES)
     if (DEFINED FPP_TO_XML-NOTFOUND OR DEFINED FPP_TO_CPP-NOTFOUND)
         message(FATAL_ERROR "fpp tools not found, please install them onto your system path")
     endif()
-    fpp_info("${AC_INPUT_FILES}")
+    fpp_info("${MODULE_NAME}" "${AC_INPUT_FILES}")
     set(CMAKE_BINARY_DIR_RESOLVED "${CMAKE_BINARY_DIR}")
     set(CMAKE_CURRENT_BINARY_DIR_RESOLVED "${CMAKE_CURRENT_BINARY_DIR}")
     resolve_path_variables(
@@ -253,11 +253,14 @@ function(fpp_setup_autocode AC_INPUT_FILES)
                     ${FPRIME_JSON_VERSION_FILE}
                     version
         )
-endif()
+    endif()
+
     set(AUTOCODER_GENERATED ${GENERATED_AI} ${GENERATED_CPP} ${GENERATED_DICT})
     set(AUTOCODER_GENERATED "${AUTOCODER_GENERATED}" PARENT_SCOPE)
     set(AUTOCODER_DEPENDENCIES "${MODULE_DEPENDENCIES}" PARENT_SCOPE)
     set(AUTOCODER_INCLUDES "${FILE_DEPENDENCIES}" PARENT_SCOPE)
+    set(AUTOCODER_BUILD_SOURCES "${GENERATED_CPP};${GENERATED_AI};${GENERATED_DICT}" PARENT_SCOPE)
+    set(AUTOCODER_NEW_AUTOCODER_INPUTS "${GENERATED_AI};${GENERATED_DICT}" PARENT_SCOPE)
 endfunction(fpp_setup_autocode)
 
 ####
