@@ -131,8 +131,8 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void ComQueue::comQueueIn_handler(const FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
-    // Ensure that the port number of comQueueIn is consistent with the expectation
+void ComQueue::comPktQueueIn_handler(const FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
+    // Ensure that the port number of comPktQueueIn is consistent with the expectation
     FW_ASSERT(portNum >= 0 && portNum < COM_PORT_COUNT, static_cast<FwAssertArgType>(portNum));
     (void)this->enqueue(portNum, QueueType::COM_QUEUE, reinterpret_cast<const U8*>(&data), sizeof(Fw::ComBuffer));
 }
@@ -196,7 +196,7 @@ void ComQueue ::bufferReturnIn_handler(FwIndexType portNum,
     // the first COM_PORT_COUNT queues are for ComBuffer. So we have for buffer queues:
     // queueNum = portNum + COM_PORT_COUNT
     // Since queueNum is used as APID, we can retrieve the original portNum like such:
-    FwIndexType bufferReturnPortNum = static_cast<FwIndexType>(context.getapid()) - static_cast<FwIndexType>(ComQueue::COM_PORT_COUNT);
+    FwIndexType bufferReturnPortNum = static_cast<FwIndexType>(static_cast<FwIndexType>(context.getapid()) - ComQueue::COM_PORT_COUNT);
     // Failing this assert means that context.apid was modified since ComQueue set it, which should not happen
     FW_ASSERT(bufferReturnPortNum < BUFFER_PORT_COUNT,
               static_cast<FwAssertArgType>(bufferReturnPortNum));

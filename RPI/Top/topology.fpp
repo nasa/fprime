@@ -63,8 +63,8 @@ module RPI {
     # ----------------------------------------------------------------------
 
     connections Downlink {
-      eventLogger.PktSend -> comQueue.comQueueIn[0]
-      chanTlm.PktSend -> comQueue.comQueueIn[1]
+      eventLogger.PktSend -> comQueue.comPktQueueIn[0]
+      chanTlm.PktSend -> comQueue.comPktQueueIn[1]
       fileDownlink.bufferSendOut -> comQueue.buffQueueIn[0]
 
       comQueue.queueSend -> framer.dataIn

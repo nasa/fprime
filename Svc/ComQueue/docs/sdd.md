@@ -52,7 +52,7 @@ The diagram below shows the `Svc::ComQueue` component.
 | `output`      | `queueSend`       | `Svc.DataWithContext`                 | Port emitting queued messages                            |
 | `output`      | `deallocate`      | `Fw.BufferSend`                       | Port for deallocating Fw::Buffer on queue overflow       |
 | `async input` | `comStatusIn`     | `Fw.SuccessCondition`                 | Port for receiving the status signal                     |
-| `async input` | `comQueueIn`      | `[ComQueueComPorts] Fw.Com`           | Port array for receiving Fw::ComBuffers                  |
+| `async input` | `comPktQueueIn`      | `[ComQueueComPorts] Fw.Com`           | Port array for receiving Fw::ComBuffers                  |
 | `async input` | `buffQueueIn`     | `[ComQueueBufferPorts] Fw.BufferSend` | Port array for receiving Fw::Buffers                     |
 | `async input` | `run`             | `Svc.Sched`                           | Port for scheduling telemetry output                     |
 | `event`       | `Log`             | `Fw.Log`                              | Port for emitting events                                 |
@@ -86,7 +86,7 @@ Buffers are queued when in `WAITING` state.
 
 ### 4.3 Model Configuration
 `Svc::ComQueue` has the following constants, that are configured in `AcConstants.fpp`:
-1. `ComQueueComPorts`: number of ports of `Fw.Com` type in the `comQueueIn` port array.
+1. `ComQueueComPorts`: number of ports of `Fw.Com` type in the `comPktQueueIn` port array.
 2. `ComQueueBufferPorts`: number of ports of `Fw.BufferSend` type in the `buffQueueIn` port array.
 
 ### 4.4 Runtime Setup
@@ -113,8 +113,8 @@ It does the following:
 In the case where the component is already in `READY` state, this will process the queue immediately after the buffer
 is added to the queue.
 
-#### 4.5.2 comQueueIn
-The `comQueueIn` port handler receives an `Fw::ComBuffer` data type and a port number. 
+#### 4.5.2 comPktQueueIn
+The `comPktQueueIn` port handler receives an `Fw::ComBuffer` data type and a port number. 
 It does the following:
 1. Ensures that the port number is between zero and the value of the com buffer size
 2. Enqueue the com buffer onto the `m_queues` instance

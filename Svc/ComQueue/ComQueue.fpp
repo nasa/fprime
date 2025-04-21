@@ -23,7 +23,7 @@ module Svc {
       async input port comStatusIn: Fw.SuccessCondition
 
       @ Port array for receiving Fw::ComBuffers
-      async input port comQueueIn: [ComQueueComPorts] Fw.Com drop
+      async input port comPktQueueIn: [ComQueueComPorts] Fw.Com drop
 
       @ Port array for receiving Fw::Buffers
       async input port buffQueueIn: [ComQueueBufferPorts] Fw.BufferSend hook
