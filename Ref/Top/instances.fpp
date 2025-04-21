@@ -102,8 +102,9 @@ module Ref {
     stack size Default.STACK_SIZE \
     priority 96
 
+  # ComQueue has a deeper queue to be resilient to spikes in com throughput
   instance comQueue: Svc.ComQueue base id 0x1100 \
-      queue size Default.QUEUE_SIZE \
+      queue size 50 \
       stack size Default.STACK_SIZE \
       priority 100 \
 
