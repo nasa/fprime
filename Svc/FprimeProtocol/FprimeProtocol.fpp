@@ -1,3 +1,4 @@
+module Svc {
 module FprimeProtocol {
 
     @ Describes the frame header format for the F Prime communications protocol
@@ -13,4 +14,5 @@ module FprimeProtocol {
         crcField: U32
     }
 
+}
 }
