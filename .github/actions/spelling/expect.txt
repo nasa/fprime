@@ -153,7 +153,7 @@ COMMANDDISPATCHERIMPLCFG
 commandline
 commasepitem
 COMPACKET
-COMPKTQUEUEIN
+COMPACKETQUEUEIN
 COMPONENTTESTERIMPL
 COMQUEUE
 COMQUEUEIN
@@ -360,7 +360,7 @@ gencode
 genfile
 GENHUB
 genshi
-getapid
+getcomQueueIndex
 getblocks
 getchildren
 getcontext
@@ -834,7 +834,7 @@ SENDPARTIAL
 seqgen
 serializables
 setaffinity
-setapid
+setcomQueueIndex
 setblocks
 setcrc
 setdata

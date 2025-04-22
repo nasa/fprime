@@ -42,7 +42,7 @@ class FprimeFramer final : public FprimeFramerComponentBase {
     //! Port to receive data to frame, in a Fw::Buffer with optional context
     void dataIn_handler(FwIndexType portNum,  //!< The port number
                         Fw::Buffer& data,
-                        const CommsCfg::FrameContext& context) override;
+                        const ComCfg::FrameContext& context) override;
 
     // ----------------------------------------------------------------------
     // Helpers
@@ -51,7 +51,7 @@ class FprimeFramer final : public FprimeFramerComponentBase {
     //! Helper function to send the framed data out of the component
     //! This sequentially calls both frameDataOut and frameStreamOut ports if connected
     void framedOut_helper(Fw::Buffer& frameBuffer,
-                          const CommsCfg::FrameContext& context);
+                          const ComCfg::FrameContext& context);
 };
 
 }  // namespace Svc

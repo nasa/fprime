@@ -131,8 +131,8 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void ComQueue::comPktQueueIn_handler(const FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
-    // Ensure that the port number of comPktQueueIn is consistent with the expectation
+void ComQueue::comPacketQueueIn_handler(const FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
+    // Ensure that the port number of comPacketQueueIn is consistent with the expectation
     FW_ASSERT(portNum >= 0 && portNum < COM_PORT_COUNT, static_cast<FwAssertArgType>(portNum));
     (void)this->enqueue(portNum, QueueType::COM_QUEUE, reinterpret_cast<const U8*>(&data), sizeof(Fw::ComBuffer));
 }
@@ -191,16 +191,18 @@ void ComQueue::run_handler(const FwIndexType portNum, U32 context) {
 
 void ComQueue ::bufferReturnIn_handler(FwIndexType portNum,
                                           Fw::Buffer& data,
-                                          const CommsCfg::FrameContext& context) {
+                                          const ComCfg::FrameContext& context) {
+    static_assert(std::numeric_limits<FwIndexType>::is_signed, "FwIndexType must be signed");
     // For the buffer queues, the index of the queue is portNum offset by COM_PORT_COUNT since
     // the first COM_PORT_COUNT queues are for ComBuffer. So we have for buffer queues:
     // queueNum = portNum + COM_PORT_COUNT
     // Since queueNum is used as APID, we can retrieve the original portNum like such:
-    FwIndexType bufferReturnPortNum = static_cast<FwIndexType>(static_cast<FwIndexType>(context.getapid()) - ComQueue::COM_PORT_COUNT);
+    FwIndexType bufferReturnPortNum = context.getcomQueueIndex() - ComQueue::COM_PORT_COUNT;
     // Failing this assert means that context.apid was modified since ComQueue set it, which should not happen
-    FW_ASSERT(bufferReturnPortNum < BUFFER_PORT_COUNT,
-              static_cast<FwAssertArgType>(bufferReturnPortNum));
-    if (bufferReturnPortNum >= 0 && this->isConnected_bufferReturnOut_OutputPort(bufferReturnPortNum)) {
+    FW_ASSERT(bufferReturnPortNum < BUFFER_PORT_COUNT, static_cast<FwAssertArgType>(bufferReturnPortNum));
+    if (bufferReturnPortNum >= 0) {
+        // It is a coding error not to connect the associated bufferReturnOut port for each bufferReturnIn port
+        FW_ASSERT(this->isConnected_bufferReturnOut_OutputPort(bufferReturnPortNum), static_cast<FwAssertArgType>(bufferReturnPortNum));
         // If this is a buffer port, return the buffer to the BufferDownlink
         this->bufferReturnOut_out(bufferReturnPortNum, data);
     }
@@ -255,8 +257,8 @@ void ComQueue::sendComBuffer(Fw::ComBuffer& comBuffer, FwIndexType queueIndex) {
     Fw::Buffer outBuffer(comBuffer.getBuffAddr(), static_cast<Fw::Buffer::SizeType>(comBuffer.getBuffLength()));
 
     // Context APID is set to the queue index for now. A future implementation may want this to be configurable
-    CommsCfg::FrameContext context;
-    context.setapid(static_cast<U32>(queueIndex));
+    ComCfg::FrameContext context;
+    context.setcomQueueIndex(queueIndex);
     this->queueSend_out(0, outBuffer, context);
     // Set state to WAITING for the status to come back
     this->m_state = WAITING;
@@ -267,8 +269,8 @@ void ComQueue::sendBuffer(Fw::Buffer& buffer, FwIndexType queueIndex) {
     FW_ASSERT(this->m_state == READY);
 
     // Context APID is set to the queue index for now. A future implementation may want this to be configurable
-    CommsCfg::FrameContext context;
-    context.setapid(static_cast<U32>(queueIndex));
+    ComCfg::FrameContext context;
+    context.setcomQueueIndex(queueIndex);
     this->queueSend_out(0, buffer, context);
 
     // Set state to WAITING for the status to come back

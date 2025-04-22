@@ -19,7 +19,7 @@ stream driver model for backwards compatibility.
 
 | Kind     | Suggested Name | Port Type             | Usage                                                          |
 |----------|----------------|-----------------------|----------------------------------------------------------------|
-| `input`  | `comDataIn`    | `Svc.DataWithContext`  | Port receiving `Fw::Buffer` objects for outgoing transmission. |
+| `input`  | `comDataIn`    | `Svc.ComDataWithContext`  | Port receiving `Fw::Buffer` objects for outgoing transmission. |
 | `output` | `comDataOut`   | `Drv.ByteStreamRecv`  | Port producing incoming `Fw::Buffer` objects.                  |
 | `output` | `comStatus`    | `Fw.SuccessCondition` | Port indicating status of outgoing transmission. See protocol. |
 

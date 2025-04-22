@@ -11,5 +11,5 @@ register_fprime_module(
         "${CMAKE_CURRENT_LIST_DIR}/FpConfig.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/PolyDbCfg.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/VersionCfg.fpp"
-        "${CMAKE_CURRENT_LIST_DIR}/CommsCfg.fpp"
+        "${CMAKE_CURRENT_LIST_DIR}/ComCfg.fpp"
 )

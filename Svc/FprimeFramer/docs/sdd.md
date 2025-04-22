@@ -12,7 +12,7 @@ Below is the common configuration in which the `Svc::FprimeFramer` can be used. 
 
 ## Internals
 
-The `Svc::FprimeFramer` receives data packets of type `Svc.DataWithContext`. This type contains both a `Fw::Buffer` containing the packet data, and a `context: FrameContext` that contains contextual information about the data packet (such as an APID). In the default configuration (using Svc::ComQueue), the `context` is used to determine whether a packet is coming from the ComQueue's Fw::Buffer queue (as opposed to ComPacket queue). If it is, the original data packet `Fw::Buffer` is returned back to its original sender.
+The `Svc::FprimeFramer` receives data packets of type `Svc.ComDataWithContext`. This type contains both a `Fw::Buffer` containing the packet data, and a `context: FrameContext` that contains contextual information about the data packet (such as an APID). In the default configuration (using Svc::ComQueue), the `context` is used to determine whether a packet is coming from the ComQueue's Fw::Buffer queue (as opposed to ComPacket queue). If it is, the original data packet `Fw::Buffer` is returned back to its original sender.
 
 On receiving a data packet, the `Svc::FprimeFramer` performs the following actions:
 
@@ -26,8 +26,8 @@ On receiving a data packet, the `Svc::FprimeFramer` performs the following actio
 
 | Kind  | Name  | Port Type | Usage    |
 |---|---|---|---|
-| `guarded input` | `dataIn` | `Svc.DataWithContext` | Port to receive data to frame, in a Fw::Buffer with optional context|
-| `output` | `framedDataOut` | `Svc.DataWithContext` | Port to output framed data, with optional context, for follow-up framing|
+| `guarded input` | `dataIn` | `Svc.ComDataWithContext` | Port to receive data to frame, in a Fw::Buffer with optional context|
+| `output` | `framedDataOut` | `Svc.ComDataWithContext` | Port to output framed data, with optional context, for follow-up framing|
 | `sync input` | `comStatusIn` | `Fw.SuccessCondition` | Port receiving the general status from the downstream component|
 | `output` | `comStatusOut` | `Fw.SuccessCondition` | Port receiving indicating the status of framer for receiving more data|
 

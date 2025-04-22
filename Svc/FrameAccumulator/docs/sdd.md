@@ -86,6 +86,6 @@ SVC-FRAME-ACCUMULATOR-004 | `Svc::FrameAccumulator` shall accept byte buffers co
 | Kind | Name | Type | Description |
 |---|---|---|---|
 | `guarded input` | dataIn | `Drv.ByteStreamRecv` | Receives raw data from a ByteStreamDriver, ComStub, or other buffer producing component |
-| `output` | frameOut | `Svc.DataWithContext` | Port for sending an extracted frame out |
+| `output` | frameOut | `Svc.ComDataWithContext` | Port for sending an extracted frame out |
 | `output` | bufferAllocate | `Fw.BufferGet` | Port for allocating buffer to hold extracted frame |
 | `output`| bufferDeallocate | `Fw.BufferSend` | Port for deallocating buffers received on dataIn. |

@@ -56,7 +56,7 @@ void ComStubTester ::test_basic() {
     this->test_initial();
     Fw::Buffer buffer(storage[0], sizeof(storage[0]));
     Fw::Success condition = Fw::Success::SUCCESS;
-    CommsCfg::FrameContext context;
+    ComCfg::FrameContext context;
     this->fill(buffer);
 
     // Downlink
@@ -78,7 +78,7 @@ void ComStubTester ::test_fail() {
     this->fill(buffer);
     Fw::Success condition = Fw::Success::FAILURE;
     m_send_mode = Drv::SendStatus::SEND_ERROR;
-    CommsCfg::FrameContext context;
+    ComCfg::FrameContext context;
 
     // Downlink
     invoke_to_comDataIn(0, buffer, context);
@@ -99,7 +99,7 @@ void ComStubTester ::test_retry() {
     Fw::Buffer buffers[RETRIES];
     Fw::Success condition = Fw::Success::SUCCESS;
     m_send_mode = Drv::SendStatus::SEND_RETRY;
-    CommsCfg::FrameContext context;
+    ComCfg::FrameContext context;
 
     for (U32 i = 0; i < RETRIES; i++) {
         buffers[i].setData(storage[i]);

@@ -4,11 +4,16 @@ module Ref {
   # Symbolic constants for port numbers
   # ----------------------------------------------------------------------
 
-    enum Ports_RateGroups {
-      rateGroup1
-      rateGroup2
-      rateGroup3
-    }
+  enum Ports_RateGroups {
+    rateGroup1
+    rateGroup2
+    rateGroup3
+  }
+
+  enum Ports_ComPacketQueue {
+    EVENTS,
+    TELEMETRY
+  }
 
   topology Ref {
 
@@ -87,27 +92,27 @@ module Ref {
     # ----------------------------------------------------------------------
 
     connections Downlink {
+      # TODO: add enum for port indices
+      dpCat.fileOut -> fileDownlink.SendFile
+      fileDownlink.FileComplete -> dpCat.fileDone
 
-      eventLogger.PktSend -> comQueue.comPktQueueIn[0]
-      tlmSend.PktSend -> comQueue.comPktQueueIn[1]
+      eventLogger.PktSend -> comQueue.comPacketQueueIn[Ports_ComPacketQueue.EVENTS]
+      tlmSend.PktSend -> comQueue.comPacketQueueIn[Ports_ComPacketQueue.TELEMETRY]
       fileDownlink.bufferSendOut -> comQueue.buffQueueIn[0]
+      comQueue.bufferReturnOut[0] -> fileDownlink.bufferReturn
 
       comQueue.queueSend -> fprimeFramer.dataIn
       fprimeFramer.dataReturn -> comQueue.bufferReturnIn
-      comQueue.bufferReturnOut[0] -> fileDownlink.bufferReturn
+      fprimeFramer.comStatusOut -> comQueue.comStatusIn
 
       fprimeFramer.bufferAllocate -> commsBufferManager.bufferGetCallee
+
       fprimeFramer.framedDataOut -> comStub.comDataIn
+      comStub.comStatus -> fprimeFramer.comStatusIn
 
       comDriver.deallocate -> commsBufferManager.bufferSendIn
       comDriver.ready -> comStub.drvConnected
-
-      dpCat.fileOut -> fileDownlink.SendFile
-      fileDownlink.FileComplete -> dpCat.fileDone
       comStub.drvDataOut -> comDriver.$send
-
-      comStub.comStatus -> fprimeFramer.comStatusIn
-      fprimeFramer.comStatusOut -> comQueue.comStatusIn
     }
 
     connections FaultProtection {
@@ -162,11 +167,11 @@ module Ref {
       comDriver.$recv -> comStub.drvDataIn
       comStub.comDataOut -> frameAccumulator.dataIn
 
-      frameAccumulator.bufferDeallocate -> commsBufferManager.bufferSendIn
-      frameAccumulator.bufferAllocate -> commsBufferManager.bufferGetCallee
       frameAccumulator.frameOut -> deframer.framedIn
-      deframer.deframedOut -> fprimeRouter.dataIn
+      frameAccumulator.bufferAllocate -> commsBufferManager.bufferGetCallee
+      frameAccumulator.bufferDeallocate -> commsBufferManager.bufferSendIn
       deframer.bufferDeallocate -> commsBufferManager.bufferSendIn
+      deframer.deframedOut -> fprimeRouter.dataIn
 
       fprimeRouter.commandOut -> cmdDisp.seqCmdBuff
       fprimeRouter.fileOut -> fileUplink.bufferSendIn

@@ -15,6 +15,7 @@
 #include <Fw/Types/MallocAllocator.hpp>
 #include <Os/Console.hpp>
 #include <Svc/FrameAccumulator/FrameDetector/FprimeFrameDetector.hpp>
+#include <Ref/Top/Ports_ComPacketQueueEnumAc.hpp>
 
 // Used for 1Hz synthetic cycling
 #include <Os/Mutex.hpp>
@@ -126,14 +127,14 @@ void configureTopology() {
 
     // ComQueue configuration
     // Events (highest-priority)
-    configurationTable.entries[0].depth = 100;
-    configurationTable.entries[0].priority = 0;
+    configurationTable.entries[Ref::Ports_ComPacketQueue::EVENTS].depth = 100;
+    configurationTable.entries[Ref::Ports_ComPacketQueue::EVENTS].priority = 0;
     // Telemetry
-    configurationTable.entries[1].depth = 500;
-    configurationTable.entries[1].priority = 2;
-    // File Downlink
-    configurationTable.entries[2].depth = 100;
-    configurationTable.entries[2].priority = 1;
+    configurationTable.entries[Ref::Ports_ComPacketQueue::TELEMETRY].depth = 500;
+    configurationTable.entries[Ref::Ports_ComPacketQueue::TELEMETRY].priority = 2;
+    // File Downlink (first entry after the ComPacket queues = NUM_CONSTANTS)
+    configurationTable.entries[Ref::Ports_ComPacketQueue::NUM_CONSTANTS].depth = 100;
+    configurationTable.entries[Ref::Ports_ComPacketQueue::NUM_CONSTANTS].priority = 1;
     // Allocation identifier is 0 as the MallocAllocator discards it
     comQueue.configure(configurationTable, 0, mallocator);
 

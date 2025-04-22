@@ -106,7 +106,7 @@ module Ref {
   instance comQueue: Svc.ComQueue base id 0x1100 \
       queue size 50 \
       stack size Default.STACK_SIZE \
-      priority 100 \
+      priority 100
 
 
   instance typeDemo: Ref.TypeDemo base id 0x1200

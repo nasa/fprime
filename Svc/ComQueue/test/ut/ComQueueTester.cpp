@@ -49,7 +49,7 @@ void ComQueueTester ::sendByQueueNumber(Fw::Buffer& buffer,
         Fw::ComBuffer comBuffer(buffer.getData(), buffer.getSize());
         portNum = queueNum;
         queueType = QueueType::COM_QUEUE;
-        invoke_to_comPktQueueIn(portNum, comBuffer, 0);
+        invoke_to_comPacketQueueIn(portNum, comBuffer, 0);
     } else {
         portNum = queueNum - ComQueue::COM_PORT_COUNT;
         queueType = QueueType::BUFFER_QUEUE;
@@ -86,7 +86,7 @@ void ComQueueTester ::testQueueSend() {
     configure();
 
     for(FwIndexType portNum = 0; portNum < ComQueue::COM_PORT_COUNT; portNum++){
-        invoke_to_comPktQueueIn(portNum, comBuffer, 0);
+        invoke_to_comPacketQueueIn(portNum, comBuffer, 0);
         emitOneAndCheck(portNum, comBuffer.getBuffAddr(), comBuffer.getBuffLength());
     }
     clearFromPortHistory();
@@ -106,7 +106,7 @@ void ComQueueTester ::testQueuePause() {
     configure();
 
     for(FwIndexType portNum = 0; portNum < ComQueue::COM_PORT_COUNT; portNum++){
-        invoke_to_comPktQueueIn(portNum, comBuffer, 0);
+        invoke_to_comPacketQueueIn(portNum, comBuffer, 0);
         // Send a bunch of failures
         Fw::Success state = Fw::Success::FAILURE;
         invoke_to_comStatusIn(0, state);
@@ -149,7 +149,7 @@ void ComQueueTester ::testPrioritySend() {
 
     for(FwIndexType portNum = 0; portNum < ComQueue::COM_PORT_COUNT; portNum++){
         Fw::ComBuffer comBuffer(&data[portNum][0], BUFFER_LENGTH);
-        invoke_to_comPktQueueIn(portNum, comBuffer, 0);
+        invoke_to_comPacketQueueIn(portNum, comBuffer, 0);
     }
 
     for (FwIndexType portNum = 0; portNum < ComQueue::BUFFER_PORT_COUNT; portNum++) {
@@ -292,7 +292,7 @@ void ComQueueTester ::testReadyFirst() {
 
     for(FwIndexType portNum = 0; portNum < ComQueue::COM_PORT_COUNT; portNum++){
         emitOne();
-        invoke_to_comPktQueueIn(portNum, comBuffer, 0);
+        invoke_to_comPacketQueueIn(portNum, comBuffer, 0);
         dispatchAll();
 
         Fw::Buffer emittedBuffer = this->fromPortHistory_queueSend->at(portNum).data;
@@ -324,12 +324,12 @@ void ComQueueTester ::testContextData() {
     configure();
 
     for(FwIndexType portNum = 0; portNum < ComQueue::COM_PORT_COUNT; portNum++){
-        invoke_to_comPktQueueIn(portNum, comBuffer, 0);
+        invoke_to_comPacketQueueIn(portNum, comBuffer, 0);
         emitOne();
         // Currently, the APID is set to the queue index, which is the same as the port number for COM ports
-        U32 expectedApid = portNum;
+        FwIndexType expectedApid = portNum;
         auto emittedContext = this->fromPortHistory_queueSend->at(portNum).context;
-        ASSERT_EQ(expectedApid, emittedContext.getapid());
+        ASSERT_EQ(expectedApid, emittedContext.getcomQueueIndex());
     }
     clearFromPortHistory();
 
@@ -337,9 +337,9 @@ void ComQueueTester ::testContextData() {
         invoke_to_buffQueueIn(portNum, buffer);
         emitOne();
         // APID is queue index, which is COM_PORT_COUNT + portNum for BUFFER ports
-        U32 expectedApid = portNum + ComQueue::COM_PORT_COUNT;
+        FwIndexType expectedApid = portNum + ComQueue::COM_PORT_COUNT;
         auto emittedContext = this->fromPortHistory_queueSend->at(portNum).context;
-        ASSERT_EQ(expectedApid, emittedContext.getapid());
+        ASSERT_EQ(expectedApid, emittedContext.getcomQueueIndex());
     }
     clearFromPortHistory();
     component.cleanup();
@@ -348,12 +348,12 @@ void ComQueueTester ::testContextData() {
 void ComQueueTester ::testBufferQueueReturn() {
     U8 data[BUFFER_LENGTH] = {0xde, 0xad, 0xbe};
     Fw::Buffer buffer(&data[0], sizeof(data));
-    CommsCfg::FrameContext context;
+    ComCfg::FrameContext context;
     configure();
 
     for(FwIndexType portNum = 0; portNum < ComQueue::TOTAL_PORT_COUNT; portNum++){
         clearFromPortHistory();
-        context.setapid(portNum);
+        context.setcomQueueIndex(portNum);
         invoke_to_bufferReturnIn(0, buffer, context);
         // APIDs that correspond to an buffer originating from a Fw.Com port
         // do no get deallocated – APIDs that correspond to a Fw.Buffer do

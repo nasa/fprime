@@ -24,7 +24,7 @@ namespace Svc {
 class ComQueue final : public ComQueueComponentBase {
   public:
     //!< Count of Fw::Com input ports and thus Fw::Com queues
-    static const FwIndexType COM_PORT_COUNT = ComQueueComponentBase::NUM_COMPKTQUEUEIN_INPUT_PORTS;
+    static const FwIndexType COM_PORT_COUNT = ComQueueComponentBase::NUM_COMPACKETQUEUEIN_INPUT_PORTS;
 
     //!< Count of Fw::Buffer input ports and thus Fw::Buffer queues
     static const FwIndexType BUFFER_PORT_COUNT = ComQueueComponentBase::NUM_BUFFQUEUEIN_INPUT_PORTS;
@@ -131,7 +131,7 @@ class ComQueue final : public ComQueueComponentBase {
 
     //! Receive and queue a Fw::ComBuffer
     //!
-    void comPktQueueIn_handler(const FwIndexType portNum, /*!< The port number*/
+    void comPacketQueueIn_handler(const FwIndexType portNum, /*!< The port number*/
                             Fw::ComBuffer& data,           /*!< Buffer containing packet data*/
                             U32 context                    /*!< Call context value; meaning chosen by user*/
     ) override;
@@ -153,7 +153,7 @@ class ComQueue final : public ComQueueComponentBase {
     //! Port for returning ownership of Fw::Buffer to its sender
     void bufferReturnIn_handler(FwIndexType portNum,  //!< The port number
       Fw::Buffer& data,
-      const CommsCfg::FrameContext& context) override;
+      const ComCfg::FrameContext& context) override;
 
 
     // ----------------------------------------------------------------------

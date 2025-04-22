@@ -137,7 +137,7 @@ void FrameAccumulator ::processRing() {
                 FW_ASSERT(m_inRing.get_allocated_size() == remaining - size_out,
                           static_cast<FwAssertArgType>(m_inRing.get_allocated_size()),
                           static_cast<FwAssertArgType>(remaining), static_cast<FwAssertArgType>(size_out));
-                CommsCfg::FrameContext context;
+                ComCfg::FrameContext context;
                 this->frameOut_out(0, buffer, context);
             } else {
                 // No buffer is available, we need to exit and try again later

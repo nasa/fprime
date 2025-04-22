@@ -2,4 +2,4 @@
 guarded input port dataIn: Drv.ByteStreamRecv
 
 @ Port for sending an extracted frame out
-output port frameOut: Svc.DataWithContext
+output port frameOut: Svc.ComDataWithContext

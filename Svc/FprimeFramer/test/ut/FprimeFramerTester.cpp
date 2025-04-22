@@ -41,7 +41,7 @@ void FprimeFramerTester ::testComStatusPassThrough() {
 void FprimeFramerTester ::testNominalFraming() {
     U8 bufferData[100];
     Fw::Buffer buffer(bufferData, sizeof(bufferData));
-    CommsCfg::FrameContext context;
+    ComCfg::FrameContext context;
 
 
     // Fill the buffer with some data

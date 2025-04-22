@@ -36,7 +36,7 @@ class ComStub final : public ComStubComponentBase {
     //!
     void comDataIn_handler(const FwIndexType portNum, /*!< The port number*/
                                       Fw::Buffer& sendBuffer,
-                                      const CommsCfg::FrameContext& context) override;
+                                      const ComCfg::FrameContext& context) override;
 
     //! Handler implementation for drvConnected
     //!

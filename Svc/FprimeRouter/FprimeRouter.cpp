@@ -23,7 +23,7 @@ FprimeRouter ::~FprimeRouter() {}
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer, const CommsCfg::FrameContext& context) {
+void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer, const ComCfg::FrameContext& context) {
     // Read the packet type from the packet buffer
     FwPacketDescriptorType packetType = Fw::ComPacket::FW_PACKET_UNKNOWN;
     Fw::SerializeStatus status = Fw::FW_SERIALIZE_OK;
