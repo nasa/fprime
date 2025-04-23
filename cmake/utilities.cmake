@@ -551,7 +551,7 @@ endfunction(get_expected_tool_version)
 # flag for handling relative path asserts.
 ####
 function(set_assert_flags SRC)
-    if (EXISTS "${SRC}")
+    if (NOT SRC MATCHES "^[$].*") # skip if generator expression
         get_nearest_build_root("${SRC}") # sets FPRIME_CLOSEST_BUILD_ROOT in current scope
     endif()
     get_filename_component(FPRIME_CLOSEST_BUILD_ROOT_ABS "${FPRIME_CLOSEST_BUILD_ROOT}" ABSOLUTE)
