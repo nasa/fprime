@@ -4,10 +4,9 @@
 // \brief  cpp file for FrameAccumulator component implementation class
 // ======================================================================
 
-#include "Svc/FrameAccumulator/FrameAccumulator.hpp"
-#include <new>  // required for placement new in configure() member function
 #include "Fw/FPrimeBasicTypes.hpp"
 #include "Fw/Types/Assert.hpp"
+#include "Svc/FrameAccumulator/FrameAccumulator.hpp"
 
 namespace Svc {
 
@@ -29,8 +28,7 @@ void FrameAccumulator ::configure(const FrameDetector& detector,
                                   Fw::MemAllocator& allocator,
                                   FwSizeType store_size) {
     bool recoverable = false;
-    void* data_void = allocator.allocate(allocationId, store_size, recoverable);
-    U8* data = new (data_void) U8[store_size];
+    U8* const data = static_cast<U8*>(allocator.allocate(allocationId, store_size, recoverable));
     FW_ASSERT(data != nullptr);
     m_inRing.setup(data, store_size);
 
