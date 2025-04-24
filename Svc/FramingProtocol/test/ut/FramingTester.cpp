@@ -51,10 +51,6 @@ namespace Svc {
       // Check the packet size
       const U32 packetSize = this->getPacketSize();
       this->checkPacketSize(packetSize);
-      // Check the packet type
-      if (this->packetType != Fw::ComPacket::FW_PACKET_UNKNOWN) {
-        this->checkPacketType();
-      }
       // Check the data
       this->checkData();
       // Check the hash value
@@ -84,10 +80,6 @@ namespace Svc {
     checkPacketSize(FpFrameHeader::TokenType packetSize)
   {
     FwSizeType expectedPacketSize = this->dataSize;
-    if (this->packetType != Fw::ComPacket::FW_PACKET_UNKNOWN) {
-      // Packet type is stored in header
-      expectedPacketSize += sizeof(SerialPacketType);
-    }
     ASSERT_EQ(packetSize, expectedPacketSize);
   }
 
@@ -125,10 +117,6 @@ namespace Svc {
     checkData()
   {
     FwSizeType dataOffset = PACKET_TYPE_OFFSET;
-    if (this->packetType != Fw::ComPacket::FW_PACKET_UNKNOWN) {
-      // Packet type is stored in header
-      dataOffset += sizeof(SerialPacketType);
-    }
     const I32 result = memcmp(
         this->data,
         &this->bufferStorage[dataOffset],

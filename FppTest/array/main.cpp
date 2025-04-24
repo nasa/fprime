@@ -14,6 +14,8 @@
 #include "FppTest/array/StringArrayAc.hpp"
 #include "FppTest/array/StructArrayAc.hpp"
 #include "FppTest/array/Uint32ArrayArrayAc.hpp"
+#include "FppTest/array/AliasOfArrayAliasAc.hpp"
+#include "FppTest/array/AliasStringArrayAc.hpp"
 #include "FppTest/typed_tests/ArrayTest.hpp"
 #include "FppTest/typed_tests/StringTest.hpp"
 #include "FppTest/utils/Utils.hpp"
@@ -61,8 +63,10 @@ template<>
 void FppTest::Array::setDefaultVals<String>
     (Fw::ExternalString (&a)[::String::SIZE]) {
     for (U32 i = 0; i < ::String::SIZE; i++) {
-        char *const buffer = &stringDefaultValsBuffer[i][0];
-        a[i].setBuffer(buffer, ::String::ELEMENT_BUFFER_SIZE);
+        a[i].setBuffer(
+            stringDefaultValsBuffer[i],
+            ::String::ELEMENT_BUFFER_SIZE
+        );
     }
 }
 
@@ -72,9 +76,14 @@ template<>
 void FppTest::Array::setTestVals<String>
     (Fw::ExternalString (&a)[::String::SIZE]) {
     for (U32 i = 0; i < ::String::SIZE; i++) {
-        char *const buffer = &stringTestValsBuffer[i][0];
-        a[i].setBuffer(buffer, ::String::ELEMENT_BUFFER_SIZE);
-        FppTest::Utils::setString(buffer, ::String::ELEMENT_BUFFER_SIZE, 1);
+        a[i].setBuffer(
+            stringTestValsBuffer[i],
+            ::String::ELEMENT_BUFFER_SIZE
+        );
+        FppTest::Utils::setString(
+            stringTestValsBuffer[i],
+            ::String::ELEMENT_BUFFER_SIZE, 1
+        );
     }
 }
 
@@ -97,6 +106,50 @@ void FppTest::Array::setTestVals<Uint32Array>(Uint32 (&a)[Uint32Array::SIZE]) {
             b[j] = FppTest::Utils::getNonzeroU32();
         }
         a[i] = b;
+    }
+}
+
+static char stringAliasDefaultValsBuffer[::String::SIZE][::String::ELEMENT_BUFFER_SIZE];
+
+template<>
+void FppTest::Array::setDefaultVals<AliasString>
+    (Fw::ExternalString (&a)[::AliasString::SIZE]) {
+    for (U32 i = 0; i < ::AliasString::SIZE; i++) {
+        a[i].setBuffer(
+            stringAliasDefaultValsBuffer[i],
+            ::AliasString::ELEMENT_BUFFER_SIZE
+        );
+    }
+}
+
+static char stringAliasTestValsBuffer[::String::SIZE][::String::ELEMENT_BUFFER_SIZE];
+
+template<>
+void FppTest::Array::setTestVals<AliasString>(Fw::ExternalString (&a)[AliasString::SIZE]) {
+    for (U32 i = 0; i < ::AliasString::SIZE; i++) {
+        a[i].setBuffer(
+            stringAliasTestValsBuffer[i],
+            ::AliasString::ELEMENT_BUFFER_SIZE
+        );
+        FppTest::Utils::setString(
+            stringAliasTestValsBuffer[i],
+            ::AliasString::ELEMENT_BUFFER_SIZE, 1
+        );
+    }
+}
+
+template<>
+void FppTest::Array::setTestVals<AliasOfArray>(EA (&a)[AliasOfArray::SIZE]) {
+    a[0] = static_cast<EA::T>(STest::Pick::startLength(
+        EA::B,
+        EA::NUM_CONSTANTS - 1
+    ));
+
+    for (U32 i = 1; i < Enum::SIZE; i++) {
+        a[i] = static_cast<EA::T>(STest::Pick::startLength(
+            EA::A,
+            EA::NUM_CONSTANTS - 1
+        ));
     }
 }
 

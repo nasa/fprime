@@ -35,6 +35,7 @@ AQuat
 AQueued
 Arcsecond
 arduino
+ARef
 argcomplete
 argcount
 ARGN
@@ -136,7 +137,9 @@ CMDDISP
 CMDDISPATCHER
 CMDPACKET
 CMDREG
+cmdresponse
 cmds
+cmdseq
 cmdsequencer
 cntx
 cobj
@@ -342,6 +345,7 @@ fprime
 fptr
 fputil
 fpv
+fpy
 freeram
 Fregoso
 frox
@@ -359,24 +363,33 @@ gencode
 genfile
 GENHUB
 genshi
+getarg
+getargument
 getblocks
+getbody
 getchildren
 getcontext
 getcrc
 getdata
 getdefaultencoding
+getduration
 getextern
 getf
+getfooter
 geti
 getinput
 getlength
 getm
+getop
 getquaternion
+getschema
 getstart
+getstatement
 gett
 gettime
 getty
 getu
+getwakeup
 ghprb
 gitmodules
 gmock
@@ -463,6 +476,7 @@ INVALIDHEADERHASH
 invisi
 ioc
 ioctl
+ipas
 IPCFG
 IPHELPER
 ipriority
@@ -495,6 +509,7 @@ jsonable
 kermit
 kevin
 kislyuk
+kubiak
 Lammert
 lammertbies
 LASTLOG
@@ -588,6 +603,7 @@ Mutexed
 mval
 MVC
 mycompany
+NACI
 nasafprime
 nbits
 ncsl
@@ -652,6 +668,7 @@ osaves
 osets
 ossw
 ostate
+OSTIME
 otherdictitems
 otheritems
 otherside
@@ -768,6 +785,7 @@ RATEGROUPDRIVERIMPLTESTER
 RATEGROUPMEMBEROUT
 RATELIMITERTESTER
 rawtime
+RAWTIMETESTER
 RBF
 RCHILD
 rcvd
@@ -806,6 +824,7 @@ RTEMS
 runperiod
 RXD
 saddr
+SAlias
 sanitizers
 sats
 savelist
@@ -952,6 +971,7 @@ testerbase
 testgen
 TESTLIST
 TESTLOGRECVIMPL
+testmark
 TESTPARAMIMPL
 TESTPARAMRECVIMPL
 TESTPTSOURCEIMPL
@@ -1072,6 +1092,7 @@ Xelect
 xmlfile
 xsltproc
 xxxx
+XXYY
 yacgen
 zimri
 zmq

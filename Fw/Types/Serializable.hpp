@@ -188,14 +188,14 @@ class SerializeBufferBase {
 
   PROTECTED:
     SerializeBufferBase();  //!< default constructor
+    Serializable::SizeType m_serLoc;                //!< current offset in buffer of serialized data
+    Serializable::SizeType m_deserLoc;              //!< current offset for deserialization
 
   PRIVATE:
     // Copy constructor can be used only by the implementation
     SerializeBufferBase(const SerializeBufferBase& src);  //!< constructor with buffer as source
 
     void copyFrom(const SerializeBufferBase& src);  //!< copy data from source buffer
-    Serializable::SizeType m_serLoc;                //!< current offset in buffer of serialized data
-    Serializable::SizeType m_deserLoc;              //!< current offset for deserialization
 };
 
 // Helper classes for building buffers with external storage
@@ -254,12 +254,17 @@ class ExternalSerializeBufferWithMemberCopy final : public ExternalSerializeBuff
         : ExternalSerializeBuffer(buffPtr, size) {}
     ExternalSerializeBufferWithMemberCopy() : ExternalSerializeBuffer() {}
     ~ExternalSerializeBufferWithMemberCopy() {}
-    explicit ExternalSerializeBufferWithMemberCopy(const ExternalSerializeBufferWithMemberCopy& src)
-        : ExternalSerializeBuffer(src.m_buff, src.m_buffSize) {}
+    ExternalSerializeBufferWithMemberCopy(const ExternalSerializeBufferWithMemberCopy& src)
+        : ExternalSerializeBuffer(src.m_buff, src.m_buffSize) {
+        this->m_serLoc = src.m_serLoc;
+        this->m_deserLoc = src.m_deserLoc;
+    }
     ExternalSerializeBufferWithMemberCopy& operator=(const ExternalSerializeBufferWithMemberCopy& src) {
         // Ward against self-assignment
         if (this != &src) {
             this->setExtBuffer(src.m_buff, src.m_buffSize);
+            this->m_serLoc = src.m_serLoc;
+            this->m_deserLoc = src.m_deserLoc;
         }
         return *this;
     }

@@ -28,386 +28,9 @@
 
   }
 
-  // ----------------------------------------------------------------------
-  // Handler implementations for user-defined typed input ports
-  // ----------------------------------------------------------------------
-
-  void ActiveTest ::
-    arrayArgsAsync_handler(
-        const FwIndexType portNum,
-        const FormalParamArray &a,
-        FormalParamArray &aRef
-    )
-  {
-    this->arrayArgsOut_out(portNum, a, aRef);
-  }
-
-  void ActiveTest ::
-    enumArgsAsync_handler(
-        const FwIndexType portNum,
-        const FormalParamEnum &en,
-        FormalParamEnum &enRef
-    )
-  {
-    this->enumArgsOut_out(portNum, en, enRef);
-  }
-
-  void ActiveTest ::
-    noArgsAsync_handler(
-        const FwIndexType portNum
-    )
-  {
-    this->noArgsOut_out(portNum);
-  }
-
-  void ActiveTest ::
-    primitiveArgsAsync_handler(
-        const FwIndexType portNum,
-        U32 u32,
-        U32 &u32Ref,
-        F32 f32,
-        F32 &f32Ref,
-        bool b,
-        bool &bRef
-    )
-  {
-    this->primitiveArgsOut_out(
-      portNum, 
-      u32, 
-      u32Ref, 
-      f32, 
-      f32Ref, 
-      b, 
-      bRef
-    );
-  }
-
-  Fw::String ActiveTest ::stringReturnGuarded_handler(
-      FwIndexType portNum,
-      const Fw::StringBase& str,
-      Fw::StringBase& strRef
-  ) {
-      return this->stringReturnOut_out(portNum, str, strRef);
-  }
-
-  Fw::String ActiveTest ::stringReturnSync_handler(
-      FwIndexType portNum,
-      const Fw::StringBase& str,
-      Fw::StringBase& strRef
-  ) {
-      return this->stringReturnOut_out(portNum, str, strRef);
-  }
-
-  void ActiveTest ::
-    structArgsAsync_handler(
-        const FwIndexType portNum,
-        const FormalParamStruct &s,
-        FormalParamStruct &sRef
-    )
-  {
-    this->structArgsOut_out(portNum, s, sRef);
-  }
-
-  void ActiveTest ::
-    stringArgsAsync_handler(
-        const FwIndexType portNum,
-        const Fw::StringBase &str80,
-        Fw::StringBase &str80Ref,
-        const Fw::StringBase &str100,
-        Fw::StringBase &str100Ref
-    )
-  {
-    this->stringArgsOut_out(
-      portNum,
-      str80,
-      str80Ref,
-      str100,
-      str100Ref
-    );
-  }
-
-  void ActiveTest ::
-    arrayArgsGuarded_handler(
-        const FwIndexType portNum,
-        const FormalParamArray &a,
-        FormalParamArray &aRef
-    )
-  {
-    this->arrayArgsOut_out(portNum, a, aRef);
-  }
-
-  void ActiveTest ::
-    arrayArgsSync_handler(
-        const FwIndexType portNum,
-        const FormalParamArray &a,
-        FormalParamArray &aRef
-    )
-  {
-    this->arrayArgsOut_out(portNum, a, aRef);
-  }
-
-  FormalParamArray ActiveTest ::
-    arrayReturnGuarded_handler(
-        const FwIndexType portNum,
-        const FormalParamArray &a,
-        FormalParamArray &aRef
-    )
-  {
-    return this->arrayReturnOut_out(portNum, a, aRef);
-  }
-
-  FormalParamArray ActiveTest ::
-    arrayReturnSync_handler(
-        const FwIndexType portNum,
-        const FormalParamArray &a,
-        FormalParamArray &aRef
-    )
-  {
-    return this->arrayReturnOut_out(portNum, a, aRef);
-  }
-
-  void ActiveTest ::
-    enumArgsGuarded_handler(
-        const FwIndexType portNum,
-        const FormalParamEnum &en,
-        FormalParamEnum &enRef
-    )
-  {
-    this->enumArgsOut_out(portNum, en, enRef);
-  }
-
-  void ActiveTest ::
-    enumArgsSync_handler(
-        const FwIndexType portNum,
-        const FormalParamEnum &en,
-        FormalParamEnum &enRef
-    )
-  {
-    this->enumArgsOut_out(portNum, en, enRef);
-  }
-
-  FormalParamEnum ActiveTest ::
-    enumReturnGuarded_handler(
-        const FwIndexType portNum,
-        const FormalParamEnum &en,
-        FormalParamEnum &enRef
-    )
-  {
-    return this->enumReturnOut_out(portNum, en, enRef);
-  }
-
-  FormalParamEnum ActiveTest ::
-    enumReturnSync_handler(
-        const FwIndexType portNum,
-        const FormalParamEnum &en,
-        FormalParamEnum &enRef
-    )
-  {
-    return this->enumReturnOut_out(portNum, en, enRef);
-  }
-
-  void ActiveTest ::
-    noArgsGuarded_handler(
-        const FwIndexType portNum
-    )
-  {
-    this->noArgsOut_out(portNum);
-  }
-
-  bool ActiveTest ::
-    noArgsReturnGuarded_handler(
-        const FwIndexType portNum
-    )
-  {
-    return this->noArgsReturnOut_out(portNum);
-  }
-
-  bool ActiveTest ::
-    noArgsReturnSync_handler(
-        const FwIndexType portNum
-    )
-  {
-    return this->noArgsReturnOut_out(portNum);
-  }
-
-  void ActiveTest ::
-    noArgsSync_handler(
-        const FwIndexType portNum
-    )
-  {
-    this->noArgsOut_out(portNum);
-  }
-
-  void ActiveTest ::
-    primitiveArgsGuarded_handler(
-        const FwIndexType portNum,
-        U32 u32,
-        U32 &u32Ref,
-        F32 f32,
-        F32 &f32Ref,
-        bool b,
-        bool &bRef
-    )
-  {
-    this->primitiveArgsOut_out(
-      portNum, 
-      u32, 
-      u32Ref, 
-      f32, 
-      f32Ref, 
-      b, 
-      bRef
-    );
-  }
-
-  void ActiveTest ::
-    primitiveArgsSync_handler(
-        const FwIndexType portNum,
-        U32 u32,
-        U32 &u32Ref,
-        F32 f32,
-        F32 &f32Ref,
-        bool b,
-        bool &bRef
-    )
-  {
-    this->primitiveArgsOut_out(
-      portNum, 
-      u32, 
-      u32Ref, 
-      f32, 
-      f32Ref, 
-      b, 
-      bRef
-    );
-  }
-
-  U32 ActiveTest ::
-    primitiveReturnGuarded_handler(
-        const FwIndexType portNum,
-        U32 u32,
-        U32 &u32Ref,
-        F32 f32,
-        F32 &f32Ref,
-        bool b,
-        bool &bRef
-    )
-  {
-    return this->primitiveReturnOut_out(
-      portNum, 
-      u32, 
-      u32Ref, 
-      f32, 
-      f32Ref, 
-      b, 
-      bRef
-    );
-  }
-
-  U32 ActiveTest ::
-    primitiveReturnSync_handler(
-        const FwIndexType portNum,
-        U32 u32,
-        U32 &u32Ref,
-        F32 f32,
-        F32 &f32Ref,
-        bool b,
-        bool &bRef
-    )
-  {
-    return this->primitiveReturnOut_out(
-      portNum, 
-      u32, 
-      u32Ref, 
-      f32, 
-      f32Ref, 
-      b, 
-      bRef
-    );
-  }
-
-  void ActiveTest ::
-    stringArgsGuarded_handler(
-        const FwIndexType portNum,
-        const Fw::StringBase &str80,
-        Fw::StringBase &str80Ref,
-        const Fw::StringBase &str100,
-        Fw::StringBase &str100Ref
-    )
-  {
-    this->stringArgsOut_out(
-      portNum,
-      str80,
-      str80Ref,
-      str100,
-      str100Ref
-    );
-  }
-
-  void ActiveTest ::
-    stringArgsSync_handler(
-        const FwIndexType portNum,
-        const Fw::StringBase &str80,
-        Fw::StringBase &str80Ref,
-        const Fw::StringBase &str100,
-        Fw::StringBase &str100Ref
-    )
-  {
-    this->stringArgsOut_out(
-      portNum,
-      str80,
-      str80Ref,
-      str100,
-      str100Ref
-    );
-  }
-
-  void ActiveTest ::
-    structArgsGuarded_handler(
-        const FwIndexType portNum,
-        const FormalParamStruct &s,
-        FormalParamStruct &sRef
-    )
-  {
-    this->structArgsOut_out(portNum, s, sRef);
-  }
-
-  void ActiveTest ::
-    structArgsSync_handler(
-        const FwIndexType portNum,
-        const FormalParamStruct &s,
-        FormalParamStruct &sRef
-    )
-  {
-    this->structArgsOut_out(portNum, s, sRef);
-  }
-
-  FormalParamStruct ActiveTest ::
-    structReturnGuarded_handler(
-        const FwIndexType portNum,
-        const FormalParamStruct &s,
-        FormalParamStruct &sRef
-    )
-  {
-    return this->structReturnOut_out(portNum, s, sRef);
-  }
-
-  FormalParamStruct ActiveTest ::
-    structReturnSync_handler(
-        const FwIndexType portNum,
-        const FormalParamStruct &s,
-        FormalParamStruct &sRef
-    )
-  {
-    return this->structReturnOut_out(portNum, s, sRef);
-  }
-
-  void ActiveTest ::
-      enumArgsHook_handler(
-          const FwIndexType portNum,
-          const FormalParamEnum &en,
-          FormalParamEnum &enRef
-      ) {}
+  #define TestComponentName ActiveTest
+  #include "FppTest/component/common/typed_async.cpp"
+  #include "FppTest/component/common/typed.cpp"
 
   // ----------------------------------------------------------------------
   // Handler implementations for user-defined serial input ports
@@ -415,8 +38,8 @@
 
   void ActiveTest ::
     serialAsync_handler(
-        FwIndexType portNum, /*!< The port number*/
-        Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
+        FwIndexType portNum, //!< The port number
+        Fw::SerializeBufferBase &Buffer //!< The serialization buffer
     )
   {
     this->serializeStatus = this->serialOut_out(portNum, Buffer);
@@ -424,8 +47,8 @@
 
   void ActiveTest ::
     serialAsyncAssert_handler(
-        FwIndexType portNum, /*!< The port number*/
-        Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
+        FwIndexType portNum, //!< The port number
+        Fw::SerializeBufferBase &Buffer //!< The serialization buffer
     )
   {
     this->serializeStatus = this->serialOut_out(SerialPortIndex::ENUM, Buffer);
@@ -433,8 +56,8 @@
 
   void ActiveTest ::
     serialAsyncBlockPriority_handler(
-        FwIndexType portNum, /*!< The port number*/
-        Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
+        FwIndexType portNum, //!< The port number
+        Fw::SerializeBufferBase &Buffer //!< The serialization buffer
     )
   {
     this->serializeStatus = this->serialOut_out(SerialPortIndex::ARRAY, Buffer);
@@ -442,8 +65,8 @@
 
   void ActiveTest ::
     serialAsyncDropPriority_handler(
-        FwIndexType portNum, /*!< The port number*/
-        Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
+        FwIndexType portNum, //!< The port number
+        Fw::SerializeBufferBase &Buffer //!< The serialization buffer
     )
   {
     this->serializeStatus = this->serialOut_out(SerialPortIndex::STRUCT, Buffer);
@@ -451,8 +74,8 @@
 
   void ActiveTest ::
     serialGuarded_handler(
-        FwIndexType portNum, /*!< The port number*/
-        Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
+        FwIndexType portNum, //!< The port number
+        Fw::SerializeBufferBase &Buffer //!< The serialization buffer
     )
   {
     this->serializeStatus = this->serialOut_out(portNum, Buffer);
@@ -460,8 +83,8 @@
 
   void ActiveTest ::
     serialSync_handler(
-        FwIndexType portNum, /*!< The port number*/
-        Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
+        FwIndexType portNum, //!< The port number
+        Fw::SerializeBufferBase &Buffer //!< The serialization buffer
     )
   {
     this->serializeStatus = this->serialOut_out(portNum, Buffer);
@@ -708,8 +331,10 @@
       enumArgsHook_overflowHook(
           const FwIndexType portNum,
           const FormalParamEnum &en,
-          FormalParamEnum &enRef
+          FormalParamEnum &enRef,
+          const FormalAliasEnum& enA,
+          FormalAliasEnum& enARef
   )
   {
-      this->enumArgsHookOverflowed_out(portNum, en, enRef);
+      this->enumArgsHookOverflowed_out(portNum, en, enRef, enA, enARef);
   }
