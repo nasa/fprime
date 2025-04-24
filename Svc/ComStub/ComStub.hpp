@@ -8,7 +8,7 @@
 #define Svc_ComStub_HPP
 
 #include "Svc/ComStub/ComStubComponentAc.hpp"
-#include "Drv/ByteStreamDriverModel/ByteStreamSentReturnPortAc.hpp"
+#include "Drv/ByteStreamDriverModel/ByteStreamStatusEnumAc.hpp"
 
 namespace Svc {
 
