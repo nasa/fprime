@@ -52,9 +52,9 @@ void FrameAccumulator ::cleanup() {
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void FrameAccumulator ::dataIn_handler(FwIndexType portNum, Fw::Buffer& buffer, const Drv::RecvStatus& status) {
+void FrameAccumulator ::dataIn_handler(FwIndexType portNum, Fw::Buffer& buffer, const Drv::ByteStreamStatus& status) {
     // Check whether there is data to process
-    if (status.e == Drv::RecvStatus::RECV_OK) {
+    if (status.e == Drv::ByteStreamStatus::RECV_OK) {
         // There is: process the data
         this->processBuffer(buffer);
     }

@@ -66,7 +66,7 @@ The `Svc::FrameAccumulator` component is used in the uplink stack of many refere
 classDiagram
     class FrameAccumulator~PassiveComponent~ {
         + void configure(FrameDetector& detector, FwEnumStoreType allocationId, Fw::MemAllocator& allocator, FwSizeType store_size)
-        + void dataIn_handler(FwIndexType portNum, Fw::Buffer& recvBuffer, const Drv::RecvStatus& recvStatus)
+        + void dataIn_handler(FwIndexType portNum, Fw::Buffer& recvBuffer, const Drv::ByteStreamStatus& recvStatus)
         + void processBuffer(Fw::Buffer& buffer)
         + void processRing()
     }
