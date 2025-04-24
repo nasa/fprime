@@ -80,8 +80,9 @@ void TcpServerTester ::test_with_loop(U32 iterations, bool recv_thread) {
             Drv::Test::force_recv_timeout(client_fd.fd, client);
             m_data_buffer.setSize(sizeof(m_data_storage));
             size = Drv::Test::fill_random_buffer(m_data_buffer);
-            Drv::SendStatus status = invoke_to_send(0, m_data_buffer);
-            EXPECT_EQ(status, SendStatus::SEND_OK) <<
+            invoke_to_send(0, m_data_buffer);
+            Drv::ByteStreamStatus status = this->fromPortHistory_sentDataReturn->at(i).status;
+            EXPECT_EQ(status, ByteStreamStatus::SEND_OK) <<
                 "On iteration: " << i << " and receive thread: " << recv_thread;
             Drv::Test::receive_all(client, client_fd, buffer, size);
             EXPECT_EQ(status2, Drv::SOCK_SUCCESS) <<
@@ -218,10 +219,10 @@ void TcpServerTester ::test_no_automatic_recv_connection() {
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-void TcpServerTester ::from_recv_handler(const FwIndexType portNum, Fw::Buffer& recvBuffer, const RecvStatus& recvStatus) {
+void TcpServerTester ::from_recv_handler(const FwIndexType portNum, Fw::Buffer& recvBuffer, const ByteStreamStatus& recvStatus) {
     // this function will still receive a status of error because the recv port is always called
     this->pushFromPortEntry_recv(recvBuffer, recvStatus);
-    if (recvStatus == RecvStatus::RECV_OK) {
+    if (recvStatus == ByteStreamStatus::RECV_OK) {
         // Make sure we can get to unblocking the spinner
         EXPECT_EQ(m_data_buffer.getSize(), recvBuffer.getSize()) << "Invalid transmission size";
         Drv::Test::validate_random_buffer(m_data_buffer, recvBuffer.getData());

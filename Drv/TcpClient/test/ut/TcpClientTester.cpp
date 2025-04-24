@@ -79,8 +79,9 @@ void TcpClientTester ::test_with_loop(U32 iterations, bool recv_thread) {
             Drv::Test::force_recv_timeout(server_fd.serverFd, server);
             m_data_buffer.setSize(sizeof(m_data_storage));
             size = Drv::Test::fill_random_buffer(m_data_buffer);
-            Drv::SendStatus status = invoke_to_send(0, m_data_buffer);
-            EXPECT_EQ(status, SendStatus::SEND_OK);
+            invoke_to_send(0, m_data_buffer);
+            Drv::ByteStreamStatus status = this->fromPortHistory_sentDataReturn->at(i).status;
+            EXPECT_EQ(status, ByteStreamStatus::SEND_OK);
             Drv::Test::receive_all(server, server_fd, buffer, size);
             Drv::Test::validate_random_buffer(m_data_buffer, buffer);
             // If receive thread is live, try the other way
@@ -187,11 +188,11 @@ void TcpClientTester ::test_no_automatic_recv_connection() {
     from_recv_handler(
         const FwIndexType portNum,
         Fw::Buffer &recvBuffer,
-        const RecvStatus &recvStatus
+        const ByteStreamStatus &ByteStreamStatus
     )
   {
-    this->pushFromPortEntry_recv(recvBuffer, recvStatus);
-    if (recvStatus == RecvStatus::RECV_OK){
+    this->pushFromPortEntry_recv(recvBuffer, ByteStreamStatus);
+    if (ByteStreamStatus == ByteStreamStatus::RECV_OK){
         // Make sure we can get to unblocking the spinner
         EXPECT_EQ(m_data_buffer.getSize(), recvBuffer.getSize()) << "Invalid transmission size";
         Drv::Test::validate_random_buffer(m_data_buffer, recvBuffer.getData());

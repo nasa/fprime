@@ -78,7 +78,7 @@ namespace Drv {
       void from_recv_handler(
           const FwIndexType portNum, /*!< The port number*/
           Fw::Buffer &recvBuffer,
-          const RecvStatus &recvStatus
+          const ByteStreamStatus &ByteStreamStatus
       );
 
       //! Handler for from_ready

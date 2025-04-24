@@ -158,9 +158,8 @@ class TcpServerComponentImpl final : public TcpServerComponentBase, public Socke
      *
      * \param portNum: fprime port number of the incoming port call
      * \param fwBuffer: buffer containing data to be sent
-     * \return SEND_OK on success, SEND_RETRY when critical data should be retried and SEND_ERROR upon error
      */
-    Drv::SendStatus send_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) override;
+    void send_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) override;
 
     Drv::TcpServerSocket m_socket; //!< Socket implementation
 
