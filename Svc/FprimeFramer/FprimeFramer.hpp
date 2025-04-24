@@ -44,6 +44,13 @@ class FprimeFramer final : public FprimeFramerComponentBase {
                         Fw::Buffer& data,
                         const ComCfg::FrameContext& context) override;
 
+    //! Handler implementation for returnedDataIn
+    //!
+    //! Buffer coming from a deallocate call in a ComDriver component
+    void returnedDataIn_handler(FwIndexType portNum,  //!< The port number
+                                Fw::Buffer& data,
+                                const ComCfg::FrameContext& context) override;
+
     // ----------------------------------------------------------------------
     // Helpers
     // ----------------------------------------------------------------------

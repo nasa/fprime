@@ -11,6 +11,9 @@ module Svc {
         @ Port for allocating buffers to hold framed data
         output port bufferAllocate: Fw.BufferGet
 
+        @ Port for deallocating buffers allocated for framed data
+        output port bufferDeallocate: Fw.BufferSend
+
         # ----------------------------------------------------------------------
         # Standard AC Ports
         # ----------------------------------------------------------------------

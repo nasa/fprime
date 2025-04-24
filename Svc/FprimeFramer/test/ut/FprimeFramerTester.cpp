@@ -26,6 +26,15 @@ FprimeFramerTester ::~FprimeFramerTester() {}
 // Tests
 // ----------------------------------------------------------------------
 
+void FprimeFramerTester ::testFrameDeallocation() {
+    // When receiving a buffer on returnedDataIn, the buffer should be deallocated
+    Fw::Buffer buffer;
+    ComCfg::FrameContext context;
+    this->invoke_to_returnedDataIn(0, buffer, context);
+    ASSERT_from_bufferDeallocate_SIZE(1);
+    ASSERT_from_bufferDeallocate(0, buffer);
+}
+
 void FprimeFramerTester ::testComStatusPassThrough() {
     // Send a status message to the component
     Fw::Success inputStatus = Fw::Success::SUCCESS;

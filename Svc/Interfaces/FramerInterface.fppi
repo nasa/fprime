@@ -14,6 +14,9 @@ output port framedDataOut: Svc.ComDataWithContext
 @ once framing is handled
 output port dataReturn: Svc.ComDataWithContext
 
+@ Buffer coming from a deallocate call in a ComDriver component
+sync input port returnedDataIn: Svc.ComDataWithContext
+
 # ----------------------------------------------------------------------
 # Handling of of ready signals
 # ----------------------------------------------------------------------

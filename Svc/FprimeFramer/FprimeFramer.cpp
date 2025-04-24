@@ -57,7 +57,7 @@ void FprimeFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const 
 
     // Send the full frame out - this port shall always be connected
     this->framedDataOut_out(0, frameBuffer, context);
-    // Return original data buffer ownership back to its sender - always connected
+    // Return original (unframed) data buffer ownership back to its sender - always connected
     this->dataReturn_out(0, data, context);
 }
 
@@ -65,6 +65,11 @@ void FprimeFramer ::comStatusIn_handler(FwIndexType portNum, Fw::Success& condit
     if (this->isConnected_comStatusOut_OutputPort(portNum)) {
         this->comStatusOut_out(portNum, condition);
     }
+}
+
+void FprimeFramer ::returnedDataIn_handler(FwIndexType portNum, Fw::Buffer& frameBuffer, const ComCfg::FrameContext& context) {
+    // returnedDataIn is the allocated buffer coming back from the ComManager (e.g. ComStub) component
+    this->bufferDeallocate_out(0, frameBuffer);
 }
 
 }  // namespace Svc

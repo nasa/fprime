@@ -11,6 +11,11 @@ TEST(Nominal, testComStatusPassThrough) {
     tester.testComStatusPassThrough();
 }
 
+TEST(Nominal, testFrameDeallocation) {
+    Svc::FprimeFramerTester tester;
+    tester.testFrameDeallocation();
+}
+
 TEST(Nominal, testNominalFraming) {
     Svc::FprimeFramerTester tester;
     tester.testNominalFraming();
