@@ -206,6 +206,7 @@ void TcpServerTester ::test_no_automatic_recv_connection() {
     // Connect a client to the server so it is waiting in the "listen" queue
     // The read thread should not automatically connect and will thus exit with a failure
     client.configure("127.0.0.1", this->component.getListenPort(), 0, 100);
+    ASSERT_TRUE(this->wait_on_started(false, Drv::Test::get_configured_delay_ms()/10 + 1));
     ASSERT_EQ(client.open(client_fd), Drv::SOCK_FAILED_TO_CONNECT);
     ASSERT_FALSE(this->component.isOpened());
 
