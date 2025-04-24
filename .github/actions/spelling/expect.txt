@@ -848,7 +848,6 @@ seqgen
 serializables
 setaffinity
 setblocks
-setcrc
 setdata
 setid
 setinheritsched
