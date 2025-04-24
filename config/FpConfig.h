@@ -229,6 +229,11 @@ typedef enum {
 #define FW_TLM_BUFFER_MAX_SIZE (FW_COM_BUFFER_MAX_SIZE - sizeof(FwChanIdType) - sizeof(FwPacketDescriptorType))
 #endif
 
+// Specifies the size of the buffer that contains statement args for the FpySequencer
+#ifndef FW_STATEMENT_ARG_BUFFER_MAX_SIZE
+#define FW_STATEMENT_ARG_BUFFER_MAX_SIZE (FW_CMD_ARG_BUFFER_MAX_SIZE)
+#endif
+
 // Specifies the maximum size of a string in a telemetry channel
 #ifndef FW_TLM_STRING_MAX_SIZE
 #define FW_TLM_STRING_MAX_SIZE 40  //!< Max size of channelized telemetry string type
