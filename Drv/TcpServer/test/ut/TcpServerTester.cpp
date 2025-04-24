@@ -246,12 +246,4 @@ Fw::Buffer TcpServerTester ::
     return buffer;
   }
 
-  void TcpServerTester ::
-    from_deallocate_handler(
-        const FwIndexType portNum,
-        Fw::Buffer &fwBuffer
-    )
-  {
-    this->pushFromPortEntry_deallocate(fwBuffer);
-  }
 }  // end namespace Drv

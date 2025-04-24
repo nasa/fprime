@@ -90,7 +90,6 @@ void TcpClientTester ::test_with_loop(U32 iterations, bool recv_thread) {
                 m_data_buffer.setSize(sizeof(m_data_storage));
                 status2 = server.send(server_fd, m_data_buffer.getData(), m_data_buffer.getSize());
                 EXPECT_EQ(status2, Drv::SOCK_SUCCESS);
-                from_deallocate_handler(0, m_data_buffer);
                 while (not m_spinner) {}
             }
         }
@@ -216,15 +215,6 @@ Fw::Buffer TcpClientTester ::
     Fw::Buffer buffer(new U8[size], size);
     m_data_buffer2 = buffer;
     return buffer;
-  }
-
-  void TcpClientTester ::
-    from_deallocate_handler(
-        const FwIndexType portNum,
-        Fw::Buffer &fwBuffer
-    )
-  {
-    this->pushFromPortEntry_deallocate(fwBuffer);
   }
 
 }  // end namespace Drv

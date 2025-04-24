@@ -188,13 +188,4 @@ Fw::Buffer UdpTester ::
     return buffer;
   }
 
-  void UdpTester ::
-    from_deallocate_handler(
-        const FwIndexType portNum,
-        Fw::Buffer &fwBuffer
-    )
-  {
-    this->pushFromPortEntry_deallocate(fwBuffer);
-  }
-
 }  // end namespace Drv

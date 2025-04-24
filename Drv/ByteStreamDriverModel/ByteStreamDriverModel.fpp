@@ -10,16 +10,39 @@ module Drv {
         RECV_ERROR = 5 @< Receive error occurred retrying may succeed
     }
 
-    @ Send data out through the byte stream
-    port ByteStreamSend(
-        ref sendBuffer: Fw.Buffer @< Data to send
-    )
-
     @ Port to transmit
     port ByteStreamTransmit(
         ref buffer: Fw.Buffer,
         status: ByteStreamStatus
+        # REVIEW NOTE:
+        # If we make status a mutable reference, it can be used
+        # as a return value by projects who know they'll be sync ??
     )
+
+
+    ###########################################################
+    # DEPRECATED
+    # Anything below this line is deprecated. Please use the
+    # bidirectional ByteStreamTransmit instead
+    ###########################################################
+
+    @ Status returned by the send call
+    enum SendStatus {
+        SEND_OK = 0 @< Send worked as expected
+        SEND_RETRY = 1 @< Data send should be retried
+        SEND_ERROR = 2 @< Send error occurred retrying may succeed
+        RECV_OK = 3 @< Receive worked as expected
+        RECV_NO_DATA = 4 @< Receive worked, but there was no data 
+        RECV_ERROR = 5 @< Receive error occurred retrying may succeed
+    }
+
+
+    @ Send data out through the byte stream
+    port ByteStreamSend(
+        ref sendBuffer: Fw.Buffer @< Data to send
+    ) -> SendStatus
+
+
 
     @ Status associated with the received data
     enum RecvStatus {

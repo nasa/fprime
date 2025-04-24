@@ -101,13 +101,6 @@ namespace Drv {
           U32 size
       );
 
-      //! Handler for from_deallocate
-      //!
-      void from_deallocate_handler(
-          const FwIndexType portNum, /*!< The port number*/
-          Fw::Buffer &fwBuffer
-      );
-
     private:
 
       // ----------------------------------------------------------------------
