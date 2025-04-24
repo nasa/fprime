@@ -143,6 +143,6 @@ TeX/AMS
 ###### F Prime specific patterns    ######
 ##########################################
 
-# .get<NAME>() .set<NAME>() autocoded functions
+# .get...() .set...() autocoded functions
 \.get\w+\(
 \.set\w+\(

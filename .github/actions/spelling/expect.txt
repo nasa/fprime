@@ -369,7 +369,6 @@ getargument
 getblocks
 getbody
 getchildren
-getcomQueueIndex
 getcontext
 getcrc
 getdata
@@ -848,7 +847,6 @@ SENDPARTIAL
 seqgen
 serializables
 setaffinity
-setcomQueueIndex
 setblocks
 setcrc
 setdata
