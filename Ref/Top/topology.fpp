@@ -92,7 +92,6 @@ module Ref {
     # ----------------------------------------------------------------------
 
     connections Downlink {
-      # TODO: add enum for port indices
       dpCat.fileOut -> fileDownlink.SendFile
       fileDownlink.FileComplete -> dpCat.fileDone
 
@@ -106,13 +105,15 @@ module Ref {
       fprimeFramer.comStatusOut -> comQueue.comStatusIn
 
       fprimeFramer.bufferAllocate -> commsBufferManager.bufferGetCallee
+      fprimeFramer.bufferDeallocate -> commsBufferManager.bufferSendIn
 
       fprimeFramer.framedDataOut -> comStub.comDataIn
+      comStub.bufferReturnOut -> fprimeFramer.returnedDataIn
       comStub.comStatus -> fprimeFramer.comStatusIn
 
-      comDriver.deallocate -> commsBufferManager.bufferSendIn
       comDriver.ready -> comStub.drvConnected
       comStub.drvDataOut -> comDriver.$send
+      comDriver.sentDataReturn -> comStub.sentDataReturnIn
     }
 
     connections FaultProtection {
