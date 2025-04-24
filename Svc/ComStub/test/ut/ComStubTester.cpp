@@ -7,12 +7,6 @@
 #include "ComStubTester.hpp"
 #include <STest/Pick/Pick.hpp>
 
-#define INSTANCE 0
-#define MAX_HISTORY_SIZE 100
-#define RETRIES 3
-
-U8 storage[RETRIES][10240];
-
 namespace Svc {
 
 // ----------------------------------------------------------------------
@@ -21,8 +15,8 @@ namespace Svc {
 
 ComStubTester ::ComStubTester()
     : ComStubGTestBase("Tester", MAX_HISTORY_SIZE),
-      m_component("ComStub"),
-      m_send_mode(Drv::SendStatus::SEND_OK),
+      component("ComStub"),
+      m_send_mode(Drv::ByteStreamStatus::SEND_OK),
       m_retries(0) {
     this->initComponents();
     this->connectPorts();
@@ -54,7 +48,8 @@ void ComStubTester ::test_initial() {
 
 void ComStubTester ::test_basic() {
     this->test_initial();
-    Fw::Buffer buffer(storage[0], sizeof(storage[0]));
+    U8 storage[8];
+    Fw::Buffer buffer(storage, sizeof(storage));
     Fw::Success condition = Fw::Success::SUCCESS;
     ComCfg::FrameContext context;
     this->fill(buffer);
@@ -63,10 +58,9 @@ void ComStubTester ::test_basic() {
     invoke_to_comDataIn(0, buffer, context);
     ASSERT_from_drvDataOut_SIZE(1);
     ASSERT_from_drvDataOut(0, buffer);
-    ASSERT_from_comStatus(0, condition);
 
     // Uplink
-    Drv::RecvStatus status = Drv::RecvStatus::RECV_OK;
+    Drv::ByteStreamStatus status = Drv::ByteStreamStatus::RECV_OK;
     invoke_to_drvDataIn(0, buffer, status);
     ASSERT_from_comDataOut_SIZE(1);
     ASSERT_from_comDataOut(0, buffer, status);
@@ -74,21 +68,20 @@ void ComStubTester ::test_basic() {
 
 void ComStubTester ::test_fail() {
     this->test_initial();
-    Fw::Buffer buffer(storage[0], sizeof(storage[0]));
+    U8 storage[8];
+    Fw::Buffer buffer(storage, sizeof(storage));
     this->fill(buffer);
     Fw::Success condition = Fw::Success::FAILURE;
-    m_send_mode = Drv::SendStatus::SEND_ERROR;
+    m_send_mode = Drv::ByteStreamStatus::SEND_ERROR;
     ComCfg::FrameContext context;
 
     // Downlink
     invoke_to_comDataIn(0, buffer, context);
     ASSERT_from_drvDataOut_SIZE(1);
     ASSERT_from_drvDataOut(0, buffer);
-    ASSERT_from_drvDataOut_SIZE(1);
-    ASSERT_from_comStatus(0, condition);
 
     // Uplink
-    Drv::RecvStatus status = Drv::RecvStatus::RECV_ERROR;
+    Drv::ByteStreamStatus status = Drv::ByteStreamStatus::RECV_ERROR;
     invoke_to_drvDataIn(0, buffer, status);
     ASSERT_from_comDataOut_SIZE(1);
     ASSERT_from_comDataOut(0, buffer, status);
@@ -96,28 +89,61 @@ void ComStubTester ::test_fail() {
 
 void ComStubTester ::test_retry() {
     this->test_initial();
-    Fw::Buffer buffers[RETRIES];
-    Fw::Success condition = Fw::Success::SUCCESS;
-    m_send_mode = Drv::SendStatus::SEND_RETRY;
-    ComCfg::FrameContext context;
+    FwIndexType MAX_ITERS = this->component.RETRY_LIMIT + 1;
 
-    for (U32 i = 0; i < RETRIES; i++) {
+    // Make small individual buffers for testing
+    U8 storage[MAX_ITERS][8]; 
+    Fw::Buffer buffers[MAX_ITERS];
+    for (FwIndexType i = 0; i < MAX_ITERS; i++) {
         buffers[i].setData(storage[i]);
         buffers[i].setSize(sizeof(storage[i]));
-        buffers[i].setContext(i);
+        buffers[i].setContext(static_cast<U32>(i));
         this->fill(buffers[i]);
-        invoke_to_comDataIn(0, buffers[i], context);
-        ASSERT_from_drvDataOut_SIZE((i + 1) * RETRIES);
-        m_retries = 0;
     }
-    ASSERT_from_drvDataOut_SIZE(RETRIES * RETRIES);
-    ASSERT_from_comStatus_SIZE(3);
-    for (U32 i = 0; i < RETRIES; i++) {
-        for (U32 j = 0; j < RETRIES; j++) {
-            ASSERT_from_drvDataOut((i * RETRIES) + j, buffers[i]);
-        }
-        ASSERT_from_comStatus(i, condition);
+    // Retrying for as many times as the RETRY_LIMIT should be ok
+    for (FwIndexType i = 0; i < this->component.RETRY_LIMIT; i++) {
+        invoke_to_sentDataReturnIn(0, buffers[i], Drv::ByteStreamStatus::SEND_RETRY);
+        ASSERT_from_drvDataOut_SIZE(static_cast<U32>(i + 1));
+        ASSERT_from_drvDataOut(static_cast<U32>(i), buffers[i]);
     }
+    // The next call should be a failure
+    ASSERT_DEATH_IF_SUPPORTED(invoke_to_sentDataReturnIn(0, buffers[MAX_ITERS - 1], Drv::ByteStreamStatus::SEND_RETRY), "ComStub.cpp");
+}
+
+void ComStubTester ::test_retry_reset() {
+    this->test_initial();
+    FwIndexType MAX_ITERS = this->component.RETRY_LIMIT + 1;
+    U32 expected_drvDataOut_count = 0;
+
+    // Make small individual buffers for testing
+    U8 storage[MAX_ITERS][8]; 
+    Fw::Buffer buffers[MAX_ITERS];
+    for (FwIndexType i = 0; i < MAX_ITERS; i++) {
+        buffers[i].setData(storage[i]);
+        buffers[i].setSize(sizeof(storage[i]));
+        buffers[i].setContext(static_cast<U32>(i));
+        this->fill(buffers[i]);
+    }
+
+    // Retrying for as many times as the RETRY_LIMIT should be ok
+    for (FwIndexType i = 0; i < this->component.RETRY_LIMIT; i++) {
+        invoke_to_sentDataReturnIn(0, buffers[i], Drv::ByteStreamStatus::SEND_RETRY);
+        ASSERT_from_drvDataOut(expected_drvDataOut_count, buffers[i]);
+        expected_drvDataOut_count++; // trick: increment now to use as index prior and size after
+        ASSERT_from_drvDataOut_SIZE(expected_drvDataOut_count);
+    }
+    // Now, we receive a SEND_OK, which should not retry (drvDataOut should not be called) and reset the retry count
+    ASSERT_from_drvDataOut_SIZE(expected_drvDataOut_count); // no drvDataOut sent when SEND_OK
+    invoke_to_sentDataReturnIn(0, buffers[0], Drv::ByteStreamStatus::SEND_OK);
+    ASSERT_from_drvDataOut_SIZE(expected_drvDataOut_count); // no drvDataOut sent when SEND_OK
+    // Now that retry count is reset, we can retry again without a problem
+    for (FwIndexType i = 0; i < this->component.RETRY_LIMIT; i++) {
+        invoke_to_sentDataReturnIn(0, buffers[i], Drv::ByteStreamStatus::SEND_RETRY);
+        ASSERT_from_drvDataOut(expected_drvDataOut_count, buffers[i]);
+        expected_drvDataOut_count++; // trick: increment now to use as index prior and size after
+        ASSERT_from_drvDataOut_SIZE(expected_drvDataOut_count);
+    }
+    ASSERT_from_drvDataOut_SIZE(expected_drvDataOut_count); // no drvDataOut sent when SEND_OK
 }
 
 // ----------------------------------------------------------------------
@@ -126,7 +152,7 @@ void ComStubTester ::test_retry() {
 
 void ComStubTester ::from_comDataOut_handler(const FwIndexType portNum,
                                       Fw::Buffer& recvBuffer,
-                                      const Drv::RecvStatus& recvStatus) {
+                                      const Drv::ByteStreamStatus& recvStatus) {
     this->pushFromPortEntry_comDataOut(recvBuffer, recvStatus);
 }
 
@@ -134,42 +160,9 @@ void ComStubTester ::from_comStatus_handler(const FwIndexType portNum, Fw::Succe
     this->pushFromPortEntry_comStatus(condition);
 }
 
-Drv::SendStatus ComStubTester ::from_drvDataOut_handler(const FwIndexType portNum, Fw::Buffer& sendBuffer) {
+void ComStubTester ::from_drvDataOut_handler(const FwIndexType portNum, Fw::Buffer& sendBuffer) {
     this->pushFromPortEntry_drvDataOut(sendBuffer);
-    m_retries = (m_send_mode == Drv::SendStatus::SEND_RETRY) ? (m_retries + 1) : m_retries;
-    if (m_retries < RETRIES) {
-        return m_send_mode;
-    }
-    return Drv::SendStatus::SEND_OK;
 }
 
-// ----------------------------------------------------------------------
-// Helper methods
-// ----------------------------------------------------------------------
-
-void ComStubTester ::connectPorts() {
-    // comDataIn
-    this->connect_to_comDataIn(0, this->m_component.get_comDataIn_InputPort(0));
-
-    // drvConnected
-    this->connect_to_drvConnected(0, this->m_component.get_drvConnected_InputPort(0));
-
-    // drvDataIn
-    this->connect_to_drvDataIn(0, this->m_component.get_drvDataIn_InputPort(0));
-
-    // comDataOut
-    this->m_component.set_comDataOut_OutputPort(0, this->get_from_comDataOut(0));
-
-    // comStatus
-    this->m_component.set_comStatus_OutputPort(0, this->get_from_comStatus(0));
-
-    // drvDataOut
-    this->m_component.set_drvDataOut_OutputPort(0, this->get_from_drvDataOut(0));
-}
-
-void ComStubTester ::initComponents() {
-    this->init();
-    this->m_component.init(INSTANCE);
-}
 
 }  // end namespace Svc

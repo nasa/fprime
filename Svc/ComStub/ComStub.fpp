@@ -11,9 +11,9 @@ module Svc {
         sync input port drvConnected: Drv.ByteStreamReady
 
         @ Data received from driver
-        sync input port drvDataIn: Drv.ByteStreamRecv
+        sync input port drvDataIn: Drv.ByteStreamTransmit
 
         @ Data going to the underlying driver
-        output port drvDataOut: Drv.ByteStreamSend
+        output port drvDataOut: Fw.BufferSend
     }
 }

@@ -13,6 +13,12 @@
 namespace Svc {
 
 class ComStubTester : public ComStubGTestBase {
+
+  // Maximum size of histories storing events, telemetry, and port outputs
+  static const FwSizeType MAX_HISTORY_SIZE = 30;
+
+  // Instance ID supplied to the component instance under test
+  static const FwEnumStoreType TEST_INSTANCE_ID = 0;
     // ----------------------------------------------------------------------
     // Construction and destruction
     // ----------------------------------------------------------------------
@@ -50,6 +56,10 @@ class ComStubTester : public ComStubGTestBase {
     //!
     void test_retry();
 
+    //! Tests the retry -> reset -> retry again
+    //!
+    void test_retry_reset();
+
   private:
     // ----------------------------------------------------------------------
     // Handlers for typed from ports
@@ -59,7 +69,7 @@ class ComStubTester : public ComStubGTestBase {
     //!
     void from_comDataOut_handler(const FwIndexType portNum, //!< The port number
                                  Fw::Buffer& recvBuffer,
-                                 const Drv::RecvStatus& recvStatus);
+                                 const Drv::ByteStreamStatus& recvStatus);
 
     //! Handler for from_comStatus
     //!
@@ -69,8 +79,8 @@ class ComStubTester : public ComStubGTestBase {
 
     //! Handler for from_drvDataOut
     //!
-    Drv::SendStatus from_drvDataOut_handler(const FwIndexType portNum, //!< The port number
-                                            Fw::Buffer& sendBuffer);
+    void from_drvDataOut_handler(const FwIndexType portNum, //!< The port number
+                                Fw::Buffer& sendBuffer);
 
   private:
     // ----------------------------------------------------------------------
@@ -92,8 +102,8 @@ class ComStubTester : public ComStubGTestBase {
 
     //! The component under test
     //!
-    ComStub m_component;
-    Drv::SendStatus m_send_mode;  //! Send mode
+    ComStub component;
+    Drv::ByteStreamStatus m_send_mode;  //! Send mode
     U32 m_retries; //! Number of retries to test
 };
 

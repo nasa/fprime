@@ -20,4 +20,5 @@ set(UT_SOURCE_FILES
 set(UT_MOD_DEPS
     STest
 )
+set(UT_AUTO_HELPERS ON)
 register_fprime_ut()

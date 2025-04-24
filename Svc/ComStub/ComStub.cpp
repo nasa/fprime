@@ -14,7 +14,7 @@ namespace Svc {
 // Construction, initialization, and destruction
 // ----------------------------------------------------------------------
 
-ComStub::ComStub(const char* const compName) : ComStubComponentBase(compName), m_reinitialize(true) {}
+ComStub::ComStub(const char* const compName) : ComStubComponentBase(compName), m_reinitialize(true), m_retry_count(0) {}
 
 ComStub::~ComStub() {}
 
@@ -24,16 +24,8 @@ ComStub::~ComStub() {}
 
 void ComStub::comDataIn_handler(const FwIndexType portNum, Fw::Buffer& sendBuffer, const ComCfg::FrameContext& context) {
     FW_ASSERT(!this->m_reinitialize || !this->isConnected_comStatus_OutputPort(0));  // A message should never get here if we need to reinitialize is needed
-    Drv::SendStatus driverStatus = Drv::SendStatus::SEND_RETRY;
-    for (FwIndexType i = 0; driverStatus == Drv::SendStatus::SEND_RETRY && i < RETRY_LIMIT; i++) {
-        driverStatus = this->drvDataOut_out(0, sendBuffer);
-    }
-    FW_ASSERT(driverStatus != Drv::SendStatus::SEND_RETRY);  // If it is still in retry state, there is no good answer
-    Fw::Success comSuccess = (driverStatus.e == Drv::SendStatus::SEND_OK) ? Fw::Success::SUCCESS : Fw::Success::FAILURE;
-    this->m_reinitialize = driverStatus.e != Drv::SendStatus::SEND_OK;
-    if (this->isConnected_comStatus_OutputPort(0)) {
-        this->comStatus_out(0, comSuccess);
-    }
+    this->m_storedContext = context;  // Store the context of the current message
+    this->drvDataOut_out(0, sendBuffer);
 }
 
 void ComStub::drvConnected_handler(const FwIndexType portNum) {
@@ -46,8 +38,25 @@ void ComStub::drvConnected_handler(const FwIndexType portNum) {
 
 void ComStub::drvDataIn_handler(const FwIndexType portNum,
                                 Fw::Buffer& recvBuffer,
-                                const Drv::RecvStatus& recvStatus) {
+                                const Drv::ByteStreamStatus& recvStatus) {
     this->comDataOut_out(0, recvBuffer, recvStatus);
+}
+
+void ComStub ::sentDataReturnIn_handler(FwIndexType portNum,  //!< The port number
+                                        Fw::Buffer& fwBuffer,  //!< The buffer
+                                        const Drv::ByteStreamStatus& sendStatus) {
+    if (sendStatus != Drv::ByteStreamStatus::SEND_RETRY) {
+        this->bufferReturnOut_out(0, fwBuffer, this->m_storedContext);
+        this->m_reinitialize = sendStatus.e != Drv::ByteStreamStatus::SEND_OK;
+        this->m_retry_count = 0; // Reset the retry count
+        Fw::Success comSuccess = (sendStatus.e == Drv::ByteStreamStatus::SEND_OK) ? Fw::Success::SUCCESS : Fw::Success::FAILURE;
+        this->comStatus_out(0, comSuccess);
+    } else {
+        // If we have already retried more than the retry limit, there is no good answer
+        FW_ASSERT(this->m_retry_count < this->RETRY_LIMIT, static_cast<FwAssertArgType>(this->m_retry_count));
+        this->m_retry_count++;
+        this->drvDataOut_out(0, fwBuffer);
+    }
 }
 
 }  // end namespace Svc

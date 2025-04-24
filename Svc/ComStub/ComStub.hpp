@@ -8,6 +8,7 @@
 #define Svc_ComStub_HPP
 
 #include "Svc/ComStub/ComStubComponentAc.hpp"
+#include "Drv/ByteStreamDriverModel/ByteStreamSentReturnPortAc.hpp"
 
 namespace Svc {
 
@@ -46,9 +47,19 @@ class ComStub final : public ComStubComponentBase {
     //!
     void drvDataIn_handler(const FwIndexType portNum,
                            /*!< The port number*/ Fw::Buffer& recvBuffer,
-                           const Drv::RecvStatus& recvStatus) override;
+                           const Drv::ByteStreamStatus& recvStatus) override;
+
+    //! Handler implementation for bufferReturnIn
+    //!
+    //! Buffer coming from a deallocate call in a ComDriver component
+    void sentDataReturnIn_handler(FwIndexType portNum,  //!< The port number
+                                  Fw::Buffer& fwBuffer,  //!< The buffer
+                                  const Drv::ByteStreamStatus& recvStatus) override;
+
 
     bool m_reinitialize;  //!< Stores if a ready signal is needed on connection
+    ComCfg::FrameContext m_storedContext; //!< Stores the context of the current message
+    FwIndexType m_retry_count; //!< Counts the number of retries of the current message
 };
 
 }  // end namespace Svc
