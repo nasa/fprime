@@ -71,8 +71,12 @@ module RPI {
       framer.dataReturn -> comQueue.bufferReturnIn
       comQueue.bufferReturnOut[0] -> fileDownlink.bufferReturn
 
-      # framer.bufferAllocate -> commsBufferManager.bufferGetCallee
+      framer.bufferAllocate -> commsBufferManager.bufferGetCallee
+      framer.bufferDeallocate -> commsBufferManager.bufferSendIn
+
       framer.framedDataOut -> comStub.comDataIn
+      comStub.bufferReturnOut -> framer.returnedDataIn
+      comm.sentDataReturn -> comStub.sentDataReturnIn
 
       comm.ready -> comStub.drvConnected
       comStub.drvDataOut -> comm.$send
@@ -123,8 +127,6 @@ module RPI {
 
     connections MemoryAllocations {
       comm.allocate -> commsBufferManager.bufferGetCallee
-      comm.deallocate -> commsBufferManager.bufferSendIn
-      framer.bufferAllocate -> commsBufferManager.bufferGetCallee
       fileUplink.bufferSendOut -> commsBufferManager.bufferSendIn
       frameAccumulator.bufferAllocate -> commsBufferManager.bufferGetCallee
       frameAccumulator.bufferDeallocate -> commsBufferManager.bufferSendIn
@@ -137,6 +139,7 @@ module RPI {
       rpiDemo.UartWrite -> uartDrv.$send
       uartDrv.$recv -> rpiDemo.UartRead
       uartDrv.allocate -> uartBufferManager.bufferGetCallee
+      uartDrv.sentDataReturn -> rpiDemo.UartWriteReturn
     }
 
     connections Uplink {

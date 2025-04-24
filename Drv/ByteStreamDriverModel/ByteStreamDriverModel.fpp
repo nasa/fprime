@@ -31,18 +31,12 @@ module Drv {
         SEND_OK = 0 @< Send worked as expected
         SEND_RETRY = 1 @< Data send should be retried
         SEND_ERROR = 2 @< Send error occurred retrying may succeed
-        RECV_OK = 3 @< Receive worked as expected
-        RECV_NO_DATA = 4 @< Receive worked, but there was no data 
-        RECV_ERROR = 5 @< Receive error occurred retrying may succeed
     }
-
 
     @ Send data out through the byte stream
     port ByteStreamSend(
         ref sendBuffer: Fw.Buffer @< Data to send
     ) -> SendStatus
-
-
 
     @ Status associated with the received data
     enum RecvStatus {
