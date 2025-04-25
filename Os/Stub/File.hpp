@@ -43,7 +43,7 @@ class StubFile : public FileInterface {
     //! \param overwrite: overwrite existing file on create
     //! \return: NOT_IMPLEMENTED
     //!
-    Os::FileInterface::Status open(const char *path, Mode mode, OverwriteType overwrite) override;
+    Os::FileInterface::Status open(const char* path, Mode mode, OverwriteType overwrite) override;
 
     //! \brief close the file, if not opened then do nothing
     //!
@@ -57,7 +57,7 @@ class StubFile : public FileInterface {
     //! \param size: output parameter for size.
     //! \return NOT_IMPLEMENTED
     //!
-    Status size(FwSizeType &size_result) override;
+    Status size(FwSizeType& size_result) override;
 
     //! \brief get file pointer position of the currently open file
     //!
@@ -65,7 +65,7 @@ class StubFile : public FileInterface {
     //! \param position: output parameter for size.
     //! \return NOT_IMPLEMENTED
     //!
-    Status position(FwSizeType &position_result) override;
+    Status position(FwSizeType& position_result) override;
 
     //! \brief pre-allocate file storage
     //!
@@ -85,7 +85,7 @@ class StubFile : public FileInterface {
     //! This implementation does nothing but return NOT_IMPLEMENTED.
     //!
     //! \param offset: offset to seek to
-    //! \param seekType: `ABSOLUTE` for seeking from beginning of file, `CURRENT` to use current position.
+    //! \param seekType: `ABSOLUTE` for seeking from beginning of file, `RELATIVE` to use current position.
     //! \return NOT_IMPLEMENTED
     //!
     Status seek(FwSignedSizeType offset, SeekType seekType) override;
@@ -111,7 +111,7 @@ class StubFile : public FileInterface {
     //! \param wait: `WAIT` to wait for data, `NO_WAIT` to return what is currently available
     //! \return NOT_IMPLEMENTED
     //!
-    Status read(U8 *buffer, FwSizeType &size, WaitType wait) override;
+    Status read(U8* buffer, FwSizeType& size, WaitType wait) override;
 
     //! \brief read data from this file into supplied buffer bounded by size
     //!
@@ -126,7 +126,7 @@ class StubFile : public FileInterface {
     //! \param wait: `WAIT` to wait for data to write to disk, `NO_WAIT` to return what is currently available
     //! \return NOT_IMPLEMENTED
     //!
-    Status write(const U8 *buffer, FwSizeType &size, WaitType wait) override;
+    Status write(const U8* buffer, FwSizeType& size, WaitType wait) override;
 
     //! \brief returns the raw file handle
     //!
@@ -135,15 +135,14 @@ class StubFile : public FileInterface {
     //!
     //! \return raw file handle
     //!
-    FileHandle *getHandle() override;
+    FileHandle* getHandle() override;
 
-
-private:
+  private:
     //! File handle for PosixFile
     StubFileHandle m_handle;
 };
 
-} // namespace File
-} // namespace Stub
-} // namespace Os
-#endif // OS_STUB_FILE_HPP
+}  // namespace File
+}  // namespace Stub
+}  // namespace Os
+#endif  // OS_STUB_FILE_HPP

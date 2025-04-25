@@ -104,8 +104,25 @@ void Buffer::set(U8* const data, const SizeType size, const U32 context) {
     this->m_context = context;
 }
 
-Fw::SerializeBufferBase& Buffer::getSerializeRepr() {
-    return m_serialize_repr;
+Fw::ExternalSerializeBufferWithMemberCopy Buffer::getSerializer() {
+    if (this->isValid()) {
+        Fw::ExternalSerializeBufferWithMemberCopy esb(this->m_bufferData, static_cast<Fw::Serializable::SizeType>(this->m_size));
+        esb.resetSer();
+        return esb;
+    } else {
+        return ExternalSerializeBufferWithMemberCopy();
+    }
+}
+
+Fw::ExternalSerializeBufferWithMemberCopy Buffer::getDeserializer() {
+    if (this->isValid()) {
+        Fw::ExternalSerializeBufferWithMemberCopy esb(this->m_bufferData, static_cast<Fw::Serializable::SizeType>(this->m_size));
+        Fw::SerializeStatus stat = esb.setBuffLen(static_cast<Fw::Serializable::SizeType>(this->m_size));
+        FW_ASSERT(stat == Fw::FW_SERIALIZE_OK);
+        return esb;
+    } else {
+        return ExternalSerializeBufferWithMemberCopy();
+    }
 }
 
 Fw::SerializeStatus Buffer::serialize(Fw::SerializeBufferBase& buffer) const {

@@ -124,7 +124,6 @@ void FprimeDeframerTester::injectChecksum(U8* data, FwSizeType size) {
 void FprimeDeframerTester::mockReceiveData(U8* data, FwSizeType size) {
     Fw::Buffer nullContext;
     Fw::Buffer buffer(data, static_cast<Fw::Buffer::SizeType>(size));
-    buffer.getSerializeRepr().setBuffLen(size);
     this->invoke_to_framedIn(0, buffer, nullContext);
 }
 

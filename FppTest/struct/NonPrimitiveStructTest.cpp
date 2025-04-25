@@ -111,7 +111,9 @@ TEST_F(NonPrimitiveStructTest, Default) {
         Fw::StringBase::STATIC_SERIALIZED_SIZE(80)
             + StructEnum::SERIALIZED_SIZE
             + StructArray::SERIALIZED_SIZE
+            + StructArrAlias::SERIALIZED_SIZE
             + Primitive::SERIALIZED_SIZE
+            + StructSAlias::SERIALIZED_SIZE
             + (3 * sizeof(U32))
             + (3 * Primitive::SERIALIZED_SIZE)
     );
@@ -133,13 +135,17 @@ TEST_F(NonPrimitiveStructTest, Default) {
 // Test struct constructors
 TEST_F(NonPrimitiveStructTest, Constructors) {
     // Member constructor
-    NonPrimitive s1(testString, testEnum, testArray,
-                    testStruct, testU32Arr, testStructArr);
+    NonPrimitive s1(testString, testEnum,
+                    testArray, testArray,
+                    testStruct, testStruct,
+                    testU32Arr, testStructArr);
     assertStructMembers(s1);
 
     // Scalar member constructor
-    NonPrimitive s2(testString, testEnum, testArray,
-                    testStruct, testU32Arr[0], testStructArr[0]);
+    NonPrimitive s2(testString, testEnum,
+                    testArray, testArray,
+                    testStruct, testStruct,
+                    testU32Arr[0], testStructArr[0]);
 
     ASSERT_EQ(s2.getmString(), testString);
     ASSERT_EQ(s2.getmEnum(), testEnum);
@@ -161,8 +167,10 @@ TEST_F(NonPrimitiveStructTest, Constructors) {
 // Test struct assignment operator
 TEST_F(NonPrimitiveStructTest, AssignmentOp) {
     NonPrimitive s1;
-    NonPrimitive s2(testString, testEnum, testArray,
-                    testStruct, testU32Arr, testStructArr);
+    NonPrimitive s2(testString, testEnum,
+                    testArray, testArray,
+                    testStruct, testStruct,
+                    testU32Arr, testStructArr);
 
     // Copy assignment
     s1 = s2;
@@ -227,8 +235,8 @@ TEST_F(NonPrimitiveStructTest, GetterSetterFunctions) {
     NonPrimitive s1, s2;
 
     // Set all members
-    s1.set(testString, testEnum, testArray,
-           testStruct, testU32Arr, testStructArr);
+    s1.set(testString, testEnum, testArray, testArray,
+           testStruct, testStruct, testU32Arr, testStructArr);
     assertStructMembers(s1);
 
     // Set individual members
@@ -261,8 +269,10 @@ TEST_F(NonPrimitiveStructTest, GetterSetterFunctions) {
 
 // Test struct serialization and deserialization
 TEST_F(NonPrimitiveStructTest, Serialization) {
-    NonPrimitive s(testString, testEnum, testArray,
-                   testStruct, testU32Arr, testStructArr);
+    NonPrimitive s(testString, testEnum,
+                   testArray, testArray,
+                   testStruct, testStruct,
+                   testU32Arr, testStructArr);
     NonPrimitive sCopy;
 
     U32 stringSerializedSize = static_cast<U32>(testString.length() + sizeof(FwBuffSizeType));
@@ -306,8 +316,10 @@ TEST_F(NonPrimitiveStructTest, Serialization) {
 
 // Test struct toString() and ostream operator functions
 TEST_F(NonPrimitiveStructTest, ToString) {
-    NonPrimitive s(testString, testEnum, testArray,
-                   testStruct, testU32Arr, testStructArr);
+    NonPrimitive s(testString, testEnum,
+                   testArray, testArray,
+                   testStruct, testStruct,
+                   testU32Arr, testStructArr);
     std::stringstream buf1, buf2;
 
     buf1 << s;
@@ -316,7 +328,9 @@ TEST_F(NonPrimitiveStructTest, ToString) {
          << "mString = " << testString << ", "
          << "mEnum = " << testEnum << ", "
          << "mArray = " << testArray << ", "
+         << "mAliasStructAlias = " << testArray << ", "
          << "mStruct = " << testStruct << ", "
+         << "mAliasStruct = " << testStruct << ", "
          << "mU32Arr = [ "
          << testU32Arr[0] << ", "
          << testU32Arr[1] << ", "

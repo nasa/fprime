@@ -104,10 +104,10 @@ class PosixFile : public FileInterface {
     //! \brief seek the file pointer to the given offset
     //!
     //! Seek the file pointer to the given `offset`. If `seekType` is set to `ABSOLUTE` then the offset is calculated
-    //! from the start of the file, and if it is set to `CURRENT` it is calculated from the current position.
+    //! from the start of the file, and if it is set to `RELATIVE` it is calculated from the current position.
     //!
     //! \param offset: offset to seek to
-    //! \param seekType: `ABSOLUTE` for seeking from beginning of file, `CURRENT` to use current position.
+    //! \param seekType: `ABSOLUTE` for seeking from beginning of file, `RELATIVE` to use current position.
     //! \return OP_OK on success otherwise error status
     //!
     Status seek(FwSignedSizeType offset, SeekType seekType) override;
