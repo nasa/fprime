@@ -2,7 +2,7 @@
 # The website uses MkDocs Material and this file is used by the mkdocs-awesome-nav plugin
 # https://github.com/lukasgeiter/mkdocs-awesome-nav
 #
-# Paths pefixed with ../ are not plublicly available
+# Paths prefixed with ../ are not publicly available
 
 nav:
   - Home: '../'
