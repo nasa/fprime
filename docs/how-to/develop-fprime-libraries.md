@@ -1,4 +1,4 @@
-# How-To: Develop an F´ Library
+# Develop an F´ Library
 
 This guide will walk you through the structure and best practices in developing an F´ library.  F´ libraries are used to share modules (components, ports, topologies, etc.), toolchains, and platforms between F´ projects.  These libraries help with code reuse between projects by enabling direct sharing of F´ software.
 
