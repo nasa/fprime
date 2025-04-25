@@ -1,4 +1,4 @@
-# The Discerning User's Guide to the F´ GDS CLI
+# The F´ GDS CLI
 
 This guide will give you a quick introduction to the F´ Ground Data System  Command Line Interface (`fprime-cli`),
 how it can be used, and a detailed reference for interested users. `fprime-cli` allows for use of the most common F´ GDS
@@ -6,7 +6,7 @@ features without the need for a graphical environment. This enables projects eas
 in more environments.
 
 > [!NOTE]
-> Developer documentation is available in the [developer's CLI guide](../../reference/gds-cli-dev.md).
+> Developer documentation is available in the [developer's CLI guide](gds-dev-guide.md).
 
 - [What is `fprime-cli`?](#what-is-fprime-cli)
 - [Getting Started](#getting-started)

@@ -1,4 +1,4 @@
-# Dynamic Memory Allocation Using `Fw::Buffer`
+# Dynamic Memory and Buffer Management
 
 In embedded systems, dynamic memory allocation (a.k.a heap allocation) is typically avoided to reduce the steady-state
 variability in a running system. Avoiding dynamic memory allocation also avoids the problem of what to do in the case of

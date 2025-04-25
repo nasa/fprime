@@ -1,4 +1,4 @@
-# Data Types and Data Structures: Primitive Types, Enums, Arrays, and Serializables
+# Data Structures and Types
 
 This guide will describe the types available in F´.  F´ defines both useful short names for primitive types as well as
 a set of autocoded complex types.  The types described here are available to both the flight software and the ground
