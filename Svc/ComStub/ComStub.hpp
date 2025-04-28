@@ -52,7 +52,7 @@ class ComStub final : public ComStubComponentBase {
     //! Handler implementation for bufferReturnIn
     //!
     //! Buffer coming from a deallocate call in a ComDriver component
-    void sentDataReturnIn_handler(FwIndexType portNum,  //!< The port number
+    void dataReturnIn_handler(FwIndexType portNum,  //!< The port number
                                   Fw::Buffer& fwBuffer,  //!< The buffer
                                   const Drv::ByteStreamStatus& recvStatus) override;
 

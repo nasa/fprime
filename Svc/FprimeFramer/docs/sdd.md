@@ -20,14 +20,14 @@ On receiving a data packet, the `Svc::FprimeFramer` performs the following actio
 2. Serializes the F´ start word (`0xDEADBEEF`) and length token (`size(dataPacket)`) into _`outBuffer`_
 3. Serializes the F´ packet data into _`outBuffer`_
 4. Computes and serializes a CRC32 checksum into _`outBuffer`_
-5. Emits the _`outBuffer`_ on the `framedDataOut` output port. Ownership of _`outBuffer`_ is handed to the receiver
+5. Emits the _`outBuffer`_ on the `dataOut` output port. Ownership of _`outBuffer`_ is handed to the receiver
 
 ## Port Descriptions
 
 | Kind  | Name  | Port Type | Usage    |
 |---|---|---|---|
 | `guarded input` | `dataIn` | `Svc.ComDataWithContext` | Port to receive data to frame, in a Fw::Buffer with optional context|
-| `output` | `framedDataOut` | `Svc.ComDataWithContext` | Port to output framed data, with optional context, for follow-up framing|
+| `output` | `dataOut` | `Svc.ComDataWithContext` | Port to output framed data, with optional context, for follow-up framing|
 | `sync input` | `comStatusIn` | `Fw.SuccessCondition` | Port receiving the general status from the downstream component|
 | `output` | `comStatusOut` | `Fw.SuccessCondition` | Port receiving indicating the status of framer for receiving more data|
 

@@ -4,21 +4,21 @@
 @ Port to receive data to frame, in a Fw::Buffer with optional context
 guarded input port dataIn: Svc.ComDataWithContext
 
-@ Port to output framed data, with optional context, for follow-up framing
-output port framedDataOut: Svc.ComDataWithContext
+@ Port to output framed data with optional context
+output port dataOut: Svc.ComDataWithContext
 
 # ----------------------------------------------------------------------
 # Data ownership
 # ----------------------------------------------------------------------
 @ Port for returning ownership of the incoming Fw::Buffer to its sender
 @ once framing is handled
-output port dataReturn: Svc.ComDataWithContext
+output port dataReturnOut: Svc.ComDataWithContext
 
 @ Buffer coming from a deallocate call in a ComDriver component
-sync input port returnedDataIn: Svc.ComDataWithContext
+sync input port dataReturnIn: Svc.ComDataWithContext
 
 # ----------------------------------------------------------------------
-# Handling of of ready signals
+# Handling of ready signals (ComQueue <-> ComInterface)
 # ----------------------------------------------------------------------
 @ Port receiving the general status from the downstream component
 @ indicating it is ready or not-ready for more input

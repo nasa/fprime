@@ -311,7 +311,7 @@ void LinuxUartDriver ::send_handler(const FwIndexType portNum, Fw::Buffer& serBu
         }
     }
     // Return the buffer back to the caller
-    sentDataReturn_out(0, serBuffer, status);
+    dataReturnOut_out(0, serBuffer, status);
 }
 
 void LinuxUartDriver ::serialReadTaskEntry(void* ptr) {

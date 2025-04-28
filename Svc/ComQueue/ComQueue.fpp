@@ -26,7 +26,7 @@ module Svc {
       async input port comPacketQueueIn: [ComQueueComPorts] Fw.Com drop
 
       @ Port array for receiving Fw::Buffers
-      async input port buffQueueIn: [ComQueueBufferPorts] Fw.BufferSend hook
+      async input port bufferQueueIn: [ComQueueBufferPorts] Fw.BufferSend hook
 
       @ Port array for returning ownership of Fw::Buffer to its original sender
       output port bufferReturnOut: [ComQueueBufferPorts] Fw.BufferSend

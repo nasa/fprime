@@ -53,7 +53,7 @@ The diagram below shows the `Svc::ComQueue` component.
 | `output`      | `deallocate`      | `Fw.BufferSend`                       | Port for deallocating Fw::Buffer on queue overflow       |
 | `async input` | `comStatusIn`     | `Fw.SuccessCondition`                 | Port for receiving the status signal                     |
 | `async input` | `comPacketQueueIn`      | `[ComQueueComPorts] Fw.Com`           | Port array for receiving Fw::ComBuffers                  |
-| `async input` | `buffQueueIn`     | `[ComQueueBufferPorts] Fw.BufferSend` | Port array for receiving Fw::Buffers                     |
+| `async input` | `bufferQueueIn`     | `[ComQueueBufferPorts] Fw.BufferSend` | Port array for receiving Fw::Buffers                     |
 | `async input` | `run`             | `Svc.Sched`                           | Port for scheduling telemetry output                     |
 | `event`       | `Log`             | `Fw.Log`                              | Port for emitting events                                 |
 | `text event`  | `LogText`         | `Fw.LogText`                          | Port for emitting text events                            |
@@ -87,7 +87,7 @@ Buffers are queued when in `WAITING` state.
 ### 4.3 Model Configuration
 `Svc::ComQueue` has the following constants, that are configured in `AcConstants.fpp`:
 1. `ComQueueComPorts`: number of ports of `Fw.Com` type in the `comPacketQueueIn` port array.
-2. `ComQueueBufferPorts`: number of ports of `Fw.BufferSend` type in the `buffQueueIn` port array.
+2. `ComQueueBufferPorts`: number of ports of `Fw.BufferSend` type in the `bufferQueueIn` port array.
 
 ### 4.4 Runtime Setup
 To set up an instance of `ComQueue`, the following needs to be done: 
@@ -103,8 +103,8 @@ and an allocator of `Fw::MemAllocator`. The `configure` method foes the followin
 
 ### 4.5 Port Handlers
 
-#### 4.5.1 buffQueueIn
-The `buffQueueIn` port handler receives an `Fw::Buffer` data type and a port number. 
+#### 4.5.1 bufferQueueIn
+The `bufferQueueIn` port handler receives an `Fw::Buffer` data type and a port number. 
 It does the following:
 1. Ensures that the port number is between zero and the value of the buffer size 
 2. Enqueue the buffer onto the `m_queues` instance 

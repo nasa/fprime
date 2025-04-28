@@ -97,23 +97,23 @@ module Ref {
 
       eventLogger.PktSend -> comQueue.comPacketQueueIn[Ports_ComPacketQueue.EVENTS]
       tlmSend.PktSend -> comQueue.comPacketQueueIn[Ports_ComPacketQueue.TELEMETRY]
-      fileDownlink.bufferSendOut -> comQueue.buffQueueIn[0]
+      fileDownlink.bufferSendOut -> comQueue.bufferQueueIn[0]
       comQueue.bufferReturnOut[0] -> fileDownlink.bufferReturn
 
       comQueue.queueSend -> fprimeFramer.dataIn
-      fprimeFramer.dataReturn -> comQueue.bufferReturnIn
+      fprimeFramer.dataReturnOut -> comQueue.bufferReturnIn
       fprimeFramer.comStatusOut -> comQueue.comStatusIn
 
       fprimeFramer.bufferAllocate -> commsBufferManager.bufferGetCallee
       fprimeFramer.bufferDeallocate -> commsBufferManager.bufferSendIn
 
-      fprimeFramer.framedDataOut -> comStub.comDataIn
-      comStub.bufferReturnOut -> fprimeFramer.returnedDataIn
-      comStub.comStatus -> fprimeFramer.comStatusIn
+      fprimeFramer.dataOut -> comStub.comDataIn
+      comStub.dataReturnOut -> fprimeFramer.dataReturnIn
+      comStub.comStatusOut -> fprimeFramer.comStatusIn
 
-      comDriver.ready -> comStub.drvConnected
       comStub.drvDataOut -> comDriver.$send
-      comDriver.sentDataReturn -> comStub.sentDataReturnIn
+      comDriver.dataReturnOut -> comStub.dataReturnIn
+      comDriver.ready -> comStub.drvConnected
     }
 
     connections FaultProtection {

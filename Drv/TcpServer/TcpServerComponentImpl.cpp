@@ -139,7 +139,7 @@ void TcpServerComponentImpl::send_handler(const FwIndexType portNum, Fw::Buffer&
             break;
     }
     // Return the buffer and status to the caller
-    this->sentDataReturn_out(0, fwBuffer, returnStatus);
+    this->dataReturnOut_out(0, fwBuffer, returnStatus);
 }
 
 }  // end namespace Drv

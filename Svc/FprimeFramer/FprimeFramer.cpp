@@ -56,9 +56,9 @@ void FprimeFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const 
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     // Send the full frame out - this port shall always be connected
-    this->framedDataOut_out(0, frameBuffer, context);
+    this->dataOut_out(0, frameBuffer, context);
     // Return original (unframed) data buffer ownership back to its sender - always connected
-    this->dataReturn_out(0, data, context);
+    this->dataReturnOut_out(0, data, context);
 }
 
 void FprimeFramer ::comStatusIn_handler(FwIndexType portNum, Fw::Success& condition) {
@@ -67,8 +67,8 @@ void FprimeFramer ::comStatusIn_handler(FwIndexType portNum, Fw::Success& condit
     }
 }
 
-void FprimeFramer ::returnedDataIn_handler(FwIndexType portNum, Fw::Buffer& frameBuffer, const ComCfg::FrameContext& context) {
-    // returnedDataIn is the allocated buffer coming back from the ComManager (e.g. ComStub) component
+void FprimeFramer ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& frameBuffer, const ComCfg::FrameContext& context) {
+    // dataReturnIn is the allocated buffer coming back from the ComManager (e.g. ComStub) component
     this->bufferDeallocate_out(0, frameBuffer);
 }
 

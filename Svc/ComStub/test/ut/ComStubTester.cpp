@@ -41,9 +41,9 @@ void ComStubTester ::fill(Fw::Buffer& buffer_to_fill) {
 void ComStubTester ::test_initial() {
     Fw::Success condition = Fw::Success::SUCCESS;
     invoke_to_drvConnected(0);
-    ASSERT_from_comStatus_SIZE(1);
-    ASSERT_from_comStatus(0, condition);
-    this->fromPortHistory_comStatus->clear();
+    ASSERT_from_comStatusOut_SIZE(1);
+    ASSERT_from_comStatusOut(0, condition);
+    this->fromPortHistory_comStatusOut->clear();
 }
 
 void ComStubTester ::test_basic() {
@@ -102,12 +102,12 @@ void ComStubTester ::test_retry() {
     }
     // Retrying for as many times as the RETRY_LIMIT should be ok
     for (FwIndexType i = 0; i < this->component.RETRY_LIMIT; i++) {
-        invoke_to_sentDataReturnIn(0, buffers[i], Drv::ByteStreamStatus::SEND_RETRY);
+        invoke_to_dataReturnIn(0, buffers[i], Drv::ByteStreamStatus::SEND_RETRY);
         ASSERT_from_drvDataOut_SIZE(static_cast<U32>(i + 1));
         ASSERT_from_drvDataOut(static_cast<U32>(i), buffers[i]);
     }
     // The next call should be a failure
-    ASSERT_DEATH_IF_SUPPORTED(invoke_to_sentDataReturnIn(0, buffers[MAX_ITERS - 1], Drv::ByteStreamStatus::SEND_RETRY), "ComStub.cpp");
+    ASSERT_DEATH_IF_SUPPORTED(invoke_to_dataReturnIn(0, buffers[MAX_ITERS - 1], Drv::ByteStreamStatus::SEND_RETRY), "ComStub.cpp");
 }
 
 void ComStubTester ::test_retry_reset() {
@@ -127,18 +127,18 @@ void ComStubTester ::test_retry_reset() {
 
     // Retrying for as many times as the RETRY_LIMIT should be ok
     for (FwIndexType i = 0; i < this->component.RETRY_LIMIT; i++) {
-        invoke_to_sentDataReturnIn(0, buffers[i], Drv::ByteStreamStatus::SEND_RETRY);
+        invoke_to_dataReturnIn(0, buffers[i], Drv::ByteStreamStatus::SEND_RETRY);
         ASSERT_from_drvDataOut(expected_drvDataOut_count, buffers[i]);
         expected_drvDataOut_count++; // trick: increment now to use as index prior and size after
         ASSERT_from_drvDataOut_SIZE(expected_drvDataOut_count);
     }
     // Now, we receive a SEND_OK, which should not retry (drvDataOut should not be called) and reset the retry count
     ASSERT_from_drvDataOut_SIZE(expected_drvDataOut_count); // no drvDataOut sent when SEND_OK
-    invoke_to_sentDataReturnIn(0, buffers[0], Drv::ByteStreamStatus::SEND_OK);
+    invoke_to_dataReturnIn(0, buffers[0], Drv::ByteStreamStatus::SEND_OK);
     ASSERT_from_drvDataOut_SIZE(expected_drvDataOut_count); // no drvDataOut sent when SEND_OK
     // Now that retry count is reset, we can retry again without a problem
     for (FwIndexType i = 0; i < this->component.RETRY_LIMIT; i++) {
-        invoke_to_sentDataReturnIn(0, buffers[i], Drv::ByteStreamStatus::SEND_RETRY);
+        invoke_to_dataReturnIn(0, buffers[i], Drv::ByteStreamStatus::SEND_RETRY);
         ASSERT_from_drvDataOut(expected_drvDataOut_count, buffers[i]);
         expected_drvDataOut_count++; // trick: increment now to use as index prior and size after
         ASSERT_from_drvDataOut_SIZE(expected_drvDataOut_count);
@@ -156,8 +156,8 @@ void ComStubTester ::from_comDataOut_handler(const FwIndexType portNum,
     this->pushFromPortEntry_comDataOut(recvBuffer, recvStatus);
 }
 
-void ComStubTester ::from_comStatus_handler(const FwIndexType portNum, Fw::Success& condition) {
-    this->pushFromPortEntry_comStatus(condition);
+void ComStubTester ::from_comStatusOut_handler(const FwIndexType portNum, Fw::Success& condition) {
+    this->pushFromPortEntry_comStatusOut(condition);
 }
 
 void ComStubTester ::from_drvDataOut_handler(const FwIndexType portNum, Fw::Buffer& sendBuffer) {

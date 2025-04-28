@@ -27,10 +27,10 @@ FprimeFramerTester ::~FprimeFramerTester() {}
 // ----------------------------------------------------------------------
 
 void FprimeFramerTester ::testFrameDeallocation() {
-    // When receiving a buffer on returnedDataIn, the buffer should be deallocated
+    // When receiving a buffer on dataReturnIn, the buffer should be deallocated
     Fw::Buffer buffer;
     ComCfg::FrameContext context;
-    this->invoke_to_returnedDataIn(0, buffer, context);
+    this->invoke_to_dataReturnIn(0, buffer, context);
     ASSERT_from_bufferDeallocate_SIZE(1);
     ASSERT_from_bufferDeallocate(0, buffer);
 }
@@ -60,10 +60,10 @@ void FprimeFramerTester ::testNominalFraming() {
 
     // Send the buffer to the component
     this->invoke_to_dataIn(0, buffer, context);
-    ASSERT_from_framedDataOut_SIZE(1); // One frame emitted
-    ASSERT_from_dataReturn_SIZE(1); // Original data buffer ownership returned
+    ASSERT_from_dataOut_SIZE(1); // One frame emitted
+    ASSERT_from_dataReturnOut_SIZE(1); // Original data buffer ownership returned
 
-    Fw::Buffer outputBuffer = this->fromPortHistory_framedDataOut->at(0).data;
+    Fw::Buffer outputBuffer = this->fromPortHistory_dataOut->at(0).data;
     // Check the size of the output buffer
     ASSERT_EQ(outputBuffer.getSize(), sizeof(bufferData) + FprimeProtocol::FrameHeader::SERIALIZED_SIZE + FprimeProtocol::FrameTrailer::SERIALIZED_SIZE);
     // Check header

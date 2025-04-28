@@ -81,7 +81,7 @@ void TcpServerTester ::test_with_loop(U32 iterations, bool recv_thread) {
             m_data_buffer.setSize(sizeof(m_data_storage));
             size = Drv::Test::fill_random_buffer(m_data_buffer);
             invoke_to_send(0, m_data_buffer);
-            Drv::ByteStreamStatus status = this->fromPortHistory_sentDataReturn->at(i).status;
+            Drv::ByteStreamStatus status = this->fromPortHistory_dataReturnOut->at(i).status;
             EXPECT_EQ(status, ByteStreamStatus::SEND_OK) <<
                 "On iteration: " << i << " and receive thread: " << recv_thread;
             Drv::Test::receive_all(client, client_fd, buffer, size);

@@ -65,23 +65,23 @@ module RPI {
     connections Downlink {
       eventLogger.PktSend -> comQueue.comPacketQueueIn[0]
       chanTlm.PktSend -> comQueue.comPacketQueueIn[1]
-      fileDownlink.bufferSendOut -> comQueue.buffQueueIn[0]
+      fileDownlink.bufferSendOut -> comQueue.bufferQueueIn[0]
 
       comQueue.queueSend -> framer.dataIn
-      framer.dataReturn -> comQueue.bufferReturnIn
       comQueue.bufferReturnOut[0] -> fileDownlink.bufferReturn
+      framer.dataReturnOut -> comQueue.bufferReturnIn
 
       framer.bufferAllocate -> commsBufferManager.bufferGetCallee
       framer.bufferDeallocate -> commsBufferManager.bufferSendIn
 
-      framer.framedDataOut -> comStub.comDataIn
-      comStub.bufferReturnOut -> framer.returnedDataIn
-      comm.sentDataReturn -> comStub.sentDataReturnIn
+      framer.dataOut -> comStub.comDataIn
+      comStub.dataReturnOut -> framer.dataReturnIn
+      comm.dataReturnOut -> comStub.dataReturnIn
 
       comm.ready -> comStub.drvConnected
       comStub.drvDataOut -> comm.$send
 
-      comStub.comStatus -> framer.comStatusIn
+      comStub.comStatusOut -> framer.comStatusIn
       framer.comStatusOut -> comQueue.comStatusIn
     }
 
@@ -139,7 +139,7 @@ module RPI {
       rpiDemo.UartWrite -> uartDrv.$send
       uartDrv.$recv -> rpiDemo.UartRead
       uartDrv.allocate -> uartBufferManager.bufferGetCallee
-      uartDrv.sentDataReturn -> rpiDemo.UartWriteReturn
+      uartDrv.dataReturnOut -> rpiDemo.UartWriteReturn
     }
 
     connections Uplink {

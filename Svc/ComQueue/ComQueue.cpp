@@ -137,10 +137,10 @@ void ComQueue::comPacketQueueIn_handler(const FwIndexType portNum, Fw::ComBuffer
     (void)this->enqueue(portNum, QueueType::COM_QUEUE, reinterpret_cast<const U8*>(&data), sizeof(Fw::ComBuffer));
 }
 
-void ComQueue::buffQueueIn_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
+void ComQueue::bufferQueueIn_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
     FW_ASSERT(std::numeric_limits<FwIndexType>::max() - COM_PORT_COUNT > portNum);
     const FwIndexType queueNum = static_cast<FwIndexType>(portNum + COM_PORT_COUNT);
-    // Ensure that the port number of buffQueueIn is consistent with the expectation
+    // Ensure that the port number of bufferQueueIn is consistent with the expectation
     FW_ASSERT(portNum >= 0 && portNum < BUFFER_PORT_COUNT, static_cast<FwAssertArgType>(portNum));
     FW_ASSERT(queueNum < TOTAL_PORT_COUNT);
     bool success =
@@ -212,7 +212,7 @@ void ComQueue ::bufferReturnIn_handler(FwIndexType portNum,
 // Hook implementations for typed async input ports
 // ----------------------------------------------------------------------
 
-void ComQueue::buffQueueIn_overflowHook(FwIndexType portNum, Fw::Buffer& fwBuffer) {
+void ComQueue::bufferQueueIn_overflowHook(FwIndexType portNum, Fw::Buffer& fwBuffer) {
     FW_ASSERT(portNum >= 0 && portNum < BUFFER_PORT_COUNT, static_cast<FwAssertArgType>(portNum));
     this->bufferReturnOut_out(portNum, fwBuffer);
 }

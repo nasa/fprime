@@ -10,20 +10,19 @@ module Drv {
         RECV_ERROR = 5 @< Receive error occurred retrying may succeed
     }
 
-    @ Port to transmit
-    port ByteStreamTransmit(
+    @ Port to exchange buffer and status with the ByteStreamDriver model
+    @ This port is used for receiving data from the driver as well as on
+    @ callback of a send call
+    port ByteStreamData(
         ref buffer: Fw.Buffer,
         status: ByteStreamStatus
-        # REVIEW NOTE:
-        # If we make status a mutable reference, it can be used
-        # as a return value by projects who know they'll be sync ??
     )
 
 
     ###########################################################
     # DEPRECATED
     # Anything below this line is deprecated. Please use the
-    # bidirectional ByteStreamTransmit instead
+    # bidirectional ByteStreamData instead
     ###########################################################
 
     @ Status returned by the send call

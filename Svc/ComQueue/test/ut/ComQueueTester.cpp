@@ -53,7 +53,7 @@ void ComQueueTester ::sendByQueueNumber(Fw::Buffer& buffer,
     } else {
         portNum = queueNum - ComQueue::COM_PORT_COUNT;
         queueType = QueueType::BUFFER_QUEUE;
-        invoke_to_buffQueueIn(portNum, buffer);
+        invoke_to_bufferQueueIn(portNum, buffer);
     }
 }
 
@@ -92,7 +92,7 @@ void ComQueueTester ::testQueueSend() {
     clearFromPortHistory();
 
     for(FwIndexType portNum = 0; portNum < ComQueue::BUFFER_PORT_COUNT; portNum++){
-        invoke_to_buffQueueIn(portNum, buffer);
+        invoke_to_bufferQueueIn(portNum, buffer);
         emitOneAndCheck(portNum, buffer.getData(), buffer.getSize());
     }
     clearFromPortHistory();
@@ -117,7 +117,7 @@ void ComQueueTester ::testQueuePause() {
     clearFromPortHistory();
 
     for(FwIndexType portNum = 0; portNum < ComQueue::BUFFER_PORT_COUNT; portNum++){
-        invoke_to_buffQueueIn(portNum, buffer);
+        invoke_to_bufferQueueIn(portNum, buffer);
         // Send a bunch of failures
         Fw::Success state = Fw::Success::FAILURE;
         invoke_to_comStatusIn(0, state);
@@ -154,7 +154,7 @@ void ComQueueTester ::testPrioritySend() {
 
     for (FwIndexType portNum = 0; portNum < ComQueue::BUFFER_PORT_COUNT; portNum++) {
         Fw::Buffer buffer(&data[portNum + ComQueue::COM_PORT_COUNT][0], BUFFER_LENGTH);
-        invoke_to_buffQueueIn(portNum, buffer);
+        invoke_to_bufferQueueIn(portNum, buffer);
     }
 
     // Check that nothing has yet been sent
@@ -305,7 +305,7 @@ void ComQueueTester ::testReadyFirst() {
 
     for(FwIndexType portNum = 0; portNum < ComQueue::BUFFER_PORT_COUNT; portNum++){
         emitOne();
-        invoke_to_buffQueueIn(portNum, buffer);
+        invoke_to_bufferQueueIn(portNum, buffer);
         dispatchAll();
         Fw::Buffer emittedBuffer = this->fromPortHistory_queueSend->at(portNum).data;
         ASSERT_EQ(emittedBuffer.getSize(), buffer.getSize());
@@ -334,7 +334,7 @@ void ComQueueTester ::testContextData() {
     clearFromPortHistory();
 
     for(FwIndexType portNum = 0; portNum < ComQueue::BUFFER_PORT_COUNT; portNum++){
-        invoke_to_buffQueueIn(portNum, buffer);
+        invoke_to_bufferQueueIn(portNum, buffer);
         emitOne();
         // APID is queue index, which is COM_PORT_COUNT + portNum for BUFFER ports
         FwIndexType expectedApid = portNum + ComQueue::COM_PORT_COUNT;

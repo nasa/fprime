@@ -27,7 +27,7 @@ class ComQueue final : public ComQueueComponentBase {
     static const FwIndexType COM_PORT_COUNT = ComQueueComponentBase::NUM_COMPACKETQUEUEIN_INPUT_PORTS;
 
     //!< Count of Fw::Buffer input ports and thus Fw::Buffer queues
-    static const FwIndexType BUFFER_PORT_COUNT = ComQueueComponentBase::NUM_BUFFQUEUEIN_INPUT_PORTS;
+    static const FwIndexType BUFFER_PORT_COUNT = ComQueueComponentBase::NUM_BUFFERQUEUEIN_INPUT_PORTS;
 
     static_assert((COM_PORT_COUNT + BUFFER_PORT_COUNT) <= std::numeric_limits<FwIndexType>::max(),
                   "FwIndexType not large enough to hold com and buffer ports");
@@ -126,7 +126,7 @@ class ComQueue final : public ComQueueComponentBase {
 
     //! Receive and queue a Fw::Buffer
     //!
-    void buffQueueIn_handler(const FwIndexType portNum, /*!< The port number*/
+    void bufferQueueIn_handler(const FwIndexType portNum, /*!< The port number*/
                              Fw::Buffer& fwBuffer /*!< Buffer containing packet data*/) override;
 
     //! Receive and queue a Fw::ComBuffer
@@ -162,7 +162,7 @@ class ComQueue final : public ComQueueComponentBase {
 
     //! Queue overflow hook method that deallocates the fwBuffer
     //!
-    void buffQueueIn_overflowHook(FwIndexType portNum, //!< The port number
+    void bufferQueueIn_overflowHook(FwIndexType portNum, //!< The port number
                                   Fw::Buffer& fwBuffer //!< The buffer
     ) override;
 
