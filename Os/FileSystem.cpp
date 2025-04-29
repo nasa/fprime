@@ -291,8 +291,13 @@ FileSystem::Status FileSystem::copyFileData(File& source, File& destination, FwS
     FwSizeType copiedSize = 0;
     FwSizeType chunkSize = FILE_SYSTEM_FILE_CHUNK_SIZE;
 
+    // Loop up to 2 times for each by, bounded to prevent infinite loop
+    const FwSizeType maximum =
+        (size > (std::numeric_limits<FwSizeType>::max() / 2)) ? std::numeric_limits<FwSizeType>::max() : size * 2;
+
     // Copy the file in chunks - loop until all data is copied
-    for (copiedSize = 0; copiedSize < size; copiedSize += chunkSize) {
+    FwSizeType i = 0;
+    for (copiedSize = 0; (copiedSize < size) && (i < maximum); copiedSize += chunkSize, i++) {
         // chunkSize is FILE_SYSTEM_FILE_CHUNK_SIZE unless size-copiedSize is less than that
         // in which case chunkSize is size-copiedSize, ensuring the last chunk reads the remaining data
         chunkSize = FW_MIN(FILE_SYSTEM_FILE_CHUNK_SIZE, size - copiedSize);
