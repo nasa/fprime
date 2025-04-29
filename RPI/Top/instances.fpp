@@ -242,7 +242,7 @@ module RPI {
 
   instance deframer: Svc.FprimeDeframer base id 1240
 
-  instance comm: Drv.TcpClient base id 1260 \
+  instance comDriver: Drv.TcpClient base id 1260 \
   {
 
     phase Fpp.ToCpp.Phases.configConstants """
@@ -255,7 +255,7 @@ module RPI {
     phase Fpp.ToCpp.Phases.configComponents """
     // Configure socket server if and only if there is a valid specification
     if (state.hostName != nullptr && state.portNumber != 0) {
-        RPI::comm.configure(state.hostName, state.portNumber);
+        RPI::comDriver.configure(state.hostName, state.portNumber);
     }
     """
 
@@ -264,20 +264,20 @@ module RPI {
     if (state.hostName != nullptr && state.portNumber != 0) {
         // Uplink is configured for receive so a socket task is started
         Os::TaskString name("ReceiveTask");
-        RPI::comm.start(
+        RPI::comDriver.start(
             name,
-            ConfigConstants::RPI_comm::PRIORITY,
-            ConfigConstants::RPI_comm::STACK_SIZE
+            ConfigConstants::RPI_comDriver::PRIORITY,
+            ConfigConstants::RPI_comDriver::STACK_SIZE
         );
     }
     """
 
     phase Fpp.ToCpp.Phases.stopTasks """
-    RPI::comm.stop();
+    RPI::comDriver.stop();
     """
 
     phase Fpp.ToCpp.Phases.freeThreads """
-    (void) RPI::comm.join();
+    (void) RPI::comDriver.join();
     """
 
   }

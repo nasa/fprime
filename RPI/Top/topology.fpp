@@ -11,7 +11,7 @@ module RPI {
     instance cmdDisp
     instance cmdSeq
     instance comQueue
-    instance comm
+    instance comDriver
     instance comStub
     instance deframer
     instance framer
@@ -76,10 +76,10 @@ module RPI {
 
       framer.dataOut -> comStub.comDataIn
       comStub.dataReturnOut -> framer.dataReturnIn
-      comm.dataReturnOut -> comStub.dataReturnIn
+      comDriver.dataReturnOut -> comStub.dataReturnIn
 
-      comm.ready -> comStub.drvConnected
-      comStub.drvDataOut -> comm.$send
+      comDriver.ready -> comStub.drvConnected
+      comStub.drvDataOut -> comDriver.$send
 
       comStub.comStatusOut -> framer.comStatusIn
       framer.comStatusOut -> comQueue.comStatusIn
@@ -126,7 +126,7 @@ module RPI {
     }
 
     connections MemoryAllocations {
-      comm.allocate -> commsBufferManager.bufferGetCallee
+      comDriver.allocate -> commsBufferManager.bufferGetCallee
       fileUplink.bufferSendOut -> commsBufferManager.bufferSendIn
       frameAccumulator.bufferAllocate -> commsBufferManager.bufferGetCallee
       frameAccumulator.bufferDeallocate -> commsBufferManager.bufferSendIn
