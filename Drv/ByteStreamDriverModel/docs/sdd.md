@@ -5,17 +5,19 @@ The outgoing stream is represented by the input `send` port; other components ca
 
 ## Design
 
+### Send
+
 The manager component (for example a radio manager) initiates the transfer of send data by calling the "send" port.
-The caller will provide a `Fw::Buffer` containing the data to send. The driver component **must** perform a callback on its `dataReturnOut` to return the status of that send as well as returning ownership of the `Fw::Buffer` to the caller.
+The caller will provide a `Fw::Buffer` containing the data to send. The driver component **must** perform a callback on its `dataReturnOut` port to return the status of that send as well as returning ownership of the `Fw::Buffer` to the caller.
 These responses are an enumeration whose values are described in the following table:
 
 | Value | Description | Buffer Ownership |
 |---|---|---|
-| Drv::OP_OK    | Send functioned normally. | Ownership of the `Fw::Buffer` passes to the byte stream driver. |
-| Drv::SEND_RETRY | Send should be retried, but a subsequent send should return OP_OK. | The caller retains ownership of the `Fw::Buffer`. |
-| Drv::OTHER_ERROR | Send produced an error, future sends likely to fail. | Ownership of the `Fw::Buffer` passes to the byte stream driver. |
+| ByteStreamStatus::OP_OK    | Send functioned normally. | Ownership of the `Fw::Buffer` passes to the byte stream driver. |
+| ByteStreamStatus::SEND_RETRY | Send should be retried, but a subsequent send should return OP_OK. | The caller retains ownership of the `Fw::Buffer`. |
+| ByteStreamStatus::OTHER_ERROR | Send produced an error, future sends likely to fail. | Ownership of the `Fw::Buffer` passes to the byte stream driver. |
 
-### Callback Formation
+### Receive
 
 ![Callback](./img/canvas-callback.png)
 
@@ -25,14 +27,14 @@ This status is an enumeration whose values are described in the following table:
 
 | Value | Description |
 |---|---|
-| Drv::OP_OK    | Receive functioned normally and buffer contains valid data. |
-| Drv::RECV_NO_DATA    | Receive worked, but there was no data  |
-| Drv::OTHER_ERROR | Receive produced an error and buffer contains no valid data. |
+| ByteStreamStatus::OP_OK    | Receive functioned normally and buffer contains valid data. |
+| ByteStreamStatus::RECV_NO_DATA    | Receive worked, but there was no data  |
+| ByteStreamStatus::OTHER_ERROR | Receive produced an error and buffer contains no valid data. |
 
 The following components implement the byte stream model using a callback formation:
-- `DrvTcpClient`: a F´ component wrapper of the tcp client
-- `DrvTcpServer`: a F´ component wrapper of the tcp server
-- `DrvUdp`: a F´ component wrapper of the udp
+- [`Drv::TcpClient`](../../TcpClient/docs/sdd.md): a F´ component wrapper of the tcp client
+- [`Drv::TcpServer`](../../TcpServer/docs/sdd.md): a F´ component wrapper of the tcp server
+- [`Drv::Udp`](../../Udp/docs/sdd.md): a F´ component wrapper of the udp
 
 ## Class Diagram
 ![classdiagram](./img/class_diagram.png)
