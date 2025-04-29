@@ -115,7 +115,7 @@ Serialization ports are useful for generic storage and communication components 
 data passing through them. This allows the design and implementation of command and data handling (C&DH) components that
 provide reusability. Tested C&DH components are developed to implement typical non-mission-specific flight functions
 
-See note about usage for [Commands, Events and Telemetry](cmd-evt-chn-prm.md).
+See note about usage for [Commands, Events and Telemetry](04-cmd-evt-chn-prm.md).
 
 
 ## Components: F´ Modules

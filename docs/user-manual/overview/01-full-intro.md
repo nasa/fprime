@@ -1,4 +1,4 @@
-# A More Complete Introduction To F´
+# Introduction To F´
 
 This document will reintroduce F´ giving more context and detail for users who desire the "full story", or at least a
 more complete "story". This document contains the following sections:

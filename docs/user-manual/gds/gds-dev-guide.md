@@ -1,6 +1,6 @@
-# GDS CLI - Developer's Guide
+# GDS Developer's Guide
 
-This guide is for programmers who intend to maintain and develop code for the Ground Data System's command-line interface suite. For regular users who just want to use these CLI tools, please see the [user guide](../user-manual/gds/gds-cli.md).
+This guide is for programmers who intend to maintain and develop code for the Ground Data System's command-line interface suite. For regular users who just want to use these CLI tools, please see the [user guide](gds-cli.md).
 
 - [CLI Requirements](#cli-requirements)
     - [Primary Requirements](#primary-requirements)
@@ -42,7 +42,7 @@ This guide is for programmers who intend to maintain and develop code for the Gr
 
 ### Intended
 
-![](../img/proposed_architecture.png)
+![](../../img/proposed_architecture.png)
 
 The intended architecture for the CLI is:
 
@@ -56,7 +56,7 @@ The CLI will interact with the GDS through an appropriate API, which the CLI mod
 
 Not including imports used only for type hints, or dependencies for modules not part of the GDS CLI source code (generated using [pydeps](https://pydeps.readthedocs.io/en/latest/):
 
-![](../img/overall_dependencies_edited.png)
+![](../../img/overall_dependencies_edited.png)
 
 > [!NOTE]
 > The above graph has arrows pointing **to** the module that does the importing and away from the dependency, and does not include Python standard library imports.
@@ -67,7 +67,7 @@ Not including imports used only for type hints, or dependencies for modules not 
 
 ### Dataflow
 
-![](../img/cli_data_flow.svg)
+![](../../img/cli_data_flow.svg)
 
 ### Dependencies
 

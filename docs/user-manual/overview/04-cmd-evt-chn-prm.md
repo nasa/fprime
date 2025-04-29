@@ -41,7 +41,7 @@ arguments are sent from the ground.
 4. synchronization "kind": (sync, async, guarded) controls which execution context the command runs in. Sync and guarded
 commands run on the execution context of the command dispatcher. Async commands execute on the component threads and
 can specify a priority. Guarded commands are protected from reentrancy by a mutex. These are similar to
-[port kinds](port-comp-top.md#a-quick-look-at-port-kinds-defined-in-a-components-usage)
+[port kinds](03-port-comp-top.md#a-quick-look-at-port-kinds-defined-in-a-components-usage)
 
 Code in the component-specific generated base class calls a function to invoke the user-defined command handler. This is
 hooked up by connecting the command registration, command dispatch, and command response ports.

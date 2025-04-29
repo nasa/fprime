@@ -1,4 +1,4 @@
-# GDS Integration Test API User Guide
+# GDS Integration Test API
 
 The GDS integration test API is a tool that provides useful functions and asserts for creating integration or system tests for an F´ deployment. These tests run through the ground system attached to a running F´ deployment. This document hopes to give an overview of the main features associated with the Test API and demonstrates common use patterns and highlight some anti-patterns. 
 
