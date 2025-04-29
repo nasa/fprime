@@ -143,7 +143,8 @@ module RPI {
     }
 
     connections Uplink {
-      comm.$recv -> frameAccumulator.dataIn
+      comDriver.$recv -> comStub.drvDataIn
+      comStub.comDataOut -> frameAccumulator.dataIn
 
       frameAccumulator.frameOut -> deframer.framedIn
       deframer.deframedOut -> fprimeRouter.dataIn
