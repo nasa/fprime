@@ -82,7 +82,7 @@ namespace Drv {
     private:
 
       // ----------------------------------------------------------------------
-      // Handlers for typed from ports
+      // Handlers overrides for typed from ports
       // ----------------------------------------------------------------------
 
       //! Handler for from_recv
@@ -91,20 +91,14 @@ namespace Drv {
           const FwIndexType portNum, /*!< The port number*/
           Fw::Buffer &recvBuffer,
           const ByteStreamStatus &recvStatus
-      );
-
-      //! Handler for from_ready
-      //!
-      void from_ready_handler(
-          const FwIndexType portNum /*!< The port number*/
-      );
+      ) override;
 
       //! Handler for from_allocate
       //!
       Fw::Buffer from_allocate_handler(
           const FwIndexType portNum, /*!< The port number*/
           U32 size
-      );
+      ) override;
 
     private:
 

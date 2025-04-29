@@ -92,6 +92,7 @@ void UdpTester::test_with_loop(U32 iterations, bool recv_thread) {
             m_data_buffer.setSize(sizeof(m_data_storage));
             size = Drv::Test::fill_random_buffer(m_data_buffer);
             invoke_to_send(0, m_data_buffer);
+            ASSERT_from_dataReturnOut_SIZE(i + 1);
             Drv::ByteStreamStatus status = this->fromPortHistory_dataReturnOut->at(i).status;
             EXPECT_EQ(status, ByteStreamStatus::OP_OK);
             Drv::Test::receive_all(udp2, udp2_fd, buffer, size);
@@ -170,10 +171,6 @@ void UdpTester ::from_recv_handler(const FwIndexType portNum, Fw::Buffer& recvBu
         m_spinner = true;
     }
     delete[] recvBuffer.getData();
-}
-
-void UdpTester ::from_ready_handler(const FwIndexType portNum) {
-    this->pushFromPortEntry_ready();
 }
 
 Fw::Buffer UdpTester ::

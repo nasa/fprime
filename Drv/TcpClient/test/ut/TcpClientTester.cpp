@@ -80,6 +80,7 @@ void TcpClientTester ::test_with_loop(U32 iterations, bool recv_thread) {
             m_data_buffer.setSize(sizeof(m_data_storage));
             size = Drv::Test::fill_random_buffer(m_data_buffer);
             invoke_to_send(0, m_data_buffer);
+            ASSERT_from_dataReturnOut_SIZE(i + 1);
             Drv::ByteStreamStatus status = this->fromPortHistory_dataReturnOut->at(i).status;
             EXPECT_EQ(status, ByteStreamStatus::OP_OK);
             Drv::Test::receive_all(server, server_fd, buffer, size);
@@ -180,7 +181,7 @@ void TcpClientTester ::test_no_automatic_recv_connection() {
 }
 
 // ----------------------------------------------------------------------
-// Handlers for typed from ports
+// Handler overrides for typed from ports
 // ----------------------------------------------------------------------
 
   void TcpClientTester ::
@@ -199,10 +200,6 @@ void TcpClientTester ::test_no_automatic_recv_connection() {
         m_spinner = true;
     }
     delete[] recvBuffer.getData();
-}
-
-void TcpClientTester ::from_ready_handler(const FwIndexType portNum) {
-    this->pushFromPortEntry_ready();
 }
 
 Fw::Buffer TcpClientTester ::

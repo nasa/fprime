@@ -81,6 +81,7 @@ void TcpServerTester ::test_with_loop(U32 iterations, bool recv_thread) {
             m_data_buffer.setSize(sizeof(m_data_storage));
             size = Drv::Test::fill_random_buffer(m_data_buffer);
             invoke_to_send(0, m_data_buffer);
+            ASSERT_from_dataReturnOut_SIZE(i + 1);
             Drv::ByteStreamStatus status = this->fromPortHistory_dataReturnOut->at(i).status;
             EXPECT_EQ(status, ByteStreamStatus::OP_OK) <<
                 "On iteration: " << i << " and receive thread: " << recv_thread;
@@ -230,10 +231,6 @@ void TcpServerTester ::from_recv_handler(const FwIndexType portNum, Fw::Buffer& 
         m_spinner = true;
     }
     delete[] recvBuffer.getData();
-}
-
-void TcpServerTester ::from_ready_handler(const FwIndexType portNum) {
-    this->pushFromPortEntry_ready();
 }
 
 Fw::Buffer TcpServerTester ::
