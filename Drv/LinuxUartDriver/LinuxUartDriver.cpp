@@ -293,9 +293,9 @@ LinuxUartDriver ::~LinuxUartDriver() {
 // ----------------------------------------------------------------------
 
 void LinuxUartDriver ::send_handler(const FwIndexType portNum, Fw::Buffer& serBuffer) {
-    Drv::ByteStreamStatus status = Drv::ByteStreamStatus::SEND_OK;
+    Drv::ByteStreamStatus status = Drv::ByteStreamStatus::OP_OK;
     if (this->m_fd == -1 || serBuffer.getData() == nullptr || serBuffer.getSize() == 0) {
-        status = Drv::ByteStreamStatus::SEND_ERROR;
+        status = Drv::ByteStreamStatus::OTHER_ERROR;
     } else {
         unsigned char *data = serBuffer.getData();
         FW_ASSERT(static_cast<size_t>(serBuffer.getSize()) <= std::numeric_limits<size_t>::max(),
@@ -307,7 +307,7 @@ void LinuxUartDriver ::send_handler(const FwIndexType portNum, Fw::Buffer& serBu
         if (-1 == stat || static_cast<size_t>(stat) != xferSize) {
           Fw::LogStringArg _arg = this->m_device;
           this->log_WARNING_HI_WriteError(_arg, static_cast<I32>(stat));
-          status = Drv::ByteStreamStatus::SEND_ERROR;
+          status = Drv::ByteStreamStatus::OTHER_ERROR;
         }
     }
     // Return the buffer back to the caller
@@ -316,7 +316,7 @@ void LinuxUartDriver ::send_handler(const FwIndexType portNum, Fw::Buffer& serBu
 
 void LinuxUartDriver ::serialReadTaskEntry(void* ptr) {
     FW_ASSERT(ptr != nullptr);
-    Drv::ByteStreamStatus status = ByteStreamStatus::RECV_ERROR;  // added by m.chase 03.06.2017
+    Drv::ByteStreamStatus status = ByteStreamStatus::OTHER_ERROR;  // added by m.chase 03.06.2017
     LinuxUartDriver* comp = reinterpret_cast<LinuxUartDriver*>(ptr);
     while (!comp->m_quitReadThread) {
         Fw::Buffer buff = comp->allocate_out(0,comp->m_allocationSize);
@@ -325,7 +325,7 @@ void LinuxUartDriver ::serialReadTaskEntry(void* ptr) {
         if (buff.getData() == nullptr) {
             Fw::LogStringArg _arg = comp->m_device;
             comp->log_WARNING_HI_NoBuffers(_arg);
-            status = ByteStreamStatus::RECV_ERROR;
+            status = ByteStreamStatus::OTHER_ERROR;
             comp->recv_out(0, buff, status);
             // to avoid spinning, wait 50 ms
             Os::Task::delay(Fw::TimeInterval(0, 50000));
@@ -347,12 +347,12 @@ void LinuxUartDriver ::serialReadTaskEntry(void* ptr) {
         if (stat == -1) {
             Fw::LogStringArg _arg = comp->m_device;
             comp->log_WARNING_HI_ReadError(_arg, stat);
-            status = ByteStreamStatus::RECV_ERROR;
+            status = ByteStreamStatus::OTHER_ERROR;
         } else if (stat > 0) {
             buff.setSize(static_cast<U32>(stat));
-            status = ByteStreamStatus::RECV_OK;  // added by m.chase 03.06.2017
+            status = ByteStreamStatus::OP_OK;  // added by m.chase 03.06.2017
         } else {
-            status = ByteStreamStatus::RECV_ERROR; // Simply to return the buffer
+            status = ByteStreamStatus::OTHER_ERROR; // Simply to return the buffer
         }
         comp->recv_out(0, buff, status);  // added by m.chase 03.06.2017
     }

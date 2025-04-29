@@ -59,15 +59,15 @@ Fw::Buffer TcpServerComponentImpl::getBuffer() {
 }
 
 void TcpServerComponentImpl::sendBuffer(Fw::Buffer buffer, SocketIpStatus status) {
-    Drv::ByteStreamStatus recvStatus = ByteStreamStatus::RECV_ERROR;
+    Drv::ByteStreamStatus recvStatus = ByteStreamStatus::OTHER_ERROR;
     if (status == SOCK_SUCCESS) {
-        recvStatus = ByteStreamStatus::RECV_OK;
+        recvStatus = ByteStreamStatus::OP_OK;
     }
     else if (status == SOCK_NO_DATA_AVAILABLE) {
         recvStatus = ByteStreamStatus::RECV_NO_DATA;
     }
     else {
-        recvStatus = ByteStreamStatus::RECV_ERROR;
+        recvStatus = ByteStreamStatus::OTHER_ERROR;
     }
     this->recv_out(0, buffer, recvStatus);
 }
@@ -132,10 +132,10 @@ void TcpServerComponentImpl::send_handler(const FwIndexType portNum, Fw::Buffer&
             returnStatus = ByteStreamStatus::SEND_RETRY;
             break;
         case SOCK_SUCCESS:
-            returnStatus = ByteStreamStatus::SEND_OK;
+            returnStatus = ByteStreamStatus::OP_OK;
             break;
         default:
-            returnStatus = ByteStreamStatus::SEND_ERROR;
+            returnStatus = ByteStreamStatus::OTHER_ERROR;
             break;
     }
     // Return the buffer and status to the caller

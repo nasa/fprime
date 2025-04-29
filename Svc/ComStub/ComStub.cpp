@@ -47,9 +47,9 @@ void ComStub ::dataReturnIn_handler(FwIndexType portNum,  //!< The port number
                                         const Drv::ByteStreamStatus& sendStatus) {
     if (sendStatus != Drv::ByteStreamStatus::SEND_RETRY) {
         this->dataReturnOut_out(0, fwBuffer, this->m_storedContext);
-        this->m_reinitialize = sendStatus.e != Drv::ByteStreamStatus::SEND_OK;
+        this->m_reinitialize = sendStatus.e != Drv::ByteStreamStatus::OP_OK;
         this->m_retry_count = 0; // Reset the retry count
-        Fw::Success comSuccess = (sendStatus.e == Drv::ByteStreamStatus::SEND_OK) ? Fw::Success::SUCCESS : Fw::Success::FAILURE;
+        Fw::Success comSuccess = (sendStatus.e == Drv::ByteStreamStatus::OP_OK) ? Fw::Success::SUCCESS : Fw::Success::FAILURE;
         this->comStatusOut_out(0, comSuccess);
     } else {
         // If we have already retried more than the retry limit, there is no good answer

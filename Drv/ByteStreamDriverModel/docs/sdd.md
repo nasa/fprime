@@ -1,5 +1,8 @@
 # Drv::ByteStreamDriverModel Byte Stream Driver Model
 
+> [!WARNING]
+> TODO: This document is *OUT OF DATE*. Updating is work in progress.
+
 The byte stream driver is a generic model for drivers implementing a "stream of bytes" interface. Typically these
 drivers operate with an outgoing stream and an incoming stream. The outgoing stream is represented by the "send" port
 and the incoming stream is either polled using the "poll" port or return asynchronously via the "readCallback" port.
@@ -12,9 +15,9 @@ These responses are an enumeration whose values are described in the following t
 
 | Value | Description | Buffer Ownership |
 |---|---|---|
-| Drv::SEND_OK    | Send functioned normally. | Ownership of the `Fw::Buffer` passes to the byte stream driver. |
-| Drv::SEND_RETRY | Send should be retried, but a subsequent send should return SEND_OK. | The caller retains ownership of the `Fw::Buffer`. |
-| Drv::SEND_ERROR | Send produced an error, future sends likely to fail. | Ownership of the `Fw::Buffer` passes to the byte stream driver. |
+| Drv::OP_OK    | Send functioned normally. | Ownership of the `Fw::Buffer` passes to the byte stream driver. |
+| Drv::SEND_RETRY | Send should be retried, but a subsequent send should return OP_OK. | The caller retains ownership of the `Fw::Buffer`. |
+| Drv::OTHER_ERROR | Send produced an error, future sends likely to fail. | Ownership of the `Fw::Buffer` passes to the byte stream driver. |
 
 **Note:** in either formation described below, send will operate as described here.
 
@@ -28,8 +31,8 @@ This status is an enumeration whose values are described in the following table:
 
 | Value | Description |
 |---|---|
-| Drv::RECV_OK    | Receive functioned normally buffer contains valid data. |
-| Drv::RECV_ERROR | Receive produced an error and buffer contains no valid data. |
+| Drv::OP_OK    | Receive functioned normally buffer contains valid data. |
+| Drv::OTHER_ERROR | Receive produced an error and buffer contains no valid data. |
 
 The following components implement the byte stream model using a callback formation:
 - `DrvTcpClient`: a F´ component wrapper of the tcp client

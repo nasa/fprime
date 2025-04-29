@@ -15,9 +15,9 @@ These responses are an enumeration whose values are described in the following t
 
 | Value | Description |
 |---|---|
-| Drv::SEND_OK    | Send functioned normally. |
-| Drv::SEND_RETRY | Send should be retried, but a subsequent send should return SEND_OK. |
-| Drv::SEND_ERROR | Send produced an error, future sends likely to fail. |
+| Drv::OP_OK    | Send functioned normally. |
+| Drv::SEND_RETRY | Send should be retried, but a subsequent send should return OP_OK. |
+| Drv::OTHER_ERROR | Send produced an error, future sends likely to fail. |
 
 This data is immediately sent out to the remote UDP server with a configured send timeout. See Usage described below.
 
@@ -31,8 +31,8 @@ This status is an enumeration whose values are described in the following table:
 
 | Value | Description |
 |---|---|
-| Drv::RECV_OK    | Receive functioned normally buffer contains valid data. |
-| Drv::RECV_ERROR | Receive produced an error and buffer contains no valid data. |
+| Drv::OP_OK    | Receive functioned normally buffer contains valid data. |
+| Drv::OTHER_ERROR | Receive produced an error and buffer contains no valid data. |
 
 ## Usage
 

@@ -81,7 +81,7 @@ void TcpClientTester ::test_with_loop(U32 iterations, bool recv_thread) {
             size = Drv::Test::fill_random_buffer(m_data_buffer);
             invoke_to_send(0, m_data_buffer);
             Drv::ByteStreamStatus status = this->fromPortHistory_dataReturnOut->at(i).status;
-            EXPECT_EQ(status, ByteStreamStatus::SEND_OK);
+            EXPECT_EQ(status, ByteStreamStatus::OP_OK);
             Drv::Test::receive_all(server, server_fd, buffer, size);
             Drv::Test::validate_random_buffer(m_data_buffer, buffer);
             // If receive thread is live, try the other way
@@ -191,7 +191,7 @@ void TcpClientTester ::test_no_automatic_recv_connection() {
     )
   {
     this->pushFromPortEntry_recv(recvBuffer, ByteStreamStatus);
-    if (ByteStreamStatus == ByteStreamStatus::RECV_OK){
+    if (ByteStreamStatus == ByteStreamStatus::OP_OK){
         // Make sure we can get to unblocking the spinner
         EXPECT_EQ(m_data_buffer.getSize(), recvBuffer.getSize()) << "Invalid transmission size";
         Drv::Test::validate_random_buffer(m_data_buffer, recvBuffer.getData());

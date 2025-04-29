@@ -52,7 +52,7 @@ void FrameAccumulator ::cleanup() {
 
 void FrameAccumulator ::dataIn_handler(FwIndexType portNum, Fw::Buffer& buffer, const Drv::ByteStreamStatus& status) {
     // Check whether there is data to process
-    if (status.e == Drv::ByteStreamStatus::RECV_OK) {
+    if (status.e == Drv::ByteStreamStatus::OP_OK) {
         // There is: process the data
         this->processBuffer(buffer);
     }
