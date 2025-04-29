@@ -2,7 +2,7 @@
 # Framing
 # ----------------------------------------------------------------------
 @ Port to receive data to frame, in a Fw::Buffer with optional context
-guarded input port dataIn: Svc.ComDataWithContext
+sync input port dataIn: Svc.ComDataWithContext
 
 @ Port to output framed data with optional context
 output port dataOut: Svc.ComDataWithContext

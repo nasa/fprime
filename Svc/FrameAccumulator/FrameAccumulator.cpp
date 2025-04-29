@@ -50,12 +50,12 @@ void FrameAccumulator ::cleanup() {
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void FrameAccumulator ::dataIn_handler(FwIndexType portNum, Fw::Buffer& buffer, const Drv::ByteStreamStatus& status) {
+void FrameAccumulator ::dataIn_handler(FwIndexType portNum, Fw::Buffer& buffer) {
     // Check whether there is data to process
-    if (status.e == Drv::ByteStreamStatus::OP_OK) {
-        // There is: process the data
+    if (buffer.isValid()) {
         this->processBuffer(buffer);
     }
+    // TODO: rework the uplink deallocation logic to use the bufferReturn chaining pattern
     // Deallocate the buffer
     this->bufferDeallocate_out(0, buffer);
 }

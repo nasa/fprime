@@ -23,6 +23,7 @@ ComStub::~ComStub() {}
 // ----------------------------------------------------------------------
 
 void ComStub::comDataIn_handler(const FwIndexType portNum, Fw::Buffer& sendBuffer, const ComCfg::FrameContext& context) {
+    // Com Data is coming in - send it to the driver
     FW_ASSERT(!this->m_reinitialize || !this->isConnected_comStatusOut_OutputPort(0));  // A message should never get here if we need to reinitialize is needed
     this->m_storedContext = context;  // Store the context of the current message
     this->drvDataOut_out(0, sendBuffer);
@@ -39,19 +40,23 @@ void ComStub::drvConnected_handler(const FwIndexType portNum) {
 void ComStub::drvDataIn_handler(const FwIndexType portNum,
                                 Fw::Buffer& recvBuffer,
                                 const Drv::ByteStreamStatus& recvStatus) {
-    this->comDataOut_out(0, recvBuffer, recvStatus);
+    if (recvStatus.e == Drv::ByteStreamStatus::OP_OK) {
+        this->comDataOut_out(0, recvBuffer);
+    }
 }
 
 void ComStub ::dataReturnIn_handler(FwIndexType portNum,  //!< The port number
                                         Fw::Buffer& fwBuffer,  //!< The buffer
                                         const Drv::ByteStreamStatus& sendStatus) {
     if (sendStatus != Drv::ByteStreamStatus::SEND_RETRY) {
+        // Not retrying - return buffer ownership and send status
         this->dataReturnOut_out(0, fwBuffer, this->m_storedContext);
         this->m_reinitialize = sendStatus.e != Drv::ByteStreamStatus::OP_OK;
         this->m_retry_count = 0; // Reset the retry count
         Fw::Success comSuccess = (sendStatus.e == Drv::ByteStreamStatus::OP_OK) ? Fw::Success::SUCCESS : Fw::Success::FAILURE;
         this->comStatusOut_out(0, comSuccess);
     } else {
+        // Retrying - attempt to write to the driver again
         // If we have already retried more than the retry limit, there is no good answer
         FW_ASSERT(this->m_retry_count < this->RETRY_LIMIT, static_cast<FwAssertArgType>(this->m_retry_count));
         this->m_retry_count++;

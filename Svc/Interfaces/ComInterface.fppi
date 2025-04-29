@@ -2,21 +2,18 @@
 # Com Data and Status
 # ----------------------------------------------------------------------
 
-@ Data coming in to be sent out for transmission (e.g. from a Framer)
+@ Data to be sent on the wire (coming in to the component)
 sync input port comDataIn: Svc.ComDataWithContext
 
-@ Buffers sent out for transmission (e.g. to a driver)
-output port comDataOut: Drv.ByteStreamData
+@ Data received from the wire (coming out of the component)
+output port comDataOut: Fw.BufferSend
 
-@ Status of the last radio transmission
+@ Status of the last transmission
 output port comStatusOut: Fw.SuccessCondition
 
 # ----------------------------------------------------------------------
 # Memory management
 # ----------------------------------------------------------------------
 
-@ Buffer ownership going back to sender - incoming from downstream driver
-sync input port dataReturnIn: Drv.ByteStreamData
-
-@ Buffer ownership going back to sender - outgoing upstream
+@ Returning ownership of data that came in on comDataIn
 output port dataReturnOut: Svc.ComDataWithContext
