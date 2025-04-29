@@ -26,12 +26,13 @@ This data is immediately sent out to the remote UDP server with a configured sen
 ![Callback](../../ByteStreamDriverModel/docs/img/canvas-callback.png)
 
 In the callback formation, the byte stream driver component initiates the transfer of received data by calling the
-"readCallback" output port. This port transfers any read data in a `Fw::Buffer` along with a status for the receive.
+"recv" output port. This port transfers any read data in a `Fw::Buffer` along with a status for the receive.
 This status is an enumeration whose values are described in the following table:
 
 | Value | Description |
 |---|---|
 | Drv::OP_OK    | Receive functioned normally buffer contains valid data. |
+| Drv::RECV_NO_DATA    | Receive worked, but there was no data  |
 | Drv::OTHER_ERROR | Receive produced an error and buffer contains no valid data. |
 
 ## Usage

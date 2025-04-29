@@ -21,7 +21,7 @@ stream driver model for backwards compatibility.
 |----------|----------------|-----------------------|----------------------------------------------------------------|
 | `input`  | `comDataIn`    | `Svc.ComDataWithContext`  | Port receiving `Fw::Buffer` objects for outgoing transmission. |
 | `output` | `comDataOut`   | `Drv.ByteStreamRecv`  | Port producing incoming `Fw::Buffer` objects.                  |
-| `output` | `comStatus`    | `Fw.SuccessCondition` | Port indicating status of outgoing transmission. See protocol. |
+| `output` | `comStatusOut`    | `Fw.SuccessCondition` | Port indicating status of outgoing transmission. See protocol. |
 
 
 > [!NOTE]
@@ -38,7 +38,7 @@ the outgoing data port.
 This port receives data from the communication interface managed by this component and provides it to the F´ application
 in the form of an argument of `Fw::Buffer` type. From the perspective of the application this is the incoming data port.
 
-### comStatus Description
+### comStatusOut Description
 
 This port carries a status of `Fw::Success::SUCCESS` or `Fw::Success::FAILURE` typically in response to a call to the
 `comDataIn` port described above. 

@@ -21,6 +21,7 @@ On receiving a data packet, the `Svc::FprimeFramer` performs the following actio
 3. Serializes the F´ packet data into _`outBuffer`_
 4. Computes and serializes a CRC32 checksum into _`outBuffer`_
 5. Emits the _`outBuffer`_ on the `dataOut` output port. Ownership of _`outBuffer`_ is handed to the receiver
+5. Transfer ownership of input _`dataPacket`_ to the `dataReturnOut` port. This usually should be connected to the same component that sent the original packet to `dataIn`.
 
 ## Port Descriptions
 
