@@ -13,6 +13,8 @@
 namespace Svc {
 
 class ComStub final : public ComStubComponentBase {
+    friend class ComStubTester;  //!< Allow UT Tester to access private members
+
   public:
     const FwIndexType RETRY_LIMIT = 10;
     // ----------------------------------------------------------------------
@@ -47,7 +49,7 @@ class ComStub final : public ComStubComponentBase {
 
     //! Handler implementation for drvDataIn
     //!
-    //! Data is coming in from the driver (meaning it has been read from the wire). 
+    //! Data is coming in from the driver (meaning it has been read from the wire).
     //! ComStub forwards this to the comDataOut port
     void drvDataIn_handler(const FwIndexType portNum,
                            /*!< The port number*/ Fw::Buffer& recvBuffer,

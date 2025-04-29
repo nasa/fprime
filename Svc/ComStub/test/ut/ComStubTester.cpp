@@ -60,10 +60,9 @@ void ComStubTester ::test_basic() {
     ASSERT_from_drvDataOut(0, buffer);
 
     // Uplink
-    Drv::ByteStreamStatus status = Drv::ByteStreamStatus::OP_OK;
-    invoke_to_drvDataIn(0, buffer, status);
+    invoke_to_drvDataIn(0, buffer, Drv::ByteStreamStatus::OP_OK);
     ASSERT_from_comDataOut_SIZE(1);
-    ASSERT_from_comDataOut(0, buffer, status);
+    ASSERT_from_comDataOut(0, buffer);
 }
 
 void ComStubTester ::test_fail() {
@@ -81,10 +80,8 @@ void ComStubTester ::test_fail() {
     ASSERT_from_drvDataOut(0, buffer);
 
     // Uplink
-    Drv::ByteStreamStatus status = Drv::ByteStreamStatus::OTHER_ERROR;
-    invoke_to_drvDataIn(0, buffer, status);
-    ASSERT_from_comDataOut_SIZE(1);
-    ASSERT_from_comDataOut(0, buffer, status);
+    invoke_to_drvDataIn(0, buffer, Drv::ByteStreamStatus::OTHER_ERROR);
+    ASSERT_from_comDataOut_SIZE(0); // receiving failure should not send anything
 }
 
 void ComStubTester ::test_retry() {
@@ -103,11 +100,17 @@ void ComStubTester ::test_retry() {
     // Retrying for as many times as the RETRY_LIMIT should be ok
     for (FwIndexType i = 0; i < this->component.RETRY_LIMIT; i++) {
         invoke_to_dataReturnIn(0, buffers[i], Drv::ByteStreamStatus::SEND_RETRY);
+        // Test we have indeed retried (data sent on drvDataOut)
         ASSERT_from_drvDataOut_SIZE(static_cast<U32>(i + 1));
         ASSERT_from_drvDataOut(static_cast<U32>(i), buffers[i]);
     }
-    // The next call should be a failure
-    ASSERT_DEATH_IF_SUPPORTED(invoke_to_dataReturnIn(0, buffers[MAX_ITERS - 1], Drv::ByteStreamStatus::SEND_RETRY), "ComStub.cpp");
+    ASSERT_from_drvDataOut_SIZE(static_cast<U32>(this->component.RETRY_LIMIT));
+    ASSERT_EQ(this->component.m_retry_count, this->component.RETRY_LIMIT);
+    // Retry one more time should block from retrying and reset retry count
+    invoke_to_dataReturnIn(0, buffers[MAX_ITERS - 1], Drv::ByteStreamStatus::SEND_RETRY);
+    ASSERT_from_drvDataOut_SIZE(static_cast<U32>(this->component.RETRY_LIMIT)); // no drvDataOut sent when SEND_RETRY
+    ASSERT_from_dataReturnOut_SIZE(1); // buffer ownership was returned
+    ASSERT_EQ(this->component.m_retry_count, 0);
 }
 
 void ComStubTester ::test_retry_reset() {
@@ -151,9 +154,8 @@ void ComStubTester ::test_retry_reset() {
 // ----------------------------------------------------------------------
 
 void ComStubTester ::from_comDataOut_handler(const FwIndexType portNum,
-                                      Fw::Buffer& recvBuffer,
-                                      const Drv::ByteStreamStatus& recvStatus) {
-    this->pushFromPortEntry_comDataOut(recvBuffer, recvStatus);
+                                      Fw::Buffer& recvBuffer) {
+    this->pushFromPortEntry_comDataOut(recvBuffer);
 }
 
 void ComStubTester ::from_comStatusOut_handler(const FwIndexType portNum, Fw::Success& condition) {
