@@ -1075,7 +1075,6 @@ viewforum
 vla
 vlist
 VOXL
-VOXL2
 vtype
 vuejs
 vwong
