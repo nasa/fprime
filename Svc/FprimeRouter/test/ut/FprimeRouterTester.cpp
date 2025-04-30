@@ -69,6 +69,8 @@ void FprimeRouterTester ::testBufferReturn() {
     Fw::Buffer buffer(data, sizeof(data));
     this->invoke_to_fileBufferReturnIn(0, buffer);
     ASSERT_from_bufferDeallocate_SIZE(1);     // incoming buffer should be deallocated
+    ASSERT_EQ(this->fromPortHistory_bufferDeallocate->at(0).fwBuffer.getData(), data);
+    ASSERT_EQ(this->fromPortHistory_bufferDeallocate->at(0).fwBuffer.getSize(), sizeof(data));
 }
 
 void FprimeRouterTester ::testCommandResponse() {
