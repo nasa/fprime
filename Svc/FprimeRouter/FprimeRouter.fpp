@@ -10,9 +10,6 @@ module Svc {
         @ Port for forwarding non-recognized packet types
         output port unknownDataOut: Svc.ComDataWithContext
 
-        @ Port for deallocating buffers
-        output port bufferDeallocate: Fw.BufferSend
-
         @ An error occurred while serializing a com buffer
         event SerializationError(
                 status: U32 @< The status of the operation

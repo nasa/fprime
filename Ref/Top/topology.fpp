@@ -163,25 +163,29 @@ module Ref {
     }
 
     connections Uplink {
-
-      comDriver.allocate -> commsBufferManager.bufferGetCallee
-      comDriver.$recv -> comStub.drvDataIn
-      comStub.comDataOut -> frameAccumulator.dataIn
-
-      frameAccumulator.frameOut -> deframer.framedIn
-      frameAccumulator.bufferAllocate -> commsBufferManager.bufferGetCallee
+      # ComDriver buffer allocations
+      comDriver.allocate      -> commsBufferManager.bufferGetCallee
+      comDriver.deallocate    -> commsBufferManager.bufferSendIn
+      # ComDriver <-> ComStub
+      comDriver.$recv         -> comStub.drvDataIn
+      comStub.bufferReturnOut -> comDriver.bufferReturnIn
+      # ComStub <-> FrameAccumulator
+      comStub.comDataOut               -> frameAccumulator.dataIn # Update needed: ComInterface needs to emit ComDataWithContext ?
+      frameAccumulator.bufferReturnOut -> comStub.bufferReturnIn
+      # FrameAccumulator buffer allocations
       frameAccumulator.bufferDeallocate -> commsBufferManager.bufferSendIn
-      deframer.bufferDeallocate -> commsBufferManager.bufferSendIn
-      deframer.deframedOut -> fprimeRouter.dataIn
-
-      fprimeRouter.commandOut -> cmdDisp.seqCmdBuff
-      fprimeRouter.fileOut -> fileUplink.bufferSendIn
-      fprimeRouter.bufferDeallocate -> commsBufferManager.bufferSendIn
-
-      cmdDisp.seqCmdStatus -> fprimeRouter.cmdResponseIn
-
-      fileUplink.bufferSendOut -> commsBufferManager.bufferSendIn
-
+      frameAccumulator.bufferAllocate   -> commsBufferManager.bufferGetCallee
+      # FrameAccumulator <-> Deframer
+      frameAccumulator.frameOut -> deframer.framedIn
+      deframer.dataReturnOut    -> frameAccumulator.dataReturnIn
+      # Deframer <-> Router
+      deframer.deframedOut         -> fprimeRouter.dataIn
+      fprimeRouter.dataReturnOut   -> deframer.dataReturnIn
+      # Router <-> CmdDispatcher/FileUplink
+      fprimeRouter.commandOut  -> cmdDisp.seqCmdBuff
+      cmdDisp.seqCmdStatus     -> fprimeRouter.cmdResponseIn
+      fprimeRouter.fileOut     -> fileUplink.bufferSendIn
+      fileUplink.bufferSendOut -> fprimeRouter.fileBufferReturnIn
     }
 
     connections DataProducts {

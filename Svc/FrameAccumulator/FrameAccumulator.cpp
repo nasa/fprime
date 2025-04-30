@@ -55,9 +55,8 @@ void FrameAccumulator ::dataIn_handler(FwIndexType portNum, Fw::Buffer& buffer) 
     if (buffer.isValid()) {
         this->processBuffer(buffer);
     }
-    // TODO: rework the uplink deallocation logic to use the bufferReturn chaining pattern
-    // Deallocate the buffer
-    this->bufferDeallocate_out(0, buffer);
+    // Return ownership of the incoming buffer (FrameAccumulator allocates its own buffers to hold frames)
+    this->bufferReturnOut_out(0, buffer);
 }
 
 void FrameAccumulator ::processBuffer(Fw::Buffer& buffer) {
@@ -163,4 +162,11 @@ void FrameAccumulator ::processRing() {
         }
     }
 }
+
+void FrameAccumulator ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer, const ComCfg::FrameContext& context) {
+    // Frame buffer ownership is returned to the component. Component had allocated with a buffer manager,
+    // so we return it to the buffer manager for deallocation
+    this->bufferDeallocate_out(0, fwBuffer);
+}
+
 }  // namespace Svc

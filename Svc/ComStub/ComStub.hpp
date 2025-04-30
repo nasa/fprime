@@ -55,6 +55,13 @@ class ComStub final : public ComStubComponentBase {
                            /*!< The port number*/ Fw::Buffer& recvBuffer,
                            const Drv::ByteStreamStatus& recvStatus) override;
 
+    //! Handler implementation for bufferReturnIn
+    //!
+    //! Port receiving back ownership of buffer sent out on comDataOut
+    void bufferReturnIn_handler(FwIndexType portNum,  //!< The port number
+                                Fw::Buffer& fwBuffer  //!< The buffer
+                                ) override;
+
     //! Handler implementation for dataReturnIn
     //!
     //! Buffer ownership and status returning from a Driver "send" operation

@@ -39,6 +39,15 @@ class FprimeDeframer final : public FprimeDeframerComponentBase {
     void framedIn_handler(FwIndexType portNum,  //!< The port number
                        Fw::Buffer& data,
                        const ComCfg::FrameContext& context) override;
+
+    //! Handler implementation for dataReturnIn
+    //!
+    //! Port receiving back ownership of sent frame buffers
+    void dataReturnIn_handler(FwIndexType portNum,  //!< The port number
+                                Fw::Buffer& data,  //!< The buffer
+                                const ComCfg::FrameContext& context) override;
+
+
 };
 
 }  // namespace Svc

@@ -19,5 +19,8 @@ module Svc {
         @ Callback from drvDataOut (retrieving status and ownership of sent buffer)
         sync input port dataReturnIn: Drv.ByteStreamData
 
+        @ Returning ownership of buffer that came in on drvDataIn
+        output port bufferReturnOut: Fw.BufferSend
+
     }
 }

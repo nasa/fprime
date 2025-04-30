@@ -70,4 +70,8 @@ void ComStub ::dataReturnIn_handler(FwIndexType portNum,  //!< The port number
     }
 }
 
+void ComStub ::bufferReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
+    this->bufferReturnOut_out(0, fwBuffer);
+}
+
 }  // end namespace Svc

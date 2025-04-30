@@ -94,4 +94,8 @@ void TcpClientComponentImpl::send_handler(const FwIndexType portNum, Fw::Buffer&
     this->dataReturnOut_out(0, fwBuffer, returnStatus);
 }
 
+void TcpClientComponentImpl::bufferReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
+    this->deallocate_out(0, fwBuffer);
+}
+
 }  // end namespace Drv

@@ -61,7 +61,7 @@ void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer
                 // send the file packet. Otherwise take no action.
                 if (this->isConnected_fileOut_OutputPort(0)) {
                     // Send the packet buffer
-                    this->fileOut_out(0, packetBuffer);
+                    this->fileOut_out(0, packetBuffer, context);
                     // Transfer ownership of the packetBuffer to the receiver
                     deallocate = false;
                 }
@@ -83,7 +83,7 @@ void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer
 
     if (deallocate) {
         // Deallocate the packet buffer
-        this->bufferDeallocate_out(0, packetBuffer);
+        this->dataReturnOut_out(0, packetBuffer, context);
     }
 }
 
@@ -93,4 +93,9 @@ void FprimeRouter ::cmdResponseIn_handler(FwIndexType portNum,
                                           const Fw::CmdResponse& response) {
     // Nothing to do
 }
+
+void FprimeRouter ::fileBufferReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer, const ComCfg::FrameContext& context) {
+    this->dataReturnOut_out(0, fwBuffer, context);
+}
+
 }  // namespace Svc

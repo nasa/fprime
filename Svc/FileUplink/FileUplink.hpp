@@ -219,7 +219,8 @@ namespace Svc {
       //!
       void bufferSendIn_handler(
           const FwIndexType portNum, //!< The port number
-          Fw::Buffer& buffer //!< Buffer wrapping data
+          Fw::Buffer& buffer, //!< Buffer wrapping data
+          const ComCfg::FrameContext& context
       );
 
       //! Handler implementation for pingIn

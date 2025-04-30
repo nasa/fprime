@@ -52,6 +52,14 @@ class FrameAccumulator final : public FrameAccumulatorComponentBase {
     void dataIn_handler(FwIndexType portNum,  //!< The port number
                         Fw::Buffer& recvBuffer) override;
 
+    //! Handler implementation for bufferReturnIn
+    //!
+    //! Port receiving ownership back of buffers sent on frameOut
+    void dataReturnIn_handler(FwIndexType portNum,  //!< The port number
+                                Fw::Buffer& fwBuffer,  //!< The buffer
+                                const ComCfg::FrameContext& context  //!< The context object  
+                              ) override;
+
   PRIVATE:
     //! \brief process raw buffer
     //! \return raw data buffer
