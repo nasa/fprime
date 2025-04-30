@@ -179,7 +179,6 @@ nav:
         - 'Dynamic Memory and Buffer Management': docs/user-manual/framework/dynamic-memory.md
         - 'F´ Data Products': docs/user-manual/framework/data-products.md
         - 'State Machines': docs/user-manual/framework/state-machines.md
-        - 'Supported Platforms': docs/user-manual/framework/supported-platforms.md
       - 'FPP': 'https://nasa.github.io/fpp/fpp-users-guide.html'
       - GDS:
         - "The GDS CLI": docs/user-manual/gds/gds-cli.md
