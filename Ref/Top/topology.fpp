@@ -181,6 +181,9 @@ module Ref {
       # Deframer <-> Router
       deframer.deframedOut         -> fprimeRouter.dataIn
       fprimeRouter.dataReturnOut   -> deframer.dataReturnIn
+      # Router buffer allocations
+      fprimeRouter.bufferAllocate   -> commsBufferManager.bufferGetCallee
+      fprimeRouter.bufferDeallocate -> commsBufferManager.bufferSendIn
       # Router <-> CmdDispatcher/FileUplink
       fprimeRouter.commandOut  -> cmdDisp.seqCmdBuff
       cmdDisp.seqCmdStatus     -> fprimeRouter.cmdResponseIn

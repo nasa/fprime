@@ -32,9 +32,6 @@ void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer
         status = esb.deserialize(packetType);
     }
 
-    // Whether to deallocate the packet buffer
-    bool deallocate = true;
-
     // Process the packet
     if (status == Fw::FW_SERIALIZE_OK) {
         U8* const packetData = packetBuffer.getData();
@@ -57,13 +54,16 @@ void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer
             }
             // Handle a file packet
             case Fw::ComPacket::FW_PACKET_FILE: {
-                // If the file uplink output port is connected,
-                // send the file packet. Otherwise take no action.
+                // If the file uplink output port is connected, send the file packet. Otherwise take no action.
                 if (this->isConnected_fileOut_OutputPort(0)) {
-                    // Send the packet buffer
-                    this->fileOut_out(0, packetBuffer, context);
-                    // Transfer ownership of the packetBuffer to the receiver
-                    deallocate = false;
+                    // Copy buffer into a new allocated buffer. This lets us return the original buffer with dataReturnOut,
+                    // and FprimeRouter can handle the deallocation of the file buffer when it returns on filebufferReturnIn
+                    Fw::Buffer packetBufferCopy = this->bufferAllocate_out(0, packetBuffer.getSize());
+                    auto copySerializer = packetBufferCopy.getSerializer();
+                    status = copySerializer.serialize(packetBuffer.getData(), packetBuffer.getSize(), Fw::Serialization::OMIT_LENGTH);
+                    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
+                    // Send the copied buffer out. It will come back on fileBufferReturnIn once the receiver is done with it
+                    this->fileOut_out(0, packetBufferCopy);
                 }
                 break;
             }
@@ -72,8 +72,6 @@ void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer
                 // connected, forward packet and context for further processing
                 if (this->isConnected_unknownDataOut_OutputPort(0)) {
                     this->unknownDataOut_out(0, packetBuffer, context);
-                    // Transfer ownership of the packetBuffer to the receiver
-                    deallocate = false;
                 }
             }
         }
@@ -81,10 +79,8 @@ void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer
         this->log_WARNING_HI_DeserializationError(status);
     }
 
-    if (deallocate) {
-        // Deallocate the packet buffer
-        this->dataReturnOut_out(0, packetBuffer, context);
-    }
+    // Return ownership of the incoming packetBuffer
+    this->dataReturnOut_out(0, packetBuffer, context);
 }
 
 void FprimeRouter ::cmdResponseIn_handler(FwIndexType portNum,
@@ -94,8 +90,8 @@ void FprimeRouter ::cmdResponseIn_handler(FwIndexType portNum,
     // Nothing to do
 }
 
-void FprimeRouter ::fileBufferReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer, const ComCfg::FrameContext& context) {
-    this->dataReturnOut_out(0, fwBuffer, context);
+void FprimeRouter ::fileBufferReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
+    this->bufferDeallocate_out(0, fwBuffer);
 }
 
 }  // namespace Svc

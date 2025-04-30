@@ -49,8 +49,7 @@ class FprimeRouter final : public FprimeRouterComponentBase {
     //!
     //! Port for receiving ownership back of buffers sent on fileOut
     void fileBufferReturnIn_handler(FwIndexType portNum,  //!< The port number
-                                    Fw::Buffer& fwBuffer,  //!< The buffer
-                                    const ComCfg::FrameContext& context
+                                    Fw::Buffer& fwBuffer  //!< The buffer
                                     ) override;
 
 };
