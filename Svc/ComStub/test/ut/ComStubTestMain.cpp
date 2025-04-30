@@ -20,6 +20,11 @@ TEST(Nominal, Fail) {
     tester.test_fail();
 }
 
+TEST(Nominal, BufferReturn) {
+    Svc::ComStubTester tester;
+    tester.test_buffer_return();
+}
+
 TEST(OffNominal, Retry) {
     Svc::ComStubTester tester;
     tester.test_retry();

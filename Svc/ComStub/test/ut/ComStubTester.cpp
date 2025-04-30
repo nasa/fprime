@@ -149,6 +149,16 @@ void ComStubTester ::test_retry_reset() {
     ASSERT_from_drvDataOut_SIZE(expected_drvDataOut_count); // no drvDataOut sent when OP_OK
 }
 
+void ComStubTester ::test_buffer_return() {
+    U8 data[1];
+    Fw::Buffer buffer(data, sizeof(data));
+    this->invoke_to_bufferReturnIn(0, buffer);
+    ASSERT_from_bufferReturnOut_SIZE(1);     // incoming buffer should be returned
+    ASSERT_EQ(this->fromPortHistory_bufferReturnOut->at(0).fwBuffer.getData(), data);
+    ASSERT_EQ(this->fromPortHistory_bufferReturnOut->at(0).fwBuffer.getSize(), sizeof(data));
+}
+
+
 // ----------------------------------------------------------------------
 // Handlers for typed from ports
 // ----------------------------------------------------------------------

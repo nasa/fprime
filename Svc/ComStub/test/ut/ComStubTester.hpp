@@ -60,6 +60,9 @@ class ComStubTester : public ComStubGTestBase {
     //!
     void test_retry_reset();
 
+    //! Tests buffer is returned
+    //!
+    void test_buffer_return();
   private:
     // ----------------------------------------------------------------------
     // Handlers for typed from ports
