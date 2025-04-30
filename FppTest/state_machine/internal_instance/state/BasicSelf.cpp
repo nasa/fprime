@@ -46,9 +46,9 @@ void BasicSelf::test() {
     const auto status = this->doDispatch();
     ASSERT_EQ(status, MSG_DISPATCH_OK);
     ASSERT_EQ(this->smStateBasicSelf_getState(), SmState_BasicSelf::State::S);
-    const FwSizeType expectedSize = 6;
+    const FwIndexType expectedSize = 6;
     ASSERT_EQ(this->m_smStateBasicSelf_action_a_history.getSize(), expectedSize);
-    for (FwSizeType i = 0; i < expectedSize; i++) {
+    for (FwIndexType i = 0; i < expectedSize; i++) {
         ASSERT_EQ(this->m_smStateBasicSelf_action_a_history.getItemAt(i), SmState_BasicSelf::Signal::s);
     }
 }

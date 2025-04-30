@@ -61,7 +61,7 @@ namespace Svc {
             // Won't exceed max size, so write to file:
             else {
 
-                FwSignedSizeType writeSize = static_cast<FwSignedSizeType>(size);
+                FwSizeType writeSize = size;
                 Os::File::Status stat = this->m_file.write(reinterpret_cast<const U8*>(buf),writeSize,Os::File::WAIT);
 
                 // Assert that we are not trying to write to a file we never opened:
@@ -99,7 +99,7 @@ namespace Svc {
         // Quit after maxBackups suffix addition tries (first try is w/ the original name).
         U32 suffix = 0;
         bool failedSuffix = false;
-        FwSignedSizeType fileSize = 0;
+        FwSizeType fileSize = 0;
         while (Os::FileSystem::getFileSize(searchFilename.toChar(), fileSize) == Os::FileSystem::OP_OK) {
             // Not able to create a new non-existing file in maxBackups tries, then mark that it failed:
             if (suffix >= maxBackups) {

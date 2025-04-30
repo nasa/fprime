@@ -1,26 +1,50 @@
-/**
- * \file: BasicType.h
- * \author mstarch
- * \brief Declares fprime basic types for usage within C language files
- *
- * \copyright
- * Copyright 2009-2016, by the California Institute of Technology.
- * ALL RIGHTS RESERVED.  United States Government Sponsorship
- * acknowledged.
- *
- */
-#include <PlatformTypes.h>
+// ======================================================================
+// \title  Fw/Types/BasicTypes.h
+// \author mstarch
+// \brief  h file for FPrime basic numerical aliases (I8, U64, etc.)
+//
+// \copyright
+// Copyright 2024, by the California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
+//
+// FPrime allows use of shorthand fixed-with types. This file provides
+// these definitions. I# is a signed integer of width #, U# is an unsigned
+// integer of width #, F# is a floating point number of width #.
+//
+// This file also contains macros for a number of useful operations:
+//
+// - FW_NUM_ARRAY_ELEMENTS(a): number of elements in an array
+// - FW_MAX(a, b): maximum of a and b
+// - FW_MIN(a, b): minimum of a and b
+//
+// - FW_NO_ASSERT: constant for assertions turned off
+// - FW_FILEID_ASSERT: constant for assertions reported as a file CRC and line number
+// - FW_FILENAME_ASSERT: constant for assertions reported as a file path and line number
+// - FW_RELATIVE_PATH_ASSERT: constant for assertions reported as a relative path within
+//       FPrime and line number
+//
+// - STATIC: overridable "static" for unit testing
+// - PROTECTED: overridable "protected" for unit testing
+// - PRIVATE: overridable "private" for unit testing
+//
+// This header is intended to be C-compatible.
+//
+// ======================================================================
 #ifndef FW_BASIC_TYPES_H
 #define FW_BASIC_TYPES_H
 
 #ifdef  __cplusplus
 extern "C" {
 #endif
+#include <inttypes.h> // Standard integer types and printf macros
+#include <FPrimeNumericalConfig.h>
+
 
 // Compiler checks
 #if defined(__GNUC__) || defined(__llvm__) || defined(PLATFORM_OVERRIDE_GCC_CLANG_CHECK)
 #else
-#error Unsupported compiler!
+#error "FPrime only supports GCC or Clang compilers. You may attempt to use other compilers by defining PLATFORM_OVERRIDE_GCC_CLANG_CHECK, but this is not recommended."
 #endif
 
 /*----------------------------------------------------------------------------*/
@@ -61,19 +85,15 @@ typedef uint64_t U64;  //!< 64-bit unsigned integer
 
 typedef float F32;  //!< 32-bit floating point
 #define PRI_F64 "lf"
-
-#if FW_HAS_F64
-typedef double F64;  //!< 64-bit floating point
-#endif
-
-// Backwards-compatibility definitions
-typedef PlatformIntType NATIVE_INT_TYPE;
-typedef PlatformUIntType NATIVE_UINT_TYPE;
-typedef PlatformPointerCastType POINTER_CAST;
+typedef double F64;  //!< 64-bit floating point (double). Required for compiler-supplied double promotion.
 
 /*----------------------------------------------------------------------------*/
 /* Useful macro definitions                                                   */
 /*----------------------------------------------------------------------------*/
+#define FW_NUM_ARRAY_ELEMENTS(a) (sizeof(a) / sizeof((a)[0]))  //!< number of elements in an array
+#define FW_MAX(a, b) (((a) > (b)) ? (a) : (b))                 //!< MAX macro
+#define FW_MIN(a, b) (((a) < (b)) ? (a) : (b))                 //!< MIN macro
+
 #define FW_NO_ASSERT 1  //!< Asserts turned off
 #define FW_FILEID_ASSERT \
     2  //!< File ID used - requires -DASSERT_FILE_ID=somevalue to be set on the compile command line
@@ -81,10 +101,6 @@ typedef PlatformPointerCastType POINTER_CAST;
 #define FW_RELATIVE_PATH_ASSERT \
     4  //!< Uses a relative file path (within fprime/fprime library) for assert. - requires -DASSERT_RELATIVE_PATH=path
        //!< to be set on the compile command line
-
-#define FW_NUM_ARRAY_ELEMENTS(a) (sizeof(a) / sizeof((a)[0]))  //!< number of elements in an array
-#define FW_MAX(a, b) (((a) > (b)) ? (a) : (b))                 //!< MAX macro
-#define FW_MIN(a, b) (((a) < (b)) ? (a) : (b))                 //!< MIN macro
 
 #ifndef STATIC
 #define STATIC static  //!< static for non unit-test code
@@ -101,5 +117,4 @@ typedef PlatformPointerCastType POINTER_CAST;
 #ifdef  __cplusplus
 }
 #endif
-
 #endif  // FW_BASIC_TYPES_H

@@ -1,8 +1,11 @@
     @ Port invoked when the driver is ready to send/receive data
     output port ready: Drv.ByteStreamReady
 
-    @ Port invoked when driver has received data
-    output port $recv: Drv.ByteStreamRecv
+    @ Port invoked by the driver when it receives data
+    output port $recv: Drv.ByteStreamData
 
-    @ Port invoked to send data out the driver
-    guarded input port $send: Drv.ByteStreamSend
+    @ Invoke this port to send data out the driver
+    guarded input port $send: Fw.BufferSend
+
+    @ Port invoked to return ownership of sent data back to the sender
+    output port dataReturnOut: Drv.ByteStreamData

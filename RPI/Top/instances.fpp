@@ -148,6 +148,30 @@ module RPI {
     stack size Default.stackSize \
     priority 30
 
+  instance comQueue: Svc.ComQueue base id 0x1100 \
+      queue size 50 \
+      stack size Default.stackSize \
+      priority 100 \
+  {
+    phase Fpp.ToCpp.Phases.configObjects """
+      Svc::ComQueue::QueueConfigurationTable configurationTable;
+      """
+    phase Fpp.ToCpp.Phases.configComponents """
+      // Events (highest-priority)
+      ConfigObjects::RPI_comQueue::configurationTable.entries[0].depth = 100;
+      ConfigObjects::RPI_comQueue::configurationTable.entries[0].priority = 0;
+      // Telemetry
+      ConfigObjects::RPI_comQueue::configurationTable.entries[1].depth = 500;
+      ConfigObjects::RPI_comQueue::configurationTable.entries[1].priority = 2;
+      // File Downlink
+      ConfigObjects::RPI_comQueue::configurationTable.entries[2].depth = 100;
+      ConfigObjects::RPI_comQueue::configurationTable.entries[2].priority = 1;
+
+      RPI::comQueue.configure(ConfigObjects::RPI_comQueue::configurationTable, 0, Allocation::mallocator);
+    """
+  }
+
+
   # ----------------------------------------------------------------------
   # Queued component instances
   # ----------------------------------------------------------------------
@@ -214,22 +238,11 @@ module RPI {
 
   instance fatalAdapter: Svc.AssertFatalAdapter base id 1000
 
-  instance downlink: Svc.Framer base id 1220 \
-  {
-
-    phase Fpp.ToCpp.Phases.configObjects """
-    Svc::FprimeFraming framing;
-    """
-
-    phase Fpp.ToCpp.Phases.configComponents """
-    RPI::downlink.setup(ConfigObjects::RPI_downlink::framing);
-    """
-
-  }
+  instance framer: Svc.FprimeFramer base id 1220
 
   instance deframer: Svc.FprimeDeframer base id 1240
 
-  instance comm: Drv.TcpClient base id 1260 \
+  instance comDriver: Drv.TcpClient base id 1260 \
   {
 
     phase Fpp.ToCpp.Phases.configConstants """
@@ -242,7 +255,7 @@ module RPI {
     phase Fpp.ToCpp.Phases.configComponents """
     // Configure socket server if and only if there is a valid specification
     if (state.hostName != nullptr && state.portNumber != 0) {
-        RPI::comm.configure(state.hostName, state.portNumber);
+        RPI::comDriver.configure(state.hostName, state.portNumber);
     }
     """
 
@@ -251,20 +264,20 @@ module RPI {
     if (state.hostName != nullptr && state.portNumber != 0) {
         // Uplink is configured for receive so a socket task is started
         Os::TaskString name("ReceiveTask");
-        RPI::comm.start(
+        RPI::comDriver.start(
             name,
-            ConfigConstants::RPI_comm::PRIORITY,
-            ConfigConstants::RPI_comm::STACK_SIZE
+            ConfigConstants::RPI_comDriver::PRIORITY,
+            ConfigConstants::RPI_comDriver::STACK_SIZE
         );
     }
     """
 
     phase Fpp.ToCpp.Phases.stopTasks """
-    RPI::comm.stop();
+    RPI::comDriver.stop();
     """
 
     phase Fpp.ToCpp.Phases.freeThreads """
-    (void) RPI::comm.join();
+    (void) RPI::comDriver.join();
     """
 
   }
@@ -473,5 +486,8 @@ module RPI {
   }
 
   instance fprimeRouter: Svc.FprimeRouter base id 3000
+
+  instance comStub: Svc.ComStub base id 3100
+
 
 }

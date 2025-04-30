@@ -35,14 +35,13 @@ namespace Fw {
     Os::File file;
     Os::File::Status status;
     status = file.open(fileName, Os::File::OPEN_READ);
-    if( Os::File::OP_OK != status ) {
+    if(Os::File::OP_OK != status) {
       return FILE_OPEN_ERROR;
     }
 
-    FwSignedSizeType capacity = static_cast<FwSignedSizeType>(this->m_buffer.getBuffCapacity());
-    FwSignedSizeType length = static_cast<FwSignedSizeType>(capacity);
+    FwSizeType length = this->m_buffer.getBuffCapacity();
     status = file.read(this->m_buffer.getBuffAddr(), length, Os::File::WaitType::NO_WAIT);
-    if( Os::File::OP_OK != status ) {
+    if( Os::File::OP_OK != status) {
       file.close();
       return FILE_READ_ERROR;
     }
@@ -50,7 +49,7 @@ namespace Fw {
 
     this->reset();
     SerializeStatus serStatus;
-    serStatus = this->m_buffer.setBuffLen(static_cast<FwSizeType>(length));
+    serStatus = this->m_buffer.setBuffLen(length);
     FW_ASSERT(FW_SERIALIZE_OK == serStatus, serStatus);
     serStatus = serializable.deserialize(this->m_buffer);
     if(FW_SERIALIZE_OK != serStatus) {
@@ -72,10 +71,9 @@ namespace Fw {
       return FILE_OPEN_ERROR;
     }
 
-    FwSignedSizeType length = static_cast<FwSignedSizeType>(this->m_buffer.getBuffLength());
-    FwSignedSizeType size = length;
+    FwSizeType length = this->m_buffer.getBuffLength();
     status = file.write(this->m_buffer.getBuffAddr(), length);
-    if( (Os::File::OP_OK != status) || (length != size)) {
+    if((Os::File::OP_OK != status) || (length != this->m_buffer.getBuffLength())) {
       file.close();
       return FILE_WRITE_ERROR;
     }

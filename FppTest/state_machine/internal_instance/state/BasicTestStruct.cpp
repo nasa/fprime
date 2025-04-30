@@ -53,9 +53,9 @@ void BasicTestStruct::test() {
     const auto status = this->doDispatch();
     ASSERT_EQ(status, MSG_DISPATCH_OK);
     ASSERT_EQ(this->smStateBasicTestStruct_getState(), SmState_BasicTestStruct::State::T);
-    const FwSizeType expectedASize = 5;
+    const FwIndexType expectedASize = 5;
     ASSERT_EQ(this->m_smStateBasicTestStruct_action_a_history.getSize(), expectedASize);
-    for (FwSizeType i = 0; i < expectedASize; i++) {
+    for (FwIndexType i = 0; i < expectedASize; i++) {
         ASSERT_EQ(this->m_smStateBasicTestStruct_action_a_history.getItemAt(i), SmState_BasicTestStruct::Signal::s);
     }
     ASSERT_EQ(this->m_smStateBasicTestStruct_action_b_history.getSize(), 1);

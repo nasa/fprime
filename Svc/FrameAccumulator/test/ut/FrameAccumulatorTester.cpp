@@ -40,7 +40,7 @@ void FrameAccumulatorTester ::testFrameDetected() {
     // Set the mock detector to report success of size_out = buffer_size
     this->mockDetector.set_next_result(FrameDetector::Status::FRAME_DETECTED, buffer_size);
     // Receive the buffer on dataIn
-    this->invoke_to_dataIn(0, buffer, Drv::RecvStatus::RECV_OK);
+    this->invoke_to_dataIn(0, buffer);
     // Checks
     ASSERT_from_bufferDeallocate_SIZE(1); // input buffer was deallocated
     ASSERT_from_frameOut_SIZE(1); // frame was sent
@@ -56,7 +56,7 @@ void FrameAccumulatorTester ::testMoreDataNeeded() {
     // Set the mock detector to report more data needed
     this->mockDetector.set_next_result(FrameDetector::Status::MORE_DATA_NEEDED, buffer_size + 1);
     // Receive the buffer on dataIn
-    this->invoke_to_dataIn(0, buffer, Drv::RecvStatus::RECV_OK);
+    this->invoke_to_dataIn(0, buffer);
     // Checks
     ASSERT_from_bufferDeallocate_SIZE(1); // input buffer was deallocated
     ASSERT_from_frameOut_SIZE(0); // frame was not sent (waiting on more data)
@@ -71,7 +71,7 @@ void FrameAccumulatorTester ::testNoFrameDetected() {
     // Set the mock detector
     this->mockDetector.set_next_result(FrameDetector::Status::NO_FRAME_DETECTED, 0);
     // Receive the buffer on dataIn
-    this->invoke_to_dataIn(0, buffer, Drv::RecvStatus::RECV_OK);
+    this->invoke_to_dataIn(0, buffer);
     // Checks
     ASSERT_from_bufferDeallocate_SIZE(1); // input buffer was deallocated
     ASSERT_from_frameOut_SIZE(0); // No frame was sent out
@@ -84,7 +84,7 @@ void FrameAccumulatorTester ::testReceiveZeroSizeBuffer() {
     U8 data[1] = {0};
     Fw::Buffer buffer(data, 0);
     // Receive the buffer on dataIn
-    this->invoke_to_dataIn(0, buffer, Drv::RecvStatus::RECV_OK);
+    this->invoke_to_dataIn(0, buffer);
     // Checks
     ASSERT_from_bufferDeallocate_SIZE(1); // input buffer was deallocated
     ASSERT_from_frameOut_SIZE(0); // No frame was sent out
@@ -102,11 +102,11 @@ void FrameAccumulatorTester ::testAccumulateTwoBuffers() {
 
     this->mockDetector.set_next_result(FrameDetector::Status::MORE_DATA_NEEDED, buffer2_size);
     // Receive the buffer on dataIn
-    this->invoke_to_dataIn(0, buffer1, Drv::RecvStatus::RECV_OK);
+    this->invoke_to_dataIn(0, buffer1);
     // Next result is detection of a full frame, size = buffer1_size + buffer2_size
     this->mockDetector.set_next_result(FrameDetector::Status::FRAME_DETECTED, buffer1_size + buffer2_size );
     // Receive the buffer on dataIn
-    this->invoke_to_dataIn(0, buffer2, Drv::RecvStatus::RECV_OK);
+    this->invoke_to_dataIn(0, buffer2);
 
     // Checks
     ASSERT_from_bufferDeallocate_SIZE(2); // both input buffers deallocated
@@ -171,7 +171,7 @@ void FrameAccumulatorTester ::mockAccumulateFullFrame(U32& frame_size, U32& buff
         buffer.setSize(buffer_size);
         // Detector reports MORE_DATA_NEEDED and size needed bigger than accumulated size so far
         this->mockDetector.set_next_result(FrameDetector::Status::MORE_DATA_NEEDED, accumulated_size + 1);
-        this->invoke_to_dataIn(0, buffer, Drv::RecvStatus::RECV_OK);
+        this->invoke_to_dataIn(0, buffer);
     }
 
     // Send last buffer with FRAME_DETECTED
@@ -181,7 +181,7 @@ void FrameAccumulatorTester ::mockAccumulateFullFrame(U32& frame_size, U32& buff
     // Send last buffer with finally FRAME_DETECTED and total accumulated + last buffer
     this->mockDetector.set_next_result(FrameDetector::Status::FRAME_DETECTED, accumulated_size);
     // Receive the last buffer on dataIn
-    this->invoke_to_dataIn(0, buffer, Drv::RecvStatus::RECV_OK);
+    this->invoke_to_dataIn(0, buffer);
     frame_size = accumulated_size;
     buffer_count = iters + 1;
 }

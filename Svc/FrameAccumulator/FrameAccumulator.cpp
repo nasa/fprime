@@ -4,10 +4,9 @@
 // \brief  cpp file for FrameAccumulator component implementation class
 // ======================================================================
 
-#include "Svc/FrameAccumulator/FrameAccumulator.hpp"
-#include <new>  // required for placement new in configure() member function
-#include "FpConfig.hpp"
+#include "Fw/FPrimeBasicTypes.hpp"
 #include "Fw/Types/Assert.hpp"
+#include "Svc/FrameAccumulator/FrameAccumulator.hpp"
 
 namespace Svc {
 
@@ -29,8 +28,7 @@ void FrameAccumulator ::configure(const FrameDetector& detector,
                                   Fw::MemAllocator& allocator,
                                   FwSizeType store_size) {
     bool recoverable = false;
-    void* data_void = allocator.allocate(allocationId, store_size, recoverable);
-    U8* data = new (data_void) U8[store_size];
+    U8* const data = static_cast<U8*>(allocator.allocate(allocationId, store_size, recoverable));
     FW_ASSERT(data != nullptr);
     m_inRing.setup(data, store_size);
 
@@ -52,12 +50,12 @@ void FrameAccumulator ::cleanup() {
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void FrameAccumulator ::dataIn_handler(FwIndexType portNum, Fw::Buffer& buffer, const Drv::RecvStatus& status) {
+void FrameAccumulator ::dataIn_handler(FwIndexType portNum, Fw::Buffer& buffer) {
     // Check whether there is data to process
-    if (status.e == Drv::RecvStatus::RECV_OK) {
-        // There is: process the data
+    if (buffer.isValid()) {
         this->processBuffer(buffer);
     }
+    // TODO: rework the uplink deallocation logic to use the bufferReturn chaining pattern
     // Deallocate the buffer
     this->bufferDeallocate_out(0, buffer);
 }
@@ -131,16 +129,14 @@ void FrameAccumulator ::processRing() {
                 // Copy data out of ring buffer into the allocated buffer
                 Fw::SerializeStatus serialize_status = this->m_inRing.peek(buffer.getData(), size_out);
                 FW_ASSERT(serialize_status == Fw::SerializeStatus::FW_SERIALIZE_OK);
-                serialize_status = buffer.getSerializeRepr().setBuffLen(size_out);
-                FW_ASSERT(serialize_status == Fw::SerializeStatus::FW_SERIALIZE_OK);
                 // Consume (rotate) the data from the ring buffer
                 serialize_status = this->m_inRing.rotate(size_out);
                 FW_ASSERT(serialize_status == Fw::SerializeStatus::FW_SERIALIZE_OK);
                 FW_ASSERT(m_inRing.get_allocated_size() == remaining - size_out,
                           static_cast<FwAssertArgType>(m_inRing.get_allocated_size()),
                           static_cast<FwAssertArgType>(remaining), static_cast<FwAssertArgType>(size_out));
-                Fw::Buffer nullContext;
-                this->frameOut_out(0, buffer, nullContext);
+                ComCfg::FrameContext context;
+                this->frameOut_out(0, buffer, context);
             } else {
                 // No buffer is available, we need to exit and try again later
                 this->log_WARNING_HI_NoBufferAvailable();

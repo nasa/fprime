@@ -16,7 +16,7 @@ The `Svc::FprimeDeframer` does not support deframing multiple packets in a singl
 
 ### Frame validation
 
-The passed-in `data` field (of type `Fw::Buffer`) of the `Fw.DataWithContext` input port is validated for the following conditions:
+The passed-in `data` field (of type `Fw::Buffer`) of the `Svc.ComDataWithContext` input port is validated for the following conditions:
 - The buffer is large enough to contain the header and trailer
 - The buffer starts with the F´ start word
 - The buffer length is equal to (or larger than) the packet length field in the frame header
@@ -41,7 +41,7 @@ The below diagram shows a typical configuration in which the `Svc::FprimeDeframe
 ```mermaid
 classDiagram
     class FprimeDeframer~PassiveComponent~ {
-        + void framedIn_handler(FwIndexType portNum, Fw::Buffer& data, Fw::Buffer& context)
+        + void framedIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context)
     }
 ```
 
@@ -57,6 +57,6 @@ SVC-DEFRAMER-002 | `Svc::FprimeDeframer` shall deallocate input buffers that are
 
 | Kind | Name | Type | Description |
 |---|---|---|---|
-| `guarded input` | framedIn | `Fw.DataWithContext` | Receives a frame with optional context data |
-| `output` | deframedOut | `Fw.DataWithContext` | Receives a frame with optional context data |
+| `guarded input` | framedIn | `Svc.ComDataWithContext` | Receives a frame with optional context data |
+| `output` | deframedOut | `Svc.ComDataWithContext` | Receives a frame with optional context data |
 | `output` | bufferDeallocate | `Fw.BufferSend` | Port for deallocating dropped frames |

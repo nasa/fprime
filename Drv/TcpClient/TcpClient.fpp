@@ -2,10 +2,9 @@ module Drv {
     passive component TcpClient {
 
         include "../Interfaces/ByteStreamDriverInterface.fppi"
-        
-        output port allocate: Fw.BufferGet
 
-        output port deallocate: Fw.BufferSend
+        @ Allocation for received data
+        output port allocate: Fw.BufferGet
 
     }
 }

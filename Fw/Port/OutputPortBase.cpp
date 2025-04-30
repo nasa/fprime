@@ -1,4 +1,4 @@
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Port/OutputPortBase.hpp>
 #include <Os/Console.hpp>
 #include <cstdio>

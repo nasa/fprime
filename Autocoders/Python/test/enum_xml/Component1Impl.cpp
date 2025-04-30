@@ -1,5 +1,5 @@
 #include <Autocoders/Python/test/enum_xml/Component1Impl.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <iostream>
 #include <cstdio>
 

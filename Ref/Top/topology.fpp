@@ -4,11 +4,16 @@ module Ref {
   # Symbolic constants for port numbers
   # ----------------------------------------------------------------------
 
-    enum Ports_RateGroups {
-      rateGroup1
-      rateGroup2
-      rateGroup3
-    }
+  enum Ports_RateGroups {
+    rateGroup1
+    rateGroup2
+    rateGroup3
+  }
+
+  enum Ports_ComPacketQueue {
+    EVENTS,
+    TELEMETRY
+  }
 
   topology Ref {
 
@@ -26,7 +31,9 @@ module Ref {
     instance tlmSend
     instance cmdDisp
     instance cmdSeq
-    instance comm
+    instance comDriver
+    instance comStub
+    instance comQueue
     instance deframer
     instance eventLogger
     instance fatalAdapter
@@ -36,7 +43,7 @@ module Ref {
     instance fileUplink
     instance commsBufferManager
     instance frameAccumulator
-    instance framer
+    instance fprimeFramer
     instance posixTime
     instance pingRcvr
     instance prmDb
@@ -75,24 +82,38 @@ module Ref {
     health connections instance $health
 
     # ----------------------------------------------------------------------
+    # Telemetry packets
+    # ----------------------------------------------------------------------
+
+    include "RefPackets.fppi"
+
+    # ----------------------------------------------------------------------
     # Direct graph specifiers
     # ----------------------------------------------------------------------
 
     connections Downlink {
-
-      tlmSend.PktSend -> framer.comIn
-      eventLogger.PktSend -> framer.comIn
-      fileDownlink.bufferSendOut -> framer.bufferIn
-
-      framer.framedAllocate -> commsBufferManager.bufferGetCallee
-      framer.framedOut -> comm.$send
-      framer.bufferDeallocate -> fileDownlink.bufferReturn
-
-      comm.deallocate -> commsBufferManager.bufferSendIn
-
       dpCat.fileOut -> fileDownlink.SendFile
       fileDownlink.FileComplete -> dpCat.fileDone
 
+      eventLogger.PktSend -> comQueue.comPacketQueueIn[Ports_ComPacketQueue.EVENTS]
+      tlmSend.PktSend -> comQueue.comPacketQueueIn[Ports_ComPacketQueue.TELEMETRY]
+      fileDownlink.bufferSendOut -> comQueue.bufferQueueIn[0]
+      comQueue.bufferReturnOut[0] -> fileDownlink.bufferReturn
+
+      comQueue.queueSend -> fprimeFramer.dataIn
+      fprimeFramer.dataReturnOut -> comQueue.bufferReturnIn
+      fprimeFramer.comStatusOut -> comQueue.comStatusIn
+
+      fprimeFramer.bufferAllocate -> commsBufferManager.bufferGetCallee
+      fprimeFramer.bufferDeallocate -> commsBufferManager.bufferSendIn
+
+      fprimeFramer.dataOut -> comStub.comDataIn
+      comStub.dataReturnOut -> fprimeFramer.dataReturnIn
+      comStub.comStatusOut -> fprimeFramer.comStatusIn
+
+      comStub.drvDataOut -> comDriver.$send
+      comDriver.dataReturnOut -> comStub.dataReturnIn
+      comDriver.ready -> comStub.drvConnected
     }
 
     connections FaultProtection {
@@ -111,6 +132,7 @@ module Ref {
       rateGroup1Comp.RateGroupMemberOut[2] -> tlmSend.Run
       rateGroup1Comp.RateGroupMemberOut[3] -> fileDownlink.Run
       rateGroup1Comp.RateGroupMemberOut[4] -> systemResources.run
+      rateGroup1Comp.RateGroupMemberOut[5] -> comQueue.run
 
       # Rate group 2
       rateGroupDriverComp.CycleOut[Ports_RateGroups.rateGroup2] -> rateGroup2Comp.CycleIn
@@ -142,8 +164,9 @@ module Ref {
 
     connections Uplink {
 
-      comm.allocate -> commsBufferManager.bufferGetCallee
-      comm.$recv -> frameAccumulator.dataIn
+      comDriver.allocate -> commsBufferManager.bufferGetCallee
+      comDriver.$recv -> comStub.drvDataIn
+      comStub.comDataOut -> frameAccumulator.dataIn
 
       frameAccumulator.frameOut -> deframer.framedIn
       frameAccumulator.bufferAllocate -> commsBufferManager.bufferGetCallee
@@ -168,7 +191,7 @@ module Ref {
       dpWriter.deallocBufferSendOut -> dpBufferManager.bufferSendIn
 
       # Component DP connections
-      
+
       # Synchronous request. Will have both request kinds for demo purposes, not typical
       SG1.productGetOut -> dpMgr.productGetIn[0]
       # Asynchronous request
@@ -176,7 +199,7 @@ module Ref {
       dpMgr.productResponseOut[0] -> SG1.productRecvIn
       # Send filled DP
       SG1.productSendOut -> dpMgr.productSendIn[0]
-      
+
     }
 
   }

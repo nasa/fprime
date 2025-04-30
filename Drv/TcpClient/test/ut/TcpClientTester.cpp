@@ -79,8 +79,10 @@ void TcpClientTester ::test_with_loop(U32 iterations, bool recv_thread) {
             Drv::Test::force_recv_timeout(server_fd.serverFd, server);
             m_data_buffer.setSize(sizeof(m_data_storage));
             size = Drv::Test::fill_random_buffer(m_data_buffer);
-            Drv::SendStatus status = invoke_to_send(0, m_data_buffer);
-            EXPECT_EQ(status, SendStatus::SEND_OK);
+            invoke_to_send(0, m_data_buffer);
+            ASSERT_from_dataReturnOut_SIZE(i + 1);
+            Drv::ByteStreamStatus status = this->fromPortHistory_dataReturnOut->at(i).status;
+            EXPECT_EQ(status, ByteStreamStatus::OP_OK);
             Drv::Test::receive_all(server, server_fd, buffer, size);
             Drv::Test::validate_random_buffer(m_data_buffer, buffer);
             // If receive thread is live, try the other way
@@ -89,7 +91,6 @@ void TcpClientTester ::test_with_loop(U32 iterations, bool recv_thread) {
                 m_data_buffer.setSize(sizeof(m_data_storage));
                 status2 = server.send(server_fd, m_data_buffer.getData(), m_data_buffer.getSize());
                 EXPECT_EQ(status2, Drv::SOCK_SUCCESS);
-                from_deallocate_handler(0, m_data_buffer);
                 while (not m_spinner) {}
             }
         }
@@ -180,18 +181,18 @@ void TcpClientTester ::test_no_automatic_recv_connection() {
 }
 
 // ----------------------------------------------------------------------
-// Handlers for typed from ports
+// Handler overrides for typed from ports
 // ----------------------------------------------------------------------
 
   void TcpClientTester ::
     from_recv_handler(
         const FwIndexType portNum,
         Fw::Buffer &recvBuffer,
-        const RecvStatus &recvStatus
+        const ByteStreamStatus &ByteStreamStatus
     )
   {
-    this->pushFromPortEntry_recv(recvBuffer, recvStatus);
-    if (recvStatus == RecvStatus::RECV_OK){
+    this->pushFromPortEntry_recv(recvBuffer, ByteStreamStatus);
+    if (ByteStreamStatus == ByteStreamStatus::OP_OK){
         // Make sure we can get to unblocking the spinner
         EXPECT_EQ(m_data_buffer.getSize(), recvBuffer.getSize()) << "Invalid transmission size";
         Drv::Test::validate_random_buffer(m_data_buffer, recvBuffer.getData());
@@ -199,10 +200,6 @@ void TcpClientTester ::test_no_automatic_recv_connection() {
         m_spinner = true;
     }
     delete[] recvBuffer.getData();
-}
-
-void TcpClientTester ::from_ready_handler(const FwIndexType portNum) {
-    this->pushFromPortEntry_ready();
 }
 
 Fw::Buffer TcpClientTester ::
@@ -215,15 +212,6 @@ Fw::Buffer TcpClientTester ::
     Fw::Buffer buffer(new U8[size], size);
     m_data_buffer2 = buffer;
     return buffer;
-  }
-
-  void TcpClientTester ::
-    from_deallocate_handler(
-        const FwIndexType portNum,
-        Fw::Buffer &fwBuffer
-    )
-  {
-    this->pushFromPortEntry_deallocate(fwBuffer);
   }
 
 }  // end namespace Drv

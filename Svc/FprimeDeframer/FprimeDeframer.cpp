@@ -5,7 +5,7 @@
 // ======================================================================
 
 #include "Svc/FprimeDeframer/FprimeDeframer.hpp"
-#include "FpConfig.hpp"
+#include "Fw/FPrimeBasicTypes.hpp"
 #include "Fw/Types/Assert.hpp"
 
 #include "Svc/FprimeProtocol/FrameHeaderSerializableAc.hpp"
@@ -25,7 +25,7 @@ FprimeDeframer ::~FprimeDeframer() {}
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void FprimeDeframer ::framedIn_handler(FwIndexType portNum, Fw::Buffer& data, Fw::Buffer& context) {
+void FprimeDeframer ::framedIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
     if (data.getSize() < FprimeProtocol::FrameHeader::SERIALIZED_SIZE + FprimeProtocol::FrameTrailer::SERIALIZED_SIZE) {
         // Incoming buffer is not long enough to contain a valid frame (header+trailer)
         this->log_WARNING_HI_InvalidBufferReceived();
@@ -39,7 +39,8 @@ void FprimeDeframer ::framedIn_handler(FwIndexType portNum, Fw::Buffer& data, Fw
 
     // ---------------- Validate Frame Header ----------------
     // Deserialize transmitted header into the header object
-    Fw::SerializeStatus status = header.deserialize(data.getSerializeRepr());
+    auto deserializer = data.getDeserializer();
+    Fw::SerializeStatus status = header.deserialize(deserializer);
     FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK, status);
     // Check that deserialized start_word token matches expected value (default start_word value in the FPP object)
     const FprimeProtocol::FrameHeader defaultValue;
@@ -59,9 +60,9 @@ void FprimeDeframer ::framedIn_handler(FwIndexType portNum, Fw::Buffer& data, Fw
 
     // ---------------- Validate Frame Trailer ----------------
     // Deserialize transmitted trailer: trailer is at offset = len(header) + len(body)
-    status = data.getSerializeRepr().moveDeserToOffset(FprimeProtocol::FrameHeader::SERIALIZED_SIZE + header.getlengthField());
+    status = deserializer.moveDeserToOffset(FprimeProtocol::FrameHeader::SERIALIZED_SIZE + header.getlengthField());
     FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK, status);
-    status = trailer.deserialize(data.getSerializeRepr());
+    status = trailer.deserialize(deserializer);
     FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK, status);
     // Compute CRC over the transmitted data (header + body)
     Utils::Hash hash;

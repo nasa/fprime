@@ -4,7 +4,7 @@
 // ======================================================================
 #ifndef OS_OS_HPP_
 #define OS_OS_HPP_
-#include "FpConfig.h"
+#include "Fw/FPrimeBasicTypes.hpp"
 
 //! Storage type for OSAL handles
 typedef U8 QueueHandleStorage[FW_QUEUE_HANDLE_MAX_SIZE];

@@ -88,7 +88,9 @@ TEST(Nominal, PushPop) {
 
     printf("Testing pop...\n");
     //heap.print();
-    for(FwQueuePriorityType ii = DEPTH-1; ii >= 0; --ii) {
+    for(FwSizeType i = 0; i < DEPTH; i++) {
+        ASSERT_TRUE(DEPTH - 1 >= i);
+        FwSizeType ii = DEPTH - 1 - i;
         ret = heap.pop(value, id);
         ASSERT_TRUE(ret);
         ASSERT_EQ(id, static_cast<FwSizeType>(ii));
@@ -104,8 +106,8 @@ TEST(Nominal, PushPop) {
     printf("Passed.\n");
 
     printf("Testing random...\n");
-    FwQueuePriorityType values[DEPTH] = {56, 0, 500, 57, 5};
-    FwSizeType sorted[DEPTH] = {500, 57, 56, 5, 0};
+    FwQueuePriorityType values[DEPTH] = {56, 0, 127, 57, 5};
+    FwSizeType sorted[DEPTH] = {127, 57, 56, 5, 0};
     //heap.print();
     // Push values on in random order:
     for(FwSizeType ii = 0; ii < DEPTH; ++ii) {
@@ -188,9 +190,9 @@ TEST(Nominal, PushPop) {
     // for things of the same priority and in priority
     // order for things of different priorities.
     FwQueuePriorityType pries[DEPTH] = {1, 7, 100, 1, 7};
-    FwQueuePriorityType data2[DEPTH] = {4, 22, 99, 12344, 33};
+    FwQueuePriorityType data2[DEPTH] = {4, 22, 99, 127, 33};
     FwQueuePriorityType orderedPries[DEPTH] = {100, 7, 7, 1, 1};
-    FwSizeType ordered[DEPTH] = {99, 22, 33, 4, 12344};
+    FwSizeType ordered[DEPTH] = {99, 22, 33, 4, 127};
     // Push values on in random order:
     for(FwSizeType ii = 0; ii < DEPTH; ++ii) {
         // Push next value in the list:

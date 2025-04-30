@@ -46,7 +46,7 @@ namespace FppTest {
         typename EnumType::T getInvalidValue() {
             U8 sign = 0;
             if (std::numeric_limits<typename EnumType::SerialType>::min() < 0) {
-                sign = STest::Pick::lowerUpper(0, 1);
+                sign = static_cast<U8>(STest::Pick::lowerUpper(0, 1));
             }
 
             switch (sign) {
@@ -58,12 +58,16 @@ namespace FppTest {
                         )
                     ));
                 default:
-                    return static_cast<typename EnumType::T>(STest::Pick::lowerUpper(
-                        1,
-                        static_cast<U32>((-1) *
-                            (std::numeric_limits<typename EnumType::SerialType>::min() + 1)
-                        )
-                    ) * (-1));
+                    return static_cast<typename EnumType::T>(
+                        static_cast<I32>(
+                          STest::Pick::lowerUpper(
+                            1,
+                            static_cast<U32>((-1) *
+                                static_cast<I32>(std::numeric_limits<typename EnumType::SerialType>::min() + 1)
+                            )
+                          )
+                      ) * (-1)
+                    );
             }
         }
 

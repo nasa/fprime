@@ -30,7 +30,7 @@ module RPI {
     async input port Run: Svc.Sched
 
     @ Input port for receiving UART data
-    async input port UartRead: Drv.ByteStreamRecv
+    async input port UartRead: Drv.ByteStreamData
 
     @ Output Port for reading GPIO values
     output port GpioRead: [2] Drv.GpioRead
@@ -42,7 +42,10 @@ module RPI {
     output port GpioWrite: [3] Drv.GpioWrite
 
     @ Output Port for writing UART data
-    output port UartWrite: Drv.ByteStreamSend
+    output port UartWrite: Fw.BufferSend
+
+    @ Input port for getting back buffer ownership and status when using UartWrite
+    sync input port UartWriteReturn: Drv.ByteStreamData
 
     @ Output port for sending UART buffers to use for reading
     output port UartBuffers: Fw.BufferSend

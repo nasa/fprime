@@ -16,9 +16,9 @@ bool compare_file_contents_on_disk(std::string path1, std::string path2) {
     file1.open(path1.c_str(), Os::File::OPEN_READ);
     file2.open(path2.c_str(), Os::File::OPEN_READ);
     
-    const FwSignedSizeType chunk_size = 128;
+    const FwSizeType chunk_size = 128;
 
-    FwSignedSizeType file1Size, file2Size;
+    FwSizeType file1Size, file2Size;
     file1.size(file1Size);
     file2.size(file2Size);
     if (file1Size != file2Size) {
@@ -27,7 +27,7 @@ bool compare_file_contents_on_disk(std::string path1, std::string path2) {
     const FwIndexType loopLimit = file1Size / chunk_size + 2;
 
     U8 buffer1[chunk_size], buffer2[chunk_size];
-    FwSignedSizeType bytesRead1 = chunk_size, bytesRead2 = chunk_size;
+    FwSizeType bytesRead1 = chunk_size, bytesRead2 = chunk_size;
 
     for (FwIndexType i = 0; i < loopLimit; i++) {
         file1.read(buffer1, bytesRead1);
@@ -329,7 +329,7 @@ bool Os::Test::FileSystem::Tester::GetFileSize::precondition(const Os::Test::Fil
 void Os::Test::FileSystem::Tester::GetFileSize::action(Os::Test::FileSystem::Tester &state) {
     TestFile file = state.get_random_file();
     Os::FileSystem::Status status;
-    FwSignedSizeType size;
+    FwSizeType size;
     status = Os::FileSystem::getSingleton().getFileSize(file.path.c_str(), size);
     ASSERT_EQ(status, Os::FileSystem::Status::OP_OK) << "Failed to get file size";
     ASSERT_EQ(size, file.contents.size()) << "File size should match contents size";

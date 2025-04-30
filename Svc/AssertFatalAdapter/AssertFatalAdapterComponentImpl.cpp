@@ -12,7 +12,7 @@
 
 
 #include <Svc/AssertFatalAdapter/AssertFatalAdapterComponentImpl.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Logger/Logger.hpp>
 #include <cassert>

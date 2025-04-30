@@ -27,11 +27,11 @@ endfunction(fpp_ut_is_supported)
 #
 # AC_INPUT_FILES: list of supported autocoder input files
 ####
-function(fpp_ut_setup_autocode AC_INPUT_FILES)
+function(fpp_ut_setup_autocode MODULE_NAME AC_INPUT_FILES)
     if (DEFINED FPP_TO_XML-NOTFOUND OR DEFINED FPP_TO_CPP-NOTFOUND)
         message(FATAL_ERROR "fpp tools not found, please install them onto your system path")
     endif()
-    fpp_info("${AC_INPUT_FILES}")
+    fpp_info("${MODULE_NAME}" "${AC_INPUT_FILES}")
     string(REGEX REPLACE ";" ","  FPRIME_BUILD_LOCATIONS_COMMA_SEP "${FPRIME_BUILD_LOCATIONS}")
     string(REGEX REPLACE ";" ","  FPP_IMPORTS_COMMA_SEP "${FPP_IMPORTS}")
     set(IMPORTS)
@@ -74,5 +74,7 @@ function(fpp_ut_setup_autocode AC_INPUT_FILES)
     set(AUTOCODER_GENERATED "${AUTOCODER_GENERATED}" PARENT_SCOPE)
     set(AUTOCODER_DEPENDENCIES "${MODULE_DEPENDENCIES}" PARENT_SCOPE)
     set(AUTOCODER_INCLUDES "${FILE_DEPENDENCIES}" PARENT_SCOPE)
+    set(AUTOCODER_BUILD_SOURCES "${GENERATED_CPP}" PARENT_SCOPE)
+    set(AUTOCODER_NEW_AUTOCODER_INPUTS "${GENERATED_AI};${GENERATED_DICT}" PARENT_SCOPE)
 endfunction(fpp_ut_setup_autocode)
 

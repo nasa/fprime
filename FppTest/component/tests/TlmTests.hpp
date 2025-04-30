@@ -38,8 +38,7 @@
         ASSERT_TLM_Channel##TYPE##_SIZE(1);                                                   \
         ASSERT_TLM_Channel##TYPE(0, data.args.val);                                           \
                                                                                               \
-        Fw::Time time = Fw::ZERO_TIME;                                                        \
-        component.tlmWrite_Channel##TYPE(data.args.val, time);                                \
+        component.tlmWrite_Channel##TYPE(data.args.val, Fw::ZERO_TIME);                       \
                                                                                               \
         ASSERT_TLM_SIZE(2);                                                                   \
         ASSERT_TLM_Channel##TYPE##_SIZE(2);                                                   \
@@ -70,8 +69,7 @@
             data2 = FppTest::Types::TlmStringParam();                                            \
         }                                                                                        \
                                                                                                  \
-        Fw::Time time = Fw::ZERO_TIME;                                                           \
-        component.tlmWrite_ChannelString(data2.args.val, time);                                  \
+        component.tlmWrite_ChannelString(data2.args.val, Fw::ZERO_TIME);                         \
                                                                                                  \
         ASSERT_TLM_SIZE(2);                                                                      \
         ASSERT_TLM_ChannelString_SIZE(2);                                                        \

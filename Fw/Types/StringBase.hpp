@@ -13,7 +13,7 @@
 #ifndef FW_STRING_BASE_HPP
 #define FW_STRING_BASE_HPP
 #include <Fw/Types/format.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <cstdarg>
 #ifdef BUILD_UT

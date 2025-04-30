@@ -9,7 +9,7 @@
  * acknowledged.
  * <br /><br />
  */
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Com/ComBuffer.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Svc/TlmChan/TlmChan.hpp>

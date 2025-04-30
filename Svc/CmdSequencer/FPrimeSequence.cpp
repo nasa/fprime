@@ -163,12 +163,11 @@ namespace Svc {
     Fw::SerializeBufferBase& buffer = this->m_buffer;
     bool status = true;
 
-    FwSignedSizeType readLen = Sequence::Header::SERIALIZED_SIZE;
-    FW_ASSERT(readLen >= 0, static_cast<FwAssertArgType>(readLen));
+    FwSizeType readLen = Sequence::Header::SERIALIZED_SIZE;
 
     const FwSizeType capacity = buffer.getBuffCapacity();
     FW_ASSERT(
-        capacity >= static_cast<FwSizeType>(readLen),
+        capacity >= readLen,
         static_cast<FwAssertArgType>(capacity),
         static_cast<FwAssertArgType>(readLen)
     );
@@ -263,7 +262,7 @@ namespace Svc {
     const FwSizeType size = this->m_header.m_fileSize;
     Fw::SerializeBufferBase& buffer = this->m_buffer;
 
-    FwSignedSizeType readLen = static_cast<FwSignedSizeType>(size);
+    FwSizeType readLen = size;
     Os::File::Status fileStatus = file.read(
       buffer.getBuffAddr(),
       readLen

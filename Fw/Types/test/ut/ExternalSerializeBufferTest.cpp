@@ -1,4 +1,4 @@
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <gtest/gtest.h>
 
 #include "Fw/Types/Serializable.hpp"

@@ -90,8 +90,8 @@ class BasicGuard : public BasicGuardComponentBase {
     // ----------------------------------------------------------------------
 
     //! Helper function for checking actions and guards
-    void checkActionsAndGuards(FwSizeType expectedActionSize,  //!< The expected action size
-                               FwSizeType expectedGuardSize    //!< The expected guard size
+    void checkActionsAndGuards(FwIndexType expectedActionSize,  //!< The expected action size
+                               FwIndexType expectedGuardSize    //!< The expected guard size
     );
 
   private:

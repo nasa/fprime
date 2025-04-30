@@ -24,10 +24,10 @@ namespace Svc {
 class ComQueue final : public ComQueueComponentBase {
   public:
     //!< Count of Fw::Com input ports and thus Fw::Com queues
-    static const FwIndexType COM_PORT_COUNT = ComQueueComponentBase::NUM_COMQUEUEIN_INPUT_PORTS;
+    static const FwIndexType COM_PORT_COUNT = ComQueueComponentBase::NUM_COMPACKETQUEUEIN_INPUT_PORTS;
 
     //!< Count of Fw::Buffer input ports and thus Fw::Buffer queues
-    static const FwIndexType BUFFER_PORT_COUNT = ComQueueComponentBase::NUM_BUFFQUEUEIN_INPUT_PORTS;
+    static const FwIndexType BUFFER_PORT_COUNT = ComQueueComponentBase::NUM_BUFFERQUEUEIN_INPUT_PORTS;
 
     static_assert((COM_PORT_COUNT + BUFFER_PORT_COUNT) <= std::numeric_limits<FwIndexType>::max(),
                   "FwIndexType not large enough to hold com and buffer ports");
@@ -126,27 +126,35 @@ class ComQueue final : public ComQueueComponentBase {
 
     //! Receive and queue a Fw::Buffer
     //!
-    void buffQueueIn_handler(const FwIndexType portNum, /*!< The port number*/
-                             Fw::Buffer& fwBuffer /*!< Buffer containing packet data*/);
+    void bufferQueueIn_handler(const FwIndexType portNum, /*!< The port number*/
+                             Fw::Buffer& fwBuffer /*!< Buffer containing packet data*/) override;
 
     //! Receive and queue a Fw::ComBuffer
     //!
-    void comQueueIn_handler(const FwIndexType portNum, /*!< The port number*/
+    void comPacketQueueIn_handler(const FwIndexType portNum, /*!< The port number*/
                             Fw::ComBuffer& data,           /*!< Buffer containing packet data*/
                             U32 context                    /*!< Call context value; meaning chosen by user*/
-    );
+    ) override;
 
     //! Handle the status of the last sent message
     //!
     void comStatusIn_handler(const FwIndexType portNum, /*!< The port number*/
                              Fw::Success& condition         /*!<Status of communication state*/
-    );
+    ) override;
 
     //! Schedules the transmission of telemetry
     //!
     void run_handler(const FwIndexType portNum, /*!< The port number*/
                      U32 context                    /*!<The call order*/
-    );
+    ) override;
+
+    //! Handler implementation for bufferReturnIn
+    //!
+    //! Port for returning ownership of Fw::Buffer to its sender
+    void bufferReturnIn_handler(FwIndexType portNum,  //!< The port number
+      Fw::Buffer& data,
+      const ComCfg::FrameContext& context) override;
+
 
     // ----------------------------------------------------------------------
     // Hook implementations for typed async input ports
@@ -154,9 +162,9 @@ class ComQueue final : public ComQueueComponentBase {
 
     //! Queue overflow hook method that deallocates the fwBuffer
     //!
-    void buffQueueIn_overflowHook(FwIndexType portNum, //!< The port number
+    void bufferQueueIn_overflowHook(FwIndexType portNum, //!< The port number
                                   Fw::Buffer& fwBuffer //!< The buffer
-    );
+    ) override;
 
     // ----------------------------------------------------------------------
     // Helper Functions
@@ -172,17 +180,22 @@ class ComQueue final : public ComQueueComponentBase {
 
     //! Send a chosen Fw::ComBuffer
     //!
-    void sendComBuffer(Fw::ComBuffer& comBuffer  //!< Reference to buffer to send
+    void sendComBuffer(Fw::ComBuffer& comBuffer,  //!< Reference to buffer to send
+                       FwIndexType queueIndex     //!< Index of the queue emitting the message
     );
 
     //! Send a chosen Fw::Buffer
     //!
-    void sendBuffer(Fw::Buffer& buffer  //!< Reference to buffer to send
+    void sendBuffer(Fw::Buffer& buffer,     //!< Reference to buffer to send
+                    FwIndexType queueIndex  //!< Index of the queue emitting the message  
     );
 
     //! Process the queues to select the next priority message
     //!
     void processQueue();
+
+
+  PRIVATE:
     // ----------------------------------------------------------------------
     // Member variables
     // ----------------------------------------------------------------------
@@ -195,6 +208,7 @@ class ComQueue final : public ComQueueComponentBase {
     FwEnumStoreType m_allocationId;  //!< Component's allocation ID
     Fw::MemAllocator* m_allocator;    //!< Pointer to Fw::MemAllocator instance for deallocation
     void* m_allocation;               //!< Pointer to allocated memory
+
 };
 
 }  // end namespace Svc

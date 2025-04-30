@@ -19,7 +19,7 @@
 #ifndef FW_OBJ_SIMPLE_OBJ_REGISTRY_HPP
 #define FW_OBJ_SIMPLE_OBJ_REGISTRY_HPP
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Obj/ObjBase.hpp>
 
 #if FW_OBJECT_REGISTRATION == 1

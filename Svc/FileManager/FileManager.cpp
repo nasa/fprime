@@ -16,7 +16,7 @@
 #include "Fw/Types/ExternalString.hpp"
 #include "Svc/FileManager/FileManager.hpp"
 #include "Fw/Types/Assert.hpp"
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 namespace Svc {
 
@@ -227,7 +227,7 @@ namespace Svc {
     Fw::LogStringArg logStringFileName(fileName.toChar());
     this->log_ACTIVITY_HI_FileSizeStarted(logStringFileName);
 
-    FwSignedSizeType size_arg;
+    FwSizeType size_arg;
     const Os::FileSystem::Status status =
       Os::FileSystem::getFileSize(fileName.toChar(), size_arg);
     if (status != Os::FileSystem::OP_OK) {

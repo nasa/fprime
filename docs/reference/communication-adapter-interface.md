@@ -1,7 +1,7 @@
 # Communication Adapter Interface
 
 Any communication component (e.g. a radio component) that is intended for use with the standard F´ uplink and downlink
-stack should implement the *Communication Adapter Interface*. This interface specifies both the ports and protocols used
+stack should implement the *Communication Adapter Interface* [`ComInterface.fppi`](../../Svc/Interfaces/ComInterface.fppi). This interface specifies both the ports and protocols used
 to operate with the standard F´ uplink and downlink components.
 
 Implementors of this interface are referred to as *Communication Adapters*.
@@ -19,18 +19,20 @@ stream driver model for backwards compatibility.
 
 | Kind     | Suggested Name | Port Type             | Usage                                                          |
 |----------|----------------|-----------------------|----------------------------------------------------------------|
-| `input`  | `comDataIn`    | `Drv.ByteStreamSend`  | Port receiving `Fw::Buffer` objects for outgoing transmission. |
-| `output` | `comDataOut`   | `Drv.ByteStreamRecv`  | Port producing incoming `Fw::Buffer` objects.                  |
-| `output` | `comStatus`    | `Fw.SuccessCondition` | Port indicating status of outgoing transmission. See protocol. |
+| `input`  | `comDataIn`    | `Svc.ComDataWithContext`  | Port receiving `Fw::Buffer` objects for outgoing transmission (to be sent on the wire) |
+| `output` | `comDataOut`   | `Fw.BufferSend`  | Port producing incoming `Fw::Buffer` objects (received on the wire) |
+| `output` | `dataReturnOut`    | `Svc.ComDataWithContext` | Port returning ownership of the `Fw::Buffer` sent on the `comDataIn` port |
+| `output` | `comStatusOut`    | `Fw.SuccessCondition` | Port indicating status of outgoing transmission. See protocol. |
 
 
 > [!NOTE]
-> components implementing the *Communication Adapter Interface* must deallocate any `Fw::Buffer` received on the `comDataIn` port or must delegate the deallocation to another component (e.g. a driver).
+> About buffer management: after receiving a buffer on the `comDataIn` port, the communication component must return ownership of said buffer through the `dataReturnOut` port. The common scenario is to connect `comDataIn` and `dataReturnOut` to the same component, so that the sender can handle deallocation.
+> This is done with a callback so that `comDataIn` can be an asynchronous port if needed.
 
 ### comDataIn Description
 
 This port receives data from an F´ application in the form of an argument of `Fw::Buffer` type. This data is intended to
-be sent out the communications interface managed by this component. From the perspective of the application this is
+be sent out the communications interface managed by this component (often referred to as _the wire_). From the perspective of the application this is
 the outgoing data port.
 
 ### comDataOut Description
@@ -38,7 +40,11 @@ the outgoing data port.
 This port receives data from the communication interface managed by this component and provides it to the F´ application
 in the form of an argument of `Fw::Buffer` type. From the perspective of the application this is the incoming data port.
 
-### comStatus Description
+### dataReturnOut Description
+
+This port is used to receive a callback returning ownership of the `Fw::Buffer` object that was sent on the `comDataIn` port. Ownership is typically returned to the sender. A callback is used so that `comDataIn` may be an asynchronous port if needed.
+
+### comStatusOut Description
 
 This port carries a status of `Fw::Success::SUCCESS` or `Fw::Success::FAILURE` typically in response to a call to the
 `comDataIn` port described above. 

@@ -1,4 +1,4 @@
-# A Brief Guide to the F´ Ground Data System
+# The F´ Ground Data System
 
 The F´ Ground Data System (GDS) was built to aid in the usage, development, test, and integration of F´-based embedded
 systems. It was designed for projects that have not already chosen a GDS, for developers who need to test before the
@@ -223,7 +223,7 @@ command requires any arguments, they'll appear below the dropdown where the valu
 inputs will be outlined in red. When clicked, the "Send Command" button will transmit the selected command and input
 arguments through the GDS and to the embedded system, while "Clear Arguments" will reset the arguments inputs
 to their default values.  Should an error occur in the GDS, it will be shown below the inputs.  The commanding tab is
-shown below. See: [Commands](cmd-evt-chn-prm.md#commands)
+shown below. See: [Commands](04-cmd-evt-chn-prm.md#commands)
 
 ![Commanding Tab](../../img/gds_gui_commanding.png)
 
@@ -238,7 +238,7 @@ sending component and is useful to retry the transmission of a command.
 ### Events
 
 The Events tab will display a table of all the "Events" that have happened on the embedded system and been received by
-the GDS. See: [Events](cmd-evt-chn-prm.md#events). The Events tab is shown below.
+the GDS. See: [Events](04-cmd-evt-chn-prm.md#events). The Events tab is shown below.
 
 ![Events Tab](../../img/gds_gui_events.png)
 

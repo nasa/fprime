@@ -13,7 +13,7 @@
 #ifndef DPCFG_HPP
 #define DPCFG_HPP
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 // The format string for a file name
 // The format arguments are base directory, container ID, time seconds, and time microseconds

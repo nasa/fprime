@@ -33,6 +33,12 @@ void Tester ::connectPorts() {
     // arrayReturnSync
     this->connect_to_arrayReturnSync(0, this->component.get_arrayReturnSync_InputPort(0));
 
+    // arrayStringAliasReturnGuarded
+    this->connect_to_arrayStringAliasReturnGuarded(0, this->component.get_arrayStringAliasReturnGuarded_InputPort(0));
+
+    // arrayStringAliasReturnSync
+    this->connect_to_arrayStringAliasReturnSync(0, this->component.get_arrayStringAliasReturnSync_InputPort(0));
+
     // cmdIn
     this->connect_to_cmdIn(0, this->component.get_cmdIn_InputPort(0));
 
@@ -51,6 +57,18 @@ void Tester ::connectPorts() {
 
     // enumReturnSync
     this->connect_to_enumReturnSync(0, this->component.get_enumReturnSync_InputPort(0));
+
+    // stringReturnGuarded
+    this->connect_to_stringReturnGuarded(0, this->component.get_stringReturnGuarded_InputPort(0));
+
+    // stringAliasReturnSync
+    this->connect_to_stringAliasReturnSync(0, this->component.get_stringAliasReturnSync_InputPort(0));
+
+    // stringAliasReturnGuarded
+    this->connect_to_stringAliasReturnGuarded(0, this->component.get_stringAliasReturnGuarded_InputPort(0));
+
+    // stringReturnSync
+    this->connect_to_stringReturnSync(0, this->component.get_stringReturnSync_InputPort(0));
 
     // noArgsGuarded
     for (FwIndexType i = 0; i < 2; ++i) {
@@ -117,6 +135,9 @@ void Tester ::connectPorts() {
     // arrayReturnOut
     this->component.set_arrayReturnOut_OutputPort(0, this->get_from_arrayReturnOut(0));
 
+    // arrayStringAliasReturnOut
+    this->component.set_arrayStringAliasReturnOut_OutputPort(0, this->get_from_arrayStringAliasReturnOut(0));
+
     // cmdRegOut
     this->component.set_cmdRegOut_OutputPort(0, this->get_from_cmdRegOut(0));
 
@@ -129,6 +150,12 @@ void Tester ::connectPorts() {
 
     // enumReturnOut
     this->component.set_enumReturnOut_OutputPort(0, this->get_from_enumReturnOut(0));
+
+    // stringReturnOut
+    this->component.set_stringReturnOut_OutputPort(0, this->get_from_stringReturnOut(0));
+
+    // stringAliasReturnOut
+    this->component.set_stringAliasReturnOut_OutputPort(0, this->get_from_stringAliasReturnOut(0));
 
     // eventOut
     this->component.set_eventOut_OutputPort(0, this->get_from_eventOut(0));
@@ -213,12 +240,12 @@ void Tester ::connectPorts() {
     // ----------------------------------------------------------------------
 
     // serialGuarded
-    for (FwSizeType i = 0; i < 6; ++i) {
+    for (FwIndexType i = 0; i < 6; ++i) {
         this->connect_to_serialGuarded(i, this->component.get_serialGuarded_InputPort(i));
     }
 
     // serialSync
-    for (FwSizeType i = 0; i < 6; ++i) {
+    for (FwIndexType i = 0; i < 6; ++i) {
         this->connect_to_serialSync(i, this->component.get_serialSync_InputPort(i));
     }
 }

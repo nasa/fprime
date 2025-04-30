@@ -10,9 +10,11 @@ module RPI {
     instance chanTlm
     instance cmdDisp
     instance cmdSeq
-    instance comm
+    instance comQueue
+    instance comDriver
+    instance comStub
     instance deframer
-    instance downlink
+    instance framer
     instance eventLogger
     instance fatalAdapter
     instance fatalHandler
@@ -61,11 +63,26 @@ module RPI {
     # ----------------------------------------------------------------------
 
     connections Downlink {
-      chanTlm.PktSend -> downlink.comIn
-      downlink.bufferDeallocate -> fileDownlink.bufferReturn
-      downlink.framedOut -> comm.$send
-      eventLogger.PktSend -> downlink.comIn
-      fileDownlink.bufferSendOut -> downlink.bufferIn
+      eventLogger.PktSend -> comQueue.comPacketQueueIn[0]
+      chanTlm.PktSend -> comQueue.comPacketQueueIn[1]
+      fileDownlink.bufferSendOut -> comQueue.bufferQueueIn[0]
+
+      comQueue.queueSend -> framer.dataIn
+      comQueue.bufferReturnOut[0] -> fileDownlink.bufferReturn
+      framer.dataReturnOut -> comQueue.bufferReturnIn
+
+      framer.bufferAllocate -> commsBufferManager.bufferGetCallee
+      framer.bufferDeallocate -> commsBufferManager.bufferSendIn
+
+      framer.dataOut -> comStub.comDataIn
+      comStub.dataReturnOut -> framer.dataReturnIn
+      comDriver.dataReturnOut -> comStub.dataReturnIn
+
+      comDriver.ready -> comStub.drvConnected
+      comStub.drvDataOut -> comDriver.$send
+
+      comStub.comStatusOut -> framer.comStatusIn
+      framer.comStatusOut -> comQueue.comStatusIn
     }
 
     connections FaultProtection {
@@ -109,9 +126,7 @@ module RPI {
     }
 
     connections MemoryAllocations {
-      comm.allocate -> commsBufferManager.bufferGetCallee
-      comm.deallocate -> commsBufferManager.bufferSendIn
-      downlink.framedAllocate -> commsBufferManager.bufferGetCallee
+      comDriver.allocate -> commsBufferManager.bufferGetCallee
       fileUplink.bufferSendOut -> commsBufferManager.bufferSendIn
       frameAccumulator.bufferAllocate -> commsBufferManager.bufferGetCallee
       frameAccumulator.bufferDeallocate -> commsBufferManager.bufferSendIn
@@ -124,10 +139,12 @@ module RPI {
       rpiDemo.UartWrite -> uartDrv.$send
       uartDrv.$recv -> rpiDemo.UartRead
       uartDrv.allocate -> uartBufferManager.bufferGetCallee
+      uartDrv.dataReturnOut -> rpiDemo.UartWriteReturn
     }
 
     connections Uplink {
-      comm.$recv -> frameAccumulator.dataIn
+      comDriver.$recv -> comStub.drvDataIn
+      comStub.comDataOut -> frameAccumulator.dataIn
 
       frameAccumulator.frameOut -> deframer.framedIn
       deframer.deframedOut -> fprimeRouter.dataIn

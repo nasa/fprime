@@ -7,7 +7,7 @@
 #ifndef OS_TASK_STRING_HPP
 #define OS_TASK_STRING_HPP
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 #include "Fw/Types/StringBase.hpp"
 
@@ -19,9 +19,9 @@ class TaskString final : public Fw::StringBase {
 
     TaskString() : StringBase() { *this = ""; }
 
-    explicit TaskString(const TaskString& src) : StringBase() { *this = src; }
+    TaskString(const TaskString& src) : StringBase() { *this = src; }
 
-    explicit TaskString(const StringBase& src) : StringBase() { *this = src; }
+    TaskString(const StringBase& src) : StringBase() { *this = src; }
 
     explicit TaskString(const char* src) : StringBase() { *this = src; }
 

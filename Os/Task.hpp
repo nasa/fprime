@@ -5,7 +5,7 @@
 #ifndef Os_Task_hpp_
 #define Os_Task_hpp_
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Time/TimeInterval.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <Os/Os.hpp>

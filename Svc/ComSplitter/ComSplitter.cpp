@@ -5,7 +5,7 @@
 // ----------------------------------------------------------------------
 
 #include <Svc/ComSplitter/ComSplitter.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 namespace Svc {
 
