@@ -16,4 +16,4 @@ The `Drv/SpiInterface` is an interface for writing and reading to an SPI device.
 
 ## Drv/TickInterface
 
-The `Drv/TickInterface` is an interface for outputing a system tick along with a RawTime timestamp. The [`Drv::BlockDriver`](../../BlockDriver/BlockDriver.fpp) driver implements this interface.
+The `Drv/TickInterface` is an interface for outputting a system tick along with a RawTime timestamp. The [`Drv::BlockDriver`](../../BlockDriver/BlockDriver.fpp) driver implements this interface.
