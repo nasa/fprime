@@ -6,6 +6,11 @@ docs_dir: .. # using ./fprime/ as the root directory to host all source files in
 site_dir: ../../site
 edit_uri: edit/devel/ # for "Edit Source" button (see content.action.edit)
 
+exclude_docs: |
+  Autocoders/
+  ci/
+  googletest/
+
 theme:
   name: material # enables the material theme, DO NOT CHANGE
   language: en
@@ -66,6 +71,7 @@ extra_css:
 # Adds material for mkdocs plugins
 plugins:
   - search # enables search
+  - awesome-nav
   - mike:
       # symlink are not allowed in GH Pages so if website needs to be deployed on GH Pages, use `copy` instead
       # see https://github.blog/changelog/2023-02-21-github-pages-deprecating-symlinks-in-non-actions-builds/
@@ -138,88 +144,4 @@ markdown_extensions:
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
 
 
-
-
-# Custom navigation
-nav:
-  - Home: '../'
-  - Overview: '../overview'
-  - Getting Started: 
-    - docs/getting-started/index.md
-    - 'Installation and Troubleshooting': docs/getting-started/installing-fprime.md
-  - Documentation:
-    - docs/index.md
-    - Tutorials:
-      - 'Tutorials Overview': docs/tutorials/index.md
-      - 'Hello World': tutorials-hello-world/docs/hello-world.md
-      - 'LED Blinker': tutorials-led-blinker/docs/led-blinker.md
-      - 'MathComponent': tutorials-math-component/docs/math-component.md
-      - 'Cross-Compilation Setup': docs/tutorials/cross-compilation.md
-      - 'Arduino LED Blinker': tutorials-arduino-led-blinker/docs/arduino-led-blinker.md
-    - User Manual:
-      - docs/user-manual/index.md
-      - Overview:
-        - 'Introduction to F´': docs/user-manual/overview/full-intro.md
-        - 'The F´ Ground Data System': docs/user-manual/overview/gds-introduction.md
-        - 'F´ Software Architecture': docs/user-manual/overview/fprime-architecture.md
-        - 'F´ Development Process': docs/user-manual/overview/development-practice.md
-        - 'A Tour of the Source Tree': docs/user-manual/overview/source-tree.md
-        - 'Projects and Deployments': docs/user-manual/overview/proj-dep.md
-        - 'Core Constructs: Ports, Components, and Topologies': docs/user-manual/overview/port-comp-top.md
-        - 'Data Constructs': docs/user-manual/overview/cmd-evt-chn-prm.md
-        - 'Data Types and Data Structures': docs/user-manual/overview/enum-arr-ser.md
-        - 'Unit Testing F´ Components': docs/user-manual/overview/unit-testing.md
-      - Framework:
-        - 'Configuring F´': docs/user-manual/framework/configuring-fprime.md
-        - 'Autocoded Functions': docs/user-manual/framework/autocoded-functions.md
-        - 'Constructing the F´ Topology': docs/user-manual/framework/building-topology.md
-        - 'Asserts in F´': docs/user-manual/framework/assert.md
-        - 'F´ On Baremetal and Multi-Core Systems': docs/user-manual/framework/baremetal-multicore.md
-        - 'Ground Interface': docs/user-manual/framework/ground-interface.md
-        - 'Dynamic Memory and Buffer Management': docs/user-manual/framework/dynamic-memory.md
-        - 'F´ Data Products': docs/user-manual/framework/data-products.md
-        - 'State Machines': docs/user-manual/framework/state-machines.md
-      - 'FPP': 'https://nasa.github.io/fpp/fpp-users-guide.html'
-      - GDS:
-        - "The GDS CLI": docs/user-manual/gds/gds-cli.md
-        - 'The GDS Dashboard': docs/user-manual/gds/gds-custom-dashboards.md
-        - 'GDS Dashboard Reference': docs/user-manual/gds/gds-dashboard-reference.md
-        - 'Integration Test API': docs/user-manual/gds/gds-test-api-guide.md
-        - 'Sequencing in F´': docs/user-manual/gds/seqgen.md
-      - Design Patterns:
-        - 'Application, Manager, Driver Pattern': docs/user-manual/design-patterns/app-man-drv.md
-        - 'Rate Groups and Timeliness': docs/user-manual/design-patterns/rate-group.md
-        - 'The Hub Pattern': docs/user-manual/design-patterns/hub-pattern.md
-        - 'Common Port Patterns': docs/user-manual/design-patterns/common-port-patterns.md
-        - 'Manager/Worker Pattern': docs/user-manual/design-patterns/manager-worker.md
-      - Build System:
-        - 'The F´ CMake Build System': docs/user-manual/build-system/cmake-intro.md
-        - 'settings.ini: Build Settings Configuration': docs/user-manual/build-system/settings.md
-        - 'CMake Platforms': docs/user-manual/build-system/cmake-platforms.md
-        - 'CMake Toolchains': docs/user-manual/build-system/cmake-toolchains.md
-        - 'CMake User API': docs/user-manual/build-system/cmake-api.md
-        - 'CMake Targets': docs/user-manual/build-system/cmake-targets.md
-        - 'CMake Customization': docs/user-manual/build-system/cmake-customization.md
-        - 'Advanced CMake usage': docs/user-manual/build-system/cmake-advanced.md
-        - 'CMake Unit Testing': docs/user-manual/build-system/cmake-uts.md
-        - 'Package Implementations': docs/user-manual/build-system/package-implementations.md
-      - Security:
-        - 'Software Bill of Materials': docs/user-manual/security/software-bill-of-materials.md
-    - How To: 
-      - docs/how-to/index.md
-      - 'F´ Library Development': docs/how-to/develop-fprime-libraries.md
-      - 'F´ Subtopology Development': docs/how-to/develop-subtopologies.md
-      - 'F´ GDS Plugin Development': docs/how-to/develop-gds-plugins.md
-      - 'Porting F´ To a New Platform': docs/how-to/porting-guide.md
-    - Reference:
-      - docs/reference/index.md
-      - 'Software Engineering Terminology to F´ Nomenclature': docs/reference/fprime-translations.md
-      - 'C++ Documentation': docs/reference/api/cpp/html/index.html
-      - 'F´ Components SDDs': docs/reference/sdd.md
-      - 'FPP Language Specification': https://nasa.github.io/fpp/fpp-spec.html
-      - 'FPP JSON Dictionary Specification': docs/reference/fpp-json-dict.md
-      - 'Numerical Types Design': docs/reference/numerical-types.md
-      - 'Communication Adapter Interface': docs/reference/communication-adapter-interface.md
-      - 'GDS Developers Guide': docs/reference/gds-cli-dev.md
-  - Support: '../support'
-  - Events: '../events'
+# Custom navigation is set in the fprime/.nav.yml file
