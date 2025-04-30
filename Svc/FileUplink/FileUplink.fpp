@@ -8,10 +8,10 @@ module Svc {
     # ----------------------------------------------------------------------
 
     @ Buffer send in
-    async input port bufferSendIn: Svc.ComDataWithContext
+    async input port bufferSendIn: Fw.BufferSend
 
     @ Buffer send out
-    output port bufferSendOut: Svc.ComDataWithContext
+    output port bufferSendOut: Fw.BufferSend
 
     @ Ping in
     async input port pingIn: Svc.Ping
