@@ -217,6 +217,15 @@ void TcpServerTester ::test_no_automatic_recv_connection() {
     this->component.terminate();
 }
 
+void TcpServerTester ::test_buffer_deallocation() {
+    U8 data[1];
+    Fw::Buffer buffer(data, sizeof(data));
+    this->invoke_to_bufferReturnIn(0, buffer);
+    ASSERT_from_deallocate_SIZE(1);     // incoming buffer should be deallocated
+    ASSERT_EQ(this->fromPortHistory_deallocate->at(0).fwBuffer.getData(), data);
+    ASSERT_EQ(this->fromPortHistory_deallocate->at(0).fwBuffer.getSize(), sizeof(data));
+}
+
 // ----------------------------------------------------------------------
 // Handlers for typed from ports
 // ----------------------------------------------------------------------

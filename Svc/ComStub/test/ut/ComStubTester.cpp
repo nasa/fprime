@@ -158,7 +158,6 @@ void ComStubTester ::test_buffer_return() {
     ASSERT_EQ(this->fromPortHistory_bufferReturnOut->at(0).fwBuffer.getSize(), sizeof(data));
 }
 
-
 // ----------------------------------------------------------------------
 // Handlers for typed from ports
 // ----------------------------------------------------------------------

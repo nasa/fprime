@@ -180,6 +180,15 @@ void TcpClientTester ::test_no_automatic_recv_connection() {
     server.terminate(server_fd);
 }
 
+void TcpClientTester ::test_buffer_deallocation() {
+    U8 data[1];
+    Fw::Buffer buffer(data, sizeof(data));
+    this->invoke_to_bufferReturnIn(0, buffer);
+    ASSERT_from_deallocate_SIZE(1);     // incoming buffer should be deallocated
+    ASSERT_EQ(this->fromPortHistory_deallocate->at(0).fwBuffer.getData(), data);
+    ASSERT_EQ(this->fromPortHistory_deallocate->at(0).fwBuffer.getSize(), sizeof(data));
+}
+
 // ----------------------------------------------------------------------
 // Handler overrides for typed from ports
 // ----------------------------------------------------------------------
