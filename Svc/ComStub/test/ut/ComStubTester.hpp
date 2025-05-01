@@ -71,7 +71,9 @@ class ComStubTester : public ComStubGTestBase {
     //! Handler for from_comDataOut
     //!
     void from_comDataOut_handler(const FwIndexType portNum, //!< The port number
-                                 Fw::Buffer& recvBuffer);
+                                 Fw::Buffer& recvBuffer,
+                                 const ComCfg::FrameContext& context //!< The context
+                                 );
 
     //! Handler for from_comStatusOut
     //!
