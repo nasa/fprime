@@ -63,26 +63,26 @@ module RPI {
     # ----------------------------------------------------------------------
 
     connections Downlink {
-      eventLogger.PktSend -> comQueue.comPacketQueueIn[0]
-      chanTlm.PktSend -> comQueue.comPacketQueueIn[1]
+      eventLogger.PktSend        -> comQueue.comPacketQueueIn[0]
+      chanTlm.PktSend            -> comQueue.comPacketQueueIn[1]
       fileDownlink.bufferSendOut -> comQueue.bufferQueueIn[0]
 
-      comQueue.queueSend -> framer.dataIn
+      comQueue.queueSend          -> framer.dataIn
       comQueue.bufferReturnOut[0] -> fileDownlink.bufferReturn
-      framer.dataReturnOut -> comQueue.bufferReturnIn
+      framer.dataReturnOut        -> comQueue.bufferReturnIn[0]
 
-      framer.bufferAllocate -> commsBufferManager.bufferGetCallee
+      framer.bufferAllocate   -> commsBufferManager.bufferGetCallee
       framer.bufferDeallocate -> commsBufferManager.bufferSendIn
 
-      framer.dataOut -> comStub.comDataIn
-      comStub.dataReturnOut -> framer.dataReturnIn
+      framer.dataOut          -> comStub.comDataIn
+      comStub.dataReturnOut   -> framer.dataReturnIn
       comDriver.dataReturnOut -> comStub.dataReturnIn
 
-      comDriver.ready -> comStub.drvConnected
+      comDriver.ready    -> comStub.drvConnected
       comStub.drvDataOut -> comDriver.$send
 
       comStub.comStatusOut -> framer.comStatusIn
-      framer.comStatusOut -> comQueue.comStatusIn
+      framer.comStatusOut  -> comQueue.comStatusIn
     }
 
     connections FaultProtection {
@@ -125,15 +125,6 @@ module RPI {
       rpiDemo.SpiReadWrite -> spiDrv.SpiReadWrite
     }
 
-    connections MemoryAllocations {
-      comDriver.allocate -> commsBufferManager.bufferGetCallee
-      fileUplink.bufferSendOut -> commsBufferManager.bufferSendIn
-      frameAccumulator.bufferAllocate -> commsBufferManager.bufferGetCallee
-      frameAccumulator.bufferDeallocate -> commsBufferManager.bufferSendIn
-      fprimeRouter.bufferDeallocate -> commsBufferManager.bufferSendIn
-      deframer.bufferDeallocate -> commsBufferManager.bufferSendIn
-    }
-
     connections UART {
       rpiDemo.UartBuffers -> uartBufferManager.bufferSendIn
       rpiDemo.UartWrite -> uartDrv.$send
@@ -143,16 +134,32 @@ module RPI {
     }
 
     connections Uplink {
-      comDriver.$recv -> comStub.drvDataIn
-      comStub.comDataOut -> frameAccumulator.dataIn
-
+      # ComDriver buffer allocations
+      comDriver.allocate      -> commsBufferManager.bufferGetCallee
+      comDriver.deallocate    -> commsBufferManager.bufferSendIn
+      # ComDriver <-> ComStub
+      comDriver.$recv         -> comStub.drvDataIn
+      comStub.bufferReturnOut -> comDriver.bufferReturnIn
+      # ComStub <-> FrameAccumulator
+      comStub.comDataOut               -> frameAccumulator.dataIn
+      frameAccumulator.bufferReturnOut -> comStub.bufferReturnIn
+      # FrameAccumulator buffer allocations
+      frameAccumulator.bufferDeallocate -> commsBufferManager.bufferSendIn
+      frameAccumulator.bufferAllocate   -> commsBufferManager.bufferGetCallee
+      # FrameAccumulator <-> Deframer
       frameAccumulator.frameOut -> deframer.framedIn
-      deframer.deframedOut -> fprimeRouter.dataIn
-
-      fprimeRouter.commandOut -> cmdDisp.seqCmdBuff
-      fprimeRouter.fileOut -> fileUplink.bufferSendIn
-
-      cmdDisp.seqCmdStatus -> fprimeRouter.cmdResponseIn
+      deframer.dataReturnOut    -> frameAccumulator.dataReturnIn
+      # Deframer <-> Router
+      deframer.deframedOut         -> fprimeRouter.dataIn
+      fprimeRouter.dataReturnOut   -> deframer.dataReturnIn
+      # Router buffer allocations
+      fprimeRouter.bufferAllocate   -> commsBufferManager.bufferGetCallee
+      fprimeRouter.bufferDeallocate -> commsBufferManager.bufferSendIn
+      # Router <-> CmdDispatcher/FileUplink
+      fprimeRouter.commandOut  -> cmdDisp.seqCmdBuff
+      cmdDisp.seqCmdStatus     -> fprimeRouter.cmdResponseIn
+      fprimeRouter.fileOut     -> fileUplink.bufferSendIn
+      fileUplink.bufferSendOut -> fprimeRouter.fileBufferReturnIn
     }
 
   }

@@ -92,28 +92,29 @@ module Ref {
     # ----------------------------------------------------------------------
 
     connections Downlink {
-      dpCat.fileOut -> fileDownlink.SendFile
+      # Data Products
+      dpCat.fileOut             -> fileDownlink.SendFile
       fileDownlink.FileComplete -> dpCat.fileDone
-
-      eventLogger.PktSend -> comQueue.comPacketQueueIn[Ports_ComPacketQueue.EVENTS]
-      tlmSend.PktSend -> comQueue.comPacketQueueIn[Ports_ComPacketQueue.TELEMETRY]
-      fileDownlink.bufferSendOut -> comQueue.bufferQueueIn[0]
+      # Inputs to ComQueue (events, telemetry, file)
+      eventLogger.PktSend         -> comQueue.comPacketQueueIn[0]
+      tlmSend.PktSend             -> comQueue.comPacketQueueIn[1]
+      fileDownlink.bufferSendOut  -> comQueue.bufferQueueIn[0]
       comQueue.bufferReturnOut[0] -> fileDownlink.bufferReturn
-
-      comQueue.queueSend -> fprimeFramer.dataIn
+      # ComQueue <-> Framer
+      comQueue.queueSend   -> fprimeFramer.dataIn
       fprimeFramer.dataReturnOut -> comQueue.bufferReturnIn
-      fprimeFramer.comStatusOut -> comQueue.comStatusIn
-
-      fprimeFramer.bufferAllocate -> commsBufferManager.bufferGetCallee
+      fprimeFramer.comStatusOut  -> comQueue.comStatusIn
+      # Buffer Management for Framer
+      fprimeFramer.bufferAllocate   -> commsBufferManager.bufferGetCallee
       fprimeFramer.bufferDeallocate -> commsBufferManager.bufferSendIn
-
-      fprimeFramer.dataOut -> comStub.comDataIn
+      # Framer <-> ComStub
+      fprimeFramer.dataOut        -> comStub.comDataIn
       comStub.dataReturnOut -> fprimeFramer.dataReturnIn
-      comStub.comStatusOut -> fprimeFramer.comStatusIn
-
-      comStub.drvDataOut -> comDriver.$send
+      comStub.comStatusOut  -> fprimeFramer.comStatusIn
+      # ComStub <-> ComDriver
+      comStub.drvDataOut      -> comDriver.$send
       comDriver.dataReturnOut -> comStub.dataReturnIn
-      comDriver.ready -> comStub.drvConnected
+      comDriver.ready         -> comStub.drvConnected
     }
 
     connections FaultProtection {
