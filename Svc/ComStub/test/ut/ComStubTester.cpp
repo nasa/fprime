@@ -117,7 +117,7 @@ void ComStubTester ::test_retry() {
 void ComStubTester ::test_retry_reset() {
     this->test_initial();
     FwIndexType MAX_ITERS = static_cast<FwIndexType>(this->component.RETRY_LIMIT + 1);
-    U32 expected_drvDataOut_count = 0;
+    U32 expected_drvSendOut_count = 0;
 
     // Make small individual buffers for testing
     U8 storage[MAX_ITERS][8]; 
