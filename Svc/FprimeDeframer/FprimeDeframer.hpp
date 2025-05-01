@@ -36,7 +36,7 @@ class FprimeDeframer final : public FprimeDeframerComponentBase {
     //!
     //! Port to receive framed data. The handler will strip the header and trailer from the frame 
     //! and pass the deframed data to the deframed output port.
-    void framedIn_handler(FwIndexType portNum,  //!< The port number
+    void dataIn_handler(FwIndexType portNum,  //!< The port number
                        Fw::Buffer& data,
                        const ComCfg::FrameContext& context) override;
 

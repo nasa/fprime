@@ -311,11 +311,11 @@ void LinuxUartDriver ::send_handler(const FwIndexType portNum, Fw::Buffer& serBu
         }
     }
     // Return the buffer back to the caller
-    dataReturnOut_out(0, serBuffer, status);
+    sendReturnOut_out(0, serBuffer, status);
 }
 
 
-void LinuxUartDriver::bufferReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
+void LinuxUartDriver::recvReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
     this->deallocate_out(0, fwBuffer);
 }
 

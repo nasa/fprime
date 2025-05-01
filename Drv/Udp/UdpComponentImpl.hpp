@@ -149,10 +149,10 @@ PROTECTED:
     void send_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) override;
 
 
-    //! Handler implementation for bufferReturnIn
+    //! Handler implementation for recvReturnIn
     //!
     //! Port receiving back ownership of data sent out on $recv port
-    void bufferReturnIn_handler(FwIndexType portNum,  //!< The port number
+    void recvReturnIn_handler(FwIndexType portNum,  //!< The port number
                                 Fw::Buffer& fwBuffer  //!< The buffer
                                 ) override;
 

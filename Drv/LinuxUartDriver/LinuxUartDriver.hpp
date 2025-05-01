@@ -96,10 +96,10 @@ class LinuxUartDriver final : public LinuxUartDriverComponentBase {
     void send_handler(FwIndexType portNum, /*!< The port number*/
                                  Fw::Buffer& serBuffer) override;
 
-    //! Handler implementation for bufferReturnIn
+    //! Handler implementation for recvReturnIn
     //!
     //! Port receiving back ownership of data sent out on $recv port
-    void bufferReturnIn_handler(FwIndexType portNum,  //!< The port number
+    void recvReturnIn_handler(FwIndexType portNum,  //!< The port number
                                 Fw::Buffer& fwBuffer  //!< The buffer
                                 ) override;
 

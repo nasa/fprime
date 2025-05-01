@@ -56,8 +56,8 @@ void FrameAccumulator ::dataIn_handler(FwIndexType portNum, Fw::Buffer& buffer, 
         // The buffer is not necessarily a full frame, so the attached context has no meaning and we ignore it
         this->processBuffer(buffer);
     }
-    // Return ownership of the incoming buffer (FrameAccumulator allocates its own buffers to hold frames)
-    this->bufferReturnOut_out(0, buffer);
+    // Return ownership of the incoming data
+    this->dataReturnOut_out(0, buffer, context);
 }
 
 void FrameAccumulator ::processBuffer(Fw::Buffer& buffer) {
@@ -136,7 +136,7 @@ void FrameAccumulator ::processRing() {
                           static_cast<FwAssertArgType>(m_inRing.get_allocated_size()),
                           static_cast<FwAssertArgType>(remaining), static_cast<FwAssertArgType>(size_out));
                 ComCfg::FrameContext context;
-                this->frameOut_out(0, buffer, context);
+                this->dataOut_out(0, buffer, context);
             } else {
                 // No buffer is available, we need to exit and try again later
                 this->log_WARNING_HI_NoBufferAvailable();

@@ -91,10 +91,10 @@ void TcpClientComponentImpl::send_handler(const FwIndexType portNum, Fw::Buffer&
             break;
     }
     // Return the buffer and status to the caller
-    this->dataReturnOut_out(0, fwBuffer, returnStatus);
+    this->sendReturnOut_out(0, fwBuffer, returnStatus);
 }
 
-void TcpClientComponentImpl::bufferReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
+void TcpClientComponentImpl::recvReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
     this->deallocate_out(0, fwBuffer);
 }
 

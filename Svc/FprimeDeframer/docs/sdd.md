@@ -2,13 +2,13 @@
 
 The `Svc::FprimeDeframer` component receives F´ frames on its input port, takes off the header and trailer (sometimes referred to as "footer"), and passes the encapsulated payload to a downstream component (usually the [`Svc.FprimeRouter`](../../FprimeRouter/docs/sdd.md)).
 
-Following the [F Prime Protocol frame specification](../../FprimeProtocol/docs/sdd.md), the `Svc::FprimeDeframer` validates the passed in `Fw.Buffer` to ensure it represents a valid frame (see [Frame validation](#frame-validation)), extract the payload from the frame, and outputs the payload on the `deframedOut` output port.
+Following the [F Prime Protocol frame specification](../../FprimeProtocol/docs/sdd.md), the `Svc::FprimeDeframer` validates the passed in `Fw.Buffer` to ensure it represents a valid frame (see [Frame validation](#frame-validation)), extract the payload from the frame, and outputs the payload on the `dataOut` output port.
 
 ## Internals
 
-The `Svc::FprimeDeframer` component is an implementation of the [DeframerInterface](../../Interfaces/DeframerInterface.fppi) for the F´ communications protocol. It receives an F´ frame (in a [Fw::Buffer](../../../Fw/Buffer/docs/sdd.md) object) on its `framedIn` input port, modifies the input buffer to remove the header and trailer, and sends it out through its `deframedOut` output port. 
+The `Svc::FprimeDeframer` component is an implementation of the [DeframerInterface](../../Interfaces/DeframerInterface.fppi) for the F´ communications protocol. It receives an F´ frame (in a [Fw::Buffer](../../../Fw/Buffer/docs/sdd.md) object) on its `dataIn` input port, modifies the input buffer to remove the header and trailer, and sends it out through its `dataOut` output port. 
 
-Ownership of the buffer is transferred to the component connected to the `deframedOut` output port. The input buffer is modified by subtracting the header and trailer size from the buffer's length, and offsetting the buffer's data pointer to point to the start of the packet data.
+Ownership of the buffer is transferred to the component connected to the `dataOut` output port. The input buffer is modified by subtracting the header and trailer size from the buffer's length, and offsetting the buffer's data pointer to point to the start of the packet data.
 
 The `Svc::FprimeDeframer` component does not perform any validation of the frame. It is expected that the frame is valid and well-formed. The validation should be performed by an upstream component, such as [`Svc::FrameAccumulator`](../../FrameAccumulator/docs/sdd.md).
 
@@ -41,7 +41,7 @@ The below diagram shows a typical configuration in which the `Svc::FprimeDeframe
 ```mermaid
 classDiagram
     class FprimeDeframer~PassiveComponent~ {
-        + void framedIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context)
+        + void dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context)
     }
 ```
 
@@ -57,6 +57,6 @@ SVC-DEFRAMER-002 | `Svc::FprimeDeframer` shall deallocate input buffers that are
 
 | Kind | Name | Type | Description |
 |---|---|---|---|
-| `guarded input` | framedIn | `Svc.ComDataWithContext` | Receives a frame with optional context data |
-| `output` | deframedOut | `Svc.ComDataWithContext` | Receives a frame with optional context data |
+| `guarded input` | dataIn | `Svc.ComDataWithContext` | Receives a frame with optional context data |
+| `output` | dataOut | `Svc.ComDataWithContext` | Receives a frame with optional context data |
 | `output` | bufferDeallocate | `Fw.BufferSend` | Port for deallocating dropped frames |

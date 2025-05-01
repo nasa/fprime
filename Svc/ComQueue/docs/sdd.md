@@ -43,11 +43,11 @@ The diagram below shows the `Svc::ComQueue` component.
 
 | Kind          | Name              | Port Type                             | Usage                                                    |
 |---------------|-------------------|---------------------------------------|----------------------------------------------------------|
-| `output`      | `queueSend`       | `Svc.ComDataWithContext`              | Port emitting queued messages                            |
+| `output`      | `dataOut`       | `Svc.ComDataWithContext`              | Port emitting queued messages                            |
 | `async input` | `comStatusIn`     | `Fw.SuccessCondition`                 | Port for receiving the status signal                     |
 | `async input` | `comPacketQueueIn`| `[ComQueueComPorts] Fw.Com`           | Port array for receiving Fw::ComBuffers                  |
 | `async input` | `bufferQueueIn`   |  `[ComQueueBufferPorts] Fw.BufferSend`| Port array for receiving Fw::Buffers                     |
-| `sync input`  | `bufferReturnIn`  | `Svc.ComDataWithContext`              | Port for deallocating Fw::Buffer on queue overflow       |
+| `sync input`  | `dataReturnIn`  | `Svc.ComDataWithContext`              | Port for deallocating Fw::Buffer on queue overflow       |
 | `output`      | `bufferReturnOut` | `Svc.ComDataWithContext`              | Port for deallocating Fw::Buffer on queue overflow       |
 
 > [!NOTE]

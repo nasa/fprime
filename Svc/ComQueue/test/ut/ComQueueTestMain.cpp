@@ -6,7 +6,7 @@
 
 TEST(Nominal, Send) {
     Svc::ComQueueTester tester;
-    tester.testQueueSend();
+    tester.testdataOut();
 }
 
 TEST(Nominal, Pause) {

@@ -92,8 +92,8 @@ void UdpTester::test_with_loop(U32 iterations, bool recv_thread) {
             m_data_buffer.setSize(sizeof(m_data_storage));
             size = Drv::Test::fill_random_buffer(m_data_buffer);
             invoke_to_send(0, m_data_buffer);
-            ASSERT_from_dataReturnOut_SIZE(i + 1);
-            Drv::ByteStreamStatus status = this->fromPortHistory_dataReturnOut->at(i).status;
+            ASSERT_from_sendReturnOut_SIZE(i + 1);
+            Drv::ByteStreamStatus status = this->fromPortHistory_sendReturnOut->at(i).status;
             EXPECT_EQ(status, ByteStreamStatus::OP_OK);
             Drv::Test::receive_all(udp2, udp2_fd, buffer, size);
             Drv::Test::validate_random_buffer(m_data_buffer, buffer);
@@ -161,7 +161,7 @@ void UdpTester ::test_advanced_reconnect() {
 void UdpTester ::test_buffer_deallocation() {
     U8 data[1];
     Fw::Buffer buffer(data, sizeof(data));
-    this->invoke_to_bufferReturnIn(0, buffer);
+    this->invoke_to_recvReturnIn(0, buffer);
     ASSERT_from_deallocate_SIZE(1);     // incoming buffer should be deallocated
     ASSERT_EQ(this->fromPortHistory_deallocate->at(0).fwBuffer.getData(), data);
     ASSERT_EQ(this->fromPortHistory_deallocate->at(0).fwBuffer.getSize(), sizeof(data));

@@ -55,17 +55,17 @@ be useful
 
 | Kind         | Name           | Port Type             | Usage                                                                             |
 |--------------|----------------|-----------------------|-----------------------------------------------------------------------------------|
-| `sync input` | `comDataIn`    | `Svc.ComDataWithContext`  | Port receiving `Fw::Buffer`s for transmission out `drvDataOut`                    |
+| `sync input` | `dataIn`    | `Svc.ComDataWithContext`  | Port receiving `Fw::Buffer`s for transmission out `drvSendOut`                    |
 | `output`     | `comStatusOut`    | `Svc.ComStatus`       | Port indicating success or failure to attached `Svc::ComQueue`                    |
-| `output`     | `comDataOut`   | `Drv.ByteStreamRecv`  | Port providing received `Fw::Buffers` to a potential `Svc::Deframer`              |
+| `output`     | `dataOut`   | `Drv.ByteStreamRecv`  | Port providing received `Fw::Buffers` to a potential `Svc::Deframer`              |
 
 **Byte Stream Driver Model Ports**
 
 | Kind         | Name           | Port Type             | Usage                                                                             |
 |--------------|----------------|-----------------------|-----------------------------------------------------------------------------------|
 | `sync input` | `drvConnected` | `Drv.ByteStreamReady` | Port called when the underlying driver has connected                              |
-| `sync input` | `drvDataIn`    | `Drv.ByteStreamRecv`  | Port receiving `Fw::Buffers` from underlying communications bus driver            |
-| `output`     | `drvDataOut`   | `Drv.ByteStreamSend`  | Port providing received `Fw::Buffers` to the underlying communications bus driver |
+| `sync input` | `drvReceiveIn`    | `Drv.ByteStreamRecv`  | Port receiving `Fw::Buffers` from underlying communications bus driver            |
+| `output`     | `drvSendOut`   | `Drv.ByteStreamSend`  | Port providing received `Fw::Buffers` to the underlying communications bus driver |
 
 
 ### 4.2. State, Configuration, and Runtime Setup
@@ -76,11 +76,11 @@ response to a driver reconnection event. This is to implement the  Communication
 
 ### 4.3. Port Handlers
 
-#### 4.3.1 comDataIn
+#### 4.3.1 dataIn
 
-The `comDataIn` port handler receives an `Fw::Buffer` from the F´ system for transmission to the ground. Typically, it
+The `dataIn` port handler receives an `Fw::Buffer` from the F´ system for transmission to the ground. Typically, it
 is connected to the output of the `Svc::Framer` component. In this `Svc::ComStub` implementation, it passes this
-`Fw::Buffer` directly to the `drvDataOut` port. It will retry when that port responds with a `RETRY` request. Otherwise, 
+`Fw::Buffer` directly to the `drvSendOut` port. It will retry when that port responds with a `RETRY` request. Otherwise, 
  the `comStatusOut` port will be invoked to indicate success or failure. Retries attempts are limited before the port
 asserts.
 
@@ -89,7 +89,7 @@ asserts.
 This port receives the connected signal from the driver and responds with exactly one `READY` invocation to the
 `comStatusOut` port. This starts downlink. This occurs each time the driver reconnects.
 
-#### 4.3.1 drvDataIn
+#### 4.3.1 drvReceiveIn
 
-The `drvDataIn` handler receives data read from the driver and supplies it out the `comDataOut` port. It is usually
+The `drvReceiveIn` handler receives data read from the driver and supplies it out the `dataOut` port. It is usually
 connected to the `Svc::Deframer` component

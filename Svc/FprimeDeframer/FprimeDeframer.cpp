@@ -25,7 +25,7 @@ FprimeDeframer ::~FprimeDeframer() {}
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void FprimeDeframer ::framedIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
+void FprimeDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
     if (data.getSize() < FprimeProtocol::FrameHeader::SERIALIZED_SIZE + FprimeProtocol::FrameTrailer::SERIALIZED_SIZE) {
         // Incoming buffer is not long enough to contain a valid frame (header+trailer)
         this->log_WARNING_HI_InvalidBufferReceived();
@@ -88,7 +88,7 @@ void FprimeDeframer ::framedIn_handler(FwIndexType portNum, Fw::Buffer& data, co
     data.setSize(data.getSize() - FprimeProtocol::FrameHeader::SERIALIZED_SIZE -
                  FprimeProtocol::FrameTrailer::SERIALIZED_SIZE);
     // Emit the deframed data
-    this->deframedOut_out(0, data, context);
+    this->dataOut_out(0, data, context);
 }
 
 void FprimeDeframer ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer, const ComCfg::FrameContext& context) {

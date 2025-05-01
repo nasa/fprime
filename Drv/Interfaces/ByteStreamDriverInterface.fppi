@@ -8,7 +8,7 @@
     guarded input port $send: Fw.BufferSend
 
     @ Port returning ownership of data received on $send port
-    output port dataReturnOut: Drv.ByteStreamData
+    output port sendReturnOut: Drv.ByteStreamData
 
     @ Port receiving back ownership of data sent out on $recv port
-    sync input port bufferReturnIn: Fw.BufferSend
+    sync input port recvReturnIn: Fw.BufferSend

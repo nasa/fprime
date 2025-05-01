@@ -17,7 +17,7 @@ module Svc {
       # ----------------------------------------------------------------------
 
       @ Port for emitting data ready to be sent
-      output port queueSend: Svc.ComDataWithContext
+      output port dataOut: Svc.ComDataWithContext
 
       @ Port for receiving the status signal
       async input port comStatusIn: Fw.SuccessCondition
@@ -31,9 +31,8 @@ module Svc {
       @ Port array for returning ownership of Fw::Buffer to its original sender
       output port bufferReturnOut: [ComQueueBufferPorts] Fw.BufferSend
 
-      # It is appropriate for this port to be sync since it is just a passthrough
       @ Port for receiving Fw::Buffer whose ownership needs to be handed back
-      sync input port bufferReturnIn: Svc.ComDataWithContext
+      sync input port dataReturnIn: Svc.ComDataWithContext
 
       @ Port for scheduling telemetry output
       async input port run: Svc.Sched drop

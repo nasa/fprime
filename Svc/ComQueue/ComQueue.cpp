@@ -193,7 +193,7 @@ void ComQueue::run_handler(const FwIndexType portNum, U32 context) {
     this->tlmWrite_buffQueueDepth(buffQueueDepth);
 }
 
-void ComQueue ::bufferReturnIn_handler(FwIndexType portNum,
+void ComQueue ::dataReturnIn_handler(FwIndexType portNum,
                                           Fw::Buffer& data,
                                           const ComCfg::FrameContext& context) {
     static_assert(std::numeric_limits<FwIndexType>::is_signed, "FwIndexType must be signed");
@@ -205,7 +205,7 @@ void ComQueue ::bufferReturnIn_handler(FwIndexType portNum,
     // Failing this assert means that context.apid was modified since ComQueue set it, which should not happen
     FW_ASSERT(bufferReturnPortNum < BUFFER_PORT_COUNT, static_cast<FwAssertArgType>(bufferReturnPortNum));
     if (bufferReturnPortNum >= 0) {
-        // It is a coding error not to connect the associated bufferReturnOut port for each bufferReturnIn port
+        // It is a coding error not to connect the associated bufferReturnOut port for each dataReturnIn port
         FW_ASSERT(this->isConnected_bufferReturnOut_OutputPort(bufferReturnPortNum), static_cast<FwAssertArgType>(bufferReturnPortNum));
         // If this is a buffer port, return the buffer to the BufferDownlink
         this->bufferReturnOut_out(bufferReturnPortNum, data);
@@ -263,7 +263,7 @@ void ComQueue::sendComBuffer(Fw::ComBuffer& comBuffer, FwIndexType queueIndex) {
     // Context APID is set to the queue index for now. A future implementation may want this to be configurable
     ComCfg::FrameContext context;
     context.setcomQueueIndex(queueIndex);
-    this->queueSend_out(0, outBuffer, context);
+    this->dataOut_out(0, outBuffer, context);
     // Set state to WAITING for the status to come back
     this->m_state = WAITING;
 }
@@ -275,7 +275,7 @@ void ComQueue::sendBuffer(Fw::Buffer& buffer, FwIndexType queueIndex) {
     // Context APID is set to the queue index for now. A future implementation may want this to be configurable
     ComCfg::FrameContext context;
     context.setcomQueueIndex(queueIndex);
-    this->queueSend_out(0, buffer, context);
+    this->dataOut_out(0, buffer, context);
 
     // Set state to WAITING for the status to come back
     this->m_state = WAITING;
