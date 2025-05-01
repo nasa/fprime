@@ -158,6 +158,15 @@ void UdpTester ::test_advanced_reconnect() {
     test_with_loop(10, true); // Up to 10 * RECONNECT_MS
 }
 
+void UdpTester ::test_buffer_deallocation() {
+    U8 data[1];
+    Fw::Buffer buffer(data, sizeof(data));
+    this->invoke_to_bufferReturnIn(0, buffer);
+    ASSERT_from_deallocate_SIZE(1);     // incoming buffer should be deallocated
+    ASSERT_EQ(this->fromPortHistory_deallocate->at(0).fwBuffer.getData(), data);
+    ASSERT_EQ(this->fromPortHistory_deallocate->at(0).fwBuffer.getSize(), sizeof(data));
+}
+
 // ----------------------------------------------------------------------
 // Handlers for typed from ports
 // ----------------------------------------------------------------------

@@ -103,4 +103,8 @@ void UdpComponentImpl::send_handler(const FwIndexType portNum, Fw::Buffer& fwBuf
     this->dataReturnOut_out(0, fwBuffer, returnStatus);
 }
 
+void UdpComponentImpl::bufferReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
+    this->deallocate_out(0, fwBuffer);
+}
+
 }  // end namespace Drv

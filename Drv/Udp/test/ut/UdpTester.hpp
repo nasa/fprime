@@ -69,6 +69,9 @@ namespace Drv {
       //!
       void test_advanced_reconnect();
 
+      //! Test buffer deallocation
+      void test_buffer_deallocation();
+
       // Helpers
       void test_with_loop(U32 iterations, bool recv_thread=false);
 
