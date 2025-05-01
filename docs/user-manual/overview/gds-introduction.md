@@ -149,11 +149,7 @@ $ fprime-gds -g none
 ### Help and Other Options
 
 To see the full list of options you have when running the `fprime-gds` command, use the `--help` flag. e.g.
-`fprime-gds --help`. The following are the currently available options:
-
-```bash
-fprime-gds --help
-```
+`fprime-gds --help`.
 
 ## Navigating the GDS GUI
 
