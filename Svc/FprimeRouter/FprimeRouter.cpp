@@ -57,7 +57,7 @@ void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer
                 // If the file uplink output port is connected, send the file packet. Otherwise take no action.
                 if (this->isConnected_fileOut_OutputPort(0)) {
                     // Copy buffer into a new allocated buffer. This lets us return the original buffer with dataReturnOut,
-                    // and FprimeRouter can handle the deallocation of the file buffer when it returns on filebufferReturnIn
+                    // and FprimeRouter can handle the deallocation of the file buffer when it returns on fileBufferReturnIn
                     Fw::Buffer packetBufferCopy = this->bufferAllocate_out(0, packetBuffer.getSize());
                     auto copySerializer = packetBufferCopy.getSerializer();
                     status = copySerializer.serialize(packetBuffer.getData(), packetBuffer.getSize(), Fw::Serialization::OMIT_LENGTH);
