@@ -153,7 +153,8 @@ void ComStubTester ::test_retry_reset() {
 void ComStubTester ::test_buffer_return() {
     U8 data[1];
     Fw::Buffer buffer(data, sizeof(data));
-    this->invoke_to_dataReturnIn(0, buffer);
+    ComCfg::FrameContext context;
+    this->invoke_to_dataReturnIn(0, buffer, context);
     ASSERT_from_drvReceiveReturnOut_SIZE(1);     // incoming buffer should be returned
     ASSERT_EQ(this->fromPortHistory_drvReceiveReturnOut->at(0).fwBuffer.getData(), data);
     ASSERT_EQ(this->fromPortHistory_drvReceiveReturnOut->at(0).fwBuffer.getSize(), sizeof(data));

@@ -156,8 +156,8 @@ void FrameAccumulatorTester ::testAccumulateBuffersEmitManyFrames() {
 void FrameAccumulatorTester ::testBufferReturnDeallocation() {
     U8 data[1];
     Fw::Buffer buffer(data, sizeof(data));
-    ComCfg::FrameContext ignoredContext;
-    this->invoke_to_dataReturnIn(0, buffer, ignoredContext);
+    ComCfg::FrameContext context;
+    this->invoke_to_dataReturnIn(0, buffer, context);
     ASSERT_from_bufferDeallocate_SIZE(1);     // incoming buffer should be deallocated
     ASSERT_EQ(this->fromPortHistory_bufferDeallocate->at(0).fwBuffer.getData(), data);
     ASSERT_EQ(this->fromPortHistory_bufferDeallocate->at(0).fwBuffer.getSize(), sizeof(data));
