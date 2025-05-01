@@ -149,45 +149,7 @@ $ fprime-gds -g none
 ### Help and Other Options
 
 To see the full list of options you have when running the `fprime-gds` command, use the `--help` flag. e.g.
-`fprime-gds --help`. The following are the currently available options:
-
-```
-fprime-gds --help
-usage: fprime-gds [-h] [-d DEPLOY] [-l LOGS] [--log-directly] [-g {none,html}]
-                  [--dictionary DICTIONARY] [-c CONFIG] [--tts-port TTS_PORT]
-                  [--tts-addr TTS_ADDR] [-n] [--app APP]
-                  [--ip-address ADDRESS] [--ip-port PORT]
-                  [--comm-adapter {ip}]
-
-Run F prime deployment and GDS
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -d DEPLOY, --deployment DEPLOY
-                        Deployment directory for detecting dict, app, and
-                        logging. [default: /Users/mstarch]
-  -l LOGS, --logs LOGS  Logging directory. Created if nonexistent. Default:
-                        deployment directory.
-  --log-directly        Logging directory is used directly, no extra dated
-                        directories are created.
-  -g {none,html}, --gui {none,html}
-                        Set the desired GUI system for running the deployment.
-                        [default: html]
-  --dictionary DICTIONARY
-                        Path to dictionary. Overrides deploy if both are set
-  -c CONFIG, --config CONFIG
-                        Configuration for wx GUI. Ignored if not using wx.
-  --tts-port TTS_PORT   Set the threaded TCP socket server port [default:
-                        50050]
-  --tts-addr TTS_ADDR   set the threaded TCP socket server address [default:
-                        0.0.0.0]
-  -n, --no-app          Do not run deployment binary. Overrides --app.
-  --app APP             Path to app to run. Overrides deploy if both are set.
-  --ip-address ADDRESS  Address of the IP adapter server. Default: 0.0.0.0
-  --ip-port PORT        Port of the IP adapter server. Default: 50000
-  --comm-adapter {ip}   Adapter for communicating to flight deployment.
-                        [default: ip]
-```
+`fprime-gds --help`.
 
 ## Navigating the GDS GUI
 
