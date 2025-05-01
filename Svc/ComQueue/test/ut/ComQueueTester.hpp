@@ -66,7 +66,7 @@ class ComQueueTester : public ComQueueGTestBase {
     // Tests
     // ----------------------------------------------------------------------
 
-    void testdataOut();
+    void testQueueSend();
 
     void testQueuePause();
 

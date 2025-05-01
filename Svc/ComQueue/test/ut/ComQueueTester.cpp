@@ -79,7 +79,7 @@ void ComQueueTester ::emitOneAndCheck(FwIndexType expectedIndex,
 // Tests
 // ----------------------------------------------------------------------
 
-void ComQueueTester ::testdataOut() {
+void ComQueueTester ::testQueueSend() {
     U8 data[BUFFER_LENGTH] = {0xde, 0xad, 0xbe};
     Fw::ComBuffer comBuffer(&data[0], sizeof(data));
     Fw::Buffer buffer(&data[0], sizeof(data));

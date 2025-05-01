@@ -25,14 +25,14 @@ On receiving a data packet, the `Svc::FprimeFramer` performs the following actio
 
 ## Port Descriptions
 
-| Kind  | Name  | Port Type | Usage    |
-|---|---|---|---|
-| `guarded input` | `dataIn` | `Svc.ComDataWithContext` | Port to receive data to frame, in a Fw::Buffer with optional context|
-| `output` | `dataOut` | `Svc.ComDataWithContext` | Port to output framed data, with optional context, for follow-up framing|
-| `sync input` | `dataReturnIn` | `Svc.ComDataWithContext` | Port to receive back ownership of buffer sent out of `dataOut` |
-| `output` | `dataReturnOut` | `Svc.ComDataWithContext` | Port to return ownership of buffer received received on `dataIn` |
-| `sync input` | `comStatusIn` | `Fw.SuccessCondition` | Port receiving the general status from the downstream component|
-| `output` | `comStatusOut` | `Fw.SuccessCondition` | Port receiving indicating the status of framer for receiving more data|
+| Kind            | Name            | Port Type                | Usage                                                                    |
+|-----------------|-----------------|--------------------------|--------------------------------------------------------------------------|
+| `guarded input` | `dataIn`        | `Svc.ComDataWithContext` | Port to receive data to frame, in a Fw::Buffer with optional context     |
+| `output`        | `dataOut`       | `Svc.ComDataWithContext` | Port to output framed data, with optional context, for follow-up framing |
+| `sync input`    | `dataReturnIn`  | `Svc.ComDataWithContext` | Port to receive back ownership of buffer sent out of `dataOut`           |
+| `output`        | `dataReturnOut` | `Svc.ComDataWithContext` | Port to return ownership of buffer received on `dataIn`                  |
+| `sync input`    | `comStatusIn`   | `Fw.SuccessCondition`    | Port receiving the general status from the downstream component          |
+| `output`        | `comStatusOut`  | `Fw.SuccessCondition`    | Port receiving indicating the status of framer for receiving more data   |
 
 ## Requirements
 
