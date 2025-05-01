@@ -57,7 +57,9 @@ be useful
 |--------------|----------------|-----------------------|-----------------------------------------------------------------------------------|
 | `sync input` | `dataIn`    | `Svc.ComDataWithContext`  | Port receiving `Fw::Buffer`s for transmission out `drvSendOut`                    |
 | `output`     | `comStatusOut`    | `Svc.ComStatus`       | Port indicating success or failure to attached `Svc::ComQueue`                    |
-| `output`     | `dataOut`   | `Drv.ByteStreamRecv`  | Port providing received `Fw::Buffers` to a potential `Svc::Deframer`              |
+| `output`     | `dataOut`   | `Svc.ComDataWithContext`  | Port providing received `Fw::Buffers` to the broader application (typically a Deframer)              |
+| `output`     | `dataReturnOut`   | `Svc.ComDataWithContext`  | Port returning ownership of data that came in on `dataIn`                         |
+| `sync input` | `dataReturnIn`    | `Svc.ComDataWithContext`  | Port receiving back ownership of buffer sent out on `dataOut`                     |
 
 **Byte Stream Driver Model Ports**
 
@@ -66,13 +68,16 @@ be useful
 | `sync input` | `drvConnected` | `Drv.ByteStreamReady` | Port called when the underlying driver has connected                              |
 | `sync input` | `drvReceiveIn`    | `Drv.ByteStreamRecv`  | Port receiving `Fw::Buffers` from underlying communications bus driver            |
 | `output`     | `drvSendOut`   | `Drv.ByteStreamSend`  | Port providing received `Fw::Buffers` to the underlying communications bus driver |
+| `sync input` | `drvSendReturnIn`    | `Drv.ByteStreamData`  | Port receiving status and ownership of buffer sent out on `drvSendOut`            |
+| `output`     | `drvReceiveReturnOut`   | `Fw.BufferSend`  | Port returning ownership of buffer that came in on `drvReceiveIn`                 |
 
 
 ### 4.2. State, Configuration, and Runtime Setup
 
-`Svc::ComStub` has only stores a boolean `m_reinitialize` indicating when it should send `Fw::Success::SUCCESS` in
+`Svc::ComStub` stores a boolean `m_reinitialize` indicating when it should send `Fw::Success::SUCCESS` in
 response to a driver reconnection event. This is to implement the  Communication Adapter Protocol of a
-[communication adapter interface](../../../docs/reference/communication-adapter-interface.md).
+[communication adapter interface](../../../docs/reference/communication-adapter-interface.md). It also keeps
+track of a `m_retry_count` to limit the number of retries on an attempt to send data.
 
 ### 4.3. Port Handlers
 

@@ -10,8 +10,6 @@ The `Svc::FprimeDeframer` component is an implementation of the [DeframerInterfa
 
 Ownership of the buffer is transferred to the component connected to the `dataOut` output port. The input buffer is modified by subtracting the header and trailer size from the buffer's length, and offsetting the buffer's data pointer to point to the start of the packet data.
 
-The `Svc::FprimeDeframer` component does not perform any validation of the frame. It is expected that the frame is valid and well-formed. The validation should be performed by an upstream component, such as [`Svc::FrameAccumulator`](../../FrameAccumulator/docs/sdd.md).
-
 The `Svc::FprimeDeframer` does not support deframing multiple packets in a single frame (i.e. concatenated packets) as this is not supported by the F´ communications protocol.
 
 ### Frame validation
@@ -28,35 +26,25 @@ If any of these conditions are not met, the frame is dropped meaning no payload 
 
 The `Svc::FprimeDeframer` component is used in the uplink stack of many reference F´ application such as [the tutorials source code](https://github.com/fprime-community#tutorials).
 
-
 ## Diagrams
 
 The below diagram shows a typical configuration in which the `Svc::FprimeDeframer` can be used. This is the configuration used in the [the tutorials source code](https://github.com/fprime-community#tutorials). It is receiving accumulated frames from a [Svc::FrameAccumulator](../../FrameAccumulator/docs/sdd.md) and passes packets to a [Svc::FprimeRouter](../../FprimeRouter/docs/sdd.md) for routing to other components.
 
 ![./img/deframer_uplink_stack.png](./img/deframer_uplink_stack.png)
 
-
-## Class Diagram
-
-```mermaid
-classDiagram
-    class FprimeDeframer~PassiveComponent~ {
-        + void dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context)
-    }
-```
-
-
 ## Requirements
 
 Requirement | Description | Rationale | Verification Method
 ----------- | ----------- | ----------| -------------------
 SVC-DEFRAMER-001 | `Svc::FprimeDeframer` shall extract the payload field from input buffers that represent a valid F Prime frame as specified by the [F Prime Protocol](../../FprimeProtocol/docs/sdd.md) | Deframe valid frames and extract payload | Unit test |
-SVC-DEFRAMER-002 | `Svc::FprimeDeframer` shall deallocate input buffers that are not a valid F Prime frame as specified by the [F Prime Protocol](../../FprimeProtocol/docs/sdd.md) | Drop invalid frames | Unit test |
+SVC-DEFRAMER-002 | `Svc::FprimeDeframer` shall return ownership of input buffers that are not a valid F Prime frame as specified by the [F Prime Protocol](../../FprimeProtocol/docs/sdd.md) | Drop invalid frames | Unit test |
 
 ## Port Descriptions
 
 | Kind | Name | Type | Description |
 |---|---|---|---|
-| `guarded input` | dataIn | `Svc.ComDataWithContext` | Receives a frame with optional context data |
-| `output` | dataOut | `Svc.ComDataWithContext` | Receives a frame with optional context data |
-| `output` | bufferDeallocate | `Fw.BufferSend` | Port for deallocating dropped frames |
+| `guarded input` | `dataIn` | `Svc.ComDataWithContext` | Receives a frame for deframing |
+| `output` | `dataOut` | `Svc.ComDataWithContext` | Emits deframed data (F´ packets) |
+| `sync input` | `dataReturnIn` | `Svc.ComDataWithContext` | Receives ownership of the emitted data back |
+| `output` | `dataReturnOut` | `Svc.ComDataWithContext` | Returns ownership of the input buffer back to the sender |
+
