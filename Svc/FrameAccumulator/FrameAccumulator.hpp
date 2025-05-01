@@ -48,9 +48,10 @@ class FrameAccumulator final : public FrameAccumulatorComponentBase {
 
     //! Handler implementation for dataIn
     //!
-    //! Receives raw data from a ByteStreamDriver, ComStub, or other buffer producing component
+    //! Receive stream of bytes from a ComInterface component
     void dataIn_handler(FwIndexType portNum,  //!< The port number
-                        Fw::Buffer& recvBuffer) override;
+                        Fw::Buffer& recvBuffer,
+                        const ComCfg::FrameContext& context) override;
 
     //! Handler implementation for bufferReturnIn
     //!

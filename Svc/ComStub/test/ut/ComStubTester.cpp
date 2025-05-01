@@ -60,9 +60,10 @@ void ComStubTester ::test_basic() {
     ASSERT_from_drvDataOut(0, buffer);
 
     // Uplink
+    ComCfg::FrameContext emptyContext;
     invoke_to_drvDataIn(0, buffer, Drv::ByteStreamStatus::OP_OK);
     ASSERT_from_comDataOut_SIZE(1);
-    ASSERT_from_comDataOut(0, buffer);
+    ASSERT_from_comDataOut(0, buffer, emptyContext);
 }
 
 void ComStubTester ::test_fail() {
@@ -163,8 +164,9 @@ void ComStubTester ::test_buffer_return() {
 // ----------------------------------------------------------------------
 
 void ComStubTester ::from_comDataOut_handler(const FwIndexType portNum,
-                                      Fw::Buffer& recvBuffer) {
-    this->pushFromPortEntry_comDataOut(recvBuffer);
+                                      Fw::Buffer& recvBuffer,
+                                      const ComCfg::FrameContext& context) {
+    this->pushFromPortEntry_comDataOut(recvBuffer, context);
 }
 
 void ComStubTester ::from_comStatusOut_handler(const FwIndexType portNum, Fw::Success& condition) {

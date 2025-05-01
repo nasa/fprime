@@ -170,7 +170,7 @@ module Ref {
       comDriver.$recv         -> comStub.drvDataIn
       comStub.bufferReturnOut -> comDriver.bufferReturnIn
       # ComStub <-> FrameAccumulator
-      comStub.comDataOut               -> frameAccumulator.dataIn # Update needed: ComInterface needs to emit ComDataWithContext ?
+      comStub.comDataOut               -> frameAccumulator.dataIn
       frameAccumulator.bufferReturnOut -> comStub.bufferReturnIn
       # FrameAccumulator buffer allocations
       frameAccumulator.bufferDeallocate -> commsBufferManager.bufferSendIn

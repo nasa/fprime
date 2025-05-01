@@ -6,9 +6,7 @@
 sync input port comDataIn: Svc.ComDataWithContext
 
 @ Data received from the wire (coming out of the component)
-output port comDataOut: Fw.BufferSend 
-# TODO: problem here: if there's a radio component and no FrameAccumulator needed,
-# We likely need comDataOut to be Svc.ComDataWithContext so it can be fed directly into a Deframer ?
+output port comDataOut: Svc.ComDataWithContext
 
 @ Status of the last transmission
 output port comStatusOut: Fw.SuccessCondition

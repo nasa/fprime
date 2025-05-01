@@ -41,7 +41,8 @@ void ComStub::drvDataIn_handler(const FwIndexType portNum,
                                 Fw::Buffer& recvBuffer,
                                 const Drv::ByteStreamStatus& recvStatus) {
     if (recvStatus.e == Drv::ByteStreamStatus::OP_OK) {
-        this->comDataOut_out(0, recvBuffer);
+        ComCfg::FrameContext emptyContext; // ComStub knows nothing about the received bytes, so use an empty context
+        this->comDataOut_out(0, recvBuffer, emptyContext);
     }
 }
 

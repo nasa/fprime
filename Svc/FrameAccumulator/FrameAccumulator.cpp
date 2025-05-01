@@ -50,9 +50,10 @@ void FrameAccumulator ::cleanup() {
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void FrameAccumulator ::dataIn_handler(FwIndexType portNum, Fw::Buffer& buffer) {
+void FrameAccumulator ::dataIn_handler(FwIndexType portNum, Fw::Buffer& buffer, const ComCfg::FrameContext& context) {
     // Check whether there is data to process
     if (buffer.isValid()) {
+        // The buffer is not necessarily a full frame, so the attached context has no meaning and we ignore it
         this->processBuffer(buffer);
     }
     // Return ownership of the incoming buffer (FrameAccumulator allocates its own buffers to hold frames)
