@@ -122,35 +122,6 @@ module Ref {
       fprimeFramer.comStatusOut  -> comQueue.comStatusIn
     }
 
-    connections Uplink {
-      # ComDriver buffer allocations
-      comDriver.allocate      -> commsBufferManager.bufferGetCallee
-      comDriver.deallocate    -> commsBufferManager.bufferSendIn
-      # ComDriver <-> ComStub
-      comDriver.$recv             -> comStub.drvReceiveIn
-      comStub.drvReceiveReturnOut -> comDriver.recvReturnIn
-      # ComStub <-> FrameAccumulator
-      comStub.dataOut                -> frameAccumulator.dataIn
-      frameAccumulator.dataReturnOut -> comStub.dataReturnIn
-      # FrameAccumulator buffer allocations
-      frameAccumulator.bufferDeallocate -> commsBufferManager.bufferSendIn
-      frameAccumulator.bufferAllocate   -> commsBufferManager.bufferGetCallee
-      # FrameAccumulator <-> Deframer
-      frameAccumulator.dataOut -> deframer.dataIn
-      deframer.dataReturnOut   -> frameAccumulator.dataReturnIn
-      # Deframer <-> Router
-      deframer.dataOut           -> fprimeRouter.dataIn
-      fprimeRouter.dataReturnOut -> deframer.dataReturnIn
-      # Router buffer allocations
-      fprimeRouter.bufferAllocate   -> commsBufferManager.bufferGetCallee
-      fprimeRouter.bufferDeallocate -> commsBufferManager.bufferSendIn
-      # Router <-> CmdDispatcher/FileUplink
-      fprimeRouter.commandOut  -> cmdDisp.seqCmdBuff
-      cmdDisp.seqCmdStatus     -> fprimeRouter.cmdResponseIn
-      fprimeRouter.fileOut     -> fileUplink.bufferSendIn
-      fileUplink.bufferSendOut -> fprimeRouter.fileBufferReturnIn
-    }
-
     connections FaultProtection {
       eventLogger.FatalAnnounce -> fatalHandler.FatalReceive
     }
@@ -195,6 +166,35 @@ module Ref {
     connections Sequencer {
       cmdSeq.comCmdOut -> cmdDisp.seqCmdBuff
       cmdDisp.seqCmdStatus -> cmdSeq.cmdResponseIn
+    }
+
+    connections Uplink {
+      # ComDriver buffer allocations
+      comDriver.allocate      -> commsBufferManager.bufferGetCallee
+      comDriver.deallocate    -> commsBufferManager.bufferSendIn
+      # ComDriver <-> ComStub
+      comDriver.$recv             -> comStub.drvReceiveIn
+      comStub.drvReceiveReturnOut -> comDriver.recvReturnIn
+      # ComStub <-> FrameAccumulator
+      comStub.dataOut                -> frameAccumulator.dataIn
+      frameAccumulator.dataReturnOut -> comStub.dataReturnIn
+      # FrameAccumulator buffer allocations
+      frameAccumulator.bufferDeallocate -> commsBufferManager.bufferSendIn
+      frameAccumulator.bufferAllocate   -> commsBufferManager.bufferGetCallee
+      # FrameAccumulator <-> Deframer
+      frameAccumulator.dataOut -> deframer.dataIn
+      deframer.dataReturnOut   -> frameAccumulator.dataReturnIn
+      # Deframer <-> Router
+      deframer.dataOut           -> fprimeRouter.dataIn
+      fprimeRouter.dataReturnOut -> deframer.dataReturnIn
+      # Router buffer allocations
+      fprimeRouter.bufferAllocate   -> commsBufferManager.bufferGetCallee
+      fprimeRouter.bufferDeallocate -> commsBufferManager.bufferSendIn
+      # Router <-> CmdDispatcher/FileUplink
+      fprimeRouter.commandOut  -> cmdDisp.seqCmdBuff
+      cmdDisp.seqCmdStatus     -> fprimeRouter.cmdResponseIn
+      fprimeRouter.fileOut     -> fileUplink.bufferSendIn
+      fileUplink.bufferSendOut -> fprimeRouter.fileBufferReturnIn
     }
 
     connections DataProducts {

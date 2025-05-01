@@ -63,9 +63,9 @@ module RPI {
     # ----------------------------------------------------------------------
 
     connections Downlink {
-      eventLogger.PktSend        -> comQueue.comPacketQueueIn[0]
-      chanTlm.PktSend            -> comQueue.comPacketQueueIn[1]
-      fileDownlink.bufferSendOut -> comQueue.bufferQueueIn[0]
+      eventLogger.PktSend         -> comQueue.comPacketQueueIn[0]
+      chanTlm.PktSend             -> comQueue.comPacketQueueIn[1]
+      fileDownlink.bufferSendOut  -> comQueue.bufferQueueIn[0]
       comQueue.bufferReturnOut[0] -> fileDownlink.bufferReturn
 
       comQueue.dataOut     -> framer.dataIn
@@ -138,20 +138,20 @@ module RPI {
       comDriver.allocate      -> commsBufferManager.bufferGetCallee
       comDriver.deallocate    -> commsBufferManager.bufferSendIn
       # ComDriver <-> ComStub
-      comDriver.$recv         -> comStub.drvReceiveIn
+      comDriver.$recv             -> comStub.drvReceiveIn
       comStub.drvReceiveReturnOut -> comDriver.recvReturnIn
       # ComStub <-> FrameAccumulator
-      comStub.dataOut               -> frameAccumulator.dataIn
+      comStub.dataOut                -> frameAccumulator.dataIn
       frameAccumulator.dataReturnOut -> comStub.dataReturnIn
       # FrameAccumulator buffer allocations
       frameAccumulator.bufferDeallocate -> commsBufferManager.bufferSendIn
       frameAccumulator.bufferAllocate   -> commsBufferManager.bufferGetCallee
       # FrameAccumulator <-> Deframer
-      frameAccumulator.dataOut -> deframer.dataIn
+      frameAccumulator.dataOut  -> deframer.dataIn
       deframer.dataReturnOut    -> frameAccumulator.dataReturnIn
       # Deframer <-> Router
-      deframer.dataOut         -> fprimeRouter.dataIn
-      fprimeRouter.dataReturnOut   -> deframer.dataReturnIn
+      deframer.dataOut           -> fprimeRouter.dataIn
+      fprimeRouter.dataReturnOut -> deframer.dataReturnIn
       # Router buffer allocations
       fprimeRouter.bufferAllocate   -> commsBufferManager.bufferGetCallee
       fprimeRouter.bufferDeallocate -> commsBufferManager.bufferSendIn
