@@ -10,8 +10,11 @@ module Svc {
 
     include "../Interfaces/DeframerInterface.fppi"
 
-    @ Port for deallocating dropped frames
-    output port bufferDeallocate: Fw.BufferSend
+    @ Port for returning ownership of received frame buffers
+    output port dataReturnOut: Svc.ComDataWithContext
+
+    @ Port receiving back ownership of sent frame buffers 
+    sync input port dataReturnIn: Svc.ComDataWithContext
 
     @ An invalid frame was received (too short to be a frame)
     event InvalidBufferReceived \

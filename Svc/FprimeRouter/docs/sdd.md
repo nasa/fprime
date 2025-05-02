@@ -16,26 +16,18 @@ In the canonical uplink communications stack, `Svc::FprimeRouter` is connected t
 
 ![uplink_stack](../../FprimeDeframer/docs/img/deframer_uplink_stack.png)
 
-## Class Diagram
-
-
-```mermaid
-classDiagram
-    class FprimeRouter~PassiveComponent~ {
-        + void dataIn_handler(portNum, packetBuffer, contextBuffer)
-        + void cmdResponseIn_handler(portNum, opcode, cmdSeq, response)
-    }
-```
-
 ## Port Descriptions
 
-| Name | Description | Type |
-|---|---|---|
-| `dataIn: Svc.ComDataWithContext` | Receiving Fw::Buffer with context buffer from Deframer | `guarded input` |
-| `commandOut: Fw.Com` | Port for sending command packets as Fw::ComBuffers | `output` |
-| `fileOut: Fw.BufferSend` | Port for sending file packets as Fw::Buffer (ownership passed to receiver) | `output` |
-| `unknownDataOut: Svc.ComDataWithContext` | Port forwarding unknown data (useful for adding custom routing rules with a project-defined router) | `output` |
-| `output`| bufferDeallocate | `Fw.BufferSend` | Port for deallocating buffers once routed |
+| Kind | Name | Type | Description |
+|---|---|---|---|
+| `guarded input` | `dataIn` | `Svc.ComDataWithContext` | Receiving Fw::Buffer with context buffer from Deframer 
+| `guarded input` | `dataReturnOut` | `Svc.ComDataWithContext` | Returning ownership of buffer received on `dataIn` 
+| `output` | `commandOut` | `Fw.Com` | Port for sending command packets as Fw::ComBuffers |
+| `output` | `fileOut` | `Fw.BufferSend` | Port for sending file packets as Fw::Buffer (ownership passed to receiver) |
+| `sync input` | `fileBufferReturnIn` | `Fw.BufferSend` | Receiving ownership of buffer sent on `fileOut` | 
+| `output` | `unknownDataOut` | `Svc.ComDataWithContext` | Port forwarding unknown data (useful for adding custom routing rules with a  project-defined router) |
+| `output`| `bufferAllocate` | `Fw.BufferGet` | Port for allocating buffers, allowing copy of received data |
+| `output`| `bufferDeallocate` | `Fw.BufferSend` | Port for deallocating buffers |
 
 ## Requirements
 
@@ -46,3 +38,5 @@ SVC-ROUTER-002 | `Svc::FprimeRouter` shall route packets of type `Fw::ComPacket:
 SVC-ROUTER-003 | `Svc::FprimeRouter` shall route packets of type `Fw::ComPacket::FW_PACKET_FILE` to the `fileOut` output port. | Routing file packets | Unit test |
 SVC-ROUTER-004 | `Svc::FprimeRouter` shall route data that is neither `Fw::ComPacket::FW_PACKET_COMMAND` nor `Fw::ComPacket::FW_PACKET_FILE` to the `unknownDataOut` output port. | Allows for projects to provide custom routing for additional (project-specific) uplink data types | Unit test |
 SVC-ROUTER-005 | `Svc::FprimeRouter` shall emit warning events if serialization errors occur during processing of incoming packets | Aid in diagnosing uplink issues | Unit test |
+SVC-ROUTER-005 | `Svc::FprimeRouter` shall make a copy of buffers that represent a `FW_PACKET_FILE` | Aid in memory management of file buffers | Unit test |
+SVC-ROUTER-005 | `Svc::FprimeRouter` shall return ownership of all buffers received on `dataIn` through `dataReturnOut` | Memory management | Unit test |
