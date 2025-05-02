@@ -2,7 +2,7 @@
 
 Data Handler Plugins allow users to register custom consumers for decoded F Prime data types, such as telemetry, events, or channels. These plugins are useful for logging, transforming, forwarding, or visualizing data as it flows through the system.
 
-Each handler is dynamically registered to specific data descriptors (e.g., telemetry, events) and all custom data handlers run in a single custom data handler process. This allows thees plugin to process decoded data without interfering with the core GDS runtime.
+Each handler is dynamically registered to specific data descriptors (e.g., telemetry, events) and all custom data handlers run in a single custom data handler process. This allows these plugins to process decoded data without interfering with the core GDS runtime.
 
 An example [`OpenMCTPush`](https://github.com/fprime-community/fprime-openmct/blob/devel/src/fprime_openmct/data_push.py) plugin shows how to use a `DataHandler` to push data to another service (in this case via ZeroMQ).
 
