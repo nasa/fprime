@@ -32,4 +32,5 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/FpySequencerTester.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/FpySequencerTestMain.cpp"
 )
+
 register_fprime_ut()

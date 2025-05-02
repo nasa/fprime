@@ -5,12 +5,13 @@
 namespace Svc {
 
 Signal FpySequencer::dispatchStatement() {
+    // check to make sure no array out of bounds, or if it is out of bounds it's only 1 out of bound
+    // as that indicates eof
+    FW_ASSERT(this->m_runtime.nextStatementIndex <= this->m_sequenceObj.getheader().getstatementCount());
+
     if (this->m_runtime.nextStatementIndex == this->m_sequenceObj.getheader().getstatementCount()) {
         return Signal::result_dispatchStatement_noMoreStatements;
     }
-
-    // check to make sure no array out of bounds
-    FW_ASSERT(this->m_runtime.nextStatementIndex < this->m_sequenceObj.getheader().getstatementCount());
 
     const Fpy::Statement& nextStatement = this->m_sequenceObj.getstatements()[this->m_runtime.nextStatementIndex];
     this->m_runtime.nextStatementIndex++;
@@ -104,6 +105,79 @@ Fw::Success FpySequencer::dispatchDirective(const Fpy::Statement& stmt) {
                 return Fw::Success::FAILURE;
             }
             this->directive_waitAbs_internalInterfaceInvoke(directive);
+            break;
+        }
+        case Fpy::DirectiveId::SET_LVAR: {
+            // set local var has some custom deserialization behavior
+            // we don't write a custom class for it though because that deserialization behavior only
+            // applies for the initial time we deserialize it out of the statement
+
+            // the behavior in question is that it will grab the entire remaining part of the statement
+            // arg buf. that is, it uses the remaining length of the statement arg buf to determine the length
+            // of its value buf. this way we get to save on serializing the value length
+
+            // TODO do some trades on the best way to do this. not confident on this one
+            FpySequencer_SetLocalVarDirective directive;
+
+            // first deserialize the index
+            U8 index;
+            status = argBuf.deserialize(index);
+            if (status != Fw::SerializeStatus::FW_SERIALIZE_OK) {
+                this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), this->m_runtime.nextStatementIndex - 1, status, argBuf.getBuffLeft(),
+                                                               argBuf.getBuffLength());
+                return Fw::Success::FAILURE;
+            }
+            directive.setindex(index);
+
+            // okay, now deserialize the remaining bytes in the stmt arg buf into the value buf
+
+            //  how many bytes are left?
+            FwSizeType valueSize = argBuf.getBuffLeft();
+
+            // check to make sure the value will fit
+            if (valueSize > Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE) {
+                this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), this->m_runtime.nextStatementIndex - 1, 
+                                                               Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR, argBuf.getBuffLeft(),
+                                                               argBuf.getBuffLength());
+                return Fw::Success::FAILURE;
+            }
+
+            // okay, it will fit. put it in
+            status = argBuf.deserialize(directive.getvalue(), valueSize, true);
+
+            // now we can fail if there is any buf left
+            if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || argBuf.getBuffLeft() != 0) {
+                this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), this->m_runtime.nextStatementIndex - 1, status, argBuf.getBuffLeft(),
+                                                               argBuf.getBuffLength());
+                return Fw::Success::FAILURE;
+            }
+
+            // and set the buf size now that we know it
+            directive.set_valueSize(valueSize);
+
+            this->directive_setLocalVar_internalInterfaceInvoke(directive);
+            break;
+        }
+          case Fpy::DirectiveId::GOTO: {
+            FpySequencer_GotoDirective directive;
+            status = argBuf.deserialize(directive);
+            if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || argBuf.getBuffLeft() != 0) {
+                this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), this->m_runtime.nextStatementIndex - 1, status, argBuf.getBuffLeft(),
+                                                               argBuf.getBuffLength());
+                return Fw::Success::FAILURE;
+            }
+            this->directive_goto_internalInterfaceInvoke(directive);
+            break;
+        }
+        case Fpy::DirectiveId::IF: {
+            FpySequencer_IfDirective directive;
+            status = argBuf.deserialize(directive);
+            if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || argBuf.getBuffLeft() != 0) {
+                this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), this->m_runtime.nextStatementIndex - 1, status, argBuf.getBuffLeft(),
+                                                               argBuf.getBuffLength());
+                return Fw::Success::FAILURE;
+            }
+            this->directive_if_internalInterfaceInvoke(directive);
             break;
         }
         default: {

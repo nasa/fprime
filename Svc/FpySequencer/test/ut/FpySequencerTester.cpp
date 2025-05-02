@@ -134,40 +134,30 @@ void FpySequencerTester::test_checkStatementTimeoutMismatchContext() {
 void FpySequencerTester::test_cmd_RUN() {
     // non blocking should instantly respond no matter what
     sendCmd_RUN(0, 0, Fw::String("invalid seq"), FpySequencer_BlockState::NO_BLOCK);
-    component.doDispatch();
+    // should try validating, then go to idle cuz it failed
+    dispatchUntilState(State::VALIDATING);
+    dispatchUntilState(State::IDLE);
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, FpySequencer::OPCODE_RUN, 0, Fw::CmdResponse::OK);
-    // clear the queue completely (but with a bound)
-    U16 ii = 0;
-    while (component.m_queue.getMessagesAvailable() > 0 && ii < 1000) {
-        component.doDispatch();
-        ii++;
-    }
+    dispatchCurrentMessages(component);
+
     this->clearHistory();
 
     // blocking will take some queue emptying to respond
     sendCmd_RUN(0, 0, Fw::String("invalid seq"), FpySequencer_BlockState::BLOCK);
 
-    // clear the queue completely (but with a bound)
-    ii = 0;
-    while (component.m_queue.getMessagesAvailable() > 0 && ii < 1000) {
-        component.doDispatch();
-        ii++;
-    }
+    // should try validating, then go to idle cuz it failed
+    dispatchUntilState(State::VALIDATING);
+    dispatchUntilState(State::IDLE);
 
-    ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, FpySequencer::OPCODE_RUN, 0, Fw::CmdResponse::EXECUTION_ERROR);
 }
 
 void FpySequencerTester::test_cmd_VALIDATE() {
     sendCmd_VALIDATE(0, 0, Fw::String("invalid seq"));
-    // clear the queue completely (but with a bound)
-    U16 ii = 0;
-    while (component.m_queue.getMessagesAvailable() > 0 && ii < 1000) {
-        component.doDispatch();
-        ii++;
-    }
-    ASSERT_CMD_RESPONSE_SIZE(1);
+    // should try validating, then go to idle cuz it failed
+    dispatchUntilState(State::VALIDATING);
+    dispatchUntilState(State::IDLE);
     ASSERT_CMD_RESPONSE(0, FpySequencer::OPCODE_VALIDATE, 0, Fw::CmdResponse::EXECUTION_ERROR);
 }
 
@@ -175,29 +165,21 @@ void FpySequencerTester::test_cmd_RUN_VALIDATED() {
     // should fail because in idle
     component.m_stateMachine_sequencer.m_state = State::IDLE;
     sendCmd_RUN_VALIDATED(0, 0, FpySequencer_BlockState::NO_BLOCK);
-    U16 ii = 0;
-    while (component.m_queue.getMessagesAvailable() > 0 && ii < 1000) {
-        component.doDispatch();
-        ii++;
-    }
+    dispatchCurrentMessages(component);
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, FpySequencer::OPCODE_RUN_VALIDATED, 0, Fw::CmdResponse::EXECUTION_ERROR);
     this->clearHistory();
 
 
     // should succeed immediately
+    component.m_sequenceFilePath = "<invalid seq>";
     component.m_stateMachine_sequencer.m_state = State::AWAITING_CMD_RUN_VALIDATED;
     sendCmd_RUN_VALIDATED(0, 0, FpySequencer_BlockState::NO_BLOCK);
     component.doDispatch();
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, FpySequencer::OPCODE_RUN_VALIDATED, 0, Fw::CmdResponse::OK);
-    ii = 0;
-    while (component.m_queue.getMessagesAvailable() > 0 && ii < 1000) {
-        component.doDispatch();
-        ii++;
-    }
-
-    this->clearHistory();
+    // should go back to IDLE because sequence is bad
+    dispatchUntilState(State::IDLE);
 }
 
 void FpySequencerTester::test_cmd_CANCEL() {
@@ -208,12 +190,7 @@ void FpySequencerTester::test_cmd_CANCEL() {
     // should fail if we're in IDLE
     ASSERT_CMD_RESPONSE(0, FpySequencer::OPCODE_CANCEL, 0, Fw::CmdResponse::EXECUTION_ERROR);
 
-    // clear the queue completely (but with a bound)
-    U16 ii = 0;
-    while (component.m_queue.getMessagesAvailable() > 0 && ii < 1000) {
-        component.doDispatch();
-        ii++;
-    }
+    dispatchCurrentMessages(component);
     ASSERT_EQ(component.sequencer_getState(), State::IDLE);
 
 
@@ -222,15 +199,95 @@ void FpySequencerTester::test_cmd_CANCEL() {
     sendCmd_CANCEL(0, 0);
     component.doDispatch();
     ASSERT_CMD_RESPONSE_SIZE(1);
-    // should fail if we're in IDLE
+    // should succeed instantly
     ASSERT_CMD_RESPONSE(0, FpySequencer::OPCODE_CANCEL, 0, Fw::CmdResponse::OK);
-    // clear the queue completely (but with a bound)
-    ii = 0;
-    while (component.m_queue.getMessagesAvailable() > 0 && ii < 1000) {
-        component.doDispatch();
-        ii++;
+    // should go back to idle
+    dispatchUntilState(State::IDLE);
+}
+
+void FpySequencerTester::test_cmd_DEBUG_CLEAR_BREAKPOINT() {
+    component.m_debug.breakOnBreakpoint = true;
+    sendCmd_DEBUG_CLEAR_BREAKPOINT(0, 0);
+    // dispatch cmd
+    component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    // should always work
+    ASSERT_CMD_RESPONSE(0, FpySequencer::OPCODE_DEBUG_CLEAR_BREAKPOINT, 0, Fw::CmdResponse::OK);
+    // dispatch signal
+    component.doDispatch();
+    ASSERT_FALSE(component.m_debug.breakOnBreakpoint);
+}
+
+void FpySequencerTester::test_cmd_DEBUG_SET_BREAKPOINT() {
+    sendCmd_DEBUG_SET_BREAKPOINT(0, 0, 123, true);
+    // dispatch cmd handler
+    component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    // should always work
+    ASSERT_CMD_RESPONSE(0, FpySequencer::OPCODE_DEBUG_SET_BREAKPOINT, 0, Fw::CmdResponse::OK);
+    // dispatch signal
+    component.doDispatch();
+    ASSERT_TRUE(component.m_debug.breakOnBreakpoint);
+    ASSERT_TRUE(component.m_debug.breakOnlyOnceOnBreakpoint);
+    ASSERT_EQ(component.m_debug.breakpointIndex, 123);
+}
+
+void FpySequencerTester::test_cmd_DEBUG_BREAK() {
+    component.m_stateMachine_sequencer.m_state = State::IDLE;
+    component.m_debug.breakOnBreakpoint = false;
+    component.m_debug.breakOnlyOnceOnBreakpoint = false;
+    sendCmd_DEBUG_BREAK(0, 0, true);
+    dispatchCurrentMessages(component);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    // should fail in idle
+    ASSERT_CMD_RESPONSE(0, FpySequencer::OPCODE_DEBUG_BREAK, 0, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_FALSE(component.m_debug.breakOnBreakpoint);
+
+    // now try while running
+    this->clearHistory();
+    component.m_stateMachine_sequencer.m_state = State::RUNNING_AWAITING_STATEMENT_RESPONSE;
+    sendCmd_DEBUG_BREAK(0, 0, true);
+    // dispatch cmd handler
+    dispatchCurrentMessages(component);
+    // dispatch signal handler
+    dispatchCurrentMessages(component);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    // should work in running
+    ASSERT_CMD_RESPONSE(0, FpySequencer::OPCODE_DEBUG_BREAK, 0, Fw::CmdResponse::OK);
+    ASSERT_TRUE(component.m_debug.breakOnBreakpoint);
+    ASSERT_TRUE(component.m_debug.breakOnlyOnceOnBreakpoint);
+}
+
+void FpySequencerTester::test_cmd_DEBUG_CONTINUE() {
+    component.m_stateMachine_sequencer.m_state = State::IDLE;
+    sendCmd_DEBUG_CONTINUE(0, 0);
+    component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    // should fail in IDLE
+    ASSERT_CMD_RESPONSE(0, FpySequencer::OPCODE_DEBUG_CONTINUE, 0, Fw::CmdResponse::EXECUTION_ERROR);
+    this->clearHistory();
+
+    component.m_stateMachine_sequencer.m_state = State::RUNNING_DEBUG_BROKEN;
+    sendCmd_DEBUG_CONTINUE(0, 0);
+    // dispatch cmd handler
+    component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    // should work in debug_broken
+    ASSERT_CMD_RESPONSE(0, FpySequencer::OPCODE_DEBUG_CONTINUE, 0, Fw::CmdResponse::OK);
+    // dispatch signal handler
+    component.doDispatch();
+    // should have gone to dispatch stmt
+    ASSERT_EQ(component.sequencer_getState(), State::RUNNING_DISPATCH_STATEMENT);
+}
+
+// dispatches events from the queue until the component reaches the given state
+void FpySequencerTester::dispatchUntilState(State state, U32 bound) {
+    U64 iters = 0;
+    while (component.sequencer_getState() != state && iters < bound) {
+        dispatchCurrentMessages(component);
+        iters++;
     }
-    ASSERT_EQ(component.sequencer_getState(), State::IDLE);
+    ASSERT_EQ(component.sequencer_getState(), state);
 }
 
 }  // namespace Svc

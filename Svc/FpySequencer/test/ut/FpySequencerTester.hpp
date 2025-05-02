@@ -4,13 +4,13 @@
 // \brief  hpp file for FpySequencer test harness implementation class
 // ======================================================================
 
-#ifndef TESTER_HPP
-#define TESTER_HPP
+#ifndef FPYSEQUENCER_TESTER_HPP
+#define FPYSEQUENCER_TESTER_HPP
 
 #include "FpySequencerGTestBase.hpp"
 #include "Svc/FpySequencer/FpySequencer.hpp"
 
-namespace Svc{
+namespace Svc {
 
 class FpySequencerTester : public FpySequencerGTestBase {
   // ----------------------------------------------------------------------
@@ -53,6 +53,10 @@ class FpySequencerTester : public FpySequencerGTestBase {
   void test_cmd_VALIDATE();
   void test_cmd_RUN_VALIDATED();
   void test_cmd_CANCEL();
+  void test_cmd_DEBUG_CLEAR_BREAKPOINT();
+  void test_cmd_DEBUG_SET_BREAKPOINT();
+  void test_cmd_DEBUG_BREAK();
+  void test_cmd_DEBUG_CONTINUE();
 
  private:
   // ----------------------------------------------------------------------
@@ -63,6 +67,9 @@ class FpySequencerTester : public FpySequencerGTestBase {
   // ----------------------------------------------------------------------
   // Helper methods
   // ----------------------------------------------------------------------
+
+  // dispatches events from the queue until the component reaches the given state
+  void dispatchUntilState(State state, U32 bound=100);
 
   //! Connect ports
   //!

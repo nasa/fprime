@@ -64,6 +64,26 @@ TEST(Test, CmdCANCEL) {
   tester.test_cmd_CANCEL();
 }
 
+TEST(Test, CmdDEBUG_SET_BREAKPOINT) {
+  Svc::FpySequencerTester tester;
+  tester.test_cmd_DEBUG_SET_BREAKPOINT();
+}
+
+TEST(Test, CmdDEBUG_CLEAR_BREAKPOINT) {
+  Svc::FpySequencerTester tester;
+  tester.test_cmd_DEBUG_CLEAR_BREAKPOINT();
+}
+
+TEST(Test, CmdDEBUG_CONTINUE) {
+  Svc::FpySequencerTester tester;
+  tester.test_cmd_DEBUG_CONTINUE();
+}
+
+TEST(Test, CmdDEBUG_BREAK) {
+  Svc::FpySequencerTester tester;
+  tester.test_cmd_DEBUG_BREAK();
+}
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
