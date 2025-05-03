@@ -29,6 +29,11 @@ TEST(Test, SetLVar) {
   tester.test_setLvar();
 }
 
+TEST(Test, NoOp) {
+  Svc::FpySequencerTester tester;
+  tester.test_noOp();
+}
+
 TEST(Test, CheckShouldWake) {
   Svc::FpySequencerTester tester;
   tester.test_checkShouldWake();
@@ -97,6 +102,11 @@ TEST(Test, CmdDEBUG_CONTINUE) {
 TEST(Test, CmdDEBUG_BREAK) {
   Svc::FpySequencerTester tester;
   tester.test_cmd_DEBUG_BREAK();
+}
+
+TEST(Test, dispatchStatement) {
+  Svc::FpySequencerTester tester;
+  tester.test_dispatchStatement();
 }
 
 int main(int argc, char **argv) {

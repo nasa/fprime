@@ -52,4 +52,8 @@ void FpySequencerTester::add_IF(FpySequencer_IfDirective dir) {
     addDirective(Fpy::DirectiveId::IF, buf);
 }
 
+void FpySequencerTester::add_NO_OP() {
+    Fw::StatementArgBuffer buf;
+    addDirective(Fpy::DirectiveId::NO_OP, buf);
+}
 }

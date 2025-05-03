@@ -363,6 +363,9 @@ class FpySequencer : public FpySequencerComponentBase {
     //! Internal interface handler for directive_if
     void directive_if_internalInterfaceHandler(const Svc::FpySequencer_IfDirective& directive) override;
 
+    //! Internal interface handler for directive_noOp
+    void directive_noOp_internalInterfaceHandler(const Svc::FpySequencer_NoOpDirective& directive) override;
+
     void parametersLoaded() override;
     void parameterUpdated(FwPrmIdType id) override;
 
@@ -518,6 +521,7 @@ class FpySequencer : public FpySequencerComponentBase {
     Signal setLocalVar_directiveHandler(const FpySequencer_SetLocalVarDirective& directive);
     Signal goto_directiveHandler(const FpySequencer_GotoDirective& directive);
     Signal if_directiveHandler(const FpySequencer_IfDirective& directive);
+    Signal noOp_directiveHandler(const FpySequencer_NoOpDirective& directive);
 };
 
 }  // namespace Svc

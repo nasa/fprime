@@ -180,6 +180,17 @@ Fw::Success FpySequencer::dispatchDirective(const Fpy::Statement& stmt) {
             this->directive_if_internalInterfaceInvoke(directive);
             break;
         }
+        case Fpy::DirectiveId::NO_OP: {
+            FpySequencer_NoOpDirective directive;
+            // no op does not need deser
+            if (argBuf.getBuffLeft() != 0) {
+                this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), this->m_runtime.nextStatementIndex - 1, Fw::SerializeStatus::FW_DESERIALIZE_SIZE_MISMATCH, argBuf.getBuffLeft(),
+                                                               argBuf.getBuffLength());
+                return Fw::Success::FAILURE;
+            }
+            this->directive_noOp_internalInterfaceInvoke(directive);
+            break;
+        }
         default: {
             // unsure what this opcode is. check compiler version matches sequencer
             this->log_WARNING_HI_UnknownSequencerDirective(stmt.getopCode(), this->m_runtime.nextStatementIndex - 1, this->m_sequenceFilePath);

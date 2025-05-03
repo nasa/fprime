@@ -33,6 +33,10 @@ struct IfDirective {
     # this directive will not goto anywhere if the variable is true
 }
 
+struct NoOpDirective {
+    _empty: U8
+}
+
 internal port directive_waitRel(directive: WaitRelDirective) priority 6 assert
 
 internal port directive_waitAbs(directive: WaitAbsDirective) priority 6 assert
@@ -42,3 +46,5 @@ internal port directive_setLocalVar(directive: SetLocalVarDirective) priority 6 
 internal port directive_goto(directive: GotoDirective) priority 6 assert
 
 internal port directive_if(directive: IfDirective) priority 6 assert
+
+internal port directive_noOp(directive: NoOpDirective) priority 6 assert

@@ -48,6 +48,11 @@ void FpySequencer::directive_if_internalInterfaceHandler(const Svc::FpySequencer
     this->sendSignal(this->if_directiveHandler(directive));
 }
 
+//! Internal interface handler for directive_noOp
+void FpySequencer::directive_noOp_internalInterfaceHandler(const Svc::FpySequencer_NoOpDirective& directive) {
+    this->sendSignal(this->noOp_directiveHandler(directive));
+}
+
 //! Internal interface handler for directive_waitRel
 Signal FpySequencer::waitRel_directiveHandler(const FpySequencer_WaitRelDirective& directive) {
     Fw::Time wakeupTime = this->getTime();
@@ -123,6 +128,10 @@ Signal FpySequencer::if_directiveHandler(const FpySequencer_IfDirective& directi
 
     // conditional false case
     this->m_runtime.nextStatementIndex = directive.getfalseGotoStmtIndex();
+    return Signal::stmtResponse_success;
+}
+
+Signal FpySequencer::noOp_directiveHandler(const FpySequencer_NoOpDirective& directive) {
     return Signal::stmtResponse_success;
 }
 }  // namespace Svc

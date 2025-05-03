@@ -133,6 +133,12 @@ void FpySequencerTester::test_if() {
     ASSERT_NE(component.m_runtime.nextStatementIndex, 111);
 }
 
+void FpySequencerTester::test_noOp() {
+    FpySequencer_NoOpDirective directive;
+    Signal result = component.noOp_directiveHandler(directive);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+}
+
 void FpySequencerTester::test_checkShouldWakeMismatchBase() {
     Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 0, 100, 100);
     setTestTime(testTime);
@@ -366,6 +372,21 @@ void FpySequencerTester::test_cmd_DEBUG_CONTINUE() {
     component.doDispatch();
     // should have gone to dispatch stmt
     ASSERT_EQ(component.sequencer_getState(), State::RUNNING_DISPATCH_STATEMENT);
+}
+
+void FpySequencerTester::test_dispatchStatement() {
+    Fw::Time time(123, 123);
+    setTestTime(time);
+
+    add_NO_OP();
+    component.m_sequenceObj = seq;
+    Signal result = component.dispatchStatement();
+    ASSERT_EQ(result, Signal::result_dispatchStatement_success);
+    ASSERT_EQ(component.m_runtime.currentStatementOpcode, Fpy::DirectiveId::NO_OP);
+    ASSERT_EQ(component.m_runtime.currentStatementType, Fpy::StatementType::DIRECTIVE);
+    ASSERT_EQ(component.m_runtime.currentStatementDispatchTime, time);
+    result = component.dispatchStatement();
+    ASSERT_EQ(result, Signal::result_dispatchStatement_noMoreStatements);
 }
 
 // dispatches events from the queue until the component reaches the given state

@@ -10,6 +10,7 @@ module Svc {
             SET_LVAR = 0x00000003,
             GOTO = 0x00000004,
             IF = 0x00000005,
+            NO_OP = 0x00000006,
         }
 
         enum StatementType : U8 {

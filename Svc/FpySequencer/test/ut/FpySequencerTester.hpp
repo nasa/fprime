@@ -43,6 +43,7 @@ class FpySequencerTester : public FpySequencerGTestBase {
   void test_goto();
   void test_setLvar();
   void test_if();
+  void test_noOp();
 
   void test_checkShouldWake();
   void test_checkShouldWakeMismatchBase();
@@ -60,6 +61,8 @@ class FpySequencerTester : public FpySequencerGTestBase {
   void test_cmd_DEBUG_SET_BREAKPOINT();
   void test_cmd_DEBUG_BREAK();
   void test_cmd_DEBUG_CONTINUE();
+
+  void test_dispatchStatement();
 
  private:
   // ----------------------------------------------------------------------
@@ -102,6 +105,7 @@ class FpySequencerTester : public FpySequencerGTestBase {
   void add_GOTO(FpySequencer_GotoDirective dir);
   void add_SET_LVAR(FpySequencer_SetLocalVarDirective dir);
   void add_IF(FpySequencer_IfDirective dir);
+  void add_NO_OP();
 };
 
 }  // end namespace components
