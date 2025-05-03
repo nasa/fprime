@@ -14,6 +14,21 @@ TEST(Test, WaitAbs) {
   tester.test_waitAbs();
 }
 
+TEST(Test, Goto) {
+  Svc::FpySequencerTester tester;
+  tester.test_goto();
+}
+
+TEST(Test, If) {
+  Svc::FpySequencerTester tester;
+  tester.test_if();
+}
+
+TEST(Test, SetLVar) {
+  Svc::FpySequencerTester tester;
+  tester.test_setLvar();
+}
+
 TEST(Test, CheckShouldWake) {
   Svc::FpySequencerTester tester;
   tester.test_checkShouldWake();

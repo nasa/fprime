@@ -1,5 +1,5 @@
 @ Loads, validates and runs a sequence
-# prio: before sm sig and CANCEL
+# prio: lower than sm sig and CANCEL
 async command RUN(
                       fileName: string size FileNameStringSize @< The name of the sequence file
                       $block: BlockState @< Return command status when complete or not
@@ -7,14 +7,14 @@ async command RUN(
     opcode 0 priority 7 assert
 
 @ Loads and validates a sequence
-# prio: before sm sig and CANCEL
+# prio: lower than sm sig and CANCEL
 async command VALIDATE(
     fileName: string size FileNameStringSize @< The name of the sequence file
 ) \
     opcode 1 priority 7 assert
 
 @ Must be called after VALIDATE. Runs the sequence that was validated.
-# prio: before sm sig and CANCEL
+# prio: lower than sm sig and CANCEL
 async command RUN_VALIDATED(
     $block: BlockState @< Return command status when complete or not
 ) \

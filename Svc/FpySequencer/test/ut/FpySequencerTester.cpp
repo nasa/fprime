@@ -45,6 +45,94 @@ void FpySequencerTester::test_waitAbs() {
     ASSERT_EQ(component.m_runtime.wakeupTime, Fw::Time(5, 123));
 }
 
+void FpySequencerTester::test_goto() {
+    FpySequencer_GotoDirective directive(123);
+    component.m_sequenceObj.getheader().setstatementCount(456);
+    Signal result = component.goto_directiveHandler(directive);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(component.m_runtime.nextStatementIndex, 123);
+
+    component.m_runtime.nextStatementIndex = 0;
+    // out of bounds
+    directive.setstatementIndex(111111);
+    result = component.goto_directiveHandler(directive);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(component.m_runtime.nextStatementIndex, 0);
+}
+
+void FpySequencerTester::test_setLvar() {
+    U8 buf[Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE];
+    memset(buf, 1, sizeof(buf));
+    FpySequencer_SetLocalVarDirective directive(static_cast<U8>(0), 1, static_cast<FwSizeType>(sizeof(buf)));
+    Signal result = component.setLocalVar_directiveHandler(directive);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(component.m_runtime.localVariables[0].valueSize, sizeof(buf));
+    ASSERT_EQ(memcmp(buf, component.m_runtime.localVariables[0].value, sizeof(buf)), 0);
+
+    // outside of lvar range
+    directive.setindex(Fpy::MAX_SEQUENCE_LOCAL_VARIABLES);
+    result = component.setLocalVar_directiveHandler(directive);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+
+    // check what happens if buf too big
+    directive = FpySequencer_SetLocalVarDirective(static_cast<U8>(0), 1, Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE + 1);
+
+    ASSERT_DEATH_IF_SUPPORTED(component.setLocalVar_directiveHandler(directive), "Assert: ");
+}
+
+void FpySequencerTester::test_if() {
+    component.m_runtime.nextStatementIndex = 100;
+    component.m_sequenceObj.getheader().setstatementCount(123);
+    Fw::ExternalSerializeBuffer buf(component.m_runtime.localVariables[0].value, Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE);
+    buf.serialize(true);
+    component.m_runtime.localVariables[0].valueSize = buf.getBuffLength();
+    FpySequencer_IfDirective directive(0, 111);
+    Signal result = component.if_directiveHandler(directive);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    // should not have changd stmtidx
+    ASSERT_EQ(component.m_runtime.nextStatementIndex, 100);
+
+    buf.resetSer();
+    buf.serialize(false);
+    component.m_runtime.localVariables[0].valueSize = buf.getBuffLength();
+    result = component.if_directiveHandler(directive);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    // should have changd stmtidx
+    ASSERT_EQ(component.m_runtime.nextStatementIndex, 111);
+
+    component.m_runtime.nextStatementIndex = 100;
+
+    directive.setfalseGotoStmtIndex(component.m_sequenceObj.getheader().getstatementCount());
+    result = component.if_directiveHandler(directive);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    // should have succeeded
+    ASSERT_EQ(component.m_runtime.nextStatementIndex, component.m_sequenceObj.getheader().getstatementCount());
+
+    component.m_runtime.nextStatementIndex = 100;
+
+    buf.resetSer();
+    // check failure to interpret as bool
+    buf.serialize(static_cast<U8>(111));
+    component.m_runtime.localVariables[0].valueSize = buf.getBuffLength();
+    result = component.if_directiveHandler(directive);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    // should not have changd stmtidx
+    ASSERT_NE(component.m_runtime.nextStatementIndex, 111);
+
+    directive.setconditionalLocalVarIndex(Fpy::MAX_SEQUENCE_LOCAL_VARIABLES);
+    result = component.if_directiveHandler(directive);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    // should not have changd stmtidx
+    ASSERT_NE(component.m_runtime.nextStatementIndex, 111);
+
+    directive.setconditionalLocalVarIndex(0);
+    directive.setfalseGotoStmtIndex(component.m_sequenceObj.getheader().getstatementCount() + 1);
+    result = component.if_directiveHandler(directive);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    // should not have changd stmtidx
+    ASSERT_NE(component.m_runtime.nextStatementIndex, 111);
+}
+
 void FpySequencerTester::test_checkShouldWakeMismatchBase() {
     Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 0, 100, 100);
     setTestTime(testTime);

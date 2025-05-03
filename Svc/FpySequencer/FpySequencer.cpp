@@ -308,12 +308,30 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
 void FpySequencer::tlmWrite_handler(FwIndexType portNum,  //!< The port number
                                     U32 context           //!< The call order
 ) {
+    this->tlmWrite_State(static_cast<I32>(this->sequencer_getState()));
     this->tlmWrite_StatementsDispatched(this->m_statementsDispatched);
     this->tlmWrite_StatementsFailed(this->m_tlm.statementsFailed);
     this->tlmWrite_SequencesCancelled(this->m_tlm.sequencesCancelled);
     this->tlmWrite_SequencesSucceeded(this->m_tlm.sequencesSucceeded);
     this->tlmWrite_SequencesFailed(this->m_tlm.sequencesFailed);
     this->tlmWrite_SeqPath(this->m_sequenceFilePath);
+    this->tlmWrite_DebugBreakpointIdx(this->m_debug.breakpointIndex);
+    this->tlmWrite_Debug(this->getDebugTelemetry());
+}
+
+FpySequencer_DebugTelemetry FpySequencer::getDebugTelemetry() {
+    // only send debug tlm when we are paused in debug break
+    if (this->sequencer_getState() == State::RUNNING_DEBUG_BROKEN) {
+        if (this->m_runtime.nextStatementIndex >= this->m_sequenceObj.getheader().getstatementCount()) {
+            // reached end of file, turn on EOF flag and otherwise send some default tlm
+            return FpySequencer_DebugTelemetry(true, 0, Fpy::StatementType::COMMAND);
+        } else {
+            const Fpy::Statement& nextStmt = this->m_sequenceObj.getstatements()[this->m_runtime.nextStatementIndex];
+            return FpySequencer_DebugTelemetry(false, nextStmt.getopCode(), nextStmt.gettype());
+        }
+    }
+    // send some default tlm when we aren't in debug break
+    return FpySequencer_DebugTelemetry(false, 0, Fpy::StatementType::COMMAND);
 }
 
 void FpySequencer::parametersLoaded() {

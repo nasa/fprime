@@ -40,6 +40,9 @@ class FpySequencerTester : public FpySequencerGTestBase {
 
   void test_waitRel();
   void test_waitAbs();
+  void test_goto();
+  void test_setLvar();
+  void test_if();
 
   void test_checkShouldWake();
   void test_checkShouldWakeMismatchBase();
@@ -87,6 +90,18 @@ class FpySequencerTester : public FpySequencerGTestBase {
   //! The component under test
   //!
   FpySequencer component;
+
+  Fpy::Sequence seq;
+
+  void addStmt(const Fpy::Statement& stmt);
+  void addCmd(FwOpcodeType opcode);
+  void addDirective(Fpy::DirectiveId id, Fw::StatementArgBuffer& buf);
+
+  void add_WAIT_REL(FpySequencer_WaitRelDirective dir);
+  void add_WAIT_ABS(FpySequencer_WaitAbsDirective dir);
+  void add_GOTO(FpySequencer_GotoDirective dir);
+  void add_SET_LVAR(FpySequencer_SetLocalVarDirective dir);
+  void add_IF(FpySequencer_IfDirective dir);
 };
 
 }  // end namespace components

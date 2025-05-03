@@ -3,7 +3,7 @@ module Svc {
         @ the current schema version (must be representable in U8)
         constant SCHEMA_VERSION = 1;
 
-        enum DirectiveId {
+        enum DirectiveId : U32 {
             INVALID = 0x00000000,
             WAIT_REL = 0x00000001,
             WAIT_ABS = 0x00000002,

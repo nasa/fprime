@@ -494,10 +494,15 @@ class FpySequencer : public FpySequencerComponentBase {
 
     // checks whether the currently executing statement timed out
     Signal checkStatementTimeout();
+
     // checks whether the sequencer should wake from sleeping
     Signal checkShouldWake();
 
+    // return true if state is a substate of RUNNING
     bool isRunningState(State state);
+
+    // return a struct containing debug telemetry, or defaults if not in debug break
+    FpySequencer_DebugTelemetry getDebugTelemetry();
 
     // ----------------------------------------------------------------------
     // Directives
