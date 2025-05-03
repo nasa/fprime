@@ -6,6 +6,7 @@
 
 #include "FpySequencerTester.hpp"
 #include "Fw/Com/ComPacket.hpp"
+#include "Svc/FpySequencer/FppConstantsAc.hpp"
 
 namespace Svc {
 
@@ -17,6 +18,7 @@ FpySequencerTester ::FpySequencerTester()
     : FpySequencerGTestBase("FpySequencerTester", FpySequencerTester::MAX_HISTORY_SIZE), component("FpySequencer") {
     this->connectPorts();
     this->initComponents();
+    clearSeq();
 }
 
 FpySequencerTester ::~FpySequencerTester() {}
@@ -382,6 +384,209 @@ void FpySequencerTester::test_cmd_DEBUG_CONTINUE() {
     ASSERT_EQ(component.sequencer_getState(), State::RUNNING_DISPATCH_STATEMENT);
 }
 
+void FpySequencerTester::test_readHeader() {
+    U8 seqBuf[Fpy::Header::SERIALIZED_SIZE] = {0};
+    component.m_sequenceBuffer.setExtBuffer(seqBuf, sizeof(seqBuf));
+    Fpy::Header header;
+    header.setargumentCount(Fpy::MAX_SEQUENCE_ARG_COUNT);
+    header.setbodySize(50);
+    header.setschemaVersion(Fpy::SCHEMA_VERSION);
+    header.setstatementCount(Fpy::MAX_SEQUENCE_STATEMENT_COUNT);
+
+    ASSERT_EQ(component.m_sequenceBuffer.serialize(header), Fw::SerializeStatus::FW_SERIALIZE_OK);
+
+    ASSERT_EQ(component.readHeader(), Fw::Success::SUCCESS);
+    ASSERT_EQ(component.m_sequenceObj.getheader(), header);
+
+    // check not enough bytes
+    component.m_sequenceBuffer.resetDeser();
+    component.m_sequenceBuffer.setBuffLen(component.m_sequenceBuffer.getBuffLength() - 1);
+    ASSERT_EQ(component.readHeader(), Fw::Success::FAILURE);
+    ASSERT_EVENTS_FileReadDeserializeError_SIZE(1);
+
+    // check wrong schema version
+    component.m_sequenceBuffer.resetSer();
+    header.setschemaVersion(Fpy::SCHEMA_VERSION + 1);
+    ASSERT_EQ(component.m_sequenceBuffer.serialize(header), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    ASSERT_EQ(component.readHeader(), Fw::Success::FAILURE);
+    ASSERT_EVENTS_WrongSchemaVersion_SIZE(1);
+    header.setschemaVersion(Fpy::SCHEMA_VERSION);
+    clearHistory();
+
+    // check too many args
+    component.m_sequenceBuffer.resetSer();
+    header.setargumentCount(Fpy::MAX_SEQUENCE_ARG_COUNT + 1);
+    ASSERT_EQ(component.m_sequenceBuffer.serialize(header), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    ASSERT_EQ(component.readHeader(), Fw::Success::FAILURE);
+    ASSERT_EVENTS_TooManySequenceArgs_SIZE(1);
+    header.setargumentCount(Fpy::MAX_SEQUENCE_ARG_COUNT);
+
+    // check too many stmts
+    component.m_sequenceBuffer.resetSer();
+    header.setstatementCount(Fpy::MAX_SEQUENCE_STATEMENT_COUNT + 1);
+    ASSERT_EQ(component.m_sequenceBuffer.serialize(header), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    ASSERT_EQ(component.readHeader(), Fw::Success::FAILURE);
+    ASSERT_EVENTS_TooManySequenceStatements_SIZE(1);
+}
+
+void FpySequencerTester::test_readBody() {
+    U8 data[Fpy::MAX_SEQUENCE_ARG_COUNT + Fpy::MAX_SEQUENCE_STATEMENT_COUNT * Fpy::Statement::SERIALIZED_SIZE];
+
+    component.m_sequenceBuffer.setExtBuffer(data, sizeof(data));
+    // write some args mappings
+    for (U32 ii = 0; ii < Fpy::MAX_SEQUENCE_ARG_COUNT; ii++) {
+        // map arg idx ii to lvar pos 123
+        ASSERT_EQ(component.m_sequenceBuffer.serialize(static_cast<U8>(123)), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    }
+    // write some statements
+    Fpy::Statement stmt(Fpy::StatementType::DIRECTIVE, Fpy::DirectiveId::NO_OP, Fw::StatementArgBuffer());
+    for (U32 ii = 0; ii < Fpy::MAX_SEQUENCE_STATEMENT_COUNT; ii++) {
+        ASSERT_EQ(component.m_sequenceBuffer.serialize(stmt), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    }
+    component.m_sequenceObj.getheader().setargumentCount(Fpy::MAX_SEQUENCE_ARG_COUNT);
+    component.m_sequenceObj.getheader().setstatementCount(Fpy::MAX_SEQUENCE_STATEMENT_COUNT);
+
+    ASSERT_EQ(component.readBody(), Fw::Success::SUCCESS);
+
+    for (U32 ii = 0; ii < Fpy::MAX_SEQUENCE_ARG_COUNT; ii++) {
+        ASSERT_EQ(component.m_sequenceObj.getargs()[ii], 123);
+    }
+
+    for (U32 ii = 0; ii < Fpy::MAX_SEQUENCE_STATEMENT_COUNT; ii++) {
+        ASSERT_EQ(component.m_sequenceObj.getstatements()[ii], stmt);
+    }
+
+    component.m_sequenceBuffer.resetSer();
+    component.m_sequenceObj.getheader().setstatementCount(0);
+    // now see what happens if we don't write enough args
+    for (U32 ii = 0; ii < Fpy::MAX_SEQUENCE_ARG_COUNT - 1; ii++) {
+        // map arg idx ii to lvar pos 123
+        ASSERT_EQ(component.m_sequenceBuffer.serialize(static_cast<U8>(123)), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    }
+    // don't write any stmts otherwise their bytes will be interpreted as arg mappings and it will trigger
+    // the wrong branch
+    ASSERT_EQ(component.readBody(), Fw::Success::FAILURE);
+
+    // now see what happens if we don't write enough stmts
+    component.m_sequenceBuffer.resetSer();
+    component.m_sequenceObj.getheader().setargumentCount(Fpy::MAX_SEQUENCE_ARG_COUNT);
+    component.m_sequenceObj.getheader().setstatementCount(Fpy::MAX_SEQUENCE_STATEMENT_COUNT);
+    for (U32 ii = 0; ii < Fpy::MAX_SEQUENCE_ARG_COUNT; ii++) {
+        // map arg idx ii to lvar pos 123
+        ASSERT_EQ(component.m_sequenceBuffer.serialize(static_cast<U8>(123)), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    }
+    // the -1 here is the intended mistake
+    for (U32 ii = 0; ii < Fpy::MAX_SEQUENCE_STATEMENT_COUNT - 1; ii++) {
+        ASSERT_EQ(component.m_sequenceBuffer.serialize(stmt), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    }
+    ASSERT_EQ(component.readBody(), Fw::Success::FAILURE);
+}
+
+void FpySequencerTester::test_readFooter() {
+    U8 data[Fpy::Footer::SERIALIZED_SIZE];
+
+    component.m_sequenceBuffer.setExtBuffer(data, sizeof(data));
+
+    component.m_computedCRC = 0x12345678;
+    Fpy::Footer footer(~0x12345678);
+    ASSERT_EQ(component.m_sequenceBuffer.serialize(footer), Fw::SerializeStatus::FW_SERIALIZE_OK);
+
+    ASSERT_EQ(component.readFooter(), Fw::Success::SUCCESS);
+    ASSERT_EQ(component.m_sequenceObj.getfooter(), footer);
+
+    component.m_sequenceBuffer.resetDeser();
+    // try wrong crc
+    component.m_computedCRC = 0x44444444;
+    ASSERT_EQ(component.readFooter(), Fw::Success::FAILURE);
+    ASSERT_EVENTS_WrongCRC_SIZE(1);
+
+    // try not enough remaining
+    ASSERT_EQ(component.m_sequenceBuffer.setBuffLen(component.m_sequenceBuffer.getBuffLength() - 1),
+              Fw::SerializeStatus::FW_SERIALIZE_OK);
+    ASSERT_EQ(component.readFooter(), Fw::Success::FAILURE);
+}
+
+void FpySequencerTester::test_readBytes() {
+    // no statements, just header and footer
+    writeToFile("test.bin");
+    U8 data[Fpy::Sequence::SERIALIZED_SIZE] = {0};
+    component.m_sequenceBuffer.setExtBuffer(data, sizeof(data));
+    Os::File seqFile;
+    ASSERT_EQ(seqFile.open("test.bin", Os::File::OPEN_READ), Os::File::OP_OK);
+    ASSERT_EQ(component.readBytes(seqFile, Fpy::Header::SERIALIZED_SIZE), Fw::Success::SUCCESS);
+    seqFile.close();
+
+    // check capacity too low
+    component.m_sequenceBuffer.setExtBuffer(data, Fpy::Header::SERIALIZED_SIZE - 1);
+    ASSERT_EQ(seqFile.open("test.bin", Os::File::OPEN_READ), Os::File::OP_OK);
+    ASSERT_EQ(component.readBytes(seqFile, Fpy::Header::SERIALIZED_SIZE), Fw::Success::FAILURE);
+    seqFile.close();
+
+    // check not enough bytes
+    component.m_sequenceBuffer.setExtBuffer(data, Fpy::Header::SERIALIZED_SIZE + Fpy::Footer::SERIALIZED_SIZE + 1);
+    ASSERT_EQ(seqFile.open("test.bin", Os::File::OPEN_READ), Os::File::OP_OK);
+    ASSERT_EQ(component.readBytes(seqFile, Fpy::Header::SERIALIZED_SIZE + Fpy::Footer::SERIALIZED_SIZE + 1),
+              Fw::Success::FAILURE);
+
+    seqFile.close();
+    removeFile("test.bin");
+
+    // read after close
+    ASSERT_DEATH_IF_SUPPORTED(component.readBytes(seqFile, Fpy::Header::SERIALIZED_SIZE + Fpy::Footer::SERIALIZED_SIZE),
+                              "Assert: ");
+}
+
+void FpySequencerTester::test_validate() {
+    // nominal
+    add_NO_OP();
+    writeToFile("test.bin");
+    U8 data[Fpy::Sequence::SERIALIZED_SIZE] = {0};
+    component.m_sequenceBuffer.setExtBuffer(data, sizeof(data));
+    component.m_sequenceFilePath = "test.bin";
+    ASSERT_EQ(component.validate(), Fw::Success::SUCCESS);
+
+    // cause validation failure to open
+    removeFile("test.bin");
+    ASSERT_EQ(component.validate(), Fw::Success::FAILURE);
+    ASSERT_EVENTS_FileOpenError_SIZE(1);
+    this->clearHistory();
+
+    // cause not enough bytes for header
+    component.m_sequenceBuffer.resetSer();
+    writeToFile("test.bin", Fpy::Header::SERIALIZED_SIZE - 1);
+    ASSERT_EQ(component.validate(), Fw::Success::FAILURE);
+    ASSERT_EVENTS_EndOfFileError_SIZE(1);
+    this->clearHistory();
+    removeFile("test.bin");
+
+    component.m_sequenceBuffer.resetSer();
+    // cause fail to validate header
+    seq.getheader().setschemaVersion(Fpy::SCHEMA_VERSION + 1);
+    writeToFile("test.bin");
+    ASSERT_EQ(component.validate(), Fw::Success::FAILURE);
+    ASSERT_EVENTS_WrongSchemaVersion_SIZE(1);
+    seq.getheader().setschemaVersion(Fpy::SCHEMA_VERSION);
+    this->clearHistory();
+    removeFile("test.bin");
+
+    // cause not enough bytes for body
+    writeToFile("test.bin", Fpy::Header::SERIALIZED_SIZE + 1);
+    ASSERT_EQ(component.validate(), Fw::Success::FAILURE);
+    ASSERT_EVENTS_EndOfFileError_SIZE(1);
+    this->clearHistory();
+    removeFile("test.bin");
+
+    // cause body deser error
+    // TODO cannot figure out how to cause this
+    // // bad statement arg buf len
+    // seq.getstatements()[0].getargBuf().m_serLoc = Fpy::Sequence::SERIALIZED_SIZE + 1;
+    // writeToFile("test.bin");
+    // ASSERT_EQ(component.validate(), Fw::Success::FAILURE);
+    // ASSERT_EVENTS_FileReadDeserializeError_SIZE(1);
+    // this->clearHistory();
+    // removeFile("test.bin");
+}
+
 void FpySequencerTester::test_dispatchStatement() {
     Fw::Time time(123, 123);
     setTestTime(time);
@@ -422,7 +627,6 @@ void FpySequencerTester::test_dispatchStatement() {
 }
 
 void FpySequencerTester::test_dispatchCommand() {
-
     U8 data[4] = {0x12, 0x23, 0x34, 0x45};
     Fw::StatementArgBuffer buf(data, sizeof(data));
     buf.setBuffLen(sizeof(data));
@@ -449,7 +653,8 @@ void FpySequencerTester::test_dispatchCommand() {
     component.m_sequencesStarted = 456;
     result = component.dispatchCommand(cmd);
     ASSERT_EQ(result, Fw::Success::SUCCESS);
-    ASSERT_from_cmdOut(0, expected, (((component.m_sequencesStarted & 0xFFFF) << 16) | (component.m_statementsDispatched & 0xFFFF)));
+    ASSERT_from_cmdOut(0, expected,
+                       (((component.m_sequencesStarted & 0xFFFF) << 16) | (component.m_statementsDispatched & 0xFFFF)));
 
     cmd.settype(Fpy::StatementType::DIRECTIVE);
     ASSERT_DEATH_IF_SUPPORTED(component.dispatchCommand(cmd), "Assert: ");

@@ -1,5 +1,7 @@
-#include "FpySequencerTester.hpp"
 #include <new>
+#include "FpySequencerTester.hpp"
+#include "Os/FileSystem.hpp"
+#include "Svc/FpySequencer/FppConstantsAc.hpp"
 namespace Svc {
 
 // dispatches events from the queue until the component reaches the given state
@@ -13,7 +15,6 @@ void FpySequencerTester::dispatchUntilState(State state, U32 bound) {
 }
 
 void FpySequencerTester::assertQueueMsg(FwEnumStoreType msg) {
-
     // TODO I would like to write this function but I can't have access to the
     // componentipcbuf and msgtypeenum
     // ComponentIpcSerializableBuffer _msg;
@@ -45,6 +46,59 @@ void FpySequencerTester::assertQueueMsg(FwEnumStoreType msg) {
 
 void FpySequencerTester::clearSeq() {
     seq = Fpy::Sequence();
+    seq.getheader().setschemaVersion(Fpy::SCHEMA_VERSION);
+}
+
+// writes the sequence we're building to a file with the given name
+void FpySequencerTester::writeToFile(const char* name, FwSizeType maxBytes) {
+    Os::File outputFile;
+    ASSERT_EQ(outputFile.open(name, Os::FileInterface::OPEN_CREATE, Os::FileInterface::OverwriteType::OVERWRITE),
+              Os::File::Status::OP_OK);
+
+    // TODO is this okay to declare on stack? this could stack overflow, it's like 500 KB with default configs
+    U8 data[Fpy::Sequence::SERIALIZED_SIZE];
+    Fw::ExternalSerializeBuffer buf;
+    buf.setExtBuffer(data, sizeof(data));
+
+    // first let's calculate the size of the body. do this by just writing the body,
+    // then calculating how big that was, then clearing and writing the header, then writing the body again
+    for (U32 ii = 0; ii < seq.getheader().getargumentCount(); ii++) {
+        ASSERT_EQ(buf.serialize(seq.getargs()[ii]), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    }
+    for (U32 ii = 0; ii < seq.getheader().getstatementCount(); ii++) {
+        ASSERT_EQ(buf.serialize(seq.getstatements()[ii]), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    }
+    seq.getheader().setbodySize(static_cast<U32>(buf.getBuffLength()));
+    buf.resetSer();
+
+    ASSERT_EQ(buf.serialize(seq.getheader()), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    for (U32 ii = 0; ii < seq.getheader().getargumentCount(); ii++) {
+        ASSERT_EQ(buf.serialize(seq.getargs()[ii]), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    }
+    for (U32 ii = 0; ii < seq.getheader().getstatementCount(); ii++) {
+        ASSERT_EQ(buf.serialize(seq.getstatements()[ii]), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    }
+
+    U32 crc = FpySequencer::CRC_INITIAL_VALUE;
+    FpySequencer::updateCrc(crc, buf.getBuffAddr(), buf.getBuffLength());
+
+    seq.getfooter().setcrc(~crc);
+
+    ASSERT_EQ(buf.serialize(seq.getfooter()), Fw::SerializeStatus::FW_SERIALIZE_OK);
+
+    FwSizeType intendedWriteSize = buf.getBuffLength();
+    if (intendedWriteSize > maxBytes) {
+        intendedWriteSize = maxBytes;
+    }
+    FwSizeType actualWriteSize = intendedWriteSize;
+    ASSERT_EQ(outputFile.write(buf.getBuffAddr(), actualWriteSize), Os::File::Status::OP_OK);
+    ASSERT_EQ(intendedWriteSize, actualWriteSize);
+
+    outputFile.close();
+}
+
+void FpySequencerTester::removeFile(const char* name) {
+    ASSERT_EQ(Os::FileSystem::removeFile(name), Os::FileSystemInterface::Status::OP_OK);
 }
 
 void FpySequencerTester::resetRuntime() {

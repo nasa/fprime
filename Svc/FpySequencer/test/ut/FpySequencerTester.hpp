@@ -62,6 +62,12 @@ class FpySequencerTester : public FpySequencerGTestBase {
   void test_cmd_DEBUG_BREAK();
   void test_cmd_DEBUG_CONTINUE();
 
+  void test_readHeader();
+  void test_readBody();
+  void test_readFooter();
+  void test_readBytes();
+  void test_validate();
+
   void test_dispatchStatement();
   void test_dispatchCommand();
   void test_deserialize_waitRel();
@@ -108,6 +114,10 @@ class FpySequencerTester : public FpySequencerGTestBase {
 
   // clears the sequence we're currently building
   void clearSeq();
+  // writes the sequence we're building to a file with the given name
+  // writes up to maxBytes bytes
+  void writeToFile(const char* name, FwSizeType maxBytes=Fpy::Sequence::SERIALIZED_SIZE);
+  void removeFile(const char* name);
   void addStmt(const Fpy::Statement& stmt);
   void addCmd(FwOpcodeType opcode);
   void addDirective(Fpy::DirectiveId id, Fw::StatementArgBuffer& buf);

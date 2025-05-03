@@ -37,7 +37,7 @@ module Svc {
 
             @ the size of the body in bytes
             bodySize: U32
-        }
+        } default { majorVersion = 0, minorVersion = 0, patchVersion = 0, schemaVersion = 0, argumentCount = 0, statementCount = 0, bodySize = 0 }
 
         struct Footer {
             crc: U32

@@ -144,6 +144,31 @@ TEST(Test, deserialize_noOp) {
   tester.test_deserialize_noOp();
 }
 
+TEST(Test, readHeader) {
+  Svc::FpySequencerTester tester;
+  tester.test_readHeader();
+}
+
+TEST(Test, readBody) {
+  Svc::FpySequencerTester tester;
+  tester.test_readBody();
+}
+
+TEST(Test, readFooter) {
+  Svc::FpySequencerTester tester;
+  tester.test_readFooter();
+}
+
+TEST(Test, readBytes) {
+  Svc::FpySequencerTester tester;
+  tester.test_readBytes();
+}
+
+TEST(Test, validate) {
+  Svc::FpySequencerTester tester;
+  tester.test_validate();
+}
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
