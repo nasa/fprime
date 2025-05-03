@@ -109,6 +109,41 @@ TEST(Test, dispatchStatement) {
   tester.test_dispatchStatement();
 }
 
+TEST(Test, dispatchCommand) {
+  Svc::FpySequencerTester tester;
+  tester.test_dispatchCommand();
+}
+
+TEST(Test, deserialize_waitRel) {
+  Svc::FpySequencerTester tester;
+  tester.test_deserialize_waitRel();
+}
+
+TEST(Test, deserialize_waitAbs) {
+  Svc::FpySequencerTester tester;
+  tester.test_deserialize_waitAbs();
+}
+
+TEST(Test, deserialize_setLVar) {
+  Svc::FpySequencerTester tester;
+  tester.test_deserialize_setLVar();
+}
+
+TEST(Test, deserialize_goto) {
+  Svc::FpySequencerTester tester;
+  tester.test_deserialize_goto();
+}
+
+TEST(Test, deserialize_if) {
+  Svc::FpySequencerTester tester;
+  tester.test_deserialize_if();
+}
+
+TEST(Test, deserialize_noOp) {
+  Svc::FpySequencerTester tester;
+  tester.test_deserialize_noOp();
+}
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

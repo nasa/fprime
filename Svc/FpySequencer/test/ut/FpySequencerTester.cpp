@@ -5,6 +5,7 @@
 // ======================================================================
 
 #include "FpySequencerTester.hpp"
+#include "Fw/Com/ComPacket.hpp"
 
 namespace Svc {
 
@@ -31,7 +32,7 @@ void FpySequencerTester::test_waitRel() {
     FpySequencer_WaitRelDirective directive(Fw::TimeInterval(5, 123));
     Fw::Time testTime(100, 100);
     setTestTime(testTime);
-    
+
     Signal result = component.waitRel_directiveHandler(directive);
     ASSERT_EQ(result, Signal::stmtResponse_beginSleep);
     ASSERT_EQ(component.m_runtime.wakeupTime, Fw::Time(105, 223));
@@ -39,7 +40,7 @@ void FpySequencerTester::test_waitRel() {
 
 void FpySequencerTester::test_waitAbs() {
     FpySequencer_WaitAbsDirective directive(Fw::Time(5, 123));
-    
+
     Signal result = component.waitAbs_directiveHandler(directive);
     ASSERT_EQ(result, Signal::stmtResponse_beginSleep);
     ASSERT_EQ(component.m_runtime.wakeupTime, Fw::Time(5, 123));
@@ -158,7 +159,7 @@ void FpySequencerTester::test_checkShouldWakeMismatchContext() {
 void FpySequencerTester::test_checkShouldWake() {
     Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 0, 100, 100);
     setTestTime(testTime);
-    
+
     // wake up at 200, currently 100
     component.m_runtime.wakeupTime = Fw::Time(TimeBase::TB_WORKSTATION_TIME, 0, 200, 100);
     Signal result = component.checkShouldWake();
@@ -202,15 +203,15 @@ void FpySequencerTester::test_checkStatementTimeout() {
 }
 
 void FpySequencerTester::test_checkStatementTimeoutMismatchBase() {
-    // Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 0, 300, 100);
-    // setTestTime(testTime);
+    Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 0, 300, 100);
+    setTestTime(testTime);
 
-    // F32 timeout = 10;
-    // paramSet_STATEMENT_TIMEOUT_SECS(timeout, Fw::ParamValid::VALID);
-    // paramSend_STATEMENT_TIMEOUT_SECS(0, 0);
-    // component.m_runtime.currentStatementDispatchTime = Fw::Time(TimeBase::TB_DONT_CARE, 0, 200, 100);
-    // Signal result = component.checkStatementTimeout();
-    // ASSERT_EQ(result, Signal::result_timeOpFailed);
+    F32 timeout = 10;
+    paramSet_STATEMENT_TIMEOUT_SECS(timeout, Fw::ParamValid::VALID);
+    paramSend_STATEMENT_TIMEOUT_SECS(0, 0);
+    component.m_runtime.currentStatementDispatchTime = Fw::Time(TimeBase::TB_DONT_CARE, 0, 200, 100);
+    Signal result = component.checkStatementTimeout();
+    ASSERT_EQ(result, Signal::result_timeOpFailed);
 }
 
 void FpySequencerTester::test_checkStatementTimeoutMismatchContext() {
@@ -245,6 +246,15 @@ void FpySequencerTester::test_cmd_RUN() {
     dispatchUntilState(State::IDLE);
 
     ASSERT_CMD_RESPONSE(0, FpySequencer::OPCODE_RUN, 0, Fw::CmdResponse::EXECUTION_ERROR);
+
+    this->clearHistory();
+
+    // try running while already running
+    component.m_stateMachine_sequencer.m_state = State::RUNNING_DISPATCH_STATEMENT;
+    sendCmd_RUN(0, 0, Fw::String("invalid seq"), FpySequencer_BlockState::BLOCK);
+    // dispatch cmd
+    component.doDispatch();
+    ASSERT_CMD_RESPONSE(0, FpySequencer::OPCODE_RUN, 0, Fw::CmdResponse::EXECUTION_ERROR);
 }
 
 void FpySequencerTester::test_cmd_VALIDATE() {
@@ -263,7 +273,6 @@ void FpySequencerTester::test_cmd_RUN_VALIDATED() {
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, FpySequencer::OPCODE_RUN_VALIDATED, 0, Fw::CmdResponse::EXECUTION_ERROR);
     this->clearHistory();
-
 
     // should succeed immediately
     component.m_sequenceFilePath = "<invalid seq>";
@@ -286,7 +295,6 @@ void FpySequencerTester::test_cmd_CANCEL() {
 
     dispatchCurrentMessages(component);
     ASSERT_EQ(component.sequencer_getState(), State::IDLE);
-
 
     this->clearHistory();
     component.m_stateMachine_sequencer.m_state = State::RUNNING_SLEEPING;
@@ -385,18 +393,195 @@ void FpySequencerTester::test_dispatchStatement() {
     ASSERT_EQ(component.m_runtime.currentStatementOpcode, Fpy::DirectiveId::NO_OP);
     ASSERT_EQ(component.m_runtime.currentStatementType, Fpy::StatementType::DIRECTIVE);
     ASSERT_EQ(component.m_runtime.currentStatementDispatchTime, time);
+    ASSERT_EQ(component.m_statementsDispatched, 1);
+    // try dispatching again, should fail cuz no more stmts
     result = component.dispatchStatement();
     ASSERT_EQ(result, Signal::result_dispatchStatement_noMoreStatements);
+    ASSERT_EQ(component.m_statementsDispatched, 1);
+    // reset counter, try dispatching a bad statement
+    component.m_runtime.nextStatementIndex = 0;
+    component.m_sequenceObj.getstatements()[0].setopCode(Fpy::DirectiveId::NUM_CONSTANTS);
+    result = component.dispatchStatement();
+    ASSERT_EQ(result, Signal::result_dispatchStatement_failure);
+
+    clearSeq();
+    time = Fw::Time(456, 123);
+    setTestTime(time);
+    // okay try adding a command
+    addCmd(123);
+    component.m_sequenceObj = seq;
+    component.m_runtime.nextStatementIndex = 0;
+    result = component.dispatchStatement();
+    ASSERT_EQ(result, Signal::result_dispatchStatement_success);
+    ASSERT_EQ(component.m_runtime.currentStatementOpcode, 123);
+    ASSERT_EQ(component.m_runtime.currentStatementType, Fpy::StatementType::COMMAND);
+    ASSERT_EQ(component.m_runtime.currentStatementDispatchTime, time);
+
+    component.m_runtime.nextStatementIndex = component.m_sequenceObj.getheader().getstatementCount() + 1;
+    ASSERT_DEATH_IF_SUPPORTED(component.dispatchStatement(), "Assert: ");
 }
 
-// dispatches events from the queue until the component reaches the given state
-void FpySequencerTester::dispatchUntilState(State state, U32 bound) {
-    U64 iters = 0;
-    while (component.sequencer_getState() != state && iters < bound) {
-        dispatchCurrentMessages(component);
-        iters++;
-    }
-    ASSERT_EQ(component.sequencer_getState(), state);
+void FpySequencerTester::test_dispatchCommand() {
+
+    U8 data[4] = {0x12, 0x23, 0x34, 0x45};
+    Fw::StatementArgBuffer buf(data, sizeof(data));
+    buf.setBuffLen(sizeof(data));
+    Fpy::Statement cmd(Fpy::StatementType::COMMAND, 123, buf);
+    Fw::Success result = component.dispatchCommand(cmd);
+    ASSERT_EQ(result, Fw::Success::SUCCESS);
+
+    Fw::ComBuffer expected;
+    ASSERT_EQ(expected.serialize(Fw::ComPacket::FW_PACKET_COMMAND), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    ASSERT_EQ(expected.serialize(cmd.getopCode()), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    ASSERT_EQ(expected.serialize(buf.getBuffAddr(), buf.getBuffLength(), true), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    ASSERT_from_cmdOut_SIZE(1);
+    ASSERT_from_cmdOut(0, expected, 0);
+    this->clearHistory();
+
+    // try dispatching again, make sure cmd uid is right
+    component.m_statementsDispatched = 123;
+    result = component.dispatchCommand(cmd);
+    ASSERT_EQ(result, Fw::Success::SUCCESS);
+    ASSERT_from_cmdOut(0, expected, component.m_statementsDispatched);
+    this->clearHistory();
+
+    // modify sequences started, make sure correct
+    component.m_sequencesStarted = 456;
+    result = component.dispatchCommand(cmd);
+    ASSERT_EQ(result, Fw::Success::SUCCESS);
+    ASSERT_from_cmdOut(0, expected, (((component.m_sequencesStarted & 0xFFFF) << 16) | (component.m_statementsDispatched & 0xFFFF)));
+
+    cmd.settype(Fpy::StatementType::DIRECTIVE);
+    ASSERT_DEATH_IF_SUPPORTED(component.dispatchCommand(cmd), "Assert: ");
+}
+
+void FpySequencerTester::test_deserialize_waitRel() {
+    FpySequencer::DirectiveUnion actual;
+    FpySequencer_WaitRelDirective waitRel(Fw::TimeInterval(123, 123));
+    add_WAIT_REL(waitRel);
+    Fw::Success result = component.deserializeDirective(seq.getstatements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::SUCCESS);
+    ASSERT_EQ(actual.waitRel, waitRel);
+    // write some junk after buf, make sure it fails
+    seq.getstatements()[0].getargBuf().serialize(123);
+    result = component.deserializeDirective(seq.getstatements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::FAILURE);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+    this->clearHistory();
+    // clear args, make sure it fails
+    seq.getstatements()[0].getargBuf().resetSer();
+    result = component.deserializeDirective(seq.getstatements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::FAILURE);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+}
+void FpySequencerTester::test_deserialize_waitAbs() {
+    FpySequencer::DirectiveUnion actual;
+    FpySequencer_WaitAbsDirective waitAbs(Fw::Time(123, 123));
+    add_WAIT_ABS(waitAbs);
+    Fw::Success result = component.deserializeDirective(seq.getstatements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::SUCCESS);
+    ASSERT_EQ(actual.waitAbs, waitAbs);
+    // write some junk after buf, make sure it fails
+    seq.getstatements()[0].getargBuf().serialize(123);
+    result = component.deserializeDirective(seq.getstatements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::FAILURE);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+    this->clearHistory();
+    // clear args, make sure it fails
+    seq.getstatements()[0].getargBuf().resetSer();
+    result = component.deserializeDirective(seq.getstatements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::FAILURE);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+}
+
+void FpySequencerTester::test_deserialize_setLVar() {
+    FpySequencer::DirectiveUnion actual;
+    FpySequencer_SetLocalVarDirective setLVar(0, 123, 10);
+    add_SET_LVAR(setLVar);
+    Fw::Success result = component.deserializeDirective(seq.getstatements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::SUCCESS);
+    // for some reason, can't just use the equality method here... i get a huge asan err
+    ASSERT_EQ(actual.setLVar.get_valueSize(), setLVar.get_valueSize());
+    ASSERT_EQ(actual.setLVar.getindex(), setLVar.getindex());
+    ASSERT_EQ(memcmp(actual.setLVar.getvalue(), setLVar.getvalue(), setLVar.get_valueSize()), 0);
+    // write some junk after buf, setlocalvar should eat it up and succeed
+    seq.getstatements()[0].getargBuf().serialize(123);
+    result = component.deserializeDirective(seq.getstatements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::SUCCESS);
+    this->clearHistory();
+    // clear buf, should fail cuz no valueSize or whatever
+    seq.getstatements()[0].getargBuf().resetSer();
+    result = component.deserializeDirective(seq.getstatements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::FAILURE);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+
+    this->clearHistory();
+    clearSeq();
+    // run with valueSize too big
+    setLVar = FpySequencer_SetLocalVarDirective(0, 123, Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE + 1);
+    add_SET_LVAR(setLVar);
+    result = component.deserializeDirective(seq.getstatements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::FAILURE);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+}
+
+void FpySequencerTester::test_deserialize_goto() {
+    FpySequencer::DirectiveUnion actual;
+    FpySequencer_GotoDirective gotoDir(123);
+    add_GOTO(gotoDir);
+    Fw::Success result = component.deserializeDirective(seq.getstatements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::SUCCESS);
+    ASSERT_EQ(actual.gotoDirective, gotoDir);
+    // write some junk after buf, make sure it fails
+    seq.getstatements()[0].getargBuf().serialize(123);
+    result = component.deserializeDirective(seq.getstatements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::FAILURE);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+    this->clearHistory();
+    // clear args, make sure it fails
+    seq.getstatements()[0].getargBuf().resetSer();
+    result = component.deserializeDirective(seq.getstatements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::FAILURE);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+}
+
+void FpySequencerTester::test_deserialize_if() {
+    FpySequencer::DirectiveUnion actual;
+    FpySequencer_IfDirective ifDir(123, 9999);
+    add_IF(ifDir);
+    Fw::Success result = component.deserializeDirective(seq.getstatements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::SUCCESS);
+    ASSERT_EQ(actual.ifDirective, ifDir);
+    // write some junk after buf, make sure it fails
+    seq.getstatements()[0].getargBuf().serialize(123);
+    result = component.deserializeDirective(seq.getstatements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::FAILURE);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+    this->clearHistory();
+    // clear args, make sure it fails
+    seq.getstatements()[0].getargBuf().resetSer();
+    result = component.deserializeDirective(seq.getstatements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::FAILURE);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+}
+
+void FpySequencerTester::test_deserialize_noOp() {
+    FpySequencer::DirectiveUnion actual;
+    FpySequencer_NoOpDirective noOp;
+    add_NO_OP();
+    Fw::Success result = component.deserializeDirective(seq.getstatements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::SUCCESS);
+    ASSERT_EQ(actual.noOp, noOp);
+    // write some junk after buf, make sure it fails
+    seq.getstatements()[0].getargBuf().serialize(123);
+    result = component.deserializeDirective(seq.getstatements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::FAILURE);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+    this->clearHistory();
+    // clear args, should succeed
+    seq.getstatements()[0].getargBuf().resetSer();
+    result = component.deserializeDirective(seq.getstatements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::SUCCESS);
 }
 
 }  // namespace Svc

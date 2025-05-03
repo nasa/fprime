@@ -32,6 +32,23 @@ using State = FpySequencer_SequencerStateMachineStateMachineBase::State;
 
 class FpySequencer : public FpySequencerComponentBase {
   public:
+
+    // TODO need to be very careful about how I'm using this. question:
+    // if I set waitrel to something, then later set waitAbs to something else
+    // do I have to do any memory management in between?
+    union DirectiveUnion {
+        FpySequencer_WaitRelDirective waitRel;
+        FpySequencer_WaitAbsDirective waitAbs;
+        FpySequencer_SetLocalVarDirective setLVar;
+        FpySequencer_GotoDirective gotoDirective;
+        FpySequencer_IfDirective ifDirective;
+        FpySequencer_NoOpDirective noOp;
+
+        DirectiveUnion() {}
+        ~DirectiveUnion() {}
+                           
+    };
+
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction
     // ----------------------------------------------------------------------
@@ -491,9 +508,14 @@ class FpySequencer : public FpySequencerComponentBase {
     // return success if successfully dispatched.
     Fw::Success dispatchCommand(const Fpy::Statement& stmt);
 
-    // dispatches a sequencer directive to the right handler.
+    // deserializes a directive from bytes into the Fpy type
+    // returns success if able to deserialize, and returns thethe Fpy type object
+    // as a reference, in a union of all the possible directive type objects
+    Fw::Success deserializeDirective(const Fpy::Statement& stmt, DirectiveUnion& deserializedDirective);
+    
+    // dispatches a deserialized sequencer directive to the right handler.
     // return success if successfully handled.
-    Fw::Success dispatchDirective(const Fpy::Statement& stmt);
+    void dispatchDirective(const DirectiveUnion& directive, const Fpy::DirectiveId& id);
 
     // checks whether the currently executing statement timed out
     Signal checkStatementTimeout();

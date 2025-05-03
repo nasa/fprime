@@ -63,6 +63,13 @@ class FpySequencerTester : public FpySequencerGTestBase {
   void test_cmd_DEBUG_CONTINUE();
 
   void test_dispatchStatement();
+  void test_dispatchCommand();
+  void test_deserialize_waitRel();
+  void test_deserialize_waitAbs();
+  void test_deserialize_setLVar();
+  void test_deserialize_goto();
+  void test_deserialize_if();
+  void test_deserialize_noOp();
 
  private:
   // ----------------------------------------------------------------------
@@ -73,9 +80,6 @@ class FpySequencerTester : public FpySequencerGTestBase {
   // ----------------------------------------------------------------------
   // Helper methods
   // ----------------------------------------------------------------------
-
-  // dispatches events from the queue until the component reaches the given state
-  void dispatchUntilState(State state, U32 bound=100);
 
   //! Connect ports
   //!
@@ -94,8 +98,16 @@ class FpySequencerTester : public FpySequencerGTestBase {
   //!
   FpySequencer component;
 
+  // dispatches events from the queue until the component reaches the given state
+  void dispatchUntilState(State state, U32 bound=100);
+  void resetRuntime();
+  void assertQueueMsg(FwEnumStoreType msg);
+
+  // a sequence that you can build with the following functions
   Fpy::Sequence seq;
 
+  // clears the sequence we're currently building
+  void clearSeq();
   void addStmt(const Fpy::Statement& stmt);
   void addCmd(FwOpcodeType opcode);
   void addDirective(Fpy::DirectiveId id, Fw::StatementArgBuffer& buf);
