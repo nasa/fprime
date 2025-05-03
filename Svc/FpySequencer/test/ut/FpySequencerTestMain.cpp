@@ -169,6 +169,11 @@ TEST(Test, validate) {
   tester.test_validate();
 }
 
+TEST(Test, allocateBuffer) {
+  Svc::FpySequencerTester tester;
+  tester.test_allocateBuffer();
+}
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

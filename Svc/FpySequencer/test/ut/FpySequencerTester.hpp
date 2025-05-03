@@ -67,6 +67,7 @@ class FpySequencerTester : public FpySequencerGTestBase {
   void test_readFooter();
   void test_readBytes();
   void test_validate();
+  void test_allocateBuffer();
 
   void test_dispatchStatement();
   void test_dispatchCommand();

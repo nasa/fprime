@@ -7,6 +7,7 @@
 #include "FpySequencerTester.hpp"
 #include "Fw/Com/ComPacket.hpp"
 #include "Svc/FpySequencer/FppConstantsAc.hpp"
+#include "Fw/Types/MallocAllocator.hpp"
 
 namespace Svc {
 
@@ -585,6 +586,27 @@ void FpySequencerTester::test_validate() {
     // ASSERT_EVENTS_FileReadDeserializeError_SIZE(1);
     // this->clearHistory();
     // removeFile("test.bin");
+
+    // write some more bytes after the file end
+    writeToFile("test.bin");
+    Os::File file;
+    file.open("test.bin", Os::FileInterface::OPEN_APPEND);
+    U8 extraByte[1] = {0};
+    FwSizeType size = 1;
+    ASSERT_EQ(file.write(extraByte, size), Os::File::OP_OK);
+    file.close();
+    ASSERT_EQ(component.validate(), Fw::Success::FAILURE);
+    ASSERT_EVENTS_ExtraBytesInSequence_SIZE(1);
+}
+
+void FpySequencerTester::test_allocateBuffer() {
+    Fw::MallocAllocator alloc;
+    component.allocateBuffer(0, alloc, 100);
+    ASSERT_NE(component.m_sequenceBuffer.getBuffAddr(), nullptr);
+    ASSERT_EQ(component.m_sequenceBuffer.getBuffCapacity(), 100);
+    component.deallocateBuffer(alloc);
+    ASSERT_EQ(component.m_sequenceBuffer.getBuffAddr(), nullptr);
+    ASSERT_EQ(component.m_sequenceBuffer.getBuffCapacity(), 0);
 }
 
 void FpySequencerTester::test_dispatchStatement() {
