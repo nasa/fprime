@@ -8,10 +8,13 @@ namespace Svc {
 void FpySequencerTester::dispatchUntilState(State state, U32 bound) {
     U64 iters = 0;
     while (component.sequencer_getState() != state && iters < bound) {
-        dispatchCurrentMessages(component);
+        component.doDispatch();
         iters++;
     }
     ASSERT_EQ(component.sequencer_getState(), state);
+}
+void FpySequencerTester::allocMem(FwSizeType bytes) {
+    component.m_sequenceBuffer.setExtBuffer(internalSeqBuf, sizeof(internalSeqBuf));
 }
 
 void FpySequencerTester::assertQueueMsg(FwEnumStoreType msg) {
@@ -161,5 +164,15 @@ void FpySequencerTester::add_IF(FpySequencer_IfDirective dir) {
 void FpySequencerTester::add_NO_OP() {
     Fw::StatementArgBuffer buf;
     addDirective(Fpy::DirectiveId::NO_OP, buf);
+}
+
+//! Handle a text event
+void FpySequencerTester::textLogIn(
+    FwEventIdType id, //!< The event ID
+    const Fw::Time& timeTag, //!< The time
+    const Fw::LogSeverity severity, //!< The severity
+    const Fw::TextLogString& text //!< The event string
+) {
+    // printf("%s\n", text.toChar());
 }
 }  // namespace Svc

@@ -230,14 +230,29 @@ void FpySequencerTester::test_checkStatementTimeoutMismatchContext() {
 }
 
 void FpySequencerTester::test_cmd_RUN() {
-    // non blocking should instantly respond no matter what
-    sendCmd_RUN(0, 0, Fw::String("invalid seq"), FpySequencer_BlockState::NO_BLOCK);
-    // should try validating, then go to idle cuz it failed
+    allocMem();
+    add_NO_OP();
+    writeToFile("test.bin");
+    sendCmd_RUN(0, 0, Fw::String("test.bin"), FpySequencer_BlockState::BLOCK);
     dispatchUntilState(State::VALIDATING);
+    ASSERT_EQ(component.m_sequencesStarted, 0);
+    ASSERT_EQ(component.m_statementsDispatched, 0);
+    dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
+    ASSERT_EQ(component.m_sequencesStarted, 1);
     dispatchUntilState(State::IDLE);
+    ASSERT_EQ(component.m_statementsDispatched, 1);
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, FpySequencer::OPCODE_RUN, 0, Fw::CmdResponse::OK);
-    dispatchCurrentMessages(component);
+    this->clearHistory();
+
+    sendCmd_RUN(0, 0, Fw::String("test.bin"), FpySequencer_BlockState::NO_BLOCK);
+    component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FpySequencer::OPCODE_RUN, 0, Fw::CmdResponse::OK);
+    dispatchUntilState(State::VALIDATING);
+    dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
 
     this->clearHistory();
 

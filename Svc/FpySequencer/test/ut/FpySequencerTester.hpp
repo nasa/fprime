@@ -54,6 +54,7 @@ class FpySequencerTester : public FpySequencerGTestBase {
   void test_checkStatementTimeoutMismatchContext();
   
   void test_cmd_RUN();
+  void test_cmd_RUN_nom();
   void test_cmd_VALIDATE();
   void test_cmd_RUN_VALIDATED();
   void test_cmd_CANCEL();
@@ -112,9 +113,11 @@ class FpySequencerTester : public FpySequencerGTestBase {
 
   // a sequence that you can build with the following functions
   Fpy::Sequence seq;
+  U8 internalSeqBuf[Fpy::Sequence::SERIALIZED_SIZE] = {0};
 
   // clears the sequence we're currently building
   void clearSeq();
+  void allocMem(FwSizeType bytes=Fpy::Sequence::SERIALIZED_SIZE);
   // writes the sequence we're building to a file with the given name
   // writes up to maxBytes bytes
   void writeToFile(const char* name, FwSizeType maxBytes=Fpy::Sequence::SERIALIZED_SIZE);
@@ -129,6 +132,13 @@ class FpySequencerTester : public FpySequencerGTestBase {
   void add_SET_LVAR(FpySequencer_SetLocalVarDirective dir);
   void add_IF(FpySequencer_IfDirective dir);
   void add_NO_OP();
+  //! Handle a text event
+  void textLogIn(
+      FwEventIdType id, //!< The event ID
+      const Fw::Time& timeTag, //!< The time
+      const Fw::LogSeverity severity, //!< The severity
+      const Fw::TextLogString& text //!< The event string
+  ) override;
 };
 
 }  // end namespace components
