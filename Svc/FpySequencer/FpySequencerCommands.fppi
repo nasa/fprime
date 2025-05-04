@@ -36,7 +36,7 @@ async command DEBUG_SET_BREAKPOINT(
 ) \
     opcode 4 priority 7 assert
 
-@ Pauses the execution of the sequencer once, just before it is about to dispatch the next statement,
+@ Pauses the execution of the sequencer, just before it is about to dispatch the next statement,
 @ until unpaused by the DEBUG_CONTINUE command. This command is only valid in the RUNNING state.
 @ Debug settings are cleared after a sequence ends execution.
 async command DEBUG_BREAK(
