@@ -596,6 +596,7 @@ msc
 mscfile
 mseconds
 msgs
+msgtypeenum
 mstarch
 mstat
 MState
