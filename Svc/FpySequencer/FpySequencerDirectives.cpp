@@ -82,7 +82,7 @@ Signal FpySequencer::setLocalVar_directiveHandler(const FpySequencer_SetLocalVar
     this->m_runtime.localVariables[directive.getindex()].valueSize = directive.get_valueSize();
 
     (void)memcpy(this->m_runtime.localVariables[directive.getindex()].value, directive.getvalue(),
-                 directive.get_valueSize());
+                 static_cast<size_t>(directive.get_valueSize()));
 
     return Signal::stmtResponse_success;
 }
