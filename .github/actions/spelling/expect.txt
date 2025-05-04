@@ -158,6 +158,7 @@ commandline
 commasepitem
 COMPACKET
 COMPACKETQUEUEIN
+componentipcbuf
 COMPONENTTESTERIMPL
 COMQUEUE
 COMQUEUEIN
@@ -348,6 +349,7 @@ fptr
 fputil
 fpv
 fpy
+FPYSEQUENCER
 freeram
 Fregoso
 frox
@@ -548,6 +550,7 @@ Lps
 lseek
 ltab
 LTLT
+lvar
 LVL
 lxml
 MACROFILE
@@ -592,6 +595,7 @@ Msap
 msc
 mscfile
 mseconds
+msgs
 mstarch
 mstat
 MState
@@ -855,6 +859,7 @@ setblocks
 setdata
 setid
 setinheritsched
+setlocalvar
 SETLOGGING
 setm
 setop
@@ -916,6 +921,7 @@ STDC
 stddef
 stdint
 stest
+stmtidx
 Stl
 STREQ
 STREQUAL
@@ -1079,6 +1085,7 @@ vtype
 vuejs
 vwong
 vxworks
+waitrel
 watney
 Wdog
 whitebox

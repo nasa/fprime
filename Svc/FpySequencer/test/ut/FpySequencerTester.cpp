@@ -93,7 +93,7 @@ void FpySequencerTester::test_if() {
     FpySequencer_IfDirective directive(0, 111);
     Signal result = component.if_directiveHandler(directive);
     ASSERT_EQ(result, Signal::stmtResponse_success);
-    // should not have changd stmtidx
+    // should not have changed stmtidx
     ASSERT_EQ(component.m_runtime.nextStatementIndex, 100);
 
     buf.resetSer();
@@ -101,7 +101,7 @@ void FpySequencerTester::test_if() {
     component.m_runtime.localVariables[0].valueSize = buf.getBuffLength();
     result = component.if_directiveHandler(directive);
     ASSERT_EQ(result, Signal::stmtResponse_success);
-    // should have changd stmtidx
+    // should have changed stmtidx
     ASSERT_EQ(component.m_runtime.nextStatementIndex, 111);
 
     component.m_runtime.nextStatementIndex = 100;
@@ -120,20 +120,20 @@ void FpySequencerTester::test_if() {
     component.m_runtime.localVariables[0].valueSize = buf.getBuffLength();
     result = component.if_directiveHandler(directive);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
-    // should not have changd stmtidx
+    // should not have changed stmtidx
     ASSERT_NE(component.m_runtime.nextStatementIndex, 111);
 
     directive.setconditionalLocalVarIndex(Fpy::MAX_SEQUENCE_LOCAL_VARIABLES);
     result = component.if_directiveHandler(directive);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
-    // should not have changd stmtidx
+    // should not have changed stmtidx
     ASSERT_NE(component.m_runtime.nextStatementIndex, 111);
 
     directive.setconditionalLocalVarIndex(0);
     directive.setfalseGotoStmtIndex(component.m_sequenceObj.getheader().getstatementCount() + 1);
     result = component.if_directiveHandler(directive);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
-    // should not have changd stmtidx
+    // should not have changed stmtidx
     ASSERT_NE(component.m_runtime.nextStatementIndex, 111);
 }
 

@@ -281,7 +281,7 @@ class FpySequencer : public FpySequencerComponentBase {
 
     //! Implementation for action clearDebugBreakpoint of state machine Svc_FpySequencer_SequencerStateMachine
     //!
-    //! clears the debug breakpoint, allowing execution of the sequence to continu
+    //! clears the debug breakpoint, allowing execution of the sequence to continue
     void Svc_FpySequencer_SequencerStateMachine_action_clearDebugBreakpoint(
         SmId smId,                                             //!< The state machine id
         Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
@@ -516,7 +516,7 @@ class FpySequencer : public FpySequencerComponentBase {
     Fw::Success dispatchCommand(const Fpy::Statement& stmt);
 
     // deserializes a directive from bytes into the Fpy type
-    // returns success if able to deserialize, and returns thethe Fpy type object
+    // returns success if able to deserialize, and returns the Fpy type object
     // as a reference, in a union of all the possible directive type objects
     Fw::Success deserializeDirective(const Fpy::Statement& stmt, DirectiveUnion& deserializedDirective);
 

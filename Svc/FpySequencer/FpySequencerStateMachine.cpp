@@ -259,7 +259,7 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_clearSequenceFi
 
 //! Implementation for action clearDebugBreakpoint of state machine Svc_FpySequencer_SequencerStateMachine
 //!
-//! clears the debug breakpoint, allowing execution of the sequence to continu
+//! clears the debug breakpoint, allowing execution of the sequence to continue
 void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_clearDebugBreakpoint(
     SmId smId,                                             //!< The state machine id
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
