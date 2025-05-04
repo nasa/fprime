@@ -235,6 +235,7 @@ state machine SequencerStateMachine {
             on checkTimersIn do { checkStatementTimeout }
             # -->
             on result_checkStatementTimeout_statementTimeout do { sendCmdResponse_EXECUTION_ERROR } enter IDLE
+            # this can occur if the time base/ctx changes, or was invalid from the start
             on result_timeOpFailed do { sendCmdResponse_EXECUTION_ERROR } enter IDLE
             # result_checkStatementTimeout_noTimeout not handled, no need
 
@@ -245,12 +246,14 @@ state machine SequencerStateMachine {
 
         @ sequencer is not taking any action, waiting for a time in the future to continue
         state SLEEPING {
-            on checkTimersIn do { checkShouldWake }
+            on checkTimersIn do { checkShouldWake, checkStatementTimeout }
             # -->
             on result_checkShouldWake_wakeup enter DEBUG_BREAK_CHECK
             # this can occur if the time base/ctx changes, or was invalid from the start
             on result_timeOpFailed do { sendCmdResponse_EXECUTION_ERROR } enter IDLE
-            # if keepSleeping is raised, stay asleep
+            on result_checkStatementTimeout_statementTimeout do { sendCmdResponse_EXECUTION_ERROR } enter IDLE
+            # if result_checkShouldWake_keepSleeping is raised, stay asleep
+            # if result_checkStatementTimeout_noTimeout is raised, stay asleep
         }
 
         @ a debug breakpoint was hit. sequencer is not taking any action, or allowing timeouts.

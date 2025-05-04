@@ -6,8 +6,8 @@
 
 #include "FpySequencerTester.hpp"
 #include "Fw/Com/ComPacket.hpp"
-#include "Svc/FpySequencer/FppConstantsAc.hpp"
 #include "Fw/Types/MallocAllocator.hpp"
+#include "Svc/FpySequencer/FppConstantsAc.hpp"
 
 namespace Svc {
 
@@ -273,6 +273,7 @@ void FpySequencerTester::test_cmd_RUN() {
     // dispatch cmd
     component.doDispatch();
     ASSERT_CMD_RESPONSE(0, FpySequencer::OPCODE_RUN, 0, Fw::CmdResponse::EXECUTION_ERROR);
+    removeFile("test.bin");
 }
 
 void FpySequencerTester::test_cmd_VALIDATE() {
@@ -280,6 +281,26 @@ void FpySequencerTester::test_cmd_VALIDATE() {
     // should try validating, then go to idle cuz it failed
     dispatchUntilState(State::VALIDATING);
     dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FpySequencer::OPCODE_VALIDATE, 0, Fw::CmdResponse::EXECUTION_ERROR);
+    this->clearHistory();
+
+    allocMem();
+    add_NO_OP();
+    writeToFile("test.bin");
+    sendCmd_VALIDATE(0, 0, Fw::String("test.bin"));
+    dispatchUntilState(State::VALIDATING);
+    ASSERT_EQ(component.m_sequencesStarted, 0);
+    ASSERT_EQ(component.m_statementsDispatched, 0);
+    dispatchUntilState(State::AWAITING_CMD_RUN_VALIDATED);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FpySequencer::OPCODE_VALIDATE, 0, Fw::CmdResponse::OK);
+    this->clearHistory();
+
+    component.m_stateMachine_sequencer.m_state = State::VALIDATING;
+    sendCmd_VALIDATE(0, 0, Fw::String("test.bin"));
+    component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, FpySequencer::OPCODE_VALIDATE, 0, Fw::CmdResponse::EXECUTION_ERROR);
 }
 
@@ -292,15 +313,33 @@ void FpySequencerTester::test_cmd_RUN_VALIDATED() {
     ASSERT_CMD_RESPONSE(0, FpySequencer::OPCODE_RUN_VALIDATED, 0, Fw::CmdResponse::EXECUTION_ERROR);
     this->clearHistory();
 
+    allocMem();
+    add_NO_OP();
+    writeToFile("test.bin");
+    sendCmd_VALIDATE(0, 0, Fw::String("test.bin"));
+    dispatchUntilState(State::AWAITING_CMD_RUN_VALIDATED);
+    this->clearHistory();
     // should succeed immediately
-    component.m_sequenceFilePath = "<invalid seq>";
-    component.m_stateMachine_sequencer.m_state = State::AWAITING_CMD_RUN_VALIDATED;
     sendCmd_RUN_VALIDATED(0, 0, FpySequencer_BlockState::NO_BLOCK);
     component.doDispatch();
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, FpySequencer::OPCODE_RUN_VALIDATED, 0, Fw::CmdResponse::OK);
     // should go back to IDLE because sequence is bad
     dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    clearHistory();
+
+    sendCmd_VALIDATE(0, 0, Fw::String("test.bin"));
+    dispatchUntilState(State::AWAITING_CMD_RUN_VALIDATED);
+    this->clearHistory();
+    // should succeed immediately
+    sendCmd_RUN_VALIDATED(0, 0, FpySequencer_BlockState::BLOCK);
+    component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(0);
+    // should go back to IDLE because sequence is bad
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FpySequencer::OPCODE_RUN_VALIDATED, 0, Fw::CmdResponse::OK);
 }
 
 void FpySequencerTester::test_cmd_CANCEL() {
@@ -624,6 +663,7 @@ void FpySequencerTester::test_allocateBuffer() {
     ASSERT_EQ(component.m_sequenceBuffer.getBuffCapacity(), 0);
 }
 
+// caught a bug
 void FpySequencerTester::test_dispatchStatement() {
     Fw::Time time(123, 123);
     setTestTime(time);
@@ -826,4 +866,149 @@ void FpySequencerTester::test_deserialize_noOp() {
     ASSERT_EQ(result, Fw::Success::SUCCESS);
 }
 
+// caught a bug
+void FpySequencerTester::test_checkTimers() {
+    allocMem();
+    add_WAIT_REL(FpySequencer_WaitRelDirective(Fw::TimeInterval(10, 0)));
+    writeToFile("test.bin");
+    sendCmd_RUN(0, 0, Fw::String("test.bin"), FpySequencer_BlockState::BLOCK);
+    Fw::Time time(0, 0);
+    setTestTime(time);
+    dispatchUntilState(State::RUNNING_SLEEPING);
+
+    time = Fw::Time(5, 0);
+    setTestTime(time);
+    invoke_to_checkTimers(0, 0);
+    dispatchCurrentMessages(component);
+    // should not leave sleep
+    ASSERT_EQ(component.sequencer_getState(), State::RUNNING_SLEEPING);
+
+    time = Fw::Time(10, 0);
+    setTestTime(time);
+    invoke_to_checkTimers(0, 0);
+    // should leave sleep
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FpySequencer::OPCODE_RUN, 0, Fw::CmdResponse::OK);
+    clearHistory();
+
+    // okay now make sure it also works for checking timeout
+    paramSet_STATEMENT_TIMEOUT_SECS(5, Fw::ParamValid::VALID);
+    paramSend_STATEMENT_TIMEOUT_SECS(0, 0);
+    clearHistory();
+
+    sendCmd_RUN(0, 0, Fw::String("test.bin"), FpySequencer_BlockState::BLOCK);
+    dispatchUntilState(State::RUNNING_SLEEPING);
+    time = Fw::Time(12, 0);
+    setTestTime(time);
+    invoke_to_checkTimers(0, 0);
+    dispatchCurrentMessages(component);
+    // should not leave sleep
+    ASSERT_EQ(component.sequencer_getState(), State::RUNNING_SLEEPING);
+    time = Fw::Time(15, 0);
+    setTestTime(time);
+    invoke_to_checkTimers(0, 0);
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    // timed out, should give exec error
+    ASSERT_CMD_RESPONSE(0, FpySequencer::OPCODE_RUN, 0, Fw::CmdResponse::EXECUTION_ERROR);
+}
+
+void FpySequencerTester::test_ping() {
+    invoke_to_pingIn(0, 0);
+    component.doDispatch();
+    ASSERT_from_pingOut_SIZE(1);
+}
+
+void FpySequencerTester::test_cmdResponse() {
+    invoke_to_cmdResponseIn(0, 0, 0, Fw::CmdResponse::OK);
+    component.doDispatch();
+    ASSERT_EVENTS_CmdResponseWhileNotRunningSequence_SIZE(1);
+    clearHistory();
+
+    allocMem();
+    addCmd(123);
+    writeToFile("test.bin");
+    component.m_sequencesStarted = 255;
+    component.m_statementsDispatched = 255;
+    sendCmd_RUN(0, 0, Fw::String("test.bin"), FpySequencer_BlockState::BLOCK);
+    dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
+
+    // should be 256 for seq idx and 255 for cmd idx
+    invoke_to_cmdResponseIn(0, 123, 0x010000FF, Fw::CmdResponse::OK);
+    // should be successful
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FpySequencer::OPCODE_RUN, 0, Fw::CmdResponse::OK);
+    clearHistory();
+    // let's try that again but with a command that fails
+    component.m_sequencesStarted = 255;
+    component.m_statementsDispatched = 255;
+    sendCmd_RUN(0, 0, Fw::String("test.bin"), FpySequencer_BlockState::BLOCK);
+    dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
+
+    invoke_to_cmdResponseIn(0, 123, 0x010000FF, Fw::CmdResponse::EXECUTION_ERROR);
+    dispatchUntilState(State::IDLE);
+    // should fail seq
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FpySequencer::OPCODE_RUN, 0, Fw::CmdResponse::EXECUTION_ERROR);
+    clearHistory();
+
+    component.m_sequencesStarted = 255;
+    component.m_statementsDispatched = 255;
+    sendCmd_RUN(0, 0, Fw::String("test.bin"), FpySequencer_BlockState::BLOCK);
+    dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
+    // send wrong cmd uid
+    // should be 256 for seq idx and 255 for cmd idx
+    // but we're gonna send 255 for seq idx and 255 for cmd idx
+    invoke_to_cmdResponseIn(0, 123, 0x00FF00FF, Fw::CmdResponse::OK);
+    // should fail on seq idx, but should stay in running
+    dispatchCurrentMessages(component);
+    ASSERT_EQ(component.sequencer_getState(), State::RUNNING_AWAITING_STATEMENT_RESPONSE);
+
+    // okay now send right seq idx but wrong cmd idx
+    invoke_to_cmdResponseIn(0, 123, 0x01000100, Fw::CmdResponse::OK);
+    // should fail on cmd idx and go back to IDLE
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FpySequencer::OPCODE_RUN, 0, Fw::CmdResponse::EXECUTION_ERROR);
+    clearHistory();
+
+    // okay now have a command response come in from this seq
+    // while sleeping (coding err)
+    clearSeq();
+    add_WAIT_REL(FpySequencer_WaitRelDirective(Fw::TimeInterval(10, 0)));
+    addCmd(123);
+    writeToFile("test.bin");
+    component.m_sequencesStarted = 255;
+    component.m_statementsDispatched = 255;
+    sendCmd_RUN(0, 0, Fw::String("test.bin"), FpySequencer_BlockState::BLOCK);
+    dispatchUntilState(State::RUNNING_SLEEPING);
+    invoke_to_cmdResponseIn(0, 123, 0x010000FF, Fw::CmdResponse::OK);
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FpySequencer::OPCODE_RUN, 0, Fw::CmdResponse::EXECUTION_ERROR);
+    clearHistory();
+
+    // okay now have the wrong opcode come in
+    clearSeq();
+    addCmd(123);
+    writeToFile("test.bin");
+    component.m_sequencesStarted = 255;
+    component.m_statementsDispatched = 255;
+    sendCmd_RUN(0, 0, Fw::String("test.bin"), FpySequencer_BlockState::BLOCK);
+    dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
+    invoke_to_cmdResponseIn(0, 456, 0x010000FF, Fw::CmdResponse::OK);
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FpySequencer::OPCODE_RUN, 0, Fw::CmdResponse::EXECUTION_ERROR);
+    clearHistory();
+}
+
+void FpySequencerTester::test_tlmWrite() {
+    invoke_to_tlmWrite(0, 0);
+    component.doDispatch();
+    // make sure that all tlm is written every call
+    ASSERT_TLM_SIZE(9);
+}
 }  // namespace Svc

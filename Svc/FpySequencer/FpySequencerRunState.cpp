@@ -29,7 +29,8 @@ Signal FpySequencer::dispatchStatement() {
         DirectiveUnion directiveUnion;
         result = this->deserializeDirective(nextStatement, directiveUnion);
         if (result) {
-            this->dispatchDirective(directiveUnion, Fpy::DirectiveId(static_cast<Fpy::DirectiveId::T>(nextStatement.getopCode())));
+            this->dispatchDirective(directiveUnion,
+                                    Fpy::DirectiveId(static_cast<Fpy::DirectiveId::T>(nextStatement.getopCode())));
         }
     } else {
         result = this->dispatchCommand(nextStatement);

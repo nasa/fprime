@@ -167,11 +167,10 @@ void FpySequencerTester::add_NO_OP() {
 }
 
 //! Handle a text event
-void FpySequencerTester::textLogIn(
-    FwEventIdType id, //!< The event ID
-    const Fw::Time& timeTag, //!< The time
-    const Fw::LogSeverity severity, //!< The severity
-    const Fw::TextLogString& text //!< The event string
+void FpySequencerTester::textLogIn(FwEventIdType id,                //!< The event ID
+                                   const Fw::Time& timeTag,         //!< The time
+                                   const Fw::LogSeverity severity,  //!< The severity
+                                   const Fw::TextLogString& text    //!< The event string
 ) {
     // printf("%s\n", text.toChar());
 }

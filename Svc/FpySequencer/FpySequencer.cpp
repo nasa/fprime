@@ -12,22 +12,22 @@ namespace Svc {
 // Construction, initialization, and destruction
 // ----------------------------------------------------------------------
 
-FpySequencer ::FpySequencer(const char* const compName) : 
-    FpySequencerComponentBase(compName), 
-    m_sequenceBuffer(),
-    m_allocatorId(0),
-    m_sequenceFilePath("<invalid_seq>"),
-    m_sequenceObj(),
-    m_computedCRC(0),
-    m_sequenceBlockState(),
-    m_savedOpCode(0),
-    m_savedCmdSeq(0),
-    m_goalState(),
-    m_sequencesStarted(0),
-    m_statementsDispatched(0),
-    m_runtime(),
-    m_tlm()
-{}
+FpySequencer ::FpySequencer(const char* const compName)
+    : FpySequencerComponentBase(compName),
+      m_sequenceBuffer(),
+      m_allocatorId(0),
+      m_sequenceFilePath("<invalid_seq>"),
+      m_sequenceObj(),
+      m_computedCRC(0),
+      m_sequenceBlockState(),
+      m_savedOpCode(0),
+      m_savedCmdSeq(0),
+      m_goalState(),
+      m_sequencesStarted(0),
+      m_statementsDispatched(0),
+      m_runtime(),
+      m_debug(),
+      m_tlm() {}
 
 FpySequencer ::~FpySequencer() {}
 
@@ -138,26 +138,24 @@ void FpySequencer::CANCEL_cmdHandler(FwOpcodeType opCode,  //!< The opcode
 //! the specified statement. This command is valid in all states. Debug settings are
 //! cleared after a sequence ends execution.
 void FpySequencer::DEBUG_SET_BREAKPOINT_cmdHandler(
-    FwOpcodeType opCode, //!< The opcode
-    U32 cmdSeq, //!< The command sequence number
-    U32 stmtIdx, //!< The statement index to pause execution before.
-    bool breakOnce //!< Whether or not to break only once at this breakpoint
+    FwOpcodeType opCode,  //!< The opcode
+    U32 cmdSeq,           //!< The command sequence number
+    U32 stmtIdx,          //!< The statement index to pause execution before.
+    bool breakOnce        //!< Whether or not to break only once at this breakpoint
 ) {
     this->sequencer_sendSignal_cmd_DEBUG_SET_BREAKPOINT(FpySequencer_DebugBreakpointArgs(true, breakOnce, stmtIdx));
 
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
-
 //! Handler for command DEBUG_BREAK
 //!
 //! Pauses the execution of the sequencer once, just before it is about to dispatch the next statement,
 //! until unpaused by the DEBUG_CONTINUE command. This command is only valid in the RUNNING state.
 //! Debug settings are cleared after a sequence ends execution.
-void FpySequencer::DEBUG_BREAK_cmdHandler(
-    FwOpcodeType opCode, //!< The opcode
-    U32 cmdSeq, //!< The command sequence number
-    bool breakOnce //!< Whether or not to break only once at this breakpoint
+void FpySequencer::DEBUG_BREAK_cmdHandler(FwOpcodeType opCode,  //!< The opcode
+                                          U32 cmdSeq,           //!< The command sequence number
+                                          bool breakOnce  //!< Whether or not to break only once at this breakpoint
 ) {
     if (!this->isRunningState(this->sequencer_getState())) {
         // can only break while running
@@ -165,7 +163,8 @@ void FpySequencer::DEBUG_BREAK_cmdHandler(
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
-    this->sequencer_sendSignal_cmd_DEBUG_BREAK(FpySequencer_DebugBreakpointArgs(true, breakOnce, this->m_runtime.nextStatementIndex));
+    this->sequencer_sendSignal_cmd_DEBUG_BREAK(
+        FpySequencer_DebugBreakpointArgs(true, breakOnce, this->m_runtime.nextStatementIndex));
 
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
@@ -174,9 +173,8 @@ void FpySequencer::DEBUG_BREAK_cmdHandler(
 //!
 //! Continues the execution of the sequence after it has been paused by a debug break. This command
 //! is only valid in the RUNNING.DEBUG_BROKEN state.
-void FpySequencer::DEBUG_CONTINUE_cmdHandler(
-    FwOpcodeType opCode, //!< The opcode
-    U32 cmdSeq //!< The command sequence number
+void FpySequencer::DEBUG_CONTINUE_cmdHandler(FwOpcodeType opCode,  //!< The opcode
+                                             U32 cmdSeq            //!< The command sequence number
 ) {
     if (this->sequencer_getState() != State::RUNNING_DEBUG_BROKEN) {
         this->log_WARNING_HI_InvalidCommand(static_cast<I32>(sequencer_getState()));
@@ -193,11 +191,11 @@ void FpySequencer::DEBUG_CONTINUE_cmdHandler(
 //!
 //! Clears the debugging breakpoint, but does not continue executing the sequence. This command
 //! is valid in all states. This happens automatically when a sequence ends execution.
-void FpySequencer::DEBUG_CLEAR_BREAKPOINT_cmdHandler(
-    FwOpcodeType opCode, //!< The opcode
-    U32 cmdSeq //!< The command sequence number
+void FpySequencer::DEBUG_CLEAR_BREAKPOINT_cmdHandler(FwOpcodeType opCode,  //!< The opcode
+                                                     U32 cmdSeq            //!< The command sequence number
 ) {
     this->sequencer_sendSignal_cmd_DEBUG_CLEAR_BREAKPOINT();
+    this->log_ACTIVITY_HI_DebugBreakpointCleared();
 
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
@@ -225,7 +223,7 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
     // if we aren't in the RUNNING state:
     if (!this->isRunningState(sequencer_getState())) {
         // must be a coding error from an outside component (off nom), or due to CANCEL while running a command (nom).
-        // because we can't be sure that it wasn't a nominal sequence of events leading to this, don't fail the 
+        // because we can't be sure that it wasn't a nominal sequence of events leading to this, don't fail the
         // sequence, just report it
         this->log_WARNING_LO_CmdResponseWhileNotRunningSequence(static_cast<I32>(this->sequencer_getState()), opCode,
                                                                 response);
@@ -264,8 +262,10 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
     }
 
     // okay, we were awaiting a command. were we awaiting this opcode?
-    if (opCode != this->m_runtime.currentStatementOpcode || this->m_runtime.currentStatementType != Fpy::StatementType::COMMAND) {
-        // we were not awaiting this opcode. coding error, likely on the part of the responding component or cmd dispatcher
+    if (opCode != this->m_runtime.currentStatementOpcode ||
+        this->m_runtime.currentStatementType != Fpy::StatementType::COMMAND) {
+        // we were not awaiting this opcode. coding error, likely on the part of the responding component or cmd
+        // dispatcher
         this->log_WARNING_HI_WrongCmdResponseOpcode(opCode, response, this->m_runtime.currentStatementOpcode);
         this->sequencer_sendSignal_stmtResponse_unexpected();
         return;
@@ -274,7 +274,7 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
     // okay, we were awaiting this opcode. but was it from this exact statement, or a different one with the same opcode
     // in the same file?
 
-    // pull the cmd index (modulo 2^16) out of cmdUid. this should be equal to the first 16 bits of the 
+    // pull the cmd index (modulo 2^16) out of cmdUid. this should be equal to the first 16 bits of the
     // m_statementsDispatched variable - 1. the -1 is because the count gets incremented immediately
     // after we dispatch the cmd.
     U16 cmdIndex = static_cast<U16>(cmdUid & 0xFFFF);
@@ -298,8 +298,9 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
     if (response == Fw::CmdResponse::OK) {
         this->sequencer_sendSignal_stmtResponse_success();
     } else {
-        this->log_WARNING_HI_StatementFailed(Fpy::StatementType::COMMAND, opCode, this->m_runtime.nextStatementIndex - 1, 
-                                             this->m_sequenceFilePath, response);
+        this->log_WARNING_HI_StatementFailed(Fpy::StatementType::COMMAND, opCode,
+                                             this->m_runtime.nextStatementIndex - 1, this->m_sequenceFilePath,
+                                             response);
         this->sequencer_sendSignal_stmtResponse_failure();
     }
 }
@@ -358,10 +359,10 @@ bool FpySequencer::isRunningState(State state) {
     // TODO ask Rob if there's a better way to check if we're in a superstate. I don't want to have
     // to update this every time I add a new substate to the RUNNING state.
 
-    return this->sequencer_getState() == State::RUNNING_AWAITING_STATEMENT_RESPONSE
-        || this->sequencer_getState() == State::RUNNING_DISPATCH_STATEMENT
-        || this->sequencer_getState() == State::RUNNING_DEBUG_BROKEN
-        || this->sequencer_getState() == State::RUNNING_SLEEPING;
+    return this->sequencer_getState() == State::RUNNING_AWAITING_STATEMENT_RESPONSE ||
+           this->sequencer_getState() == State::RUNNING_DISPATCH_STATEMENT ||
+           this->sequencer_getState() == State::RUNNING_DEBUG_BROKEN ||
+           this->sequencer_getState() == State::RUNNING_SLEEPING;
 }
 
 }  // namespace Svc

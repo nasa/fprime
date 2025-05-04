@@ -13,134 +13,139 @@
 namespace Svc {
 
 class FpySequencerTester : public FpySequencerGTestBase {
-  // ----------------------------------------------------------------------
-  // Construction and destruction
-  // ----------------------------------------------------------------------
+    // ----------------------------------------------------------------------
+    // Construction and destruction
+    // ----------------------------------------------------------------------
 
- public:
-  // Maximum size of histories storing events, telemetry, and port outputs
-  static const FwSizeType MAX_HISTORY_SIZE = 10;
-  // Instance ID supplied to the component instance under test
-  static const FwSizeType TEST_INSTANCE_ID = 0;
-  // Queue depth supplied to component instance under test
-  static const FwSizeType TEST_INSTANCE_QUEUE_DEPTH = 10;
+  public:
+    // Maximum size of histories storing events, telemetry, and port outputs
+    static const FwSizeType MAX_HISTORY_SIZE = 10;
+    // Instance ID supplied to the component instance under test
+    static const FwSizeType TEST_INSTANCE_ID = 0;
+    // Queue depth supplied to component instance under test
+    static const FwSizeType TEST_INSTANCE_QUEUE_DEPTH = 10;
 
-  //! Construct object FpySequencerTester
-  //!
-  FpySequencerTester();
+    //! Construct object FpySequencerTester
+    //!
+    FpySequencerTester();
 
-  //! Destroy object FpySequencerTester
-  //!
-  ~FpySequencerTester();
+    //! Destroy object FpySequencerTester
+    //!
+    ~FpySequencerTester();
 
- public:
-  // ----------------------------------------------------------------------
-  // Tests
-  // ----------------------------------------------------------------------
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-  void test_waitRel();
-  void test_waitAbs();
-  void test_goto();
-  void test_setLvar();
-  void test_if();
-  void test_noOp();
+    void test_waitRel();
+    void test_waitAbs();
+    void test_goto();
+    void test_setLvar();
+    void test_if();
+    void test_noOp();
 
-  void test_checkShouldWake();
-  void test_checkShouldWakeMismatchBase();
-  void test_checkShouldWakeMismatchContext();
+    void test_checkShouldWake();
+    void test_checkShouldWakeMismatchBase();
+    void test_checkShouldWakeMismatchContext();
 
-  void test_checkStatementTimeout();
-  void test_checkStatementTimeoutMismatchBase();
-  void test_checkStatementTimeoutMismatchContext();
-  
-  void test_cmd_RUN();
-  void test_cmd_RUN_nom();
-  void test_cmd_VALIDATE();
-  void test_cmd_RUN_VALIDATED();
-  void test_cmd_CANCEL();
-  void test_cmd_DEBUG_CLEAR_BREAKPOINT();
-  void test_cmd_DEBUG_SET_BREAKPOINT();
-  void test_cmd_DEBUG_BREAK();
-  void test_cmd_DEBUG_CONTINUE();
+    void test_checkStatementTimeout();
+    void test_checkStatementTimeoutMismatchBase();
+    void test_checkStatementTimeoutMismatchContext();
 
-  void test_readHeader();
-  void test_readBody();
-  void test_readFooter();
-  void test_readBytes();
-  void test_validate();
-  void test_allocateBuffer();
+    void test_cmd_RUN();
+    void test_cmd_RUN_nom();
+    void test_cmd_VALIDATE();
+    void test_cmd_RUN_VALIDATED();
+    void test_cmd_CANCEL();
+    void test_cmd_DEBUG_CLEAR_BREAKPOINT();
+    void test_cmd_DEBUG_SET_BREAKPOINT();
+    void test_cmd_DEBUG_BREAK();
+    void test_cmd_DEBUG_CONTINUE();
 
-  void test_dispatchStatement();
-  void test_dispatchCommand();
-  void test_deserialize_waitRel();
-  void test_deserialize_waitAbs();
-  void test_deserialize_setLVar();
-  void test_deserialize_goto();
-  void test_deserialize_if();
-  void test_deserialize_noOp();
+    void test_readHeader();
+    void test_readBody();
+    void test_readFooter();
+    void test_readBytes();
+    void test_validate();
+    void test_allocateBuffer();
 
- private:
-  // ----------------------------------------------------------------------
-  // Handlers for typed from ports
-  // ----------------------------------------------------------------------
+    void test_dispatchStatement();
+    void test_dispatchCommand();
+    void test_deserialize_waitRel();
+    void test_deserialize_waitAbs();
+    void test_deserialize_setLVar();
+    void test_deserialize_goto();
+    void test_deserialize_if();
+    void test_deserialize_noOp();
 
- private:
-  // ----------------------------------------------------------------------
-  // Helper methods
-  // ----------------------------------------------------------------------
+    void test_checkTimers();
+    void test_ping();
+    void test_cmdResponse();
 
-  //! Connect ports
-  //!
-  void connectPorts();
+    void test_tlmWrite();
 
-  //! Initialize components
-  //!
-  void initComponents();
+  private:
+    // ----------------------------------------------------------------------
+    // Handlers for typed from ports
+    // ----------------------------------------------------------------------
 
- private:
-  // ----------------------------------------------------------------------
-  // Variables
-  // ----------------------------------------------------------------------
+  private:
+    // ----------------------------------------------------------------------
+    // Helper methods
+    // ----------------------------------------------------------------------
 
-  //! The component under test
-  //!
-  FpySequencer component;
+    //! Connect ports
+    //!
+    void connectPorts();
 
-  // dispatches events from the queue until the component reaches the given state
-  void dispatchUntilState(State state, U32 bound=100);
-  void resetRuntime();
-  void assertQueueMsg(FwEnumStoreType msg);
+    //! Initialize components
+    //!
+    void initComponents();
 
-  // a sequence that you can build with the following functions
-  Fpy::Sequence seq;
-  U8 internalSeqBuf[Fpy::Sequence::SERIALIZED_SIZE] = {0};
+  private:
+    // ----------------------------------------------------------------------
+    // Variables
+    // ----------------------------------------------------------------------
 
-  // clears the sequence we're currently building
-  void clearSeq();
-  void allocMem(FwSizeType bytes=Fpy::Sequence::SERIALIZED_SIZE);
-  // writes the sequence we're building to a file with the given name
-  // writes up to maxBytes bytes
-  void writeToFile(const char* name, FwSizeType maxBytes=Fpy::Sequence::SERIALIZED_SIZE);
-  void removeFile(const char* name);
-  void addStmt(const Fpy::Statement& stmt);
-  void addCmd(FwOpcodeType opcode);
-  void addDirective(Fpy::DirectiveId id, Fw::StatementArgBuffer& buf);
+    //! The component under test
+    //!
+    FpySequencer component;
 
-  void add_WAIT_REL(FpySequencer_WaitRelDirective dir);
-  void add_WAIT_ABS(FpySequencer_WaitAbsDirective dir);
-  void add_GOTO(FpySequencer_GotoDirective dir);
-  void add_SET_LVAR(FpySequencer_SetLocalVarDirective dir);
-  void add_IF(FpySequencer_IfDirective dir);
-  void add_NO_OP();
-  //! Handle a text event
-  void textLogIn(
-      FwEventIdType id, //!< The event ID
-      const Fw::Time& timeTag, //!< The time
-      const Fw::LogSeverity severity, //!< The severity
-      const Fw::TextLogString& text //!< The event string
-  ) override;
+    // dispatches events from the queue until the component reaches the given state
+    void dispatchUntilState(State state, U32 bound = 100);
+    void resetRuntime();
+    void assertQueueMsg(FwEnumStoreType msg);
+
+    // a sequence that you can build with the following functions
+    Fpy::Sequence seq;
+    U8 internalSeqBuf[Fpy::Sequence::SERIALIZED_SIZE] = {0};
+
+    // clears the sequence we're currently building
+    void clearSeq();
+    void allocMem(FwSizeType bytes = Fpy::Sequence::SERIALIZED_SIZE);
+    // writes the sequence we're building to a file with the given name
+    // writes up to maxBytes bytes
+    void writeToFile(const char* name, FwSizeType maxBytes = Fpy::Sequence::SERIALIZED_SIZE);
+    void removeFile(const char* name);
+    void addStmt(const Fpy::Statement& stmt);
+    void addCmd(FwOpcodeType opcode);
+    void addDirective(Fpy::DirectiveId id, Fw::StatementArgBuffer& buf);
+
+    void add_WAIT_REL(FpySequencer_WaitRelDirective dir);
+    void add_WAIT_ABS(FpySequencer_WaitAbsDirective dir);
+    void add_GOTO(FpySequencer_GotoDirective dir);
+    void add_SET_LVAR(FpySequencer_SetLocalVarDirective dir);
+    void add_IF(FpySequencer_IfDirective dir);
+    void add_NO_OP();
+    //! Handle a text event
+    void textLogIn(FwEventIdType id,                //!< The event ID
+                   const Fw::Time& timeTag,         //!< The time
+                   const Fw::LogSeverity severity,  //!< The severity
+                   const Fw::TextLogString& text    //!< The event string
+                   ) override;
 };
 
-}  // end namespace components
+}  // namespace Svc
 
 #endif
