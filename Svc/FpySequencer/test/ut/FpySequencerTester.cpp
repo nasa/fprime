@@ -543,7 +543,7 @@ void FpySequencerTester::test_readFooter() {
     component.m_sequenceBuffer.setExtBuffer(data, sizeof(data));
 
     component.m_computedCRC = 0x12345678;
-    Fpy::Footer footer(~0x12345678);
+    Fpy::Footer footer(static_cast<U32>(~0x12345678));
     ASSERT_EQ(component.m_sequenceBuffer.serialize(footer), Fw::SerializeStatus::FW_SERIALIZE_OK);
 
     ASSERT_EQ(component.readFooter(), Fw::Success::SUCCESS);
