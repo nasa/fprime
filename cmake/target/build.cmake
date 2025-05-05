@@ -69,7 +69,7 @@ function(fprime__internal_TECH_DEBT_module_setup BUILD_MODULE_NAME MODULE_NAME_H
     #
     # This should be done per-target using IMPLEMENTATION_OVERRIDES supplied to API registration call and should not
     # be set to the current module.
-    if (NOT ${MODULE_TYPE} STREQUAL "Library")
+    if (NOT ${MODULE_TYPE} STREQUAL "Library" AND NOT ${MODULE_TYPE} STREQUAL "Interface")
         # Handle updates when the types have diverged
         if (NOT MODULE STREQUAL "${FPRIME_CURRENT_MODULE}")
             # Update implementation choices

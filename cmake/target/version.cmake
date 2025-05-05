@@ -30,7 +30,7 @@ function(version_add_global_target TARGET)
         WORKING_DIRECTORY "${FPRIME_PROJECT_ROOT}"
     )
     add_library("${TARGET}" "${OUTPUT_CPP}")
-    target_link_libraries("${TARGET}" PUBLIC "config")
+    target_link_libraries("${TARGET}" PUBLIC "Fw_Types")
 endfunction()
 
 function(version_add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPENDENCIES)

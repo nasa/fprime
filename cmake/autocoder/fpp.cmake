@@ -83,13 +83,14 @@ endfunction(fpp_is_supported)
 # FRAMEWORK: list of framework dependencies. **NOTE:** will be overridden in PARENT_SCOPE with updated list
 ####
 function(fpp_get_framework_dependency_helper MODULE_NAME FRAMEWORK)
+    get_target_property(FPRIME_IS_CONFIG "${MODULE_NAME}" FPRIME_CONFIGURATION)
     # Subset the framework dependencies, or where possible use the Fw interface target
-    if (MODULE_NAME STREQUAL "config" OR MODULE_NAME MATCHES "cmake_platform.*")
-        # config has no automatic dependencies
+    if (FPRIME_IS_CONFIG)
+        # config modules are INTERFACES and have no automatic dependencies
     elseif (NOT DEFINED FPRIME_FRAMEWORK_MODULES)
         fprime_fatal_cmake_error("${MODULE_NAME} Fw/CMakeLists.txt not included in deployment")
-    elseif (MODULE_NAME STREQUAL Fw_Cfg)
-        # Skip Fw_Cfg as it is the root dependency 
+    elseif (MODULE_NAME STREQUAL Fw_Types)
+        # Skip Fw_Types as it is the root dependency 
     elseif (NOT TARGET Fw OR MODULE_NAME IN_LIST FPRIME_FRAMEWORK_MODULES)
         list(APPEND FRAMEWORK ${FPRIME_FRAMEWORK_MODULES})
         list(FIND FRAMEWORK "${MODULE_NAME}" START_INDEX)
@@ -256,6 +257,7 @@ function(fpp_setup_autocode MODULE_NAME AC_INPUT_FILES)
 
     set(AUTOCODER_GENERATED ${GENERATED_AI} ${GENERATED_CPP} ${GENERATED_DICT})
     set(AUTOCODER_GENERATED "${AUTOCODER_GENERATED}" PARENT_SCOPE)
+    message(STATUS ">>>>>> ${MODULE_DEPENDENCIES} \n>>>>>>>>${FILE_DEPENDENCIES} \n>>>>>>>> ${FPP_IMPORTS}")
     set(AUTOCODER_DEPENDENCIES "${MODULE_DEPENDENCIES}" PARENT_SCOPE)
     set(AUTOCODER_INCLUDES "${FILE_DEPENDENCIES}" PARENT_SCOPE)
     set(AUTOCODER_BUILD_SOURCES "${GENERATED_CPP};${GENERATED_AI};${GENERATED_DICT}" PARENT_SCOPE)

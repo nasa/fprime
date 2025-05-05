@@ -186,16 +186,26 @@ function(fprime__internal_add_build_target_helper TARGET_NAME TYPE SOURCES AUTOC
     # Remap F Prime target type to CMake targe type
     if (TYPE STREQUAL "Executable" OR TYPE STREQUAL "Deployment" OR TYPE STREQUAL "Unit Test")
         add_executable("${TARGET_NAME}" ${EXTRA_CMAKE_DIRECTIVES} "${SOURCES}")
-    elseif(TYPE STREQUAL "Library")
-        add_library("${TARGET_NAME}" ${EXTRA_CMAKE_DIRECTIVES} "${SOURCES}")
+    elseif(TYPE STREQUAL "Library" OR TYPE STREQUAL "Interface")
+        # Set up the library directives
+        set(LIBRARY_DIRECTIVES)
+        if (TYPE STREQUAL "Interface")
+            list(APPEND LIBRARY_DIRECTIVES INTERFACE)
+        endif()
+        add_library("${TARGET_NAME}" ${LIBRARY_DIRECTIVES} ${EXTRA_CMAKE_DIRECTIVES} "${SOURCES}" )
     else()
         fprime_cmake_fatal_error("Cannot register compilation target of type ${TYPE}")
+    endif()
+    # Set up the scope of dependencies.
+    set(DEPENDENCY_SCOPE "PUBLIC")
+    if (TYPE STREQUAL "Interface")
+        set(DEPENDENCY_SCOPE "INTERFACE")
     endif()
     # TODO: this is needed because sub-builds still attempt register targets, but without the build target to add back in the
     #       autocoding output. Thus empty must be substituted. Would it be possible to force the library to be an INTERFACE
     #       instead?  Or only add empty on sub-builds?
     target_sources("${TARGET_NAME}" PRIVATE "${FPRIME__INTERNAL_EMPTY_CPP}")
-    target_link_libraries("${TARGET_NAME}" PUBLIC ${DEPENDENCIES})
+    target_link_libraries("${TARGET_NAME}" ${DEPENDENCY_SCOPE} ${DEPENDENCIES})
     set_target_properties("${TARGET_NAME}"
         PROPERTIES
             SUPPLIED_HEADERS "${HEADERS}"

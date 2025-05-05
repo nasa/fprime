@@ -11,6 +11,7 @@ include(utilities)
 include(options)
 include(sanitizers) # Enable sanitizers if they are requested
 include(required)
+include(config_assembler)
 
 # Add project root's cmake folder to module path
 if (IS_DIRECTORY "${FPRIME_PROJECT_ROOT}/cmake")
@@ -35,7 +36,7 @@ resolve_path_variables(FPRIME_BUILD_LOCATIONS)
 
 # Message describing the fprime setup
 message(STATUS "[FPRIME] Module locations: ${FPRIME_BUILD_LOCATIONS}")
-message(STATUS "[FPRIME] Configuration module: ${FPRIME_CONFIG_DIR}")
+#message(STATUS "[FPRIME] Configuration module: ${FPRIME_CONFIG_DIR}")
 message(STATUS "[FPRIME] Installation directory: ${CMAKE_INSTALL_PREFIX}")
 include(platform/platform) # Now that module locations are known, load platform settings
 
@@ -61,13 +62,13 @@ include(settings)
 function(fprime_setup_global_includes)
     # Setup the global include directories that exist outside of the build cache
     include_directories("${FPRIME_FRAMEWORK_PATH}")
-    include_directories("${FPRIME_CONFIG_DIR}")
+    #include_directories("${FPRIME_CONFIG_DIR}")
     include_directories("${FPRIME_PROJECT_ROOT}")
 
     # Setup the include directories that exist within the build-cache
     include_directories("${CMAKE_BINARY_DIR}")
     include_directories("${CMAKE_BINARY_DIR}/F-Prime")
-    include_directories("${CMAKE_BINARY_DIR}/config")
+    #include_directories("${CMAKE_BINARY_DIR}/config")
 endfunction(fprime_setup_global_includes)
 
 ####
@@ -214,10 +215,10 @@ function(fprime_setup_included_code)
     set(FPRIME_CURRENT_MODULE "${MODULE_NAME}")
     string(REPLACE "_" "/" PLATFORM_MODULE_PATH "${FPRIME_CURRENT_MODULE}")
     add_subdirectory("${FPRIME_PLATFORM_MODULE_DIRECTORY}" "${CMAKE_BINARY_DIR}/${PLATFORM_MODULE_PATH}")
-    set(FPRIME_CURRENT_MODULE config)
-    add_subdirectory("${FPRIME_CONFIG_DIR}" "${CMAKE_BINARY_DIR}/config")
-
-    set(_FP_CORE_PACKAGES Fw Svc Os Drv CFDP Utils)
+    #set(FPRIME_CURRENT_MODULE config)
+#    add_subdirectory("${FPRIME_FRAMEWORK_PATH}/config/" "${CMAKE_BINARY_DIR}/config-assembly/config")
+    
+    set(_FP_CORE_PACKAGES config Fw Svc Os Drv CFDP Utils)
     foreach (_FP_PACKAGE_DIR IN LISTS _FP_CORE_PACKAGES)
         set(FPRIME_CURRENT_MODULE "${_FP_PACKAGE_DIR}")
         add_subdirectory("${FPRIME_FRAMEWORK_PATH}/${_FP_PACKAGE_DIR}/" "${CMAKE_BINARY_DIR}/F-Prime/${_FP_PACKAGE_DIR}")

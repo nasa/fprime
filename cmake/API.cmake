@@ -14,6 +14,7 @@
 include_guard()
 include(utilities)
 include(module)
+include(config_assembler)
 set(FPRIME_TARGET_LIST "" CACHE INTERNAL "FPRIME_TARGET_LIST: custom fprime targets" FORCE)
 set(FPRIME_UT_TARGET_LIST "" CACHE INTERNAL "FPRIME_UT_TARGET_LIST: custom fprime targets" FORCE)
 set(FPRIME_AUTOCODER_TARGET_LIST "" CACHE INTERNAL "FPRIME_AUTOCODER_TARGET_LIST: custom fprime targets" FORCE)
@@ -359,6 +360,79 @@ function(fprime_add_deployment_build_target)
     fprime__internal_add_build_target("Deployment" "" ${ARGN})
     clear_historical_variables()
     set(INTERNAL_MODULE_NAME "${INTERNAL_MODULE_NAME}" PARENT_SCOPE)
+endfunction()
+
+####
+# Function `fprime_add_config_build_target`:
+#
+# Registers a configuration build target using the fprime build system. This comes with dependency management and
+# fprime autocoding capabilities. The call format is identical to `register_fprime_library` and additionally supports
+# the CONFIGURATION_OVERRIDES directive. This allows users to override the configuration files supplied by previous
+# configuration modules supplied by the build (e.g. fprime default configuration and library configuration). DEPENDS
+# and EXCLUDE_FROM_ALL are not supported.
+#
+# This call will construct a folder within the build-cache that will be added to the include path. All configuration
+# files can be referenced using `#include "fprime_config/<name of header>"` as HEADER and SOURCE file will be copied
+# and/or generated into this folder. 
+#
+# > [!WARNING]
+# > Specifying headers in this command is crucial to providing as configuration.
+#
+# > [!NOTE]
+# > Configuration is built as a series of object libraries in order to allow for interdependencies between config and
+# > Fw/Types.
+#
+# Example:
+# ```
+# fprime_add_config_build_target(
+#         MyFprimeConfig
+#     SOURCES
+#         config.cpp
+#     AUTOCODER_INPUTS
+#         config.fpp
+#     HEADERS
+#         config.hpp
+#     CONFIGURATION_OVERRIDES
+#         FpConfig.fpp
+#         FpConfig.hpp
+####
+function(fprime_add_config_build_target)
+    set(FPRIME__INTERNAL_CONFIG_TARGET_NAME "fprime_config")
+    set(FPRIME__INTERNAL_CONFIG_DIRECTORY "${FPRIME_CONFIG_ASSEMBLY}")
+    # Set up interface target and directory for configuration files
+    if (NOT TARGET "${FPRIME__INTERNAL_CONFIG_TARGET_NAME}")
+        add_library("${FPRIME__INTERNAL_CONFIG_TARGET_NAME}" INTERFACE)
+    endif()
+    # Process the module arguments
+    fprime__process_module_setup("Library" "CONFIGURATION_OVERRIDES" ${ARGN})
+    # Prevent configuration from having dependencies or being excluded from the all build
+    if (INTERNAL_DEPENDS OR INTERNAL_EXCLUDE_FROM_ALL)
+        message(FATAL_ERROR "Cannot use DEPENDS or EXCLUDE_FROM_ALL with fprime_add_config_build_target")
+    endif()
+    fprime__internal_process_configuration_sources(
+        "${INTERNAL_SOURCES}"
+        "${INTERNAL_AUTOCODER_INPUTS}"
+        "${INTERNAL_HEADERS}"
+        "${INTERNAL_CONFIGURATION_OVERRIDES}"
+    )
+
+    # Make an object library for this configuration module
+    fprime__internal_add_build_target_helper(
+        "${INTERNAL_MODULE_NAME}" "Interface"
+        "${INTERNAL_SOURCES}" "${INTERNAL_AUTOCODER_INPUTS}" "${INTERNAL_HEADERS}" "" ""
+    )
+    # The new module should include the root configuration directory
+    target_include_directories("${INTERNAL_MODULE_NAME}" INTERFACE "${FPRIME__INTERNAL_CONFIG_DIRECTORY}")
+    # The configuration target should depend on the new module
+    target_link_libraries("${FPRIME__INTERNAL_CONFIG_TARGET_NAME}" INTERFACE "${INTERNAL_MODULE_NAME}")
+    # Set up the new module to be marked as FPRIME_CONFIGURATION
+    append_list_property("${INTERNAL_MODULE_NAME}" GLOBAL PROPERTY "FPRIME_CONFIG_MODULES")
+    set_property(TARGET "${INTERNAL_MODULE_NAME}" PROPERTY FPRIME_CONFIGURATION TRUE)
+    set_property(TARGET "${FPRIME__INTERNAL_CONFIG_TARGET_NAME}" PROPERTY FPRIME_CONFIGURATION TRUE)
+
+    # Clear the historical variables and set up autocode
+    clear_historical_variables()
+    fprime_attach_custom_targets("${INTERNAL_MODULE_NAME}")
 endfunction()
 
 ####

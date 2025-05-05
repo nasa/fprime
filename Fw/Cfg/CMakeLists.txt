@@ -10,8 +10,3 @@ set(SOURCE_FILES
 )
 set(MOD_DEPS config)
 register_fprime_module()
-if (FPRIME_USE_BAREMETAL_SCHEDULER)
-    target_compile_definitions(config PUBLIC FW_BAREMETAL_SCHEDULER=1)
-else()
-    target_compile_definitions(config PUBLIC FW_BAREMETAL_SCHEDULER=0)
-endif()
