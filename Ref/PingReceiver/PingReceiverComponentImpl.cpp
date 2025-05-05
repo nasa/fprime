@@ -12,7 +12,7 @@
 
 
 #include <Ref/PingReceiver/PingReceiverComponentImpl.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 namespace Ref {
 
@@ -28,15 +28,6 @@ namespace Ref {
 
   }
 
-  void PingReceiverComponentImpl ::
-    init(
-        const NATIVE_INT_TYPE queueDepth,
-        const NATIVE_INT_TYPE instance
-    )
-  {
-    PingReceiverComponentBase::init(queueDepth, instance);
-  }
-
   PingReceiverComponentImpl ::
     ~PingReceiverComponentImpl()
   {
@@ -49,7 +40,7 @@ namespace Ref {
 
   void PingReceiverComponentImpl ::
     PingIn_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 key
     )
   {

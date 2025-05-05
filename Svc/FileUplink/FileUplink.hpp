@@ -19,7 +19,7 @@
 
 namespace Svc {
 
-  class FileUplink :
+  class FileUplink final :
     public FileUplinkComponentBase
   {
 
@@ -161,6 +161,11 @@ namespace Svc {
               const U32 lastSequenceIndex
           );
 
+          //! Record a Duplicate Packet warning
+          void packetDuplicate(
+              const U32 sequenceIndex
+          );
+
           //! Record a File Write warning
           void fileWrite(Fw::LogStringArg& fileName);
 
@@ -200,13 +205,6 @@ namespace Svc {
           const char *const name //!< The component name
       );
 
-      //! Initialize object FileUplink
-      //!
-      void init(
-          const NATIVE_INT_TYPE queueDepth, //!< The queue depth
-          const NATIVE_INT_TYPE instance //!< The instance number
-      );
-
       //! Destroy object FileUplink
       //!
       ~FileUplink();
@@ -220,14 +218,14 @@ namespace Svc {
       //! Handler implementation for bufferSendIn
       //!
       void bufferSendIn_handler(
-          const NATIVE_INT_TYPE portNum, //!< The port number
+          const FwIndexType portNum, //!< The port number
           Fw::Buffer& buffer //!< Buffer wrapping data
       );
 
       //! Handler implementation for pingIn
       //!
       void pingIn_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          const FwIndexType portNum, /*!< The port number*/
           U32 key /*!< Value to return to pinger*/
       );
 
@@ -253,6 +251,9 @@ namespace Svc {
       //! Check sequence index
       void checkSequenceIndex(const U32 sequenceIndex);
 
+      //! Check if a received packet is a duplicate
+      bool checkDuplicatedPacket(const U32 sequenceIndex);
+
       //! Compare checksums
       void compareChecksums(const Fw::FilePacket::EndPacket& endPacket);
 
@@ -273,6 +274,9 @@ namespace Svc {
 
       //! The sequence index of the last packet received
       U32 m_lastSequenceIndex;
+
+      //! The write status of the last packet received
+      Os::File::Status m_lastPacketWriteStatus;
 
       //! The file being assembled
       File m_file;

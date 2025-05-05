@@ -11,7 +11,7 @@
 // ======================================================================
 
 #include "Fw/Types/Assert.hpp"
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Drv/LinuxI2cDriver/LinuxI2cDriver.hpp>
 #include <Fw/Logger/Logger.hpp>
 
@@ -22,7 +22,6 @@
 #include <linux/i2c-dev.h> // required for constant definitions
 #include <cerrno>
 
-#define DEBUG_PRINT 0
 
 namespace Drv {
 
@@ -37,14 +36,6 @@ namespace Drv {
         m_fd(-1)
   {
 
-  }
-
-  void LinuxI2cDriver ::
-    init(
-        const NATIVE_INT_TYPE instance
-    )
-  {
-    LinuxI2cDriverComponentBase::init(instance);
   }
 
   LinuxI2cDriver::
@@ -70,7 +61,7 @@ namespace Drv {
 
   Drv::I2cStatus LinuxI2cDriver ::
     write_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 addr,
         Fw::Buffer &serBuffer
     )
@@ -80,20 +71,9 @@ namespace Drv {
           return I2cStatus::I2C_OPEN_ERR;
       }
 
-#if DEBUG_PRINT
-      Fw::Logger::logMsg("I2c addr: 0x%02X\n",addr);
-      for (U32 byte = 0; byte < serBuffer.getSize(); byte++) {
-    	  Fw::Logger::logMsg("0x%02X ",serBuffer.getData()[byte]);
-
-      }
-      Fw::Logger::logMsg("\n");
-#endif
       // select slave address
       int stat = ioctl(this->m_fd, I2C_SLAVE, addr);
       if (stat == -1) {
-#if DEBUG_PRINT
-          Fw::Logger::logMsg("Status: %d Errno: %d\n", stat, errno);
-#endif
 	  return I2cStatus::I2C_ADDRESS_ERR;
       }
       // make sure it isn't a null pointer
@@ -101,9 +81,6 @@ namespace Drv {
       // write data
       stat = static_cast<int>(write(this->m_fd, serBuffer.getData(), serBuffer.getSize()));
       if (stat == -1) {
-#if DEBUG_PRINT
-          Fw::Logger::logMsg("Status: %d Errno: %d\n", stat, errno);
-#endif
 	  return I2cStatus::I2C_WRITE_ERR;
       }
       return I2cStatus::I2C_OK;
@@ -111,7 +88,7 @@ namespace Drv {
 
   Drv::I2cStatus LinuxI2cDriver ::
     read_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 addr,
         Fw::Buffer &serBuffer
     )
@@ -121,15 +98,9 @@ namespace Drv {
           return I2cStatus::I2C_OPEN_ERR;
       }
 
-#if DEBUG_PRINT
-      Fw::Logger::logMsg("I2c addr: 0x%02X\n",addr);
-#endif
       // select slave address
       int stat = ioctl(this->m_fd, I2C_SLAVE, addr);
       if (stat == -1) {
-#if DEBUG_PRINT
-          Fw::Logger::logMsg("Status: %d Errno: %d\n", stat, errno);
-#endif
 	  return I2cStatus::I2C_ADDRESS_ERR;
       }
       // make sure it isn't a null pointer
@@ -137,24 +108,14 @@ namespace Drv {
       // read data
       stat = static_cast<int>(read(this->m_fd, serBuffer.getData(), serBuffer.getSize()));
       if (stat == -1) {
-#if DEBUG_PRINT
-          Fw::Logger::logMsg("Status: %d Errno: %d\n", stat, errno);
-#endif
 	  return I2cStatus::I2C_READ_ERR;
       }
-#if DEBUG_PRINT
-      for (U32 byte = 0; byte < serBuffer.getSize(); byte++) {
-    	  Fw::Logger::logMsg("0x%02X ",serBuffer.getData()[byte]);
-
-      }
-      Fw::Logger::logMsg("\n");
-#endif
       return I2cStatus::I2C_OK;
   }
 
   Drv::I2cStatus LinuxI2cDriver ::
     writeRead_handler(
-      const NATIVE_INT_TYPE portNum, /*!< The port number*/
+      const FwIndexType portNum, /*!< The port number*/
       U32 addr,
       Fw::Buffer &writeBuffer,
       Fw::Buffer &readBuffer
@@ -169,10 +130,6 @@ namespace Drv {
     // make sure they are not null pointers
     FW_ASSERT(writeBuffer.getData());
     FW_ASSERT(readBuffer.getData());
-
-    #if DEBUG_PRINT
-      Fw::Logger::logMsg("I2c addr: 0x%02X\n",addr);
-    #endif
 
     struct i2c_msg rdwr_msgs[2];
 
@@ -193,30 +150,12 @@ namespace Drv {
     rdwr_data.nmsgs = 2;
 
     //Use ioctl to perform the combined write/read transaction
-    NATIVE_INT_TYPE stat = ioctl(this->m_fd, I2C_RDWR, &rdwr_data);
+    PlatformIntType stat = ioctl(this->m_fd, I2C_RDWR, &rdwr_data);
 
     if(stat == -1){
-      #if DEBUG_PRINT
-        Fw::Logger::logMsg("Status: %d Errno: %d\n", stat, errno);
-      #endif
       //Because we're using ioctl to perform the transaction we dont know exactly the type of error that occurred
       return I2cStatus::I2C_OTHER_ERR;
     }
-
-#if DEBUG_PRINT
-    Fw::Logger::logMsg("Wrote:\n");
-    for (U32 byte = 0; byte < writeBuffer.getSize(); byte++) {
-    	  Fw::Logger::logMsg("0x%02X ",writeBuffer.getData()[byte]);
-
-    }
-    Fw::Logger::logMsg("\n");
-    Fw::Logger::logMsg("Read:\n");
-    for (U32 byte = 0; byte < readBuffer.getSize(); byte++) {
-    	  Fw::Logger::logMsg("0x%02X ",readBuffer.getData()[byte]);
-
-    }
-    Fw::Logger::logMsg("\n");
-#endif
 
     return I2cStatus::I2C_OK;
   }

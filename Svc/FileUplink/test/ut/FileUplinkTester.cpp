@@ -14,6 +14,7 @@
 #include <cstring>
 
 #include "FileUplinkTester.hpp"
+#include "Fw/Com/ComPacket.hpp"
 
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 10
@@ -378,6 +379,64 @@ namespace Svc {
   }
 
   void FileUplinkTester ::
+    packetDuplicated()
+  {
+    const char *const sourcePath = "source.bin";
+    const char *const destPath = "dest.bin";
+    U8 packetData[] = { 5, 6, 7, 8, 9 };
+    const size_t fileSize = 2 * PACKET_SIZE;
+
+    // Send the start packet (packet 0)
+    this->sendStartPacket(sourcePath, destPath, fileSize);
+    ASSERT_TLM_SIZE(1);
+    ASSERT_TLM_PacketsReceived(
+        0,
+        ++this->expectedPacketsReceived
+    );
+    ASSERT_EVENTS_SIZE(0);
+
+    ASSERT_EQ(0, component.m_lastSequenceIndex);
+    ASSERT_EQ(1, this->sequenceIndex);
+    ASSERT_EQ(Os::File::MAX_STATUS, component.m_lastPacketWriteStatus);
+
+    // Send data packet 1
+    const size_t byteOffset = 0;
+    this->sendDataPacket(byteOffset, packetData);
+    ASSERT_TLM_SIZE(1);
+    ASSERT_TLM_PacketsReceived(
+        0,
+        ++this->expectedPacketsReceived
+    );
+    ASSERT_TLM_Warnings_SIZE(0);
+
+    // capture the checksum after sending the first packet
+    const ::CFDP::Checksum expectedChecksum(component.m_file.m_checksum);
+
+    // Simulate duplication of packet 1
+    --this->sequenceIndex;
+
+    ASSERT_EQ(this->sequenceIndex, component.m_lastSequenceIndex);
+    ASSERT_EQ(Os::File::OP_OK, component.m_lastPacketWriteStatus);
+
+    // Send data packet 1 again
+    this->sendDataPacket(byteOffset, packetData);
+    ASSERT_TLM_SIZE(2);
+    ASSERT_TLM_PacketsReceived(
+        0,
+        ++this->expectedPacketsReceived
+    );
+    ASSERT_TLM_Warnings(0, 1);
+
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_PacketDuplicate(0, component.m_lastSequenceIndex);
+
+    // verify that the checksum hasn't changed
+    ASSERT_EQ(expectedChecksum, component.m_file.m_checksum);
+
+    this->removeFile("test.bin");
+  }
+
+  void FileUplinkTester ::
     cancelPacketInStartMode()
   {
 
@@ -466,7 +525,7 @@ namespace Svc {
 
   void FileUplinkTester ::
     from_bufferSendOut_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         Fw::Buffer& buffer
     )
   {
@@ -475,7 +534,7 @@ namespace Svc {
 
   void FileUplinkTester ::
     from_pingOut_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 key
     )
   {
@@ -553,11 +612,17 @@ namespace Svc {
 
     this->clearHistory();
 
-    const size_t bufferSize = filePacket.bufferSize();
+    const size_t bufferSize = filePacket.bufferSize() + sizeof(FwPacketDescriptorType);
     U8 bufferData[bufferSize];
     Fw::Buffer buffer(bufferData, bufferSize);
 
-    const Fw::SerializeStatus status = filePacket.toBuffer(buffer);
+    // Serialize the packet descriptor FW_PACKET_FILE to the buffer
+    Fw::SerializeStatus status = buffer.getSerializer().serialize(Fw::ComPacket::FW_PACKET_FILE);
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
+    // Serialize the filePacket content into the buffer after the packet descriptor token
+    Fw::Buffer offsetBuffer(buffer.getData() + sizeof(FwPacketDescriptorType),
+                            bufferSize - sizeof(FwPacketDescriptorType));
+    status = filePacket.toBuffer(offsetBuffer);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, status);
 
     this->invoke_to_bufferSendIn(0, buffer);
@@ -641,7 +706,7 @@ namespace Svc {
 
     file.open(path, Os::File::OPEN_READ);
 
-    FwSignedSizeType intSize = static_cast<FwSignedSizeType>(dataSize);
+    FwSizeType intSize = static_cast<FwSizeType>(dataSize);
     const Os::File::Status status = file.read(fileData, intSize);
 
     ASSERT_EQ(Os::File::OP_OK, status);
@@ -655,7 +720,8 @@ namespace Svc {
   void FileUplinkTester ::
     removeFile(const char *const path)
   {
-    const NATIVE_INT_TYPE status = ::unlink(path);
+    // status from unlink is a platform integer
+    const PlatformIntType status = ::unlink(path);
     if (status != 0) {
       ASSERT_EQ(ENOENT, errno);
     }

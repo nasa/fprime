@@ -1,5 +1,5 @@
 #include <Svc/PassiveConsoleTextLogger/ConsoleTextLoggerImpl.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Logger/Logger.hpp>
 
@@ -9,13 +9,9 @@ namespace Svc {
         PassiveTextLoggerComponentBase(compName) {
     }
 
-    void ConsoleTextLoggerImpl::init(NATIVE_INT_TYPE instanceId) {
-        PassiveTextLoggerComponentBase::init(instanceId);
-    }
-
     ConsoleTextLoggerImpl::~ConsoleTextLoggerImpl() {}
 
-    void ConsoleTextLoggerImpl::TextLogger_handler(NATIVE_INT_TYPE portNum, FwEventIdType id, Fw::Time &timeTag, const Fw::LogSeverity& severity, Fw::TextLogString &text) {
+    void ConsoleTextLoggerImpl::TextLogger_handler(FwIndexType portNum, FwEventIdType id, Fw::Time &timeTag, const Fw::LogSeverity& severity, Fw::TextLogString &text) {
         const char *severityString = "UNKNOWN";
         switch (severity.e) {
             case Fw::LogSeverity::FATAL:
@@ -43,7 +39,7 @@ namespace Svc {
                 severityString = "SEVERITY ERROR";
                 break;
         }
-        Fw::Logger::logMsg("EVENT: (%" PRI_FwEventIdType ") (%" PRI_FwTimeBaseStoreType ":%" PRIu32 ",%" PRIu32 ") %s: %s\n",
+        Fw::Logger::log("EVENT: (%" PRI_FwEventIdType ") (%" PRI_FwTimeBaseStoreType ":%" PRIu32 ",%" PRIu32 ") %s: %s\n",
                 id, static_cast<FwTimeBaseStoreType>(timeTag.getTimeBase()), timeTag.getSeconds(), timeTag.getUSeconds(),
                 reinterpret_cast<PlatformPointerCastType>(severityString), reinterpret_cast<PlatformPointerCastType>(text.toChar()));
     }

@@ -48,7 +48,7 @@ void testValidateFile(const char* fileName) {
 
     // Get file size:
     printf("Checking file size of %s.\n", hashFileName);
-    FwSignedSizeType fileSize=0;
+    FwSizeType fileSize=0;
     fsStatus = Os::FileSystem::getFileSize(hashFileName, fileSize);
     if( Os::FileSystem::OP_OK != fsStatus ) {
     	printf("\tFailed to get file size of %s\n", hashFileName);
@@ -57,7 +57,7 @@ void testValidateFile(const char* fileName) {
     	return;
     }
     Utils::HashBuffer buf;
-    EXPECT_TRUE(fileSize == buf.getBuffCapacity());
+    EXPECT_TRUE(static_cast<FwSizeType>(fileSize) == buf.getBuffCapacity());
 
     // Validate file:
     printf("Validating file %s against hash file %s\n", fileName, hashFileName);

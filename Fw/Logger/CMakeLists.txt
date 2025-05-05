@@ -11,7 +11,6 @@ set(MOD_DEPS
 )
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/Logger.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/LogAssert.cpp"
 )
 register_fprime_module()
 
@@ -26,4 +25,8 @@ set(UT_SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/LoggerMain.cpp"
 )
 # STest Includes for this UT
-register_fprime_ut("Logger_Rules_Testing")
+register_fprime_ut()
+set (UT_TARGET_NAME "${FPRIME_CURRENT_MODULE}_ut_exe")
+if (TARGET "${UT_TARGET_NAME}")
+    target_compile_options("${UT_TARGET_NAME}" PRIVATE -Wno-conversion)
+endif()

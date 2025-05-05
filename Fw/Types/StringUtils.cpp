@@ -2,8 +2,9 @@
 #include <Fw/Types/Assert.hpp>
 #include <cstring>
 #include <limits>
+#include <Fw/Types/ExternalString.hpp>
 
-char* Fw::StringUtils::string_copy(char* destination, const char* source, U32 num) {
+char* Fw::StringUtils::string_copy(char* destination, const char* source, FwSizeType num) {
     // Handle self-copy and 0 bytes copy
     if (destination == source || num == 0) {
         return destination;
@@ -12,18 +13,18 @@ char* Fw::StringUtils::string_copy(char* destination, const char* source, U32 nu
     FW_ASSERT(destination != nullptr);
 
     // Copying an overlapping range is undefined
-    U32 source_len = string_length(source, num) + 1;
+    FwSizeType source_len = string_length(source, num) + 1;
     FW_ASSERT(source + source_len <= destination || destination + num <= source);
 
-    char* returned = strncpy(destination, source, num);
+    char* returned = strncpy(destination, source, static_cast<size_t>(num));
     destination[num - 1] = '\0';
     return returned;
 }
 
-U32 Fw::StringUtils::string_length(const CHAR* source, U32 max_len) {
-    U32 length = 0;
+FwSizeType Fw::StringUtils::string_length(const CHAR* source, FwSizeType buffer_size) {
+    FwSizeType length = 0;
     FW_ASSERT(source != nullptr);
-    for (length = 0; length < max_len; length++) {
+    for (length = 0; length < buffer_size; length++) {
         if (source[length] == '\0') {
             break;
         }
@@ -48,7 +49,7 @@ FwSignedSizeType Fw::StringUtils::substring_find(const CHAR* source_string,
         return -1;
     }
     // Confirm that the output type can hold the range of valid results
-    FW_ASSERT((source_size - sub_size) <= std::numeric_limits<FwSignedSizeType>::max());
+    FW_ASSERT(static_cast<FwSignedSizeType>(source_size - sub_size) <= std::numeric_limits<FwSignedSizeType>::max());
 
     // Loop from zero to source_size - sub_size (inclusive)
     for (FwSizeType source_index = 0;

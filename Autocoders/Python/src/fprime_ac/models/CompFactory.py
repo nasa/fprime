@@ -40,7 +40,7 @@ class CompFactory:
     """
     This is a concrete factory method object used to create the interface
     to the code generation.  A single call to create is made that returns
-    a the component object containing all the ports, includes, args, etc.
+    the component object containing all the ports, includes, args, etc.
     """
 
     __parsed = None

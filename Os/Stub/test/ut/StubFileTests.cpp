@@ -3,11 +3,11 @@
 // \brief tests using stub implementation for Os::File interface testing
 // ======================================================================
 #include <gtest/gtest.h>
+#include "Os/Os.hpp"
 #include "Os/File.hpp"
-#include "Os/Models/Models.hpp"
+#include "Os/Stub/test/File.hpp"
 #include "Os/test/ut/file/CommonTests.hpp"
 #include "Os/test/ut/file/RulesHeaders.hpp"
-#include "Os/Stub/test/File.hpp"
 
 namespace Os {
 namespace Test {
@@ -102,7 +102,7 @@ TEST_F(Interface, Close) {
 
 // Ensure that Os::File properly routes close calls to the `sizeInternal` function.
 TEST_F(Interface, Size) {
-    FwSignedSizeType sizeResult = -1;
+    FwSizeType sizeResult = std::numeric_limits<FwSizeType>::max();
     Os::File file;
     Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
     ASSERT_EQ(file.open("/does/not/matter", Os::File::OPEN_CREATE, Os::File::OverwriteType::OVERWRITE), Os::File::OP_OK);
@@ -114,7 +114,7 @@ TEST_F(Interface, Size) {
 
 // Ensure that Os::File properly routes close calls to the `positionInternal` function.
 TEST_F(Interface, Position) {
-    FwSignedSizeType positionResult = -1;
+    FwSizeType positionResult = std::numeric_limits<FwSizeType>::max();
     Os::File file;
     Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
     ASSERT_EQ(file.open("/does/not/matter", Os::File::OPEN_CREATE, Os::File::OverwriteType::OVERWRITE), Os::File::OP_OK);
@@ -162,8 +162,8 @@ TEST_F(Interface, Flush) {
 // Ensure that Os::File properly routes flush calls to the `flushInternal` function.
 TEST_F(Interface, Read) {
     U8 buffer[] = {0xab, 0xcd, 0xef};
-    FwSignedSizeType size = static_cast<FwSignedSizeType>(sizeof buffer);
-    FwSignedSizeType original_size = size;
+    FwSizeType size = static_cast<FwSizeType>(sizeof buffer);
+    FwSizeType original_size = size;
     Os::File file;
     Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
     ASSERT_EQ(file.open("/does/not/matter", Os::File::OPEN_READ, Os::File::OverwriteType::OVERWRITE), Os::File::OP_OK);
@@ -178,8 +178,8 @@ TEST_F(Interface, Read) {
 // Ensure that Os::File properly routes statuses returned from the `flushInternal` function back to the caller.
 TEST_F(Interface, Write) {
     U8 buffer[] = {0xab, 0xcd, 0xef};
-    FwSignedSizeType size = static_cast<FwSignedSizeType>(sizeof buffer);
-    FwSignedSizeType original_size = size;
+    FwSizeType size = static_cast<FwSizeType>(sizeof buffer);
+    FwSizeType original_size = size;
     Os::File file;
     Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
     ASSERT_EQ(file.open("/does/not/matter", Os::File::OPEN_WRITE, Os::File::OverwriteType::OVERWRITE), Os::File::OP_OK);
@@ -191,25 +191,8 @@ TEST_F(Interface, Write) {
     ASSERT_EQ(Os::Stub::File::Test::StaticData::data.writeWait, Os::File::WaitType::WAIT);
 }
 
-// Ensure that FPP shadow enumeration matches
-TEST(FppTypes, FileStatusEnum) {
-    for (FwIndexType i = static_cast<FwIndexType>(Os::File::Status::OP_OK); i < static_cast<FwIndexType>(Os::File::Status::MAX_STATUS); i++){
-        Os::File::Status status = static_cast<Os::File::Status>(i);
-        Os::FileStatus fpp_status = static_cast<Os::FileStatus::T>(status);
-        ASSERT_TRUE(fpp_status.isValid());
-    }
-}
-
-// Ensure that FPP shadow enumeration matches
-TEST(FppTypes, FileModeEnum) {
-    for (FwIndexType i = static_cast<FwIndexType>(Os::File::Mode::OPEN_CREATE); i < static_cast<FwIndexType>(Os::File::Mode::MAX_OPEN_MODE); i++){
-        Os::File::Mode mode = static_cast<Os::File::Mode>(i);
-        Os::FileMode fpp_mode = static_cast<Os::FileMode::T>(mode);
-        ASSERT_TRUE(fpp_mode.isValid());
-    }
-}
-
 int main(int argc, char **argv) {
+    Os::init();
     ::testing::InitGoogleTest(&argc, argv);
     STest::Random::seed();
     return RUN_ALL_TESTS();

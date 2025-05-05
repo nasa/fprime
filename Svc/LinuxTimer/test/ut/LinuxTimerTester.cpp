@@ -54,8 +54,8 @@ namespace Svc {
 
   void LinuxTimerTester ::
     from_CycleOut_handler(
-        const NATIVE_INT_TYPE portNum,
-        Svc::TimerVal &cycleStart
+        const FwIndexType portNum,
+        Os::RawTime &cycleStart
     )
   {
       printf("TICK\n");

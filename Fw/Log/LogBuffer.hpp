@@ -12,13 +12,13 @@
 #ifndef FW_LOG_BUFFER_HPP
 #define FW_LOG_BUFFER_HPP
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <Fw/Cfg/SerIds.hpp>
 
 namespace Fw {
 
-    class LogBuffer : public SerializeBufferBase {
+    class LogBuffer final : public SerializeBufferBase {
         public:
 
             enum {
@@ -26,13 +26,13 @@ namespace Fw {
                 SERIALIZED_SIZE = FW_LOG_BUFFER_MAX_SIZE + sizeof(FwBuffSizeType)
             };
 
-            LogBuffer(const U8 *args, NATIVE_UINT_TYPE size);
+            LogBuffer(const U8 *args, FwSizeType size);
             LogBuffer();
             LogBuffer(const LogBuffer& other);
             virtual ~LogBuffer();
             LogBuffer& operator=(const LogBuffer& other);
 
-            NATIVE_UINT_TYPE getBuffCapacity() const; // !< returns capacity, not current size, of buffer
+            FwSizeType getBuffCapacity() const; // !< returns capacity, not current size, of buffer
             U8* getBuffAddr();
             const U8* getBuffAddr() const;
 

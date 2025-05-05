@@ -22,7 +22,7 @@ on:
 
 jobs:
   runs:
-    runs-on: "ubuntu-latest"
+    runs-on: "ubuntu-22.04"
     outputs:
       target-branch: ${{ steps.get_target_branch.outputs.TARGET_BRANCH }}
     steps:

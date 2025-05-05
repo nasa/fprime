@@ -1,4 +1,3 @@
-\page SvcCmdSplitter Svc::CmdSplitter Component
 # Svc::CmdSplitter Component
 
 ## 1. Introduction

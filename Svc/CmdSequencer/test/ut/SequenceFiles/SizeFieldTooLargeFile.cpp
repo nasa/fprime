@@ -19,11 +19,11 @@ namespace Svc {
 
     SizeFieldTooLargeFile ::
       SizeFieldTooLargeFile(
-          const U32 bufferSize,
-          const Format::t format
+          const U32 a_bufferSize,
+          const Format::t a_format
       ) :
-        File("size_field_too_large", format),
-        bufferSize(bufferSize)
+        File("size_field_too_large", a_format),
+        bufferSize(a_bufferSize)
     {
 
     }

@@ -18,7 +18,7 @@
 
 namespace RPI {
 
-  class RpiDemoComponentImpl :
+  class RpiDemoComponentImpl final :
     public RpiDemoComponentBase
   {
 
@@ -46,13 +46,6 @@ namespace RPI {
           const char *const compName /*!< The component name*/
       );
 
-      //! Initialize object RpiDemo
-      //!
-      void init(
-          const NATIVE_INT_TYPE queueDepth, /*!< The queue depth*/
-          const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
-      );
-
       //! Destroy object RpiDemo
       //!
       ~RpiDemoComponentImpl();
@@ -66,17 +59,24 @@ namespace RPI {
       //! Handler implementation for Run
       //!
       void Run_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          const FwIndexType portNum, /*!< The port number*/
           U32 context /*!< The call order*/
       ) override;
 
       //! Handler implementation for UartRead
       //!
       void UartRead_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          const FwIndexType portNum, /*!< The port number*/
           Fw::Buffer &serBuffer, /*!< Buffer containing data*/
-          const Drv::RecvStatus &status /*!< Status of read*/
+          const Drv::ByteStreamStatus &status /*!< Status of read*/
       ) override;
+
+      //! Handler implementation for UartWriteReturn
+      //!
+      //! Input port for getting back buffer ownership and status when using UartWrite
+      void UartWriteReturn_handler(FwIndexType portNum,  //!< The port number
+        Fw::Buffer& buffer,
+        const Drv::ByteStreamStatus& status) override;
 
     PRIVATE:
 
@@ -145,7 +145,6 @@ namespace RPI {
       Fw::Logic m_currLedVal;
       // serial buffers
       Fw::Buffer m_recvBuffers[NUM_RPI_UART_BUFFERS];
-      BYTE m_uartBuffers[NUM_RPI_UART_BUFFERS][RPI_UART_READ_BUFF_SIZE];
       // LED enabled
       bool m_ledOn;
       // toggle LED divider

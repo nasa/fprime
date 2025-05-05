@@ -21,7 +21,7 @@ namespace Svc {
     //! consistent ordering.  It also provides the option to write the text
     //! to a file as well.
 
-    class ActiveTextLogger: public ActiveTextLoggerComponentBase {
+    class ActiveTextLogger final : public ActiveTextLoggerComponentBase {
 
         public:
 
@@ -38,15 +38,6 @@ namespace Svc {
             //!  \brief Component destructor
             //!
             virtual ~ActiveTextLogger(); //!< destructor
-
-            //!  \brief Component initialization routine
-            //!
-            //!  The initialization function calls the initialization
-            //!  routine for the base class.
-            //!
-            //!  \param queueDepth the depth of the message queue for the component
-            //!  \param instance: instance identifier. Default: 0.
-            void init(NATIVE_INT_TYPE queueDepth, NATIVE_INT_TYPE instance = 0);
 
             //!  \brief Set log file and max size
             //!
@@ -92,7 +83,7 @@ namespace Svc {
         //! Handler for input port TextLogger
         //
         virtual void TextLogger_handler(
-            NATIVE_INT_TYPE portNum, /*!< The port number*/
+            FwIndexType portNum, /*!< The port number*/
             FwEventIdType id, /*!< Log ID*/
             Fw::Time &timeTag, /*!< Time Tag*/
             const Fw::LogSeverity& severity, /*!< The severity argument*/

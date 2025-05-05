@@ -27,8 +27,8 @@ namespace Svc {
 
         //! Construct a BadDescriptorFile
         BadDescriptorFile(
-            const U32 n, //!< The number of records
-            const Format::t = Format::F_PRIME //!< The file format
+            const U32 a_n, //!< The number of records
+            const Format::t a_format = Format::F_PRIME //!< The file format
         );
 
       public:

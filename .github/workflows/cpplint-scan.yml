@@ -1,4 +1,4 @@
-name: "Cpplint Scan"
+name: "Code Scan: Cpplint"
 
 on:
   push:
@@ -15,7 +15,7 @@ on:
 jobs:
   cpplint:
     name: Cpplint
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     permissions:
       actions: read
       contents: read
@@ -33,7 +33,7 @@ jobs:
         run: pip install cpplint
 
       - name: Install xsltproc
-        run: sudo apt-get install xsltproc -y
+        run: sudo apt-get update && sudo apt-get install xsltproc -y
 
       - name: Install sarif tool
         run: npm i -g @microsoft/sarif-multitool
@@ -53,13 +53,13 @@ jobs:
           sed -i -e 's/\"name\": \"CppCheck\"/\"name\": \"CppLint\"/g' cpplint_cppcheck_result.sarif
 
       - name: Upload SARIF file to GitHub Code Scanning Alerts
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: ${{ github.workspace }}/cpplint_cppcheck_result.sarif
           category: "cpplint"
 
       - name: Archive static analysis artifacts to download and view
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: cpplint-errors
           path: ./*cpplint_cppcheck_result.*

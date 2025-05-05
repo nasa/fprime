@@ -8,7 +8,6 @@
  * ALL RIGHTS RESERVED.  United States Government Sponsorship
  * acknowledged.
  */
-#include <Fw/Types/BasicTypes.hpp>
 extern "C" {
 #include <FpConfig.h>
 }

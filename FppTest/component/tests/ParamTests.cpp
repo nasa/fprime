@@ -61,7 +61,7 @@ void Tester ::testParam() {
     }
 }
 
-void Tester ::testParamCommand(NATIVE_INT_TYPE portNum, FppTest::Types::BoolParam& data) {
+void Tester ::testParamCommand(FwIndexType portNum, FppTest::Types::BoolParam& data) {
     Fw::CmdArgBuffer buf;
 
     // Test unsuccessful saving of param
@@ -94,7 +94,7 @@ void Tester ::testParamCommand(NATIVE_INT_TYPE portNum, FppTest::Types::BoolPara
     ASSERT_EQ(boolPrm.args.val, data.args.val);
 }
 
-void Tester ::testParamCommand(NATIVE_INT_TYPE portNum, FppTest::Types::U32Param& data) {
+void Tester ::testParamCommand(FwIndexType portNum, FppTest::Types::U32Param& data) {
     Fw::CmdArgBuffer buf;
 
     // Test unsuccessful saving of param
@@ -127,7 +127,7 @@ void Tester ::testParamCommand(NATIVE_INT_TYPE portNum, FppTest::Types::U32Param
     ASSERT_EQ(u32Prm.args.val, data.args.val);
 }
 
-void Tester ::testParamCommand(NATIVE_INT_TYPE portNum, FppTest::Types::PrmStringParam& data) {
+void Tester ::testParamCommand(FwIndexType portNum, FppTest::Types::PrmStringParam& data) {
     Fw::CmdArgBuffer buf;
 
     // Test unsuccessful saving of param
@@ -160,7 +160,7 @@ void Tester ::testParamCommand(NATIVE_INT_TYPE portNum, FppTest::Types::PrmStrin
     ASSERT_EQ(stringPrm.args.val, data.args.val);
 }
 
-void Tester ::testParamCommand(NATIVE_INT_TYPE portNum, FppTest::Types::EnumParam& data) {
+void Tester ::testParamCommand(FwIndexType portNum, FppTest::Types::EnumParam& data) {
     Fw::CmdArgBuffer buf;
 
     // Test unsuccessful saving of param
@@ -193,7 +193,7 @@ void Tester ::testParamCommand(NATIVE_INT_TYPE portNum, FppTest::Types::EnumPara
     ASSERT_EQ(enumPrm.args.val, data.args.val);
 }
 
-void Tester ::testParamCommand(NATIVE_INT_TYPE portNum, FppTest::Types::ArrayParam& data) {
+void Tester ::testParamCommand(FwIndexType portNum, FppTest::Types::ArrayParam& data) {
     Fw::CmdArgBuffer buf;
 
     // Test unsuccessful saving of param
@@ -226,7 +226,7 @@ void Tester ::testParamCommand(NATIVE_INT_TYPE portNum, FppTest::Types::ArrayPar
     ASSERT_EQ(arrayPrm.args.val, data.args.val);
 }
 
-void Tester ::testParamCommand(NATIVE_INT_TYPE portNum, FppTest::Types::StructParam& data) {
+void Tester ::testParamCommand(FwIndexType portNum, FppTest::Types::StructParam& data) {
     Fw::CmdArgBuffer buf;
 
     // Test unsuccessful saving of param

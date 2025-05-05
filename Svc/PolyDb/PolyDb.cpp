@@ -7,7 +7,7 @@
 
 #include <Svc/PolyDb/PolyDb.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 namespace Svc {
     PolyDb::PolyDb(const char* const name) : PolyDbComponentBase(name) {
@@ -19,7 +19,7 @@ namespace Svc {
 
     void PolyDb ::
         getValue_handler(
-            NATIVE_INT_TYPE portNum,
+            FwIndexType portNum,
             const Svc::PolyDbCfg::PolyDbEntry& entry,
             Svc::MeasurementStatus& status,
             Fw::Time& time,
@@ -33,7 +33,7 @@ namespace Svc {
 
     void PolyDb ::
         setValue_handler(
-            NATIVE_INT_TYPE portNum,
+            FwIndexType portNum,
             const Svc::PolyDbCfg::PolyDbEntry& entry,
             Svc::MeasurementStatus& status,
             Fw::Time& time,

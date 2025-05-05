@@ -8,48 +8,21 @@
  * ALL RIGHTS RESERVED.  United States Government Sponsorship
  * acknowledged.
  */
-#include <Fw/Types/BasicTypes.h>
 #ifndef FPCONFIG_H_
 #define FPCONFIG_H_
+
+#ifdef  __cplusplus
+extern "C" {
+#endif
+#include <Platform/PlatformTypes.h>
+#include <Fw/Types/BasicTypes.h>
+
 
 // ----------------------------------------------------------------------
 // Type aliases
 // ----------------------------------------------------------------------
 
-// The type of port indices and smaller sizes internal to the software
-typedef PlatformIndexType FwIndexType;
-#define PRI_FwIndexType PRI_PlatformIndexType
 
-// The signed type of larger sizes internal to the software, e.g., memory buffer sizes,
-// file sizes
-typedef PlatformSignedSizeType FwSignedSizeType;
-#define PRI_FwSignedSizeType PRI_PlatformSignedSizeType
-
-// The unsigned type of larger sizes internal to the software, e.g., memory buffer sizes,
-// file sizes
-typedef PlatformSizeType FwSizeType;
-#define PRI_FwSizeType PRI_PlatformSizeType
-
-// The type of an assertion argument
-typedef PlatformAssertArgType FwAssertArgType;
-#define PRI_FwAssertArgType PRI_PlatformAssertArgType
-
-// The type of a machine integer. Ordinarily this should be int.
-typedef PlatformIntType FwNativeIntType;
-#define PRI_FwNativeIntType PRI_PlatformIntType
-
-// The type of a machine unsigned integer. Ordinarily this should be unsigned int.
-typedef PlatformUIntType FwNativeUIntType;
-#define PRI_FwNativeUIntType PRI_PlatformUIntType
-
-// The type used to serialize a size value
-typedef U16 FwSizeStoreType;
-#define PRI_FwSizeStoreType PRIu16
-
-// The type used to serialize a C++ enumeration constant
-// FPP enumerations are serialized according to their representation types
-typedef I32 FwEnumStoreType;
-#define PRI_FwEnumStoreType PRId32
 
 // Define enumeration for Time base types
 // Note: maintaining C-style
@@ -61,61 +34,6 @@ typedef enum {
         0xFFFF  //!< Don't care value for sequences. If FwTimeBaseStoreType is changed, value should be changed
 } TimeBase;
 #define FW_CONTEXT_DONT_CARE 0xFF  //!< Don't care value for time contexts in sequences
-
-// The type used to serialize a time base value
-typedef U16 FwTimeBaseStoreType;
-#define PRI_FwTimeBaseStoreType PRIu16
-
-// The type used to serialize a time context value
-typedef U8 FwTimeContextStoreType;
-#define PRI_FwTimeContextStoreType PRIu8
-
-// The type of a com packet descriptor
-typedef U32 FwPacketDescriptorType;
-#define PRI_FwPacketDescriptorType PRIu32
-
-// The type of a command opcode
-typedef U32 FwOpcodeType;
-#define PRI_FwOpcodeType PRIu32
-
-// The type of a telemetry channel identifier
-typedef U32 FwChanIdType;
-#define PRI_FwChanIdType PRIu32
-
-// The type of an event identifier
-typedef U32 FwEventIdType;
-#define PRI_FwEventIdType PRIu32
-
-// The type of a parameter identifier
-typedef U32 FwPrmIdType;
-#define PRI_FwPrmIdType PRIu32
-
-// The type of a telemetry packet identifier
-typedef U16 FwTlmPacketizeIdType;
-#define PRI_FwTlmPacketizeIdType PRIu16
-
-// The type of a queue priority
-typedef I32 FwQueuePriorityType;
-#define PRI_FwQueuePriorityType PRId32
-
-// The type of a data product identifier
-typedef U32 FwDpIdType;
-#define PRI_FwDpIdType PRIu32
-
-// The type of a data product priority
-typedef U32 FwDpPriorityType;
-#define PRI_FwDpPriorityType PRIu32
-
-// ----------------------------------------------------------------------
-// Derived type aliases
-// By default, these types are aliases of types defined above
-// If necessary, you can change these definitions
-// In most cases, the defaults should work
-// ----------------------------------------------------------------------
-
-// The type of a queue size
-typedef FwIndexType FwQueueSizeType;
-#define PRI_FwQueueSizeType PRI_FwIndexType
 
 // ----------------------------------------------------------------------
 // Configuration switches
@@ -171,6 +89,14 @@ typedef FwIndexType FwQueueSizeType;
     0  //!< Indicates whether or not a baremetal scheduler should be used. Alternatively the Os scheduler is used.
 #endif
 
+// On some systems, use of *printf family functions (snprintf, printf, etc) require a prohibitive amount of program
+// space. Setting this to `0` indicates that the Fw/String methods should stop using these functions to conserve
+// program size. However, this comes at the expense of discarding format parameters. i.e. the format string is returned
+// unchanged.
+#ifndef FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING
+#define FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING 1
+#endif
+
 // Port Facilities
 
 // This allows tracing calls through ports for debugging
@@ -213,14 +139,8 @@ typedef FwIndexType FwQueueSizeType;
 //   4. FW_RELATIVE_PATH_ASSERT: asserts report a relative path within F´ or F´ library and line number
 //
 // Note: users who want alternate asserts should set assert level to FW_NO_ASSERT and define FW_ASSERT in this header
-#define FW_ASSERT_DFL_MSG_LEN 256  //!< Maximum assert message length when using the default assert handler
 #ifndef FW_ASSERT_LEVEL
 #define FW_ASSERT_LEVEL FW_FILENAME_ASSERT  //!< Defines the type of assert used
-#endif
-
-// Define max length of assert string
-#ifndef FW_ASSERT_TEXT_SIZE
-#define FW_ASSERT_TEXT_SIZE 120  //!< Size of string used to store assert description
 #endif
 
 // Adjust various configuration parameters in the architecture. Some of the above enables may disable some of the values
@@ -264,7 +184,12 @@ typedef FwIndexType FwQueueSizeType;
 
 // Specifies the size of the buffer that contains a communications packet.
 #ifndef FW_COM_BUFFER_MAX_SIZE
-#define FW_COM_BUFFER_MAX_SIZE 128  //!< Max size of Fw::Com buffer
+#define FW_COM_BUFFER_MAX_SIZE 512
+#endif
+
+// Specifies the size of the buffer attached to state machine signals.
+#ifndef FW_SM_SIGNAL_BUFFER_MAX_SIZE
+#define FW_SM_SIGNAL_BUFFER_MAX_SIZE 128  // Not to exceed max value of FwSizeType
 #endif
 
 // Specifies the size of the buffer that contains the serialized command arguments.
@@ -294,13 +219,19 @@ typedef FwIndexType FwQueueSizeType;
 #endif
 
 // Specifies the maximum size of a string in a log event
+// Note: This constant truncates file names in assertion failure event reports
 #ifndef FW_LOG_STRING_MAX_SIZE
-#define FW_LOG_STRING_MAX_SIZE 100  //!< Max size of log string parameter type
+#define FW_LOG_STRING_MAX_SIZE 200  //!< Max size of log string parameter type
 #endif
 
 // Specifies the size of the buffer that contains the serialized telemetry value.
 #ifndef FW_TLM_BUFFER_MAX_SIZE
 #define FW_TLM_BUFFER_MAX_SIZE (FW_COM_BUFFER_MAX_SIZE - sizeof(FwChanIdType) - sizeof(FwPacketDescriptorType))
+#endif
+
+// Specifies the size of the buffer that contains statement args for the FpySequencer
+#ifndef FW_STATEMENT_ARG_BUFFER_MAX_SIZE
+#define FW_STATEMENT_ARG_BUFFER_MAX_SIZE (FW_CMD_ARG_BUFFER_MAX_SIZE)
 #endif
 
 // Specifies the maximum size of a string in a telemetry channel
@@ -328,7 +259,8 @@ typedef FwIndexType FwQueueSizeType;
 #define FW_INTERNAL_INTERFACE_STRING_MAX_SIZE 256  //!< Max size of interface string parameter type
 #endif
 
-// enables text logging of events as well as data logging. Adds a second logging port for text output.
+// Enables text logging of events as well as data logging. Adds a second logging port for text output.
+// In order to set this to 0, FPRIME_ENABLE_TEXT_LOGGERS must be set to OFF.
 #ifndef FW_ENABLE_TEXT_LOGGING
 #define FW_ENABLE_TEXT_LOGGING 1  //!< Indicates whether text logging is turned on
 #endif
@@ -367,23 +299,67 @@ typedef FwIndexType FwQueueSizeType;
 #endif
 
 // OS configuration
+#ifndef FW_CONSOLE_HANDLE_MAX_SIZE
+#define FW_CONSOLE_HANDLE_MAX_SIZE 24  //!< Maximum size of a handle for OS queues
+#endif
 
-#ifndef FW_HANDLE_MAX_SIZE
-#define FW_HANDLE_MAX_SIZE 24  //!< Maximum size of a handle for OS resources (files, queues, locks, etc.)
+#ifndef FW_TASK_HANDLE_MAX_SIZE
+#define FW_TASK_HANDLE_MAX_SIZE 24  //!< Maximum size of a handle for OS queues
+#endif
+
+#ifndef FW_FILE_HANDLE_MAX_SIZE
+#define FW_FILE_HANDLE_MAX_SIZE 16  //!< Maximum size of a handle for OS queues
+#endif
+
+#ifndef FW_MUTEX_HANDLE_MAX_SIZE
+#define FW_MUTEX_HANDLE_MAX_SIZE 72  //!< Maximum size of a handle for OS queues
+#endif
+
+#ifndef FW_QUEUE_HANDLE_MAX_SIZE
+#define FW_QUEUE_HANDLE_MAX_SIZE 352  //!< Maximum size of a handle for OS queues
+#endif
+
+#ifndef FW_DIRECTORY_HANDLE_MAX_SIZE
+#define FW_DIRECTORY_HANDLE_MAX_SIZE 16  //!< Maximum size of a handle for OS resources (files, queues, locks, etc.)
+#endif
+
+#ifndef FW_FILESYSTEM_HANDLE_MAX_SIZE
+#define FW_FILESYSTEM_HANDLE_MAX_SIZE 16  //!< Maximum size of a handle for OS resources (files, queues, locks, etc.)
+#endif
+
+#ifndef FW_RAW_TIME_HANDLE_MAX_SIZE
+#define FW_RAW_TIME_HANDLE_MAX_SIZE 32  //!< Maximum size of a handle for OS::RawTime objects
+#endif
+
+#ifndef FW_RAW_TIME_SERIALIZATION_MAX_SIZE
+#define FW_RAW_TIME_SERIALIZATION_MAX_SIZE 8  //!< Maximum allowed serialization size for Os::RawTime objects
+#endif
+
+#ifndef FW_CONDITION_VARIABLE_HANDLE_MAX_SIZE
+#define FW_CONDITION_VARIABLE_HANDLE_MAX_SIZE 56  //!< Maximum size of a handle for OS condition variables
+#endif
+
+#ifndef FW_CPU_HANDLE_MAX_SIZE
+#define FW_CPU_HANDLE_MAX_SIZE 16  //!< Maximum size of a handle for OS cpu
+#endif
+
+#ifndef FW_MEMORY_HANDLE_MAX_SIZE
+#define FW_MEMORY_HANDLE_MAX_SIZE 16  //!< Maximum size of a handle for OS memory
 #endif
 
 #ifndef FW_HANDLE_ALIGNMENT
-#define FW_HANDLE_ALIGNMENT 16  //!< Alignment of handle storage
+#define FW_HANDLE_ALIGNMENT 8  //!< Alignment of handle storage
 #endif
 
+// Note: One buffer of this size will be stack-allocated during certain OSAL operations e.g. when copying a file
 #ifndef FW_FILE_CHUNK_SIZE
-#define FW_FILE_CHUNK_SIZE 512  //!< Chunk size for working with files
+#define FW_FILE_CHUNK_SIZE 512  //!< Chunk size for working with files in the OSAL layer
 #endif
 
 // *** NOTE configuration checks are in Fw/Cfg/ConfigCheck.cpp in order to have
 // the type definitions in Fw/Types/BasicTypes available.
+#ifdef  __cplusplus
+}
+#endif
 
-// DO NOT TOUCH.  These types are specified for backwards naming compatibility.
-typedef FwSizeStoreType FwBuffSizeType;
-#define PRI_FwBuffSizeType PRI_FwSizeStoreType
 #endif

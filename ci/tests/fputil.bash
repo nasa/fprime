@@ -69,7 +69,7 @@ function integration_test_run {
         mkdir -p "${LOG_DIR}/gds-logs"
         # Start the GDS layer and give it time to run
         echo "[INFO] Starting headless GDS layer"
-        fprime-gds -n --dictionary "${ROOTDIR}/"*"/${BINARY}/dict/${BINARY}TopologyAppDictionary.xml" -g none -l "${LOG_DIR}/gds-logs" 1>${LOG_DIR}/gds-logs/fprime-gds.stdout.log 2>${LOG_DIR}/gds-logs/fprime-gds.stderr.log &
+        fprime-gds -n --dictionary "${ROOTDIR}/"*"/${BINARY}/dict/${BINARY}TopologyDictionary.json" -g none -l "${LOG_DIR}/gds-logs" 1>${LOG_DIR}/gds-logs/fprime-gds.stdout.log 2>${LOG_DIR}/gds-logs/fprime-gds.stderr.log &
         GDS_PID=$!
         # run the app with valgrind in the background
         if command -v valgrind &> /dev/null

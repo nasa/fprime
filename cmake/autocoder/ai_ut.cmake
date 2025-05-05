@@ -30,7 +30,7 @@ endfunction (ai_ut_is_supported)
 #
 # Required function, sets up a custom command to produce TesterBase and GTestBase files.
 ####
-function(ai_ut_setup_autocode AC_INPUT_FILE)
+function(ai_ut_setup_autocode MODULE_NAME AC_INPUT_FILE)
     set(REMOVALS "${CMAKE_CURRENT_BINARY_DIR}/Tester.hpp"
                  "${CMAKE_CURRENT_BINARY_DIR}/Tester.cpp"
                  "${CMAKE_CURRENT_BINARY_DIR}/TestMain.cpp")
@@ -62,4 +62,7 @@ function(ai_ut_setup_autocode AC_INPUT_FILE)
     )
     set(AUTOCODER_GENERATED "${AUTOCODER_GENERATED}" PARENT_SCOPE)
     set(AUTOCODER_INCLUDES "${FILE_DEPENDENCIES}" PARENT_SCOPE)
+    sort_buildable_from_non_buildable_sources(BUILD_SOURCES NON_BUILD_SOURCES ${AUTOCODER_GENERATED})
+    set(AUTOCODER_BUILD_SOURCES "${BUILD_SOURCES}" PARENT_SCOPE)
+    set(AUTOCODER_NEW_AUTOCODER_INPUTS "${NON_BUILD_SOURCES}" PARENT_SCOPE)
 endfunction(ai_ut_setup_autocode)

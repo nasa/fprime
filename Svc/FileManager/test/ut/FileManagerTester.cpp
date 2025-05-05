@@ -159,7 +159,7 @@ namespace Svc {
         0,
         "file1",
         "file2",
-        Os::FileSystem::INVALID_PATH
+        Os::FileSystem::DOESNT_EXIST
     );
 
   }
@@ -214,7 +214,7 @@ namespace Svc {
     ASSERT_EVENTS_DirectoryRemoveError(
         0,
         "test_dir",
-        Os::FileSystem::INVALID_PATH
+        Os::FileSystem::DOESNT_EXIST
     );
 
   }
@@ -269,7 +269,7 @@ namespace Svc {
     ASSERT_EVENTS_FileRemoveError(
         0,
         "test_file",
-        Os::FileSystem::INVALID_PATH
+        Os::FileSystem::DOESNT_EXIST
     );
 
   }
@@ -415,7 +415,7 @@ namespace Svc {
         0,
         "file1",
         "file2",
-        Os::FileSystem::INVALID_PATH
+        Os::FileSystem::DOESNT_EXIST
     );
   }
 
@@ -528,8 +528,8 @@ namespace Svc {
   void FileManagerTester ::
     system(const char *const cmd)
   {
-    const NATIVE_INT_TYPE status = ::system(cmd);
-    ASSERT_EQ(static_cast<NATIVE_INT_TYPE>(0), status);
+    const PlatformIntType status = ::system(cmd);
+    ASSERT_EQ(static_cast<PlatformIntType>(0), status);
   }
 
   void FileManagerTester ::
@@ -677,7 +677,7 @@ namespace Svc {
   }
   void FileManagerTester ::
     from_pingOut_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 key
     )
   {

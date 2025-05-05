@@ -17,7 +17,7 @@
 
 namespace Svc {
 
-  class FatalHandlerComponentImpl :
+  class FatalHandlerComponentImpl final :
     public FatalHandlerComponentBase
   {
 
@@ -33,12 +33,6 @@ namespace Svc {
           const char *const compName /*!< The component name*/
       );
 
-      //! Initialize object FatalHandler
-      //!
-      void init(
-          const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
-      );
-
       //! Destroy object FatalHandler
       //!
       ~FatalHandlerComponentImpl();
@@ -52,7 +46,7 @@ namespace Svc {
       //! Handler implementation for FatalReceive
       //!
       void FatalReceive_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          const FwIndexType portNum, /*!< The port number*/
           FwEventIdType Id /*!< The ID of the FATAL event*/
       );
 

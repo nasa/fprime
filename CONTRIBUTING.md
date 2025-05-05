@@ -7,9 +7,6 @@ through how to contribute and the process contributions follow. Remember, we may
 your submission the best it can be. Fear not! Your submission is still valued! You may even comment on other submissions
 to help them improve.
 
-Make sure to review our [style guidelines](./docs/UsersGuide/dev/code-style.md) when developing code to ensure it meets
-the standards for F´´
-
 ## Ways of Contributing
 
 The best way to contribute to F´ is to remain positive and engaged. Just about every contribution needs some improvement
@@ -36,7 +33,7 @@ Feel free to contribute any way that suits your skills and enjoy.
 ## Where to Start
 
 First, contributors should build some understanding of F´. Read through the documentation, try a tutorial, or run a
-reference application. Contributors can find information in our [documentation](https://nasa.github.io/fprime/). Keep
+reference application. Contributors can find information in our [documentation](https://fprime.jpl.nasa.gov/latest/docs). Keep
 track of inconsistencies or bugs as these should be reported!
 
 When you are ready to join discussions and submit bug reports use one of the above links!
@@ -45,8 +42,7 @@ To contribute to the F´ framework directly, consider writing
 [needed documentation](https://github.com/nasa/fprime/issues?q=is%3Aissue+is%3Aopen+label%3ADocumentation) or starting
 with an [easy first issue](https://github.com/nasa/fprime/issues?q=is%3Aissue+is%3Aopen+label%3A%22Easy+First+Issue%22).
 When starting to modify F´ directly, ask questions, seek help, and be patient. Remember to review the project structure,
-development process, and helpful tips sections below. Following the
-[style guidelines](./docs/UsersGuide/dev/code-style.md) is a must for contributing code to F´.
+development process, and helpful tips sections below.
 
 ## Project Structure
 
@@ -74,7 +70,7 @@ Contributors to the [fprime](https://github.com/nasa/fprime) repository should u
 F´ follows a standard git flow development model. Developers should start with a
 [fork](https://docs.github.com/en/get-started/quickstart/fork-a-repo) of one of the F´ repositories and then develop
 according to [git flow](https://docs.github.com/en/get-started/quickstart/github-flow). Remember to add an
-upstream remote to your fork such that you may fetch the latest changes.
+[upstream remote](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/configuring-a-remote-repository-for-a-fork) to your fork such that you may fetch the latest changes.
 
 For each contribution, developers should first fetch the latest changes from upstream. Then create a new branch off
 `devel` and submit back to F´ using a pull request as described above.

@@ -32,35 +32,40 @@ namespace Task {
     PlatformIntType set_stack_size(pthread_attr_t& attributes, const Os::Task::Arguments& arguments) {
         PlatformIntType status = PosixTaskHandle::SUCCESS;
         FwSizeType stack = arguments.m_stackSize;
-        // Check for stack size multiple of page size
+// Check for stack size multiple of page size or skip when the function
+// is unavailable.
+#ifdef _SC_PAGESIZE
         long page_size = sysconf(_SC_PAGESIZE);
+#else
+        long page_size = -1; // Force skip and warning
+#endif
         if (page_size <= 0) {
-            Fw::Logger::logMsg(
+            Fw::Logger::log(
                     "[WARNING] %s could not determine page size %s. Skipping stack-size check.\n",
-                    reinterpret_cast<PlatformPointerCastType>(const_cast<CHAR*>(arguments.m_name.toChar())),
-                    reinterpret_cast<PlatformPointerCastType>(strerror(errno))
+                    const_cast<CHAR*>(arguments.m_name.toChar()),
+                    strerror(errno)
             );
         }
         else if ((stack % static_cast<FwSizeType>(page_size)) != 0) {
             // Round-down to nearest page size multiple
             FwSizeType rounded = (stack / static_cast<FwSizeType>(page_size)) * static_cast<FwSizeType>(page_size);
-            Fw::Logger::logMsg(
+            Fw::Logger::log(
                     "[WARNING] %s stack size of %" PRI_FwSizeType " is not multiple of page size %ld, rounding to %" PRI_FwSizeType "\n",
-                    reinterpret_cast<PlatformPointerCastType>(const_cast<CHAR*>(arguments.m_name.toChar())),
-                    static_cast<PlatformPointerCastType>(stack),
-                    static_cast<PlatformPointerCastType>(page_size),
-                    static_cast<PlatformPointerCastType>(rounded)
+                    const_cast<CHAR*>(arguments.m_name.toChar()),
+                    stack,
+                    page_size,
+                    rounded
             );
             stack = rounded;
         }
 
         // Clamp invalid stack sizes
         if (stack <= static_cast<FwSizeType>(PTHREAD_STACK_MIN)) {
-            Fw::Logger::logMsg(
+            Fw::Logger::log(
                     "[WARNING] %s stack size of %" PRI_FwSizeType "  is too small, clamping to %" PRI_FwSizeType "\n",
-                    reinterpret_cast<PlatformPointerCastType>(const_cast<CHAR*>(arguments.m_name.toChar())),
-                    static_cast<PlatformPointerCastType>(stack),
-                    static_cast<PlatformPointerCastType>(static_cast<FwSizeType>(PTHREAD_STACK_MIN))
+                    const_cast<CHAR*>(arguments.m_name.toChar()),
+                    stack,
+                    static_cast<FwSizeType>(PTHREAD_STACK_MIN)
             );
             stack = static_cast<FwSizeType>(PTHREAD_STACK_MIN);
         }
@@ -75,18 +80,18 @@ namespace Task {
         FwSizeType priority = arguments.m_priority;
         // Clamp to minimum priority
         if (priority < min_priority) {
-            Fw::Logger::logMsg("[WARNING] %s low task priority of %" PRI_FwSizeType " clamped to %" PRI_FwSizeType "\n",
-                               reinterpret_cast<PlatformPointerCastType>(const_cast<CHAR*>(arguments.m_name.toChar())),
-                               static_cast<PlatformPointerCastType>(priority),
-                               static_cast<PlatformPointerCastType>(min_priority));
+            Fw::Logger::log("[WARNING] %s low task priority of %" PRI_FwSizeType " clamped to %" PRI_FwSizeType "\n",
+                               const_cast<CHAR*>(arguments.m_name.toChar()),
+                               priority,
+                               min_priority);
             priority = min_priority;
         }
         // Clamp to maximum priority
         else if (priority > max_priority) {
-            Fw::Logger::logMsg("[WARNING] %s high task priority of %" PRI_FwSizeType " clamped to %" PRI_FwSizeType "\n",
-                               reinterpret_cast<PlatformPointerCastType>(const_cast<CHAR*>(arguments.m_name.toChar())),
-                               static_cast<PlatformPointerCastType>(priority),
-                               static_cast<PlatformPointerCastType>(max_priority));
+            Fw::Logger::log("[WARNING] %s high task priority of %" PRI_FwSizeType " clamped to %" PRI_FwSizeType "\n",
+                               const_cast<CHAR*>(arguments.m_name.toChar()),
+                               priority,
+                               max_priority);
             priority = max_priority;
         }
 
@@ -106,8 +111,10 @@ namespace Task {
 
     PlatformIntType set_cpu_affinity(pthread_attr_t& attributes, const Os::Task::Arguments& arguments) {
         PlatformIntType status = 0;
-// Feature set check for _GNU_SOURCE before using GNU only features
-#ifdef _GNU_SOURCE
+// pthread_attr_setaffinity_np is a non-POSIX function. Notably, it is not available on musl.
+// Limit its use to builds that involve glibc, on Linux, with _GNU_SOURCE defined.
+// That's the circumstance in which we expect this feature to work.
+#if defined(TGT_OS_TYPE_LINUX) && defined(__GLIBC__) && defined(_GNU_SOURCE)
         const FwSizeType affinity = arguments.m_cpuAffinity;
         cpu_set_t cpu_set;
         CPU_ZERO(&cpu_set);
@@ -117,8 +124,8 @@ namespace Task {
         status = pthread_attr_setaffinity_np(&attributes, sizeof(cpu_set_t), &cpu_set);
         status = (status == PosixTaskHandle::SUCCESS) ? status : errno;
 #else
-            Fw::Logger::logMsg("[WARNING] %s setting CPU affinity is only available with GNU pthreads\n",
-                               reinterpret_cast<PlatformPointerCastType>(const_cast<CHAR*>(arguments.m_name.toChar())));
+            Fw::Logger::log("[WARNING] %s setting CPU affinity is only available with GNU pthreads\n",
+                            const_cast<CHAR*>(arguments.m_name.toChar()));
 #endif
         return status;
     }
@@ -163,24 +170,24 @@ namespace Task {
         // Failure due to permission automatically retried
         if (status == Os::Task::Status::ERROR_PERMISSION) {
             if (not PosixTask::s_permissions_reported) {
-                Fw::Logger::logMsg("\n");
-                Fw::Logger::logMsg("[NOTE] Task Permissions:\n");
-                Fw::Logger::logMsg("[NOTE]\n");
-                Fw::Logger::logMsg("[NOTE] You have insufficient permissions to create a task with priority and/or cpu affinity.\n");
-                Fw::Logger::logMsg("[NOTE] A task without priority and affinity will be created.\n");
-                Fw::Logger::logMsg("[NOTE]\n");
-                Fw::Logger::logMsg("[NOTE] There are three possible resolutions:\n");
-                Fw::Logger::logMsg("[NOTE] 1. Use tasks without priority and affinity using parameterless start()\n");
-                Fw::Logger::logMsg("[NOTE] 2. Run this executable as a user with task priority permission\n");
-                Fw::Logger::logMsg("[NOTE] 3. Grant capability with \"setcap 'cap_sys_nice=eip'\" or equivalent\n");
-                Fw::Logger::logMsg("\n");
+                Fw::Logger::log("\n");
+                Fw::Logger::log("[NOTE] Task Permissions:\n");
+                Fw::Logger::log("[NOTE]\n");
+                Fw::Logger::log("[NOTE] You have insufficient permissions to create a task with priority and/or cpu affinity.\n");
+                Fw::Logger::log("[NOTE] A task without priority and affinity will be created.\n");
+                Fw::Logger::log("[NOTE]\n");
+                Fw::Logger::log("[NOTE] There are three possible resolutions:\n");
+                Fw::Logger::log("[NOTE] 1. Use tasks without priority and affinity using parameterless start()\n");
+                Fw::Logger::log("[NOTE] 2. Run this executable as a user with task priority permission\n");
+                Fw::Logger::log("[NOTE] 3. Grant capability with \"setcap 'cap_sys_nice=eip'\" or equivalent\n");
+                Fw::Logger::log("\n");
                 PosixTask::s_permissions_reported = true;
             }
             // Fallback with no permission
             status = this->create(arguments, PermissionExpectation::EXPECT_NO_PERMISSION);
         } else if (status != Os::Task::Status::OP_OK) {
-            Fw::Logger::logMsg("[ERROR] Failed to create task with status: %d",
-                               static_cast<PlatformPointerCastType>(static_cast<PlatformIntType>(status)));
+            Fw::Logger::log("[ERROR] Failed to create task with status: %d",
+                            static_cast<PlatformIntType>(status));
         }
         return status;
     }
@@ -209,6 +216,39 @@ namespace Task {
     void PosixTask::resume() {
         FW_ASSERT(0);
     }
+
+
+    Os::Task::Status PosixTask::_delay(Fw::TimeInterval interval) {
+        Os::Task::Status task_status = Os::Task::OP_OK;
+        timespec sleep_interval;
+        sleep_interval.tv_sec = interval.getSeconds();
+        sleep_interval.tv_nsec = interval.getUSeconds() * 1000;
+
+        timespec remaining_interval;
+        remaining_interval.tv_sec = 0;
+        remaining_interval.tv_nsec = 0;
+
+        while (true) {
+            PlatformIntType status = nanosleep(&sleep_interval, &remaining_interval);
+            // Success, return ok
+            if (0 == status) {
+                break;
+            }
+            // Interrupted, reset sleep and iterate
+            else if (EINTR == errno) {
+                sleep_interval = remaining_interval;
+                continue;
+            }
+            // Anything else is an error
+            else {
+                task_status = Os::Task::Status::DELAY_ERROR;
+                break;
+            }
+        }
+        return task_status;
+    }
+
+
 } // end namespace Task
 } // end namespace Posix
 } // end namespace Os

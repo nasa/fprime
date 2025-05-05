@@ -11,10 +11,8 @@
 // ======================================================================
 
 #include "Fw/Types/Assert.hpp"
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Drv/LinuxI2cDriver/LinuxI2cDriver.hpp>
-
-#define DEBUG_PRINT 0
 
 namespace Drv {
 
@@ -27,14 +25,6 @@ LinuxI2cDriver ::LinuxI2cDriver(
     ) : LinuxI2cDriverComponentBase(compName)
   {
 
-  }
-
-  void LinuxI2cDriver ::
-    init(
-        const NATIVE_INT_TYPE instance
-    )
-  {
-    LinuxI2cDriverComponentBase::init(instance);
   }
 
   LinuxI2cDriver ::
@@ -56,7 +46,7 @@ LinuxI2cDriver ::LinuxI2cDriver(
 
   I2cStatus LinuxI2cDriver ::
     write_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 addr,
         Fw::Buffer &serBuffer
     )
@@ -66,7 +56,7 @@ LinuxI2cDriver ::LinuxI2cDriver(
 
   Drv::I2cStatus LinuxI2cDriver ::
     read_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 addr,
         Fw::Buffer &serBuffer
     )
@@ -76,7 +66,7 @@ LinuxI2cDriver ::LinuxI2cDriver(
 
   Drv::I2cStatus LinuxI2cDriver ::
     writeRead_handler(
-      const NATIVE_INT_TYPE portNum, /*!< The port number*/
+      const FwIndexType portNum, /*!< The port number*/
       U32 addr,
       Fw::Buffer &writeBuffer,
       Fw::Buffer &readBuffer

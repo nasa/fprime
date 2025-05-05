@@ -162,6 +162,12 @@ class TlmPacketParser(object):
             return 8
         elif type_name == "bool":
             return 1
+        elif type_name == "FwOpcodeType":
+            return 4
+        elif type_name == "Fw::Time":
+            return 11
+        elif type_name == "Fw::TimeInterval":
+            return 8
         else:
             return None
 
@@ -177,6 +183,7 @@ class TlmPacketParser(object):
         # uses the topology model to process the items
         # create list of used parsed component xmls
         parsed_xml_dict = {}
+        # deployment = the_parsed_topology_xml.get_deployment()
         for comp in the_parsed_topology_xml.get_instances():
             if comp.get_type() in topology_model.get_base_id_dict():
                 parsed_xml_dict[comp.get_type()] = comp.get_comp_xml()
@@ -335,6 +342,18 @@ class TlmPacketParser(object):
                     channel_list = []
                     for channel in entry:
                         channel_name = channel.attrib["name"]
+                        # TKC 11/20/2024 - In order to work with the ground system,
+                        #  we have to strip off the leading module. This is a
+                        #  band-aid until FPP packets are done
+                        name_parts = channel_name.split(".")
+                        if len(name_parts) != 3:
+                            raise TlmPacketParseValueError(
+                                'Channel %s must be of the format "module.component.channel_name"'
+                                % channel_name
+                            )
+
+                        (module, component, channel) = name_parts
+                        channel_name = "%s.%s" % (component, channel)
                         if not channel_name in channel_size_dict:
                             raise TlmPacketParseValueError(
                                 "Channel %s does not exist" % channel_name
@@ -381,6 +400,19 @@ class TlmPacketParser(object):
                         )
                     for channel in entry:
                         channel_name = channel.attrib["name"]
+                        # TKC 11/20/2024 - In order to work with the ground system,
+                        #  we have to strip off the leading module. This is a
+                        #  band-aid until FPP packets are done
+                        name_parts = channel_name.split(".")
+                        if len(name_parts) != 3:
+                            raise TlmPacketParseValueError(
+                                'Channel %s must be of the format "module.component.channel_name"'
+                                % channel_name
+                            )
+
+                        (module, component, channel) = name_parts
+                        channel_name = "%s.%s" % (component, channel)
+
                         if not channel_name in channel_size_dict:
                             raise TlmPacketParseValueError(
                                 "Channel %s does not exist" % channel_name

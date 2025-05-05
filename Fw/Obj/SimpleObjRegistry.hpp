@@ -19,7 +19,7 @@
 #ifndef FW_OBJ_SIMPLE_OBJ_REGISTRY_HPP
 #define FW_OBJ_SIMPLE_OBJ_REGISTRY_HPP
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Obj/ObjBase.hpp>
 
 #if FW_OBJECT_REGISTRATION == 1
@@ -38,7 +38,7 @@ namespace Fw {
         private:
             void regObject(ObjBase* obj); //!< register an object with the registry
             ObjBase* m_objPtrArray[FW_OBJ_SIMPLE_REG_ENTRIES]; //!< array of objects
-            NATIVE_INT_TYPE m_numEntries; //!< number of entries in the registry
+            FwSizeType m_numEntries; //!< number of entries in the registry
     };
 
 }

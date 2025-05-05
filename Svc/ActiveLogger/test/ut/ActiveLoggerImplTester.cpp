@@ -19,10 +19,6 @@ namespace Svc {
     typedef ActiveLogger_Enabled Enabled;
     typedef ActiveLogger_FilterSeverity FilterSeverity;
 
-    void ActiveLoggerImplTester::init(NATIVE_INT_TYPE instance) {
-        Svc::ActiveLoggerGTestBase::init();
-    }
-
     ActiveLoggerImplTester::ActiveLoggerImplTester(Svc::ActiveLoggerImpl& inst) :
             Svc::ActiveLoggerGTestBase("testerbase",100),
             m_impl(inst),
@@ -34,7 +30,7 @@ namespace Svc {
     }
 
     void ActiveLoggerImplTester::from_PktSend_handler(
-            const NATIVE_INT_TYPE portNum, //!< The port number
+            const FwIndexType portNum, //!< The port number
             Fw::ComBuffer &data, //!< Buffer containing packet data
             U32 context //!< context; not used
         ) {
@@ -43,7 +39,7 @@ namespace Svc {
     }
 
     void ActiveLoggerImplTester::from_FatalAnnounce_handler(
-                          const NATIVE_INT_TYPE portNum, //!< The port number
+                          const FwIndexType portNum, //!< The port number
                           FwEventIdType Id //!< The ID of the FATAL event
                       ) {
         this->m_receivedFatalEvent = true;
@@ -229,7 +225,7 @@ namespace Svc {
 
         REQUIREMENT("AL-003");
 
-        for (NATIVE_INT_TYPE filterID = 1; filterID <= TELEM_ID_FILTER_SIZE; filterID++) {
+        for (FwSizeType filterID = 1; filterID <= TELEM_ID_FILTER_SIZE; filterID++) {
             this->clearHistory();
             this->clearEvents();
             this->sendCmd_SET_ID_FILTER(0,cmdSeq,filterID,Enabled::ENABLED);
@@ -265,7 +261,7 @@ namespace Svc {
         }
 
         // Try to send the IDs that are filtered
-        for (NATIVE_INT_TYPE filterID = 1; filterID <= TELEM_ID_FILTER_SIZE; filterID++) {
+        for (FwSizeType filterID = 1; filterID <= TELEM_ID_FILTER_SIZE; filterID++) {
             this->clearHistory();
             this->clearEvents();
 
@@ -325,7 +321,7 @@ namespace Svc {
 
         // Now clear them
 
-        for (NATIVE_INT_TYPE filterID = 1; filterID <= TELEM_ID_FILTER_SIZE; filterID++) {
+        for (FwSizeType filterID = 1; filterID <= TELEM_ID_FILTER_SIZE; filterID++) {
             this->clearHistory();
             this->clearEvents();
             this->sendCmd_SET_ID_FILTER(0,cmdSeq,filterID,Enabled::DISABLED);
@@ -582,7 +578,7 @@ namespace Svc {
 
         // first read should be delimiter
         BYTE de;
-        FwSignedSizeType readSize = sizeof(de);
+        FwSizeType readSize = static_cast<FwSizeType>(sizeof(de));
 
         ASSERT_EQ(file.read(&de,readSize,Os::File::WaitType::WAIT),Os::File::OP_OK);
         ASSERT_EQ(delimiter,de);
@@ -620,7 +616,7 @@ namespace Svc {
     }
     void ActiveLoggerImplTester ::
       from_pingOut_handler(
-          const NATIVE_INT_TYPE portNum,
+          const FwIndexType portNum,
           U32 key
       )
     {

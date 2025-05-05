@@ -21,7 +21,7 @@
 
 namespace Drv {
 
-class LinuxUartDriver : public LinuxUartDriverComponentBase {
+class LinuxUartDriver final : public LinuxUartDriverComponentBase {
   public:
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction
@@ -30,11 +30,6 @@ class LinuxUartDriver : public LinuxUartDriverComponentBase {
     //! Construct object LinuxUartDriver
     //!
     LinuxUartDriver(const char* const compName /*!< The component name*/
-    );
-
-    //! Initialize object LinuxUartDriver
-    //!
-    void init(const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
     );
 
     //! Configure UART parameters
@@ -48,21 +43,21 @@ class LinuxUartDriver : public LinuxUartDriverComponentBase {
 #ifdef TGT_OS_TYPE_LINUX
       BAUD_460K=460800,
       BAUD_921K=921600,
-      BAUD_1000K=1000000000,
-      BAUD_1152K=1152000000,
-      BAUD_1500K=1500000000,
-      BAUD_2000K=2000000000,
+      BAUD_1000K=1000000,
+      BAUD_1152K=1152000,
+      BAUD_1500K=1500000,
+      BAUD_2000K=2000000,
 #ifdef B2500000
-      BAUD_2500K=2500000000,
+      BAUD_2500K=2500000,
 #endif
 #ifdef B3000000
-      BAUD_3000K=3000000000,
+      BAUD_3000K=3000000,
 #endif
 #ifdef B3500000
-      BAUD_3500K=3500000000,
+      BAUD_3500K=3500000,
 #endif
 #ifdef B4000000
-      BAUD_4000K=4000000000
+      BAUD_4000K=4000000
 #endif
 #endif
     };
@@ -98,11 +93,11 @@ class LinuxUartDriver : public LinuxUartDriverComponentBase {
 
     //! Handler implementation for serialSend
     //!
-    Drv::SendStatus send_handler(NATIVE_INT_TYPE portNum, /*!< The port number*/
+    void send_handler(FwIndexType portNum, /*!< The port number*/
                                  Fw::Buffer& serBuffer);
 
 
-    NATIVE_INT_TYPE m_fd;  //!< file descriptor returned for I/O device
+    PlatformIntType m_fd;  //!< file descriptor returned for I/O device
     U32 m_allocationSize; //!< size of allocation request to memory manager
     const char* m_device;  //!< original device path
 

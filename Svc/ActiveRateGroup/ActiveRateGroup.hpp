@@ -28,9 +28,9 @@ namespace Svc {
     //! time of the rate group and detects overruns.
     //!
 
-    class ActiveRateGroup : public ActiveRateGroupComponentBase {
+    class ActiveRateGroup final : public ActiveRateGroupComponentBase {
         public:
-            static constexpr NATIVE_INT_TYPE CONNECTION_COUNT_MAX = NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS;
+            static constexpr FwIndexType CONNECTION_COUNT_MAX = NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS;
 
             //!  \brief ActiveRateGroup constructor
             //!
@@ -39,16 +39,6 @@ namespace Svc {
             //!
             //!  \param compName Name of the component
             ActiveRateGroup(const char* compName);
-
-            //!  \brief ActiveRateGroup initialization function
-            //!
-            //!  The initialization function of the class initializes the member
-            //!  ports and the component base class
-            //!
-            //!  \param queueDepth Depth of the active component message queue
-            //!  \param instance Identifies the instance of the rate group component
-
-            void init(NATIVE_INT_TYPE queueDepth, NATIVE_INT_TYPE instance);
 
             //!  \brief ActiveRateGroup configuration function
             //!
@@ -60,7 +50,7 @@ namespace Svc {
             //!         output port number.
             //!  \param numContexts The number of elements in the context array.
 
-            void configure(NATIVE_INT_TYPE contexts[], NATIVE_INT_TYPE numContexts);
+            void configure(U32 contexts[], FwIndexType numContexts);
 
             //!  \brief ActiveRateGroup destructor
             //!
@@ -79,7 +69,7 @@ namespace Svc {
             //!  \param portNum incoming port call. For this class, should always be zero
             //!  \param cycleStart value stored by the cycle driver, used to compute execution time.
 
-            void CycleIn_handler(NATIVE_INT_TYPE portNum, Svc::TimerVal& cycleStart);
+            void CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleStart);
 
             //!  \brief Input cycle port pre message hook
             //!
@@ -89,7 +79,7 @@ namespace Svc {
             //!  \param portNum incoming port call. For this class, should always be zero
             //!  \param cycleStart value stored by the cycle driver, used to compute execution time.
 
-            void CycleIn_preMsgHook(NATIVE_INT_TYPE portNum, Svc::TimerVal& cycleStart); //!< CycleIn pre-message hook
+            void CycleIn_preMsgHook(FwIndexType portNum, Os::RawTime& cycleStart); //!< CycleIn pre-message hook
 
             //!  \brief Input ping port handler
             //!
@@ -98,7 +88,7 @@ namespace Svc {
             //!  \param portNum incoming port call. For this class, should always be zero
             //!  \param key value returned to health task to verify round trip
 
-            void PingIn_handler(NATIVE_INT_TYPE portNum, U32 key);
+            void PingIn_handler(FwIndexType portNum, U32 key);
 
             //!  \brief Task preamble
             //!
@@ -111,9 +101,9 @@ namespace Svc {
             U32 m_cycles; //!< cycles executed
             U32 m_maxTime; //!< maximum execution time in microseconds
             volatile bool m_cycleStarted; //!< indicate that cycle has started. Used to detect overruns.
-            NATIVE_INT_TYPE m_contexts[CONNECTION_COUNT_MAX]; //!< Must match number of output ports
-            NATIVE_INT_TYPE m_numContexts; //!< Number of contexts passed in by user
-            NATIVE_INT_TYPE m_overrunThrottle; //!< throttle value for overrun events
+            U32 m_contexts[CONNECTION_COUNT_MAX]; //!< Must match number of output ports
+            FwIndexType m_numContexts; //!< Number of contexts passed in by user
+            FwIndexType m_overrunThrottle; //!< throttle value for overrun events
             U32 m_cycleSlips; //!< tracks number of cycle slips
     };
 

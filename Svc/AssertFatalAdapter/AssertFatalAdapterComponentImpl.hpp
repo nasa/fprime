@@ -17,7 +17,7 @@
 
 namespace Svc {
 
-  class AssertFatalAdapterComponentImpl :
+  class AssertFatalAdapterComponentImpl final :
     public AssertFatalAdapterComponentBase
   {
 
@@ -33,12 +33,6 @@ namespace Svc {
           const char *const compName /*!< The component name*/
       );
 
-      //! Initialize object AssertFatalAdapter
-      //!
-      void init(
-          const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
-      );
-
       //! Destroy object AssertFatalAdapter
       //!
       ~AssertFatalAdapterComponentImpl();
@@ -46,8 +40,8 @@ namespace Svc {
       //! Report the assert as a FATAL
       void reportAssert(
           FILE_NAME_ARG file,
-          NATIVE_UINT_TYPE lineNo,
-          NATIVE_UINT_TYPE numArgs,
+          FwSizeType lineNo,
+          FwSizeType numArgs,
           FwAssertArgType arg1,
           FwAssertArgType arg2,
           FwAssertArgType arg3,
@@ -66,8 +60,8 @@ namespace Svc {
           private:
               void reportAssert(
                   FILE_NAME_ARG file,
-                  NATIVE_UINT_TYPE lineNo,
-                  NATIVE_UINT_TYPE numArgs,
+                  FwSizeType lineNo,
+                  FwSizeType numArgs,
                   FwAssertArgType arg1,
                   FwAssertArgType arg2,
                   FwAssertArgType arg3,

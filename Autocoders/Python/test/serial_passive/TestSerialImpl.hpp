@@ -54,21 +54,21 @@ namespace TestComponents {
       //! Handler implementation for SerialInSync
       //!
       void SerialInSync_handler(
-        NATIVE_INT_TYPE portNum, //!< The port number
+        FwIndexType portNum, //!< The port number
         Fw::SerializeBufferBase &Buffer //!< The serialization buffer
       );
 
       //! Handler implementation for SerialInGuarded
       //!
       void SerialInGuarded_handler(
-        NATIVE_INT_TYPE portNum, //!< The port number
+        FwIndexType portNum, //!< The port number
         Fw::SerializeBufferBase &Buffer //!< The serialization buffer
       );
 
       //! Handler implementation for SerialInAsync
       //!
       void SerialInAsync_handler(
-        NATIVE_INT_TYPE portNum, //!< The port number
+        FwIndexType portNum, //!< The port number
         Fw::SerializeBufferBase &Buffer //!< The serialization buffer
       );
 

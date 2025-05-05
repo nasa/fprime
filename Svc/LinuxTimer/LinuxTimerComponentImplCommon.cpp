@@ -12,7 +12,7 @@
 
 
 #include <Svc/LinuxTimer/LinuxTimerComponentImpl.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 namespace Svc {
 
@@ -27,14 +27,6 @@ namespace Svc {
         m_quit(false)
   {
 
-  }
-
-  void LinuxTimerComponentImpl ::
-    init(
-        const NATIVE_INT_TYPE instance
-    )
-  {
-    LinuxTimerComponentBase::init(instance);
   }
 
   LinuxTimerComponentImpl ::

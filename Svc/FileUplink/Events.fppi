@@ -63,10 +63,19 @@ event PacketOutOfOrder(
   format "Received packet {} after packet {}" \
   throttle 20
 
+@ The File Uplink component encountered a duplicate packet during file receipt
+event PacketDuplicate(
+                        packetIndex: U32 @< The sequence index of the duplicate packet
+                      ) \
+  severity warning high \
+  id 7 \
+  format "Received a duplicate of packet {}" \
+  throttle 20
+
 @ The File Uplink component received a CANCEL packet
 event UplinkCanceled \
   severity activity high \
-  id 7 \
+  id 8 \
   format "Received CANCEL packet"
 
 @ Error decoding file packet
@@ -74,5 +83,13 @@ event DecodeError(
                    status: I32 @< The sequence index of the out-of-order packet
                  ) \
   severity warning high \
-  id 8 \
+  id 9 \
   format "Unable to decode file packet. Status: {}"
+
+@ Invalid packet received
+event InvalidPacketReceived(
+                   packetType: U32 @< The packet type received
+                 ) \
+  severity warning high \
+  id 10 \
+  format "Invalid packet received. Wrong packet type: {}"

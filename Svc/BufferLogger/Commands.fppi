@@ -15,7 +15,7 @@ enum LogState {
 
 @ Sets the volatile logging state
 async command BL_SetLogging(
-                             state: LogState
+                             $state: LogState
                            ) \
   opcode 0x02
 

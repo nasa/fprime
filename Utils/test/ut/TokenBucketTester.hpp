@@ -15,7 +15,7 @@
 #define TOKENBUCKETTESTER_HPP
 
 #include "Utils/TokenBucket.hpp"
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include "gtest/gtest.h"
 
 namespace Utils {

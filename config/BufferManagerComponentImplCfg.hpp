@@ -1,10 +1,10 @@
 #ifndef __BUFFERMANAGERCOMPONENTIMPLCFG_HPP__
 #define __BUFFERMANAGERCOMPONENTIMPLCFG_HPP__
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 namespace Svc {
-    static const NATIVE_UINT_TYPE BUFFERMGR_MAX_NUM_BINS = 10;
+    static const U16 BUFFERMGR_MAX_NUM_BINS = 10;
 }
 
 

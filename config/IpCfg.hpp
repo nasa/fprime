@@ -9,7 +9,7 @@
 // acknowledged.
 //
 // ======================================================================
-#include <Fw/Time/Time.hpp>
+#include <Fw/Time/TimeInterval.hpp>
 #ifndef REF_IPCFG_HPP
 #define REF_IPCFG_HPP
 
@@ -21,7 +21,7 @@ enum IpCfg {
     SOCKET_MAX_ITERATIONS = 0xFFFF,        // Maximum send/recv attempts before an error is returned
     SOCKET_MAX_HOSTNAME_SIZE = 256         // Maximum stored hostname
 };
-static const Fw::Time SOCKET_RETRY_INTERVAL = Fw::Time(1, 0);
+static const Fw::TimeInterval SOCKET_RETRY_INTERVAL = Fw::TimeInterval(1, 0);
 
 
 #endif //REF_IPCFG_HPP

@@ -15,7 +15,6 @@
 namespace FppTest {
 
 class DpTest : public DpTestComponentBase {
-
     // Friend class for testing
     friend class Tester;
 
@@ -66,11 +65,6 @@ class DpTest : public DpTestComponentBase {
            const Fw::StringBase& stringRecordData           //!< The StringRecord data
     );
 
-    //! Initialize object DpTest
-    void init(const NATIVE_INT_TYPE queueDepth,   //!< The queue depth
-              const NATIVE_INT_TYPE instance = 0  //!< The instance number
-    );
-
     //! Destroy object DpTest
     ~DpTest();
 
@@ -88,7 +82,7 @@ class DpTest : public DpTestComponentBase {
     // ----------------------------------------------------------------------
 
     //! Handler implementation for schedIn
-    void schedIn_handler(const NATIVE_INT_TYPE portNum,  //!< The port number
+    void schedIn_handler(const FwIndexType portNum,  //!< The port number
                          U32 context                     //!< The call order
                          ) final;
 
@@ -143,6 +137,10 @@ class DpTest : public DpTestComponentBase {
     // ----------------------------------------------------------------------
     // Private helper functions
     // ----------------------------------------------------------------------
+
+    //! Check that a container is empty
+    void checkContainerEmpty(const DpContainer& container  //!< The container
+    ) const;
 
     //! Check a container for validity
     void checkContainer(const DpContainer& container,  //!< The container

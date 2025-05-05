@@ -32,7 +32,7 @@ void Tester ::initComponents() {
     this->component.init(Tester::TEST_INSTANCE_ID);
 }
 
-Fw::ParamValid Tester ::from_prmGetIn_handler(const NATIVE_INT_TYPE portNum, FwPrmIdType id, Fw::ParamBuffer& val) {
+Fw::ParamValid Tester ::from_prmGetIn_handler(const FwIndexType portNum, FwPrmIdType id, Fw::ParamBuffer& val) {
     val.resetSer();
 
     Fw::SerializeStatus status;
@@ -77,7 +77,7 @@ Fw::ParamValid Tester ::from_prmGetIn_handler(const NATIVE_INT_TYPE portNum, FwP
     return prmValid;
 }
 
-void Tester ::from_prmSetIn_handler(const NATIVE_INT_TYPE portNum, FwPrmIdType id, Fw::ParamBuffer& val) {
+void Tester ::from_prmSetIn_handler(const FwIndexType portNum, FwPrmIdType id, Fw::ParamBuffer& val) {
     Fw::SerializeStatus status;
     U32 id_base = component.getIdBase();
 

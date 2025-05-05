@@ -48,7 +48,7 @@ UNIT_TESTS = [
     "Svc_FileDownlink_ut_exe",
     "Svc_FileManager_ut_exe",
     "Svc_FileUplink_ut_exe",
-    "Svc_Framer_ut_exe",
+    "Svc_FprimeFramer_ut_exe",
     "Svc_GenericHub_ut_exe",
     "Svc_Health_ut_exe",
     "Svc_PosixTime_ut_exe",
@@ -167,9 +167,12 @@ def test_unittest_module_ut_info(UT_BUILD):
         "SignalGenTesterBase.cpp",
         "SignalGenTesterBase.hpp",
         "SignalGenTesterHelpers.cpp",
+        "SignalGen_DpReqTypeEnumAc.cpp",
+        "SignalGen_DpReqTypeEnumAc.hpp",
+        "SignalGen_DpReqTypeEnumAi.xml",
     ]
     actual_gen = [Path(source).name for source in generated]
     assert sorted(expected_gen) == sorted(
         actual_gen
     ), "Did not find expected autocoder generated sources"
-    assert dependencies == ["Ref_SignalGen"], "Did not find expected dependencies"
+    assert "Ref_SignalGen" in dependencies, "Did not find expected dependencies"

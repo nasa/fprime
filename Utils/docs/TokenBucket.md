@@ -1,4 +1,3 @@
-\page UtilsTokenBucketClass Utils::TokenBucket Class
 # Utils::TokenBucket
 
 ## 1 Introduction

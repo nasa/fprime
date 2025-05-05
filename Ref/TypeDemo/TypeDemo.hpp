@@ -22,11 +22,6 @@ class TypeDemo : public TypeDemoComponentBase {
     TypeDemo(const char* const compName  //!< The component name
     );
 
-    //! Initialize object TypeDemo
-    //!
-    void init(const NATIVE_INT_TYPE instance = 0  //!< The instance number
-    );
-
     //! Destroy object TypeDemo
     //!
     ~TypeDemo() = default;

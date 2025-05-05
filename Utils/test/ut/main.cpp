@@ -2,14 +2,8 @@
 // Main.cpp
 // ----------------------------------------------------------------------
 
-#include "LockGuardTester.hpp"
 #include "RateLimiterTester.hpp"
 #include "TokenBucketTester.hpp"
-
-TEST(LockGuardTest, TestLocking) {
-    Utils::LockGuardTester tester;
-    tester.testLocking();
-}
 
 TEST(RateLimiterTest, TestCounterTriggering) {
     Utils::RateLimiterTester tester;

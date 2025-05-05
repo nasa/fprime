@@ -5,26 +5,24 @@
 
 namespace Ref {
 
-    class RecvBuffImpl : public RecvBuffComponentBase {
+    class RecvBuffImpl final : public RecvBuffComponentBase {
         public:
 
             // Only called by derived class
             RecvBuffImpl(const char* compName);
 
-            void init(NATIVE_INT_TYPE instanceId = 0);
             ~RecvBuffImpl();
 
         private:
 
             // downcall for input port
-            void Data_handler(NATIVE_INT_TYPE portNum, Drv::DataBuffer &buff);
+            void Data_handler(FwIndexType portNum, Drv::DataBuffer &buff);
             Ref::PacketStat m_stats;
             U32 m_buffsReceived; // !< number of buffers received
             bool m_firstBuffReceived; // !< first buffer received or not
             U32 m_errBuffs; // !< number of buffers with errors received
             F32 m_sensor1;
             F32 m_sensor2;
-            void toString(char* str, I32 buffer_size);
 
             // parameter update notification
             void parameterUpdated(FwPrmIdType id);

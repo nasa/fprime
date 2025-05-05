@@ -27,7 +27,7 @@ namespace Svc {
     //! for components.
     //!
 
-    class PrmDbImpl : public PrmDbComponentBase {
+    class PrmDbImpl final : public PrmDbComponentBase {
         public:
 
             friend class PrmDbImplTester;
@@ -40,16 +40,6 @@ namespace Svc {
             //!
             //!  \param name component instance name
             PrmDbImpl(const char* name);
-
-            //!  \brief PrmDb initialization function
-            //!
-            //!  The initialization function for the component creates the message
-            //!  queue and initializes the component base classes.
-            //!
-            //!  \param queueDepth queue depth for messages
-            //!  \param instance instance of component, if more than one is needed.
-
-            void init(NATIVE_INT_TYPE queueDepth, NATIVE_INT_TYPE instance);
 
             //!  \brief PrmDb configure method
             //!
@@ -79,7 +69,7 @@ namespace Svc {
             //!  \param id identifier for parameter being used.
             //!  \param val buffer where value is placed.
             //!  \return status of retrieval. PARAM_VALID = successful read, PARAM_INVALID = unsuccessful read
-            Fw::ParamValid getPrm_handler(NATIVE_INT_TYPE portNum, FwPrmIdType id, Fw::ParamBuffer &val);
+            Fw::ParamValid getPrm_handler(FwIndexType portNum, FwPrmIdType id, Fw::ParamBuffer &val);
             //!  \brief PrmDb parameter set handler
             //!
             //!  This function updates the value of the parameter stored in RAM. The PRM_SAVE_FILE
@@ -88,7 +78,7 @@ namespace Svc {
             //!  \param portNum input port number. Should always be zero
             //!  \param id identifier for parameter being used.
             //!  \param val buffer where value to be saved is stored.
-            void setPrm_handler(NATIVE_INT_TYPE portNum, FwPrmIdType id, Fw::ParamBuffer &val);
+            void setPrm_handler(FwIndexType portNum, FwPrmIdType id, Fw::ParamBuffer &val);
 
             //!  \brief component ping handler
             //!
@@ -99,7 +89,7 @@ namespace Svc {
             //!  \param opCode the opcode being registered.
             //!  \param key the key value that is returned with the ping response
 
-            void pingIn_handler(NATIVE_INT_TYPE portNum, U32 key);
+            void pingIn_handler(FwIndexType portNum, U32 key);
             //!  \brief PrmDb PRM_SAVE_FILE command handler
             //!
             //!  This function saves the parameter values stored in RAM to the file

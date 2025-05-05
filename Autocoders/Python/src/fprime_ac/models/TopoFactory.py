@@ -41,7 +41,7 @@ class TopoFactory:
     """
     This is a concrete factory method object used to create the interface
     to the code generation.  A single call to create is made that returns
-    a the topology object containing a list of instanced components and
+    the topology object containing a list of instanced components and
     general topology information. Each component contains a list
     of output ports and each output port contains target component instance
     name and port name and type.

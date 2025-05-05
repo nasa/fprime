@@ -11,7 +11,7 @@
 // ======================================================================
 
 #include <Drv/LinuxSpiDriver/LinuxSpiDriverComponentImpl.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 namespace Drv {
 
@@ -29,10 +29,5 @@ namespace Drv {
     {
 
     }
-
-    void LinuxSpiDriverComponentImpl::init(const NATIVE_INT_TYPE instance) {
-        LinuxSpiDriverComponentBase::init(instance);
-    }
-
 
 } // end namespace Drv

@@ -6,6 +6,7 @@
 #
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
+
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/CmdSequencer.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/CmdSequencerImpl.cpp"
@@ -16,7 +17,8 @@ set(SOURCE_FILES
 )
 
 register_fprime_module()
-### UTs ###
+
+# ## UTs ###
 set(UT_SOURCE_FILES
   "${FPRIME_FRAMEWORK_PATH}/Svc/CmdSequencer/CmdSequencer.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/AMPCS.cpp"
@@ -30,12 +32,14 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/Mixed.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/MixedRelativeBase.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/NoFiles.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/NoRecords.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/Relative.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/SequenceFiles/AMPCS/CRCs.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/SequenceFiles/AMPCS/Headers.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/SequenceFiles/AMPCS/Records.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/SequenceFiles/BadCRCFile.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/SequenceFiles/BadDescriptorFile.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/SequenceFiles/NoRecordsFile.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/SequenceFiles/BadTimeBaseFile.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/SequenceFiles/BadTimeContextFile.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/SequenceFiles/Buffers.cpp"
@@ -65,3 +69,7 @@ set(UT_MOD_DEPS
 )
 choose_fprime_implementation(Os/File Os_File_None)
 register_fprime_ut()
+set (UT_TARGET_NAME "${FPRIME_CURRENT_MODULE}_ut_exe")
+if (TARGET "${UT_TARGET_NAME}")
+    target_compile_options("${UT_TARGET_NAME}" PRIVATE -Wno-conversion)
+endif()

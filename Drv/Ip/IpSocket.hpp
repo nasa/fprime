@@ -12,11 +12,17 @@
 #ifndef DRV_IP_IPHELPER_HPP_
 #define DRV_IP_IPHELPER_HPP_
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <IpCfg.hpp>
 #include <Os/Mutex.hpp>
 
 namespace Drv {
+
+struct SocketDescriptor final {
+    PlatformIntType fd = -1; //!< Used for all sockets to track the communication file descriptor
+    PlatformIntType serverFd = -1; //!< Used for server sockets to track the listening file descriptor
+};
+
 /**
  * \brief Status enumeration for socket return values
  */
@@ -36,6 +42,10 @@ enum SocketIpStatus {
     SOCK_SEND_ERROR = -13,                   //!< Failed to send after configured retries
     SOCK_NOT_STARTED = -14,                  //!< Socket has not been started
     SOCK_FAILED_TO_READ_BACK_PORT = -15,     //!< Failed to read back port from connection
+    SOCK_NO_DATA_AVAILABLE = -16,            //!< No data available or read operation would block
+    SOCK_ANOTHER_THREAD_OPENING = -17,       //!< Another thread is opening
+    SOCK_AUTO_CONNECT_DISABLED = -18,        //!< Automatic connections are disabled
+    SOCK_INVALID_CALL = -19                  //!< Operation is invalid
 };
 
 /**
@@ -66,36 +76,8 @@ class IpSocket {
      * \param send_timeout_microseconds: send timeout microseconds portion. Must be less than 1000000
      * \return status of configure
      */
-    SocketIpStatus configure(const char* hostname, const U16 port, const U32 send_timeout_seconds,
-                             const U32 send_timeout_microseconds);
-    /**
-     * \brief Returns true when the socket is started
-     *
-     * Returns true when the socket is started up sufficiently to be actively listening to clients. Returns false
-     * otherwise. This means `startup()` was called and returned success.
-     */
-    bool isStarted();
-
-    /**
-     * \brief check if IP socket has previously been opened
-     *
-     * Check if this IpSocket has previously been opened. In the case of Udp this will check for outgoing transmissions
-     * and (if configured) incoming transmissions as well. This does not guarantee errors will not occur when using this
-     * socket as the remote component may have disconnected.
-     *
-     * \return true if socket is open, false otherwise
-     */
-    bool isOpened();
-
-    /**
-     * \brief startup the socket, a no-op on unless this is server
-     *
-     * This will start-up the socket. In the case of most sockets, this is a no-op. On server sockets this binds to the
-     * server address and progresses through the `listen` step such that on `open` new clients may be accepted.
-     *
-     * \return status of startup
-     */
-    virtual SocketIpStatus startup();
+    virtual SocketIpStatus configure(const char* hostname, const U16 port, const U32 send_timeout_seconds,
+                                     const U32 send_timeout_microseconds);
 
     /**
      * \brief open the IP socket for communications
@@ -112,9 +94,10 @@ class IpSocket {
      *
      * Note: delegates to openProtocol for protocol specific implementation
      *
+     * \param socketDescriptor: socket descriptor to update with opened port
      * \return status of open
      */
-    SocketIpStatus open();
+    SocketIpStatus open(SocketDescriptor& socketDescriptor);
     /**
      * \brief send data out the IP socket from the given buffer
      *
@@ -126,11 +109,12 @@ class IpSocket {
      *
      * Note: delegates to `sendProtocol` to send the data
      *
+     * \param fd: file descriptor to send to
      * \param data: pointer to data to send
      * \param size: size of data to send
      * \return status of the send, SOCK_DISCONNECTED to reopen, SOCK_SUCCESS on success, something else on error
      */
-    SocketIpStatus send(const U8* const data, const U32 size);
+    SocketIpStatus send(const SocketDescriptor& socketDescriptor, const U8* const data, const U32 size);
     /**
      * \brief receive data from the IP socket from the given buffer
      *
@@ -142,26 +126,35 @@ class IpSocket {
      *
      * Note: delegates to `recvProtocol` to send the data
      *
+     * \param socketDescriptor: socket descriptor to recv from
      * \param data: pointer to data to fill with received data
      * \param size: maximum size of data buffer to fill
      * \return status of the send, SOCK_DISCONNECTED to reopen, SOCK_SUCCESS on success, something else on error
      */
-    SocketIpStatus recv(U8* const data, U32& size);
+    SocketIpStatus recv(const SocketDescriptor& fd, U8* const data, U32& size);
+
     /**
      * \brief closes the socket
      *
      * Closes the socket opened by the open call. In this case of the TcpServer, this does NOT close server's listening
-     * port (call `shutdown`) but will close the active client connection.
+     * port but will close the active client connection.
+     * 
+     * \param socketDescriptor: socket descriptor to close
      */
-    void close();
+    void close(const SocketDescriptor& socketDescriptor);
 
     /**
      * \brief shutdown the socket
      *
-     * Closes the socket opened by the open call. In this case of the TcpServer, this does close server's listening
-     * port. This will shutdown all clients.
+     * Shuts down the socket opened by the open call. In this case of the TcpServer, this does shut down server's
+     * listening port, but rather shuts down the active client.
+     *
+     * A shut down begins the termination of communication. The underlying socket will coordinate a clean shutdown, and
+     * it is safe to close the socket once a recv with 0 size has returned or an appropriate timeout has been reached.
+     * 
+     * \param socketDescriptor: socket descriptor to shutdown
      */
-    virtual void shutdown();
+    void shutdown(const SocketDescriptor& socketDescriptor);
 
   PROTECTED:
     /**
@@ -178,10 +171,10 @@ class IpSocket {
 
     /**
      * \brief setup the socket timeout properties of the opened outgoing socket
-     * \param socketFd: file descriptor to setup
+     * \param socketDescriptor: socket descriptor to setup
      * \return status of timeout setup
     */
-    SocketIpStatus setupTimeouts(NATIVE_INT_TYPE socketFd);
+    SocketIpStatus setupTimeouts(PlatformIntType socketFd);
 
     /**
      * \brief converts a given address in dot form x.x.x.x to an ip address. ONLY works for IPv4.
@@ -192,33 +185,31 @@ class IpSocket {
     static SocketIpStatus addressToIp4(const char* address, void* ip4);
     /**
      * \brief Protocol specific open implementation, called from open.
-     * \param fd: (output) file descriptor opened. Only valid on SOCK_SUCCESS. Otherwise will be invalid
+     * \param socketDescriptor: (output) socket descriptor opened. Only valid on SOCK_SUCCESS. Otherwise will be invalid
      * \return status of open
      */
-    virtual SocketIpStatus openProtocol(NATIVE_INT_TYPE& fd) = 0;
+    virtual SocketIpStatus openProtocol(SocketDescriptor& fd) = 0;
     /**
      * \brief Protocol specific implementation of send.  Called directly with retry from send.
+     * \param socketDescriptor: socket descriptor to send to
      * \param data: data to send
      * \param size: size of data to send
      * \return: size of data sent, or -1 on error.
      */
-    virtual I32 sendProtocol(const U8* const data, const U32 size) = 0;
+    virtual I32 sendProtocol(const SocketDescriptor& socketDescriptor, const U8* const data, const U32 size) = 0;
 
     /**
      * \brief Protocol specific implementation of recv.  Called directly with error handling from recv.
+     * \param socket: socket descriptor to recv from
      * \param data: data pointer to fill
      * \param size: size of data buffer
      * \return: size of data received, or -1 on error.
      */
-    virtual I32 recvProtocol( U8* const data, const U32 size) = 0;
+    virtual I32 recvProtocol(const SocketDescriptor& socketDescriptor, U8* const data, const U32 size) = 0;
 
-    Os::Mutex m_lock;
-    NATIVE_INT_TYPE m_fd;
     U32 m_timeoutSeconds;
     U32 m_timeoutMicroseconds;
     U16 m_port;  //!< IP address port used
-    bool m_open; //!< Have we successfully opened
-    bool m_started; //!< Have we successfully started the socket
     char m_hostname[SOCKET_MAX_HOSTNAME_SIZE];  //!< Hostname to supply
 };
 }  // namespace Drv

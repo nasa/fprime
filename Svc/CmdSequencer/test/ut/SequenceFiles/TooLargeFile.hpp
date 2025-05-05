@@ -28,8 +28,8 @@ namespace Svc {
 
         //! Construct a TooLargeFile
         TooLargeFile(
-            const U32 bufferSize, //!< The sequence buffer size
-            const Format::t format //!< The file format
+            const U32 a_bufferSize, //!< The sequence buffer size
+            const Format::t a_format //!< The file format
         );
 
       public:

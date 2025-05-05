@@ -77,10 +77,10 @@ module Ref {
     stack size Default.STACK_SIZE \
     priority 97
 
-  #instance tlmSend: Svc.TlmPacketizer base id 0x0C00 \
-  #    queue size Default.QUEUE_SIZE \
-  #    stack size Default.STACK_SIZE \
-  #    priority 97
+#   instance tlmSend: Svc.TlmPacketizer base id 0x0C00 \
+#       queue size Default.QUEUE_SIZE \
+#       stack size Default.STACK_SIZE \
+#       priority 97
 
   instance prmDb: Svc.PrmDb base id 0x0D00 \
     queue size Default.QUEUE_SIZE \
@@ -102,8 +102,14 @@ module Ref {
     stack size Default.STACK_SIZE \
     priority 96
 
+  # ComQueue has a deeper queue to be resilient to spikes in com throughput
+  instance comQueue: Svc.ComQueue base id 0x1100 \
+      queue size 50 \
+      stack size Default.STACK_SIZE \
+      priority 100
 
-  instance typeDemo: Ref.TypeDemo base id 0x1100
+
+  instance typeDemo: Ref.TypeDemo base id 0x1200
 
   # ----------------------------------------------------------------------
   # Queued component instances
@@ -129,37 +135,45 @@ module Ref {
 
   instance sendBuffComp: Ref.SendBuff base id 0x2600 \
     queue size Default.QUEUE_SIZE
+  
+
 
   # ----------------------------------------------------------------------
   # Passive component instances
   # ----------------------------------------------------------------------
 
   @ Communications driver. May be swapped with other comm drivers like UART
-  @ Note: Here we have TCP reliable uplink and UDP (low latency) downlink
-  instance comm: Drv.TcpClient base id 0x4000
+  instance comDriver: Drv.TcpClient base id 0x4000
 
-  instance downlink: Svc.Framer base id 0x4100
+  instance fatalAdapter: Svc.AssertFatalAdapter base id 0x4100
 
-  instance fatalAdapter: Svc.AssertFatalAdapter base id 0x4200
+  instance fatalHandler: Svc.FatalHandler base id 0x4200
 
-  instance fatalHandler: Svc.FatalHandler base id 0x4300
+  instance commsBufferManager: Svc.BufferManager base id 0x4300
 
-  instance fileUplinkBufferManager: Svc.BufferManager base id 0x4400
+  instance posixTime: Svc.PosixTime base id 0x4400
 
-  instance posixTime: Svc.PosixTime base id 0x4500
+  instance rateGroupDriverComp: Svc.RateGroupDriver base id 0x4500
 
-  instance rateGroupDriverComp: Svc.RateGroupDriver base id 0x4600
+  instance recvBuffComp: Ref.RecvBuff base id 0x4600
 
-  instance recvBuffComp: Ref.RecvBuff base id 0x4700
+  instance version: Svc.Version base id 0x4700
 
-  instance staticMemory: Svc.StaticMemory base id 0x4800
+  instance textLogger: Svc.PassiveTextLogger base id 0x4800
 
-  instance textLogger: Svc.PassiveTextLogger base id 0x4900
+  instance systemResources: Svc.SystemResources base id 0x4900
 
-  instance uplink: Svc.Deframer base id 0x4A00
+  instance dpBufferManager: Svc.BufferManager base id 0x4A00
 
-  instance systemResources: Svc.SystemResources base id 0x4B00
+  instance frameAccumulator: Svc.FrameAccumulator base id 0x4B00
 
-  instance dpBufferManager: Svc.BufferManager base id 0x4C00
+  instance deframer: Svc.FprimeDeframer base id 0x4C00
+
+  instance fprimeRouter: Svc.FprimeRouter base id 0x4D00
+
+  instance fprimeFramer: Svc.FprimeFramer base id 0x4E00
+
+  instance comStub: Svc.ComStub base id 0x4F00
 
 }
+

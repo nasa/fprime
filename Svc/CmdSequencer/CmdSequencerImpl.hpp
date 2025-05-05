@@ -19,7 +19,7 @@
 
 namespace Svc {
 
-  class CmdSequencerComponentImpl :
+  class CmdSequencerComponentImpl final :
     public CmdSequencerComponentBase
   {
 
@@ -110,6 +110,9 @@ namespace Svc {
                   const FwTimeContextStoreType currTimeContext, //!< The current time context
                   const FwTimeContextStoreType seqTimeContext //!< The sequence file time context
               );
+
+              // No Records 
+              void noRecords();
 
             PRIVATE:
 
@@ -214,9 +217,9 @@ namespace Svc {
 
           //! Give the sequence representation a memory buffer
           void allocateBuffer(
-              NATIVE_INT_TYPE identifier, //!< The identifier
+              FwEnumStoreType identifier, //!< The identifier
               Fw::MemAllocator& allocator, //!< The allocator
-              NATIVE_UINT_TYPE bytes //!< The number of bytes
+              FwSizeType bytes //!< The number of bytes
           );
 
           //! Deallocate the buffer
@@ -234,6 +237,10 @@ namespace Svc {
           //! Get the log file name
           //! \return The log file name
           Fw::LogStringArg& getLogFileName();
+
+          //! Get the normal string file name
+          //! \return The normal string file name
+          Fw::String& getStringFileName();
 
           //! Get the sequence header
           const Header& getHeader() const;
@@ -277,11 +284,14 @@ namespace Svc {
           //! Copy of file name for events
           Fw::LogStringArg m_logFileName;
 
+          //! Copy of file name for ports
+          Fw::String m_stringFileName;
+
           //! Serialize buffer to hold the binary sequence data
           Fw::ExternalSerializeBuffer m_buffer;
 
           //! The allocator ID
-          NATIVE_INT_TYPE m_allocatorId;
+          FwEnumStoreType m_allocatorId;
 
           //! The sequence header
           Header m_header;
@@ -315,7 +325,7 @@ namespace Svc {
             //! Update computed CRC
             void update(
                 const BYTE* buffer, //!< The buffer
-                NATIVE_UINT_TYPE bufferSize //!< The buffer size
+                FwSizeType bufferSize //!< The buffer size
             );
 
             //! Finalize computed CRC
@@ -515,17 +525,11 @@ namespace Svc {
           const char* compName //!< The component name
       );
 
-      //! Initialize a CmdSequencer
-      void init(
-          const NATIVE_INT_TYPE queueDepth, //!< The queue depth
-          const NATIVE_INT_TYPE instance //!< The instance number
-      );
-
       //! (Optional) Set a timeout.
       //! Sequence will quit if a command takes longer than the number of
       //! seconds in the timeout value.
       void setTimeout(
-          const NATIVE_UINT_TYPE seconds //!< The number of seconds
+          const U32 seconds //!< The number of seconds
       );
 
       //! (Optional) Set the sequence format.
@@ -540,9 +544,9 @@ namespace Svc {
       //! Call this after constructor and init, and after setting
       //! the sequence format, but before task is spawned.
       void allocateBuffer(
-          const NATIVE_INT_TYPE identifier, //!< The identifier
+          const FwEnumStoreType identifier, //!< The identifier
           Fw::MemAllocator& allocator, //!< The allocator
-          const NATIVE_UINT_TYPE bytes //!< The number of bytes
+          const FwSizeType bytes //!< The number of bytes
       );
 
       //! (Optional) Load a sequence to run later.
@@ -567,7 +571,7 @@ namespace Svc {
 
       //! Handler for input port cmdResponseIn
       void cmdResponseIn_handler(
-          NATIVE_INT_TYPE portNum, //!< The port number
+          FwIndexType portNum, //!< The port number
           FwOpcodeType opcode, //!< The command opcode
           U32 cmdSeq, //!< The command sequence number
           const Fw::CmdResponse& response //!< The command response
@@ -575,26 +579,26 @@ namespace Svc {
 
       //! Handler for input port schedIn
       void schedIn_handler(
-          NATIVE_INT_TYPE portNum, //!< The port number
-          NATIVE_UINT_TYPE order //!< The call order
+          FwIndexType portNum, //!< The port number
+          U32 order //!< The call order
       );
 
       //! Handler for input port seqRunIn
       void seqRunIn_handler(
-          NATIVE_INT_TYPE portNum, //!< The port number
-          Fw::String &filename //!< The sequence file
+          FwIndexType portNum, //!< The port number
+          const Fw::StringBase& filename //!< The sequence file
       );
 
       //! Handler for ping port
       void pingIn_handler(
-          NATIVE_INT_TYPE portNum, //!< The port number
+          FwIndexType portNum, //!< The port number
           U32 key //!< Value to return to pinger
       );
 
       //! Handler implementation for seqCancelIn
       //!
       void seqCancelIn_handler(
-          const NATIVE_INT_TYPE portNum /*!< The port number*/
+          const FwIndexType portNum /*!< The port number*/
       );
 
     PRIVATE:
@@ -764,7 +768,7 @@ namespace Svc {
       U32 m_sequencesCompletedCount;
 
       //! timeout value
-      NATIVE_UINT_TYPE m_timeout;
+      U32 m_timeout;
 
       //! timeout timer
       Timer m_cmdTimeoutTimer;

@@ -20,10 +20,6 @@
 #include <termios.h>
 #include <cerrno>
 
-//#include <cstdlib>
-//#include <cstdio>
-//#define DEBUG_PRINT(...) printf(##__VA_ARGS__); fflush(stdout)
-#define DEBUG_PRINT(...)
 
 namespace Drv {
 
@@ -35,23 +31,18 @@ LinuxUartDriver ::LinuxUartDriver(const char* const compName)
     : LinuxUartDriverComponentBase(compName), m_fd(-1), m_allocationSize(0),  m_device("NOT_EXIST"), m_quitReadThread(false) {
 }
 
-void LinuxUartDriver ::init(const NATIVE_INT_TYPE instance) {
-  LinuxUartDriverComponentBase::init(instance);
-}
-
 bool LinuxUartDriver::open(const char* const device,
                            UartBaudRate baud,
                            UartFlowControl fc,
                            UartParity parity,
                            U32 allocationSize) {
     FW_ASSERT(device != nullptr);
-    NATIVE_INT_TYPE fd = -1;
-    NATIVE_INT_TYPE stat = -1;
+    PlatformIntType fd = -1;
+    PlatformIntType stat = -1;
     this->m_allocationSize = allocationSize;
 
     this->m_device = device;
 
-    DEBUG_PRINT("Opening UART device %s\n", device);
 
     /*
      The O_NOCTTY flag tells UNIX that this program doesn't want to be the "controlling terminal" for that port. If you
@@ -62,13 +53,10 @@ bool LinuxUartDriver::open(const char* const device,
     fd = ::open(device, O_RDWR | O_NOCTTY);
 
     if (fd == -1) {
-        DEBUG_PRINT("open UART device %s failed.\n", device);
         Fw::LogStringArg _arg = device;
         Fw::LogStringArg _err = strerror(errno);
         this->log_WARNING_HI_OpenError(_arg, this->m_fd, _err);
         return false;
-    } else {
-        DEBUG_PRINT("Successfully opened UART device %s fd %d\n", device, fd);
     }
 
     this->m_fd = fd;
@@ -78,14 +66,11 @@ bool LinuxUartDriver::open(const char* const device,
 
     stat = tcgetattr(fd, &cfg);
     if (-1 == stat) {
-        DEBUG_PRINT("tcgetattr failed: (%d): %s\n", stat, strerror(errno));
         close(fd);
         Fw::LogStringArg _arg = device;
         Fw::LogStringArg _err = strerror(errno);
         this->log_WARNING_HI_OpenError(_arg, fd, _err);
         return false;
-    } else {
-        DEBUG_PRINT("tcgetattr passed.\n");
     }
 
     /*
@@ -108,14 +93,11 @@ bool LinuxUartDriver::open(const char* const device,
 
     stat = tcsetattr(fd, TCSANOW, &cfg);
     if (-1 == stat) {
-        DEBUG_PRINT("tcsetattr failed: (%d): %s\n", stat, strerror(errno));
         close(fd);
         Fw::LogStringArg _arg = device;
         Fw::LogStringArg _err = strerror(errno);
         this->log_WARNING_HI_OpenError(_arg, fd, _err);
         return false;
-    } else {
-        DEBUG_PRINT("tcsetattr passed.\n");
     }
 
     // Set flow control
@@ -124,7 +106,6 @@ bool LinuxUartDriver::open(const char* const device,
 
         stat = tcgetattr(fd, &t);
         if (-1 == stat) {
-            DEBUG_PRINT("tcgetattr UART fd %d failed\n", fd);
             close(fd);
             Fw::LogStringArg _arg = device;
             Fw::LogStringArg _err = strerror(errno);
@@ -137,7 +118,6 @@ bool LinuxUartDriver::open(const char* const device,
 
         stat = tcsetattr(fd, TCSANOW, &t);
         if (-1 == stat) {
-            DEBUG_PRINT("tcsetattr UART fd %d failed\n", fd);
             close(fd);
             Fw::LogStringArg _arg = device;
             Fw::LogStringArg _err = strerror(errno);
@@ -146,7 +126,7 @@ bool LinuxUartDriver::open(const char* const device,
         }
     }
 
-    NATIVE_INT_TYPE relayRate = B0;
+    PlatformIntType relayRate = B0;
     switch (baud) {
         case BAUD_9600:
             relayRate = B9600;
@@ -215,7 +195,6 @@ bool LinuxUartDriver::open(const char* const device,
 
     stat = tcgetattr(fd, &newtio);
     if (-1 == stat) {
-        DEBUG_PRINT("tcgetattr UART fd %d failed\n", fd);
         close(fd);
         Fw::LogStringArg _arg = device;
         Fw::LogStringArg _err = strerror(errno);
@@ -258,7 +237,6 @@ bool LinuxUartDriver::open(const char* const device,
     // Set baud rate:
     stat = cfsetispeed(&newtio, static_cast<speed_t>(relayRate));
     if (stat) {
-        DEBUG_PRINT("cfsetispeed failed\n");
         close(fd);
         Fw::LogStringArg _arg = device;
         Fw::LogStringArg _err = strerror(errno);
@@ -267,7 +245,6 @@ bool LinuxUartDriver::open(const char* const device,
     }
     stat = cfsetospeed(&newtio, static_cast<speed_t>(relayRate));
     if (stat) {
-        DEBUG_PRINT("cfsetospeed failed\n");
         close(fd);
         Fw::LogStringArg _arg = device;
         Fw::LogStringArg _err = strerror(errno);
@@ -289,7 +266,6 @@ bool LinuxUartDriver::open(const char* const device,
     // Set attributes:
     stat = tcsetattr(fd, TCSANOW, &newtio);
     if (-1 == stat) {
-        DEBUG_PRINT("tcsetattr UART fd %d failed\n", fd);
         close(fd);
         Fw::LogStringArg _arg = device;
         Fw::LogStringArg _err = strerror(errno);
@@ -308,8 +284,6 @@ bool LinuxUartDriver::open(const char* const device,
 
 LinuxUartDriver ::~LinuxUartDriver() {
     if (this->m_fd != -1) {
-        DEBUG_PRINT("Closing UART device %d\n", this->m_fd);
-
         (void)close(this->m_fd);
     }
 }
@@ -318,50 +292,45 @@ LinuxUartDriver ::~LinuxUartDriver() {
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-Drv::SendStatus LinuxUartDriver ::send_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& serBuffer) {
-    Drv::SendStatus status = Drv::SendStatus::SEND_OK;
+void LinuxUartDriver ::send_handler(const FwIndexType portNum, Fw::Buffer& serBuffer) {
+    Drv::ByteStreamStatus status = Drv::ByteStreamStatus::OP_OK;
     if (this->m_fd == -1 || serBuffer.getData() == nullptr || serBuffer.getSize() == 0) {
-        status = Drv::SendStatus::SEND_ERROR;
+        status = Drv::ByteStreamStatus::OTHER_ERROR;
     } else {
         unsigned char *data = serBuffer.getData();
-        NATIVE_INT_TYPE xferSize = static_cast<NATIVE_INT_TYPE>(serBuffer.getSize());
+        FW_ASSERT(static_cast<size_t>(serBuffer.getSize()) <= std::numeric_limits<size_t>::max(),
+                  static_cast<FwAssertArgType>(serBuffer.getSize()));
+        size_t xferSize = static_cast<size_t>(serBuffer.getSize());
 
-        NATIVE_INT_TYPE stat = static_cast<NATIVE_INT_TYPE>(::write(this->m_fd, data, static_cast<size_t>(xferSize)));
+        ssize_t stat = ::write(this->m_fd, data, xferSize);
 
-        if (-1 == stat || stat != xferSize) {
+        if (-1 == stat || static_cast<size_t>(stat) != xferSize) {
           Fw::LogStringArg _arg = this->m_device;
-          this->log_WARNING_HI_WriteError(_arg, stat);
-          status = Drv::SendStatus::SEND_ERROR;
+          this->log_WARNING_HI_WriteError(_arg, static_cast<I32>(stat));
+          status = Drv::ByteStreamStatus::OTHER_ERROR;
         }
     }
-    // Deallocate when necessary
-    if (isConnected_deallocate_OutputPort(0)) {
-        deallocate_out(0, serBuffer);
-    }
-    return status;
+    // Return the buffer back to the caller
+    dataReturnOut_out(0, serBuffer, status);
 }
 
 void LinuxUartDriver ::serialReadTaskEntry(void* ptr) {
     FW_ASSERT(ptr != nullptr);
-    Drv::RecvStatus status = RecvStatus::RECV_ERROR;  // added by m.chase 03.06.2017
+    Drv::ByteStreamStatus status = ByteStreamStatus::OTHER_ERROR;  // added by m.chase 03.06.2017
     LinuxUartDriver* comp = reinterpret_cast<LinuxUartDriver*>(ptr);
     while (!comp->m_quitReadThread) {
         Fw::Buffer buff = comp->allocate_out(0,comp->m_allocationSize);
 
-        // On failed allocation, error and deallocate
+        // On failed allocation, error
         if (buff.getData() == nullptr) {
             Fw::LogStringArg _arg = comp->m_device;
             comp->log_WARNING_HI_NoBuffers(_arg);
-            status = RecvStatus::RECV_ERROR;
+            status = ByteStreamStatus::OTHER_ERROR;
             comp->recv_out(0, buff, status);
             // to avoid spinning, wait 50 ms
-            Os::Task::delay(Fw::Time(0, 50));
+            Os::Task::delay(Fw::TimeInterval(0, 50000));
             continue;
         }
-
-        //          timespec stime;
-        //          (void)clock_gettime(CLOCK_REALTIME,&stime);
-        //          DEBUG_PRINT("<<< Calling dsp_relay_uart_relay_read() at %d %d\n", stime.tv_sec, stime.tv_nsec);
 
         int stat = 0;
 
@@ -378,12 +347,12 @@ void LinuxUartDriver ::serialReadTaskEntry(void* ptr) {
         if (stat == -1) {
             Fw::LogStringArg _arg = comp->m_device;
             comp->log_WARNING_HI_ReadError(_arg, stat);
-            status = RecvStatus::RECV_ERROR;
+            status = ByteStreamStatus::OTHER_ERROR;
         } else if (stat > 0) {
             buff.setSize(static_cast<U32>(stat));
-            status = RecvStatus::RECV_OK;  // added by m.chase 03.06.2017
+            status = ByteStreamStatus::OP_OK;  // added by m.chase 03.06.2017
         } else {
-            status = RecvStatus::RECV_ERROR; // Simply to return the buffer
+            status = ByteStreamStatus::OTHER_ERROR; // Simply to return the buffer
         }
         comp->recv_out(0, buff, status);  // added by m.chase 03.06.2017
     }

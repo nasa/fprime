@@ -14,6 +14,19 @@
 namespace Svc {
 
 class ComQueueTester : public ComQueueGTestBase {
+
+  public:
+
+    // ----------------------------------------------------------------------
+    // Constants
+    // ----------------------------------------------------------------------
+
+    // Instance ID supplied to the component instance under test
+    static const FwEnumStoreType TEST_INSTANCE_ID = 0;
+
+    // Queue depth supplied to the component instance under test
+    static const FwSizeType TEST_INSTANCE_QUEUE_DEPTH = 10;
+
   private:
     // ----------------------------------------------------------------------
     // Construction and destruction
@@ -38,14 +51,16 @@ class ComQueueTester : public ComQueueGTestBase {
     // ----------------------------------------------------------------------
     void configure();
 
-    void sendByQueueNumber(NATIVE_INT_TYPE queueNumber, NATIVE_INT_TYPE& portNum, QueueType& queueType);
+    void sendByQueueNumber(Fw::Buffer& buffer,
+                           FwIndexType queueNumber,
+                           FwIndexType& portNum,
+                           QueueType& queueType);
 
     void emitOne();
 
-    void emitOneAndCheck(NATIVE_UINT_TYPE expectedIndex,
-                         QueueType expectedType,
-                         Fw::ComBuffer& expectedCom,
-                         Fw::Buffer& expectedBuff);
+    void emitOneAndCheck(FwIndexType expectedIndex,
+                         U8* expectedData,
+                         FwSizeType expectedDataSize);
 
     // ----------------------------------------------------------------------
     // Tests
@@ -57,26 +72,15 @@ class ComQueueTester : public ComQueueGTestBase {
 
     void testPrioritySend();
 
-    void testQueueOverflow();
+    void testExternalQueueOverflow();
+
+    void testInternalQueueOverflow();
 
     void testReadyFirst();
 
-  private:
-    // ----------------------------------------------------------------------
-    // Handlers for typed from ports
-    // ----------------------------------------------------------------------
+    void testContextData();
 
-    //! Handler for from_buffQueueSend
-    //!
-    void from_buffQueueSend_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
-                                    Fw::Buffer& fwBuffer);
-
-    //! Handler for from_comQueueSend
-    //!
-    void from_comQueueSend_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
-                                   Fw::ComBuffer& data,           /*!< Buffer containing packet data*/
-                                   U32 context                    /*!< Call context value; meaning chosen by user*/
-    );
+    void testBufferQueueReturn();
 
   private:
     // ----------------------------------------------------------------------
@@ -99,6 +103,7 @@ class ComQueueTester : public ComQueueGTestBase {
     //! The component under test
     //!
     ComQueue component;
+
 };
 
 }  // end namespace Svc

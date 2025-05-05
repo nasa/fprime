@@ -24,11 +24,6 @@ class Empty :
         const char* const compName //!< The component name
     );
 
-    //! Initialize Empty object
-    void init(
-        NATIVE_INT_TYPE instance = 0 //!< The instance number
-    );
-
     //! Destroy Empty object
     ~Empty();
 

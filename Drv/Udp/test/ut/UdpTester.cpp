@@ -13,10 +13,10 @@
 #include "STest/Pick/Pick.hpp"
 #include <Drv/Ip/test/ut/PortSelector.hpp>
 #include <Drv/Ip/test/ut/SocketTestHelper.hpp>
-#include "Os/Log.hpp"
+#include "Os/Console.hpp"
 #include <sys/socket.h>
 
-Os::Log logger;
+Os::Console logger;
 
 namespace Drv {
 
@@ -28,14 +28,14 @@ void UdpTester::test_with_loop(U32 iterations, bool recv_thread) {
     U8 buffer[sizeof(m_data_storage)] = {};
     Drv::SocketIpStatus status1 = Drv::SOCK_SUCCESS;
     Drv::SocketIpStatus status2 = Drv::SOCK_SUCCESS;
+    Drv::SocketDescriptor udp2_fd;
 
     U16 port1 = Drv::Test::get_free_port(true);
     ASSERT_NE(0, port1);
     U16 port2 = port1;
     uint8_t attempt_to_find_available_port = std::numeric_limits<uint8_t>::max();
 
-    while ((port1 == port2) && attempt_to_find_available_port > 0)
-    {
+    while ((port1 == port2) && attempt_to_find_available_port > 0) {
         port2 = Drv::Test::get_free_port(true);
         ASSERT_NE(0, port2);
         --attempt_to_find_available_port;
@@ -70,13 +70,13 @@ void UdpTester::test_with_loop(U32 iterations, bool recv_thread) {
                 << "Port2: " << port2;
 
         } else {
-            EXPECT_TRUE(Drv::Test::wait_on_change(this->component.getSocketHandler(), true, Drv::Test::get_configured_delay_ms()/10 + 1));
+            EXPECT_TRUE(this->wait_on_change(this->component.getSocketHandler(), true, Drv::Test::get_configured_delay_ms()/10 + 1));
         }
-        EXPECT_TRUE(this->component.getSocketHandler().isOpened());
+        EXPECT_TRUE(this->component.isOpened());
 
         udp2.configureSend("127.0.0.1", port2, 0, 100);
         udp2.configureRecv("127.0.0.1", port1);
-        status2 = udp2.open();
+        status2 = udp2.open(udp2_fd);
 
         EXPECT_EQ(status2, Drv::SOCK_SUCCESS)
             << "UDP socket open error: " << strerror(errno) << std::endl
@@ -85,36 +85,46 @@ void UdpTester::test_with_loop(U32 iterations, bool recv_thread) {
 
         // If all the opens worked, then run this
         if ((Drv::SOCK_SUCCESS == status1) && (Drv::SOCK_SUCCESS == status2) &&
-            (this->component.getSocketHandler().isOpened())) {
+            (this->component.isOpened())) {
             // Force the sockets not to hang, if at all possible
-            Drv::Test::force_recv_timeout(this->component.getSocketHandler());
-            Drv::Test::force_recv_timeout(udp2);
+            Drv::Test::force_recv_timeout(this->component.m_descriptor.fd, this->component.getSocketHandler());
+            Drv::Test::force_recv_timeout(udp2_fd.fd, udp2);
             m_data_buffer.setSize(sizeof(m_data_storage));
-            Drv::Test::fill_random_buffer(m_data_buffer);
-            Drv::SendStatus status = invoke_to_send(0, m_data_buffer);
-            EXPECT_EQ(status, SendStatus::SEND_OK);
-            status2 = udp2.recv(buffer, size);
-            EXPECT_EQ(status2, Drv::SOCK_SUCCESS);
-            EXPECT_EQ(size, m_data_buffer.getSize());
+            size = Drv::Test::fill_random_buffer(m_data_buffer);
+            invoke_to_send(0, m_data_buffer);
+            ASSERT_from_dataReturnOut_SIZE(i + 1);
+            Drv::ByteStreamStatus status = this->fromPortHistory_dataReturnOut->at(i).status;
+            EXPECT_EQ(status, ByteStreamStatus::OP_OK);
+            Drv::Test::receive_all(udp2, udp2_fd, buffer, size);
             Drv::Test::validate_random_buffer(m_data_buffer, buffer);
             // If receive thread is live, try the other way
             if (recv_thread) {
                 m_spinner = false;
                 m_data_buffer.setSize(sizeof(m_data_storage));
-                udp2.send(m_data_buffer.getData(), m_data_buffer.getSize());
+                udp2.send(udp2_fd, m_data_buffer.getData(), m_data_buffer.getSize());
                 while (not m_spinner) {}
             }
         }
         // Properly stop the client on the last iteration
-        if ((1 + i) == iterations && recv_thread) {
+        if (((1 + i) == iterations) && recv_thread) {
             this->component.stop();
             this->component.join();
         } else {
             this->component.close();
         }
-        udp2.close();
+        udp2.close(udp2_fd);
     }
     ASSERT_from_ready_SIZE(iterations);
+}
+
+bool UdpTester::wait_on_change(Drv::IpSocket &socket, bool open, U32 iterations) {
+    for (U32 i = 0; i < iterations; i++) {
+        if (open == this->component.isOpened()) {
+            return true;
+        }
+        Os::Task::delay(Fw::TimeInterval(0, 10000));
+    }
+    return false;
 }
 
 UdpTester ::UdpTester()
@@ -152,22 +162,20 @@ void UdpTester ::test_advanced_reconnect() {
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-void UdpTester ::from_recv_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& recvBuffer, const RecvStatus& recvStatus) {
+void UdpTester ::from_recv_handler(const FwIndexType portNum, Fw::Buffer& recvBuffer, const ByteStreamStatus& recvStatus) {
     this->pushFromPortEntry_recv(recvBuffer, recvStatus);
     // Make sure we can get to unblocking the spinner
-    EXPECT_EQ(m_data_buffer.getSize(), recvBuffer.getSize()) << "Invalid transmission size";
-    Drv::Test::validate_random_buffer(m_data_buffer, recvBuffer.getData());
-    m_spinner = true;
+    if (recvStatus == ByteStreamStatus::OP_OK){
+        EXPECT_EQ(m_data_buffer.getSize(), recvBuffer.getSize()) << "Invalid transmission size";
+        Drv::Test::validate_random_buffer(m_data_buffer, recvBuffer.getData());
+        m_spinner = true;
+    }
     delete[] recvBuffer.getData();
-}
-
-void UdpTester ::from_ready_handler(const NATIVE_INT_TYPE portNum) {
-    this->pushFromPortEntry_ready();
 }
 
 Fw::Buffer UdpTester ::
     from_allocate_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         U32 size
     )
   {
@@ -175,15 +183,6 @@ Fw::Buffer UdpTester ::
     Fw::Buffer buffer(new U8[size], size);
     m_data_buffer2 = buffer;
     return buffer;
-  }
-
-  void UdpTester ::
-    from_deallocate_handler(
-        const NATIVE_INT_TYPE portNum,
-        Fw::Buffer &fwBuffer
-    )
-  {
-    this->pushFromPortEntry_deallocate(fwBuffer);
   }
 
 }  // end namespace Drv

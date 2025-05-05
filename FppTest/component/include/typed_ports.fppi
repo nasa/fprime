@@ -54,9 +54,13 @@ sync input port primitiveReturnSync: PrimitiveReturn
 
 guarded input port primitiveReturnGuarded: PrimitiveReturn
 
-# sync input port stringReturnSync: StringReturn
+sync input port stringReturnSync: StringReturn
  
-# guarded input port stringReturnGuarded: StringReturn
+guarded input port stringReturnGuarded: StringReturn
+
+sync input port stringAliasReturnSync: StringAliasReturn
+ 
+guarded input port stringAliasReturnGuarded: StringAliasReturn
 
 sync input port enumReturnSync: EnumReturn
 
@@ -65,6 +69,10 @@ guarded input port enumReturnGuarded: EnumReturn
 sync input port arrayReturnSync: ArrayReturn
 
 guarded input port arrayReturnGuarded: ArrayReturn
+
+sync input port arrayStringAliasReturnSync: ArrayStringAliasReturn
+
+guarded input port arrayStringAliasReturnGuarded: ArrayStringAliasReturn
 
 sync input port structReturnSync: StructReturn
 
@@ -78,11 +86,15 @@ output port noArgsReturnOut: NoArgsReturn
 
 output port primitiveReturnOut: PrimitiveReturn
 
-# output port stringReturnOut: StringReturn
+output port stringReturnOut: StringReturn
+
+output port stringAliasReturnOut: StringAliasReturn
 
 output port enumReturnOut: EnumReturn
 
 output port arrayReturnOut: ArrayReturn
+
+output port arrayStringAliasReturnOut: ArrayStringAliasReturn
 
 output port structReturnOut: StructReturn
 

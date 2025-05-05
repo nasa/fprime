@@ -14,17 +14,13 @@
 
 namespace Svc {
 
-    class ActiveLoggerImpl: public ActiveLoggerComponentBase {
+    class ActiveLoggerImpl final : public ActiveLoggerComponentBase {
         public:
             ActiveLoggerImpl(const char* compName); //!< constructor
             virtual ~ActiveLoggerImpl(); //!< destructor
-            void init(
-                    NATIVE_INT_TYPE queueDepth, /*!< The queue depth*/
-                    NATIVE_INT_TYPE instance /*!< The instance number*/
-                    ); //!< initialization function
         PROTECTED:
         PRIVATE:
-            void LogRecv_handler(NATIVE_INT_TYPE portNum, FwEventIdType id, Fw::Time &timeTag, const Fw::LogSeverity& severity, Fw::LogBuffer &args);
+            void LogRecv_handler(FwIndexType portNum, FwEventIdType id, Fw::Time &timeTag, const Fw::LogSeverity& severity, Fw::LogBuffer &args);
             void loqQueue_internalInterfaceHandler(FwEventIdType id, const Fw::Time &timeTag, const Fw::LogSeverity& severity, const Fw::LogBuffer &args);
 
             void SET_EVENT_FILTER_cmdHandler(
@@ -48,7 +44,7 @@ namespace Svc {
             //! Handler implementation for pingIn
             //!
             void pingIn_handler(
-                const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                const FwIndexType portNum, /*!< The port number*/
                 U32 key /*!< Value to return to pinger*/
             );
 

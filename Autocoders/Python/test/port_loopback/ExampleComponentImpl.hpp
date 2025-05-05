@@ -54,7 +54,7 @@ namespace ExampleComponents {
       //! Handler implementation for exampleInput
       //!
       void exampleInput_handler(
-          const NATIVE_INT_TYPE portNum, //!< The port number
+          const FwIndexType portNum, //!< The port number
           I32 arg1, //!< A built-in type argument
           AnotherExample::SomeEnum arg2, //!< The ENUM argument
           const AnotherExample::arg6String& arg6

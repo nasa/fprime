@@ -4,24 +4,35 @@
 
 #include "TcpClientTester.hpp"
 
-TEST(Nominal, BasicMessaging) {
+
+TEST(Nominal, TcpClientBasicMessaging) {
     Drv::TcpClientTester tester;
     tester.test_basic_messaging();
 }
 
-TEST(Nominal, BasicReceiveThread) {
+TEST(Nominal, TcpClientBasicReceiveThread) {
     Drv::TcpClientTester tester;
     tester.test_receive_thread();
 }
 
-TEST(Reconnect, MultiMessaging) {
+TEST(Reconnect, TcpClientMultiMessaging) {
     Drv::TcpClientTester tester;
     tester.test_multiple_messaging();
 }
 
-TEST(Reconnect, ReceiveThreadReconnect) {
+TEST(Reconnect, TcpClientReceiveThreadReconnect) {
     Drv::TcpClientTester tester;
     tester.test_advanced_reconnect();
+}
+
+TEST(AutoConnect, AutoConnectOnSendOff) {
+    Drv::TcpClientTester tester;
+    tester.test_no_automatic_send_connection();
+}
+
+TEST(AutoConnect, AutoConnectOnRecvOff) {
+    Drv::TcpClientTester tester;
+    tester.test_no_automatic_recv_connection();
 }
 
 int main(int argc, char** argv) {

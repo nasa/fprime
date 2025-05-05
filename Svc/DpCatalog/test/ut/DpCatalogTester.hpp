@@ -23,13 +23,13 @@ namespace Svc {
         // ----------------------------------------------------------------------
 
         // Maximum size of histories storing events, telemetry, and port outputs
-        static const NATIVE_INT_TYPE MAX_HISTORY_SIZE = 100;
+        static const U32 MAX_HISTORY_SIZE = 100;
 
         // Instance ID supplied to the component instance under test
-        static const NATIVE_INT_TYPE TEST_INSTANCE_ID = 0;
+        static const FwEnumStoreType TEST_INSTANCE_ID = 0;
 
         // Queue depth supplied to the component instance under test
-        static const NATIVE_INT_TYPE TEST_INSTANCE_QUEUE_DEPTH = 10;
+        static const FwSizeType TEST_INSTANCE_QUEUE_DEPTH = 10;
 
     public:
 
@@ -52,6 +52,12 @@ namespace Svc {
         //! Initialization/teardown smoke test
         void doInit();
 
+        //! Test tree construction
+        void testTree(
+            DpCatalog::DpStateEntry* list, 
+            DpCatalog::DpStateEntry* output,
+            FwIndexType numEntries);
+
         struct DpSet {
             FwDpIdType id;
             FwDpPriorityType prio;
@@ -65,6 +71,7 @@ namespace Svc {
         void readDps(
             Fw::FileNameString *dpDirs,
             FwSizeType numDirs,
+            Fw::FileNameString& stateFile,
             const DpSet* dpSet,
             FwSizeType numDps
         );
@@ -98,7 +105,7 @@ namespace Svc {
 
         //! Handler implementation for fileOut
         Svc::SendFileResponse from_fileOut_handler(
-            NATIVE_INT_TYPE portNum, //!< The port number
+            FwIndexType portNum, //!< The port number
             const Fw::StringBase& sourceFileName, //!< Path of file to downlink
             const Fw::StringBase& destFileName, //!< Path to store downlinked file at
             U32 offset, //!< Amount of data in bytes to downlink from file. 0 to read until end of file
@@ -107,7 +114,7 @@ namespace Svc {
 
         //! Handler implementation for pingOut
         void from_pingOut_handler(
-            NATIVE_INT_TYPE portNum, //!< The port number
+            FwIndexType portNum, //!< The port number
             U32 key //!< Value to return to pinger
         ) override;
 

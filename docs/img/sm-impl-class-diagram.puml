@@ -1,0 +1,17 @@
+@startuml
+
+abstract class A::B::MStateMachineBase
+class CComponentBase::A_B_M
+
+A::B::MStateMachineBase <|-- CComponentBase::A_B_M
+
+abstract class CComponentBase
+class C
+
+CComponentBase <|-- C
+
+CComponentBase::A_B_M --+ CComponentBase
+CComponentBase::A_B_M --* CComponentBase
+CComponentBase --o CComponentBase::A_B_M
+
+@enduml

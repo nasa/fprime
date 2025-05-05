@@ -10,16 +10,32 @@ Understanding the reference application has a few minimal prerequisites.
 
 **Installing F´**
 
-Please follow the install guide for F´ found here: [INSTALL.md](../docs/INSTALL.md).
+Please follow the [install guide for F´](../docs/getting-started/installing-fprime.md).
 
 ## Building and Running the Ref Application
 
-In order to build the Ref application, or any other F´ application, we first need to generate a build directory.  F´ uses CMake under the hood,
+To get started with creating the Ref application we will first need to clone the nasa/fprime repository. We then can change directories into the project's
+Ref directory so that we have a place to build the Ref application.
+
+```
+git clone https://github.com/nasa/fprime
+cd fprime/Ref
+```
+
+With the repository cloned and the project's Ref directory entered we can now create a python virtual environment, activate that environment, and then
+install the project requirements.
+
+```
+python3 -m venv fprime-venv
+. fprime-venv/bin/activate
+pip install -r ../requirements.txt
+```
+
+In order to build the Ref application, or any other F´ application, we need to generate a build directory.  F´ uses CMake under the hood,
 which requires a directory to work in. To generate a build directory, we will use the `fprime-util` (a wrapper for CMake to streamline standard 
 F´ processes). This can be done with the following commands:
 
 ```
-cd fprime/Ref
 fprime-util generate
 ```
 
@@ -63,7 +79,5 @@ cd fprime/Ref/build-artifacts/<platform>/bin/
 - The F´ utility's build command can build individual components too.
 - The 'generate' command can take a toolchain argument for quickly generating a cross-compile `fprime-util generate raspberrypi` for example.
 
-Further work with the F´ utility can be found in the [Getting Started](../docs/Tutorials/README.md) tutorial. Other tutorials
-for many aspects of F´ are available [here](../docs/Tutorials/README.md).
-
+Further work with the F´ utility can be found in the [HelloWorld tutorial](../docs/tutorials/index.md) tutorial.
 

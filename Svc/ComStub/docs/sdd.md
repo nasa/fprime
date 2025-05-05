@@ -1,10 +1,9 @@
-\page SvcComStubComponent Svc::ComStub Component
 # Svc::ComStub (Passive Component)
 
 ## 1. Introduction
 
 `Svc::ComStub` is an example  F´ component implementing the
-[communication adapter interface](https://nasa.github.io/fprime/Design/communication-adapter-interface.html) required
+[communication adapter interface](../../../docs/reference/communication-adapter-interface.md) required
 to work with F´ communication components. Projects and users may choose to replace this with a complete communication
 implementation (i.e. a component managing a specific radio) once ready. As long as any communication implementation
 implements the communication adapter interface it can drop in and work with the standard F´ uplink and downlink setup.
@@ -39,7 +38,7 @@ used alongside the other F´ communication components (`Svc::Framer`, `Svc::Defr
 
 
 `Svc::ComStub` implements the
-[communication adapter interface](https://nasa.github.io/fprime/Design/communication-adapter-interface.html) by
+[communication adapter interface](../../../docs/reference/communication-adapter-interface.md) by
 delegation to a `Drv::ByteStreamDriverModel` as a way to transmit data and receive data. Other communication
 adapter implementations may follow-suite.
 
@@ -56,8 +55,8 @@ be useful
 
 | Kind         | Name           | Port Type             | Usage                                                                             |
 |--------------|----------------|-----------------------|-----------------------------------------------------------------------------------|
-| `sync input` | `comDataIn`    | `Drv.ByteStreamSend`  | Port receiving `Fw::Buffer`s for transmission out `drvDataOut`                    |
-| `output`     | `comStatus`    | `Svc.ComStatus`       | Port indicating success or failure to attached `Svc::ComQueue`                    |
+| `sync input` | `comDataIn`    | `Svc.ComDataWithContext`  | Port receiving `Fw::Buffer`s for transmission out `drvDataOut`                    |
+| `output`     | `comStatusOut`    | `Svc.ComStatus`       | Port indicating success or failure to attached `Svc::ComQueue`                    |
 | `output`     | `comDataOut`   | `Drv.ByteStreamRecv`  | Port providing received `Fw::Buffers` to a potential `Svc::Deframer`              |
 
 **Byte Stream Driver Model Ports**
@@ -73,7 +72,7 @@ be useful
 
 `Svc::ComStub` has only stores a boolean `m_reinitialize` indicating when it should send `Fw::Success::SUCCESS` in
 response to a driver reconnection event. This is to implement the  Communication Adapter Protocol of a
-[communication adapter interface](https://nasa.github.io/fprime/Design/communication-adapter-interface.html#Communication_Adapter_Protocol).
+[communication adapter interface](../../../docs/reference/communication-adapter-interface.md).
 
 ### 4.3. Port Handlers
 
@@ -82,13 +81,13 @@ response to a driver reconnection event. This is to implement the  Communication
 The `comDataIn` port handler receives an `Fw::Buffer` from the F´ system for transmission to the ground. Typically, it
 is connected to the output of the `Svc::Framer` component. In this `Svc::ComStub` implementation, it passes this
 `Fw::Buffer` directly to the `drvDataOut` port. It will retry when that port responds with a `RETRY` request. Otherwise, 
- the `comStatus` port will be invoked to indicate success or failure. Retries attempts are limited before the port
+ the `comStatusOut` port will be invoked to indicate success or failure. Retries attempts are limited before the port
 asserts.
 
 #### 4.3.1 drvConnected
 
 This port receives the connected signal from the driver and responds with exactly one `READY` invocation to the
-`comStatus` port. This starts downlink. This occurs each time the driver reconnects.
+`comStatusOut` port. This starts downlink. This occurs each time the driver reconnects.
 
 #### 4.3.1 drvDataIn
 

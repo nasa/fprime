@@ -18,7 +18,7 @@
 
 namespace Svc {
 
-class StaticMemoryComponentImpl : public StaticMemoryComponentBase {
+class StaticMemoryComponentImpl final : public StaticMemoryComponentBase {
   public:
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction
@@ -27,11 +27,6 @@ class StaticMemoryComponentImpl : public StaticMemoryComponentBase {
     //! Construct object StaticMemory
     //!
     StaticMemoryComponentImpl(const char* const compName /*!< The component name*/
-    );
-
-    //! Initialize object StaticMemory
-    //!
-    void init(const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
     );
 
     //! Destroy object StaticMemory
@@ -46,12 +41,12 @@ class StaticMemoryComponentImpl : public StaticMemoryComponentBase {
 
     //! Handler implementation for bufferDeallocate
     //!
-    void bufferDeallocate_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    void bufferDeallocate_handler(const FwIndexType portNum, /*!< The port number*/
                                   Fw::Buffer& fwBuffer);
 
     //! Handler implementation for bufferAllocate
     //!
-    Fw::Buffer bufferAllocate_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    Fw::Buffer bufferAllocate_handler(const FwIndexType portNum, /*!< The port number*/
                                       U32 size);
 
     bool m_allocated[NUM_BUFFERALLOCATE_INPUT_PORTS];

@@ -19,8 +19,8 @@ namespace Svc {
   namespace SequenceFiles {
 
     MixedFile ::
-      MixedFile(const Format::t format) :
-        File("mixed", format)
+      MixedFile(const Format::t a_format) :
+        File("mixed", a_format)
     {
 
     }
@@ -29,7 +29,7 @@ namespace Svc {
       serializeFPrime(Fw::SerializeBufferBase& buffer)
     {
       // Header
-      const NATIVE_INT_TYPE numRecs = 4;
+      const FwSizeType numRecs = 4;
       const U32 recordDataSize = 
         numRecs * FPrime::Records::STANDARD_SIZE;
       const U32 dataSize = recordDataSize + FPrime::CRCs::SIZE;

@@ -7,14 +7,14 @@
 #ifndef FW_PARAM_STRING_HPP
 #define FW_PARAM_STRING_HPP
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 #include "Fw/Cfg/SerIds.hpp"
 #include "Fw/Types/StringBase.hpp"
 
 namespace Fw {
 
-class ParamString : public StringBase {
+class ParamString final : public StringBase {
   public:
     enum {
         SERIALIZED_TYPE_ID = FW_TYPEID_PRM_STR,

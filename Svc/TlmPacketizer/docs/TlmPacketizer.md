@@ -1,4 +1,3 @@
-\page SvcTlmPacketizerComponentDictionary Svc::TlmPacketizer Component Dictionary
 # Svc::TlmPacketizer Component Dictionary
 
 ## Command List

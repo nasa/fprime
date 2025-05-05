@@ -14,7 +14,6 @@
 #include "Drv/BlockDriver/BlockDriver.hpp"
 #include "Fw/Types/MallocAllocator.hpp"
 #include "Ref/Top/FppConstantsAc.hpp"
-#include "Svc/FramingProtocol/FprimeProtocol.hpp"
 #include "Svc/Health/Health.hpp"
 
 // Definitions are placed within a namespace named after the deployment
@@ -30,7 +29,7 @@ namespace Ref {
  */
 struct TopologyState {
     const char* hostname;
-    U32 port;
+    U16 port;
 };
 
 /**
@@ -53,46 +52,46 @@ struct TopologyState {
  * ```
  */
 namespace PingEntries {
-namespace blockDrv {
+namespace Ref_blockDrv {
 enum { WARN = 3, FATAL = 5 };
 }
-namespace tlmSend {
+namespace Ref_tlmSend {
 enum { WARN = 3, FATAL = 5 };
 }
-namespace cmdDisp {
+namespace Ref_cmdDisp {
 enum { WARN = 3, FATAL = 5 };
 }
-namespace cmdSeq {
+namespace Ref_cmdSeq {
 enum { WARN = 3, FATAL = 5 };
 }
-namespace eventLogger {
+namespace Ref_eventLogger {
 enum { WARN = 3, FATAL = 5 };
 }
-namespace fileDownlink {
+namespace Ref_fileDownlink {
 enum { WARN = 3, FATAL = 5 };
 }
-namespace fileManager {
+namespace Ref_fileManager {
 enum { WARN = 3, FATAL = 5 };
 }
-namespace fileUplink {
+namespace Ref_fileUplink {
 enum { WARN = 3, FATAL = 5 };
 }
-namespace pingRcvr {
+namespace Ref_pingRcvr {
 enum { WARN = 3, FATAL = 5 };
 }
-namespace prmDb {
+namespace Ref_prmDb {
 enum { WARN = 3, FATAL = 5 };
 }
-namespace rateGroup1Comp {
+namespace Ref_rateGroup1Comp {
 enum { WARN = 3, FATAL = 5 };
 }
-namespace rateGroup2Comp {
+namespace Ref_rateGroup2Comp {
 enum { WARN = 3, FATAL = 5 };
 }
-namespace rateGroup3Comp {
+namespace Ref_rateGroup3Comp {
 enum { WARN = 3, FATAL = 5 };
 }
-namespace dpCat {
+namespace Ref_dpCat {
 enum { WARN = 3, FATAL = 5 };
 }
 }  // namespace PingEntries

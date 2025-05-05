@@ -15,17 +15,17 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   FramingTester ::
-    FramingTester(Fw::ComPacket::ComPacketType packetType) :
+    FramingTester(Fw::ComPacket::ComPacketType a_packetType) :
       // Pick a random data size
       dataSize(STest::Pick::lowerUpper(1, MAX_DATA_SIZE)),
-      packetType(packetType),
+      packetType(a_packetType),
       interface(*this)
   {
     FW_ASSERT(this->dataSize <= MAX_DATA_SIZE);
     this->fprimeFraming.setup(this->interface);
     // Fill in random data
     for (U32 i = 0; i < sizeof(this->data); ++i) {
-      this->data[i] = STest::Pick::lowerUpper(0, 0xFF);
+      this->data[i] = static_cast<U8>(STest::Pick::lowerUpper(0, 0xFF));
     }
     memset(this->bufferStorage, 0, sizeof this->bufferStorage);
   }
@@ -51,10 +51,6 @@ namespace Svc {
       // Check the packet size
       const U32 packetSize = this->getPacketSize();
       this->checkPacketSize(packetSize);
-      // Check the packet type
-      if (this->packetType != Fw::ComPacket::FW_PACKET_UNKNOWN) {
-        this->checkPacketType();
-      }
       // Check the data
       this->checkData();
       // Check the hash value
@@ -83,11 +79,7 @@ namespace Svc {
   void FramingTester ::
     checkPacketSize(FpFrameHeader::TokenType packetSize)
   {
-    U32 expectedPacketSize = this->dataSize;
-    if (this->packetType != Fw::ComPacket::FW_PACKET_UNKNOWN) {
-      // Packet type is stored in header
-      expectedPacketSize += sizeof(SerialPacketType);
-    }
+    FwSizeType expectedPacketSize = this->dataSize;
     ASSERT_EQ(packetSize, expectedPacketSize);
   }
 
@@ -124,11 +116,7 @@ namespace Svc {
   void FramingTester ::
     checkData()
   {
-    U32 dataOffset = PACKET_TYPE_OFFSET;
-    if (this->packetType != Fw::ComPacket::FW_PACKET_UNKNOWN) {
-      // Packet type is stored in header
-      dataOffset += sizeof(SerialPacketType);
-    }
+    FwSizeType dataOffset = PACKET_TYPE_OFFSET;
     const I32 result = memcmp(
         this->data,
         &this->bufferStorage[dataOffset],
@@ -142,12 +130,12 @@ namespace Svc {
   {
     Utils::Hash hash;
     Utils::HashBuffer hashBuffer;
-    const U32 dataSize = FpFrameHeader::SIZE + packetSize;
-    hash.update(this->bufferStorage,  dataSize);
+    const U32 localDataSize = FpFrameHeader::SIZE + packetSize;
+    hash.update(this->bufferStorage, localDataSize);
     hash.final(hashBuffer);
     const U8 *const hashAddr = hashBuffer.getBuffAddr();
     const I32 result = memcmp(
-        &this->bufferStorage[dataSize],
+        &this->bufferStorage[localDataSize],
         hashAddr,
         HASH_DIGEST_LENGTH
     );

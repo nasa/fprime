@@ -29,11 +29,11 @@ namespace STest {
 
       //! Construct a ConditionalScenario
       ConditionalScenario(
-          const char *const name, //!< The name of the ConditionalScenario
-          Scenario<State>& scenario //!< The scenario to run
+          const char *const a_name, //!< The name of the ConditionalScenario
+          Scenario<State>& a_scenario //!< The scenario to run
       ) :
-        Scenario<State>(name),
-        scenario(scenario)
+        Scenario<State>(a_name),
+        scenario(a_scenario)
       {
 
       }

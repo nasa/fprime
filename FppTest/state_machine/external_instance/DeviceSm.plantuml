@@ -1,0 +1,16 @@
+
+@startuml
+
+[*] --> OFF
+
+state OFF {
+    OFF::Entry: turnOff()
+}
+
+state ON {
+    ON::Entry: turnOn()
+}
+
+OFF --> ON : RTI [g1()]/a1(e)
+ON --> OFF : RTI [g2(e)]/a2()
+@enduml

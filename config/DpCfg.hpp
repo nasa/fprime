@@ -13,10 +13,11 @@
 #ifndef DPCFG_HPP
 #define DPCFG_HPP
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 // The format string for a file name
 // The format arguments are base directory, container ID, time seconds, and time microseconds
-constexpr const char *DP_FILENAME_FORMAT = "%s/Dp_%08" PRI_FwDpIdType "_%08" PRIu32 "_%08" PRIu32 ".fdp";
+#define DP_EXT ".fdp"
+constexpr const char *DP_FILENAME_FORMAT = "%s/Dp_%08" PRI_FwDpIdType "_%08" PRIu32 "_%08" PRIu32 DP_EXT;
 
 #endif

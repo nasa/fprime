@@ -35,8 +35,9 @@ namespace Svc {
       // Tests
       // ----------------------------------------------------------------------
 
-      void run_nominal_test();
-      void run_off_nominal_test();
+      void runNominalTest();
+      void runOffNominalTest();
+      void testWorkstationTimestamp();
 
     private:
 

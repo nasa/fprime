@@ -41,17 +41,10 @@ namespace Ref {
         skipOne(false),
         m_dpInProgress(false),
         m_numDps(0),
-        m_currDp(0)
+        m_currDp(0),
+        m_dpPriority(0)
     {}
 
-    void SignalGen ::
-        init(
-            const NATIVE_INT_TYPE queueDepth,
-            const NATIVE_INT_TYPE instance
-        )
-    {
-        SignalGenComponentBase::init(queueDepth, instance);
-    }
 
     SignalGen :: ~SignalGen() { }
 
@@ -99,7 +92,7 @@ namespace Ref {
     }
 
     void SignalGen::schedIn_handler(
-        NATIVE_INT_TYPE portNum, /*!< The port number*/
+        FwIndexType portNum, /*!< The port number*/
         U32 context /*!< The call order*/
     )
     {
@@ -147,10 +140,10 @@ namespace Ref {
             this->m_dpBytes += SignalInfo::SERIALIZED_SIZE;
             // check for full data product
             if (Fw::SerializeStatus::FW_SERIALIZE_NO_ROOM_LEFT == stat) {
-                this->log_WARNING_LO_SignalGen_DpRecordFull(this->m_currDp,this->m_dpBytes);
+                this->log_WARNING_LO_DpRecordFull(this->m_currDp,this->m_dpBytes);
                 this->cleanupAndSendDp();
             } else if (this->m_currDp == this->m_numDps) { // if we reached the target number of DPs
-                this->log_ACTIVITY_LO_SignalGen_DpComplete(this->m_numDps,this->m_dpBytes);
+                this->log_ACTIVITY_LO_DpComplete(this->m_numDps,this->m_dpBytes);
                 this->cleanupAndSendDp();
             }
 
@@ -161,7 +154,7 @@ namespace Ref {
         this->ticks += 1;
     }
 
-    void SignalGen::SignalGen_Settings_cmdHandler(
+    void SignalGen::Settings_cmdHandler(
         FwOpcodeType opCode, /*!< The opcode*/
         U32 cmdSeq, /*!< The command sequence number*/
         U32 Frequency,
@@ -183,12 +176,12 @@ namespace Ref {
             this->sigPairHistory[i].settime(0.0f);
             this->sigPairHistory[i].setvalue(0.0f);
         }
-        this->log_ACTIVITY_LO_SignalGen_SettingsChanged(this->signalFrequency, this->signalAmplitude, this->signalPhase, this->sigType);
+        this->log_ACTIVITY_LO_SettingsChanged(this->signalFrequency, this->signalAmplitude, this->signalPhase, this->sigType);
         this->tlmWrite_Type(SigType);
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
 
-    void SignalGen::SignalGen_Toggle_cmdHandler(
+    void SignalGen::Toggle_cmdHandler(
         FwOpcodeType opCode, /*!< The opcode*/
         U32 cmdSeq /*!< The command sequence number*/
     )
@@ -198,7 +191,7 @@ namespace Ref {
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
 
-    void SignalGen::SignalGen_Skip_cmdHandler(
+    void SignalGen::Skip_cmdHandler(
         FwOpcodeType opCode, /*!< The opcode*/
         U32 cmdSeq /*!< The command sequence number*/
     )
@@ -207,34 +200,64 @@ namespace Ref {
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
 
-    void SignalGen ::
-        SignalGen_Dp_cmdHandler(
-            FwOpcodeType opCode,
-            U32 cmdSeq,
-            U32 records
-        )
+    void SignalGen::Dp_cmdHandler(
+        FwOpcodeType opCode,
+        U32 cmdSeq,
+        Ref::SignalGen_DpReqType reqType,
+        U32 records,
+        U32 priority
+    )
     {
+        // at least one record
+        if (0 == records) {
+            this->log_WARNING_HI_InSufficientDpRecords();
+            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+            return;
+        }
+
         // make sure DPs are available
         if (
             not this->isConnected_productGetOut_OutputPort(0)
         ) {
-            this->log_WARNING_HI_SignalGen_DpsNotConnected();
+            this->log_WARNING_HI_DpsNotConnected();
             this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
             return;
         }
 
-        // get DP buffer
-        this->dpGet_DataContainer(records*SIZE_OF_DataRecord_RECORD,this->m_dpContainer);
-        this->m_dpInProgress = true;
+        // get DP buffer. Use sync or async request depending on 
+        // requested type
+        FwSizeType dpSize = records*(SignalInfo::SERIALIZED_SIZE + sizeof(FwDpIdType));
         this->m_numDps = records;
         this->m_currDp = 0;
-        this->log_ACTIVITY_LO_SignalGen_DpStarted(records);
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+        this->m_dpPriority = static_cast<FwDpPriorityType>(priority);
+        this->log_ACTIVITY_LO_DpMemRequested(dpSize);
+        if (Ref::SignalGen_DpReqType::IMMEDIATE ==  reqType) {
+            Fw::Success stat = this->dpGet_DataContainer(dpSize,this->m_dpContainer);
+            // make sure we got the memory we wanted
+            if (Fw::Success::FAILURE == stat) {
+                this->log_WARNING_HI_DpMemoryFail();
+                this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+            } else {
+                this->m_dpInProgress = true;
+                this->log_ACTIVITY_LO_DpStarted(records);
+                this->log_ACTIVITY_LO_DpMemReceived(this->m_dpContainer.getBuffer().getSize());
+                this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+                // override priority with requested priority
+                this->m_dpContainer.setPriority(this->m_dpPriority);
+            }
+        } else if (Ref::SignalGen_DpReqType::ASYNC == reqType) {
+            this->dpRequest_DataContainer(dpSize);
+            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+        } else {
+            // should never get here
+            FW_ASSERT(0,reqType.e);
+        }
+
     }
 
     void SignalGen::cleanupAndSendDp() {
         this->dpSend(this->m_dpContainer);
-        this->m_dpInProgress = 0;
+        this->m_dpInProgress = false;
         this->m_dpBytes = 0;
         this->m_numDps = 0;
         this->m_currDp = 0;
@@ -252,8 +275,22 @@ namespace Ref {
             Fw::Success::T status
         )
     {
-        // TODO
+
+        // Make sure we got the buffer we wanted or quit
+        if (Fw::Success::SUCCESS == status) {
+            this->m_dpContainer = container;
+            this->m_dpInProgress = true;
+            // set previously requested priority
+            this->m_dpContainer.setPriority(this->m_dpPriority);
+            this->log_ACTIVITY_LO_DpStarted(this->m_numDps);
+        } else {
+            this->log_WARNING_HI_DpMemoryFail();
+            // cleanup
+            this->m_dpInProgress = false;
+            this->m_dpBytes = 0;
+            this->m_numDps = 0;
+            this->m_currDp = 0;
+        }
     }
 
-
-};
+}

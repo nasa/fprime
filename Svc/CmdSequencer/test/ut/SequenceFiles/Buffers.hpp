@@ -33,7 +33,7 @@ namespace Svc {
 
         public:
 
-          NATIVE_UINT_TYPE getBuffCapacity() const;
+          FwSizeType getBuffCapacity() const;
 
           U8* getBuffAddr();
 

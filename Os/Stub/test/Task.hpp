@@ -27,9 +27,9 @@ struct StaticData {
 
     //! Last function called
     LastFn lastCalled = NONE_FN;
-    //Os::Task::Arguments arguments();
+
     Os::Task::SuspensionType suspensionType;
-    Fw::Time delay;
+    Fw::TimeInterval delay;
 
     Os::Task::Status delayStatus = Os::Task::Status::OP_OK;
     Os::Task::Status joinStatus = Os::Task::Status::OP_OK;
@@ -76,6 +76,15 @@ class TestTask : public TaskInterface {
     //! Resumes this task. Not started, running, and exited tasks take no action.
     //!
     void resume() override;
+
+    //! \brief delay the current task
+    //!
+    //! Delays, or sleeps, the current task by the supplied time interval. In non-preempting os implementations
+    //! the task will resume no earlier than expected but an exact wake-up time is not guaranteed.
+    //!
+    //! \param interval: delay time
+    //! \return status of the delay
+    Status _delay(Fw::TimeInterval interval) override;
 
     //! \brief return the underlying task handle (implementation specific)
     //! \return internal task handle representation

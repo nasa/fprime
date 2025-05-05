@@ -42,26 +42,6 @@ module Svc {
                           ) \
       opcode 0
 
-    @ Report version as EVR
-    guarded command VERSION \
-      opcode 1
-
-    @ Version of the git repository.
-    event FRAMEWORK_VERSION(
-                   version: string size 40 @< version string
-                 ) \
-      severity activity low \
-      id 0 \
-      format "Framework Version: [{}]"
-
-    @ Version of the git repository.
-    event PROJECT_VERSION(
-                   version: string size 40 @< version string
-                 ) \
-      severity activity low \
-      id 1 \
-      format "Project Version: [{}]"
-
     @ Total system memory in KB
     telemetry MEMORY_TOTAL: U64 id 0 \
       format "{} KB"
@@ -128,12 +108,6 @@ module Svc {
 
     @ System's CPU Percentage
     telemetry CPU_15: F32 id 20 format "{.2f} percent"
-
-    @ Software framework version
-    telemetry FRAMEWORK_VERSION: string size 40 id 21
-
-    @ Software project version
-    telemetry PROJECT_VERSION: string size 40 id 22
 
   }
 

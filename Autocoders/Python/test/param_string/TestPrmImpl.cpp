@@ -19,7 +19,7 @@ void TestPrmImpl::init() {
     Prm::TestPrmComponentBase::init();
 }
 
-void TestPrmImpl::aport_handler(NATIVE_INT_TYPE portNum, I32 arg4, F32 arg5, U8 arg6) {
+void TestPrmImpl::aport_handler(FwIndexType portNum, I32 arg4, F32 arg5, U8 arg6) {
 
 }
 

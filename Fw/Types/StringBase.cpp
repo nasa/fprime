@@ -14,7 +14,6 @@
 #include <Fw/Types/StringType.hpp>
 #include <Fw/Types/StringUtils.hpp>
 #include <cstdarg>
-#include <cstdio>
 #include <cstring>
 
 namespace Fw {
@@ -24,7 +23,7 @@ StringBase::StringBase() {}
 StringBase::~StringBase() {}
 
 const CHAR* StringBase::operator+=(const CHAR* src) {
-    this->appendBuff(src, StringUtils::string_length(src, this->getCapacity()));
+    this->appendBuff(src, static_cast<SizeType>(StringUtils::string_length(src, this->getCapacity())));
     return this->toChar();
 }
 
@@ -49,20 +48,26 @@ bool StringBase::operator==(const CHAR* other) const {
     }
 
     const SizeType capacity = this->getCapacity();
-    const size_t result = static_cast<size_t>(strncmp(us, other, capacity));
+    const size_t result = static_cast<size_t>(strncmp(us, other, static_cast<size_t>(capacity)));
     return (result == 0);
 }
 
-void StringBase::format(const CHAR* formatString, ...) {
-    CHAR* us = const_cast<CHAR*>(this->toChar());
-    SizeType cap = this->getCapacity();
-    FW_ASSERT(us);
+FormatStatus StringBase::format(const CHAR* formatString, ...) {
     va_list args;
     va_start(args, formatString);
-    (void)vsnprintf(us, cap, formatString, args);
+    FormatStatus status = this->vformat(formatString, args);
     va_end(args);
-    // null terminate
-    us[cap - 1] = 0;
+    return status;
+}
+
+FormatStatus StringBase::vformat(const CHAR* formatString, va_list args) {
+    CHAR* us = const_cast<CHAR*>(this->toChar());
+    SizeType cap = this->getCapacity();
+    FW_ASSERT(us != nullptr);
+    // Needed until SizeType an FwSizeType are the same
+    static_assert(std::numeric_limits<FwSizeType>::max() >= std::numeric_limits<SizeType>::max(),
+                  "String size type must fit into FwSizeType");
+    return Fw::stringFormat(us, static_cast<FwSizeType>(cap), formatString, args);
 }
 
 bool StringBase::operator!=(const StringBase& other) const {
@@ -110,7 +115,7 @@ void StringBase::appendBuff(const CHAR* buff, SizeType size) {
         remaining = size;
     }
     FW_ASSERT(remaining < capacity, static_cast<FwAssertArgType>(remaining), static_cast<FwAssertArgType>(capacity));
-    (void)strncat(const_cast<CHAR*>(this->toChar()), buff, remaining);
+    (void)strncat(const_cast<CHAR*>(this->toChar()), buff, static_cast<size_t>(remaining));
 }
 
 StringBase::SizeType StringBase::length() const {

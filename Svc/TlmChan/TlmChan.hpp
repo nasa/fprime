@@ -19,26 +19,23 @@
 
 namespace Svc {
 
-class TlmChan : public TlmChanComponentBase {
+class TlmChan final : public TlmChanComponentBase {
   public:
     TlmChan(const char* compName);
     virtual ~TlmChan();
-    void init(NATIVE_INT_TYPE queueDepth, /*!< The queue depth*/
-              NATIVE_INT_TYPE instance    /*!< The instance number*/
-    );
 
   PROTECTED:
     // can be overridden for alternate algorithms
-    virtual NATIVE_UINT_TYPE doHash(FwChanIdType id);
+    virtual FwChanIdType doHash(FwChanIdType id);
 
   PRIVATE:
     // Port functions
-    void TlmRecv_handler(NATIVE_INT_TYPE portNum, FwChanIdType id, Fw::Time& timeTag, Fw::TlmBuffer& val);
-    void TlmGet_handler(NATIVE_INT_TYPE portNum, FwChanIdType id, Fw::Time& timeTag, Fw::TlmBuffer& val);
-    void Run_handler(NATIVE_INT_TYPE portNum, U32 context);
+    void TlmRecv_handler(FwIndexType portNum, FwChanIdType id, Fw::Time& timeTag, Fw::TlmBuffer& val);
+    void TlmGet_handler(FwIndexType portNum, FwChanIdType id, Fw::Time& timeTag, Fw::TlmBuffer& val);
+    void Run_handler(FwIndexType portNum, U32 context);
     //! Handler implementation for pingIn
     //!
-    void pingIn_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    void pingIn_handler(const FwIndexType portNum, /*!< The port number*/
                         U32 key                        /*!< Value to return to pinger*/
     );
 
@@ -49,13 +46,13 @@ class TlmChan : public TlmChanComponentBase {
         Fw::TlmBuffer buffer;       //!< buffer to store serialized telemetry
         tlmEntry* next;             //!< pointer to next bucket in table
         bool used;                  //!< if entry has been used
-        NATIVE_UINT_TYPE bucketNo;  //!< for testing
+        FwChanIdType bucketNo;  //!< for testing
     } TlmEntry;
 
     struct TlmSet {
         TlmEntry* slots[TLMCHAN_NUM_TLM_HASH_SLOTS];  //!< set of hash slots in hash table
         TlmEntry buckets[TLMCHAN_HASH_BUCKETS];       //!< set of buckets used in hash table
-        NATIVE_INT_TYPE free;                         //!< next free bucket
+        FwChanIdType free;                            //!< next free bucket
     } m_tlmEntries[2];
 
     U32 m_activeBuffer;  // !< which buffer is active for storing telemetry

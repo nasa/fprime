@@ -1,4 +1,3 @@
-\page SvcPolyDbComponent Svc::PolyDb Component
 # Svc::PolyDb Component
 
 ## 1. Introduction
@@ -67,11 +66,11 @@ No dictionaries
 
 ## 4. Module Checklists
 
-Document | Link
--------- | ----
-Design Checklist | [Link](Checklist_Design.xlsx)
-Code Checklist | [Link](Checklist_Design.xlsx)
-Unit Test Checklist | [Link](Checklist_Unit_Test.xls)
+Checklist |
+-------- |
+[Design](Checklist_Design.xlsx) |
+[Code](Checklist_Code.xlsx) |
+[Unit Test](Checklist_Unit_Test.xls) |
 
 ## 5. Unit Testing
 

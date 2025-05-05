@@ -6,7 +6,7 @@
 
 
 #include "Empty.hpp"
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 
 // ----------------------------------------------------------------------
@@ -19,14 +19,6 @@ Empty ::
   ) : EmptyComponentBase(compName)
 {
 
-}
-
-void Empty ::
-  init(
-      NATIVE_INT_TYPE instance
-  )
-{
-  EmptyComponentBase::init(instance);
 }
 
 Empty ::

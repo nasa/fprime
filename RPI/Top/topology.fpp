@@ -10,14 +10,18 @@ module RPI {
     instance chanTlm
     instance cmdDisp
     instance cmdSeq
-    instance comm
-    instance downlink
+    instance comQueue
+    instance comDriver
+    instance comStub
+    instance deframer
+    instance framer
     instance eventLogger
     instance fatalAdapter
     instance fatalHandler
     instance fileDownlink
     instance fileUplink
-    instance fileUplinkBufferManager
+    instance frameAccumulator
+    instance commsBufferManager
     instance gpio17Drv
     instance gpio23Drv
     instance gpio24Drv
@@ -31,11 +35,10 @@ module RPI {
     instance rateGroupDriverComp
     instance rpiDemo
     instance spiDrv
-    instance staticMemory
     instance textLogger
     instance uartDrv
-    instance uplink
     instance uartBufferManager
+    instance fprimeRouter
 
     # ----------------------------------------------------------------------
     # Pattern graph specifiers
@@ -60,22 +63,30 @@ module RPI {
     # ----------------------------------------------------------------------
 
     connections Downlink {
-      chanTlm.PktSend -> downlink.comIn
-      downlink.bufferDeallocate -> fileDownlink.bufferReturn
-      downlink.framedOut -> comm.$send
-      eventLogger.PktSend -> downlink.comIn
-      fileDownlink.bufferSendOut -> downlink.bufferIn
+      eventLogger.PktSend -> comQueue.comPacketQueueIn[0]
+      chanTlm.PktSend -> comQueue.comPacketQueueIn[1]
+      fileDownlink.bufferSendOut -> comQueue.bufferQueueIn[0]
+
+      comQueue.queueSend -> framer.dataIn
+      comQueue.bufferReturnOut[0] -> fileDownlink.bufferReturn
+      framer.dataReturnOut -> comQueue.bufferReturnIn
+
+      framer.bufferAllocate -> commsBufferManager.bufferGetCallee
+      framer.bufferDeallocate -> commsBufferManager.bufferSendIn
+
+      framer.dataOut -> comStub.comDataIn
+      comStub.dataReturnOut -> framer.dataReturnIn
+      comDriver.dataReturnOut -> comStub.dataReturnIn
+
+      comDriver.ready -> comStub.drvConnected
+      comStub.drvDataOut -> comDriver.$send
+
+      comStub.comStatusOut -> framer.comStatusIn
+      framer.comStatusOut -> comQueue.comStatusIn
     }
 
     connections FaultProtection {
       eventLogger.FatalAnnounce -> fatalHandler.FatalReceive
-    }
-
-    connections FileUplinkBuffers {
-      fileUplink.bufferSendOut -> fileUplinkBufferManager.bufferSendIn
-      uplink.bufferAllocate -> fileUplinkBufferManager.bufferGetCallee
-      uplink.bufferDeallocate -> fileUplinkBufferManager.bufferSendIn
-      uplink.bufferOut -> fileUplink.bufferSendIn
     }
 
     connections GPIO {
@@ -114,11 +125,13 @@ module RPI {
       rpiDemo.SpiReadWrite -> spiDrv.SpiReadWrite
     }
 
-    connections StaticMemory {
-      comm.allocate -> staticMemory.bufferAllocate[0]
-      comm.deallocate -> staticMemory.bufferDeallocate[1]
-      downlink.framedAllocate -> staticMemory.bufferAllocate[1]
-      uplink.framedDeallocate -> staticMemory.bufferDeallocate[0]
+    connections MemoryAllocations {
+      comDriver.allocate -> commsBufferManager.bufferGetCallee
+      fileUplink.bufferSendOut -> commsBufferManager.bufferSendIn
+      frameAccumulator.bufferAllocate -> commsBufferManager.bufferGetCallee
+      frameAccumulator.bufferDeallocate -> commsBufferManager.bufferSendIn
+      fprimeRouter.bufferDeallocate -> commsBufferManager.bufferSendIn
+      deframer.bufferDeallocate -> commsBufferManager.bufferSendIn
     }
 
     connections UART {
@@ -126,12 +139,20 @@ module RPI {
       rpiDemo.UartWrite -> uartDrv.$send
       uartDrv.$recv -> rpiDemo.UartRead
       uartDrv.allocate -> uartBufferManager.bufferGetCallee
+      uartDrv.dataReturnOut -> rpiDemo.UartWriteReturn
     }
 
     connections Uplink {
-      cmdDisp.seqCmdStatus -> uplink.cmdResponseIn
-      comm.$recv -> uplink.framedIn
-      uplink.comOut -> cmdDisp.seqCmdBuff
+      comDriver.$recv -> comStub.drvDataIn
+      comStub.comDataOut -> frameAccumulator.dataIn
+
+      frameAccumulator.frameOut -> deframer.framedIn
+      deframer.deframedOut -> fprimeRouter.dataIn
+
+      fprimeRouter.commandOut -> cmdDisp.seqCmdBuff
+      fprimeRouter.fileOut -> fileUplink.bufferSendIn
+
+      cmdDisp.seqCmdStatus -> fprimeRouter.cmdResponseIn
     }
 
   }

@@ -12,7 +12,7 @@
 
 
 #include <Autocoders/Python/test/testgen/MathSenderComponentImpl.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 namespace Ref {
 
@@ -49,7 +49,7 @@ namespace Ref {
 
   void MathSenderComponentImpl ::
     mathIn_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         F32 result
     )
   {

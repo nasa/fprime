@@ -28,14 +28,11 @@ namespace Svc {
             void runFileWriteError();
 
             void runRefPrmFile();
-
-            void init(NATIVE_INT_TYPE instance = 0);
-
         private:
             //! Handler for from_pingOut
             //!
             void from_pingOut_handler(
-                const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                const FwIndexType portNum, /*!< The port number*/
                 U32 key /*!< Value to return to pinger*/
             );
             Svc::PrmDbImpl& m_impl;
@@ -64,9 +61,9 @@ namespace Svc {
       public:
         class PrmDbTestFile : public Os::Stub::File::Test::TestFile {
           public:
-            Status read(U8 *buffer, FwSignedSizeType &size, WaitType wait) override;
+            Status read(U8 *buffer, FwSizeType &size, WaitType wait) override;
 
-            Status write(const U8 *buffer, FwSignedSizeType &size, WaitType wait) override;
+            Status write(const U8 *buffer, FwSizeType &size, WaitType wait) override;
 
             // Tracks the current tester
             static void setTester(PrmDbImplTester* tester);

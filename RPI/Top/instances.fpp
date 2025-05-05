@@ -23,13 +23,13 @@ module RPI {
   {
 
     phase Fpp.ToCpp.Phases.configObjects """
-    NATIVE_INT_TYPE context[] = { RpiDemo::RG_CONTEXT_10Hz, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    U32 context[] = { RpiDemo::RG_CONTEXT_10Hz, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     """
 
     phase Fpp.ToCpp.Phases.configComponents """
-    rateGroup10HzComp.configure(
-        ConfigObjects::rateGroup10HzComp::context,
-        FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroup10HzComp::context)
+    RPI::rateGroup10HzComp.configure(
+        ConfigObjects::RPI_rateGroup10HzComp::context,
+        FW_NUM_ARRAY_ELEMENTS(ConfigObjects::RPI_rateGroup10HzComp::context)
     );
     """
 
@@ -51,8 +51,8 @@ module RPI {
     priority 20 \
   {
     phase Fpp.ToCpp.Phases.readParameters """
-    prmDb.configure("PrmDb.dat");
-    prmDb.readParamFile();
+    RPI::prmDb.configure("PrmDb.dat");
+    RPI::prmDb.readParamFile();
     """
 
   }
@@ -72,18 +72,18 @@ module RPI {
 
     phase Fpp.ToCpp.Phases.configComponents """
     {
-      using namespace ConfigConstants::cmdSeq;
-      cmdSeq.allocateBuffer(
+      using namespace ConfigConstants::RPI_cmdSeq;
+      RPI::cmdSeq.allocateBuffer(
           0,
           Allocation::mallocator,
-          ConfigConstants::cmdSeq::BUFFER_SIZE
+          ConfigConstants::RPI_cmdSeq::BUFFER_SIZE
       );
-      cmdSeq.setTimeout(TIMEOUT);
+      RPI::cmdSeq.setTimeout(TIMEOUT);
     }
     """
 
     phase Fpp.ToCpp.Phases.tearDownComponents """
-    cmdSeq.deallocateBuffer(Allocation::mallocator);
+    RPI::cmdSeq.deallocateBuffer(Allocation::mallocator);
     """
 
   }
@@ -100,13 +100,13 @@ module RPI {
   {
 
     phase Fpp.ToCpp.Phases.configObjects """
-    NATIVE_INT_TYPE context[] = { 0, 0, RpiDemo::RG_CONTEXT_1Hz, 0, 0, 0, 0, 0, 0, 0 };
+    U32 context[] = { 0, 0, RpiDemo::RG_CONTEXT_1Hz, 0, 0, 0, 0, 0, 0, 0 };
     """
 
     phase Fpp.ToCpp.Phases.configComponents """
-    rateGroup1HzComp.configure(
-        ConfigObjects::rateGroup1HzComp::context,
-        FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroup1HzComp::context)
+    RPI::rateGroup1HzComp.configure(
+        ConfigObjects::RPI_rateGroup1HzComp::context,
+        FW_NUM_ARRAY_ELEMENTS(ConfigObjects::RPI_rateGroup1HzComp::context)
     );
     """
 
@@ -133,11 +133,11 @@ module RPI {
     """
 
     phase Fpp.ToCpp.Phases.configComponents """
-    fileDownlink.configure(
-        ConfigConstants::fileDownlink::TIMEOUT,
-        ConfigConstants::fileDownlink::COOLDOWN,
-        ConfigConstants::fileDownlink::CYCLE_TIME,
-        ConfigConstants::fileDownlink::FILE_QUEUE_DEPTH
+    RPI::fileDownlink.configure(
+        ConfigConstants::RPI_fileDownlink::TIMEOUT,
+        ConfigConstants::RPI_fileDownlink::COOLDOWN,
+        ConfigConstants::RPI_fileDownlink::CYCLE_TIME,
+        ConfigConstants::RPI_fileDownlink::FILE_QUEUE_DEPTH
     );
     """
 
@@ -147,6 +147,30 @@ module RPI {
     queue size Default.queueSize \
     stack size Default.stackSize \
     priority 30
+
+  instance comQueue: Svc.ComQueue base id 0x1100 \
+      queue size 50 \
+      stack size Default.stackSize \
+      priority 100 \
+  {
+    phase Fpp.ToCpp.Phases.configObjects """
+      Svc::ComQueue::QueueConfigurationTable configurationTable;
+      """
+    phase Fpp.ToCpp.Phases.configComponents """
+      // Events (highest-priority)
+      ConfigObjects::RPI_comQueue::configurationTable.entries[0].depth = 100;
+      ConfigObjects::RPI_comQueue::configurationTable.entries[0].priority = 0;
+      // Telemetry
+      ConfigObjects::RPI_comQueue::configurationTable.entries[1].depth = 500;
+      ConfigObjects::RPI_comQueue::configurationTable.entries[1].priority = 2;
+      // File Downlink
+      ConfigObjects::RPI_comQueue::configurationTable.entries[2].depth = 100;
+      ConfigObjects::RPI_comQueue::configurationTable.entries[2].priority = 1;
+
+      RPI::comQueue.configure(ConfigObjects::RPI_comQueue::configurationTable, 0, Allocation::mallocator);
+    """
+  }
+
 
   # ----------------------------------------------------------------------
   # Queued component instances
@@ -163,10 +187,10 @@ module RPI {
     """
 
     phase Fpp.ToCpp.Phases.configComponents """
-    health.setPingEntries(
-        ConfigObjects::health::pingEntries,
-        FW_NUM_ARRAY_ELEMENTS(ConfigObjects::health::pingEntries),
-        ConfigConstants::health::WATCHDOG_CODE
+    RPI::health.setPingEntries(
+        ConfigObjects::RPI_health::pingEntries,
+        FW_NUM_ARRAY_ELEMENTS(ConfigObjects::RPI_health::pingEntries),
+        ConfigConstants::RPI_health::WATCHDOG_CODE
     );
     """
 
@@ -178,13 +202,13 @@ module RPI {
 
   instance fatalHandler: Svc.FatalHandler base id 100
 
-  instance fileUplinkBufferManager: Svc.BufferManager base id 900 \
+  instance commsBufferManager: Svc.BufferManager base id 900 \
   {
 
     phase Fpp.ToCpp.Phases.configConstants """
     enum {
       STORE_SIZE = 3000,
-      QUEUE_SIZE = 30,
+      STORE_COUNT = 30,
       MGR_ID = 200
     };
     """
@@ -193,10 +217,10 @@ module RPI {
     {
       Svc::BufferManager::BufferBins bufferBins;
       memset(&bufferBins, 0, sizeof(bufferBins));
-      using namespace ConfigConstants::fileUplinkBufferManager;
+      using namespace ConfigConstants::RPI_commsBufferManager;
       bufferBins.bins[0].bufferSize = STORE_SIZE;
-      bufferBins.bins[0].numBuffers = QUEUE_SIZE;
-      fileUplinkBufferManager.setup(
+      bufferBins.bins[0].numBuffers = STORE_COUNT;
+      RPI::commsBufferManager.setup(
           MGR_ID,
           0,
           Allocation::mallocator,
@@ -207,42 +231,18 @@ module RPI {
     """
 
     phase Fpp.ToCpp.Phases.tearDownComponents """
-    fileUplinkBufferManager.cleanup();
+    RPI::commsBufferManager.cleanup();
     """
 
   }
 
   instance fatalAdapter: Svc.AssertFatalAdapter base id 1000
 
-  instance staticMemory: Svc.StaticMemory base id 1200
+  instance framer: Svc.FprimeFramer base id 1220
 
-  instance downlink: Svc.Framer base id 1220 \
-  {
+  instance deframer: Svc.FprimeDeframer base id 1240
 
-    phase Fpp.ToCpp.Phases.configObjects """
-    Svc::FprimeFraming framing;
-    """
-
-    phase Fpp.ToCpp.Phases.configComponents """
-    downlink.setup(ConfigObjects::downlink::framing);
-    """
-
-  }
-
-  instance uplink: Svc.Deframer base id 1240 \
-  {
-
-    phase Fpp.ToCpp.Phases.configObjects """
-    Svc::FprimeDeframing deframing;
-    """
-
-    phase Fpp.ToCpp.Phases.configComponents """
-    uplink.setup(ConfigObjects::uplink::deframing);
-    """
-
-  }
-
-  instance comm: Drv.TcpClient base id 1260 \
+  instance comDriver: Drv.TcpClient base id 1260 \
   {
 
     phase Fpp.ToCpp.Phases.configConstants """
@@ -252,26 +252,32 @@ module RPI {
     };
     """
 
+    phase Fpp.ToCpp.Phases.configComponents """
+    // Configure socket server if and only if there is a valid specification
+    if (state.hostName != nullptr && state.portNumber != 0) {
+        RPI::comDriver.configure(state.hostName, state.portNumber);
+    }
+    """
+
     phase Fpp.ToCpp.Phases.startTasks """
     // Initialize socket server if and only if there is a valid specification
     if (state.hostName != nullptr && state.portNumber != 0) {
-        Os::TaskString name("ReceiveTask");
         // Uplink is configured for receive so a socket task is started
-        comm.configure(state.hostName, state.portNumber);
-        comm.start(
+        Os::TaskString name("ReceiveTask");
+        RPI::comDriver.start(
             name,
-            ConfigConstants::comm::PRIORITY,
-            ConfigConstants::comm::STACK_SIZE
+            ConfigConstants::RPI_comDriver::PRIORITY,
+            ConfigConstants::RPI_comDriver::STACK_SIZE
         );
     }
     """
 
     phase Fpp.ToCpp.Phases.stopTasks """
-    comm.stop();
+    RPI::comDriver.stop();
     """
 
     phase Fpp.ToCpp.Phases.freeThreads """
-    (void) comm.join();
+    (void) RPI::comDriver.join();
     """
 
   }
@@ -282,7 +288,7 @@ module RPI {
   {
 
     phase Fpp.ToCpp.Phases.stopTasks """
-    linuxTimer.quit();
+    RPI::linuxTimer.quit();
     """
 
   }
@@ -295,8 +301,8 @@ module RPI {
     """
 
     phase Fpp.ToCpp.Phases.configComponents """
-    rateGroupDriverComp.configure(
-        ConfigObjects::rateGroupDriverComp::rgDivs
+    RPI::rateGroupDriverComp.configure(
+        ConfigObjects::RPI_rateGroupDriverComp::rgDivs
     );
     """
   }
@@ -315,7 +321,7 @@ module RPI {
           1024
       );
       if (!status) {
-        Fw::Logger::logMsg("[ERROR] Could not open UART driver\\n");
+        Fw::Logger::log("[ERROR] Could not open UART driver\\n");
         Init::status = false;
       }
     }
@@ -323,15 +329,15 @@ module RPI {
 
     phase Fpp.ToCpp.Phases.startTasks """
     if (Init::status) {
-      uartDrv.start();
+      RPI::uartDrv.start();
     }
     else {
-      Fw::Logger::logMsg("[ERROR] Initialization failed; not starting UART driver\\n");
+      Fw::Logger::log("[ERROR] Initialization failed; not starting UART driver\\n");
     }
     """
 
     phase Fpp.ToCpp.Phases.stopTasks """
-    uartDrv.quitReadThread();
+    RPI::uartDrv.quitReadThread();
     """
 
   }
@@ -341,9 +347,9 @@ module RPI {
 
     phase Fpp.ToCpp.Phases.configComponents """
     {
-      const bool status = ledDrv.open(21, Drv::LinuxGpioDriverComponentImpl::GPIO_OUT);
-      if (!status) {
-        Fw::Logger::logMsg("[ERROR] Could not open LED driver\\n");
+      const Os::File::Status status = RPI::ledDrv.open("/dev/gpiochip0", 21, Drv::LinuxGpioDriver::GpioConfiguration::GPIO_OUTPUT);
+      if (status != Os::File::Status::OP_OK) {
+        Fw::Logger::log("[ERROR] Could not open LED driver\\n");
         Init::status = false;
       }
     }
@@ -356,9 +362,9 @@ module RPI {
 
     phase Fpp.ToCpp.Phases.configComponents """
     {
-      const bool status = gpio23Drv.open(23, Drv::LinuxGpioDriverComponentImpl::GPIO_OUT);
-      if (!status) {
-        Fw::Logger::logMsg("[ERROR] Could not open GPIO 23 driver\\n");
+      const Os::File::Status status = RPI::gpio23Drv.open("/dev/gpiochip0", 23, Drv::LinuxGpioDriver::GpioConfiguration::GPIO_OUTPUT);
+      if (status != Os::File::Status::OP_OK) {
+        Fw::Logger::log("[ERROR] Could not open GPIO 23 driver\\n");
         Init::status = false;
       }
     }
@@ -371,9 +377,9 @@ module RPI {
 
     phase Fpp.ToCpp.Phases.configComponents """
     {
-      const bool status = gpio24Drv.open(24, Drv::LinuxGpioDriverComponentImpl::GPIO_OUT);
-      if (!status) {
-        Fw::Logger::logMsg("[ERROR] Could not open GPIO 24 driver\\n");
+      const Os::File::Status status = RPI::gpio24Drv.open("/dev/gpiochip0", 24, Drv::LinuxGpioDriver::GpioConfiguration::GPIO_OUTPUT);
+      if (status != Os::File::Status::OP_OK) {
+        Fw::Logger::log("[ERROR] Could not open GPIO 24 driver\\n");
         Init::status = false;
       }
     }
@@ -386,9 +392,9 @@ module RPI {
 
     phase Fpp.ToCpp.Phases.configComponents """
     {
-      const bool status = gpio25Drv.open(25, Drv::LinuxGpioDriverComponentImpl::GPIO_IN);
-      if (!status) {
-        Fw::Logger::logMsg("[ERROR] Could not open GPIO 25 driver\\n");
+      const Os::File::Status status = RPI::gpio25Drv.open("/dev/gpiochip0", 25, Drv::LinuxGpioDriver::GpioConfiguration::GPIO_INPUT);
+      if (status != Os::File::Status::OP_OK) {
+        Fw::Logger::log("[ERROR] Could not open GPIO 25 driver\\n");
         Init::status = false;
       }
     }
@@ -401,9 +407,9 @@ module RPI {
 
     phase Fpp.ToCpp.Phases.configComponents """
     {
-      const bool status = gpio17Drv.open(17, Drv::LinuxGpioDriverComponentImpl::GPIO_IN);
-      if (!status) {
-        Fw::Logger::logMsg("[ERROR] Could not open GPIO 17 driver\\n");
+      const Os::File::Status status = RPI::gpio17Drv.open("/dev/gpiochip0", 17, Drv::LinuxGpioDriver::GpioConfiguration::GPIO_INPUT);
+      if (status != Os::File::Status::OP_OK) {
+        Fw::Logger::log("[ERROR] Could not open GPIO 17 driver\\n");
         Init::status = false;
       }
     }
@@ -416,9 +422,9 @@ module RPI {
 
     phase Fpp.ToCpp.Phases.configComponents """
     {
-      const bool status = spiDrv.open(0, 0, Drv::SPI_FREQUENCY_1MHZ);
+      const bool status = RPI::spiDrv.open(0, 0, Drv::SPI_FREQUENCY_1MHZ);
       if (!status) {
-        Fw::Logger::logMsg("[ERROR] Could not open SPI driver\\n");
+        Fw::Logger::log("[ERROR] Could not open SPI driver\\n");
         Init::status = false;
       }
     }
@@ -441,10 +447,10 @@ module RPI {
     {
       Svc::BufferManager::BufferBins bufferBins;
       memset(&bufferBins, 0, sizeof(bufferBins));
-      using namespace ConfigConstants::uartBufferManager;
+      using namespace ConfigConstants::RPI_uartBufferManager;
       bufferBins.bins[0].bufferSize = STORE_SIZE;
       bufferBins.bins[0].numBuffers = QUEUE_SIZE;
-      uartBufferManager.setup(
+      RPI::uartBufferManager.setup(
           MGR_ID,
           0,
           Allocation::mallocator,
@@ -455,9 +461,33 @@ module RPI {
     """
 
     phase Fpp.ToCpp.Phases.tearDownComponents """
-    uartBufferManager.cleanup();
+    RPI::uartBufferManager.cleanup();
     """
   }
+
+  instance frameAccumulator: Svc.FrameAccumulator base id 2900 \
+  {
+    phase Fpp.ToCpp.Phases.configObjects """
+        Svc::FrameDetectors::FprimeFrameDetector fprimeFrameDetector;
+    """
+
+    phase Fpp.ToCpp.Phases.configComponents """
+    {
+      RPI::frameAccumulator.configure(ConfigObjects::RPI_frameAccumulator::fprimeFrameDetector, 1, Allocation::mallocator, 2048);
+    }
+    """
+
+    phase Fpp.ToCpp.Phases.tearDownComponents """
+    {
+      RPI::frameAccumulator.cleanup();
+    }
+    """
+
+  }
+
+  instance fprimeRouter: Svc.FprimeRouter base id 3000
+
+  instance comStub: Svc.ComStub base id 3100
 
 
 }

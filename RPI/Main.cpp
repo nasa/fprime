@@ -3,12 +3,11 @@
 #include <ctype.h>
 #include <getopt.h>
 #include <signal.h>
+#include <Os/Os.hpp>
 #include <Fw/Time/Time.hpp>
 #include <RPI/Top/RPITopologyAc.hpp>
 
 RPI::TopologyState state;
-// Enable the console logging provided by Os::Log
-Os::Log logger;
 
 void print_usage(const char* app) {
     (void) printf("Usage: ./%s [options]\n-p\tport_number\n-a\thostname/IP address\n",app);
@@ -22,6 +21,7 @@ static void sighandler(int signum) {
 }
 
 int main(int argc, char* argv[]) {
+    Os::init();
     I32 option = 0;
 
     while ((option = getopt(argc, argv, "hp:a:")) != -1){
@@ -31,7 +31,7 @@ int main(int argc, char* argv[]) {
                 return 0;
                 break;
             case 'p':
-                state.portNumber = static_cast<U32>(atoi(optarg));
+                state.portNumber = static_cast<U16>(atoi(optarg));
                 break;
             case 'a':
                 state.hostName = optarg;
@@ -61,7 +61,7 @@ int main(int argc, char* argv[]) {
     // Time to exit the program.
     // Give time for threads to exit.
     (void) printf("Waiting for threads...\n");
-    Os::Task::delay(Fw::Time(1, 0));
+    Os::Task::delay(Fw::TimeInterval(1, 0));
 
     (void) printf("Exiting...\n");
 

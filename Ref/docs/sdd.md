@@ -1,3 +1,8 @@
+---
+search:
+  exclude: true
+---
+
 # Reference Deployment
 
 ## 1. Description

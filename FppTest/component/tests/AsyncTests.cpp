@@ -53,3 +53,19 @@ using InternalInterfaceTestImplementations = ::testing::Types<FppTest::Types::No
                                                               FppTest::Types::StructParam>;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(FppTest, ComponentInternalInterfaceTest, InternalInterfaceTestImplementations);
+
+TEST(ComponentOverflow, OverflowHook) {
+    Tester tester;
+    tester.testOverflowHook();
+}
+
+TEST(ComponentOverflow, OverflowDrop) {
+    Tester tester;
+    tester.testOverflowDrop();
+}
+
+TEST(ComponentOverflow, OverflowAssert) {
+    Tester tester;
+    tester.testOverflowAssert();
+}
+

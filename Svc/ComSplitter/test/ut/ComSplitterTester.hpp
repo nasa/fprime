@@ -53,7 +53,7 @@ namespace Svc {
       //! Handler for from_comOut
       //!
       void from_comOut_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          const FwIndexType portNum, /*!< The port number*/
           Fw::ComBuffer &data, /*!< Buffer containing packet data*/
           U32 context /*!< Call context value; meaning chosen by user*/
       );

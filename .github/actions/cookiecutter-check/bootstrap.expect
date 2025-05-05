@@ -1,0 +1,5 @@
+set timeout 180
+spawn fprime-bootstrap project
+expect -re {.*Project name.*}
+send "MyProject\r"
+expect eof

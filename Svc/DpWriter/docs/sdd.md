@@ -1,4 +1,3 @@
-\page SvcDpWriterComponent Svc::DpWriter Component
 # Svc::DpWriter (Active Component)
 
 ## 1. Introduction
@@ -12,7 +11,7 @@ data products.
 They typically pass through an instance of
 [`Svc::DpManager`](../../DpManager/docs/sdd.md), and possibly through
 an instance of
-[`Svc::BufferAccumulator`](../../BufferAccumulator/docs/BufferAccumulator.md),
+[`Svc::BufferAccumulator`](../../BufferAccumulator/docs/sdd.md),
 before reaching `DpWriter`.
 
 1. For each buffer _B_ received in step 1:
@@ -43,9 +42,7 @@ SVC-DPWRITER-006 | `Svc::DpManager` shall provide telemetry that reports the num
 
 The diagram below shows the `DpWriter` component.
 
-<div>
-<img src="img/DpWriter.png" width=700/>
-</div>
+![DpWriter](img/DpWriter.png)
 
 ### 3.2. Ports
 
@@ -206,9 +203,7 @@ The diagrams use the following instances:
 
 * `producer`: A component that produces data products.
 
-<div>
-<img src="img/top/product-write.png" width=800/>
-</div>
+![product-write](./img/top/product-write.png)
 
 ### 6.2. Sequence Diagrams
 

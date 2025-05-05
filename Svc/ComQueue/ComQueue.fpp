@@ -4,7 +4,7 @@ module Svc {
 
     @ Array of queue depths for Fw::Com types
     array ComQueueDepth = [ComQueueComPorts] U32
-    
+
     @ Array of queue depths for Fw::Buffer types
     array BuffQueueDepth = [ComQueueBufferPorts] U32
 
@@ -16,20 +16,24 @@ module Svc {
       # General ports
       # ----------------------------------------------------------------------
 
-      @ Fw::ComBuffer output port
-      output port comQueueSend: Fw.Com
-
-      @ Fw::Buffer output port
-      output port buffQueueSend: Fw.BufferSend
+      @ Port for emitting data ready to be sent
+      output port queueSend: Svc.ComDataWithContext
 
       @ Port for receiving the status signal
       async input port comStatusIn: Fw.SuccessCondition
 
       @ Port array for receiving Fw::ComBuffers
-      async input port comQueueIn: [ComQueueComPorts] Fw.Com drop
+      async input port comPacketQueueIn: [ComQueueComPorts] Fw.Com drop
 
       @ Port array for receiving Fw::Buffers
-      async input port buffQueueIn: [ComQueueBufferPorts] Fw.BufferSend drop
+      async input port bufferQueueIn: [ComQueueBufferPorts] Fw.BufferSend hook
+
+      @ Port array for returning ownership of Fw::Buffer to its original sender
+      output port bufferReturnOut: [ComQueueBufferPorts] Fw.BufferSend
+
+      # It is appropriate for this port to be sync since it is just a passthrough
+      @ Port for receiving Fw::Buffer whose ownership needs to be handed back
+      sync input port bufferReturnIn: Svc.ComDataWithContext
 
       @ Port for scheduling telemetry output
       async input port run: Svc.Sched drop

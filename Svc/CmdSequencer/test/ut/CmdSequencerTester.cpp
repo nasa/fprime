@@ -13,6 +13,8 @@
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/FPrime/FPrime.hpp"
 #include "CmdSequencerTester.hpp"
 #include "Os/Delegate.hpp"
+#include "Os/Posix/FileSystem.hpp"
+#include "Os/Posix/Directory.hpp"
 
 namespace Svc {
 
@@ -21,10 +23,10 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   CmdSequencerTester ::
-    CmdSequencerTester(const SequenceFiles::File::Format::t format) :
+    CmdSequencerTester(const SequenceFiles::File::Format::t a_format) :
       CmdSequencerGTestBase("Tester", MAX_HISTORY_SIZE),
       component("CmdSequencer"),
-      format(format),
+      format(a_format),
       sequences(this->component)
   {
     this->initComponents();
@@ -52,7 +54,7 @@ namespace Svc {
 
   void CmdSequencerTester ::
     from_seqDone_handler(
-      const NATIVE_INT_TYPE portNum,
+      const FwIndexType portNum,
       FwOpcodeType opCode,
       U32 cmdSeq,
       const Fw::CmdResponse& response
@@ -63,7 +65,7 @@ namespace Svc {
 
   void CmdSequencerTester ::
     from_comCmdOut_handler(
-        const NATIVE_INT_TYPE portNum,
+        const FwIndexType portNum,
         Fw::ComBuffer &data,
         U32 context
     )
@@ -73,7 +75,7 @@ namespace Svc {
 
   void CmdSequencerTester ::
     from_pingOut_handler(
-      const NATIVE_INT_TYPE portNum,
+      const FwIndexType portNum,
       U32 key
     )
   {
@@ -822,9 +824,29 @@ namespace Os {
 //! \param aligned_new_memory: aligned memory to fill
 //! \param to_copy: pointer to copy-constructor input
 //! \return: pointer to delegate
-FileInterface *FileInterface::getDelegate(HandleStorage& aligned_placement_new_memory, const FileInterface* to_copy) {
+FileInterface *FileInterface::getDelegate(FileHandleStorage& aligned_placement_new_memory, const FileInterface* to_copy) {
     return Os::Delegate::makeDelegate<FileInterface, Svc::CmdSequencerTester::Interceptor::PosixFileInterceptor>(
             aligned_placement_new_memory, to_copy
     );
 }
+
+//! \brief get a delegate for FileSystemInterface that intercepts calls for stub fileSystem usage
+//! \param aligned_new_memory: aligned memory to fill
+//! \param to_copy: pointer to copy-constructor input
+//! \return: pointer to delegate
+FileSystemInterface *FileSystemInterface::getDelegate(FileSystemHandleStorage& aligned_placement_new_memory) {
+    return Os::Delegate::makeDelegate<FileSystemInterface, Os::Posix::FileSystem::PosixFileSystem>(
+        aligned_placement_new_memory
+    );
+}
+
+//! \brief get a delegate for DirectoryInterface that intercepts calls for stub Directory usage
+//! \param aligned_new_memory: aligned memory to fill
+//! \return: pointer to delegate
+DirectoryInterface *DirectoryInterface::getDelegate(DirectoryHandleStorage& aligned_placement_new_memory) {
+    return Os::Delegate::makeDelegate<DirectoryInterface, Os::Posix::Directory::PosixDirectory>(
+        aligned_placement_new_memory
+    );
+}
+
 }

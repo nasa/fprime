@@ -12,7 +12,7 @@
 #include <Drv/Ip/TcpServerSocket.hpp>
 #include <Fw/Logger/Logger.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 #ifdef TGT_OS_TYPE_VXWORKS
     #include <socket.h>
@@ -38,28 +38,23 @@
 
 namespace Drv {
 
-TcpServerSocket::TcpServerSocket() : IpSocket(), m_base_fd(-1) {}
+TcpServerSocket::TcpServerSocket() : IpSocket() {}
 
 U16 TcpServerSocket::getListenPort() {
-    this->m_lock.lock();
     U16 port = this->m_port;
-    this->m_lock.unlock();
     return port;
 }
 
-SocketIpStatus TcpServerSocket::startup() {
-    NATIVE_INT_TYPE serverFd = -1;
+SocketIpStatus TcpServerSocket::startup(SocketDescriptor& socketDescriptor) {
+    PlatformIntType serverFd = -1;
     struct sockaddr_in address;
-    this->close();
     // Acquire a socket, or return error
     if ((serverFd = ::socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         return SOCK_FAILED_TO_GET_SOCKET;
     }
     // Set up the address port and name
     address.sin_family = AF_INET;
-    this->m_lock.lock();
     address.sin_port = htons(this->m_port);
-    this->m_lock.unlock();
 
     // OS specific settings
 #if defined TGT_OS_TYPE_VXWORKS || TGT_OS_TYPE_DARWIN
@@ -82,45 +77,30 @@ SocketIpStatus TcpServerSocket::startup() {
         ::close(serverFd);
         return SOCK_FAILED_TO_READ_BACK_PORT;
     }
-    U16 port = ntohs(address.sin_port);
-    Fw::Logger::logMsg("Listening for single client at %s:%hu\n", reinterpret_cast<POINTER_CAST>(m_hostname), port);
-    // TCP requires listening on the socket. Since we only expect a single client, set the TCP backlog (second argument) to 1 to prevent queuing of multiple clients. 
+    // TCP requires listening on the socket. Since we only expect a single client, set the TCP backlog (second argument) to 1 to prevent queuing of multiple clients.
     if (::listen(serverFd, 1) < 0) {
         ::close(serverFd);
         return SOCK_FAILED_TO_LISTEN; // What we have here is a failure to communicate
     }
-
-    this->m_lock.lock();
-    m_base_fd = serverFd;
-    m_port = port;
-    this->m_lock.unLock();
-
-    return this->IpSocket::startup();
+    Fw::Logger::log("Listening for single client at %s:%hu\n", m_hostname, m_port);
+    FW_ASSERT(serverFd != -1);
+    socketDescriptor.serverFd = serverFd;
+    this->m_port = ntohs(address.sin_port);
+    return SOCK_SUCCESS;
 }
 
-void TcpServerSocket::shutdown() {
-    this->m_lock.lock();
-    if (this->m_base_fd != -1) {
-        (void)::shutdown(this->m_base_fd, SHUT_RDWR);
-        (void)::close(this->m_base_fd);
-        this->m_base_fd = -1;
-    }
-    this->m_lock.unLock();
-    this->IpSocket::shutdown();
+void TcpServerSocket::terminate(const SocketDescriptor& socketDescriptor) {
+    (void)::close(socketDescriptor.serverFd);
 }
 
-SocketIpStatus TcpServerSocket::openProtocol(NATIVE_INT_TYPE& fd) {
-    NATIVE_INT_TYPE clientFd = -1;
-    NATIVE_INT_TYPE serverFd = -1;
+SocketIpStatus TcpServerSocket::openProtocol(SocketDescriptor& socketDescriptor) {
+    PlatformIntType clientFd = -1;
+    PlatformIntType serverFd = socketDescriptor.serverFd;
 
-    // Check started before allowing open
-    if (not this->isStarted()) {
+    // Check for not started yet, may be true in the case of start-up reconnect attempts
+    if (serverFd == -1) {
         return SOCK_NOT_STARTED;
     }
-
-    this->m_lock.lock();
-    serverFd = this->m_base_fd;
-    this->m_lock.unLock();
 
     // TCP requires accepting on the socket to get the client socket file descriptor.
     clientFd = ::accept(serverFd, nullptr, nullptr);
@@ -133,17 +113,20 @@ SocketIpStatus TcpServerSocket::openProtocol(NATIVE_INT_TYPE& fd) {
         return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
     }
 
-    Fw::Logger::logMsg("Accepted client at %s:%hu\n", reinterpret_cast<POINTER_CAST>(m_hostname), m_port);
-    fd = clientFd;
+    Fw::Logger::log("Accepted client at %s:%hu\n", m_hostname, m_port);
+    socketDescriptor.fd = clientFd;
     return SOCK_SUCCESS;
 }
 
-I32 TcpServerSocket::sendProtocol(const U8* const data, const U32 size) {
-    return static_cast<I32>(::send(this->m_fd, data, size, SOCKET_IP_SEND_FLAGS));
+I32 TcpServerSocket::sendProtocol(const SocketDescriptor& socketDescriptor, const U8* const data, const U32 size) {
+    return static_cast<I32>(::send(socketDescriptor.fd, data, size, SOCKET_IP_SEND_FLAGS));
 }
 
-I32 TcpServerSocket::recvProtocol(U8* const data, const U32 size) {
-    return static_cast<I32>(::recv(this->m_fd, data, size, SOCKET_IP_RECV_FLAGS));
+I32 TcpServerSocket::recvProtocol(const SocketDescriptor& socketDescriptor, U8* const data, const U32 size) {
+    I32 size_buf;
+    // recv will return 0 if the client has done an orderly shutdown
+    size_buf = static_cast<I32>(::recv(socketDescriptor.fd, data, size, SOCKET_IP_RECV_FLAGS));
+    return size_buf;
 }
 
 }  // namespace Drv

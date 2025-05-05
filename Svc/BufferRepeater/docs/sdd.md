@@ -1,4 +1,3 @@
-\page SvcBufferRepeaterComponent Svc::BufferRepeater Component
 # Svc::BufferRepeater: Buffer Repeater (Passive Component)
 
 ## 1. Introduction

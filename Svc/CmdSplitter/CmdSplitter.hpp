@@ -12,7 +12,7 @@
 
 namespace Svc {
 
-class CmdSplitter : public CmdSplitterComponentBase {
+class CmdSplitter final : public CmdSplitterComponentBase {
   public:
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction
@@ -39,14 +39,14 @@ class CmdSplitter : public CmdSplitterComponentBase {
 
     //! Handler implementation for CmdBuff
     //!
-    void CmdBuff_handler(const NATIVE_INT_TYPE portNum, /*!< The port number */
+    void CmdBuff_handler(const FwIndexType portNum, /*!< The port number */
                          Fw::ComBuffer& data,           /*!< Buffer containing packet data */
                          U32 context                    /*!< Call context value; meaning chosen by user */
     );
 
     //! Handler implementation for seqCmdStatus
     //!
-    void seqCmdStatus_handler(const NATIVE_INT_TYPE portNum,  /*!< The port number */
+    void seqCmdStatus_handler(const FwIndexType portNum,  /*!< The port number */
                               FwOpcodeType opCode,            /*!< Command Op Code */
                               U32 cmdSeq,                     /*!< Command Sequence */
                               const Fw::CmdResponse& response /*!< The command response argument */

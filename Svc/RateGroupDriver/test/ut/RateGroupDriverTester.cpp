@@ -17,7 +17,7 @@ static Fw::SimpleObjRegistry simpleReg;
 
 void connectPorts(Svc::RateGroupDriver& impl, Svc::RateGroupDriverImplTester& tester) {
 
-    for(NATIVE_UINT_TYPE i=0; i<Svc::RateGroupDriver::DIVIDER_SIZE; i++)
+    for(FwIndexType i=0; i<Svc::RateGroupDriver::DIVIDER_SIZE; i++)
     {
         impl.set_CycleOut_OutputPort(i,tester.get_from_CycleOut(i));
     }
@@ -35,7 +35,7 @@ TEST(RateGroupDriverTest,NominalSchedule) {
     Svc::RateGroupDriver::DividerSet dividersSet{};
     for(FwIndexType i=0; i<static_cast<FwIndexType>(Svc::RateGroupDriver::DIVIDER_SIZE); i++)
     {
-        dividersSet.dividers[i] = {i+1, i%2};
+        dividersSet.dividers[i] = {static_cast<FwSizeType>(i+1), static_cast<FwSizeType>(i%2)};
     }
 
     Svc::RateGroupDriver impl("RateGroupDriver");

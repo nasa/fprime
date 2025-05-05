@@ -1,4 +1,4 @@
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/ExternalString.hpp>
 #include <Fw/Types/InternalInterfaceString.hpp>
@@ -8,7 +8,6 @@
 #include <Fw/Types/Serializable.hpp>
 #include <Fw/Types/String.hpp>
 #include <Fw/Types/StringTemplate.hpp>
-#include <Os/InterruptLock.hpp>
 #include <Os/IntervalTimer.hpp>
 //
 // Created by mstarch on 12/7/20.
@@ -30,7 +29,7 @@
 
 class SerializeTestBuffer : public Fw::SerializeBufferBase {
   public:
-    NATIVE_UINT_TYPE getBuffCapacity() const {  // !< returns capacity, not current size, of buffer
+    FwSizeType getBuffCapacity() const {  // !< returns capacity, not current size, of buffer
         return sizeof(m_testBuff);
     }
 
@@ -82,7 +81,7 @@ TEST(SerializationTest, Serialization1) {
     ASSERT_EQ(0, buff.m_serLoc);
     ASSERT_EQ(0, buff.m_deserLoc);
 
-    I8 i8t1 = 0xFF;
+    I8 i8t1 = static_cast<I8>(0xFF);
     I8 i8t2 = 0;
 
     stat1 = buff.serialize(i8t1);
@@ -136,7 +135,7 @@ TEST(SerializationTest, Serialization1) {
     printf("I16 test\n");
 #endif
 
-    I16 i16t1 = 0xABCD;
+    I16 i16t1 = static_cast<I16>(0xABCD);
     I16 i16t2 = 0;
 
     buff.resetSer();
@@ -657,9 +656,6 @@ TEST(PerformanceTest, SerPerfTest) {
     MySerializable out;
     SerializeTestBuffer buff;
 
-    Os::InterruptLock intLock;
-
-    intLock.lock();
     timer.start();
 
     I32 iterations = 1000000;
@@ -669,20 +665,17 @@ TEST(PerformanceTest, SerPerfTest) {
     }
 
     timer.stop();
-    intLock.unLock();
 
     printf("%d iterations took %d us (%f each).\n", iterations, timer.getDiffUsec(),
-           static_cast<F32>(timer.getDiffUsec()) / static_cast<F32>(iterations));
+           static_cast<F64>(timer.getDiffUsec()) / iterations);
 }
 
 TEST(PerformanceTest, StructCopyTest) {
     char buff[sizeof(TestStruct)];
     TestStruct ts;
 
-    Os::InterruptLock intLock;
     Os::IntervalTimer timer;
 
-    intLock.lock();
     timer.start();
 
     I32 iterations = 1000000;
@@ -699,20 +692,17 @@ TEST(PerformanceTest, StructCopyTest) {
     }
 
     timer.stop();
-    intLock.unLock();
 
     printf("%d iterations took %d us (%f each).\n", iterations, timer.getDiffUsec(),
-           static_cast<F32>(timer.getDiffUsec()) / static_cast<F32>(iterations));
+           static_cast<F64>(timer.getDiffUsec()) / iterations);
 }
 
 TEST(PerformanceTest, ClassCopyTest) {
     char buff[sizeof(MySerializable)];
     MySerializable ms;
 
-    Os::InterruptLock intLock;
     Os::IntervalTimer timer;
 
-    intLock.lock();
     timer.start();
 
     I32 iterations = 1000000;
@@ -722,10 +712,9 @@ TEST(PerformanceTest, ClassCopyTest) {
     }
 
     timer.stop();
-    intLock.unLock();
 
     printf("%d iterations took %d us (%f each).\n", iterations, timer.getDiffUsec(),
-           static_cast<F32>(timer.getDiffUsec()) / static_cast<F32>(iterations));
+           static_cast<F64>(timer.getDiffUsec()) / iterations);
 }
 
 void printSizes() {
@@ -753,8 +742,8 @@ void AssertTest() {
         TestAssertHook() {}
         virtual ~TestAssertHook() {}
         void reportAssert(FILE_NAME_ARG file,
-                          NATIVE_UINT_TYPE lineNo,
-                          NATIVE_UINT_TYPE numArgs,
+                          FwSizeType lineNo,
+                          FwSizeType numArgs,
                           FwAssertArgType arg1,
                           FwAssertArgType arg2,
                           FwAssertArgType arg3,
@@ -776,9 +765,9 @@ void AssertTest() {
 
         FILE_NAME_ARG getFile() { return this->m_file; }
 
-        NATIVE_UINT_TYPE getLineNo() { return this->m_lineNo; }
+        FwSizeType getLineNo() { return this->m_lineNo; }
 
-        NATIVE_UINT_TYPE getNumArgs() { return this->m_numArgs; }
+        FwSizeType getNumArgs() { return this->m_numArgs; }
 
         FwAssertArgType getArg1() { return this->m_arg1; }
 
@@ -804,8 +793,8 @@ void AssertTest() {
 #else
         FILE_NAME_ARG m_file = nullptr;
 #endif
-        NATIVE_UINT_TYPE m_lineNo = 0;
-        NATIVE_UINT_TYPE m_numArgs = 0;
+        FwSizeType m_lineNo = 0;
+        FwSizeType m_numArgs = 0;
         FwAssertArgType m_arg1 = 0;
         FwAssertArgType m_arg2 = 0;
         FwAssertArgType m_arg3 = 0;
@@ -1203,6 +1192,62 @@ TEST(TypesTest, StringFormatTest) {
     ASSERT_STREQ(str.toChar(), "Int 10 String foo");
 }
 
+TEST(TypesTest, FormatSpecifierTest) {
+    Fw::String str;
+
+    U8 numU8 = 10;
+    str.format("U8: %" PRI_U8, numU8);
+    ASSERT_STREQ(str.toChar(), "U8: 10");
+
+    I8 numI8 = -10;
+    str.format("I8: %" PRI_I8, numI8);
+    ASSERT_STREQ(str.toChar(), "I8: -10");
+
+    #if FW_HAS_16_BIT
+    U16 numU16 = 10;
+    str.format("U16: %" PRI_U16, numU16);
+    ASSERT_STREQ(str.toChar(), "U16: 10");
+
+    I16 numI16 = -10;
+    str.format("I16: %" PRI_I16, numI16);
+    ASSERT_STREQ(str.toChar(), "I16: -10");
+    #endif
+
+    #if FW_HAS_32_BIT
+    U32 numU32 = 10;
+    str.format("U32: %" PRI_U32, numU32);
+    ASSERT_STREQ(str.toChar(), "U32: 10");
+
+    I32 numI32 = -10;
+    str.format("I32: %" PRI_I32, numI32);
+    ASSERT_STREQ(str.toChar(), "I32: -10");
+    #endif
+
+    #if FW_HAS_64_BIT
+    U64 numU64 = 10;
+    str.format("U64: %" PRI_U64, numU64);
+    ASSERT_STREQ(str.toChar(), "U64: 10");
+
+    I64 numI64 = -10;
+    str.format("I64: %" PRI_I64, numI64);
+    ASSERT_STREQ(str.toChar(), "I64: -10");
+    #endif
+
+    F32 numF32 = 12.3456789;
+    str.format("F32: %" PRI_F64, static_cast<double>(numF32));
+    ASSERT_STREQ(str.toChar(), "F32: 12.345679");
+
+    #if FW_HAS_F64
+    F64 numF64 = 12.3456789;
+    str.format("F64: %" PRI_F64, numF64);
+    ASSERT_STREQ(str.toChar(), "F64: 12.345679");
+    #endif
+
+    char c = 'A';
+    str.format("CHAR: %" PRI_CHAR, c);
+    ASSERT_STREQ(str.toChar(), "CHAR: A");
+}
+
 TEST(PerformanceTest, F64SerPerfTest) {
     SerializeTestBuffer buff;
 
@@ -1213,12 +1258,12 @@ TEST(PerformanceTest, F64SerPerfTest) {
     F64 in = 10000.0;
     F64 out = 0;
 
-    NATIVE_INT_TYPE iters = 1000000;
+    FwSizeType iters = 1000000;
 
     Os::IntervalTimer timer;
     timer.start();
 
-    for (NATIVE_INT_TYPE iter = 0; iter < iters; iter++) {
+    for (FwSizeType iter = 0; iter < iters; iter++) {
         buff.resetSer();
         buff.serialize(in);
         buff.deserialize(out);
@@ -1226,15 +1271,15 @@ TEST(PerformanceTest, F64SerPerfTest) {
 
     timer.stop();
 
-    printf("%d iterations took %d us (%f us each).\n", iters, timer.getDiffUsec(),
-           static_cast<F32>(timer.getDiffUsec()) / static_cast<F32>(iters));
+    printf("%" PRI_FwSizeType " iterations took %d us (%f us each).\n", iters, timer.getDiffUsec(),
+           static_cast<F64>(timer.getDiffUsec()) / static_cast<F64>(iters));
 }
 
 TEST(AllocatorTest, MallocAllocatorTest) {
     // Since it is a wrapper around malloc, the test consists of requesting
     // memory and verifying a non-zero pointer, unchanged size, and not recoverable.
     Fw::MallocAllocator allocator;
-    NATIVE_UINT_TYPE size = 100;  // one hundred bytes
+    FwSizeType size = 100;  // one hundred bytes
     bool recoverable;
     void* ptr = allocator.allocate(10, size, recoverable);
     ASSERT_EQ(100, size);
@@ -1249,8 +1294,8 @@ TEST(Nominal, string_copy) {
     char buffer_out_test[10];
     char buffer_out_truth[10];
 
-    char* out_truth = ::strncpy(buffer_out_truth, copy_string, sizeof(buffer_out_truth));
-    char* out_test = Fw::StringUtils::string_copy(buffer_out_test, copy_string, sizeof(buffer_out_test));
+    char* out_truth = ::strncpy(buffer_out_truth, copy_string, static_cast<FwSizeType>(sizeof(buffer_out_truth)));
+    char* out_test = Fw::StringUtils::string_copy(buffer_out_test, copy_string, static_cast<FwSizeType>(sizeof(buffer_out_test)));
 
     ASSERT_EQ(sizeof(buffer_out_truth), sizeof(buffer_out_test)) << "Buffer size mismatch";
 
@@ -1275,8 +1320,8 @@ TEST(OffNominal, string_copy) {
     char buffer_out_test[sizeof(copy_string) - 1];
     char buffer_out_truth[sizeof(copy_string) - 1];
 
-    char* out_truth = ::strncpy(buffer_out_truth, copy_string, sizeof(buffer_out_truth));
-    char* out_test = Fw::StringUtils::string_copy(buffer_out_test, copy_string, sizeof(buffer_out_test));
+    char* out_truth = ::strncpy(buffer_out_truth, copy_string, static_cast<FwSizeType>(sizeof(buffer_out_truth)));
+    char* out_test = Fw::StringUtils::string_copy(buffer_out_test, copy_string, static_cast<FwSizeType>(sizeof(buffer_out_test)));
 
     ASSERT_EQ(sizeof(buffer_out_truth), sizeof(buffer_out_test)) << "Buffer size mismatch";
 
@@ -1296,13 +1341,13 @@ TEST(OffNominal, string_copy) {
 
 TEST(Nominal, string_len) {
     const char* test_string = "abc123";
-    ASSERT_EQ(Fw::StringUtils::string_length(test_string, 50), 6);
-    ASSERT_EQ(Fw::StringUtils::string_length(test_string, 3), 3);
+    ASSERT_EQ(Fw::StringUtils::string_length(test_string, static_cast<FwSizeType>(50)), 6);
+    ASSERT_EQ(Fw::StringUtils::string_length(test_string, static_cast<FwSizeType>(3)), 3);
 }
 
 TEST(OffNominal, string_len_zero) {
     const char* test_string = "abc123";
-    ASSERT_EQ(Fw::StringUtils::string_length(test_string, 0), 0);
+    ASSERT_EQ(Fw::StringUtils::string_length(test_string, static_cast<FwSizeType>(0)), 0);
 }
 
 TEST(OffNominal, sub_string_no_match) {

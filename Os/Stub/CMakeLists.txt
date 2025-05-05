@@ -6,59 +6,36 @@
 #
 ####
 add_custom_target("${FPRIME_CURRENT_MODULE}")
-set(SOURCE_FILES
-    "${CMAKE_CURRENT_LIST_DIR}/File.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/DefaultFile.cpp"
-)
-register_fprime_module(Os_File_Stub)
-register_fprime_implementation(Os/File Os_File_Stub)
+
+register_os_implementation("File;FileSystem;Directory" Stub)
+register_os_implementation(Console Stub)
+register_os_implementation(Task Stub)
+register_os_implementation("Mutex;ConditionVariable" Stub)
+register_os_implementation(Cpu Stub)
+register_os_implementation(Memory Stub)
+register_os_implementation(Queue Stub)
+register_os_implementation(RawTime Stub)
 
 # Remainder of file is specific to UTs
 if (NOT BUILD_TESTING)
     return()
 endif ()
 
-#### File Stub Testing ####
-set(SOURCE_FILES
-    "${CMAKE_CURRENT_LIST_DIR}/test/File.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/test/DefaultFile.cpp"
-)
-register_fprime_module(Os_File_Test_Stub)
-register_fprime_implementation(Os/File Os_File_Test_Stub)
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test")
 
+## Stubs test: checks that all the no-op stubs can be selected and compile ##
 set(UT_SOURCE_FILES
-    "${CMAKE_CURRENT_LIST_DIR}/test/ut/StubFileTests.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/../test/ut/file/CommonTests.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/../test/ut/file/FileRules.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/StubTests.cpp"
 )
-set(UT_MOD_DEPS
-    Os
-    Os_Models
-    Os_Test_File_SyntheticFileSystem
-    STest
-)
-choose_fprime_implementation(Os/File Os_File_Test_Stub)
-register_fprime_ut(StubFileTest)
-
-
-#### Task Stub Testing ####
-set(SOURCE_FILES
-        "${CMAKE_CURRENT_LIST_DIR}/test/Task.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/test/DefaultTask.cpp"
-)
-register_fprime_module(Os_Task_Test_Stub)
-register_fprime_implementation(Os/Task Os_Task_Test_Stub)
-
-set(UT_SOURCE_FILES
-        "${CMAKE_CURRENT_LIST_DIR}/test/ut/StubTaskTests.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/../test/ut/task/CommonTests.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/../test/ut/task/TaskRules.cpp"
-)
-set(UT_MOD_DEPS
-        Fw/Time
-        Os
-        Os_Models
-        STest
-)
-choose_fprime_implementation(Os/Task Os_Task_Test_Stub)
-register_fprime_ut(StubTaskTest)
+set(UT_MOD_DEPS Os Os_Models Fw_Time)
+choose_fprime_implementation(Os/Task Os_Task_Stub)
+choose_fprime_implementation(Os/Mutex Os_Mutex_Stub)
+choose_fprime_implementation(Os/File Os_File_Stub)
+choose_fprime_implementation(Os/Console Os_Console_Stub)
+choose_fprime_implementation(Os/Cpu Os_Cpu_Stub)
+choose_fprime_implementation(Os/Memory Os_Memory_Stub)
+choose_fprime_implementation(Os/RawTime Os_RawTime_Stub)
+register_fprime_ut(StubTest)
+if (TARGET StubTest)
+    target_compile_options(StubTest PRIVATE -Wno-conversion)
+endif()

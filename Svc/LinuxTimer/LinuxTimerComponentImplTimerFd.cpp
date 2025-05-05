@@ -12,7 +12,7 @@
 
 #include <Fw/Logger/Logger.hpp>
 #include <Svc/LinuxTimer/LinuxTimerComponentImpl.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <sys/timerfd.h>
 #include <unistd.h>
 #include <cerrno>
@@ -20,17 +20,19 @@
 
 namespace Svc {
 
-  void LinuxTimerComponentImpl::startTimer(NATIVE_INT_TYPE interval) {
+  void LinuxTimerComponentImpl::startTimer(FwSizeType interval) {
       int fd;
       struct itimerspec itval;
 
       /* Create the timer */
       fd = timerfd_create (CLOCK_MONOTONIC, 0);
-
-      itval.it_interval.tv_sec = interval/1000;
-      itval.it_interval.tv_nsec = (interval*1000000)%1000000000;
-      itval.it_value.tv_sec = interval/1000;
-      itval.it_value.tv_nsec = (interval*1000000)%1000000000;
+      const FwSizeType interval_secs = interval/1000;
+      FW_ASSERT(static_cast<FwSizeType>(std::numeric_limits<I32>::max()) >= interval_secs,
+                static_cast<FwAssertArgType>(interval));
+      itval.it_interval.tv_sec = static_cast<I32>(interval_secs);
+      itval.it_interval.tv_nsec = static_cast<I32>((interval*1000000)%1000000000);
+      itval.it_value.tv_sec = static_cast<I32>(interval_secs);
+      itval.it_value.tv_nsec = static_cast<I32>((interval*1000000)%1000000000);
 
       timerfd_settime (fd, 0, &itval, nullptr);
 
@@ -38,7 +40,7 @@ namespace Svc {
           unsigned long long missed;
           int ret = static_cast<int>(read (fd, &missed, sizeof (missed)));
           if (-1 == ret) {
-              Fw::Logger::logMsg("timer read error: %s\n", reinterpret_cast<POINTER_CAST>(strerror(errno)));
+              Fw::Logger::log("timer read error: %s\n", strerror(errno));
           }
           this->m_mutex.lock();
           bool quit = this->m_quit;
@@ -52,8 +54,8 @@ namespace Svc {
               timerfd_settime (fd, 0, &itval, nullptr);
               return;
           }
-          this->m_timer.take();
-          this->CycleOut_out(0,this->m_timer);
+          this->m_rawTime.now();
+          this->CycleOut_out(0,this->m_rawTime);
       }
   }
 

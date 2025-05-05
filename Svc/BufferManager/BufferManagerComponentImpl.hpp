@@ -53,7 +53,7 @@ namespace Svc
     // destructor of BufferManager if cleanup() is not called. If a project-specific manual memory
     // allocator is not needed, Fw::MallocAllocator can be used.
 
-    class BufferManagerComponentImpl : public BufferManagerComponentBase
+    class BufferManagerComponentImpl final : public BufferManagerComponentBase
     {
 
     public:
@@ -68,17 +68,11 @@ namespace Svc
             const char *const compName /*!< The component name*/
         );
 
-        //! Initialize object BufferManager
-        //!
-        void init(
-            const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
-        );
-
         // Defines a buffer bin
         struct BufferBin
         {
-            NATIVE_UINT_TYPE bufferSize; //!< size of the buffers in this bin. Set to zero for unused bins.
-            NATIVE_UINT_TYPE numBuffers; //!< number of buffers in this bin. Set to zero for unused bins.
+            Fw::Buffer::SizeType bufferSize; //!< size of the buffers in this bin. Set to zero for unused bins.
+            U16 numBuffers; //!< number of buffers in this bin. Set to zero for unused bins.
         };
 
         // Set of bins for the BufferManager
@@ -90,8 +84,8 @@ namespace Svc
         //! set up configuration
 
         void setup(
-            NATIVE_UINT_TYPE mgrID,      //!< ID of manager for buffer checking
-            NATIVE_UINT_TYPE memID,      //!< Memory segment identifier
+            U16 mgrID,                  //!< ID of manager for buffer checking
+            FwEnumStoreType memID,      //!< Memory segment identifier
             Fw::MemAllocator &allocator, //!< memory allocator. MUST be persistent for later deallocation.
                                          //!  MUST persist past destructor if cleanup() not called explicitly.
             const BufferBins &bins       //!< Set of user bins
@@ -114,26 +108,26 @@ namespace Svc
         //!
         void
         bufferSendIn_handler(
-            const NATIVE_INT_TYPE portNum, /*!< The port number*/
+            const FwIndexType portNum, /*!< The port number*/
             Fw::Buffer &fwBuffer);
 
         //! Handler implementation for bufferGetCallee
         //!
         Fw::Buffer bufferGetCallee_handler(
-            const NATIVE_INT_TYPE portNum, /*!< The port number*/
-            U32 size);
+            const FwIndexType portNum, /*!< The port number*/
+            Fw::Buffer::SizeType size);
 
         //! Handler implementation for schedIn
         //!
         void schedIn_handler(
-            const NATIVE_INT_TYPE portNum, /*!< The port number*/
+            const FwIndexType portNum, /*!< The port number*/
             U32 context /*!< The call order*/
         );
 
 
         bool m_setup;             //!< flag to indicate component has been setup
         bool m_cleaned;           //!< flag to indicate memory has been cleaned up
-        NATIVE_UINT_TYPE m_mgrId; //!< stored manager ID for buffer checking
+        U16 m_mgrId;              //!< stored manager ID for buffer checking
 
         BufferBins m_bufferBins; //!< copy of bins supplied by user
 
@@ -141,14 +135,14 @@ namespace Svc
         {
             Fw::Buffer buff; //!< Buffer class to give to user
             U8 *memory;      //!< pointer to memory buffer
-            U32 size;        //!< size of the buffer
+            Fw::Buffer::SizeType size; //!< size of the buffer
             bool allocated;  //!< this buffer has been allocated
         };
 
         AllocatedBuffer *m_buffers;    //!< pointer to allocated buffer space
         Fw::MemAllocator *m_allocator; //!< allocator for memory
-        NATIVE_UINT_TYPE m_memId; //!< identifier for allocator
-        NATIVE_UINT_TYPE m_numStructs; //!< number of allocated structs
+        FwEnumStoreType m_memId; //!< identifier for allocator
+        U16 m_numStructs; //!< number of allocated structs
 
         // stats
         U32 m_highWater; //!< high watermark for allocations

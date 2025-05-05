@@ -15,7 +15,7 @@
 #include <Fw/Logger/Logger.hpp>
 #include <Svc/FatalHandler/FatalHandlerComponentImpl.hpp>
 #include <Os/Task.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 namespace Svc {
 
@@ -24,12 +24,12 @@ namespace Svc {
     // ----------------------------------------------------------------------
 
     void FatalHandlerComponentImpl::FatalReceive_handler(
-            const NATIVE_INT_TYPE portNum,
+            const FwIndexType portNum,
             FwEventIdType Id) {
         // for **nix, delay then exit with error code
-        Fw::Logger::logMsg("FATAL %d handled.\n",Id,0,0,0,0,0);
-        (void)Os::Task::delay(Fw::Time(1, 0));
-        Fw::Logger::logMsg("Exiting with abort signal and core dump file.\n",0,0,0,0,0,0);
+        Fw::Logger::log("FATAL %d handled.\n",Id);
+        (void)Os::Task::delay(Fw::TimeInterval(1, 0));
+        Fw::Logger::log("Exiting with abort signal and core dump file.\n");
         (void)raise( SIGABRT );
         exit(1);
     }

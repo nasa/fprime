@@ -8,6 +8,7 @@
 ####
 # Set the system information
 set(CMAKE_SYSTEM_NAME       Linux)
+set(FPRIME_PLATFORM         Linux)
 set(CMAKE_SYSTEM_VERSION    0.2)
 
 # Check ARM tools path

@@ -42,14 +42,14 @@ class TlmChanTester : public TlmChanGTestBase {
 
     //! Handler for from_PktSend
     //!
-    void from_PktSend_handler(const NATIVE_INT_TYPE portNum, //!< The port number
+    void from_PktSend_handler(const FwIndexType portNum, //!< The port number
                               Fw::ComBuffer& data,           //!< Buffer containing packet data
                               U32 context                    //!< Call context value; meaning chosen by user
     );
 
     //! Handler for from_pingOut
     //!
-    void from_pingOut_handler(const NATIVE_INT_TYPE portNum, //!< The port number
+    void from_pingOut_handler(const FwIndexType portNum, //!< The port number
                               U32 key                        //!< Value to return to pinger
     );
 
@@ -68,7 +68,7 @@ class TlmChanTester : public TlmChanGTestBase {
 
     void sendBuff(FwChanIdType id, U32 val);
     bool doRun(bool check);
-    void checkBuff(NATIVE_UINT_TYPE chanNum, NATIVE_UINT_TYPE totalChan, FwChanIdType id, U32 val);
+    void checkBuff(FwChanIdType chanNum, FwChanIdType totalChan, FwChanIdType id, U32 val);
 
     void clearBuffs();
 
@@ -85,7 +85,7 @@ class TlmChanTester : public TlmChanGTestBase {
     //!
     TlmChan component;
     // Keep a history
-    NATIVE_UINT_TYPE m_numBuffs;
+    FwChanIdType m_numBuffs;
     Fw::ComBuffer m_rcvdBuffer[TLMCHAN_HASH_BUCKETS];
     bool m_bufferRecv;
 };

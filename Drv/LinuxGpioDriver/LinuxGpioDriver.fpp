@@ -1,14 +1,8 @@
 module Drv {
 
   passive component LinuxGpioDriver {
+    include "../Interfaces/GpioInterface.fppi"
 
-    # ----------------------------------------------------------------------
-    # General ports
-    # ----------------------------------------------------------------------
-
-    sync input port gpioWrite: Drv.GpioWrite
-
-    output port intOut: [2] Svc.Cycle
 
     # ----------------------------------------------------------------------
     # Special ports
@@ -18,15 +12,20 @@ module Drv {
 
     text event port LogText
 
-    sync input port gpioRead: Drv.GpioRead
-
     time get port Time
 
     # ----------------------------------------------------------------------
     # Events
     # ----------------------------------------------------------------------
+    event OpenChip(chip: string, chipLabel: string, pin: U32, pinMessage: string) severity diagnostic format "Opened GPIO chip {}[{}] pin {}[{}]"
 
-    include "Events.fppi"
+    event OpenChipError(chip: string, status: Os.FileStatus) severity warning high format "Failed to open GPIO chip {}: {}"
+
+    event OpenPinError(chip: string, pin: U32, pinMessage: string, status: Os.FileStatus) severity warning high format "Failed to open GPIO chip {} pin {} [{}]: {}"
+
+    event InterruptReadError(expected: U32, got: U32) severity warning high format "Interrupt data read expected {} byes and got {}"
+
+    event PollingError(error_number: I32) severity warning high format "Interrupt polling returned errno: {}"
 
   }
 

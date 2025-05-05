@@ -19,14 +19,29 @@ TEST(Nominal, Priority) {
     tester.testPrioritySend();
 }
 
-TEST(Nominal, Full) {
+TEST(Nominal, ExternalQueueOverflow) {
     Svc::ComQueueTester tester;
-    tester.testQueueOverflow();
+    tester.testExternalQueueOverflow();
+}
+
+TEST(Nominal, InternalQueueOverflow) {
+    Svc::ComQueueTester tester;
+    tester.testInternalQueueOverflow();
 }
 
 TEST(Nominal, ReadyFirst) {
     Svc::ComQueueTester tester;
     tester.testReadyFirst();
+}
+
+TEST(Nominal, ContextData) {
+    Svc::ComQueueTester tester;
+    tester.testContextData();
+}
+
+TEST(Nominal, testBufferQueueReturn) {
+    Svc::ComQueueTester tester;
+    tester.testBufferQueueReturn();
 }
 
 int main(int argc, char **argv) {

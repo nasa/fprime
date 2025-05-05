@@ -50,6 +50,9 @@
 #ifndef UTILS_HASH_LIB_CRC_HPP
 #define UTILS_HASH_LIB_CRC_HPP
 
+#ifdef  __cplusplus
+extern "C" {
+#endif
 
 #define CRC_VERSION     "1.16"
 
@@ -66,5 +69,9 @@ unsigned short          update_crc_ccitt(  unsigned short crc, char c           
 unsigned short          update_crc_dnp(    unsigned short crc, char c                 );
 unsigned short          update_crc_kermit( unsigned short crc, char c                 );
 unsigned short          update_crc_sick(   unsigned short crc, char c, char prev_byte );
+
+#ifdef  __cplusplus
+}
+#endif
 
 #endif // UTILS_HASH_LIB_CRC_HPP

@@ -25,7 +25,7 @@ endfunction (ai_impl_is_supported)
 #
 # Required function, sets up a custom command to produce .hpp-template and .cpp-template files.
 ####
-function(ai_impl_setup_autocode AC_INPUT_FILE)
+function(ai_impl_setup_autocode MODULE_NAME AC_INPUT_FILE)
     ai_split_xml_path("${AC_INPUT_FILE}")
     set(AUTOCODER_GENERATED
         "${CMAKE_CURRENT_SOURCE_DIR}/${OBJ_NAME}${XML_TYPE}Impl.hpp-template"
@@ -40,4 +40,7 @@ function(ai_impl_setup_autocode AC_INPUT_FILE)
         DEPENDS "${AC_INPUT_FILE}" "${CODEGEN_TARGET}"
     )
     set(AUTOCODER_GENERATED "${AUTOCODER_GENERATED}" PARENT_SCOPE)
+    sort_buildable_from_non_buildable_sources(BUILD_SOURCES NON_BUILD_SOURCES ${AUTOCODER_GENERATED})
+    set(AUTOCODER_BUILD_SOURCES "${BUILD_SOURCES}" PARENT_SCOPE)
+    set(AUTOCODER_NEW_AUTOCODER_INPUTS "${NON_BUILD_SOURCES}" PARENT_SCOPE)
 endfunction(ai_impl_setup_autocode)
