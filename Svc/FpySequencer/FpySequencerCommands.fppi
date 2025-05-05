@@ -26,10 +26,10 @@ async command RUN_VALIDATED(
 async command CANCEL() \
     opcode 3 priority 8 assert
 
-@ Sets the debugging breakpoint which will pause the execution of the sequencer
-@ until unpaused by the DEBUG_CONTINUE command. Will pause just before dispatching
-@ the specified statement. This command is valid in all states. Debug settings are
-@ cleared after a sequence ends execution.
+@ Sets the debugging breakpoint which will pause the execution of the sequencer when
+@ reached, until unpaused by the DEBUG_CONTINUE command. Will pause just before 
+@ dispatching the specified statement. This command is valid in all states. Debug 
+@ settings are cleared after a sequence ends execution.
 async command DEBUG_SET_BREAKPOINT(
     stmtIdx: U32 @< The statement index to pause execution before.
     breakOnce: bool @< Whether or not to break only once at this breakpoint
