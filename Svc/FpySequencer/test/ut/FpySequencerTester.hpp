@@ -12,7 +12,7 @@
 
 namespace Svc {
 
-class FpySequencerTester : public FpySequencerGTestBase {
+class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test {
     // ----------------------------------------------------------------------
     // Construction and destruction
     // ----------------------------------------------------------------------
@@ -33,63 +33,6 @@ class FpySequencerTester : public FpySequencerGTestBase {
     //!
     ~FpySequencerTester();
 
-  public:
-    // ----------------------------------------------------------------------
-    // Tests
-    // ----------------------------------------------------------------------
-
-    void test_waitRel();
-    void test_waitAbs();
-    void test_goto();
-    void test_setLvar();
-    void test_if();
-    void test_noOp();
-
-    void test_checkShouldWake();
-    void test_checkShouldWakeMismatchBase();
-    void test_checkShouldWakeMismatchContext();
-
-    void test_checkStatementTimeout();
-    void test_checkStatementTimeoutMismatchBase();
-    void test_checkStatementTimeoutMismatchContext();
-
-    void test_cmd_RUN();
-    void test_cmd_RUN_nom();
-    void test_cmd_VALIDATE();
-    void test_cmd_RUN_VALIDATED();
-    void test_cmd_CANCEL();
-    void test_cmd_DEBUG_CLEAR_BREAKPOINT();
-    void test_cmd_DEBUG_SET_BREAKPOINT();
-    void test_cmd_DEBUG_BREAK();
-    void test_cmd_DEBUG_CONTINUE();
-
-    void test_readHeader();
-    void test_readBody();
-    void test_readFooter();
-    void test_readBytes();
-    void test_validate();
-    void test_allocateBuffer();
-
-    void test_dispatchStatement();
-    void test_dispatchCommand();
-    void test_deserialize_waitRel();
-    void test_deserialize_waitAbs();
-    void test_deserialize_setLVar();
-    void test_deserialize_goto();
-    void test_deserialize_if();
-    void test_deserialize_noOp();
-
-    void test_checkTimers();
-    void test_ping();
-    void test_cmdResponse();
-
-    void test_tlmWrite();
-
-  private:
-    // ----------------------------------------------------------------------
-    // Handlers for typed from ports
-    // ----------------------------------------------------------------------
-
   private:
     // ----------------------------------------------------------------------
     // Helper methods
@@ -103,14 +46,15 @@ class FpySequencerTester : public FpySequencerGTestBase {
     //!
     void initComponents();
 
-  private:
+  protected:
     // ----------------------------------------------------------------------
     // Variables
     // ----------------------------------------------------------------------
 
     //! The component under test
     //!
-    FpySequencer component;
+    FpySequencer cmp;
+    FpySequencer& component; // for compatibility
 
     // dispatches events from the queue until the component reaches the given state
     void dispatchUntilState(State state, U32 bound = 100);
@@ -132,10 +76,15 @@ class FpySequencerTester : public FpySequencerGTestBase {
     void addCmd(FwOpcodeType opcode);
     void addDirective(Fpy::DirectiveId id, Fw::StatementArgBuffer& buf);
 
+    void add_WAIT_REL(Fw::TimeInterval duration);
     void add_WAIT_REL(FpySequencer_WaitRelDirective dir);
+    void add_WAIT_ABS(Fw::Time wakeupTime);
     void add_WAIT_ABS(FpySequencer_WaitAbsDirective dir);
+    void add_GOTO(U32 stmtIdx);
     void add_GOTO(FpySequencer_GotoDirective dir);
+    void add_SET_LVAR(U8 lvarIdx, Fw::StatementArgBuffer value);
     void add_SET_LVAR(FpySequencer_SetLocalVarDirective dir);
+    void add_IF(U8 lvarIdx, U32 gotoIfFalse);
     void add_IF(FpySequencer_IfDirective dir);
     void add_NO_OP();
     //! Handle a text event
@@ -144,6 +93,8 @@ class FpySequencerTester : public FpySequencerGTestBase {
                    const Fw::LogSeverity severity,  //!< The severity
                    const Fw::TextLogString& text    //!< The event string
                    ) override;
+
+    void writeAndRun();
 };
 
 }  // namespace Svc
