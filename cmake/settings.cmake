@@ -23,5 +23,12 @@ set(CMAKE_C_EXTENSIONS OFF)
 
 # fprime unit testing methodology requires the following flags
 if (BUILD_TESTING)
-    add_compile_options(-g -DBUILD_UT -DPROTECTED=public -DPRIVATE=public -DSTATIC=)
+    add_compile_options(-DBUILD_UT -DPROTECTED=public -DPRIVATE=public -DSTATIC=)
+
+    # By default when CMake testing is enabled `CMAKE_BUILD_TYPE` is set to "Debug".
+    # If, in a deployment's top-level CMakeLists.txt, `CMAKE_BUILD_TYPE` is explicitly set to
+    # "Release" this should be respected and the debug flag should be omitted
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+        add_compile_options(-g)
+    endif()
 endif()
