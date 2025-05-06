@@ -31,6 +31,7 @@ void SpacePacketFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, c
     FW_ASSERT(data.getSize() <= std::numeric_limits<Fw::Buffer::SizeType>::max(), static_cast<FwAssertArgType>(frameSize));
     FW_ASSERT(frameSize <= std::numeric_limits<Fw::Buffer::SizeType>::max(), static_cast<FwAssertArgType>(frameSize));
 
+    // TODO: Maybe can use a member as well, instead of allocating a new one each time
     // Allocate frame buffer
     Fw::Buffer frameBuffer = this->bufferAllocate_out(0, static_cast<Fw::Buffer::SizeType>(frameSize));
     auto frameSerializer = frameBuffer.getSerializer();
@@ -47,7 +48,7 @@ void SpacePacketFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, c
     packetSequenceControl |= this->m_packetSequenceCount;
     this->m_packetSequenceCount += 1;
 
-    // TODO: Assert / event that it fits in a U16
+    FW_ASSERT(data.getSize() <= std::numeric_limits<U16>::max(), static_cast<FwAssertArgType>(this->m_packetSequenceCount));
     U16 packetDataLength = static_cast<U16>(data.getSize() - 1); // Standard specifies length is number of bytes minus 1
 
     header.setpacketIdentification(packetIdentification);
@@ -73,7 +74,7 @@ void SpacePacketFramer ::comStatusIn_handler(FwIndexType portNum, Fw::Success& c
 }
 
 void SpacePacketFramer ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& frameBuffer, const ComCfg::FrameContext& context) {
-    // dataReturnIn is the allocated buffer coming back from the ComManager (e.g. ComStub) component
+    // dataReturnIn is the allocated buffer coming back from the dataOut port
     this->bufferDeallocate_out(0, frameBuffer);
 }
 

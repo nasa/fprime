@@ -26,7 +26,7 @@ class SpacePacketFramer final : public SpacePacketFramerComponentBase {
     //! Destroy SpacePacketFramer object
     ~SpacePacketFramer();
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Handler implementations for typed input ports
     // ----------------------------------------------------------------------

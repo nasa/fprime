@@ -56,10 +56,7 @@ void TMFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
     // -------------------------------------------------
 
     Fw::SerializeStatus status;
-    FwSizeType frameSize = CCSDS::Types::TMFrameHeader::SERIALIZED_SIZE + data.getSize() + CCSDS::Types::TMFrameHeader::SERIALIZED_SIZE;
-    FW_ASSERT(data.getSize() <= std::numeric_limits<Fw::Buffer::SizeType>::max(), static_cast<FwAssertArgType>(frameSize));
-    FW_ASSERT(frameSize <= std::numeric_limits<Fw::Buffer::SizeType>::max(), static_cast<FwAssertArgType>(frameSize));
-    // Allocate frame buffer
+    // Create frame Fw::Buffer using member data field
     Fw::Buffer frameBuffer = Fw::Buffer(this->m_frameBuffer, sizeof(this->m_frameBuffer));
     auto frameSerializer = frameBuffer.getSerializer();
 
@@ -72,9 +69,10 @@ void TMFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
     // Trailer: Compute CRC
     // -------------------------------------------------
     CCSDS::Types::TMFrameTrailer trailer;
+    // Compute CRC over the entire frame buffer minus the FECF trailer
     U16 crc = CCSDS::Utils::CRC16::compute(frameBuffer.getData(), sizeof(this->m_frameBuffer) - CCSDS::Types::TMFrameTrailer::SERIALIZED_SIZE);
     trailer.setfecf(crc); // Frame Error Control Field
-
+    // Move the serializer pointer to the end of the frame buffer since we are using a fixed size buffer
     frameSerializer.moveSerToOffset(ComCfg::FppConstant_TmFrameFixedSize::TmFrameFixedSize - CCSDS::Types::TMFrameTrailer::SERIALIZED_SIZE);
     status = frameSerializer.serialize(trailer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
