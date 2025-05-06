@@ -167,7 +167,13 @@ module Ref {
 
   instance frameAccumulator: Svc.FrameAccumulator base id 0x4B00
 
-  instance deframer: Svc.FprimeDeframer base id 0x4C00
+  instance tcDeframer: Svc.CCSDS.TCDeframer base id 0x4C00
+
+  instance spacePacketDeframer: Svc.CCSDS.SpacePacketDeframer base id 0x5000
+
+  instance tmFramer: Svc.CCSDS.TMFramer base id 0x4C00
+
+  instance spacePacketFramer: Svc.CCSDS.SpacePacketFramer base id 0x5000
 
   instance fprimeRouter: Svc.FprimeRouter base id 0x4D00
 

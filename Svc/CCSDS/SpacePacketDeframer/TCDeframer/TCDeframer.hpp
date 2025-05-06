@@ -1,53 +1,53 @@
 // ======================================================================
-// \title  SpacePacketDeframer.hpp
-// \author chammard
-// \brief  hpp file for SpacePacketDeframer component implementation class
+// \title  TCDeframer.hpp
+// \author thomas-bc
+// \brief  hpp file for TCDeframer component implementation class
 // ======================================================================
 
-#ifndef Svc_CCSDS_SpacePacketDeframer_HPP
-#define Svc_CCSDS_SpacePacketDeframer_HPP
+#ifndef Svc_CCSDS_TCDeframer_HPP
+#define Svc_CCSDS_TCDeframer_HPP
 
-#include "Svc/CCSDS/SpacePacketDeframer/SpacePacketDeframerComponentAc.hpp"
+#include "Svc/CCSDS/TCDeframer/TCDeframerComponentAc.hpp"
 
 namespace Svc {
-
 namespace CCSDS {
+class TCDeframer : public TCDeframerComponentBase {
 
-class SpacePacketDeframer final : public SpacePacketDeframerComponentBase {
+  static const U8 SPACE_PACKET_HEADER_SIZE = 5;
+  static const U8 SPACE_PACKET_TRAILER_SIZE = 2;
   public:
     // ----------------------------------------------------------------------
     // Component construction and destruction
     // ----------------------------------------------------------------------
 
-    //! Construct SpacePacketDeframer object
-    SpacePacketDeframer(const char* const compName  //!< The component name
+    //! Construct TCDeframer object
+    TCDeframer(const char* const compName  //!< The component name
     );
 
-    //! Destroy SpacePacketDeframer object
-    ~SpacePacketDeframer();
+    //! Destroy TCDeframer object
+    ~TCDeframer();
 
   private:
     // ----------------------------------------------------------------------
-    // Handler implementations for typed input ports
+    // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
 
     //! Handler implementation for dataIn
     //!
-    //! Port to receive framed data, with optional context
+    //! Port to receive framed data
     void dataIn_handler(FwIndexType portNum,  //!< The port number
-                        Fw::Buffer& data,
-                        const ComCfg::FrameContext& context) override;
+                          Fw::Buffer& data,
+                          const ComCfg::FrameContext& context) override;
 
     //! Handler implementation for dataReturnIn
     //!
     //! Port receiving back ownership of sent frame buffers
     void dataReturnIn_handler(FwIndexType portNum,  //!< The port number
-                              Fw::Buffer& data,
-                              const ComCfg::FrameContext& context) override;
+      Fw::Buffer& data,  //!< The buffer
+      const ComCfg::FrameContext& context) override;
+
 };
-
 }  // namespace CCSDS
-
 }  // namespace Svc
 
 #endif

@@ -38,7 +38,10 @@ module Ref {
     instance comDriver
     instance comStub
     instance comQueue
-    instance deframer
+    instance tcDeframer
+    instance spacePacketDeframer
+    instance tmFramer
+    instance spacePacketFramer
     instance eventLogger
     instance fatalAdapter
     instance fatalHandler
@@ -105,21 +108,27 @@ module Ref {
       fileDownlink.bufferSendOut -> comQueue.bufferQueueIn[Ports_ComBufferQueue.FILE_DOWNLINK]
       comQueue.bufferReturnOut[Ports_ComBufferQueue.FILE_DOWNLINK] -> fileDownlink.bufferReturn
       # ComQueue <-> Framer
-      comQueue.dataOut           -> fprimeFramer.dataIn
-      fprimeFramer.dataReturnOut -> comQueue.dataReturnIn
+      comQueue.dataOut           -> spacePacketFramer.dataIn
+      spacePacketFramer.dataReturnOut -> comQueue.dataReturnIn
       # Buffer Management for Framer
-      fprimeFramer.bufferAllocate   -> commsBufferManager.bufferGetCallee
-      fprimeFramer.bufferDeallocate -> commsBufferManager.bufferSendIn
+      spacePacketFramer.bufferAllocate   -> commsBufferManager.bufferGetCallee
+      spacePacketFramer.bufferDeallocate -> commsBufferManager.bufferSendIn
+      tmFramer.bufferAllocate   -> commsBufferManager.bufferGetCallee
+      tmFramer.bufferDeallocate -> commsBufferManager.bufferSendIn
+      # Framer chain
+      spacePacketFramer.dataOut -> tmFramer.dataIn
+      tmFramer.dataReturnOut -> spacePacketFramer.dataReturnIn
       # Framer <-> ComStub
-      fprimeFramer.dataOut  -> comStub.dataIn
-      comStub.dataReturnOut -> fprimeFramer.dataReturnIn
+      tmFramer.dataOut  -> comStub.dataIn
+      comStub.dataReturnOut -> tmFramer.dataReturnIn
       # ComStub <-> ComDriver
       comStub.drvSendOut      -> comDriver.$send
       comDriver.sendReturnOut -> comStub.drvSendReturnIn
       comDriver.ready         -> comStub.drvConnected
       # ComStatus
-      comStub.comStatusOut       -> fprimeFramer.comStatusIn
-      fprimeFramer.comStatusOut  -> comQueue.comStatusIn
+      comStub.comStatusOut       -> tmFramer.comStatusIn
+      tmFramer.comStatusOut       -> spacePacketFramer.comStatusIn
+      spacePacketFramer.comStatusOut  -> comQueue.comStatusIn
     }
 
     connections FaultProtection {
@@ -182,11 +191,13 @@ module Ref {
       frameAccumulator.bufferDeallocate -> commsBufferManager.bufferSendIn
       frameAccumulator.bufferAllocate   -> commsBufferManager.bufferGetCallee
       # FrameAccumulator <-> Deframer
-      frameAccumulator.dataOut -> deframer.dataIn
-      deframer.dataReturnOut   -> frameAccumulator.dataReturnIn
+      frameAccumulator.dataOut -> tcDeframer.dataIn
+      tcDeframer.dataReturnOut   -> frameAccumulator.dataReturnIn
+      tcDeframer.dataOut -> spacePacketDeframer.dataIn
+      spacePacketDeframer.dataReturnOut -> tcDeframer.dataReturnIn
       # Deframer <-> Router
-      deframer.dataOut           -> fprimeRouter.dataIn
-      fprimeRouter.dataReturnOut -> deframer.dataReturnIn
+      spacePacketDeframer.dataOut           -> fprimeRouter.dataIn
+      fprimeRouter.dataReturnOut -> spacePacketDeframer.dataReturnIn
       # Router buffer allocations
       fprimeRouter.bufferAllocate   -> commsBufferManager.bufferGetCallee
       fprimeRouter.bufferDeallocate -> commsBufferManager.bufferSendIn

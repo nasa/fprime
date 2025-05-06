@@ -11,6 +11,7 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/FrameAccumulator.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/FrameAccumulator.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/FrameDetector/FprimeFrameDetector.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/FrameDetector/CcsdsTCFrameDetector.cpp"
 )
 set(MOD_DEPS
     Utils/Types

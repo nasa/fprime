@@ -1,7 +1,7 @@
 module Svc {
 module CCSDS {
-    @ Deframer for the CCSDS Space Packet protocol
-    passive component SpacePacketDeframer {
+    @ Deframer for the TC Space Data Link Protocl (CCSDS Standard)
+    passive component TCDeframer {
 
         include "../../Interfaces/DeframerInterface.fppi"
 
@@ -29,10 +29,9 @@ module CCSDS {
         @ Port to return the value of a parameter
         param get port prmGetOut
 
-        @ Port to set the value of a parameter
+        @Port to set the value of a parameter
         param set port prmSetOut
 
     }
-
-} # end CCSDS
-} # end Svc
+}
+}

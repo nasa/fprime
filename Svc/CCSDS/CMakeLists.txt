@@ -1,2 +1,6 @@
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Types/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SpacePacketDeframer/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SpacePacketFramer/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/TCDeframer/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/TMFramer/")
+# add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Utils/")

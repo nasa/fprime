@@ -1,15 +1,12 @@
 module Svc {
 module CCSDS {
-    @ Deframer for the CCSDS Space Packet protocol
-    passive component SpacePacketDeframer {
+    @ Deframer for the TM Space Data Link Protocl (CCSDS Standard)
+    passive component TMFramer {
 
-        include "../../Interfaces/DeframerInterface.fppi"
+        include "../../Interfaces/FramerInterface.fppi"
 
-        @ Port for returning ownership of received frame buffers
-        output port dataReturnOut: Svc.ComDataWithContext
-
-        @ Port receiving back ownership of sent frame buffers 
-        sync input port dataReturnIn: Svc.ComDataWithContext
+        output port bufferAllocate: Fw.BufferGet
+        output port bufferDeallocate: Fw.BufferSend
 
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #
@@ -29,10 +26,9 @@ module CCSDS {
         @ Port to return the value of a parameter
         param get port prmGetOut
 
-        @ Port to set the value of a parameter
+        @Port to set the value of a parameter
         param set port prmSetOut
 
     }
-
-} # end CCSDS
-} # end Svc
+}
+}
