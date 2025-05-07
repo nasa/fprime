@@ -434,7 +434,10 @@ function(fprime_add_config_build_target)
     append_list_property("${INTERNAL_MODULE_NAME}" GLOBAL PROPERTY "FPRIME_CONFIG_MODULES")
     set_property(TARGET "${INTERNAL_MODULE_NAME}" PROPERTY FPRIME_CONFIGURATION TRUE)
     set_property(TARGET "${FPRIME__INTERNAL_CONFIG_TARGET_NAME}" PROPERTY FPRIME_CONFIGURATION TRUE)
-
+    # Static libraries must be position independent when building shared libraries
+    if (BUILD_SHARED_LIBS AND CONFIG_LIBRARY_TYPE STREQUAL "STATIC")
+        target_compile_options(${INTERNAL_MODULE_NAME} PRIVATE -fPIC)
+    endif()
     # Clear the historical variables and set up autocode
     clear_historical_variables()
     fprime_attach_custom_targets("${INTERNAL_MODULE_NAME}")
