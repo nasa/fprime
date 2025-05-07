@@ -11,4 +11,4 @@
     output port sendReturnOut: Drv.ByteStreamData
 
     @ Port receiving back ownership of data sent out on $recv port
-    sync input port recvReturnIn: Fw.BufferSend
+    guarded input port recvReturnIn: Fw.BufferSend

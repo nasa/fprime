@@ -71,7 +71,14 @@ void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer
                 // Packet type is not known to the F Prime protocol. If the unknownDataOut port is
                 // connected, forward packet and context for further processing
                 if (this->isConnected_unknownDataOut_OutputPort(0)) {
-                    this->unknownDataOut_out(0, packetBuffer, context);
+                    // Copy buffer into a new allocated buffer. This lets us return the original buffer with dataReturnOut,
+                    // and FprimeRouter can handle the deallocation of the unknown buffer when it returns on bufferReturnIn
+                    Fw::Buffer packetBufferCopy = this->bufferAllocate_out(0, packetBuffer.getSize());
+                    auto copySerializer = packetBufferCopy.getSerializer();
+                    status = copySerializer.serialize(packetBuffer.getData(), packetBuffer.getSize(), Fw::Serialization::OMIT_LENGTH);
+                    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
+                    // Send the copied buffer out. It will come back on fileBufferReturnIn once the receiver is done with it
+                    this->unknownDataOut_out(0, packetBufferCopy, context);
                 }
             }
         }

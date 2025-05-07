@@ -52,16 +52,16 @@ void FprimeRouterTester ::testRouteUnknownPacket() {
     ASSERT_from_fileOut_SIZE(0);           // no file packet emitted
     ASSERT_from_unknownDataOut_SIZE(1);    // one unknown data emitted
     ASSERT_from_dataReturnOut_SIZE(1);     // data ownership should always be returned
-    ASSERT_from_bufferAllocate_SIZE(0);    // no buffer allocation for unknown packets
+    ASSERT_from_bufferAllocate_SIZE(1);    // unknown packet was copied into a new allocated buffer
 }
 
 void FprimeRouterTester ::testRouteUnknownPacketUnconnected() {
     this->mockReceivePacketType(Fw::ComPacket::FW_PACKET_UNKNOWN);
     ASSERT_from_commandOut_SIZE(0);        // no command packet emitted
     ASSERT_from_fileOut_SIZE(0);           // no file packet emitted
-    ASSERT_from_unknownDataOut_SIZE(0);    // zero unknown data emitted
+    ASSERT_from_unknownDataOut_SIZE(0);    // zero unknown data emitted when port is unconnected
     ASSERT_from_dataReturnOut_SIZE(1);     // data ownership should always be returned
-    ASSERT_from_bufferAllocate_SIZE(0);    // no buffer allocation for unknown packets
+    ASSERT_from_bufferAllocate_SIZE(0);    // no buffer allocation when port is unconnected
 }
 
 void FprimeRouterTester ::testBufferReturn() {
