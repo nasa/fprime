@@ -819,8 +819,6 @@ function(recurse_target_properties CMAKE_BUILD_TARGET_NAME PROPERTY_NAMES TRANSI
 
     # If the current item is not a target, tell the parent that this is a nonexistent entity
     if (NOT TARGET "${CMAKE_BUILD_TARGET_NAME}")
-        message(FATAL_ERROR "Target '${CMAKE_BUILD_TARGET_NAME}' is not a valid target (from ${__PARENT_RECURSED})")
-    elseif (NOT TARGET "${CMAKE_BUILD_TARGET_NAME}")
         set("${NON_EXISTENT_LINKS_OUTPUT}" "${CMAKE_BUILD_TARGET_NAME}" PARENT_SCOPE)
         set("${TRANSITIVE_LINKS_OUTPUT}" PARENT_SCOPE)
         set("${EXTERNAL_LINKS_OUTPUT}" PARENT_SCOPE)

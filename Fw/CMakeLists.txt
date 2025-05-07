@@ -29,4 +29,4 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Types/")
 
 # Setup an interface target for Fw for efficiency
 add_library(Fw INTERFACE)
-add_dependencies(Fw ${FPRIME_FRAMEWORK_MODULES})
+target_link_libraries(Fw INTERFACE ${FPRIME_FRAMEWORK_MODULES})

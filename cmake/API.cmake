@@ -398,7 +398,6 @@ endfunction()
 ####
 function(fprime_add_config_build_target)
     set(FPRIME__INTERNAL_CONFIG_TARGET_NAME "fprime_config")
-    #set(FPRIME__INTERNAL_CONFIG_DIRECTORY "${FPRIME_CONFIG_ASSEMBLY}")
     # Set up interface target and directory for configuration files
     if (NOT TARGET "${FPRIME__INTERNAL_CONFIG_TARGET_NAME}")
         add_library("${FPRIME__INTERNAL_CONFIG_TARGET_NAME}" INTERFACE)
@@ -415,9 +414,13 @@ function(fprime_add_config_build_target)
         "${INTERNAL_HEADERS}"
         "${INTERNAL_CONFIGURATION_OVERRIDES}"
     )
+
+    # Set up scoping variables for the new module
     set(CONFIG_LIBRARY_TYPE "STATIC")
+    set(SCOPE "PUBLIC")
     if (DEFINED INTERNAL_INTERFACE)
         set(CONFIG_LIBRARY_TYPE "INTERFACE")
+        set(SCOPE "INTERFACE")
     endif()
     
     # Make a library for this configuration module specifying the library type
@@ -427,7 +430,7 @@ function(fprime_add_config_build_target)
         "${INTERNAL_SOURCES}" "${INTERNAL_AUTOCODER_INPUTS}" "${INTERNAL_HEADERS}" "" "${CONFIG_LIBRARY_TYPE}"
     )
     # The new module should include the root configuration directory
-    #target_include_directories("${INTERNAL_MODULE_NAME}" INTERFACE "${FPRIME__INTERNAL_CONFIG_DIRECTORY}")
+    target_include_directories("${INTERNAL_MODULE_NAME}" "${SCOPE}" "${CMAKE_CURRENT_BINARY_DIR}/..")
     # The configuration target should depend on the new module
     target_link_libraries("${FPRIME__INTERNAL_CONFIG_TARGET_NAME}" INTERFACE "${INTERNAL_MODULE_NAME}")
     # Set up the new module to be marked as FPRIME_CONFIGURATION

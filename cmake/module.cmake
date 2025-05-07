@@ -16,9 +16,6 @@ include(utilities)
 set(FPRIME__INTERNAL_EMPTY_CPP "${FPRIME_FRAMEWORK_PATH}/cmake/empty.cpp")
 set(VALID_EMPTY "${FPRIME_FRAMEWORK_PATH}/cmake/valid-empty.cpp")
 
-# Name of the F Prime implicit dependency of all modules (our project config)
-set(FPRIME_IMPLICIT_DEPENDENCY config)
-
 ####
 # Function `fprime__internal_add_build_target`:
 #
@@ -191,9 +188,6 @@ endfunction()
 function(fprime__internal_add_build_target_helper TARGET_NAME TYPE SOURCES AUTOCODER_INPUTS HEADERS DEPENDENCIES EXTRA_CMAKE_DIRECTIVES)
     # Historical status message for posterity...and to prevent panic amongst users
     message(STATUS "Adding ${TYPE}: ${TARGET_NAME}")
-    # Add implicit dependency and filter out self-dependencies
-    list(APPEND DEPENDENCIES config)
-    list(REMOVE_ITEM DEPENDENCIES "${TARGET_NAME}")
     # Remap F Prime target type to CMake targe type
     if (TYPE STREQUAL "Executable" OR TYPE STREQUAL "Deployment" OR TYPE STREQUAL "Unit Test")
         add_executable("${TARGET_NAME}" ${EXTRA_CMAKE_DIRECTIVES} "${SOURCES}")
