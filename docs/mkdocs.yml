@@ -145,3 +145,12 @@ markdown_extensions:
 
 
 # Custom navigation is set in the fprime/.nav.yml file
+# Must keep a copy of just the tutorials nav here to let multirepo know to import them, this does not act as a nav
+nav:
+  - Tutorials:
+    - Tutorials Index: docs/tutorials/index.md
+    - 'Hello World': tutorials-hello-world/docs/hello-world.md
+    - 'LED Blinker': tutorials-led-blinker/docs/led-blinker.md
+    - 'MathComponent': tutorials-math-component/docs/math-component.md
+    - 'Cross-Compilation Setup': docs/tutorials/cross-compilation.md
+    - 'Arduino LED Blinker': tutorials-arduino-led-blinker/docs/arduino-led-blinker.md
