@@ -27,11 +27,11 @@ flowchart TD
     Source-->|Yes| CMakeSourceSupport{Builds with CMake?}  
         CMakeSourceSupport-->|Yes|IsSubmodule{Is local folder?}  
             IsSubmodule-->|Yes| AddSubdirectory[<a href='#add_subdirectory'>Approach 1: add_subdirectory</a>]  
-            IsSubmodule-->|No| FetchContent[<a href='#fetchcontent'>Approach 1-bis: FetchContent</a>]  
-        CMakeSourceSupport-->|No|ExternalProject_Add[<a href='#externalproject_add'>Approach 4: ExternalProject_Add</a>]  
+            IsSubmodule-->|No| FetchContent[<a href='#fetchcontent'>Approach 2: FetchContent</a>]  
+        CMakeSourceSupport-->|No|ExternalProject_Add[<a href='#externalproject_add'>Approach 5: ExternalProject_Add</a>]  
     Source-->|No| CMakePackageSupport{CMake integration?}  
-        CMakePackageSupport-->|Yes| find_package[<a href='#find_package'>Approach 3: find_package</a>]  
-        CMakePackageSupport-->|No| MOD_DEPS[<a href='#mod_deps'>Approach 2: MOD_DEPS</a>]  
+        CMakePackageSupport-->|Yes| find_package[<a href='#find_package'>Approach 4: find_package</a>]  
+        CMakePackageSupport-->|No| MOD_DEPS[<a href='#mod_deps'>Approach 3: MOD_DEPS</a>]  
 ```
 
 
@@ -55,7 +55,7 @@ Many popular libraries use CMake as their build system and should likely be able
 
 ##### Step 1: Use add_subdirectory (or equivalent FetchContent) to include the library in your project
 
-The following excerpt demonstrates how to integrate the [ETL libraries](https://github.com/ETLCPP/etl) using `FetchContent`:
+The following excerpt demonstrates how to integrate the [ETL libraries](https://github.com/ETLCPP/etl) using `add_subdirectory()`:
 
 ```cmake
 # This code can be located in the root project.cmake file if the library is used by multiple modules
@@ -85,7 +85,7 @@ register_fprime_module()
 
 ---
 
-## <a id="fetchcontent"></a>Approach 1-bis: CMake library with FetchContent
+## <a id="fetchcontent"></a>Approach 2: CMake library with FetchContent
 
 |     |     |
 | --- | --- |
@@ -111,7 +111,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(etl)
 ```
 
-The same considerations as [Approach 1](#add_subdirectory) apply with regards to where to place that code.
+The same considerations as [Approach 1 (add_subdirectory)](#add_subdirectory) apply with regards to where to place that code.
 
 ##### Step 2: Set the library as a dependency of the module
 
@@ -132,7 +132,7 @@ register_fprime_module()
 
 ---
 
-## <a id="mod_deps"></a>Approach 2: MOD_DEPS and pre-compiled library files
+## <a id="mod_deps"></a>Approach 3: MOD_DEPS and pre-compiled library files
 
 |     |     |
 | --- | --- |
@@ -159,15 +159,15 @@ target_include_directories(${FPRIME_CURRENT_MODULE} PUBLIC "${FPRIME_PROJECT_ROO
 This assumes that the `libcrypto.a` is available for the targeted architecture in the `lib/openssl/` directory of your F´ project root, and that the necessary header files are in `lib/openssl/include/`.
 
 > [!NOTE]
-> If you are attempting to cross-compile but also want to build for your local machine for testing, you may include multiple `.a` files in `lib/openssl/` (one for each target architecture) and use CMake logic to set the `MOD_DEPS` to the correct library file based on the target platform.
+> If you are attempting to cross-compile but also want to build for your local machine for testing, you must ensure to have a version of the precompiled library that matches the platform you are building for.
 
 ---
 
-## <a id="find_package"></a>Approach 3: Install once and integrate with find_package()
+## <a id="find_package"></a>Approach 4: Install once and integrate with find_package()
 
 |     |     |
 | --- | --- |
-| **Benefits** | Easier than approach 4 |
+| **Benefits** | Easier than approach 5 |
 | **Drawbacks** | Additional step managed outside of CMake |
 | **Considerations** | Need to ensure developers will install the dependency |
 
@@ -199,7 +199,7 @@ The `find_package()` command searches for the OpenCV library and sets the `OpenC
 
 ---
 
-## <a id="externalproject_add"></a>Approach 4: Build from source alongside your project with ExternalProject_Add
+## <a id="externalproject_add"></a>Approach 5: Build from source alongside your project with ExternalProject_Add
 
 |     |     |
 | --- | --- |
