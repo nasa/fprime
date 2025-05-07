@@ -93,7 +93,8 @@ void TlmChan::TlmRecv_handler(FwIndexType portNum, FwChanIdType id, Fw::Time& ti
     // Search to see if channel has already been stored or a bucket needs to be added
     if (this->m_tlmEntries[this->m_activeBuffer].slots[index]) {
         entryToUse = this->m_tlmEntries[this->m_activeBuffer].slots[index];
-        for (FwChanIdType bucket = 0; bucket < TLMCHAN_HASH_BUCKETS; bucket++) {
+        // Loop one extra time so that we don't inadvertently fall through the end of the loop early.
+        for (FwChanIdType bucket = 0; bucket < TLMCHAN_HASH_BUCKETS + 1; bucket++) {
             if (entryToUse) {
                 if (entryToUse->id == id) {  // found the matching entry
                     break;
