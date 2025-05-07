@@ -13,7 +13,7 @@
 #ifndef TcpServerComponentImpl_HPP
 #define TcpServerComponentImpl_HPP
 
-#include <IpCfg.hpp>
+#include <config/IpCfg.hpp>
 #include <Drv/Ip/IpSocket.hpp>
 #include <Drv/Ip/SocketComponentHelper.hpp>
 #include <Drv/Ip/TcpServerSocket.hpp>

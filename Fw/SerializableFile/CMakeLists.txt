@@ -12,7 +12,6 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/SerializableFile.cpp"
 )
 set(MOD_DEPS
-    Fw/Cfg
     Fw/Types
     Os
 )

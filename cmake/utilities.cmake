@@ -819,9 +819,11 @@ function(recurse_target_properties CMAKE_BUILD_TARGET_NAME PROPERTY_NAMES TRANSI
 
     # If the current item is not a target, tell the parent that this is a nonexistent entity
     if (NOT TARGET "${CMAKE_BUILD_TARGET_NAME}")
+        message(FATAL_ERROR "Target '${CMAKE_BUILD_TARGET_NAME}' is not a valid target (from ${__PARENT_RECURSED})")
+    elseif (NOT TARGET "${CMAKE_BUILD_TARGET_NAME}")
         set("${NON_EXISTENT_LINKS_OUTPUT}" "${CMAKE_BUILD_TARGET_NAME}" PARENT_SCOPE)
         set("${TRANSITIVE_LINKS_OUTPUT}" PARENT_SCOPE)
-	set("${EXTERNAL_LINKS_OUTPUT}" PARENT_SCOPE)
+        set("${EXTERNAL_LINKS_OUTPUT}" PARENT_SCOPE)
         return()
     endif()
     # If the target is imported, tell the parent that this is an external target
@@ -845,7 +847,7 @@ function(recurse_target_properties CMAKE_BUILD_TARGET_NAME PROPERTY_NAMES TRANSI
     if (NOT PROPERTY_LIST)
         set("${NON_EXISTENT_LINKS_OUTPUT}" PARENT_SCOPE)
         set("${TRANSITIVE_LINKS_OUTPUT}" "${CMAKE_BUILD_TARGET_NAME}" PARENT_SCOPE)
-	set("${EXTERNAL_LINKS_OUTPUT}" PARENT_SCOPE)
+        set("${EXTERNAL_LINKS_OUTPUT}" PARENT_SCOPE)
         return()
     endif()
     set(PREVIOUSLY_RECURSED ${ARGN} ${CMAKE_BUILD_TARGET_NAME})
@@ -862,6 +864,7 @@ function(recurse_target_properties CMAKE_BUILD_TARGET_NAME PROPERTY_NAMES TRANSI
             fprime_cmake_ASSERT("'${LINK}' is a null dependency of '${CMAKE_BUILD_TARGET_NAME}'" LINK)
             # Recurse through each link and append the recursively determined additions to the list
             # while ensuring there are no duplicates
+            set(__PARENT_RECURSED "${CMAKE_BUILD_TARGET_NAME}")
             recurse_target_properties("${LINK}" "${PROPERTY_NAMES}" INTERNAL_TRANSITIVE INTERNAL_EXTERNAL INTERNAL_UNKNOWN ${PREVIOUSLY_RECURSED})
             # The current link must occur in one list or the other
             fprime_cmake_ASSERT("'${LINK}' must appear in '${INTERNAL_TRANSITIVE}' or '${INTERNAL_UNKNOWN}'"
@@ -869,12 +872,12 @@ function(recurse_target_properties CMAKE_BUILD_TARGET_NAME PROPERTY_NAMES TRANSI
             # Append the lists to the aggregated output
             list(APPEND RECURSED_TRANSITIVE ${INTERNAL_TRANSITIVE})
             list(APPEND RECURSED_UNKNOWN ${INTERNAL_UNKNOWN})
-	    list(APPEND RECURSED_EXTERNAL ${INTERNAL_EXTERNAL})
+            list(APPEND RECURSED_EXTERNAL ${INTERNAL_EXTERNAL})
             list(REMOVE_DUPLICATES RECURSED_TRANSITIVE)
             list(REMOVE_DUPLICATES RECURSED_UNKNOWN)
-	    list(REMOVE_DUPLICATES RECURSED_EXTERNAL)
+            list(REMOVE_DUPLICATES RECURSED_EXTERNAL)
             # Update previously touched modules
-	    list(APPEND PREVIOUSLY_RECURSED ${INTERNAL_TRANSITIVE} ${INTERNAL_UNKNOWN} ${INTERNAL_EXTERNAL})
+            list(APPEND PREVIOUSLY_RECURSED ${INTERNAL_TRANSITIVE} ${INTERNAL_UNKNOWN} ${INTERNAL_EXTERNAL})
             list(REMOVE_DUPLICATES PREVIOUSLY_RECURSED)
         endif()
     endforeach()

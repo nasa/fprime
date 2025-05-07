@@ -6,6 +6,8 @@
 # support. This file includes the cmake build system setup for building like fprime.
 ####
 include_guard()
+cmake_policy(SET CMP0118 NEW)
+
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
 include(utilities)
 include(options)

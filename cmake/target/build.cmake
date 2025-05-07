@@ -106,7 +106,8 @@ function(fprime__internal_standard_build_target_setup BUILD_TARGET_NAME MODULE_N
     fprime__internal_check_restrictions("${BUILD_TARGET_NAME}" "${TARGET_LINK_DEPENDENCIES};${TARGET_INTERFACE_DEPENDENCIES}")
 
     # Special flags applied to modules when compiling with testing enabled
-    if (BUILD_TESTING)
+    get_target_property(TARGET_TYPE "${BUILD_TARGET_NAME}" TYPE)
+    if (BUILD_TESTING AND NOT TARGET_TYPE STREQUAL "INTERFACE_LIBRARY")
         target_compile_options("${BUILD_TARGET_NAME}" PRIVATE ${FPRIME_TESTING_REQUIRED_COMPILE_FLAGS})
         target_link_libraries("${BUILD_TARGET_NAME}" PRIVATE ${FPRIME_TESTING_REQUIRED_LINK_FLAGS})
     endif()

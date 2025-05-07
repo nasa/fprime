@@ -14,7 +14,7 @@
 */
 
 #include <Svc/ActiveRateGroup/test/ut/ActiveRateGroupImplTester.hpp>
-#include <ActiveRateGroupCfg.hpp>
+#include <config/ActiveRateGroupCfg.hpp>
 #include <gtest/gtest.h>
 #include <Fw/Test/UnitTest.hpp>
 

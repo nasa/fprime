@@ -13,7 +13,7 @@
 #define DRV_IP_IPHELPER_HPP_
 
 #include <Fw/FPrimeBasicTypes.hpp>
-#include <IpCfg.hpp>
+#include <config/IpCfg.hpp>
 #include <Os/Mutex.hpp>
 
 namespace Drv {

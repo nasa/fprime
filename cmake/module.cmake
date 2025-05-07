@@ -67,6 +67,7 @@ function(fprime__process_module_setup FPRIME_MODULE_TYPE ADDITIONAL_CONTROL_SETS
 
     # List of control words
     set(CONTROL_SETS "HEADERS" "SOURCES" "DEPENDS" "EXCLUDE_FROM_ALL" "AUTOCODER_INPUTS" ${ADDITIONAL_CONTROL_SETS})
+    set(FILE_CONTROL_SETS "HEADERS" "SOURCES" "AUTOCODER_INPUTS")
     # Set module name as passed in, then defaulting to FPRIME_CURRENT_MODULE
     if (${INPUT_COUNT} GREATER 0 AND NOT FIRST_ARGUMENT IN_LIST CONTROL_SETS)
         list(POP_FRONT INPUT_ARGUMENTS MODULE_NAME)
@@ -130,8 +131,15 @@ function(fprime__process_module_setup FPRIME_MODULE_TYPE ADDITIONAL_CONTROL_SETS
         # Now update the current list and define the backing store for it. This will allow us to capture arguments
         # between this and other control words.
         elseif(ARGUMENT IN_LIST CONTROL_SETS)
+            # Check for control words that are zero-argument (flags) and set them to true
+            if (DEFINED CURRENT_LIST_NAME AND NOT DEFINED ${CURRENT_LIST_NAME})
+                set("${CURRENT_LIST_NAME}" TRUE)
+            endif()
             set(CURRENT_LIST_NAME "${ARGUMENT}")
             set("${CURRENT_LIST_NAME}")
+        # Check that file types' files exist
+        elseif(DEFINED CURRENT_LIST_NAME AND CURRENT_LIST_NAME IN_LIST FILE_CONTROL_SETS AND NOT EXISTS "${ARGUMENT}")
+            fprime_cmake_fatal_error("${ARGUMENT} does not exist but was specified as a SOURCE/HEADER/AUTOCODER_INPUT")
         # Add in an element to the active control list
         elseif(DEFINED CURRENT_LIST_NAME)
             list(APPEND "${CURRENT_LIST_NAME}" "${ARGUMENT}")
@@ -141,7 +149,10 @@ function(fprime__process_module_setup FPRIME_MODULE_TYPE ADDITIONAL_CONTROL_SETS
             fprime_cmake_fatal_error("One of ${CONTROL_SETS_STRING} must be specified before list elements: ${ARGUMENT}")
         endif()
     endforeach()
-
+    # Check for control words that are zero-argument (flags) and set them to true
+    if (DEFINED CURRENT_LIST_NAME AND NOT DEFINED ${CURRENT_LIST_NAME})
+        set("${CURRENT_LIST_NAME}" TRUE)
+    endif()
     # Update caller scope with the new variables
     set(INTERNAL_MODULE_NAME "${MODULE_NAME}" PARENT_SCOPE)
     foreach(CONTROL_SET IN LISTS CONTROL_SETS)
@@ -186,31 +197,28 @@ function(fprime__internal_add_build_target_helper TARGET_NAME TYPE SOURCES AUTOC
     # Remap F Prime target type to CMake targe type
     if (TYPE STREQUAL "Executable" OR TYPE STREQUAL "Deployment" OR TYPE STREQUAL "Unit Test")
         add_executable("${TARGET_NAME}" ${EXTRA_CMAKE_DIRECTIVES} "${SOURCES}")
-    elseif(TYPE STREQUAL "Library" OR TYPE STREQUAL "Interface")
-        # Set up the library directives
-        set(LIBRARY_DIRECTIVES)
-        if (TYPE STREQUAL "Interface")
-            list(APPEND LIBRARY_DIRECTIVES INTERFACE)
-        endif()
-        add_library("${TARGET_NAME}" ${LIBRARY_DIRECTIVES} ${EXTRA_CMAKE_DIRECTIVES} "${SOURCES}" )
+    elseif(TYPE STREQUAL "Library")
+        add_library("${TARGET_NAME}" ${EXTRA_CMAKE_DIRECTIVES} ${SOURCES})
     else()
         fprime_cmake_fatal_error("Cannot register compilation target of type ${TYPE}")
-    endif()
-    # Set up the scope of dependencies.
-    set(DEPENDENCY_SCOPE "PUBLIC")
-    if (TYPE STREQUAL "Interface")
-        set(DEPENDENCY_SCOPE "INTERFACE")
     endif()
     # TODO: this is needed because sub-builds still attempt register targets, but without the build target to add back in the
     #       autocoding output. Thus empty must be substituted. Would it be possible to force the library to be an INTERFACE
     #       instead?  Or only add empty on sub-builds?
     target_sources("${TARGET_NAME}" PRIVATE "${FPRIME__INTERNAL_EMPTY_CPP}")
-    target_link_libraries("${TARGET_NAME}" ${DEPENDENCY_SCOPE} ${DEPENDENCIES})
+    # Use the appropriate link type for the target
+    get_target_property(CMAKE_LIBRARY_TYPE "${TARGET_NAME}" TYPE)
+    if (CMAKE_LIBRARY_TYPE MATCHES "INTERFACE_LIBRARY")
+        target_link_libraries("${TARGET_NAME}" INTERFACE ${DEPENDENCIES})
+    else()
+        target_link_libraries("${TARGET_NAME}" PUBLIC ${DEPENDENCIES})
+    endif()
     set_target_properties("${TARGET_NAME}"
         PROPERTIES
             SUPPLIED_HEADERS "${HEADERS}"
             SUPPLIED_SOURCES "${SOURCES}"
             SUPPLIED_DEPENDENCIES "${DEPENDENCIES}"
+            FPRIME_DEPENDENCIES "${DEPENDENCIES}"
             AUTOCODER_INPUTS "${AUTOCODER_INPUTS}"
             FPRIME_TYPE "${TYPE}"
     )

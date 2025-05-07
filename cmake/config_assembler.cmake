@@ -1,8 +1,3 @@
-#if (NOT DEFINED FPRIME_BINARY_DIR)
-#    set(FPRIME_CONFIG_ASSEMBLY "${CMAKE_BINARY_DIR}/config-assembly")
-#else()
-#    set(FPRIME_CONFIG_ASSEMBLY "${FPRIME_BINARY_DIR}/config-assembly")
-#endif()
 ####
 # Function `fprime__internal_process_configuration_sources`:
 #
@@ -76,7 +71,6 @@ function(fprime__internal_process_configuration_source_set CONFIG_DIR SOURCE_SET
         # If the source is new, move it to the binary directory
         else()
             list(APPEND RETURNED_SOURCES "${SOURCE}")
-            message(STATUS "Copying ${SOURCE} to ${CMAKE_CURRENT_BINARY_DIR}")
             file(COPY "${SOURCE}" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
         endif()
     endforeach()

@@ -398,13 +398,13 @@ endfunction()
 ####
 function(fprime_add_config_build_target)
     set(FPRIME__INTERNAL_CONFIG_TARGET_NAME "fprime_config")
-    set(FPRIME__INTERNAL_CONFIG_DIRECTORY "${FPRIME_CONFIG_ASSEMBLY}")
+    #set(FPRIME__INTERNAL_CONFIG_DIRECTORY "${FPRIME_CONFIG_ASSEMBLY}")
     # Set up interface target and directory for configuration files
     if (NOT TARGET "${FPRIME__INTERNAL_CONFIG_TARGET_NAME}")
         add_library("${FPRIME__INTERNAL_CONFIG_TARGET_NAME}" INTERFACE)
     endif()
     # Process the module arguments
-    fprime__process_module_setup("Library" "CONFIGURATION_OVERRIDES" ${ARGN})
+    fprime__process_module_setup("Library" "CONFIGURATION_OVERRIDES;INTERFACE" ${ARGN})
     # Prevent configuration from having dependencies or being excluded from the all build
     if (INTERNAL_DEPENDS OR INTERNAL_EXCLUDE_FROM_ALL)
         message(FATAL_ERROR "Cannot use DEPENDS or EXCLUDE_FROM_ALL with fprime_add_config_build_target")
@@ -415,14 +415,19 @@ function(fprime_add_config_build_target)
         "${INTERNAL_HEADERS}"
         "${INTERNAL_CONFIGURATION_OVERRIDES}"
     )
-
-    # Make an object library for this configuration module
+    set(CONFIG_LIBRARY_TYPE "STATIC")
+    if (DEFINED INTERNAL_INTERFACE)
+        set(CONFIG_LIBRARY_TYPE "INTERFACE")
+    endif()
+    
+    # Make a library for this configuration module specifying the library type
+    # This is a static library by default, but can be overridden to INTERFACE
     fprime__internal_add_build_target_helper(
-        "${INTERNAL_MODULE_NAME}" "Interface"
-        "${INTERNAL_SOURCES}" "${INTERNAL_AUTOCODER_INPUTS}" "${INTERNAL_HEADERS}" "" ""
+        "${INTERNAL_MODULE_NAME}" "Library"
+        "${INTERNAL_SOURCES}" "${INTERNAL_AUTOCODER_INPUTS}" "${INTERNAL_HEADERS}" "" "${CONFIG_LIBRARY_TYPE}"
     )
     # The new module should include the root configuration directory
-    target_include_directories("${INTERNAL_MODULE_NAME}" INTERFACE "${FPRIME__INTERNAL_CONFIG_DIRECTORY}")
+    #target_include_directories("${INTERNAL_MODULE_NAME}" INTERFACE "${FPRIME__INTERNAL_CONFIG_DIRECTORY}")
     # The configuration target should depend on the new module
     target_link_libraries("${FPRIME__INTERNAL_CONFIG_TARGET_NAME}" INTERFACE "${INTERNAL_MODULE_NAME}")
     # Set up the new module to be marked as FPRIME_CONFIGURATION

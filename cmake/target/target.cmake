@@ -149,7 +149,7 @@ function(setup_single_target TARGET_FILE MODULE SOURCES DEPENDENCIES)
         get_target_property(TRANSITIVE_DEPENDENCIES "${MODULE}" TRANSITIVE_DEPENDENCIES)
         # Recalculate recursive dependencies
         if (NOT TRANSITIVE_DEPENDENCIES)
-            set(RECURSED_PROPERTY_NAMES INTERFACE_LINK_LIBRARIES MANUALLY_ADDED_DEPENDENCIES)
+            set(RECURSED_PROPERTY_NAMES FPRIME_DEPENDENCIES)
             recurse_target_properties("${MODULE}" "${RECURSED_PROPERTY_NAMES}" KNOWN_TRANSITIVE_LINKS EXTERNAL_LINKS UNKNOWN_LINKS)
             
             # Report all detected recursive dependencies
