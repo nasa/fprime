@@ -363,7 +363,7 @@ function(fprime_add_deployment_build_target)
 endfunction()
 
 ####
-# Function `fprime_add_config_build_target`:
+# Function `register_fprime_config`:
 #
 # Registers a configuration build target using the fprime build system. This comes with dependency management and
 # fprime autocoding capabilities. The call format is identical to `register_fprime_library` and additionally supports
@@ -396,6 +396,29 @@ endfunction()
 #         FpConfig.fpp
 #         FpConfig.hpp
 ####
+function(register_fprime_config)
+    fprime_add_config_build_target(${ARGN})
+    # Clear the historical variables and set up autocode
+    clear_historical_variables()
+    fprime_attach_custom_targets("${INTERNAL_MODULE_NAME}")
+endfunction()
+
+####
+# Function `fprime_add_config_build_target`:
+#
+# Registers config using the fprime build system without setting up autocoding or target
+# support. See `register_fprime_config`.
+#
+# > [!NOTE]  
+# > Users may set up custom target and autocoder support by calling `fprime_attach_custom_targets`.
+#
+# This function sets "INTERNAL_MODULE_NAME" in PARENT_SCOPE to pass-back module name for target
+# registration.
+#
+# **MODULE_NAME**: (optional) module name. Default: ${FPRIME_CURRENT_MODULE}
+# **ARGN**: sources, autocoder inputs, etc preceded by a directive (i.e. SOURCES or DEPENDS)
+#
+####
 function(fprime_add_config_build_target)
     set(FPRIME__INTERNAL_CONFIG_TARGET_NAME "fprime_config")
     # Set up interface target and directory for configuration files
@@ -409,10 +432,12 @@ function(fprime_add_config_build_target)
         message(FATAL_ERROR "Cannot use DEPENDS or EXCLUDE_FROM_ALL with fprime_add_config_build_target")
     endif()
     fprime__internal_process_configuration_sources(
+        "${INTERNAL_MODULE_NAME}"
         "${INTERNAL_SOURCES}"
         "${INTERNAL_AUTOCODER_INPUTS}"
         "${INTERNAL_HEADERS}"
         "${INTERNAL_CONFIGURATION_OVERRIDES}"
+        "${INTERNAL_DEPENDS}"
     )
 
     # Set up scoping variables for the new module
@@ -427,7 +452,7 @@ function(fprime_add_config_build_target)
     # This is a static library by default, but can be overridden to INTERFACE
     fprime__internal_add_build_target_helper(
         "${INTERNAL_MODULE_NAME}" "Library"
-        "${INTERNAL_SOURCES}" "${INTERNAL_AUTOCODER_INPUTS}" "${INTERNAL_HEADERS}" "" "${CONFIG_LIBRARY_TYPE}"
+        "${INTERNAL_SOURCES}" "${INTERNAL_AUTOCODER_INPUTS}" "${INTERNAL_HEADERS}" "${INTERNAL_DEPENDS}" "${CONFIG_LIBRARY_TYPE}"
     )
     # The new module should include the root configuration directory
     target_include_directories("${INTERNAL_MODULE_NAME}" "${SCOPE}" "${CMAKE_CURRENT_BINARY_DIR}/..")
@@ -441,9 +466,7 @@ function(fprime_add_config_build_target)
     if (BUILD_SHARED_LIBS AND CONFIG_LIBRARY_TYPE STREQUAL "STATIC")
         target_compile_options(${INTERNAL_MODULE_NAME} PRIVATE -fPIC)
     endif()
-    # Clear the historical variables and set up autocode
-    clear_historical_variables()
-    fprime_attach_custom_targets("${INTERNAL_MODULE_NAME}")
+    set(INTERNAL_MODULE_NAME "${INTERNAL_MODULE_NAME}" PARENT_SCOPE)
 endfunction()
 
 ####

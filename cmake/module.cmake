@@ -196,15 +196,17 @@ function(fprime__internal_add_build_target_helper TARGET_NAME TYPE SOURCES AUTOC
     else()
         fprime_cmake_fatal_error("Cannot register compilation target of type ${TYPE}")
     endif()
-    # TODO: this is needed because sub-builds still attempt register targets, but without the build target to add back in the
-    #       autocoding output. Thus empty must be substituted. Would it be possible to force the library to be an INTERFACE
-    #       instead?  Or only add empty on sub-builds?
-    target_sources("${TARGET_NAME}" PRIVATE "${FPRIME__INTERNAL_EMPTY_CPP}")
     # Use the appropriate link type for the target
     get_target_property(CMAKE_LIBRARY_TYPE "${TARGET_NAME}" TYPE)
     if (CMAKE_LIBRARY_TYPE MATCHES "INTERFACE_LIBRARY")
+        message(STATUS "${TARGET_NAME} is FAKE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         target_link_libraries("${TARGET_NAME}" INTERFACE ${DEPENDENCIES})
     else()
+        message(STATUS "${TARGET_NAME} is REAL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        # TODO: this is needed because sub-builds still attempt register targets, but without the build target to add back in the
+        #       autocoding output. Thus empty must be substituted. Would it be possible to force the library to be an INTERFACE
+        #       instead?  Or only add empty on sub-builds?
+        target_sources("${TARGET_NAME}" PRIVATE "${FPRIME__INTERNAL_EMPTY_CPP}")
         target_link_libraries("${TARGET_NAME}" PUBLIC ${DEPENDENCIES})
     endif()
     set_target_properties("${TARGET_NAME}"
@@ -212,6 +214,7 @@ function(fprime__internal_add_build_target_helper TARGET_NAME TYPE SOURCES AUTOC
             SUPPLIED_HEADERS "${HEADERS}"
             SUPPLIED_SOURCES "${SOURCES}"
             SUPPLIED_DEPENDENCIES "${DEPENDENCIES}"
+            SUPPLIED_AUTOCODER_INPUTS "${AUTOCODER_INPUTS}"
             FPRIME_DEPENDENCIES "${DEPENDENCIES}"
             AUTOCODER_INPUTS "${AUTOCODER_INPUTS}"
             FPRIME_TYPE "${TYPE}"

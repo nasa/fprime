@@ -6,35 +6,44 @@
 # and header files.
 #
 # Arguments:
+# - `MODULE_NAME`: the name of the module being processed
 # - `SOURCES`: list of sources to process
 # - `AUTOCODER_INPUTS`: list of autocoder inputs to process
 # - `HEADERS`: list of headers to process
 # - `OVERRIDES`: list of configuration overrides to process
+# - `DEPENDS`: list of dependencies to append to
 #
 # Returns:
 # - `INTERNAL_SOURCES`: list of sources in their final configuration location (set in caller)
+# - `INTERNAL_AUTOCODER_INPUTS`: list of autocoder inputs in their final configuration location (set in caller)
 # - `INTERNAL_HEADERS`: list of headers in their final configuration location (set in caller)
+# - `INTERNAL_DEPENDS`: list of dependencies, new and old
 ####
-function(fprime__internal_process_configuration_sources SOURCES AUTOCODER_INPUTS HEADERS OVERRIDES)
-    # Process source files and update INTERNAL_SOURCES in caller
+function(fprime__internal_process_configuration_sources MODULE_NAME SOURCES AUTOCODER_INPUTS HEADERS OVERRIDES DEPENDS)
+    # Process source files and update INTERNAL_SOURCES in caller and track new dependencies
     fprime__internal_process_configuration_source_set(
-        "${CONFIG_DIRECTORY}" "${SOURCES}" FALSE
+        "${MODULE_NAME}" "${SOURCES}" FALSE
     )
     set(INTERNAL_SOURCES "${PROCESSED_SOURCES}" PARENT_SCOPE)
-    # Process source files and update INTERNAL_AUTOCODER_INPUTS in caller
+    set(DEPENDS ${DEPENDS} ${NEW_DEPENDS})
+    # Process source files and update INTERNAL_AUTOCODER_INPUTS in caller and track new dependencies
     fprime__internal_process_configuration_source_set(
-        "${CONFIG_DIRECTORY}" "${AUTOCODER_INPUTS}" FALSE
+        "${MODULE_NAME}" "${AUTOCODER_INPUTS}" FALSE
     )
     set(INTERNAL_AUTOCODER_INPUTS "${PROCESSED_SOURCES}" PARENT_SCOPE)
-    # Process header files and update INTERNAL_HEADERS in caller
+    set(DEPENDS ${DEPENDS} ${NEW_DEPENDS})
+    # Process header files and update INTERNAL_HEADERS in caller and track new dependencies
     fprime__internal_process_configuration_source_set(
-        "${CONFIG_DIRECTORY}" "${HEADERS}" FALSE
+        "${MODULE_NAME}" "${HEADERS}" FALSE
     )
     set(INTERNAL_HEADERS "${PROCESSED_SOURCES}" PARENT_SCOPE)
+    set(DEPENDS ${DEPENDS} ${NEW_DEPENDS})
     # Process configuration overrides. Since these are already in a module, they need not be updated in caller.
+    # New dependencies are tracked.
     fprime__internal_process_configuration_source_set(
-        "${CONFIG_DIRECTORY}" "${CONFIGURATION_OVERRIDES}" TRUE
+        "${MODULE_NAME}" "${OVERRIDES}" TRUE
     )
+    set(INTERNAL_DEPENDS ${DEPENDS} ${NEW_DEPENDS} PARENT_SCOPE)
 endfunction()
 
 ####
@@ -43,15 +52,19 @@ endfunction()
 # Processes a single set of configuration files checking to see if files collide and if they must collide.
 #
 # Arguments:
+# - `MODULE_NAME`: the name of the module being processed
 # - `SOURCE_SET`: list of sources to process
 # - `MUST_EXIST`: if true, the source must exist in the configuration directory, false if it must not exist
 #
 # Returns:
 # - `PROCESSED_SOURCES`: list (set in caller)
+# - `NEW_DEPENDS`: list of new dependencies (set in caller)
 ####
-function(fprime__internal_process_configuration_source_set CONFIG_DIR SOURCE_SET MUST_EXIST)
+function(fprime__internal_process_configuration_source_set MODULE_NAME SOURCE_SET MUST_EXIST)
     list(REMOVE_DUPLICATES SOURCE_SET)
     set(RETURNED_SOURCES)
+    set(NEW_DEPENDS)
+
     foreach(SOURCE IN LISTS SOURCE_SET)
         get_filename_component(SOURCE_NAME "${SOURCE}" NAME)
 
@@ -60,21 +73,35 @@ function(fprime__internal_process_configuration_source_set CONFIG_DIR SOURCE_SET
         # Check if the source cannot exist, and yet it was found
         if (NOT MUST_EXIST AND DESTINATION)
             message(FATAL_ERROR
-                "${CONFIG_RELATIVE} is SOURCE/HEADER but overrides existing file. Use CONFIGURATION_OVERRIDES.")
+                "${SOURCE_NAME} is SOURCE/HEADER but overrides existing file. Use CONFIGURATION_OVERRIDES.")
         # Check if the source must exist, and yet it was not found
         elseif (MUST_EXIST AND NOT DESTINATION)
             message(FATAL_ERROR
-                "${CONFIG_RELATIVE} is CONFIGURATION_OVERRIDE but overrides non-existent file. Use SOURCES/HEADERS.")
+                "${SOURCE_NAME} is CONFIGURATION_OVERRIDE but overrides non-existent file. Use SOURCES/HEADERS.")
         # If the source must exist and it was found, overwrite it
         elseif(MUST_EXIST)
-            file(COPY "${SOURCE}" DESTINATION "${DESTINATION}")
+            fprime_cmake_debug_message("[config] Overriding ${DESTINATION} with ${SOURCE}")
+            file(COPY_FILE "${SOURCE}" "${DESTINATION}" ONLY_IF_DIFFERENT)
+            list(APPEND NEW_DEPENDS "${DESTINATION_MODULE}")
         # If the source is new, move it to the binary directory
         else()
-            list(APPEND RETURNED_SOURCES "${SOURCE}")
-            file(COPY "${SOURCE}" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
+            cmake_path(RELATIVE_PATH CMAKE_CURRENT_BINARY_DIR BASE_DIRECTORY ${CMAKE_BINARY_DIR} OUTPUT_VARIABLE RELATIVE_PATH)
+            # Calculate the base destination
+            set(DESTINATION_BASE "${CMAKE_BINARY_DIR}")
+            if (DEFINED FPRIME_BINARY_DIR)
+                set(DESTINATION_BASE "${FPRIME_BINARY_DIR}")
+            endif()
+            get_filename_component(SOURCE_NAME "${SOURCE}" NAME)
+            set(DESTINATION_DIRECTORY "${DESTINATION_BASE}/${RELATIVE_PATH}")
+            set(DESTINATION "${DESTINATION_DIRECTORY}/${SOURCE_NAME}")
+            fprime_cmake_debug_message("[config] Initial config ${DESTINATION} from ${SOURCE}")
+            list(APPEND RETURNED_SOURCES "${DESTINATION}")
+            file(MAKE_DIRECTORY "${DESTINATION_DIRECTORY}")
+            file(COPY_FILE "${SOURCE}" "${DESTINATION}" ONLY_IF_DIFFERENT)
         endif()
     endforeach()
     set(PROCESSED_SOURCES "${RETURNED_SOURCES}" PARENT_SCOPE)
+    set(NEW_DEPENDS "${NEW_DEPENDS}" PARENT_SCOPE)
 endfunction()
 
 ####
@@ -95,9 +122,9 @@ function(fprime_internal_get_configuration_destination NEW_CONFIG_NAME)
     get_property(CONFIG_MODULES GLOBAL PROPERTY FPRIME_CONFIG_MODULES)
     foreach(CONFIG_MODULE IN LISTS CONFIG_MODULES)
         # Read the sources, headers, and autocoder inputs from the module
-        get_target_property(CONFIG_SOURCES ${CONFIG_MODULE} SOURCES)
-        get_target_property(CONFIG_HEADERS ${CONFIG_MODULE} HEADERS)
-        get_target_property(CONFIG_AUTOCODER_INPUTS ${CONFIG_MODULE} AUTOCODER_INPUTS)
+        get_target_property(CONFIG_SOURCES ${CONFIG_MODULE} SUPPLIED_SOURCES)
+        get_target_property(CONFIG_HEADERS ${CONFIG_MODULE} SUPPLIED_HEADERS)
+        get_target_property(CONFIG_AUTOCODER_INPUTS ${CONFIG_MODULE} SUPPLIED_AUTOCODER_INPUTS)
 
         # Loop through all read files
         foreach(CONFIG_FILE IN LISTS CONFIG_SOURCES CONFIG_HEADERS CONFIG_AUTOCODER_INPUTS)
@@ -105,11 +132,13 @@ function(fprime_internal_get_configuration_destination NEW_CONFIG_NAME)
             get_filename_component(CONFIG_NAME "${CONFIG_FILE}" NAME)
             if (NEW_CONFIG_NAME STREQUAL CONFIG_NAME)
                 set(DESTINATION "${CONFIG_FILE}" PARENT_SCOPE)
+                set(DESTINATION_MODULE "${CONFIG_MODULE}" PARENT_SCOPE)
                 return()
             endif()
         endforeach()
     endforeach()
     # If no match was found, unset the destination
     unset(DESTINATION PARENT_SCOPE)
+    unset(DESTINATION_MODULE PARENT_SCOPE)
 endfunction()
 

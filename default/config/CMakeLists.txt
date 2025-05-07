@@ -3,7 +3,7 @@
 #
 # Sets a list of source files for cmake to process as part of autocoding.
 ####
-fprime_add_config_build_target(
+register_fprime_config(
     AUTOCODER_INPUTS
         "${CMAKE_CURRENT_LIST_DIR}/AcConstants.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/DpCfg.fpp"

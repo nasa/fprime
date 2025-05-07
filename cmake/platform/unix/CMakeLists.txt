@@ -2,7 +2,7 @@
 #    "${CMAKE_CURRENT_LIST_DIR}/PlatformTypes.fpp"
 #    "${CMAKE_CURRENT_LIST_DIR}/../../valid-empty.cpp"
 #)
-fprime_add_config_build_target(
+register_fprime_config(
     AUTOCODER_INPUTS
         "${CMAKE_CURRENT_LIST_DIR}/PlatformTypes.fpp"
     INTERFACE # No buildable files generated

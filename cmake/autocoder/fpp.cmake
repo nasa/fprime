@@ -276,6 +276,7 @@ function(fpp_to_modules FILE_LIST OUTPUT_VAR)
     get_module_name("${CMAKE_CURRENT_SOURCE_DIR}")
     set(CURRENT_MODULE "${MODULE_NAME}")
     foreach(INCLUDE IN LISTS FILE_LIST)
+        message(STATUS ">>>>> ${INCLUDE}")
         get_module_name(${INCLUDE})
         # Here we are adding a module to the modules list if all of the following are true:
         #  1. Not present already (deduplication)

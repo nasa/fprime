@@ -6,7 +6,6 @@
 ####
 import platform
 import tempfile
-
 from pathlib import Path
 from . import cmake
 from . import settings

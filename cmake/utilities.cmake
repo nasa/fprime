@@ -595,6 +595,7 @@ endfunction(print_property)
 ####
 function(introspect MODULE_NAME)
     print_property("${MODULE_NAME}" SOURCES)
+    print_property("${MODULE_NAME}" SUPPLIED_HEADERS)
     print_property("${MODULE_NAME}" INCLUDE_DIRECTORIES)
     print_property("${MODULE_NAME}" LINK_LIBRARIES)
     print_property("${MODULE_NAME}" INTERFACE_LINK_LIBRARIES)

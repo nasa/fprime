@@ -60,6 +60,7 @@ function(fprime__internal_TECH_DEBT_module_setup BUILD_MODULE_NAME MODULE_NAME_H
         PROPERTIES
         SOURCES "${MODULE_SOURCES}"
     )
+    message(STATUS "Final sources for ${BUILD_MODULE_NAME}: ${MODULE_SOURCES}")
     #### End Remove empty.cpp ####
 
     #### Set Implementation Choices ####
