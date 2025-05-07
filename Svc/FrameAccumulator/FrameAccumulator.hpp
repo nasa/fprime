@@ -50,8 +50,7 @@ class FrameAccumulator final : public FrameAccumulatorComponentBase {
     //!
     //! Receives raw data from a ByteStreamDriver, ComStub, or other buffer producing component
     void dataIn_handler(FwIndexType portNum,  //!< The port number
-                        Fw::Buffer& recvBuffer,
-                        const Drv::RecvStatus& recvStatus) override;
+                        Fw::Buffer& recvBuffer) override;
 
   PRIVATE:
     //! \brief process raw buffer

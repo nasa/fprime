@@ -23,7 +23,7 @@ FprimeRouter ::~FprimeRouter() {}
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer, Fw::Buffer& contextBuffer) {
+void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer, const ComCfg::FrameContext& context) {
     // Read the packet type from the packet buffer
     FwPacketDescriptorType packetType = Fw::ComPacket::FW_PACKET_UNKNOWN;
     Fw::SerializeStatus status = Fw::FW_SERIALIZE_OK;
@@ -71,7 +71,7 @@ void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer
                 // Packet type is not known to the F Prime protocol. If the unknownDataOut port is
                 // connected, forward packet and context for further processing
                 if (this->isConnected_unknownDataOut_OutputPort(0)) {
-                    this->unknownDataOut_out(0, packetBuffer, contextBuffer);
+                    this->unknownDataOut_out(0, packetBuffer, context);
                     // Transfer ownership of the packetBuffer to the receiver
                     deallocate = false;
                 }

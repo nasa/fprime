@@ -2,7 +2,7 @@
 
 The `Svc::FprimeRouter` component routes F´ packets (such as command or file packets) to other components.
 
-The `Svc::FprimeRouter` component receives F´ packets (as [Fw::Buffer](../../../Fw/Buffer/docs/sdd.md) objects) and routes them to other components through synchronous port calls. The input port of type `Fw.DataWithContext` passes this Fw.Buffer object along with optional context data which can help for routing. The current F Prime protocol does not use this context data, but is nevertheless present in the interface for compatibility with other protocols which may for example pass APIDs in the frame headers.
+The `Svc::FprimeRouter` component receives F´ packets (as [Fw::Buffer](../../../Fw/Buffer/docs/sdd.md) objects) and routes them to other components through synchronous port calls. The input port of type `Svc.ComDataWithContext` passes this Fw.Buffer object along with optional context data which can help for routing. The current F Prime protocol does not use this context data, but is nevertheless present in the interface for compatibility with other protocols which may for example pass APIDs in the frame headers.
 
 The `Svc::FprimeRouter` component supports `Fw::ComPacket::FW_PACKET_COMMAND` and `Fw::ComPacket::FW_PACKET_FILE` packet types. Unknown packet types are forwarded on the `unknownDataOut` port, which a project-specific component can connect to for custom routing. In the case of unknown data being forwarded, the ownership of the packet data `Fw::Buffer` object is passed to the receiver.
 
@@ -31,10 +31,10 @@ classDiagram
 
 | Name | Description | Type |
 |---|---|---|
-| `dataIn: Fw.DataWithContext` | Receiving Fw::Buffer with context buffer from Deframer | `guarded input` |
+| `dataIn: Svc.ComDataWithContext` | Receiving Fw::Buffer with context buffer from Deframer | `guarded input` |
 | `commandOut: Fw.Com` | Port for sending command packets as Fw::ComBuffers | `output` |
 | `fileOut: Fw.BufferSend` | Port for sending file packets as Fw::Buffer (ownership passed to receiver) | `output` |
-| `unknownDataOut: Fw.DataWithContext` | Port forwarding unknown data (useful for adding custom routing rules with a project-defined router) | `output` |
+| `unknownDataOut: Svc.ComDataWithContext` | Port forwarding unknown data (useful for adding custom routing rules with a project-defined router) | `output` |
 | `output`| bufferDeallocate | `Fw.BufferSend` | Port for deallocating buffers once routed |
 
 ## Requirements

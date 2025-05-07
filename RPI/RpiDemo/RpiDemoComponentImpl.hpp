@@ -68,8 +68,15 @@ namespace RPI {
       void UartRead_handler(
           const FwIndexType portNum, /*!< The port number*/
           Fw::Buffer &serBuffer, /*!< Buffer containing data*/
-          const Drv::RecvStatus &status /*!< Status of read*/
+          const Drv::ByteStreamStatus &status /*!< Status of read*/
       ) override;
+
+      //! Handler implementation for UartWriteReturn
+      //!
+      //! Input port for getting back buffer ownership and status when using UartWrite
+      void UartWriteReturn_handler(FwIndexType portNum,  //!< The port number
+        Fw::Buffer& buffer,
+        const Drv::ByteStreamStatus& status) override;
 
     PRIVATE:
 

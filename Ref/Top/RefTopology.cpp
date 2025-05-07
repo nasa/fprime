@@ -14,8 +14,8 @@
 // Necessary project-specified types
 #include <Fw/Types/MallocAllocator.hpp>
 #include <Os/Console.hpp>
-#include <Svc/FramingProtocol/FprimeProtocol.hpp>
 #include <Svc/FrameAccumulator/FrameDetector/FprimeFrameDetector.hpp>
+#include <Ref/Top/Ports_ComPacketQueueEnumAc.hpp>
 
 // Used for 1Hz synthetic cycling
 #include <Os/Mutex.hpp>
@@ -32,7 +32,6 @@ Fw::MallocAllocator mallocator;
 
 // The reference topology uses the F´ packet protocol when communicating with the ground and therefore uses the F´
 // framing and deframing implementations.
-Svc::FprimeFraming framing;
 Svc::FrameDetectors::FprimeFrameDetector frameDetector;
 
 
@@ -45,6 +44,8 @@ Svc::RateGroupDriver::DividerSet rateGroupDivisorsSet{{{1, 0}, {2, 0}, {4, 0}}};
 U32 rateGroup1Context[Svc::ActiveRateGroup::CONNECTION_COUNT_MAX] = {};
 U32 rateGroup2Context[Svc::ActiveRateGroup::CONNECTION_COUNT_MAX] = {};
 U32 rateGroup3Context[Svc::ActiveRateGroup::CONNECTION_COUNT_MAX] = {};
+
+Svc::ComQueue::QueueConfigurationTable configurationTable;
 
 // A number of constants are needed for construction of the topology. These are specified here.
 enum TopologyConstants {
@@ -113,8 +114,6 @@ void configureTopology() {
     dpBuffMgrBins.bins[0].numBuffers = DP_BUFFER_MANAGER_STORE_COUNT;
     dpBufferManager.setup(DP_BUFFER_MANAGER_ID, 0, mallocator, dpBuffMgrBins);
 
-    // Framer and Deframer components need to be passed a protocol handler
-    framer.setup(framing);
     frameAccumulator.configure(frameDetector, 1, mallocator, 2048);
 
     Fw::FileNameString dpDir("./DpCat");
@@ -125,6 +124,19 @@ void configureTopology() {
 
     dpCat.configure(&dpDir,1,dpState,0,mallocator);
     dpWriter.configure(dpDir);
+
+    // ComQueue configuration
+    // Events (highest-priority)
+    configurationTable.entries[Ref::Ports_ComPacketQueue::EVENTS].depth = 100;
+    configurationTable.entries[Ref::Ports_ComPacketQueue::EVENTS].priority = 0;
+    // Telemetry
+    configurationTable.entries[Ref::Ports_ComPacketQueue::TELEMETRY].depth = 500;
+    configurationTable.entries[Ref::Ports_ComPacketQueue::TELEMETRY].priority = 2;
+    // File Downlink (first entry after the ComPacket queues = NUM_CONSTANTS)
+    configurationTable.entries[Ref::Ports_ComPacketQueue::NUM_CONSTANTS].depth = 100;
+    configurationTable.entries[Ref::Ports_ComPacketQueue::NUM_CONSTANTS].priority = 1;
+    // Allocation identifier is 0 as the MallocAllocator discards it
+    comQueue.configure(configurationTable, 0, mallocator);
 
     // Note: Uncomment when using Svc:TlmPacketizer
     // tlmSend.setPacketList(Ref::Ref_RefPacketsTlmPackets::packetList, Ref::Ref_RefPacketsTlmPackets::omittedChannels, 1);
@@ -144,7 +156,7 @@ void setupTopology(const TopologyState& state) {
     // Autocoded configuration. Function provided by autocoder.
     configComponents(state);
     if (state.hostname != nullptr && state.port != 0) {
-        comm.configure(state.hostname, state.port);
+        comDriver.configure(state.hostname, state.port);
     }
     // Project-specific component configuration. Function provided above. May be inlined, if desired.
     configureTopology();
@@ -158,7 +170,7 @@ void setupTopology(const TopologyState& state) {
     if (state.hostname != nullptr && state.port != 0) {
         Os::TaskString name("ReceiveTask");
         // Uplink is configured for receive so a socket task is started
-        comm.start(name, COMM_PRIORITY, Default::STACK_SIZE);
+        comDriver.start(name, COMM_PRIORITY, Default::STACK_SIZE);
     }
 }
 
@@ -194,8 +206,8 @@ void teardownTopology(const TopologyState& state) {
     freeThreads(state);
 
     // Other task clean-up.
-    comm.stop();
-    (void)comm.join();
+    comDriver.stop();
+    (void)comDriver.join();
 
     // Resource deallocation
     cmdSeq.deallocateBuffer(mallocator);

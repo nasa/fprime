@@ -25,6 +25,11 @@ TEST(OffNominal, Retry) {
     tester.test_retry();
 }
 
+TEST(OffNominal, RetryReset) {
+    Svc::ComStubTester tester;
+    tester.test_retry_reset();
+}
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

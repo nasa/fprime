@@ -1,4 +1,4 @@
-# Porting Guide
+# Porting to new platforms
 
 Porting F′ to a new hardware platform is often required for using F´ on
 new missions and projects. Fortunately, F´ is designed to be mostly

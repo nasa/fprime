@@ -66,7 +66,7 @@ The `Svc::FrameAccumulator` component is used in the uplink stack of many refere
 classDiagram
     class FrameAccumulator~PassiveComponent~ {
         + void configure(FrameDetector& detector, FwEnumStoreType allocationId, Fw::MemAllocator& allocator, FwSizeType store_size)
-        + void dataIn_handler(FwIndexType portNum, Fw::Buffer& recvBuffer, const Drv::RecvStatus& recvStatus)
+        + void dataIn_handler(FwIndexType portNum, Fw::Buffer& recvBuffer, const Drv::ByteStreamStatus& recvStatus)
         + void processBuffer(Fw::Buffer& buffer)
         + void processRing()
     }
@@ -86,6 +86,6 @@ SVC-FRAME-ACCUMULATOR-004 | `Svc::FrameAccumulator` shall accept byte buffers co
 | Kind | Name | Type | Description |
 |---|---|---|---|
 | `guarded input` | dataIn | `Drv.ByteStreamRecv` | Receives raw data from a ByteStreamDriver, ComStub, or other buffer producing component |
-| `output` | frameOut | `Fw.DataWithContext` | Port for sending an extracted frame out |
+| `output` | frameOut | `Svc.ComDataWithContext` | Port for sending an extracted frame out |
 | `output` | bufferAllocate | `Fw.BufferGet` | Port for allocating buffer to hold extracted frame |
 | `output`| bufferDeallocate | `Fw.BufferSend` | Port for deallocating buffers received on dataIn. |

@@ -8,7 +8,9 @@ register_fprime_module(
     AUTOCODER_INPUTS
         "${CMAKE_CURRENT_LIST_DIR}/AcConstants.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/DpCfg.fpp"
+        "${CMAKE_CURRENT_LIST_DIR}/ComCfg.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/FpConfig.fpp"
+        "${CMAKE_CURRENT_LIST_DIR}/FpySequencerCfg.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/PolyDbCfg.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/VersionCfg.fpp"
 )

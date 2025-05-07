@@ -1,4 +1,4 @@
-# How-To: F´ GDS Plugin Development
+# Develop a GDS Plugin
 
 This guide will walk through the process of developing GDS plugins.  GDS plugins allow users to add functionality to the
 GDS in several ways. These include:
@@ -39,7 +39,7 @@ category is summarized in the table below.
 |---------------|---------------|--------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
 | framing       | Selection     | Implement a framer/deframer pair to handle serialized data               | [FramerDeframer](https://github.com/fprime-community/fprime-gds/blob/devel/src/fprime_gds/common/communication/framing.py#L24)    |
 | communication | Selection     | Implement a communication adapter for flight software communication      | [BaseAdapter](https://github.com/fprime-community/fprime-gds/blob/devel/src/fprime_gds/common/communication/adapters/base.py#L16) |
-| gds-app       | Functionality | Implement a new GDS application isolated to a separate process           | [GdsApp](https://github.com/fprime-community/fprime-gds/blob/devel/src/fprime_gds/executables/apps.py#L76)                        |
+| gds-app       | Functionality | Implement a new GDS application isolated to a separate process           | [GdsApp](https://github.com/fprime-community/fprime-gds/blob/devel/src/fprime_gds/executables/apps.py#L88)                        |
 | gds-function  | Functionality | (Advanced) Implement new GDS functionality with control over the process | [GdsFunction](https://github.com/fprime-community/fprime-gds/blob/devel/src/fprime_gds/executables/apps.py#L40)                   |
 
 

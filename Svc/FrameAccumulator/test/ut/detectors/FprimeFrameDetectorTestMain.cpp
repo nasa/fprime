@@ -76,7 +76,7 @@ TEST(FprimeFrameDetector, TestBufferTooSmall) {
 
     // Anything smaller than the size of header + trailer is invalid
     U32 minimum_valid_size =
-        FprimeProtocol::FrameHeader::SERIALIZED_SIZE + FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
+        Svc::FprimeProtocol::FrameHeader::SERIALIZED_SIZE + Svc::FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
     U32 invalid_size = STest::Random::lowerUpper(1, minimum_valid_size - 1);
     // Set the circular buffer to hold data of invalid size
     circular_buffer.serialize(buffer, invalid_size);

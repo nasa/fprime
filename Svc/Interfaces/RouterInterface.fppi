@@ -1,5 +1,5 @@
 @ Receiving data (Fw::Buffer) to be routed with optional context to help with routing
-sync input port dataIn: Fw.DataWithContext
+sync input port dataIn: Svc.ComDataWithContext
 
 @ Port for sending file packets as Fw::Buffer (ownership passed to receiver)
 output port fileOut: Fw.BufferSend

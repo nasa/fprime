@@ -1,4 +1,4 @@
-# F′ Development Process
+# F´ Development Process
 
 The purpose of this guide is to lay out the standard F´ development process. This is the process used
 by most developers who use F´ and, as such, many of the F´ tools are written to support the stages
@@ -26,7 +26,7 @@ of functionality that represent the system. In addition, the interface between t
 defined. The units of functionality are Components and the interfaces are further broken down into
 discrete calls or actions through that interface. These are F´ ports. The full design of the system
 of components and ports is the Topology. See: [Ports Components and
-Topologies](port-comp-top.md)
+Topologies](03-port-comp-top.md)
 
 Next, the project should review the components provided by the F´ framework to see what
 functionality can be inherited for free. This usually consists of the basic command and data

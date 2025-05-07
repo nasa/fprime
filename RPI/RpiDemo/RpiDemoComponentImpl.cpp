@@ -106,10 +106,10 @@ namespace RPI {
     UartRead_handler(
         const FwIndexType portNum,
         Fw::Buffer &serBuffer,
-        const Drv::RecvStatus &status
+        const Drv::ByteStreamStatus &status
     )
   {
-      if (Drv::RecvStatus::RECV_OK == status.e) {
+      if (Drv::ByteStreamStatus::OP_OK == status.e) {
           // convert incoming data to string. If it is not printable, set character to '*'
           char uMsg[serBuffer.getSize() + 1];
           char *bPtr = reinterpret_cast<char *>(serBuffer.getData());
@@ -142,15 +142,17 @@ namespace RPI {
       Fw::Buffer txt;
       txt.setSize(text.length());
       txt.setData(reinterpret_cast<U8*>(const_cast<char*>(text.toChar())));
-      Drv::SendStatus status = this->UartWrite_out(0, txt);
-      if (Drv::SendStatus::SEND_OK == status.e) {
-        this->m_uartWriteBytes += text.length();
-
-        Fw::LogStringArg arg = text;
-        this->log_ACTIVITY_HI_RD_UartMsgOut(arg);
-      }
+      this->UartWrite_out(0, txt);
       this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
   }
+
+    void RpiDemoComponentImpl ::UartWriteReturn_handler(FwIndexType portNum, Fw::Buffer& buffer, const Drv::ByteStreamStatus& status) {
+        if (Drv::ByteStreamStatus::OP_OK == status.e) {
+            this->m_uartWriteBytes += buffer.getSize();
+            Fw::LogStringArg arg(reinterpret_cast<char *>(buffer.getData()));
+            this->log_ACTIVITY_HI_RD_UartMsgOut(arg);
+        }
+    }
 
   void RpiDemoComponentImpl ::
     RD_SetGpio_cmdHandler(

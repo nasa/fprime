@@ -38,7 +38,7 @@ class FprimeDeframer final : public FprimeDeframerComponentBase {
     //! and pass the deframed data to the deframed output port.
     void framedIn_handler(FwIndexType portNum,  //!< The port number
                        Fw::Buffer& data,
-                       Fw::Buffer& context) override;
+                       const ComCfg::FrameContext& context) override;
 };
 
 }  // namespace Svc

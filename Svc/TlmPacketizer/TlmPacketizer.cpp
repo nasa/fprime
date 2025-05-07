@@ -74,8 +74,8 @@ void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
             entryToUse->ignored = false;
             entryToUse->id = id;
             // the offset into the buffer will be the current packet length
-            // the offset must fit within FwIndexType to allow for negative values
-            FW_ASSERT(packetLen <= std::numeric_limits<FwSignedSizeType>::max(), static_cast<FwAssertArgType>(packetLen));
+            // the offset must fit within FwSignedSizeType to allow for negative values
+            FW_ASSERT(packetLen <= static_cast<FwSizeType>(std::numeric_limits<FwSignedSizeType>::max()), static_cast<FwAssertArgType>(packetLen));
             entryToUse->packetOffset[pktEntry] = static_cast<FwSignedSizeType>(packetLen);
 
             packetLen += packetList.list[pktEntry]->list[tlmEntry].size;

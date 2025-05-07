@@ -454,9 +454,11 @@ endfunction(full_path_from_build_relative_path)
 # Return: nearest parent from ${FPRIME_BUILD_LOCATIONS}
 ####
 function(get_nearest_build_root DIRECTORY_PATH)
+    get_filename_component(DIRECTORY_PATH "${DIRECTORY_PATH}" ABSOLUTE)
     set(FOUND_BUILD_ROOT "${DIRECTORY_PATH}")
     set(LAST_REL "${DIRECTORY_PATH}")
-    foreach(FPRIME_BUILD_LOC ${FPRIME_BUILD_LOCATIONS})
+    foreach(FPRIME_BUILD_LOC ${FPRIME_BUILD_LOCATIONS} ${CMAKE_BINARY_DIR}/F-Prime ${CMAKE_BINARY_DIR})
+        get_filename_component(FPRIME_BUILD_LOC "${FPRIME_BUILD_LOC}" ABSOLUTE)
         file(RELATIVE_PATH TEMP_MODULE ${FPRIME_BUILD_LOC} ${DIRECTORY_PATH})
         string(LENGTH "${LAST_REL}" LEN1)
         string(LENGTH "${TEMP_MODULE}" LEN2)
@@ -551,6 +553,9 @@ endfunction(get_expected_tool_version)
 # flag for handling relative path asserts.
 ####
 function(set_assert_flags SRC)
+    if (NOT SRC MATCHES "^[$].*") # skip if generator expression
+        get_nearest_build_root("${SRC}") # sets FPRIME_CLOSEST_BUILD_ROOT in current scope
+    endif()
     get_filename_component(FPRIME_CLOSEST_BUILD_ROOT_ABS "${FPRIME_CLOSEST_BUILD_ROOT}" ABSOLUTE)
     get_filename_component(FPRIME_PROJECT_ROOT_ABS "${FPRIME_PROJECT_ROOT}" ABSOLUTE)
     string(REPLACE "${FPRIME_CLOSEST_BUILD_ROOT_ABS}/" "" SHORT_SRC "${SRC}")

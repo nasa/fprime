@@ -2,18 +2,12 @@
 
 ## 1. Introduction
 
-`Svc::ComQueue` is an  F´ active component that functions as a priority queue of buffer types. Messages are dequeued and
-forwarded when a `Fw::Success::SUCCESS` signal is received in order of priority. `Fw::Success::FAILURE` signals result
-in the queues being paused until a following `Fw::Success::SUCCESS` signal.
+`Svc::ComQueue` is an  F´ active component that functions as a priority queue of buffer types. Messages are dequeued and forwarded in order of priority when a `Fw::Success::SUCCESS` signal is received. Receiving a `Fw::Success::FAILURE` results in the queues being paused until a following `Fw::Success::SUCCESS` is received.
 
-`Svc::ComQueue` is configured with a queue depth and queue priority for each incoming `Fw::Com` and `Fw::Buffer` port by
-passing in a configuration table at initialization. Queued messages from the highest priority source port are serviced
-first and a round-robin algorithm is used to balance between ports of shared priority.
+`Svc::ComQueue` is configured with a queue depth and queue priority for each incoming `Fw::Com` and `Fw::Buffer` port by passing in a configuration table at initialization. 
+Queued messages from the highest priority source port are serviced first and a round-robin algorithm is used to balance between ports of shared priority.
 
-`Svc::ComQueue` is designed to act alongside instances of the
-[communication adapter interface](../../../docs/reference/communication-adapter-interface.md) and
-implements the communication queue
-[protocol](../../../docs/reference/communication-adapter-interface.md#communication-queue-protocol).
+`Svc::ComQueue` is designed to act alongside instances of the [communication adapter interface](../../../docs/reference/communication-adapter-interface.md) and implements the communication queue [protocol](../../../docs/reference/communication-adapter-interface.md#communication-queue-protocol).
 
 ## 2. Assumptions
 
@@ -30,15 +24,15 @@ implements the communication queue
 | Requirement      | Description                                                                                                                             | Rationale                                                               | Verification Method |
 |------------------|-----------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------|---------------------|
 | SVC-COMQUEUE-001 | `Svc::ComQueue` shall queue `Fw::Buffer` and `Fw::ComBuffer` received on incoming ports.                                                | The purpose of the queue is to store messages.                          | Unit Test           |
-| SVC-COMQUEUE-002 | `Svc::ComQueue` shall output exactly one `Fw::Buffer` or `Fw::ComBuffer` message on a received `Fw::Success::SUCCESS` signal.           | `Svc::ComQueue` obeys the communication adapter interface protocol.     | Unit Test           |
-| SVC-COMQUEUE-003 | `Svc::ComQueue` shall pause sending  on the  `Fw::Success::FAILURE` and restart on the next `Fw::Success::SUCCESS` signal.              | `Svc::ComQueue` should not sent to a failing communication adapter.     | Unit Test           |
+| SVC-COMQUEUE-002 | `Svc::ComQueue` shall output exactly one `Fw::Buffer` (wrapping the queued data units) on a received `Fw::Success::SUCCESS` signal.           | `Svc::ComQueue` obeys the communication adapter interface protocol.     | Unit Test           |
+| SVC-COMQUEUE-003 | `Svc::ComQueue` shall pause sending on the  `Fw::Success::FAILURE` and restart on the next `Fw::Success::SUCCESS` signal.               | `Svc::ComQueue` should not sent to a failing communication adapter.     | Unit Test           |
 | SVC-COMQUEUE-004 | `Svc::ComQueue` shall have a configurable number of `Fw::Com` and `Fw::Buffer` input ports.                                             | `Svc::ComQueue` should be adaptable for a number of projects.           | Inspection          |
 | SVC-COMQUEUE-005 | `Svc::ComQueue` shall select and send the next priority `Fw::Buffer` and `Fw::ComBuffer` message in response to `Fw::Success::SUCCESS`. | `Svc::ComQueue` obeys the communication adapter interface protocol.     | Unit test           |
 | SVC-COMQUEUE-006 | `Svc::ComQueue` shall periodically telemeter the number of queued messages per-port in response to a `run` port invocation.             | `Svc::ComQueue` should provide useful telemetry.                        | Unit Test           | 
 | SVC-COMQUEUE-007 | `Svc::ComQueue` shall emit a queue overflow event for a given port when the configured depth is exceeded. Messages shall be discarded.  | `Svc::ComQueue` needs to indicate off-nominal events.                   | Unit Test           | 
 | SVC-COMQUEUE-008 | `Svc::ComQueue` shall implement a round robin approach to balance between ports of the same priority.                                   | Allows projects to balance between a set of queues of similar priority. | Unit Test           |
 | SVC-COMQUEUE-009 | `Svc::ComQueue` shall keep track and throttle queue overflow events per port.                                                           | Prevents a flood of queue overflow events.                              | Unit test           | 
-
+comPacketQueueIn
 ## 4. Design
 The diagram below shows the `Svc::ComQueue` component.
 
@@ -47,20 +41,17 @@ The diagram below shows the `Svc::ComQueue` component.
 ### 4.1. Ports
 `Svc::ComQueue` has the following ports:
 
-| Kind          | Name              | Port Type                             | Usage                                                  |
-|---------------|-------------------|---------------------------------------|--------------------------------------------------------|
-| `output`      | `comQueueSend`    | `Fw.Com`                              | Fw::ComBuffer output port                              |
-| `output`      | `buffQueueSend`   | `Fw.BufferSend`                       | Fw::Buffer output port                                 |
-| `output`      | `deallocate`      | `Fw.BufferSend`                       | Port for deallocating Fw::Buffer on queue overflow     |
-| `async input` | `comStatusIn`     | `Fw.SuccessCondition`                 | Port for receiving the status signal                   |
-| `async input` | `comQueueIn`      | `[ComQueueComPorts] Fw.Com`           | Port array for receiving Fw::ComBuffers                |
-| `async input` | `buffQueueIn`     | `[ComQueueBufferPorts] Fw.BufferSend` | Port array for receiving Fw::Buffers                   |
-| `async input` | `run`             | `Svc.Sched`                           | Port for scheduling telemetry output                   |
-| `event`       | `Log`             | `Fw.Log`                              | Port for emitting events                               |
-| `text event`  | `LogText`         | `Fw.LogText`                          | Port for emitting text events                          |
-| `time get`    | `Time`            | `Fw.Time`                             | Port for getting the time                              |
-| `telemetry`   | `Tlm`             | `Fw.Tlm`                              | Port for emitting telemetry                            |
+| Kind          | Name              | Port Type                             | Usage                                                    |
+|---------------|-------------------|---------------------------------------|----------------------------------------------------------|
+| `output`      | `queueSend`       | `Svc.ComDataWithContext`              | Port emitting queued messages                            |
+| `async input` | `comStatusIn`     | `Fw.SuccessCondition`                 | Port for receiving the status signal                     |
+| `async input` | `comPacketQueueIn`| `[ComQueueComPorts] Fw.Com`           | Port array for receiving Fw::ComBuffers                  |
+| `async input` | `bufferQueueIn`   |  `[ComQueueBufferPorts] Fw.BufferSend`| Port array for receiving Fw::Buffers                     |
+| `sync input`  | `bufferReturnIn`  | `Svc.ComDataWithContext`              | Port for deallocating Fw::Buffer on queue overflow       |
+| `output`      | `bufferReturnOut` | `Svc.ComDataWithContext`              | Port for deallocating Fw::Buffer on queue overflow       |
 
+> [!NOTE]
+> ComQueue also has the port instances for autocoded functionality for events, telemetry and time.
 
 ### 4.2. State
 `Svc::ComQueue` maintains the following state:
@@ -87,8 +78,8 @@ Buffers are queued when in `WAITING` state.
 
 ### 4.3 Model Configuration
 `Svc::ComQueue` has the following constants, that are configured in `AcConstants.fpp`:
-1. `ComQueueComPorts`: number of ports of `Fw.Com` type in the `comQueueIn` port array.
-2. `ComQueueBufferPorts`: number of ports of `Fw.BufferSend` type in the `buffQueueIn` port array.
+1. `ComQueueComPorts`: number of ports of `Fw.Com` type in the `comPacketQueueIn` port array.
+2. `ComQueueBufferPorts`: number of ports of `Fw.BufferSend` type in the `bufferQueueIn` port array.
 
 ### 4.4 Runtime Setup
 To set up an instance of `ComQueue`, the following needs to be done: 
@@ -104,8 +95,8 @@ and an allocator of `Fw::MemAllocator`. The `configure` method foes the followin
 
 ### 4.5 Port Handlers
 
-#### 4.5.1 buffQueueIn
-The `buffQueueIn` port handler receives an `Fw::Buffer` data type and a port number. 
+#### 4.5.1 bufferQueueIn
+The `bufferQueueIn` port handler receives an `Fw::Buffer` data type and a port number. 
 It does the following:
 1. Ensures that the port number is between zero and the value of the buffer size 
 2. Enqueue the buffer onto the `m_queues` instance 
@@ -114,8 +105,8 @@ It does the following:
 In the case where the component is already in `READY` state, this will process the queue immediately after the buffer
 is added to the queue.
 
-#### 4.5.2 comQueueIn
-The `comQueueIn` port handler receives an `Fw::ComBuffer` data type and a port number. 
+#### 4.5.2 comPacketQueueIn
+The `comPacketQueueIn` port handler receives an `Fw::ComBuffer` data type and a port number. 
 It does the following:
 1. Ensures that the port number is between zero and the value of the com buffer size
 2. Enqueue the com buffer onto the `m_queues` instance

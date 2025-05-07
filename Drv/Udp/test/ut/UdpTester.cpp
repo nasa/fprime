@@ -91,8 +91,10 @@ void UdpTester::test_with_loop(U32 iterations, bool recv_thread) {
             Drv::Test::force_recv_timeout(udp2_fd.fd, udp2);
             m_data_buffer.setSize(sizeof(m_data_storage));
             size = Drv::Test::fill_random_buffer(m_data_buffer);
-            Drv::SendStatus status = invoke_to_send(0, m_data_buffer);
-            EXPECT_EQ(status, SendStatus::SEND_OK);
+            invoke_to_send(0, m_data_buffer);
+            ASSERT_from_dataReturnOut_SIZE(i + 1);
+            Drv::ByteStreamStatus status = this->fromPortHistory_dataReturnOut->at(i).status;
+            EXPECT_EQ(status, ByteStreamStatus::OP_OK);
             Drv::Test::receive_all(udp2, udp2_fd, buffer, size);
             Drv::Test::validate_random_buffer(m_data_buffer, buffer);
             // If receive thread is live, try the other way
@@ -160,19 +162,15 @@ void UdpTester ::test_advanced_reconnect() {
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-void UdpTester ::from_recv_handler(const FwIndexType portNum, Fw::Buffer& recvBuffer, const RecvStatus& recvStatus) {
+void UdpTester ::from_recv_handler(const FwIndexType portNum, Fw::Buffer& recvBuffer, const ByteStreamStatus& recvStatus) {
     this->pushFromPortEntry_recv(recvBuffer, recvStatus);
     // Make sure we can get to unblocking the spinner
-    if (recvStatus == RecvStatus::RECV_OK){
+    if (recvStatus == ByteStreamStatus::OP_OK){
         EXPECT_EQ(m_data_buffer.getSize(), recvBuffer.getSize()) << "Invalid transmission size";
         Drv::Test::validate_random_buffer(m_data_buffer, recvBuffer.getData());
         m_spinner = true;
     }
     delete[] recvBuffer.getData();
-}
-
-void UdpTester ::from_ready_handler(const FwIndexType portNum) {
-    this->pushFromPortEntry_ready();
 }
 
 Fw::Buffer UdpTester ::
@@ -185,15 +183,6 @@ Fw::Buffer UdpTester ::
     Fw::Buffer buffer(new U8[size], size);
     m_data_buffer2 = buffer;
     return buffer;
-  }
-
-  void UdpTester ::
-    from_deallocate_handler(
-        const FwIndexType portNum,
-        Fw::Buffer &fwBuffer
-    )
-  {
-    this->pushFromPortEntry_deallocate(fwBuffer);
   }
 
 }  // end namespace Drv

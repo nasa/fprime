@@ -5,7 +5,5 @@ module Drv {
         
         output port allocate: Fw.BufferGet
 
-        output port deallocate: Fw.BufferSend
-
     }
 }

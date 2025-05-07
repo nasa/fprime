@@ -93,7 +93,7 @@ class LinuxUartDriver final : public LinuxUartDriverComponentBase {
 
     //! Handler implementation for serialSend
     //!
-    Drv::SendStatus send_handler(FwIndexType portNum, /*!< The port number*/
+    void send_handler(FwIndexType portNum, /*!< The port number*/
                                  Fw::Buffer& serBuffer);
 
 

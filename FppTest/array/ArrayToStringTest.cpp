@@ -14,6 +14,8 @@
 #include "FppTest/array/StringArrayAc.hpp"
 #include "FppTest/array/StructArrayAc.hpp"
 #include "FppTest/array/Uint32ArrayArrayAc.hpp"
+#include "FppTest/array/AliasOfArrayAliasAc.hpp"
+#include "FppTest/array/AliasStringArrayAc.hpp"
 
 #include "FppTest/typed_tests/ArrayTest.hpp"
 
@@ -36,7 +38,9 @@ using ArrayTypes = ::testing::Types<
     Enum,
     String,
     Struct,
-    Uint32Array
+    Uint32Array,
+    AliasString,
+    AliasOfArray
 >;
 TYPED_TEST_SUITE(ArrayToStringTest, ArrayTypes);
 
@@ -49,7 +53,7 @@ TYPED_TEST(ArrayToStringTest, ToString) {
 
     buf2 << "[ ";
     for (U32 i = 0; i < TypeParam::SIZE; i++) {
-        buf2 << this->testVals[i] << " ";    
+        buf2 << this->testVals[i] << " ";
     }
     buf2 << "]";
 

@@ -54,9 +54,9 @@ The driver is responsible for reading the data from the hardware in either conte
 To send data to a driver, an `Fw::Buffer` is passed to the driver's send input port and the data wrapped by the buffer
 will be pushed out to the hardware. Drivers respond to sends with one of the following statuses:
 
-1. SendStatus.SEND_OK: indicates the send was successful
+1. SendStatus.OP_OK: indicates the send was successful
 2. SendStatus.SEND_RETRY: indicates subsequent retransmission will likely succeed 
-3. SendStatus.SEND_ERROR: send failed, the data was not sent, and future success cannot be predicted
+3. SendStatus.OTHER_ERROR: send failed, the data was not sent, and future success cannot be predicted
 
 **Polling Data**
 
@@ -77,8 +77,8 @@ has an internal task that calls the receive output port when data has been recei
 nothing to retry.
 
 
-1. RecvStatus.RECV_OK: receive works as expected and the buffer has valid data
-2. RecvStatus.RECV_ERROR: receive failed and the buffer does not have valid data
+1. RecvStatus.OP_OK: receive works as expected and the buffer has valid data
+2. RecvStatus.OTHER_ERROR: receive failed and the buffer does not have valid data
 
 ### Uplink
 

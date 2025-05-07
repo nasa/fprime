@@ -17,6 +17,8 @@ telemetry packets RefPackets {
     Ref.fileDownlink.FilesSent
     Ref.fileDownlink.PacketsSent
     Ref.fileManager.CommandsExecuted
+    Ref.comQueue.comQueueDepth
+    Ref.comQueue.buffQueueDepth
     # Ref.tlmSend.SendLevel
   }
 

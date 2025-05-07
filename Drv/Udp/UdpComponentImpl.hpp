@@ -137,7 +137,7 @@ PROTECTED:
      *
      * Passing data to this port will send data from the TcpClient to whatever TCP server this component has connected
      * to. Should the socket not be opened or was disconnected, then this port call will return SEND_RETRY and critical
-     * transmissions should be retried. SEND_ERROR indicates an unresolvable error. SEND_OK is returned when the data
+     * transmissions should be retried. OTHER_ERROR indicates an unresolvable error. OP_OK is returned when the data
      * has been sent.
      *
      * Note: this component delegates the reopening of the socket to the read thread and thus the caller should retry
@@ -145,9 +145,8 @@ PROTECTED:
      *
      * \param portNum: fprime port number of the incoming port call
      * \param fwBuffer: buffer containing data to be sent
-     * \return SEND_OK on success, SEND_RETRY when critical data should be retried and SEND_ERROR upon error
      */
-    Drv::SendStatus send_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer);
+    void send_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer);
 
     Drv::UdpSocket m_socket; //!< Socket implementation
 

@@ -59,15 +59,15 @@ Fw::Buffer UdpComponentImpl::getBuffer() {
 }
 
 void UdpComponentImpl::sendBuffer(Fw::Buffer buffer, SocketIpStatus status) {
-    Drv::RecvStatus recvStatus = RecvStatus::RECV_ERROR;
+    Drv::ByteStreamStatus recvStatus = ByteStreamStatus::OTHER_ERROR;
     if (status == SOCK_SUCCESS) {
-        recvStatus = RecvStatus::RECV_OK;
+        recvStatus = ByteStreamStatus::OP_OK;
     }
     else if (status == SOCK_NO_DATA_AVAILABLE) {
-        recvStatus = RecvStatus::RECV_NO_DATA;
+        recvStatus = ByteStreamStatus::RECV_NO_DATA;
     }
     else {
-        recvStatus = RecvStatus::RECV_ERROR;
+        recvStatus = ByteStreamStatus::OTHER_ERROR;
     }
     this->recv_out(0, buffer, recvStatus);
 }
@@ -82,16 +82,25 @@ void UdpComponentImpl::connected() {
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-Drv::SendStatus UdpComponentImpl::send_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
+void UdpComponentImpl::send_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
     Drv::SocketIpStatus status = send(fwBuffer.getData(), fwBuffer.getSize());
-    // Always return the buffer
-    deallocate_out(0, fwBuffer);
-    if ((status == SOCK_DISCONNECTED) || (status == SOCK_INTERRUPTED_TRY_AGAIN)) {
-        return SendStatus::SEND_RETRY;
-    } else if (status != SOCK_SUCCESS) {
-        return SendStatus::SEND_ERROR;
+    Drv::ByteStreamStatus returnStatus;
+    switch (status) {
+        case SOCK_INTERRUPTED_TRY_AGAIN:
+            returnStatus = ByteStreamStatus::SEND_RETRY;
+            break;
+        case SOCK_DISCONNECTED:
+            returnStatus = ByteStreamStatus::SEND_RETRY;
+            break;
+        case SOCK_SUCCESS:
+            returnStatus = ByteStreamStatus::OP_OK;
+            break;
+        default:
+            returnStatus = ByteStreamStatus::OTHER_ERROR;
+            break;
     }
-    return SendStatus::SEND_OK;
+    // Return the buffer and status to the caller
+    this->dataReturnOut_out(0, fwBuffer, returnStatus);
 }
 
 }  // end namespace Drv
