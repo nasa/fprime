@@ -94,8 +94,14 @@ class LinuxUartDriver final : public LinuxUartDriverComponentBase {
     //! Handler implementation for serialSend
     //!
     void send_handler(FwIndexType portNum, /*!< The port number*/
-                                 Fw::Buffer& serBuffer);
+                                 Fw::Buffer& serBuffer) override;
 
+    //! Handler implementation for recvReturnIn
+    //!
+    //! Port receiving back ownership of data sent out on $recv port
+    void recvReturnIn_handler(FwIndexType portNum,  //!< The port number
+                                Fw::Buffer& fwBuffer  //!< The buffer
+                                ) override;
 
     PlatformIntType m_fd;  //!< file descriptor returned for I/O device
     U32 m_allocationSize; //!< size of allocation request to memory manager

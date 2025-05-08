@@ -148,10 +148,10 @@ class ComQueue final : public ComQueueComponentBase {
                      U32 context                    /*!<The call order*/
     ) override;
 
-    //! Handler implementation for bufferReturnIn
+    //! Handler implementation for dataReturnIn
     //!
     //! Port for returning ownership of Fw::Buffer to its sender
-    void bufferReturnIn_handler(FwIndexType portNum,  //!< The port number
+    void dataReturnIn_handler(FwIndexType portNum,  //!< The port number
       Fw::Buffer& data,
       const ComCfg::FrameContext& context) override;
 

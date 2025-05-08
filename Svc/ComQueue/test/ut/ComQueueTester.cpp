@@ -68,7 +68,7 @@ void ComQueueTester ::emitOneAndCheck(FwIndexType expectedIndex,
                               FwSizeType expectedSize) {
     emitOne();
     // Check that the data buffers are identical (size + data)
-    Fw::Buffer emittedBuffer = this->fromPortHistory_queueSend->at(expectedIndex).data;
+    Fw::Buffer emittedBuffer = this->fromPortHistory_dataOut->at(expectedIndex).data;
     ASSERT_EQ(expectedSize, emittedBuffer.getSize());
     for (FwSizeType i = 0; i < expectedSize; i++) {
         ASSERT_EQ(emittedBuffer.getData()[i], expectedData[i]);
@@ -158,17 +158,17 @@ void ComQueueTester ::testPrioritySend() {
     }
 
     // Check that nothing has yet been sent
-    ASSERT_from_queueSend_SIZE(0);
+    ASSERT_from_dataOut_SIZE(0);
 
     for (FwIndexType index = 0; index < ComQueue::TOTAL_PORT_COUNT; index++) {
         U8 orderKey;
-        U32 previousSize = fromPortHistory_queueSend->size();
+        U32 previousSize = fromPortHistory_dataOut->size();
         emitOne();
-        ASSERT_EQ(fromPortHistory_queueSend->size(), (index + 1));
+        ASSERT_EQ(fromPortHistory_dataOut->size(), (index + 1));
         // Check that the size changed by exactly one
-        ASSERT_EQ(fromPortHistory_queueSend->size(), (previousSize + 1));
+        ASSERT_EQ(fromPortHistory_dataOut->size(), (previousSize + 1));
 
-        orderKey = fromPortHistory_queueSend->at(index).data.getData()[0];
+        orderKey = fromPortHistory_dataOut->at(index).data.getData()[0];
         ASSERT_EQ(orderKey, index);
     }
     clearFromPortHistory();
@@ -295,7 +295,7 @@ void ComQueueTester ::testReadyFirst() {
         invoke_to_comPacketQueueIn(portNum, comBuffer, 0);
         dispatchAll();
 
-        Fw::Buffer emittedBuffer = this->fromPortHistory_queueSend->at(portNum).data;
+        Fw::Buffer emittedBuffer = this->fromPortHistory_dataOut->at(portNum).data;
         ASSERT_EQ(emittedBuffer.getSize(), comBuffer.getBuffLength());
         for (FwSizeType i = 0; i < emittedBuffer.getSize(); i++) {
             ASSERT_EQ(emittedBuffer.getData()[i], comBuffer.getBuffAddr()[i]);
@@ -307,7 +307,7 @@ void ComQueueTester ::testReadyFirst() {
         emitOne();
         invoke_to_bufferQueueIn(portNum, buffer);
         dispatchAll();
-        Fw::Buffer emittedBuffer = this->fromPortHistory_queueSend->at(portNum).data;
+        Fw::Buffer emittedBuffer = this->fromPortHistory_dataOut->at(portNum).data;
         ASSERT_EQ(emittedBuffer.getSize(), buffer.getSize());
         for (FwSizeType i = 0; i < buffer.getSize(); i++) {
             ASSERT_EQ(buffer.getData()[i], emittedBuffer.getData()[i]);
@@ -328,7 +328,7 @@ void ComQueueTester ::testContextData() {
         emitOne();
         // Currently, the APID is set to the queue index, which is the same as the port number for COM ports
         FwIndexType expectedApid = portNum;
-        auto emittedContext = this->fromPortHistory_queueSend->at(portNum).context;
+        auto emittedContext = this->fromPortHistory_dataOut->at(portNum).context;
         ASSERT_EQ(expectedApid, emittedContext.getcomQueueIndex());
     }
     clearFromPortHistory();
@@ -338,7 +338,7 @@ void ComQueueTester ::testContextData() {
         emitOne();
         // APID is queue index, which is COM_PORT_COUNT + portNum for BUFFER ports
         FwIndexType expectedApid = portNum + ComQueue::COM_PORT_COUNT;
-        auto emittedContext = this->fromPortHistory_queueSend->at(portNum).context;
+        auto emittedContext = this->fromPortHistory_dataOut->at(portNum).context;
         ASSERT_EQ(expectedApid, emittedContext.getcomQueueIndex());
     }
     clearFromPortHistory();
@@ -354,7 +354,7 @@ void ComQueueTester ::testBufferQueueReturn() {
     for(FwIndexType portNum = 0; portNum < ComQueue::TOTAL_PORT_COUNT; portNum++){
         clearFromPortHistory();
         context.setcomQueueIndex(portNum);
-        invoke_to_bufferReturnIn(0, buffer, context);
+        invoke_to_dataReturnIn(0, buffer, context);
         // APIDs that correspond to an buffer originating from a Fw.Com port
         // do no get deallocated – APIDs that correspond to a Fw.Buffer do
         if (portNum < ComQueue::COM_PORT_COUNT) {

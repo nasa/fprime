@@ -75,6 +75,8 @@ namespace Drv {
       void test_no_automatic_send_connection();
 
       void test_no_automatic_recv_connection();
+      
+      void test_buffer_deallocation();
 
       bool wait_on_change(bool open, U32 iterations);
       bool wait_on_started(bool open, U32 iterations);

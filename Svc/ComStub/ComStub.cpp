@@ -23,10 +23,10 @@ ComStub::~ComStub() {}
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void ComStub::comDataIn_handler(const FwIndexType portNum, Fw::Buffer& sendBuffer, const ComCfg::FrameContext& context) {
+void ComStub::dataIn_handler(const FwIndexType portNum, Fw::Buffer& sendBuffer, const ComCfg::FrameContext& context) {
     FW_ASSERT(!this->m_reinitialize || !this->isConnected_comStatusOut_OutputPort(0));  // A message should never get here if we need to reinitialize is needed
     this->m_storedContext = context;  // Store the context of the current message
-    this->drvDataOut_out(0, sendBuffer);
+    this->drvSendOut_out(0, sendBuffer);
 }
 
 void ComStub::drvConnected_handler(const FwIndexType portNum) {
@@ -37,15 +37,16 @@ void ComStub::drvConnected_handler(const FwIndexType portNum) {
     }
 }
 
-void ComStub::drvDataIn_handler(const FwIndexType portNum,
+void ComStub::drvReceiveIn_handler(const FwIndexType portNum,
                                 Fw::Buffer& recvBuffer,
                                 const Drv::ByteStreamStatus& recvStatus) {
     if (recvStatus.e == Drv::ByteStreamStatus::OP_OK) {
-        this->comDataOut_out(0, recvBuffer);
+        ComCfg::FrameContext emptyContext; // ComStub knows nothing about the received bytes, so use an empty context
+        this->dataOut_out(0, recvBuffer, emptyContext);
     }
 }
 
-void ComStub ::dataReturnIn_handler(FwIndexType portNum,  //!< The port number
+void ComStub ::drvSendReturnIn_handler(FwIndexType portNum,  //!< The port number
                                         Fw::Buffer& fwBuffer,  //!< The buffer
                                         const Drv::ByteStreamStatus& sendStatus) {
     if (sendStatus != Drv::ByteStreamStatus::SEND_RETRY) {
@@ -60,7 +61,7 @@ void ComStub ::dataReturnIn_handler(FwIndexType portNum,  //!< The port number
         if (this->m_retry_count < this->RETRY_LIMIT) {
             // If we have not yet retried more than the retry limit, attempt to retry
             this->m_retry_count++;
-            this->drvDataOut_out(0, fwBuffer);
+            this->drvSendOut_out(0, fwBuffer);
         } else {
             // If retried too many times, return buffer and log failure
             this->dataReturnOut_out(0, fwBuffer, this->m_storedContext);
@@ -68,6 +69,10 @@ void ComStub ::dataReturnIn_handler(FwIndexType portNum,  //!< The port number
             this->m_retry_count = 0; // Reset the retry count
         }
     }
+}
+
+void ComStub ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer, const ComCfg::FrameContext& context) {
+    this->drvReceiveReturnOut_out(0, fwBuffer);
 }
 
 }  // end namespace Svc

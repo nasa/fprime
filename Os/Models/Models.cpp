@@ -204,6 +204,8 @@ static_assert(static_cast<Os::QueueStatus::T>(Os::Queue::Status::FULL) == Os::Qu
               "Queue status enums do not match");
 static_assert(static_cast<Os::QueueStatus::T>(Os::Queue::Status::UNKNOWN_ERROR) == Os::QueueStatus::T::UNKNOWN_ERROR,
               "Queue status enums do not match");
+static_assert(static_cast<Os::QueueStatus::T>(Os::Queue::Status::ALLOCATION_FAILED) == Os::QueueStatus::T::ALLOCATION_FAILED,
+              "Queue status enums do not match");
 
 // Check consistency of every constant in the Os::Queue::BlockingType enum
 static_assert(static_cast<Os::QueueBlockingType::T>(Os::Queue::BlockingType::BLOCKING) == Os::QueueBlockingType::T::BLOCKING,
