@@ -371,20 +371,23 @@ endfunction()
 # configuration modules supplied by the build (e.g. fprime default configuration and library configuration). DEPENDS
 # and EXCLUDE_FROM_ALL are not supported.
 #
-# This call will construct a folder within the build-cache that will be added to the include path. All configuration
-# files can be referenced using `#include "fprime_config/<name of header>"` as HEADER and SOURCE file will be copied
-# and/or generated into this folder. 
+# All configuration module sources (SOURCES, HEADERS, and AUTOCODER_INPUTS) are copied into the build cache.
+# Overrides are copied into the original module's build that the file overrides as this preserves the original build
+# module set up. Overrides only work in order of detection within the CMakeList.txt tree:
+#
+#    platform -> fprime config -> library -> project.
+# 
 #
 # > [!WARNING]
 # > Specifying headers in this command is crucial to providing as configuration.
 #
 # > [!NOTE]
-# > Configuration is built as a series of object libraries in order to allow for interdependencies between config and
-# > Fw/Types.
+# > Configuration is built as a series of STATIC libraries in order to allow for interdependencies between config and
+# > Fw_Types regardless of the Fw_Types library type.
 #
 # Example:
 # ```
-# fprime_add_config_build_target(
+# register_fprime_Config(
 #         MyFprimeConfig
 #     SOURCES
 #         config.cpp

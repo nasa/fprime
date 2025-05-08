@@ -12,18 +12,7 @@ project(TestConfigDeployment VERSION 1.0.0 LANGUAGES C CXX)
 include("${FPRIME_FRAMEWORK_PATH}/cmake/FPrime.cmake")
 # NOTE: register custom targets between these two lines
 include("${FPRIME_FRAMEWORK_PATH}/cmake/FPrime-Code.cmake")
-
-register_fprime_config(
-        project_config
-    CONFIGURATION_OVERRIDES
-        # Test header override from F Prime
-        "${CMAKE_CURRENT_LIST_DIR}/DpCfg.hpp"
-        # Test FPP override from F Prime
-        "${CMAKE_CURRENT_LIST_DIR}/FpConfig.fpp"
-        # Test the library source was overridden
-        "${CMAKE_CURRENT_LIST_DIR}/config.cpp"
-    INTERFACE
-)
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/override/project")
 
 register_fprime_library(
         TestModelOverride
