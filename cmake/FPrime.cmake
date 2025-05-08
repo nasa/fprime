@@ -210,10 +210,7 @@ function(fprime_setup_included_code)
     # add_fprime_subdirectory cannot be run until later in the build process. Otherwise detection
     # for model specific post processing is messed up. Thus we synthesize the behavior by setting
     # the current module and then calling stock "add_subdirectory".
-    get_module_name("${FPRIME_PLATFORM_MODULE_DIRECTORY}")
-    set(FPRIME_CURRENT_MODULE "${MODULE_NAME}")
-    string(REPLACE "_" "/" PLATFORM_MODULE_PATH "${FPRIME_CURRENT_MODULE}")
-    add_subdirectory("${FPRIME_PLATFORM_MODULE_DIRECTORY}" "${CMAKE_BINARY_DIR}/${PLATFORM_MODULE_PATH}")
+    fprime__include_platform_file()
     
     set(_FP_CORE_PACKAGES default Fw Svc Os Drv CFDP Utils)
     foreach (_FP_PACKAGE_DIR IN LISTS _FP_CORE_PACKAGES)

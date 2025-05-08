@@ -14,5 +14,5 @@
 //
 // ======================================================================
 #include "config/DpCfg.hpp"
-static_assert(OVERIDE_TEST, "OVERIDE_TEST is not set, header override failed");
+static_assert(OVERRIDE_TEST, "OVERRIDE_TEST is not set, header override failed");
               

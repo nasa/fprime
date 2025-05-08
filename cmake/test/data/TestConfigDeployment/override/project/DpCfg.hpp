@@ -14,7 +14,7 @@
 #define DPCFG_HPP
 
 // THE ONLY DIFFERENCE: set a new value for override testing
-const bool OVERIDE_TEST = true;
+const bool OVERRIDE_TEST = true;
 // END OF THE ONLY DIFFERENCE
 
 #include <Fw/FPrimeBasicTypes.hpp>

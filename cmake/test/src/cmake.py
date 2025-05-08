@@ -152,7 +152,7 @@ def get_build(
             "cmake": cmake_output,
             "targets": target_outputs,
         }
-        #shutil.rmtree(build_directory, ignore_errors=True)
+        shutil.rmtree(build_directory, ignore_errors=True)
         if install_directory is not None:
             shutil.rmtree(install_directory, ignore_errors=True)
 

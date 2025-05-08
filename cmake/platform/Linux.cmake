@@ -25,4 +25,4 @@ set(FPRIME_USE_POSIX ON)
 set(FPRIME_HAS_SOCKETS ON)
 
 # Add unix specific configuration into the system
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/unix/platform/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/unix/Platform/")

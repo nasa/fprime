@@ -54,13 +54,13 @@ endfunction()
 # Arguments:
 # - `MODULE_NAME`: the name of the module being processed
 # - `SOURCE_SET`: list of sources to process
-# - `MUST_EXIST`: if true, the source must exist in the configuration directory, false if it must not exist
+# - `EXPECT_OVERRIDE`: if true, the source must exist and will be overridden, false if it must not exist
 #
 # Returns:
 # - `PROCESSED_SOURCES`: list (set in caller)
 # - `NEW_DEPENDS`: list of new dependencies (set in caller)
 ####
-function(fprime__internal_process_configuration_source_set MODULE_NAME SOURCE_SET MUST_EXIST)
+function(fprime__internal_process_configuration_source_set MODULE_NAME SOURCE_SET EXPECT_OVERRIDE)
     list(REMOVE_DUPLICATES SOURCE_SET)
     set(RETURNED_SOURCES)
     set(NEW_DEPENDS)
@@ -68,32 +68,23 @@ function(fprime__internal_process_configuration_source_set MODULE_NAME SOURCE_SE
     foreach(SOURCE IN LISTS SOURCE_SET)
         get_filename_component(SOURCE_NAME "${SOURCE}" NAME)
 
-        fprime_internal_get_configuration_destination("${SOURCE_NAME}")
+        fprime_internal_get_configuration_destination("${MODULE_NAME}" "${SOURCE_NAME}")
 
         # Check if the source cannot exist, and yet it was found
-        if (NOT MUST_EXIST AND DESTINATION)
+        if (NOT EXPECT_OVERRIDE AND DESTINATION_OVERRIDE)
             message(FATAL_ERROR
-                "${SOURCE_NAME} is SOURCE/HEADER but overrides existing file. Use CONFIGURATION_OVERRIDES.")
+                "${SOURCE_NAME} is SOURCE/HEADER but overrides existing file: ${DESTINATION}. Use CONFIGURATION_OVERRIDES.")
         # Check if the source must exist, and yet it was not found
-        elseif (MUST_EXIST AND NOT DESTINATION)
+        elseif (EXPECT_OVERRIDE AND NOT DESTINATION_OVERRIDE)
             message(FATAL_ERROR
-                "${SOURCE_NAME} is CONFIGURATION_OVERRIDE but overrides non-existent file. Use SOURCES/HEADERS.")
+                "${SOURCE_NAME} is CONFIGURATION_OVERRIDE but overrides non-existent file: ${DESTINATION}. Use SOURCES/HEADERS.")
         # If the source must exist and it was found, overwrite it
-        elseif(MUST_EXIST)
+        elseif(EXPECT_OVERRIDE)
             fprime_cmake_debug_message("[config] Overriding ${DESTINATION} with ${SOURCE}")
             file(COPY_FILE "${SOURCE}" "${DESTINATION}" ONLY_IF_DIFFERENT)
             list(APPEND NEW_DEPENDS "${DESTINATION_MODULE}")
         # If the source is new, move it to the binary directory
         else()
-            cmake_path(RELATIVE_PATH CMAKE_CURRENT_BINARY_DIR BASE_DIRECTORY ${CMAKE_BINARY_DIR} OUTPUT_VARIABLE RELATIVE_PATH)
-            # Calculate the base destination
-            set(DESTINATION_BASE "${CMAKE_BINARY_DIR}")
-            if (DEFINED FPRIME_BINARY_DIR)
-                set(DESTINATION_BASE "${FPRIME_BINARY_DIR}")
-            endif()
-            get_filename_component(SOURCE_NAME "${SOURCE}" NAME)
-            set(DESTINATION_DIRECTORY "${DESTINATION_BASE}/${RELATIVE_PATH}")
-            set(DESTINATION "${DESTINATION_DIRECTORY}/${SOURCE_NAME}")
             fprime_cmake_debug_message("[config] Initial config ${DESTINATION} from ${SOURCE}")
             list(APPEND RETURNED_SOURCES "${DESTINATION}")
             file(MAKE_DIRECTORY "${DESTINATION_DIRECTORY}")
@@ -117,7 +108,7 @@ endfunction()
 # Returns:
 # - `DESTINATION`: the destination of the configuration file or unset (in caller)
 ####
-function(fprime_internal_get_configuration_destination NEW_CONFIG_NAME)
+function(fprime_internal_get_configuration_destination MODULE_NAME NEW_CONFIG_NAME)
     # Get all registered configuration modules
     get_property(CONFIG_MODULES GLOBAL PROPERTY FPRIME_CONFIG_MODULES)
     foreach(CONFIG_MODULE IN LISTS CONFIG_MODULES)
@@ -133,12 +124,28 @@ function(fprime_internal_get_configuration_destination NEW_CONFIG_NAME)
             if (NEW_CONFIG_NAME STREQUAL CONFIG_NAME)
                 set(DESTINATION "${CONFIG_FILE}" PARENT_SCOPE)
                 set(DESTINATION_MODULE "${CONFIG_MODULE}" PARENT_SCOPE)
+                set(DESTINATION_OVERRIDE TRUE PARENT_SCOPE)
                 return()
             endif()
         endforeach()
     endforeach()
-    # If no match was found, unset the destination
-    unset(DESTINATION PARENT_SCOPE)
-    unset(DESTINATION_MODULE PARENT_SCOPE)
+    # F Prime sub-builds still need to calculate (and copy) the files to the base build cache specified by FPRIME_BINARY_DIR
+    # This is needed for locations generation to calculate the correct paths.
+    #
+    # This code calculates the relative path from the cmake build cache of the current built to the current binary directory.
+    # This is the relative path within the build current build cache.  Then it applies this relative path to FPRIME_BINARY_DIR
+    # if it is set, otherwise it just recalculates the current binary directory.
+    cmake_path(RELATIVE_PATH CMAKE_CURRENT_BINARY_DIR BASE_DIRECTORY ${CMAKE_BINARY_DIR} OUTPUT_VARIABLE RELATIVE_PATH)
+    
+    set(DESTINATION_BASE "${CMAKE_BINARY_DIR}")
+    if (DEFINED FPRIME_BINARY_DIR)
+        set(DESTINATION_BASE "${FPRIME_BINARY_DIR}")
+    endif()
+    get_filename_component(SOURCE_NAME "${NEW_CONFIG_NAME}" NAME)
+    set(DESTINATION_DIRECTORY "${DESTINATION_BASE}/${RELATIVE_PATH}")
+    set(DESTINATION "${DESTINATION_DIRECTORY}/${SOURCE_NAME}" PARENT_SCOPE)
+    set(DESTINATION_MODULE "${MODULE_NAME}" PARENT_SCOPE)
+    set(DESTINATION_DIRECTORY "${DESTINATION_DIRECTORY}" PARENT_SCOPE)
+    set(DESTINATION_OVERRIDE FALSE PARENT_SCOPE)
 endfunction()
 
