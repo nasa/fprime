@@ -37,6 +37,7 @@ class FileInterface {
         NOT_SUPPORTED,     //!< Kernel or file system does not support operation
         INVALID_MODE,      //!< Mode for file access is invalid for current operation
         INVALID_ARGUMENT,  //!< Invalid argument passed in
+	NO_MORE_RESOURCES, //!< No more available resources
         OTHER_ERROR,       //!<  A catch-all for other errors. Have to look in implementation-specific code
         MAX_STATUS         //!< Maximum value of status
     };
