@@ -13,7 +13,8 @@ from . import cmake
 from . import settings
 
 
-pytestmark = pytest.mark.skip(reason="Shared modules are broken through the next PR")
+if platform.system() == "Darwin":
+    pytestmark = pytest.mark.skip(reason="Shared modules are not supported on macOS")
 
 _ = cmake.get_build(
     "REF_BUILD",
