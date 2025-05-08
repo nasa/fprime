@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  SpacePacketFramer.hpp
-// \author chammard
+// \author thomas-bc
 // \brief  hpp file for SpacePacketFramer component implementation class
 // ======================================================================
 

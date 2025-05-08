@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  SpacePacketFramer.cpp
-// \author chammard
+// \author thomas-bc
 // \brief  cpp file for SpacePacketFramer component implementation class
 // ======================================================================
 
@@ -41,7 +41,22 @@ void SpacePacketFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, c
     // -----------------------------------------------
     // PVN is always 0 per Standard - Packet Type is 0 for Telemetry (downlink) - SecHdr flag is 0 for no secondary header
     U16 packetIdentification = 0;
-    packetIdentification |= context.getcomQueueIndex(); // APID = comQueueIndex (for now; TBD how to configure APIDs)
+    U16 apid;
+    // Figure out APID based on queue index - TODO: find a better way ??
+    switch (context.getcomQueueIndex()) {
+        case 0:
+            apid = ComCfg::APID::FW_PACKET_LOG; // Only true if topology is wired this way. Need to fix this logic somehow
+            break;
+        case 1:
+            apid = ComCfg::APID::FW_PACKET_TELEM;
+            break;
+        case 2:
+            apid = ComCfg::APID::FW_PACKET_FILE;
+            break;
+        default:
+            apid = ComCfg::APID::FW_PACKET_UNKNOWN;
+    }
+    packetIdentification |= apid & CCSDS::Types::SpacePacketMasks::ApidMask; // 11 bit APID
 
     U16 packetSequenceControl = 0;
     packetSequenceControl |= 0x3 << CCSDS::Types::SpacePacketMasks::SeqFlagsOffset; // Sequence Flags 0b11 = unsegmented User Data

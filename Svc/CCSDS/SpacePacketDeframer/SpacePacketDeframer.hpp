@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  SpacePacketDeframer.hpp
-// \author chammard
+// \author thomas-bc
 // \brief  hpp file for SpacePacketDeframer component implementation class
 // ======================================================================
 

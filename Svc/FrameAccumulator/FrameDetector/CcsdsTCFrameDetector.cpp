@@ -7,6 +7,9 @@
 #include "Svc/FrameAccumulator/FrameDetector/CcsdsTCFrameDetector.hpp"
 #include "Svc/CCSDS/Types/FppConstantsAc.hpp"
 #include "config/FppConstantsAc.hpp"
+#include "Svc/CCSDS/Types/TCFrameHeaderSerializableAc.hpp"
+#include "Svc/CCSDS/Types/TCFrameTrailerSerializableAc.hpp"
+#include "Utils/Hash/Hash.hpp"
 
 namespace Svc {
 namespace FrameDetectors {
@@ -35,10 +38,10 @@ FrameDetector::Status CcsdsTCFrameDetector::detect(const Types::CircularBuffer& 
     U16 sc_id = header.getflagsAndScId() & CCSDS::Types::TCFrameMasks::SpacecraftIdMask;
     U16 frame_length = header.getvcIdAndLength() & CCSDS::Types::TCFrameMasks::FrameLengthMask;
 
-    FwSizeType expected_frame_size = CCSDS::Types::TCFrameHeader::SERIALIZED_SIZE + frame_length + 2; // 2 bytes for CRC
+    FwSizeType expected_frame_size = CCSDS::Types::TCFrameHeader::SERIALIZED_SIZE + frame_length + CCSDS::Types::TCFrameTrailer::SERIALIZED_SIZE; // 2 bytes for CRC
     if (sc_id == ComCfg::FppConstant_SpacecraftId::SpacecraftId) {
         size_out = expected_frame_size;
-        if (frame_length > expected_frame_size) {
+        if (data.get_allocated_size() < expected_frame_size) {
             return Status::MORE_DATA_NEEDED;
         }
         return Status::FRAME_DETECTED;

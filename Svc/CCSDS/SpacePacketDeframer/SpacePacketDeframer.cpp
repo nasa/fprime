@@ -48,7 +48,7 @@ void SpacePacketDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data,
 
     U16 apid = header.getpacketIdentification() & CCSDS::Types::SpacePacketMasks::ApidMask;
     ComCfg::FrameContext contextCopy = context;
-    contextCopy.setapid(apid);
+    contextCopy.setapid(static_cast<ComCfg::APID::T>(apid));
 
     // TODO: Add checks and events in case of failure
     U16 pkt_length = header.getpacketDataLength();

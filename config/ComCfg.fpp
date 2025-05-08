@@ -11,10 +11,23 @@ module ComCfg {
     constant SpacecraftId = 0x0355
     constant TmFrameFixedSize = 1024
 
+    @ APIDs are 11 bits in the Space Packet protocol, so we use U16. Max value 7FF
+    enum APID : U16 {
+        FW_PACKET_COMMAND        = 0x0000  @< Command packet type - incoming
+        FW_PACKET_TELEM          = 0x0001  @< Telemetry packet type - outgoing
+        FW_PACKET_LOG            = 0x0002  @< Log type - outgoing
+        FW_PACKET_FILE           = 0x0003  @< File type - incoming and outgoing
+        FW_PACKET_PACKETIZED_TLM = 0x0004  @< Packetized telemetry packet type
+        FW_PACKET_IDLE           = 0x0005  @< F Prime idle
+        FW_PACKET_HAND           = 0xFE    @< F Prime handshake
+        FW_PACKET_UNKNOWN        = 0xFF    @< F Prime unknown packet
+        IDLE_PACKET              = 0x7FF   @< Per Space Packet Standard, all 1s (11bits) is reserved for Idle Packets
+    }
+
     @ Type used to pass context info between components during framing/deframing
     struct FrameContext {
         comQueueIndex: FwIndexType  @< Queue Index used by the ComQueue, other components shall not modify
-        apid: U16  @< 11 bits APID in CCSDS
+        apid: APID  @< 11 bits APID in CCSDS
     } default {
         comQueueIndex = 0
     }

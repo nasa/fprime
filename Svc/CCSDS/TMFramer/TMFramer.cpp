@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  TMFramer.cpp
-// \author chammard
+// \author thomas-bc
 // \brief  cpp file for TMFramer component implementation class
 // ======================================================================
 

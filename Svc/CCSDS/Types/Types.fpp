@@ -10,15 +10,15 @@ module Types {
     # with the approriate mask to 
 
     module SpacePacketMasks {
-        constant PvnMask = 0xE000      @< 0b1110000000000000
-        constant PktTypeMask = 0x1000  @< 0b0001000000000000
-        constant SecHdrMask = 0x0800   @< 0b0000100000000000
-        constant ApidMask = 0x07FF     @< 0b0000011111111111
-        constant SecHdrOffset = 11
-        constant PktTypeOffset = 12
-        constant PvnOffset = 13
-        constant SeqFlagsMask = 0xC000 @< 0b1100000000000000
-        constant SeqFlagsOffset = 14
+        constant PvnMask = 0xE000;      @< 0b1110000000000000
+        constant PktTypeMask = 0x1000;  @< 0b0001000000000000
+        constant SecHdrMask = 0x0800;   @< 0b0000100000000000
+        constant ApidMask = 0x07FF;     @< 0b0000011111111111
+        constant SecHdrOffset = 11;
+        constant PktTypeOffset = 12;
+        constant PvnOffset = 13;
+        constant SeqFlagsMask = 0xC000; @< 0b1100000000000000
+        constant SeqFlagsOffset = 14;
     }
 
     module TCFrameMasks {
