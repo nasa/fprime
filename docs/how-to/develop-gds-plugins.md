@@ -3,11 +3,11 @@
 This guide will walk through the process of developing GDS plugins.  GDS plugins allow users to add functionality to the
 GDS in several ways. These include:
 
-1. Selection plugins: add another choice for key GDS functionality
-2. Functionality plugins: add functionality as an addition to the GDS.
+1. SELECTION plugins: add another choice for key GDS functionality
+2. FEATURE plugins: add functionality as an addition to the GDS.
 
-This guide will walk through the development of a `framing`  selection plugin to see the basic development of a plugin. Then
-the guide will walk you through the development of a start-up application functionality plugin, which will also discuss
+This guide will walk through the development of a `framing`  SELECTION plugin to see the basic development of a plugin. Then
+the guide will walk you through the development of a start-up application FEATURE plugin, which will also discuss
 taking arguments to plugins. Finally the guide will close with a discussion of testing and distributing your plugins.
 
 Examples covered here are available at: [https://github.com/fprime-community/fprime-gds-plugin-examples](https://github.com/fprime-community/fprime-gds-plugin-examples)
@@ -37,11 +37,11 @@ category is summarized in the table below.
 
 | Category      | Type          | Description                                                              | Reference                                                                    |
 |---------------|---------------|--------------------------------------------------------------------------|------------------------------------------------------------------------------|
-| framing       | Selection     | Implement a framer/deframer pair to handle serialized data               | [Framing Plugin Reference](../reference/gds-plugins/framing.md)              |
-| communication | Selection     | Implement a communication adapter for flight software communication      | [Communication Plugin Reference](../reference/gds-plugins/communications.md) |
-| data-handler  | Functionality | Implement custom data item handling (for channels, events, etc)          | [Data Handler Plugin](../reference/gds-plugins/data-handler.md)              |
-| gds-app       | Functionality | Implement a new GDS application isolated to a separate process           | [Gds Application Plugin](../reference/gds-plugins/gds-app.md)                |
-| gds-function  | Functionality | (Advanced) Implement new GDS functionality with control over the process | [Gds Function Plugin](../reference/gds-plugins/gds-function.md)              |
+| framing       | SELECTION     | Implement a framer/deframer pair to handle serialized data               | [Framing Plugin Reference](../reference/gds-plugins/framing.md)              |
+| communication | SELECTION     | Implement a communication adapter for flight software communication      | [Communication Plugin Reference](../reference/gds-plugins/communications.md) |
+| data-handler  | FEATURE | Implement custom data item handling (for channels, events, etc)          | [Data Handler Plugin](../reference/gds-plugins/data-handler.md)              |
+| gds-app       | FEATURE | Implement a new GDS application isolated to a separate process           | [Gds Application Plugin](../reference/gds-plugins/gds-app.md)                |
+| gds-function  | FEATURE | (Advanced) Implement new GDS functionality with control over the process | [Gds Function Plugin](../reference/gds-plugins/gds-function.md)              |
 
 
 Plugins should define a function called `register_<category>_plugin` that return a concrete subclass of the category's
@@ -55,6 +55,14 @@ This guide will walk through the development of a framing plugin and compare tha
 The first step in developing a framing plugin is to determine the function that must be implemented and the class that
 must be derived to develop the plugin. For the case of a `framing` plugin, the `register_framing_plugin` function
 must be defined to return a concrete subclass of `FramerDeframer`. This information was found in the above table.
+
+> [TIP]
+> Use the decorator `@gds_plugin(<BaseClass>)` to help define your plugins (e.g. `@gds_plugin(FramerDeframer)`).
+> This will:
+>  1. Check the supplied base class is a valid plugin base class
+>  2. Add the appropriate register function
+>  3. Ensure the decorated class is an appropriate sub class
+>  4. Ensure all virtual functions are implemented
 
 ### Basic Plugin Skeleton
 
@@ -379,7 +387,7 @@ Gds_App Plugin 'my-app' Options:
 > [!WARNING]
 > Syntax errors, indentation errors, and other exceptions can arise during this step. Resolving these errors will allow the help message to display properly.
 
-To test selection plugins, select them during a normal GDS run:
+To test SELECTION plugins, select them during a normal GDS run:
 
 ```
 fprime-gds --framing-selection my-plugin
@@ -406,5 +414,5 @@ A tutorial on python packaging including building wheels and uploading them to P
 
 ## Conclusion
 
-This guide has covered how to develop GDS plugins, their design, and selection vs functionality plugins. You should now
+This guide has covered how to develop GDS plugins, their design, and SELECTION vs FEATURE plugins. You should now
 be capable of writing plugins and handling arguments.
