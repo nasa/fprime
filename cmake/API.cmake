@@ -387,7 +387,7 @@ endfunction()
 #
 # Example:
 # ```
-# register_fprime_Config(
+# register_fprime_config(
 #         MyFprimeConfig
 #     SOURCES
 #         config.cpp
@@ -423,7 +423,7 @@ endfunction()
 #
 ####
 function(fprime_add_config_build_target)
-    set(FPRIME__INTERNAL_CONFIG_TARGET_NAME "fprime_config")
+    set(FPRIME__INTERNAL_CONFIG_TARGET_NAME "__fprime_config")
     # Set up interface target and directory for configuration files
     if (NOT TARGET "${FPRIME__INTERNAL_CONFIG_TARGET_NAME}")
         add_library("${FPRIME__INTERNAL_CONFIG_TARGET_NAME}" INTERFACE)

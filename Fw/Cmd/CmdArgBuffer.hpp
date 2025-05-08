@@ -14,7 +14,7 @@
 
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Serializable.hpp>
-#include <Fw/Cfg/SerIds.hpp>
+#include <Fw/Types/SerIds.hpp>
 
 namespace Fw {
 

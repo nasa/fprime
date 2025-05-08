@@ -13,7 +13,6 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Time/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Tlm/")
 
 # Framework subdirectories
-#add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Cfg/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Comp/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Sm/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FilePacket/")

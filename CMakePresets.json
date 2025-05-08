@@ -18,15 +18,6 @@
     {
       "name": "fprime-debug",
       "inherits": "fprime",
-      "displayName": "F´ (CMake Debug) Preset",
-      "description": "F´ (With CMake Debug) build using local fprime-venv",
-      "cacheVariables": {
-          "CMAKE_DEBUG_OUTPUT": "ON"
-      }
-    },
-    {
-      "name": "fprime-debug",
-      "inherits": "fprime",
       "displayName": "F´ Debug Preset",
       "description": "F´ debug build using local fprime-venv",
       "cacheVariables": {
