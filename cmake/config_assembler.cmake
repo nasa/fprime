@@ -77,7 +77,7 @@ function(fprime__internal_process_configuration_source_set MODULE_NAME SOURCE_SE
         # Check if the source must exist, and yet it was not found
         elseif (EXPECT_OVERRIDE AND NOT DESTINATION_OVERRIDE)
             message(FATAL_ERROR
-                "${SOURCE_NAME} is CONFIGURATION_OVERRIDE but overrides non-existent file: ${DESTINATION}. Use SOURCES/HEADERS.")
+                "${SOURCE_NAME} is CONFIGURATION_OVERRIDE but overrides nonexistent file: ${DESTINATION}. Use SOURCES/HEADERS.")
         # If the source must exist and it was found, overwrite it
         elseif(EXPECT_OVERRIDE)
             fprime_cmake_debug_message("[config] Overriding ${DESTINATION} with ${SOURCE}")
