@@ -42,13 +42,6 @@ def subprocess_helper(args, cwd):
                     )
         lines[stdout].extend(stdout.readlines())
         lines[stderr].extend(stderr.readlines())
-        for stream in [stdout, stderr]:
-            for line in lines[stream]:
-                print(
-                    line,
-                    end="",
-                    file=(sys.stdout if stream == stdout else sys.stderr),
-                )
         return (
             proc.poll(),
             [line for line in lines[stdout] if line.strip() != ""],
