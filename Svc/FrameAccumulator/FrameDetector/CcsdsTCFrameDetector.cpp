@@ -6,6 +6,7 @@
 
 #include "Svc/FrameAccumulator/FrameDetector/CcsdsTCFrameDetector.hpp"
 #include "Svc/CCSDS/Types/FppConstantsAc.hpp"
+#include <cstdio>
 #include "config/FppConstantsAc.hpp"
 #include "Svc/CCSDS/Types/TCFrameHeaderSerializableAc.hpp"
 #include "Svc/CCSDS/Types/TCFrameTrailerSerializableAc.hpp"
@@ -46,7 +47,6 @@ FrameDetector::Status CcsdsTCFrameDetector::detect(const Types::CircularBuffer& 
         }
         return Status::FRAME_DETECTED;
     }
-
     return Status::NO_FRAME_DETECTED;
 }
 

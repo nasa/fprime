@@ -56,6 +56,9 @@ class TMFramer final : public TMFramerComponentBase {
     // Because the TM protocol use fixed width frames, and only one frame is in transit between ComQueue and ComInterface
     // at a time, we can use a member fixed-size buffer to hold the frame data
     U8 m_frameBuffer[ComCfg::FppConstant_TmFrameFixedSize::TmFrameFixedSize];  //!< Buffer to hold the frame data
+
+    U8 m_masterFrameCount;  //!< Master Frame Count - 8 bits - wraps around at 255
+    U8 m_virtualFrameCount; //!< Virtual Frame Count - 8 bits - wraps around at 255
 };
 
 }  // namespace CCSDS

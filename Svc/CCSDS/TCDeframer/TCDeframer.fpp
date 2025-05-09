@@ -5,12 +5,6 @@ module CCSDS {
 
         include "../../Interfaces/DeframerInterface.fppi"
 
-        @ Port for returning ownership of received frame buffers
-        output port dataReturnOut: Svc.ComDataWithContext
-
-        @ Port receiving back ownership of sent frame buffers 
-        sync input port dataReturnIn: Svc.ComDataWithContext
-
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #
         ###############################################################################

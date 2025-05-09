@@ -8,6 +8,7 @@
 #define Svc_CCSDS_SpacePacketFramer_HPP
 
 #include "Svc/CCSDS/SpacePacketFramer/SpacePacketFramerComponentAc.hpp"
+#include "config/APIDEnumAc.hpp"
 
 namespace Svc {
 
@@ -53,7 +54,16 @@ class SpacePacketFramer final : public SpacePacketFramerComponentBase {
                               Fw::Buffer& data,
                               const ComCfg::FrameContext& context) override;
 
-    U16 m_packetSequenceCount = 0;  //!< Packet sequence count (TODO: needs to be per-APID; and wrap around at 14 bits)
+    // ----------------------------------------------------------------------
+    // Helpers
+    // ----------------------------------------------------------------------
+
+    U16 increment_sequence_count_for_apid(FwIndexType index);
+
+    // FwIndexType get_index_from_apid(ComCfg::APID::T apid);
+    ComCfg::APID::T get_apid_from_index(FwIndexType index);
+
+    U16 m_packetSequenceCounts[ComCfg::APID::NUM_CONSTANTS] = {0};  //!< Packet sequence counts for each APID
 };
 
 }  // namespace CCSDS

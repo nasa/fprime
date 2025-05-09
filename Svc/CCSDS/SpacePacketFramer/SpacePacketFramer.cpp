@@ -41,29 +41,15 @@ void SpacePacketFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, c
     // -----------------------------------------------
     // PVN is always 0 per Standard - Packet Type is 0 for Telemetry (downlink) - SecHdr flag is 0 for no secondary header
     U16 packetIdentification = 0;
-    U16 apid;
-    // Figure out APID based on queue index - TODO: find a better way ??
-    switch (context.getcomQueueIndex()) {
-        case 0:
-            apid = ComCfg::APID::FW_PACKET_LOG; // Only true if topology is wired this way. Need to fix this logic somehow
-            break;
-        case 1:
-            apid = ComCfg::APID::FW_PACKET_TELEM;
-            break;
-        case 2:
-            apid = ComCfg::APID::FW_PACKET_FILE;
-            break;
-        default:
-            apid = ComCfg::APID::FW_PACKET_UNKNOWN;
-    }
-    packetIdentification |= apid & CCSDS::Types::SpacePacketMasks::ApidMask; // 11 bit APID
+    ComCfg::APID::T apid = this->get_apid_from_index(context.getcomQueueIndex());
+    U16 sequenceCount = this->increment_sequence_count_for_apid(context.getcomQueueIndex());
+    packetIdentification |= static_cast<U16>(apid) & CCSDS::Types::SpacePacketMasks::ApidMask; // 11 bit APID
 
     U16 packetSequenceControl = 0;
     packetSequenceControl |= 0x3 << CCSDS::Types::SpacePacketMasks::SeqFlagsOffset; // Sequence Flags 0b11 = unsegmented User Data
-    packetSequenceControl |= this->m_packetSequenceCount;
-    this->m_packetSequenceCount += 1;
+    packetSequenceControl |= sequenceCount & CCSDS::Types::SpacePacketMasks::SeqCountMask; // 14 bit sequence count
 
-    FW_ASSERT(data.getSize() <= std::numeric_limits<U16>::max(), static_cast<FwAssertArgType>(this->m_packetSequenceCount));
+    FW_ASSERT(data.getSize() <= std::numeric_limits<U16>::max(), static_cast<FwAssertArgType>(data.getSize()));
     U16 packetDataLength = static_cast<U16>(data.getSize() - 1); // Standard specifies length is number of bytes minus 1
 
     header.setpacketIdentification(packetIdentification);
@@ -92,6 +78,30 @@ void SpacePacketFramer ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& f
     // dataReturnIn is the allocated buffer coming back from the dataOut port
     this->bufferDeallocate_out(0, frameBuffer);
 }
+
+U16 SpacePacketFramer ::increment_sequence_count_for_apid(FwIndexType index) {
+    // FwIndexType index = this->get_index_from_apid(apid);
+    U16 sequenceCount = this->m_packetSequenceCounts[index];
+    this->m_packetSequenceCounts[index] = (this->m_packetSequenceCounts[index] + 1) % (1 << 14); // Wrap around at 14 bits (modulo 2^14)
+    printf("index: %d, Sequence Count: %d\n", index, this->m_packetSequenceCounts[index]);
+    return sequenceCount;
+}
+
+ComCfg::APID::T SpacePacketFramer ::get_apid_from_index(FwIndexType index) {
+    // Need a manual mapping from comQueue index to APID for now to get an APID count
+    // per APID
+    switch (index) {
+        case 0:
+            return ComCfg::APID::FW_PACKET_LOG;
+        case 1:
+            return ComCfg::APID::FW_PACKET_TELEM;
+        case 2:
+            return ComCfg::APID::FW_PACKET_FILE;
+        default:
+            return ComCfg::APID::FW_PACKET_UNKNOWN; // TODO: Handle unknown index
+    }
+}
+
 
 }  // namespace CCSDS
 

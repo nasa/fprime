@@ -13,8 +13,6 @@ namespace Svc {
 namespace CCSDS {
 class TCDeframer : public TCDeframerComponentBase {
 
-  static const U8 SPACE_PACKET_HEADER_SIZE = 5;
-  static const U8 SPACE_PACKET_TRAILER_SIZE = 2;
   public:
     // ----------------------------------------------------------------------
     // Component construction and destruction

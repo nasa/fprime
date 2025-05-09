@@ -19,6 +19,7 @@ module Types {
         constant PvnOffset = 13;
         constant SeqFlagsMask = 0xC000; @< 0b1100000000000000
         constant SeqFlagsOffset = 14;
+        constant SeqCountMask = 0x3FFF
     }
 
     module TCFrameMasks {

@@ -8,7 +8,8 @@
 
 module ComCfg {
 
-    constant SpacecraftId = 0x0355
+    constant SpacecraftId = 0x03FF    # Spacecraft ID (10 bits)
+    constant VcId = 0x001             # Virtual Channel ID (3 bits)
     constant TmFrameFixedSize = 1024
 
     @ APIDs are 11 bits in the Space Packet protocol, so we use U16. Max value 7FF
