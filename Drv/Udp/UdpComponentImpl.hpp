@@ -99,7 +99,7 @@ PROTECTED:
      *
      * \return IpSocket reference
      */
-    IpSocket& getSocketHandler();
+    IpSocket& getSocketHandler() override;
 
     /**
      * \brief returns a buffer to fill with data
@@ -109,7 +109,7 @@ PROTECTED:
      *
      * \return Fw::Buffer to fill with data
      */
-    Fw::Buffer getBuffer();
+    Fw::Buffer getBuffer() override;
 
     /**
      * \brief sends a buffer to be filled with data
@@ -119,12 +119,12 @@ PROTECTED:
      *
      * \return Fw::Buffer filled with data to send out
      */
-    void sendBuffer(Fw::Buffer buffer, SocketIpStatus status);
+    void sendBuffer(Fw::Buffer buffer, SocketIpStatus status) override;
 
     /**
      * \brief called when the IPv4 system has been connected
     */
-    void connected();
+    void connected() override;
 
   PRIVATE:
 
@@ -146,7 +146,15 @@ PROTECTED:
      * \param portNum: fprime port number of the incoming port call
      * \param fwBuffer: buffer containing data to be sent
      */
-    void send_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer);
+    void send_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) override;
+
+
+    //! Handler implementation for recvReturnIn
+    //!
+    //! Port receiving back ownership of data sent out on $recv port
+    void recvReturnIn_handler(FwIndexType portNum,  //!< The port number
+                                Fw::Buffer& fwBuffer  //!< The buffer
+                                ) override;
 
     Drv::UdpSocket m_socket; //!< Socket implementation
 

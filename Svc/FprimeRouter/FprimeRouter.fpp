@@ -10,6 +10,9 @@ module Svc {
         @ Port for forwarding non-recognized packet types
         output port unknownDataOut: Svc.ComDataWithContext
 
+        @ Port for allocating buffers
+        output port bufferAllocate: Fw.BufferGet
+
         @ Port for deallocating buffers
         output port bufferDeallocate: Fw.BufferSend
 

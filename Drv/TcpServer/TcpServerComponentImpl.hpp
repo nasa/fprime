@@ -161,6 +161,13 @@ class TcpServerComponentImpl final : public TcpServerComponentBase, public Socke
      */
     void send_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) override;
 
+    //! Handler implementation for recvReturnIn
+    //!
+    //! Port receiving back ownership of data sent out on $recv port
+    void recvReturnIn_handler(FwIndexType portNum,  //!< The port number
+                                Fw::Buffer& fwBuffer  //!< The buffer
+                                ) override;
+
     Drv::TcpServerSocket m_socket; //!< Socket implementation
 
     FwSizeType m_allocation_size; //!< Member variable to store the buffer size

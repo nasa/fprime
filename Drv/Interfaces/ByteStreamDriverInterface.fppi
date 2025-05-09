@@ -7,5 +7,8 @@
     @ Invoke this port to send data out the driver
     guarded input port $send: Fw.BufferSend
 
-    @ Port invoked to return ownership of sent data back to the sender
-    output port dataReturnOut: Drv.ByteStreamData
+    @ Port returning ownership of data received on $send port
+    output port sendReturnOut: Drv.ByteStreamData
+
+    @ Port receiving back ownership of data sent out on $recv port
+    guarded input port recvReturnIn: Fw.BufferSend

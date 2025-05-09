@@ -60,15 +60,20 @@ class ComStubTester : public ComStubGTestBase {
     //!
     void test_retry_reset();
 
+    //! Tests buffer is returned
+    //!
+    void test_buffer_return();
   private:
     // ----------------------------------------------------------------------
     // Handlers for typed from ports
     // ----------------------------------------------------------------------
 
-    //! Handler for from_comDataOut
+    //! Handler for from_dataOut
     //!
-    void from_comDataOut_handler(const FwIndexType portNum, //!< The port number
-                                 Fw::Buffer& recvBuffer);
+    void from_dataOut_handler(const FwIndexType portNum, //!< The port number
+                                 Fw::Buffer& recvBuffer,
+                                 const ComCfg::FrameContext& context //!< The context
+                                 );
 
     //! Handler for from_comStatusOut
     //!
@@ -76,9 +81,9 @@ class ComStubTester : public ComStubGTestBase {
                                 Fw::Success& condition         //!< Status of communication state
     );
 
-    //! Handler for from_drvDataOut
+    //! Handler for from_drvSendOut
     //!
-    void from_drvDataOut_handler(const FwIndexType portNum, //!< The port number
+    void from_drvSendOut_handler(const FwIndexType portNum, //!< The port number
                                 Fw::Buffer& sendBuffer);
 
   private:

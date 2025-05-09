@@ -43,6 +43,7 @@ nav:
           - "Drv/**/docs/sdd.md"
       - Specifications: 
         - FPP Language Spec: 'https://nasa.github.io/fpp/fpp-spec.html'
+        - GDS Plugins: docs/reference/gds-plugins/
         - "docs/reference/*.md"
   - Support: '../support'
   - Events: '../events'
