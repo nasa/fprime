@@ -1,1 +1,1 @@
-static_assert(false, "This file was not overriden, library source override failed")
+static_assert(false, "This file was not overridden, library source override failed")
