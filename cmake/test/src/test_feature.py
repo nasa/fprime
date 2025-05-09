@@ -25,10 +25,14 @@ _ = cmake.get_build(
                 str(settings.DATA_DIR / "test-fprime-library2"),
             ]
         ),
-        "CMAKE_TOOLCHAIN_FILE":  str(
-            settings.DATA_DIR / "test-fprime-library" / "cmake" / "toolchain" / f"{TOOLCHAIN_NAME}.cmake"
+        "CMAKE_TOOLCHAIN_FILE": str(
+            settings.DATA_DIR
+            / "test-fprime-library"
+            / "cmake"
+            / "toolchain"
+            / f"{TOOLCHAIN_NAME}.cmake"
         ),
-        "FPRIME_PLATFORM": platform.system()
+        "FPRIME_PLATFORM": platform.system(),
     },
     make_targets=[
         "TestDeployment",
@@ -60,7 +64,7 @@ def test_feature_library(FEATURE_BUILD):
     modules = ["TestLibrary_TestComponent", "TestLibrary2_TestComponent"]
     for module in modules:
         library_name = f"lib{module}.a"
-        output_path = FEATURE_BUILD["build"] / "lib" / TOOLCHAIN_NAME/ library_name
+        output_path = FEATURE_BUILD["build"] / "lib" / TOOLCHAIN_NAME / library_name
         assert output_path.exists(), f"Failed to locate {library_name} in build output"
 
 
