@@ -10,7 +10,7 @@
  *
  */
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <limits>
 
 // Check that Fw::String is big enough to hold any string that can be given a

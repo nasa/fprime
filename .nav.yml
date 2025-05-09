@@ -1,0 +1,49 @@
+# This file is used to generate the navigation structure for the documentation website
+# The website uses MkDocs Material and this file is used by the mkdocs-awesome-nav plugin
+# https://github.com/lukasgeiter/mkdocs-awesome-nav
+#
+# Paths prefixed with ../ are not publicly available
+
+nav:
+  - Home: '../'
+  - Overview: '../overview'
+  - Getting Started: 
+    - 'Getting Started': docs/getting-started/index.md
+    - 'Installation and Troubleshooting': docs/getting-started/installing-fprime.md
+  - Documentation:
+    - docs/index.md
+    - Tutorials:
+      - Tutorials Index: docs/tutorials/index.md
+      - 'Hello World': tutorials-hello-world/docs/hello-world.md
+      - 'LED Blinker': tutorials-led-blinker/docs/led-blinker.md
+      - 'MathComponent': tutorials-math-component/docs/math-component.md
+      - 'Cross-Compilation Setup': docs/tutorials/cross-compilation.md
+      - 'Arduino LED Blinker': tutorials-arduino-led-blinker/docs/arduino-led-blinker.md
+    - User Manual: 
+      - User Manual Index: docs/user-manual/index.md
+      - Overview: docs/user-manual/overview/
+      - Framework: docs/user-manual/framework/
+      - FPP: 'https://nasa.github.io/fpp/fpp-users-guide.html'
+      - GDS: docs/user-manual/gds
+      - Design Pattens: docs/user-manual/design-patterns/
+      - Build System: docs/user-manual/build-system/
+      - Security: docs/user-manual/security/
+    - How To: docs/how-to
+    - Reference: 
+      - docs/reference/index.md
+      - APIs:
+        - C++: docs/reference/api/cpp/html/
+        - CMake: docs/reference/api/cmake/
+      - Component SDDs:
+        - Svc:
+          - "Svc/**/docs/sdd.md"
+        - Fw:
+          - "Fw/**/docs/sdd.md"
+        - Drv:
+          - "Drv/**/docs/sdd.md"
+      - Specifications: 
+        - FPP Language Spec: 'https://nasa.github.io/fpp/fpp-spec.html'
+        - GDS Plugins: docs/reference/gds-plugins/
+        - "docs/reference/*.md"
+  - Support: '../support'
+  - Events: '../events'

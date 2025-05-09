@@ -14,7 +14,7 @@
 #define OS_ValidatedFile_HPP
 
 #include "Fw/Types/String.hpp"
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include "Os/ValidateFile.hpp"
 
 namespace Os {

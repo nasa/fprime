@@ -81,6 +81,9 @@ namespace Svc {
         if (portToCall != -1) {
             // call port to report status
             if (this->isConnected_seqCmdStatus_OutputPort(portToCall)) {
+                // NOTE: seqCmdStatus port forwards three arguments: (opCode, cmdSeq, response).
+                //       However, the cmdSeq value has no meaning for the calling sequencer.
+                //       Instead, the context value is forwarded to allow the caller to utilize it if needed.
                 this->seqCmdStatus_out(portToCall,opCode,context,response);
             }
         }

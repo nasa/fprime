@@ -71,9 +71,9 @@ void Basic::test() {
         const auto status = this->doDispatch();
         ASSERT_EQ(status, MSG_DISPATCH_OK);
         ASSERT_EQ(this->basic1_getState(), Basic_Basic::State::T);
-        const FwSizeType expectedSize = 6;
+        const FwIndexType expectedSize = 6;
         ASSERT_EQ(this->m_basic1_action_a_history.getSize(), expectedSize);
-        for (FwSizeType i = 0; i < expectedSize; i++) {
+        for (FwIndexType i = 0; i < expectedSize; i++) {
             ASSERT_EQ(this->m_basic1_action_a_history.getItemAt(i), Basic_Basic::Signal::s);
         }
     }
@@ -83,9 +83,9 @@ void Basic::test() {
         const auto status = this->doDispatch();
         ASSERT_EQ(status, MSG_DISPATCH_OK);
         ASSERT_EQ(this->basic2_getState(), Basic_Basic::State::T);
-        const FwSizeType expectedSize = 6;
+        const FwIndexType expectedSize = 6;
         ASSERT_EQ(this->m_basic2_action_a_history.getSize(), expectedSize);
-        for (FwSizeType i = 0; i < expectedSize; i++) {
+        for (FwIndexType i = 0; i < expectedSize; i++) {
             ASSERT_EQ(this->m_basic2_action_a_history.getItemAt(i), Basic_Basic::Signal::s);
         }
     }
@@ -95,9 +95,9 @@ void Basic::test() {
         const auto status = this->doDispatch();
         ASSERT_EQ(status, MSG_DISPATCH_OK);
         ASSERT_EQ(this->smStateBasic1_getState(), SmState_Basic::State::T);
-        const FwSizeType expectedSize = 6;
+        const FwIndexType expectedSize = 6;
         ASSERT_EQ(this->m_smStateBasic1_action_a_history.getSize(), expectedSize);
-        for (FwSizeType i = 0; i < expectedSize; i++) {
+        for (FwIndexType i = 0; i < expectedSize; i++) {
             ASSERT_EQ(this->m_smStateBasic1_action_a_history.getItemAt(i), SmState_Basic::Signal::s);
         }
     }
@@ -107,9 +107,9 @@ void Basic::test() {
         const auto status = this->doDispatch();
         ASSERT_EQ(status, MSG_DISPATCH_OK);
         ASSERT_EQ(this->smStateBasic2_getState(), SmState_Basic::State::T);
-        const FwSizeType expectedSize = 6;
+        const FwIndexType expectedSize = 6;
         ASSERT_EQ(this->m_smStateBasic2_action_a_history.getSize(), expectedSize);
-        for (FwSizeType i = 0; i < expectedSize; i++) {
+        for (FwIndexType i = 0; i < expectedSize; i++) {
             ASSERT_EQ(this->m_smStateBasic2_action_a_history.getItemAt(i), SmState_Basic::Signal::s);
         }
     }

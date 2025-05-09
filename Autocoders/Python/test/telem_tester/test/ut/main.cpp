@@ -4,7 +4,7 @@
 #include <telem_testerGTestBase.hpp>
 #endif
 #include "TesterBase.hpp"
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 // Very minimal to test autocoder. Some day they'll be actual unit test code
 

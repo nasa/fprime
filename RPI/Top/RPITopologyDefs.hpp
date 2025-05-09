@@ -4,7 +4,6 @@
 #include "Fw/Types/MallocAllocator.hpp"
 #include "Os/Console.hpp"
 #include "RPI/Top/FppConstantsAc.hpp"
-#include "Svc/FramingProtocol/FprimeProtocol.hpp"
 #include "Svc/LinuxTimer/LinuxTimer.hpp"
 #include <Svc/FrameAccumulator/FrameDetector/FprimeFrameDetector.hpp>
 

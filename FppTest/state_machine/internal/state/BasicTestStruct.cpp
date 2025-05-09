@@ -42,9 +42,9 @@ void BasicTestStruct::test() {
     ASSERT_EQ(this->getState(), State::T);
     this->sendSignal_s(value);
     ASSERT_EQ(this->getState(), State::T);
-    const FwSizeType expectedASize = 5;
+    const FwIndexType expectedASize = 5;
     ASSERT_EQ(this->m_action_a_history.getSize(), expectedASize);
-    for (FwSizeType i = 0; i < expectedASize; i++) {
+    for (FwIndexType i = 0; i < expectedASize; i++) {
         ASSERT_EQ(this->m_action_a_history.getItemAt(i), Signal::s);
     }
     ASSERT_EQ(this->m_action_b_history.getSize(), 1);

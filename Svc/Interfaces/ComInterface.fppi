@@ -1,8 +1,22 @@
-@ Data coming in from the framing component
-sync input port comDataIn: Drv.ByteStreamSend
+# ----------------------------------------------------------------------
+# Com Data and Status
+# ----------------------------------------------------------------------
 
-@ Status of the last radio transmission
-output port comStatus: Fw.SuccessCondition
+@ Data to be sent on the wire (coming in to the component)
+sync input port dataIn: Svc.ComDataWithContext
 
-@ Com data passing back out
-output port comDataOut: Drv.ByteStreamRecv
+@ Data received from the wire (going out of the component)
+output port dataOut: Svc.ComDataWithContext
+
+@ Status of the last transmission
+output port comStatusOut: Fw.SuccessCondition
+
+# ----------------------------------------------------------------------
+# Memory management
+# ----------------------------------------------------------------------
+
+@ Port returning ownership of data that came in on dataIn
+output port dataReturnOut: Svc.ComDataWithContext
+
+@ Port receiving back ownership of buffer sent out on dataOut
+sync input port dataReturnIn: Svc.ComDataWithContext

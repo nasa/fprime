@@ -28,6 +28,11 @@ TEST(FprimeRouter, TestRouteUnknownPacketUnconnected) {
     Svc::FprimeRouterTester tester(true);
     tester.testRouteUnknownPacketUnconnected();
 }
+TEST(FprimeRouter, TestBufferReturn) {
+    COMMENT("Deallocate a returning buffer");
+    Svc::FprimeRouterTester tester;
+    tester.testBufferReturn();
+}
 TEST(FprimeRouter, TestCommandResponse) {
     COMMENT("Handle a command response (no-op)");
     Svc::FprimeRouterTester tester;

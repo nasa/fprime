@@ -50,7 +50,7 @@ struct Tester {
     std::vector<TestDirectory> m_test_dirs;
     std::vector<TestFile> m_test_files;
 
-    FwIndexType m_counter; //!< Counter for generating unique file/directory names
+    U64 m_counter; //!< Counter for generating unique file/directory names
 
     // ---------------------------------------------------------------
     // Functions to manipulate the state of the Tester w.r.t filesystem
@@ -84,9 +84,11 @@ struct Tester {
     // Helper functions for testing
     // ----------------------------------------------------------------
     std::string get_new_filename() {
+        assert(m_counter != std::numeric_limits<U64>::max());
         return "test_file_" + std::to_string(m_counter++);
     }
     std::string get_new_dirname() {
+        assert(m_counter != std::numeric_limits<U64>::max());
         return "test_dir_" + std::to_string(m_counter++);
     }
     TestFile& get_random_file() {
@@ -102,7 +104,7 @@ struct Tester {
     bool validate_contents_on_disk(TestFile& file) {
         Os::File os_file;
         os_file.open(file.path.c_str(), Os::File::OPEN_READ);
-        FwSignedSizeType size;
+        FwSizeType size;
         os_file.size(size);
         if (size == 0) {
             os_file.close();
@@ -130,7 +132,7 @@ struct Tester {
         // Create and write files
         for (TestFile& file_track : this->m_test_files) {
             file.open(file_track.path.c_str(), Os::File::OPEN_CREATE);
-            FwSignedSizeType bytesRead = file_track.contents.size();
+            FwSizeType bytesRead = file_track.contents.size();
             file.write(reinterpret_cast<const U8*>(file_track.contents.c_str()), bytesRead);
             file.close();
             this->m_counter++;

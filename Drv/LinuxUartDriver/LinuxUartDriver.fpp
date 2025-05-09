@@ -11,7 +11,7 @@ module Drv {
     @ Allocation port used for allocating memory in the receive task
     output port allocate: Fw.BufferGet
 
-    @ Deallocates buffers passed to the "send" port
+    @ Deallocation of allocated buffers
     output port deallocate: Fw.BufferSend
 
     # ----------------------------------------------------------------------

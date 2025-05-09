@@ -148,6 +148,7 @@ def get_build(
             "targets": target_outputs,
         }
         shutil.rmtree(build_directory, ignore_errors=True)
-        shutil.rmtree(install_directory, ignore_errors=True)
+        if install_directory is not None:
+            shutil.rmtree(install_directory, ignore_errors=True)
 
     return fixture_function

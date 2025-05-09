@@ -13,7 +13,7 @@
 #ifndef TestUtils_OnChangeChannel_HPP
 #define TestUtils_OnChangeChannel_HPP
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <cstring>
 
 #include "TestUtils/Option.hpp"

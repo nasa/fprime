@@ -14,12 +14,28 @@ Please follow the [install guide for F´](../docs/getting-started/installing-fpr
 
 ## Building and Running the Ref Application
 
-In order to build the Ref application, or any other F´ application, we first need to generate a build directory.  F´ uses CMake under the hood,
+To get started with creating the Ref application we will first need to clone the nasa/fprime repository. We then can change directories into the project's
+Ref directory so that we have a place to build the Ref application.
+
+```
+git clone https://github.com/nasa/fprime
+cd fprime/Ref
+```
+
+With the repository cloned and the project's Ref directory entered we can now create a python virtual environment, activate that environment, and then
+install the project requirements.
+
+```
+python3 -m venv fprime-venv
+. fprime-venv/bin/activate
+pip install -r ../requirements.txt
+```
+
+In order to build the Ref application, or any other F´ application, we need to generate a build directory.  F´ uses CMake under the hood,
 which requires a directory to work in. To generate a build directory, we will use the `fprime-util` (a wrapper for CMake to streamline standard 
 F´ processes). This can be done with the following commands:
 
 ```
-cd fprime/Ref
 fprime-util generate
 ```
 

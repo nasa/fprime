@@ -10,10 +10,17 @@ module Svc {
         @ Ready signal when driver is connected
         sync input port drvConnected: Drv.ByteStreamReady
 
-        @ Data received from driver
-        sync input port drvDataIn: Drv.ByteStreamRecv
+        @ Receive (read) data from driver. This gets forwarded to dataOut
+        sync input port drvReceiveIn: Drv.ByteStreamData
 
-        @ Data going to the underlying driver
-        output port drvDataOut: Drv.ByteStreamSend
+        @ Send (write) data to the driver. This gets invoked on dataIn invocation
+        output port drvSendOut: Fw.BufferSend
+
+        @ Callback from drvSendOut (retrieving status and ownership of sent buffer)
+        sync input port drvSendReturnIn: Drv.ByteStreamData
+
+        @ Returning ownership of buffer that came in on drvReceiveIn
+        output port drvReceiveReturnOut: Fw.BufferSend
+
     }
 }

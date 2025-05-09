@@ -33,7 +33,7 @@ jobs:
         run: pip install cpplint
 
       - name: Install xsltproc
-        run: sudo apt-get install xsltproc -y
+        run: sudo apt-get update && sudo apt-get install xsltproc -y
 
       - name: Install sarif tool
         run: npm i -g @microsoft/sarif-multitool

@@ -63,6 +63,9 @@ class FrameAccumulatorTester : public FrameAccumulatorGTestBase {
     //! Test accumulation of multiple random-size buffer into frames successively
     void testAccumulateBuffersEmitManyFrames();
 
+    //! Test returning ownership of a buffer
+    void testBufferReturnDeallocation();
+
   private:
     // ----------------------------------------------------------------------
     // Helper functions

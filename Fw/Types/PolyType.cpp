@@ -235,8 +235,6 @@ PolyType& PolyType::operator=(I64 other) {
 
 #endif
 
-#if FW_HAS_F64
-
 PolyType::PolyType(F64 val) {
     this->m_dataType = TYPE_F64;
     this->m_val.f64Val = val;
@@ -262,7 +260,6 @@ PolyType& PolyType::operator=(F64 other) {
     return *this;
 }
 
-#endif
 PolyType::PolyType(F32 val) {
     this->m_dataType = TYPE_F32;
     this->m_val.f32Val = val;
@@ -399,9 +396,7 @@ bool PolyType::operator==(const PolyType& other) const {
             case TYPE_PTR:
                 valIsEqual = (this->m_val.ptrVal == other.m_val.ptrVal);
                 break;
-#if FW_HAS_F64
             case TYPE_F64:  // fall through, shouldn't test floating point
-#endif
             case TYPE_F32:  // fall through, shouldn't test floating point
             case TYPE_NOTYPE:
                 valIsEqual = false;
@@ -452,11 +447,9 @@ bool PolyType::operator<(const PolyType& other) const {
                 result = (this->m_val.i64Val < other.m_val.i64Val);
                 break;
 #endif
-#if FW_HAS_F64
             case TYPE_F64:
                 result = (this->m_val.f64Val < other.m_val.f64Val);
                 break;
-#endif
             case TYPE_F32:
                 result = (this->m_val.f32Val < other.m_val.f32Val);
                 break;
@@ -526,11 +519,9 @@ SerializeStatus PolyType::serialize(SerializeBufferBase& buffer) const {
             stat = buffer.serialize(this->m_val.i64Val);
             break;
 #endif
-#if FW_HAS_F64
         case TYPE_F64:
             stat = buffer.serialize(this->m_val.f64Val);
             break;
-#endif
         case TYPE_F32:
             stat = buffer.serialize(this->m_val.f32Val);
             break;
@@ -581,10 +572,8 @@ SerializeStatus PolyType::deserialize(SerializeBufferBase& buffer) {
             case TYPE_I64:
                 return buffer.deserialize(this->m_val.i64Val);
 #endif
-#if FW_HAS_F64
             case TYPE_F64:
                 return buffer.deserialize(this->m_val.f64Val);
-#endif
             case TYPE_F32:
                 return buffer.deserialize(this->m_val.f32Val);
             case TYPE_BOOL:
@@ -637,18 +626,12 @@ void PolyType::toString(StringBase& dest, bool append) const {
             (void)external.format("%" PRId64 " ", this->m_val.i64Val);
             break;
 #endif
-#if FW_HAS_F64
         case TYPE_F64:
             (void)external.format("%g ", this->m_val.f64Val);
             break;
         case TYPE_F32:
             (void)external.format("%g ", static_cast<F64>(this->m_val.f32Val));
             break;
-#else
-        case TYPE_F32:
-            (void)external.format("%g ", this->m_val.f32Val);
-            break;
-#endif
         case TYPE_BOOL:
             (void)external.format("%s ", this->m_val.boolVal ? "T" : "F");
             break;

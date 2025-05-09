@@ -10,7 +10,7 @@
 //
 // ======================================================================
 #include <Drv/LinuxGpioDriver/LinuxGpioDriver.hpp>
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/String.hpp>
 #include <Fw/Types/StringUtils.hpp>
 #include <Os/Posix/File.hpp>

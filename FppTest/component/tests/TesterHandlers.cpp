@@ -18,8 +18,12 @@
 
 void Tester ::from_arrayArgsOut_handler(const FwIndexType portNum,
                                         const FormalParamArray& a,
-                                        FormalParamArray& aRef) {
-    this->pushFromPortEntry_arrayArgsOut(a, aRef);
+                                        FormalParamArray& aRef,
+                                        const FormalAliasArray& b,
+                                        FormalAliasArray& bRef,
+                                        const FormalAliasStringArray& c,
+                                        FormalAliasStringArray& cRef) {
+    this->pushFromPortEntry_arrayArgsOut(a, aRef, b, bRef, c, cRef);
 }
 
 FormalParamArray Tester ::from_arrayReturnOut_handler(const FwIndexType portNum,
@@ -31,8 +35,10 @@ FormalParamArray Tester ::from_arrayReturnOut_handler(const FwIndexType portNum,
 
 void Tester ::from_enumArgsOut_handler(const FwIndexType portNum,
                                        const FormalParamEnum& en,
-                                       FormalParamEnum& enRef) {
-    this->pushFromPortEntry_enumArgsOut(en, enRef);
+                                       FormalParamEnum& enRef,
+                                       const FormalAliasEnum& enA,
+                                       FormalAliasEnum& enARef) {
+    this->pushFromPortEntry_enumArgsOut(en, enRef, enA, enARef);
 }
 
 FormalParamEnum Tester ::from_enumReturnOut_handler(const FwIndexType portNum,
@@ -40,6 +46,44 @@ FormalParamEnum Tester ::from_enumReturnOut_handler(const FwIndexType portNum,
                                                     FormalParamEnum& enRef) {
     this->pushFromPortEntry_enumReturnOut(en, enRef);
     return enumReturnVal.val;
+}
+
+void Tester ::from_stringArgsOut_handler(
+    const FwIndexType portNum,
+    const Fw::StringBase &str80,
+    Fw::StringBase &str80Ref,
+    const Fw::StringBase &str100,
+    Fw::StringBase &str100Ref) {
+    this->pushFromPortEntry_stringArgsOut(str80, str80Ref, str100, str100Ref);
+}
+
+Fw::String Tester ::from_stringReturnOut_handler(
+    const FwIndexType portNum,
+    const Fw::StringBase &str,
+    Fw::StringBase &strRef
+) {
+    this->pushFromPortEntry_stringReturnOut(str, strRef);
+    return stringReturnVal.val;
+}
+
+//! Handler base-class function for from_arrayStringAliasReturnOut
+FormalAliasStringArray Tester::from_arrayStringAliasReturnOut_handler(
+    FwIndexType portNum, //!< The port number
+    const FormalParamArray& a, //!< An array
+    FormalParamArray& aRef //!< An array ref
+) {
+    this->pushFromPortEntry_arrayStringAliasReturnOut(a, aRef);
+    return arrayStringAliasReturnVal.val;
+}
+
+//! Handler base-class function for from_arrayStringAliasReturnOut
+FormalAliasString Tester::from_stringAliasReturnOut_handler(
+    FwIndexType portNum, //!< The port number
+    const Fw::StringBase& str, //!< A string
+    Fw::StringBase& strRef //!< A string ref
+) {
+    this->pushFromPortEntry_stringAliasReturnOut(str, strRef);
+    return stringAliasReturnVal.val;
 }
 
 void Tester ::from_noArgsOut_handler(const FwIndexType portNum) {
@@ -89,8 +133,8 @@ FormalParamStruct Tester ::from_structReturnOut_handler(const FwIndexType portNu
 // Handlers for serial from ports
 // ----------------------------------------------------------------------
 
-void Tester ::from_serialOut_handler(FwIndexType portNum,        /*!< The port number*/
-                                     Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
+void Tester ::from_serialOut_handler(FwIndexType portNum,        //!< The port number
+                                     Fw::SerializeBufferBase& Buffer //!< The serialization buffer
 ) {
     Fw::SerializeStatus status;
 

@@ -1,8 +1,8 @@
 # Common Port Design Patterns
 
-This guide will walk you through several common patterns using [ports](../overview/port-comp-top.md#ports-f-communication) in F Prime. 
+This guide will walk you through several common patterns using [ports](../overview/03-port-comp-top.md#ports-f-communication) in F Prime. 
 
-You should be familiar with [Ports, Components, and Topologies](../overview/port-comp-top.md) in F Prime as well as have a basic understanding of modeling in [FPP](https://nasa.github.io/fpp/fpp-users-guide). To build an understanding of these concepts, you should consider running through our [Hello World Tutorial](https://fprime.jpl.nasa.gov/latest/tutorials-hello-world/docs/hello-world/).
+You should be familiar with [Ports, Components, and Topologies](../overview/03-port-comp-top.md) in F Prime as well as have a basic understanding of modeling in [FPP](https://nasa.github.io/fpp/fpp-users-guide). To build an understanding of these concepts, you should consider running through our [Hello World Tutorial](https://fprime.jpl.nasa.gov/latest/tutorials-hello-world/docs/hello-world/).
 
 **Common Port Patterns:**
 1. [Synchronous Get Ports](#synchronous-get-ports)

@@ -11,7 +11,7 @@
 #include <limits>
 // Use C linkage for the basic items
 extern "C" {
-#include "BasicTypes.h"
+#include "Fw/Types/BasicTypes.h"
 }
 
 #ifndef FW_BASIC_TYPES_HPP
@@ -22,10 +22,8 @@ extern "C" {
 static_assert((std::numeric_limits<float>::is_iec559 == true) && (std::numeric_limits<float>::radix == 2) &&
                   (std::numeric_limits<float>::digits == 24) && (std::numeric_limits<float>::max_exponent == 128),
               "The 32-bit floating point type does not conform to the IEEE-754 standard.");
-#if FW_HAS_F64
 static_assert((std::numeric_limits<double>::is_iec559 == true) && (std::numeric_limits<double>::radix == 2) &&
                   (std::numeric_limits<double>::digits == 53) && (std::numeric_limits<double>::max_exponent == 1024),
               "The 64-bit floating point type does not conform to the IEEE-754 standard.");
-#endif
 #endif
 #endif  // End FW_BASIC_TYPES_HPP

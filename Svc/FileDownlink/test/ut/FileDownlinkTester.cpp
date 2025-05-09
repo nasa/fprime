@@ -669,7 +669,10 @@ namespace Svc {
         Fw::FilePacket& filePacket
     )
   {
-    const Fw::SerializeStatus status = filePacket.fromBuffer(buffer);
+    // buffer contains the FW_PACKET_FILE descriptor - we remove it before deserializing into the filePacket
+    Fw::Buffer packetDataBuffer(buffer.getData() + sizeof(FwPacketDescriptorType), 
+                                buffer.getSize() - sizeof(FwPacketDescriptorType));
+    const Fw::SerializeStatus status = filePacket.fromBuffer(packetDataBuffer);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, status);
   }
 

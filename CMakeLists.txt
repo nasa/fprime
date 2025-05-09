@@ -23,22 +23,14 @@ include("${CMAKE_CURRENT_LIST_DIR}/cmake/FPrime.cmake")
 #
 add_compile_options(
     $<$<COMPILE_LANGUAGE:CXX>:-Wold-style-cast>
+    -pedantic
     -Wall
+    -Wextra
     -Wconversion
     -Wdouble-promotion
+    -Wshadow
     -Werror
-    -Wextra
     -Wno-unused-parameter
     -Wno-vla
-    -Wshadow
-    -pedantic
 )
-
-find_program(VALGRIND valgrind) # Find valgrind, and use it instead of leak check
-# Enable sanitizers
-if (BUILD_TESTING AND NOT VALGRIND)
-    add_compile_options(-fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined)
-    add_link_options(-fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined)
-endif()
-
 include("${CMAKE_CURRENT_LIST_DIR}/cmake/FPrime-Code.cmake")

@@ -8,7 +8,10 @@ module Svc {
         include "../Interfaces/RouterInterface.fppi"
 
         @ Port for forwarding non-recognized packet types
-        output port unknownDataOut: Fw.DataWithContext
+        output port unknownDataOut: Svc.ComDataWithContext
+
+        @ Port for allocating buffers
+        output port bufferAllocate: Fw.BufferGet
 
         @ Port for deallocating buffers
         output port bufferDeallocate: Fw.BufferSend

@@ -1,13 +1,13 @@
-# How-To: F´ GDS Plugin Development
+# Develop a GDS Plugin
 
 This guide will walk through the process of developing GDS plugins.  GDS plugins allow users to add functionality to the
 GDS in several ways. These include:
 
-1. Selection plugins: add another choice for key GDS functionality
-2. Functionality plugins: add functionality as an addition to the GDS.
+1. SELECTION plugins: add another choice for key GDS functionality
+2. FEATURE plugins: add functionality as an addition to the GDS.
 
-This guide will walk through the development of a `framing`  selection plugin to see the basic development of a plugin. Then
-the guide will walk you through the development of a start-up application functionality plugin, which will also discuss
+This guide will walk through the development of a `framing`  SELECTION plugin to see the basic development of a plugin. Then
+the guide will walk you through the development of a start-up application FEATURE plugin, which will also discuss
 taking arguments to plugins. Finally the guide will close with a discussion of testing and distributing your plugins.
 
 Examples covered here are available at: [https://github.com/fprime-community/fprime-gds-plugin-examples](https://github.com/fprime-community/fprime-gds-plugin-examples)
@@ -35,12 +35,13 @@ all define a registration function, which returns an implementation class for th
 The GDS defines several categories of plugins that the user may implement. These categories and the plugin type of each
 category is summarized in the table below.
 
-| Category      | Type          | Description                                                              | Implementation Base Class                                                                                                         |
-|---------------|---------------|--------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
-| framing       | Selection     | Implement a framer/deframer pair to handle serialized data               | [FramerDeframer](https://github.com/fprime-community/fprime-gds/blob/devel/src/fprime_gds/common/communication/framing.py#L24)    |
-| communication | Selection     | Implement a communication adapter for flight software communication      | [BaseAdapter](https://github.com/fprime-community/fprime-gds/blob/devel/src/fprime_gds/common/communication/adapters/base.py#L16) |
-| gds-app       | Functionality | Implement a new GDS application isolated to a separate process           | [GdsApp](https://github.com/fprime-community/fprime-gds/blob/devel/src/fprime_gds/executables/apps.py#L76)                        |
-| gds-function  | Functionality | (Advanced) Implement new GDS functionality with control over the process | [GdsFunction](https://github.com/fprime-community/fprime-gds/blob/devel/src/fprime_gds/executables/apps.py#L40)                   |
+| Category      | Type          | Description                                                              | Reference                                                                    |
+|---------------|---------------|--------------------------------------------------------------------------|------------------------------------------------------------------------------|
+| framing       | SELECTION     | Implement a framer/deframer pair to handle serialized data               | [Framing Plugin Reference](../reference/gds-plugins/framing.md)              |
+| communication | SELECTION     | Implement a communication adapter for flight software communication      | [Communication Plugin Reference](../reference/gds-plugins/communications.md) |
+| data-handler  | FEATURE | Implement custom data item handling (for channels, events, etc)          | [Data Handler Plugin](../reference/gds-plugins/data-handler.md)              |
+| gds-app       | FEATURE | Implement a new GDS application isolated to a separate process           | [Gds Application Plugin](../reference/gds-plugins/gds-app.md)                |
+| gds-function  | FEATURE | (Advanced) Implement new GDS functionality with control over the process | [Gds Function Plugin](../reference/gds-plugins/gds-function.md)              |
 
 
 Plugins should define a function called `register_<category>_plugin` that return a concrete subclass of the category's
@@ -55,6 +56,14 @@ The first step in developing a framing plugin is to determine the function that 
 must be derived to develop the plugin. For the case of a `framing` plugin, the `register_framing_plugin` function
 must be defined to return a concrete subclass of `FramerDeframer`. This information was found in the above table.
 
+> [TIP]
+> Use the decorator `@gds_plugin(<BaseClass>)` to help define your plugins (e.g. `@gds_plugin(FramerDeframer)`).
+> This will:
+>  1. Check the supplied base class is a valid plugin base class
+>  2. Add the appropriate register function
+>  3. Ensure the decorated class is an appropriate sub class
+>  4. Ensure all virtual functions are implemented
+
 ### Basic Plugin Skeleton
 
 GDS plugins define a class that inherits from the implementation base class and implements all virtual functions. These
@@ -65,8 +74,9 @@ A basic framing plugin skeleton would thus look like:
 **`src/my_plugin.py`:**
 ```python
 from fprime_gds.common.communication.framing import FramerDeframer
-from fprime_gds.plugin.definitions import gds_plugin_implementation
+from fprime_gds.plugin.definitions import gds_plugin
 
+@gds_plugin(FramerDeframer)
 class MyPlugin(FramerDeframer):
     # TODO: implement virtual functions
     @classmethod
@@ -83,12 +93,6 @@ class MyPlugin(FramerDeframer):
     def check_arguments(cls):
         """ Check arguments from the CLI """
         pass
-
-    @classmethod
-    @gds_plugin_implementation
-    def register_framing_plugin(cls):
-        """ Register the MyPlugin plugin """
-        return cls
 ```
 
 ### Implementing Virtual Functions
@@ -104,8 +108,9 @@ frame and strip the same bytes off the start of each frame. This is a trivial ex
 **`src/my_plugin.py`:**
 ```python
 from fprime_gds.common.communication.framing import FramerDeframer
-from fprime_gds.plugin.definitions import gds_plugin_implementation
+from fprime_gds.plugin.definitions import gds_plugin
 
+@gds_plugin(FramerDeframer)
 class MyPlugin(FramerDeframer):
     START_TOKEN = b"MY-PLUGIN"
     
@@ -151,12 +156,6 @@ class MyPlugin(FramerDeframer):
     def check_arguments(cls):
         """ Check arguments from the CLI """
         pass
-
-    @classmethod
-    @gds_plugin_implementation
-    def register_framing_plugin(cls):
-        """ Register the MyPlugin plugin """
-        return cls
 ```
 
 This is the basic implementation of a no-argument framing plugin. The above plugin tracks a single start `MY-PLUGIN`
@@ -189,7 +188,9 @@ function `get_process_invocation` that returns command line arguments to be run 
 ```python
 import sys
 from fprime_gds.executables.apps import GdsApp
+from fprime_gds.plugin.definitions import gds_plugin
 
+@gds_plugin(GdsApp)
 class MyApp(GdsApp):
     """ An app for the GDS """
 
@@ -201,12 +202,6 @@ class MyApp(GdsApp):
     def get_name(cls):
         """ Get name """
         return "my-app"
-
-    @classmethod
-    @gds_plugin_implementation
-    def register_gds_app_plugin(cls):
-        """ Register a good plugin """
-        return cls
 ```
 
 ### Plugin Arguments
@@ -275,9 +270,10 @@ The complete plugin would look like:
 **`src/my_app.py`:**
 ```python
 import sys
-from fprime_gds.plugin.definitions import gds_plugin_implementation
+from fprime_gds.plugin.definitions import gds_plugin
 from fprime_gds.executables.apps import GdsApp
 
+@gds_plugin(GdsApp)
 class MyApp(GdsApp):
     """ An app for the GDS """
 
@@ -312,12 +308,6 @@ class MyApp(GdsApp):
         """ Check arguments """
         if "'" in message or '\n' in message:
             raise ValueError("--message must not include ' nor a newline")
-  
-    @classmethod
-    @gds_plugin_implementation
-    def register_gds_app_plugin(cls):
-        """ Register a good plugin """
-        return cls
 ```
 
 ## Packaging and Testing Plugins
@@ -397,7 +387,7 @@ Gds_App Plugin 'my-app' Options:
 > [!WARNING]
 > Syntax errors, indentation errors, and other exceptions can arise during this step. Resolving these errors will allow the help message to display properly.
 
-To test selection plugins, select them during a normal GDS run:
+To test SELECTION plugins, select them during a normal GDS run:
 
 ```
 fprime-gds --framing-selection my-plugin
@@ -424,5 +414,5 @@ A tutorial on python packaging including building wheels and uploading them to P
 
 ## Conclusion
 
-This guide has covered how to develop GDS plugins, their design, and selection vs functionality plugins. You should now
+This guide has covered how to develop GDS plugins, their design, and SELECTION vs FEATURE plugins. You should now
 be capable of writing plugins and handling arguments.

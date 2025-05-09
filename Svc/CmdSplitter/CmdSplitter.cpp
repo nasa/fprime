@@ -4,7 +4,7 @@
 // \brief  cpp file for CmdSplitter component implementation class
 // ======================================================================
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Cmd/CmdPacket.hpp>
 #include <Svc/CmdSplitter/CmdSplitter.hpp>
 #include <Fw/Types/Assert.hpp>

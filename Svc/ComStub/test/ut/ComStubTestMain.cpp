@@ -20,9 +20,19 @@ TEST(Nominal, Fail) {
     tester.test_fail();
 }
 
+TEST(Nominal, BufferReturn) {
+    Svc::ComStubTester tester;
+    tester.test_buffer_return();
+}
+
 TEST(OffNominal, Retry) {
     Svc::ComStubTester tester;
     tester.test_retry();
+}
+
+TEST(OffNominal, RetryReset) {
+    Svc::ComStubTester tester;
+    tester.test_retry_reset();
 }
 
 int main(int argc, char **argv) {

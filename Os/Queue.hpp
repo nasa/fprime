@@ -5,7 +5,7 @@
 #ifndef Os_Queue_hpp_
 #define Os_Queue_hpp_
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Obj/ObjBase.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <Os/Mutex.hpp>
@@ -38,6 +38,7 @@ class QueueInterface {
         INVALID_PRIORITY,  //!<  invalid priority requested
         FULL,              //!<  Queue was full when attempting to send a message
         NOT_SUPPORTED,     //!<  Queue feature is not supported
+        ALLOCATION_FAILED, //!<  required memory could not be allocated
         UNKNOWN_ERROR      //!<  Unexpected error; can't match with returns
     };
 

@@ -10,9 +10,11 @@ module RPI {
     instance chanTlm
     instance cmdDisp
     instance cmdSeq
-    instance comm
+    instance comQueue
+    instance comDriver
+    instance comStub
     instance deframer
-    instance downlink
+    instance framer
     instance eventLogger
     instance fatalAdapter
     instance fatalHandler
@@ -61,11 +63,26 @@ module RPI {
     # ----------------------------------------------------------------------
 
     connections Downlink {
-      chanTlm.PktSend -> downlink.comIn
-      downlink.bufferDeallocate -> fileDownlink.bufferReturn
-      downlink.framedOut -> comm.$send
-      eventLogger.PktSend -> downlink.comIn
-      fileDownlink.bufferSendOut -> downlink.bufferIn
+      eventLogger.PktSend         -> comQueue.comPacketQueueIn[0]
+      chanTlm.PktSend             -> comQueue.comPacketQueueIn[1]
+      fileDownlink.bufferSendOut  -> comQueue.bufferQueueIn[0]
+      comQueue.bufferReturnOut[0] -> fileDownlink.bufferReturn
+
+      comQueue.dataOut     -> framer.dataIn
+      framer.dataReturnOut -> comQueue.dataReturnIn
+
+      framer.bufferAllocate   -> commsBufferManager.bufferGetCallee
+      framer.bufferDeallocate -> commsBufferManager.bufferSendIn
+
+      framer.dataOut          -> comStub.dataIn
+      comStub.dataReturnOut   -> framer.dataReturnIn
+
+      comStub.drvSendOut      -> comDriver.$send
+      comDriver.sendReturnOut -> comStub.drvSendReturnIn
+      comDriver.ready         -> comStub.drvConnected
+
+      comStub.comStatusOut -> framer.comStatusIn
+      framer.comStatusOut  -> comQueue.comStatusIn
     }
 
     connections FaultProtection {
@@ -108,34 +125,41 @@ module RPI {
       rpiDemo.SpiReadWrite -> spiDrv.SpiReadWrite
     }
 
-    connections MemoryAllocations {
-      comm.allocate -> commsBufferManager.bufferGetCallee
-      comm.deallocate -> commsBufferManager.bufferSendIn
-      downlink.framedAllocate -> commsBufferManager.bufferGetCallee
-      fileUplink.bufferSendOut -> commsBufferManager.bufferSendIn
-      frameAccumulator.bufferAllocate -> commsBufferManager.bufferGetCallee
-      frameAccumulator.bufferDeallocate -> commsBufferManager.bufferSendIn
-      fprimeRouter.bufferDeallocate -> commsBufferManager.bufferSendIn
-      deframer.bufferDeallocate -> commsBufferManager.bufferSendIn
-    }
-
     connections UART {
       rpiDemo.UartBuffers -> uartBufferManager.bufferSendIn
       rpiDemo.UartWrite -> uartDrv.$send
       uartDrv.$recv -> rpiDemo.UartRead
       uartDrv.allocate -> uartBufferManager.bufferGetCallee
+      uartDrv.sendReturnOut -> rpiDemo.UartWriteReturn
     }
 
     connections Uplink {
-      comm.$recv -> frameAccumulator.dataIn
-
-      frameAccumulator.frameOut -> deframer.framedIn
-      deframer.deframedOut -> fprimeRouter.dataIn
-
-      fprimeRouter.commandOut -> cmdDisp.seqCmdBuff
-      fprimeRouter.fileOut -> fileUplink.bufferSendIn
-
-      cmdDisp.seqCmdStatus -> fprimeRouter.cmdResponseIn
+      # ComDriver buffer allocations
+      comDriver.allocate      -> commsBufferManager.bufferGetCallee
+      comDriver.deallocate    -> commsBufferManager.bufferSendIn
+      # ComDriver <-> ComStub
+      comDriver.$recv             -> comStub.drvReceiveIn
+      comStub.drvReceiveReturnOut -> comDriver.recvReturnIn
+      # ComStub <-> FrameAccumulator
+      comStub.dataOut                -> frameAccumulator.dataIn
+      frameAccumulator.dataReturnOut -> comStub.dataReturnIn
+      # FrameAccumulator buffer allocations
+      frameAccumulator.bufferDeallocate -> commsBufferManager.bufferSendIn
+      frameAccumulator.bufferAllocate   -> commsBufferManager.bufferGetCallee
+      # FrameAccumulator <-> Deframer
+      frameAccumulator.dataOut  -> deframer.dataIn
+      deframer.dataReturnOut    -> frameAccumulator.dataReturnIn
+      # Deframer <-> Router
+      deframer.dataOut           -> fprimeRouter.dataIn
+      fprimeRouter.dataReturnOut -> deframer.dataReturnIn
+      # Router buffer allocations
+      fprimeRouter.bufferAllocate   -> commsBufferManager.bufferGetCallee
+      fprimeRouter.bufferDeallocate -> commsBufferManager.bufferSendIn
+      # Router <-> CmdDispatcher/FileUplink
+      fprimeRouter.commandOut  -> cmdDisp.seqCmdBuff
+      cmdDisp.seqCmdStatus     -> fprimeRouter.cmdResponseIn
+      fprimeRouter.fileOut     -> fileUplink.bufferSendIn
+      fileUplink.bufferSendOut -> fprimeRouter.fileBufferReturnIn
     }
 
   }

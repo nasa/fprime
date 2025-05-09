@@ -45,7 +45,7 @@ def create_version_file_hpp(output_dir, framework_version, project_version):
         fid.write("#ifndef _VERSION_HPP_\n")
         fid.write("#define _VERSION_HPP_\n")
         fid.write("\n")
-        fid.write('#include "FpConfig.h"\n')
+        fid.write('#include "Fw/FPrimeBasicTypes.hpp"\n')
 
         fid.write("namespace Project {\n\n")
         fid.write("struct Version {\n")
