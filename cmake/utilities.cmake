@@ -863,7 +863,6 @@ function(recurse_target_properties CMAKE_BUILD_TARGET_NAME PROPERTY_NAMES TRANSI
             fprime_cmake_ASSERT("'${LINK}' is a null dependency of '${CMAKE_BUILD_TARGET_NAME}'" LINK)
             # Recurse through each link and append the recursively determined additions to the list
             # while ensuring there are no duplicates
-            set(__PARENT_RECURSED "${CMAKE_BUILD_TARGET_NAME}")
             recurse_target_properties("${LINK}" "${PROPERTY_NAMES}" INTERNAL_TRANSITIVE INTERNAL_EXTERNAL INTERNAL_UNKNOWN ${PREVIOUSLY_RECURSED})
             # The current link must occur in one list or the other
             fprime_cmake_ASSERT("'${LINK}' must appear in '${INTERNAL_TRANSITIVE}' or '${INTERNAL_UNKNOWN}'"

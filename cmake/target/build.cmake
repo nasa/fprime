@@ -19,6 +19,12 @@ if (FPRIME_ENABLE_UT_COVERAGE)
     list(APPEND FPRIME_TESTING_REQUIRED_LINK_FLAGS --coverage)
 endif()
 
+####
+# Function `fprime__internal_TECH_DEBT_module_setup`:
+#
+# A function containing all the steps necessary to maintain build-system technical debt within the build target.
+#
+####
 function(fprime__internal_TECH_DEBT_module_setup BUILD_MODULE_NAME MODULE_NAME_HELPER)
     #### Load target properties ####
     # This switches the following code to use new properties.
@@ -69,7 +75,7 @@ function(fprime__internal_TECH_DEBT_module_setup BUILD_MODULE_NAME MODULE_NAME_H
     #
     # This should be done per-target using IMPLEMENTATION_OVERRIDES supplied to API registration call and should not
     # be set to the current module.
-    if (NOT ${MODULE_TYPE} STREQUAL "Library" AND NOT ${MODULE_TYPE} STREQUAL "Interface")
+    if (NOT ${MODULE_TYPE} STREQUAL "Library")
         # Handle updates when the types have diverged
         if (NOT MODULE STREQUAL "${FPRIME_CURRENT_MODULE}")
             # Update implementation choices
