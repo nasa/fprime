@@ -6,9 +6,9 @@
 ####
 import platform
 
-import settings
+from . import cmake
+from . import settings
 
-import cmake
 
 _ = cmake.get_build(
     "IMPLEMENTATION_TEST",

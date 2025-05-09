@@ -7,9 +7,8 @@
 import platform
 import json
 
-from . import settings
-
 from . import cmake
+from . import settings
 
 FEATURE_BUILD_RESULT = cmake.get_build(
     "FEATURE_BUILD",

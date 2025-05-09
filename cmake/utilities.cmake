@@ -494,6 +494,7 @@ function(get_module_name)
     else()
         set(DIRECTORY_PATH "${CMAKE_CURRENT_LIST_DIR}")
     endif()
+    resolve_path_variables(DIRECTORY_PATH)
     # If DIRECTORY_PATH exists, then find its offset from BUILD_ROOT to calculate the module
     # name. If it does not exist, then it is assumed to be an offset already and is carried
     # forward in the calculation.
