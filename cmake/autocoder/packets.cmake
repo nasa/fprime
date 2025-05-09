@@ -7,7 +7,7 @@ include(utilities)
 include(autocoder/helpers)
 include(autocoder/ai-shared)
 
-set(PACKETS_AUTOCODER_SCRIPT "${FPRIME_FRAMEWORK_PATH}/Autocoders/Python/bin/tlm_packet_gen.py")
+set(FPRIME__INTERNAL_PACKETS_AUTOCODER_SCRIPT "${FPRIME_FRAMEWORK_PATH}/Autocoders/Python/bin/tlm_packet_gen.py")
 
 autocoder_setup_for_individual_sources()
 ####
@@ -58,7 +58,7 @@ function(packets_setup_autocode MODULE_NAME AC_INPUT_FILE)
         COMMAND
             PYTHONPATH=${PYTHON_AUTOCODER_DIR}/src:${PYTHON_AUTOCODER_DIR}/utils
             BUILD_ROOT=${FPRIME_BUILD_LOCATIONS_SEP}:${CMAKE_BINARY_DIR_RESOLVED}:${CMAKE_BINARY_DIR_RESOLVED}/F-Prime
-            "${PYTHON}" "${PACKETS_AUTOCODER_SCRIPT}" "${AC_INPUT_FILE}"
+            "${PYTHON}" "${FPRIME__INTERNAL_PACKETS_AUTOCODER_SCRIPT}" "${AC_INPUT_FILE}"
         DEPENDS "${AC_INPUT_FILE}" "${FULL_TOPOLOGY_FILE}"
     )
     set(AUTOCODER_GENERATED "${GENERATED_FILES}" PARENT_SCOPE)
