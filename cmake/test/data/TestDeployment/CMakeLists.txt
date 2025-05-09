@@ -12,6 +12,7 @@ project(TestDeployment VERSION 1.0.0 LANGUAGES C CXX)
 include("${FPRIME_FRAMEWORK_PATH}/cmake/FPrime.cmake")
 
 register_fprime_target("target/test") # Test target and autocoder supporting it
+register_fprime_target("target/test_recursion") # Test recursive dependencies
 
 # NOTE: register custom targets between these two lines
 include("${FPRIME_FRAMEWORK_PATH}/cmake/FPrime-Code.cmake")
