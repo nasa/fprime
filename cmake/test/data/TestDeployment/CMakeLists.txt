@@ -17,6 +17,8 @@ register_fprime_target("target/test") # Test target and autocoder supporting it
 include("${FPRIME_FRAMEWORK_PATH}/cmake/FPrime-Code.cmake")
 run_sub_build(test-sub-build target/sub)
 
+add_fprime_subdirectory(./TestRelative)
+
 set(SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Main.cpp")
 set(MOD_DEPS  Svc_CmdDispatcher TestLibrary_TestComponent TestLibrary2_TestComponent)
 register_fprime_deployment()
