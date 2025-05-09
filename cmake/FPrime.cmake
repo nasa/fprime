@@ -32,7 +32,13 @@ endif()
 
 # Setup fprime library locations
 list(REMOVE_DUPLICATES FPRIME_LIBRARY_LOCATIONS)
-set(FPRIME_BUILD_LOCATIONS "${FPRIME_FRAMEWORK_PATH}" ${FPRIME_LIBRARY_LOCATIONS} "${FPRIME_PROJECT_ROOT}")
+
+# F Prime build locations represent the root of the module paths in F Prime. This allows us to detect module names from the
+# paths to given files.
+# Now that modules can build within the build cache, the build cache locations (root, F-Prime) are added to the list of
+# locations. This allows for the detection of modules that are built within the build cache.
+set(FPRIME_BUILD_LOCATIONS "${FPRIME_FRAMEWORK_PATH}" ${FPRIME_LIBRARY_LOCATIONS} "${FPRIME_PROJECT_ROOT}"
+    "${CMAKE_BINARY_DIR}/F-Prime" "${CMAKE_BINARY_DIR}")
 list(REMOVE_DUPLICATES FPRIME_BUILD_LOCATIONS)
 resolve_path_variables(FPRIME_BUILD_LOCATIONS)
 
