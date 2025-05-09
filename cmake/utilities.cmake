@@ -717,10 +717,10 @@ function(resolve_path_variables)
         set(NEW_LIST)
         # Loop through each item in INPUT_NAME
         foreach(UNRESOLVED IN LISTS ${INPUT_NAME})
-            get_filename_component(ABSOLUTED "${UNRESOLVED}" ABSOLUTE)
+            get_filename_component(ABSOLUTE_UNRESOLVED "${UNRESOLVED}" ABSOLUTE)
             # If it is a path, resolve it
-            if (EXISTS ${ABSOLUTED})
-                get_filename_component(RESOLVED "${ABSOLUTED}" REALPATH)
+            if (EXISTS ${ABSOLUTE_UNRESOLVED})
+                get_filename_component(RESOLVED "${ABSOLUTE_UNRESOLVED}" REALPATH)
             else()
                 set(RESOLVED "${UNRESOLVED}")
             endif()
