@@ -7,10 +7,9 @@
 import platform
 import tempfile
 
-import settings
-
-import cmake
 from pathlib import Path
+from . import cmake
+from . import settings
 
 _ = cmake.get_build(
     "UT_BUILD",

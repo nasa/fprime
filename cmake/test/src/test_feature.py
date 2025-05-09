@@ -7,13 +7,15 @@
 import json
 import platform
 
-import settings
+from . import cmake
+from . import settings
 
-import cmake
 
 TOOLCHAIN_NAME = "generic-native"
 
-_ = cmake.get_build(
+
+FEATURE_BUILD_RESULT = cmake.get_build(
+
     "FEATURE_BUILD",
     settings.DATA_DIR / "TestDeployment",
     {
@@ -40,6 +42,7 @@ _ = cmake.get_build(
         "TestDeployment_test",
         "TestLibrary_TestComponent_test",
         "version",
+        "TestRelative",
     ],
 )
 

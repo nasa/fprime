@@ -27,18 +27,19 @@ class FileInterface {
     };
 
     enum Status {
-        OP_OK,             //!<  Operation was successful
-        DOESNT_EXIST,      //!<  File doesn't exist (for read)
-        NO_SPACE,          //!<  No space left
-        NO_PERMISSION,     //!<  No permission to read/write file
-        BAD_SIZE,          //!<  Invalid size parameter
-        NOT_OPENED,        //!<  file hasn't been opened yet
-        FILE_EXISTS,       //!< file already exist (for CREATE with O_EXCL enabled)
-        NOT_SUPPORTED,     //!< Kernel or file system does not support operation
-        INVALID_MODE,      //!< Mode for file access is invalid for current operation
-        INVALID_ARGUMENT,  //!< Invalid argument passed in
-        OTHER_ERROR,       //!<  A catch-all for other errors. Have to look in implementation-specific code
-        MAX_STATUS         //!< Maximum value of status
+        OP_OK,              //!<  Operation was successful
+        DOESNT_EXIST,       //!<  File doesn't exist (for read)
+        NO_SPACE,           //!<  No space left
+        NO_PERMISSION,      //!<  No permission to read/write file
+        BAD_SIZE,           //!<  Invalid size parameter
+        NOT_OPENED,         //!<  file hasn't been opened yet
+        FILE_EXISTS,        //!< file already exist (for CREATE with O_EXCL enabled)
+        NOT_SUPPORTED,      //!< Kernel or file system does not support operation
+        INVALID_MODE,       //!< Mode for file access is invalid for current operation
+        INVALID_ARGUMENT,   //!< Invalid argument passed in
+        NO_MORE_RESOURCES,  //!< No more available resources
+        OTHER_ERROR,        //!<  A catch-all for other errors. Have to look in implementation-specific code
+        MAX_STATUS          //!< Maximum value of status
     };
 
     enum OverwriteType {

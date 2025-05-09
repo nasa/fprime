@@ -494,6 +494,7 @@ function(get_module_name)
     else()
         set(DIRECTORY_PATH "${CMAKE_CURRENT_LIST_DIR}")
     endif()
+    resolve_path_variables(DIRECTORY_PATH)
     # If DIRECTORY_PATH exists, then find its offset from BUILD_ROOT to calculate the module
     # name. If it does not exist, then it is assumed to be an offset already and is carried
     # forward in the calculation.
@@ -716,9 +717,10 @@ function(resolve_path_variables)
         set(NEW_LIST)
         # Loop through each item in INPUT_NAME
         foreach(UNRESOLVED IN LISTS ${INPUT_NAME})
+            get_filename_component(ABSOLUTE_UNRESOLVED "${UNRESOLVED}" ABSOLUTE)
             # If it is a path, resolve it
-            if (EXISTS ${UNRESOLVED})
-                get_filename_component(RESOLVED "${UNRESOLVED}" REALPATH)
+            if (EXISTS ${ABSOLUTE_UNRESOLVED})
+                get_filename_component(RESOLVED "${ABSOLUTE_UNRESOLVED}" REALPATH)
             else()
                 set(RESOLVED "${UNRESOLVED}")
             endif()

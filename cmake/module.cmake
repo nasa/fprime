@@ -141,12 +141,19 @@ function(fprime__process_module_setup FPRIME_MODULE_TYPE ADDITIONAL_CONTROL_SETS
             fprime_cmake_fatal_error("One of ${CONTROL_SETS_STRING} must be specified before list elements: ${ARGUMENT}")
         endif()
     endforeach()
+
     # Update caller scope with the new variables
     set(INTERNAL_MODULE_NAME "${MODULE_NAME}" PARENT_SCOPE)
     foreach(CONTROL_SET IN LISTS CONTROL_SETS)
         # Define listed argument in parent scope only when they were defined within this file. This will unused control
         # words to be undefined lists in parent scope distinguishing them from empty words.
         if (DEFINED "${CONTROL_SET}")
+            # FPP, Python, and other non-native (virtualized) tooling deal in absolute resolved paths. This is a function
+            # of how the virtual machines underpinning these technologies work.
+            #
+            # Thus to make life easier on tool developers, we automatically resolve all paths as part of the interface
+            # ensuring that this step is not required on each tool integration.
+            resolve_path_variables(${CONTROL_SET})
             set(INTERNAL_${CONTROL_SET} "${${CONTROL_SET}}" PARENT_SCOPE)
         endif()
     endforeach(CONTROL_SET IN LISTS CONTROL_SETS)

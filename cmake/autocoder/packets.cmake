@@ -44,7 +44,7 @@ function(packets_setup_autocode MODULE_NAME AC_INPUT_FILE)
 
 
     set(CMAKE_BINARY_DIR_RESOLVED "${CMAKE_BINARY_DIR}")
-    resolve_path_variables(FPRIME_BUILD_LOCATIONS PYTHON_AUTOCODER_DIR CMAKE_BINARY_DIR_RESOLVED AC_INPUT_FILE)
+    resolve_path_variables(PYTHON_AUTOCODER_DIR CMAKE_BINARY_DIR_RESOLVED)
     string(REPLACE ";" ":" FPRIME_BUILD_LOCATIONS_SEP "${FPRIME_BUILD_LOCATIONS}")
     string(REPLACE "Packets.xml" "PacketsAc.cpp" CPP_FILE "${AC_INPUT_FILE_NO_PATH}")
     string(REPLACE "Packets.xml" "PacketsAc.hpp" HPP_FILE "${AC_INPUT_FILE_NO_PATH}")

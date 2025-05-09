@@ -131,6 +131,9 @@ function(add_fprime_subdirectory FP_SOURCE_DIR)
     if (${ARGC} GREATER 2)
         message(FATAL_ERROR "Cannot use 'add_fprime_subdirectory' with [binary_dir] argument.")
     endif()
+    # Make the path resolved: absolute, links resolved, etc.
+    # This allows the relative path commands (below) to work correctly.
+    resolve_path_variables(FP_SOURCE_DIR)
     get_nearest_build_root("${FP_SOURCE_DIR}")
     file(RELATIVE_PATH NEW_BIN_DIR "${FPRIME_CLOSEST_BUILD_ROOT}" "${FP_SOURCE_DIR}")
     # Add component subdirectories using normal add_subdirectory with overridden binary_dir

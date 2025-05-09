@@ -7,13 +7,12 @@
 import platform
 import tempfile
 
-import settings
-
-import cmake
-
 import json
 import pytest
 from pathlib import Path
+from . import cmake
+from . import settings
+
 
 pytestmark = pytest.mark.skip(reason="Shared modules are broken through the next PR")
 
