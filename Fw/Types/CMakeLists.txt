@@ -18,7 +18,6 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/StringUtils.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/StringToNumber.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Types.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/snprintf_format.cpp"
 )
 set(MOD_DEPS
   __fprime_config
