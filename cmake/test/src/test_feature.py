@@ -29,7 +29,7 @@ FEATURE_BUILD_RESULT = cmake.get_build(
         "TestDeployment_test",
         "TestLibrary_TestComponent_test",
         "version",
-        "TestRelative"
+        "TestRelative",
     ],
 )
 

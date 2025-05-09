@@ -14,7 +14,6 @@ from . import cmake
 from . import settings
 
 
-
 SYMLINK_PATH = Path(tempfile.mkdtemp()) / "fprime-link"
 os.symlink(settings.REF_APP_PATH.parent, SYMLINK_PATH)
 
