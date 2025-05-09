@@ -28,14 +28,19 @@ def subprocess_helper(args, cwd):
     """Subprocess helper used to 'tee' the output to: console and capture"""
 
     def read_available(proc, stdout, stderr):
-        """ Read the available output from the process and return it """
+        """Read the available output from the process and return it"""
+
         def capture_stream(stream, lines):
-            """ Capture output from a stream, printing to console if needed """
+            """Capture output from a stream, printing to console if needed"""
             new_lines = stream.readlines()
             lines[stream].extend(new_lines)
             if "-s" in sys.argv or "--capture=no" in sys.argv:
                 for line in new_lines:
-                    print(line, end="", file=(sys.stdout if stream == stdout else sys.stderr))
+                    print(
+                        line,
+                        end="",
+                        file=(sys.stdout if stream == stdout else sys.stderr),
+                    )
 
         lines = {stdout: [], stderr: []}
         while proc.poll() is None:
@@ -109,7 +114,11 @@ def assert_process_success(data_object, errors_ok=False, targets=None):
     assert not stderr or errors_ok, f"CMake generated errors:\n{''.join(stderr)}"
 
     targets = data_object["targets"].keys() if targets is None else targets
-    filtered = [(target, output) for target, output in data_object["targets"].items() if target in targets]
+    filtered = [
+        (target, output)
+        for target, output in data_object["targets"].items()
+        if target in targets
+    ]
 
     for target, output in filtered:
         return_code, stdout, stderr = output
