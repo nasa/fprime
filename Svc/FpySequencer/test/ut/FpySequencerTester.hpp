@@ -54,7 +54,7 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     //! The component under test
     //!
     FpySequencer cmp;
-    FpySequencer& component; // for compatibility
+    FpySequencer& component;  // for compatibility
 
     // dispatches events from the queue until the component reaches the given state
     void dispatchUntilState(State state, U32 bound = 100);
@@ -64,6 +64,10 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     // a sequence that you can build with the following functions
     Fpy::Sequence seq;
     U8 internalSeqBuf[Fpy::Sequence::SERIALIZED_SIZE] = {0};
+
+    FwChanIdType nextTlmId;
+    Fw::Time nextTlmTime;
+    Fw::TlmBuffer nextTlmValue;
 
     // clears the sequence we're currently building
     void clearSeq();
@@ -87,6 +91,10 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     void add_IF(U8 lvarIdx, U32 gotoIfFalse);
     void add_IF(FpySequencer_IfDirective dir);
     void add_NO_OP();
+    void add_GET_TLM_TIME(U8 lvarIdx, FwChanIdType id);
+    void add_GET_TLM_TIME(FpySequencer_GetTlmTimeDirective dir);
+    void add_GET_TLM_VALUE(U8 lvarIdx, FwChanIdType id);
+    void add_GET_TLM_VALUE(FpySequencer_GetTlmValueDirective dir);
     //! Handle a text event
     void textLogIn(FwEventIdType id,                //!< The event ID
                    const Fw::Time& timeTag,         //!< The time
@@ -95,6 +103,14 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
                    ) override;
 
     void writeAndRun();
+
+    //! Default handler implementation for from_getTlmChan
+    void from_getTlmChan_handler(FwIndexType portNum,  //!< The port number
+                                 FwChanIdType id,      //!< Telemetry Channel ID
+                                 Fw::Time& timeTag,    //!< Time Tag
+                                 Fw::TlmBuffer& val    //!< Buffer containing serialized telemetry value.
+                                                       //!< Size set to 0 if channel not found.
+                                 ) override;
 };
 
 }  // namespace Svc

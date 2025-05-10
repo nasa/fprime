@@ -11,6 +11,8 @@ module Svc {
             GOTO = 0x00000004,
             IF = 0x00000005,
             NO_OP = 0x00000006,
+            GET_TLM_TIME = 0x00000007,
+            GET_TLM_VAL = 0x00000008,
         }
 
         enum StatementType : U8 {

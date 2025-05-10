@@ -209,6 +209,26 @@ void FpySequencerTester::add_NO_OP() {
     addDirective(Fpy::DirectiveId::NO_OP, buf);
 }
 
+void FpySequencerTester::add_GET_TLM_TIME(U8 lvarIdx, FwChanIdType id) {
+    add_GET_TLM_TIME(FpySequencer_GetTlmTimeDirective(lvarIdx, id));
+}
+
+void FpySequencerTester::add_GET_TLM_TIME(FpySequencer_GetTlmTimeDirective dir) {
+    Fw::StatementArgBuffer buf;
+    FW_ASSERT(buf.serialize(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    addDirective(Fpy::DirectiveId::GET_TLM_TIME, buf);
+}
+
+void FpySequencerTester::add_GET_TLM_VALUE(U8 lvarIdx, FwChanIdType id) {
+    add_GET_TLM_VALUE(FpySequencer_GetTlmValueDirective(lvarIdx, id));
+}
+
+void FpySequencerTester::add_GET_TLM_VALUE(FpySequencer_GetTlmValueDirective dir) {
+    Fw::StatementArgBuffer buf;
+    FW_ASSERT(buf.serialize(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    addDirective(Fpy::DirectiveId::GET_TLM_VAL, buf);
+}
+
 //! Handle a text event
 void FpySequencerTester::textLogIn(FwEventIdType id,                //!< The event ID
                                    const Fw::Time& timeTag,         //!< The time
@@ -227,4 +247,19 @@ void FpySequencerTester::writeAndRun() {
     cmp.doDispatch();
 }
 
+//! Default handler implementation for from_getTlmChan
+void FpySequencerTester::from_getTlmChan_handler(FwIndexType portNum,  //!< The port number
+                                                 FwChanIdType id,      //!< Telemetry Channel ID
+                                                 Fw::Time& timeTag,    //!< Time Tag
+                                                 Fw::TlmBuffer& val  //!< Buffer containing serialized telemetry value.
+                                                                     //!< Size set to 0 if channel not found.
+) {
+    this->pushFromPortEntry_getTlmChan(id, timeTag, val);
+    if (id != nextTlmId) {
+        val.setBuffLen(0);
+        return;
+    }
+    val = nextTlmValue;
+    timeTag = nextTlmTime;
+}
 }  // namespace Svc

@@ -46,6 +46,9 @@ module Svc {
         @ Ping out port
         output port pingOut: Svc.Ping
 
+        @ port for getting telemetry channel values and storing them in sequence lvars
+        output port getTlmChan: Fw.TlmGet
+
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #
         ###############################################################################

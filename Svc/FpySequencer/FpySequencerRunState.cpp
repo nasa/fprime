@@ -209,6 +209,26 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
             }
             break;
         }
+        case Fpy::DirectiveId::GET_TLM_TIME: {
+            new (&deserializedDirective.getTlmTime) FpySequencer_GetTlmTimeDirective();
+            status = argBuf.deserialize(deserializedDirective.getTlmTime);
+            if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || argBuf.getBuffLeft() != 0) {
+                this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), this->m_runtime.nextStatementIndex - 1,
+                                                               status, argBuf.getBuffLeft(), argBuf.getBuffLength());
+                return Fw::Success::FAILURE;
+            }
+            break;
+        }
+        case Fpy::DirectiveId::GET_TLM_VAL: {
+            new (&deserializedDirective.getTlmValue) FpySequencer_GetTlmValueDirective();
+            status = argBuf.deserialize(deserializedDirective.getTlmValue);
+            if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || argBuf.getBuffLeft() != 0) {
+                this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), this->m_runtime.nextStatementIndex - 1,
+                                                               status, argBuf.getBuffLeft(), argBuf.getBuffLength());
+                return Fw::Success::FAILURE;
+            }
+            break;
+        }
         default: {
             // unsure what this opcode is. check compiler version matches sequencer
             this->log_WARNING_HI_UnknownSequencerDirective(stmt.getopCode(), this->m_runtime.nextStatementIndex - 1,
@@ -245,6 +265,14 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
         }
         case Fpy::DirectiveId::NO_OP: {
             this->directive_noOp_internalInterfaceInvoke(directive.noOp);
+            break;
+        }
+        case Fpy::DirectiveId::GET_TLM_TIME: {
+            this->directive_getTlmTime_internalInterfaceInvoke(directive.getTlmTime);
+            break;
+        }
+        case Fpy::DirectiveId::GET_TLM_VAL: {
+            this->directive_getTlmValue_internalInterfaceInvoke(directive.getTlmValue);
             break;
         }
         default: {

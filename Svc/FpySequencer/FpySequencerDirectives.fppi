@@ -34,7 +34,22 @@ struct IfDirective {
 }
 
 struct NoOpDirective {
+    # fpp requires we have something in a struct
     _empty: U8
+}
+
+struct GetTlmTimeDirective {
+    @ the local variable to store the tlm time in
+    destLvarIndex: U8
+    @ the tlm channel id to get the time of
+    chanId: FwChanIdType
+}
+
+struct GetTlmValueDirective {
+    @ the local variable to store the tlm value in
+    destLvarIndex: U8
+    @ the tlm channel id to get the value of
+    chanId: FwChanIdType
 }
 
 internal port directive_waitRel(directive: WaitRelDirective) priority 6 assert
@@ -48,3 +63,7 @@ internal port directive_goto(directive: GotoDirective) priority 6 assert
 internal port directive_if(directive: IfDirective) priority 6 assert
 
 internal port directive_noOp(directive: NoOpDirective) priority 6 assert
+
+internal port directive_getTlmTime(directive: GetTlmTimeDirective) priority 6 assert
+
+internal port directive_getTlmValue(directive: GetTlmValueDirective) priority 6 assert
