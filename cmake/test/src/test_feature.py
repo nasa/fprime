@@ -15,7 +15,6 @@ TOOLCHAIN_NAME = "generic-native"
 
 
 FEATURE_BUILD_RESULT = cmake.get_build(
-
     "FEATURE_BUILD",
     settings.DATA_DIR / "TestDeployment",
     {
