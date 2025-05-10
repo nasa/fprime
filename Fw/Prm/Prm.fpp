@@ -13,7 +13,9 @@ module Fw {
   @ Port for getting a parameter
   port PrmGet(
                $id: FwPrmIdType @< Parameter ID
-               ref val: ParamBuffer @< Buffer containing serialized parameter value
+               @ Buffer containing serialized parameter value.
+               @ Unmodified if param not found.
+               ref val: ParamBuffer
              ) -> ParamValid
 
   @ Port for setting a parameter
