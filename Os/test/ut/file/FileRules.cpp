@@ -435,7 +435,7 @@ void Os::Test::File::Tester::Write::action(
 }
 
 // ------------------------------------------------------------------------------------------------------
-// Rule:  Read
+// Rule:  Seek
 //
 // ------------------------------------------------------------------------------------------------------
 
@@ -464,7 +464,12 @@ void Os::Test::File::Tester::Seek::action(
     if (absolute) {
         seek_offset = STest::Pick::lowerUpper(0, FILE_DATA_MAXIMUM);
     } else {
-        seek_offset = STest::Pick::lowerUpper(0, original_file_state.position + FILE_DATA_MAXIMUM) - original_file_state.position;
+        // seek_offset =
+        // STest::Pick::lowerUpper(0, original_file_state.position + FILE_DATA_MAXIMUM) - original_file_state.position;
+        // seek_offset = STest::Pick::lowerUpper(0, original_file_state.position + FILE_DATA_MAXIMUM);
+        seek_offset = STest::Pick::lowerUpper(0, FILE_DATA_MAXIMUM);
+        printf("before seekoffset %u and position %u\n", seek_offset, original_file_state.position);
+        seek_offset -= original_file_state.position;
     }
     Os::File::Status status = state.m_file.seek(seek_offset, absolute ? Os::File::SeekType::ABSOLUTE : Os::File::SeekType::RELATIVE);
     ASSERT_EQ(status, Os::File::Status::OP_OK);
@@ -496,8 +501,8 @@ void Os::Test::File::Tester::Preallocate::action(
     printf("--> Rule: %s \n", this->getName());
     state.assert_file_consistent();
     FileState original_file_state = state.current_file_state();
-    FwSizeType offset = static_cast<FwSizeType>(STest::Pick::lowerUpper(0, FILE_DATA_MAXIMUM));
-    FwSizeType length = static_cast<FwSizeType>(STest::Pick::lowerUpper(1, FILE_DATA_MAXIMUM));
+    FwSizeType offset = static_cast<FwSizeType>(STest::Pick::lowerUpper(0, FILE_DATA_MAXIMUM - 1));
+    FwSizeType length = static_cast<FwSizeType>(STest::Pick::lowerUpper(1, FILE_DATA_MAXIMUM - offset));
     Os::File::Status status = state.m_file.preallocate(offset, length);
     ASSERT_EQ(Os::File::Status::OP_OK, status);
     state.shadow_preallocate(offset, length);
