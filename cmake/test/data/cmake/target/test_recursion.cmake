@@ -5,11 +5,12 @@
 ####
 include(utilities)
 # Current full dependency list for TestDeployment (mostly via Svc_CmdDispatcher)
-set(EXPECTED_FULL_DEPENDENCIES TestDeployment Svc_CmdDispatcher config cmake_platform_unix Fw_Cmd Fw_Com Fw_Time
-    Fw_Port Fw_Cfg Fw_Types Fw_StringFormat Fw_Logger Fw_Obj Fw_Log Fw_Tlm Fw_Fpy Svc_Ping Fw Fw_Prm Fw_CompQueued Os
-    Os_Console_Common Os_File_Common Utils_Hash Os_Task_Common Os_Mutex_Common Os_Queue_Common Os_Cpu_Common
-    Os_Memory_Common Os_RawTime_Common Fw_Buffer Os_Console Os_Cpu Os_File Os_Memory Os_Mutex Os_Queue Os_RawTime
-    Os_Task Fw_Comp TestLibrary_TestComponent Svc_Sched TestLibrary2_TestComponent)
+set(EXPECTED_FULL_DEPENDENCIES Fw Fw_Buffer Fw_Cmd Fw_Com Fw_Comp Fw_CompQueued Fw_Fpy Fw_Log Fw_Logger Fw_Obj Fw_Port
+    Fw_Prm Fw_Time Fw_Tlm Fw_Types Os Os_Console_Common Os_Console_Posix Os_Cpu_Common Os_Cpu_Darwin Os_File_Common
+    Os_File_Posix Os_Generic_PriorityQueue Os_Generic_Types Os_Memory_Common Os_Memory_Darwin Os_Mutex_Common
+    Os_Mutex_Posix Os_Posix_Shared Os_RawTime_Common Os_RawTime_Posix Os_Task_Common Os_Task_Posix Svc_CmdDispatcher
+    Svc_Ping Svc_Sched TestDeployment TestLibrary2_TestComponent TestLibrary_TestComponent Utils_Hash __fprime_config
+    cmake_platform_unix_Platform default_config snprintf-format)
 
 function(test_recursion_add_global_target TARGET)
 endfunction(test_recursion_add_global_target)

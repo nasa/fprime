@@ -82,6 +82,8 @@ function(fprime__internal_TECH_DEBT_module_setup BUILD_MODULE_NAME MODULE_NAME_H
             remap_implementation_choices("${FPRIME_CURRENT_MODULE}" "${BUILD_MODULE_NAME}")
         endif()
         setup_executable_implementations("${BUILD_MODULE_NAME}")
+        # Clear transitive dependencies to force a re-evaluation
+        set_property(TARGET "${BUILD_MODULE_NAME}" PROPERTY TRANSITIVE_DEPENDENCIES)
     endif ()
     #### End Implementation Choices ####
 endfunction()

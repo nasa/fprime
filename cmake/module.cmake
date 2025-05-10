@@ -121,6 +121,9 @@ function(fprime__process_module_setup FPRIME_MODULE_TYPE ADDITIONAL_CONTROL_SETS
     unset(CURRENT_LIST_NAME)
     # Process all arguments and fill in the module sources
     foreach (ARGUMENT IN LISTS INPUT_ARGUMENTS)
+        # EXISTS only defined for resolved absolute paths
+        set(RESOLVED_ARGUMENT "${ARGUMENT}")
+        resolve_path_variables(RESOLVED_ARGUMENT)
         # If the argument is one of our control tokens, and the list is already defined, this means the user has specified
         # the argument twice. This is likely an error.
         if (ARGUMENT IN_LIST CONTROL_SETS AND DEFINED "${ARGUMENT}")
@@ -135,7 +138,7 @@ function(fprime__process_module_setup FPRIME_MODULE_TYPE ADDITIONAL_CONTROL_SETS
             set(CURRENT_LIST_NAME "${ARGUMENT}")
             set("${CURRENT_LIST_NAME}")
         # Check that file types' files exist
-        elseif(DEFINED CURRENT_LIST_NAME AND CURRENT_LIST_NAME IN_LIST FILE_CONTROL_SETS AND NOT EXISTS "${ARGUMENT}")
+        elseif(DEFINED CURRENT_LIST_NAME AND CURRENT_LIST_NAME IN_LIST FILE_CONTROL_SETS AND NOT EXISTS "${RESOLVED_ARGUMENT}")
             fprime_cmake_fatal_error("${ARGUMENT} does not exist but was specified as a SOURCE/HEADER/AUTOCODER_INPUT")
         # Add in an element to the active control list
         elseif(DEFINED CURRENT_LIST_NAME)

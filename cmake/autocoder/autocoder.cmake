@@ -52,7 +52,7 @@ function (run_ac_set BUILD_TARGET_NAME)
     append_list_property("${MODULE_DEPENDENCIES_LIST}" TARGET "${BUILD_TARGET_NAME}" PROPERTY FPRIME_DEPENDENCIES)
     # Invalidate the TRANSITIVE_DEPENDENCIES on the target
     if (MODULE_DEPENDENCIES_LIST)
-        set_property(TARGET "${BUILD_TARGET_NAME}" PROPERTY TRANSITIVE_LINK_LIBRARIES)
+        set_property(TARGET "${BUILD_TARGET_NAME}" PROPERTY TRANSITIVE_DEPENDENCIES)
     endif()
     # CMake claims that all generated files are marked generated. This asserts this fact.
     get_target_property(ALL_GENERATED "${BUILD_TARGET_NAME}" AC_GENERATED)
