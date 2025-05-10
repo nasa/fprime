@@ -65,6 +65,12 @@ void FpySequencer::directive_getTlmValue_internalInterfaceHandler(
     this->sendSignal(this->getTlmValue_directiveHandler(directive));
 }
 
+//! Internal interface handler for directive_getPrmValue
+void FpySequencer::directive_getPrmValue_internalInterfaceHandler(
+    const Svc::FpySequencer_GetPrmValueDirective& directive) {
+    this->sendSignal(this->getPrmValue_directiveHandler(directive));
+}
+
 //! Internal interface handler for directive_waitRel
 Signal FpySequencer::waitRel_directiveHandler(const FpySequencer_WaitRelDirective& directive) {
     Fw::Time wakeupTime = this->getTime();
@@ -212,6 +218,34 @@ Signal FpySequencer::getTlmValue_directiveHandler(const FpySequencer_GetTlmValue
     Runtime::LocalVariable& lvar = this->m_runtime.localVariables[directive.getdestLvarIndex()];
     memcpy(lvar.value, tlmValue.getBuffAddr(), tlmValue.getBuffLength());
     lvar.valueSize = tlmValue.getBuffLength();
+    return Signal::stmtResponse_success;
+}
+
+Signal FpySequencer::getPrmValue_directiveHandler(const FpySequencer_GetPrmValueDirective& directive) {
+    if (directive.getdestLvarIndex() >= Fpy::MAX_SEQUENCE_LOCAL_VARIABLES) {
+        return Signal::stmtResponse_failure;
+    }
+    if (!this->isConnected_prmGet_OutputPort(0)) {
+        return Signal::stmtResponse_failure;
+    }
+    Fw::ParamBuffer prmValue;
+    // set buff len to 0 before call so we can detect if we failed to get it
+    prmValue.setBuffLen(0);
+    Fw::ParamValid valid = this->getParam_out(0, directive.getprmId(), prmValue);
+
+    if (valid != Fw::ParamValid::VALID) {
+        // could not find this prm in the DB
+        return Signal::stmtResponse_failure;
+    }
+
+    if (prmValue.getBuffLength() > Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE) {
+        // cannot store the prm value in the lvar
+        return Signal::stmtResponse_failure;
+    }
+    // copy value into lvar
+    Runtime::LocalVariable& lvar = this->m_runtime.localVariables[directive.getdestLvarIndex()];
+    memcpy(lvar.value, prmValue.getBuffAddr(), prmValue.getBuffLength());
+    lvar.valueSize = prmValue.getBuffLength();
     return Signal::stmtResponse_success;
 }
 }  // namespace Svc

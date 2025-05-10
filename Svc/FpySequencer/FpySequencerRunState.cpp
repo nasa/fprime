@@ -229,6 +229,16 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
             }
             break;
         }
+        case Fpy::DirectiveId::GET_PRM_VAL: {
+            new (&deserializedDirective.getPrmValue) FpySequencer_GetPrmValueDirective();
+            status = argBuf.deserialize(deserializedDirective.getPrmValue);
+            if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || argBuf.getBuffLeft() != 0) {
+                this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), this->m_runtime.nextStatementIndex - 1,
+                                                               status, argBuf.getBuffLeft(), argBuf.getBuffLength());
+                return Fw::Success::FAILURE;
+            }
+            break;
+        }
         default: {
             // unsure what this opcode is. check compiler version matches sequencer
             this->log_WARNING_HI_UnknownSequencerDirective(stmt.getopCode(), this->m_runtime.nextStatementIndex - 1,
@@ -273,6 +283,10 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
         }
         case Fpy::DirectiveId::GET_TLM_VAL: {
             this->directive_getTlmValue_internalInterfaceInvoke(directive.getTlmValue);
+            break;
+        }
+        case Fpy::DirectiveId::GET_PRM_VAL: {
+            this->directive_getPrmValue_internalInterfaceInvoke(directive.getPrmValue);
             break;
         }
         default: {

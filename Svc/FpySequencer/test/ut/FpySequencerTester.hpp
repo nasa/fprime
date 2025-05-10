@@ -69,6 +69,9 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     Fw::Time nextTlmTime;
     Fw::TlmBuffer nextTlmValue;
 
+    FwPrmIdType nextPrmId;
+    Fw::ParamBuffer nextPrmValue;
+
     // clears the sequence we're currently building
     void clearSeq();
     void allocMem(FwSizeType bytes = Fpy::Sequence::SERIALIZED_SIZE);
@@ -95,6 +98,8 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     void add_GET_TLM_TIME(FpySequencer_GetTlmTimeDirective dir);
     void add_GET_TLM_VALUE(U8 lvarIdx, FwChanIdType id);
     void add_GET_TLM_VALUE(FpySequencer_GetTlmValueDirective dir);
+    void add_GET_PRM_VALUE(U8 lvarIdx, FwPrmIdType id);
+    void add_GET_PRM_VALUE(FpySequencer_GetPrmValueDirective dir);
     //! Handle a text event
     void textLogIn(FwEventIdType id,                //!< The event ID
                    const Fw::Time& timeTag,         //!< The time
@@ -111,6 +116,13 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
                                  Fw::TlmBuffer& val    //!< Buffer containing serialized telemetry value.
                                                        //!< Size set to 0 if channel not found.
                                  ) override;
+
+    //! Default handler implementation for from_getParam
+    Fw::ParamValid from_getParam_handler(FwIndexType portNum,  //!< The port number
+                                         FwPrmIdType id,       //!< Parameter ID
+                                         Fw::ParamBuffer& val  //!< Buffer containing serialized parameter value.
+                                                               //!< Unmodified if param not found.
+    ) override;
 };
 
 }  // namespace Svc

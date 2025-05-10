@@ -13,6 +13,7 @@ module Svc {
             NO_OP = 0x00000006,
             GET_TLM_TIME = 0x00000007,
             GET_TLM_VAL = 0x00000008,
+            GET_PRM_VAL = 0x00000009,
         }
 
         enum StatementType : U8 {

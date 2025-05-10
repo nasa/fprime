@@ -51,6 +51,7 @@ class FpySequencer : public FpySequencerComponentBase {
         FpySequencer_NoOpDirective noOp;
         FpySequencer_GetTlmTimeDirective getTlmTime;
         FpySequencer_GetTlmValueDirective getTlmValue;
+        FpySequencer_GetPrmValueDirective getPrmValue;
 
         DirectiveUnion() {}
         ~DirectiveUnion() {}
@@ -393,6 +394,10 @@ class FpySequencer : public FpySequencerComponentBase {
     void directive_getTlmValue_internalInterfaceHandler(
         const Svc::FpySequencer_GetTlmValueDirective& directive) override;
 
+    //! Internal interface handler for directive_getPrmValue
+    void directive_getPrmValue_internalInterfaceHandler(
+        const Svc::FpySequencer_GetPrmValueDirective& directive) override;
+
     void parametersLoaded() override;
     void parameterUpdated(FwPrmIdType id) override;
 
@@ -566,6 +571,7 @@ class FpySequencer : public FpySequencerComponentBase {
     Signal noOp_directiveHandler(const FpySequencer_NoOpDirective& directive);
     Signal getTlmTime_directiveHandler(const FpySequencer_GetTlmTimeDirective& directive);
     Signal getTlmValue_directiveHandler(const FpySequencer_GetTlmValueDirective& directive);
+    Signal getPrmValue_directiveHandler(const FpySequencer_GetPrmValueDirective& directive);
 };
 
 }  // namespace Svc

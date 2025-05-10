@@ -229,6 +229,16 @@ void FpySequencerTester::add_GET_TLM_VALUE(FpySequencer_GetTlmValueDirective dir
     addDirective(Fpy::DirectiveId::GET_TLM_VAL, buf);
 }
 
+void FpySequencerTester::add_GET_PRM_VALUE(U8 lvarIdx, FwPrmIdType id) {
+    add_GET_PRM_VALUE(FpySequencer_GetPrmValueDirective(lvarIdx, id));
+}
+
+void FpySequencerTester::add_GET_PRM_VALUE(FpySequencer_GetPrmValueDirective dir) {
+    Fw::StatementArgBuffer buf;
+    FW_ASSERT(buf.serialize(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    addDirective(Fpy::DirectiveId::GET_PRM_VAL, buf);
+}
+
 //! Handle a text event
 void FpySequencerTester::textLogIn(FwEventIdType id,                //!< The event ID
                                    const Fw::Time& timeTag,         //!< The time
@@ -261,5 +271,20 @@ void FpySequencerTester::from_getTlmChan_handler(FwIndexType portNum,  //!< The 
     }
     val = nextTlmValue;
     timeTag = nextTlmTime;
+}
+
+//! Default handler implementation for from_getParam
+Fw::ParamValid FpySequencerTester::from_getParam_handler(
+    FwIndexType portNum,  //!< The port number
+    FwPrmIdType id,       //!< Parameter ID
+    Fw::ParamBuffer& val  //!< Buffer containing serialized parameter value.
+                          //!< Unmodified if param not found.
+) {
+    this->pushFromPortEntry_getParam(id, val);
+    if (id != nextPrmId) {
+        return Fw::ParamValid::INVALID;
+    }
+    val = nextPrmValue;
+    return Fw::ParamValid::VALID;
 }
 }  // namespace Svc

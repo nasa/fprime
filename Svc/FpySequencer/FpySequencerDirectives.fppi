@@ -52,6 +52,13 @@ struct GetTlmValueDirective {
     chanId: FwChanIdType
 }
 
+struct GetPrmValueDirective {
+    @ the local variable to store the prm value in
+    destLvarIndex: U8
+    @ the param id to get the value of
+    prmId: FwPrmIdType
+}
+
 internal port directive_waitRel(directive: WaitRelDirective) priority 6 assert
 
 internal port directive_waitAbs(directive: WaitAbsDirective) priority 6 assert
@@ -67,3 +74,5 @@ internal port directive_noOp(directive: NoOpDirective) priority 6 assert
 internal port directive_getTlmTime(directive: GetTlmTimeDirective) priority 6 assert
 
 internal port directive_getTlmValue(directive: GetTlmValueDirective) priority 6 assert
+
+internal port directive_getPrmValue(directive: GetPrmValueDirective) priority 6 assert
