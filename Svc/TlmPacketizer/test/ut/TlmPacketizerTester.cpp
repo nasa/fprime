@@ -900,6 +900,39 @@ void TlmPacketizerTester ::pingTest() {
     ASSERT_from_pingOut(0, static_cast<U32>(0x1234));
 }
 
+//! get channel value test
+//!
+void TlmPacketizerTester ::getChannelValueTest() {
+    this->component.setPacketList(packetList, ignore, 2);
+    Fw::Time time;
+    Fw::TlmBuffer val;
+    this->invoke_to_TlmGet(0, 10, time, val);
+    // hasn't received a value yet
+    ASSERT_EQ(val.getBuffLength(), 0);
+
+    Fw::Time timeIn(123, 456);
+    Fw::TlmBuffer valIn;
+    valIn.serialize(static_cast<I32>(789));
+    this->invoke_to_TlmRecv(0, 10, timeIn, valIn);
+
+    this->invoke_to_TlmGet(0, 10, time, val);
+    // should have a value
+    ASSERT_EQ(val.getBuffLength(), 4);
+    ASSERT_EQ(time, timeIn);
+
+    // grab an ignored chan
+    this->invoke_to_TlmGet(0, 25, time, val);
+    // should not have a value
+    ASSERT_EQ(val.getBuffLength(), 0);
+
+    // grab a nonexistent chan
+    // set it to 4 so we can see when it fails
+    val.setBuffLen(4);
+    this->invoke_to_TlmGet(0, 9123, time, val);
+    // should not have a value
+    ASSERT_EQ(val.getBuffLength(), 0);
+}
+
 // ----------------------------------------------------------------------
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
@@ -952,6 +985,9 @@ void TlmPacketizerTester ::connectPorts() {
 
     // tlmOut
     this->component.set_tlmOut_OutputPort(0, this->get_from_tlmOut(0));
+
+    // TlmGet
+    this->connect_to_TlmGet(0, this->component.get_TlmGet_InputPort(0));
 }
 
 void TlmPacketizerTester::textLogIn(const FwEventIdType id,          //!< The event ID

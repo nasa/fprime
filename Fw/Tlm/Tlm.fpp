@@ -14,7 +14,8 @@ module Fw {
                $id: FwChanIdType @< Telemetry Channel ID
                ref timeTag: Fw.Time @< Time Tag
                @ Buffer containing serialized telemetry value. 
-               @ Size set to 0 if channel not found.
+               @ Size set to 0 if channel not found, or if no value
+               @ has been received for this channel yet.
                ref val: Fw.TlmBuffer 
              )
 
