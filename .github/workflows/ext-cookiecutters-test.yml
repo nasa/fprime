@@ -1,4 +1,4 @@
-name: Cookiecutters Tests
+name: "External Repo: Cookiecutters Tests"
 
 on:
  push:
@@ -31,7 +31,7 @@ jobs:
     name: "Get fprime-bootstrap target branch"
     uses: ./.github/workflows/reusable-get-pr-branch.yml
     with:
-      target_repository: nasa/fprime-bootstrap
+      target_repository: fprime-community/fprime-bootstrap
 
   # -------- Install target versions of the cookiecutter templates and validate -------
   Validate:

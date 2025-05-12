@@ -16,7 +16,6 @@ set(SOURCE_FILES
 )
 # Note: no autocoding files, so basic dependencies must be hard-coded
 set(MOD_DEPS
-  Fw/Cfg
   Fw/Types
   CFDP/Checksum
   Fw/Buffer

@@ -8,7 +8,7 @@
 #include <Fw/Cmd/CmdPacket.hpp>
 #include <Svc/CmdSplitter/CmdSplitter.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <FppConstantsAc.hpp>
+#include <config/FppConstantsAc.hpp>
 
 namespace Svc {
 

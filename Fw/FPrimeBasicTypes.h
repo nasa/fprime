@@ -23,7 +23,7 @@ extern "C" {
 #endif
 #include <Fw/Types/BasicTypes.hpp>
 #include <Platform/PlatformTypes.h>
-#include <FpConfig.h>
+#include <config/FpConfig.h>
 
 
 // ----------------------------------------------------------------------

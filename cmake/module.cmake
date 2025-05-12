@@ -16,9 +16,6 @@ include(utilities)
 set(FPRIME__INTERNAL_EMPTY_CPP "${FPRIME_FRAMEWORK_PATH}/cmake/empty.cpp")
 set(VALID_EMPTY "${FPRIME_FRAMEWORK_PATH}/cmake/valid-empty.cpp")
 
-# Name of the F Prime implicit dependency of all modules (our project config)
-set(FPRIME_IMPLICIT_DEPENDENCY config)
-
 ####
 # Function `fprime__internal_add_build_target`:
 #
@@ -67,6 +64,7 @@ function(fprime__process_module_setup FPRIME_MODULE_TYPE ADDITIONAL_CONTROL_SETS
 
     # List of control words
     set(CONTROL_SETS "HEADERS" "SOURCES" "DEPENDS" "EXCLUDE_FROM_ALL" "AUTOCODER_INPUTS" ${ADDITIONAL_CONTROL_SETS})
+    set(FILE_CONTROL_SETS "HEADERS" "SOURCES" "AUTOCODER_INPUTS")
     # Set module name as passed in, then defaulting to FPRIME_CURRENT_MODULE
     if (${INPUT_COUNT} GREATER 0 AND NOT FIRST_ARGUMENT IN_LIST CONTROL_SETS)
         list(POP_FRONT INPUT_ARGUMENTS MODULE_NAME)
@@ -123,6 +121,9 @@ function(fprime__process_module_setup FPRIME_MODULE_TYPE ADDITIONAL_CONTROL_SETS
     unset(CURRENT_LIST_NAME)
     # Process all arguments and fill in the module sources
     foreach (ARGUMENT IN LISTS INPUT_ARGUMENTS)
+        # EXISTS only defined for resolved absolute paths
+        set(RESOLVED_ARGUMENT "${ARGUMENT}")
+        resolve_path_variables(RESOLVED_ARGUMENT)
         # If the argument is one of our control tokens, and the list is already defined, this means the user has specified
         # the argument twice. This is likely an error.
         if (ARGUMENT IN_LIST CONTROL_SETS AND DEFINED "${ARGUMENT}")
@@ -130,8 +131,15 @@ function(fprime__process_module_setup FPRIME_MODULE_TYPE ADDITIONAL_CONTROL_SETS
         # Now update the current list and define the backing store for it. This will allow us to capture arguments
         # between this and other control words.
         elseif(ARGUMENT IN_LIST CONTROL_SETS)
+            # Check for control words that are zero-argument (flags) and set them to true
+            if (DEFINED CURRENT_LIST_NAME AND NOT DEFINED ${CURRENT_LIST_NAME})
+                set("${CURRENT_LIST_NAME}" TRUE)
+            endif()
             set(CURRENT_LIST_NAME "${ARGUMENT}")
             set("${CURRENT_LIST_NAME}")
+        # Check that file types' files exist
+        elseif(DEFINED CURRENT_LIST_NAME AND CURRENT_LIST_NAME IN_LIST FILE_CONTROL_SETS AND NOT EXISTS "${RESOLVED_ARGUMENT}")
+            fprime_cmake_fatal_error("${ARGUMENT} does not exist but was specified as a SOURCE/HEADER/AUTOCODER_INPUT")
         # Add in an element to the active control list
         elseif(DEFINED CURRENT_LIST_NAME)
             list(APPEND "${CURRENT_LIST_NAME}" "${ARGUMENT}")
@@ -141,12 +149,22 @@ function(fprime__process_module_setup FPRIME_MODULE_TYPE ADDITIONAL_CONTROL_SETS
             fprime_cmake_fatal_error("One of ${CONTROL_SETS_STRING} must be specified before list elements: ${ARGUMENT}")
         endif()
     endforeach()
+    # Check for control words that are zero-argument (flags) and set them to true
+    if (DEFINED CURRENT_LIST_NAME AND NOT DEFINED ${CURRENT_LIST_NAME})
+        set("${CURRENT_LIST_NAME}" TRUE)
+    endif()
     # Update caller scope with the new variables
     set(INTERNAL_MODULE_NAME "${MODULE_NAME}" PARENT_SCOPE)
     foreach(CONTROL_SET IN LISTS CONTROL_SETS)
         # Define listed argument in parent scope only when they were defined within this file. This will unused control
         # words to be undefined lists in parent scope distinguishing them from empty words.
         if (DEFINED "${CONTROL_SET}")
+            # FPP, Python, and other non-native (virtualized) tooling deal in absolute resolved paths. This is a function
+            # of how the virtual machines underpinning these technologies work.
+            #
+            # Thus to make life easier on tool developers, we automatically resolve all paths as part of the interface
+            # ensuring that this step is not required on each tool integration.
+            resolve_path_variables(${CONTROL_SET})
             set(INTERNAL_${CONTROL_SET} "${${CONTROL_SET}}" PARENT_SCOPE)
         endif()
     endforeach(CONTROL_SET IN LISTS CONTROL_SETS)
@@ -173,27 +191,32 @@ endfunction()
 function(fprime__internal_add_build_target_helper TARGET_NAME TYPE SOURCES AUTOCODER_INPUTS HEADERS DEPENDENCIES EXTRA_CMAKE_DIRECTIVES)
     # Historical status message for posterity...and to prevent panic amongst users
     message(STATUS "Adding ${TYPE}: ${TARGET_NAME}")
-    # Add implicit dependency and filter out self-dependencies
-    list(APPEND DEPENDENCIES config)
-    list(REMOVE_ITEM DEPENDENCIES "${TARGET_NAME}")
     # Remap F Prime target type to CMake targe type
     if (TYPE STREQUAL "Executable" OR TYPE STREQUAL "Deployment" OR TYPE STREQUAL "Unit Test")
         add_executable("${TARGET_NAME}" ${EXTRA_CMAKE_DIRECTIVES} "${SOURCES}")
     elseif(TYPE STREQUAL "Library")
-        add_library("${TARGET_NAME}" ${EXTRA_CMAKE_DIRECTIVES} "${SOURCES}")
+        add_library("${TARGET_NAME}" ${EXTRA_CMAKE_DIRECTIVES} ${SOURCES})
     else()
         fprime_cmake_fatal_error("Cannot register compilation target of type ${TYPE}")
     endif()
-    # TODO: this is needed because sub-builds still attempt register targets, but without the build target to add back in the
-    #       autocoding output. Thus empty must be substituted. Would it be possible to force the library to be an INTERFACE
-    #       instead?  Or only add empty on sub-builds?
-    target_sources("${TARGET_NAME}" PRIVATE "${FPRIME__INTERNAL_EMPTY_CPP}")
-    target_link_libraries("${TARGET_NAME}" PUBLIC ${DEPENDENCIES})
+    # Use the appropriate link type for the target
+    get_target_property(CMAKE_LIBRARY_TYPE "${TARGET_NAME}" TYPE)
+    if (CMAKE_LIBRARY_TYPE MATCHES "INTERFACE_LIBRARY")
+        target_link_libraries("${TARGET_NAME}" INTERFACE ${DEPENDENCIES})
+    else()
+        # TODO: this is needed because sub-builds still attempt register targets, but without the build target to add back in the
+        #       autocoding output. Thus empty must be substituted. Would it be possible to force the library to be an INTERFACE
+        #       instead?  Or only add empty on sub-builds?
+        target_sources("${TARGET_NAME}" PRIVATE "${FPRIME__INTERNAL_EMPTY_CPP}")
+        target_link_libraries("${TARGET_NAME}" PUBLIC ${DEPENDENCIES})
+    endif()
     set_target_properties("${TARGET_NAME}"
         PROPERTIES
             SUPPLIED_HEADERS "${HEADERS}"
             SUPPLIED_SOURCES "${SOURCES}"
             SUPPLIED_DEPENDENCIES "${DEPENDENCIES}"
+            SUPPLIED_AUTOCODER_INPUTS "${AUTOCODER_INPUTS}"
+            FPRIME_DEPENDENCIES "${DEPENDENCIES}"
             AUTOCODER_INPUTS "${AUTOCODER_INPUTS}"
             FPRIME_TYPE "${TYPE}"
     )

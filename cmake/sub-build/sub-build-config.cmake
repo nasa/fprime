@@ -7,13 +7,13 @@
 include_guard()
 
 # List of types of variables that are excluded from the list passed to sub-builds.
-set(TYPES_DISALLOWED_LIST
+set(FPRIME_SUB_BUILD_TYPES_DISALLOWED_LIST
     INTERNAL
     STATIC
 )
 
 # List of cache variables that shall be excluded from the list passed to sub-builds.
-set(SUB_BUILD_EXCLUDED_CACHE_VARIABLES
+set(FPRIME_SUB_BUILD_EXCLUDED_CACHE_VARIABLES
     CMAKE_EDIT_COMMAND
     CMAKE_HOME_DIRECTORY
     CMAKE_INSTALL_NAME_TOOL

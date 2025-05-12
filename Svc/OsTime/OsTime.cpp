@@ -5,7 +5,7 @@
 // ======================================================================
 
 #include "Svc/OsTime/OsTime.hpp"
-#include "FpConfig.hpp"
+#include "config/FpConfig.hpp"
 
 #include <Fw/Time/TimeInterval.hpp>
 

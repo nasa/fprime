@@ -6,11 +6,13 @@
 # support. This file includes the cmake build system setup for building like fprime.
 ####
 include_guard()
+
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
 include(utilities)
 include(options)
 include(sanitizers) # Enable sanitizers if they are requested
 include(required)
+include(config_assembler)
 
 # Add project root's cmake folder to module path
 if (IS_DIRECTORY "${FPRIME_PROJECT_ROOT}/cmake")
@@ -29,12 +31,18 @@ endif()
 
 # Setup fprime library locations
 list(REMOVE_DUPLICATES FPRIME_LIBRARY_LOCATIONS)
-set(FPRIME_BUILD_LOCATIONS "${FPRIME_FRAMEWORK_PATH}" ${FPRIME_LIBRARY_LOCATIONS} "${FPRIME_PROJECT_ROOT}")
+
+# F Prime build locations represent the root of the module paths in F Prime. This allows us to detect module names from the
+# paths to given files.
+# Now that modules can build within the build cache, the build cache locations (root, F-Prime) are added to the list of
+# locations. This allows for the detection of modules that are built within the build cache.
+set(FPRIME_BUILD_LOCATIONS "${FPRIME_FRAMEWORK_PATH}" ${FPRIME_LIBRARY_LOCATIONS} "${FPRIME_PROJECT_ROOT}"
+    "${CMAKE_BINARY_DIR}/F-Prime" "${CMAKE_BINARY_DIR}")
 list(REMOVE_DUPLICATES FPRIME_BUILD_LOCATIONS)
+resolve_path_variables(FPRIME_BUILD_LOCATIONS)
 
 # Message describing the fprime setup
 message(STATUS "[FPRIME] Module locations: ${FPRIME_BUILD_LOCATIONS}")
-message(STATUS "[FPRIME] Configuration module: ${FPRIME_CONFIG_DIR}")
 message(STATUS "[FPRIME] Installation directory: ${CMAKE_INSTALL_PREFIX}")
 include(platform/platform) # Now that module locations are known, load platform settings
 
@@ -60,13 +68,11 @@ include(settings)
 function(fprime_setup_global_includes)
     # Setup the global include directories that exist outside of the build cache
     include_directories("${FPRIME_FRAMEWORK_PATH}")
-    include_directories("${FPRIME_CONFIG_DIR}")
     include_directories("${FPRIME_PROJECT_ROOT}")
 
     # Setup the include directories that exist within the build-cache
     include_directories("${CMAKE_BINARY_DIR}")
     include_directories("${CMAKE_BINARY_DIR}/F-Prime")
-    include_directories("${CMAKE_BINARY_DIR}/config")
 endfunction(fprime_setup_global_includes)
 
 ####
@@ -209,14 +215,9 @@ function(fprime_setup_included_code)
     # add_fprime_subdirectory cannot be run until later in the build process. Otherwise detection
     # for model specific post processing is messed up. Thus we synthesize the behavior by setting
     # the current module and then calling stock "add_subdirectory".
-    get_module_name("${FPRIME_PLATFORM_MODULE_DIRECTORY}")
-    set(FPRIME_CURRENT_MODULE "${MODULE_NAME}")
-    string(REPLACE "_" "/" PLATFORM_MODULE_PATH "${FPRIME_CURRENT_MODULE}")
-    add_subdirectory("${FPRIME_PLATFORM_MODULE_DIRECTORY}" "${CMAKE_BINARY_DIR}/${PLATFORM_MODULE_PATH}")
-    set(FPRIME_CURRENT_MODULE config)
-    add_subdirectory("${FPRIME_CONFIG_DIR}" "${CMAKE_BINARY_DIR}/config")
-
-    set(_FP_CORE_PACKAGES Fw Svc Os Drv CFDP Utils)
+    fprime__include_platform_file()
+    
+    set(_FP_CORE_PACKAGES default Fw Svc Os Drv CFDP Utils)
     foreach (_FP_PACKAGE_DIR IN LISTS _FP_CORE_PACKAGES)
         set(FPRIME_CURRENT_MODULE "${_FP_PACKAGE_DIR}")
         add_subdirectory("${FPRIME_FRAMEWORK_PATH}/${_FP_PACKAGE_DIR}/" "${CMAKE_BINARY_DIR}/F-Prime/${_FP_PACKAGE_DIR}")

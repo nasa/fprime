@@ -44,6 +44,14 @@ class FprimeRouter final : public FprimeRouterComponentBase {
                                U32 cmdSeq,                      //!< The command sequence number
                                const Fw::CmdResponse& response  //!< The command response
                                ) override;
+
+    //! Handler implementation for fileBufferReturnIn
+    //!
+    //! Port for receiving ownership back of buffers sent on fileOut
+    void fileBufferReturnIn_handler(FwIndexType portNum,  //!< The port number
+                                    Fw::Buffer& fwBuffer  //!< The buffer
+                                    ) override;
+
 };
 }  // namespace Svc
 

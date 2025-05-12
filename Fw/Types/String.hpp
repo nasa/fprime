@@ -9,7 +9,7 @@
 
 #include <Fw/FPrimeBasicTypes.hpp>
 
-#include "Fw/Cfg/SerIds.hpp"
+#include "Fw/Types/SerIds.hpp"
 #include "Fw/Types/StringBase.hpp"
 
 namespace Fw {

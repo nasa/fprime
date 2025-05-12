@@ -43,7 +43,6 @@ def print_list_settings(items: List[str]):
 CMAKE_NEEDED_SETTINGS = {
     "framework_path": partial(print_setting, "FPRIME_FRAMEWORK_PATH"),
     "project_root": partial(print_setting, "FPRIME_PROJECT_ROOT"),
-    "config_directory": partial(print_setting, "FPRIME_CONFIG_DIR"),
     "library_locations": lambda value: print_setting(
         "FPRIME_LIBRARY_LOCATIONS", ";".join(str(item) for item in value)
     ),
@@ -92,6 +91,7 @@ def main():
             print(
                 f"[WARNING] Failed to load settings.ini field {key_error}. Update fprime-util.",
                 end=";",
+                file=sys.stderr,
             )
     # Print the last setting with no ending to prevent null-entry at list end
     print_setting("FPRIME_SETTINGS_FILE", args_ns.settings, ending="")

@@ -24,9 +24,8 @@ Learn more about [F´ key features](https://fprime.jpl.nasa.gov/overview).
 
 1. Linux, Windows with WSL, or macOS operating system
 2. [git](https://git-scm.com/)
-3. [CMake 3.16+](https://cmake.org/download/). CLI tool must be available on the system path.
-4. [Clang](https://clang.llvm.org/) or [GNU C and C++ compilers](https://gcc.gnu.org/) (e.g. gcc and g++)
-5. [Python 3.8+](https://www.python.org/downloads/), [virtual environments](https://docs.python.org/3/library/venv.html), and [PIP](https://pypi.org/project/pip/)
+3. [Clang](https://clang.llvm.org/) or [GNU C and C++ compilers](https://gcc.gnu.org/) (e.g. gcc and g++)
+4. [Python 3.8+](https://www.python.org/downloads/), [virtual environments](https://docs.python.org/3/library/venv.html), and [PIP](https://pypi.org/project/pip/)
 
 
 ## Getting Started

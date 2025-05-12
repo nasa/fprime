@@ -24,7 +24,7 @@ Queued messages from the highest priority source port are serviced first and a r
 | Requirement      | Description                                                                                                                             | Rationale                                                               | Verification Method |
 |------------------|-----------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------|---------------------|
 | SVC-COMQUEUE-001 | `Svc::ComQueue` shall queue `Fw::Buffer` and `Fw::ComBuffer` received on incoming ports.                                                | The purpose of the queue is to store messages.                          | Unit Test           |
-| SVC-COMQUEUE-002 | `Svc::ComQueue` shall output exactly one `Fw::Buffer` (wrapping the queued data units) on a received `Fw::Success::SUCCESS` signal.           | `Svc::ComQueue` obeys the communication adapter interface protocol.     | Unit Test           |
+| SVC-COMQUEUE-002 | `Svc::ComQueue` shall output exactly one `Fw::Buffer` (wrapping the queued data units) on a received `Fw::Success::SUCCESS` signal.           | `Svc::ComQueue` obeys the communication adapter interface protocol.     | Unit Test     |
 | SVC-COMQUEUE-003 | `Svc::ComQueue` shall pause sending on the  `Fw::Success::FAILURE` and restart on the next `Fw::Success::SUCCESS` signal.               | `Svc::ComQueue` should not sent to a failing communication adapter.     | Unit Test           |
 | SVC-COMQUEUE-004 | `Svc::ComQueue` shall have a configurable number of `Fw::Com` and `Fw::Buffer` input ports.                                             | `Svc::ComQueue` should be adaptable for a number of projects.           | Inspection          |
 | SVC-COMQUEUE-005 | `Svc::ComQueue` shall select and send the next priority `Fw::Buffer` and `Fw::ComBuffer` message in response to `Fw::Success::SUCCESS`. | `Svc::ComQueue` obeys the communication adapter interface protocol.     | Unit test           |
@@ -32,7 +32,8 @@ Queued messages from the highest priority source port are serviced first and a r
 | SVC-COMQUEUE-007 | `Svc::ComQueue` shall emit a queue overflow event for a given port when the configured depth is exceeded. Messages shall be discarded.  | `Svc::ComQueue` needs to indicate off-nominal events.                   | Unit Test           | 
 | SVC-COMQUEUE-008 | `Svc::ComQueue` shall implement a round robin approach to balance between ports of the same priority.                                   | Allows projects to balance between a set of queues of similar priority. | Unit Test           |
 | SVC-COMQUEUE-009 | `Svc::ComQueue` shall keep track and throttle queue overflow events per port.                                                           | Prevents a flood of queue overflow events.                              | Unit test           | 
-comPacketQueueIn
+| SVC-COMQUEUE-010 | `Svc::ComQueue` shall return ownership of incoming buffers once they have been enqueued.                                                | Memory management                                                       | Unit test           | 
+
 ## 4. Design
 The diagram below shows the `Svc::ComQueue` component.
 
@@ -43,12 +44,12 @@ The diagram below shows the `Svc::ComQueue` component.
 
 | Kind          | Name              | Port Type                             | Usage                                                    |
 |---------------|-------------------|---------------------------------------|----------------------------------------------------------|
-| `output`      | `queueSend`       | `Svc.ComDataWithContext`              | Port emitting queued messages                            |
+| `output`      | `dataOut`         | `Svc.ComDataWithContext`              | Port emitting queued messages                            |
+| `sync input`  | `dataReturnIn`    | `Svc.ComDataWithContext`              | Port retrieving back ownership buffers sent on dataOut   |
 | `async input` | `comStatusIn`     | `Fw.SuccessCondition`                 | Port for receiving the status signal                     |
 | `async input` | `comPacketQueueIn`| `[ComQueueComPorts] Fw.Com`           | Port array for receiving Fw::ComBuffers                  |
-| `async input` | `bufferQueueIn`   |  `[ComQueueBufferPorts] Fw.BufferSend`| Port array for receiving Fw::Buffers                     |
-| `sync input`  | `bufferReturnIn`  | `Svc.ComDataWithContext`              | Port for deallocating Fw::Buffer on queue overflow       |
-| `output`      | `bufferReturnOut` | `Svc.ComDataWithContext`              | Port for deallocating Fw::Buffer on queue overflow       |
+| `async input` | `bufferQueueIn`   | `[ComQueueBufferPorts] Fw.BufferSend` | Port array for receiving Fw::Buffers                     |
+| `output`      | `bufferReturnOut` | `[ComQueueBufferPorts] Fw.BufferSend` | Port array returning ownership of buffers received on bufferQueueIn |
 
 > [!NOTE]
 > ComQueue also has the port instances for autocoded functionality for events, telemetry and time.

@@ -14,6 +14,7 @@
 include_guard()
 include(utilities)
 include(module)
+include(config_assembler)
 set(FPRIME_TARGET_LIST "" CACHE INTERNAL "FPRIME_TARGET_LIST: custom fprime targets" FORCE)
 set(FPRIME_UT_TARGET_LIST "" CACHE INTERNAL "FPRIME_UT_TARGET_LIST: custom fprime targets" FORCE)
 set(FPRIME_AUTOCODER_TARGET_LIST "" CACHE INTERNAL "FPRIME_AUTOCODER_TARGET_LIST: custom fprime targets" FORCE)
@@ -131,6 +132,9 @@ function(add_fprime_subdirectory FP_SOURCE_DIR)
     if (${ARGC} GREATER 2)
         message(FATAL_ERROR "Cannot use 'add_fprime_subdirectory' with [binary_dir] argument.")
     endif()
+    # Make the path resolved: absolute, links resolved, etc.
+    # This allows the relative path commands (below) to work correctly.
+    resolve_path_variables(FP_SOURCE_DIR)
     get_nearest_build_root("${FP_SOURCE_DIR}")
     file(RELATIVE_PATH NEW_BIN_DIR "${FPRIME_CLOSEST_BUILD_ROOT}" "${FP_SOURCE_DIR}")
     # Add component subdirectories using normal add_subdirectory with overridden binary_dir
@@ -355,6 +359,116 @@ endfunction(register_fprime_deployment)
 function(fprime_add_deployment_build_target)
     fprime__internal_add_build_target("Deployment" "" ${ARGN})
     clear_historical_variables()
+    set(INTERNAL_MODULE_NAME "${INTERNAL_MODULE_NAME}" PARENT_SCOPE)
+endfunction()
+
+####
+# Function `register_fprime_config`:
+#
+# Registers a configuration build target using the fprime build system. This comes with dependency management and
+# fprime autocoding capabilities. The call format is identical to `register_fprime_library` and additionally supports
+# the CONFIGURATION_OVERRIDES directive. This allows users to override the configuration files supplied by previous
+# configuration modules supplied by the build (e.g. fprime default configuration and library configuration). DEPENDS
+# and EXCLUDE_FROM_ALL are not supported.
+#
+# All configuration module sources (SOURCES, HEADERS, and AUTOCODER_INPUTS) are copied into the build cache.
+# Overrides are copied into the original module's build that the file overrides as this preserves the original build
+# module set up. Overrides only work in order of detection within the CMakeList.txt tree:
+#
+#    platform -> fprime config -> library -> project.
+# 
+#
+# > [!WARNING]
+# > Specifying headers in this command is crucial to providing as configuration.
+#
+# > [!NOTE]
+# > Configuration is built as a series of STATIC libraries in order to allow for interdependencies between config and
+# > Fw_Types regardless of the Fw_Types library type.
+#
+# Example:
+# ```
+# register_fprime_config(
+#         MyFprimeConfig
+#     SOURCES
+#         config.cpp
+#     AUTOCODER_INPUTS
+#         config.fpp
+#     HEADERS
+#         config.hpp
+#     CONFIGURATION_OVERRIDES
+#         FpConfig.fpp
+#         FpConfig.hpp
+####
+function(register_fprime_config)
+    fprime_add_config_build_target(${ARGN})
+    # Clear the historical variables and set up autocode
+    clear_historical_variables()
+    fprime_attach_custom_targets("${INTERNAL_MODULE_NAME}")
+endfunction()
+
+####
+# Function `fprime_add_config_build_target`:
+#
+# Registers config using the fprime build system without setting up autocoding or target
+# support. See `register_fprime_config`.
+#
+# > [!NOTE]  
+# > Users may set up custom target and autocoder support by calling `fprime_attach_custom_targets`.
+#
+# This function sets "INTERNAL_MODULE_NAME" in PARENT_SCOPE to pass-back module name for target
+# registration.
+#
+# **MODULE_NAME**: (optional) module name. Default: ${FPRIME_CURRENT_MODULE}
+# **ARGN**: sources, autocoder inputs, etc preceded by a directive (i.e. SOURCES or DEPENDS)
+#
+####
+function(fprime_add_config_build_target)
+    set(FPRIME__INTERNAL_CONFIG_TARGET_NAME "__fprime_config")
+    # Set up interface target and directory for configuration files
+    if (NOT TARGET "${FPRIME__INTERNAL_CONFIG_TARGET_NAME}")
+        add_library("${FPRIME__INTERNAL_CONFIG_TARGET_NAME}" INTERFACE)
+    endif()
+    # Process the module arguments
+    fprime__process_module_setup("Library" "CONFIGURATION_OVERRIDES;INTERFACE" ${ARGN})
+    # Prevent configuration from having dependencies or being excluded from the all build
+    if (INTERNAL_DEPENDS OR INTERNAL_EXCLUDE_FROM_ALL)
+        message(FATAL_ERROR "Cannot use DEPENDS or EXCLUDE_FROM_ALL with fprime_add_config_build_target")
+    endif()
+    fprime__internal_process_configuration_sources(
+        "${INTERNAL_MODULE_NAME}"
+        "${INTERNAL_SOURCES}"
+        "${INTERNAL_AUTOCODER_INPUTS}"
+        "${INTERNAL_HEADERS}"
+        "${INTERNAL_CONFIGURATION_OVERRIDES}"
+        "${INTERNAL_DEPENDS}"
+    )
+
+    # Set up scoping variables for the new module
+    set(CONFIG_LIBRARY_TYPE "STATIC")
+    set(SCOPE "PUBLIC")
+    if (DEFINED INTERNAL_INTERFACE)
+        set(CONFIG_LIBRARY_TYPE "INTERFACE")
+        set(SCOPE "INTERFACE")
+    endif()
+    
+    # Make a library for this configuration module specifying the library type
+    # This is a static library by default, but can be overridden to INTERFACE
+    fprime__internal_add_build_target_helper(
+        "${INTERNAL_MODULE_NAME}" "Library"
+        "${INTERNAL_SOURCES}" "${INTERNAL_AUTOCODER_INPUTS}" "${INTERNAL_HEADERS}" "${INTERNAL_DEPENDS}" "${CONFIG_LIBRARY_TYPE}"
+    )
+    # The new module should include the root configuration directory
+    target_include_directories("${INTERNAL_MODULE_NAME}" "${SCOPE}" "${CMAKE_CURRENT_BINARY_DIR}/..")
+    # The configuration target should depend on the new module
+    target_link_libraries("${FPRIME__INTERNAL_CONFIG_TARGET_NAME}" INTERFACE "${INTERNAL_MODULE_NAME}")
+    # Set up the new module to be marked as FPRIME_CONFIGURATION
+    append_list_property("${INTERNAL_MODULE_NAME}" GLOBAL PROPERTY "FPRIME_CONFIG_MODULES")
+    set_property(TARGET "${INTERNAL_MODULE_NAME}" PROPERTY FPRIME_CONFIGURATION TRUE)
+    set_property(TARGET "${FPRIME__INTERNAL_CONFIG_TARGET_NAME}" PROPERTY FPRIME_CONFIGURATION TRUE)
+    # Static libraries must be position independent when building shared libraries
+    if (BUILD_SHARED_LIBS AND CONFIG_LIBRARY_TYPE STREQUAL "STATIC")
+        target_compile_options(${INTERNAL_MODULE_NAME} PRIVATE -fPIC)
+    endif()
     set(INTERNAL_MODULE_NAME "${INTERNAL_MODULE_NAME}" PARENT_SCOPE)
 endfunction()
 

@@ -6,7 +6,6 @@
 #
 ####
 set(MOD_DEPS
-    Fw/Cfg
     Fw/Types
 )
 set(SOURCE_FILES

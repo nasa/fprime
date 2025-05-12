@@ -14,7 +14,7 @@
 
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Drv/Ip/IpSocket.hpp>
-#include <IpCfg.hpp>
+#include <config/IpCfg.hpp>
 
 namespace Drv {
 /**

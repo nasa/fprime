@@ -265,7 +265,7 @@ option(BUILD_TESTING "Enable unit testing in the build" OFF)
 include(CTest)
 
 ####
-# Locations `FPRIME_FRAMEWORK_PATH`, `FPRIME_PROJECT_ROOT`, `FPRIME_LIBRARY_LOCATIONS`, and `FPRIME_CONFIG_DIR`:
+# Locations `FPRIME_FRAMEWORK_PATH`, `FPRIME_PROJECT_ROOT`, and `FPRIME_LIBRARY_LOCATIONS`:
 #
 # Note: these settings are supplied by `fprime-util` and need not be provided unless running CMake directly or through
 # any way bypassing that utility (e.g. inside your beloved IDE).
@@ -339,13 +339,6 @@ if (DEFINED FPRIME_ENVIRONMENT_FILE)
     set(FPRIME_ENVIRONMENT_FILE "${FPRIME_ENVIRONMENT_FILE}" CACHE PATH "F prime environment file" FORCE)
     set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${FPRIME_ENVIRONMENT_FILE}")
 endif()
-
-# Settings for F config directory
-if (NOT DEFINED FPRIME_CONFIG_DIR)
-    set(FPRIME_CONFIG_DIR "${FPRIME_FRAMEWORK_PATH}/config/")
-endif()
-set(FPRIME_CONFIG_DIR "${FPRIME_CONFIG_DIR}" CACHE PATH "F prime configuration header directory" FORCE)
-
 
 # Set FPRIME_TOOLCHAIN_NAME when not set by toolchain directly
 if (NOT DEFINED FPRIME_TOOLCHAIN_NAME)

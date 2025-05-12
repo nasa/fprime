@@ -23,9 +23,8 @@ Requirements:
 
 1. Linux, macOS, or WSL on Windows
 2. git
-3. [CMake 3.16](https://cmake.org/download/) or newer. CLI tool must be available on the system path.
-4. CLang or GNU C and C++ compilers (e.g. gcc and g++)
-5. [Python 3.8+](https://www.python.org/downloads/), virtual environments, and PIP
+3. CLang or GNU C and C++ compilers (e.g. gcc and g++)
+4. [Python 3.8+](https://www.python.org/downloads/), virtual environments, and PIP
 
 > [!NOTE]
 > Latest versions of PIP are strongly recommended. See [Recommended PIP Versions](#recommended-pip-versions)
@@ -33,8 +32,6 @@ Requirements:
 > For build host architectures other than x86_64 or aarch64, and systems with older PIP versions, Java is required
 >
 > Ubuntu and Debian users should see notes on [Python installation](#ubuntu-debian-java-and-python-pip)
->
-> macOS users must ensure the [CMake command line utility is on their path](#macos-and-cmake-command-not-found)
 >
 > Other OS-specific notes are in the [Troubleshooting](#troubleshooting) section below.
 
@@ -113,7 +110,6 @@ This section will add some known hints to trouble-shooting with the installation
 ### Linux
 * [Ubuntu, Debian, Java and Python PIP](#ubuntu-debian-java-and-python-pip)
 ### macOS
-* [CMake Command Not Found](#macos-and-cmake-command-not-found)
 * [SSL Error with Python 3.8+](#ssl-error-with-python-38-on-macos)
 
 ### Recommended PIP Versions
@@ -152,13 +148,6 @@ Ubuntu and possibly other Debian variants don’t include the pip packages in th
 sudo apt install git cmake default-jre python3 python3-pip python3-venv
 ```
 Now you should be able to run the installation without trouble.
-
-### macOS and CMake Command Not Found
-If the user chooses to install CMake directly from the CMake site (not using homebrew nor Mac Ports), then the CMake command-line tools must be added to the user’s PATH or default system libraries. The quickest command to do that is:
-```
-sudo "/Applications/CMake.app/Contents/bin/cmake-gui" --install
-```
-See [installing cmake command line tools on a mac](https://stackoverflow.com/questions/30668601/installing-cmake-command-line-tools-on-a-mac).   
 
 ### SSL Error with Python 3.8+ on macOS
 This fix will not work for Python installed via Homebrew. Try installing Python published at python.org.

@@ -46,6 +46,8 @@ static_assert(static_cast<Os::FileStatus::T>(Os::File::Status::INVALID_MODE) == 
               "File status and FPP shadow enum do not match");
 static_assert(static_cast<Os::FileStatus::T>(Os::File::Status::INVALID_ARGUMENT) == Os::FileStatus::T::INVALID_ARGUMENT,
               "File status and FPP shadow enum do not match");
+static_assert(static_cast<Os::FileStatus::T>(Os::File::Status::NO_MORE_RESOURCES) == Os::FileStatus::T::NO_MORE_RESOURCES,
+              "File status and FPP shadow enum do not match");
 static_assert(static_cast<Os::FileStatus::T>(Os::File::Status::OTHER_ERROR) == Os::FileStatus::T::OTHER_ERROR,
               "File status and FPP shadow enum do not match");
 
@@ -203,6 +205,8 @@ static_assert(static_cast<Os::QueueStatus::T>(Os::Queue::Status::INVALID_PRIORIT
 static_assert(static_cast<Os::QueueStatus::T>(Os::Queue::Status::FULL) == Os::QueueStatus::T::FULL,
               "Queue status enums do not match");
 static_assert(static_cast<Os::QueueStatus::T>(Os::Queue::Status::UNKNOWN_ERROR) == Os::QueueStatus::T::UNKNOWN_ERROR,
+              "Queue status enums do not match");
+static_assert(static_cast<Os::QueueStatus::T>(Os::Queue::Status::ALLOCATION_FAILED) == Os::QueueStatus::T::ALLOCATION_FAILED,
               "Queue status enums do not match");
 
 // Check consistency of every constant in the Os::Queue::BlockingType enum

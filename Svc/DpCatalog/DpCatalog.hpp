@@ -12,8 +12,8 @@
 
 #include <Fw/Types/MemAllocator.hpp>
 
-#include <DpCfg.hpp>
-#include <DpCatalogCfg.hpp>
+#include <config/DpCfg.hpp>
+#include <config/DpCatalogCfg.hpp>
 #include <Fw/Types/FileNameString.hpp>
 
 namespace Svc {
