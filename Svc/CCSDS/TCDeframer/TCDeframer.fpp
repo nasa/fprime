@@ -5,6 +5,18 @@ module CCSDS {
 
         include "../../Interfaces/DeframerInterface.fppi"
 
+        @ Used for event reporting
+        enum HeaderField {
+            SpacecraftId,
+            FrameLength,
+            VcId
+        }
+
+        @ Invalid Data Field
+        event InvalidHeaderField(field: HeaderField, expected: U32, received: U32) \
+            severity warning high \
+            format "Invalid Header Field Received. Field {} | Expected: {} | Received: {}"
+
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #
         ###############################################################################

@@ -41,7 +41,10 @@ class TMFramer final : public TMFramerComponentBase {
 
     //! Handler implementation for dataIn
     //!
-    //! Port to receive data to frame, in a Fw::Buffer with optional context
+    //! Port to receive data to frame, in a Fw::Buffer with optional context.
+    //! This is essentially the CCSDS TM VCP.request Service Primitive, with 
+    //! Packet=data and GVCID implicitly passed in context
+    //!
     void dataIn_handler(FwIndexType portNum,  //!< The port number
                         Fw::Buffer& data,
                         const ComCfg::FrameContext& context) override;
@@ -57,6 +60,7 @@ class TMFramer final : public TMFramerComponentBase {
     // at a time, we can use a member fixed-size buffer to hold the frame data
     U8 m_frameBuffer[ComCfg::FppConstant_TmFrameFixedSize::TmFrameFixedSize];  //!< Buffer to hold the frame data
 
+    // Current implementation uses a single virtual channel, so we can use a single virtual frame count
     U8 m_masterFrameCount;  //!< Master Frame Count - 8 bits - wraps around at 255
     U8 m_virtualFrameCount; //!< Virtual Frame Count - 8 bits - wraps around at 255
 };

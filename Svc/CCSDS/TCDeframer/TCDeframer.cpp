@@ -5,7 +5,7 @@
 // ======================================================================
 
 #include "Svc/CCSDS/TCDeframer/TCDeframer.hpp"
-#include "FpConfig.hpp"
+#include "config/FpConfig.hpp"
 #include "Svc/CCSDS/Types/FppConstantsAc.hpp"
 #include "Svc/CCSDS/Types/TCFrameHeaderSerializableAc.hpp"
 #include "Svc/CCSDS/Types/TCFrameTrailerSerializableAc.hpp"
@@ -33,7 +33,7 @@ void TCDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
     // CCSDS TC Primary Header:
     // 2b - 00  - TF Version Number
     // 1b - 0/1 - Bypass Flag            (0 = FARM checks enabled, 1 = FARM checks bypassed)
-    // 1b - 0/1 - Control Command Flag   (0 = Type-D data, 1 = Type-C data)
+    // 1b - 0/1 - Control Command Flag   (0 = Type-D data, 1 = Type-C control command)
     // 2b - 00  - Reserved Spare         (set to 00)
     // 10b- XX  - Spacecraft ID
     // 6b - XX  - Virtual Channel ID
@@ -55,16 +55,17 @@ void TCDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
         (header.getvcIdAndLength() & CCSDS::Types::TCFrameMasks::VcIdMask) >> CCSDS::Types::TCFrameMasks::VcIdOffset;
     U16 spacecraft_id = header.getflagsAndScId() & CCSDS::Types::TCFrameMasks::SpacecraftIdMask;
     if (spacecraft_id != ComCfg::FppConstant_SpacecraftId::SpacecraftId) {
-        printf("Spacecraft ID mismatch: %d != %d\n", spacecraft_id,
-               ComCfg::FppConstant_SpacecraftId::SpacecraftId);
+        this->log_WARNING_HI_InvalidHeaderField(TCDeframer_HeaderField::SpacecraftId, spacecraft_id,
+                                               ComCfg::FppConstant_SpacecraftId::SpacecraftId);
     }
     if (data.getSize() < frame_length + CCSDS::Types::TCFrameHeader::SERIALIZED_SIZE + CCSDS::Types::TCFrameTrailer::SERIALIZED_SIZE) {
-        printf("Frame length mismatch: %d != %d\n", frame_length,
-               data.getSize() - CCSDS::Types::TCFrameHeader::SERIALIZED_SIZE -
-                   CCSDS::Types::TCFrameTrailer::SERIALIZED_SIZE);
+        this->log_WARNING_HI_InvalidHeaderField(TCDeframer_HeaderField::FrameLength, frame_length,
+                                               data.getSize() - CCSDS::Types::TCFrameHeader::SERIALIZED_SIZE -
+                                                   CCSDS::Types::TCFrameTrailer::SERIALIZED_SIZE);
     }
     if (vc_id != ComCfg::FppConstant_VcId::VcId) {
-        printf("VC ID mismatch: %d != %d\n", vc_id, ComCfg::FppConstant_VcId::VcId);
+        this->log_WARNING_HI_InvalidHeaderField(TCDeframer_HeaderField::VcId, vc_id,
+                                               ComCfg::FppConstant_VcId::VcId);
     }
 
     // -------------------------------------------------

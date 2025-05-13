@@ -29,6 +29,9 @@ TMFramer ::~TMFramer() {}
 // ----------------------------------------------------------------------
 
 void TMFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
+    // TODO: VcId should likely be passed in the context by the caller, rather than retrieved here
+    // This matches the VCP.request Service Primitive better
+
     // TODO: make this an event probably
     FW_ASSERT(data.getSize() <= ComCfg::FppConstant_TmFrameFixedSize::TmFrameFixedSize,
               static_cast<FwAssertArgType>(data.getSize()));
@@ -53,6 +56,7 @@ void TMFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
     header.setvirtualFrameCount(this->m_virtualFrameCount);
     header.setdataFieldStatus(dataFieldStatus);
 
+    // We use only a single Virtual Channel for now, so master and virtual frame counts are the same
     this->m_masterFrameCount++;   // U8 intended to wrap around (modulo 256)
     this->m_virtualFrameCount++;  // U8 intended to wrap around (modulo 256)
 
@@ -69,6 +73,8 @@ void TMFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
     status = frameSerializer.serialize(data.getData(), data.getSize(), Fw::Serialization::OMIT_LENGTH);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
+
+    // TODO: fill with Idle Packets
 
     // -------------------------------------------------
     // Trailer: Compute CRC
@@ -97,8 +103,7 @@ void TMFramer ::comStatusIn_handler(FwIndexType portNum, Fw::Success& condition)
 void TMFramer ::dataReturnIn_handler(FwIndexType portNum,
                                      Fw::Buffer& frameBuffer,
                                      const ComCfg::FrameContext& context) {
-    // dataReturnIn is the member buffer coming back from the ComManager (e.g. ComStub) component
-    // this->bufferDeallocate_out(0, frameBuffer);
+    // dataReturnIn is our own member buffer coming back from the dataOut call - memset it to 0
     ::memset(this->m_frameBuffer, 0, sizeof(this->m_frameBuffer));
 }
 
