@@ -2,6 +2,24 @@
 
 Deframer for the TC Space Data Link Protocl (CCSDS Standard)
 
+- Service Types: Use "Expedited Service" Type-B Frames (meaning no sequence control)
+- This means FARM flag is expected to be 0, and sequence control is set to all 0s
+
+Implements the following service:
+- VIRTUAL CHANNEL PACKET SERVICE
+
+Implements the following functions:
+- ALL FRAMES RECEPTION FUNCTION
+- VC PACKET EXTRACTION FUNCTION (Router is the user to which frame data unit is delivered) ---- OR ------ use VCA_SDU with no Space Packet
+- FRAME DELIVERY FUNCTION (Type-BD -> to Router)
+- Frame Validation Check Procedure
+
+
+Not implemented:
+- Sequence Control (Type-A frames) and Control Commands
+- 
+
+
 ## Usage Examples
 Add usage examples here
 

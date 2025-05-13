@@ -29,6 +29,7 @@ module Types {
         constant ReservedMask     = 0x0C00
         constant SpacecraftIdMask = 0x03FF
         constant VcIdMask         = 0xFC00
+        constant VcIdOffset       = 10
         constant FrameLengthMask  = 0x03FF
     }
 
