@@ -170,8 +170,8 @@ void Os::Test::File::Tester::assert_file_opened(const std::string &path, Os::Fil
 
     // When the open mode has been specified assert that is in an exact state
     if (not path.empty() && Os::File::Mode::OPEN_NO_MODE != newly_opened_mode) {
-        // Assert file pointer always at beginning when functional
-        if (functional() ) {
+        // Assert file pointer always at beginning when functional and not append
+        if (functional() && Os::File::Mode::OPEN_APPEND != newly_opened_mode) {
             FwSizeType file_position = std::numeric_limits<FwSizeType>::max();
             ASSERT_EQ(this->m_file.position(file_position), Os::File::Status::OP_OK);
             ASSERT_EQ(file_position, 0);
@@ -275,7 +275,9 @@ void Os::Test::File::Tester::OpenBaseRule::action(Os::Test::File::Tester &state 
     if (Os::File::Status::OP_OK == status) {
         state.assert_file_opened(*filename, m_mode);
         FileState file_state = state.current_file_state();
-        ASSERT_EQ(file_state.position, 0); // Open always zeros the position
+        if(m_mode != Os::File::Mode::OPEN_APPEND) {
+            ASSERT_EQ(file_state.position, 0); // Open always zeros the position
+        }
     }
     // Assert the file state remains consistent.
     state.assert_file_consistent();
@@ -468,7 +470,6 @@ void Os::Test::File::Tester::Seek::action(
         // STest::Pick::lowerUpper(0, original_file_state.position + FILE_DATA_MAXIMUM) - original_file_state.position;
         // seek_offset = STest::Pick::lowerUpper(0, original_file_state.position + FILE_DATA_MAXIMUM);
         seek_offset = STest::Pick::lowerUpper(0, FILE_DATA_MAXIMUM);
-        printf("before seekoffset %u and position %u\n", seek_offset, original_file_state.position);
         seek_offset -= original_file_state.position;
     }
     Os::File::Status status = state.m_file.seek(seek_offset, absolute ? Os::File::SeekType::ABSOLUTE : Os::File::SeekType::RELATIVE);

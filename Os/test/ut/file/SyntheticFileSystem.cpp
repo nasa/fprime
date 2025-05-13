@@ -8,6 +8,10 @@
 namespace Os {
 namespace Test {
 
+SyntheticFile::~SyntheticFile() {
+    this->close();
+}
+
 SyntheticFileSystem::OpenData SyntheticFileSystem::open(const CHAR* char_path, const Os::File::Mode open_mode, const File::OverwriteType overwrite) {
     SyntheticFileSystem::OpenData return_value;
     std::string path = char_path;
@@ -36,12 +40,19 @@ SyntheticFileSystem::OpenData SyntheticFileSystem::open(const CHAR* char_path, c
         if (truncate) {
             return_value.file->m_data.clear();
         }
-        return_value.file->m_pointer = 0;
+
+        auto newPointer = 0;
+        if(exists && (Os::File::Mode::OPEN_APPEND == open_mode)) {
+            newPointer = return_value.file->m_data.size();
+        }
+        return_value.file->m_pointer = newPointer;
+
+        printf("syntheticfilesystem open: newPointer -> %u\n", newPointer);
         return_value.file->m_mode = open_mode;
         return_value.file->m_path = path;
         // Checks on the shadow data to ensure consistency
         FW_ASSERT(return_value.file->m_mode != Os::File::OPEN_NO_MODE);
-        FW_ASSERT(return_value.file->m_pointer == 0);
+        FW_ASSERT(return_value.file->m_pointer == newPointer);
         FW_ASSERT(return_value.file->m_path == path);
         FW_ASSERT(not truncate || return_value.file->m_data.empty());
     }
@@ -83,9 +94,11 @@ void SyntheticFile::close() {
     if (this->m_data != nullptr) {
         this->m_data->m_mode = Os::File::Mode::OPEN_NO_MODE;
         this->m_data->m_path.clear();
+        this->m_data->m_pointer = 0;
         // Checks on the shadow data to ensure consistency
         FW_ASSERT(this->m_data->m_mode == Os::File::Mode::OPEN_NO_MODE);
         FW_ASSERT(this->m_data->m_path.empty());
+        FW_ASSERT(this->m_data->m_pointer == 0);
     }
 }
 
