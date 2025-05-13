@@ -1,4 +1,4 @@
-#include <FpConfig.hpp>
+#include <config/FpConfig.hpp>
 #include <gtest/gtest.h>
 
 /**

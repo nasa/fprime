@@ -41,7 +41,7 @@ namespace Drv {
         FW_ASSERT(arg);
         // cast argument to component instance
         BlockDriverImpl* compPtr = static_cast<BlockDriverImpl*>(arg);
-        compPtr->InterruptReport_internalInterfaceHandler(0);
+        compPtr->InterruptReport_internalInterfaceInvoke(0);
     }
 
     void BlockDriverImpl::PingIn_handler(

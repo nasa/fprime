@@ -88,13 +88,13 @@ function(_get_call_properties)
     foreach (PROPERTY IN LISTS CACHE_VARS)
         get_property(CACHE_TYPE CACHE "${PROPERTY}" PROPERTY TYPE)
         # Exclude listed properties and empty properties
-        if ("${PROPERTY}" IN_LIST SUB_BUILD_EXCLUDED_CACHE_VARIABLES)
+        if ("${PROPERTY}" IN_LIST FPRIME_SUB_BUILD_EXCLUDED_CACHE_VARIABLES)
             continue()
             # Exclude empty values
         elseif("${${PROPERTY}}" STREQUAL "")
             continue()
             # Exclude internal cache values
-        elseif("${CACHE_TYPE}" IN_LIST TYPES_DISALLOWED_LIST)
+        elseif("${CACHE_TYPE}" IN_LIST FPRIME_SUB_BUILD_TYPES_DISALLOWED_LIST)
             continue()
         endif()
         # Add escaping for list type variables (for pass to function call and then again to another function call)

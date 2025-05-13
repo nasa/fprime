@@ -13,7 +13,7 @@
 #ifndef StaticMemory_HPP
 #define StaticMemory_HPP
 
-#include "StaticMemoryConfig.hpp"
+#include "config/StaticMemoryConfig.hpp"
 #include "Svc/StaticMemory/StaticMemoryComponentAc.hpp"
 
 namespace Svc {

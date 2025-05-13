@@ -15,7 +15,7 @@
 
 #include <Fw/Tlm/TlmPacket.hpp>
 #include <Svc/TlmChan/TlmChanComponentAc.hpp>
-#include <TlmChanImplCfg.hpp>
+#include <config/TlmChanImplCfg.hpp>
 
 namespace Svc {
 

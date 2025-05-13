@@ -5,7 +5,7 @@
 # sub-build that generates cached-information about the build itself.
 ####
 include_guard()
-set(FPP_LOCATE_DEFS_HELPER "${PYTHON}" "${CMAKE_CURRENT_LIST_DIR}/tools/redirector.py")
+set(FPP__INTERNAL_LOCATE_DEFS_HELPER "${PYTHON}" "${CMAKE_CURRENT_LIST_DIR}/tools/redirector.py")
 ####
 # Function `fpp_depend_add_global_target`:
 #
@@ -61,7 +61,7 @@ function(fpp_depend_add_module_target MODULE TARGET SOURCES_UNUSED DEPENDENCIES)
         )
         add_custom_command(
             OUTPUT ${OUTPUT_FILES}
-            COMMAND ${FPP_LOCATE_DEFS_HELPER}
+            COMMAND ${FPP__INTERNAL_LOCATE_DEFS_HELPER}
                 "${LOCAL_CACHE}/stdout.txt"
                 "${FPP_DEPEND}"
                 "${FPRIME_BINARY_DIR}/locs.fpp"

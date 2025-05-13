@@ -494,6 +494,7 @@ function(get_module_name)
     else()
         set(DIRECTORY_PATH "${CMAKE_CURRENT_LIST_DIR}")
     endif()
+    resolve_path_variables(DIRECTORY_PATH)
     # If DIRECTORY_PATH exists, then find its offset from BUILD_ROOT to calculate the module
     # name. If it does not exist, then it is assumed to be an offset already and is carried
     # forward in the calculation.
@@ -594,6 +595,7 @@ endfunction(print_property)
 ####
 function(introspect MODULE_NAME)
     print_property("${MODULE_NAME}" SOURCES)
+    print_property("${MODULE_NAME}" SUPPLIED_HEADERS)
     print_property("${MODULE_NAME}" INCLUDE_DIRECTORIES)
     print_property("${MODULE_NAME}" LINK_LIBRARIES)
     print_property("${MODULE_NAME}" INTERFACE_LINK_LIBRARIES)
@@ -716,9 +718,10 @@ function(resolve_path_variables)
         set(NEW_LIST)
         # Loop through each item in INPUT_NAME
         foreach(UNRESOLVED IN LISTS ${INPUT_NAME})
+            get_filename_component(ABSOLUTE_UNRESOLVED "${UNRESOLVED}" ABSOLUTE)
             # If it is a path, resolve it
-            if (EXISTS ${UNRESOLVED})
-                get_filename_component(RESOLVED "${UNRESOLVED}" REALPATH)
+            if (EXISTS ${ABSOLUTE_UNRESOLVED})
+                get_filename_component(RESOLVED "${ABSOLUTE_UNRESOLVED}" REALPATH)
             else()
                 set(RESOLVED "${UNRESOLVED}")
             endif()
@@ -819,7 +822,7 @@ function(recurse_target_properties CMAKE_BUILD_TARGET_NAME PROPERTY_NAMES TRANSI
     if (NOT TARGET "${CMAKE_BUILD_TARGET_NAME}")
         set("${NON_EXISTENT_LINKS_OUTPUT}" "${CMAKE_BUILD_TARGET_NAME}" PARENT_SCOPE)
         set("${TRANSITIVE_LINKS_OUTPUT}" PARENT_SCOPE)
-	set("${EXTERNAL_LINKS_OUTPUT}" PARENT_SCOPE)
+        set("${EXTERNAL_LINKS_OUTPUT}" PARENT_SCOPE)
         return()
     endif()
     # If the target is imported, tell the parent that this is an external target
@@ -843,7 +846,7 @@ function(recurse_target_properties CMAKE_BUILD_TARGET_NAME PROPERTY_NAMES TRANSI
     if (NOT PROPERTY_LIST)
         set("${NON_EXISTENT_LINKS_OUTPUT}" PARENT_SCOPE)
         set("${TRANSITIVE_LINKS_OUTPUT}" "${CMAKE_BUILD_TARGET_NAME}" PARENT_SCOPE)
-	set("${EXTERNAL_LINKS_OUTPUT}" PARENT_SCOPE)
+        set("${EXTERNAL_LINKS_OUTPUT}" PARENT_SCOPE)
         return()
     endif()
     set(PREVIOUSLY_RECURSED ${ARGN} ${CMAKE_BUILD_TARGET_NAME})
@@ -867,12 +870,12 @@ function(recurse_target_properties CMAKE_BUILD_TARGET_NAME PROPERTY_NAMES TRANSI
             # Append the lists to the aggregated output
             list(APPEND RECURSED_TRANSITIVE ${INTERNAL_TRANSITIVE})
             list(APPEND RECURSED_UNKNOWN ${INTERNAL_UNKNOWN})
-	    list(APPEND RECURSED_EXTERNAL ${INTERNAL_EXTERNAL})
+            list(APPEND RECURSED_EXTERNAL ${INTERNAL_EXTERNAL})
             list(REMOVE_DUPLICATES RECURSED_TRANSITIVE)
             list(REMOVE_DUPLICATES RECURSED_UNKNOWN)
-	    list(REMOVE_DUPLICATES RECURSED_EXTERNAL)
+            list(REMOVE_DUPLICATES RECURSED_EXTERNAL)
             # Update previously touched modules
-	    list(APPEND PREVIOUSLY_RECURSED ${INTERNAL_TRANSITIVE} ${INTERNAL_UNKNOWN} ${INTERNAL_EXTERNAL})
+            list(APPEND PREVIOUSLY_RECURSED ${INTERNAL_TRANSITIVE} ${INTERNAL_UNKNOWN} ${INTERNAL_EXTERNAL})
             list(REMOVE_DUPLICATES PREVIOUSLY_RECURSED)
         endif()
     endforeach()

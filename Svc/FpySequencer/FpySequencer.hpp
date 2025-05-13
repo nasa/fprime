@@ -7,7 +7,7 @@
 #ifndef FpySequencer_HPP
 #define FpySequencer_HPP
 
-#include "FppConstantsAc.hpp"
+#include "config/FppConstantsAc.hpp"
 #include "Fw/Types/MemAllocator.hpp"
 #include "Fw/Types/StringBase.hpp"
 #include "Fw/Types/WaitEnumAc.hpp"

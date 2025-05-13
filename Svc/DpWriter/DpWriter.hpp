@@ -7,7 +7,7 @@
 #ifndef Svc_DpWriter_HPP
 #define Svc_DpWriter_HPP
 
-#include <DpCfg.hpp>
+#include <config/DpCfg.hpp>
 
 #include "Fw/Dp/DpContainer.hpp"
 #include "Fw/Types/FileNameString.hpp"

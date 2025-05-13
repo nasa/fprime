@@ -46,6 +46,8 @@ static_assert(static_cast<Os::FileStatus::T>(Os::File::Status::INVALID_MODE) == 
               "File status and FPP shadow enum do not match");
 static_assert(static_cast<Os::FileStatus::T>(Os::File::Status::INVALID_ARGUMENT) == Os::FileStatus::T::INVALID_ARGUMENT,
               "File status and FPP shadow enum do not match");
+static_assert(static_cast<Os::FileStatus::T>(Os::File::Status::NO_MORE_RESOURCES) == Os::FileStatus::T::NO_MORE_RESOURCES,
+              "File status and FPP shadow enum do not match");
 static_assert(static_cast<Os::FileStatus::T>(Os::File::Status::OTHER_ERROR) == Os::FileStatus::T::OTHER_ERROR,
               "File status and FPP shadow enum do not match");
 

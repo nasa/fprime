@@ -24,7 +24,7 @@ set(SOURCE_FILES
 set(HEADER_FILES
     "${CMAKE_CURRENT_LIST_DIR}/error.hpp"
 )
-set(MOD_DEPS config)
+set(MOD_DEPS Fw_Types)
 register_fprime_module(Os_Posix_Shared)
 
 # Set up Posix implementations

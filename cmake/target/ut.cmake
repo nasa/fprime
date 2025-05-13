@@ -5,7 +5,7 @@
 ####
 include(target/build) # Borrows some implementation
 set(FPRIME__INTERNAL_UT_TARGET "ut_exe") # For historical reasons
-set(UT_CLEAN_SCRIPT "${CMAKE_BINARY_DIR}/clean.cmake")
+set(FPRIME__INTERNAL_UT_CLEAN_SCRIPT "${CMAKE_BINARY_DIR}/clean.cmake")
 
 
 ####
@@ -16,14 +16,14 @@ set(UT_CLEAN_SCRIPT "${CMAKE_BINARY_DIR}/clean.cmake")
 ####
 function(_ut_setup_clean_file)
     set(REMOVAL_GLOB "*.gcda")
-    file(WRITE "${UT_CLEAN_SCRIPT}" "
+    file(WRITE "${FPRIME__INTERNAL_UT_CLEAN_SCRIPT}" "
         file(GLOB_RECURSE GCDA_FILES \"${CMAKE_BINARY_DIR}/**/${REMOVAL_GLOB}\")
         if (GCDA_FILES)
             file(REMOVE \${GCDA_FILES})
         endif()
     ")
     set_property(DIRECTORY APPEND PROPERTY
-        TEST_INCLUDE_FILES "${UT_CLEAN_SCRIPT}"
+        TEST_INCLUDE_FILES "${FPRIME__INTERNAL_UT_CLEAN_SCRIPT}"
     )
 endfunction(_ut_setup_clean_file)
 
@@ -55,7 +55,7 @@ function(ut_add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPEND
         return()
     endif()
     set_property(DIRECTORY APPEND PROPERTY
-        TEST_INCLUDE_FILES "${UT_CLEAN_SCRIPT}"
+        TEST_INCLUDE_FILES "${FPRIME__INTERNAL_UT_CLEAN_SCRIPT}"
     )
     add_custom_target("${MODULE}_${FPRIME__INTERNAL_UT_TARGET}")
     foreach(DEPENDENCY IN LISTS FULL_DEPENDENCIES)
@@ -112,7 +112,7 @@ function(ut_add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCIES)
     set(UT_MODULE_TARGET "${FPRIME_CURRENT_MODULE}_${FPRIME__INTERNAL_UT_TARGET}")
     message(STATUS "Adding Unit Test: ${UT_EXECUTABLE_TARGET}")
     set_property(DIRECTORY APPEND PROPERTY
-        TEST_INCLUDE_FILES "${UT_CLEAN_SCRIPT}"
+        TEST_INCLUDE_FILES "${FPRIME__INTERNAL_UT_CLEAN_SCRIPT}"
     )
     run_ac_set("${UT_EXECUTABLE_TARGET}" autocoder/fpp autocoder/fpp_ut)
 

@@ -10,7 +10,6 @@ REF_APP_PATH = Path(__file__).parent.parent.parent.parent / "Ref"
 
 
 FRAMEWORK_MODULES = [
-    "Fw_Cfg",
     "Fw_Cmd",
     "Fw_Com",
     "Fw_Comp",

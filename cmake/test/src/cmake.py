@@ -28,20 +28,27 @@ def subprocess_helper(args, cwd):
     """Subprocess helper used to 'tee' the output to: console and capture"""
 
     def read_available(proc, stdout, stderr):
-        lines = {stdout: [], stderr: []}
-        while proc.poll() is None:
-            ready, _, _ = select.select([stdout, stderr], [], [])
-            for stream in ready:
-                line = stream.readline()
-                lines[stream].append(line)
-                if "-s" in sys.argv or "--capture=no" in sys.argv:
+        """Read the available output from the process and return it"""
+
+        def capture_stream(stream, lines):
+            """Capture output from a stream, printing to console if needed"""
+            new_lines = stream.readlines()
+            lines[stream].extend(new_lines)
+            if "-s" in sys.argv or "--capture=no" in sys.argv:
+                for line in new_lines:
                     print(
                         line,
                         end="",
                         file=(sys.stdout if stream == stdout else sys.stderr),
                     )
-        lines[stdout].extend(stdout.readlines())
-        lines[stderr].extend(stderr.readlines())
+
+        lines = {stdout: [], stderr: []}
+        while proc.poll() is None:
+            ready, _, _ = select.select([stdout, stderr], [], [])
+            for stream in ready:
+                capture_stream(stream, lines)
+        capture_stream(stdout, lines)
+        capture_stream(stderr, lines)
         return (
             proc.poll(),
             [line for line in lines[stdout] if line.strip() != ""],
@@ -95,7 +102,7 @@ def run_make(build_directory, target):
     return subprocess_helper(args, build_directory)
 
 
-def assert_process_success(data_object, errors_ok=False):
+def assert_process_success(data_object, errors_ok=False, targets=None):
     """Assert the subprocess runs worked as expected"""
     for field in ["source", "build", "install", "cmake", "targets"]:
         assert field in data_object, f"Data object malformed: missing '{field}' field"
@@ -106,7 +113,14 @@ def assert_process_success(data_object, errors_ok=False):
     assert stdout, "CMake generated no standard out process"
     assert not stderr or errors_ok, f"CMake generated errors:\n{''.join(stderr)}"
 
-    for target, output in data_object["targets"].items():
+    targets = data_object["targets"].keys() if targets is None else targets
+    filtered = [
+        (target, output)
+        for target, output in data_object["targets"].items()
+        if target in targets
+    ]
+
+    for target, output in filtered:
         return_code, stdout, stderr = output
         assert return_code == 0, f"CMake failed building '{target}'"
         assert stdout, "CMake generated no standard out building '{target}'"

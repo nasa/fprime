@@ -19,6 +19,12 @@ if (FPRIME_ENABLE_UT_COVERAGE)
     list(APPEND FPRIME_TESTING_REQUIRED_LINK_FLAGS --coverage)
 endif()
 
+####
+# Function `fprime__internal_TECH_DEBT_module_setup`:
+#
+# A function containing all the steps necessary to maintain build-system technical debt within the build target.
+#
+####
 function(fprime__internal_TECH_DEBT_module_setup BUILD_MODULE_NAME MODULE_NAME_HELPER)
     #### Load target properties ####
     # This switches the following code to use new properties.
@@ -76,6 +82,8 @@ function(fprime__internal_TECH_DEBT_module_setup BUILD_MODULE_NAME MODULE_NAME_H
             remap_implementation_choices("${FPRIME_CURRENT_MODULE}" "${BUILD_MODULE_NAME}")
         endif()
         setup_executable_implementations("${BUILD_MODULE_NAME}")
+        # Clear transitive dependencies to force a re-evaluation
+        set_property(TARGET "${BUILD_MODULE_NAME}" PROPERTY TRANSITIVE_DEPENDENCIES)
     endif ()
     #### End Implementation Choices ####
 endfunction()
@@ -106,7 +114,8 @@ function(fprime__internal_standard_build_target_setup BUILD_TARGET_NAME MODULE_N
     fprime__internal_check_restrictions("${BUILD_TARGET_NAME}" "${TARGET_LINK_DEPENDENCIES};${TARGET_INTERFACE_DEPENDENCIES}")
 
     # Special flags applied to modules when compiling with testing enabled
-    if (BUILD_TESTING)
+    get_target_property(TARGET_TYPE "${BUILD_TARGET_NAME}" TYPE)
+    if (BUILD_TESTING AND NOT TARGET_TYPE STREQUAL "INTERFACE_LIBRARY")
         target_compile_options("${BUILD_TARGET_NAME}" PRIVATE ${FPRIME_TESTING_REQUIRED_COMPILE_FLAGS})
         target_link_libraries("${BUILD_TARGET_NAME}" PRIVATE ${FPRIME_TESTING_REQUIRED_LINK_FLAGS})
     endif()

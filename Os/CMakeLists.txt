@@ -142,6 +142,6 @@ if (BUILD_TESTING)
     set(SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/file/SyntheticFileSystem.cpp"
     )
-    set(MOD_DEPS config)
+    set(MOD_DEPS Fw_Types)
     register_fprime_module(Os_Test_File_SyntheticFileSystem)
 endif()

@@ -8,7 +8,7 @@
 include_guard()
 
 # Necessary global variables
-set(SETTINGS_CMAKE_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}")
+set(FPRIME__INTERNAL_SETTINGS_CMAKE_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}")
 find_program(PYTHON NAMES python3 python) #This happens before required
 
 ####
@@ -22,7 +22,6 @@ set(FPRIME_UTIL_CRITICAL_LIST
     "FPRIME_LIBRARY_LOCATIONS"
     "FPRIME_PROJECT_ROOT"
     "FPRIME_ENVIRONMENT_FILE"
-    "FPRIME_CONFIG_DIR"
     "FPRIME_INSTALL_DEST"
 )
 
@@ -40,7 +39,7 @@ function(ini_to_cache)
     endif()
     # Execute the process
     execute_process(COMMAND ${PYTHON}
-        "${SETTINGS_CMAKE_DIRECTORY}/ini-to-stdio.py"
+        "${FPRIME__INTERNAL_SETTINGS_CMAKE_DIRECTORY}/ini-to-stdio.py"
         "${CALCULATED_INI}"
         ${CMAKE_TOOLCHAIN_FILE}
         OUTPUT_VARIABLE INI_OUTPUT

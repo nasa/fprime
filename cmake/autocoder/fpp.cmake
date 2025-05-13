@@ -83,13 +83,14 @@ endfunction(fpp_is_supported)
 # FRAMEWORK: list of framework dependencies. **NOTE:** will be overridden in PARENT_SCOPE with updated list
 ####
 function(fpp_get_framework_dependency_helper MODULE_NAME FRAMEWORK)
+    get_target_property(FPRIME_IS_CONFIG "${MODULE_NAME}" FPRIME_CONFIGURATION)
     # Subset the framework dependencies, or where possible use the Fw interface target
-    if (MODULE_NAME STREQUAL "config" OR MODULE_NAME MATCHES "cmake_platform.*")
-        # config has no automatic dependencies
+    if (FPRIME_IS_CONFIG)
+        # config modules have no automatic dependencies
     elseif (NOT DEFINED FPRIME_FRAMEWORK_MODULES)
         fprime_fatal_cmake_error("${MODULE_NAME} Fw/CMakeLists.txt not included in deployment")
-    elseif (MODULE_NAME STREQUAL Fw_Cfg)
-        # Skip Fw_Cfg as it is the root dependency 
+    elseif (MODULE_NAME STREQUAL Fw_Types)
+        # Skip Fw_Types as it is the root dependency 
     elseif (NOT TARGET Fw OR MODULE_NAME IN_LIST FPRIME_FRAMEWORK_MODULES)
         list(APPEND FRAMEWORK ${FPRIME_FRAMEWORK_MODULES})
         list(FIND FRAMEWORK "${MODULE_NAME}" START_INDEX)
@@ -197,8 +198,7 @@ function(fpp_setup_autocode MODULE_NAME AC_INPUT_FILES)
     fpp_info("${MODULE_NAME}" "${AC_INPUT_FILES}")
     set(CMAKE_BINARY_DIR_RESOLVED "${CMAKE_BINARY_DIR}")
     set(CMAKE_CURRENT_BINARY_DIR_RESOLVED "${CMAKE_CURRENT_BINARY_DIR}")
-    resolve_path_variables(
-            AC_INPUT_FILES FPRIME_BUILD_LOCATIONS FPP_IMPORTS CMAKE_BINARY_DIR_RESOLVED CMAKE_CURRENT_BINARY_DIR_RESOLVED)
+    resolve_path_variables(CMAKE_BINARY_DIR_RESOLVED CMAKE_CURRENT_BINARY_DIR_RESOLVED)
     string(REGEX REPLACE ";" ","  FPRIME_BUILD_LOCATIONS_COMMA_SEP "${FPRIME_BUILD_LOCATIONS}")
     string(REGEX REPLACE ";" ","  FPP_IMPORTS_COMMA_SEP "${FPP_IMPORTS}")
     set(IMPORTS)
@@ -280,8 +280,7 @@ function(fpp_to_modules FILE_LIST OUTPUT_VAR)
         # Here we are adding a module to the modules list if all of the following are true:
         #  1. Not present already (deduplication)
         #  2. Not the current module directory as learned by the path to the autocoder inputs
-        #  3. Not within the config directory. Config dependencies are attached to every module automatically.
-        if ("${MODULE_NAME}" IN_LIST OUTPUT_DATA OR CURRENT_MODULE STREQUAL MODULE_NAME OR INCLUDE MATCHES "${FPRIME_CONFIG_DIR}/.*")
+        if ("${MODULE_NAME}" IN_LIST OUTPUT_DATA OR CURRENT_MODULE STREQUAL MODULE_NAME)
             continue() # Skip adding to module list
         endif()
         list(APPEND OUTPUT_DATA "${MODULE_NAME}")

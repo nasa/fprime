@@ -13,7 +13,7 @@
 */
 
 #include <Svc/ActiveRateGroup/ActiveRateGroup.hpp>
-#include <ActiveRateGroupCfg.hpp>
+#include <config/ActiveRateGroupCfg.hpp>
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Os/Console.hpp>

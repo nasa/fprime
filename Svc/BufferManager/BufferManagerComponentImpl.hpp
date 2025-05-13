@@ -15,7 +15,7 @@
 
 #include "Svc/BufferManager/BufferManagerComponentAc.hpp"
 #include <Fw/Types/MemAllocator.hpp>
-#include "BufferManagerComponentImplCfg.hpp"
+#include "config/BufferManagerComponentImplCfg.hpp"
 
 namespace Svc
 {

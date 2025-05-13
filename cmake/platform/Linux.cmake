@@ -24,6 +24,5 @@ add_definitions(-DTGT_OS_TYPE_LINUX)
 set(FPRIME_USE_POSIX ON)
 set(FPRIME_HAS_SOCKETS ON)
 
-# Add Linux specific headers into the system
-include_directories(SYSTEM "${CMAKE_CURRENT_LIST_DIR}/unix")
-set(FPRIME_PLATFORM_MODULE_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/unix")
+# Add unix specific configuration into the system
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/unix/Platform/")

@@ -12,7 +12,7 @@
 
 #include <limits>
 #include <Drv/Udp/UdpComponentImpl.hpp>
-#include <IpCfg.hpp>
+#include <config/IpCfg.hpp>
 #include <Fw/FPrimeBasicTypes.hpp>
 #include "Fw/Types/Assert.hpp"
 
