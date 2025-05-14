@@ -58,7 +58,7 @@ void TlmChan::pingIn_handler(const FwIndexType portNum, U32 key) {
     this->pingOut_out(0, key);
 }
 
-void TlmChan::TlmGet_handler(FwIndexType portNum, FwChanIdType id, Fw::Time& timeTag, Fw::TlmBuffer& val) {
+Fw::TlmValid TlmChan::TlmGet_handler(FwIndexType portNum, FwChanIdType id, Fw::Time& timeTag, Fw::TlmBuffer& val) {
     // Compute index for entry
 
     FwChanIdType index = this->doHash(id);
@@ -98,26 +98,27 @@ void TlmChan::TlmGet_handler(FwIndexType portNum, FwChanIdType id, Fw::Time& tim
             // inactive entry is more recent
             val = inactiveEntry->buffer;
             timeTag = inactiveEntry->lastUpdate;
-            return;
+            return Fw::TlmValid::VALID;
         } else {
             // active entry is more recent, or they are equal
             val = activeEntry->buffer;
             timeTag = activeEntry->lastUpdate;
-            return;
+            return Fw::TlmValid::VALID;
         }
     } else if (activeEntry) {
         // only one entry, and it's in the active buf
         val = activeEntry->buffer;
         timeTag = activeEntry->lastUpdate;
-        return;
+        return Fw::TlmValid::VALID;
     } else if (inactiveEntry) {
         // only one entry, and it's in the inactive buf
         val = inactiveEntry->buffer;
         timeTag = inactiveEntry->lastUpdate;
-        return;
+        return Fw::TlmValid::VALID;
     } else {
         val.resetSer();
     }
+    return Fw::TlmValid::INVALID;
 }
 
 void TlmChan::TlmRecv_handler(FwIndexType portNum, FwChanIdType id, Fw::Time& timeTag, Fw::TlmBuffer& val) {

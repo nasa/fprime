@@ -128,8 +128,10 @@ void TlmChanTester::runOffNominal() {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat);
 
     // Read back value
-    this->invoke_to_TlmGet(0, 10, timeTag, buff);
+    Fw::TlmValid valid = this->invoke_to_TlmGet(0, 10, timeTag, buff);
     ASSERT_EQ(0u, buff.getBuffLength());
+    ASSERT_EQ(valid, Fw::TlmValid::INVALID);
+
 }
 
 // ----------------------------------------------------------------------
@@ -249,11 +251,12 @@ void TlmChanTester::sendBuff(FwChanIdType id, U32 val) {
         tlc002 = true;
     }
 
-    this->invoke_to_TlmGet(0, id, timeTag, readBack);
+    Fw::TlmValid valid = this->invoke_to_TlmGet(0, id, timeTag, readBack);
     // deserialize value
     retestVal = 0;
     readBack.deserialize(retestVal);
     ASSERT_EQ(retestVal, val);
+    ASSERT_EQ(valid, Fw::TlmValid::VALID);
 }
 
 void TlmChanTester::clearBuffs() {
