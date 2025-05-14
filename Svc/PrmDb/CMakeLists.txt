@@ -7,26 +7,27 @@
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
 
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/PrmDb.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/PrmDbImpl.cpp"
+register_fprime_module(
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/PrmDb.fpp"
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/PrmDbImpl.cpp"
 )
-
-register_fprime_module()
 
 ### UTs ###
-set(UT_SOURCE_FILES
-  "${FPRIME_FRAMEWORK_PATH}/Svc/PrmDb/PrmDb.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/PrmDbTester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/PrmDbImplTester.cpp"
+register_fprime_ut(
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/PrmDb.fpp"
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/PrmDbTester.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/PrmDbImplTester.cpp"
+  DEPENDS
+    Os_File_Test_Stub_Implementation
+    Os_File_Stub_Implementation
+  CHOOSES_IMPLEMENTATIONS
+    Os_File_None
 )
 
-set(UT_MOD_DEPS
-    Os_File_Test_Stub
-    Os_File_Stub
-)
-choose_fprime_implementation(Os/File Os/File/None)
-register_fprime_ut()
 set (UT_TARGET_NAME "${FPRIME_CURRENT_MODULE}_ut_exe")
 if (TARGET "${UT_TARGET_NAME}")
     target_compile_options("${UT_TARGET_NAME}" PRIVATE -Wno-conversion)

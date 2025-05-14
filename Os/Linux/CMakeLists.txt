@@ -14,19 +14,31 @@ register_os_implementation(Memory Linux)
 # -----------------------------------------
 ### Os/Linux/Cpu Section
 # -----------------------------------------
-set(UT_SOURCE_FILES
+register_fprime_ut(
+    LinuxCpuTest
+  SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/../test/ut/cpu/CommonCpuTests.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/LinuxCpuTests.cpp"
+  CHOOSES_IMPLEMENTATIONS
+    Os_Cpu_Linux
+  DEPENDS
+    Fw_Types
+    Fw_Time
+    STest
 )
-add_fprime_os_test(LinuxCpuTest "${UT_SOURCE_FILES}" "Os_Cpu\;Os_Cpu_Linux")
-
 
 # -----------------------------------------
 ### Os/Linux/Memory Section
 # -----------------------------------------
-
-set(UT_SOURCE_FILES
+register_fprime_ut(
+    LinuxMemoryTest
+  SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/../test/ut/memory/CommonMemoryTests.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/LinuxMemoryTests.cpp"
+  CHOOSES_IMPLEMENTATIONS
+    Os_Memory_Linux
+  DEPENDS
+    Fw_Types
+    Fw_Time
+    STest
 )
-add_fprime_os_test(LinuxMemoryTest "${UT_SOURCE_FILES}" "Os_Memory\;Os_Memory_Linux")
