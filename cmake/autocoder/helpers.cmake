@@ -6,7 +6,7 @@
 ####
 include_guard()
 include("utilities")
-set_property(GLOBAL PROPERTY AUTO_RECONFIGURE_LIST)
+
 ####
 # Macro `autocoder_support_by_suffix`:
 #
