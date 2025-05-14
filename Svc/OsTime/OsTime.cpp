@@ -33,6 +33,19 @@ void OsTime::set_epoch(const Fw::Time& fw_time, const Os::RawTime& os_time) {
     m_epoch_valid = true;
 }
 
+void OsTime::SetCurrentTime_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U32 seconds_now) {
+    Os::RawTime time_now;
+    Os::RawTime::Status stat = time_now.now();
+    if (stat != Os::RawTime::OP_OK) {
+        this->log_WARNING_HI_SetCurrentTimeError(stat);
+        return;
+    }
+    Os::ScopeLock lock(m_epoch_lock);
+    m_epoch_fw_time = Fw::Time(seconds_now, 0);
+    m_epoch_os_time = time_now;
+    m_epoch_valid = true;
+}
+
 // ----------------------------------------------------------------------
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------

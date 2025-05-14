@@ -49,6 +49,12 @@ class OsTime final : public OsTimeComponentBase {
                           const Fw::Time& fw_time,
                           const Os::RawTime& os_time) override;
 
+    
+    //! Handler implementation for command SetCurrentTime
+    void SetCurrentTime_cmdHandler(FwOpcodeType opCode, //!< The opcode
+                                   U32 cmdSeq, //!< The command sequence number
+                                   U32 seconds_now) override;
+
     Fw::Time m_epoch_fw_time;
     Os::RawTime m_epoch_os_time;
     bool m_epoch_valid;
