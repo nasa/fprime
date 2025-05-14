@@ -209,34 +209,24 @@ void FpySequencerTester::add_NO_OP() {
     addDirective(Fpy::DirectiveId::NO_OP, buf);
 }
 
-void FpySequencerTester::add_GET_TLM_TIME(U8 lvarIdx, FwChanIdType id) {
-    add_GET_TLM_TIME(FpySequencer_GetTlmTimeDirective(lvarIdx, id));
+void FpySequencerTester::add_GET_TLM(U8 valueDestLvar, U8 timeDestLvar, FwChanIdType id) {
+    add_GET_TLM(FpySequencer_GetTlmDirective(valueDestLvar, timeDestLvar, id));
 }
 
-void FpySequencerTester::add_GET_TLM_TIME(FpySequencer_GetTlmTimeDirective dir) {
+void FpySequencerTester::add_GET_TLM(FpySequencer_GetTlmDirective dir) {
     Fw::StatementArgBuffer buf;
     FW_ASSERT(buf.serialize(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    addDirective(Fpy::DirectiveId::GET_TLM_TIME, buf);
+    addDirective(Fpy::DirectiveId::GET_TLM, buf);
 }
 
-void FpySequencerTester::add_GET_TLM_VALUE(U8 lvarIdx, FwChanIdType id) {
-    add_GET_TLM_VALUE(FpySequencer_GetTlmValueDirective(lvarIdx, id));
+void FpySequencerTester::add_GET_PRM(U8 lvarIdx, FwPrmIdType id) {
+    add_GET_PRM(FpySequencer_GetPrmDirective(lvarIdx, id));
 }
 
-void FpySequencerTester::add_GET_TLM_VALUE(FpySequencer_GetTlmValueDirective dir) {
+void FpySequencerTester::add_GET_PRM(FpySequencer_GetPrmDirective dir) {
     Fw::StatementArgBuffer buf;
     FW_ASSERT(buf.serialize(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    addDirective(Fpy::DirectiveId::GET_TLM_VAL, buf);
-}
-
-void FpySequencerTester::add_GET_PRM_VALUE(U8 lvarIdx, FwPrmIdType id) {
-    add_GET_PRM_VALUE(FpySequencer_GetPrmValueDirective(lvarIdx, id));
-}
-
-void FpySequencerTester::add_GET_PRM_VALUE(FpySequencer_GetPrmValueDirective dir) {
-    Fw::StatementArgBuffer buf;
-    FW_ASSERT(buf.serialize(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    addDirective(Fpy::DirectiveId::GET_PRM_VAL, buf);
+    addDirective(Fpy::DirectiveId::GET_PRM, buf);
 }
 
 //! Handle a text event
@@ -258,7 +248,7 @@ void FpySequencerTester::writeAndRun() {
 }
 
 //! Default handler implementation for from_getTlmChan
-void FpySequencerTester::from_getTlmChan_handler(FwIndexType portNum,  //!< The port number
+Fw::TlmValid FpySequencerTester::from_getTlmChan_handler(FwIndexType portNum,  //!< The port number
                                                  FwChanIdType id,      //!< Telemetry Channel ID
                                                  Fw::Time& timeTag,    //!< Time Tag
                                                  Fw::TlmBuffer& val  //!< Buffer containing serialized telemetry value.
@@ -267,10 +257,11 @@ void FpySequencerTester::from_getTlmChan_handler(FwIndexType portNum,  //!< The 
     this->pushFromPortEntry_getTlmChan(id, timeTag, val);
     if (id != nextTlmId) {
         val.setBuffLen(0);
-        return;
+        return Fw::TlmValid::INVALID;
     }
     val = nextTlmValue;
     timeTag = nextTlmTime;
+    return Fw::TlmValid::VALID;
 }
 
 //! Default handler implementation for from_getParam

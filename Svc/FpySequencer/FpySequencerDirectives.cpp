@@ -53,22 +53,14 @@ void FpySequencer::directive_noOp_internalInterfaceHandler(const Svc::FpySequenc
     this->sendSignal(this->noOp_directiveHandler(directive));
 }
 
-//! Internal interface handler for directive_getTlmTime
-void FpySequencer::directive_getTlmTime_internalInterfaceHandler(
-    const Svc::FpySequencer_GetTlmTimeDirective& directive) {
-    this->sendSignal(this->getTlmTime_directiveHandler(directive));
+//! Internal interface handler for directive_getTlm
+void FpySequencer::directive_getTlm_internalInterfaceHandler(const Svc::FpySequencer_GetTlmDirective& directive) {
+    this->sendSignal(this->getTlm_directiveHandler(directive));
 }
 
-//! Internal interface handler for directive_getTlmValue
-void FpySequencer::directive_getTlmValue_internalInterfaceHandler(
-    const Svc::FpySequencer_GetTlmValueDirective& directive) {
-    this->sendSignal(this->getTlmValue_directiveHandler(directive));
-}
-
-//! Internal interface handler for directive_getPrmValue
-void FpySequencer::directive_getPrmValue_internalInterfaceHandler(
-    const Svc::FpySequencer_GetPrmValueDirective& directive) {
-    this->sendSignal(this->getPrmValue_directiveHandler(directive));
+//! Internal interface handler for directive_getPrm
+void FpySequencer::directive_getPrm_internalInterfaceHandler(const Svc::FpySequencer_GetPrmDirective& directive) {
+    this->sendSignal(this->getPrm_directiveHandler(directive));
 }
 
 //! Internal interface handler for directive_waitRel
@@ -157,31 +149,38 @@ Signal FpySequencer::noOp_directiveHandler(const FpySequencer_NoOpDirective& dir
     return Signal::stmtResponse_success;
 }
 
-Signal FpySequencer::getTlmTime_directiveHandler(const FpySequencer_GetTlmTimeDirective& directive) {
-    if (directive.getdestLvarIndex() >= Fpy::MAX_SEQUENCE_LOCAL_VARIABLES) {
+Signal FpySequencer::getTlm_directiveHandler(const FpySequencer_GetTlmDirective& directive) {
+    if (directive.getvalueDestLvar() >= Fpy::MAX_SEQUENCE_LOCAL_VARIABLES) {
+        return Signal::stmtResponse_failure;
+    }
+    if (directive.gettimeDestLvar() >= Fpy::MAX_SEQUENCE_LOCAL_VARIABLES) {
         return Signal::stmtResponse_failure;
     }
     if (!this->isConnected_getTlmChan_OutputPort(0)) {
         return Signal::stmtResponse_failure;
     }
-    if (static_cast<U64>(Fw::Time::SERIALIZED_SIZE) > static_cast<U64>(Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE)) {
-        // cannot store the tlm time in the lvar
-        return Signal::stmtResponse_failure;
-    }
     Fw::Time tlmTime;
     Fw::TlmBuffer tlmValue;
-    this->getTlmChan_out(0, directive.getchanId(), tlmTime, tlmValue);
+    Fw::TlmValid valid = this->getTlmChan_out(0, directive.getchanId(), tlmTime, tlmValue);
 
-    if (tlmValue.getBuffLength() == 0) {
+    if (valid != Fw::TlmValid::VALID) {
         // could not find this tlm chan
-        // impl of port says to set buf len to 0 in this case
         return Signal::stmtResponse_failure;
     }
 
-    Runtime::LocalVariable& lvar = this->m_runtime.localVariables[directive.getdestLvarIndex()];
+    // this is an assert in the hpp, the buf should never be bigger than TLM_BUF_MAX
+    FW_ASSERT(tlmValue.getBuffLength() <= Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE, static_cast<FwAssertArgType>(tlmValue.getBuffLength()));
+
+    // copy value into lvar
+    Runtime::LocalVariable& valueLvar = this->m_runtime.localVariables[directive.getvalueDestLvar()];
+    memcpy(valueLvar.value, tlmValue.getBuffAddr(), tlmValue.getBuffLength());
+    valueLvar.valueSize = tlmValue.getBuffLength();
+
+    // serialize time into lvar
+    Runtime::LocalVariable& timeLvar = this->m_runtime.localVariables[directive.gettimeDestLvar()];
     // clear the lvar in case of early return
-    lvar.valueSize = 0;
-    Fw::ExternalSerializeBuffer esb(lvar.value, Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE);
+    timeLvar.valueSize = 0;
+    Fw::ExternalSerializeBuffer esb(timeLvar.value, Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE);
     Fw::SerializeStatus stat = esb.serialize(tlmTime);
 
     if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
@@ -189,39 +188,11 @@ Signal FpySequencer::getTlmTime_directiveHandler(const FpySequencer_GetTlmTimeDi
         return Signal::stmtResponse_failure;
     }
 
-    lvar.valueSize = esb.getBuffLength();
+    timeLvar.valueSize = esb.getBuffLength();
     return Signal::stmtResponse_success;
 }
 
-Signal FpySequencer::getTlmValue_directiveHandler(const FpySequencer_GetTlmValueDirective& directive) {
-    if (directive.getdestLvarIndex() >= Fpy::MAX_SEQUENCE_LOCAL_VARIABLES) {
-        return Signal::stmtResponse_failure;
-    }
-    if (!this->isConnected_getTlmChan_OutputPort(0)) {
-        return Signal::stmtResponse_failure;
-    }
-    Fw::Time tlmTime;
-    Fw::TlmBuffer tlmValue;
-    this->getTlmChan_out(0, directive.getchanId(), tlmTime, tlmValue);
-
-    if (tlmValue.getBuffLength() == 0) {
-        // could not find this tlm chan
-        // impl of port says to set buf len to 0 in this case
-        return Signal::stmtResponse_failure;
-    }
-
-    if (tlmValue.getBuffLength() > Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE) {
-        // cannot store the tlm value in the lvar
-        return Signal::stmtResponse_failure;
-    }
-    // copy value into lvar
-    Runtime::LocalVariable& lvar = this->m_runtime.localVariables[directive.getdestLvarIndex()];
-    memcpy(lvar.value, tlmValue.getBuffAddr(), tlmValue.getBuffLength());
-    lvar.valueSize = tlmValue.getBuffLength();
-    return Signal::stmtResponse_success;
-}
-
-Signal FpySequencer::getPrmValue_directiveHandler(const FpySequencer_GetPrmValueDirective& directive) {
+Signal FpySequencer::getPrm_directiveHandler(const FpySequencer_GetPrmDirective& directive) {
     if (directive.getdestLvarIndex() >= Fpy::MAX_SEQUENCE_LOCAL_VARIABLES) {
         return Signal::stmtResponse_failure;
     }

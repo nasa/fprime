@@ -7,6 +7,7 @@ module Svc {
         @ The maximum number of local variables a sequence can have
         constant MAX_SEQUENCE_LOCAL_VARIABLES = 16
         @ The maximum size a local variable's buffer can be
-        constant MAX_LOCAL_VARIABLE_BUFFER_SIZE = 500
+        # FW_COM_BUFFER_MAX_SIZE - sizeof(FwChanIdType) - sizeof(FwPacketDescriptorType)
+        constant MAX_LOCAL_VARIABLE_BUFFER_SIZE = 512 - 4 - 4
     }
 }

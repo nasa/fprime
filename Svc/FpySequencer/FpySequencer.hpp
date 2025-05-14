@@ -7,7 +7,6 @@
 #ifndef FpySequencer_HPP
 #define FpySequencer_HPP
 
-#include "config/FppConstantsAc.hpp"
 #include "Fw/Types/MemAllocator.hpp"
 #include "Fw/Types/StringBase.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
@@ -20,6 +19,7 @@
 #include "Svc/FpySequencer/HeaderSerializableAc.hpp"
 #include "Svc/FpySequencer/SequenceSerializableAc.hpp"
 #include "Svc/FpySequencer/StatementSerializableAc.hpp"
+#include "config/FppConstantsAc.hpp"
 
 static_assert(Svc::Fpy::MAX_SEQUENCE_ARG_COUNT <= std::numeric_limits<U8>::max(),
               "Sequence arg count must be below U8 max");
@@ -27,10 +27,10 @@ static_assert(Svc::Fpy::MAX_SEQUENCE_STATEMENT_COUNT <= std::numeric_limits<U16>
               "Sequence statement count must be below U16 max");
 static_assert(Svc::Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE <= std::numeric_limits<FwSizeType>::max(),
               "Local variable buffer size must be below FwSizeType max");
-// TODO should we assert on this? or should we just fail to pull in tlm buffers that are greater than
-// a certain size?
-// static_assert(Svc::Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE >= FW_TLM_BUFFER_MAX_SIZE,
-//               "Local variable buffer size must be greater than FW_TLM_BUFFER_MAX_SIZE");
+static_assert(Svc::Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE >= FW_TLM_BUFFER_MAX_SIZE,
+              "Local variable buffer size must be greater than FW_TLM_BUFFER_MAX_SIZE");
+static_assert(Svc::Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE >= FW_PARAM_BUFFER_MAX_SIZE,
+              "Local variable buffer size must be greater than FW_PARAM_BUFFER_MAX_SIZE");
 
 namespace Svc {
 
@@ -39,9 +39,6 @@ using State = FpySequencer_SequencerStateMachineStateMachineBase::State;
 
 class FpySequencer : public FpySequencerComponentBase {
   public:
-    // TODO need to be very careful about how I'm using this. question:
-    // if I set waitrel to something, then later set waitAbs to something else
-    // do I have to do any memory management in between?
     union DirectiveUnion {
         FpySequencer_WaitRelDirective waitRel;
         FpySequencer_WaitAbsDirective waitAbs;
@@ -49,9 +46,8 @@ class FpySequencer : public FpySequencerComponentBase {
         FpySequencer_GotoDirective gotoDirective;
         FpySequencer_IfDirective ifDirective;
         FpySequencer_NoOpDirective noOp;
-        FpySequencer_GetTlmTimeDirective getTlmTime;
-        FpySequencer_GetTlmValueDirective getTlmValue;
-        FpySequencer_GetPrmValueDirective getPrmValue;
+        FpySequencer_GetTlmDirective getTlm;
+        FpySequencer_GetPrmDirective getPrm;
 
         DirectiveUnion() {}
         ~DirectiveUnion() {}
@@ -387,16 +383,11 @@ class FpySequencer : public FpySequencerComponentBase {
     //! Internal interface handler for directive_noOp
     void directive_noOp_internalInterfaceHandler(const Svc::FpySequencer_NoOpDirective& directive) override;
 
-    //! Internal interface handler for directive_getTlmTime
-    void directive_getTlmTime_internalInterfaceHandler(const Svc::FpySequencer_GetTlmTimeDirective& directive) override;
+    //! Internal interface handler for directive_getTlm
+    void directive_getTlm_internalInterfaceHandler(const Svc::FpySequencer_GetTlmDirective& directive) override;
 
-    //! Internal interface handler for directive_getTlmValue
-    void directive_getTlmValue_internalInterfaceHandler(
-        const Svc::FpySequencer_GetTlmValueDirective& directive) override;
-
-    //! Internal interface handler for directive_getPrmValue
-    void directive_getPrmValue_internalInterfaceHandler(
-        const Svc::FpySequencer_GetPrmValueDirective& directive) override;
+    //! Internal interface handler for directive_getPrm
+    void directive_getPrm_internalInterfaceHandler(const Svc::FpySequencer_GetPrmDirective& directive) override;
 
     void parametersLoaded() override;
     void parameterUpdated(FwPrmIdType id) override;
@@ -569,9 +560,8 @@ class FpySequencer : public FpySequencerComponentBase {
     Signal goto_directiveHandler(const FpySequencer_GotoDirective& directive);
     Signal if_directiveHandler(const FpySequencer_IfDirective& directive);
     Signal noOp_directiveHandler(const FpySequencer_NoOpDirective& directive);
-    Signal getTlmTime_directiveHandler(const FpySequencer_GetTlmTimeDirective& directive);
-    Signal getTlmValue_directiveHandler(const FpySequencer_GetTlmValueDirective& directive);
-    Signal getPrmValue_directiveHandler(const FpySequencer_GetPrmValueDirective& directive);
+    Signal getTlm_directiveHandler(const FpySequencer_GetTlmDirective& directive);
+    Signal getPrm_directiveHandler(const FpySequencer_GetPrmDirective& directive);
 };
 
 }  // namespace Svc

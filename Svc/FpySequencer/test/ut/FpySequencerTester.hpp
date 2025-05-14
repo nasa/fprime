@@ -94,12 +94,10 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     void add_IF(U8 lvarIdx, U32 gotoIfFalse);
     void add_IF(FpySequencer_IfDirective dir);
     void add_NO_OP();
-    void add_GET_TLM_TIME(U8 lvarIdx, FwChanIdType id);
-    void add_GET_TLM_TIME(FpySequencer_GetTlmTimeDirective dir);
-    void add_GET_TLM_VALUE(U8 lvarIdx, FwChanIdType id);
-    void add_GET_TLM_VALUE(FpySequencer_GetTlmValueDirective dir);
-    void add_GET_PRM_VALUE(U8 lvarIdx, FwPrmIdType id);
-    void add_GET_PRM_VALUE(FpySequencer_GetPrmValueDirective dir);
+    void add_GET_TLM(U8 valueDestLvar, U8 timeDestLvar, FwChanIdType id);
+    void add_GET_TLM(FpySequencer_GetTlmDirective dir);
+    void add_GET_PRM(U8 lvarIdx, FwPrmIdType id);
+    void add_GET_PRM(FpySequencer_GetPrmDirective dir);
     //! Handle a text event
     void textLogIn(FwEventIdType id,                //!< The event ID
                    const Fw::Time& timeTag,         //!< The time
@@ -110,19 +108,19 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     void writeAndRun();
 
     //! Default handler implementation for from_getTlmChan
-    void from_getTlmChan_handler(FwIndexType portNum,  //!< The port number
-                                 FwChanIdType id,      //!< Telemetry Channel ID
-                                 Fw::Time& timeTag,    //!< Time Tag
-                                 Fw::TlmBuffer& val    //!< Buffer containing serialized telemetry value.
-                                                       //!< Size set to 0 if channel not found.
-                                 ) override;
+    Fw::TlmValid from_getTlmChan_handler(FwIndexType portNum,  //!< The port number
+                                         FwChanIdType id,      //!< Telemetry Channel ID
+                                         Fw::Time& timeTag,    //!< Time Tag
+                                         Fw::TlmBuffer& val    //!< Buffer containing serialized telemetry value.
+                                                               //!< Size set to 0 if channel not found.
+                                         ) override;
 
     //! Default handler implementation for from_getParam
     Fw::ParamValid from_getParam_handler(FwIndexType portNum,  //!< The port number
                                          FwPrmIdType id,       //!< Parameter ID
                                          Fw::ParamBuffer& val  //!< Buffer containing serialized parameter value.
                                                                //!< Unmodified if param not found.
-    ) override;
+                                         ) override;
 };
 
 }  // namespace Svc

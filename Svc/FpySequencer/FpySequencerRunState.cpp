@@ -209,9 +209,9 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
             }
             break;
         }
-        case Fpy::DirectiveId::GET_TLM_TIME: {
-            new (&deserializedDirective.getTlmTime) FpySequencer_GetTlmTimeDirective();
-            status = argBuf.deserialize(deserializedDirective.getTlmTime);
+        case Fpy::DirectiveId::GET_TLM: {
+            new (&deserializedDirective.getTlm) FpySequencer_GetTlmDirective();
+            status = argBuf.deserialize(deserializedDirective.getTlm);
             if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || argBuf.getBuffLeft() != 0) {
                 this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), this->m_runtime.nextStatementIndex - 1,
                                                                status, argBuf.getBuffLeft(), argBuf.getBuffLength());
@@ -219,19 +219,9 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
             }
             break;
         }
-        case Fpy::DirectiveId::GET_TLM_VAL: {
-            new (&deserializedDirective.getTlmValue) FpySequencer_GetTlmValueDirective();
-            status = argBuf.deserialize(deserializedDirective.getTlmValue);
-            if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || argBuf.getBuffLeft() != 0) {
-                this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), this->m_runtime.nextStatementIndex - 1,
-                                                               status, argBuf.getBuffLeft(), argBuf.getBuffLength());
-                return Fw::Success::FAILURE;
-            }
-            break;
-        }
-        case Fpy::DirectiveId::GET_PRM_VAL: {
-            new (&deserializedDirective.getPrmValue) FpySequencer_GetPrmValueDirective();
-            status = argBuf.deserialize(deserializedDirective.getPrmValue);
+        case Fpy::DirectiveId::GET_PRM: {
+            new (&deserializedDirective.getPrm) FpySequencer_GetPrmDirective();
+            status = argBuf.deserialize(deserializedDirective.getPrm);
             if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || argBuf.getBuffLeft() != 0) {
                 this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), this->m_runtime.nextStatementIndex - 1,
                                                                status, argBuf.getBuffLeft(), argBuf.getBuffLength());
@@ -277,16 +267,12 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
             this->directive_noOp_internalInterfaceInvoke(directive.noOp);
             break;
         }
-        case Fpy::DirectiveId::GET_TLM_TIME: {
-            this->directive_getTlmTime_internalInterfaceInvoke(directive.getTlmTime);
+        case Fpy::DirectiveId::GET_TLM: {
+            this->directive_getTlm_internalInterfaceInvoke(directive.getTlm);
             break;
         }
-        case Fpy::DirectiveId::GET_TLM_VAL: {
-            this->directive_getTlmValue_internalInterfaceInvoke(directive.getTlmValue);
-            break;
-        }
-        case Fpy::DirectiveId::GET_PRM_VAL: {
-            this->directive_getPrmValue_internalInterfaceInvoke(directive.getPrmValue);
+        case Fpy::DirectiveId::GET_PRM: {
+            this->directive_getPrm_internalInterfaceInvoke(directive.getPrm);
             break;
         }
         default: {

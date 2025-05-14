@@ -131,82 +131,51 @@ TEST_F(FpySequencerTester, noOp) {
     ASSERT_EQ(result, Signal::stmtResponse_success);
 }
 
-TEST_F(FpySequencerTester, getTlmValue) {
-    FpySequencer_GetTlmValueDirective directive(0, 456);
+TEST_F(FpySequencerTester, getTlm) {
+    FpySequencer_GetTlmDirective directive(0, 1, 456);
     nextTlmId = 456;
     nextTlmValue.setBuffLen(1);
     nextTlmValue.getBuffAddr()[0] = 200;
     nextTlmTime.set(888, 777);
-    Signal result = cmp.getTlmValue_directiveHandler(directive);
+    Signal result = cmp.getTlm_directiveHandler(directive);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_from_getTlmChan_SIZE(1);
     ASSERT_from_getTlmChan(0, 456, Fw::Time(), Fw::TlmBuffer());
     ASSERT_EQ(cmp.m_runtime.localVariables[0].value[0], nextTlmValue.getBuffAddr()[0]);
     ASSERT_EQ(cmp.m_runtime.localVariables[0].valueSize, nextTlmValue.getBuffLength());
-    clearHistory();
-
-    // try getting a nonexistent chan
-    directive.setchanId(111);
-    result = cmp.getTlmValue_directiveHandler(directive);
-    ASSERT_EQ(result, Signal::stmtResponse_failure);
-    directive.setchanId(456);
-
-    // try setting bad lvar
-    directive.setdestLvarIndex(Fpy::MAX_SEQUENCE_LOCAL_VARIABLES);
-    result = cmp.getTlmValue_directiveHandler(directive);
-    ASSERT_EQ(result, Signal::stmtResponse_failure);
-    directive.setdestLvarIndex(0);
-
-    // try getting tlm chan too big
-    if (Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE < FW_TLM_BUFFER_MAX_SIZE) {
-        // we can test this
-        nextTlmValue.setBuffLen(Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE + 1);
-        result = cmp.getTlmValue_directiveHandler(directive);
-        ASSERT_EQ(result, Signal::stmtResponse_failure);
-        nextTlmValue.setBuffLen(1);
-    }
-}
-
-TEST_F(FpySequencerTester, getTlmTime) {
-    FpySequencer_GetTlmTimeDirective directive(0, 456);
-    nextTlmId = 456;
-    nextTlmValue.setBuffLen(1);
-    nextTlmValue.getBuffAddr()[0] = 200;
-    nextTlmTime.set(888, 777);
-    Signal result = cmp.getTlmTime_directiveHandler(directive);
-    ASSERT_EQ(result, Signal::stmtResponse_success);
-    ASSERT_from_getTlmChan_SIZE(1);
-    ASSERT_from_getTlmChan(0, 456, Fw::Time(), Fw::TlmBuffer());
-
-    // deserialize the time
+    Fw::ExternalSerializeBuffer timeBuf(cmp.m_runtime.localVariables[1].value,
+                                        cmp.m_runtime.localVariables[1].valueSize);
+    timeBuf.setBuffLen(cmp.m_runtime.localVariables[1].valueSize);
     Fw::Time resultTime;
-    Fw::ExternalSerializeBuffer esb(cmp.m_runtime.localVariables[0].value, cmp.m_runtime.localVariables[0].valueSize);
-    esb.setBuffLen(cmp.m_runtime.localVariables[0].valueSize);
-    esb.deserialize(resultTime);
-    ASSERT_EQ(resultTime.getSeconds(), nextTlmTime.getSeconds());
-    ASSERT_EQ(resultTime.getUSeconds(), nextTlmTime.getUSeconds());
+    ASSERT_EQ(timeBuf.deserialize(resultTime), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    ASSERT_EQ(resultTime, nextTlmTime);
     clearHistory();
 
     // try getting a nonexistent chan
     directive.setchanId(111);
-    result = cmp.getTlmTime_directiveHandler(directive);
+    result = cmp.getTlm_directiveHandler(directive);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     directive.setchanId(456);
 
-    // try setting bad lvar
-    directive.setdestLvarIndex(Fpy::MAX_SEQUENCE_LOCAL_VARIABLES);
-    result = cmp.getTlmTime_directiveHandler(directive);
+    // try setting bad value lvar
+    directive.setvalueDestLvar(Fpy::MAX_SEQUENCE_LOCAL_VARIABLES);
+    result = cmp.getTlm_directiveHandler(directive);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
-    directive.setdestLvarIndex(0);
+    directive.setvalueDestLvar(0);
 
+    // try setting bad time lvar
+    directive.settimeDestLvar(Fpy::MAX_SEQUENCE_LOCAL_VARIABLES);
+    result = cmp.getTlm_directiveHandler(directive);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    directive.settimeDestLvar(0);
 }
 
-TEST_F(FpySequencerTester, getPrmValue) {
-    FpySequencer_GetPrmValueDirective directive(0, 456);
+TEST_F(FpySequencerTester, getPrm) {
+    FpySequencer_GetPrmDirective directive(0, 456);
     nextPrmId = 456;
     nextPrmValue.setBuffLen(1);
     nextPrmValue.getBuffAddr()[0] = 200;
-    Signal result = cmp.getPrmValue_directiveHandler(directive);
+    Signal result = cmp.getPrm_directiveHandler(directive);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_from_getParam_SIZE(1);
     ASSERT_from_getParam(0, 456, Fw::ParamBuffer());
@@ -216,24 +185,15 @@ TEST_F(FpySequencerTester, getPrmValue) {
 
     // try getting a nonexistent param
     directive.setprmId(111);
-    result = cmp.getPrmValue_directiveHandler(directive);
+    result = cmp.getPrm_directiveHandler(directive);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     directive.setprmId(456);
 
     // try setting bad lvar
     directive.setdestLvarIndex(Fpy::MAX_SEQUENCE_LOCAL_VARIABLES);
-    result = cmp.getPrmValue_directiveHandler(directive);
+    result = cmp.getPrm_directiveHandler(directive);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     directive.setdestLvarIndex(0);
-
-    // try getting param too big
-    if (Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE < FW_PARAM_STRING_MAX_SIZE) {
-        // we can test this
-        nextPrmValue.setBuffLen(Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE + 1);
-        result = cmp.getPrmValue_directiveHandler(directive);
-        ASSERT_EQ(result, Signal::stmtResponse_failure);
-        nextPrmValue.setBuffLen(1);
-    }
 }
 
 TEST_F(FpySequencerTester, checkShouldWakeMismatchBase) {
@@ -893,11 +853,14 @@ TEST_F(FpySequencerTester, deserialize_setLVar) {
     this->clearHistory();
     clearSeq();
     // run with valueSize too big
-    setLVar = FpySequencer_SetLocalVarDirective(0, 123, Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE + 1);
-    add_SET_LVAR(setLVar);
-    result = cmp.deserializeDirective(seq.getstatements()[0], actual);
-    ASSERT_EQ(result, Fw::Success::FAILURE);
-    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+    if (Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE + 6 <= FW_STATEMENT_ARG_BUFFER_MAX_SIZE) {
+        // we can test this
+        setLVar = FpySequencer_SetLocalVarDirective(0, 123, Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE + 1);
+        add_SET_LVAR(setLVar);
+        result = cmp.deserializeDirective(seq.getstatements()[0], actual);
+        ASSERT_EQ(result, Fw::Success::FAILURE);
+        ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+    }
 }
 
 TEST_F(FpySequencerTester, deserialize_goto) {
@@ -959,13 +922,13 @@ TEST_F(FpySequencerTester, deserialize_noOp) {
     ASSERT_EQ(result, Fw::Success::SUCCESS);
 }
 
-TEST_F(FpySequencerTester, deserialize_getTlmValue) {
+TEST_F(FpySequencerTester, deserialize_getTlm) {
     FpySequencer::DirectiveUnion actual;
-    FpySequencer_GetTlmValueDirective dir(123, 456);
-    add_GET_TLM_VALUE(dir);
+    FpySequencer_GetTlmDirective dir(123, 234, 456);
+    add_GET_TLM(dir);
     Fw::Success result = cmp.deserializeDirective(seq.getstatements()[0], actual);
     ASSERT_EQ(result, Fw::Success::SUCCESS);
-    ASSERT_EQ(actual.getTlmValue, dir);
+    ASSERT_EQ(actual.getTlm, dir);
     // write some junk after buf, make sure it fails
     seq.getstatements()[0].getargBuf().serialize(123);
     result = cmp.deserializeDirective(seq.getstatements()[0], actual);
@@ -979,33 +942,13 @@ TEST_F(FpySequencerTester, deserialize_getTlmValue) {
     ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
 }
 
-TEST_F(FpySequencerTester, deserialize_getTlmTime) {
+TEST_F(FpySequencerTester, deserialize_getPrm) {
     FpySequencer::DirectiveUnion actual;
-    FpySequencer_GetTlmTimeDirective dir(123, 456);
-    add_GET_TLM_TIME(dir);
+    FpySequencer_GetPrmDirective dir(123, 456);
+    add_GET_PRM(dir);
     Fw::Success result = cmp.deserializeDirective(seq.getstatements()[0], actual);
     ASSERT_EQ(result, Fw::Success::SUCCESS);
-    ASSERT_EQ(actual.getTlmTime, dir);
-    // write some junk after buf, make sure it fails
-    seq.getstatements()[0].getargBuf().serialize(123);
-    result = cmp.deserializeDirective(seq.getstatements()[0], actual);
-    ASSERT_EQ(result, Fw::Success::FAILURE);
-    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
-    this->clearHistory();
-    // clear args, make sure it fails
-    seq.getstatements()[0].getargBuf().resetSer();
-    result = cmp.deserializeDirective(seq.getstatements()[0], actual);
-    ASSERT_EQ(result, Fw::Success::FAILURE);
-    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
-}
-
-TEST_F(FpySequencerTester, deserialize_getPrmValue) {
-    FpySequencer::DirectiveUnion actual;
-    FpySequencer_GetPrmValueDirective dir(123, 456);
-    add_GET_PRM_VALUE(dir);
-    Fw::Success result = cmp.deserializeDirective(seq.getstatements()[0], actual);
-    ASSERT_EQ(result, Fw::Success::SUCCESS);
-    ASSERT_EQ(actual.getPrmValue, dir);
+    ASSERT_EQ(actual.getPrm, dir);
     // write some junk after buf, make sure it fails
     seq.getstatements()[0].getargBuf().serialize(123);
     result = cmp.deserializeDirective(seq.getstatements()[0], actual);

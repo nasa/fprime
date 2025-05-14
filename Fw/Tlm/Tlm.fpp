@@ -2,6 +2,11 @@ module Fw {
 
   type TlmBuffer
 
+  enum TlmValid {
+    VALID = 0
+    INVALID = 1
+  }
+
   @ Port for sending telemetry
   port Tlm(
             $id: FwChanIdType @< Telemetry Channel ID
@@ -17,6 +22,6 @@ module Fw {
                @ Size set to 0 if channel not found, or if no value
                @ has been received for this channel yet.
                ref val: Fw.TlmBuffer 
-             )
+             ) -> Fw.TlmValid
 
 }
