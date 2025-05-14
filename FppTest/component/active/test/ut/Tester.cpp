@@ -166,7 +166,7 @@ Fw::SerializeStatus Tester::ActiveTestComponentBaseParamExternalDelegate ::
       break;
     default:
       // Unknown ID should not have gotten here
-      FW_ASSERT(false, local_id);
+      FW_ASSERT(false, static_cast<FwAssertArgType>(local_id));
   }
 
   return stat;
@@ -211,7 +211,7 @@ Fw::SerializeStatus Tester::ActiveTestComponentBaseParamExternalDelegate ::
       break;
     default:
       // Unknown ID should not have gotten here
-      FW_ASSERT(false, local_id);
+      FW_ASSERT(false, static_cast<FwAssertArgType>(local_id));
   }
 
   return stat;
