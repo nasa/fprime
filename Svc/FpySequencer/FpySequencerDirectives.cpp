@@ -173,7 +173,7 @@ Signal FpySequencer::getTlm_directiveHandler(const FpySequencer_GetTlmDirective&
 
     // copy value into lvar
     Runtime::LocalVariable& valueLvar = this->m_runtime.localVariables[directive.getvalueDestLvar()];
-    memcpy(valueLvar.value, tlmValue.getBuffAddr(), tlmValue.getBuffLength());
+    memcpy(valueLvar.value, tlmValue.getBuffAddr(), static_cast<size_t>(tlmValue.getBuffLength()));
     valueLvar.valueSize = tlmValue.getBuffLength();
 
     // serialize time into lvar
@@ -215,7 +215,7 @@ Signal FpySequencer::getPrm_directiveHandler(const FpySequencer_GetPrmDirective&
     }
     // copy value into lvar
     Runtime::LocalVariable& lvar = this->m_runtime.localVariables[directive.getdestLvarIndex()];
-    memcpy(lvar.value, prmValue.getBuffAddr(), prmValue.getBuffLength());
+    memcpy(lvar.value, prmValue.getBuffAddr(), static_cast<size_t>(prmValue.getBuffLength()));
     lvar.valueSize = prmValue.getBuffLength();
     return Signal::stmtResponse_success;
 }
