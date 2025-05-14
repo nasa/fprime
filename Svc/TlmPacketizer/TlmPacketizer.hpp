@@ -64,11 +64,11 @@ class TlmPacketizer final : public TlmPacketizerComponentBase {
     ) override;
 
     //! Handler for input port TlmGet
-    void TlmGet_handler(FwIndexType portNum, //!< The port number
-                        FwChanIdType id, //!< Telemetry Channel ID
-                        Fw::Time& timeTag, //!< Time Tag
-                        Fw::TlmBuffer& val //!< Buffer containing serialized telemetry value.
-                                            //!< Size set to 0 if channel not found.
+    Fw::TlmValid TlmGet_handler(FwIndexType portNum, //!< The port number
+                                FwChanIdType id, //!< Telemetry Channel ID
+                                Fw::Time& timeTag, //!< Time Tag
+                                Fw::TlmBuffer& val //!< Buffer containing serialized telemetry value.
+                                                    //!< Size set to 0 if channel not found.
     ) override;
 
     //! Implementation for SET_LEVEL command handler

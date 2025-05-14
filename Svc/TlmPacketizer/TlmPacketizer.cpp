@@ -245,11 +245,11 @@ void TlmPacketizer ::TlmRecv_handler(const FwIndexType portNum,
 }
 
 //! Handler for input port TlmGet
-void TlmPacketizer ::TlmGet_handler(FwIndexType portNum,  //!< The port number
-                                    FwChanIdType id,      //!< Telemetry Channel ID
-                                    Fw::Time& timeTag,    //!< Time Tag
-                                    Fw::TlmBuffer& val    //!< Buffer containing serialized telemetry value.
-                                                          //!< Size set to 0 if channel not found.
+Fw::TlmValid TlmPacketizer ::TlmGet_handler(FwIndexType portNum,  //!< The port number
+                                            FwChanIdType id,      //!< Telemetry Channel ID
+                                            Fw::Time& timeTag,    //!< Time Tag
+                                            Fw::TlmBuffer& val    //!< Buffer containing serialized telemetry value.
+                                                                  //!< Size set to 0 if channel not found.
 ) {
     FW_ASSERT(this->m_configured);
     // get hash value for id
@@ -263,7 +263,7 @@ void TlmPacketizer ::TlmGet_handler(FwIndexType portNum,  //!< The port number
     if (not entryToUse) {
         this->missingChannel(id);
         val.resetSer();
-        return;
+        return Fw::TlmValid::INVALID;
     }
 
     for (FwChanIdType bucket = 0; bucket < TLMPACKETIZER_HASH_BUCKETS; bucket++) {
@@ -273,7 +273,7 @@ void TlmPacketizer ::TlmGet_handler(FwIndexType portNum,  //!< The port number
                 // we don't store the bytes of ignored chans
                 if (entryToUse->ignored) {
                     val.resetSer();
-                    return;
+                    return Fw::TlmValid::INVALID;
                 }
                 break;
             } else {  // try next entry
@@ -283,14 +283,14 @@ void TlmPacketizer ::TlmGet_handler(FwIndexType portNum,  //!< The port number
             // telemetry channel not in any packets
             this->missingChannel(id);
             val.resetSer();
-            return;
+            return Fw::TlmValid::INVALID;
         }
     }
 
     if (!entryToUse->hasValue) {
         // haven't received a value yet for this entry.
         val.resetSer();
-        return;
+        return Fw::TlmValid::INVALID;
     }
 
     // make sure we have enough space to store this entry in our buf
@@ -312,7 +312,7 @@ void TlmPacketizer ::TlmGet_handler(FwIndexType portNum,  //!< The port number
             // so we may actually be filling val with some junk after the value of the channel.
             FW_ASSERT(val.setBuffLen(entryToUse->channelSize) == Fw::SerializeStatus::FW_SERIALIZE_OK);
             this->m_lock.unLock();
-            return;
+            return Fw::TlmValid::VALID;
         }
     }
 
@@ -321,6 +321,7 @@ void TlmPacketizer ::TlmGet_handler(FwIndexType portNum,  //!< The port number
     FW_ASSERT(0, static_cast<FwAssertArgType>(entryToUse->id));
     // TPP (tim paranoia principle)
     val.resetSer();
+    return Fw::TlmValid::INVALID;
 }
 
 void TlmPacketizer ::Run_handler(const FwIndexType portNum, U32 context) {
