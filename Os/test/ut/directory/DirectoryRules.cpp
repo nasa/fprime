@@ -107,7 +107,6 @@ void Os::Test::Directory::Tester::ReadOneFile::action(Os::Test::Directory::Teste
     char filename[100] = {0};
     Os::Directory::Status status = state.m_directory.read(filename, 100);
     // If seek is at the end of the directory, expect NO_MORE_FILES - otherwise expect normal read and valid filename
-    printf("%s: state.m_seek_position, state.m_filenames.size filename -> %u %u %s\n", this->getName(), state.m_seek_position, state.m_filenames.size(), filename);
     if (state.m_seek_position < static_cast<FwIndexType>(state.m_filenames.size())) {
         ASSERT_EQ(status, Os::Directory::Status::OP_OK);
         ASSERT_TRUE(state.is_valid_filename(std::string(filename)));

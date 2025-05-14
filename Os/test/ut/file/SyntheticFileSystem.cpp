@@ -41,13 +41,12 @@ SyntheticFileSystem::OpenData SyntheticFileSystem::open(const CHAR* char_path, c
             return_value.file->m_data.clear();
         }
 
-        auto newPointer = 0;
+        FwSizeType newPointer = 0;
         if(exists && (Os::File::Mode::OPEN_APPEND == open_mode)) {
             newPointer = return_value.file->m_data.size();
         }
         return_value.file->m_pointer = newPointer;
 
-        printf("syntheticfilesystem open: newPointer -> %u\n", newPointer);
         return_value.file->m_mode = open_mode;
         return_value.file->m_path = path;
         // Checks on the shadow data to ensure consistency
