@@ -7,7 +7,7 @@
 #ifndef FW_EXTERNAL_PARAM_TYPES_HPP
 #define FW_EXTERNAL_PARAM_TYPES_HPP
 
-#include <FpConfig.hpp>
+#include <config/FpConfig.hpp>
 #include <Fw/Prm/ParamValidEnumAc.hpp>
 #include "PrmBuffer.hpp"
 
