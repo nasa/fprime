@@ -421,7 +421,12 @@ void Os::Test::File::Tester::Write::action(
     printf("--> Rule: %s \n", this->getName());
     U8 buffer[FILE_DATA_MAXIMUM];
     state.assert_file_consistent();
-    FwSizeType size_desired = static_cast<FwSizeType>(STest::Pick::lowerUpper(0, FILE_DATA_MAXIMUM));
+    FwSizeType current_position = 0;
+    state.m_file.position(current_position);
+    if(state.m_mode == Os::File::Mode::OPEN_APPEND) {
+        state.m_file.size(current_position);
+    }
+    FwSizeType size_desired = static_cast<FwSizeType>(STest::Pick::lowerUpper(0, FILE_DATA_MAXIMUM - current_position));
     FwSizeType size_written = size_desired;
     bool wait = static_cast<bool>(STest::Pick::lowerUpper(0, 1));
     for (FwSizeType i = 0; i < size_desired; i++) {

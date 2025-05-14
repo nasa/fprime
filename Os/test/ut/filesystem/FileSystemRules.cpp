@@ -54,6 +54,7 @@ bool Os::Test::FileSystem::Tester::DirectoryExists::precondition(const Os::Test:
 
 void Os::Test::FileSystem::Tester::DirectoryExists::action(Os::Test::FileSystem::Tester &state) {
     std::string dirPath = state.get_random_directory().path;
+    printf("--> Rule: %s directory path %s\n", this->getName(), dirPath.c_str());
     ASSERT_TRUE(Os::FileSystem::getSingleton().exists(dirPath.c_str())) << "exists() failed for directory";
 }
 
