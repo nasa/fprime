@@ -8,7 +8,7 @@ The outgoing stream is represented by the input `send` port; other components ca
 ### Send
 
 The manager component (for example a radio manager) initiates the transfer of send data by calling the "send" port.
-The caller will provide a `Fw::Buffer` containing the data to send. The driver component **must** perform a callback on its `dataReturnOut` port to return the status of that send as well as returning ownership of the `Fw::Buffer` to the caller.
+The caller will provide a `Fw::Buffer` containing the data to send. The driver component **must** perform a callback on its `sendReturnOut` port to return the status of that send as well as returning ownership of the `Fw::Buffer` to the caller.
 These responses are an enumeration whose values are described in the following table:
 
 | Value | Description | Buffer Ownership |

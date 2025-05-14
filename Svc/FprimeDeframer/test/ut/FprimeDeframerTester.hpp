@@ -58,6 +58,9 @@ class FprimeDeframerTester : public FprimeDeframerGTestBase {
     //! Test receiving a frame with an incorrect Crc field
     void testIncorrectCrc();
 
+    //! Test bufferReturn passthrough
+    void testDataReturn();
+
   private:
     // ----------------------------------------------------------------------
     // Helper functions

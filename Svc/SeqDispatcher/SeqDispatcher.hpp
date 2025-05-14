@@ -9,7 +9,7 @@
 
 #include "Svc/SeqDispatcher/SeqDispatcherComponentAc.hpp"
 #include "Svc/SeqDispatcher/SeqDispatcher_CmdSequencerStateEnumAc.hpp"
-#include "FppConstantsAc.hpp"
+#include "config/FppConstantsAc.hpp"
 #include "Fw/Types/WaitEnumAc.hpp"
 #include "Fw/Types/StringBase.hpp"
 

@@ -35,11 +35,11 @@ class ComStub final : public ComStubComponentBase {
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
 
-    //! Handler implementation for comDataIn
+    //! Handler implementation for dataIn
     //!
     //! Comms data is coming in meaning there is a request for ComStub to send data on the wire
     //! For ComStub, this means we send the data to the underlying driver (e.g. TCP/UDP/UART)
-    void comDataIn_handler(const FwIndexType portNum, /*!< The port number*/
+    void dataIn_handler(const FwIndexType portNum, /*!< The port number*/
                            Fw::Buffer& sendBuffer,
                            const ComCfg::FrameContext& context) override;
 
@@ -47,18 +47,25 @@ class ComStub final : public ComStubComponentBase {
     //!
     void drvConnected_handler(const FwIndexType portNum) override;
 
-    //! Handler implementation for drvDataIn
+    //! Handler implementation for drvReceiveIn
     //!
     //! Data is coming in from the driver (meaning it has been read from the wire).
-    //! ComStub forwards this to the comDataOut port
-    void drvDataIn_handler(const FwIndexType portNum,
+    //! ComStub forwards this to the dataOut port
+    void drvReceiveIn_handler(const FwIndexType portNum,
                            /*!< The port number*/ Fw::Buffer& recvBuffer,
                            const Drv::ByteStreamStatus& recvStatus) override;
 
     //! Handler implementation for dataReturnIn
     //!
+    //! Port receiving back ownership of buffer sent out on dataOut
+    void dataReturnIn_handler(FwIndexType portNum,  //!< The port number
+                                Fw::Buffer& fwBuffer,  //!< The buffer
+                                const ComCfg::FrameContext& context) override;
+
+    //! Handler implementation for drvSendReturnIn
+    //!
     //! Buffer ownership and status returning from a Driver "send" operation
-    void dataReturnIn_handler(FwIndexType portNum,   //!< The port number
+    void drvSendReturnIn_handler(FwIndexType portNum,   //!< The port number
                               Fw::Buffer& fwBuffer,  //!< The buffer
                               const Drv::ByteStreamStatus& recvStatus) override;
 

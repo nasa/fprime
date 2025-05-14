@@ -38,7 +38,7 @@
 extern "C" {
 #endif
 #include <inttypes.h> // Standard integer types and printf macros
-#include <FPrimeNumericalConfig.h>
+#include <config/FPrimeNumericalConfig.h>
 
 
 // Compiler checks

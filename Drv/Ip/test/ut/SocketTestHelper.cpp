@@ -10,7 +10,7 @@
 #include <unistd.h>
 #include <cerrno>
 #include <arpa/inet.h>
-#include <IpCfg.hpp>
+#include <config/IpCfg.hpp>
 
 namespace Drv {
 namespace Test {

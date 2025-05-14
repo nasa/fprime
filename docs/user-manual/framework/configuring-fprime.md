@@ -380,15 +380,6 @@ Table 47 describes other user settings.
 > [!NOTE]
 > The following settings are defined by the build system and are in `FpConfig.hpp` to provide a default off value. These must be set by the build system as the setting works in unison with other modules that the build system includes when enabling these settings.
 
-Table 48 describes settings defined by the build system that should never be hand-set.
-
-**Table 48.** Macros for use by build system only
-
-| Macro                       | Definition                                              | Default | Valid Values     |
-| --------------------------- | --------------------------------------------------------|---------|------------------|
-| FW_BAREMETAL_SCHEDULER      | Enables baremetal scheduler hooks in active components  | 0 (off) | 0 (off) 1 (on)   |
-
-
 ## Component Configuration
 
 Component configurations are also provided as part of the project's config directory. If the directory is not provided,

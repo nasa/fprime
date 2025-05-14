@@ -15,6 +15,11 @@ TEST(Nominal, TcpClientBasicReceiveThread) {
     tester.test_receive_thread();
 }
 
+TEST(Nominal, TcpClientBufferDeallocation) {
+    Drv::TcpClientTester tester;
+    tester.test_buffer_deallocation();
+}
+
 TEST(Reconnect, TcpClientMultiMessaging) {
     Drv::TcpClientTester tester;
     tester.test_multiple_messaging();

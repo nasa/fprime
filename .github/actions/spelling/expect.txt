@@ -303,6 +303,7 @@ errornum
 ert
 esb
 ethanchee
+etl
 EVENTARRAY
 EVENTBOOL
 eventflags
@@ -315,11 +316,13 @@ EXAMPLECOMPONENTIMPL
 excinfo
 Exoplanets
 exprtokens
+externalproject
 Fabcdef
 FAKELOGGER
 fbuild
 fdp
 FEEDNAME
+fetchcontent
 ffff
 Ffs
 FILEDOWNLINK
@@ -526,6 +529,7 @@ lestarch
 levelname
 lflag
 lhash
+LIBCRYPTO
 LIBDIR
 LIBEXECDIR
 LIBLOC
@@ -663,6 +667,7 @@ ONLN
 OPCODEBASE
 openmct
 openpyxl
+openssldir
 oper
 optarg
 optind

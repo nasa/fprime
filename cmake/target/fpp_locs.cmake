@@ -9,7 +9,7 @@
 # fpp_locs_add_module_target: used to identify all source files to pass to location global target
 ####
 include_guard()
-set(FPP_LOCATE_DEFS_HELPER "${PYTHON}" "${CMAKE_CURRENT_LIST_DIR}/tools/redirector.py")
+set(FPP__INTERNAL_LOCATE_DEFS_HELPER "${PYTHON}" "${CMAKE_CURRENT_LIST_DIR}/tools/redirector.py")
 
 ####
 # Function `fpp_locs_add_global_target`:
@@ -23,7 +23,7 @@ function(fpp_locs_add_global_target TARGET)
     add_custom_command(
         OUTPUT "${CMAKE_BINARY_DIR}/locs.fpp"
         COMMAND 
-            "${FPP_LOCATE_DEFS_HELPER}"
+            "${FPP__INTERNAL_LOCATE_DEFS_HELPER}"
             "${CMAKE_BINARY_DIR}/locs.fpp"
             "${FPP_LOCATE_DEFS}"
             -d "${FPRIME_BINARY_DIR}"

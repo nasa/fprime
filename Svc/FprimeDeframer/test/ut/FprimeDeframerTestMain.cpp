@@ -37,6 +37,11 @@ TEST(FprimeDeframer, testIncorrectCrc) {
     tester.testIncorrectCrc();
 }
 
+TEST(FprimeDeframer, testDataReturn) {
+    Svc::FprimeDeframerTester tester;
+    tester.testDataReturn();
+}
+
 int main(int argc, char** argv) {
     STest::Random::seed();
     ::testing::InitGoogleTest(&argc, argv);

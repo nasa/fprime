@@ -8,7 +8,7 @@
 #include <Fw/Cmd/CmdPacket.hpp>
 #include <Fw/Test/UnitTest.hpp>
 #include <STest/Pick/Pick.hpp>
-#include "FppConstantsAc.hpp"
+#include "config/FppConstantsAc.hpp"
 
 namespace Svc {
 

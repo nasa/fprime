@@ -8,5 +8,5 @@
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/SmSignalBuffer.cpp"
 )
-set(MOD_DEPS config)
+set(MOD_DEPS Fw_Types)
 register_fprime_module()

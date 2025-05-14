@@ -12,7 +12,7 @@
 #ifndef Svc_FileDownlink_HPP
 #define Svc_FileDownlink_HPP
 
-#include <FileDownlinkCfg.hpp>
+#include <config/FileDownlinkCfg.hpp>
 #include <Svc/FileDownlink/FileDownlinkComponentAc.hpp>
 #include <Fw/FilePacket/FilePacket.hpp>
 #include <Os/File.hpp>

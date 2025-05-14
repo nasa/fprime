@@ -25,11 +25,11 @@ FprimeDeframer ::~FprimeDeframer() {}
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void FprimeDeframer ::framedIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
+void FprimeDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
     if (data.getSize() < FprimeProtocol::FrameHeader::SERIALIZED_SIZE + FprimeProtocol::FrameTrailer::SERIALIZED_SIZE) {
         // Incoming buffer is not long enough to contain a valid frame (header+trailer)
         this->log_WARNING_HI_InvalidBufferReceived();
-        this->bufferDeallocate_out(0, data); // drop the frame
+        this->dataReturnOut_out(0, data, context); // drop the frame
         return;
     }
 
@@ -46,7 +46,7 @@ void FprimeDeframer ::framedIn_handler(FwIndexType portNum, Fw::Buffer& data, co
     const FprimeProtocol::FrameHeader defaultValue;
     if (header.getstartWord() != defaultValue.getstartWord()) {
         this->log_WARNING_HI_InvalidStartWord();
-        this->bufferDeallocate_out(0, data);
+        this->dataReturnOut_out(0, data, context); // drop the frame
         return;
     }
     // We expect the frame size to be size of header + body (of size specified in header) + trailer
@@ -54,7 +54,7 @@ void FprimeDeframer ::framedIn_handler(FwIndexType portNum, Fw::Buffer& data, co
                                          FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
     if (data.getSize() < expectedFrameSize) {
         this->log_WARNING_HI_InvalidLengthReceived();
-        this->bufferDeallocate_out(0, data);
+        this->dataReturnOut_out(0, data, context); // drop the frame
         return;
     }
 
@@ -77,7 +77,7 @@ void FprimeDeframer ::framedIn_handler(FwIndexType portNum, Fw::Buffer& data, co
     // Check that the CRC in the trailer of the frame matches the computed CRC
     if (trailer.getcrcField() != computedCrc.asBigEndianU32()) {
         this->log_WARNING_HI_InvalidChecksum();
-        this->bufferDeallocate_out(0, data);
+        this->dataReturnOut_out(0, data, context); // drop the frame
         return;
     }
 
@@ -88,7 +88,12 @@ void FprimeDeframer ::framedIn_handler(FwIndexType portNum, Fw::Buffer& data, co
     data.setSize(data.getSize() - FprimeProtocol::FrameHeader::SERIALIZED_SIZE -
                  FprimeProtocol::FrameTrailer::SERIALIZED_SIZE);
     // Emit the deframed data
-    this->deframedOut_out(0, data, context);
+    this->dataOut_out(0, data, context);
 }
+
+void FprimeDeframer ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer, const ComCfg::FrameContext& context) {
+    this->dataReturnOut_out(0, fwBuffer, context);
+}
+
 
 }  // namespace Svc
