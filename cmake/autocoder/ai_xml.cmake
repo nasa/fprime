@@ -19,10 +19,6 @@ autocoder_setup_for_individual_sources()
 ####
 function(ai_xml_is_supported AC_INPUT_FILE)
     ends_with(IS_SUPPORTED "${AC_INPUT_FILE}" "Ai.xml")
-    set(PREVIOUSLY_GENERATED)
-    if (ARGC GREATER_EQUAL 2)
-        set(PREVIOUSLY_GENERATED ${ARGV2})
-    endif()
 
     # Don't generate cpp/hpp files that have already been generated
     if (IS_SUPPORTED)
@@ -31,11 +27,8 @@ function(ai_xml_is_supported AC_INPUT_FILE)
         if(("${CPP_FILE}" IN_LIST PREVIOUSLY_GENERATED) AND ("${HPP_FILE}" IN_LIST PREVIOUSLY_GENERATED))
             set(IS_SUPPORTED FALSE)
         endif()
-
-        # If this Ai.xml file was not a generated product, then mark it as requiring a rebuild
-        if (NOT "${AC_INPUT_FILE}" IN_LIST PREVIOUSLY_GENERATED)
-            requires_regeneration("${AC_INPUT_FILE}")
-        endif()
+        # Requires regeneration checks for GENERATED before requiring regeneration
+        requires_regeneration("${AC_INPUT_FILE}")
     endif()
     # Note: set in PARENT_SCOPE in macro is intended. Caller **wants** to set IS_SUPPORTED in their parent's scope.
     set(IS_SUPPORTED "${IS_SUPPORTED}" PARENT_SCOPE)
