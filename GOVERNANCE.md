@@ -101,7 +101,7 @@ As F Prime is open source, there is nothing stopping a Contributor from attempti
 
 ## Communication Channels
 
-The F Prime Project uses Github as a communication medium. Issues and Discussions will be communicated to using the conversation features provided by those mediums. The "Reviews" feature is used to communicate feedback to a specific contribution. The CCB will comment on Issues, and on Pull Requests to communicate feedback. The Community Manager will use the "Reviews" feature to provide the required pre-merge reviews.
+The F Prime Project uses GitHub as a communication medium. Issues and Discussions will be communicated to using the conversation features provided by those mediums. The "Reviews" feature is used to communicate feedback to a specific contribution. The CCB will comment on Issues, and on Pull Requests to communicate feedback. The Community Manager will use the "Reviews" feature to provide the required pre-merge reviews.
 
 [Announcements](https://github.com/nasa/fprime/discussions/categories/announcements) are used when F Prime needs to communicate to the entire community.
 Calls for Comments are used as outlined above to solicit feedback from the community.
