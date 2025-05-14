@@ -46,12 +46,9 @@ endmacro()
 # `AC_INPUT_FILE`: file to mark as tracked
 ####
 function(requires_regeneration AC_INPUT_FILE)
-    get_property(RECONFIGURE_LIST GLOBAL PROPERTY AUTO_RECONFIGURE_LIST)
-    get_filename_component(REAL_FILE "${AC_INPUT_FILE}" REALPATH)
-    if (NOT "${REAL_FILE}" IN_LIST RECONFIGURE_LIST)
+    get_source_file_property(IS_GENERATED "${AC_INPUT_FILE}" GENERATED)
+    if (NOT IS_GENERATED)
         set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${AC_INPUT_FILE}")
-        list(APPEND RECONFIGURE_LIST "${REAL_FILE}")
-        set_property(GLOBAL PROPERTY AUTO_RECONFIGURE_LIST "${RECONFIGURE_LIST}")
     endif()
 endfunction()
 
