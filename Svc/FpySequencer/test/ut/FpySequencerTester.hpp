@@ -59,7 +59,6 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     // dispatches events from the queue until the component reaches the given state
     void dispatchUntilState(State state, U32 bound = 100);
     void resetRuntime();
-    void assertQueueMsg(FwEnumStoreType msg);
 
     // a sequence that you can build with the following functions
     Fpy::Sequence seq;

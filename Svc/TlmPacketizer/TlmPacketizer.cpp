@@ -270,7 +270,7 @@ Fw::TlmValid TlmPacketizer ::TlmGet_handler(FwIndexType portNum,  //!< The port 
         if (entryToUse) {
             if (entryToUse->id == id) {  // found the matching entry
                 // check to see if the channel is ignored. If so, just return, as
-                // we don't store the bytes of ignored chans
+                // we don't store the bytes of ignored channels
                 if (entryToUse->ignored) {
                     val.resetSer();
                     return Fw::TlmValid::INVALID;

@@ -93,17 +93,31 @@ Fw::TlmValid TlmChan::TlmGet_handler(FwIndexType portNum, FwChanIdType id, Fw::T
     }
 
     if (activeEntry && inactiveEntry) {
+        Fw::Time::Comparison cmp = Fw::Time::compare(inactiveEntry->lastUpdate, activeEntry->lastUpdate);
         // two entries. grab the one with the most recent time tag
-        if (Fw::Time::compare(inactiveEntry->lastUpdate, activeEntry->lastUpdate) == Fw::Time::Comparison::GT) {
+        if (cmp == Fw::Time::Comparison::GT) {
             // inactive entry is more recent
             val = inactiveEntry->buffer;
             timeTag = inactiveEntry->lastUpdate;
             return Fw::TlmValid::VALID;
-        } else {
+        } else if (cmp != Fw::Time::Comparison::INCOMPARABLE) {
             // active entry is more recent, or they are equal
             val = activeEntry->buffer;
             timeTag = activeEntry->lastUpdate;
             return Fw::TlmValid::VALID;
+        } else {
+            // times are incomparable
+            // return the one that is updated, or if neither,
+            // default to active
+            if (inactiveEntry->updated) {
+                val = inactiveEntry->buffer;
+                timeTag = inactiveEntry->lastUpdate;
+                return Fw::TlmValid::VALID;
+            } else {
+                val = activeEntry->buffer;
+                timeTag = activeEntry->lastUpdate;
+                return Fw::TlmValid::VALID;
+            }
         }
     } else if (activeEntry) {
         // only one entry, and it's in the active buf

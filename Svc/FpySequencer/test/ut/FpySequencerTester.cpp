@@ -41,36 +41,6 @@ void FpySequencerTester::allocMem(FwSizeType bytes) {
     cmp.m_sequenceBuffer.setExtBuffer(internalSeqBuf, bytes);
 }
 
-void FpySequencerTester::assertQueueMsg(FwEnumStoreType msg) {
-    // TODO I would like to write this function but I can't have access to the
-    // cmpipcbuf and msgtypeenum
-    // cmpIpcSerializableBuffer _msg;
-    // FwQueuePriorityType _priority = 0;
-
-    // Os::Queue::Status _msgStatus = cmp.m_queue.receive(
-    //   _msg,
-    //   Os::Queue::BLOCKING,
-    //   _priority
-    // );
-    // FW_ASSERT(
-    //   _msgStatus == Os::Queue::OP_OK,
-    //   static_cast<FwAssertArgType>(_msgStatus)
-    // );
-
-    // // Reset to beginning of buffer
-    // _msg.resetDeser();
-
-    // FwEnumStoreType _desMsg = 0;
-    // Fw::SerializeStatus _deserStatus = _msg.deserialize(_desMsg);
-    // FW_ASSERT(
-    //   _deserStatus == Fw::FW_SERIALIZE_OK,
-    //   static_cast<FwAssertArgType>(_deserStatus)
-    // );
-
-    // MsgTypeEnum _msgType = static_cast<MsgTypeEnum>(_desMsg);
-    // ASSERT_EQ(msg, _msgType);
-}
-
 void FpySequencerTester::clearSeq() {
     seq = Fpy::Sequence();
     seq.getheader().setschemaVersion(Fpy::SCHEMA_VERSION);
@@ -248,11 +218,12 @@ void FpySequencerTester::writeAndRun() {
 }
 
 //! Default handler implementation for from_getTlmChan
-Fw::TlmValid FpySequencerTester::from_getTlmChan_handler(FwIndexType portNum,  //!< The port number
-                                                 FwChanIdType id,      //!< Telemetry Channel ID
-                                                 Fw::Time& timeTag,    //!< Time Tag
-                                                 Fw::TlmBuffer& val  //!< Buffer containing serialized telemetry value.
-                                                                     //!< Size set to 0 if channel not found.
+Fw::TlmValid FpySequencerTester::from_getTlmChan_handler(
+    FwIndexType portNum,  //!< The port number
+    FwChanIdType id,      //!< Telemetry Channel ID
+    Fw::Time& timeTag,    //!< Time Tag
+    Fw::TlmBuffer& val    //!< Buffer containing serialized telemetry value.
+                          //!< Size set to 0 if channel not found.
 ) {
     this->pushFromPortEntry_getTlmChan(id, timeTag, val);
     if (id != nextTlmId) {

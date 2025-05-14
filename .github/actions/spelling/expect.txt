@@ -1046,6 +1046,7 @@ TOTALISFTELMMSG
 TOTALQUEUEFULL
 totalram
 tparam
+TPP
 trimwhitespace
 trinomials
 truncstring
