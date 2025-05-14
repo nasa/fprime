@@ -189,3 +189,22 @@ event TooManySequenceStatements(
 ) \
     severity warning high \
     format "A sequence specified it had {} statements but the max was {}"
+
+event DebugBroken(
+    stmtIdx: U32
+    breakOnce: bool
+) \
+    severity activity high \
+    format "Debug breakpoint reached before dispatching statement index {}. Will break once: {}"
+
+event DebugBreakpointSet(
+    breakpointIdx: U32
+    breakOnce: bool
+) \
+    severity activity high \
+    format "Debug breakpoint set before statement index {}. Will break once: {}"
+
+event DebugBreakpointCleared() \
+    severity activity high \
+    format "Debug breakpoint cleared"
+    

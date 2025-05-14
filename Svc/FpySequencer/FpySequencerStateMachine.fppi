@@ -3,6 +3,15 @@ struct SequenceExecutionArgs {
     $block: BlockState
 }
 
+struct DebugBreakpointArgs {
+    @ whether or not to break at the debug breakpoint index
+    breakOnBreakpoint: bool
+    @ whether or not to remove the breakpoint after breaking on it
+    breakOnlyOnceOnBreakpoint: bool
+    @ the statement index at which to break, before dispatching
+    breakpointIndex: U32
+}
+
 state machine SequencerStateMachine {
     ####################
     # guards           #
@@ -22,6 +31,10 @@ state machine SequencerStateMachine {
     signal cmd_RUN_VALIDATED: SequenceExecutionArgs
     @ called on CANCEL cmd. raised in all states except IDLE
     signal cmd_CANCEL
+    @ called in DEBUG_SET_BREAKPOINT cmd. raised in any state
+    signal cmd_DEBUG_SET_BREAKPOINT: DebugBreakpointArgs
+    @ called in DEBUG_CLEAR_BREAKPOINT cmd. raised in any state
+    signal cmd_DEBUG_CLEAR_BREAKPOINT
 
     @ generic failure of an action
     signal result_failure
@@ -65,13 +78,15 @@ state machine SequencerStateMachine {
 
     @ clears all variables related to the loading/validating of the sequence file
     action clearSequenceFile
+    @ clears the debug breakpoint setting
+    action clearDebugBreakpoint
 
     initial enter IDLE
 
     @ sequencer is ready to load, validate and run a sequence
     state IDLE {
-        # start with an unset goal state
-        entry do { setGoalState_IDLE, clearSequenceFile }
+        # start with an unset goal state, and no debugging settings
+        entry do { clearDebugBreakpoint, setGoalState_IDLE, clearSequenceFile }
         # -->
         # wait for a cmd
 
@@ -82,6 +97,9 @@ state machine SequencerStateMachine {
         on cmd_VALIDATE do { setGoalState_VALID, setSequenceFilePath } enter VALIDATING
         # run takes both path and block state
         on cmd_RUN do { setGoalState_RUNNING, setSequenceFilePath, setSequenceBlockState } enter VALIDATING
+
+        on cmd_DEBUG_SET_BREAKPOINT do { setDebugBreakpoint }
+        on cmd_DEBUG_CLEAR_BREAKPOINT do { clearDebugBreakpoint }
     }
 
     state VALIDATING {
@@ -100,6 +118,9 @@ state machine SequencerStateMachine {
         ####################
         @ cancelled the sequence while it was validating
         on cmd_CANCEL do { report_seqCancelled, sendCmdResponse_EXECUTION_ERROR } enter IDLE
+
+        on cmd_DEBUG_SET_BREAKPOINT do { setDebugBreakpoint }
+        on cmd_DEBUG_CLEAR_BREAKPOINT do { clearDebugBreakpoint }
     }
 
     @ decide whether we should stop after validating, or proceed to running
@@ -124,6 +145,9 @@ state machine SequencerStateMachine {
         on cmd_CANCEL do { report_seqCancelled } enter IDLE
         @ the sequence path has already been decided on, so only set the sequenceShouldBlock var
         on cmd_RUN_VALIDATED do { setSequenceBlockState } enter RUNNING
+
+        on cmd_DEBUG_SET_BREAKPOINT do { setDebugBreakpoint }
+        on cmd_DEBUG_CLEAR_BREAKPOINT do { clearDebugBreakpoint }
     }
 
 
@@ -141,6 +165,10 @@ state machine SequencerStateMachine {
     action checkStatementTimeout
     @ increments the m_sequencesStarted counter
     action incrementSequenceCounter
+    @ reports that a debug breakpoint was hit
+    action report_debugBroken
+    @ sets the debug breakpoint to the provided args
+    action setDebugBreakpoint: DebugBreakpointArgs
 
     @ called in dispatchStatement method when a statement was successfully dispatched
     signal result_dispatchStatement_success
@@ -170,13 +198,29 @@ state machine SequencerStateMachine {
     @ raised when the statement has not timed out yet
     signal result_checkStatementTimeout_noTimeout
 
+    @ called in DEBUG_CONTINUE cmd. only raised in RUNNING.DEBUG_BROKEN state
+    signal cmd_DEBUG_CONTINUE
+    @ called in DEBUG_BREAK cmd. only raised in RUNNING state
+    signal cmd_DEBUG_BREAK: DebugBreakpointArgs
+
+    @ return true if should debug break at this point in execution, before dispatching
+    @ next stmt
+    guard shouldDebugBreak
+    @ return true if this debug breakpoint should only happen once
+    guard debugBreakOnce
+
     @ sequencer is executing all statements in the sequence
     state RUNNING {
         @ start with a fresh baked runtime, and tick up the
         @ sequence counter
         entry do { resetRuntime, incrementSequenceCounter }
 
-        initial enter DISPATCH_STATEMENT
+        initial enter DEBUG_BREAK_CHECK
+
+        @ check whether to pause execution before dispatching the next statement
+        choice DEBUG_BREAK_CHECK {
+            if shouldDebugBreak do { report_debugBroken } enter DEBUG_BROKEN else enter DISPATCH_STATEMENT
+        }
 
         @ sequencer is stepping into a single statement and dispatching it
         state DISPATCH_STATEMENT {
@@ -191,22 +235,35 @@ state machine SequencerStateMachine {
             on checkTimersIn do { checkStatementTimeout }
             # -->
             on result_checkStatementTimeout_statementTimeout do { sendCmdResponse_EXECUTION_ERROR } enter IDLE
+            # this can occur if the time base/ctx changes, or was invalid from the start
             on result_timeOpFailed do { sendCmdResponse_EXECUTION_ERROR } enter IDLE
             # result_checkStatementTimeout_noTimeout not handled, no need
 
-            on stmtResponse_success enter DISPATCH_STATEMENT
+            on stmtResponse_success enter DEBUG_BREAK_CHECK
             on stmtResponse_failure do { sendCmdResponse_EXECUTION_ERROR } enter IDLE
             on stmtResponse_beginSleep enter SLEEPING
         }
 
         @ sequencer is not taking any action, waiting for a time in the future to continue
         state SLEEPING {
-            on checkTimersIn do { checkShouldWake }
+            on checkTimersIn do { checkShouldWake, checkStatementTimeout }
             # -->
-            on result_checkShouldWake_wakeup enter DISPATCH_STATEMENT
+            on result_checkShouldWake_wakeup enter DEBUG_BREAK_CHECK
             # this can occur if the time base/ctx changes, or was invalid from the start
             on result_timeOpFailed do { sendCmdResponse_EXECUTION_ERROR } enter IDLE
-            # if keepSleeping is raised, stay asleep
+            on result_checkStatementTimeout_statementTimeout do { sendCmdResponse_EXECUTION_ERROR } enter IDLE
+            # if result_checkShouldWake_keepSleeping is raised, stay asleep
+            # if result_checkStatementTimeout_noTimeout is raised, stay asleep
+        }
+
+        @ a debug breakpoint was hit. sequencer is not taking any action, or allowing timeouts.
+        @ must be exited via command, either CANCEL or DEBUG_CONTINUE
+        state DEBUG_BROKEN {
+            entry do { signalEntered }
+            # -->
+            on entered if debugBreakOnce do { clearDebugBreakpoint }
+
+            on cmd_DEBUG_CONTINUE enter DISPATCH_STATEMENT
         }
 
         @ fail the sequence if we got an unexpected statement response while running it.
@@ -219,7 +276,9 @@ state machine SequencerStateMachine {
         ####################
         # commands         #
         ####################
-        # TODO is it okay to cancel if we're awaiting a cmd? or sleeping?
         on cmd_CANCEL do { report_seqCancelled, sendCmdResponse_EXECUTION_ERROR } enter IDLE
+        on cmd_DEBUG_BREAK do { setDebugBreakpoint }
+        on cmd_DEBUG_SET_BREAKPOINT do { setDebugBreakpoint }
+        on cmd_DEBUG_CLEAR_BREAKPOINT do { clearDebugBreakpoint }
     }
 }

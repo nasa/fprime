@@ -8,8 +8,8 @@
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
 
-#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Com/ComPacket.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Svc/TlmPacketizer/TlmPacketizer.hpp>
 
 namespace Svc {
@@ -73,15 +73,19 @@ void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
             // not ignored channel
             entryToUse->ignored = false;
             entryToUse->id = id;
+            entryToUse->hasValue = false;
+            entryToUse->channelSize = packetList.list[pktEntry]->list[tlmEntry].size;
             // the offset into the buffer will be the current packet length
             // the offset must fit within FwSignedSizeType to allow for negative values
-            FW_ASSERT(packetLen <= static_cast<FwSizeType>(std::numeric_limits<FwSignedSizeType>::max()), static_cast<FwAssertArgType>(packetLen));
+            FW_ASSERT(packetLen <= static_cast<FwSizeType>(std::numeric_limits<FwSignedSizeType>::max()),
+                      static_cast<FwAssertArgType>(packetLen));
             entryToUse->packetOffset[pktEntry] = static_cast<FwSignedSizeType>(packetLen);
 
-            packetLen += packetList.list[pktEntry]->list[tlmEntry].size;
+            packetLen += entryToUse->channelSize;
 
         }  // end channel in packet
-        FW_ASSERT(packetLen <= FW_COM_BUFFER_MAX_SIZE, static_cast<FwAssertArgType>(packetLen), static_cast<FwAssertArgType>(pktEntry));
+        FW_ASSERT(packetLen <= FW_COM_BUFFER_MAX_SIZE, static_cast<FwAssertArgType>(packetLen),
+                  static_cast<FwAssertArgType>(pktEntry));
         // clear contents
         memset(this->m_fillBuffers[pktEntry].buffer.getBuffAddr(), 0, static_cast<size_t>(packetLen));
         // serialize packet descriptor and packet ID now since it will always be the same
@@ -119,6 +123,8 @@ void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
         // is ignored channel
         entryToUse->ignored = true;
         entryToUse->id = id;
+        entryToUse->hasValue = false;
+        entryToUse->channelSize = ignoreList.list[channelEntry].size;
     }  // end ignore list
 
     // store number of packets
@@ -147,7 +153,8 @@ TlmPacketizer::TlmEntry* TlmPacketizer::findBucket(FwChanIdType id) {
                 }
             } else {
                 // Make sure that we haven't run out of buckets
-                FW_ASSERT(this->m_tlmEntries.free < TLMPACKETIZER_HASH_BUCKETS, static_cast<FwAssertArgType>(this->m_tlmEntries.free));
+                FW_ASSERT(this->m_tlmEntries.free < TLMPACKETIZER_HASH_BUCKETS,
+                          static_cast<FwAssertArgType>(this->m_tlmEntries.free));
                 // add new bucket from free list
                 entryToUse = &this->m_tlmEntries.buckets[this->m_tlmEntries.free++];
                 // Coverity warning about null dereference - see if it happens
@@ -164,7 +171,8 @@ TlmPacketizer::TlmEntry* TlmPacketizer::findBucket(FwChanIdType id) {
         }
     } else {
         // Make sure that we haven't run out of buckets
-        FW_ASSERT(this->m_tlmEntries.free < TLMPACKETIZER_HASH_BUCKETS, static_cast<FwAssertArgType>(this->m_tlmEntries.free));
+        FW_ASSERT(this->m_tlmEntries.free < TLMPACKETIZER_HASH_BUCKETS,
+                  static_cast<FwAssertArgType>(this->m_tlmEntries.free));
         // create new entry at slot head
         this->m_tlmEntries.slots[index] = &this->m_tlmEntries.buckets[this->m_tlmEntries.free++];
         entryToUse = this->m_tlmEntries.slots[index];
@@ -228,9 +236,92 @@ void TlmPacketizer ::TlmRecv_handler(const FwIndexType portNum,
             this->m_fillBuffers[pkt].latestTime = timeTag;
             U8* ptr = &this->m_fillBuffers[pkt].buffer.getBuffAddr()[entryToUse->packetOffset[pkt]];
             (void)memcpy(ptr, val.getBuffAddr(), static_cast<size_t>(val.getBuffLength()));
+            // record that this chan has a value. could do this outside of the loop only once
+            // but then we'd need to grab the lock again.
+            entryToUse->hasValue = true;
             this->m_lock.unLock();
         }
     }
+}
+
+//! Handler for input port TlmGet
+Fw::TlmValid TlmPacketizer ::TlmGet_handler(FwIndexType portNum,  //!< The port number
+                                            FwChanIdType id,      //!< Telemetry Channel ID
+                                            Fw::Time& timeTag,    //!< Time Tag
+                                            Fw::TlmBuffer& val    //!< Buffer containing serialized telemetry value.
+                                                                  //!< Size set to 0 if channel not found.
+) {
+    FW_ASSERT(this->m_configured);
+    // get hash value for id
+    FwChanIdType index = this->doHash(id);
+    TlmEntry* entryToUse = nullptr;
+
+    // Search to see if the channel is being sent
+    entryToUse = this->m_tlmEntries.slots[index];
+
+    // if no entries at hash, channel not part of a packet or is not ignored
+    if (not entryToUse) {
+        this->missingChannel(id);
+        val.resetSer();
+        return Fw::TlmValid::INVALID;
+    }
+
+    for (FwChanIdType bucket = 0; bucket < TLMPACKETIZER_HASH_BUCKETS; bucket++) {
+        if (entryToUse) {
+            if (entryToUse->id == id) {  // found the matching entry
+                // check to see if the channel is ignored. If so, just return, as
+                // we don't store the bytes of ignored channels
+                if (entryToUse->ignored) {
+                    val.resetSer();
+                    return Fw::TlmValid::INVALID;
+                }
+                break;
+            } else {  // try next entry
+                entryToUse = entryToUse->next;
+            }
+        } else {
+            // telemetry channel not in any packets
+            this->missingChannel(id);
+            val.resetSer();
+            return Fw::TlmValid::INVALID;
+        }
+    }
+
+    if (!entryToUse->hasValue) {
+        // haven't received a value yet for this entry.
+        val.resetSer();
+        return Fw::TlmValid::INVALID;
+    }
+
+    // make sure we have enough space to store this entry in our buf
+    FW_ASSERT(entryToUse->channelSize <= val.getBuffCapacity(), static_cast<FwAssertArgType>(entryToUse->channelSize),
+              static_cast<FwAssertArgType>(val.getBuffCapacity()));
+
+    // okay, we have the matching entry.
+    // go over each packet and find the first one which stores this channel
+
+    for (FwChanIdType pkt = 0; pkt < MAX_PACKETIZER_PACKETS; pkt++) {
+        // check if current packet has this channel
+        if (entryToUse->packetOffset[pkt] != -1) {
+            // okay, it has the channel. copy chan val into the tlm buf
+            this->m_lock.lock();
+            timeTag = this->m_fillBuffers[pkt].latestTime;
+            U8* ptr = &this->m_fillBuffers[pkt].buffer.getBuffAddr()[entryToUse->packetOffset[pkt]];
+            (void)memcpy(val.getBuffAddr(), ptr, static_cast<size_t>(entryToUse->channelSize));
+            // set buf len to the channelSize. keep in mind, this is the MAX serialized size of the channel.
+            // so we may actually be filling val with some junk after the value of the channel.
+            FW_ASSERT(val.setBuffLen(entryToUse->channelSize) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+            this->m_lock.unLock();
+            return Fw::TlmValid::VALID;
+        }
+    }
+
+    // did not find a packet which stores this channel.
+    // coding error, this was not an ignored channel so it must be in a packet somewhere
+    FW_ASSERT(0, static_cast<FwAssertArgType>(entryToUse->id));
+    // TPP (tim paranoia principle)
+    val.resetSer();
+    return Fw::TlmValid::INVALID;
 }
 
 void TlmPacketizer ::Run_handler(const FwIndexType portNum, U32 context) {

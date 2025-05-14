@@ -106,6 +106,7 @@ carg
 caselessmatch
 CBF
 CBLOCK
+CCB
 CComponent
 CCSDS
 ccsparc
@@ -158,6 +159,7 @@ commandline
 commasepitem
 COMPACKET
 COMPACKETQUEUEIN
+componentipcbuf
 COMPONENTTESTERIMPL
 COMQUEUE
 COMQUEUEIN
@@ -351,6 +353,7 @@ fptr
 fputil
 fpv
 fpy
+FPYSEQUENCER
 freeram
 Fregoso
 frox
@@ -552,6 +555,7 @@ Lps
 lseek
 ltab
 LTLT
+lvar
 LVL
 lxml
 MACROFILE
@@ -596,6 +600,8 @@ Msap
 msc
 mscfile
 mseconds
+msgs
+msgtypeenum
 mstarch
 mstat
 MState
@@ -860,6 +866,7 @@ setblocks
 setdata
 setid
 setinheritsched
+setlocalvar
 SETLOGGING
 setm
 setop
@@ -921,6 +928,7 @@ STDC
 stddef
 stdint
 stest
+stmtidx
 Stl
 STREQ
 STREQUAL
@@ -1039,6 +1047,7 @@ TOTALISFTELMMSG
 TOTALQUEUEFULL
 totalram
 tparam
+TPP
 trimwhitespace
 trinomials
 truncstring
@@ -1084,6 +1093,7 @@ vtype
 vuejs
 vwong
 vxworks
+waitrel
 watney
 Wdog
 whitebox

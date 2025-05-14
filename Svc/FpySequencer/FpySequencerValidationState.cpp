@@ -25,10 +25,10 @@ void FpySequencer::deallocateBuffer(Fw::MemAllocator& allocator) {
     this->m_sequenceBuffer.clear();
 }
 
-void FpySequencer::updateComputedCRC(const U8* buffer, FwSizeType bufferSize) {
+void FpySequencer::updateCrc(U32& crc, const U8* buffer, FwSizeType bufferSize) {
     FW_ASSERT(buffer);
     for (FwSizeType index = 0; index < bufferSize; index++) {
-        this->m_computedCRC = static_cast<U32>(update_crc_32(this->m_computedCRC, static_cast<char>(buffer[index])));
+        crc = static_cast<U32>(update_crc_32(crc, static_cast<char>(buffer[index])));
     }
 }
 
@@ -49,46 +49,96 @@ Fw::Success FpySequencer::validate() {
         return Fw::Success::FAILURE;
     }
 
-    // read header bytes
-    bool readStatus = this->readBytes(sequenceFile, Fpy::Header::SERIALIZED_SIZE);
-    if (!readStatus) {
+    Fw::Success readStatus = this->readBytes(sequenceFile, Fpy::Header::SERIALIZED_SIZE);
+
+    if (readStatus != Fw::Success::SUCCESS) {
         return Fw::Success::FAILURE;
     }
 
+    readStatus = this->readHeader();
+
+    if (readStatus != Fw::Success::SUCCESS) {
+        return Fw::Success::FAILURE;
+    }
+
+    readStatus = readBytes(sequenceFile, this->m_sequenceObj.getheader().getbodySize());
+
+    if (readStatus != Fw::Success::SUCCESS) {
+        return Fw::Success::FAILURE;
+    }
+
+    readStatus = this->readBody();
+
+    if (readStatus != Fw::Success::SUCCESS) {
+        return Fw::Success::FAILURE;
+    }
+
+    // read footer bytes but don't include in CRC
+    readStatus = this->readBytes(sequenceFile, Fpy::Footer::SERIALIZED_SIZE, false);
+
+    if (readStatus != Fw::Success::SUCCESS) {
+        return Fw::Success::FAILURE;
+    }
+
+    readStatus = this->readFooter();
+
+    if (readStatus != Fw::Success::SUCCESS) {
+        return Fw::Success::FAILURE;
+    }
+
+    // make sure we're at EOF
+    FwSizeType sequenceFileSize;
+    FW_ASSERT(sequenceFile.size(sequenceFileSize) == Os::File::Status::OP_OK);
+
+    FwSizeType sequenceFilePosition;
+    FW_ASSERT(sequenceFile.position(sequenceFilePosition) == Os::File::Status::OP_OK);
+
+    if (sequenceFileSize != sequenceFilePosition) {
+        this->log_WARNING_HI_ExtraBytesInSequence(static_cast<U32>(sequenceFileSize - sequenceFilePosition));
+        return Fw::Success::FAILURE;
+    }
+
+    return Fw::Success::SUCCESS;
+}
+
+Fw::Success FpySequencer::readHeader() {
     // deser header
     Fw::SerializeStatus deserStatus = this->m_sequenceBuffer.deserialize(this->m_sequenceObj.getheader());
     if (deserStatus != Fw::SerializeStatus::FW_SERIALIZE_OK) {
         this->log_WARNING_HI_FileReadDeserializeError(this->m_sequenceFilePath, static_cast<I32>(deserStatus),
-                                                      this->m_sequenceBuffer.getBuffLeft(), this->m_sequenceBuffer.getBuffLength());
+                                                      this->m_sequenceBuffer.getBuffLeft(),
+                                                      this->m_sequenceBuffer.getBuffLength());
         return Fw::Success::FAILURE;
     }
 
     // check matching schema version
     if (this->m_sequenceObj.getheader().getschemaVersion() != Fpy::SCHEMA_VERSION) {
-        this->log_WARNING_HI_WrongSchemaVersion(Fpy::SCHEMA_VERSION, this->m_sequenceObj.getheader().getschemaVersion());
+        this->log_WARNING_HI_WrongSchemaVersion(Fpy::SCHEMA_VERSION,
+                                                this->m_sequenceObj.getheader().getschemaVersion());
         return Fw::Success::FAILURE;
     }
 
     if (this->m_sequenceObj.getheader().getargumentCount() > Fpy::MAX_SEQUENCE_ARG_COUNT) {
-        this->log_WARNING_HI_TooManySequenceArgs(m_sequenceObj.getheader().getargumentCount(), Fpy::MAX_SEQUENCE_ARG_COUNT);
+        this->log_WARNING_HI_TooManySequenceArgs(m_sequenceObj.getheader().getargumentCount(),
+                                                 Fpy::MAX_SEQUENCE_ARG_COUNT);
         return Fw::Success::FAILURE;
     }
 
     if (this->m_sequenceObj.getheader().getstatementCount() > Fpy::MAX_SEQUENCE_STATEMENT_COUNT) {
-        this->log_WARNING_HI_TooManySequenceStatements(this->m_sequenceObj.getheader().getstatementCount(), Fpy::MAX_SEQUENCE_STATEMENT_COUNT);
+        this->log_WARNING_HI_TooManySequenceStatements(this->m_sequenceObj.getheader().getstatementCount(),
+                                                       Fpy::MAX_SEQUENCE_STATEMENT_COUNT);
         return Fw::Success::FAILURE;
     }
+    return Fw::Success::SUCCESS;
+}
 
-    // read body bytes
-    readStatus = readBytes(sequenceFile, this->m_sequenceObj.getheader().getbodySize());
-    if (!readStatus) {
-        return Fw::Success::FAILURE;
-    }
-
+Fw::Success FpySequencer::readBody() {
+    Fw::SerializeStatus deserStatus;
     // deser body:
     // deser arg mappings
     for (U8 argMappingIdx = 0; argMappingIdx < this->m_sequenceObj.getheader().getargumentCount(); argMappingIdx++) {
         // local variable index of arg $argMappingIdx
+        // TODO should probably check that this lvar is inside range
         deserStatus = this->m_sequenceBuffer.deserialize(this->m_sequenceObj.getargs()[argMappingIdx]);
         if (deserStatus != Fw::FW_SERIALIZE_OK) {
             this->log_WARNING_HI_FileReadDeserializeError(this->m_sequenceFilePath, static_cast<I32>(deserStatus),
@@ -109,17 +159,15 @@ Fw::Success FpySequencer::validate() {
             return Fw::Success::FAILURE;
         }
     }
+    return Fw::Success::SUCCESS;
+}
 
-    // read footer bytes (but don't include in CRC)
-    readStatus = this->readBytes(sequenceFile, Fpy::Footer::SERIALIZED_SIZE, false);
-    if (!readStatus) {
-        return Fw::Success::FAILURE;
-    }
-
-    deserStatus = this->m_sequenceBuffer.deserialize(this->m_sequenceObj.getfooter());
+Fw::Success FpySequencer::readFooter() {
+    Fw::SerializeStatus deserStatus = this->m_sequenceBuffer.deserialize(this->m_sequenceObj.getfooter());
     if (deserStatus != Fw::FW_SERIALIZE_OK) {
         this->log_WARNING_HI_FileReadDeserializeError(this->m_sequenceFilePath, static_cast<I32>(deserStatus),
-                                                      this->m_sequenceBuffer.getBuffLeft(), this->m_sequenceBuffer.getBuffLength());
+                                                      this->m_sequenceBuffer.getBuffLeft(),
+                                                      this->m_sequenceBuffer.getBuffLength());
         return Fw::Success::FAILURE;
     }
 
@@ -131,27 +179,15 @@ Fw::Success FpySequencer::validate() {
         return Fw::Success::FAILURE;
     }
 
-    // make sure we're at EOF
-    FwSizeType sequenceFileSize;
-    FW_ASSERT(sequenceFile.size(sequenceFileSize) == Os::File::Status::OP_OK);
-
-    FwSizeType sequenceFilePosition;
-    FW_ASSERT(sequenceFile.position(sequenceFilePosition) == Os::File::Status::OP_OK);
-
-    if (sequenceFileSize != sequenceFilePosition) {
-        this->log_WARNING_HI_ExtraBytesInSequence(static_cast<U32>(sequenceFileSize - sequenceFilePosition));
-        return Fw::Success::FAILURE;
-    }
-
     return Fw::Success::SUCCESS;
 }
 
 // reads some bytes from the open file into the m_sequenceBuffer.
-// return true if successful
-Fw::Success FpySequencer::readBytes(Os::File& file, FwSizeType readLen, bool updateCRC) {
+// return success if successful
+Fw::Success FpySequencer::readBytes(Os::File& file, FwSizeType expectedReadLen, bool updateCrc) {
     FW_ASSERT(file.isOpen());
     // this has to be declared a var because file.read must take a ref
-    FwSizeType expectedReadLen = readLen;
+    FwSizeType actualReadLen = expectedReadLen;
 
     const FwSizeType capacity = this->m_sequenceBuffer.getBuffCapacity();
 
@@ -162,26 +198,28 @@ Fw::Success FpySequencer::readBytes(Os::File& file, FwSizeType readLen, bool upd
         return Fw::Success::FAILURE;
     }
 
-    Os::File::Status fileStatus = file.read(this->m_sequenceBuffer.getBuffAddr(), expectedReadLen);
+    Os::File::Status fileStatus = file.read(this->m_sequenceBuffer.getBuffAddr(), actualReadLen);
 
     if (fileStatus != Os::File::OP_OK) {
         this->log_WARNING_HI_FileReadError(this->m_sequenceFilePath, static_cast<I32>(fileStatus));
         return Fw::Success::FAILURE;
     }
 
-    if (readLen < expectedReadLen) {
+    if (actualReadLen < expectedReadLen) {
         this->log_WARNING_HI_EndOfFileError(this->m_sequenceFilePath);
         return Fw::Success::FAILURE;
     }
 
     // should probably fail if we read in MORE bytes than we ask for
-    FW_ASSERT(readLen == expectedReadLen, static_cast<FwAssertArgType>(readLen), static_cast<FwAssertArgType>(expectedReadLen));
+    FW_ASSERT(expectedReadLen == actualReadLen, static_cast<FwAssertArgType>(expectedReadLen),
+              static_cast<FwAssertArgType>(actualReadLen));
 
-    Fw::SerializeStatus serializeStatus = this->m_sequenceBuffer.setBuffLen(static_cast<Fw::Serializable::SizeType>(readLen));
+    Fw::SerializeStatus serializeStatus =
+        this->m_sequenceBuffer.setBuffLen(static_cast<Fw::Serializable::SizeType>(expectedReadLen));
     FW_ASSERT(serializeStatus == Fw::FW_SERIALIZE_OK, serializeStatus);
 
-    if (updateCRC) {
-        this->updateComputedCRC(this->m_sequenceBuffer.getBuffAddr(), readLen);
+    if (updateCrc) {
+        FpySequencer::updateCrc(this->m_computedCRC, this->m_sequenceBuffer.getBuffAddr(), expectedReadLen);
     }
 
     return Fw::Success::SUCCESS;
