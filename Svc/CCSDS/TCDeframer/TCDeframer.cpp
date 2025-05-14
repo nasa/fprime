@@ -82,7 +82,8 @@ void TCDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
 
     U16 transmitted_crc = trailer.getfecf();
     if (transmitted_crc != computed_crc) {
-        printf("FECF mismatch: %d != %d\n", transmitted_crc, computed_crc);
+        this->log_WARNING_HI_InvalidHeaderField(TCDeframer_HeaderField::FrameErrorControlField,
+                                                computed_crc, transmitted_crc);
     }
 
     // Point to the start of the data field and set appropriate size

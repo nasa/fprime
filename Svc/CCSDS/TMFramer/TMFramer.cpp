@@ -75,6 +75,9 @@ void TMFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     // TODO: fill with Idle Packets
+    FW_ASSERT(frameSerializer.getBuffLength() <= std::numeric_limits<U16>::max(),
+              static_cast<FwAssertArgType>(frameSerializer.getBuffLength()));
+    this->fill_with_idle_packet(static_cast<U16>(frameSerializer.getBuffLength()));
 
     // -------------------------------------------------
     // Trailer: Compute CRC
@@ -107,6 +110,28 @@ void TMFramer ::dataReturnIn_handler(FwIndexType portNum,
     ::memset(this->m_frameBuffer, 0, sizeof(this->m_frameBuffer));
 }
 
-}  // namespace CCSDS
+void TMFramer ::fill_with_idle_packet(U16 startIndex) {
+    // TODO: make this code cleaner
+    U16 endIndex = ComCfg::FppConstant_TmFrameFixedSize::TmFrameFixedSize -
+                           CCSDS::Types::TMFrameTrailer::SERIALIZED_SIZE;
+    U16 idlePacketLength = endIndex - startIndex;
+    FW_ASSERT(idlePacketLength > 0, static_cast<FwAssertArgType>(idlePacketLength));
+    FW_ASSERT(idlePacketLength >= 7, static_cast<FwAssertArgType>(idlePacketLength)); // 7 bytes minimum for idle packet
+    FW_ASSERT(idlePacketLength <= ComCfg::FppConstant_TmFrameFixedSize::TmFrameFixedSize,
+              static_cast<FwAssertArgType>(idlePacketLength));
+    U16 idleApid = 0x7FF;     // All 1s (11bit) per Space Packet protocol paragraph 4.1.3.3.4.4
+    this->m_frameBuffer[startIndex + 0] = (idleApid >> 8) & 0xFF;
+    this->m_frameBuffer[startIndex + 1] = idleApid & 0xFF;
+    this->m_frameBuffer[startIndex + 2] = 0xC0;  // Sequence Flags = 0b11 (unsegmented) & unused Seq count
+    this->m_frameBuffer[startIndex + 3] = 0x00;  // unused Sequence Count 
+    this->m_frameBuffer[startIndex + 4] = idlePacketLength >> 8;    // Packet Data Length MSB
+    this->m_frameBuffer[startIndex + 5] = idlePacketLength & 0xFF;  // Packet Data Length LSB
+    // Fill the rest of the buffer with arbitrary idle data
+    for (U16 i = startIndex + 6; i < endIndex; i++) {
+        this->m_frameBuffer[i] = 0x44;  // Idle data
+    }
+}
 
+
+}  // namespace CCSDS
 }  // namespace Svc

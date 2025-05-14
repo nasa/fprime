@@ -42,8 +42,8 @@ class TMFramer final : public TMFramerComponentBase {
     //! Handler implementation for dataIn
     //!
     //! Port to receive data to frame, in a Fw::Buffer with optional context.
-    //! This is essentially the CCSDS TM VCP.request Service Primitive, with 
-    //! Packet=data and GVCID implicitly passed in context
+    //! This is essentially the CCSDS TM VCP.request Service Primitive, with
+    //! Packet=data and GVCID implicitly passed in context (TM Protocol 3.3.3.2)
     //!
     void dataIn_handler(FwIndexType portNum,  //!< The port number
                         Fw::Buffer& data,
@@ -56,13 +56,21 @@ class TMFramer final : public TMFramerComponentBase {
                               Fw::Buffer& data,
                               const ComCfg::FrameContext& context) override;
 
-    // Because the TM protocol use fixed width frames, and only one frame is in transit between ComQueue and ComInterface
-    // at a time, we can use a member fixed-size buffer to hold the frame data
+    // ----------------------------------------------------------------------
+    // Helpers
+    // ----------------------------------------------------------------------
+    //! Fill the frame buffer with an Idle Packet to complete the frame data field
+    //! as per CCSDS TM Protocol paragraph 4.2.2.5. Idle packet is inserted at the
+    //! start_index index of the frame buffer, and fills it up to the end minus CRC
+    void fill_with_idle_packet(U16 start_index);
+
+    // Because the TM protocol use fixed width frames, and only one frame is in transit between ComQueue and
+    // ComInterface at a time, we can use a member fixed-size buffer to hold the frame data
     U8 m_frameBuffer[ComCfg::FppConstant_TmFrameFixedSize::TmFrameFixedSize];  //!< Buffer to hold the frame data
 
     // Current implementation uses a single virtual channel, so we can use a single virtual frame count
-    U8 m_masterFrameCount;  //!< Master Frame Count - 8 bits - wraps around at 255
-    U8 m_virtualFrameCount; //!< Virtual Frame Count - 8 bits - wraps around at 255
+    U8 m_masterFrameCount;   //!< Master Frame Count - 8 bits - wraps around at 255
+    U8 m_virtualFrameCount;  //!< Virtual Frame Count - 8 bits - wraps around at 255
 };
 
 }  // namespace CCSDS

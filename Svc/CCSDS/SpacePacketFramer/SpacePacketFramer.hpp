@@ -63,6 +63,10 @@ class SpacePacketFramer final : public SpacePacketFramerComponentBase {
     // FwIndexType get_index_from_apid(ComCfg::APID::T apid);
     ComCfg::APID::T get_apid_from_index(FwIndexType index);
 
+    // ----------------------------------------------------------------------
+    // Members
+    // ----------------------------------------------------------------------
+
     U16 m_packetSequenceCounts[ComCfg::APID::NUM_CONSTANTS] = {0};  //!< Packet sequence counts for each APID
 };
 

@@ -9,7 +9,8 @@ module CCSDS {
         enum HeaderField {
             SpacecraftId,
             FrameLength,
-            VcId
+            VcId,
+            FrameErrorControlField
         }
 
         @ Invalid Data Field
