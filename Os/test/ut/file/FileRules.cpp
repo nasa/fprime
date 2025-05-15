@@ -170,8 +170,8 @@ void Os::Test::File::Tester::assert_file_opened(const std::string &path, Os::Fil
 
     // When the open mode has been specified assert that is in an exact state
     if (not path.empty() && Os::File::Mode::OPEN_NO_MODE != newly_opened_mode) {
-        // Assert file pointer always at beginning when functional and not append
-        if (functional() && Os::File::Mode::OPEN_APPEND != newly_opened_mode) {
+        // Assert file pointer always at beginning when functional
+        if (functional()) {
             FwSizeType file_position = std::numeric_limits<FwSizeType>::max();
             ASSERT_EQ(this->m_file.position(file_position), Os::File::Status::OP_OK);
             ASSERT_EQ(file_position, 0);

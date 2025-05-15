@@ -9,7 +9,6 @@ namespace Os {
 namespace Test {
 
 SyntheticFile::~SyntheticFile() {
-    //this->nonVirtualClose();
     this->close();
 }
 
@@ -87,10 +86,6 @@ File::Status SyntheticFile::open(const CHAR* char_path, const Os::File::Mode ope
 }
 
 void SyntheticFile::close() {
-    this->nonVirtualClose();
-}
-
-void SyntheticFile::nonVirtualClose() {
     if (this->m_data != nullptr) {
         this->m_data->m_mode = Os::File::Mode::OPEN_NO_MODE;
         this->m_data->m_path.clear();

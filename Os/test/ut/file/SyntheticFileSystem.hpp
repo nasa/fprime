@@ -64,10 +64,6 @@ class SyntheticFile : public FileInterface {
     //!
     void close() final;
 
-    //! \brief close the file without virtual dispatch
-    //!
-    void nonVirtualClose();
-
     //! \brief read data from the file
     //!
     //! Read from the synthetic file and fill the buffer up-to size. Fill size with the data that was read.
