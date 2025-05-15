@@ -275,9 +275,7 @@ void Os::Test::File::Tester::OpenBaseRule::action(Os::Test::File::Tester &state 
     if (Os::File::Status::OP_OK == status) {
         state.assert_file_opened(*filename, m_mode);
         FileState file_state = state.current_file_state();
-        if(m_mode != Os::File::Mode::OPEN_APPEND) {
-            ASSERT_EQ(file_state.position, 0); // Open always zeros the position
-        }
+        ASSERT_EQ(file_state.position, 0); // Open always zeros the position
     }
     // Assert the file state remains consistent.
     state.assert_file_consistent();
