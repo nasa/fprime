@@ -258,7 +258,7 @@ bool Os::Test::File::Tester::OpenBaseRule::precondition(const Os::Test::File::Te
 
 void Os::Test::File::Tester::OpenBaseRule::action(Os::Test::File::Tester &state  //!< The test state
 ) {
-    printf("--> Rule: %s \n", this->getName());
+    printf("--> Rule: %s mode %d\n", this->getName(), this->m_mode);
     // Initial variables used for this test
     std::shared_ptr<const std::string> filename = state.get_filename(this->m_random);
 
@@ -316,6 +316,25 @@ Os::Test::File::Tester::OpenForWrite::OpenForWrite(const bool randomize_filename
                                                        Os::File::Mode::OPEN_APPEND)),
         // Randomized overwrite
                                                static_cast<bool>(STest::Pick::lowerUpper(0, 1)),
+                                               randomize_filename) {
+    // Ensures that a random write mode will work correctly
+    static_assert((Os::File::Mode::OPEN_SYNC_WRITE - 1) == Os::File::Mode::OPEN_WRITE, "Write modes not contiguous");
+    static_assert((Os::File::Mode::OPEN_APPEND - 1) == Os::File::Mode::OPEN_SYNC_WRITE,
+                  "Write modes not contiguous");
+
+}
+
+// ------------------------------------------------------------------------------------------------------
+// Rule:  OpenForAppend
+//
+// ------------------------------------------------------------------------------------------------------
+
+Os::Test::File::Tester::OpenForAppend::OpenForAppend(const bool randomize_filename)
+        : Os::Test::File::Tester::OpenBaseRule("OpenForAppend",
+        // Randomized write mode
+                                               Os::File::Mode::OPEN_APPEND,
+        // Randomized overwrite
+                                               0,
                                                randomize_filename) {
     // Ensures that a random write mode will work correctly
     static_assert((Os::File::Mode::OPEN_SYNC_WRITE - 1) == Os::File::Mode::OPEN_WRITE, "Write modes not contiguous");

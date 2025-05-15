@@ -42,17 +42,13 @@ SyntheticFileSystem::OpenData SyntheticFileSystem::open(const CHAR* char_path, c
             return_value.file->m_data.clear();
         }
 
-        FwSizeType newPointer = 0;
-        if(exists && (Os::File::Mode::OPEN_APPEND == open_mode)) {
-            newPointer = return_value.file->m_data.size();
-        }
-        return_value.file->m_pointer = newPointer;
+        return_value.file->m_pointer = 0;
 
         return_value.file->m_mode = open_mode;
         return_value.file->m_path = path;
         // Checks on the shadow data to ensure consistency
         FW_ASSERT(return_value.file->m_mode != Os::File::OPEN_NO_MODE);
-        FW_ASSERT(return_value.file->m_pointer == newPointer);
+        FW_ASSERT(return_value.file->m_pointer == 0);
         FW_ASSERT(return_value.file->m_path == path);
         FW_ASSERT(not truncate || return_value.file->m_data.empty());
     }

@@ -182,6 +182,31 @@ TEST_F(Functionality, WriteInvalidModes) {
 }
 
 // Ensure a write followed by a read produces valid data
+TEST_F(FunctionalIO, WriteSeekAppendReadBack) {
+    Os::Test::File::Tester::OpenFileCreate open_rule(false);
+    Os::Test::File::Tester::OpenForAppend open_append_rule(false);
+    Os::Test::File::Tester::Write write_rule;
+    Os::Test::File::Tester::Seek seek_rule;
+    Os::Test::File::Tester::CloseFile close_rule;
+    Os::Test::File::Tester::OpenForRead open_read;
+    Os::Test::File::Tester::Read read_rule;
+
+    open_rule.apply(*tester);
+    write_rule.apply(*tester);
+    close_rule.apply(*tester);
+    open_read.apply(*tester);
+    close_rule.apply(*tester);
+    open_append_rule.apply(*tester);
+    write_rule.apply(*tester);
+    seek_rule.apply(*tester);
+    write_rule.apply(*tester);
+    close_rule.apply(*tester);
+    open_read.apply(*tester);
+    read_rule.apply(*tester);
+    close_rule.apply(*tester);
+}
+
+// Ensure a write followed by a read produces valid data
 TEST_F(FunctionalIO, WriteReadBack) {
     Os::Test::File::Tester::OpenFileCreate open_rule(false);
     Os::Test::File::Tester::Write write_rule;
