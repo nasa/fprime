@@ -334,7 +334,7 @@ Os::Test::File::Tester::OpenForAppend::OpenForAppend(const bool randomize_filena
         // Randomized write mode
                                                Os::File::Mode::OPEN_APPEND,
         // Randomized overwrite
-                                               0,
+                                               false,
                                                randomize_filename) {
     // Ensures that a random write mode will work correctly
     static_assert((Os::File::Mode::OPEN_SYNC_WRITE - 1) == Os::File::Mode::OPEN_WRITE, "Write modes not contiguous");
