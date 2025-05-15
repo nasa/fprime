@@ -471,9 +471,6 @@ void Os::Test::File::Tester::Seek::action(
     if (absolute) {
         seek_offset = STest::Pick::lowerUpper(0, FILE_DATA_MAXIMUM);
     } else {
-        // seek_offset =
-        // STest::Pick::lowerUpper(0, original_file_state.position + FILE_DATA_MAXIMUM) - original_file_state.position;
-        // seek_offset = STest::Pick::lowerUpper(0, original_file_state.position + FILE_DATA_MAXIMUM);
         seek_offset = STest::Pick::lowerUpper(0, FILE_DATA_MAXIMUM);
         seek_offset -= original_file_state.position;
     }
