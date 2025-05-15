@@ -62,7 +62,7 @@ class SyntheticFile : public FileInterface {
 
     //! \brief close the file
     //!
-    void close() override;
+    void close() final;
 
     //! \brief close the file without virtual dispatch
     //!

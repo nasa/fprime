@@ -9,7 +9,8 @@ namespace Os {
 namespace Test {
 
 SyntheticFile::~SyntheticFile() {
-    this->nonVirtualClose();
+    //this->nonVirtualClose();
+    this->close();
 }
 
 SyntheticFileSystem::OpenData SyntheticFileSystem::open(const CHAR* char_path, const Os::File::Mode open_mode, const File::OverwriteType overwrite) {
