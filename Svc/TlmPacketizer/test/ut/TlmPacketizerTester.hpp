@@ -75,6 +75,10 @@ class TlmPacketizerTester : public TlmPacketizerGTestBase {
     //!
     void setPacketLevelTest(void);
 
+    //! get channel value test
+    //!
+    void getChannelValueTest(void);
+
   private:
     // ----------------------------------------------------------------------
     // Handlers for typed from ports

@@ -49,33 +49,41 @@ class TlmPacketizer final : public TlmPacketizerComponentBase {
                          FwChanIdType id,               /*!< Telemetry Channel ID*/
                          Fw::Time& timeTag,             /*!< Time Tag*/
                          Fw::TlmBuffer& val             /*!< Buffer containing serialized telemetry value*/
-    );
+    ) override;
 
     //! Handler implementation for Run
     //!
     void Run_handler(const FwIndexType portNum, /*!< The port number*/
                      U32 context                    /*!< The call order*/
-    );
+    ) override;
 
     //! Handler implementation for pingIn
     //!
     void pingIn_handler(const FwIndexType portNum, /*!< The port number*/
                         U32 key                        /*!< Value to return to pinger*/
-    );
+    ) override;
+
+    //! Handler for input port TlmGet
+    Fw::TlmValid TlmGet_handler(FwIndexType portNum, //!< The port number
+                                FwChanIdType id, //!< Telemetry Channel ID
+                                Fw::Time& timeTag, //!< Time Tag
+                                Fw::TlmBuffer& val //!< Buffer containing serialized telemetry value.
+                                                    //!< Size set to 0 if channel not found.
+    ) override;
 
     //! Implementation for SET_LEVEL command handler
     //! Set telemetry send leve
     void SET_LEVEL_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
                               const U32 cmdSeq,          /*!< The command sequence number*/
                               U32 level                  /*!< The I32 command argument*/
-    );
+    ) override;
 
     //! Implementation for SEND_PKT command handler
     //! Force a packet to be sent
     void SEND_PKT_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
                              const U32 cmdSeq,          /*!< The command sequence number*/
                              U32 id                     /*!< The packet ID*/
-    );
+    ) override;
 
     // number of packets to fill
     FwChanIdType m_numPackets;
@@ -101,9 +109,11 @@ class TlmPacketizer final : public TlmPacketizerComponentBase {
         // Offsets into packet buffers.
         // -1 means that channel is not in that packet
         FwSignedSizeType packetOffset[MAX_PACKETIZER_PACKETS];
+        FwSizeType channelSize;     //!< max serialized size of the channel in bytes
         TlmEntry* next;             //!< pointer to next bucket in table
         bool used;                  //!< if entry has been used
         bool ignored;               //!< ignored packet id
+        bool hasValue;              //!< if the entry has received a value at least once
         FwChanIdType bucketNo;  //!< for testing
     };
 

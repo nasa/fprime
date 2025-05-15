@@ -9,17 +9,19 @@
  * acknowledged.
  * <br /><br />
  */
-#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Com/ComBuffer.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Svc/TlmChan/TlmChan.hpp>
 
 namespace Svc {
 
 // Definition of TLMCHAN_HASH_BUCKETS is >= number of telemetry ids
-static_assert(std::numeric_limits<FwChanIdType>::max() >= TLMCHAN_HASH_BUCKETS, "Cannot have more hash buckets than maximum telemetry ids in the system");
+static_assert(std::numeric_limits<FwChanIdType>::max() >= TLMCHAN_HASH_BUCKETS,
+              "Cannot have more hash buckets than maximum telemetry ids in the system");
 // TLMCHAN_HASH_BUCKETS >= TLMCHAN_NUM_TLM_HASH_SLOTS >= 0
-static_assert(std::numeric_limits<FwChanIdType>::max() >= TLMCHAN_NUM_TLM_HASH_SLOTS, "Cannot have more hash slots than maximum telemetry ids in the system");
+static_assert(std::numeric_limits<FwChanIdType>::max() >= TLMCHAN_NUM_TLM_HASH_SLOTS,
+              "Cannot have more hash slots than maximum telemetry ids in the system");
 
 TlmChan::TlmChan(const char* name) : TlmChanComponentBase(name), m_activeBuffer(0) {
     // clear slot pointers
@@ -56,31 +58,81 @@ void TlmChan::pingIn_handler(const FwIndexType portNum, U32 key) {
     this->pingOut_out(0, key);
 }
 
-void TlmChan::TlmGet_handler(FwIndexType portNum, FwChanIdType id, Fw::Time& timeTag, Fw::TlmBuffer& val) {
+Fw::TlmValid TlmChan::TlmGet_handler(FwIndexType portNum, FwChanIdType id, Fw::Time& timeTag, Fw::TlmBuffer& val) {
     // Compute index for entry
 
     FwChanIdType index = this->doHash(id);
 
     // Search to see if channel has been stored
-    TlmEntry* entryToUse = this->m_tlmEntries[this->m_activeBuffer].slots[index];
+    // check both buffers
+    // don't need to lock because this port is guarded
+    TlmEntry* activeEntry = this->m_tlmEntries[this->m_activeBuffer].slots[index];
     for (FwChanIdType bucket = 0; bucket < TLMCHAN_HASH_BUCKETS; bucket++) {
-        if (entryToUse) {  // If bucket exists, check id
-            if (entryToUse->id == id) {
+        if (activeEntry) {  // If bucket exists, check id
+            if (activeEntry->id == id) {
                 break;
             } else {  // otherwise go to next bucket
-                entryToUse = entryToUse->next;
+                activeEntry = activeEntry->next;
             }
         } else {  // no buckets left to search
             break;
         }
     }
 
-    if (entryToUse) {
-        val = entryToUse->buffer;
-        timeTag = entryToUse->lastUpdate;
-    } else {  // requested entry may not be written yet; empty buffer
+    TlmEntry* inactiveEntry = this->m_tlmEntries[1 - this->m_activeBuffer].slots[index];
+    for (FwChanIdType bucket = 0; bucket < TLMCHAN_HASH_BUCKETS; bucket++) {
+        if (inactiveEntry) {  // If bucket exists, check id
+            if (inactiveEntry->id == id) {
+                break;
+            } else {  // otherwise go to next bucket
+                inactiveEntry = inactiveEntry->next;
+            }
+        } else {  // no buckets left to search
+            break;
+        }
+    }
+
+    if (activeEntry && inactiveEntry) {
+        Fw::Time::Comparison cmp = Fw::Time::compare(inactiveEntry->lastUpdate, activeEntry->lastUpdate);
+        // two entries. grab the one with the most recent time tag
+        if (cmp == Fw::Time::Comparison::GT) {
+            // inactive entry is more recent
+            val = inactiveEntry->buffer;
+            timeTag = inactiveEntry->lastUpdate;
+            return Fw::TlmValid::VALID;
+        } else if (cmp != Fw::Time::Comparison::INCOMPARABLE) {
+            // active entry is more recent, or they are equal
+            val = activeEntry->buffer;
+            timeTag = activeEntry->lastUpdate;
+            return Fw::TlmValid::VALID;
+        } else {
+            // times are incomparable
+            // return the one that is updated, or if neither,
+            // default to active
+            if (inactiveEntry->updated) {
+                val = inactiveEntry->buffer;
+                timeTag = inactiveEntry->lastUpdate;
+                return Fw::TlmValid::VALID;
+            } else {
+                val = activeEntry->buffer;
+                timeTag = activeEntry->lastUpdate;
+                return Fw::TlmValid::VALID;
+            }
+        }
+    } else if (activeEntry) {
+        // only one entry, and it's in the active buf
+        val = activeEntry->buffer;
+        timeTag = activeEntry->lastUpdate;
+        return Fw::TlmValid::VALID;
+    } else if (inactiveEntry) {
+        // only one entry, and it's in the inactive buf
+        val = inactiveEntry->buffer;
+        timeTag = inactiveEntry->lastUpdate;
+        return Fw::TlmValid::VALID;
+    } else {
         val.resetSer();
     }
+    return Fw::TlmValid::INVALID;
 }
 
 void TlmChan::TlmRecv_handler(FwIndexType portNum, FwChanIdType id, Fw::Time& timeTag, Fw::TlmBuffer& val) {
@@ -178,7 +230,7 @@ void TlmChan::Run_handler(FwIndexType portNum, U32 context) {
             // flag as updated
             p_entry->updated = false;
         }  // end if entry was updated
-    }      // end for each entry
+    }  // end for each entry
 
     // send remnant entries
     if (pkt.getNumEntries() > 0) {
