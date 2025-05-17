@@ -50,6 +50,7 @@ Markdown==3.7
 markdown-it-py==3.0.0
 MarkupSafe==2.1.5
 mdurl==0.1.2
+ninja==1.11.1.4
 openpyxl==3.1.5
 packaging==24.1
 pexpect==4.9.0
