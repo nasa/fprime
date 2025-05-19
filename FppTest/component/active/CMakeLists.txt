@@ -1,13 +1,13 @@
-# ====================================================================== 
+# ======================================================================
 # CMakeLists.txt
-# ====================================================================== 
+# ======================================================================
 
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/active.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/port_types.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/port_index_enums.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/fpp_types.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/ActiveTest.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/active.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/fpp_types.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/port_index_enums.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/port_types.fpp"
 )
 
 register_fprime_module()
@@ -31,29 +31,30 @@ set(UT_MOD_DEPS
 # Add unit test directory
 # UT_SOURCE_FILES: Sources for unit test
 set(UT_SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/active.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/port_types.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/port_index_enums.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/fpp_types.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/../tests/TestMain.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/../tests/Tests.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/../tests/TesterHandlers.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/../tests/TesterHelpers.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/../tests/PortTests.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../../utils/Utils.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../tests/AsyncCmdTests.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../tests/AsyncPortTests.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../tests/AsyncTesterHelpers.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../tests/AsyncTests.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../tests/CmdTests.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../tests/EventTests.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/../tests/TlmTests.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/../tests/ParamTests.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/../tests/TimeTests.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../tests/ExternalParamTests.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../tests/InternalInterfaceTests.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/../tests/AsyncTests.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/../tests/AsyncTesterHelpers.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/../tests/AsyncPortTests.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/../tests/AsyncCmdTests.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../tests/OverflowTests.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../tests/ParamTests.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../tests/PortTests.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../tests/TestMain.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../tests/TesterHandlers.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../tests/TesterHelpers.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../tests/Tests.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../tests/TimeTests.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../tests/TlmTests.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../types/FormalParamTypes.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/../../utils/Utils.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/active.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/fpp_types.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/port_index_enums.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/port_types.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
 )
 # Needed for compiling files using Tester.hpp from outside the directory
 include_directories("${CMAKE_CURRENT_LIST_DIR}/test/ut")

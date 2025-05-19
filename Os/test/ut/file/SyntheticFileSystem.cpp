@@ -8,6 +8,10 @@
 namespace Os {
 namespace Test {
 
+SyntheticFile::~SyntheticFile() {
+    this->close();
+}
+
 SyntheticFileSystem::OpenData SyntheticFileSystem::open(const CHAR* char_path, const Os::File::Mode open_mode, const File::OverwriteType overwrite) {
     SyntheticFileSystem::OpenData return_value;
     std::string path = char_path;
@@ -36,7 +40,9 @@ SyntheticFileSystem::OpenData SyntheticFileSystem::open(const CHAR* char_path, c
         if (truncate) {
             return_value.file->m_data.clear();
         }
+
         return_value.file->m_pointer = 0;
+
         return_value.file->m_mode = open_mode;
         return_value.file->m_path = path;
         // Checks on the shadow data to ensure consistency
@@ -83,9 +89,11 @@ void SyntheticFile::close() {
     if (this->m_data != nullptr) {
         this->m_data->m_mode = Os::File::Mode::OPEN_NO_MODE;
         this->m_data->m_path.clear();
+        this->m_data->m_pointer = 0;
         // Checks on the shadow data to ensure consistency
         FW_ASSERT(this->m_data->m_mode == Os::File::Mode::OPEN_NO_MODE);
         FW_ASSERT(this->m_data->m_path.empty());
+        FW_ASSERT(this->m_data->m_pointer == 0);
     }
 }
 

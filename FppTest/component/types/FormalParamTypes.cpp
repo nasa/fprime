@@ -10,6 +10,8 @@
 //
 // ======================================================================
 
+#include <cstdint>
+
 #include "FormalParamTypes.hpp"
 #include "FppTest/utils/Utils.hpp"
 #include "Fw/Types/StringTemplate.hpp"
@@ -29,6 +31,10 @@ BoolType::BoolType() {
 
 U32Type::U32Type() {
     val = STest::Pick::any();
+}
+
+I32Type::I32Type() {
+    val = static_cast<I32>(STest::Pick::lowerUpper(0, INT32_MAX));
 }
 
 F32Type::F32Type() {

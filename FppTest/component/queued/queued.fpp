@@ -15,5 +15,6 @@ queued component QueuedTest {
   include "../include/events.fppi"
   include "../include/telemetry.fppi"
   include "../include/params.fppi"
+  include "../include/external_params.fppi"
 
 }

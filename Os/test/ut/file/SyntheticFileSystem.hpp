@@ -36,6 +36,9 @@ class SyntheticFile : public FileInterface {
   public:
     friend class SyntheticFileSystem;
 
+    //! \brief Destructor in order to correctly close file
+    virtual ~SyntheticFile();
+
     //! \brief check if file exists
     static bool exists(const CHAR* path);
 
@@ -59,7 +62,7 @@ class SyntheticFile : public FileInterface {
 
     //! \brief close the file
     //!
-    void close() override;
+    void close() final;
 
     //! \brief read data from the file
     //!

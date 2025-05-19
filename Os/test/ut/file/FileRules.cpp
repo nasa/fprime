@@ -171,7 +171,7 @@ void Os::Test::File::Tester::assert_file_opened(const std::string &path, Os::Fil
     // When the open mode has been specified assert that is in an exact state
     if (not path.empty() && Os::File::Mode::OPEN_NO_MODE != newly_opened_mode) {
         // Assert file pointer always at beginning when functional
-        if (functional() ) {
+        if (functional()) {
             FwSizeType file_position = std::numeric_limits<FwSizeType>::max();
             ASSERT_EQ(this->m_file.position(file_position), Os::File::Status::OP_OK);
             ASSERT_EQ(file_position, 0);
@@ -258,7 +258,7 @@ bool Os::Test::File::Tester::OpenBaseRule::precondition(const Os::Test::File::Te
 
 void Os::Test::File::Tester::OpenBaseRule::action(Os::Test::File::Tester &state  //!< The test state
 ) {
-    printf("--> Rule: %s \n", this->getName());
+    printf("--> Rule: %s mode %d\n", this->getName(), this->m_mode);
     // Initial variables used for this test
     std::shared_ptr<const std::string> filename = state.get_filename(this->m_random);
 
@@ -314,6 +314,25 @@ Os::Test::File::Tester::OpenForWrite::OpenForWrite(const bool randomize_filename
                                                        Os::File::Mode::OPEN_APPEND)),
         // Randomized overwrite
                                                static_cast<bool>(STest::Pick::lowerUpper(0, 1)),
+                                               randomize_filename) {
+    // Ensures that a random write mode will work correctly
+    static_assert((Os::File::Mode::OPEN_SYNC_WRITE - 1) == Os::File::Mode::OPEN_WRITE, "Write modes not contiguous");
+    static_assert((Os::File::Mode::OPEN_APPEND - 1) == Os::File::Mode::OPEN_SYNC_WRITE,
+                  "Write modes not contiguous");
+
+}
+
+// ------------------------------------------------------------------------------------------------------
+// Rule:  OpenForAppend
+//
+// ------------------------------------------------------------------------------------------------------
+
+Os::Test::File::Tester::OpenForAppend::OpenForAppend(const bool randomize_filename)
+        : Os::Test::File::Tester::OpenBaseRule("OpenForAppend",
+        // Randomized write mode
+                                               Os::File::Mode::OPEN_APPEND,
+        // Randomized overwrite
+                                               false,
                                                randomize_filename) {
     // Ensures that a random write mode will work correctly
     static_assert((Os::File::Mode::OPEN_SYNC_WRITE - 1) == Os::File::Mode::OPEN_WRITE, "Write modes not contiguous");
@@ -419,7 +438,12 @@ void Os::Test::File::Tester::Write::action(
     printf("--> Rule: %s \n", this->getName());
     U8 buffer[FILE_DATA_MAXIMUM];
     state.assert_file_consistent();
-    FwSizeType size_desired = static_cast<FwSizeType>(STest::Pick::lowerUpper(0, FILE_DATA_MAXIMUM));
+    FwSizeType current_position = 0;
+    state.m_file.position(current_position);
+    if(state.m_mode == Os::File::Mode::OPEN_APPEND) {
+        state.m_file.size(current_position);
+    }
+    FwSizeType size_desired = static_cast<FwSizeType>(STest::Pick::lowerUpper(0, FILE_DATA_MAXIMUM - current_position));
     FwSizeType size_written = size_desired;
     bool wait = static_cast<bool>(STest::Pick::lowerUpper(0, 1));
     for (FwSizeType i = 0; i < size_desired; i++) {
@@ -435,7 +459,7 @@ void Os::Test::File::Tester::Write::action(
 }
 
 // ------------------------------------------------------------------------------------------------------
-// Rule:  Read
+// Rule:  Seek
 //
 // ------------------------------------------------------------------------------------------------------
 
@@ -464,7 +488,8 @@ void Os::Test::File::Tester::Seek::action(
     if (absolute) {
         seek_offset = STest::Pick::lowerUpper(0, FILE_DATA_MAXIMUM);
     } else {
-        seek_offset = STest::Pick::lowerUpper(0, original_file_state.position + FILE_DATA_MAXIMUM) - original_file_state.position;
+        seek_offset = STest::Pick::lowerUpper(0, FILE_DATA_MAXIMUM);
+        seek_offset -= original_file_state.position;
     }
     Os::File::Status status = state.m_file.seek(seek_offset, absolute ? Os::File::SeekType::ABSOLUTE : Os::File::SeekType::RELATIVE);
     ASSERT_EQ(status, Os::File::Status::OP_OK);
@@ -496,8 +521,8 @@ void Os::Test::File::Tester::Preallocate::action(
     printf("--> Rule: %s \n", this->getName());
     state.assert_file_consistent();
     FileState original_file_state = state.current_file_state();
-    FwSizeType offset = static_cast<FwSizeType>(STest::Pick::lowerUpper(0, FILE_DATA_MAXIMUM));
-    FwSizeType length = static_cast<FwSizeType>(STest::Pick::lowerUpper(1, FILE_DATA_MAXIMUM));
+    FwSizeType offset = static_cast<FwSizeType>(STest::Pick::lowerUpper(0, FILE_DATA_MAXIMUM - 1));
+    FwSizeType length = static_cast<FwSizeType>(STest::Pick::lowerUpper(1, FILE_DATA_MAXIMUM - offset));
     Os::File::Status status = state.m_file.preallocate(offset, length);
     ASSERT_EQ(Os::File::Status::OP_OK, status);
     state.shadow_preallocate(offset, length);

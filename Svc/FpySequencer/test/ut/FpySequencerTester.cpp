@@ -108,8 +108,9 @@ void FpySequencerTester::addStmt(const Fpy::Statement& stmt) {
     // if fails, cannot add a new stmt (out of space)
     FW_ASSERT(seq.getheader().getstatementCount() < std::numeric_limits<U16>::max());
 
-    seq.getstatements()[seq.getheader().getstatementCount()] = stmt;
-    seq.getheader().setstatementCount(seq.getheader().getstatementCount() + 1);
+    U16 stateCount = seq.getheader().getstatementCount();
+    seq.getstatements()[stateCount] = stmt;
+    seq.getheader().setstatementCount(static_cast<U16>(stateCount + 1));
 }
 
 void FpySequencerTester::addCmd(FwOpcodeType opcode) {

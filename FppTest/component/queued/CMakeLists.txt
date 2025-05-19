@@ -1,6 +1,6 @@
-# ====================================================================== 
+# ======================================================================
 # CMakeLists.txt
-# ====================================================================== 
+# ======================================================================
 
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/queued.fpp"
@@ -39,6 +39,7 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/../tests/EventTests.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../tests/TlmTests.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../tests/ParamTests.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../tests/ExternalParamTests.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../tests/TimeTests.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../tests/InternalInterfaceTests.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../tests/AsyncTests.cpp"

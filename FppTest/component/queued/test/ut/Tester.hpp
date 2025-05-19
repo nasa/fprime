@@ -14,6 +14,7 @@
 #include "FppTest/component/tests/EventTests.hpp"
 #include "FppTest/component/tests/InternalInterfaceTests.hpp"
 #include "FppTest/component/tests/ParamTests.hpp"
+#include "FppTest/component/tests/ExternalParamTests.hpp"
 #include "FppTest/component/tests/PortTests.hpp"
 #include "FppTest/component/tests/TlmTests.hpp"
 #include "FppTest/component/types/FormalParamTypes.hpp"
@@ -58,10 +59,12 @@ class Tester : public QueuedTestGTestBase {
     void testParam();
     PARAM_CMD_TEST_DECLS
 
+    void testExternalParam();
+    EXTERNAL_PARAM_CMD_TEST_DECLS
+
     INTERNAL_INT_TEST_DECLS
 
     void testTime();
-
 
     void testOverflowAssert();
 
@@ -166,6 +169,90 @@ class Tester : public QueuedTestGTestBase {
 
     // Time test values
     Fw::Time time;
+
+
+    //! External Parameter Delegate
+    class QueuedTestComponentBaseParamExternalDelegate :
+    public Fw::ParamExternalDelegate
+    {
+
+    public:
+
+        // ----------------------------------------------------------------------
+        // Parameter validity flags
+        // ----------------------------------------------------------------------
+
+        //! True if ParamBoolExternal was successfully received
+        Fw::ParamValid m_param_ParamBoolExternal_valid;
+
+        //! True if ParamI32External was successfully received
+        Fw::ParamValid m_param_ParamI32External_valid;
+
+        //! True if ParamStringExternal was successfully received
+        Fw::ParamValid m_param_ParamStringExternal_valid;
+
+        //! True if ParamEnumExternal was successfully received
+        Fw::ParamValid m_param_ParamEnumExternal_valid;
+
+        //! True if ParamArrayExternal was successfully received
+        Fw::ParamValid m_param_ParamArrayExternal_valid;
+
+        //! True if ParamStructExternal was successfully received
+        Fw::ParamValid m_param_ParamStructExternal_valid;
+
+    public:
+
+        // ----------------------------------------------------------------------
+        // Parameter variables
+        // ----------------------------------------------------------------------
+
+        //! Parameter ParamBoolExternal
+        bool m_param_ParamBoolExternal;
+
+        //! Parameter ParamI32External
+        I32 m_param_ParamI32External;
+
+        //! Parameter ParamStringExternal
+        Fw::ParamString m_param_ParamStringExternal;
+
+        //! Parameter ParamEnumExternal
+        FormalParamEnum m_param_ParamEnumExternal;
+
+        //! Parameter ParamArrayExternal
+        FormalParamArray m_param_ParamArrayExternal;
+
+        //! Parameter ParamStructExternal
+        FormalParamStruct m_param_ParamStructExternal;
+
+    public:
+
+        // ----------------------------------------------------------------------
+        // Unit test implementation of external parameter delegate serialization/deserialization
+        // ----------------------------------------------------------------------
+
+        //! Parameter deserialization function for external parameter unit testing
+        Fw::SerializeStatus deserializeParam(
+            const FwPrmIdType base_id, //!< The component base parameter ID to deserialize
+            const FwPrmIdType local_id, //!< The parameter local ID to deserialize
+            const Fw::ParamValid prmStat, //!< The parameter validity status
+            Fw::SerializeBufferBase& buff //!< The buffer containing the parameter to deserialize
+        ) override;
+
+        //! Parameter serialization function for external parameter unit testing
+        Fw::SerializeStatus serializeParam(
+            const FwPrmIdType base_id, //!< The component base parameter ID to serialize
+            const FwPrmIdType local_id, //!< The parameter local ID to serialize
+            Fw::SerializeBufferBase& buff //!< The buffer to serialize the parameter into
+        ) const override;
+
+    };
+
+    // ----------------------------------------------------------------------
+    // Parameter delegates
+    // ----------------------------------------------------------------------
+
+    //! Delegate to serialize/deserialize an externally stored parameter
+    QueuedTestComponentBaseParamExternalDelegate paramTesterDelegate;
 };
 
 #endif

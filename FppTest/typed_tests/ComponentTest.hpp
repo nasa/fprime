@@ -105,6 +105,23 @@ REGISTER_TYPED_TEST_SUITE_P(ComponentParamCommandTest,
 );
 
 template <typename FormalParamType>
+class ComponentExternalParamCommandTest : public ::testing::Test {
+protected:
+    Tester tester;
+    FormalParamType data;
+};
+
+TYPED_TEST_SUITE_P(ComponentExternalParamCommandTest);
+
+TYPED_TEST_P(ComponentExternalParamCommandTest, ExternalParamTest) {
+    this->tester.testExternalParamCommand(0, this->data);
+}
+
+REGISTER_TYPED_TEST_SUITE_P(ComponentExternalParamCommandTest,
+    ExternalParamTest
+);
+
+template <typename FormalParamType>
 class ComponentInternalInterfaceTest : public ::testing::Test {
 protected:
     Tester tester;

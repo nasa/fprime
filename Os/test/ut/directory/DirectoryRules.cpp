@@ -22,6 +22,7 @@ bool Os::Test::Directory::Tester::Open::precondition(const Os::Test::Directory::
 
 void Os::Test::Directory::Tester::Open::action(Os::Test::Directory::Tester &state) {
     Os::Directory::OpenMode mode = STest::Pick::lowerUpper(0, 1) == 1 ? Os::Directory::READ : Os::Directory::CREATE_IF_MISSING;
+    printf("--> Rule: %s pathname %s mode %d\n", this->getName(), state.m_path.c_str(), mode);
     Os::Directory::Status status = state.m_directory.open(state.m_path.c_str(), mode);
     ASSERT_EQ(status, Os::Directory::Status::OP_OK);
     state.m_state = Os::Test::Directory::Tester::DirectoryState::OPEN;
@@ -40,6 +41,7 @@ bool Os::Test::Directory::Tester::OpenAlreadyExistsError::precondition(const Os:
 }
 
 void Os::Test::Directory::Tester::OpenAlreadyExistsError::action(Os::Test::Directory::Tester &state) {
+    printf("--> Rule: %s pathname %s\n", this->getName(), state.m_path.c_str());
     Os::Directory new_directory;
     Os::Directory::Status status = new_directory.open(state.m_path.c_str(), Os::Directory::OpenMode::CREATE_EXCLUSIVE);
     ASSERT_EQ(status, Os::Directory::Status::ALREADY_EXISTS);
@@ -100,8 +102,9 @@ bool Os::Test::Directory::Tester::ReadOneFile::precondition(const Os::Test::Dire
 }
 
 void Os::Test::Directory::Tester::ReadOneFile::action(Os::Test::Directory::Tester &state) {
+    printf("--> Rule: %s\n", this->getName());
     ASSERT_TRUE(state.m_directory.isOpen());
-    char filename[100];
+    char filename[100] = {0};
     Os::Directory::Status status = state.m_directory.read(filename, 100);
     // If seek is at the end of the directory, expect NO_MORE_FILES - otherwise expect normal read and valid filename
     if (state.m_seek_position < static_cast<FwIndexType>(state.m_filenames.size())) {

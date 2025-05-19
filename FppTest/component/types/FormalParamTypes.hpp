@@ -64,6 +64,12 @@ struct U32Type {
     U32 val;
 };
 
+struct I32Type {
+    I32Type();
+
+    I32 val;
+};
+
 struct F32Type {
     F32Type();
 
@@ -265,6 +271,7 @@ void getRandomFormalStringArray(FormalAliasStringArray& a);
 typedef FormalParams<Empty> NoParams;
 typedef FormalParams<BoolType> BoolParam;
 typedef FormalParams<U32Type> U32Param;
+typedef FormalParams<I32Type> I32Param;
 typedef FormalParams<F32Type> F32Param;
 typedef FormalParams<PrimitiveTypes> PrimitiveParams;
 typedef FormalParams<EnumType> EnumParam;
