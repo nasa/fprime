@@ -51,6 +51,7 @@ void TMFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
     U16 dataFieldStatus = 0;
     dataFieldStatus |= 0x3 << CCSDS::Types::TMFrameMasks::segLengthOffset;  // Seg Length 0b11 per Standard
 
+    // TODO: could virtual channel be passed in context or use portNum and a mapping ??
     header.setchannelIds(channelIds);
     header.setmasterFrameCount(this->m_masterFrameCount);
     header.setvirtualFrameCount(this->m_virtualFrameCount);

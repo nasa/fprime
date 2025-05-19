@@ -28,9 +28,12 @@ module ComCfg {
     @ Type used to pass context info between components during framing/deframing
     struct FrameContext {
         comQueueIndex: FwIndexType  @< Queue Index used by the ComQueue, other components shall not modify
-        apid: APID  @< 11 bits APID in CCSDS
+        apid: APID                  @< 11 bits APID in CCSDS
+        sequenceCount: U16          @< 14 bit Sequence count - sequence count is incremented per APID
     } default {
         comQueueIndex = 0
+        apid = APID.FW_PACKET_UNKNOWN
+        sequenceCount = 0
     }
 
 }

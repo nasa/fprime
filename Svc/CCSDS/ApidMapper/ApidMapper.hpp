@@ -1,31 +1,30 @@
 // ======================================================================
-// \title  SpacePacketFramer.hpp
-// \author thomas-bc
-// \brief  hpp file for SpacePacketFramer component implementation class
+// \title  ApidMapper.hpp
+// \author chammard
+// \brief  hpp file for ApidMapper component implementation class
 // ======================================================================
 
-#ifndef Svc_CCSDS_SpacePacketFramer_HPP
-#define Svc_CCSDS_SpacePacketFramer_HPP
+#ifndef Svc_CCSDS_ApidMapper_HPP
+#define Svc_CCSDS_ApidMapper_HPP
 
-#include "Svc/CCSDS/SpacePacketFramer/SpacePacketFramerComponentAc.hpp"
-#include "config/APIDEnumAc.hpp"
+#include "Svc/CCSDS/ApidMapper/ApidMapperComponentAc.hpp"
 
 namespace Svc {
 
 namespace CCSDS {
 
-class SpacePacketFramer final : public SpacePacketFramerComponentBase {
+class ApidMapper final : public ApidMapperComponentBase {
   public:
     // ----------------------------------------------------------------------
     // Component construction and destruction
     // ----------------------------------------------------------------------
 
-    //! Construct SpacePacketFramer object
-    SpacePacketFramer(const char* const compName  //!< The component name
+    //! Construct ApidMapper object
+    ApidMapper(const char* const compName  //!< The component name
     );
 
-    //! Destroy SpacePacketFramer object
-    ~SpacePacketFramer();
+    //! Destroy ApidMapper object
+    ~ApidMapper();
 
   private:
     // ----------------------------------------------------------------------
@@ -54,10 +53,29 @@ class SpacePacketFramer final : public SpacePacketFramerComponentBase {
                               Fw::Buffer& data,
                               const ComCfg::FrameContext& context) override;
 
+  private:
+    // ----------------------------------------------------------------------
+    // Helpers
+    // ----------------------------------------------------------------------
+    //! Get the sequence count for a given APID and increment it for the next
+    //! Wraps around at 14 bits
+    U16 getAndIncrementSeqCount(ComCfg::APID::T apid);
+
+    //! This struct helps to track sequence counts per APID
+    struct ApidSequenceEntry {
+        ComCfg::APID::T apid = ComCfg::APID::FW_PACKET_UNKNOWN;
+        U16 sequenceCount;
+    };
+
+  private:
+    // ----------------------------------------------------------------------
+    // Member variables
+    // ----------------------------------------------------------------------
+    static const U8 MAX_TRACKED_APIDS = 5;
+    ApidSequenceEntry m_apidSequences[MAX_TRACKED_APIDS];
 };
 
 }  // namespace CCSDS
-
 }  // namespace Svc
 
 #endif

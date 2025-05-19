@@ -50,7 +50,7 @@ module Ref {
     instance fileUplink
     instance commsBufferManager
     instance frameAccumulator
-    instance fprimeFramer
+    instance apidMapper
     instance posixTime
     instance pingRcvr
     instance prmDb
@@ -107,9 +107,12 @@ module Ref {
       tlmSend.PktSend            -> comQueue.comPacketQueueIn[Ports_ComPacketQueue.TELEMETRY]
       fileDownlink.bufferSendOut -> comQueue.bufferQueueIn[Ports_ComBufferQueue.FILE_DOWNLINK]
       comQueue.bufferReturnOut[Ports_ComBufferQueue.FILE_DOWNLINK] -> fileDownlink.bufferReturn
-      # ComQueue <-> Framer
-      comQueue.dataOut           -> spacePacketFramer.dataIn
-      spacePacketFramer.dataReturnOut -> comQueue.dataReturnIn
+      # ComQueue <-> ApidMapper
+      comQueue.dataOut           -> apidMapper.dataIn
+      apidMapper.dataReturnOut -> comQueue.dataReturnIn
+      # ApidMapper <-> Framer
+      apidMapper.dataOut           -> spacePacketFramer.dataIn
+      spacePacketFramer.dataReturnOut -> apidMapper.dataReturnIn
       # Buffer Management for Framer
       spacePacketFramer.bufferAllocate   -> commsBufferManager.bufferGetCallee
       spacePacketFramer.bufferDeallocate -> commsBufferManager.bufferSendIn

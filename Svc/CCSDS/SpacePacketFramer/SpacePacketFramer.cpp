@@ -41,12 +41,12 @@ void SpacePacketFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, c
     // -----------------------------------------------
     // PVN is always 0 per Standard - Packet Type is 0 for Telemetry (downlink) - SecHdr flag is 0 for no secondary header
     U16 packetIdentification = 0;
-    ComCfg::APID::T apid = this->get_apid_from_index(context.getcomQueueIndex());
-    U16 sequenceCount = this->increment_sequence_count_for_apid(context.getcomQueueIndex());
+    ComCfg::APID::T apid = context.getapid();
     packetIdentification |= static_cast<U16>(apid) & CCSDS::Types::SpacePacketMasks::ApidMask; // 11 bit APID
-
+    
     U16 packetSequenceControl = 0;
     packetSequenceControl |= 0x3 << CCSDS::Types::SpacePacketMasks::SeqFlagsOffset; // Sequence Flags 0b11 = unsegmented User Data
+    U16 sequenceCount = context.getsequenceCount();
     packetSequenceControl |= sequenceCount & CCSDS::Types::SpacePacketMasks::SeqCountMask; // 14 bit sequence count
 
     FW_ASSERT(data.getSize() <= std::numeric_limits<U16>::max(), static_cast<FwAssertArgType>(data.getSize()));
@@ -79,30 +79,5 @@ void SpacePacketFramer ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& f
     this->bufferDeallocate_out(0, frameBuffer);
 }
 
-U16 SpacePacketFramer ::increment_sequence_count_for_apid(FwIndexType index) {
-    // FwIndexType index = this->get_index_from_apid(apid);
-    U16 sequenceCount = this->m_packetSequenceCounts[index];
-    this->m_packetSequenceCounts[index] = (this->m_packetSequenceCounts[index] + 1) % (1 << 14); // Wrap around at 14 bits (modulo 2^14)
-    printf("index: %d, Sequence Count: %d\n", index, this->m_packetSequenceCounts[index]);
-    return sequenceCount;
-}
-
-ComCfg::APID::T SpacePacketFramer ::get_apid_from_index(FwIndexType index) {
-    // Need a manual mapping from comQueue index to APID for now to get an APID count
-    // per APID
-    switch (index) {
-        case 0:
-            return ComCfg::APID::FW_PACKET_LOG;
-        case 1:
-            return ComCfg::APID::FW_PACKET_TELEM;
-        case 2:
-            return ComCfg::APID::FW_PACKET_FILE;
-        default:
-            return ComCfg::APID::FW_PACKET_UNKNOWN; // TODO: Handle unknown index
-    }
-}
-
-
 }  // namespace CCSDS
-
 }  // namespace Svc
