@@ -2,7 +2,7 @@
 
 This How-To Guide provides a step-by-step guide to implementing a custom framing protocol in F Prime Flight Software
 
-The default [F Prime Protocol](../../FprimeProtocol/docs/sdd.md) is a lightweight protocol used to get development started quickly with a low-overhead communications protocol that the [F Prime GDS](https://github.com/nasa/fprime-gds) understands. However, as projects mature, there may be a need to implement a framing protocol that fits mission requirements. This document provides an overview of how to implement a custom framing protocol in F Prime Flight Software, and how to integrate it with the F Prime GDS.
+The default [F Prime Protocol](../../Svc/FprimeProtocol/docs/sdd.md) is a lightweight protocol used to get development started quickly with a low-overhead communications protocol that the [F Prime GDS](https://github.com/nasa/fprime-gds) understands. However, as projects mature, there may be a need to implement a framing protocol that fits mission requirements. This document provides an overview of how to implement a custom framing protocol in F Prime Flight Software, and how to integrate it with the F Prime GDS.
 
 ## Overview
 
