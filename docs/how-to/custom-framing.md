@@ -8,11 +8,9 @@ The default [F Prime Protocol](../../FprimeProtocol/docs/sdd.md) is a lightweigh
 
 This guide demonstrates how to implement a custom framing protocol, referred to here as **MyCustomProtocol**. The protocol defines how data is wrapped (framed) for transmission and how frames are validated and unpacked (deframed) on reception. 
 
-A reference implementation of a custom framing protocol is available in the `fprime-examples`:
+A reference implementation of a custom framing protocol (the "Decaf Protocol") is available in the `fprime-examples` repository:
 - [C++ CustomFraming Example](https://github.com/nasa/fprime-examples/tree/devel/FlightExamples/CustomFraming)
 - [GDS Plugin Example](https://github.com/nasa/fprime-examples/tree/devel/GdsExamples/gds-plugins/src/framing)
-
-This example implements a custom protocol called **Decaf**, which is a simple protocol with a start word, length field, and CRC32 checksum.
 
 This guide is divided into two main sections: flight software implementation and GDS integration. Note that if you are aiming to integrate with another GDS and do not wish to use the F´ GDS, you can skip the GDS section.
 
