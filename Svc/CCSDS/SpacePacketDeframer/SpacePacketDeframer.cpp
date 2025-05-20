@@ -40,13 +40,13 @@ void SpacePacketDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data,
     // 16b - n/a - Packet Data Length
     // ################################
 
-    FW_ASSERT(data.getSize() >= Svc::CCSDS::Types::SpacePacketHeader::SERIALIZED_SIZE, static_cast<FwAssertArgType>(data.getSize()));
+    FW_ASSERT(data.getSize() >= SpacePacketHeader::SERIALIZED_SIZE, static_cast<FwAssertArgType>(data.getSize()));
 
-    CCSDS::Types::SpacePacketHeader header;
+    SpacePacketHeader header;
     Fw::SerializeStatus status = data.getDeserializer().deserialize(header);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
-    U16 apid = header.getpacketIdentification() & CCSDS::Types::SpacePacketMasks::ApidMask;
+    U16 apid = header.getpacketIdentification() & SpacePacketMasks::ApidMask;
     ComCfg::FrameContext contextCopy = context;
     contextCopy.setapid(static_cast<ComCfg::APID::T>(apid));
 
@@ -54,7 +54,7 @@ void SpacePacketDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data,
     U16 pkt_length = header.getpacketDataLength();
 
     // Set data buffer to be of the encapsulated data: HEADER (6 bytes) | PACKET DATA
-    data.setData(data.getData() + Svc::CCSDS::Types::SpacePacketHeader::SERIALIZED_SIZE);
+    data.setData(data.getData() + SpacePacketHeader::SERIALIZED_SIZE);
     data.setSize(pkt_length);
 
     this->dataOut_out(0, data, contextCopy);

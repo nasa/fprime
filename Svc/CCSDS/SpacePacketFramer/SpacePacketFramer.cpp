@@ -25,9 +25,9 @@ SpacePacketFramer ::~SpacePacketFramer() {}
 // ----------------------------------------------------------------------
 
 void SpacePacketFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
-    CCSDS::Types::SpacePacketHeader header;
+    SpacePacketHeader header;
     Fw::SerializeStatus status;
-    FwSizeType frameSize = CCSDS::Types::SpacePacketHeader::SERIALIZED_SIZE + data.getSize();
+    FwSizeType frameSize = SpacePacketHeader::SERIALIZED_SIZE + data.getSize();
     FW_ASSERT(data.getSize() <= std::numeric_limits<Fw::Buffer::SizeType>::max(), static_cast<FwAssertArgType>(frameSize));
     FW_ASSERT(frameSize <= std::numeric_limits<Fw::Buffer::SizeType>::max(), static_cast<FwAssertArgType>(frameSize));
 
@@ -42,12 +42,12 @@ void SpacePacketFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, c
     // PVN is always 0 per Standard - Packet Type is 0 for Telemetry (downlink) - SecHdr flag is 0 for no secondary header
     U16 packetIdentification = 0;
     ComCfg::APID::T apid = context.getapid();
-    packetIdentification |= static_cast<U16>(apid) & CCSDS::Types::SpacePacketMasks::ApidMask; // 11 bit APID
+    packetIdentification |= static_cast<U16>(apid) & SpacePacketMasks::ApidMask; // 11 bit APID
     
     U16 packetSequenceControl = 0;
-    packetSequenceControl |= 0x3 << CCSDS::Types::SpacePacketMasks::SeqFlagsOffset; // Sequence Flags 0b11 = unsegmented User Data
+    packetSequenceControl |= 0x3 << SpacePacketMasks::SeqFlagsOffset; // Sequence Flags 0b11 = unsegmented User Data
     U16 sequenceCount = context.getsequenceCount();
-    packetSequenceControl |= sequenceCount & CCSDS::Types::SpacePacketMasks::SeqCountMask; // 14 bit sequence count
+    packetSequenceControl |= sequenceCount & SpacePacketMasks::SeqCountMask; // 14 bit sequence count
 
     FW_ASSERT(data.getSize() <= std::numeric_limits<U16>::max(), static_cast<FwAssertArgType>(data.getSize()));
     U16 packetDataLength = static_cast<U16>(data.getSize() - 1); // Standard specifies length is number of bytes minus 1

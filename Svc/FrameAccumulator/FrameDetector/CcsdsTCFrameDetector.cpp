@@ -17,29 +17,29 @@ namespace FrameDetectors {
 
 FrameDetector::Status CcsdsTCFrameDetector::detect(const Types::CircularBuffer& data, FwSizeType& size_out) const {
 
-    if (data.get_allocated_size() < CCSDS::Types::TCFrameHeader::SERIALIZED_SIZE) {
-        size_out = CCSDS::Types::TCFrameHeader::SERIALIZED_SIZE;
+    if (data.get_allocated_size() < CCSDS::TCFrameHeader::SERIALIZED_SIZE) {
+        size_out = CCSDS::TCFrameHeader::SERIALIZED_SIZE;
         return Status::MORE_DATA_NEEDED;
     }
 
     // Copy CircularBuffer data into linear buffer, for serialization into FrameHeader object
-    U8 header_data[CCSDS::Types::TCFrameHeader::SERIALIZED_SIZE];
-    Fw::SerializeStatus status = data.peek(header_data, CCSDS::Types::TCFrameHeader::SERIALIZED_SIZE, 0);
+    U8 header_data[CCSDS::TCFrameHeader::SERIALIZED_SIZE];
+    Fw::SerializeStatus status = data.peek(header_data, CCSDS::TCFrameHeader::SERIALIZED_SIZE, 0);
     if (status != Fw::FW_SERIALIZE_OK) {
         return Status::NO_FRAME_DETECTED;
     }
-    CCSDS::Types::TCFrameHeader header;
-    Fw::ExternalSerializeBuffer header_ser_buffer(header_data, CCSDS::Types::TCFrameHeader::SERIALIZED_SIZE);
-    status = header_ser_buffer.setBuffLen(CCSDS::Types::TCFrameHeader::SERIALIZED_SIZE);
+    CCSDS::TCFrameHeader header;
+    Fw::ExternalSerializeBuffer header_ser_buffer(header_data, CCSDS::TCFrameHeader::SERIALIZED_SIZE);
+    status = header_ser_buffer.setBuffLen(CCSDS::TCFrameHeader::SERIALIZED_SIZE);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     // Attempt to deserialize data into the FrameHeader object
     status = header.deserialize(header_ser_buffer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
-    U16 sc_id = header.getflagsAndScId() & CCSDS::Types::TCFrameMasks::SpacecraftIdMask;
-    U16 frame_length = header.getvcIdAndLength() & CCSDS::Types::TCFrameMasks::FrameLengthMask;
+    U16 sc_id = header.getflagsAndScId() & CCSDS::TCFrameMasks::SpacecraftIdMask;
+    U16 frame_length = header.getvcIdAndLength() & CCSDS::TCFrameMasks::FrameLengthMask;
 
-    FwSizeType expected_frame_size = CCSDS::Types::TCFrameHeader::SERIALIZED_SIZE + frame_length + CCSDS::Types::TCFrameTrailer::SERIALIZED_SIZE; // 2 bytes for CRC
+    FwSizeType expected_frame_size = CCSDS::TCFrameHeader::SERIALIZED_SIZE + frame_length + CCSDS::TCFrameTrailer::SERIALIZED_SIZE; // 2 bytes for CRC
     if (sc_id == ComCfg::FppConstant_SpacecraftId::SpacecraftId) {
         size_out = expected_frame_size;
         if (data.get_allocated_size() < expected_frame_size) {

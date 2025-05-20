@@ -39,17 +39,18 @@ void TMFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
     // -----------------------------------------------
     // Header
     // -----------------------------------------------
-    CCSDS::Types::TMFrameHeader header;
+    TMFrameHeader header;
     U16 channelIds = 0;
-    channelIds |= ComCfg::FppConstant_SpacecraftId::SpacecraftId << CCSDS::Types::TMFrameMasks::spacecraftIdOffset;
-    channelIds |= ComCfg::FppConstant_VcId::VcId << CCSDS::Types::TMFrameMasks::virtualChannelIdOffset;
+    channelIds |= ComCfg::FppConstant_SpacecraftId::SpacecraftId << TMFrameMasks::spacecraftIdOffset;
+    U8 vcId = 1;
+    channelIds |= vcId << TMFrameMasks::virtualChannelIdOffset;
     channelIds |= 0x0;  // No Operational Control Field: Flag set to 0
 
     // Data Field Status:
     // - all flags to 0 except segment length id 0b11 per standard
     // - First Header Pointer is always 0 since we are always wrapping a single entire packet at offset 0
     U16 dataFieldStatus = 0;
-    dataFieldStatus |= 0x3 << CCSDS::Types::TMFrameMasks::segLengthOffset;  // Seg Length 0b11 per Standard
+    dataFieldStatus |= 0x3 << TMFrameMasks::segLengthOffset;  // Seg Length 0b11 per Standard
 
     // TODO: could virtual channel be passed in context or use portNum and a mapping ??
     header.setchannelIds(channelIds);
@@ -83,14 +84,14 @@ void TMFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
     // -------------------------------------------------
     // Trailer: Compute CRC
     // -------------------------------------------------
-    CCSDS::Types::TMFrameTrailer trailer;
+    TMFrameTrailer trailer;
     // Compute CRC over the entire frame buffer minus the FECF trailer
     U16 crc = CCSDS::Utils::CRC16::compute(frameBuffer.getData(),
-                                           sizeof(this->m_frameBuffer) - CCSDS::Types::TMFrameTrailer::SERIALIZED_SIZE);
+                                           sizeof(this->m_frameBuffer) - TMFrameTrailer::SERIALIZED_SIZE);
     trailer.setfecf(crc);  // Frame Error Control Field
     // Move the serializer pointer to the end of the location where the trailer will be serialized
     frameSerializer.moveSerToOffset(ComCfg::FppConstant_TmFrameFixedSize::TmFrameFixedSize -
-                                    CCSDS::Types::TMFrameTrailer::SERIALIZED_SIZE);
+                                    TMFrameTrailer::SERIALIZED_SIZE);
     status = frameSerializer.serialize(trailer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
@@ -114,7 +115,7 @@ void TMFramer ::dataReturnIn_handler(FwIndexType portNum,
 void TMFramer ::fill_with_idle_packet(U16 startIndex) {
     // TODO: make this code cleaner
     U16 endIndex = ComCfg::FppConstant_TmFrameFixedSize::TmFrameFixedSize -
-                           CCSDS::Types::TMFrameTrailer::SERIALIZED_SIZE;
+                           TMFrameTrailer::SERIALIZED_SIZE;
     U16 idlePacketLength = endIndex - startIndex;
     FW_ASSERT(idlePacketLength > 0, static_cast<FwAssertArgType>(idlePacketLength));
     FW_ASSERT(idlePacketLength >= 7, static_cast<FwAssertArgType>(idlePacketLength)); // 7 bytes minimum for idle packet
