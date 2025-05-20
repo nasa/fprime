@@ -26,6 +26,20 @@ TEST(TCDeframer, testInvalidVcId) {
     tester.testInvalidVcId();
 }
 
+TEST(TCDeframer, testInvalidLengthToken) {
+    Svc::CCSDS::TCDeframerTester tester;
+    tester.testInvalidLengthToken();
+}
+
+TEST(TCDeframer, testInvalidSequenceNumber) {
+    Svc::CCSDS::TCDeframerTester tester;
+    tester.testInvalidSequenceNumber();
+}
+
+TEST(TCDeframer, testInvalidCrc) {
+    Svc::CCSDS::TCDeframerTester tester;
+    tester.testInvalidCrc();
+}
 
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);

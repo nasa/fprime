@@ -42,11 +42,13 @@ class TCDeframerTester final : public TCDeframerGTestBase {
     // Tests
     // ----------------------------------------------------------------------
 
-    //! Test Data Return handler
     void testDataReturn();
     void testNominalDeframing();
     void testInvalidScId();
     void testInvalidVcId();
+    void testInvalidLengthToken();
+    void testInvalidSequenceNumber();
+    void testInvalidCrc();
 
 
   private:

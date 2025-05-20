@@ -80,7 +80,6 @@ void TCDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
     }
     this->m_sequenceCount++; // increment count for next frame
 
-
     // -------------------------------------------------
     // CRC Check
     // -------------------------------------------------
