@@ -5,19 +5,22 @@
 // ======================================================================
 
 #include "Svc/CCSDS/TCDeframer/TCDeframer.hpp"
-#include "config/FpConfig.hpp"
 #include "Svc/CCSDS/Types/FppConstantsAc.hpp"
 #include "Svc/CCSDS/Types/TCFrameHeaderSerializableAc.hpp"
 #include "Svc/CCSDS/Types/TCFrameTrailerSerializableAc.hpp"
 #include "Svc/CCSDS/Utils/CRC16.hpp"
+#include "config/FpConfig.hpp"
 
 namespace Svc {
 namespace CCSDS {
+
 // ----------------------------------------------------------------------
 // Component construction and destruction
 // ----------------------------------------------------------------------
 
-TCDeframer ::TCDeframer(const char* const compName) : TCDeframerComponentBase(compName) {}
+TCDeframer ::TCDeframer(const char* const compName)
+    : TCDeframerComponentBase(compName),
+      m_spacecraftId(ComCfg::FppConstant_SpacecraftId::SpacecraftId) {}
 
 TCDeframer ::~TCDeframer() {}
 
@@ -43,51 +46,61 @@ void TCDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
     // CCSDS TC Trailer:
     // 16b - Frame Error Control Field (FECF): CRC16
 
-    FW_ASSERT(data.getSize() >= CCSDS::Types::TCFrameHeader::SERIALIZED_SIZE,
-              static_cast<FwAssertArgType>(data.getSize()));
+    FW_ASSERT(data.getSize() >= TCFrameHeader::SERIALIZED_SIZE, static_cast<FwAssertArgType>(data.getSize()));
 
-    CCSDS::Types::TCFrameHeader header;
+    TCFrameHeader header;
     Fw::SerializeStatus status = data.getDeserializer().deserialize(header);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
-    U16 frame_length = header.getvcIdAndLength() & CCSDS::Types::TCFrameMasks::FrameLengthMask;
-    U8 vc_id =
-        (header.getvcIdAndLength() & CCSDS::Types::TCFrameMasks::VcIdMask) >> CCSDS::Types::TCFrameMasks::VcIdOffset;
-    U16 spacecraft_id = header.getflagsAndScId() & CCSDS::Types::TCFrameMasks::SpacecraftIdMask;
-    if (spacecraft_id != ComCfg::FppConstant_SpacecraftId::SpacecraftId) {
-        this->log_WARNING_HI_InvalidHeaderField(TCDeframer_HeaderField::SpacecraftId, spacecraft_id,
-                                               ComCfg::FppConstant_SpacecraftId::SpacecraftId);
+    U16 frame_length = header.getvcIdAndLength() & TCFrameMasks::FrameLengthMask;
+    U8 vc_id = (header.getvcIdAndLength() & TCFrameMasks::VcIdMask) >> TCFrameMasks::VcIdOffset;
+    U16 spacecraft_id = header.getflagsAndScId() & TCFrameMasks::SpacecraftIdMask;
+    U8 sequence_number = header.getframeSequenceNbr();
+
+    if (spacecraft_id != this->m_spacecraftId) {
+        this->log_ACTIVITY_LO_InvalidSpacecraftId(spacecraft_id, this->m_spacecraftId);
+        this->dataReturnOut_out(0, data, context); // drop the frame
+        return;
     }
-    if (data.getSize() < frame_length + CCSDS::Types::TCFrameHeader::SERIALIZED_SIZE + CCSDS::Types::TCFrameTrailer::SERIALIZED_SIZE) {
-        this->log_WARNING_HI_InvalidHeaderField(TCDeframer_HeaderField::FrameLength, frame_length,
-                                               data.getSize() - CCSDS::Types::TCFrameHeader::SERIALIZED_SIZE -
-                                                   CCSDS::Types::TCFrameTrailer::SERIALIZED_SIZE);
+    if (data.getSize() < frame_length + TCFrameHeader::SERIALIZED_SIZE + TCFrameTrailer::SERIALIZED_SIZE) {
+        U32 maxDataAvailable = data.getSize() - TCFrameHeader::SERIALIZED_SIZE - TCFrameTrailer::SERIALIZED_SIZE;
+        this->log_WARNING_HI_InvalidFrameLength(frame_length, maxDataAvailable);
+        this->dataReturnOut_out(0, data, context); // drop the frame
+        return;
     }
-    if (vc_id != ComCfg::FppConstant_VcId::VcId) {
-        this->log_WARNING_HI_InvalidHeaderField(TCDeframer_HeaderField::VcId, vc_id,
-                                               ComCfg::FppConstant_VcId::VcId);
+    if (this->m_acceptAllVcid == false && vc_id != this->m_vcId) {
+        this->log_ACTIVITY_LO_InvalidVcId(vc_id, this->m_vcId);
+        this->dataReturnOut_out(0, data, context); // drop the frame
+        return;
     }
+    if (sequence_number != this->m_sequenceCount) {
+        this->log_WARNING_HI_UnexpectedSequenceNumber(sequence_number, this->m_sequenceCount);
+        // Synchronize onboard count with received number so that count can keep going
+        this->m_sequenceCount = sequence_number;
+    }
+    this->m_sequenceCount++; // increment count for next frame
+
 
     // -------------------------------------------------
     // CRC Check
     // -------------------------------------------------
     // Compute CRC over the entire frame buffer minus the FECF trailer
-    U16 computed_crc = CCSDS::Utils::CRC16::compute(data.getData(),
-                                           CCSDS::Types::TCFrameHeader::SERIALIZED_SIZE + frame_length);
-    CCSDS::Types::TCFrameTrailer trailer;
+    U16 computed_crc = CCSDS::Utils::CRC16::compute(data.getData(), TCFrameHeader::SERIALIZED_SIZE + frame_length);
+    TCFrameTrailer trailer;
     auto deserializer = data.getDeserializer();
-    deserializer.moveDeserToOffset(CCSDS::Types::TCFrameHeader::SERIALIZED_SIZE + frame_length);
+    deserializer.moveDeserToOffset(TCFrameHeader::SERIALIZED_SIZE + frame_length);
     status = deserializer.deserialize(trailer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     U16 transmitted_crc = trailer.getfecf();
     if (transmitted_crc != computed_crc) {
-        this->log_WARNING_HI_InvalidHeaderField(TCDeframer_HeaderField::FrameErrorControlField,
-                                                computed_crc, transmitted_crc);
+        this->log_WARNING_HI_InvalidCrc(computed_crc, transmitted_crc);
+        this->dataReturnOut_out(0, data, context); // drop the frame
+        return;
     }
 
     // Point to the start of the data field and set appropriate size
-    data.setData(data.getData() + Svc::CCSDS::Types::TCFrameHeader::SERIALIZED_SIZE);
+    data.setData(data.getData() + TCFrameHeader::SERIALIZED_SIZE);
     data.setSize(frame_length);
 
     this->dataOut_out(0, data, context);

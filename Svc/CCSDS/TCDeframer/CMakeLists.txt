@@ -19,3 +19,15 @@ register_fprime_library(
     Svc_CCSDS_Types
 )
 
+set(UT_AUTO_HELPERS ON)
+
+register_fprime_ut(
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/TCDeframerTestMain.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/TCDeframerTester.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/TCDeframer.fpp"
+  DEPENDS
+    Svc_CCSDS_Types
+    STest
+)

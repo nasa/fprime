@@ -5,18 +5,30 @@ module CCSDS {
 
         include "../../Interfaces/DeframerInterface.fppi"
 
-        @ Used for event reporting
-        enum HeaderField {
-            SpacecraftId,
-            FrameLength,
-            VcId,
-            FrameErrorControlField
-        }
+        @ Deframing received an invalid SCID
+        event InvalidSpacecraftId(transmitted: U16, configured: U16) \
+            severity activity low \
+            format "Invalid Spacecraft ID Received. Received: {} | Deframer configured with: {}"
 
-        @ Invalid Data Field
-        event InvalidHeaderField(field: HeaderField, expected: U32, received: U32) \
+        @ Deframing received an invalid frame length
+        event InvalidFrameLength(transmitted: U16, actual: U32) \
             severity warning high \
-            format "Invalid Header Field Received. Field {} | Expected: {} | Received: {}"
+            format "Not enough data received. Header length specified: {} | Received data length: {}"
+
+        @ Deframing received an invalid VCID
+        event InvalidVcId(transmitted: U16, configured: U16) \
+            severity activity low \
+            format "Invalid Virtual Channel ID Received. Header token specified: {} | Deframer configured with: {}"
+
+        @ Deframing received an invalid checksum
+        event InvalidCrc(transmitted: U16, computed: U16) \
+            severity warning high \
+            format "Invalid checksum received. Trailer specified: {} | Computed on board: {}"
+
+        @ Deframing received an unexpected sequence number
+        event UnexpectedSequenceNumber(transmitted: U16, expected: U16) \
+            severity warning high \
+            format "Invalid sequence number received. Frames may have been lost. Transmitted: {} | Expected on board: {}"
 
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #

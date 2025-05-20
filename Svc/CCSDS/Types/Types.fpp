@@ -1,9 +1,8 @@
 module Svc {
 module CCSDS {
-module Types {
 
     # ------------------------------------------------
-    # Frame header types
+    # Frame header and trailer types
     # ------------------------------------------------ 
     # Note: FPP does not currently support bit fields, so these structs may contain fields
     # that are compoed of multiple bitfields. One should mask the individual FPP types 
@@ -71,6 +70,6 @@ module Types {
 
 
 
-}
+
 }
 }
