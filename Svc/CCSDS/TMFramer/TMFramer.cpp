@@ -29,9 +29,6 @@ TMFramer ::~TMFramer() {}
 // ----------------------------------------------------------------------
 
 void TMFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
-    // TODO: VcId should likely be passed in the context by the caller, rather than retrieved here
-    // This matches the VCP.request Service Primitive better
-
     // TODO: make this an event probably
     FW_ASSERT(data.getSize() <= ComCfg::FppConstant_TmFrameFixedSize::TmFrameFixedSize,
               static_cast<FwAssertArgType>(data.getSize()));
@@ -40,11 +37,11 @@ void TMFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
     // Header
     // -----------------------------------------------
     TMFrameHeader header;
-    U16 channelIds = 0;
-    channelIds |= ComCfg::FppConstant_SpacecraftId::SpacecraftId << TMFrameMasks::spacecraftIdOffset;
-    U8 vcId = 1;
-    channelIds |= vcId << TMFrameMasks::virtualChannelIdOffset;
-    channelIds |= 0x0;  // No Operational Control Field: Flag set to 0
+
+    U16 globalVcId = 0;
+    globalVcId |= ComCfg::FppConstant_SpacecraftId::SpacecraftId << TMFrameMasks::spacecraftIdOffset;
+    globalVcId |= context.getvcId() << TMFrameMasks::virtualChannelIdOffset;
+    globalVcId |= 0x0;  // Operational Control Field: Flag set to 0
 
     // Data Field Status:
     // - all flags to 0 except segment length id 0b11 per standard
@@ -52,8 +49,7 @@ void TMFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
     U16 dataFieldStatus = 0;
     dataFieldStatus |= 0x3 << TMFrameMasks::segLengthOffset;  // Seg Length 0b11 per Standard
 
-    // TODO: could virtual channel be passed in context or use portNum and a mapping ??
-    header.setchannelIds(channelIds);
+    header.setglobalVcId(globalVcId);
     header.setmasterFrameCount(this->m_masterFrameCount);
     header.setvirtualFrameCount(this->m_virtualFrameCount);
     header.setdataFieldStatus(dataFieldStatus);
@@ -63,7 +59,7 @@ void TMFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
     this->m_virtualFrameCount++;  // U8 intended to wrap around (modulo 256)
 
     // -------------------------------------------------
-    // Serialize the Frame
+    // Data field
     // -------------------------------------------------
 
     Fw::SerializeStatus status;
@@ -76,19 +72,17 @@ void TMFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
     status = frameSerializer.serialize(data.getData(), data.getSize(), Fw::Serialization::OMIT_LENGTH);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
-    // TODO: fill with Idle Packets
-    FW_ASSERT(frameSerializer.getBuffLength() <= std::numeric_limits<U16>::max(),
-              static_cast<FwAssertArgType>(frameSerializer.getBuffLength()));
     this->fill_with_idle_packet(static_cast<U16>(frameSerializer.getBuffLength()));
 
     // -------------------------------------------------
-    // Trailer: Compute CRC
+    // Trailer (CRC)
     // -------------------------------------------------
     TMFrameTrailer trailer;
     // Compute CRC over the entire frame buffer minus the FECF trailer
     U16 crc = CCSDS::Utils::CRC16::compute(frameBuffer.getData(),
                                            sizeof(this->m_frameBuffer) - TMFrameTrailer::SERIALIZED_SIZE);
-    trailer.setfecf(crc);  // Frame Error Control Field
+    // Set the Frame Error Control Field (FECF)
+    trailer.setfecf(crc);
     // Move the serializer pointer to the end of the location where the trailer will be serialized
     frameSerializer.moveSerToOffset(ComCfg::FppConstant_TmFrameFixedSize::TmFrameFixedSize -
                                     TMFrameTrailer::SERIALIZED_SIZE);
@@ -110,10 +104,11 @@ void TMFramer ::dataReturnIn_handler(FwIndexType portNum,
                                      const ComCfg::FrameContext& context) {
     // dataReturnIn is our own member buffer coming back from the dataOut call - memset it to 0
     ::memset(this->m_frameBuffer, 0, sizeof(this->m_frameBuffer));
+    // NOTE: should I set a flag to track that it has been returned an ready for reuse?
 }
 
 void TMFramer ::fill_with_idle_packet(U16 startIndex) {
-    // TODO: make this code cleaner
+    // TODO: make this code cleaner - could request from SpacePacket ??
     U16 endIndex = ComCfg::FppConstant_TmFrameFixedSize::TmFrameFixedSize -
                            TMFrameTrailer::SERIALIZED_SIZE;
     U16 idlePacketLength = endIndex - startIndex;
@@ -130,7 +125,7 @@ void TMFramer ::fill_with_idle_packet(U16 startIndex) {
     this->m_frameBuffer[startIndex + 5] = idlePacketLength & 0xFF;  // Packet Data Length LSB
     // Fill the rest of the buffer with arbitrary idle data
     for (U16 i = startIndex + 6; i < endIndex; i++) {
-        this->m_frameBuffer[i] = 0x44;  // Idle data
+        this->m_frameBuffer[i] = IDLE_DATA_PATTERN;  // Idle data
     }
 }
 

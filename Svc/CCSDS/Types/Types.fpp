@@ -58,8 +58,7 @@ module CCSDS {
     }
 
     struct TMFrameHeader {
-        # TODO: rename: channelIds is called GVCID Global Virtual Channel Identifier
-        channelIds: U16,   @< 2 bit Frame Version | 10 bit spacecraft ID | 3 bit virtual channel ID | 1 bit OCF flag
+        globalVcId: U16,         @< 2 bit Frame Version | 10 bit spacecraft ID | 3 bit virtual channel ID | 1 bit OCF flag
         masterFrameCount: U8,    @< 8 bit Master Channel Frame Count
         virtualFrameCount: U8,   @< 8 bit Virtual Channel Frame Count
         dataFieldStatus: U16     @< 1 bit 2nd Header | 1 bit sync | 1 bit pkt order | 2 bit seg len | 11 bit header ptr

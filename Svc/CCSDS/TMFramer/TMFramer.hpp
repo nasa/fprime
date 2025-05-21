@@ -14,6 +14,10 @@ namespace Svc {
 namespace CCSDS {
 
 class TMFramer final : public TMFramerComponentBase {
+  friend class TMFramerTester;
+
+  static constexpr U8 IDLE_DATA_PATTERN = 0x44;
+
   public:
     // ----------------------------------------------------------------------
     // Component construction and destruction
@@ -44,6 +48,8 @@ class TMFramer final : public TMFramerComponentBase {
     //! Port to receive data to frame, in a Fw::Buffer with optional context.
     //! This is essentially the CCSDS TM VCP.request Service Primitive, with
     //! Packet=data and GVCID implicitly passed in context (TM Protocol 3.3.3.2)
+    //!
+    //! TODO: mention context values that are being used 
     //!
     void dataIn_handler(FwIndexType portNum,  //!< The port number
                         Fw::Buffer& data,

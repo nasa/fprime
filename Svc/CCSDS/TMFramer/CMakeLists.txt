@@ -18,3 +18,16 @@ register_fprime_library(
   DEPENDS
     Svc_CCSDS_Types
 )
+
+set(UT_AUTO_HELPERS ON)
+
+register_fprime_ut(
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/TMFramerTestMain.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/TMFramerTester.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/TMFramer.fpp"
+  DEPENDS
+    Svc_CCSDS_Types
+    STest
+)
