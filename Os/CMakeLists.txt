@@ -39,7 +39,7 @@ function(add_named_os_module NAMES)
         DEPENDS
           Fw_Types ${ARGN}
     )
-    target_link_libraries(Os PUBLIC "${OS_MODULE_NAME}")
+    fprime_target_dependencies(Os PUBLIC "${OS_MODULE_NAME}")
 endfunction()
 
 ####

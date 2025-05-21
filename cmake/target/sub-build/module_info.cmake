@@ -72,9 +72,10 @@ function(module_info_add_module_target BUILD_MODULE_NAME CUSTOM_TARGET_NAME SOUR
 
     # If this module requires something append it to the list property
     if (REQUIRES)
+        string(REPLACE ";" "\;" REQUIRES_ESCAPED "${REQUIRES}")
         list(APPEND "FILE_LINES"
             "include(utilities)\n"
-            "append_list_property(\"${REQUIRES}\" GLOBAL PROPERTY FPRIME_REQUIRED_IMPLEMENTATIONS)\n"
+            "append_list_property(\"${REQUIRES_ESCAPED}\" GLOBAL PROPERTY FPRIME_REQUIRED_IMPLEMENTATIONS)\n"
         )
     endif()
     get_target_property(AUTOCODER_INPUTS "${BUILD_MODULE_NAME}" AUTOCODER_INPUTS)

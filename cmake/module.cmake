@@ -233,7 +233,7 @@ function(fprime__internal_add_build_target_helper TARGET_NAME TYPE SOURCES AUTOC
     target_sources("${TARGET_NAME}" PRIVATE "${FPRIME__INTERNAL_EMPTY_CPP}")
 
     # Add the link libraries safely in both real and INERFACE libraries
-    fprime_target_link_libraries("${TARGET_NAME}" PUBLIC ${DEPENDENCIES} ${REQUIRED_IMPLEMENTATIONS} ${IMPLEMENTATION_DEPENDENCIES})
+    fprime_target_dependencies("${TARGET_NAME}" PUBLIC ${DEPENDENCIES} ${REQUIRED_IMPLEMENTATIONS} ${IMPLEMENTATION_DEPENDENCIES})
 
     # Set F Prime target properties
     set_target_properties("${TARGET_NAME}"
@@ -242,7 +242,6 @@ function(fprime__internal_add_build_target_helper TARGET_NAME TYPE SOURCES AUTOC
             SUPPLIED_SOURCES "${SOURCES}"
             SUPPLIED_DEPENDENCIES "${DEPENDENCIES}"
             SUPPLIED_AUTOCODER_INPUTS "${AUTOCODER_INPUTS}"
-            FPRIME_DEPENDENCIES "${DEPENDENCIES}"
             AUTOCODER_INPUTS "${AUTOCODER_INPUTS}"
             FPRIME_TYPE "${TYPE}"
             FPRIME_REQUIRES_IMPLEMENTATIONS "${REQUIRES_IMPLEMENTATIONS}"
@@ -256,7 +255,7 @@ function(fprime__internal_add_build_target_helper TARGET_NAME TYPE SOURCES AUTOC
     # Add required implementations to the target
     if (REQUIRES_IMPLEMENTATIONS)
         message(STATUS "Adding required implementations of ${REQUIRES_IMPLEMENTATIONS}")
-        append_list_property(${REQUIRES_IMPLEMENTATIONS} GLOBAL PROPERTY FPRIME_REQUIRED_IMPLEMENTATIONS)
+        append_list_property("${REQUIRES_IMPLEMENTATIONS}" GLOBAL PROPERTY FPRIME_REQUIRED_IMPLEMENTATIONS)
     endif()      
 endfunction()
 

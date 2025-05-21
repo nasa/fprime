@@ -942,3 +942,20 @@ endfunction()
 function(fprime_target_include_directories BUILD_TARGET_NAME SCOPE)
     fprime__internal_target_interceptor("target_include_directories" "${BUILD_TARGET_NAME}" "${SCOPE}" ${ARGN})
 endfunction()
+
+####
+# Function `fprime_target_dependencies`:
+#
+# Adds dependencies to the supplied BUILD_TARGET_NAME properly handling scope (see fprime_target_link_libraries). Adding a dependency
+# involves 2 steps:
+# 1. Adding a link dependency from BUILD_TARGET_NAME to supplied dependencies
+# 2. Append supplied dependencies to the FPRIME_DEPENDENCIES property of BUILD_TARGET_NAME
+#
+# - **BUILD_TARGET_NAME**: name of the target to add dependencies to
+# - **SCOPE**: scope of the target to intercept and change from PUBLIC to INTERFACE for INTERFACE_LIBRARY targets targets
+# - **ARGN**: dependencies to add to the target
+####
+function(fprime_target_dependencies BUILD_TARGET_NAME SCOPE)
+    fprime_target_link_libraries("${BUILD_TARGET_NAME}" "${SCOPE}" ${ARGN})
+    append_list_property("${ARGN}" TARGET "${BUILD_TARGET_NAME}" PROPERTY FPRIME_DEPENDENCIES)
+endfunction()

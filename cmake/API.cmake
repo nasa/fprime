@@ -432,14 +432,18 @@ function(fprime_add_config_build_target)
             list(APPEND ARGN_PASS STATIC)
         endif()
     endif()
-    fprime__internal_add_build_target("Library"
+    #### Split module processing ####
+    #
+    # Configuration works by copying sources into the build cache. These new copied sources are
+    # substituted for the original sources. Thus the module processing must happen before the
+    # configuration processing, which is before the build target processing.
+    #
+    # This implies:
+    # 1. The helper cannot be used as it combines module and build target processing
+    # 2. Configuration processing must be called in-between
+    ####
+    fprime__process_module_setup("Library"
         "CONFIGURATION_OVERRIDES;STATIC;INTERFACE;CHOOSES_IMPLEMENTATIONS" ${ARGN_PASS})
-
-    #### Custom configuration handling ####
-    # Prevent configuration from having dependencies
-    if (INTERNAL_DEPENDS)
-        message(FATAL_ERROR "Cannot supply DEPENDS with register_fprime_config")
-    endif()
     fprime__internal_process_configuration_sources(
         "${INTERNAL_MODULE_NAME}"
         "${INTERNAL_SOURCES}"
@@ -448,6 +452,10 @@ function(fprime_add_config_build_target)
         "${INTERNAL_CONFIGURATION_OVERRIDES}"
         "${INTERNAL_DEPENDS}"
     )
+    fprime__internal_add_build_target_helper("${INTERNAL_MODULE_NAME}" "Library" "${INTERNAL_SOURCES}"
+                                             "${INTERNAL_AUTOCODER_INPUTS}" "${INTERNAL_HEADERS}" "${INTERNAL_DEPENDS}"
+                                             "${INTERNAL_REQUIRES_IMPLEMENTATIONS}"
+                                             "${INTERNAL_CHOOSES_IMPLEMENTATIONS}" "${INTERNAL_CMAKE_ADD_OPTIONS}")
 
     # The new module should include the root configuration directory
     fprime_target_include_directories("${INTERNAL_MODULE_NAME}" PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/..")
