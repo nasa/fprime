@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  TMFramerTester.hpp
-// \author chammard
+// \author thomas-bc
 // \brief  hpp file for TMFramer component test harness implementation class
 // ======================================================================
 
@@ -57,10 +57,10 @@ class TMFramerTester final : public TMFramerGTestBase {
     //! Initialize components
     void initComponents();
 
-    U16 getFrameScId(U8* frameData);
-    U8 getFrameVcId(U8* frameData);
-    U8 getFrameMcCount(U8* frameData);
-    U8 getFrameVcCount(U8* frameData);
+    U16 getFrameScId(U8* frameData);    //!< Get the Spacecraft ID from the frame - no boundary check
+    U8 getFrameVcId(U8* frameData);     //!< Get the Virtual Channel ID from the frame - no boundary check
+    U8 getFrameMcCount(U8* frameData);  //!< Get the Master Frame Count from the frame - no boundary check
+    U8 getFrameVcCount(U8* frameData);  //!< Get the Virtual Frame Count from the frame - no boundary check
 
   private:
     // ----------------------------------------------------------------------

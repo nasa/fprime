@@ -47,6 +47,7 @@ void SpacePacketFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, c
     U16 packetSequenceControl = 0;
     packetSequenceControl |= 0x3 << SpacePacketMasks::SeqFlagsOffset; // Sequence Flags 0b11 = unsegmented User Data
     U16 sequenceCount = context.getsequenceCount();
+    // TODO: Add assert that it indeed fits in 14 bits ??
     packetSequenceControl |= sequenceCount & SpacePacketMasks::SeqCountMask; // 14 bit sequence count
 
     FW_ASSERT(data.getSize() <= std::numeric_limits<U16>::max(), static_cast<FwAssertArgType>(data.getSize()));

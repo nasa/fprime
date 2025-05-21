@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  ApidMapper.hpp
-// \author chammard
+// \author thomas-bc
 // \brief  hpp file for ApidMapper component implementation class
 // ======================================================================
 
@@ -61,7 +61,7 @@ class ApidMapper final : public ApidMapperComponentBase {
     //! Wraps around at 14 bits
     U16 getAndIncrementSeqCount(ComCfg::APID::T apid);
 
-    //! This struct helps to track sequence counts per APID
+    //! This struct helps track sequence counts per APID
     struct ApidSequenceEntry {
         ComCfg::APID::T apid = ComCfg::APID::FW_PACKET_UNKNOWN;
         U16 sequenceCount;

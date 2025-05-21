@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  TCDeframerTester.cpp
-// \author chammard
+// \author thomas-bc
 // \brief  cpp file for TCDeframer component test harness implementation class
 // ======================================================================
 

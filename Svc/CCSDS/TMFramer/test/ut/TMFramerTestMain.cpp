@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  TMFramerTestMain.cpp
-// \author chammard
+// \author thomas-bc
 // \brief  cpp file for TMFramer component test main function
 // ======================================================================
 

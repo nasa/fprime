@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  TMFramerTester.cpp
-// \author chammard
+// \author thomas-bc
 // \brief  cpp file for TMFramer component test harness implementation class
 // ======================================================================
 

@@ -116,7 +116,7 @@ void TMFramer ::fill_with_idle_packet(U16 startIndex) {
     FW_ASSERT(idlePacketLength >= 7, static_cast<FwAssertArgType>(idlePacketLength)); // 7 bytes minimum for idle packet
     FW_ASSERT(idlePacketLength <= ComCfg::FppConstant_TmFrameFixedSize::TmFrameFixedSize,
               static_cast<FwAssertArgType>(idlePacketLength));
-    U16 idleApid = 0x7FF;     // All 1s (11bit) per Space Packet protocol paragraph 4.1.3.3.4.4
+    U16 idleApid = ComCfg::APID::SPP_IDLE_PACKET;     // All 1s (11bit) per Space Packet protocol paragraph 4.1.3.3.4.4
     this->m_frameBuffer[startIndex + 0] = (idleApid >> 8) & 0xFF;
     this->m_frameBuffer[startIndex + 1] = idleApid & 0xFF;
     this->m_frameBuffer[startIndex + 2] = 0xC0;  // Sequence Flags = 0b11 (unsegmented) & unused Seq count

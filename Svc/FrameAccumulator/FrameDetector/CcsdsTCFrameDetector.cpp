@@ -28,15 +28,17 @@ FrameDetector::Status CcsdsTCFrameDetector::detect(const Types::CircularBuffer& 
     if (status != Fw::FW_SERIALIZE_OK) {
         return Status::NO_FRAME_DETECTED;
     }
-    CCSDS::TCFrameHeader header;
     Fw::ExternalSerializeBuffer header_ser_buffer(header_data, CCSDS::TCFrameHeader::SERIALIZED_SIZE);
     status = header_ser_buffer.setBuffLen(CCSDS::TCFrameHeader::SERIALIZED_SIZE);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     // Attempt to deserialize data into the FrameHeader object
+    CCSDS::TCFrameHeader header;
     status = header.deserialize(header_ser_buffer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     U16 sc_id = header.getflagsAndScId() & CCSDS::TCFrameMasks::SpacecraftIdMask;
+    // TODO?? Use the full expected flagsAndScId value since the other fields should be static
+    // REVIEW NOTE: Not doing CRC here.... 
     U16 frame_length = header.getvcIdAndLength() & CCSDS::TCFrameMasks::FrameLengthMask;
 
     FwSizeType expected_frame_size = CCSDS::TCFrameHeader::SERIALIZED_SIZE + frame_length + CCSDS::TCFrameTrailer::SERIALIZED_SIZE; // 2 bytes for CRC

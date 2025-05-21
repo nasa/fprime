@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  ApidMapper.cpp
-// \author chammard
+// \author thomas-bc
 // \brief  cpp file for ApidMapper component implementation class
 // ======================================================================
 

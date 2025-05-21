@@ -9,27 +9,31 @@ module CCSDS {
     # with the approriate mask to 
 
     module SpacePacketMasks {
-        constant PvnMask = 0xE000;      @< 0b1110000000000000
-        constant PktTypeMask = 0x1000;  @< 0b0001000000000000
-        constant SecHdrMask = 0x0800;   @< 0b0000100000000000
-        constant ApidMask = 0x07FF;     @< 0b0000011111111111
-        constant SecHdrOffset = 11;
-        constant PktTypeOffset = 12;
-        constant PvnOffset = 13;
-        constant SeqFlagsMask = 0xC000; @< 0b1100000000000000
+        # packetIdentification sub-fields      |-- 16 bits ---|
+        constant PvnMask        = 0xE000; @< 0b1110000000000000
+        constant PktTypeMask    = 0x1000; @< 0b0001000000000000
+        constant SecHdrMask     = 0x0800; @< 0b0000100000000000
+        constant ApidMask       = 0x07FF; @< 0b0000011111111111
+        constant PvnOffset      = 13;
+        constant PktTypeOffset  = 12;
+        constant SecHdrOffset   = 11;
+        # packetSequenceControl sub-fields
+        constant SeqFlagsMask   = 0xC000; @< 0b1100000000000000
+        constant SeqCountMask   = 0x3FFF; @< 0b0011111111111111
         constant SeqFlagsOffset = 14;
-        constant SeqCountMask = 0x3FFF
     }
 
     module TCFrameMasks {
-        constant FrameVersionMask = 0xC000
-        constant BypassFlagMask   = 0x2000
-        constant ControlFlagMask  = 0x1000
-        constant ReservedMask     = 0x0C00
-        constant SpacecraftIdMask = 0x03FF
-        constant VcIdMask         = 0xFC00
+        # flagsAndScId sub-fields
+        constant FrameVersionMask = 0xC000; @< 0b1100000000000000
+        constant BypassFlagMask   = 0x2000; @< 0b0010000000000000
+        constant ControlFlagMask  = 0x1000; @< 0b0001000000000000
+        constant ReservedMask     = 0x0C00; @< 0b0000110000000000
+        constant SpacecraftIdMask = 0x03FF; @< 0b0000001111111111
+        # vcIdAndLength sub-fields
+        constant VcIdMask         = 0xFC00; @< 0b1111110000000000
+        constant FrameLengthMask  = 0x03FF; @< 0b0000001111111111
         constant VcIdOffset       = 10
-        constant FrameLengthMask  = 0x03FF
     }
 
     @ Describes the frame header format for the SpacePacket communications protocol
