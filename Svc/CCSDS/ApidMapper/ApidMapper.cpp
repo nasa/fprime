@@ -44,9 +44,17 @@ void ApidMapper ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
     FwPacketDescriptorType descriptorValue = 0;
     Fw::SerializeStatus status = deserializer.deserialize(descriptorValue);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
+    ComCfg::APID::T apid;
+    if (descriptorValue == ComCfg::APID::FW_PACKET_FILE) {
+        // If descriptor is a file packet, set APID to the file downlink APID
+        // This is because we don't want to use FW_PACKET_FILE as the APID so
+        // the APID isn't shared between uplink and downlink
+        apid = ComCfg::APID::SPP_FILE_DOWNLINK;
+    } else {
+        // Else, map one-to-one: Descriptor value is APID value
+        apid = static_cast<ComCfg::APID::T>(descriptorValue);
+    }
 
-    // Mapping one-to-one: Descriptor value is APID value
-    ComCfg::APID::T apid = static_cast<ComCfg::APID::T>(descriptorValue);
     contextCopy.setapid(static_cast<ComCfg::APID::T>(apid));
     contextCopy.setsequenceCount(this->getAndIncrementSeqCount(static_cast<ComCfg::APID::T>(apid)));
     // printf("APID: %d, SeqCount: %d\n", apid, contextCopy.getsequenceCount());
