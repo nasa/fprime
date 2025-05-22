@@ -29,10 +29,10 @@ endif()
 
 register_fprime_module()
 
-# set(UT_SOURCE_FILES
-# 	"${CMAKE_CURRENT_LIST_DIR}/LinuxTimer.fpp"
-#   "${CMAKE_CURRENT_LIST_DIR}/test/ut/LinuxTimerTester.cpp"
-#   "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
-# )
+set(UT_SOURCE_FILES
+	"${CMAKE_CURRENT_LIST_DIR}/LinuxTimer.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/LinuxTimerTester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
+)
 
-# register_fprime_ut()
+register_fprime_ut()
