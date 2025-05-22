@@ -21,13 +21,16 @@ register_fprime_library(
 
 
 ### Unit Tests ###
-# set(UT_SOURCE_FILES
-#   "${CMAKE_CURRENT_LIST_DIR}/SpacePacketDeframer.fpp"
-#   "${CMAKE_CURRENT_LIST_DIR}/test/ut/SpacePacketDeframerTestMain.cpp"
-#   "${CMAKE_CURRENT_LIST_DIR}/test/ut/SpacePacketDeframerTester.cpp"
-# )
-# set(UT_MOD_DEPS
-#   STest
-# )
-# set(UT_AUTO_HELPERS ON)
-# register_fprime_ut()
+set(UT_AUTO_HELPERS ON)
+
+register_fprime_ut(
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/SpacePacketDeframerTestMain.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/SpacePacketDeframerTester.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/SpacePacketDeframer.fpp"
+  DEPENDS
+    Svc_CCSDS_Types
+    STest
+)
+
