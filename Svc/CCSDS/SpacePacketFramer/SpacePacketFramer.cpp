@@ -80,5 +80,38 @@ void SpacePacketFramer ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& f
     this->bufferDeallocate_out(0, frameBuffer);
 }
 
+// TODO: use below
+// Aspirational: use this structure for everything, and put it into Utils package!! so other users can use it... ???
+// void SpacePacketFramer ::assemblePacketIntoBuffer(Fw::Buffer targetBuffer, ComCfg::APID::T apid, U16 sequenceCount, Fw::Buffer packetData) {
+//     SpacePacketHeader header;
+//     Fw::SerializeStatus status;
+//     auto frameSerializer = targetBuffer.getSerializer();
+    
+//     // -----------------------------------------------
+//     // Header
+//     // -----------------------------------------------
+//     // PVN is always 0 per Standard - Packet Type is 0 for Telemetry (downlink) - SecHdr flag is 0 for no secondary header
+//     U16 packetIdentification = 0;
+//     packetIdentification |= static_cast<U16>(apid) & SpacePacketMasks::ApidMask; // 11 bit APID
+    
+//     U16 packetSequenceControl = 0;
+//     packetSequenceControl |= 0x3 << SpacePacketMasks::SeqFlagsOffset; // Sequence Flags 0b11 = unsegmented User Data
+//     // TODO: Add assert that it indeed fits in 14 bits ??
+//     packetSequenceControl |= sequenceCount & SpacePacketMasks::SeqCountMask; // 14 bit sequence count
+//     header.setpacketIdentification(packetIdentification);
+//     header.setpacketSequenceControl(packetSequenceControl);
+//     U16 packetDataLength = static_cast<U16>(packetData.getSize() - 1); // Standard specifies length is number of bytes minus 1
+//     header.setpacketDataLength(packetDataLength);
+
+//     // -----------------------------------------------
+//     // Serialize the packet
+//     // -----------------------------------------------
+//     status = frameSerializer.serialize(header);
+//     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
+//     status = frameSerializer.serialize(packetData.getData(), packetData.getSize(), Fw::Serialization::OMIT_LENGTH);
+//     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
+// }
+
+
 }  // namespace CCSDS
 }  // namespace Svc
