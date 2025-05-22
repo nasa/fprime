@@ -21,7 +21,7 @@ namespace Drv {
 
 LinuxGpioDriver ::LinuxGpioDriver(const char* const compName) : LinuxGpioDriverComponentBase(compName) {}
 
-Drv::GpioStatus LinuxGpioDriver ::start(const FwSizeType priority,
+Drv::GpioStatus LinuxGpioDriver ::start(const FwTaskPriorityType priority,
                                         const FwSizeType stackSize,
                                         const FwSizeType cpuAffinity,
                                         const PlatformUIntType identifier) {

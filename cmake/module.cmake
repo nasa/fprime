@@ -199,6 +199,11 @@ function(fprime__internal_add_build_target_helper TARGET_NAME TYPE SOURCES AUTOC
     else()
         fprime_cmake_fatal_error("Cannot register compilation target of type ${TYPE}")
     endif()
+    if (TYPE STREQUAL "Unit Test" AND INTERNAL_UT_AUTO_HELPERS)
+        set_target_properties("${TARGET_NAME}" PROPERTIES 
+            FPRIME_UT_AUTO_HELPERS TRUE
+        )
+    endif()
     # Use the appropriate link type for the target
     get_target_property(CMAKE_LIBRARY_TYPE "${TARGET_NAME}" TYPE)
     if (CMAKE_LIBRARY_TYPE MATCHES "INTERFACE_LIBRARY")

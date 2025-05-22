@@ -47,9 +47,12 @@ TEST_F(FormatTest, Bool) {
 
     buf1 << a;
     for (U32 i = 0; i < FormatBool::SIZE; i++) {
-        buf2 << "a " << testVals[i] << " b ";
+        if (i > 0) {
+            buf2 << ", ";
+        }
+        buf2 << "a " << testVals[i] << " b";
     }
-    buf2 << "]";
+    buf2 << " ]";
 
     ASSERT_STREQ(
         buf1.str().c_str(),
@@ -63,9 +66,12 @@ TEST_F(FormatTest, U8) {
 
     buf1 << a;
     for (U32 i = 0; i < FormatU8::SIZE; i++) {
-        buf2 << "a " << static_cast<U16>(testVals[i]) << " b ";
+        if (i > 0) {
+            buf2 << ", ";
+        }
+        buf2 << "a " << static_cast<U16>(testVals[i]) << " b";
     }
-    buf2 << "]";
+    buf2 << " ]";
 
     ASSERT_STREQ(
         buf1.str().c_str(),
@@ -79,9 +85,12 @@ TEST_F(FormatTest, U16Dec) {
     
     buf1 << a;
     for (U32 i = 0; i < FormatU16Dec::SIZE; i++) {
-        buf2 << "a " << std::dec << testVals[i] << " b ";
+        if (i > 0) {
+            buf2 << ", ";
+        }
+        buf2 << "a " << std::dec << testVals[i] << " b";
     }
-    buf2 << "]";
+    buf2 << " ]";
 
     ASSERT_STREQ(
         buf1.str().c_str(),
@@ -95,9 +104,12 @@ TEST_F(FormatTest, U32Oct) {
     
     buf1 << a;
     for (U32 i = 0; i < FormatU32Oct::SIZE; i++) {
-        buf2 << "a " << std::oct << testVals[i] << " b ";
+        if (i > 0) {
+            buf2 << ", ";
+        }
+        buf2 << "a " << std::oct << testVals[i] << " b";
     }
-    buf2 << "]";
+    buf2 << " ]";
 
     ASSERT_STREQ(
         buf1.str().c_str(),
@@ -112,9 +124,12 @@ TEST_F(FormatTest, U64Hex) {
     
     buf1 << a;
     for (U32 i = 0; i < FormatU64Hex::SIZE; i++) {
-        buf2 << "a " << std::hex << testVals[i] << " b ";
+        if (i > 0) {
+            buf2 << ", ";
+        }
+        buf2 << "a " << std::hex << testVals[i] << " b";
     }
-    buf2 << "]";
+    buf2 << " ]";
 
     ASSERT_STREQ(
         buf1.str().c_str(),
@@ -129,9 +144,12 @@ TEST_F(FormatTest, I8) {
 
     buf1 << a;
     for (U32 i = 0; i < FormatI8::SIZE; i++) {
-        buf2 << "a " << static_cast<I16>(testVals[i]) << " b ";
+        if (i > 0) {
+            buf2 << ", ";
+        }
+        buf2 << "a " << static_cast<I16>(testVals[i]) << " b";
     }
-    buf2 << "]";
+    buf2 << " ]";
 
     ASSERT_STREQ(
         buf1.str().c_str(),
@@ -146,9 +164,12 @@ TEST_F(FormatTest, I16Dec) {
 
     buf1 << a;
     for (U32 i = 0; i < FormatI16Dec::SIZE; i++) {
-        buf2 << "a " << std::dec << testVals[i] << " b ";
+        if (i > 0) {
+            buf2 << ", ";
+        }
+        buf2 << "a " << std::dec << testVals[i] << " b";
     }
-    buf2 << "]";
+    buf2 << " ]";
 
     ASSERT_STREQ(
         buf1.str().c_str(),
@@ -163,9 +184,12 @@ TEST_F(FormatTest, I32Oct) {
 
     buf1 << a;
     for (U32 i = 0; i < FormatI32Oct::SIZE; i++) {
-        buf2 << "a " << std::oct << testVals[i] << " b ";
+        if (i > 0) {
+            buf2 << ", ";
+        }
+        buf2 << "a " << std::oct << testVals[i] << " b";
     }
-    buf2 << "]";
+    buf2 << " ]";
 
     ASSERT_STREQ(
         buf1.str().c_str(),
@@ -181,9 +205,12 @@ TEST_F(FormatTest, I64Hex) {
 
     buf1 << a;
     for (U32 i = 0; i < FormatI64Hex::SIZE; i++) {
-        buf2 << "a " << std::hex << testVals[i] << " b ";
+        if (i > 0) {
+            buf2 << ", ";
+        }
+        buf2 << "a " << std::hex << testVals[i] << " b";
     }
-    buf2 << "]";
+    buf2 << " ]";
 
     ASSERT_STREQ(
         buf1.str().c_str(),
@@ -198,9 +225,12 @@ TEST_F(FormatTest, F32E) {
 
     buf1 << a;
     for (U32 i = 0; i < FormatF32e::SIZE; i++) {
-        buf2 << "a " << std::setprecision(1) << std::scientific << testVals[i] << " b ";
+        if (i > 0) {
+            buf2 << ", ";
+        }
+        buf2 << "a " << std::setprecision(1) << std::scientific << testVals[i] << " b";
     }
-    buf2 << "]";
+    buf2 << " ]";
 
     ASSERT_STREQ(
         buf1.str().c_str(),
@@ -215,9 +245,12 @@ TEST_F(FormatTest, F32F) {
 
     buf1 << a;
     for (U32 i = 0; i < FormatF32f::SIZE; i++) {
-        buf2 << "a " << std::setprecision(2) << std::fixed << testVals[i] << " b ";
+        if (i > 0) {
+            buf2 << ", ";
+        }
+        buf2 << "a " << std::setprecision(2) << std::fixed << testVals[i] << " b";
     }
-    buf2 << "]";
+    buf2 << " ]";
 
     ASSERT_STREQ(
         buf1.str().c_str(),
@@ -232,9 +265,12 @@ TEST_F(FormatTest, F64G) {
 
     buf1 << a;
     for (U32 i = 0; i < FormatF64g::SIZE; i++) {
-        buf2 << "a " << std::setprecision(3) << testVals[i] << " b ";
+        if (i > 0) {
+            buf2 << ", ";
+        }
+        buf2 << "a " << std::setprecision(3) << testVals[i] << " b";
     }
-    buf2 << "]";
+    buf2 << " ]";
 
     ASSERT_STREQ(
         buf1.str().c_str(),
@@ -254,9 +290,12 @@ TEST_F(FormatTest, String) {
 
     buf1 << a;
     for (U32 i = 0; i < FormatString::SIZE; i++) {
-        buf2 << "% " << testVals[i].toChar() << " ";
+        if (i > 0) {
+            buf2 << ", ";
+        }
+        buf2 << "% " << testVals[i].toChar();
     }
-    buf2 << "]";
+    buf2 << " ]";
 
     ASSERT_STREQ(
         buf1.str().c_str(),
@@ -271,9 +310,12 @@ TEST_F(FormatTest, Char) {
 
     buf1 << a;
     for (U32 i = 0; i < FormatChar::SIZE; i++) {
-        buf2 << "a " << testVals[i] << " b ";
+        if (i > 0) {
+            buf2 << ", ";
+        }
+        buf2 << "a " << testVals[i] << " b";
     }
-    buf2 << "]";
+    buf2 << " ]";
 
     ASSERT_STREQ(
         buf1.str().c_str(),

@@ -141,7 +141,7 @@ namespace Task {
         if ((arguments.m_stackSize != Os::Task::TASK_DEFAULT) && (expect_permission) && (pthread_status == PosixTaskHandle::SUCCESS)) {
             pthread_status = set_stack_size(attributes, arguments);
         }
-        if ((arguments.m_priority != Os::Task::TASK_DEFAULT) && (expect_permission) && (pthread_status == PosixTaskHandle::SUCCESS)) {
+        if ((arguments.m_priority != Os::Task::TASK_PRIORITY_DEFAULT) && (expect_permission) && (pthread_status == PosixTaskHandle::SUCCESS)) {
             pthread_status = set_priority_params(attributes, arguments);
         }
         if ((arguments.m_cpuAffinity != Os::Task::TASK_DEFAULT) && (expect_permission) && (pthread_status == PosixTaskHandle::SUCCESS)) {

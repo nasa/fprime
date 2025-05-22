@@ -46,18 +46,18 @@ class SocketComponentHelper {
     /**
      * \brief start the socket read task to start producing data
      *
-     * Starts up the socket reading task and when reopen was configured, will open up the socket. 
-     * 
+     * Starts up the socket reading task and when reopen was configured, will open up the socket.
+     *
      * \note: users must now use `setAutomaticOpen` to configure the socket to automatically open connections. The
      *        default behavior is to automatically open connections.
      *
      * \param name: name of the task
-     * \param priority: priority of the started task. See: Os::Task::start. Default: TASK_DEFAULT, not prioritized
+     * \param priority: priority of the started task. See: Os::Task::start. Default: TASK_PRIORITY_DEFAULT, not prioritized
      * \param stack: stack size provided to the task. See: Os::Task::start. Default: TASK_DEFAULT, posix threads default
      * \param cpuAffinity: cpu affinity provided to task. See: Os::Task::start. Default: TASK_DEFAULT, don't care
      */
     void start(const Fw::StringBase &name,
-               const Os::Task::ParamType priority = Os::Task::TASK_DEFAULT,
+               const FwTaskPriorityType priority = Os::Task::TASK_PRIORITY_DEFAULT,
                const Os::Task::ParamType stack = Os::Task::TASK_DEFAULT,
                const Os::Task::ParamType cpuAffinity = Os::Task::TASK_DEFAULT);
 
@@ -88,8 +88,8 @@ class SocketComponentHelper {
      * \brief set socket to automatically open connections when true, or not when false
      *
      * When passed `true`, this instructs the socket to automatically open a socket and reopen socket failed connections. When passed `false`
-     * the user must explicitly call the `open` method to open the socket initially and when a socket fails.  
-     * 
+     * the user must explicitly call the `open` method to open the socket initially and when a socket fails.
+     *
      * \param auto_open: true to automatically open and reopen sockets, false otherwise
      */
     void setAutomaticOpen(bool auto_open);

@@ -26,6 +26,7 @@ namespace Os {
     class TaskInterface {
         public:
         static constexpr FwSizeType TASK_DEFAULT = std::numeric_limits<FwSizeType>::max();
+        static constexpr FwTaskPriorityType TASK_PRIORITY_DEFAULT = std::numeric_limits<FwTaskPriorityType>::max();
             enum Status {
                 OP_OK, //!< message sent/received okay
                 INVALID_HANDLE, //!< Task handle invalid
@@ -75,7 +76,7 @@ namespace Os {
                 //! \param identifier: (optional) identifier for this task
                 Arguments(const Fw::StringBase& name, const taskRoutine routine,
                           void* const routine_argument = nullptr,
-                          const FwSizeType priority = TASK_DEFAULT,
+                          const FwTaskPriorityType priority = TASK_PRIORITY_DEFAULT,
                           const FwSizeType stackSize = TASK_DEFAULT,
                           const FwSizeType cpuAffinity = TASK_DEFAULT,
                           const PlatformUIntType identifier = static_cast<PlatformUIntType>(TASK_DEFAULT));
@@ -84,7 +85,7 @@ namespace Os {
                 const Os::TaskString m_name;
                 taskRoutine m_routine;
                 void* m_routine_argument;
-                FwSizeType m_priority;
+                FwTaskPriorityType m_priority;
                 FwSizeType m_stackSize;
                 FwSizeType m_cpuAffinity;
                 PlatformUIntType m_identifier;
@@ -260,7 +261,7 @@ namespace Os {
         //! \param identifier: (optional) identifier of this task
         //! \return: status of the start call
         DEPRECATED(Status start(const Fw::StringBase &name, const taskRoutine routine, void* const arg = nullptr,
-                                const ParamType priority = TASK_DEFAULT,
+                                const FwTaskPriorityType priority = TASK_PRIORITY_DEFAULT,
                                 const ParamType stackSize = TASK_DEFAULT,
                                 const ParamType cpuAffinity = TASK_DEFAULT,
                                 const ParamType identifier = TASK_DEFAULT), "Switch to Task::start(Arguments&)");
@@ -332,7 +333,7 @@ namespace Os {
         bool isCooperative() override;
 
         //! \brief get the task priority
-        FwSizeType getPriority();
+        FwTaskPriorityType getPriority();
 
         //! \brief return the underlying task handle (implementation specific)
         //! \return internal task handle representation
@@ -371,7 +372,7 @@ namespace Os {
         TaskInterface::State m_state = Task::NOT_STARTED;
         Mutex m_lock; //!< Guards state transitions
         TaskRoutineWrapper m_wrapper; //!< Concrete storage for task routine wrapper
-        FwSizeType m_priority = 0; // Storage of priority
+        FwTaskPriorityType m_priority = 0; // Storage of priority
 
         bool m_registered = false; //!< Was this task registered
 

@@ -19,7 +19,7 @@
 namespace Fw {
 class ActiveComponentBase : public QueuedComponentBase {
   public:
-    void start(Os::Task::ParamType priority = Os::Task::TASK_DEFAULT,
+    void start(FwTaskPriorityType priority = Os::Task::TASK_PRIORITY_DEFAULT,
                Os::Task::ParamType stackSize = Os::Task::TASK_DEFAULT,
                Os::Task::ParamType cpuAffinity = Os::Task::TASK_DEFAULT,
                Os::Task::ParamType identifier =

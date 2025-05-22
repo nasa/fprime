@@ -22,7 +22,7 @@ SocketComponentHelper::SocketComponentHelper() {}
 SocketComponentHelper::~SocketComponentHelper() {}
 
 void SocketComponentHelper::start(const Fw::StringBase &name,
-                                  const Os::Task::ParamType priority,
+                                  const FwTaskPriorityType priority,
                                   const Os::Task::ParamType stack,
                                   const Os::Task::ParamType cpuAffinity) {
     FW_ASSERT(m_task.getState() == Os::Task::State::NOT_STARTED);  // It is a coding error to start this task multiple times

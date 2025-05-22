@@ -53,9 +53,12 @@ TYPED_TEST(ArrayToStringTest, ToString) {
 
     buf2 << "[ ";
     for (U32 i = 0; i < TypeParam::SIZE; i++) {
-        buf2 << this->testVals[i] << " ";
+        if (i > 0) {
+            buf2 << ", ";
+        }
+        buf2 << this->testVals[i];
     }
-    buf2 << "]";
+    buf2 << " ]";
 
     ASSERT_STREQ(
         buf1.str().c_str(),
