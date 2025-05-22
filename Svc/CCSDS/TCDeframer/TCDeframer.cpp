@@ -33,9 +33,10 @@ void TCDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
     // 5 octets - TC Primary Header
     // Up to 1019 octets - Data Field (including optional 2 octets frame error control field)
 
+    // Note: F Prime uses Type-BD 
     // CCSDS TC Primary Header:
     // 2b - 00  - TF Version Number
-    // 1b - 0/1 - Bypass Flag            (0 = FARM checks enabled, 1 = FARM checks bypassed)
+    // 1b - 0/1 - Bypass Flag            (0 = Type-A FARM checks enabled, 1 = Type-B FARM checks bypassed)
     // 1b - 0/1 - Control Command Flag   (0 = Type-D data, 1 = Type-C control command)
     // 2b - 00  - Reserved Spare         (set to 00)
     // 10b- XX  - Spacecraft ID
@@ -55,7 +56,6 @@ void TCDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
     U16 frame_length = header.getvcIdAndLength() & TCFrameMasks::FrameLengthMask;
     U8 vc_id = (header.getvcIdAndLength() & TCFrameMasks::VcIdMask) >> TCFrameMasks::VcIdOffset;
     U16 spacecraft_id = header.getflagsAndScId() & TCFrameMasks::SpacecraftIdMask;
-    U8 sequence_number = header.getframeSequenceNbr();
 
     if (spacecraft_id != this->m_spacecraftId) {
         this->log_ACTIVITY_LO_InvalidSpacecraftId(spacecraft_id, this->m_spacecraftId);
@@ -73,12 +73,7 @@ void TCDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
         this->dataReturnOut_out(0, data, context); // drop the frame
         return;
     }
-    if (sequence_number != this->m_sequenceCount) {
-        this->log_WARNING_HI_UnexpectedSequenceNumber(sequence_number, this->m_sequenceCount);
-        // Synchronize onboard count with received number so that count can keep going
-        this->m_sequenceCount = sequence_number;
-    }
-    this->m_sequenceCount++; // increment count for next frame
+    // Note: F Prime uses TC Type-BD frames for now, so the FARM checks are not ran (meaning no sequence count checks)
 
     // -------------------------------------------------
     // CRC Check

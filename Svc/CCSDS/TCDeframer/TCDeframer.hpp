@@ -65,7 +65,7 @@ class TCDeframer : public TCDeframerComponentBase {
     U16 m_vcId;                   //!< The virtual channel ID this deframer is configured to handle
     U16 m_spacecraftId;           //!< The spacecraft ID this deframer is configured to handle
     bool m_acceptAllVcid = true;  //!< Flag to accept all VCIDs
-    U8 m_sequenceCount = 0;       //! Counter tracking the next expected frame count
+    
 };
 }  // namespace CCSDS
 }  // namespace Svc

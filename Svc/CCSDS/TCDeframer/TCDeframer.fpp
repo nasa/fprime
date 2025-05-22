@@ -25,11 +25,6 @@ module CCSDS {
             severity warning high \
             format "Invalid checksum received. Trailer specified: {} | Computed on board: {}"
 
-        @ Deframing received an unexpected sequence number
-        event UnexpectedSequenceNumber(transmitted: U16, expected: U16) \
-            severity warning high \
-            format "Invalid sequence number received. Frames may have been lost. Transmitted: {} | Expected on board: {}"
-
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #
         ###############################################################################
