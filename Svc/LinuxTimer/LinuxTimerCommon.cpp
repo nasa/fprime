@@ -11,7 +11,7 @@
 // ======================================================================
 
 
-#include <Svc/LinuxTimer/LinuxTimerComponentImpl.hpp>
+#include <Svc/LinuxTimer/LinuxTimer.hpp>
 #include <Fw/FPrimeBasicTypes.hpp>
 
 namespace Svc {
@@ -20,8 +20,8 @@ namespace Svc {
   // Construction, initialization, and destruction
   // ----------------------------------------------------------------------
 
-  LinuxTimerComponentImpl ::
-    LinuxTimerComponentImpl(
+  LinuxTimer ::
+    LinuxTimer(
         const char *const compName
     ) : LinuxTimerComponentBase(compName),
         m_quit(false)
@@ -29,13 +29,13 @@ namespace Svc {
 
   }
 
-  LinuxTimerComponentImpl ::
-    ~LinuxTimerComponentImpl()
+  LinuxTimer ::
+    ~LinuxTimer()
   {
 
   }
 
-  void LinuxTimerComponentImpl::quit() {
+  void LinuxTimer::quit() {
       this->m_mutex.lock();
       this->m_quit = true;
       this->m_mutex.unLock();

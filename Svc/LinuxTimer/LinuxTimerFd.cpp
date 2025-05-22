@@ -11,7 +11,7 @@
 // ======================================================================
 
 #include <Fw/Logger/Logger.hpp>
-#include <Svc/LinuxTimer/LinuxTimerComponentImpl.hpp>
+#include <Svc/LinuxTimer/LinuxTimer.hpp>
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <sys/timerfd.h>
 #include <unistd.h>
@@ -20,7 +20,7 @@
 
 namespace Svc {
 
-  void LinuxTimerComponentImpl::startTimer(FwSizeType interval) {
+  void LinuxTimer::startTimer(FwSizeType interval) {
       int fd;
       struct itimerspec itval;
 
