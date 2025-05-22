@@ -31,38 +31,44 @@ It is a native C++ array of type `T[S]`.
 
 #### 1.1.3. Constructors
 
+*Zero-argument constructor:*
+
 ```c++
 Array<T,S>()
 ```
 
-Construct an array _A_ of type _T_ and size _S_ with default
-values for all elements.
+Construct an array _A_ of type `T` and size `S`.
+Initialize each element of `m_elements` with the default value for `T`.
 
 Example:
 ```
 Array<U32, 3> a;
 ```
 
+*Initializer list constructor:*
+
 ```c++
-Array<T,S>(const std::initializer_list<T>&il)
+Array<T,S>(const std::initializer_list<T>& il)
 ```
 
-Construct an array _A_ of type _T_ and size _S_.
-Initialize the first _n_ elements from _il_, where
-_n_ is the minimum of _S_ and the size of _il_.
-Initialize any other elements of _A_ with default values.
+Construct an array _A_ of type `T` and size `S`.
+Initialize the first _n_ elements of `m_elements` from `il`, where
+_n_ is the minimum of `S` and the size of `il`.
+Initialize any other elements of `m_elements` with default values.
 
 Example:
 ```
 Array<U32, 3> a({ 1, 2, 3 });
 ```
 
+*Single-item constructor:*
+
 ```c++
 Array<T,S>(const T& elt)
 ```
 
-Construct an array _A_ of type _T_ and size _S_.
-Initialize all elements of _A_ with _elt_.
+Construct an array _A_ of type `T` and size `S`.
+Initialize each element of `m_elements` with `elt`.
 
 Example:
 ```
