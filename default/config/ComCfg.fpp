@@ -13,16 +13,20 @@ module ComCfg {
 
     @ APIDs are 11 bits in the Space Packet protocol, so we use U16. Max value 7FF
     enum APID : U16 {
+        # APIDs prefixed with FW are reserved for F Prime and should not be changed
         FW_PACKET_COMMAND        = 0x0000  @< Command packet type - incoming
         FW_PACKET_TELEM          = 0x0001  @< Telemetry packet type - outgoing
         FW_PACKET_LOG            = 0x0002  @< Log type - outgoing
         FW_PACKET_FILE           = 0x0003  @< File type - incoming and outgoing
         FW_PACKET_PACKETIZED_TLM = 0x0004  @< Packetized telemetry packet type
-        FW_PACKET_IDLE           = 0x0005  @< F Prime idle
-        FW_PACKET_HAND           = 0xFE    @< F Prime handshake
-        FW_PACKET_UNKNOWN        = 0xFF    @< F Prime unknown packet
-        IDLE_PACKET              = 0x7FF   @< Per Space Packet Standard, all 1s (11bits) is reserved for Idle Packets
-    }
+        FW_PACKET_DP             = 0x0005  @< Data Product packet type
+        FW_PACKET_IDLE           = 0x0006  @< F Prime idle
+        FW_PACKET_HAND           = 0x00FE  @< F Prime handshake
+        FW_PACKET_UNKNOWN        = 0x00FF  @< F Prime unknown packet
+        # SPP_FILE_UPLINK          = 0x0101  @< APID for File packets on uplink
+        SPP_FILE_DOWNLINK        = 0x0103  @< Extra APID for File packets on downlink so APID isn't shared between uplink and downlink
+        SPP_IDLE_PACKET          = 0x07FF  @< Per Space Packet Standard, all 1s (11bits) is reserved for Idle Packets
+    } default FW_PACKET_UNKNOWN
 
     @ Type used to pass context info between components during framing/deframing
     struct FrameContext {

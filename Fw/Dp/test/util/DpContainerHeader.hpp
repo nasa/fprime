@@ -49,12 +49,12 @@ struct DpContainerHeader {
     ) {
         auto deserializer = buffer.getDeserializer();
         // Deserialize the packet descriptor
-        FwPacketDescriptorType packetDescriptor = Fw::ComPacket::FW_PACKET_UNKNOWN;
+        FwPacketDescriptorType packetDescriptor = Fw::ComPacketType::FW_PACKET_UNKNOWN;
         // Deserialize the packet descriptor
         DpContainerHeader::moveDeserToOffset(file, line, deserializer, DpContainer::Header::PACKET_DESCRIPTOR_OFFSET);
         Fw::SerializeStatus status = deserializer.deserialize(packetDescriptor);
         DP_CONTAINER_HEADER_ASSERT_EQ(status, FW_SERIALIZE_OK);
-        DP_CONTAINER_HEADER_ASSERT_EQ(packetDescriptor, Fw::ComPacket::FW_PACKET_DP);
+        DP_CONTAINER_HEADER_ASSERT_EQ(packetDescriptor, Fw::ComPacketType::FW_PACKET_DP);
         // Deserialize the container id
         DpContainerHeader::moveDeserToOffset(file, line, deserializer, DpContainer::Header::ID_OFFSET);
         status = deserializer.deserialize(this->m_id);

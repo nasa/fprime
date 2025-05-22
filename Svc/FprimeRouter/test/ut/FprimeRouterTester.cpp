@@ -29,7 +29,7 @@ FprimeRouterTester ::~FprimeRouterTester() {}
 // ----------------------------------------------------------------------
 
 void FprimeRouterTester ::testRouteComInterface() {
-    this->mockReceivePacketType(Fw::ComPacket::FW_PACKET_COMMAND);
+    this->mockReceivePacketType(Fw::ComPacketType::FW_PACKET_COMMAND);
     ASSERT_from_commandOut_SIZE(1);        // one command packet emitted
     ASSERT_from_fileOut_SIZE(0);           // no file packet emitted
     ASSERT_from_unknownDataOut_SIZE(0);    // no unknown data emitted
@@ -38,7 +38,7 @@ void FprimeRouterTester ::testRouteComInterface() {
 }
 
 void FprimeRouterTester ::testRouteFileInterface() {
-    this->mockReceivePacketType(Fw::ComPacket::FW_PACKET_FILE);
+    this->mockReceivePacketType(Fw::ComPacketType::FW_PACKET_FILE);
     ASSERT_from_commandOut_SIZE(0);        // no command packet emitted
     ASSERT_from_fileOut_SIZE(1);           // one file packet emitted
     ASSERT_from_unknownDataOut_SIZE(0);    // no unknown data emitted
@@ -47,7 +47,7 @@ void FprimeRouterTester ::testRouteFileInterface() {
 }
 
 void FprimeRouterTester ::testRouteUnknownPacket() {
-    this->mockReceivePacketType(Fw::ComPacket::FW_PACKET_UNKNOWN);
+    this->mockReceivePacketType(Fw::ComPacketType::FW_PACKET_UNKNOWN);
     ASSERT_from_commandOut_SIZE(0);        // no command packet emitted
     ASSERT_from_fileOut_SIZE(0);           // no file packet emitted
     ASSERT_from_unknownDataOut_SIZE(1);    // one unknown data emitted
@@ -56,7 +56,7 @@ void FprimeRouterTester ::testRouteUnknownPacket() {
 }
 
 void FprimeRouterTester ::testRouteUnknownPacketUnconnected() {
-    this->mockReceivePacketType(Fw::ComPacket::FW_PACKET_UNKNOWN);
+    this->mockReceivePacketType(Fw::ComPacketType::FW_PACKET_UNKNOWN);
     ASSERT_from_commandOut_SIZE(0);        // no command packet emitted
     ASSERT_from_fileOut_SIZE(0);           // no file packet emitted
     ASSERT_from_unknownDataOut_SIZE(0);    // zero unknown data emitted when port is unconnected

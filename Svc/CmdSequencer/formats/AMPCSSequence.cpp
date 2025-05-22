@@ -423,7 +423,7 @@ namespace Svc {
     Fw::SerializeBufferBase& buffer = this->m_buffer;
     comBuffer.resetSer();
     // Serialize the command packet descriptor
-    const FwPacketDescriptorType cmdDescriptor = Fw::ComPacket::FW_PACKET_COMMAND;
+    const FwPacketDescriptorType cmdDescriptor = Fw::ComPacketType::FW_PACKET_COMMAND;
     Fw::SerializeStatus status = comBuffer.serialize(cmdDescriptor);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
     // Zero-extend the two-byte AMPCS opcode by two bytes
