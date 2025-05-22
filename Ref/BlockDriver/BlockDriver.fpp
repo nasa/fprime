@@ -1,4 +1,4 @@
-module Drv {
+module Ref {
 
   @ An example block driver component with data buffers and interrupts
   active component BlockDriver {
@@ -7,7 +7,7 @@ module Drv {
     # General ports
     # ----------------------------------------------------------------------
 
-    include "../Interfaces/TickInterface.fppi"
+    include "../../Drv/Interfaces/TickInterface.fppi"
 
     @ The rate group scheduler input
     async input port Sched: Svc.Sched
@@ -33,16 +33,6 @@ module Drv {
 
     @ Telemetry port
     telemetry port Tlm
-
-    # ----------------------------------------------------------------------
-    # Internal ports
-    # ----------------------------------------------------------------------
-
-    @ Internal interrupt reporting interface
-    internal port InterruptReport(
-                                   interrupt: U32 @< The interrupt register value
-                                 ) \
-      priority 1
 
     # ----------------------------------------------------------------------
     # Telemetry

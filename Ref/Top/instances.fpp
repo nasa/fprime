@@ -13,7 +13,7 @@ module Ref {
   # Active component instances
   # ----------------------------------------------------------------------
 
-  instance blockDrv: Drv.BlockDriver base id 0x0100 \
+  instance blockDrv: Ref.BlockDriver base id 0x0100 \
     queue size Default.QUEUE_SIZE \
     stack size Default.STACK_SIZE \
     priority 140
@@ -174,6 +174,8 @@ module Ref {
   instance fprimeFramer: Svc.FprimeFramer base id 0x4E00
 
   instance comStub: Svc.ComStub base id 0x4F00
+
+  instance linuxTimer: Svc.LinuxTimer base id 0x5000
 
 }
 

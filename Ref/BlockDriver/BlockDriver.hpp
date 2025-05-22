@@ -1,25 +1,22 @@
-#ifndef DRV_BLOCK_DRIVER_IMPL_HPP
-#define DRV_BLOCK_DRIVER_IMPL_HPP
+#ifndef REF_BLOCK_DRIVER_IMPL_HPP
+#define REF_BLOCK_DRIVER_IMPL_HPP
 
-#include <Drv/BlockDriver/BlockDriverComponentAc.hpp>
+#include <Ref/BlockDriver/BlockDriverComponentAc.hpp>
 
-namespace Drv {
+namespace Ref {
 
-    class BlockDriverImpl final : public BlockDriverComponentBase  {
+    class BlockDriver final : public BlockDriverComponentBase  {
 
     public:
 
         // Only called by derived class
-        BlockDriverImpl(const char* compName);
+        BlockDriver(const char* compName);
 
-        ~BlockDriverImpl();
-        // a little hack to get the reference running
-        void callIsr();
+        ~BlockDriver();
 
     private:
 
         // downcalls for input ports
-        void InterruptReport_internalInterfaceHandler(U32 ip);
         void BufferIn_handler(FwIndexType portNum, Drv::DataBuffer& buffer);
         void Sched_handler(FwIndexType portNum, U32 context);
         //! Handler implementation for PingIn
@@ -28,9 +25,6 @@ namespace Drv {
             const FwIndexType portNum, /*!< The port number*/
             U32 key /*!< Value to return to pinger*/
         );
-
-        // static ISR callback
-        static void s_driverISR(void* arg);
 
         // cycle count
         U32 m_cycles;
