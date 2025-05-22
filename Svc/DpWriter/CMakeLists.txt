@@ -7,7 +7,6 @@ register_fprime_module(
     Fw_Dp
 )
 
-set(UT_AUTO_HELPERS ON)
 register_fprime_ut(
   AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/DpWriter.fpp"
@@ -24,6 +23,7 @@ register_fprime_ut(
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/Scenarios/Random.cpp"
   DEPENDS
     STest
+  UT_AUTO_HELPERS
   CHOOSES_IMPLEMENTATIONS
     Os_File_Test_Stub
 )

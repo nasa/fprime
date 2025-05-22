@@ -21,7 +21,6 @@ register_fprime_module(
     Svc_Ports_OsTimeEpoch
 )
 
-set(UT_AUTO_HELPERS ON)
 register_fprime_ut(
   AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/OsTime.fpp"
@@ -30,4 +29,5 @@ register_fprime_ut(
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsTimeTestMain.cpp"
   CHOOSES_IMPLEMENTATIONS
     Svc_OsTime_test_RawTimeTester
+  UT_AUTO_HELPERS
 )

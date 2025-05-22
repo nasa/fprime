@@ -95,6 +95,10 @@ function(fprime__process_module_setup FPRIME_MODULE_TYPE ADDITIONAL_CONTROL_SETS
     elseif (INPUT_COUNT EQUAL 0 AND NOT DEFINED UT_SOURCE_FILES AND FPRIME_MODULE_TYPE STREQUAL "Unit Test")
         fprime_cmake_fatal_error("Must supply SOURCES to register_fprime_ut")
     elseif (INPUT_COUNT EQUAL 0 AND FPRIME_MODULE_TYPE STREQUAL "Unit Test" AND DEFINED UT_SOURCE_FILES)
+        # Support old-style passing
+        if (UT_AUTO_HELPERS)
+            set(LIST_UT_AUTO_HELPERS TRUE)
+        endif()
         # C/CPP/ASM files end with "c", "cpp", "cc", "cxx", "S", "asm". SOURCES are C/CPP/ASM matching SOURCE_FILES and
         # AUTOCODER_INPUTS are non-matching SOURCE_FILES.
         sort_buildable_from_non_buildable_sources(LIST_SOURCES LIST_AUTOCODER_INPUTS "${UT_SOURCE_FILES}")
@@ -122,7 +126,13 @@ function(fprime__process_module_setup FPRIME_MODULE_TYPE ADDITIONAL_CONTROL_SETS
     elseif (DEFINED MOD_DEPS)
         fprime_cmake_fatal_error("Cannot both set MOD_DEPS and supply a dependency list to register_fprime_module")
     elseif (DEFINED HEADER_FILES)
-        fprime_cmake_fatal_error("Cannot both set HEADER_FILES and supply a dependency list to register_fprime_module")
+        fprime_cmake_fatal_error("Cannot both set HEADER_FILES and supply a header list to register_fprime_module")
+    elseif (DEFINED UT_SOURCE_FILES)
+        fprime_cmake_fatal_error("Cannot both set UT_SOURCE_FILES and supply a source list to register_fprime_ut")
+    elseif (DEFINED UT_MOD_DEPS)
+        fprime_cmake_fatal_error("Cannot both set UT_MOD_DEPS and supply a dependency list to register_fprime_ut")
+    elseif (DEFINED UT_AUTO_HELPERS)
+        fprime_cmake_fatal_error("Cannot both set UT_AUTO_HELPERS and supply use new-style register_fprime_ut")
     else()
         # Unset all the control lists so the module can track what controls were passed in along with their arguments
         # allowing signal control sets that do not take arguments.
