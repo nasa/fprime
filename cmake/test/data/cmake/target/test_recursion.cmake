@@ -18,34 +18,35 @@ set(EXPECTED_FULL_DEPENDENCIES
     Fw_Obj
     Fw_Port
     Fw_Prm
+    Fw_StringFormat_snprintf
     Fw_Time
     Fw_Tlm
     Fw_Types
     Os
-    Os_Console_Common
+    Os_Console
     Os_Console_Posix
     Os_Console_Posix_Implementation
-    Os_Cpu_Common
+    Os_Cpu
     Os_Cpu_${FPRIME_PLATFORM}
     Os_Cpu_${FPRIME_PLATFORM}_Implementation
-    Os_File_Common
+    Os_File
     Os_File_Posix
     Os_File_Posix_Implementation
     Os_Generic_PriorityQueue
     Os_Generic_PriorityQueue_Implementation
     Os_Generic_Types
-    Os_Memory_Common
+    Os_Memory
     Os_Memory_${FPRIME_PLATFORM}
     Os_Memory_${FPRIME_PLATFORM}_Implementation
-    Os_Mutex_Common
+    Os_Mutex
     Os_Mutex_Posix
     Os_Mutex_Posix_Implementation
     Os_Posix_Shared
-    Os_Queue_Common
-    Os_RawTime_Common
+    Os_Queue
+    Os_RawTime
     Os_RawTime_Posix
     Os_RawTime_Posix_Implementation
-    Os_Task_Common
+    Os_Task
     Os_Task_Posix
     Os_Task_Posix_Implementation
     Svc_CmdDispatcher
@@ -58,7 +59,6 @@ set(EXPECTED_FULL_DEPENDENCIES
     __fprime_config
     cmake_platform_unix_Platform
     default_config
-    snprintf-format
 )
 
 function(test_recursion_add_global_target TARGET)
