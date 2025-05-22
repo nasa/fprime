@@ -10,7 +10,7 @@ set(FPRIME_HAS_SOCKETS ON)
 if (NOT DEFINED FPRIME_USE_STUBBED_DRIVERS)
    set(FPRIME_USE_STUBBED_DRIVERS ON)
 endif()
-# Add unix include path which is compatible with Darwin for PlatformTypes.hpp
+# Add unix include path which is compatible with Linuxfor PlatformTypes.hpp
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/unix/Platform/")
 # Override unix implementations with DARWIN specific ones
 register_fprime_config(
@@ -21,4 +21,4 @@ register_fprime_config(
       Os_Cpu_Linux
       Os_Memory_Linux
 )
-target_compile_definitions(PlatformDarwin INTERFACE -DTGT_OS_TYPE_LINUX)
+target_compile_definitions(PlatformLinux INTERFACE -DTGT_OS_TYPE_LINUX)

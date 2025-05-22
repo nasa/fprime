@@ -8,8 +8,8 @@
 restrict_platforms(Linux)
 add_custom_target("${FPRIME_CURRENT_MODULE}")
 
-register_os_implementation(Cpu Linux)
-register_os_implementation(Memory Linux)
+register_os_implementation(Cpu Linux Os_File)
+register_os_implementation(Memory Linux Os_File)
 
 # -----------------------------------------
 ### Os/Linux/Cpu Section

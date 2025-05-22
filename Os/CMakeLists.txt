@@ -18,7 +18,7 @@
 function(add_named_os_module NAMES)
     # Get first element of list
     list(GET NAMES 0 FIRST_ITEM)
-    set(OS_MODULE_NAME "Os_${FIRST_ITEM}_Common")
+    set(OS_MODULE_NAME "Os_${FIRST_ITEM}")
     # Clear variables
     set(SOURCE_INPUTS)
     set(HEADER_INPUTS)
@@ -89,7 +89,7 @@ function(add_fprime_supplied_os_module NAMES SUFFIX)
         ${HEADER_INPUTS}
       DEPENDS
         Fw_Types
-        "Os_${FIRST_ITEM}_Common"
+        "Os_${FIRST_ITEM}"
         ${ARGN}
     )
     register_fprime_implementation(
