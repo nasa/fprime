@@ -6,7 +6,7 @@
 
 #include "BlockDriverTester.hpp"
 
-namespace Drv {
+namespace Ref {
 
   // ----------------------------------------------------------------------
   // Construction and destruction
@@ -67,32 +67,12 @@ namespace Drv {
   }
 
   void BlockDriverTester ::
-    testIsrInvocation()
-  {
-    this->clearHistory();
-
-    this->component.callIsr();
-
-    // verify telemetry right after ISR call: it shall be empty
-    // the ISR is run in the internal thread
-    ASSERT_TLM_SIZE(0);
-    ASSERT_TLM_BD_Cycles_SIZE(0);
-
-    this->component.doDispatch();
-
-    // now the telemetry shall be updated
-    ASSERT_TLM_SIZE(1);
-    ASSERT_TLM_BD_Cycles_SIZE(1);
-    ASSERT_TLM_BD_Cycles(0, 0);
-  }
-
-  void BlockDriverTester ::
     testCycleIncrement()
   {
     this->clearHistory();
 
     // call ISR
-    this->component.callIsr();
+    this->invoke_to_Sched(0,0);
     this->component.doDispatch();
 
     // there shall be one report with 0 cycle
@@ -101,7 +81,7 @@ namespace Drv {
     ASSERT_TLM_BD_Cycles(0, 0);
 
     // call ISR once again
-    this->component.callIsr();
+    this->invoke_to_Sched(0,0);
     this->component.doDispatch();
 
     // there shall be one more report with 1 cycle

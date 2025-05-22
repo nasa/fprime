@@ -16,7 +16,7 @@ namespace Ref {
     }
 
     void BlockDriver::Sched_handler(FwIndexType portNum, U32 context) {
-        this->m_cycles++;
+        this->tlmWrite_BD_Cycles(this->m_cycles++);
     }
 
     void BlockDriver::PingIn_handler(

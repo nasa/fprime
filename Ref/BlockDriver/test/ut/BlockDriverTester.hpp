@@ -4,13 +4,13 @@
 // \brief  hpp file for BlockDriver component test harness implementation class
 // ======================================================================
 
-#ifndef Drv_BlockDriverTester_HPP
-#define Drv_BlockDriverTester_HPP
+#ifndef Ref_BlockDriverTester_HPP
+#define Ref_BlockDriverTester_HPP
 
-#include "Drv/BlockDriver/BlockDriverGTestBase.hpp"
-#include "Drv/BlockDriver/BlockDriver.hpp"
+#include "Ref/BlockDriver/BlockDriverGTestBase.hpp"
+#include "Ref/BlockDriver/BlockDriver.hpp"
 
-namespace Drv {
+namespace Ref {
 
   class BlockDriverTester final :
     public BlockDriverGTestBase
@@ -54,9 +54,6 @@ namespace Drv {
 
       //! Test Ping port
       void testPing();
-
-      //! Test ISR invocation
-      void testIsrInvocation();
 
       //! Test ISR cycle increment
       void testCycleIncrement();

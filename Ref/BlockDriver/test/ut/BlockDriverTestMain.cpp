@@ -7,22 +7,17 @@
 #include "BlockDriverTester.hpp"
 
 TEST(Nominal, testDataLoopBack) {
-  Drv::BlockDriverTester tester;
+  Ref::BlockDriverTester tester;
   tester.testDataLoopBack();
 }
 
 TEST(Nominal, testPing) {
-  Drv::BlockDriverTester tester;
+  Ref::BlockDriverTester tester;
   tester.testPing();
 }
 
-TEST(Nominal, testIsrInvocation) {
-  Drv::BlockDriverTester tester;
-  tester.testIsrInvocation();
-}
-
 TEST(Nominal, testCycleIncrement) {
-  Drv::BlockDriverTester tester;
+  Ref::BlockDriverTester tester;
   tester.testCycleIncrement();
 }
 
