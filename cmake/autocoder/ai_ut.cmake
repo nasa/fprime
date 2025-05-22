@@ -45,6 +45,7 @@ function(ai_ut_setup_autocode MODULE_NAME AC_INPUT_FILE)
         list(APPEND REMOVALS "${CMAKE_CURRENT_BINARY_DIR}/GTestBase.cpp" "${CMAKE_CURRENT_BINARY_DIR}/GTestBase.hpp")
     endif()
     # Extra test helpers file
+    get_target_property(UT_AUTO_HELPERS "${MODULE_NAME}" FPRIME_UT_AUTO_HELPERS)
     if (DEFINED UT_AUTO_HELPERS AND UT_AUTO_HELPERS)
         list(APPEND AUTOCODER_GENERATED "${CMAKE_CURRENT_BINARY_DIR}/TesterHelpers.cpp")
     else()

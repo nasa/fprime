@@ -201,7 +201,7 @@ function(fprime__internal_add_build_target_helper TARGET_NAME TYPE SOURCES AUTOC
     endif()
     if (TYPE STREQUAL "Unit Test" AND INTERNAL_UT_AUTO_HELPERS)
         set_target_properties("${TARGET_NAME}" PROPERTIES 
-            INTERNAL_UT_AUTO_HELPERS TRUE
+            FPRIME_UT_AUTO_HELPERS TRUE
         )
     endif()
     # Use the appropriate link type for the target
