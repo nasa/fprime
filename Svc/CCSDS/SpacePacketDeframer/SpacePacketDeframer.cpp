@@ -5,8 +5,8 @@
 // ======================================================================
 
 #include "Svc/CCSDS/SpacePacketDeframer/SpacePacketDeframer.hpp"
-#include "Svc/CCSDS/Types/SpacePacketHeaderSerializableAc.hpp"
 #include "Svc/CCSDS/Types/FppConstantsAc.hpp"
+#include "Svc/CCSDS/Types/SpacePacketHeaderSerializableAc.hpp"
 
 namespace Svc {
 
@@ -16,7 +16,13 @@ namespace CCSDS {
 // Component construction and destruction
 // ----------------------------------------------------------------------
 
-SpacePacketDeframer ::SpacePacketDeframer(const char* const compName) : SpacePacketDeframerComponentBase(compName) {}
+SpacePacketDeframer ::SpacePacketDeframer(const char* const compName) : SpacePacketDeframerComponentBase(compName) {
+    // Initialize the APID sequence table with APID values that need to be counted (order does not matter)
+    this->m_apidSequences[0].apid = ComCfg::APID::FW_PACKET_COMMAND;
+    this->m_apidSequences[2].apid = ComCfg::APID::FW_PACKET_FILE;
+    this->m_apidSequences[3].apid = ComCfg::APID::FW_PACKET_PACKETIZED_TLM;
+    this->m_apidSequences[4].apid = ComCfg::APID::FW_PACKET_UNKNOWN;
+}
 
 SpacePacketDeframer ::~SpacePacketDeframer() {}
 
@@ -46,12 +52,25 @@ void SpacePacketDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data,
     Fw::SerializeStatus status = data.getDeserializer().deserialize(header);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
-    U16 apid = header.getpacketIdentification() & SpacePacketMasks::ApidMask;
+    U16 apidValue = header.getpacketIdentification() & SpacePacketMasks::ApidMask;
+    ComCfg::APID::T apid = static_cast<ComCfg::APID::T>(apidValue);
     ComCfg::FrameContext contextCopy = context;
-    contextCopy.setapid(static_cast<ComCfg::APID::T>(apid));
+    contextCopy.setapid(apid);
 
-    // TODO: Add checks and events in case of failure
     U16 pkt_length = header.getpacketDataLength();
+    if (pkt_length > data.getSize()) {
+        this->log_WARNING_HI_InvalidLength(pkt_length, data.getSize());
+        this->dataReturnOut_out(0, data, context);  // Drop the packet
+        return;
+    }
+    U16 receivedSequenceCount = header.getpacketSequenceControl() & SpacePacketMasks::SeqCountMask;
+    U16 expectedSequenceCount = this->getAndIncrementSeqCount(apid);
+    if (receivedSequenceCount != expectedSequenceCount) {
+        // Likely a packet was dropped or out of order
+        this->log_WARNING_HI_UnexpectedSequenceCount(receivedSequenceCount, expectedSequenceCount);
+        // Synchronize onboard count with received number so that count can keep going
+        this->setNextSeqCount(apid, receivedSequenceCount);
+    }
 
     // Set data buffer to be of the encapsulated data: HEADER (6 bytes) | PACKET DATA
     data.setData(data.getData() + SpacePacketHeader::SERIALIZED_SIZE);
@@ -66,6 +85,30 @@ void SpacePacketDeframer ::dataReturnIn_handler(FwIndexType portNum,
     this->dataReturnOut_out(0, data, context);
 }
 
+// ----------------------------------------------------------------------
+// Helpers
+// ----------------------------------------------------------------------
+
+U16 SpacePacketDeframer::getAndIncrementSeqCount(ComCfg::APID::T apid) {
+    for (U8 i = 0; i < MAX_TRACKED_APIDS; ++i) {
+        if (m_apidSequences[i].apid == apid) {
+            U16 seq = m_apidSequences[i].sequenceCount;
+            m_apidSequences[i].sequenceCount = (seq + 1) % (1 << 14);  // Wrap around at 14 bits
+            printf("APID: %d, SeqCount: %d\n", apid, seq);
+            return seq;
+        }
+    }
+    return std::numeric_limits<U16>::max(); // error value
+}
+
+void SpacePacketDeframer::setNextSeqCount(ComCfg::APID::T apid, U16 seqCount) {
+    for (U8 i = 0; i < MAX_TRACKED_APIDS; i++) {
+        if (m_apidSequences[i].apid == apid) {
+            m_apidSequences[i].sequenceCount = seqCount;
+            return;
+        }
+    }
+}
 
 }  // namespace CCSDS
 }  // namespace Svc

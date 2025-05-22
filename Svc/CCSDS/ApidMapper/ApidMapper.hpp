@@ -14,6 +14,9 @@ namespace Svc {
 namespace CCSDS {
 
 class ApidMapper final : public ApidMapperComponentBase {
+
+    static constexpr U8 MAX_TRACKED_APIDS = 5;
+
   public:
     // ----------------------------------------------------------------------
     // Component construction and destruction
@@ -71,7 +74,6 @@ class ApidMapper final : public ApidMapperComponentBase {
     // ----------------------------------------------------------------------
     // Member variables
     // ----------------------------------------------------------------------
-    static const U8 MAX_TRACKED_APIDS = 5;
     ApidSequenceEntry m_apidSequences[MAX_TRACKED_APIDS];
 };
 

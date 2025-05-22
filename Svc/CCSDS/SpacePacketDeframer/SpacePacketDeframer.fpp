@@ -5,6 +5,16 @@ module CCSDS {
 
         include "../../Interfaces/DeframerInterface.fppi"
 
+        @ Deframing received an invalid frame length
+        event InvalidLength(transmitted: U16, actual: U32) \
+            severity warning high \
+            format "Invalid length received. Header specified packet length of {} | Actual received data length: {}"
+
+        @ Deframing received an unexpected sequence count
+        event UnexpectedSequenceCount(transmitted: U16, expected: U16) \
+            severity warning high \
+            format "Unexpected sequence count received. Packets may have been lost. Transmitted: {} | Expected on board: {}"
+
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #
         ###############################################################################

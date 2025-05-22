@@ -21,6 +21,8 @@ ApidMapper ::ApidMapper(const char* const compName) : ApidMapperComponentBase(co
     this->m_apidSequences[2].apid = ComCfg::APID::FW_PACKET_FILE;
     this->m_apidSequences[3].apid = ComCfg::APID::FW_PACKET_PACKETIZED_TLM;
     this->m_apidSequences[4].apid = ComCfg::APID::FW_PACKET_UNKNOWN;
+    // TODO: Why does it work without specifying the downlink file APID ?
+    // and add DP ??
 
 }
 
@@ -67,6 +69,9 @@ void ApidMapper ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& data, co
     this->dataReturnOut_out(portNum, data, context);
 }
 
+// ----------------------------------------------------------------------
+// Helpers
+// ----------------------------------------------------------------------
 
 U16 ApidMapper ::getAndIncrementSeqCount(ComCfg::APID::T apid) {
     for (U8 i = 0; i < MAX_TRACKED_APIDS; ++i) {
