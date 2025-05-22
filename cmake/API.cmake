@@ -646,32 +646,6 @@ function (create_implementation_interface IMPLEMENTATION)
     add_library("${IMPLEMENTATION}" INTERFACE)
 endfunction()
 
-
-# ####
-# # Function `require_fprime_implementation`:
-# #
-# # Designates that the current module requires a separate implementation in order for it to function properly. As an
-# # example, Os requires an implementation of `Os_Task`. These implementations must be set via
-# # `choose_fprime_implementation` in the platform and may be overridden in in the executable/deployment.
-# #
-# # **IMPLEMENTATION:** implementation module name that must be covered
-# # **REQUESTER:** (optional) the requester of the implementation. Default: ${FPRIME_CURRENT_MODULE}
-# ####
-# function(require_fprime_implementation IMPLEMENTATION)
-#     if (ARGC EQUAL 2) 
-#         set(REQUESTER "${ARGV1}")
-#     elseif (FPRIME_CURRENT_MODULE)
-#         set(REQUESTER "${FPRIME_CURRENT_MODULE}")
-#     else ()
-#         message(FATAL_ERROR "Cannot determine current module, please supply as second argument")
-#     endif()
-# #    resolve_dependencies(IMPLEMENTATION "${IMPLEMENTATION}")
-# #    resolve_dependencies(REQUESTER "${REQUESTER}")
-# #    create_implementation_interface("${IMPLEMENTATION}")
-#     append_list_property("${IMPLEMENTATION}" GLOBAL PROPERTY FPRIME_REQUIRED_IMPLEMENTATIONS)
-# #    add_dependencies("${REQUESTER}" "${IMPLEMENTATION}")
-# endfunction()
-
 ####
 # Function `register_fprime_implementation`:
 #
@@ -749,24 +723,6 @@ endfunction()
 function(register_os_implementation NAMES SUFFIX)
     add_fprime_supplied_os_module("${NAMES}" "${SUFFIX}" "${ARGN}")
 endfunction()
-
-# ####
-# # Function `choose_fprime_implementation`:
-# #
-# # Designates that the given implementor is the selected implementor for the needed implementation. Platforms must call
-# # this function once for each defined IMPLEMENTATION. An executable/deployment/unit-test may call this function to set
-# # a specific implementor for any needed implementation. FRAMEWORK_DEFAULT may be supplied to indicate a default choice
-# # set by the framework, which can be overridden by the platform and module selections.
-# #
-# # **IMPLEMENTATION:** implementation module name that is implemented by IMPLEMENTOR
-# # **IMPLEMENTOR:** implementor of IMPLEMENTATION
-# ####
-# function(choose_fprime_implementation IMPLEMENTATION IMPLEMENTOR)
-#     # Just pretend this choose was a configuration override for now
-#     resolve_dependencies(IMPLEMENTATION "${IMPLEMENTATION}")
-#     resolve_dependencies(IMPLEMENTOR "${IMPLEMENTOR}")
-#     append_list_property("${IMPLEMENTOR}_OldReg" DIRECTORY PROPERTY "FPRIME_CHOSEN_IMPLEMENTATIONS")
-# endfunction()
 
 #### Documentation links
 # Next Topics:

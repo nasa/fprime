@@ -22,7 +22,7 @@ register_fprime_module(
 )
 
 register_fprime_implementation(
-    snprintf-format
+    Fw_StringFormat_snprintf
   IMPLEMENTS
     Fw_StringFormat
   DEPENDS
@@ -46,13 +46,13 @@ if (TARGET Fw_Types_ut_exe)
 endif()
 
 register_fprime_ut(
-    snprintf-format-ut
+    Fw_StringFormat_snprintf_ut_exe
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/SnPrintfFormatTest.cpp"
   DEPENDS
     Fw_Types
   CHOOSES_IMPLEMENTATIONS
-    snprintf-format
+    Fw_StringFormat_snprintf
 )
 
 

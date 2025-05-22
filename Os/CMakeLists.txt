@@ -104,25 +104,6 @@ function(add_fprime_supplied_os_module NAMES SUFFIX)
     )
 endfunction()
 
-####
-# WARNING: not for use outside of fprime/Os
-#
-# Adds a test for OSAL layer. Helper to allow multiple tests per file.
-#
-# NAME: Name of test
-# UT_SOURCE_FILES: list of source files
-# IMPLEMENTATION_PAIRS: a list of pairs of implementation choices.  e.g. "Os_File\;Os_File_Posix;Os_Task\;Os_Task_Stub"
-#                       pairs are represented with internal escaped list separators.
-# ARGN: extra MOD_DEPS to add
-####
-#function(add_fprime_os_test NAME UT_SOURCE_FILES IMPLEMENTATION_PAIRS)
-#    set(UT_MOD_DEPS Os STest ${ARGN})
-#    foreach (PAIR IN LISTS IMPLEMENTATION_PAIRS)
-#        choose_fprime_implementation(${PAIR})
-#    endforeach ()
-#    register_fprime_ut("${NAME}")
-#endfunction()
-
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Models")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Stub")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Posix")
