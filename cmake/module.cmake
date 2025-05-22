@@ -232,7 +232,7 @@ function(fprime__internal_add_build_target_helper TARGET_NAME TYPE SOURCES AUTOC
     #       instead?  Or only add empty on sub-builds?
     target_sources("${TARGET_NAME}" PRIVATE "${FPRIME__INTERNAL_EMPTY_CPP}")
 
-    # Add the link libraries safely in both real and INERFACE libraries
+    # Add the link libraries safely in both real and INTERFACE libraries
     fprime_target_dependencies("${TARGET_NAME}" PUBLIC ${DEPENDENCIES} ${REQUIRED_IMPLEMENTATIONS} ${IMPLEMENTATION_DEPENDENCIES})
 
     # Set F Prime target properties
