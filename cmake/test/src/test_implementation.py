@@ -39,4 +39,3 @@ def test_override_implementation(IMPLEMENTATION_TEST):
 def test_non_built_implementation(IMPLEMENTATION_TEST):
     """Check the override target that wasn't use was not built along with the override platform target"""
     cmake.assert_process_success(IMPLEMENTATION_TEST)
-
