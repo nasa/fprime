@@ -17,7 +17,6 @@ register_fprime_config(
       PlatformLinux
    INTERFACE # No buildable files generated
    CHOOSES_IMPLEMENTATIONS
-      #### TODO: Fix these defaults ####
       Os_Cpu_Linux
       Os_Memory_Linux
 )

@@ -219,14 +219,12 @@ endfunction()
 function(fprime__internal_add_build_target_helper TARGET_NAME TYPE SOURCES AUTOCODER_INPUTS HEADERS DEPENDENCIES REQUIRES_IMPLEMENTATIONS CHOOSES_IMPLEMENTATIONS FPRIME_CMAKE_ADD_OPTIONS)
     # Historical status message for posterity...and to prevent panic amongst users
     message(STATUS "Adding ${TYPE}: ${TARGET_NAME}")
-    set(IMPLEMENTATION_DEPENDENCIES)
     # Remap F Prime target type to CMake targe type
     if (INTERFACE IN_LIST FPRIME_CMAKE_ADD_OPTIONS AND SOURCES)
         fprime_cmake_fatal_error("INTERFACE libraries cannot have SOURCES")
     elseif (TYPE STREQUAL "Executable" OR TYPE STREQUAL "Deployment" OR TYPE STREQUAL "Unit Test")
         add_executable("${TARGET_NAME}" ${FPRIME_CMAKE_ADD_OPTIONS} "${SOURCES}")
-        set_target_properties("${TARGET_NAME}" PROPERTIES FPRIME_CHOSEN_IMPLEMENTATIONS "${CHOOSES_IMPLEMENTATIONS}")
-        fprime__internal_choose_implementations("${TARGET_NAME}" IMPLEMENTATION_DEPENDENCIES)
+        fprime_target_implementations("${TARGET_NAME}" ${CHOOSES_IMPLEMENTATIONS})
     elseif(TYPE STREQUAL "Library")
         add_library("${TARGET_NAME}" ${FPRIME_CMAKE_ADD_OPTIONS} ${SOURCES})
     else()
@@ -243,7 +241,7 @@ function(fprime__internal_add_build_target_helper TARGET_NAME TYPE SOURCES AUTOC
     target_sources("${TARGET_NAME}" PRIVATE "${FPRIME__INTERNAL_EMPTY_CPP}")
 
     # Add the link libraries safely in both real and INTERFACE libraries
-    fprime_target_dependencies("${TARGET_NAME}" PUBLIC ${DEPENDENCIES} ${REQUIRED_IMPLEMENTATIONS} ${IMPLEMENTATION_DEPENDENCIES})
+    fprime_target_dependencies("${TARGET_NAME}" PUBLIC ${DEPENDENCIES} ${REQUIRED_IMPLEMENTATIONS})
 
     # Set F Prime target properties
     set_target_properties("${TARGET_NAME}"

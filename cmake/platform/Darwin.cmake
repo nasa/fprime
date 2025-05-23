@@ -19,7 +19,6 @@ register_fprime_config(
       PlatformDarwin
    INTERFACE # No buildable files generated
    CHOOSES_IMPLEMENTATIONS
-      #### TODO: Fix these defaults ####
       Os_Cpu_Darwin
       Os_Memory_Darwin
 )

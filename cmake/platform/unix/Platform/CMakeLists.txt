@@ -9,7 +9,6 @@ register_fprime_config(
     HEADERS
         "${CMAKE_CURRENT_LIST_DIR}/PlatformTypes.h"
     CHOOSES_IMPLEMENTATIONS
-        #### TODO: Fix these defaults ####
         Os_File_Posix
         Os_Console_Posix
         Os_Task_Posix
