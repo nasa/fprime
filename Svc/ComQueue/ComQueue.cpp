@@ -260,7 +260,7 @@ void ComQueue::sendComBuffer(Fw::ComBuffer& comBuffer, FwIndexType queueIndex) {
 
     Fw::Buffer outBuffer(comBuffer.getBuffAddr(), static_cast<Fw::Buffer::SizeType>(comBuffer.getBuffLength()));
 
-    // Context APID is set to the queue index for now. A future implementation may want this to be configurable
+    // Context value is used to determine what to do when the buffer returns on the dataReturnIn port
     ComCfg::FrameContext context;
     context.setcomQueueIndex(queueIndex);
     this->dataOut_out(0, outBuffer, context);
@@ -272,7 +272,7 @@ void ComQueue::sendBuffer(Fw::Buffer& buffer, FwIndexType queueIndex) {
     // Retry buffer expected to be cleared as we are either transferring ownership or have already deallocated it.
     FW_ASSERT(this->m_state == READY);
 
-    // Context APID is set to the queue index for now. A future implementation may want this to be configurable
+    // Context value is used to determine what to do when the buffer returns on the dataReturnIn port
     ComCfg::FrameContext context;
     context.setcomQueueIndex(queueIndex);
     this->dataOut_out(0, buffer, context);
