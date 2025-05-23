@@ -40,8 +40,8 @@ Array()
 Construct an array _A_ of type `T` and size `S`.
 Initialize each element of `m_elements` with the default value for `T`.
 
-Example:
-```
+_Example:_
+```c++
 Array<U32, 3> a;
 ```
 
@@ -56,8 +56,8 @@ Initialize the first _n_ elements of `m_elements` from `il`, where
 _n_ is the minimum of `S` and the size of `il`.
 Initialize any other elements of `m_elements` with default values.
 
-Example:
-```
+_Example:_
+```c++
 Array<U32, 3> a({ 1, 2, 3 });
 ```
 
@@ -70,8 +70,8 @@ Array(const T& elt)
 Construct an array _A_ of type `T` and size `S`.
 Initialize each element of `m_elements` with `elt`.
 
-Example:
-```
+_Example:_
+```c++
 Array<U32, 3> a(10);
 ```
 
@@ -95,8 +95,8 @@ const T& operator[](FwSizeType i) const
 This operator asserts that `i < S`.
 If the assertion is true, then it returns a reference to `m_elements[i]`.
 
-Example:
-```
+_Example:_
+```c++
 const U32 x = a[0];
 a[0]++;
 ```
@@ -111,8 +111,8 @@ If `&a == this` then this operator does nothing.
 Otherwise it overwrites each element of `m_elements` with the corresponding
 element of `a`.
 
-Example:
-```
+_Example:_
+```c++
 Array<U32, 10> a1(1);
 Array<U32, 10> a2(2);
 a1 = a2;
@@ -127,8 +127,8 @@ const T[S]& getElements() const
 
 This function returns a reference to `m_elements`.
 
-Example:
-```
+_Example:_
+```c++
 Array<U32, 10> a;
 auto& elements1 = a.getElements();
 FW_ASSERT(elements1[0] == 0);
@@ -147,8 +147,8 @@ static constexpr FwSizeType getSize()
 
 This function returns the size `S` of the array.
 
-Example:
-```
+_Example:_
+```c++
 Array<U32, 10> a;
 const auto size = a.getSize();
 FW_ASSERT(size == 10);
