@@ -65,12 +65,16 @@ void SpacePacketDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data,
     }
     U16 receivedSequenceCount = header.getpacketSequenceControl() & SpacePacketMasks::SeqCountMask;
     U16 expectedSequenceCount = this->getAndIncrementSeqCount(apid);
-    if (receivedSequenceCount != expectedSequenceCount) {
+    if (expectedSequenceCount == SEQUENCE_COUNT_ERROR) {
+        // This APID is not being tracked
+        this->log_ACTIVITY_LO_UntrackedApid(apidValue);
+    } else if (receivedSequenceCount != expectedSequenceCount) {
         // Likely a packet was dropped or out of order
         this->log_WARNING_HI_UnexpectedSequenceCount(receivedSequenceCount, expectedSequenceCount);
         // Synchronize onboard count with received number so that count can keep going
-        this->setNextSeqCount(apid, receivedSequenceCount);
+        this->setNextSeqCount(apid, receivedSequenceCount + 1);
     }
+    contextCopy.setsequenceCount(receivedSequenceCount);
 
     // Set data buffer to be of the encapsulated data: HEADER (6 bytes) | PACKET DATA
     data.setData(data.getData() + SpacePacketHeader::SERIALIZED_SIZE);
@@ -98,7 +102,7 @@ U16 SpacePacketDeframer::getAndIncrementSeqCount(ComCfg::APID::T apid) {
             return seq;
         }
     }
-    return std::numeric_limits<U16>::max(); // error value
+    return SEQUENCE_COUNT_ERROR; // error value - this value is never returned with wraparound
 }
 
 void SpacePacketDeframer::setNextSeqCount(ComCfg::APID::T apid, U16 seqCount) {

@@ -43,7 +43,7 @@ void SpacePacketFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, c
     U16 packetIdentification = 0;
     ComCfg::APID::T apid = context.getapid();
     packetIdentification |= static_cast<U16>(apid) & SpacePacketMasks::ApidMask; // 11 bit APID
-    
+
     U16 packetSequenceControl = 0;
     packetSequenceControl |= 0x3 << SpacePacketMasks::SeqFlagsOffset; // Sequence Flags 0b11 = unsegmented User Data
     U16 sequenceCount = context.getsequenceCount();

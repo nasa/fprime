@@ -16,6 +16,16 @@ TEST(Nominal, testNominalDeframing) {
     tester.testNominalDeframing();
 }
 
+TEST(Nominal, testDeframingUntrackedApid) {
+    Svc::CCSDS::SpacePacketDeframerTester tester;
+    tester.testDeframingUntrackedApid();
+}
+
+TEST(Nominal, testDeframingIncorrectSeqCount) {
+    Svc::CCSDS::SpacePacketDeframerTester tester;
+    tester.testDeframingIncorrectSeqCount();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

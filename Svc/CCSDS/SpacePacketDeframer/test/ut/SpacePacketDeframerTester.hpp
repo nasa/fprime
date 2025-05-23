@@ -8,6 +8,7 @@
 #define Svc_CCSDS_SpacePacketDeframerTester_HPP
 
 #include "Svc/CCSDS/SpacePacketDeframer/SpacePacketDeframer.hpp"
+#include "Svc/CCSDS/Types/SpacePacketHeaderSerializableAc.hpp"
 #include "Svc/CCSDS/SpacePacketDeframer/SpacePacketDeframerGTestBase.hpp"
 
 namespace Svc {
@@ -44,6 +45,8 @@ class SpacePacketDeframerTester final : public SpacePacketDeframerGTestBase {
 
     void testDataReturnPassthrough();
     void testNominalDeframing();
+    void testDeframingUntrackedApid();
+    void testDeframingIncorrectSeqCount();
 
   private:
     // ----------------------------------------------------------------------
@@ -56,6 +59,9 @@ class SpacePacketDeframerTester final : public SpacePacketDeframerGTestBase {
     //! Initialize components
     void initComponents();
 
+    //! Assemble a packet with the given parameters
+    Fw::Buffer assemblePacket(U16 apid, U16 seqCount, U16 packetLength, U8* packetData);
+
   private:
     // ----------------------------------------------------------------------
     // Member variables
@@ -63,6 +69,10 @@ class SpacePacketDeframerTester final : public SpacePacketDeframerGTestBase {
 
     //! The component under test
     SpacePacketDeframer component;
+
+    //! Test buffer
+    static const FwSizeType MAX_TEST_PACKET_DATA_SIZE = 200;
+    U8 m_packetBuffer[SpacePacketHeader::SERIALIZED_SIZE + MAX_TEST_PACKET_DATA_SIZE];
 };
 
 }  // namespace CCSDS

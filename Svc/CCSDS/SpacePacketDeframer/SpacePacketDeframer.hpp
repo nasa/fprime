@@ -14,8 +14,10 @@ namespace Svc {
 namespace CCSDS {
 
 class SpacePacketDeframer final : public SpacePacketDeframerComponentBase {
+  friend class SpacePacketDeframerTester;
 
     static constexpr U8 MAX_TRACKED_APIDS = 5;
+    static constexpr U16 SEQUENCE_COUNT_ERROR = std::numeric_limits<U16>::max();
   
     public:
     // ----------------------------------------------------------------------
