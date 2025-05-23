@@ -132,6 +132,7 @@ module Ref {
       comStub.comStatusOut       -> tmFramer.comStatusIn
       tmFramer.comStatusOut       -> spacePacketFramer.comStatusIn
       spacePacketFramer.comStatusOut  -> comQueue.comStatusIn
+      # TODO: probably need comStatus to APIDMapper ??
     }
 
     connections FaultProtection {

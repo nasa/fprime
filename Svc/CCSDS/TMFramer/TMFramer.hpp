@@ -68,7 +68,8 @@ class TMFramer final : public TMFramerComponentBase {
     //! Fill the frame buffer with an Idle Packet to complete the frame data field
     //! as per CCSDS TM Protocol paragraph 4.2.2.5. Idle packet is inserted at the
     //! start_index index of the frame buffer, and fills it up to the end minus CRC
-    void fill_with_idle_packet(U16 start_index);
+    // void fill_with_idle_packet(U16 start_index);
+    void fill_with_idle_packet(Fw::SerializeBufferBase& serializer);
 
     // Because the TM protocol use fixed width frames, and only one frame is in transit between ComQueue and
     // ComInterface at a time, we can use a member fixed-size buffer to hold the frame data

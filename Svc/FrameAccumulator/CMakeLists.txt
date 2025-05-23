@@ -16,6 +16,7 @@ set(SOURCE_FILES
 set(MOD_DEPS
     Utils/Types
     Svc/FprimeProtocol
+    Svc/CCSDS/Types
 )
 
 register_fprime_module()

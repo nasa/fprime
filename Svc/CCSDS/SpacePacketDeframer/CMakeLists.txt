@@ -6,7 +6,7 @@
 # DEPENDS: list of libraries that this module depends on
 #
 # More information in the F´ CMake API documentation:
-# https://fprime.jpl.nasa.gov/latest/documentation/reference
+# https://fprime.jpl.nasa.gov/devel/docs/reference/api/cmake/API/
 #
 ####
 
@@ -21,8 +21,6 @@ register_fprime_library(
 
 
 ### Unit Tests ###
-set(UT_AUTO_HELPERS ON)
-
 register_fprime_ut(
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/SpacePacketDeframerTestMain.cpp"
@@ -32,5 +30,6 @@ register_fprime_ut(
   DEPENDS
     Svc_CCSDS_Types
     STest
+  UT_AUTO_HELPERS
 )
 

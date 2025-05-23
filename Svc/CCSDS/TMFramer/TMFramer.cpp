@@ -10,6 +10,7 @@
 #include "Svc/CCSDS/Types/TMFrameTrailerSerializableAc.hpp"
 #include "Svc/CCSDS/Utils/CRC16.hpp"
 #include "config/FppConstantsAc.hpp"
+#include "Svc/CCSDS/Types/SpacePacketHeaderSerializableAc.hpp"
 
 namespace Svc {
 
@@ -61,18 +62,18 @@ void TMFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
     // -------------------------------------------------
     // Data field
     // -------------------------------------------------
-
+    // Payload packet
     Fw::SerializeStatus status;
     // Create frame Fw::Buffer using member data field
     Fw::Buffer frameBuffer = Fw::Buffer(this->m_frameBuffer, sizeof(this->m_frameBuffer));
     auto frameSerializer = frameBuffer.getSerializer();
-
     status = frameSerializer.serialize(header);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
     status = frameSerializer.serialize(data.getData(), data.getSize(), Fw::Serialization::OMIT_LENGTH);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
-    this->fill_with_idle_packet(static_cast<U16>(frameSerializer.getBuffLength()));
+    // As per TM Standard 4.2.2.5, fill the rest of the data field with an Idle Packet
+    this->fill_with_idle_packet(frameSerializer);
 
     // -------------------------------------------------
     // Trailer (CRC)
@@ -103,29 +104,32 @@ void TMFramer ::dataReturnIn_handler(FwIndexType portNum,
                                      Fw::Buffer& frameBuffer,
                                      const ComCfg::FrameContext& context) {
     // dataReturnIn is our own member buffer coming back from the dataOut call - memset it to 0
+    FW_ASSERT(frameBuffer.getData() == static_cast<U8*>(this->m_frameBuffer));
     ::memset(this->m_frameBuffer, 0, sizeof(this->m_frameBuffer));
-    // NOTE: should I set a flag to track that it has been returned an ready for reuse?
+    // NOTE: should we set a flag to track that it has been returned and ready for reuse?
+    // NOTE: a nice trick for efficiency would be to memset to IDLE_DATA_PATTERN instead... but eh
 }
 
-void TMFramer ::fill_with_idle_packet(U16 startIndex) {
-    // TODO: make this code cleaner - could request from SpacePacket ??
-    U16 endIndex = ComCfg::FppConstant_TmFrameFixedSize::TmFrameFixedSize -
+void TMFramer ::fill_with_idle_packet(Fw::SerializeBufferBase& serializer) {
+    constexpr U16 endIndex = ComCfg::FppConstant_TmFrameFixedSize::TmFrameFixedSize -
                            TMFrameTrailer::SERIALIZED_SIZE;
-    U16 idlePacketLength = endIndex - startIndex;
+    constexpr U16 idleApid = static_cast<U16>(ComCfg::APID::SPP_IDLE_PACKET);
+    const U16 startIndex = static_cast<U16>(serializer.getBuffLength());
+    const U16 idlePacketLength = endIndex - startIndex;
+
     FW_ASSERT(idlePacketLength > 0, static_cast<FwAssertArgType>(idlePacketLength));
     FW_ASSERT(idlePacketLength >= 7, static_cast<FwAssertArgType>(idlePacketLength)); // 7 bytes minimum for idle packet
     FW_ASSERT(idlePacketLength <= ComCfg::FppConstant_TmFrameFixedSize::TmFrameFixedSize,
               static_cast<FwAssertArgType>(idlePacketLength));
-    U16 idleApid = ComCfg::APID::SPP_IDLE_PACKET;     // All 1s (11bit) per Space Packet protocol paragraph 4.1.3.3.4.4
-    this->m_frameBuffer[startIndex + 0] = (idleApid >> 8) & 0xFF;
-    this->m_frameBuffer[startIndex + 1] = idleApid & 0xFF;
-    this->m_frameBuffer[startIndex + 2] = 0xC0;  // Sequence Flags = 0b11 (unsegmented) & unused Seq count
-    this->m_frameBuffer[startIndex + 3] = 0x00;  // unused Sequence Count 
-    this->m_frameBuffer[startIndex + 4] = idlePacketLength >> 8;    // Packet Data Length MSB
-    this->m_frameBuffer[startIndex + 5] = idlePacketLength & 0xFF;  // Packet Data Length LSB
-    // Fill the rest of the buffer with arbitrary idle data
-    for (U16 i = startIndex + 6; i < endIndex; i++) {
-        this->m_frameBuffer[i] = IDLE_DATA_PATTERN;  // Idle data
+
+    SpacePacketHeader header;
+    header.setpacketIdentification(idleApid);
+    header.setpacketSequenceControl(0x3 << SpacePacketMasks::SeqFlagsOffset); // Sequence Flags = 0b11 (unsegmented) & unused Seq count
+    header.setpacketDataLength(idlePacketLength);
+    // Serialize header and idle data into the frame
+    serializer.serialize(header);
+    for (U16 i = startIndex + SpacePacketHeader::SERIALIZED_SIZE; i < endIndex; i++) {
+        serializer.serialize(IDLE_DATA_PATTERN);  // Idle data
     }
 }
 
