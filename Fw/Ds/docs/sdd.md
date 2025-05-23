@@ -51,10 +51,11 @@ Array<U32, 3> a;
 Array(const std::initializer_list<T>& il)
 ```
 
-Construct an array _A_ of type `T` and size `S`.
-Initialize the first _n_ elements of `m_elements` from `il`, where
-_n_ is the minimum of `S` and the size of `il`.
-Initialize any other elements of `m_elements` with default values.
+1. Assert that `il.size == S`.
+
+1. Construct an array _A_ of type `T` and size `S`.
+
+1. Initialize `m_elements` from `il`.
 
 _Example:_
 ```c++
@@ -149,10 +150,10 @@ _Example:_
 ```c++
 Array<U32, 10> a;
 auto& elements1 = a.getElements();
-FW_ASSERT(elements1[0] == 0);
+ASSERT_EQ(elements1[0], 0);
 elements1[0] = 1;
 const auto& elements2 = a.getElements();
-FW_ASSERT(elements2[0] == 1);
+ASSERT_EQ(elements2[0], 1);
 ```
 
 #### 1.1.5. Public Static Functions
@@ -169,7 +170,7 @@ _Example:_
 ```c++
 Array<U32, 10> a;
 const auto size = a.getSize();
-FW_ASSERT(size == 10);
+ASSERT_EQ(size, 10);
 ```
 
 ### 1.2. External Array
