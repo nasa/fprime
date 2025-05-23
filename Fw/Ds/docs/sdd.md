@@ -23,11 +23,13 @@ It maintains the backing memory _M_ as a member variable.
 
 1. The size `FwSizeType S`
 
+`Array` statically asserts that `S > 0`.
+
 #### 1.1.2. Private Member Variables
 
 `Array` has one private variable `m_elements` for
 storing the array elements.
-It is a native C++ array of type `T[S]`.
+It is a primitive C++ array of type `T[S]`.
 
 #### 1.1.3. Construction and Destruction
 
