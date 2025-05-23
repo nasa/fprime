@@ -177,6 +177,12 @@ TODO
 
 ## 2. Queues
 
+### 2.1. FIFO Queue
+
+TODO
+
+### 2.2. LIFO Queue
+
 TODO
 
 ## 3. Linked List
@@ -185,7 +191,7 @@ TODO
 
 ## 4. Sets and Maps
 
-### 4.1. Array-Based Set and Map
+### 4.1. Array Set and Map
 
 TODO
 
