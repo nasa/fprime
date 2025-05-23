@@ -39,7 +39,6 @@ It is a primitive C++ array of type `T[S]`.
 Array()
 ```
 
-Construct an array _A_ of type `T` and size `S`.
 Initialize each element of `m_elements` with the default value for `T`.
 
 _Example:_
@@ -55,8 +54,6 @@ Array(const std::initializer_list<T>& il)
 
 1. Assert that `il.size == S`.
 
-1. Construct an array _A_ of type `T` and size `S`.
-
 1. Initialize `m_elements` from `il`.
 
 _Example:_
@@ -70,7 +67,6 @@ Array<U32, 3> a({ 1, 2, 3 });
 Array(const T& elt)
 ```
 
-Construct an array _A_ of type `T` and size `S`.
 Initialize each element of `m_elements` with `elt`.
 
 _Example:_
@@ -84,7 +80,6 @@ Array<U32, 3> a(10);
 Array(const Array<S,T>& a)
 ```
 
-Construct an array _A_ of type `T` and size `S`.
 Initialize the elements of `m_elements` with the
 elements of `a.m_elements`.
 
@@ -111,8 +106,9 @@ T& operator[](FwSizeType i)
 const T& operator[](FwSizeType i) const
 ```
 
-This operator asserts that `i < S`.
-If the assertion is true, then it returns a reference to `m_elements[i]`.
+1. Assert that `i < S`.
+
+1. Return a reference to `m_elements[i]`.
 
 _Example:_
 ```c++
@@ -128,8 +124,9 @@ ASSERT_EQ(a[0], 1);
 Array<T,S>& operator=(const Array<T,S>& a)
 ```
 
-If `&a == this` then this operator does nothing.
-Otherwise it overwrites each element of `m_elements` with the corresponding
+1. If `&a == this` then do nothing.
+
+1. Otherwise overwrite each element of `m_elements` with the corresponding
 element of `a`.
 
 _Example:_
@@ -146,7 +143,7 @@ T[S]& getElements()
 const T[S]& getElements() const
 ```
 
-This function returns a reference to `m_elements`.
+Return a reference to `m_elements`.
 
 _Example:_
 ```c++
@@ -166,12 +163,11 @@ ASSERT_EQ(elements2[0], 1);
 static constexpr FwSizeType getSize()
 ```
 
-This function returns the size `S` of the array.
+Return the size `S` of the array.
 
 _Example:_
 ```c++
-Array<U32, 10> a;
-const auto size = a.getSize();
+const auto size = Array<U32, 10>::getSize();
 ASSERT_EQ(size, 10);
 ```
 
