@@ -12,18 +12,18 @@
 
 register_fprime_library(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/ApidMapper.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/ApidManager.cpp"
   AUTOCODER_INPUTS
-    "${CMAKE_CURRENT_LIST_DIR}/ApidMapper.fpp"
+    "${CMAKE_CURRENT_LIST_DIR}/ApidManager.fpp"
 )
 
 
 
 ### Unit Tests ###
 # set(UT_SOURCE_FILES
-#   "${CMAKE_CURRENT_LIST_DIR}/ApidMapper.fpp"
-#   "${CMAKE_CURRENT_LIST_DIR}/test/ut/ApidMapperTestMain.cpp"
-#   "${CMAKE_CURRENT_LIST_DIR}/test/ut/ApidMapperTester.cpp"
+#   "${CMAKE_CURRENT_LIST_DIR}/ApidManager.fpp"
+#   "${CMAKE_CURRENT_LIST_DIR}/test/ut/ApidManagerTestMain.cpp"
+#   "${CMAKE_CURRENT_LIST_DIR}/test/ut/ApidManagerTester.cpp"
 # )
 # set(UT_MOD_DEPS
 #   STest

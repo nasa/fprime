@@ -50,7 +50,7 @@ module Ref {
     instance fileUplink
     instance commsBufferManager
     instance frameAccumulator
-    instance apidMapper
+    instance apidManager
     instance posixTime
     instance pingRcvr
     instance prmDb
@@ -107,12 +107,12 @@ module Ref {
       tlmSend.PktSend            -> comQueue.comPacketQueueIn[Ports_ComPacketQueue.TELEMETRY]
       fileDownlink.bufferSendOut -> comQueue.bufferQueueIn[Ports_ComBufferQueue.FILE_DOWNLINK]
       comQueue.bufferReturnOut[Ports_ComBufferQueue.FILE_DOWNLINK] -> fileDownlink.bufferReturn
-      # ComQueue <-> ApidMapper
-      comQueue.dataOut           -> apidMapper.dataIn
-      apidMapper.dataReturnOut -> comQueue.dataReturnIn
-      # ApidMapper <-> Framer
-      apidMapper.dataOut           -> spacePacketFramer.dataIn
-      spacePacketFramer.dataReturnOut -> apidMapper.dataReturnIn
+      # ComQueue <-> ApidManager
+      comQueue.dataOut           -> apidManager.dataIn
+      apidManager.dataReturnOut -> comQueue.dataReturnIn
+      # ApidManager <-> Framer
+      apidManager.dataOut           -> spacePacketFramer.dataIn
+      spacePacketFramer.dataReturnOut -> apidManager.dataReturnIn
       # Buffer Management for Framer
       spacePacketFramer.bufferAllocate   -> commsBufferManager.bufferGetCallee
       spacePacketFramer.bufferDeallocate -> commsBufferManager.bufferSendIn
@@ -210,6 +210,8 @@ module Ref {
       cmdDisp.seqCmdStatus     -> fprimeRouter.cmdResponseIn
       fprimeRouter.fileOut     -> fileUplink.bufferSendIn
       fileUplink.bufferSendOut -> fprimeRouter.fileBufferReturnIn
+
+      spacePacketDeframer.validateApidSeqCount -> apidManager.validateApidSeqCountIn
     }
 
     connections DataProducts {

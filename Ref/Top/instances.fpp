@@ -177,7 +177,7 @@ module Ref {
 
   instance fprimeRouter: Svc.FprimeRouter base id 0x4D00
 
-  instance apidMapper: Svc.CCSDS.ApidMapper base id 0x4E00
+  instance apidManager: Svc.CCSDS.ApidManager base id 0x4E00
 
   instance comStub: Svc.ComStub base id 0x4F00
 

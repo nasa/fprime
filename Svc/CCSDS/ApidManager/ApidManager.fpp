@@ -1,26 +1,22 @@
 module Svc {
 module CCSDS {
-    @ Deframer for the CCSDS Space Packet protocol
-    passive component SpacePacketDeframer {
+    @ Maps output of ComQueue to CCSDS APIDs
+    passive component ApidManager {
 
-        include "../../Interfaces/DeframerInterface.fppi"
+        include "../../Interfaces/FramerInterface.fppi"
 
-        output port validateApidSeqCount: CCSDS.ApidSequenceCount
-
-        @ Deframing received an invalid frame length
-        event InvalidLength(transmitted: U16, actual: U32) \
-            severity warning high \
-            format "Invalid length received. Header specified packet length of {} | Actual received data length: {}"
+        guarded input port validateApidSeqCountIn: CCSDS.ApidSequenceCount
 
         @ Deframing received an unexpected sequence count
         event UnexpectedSequenceCount(transmitted: U16, expected: U16) \
             severity warning high \
             format "Unexpected sequence count received. Packets may have been lost. Transmitted: {} | Expected on board: {}"
 
-        @ Deframing received an unexpected sequence count
-        event UntrackedApid(apid: U16) \
+        @ Received an unregistered APID
+        event UntrackedApid(invalidApidValue: U16) \
             severity activity low \
             format "Received APID not registered with the deframer. Not checking sequence count. APID={}"
+
 
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #
@@ -33,17 +29,6 @@ module CCSDS {
 
         @ Port for sending events to downlink
         event port logOut
-
-        @ Port for sending telemetry channels to downlink
-        telemetry port tlmOut
-
-        @ Port to return the value of a parameter
-        param get port prmGetOut
-
-        @ Port to set the value of a parameter
-        param set port prmSetOut
-
     }
-
-} # end CCSDS
-} # end Svc
+}
+}

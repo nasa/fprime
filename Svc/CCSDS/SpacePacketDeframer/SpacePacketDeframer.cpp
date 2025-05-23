@@ -18,10 +18,10 @@ namespace CCSDS {
 
 SpacePacketDeframer ::SpacePacketDeframer(const char* const compName) : SpacePacketDeframerComponentBase(compName) {
     // Initialize the APID sequence table with APID values that need to be counted (order does not matter)
-    this->m_apidSequences[0].apid = ComCfg::APID::FW_PACKET_COMMAND;
-    this->m_apidSequences[2].apid = ComCfg::APID::FW_PACKET_FILE;
-    this->m_apidSequences[3].apid = ComCfg::APID::FW_PACKET_PACKETIZED_TLM;
-    this->m_apidSequences[4].apid = ComCfg::APID::FW_PACKET_UNKNOWN;
+    // this->m_apidSequences[0].apid = ComCfg::APID::FW_PACKET_COMMAND;
+    // this->m_apidSequences[2].apid = ComCfg::APID::FW_PACKET_FILE;
+    // this->m_apidSequences[3].apid = ComCfg::APID::FW_PACKET_PACKETIZED_TLM;
+    // this->m_apidSequences[4].apid = ComCfg::APID::FW_PACKET_UNKNOWN;
 }
 
 SpacePacketDeframer ::~SpacePacketDeframer() {}
@@ -64,16 +64,8 @@ void SpacePacketDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data,
         return;
     }
     U16 receivedSequenceCount = header.getpacketSequenceControl() & SpacePacketMasks::SeqCountMask;
-    U16 expectedSequenceCount = this->getAndIncrementSeqCount(apid);
-    if (expectedSequenceCount == SEQUENCE_COUNT_ERROR) {
-        // This APID is not being tracked
-        this->log_ACTIVITY_LO_UntrackedApid(apidValue);
-    } else if (receivedSequenceCount != expectedSequenceCount) {
-        // Likely a packet was dropped or out of order
-        this->log_WARNING_HI_UnexpectedSequenceCount(receivedSequenceCount, expectedSequenceCount);
-        // Synchronize onboard count with received number so that count can keep going
-        this->setNextSeqCount(apid, receivedSequenceCount + 1);
-    }
+    // Validate with the ApidManager that the sequence count is correct
+    (void) this->validateApidSeqCount_out(0, apid, receivedSequenceCount);
     contextCopy.setsequenceCount(receivedSequenceCount);
 
     // Set data buffer to be of the encapsulated data: HEADER (6 bytes) | PACKET DATA
@@ -93,26 +85,26 @@ void SpacePacketDeframer ::dataReturnIn_handler(FwIndexType portNum,
 // Helpers
 // ----------------------------------------------------------------------
 
-U16 SpacePacketDeframer::getAndIncrementSeqCount(ComCfg::APID::T apid) {
-    for (U8 i = 0; i < MAX_TRACKED_APIDS; ++i) {
-        if (m_apidSequences[i].apid == apid) {
-            U16 seq = m_apidSequences[i].sequenceCount;
-            m_apidSequences[i].sequenceCount = (seq + 1) % (1 << 14);  // Wrap around at 14 bits
-            printf("APID: %d, SeqCount: %d\n", apid, seq);
-            return seq;
-        }
-    }
-    return SEQUENCE_COUNT_ERROR; // error value - this value is never returned with wraparound
-}
+// U16 SpacePacketDeframer::getAndIncrementSeqCount(ComCfg::APID::T apid) {
+//     for (U8 i = 0; i < MAX_TRACKED_APIDS; ++i) {
+//         if (m_apidSequences[i].apid == apid) {
+//             U16 seq = m_apidSequences[i].sequenceCount;
+//             m_apidSequences[i].sequenceCount = (seq + 1) % (1 << 14);  // Wrap around at 14 bits
+//             printf("APID: %d, SeqCount: %d\n", apid, seq);
+//             return seq;
+//         }
+//     }
+//     return SEQUENCE_COUNT_ERROR; // error value - this value is never returned with wraparound
+// }
 
-void SpacePacketDeframer::setNextSeqCount(ComCfg::APID::T apid, U16 seqCount) {
-    for (U8 i = 0; i < MAX_TRACKED_APIDS; i++) {
-        if (m_apidSequences[i].apid == apid) {
-            m_apidSequences[i].sequenceCount = seqCount;
-            return;
-        }
-    }
-}
+// void SpacePacketDeframer::setNextSeqCount(ComCfg::APID::T apid, U16 seqCount) {
+//     for (U8 i = 0; i < MAX_TRACKED_APIDS; i++) {
+//         if (m_apidSequences[i].apid == apid) {
+//             m_apidSequences[i].sequenceCount = seqCount;
+//             return;
+//         }
+//     }
+// }
 
 }  // namespace CCSDS
 }  // namespace Svc

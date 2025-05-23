@@ -1,8 +1,8 @@
-# Svc::CCSDS::ApidMapper
+# Svc::CCSDS::ApidManager
 
 ## 1. Overview
 
-The `ApidMapper` component is a passive F´ component that maps the descriptor type (ComPacketType/APID) found in the first two bytes of a data buffer to a CCSDS Space Packet APID. It also tracks and manages a sequence count for each APID, as required by the CCSDS protocol. This enables downstream components to generate correct CCSDS Space Packets with the appropriate APID and sequence count.
+The `ApidManager` component is a passive F´ component that maps the descriptor type (ComPacketType/APID) found in the first two bytes of a data buffer to a CCSDS Space Packet APID. It also tracks and manages a sequence count for each APID, as required by the CCSDS protocol. This enables downstream components to generate correct CCSDS Space Packets with the appropriate APID and sequence count.
 
 ## 2. Requirements
 
