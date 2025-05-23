@@ -5,13 +5,13 @@ This directory contains a library of basic data structures.
 ## 1. Arrays
 
 An **array** _A_ stores _n_ elements for _n > 0_ at indices
-0, 1, ... _n - 1_.
+0, 1, ..., _n - 1_.
 The elements are stored in **backing memory** _M_.
 An array provides bounds-checked access to the array elements.
 
 ### 1.1. Array
 
-`Array` is a class template representing an array
+`Array` is a `final` class template representing an array
 with internal storage.
 It maintains the backing memory _M_ as a member variable.
 
@@ -75,7 +75,23 @@ _Example:_
 Array<U32, 3> a(10);
 ```
 
-**Destructor (implicitly declared):**
+**Copy constructor:**
+
+```c++
+Array(const Array<S,T>& a)
+```
+
+Construct an array _A_ of type `T` and size `S`.
+Initialize the elements of `m_elements` with the
+elements of `a.m_elements`.
+
+_Example:_
+```c++
+Array<U32, 3> a1(10);
+Array<U32, 3> a2(a1);
+```
+
+**Destructor:**
 
 ```c++
 ~Array()
@@ -97,8 +113,10 @@ If the assertion is true, then it returns a reference to `m_elements[i]`.
 
 _Example:_
 ```c++
-const U32 x = a[0];
+Array<U32, 10> a;
+ASSERT_EQ(a[0], 0);
 a[0]++;
+ASSERT_EQ(a[0], 1);
 ```
 
 **operator=:**
