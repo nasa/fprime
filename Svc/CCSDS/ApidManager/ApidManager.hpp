@@ -15,7 +15,7 @@ namespace CCSDS {
 
 class ApidManager final : public ApidManagerComponentBase {
 
-    static constexpr U8 MAX_TRACKED_APIDS = 10;
+    static constexpr U8 MAX_TRACKED_APIDS = ComCfg::APID::NUM_CONSTANTS;
     static constexpr U16 SEQUENCE_COUNT_ERROR = std::numeric_limits<U16>::max();
 
   public:

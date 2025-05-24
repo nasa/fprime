@@ -23,8 +23,8 @@ module ComCfg {
         FW_PACKET_IDLE           = 0x0006  @< F Prime idle
         FW_PACKET_HAND           = 0x00FE  @< F Prime handshake
         FW_PACKET_UNKNOWN        = 0x00FF  @< F Prime unknown packet
-        # SPP_FILE_UPLINK          = 0x0101  @< APID for File packets on uplink
         SPP_FILE_DOWNLINK        = 0x0103  @< Extra APID for File packets on downlink so APID isn't shared between uplink and downlink
+        MY_USER_APID_EXAMPLE     = 0x0777  @< Example APID for user defined packets
         SPP_IDLE_PACKET          = 0x07FF  @< Per Space Packet Standard, all 1s (11bits) is reserved for Idle Packets
     } default FW_PACKET_UNKNOWN
 

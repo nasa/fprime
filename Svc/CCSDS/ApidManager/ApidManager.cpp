@@ -16,16 +16,15 @@ namespace CCSDS {
 
 ApidManager ::ApidManager(const char* const compName) : ApidManagerComponentBase(compName) {
     // Initialize the APID sequence table with APID values that need to be counted (order does not matter)
-    // this->m_apidSequences[0].apid = ComCfg::APID::FW_PACKET_LOG;
+    this->m_apidSequences[0].apid = ComCfg::APID::FW_PACKET_LOG;
     this->m_apidSequences[1].apid = ComCfg::APID::FW_PACKET_TELEM;
     this->m_apidSequences[2].apid = ComCfg::APID::FW_PACKET_FILE;
     this->m_apidSequences[3].apid = ComCfg::APID::FW_PACKET_PACKETIZED_TLM;
     this->m_apidSequences[4].apid = ComCfg::APID::FW_PACKET_UNKNOWN;
     this->m_apidSequences[5].apid = ComCfg::APID::FW_PACKET_COMMAND;
     this->m_apidSequences[6].apid = ComCfg::APID::SPP_FILE_DOWNLINK;
-    // TODO: Why does it work without specifying the downlink file APID ?
-    // and add DP ??
-
+    this->m_apidSequences[7].apid = ComCfg::APID::FW_PACKET_DP;
+    this->m_apidSequences[8].apid = ComCfg::APID::MY_USER_APID_EXAMPLE;
 }
 
 ApidManager ::~ApidManager() {}
@@ -79,7 +78,7 @@ void ApidManager ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const C
 
     contextCopy.setapid(static_cast<ComCfg::APID::T>(apid));
     contextCopy.setsequenceCount(this->getAndIncrementSeqCount(static_cast<ComCfg::APID::T>(apid)));
-    // printf("APID: %d, SeqCount: %d\n", apid, contextCopy.getsequenceCount());
+    // TODO: assert if sequence count is error since that means it is a coding error: APID was not registered ??
 
     // Forward the buffer and context to the output port
     this->dataOut_out(0, data, contextCopy);

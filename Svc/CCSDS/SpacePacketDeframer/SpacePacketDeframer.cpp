@@ -81,30 +81,5 @@ void SpacePacketDeframer ::dataReturnIn_handler(FwIndexType portNum,
     this->dataReturnOut_out(0, data, context);
 }
 
-// ----------------------------------------------------------------------
-// Helpers
-// ----------------------------------------------------------------------
-
-// U16 SpacePacketDeframer::getAndIncrementSeqCount(ComCfg::APID::T apid) {
-//     for (U8 i = 0; i < MAX_TRACKED_APIDS; ++i) {
-//         if (m_apidSequences[i].apid == apid) {
-//             U16 seq = m_apidSequences[i].sequenceCount;
-//             m_apidSequences[i].sequenceCount = (seq + 1) % (1 << 14);  // Wrap around at 14 bits
-//             printf("APID: %d, SeqCount: %d\n", apid, seq);
-//             return seq;
-//         }
-//     }
-//     return SEQUENCE_COUNT_ERROR; // error value - this value is never returned with wraparound
-// }
-
-// void SpacePacketDeframer::setNextSeqCount(ComCfg::APID::T apid, U16 seqCount) {
-//     for (U8 i = 0; i < MAX_TRACKED_APIDS; i++) {
-//         if (m_apidSequences[i].apid == apid) {
-//             m_apidSequences[i].sequenceCount = seqCount;
-//             return;
-//         }
-//     }
-// }
-
 }  // namespace CCSDS
 }  // namespace Svc
