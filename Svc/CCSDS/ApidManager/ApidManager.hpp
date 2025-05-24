@@ -35,30 +35,13 @@ class ApidManager final : public ApidManagerComponentBase {
     // Handler implementations for typed input ports
     // ----------------------------------------------------------------------
 
-    //! Handler implementation for comStatusIn
-    //!
-    //! Port receiving the general status from the downstream component
-    //! indicating it is ready or not-ready for more input
-    void comStatusIn_handler(FwIndexType portNum,    //!< The port number
-                             Fw::Success& condition  //!< Condition success/failure
-                             ) override;
-
-    //! Handler implementation for dataIn
-    //!
-    //! Port to receive data to frame, in a Fw::Buffer with optional context
-    void dataIn_handler(FwIndexType portNum,  //!< The port number
-                        Fw::Buffer& data,
-                        const ComCfg::FrameContext& context) override;
-
-    //! Handler implementation for dataReturnIn
-    //!
-    //! Buffer coming from a deallocate call in a ComDriver component
-    void dataReturnIn_handler(FwIndexType portNum,  //!< The port number
-                              Fw::Buffer& data,
-                              const ComCfg::FrameContext& context) override;
+    //! Handler implementation for validateApidSeqCountIn
+    U16 validateApidSeqCountIn_handler(FwIndexType portNum,  //!< The port number
+                                  const ComCfg::APID& apid,
+                                  U16 seqCount) override;
 
     //! Handler implementation for validateApidSeqCountIn
-    Fw::Success validateApidSeqCountIn_handler(FwIndexType portNum,  //!< The port number
+    U16 getApidSeqCountIn_handler(FwIndexType portNum,  //!< The port number
                                   const ComCfg::APID& apid,
                                   U16 seqCount) override;
   private:

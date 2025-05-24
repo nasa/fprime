@@ -33,59 +33,27 @@ ApidManager ::~ApidManager() {}
 // Handler implementations for typed input ports
 // ----------------------------------------------------------------------
 
-void ApidManager ::comStatusIn_handler(FwIndexType portNum, Fw::Success& condition) {
-    if (this->isConnected_comStatusOut_OutputPort(portNum)) {
-        this->comStatusOut_out(portNum, condition);
-    }
-}
-
-Fw::Success ApidManager ::validateApidSeqCountIn_handler(FwIndexType portNum, const ComCfg::APID& apid, U16 receivedSeqCount) {
-    // ComCfg::APID::T apidValue = static_cast<ComCfg::APID::T>(apid);
-    Fw::Success status = Fw::Success::SUCCESS;
+U16 ApidManager ::validateApidSeqCountIn_handler(FwIndexType portNum, const ComCfg::APID& apid, U16 receivedSeqCount) {
     U16 expectedSequenceCount = this->getAndIncrementSeqCount(apid);
     if (expectedSequenceCount == SEQUENCE_COUNT_ERROR) {
         // This APID is not being tracked
         this->log_ACTIVITY_LO_UntrackedApid(apid);
-        status = Fw::Success::FAILURE;
     } else if (receivedSeqCount != expectedSequenceCount) {
         // Likely a packet was dropped or out of order
         this->log_WARNING_HI_UnexpectedSequenceCount(receivedSeqCount, expectedSequenceCount);
         // Synchronize onboard count with received number so that count can keep going
         this->setNextSeqCount(apid, receivedSeqCount + 1);
-        status = Fw::Success::FAILURE;
     }
-    return status;
+    return receivedSeqCount;
 }
 
-void ApidManager ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
-    ComCfg::FrameContext contextCopy = context;
-
-    // Deserialize Packet Descriptor to map to an APID
-    auto deserializer = data.getDeserializer();
-    FwPacketDescriptorType descriptorValue = 0;
-    Fw::SerializeStatus status = deserializer.deserialize(descriptorValue);
-    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
-    ComCfg::APID::T apid;
-    if (descriptorValue == ComCfg::APID::FW_PACKET_FILE) {
-        // If descriptor is a file packet, set APID to the file downlink APID
-        // This is because we don't want to use FW_PACKET_FILE as the APID so
-        // the APID isn't shared between uplink and downlink
-        apid = ComCfg::APID::SPP_FILE_DOWNLINK;
-    } else {
-        // Else, map one-to-one: Descriptor value is APID value
-        apid = static_cast<ComCfg::APID::T>(descriptorValue);
+U16 ApidManager ::getApidSeqCountIn_handler(FwIndexType portNum, const ComCfg::APID& apid, U16 unused) {
+    U16 expectedSequenceCount = this->getAndIncrementSeqCount(apid);
+    if (expectedSequenceCount == SEQUENCE_COUNT_ERROR) {
+        // This APID is not being tracked
+        this->log_ACTIVITY_LO_UntrackedApid(apid);
     }
-
-    contextCopy.setapid(static_cast<ComCfg::APID::T>(apid));
-    contextCopy.setsequenceCount(this->getAndIncrementSeqCount(static_cast<ComCfg::APID::T>(apid)));
-    // TODO: assert if sequence count is error since that means it is a coding error: APID was not registered ??
-
-    // Forward the buffer and context to the output port
-    this->dataOut_out(0, data, contextCopy);
-}
-
-void ApidManager ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
-    this->dataReturnOut_out(portNum, data, context);
+    return expectedSequenceCount;
 }
 
 // ----------------------------------------------------------------------

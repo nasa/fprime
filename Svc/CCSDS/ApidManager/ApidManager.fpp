@@ -2,10 +2,9 @@ module Svc {
 module CCSDS {
     @ Maps output of ComQueue to CCSDS APIDs
     passive component ApidManager {
-
-        include "../../Interfaces/FramerInterface.fppi"
-
         guarded input port validateApidSeqCountIn: CCSDS.ApidSequenceCount
+
+        guarded input port getApidSeqCountIn: CCSDS.ApidSequenceCount
 
         @ Deframing received an unexpected sequence count
         event UnexpectedSequenceCount(transmitted: U16, expected: U16) \

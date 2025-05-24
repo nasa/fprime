@@ -8,6 +8,8 @@ module CCSDS {
         output port bufferAllocate: Fw.BufferGet
         output port bufferDeallocate: Fw.BufferSend
 
+        output port getApidSeqCount: CCSDS.ApidSequenceCount
+
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #
         ###############################################################################

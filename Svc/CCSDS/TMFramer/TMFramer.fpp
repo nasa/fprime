@@ -5,9 +5,6 @@ module CCSDS {
 
         include "../../Interfaces/FramerInterface.fppi"
 
-        output port bufferAllocate: Fw.BufferGet
-        output port bufferDeallocate: Fw.BufferSend
-
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #
         ###############################################################################

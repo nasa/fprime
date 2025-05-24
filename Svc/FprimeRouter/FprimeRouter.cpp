@@ -26,10 +26,18 @@ FprimeRouter ::~FprimeRouter() {}
 
 void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer, const ComCfg::FrameContext& context) {
     Fw::SerializeStatus status;
-    // Route based on received APID
-    switch (context.getapid()) {
+    Fw::ComPacketType packetType = context.getapid();
+    // If APID is unknown (i.e. not provided), attempt to introspect the packet to determine the packet type
+    if (packetType == Fw::ComPacketType::FW_PACKET_UNKNOWN) {
+        FwPacketDescriptorType packetDescriptor;
+        auto esb = packetBuffer.getDeserializer();
+        status = esb.deserialize(packetDescriptor);
+        packetType = static_cast<Fw::ComPacketType>(packetDescriptor);
+    }
+    // Route based on received APID (packet type)
+    switch (packetType) {
         // Handle a command packet
-        case ComCfg::APID::FW_PACKET_COMMAND: {
+        case Fw::ComPacketType::FW_PACKET_COMMAND: {
             // Allocate a com buffer on the stack
             Fw::ComBuffer com;
             // Copy the contents of the packet buffer into the com buffer
@@ -44,7 +52,7 @@ void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer
             break;
         }
         // Handle a file packet
-        case ComCfg::APID::FW_PACKET_FILE: {
+        case Fw::ComPacketType::FW_PACKET_FILE: {
             // If the file uplink output port is connected, send the file packet. Otherwise take no action.
             if (this->isConnected_fileOut_OutputPort(0)) {
                 // Copy buffer into a new allocated buffer. This lets us return the original buffer with dataReturnOut,
