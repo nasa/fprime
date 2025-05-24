@@ -21,13 +21,13 @@ register_fprime_library(
 
 
 ### Unit Tests ###
-# set(UT_SOURCE_FILES
-#   "${CMAKE_CURRENT_LIST_DIR}/SpacePacketFramer.fpp"
-#   "${CMAKE_CURRENT_LIST_DIR}/test/ut/SpacePacketFramerTestMain.cpp"
-#   "${CMAKE_CURRENT_LIST_DIR}/test/ut/SpacePacketFramerTester.cpp"
-# )
-# set(UT_MOD_DEPS
-#   STest
-# )
-# set(UT_AUTO_HELPERS ON)
-# register_fprime_ut()
+register_fprime_ut(
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/SpacePacketFramerTestMain.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/SpacePacketFramerTester.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/SpacePacketFramer.fpp"
+  DEPENDS
+    STest
+  UT_AUTO_HELPERS
+)
