@@ -6,17 +6,17 @@
 
 #include "TMFramerTester.hpp"
 
-TEST(Nominal, testComStatusPassthrough) {
+TEST(TMFramer, testComStatusPassthrough) {
     Svc::CCSDS::TMFramerTester tester;
     tester.testComStatusPassthrough();
 }
 
-TEST(Nominal, testNominalFraming) {
+TEST(TMFramer, testNominalFraming) {
     Svc::CCSDS::TMFramerTester tester;
     tester.testNominalFraming();
 }
 
-TEST(Nominal, testSeqCountWrapAround) {
+TEST(TMFramer, testSeqCountWrapAround) {
     Svc::CCSDS::TMFramerTester tester;
     tester.testSeqCountWrapAround();
 }

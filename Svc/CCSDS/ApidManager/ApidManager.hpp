@@ -8,6 +8,7 @@
 #define Svc_CCSDS_ApidManager_HPP
 
 #include "Svc/CCSDS/ApidManager/ApidManagerComponentAc.hpp"
+#include "Fw/Com/ComPacket.hpp"
 
 namespace Svc {
 
@@ -31,6 +32,8 @@ static_assert(ComCfg::APID::FW_PACKET_UNKNOWN == Fw::ComPacketType::FW_PACKET_UN
               "APID FW_PACKET_UNKNOWN must exist, used by the Framework");
 
 class ApidManager final : public ApidManagerComponentBase {
+    friend class ApidManagerTester;  //!< Friend class for testing
+
     static constexpr U8 MAX_TRACKED_APIDS = ComCfg::APID::NUM_CONSTANTS;
     static constexpr U16 SEQUENCE_COUNT_ERROR = std::numeric_limits<U16>::max();
 

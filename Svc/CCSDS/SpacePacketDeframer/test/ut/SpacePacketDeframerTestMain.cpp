@@ -6,17 +6,17 @@
 
 #include "SpacePacketDeframerTester.hpp"
 
-TEST(Nominal, testDataReturnPassthrough) {
+TEST(SpacePacketDeframer, testDataReturnPassthrough) {
     Svc::CCSDS::SpacePacketDeframerTester tester;
     tester.testDataReturnPassthrough();
 }
 
-TEST(Nominal, testNominalDeframing) {
+TEST(SpacePacketDeframer, testNominalDeframing) {
     Svc::CCSDS::SpacePacketDeframerTester tester;
     tester.testNominalDeframing();
 }
 
-TEST(Nominal, testDeframingIncorrectLength) {
+TEST(SpacePacketDeframer, testDeframingIncorrectLength) {
     Svc::CCSDS::SpacePacketDeframerTester tester;
     tester.testDeframingIncorrectLength();
 }

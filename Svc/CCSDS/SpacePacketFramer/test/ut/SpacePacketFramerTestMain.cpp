@@ -6,17 +6,17 @@
 
 #include "SpacePacketFramerTester.hpp"
 
-TEST(Nominal, testComStatusPassthrough) {
+TEST(SpacePacketFramer, testComStatusPassthrough) {
     Svc::CCSDS::SpacePacketFramerTester tester;
     tester.testComStatusPassthrough();
 }
 
-TEST(Nominal, testDataReturnPassthrough) {
+TEST(SpacePacketFramer, testDataReturnPassthrough) {
     Svc::CCSDS::SpacePacketFramerTester tester;
     tester.testDataReturnPassthrough();
 }
 
-TEST(Nominal, testNominalFraming) {
+TEST(SpacePacketFramer, testNominalFraming) {
     Svc::CCSDS::SpacePacketFramerTester tester;
     tester.testNominalFraming();
 }
