@@ -16,14 +16,9 @@ TEST(Nominal, testNominalDeframing) {
     tester.testNominalDeframing();
 }
 
-TEST(Nominal, testDeframingUntrackedApid) {
+TEST(Nominal, testDeframingIncorrectLength) {
     Svc::CCSDS::SpacePacketDeframerTester tester;
-    tester.testDeframingUntrackedApid();
-}
-
-TEST(Nominal, testDeframingIncorrectSeqCount) {
-    Svc::CCSDS::SpacePacketDeframerTester tester;
-    tester.testDeframingIncorrectSeqCount();
+    tester.testDeframingIncorrectLength();
 }
 
 int main(int argc, char** argv) {

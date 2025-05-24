@@ -12,10 +12,9 @@ module CCSDS {
             format "Unexpected sequence count received. Packets may have been lost. Transmitted: {} | Expected on board: {}"
 
         @ Received an unregistered APID
-        event UntrackedApid(invalidApidValue: U16) \
-            severity activity low \
-            format "Received APID not registered with the deframer. Not checking sequence count. APID={}"
-
+        event ApidTableFull(invalidApidValue: U16) \
+            severity warning high \
+            format "APID Table is full, cannot generate or check sequence counts for APID: {}"
 
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #

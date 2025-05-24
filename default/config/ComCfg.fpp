@@ -26,7 +26,8 @@ module ComCfg {
         SPP_FILE_DOWNLINK        = 0x0103  @< Extra APID for File packets on downlink so APID isn't shared between uplink and downlink
         MY_USER_APID_EXAMPLE     = 0x0777  @< Example APID for user defined packets
         SPP_IDLE_PACKET          = 0x07FF  @< Per Space Packet Standard, all 1s (11bits) is reserved for Idle Packets
-    } default FW_PACKET_UNKNOWN
+        INVALID_UNINITIALIZED    = 0x0800  @< Anything equal or higher value is invalid and should not be used
+    } default INVALID_UNINITIALIZED
 
     @ Type used to pass context info between components during framing/deframing
     struct FrameContext {

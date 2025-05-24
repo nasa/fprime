@@ -16,13 +16,7 @@ namespace CCSDS {
 // Component construction and destruction
 // ----------------------------------------------------------------------
 
-SpacePacketDeframer ::SpacePacketDeframer(const char* const compName) : SpacePacketDeframerComponentBase(compName) {
-    // Initialize the APID sequence table with APID values that need to be counted (order does not matter)
-    // this->m_apidSequences[0].apid = ComCfg::APID::FW_PACKET_COMMAND;
-    // this->m_apidSequences[2].apid = ComCfg::APID::FW_PACKET_FILE;
-    // this->m_apidSequences[3].apid = ComCfg::APID::FW_PACKET_PACKETIZED_TLM;
-    // this->m_apidSequences[4].apid = ComCfg::APID::FW_PACKET_UNKNOWN;
-}
+SpacePacketDeframer ::SpacePacketDeframer(const char* const compName) : SpacePacketDeframerComponentBase(compName) {}
 
 SpacePacketDeframer ::~SpacePacketDeframer() {}
 
@@ -52,20 +46,22 @@ void SpacePacketDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data,
     Fw::SerializeStatus status = data.getDeserializer().deserialize(header);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
+    U16 pkt_length = header.getpacketDataLength();
+    if (pkt_length > data.getSize() - SpacePacketHeader::SERIALIZED_SIZE) {
+        U32 maxDataAvailable = data.getSize() - SpacePacketHeader::SERIALIZED_SIZE;
+        this->log_WARNING_HI_InvalidLength(pkt_length, maxDataAvailable);
+        this->dataReturnOut_out(0, data, context);  // Drop the packet
+        return;
+    }
+
     U16 apidValue = header.getpacketIdentification() & SpacePacketMasks::ApidMask;
     ComCfg::APID::T apid = static_cast<ComCfg::APID::T>(apidValue);
     ComCfg::FrameContext contextCopy = context;
     contextCopy.setapid(apid);
 
-    U16 pkt_length = header.getpacketDataLength();
-    if (pkt_length > data.getSize()) {
-        this->log_WARNING_HI_InvalidLength(pkt_length, data.getSize());
-        this->dataReturnOut_out(0, data, context);  // Drop the packet
-        return;
-    }
-    U16 receivedSequenceCount = header.getpacketSequenceControl() & SpacePacketMasks::SeqCountMask;
     // Validate with the ApidManager that the sequence count is correct
-    (void) this->validateApidSeqCount_out(0, apid, receivedSequenceCount);
+    U16 receivedSequenceCount = header.getpacketSequenceControl() & SpacePacketMasks::SeqCountMask;
+    (void)this->validateApidSeqCount_out(0, apid, receivedSequenceCount);
     contextCopy.setsequenceCount(receivedSequenceCount);
 
     // Set data buffer to be of the encapsulated data: HEADER (6 bytes) | PACKET DATA

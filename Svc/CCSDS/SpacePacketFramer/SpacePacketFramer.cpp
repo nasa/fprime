@@ -49,6 +49,7 @@ void SpacePacketFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, c
     packetSequenceControl |= 0x3 << SpacePacketMasks::SeqFlagsOffset; // Sequence Flags 0b11 = unsegmented User Data
 
     U16 sequenceCount = this->getApidSeqCount_out(0, apid, 0); // retrieve the sequence count for this APID
+    // NOTE: this will assert if ApidManager's table is full - should it??
     FW_ASSERT((sequenceCount >> 14) == 0, static_cast<FwAssertArgType>(sequenceCount)); // sequence count must fit in 14 bits
     packetSequenceControl |= sequenceCount & SpacePacketMasks::SeqCountMask; // 14 bit sequence count
 
