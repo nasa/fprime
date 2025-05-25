@@ -29,6 +29,4 @@ register_fprime_config(
         "${CMAKE_CURRENT_LIST_DIR}/StaticMemoryConfig.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/TlmChanImplCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/TlmPacketizerCfg.hpp"
-    CHOOSES_IMPLEMENTATIONS
-        Fw_StringFormat_snprintf
 )
