@@ -123,7 +123,7 @@ def assert_process_success(data_object, errors_ok=False, targets=None):
     for target, output in filtered:
         return_code, stdout, stderr = output
         assert return_code == 0, f"CMake failed building '{target}'"
-        assert stdout, "CMake generated no standard out building '{target}'"
+        assert stdout, f"CMake generated no standard out building '{target}'"
 
 
 def get_build(
