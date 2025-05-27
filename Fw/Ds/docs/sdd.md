@@ -103,7 +103,7 @@ Array<U32, 3> a2(a1);
 ~Array()
 ```
 
-Destroy all the elements of `m_elements`.
+Destroy each element of `m_elements`.
 
 #### 1.1.4. Public Member Functions
 
@@ -130,7 +130,7 @@ ASSERT_EQ(a[0], 1);
 ASSERT_DEATH(a[10], "Assert");
 ```
 
-**operator= with array argument:**
+**Copy assignment operator:**
 
 ```c++
 Array<T, S>& operator=(const Array<T, S>& a)
@@ -235,6 +235,33 @@ U32 elements[10];
 ExternalArray a(elements, 10);
 ```
 
+**Copy constructor:**
+
+```c++
+ExternalArray(const ExternalArray<T>& a)
+```
+
+Set `m_elements = a.elements` and `m_size = a.size`.
+
+_Example:_
+```c++
+U32 elements[3];
+// Call the constructor providing backing storage
+ExternalArray<U32> a1(elements, 3);
+// Call the copy constructor
+ExternalArray<U32, 3> a2(a1);
+```
+
+**Destructor:**
+
+```c++
+~ExternalArray()
+```
+
+1. If `m_elements == nullptr` then do nothing.
+
+1. Otherwise destroy each element of `m_elements`.
+
 #### 1.2.4. Public Member Functions
 
 **operator[]:**
@@ -261,6 +288,24 @@ a[0]++;
 ASSERT_EQ(a[0], 1);
 // Out-of-bounds access
 ASSERT_DEATH(a[10], "Assert");
+```
+
+**Copy assignment operator:**
+
+```c++
+ExternalArray<T>& operator=(const ExternalArray<T>& a)
+```
+
+1. If `&a == this` then do nothing.
+
+1. Otherwise set `m_elements = a.elements` and `m_size = a.size`.
+
+_Example:_
+```c++
+U32 elements[10];
+ExternalArray<U32> a1(elements, 10);
+ExternalArray<U32> a2;
+a2 = a1;
 ```
 
 **getElements:**
