@@ -91,7 +91,9 @@ elements of `a.m_elements`.
 
 _Example:_
 ```c++
+// Call the single-item constructor
 Array<U32, 3> a1(10);
+// Call the copy constructor
 Array<U32, 3> a2(a1);
 ```
 
