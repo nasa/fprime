@@ -193,11 +193,18 @@ It stores a pointer to the backing memory _M_.
 
 #### 1.2.1. Template Parameters
 
-TODO
+`ExternalArray` has one template parameter:
+
+1. The type `typename T`
 
 #### 1.2.2. Private Member Variables
 
-TODO
+`ExternalArray` has the following private member variables.
+
+|Name|Type|Purpose|
+|----|----|-------|
+|`m_elements`|`T*`|Points to the backing memory|
+|`m_size`|`FwSizeType`|Stores the size (number of elements) of the array|
 
 #### 1.2.3. Public Constructors and Destructors
 
