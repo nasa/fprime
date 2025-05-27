@@ -31,7 +31,7 @@ It maintains the backing memory _M_ as a member variable.
 storing the array elements.
 It is a primitive C++ array of type `T[S]`.
 
-#### 1.1.3. Construction and Destruction
+#### 1.1.3. Public Constructors and Destructors
 
 **Zero-argument constructor:**
 
@@ -56,9 +56,12 @@ Array(const std::initializer_list<T>& il)
 
 1. Initialize `m_elements` from `il`.
 
-_Example:_
+_Examples:_
 ```c++
+// Explicit call to constructor
 Array<U32, 3> a({ 1, 2, 3 });
+// Implicit call to constructor via initialization
+Array<U32, 3> b = { 1, 2, 3 };
 ```
 
 **Single-item constructor:**
@@ -71,7 +74,10 @@ Initialize each element of `m_elements` with `elt`.
 
 _Example:_
 ```c++
+// Explicit call to constructor
 Array<U32, 3> a(10);
+// Implicit call to constructor via initialization
+Array<U32, 3> b = 10;
 ```
 
 **Copy constructor:**
