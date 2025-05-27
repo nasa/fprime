@@ -10,7 +10,6 @@
 #include <FpConfig.hpp>
 
 #include "Fw/Types/Assert.hpp"
-#include "Types/PointerAssert.hpp"
 
 namespace Ds {
 
@@ -64,27 +63,6 @@ class Array {
     ) {
         this->m_elements = elements;
         this->m_size = size;
-    }
-
-  public:
-    // ----------------------------------------------------------------------
-    // Public static functions
-    // ----------------------------------------------------------------------
-
-    //! Allocate storage for an array with element type T
-    //! \return The storage
-    static T* allocateStorage(Fw::MemAllocator& memAllocator,  //!< The mem allocator (input)
-                              FwEnumStoreType memId,           //!< The memory segment identifier (input)
-                              FwSizeType numElts,              //!< The number of array elements (input)
-                              bool& recoverable  //!< Whether the memory should be recoverable (input and output)
-    ) {
-        const NATIVE_UINT_TYPE requestedSize = static_cast<NATIVE_UINT_TYPE>(numElts * sizeof(T));
-        NATIVE_UINT_TYPE allocatedSize = requestedSize;
-        void* memory = memAllocator.allocate(static_cast<NATIVE_UINT_TYPE>(memId), allocatedSize, recoverable);
-        FW_ASSERT((memory != nullptr) && (allocatedSize == requestedSize), static_cast<FwAssertArgType>(memId),
-                  Ds_PTR_ASSERT_ARGS(memory), static_cast<FwAssertArgType>(requestedSize),
-                  static_cast<FwAssertArgType>(allocatedSize));
-        return static_cast<T*>(memory);
     }
 
   private:
