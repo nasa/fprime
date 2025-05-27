@@ -43,4 +43,15 @@ TEST(Array, SingleElementConstructor) {
     }
 }
 
+TEST(Array, Subscript) {
+    Array<U32, 3> a = {0, 1, 2};
+    // Constant access
+    ASSERT_EQ(a[1], 1);
+    // Mutable access
+    a[1]++;
+    ASSERT_EQ(a[1], 2);
+    // Out-of-bounds access
+    ASSERT_DEATH(a[3], "Assert");
+}
+
 }  // namespace Ds
