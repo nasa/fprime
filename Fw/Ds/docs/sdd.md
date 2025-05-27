@@ -130,7 +130,7 @@ ASSERT_EQ(a[0], 1);
 ASSERT_DEATH(a[10], "Assert");
 ```
 
-**operator=:**
+**operator= with array argument:**
 
 ```c++
 Array<T, S>& operator=(const Array<T, S>& a)
@@ -146,6 +146,37 @@ _Example:_
 Array<U32, 10> a1(1);
 Array<U32, 10> a2(2);
 a1 = a2;
+```
+
+**operator= with element type argument:**
+
+```c++
+Array<T, S>& operator=(const T& elt)
+```
+
+Overwrite each element of `m_elements` with `elt`.
+
+_Example:_
+```c++
+Array<U32, 10> a();
+a = 1;
+```
+
+**operator= with initializer list argument:**
+
+```c++
+Array<T, S>& operator=(const std::initializer_list<T>& il)
+```
+
+1. Assert that `il.size == S`.
+
+1. Overwrite each element of `m_elements` with the corresponding element of 
+   `il`.
+
+_Example:_
+```c++
+Array<U32, 3> a();
+a = { 1, 2, 3 };
 ```
 
 **getElements:**
