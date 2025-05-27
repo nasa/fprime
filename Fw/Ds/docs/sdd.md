@@ -67,10 +67,10 @@ Array<U32, 3> b = { 1, 2, 3 };
 **Single-item constructor:**
 
 ```c++
-explicit Array(const T& elt)
+explicit Array(const T& element)
 ```
 
-Initialize each element of `m_elements` with `elt`.
+Initialize each element of `m_elements` with `element`.
 
 _Example:_
 ```c++
@@ -201,18 +201,120 @@ It stores a pointer to the backing memory _M_.
 
 `ExternalArray` has the following private member variables.
 
-|Name|Type|Purpose|Initial Value|
+|Name|Type|Purpose|Default Value|
 |----|----|-------|-------------|
 |`m_elements`|`T*`|Points to the backing memory|`nullptr`|
 |`m_size`|`FwSizeType`|Stores the size (number of elements) of the array|0|
 
 #### 1.2.3. Public Constructors and Destructors
 
-TODO
+**Zero-argument constructor:**
+
+```c++
+ExternalArray()
+```
+
+Initialize the member variables with their default values.
+
+_Example:_
+```c++
+ExternalArray<U32> a;
+```
+
+**Constructor providing backing storage:**
+
+```c++
+ExternalArray(T* elements, FwSizeType size)
+```
+
+Initialize `m_elements` with `elements` and `m_size` with `size`.
+
+_Example:_
+```c++
+U32 elements[10];
+ExternalArray a(elements, 10);
+```
 
 #### 1.2.4. Public Member Functions
 
-TODO
+**operator[]:**
+
+```c++
+T& operator[](FwSizeType i)
+const T& operator[](FwSizeType i) const
+```
+
+1. Assert that `m_elements != nullptr`.
+
+1. Assert that `i < m_size`.
+
+1. Return a reference to `m_elements[i]`.
+
+_Example:_
+```c++
+U32 elements[10];
+ExternalArray<U32>(a, 10);
+// Constant access
+ASSERT_EQ(a[0], 0);
+// Mutable access
+a[0]++;
+ASSERT_EQ(a[0], 1);
+// Out-of-bounds access
+ASSERT_DEATH(a[10], "Assert");
+```
+
+**getElements:**
+
+```c++
+T* getElements()
+const T* getElements() const
+```
+
+Return `m_elements`.
+
+_Example:_
+```c++
+U32 elements[10];
+ExternalArray<U32> a(elements, 10);
+// Mutable pointer
+auto& elements1 = a.getElements();
+ASSERT_EQ(elements1[0], 0);
+elements1[0] = 1;
+// Constant pointer
+const auto& elements2 = a.getElements();
+ASSERT_EQ(elements2[0], 1);
+```
+
+**getSize:**
+
+```c++
+FwSizeType getSize()
+```
+
+Return `m_size`.
+
+_Example:_
+```c++
+U32 elements[10];
+ExternalArray<U32> a(elements, 10);
+const auto size = a.getSize();
+ASSERT_EQ(size, 10);
+```
+
+**setStorage:**
+
+```c++
+void setStorage(T* elements, FwSizeType size)
+```
+
+Set `m_elements = elements` and `m_size = size`.
+
+_Example:_
+```c++
+ExternalArray<U32> a;
+U32 elements[10];
+a.setStorage(elements, 10);
+```
 
 ## 2. Queues
 
