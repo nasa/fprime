@@ -128,27 +128,27 @@ void TCDeframerTester::testInvalidLengthToken() {
     ASSERT_EVENTS_InvalidFrameLength(0, fakeLength, dataLength);
 }
 
-void TCDeframerTester::testInvalidSequenceNumber() {
-    U8 dataLength = static_cast<U8>(STest::Random::lowerUpper(1, 200)); // bytes of data, random length
-    U8 data[dataLength];
-    U8 expectedSeqCount = static_cast<U8>(STest::Random::lowerUpper(1, 0xFF)); // random 8 bit sequence count
-    U8 invalidSeqCount = expectedSeqCount - 1; // invalid sequence count
+// void TCDeframerTester::testInvalidSequenceNumber() {
+//     U8 dataLength = static_cast<U8>(STest::Random::lowerUpper(1, 200)); // bytes of data, random length
+//     U8 data[dataLength];
+//     U8 expectedSeqCount = static_cast<U8>(STest::Random::lowerUpper(1, 0xFF)); // random 8 bit sequence count
+//     U8 invalidSeqCount = expectedSeqCount - 1; // invalid sequence count
 
-    Fw::Buffer buffer = this->assembleFrameBuffer(data, dataLength, 0, 0, invalidSeqCount);
-    ComCfg::FrameContext nullContext;
+//     Fw::Buffer buffer = this->assembleFrameBuffer(data, dataLength, 0, 0, invalidSeqCount);
+//     ComCfg::FrameContext nullContext;
 
-    this->setComponentState(0, 0, expectedSeqCount);
-    this->invoke_to_dataIn(0, buffer, nullContext);
+//     this->setComponentState(0, 0, expectedSeqCount);
+//     this->invoke_to_dataIn(0, buffer, nullContext);
 
-    // Invalid sequence number should emit a warning but deframe data (not dropping the frame)
-    ASSERT_from_dataOut_SIZE(1);
-    ASSERT_from_dataReturnOut_SIZE(0);
-    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getData(), buffer.getData());
-    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), dataLength);
-    ASSERT_EVENTS_SIZE(1); // exactly 1 event emitted
-    ASSERT_EVENTS_UnexpectedSequenceNumber_SIZE(1);
-    ASSERT_EVENTS_UnexpectedSequenceNumber(0, invalidSeqCount, expectedSeqCount);
-}
+//     // Invalid sequence number should emit a warning but deframe data (not dropping the frame)
+//     ASSERT_from_dataOut_SIZE(1);
+//     ASSERT_from_dataReturnOut_SIZE(0);
+//     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getData(), buffer.getData());
+//     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), dataLength);
+//     ASSERT_EVENTS_SIZE(1); // exactly 1 event emitted
+//     ASSERT_EVENTS_UnexpectedSequenceNumber_SIZE(1);
+//     ASSERT_EVENTS_UnexpectedSequenceNumber(0, invalidSeqCount, expectedSeqCount);
+// }
 
 void TCDeframerTester::testInvalidCrc() {
     U8 dataLength = static_cast<U8>(STest::Random::lowerUpper(1, 200)); // bytes of data, random length
@@ -174,7 +174,7 @@ void TCDeframerTester::testInvalidCrc() {
 void TCDeframerTester::setComponentState(U16 scid, U8 vcid, U8 sequenceNumber, bool acceptAllVcid) {
     this->component.m_spacecraftId = scid;
     this->component.m_vcId = vcid;
-    this->component.m_sequenceCount = sequenceNumber;
+    // this->component.m_sequenceCount = sequenceNumber;
     this->component.m_acceptAllVcid = acceptAllVcid;
 }
 

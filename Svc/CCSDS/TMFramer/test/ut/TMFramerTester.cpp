@@ -58,7 +58,7 @@ void TMFramerTester ::testNominalFraming() {
     ASSERT_from_dataOut_SIZE(1);
     Fw::Buffer outBuffer = this->fromPortHistory_dataOut->at(0).data;
     ComCfg::FrameContext outContext = this->fromPortHistory_dataOut->at(0).context;
-    ASSERT_EQ(outBuffer.getSize(), ComCfg::FppConstant_TmFrameFixedSize::TmFrameFixedSize);
+    ASSERT_EQ(outBuffer.getSize(), ComCfg::TmFrameFixedSize);
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.getvcId(), defaultContext.getvcId());
 
     U16 outScId = this->getFrameScId(outBuffer.getData());
@@ -66,7 +66,7 @@ void TMFramerTester ::testNominalFraming() {
     U8 outMcCount = this->getFrameMcCount(outBuffer.getData());
     U8 outVcCount = this->getFrameVcCount(outBuffer.getData());
 
-    ASSERT_EQ(outScId, ComCfg::FppConstant_SpacecraftId::SpacecraftId);
+    ASSERT_EQ(outScId, ComCfg::SpacecraftId);
     ASSERT_EQ(outVcId, defaultContext.getvcId());
     ASSERT_EQ(outMcCount, 0);
     ASSERT_EQ(outVcCount, 0);
@@ -77,7 +77,7 @@ void TMFramerTester ::testNominalFraming() {
     FwSizeType expectedIdleDataOffset = TMFrameHeader::SERIALIZED_SIZE + sizeof(bufferData) + SpacePacketHeader::SERIALIZED_SIZE;
 
     // The frame is composed of the payload + a SpacePacket Idle Packet (Header + idle_pattern)
-    for (FwSizeType i = expectedIdleDataOffset; i < ComCfg::FppConstant_TmFrameFixedSize::TmFrameFixedSize - TMFrameTrailer::SERIALIZED_SIZE; ++i) {
+    for (FwSizeType i = expectedIdleDataOffset; i < ComCfg::TmFrameFixedSize - TMFrameTrailer::SERIALIZED_SIZE; ++i) {
         ASSERT_EQ(outBuffer.getData()[i], 0x44);
     }
 }

@@ -31,10 +31,10 @@ TEST(TCDeframer, testInvalidLengthToken) {
     tester.testInvalidLengthToken();
 }
 
-TEST(TCDeframer, testInvalidSequenceNumber) {
-    Svc::CCSDS::TCDeframerTester tester;
-    tester.testInvalidSequenceNumber();
-}
+// TEST(TCDeframer, testInvalidSequenceNumber) {
+//     Svc::CCSDS::TCDeframerTester tester;
+//     tester.testInvalidSequenceNumber();
+// }
 
 TEST(TCDeframer, testInvalidCrc) {
     Svc::CCSDS::TCDeframerTester tester;

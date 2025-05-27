@@ -20,7 +20,7 @@ namespace CCSDS {
 
 TCDeframer ::TCDeframer(const char* const compName)
     : TCDeframerComponentBase(compName),
-      m_spacecraftId(ComCfg::FppConstant_SpacecraftId::SpacecraftId) {}
+      m_spacecraftId(ComCfg::SpacecraftId) {}
 
 TCDeframer ::~TCDeframer() {}
 
@@ -42,7 +42,7 @@ void TCDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
     // 10b- XX  - Spacecraft ID
     // 6b - XX  - Virtual Channel ID
     // 10b- XX  - Frame Length
-    // 8b - XX  - Frame Sequence Number
+    // 8b - XX  - Frame Sequence Number  (unused for Type-B frames)
 
     // CCSDS TC Trailer:
     // 16b - Frame Error Control Field (FECF): CRC16

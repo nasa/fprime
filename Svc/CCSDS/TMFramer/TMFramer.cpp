@@ -31,7 +31,7 @@ TMFramer ::~TMFramer() {}
 
 void TMFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
     // TODO: make this an event probably
-    FW_ASSERT(data.getSize() <= ComCfg::FppConstant_TmFrameFixedSize::TmFrameFixedSize,
+    FW_ASSERT(data.getSize() <= ComCfg::TmFrameFixedSize,
               static_cast<FwAssertArgType>(data.getSize()));
 
     // -----------------------------------------------
@@ -40,7 +40,7 @@ void TMFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
     TMFrameHeader header;
 
     U16 globalVcId = 0;
-    globalVcId |= ComCfg::FppConstant_SpacecraftId::SpacecraftId << TMFrameMasks::spacecraftIdOffset;
+    globalVcId |= ComCfg::SpacecraftId << TMFrameMasks::spacecraftIdOffset;
     globalVcId |= context.getvcId() << TMFrameMasks::virtualChannelIdOffset;
     globalVcId |= 0x0;  // Operational Control Field: Flag set to 0
 
@@ -85,7 +85,7 @@ void TMFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
     // Set the Frame Error Control Field (FECF)
     trailer.setfecf(crc);
     // Move the serializer pointer to the end of the location where the trailer will be serialized
-    frameSerializer.moveSerToOffset(ComCfg::FppConstant_TmFrameFixedSize::TmFrameFixedSize -
+    frameSerializer.moveSerToOffset(ComCfg::TmFrameFixedSize -
                                     TMFrameTrailer::SERIALIZED_SIZE);
     status = frameSerializer.serialize(trailer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
@@ -111,7 +111,7 @@ void TMFramer ::dataReturnIn_handler(FwIndexType portNum,
 }
 
 void TMFramer ::fill_with_idle_packet(Fw::SerializeBufferBase& serializer) {
-    constexpr U16 endIndex = ComCfg::FppConstant_TmFrameFixedSize::TmFrameFixedSize -
+    constexpr U16 endIndex = ComCfg::TmFrameFixedSize -
                            TMFrameTrailer::SERIALIZED_SIZE;
     constexpr U16 idleApid = static_cast<U16>(ComCfg::APID::SPP_IDLE_PACKET);
     const U16 startIndex = static_cast<U16>(serializer.getBuffLength());
@@ -119,7 +119,7 @@ void TMFramer ::fill_with_idle_packet(Fw::SerializeBufferBase& serializer) {
 
     FW_ASSERT(idlePacketLength > 0, static_cast<FwAssertArgType>(idlePacketLength));
     FW_ASSERT(idlePacketLength >= 7, static_cast<FwAssertArgType>(idlePacketLength)); // 7 bytes minimum for idle packet
-    FW_ASSERT(idlePacketLength <= ComCfg::FppConstant_TmFrameFixedSize::TmFrameFixedSize,
+    FW_ASSERT(idlePacketLength <= ComCfg::TmFrameFixedSize,
               static_cast<FwAssertArgType>(idlePacketLength));
 
     SpacePacketHeader header;
