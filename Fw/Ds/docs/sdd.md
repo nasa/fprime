@@ -121,10 +121,13 @@ const T& operator[](FwSizeType i) const
 _Example:_
 ```c++
 Array<U32, 10> a;
+// Constant access
 ASSERT_EQ(a[0], 0);
+// Mutable access
 a[0]++;
 ASSERT_EQ(a[0], 1);
-ASSERT_DEATH(a[11], "Assert");
+// Out-of-bounds access
+ASSERT_DEATH(a[10], "Assert");
 ```
 
 **operator=:**
@@ -157,9 +160,11 @@ Return a reference to `m_elements`.
 _Example:_
 ```c++
 Array<U32, 10> a;
+// Mutable reference
 auto& elements1 = a.getElements();
 ASSERT_EQ(elements1[0], 0);
 elements1[0] = 1;
+// Constant reference
 const auto& elements2 = a.getElements();
 ASSERT_EQ(elements2[0], 1);
 ```
