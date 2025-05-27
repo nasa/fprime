@@ -27,29 +27,23 @@ class Array final {
     Array() {}
 
     //! Initializer list constructor
-    Array(const std::initializer_list<T>& il) {
-        FW_ASSERT(il.size() == S, static_cast<FwAssertArgType>(il.size()), static_cast<FwAssertArgType>(S));
-        // TODO
-    }
-
-#if 0
-  public:
-    // ----------------------------------------------------------------------
-    // Public operators
-    // ----------------------------------------------------------------------
-
-    //! Subscript operator
-    T& operator[](const FwSizeType i  //!< The subscript index
+    Array(const std::initializer_list<T>& il  //!< The initializer list
     ) {
-        FW_ASSERT(i < this->m_size, static_cast<FwAssertArgType>(i));
-        return this->m_elements[i];
+        FW_ASSERT(il.size() == S, static_cast<FwAssertArgType>(il.size()), static_cast<FwAssertArgType>(S));
+        FwSizeType i = 0;
+        for (const auto& e : il) {
+            FW_ASSERT(i < S);
+            this->m_elements[i] = e;
+            i++;
+        }
     }
 
-    //! Const subscript operator
-    const T& operator[](const FwSizeType i  //!< The subscript index
-    ) const {
-        FW_ASSERT(i < this->m_size, static_cast<FwAssertArgType>(i));
-        return this->m_elements[i];
+    //! Single-element constructor
+    explicit Array(const T& element  //!< The element
+    ) {
+        for (FwSizeType i = 0; i < S; i++) {
+            this->m_elements[i] = element;
+        }
     }
 
   public:
@@ -57,22 +51,24 @@ class Array final {
     // Public member functions
     // ----------------------------------------------------------------------
 
+    //! Subscript operator
+    T& operator[](const FwSizeType i  //!< The subscript index
+    ) {
+        FW_ASSERT(i < S, static_cast<FwAssertArgType>(i));
+        return this->m_elements[i];
+    }
+
+    //! Const subscript operator
+    const T& operator[](const FwSizeType i  //!< The subscript index
+    ) const {
+        FW_ASSERT(i < S, static_cast<FwAssertArgType>(i));
+        return this->m_elements[i];
+    }
+
+#if 0
     //! Get the size
     //! \return The size
     FwSizeType getSize() const { return this->m_size; }
-
-    //! Set the backing storage
-    void setStorage(T* const elements,     //!< The array elements
-                    const FwSizeType size  //!< The size
-    ) {
-        this->m_elements = elements;
-        this->m_size = size;
-    }
-
-  public:
-    // ----------------------------------------------------------------------
-    // Public static functions
-    // ----------------------------------------------------------------------
 #endif
 
   private:

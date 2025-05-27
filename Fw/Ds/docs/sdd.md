@@ -64,7 +64,7 @@ Array<U32, 3> a({ 1, 2, 3 });
 Array<U32, 3> b = { 1, 2, 3 };
 ```
 
-**Single-item constructor:**
+**Single-element constructor:**
 
 ```c++
 explicit Array(const T& element)
