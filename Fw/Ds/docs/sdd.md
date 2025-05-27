@@ -187,6 +187,24 @@ ASSERT_EQ(size, 10);
 
 ### 1.2. External Array
 
+`ExternalArray` is a `final` class template representing an array with external 
+storage.
+It stores a pointer to the backing memory _M_.
+
+#### 1.2.1. Template Parameters
+
+TODO
+
+#### 1.2.2. Private Member Variables
+
+TODO
+
+#### 1.2.3. Public Constructors and Destructors
+
+TODO
+
+#### 1.2.4. Public Member Functions
+
 TODO
 
 ## 2. Queues
