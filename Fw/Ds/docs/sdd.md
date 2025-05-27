@@ -67,17 +67,17 @@ Array<U32, 3> b = { 1, 2, 3 };
 **Single-item constructor:**
 
 ```c++
-Array(const T& elt)
+explicit Array(const T& elt)
 ```
 
 Initialize each element of `m_elements` with `elt`.
 
 _Example:_
 ```c++
-// Explicit call to constructor
-Array<U32, 3> a(10);
-// Implicit call to constructor via initialization
-Array<U32, 3> b = 10;
+// Explicit call to constructor in variable declaration
+Array<U32, 3> a(1);
+// Explicit call to constructor in assignment
+a = Array<U32, 3>(2);
 ```
 
 **Copy constructor:**
@@ -146,37 +146,6 @@ _Example:_
 Array<U32, 10> a1(1);
 Array<U32, 10> a2(2);
 a1 = a2;
-```
-
-**operator= with element type argument:**
-
-```c++
-Array<T, S>& operator=(const T& elt)
-```
-
-Overwrite each element of `m_elements` with `elt`.
-
-_Example:_
-```c++
-Array<U32, 10> a();
-a = 1;
-```
-
-**operator= with initializer list argument:**
-
-```c++
-Array<T, S>& operator=(const std::initializer_list<T>& il)
-```
-
-1. Assert that `il.size == S`.
-
-1. Overwrite each element of `m_elements` with the corresponding element of 
-   `il`.
-
-_Example:_
-```c++
-Array<U32, 3> a();
-a = { 1, 2, 3 };
 ```
 
 **getElements:**
