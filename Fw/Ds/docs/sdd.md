@@ -83,7 +83,7 @@ Array<U32, 3> b = 10;
 **Copy constructor:**
 
 ```c++
-Array(const Array<S,T>& a)
+Array(const Array<T, S>& a)
 ```
 
 Initialize the elements of `m_elements` with the
@@ -122,12 +122,13 @@ Array<U32, 10> a;
 ASSERT_EQ(a[0], 0);
 a[0]++;
 ASSERT_EQ(a[0], 1);
+ASSERT_DEATH(a[11], "Assert");
 ```
 
 **operator=:**
 
 ```c++
-Array<T,S>& operator=(const Array<T,S>& a)
+Array<T, S>& operator=(const Array<T, S>& a)
 ```
 
 1. If `&a == this` then do nothing.
