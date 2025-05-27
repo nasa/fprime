@@ -80,7 +80,7 @@ class LinuxGpioDriver final : public LinuxGpioDriverComponentBase {
     //!
     void join();
 
-  PRIVATE:
+  private:
     //! \brief helper to setup a line handle (read or write).
     Os::File::Status setupLineHandle(const PlatformIntType chip_descriptor,
                                      const U32 gpio,

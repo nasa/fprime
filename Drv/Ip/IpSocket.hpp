@@ -138,7 +138,7 @@ class IpSocket {
      *
      * Closes the socket opened by the open call. In this case of the TcpServer, this does NOT close server's listening
      * port but will close the active client connection.
-     * 
+     *
      * \param socketDescriptor: socket descriptor to close
      */
     void close(const SocketDescriptor& socketDescriptor);
@@ -151,12 +151,12 @@ class IpSocket {
      *
      * A shut down begins the termination of communication. The underlying socket will coordinate a clean shutdown, and
      * it is safe to close the socket once a recv with 0 size has returned or an appropriate timeout has been reached.
-     * 
+     *
      * \param socketDescriptor: socket descriptor to shutdown
      */
     void shutdown(const SocketDescriptor& socketDescriptor);
 
-  PROTECTED:
+  protected:
     /**
      * \brief Check if the given port is valid for the socket
      *
