@@ -253,7 +253,7 @@ const T& operator[](FwSizeType i) const
 _Example:_
 ```c++
 U32 elements[10];
-ExternalArray<U32>(a, 10);
+ExternalArray<U32> a(elements, 10);
 // Constant access
 ASSERT_EQ(a[0], 0);
 // Mutable access
