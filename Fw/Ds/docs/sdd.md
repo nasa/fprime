@@ -201,10 +201,10 @@ It stores a pointer to the backing memory _M_.
 
 `ExternalArray` has the following private member variables.
 
-|Name|Type|Purpose|
-|----|----|-------|
-|`m_elements`|`T*`|Points to the backing memory|
-|`m_size`|`FwSizeType`|Stores the size (number of elements) of the array|
+|Name|Type|Purpose|Initial Value|
+|----|----|-------|-------------|
+|`m_elements`|`T*`|Points to the backing memory|`nullptr`|
+|`m_size`|`FwSizeType`|Stores the size (number of elements) of the array|0|
 
 #### 1.2.3. Public Constructors and Destructors
 
