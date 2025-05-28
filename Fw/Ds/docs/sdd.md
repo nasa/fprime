@@ -466,7 +466,7 @@ FwSizeType decrement(FwSizeType amount = 1)
 
 ## 3. FIFO Queues
 
-A *FIFO queue* is a data structure backed by an array.
+A **FIFO queue** is a data structure backed by an array.
 It supports enqueue and dequeue operations in
 first in first out (FIFO) order.
 
@@ -485,13 +485,60 @@ the elements on the queue.
 
 #### 3.1.2. Private Member Variables
 
-TODO
+`ExternalFifoQueue` has the following private member variables.
+
+|Name|Type|Purpose|Default Value|
+|----|----|-------|-------------|
+|`m_array`|`ExternalArray<T>`|The array for storing the elements|C++ default initialization|
+|`m_enqueueIndex`|`CircularIndex`|The enqueue index|0|
+|`m_dequeueIndex`|`CircularIndex`|The dequeue index|0|
+|`m_size`|`FwSizeType`|The number of elements on the queue|0|
 
 #### 3.1.3. Public Constructors and Destructors
+
+**Zero-argument constructor:**
+
+TODO
+
+**Constructor providing backing storage:**
+
+TODO
+
+**Copy constructor:**
+
+TODO
+
+**Destructor:**
 
 TODO
 
 #### 3.1.4. Public Member Functions
+
+**clear:**
+
+TODO
+
+**setStorage:**
+
+TODO
+
+**enqueue:**
+
+TODO
+
+**peek:**
+
+TODO
+
+**dequeue:**
+
+TODO
+
+**getSize:**
+
+TODO
+
+**getCapacity:**
 
 TODO
 
