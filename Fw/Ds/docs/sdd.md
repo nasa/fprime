@@ -394,7 +394,11 @@ Initialize the member variables with their default values.
 CircularIndex(FwSizeType modulus, FwSizeType value = 0)
 ```
 
-Set `m_modulus = modulus` and `m_value = value`.
+1. Assert `modulus > 0`.
+
+1. Set `m_modulus = modulus`.
+
+1. Call `setValue(value)`.
 
 ### 2.3. Public Member Functions
 
