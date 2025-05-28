@@ -1,6 +1,6 @@
 # Implement a Framing Protocol
 
-This How-To Guide provides a step-by-step guide to implementing a custom framing protocol in F Prime Flight Software
+This How-To Guide provides a step-by-step guide to implementing a custom framing protocol in F Prime Flight Software.
 
 The default [F Prime Protocol](../../Svc/FprimeProtocol/docs/sdd.md) is a lightweight protocol used to get development started quickly with a low-overhead communications protocol that the [F Prime GDS](https://github.com/nasa/fprime-gds) understands. However, as projects mature, there may be a need to implement a framing protocol that fits mission requirements. This document provides an overview of how to implement a custom framing protocol in F Prime Flight Software, and how to integrate it with the F Prime GDS.
 
@@ -80,8 +80,12 @@ The following examples will walk through the implementation of a custom framer a
 
 4. **(Optional) Implement a Frame Detector**
 
-   In some configurations, your communications manager component may produce full frames on reception. This may be the case with some radios that have frame synchronization built-in, or if delimiting frames is handled by another subsystem. 
-   However, if your underlying data transport is stream-based (e.g. TCP, UART) or if you can't guarantee frames will always be received in full by your communications manager, you will need to implement a mechanism to delimit frames. F Prime provides this capability with the [Svc.FrameAccumulator](../../Svc/FrameAccumulator/docs/sdd.md) component, which accumulates a data stream into a circular buffer, and uses a helper `FrameDetector` to detect when a frame is present.
+   _When is this not needed?_  
+   If your communications manager component always receives complete frames, you do not need to implement frame detection. This can be the case when using radios with built-in frame synchronization or when another subsystem handles frame delimiting.
+
+   _When is this needed?_  
+   If your data transport is stream-based (for example, relying on TCP or UART), or if you cannot guarantee that frames will always be received in full, you must implement a mechanism to delimit frames. F Prime provides this capability with the [Svc.FrameAccumulator](../../Svc/FrameAccumulator/docs/sdd.md) component, which uses a circular buffer and a helper `FrameDetector` to identify complete frames in the data stream.
+
    To use the `Svc.FrameAccumulator`, you need to configure it with a FrameDetector that detects when a frame is present:
    **MyCustomFrameDetector.hpp**
    ```cpp
@@ -117,7 +121,9 @@ The following examples will walk through the implementation of a custom framer a
 
 ## F´ GDS Implementation
 
-To support your custom protocol in the F´ GDS, implement a GDS framing plugin. For example, in Python:
+To support your custom protocol in the F´ GDS, implement a GDS framing plugin. The GDS plugin system allows you to customize GDS behavior with user-provided code. For new framing protocols, you will need to implement a plugin that extends the `FramerDeframer`. This is further documented in the [How-To Develop a GDS Plugin Guide](./develop-gds-plugins.md) and [F Prime GDS Framing Plugin reference](../reference/gds-plugins/framing.md).
+
+For example, in Python:
 
 ```python
 from fprime_gds.common.communication.framing import FramerDeframer
@@ -135,7 +141,7 @@ class MyCustomFramerDeframer(FramerDeframer):
         return packet, leftover_data, discarded_data
 ```
 
-Make sure to [package and install the plugin in your virtual environment](https://fprime.jpl.nasa.gov/devel/docs/how-to/develop-gds-plugins/#packaging-and-testing-plugins) for the GDS to be able to load it, then run it:
+Make sure to [package and install the plugin in your virtual environment](./develop-gds-plugins.md#packaging-and-testing-plugins) for the GDS to be able to load it, then run it:
 
 ```
 fprime-gds --framing-selection MyCustomFramerDeframer
