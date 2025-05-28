@@ -1,7 +1,7 @@
 // ======================================================================
 // \title  Array
 // \author bocchino
-// \brief  An array that stores its size and provides bounds checking
+// \brief  A statically-sized, bounds checked array
 // ======================================================================
 
 #ifndef Ds_Array_HPP
@@ -20,7 +20,7 @@ class Array final {
 
   public:
     // ----------------------------------------------------------------------
-    // Types 
+    // Types
     // ----------------------------------------------------------------------
 
     //! The type of the elements array
@@ -100,11 +100,13 @@ class Array final {
     //! Get a const reference to the elements
     const Elements& getElements() const { return this->m_elements; }
 
-#if 0
-    //! Get the size
-    //! \return The size
-    FwSizeType getSize() const { return this->m_size; }
-#endif
+  public:
+    // ----------------------------------------------------------------------
+    // Public static functions
+    // ----------------------------------------------------------------------
+
+    //! Get the array size
+    static constexpr FwSizeType getSize() { return S; }
 
   private:
     // ----------------------------------------------------------------------
