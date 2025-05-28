@@ -97,7 +97,7 @@ elements of `a.m_elements`.
 _Example:_
 ```c++
 // Call the single-item constructor
-Array<U32, 3> a1(10);
+Array<U32, 3> a1(3);
 // Call the copy constructor
 Array<U32, 3> a2(a1);
 ```
@@ -125,14 +125,14 @@ const T& operator[](FwSizeType i) const
 
 _Example:_
 ```c++
-Array<U32, 10> a;
+Array<U32, 3> a;
 // Constant access
 ASSERT_EQ(a[0], 0);
 // Mutable access
 a[0]++;
 ASSERT_EQ(a[0], 1);
 // Out-of-bounds access
-ASSERT_DEATH(a[10], "Assert");
+ASSERT_DEATH(a[3], "Assert");
 ```
 
 **Copy assignment operator:**
@@ -148,8 +148,8 @@ element of `a`.
 
 _Example:_
 ```c++
-Array<U32, 10> a1(1);
-Array<U32, 10> a2(2);
+Array<U32, 3> a1(1);
+Array<U32, 3> a2(2);
 a1 = a2;
 ```
 
@@ -164,7 +164,7 @@ Return a reference to `m_elements`.
 
 _Example:_
 ```c++
-Array<U32, 10> a;
+Array<U32, 3> a;
 // Mutable reference
 auto& elements1 = a.getElements();
 ASSERT_EQ(elements1[0], 0);
@@ -186,8 +186,8 @@ Return the size `S` of the array.
 
 _Example:_
 ```c++
-const auto size = Array<U32, 10>::getSize();
-ASSERT_EQ(size, 10);
+const auto size = Array<U32, 3>::getSize();
+ASSERT_EQ(size, 3);
 ```
 
 ### 1.2. External Array
@@ -236,8 +236,8 @@ Initialize `m_elements` with `elements` and `m_size` with `size`.
 
 _Example:_
 ```c++
-U32 elements[10];
-ExternalArray a(elements, 10);
+U32 elements[3];
+ExternalArray a(elements, 3);
 ```
 
 **Copy constructor:**
@@ -284,15 +284,15 @@ const T& operator[](FwSizeType i) const
 
 _Example:_
 ```c++
-U32 elements[10];
-ExternalArray<U32> a(elements, 10);
+U32 elements[3];
+ExternalArray<U32> a(elements, 3);
 // Constant access
 ASSERT_EQ(a[0], 0);
 // Mutable access
 a[0]++;
 ASSERT_EQ(a[0], 1);
 // Out-of-bounds access
-ASSERT_DEATH(a[10], "Assert");
+ASSERT_DEATH(a[3], "Assert");
 ```
 
 **Copy assignment operator:**
@@ -307,8 +307,8 @@ ExternalArray<T>& operator=(const ExternalArray<T>& a)
 
 _Example:_
 ```c++
-U32 elements[10];
-ExternalArray<U32> a1(elements, 10);
+U32 elements[3];
+ExternalArray<U32> a1(elements, 3);
 ExternalArray<U32> a2;
 a2 = a1;
 ```
@@ -324,8 +324,8 @@ Return `m_elements`.
 
 _Example:_
 ```c++
-U32 elements[10];
-ExternalArray<U32> a(elements, 10);
+U32 elements[3];
+ExternalArray<U32> a(elements, 3);
 // Mutable pointer
 auto& elements1 = a.getElements();
 ASSERT_EQ(elements1[0], 0);
@@ -345,10 +345,10 @@ Return `m_size`.
 
 _Example:_
 ```c++
-U32 elements[10];
-ExternalArray<U32> a(elements, 10);
+U32 elements[3];
+ExternalArray<U32> a(elements, 3);
 const auto size = a.getSize();
-ASSERT_EQ(size, 10);
+ASSERT_EQ(size, 3);
 ```
 
 **setStorage:**
@@ -362,8 +362,8 @@ Set `m_elements = elements` and `m_size = size`.
 _Example:_
 ```c++
 ExternalArray<U32> a;
-U32 elements[10];
-a.setStorage(elements, 10);
+U32 elements[3];
+a.setStorage(elements, 3);
 ```
 
 ## 2. Queues

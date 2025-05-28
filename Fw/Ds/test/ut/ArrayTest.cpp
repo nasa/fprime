@@ -77,4 +77,15 @@ TEST(Array, CopyAssignmentOperator) {
     ASSERT_EQ(&a, &a1);
 }
 
+TEST(Array, GetElements) {
+    Array<U32, 3> a;
+    // Mutable reference
+    auto& elements1 = a.getElements();
+    ASSERT_EQ(elements1[0], 0);
+    elements1[0] = 1;
+    // Constant reference
+    const auto& elements2 = a.getElements();
+    ASSERT_EQ(elements2[0], 1);
+}
+
 }  // namespace Ds
