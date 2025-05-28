@@ -364,60 +364,151 @@ const auto size = Array<U32, 3>::getSize();
 ASSERT_EQ(size, 3);
 ```
 
-## 2. Queues
+## 2. CircularIndex
 
-A *queue* is a data structure backed by an array.
-It supports enqueue and dequeue operations.
+`CircularIndex` represents an index value that
+wraps around modulo an integer.
 
-### 2.1. ExternalFifoQueue
+### 2.1. Private Member Variables
+
+`CircularIndex` has the following private member variables.
+
+|Name|Type|Purpose|Default Value|
+|----|----|-------|-------------|
+|`m_value`|`FwSizeType`|The index value|0|
+|`m_modulus`|`FwSizeType`|The modulus|1|
+
+### 2.2. Public Constructors and Destructors
+
+**Zero-argument constructor:**
+
+```c++
+CircularIndex()
+```
+
+Initialize the member variables with their default values.
+
+**Constructor with specified members:**
+
+```c++
+CircularIndex(FwSizeType modulus, FwSizeType value = 0)
+```
+
+Set `m_modulus = modulus` and `m_value = value`.
+
+### 2.3. Public Member Functions
+
+**getValue:**
+
+```c++
+FwSizeType getValue() const
+```
+
+1. Assert `m_value < m_modulus`.
+
+1. Return `m_value`.
+
+**setValue:**
+
+```c++
+void setValue(FwSizeType value)
+```
+
+Set `m_value = m_value % m_modulus`.
+
+**getModulus:**
+
+```c++
+FwSizeType CircularIndex::getModulus() const
+```
+
+1. Assert `m_value < m_modulus`.
+
+1. Return `m_modulus`.
+
+**setModulus:**
+
+```c++
+void setModulus(FwSizeType modulus)
+```
+
+1. Set `m_modulus = modulus`.
+
+2. Call `setValue(m_value)`.
+
+**increment:**
+
+```c++
+FwSizeType increment(FwSizeType amount = 1)
+```
+
+1. Set `offset = amount % modulus`.
+
+1. Call `setValue(m_value + offset)`.
+
+1. Return `m_value`.
+
+**decrement:**
+
+```c++
+FwSizeType decrement(FwSizeType amount = 1)
+```
+
+1. Set `offset = amount % modulus`.
+
+1. Call `setValue(m_value + modulus - offset)`.
+
+1. Return `m_value`.
+
+## 3. FIFO Queues
+
+A *FIFO queue* is a data structure backed by an array.
+It supports enqueue and dequeue operations in
+first in first out (FIFO) order.
+
+### 3.1. ExternalFifoQueue
 
 `ExternalFifoQueue` is a `final` class template representing a
 first in first out (FIFO) queue with external storage.
 Internally it maintains an `ExternalArray` for storing
 the elements on the queue.
 
-#### 2.1.1. Template Parameters
+#### 3.1.1. Template Parameters
+
+`ExternalFifoQueue` has one template parameter:
+
+1. The type `typename T`
+
+#### 3.1.2. Private Member Variables
 
 TODO
 
-#### 2.1.2. Private Member Variables
+#### 3.1.3. Public Constructors and Destructors
 
 TODO
 
-#### 2.1.3. Public Constructors and Destructors
+#### 3.1.4. Public Member Functions
 
 TODO
 
-#### 2.1.4. Public Member Functions
+### 3.2. FifoQueue
 
 TODO
 
-### 2.2. FifoQueue
+## 4. Linked Lists
 
 TODO
 
-### 2.3. ExternalLifoQueue
+## 5. Sets and Maps
+
+### 5.1. Array Set and Map
 
 TODO
 
-### 2.4. LifoQueue
+### 5.2. Hash Set and Map
 
 TODO
 
-## 3. Linked Lists
-
-TODO
-
-## 4. Sets and Maps
-
-### 4.1. Array Set and Map
-
-TODO
-
-### 4.2. Hash Set and Map
-
-TODO
-
-### 4.3. Balanced Binary Tree Set and Map
+### 5.3. Balanced Binary Tree Set and Map
 
 TODO
