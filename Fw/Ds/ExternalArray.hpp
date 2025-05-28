@@ -1,42 +1,49 @@
 // ======================================================================
-// \title  Array
+// \title  ExternalArray
 // \author bocchino
-// \brief  An array that stores its size and provides bounds checking
+// \brief  A bounds-checked array with external memory
 // ======================================================================
 
-#ifndef Ds_Array_HPP
-#define Ds_Array_HPP
+#ifndef Ds_ExternalArray_HPP
+#define Ds_ExternalArray_HPP
 
-#include <FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 #include "Fw/Types/Assert.hpp"
 
 namespace Ds {
 
 template <typename T>
-class Array {
+class ExternalArray final {
   public:
     // ----------------------------------------------------------------------
     // Constructors
     // ----------------------------------------------------------------------
 
-    //! Construct an Array object
-    Array() {}
+    //! Zero-argument constructor
+    ExternalArray() {}
 
-    //! Construct an Array object with backing storage
-    Array(T* const elements,     //!< The array elements
-          const FwSizeType size  //!< The size
-          )
+    //! Constructor providing backing storage
+    ExternalArray(T* elements,     //!< The elements
+                  FwSizeType size  //!< The array size
+                  )
         : m_elements(elements), m_size(size) {}
+
+    //! Copy constructor
+    ExternalArray(const ExternalArray<T>& a) : m_elements(a.m_elements), m_size(a.m_size) {}
+
+    //! Destructor
+    ~ExternalArray() {}
 
   public:
     // ----------------------------------------------------------------------
-    // Public operators
+    // Public member functions
     // ----------------------------------------------------------------------
 
     //! Subscript operator
     T& operator[](const FwSizeType i  //!< The subscript index
     ) {
+        FW_ASSERT(i < this->m_elements != nullptr);
         FW_ASSERT(i < this->m_size, static_cast<FwAssertArgType>(i));
         return this->m_elements[i];
     }
@@ -44,22 +51,33 @@ class Array {
     //! Const subscript operator
     const T& operator[](const FwSizeType i  //!< The subscript index
     ) const {
+        FW_ASSERT(i < this->m_elements != nullptr);
         FW_ASSERT(i < this->m_size, static_cast<FwAssertArgType>(i));
         return this->m_elements[i];
     }
 
-  public:
-    // ----------------------------------------------------------------------
-    // Public member functions
-    // ----------------------------------------------------------------------
+    //! Copy assignment operator
+    ExternalArray<T>& operator=(const ExternalArray<T>& a) {
+        if (&a != this) {
+            this->m_elements = a.m_elements;
+            this->m_size = a.m_size;
+        }
+        return *this;
+    }
+
+    //! Get a mutable pointer to the elements
+    T* getElements() { return this->m_elements; }
+
+    //! Get a const pointer to the elements
+    const T* getElements() const { return this->m_elements; }
 
     //! Get the size
     //! \return The size
     FwSizeType getSize() const { return this->m_size; }
 
     //! Set the backing storage
-    void setStorage(T* const elements,     //!< The array elements
-                    const FwSizeType size  //!< The size
+    void setStorage(T* elements,     //!< The array elements
+                    FwSizeType size  //!< The size
     ) {
         this->m_elements = elements;
         this->m_size = size;

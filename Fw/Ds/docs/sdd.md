@@ -263,9 +263,7 @@ ExternalArray<U32, 3> a2(a1);
 ~ExternalArray()
 ```
 
-1. If `m_elements == nullptr` then do nothing.
-
-1. Otherwise destroy each element of `m_elements`.
+Do nothing.
 
 #### 1.2.4. Public Member Functions
 
