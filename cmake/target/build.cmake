@@ -75,16 +75,16 @@ function(fprime__internal_TECH_DEBT_module_setup BUILD_MODULE_NAME MODULE_NAME_H
     #
     # This should be done per-target using IMPLEMENTATION_OVERRIDES supplied to API registration call and should not
     # be set to the current module.
-    if (NOT ${MODULE_TYPE} STREQUAL "Library")
-        # Handle updates when the types have diverged
-        if (NOT MODULE STREQUAL "${FPRIME_CURRENT_MODULE}")
-            # Update implementation choices
-            remap_implementation_choices("${FPRIME_CURRENT_MODULE}" "${BUILD_MODULE_NAME}")
-        endif()
-        setup_executable_implementations("${BUILD_MODULE_NAME}")
+#    if (NOT ${MODULE_TYPE} STREQUAL "Library")
+#        # Handle updates when the types have diverged
+#        if (NOT MODULE STREQUAL "${FPRIME_CURRENT_MODULE}")
+#            # Update implementation choices
+#            remap_implementation_choices("${FPRIME_CURRENT_MODULE}" "${BUILD_MODULE_NAME}")
+#        endif()
+#        setup_executable_implementations("${BUILD_MODULE_NAME}")
         # Clear transitive dependencies to force a re-evaluation
-        set_property(TARGET "${BUILD_MODULE_NAME}" PROPERTY TRANSITIVE_DEPENDENCIES)
-    endif ()
+#        set_property(TARGET "${BUILD_MODULE_NAME}" PROPERTY TRANSITIVE_DEPENDENCIES)
+#    endif ()
     #### End Implementation Choices ####
 endfunction()
 

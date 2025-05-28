@@ -39,7 +39,7 @@ class UdpSocket : public IpSocket {
 
     /**
      * \brief configure is disabled
-     * 
+     *
      * \warning configure is disabled for UdpSocket. Use configureSend and configureRecv instead.
      */
     SocketIpStatus configure(const char* hostname, const U16 port, const U32 send_timeout_seconds,
@@ -90,7 +90,7 @@ class UdpSocket : public IpSocket {
      */
     U16 getRecvPort();
 
-  PROTECTED:
+  protected:
 
     /**
      * \brief bind the UDP to a port such that it can receive packets at the previously configured port

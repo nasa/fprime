@@ -1,7 +1,7 @@
 #ifndef FW_STATEMENT_BUFFER_HPP
 #define FW_STATEMENT_BUFFER_HPP
 
-#include <config/FpConfig.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <Fw/Types/SerIds.hpp>
 

@@ -26,7 +26,9 @@ namespace Svc {
     public FileDownlinkComponentBase
   {
 
-    PRIVATE:
+    friend class FileDownlinkTester;
+
+    private:
 
       // ----------------------------------------------------------------------
       // Types
@@ -34,6 +36,8 @@ namespace Svc {
 
       //! The Mode class
       class Mode {
+
+        friend class FileDownlinkTester;
 
         public:
 
@@ -74,12 +78,14 @@ namespace Svc {
       //! Class representing an outgoing file
       class File {
 
+        friend class FileDownlinkTester;
+
         public:
 
           //! Constructor
           File() : m_size(0) { }
 
-        PRIVATE:
+        private:
 
           //! The source file name
           Fw::LogStringArg m_sourceName;
@@ -140,6 +146,8 @@ namespace Svc {
       //! Class to record files sent
       class FilesSent {
 
+        friend class FileDownlinkTester;
+
         public:
 
           //! Construct a FilesSent object
@@ -156,7 +164,7 @@ namespace Svc {
             this->m_fileDownlink->tlmWrite_FilesSent(m_sent_file_count);
           }
 
-        PRIVATE:
+        private:
 
           //! The total number of file sent
           U32 m_sent_file_count;
@@ -168,6 +176,8 @@ namespace Svc {
 
       //! Class to record packets sent
       class PacketsSent {
+
+        friend class FileDownlinkTester;
 
         public:
 
@@ -185,7 +195,7 @@ namespace Svc {
             this->m_fileDownlink->tlmWrite_PacketsSent(m_sent_packet_count);
           }
 
-        PRIVATE:
+        private:
 
           //! The total number of downlinked packets
           U32 m_sent_packet_count;
@@ -197,6 +207,8 @@ namespace Svc {
 
       //! Class to record warnings
       class Warnings {
+
+        friend class FileDownlinkTester;
 
         public:
 
@@ -214,7 +226,7 @@ namespace Svc {
           //! Issue a File Read Error warning
           void fileRead(const Os::File::Status status);
 
-        PRIVATE:
+        private:
 
           //! Record a warning
           void warning() {
@@ -222,7 +234,7 @@ namespace Svc {
             this->m_fileDownlink->tlmWrite_Warnings(m_warning_count);
           }
 
-        PRIVATE:
+        private:
 
           //! The total number of warnings
           U32 m_warning_count;
@@ -287,7 +299,7 @@ namespace Svc {
       //!
       ~FileDownlink();
 
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Handler implementations for user-defined typed input ports
@@ -327,7 +339,7 @@ namespace Svc {
 
 
 
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Command handler implementations
@@ -361,7 +373,7 @@ namespace Svc {
       );
 
 
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Private helper methods
@@ -397,7 +409,7 @@ namespace Svc {
       //Send response after completing file downlink
       void sendResponse(SendFileStatus resp);
 
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Member variables

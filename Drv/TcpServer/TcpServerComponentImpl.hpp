@@ -22,6 +22,9 @@
 namespace Drv {
 
 class TcpServerComponentImpl final : public TcpServerComponentBase, public SocketComponentHelper {
+
+  friend class TcpServerTester;
+
   public:
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction
@@ -94,7 +97,7 @@ class TcpServerComponentImpl final : public TcpServerComponentBase, public Socke
      */
     U16 getListenPort();
 
-  PROTECTED:
+  protected:
     // ----------------------------------------------------------------------
     // Implementations for socket read task virtual methods
     // ----------------------------------------------------------------------
@@ -139,7 +142,7 @@ class TcpServerComponentImpl final : public TcpServerComponentBase, public Socke
      */
     void readLoop() override;
 
-  PRIVATE:
+  private:
 
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports

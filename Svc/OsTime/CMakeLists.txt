@@ -12,25 +12,22 @@
 
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/RawTimeTester")
 
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/OsTime.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/OsTime.cpp"
-)
-
-set(MOD_DEPS
+register_fprime_module(
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/OsTime.fpp"
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/OsTime.cpp"
+  DEPENDS
     Svc_Ports_OsTimeEpoch
 )
 
-register_fprime_module()
-
-set(UT_AUTO_HELPERS ON)
-set(UT_SOURCE_FILES
+register_fprime_ut(
+  AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/OsTime.fpp"
+  SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsTimeTester.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsTimeTestMain.cpp"
-)
-set(UT_MOD_DEPS
+  CHOOSES_IMPLEMENTATIONS
     Svc_OsTime_test_RawTimeTester
+  UT_AUTO_HELPERS
 )
-choose_fprime_implementation(Os/RawTime Svc_OsTime_test_RawTimeTester)
-register_fprime_ut()

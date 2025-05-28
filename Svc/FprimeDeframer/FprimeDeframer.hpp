@@ -27,14 +27,14 @@ class FprimeDeframer final : public FprimeDeframerComponentBase {
     //! Destroy FprimeDeframer object
     ~FprimeDeframer();
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
 
     //! Handler implementation for frame
     //!
-    //! Port to receive framed data. The handler will strip the header and trailer from the frame 
+    //! Port to receive framed data. The handler will strip the header and trailer from the frame
     //! and pass the deframed data to the deframed output port.
     void dataIn_handler(FwIndexType portNum,  //!< The port number
                        Fw::Buffer& data,
