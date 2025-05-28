@@ -9,200 +9,19 @@ An **array** _A_ stores _n_ elements for _n > 0_ at indices
 The elements are stored in **backing memory** _M_.
 An array provides bounds-checked access to the array elements.
 
-### 1.1. Array
-
-`Array` is a `final` class template representing an array
-with internal storage.
-It maintains the backing memory _M_ as a member variable.
-
-#### 1.1.1. Template Parameters
-
-`Array` has two template parameters:
-
-1. The type `typename T`
-
-1. The size `FwSizeType S`
-
-`Array` statically asserts that `S > 0`.
-
-#### 1.1.2. Types
-
-`Array` defines the type `Elements`.
-It is an alias of `T[S]`.
-
-#### 1.1.3. Private Member Variables
-
-`Array` has one private variable `m_elements` for
-storing the array elements.
-It is a primitive C++ array of type `Elements`.
-
-#### 1.1.4. Public Constructors and Destructors
-
-**Zero-argument constructor:**
-
-```c++
-Array()
-```
-
-Initialize each element of `m_elements` with the default value for `T`.
-
-_Example:_
-```c++
-Array<U32, 3> a;
-```
-
-**Initializer list constructor:**
-
-```c++
-Array(const std::initializer_list<T>& il)
-```
-
-1. Assert that `il.size == S`.
-
-1. Initialize `m_elements` from `il`.
-
-_Examples:_
-```c++
-// Explicit call to constructor
-Array<U32, 3> a({ 1, 2, 3 });
-// Implicit call to constructor via initialization
-Array<U32, 3> b = { 1, 2, 3 };
-```
-
-**Single-element constructor:**
-
-```c++
-explicit Array(const T& element)
-```
-
-Initialize each element of `m_elements` with `element`.
-
-_Example:_
-```c++
-// Explicit call to constructor in variable declaration
-Array<U32, 3> a(1);
-// Explicit call to constructor in assignment
-a = Array<U32, 3>(2);
-```
-
-**Copy constructor:**
-
-```c++
-Array(const Array<T, S>& a)
-```
-
-Initialize the elements of `m_elements` with the
-elements of `a.m_elements`.
-
-_Example:_
-```c++
-// Call the single-item constructor
-Array<U32, 3> a1(3);
-// Call the copy constructor
-Array<U32, 3> a2(a1);
-```
-
-**Destructor:**
-
-```c++
-~Array()
-```
-
-Destroy each element of `m_elements`.
-
-#### 1.1.5. Public Member Functions
-
-**operator[]:**
-
-```c++
-T& operator[](FwSizeType i)
-const T& operator[](FwSizeType i) const
-```
-
-1. Assert that `i < S`.
-
-1. Return a reference to `m_elements[i]`.
-
-_Example:_
-```c++
-Array<U32, 3> a;
-// Constant access
-ASSERT_EQ(a[0], 0);
-// Mutable access
-a[0]++;
-ASSERT_EQ(a[0], 1);
-// Out-of-bounds access
-ASSERT_DEATH(a[3], "Assert");
-```
-
-**Copy assignment operator:**
-
-```c++
-Array<T, S>& operator=(const Array<T, S>& a)
-```
-
-1. If `&a == this` then do nothing.
-
-1. Otherwise overwrite each element of `m_elements` with the corresponding
-element of `a`.
-
-_Example:_
-```c++
-Array<U32, 3> a1(1);
-Array<U32, 3> a2(2);
-a1 = a2;
-```
-
-**getElements:**
-
-```c++
-Elements& getElements()
-const Elements& getElements() const
-```
-
-Return a reference to `m_elements`.
-
-_Example:_
-```c++
-Array<U32, 3> a;
-// Mutable reference
-auto& elements1 = a.getElements();
-ASSERT_EQ(elements1[0], 0);
-elements1[0] = 1;
-// Constant reference
-const auto& elements2 = a.getElements();
-ASSERT_EQ(elements2[0], 1);
-```
-
-#### 1.1.6. Public Static Functions
-
-**getSize:**
-
-```c++
-static constexpr FwSizeType getSize()
-```
-
-Return the size `S` of the array.
-
-_Example:_
-```c++
-const auto size = Array<U32, 3>::getSize();
-ASSERT_EQ(size, 3);
-```
-
-### 1.2. External Array
+### 1.1. External Array
 
 `ExternalArray` is a `final` class template representing an array with external 
 storage.
 It stores a pointer to the backing memory _M_.
 
-#### 1.2.1. Template Parameters
+#### 1.1.1. Template Parameters
 
 `ExternalArray` has one template parameter:
 
 1. The type `typename T`
 
-#### 1.2.2. Private Member Variables
+#### 1.1.2. Private Member Variables
 
 `ExternalArray` has the following private member variables.
 
@@ -211,7 +30,7 @@ It stores a pointer to the backing memory _M_.
 |`m_elements`|`T*`|Points to the backing memory|`nullptr`|
 |`m_size`|`FwSizeType`|Stores the size (number of elements) of the array|0|
 
-#### 1.2.3. Public Constructors and Destructors
+#### 1.1.3. Public Constructors and Destructors
 
 **Zero-argument constructor:**
 
@@ -265,7 +84,7 @@ ExternalArray<U32, 3> a2(a1);
 
 Do nothing.
 
-#### 1.2.4. Public Member Functions
+#### 1.1.4. Public Member Functions
 
 **operator[]:**
 
@@ -364,13 +183,202 @@ U32 elements[3];
 a.setStorage(elements, 3);
 ```
 
+### 1.2. Array
+
+`Array` is a `final` class template representing an array
+with internal storage.
+It maintains the backing memory _M_ as a member variable.
+
+#### 1.2.1. Template Parameters
+
+`Array` has two template parameters:
+
+1. The type `typename T`
+
+1. The size `FwSizeType S`
+
+`Array` statically asserts that `S > 0`.
+
+#### 1.2.2. Types
+
+`Array` defines the type `Elements`.
+It is an alias of `T[S]`.
+
+#### 1.2.3. Private Member Variables
+
+`Array` has one private variable `m_elements` for
+storing the array elements.
+It is a primitive C++ array of type `Elements`.
+
+#### 1.2.4. Public Constructors and Destructors
+
+**Zero-argument constructor:**
+
+```c++
+Array()
+```
+
+Initialize each element of `m_elements` with the default value for `T`.
+
+_Example:_
+```c++
+Array<U32, 3> a;
+```
+
+**Initializer list constructor:**
+
+```c++
+Array(const std::initializer_list<T>& il)
+```
+
+1. Assert that `il.size == S`.
+
+1. Initialize `m_elements` from `il`.
+
+_Examples:_
+```c++
+// Explicit call to constructor
+Array<U32, 3> a({ 1, 2, 3 });
+// Implicit call to constructor via initialization
+Array<U32, 3> b = { 1, 2, 3 };
+```
+
+**Single-element constructor:**
+
+```c++
+explicit Array(const T& element)
+```
+
+Initialize each element of `m_elements` with `element`.
+
+_Example:_
+```c++
+// Explicit call to constructor in variable declaration
+Array<U32, 3> a(1);
+// Explicit call to constructor in assignment
+a = Array<U32, 3>(2);
+```
+
+**Copy constructor:**
+
+```c++
+Array(const Array<T, S>& a)
+```
+
+Initialize the elements of `m_elements` with the
+elements of `a.m_elements`.
+
+_Example:_
+```c++
+// Call the single-item constructor
+Array<U32, 3> a1(3);
+// Call the copy constructor
+Array<U32, 3> a2(a1);
+```
+
+**Destructor:**
+
+```c++
+~Array()
+```
+
+Destroy each element of `m_elements`.
+
+#### 1.2.5. Public Member Functions
+
+**operator[]:**
+
+```c++
+T& operator[](FwSizeType i)
+const T& operator[](FwSizeType i) const
+```
+
+1. Assert that `i < S`.
+
+1. Return a reference to `m_elements[i]`.
+
+_Example:_
+```c++
+Array<U32, 3> a;
+// Constant access
+ASSERT_EQ(a[0], 0);
+// Mutable access
+a[0]++;
+ASSERT_EQ(a[0], 1);
+// Out-of-bounds access
+ASSERT_DEATH(a[3], "Assert");
+```
+
+**Copy assignment operator:**
+
+```c++
+Array<T, S>& operator=(const Array<T, S>& a)
+```
+
+1. If `&a == this` then do nothing.
+
+1. Otherwise overwrite each element of `m_elements` with the corresponding
+element of `a`.
+
+_Example:_
+```c++
+Array<U32, 3> a1(1);
+Array<U32, 3> a2(2);
+a1 = a2;
+```
+
+**getElements:**
+
+```c++
+Elements& getElements()
+const Elements& getElements() const
+```
+
+Return a reference to `m_elements`.
+
+_Example:_
+```c++
+Array<U32, 3> a;
+// Mutable reference
+auto& elements1 = a.getElements();
+ASSERT_EQ(elements1[0], 0);
+elements1[0] = 1;
+// Constant reference
+const auto& elements2 = a.getElements();
+ASSERT_EQ(elements2[0], 1);
+```
+
+#### 1.2.6. Public Static Functions
+
+**getSize:**
+
+```c++
+static constexpr FwSizeType getSize()
+```
+
+Return the size `S` of the array.
+
+_Example:_
+```c++
+const auto size = Array<U32, 3>::getSize();
+ASSERT_EQ(size, 3);
+```
+
 ## 2. Queues
 
-### 2.1. FIFO Queue
+### 2.1. External FIFO Queue
 
 TODO
 
-### 2.2. LIFO Queue
+### 2.2. FIFO Queue
+
+TODO
+
+### 2.3. External LIFO Queue
+
+TODO
+
+### 2.4. LIFO Queue
 
 TODO
 
