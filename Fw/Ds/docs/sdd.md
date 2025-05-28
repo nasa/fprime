@@ -366,23 +366,45 @@ ASSERT_EQ(size, 3);
 
 ## 2. Queues
 
-### 2.1. External FIFO Queue
+A *queue* is a data structure backed by an array.
+It supports enqueue and dequeue operations.
+
+### 2.1. ExternalFifoQueue
+
+`ExternalFifoQueue` is a `final` class template representing a
+first in first out (FIFO) queue with external storage.
+Internally it maintains an `ExternalArray` for storing
+the elements on the queue.
+
+#### 2.1.1. Template Parameters
 
 TODO
 
-### 2.2. FIFO Queue
+#### 2.1.2. Private Member Variables
 
 TODO
 
-### 2.3. External LIFO Queue
+#### 2.1.3. Public Constructors and Destructors
 
 TODO
 
-### 2.4. LIFO Queue
+#### 2.1.4. Public Member Functions
 
 TODO
 
-## 3. Linked List
+### 2.2. FifoQueue
+
+TODO
+
+### 2.3. ExternalLifoQueue
+
+TODO
+
+### 2.4. LifoQueue
+
+TODO
+
+## 3. Linked Lists
 
 TODO
 
