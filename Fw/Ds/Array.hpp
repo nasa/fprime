@@ -20,7 +20,15 @@ class Array final {
 
   public:
     // ----------------------------------------------------------------------
-    // Constructors
+    // Types 
+    // ----------------------------------------------------------------------
+
+    //! The type of the elements array
+    using Elements = T[S];
+
+  public:
+    // ----------------------------------------------------------------------
+    // Public constructors and destructors
     // ----------------------------------------------------------------------
 
     //! Zero-argument constructor
@@ -46,6 +54,17 @@ class Array final {
         }
     }
 
+    //! Copy constructor
+    Array(const Array<T, S>& a  //!< The array to copy
+    ) {
+        for (FwSizeType i = 0; i < S; i++) {
+            this->m_elements[i] = a.m_elements[i];
+        }
+    }
+
+    //! Destructor
+    ~Array() {}
+
   public:
     // ----------------------------------------------------------------------
     // Public member functions
@@ -65,6 +84,22 @@ class Array final {
         return this->m_elements[i];
     }
 
+    //! Copy assignment operator
+    Array<T, S>& operator=(const Array<T, S>& a) {
+        if (&a != this) {
+            for (FwSizeType i = 0; i < S; i++) {
+                this->m_elements[i] = a.m_elements[i];
+            }
+        }
+        return *this;
+    }
+
+    //! Get a mutable reference to the elements
+    Elements& getElements() { return this->m_elements; }
+
+    //! Get a const reference to the elements
+    const Elements& getElements() const { return this->m_elements; }
+
 #if 0
     //! Get the size
     //! \return The size
@@ -77,7 +112,7 @@ class Array final {
     // ----------------------------------------------------------------------
 
     //! The array elements
-    T m_elements[S] = {};
+    Elements m_elements = {};
 };
 
 }  // namespace Ds

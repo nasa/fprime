@@ -43,6 +43,16 @@ TEST(Array, SingleElementConstructor) {
     }
 }
 
+TEST(Array, CopyConstructor) {
+    // Call the single-item constructor
+    Array<U32, 3> a1(10);
+    // Call the copy constructor
+    Array<U32, 3> a2(a1);
+    for (FwSizeType i = 0; i < 3; i++) {
+      ASSERT_EQ(a2[i], 10);
+    }
+}
+
 TEST(Array, Subscript) {
     Array<U32, 3> a = {0, 1, 2};
     // Constant access
@@ -52,6 +62,19 @@ TEST(Array, Subscript) {
     ASSERT_EQ(a[1], 2);
     // Out-of-bounds access
     ASSERT_DEATH(a[3], "Assert");
+}
+
+TEST(Array, CopyAssignmentOperator) {
+    Array<U32, 3> a1(1);
+    for (FwSizeType i = 0; i < 3; i ++) {
+      ASSERT_EQ(a1[i], 1);
+    }
+    Array<U32, 3> a2(2);
+    auto& a = (a1 = a2);
+    for (FwSizeType i = 0; i < 3; i ++) {
+      ASSERT_EQ(a1[i], 2);
+    }
+    ASSERT_EQ(&a, &a1);
 }
 
 }  // namespace Ds

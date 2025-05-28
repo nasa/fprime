@@ -25,13 +25,18 @@ It maintains the backing memory _M_ as a member variable.
 
 `Array` statically asserts that `S > 0`.
 
-#### 1.1.2. Private Member Variables
+#### 1.1.2. Types
+
+`Array` defines the type `Elements`.
+It is an alias of `T[S]`.
+
+#### 1.1.3. Private Member Variables
 
 `Array` has one private variable `m_elements` for
 storing the array elements.
-It is a primitive C++ array of type `T[S]`.
+It is a primitive C++ array of type `Elements`.
 
-#### 1.1.3. Public Constructors and Destructors
+#### 1.1.4. Public Constructors and Destructors
 
 **Zero-argument constructor:**
 
@@ -105,7 +110,7 @@ Array<U32, 3> a2(a1);
 
 Destroy each element of `m_elements`.
 
-#### 1.1.4. Public Member Functions
+#### 1.1.5. Public Member Functions
 
 **operator[]:**
 
@@ -151,8 +156,8 @@ a1 = a2;
 **getElements:**
 
 ```c++
-T[S]& getElements()
-const T[S]& getElements() const
+Elements& getElements()
+const Elements& getElements() const
 ```
 
 Return a reference to `m_elements`.
@@ -169,7 +174,7 @@ const auto& elements2 = a.getElements();
 ASSERT_EQ(elements2[0], 1);
 ```
 
-#### 1.1.5. Public Static Functions
+#### 1.1.6. Public Static Functions
 
 **getSize:**
 
