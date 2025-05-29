@@ -29,6 +29,9 @@ namespace Svc {
     //!
 
     class ActiveRateGroup final : public ActiveRateGroupComponentBase {
+
+        friend class ActiveRateGroupImplTester;
+
         public:
             static constexpr FwIndexType CONNECTION_COUNT_MAX = NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS;
 
@@ -58,7 +61,7 @@ namespace Svc {
 
             ~ActiveRateGroup();
 
-        PRIVATE:
+        private:
 
             //!  \brief Input cycle port handler
             //!

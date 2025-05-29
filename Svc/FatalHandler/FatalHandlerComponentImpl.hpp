@@ -37,7 +37,7 @@ namespace Svc {
       //!
       ~FatalHandlerComponentImpl();
 
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Handler implementations for user-defined typed input ports
