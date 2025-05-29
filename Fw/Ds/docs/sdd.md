@@ -628,13 +628,25 @@ TODO
 
 **dequeue:**
 
+```c++
+Fw::Success dequeue(T& e)
+```
+
 TODO
 
 **getSize:**
 
+```c++
+FwSizeType getSize() const
+```
+
 TODO
 
 **getCapacity:**
+
+```c++
+FwSizeType getCapacity() const
+```
 
 TODO
 
@@ -745,17 +757,33 @@ TODO
 
 **dequeue:**
 
+```c++
+Fw::Success dequeue(T& e)
+```
+
 TODO
 
 **getSize:**
+
+```c++
+FwSizeType getSize() const
+```
 
 TODO
 
 **getCapacity:**
 
+```c++
+FwSizeType getCapacity() const
+```
+
 TODO
 
 **asExternalFifoQueue:**
+
+```c++
+ExternalFifoQueue<T> asExternalFifoQueue()
+```
 
 TODO
 
