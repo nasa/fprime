@@ -69,7 +69,7 @@ class ExternalArray final {
     }
 
     //! Copy the elements from a
-    void copyFrom(const ExternalArray<T>& a) {
+    void copyElementsFrom(const ExternalArray<T>& a) {
         const FwSizeType size = FW_MIN(this->m_size, a.m_size);
         for (FwSizeType i = 0; i < size; i++) {
             (*this)[i] = a[i];

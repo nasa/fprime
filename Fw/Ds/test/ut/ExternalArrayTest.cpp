@@ -44,10 +44,7 @@ TEST(ExternalArray, CopyAssignment) {
     ASSERT_EQ(a1.getSize(), a2.getSize());
 }
 
-static void testCopyFrom(
-    ExternalArray<U32> a1,
-    ExternalArray<U32> a2
-) {
+static void testCopyElementsFrom(ExternalArray<U32> a1, ExternalArray<U32> a2) {
     const FwSizeType size1 = a1.getSize();
     for (FwSizeType i = 0; i < size1; i++) {
         a1[i] = static_cast<U32>(i);
@@ -56,23 +53,23 @@ static void testCopyFrom(
     for (FwSizeType i = 0; i < size2; i++) {
         a2[i] = 0;
     }
-    a2.copyFrom(a1);
+    a2.copyElementsFrom(a1);
     const FwSizeType size = FW_MIN(size1, size2);
     for (FwSizeType i = 0; i < size; i++) {
-      ASSERT_EQ(a2[i], a1[i]);
+        ASSERT_EQ(a2[i], a1[i]);
     }
 }
 
-TEST(ExternalArray, CopyFrom) {
+TEST(ExternalArray, CopyElementsFrom) {
     constexpr FwSizeType maxSize = 10;
     U32 elements1[maxSize];
     U32 elements2[maxSize];
     // size1 < size2
-    testCopyFrom(ExternalArray<U32>(elements1, 5), ExternalArray<U32>(elements2, 10));
+    testCopyElementsFrom(ExternalArray<U32>(elements1, 5), ExternalArray<U32>(elements2, 10));
     // size1 == size2
-    testCopyFrom(ExternalArray<U32>(elements1, 10), ExternalArray<U32>(elements2, 10));
+    testCopyElementsFrom(ExternalArray<U32>(elements1, 10), ExternalArray<U32>(elements2, 10));
     // size1 > size2
-    testCopyFrom(ExternalArray<U32>(elements1, 10), ExternalArray<U32>(elements2, 5));
+    testCopyElementsFrom(ExternalArray<U32>(elements1, 10), ExternalArray<U32>(elements2, 5));
 }
 
 TEST(ExternalArray, Subscript) {

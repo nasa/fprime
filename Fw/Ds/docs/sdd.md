@@ -4,8 +4,8 @@ This directory contains a library of basic data structures.
 
 ## 1. Arrays
 
-An **array** _A_ stores _n_ elements for _n > 0_ at indices
-0, 1, ..., _n - 1_.
+An **array** _A_ stores _S_ elements for _S > 0_ at indices
+0, 1, ..., _S - 1_.
 The elements are stored in **backing memory** _M_.
 An array provides bounds-checked access to the array elements
 stored in _M_.
@@ -134,10 +134,10 @@ ExternalArray<U32> a2;
 a2 = a1;
 ```
 
-**copyFrom:**
+**copyElementsFrom:**
 
 ```c++
-void copyFrom(const ExternalArray<T>& a)
+void copyElementsFrom(const ExternalArray<T>& a)
 ```
 
 1. If `&a == this` then do nothing.
@@ -157,7 +157,7 @@ for (FwSizeType i = 0; i < 10; i++) {
 }
 U32 elements2[10];
 ExternalArray<U32> a2(elements, 10);
-a2.copyFrom(a1);
+a2.copyElementsFrom(a1);
 for (FwSizeType i = 0; i < 10; i++) {
     ASSERT_EQ(a2[i], a1[i]);
 }
@@ -527,7 +527,7 @@ first in first out (FIFO) order.
 `ExternalFifoQueue` is a `final` class template representing a
 FIFO queue with external storage.
 Internally it maintains an <a href="#external_array">`ExternalArray`</a> for 
-storing the elements on the queue.
+storing the items on the queue.
 
 #### 3.1.1. Template Parameters
 
@@ -535,7 +535,7 @@ storing the elements on the queue.
 
 |Kind|Name|Purpose|
 |----|----|-------|
-|`typename`|`T`|The type of an element on the queue|
+|`typename`|`T`|The type of an item on the queue|
 
 #### 3.1.2. Private Member Variables
 
@@ -543,10 +543,10 @@ storing the elements on the queue.
 
 |Name|Type|Purpose|Default Value|
 |----|----|-------|-------------|
-|`m_array`|`ExternalArray<T>`|The array for storing the elements|C++ default initialization|
+|`m_items`|`ExternalArray<T>`|The array for storing the queue items|C++ default initialization|
 |`m_enqueueIndex`|`CircularIndex`|The enqueue index|0|
 |`m_dequeueIndex`|`CircularIndex`|The dequeue index|0|
-|`m_size`|`FwSizeType`|The number of elements on the queue|0|
+|`m_size`|`FwSizeType`|The number of items on the queue|0|
 
 #### 3.1.3. Public Constructors and Destructors
 
@@ -556,13 +556,14 @@ storing the elements on the queue.
 ExternalFifoQueue()
 ```
 
-`ExternalFifoQueue` is a `final` class template representing a FIFO queue with internal storage.
-It maintains an `Array` for storing the elements on the queue.
+`ExternalFifoQueue` is a `final` class template representing a FIFO queue with 
+internal storage.
+It maintains an `Array` for storing the items on the queue.
 
 **Constructor providing backing storage:**
 
 ```c++
-ExternalFifoQueue(T* elements, FwSizeType size)
+ExternalFifoQueue(T* items, FwSizeType size)
 ```
 
 TODO
@@ -596,15 +597,15 @@ TODO
 **setStorage:**
 
 ```c++
-void setStorage(T* elements, FwSizeType size)
+void setStorage(T* items, FwSizeType size)
 ```
 
 TODO
 
-**copyFrom:**
+**copyItemsFrom:**
 
 ```c++
-void copyFrom(const ExternalFifoQueue<T>& queue)
+void copyItemsFrom(const ExternalFifoQueue<T>& queue)
 ```
 
 TODO
@@ -642,7 +643,7 @@ TODO
 `FifoQueue` is a `final` class template representing a
 FIFO queue with internal storage.
 Internally it maintains an <a href="#array">`Array`</a>
-for storing the elements on the queue.
+for storing the items on the queue.
 
 #### 3.2.1. Template Parameters
 
@@ -650,10 +651,10 @@ for storing the elements on the queue.
 
 |Kind|Name|Purpose|
 |----|----|-------|
-|`typename`|`T`|The type of a queue element|
-|`FwSizeType`|`S`|The queue size in elements|
+|`typename`|`T`|The type of a queue item|
+|`FwSizeType`|`C`|The queue capacity in items|
 
-`FifoQueue` statically asserts that `S > 0`.
+`FifoQueue` statically asserts that `C > 0`.
 
 #### 3.2.2. Private Member Variables
 
@@ -662,7 +663,7 @@ for storing the elements on the queue.
 |Name|Type|Purpose|Default Value|
 |----|----|-------|-------------|
 |`m_eQueue`|`ExternalFifoQueue<T>`|The external queue implementation|C++ default initialization|
-|`m_array`|`Array<T, S>`|The array providing the backing memory for `m_queue`|C++ default initialization|
+|`m_array`|`Array<T, C>`|The array providing the backing memory for `m_queue`|C++ default initialization|
 
 #### 3.2.3. Public Constructors and Destructors
 
@@ -685,7 +686,7 @@ FifoQueue<U32, 10> queue;
 FifoQueue(const FifoQueue<T, S>& queue)
 ```
 
-Call `m_eQueue.copyFrom(queue.m_eQueue)`.
+Call `m_eQueue.copyItemsFrom(queue.m_eQueue)`.
 
 _Example:_
 ```c++
