@@ -59,8 +59,9 @@ Initialize `m_elements` with `elements` and `m_size` with `size`.
 
 _Example:_
 ```c++
-U32 elements[3];
-ExternalArray a(elements, 3);
+constexpr FwSizeType size = 3;
+U32 elements[size];
+ExternalArray a(elements, size);
 ```
 
 **Copy constructor:**
@@ -73,9 +74,10 @@ Set `m_elements = a.m_elements` and `m_size = a.m_size`.
 
 _Example:_
 ```c++
-U32 elements[3];
+constexpr FwSizeType size = 3;
+U32 elements[size];
 // Call the constructor providing backing storage
-ExternalArray<U32> a1(elements, 3);
+ExternalArray<U32> a1(elements, size);
 // Call the copy constructor
 ExternalArray<U32> a2(a1);
 ```
@@ -105,15 +107,16 @@ const T& operator[](FwSizeType i) const
 
 _Example:_
 ```c++
-U32 elements[3] = {};
-ExternalArray<U32> a(elements, 3);
+constexpr FwSizeType size = 3;
+U32 elements[size] = {};
+ExternalArray<U32> a(elements, size);
 // Constant access
 ASSERT_EQ(a[0], 0);
 // Mutable access
 a[0]++;
 ASSERT_EQ(a[0], 1);
 // Out-of-bounds access
-ASSERT_DEATH(a[3], "Assert");
+ASSERT_DEATH(a[size], "Assert");
 ```
 
 **Copy assignment operator:**
@@ -128,8 +131,9 @@ ExternalArray<T>& operator=(const ExternalArray<T>& a)
 
 _Example:_
 ```c++
-U32 elements[3];
-ExternalArray<U32> a1(elements, 3);
+constexpr FwSizeType size = 3;
+U32 elements[size];
+ExternalArray<U32> a1(elements, size);
 ExternalArray<U32> a2;
 a2 = a1;
 ```
@@ -150,15 +154,16 @@ void copyElementsFrom(const ExternalArray<T>& a)
 
 _Example:_
 ```c++
-U32 elements1[10];
-ExternalArray<U32> a1(elements, 10);
-for (FwSizeType i = 0; i < 10; i++) {
+constexpr FwSizeType size = 10;
+U32 elements1[size];
+ExternalArray<U32> a1(elements, size);
+for (FwSizeType i = 0; i < size; i++) {
     a1[i] = i;
 }
-U32 elements2[10];
-ExternalArray<U32> a2(elements, 10);
+U32 elements2[size];
+ExternalArray<U32> a2(elements, size);
 a2.copyElementsFrom(a1);
-for (FwSizeType i = 0; i < 10; i++) {
+for (FwSizeType i = 0; i < size; i++) {
     ASSERT_EQ(a2[i], a1[i]);
 }
 ```
@@ -174,8 +179,9 @@ Return `m_elements`.
 
 _Example:_
 ```c++
-U32 elements[3];
-ExternalArray<U32> a(elements, 3);
+constexpr FwSizeType size = 3;
+U32 elements[size];
+ExternalArray<U32> a(elements, size);
 // Mutable pointer
 auto& elements1 = a.getElements();
 ASSERT_EQ(elements1[0], 0);
@@ -195,10 +201,11 @@ Return `m_size`.
 
 _Example:_
 ```c++
-U32 elements[3];
-ExternalArray<U32> a(elements, 3);
-const auto size = a.getSize();
-ASSERT_EQ(size, 3);
+constexpr FwSizeType size = 3;
+U32 elements[size];
+ExternalArray<U32> a(elements, size);
+const auto size1 = a.getSize();
+ASSERT_EQ(size1, size);
 ```
 
 **setStorage:**
@@ -211,9 +218,10 @@ Set `m_elements = elements` and `m_size = size`.
 
 _Example:_
 ```c++
+constexpr FwSizeType size = 3;
 ExternalArray<U32> a;
-U32 elements[3];
-a.setStorage(elements, 3);
+U32 elements[size];
+a.setStorage(elements, size);
 ```
 
 <a name="array"></a>
@@ -336,14 +344,15 @@ const T& operator[](FwSizeType i) const
 
 _Example:_
 ```c++
-Array<U32, 3> a;
+constexpr FwSizeType size = 3;
+Array<U32, size> a;
 // Constant access
 ASSERT_EQ(a[0], 0);
 // Mutable access
 a[0]++;
 ASSERT_EQ(a[0], 1);
 // Out-of-bounds access
-ASSERT_DEATH(a[3], "Assert");
+ASSERT_DEATH(a[size], "Assert");
 ```
 
 **Copy assignment operator:**
@@ -375,7 +384,8 @@ Return `m_elements`.
 
 _Example:_
 ```c++
-Array<U32, 3> a;
+constexpr FwSizeType size = 3;
+Array<U32, size> a;
 // Mutable reference
 auto& elements1 = a.getElements();
 ASSERT_EQ(elements1[0], 0);
@@ -395,7 +405,8 @@ Return `ExternalArray<T>(m_elements, S)`.
 
 _Example:_
 ```c++
-Array<U32, 3> a = { 1, 2, 3 };
+constexpr FwSizeType size = 3;
+Array<U32, size> a = { 1, 2, 3 };
 ExternalArray<U32> ea = a.asExternalArray();
 ASSERT_EQ(ea[0], 1);
 ```
@@ -570,8 +581,9 @@ Initialize `m_items` with `items` and `size`.
 
 _Example:_
 ```c++
-U32 items[10];
-ExternalFifoQueue queue(items, 10);
+constexpr FwSizeType size = 10;
+U32 items[size];
+ExternalFifoQueue queue(items, size);
 ```
 
 **Copy constructor:**
@@ -590,7 +602,8 @@ ExternalFifoQueue(const ExternalFifoQueue<T>& queue)
 
 _Example:_
 ```c++
-U32 items[10];
+constexpr FwSizeType size = 3;
+U32 items[size];
 // Call the constructor providing backing storage
 ExternalFifoQueue<U32> q1(elements, 10);
 // Enqueue an element
