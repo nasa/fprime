@@ -97,7 +97,7 @@ const T& operator[](FwSizeType i) const
 
 1. Assert that `i < m_size`.
 
-1. Return a reference to `m_elements[i]`.
+1. Return `m_elements[i]`.
 
 _Example:_
 ```c++
@@ -295,7 +295,7 @@ const T& operator[](FwSizeType i) const
 
 1. Assert that `i < S`.
 
-1. Return a reference to `m_elements[i]`.
+1. Return `m_elements[i]`.
 
 _Example:_
 ```c++
@@ -334,7 +334,7 @@ Elements& getElements()
 const Elements& getElements() const
 ```
 
-Return a reference to `m_elements`.
+Return `m_elements`.
 
 _Example:_
 ```c++
