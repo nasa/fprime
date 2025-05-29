@@ -1,84 +1,51 @@
 # Svc::TCDeframer
 
-Deframer for the TC Space Data Link Protocl (CCSDS Standard)
+The `Svc::CCSDS::TCDeframer` is an implementation of the [DeframerInterface](../../Interfaces/docs/sdd.md) for the CCSDS [TC Space Data Link Protocol](https://ccsds.org/Pubs/232x0b4e1c1.pdf). 
 
-- Service Types: Use "Expedited Service" Type-B Frames (meaning no sequence control)
-- This means FARM flag is expected to be 0, and sequence control is set to all 0s
+It receives payload data (such as a Space Packet or a VCA_SDU) on input and produces a TC frame on its output port as a result. Please refer to the CCSDS [TC specification (CCSDS 232.0-B-4)](https://ccsds.org/Pubs/232x0b4e1c1.pdf) for details on the frame format and protocol.
 
-Implements the following service:
-- VIRTUAL CHANNEL PACKET SERVICE
+The `Svc::CCSDS::TCDeframer` is designed to work in the common F Prime telemetry stack, receiving data from an upstream [`Svc::ComQueue`](../../../ComQueue/docs/sdd.md) and passing frames to a [Communications Adapter](../../Interfaces/docs/sdd.md), such as a Radio manager component or [`Svc::ComStub`](../../ComStub/docs/sdd.md), for transmission on the wire. It is commonly coupled with the [`Svc::CCSDS::SpacePacketFramer`](../../SpacePacketFramer/docs/sdd.md) to wrap CCSDS Space Packets into TM frames.
 
-Implements the following functions:
-- ALL FRAMES RECEPTION FUNCTION
-- VC PACKET EXTRACTION FUNCTION (Router is the user to which frame data unit is delivered) ---- OR ------ use VCA_SDU with no Space Packet
-- FRAME DELIVERY FUNCTION (Type-BD -> to Router)
-- Frame Validation Check Procedure
+The TCDeframer currently functions only in the "Expedited Service" mode, for Type-B Frames. This means that should Type-A frames be received, no FARM checks would be performed on board.
 
+## Configuration
 
-Not implemented:
-- Sequence Control (Type-A frames) and Control Commands
-- 
+The `TCDeframer` component can be configured with a specific Virtual Channel ID (VCID) and Spacecraft ID. By default, it uses the spacecraft ID from `config/ComCfg.fpp` and accepts all VCIDs.
 
+```cpp
+void configure(U16 vcId, U16 spacecraftId, bool acceptAllVcid);
+```
 
-## Usage Examples
-Add usage examples here
-
-### Diagrams
-Add diagrams here
-
-### Typical Usage
-And the typical usage of the component here
-
-## Class Diagram
-Add a class diagram here
+- `vcId`: The virtual channel ID to accept. This is only used if `acceptAllVcid` is `false`.
+- `spacecraftId`: The spacecraft ID to accept.
+- `acceptAllVcid`: If `true`, the deframer accepts all VCIDs. If `false`, it only accepts the `vcId` specified.
 
 ## Port Descriptions
-| Name | Description |
-|---|---|
-|---|---|
-
-## Component States
-Add component states in the chart below
-| Name | Description |
-|---|---|
-|---|---|
-
-## Sequence Diagrams
-Add sequence diagrams here
-
-## Parameters
-| Name | Description |
-|---|---|
-|---|---|
-
-## Commands
-| Name | Description |
-|---|---|
-|---|---|
+| Kind | Name | Port Type | Description |
+|---|---|---|---|
+| Input (guarded) | dataIn | Svc.ComDataWithContext | Port to receive framed data |
+| Output | dataOut | Svc.ComDataWithContext | Port to output deframed data |
+| Output | dataReturnOut | Svc.ComDataWithContext | Port for returning ownership of received buffers to deframe |
+| Input (sync) | dataReturnIn | Svc.ComDataWithContext | Port receiving back ownership of sent buffers |
 
 ## Events
-| Name | Description |
-|---|---|
-|---|---|
-
-## Telemetry
-| Name | Description |
-|---|---|
-|---|---|
-
-## Unit Tests
-Add unit test descriptions in the chart below
-| Name | Description | Output | Coverage |
-|---|---|---|---|
-|---|---|---|---|
+| Name | Severity | Description |
+|---|---|---|
+| InvalidSpacecraftId | `activity low` | Deframing received an invalid SCID |
+| InvalidFrameLength | `warning high` | Deframing received an invalid frame length |
+| InvalidVcId | `activity low` | Deframing received an invalid VCID |
+| InvalidCrc | `warning high` | Deframing received an invalid checksum |
 
 ## Requirements
 Add requirements in the chart below
 | Name | Description | Validation |
 |---|---|---|
-|---|---|---|
-
-## Change Log
-| Date | Description |
-|---|---|
-|---| Initial Draft |
+| SVC-CCSDS-TCDEFRAMER-001 | The TCDeframer shall deframe Telecommand (TC) Transfer Frames according to the CCSDS Space Data Link Protocol standard for Type-BD frames. | Unit Test, Inspection |
+| SVC-CCSDS-TCDEFRAMER-002 | The TCDeframer shall perform Frame Validation Check Procedures, including Spacecraft ID, Virtual Channel ID, Frame Length, and CRC. | Unit Test |
+| SVC-CCSDS-TCDEFRAMER-003 | The TCDeframer shall be configurable for a specific Spacecraft ID. | Unit Test, Inspection |
+| SVC-CCSDS-TCDEFRAMER-004 | The TCDeframer shall be configurable with a specific Virtual Channel ID (VCID) OR to accept all VCIDs. | Unit Test, Inspection |
+| SVC-CCSDS-TCDEFRAMER-005 | The TCDeframer shall log an `InvalidSpacecraftId` event if a frame with an unexpected Spacecraft ID is received. | Unit Test |
+| SVC-CCSDS-TCDEFRAMER-006 | The TCDeframer shall log an `InvalidFrameLength` event if a frame with an invalid length is received. | Unit Test |
+| SVC-CCSDS-TCDEFRAMER-007 | The TCDeframer shall log an `InvalidVcId` event if a frame with an unexpected VCID is received (when not configured to accept all VCIDs). | Unit Test |
+| SVC-CCSDS-TCDEFRAMER-008 | The TCDeframer shall log an `InvalidCrc` event if a frame fails the CRC check. | Unit Test |
+| SVC-CCSDS-TCDEFRAMER-009 | The TCDeframer shall provide an input port (`dataIn`) to receive framed data, and emit deframed data packets on its `dataOut` output port. | Unit Test |

@@ -17,7 +17,7 @@
 namespace Fw {
 
     // This type is defined in config/ComCfg.fpp
-    typedef ComCfg::APID::T ComPacketType;
+    using ComPacketType = ComCfg::APID::T;
 
     class ComPacket: public Serializable {
         public:

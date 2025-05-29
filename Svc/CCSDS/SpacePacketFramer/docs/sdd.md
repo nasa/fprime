@@ -1,66 +1,43 @@
-# CCSDS::SpacePacketFramer
+<!-- filepath: /Users/chammard/Work/fp/fprime/Svc/CCSDS/SpacePacketFramer/docs/sdd.md -->
+# Svc::CCSDS::SpacePacketFramer
 
-Deframer for the CCSDS Space Packet protocol
+The `Svc::CCSDS::SpacePacketFramer` is an implementation of the [FramerInterface](../../Interfaces/docs/sdd.md) for the CCSDS [Space Packet Protocol](https://public.ccsds.org/Pubs/133x0b2e1.pdf).
 
-## Usage Examples
-Add usage examples here
+It receives user data on its input port and constructs a CCSDS Space Packet. Please refer to the CCSDS [Space Packet Protocol specification (CCSDS 133.0-B-2)](https://public.ccsds.org/Pubs/133x0b2e1.pdf) for details on the packet format.
 
-### Diagrams
-Add diagrams here
+The `Svc::CCSDS::SpacePacketFramer` is typically used upstream of a component that adds transfer frame headers, such as the `Svc::CCSDS::TMFramer`. It encapsulates user data into a Space Packet, adding the necessary header fields.
 
-### Typical Usage
-And the typical usage of the component here
-
-## Class Diagram
-Add a class diagram here
+## Configuration
+The `Svc::CCSDS::SpacePacketFramer` requires an Application Process Identifier (APID) for the Space Packets it generates. This APID is typically provided during instantiation or configuration. It also uses a sequence count, which is managed per APID via the `getApidSeqCount` port.
 
 ## Port Descriptions
-| Name | Description |
-|---|---|
-|---|---|
-
-## Component States
-Add component states in the chart below
-| Name | Description |
-|---|---|
-|---|---|
-
-## Sequence Diagrams
-Add sequence diagrams here
-
-## Parameters
-| Name | Description |
-|---|---|
-|---|---|
-
-## Commands
-| Name | Description |
-|---|---|
-|---|---|
+| Kind | Name | Port Type | Description |
+|---|---|---|---|
+| Input (sync) | dataIn | Svc.ComDataWithContext | Port to receive user data to be framed into a Space Packet |
+| Output | dataOut | Svc.ComDataWithContext | Port to output the constructed Space Packet |
+| Output | bufferAllocate | Fw.BufferGet | Port to allocate buffers for the outgoing Space Packet |
+| Output | bufferDeallocate | Fw.BufferSend | Port to deallocate buffers after the Space Packet is sent |
+| Output | getApidSeqCount | CCSDS.ApidSequenceCount | Port to retrieve the current sequence count for a given APID |
 
 ## Events
-| Name | Description |
-|---|---|
-|---|---|
-
-## Telemetry
-| Name | Description |
-|---|---|
-|---|---|
-
-## Unit Tests
-Add unit test descriptions in the chart below
-| Name | Description | Output | Coverage |
-|---|---|---|---|
-|---|---|---|---|
+*No component-specific events are defined in the FPP for SpacePacketFramer.*
 
 ## Requirements
 Add requirements in the chart below
 | Name | Description | Validation |
 |---|---|---|
-|---|---|---|
+| SPF-001 | The SpacePacketFramer shall implement the `Svc.FramerInterface`. | Inspection, Unit Test |
+| SPF-002 | The SpacePacketFramer shall construct CCSDS Space Packets compliant with the CCSDS 133.0-B-2 standard. | Unit Test, Inspection |
+| SPF-003 | The SpacePacketFramer shall accept user data to be framed via its `dataIn` port. | Unit Test |
+| SPF-004 | The SpacePacketFramer shall output the constructed Space Packet via its `dataOut` port. | Unit Test |
+| SPF-005 | The SpacePacketFramer shall use the `bufferAllocate` port to request memory buffers for outgoing Space Packets. | Unit Test |
+| SPF-006 | The SpacePacketFramer shall use the `bufferDeallocate` port to return ownership of buffers after transmission. | Unit Test |
+| SPF-007 | The SpacePacketFramer shall utilize the `getApidSeqCount` port to obtain the correct sequence count for the configured APID before framing a packet. | Unit Test |
+| SPF-008 | The SpacePacketFramer shall correctly populate all mandatory fields of the Space Packet Primary Header, including Version Number, Packet Type, Secondary Header Flag, APID, Sequence Flags, Packet Sequence Count, and Packet Data Length. | Unit Test |
+| SPF-009 | The SpacePacketFramer shall be configurable with an Application Process Identifier (APID) to be used in the Space Packet Header. | Inspection, Unit Test |
+| SPF-010 | The SpacePacketFramer shall accurately calculate and set the Packet Data Length field in the Space Packet header based on the length of the user data. | Unit Test |
 
 ## Change Log
 | Date | Description |
 |---|---|
-|---| Initial Draft |
+| May 28, 2025 | Initial Draft |

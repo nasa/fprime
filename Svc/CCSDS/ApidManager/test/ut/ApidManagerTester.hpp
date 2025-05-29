@@ -10,15 +10,16 @@
 #include "Svc/CCSDS/ApidManager/ApidManager.hpp"
 #include "Svc/CCSDS/ApidManager/ApidManagerGTestBase.hpp"
 #include "STest/Rule/Rule.hpp"
+#include "STest/Random/Random.hpp"
 
 namespace Svc {
 
 namespace CCSDS {
 
 class ApidManagerTester final : public ApidManagerGTestBase {
-    friend class ApidManagerTester;
 
   public:
+
     // ----------------------------------------------------------------------
     // Constants
     // ----------------------------------------------------------------------
@@ -67,26 +68,62 @@ class ApidManagerTester final : public ApidManagerGTestBase {
     //! The component under test
     ApidManager component;
 
-    std::map<ComCfg::APID::T, U16> existingSeqCounts;  //!< Map to hold existing sequence counts for APIDs
+    std::map<ComCfg::APID::T, U16> shadow_seqCounts;  //!< Map to hold existing sequence counts for APIDs
+    bool shadow_isTableFull = false;
 
     U16 shadow_getAndIncrementSeqCount(ComCfg::APID::T apid) {
         // This is a shadow function to simulate the getAndIncrementSeqCount behavior
         // without modifying the actual component state.
-        auto found = this->existingSeqCounts.find(apid);
-        if (found != this->existingSeqCounts.end()) {
+        auto found = this->shadow_seqCounts.find(apid);
+        if (found != this->shadow_seqCounts.end()) {
             U16 seqCount = found->second;
             found->second = (seqCount + 1) % (1 << 14);  // Increment for next call
             return seqCount;  // Return the current sequence count
         }
-        return ApidManager::SEQUENCE_COUNT_ERROR;  // Return error if APID not found
+        // If APID not found, initialize a new entry
+        if (this->shadow_seqCounts.size() < this->component.MAX_TRACKED_APIDS) {
+            U16 seqCount = 0;
+            this->shadow_seqCounts[apid] = seqCount + 1; // increment for next call
+            return seqCount;  // Return the initialized sequence count
+        }
+        return this->component.SEQUENCE_COUNT_ERROR;  // Return error if APID not found
     }
 
+    ComCfg::APID::T getRandomTrackedApid() {
+      // Select a random APID from the sequence counts map
+      U32 mapSize = static_cast<U32>(this->shadow_seqCounts.size());
+      U32 randomIndex = STest::Random::lowerUpper(0, mapSize - 1);
+      ComCfg::APID apid = std::next(this->shadow_seqCounts.begin(), randomIndex)->first;
+      return apid;
+    }
+
+    ComCfg::APID::T getRandomUntrackedApid() {
+      // Select a random APID that is not currently tracked
+      ComCfg::APID::T apid;
+      do {
+        apid = static_cast<ComCfg::APID::T>(STest::Random::lowerUpper(10, ComCfg::APID::SPP_IDLE_PACKET));
+      } while (this->shadow_seqCounts.find(apid) != this->shadow_seqCounts.end());
+      return apid;
+    }
+    
     // ----------------------------------------------------------------------
     // Rules (Rule-based testing)
     // ----------------------------------------------------------------------
   public:
     struct GetExistingSeqCount : public STest::Rule<ApidManagerTester> {
         GetExistingSeqCount(): STest::Rule<ApidManagerTester>("GetExistingSeqCount") {};
+        bool precondition(const ApidManagerTester &state);
+        void action(ApidManagerTester &state);
+    };
+
+    struct GetNewSeqCountOk : public STest::Rule<ApidManagerTester> {
+        GetNewSeqCountOk(): STest::Rule<ApidManagerTester>("GetNewSeqCountOk") {};
+        bool precondition(const ApidManagerTester &state);
+        void action(ApidManagerTester &state);
+    };
+
+    struct GetNewSeqCountTableFull : public STest::Rule<ApidManagerTester> {
+        GetNewSeqCountTableFull(): STest::Rule<ApidManagerTester>("GetNewSeqCountTableFull") {};
         bool precondition(const ApidManagerTester &state);
         void action(ApidManagerTester &state);
     };

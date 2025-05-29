@@ -8,12 +8,17 @@
 
 module ComCfg {
 
+    # Needed in dictionary:
+    # - spacecraftId
+    # - TmFrameFixedSize
+    # - potentially APID enum ?
     constant SpacecraftId = 0x0044    # Spacecraft ID (10 bits)
     constant TmFrameFixedSize = 1024  # Needs to be at least COM_BUFFER_MAX_SIZE + (2 * SpacePacketHeaderSize) + 1
 
     @ APIDs are 11 bits in the Space Packet protocol, so we use U16. Max value 7FF
     enum APID : U16 {
-        # APIDs prefixed with FW are reserved for F Prime and should not be changed
+        # APIDs prefixed with FW are reserved for F Prime and need to be present
+        # in the enumeration. Their values can be changed
         FW_PACKET_COMMAND        = 0x0000  @< Command packet type - incoming
         FW_PACKET_TELEM          = 0x0001  @< Telemetry packet type - outgoing
         FW_PACKET_LOG            = 0x0002  @< Log type - outgoing
@@ -28,6 +33,8 @@ module ComCfg {
         SPP_IDLE_PACKET          = 0x07FF  @< Per Space Packet Standard, all 1s (11bits) is reserved for Idle Packets
         INVALID_UNINITIALIZED    = 0x0800  @< Anything equal or higher value is invalid and should not be used
     } default INVALID_UNINITIALIZED
+
+# TODO ???: add alias with name ComPacketDscriptor for the ComPacket.hpp
 
     @ Type used to pass context info between components during framing/deframing
     struct FrameContext {
