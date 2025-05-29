@@ -72,14 +72,14 @@ class Array final {
     // ----------------------------------------------------------------------
 
     //! Subscript operator
-    T& operator[](const FwSizeType i  //!< The subscript index
+    T& operator[](FwSizeType i  //!< The subscript index
     ) {
         FW_ASSERT(i < S, static_cast<FwAssertArgType>(i));
         return this->m_elements[i];
     }
 
     //! Const subscript operator
-    const T& operator[](const FwSizeType i  //!< The subscript index
+    const T& operator[](FwSizeType i  //!< The subscript index
     ) const {
         FW_ASSERT(i < S, static_cast<FwAssertArgType>(i));
         return this->m_elements[i];

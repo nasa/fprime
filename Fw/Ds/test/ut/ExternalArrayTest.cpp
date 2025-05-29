@@ -33,4 +33,16 @@ TEST(ExternalArray, CopyConstructor) {
     ASSERT_EQ(a2.getSize(), 3);
 }
 
+TEST(ExternalArray, Subscript) {
+    U32 elements[3] = {};
+    ExternalArray<U32> a(elements, 3);
+    // Constant access
+    ASSERT_EQ(a[0], 0);
+    // Mutable access
+    a[0]++;
+    ASSERT_EQ(a[0], 1);
+    // Out-of-bounds access
+    ASSERT_DEATH(a[3], "Assert");
+}
+
 }  // namespace Ds
