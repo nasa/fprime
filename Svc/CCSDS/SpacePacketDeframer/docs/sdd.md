@@ -7,6 +7,7 @@ It receives data containing a Space Packet on its input port and extracts the Sp
 The `Svc::CCSDS::SpacePacketDeframer` is typically used downstream of a component that removes transfer frame headers, such as the `Svc::CCSDS::TCDeframer`. It validates the Space Packet header and extracts the payload.
 
 ## Port Descriptions
+
 | Kind | Name | Port Type | Description |
 |---|---|---|---|
 | Input (guarded) | dataIn | Svc.ComDataWithContext | Port to receive data containing a Space Packet |
@@ -16,11 +17,13 @@ The `Svc::CCSDS::SpacePacketDeframer` is typically used downstream of a componen
 | Output | validateApidSeqCount | CCSDS.ApidSequenceCount | Port to request validation of a sequence count for a given APID |
 
 ## Events
+
 | Name | Severity | Description |
 |---|---|---|
 | InvalidLength | `warning high` | Deframing received an invalid packet length |
 
 ## Requirements
+
 Add requirements in the chart below
 | Name | Description | Validation |
 |---|---|---|

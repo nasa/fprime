@@ -11,6 +11,7 @@ The `Svc::CCSDS::SpacePacketFramer` is typically used upstream of a component th
 The `Svc::CCSDS::SpacePacketFramer` requires an Application Process Identifier (APID) for the Space Packets it generates. This APID is typically provided during instantiation or configuration. It also uses a sequence count, which is managed per APID via the `getApidSeqCount` port.
 
 ## Port Descriptions
+
 | Kind | Name | Port Type | Description |
 |---|---|---|---|
 | Input (sync) | dataIn | Svc.ComDataWithContext | Port to receive user data to be framed into a Space Packet |
@@ -19,11 +20,8 @@ The `Svc::CCSDS::SpacePacketFramer` requires an Application Process Identifier (
 | Output | bufferDeallocate | Fw.BufferSend | Port to deallocate buffers after the Space Packet is sent |
 | Output | getApidSeqCount | CCSDS.ApidSequenceCount | Port to retrieve the current sequence count for a given APID |
 
-## Events
-*No component-specific events are defined in the FPP for SpacePacketFramer.*
-
 ## Requirements
-Add requirements in the chart below
+
 | Name | Description | Validation |
 |---|---|---|
 | SPF-001 | The SpacePacketFramer shall implement the `Svc.FramerInterface`. | Inspection, Unit Test |

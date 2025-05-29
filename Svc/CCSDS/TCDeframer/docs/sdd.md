@@ -21,6 +21,7 @@ void configure(U16 vcId, U16 spacecraftId, bool acceptAllVcid);
 - `acceptAllVcid`: If `true`, the deframer accepts all VCIDs. If `false`, it only accepts the `vcId` specified.
 
 ## Port Descriptions
+
 | Kind | Name | Port Type | Description |
 |---|---|---|---|
 | Input (guarded) | dataIn | Svc.ComDataWithContext | Port to receive framed data |
@@ -29,6 +30,7 @@ void configure(U16 vcId, U16 spacecraftId, bool acceptAllVcid);
 | Input (sync) | dataReturnIn | Svc.ComDataWithContext | Port receiving back ownership of sent buffers |
 
 ## Events
+
 | Name | Severity | Description |
 |---|---|---|
 | InvalidSpacecraftId | `activity low` | Deframing received an invalid SCID |
@@ -37,7 +39,7 @@ void configure(U16 vcId, U16 spacecraftId, bool acceptAllVcid);
 | InvalidCrc | `warning high` | Deframing received an invalid checksum |
 
 ## Requirements
-Add requirements in the chart below
+
 | Name | Description | Validation |
 |---|---|---|
 | SVC-CCSDS-TCDEFRAMER-001 | The TCDeframer shall deframe Telecommand (TC) Transfer Frames according to the CCSDS Space Data Link Protocol standard for Type-BD frames. | Unit Test, Inspection |
