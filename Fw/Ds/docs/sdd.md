@@ -466,7 +466,7 @@ void setModulus(FwSizeType modulus)
 FwSizeType increment(FwSizeType amount = 1)
 ```
 
-1. Set `offset = amount % modulus`.
+1. Set `offset = amount % m_modulus`.
 
 1. Call `setValue(m_value + offset)`.
 
@@ -478,9 +478,9 @@ FwSizeType increment(FwSizeType amount = 1)
 FwSizeType decrement(FwSizeType amount = 1)
 ```
 
-1. Set `offset = amount % modulus`.
+1. Set `offset = amount % m_modulus`.
 
-1. Call `setValue(m_value + modulus - offset)`.
+1. Call `setValue(m_value + m_modulus - offset)`.
 
 1. Return `m_value`.
 
