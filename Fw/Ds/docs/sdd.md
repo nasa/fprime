@@ -690,11 +690,12 @@ Call `m_eQueue.copyFrom(queue.m_eQueue)`.
 _Example:_
 ```c++
 FifoQueue<U32, 10> q1;
-q1.enqueue(3);
+auto status = q1.enqueue(3);
+ASSERT_EQ(status, Fw::Success::SUCCESS);
 FifoQueue<U32, 10> q2;
 q2 = q1;
 U32 value = 0;
-const auto status = q2.dequeue(value);
+status = q2.dequeue(value);
 ASSERT_EQ(status, Fw::Success::SUCCESS);
 ASSERT_EQ(value, 3);
 ```
