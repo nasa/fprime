@@ -73,7 +73,7 @@ jobs:
 
   aarch64-integration:
     name: "AArch64 Linux Integration Tests"
-    runs-on: self-hosted
+    runs-on: [self-hosted, aarch64-linux]
     needs: cross-compilation
     steps:
       - name: "Checkout F´ Repository"
