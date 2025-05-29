@@ -710,6 +710,14 @@ Defined as `= default`.
 
 #### 3.2.4. Public Member Functions
 
+**Copy assignment operator:**
+
+```c++
+FifoQueue<T>& operator=(const FifoQueue<T>& queue)
+```
+
+TODO
+
 **clear:**
 
 ```c++
@@ -743,6 +751,10 @@ TODO
 TODO
 
 **getCapacity:**
+
+TODO
+
+**asExternalFifoQueue:**
 
 TODO
 
