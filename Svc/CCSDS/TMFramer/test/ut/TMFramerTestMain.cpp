@@ -11,6 +11,11 @@ TEST(TMFramer, testComStatusPassthrough) {
     tester.testComStatusPassthrough();
 }
 
+TEST(TMFramer, testDataReturn) {
+    Svc::CCSDS::TMFramerTester tester;
+    tester.testDataReturn();
+}
+
 TEST(TMFramer, testNominalFraming) {
     Svc::CCSDS::TMFramerTester tester;
     tester.testNominalFraming();
@@ -19,6 +24,11 @@ TEST(TMFramer, testNominalFraming) {
 TEST(TMFramer, testSeqCountWrapAround) {
     Svc::CCSDS::TMFramerTester tester;
     tester.testSeqCountWrapAround();
+}
+
+TEST(TMFramer, testInputBufferTooLarge) {
+    Svc::CCSDS::TMFramerTester tester;
+    tester.testInputBufferTooLarge();
 }
 
 int main(int argc, char** argv) {

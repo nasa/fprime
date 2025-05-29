@@ -31,7 +31,7 @@ TMFramer ::~TMFramer() {}
 
 void TMFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
     // TODO: make this an event probably
-    FW_ASSERT(data.getSize() <= ComCfg::TmFrameFixedSize,
+    FW_ASSERT(data.getSize() <= ComCfg::TmFrameFixedSize - TMFrameHeader::SERIALIZED_SIZE - TMFrameTrailer::SERIALIZED_SIZE,
               static_cast<FwAssertArgType>(data.getSize()));
 
     // -----------------------------------------------
@@ -42,13 +42,13 @@ void TMFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
     U16 globalVcId = 0;
     globalVcId |= ComCfg::SpacecraftId << TMFrameMasks::spacecraftIdOffset;
     globalVcId |= context.getvcId() << TMFrameMasks::virtualChannelIdOffset;
-    globalVcId |= 0x0;  // Operational Control Field: Flag set to 0
+    globalVcId |= 0x0;  // Operational Control Field: Flag set to 0 (Standard 4.1.2.4)
 
-    // Data Field Status:
-    // - all flags to 0 except segment length id 0b11 per standard
+    // Data Field Status (Standard 4.1.2.7):
+    // - all flags to 0 except segment length id 0b11 per standard (4.1.2.7)
     // - First Header Pointer is always 0 since we are always wrapping a single entire packet at offset 0
     U16 dataFieldStatus = 0;
-    dataFieldStatus |= 0x3 << TMFrameMasks::segLengthOffset;  // Seg Length 0b11 per Standard
+    dataFieldStatus |= 0x3 << TMFrameMasks::segLengthOffset;  // Seg Length Id 0b11 per Standard (4.1.2.7.5)
 
     header.setglobalVcId(globalVcId);
     header.setmasterFrameCount(this->m_masterFrameCount);
@@ -79,7 +79,7 @@ void TMFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
     // Trailer (CRC)
     // -------------------------------------------------
     TMFrameTrailer trailer;
-    // Compute CRC over the entire frame buffer minus the FECF trailer
+    // Compute CRC over the entire frame buffer minus the FECF trailer (Standard 4.1.6)
     U16 crc = CCSDS::Utils::CRC16::compute(frameBuffer.getData(),
                                            sizeof(this->m_frameBuffer) - TMFrameTrailer::SERIALIZED_SIZE);
     // Set the Frame Error Control Field (FECF)

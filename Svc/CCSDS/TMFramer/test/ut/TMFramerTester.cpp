@@ -109,6 +109,29 @@ void TMFramerTester ::testSeqCountWrapAround() {
     }
 }
 
+void TMFramerTester ::testInputBufferTooLarge() {
+    FwSizeType tooLargeSize = ComCfg::TmFrameFixedSize; // This is too large since we need room for header+trailer as well
+    U8 bufferData[tooLargeSize];
+    Fw::Buffer buffer(bufferData, static_cast<Fw::Buffer::SizeType>(tooLargeSize));
+    ComCfg::FrameContext defaultContext;
+    // Send a buffer larger than the 
+    ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataIn(0, buffer, defaultContext), "TMFramer.cpp");
+}
+
+void TMFramerTester ::testDataReturn() {
+    U8 bufferData[10];
+    Fw::Buffer buffer(bufferData, sizeof(bufferData));
+    ComCfg::FrameContext defaultContext;
+    // Send a buffer that is not the internal buffer of the component, and expect an assertion
+    ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataReturnIn(0, buffer, defaultContext), "TMFramer.cpp");
+
+    // Now send the expected buffer and expect it to be cleared
+    this->component.m_frameBuffer[0] = 0xFF;  // Set some data in the internal buffer
+    Fw::Buffer internalBuffer(this->component.m_frameBuffer, sizeof(this->component.m_frameBuffer));
+    this->invoke_to_dataReturnIn(0, internalBuffer, defaultContext);
+    ASSERT_EQ(this->component.m_frameBuffer[0], 0x00); // data should have been cleared
+}
+
 // ----------------------------------------------------------------------
 // Helper functions
 // ----------------------------------------------------------------------

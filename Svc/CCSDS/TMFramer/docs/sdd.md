@@ -27,6 +27,7 @@ The `Svc::CCSDS::TMFramer` component, as well as the rest of the CCSDS communica
 |---|---|---|
 | SVC-CCSDS-TMFRAMER-001 | The TMFramer shall implement the `Svc.FramerInterface`. | Inspection, Unit Test |
 | SVC-CCSDS-TMFRAMER-002 | The TMFramer shall construct CCSDS Telemetry (TM) Transfer Frames compliant with the CCSDS 132.0-B-3 standard. | Unit Test, Inspection |
+| SVC-CCSDS-TMFRAMER-002 | The TMFramer shall use a fixed frame size that is configurable by the project. | Unit Test, Inspection |
 | SVC-CCSDS-TMFRAMER-003 | The TMFramer shall accept payload data (Space Packets or VCA_SDU) to be framed via its `dataIn` port. | Unit Test |
 | SVC-CCSDS-TMFRAMER-004 | The TMFramer shall output the constructed TM Transfer Frame via its `dataOut` port. | Unit Test |
 | SVC-CCSDS-TMFRAMER-005 | The TMFramer shall return ownership of the input buffer via the `dataReturnOut` port after the framing process is complete. | Unit Test |

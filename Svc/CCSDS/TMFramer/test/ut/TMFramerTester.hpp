@@ -45,6 +45,8 @@ class TMFramerTester final : public TMFramerGTestBase {
     void testComStatusPassthrough();
     void testNominalFraming();
     void testSeqCountWrapAround();
+    void testInputBufferTooLarge();
+    void testDataReturn();
 
   private:
     // ----------------------------------------------------------------------
