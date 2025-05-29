@@ -77,7 +77,7 @@ U32 elements[3];
 // Call the constructor providing backing storage
 ExternalArray<U32> a1(elements, 3);
 // Call the copy constructor
-ExternalArray<U32, 3> a2(a1);
+ExternalArray<U32> a2(a1);
 ```
 
 **Destructor:**
@@ -566,7 +566,13 @@ It maintains an `Array` for storing the items on the queue.
 ExternalFifoQueue(T* items, FwSizeType size)
 ```
 
-TODO
+Initialize `m_items` with `items` and `size`.
+
+_Example:_
+```c++
+U32 items[10];
+ExternalFifoQueue queue(items, 10);
+```
 
 **Copy constructor:**
 
@@ -574,7 +580,25 @@ TODO
 ExternalFifoQueue(const ExternalFifoQueue<T>& queue)
 ```
 
-TODO
+1. Set `m_items = queue.m_items`.
+
+1. Set `m_enqueueIndex = queue.m_enqueueIndex`.
+
+1. Set `m_dequeueIndex = queue.m_dequeueIndex`.
+
+1. Set `m_size = queue.size`.
+
+_Example:_
+```c++
+U32 items[10];
+// Call the constructor providing backing storage
+ExternalFifoQueue<U32> q1(elements, 10);
+// Enqueue an element
+U32 value = 42;
+(void) q1.enqueue(value);
+// Call the copy constructor
+ExternalFifoQueue<U32> a2(a1);
+```
 
 **Destructor:**
 
@@ -582,7 +606,7 @@ TODO
 ExternalFifoQueue()
 ```
 
-TODO
+Defined as `= default`.
 
 #### 3.1.4. Public Member Functions
 
@@ -675,7 +699,7 @@ for storing the items on the queue.
 |Name|Type|Purpose|Default Value|
 |----|----|-------|-------------|
 |`m_eQueue`|`ExternalFifoQueue<T>`|The external queue implementation|C++ default initialization|
-|`m_array`|`Array<T, C>`|The array providing the backing memory for `m_queue`|C++ default initialization|
+|`m_array`|`Array<T, C>`|The array providing the backing memory for `m_eQueue`|C++ default initialization|
 
 #### 3.2.3. Public Constructors and Destructors
 
