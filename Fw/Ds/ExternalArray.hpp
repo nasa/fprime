@@ -17,7 +17,7 @@ template <typename T>
 class ExternalArray final {
   public:
     // ----------------------------------------------------------------------
-    // Constructors
+    // Public constructors and destructors
     // ----------------------------------------------------------------------
 
     //! Zero-argument constructor
@@ -33,7 +33,7 @@ class ExternalArray final {
     ExternalArray(const ExternalArray<T>& a) : m_elements(a.m_elements), m_size(a.m_size) {}
 
     //! Destructor
-    ~ExternalArray() {}
+    ~ExternalArray() = default;
 
   public:
     // ----------------------------------------------------------------------

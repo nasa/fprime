@@ -82,7 +82,7 @@ ExternalArray<U32, 3> a2(a1);
 ~ExternalArray()
 ```
 
-Do nothing.
+Defined as `= default`.
 
 #### 1.1.4. Public Member Functions
 
@@ -282,7 +282,7 @@ Array<U32, 3> a2(a1);
 ~Array()
 ```
 
-Destroy each element of `m_elements`.
+Defined as `= default`.
 
 #### 1.2.5. Public Member Functions
 

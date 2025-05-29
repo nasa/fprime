@@ -64,7 +64,7 @@ class Array final {
     }
 
     //! Destructor
-    ~Array() {}
+    ~Array() = default;
 
   public:
     // ----------------------------------------------------------------------
