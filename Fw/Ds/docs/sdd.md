@@ -17,7 +17,7 @@ It stores a pointer to the backing memory _M_.
 
 #### 1.1.1. Template Parameters
 
-`ExternalArray` has the following template parameters:
+`ExternalArray` has the following template parameters.
 
 |Kind|Name|Purpose|
 |----|----|-------|
@@ -67,7 +67,7 @@ ExternalArray a(elements, 3);
 ExternalArray(const ExternalArray<T>& a)
 ```
 
-Set `m_elements = a.elements` and `m_size = a.size`.
+Set `m_elements = a.m_elements` and `m_size = a.m_size`.
 
 _Example:_
 ```c++
@@ -122,7 +122,7 @@ ExternalArray<T>& operator=(const ExternalArray<T>& a)
 
 1. If `&a == this` then do nothing.
 
-1. Otherwise set `m_elements = a.elements` and `m_size = a.size`.
+1. Otherwise set `m_elements = a.m_elements` and `m_size = a.m_size`.
 
 _Example:_
 ```c++
@@ -236,7 +236,7 @@ Array<U32, 3> a;
 Array(const std::initializer_list<T>& il)
 ```
 
-1. Assert that `il.size == S`.
+1. Assert that `il.m_size == S`.
 
 1. Initialize `m_elements` from `il`.
 
