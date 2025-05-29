@@ -39,15 +39,16 @@ ApidManagerTester ::~ApidManagerTester() {}
 // Tests
 // ----------------------------------------------------------------------
 
-void ApidManagerTester ::toDo() {
-    // TODO
-}
+// void ApidManagerTester ::toDo() {
+//     // TODO
+// }
 
 bool ApidManagerTester::GetExistingSeqCount::precondition(const ApidManagerTester& testerState) {
     return true; // Can always get existing sequence count
 }
 
 void ApidManagerTester::GetExistingSeqCount::action(ApidManagerTester& testerState) {
+    testerState.clearHistory();
     ComCfg::APID::T apid = testerState.getRandomTrackedApid();
     U16 seqCount = testerState.invoke_to_getApidSeqCountIn(0, apid, 0);
     U16 shadownSeqCount = testerState.shadow_getAndIncrementSeqCount(apid);
@@ -62,7 +63,10 @@ bool ApidManagerTester::GetNewSeqCountOk::precondition(const ApidManagerTester& 
 }
 
 void ApidManagerTester::GetNewSeqCountOk::action(ApidManagerTester& testerState) {
-    bool isTableFull = testerState.shadow_seqCounts.size() >= testerState.component.MAX_TRACKED_APIDS;
+    testerState.clearHistory();
+    // Use local constexpr to potentially avoid ODR-use of ApidManager::MAX_TRACKED_APIDS
+    constexpr U8 maxTrackedApidsVal = ApidManager::MAX_TRACKED_APIDS;
+    bool isTableFull = !(testerState.shadow_seqCounts.size() < maxTrackedApidsVal);
     if (isTableFull) {
         testerState.shadow_isTableFull = true;
         return; // Cannot get new sequence count if table is full - skip action
@@ -81,14 +85,51 @@ bool ApidManagerTester::GetNewSeqCountTableFull::precondition(const ApidManagerT
 }
 
 void ApidManagerTester::GetNewSeqCountTableFull::action(ApidManagerTester& testerState) {
+    testerState.clearHistory();
     ComCfg::APID::T apid = testerState.getRandomUntrackedApid();
     U16 seqCount = testerState.invoke_to_getApidSeqCountIn(0, apid, 0);
-    ASSERT_EQ(seqCount, testerState.component.SEQUENCE_COUNT_ERROR)
+    // Use local constexpr to potentially avoid ODR-use of ApidManager::SEQUENCE_COUNT_ERROR
+    constexpr U16 sequenceCountErrorVal = ApidManager::SEQUENCE_COUNT_ERROR;
+    ASSERT_EQ(seqCount, sequenceCountErrorVal)
         << "Expected SEQUENCE_COUNT_ERROR for untracked APID " << static_cast<U16>(apid)
         << ", but got " << seqCount;
     testerState.assertEvents_ApidTableFull_size(__FILE__, __LINE__, 1);
     testerState.assertEvents_ApidTableFull(__FILE__, __LINE__, 0, static_cast<U16>(apid));
 }
 
-}  // namespace CCSDS
-}  // namespace Svc
+bool ApidManagerTester::ValidateSeqCountOk::precondition(const ApidManagerTester& testerState) {
+    return true;
+}
+
+void ApidManagerTester::ValidateSeqCountOk::action(ApidManagerTester& testerState) {
+    testerState.clearHistory();
+    ComCfg::APID::T apid = testerState.getRandomTrackedApid();
+    U16 shadow_expectedSeqCount = testerState.shadow_seqCounts[apid];
+    testerState.invoke_to_validateApidSeqCountIn(0, apid, shadow_expectedSeqCount);
+    testerState.shadow_validateApidSeqCount(apid, shadow_expectedSeqCount); // keep shadow state in sync
+
+    testerState.assertEvents_UnexpectedSequenceCount_size(__FILE__, __LINE__, 0);
+}
+
+bool ApidManagerTester::ValidateSeqCountFailure::precondition(const ApidManagerTester& testerState) {
+    return true;
+}
+
+void ApidManagerTester::ValidateSeqCountFailure::action(ApidManagerTester& testerState) {
+    testerState.clearHistory();
+    ComCfg::APID::T apid = testerState.getRandomTrackedApid();
+    U16 shadow_expectedSeqCount = testerState.shadow_seqCounts.at(apid);
+    U16 invalidSeqCount = (shadow_expectedSeqCount + 1) % (1 << 14); // Or any other value that's different, ensure wrap around
+
+    // Invoke the port with the deliberately incorrect sequence count
+    testerState.invoke_to_validateApidSeqCountIn(0, apid, invalidSeqCount);
+    testerState.shadow_validateApidSeqCount(apid, invalidSeqCount); // keep shadow state in sync
+
+    // Now, the event should be logged
+    testerState.assertEvents_UnexpectedSequenceCount_size(__FILE__, __LINE__, 1);
+    testerState.assertEvents_UnexpectedSequenceCount(__FILE__, __LINE__, 0, invalidSeqCount, shadow_expectedSeqCount);
+
+}
+
+};  // namespace CCSDS
+};  // namespace Svc

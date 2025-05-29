@@ -11,8 +11,15 @@
 TEST(ApidManager, getExistingSeqCount) {
     Svc::CCSDS::ApidManagerTester tester;
     Svc::CCSDS::ApidManagerTester::GetExistingSeqCount rule1;
+    Svc::CCSDS::ApidManagerTester::GetNewSeqCountOk rule2;
+    Svc::CCSDS::ApidManagerTester::GetNewSeqCountTableFull rule3;
+
+
     rule1.apply(tester);
+    rule2.apply(tester);
+    // rule3.apply(tester);
 }
+
 
 // Randomized sequence of conditioned take/release/lock/unlock
 TEST(ApidManager, RandomizedInterfaceTesting) {
@@ -22,13 +29,16 @@ TEST(ApidManager, RandomizedInterfaceTesting) {
     Svc::CCSDS::ApidManagerTester::GetExistingSeqCount rule1;
     Svc::CCSDS::ApidManagerTester::GetNewSeqCountOk rule2;
     Svc::CCSDS::ApidManagerTester::GetNewSeqCountTableFull rule3;
-    // rule1.apply(tester);
+    Svc::CCSDS::ApidManagerTester::ValidateSeqCountOk rule4;
+    Svc::CCSDS::ApidManagerTester::ValidateSeqCountFailure rule5;
 
     // Place these rules into a list of rules
     STest::Rule<Svc::CCSDS::ApidManagerTester>* rules[] = {
             &rule1,
             &rule2,
-            &rule3
+            &rule3,
+            &rule4,
+            &rule5
     };
 
     // Take the rules and place them into a random scenario
@@ -47,10 +57,10 @@ TEST(ApidManager, RandomizedInterfaceTesting) {
     // Run!
     const U32 numSteps = bounded.run(tester);
     printf("Ran %u steps.\n", numSteps);
-    // add one run of unlock for safe destruction
 }
 
 int main(int argc, char** argv) {
+    STest::Random::seed();
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

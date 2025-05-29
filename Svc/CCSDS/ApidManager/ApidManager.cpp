@@ -21,7 +21,7 @@ ApidManager ::ApidManager(const char* const compName) : ApidManagerComponentBase
     this->m_apidSequences[1].apid = ComCfg::APID::FW_PACKET_TELEM;
     this->m_apidSequences[2].apid = ComCfg::APID::FW_PACKET_LOG;
     this->m_apidSequences[3].apid = ComCfg::APID::FW_PACKET_FILE;
-    this->m_apidSequences[4].apid = ComCfg::APID::FW_PACKET_PACKETIZED_TLM;
+    // this->m_apidSequences[4].apid = ComCfg::APID::FW_PACKET_PACKETIZED_TLM;
 }
 
 ApidManager ::~ApidManager() {}

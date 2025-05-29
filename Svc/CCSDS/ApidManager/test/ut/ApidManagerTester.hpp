@@ -16,7 +16,7 @@ namespace Svc {
 
 namespace CCSDS {
 
-class ApidManagerTester final : public ApidManagerGTestBase {
+class ApidManagerTester : public ApidManagerGTestBase {
 
   public:
 
@@ -60,7 +60,7 @@ class ApidManagerTester final : public ApidManagerGTestBase {
     //! Initialize components
     void initComponents();
 
-  private:
+  public:
     // ----------------------------------------------------------------------
     // Member variables
     // ----------------------------------------------------------------------
@@ -89,6 +89,14 @@ class ApidManagerTester final : public ApidManagerGTestBase {
         return this->component.SEQUENCE_COUNT_ERROR;  // Return error if APID not found
     }
 
+    void shadow_validateApidSeqCount(ComCfg::APID::T apid, U16 expectedSeqCount) {
+      // This simply updates the shadow state to the next expected sequence count
+      auto found = this->shadow_seqCounts.find(apid);
+      if (found != this->shadow_seqCounts.end()) {
+          found->second = (expectedSeqCount + 1) % (1 << 14);
+      }
+    }
+
     ComCfg::APID::T getRandomTrackedApid() {
       // Select a random APID from the sequence counts map
       U32 mapSize = static_cast<U32>(this->shadow_seqCounts.size());
@@ -105,30 +113,38 @@ class ApidManagerTester final : public ApidManagerGTestBase {
       } while (this->shadow_seqCounts.find(apid) != this->shadow_seqCounts.end());
       return apid;
     }
-    
-    // ----------------------------------------------------------------------
-    // Rules (Rule-based testing)
-    // ----------------------------------------------------------------------
+
   public:
     struct GetExistingSeqCount : public STest::Rule<ApidManagerTester> {
         GetExistingSeqCount(): STest::Rule<ApidManagerTester>("GetExistingSeqCount") {};
         bool precondition(const ApidManagerTester &state);
         void action(ApidManagerTester &state);
     };
-
+    
     struct GetNewSeqCountOk : public STest::Rule<ApidManagerTester> {
         GetNewSeqCountOk(): STest::Rule<ApidManagerTester>("GetNewSeqCountOk") {};
         bool precondition(const ApidManagerTester &state);
         void action(ApidManagerTester &state);
     };
-
+    
     struct GetNewSeqCountTableFull : public STest::Rule<ApidManagerTester> {
         GetNewSeqCountTableFull(): STest::Rule<ApidManagerTester>("GetNewSeqCountTableFull") {};
         bool precondition(const ApidManagerTester &state);
         void action(ApidManagerTester &state);
     };
 
-};
+    struct ValidateSeqCountOk : public STest::Rule<ApidManagerTester> {
+        ValidateSeqCountOk(): STest::Rule<ApidManagerTester>("ValidateSeqCountOk") {};
+        bool precondition(const ApidManagerTester &state);
+        void action(ApidManagerTester &state);
+    };
+
+    struct ValidateSeqCountFailure : public STest::Rule<ApidManagerTester> {
+        ValidateSeqCountFailure(): STest::Rule<ApidManagerTester>("ValidateSeqCountFailure") {};
+        bool precondition(const ApidManagerTester &state);
+        void action(ApidManagerTester &state);
+    };
+  };
 
 }  // namespace CCSDS
 
