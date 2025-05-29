@@ -134,6 +134,20 @@ ExternalArray<U32> a2;
 a2 = a1;
 ```
 
+**copyFrom:**
+
+```c++
+void copyFrom(const ExternalArray<T>& a)
+```
+
+1. If `&a == this` then do nothing.
+
+1. Otherwise 
+
+    1. Let `m` be the minimum of `this->m_size` and `a.m_size`
+
+    1. For each `i` from 0 through `m - 1`, set `m_elements[i] = a.m_elements[i]`
+
 **getElements:**
 
 ```c++
@@ -533,7 +547,7 @@ It maintains an `Array` for storing the elements on the queue.
 **Constructor providing backing storage:**
 
 ```c++
-ExternalArray(T* elements, FwSizeType size)
+ExternalFifoQueue(T* elements, FwSizeType size)
 ```
 
 TODO
@@ -618,13 +632,87 @@ for storing the elements on the queue.
 
 #### 3.2.2. Private Member Variables
 
-TODO
+`FifoQueue` has the following private member variables.
+
+|Name|Type|Purpose|Default Value|
+|----|----|-------|-------------|
+|`m_eQueue`|`ExternalFifoQueue<T>`|The external queue implementation|C++ default initialization|
+|`m_array`|`Array<T, S>`|The array providing the backing memory for `m_queue`|C++ default initialization|
 
 #### 3.2.3. Public Constructors and Destructors
 
-TODO
+**Zero-argument constructor:**
+
+```c++
+FifoQueue()
+```
+
+Initialize each member with default initialization.
+
+_Example:_
+```c++
+FifoQueue<U32, 10> queue;
+```
+
+**Copy constructor:**
+
+```c++
+FifoQueue(const FifoQueue<T, S>& queue)
+```
+
+Call `m_eQueue.copyFrom(queue.m_eQueue)`.
+
+_Example:_
+```c++
+FifoQueue<U32, 10> q1;
+q1.enqueue(3);
+FifoQueue<U32, 10> q2;
+q2 = q1;
+```
+
+**Destructor:**
+
+```c++
+~FifoQueue()
+```
+
+Defined as `= default`.
 
 #### 3.2.4. Public Member Functions
+
+**clear:**
+
+```c++
+void clear()
+```
+
+TODO
+
+**enqueue:**
+
+```c++
+Fw::Success enqueue(const T& e)
+```
+
+TODO
+
+**peek:**
+
+```c++
+Fw::Success peek(T& e)
+```
+
+TODO
+
+**dequeue:**
+
+TODO
+
+**getSize:**
+
+TODO
+
+**getCapacity:**
 
 TODO
 
