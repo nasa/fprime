@@ -6,9 +6,9 @@
 
 #include <gtest/gtest.h>
 
-#include "Fw/Ds/ExternalArray.hpp"
+#include "Fw/DataStructures/ExternalArray.hpp"
 
-namespace Ds {
+namespace DataStructures {
 
 TEST(ExternalArray, ZeroArgConstructor) {
     ExternalArray<U32> a;
@@ -93,4 +93,4 @@ TEST(ExternalArray, SetStorage) {
     ASSERT_EQ(a2.getSize(), a1.getSize());
 }
 
-}  // namespace Ds
+}  // namespace DataStructures

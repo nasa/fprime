@@ -4,16 +4,16 @@
 // \brief  A statically-sized, bounds checked array
 // ======================================================================
 
-#ifndef Ds_Array_HPP
-#define Ds_Array_HPP
+#ifndef DataStructures_Array_HPP
+#define DataStructures_Array_HPP
 
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <initializer_list>
 
-#include "Fw/Ds/ExternalArray.hpp"
+#include "Fw/DataStructures/ExternalArray.hpp"
 #include "Fw/Types/Assert.hpp"
 
-namespace Ds {
+namespace DataStructures {
 
 template <typename T, FwSizeType S>
 class Array final {
@@ -128,6 +128,6 @@ class Array final {
     Elements m_elements = {};
 };
 
-}  // namespace Ds
+}  // namespace DataStructures
 
 #endif

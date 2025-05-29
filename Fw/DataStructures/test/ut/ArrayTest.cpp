@@ -6,9 +6,9 @@
 
 #include <gtest/gtest.h>
 
-#include "Fw/Ds/Array.hpp"
+#include "Fw/DataStructures/Array.hpp"
 
-namespace Ds {
+namespace DataStructures {
 
 TEST(Array, ZeroArgConstructor) {
     Array<U32, 3> a;
@@ -99,4 +99,4 @@ TEST(Array, AsExternalArray) {
     ASSERT_EQ(ea[0], 1);
 }
 
-}  // namespace Ds
+}  // namespace DataStructures

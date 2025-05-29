@@ -1,7 +1,7 @@
 // ======================================================================
-// \title  DsTestMain.cpp
+// \title  DataStructuresTestMain.cpp
 // \author bocchino
-// \brief  cpp file for Ds tests
+// \brief  cpp file for DataStructures tests
 // ======================================================================
 
 #include <gtest/gtest.h>
