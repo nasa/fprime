@@ -1,7 +1,7 @@
 // ======================================================================
-// \title  ExternalArray
-// \author bocchino
-// \brief  A bounds-checked array with external memory
+// @title  ExternalArray
+// @author bocchino
+// @brief  A bounds-checked array with external memory
 // ======================================================================
 
 #ifndef Ds_ExternalArray_HPP
@@ -41,6 +41,7 @@ class ExternalArray final {
     // ----------------------------------------------------------------------
 
     //! Subscript operator
+    //! \return The element at index i
     T& operator[](const FwSizeType i  //!< The subscript index
     ) {
         FW_ASSERT(this->m_elements != nullptr);
@@ -49,6 +50,7 @@ class ExternalArray final {
     }
 
     //! Const subscript operator
+    //! \return The element at index i
     const T& operator[](const FwSizeType i  //!< The subscript index
     ) const {
         FW_ASSERT(i < this->m_elements != nullptr);
@@ -57,6 +59,7 @@ class ExternalArray final {
     }
 
     //! Copy assignment operator
+    //! \return *this
     ExternalArray<T>& operator=(const ExternalArray<T>& a) {
         if (&a != this) {
             this->m_elements = a.m_elements;
@@ -66,9 +69,11 @@ class ExternalArray final {
     }
 
     //! Get a mutable pointer to the elements
+    //! \return A mutable pointer to the elements
     T* getElements() { return this->m_elements; }
 
     //! Get a const pointer to the elements
+    //! \return A const pointer to the elements
     const T* getElements() const { return this->m_elements; }
 
     //! Get the size

@@ -17,9 +17,11 @@ It stores a pointer to the backing memory _M_.
 
 #### 1.1.1. Template Parameters
 
-`ExternalArray` has one template parameter:
+`ExternalArray` has the following template parameters:
 
-1. The type `typename T`
+|Kind|Name|Purpose|
+|----|----|-------|
+|`typename`|`T`|The type of an array element|
 
 #### 1.1.2. Private Member Variables
 
@@ -191,11 +193,12 @@ It maintains the backing memory _M_ as a member variable.
 
 #### 1.2.1. Template Parameters
 
-`Array` has two template parameters:
+`Array` has the following template parameters.
 
-1. The type `typename T`
-
-1. The size `FwSizeType S`
+|Kind|Name|Purpose|
+|----|----|-------|
+|`typename`|`T`|The type of an array element|
+|`FwSizeType`|`S`|The array size in elements|
 
 `Array` statically asserts that `S > 0`.
 
@@ -490,15 +493,17 @@ first in first out (FIFO) order.
 ### 3.1. ExternalFifoQueue
 
 `ExternalFifoQueue` is a `final` class template representing a
-first in first out (FIFO) queue with external storage.
+FIFO queue with external storage.
 Internally it maintains an `ExternalArray` for storing
 the elements on the queue.
 
 #### 3.1.1. Template Parameters
 
-`ExternalFifoQueue` has one template parameter:
+`ExternalFifoQueue` has the following template parameters.
 
-1. The type `typename T`
+|Kind|Name|Purpose|
+|----|----|-------|
+|`typename`|`T`|The type of an element on the queue|
 
 #### 3.1.2. Private Member Variables
 

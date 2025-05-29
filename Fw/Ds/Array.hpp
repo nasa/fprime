@@ -72,6 +72,7 @@ class Array final {
     // ----------------------------------------------------------------------
 
     //! Subscript operator
+    //! \return The element at index i
     T& operator[](FwSizeType i  //!< The subscript index
     ) {
         FW_ASSERT(i < S, static_cast<FwAssertArgType>(i));
@@ -79,6 +80,7 @@ class Array final {
     }
 
     //! Const subscript operator
+    //! \return The element at index i
     const T& operator[](FwSizeType i  //!< The subscript index
     ) const {
         FW_ASSERT(i < S, static_cast<FwAssertArgType>(i));
@@ -86,6 +88,7 @@ class Array final {
     }
 
     //! Copy assignment operator
+    //! \return *this
     Array<T, S>& operator=(const Array<T, S>& a) {
         if (&a != this) {
             for (FwSizeType i = 0; i < S; i++) {
@@ -96,9 +99,11 @@ class Array final {
     }
 
     //! Get a mutable reference to the elements
+    //! \return A mutable reference to the elements
     Elements& getElements() { return this->m_elements; }
 
     //! Get a const reference to the elements
+    //! \return A const reference to the elements
     const Elements& getElements() const { return this->m_elements; }
 
     //! Convert this array to an ExternalArray
@@ -111,6 +116,7 @@ class Array final {
     // ----------------------------------------------------------------------
 
     //! Get the array size
+    //! \return The size
     static constexpr FwSizeType getSize() { return S; }
 
   private:
