@@ -67,7 +67,7 @@ jobs:
 
   RPI-integration:
     name: "RPI Integration Tests"
-    runs-on: self-hosted
+    runs-on: [self-hosted, raspberrypi]
     needs: cross-compilation
     steps:
       - name: "Checkout F´ Repository"
