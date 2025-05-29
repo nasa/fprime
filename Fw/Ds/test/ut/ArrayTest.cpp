@@ -93,4 +93,10 @@ TEST(Array, GetSize) {
     ASSERT_EQ(size, 3);
 }
 
+TEST(Array, AsExternalArray) {
+    Array<U32, 3> a = { 1, 2, 3 };
+    ExternalArray<U32> ea = a.asExternalArray();
+    ASSERT_EQ(ea[0], 1);
+}
+
 }  // namespace Ds

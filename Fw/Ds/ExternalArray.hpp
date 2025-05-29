@@ -43,7 +43,7 @@ class ExternalArray final {
     //! Subscript operator
     T& operator[](const FwSizeType i  //!< The subscript index
     ) {
-        FW_ASSERT(i < this->m_elements != nullptr);
+        FW_ASSERT(this->m_elements != nullptr);
         FW_ASSERT(i < this->m_size, static_cast<FwAssertArgType>(i));
         return this->m_elements[i];
     }

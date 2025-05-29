@@ -10,6 +10,7 @@
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <initializer_list>
 
+#include "Fw/Ds/ExternalArray.hpp"
 #include "Fw/Types/Assert.hpp"
 
 namespace Ds {
@@ -99,6 +100,10 @@ class Array final {
 
     //! Get a const reference to the elements
     const Elements& getElements() const { return this->m_elements; }
+
+    //! Convert this array to an ExternalArray
+    // \return The ExternalArray
+    ExternalArray<T> asExternalArray() { return ExternalArray<T>(this->m_elements, S); }
 
   public:
     // ----------------------------------------------------------------------
