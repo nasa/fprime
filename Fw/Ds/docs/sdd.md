@@ -348,6 +348,21 @@ const auto& elements2 = a.getElements();
 ASSERT_EQ(elements2[0], 1);
 ```
 
+**asExternalArray:**
+
+```c++
+ExternalArray<T> asExternalArray()
+```
+
+Return `ExternalArray(m_elements, S)`.
+
+_Example:_
+```c++
+Array<U32, 3> a = { 1, 2, 3 };
+ExternalArray<U32> ea = a.asExternalArray();
+ASSERT_EQ(ea[0], 1);
+```
+
 #### 1.2.6. Public Static Functions
 
 **getSize:**
@@ -498,17 +513,33 @@ the elements on the queue.
 
 **Zero-argument constructor:**
 
+```c++
+ExternalFifoQueue()
+```
+
 TODO
 
 **Constructor providing backing storage:**
+
+```c++
+ExternalArray(T* elements, FwSizeType size)
+```
 
 TODO
 
 **Copy constructor:**
 
+```c++
+ExternalFifoQueue(const ExternalFifoQueue<T>& queue)
+```
+
 TODO
 
 **Destructor:**
+
+```c++
+ExternalFifoQueue()
+```
 
 TODO
 
@@ -516,17 +547,31 @@ TODO
 
 **clear:**
 
+```c++
+void clear()
+```
+
 TODO
 
 **setStorage:**
 
-TODO
+```c++
+void setStorage(T* elements, FwSizeType size)
+```
 
 **enqueue:**
+
+```c++
+Fw::Success enqueue(const T& e)
+```
 
 TODO
 
 **peek:**
+
+```c++
+Fw::Success peek(T& e)
+```
 
 TODO
 
