@@ -7,8 +7,8 @@
 #include "TCDeframerTester.hpp"
 #include "STest/Random/Random.hpp"
 #include "Svc/CCSDS/Utils/CRC16.hpp"
-#include "Svc/CCSDS/Types/TCFrameHeaderSerializableAc.hpp"
-#include "Svc/CCSDS/Types/TCFrameTrailerSerializableAc.hpp"
+#include "Svc/CCSDS/Types/TCHeaderSerializableAc.hpp"
+#include "Svc/CCSDS/Types/TCTrailerSerializableAc.hpp"
 
 namespace Svc {
 
@@ -156,7 +156,7 @@ void TCDeframerTester::testInvalidCrc() {
     
     Fw::Buffer buffer = this->assembleFrameBuffer(data, dataLength);
     // Override CRC to invalid value
-    buffer.getData()[TCFrameHeader::SERIALIZED_SIZE + dataLength + 1] = 0x00;
+    buffer.getData()[TCHeader::SERIALIZED_SIZE + dataLength + 1] = 0x00;
     ComCfg::FrameContext nullContext;
 
     this->setComponentState();
@@ -180,7 +180,7 @@ void TCDeframerTester::setComponentState(U16 scid, U8 vcid, U8 sequenceNumber, b
 
 Fw::Buffer TCDeframerTester::assembleFrameBuffer(U8* data, U8 dataLength, U16 scid, U8 vcid, U8 seqNumber){
     ::memset(this->m_frameData, 0, sizeof(this->m_frameData));
-    U16 frameLength = TCFrameHeader::SERIALIZED_SIZE + dataLength + TCFrameTrailer::SERIALIZED_SIZE;
+    U16 frameLength = TCHeader::SERIALIZED_SIZE + dataLength + TCTrailer::SERIALIZED_SIZE;
 
     // Header
     this->m_frameData[0] = scid >> 8;
@@ -190,12 +190,12 @@ Fw::Buffer TCDeframerTester::assembleFrameBuffer(U8* data, U8 dataLength, U16 sc
     this->m_frameData[4] = seqNumber;
 
     // Data
-    memcpy(&this->m_frameData[TCFrameHeader::SERIALIZED_SIZE], data, dataLength);
+    memcpy(&this->m_frameData[TCHeader::SERIALIZED_SIZE], data, dataLength);
 
     // CRC trailer
-    U16 crc = CCSDS::Utils::CRC16::compute(this->m_frameData, TCFrameHeader::SERIALIZED_SIZE + dataLength);
-    this->m_frameData[TCFrameHeader::SERIALIZED_SIZE + dataLength] = crc >> 8;
-    this->m_frameData[TCFrameHeader::SERIALIZED_SIZE + dataLength + 1] = crc & 0xFF;
+    U16 crc = CCSDS::Utils::CRC16::compute(this->m_frameData, TCHeader::SERIALIZED_SIZE + dataLength);
+    this->m_frameData[TCHeader::SERIALIZED_SIZE + dataLength] = crc >> 8;
+    this->m_frameData[TCHeader::SERIALIZED_SIZE + dataLength + 1] = crc & 0xFF;
 
     return Fw::Buffer(this->m_frameData, frameLength);
 }

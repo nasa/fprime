@@ -5,8 +5,8 @@
 // ======================================================================
 
 #include "TMFramerTester.hpp"
-#include "Svc/CCSDS/Types/TMFrameHeaderSerializableAc.hpp"
-#include "Svc/CCSDS/Types/TMFrameTrailerSerializableAc.hpp"
+#include "Svc/CCSDS/Types/TMHeaderSerializableAc.hpp"
+#include "Svc/CCSDS/Types/TMTrailerSerializableAc.hpp"
 #include "Svc/CCSDS/Types/SpacePacketHeaderSerializableAc.hpp"
 
 namespace Svc {
@@ -74,10 +74,10 @@ void TMFramerTester ::testNominalFraming() {
     ASSERT_EQ(this->component.m_virtualFrameCount, outVcCount + 1);
 
     // Idle data should be filled at the offset of header + payload + the Space Packet Idle Packet header
-    FwSizeType expectedIdleDataOffset = TMFrameHeader::SERIALIZED_SIZE + sizeof(bufferData) + SpacePacketHeader::SERIALIZED_SIZE;
+    FwSizeType expectedIdleDataOffset = TMHeader::SERIALIZED_SIZE + sizeof(bufferData) + SpacePacketHeader::SERIALIZED_SIZE;
 
     // The frame is composed of the payload + a SpacePacket Idle Packet (Header + idle_pattern)
-    for (FwSizeType i = expectedIdleDataOffset; i < ComCfg::TmFrameFixedSize - TMFrameTrailer::SERIALIZED_SIZE; ++i) {
+    for (FwSizeType i = expectedIdleDataOffset; i < ComCfg::TmFrameFixedSize - TMTrailer::SERIALIZED_SIZE; ++i) {
         ASSERT_EQ(outBuffer.getData()[i], 0x44);
     }
 }

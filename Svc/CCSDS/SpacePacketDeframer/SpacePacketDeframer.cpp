@@ -54,13 +54,13 @@ void SpacePacketDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data,
         return;
     }
 
-    U16 apidValue = header.getpacketIdentification() & SpacePacketMasks::ApidMask;
+    U16 apidValue = header.getpacketIdentification() & SpacePacketSubfields::ApidMask;
     ComCfg::APID::T apid = static_cast<ComCfg::APID::T>(apidValue);
     ComCfg::FrameContext contextCopy = context;
     contextCopy.setapid(apid);
 
     // Validate with the ApidManager that the sequence count is correct
-    U16 receivedSequenceCount = header.getpacketSequenceControl() & SpacePacketMasks::SeqCountMask;
+    U16 receivedSequenceCount = header.getpacketSequenceControl() & SpacePacketSubfields::SeqCountMask;
     (void)this->validateApidSeqCount_out(0, apid, receivedSequenceCount);
     contextCopy.setsequenceCount(receivedSequenceCount);
 

@@ -6,8 +6,8 @@
 
 #include "Svc/CCSDS/TMFramer/TMFramer.hpp"
 #include "Svc/CCSDS/Types/FppConstantsAc.hpp"
-#include "Svc/CCSDS/Types/TMFrameHeaderSerializableAc.hpp"
-#include "Svc/CCSDS/Types/TMFrameTrailerSerializableAc.hpp"
+#include "Svc/CCSDS/Types/TMHeaderSerializableAc.hpp"
+#include "Svc/CCSDS/Types/TMTrailerSerializableAc.hpp"
 #include "Svc/CCSDS/Utils/CRC16.hpp"
 #include "config/FppConstantsAc.hpp"
 #include "Svc/CCSDS/Types/SpacePacketHeaderSerializableAc.hpp"
@@ -31,24 +31,24 @@ TMFramer ::~TMFramer() {}
 
 void TMFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
     // TODO: make this an event probably
-    FW_ASSERT(data.getSize() <= ComCfg::TmFrameFixedSize - TMFrameHeader::SERIALIZED_SIZE - TMFrameTrailer::SERIALIZED_SIZE,
+    FW_ASSERT(data.getSize() <= ComCfg::TmFrameFixedSize - TMHeader::SERIALIZED_SIZE - TMTrailer::SERIALIZED_SIZE,
               static_cast<FwAssertArgType>(data.getSize()));
 
     // -----------------------------------------------
     // Header
     // -----------------------------------------------
-    TMFrameHeader header;
+    TMHeader header;
 
     U16 globalVcId = 0;
-    globalVcId |= ComCfg::SpacecraftId << TMFrameMasks::spacecraftIdOffset;
-    globalVcId |= context.getvcId() << TMFrameMasks::virtualChannelIdOffset;
+    globalVcId |= ComCfg::SpacecraftId << TMSubfields::spacecraftIdOffset;
+    globalVcId |= context.getvcId() << TMSubfields::virtualChannelIdOffset;
     globalVcId |= 0x0;  // Operational Control Field: Flag set to 0 (Standard 4.1.2.4)
 
     // Data Field Status (Standard 4.1.2.7):
     // - all flags to 0 except segment length id 0b11 per standard (4.1.2.7)
     // - First Header Pointer is always 0 since we are always wrapping a single entire packet at offset 0
     U16 dataFieldStatus = 0;
-    dataFieldStatus |= 0x3 << TMFrameMasks::segLengthOffset;  // Seg Length Id 0b11 per Standard (4.1.2.7.5)
+    dataFieldStatus |= 0x3 << TMSubfields::segLengthOffset;  // Seg Length Id 0b11 per Standard (4.1.2.7.5)
 
     header.setglobalVcId(globalVcId);
     header.setmasterFrameCount(this->m_masterFrameCount);
@@ -78,15 +78,15 @@ void TMFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
     // -------------------------------------------------
     // Trailer (CRC)
     // -------------------------------------------------
-    TMFrameTrailer trailer;
+    TMTrailer trailer;
     // Compute CRC over the entire frame buffer minus the FECF trailer (Standard 4.1.6)
     U16 crc = CCSDS::Utils::CRC16::compute(frameBuffer.getData(),
-                                           sizeof(this->m_frameBuffer) - TMFrameTrailer::SERIALIZED_SIZE);
+                                           sizeof(this->m_frameBuffer) - TMTrailer::SERIALIZED_SIZE);
     // Set the Frame Error Control Field (FECF)
     trailer.setfecf(crc);
     // Move the serializer pointer to the end of the location where the trailer will be serialized
     frameSerializer.moveSerToOffset(ComCfg::TmFrameFixedSize -
-                                    TMFrameTrailer::SERIALIZED_SIZE);
+                                    TMTrailer::SERIALIZED_SIZE);
     status = frameSerializer.serialize(trailer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
@@ -112,7 +112,7 @@ void TMFramer ::dataReturnIn_handler(FwIndexType portNum,
 
 void TMFramer ::fill_with_idle_packet(Fw::SerializeBufferBase& serializer) {
     constexpr U16 endIndex = ComCfg::TmFrameFixedSize -
-                           TMFrameTrailer::SERIALIZED_SIZE;
+                           TMTrailer::SERIALIZED_SIZE;
     constexpr U16 idleApid = static_cast<U16>(ComCfg::APID::SPP_IDLE_PACKET);
     const U16 startIndex = static_cast<U16>(serializer.getBuffLength());
     const U16 idlePacketLength = endIndex - startIndex;
@@ -124,7 +124,7 @@ void TMFramer ::fill_with_idle_packet(Fw::SerializeBufferBase& serializer) {
 
     SpacePacketHeader header;
     header.setpacketIdentification(idleApid);
-    header.setpacketSequenceControl(0x3 << SpacePacketMasks::SeqFlagsOffset); // Sequence Flags = 0b11 (unsegmented) & unused Seq count
+    header.setpacketSequenceControl(0x3 << SpacePacketSubfields::SeqFlagsOffset); // Sequence Flags = 0b11 (unsegmented) & unused Seq count
     header.setpacketDataLength(idlePacketLength);
     // Serialize header and idle data into the frame
     serializer.serialize(header);

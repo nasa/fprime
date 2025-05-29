@@ -43,15 +43,15 @@ void SpacePacketFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, c
     U16 packetIdentification = 0;
     ComCfg::APID::T apid = context.getapid();
     FW_ASSERT((apid >> 11) == 0, static_cast<FwAssertArgType>(apid)); // apid must fit in 11 bits
-    packetIdentification |= static_cast<U16>(apid) & SpacePacketMasks::ApidMask; // 11 bit APID
+    packetIdentification |= static_cast<U16>(apid) & SpacePacketSubfields::ApidMask; // 11 bit APID
 
     U16 packetSequenceControl = 0;
-    packetSequenceControl |= 0x3 << SpacePacketMasks::SeqFlagsOffset; // Sequence Flags 0b11 = unsegmented User Data
+    packetSequenceControl |= 0x3 << SpacePacketSubfields::SeqFlagsOffset; // Sequence Flags 0b11 = unsegmented User Data
 
     U16 sequenceCount = this->getApidSeqCount_out(0, apid, 0); // retrieve the sequence count for this APID
     // NOTE: this will assert if ApidManager's table is full (because error value is max(U16)) - should it??
     FW_ASSERT((sequenceCount >> 14) == 0, static_cast<FwAssertArgType>(sequenceCount)); // sequence count must fit in 14 bits
-    packetSequenceControl |= sequenceCount & SpacePacketMasks::SeqCountMask; // 14 bit sequence count
+    packetSequenceControl |= sequenceCount & SpacePacketSubfields::SeqCountMask; // 14 bit sequence count
 
     FW_ASSERT(data.getSize() <= std::numeric_limits<U16>::max(), static_cast<FwAssertArgType>(data.getSize()));
     U16 packetDataLength = static_cast<U16>(data.getSize() - 1); // Standard specifies length is number of bytes minus 1

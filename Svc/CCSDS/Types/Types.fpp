@@ -1,14 +1,25 @@
+# ------------------------------------------------
+# CCSDS protocols header and trailer types
+#
+# Note: FPP does not currently support bit fields, so these structs may contain fields
+# that are compoed of multiple bitfields. One should mask the individual FPP types 
+# with the approriate mask to 
+# ------------------------------------------------ 
+
 module Svc {
 module CCSDS {
 
     # ------------------------------------------------
-    # Frame header and trailer types
+    # SpacePacket
     # ------------------------------------------------ 
-    # Note: FPP does not currently support bit fields, so these structs may contain fields
-    # that are compoed of multiple bitfields. One should mask the individual FPP types 
-    # with the approriate mask to 
-
-    module SpacePacketMasks {
+    @ Describes the frame header format for the SpacePacket communications protocol
+    struct SpacePacketHeader {
+        packetIdentification: U16,   @< 3 bits PVN | 1 bit Pkt type | 1 bit Sec Hdr | 11 bit APID
+        packetSequenceControl: U16,  @< 2 bits Sequence flags | 14 bits packet seq count (or name)
+        packetDataLength: U16        @< 16 bits length
+    }
+    @ Masks and Offsets for deserializing individual sub-fields in SpacePacket headers
+    module SpacePacketSubfields {
         # packetIdentification sub-fields     |--- 16 bits ---|
         constant PvnMask        = 0xE000  @< 0b1110000000000000
         constant PktTypeMask    = 0x1000  @< 0b0001000000000000
@@ -23,7 +34,21 @@ module CCSDS {
         constant SeqFlagsOffset = 14 
     }
 
-    module TCFrameMasks {
+    # ------------------------------------------------
+    # TC (TeleCommand)
+    # ------------------------------------------------ 
+    @ Describes the frame header format for a Telecommand (TC) Transfer Frame header
+    struct TCHeader {
+        flagsAndScId: U16,    @< 2 bits Frame V. | 1 bit bypass | 1 bit ctrl | 2 bit rsvd | 10 bits spacecraft ID
+        vcIdAndLength: U16,   @< 6 bits Virtual Channel ID | 10 bits Frame Length
+        frameSequenceNbr: U8  @< 8 bits Frame Sequence Number
+    }
+    @ Describes the frame trailer format for a Telecommand (TC) Transfer Frame
+    struct TCTrailer {
+        fecf: U16             @< 16 bit Frame Error Control Field (CRC16)
+    }
+    @ Masks and Offsets for deserializing individual sub-fields in TC headers
+    module TCSubfields {
         # flagsAndScId sub-fields
         constant FrameVersionMask = 0xC000  @< 0b1100000000000000
         constant BypassFlagMask   = 0x2000  @< 0b0010000000000000
@@ -37,43 +62,27 @@ module CCSDS {
         constant VcIdOffset       = 10
     }
 
-    @ Describes the frame header format for the SpacePacket communications protocol
-    struct SpacePacketHeader {
-        packetIdentification: U16,   @< 3 bits PVN | 1 bit Pkt type | 1 bit Sec Hdr | 11 bit APID
-        packetSequenceControl: U16,  @< 2 bits Sequence flags | 14 bits packet seq count (or name)
-        packetDataLength: U16        @< 16 bits length
-    }
-
-    @ Describes the frame header format for a Telecommand (TC) Transfer Frame header
-    struct TCFrameHeader {
-        flagsAndScId: U16,    @< 2 bits Frame V. | 1 bit bypass | 1 bit ctrl | 2 bit rsvd | 10 bits spacecraft ID
-        vcIdAndLength: U16,   @< 6 bits Virtual Channel ID | 10 bits Frame Length
-        frameSequenceNbr: U8  @< 8 bits Frame Sequence Number
-    }
-
-    struct TCFrameTrailer {
-        fecf: U16             @< 16 bit Frame Error Control Field (CRC16)
-    }
-
-    module TMFrameMasks {
-        constant frameVersionOffset = 14
-        constant spacecraftIdOffset = 4
-        constant virtualChannelIdOffset = 1
-        constant segLengthOffset = 11
-    }
-
-    struct TMFrameHeader {
+    # ------------------------------------------------
+    # TM (TeleMetry)
+    # ------------------------------------------------ 
+    @ Describes the frame header format for a Telemetry (TM) Transfer Frame header
+    struct TMHeader {
         globalVcId: U16,         @< 2 bit Frame Version | 10 bit spacecraft ID | 3 bit virtual channel ID | 1 bit OCF flag
         masterFrameCount: U8,    @< 8 bit Master Channel Frame Count
         virtualFrameCount: U8,   @< 8 bit Virtual Channel Frame Count
         dataFieldStatus: U16     @< 1 bit 2nd Header | 1 bit sync | 1 bit pkt order | 2 bit seg len | 11 bit header ptr
     }
-    struct TMFrameTrailer {
+    @ Describes the frame trailer format for a Telemetry (TM) Transfer Frame
+    struct TMTrailer {
         fecf: U16             @< 16 bit Frame Error Control Field (CRC16)
     }
-
-
-
+    @ Offsets for serializing individual sub-fields in TM headers
+    module TMSubfields {
+        constant frameVersionOffset = 14
+        constant spacecraftIdOffset = 4
+        constant virtualChannelIdOffset = 1
+        constant segLengthOffset = 11
+    }
 
 }
 }
