@@ -10,6 +10,7 @@ The elements are stored in **backing memory** _M_.
 An array provides bounds-checked access to the array elements
 stored in _M_.
 
+<a name="external_array"></a>
 ### 1.1. External Array
 
 `ExternalArray` is a `final` class template representing an array with external 
@@ -186,6 +187,7 @@ U32 elements[3];
 a.setStorage(elements, 3);
 ```
 
+<a name="array"></a>
 ### 1.2. Array
 
 `Array` is a `final` class template representing an array
@@ -495,8 +497,8 @@ first in first out (FIFO) order.
 
 `ExternalFifoQueue` is a `final` class template representing a
 FIFO queue with external storage.
-Internally it maintains an `ExternalArray` for storing
-the elements on the queue.
+Internally it maintains an <a href="#external_array">`ExternalArray`</a> for 
+storing the elements on the queue.
 
 #### 3.1.1. Template Parameters
 
@@ -598,11 +600,21 @@ TODO
 
 ### 3.2. FifoQueue
 
-TODO
+`FifoQueue` is a `final` class template representing a
+FIFO queue with internal storage.
+Internally it maintains an <a href="#array">`Array`</a>
+for storing the elements on the queue.
 
 #### 3.2.1. Template Parameters
 
-TODO
+`FifoQueue` has the following template parameters.
+
+|Kind|Name|Purpose|
+|----|----|-------|
+|`typename`|`T`|The type of a queue element|
+|`FwSizeType`|`S`|The queue size in elements|
+
+`FifoQueue` statically asserts that `S > 0`.
 
 #### 3.2.2. Private Member Variables
 
