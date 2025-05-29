@@ -1,4 +1,4 @@
-# Fw::Ds: Basic Data Structures
+# Fw::DataStructures: Basic Data Structures
 
 This directory contains a library of basic data structures.
 
