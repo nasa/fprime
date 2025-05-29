@@ -7,7 +7,8 @@ This directory contains a library of basic data structures.
 An **array** _A_ stores _n_ elements for _n > 0_ at indices
 0, 1, ..., _n - 1_.
 The elements are stored in **backing memory** _M_.
-An array provides bounds-checked access to the array elements.
+An array provides bounds-checked access to the array elements
+stored in _M_.
 
 ### 1.1. External Array
 
@@ -524,7 +525,8 @@ the elements on the queue.
 ExternalFifoQueue()
 ```
 
-TODO
+`ExternalFifoQueue` is a `final` class template representing a FIFO queue with internal storage.
+It maintains an `Array` for storing the elements on the queue.
 
 **Constructor providing backing storage:**
 
@@ -595,6 +597,22 @@ TODO
 TODO
 
 ### 3.2. FifoQueue
+
+TODO
+
+#### 3.2.1. Template Parameters
+
+TODO
+
+#### 3.2.2. Private Member Variables
+
+TODO
+
+#### 3.2.3. Public Constructors and Destructors
+
+TODO
+
+#### 3.2.4. Public Member Functions
 
 TODO
 
