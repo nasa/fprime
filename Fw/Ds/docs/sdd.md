@@ -158,6 +158,9 @@ for (FwSizeType i = 0; i < 10; i++) {
 U32 elements2[10];
 ExternalArray<U32> a2(elements, 10);
 a2.copyFrom(a1);
+for (FwSizeType i = 0; i < 10; i++) {
+    ASSERT_EQ(a2[i], a1[i]);
+}
 ```
 
 **getElements:**
@@ -596,6 +599,16 @@ TODO
 void setStorage(T* elements, FwSizeType size)
 ```
 
+TODO
+
+**copyFrom:**
+
+```c++
+void copyFrom(const ExternalFifoQueue<T>& queue)
+```
+
+TODO
+
 **enqueue:**
 
 ```c++
@@ -680,6 +693,10 @@ FifoQueue<U32, 10> q1;
 q1.enqueue(3);
 FifoQueue<U32, 10> q2;
 q2 = q1;
+U32 value = 0;
+const auto status = q2.dequeue(value);
+ASSERT_EQ(status, Fw::Success::SUCCESS);
+ASSERT_EQ(value, 3);
 ```
 
 **Destructor:**
