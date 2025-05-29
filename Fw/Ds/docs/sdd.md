@@ -144,9 +144,21 @@ void copyFrom(const ExternalArray<T>& a)
 
 1. Otherwise 
 
-    1. Let `m` be the minimum of `this->m_size` and `a.m_size`
+    1. Let `size` be the minimum of `this->m_size` and `a.m_size`
 
-    1. For each `i` from 0 through `m - 1`, set `m_elements[i] = a.m_elements[i]`
+    1. For each `i` from 0 through `size - 1`, set `m_elements[i] = a.m_elements[i]`
+
+_Example:_
+```c++
+U32 elements1[10];
+ExternalArray<U32> a1(elements, 10);
+for (FwSizeType i = 0; i < 10; i++) {
+    a1[i] = i;
+}
+U32 elements2[10];
+ExternalArray<U32> a2(elements, 10);
+a2.copyFrom(a1);
+```
 
 **getElements:**
 

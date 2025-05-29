@@ -53,7 +53,7 @@ class ExternalArray final {
     //! \return The element at index i
     const T& operator[](const FwSizeType i  //!< The subscript index
     ) const {
-        FW_ASSERT(i < this->m_elements != nullptr);
+        FW_ASSERT(this->m_elements != nullptr);
         FW_ASSERT(i < this->m_size, static_cast<FwAssertArgType>(i));
         return this->m_elements[i];
     }
@@ -66,6 +66,14 @@ class ExternalArray final {
             this->m_size = a.m_size;
         }
         return *this;
+    }
+
+    //! Copy the elements from a
+    void copyFrom(const ExternalArray<T>& a) {
+        const FwSizeType size = FW_MIN(this->m_size, a.m_size);
+        for (FwSizeType i = 0; i < size; i++) {
+            (*this)[i] = a[i];
+        }
     }
 
     //! Get a mutable pointer to the elements
