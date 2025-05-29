@@ -206,9 +206,6 @@ It is an alias of `T[S]`.
 
 #### 1.2.3. Private Member Variables
 
-`Array` has one private variable `m_elements` of
-type `Elements` for storing the array elements.
-
 `Array` has the following private member variables.
 
 |Name|Type|Purpose|Default Value|
