@@ -711,8 +711,8 @@ for storing the items on the queue.
 
 |Name|Type|Purpose|Default Value|
 |----|----|-------|-------------|
-|`m_eQueue`|`ExternalFifoQueue<T>`|The external queue implementation|C++ default initialization|
-|`m_array`|`Array<T, C>`|The array providing the backing memory for `m_eQueue`|C++ default initialization|
+|`m_extQueue`|`ExternalFifoQueue<T>`|The external queue implementation|C++ default initialization|
+|`m_array`|`Array<T, C>`|The array providing the backing memory for `m_extQueue`|C++ default initialization|
 
 #### 3.2.3. Public Constructors and Destructors
 
@@ -735,7 +735,7 @@ FifoQueue<U32, 10> queue;
 FifoQueue(const FifoQueue<T, S>& queue)
 ```
 
-Call `m_eQueue.copyItemsFrom(queue.m_eQueue)`.
+Call `m_extQueue.copyItemsFrom(queue.m_extQueue)`.
 
 _Example:_
 ```c++
