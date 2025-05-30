@@ -824,20 +824,30 @@ ExternalFifoQueue<T> asExternalFifoQueue()
 
 TODO
 
-## 4. Linked Lists
+## 4. Maps
+
+### 4.1. Map
 
 TODO
 
-## 5. Sets and Maps
-
-### 5.1. Array Set and Map
+### 4.2. Array Map
 
 TODO
 
-### 5.2. Hash Set and Map
+### 4.3. AVL Tree Map
 
 TODO
 
-### 5.3. Balanced Binary Tree Set and Map
+## 5. Sets
+
+### 5.1. Set
+
+TODO
+
+### 5.2. Array Set
+
+TODO
+
+### 5.3. AVL Tree Set
 
 TODO
