@@ -38,7 +38,7 @@ namespace Fw {
     Status load(const char* fileName, Serializable& serializable);
     Status save(const char* fileName, Serializable& serializable);
 
-    PRIVATE:
+    private:
     void reset();
     MemAllocator* m_allocator;
     bool m_recoverable; // don't care; for allocator

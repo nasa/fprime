@@ -29,7 +29,7 @@ namespace Fw {
             #if FW_SERIALIZABLE_TO_STRING
             void toString(Fw::StringBase& text) const;
             #endif
-        PRIVATE:
+        private:
             U8 m_bufferData[FW_STATEMENT_ARG_BUFFER_MAX_SIZE]; // command argument buffer
     };
 

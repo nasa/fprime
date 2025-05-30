@@ -32,7 +32,7 @@ class ActiveComponentBase : public QueuedComponentBase {
         ACTIVE_COMPONENT_EXIT  //!< message to exit active component task
     };
 
-  PROTECTED:
+  protected:
     //! Tracks the lifecycle of the component
     enum Lifecycle {
         CREATED,     //!< Initial stage, call preamble
@@ -52,7 +52,7 @@ class ActiveComponentBase : public QueuedComponentBase {
 #if FW_OBJECT_TO_STRING == 1
     virtual const char* getToStringFormatString(); //!< Format string for toString function
 #endif
-  PRIVATE:
+  private:
     Lifecycle m_stage;         //!< Lifecycle stage of the component
     static void s_taskStateMachine(void*); //!< Task lifecycle state machine
     static void s_taskLoop(void*);  //!< Standard multi-threading task loop

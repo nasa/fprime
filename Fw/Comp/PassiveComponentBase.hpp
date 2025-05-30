@@ -17,7 +17,7 @@ namespace Fw {
             //! \return The ID base
             U32 getIdBase() const;
 
-        PROTECTED:
+        protected:
             PassiveComponentBase(const char* name); //!< Named constructor
             virtual ~PassiveComponentBase(); //!< Destructor
             void init(FwEnumStoreType instance); //!< Initialization function
@@ -28,7 +28,7 @@ namespace Fw {
             virtual const char* getToStringFormatString(); //!< Return the format  for a generic component toString
             void toString(char* str, FwSizeType size) override; //!< returns string description of component
 #endif
-        PRIVATE:
+        private:
             U32 m_idBase; //!< ID base for opcodes etc.
             FwEnumStoreType m_instance; //!< instance of component object
 

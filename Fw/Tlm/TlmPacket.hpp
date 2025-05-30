@@ -27,16 +27,16 @@ namespace Fw {
             SerializeStatus serialize(SerializeBufferBase& buffer) const; //!< serialize contents
             //! Deserialize the packet. For use internally in software. To extract channels, use setBuffer() and extractValue() below. This is NOT typically used.
             SerializeStatus deserialize(SerializeBufferBase& buffer);
-            //! Add telemetry value to buffer. 
+            //! Add telemetry value to buffer.
             SerializeStatus addValue(FwChanIdType id, Time& timeTag, TlmBuffer& buffer);
-            //! extract telemetry value - since there are potentially multiple channel values in the packet, 
+            //! extract telemetry value - since there are potentially multiple channel values in the packet,
             //! the size of the entry must be known
             SerializeStatus extractValue(FwChanIdType &id, Time& timeTag, TlmBuffer& buffer, FwSizeType bufferSize);
 
             //! Reset serialization of values. This should be done when starting to accumulate a new set of values.
-            SerializeStatus resetPktSer(); 
+            SerializeStatus resetPktSer();
             //! Reset deserialization. This should be done before extracting values.
-            SerializeStatus resetPktDeser(); 
+            SerializeStatus resetPktDeser();
             //! get buffer to send to the ground
             Fw::ComBuffer& getBuffer();
             //! set the internal buffer for deserializing values
@@ -44,7 +44,7 @@ namespace Fw {
             //! get the number of packets added via addValue()
             FwSizeType getNumEntries();
 
-        PRIVATE:
+        private:
             ComBuffer m_tlmBuffer; //!< serialized data
             FwSizeType m_numEntries; //!< number of entries stored during addValue()
     };
