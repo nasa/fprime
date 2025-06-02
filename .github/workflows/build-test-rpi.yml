@@ -52,7 +52,7 @@ jobs:
         retention-days: 5
 
   RPI-Integration:
-    runs-on: self-hosted
+    runs-on: [self-hosted, raspberrypi]
     needs: RPI
     steps:
     - uses: actions/checkout@v4

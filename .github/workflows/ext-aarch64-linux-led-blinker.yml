@@ -1,7 +1,7 @@
 # Cross-compile https://github.com/fprime-community/fprime-workshop-led-blinker
-# Runs integration tests on RaspberryPi
+# Runs integration tests on aarch64-linux
 
-name: "External Repo: RPI LedBlinker"
+name: "External Repo: AArch64 Linux LedBlinker"
 
 on:
   push:
@@ -16,7 +16,9 @@ on:
       - '.github/ISSUE_TEMPLATE/**'
 
 env:
-  RPI_TOOLCHAIN_DIR: /tmp/rpi-toolchain
+  AARCH64_TOOLCHAIN_DIR: /tmp/aarch64-toolchain
+  AARCH64_TOOLCHAIN_URL: https://developer.arm.com/-/media/Files/downloads/gnu-a/10.2-2020.11/binrel/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu.tar.xz
+  ARM_TOOLS_PATH: /tmp/aarch64-toolchain
 
 jobs:
   get-branch:
@@ -45,35 +47,40 @@ jobs:
       - uses: ./fprime/.github/actions/setup
         with:
           location: ./fprime
-      - name: "Setup RPI Toolchain"
-        uses: fprime-community/setup-rpi-sysroot@main
-      - name: "Generate RPI Build Cache"
+      - name: "Download and Setup AArch64 Linux Toolchain"
         run: |
-          fprime-util generate raspberrypi
-      - name: "Build RPI"
+          mkdir -p ${AARCH64_TOOLCHAIN_DIR}
+          wget -q ${AARCH64_TOOLCHAIN_URL}
+          tar -xf $(basename ${AARCH64_TOOLCHAIN_URL}) -C ${AARCH64_TOOLCHAIN_DIR} --strip-components 1
+          echo "${AARCH64_TOOLCHAIN_DIR}/bin" >> $GITHUB_PATH
+      - name: "Generate AArch64 Linux Build Cache"
         run: |
-          fprime-util build raspberrypi
+          fprime-util generate aarch64-linux
+      - name: "Build AArch64 Linux"
+        run: |
+          fprime-util build aarch64-linux
       - name: "Prepare artifacts"
         run: |
-          mkdir -p rpi-artifacts
-          cp -r ./build-artifacts rpi-artifacts
-          cp -r Components/Led/test/int rpi-artifacts
+          mkdir -p aarch64-linux-artifacts
+          cp -r ./build-artifacts aarch64-linux-artifacts
+          cp -r Components/Led/test/int aarch64-linux-artifacts
       - name: 'Archive Build Artifacts'
         uses: actions/upload-artifact@v4
         with:
-          name: rpi-artifacts
-          path: rpi-artifacts
+          name: aarch64-linux-artifacts
+          path: aarch64-linux-artifacts
           retention-days: 5
 
-  RPI-integration:
-    name: "RPI Integration Tests"
-    runs-on: [self-hosted, raspberrypi]
+  aarch64-integration:
+    name: "AArch64 Linux Integration Tests"
+    runs-on: [self-hosted, aarch64-linux]
     needs: cross-compilation
     steps:
       - name: "Checkout F´ Repository"
         uses: actions/checkout@v4
         with:
           sparse-checkout: 'requirements.txt'
+          sparse-checkout-cone-mode: false
       - name: "Setup environment"
         run: |
           python -m venv venv
@@ -82,19 +89,19 @@ jobs:
       - name: "Artifacts Download"
         uses: actions/download-artifact@v4
         with:
-          name: rpi-artifacts
+          name: aarch64-linux-artifacts
       - name: Run Integration Tests
         run: |
           . venv/bin/activate
           mkdir -p ci-logs
-          chmod +x ./build-artifacts/raspberrypi/LedBlinker/bin/LedBlinker
-          fprime-gds --ip-client -d ./build-artifacts/raspberrypi/LedBlinker --logs ./ci-logs &
+          chmod +x ./build-artifacts/aarch64-linux/LedBlinker/bin/LedBlinker
+          fprime-gds --ip-client -d ./build-artifacts/aarch64-linux/LedBlinker --logs ./ci-logs &
           sleep 10
-          pytest --dictionary ./build-artifacts/raspberrypi/LedBlinker/dict/LedBlinkerTopologyDictionary.json ./int/led_integration_tests.py
+          pytest --dictionary ./build-artifacts/aarch64-linux/LedBlinker/dict/LedBlinkerTopologyDictionary.json ./int/led_integration_tests.py
       - name: 'Archive logs'
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: rpi-logs
+          name: aarch64-linux-logs
           path: ci-logs
           retention-days: 5
