@@ -46,14 +46,22 @@ first in first out (FIFO) order.
 
 * [`Map`](Map.md)
 
+* [`ExternalArrayMap`](ExternalArrayMap.md)
+
 * [`ArrayMap`](ArrayMap.md)
 
 * [`AvlTreeMap`](AvlTreeMap.md)
+
+* [`ExternalAvlTreeMap`](ExternalAvlTreeMap.md)
 
 ## 4. Sets
 
 * [`Set`](Set.md)
 
+* [`ExternalArraySet`](ExternalArraySet.md)
+
 * [`ArraySet`](ArraySet.md)
+
+* [`ExternalAvlTreeSet`](ExternalAvlTreeSet.md)
 
 * [`AvlTreeSet`](AvlTreeSet.md)
