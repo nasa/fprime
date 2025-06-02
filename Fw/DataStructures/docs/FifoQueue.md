@@ -71,6 +71,15 @@ Defined as `= default`.
 
 ## 4. Public Member Functions
 
+**operator[]:**
+
+```c++
+T& operator[](FwSizeType i)
+const T& operator[](FwSizeType i) const
+```
+
+TODO
+
 **Copy assignment operator:**
 
 ```c++

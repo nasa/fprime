@@ -174,7 +174,7 @@ ASSERT_EQ(elements2[0], 1);
 ExternalArray<T> asExternalArray()
 ```
 
-Return `ExternalArray<T>(m_elements, S)`.
+Return [`ExternalArray<T>(m_elements, S)`](ExternalArray.md#3-public-constructors-and-destructors)
 
 _Example:_
 ```c++
