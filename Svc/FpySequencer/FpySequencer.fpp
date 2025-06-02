@@ -43,6 +43,10 @@ module Svc {
         # least important, lowest prio
         async input port tlmWrite: Svc.Sched priority 1 assert
 
+        @ port for requests to run sequences
+        # same priority as RUN cmd
+        async input port seqRunIn: Svc.CmdSeqIn priority 7 assert
+
         @ Ping out port
         output port pingOut: Svc.Ping
 

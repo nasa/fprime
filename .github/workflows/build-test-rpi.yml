@@ -52,12 +52,13 @@ jobs:
         retention-days: 5
 
   RPI-Integration:
-    runs-on: self-hosted
+    runs-on: [self-hosted, raspberrypi]
     needs: RPI
     steps:
     - uses: actions/checkout@v4
       with:
         sparse-checkout: 'requirements.txt'
+        sparse-checkout-cone-mode: false
     - name: "Setup environment"
       run: |
         python -m venv venv

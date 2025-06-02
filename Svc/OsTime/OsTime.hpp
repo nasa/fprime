@@ -32,7 +32,7 @@ class OsTime final : public OsTimeComponentBase {
     //! future Os::RawTime readings
     void set_epoch(const Fw::Time& fw_time, const Os::RawTime& os_time);
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
@@ -49,7 +49,7 @@ class OsTime final : public OsTimeComponentBase {
                           const Fw::Time& fw_time,
                           const Os::RawTime& os_time) override;
 
-    
+
     //! Handler implementation for command SetCurrentTime
     void SetCurrentTime_cmdHandler(FwOpcodeType opCode, //!< The opcode
                                    U32 cmdSeq, //!< The command sequence number

@@ -23,6 +23,8 @@ namespace Svc {
 
     class ActiveTextLogger final : public ActiveTextLoggerComponentBase {
 
+        friend class ActiveTextLoggerTester;
+
         public:
 
             //!  \brief Component constructor
@@ -52,7 +54,7 @@ namespace Svc {
             bool set_log_file(const char* fileName, const U32 maxSize, const U32 maxBackups = 10);
 
 
-        PRIVATE:
+        private:
 
         // ----------------------------------------------------------------------
         // Prohibit Copying

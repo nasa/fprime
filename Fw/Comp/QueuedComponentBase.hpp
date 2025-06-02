@@ -29,7 +29,7 @@ namespace Fw {
 				MSG_DISPATCH_EXIT //!< A message was sent requesting an exit of the loop
 			} MsgDispatchStatus;
 
-        PROTECTED:
+        protected:
             QueuedComponentBase(const char* name); //!< Constructor
             virtual ~QueuedComponentBase(); //!< Destructor
             void init(FwEnumStoreType instance); //!< initialization function
@@ -41,7 +41,7 @@ namespace Fw {
 #endif
             FwSizeType getNumMsgsDropped(); //!< return number of messages dropped
             void incNumMsgDropped(); //!< increment the number of messages dropped
-        PRIVATE:
+        private:
             FwSizeType m_msgsDropped; //!< number of messages dropped from full queue
     };
 

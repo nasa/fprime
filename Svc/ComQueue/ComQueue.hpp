@@ -187,7 +187,7 @@ class ComQueue final : public ComQueueComponentBase {
     //! Send a chosen Fw::Buffer
     //!
     void sendBuffer(Fw::Buffer& buffer,     //!< Reference to buffer to send
-                    FwIndexType queueIndex  //!< Index of the queue emitting the message  
+                    FwIndexType queueIndex  //!< Index of the queue emitting the message
     );
 
     //! Process the queues to select the next priority message
@@ -195,7 +195,7 @@ class ComQueue final : public ComQueueComponentBase {
     void processQueue();
 
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Member variables
     // ----------------------------------------------------------------------
