@@ -4,14 +4,14 @@
 // @brief  A bounds-checked array with external memory
 // ======================================================================
 
-#ifndef DataStructures_ExternalArray_HPP
-#define DataStructures_ExternalArray_HPP
+#ifndef Fw_ExternalArray_HPP
+#define Fw_ExternalArray_HPP
 
 #include <Fw/FPrimeBasicTypes.hpp>
 
 #include "Fw/Types/Assert.hpp"
 
-namespace DataStructures {
+namespace Fw {
 
 template <typename T>
 class ExternalArray final {
@@ -108,6 +108,6 @@ class ExternalArray final {
     FwSizeType m_size = 0;
 };
 
-}  // namespace DataStructures
+}  // namespace Fw
 
 #endif

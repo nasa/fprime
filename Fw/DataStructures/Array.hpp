@@ -4,8 +4,8 @@
 // \brief  A statically-sized, bounds checked array
 // ======================================================================
 
-#ifndef DataStructures_Array_HPP
-#define DataStructures_Array_HPP
+#ifndef Fw_Array_HPP
+#define Fw_Array_HPP
 
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <initializer_list>
@@ -13,7 +13,7 @@
 #include "Fw/DataStructures/ExternalArray.hpp"
 #include "Fw/Types/Assert.hpp"
 
-namespace DataStructures {
+namespace Fw {
 
 template <typename T, FwSizeType S>
 class Array final {
@@ -128,6 +128,6 @@ class Array final {
     Elements m_elements = {};
 };
 
-}  // namespace DataStructures
+}  // namespace Fw
 
 #endif

@@ -8,7 +8,7 @@
 
 #include "Fw/DataStructures/ExternalArray.hpp"
 
-namespace DataStructures {
+namespace Fw {
 
 TEST(ExternalArray, ZeroArgConstructor) {
     ExternalArray<U32> a;
@@ -93,4 +93,4 @@ TEST(ExternalArray, SetStorage) {
     ASSERT_EQ(a2.getSize(), a1.getSize());
 }
 
-}  // namespace DataStructures
+}  // namespace Fw

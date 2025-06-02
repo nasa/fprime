@@ -1,6 +1,20 @@
-# Fw::DataStructures: Basic Data Structures
+# Fw/DataStructures: Basic Data Structures
 
 This directory contains a library of basic data structures.
+All the definitions in `Fw/DataStructures` are in the
+namespace `Fw`.
+
+The data structures defined in `Fw/DataStructures` use the following concepts:
+
+* **size:** The number of elements currently stored in a data structure.
+
+* **capacity:** The maximum number of elements stored in a data structure.
+
+For a fixed-size array, the size and the capacity are the same.
+For other data structures, the size and the capacity are not
+in general the same.
+For example, at all times a map has a fixed capacity _C_ and a size between 0 
+and _C_.
 
 ## 1. Arrays
 
@@ -11,7 +25,7 @@ An array provides bounds-checked access to the array elements
 stored in _M_.
 
 <a name="external_array"></a>
-### 1.1. External Array
+### 1.1. ExternalArray
 
 `ExternalArray` is a `final` class template representing an array with external 
 storage.
@@ -622,6 +636,15 @@ ExternalFifoQueue()
 Defined as `= default`.
 
 #### 3.1.4. Public Member Functions
+
+**operator[]:**
+
+```c++
+T& operator[](FwSizeType i)
+const T& operator[](FwSizeType i) const
+```
+
+TODO
 
 **clear:**
 
