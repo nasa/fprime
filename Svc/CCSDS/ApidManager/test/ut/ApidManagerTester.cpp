@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  ApidManagerTester.cpp
-// \author chammard
+// \author thomas-bc
 // \brief  cpp file for ApidManager component test harness implementation class
 // ======================================================================
 

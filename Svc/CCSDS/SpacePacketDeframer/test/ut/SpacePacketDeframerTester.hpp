@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  SpacePacketDeframerTester.hpp
-// \author chammard
+// \author thomas-bc
 // \brief  hpp file for SpacePacketDeframer component test harness implementation class
 // ======================================================================
 

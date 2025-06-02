@@ -1,4 +1,3 @@
-<!-- filepath: /Users/chammard/Work/fp/fprime/Svc/CCSDS/SpacePacketFramer/docs/sdd.md -->
 # Svc::CCSDS::SpacePacketFramer
 
 The `Svc::CCSDS::SpacePacketFramer` is an implementation of the [FramerInterface](../../Interfaces/docs/sdd.md) for the CCSDS [Space Packet Protocol](https://public.ccsds.org/Pubs/133x0b2e1.pdf).

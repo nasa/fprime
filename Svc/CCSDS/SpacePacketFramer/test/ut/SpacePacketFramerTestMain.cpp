@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  SpacePacketFramerTestMain.cpp
-// \author chammard
+// \author thomas-bc
 // \brief  cpp file for SpacePacketFramer component test main function
 // ======================================================================
 

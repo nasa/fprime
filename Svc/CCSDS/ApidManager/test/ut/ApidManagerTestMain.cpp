@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  ApidManagerTestMain.cpp
-// \author chammard
+// \author thomas-bc
 // \brief  cpp file for ApidManager component test main function
 // ======================================================================
 

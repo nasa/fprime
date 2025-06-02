@@ -7,9 +7,8 @@
 #define SVC_FRAME_ACCUMULATOR_FRAME_DETECTOR_CCSDS_TC_FRAME_DETECTOR
 
 #include "Svc/FrameAccumulator/FrameDetector.hpp"
-
-// #include "Fw/Buffer/Buffer.hpp"
 #include "Fw/FPrimeBasicTypes.hpp"
+#include "Svc/CCSDS/Types/FppConstantsAc.hpp"
 
 namespace Svc {
 namespace FrameDetectors {
@@ -40,6 +39,12 @@ class CcsdsTCFrameDetector : public FrameDetector {
     //! \param size_out: set as output to caller indicating size when appropriate
     //! \return status of the detection to be paired with size_out
     Status detect(const Types::CircularBuffer& data, FwSizeType& size_out) const override;
+  
+  protected:
+
+    //! \brief expected flags and spacecraft ID token for a valid CCSDS TC frame
+    const U16 m_expectedFlagsAndScIdToken =
+        0x1 << CCSDS::TCSubfields::BypassFlagOffset | (ComCfg::FppConstant_SpacecraftId::SpacecraftId);
 
 };  // class CcsdsTCFrameDetector
 }  // namespace FrameDetectors
