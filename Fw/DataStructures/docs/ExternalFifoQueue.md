@@ -181,6 +181,21 @@ Fw::Success peek(T& e)
 
     1. Return `Fw::Success::SUCCESS`.
 
+_Example:_
+```c++
+constexpr FwSizeType size = 3;
+U32 elements[size] = {};
+ExternalFifoQueue<U32> queue(elements, size);
+U32 value = 0;
+auto status = queue.peek(value);
+ASSERT_EQ(status, Fw::Success::FAILURE);
+status = queue.enqueue(3);
+ASSERT_EQ(status, Fw::Success::SUCCESS);
+status = queue.peek(value);
+ASSERT_EQ(status, Fw::Success::SUCCESS);
+ASSERT_EQ(value, 3);
+```
+
 **dequeue:**
 
 ```c++
