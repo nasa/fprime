@@ -99,6 +99,8 @@ module Ref {
     # ----------------------------------------------------------------------
 
     connections Downlink {
+      apidDemo.sendPacketDown -> comQueue.bufferQueueIn[1]
+      comQueue.bufferReturnOut[1] -> apidDemo.bufferReturnIn
       # Data Products
       dpCat.fileOut             -> fileDownlink.SendFile
       fileDownlink.FileComplete -> dpCat.fileDone
@@ -107,32 +109,27 @@ module Ref {
       tlmSend.PktSend            -> comQueue.comPacketQueueIn[Ports_ComPacketQueue.TELEMETRY]
       fileDownlink.bufferSendOut -> comQueue.bufferQueueIn[Ports_ComBufferQueue.FILE_DOWNLINK]
       comQueue.bufferReturnOut[Ports_ComBufferQueue.FILE_DOWNLINK] -> fileDownlink.bufferReturn
-      # ComQueue <-> ApidManager
-      comQueue.dataOut           -> apidManager.dataIn
-      apidManager.dataReturnOut -> comQueue.dataReturnIn
-      # ApidManager <-> Framer
-      apidManager.dataOut           -> spacePacketFramer.dataIn
-      spacePacketFramer.dataReturnOut -> apidManager.dataReturnIn
-      # Buffer Management for Framer
+      # ComQueue <-> SpacePacketFramer
+      comQueue.dataOut                -> spacePacketFramer.dataIn
+      spacePacketFramer.dataReturnOut -> comQueue.dataReturnIn
+      # SpacePacketFramer buffer and APID management
       spacePacketFramer.bufferAllocate   -> commsBufferManager.bufferGetCallee
       spacePacketFramer.bufferDeallocate -> commsBufferManager.bufferSendIn
-      tmFramer.bufferAllocate   -> commsBufferManager.bufferGetCallee
-      tmFramer.bufferDeallocate -> commsBufferManager.bufferSendIn
-      # Framer chain
+      spacePacketFramer.getApidSeqCount  -> apidManager.getApidSeqCountIn
+      # SpacePacketFramer <-> TMFramer
       spacePacketFramer.dataOut -> tmFramer.dataIn
-      tmFramer.dataReturnOut -> spacePacketFramer.dataReturnIn
+      tmFramer.dataReturnOut    -> spacePacketFramer.dataReturnIn
       # Framer <-> ComStub
-      tmFramer.dataOut  -> comStub.dataIn
+      tmFramer.dataOut      -> comStub.dataIn
       comStub.dataReturnOut -> tmFramer.dataReturnIn
       # ComStub <-> ComDriver
       comStub.drvSendOut      -> comDriver.$send
       comDriver.sendReturnOut -> comStub.drvSendReturnIn
       comDriver.ready         -> comStub.drvConnected
       # ComStatus
-      comStub.comStatusOut       -> tmFramer.comStatusIn
-      tmFramer.comStatusOut       -> spacePacketFramer.comStatusIn
+      comStub.comStatusOut            -> tmFramer.comStatusIn
+      tmFramer.comStatusOut           -> spacePacketFramer.comStatusIn
       spacePacketFramer.comStatusOut  -> comQueue.comStatusIn
-      # TODO: probably need comStatus to APIDMapper ??
     }
 
     connections FaultProtection {
@@ -195,13 +192,16 @@ module Ref {
       frameAccumulator.bufferDeallocate -> commsBufferManager.bufferSendIn
       frameAccumulator.bufferAllocate   -> commsBufferManager.bufferGetCallee
       # FrameAccumulator <-> Deframer
-      frameAccumulator.dataOut -> tcDeframer.dataIn
-      tcDeframer.dataReturnOut   -> frameAccumulator.dataReturnIn
-      tcDeframer.dataOut -> spacePacketDeframer.dataIn
+      frameAccumulator.dataOut          -> tcDeframer.dataIn
+      tcDeframer.dataReturnOut          -> frameAccumulator.dataReturnIn
+      # TCDeframer <-> SpacePacketDeframer
+      tcDeframer.dataOut                -> spacePacketDeframer.dataIn
       spacePacketDeframer.dataReturnOut -> tcDeframer.dataReturnIn
-      # Deframer <-> Router
-      spacePacketDeframer.dataOut           -> fprimeRouter.dataIn
-      fprimeRouter.dataReturnOut -> spacePacketDeframer.dataReturnIn
+      # SpacePacketDeframer APID validation
+      spacePacketDeframer.validateApidSeqCount -> apidManager.validateApidSeqCountIn
+      # SpacePacketDeframer <-> Router
+      spacePacketDeframer.dataOut -> fprimeRouter.dataIn
+      fprimeRouter.dataReturnOut  -> spacePacketDeframer.dataReturnIn
       # Router buffer allocations
       fprimeRouter.bufferAllocate   -> commsBufferManager.bufferGetCallee
       fprimeRouter.bufferDeallocate -> commsBufferManager.bufferSendIn
@@ -210,8 +210,6 @@ module Ref {
       cmdDisp.seqCmdStatus     -> fprimeRouter.cmdResponseIn
       fprimeRouter.fileOut     -> fileUplink.bufferSendIn
       fileUplink.bufferSendOut -> fprimeRouter.fileBufferReturnIn
-
-      spacePacketDeframer.validateApidSeqCount -> apidManager.validateApidSeqCountIn
     }
 
     connections DataProducts {
