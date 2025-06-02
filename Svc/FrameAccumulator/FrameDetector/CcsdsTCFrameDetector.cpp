@@ -18,8 +18,8 @@ namespace FrameDetectors {
 
 FrameDetector::Status CcsdsTCFrameDetector::detect(const Types::CircularBuffer& data, FwSizeType& size_out) const {
 
-    if (data.get_allocated_size() < CCSDS::TCHeader::SERIALIZED_SIZE) {
-        size_out = CCSDS::TCHeader::SERIALIZED_SIZE;
+    if (data.get_allocated_size() < CCSDS::TCHeader::SERIALIZED_SIZE + CCSDS::TCTrailer::SERIALIZED_SIZE) {
+        size_out = CCSDS::TCHeader::SERIALIZED_SIZE + CCSDS::TCTrailer::SERIALIZED_SIZE;
         return Status::MORE_DATA_NEEDED;
     }
 

@@ -7,41 +7,51 @@
 #
 ####
 
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/FrameAccumulator.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/FrameAccumulator.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/FrameDetector/FprimeFrameDetector.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/FrameDetector/CcsdsTCFrameDetector.cpp"
+register_fprime_library(
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/FrameAccumulator.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/FrameDetector/FprimeFrameDetector.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/FrameDetector/CcsdsTCFrameDetector.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/FrameAccumulator.fpp"
+  DEPENDS
+    Utils_Types
+    Svc_FprimeProtocol
+    Svc_CCSDS_Types
 )
-set(MOD_DEPS
-    Utils/Types
-    Svc/FprimeProtocol
-    Svc/CCSDS/Types
-)
-
-register_fprime_module()
 
 #### UTs ####
-set(UT_SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/FrameAccumulator.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/FrameAccumulatorTester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/FrameAccumulatorTestMain.cpp"
-)
-set(UT_MOD_DEPS
-    Utils/Types
+register_fprime_ut(
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/FrameAccumulatorTester.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/FrameAccumulatorTestMain.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/FrameAccumulator.fpp"
+  DEPENDS
     STest
-)
-set(UT_AUTO_HELPERS ON)
-
-register_fprime_ut()
-
-#### FprimeFrameDetector tests ####
-
-set(UT_HEADER_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/FrameDetector/FprimeFrameDetector.hpp"
-)
-set(UT_SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/detectors/FprimeFrameDetectorTestMain.cpp"
+  UT_AUTO_HELPERS
 )
 
-register_fprime_ut("Svc_FrameAccumulator_FprimeFrameDetector_test")
+#### FrameDetector tests ####
+
+register_fprime_ut(
+  "Svc_FrameAccumulator_FprimeFrameDetector_test"
+  SOURCES 
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/detectors/FprimeFrameDetectorTestMain.cpp"
+  HEADERS
+    "${CMAKE_CURRENT_LIST_DIR}/FrameDetector/FprimeFrameDetector.hpp"
+  DEPENDS
+    STest
+  UT_AUTO_HELPERS
+)
+
+register_fprime_ut(
+  "Svc_FrameAccumulator_CcsdsTCFrameDetector_test"
+  SOURCES 
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/detectors/CcsdsTCFrameDetectorTestMain.cpp"
+  HEADERS
+    "${CMAKE_CURRENT_LIST_DIR}/FrameDetector/CcsdsTCFrameDetector.hpp"
+  DEPENDS
+    STest
+  UT_AUTO_HELPERS
+)
