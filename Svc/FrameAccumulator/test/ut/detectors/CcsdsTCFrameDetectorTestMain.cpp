@@ -141,12 +141,14 @@ TEST_F(CcsdsFrameDetectorTest, TestMoreDataNeeded) {
 }
 
 TEST_F(CcsdsFrameDetectorTest, TestCorruptedCrc) {
-    (void)generate_random_tc_frame(this->circular_buffer);
+    FwSizeType frame_size = generate_random_tc_frame(this->circular_buffer);
+    this->m_buffer[frame_size - 2] = 0xFF;  // Corrupt the last 2 bytes to fail CRC check
+    this->m_buffer[frame_size - 1] = 0xFF;  // Corrupt the last 2 bytes to fail CRC check
 
     Svc::FrameDetector::Status status;
     FwSizeType unused = 0;
     status = this->detector.detect(this->circular_buffer, unused);
-    EXPECT_EQ(status, Svc::FrameDetector::Status::MORE_DATA_NEEDED);
+    EXPECT_EQ(status, Svc::FrameDetector::Status::NO_FRAME_DETECTED);
 }
 
 int main(int argc, char** argv) {
