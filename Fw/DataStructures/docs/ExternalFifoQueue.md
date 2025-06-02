@@ -21,8 +21,8 @@ storing the items on the queue.
 |Name|Type|Purpose|Default Value|
 |----|----|-------|-------------|
 |`m_items`|[`ExternalArray<T>`](ExternalArray.md)|The array for storing the queue items|C++ default initialization|
-|`m_enqueueIndex`|[`CircularIndex`](CircularIndex.md)|The enqueue index|0|
-|`m_dequeueIndex`|[`CircularIndex`](CircularIndex.md)|The dequeue index|0|
+|`m_enqueueIndex`|[`CircularIndex`](CircularIndex.md)|The enqueue index|`CircularIndex(m_items.size(), 0)`|
+|`m_dequeueIndex`|[`CircularIndex`](CircularIndex.md)|The dequeue index|`CircularIndex(m_items.size(), 0)`|
 |`m_size`|`FwSizeType`|The number of items on the queue|0|
 
 ## 3. Public Constructors and Destructors
@@ -92,11 +92,24 @@ Defined as `= default`.
 **operator[]:**
 
 ```c++
-T& operator[](FwSizeType i)
 const T& operator[](FwSizeType i) const
 ```
 
-TODO
+1. Assert that `i < m_size`.
+
+1. Return `m_items[(m_enqueueIndex + i) % m_items.size()]`.
+
+_Example:_
+```c++
+constexpr FwSizeType size = 3;
+U32 elements[size] = {};
+ExternalFifoQueue<U32> queue(elements, size);
+const auto status = queue.enqueue(3);
+// Constant access
+ASSERT_EQ(queue[0], 3);
+// Out-of-bounds access
+ASSERT_DEATH(queue[1], "Assert");
+```
 
 **clear:**
 
@@ -104,7 +117,23 @@ TODO
 void clear()
 ```
 
-TODO
+1. Call `m_enqueueIndex.setValue(0)`.
+
+1. Call `m_dequeueIndex.setValue(0)`.
+
+1. Set `m_size = 0`.
+
+
+_Example:_
+```c++
+constexpr FwSizeType size = 3;
+U32 elements[size] = {};
+ExternalFifoQueue<U32> queue(elements, size);
+const auto status = queue.enqueue(3);
+ASSERT_EQ(queue.getSize(), 1);
+queue.clear();
+ASSERT_EQ(queue.getSize(), 0);
+```
 
 **setStorage:**
 
@@ -112,7 +141,15 @@ TODO
 void setStorage(T* items, FwSizeType size)
 ```
 
-TODO
+Call `m_items.setStorage(items, size)`.
+
+_Example:_
+```c++
+constexpr FwSizeType size = 3;
+ExternalFifoQueue<U32> queue;
+U32 elements[size];
+queue.setStorage(elements, size);
+```
 
 **copyItemsFrom:**
 
@@ -136,7 +173,13 @@ TODO
 Fw::Success peek(T& e)
 ```
 
-TODO
+1. If `m_size == 0` return `Fw::Success::FAILURE`.
+
+1. Otherwise
+
+    1. Set `e = (*this)[m_size - 1]`.
+
+    1. Return `Fw::Success::SUCCESS`.
 
 **dequeue:**
 
