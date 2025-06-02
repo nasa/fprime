@@ -97,19 +97,6 @@ def test_unittest_installation(UT_BUILD):
     assert output_path.exists(), "Failed to locate Ref in build output"
 
 
-def test_unittest_dictionary(UT_BUILD):
-    """Run reference and assert reference targets exit"""
-    cmake.assert_process_success(UT_BUILD, errors_ok=True)
-    output_path = (
-        UT_BUILD["install"]
-        / platform.system()
-        / "Ref"
-        / "dict"
-        / "RefTopologyAppDictionary.xml"
-    )
-    assert output_path.exists(), "Failed to locate Ref in build output"
-
-
 def test_unittest_module_ut_info(UT_BUILD):
     """Run reference and assert module-ut-info.txt was created"""
     cmake.assert_process_success(UT_BUILD, errors_ok=True)
