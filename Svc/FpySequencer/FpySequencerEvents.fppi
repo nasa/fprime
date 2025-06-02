@@ -65,14 +65,13 @@ event InsufficientBufferSpace(
 # runtime
 
 event StatementFailed(
-    stmtType: Fpy.StatementType
     stmtOpcode: U32
     stmtIdx: U32
     filePath: string
     response: Fw.CmdResponse
 ) \
     severity warning high \
-    format "Failed to execute statement type {} opcode {} index {} in sequence file {}: response was {}"
+    format "Failed to execute statement opcode {} index {} in sequence file {}: response was {}"
 
 event SequenceDone(
     filePath: string
@@ -172,13 +171,12 @@ event MismatchedTimeContext(
     format "getTime() time context was {}, but tried to operate on it with time context {}"
 
 event StatementTimedOut(
-    stmtType: Fpy.StatementType
     stmtOpcode: U32
     stmtIdx: U32
     filePath: string
 ) \
     severity warning high \
-    format "A statement type {} opcode {} at index {} timed out in sequence {}, causing the sequence to fail"
+    format "A statement opcode {} at index {} timed out in sequence {}, causing the sequence to fail"
 
 event TooManySequenceArgs(
     count: U8

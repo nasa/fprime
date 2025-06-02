@@ -48,6 +48,7 @@ class FpySequencer : public FpySequencerComponentBase {
         FpySequencer_NoOpDirective noOp;
         FpySequencer_GetTlmDirective getTlm;
         FpySequencer_GetPrmDirective getPrm;
+        FpySequencer_CmdDirective cmd;
 
         DirectiveUnion() {}
         ~DirectiveUnion() {}
@@ -394,6 +395,9 @@ class FpySequencer : public FpySequencerComponentBase {
     //! Internal interface handler for directive_getPrm
     void directive_getPrm_internalInterfaceHandler(const Svc::FpySequencer_GetPrmDirective& directive) override;
 
+    //! Internal interface handler for directive_cmd
+    void directive_cmd_internalInterfaceHandler(const Svc::FpySequencer_CmdDirective& directive) override;
+
     void parametersLoaded() override;
     void parameterUpdated(FwPrmIdType id) override;
 
@@ -446,9 +450,9 @@ class FpySequencer : public FpySequencerComponentBase {
         U32 nextStatementIndex = 0;
 
         // the opcode of the statement that is currently executing
-        FwOpcodeType currentStatementOpcode = Fpy::DirectiveId::INVALID;
-        // the stmt type of the stmt currently executing (cmd or directive)
-        Fpy::StatementType currentStatementType = Fpy::StatementType::DIRECTIVE;
+        U8 currentStatementOpcode = Fpy::DirectiveId::INVALID;
+        // the opcode of the command that we are currently awaiting, or 0 if we are executing a directive
+        FwOpcodeType currentCmdOpcode = 0;
         // the time we dispatched the statement that is currently executing
         Fw::Time currentStatementDispatchTime = Fw::Time();
 
@@ -567,6 +571,7 @@ class FpySequencer : public FpySequencerComponentBase {
     Signal noOp_directiveHandler(const FpySequencer_NoOpDirective& directive);
     Signal getTlm_directiveHandler(const FpySequencer_GetTlmDirective& directive);
     Signal getPrm_directiveHandler(const FpySequencer_GetPrmDirective& directive);
+    Signal cmd_directiveHandler(const FpySequencer_GetPrmDirective& directive);
 };
 
 }  // namespace Svc

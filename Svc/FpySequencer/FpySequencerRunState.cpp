@@ -48,49 +48,6 @@ Signal FpySequencer::dispatchStatement() {
 // dispatches a command out via port.
 // return true if successfully dispatched.
 Fw::Success FpySequencer::dispatchCommand(const Fpy::Statement& stmt) {
-    FW_ASSERT(stmt.gettype() == Fpy::StatementType::COMMAND);
-    Fw::ComBuffer cmdBuf;
-    Fw::SerializeStatus stat = cmdBuf.serialize(Fw::ComPacket::FW_PACKET_COMMAND);
-    // TODO should I assert here? this really shouldn't fail, I should just add a static assert
-    // on com buf size and then assert here
-    if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
-        this->log_WARNING_HI_CommandSerializeError(stmt.getopCode(), cmdBuf.getBuffCapacity(), cmdBuf.getBuffLength(),
-                                                   sizeof(Fw::ComPacket::FW_PACKET_COMMAND), stat,
-                                                   this->m_runtime.nextStatementIndex - 1);
-        return Fw::Success::FAILURE;
-    }
-    // TODO same as above
-    stat = cmdBuf.serialize(stmt.getopCode());
-    if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
-        this->log_WARNING_HI_CommandSerializeError(stmt.getopCode(), cmdBuf.getBuffCapacity(), cmdBuf.getBuffLength(),
-                                                   sizeof(stmt.getopCode()), stat,
-                                                   this->m_runtime.nextStatementIndex - 1);
-        return Fw::Success::FAILURE;
-    }
-    stat = cmdBuf.serialize(stmt.getargBuf().getBuffAddr(), stmt.getargBuf().getBuffLength(), true);
-    if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
-        this->log_WARNING_HI_CommandSerializeError(stmt.getopCode(), cmdBuf.getBuffCapacity(), cmdBuf.getBuffLength(),
-                                                   stmt.getargBuf().getBuffLength(), stat,
-                                                   this->m_runtime.nextStatementIndex - 1);
-        return Fw::Success::FAILURE;
-    }
-
-    // calculate the unique command identifier:
-    // cmd UID is formatted like XXYY, where XX are the first two bytes of the m_sequencesStarted counter
-    // and YY are the first two bytes of the m_statementsDispatched counter.
-    // this way, we know when we get a cmd back A) whether or not it's from this sequence (modulo 2^16) and B)
-    // whether or not it's this specific instance of the cmd in the sequence, and not another one with the same opcode
-    // somewhere else in the file.
-    // if we put this uid in the context we send to the cmdDisp, we will get it back when the cmd returns
-    U32 cmdUid =
-        static_cast<U32>(((this->m_sequencesStarted & 0xFFFF) << 16) | (this->m_statementsDispatched & 0xFFFF));
-
-    // little note--theoretically this could produce a cmdResponse before we send the
-    // dispatchSuccess signal. however b/c of priorities the dispatchSuccess signal will
-    // always get processed first, leaving us in the right state for the cmdresponse
-    this->cmdOut_out(0, cmdBuf, cmdUid);
-
-    return Fw::Success::SUCCESS;
 }
 
 // deserializes a directive from bytes into the Fpy type
@@ -227,6 +184,37 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
                                                                status, argBuf.getBuffLeft(), argBuf.getBuffLength());
                 return Fw::Success::FAILURE;
             }
+            break;
+        }
+        case Fpy::DirectiveId::CMD: {
+            new (&deserializedDirective.cmd) FpySequencer_CmdDirective();
+            // same deserialization behavior as SET_LVAR
+
+            //  how many bytes are left?
+            FwSizeType valueSize = argBuf.getBuffLeft();
+
+            // check to make sure the value will fit in the FpySequencer_SetLocalVarDirective::value buf
+            if (valueSize > Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE) {
+                this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), this->m_runtime.nextStatementIndex - 1,
+                                                               Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR,
+                                                               argBuf.getBuffLeft(), argBuf.getBuffLength());
+                return Fw::Success::FAILURE;
+            }
+
+            // okay, it will fit. put it in
+            status = argBuf.deserialize(deserializedDirective.setLVar.getvalue(), valueSize, true);
+
+            if (status != Fw::SerializeStatus::FW_SERIALIZE_OK) {
+                this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), this->m_runtime.nextStatementIndex - 1,
+                                                               status, argBuf.getBuffLeft(), argBuf.getBuffLength());
+                return Fw::Success::FAILURE;
+            }
+
+            // now there should be nothing left, otherwise coding err
+            FW_ASSERT(argBuf.getBuffLeft() == 0, static_cast<FwAssertArgType>(argBuf.getBuffLeft()));
+
+            // and set the buf size now that we know it
+            deserializedDirective.setLVar.set_valueSize(valueSize);
             break;
         }
         default: {

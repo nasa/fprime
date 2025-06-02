@@ -25,9 +25,9 @@ struct DebugTelemetry {
     @ true if there are no statements remaining in the sequence file
     reachedEndOfFile: bool
     @ the opcode of the next statement to dispatch.
-    nextStatementOpcode: U32
-    @ the type of the next statement to dispatch.
-    nextStatementType: Fpy.StatementType
+    nextStatementOpcode: U8
+    @ if the next statement is a cmd directive, the opcode of that cmd
+    nextCmdOpcode: FwOpcodeType
 }
 
 @ the current debug breakpoint index

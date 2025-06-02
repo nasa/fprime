@@ -54,6 +54,15 @@ struct GetPrmDirective {
     prmId: FwPrmIdType
 }
 
+struct CmdDirective {
+    opCode: FwOpcodeType
+    @ the arg buf of the cmd
+    argBuf: [Fpy.MAX_LOCAL_VARIABLE_BUFFER_SIZE] U8
+
+    @ the length of the arg buf byte array. 
+    _argBufSize: FwSizeType
+}
+
 internal port directive_waitRel(directive: WaitRelDirective) priority 6 assert
 
 internal port directive_waitAbs(directive: WaitAbsDirective) priority 6 assert
@@ -69,3 +78,5 @@ internal port directive_noOp(directive: NoOpDirective) priority 6 assert
 internal port directive_getTlm(directive: GetTlmDirective) priority 6 assert
 
 internal port directive_getPrm(directive: GetPrmDirective) priority 6 assert
+
+internal port directive_cmd(directive: CmdDirective) priority 6 assert

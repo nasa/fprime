@@ -1,4 +1,5 @@
 #include "Svc/FpySequencer/FpySequencer.hpp"
+#include "Fw/Com/ComPacket.hpp"
 
 namespace Svc {
 
@@ -61,6 +62,11 @@ void FpySequencer::directive_getTlm_internalInterfaceHandler(const Svc::FpySeque
 //! Internal interface handler for directive_getPrm
 void FpySequencer::directive_getPrm_internalInterfaceHandler(const Svc::FpySequencer_GetPrmDirective& directive) {
     this->sendSignal(this->getPrm_directiveHandler(directive));
+}
+
+//! Internal interface handler for directive_cmd
+void FpySequencer::directive_cmd_internalInterfaceHandler(const Svc::FpySequencer_CmdDirective& directive) {
+    this->sendSignal(this->cmd_directiveHandler(directive));
 }
 
 //! Internal interface handler for directive_waitRel
@@ -169,7 +175,8 @@ Signal FpySequencer::getTlm_directiveHandler(const FpySequencer_GetTlmDirective&
     }
 
     // this is an assert in the hpp, the buf should never be bigger than TLM_BUF_MAX
-    FW_ASSERT(tlmValue.getBuffLength() <= Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE, static_cast<FwAssertArgType>(tlmValue.getBuffLength()));
+    FW_ASSERT(tlmValue.getBuffLength() <= Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE,
+              static_cast<FwAssertArgType>(tlmValue.getBuffLength()));
 
     // copy value into lvar
     Runtime::LocalVariable& valueLvar = this->m_runtime.localVariables[directive.getvalueDestLvar()];
@@ -217,6 +224,52 @@ Signal FpySequencer::getPrm_directiveHandler(const FpySequencer_GetPrmDirective&
     Runtime::LocalVariable& lvar = this->m_runtime.localVariables[directive.getdestLvarIndex()];
     memcpy(lvar.value, prmValue.getBuffAddr(), static_cast<size_t>(prmValue.getBuffLength()));
     lvar.valueSize = prmValue.getBuffLength();
+    return Signal::stmtResponse_success;
+}
+
+Signal FpySequencer::cmd_directiveHandler(const FpySequencer_GetPrmDirective& directive) {
+    Fw::ComBuffer cmdBuf;
+    Fw::SerializeStatus stat = cmdBuf.serialize(Fw::ComPacket::FW_PACKET_COMMAND);
+    // TODO should I assert here? this really shouldn't fail, I should just add a static assert
+    // on com buf size and then assert here
+    if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
+        this->log_WARNING_HI_CommandSerializeError(stmt.getopCode(), cmdBuf.getBuffCapacity(), cmdBuf.getBuffLength(),
+                                                   sizeof(Fw::ComPacket::FW_PACKET_COMMAND), stat,
+                                                   this->m_runtime.nextStatementIndex - 1);
+        return Fw::Success::FAILURE;
+    }
+    // TODO same as above
+    stat = cmdBuf.serialize(stmt.getopCode());
+    if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
+        this->log_WARNING_HI_CommandSerializeError(stmt.getopCode(), cmdBuf.getBuffCapacity(), cmdBuf.getBuffLength(),
+                                                   sizeof(stmt.getopCode()), stat,
+                                                   this->m_runtime.nextStatementIndex - 1);
+        return Fw::Success::FAILURE;
+    }
+    stat = cmdBuf.serialize(stmt.getargBuf().getBuffAddr(), stmt.getargBuf().getBuffLength(), true);
+    if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
+        this->log_WARNING_HI_CommandSerializeError(stmt.getopCode(), cmdBuf.getBuffCapacity(), cmdBuf.getBuffLength(),
+                                                   stmt.getargBuf().getBuffLength(), stat,
+                                                   this->m_runtime.nextStatementIndex - 1);
+        return Fw::Success::FAILURE;
+    }
+
+    // calculate the unique command identifier:
+    // cmd UID is formatted like XXYY, where XX are the first two bytes of the m_sequencesStarted counter
+    // and YY are the first two bytes of the m_statementsDispatched counter.
+    // this way, we know when we get a cmd back A) whether or not it's from this sequence (modulo 2^16) and B)
+    // whether or not it's this specific instance of the cmd in the sequence, and not another one with the same opcode
+    // somewhere else in the file.
+    // if we put this uid in the context we send to the cmdDisp, we will get it back when the cmd returns
+    U32 cmdUid =
+        static_cast<U32>(((this->m_sequencesStarted & 0xFFFF) << 16) | (this->m_statementsDispatched & 0xFFFF));
+
+    // little note--theoretically this could produce a cmdResponse before we send the
+    // dispatchSuccess signal. however b/c of priorities the dispatchSuccess signal will
+    // always get processed first, leaving us in the right state for the cmdresponse
+    this->cmdOut_out(0, cmdBuf, cmdUid);
+
+    return Fw::Success::SUCCESS;
     return Signal::stmtResponse_success;
 }
 }  // namespace Svc
