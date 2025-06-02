@@ -1,6 +1,8 @@
 # ExternalArray
 
-`ExternalArray` is a `final` class template representing an 
+`ExternalArray` is a `final` class template 
+defined in [`Fw/DataStructures`](sdd.md).
+It represents an
 [array](sdd.md#1-arrays) with external storage.
 It stores a pointer to the backing memory _M_.
 

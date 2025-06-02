@@ -1,7 +1,8 @@
 # 1.2. Array
 
-`Array` is a `final` class template representing an array
-with internal storage.
+`Array` is a `final` class template defined in
+[`Fw/DataStructures`](sdd.md).
+It represents an array with internal storage.
 It maintains the backing memory _M_ as a member variable.
 
 ## 1. Template Parameters
