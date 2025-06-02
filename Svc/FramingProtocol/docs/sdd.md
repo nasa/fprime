@@ -144,7 +144,7 @@ To implement `FramingProtocol`, you must implement the following pure
 virtual method:
 
 ```c++
-virtual void frame(const U8* const data, const U32 size, Fw::ComPacket::ComPacketType packet_type) = 0;
+virtual void frame(const U8* const data, const U32 size, Fw::ComPacketType packet_type) = 0;
 ```
 
 This method is called with the following arguments:

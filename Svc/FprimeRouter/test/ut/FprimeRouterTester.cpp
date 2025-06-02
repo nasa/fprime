@@ -85,7 +85,7 @@ void FprimeRouterTester ::testCommandResponse() {
 // Test Helper
 // ----------------------------------------------------------------------
 
-void FprimeRouterTester::mockReceivePacketType(Fw::ComPacket::ComPacketType packetType) {
+void FprimeRouterTester::mockReceivePacketType(Fw::ComPacketType packetType) {
     const FwPacketDescriptorType descriptorType = packetType;
     U8 data[sizeof descriptorType];
     Fw::Buffer buffer(data, sizeof(data));
