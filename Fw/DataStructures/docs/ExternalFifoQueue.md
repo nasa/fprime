@@ -1,7 +1,8 @@
 # ExternalFifoQueue
 
-`ExternalFifoQueue` is a `final` class template representing a
-FIFO queue with external storage.
+`ExternalFifoQueue` is a `final` class template
+defined in [`Fw/DataStructures`].
+It represents a FIFO queue with external storage.
 Internally it maintains an [`ExternalArray`](ExternalArray.md) for 
 storing the items on the queue.
 

@@ -1,7 +1,8 @@
 # FifoQueue
 
-`FifoQueue` is a `final` class template representing a
-FIFO queue with internal storage.
+`FifoQueue` is a `final` class template
+defined in [`Fw/DataStructures`](sdd.md).
+It represents a FIFO queue with internal storage.
 Internally it maintains an <a href="#array">`Array`</a>
 for storing the items on the queue.
 
