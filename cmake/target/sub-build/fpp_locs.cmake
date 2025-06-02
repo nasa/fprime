@@ -19,7 +19,6 @@ set(FPP__INTERNAL_LOCATE_DEFS_HELPER "${PYTHON}" "${CMAKE_CURRENT_LIST_DIR}/../t
 # - **TARGET:** name of the target to setup (fpp_locs)
 ####
 function(fpp_locs_add_global_target TARGET)
-    set(FPP_CONFIGS "${FPRIME_FRAMEWORK_PATH}/Fpp/ToCpp.fpp")
     add_custom_command(
         OUTPUT "${CMAKE_BINARY_DIR}/locs.fpp"
         COMMAND 
@@ -36,7 +35,6 @@ function(fpp_locs_add_global_target TARGET)
             "${CMAKE_BINARY_DIR}/locs.fpp"
             "${FPRIME_BINARY_DIR}/locs.fpp"
     )
-    set_property(TARGET "${TARGET}" PROPERTY GLOBAL_FPP_FILES ${FPP_CONFIGS})
 endfunction(fpp_locs_add_global_target)
 
 ####

@@ -125,12 +125,6 @@ def test_ref_module_info(REF_BUILD):
         actual_ac
     ), "Did not find expected autocoder sources"
     expected_gen = [
-        "SignalGenComponentAi.xml",
-        "SignalInfoSerializableAi.xml",
-        "SignalPairSerializableAi.xml",
-        "SignalPairSetArrayAi.xml",
-        "SignalSetArrayAi.xml",
-        "SignalTypeEnumAi.xml",
         "SignalGenComponentAc.cpp",
         "SignalGenComponentAc.hpp",
         "SignalInfoSerializableAc.cpp",
@@ -145,7 +139,6 @@ def test_ref_module_info(REF_BUILD):
         "SignalTypeEnumAc.hpp",
         "SignalGen_DpReqTypeEnumAc.cpp",
         "SignalGen_DpReqTypeEnumAc.hpp",
-        "SignalGen_DpReqTypeEnumAi.xml",
     ]
     actual_gen = [Path(source).name for source in generated]
     assert sorted(expected_gen) == sorted(

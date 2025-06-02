@@ -211,7 +211,7 @@ function(fprime_setup_included_code)
     # the current module and then calling stock "add_subdirectory".
     fprime__include_platform_file()
     
-    set(_FP_CORE_PACKAGES default Fw Svc Os Drv CFDP Utils)
+    set(_FP_CORE_PACKAGES Fpp default Fw Svc Os Drv CFDP Utils)
     foreach (_FP_PACKAGE_DIR IN LISTS _FP_CORE_PACKAGES)
         set(FPRIME_CURRENT_MODULE "${_FP_PACKAGE_DIR}")
         add_subdirectory("${FPRIME_FRAMEWORK_PATH}/${_FP_PACKAGE_DIR}/" "${CMAKE_BINARY_DIR}/F-Prime/${_FP_PACKAGE_DIR}")
