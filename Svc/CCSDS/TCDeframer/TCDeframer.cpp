@@ -62,7 +62,7 @@ void TCDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
         this->dataReturnOut_out(0, data, context); // drop the frame
         return;
     }
-    if (data.getSize() < frame_length + TCHeader::SERIALIZED_SIZE + TCTrailer::SERIALIZED_SIZE) {
+    if (data.getSize() < static_cast<Fw::Buffer::SizeType>(frame_length + TCHeader::SERIALIZED_SIZE + TCTrailer::SERIALIZED_SIZE)) {
         U32 maxDataAvailable = data.getSize() - TCHeader::SERIALIZED_SIZE - TCTrailer::SERIALIZED_SIZE;
         this->log_WARNING_HI_InvalidFrameLength(frame_length, maxDataAvailable);
         this->dataReturnOut_out(0, data, context); // drop the frame

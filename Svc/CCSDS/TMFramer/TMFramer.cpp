@@ -41,7 +41,7 @@ void TMFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
 
     U16 globalVcId = 0;
     globalVcId |= ComCfg::SpacecraftId << TMSubfields::spacecraftIdOffset;
-    globalVcId |= context.getvcId() << TMSubfields::virtualChannelIdOffset;
+    globalVcId |= static_cast<U16>(context.getvcId() << TMSubfields::virtualChannelIdOffset);
     globalVcId |= 0x0;  // Operational Control Field: Flag set to 0 (Standard 4.1.2.4)
 
     // Data Field Status (Standard 4.1.2.7):

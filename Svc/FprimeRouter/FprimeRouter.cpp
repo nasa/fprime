@@ -31,7 +31,7 @@ void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer
     if (packetType == Fw::ComPacketType::FW_PACKET_UNKNOWN) {
         FwPacketDescriptorType packetDescriptor;
         auto esb = packetBuffer.getDeserializer();
-        status = esb.deserialize(packetDescriptor);
+        (void) esb.deserialize(packetDescriptor);
         packetType = static_cast<Fw::ComPacketType>(packetDescriptor);
     }
     // Route based on received APID (packet type)

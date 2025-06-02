@@ -55,7 +55,7 @@ U16 ApidManager ::getAndIncrementSeqCount(ComCfg::APID::T apid) {
     for (U8 i = 0; i < MAX_TRACKED_APIDS; ++i) {
         if (this->m_apidSequences[i].apid == apid) {
             seqCount = this->m_apidSequences[i].sequenceCount;
-            this->m_apidSequences[i].sequenceCount = (seqCount + 1) % (1 << 14); // Increment for next call
+            this->m_apidSequences[i].sequenceCount = static_cast<U16>((seqCount + 1) % (1 << 14)); // Increment for next call
             return seqCount; // Return the current sequence count
         }
     }
@@ -64,7 +64,7 @@ U16 ApidManager ::getAndIncrementSeqCount(ComCfg::APID::T apid) {
         if (this->m_apidSequences[i].apid == ComCfg::APID::INVALID_UNINITIALIZED) {
             this->m_apidSequences[i].apid = apid; // Initialize this entry with the new APID
             seqCount = this->m_apidSequences[i].sequenceCount; // Entries default to 0 unless otherwise specified
-            this->m_apidSequences[i].sequenceCount = (seqCount + 1) % (1 << 14); // Increment for next call
+            this->m_apidSequences[i].sequenceCount = static_cast<U16>((seqCount + 1) % (1 << 14)); // Increment for next call
             return seqCount; // Return the initialized sequence count
         }
     }
