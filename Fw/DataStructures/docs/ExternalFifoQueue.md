@@ -20,8 +20,8 @@ storing the items on the queue.
 |Name|Type|Purpose|Default Value|
 |----|----|-------|-------------|
 |`m_items`|`ExternalArray<T>`|The array for storing the queue items|C++ default initialization|
-|`m_enqueueIndex`|`CircularIndex`|The enqueue index|0|
-|`m_dequeueIndex`|`CircularIndex`|The dequeue index|0|
+|`m_enqueueIndex`|[`CircularIndex`](CircularIndex.md)|The enqueue index|0|
+|`m_dequeueIndex`|[`CircularIndex`](CircularIndex.md)|The dequeue index|0|
 |`m_size`|`FwSizeType`|The number of items on the queue|0|
 
 ## 3. Public Constructors and Destructors

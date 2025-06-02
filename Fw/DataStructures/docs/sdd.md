@@ -26,9 +26,9 @@ stored in _M_.
 
 `Fw/DataStructures` provides the following array templates:
 
-1. [`ExternalArray`](ExternalArray.md)
+* [`ExternalArray`](ExternalArray.md)
 
-1. [`Array`](Array.md)
+* [`Array`](Array.md)
 
 ## 2. FIFO Queues
 
@@ -38,9 +38,9 @@ first in first out (FIFO) order.
 
 `Fw/DataStructures` provides the following FIFO queue templates:
 
-1. [`ExternalFifoQueue`](ExternalFifoQueue.md)
+* [`ExternalFifoQueue`](ExternalFifoQueue.md)
 
-1. [`FifoQueue`](FifoQueue.md)
+* [`FifoQueue`](FifoQueue.md)
 
 ## 3. Maps
 
