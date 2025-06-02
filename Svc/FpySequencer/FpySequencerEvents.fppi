@@ -2,6 +2,10 @@ event InvalidCommand($state: I32) \
     severity warning high \
     format "Cannot run command in state {}"
 
+event InvalidSeqRunCall($state: I32) \
+    severity warning high \
+    format "Cannot run sequence from a port in state {}"
+
 event FileOpenError(
     filePath: string
     errorCode: I32
