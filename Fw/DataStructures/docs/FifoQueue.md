@@ -58,12 +58,12 @@ _Example:_
 ```c++
 FifoQueue<U32, 10> q1;
 auto status = q1.enqueue(3);
-ASSERT_EQ(status, Fw::Success::SUCCESS);
+ASSERT_EQ(status, Success::SUCCESS);
 FifoQueue<U32, 10> q2;
 q2 = q1;
 U32 value = 0;
 status = q2.dequeue(value);
-ASSERT_EQ(status, Fw::Success::SUCCESS);
+ASSERT_EQ(status, Success::SUCCESS);
 ASSERT_EQ(value, 3);
 ```
 
@@ -105,7 +105,7 @@ TODO
 **enqueue:**
 
 ```c++
-Fw::Success enqueue(const T& e)
+Success enqueue(const T& e)
 ```
 
 TODO
@@ -113,7 +113,7 @@ TODO
 **peek:**
 
 ```c++
-Fw::Success peek(T& e)
+Success peek(T& e)
 ```
 
 TODO
@@ -121,7 +121,7 @@ TODO
 **dequeue:**
 
 ```c++
-Fw::Success dequeue(T& e)
+Success dequeue(T& e)
 ```
 
 TODO

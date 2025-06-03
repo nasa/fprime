@@ -56,9 +56,9 @@ _Example:_
 void f(FifoQueueBase& queue) {
     queue.clear();
     auto status = queue.enqueue(10);
-    ASSERT_EQ(status, Fw::Success::SUCCESS);
+    ASSERT_EQ(status, Success::SUCCESS);
     auto status = queue.enqueue(11);
-    ASSERT_EQ(status, Fw::Success::SUCCESS);
+    ASSERT_EQ(status, Success::SUCCESS);
     ASSERT_EQ(queue.at(0), 10);
     ASSERT_EQ(queue.at(1), 11);
     // Out-of-bounds access
@@ -85,16 +85,20 @@ void f(FifoQueueBase& queue) {
 ### 3.3. copyDataFrom
 
 ```c++
-void copyDataFrom(const FifoQueueBase<T>& queue) override
+Success copyDataFrom(const FifoQueueBase<T>& queue)
 ```
 
 1. Call `clear()`.
 
+1. Set `status = Success::SUCCESS`.
+
 1. For `i` from 0 to `queue.getSize() - 1`
 
-    1. Set `const auto status = enqueue(queue.at(i))`
+    1. Set `status = enqueue(queue.at(i))`.
 
-    1. Assert `status == Fw::Success::SUCCESS`.
+    1. If `status == Success::FAILURE` then break out of the loop.
+
+1. Return `status`.
 
 _Example:_
 ```c++
@@ -113,39 +117,39 @@ void f(FifoQueueBase<U32>& q1, FifoQueueBase<U32>& q2) {
 ### 3.4. enqueue
 
 ```c++
-virtual void Fw::Success enqueue(const T& e) = 0
+virtual void Success enqueue(const T& e) = 0
 ```
 
-1. If there is no room on the queue for a new item, then return `Fw::Success::FAILURE`.
+1. If there is no room on the queue for a new item, then return `Success::FAILURE`.
 
 1. Otherwise
 
     1. Enqueue `e`.
 
-    1. Return `Fw::Success::SUCCESS`.
+    1. Return `Success::SUCCESS`.
 
 _Example:_
 ```c++
 void f(FifoQueueBase& queue) {
     queue.clear();
     status = queue.enqueue(3);
-    ASSERT_EQ(status, Fw::Success::SUCCESS);
+    ASSERT_EQ(status, Success::SUCCESS);
 }
 ```
 
 ### 3.5. peek
 
 ```c++
-void Fw::Success peek(T& e)
+void Success peek(T& e)
 ```
 
-1. If `getSize() == 0` return `Fw::Success::FAILURE`.
+1. If `getSize() == 0` return `Success::FAILURE`.
 
 1. Otherwise
 
     1. Set `e = (*this)[getSize() - 1]`.
 
-    1. Return `Fw::Success::SUCCESS`.
+    1. Return `Success::SUCCESS`.
 
 _Example:_
 ```c++
@@ -153,11 +157,11 @@ void f(FifoQueueBase<U32>& queue) {
     queue.clear();
     U32 value = 0;
     auto status = queue.peek(value);
-    ASSERT_EQ(status, Fw::Success::FAILURE);
+    ASSERT_EQ(status, Success::FAILURE);
     status = queue.enqueue(3);
-    ASSERT_EQ(status, Fw::Success::SUCCESS);
+    ASSERT_EQ(status, Success::SUCCESS);
     status = queue.peek(value);
-    ASSERT_EQ(status, Fw::Success::SUCCESS);
+    ASSERT_EQ(status, Success::SUCCESS);
     ASSERT_EQ(value, 3);
 }
 ```
@@ -165,12 +169,12 @@ void f(FifoQueueBase<U32>& queue) {
 ### 3.6. dequeue
 
 ```c++
-virtual void Fw::Success dequeue(T& e) = 0
+virtual void Success dequeue(T& e) = 0
 ```
 
 1. Set `status = peek(e)`.
 
-1. If `status == Fw::Success::SUCCESS` then dequeue an item and store it into 
+1. If `status == Success::SUCCESS` then dequeue an item and store it into 
    `e`.
 
 1. Return `status`.
@@ -181,11 +185,11 @@ void f(FifoQueueBase<U32>& queue) {
     queue.clear();
     U32 val = 0;
     auto status = queue.dequeue(val);
-    ASSERT_EQ(status, Fw::Success::FAILURE);
+    ASSERT_EQ(status, Success::FAILURE);
     status = queue.enqueue(3);
-    ASSERT_EQ(status, Fw::Success::SUCCESS);
+    ASSERT_EQ(status, Success::SUCCESS);
     status = queue.dequeue(val);
-    ASSERT_EQ(status, Fw::Success::SUCCESS);
+    ASSERT_EQ(status, Success::SUCCESS);
     ASSERT_EQ(val, 3);
 }
 ```
@@ -205,7 +209,7 @@ void f(const FifoQueueBase& queue) {
     auto size = queue.getSize();
     ASSERT_EQ(size, 0);
     const auto status = queue.enqueue(3);
-    ASSERT_EQ(status, Fw::Success::SUCCESS);
+    ASSERT_EQ(status, Success::SUCCESS);
     size = queue.getSize();
     ASSERT_EQ(size, 1);
 }

@@ -193,10 +193,10 @@ queue.setStorage(items, capacity);
 **enqueue:**
 
 ```c++
-Fw::Success enqueue(const T& e) override
+Success enqueue(const T& e) override
 ```
 
-1. Set `status = Fw::Success::FAILURE`.
+1. Set `status = Success::FAILURE`.
 
 1. If `m_size < m_capacity` then
 
@@ -217,17 +217,17 @@ U32 items[capacity];
 ExternalFifoQueue<U32> queue(items, capacity);
 ASSERT_EQ(queue.getSize(), 0);
 auto status = queue.enqueue(42);
-ASSERT_EQ(status, Fw::Success::SUCCESS);
+ASSERT_EQ(status, Success::SUCCESS);
 ASSERT_EQ(queue.getSize(), 1);
 ```
 
 **dequeue:**
 
 ```c++
-Fw::Success dequeue(T& e) override
+Success dequeue(T& e) override
 ```
 
-1. Set `status = Fw::Success::FAILURE`.
+1. Set `status = Success::FAILURE`.
 
 1. If `m_size > 0` then
 
@@ -248,11 +248,11 @@ U32 items[capacity];
 ExternalFifoQueue<U32> queue(items, capacity);
 U32 val;
 auto status = queue.dequeue(val);
-ASSERT_EQ(status, Fw::Success::FAILURE);
+ASSERT_EQ(status, Success::FAILURE);
 status = queue.enqueue(42);
-ASSERT_EQ(status, Fw::Success::SUCCESS);
+ASSERT_EQ(status, Success::SUCCESS);
 status = queue.dequeue(val);
-ASSERT_EQ(status, Fw::Success::SUCCESS);
+ASSERT_EQ(status, Success::SUCCESS);
 ASSERT_EQ(val, 42);
 ```
 
@@ -272,7 +272,7 @@ ExternalFifoQueue<U32> queue(items, capacity);
 auto size = queue.getSize();
 ASSERT_EQ(size, 0);
 const auto status = queue.enqueue(3);
-ASSERT_EQ(status, Fw::Success::SUCCESS);
+ASSERT_EQ(status, Success::SUCCESS);
 size = queue.getSize();
 ASSERT_EQ(size, 1);
 ```
