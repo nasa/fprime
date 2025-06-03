@@ -22,6 +22,7 @@
 
 namespace Svc {
 
+// Forward declaration for UTs
   namespace Logging {
     class CloseFileTester;
     class SendBuffersTester;
@@ -30,6 +31,7 @@ namespace Svc {
   namespace Errors {
     class BufferLoggerTester;
   }
+
 
   class BufferLogger final :
     public BufferLoggerComponentBase
