@@ -1,4 +1,4 @@
-# 1. CircularIndex
+# CircularIndex
 
 `CircularIndex` is a `final` class.
 It represents an index value that
