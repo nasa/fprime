@@ -52,7 +52,7 @@ class Choice : public ChoiceComponentBase {
     //! Destroy Choice object
     ~Choice();
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Implementations for internal state machine actions
     // ----------------------------------------------------------------------
@@ -72,7 +72,7 @@ class Choice : public ChoiceComponentBase {
         FppTest_SmInstanceInitial_Choice_Choice::Signal signal  //!< The signal
         ) override;
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Implementations for internal state machine guards
     // ----------------------------------------------------------------------
