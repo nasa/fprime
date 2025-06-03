@@ -46,7 +46,7 @@ first in first out (FIFO) order.
 
 ## 3. Maps
 
-* [`Map`](Map.md)
+* [`MapBase`](MapBase.md)
 
 * [`ExternalArrayMap`](ExternalArrayMap.md)
 
@@ -58,7 +58,7 @@ first in first out (FIFO) order.
 
 ## 4. Sets
 
-* [`Set`](Set.md)
+* [`SetBase`](SetBase.md)
 
 * [`ExternalArraySet`](ExternalArraySet.md)
 
