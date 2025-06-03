@@ -49,7 +49,7 @@ class InputPairU16U32 : public InputPairU16U32ComponentBase {
     //! Destroy InputPairU16U32 object
     ~InputPairU16U32();
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Implementations for internal state machine actions
     // ----------------------------------------------------------------------
@@ -62,7 +62,7 @@ class InputPairU16U32 : public InputPairU16U32ComponentBase {
                                                    U32 value                                         //!< The value
                                                    ) override;
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Implementations for internal state machine guards
     // ----------------------------------------------------------------------
