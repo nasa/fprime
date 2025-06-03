@@ -50,7 +50,7 @@ namespace RPI {
       //!
       ~RpiDemoComponentImpl();
 
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Handler implementations for user-defined typed input ports
@@ -78,7 +78,7 @@ namespace RPI {
         Fw::Buffer& buffer,
         const Drv::ByteStreamStatus& status) override;
 
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Command handler implementations
