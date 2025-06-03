@@ -25,7 +25,7 @@ It stores a pointer to the backing memory _M_.
 
 ## 3. Public Constructors and Destructors
 
-**Zero-argument constructor:**
+### 3.1. Zero-argument Constructor
 
 ```c++
 ExternalArray()
@@ -38,7 +38,7 @@ _Example:_
 ExternalArray<U32> a;
 ```
 
-**Constructor providing backing storage:**
+### 3.2. Constructor Providing Backing Storage
 
 ```c++
 ExternalArray(T* elements, FwSizeType size)
@@ -53,7 +53,7 @@ U32 elements[size];
 ExternalArray a(elements, size);
 ```
 
-**Copy constructor:**
+### 3.3. Copy Constructor
 
 ```c++
 ExternalArray(const ExternalArray<T>& a)
@@ -71,7 +71,7 @@ ExternalArray<U32> a1(elements, size);
 ExternalArray<U32> a2(a1);
 ```
 
-**Destructor:**
+### 3.4. Destructor
 
 ```c++
 ~ExternalArray()
@@ -81,7 +81,7 @@ Defined as `= default`.
 
 ## 4. Public Member Functions
 
-**operator[]:**
+### 4.1. operator[]
 
 ```c++
 T& operator[](FwSizeType i)
@@ -108,7 +108,7 @@ ASSERT_EQ(a[0], 1);
 ASSERT_DEATH(a[size], "Assert");
 ```
 
-**Copy assignment operator:**
+### 4.2. Copy Assignment Operator
 
 ```c++
 ExternalArray<T>& operator=(const ExternalArray<T>& a)
@@ -127,10 +127,10 @@ ExternalArray<U32> a2;
 a2 = a1;
 ```
 
-**copyElementsFrom:**
+### 4.3. copyDataFrom
 
 ```c++
-void copyElementsFrom(const ExternalArray<T>& a)
+void copyDataFrom(const ExternalArray<T>& a)
 ```
 
 1. If `&a == this` then do nothing.
@@ -151,13 +151,13 @@ for (FwSizeType i = 0; i < size; i++) {
 }
 U32 elements2[size];
 ExternalArray<U32> a2(elements, size);
-a2.copyElementsFrom(a1);
+a2.copyDataFrom(a1);
 for (FwSizeType i = 0; i < size; i++) {
     ASSERT_EQ(a2[i], a1[i]);
 }
 ```
 
-**getElements:**
+### 4.4. getElements
 
 ```c++
 T* getElements()
@@ -180,7 +180,7 @@ const auto& elements2 = a.getElements();
 ASSERT_EQ(elements2[0], 1);
 ```
 
-**getSize:**
+### 4.5. getSize
 
 ```c++
 FwSizeType getSize()
@@ -197,7 +197,7 @@ const auto size1 = a.getSize();
 ASSERT_EQ(size1, size);
 ```
 
-**setStorage:**
+### 4.6. setStorage
 
 ```c++
 void setStorage(T* elements, FwSizeType size)
