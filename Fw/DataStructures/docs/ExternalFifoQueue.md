@@ -190,37 +190,6 @@ U32 items[capacity];
 queue.setStorage(items, capacity);
 ```
 
-**copyDataFrom:**
-
-```c++
-void copyDataFrom(const FifoQueueBase<T>& queue) override
-```
-
-1. Call `clear()`.
-
-1. For `i` from 0 to `queue.getSize() - 1`
-
-    1. Set `const auto status = enqueue(queue.at(i))`
-
-    1. Assert `status == Fw::Success::SUCCESS`.
-
-_Example:_
-```c++
-constexpr FwSizeType capacity = 3;
-U32 items1[capacity];
-// Call the constructor providing backing storage
-ExternalFifoQueue<U32> q1(items1, capacity);
-// Enqueue an item
-U32 value = 42;
-(void) q1.enqueue(value);
-U32 items2[capacity];
-// Call the constructor providing backing storage
-ExternalFifoQueue<U32> q2(items2, capacity);
-ASSERT_EQ(q2.getSize(), 0);
-q2.copyDataFrom(q1);
-ASSERT_EQ(q2.getSize(), 1);
-```
-
 **enqueue:**
 
 ```c++

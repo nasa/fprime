@@ -84,16 +84,31 @@ void f(FifoQueueBase& queue) {
 
 ### 3.3. copyDataFrom
 
+**copyDataFrom:**
+
 ```c++
-virtual void copyDataFrom(const FifoQueueBase<T>& queue) = 0
+void copyDataFrom(const FifoQueueBase<T>& queue) override
 ```
 
-Copy the data from `queue` to `*this`.
+1. Call `clear()`.
+
+1. For `i` from 0 to `queue.getSize() - 1`
+
+    1. Set `const auto status = enqueue(queue.at(i))`
+
+    1. Assert `status == Fw::Success::SUCCESS`.
 
 _Example:_
 ```c++
-void f(const FifoQueueBase& q1, FifoQueueBase& q2) {
+void f(FifoQueueBase<U32>& q1, FifoQueueBase<U32>& q2) {
+    q1.clear();
+    // Enqueue an item
+    U32 value = 42;
+    (void) q1.enqueue(value);
+    q2.clear();
+    ASSERT_EQ(q2.getSize(), 0);
     q2.copyDataFrom(q1);
+    ASSERT_EQ(q2.getSize(), 1);
 }
 ```
 
@@ -136,7 +151,7 @@ void Fw::Success peek(T& e)
 
 _Example:_
 ```c++
-void f(FifoQueueBase& queue) {
+void f(FifoQueueBase<U32>& queue) {
     queue.clear();
     U32 value = 0;
     auto status = queue.peek(value);
@@ -161,6 +176,21 @@ virtual void Fw::Success dequeue(T& e) = 0
    `e`.
 
 1. Return `status`.
+
+_Example:_
+```c++
+void f(FifoQueueBase<U32>& queue) {
+    queue.clear();
+    U32 val = 0;
+    auto status = queue.dequeue(val);
+    ASSERT_EQ(status, Fw::Success::FAILURE);
+    status = queue.enqueue(3);
+    ASSERT_EQ(status, Fw::Success::SUCCESS);
+    status = queue.dequeue(val);
+    ASSERT_EQ(status, Fw::Success::SUCCESS);
+    ASSERT_EQ(val, 3);
+}
+```
 
 ### 3.7. getSize
 
