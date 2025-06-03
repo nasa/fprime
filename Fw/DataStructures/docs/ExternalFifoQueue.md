@@ -32,7 +32,7 @@ storing the items on the queue.
 
 ## 4. Public Constructors and Destructors
 
-**Zero-argument constructor:**
+### 4.1. Zero-Argument Constructor
 
 ```c++
 ExternalFifoQueue()
@@ -45,13 +45,13 @@ _Example:_
 ExternalFifoQueue<U32> queue;
 ```
 
-**Constructor providing backing storage:**
+### 4.2. Constructor Providing Backing Storage
 
 ```c++
 ExternalFifoQueue(T* items, FwSizeType capacity)
 ```
 
-1. Initialize `m_items` with `ExternalArray<T>(items, capacity)`.
+1. Call `m_items.setStorage(items, capacity)`.
 
 1. Initialize the other member variables with their default values.
 
@@ -62,7 +62,7 @@ U32 items[capacity];
 ExternalFifoQueue<U32> queue(items, capacity);
 ```
 
-**Copy constructor:**
+### 4.3. Copy Constructor
 
 ```c++
 ExternalFifoQueue(const ExternalFifoQueue<T>& queue)
@@ -84,7 +84,7 @@ ExternalFifoQueue<U32> q2(q1);
 ASSERT_EQ(q2.getSize(), 1);
 ```
 
-**Destructor:**
+### 4.4. Destructor
 
 ```c++
 ~ExternalFifoQueue() override
@@ -94,7 +94,7 @@ Defined as `= default`.
 
 ## 5. Public Member Functions
 
-**Copy assignment operator:**
+### 5.1. operator=
 
 ```c++
 ExternalFifoQueue<T>& operator=(const ExternalFifoQueue<T>& queue)
@@ -129,7 +129,7 @@ q2 = q1;
 ASSERT_EQ(q2.getSize(), 1);
 ```
 
-**at:**
+### 5.2. at
 
 ```c++
 const T& at(FwSizeType i) const override
@@ -151,7 +151,7 @@ ASSERT_EQ(queue.at(0), 3);
 ASSERT_DEATH(queue.at(1), "Assert");
 ```
 
-**clear:**
+### 5.3. clear
 
 ```c++
 void clear() override
@@ -174,7 +174,7 @@ queue.clear();
 ASSERT_EQ(queue.getSize(), 0);
 ```
 
-**setStorage:**
+### 5.4. setStorage
 
 ```c++
 void setStorage(T* items, FwSizeType size)
@@ -190,7 +190,7 @@ U32 items[capacity];
 queue.setStorage(items, capacity);
 ```
 
-**enqueue:**
+### 5.5. enqueue
 
 ```c++
 Success enqueue(const T& e) override
@@ -221,7 +221,7 @@ ASSERT_EQ(status, Success::SUCCESS);
 ASSERT_EQ(queue.getSize(), 1);
 ```
 
-**dequeue:**
+### 5.6. dequeue
 
 ```c++
 Success dequeue(T& e) override
@@ -256,7 +256,7 @@ ASSERT_EQ(status, Success::SUCCESS);
 ASSERT_EQ(val, 42);
 ```
 
-**getSize:**
+### 5.7. getSize
 
 ```c++
 FwSizeType getSize() const override
@@ -277,11 +277,18 @@ size = queue.getSize();
 ASSERT_EQ(size, 1);
 ```
 
-**getCapacity:**
+### 5.8. getCapacity
 
 ```c++
 FwSizeType getCapacity() const override
 ```
 
-TODO
+Return `m_items.getSize()`.
 
+_Example:_
+```c++
+constexpr FwSizeType capacity = 10;
+U32 items[capacity];
+ExternalFifoQueue<U32> queue(items, capacity);
+ASSERT_EQ(queue.getCapacity(), capacity);
+```
