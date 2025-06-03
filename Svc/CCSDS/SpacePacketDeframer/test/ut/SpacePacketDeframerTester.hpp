@@ -71,7 +71,7 @@ class SpacePacketDeframerTester final : public SpacePacketDeframerGTestBase {
     SpacePacketDeframer component;
 
     //! Test buffer
-    static const FwSizeType MAX_TEST_PACKET_DATA_SIZE = 200;
+    static const FwSizeType MAX_TEST_PACKET_DATA_SIZE = 200; // this value needs to fit in a U8 for testing
     U8 m_packetBuffer[SpacePacketHeader::SERIALIZED_SIZE + MAX_TEST_PACKET_DATA_SIZE];
 };
 

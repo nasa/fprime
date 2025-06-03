@@ -45,6 +45,9 @@ void SpacePacketDeframerTester ::testNominalDeframing() {
     U16 seqCount = static_cast<U8>(STest::Random::lowerUpper(0, 0x3FFF));  // random 14 bit sequence count
     U16 dataLength = static_cast<U8>(STest::Random::lowerUpper(1, MAX_TEST_PACKET_DATA_SIZE)); // bytes of data, random length
     U8 data[dataLength];
+    for (FwIndexType i = 0; i < static_cast<FwIndexType>(dataLength); ++i) {
+        data[i] = static_cast<U8>(i);
+    }
 
     Fw::Buffer buffer = this->assemblePacket(apid, seqCount, dataLength, data, dataLength);
     ComCfg::FrameContext nullContext;
@@ -54,7 +57,7 @@ void SpacePacketDeframerTester ::testNominalDeframing() {
     // Check output packet payload
     ASSERT_from_dataOut_SIZE(1);
     Fw::Buffer outBuffer = this->fromPortHistory_dataOut->at(0).data;
-    ASSERT_EQ(outBuffer.getSize(), dataLength);
+    ASSERT_EQ(outBuffer.getSize(), static_cast<Fw::Buffer::SizeType>(dataLength));
     for (U32 i = 0; i < dataLength; ++i) {
         ASSERT_EQ(outBuffer.getData()[i], data[i]);
     }
