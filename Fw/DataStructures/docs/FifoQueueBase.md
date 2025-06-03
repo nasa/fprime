@@ -14,7 +14,7 @@ It represents an abstract base class for a FIFO queue.
 
 ## 2. Protected Constructors and Destructors
 
-**Zero-argument constructor:**
+### 2.1. Zero-argument Constructor
 
 ```c++
 FifoQueueBase()
@@ -22,7 +22,7 @@ FifoQueueBase()
 
 Defined as `= default`.
 
-**Copy constructor:**
+### 2.2. Copy Constructor
 
 ```c++
 FifoQueueBase(const FifoQueueBase<T>& queue)
@@ -30,7 +30,7 @@ FifoQueueBase(const FifoQueueBase<T>& queue)
 
 Defined as `= delete`.
 
-**Destructor:**
+### 2.3. Destructor
 
 ```c++
 virtual FifoQueueBase()
