@@ -106,7 +106,7 @@ Success copyDataFrom(const FifoQueueBase<T>& queue)
 
     1. Call `clear()`.
 
-    1. For `i` from 0 to `queue.getSize() - 1`
+    1. For `i` in [0, `queue.getSize()`)
 
         1. Set `enqueueStatus = enqueue(queue.at(i))`.
 
