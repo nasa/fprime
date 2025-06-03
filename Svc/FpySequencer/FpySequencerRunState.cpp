@@ -2,7 +2,6 @@
 #include "Fw/Com/ComPacket.hpp"
 #include "Fw/Time/Time.hpp"
 #include "Svc/FpySequencer/FpySequencer.hpp"
-#include "Svc/FpySequencer/StatementTypeEnumAc.hpp"
 namespace Svc {
 
 Signal FpySequencer::dispatchStatement() {
@@ -29,7 +28,6 @@ Signal FpySequencer::dispatchStatement() {
     }
 
     if (this->m_runtime.currentStatementOpcode == Fpy::DirectiveId::CMD) {
-        printf("deserialized a cmd %d\n", directiveUnion.cmd.getopCode());
         // update the opcode of the cmd we will await
         this->m_runtime.currentCmdOpcode = directiveUnion.cmd.getopCode();
     }

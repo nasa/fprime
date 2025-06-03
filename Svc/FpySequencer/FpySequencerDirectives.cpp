@@ -29,52 +29,70 @@ void FpySequencer::sendSignal(Signal signal) {
 
 //! Internal interface handler for directive_waitRel
 void FpySequencer::directive_waitRel_internalInterfaceHandler(const FpySequencer_WaitRelDirective& directive) {
-    this->sendSignal(this->waitRel_directiveHandler(directive));
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->waitRel_directiveHandler(directive, error));
+    this->m_tlm.lastDirectiveError = error;
 }
 
 //! Internal interface handler for directive_waitAbs
 void FpySequencer::directive_waitAbs_internalInterfaceHandler(const FpySequencer_WaitAbsDirective& directive) {
-    this->sendSignal(this->waitAbs_directiveHandler(directive));
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->waitAbs_directiveHandler(directive, error));
+    this->m_tlm.lastDirectiveError = error;
 }
 
 //! Internal interface handler for directive_setLocalVar
 void FpySequencer::directive_setLocalVar_internalInterfaceHandler(
     const Svc::FpySequencer_SetLocalVarDirective& directive) {
-    this->sendSignal(this->setLocalVar_directiveHandler(directive));
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->setLocalVar_directiveHandler(directive, error));
+    this->m_tlm.lastDirectiveError = error;
 }
 
 //! Internal interface handler for directive_goto
 void FpySequencer::directive_goto_internalInterfaceHandler(const Svc::FpySequencer_GotoDirective& directive) {
-    this->sendSignal(this->goto_directiveHandler(directive));
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->goto_directiveHandler(directive, error));
+    this->m_tlm.lastDirectiveError = error;
 }
 
 //! Internal interface handler for directive_if
 void FpySequencer::directive_if_internalInterfaceHandler(const Svc::FpySequencer_IfDirective& directive) {
-    this->sendSignal(this->if_directiveHandler(directive));
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->if_directiveHandler(directive, error));
+    this->m_tlm.lastDirectiveError = error;
 }
 
 //! Internal interface handler for directive_noOp
 void FpySequencer::directive_noOp_internalInterfaceHandler(const Svc::FpySequencer_NoOpDirective& directive) {
-    this->sendSignal(this->noOp_directiveHandler(directive));
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->noOp_directiveHandler(directive, error));
+    this->m_tlm.lastDirectiveError = error;
 }
 
 //! Internal interface handler for directive_getTlm
 void FpySequencer::directive_getTlm_internalInterfaceHandler(const Svc::FpySequencer_GetTlmDirective& directive) {
-    this->sendSignal(this->getTlm_directiveHandler(directive));
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->getTlm_directiveHandler(directive, error));
+    this->m_tlm.lastDirectiveError = error;
 }
 
 //! Internal interface handler for directive_getPrm
 void FpySequencer::directive_getPrm_internalInterfaceHandler(const Svc::FpySequencer_GetPrmDirective& directive) {
-    this->sendSignal(this->getPrm_directiveHandler(directive));
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->getPrm_directiveHandler(directive, error));
+    this->m_tlm.lastDirectiveError = error;
 }
 
 //! Internal interface handler for directive_cmd
 void FpySequencer::directive_cmd_internalInterfaceHandler(const Svc::FpySequencer_CmdDirective& directive) {
-    this->sendSignal(this->cmd_directiveHandler(directive));
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->cmd_directiveHandler(directive, error));
+    this->m_tlm.lastDirectiveError = error;
 }
 
 //! Internal interface handler for directive_waitRel
-Signal FpySequencer::waitRel_directiveHandler(const FpySequencer_WaitRelDirective& directive) {
+Signal FpySequencer::waitRel_directiveHandler(const FpySequencer_WaitRelDirective& directive, DirectiveError& error) {
     Fw::Time wakeupTime = this->getTime();
 
     wakeupTime.add(directive.getduration().getSeconds(), directive.getduration().getUSeconds());
@@ -83,14 +101,15 @@ Signal FpySequencer::waitRel_directiveHandler(const FpySequencer_WaitRelDirectiv
 }
 
 //! Internal interface handler for directive_waitAbs
-Signal FpySequencer::waitAbs_directiveHandler(const FpySequencer_WaitAbsDirective& directive) {
+Signal FpySequencer::waitAbs_directiveHandler(const FpySequencer_WaitAbsDirective& directive, DirectiveError& error) {
     this->m_runtime.wakeupTime = directive.getwakeupTime();
     return Signal::stmtResponse_beginSleep;
 }
 
 //! Internal interface handler for directive_setLocalVar
-Signal FpySequencer::setLocalVar_directiveHandler(const FpySequencer_SetLocalVarDirective& directive) {
+Signal FpySequencer::setLocalVar_directiveHandler(const FpySequencer_SetLocalVarDirective& directive, DirectiveError& error) {
     if (directive.getindex() >= Fpy::MAX_SEQUENCE_LOCAL_VARIABLES) {
+        error = DirectiveError::LVAR_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
     // coding error. should have checked this when we were deserializing the directive. prefer to crash
@@ -108,9 +127,10 @@ Signal FpySequencer::setLocalVar_directiveHandler(const FpySequencer_SetLocalVar
 }
 
 //! Internal interface handler for directive_goto
-Signal FpySequencer::goto_directiveHandler(const FpySequencer_GotoDirective& directive) {
+Signal FpySequencer::goto_directiveHandler(const FpySequencer_GotoDirective& directive, DirectiveError& error) {
     // check within sequence bounds, or at EOF (we allow == case cuz this just ends the sequence)
     if (directive.getstatementIndex() > m_sequenceObj.getheader().getstatementCount()) {
+        error = DirectiveError::STMT_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
     m_runtime.nextStatementIndex = directive.getstatementIndex();
@@ -118,12 +138,14 @@ Signal FpySequencer::goto_directiveHandler(const FpySequencer_GotoDirective& dir
 }
 
 //! Internal interface handler for directive_if
-Signal FpySequencer::if_directiveHandler(const FpySequencer_IfDirective& directive) {
+Signal FpySequencer::if_directiveHandler(const FpySequencer_IfDirective& directive, DirectiveError& error) {
     if (directive.getconditionalLocalVarIndex() >= Fpy::MAX_SEQUENCE_LOCAL_VARIABLES) {
+        error = DirectiveError::LVAR_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
     // check within sequence bounds, or at EOF (we allow == case cuz this just ends the sequence)
     if (directive.getfalseGotoStmtIndex() > m_sequenceObj.getheader().getstatementCount()) {
+        error = DirectiveError::STMT_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
 
@@ -137,11 +159,13 @@ Signal FpySequencer::if_directiveHandler(const FpySequencer_IfDirective& directi
 
     if (status != Fw::SerializeStatus::FW_SERIALIZE_OK) {
         // failed to interpret this local variable as a boolean
+        error = DirectiveError::LVAR_DESERIALIZE_FAILURE;
         return Signal::stmtResponse_failure;
     }
 
     if (conditionalEsb.getBuffLeft() != 0) {
         // fail cuz this buf contained more than just a boolean
+        error = DirectiveError::LVAR_DESERIALIZE_FAILURE;
         return Signal::stmtResponse_failure;
     }
 
@@ -155,18 +179,21 @@ Signal FpySequencer::if_directiveHandler(const FpySequencer_IfDirective& directi
     return Signal::stmtResponse_success;
 }
 
-Signal FpySequencer::noOp_directiveHandler(const FpySequencer_NoOpDirective& directive) {
+Signal FpySequencer::noOp_directiveHandler(const FpySequencer_NoOpDirective& directive, DirectiveError& error) {
     return Signal::stmtResponse_success;
 }
 
-Signal FpySequencer::getTlm_directiveHandler(const FpySequencer_GetTlmDirective& directive) {
+Signal FpySequencer::getTlm_directiveHandler(const FpySequencer_GetTlmDirective& directive, DirectiveError& error) {
     if (directive.getvalueDestLvar() >= Fpy::MAX_SEQUENCE_LOCAL_VARIABLES) {
+        error = DirectiveError::LVAR_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
     if (directive.gettimeDestLvar() >= Fpy::MAX_SEQUENCE_LOCAL_VARIABLES) {
+        error = DirectiveError::LVAR_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
     if (!this->isConnected_getTlmChan_OutputPort(0)) {
+        error = DirectiveError::TLM_GET_NOT_CONNECTED;
         return Signal::stmtResponse_failure;
     }
     Fw::Time tlmTime;
@@ -175,6 +202,7 @@ Signal FpySequencer::getTlm_directiveHandler(const FpySequencer_GetTlmDirective&
 
     if (valid != Fw::TlmValid::VALID) {
         // could not find this tlm chan
+        error = DirectiveError::TLM_CHAN_NOT_FOUND;
         return Signal::stmtResponse_failure;
     }
 
@@ -196,6 +224,7 @@ Signal FpySequencer::getTlm_directiveHandler(const FpySequencer_GetTlmDirective&
 
     if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
         // failed to serialize Fw::Time into the lvar
+        error = DirectiveError::LVAR_SERIALIZE_FAILURE;
         return Signal::stmtResponse_failure;
     }
 
@@ -203,11 +232,13 @@ Signal FpySequencer::getTlm_directiveHandler(const FpySequencer_GetTlmDirective&
     return Signal::stmtResponse_success;
 }
 
-Signal FpySequencer::getPrm_directiveHandler(const FpySequencer_GetPrmDirective& directive) {
+Signal FpySequencer::getPrm_directiveHandler(const FpySequencer_GetPrmDirective& directive, DirectiveError& error) {
     if (directive.getdestLvarIndex() >= Fpy::MAX_SEQUENCE_LOCAL_VARIABLES) {
+        error = DirectiveError::LVAR_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
     if (!this->isConnected_prmGet_OutputPort(0)) {
+        error = DirectiveError::PRM_GET_NOT_CONNECTED;
         return Signal::stmtResponse_failure;
     }
     Fw::ParamBuffer prmValue;
@@ -217,11 +248,13 @@ Signal FpySequencer::getPrm_directiveHandler(const FpySequencer_GetPrmDirective&
 
     if (valid != Fw::ParamValid::VALID) {
         // could not find this prm in the DB
+        error = DirectiveError::PRM_NOT_FOUND;
         return Signal::stmtResponse_failure;
     }
 
     if (prmValue.getBuffLength() > Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE) {
         // cannot store the prm value in the lvar
+        error = DirectiveError::LVAR_SERIALIZE_FAILURE;
         return Signal::stmtResponse_failure;
     }
     // copy value into lvar
@@ -231,31 +264,23 @@ Signal FpySequencer::getPrm_directiveHandler(const FpySequencer_GetPrmDirective&
     return Signal::stmtResponse_success;
 }
 
-Signal FpySequencer::cmd_directiveHandler(const FpySequencer_CmdDirective& directive) {
+Signal FpySequencer::cmd_directiveHandler(const FpySequencer_CmdDirective& directive, DirectiveError& error) {
     Fw::ComBuffer cmdBuf;
     Fw::SerializeStatus stat = cmdBuf.serialize(Fw::ComPacket::FW_PACKET_COMMAND);
     // TODO should I assert here? this really shouldn't fail, I should just add a static assert
     // on com buf size and then assert here
     if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
-        this->log_WARNING_HI_CommandSerializeError(directive.getopCode(), cmdBuf.getBuffCapacity(), cmdBuf.getBuffLength(),
-                                                   sizeof(Fw::ComPacket::FW_PACKET_COMMAND), stat,
-                                                   this->m_runtime.nextStatementIndex - 1);
+        error = DirectiveError::CMD_SERIALIZE_FAILURE;
         return Signal::stmtResponse_failure;
     }
-    // TODO same as above
     stat = cmdBuf.serialize(directive.getopCode());
     if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
-        this->log_WARNING_HI_CommandSerializeError(directive.getopCode(), cmdBuf.getBuffCapacity(), cmdBuf.getBuffLength(),
-                                                   sizeof(directive.getopCode()), stat,
-                                                   this->m_runtime.nextStatementIndex - 1);
+        error = DirectiveError::CMD_SERIALIZE_FAILURE;
         return Signal::stmtResponse_failure;
     }
     stat = cmdBuf.serialize(directive.getargBuf(), directive.get_argBufSize(), true);
     if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
-        // most failures of directives are not error messages... TODO should this just fail silently?
-        this->log_WARNING_HI_CommandSerializeError(directive.getopCode(), cmdBuf.getBuffCapacity(), cmdBuf.getBuffLength(),
-                                                   directive.get_argBufSize(), stat,
-                                                   this->m_runtime.nextStatementIndex - 1);
+        error = DirectiveError::CMD_SERIALIZE_FAILURE;
         return Signal::stmtResponse_failure;
     }
 

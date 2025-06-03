@@ -11,44 +11,54 @@ namespace Svc {
 
 using Signal = FpySequencer_SequencerStateMachineStateMachineBase::Signal;
 using State = FpySequencer_SequencerStateMachineStateMachineBase::State;
+using DirectiveError = FpySequencer_DirectiveErrorCode;
 
 TEST_F(FpySequencerTester, waitRel) {
     FpySequencer_WaitRelDirective directive(Fw::TimeInterval(5, 123));
     Fw::Time testTime(100, 100);
     setTestTime(testTime);
 
-    Signal result = cmp.waitRel_directiveHandler(directive);
+    DirectiveError err = DirectiveError::NO_ERROR;
+    Signal result = cmp.waitRel_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_beginSleep);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(cmp.m_runtime.wakeupTime, Fw::Time(105, 223));
 }
 
 TEST_F(FpySequencerTester, waitAbs) {
     FpySequencer_WaitAbsDirective directive(Fw::Time(5, 123));
 
-    Signal result = cmp.waitAbs_directiveHandler(directive);
+    DirectiveError err = DirectiveError::NO_ERROR;
+    Signal result = cmp.waitAbs_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_beginSleep);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(cmp.m_runtime.wakeupTime, Fw::Time(5, 123));
 }
 
 TEST_F(FpySequencerTester, goto) {
     FpySequencer_GotoDirective directive(123);
     cmp.m_sequenceObj.getheader().setstatementCount(456);
-    Signal result = cmp.goto_directiveHandler(directive);
+    DirectiveError err = DirectiveError::NO_ERROR;
+    Signal result = cmp.goto_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(cmp.m_runtime.nextStatementIndex, 123);
 
     cmp.m_runtime.nextStatementIndex = 0;
     // out of bounds
     directive.setstatementIndex(111111);
-    result = cmp.goto_directiveHandler(directive);
+    result = cmp.goto_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::STMT_OUT_OF_BOUNDS);
+    err = DirectiveError::NO_ERROR;
     ASSERT_EQ(cmp.m_runtime.nextStatementIndex, 0);
 
     cmp.m_runtime.nextStatementIndex = 0;
     // just inside bounds
     directive.setstatementIndex(456);
-    result = cmp.goto_directiveHandler(directive);
+    result = cmp.goto_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(cmp.m_runtime.nextStatementIndex, 456);
 }
 
@@ -56,20 +66,23 @@ TEST_F(FpySequencerTester, setLvar) {
     U8 buf[Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE];
     memset(buf, 1, sizeof(buf));
     FpySequencer_SetLocalVarDirective directive(static_cast<U8>(0), 1, static_cast<FwSizeType>(sizeof(buf)));
-    Signal result = cmp.setLocalVar_directiveHandler(directive);
+    DirectiveError err = DirectiveError::NO_ERROR;
+    Signal result = cmp.setLocalVar_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(cmp.m_runtime.localVariables[0].valueSize, sizeof(buf));
     ASSERT_EQ(memcmp(buf, cmp.m_runtime.localVariables[0].value, sizeof(buf)), 0);
 
     // outside of lvar range
     directive.setindex(Fpy::MAX_SEQUENCE_LOCAL_VARIABLES);
-    result = cmp.setLocalVar_directiveHandler(directive);
+    result = cmp.setLocalVar_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::LVAR_OUT_OF_BOUNDS);
 
     // check what happens if buf too big
     directive = FpySequencer_SetLocalVarDirective(static_cast<U8>(0), 1, Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE + 1);
 
-    ASSERT_DEATH_IF_SUPPORTED(cmp.setLocalVar_directiveHandler(directive), "Assert: ");
+    ASSERT_DEATH_IF_SUPPORTED(cmp.setLocalVar_directiveHandler(directive, err), "Assert: ");
 }
 
 TEST_F(FpySequencerTester, if) {
@@ -79,15 +92,18 @@ TEST_F(FpySequencerTester, if) {
     buf.serialize(true);
     cmp.m_runtime.localVariables[0].valueSize = buf.getBuffLength();
     FpySequencer_IfDirective directive(0, 111);
-    Signal result = cmp.if_directiveHandler(directive);
+    DirectiveError err = DirectiveError::NO_ERROR;
+    Signal result = cmp.if_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
     // should not have changed stmtidx
     ASSERT_EQ(cmp.m_runtime.nextStatementIndex, 100);
 
     buf.resetSer();
     buf.serialize(false);
     cmp.m_runtime.localVariables[0].valueSize = buf.getBuffLength();
-    result = cmp.if_directiveHandler(directive);
+    result = cmp.if_directiveHandler(directive, err);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     // should have changed stmtidx
     ASSERT_EQ(cmp.m_runtime.nextStatementIndex, 111);
@@ -95,8 +111,9 @@ TEST_F(FpySequencerTester, if) {
     cmp.m_runtime.nextStatementIndex = 100;
 
     directive.setfalseGotoStmtIndex(cmp.m_sequenceObj.getheader().getstatementCount());
-    result = cmp.if_directiveHandler(directive);
+    result = cmp.if_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
     // should have succeeded
     ASSERT_EQ(cmp.m_runtime.nextStatementIndex, cmp.m_sequenceObj.getheader().getstatementCount());
 
@@ -106,29 +123,37 @@ TEST_F(FpySequencerTester, if) {
     // check failure to interpret as bool
     buf.serialize(static_cast<U8>(111));
     cmp.m_runtime.localVariables[0].valueSize = buf.getBuffLength();
-    result = cmp.if_directiveHandler(directive);
+    result = cmp.if_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::LVAR_DESERIALIZE_FAILURE);
+    err = DirectiveError::NO_ERROR;
     // should not have changed stmtidx
     ASSERT_NE(cmp.m_runtime.nextStatementIndex, 111);
 
     directive.setconditionalLocalVarIndex(Fpy::MAX_SEQUENCE_LOCAL_VARIABLES);
-    result = cmp.if_directiveHandler(directive);
+    result = cmp.if_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::LVAR_OUT_OF_BOUNDS);
+    err = DirectiveError::NO_ERROR;
     // should not have changed stmtidx
     ASSERT_NE(cmp.m_runtime.nextStatementIndex, 111);
 
     directive.setconditionalLocalVarIndex(0);
     directive.setfalseGotoStmtIndex(cmp.m_sequenceObj.getheader().getstatementCount() + 1);
-    result = cmp.if_directiveHandler(directive);
+    result = cmp.if_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::STMT_OUT_OF_BOUNDS);
+    err = DirectiveError::NO_ERROR;
     // should not have changed stmtidx
     ASSERT_NE(cmp.m_runtime.nextStatementIndex, 111);
 }
 
 TEST_F(FpySequencerTester, noOp) {
     FpySequencer_NoOpDirective directive;
-    Signal result = cmp.noOp_directiveHandler(directive);
+    DirectiveError err = DirectiveError::NO_ERROR;
+    Signal result = cmp.noOp_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
 }
 
 TEST_F(FpySequencerTester, getTlm) {
@@ -137,8 +162,10 @@ TEST_F(FpySequencerTester, getTlm) {
     nextTlmValue.setBuffLen(1);
     nextTlmValue.getBuffAddr()[0] = 200;
     nextTlmTime.set(888, 777);
-    Signal result = cmp.getTlm_directiveHandler(directive);
+    DirectiveError err = DirectiveError::NO_ERROR;
+    Signal result = cmp.getTlm_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_from_getTlmChan_SIZE(1);
     ASSERT_from_getTlmChan(0, 456, Fw::Time(), Fw::TlmBuffer());
     ASSERT_EQ(cmp.m_runtime.localVariables[0].value[0], nextTlmValue.getBuffAddr()[0]);
@@ -153,20 +180,26 @@ TEST_F(FpySequencerTester, getTlm) {
 
     // try getting a nonexistent chan
     directive.setchanId(111);
-    result = cmp.getTlm_directiveHandler(directive);
+    result = cmp.getTlm_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::TLM_CHAN_NOT_FOUND);
+    err = DirectiveError::NO_ERROR;
     directive.setchanId(456);
 
     // try setting bad value lvar
     directive.setvalueDestLvar(Fpy::MAX_SEQUENCE_LOCAL_VARIABLES);
-    result = cmp.getTlm_directiveHandler(directive);
+    result = cmp.getTlm_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::LVAR_OUT_OF_BOUNDS);
+    err = DirectiveError::NO_ERROR;
     directive.setvalueDestLvar(0);
 
     // try setting bad time lvar
     directive.settimeDestLvar(Fpy::MAX_SEQUENCE_LOCAL_VARIABLES);
-    result = cmp.getTlm_directiveHandler(directive);
+    result = cmp.getTlm_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::LVAR_OUT_OF_BOUNDS);
+    err = DirectiveError::NO_ERROR;
     directive.settimeDestLvar(0);
 }
 
@@ -175,7 +208,9 @@ TEST_F(FpySequencerTester, getPrm) {
     nextPrmId = 456;
     nextPrmValue.setBuffLen(1);
     nextPrmValue.getBuffAddr()[0] = 200;
-    Signal result = cmp.getPrm_directiveHandler(directive);
+    DirectiveError err = DirectiveError::NO_ERROR;
+    Signal result = cmp.getPrm_directiveHandler(directive, err);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_from_getParam_SIZE(1);
     ASSERT_from_getParam(0, 456, Fw::ParamBuffer());
@@ -185,14 +220,18 @@ TEST_F(FpySequencerTester, getPrm) {
 
     // try getting a nonexistent param
     directive.setprmId(111);
-    result = cmp.getPrm_directiveHandler(directive);
+    result = cmp.getPrm_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::PRM_NOT_FOUND);
+    err = DirectiveError::NO_ERROR;
     directive.setprmId(456);
 
     // try setting bad lvar
     directive.setdestLvarIndex(Fpy::MAX_SEQUENCE_LOCAL_VARIABLES);
-    result = cmp.getPrm_directiveHandler(directive);
+    result = cmp.getPrm_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::LVAR_OUT_OF_BOUNDS);
+    err = DirectiveError::NO_ERROR;
     directive.setdestLvarIndex(0);
 }
 
@@ -200,7 +239,9 @@ TEST_F(FpySequencerTester, cmd) {
     U8 data[4] = {0x12, 0x23, 0x34, 0x45};
     FpySequencer_CmdDirective directive(123, 0, sizeof(data));
     memcpy(directive.getargBuf(), data, sizeof(data));
-    Signal result = cmp.cmd_directiveHandler(directive);
+    DirectiveError err = DirectiveError::NO_ERROR;
+    Signal result = cmp.cmd_directiveHandler(directive, err);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(result, Signal::stmtResponse_keepWaiting);
 
     Fw::ComBuffer expected;
@@ -213,14 +254,16 @@ TEST_F(FpySequencerTester, cmd) {
 
     // try dispatching again, make sure cmd uid is right
     cmp.m_statementsDispatched = 123;
-    result = cmp.cmd_directiveHandler(directive);
+    result = cmp.cmd_directiveHandler(directive, err);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(result, Signal::stmtResponse_keepWaiting);
     ASSERT_from_cmdOut(0, expected, cmp.m_statementsDispatched);
     this->clearHistory();
 
     // modify sequences started, make sure correct
     cmp.m_sequencesStarted = 456;
-    result = cmp.cmd_directiveHandler(directive);
+    result = cmp.cmd_directiveHandler(directive, err);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(result, Signal::stmtResponse_keepWaiting);
     ASSERT_from_cmdOut(0, expected,
                        (((cmp.m_sequencesStarted & 0xFFFF) << 16) | (cmp.m_statementsDispatched & 0xFFFF)));
@@ -1100,7 +1143,7 @@ TEST_F(FpySequencerTester, tlmWrite) {
     invoke_to_tlmWrite(0, 0);
     cmp.doDispatch();
     // make sure that all tlm is written every call
-    ASSERT_TLM_SIZE(9);
+    ASSERT_TLM_SIZE(10);
 }
 
 TEST_F(FpySequencerTester, seqRunIn) {

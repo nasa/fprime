@@ -36,6 +36,7 @@ namespace Svc {
 
 using Signal = FpySequencer_SequencerStateMachineStateMachineBase::Signal;
 using State = FpySequencer_SequencerStateMachineStateMachineBase::State;
+using DirectiveError = FpySequencer_DirectiveErrorCode;
 
 class FpySequencer : public FpySequencerComponentBase {
   public:
@@ -508,6 +509,9 @@ class FpySequencer : public FpySequencerComponentBase {
 
         // the number of sequences that have been cancelled
         U64 sequencesCancelled = 0;
+
+        // the error code of the last directive that ran
+        DirectiveError lastDirectiveError = DirectiveError::NO_ERROR;
     } m_tlm;
 
     // ----------------------------------------------------------------------
@@ -578,15 +582,15 @@ class FpySequencer : public FpySequencerComponentBase {
 
     // we split these functions up into the internalInterfaceInvoke and these custom member funcs
     // so that we can unit test them easier
-    Signal waitRel_directiveHandler(const FpySequencer_WaitRelDirective& directive);
-    Signal waitAbs_directiveHandler(const FpySequencer_WaitAbsDirective& directive);
-    Signal setLocalVar_directiveHandler(const FpySequencer_SetLocalVarDirective& directive);
-    Signal goto_directiveHandler(const FpySequencer_GotoDirective& directive);
-    Signal if_directiveHandler(const FpySequencer_IfDirective& directive);
-    Signal noOp_directiveHandler(const FpySequencer_NoOpDirective& directive);
-    Signal getTlm_directiveHandler(const FpySequencer_GetTlmDirective& directive);
-    Signal getPrm_directiveHandler(const FpySequencer_GetPrmDirective& directive);
-    Signal cmd_directiveHandler(const FpySequencer_CmdDirective& directive);
+    Signal waitRel_directiveHandler(const FpySequencer_WaitRelDirective& directive, DirectiveError& error);
+    Signal waitAbs_directiveHandler(const FpySequencer_WaitAbsDirective& directive, DirectiveError& error);
+    Signal setLocalVar_directiveHandler(const FpySequencer_SetLocalVarDirective& directive, DirectiveError& error);
+    Signal goto_directiveHandler(const FpySequencer_GotoDirective& directive, DirectiveError& error);
+    Signal if_directiveHandler(const FpySequencer_IfDirective& directive, DirectiveError& error);
+    Signal noOp_directiveHandler(const FpySequencer_NoOpDirective& directive, DirectiveError& error);
+    Signal getTlm_directiveHandler(const FpySequencer_GetTlmDirective& directive, DirectiveError& error);
+    Signal getPrm_directiveHandler(const FpySequencer_GetPrmDirective& directive, DirectiveError& error);
+    Signal cmd_directiveHandler(const FpySequencer_CmdDirective& directive, DirectiveError& error);
 };
 
 }  // namespace Svc

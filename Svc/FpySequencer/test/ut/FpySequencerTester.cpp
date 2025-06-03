@@ -29,11 +29,15 @@ FpySequencerTester ::~FpySequencerTester() {}
 void FpySequencerTester::dispatchUntilState(State state, U32 bound) {
     U64 iters = 0;
     while (cmp.sequencer_getState() != state && iters < bound) {
+        if (cmp.m_queue.getMessagesAvailable() == 0) {
+            break;
+        }
         cmp.doDispatch();
         iters++;
     }
     ASSERT_EQ(cmp.sequencer_getState(), state);
 }
+
 void FpySequencerTester::allocMem(FwSizeType bytes) {
     if (bytes > sizeof(internalSeqBuf)) {
         bytes = sizeof(internalSeqBuf);
@@ -95,7 +99,7 @@ void FpySequencerTester::writeToFile(const char* name, FwSizeType maxBytes) {
 }
 
 void FpySequencerTester::removeFile(const char* name) {
-    ASSERT_EQ(Os::FileSystem::removeFile(name), Os::FileSystemInterface::Status::OP_OK);
+    Os::FileSystem::removeFile(name);
 }
 
 void FpySequencerTester::resetRuntime() {
@@ -212,6 +216,7 @@ void FpySequencerTester::textLogIn(FwEventIdType id,                //!< The eve
 }
 
 void FpySequencerTester::writeAndRun() {
+    removeFile("test.bin");
     writeToFile("test.bin");
     sendCmd_RUN(0, 0, Fw::String("test.bin"), FpySequencer_BlockState::BLOCK);
     // dispatch cmd

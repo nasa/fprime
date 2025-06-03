@@ -18,6 +18,22 @@ telemetry StatementsDispatched: U64 update on change
 @ the number of statements that failed to execute
 telemetry StatementsFailed: U64 update on change
 
+enum DirectiveErrorCode {
+    NO_ERROR
+    LVAR_OUT_OF_BOUNDS
+    STMT_OUT_OF_BOUNDS
+    LVAR_DESERIALIZE_FAILURE
+    LVAR_SERIALIZE_FAILURE
+    TLM_GET_NOT_CONNECTED
+    TLM_CHAN_NOT_FOUND
+    PRM_GET_NOT_CONNECTED
+    PRM_NOT_FOUND
+    CMD_SERIALIZE_FAILURE
+}
+
+@ the error code of the last directive that ran
+telemetry LastDirectiveError: DirectiveErrorCode update on change
+
 @ the currently running sequence
 telemetry SeqPath: string size FileNameStringSize update on change
 

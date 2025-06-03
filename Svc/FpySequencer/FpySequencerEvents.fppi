@@ -93,17 +93,6 @@ event UnknownSequencerDirective(
     severity warning high \
     format "Unknown sequencer directive id {} at index {} in file {}"
 
-event CommandSerializeError(
-    cmdOpcode: FwOpcodeType
-    bufCapacity: U64
-    curPos: U64
-    writeSize: U64
-    errorCode: U8
-    stmtIdx: U32
-) \
-    severity warning high \
-    format "Failure while serializing cmd opcode {}: buf capacity {}, cur write pos {}, write size {}, error code {}, current statement index {}"
-
 event CmdResponseWhileNotRunningSequence(
     $state: I32
     $opcode: FwOpcodeType
