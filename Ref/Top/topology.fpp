@@ -99,8 +99,6 @@ module Ref {
     # ----------------------------------------------------------------------
 
     connections Downlink {
-      apidDemo.sendPacketDown -> comQueue.bufferQueueIn[1]
-      comQueue.bufferReturnOut[1] -> apidDemo.bufferReturnIn
       # Data Products
       dpCat.fileOut             -> fileDownlink.SendFile
       fileDownlink.FileComplete -> dpCat.fileDone
