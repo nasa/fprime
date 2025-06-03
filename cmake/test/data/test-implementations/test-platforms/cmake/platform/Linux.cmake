@@ -4,6 +4,11 @@
 # Linux platform file for standard linux targets. Merely defers to ./Linux.cmake.
 ####
 include("${FPRIME_FRAMEWORK_PATH}/cmake/platform/Linux.cmake")
-choose_fprime_implementation(Test/Implementation Test/Implementation/Platform)
-choose_fprime_implementation(Test/Override Test/Implementation/Unused)
+register_fprime_config(
+        Linux_Special_Config
+    INTERFACE
+    CHOOSES_IMPLEMENTATIONS
+        Test_Implementation_Platform
+        Test_Override_Unused
+)
 

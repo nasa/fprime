@@ -36,7 +36,7 @@ namespace Drv {
       //!
       ~LinuxI2cDriver();
 
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Handler implementations for user-defined typed input ports

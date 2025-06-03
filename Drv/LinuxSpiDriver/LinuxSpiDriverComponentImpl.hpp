@@ -37,16 +37,16 @@ namespace Drv {
      * SPI Mode Select
      *
      * Defines the SPI Clock Polarity and Phase for each SPI Transaction.
-     * 
+     *
      * SPI Clock Polarity(CPOL): Defines clock polarity as idle low (CPOL = 0) or idle high(CPOL = 1)
-     * SPI Clock Phase(CPHA): Defines if data is shifted out on the rising clock edge and sampled 
-     *                        on the falling clock edge(CPHA = 0) or if data is shifted out on the 
+     * SPI Clock Phase(CPHA): Defines if data is shifted out on the rising clock edge and sampled
+     *                        on the falling clock edge(CPHA = 0) or if data is shifted out on the
      *                        falling clock edge and sampled on the rising clock edge(CPHA=1)
-     * 
+     *
      */
     enum SpiMode
     {
-        SPI_MODE_CPOL_LOW_CPHA_LOW, ///< (CPOL = 0, CPHA = 0) 
+        SPI_MODE_CPOL_LOW_CPHA_LOW, ///< (CPOL = 0, CPHA = 0)
         SPI_MODE_CPOL_LOW_CPHA_HIGH,///< (CPOL = 0, CPHA = 1)
         SPI_MODE_CPOL_HIGH_CPHA_LOW,///< (CPOL = 1, CPHA = 0)
         SPI_MODE_CPOL_HIGH_CPHA_HIGH,///< (CPOL = 1, CPHA = 1)
@@ -76,7 +76,7 @@ namespace Drv {
                       SpiFrequency clock,
                       SpiMode spiMode = SpiMode::SPI_MODE_CPOL_LOW_CPHA_LOW);
 
-        PRIVATE:
+        private:
 
             // ----------------------------------------------------------------------
             // Handler implementations for user-defined typed input ports

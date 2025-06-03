@@ -62,7 +62,7 @@ class TcpServerSocket : public IpSocket {
      */
     U16 getListenPort();
 
-  PROTECTED:
+  protected:
     /**
      * \brief Tcp specific implementation for opening a client socket connected to this server.
      * \param socketDescriptor: (output) descriptor opened. Only valid on SOCK_SUCCESS. Otherwise will be invalid

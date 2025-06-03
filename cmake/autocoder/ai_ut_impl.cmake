@@ -42,6 +42,7 @@ function(ai_ut_impl_setup_autocode MODULE_NAME AC_INPUT_FILE)
         "${CMAKE_CURRENT_SOURCE_DIR}/GTestBase.hpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/GTestBase.cpp")
     # Extra test helpers file
+    get_target_property(UT_AUTO_HELPERS "${MODULE_NAME}" FPRIME_UT_AUTO_HELPERS)
     if (NOT DEFINED UT_AUTO_HELPERS OR NOT UT_AUTO_HELPERS)
         list(APPEND AUTOCODER_GENERATED "${CMAKE_CURRENT_SOURCE_DIR}/TesterHelpers.cpp")
     else()

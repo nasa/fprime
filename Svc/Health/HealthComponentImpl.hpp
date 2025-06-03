@@ -31,6 +31,8 @@ namespace Svc {
 
     class HealthImpl final : public HealthComponentBase {
 
+        friend class HealthTester;
+
         public:
             //!  \brief struct for ping entry
             //!
@@ -77,14 +79,14 @@ namespace Svc {
             //!  The destructor for HealthImpl is empty
             ~HealthImpl();
 
-        PROTECTED:
+        protected:
 
             //!  \brief additional checks function
             //!
             //!  Does additional checks based on the platform
             virtual void doOtherChecks();
 
-        PRIVATE:
+        private:
 
             //!  \brief ping return handler
             //!

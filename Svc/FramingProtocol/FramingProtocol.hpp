@@ -45,7 +45,7 @@ class FramingProtocol {
     //! \param packet_type: type of data supplied for File downlink packets
     virtual void frame(const U8* const data, const U32 size, Fw::ComPacket::ComPacketType packet_type) = 0;
 
-  PROTECTED:
+  protected:
     FramingProtocolInterface* m_interface;
 };
 }

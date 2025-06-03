@@ -166,7 +166,11 @@ macro(fprime_initialize_build_system)
     set_property(GLOBAL PROPERTY FPRIME_BUILD_SYSTEM_LOADED ON)
 
     # Perform necessary sub-builds
-    run_sub_build(info-cache target/fpp_locs target/fpp_depend)
+    if (NOT FPRIME_IS_SUB_BUILD)
+        run_sub_build(info-cache target/sub-build/fpp_locs target/sub-build/fpp_depend target/sub-build/module_info)
+        # Import the pre-computed properties!
+        include("${CMAKE_BINARY_DIR}/fprime_module_info.cmake")
+    endif()
 endmacro(fprime_initialize_build_system)
 
 ####
@@ -176,7 +180,6 @@ endmacro(fprime_initialize_build_system)
 # registered.
 ####
 function(fprime_setup_included_code)
-    choose_fprime_implementation(Fw_StringFormat snprintf-format FRAMEWORK_DEFAULT) # Default choice is snprintf
     # Must be done before code is registered but after custom target registration
     setup_global_targets()
     # For BUILD_TESTING builds then set up libraries that support testing

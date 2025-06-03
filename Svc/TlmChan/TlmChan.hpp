@@ -20,15 +20,18 @@
 namespace Svc {
 
 class TlmChan final : public TlmChanComponentBase {
+
+  friend class TlmChanTester;
+
   public:
     TlmChan(const char* compName);
     virtual ~TlmChan();
 
-  PROTECTED:
+  protected:
     // can be overridden for alternate algorithms
     virtual FwChanIdType doHash(FwChanIdType id);
 
-  PRIVATE:
+  private:
     // Port functions
     void TlmRecv_handler(FwIndexType portNum, FwChanIdType id, Fw::Time& timeTag, Fw::TlmBuffer& val);
     Fw::TlmValid TlmGet_handler(FwIndexType portNum, FwChanIdType id, Fw::Time& timeTag, Fw::TlmBuffer& val);

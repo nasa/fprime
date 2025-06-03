@@ -53,7 +53,7 @@ class PassiveRateGroup final : public PassiveRateGroupComponentBase {
     //!  The destructor of the class is empty
     ~PassiveRateGroup();
 
-  PRIVATE:
+  private:
     //!  \brief Input cycle port handler
     //!
     //!  The cycle port handler calls each component in the rate group in turn,

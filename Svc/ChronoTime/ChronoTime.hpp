@@ -24,7 +24,7 @@ class ChronoTime final : public ChronoTimeComponentBase {
     //! Destroy ChronoTime object
     ~ChronoTime();
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
