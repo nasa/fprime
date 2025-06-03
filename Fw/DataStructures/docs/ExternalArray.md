@@ -25,7 +25,7 @@ It stores a pointer to the backing memory _M_.
 
 ## 3. Public Constructors and Destructors
 
-### 3.1. Zero-argument Constructor
+### 3.1. Zero-Argument Constructor
 
 ```c++
 ExternalArray()
@@ -108,7 +108,7 @@ ASSERT_EQ(a[0], 1);
 ASSERT_DEATH(a[size], "Assert");
 ```
 
-### 4.2. Copy Assignment Operator
+### 4.2. operator=
 
 ```c++
 ExternalArray<T>& operator=(const ExternalArray<T>& a)

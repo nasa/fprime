@@ -31,7 +31,7 @@ It is an alias of `T[S]`.
 
 ## 4. Public Constructors and Destructors
 
-### 4.1. Zero-argument Constructor
+### 4.1. Zero-Argument Constructor
 
 ```c++
 Array()
@@ -62,7 +62,7 @@ Array<U32, 3> a({ 1, 2, 3 });
 Array<U32, 3> b = { 1, 2, 3 };
 ```
 
-### 4.3. Single-element Constructor
+### 4.3. Single-Element Constructor
 
 ```c++
 explicit Array(const T& element)
@@ -129,7 +129,7 @@ ASSERT_EQ(a[0], 1);
 ASSERT_DEATH(a[size], "Assert");
 ```
 
-### 5.2. Copy Assignment Operator
+### 5.2. operator=
 
 ```c++
 Array<T, S>& operator=(const Array<T, S>& a)
