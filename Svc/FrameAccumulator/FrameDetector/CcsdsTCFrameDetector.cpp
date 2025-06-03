@@ -71,7 +71,7 @@ FrameDetector::Status CcsdsTCFrameDetector::detect(const Types::CircularBuffer& 
     Fw::ExternalSerializeBuffer trailer_ser_buffer(trailer_data, CCSDS::TCTrailer::SERIALIZED_SIZE);
     status = trailer_ser_buffer.setBuffLen(CCSDS::TCTrailer::SERIALIZED_SIZE);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
-    // Attempt to deserialize data into the Frametrailer object
+    // Attempt to deserialize data into the FrameTrailer object
     CCSDS::TCTrailer trailer;
     status = trailer.deserialize(trailer_ser_buffer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);

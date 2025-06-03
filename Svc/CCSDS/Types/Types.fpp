@@ -1,9 +1,5 @@
 # ------------------------------------------------
 # CCSDS protocols header and trailer types
-#
-# Note: FPP does not currently support bit fields, so these structs may contain fields
-# that are compoed of multiple bitfields. One should mask the individual FPP types 
-# with the approriate mask to 
 # ------------------------------------------------ 
 
 module Svc {
@@ -35,13 +31,13 @@ module CCSDS {
     }
 
     # ------------------------------------------------
-    # TC (TeleCommand)
+    # TC
     # ------------------------------------------------ 
     @ Describes the frame header format for a Telecommand (TC) Transfer Frame header
     struct TCHeader {
-        flagsAndScId: U16,    @< 2 bits Frame V. | 1 bit bypass | 1 bit ctrl | 2 bit rsvd | 10 bits spacecraft ID
+        flagsAndScId: U16,    @< 2 bits Frame V. | 1 bit bypass | 1 bit ctrl | 2 bit reserved | 10 bits spacecraft ID
         vcIdAndLength: U16,   @< 6 bits Virtual Channel ID | 10 bits Frame Length
-        frameSequenceNbr: U8  @< 8 bits Frame Sequence Number
+        frameSequenceNum: U8  @< 8 bits Frame Sequence Number
     }
     @ Describes the frame trailer format for a Telecommand (TC) Transfer Frame
     struct TCTrailer {
@@ -63,7 +59,7 @@ module CCSDS {
     }
 
     # ------------------------------------------------
-    # TM (TeleMetry)
+    # TM
     # ------------------------------------------------ 
     @ Describes the frame header format for a Telemetry (TM) Transfer Frame header
     struct TMHeader {

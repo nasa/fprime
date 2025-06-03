@@ -51,10 +51,10 @@ void ApidManagerTester::GetExistingSeqCount::action(ApidManagerTester& testerSta
     testerState.clearHistory();
     ComCfg::APID::T apid = testerState.getRandomTrackedApid();
     U16 seqCount = testerState.invoke_to_getApidSeqCountIn(0, apid, 0);
-    U16 shadownSeqCount = testerState.shadow_getAndIncrementSeqCount(apid);
-    ASSERT_EQ(seqCount, shadownSeqCount)
+    U16 shadowSeqCount = testerState.shadow_getAndIncrementSeqCount(apid);
+    ASSERT_EQ(seqCount, shadowSeqCount)
         << "Sequence count for APID " << static_cast<U16>(apid) << " does not match shadow value."
-        << " Shadow: " << shadownSeqCount << ", Actual: " << seqCount;
+        << " Shadow: " << shadowSeqCount << ", Actual: " << seqCount;
 }
 
 
@@ -74,10 +74,10 @@ void ApidManagerTester::GetNewSeqCountOk::action(ApidManagerTester& testerState)
 
     ComCfg::APID::T apid = testerState.getRandomUntrackedApid();
     U16 seqCount = testerState.invoke_to_getApidSeqCountIn(0, apid, 0);
-    U16 shadownSeqCount = testerState.shadow_getAndIncrementSeqCount(apid);
-    ASSERT_EQ(seqCount, shadownSeqCount)
+    U16 shadowSeqCount = testerState.shadow_getAndIncrementSeqCount(apid);
+    ASSERT_EQ(seqCount, shadowSeqCount)
         << "Sequence count for APID " << static_cast<U16>(apid) << " does not match shadow value."
-        << " Shadow: " << shadownSeqCount << ", Actual: " << seqCount;
+        << " Shadow: " << shadowSeqCount << ", Actual: " << seqCount;
 }
 
 bool ApidManagerTester::GetNewSeqCountTableFull::precondition(const ApidManagerTester& testerState) {

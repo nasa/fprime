@@ -70,7 +70,7 @@ bibtex
 Bies
 bindir
 binrel
-Bitfields
+bitfields
 bitmaps
 blogs
 bocchino
@@ -109,7 +109,7 @@ CBF
 CBLOCK
 CCB
 CComponent
-CCSDS
+ccsds
 ccsparc
 cdefs
 CDH
@@ -323,6 +323,7 @@ Fabcdef
 FAKELOGGER
 fbuild
 fdp
+fecf
 FEEDNAME
 fetchcontent
 ffff
@@ -423,6 +424,7 @@ gtags
 gtest
 gtimeout
 Guire
+GVCID
 HACKSM
 handcoded
 handleflags
@@ -659,7 +661,9 @@ objcopy
 objdoc
 objdump
 objmodule
+OCF
 oclc
+ODR
 oflag
 okidocki
 oldeol
@@ -785,6 +789,7 @@ ptrt
 puml
 punc
 pushd
+pvn
 PYS
 PYTHONPATH
 qch
@@ -859,6 +864,7 @@ sbom
 Scatterometer
 scc
 schematron
+scid
 sclk
 scm
 scons
@@ -985,6 +991,7 @@ TCSANOW
 tcsh
 tdir
 tdirection
+telecommand
 telem
 TELEMCHANIMPL
 testcmd
@@ -1088,6 +1095,9 @@ ustr
 utdir
 valgrind
 vbai
+vca
+vcid
+vcp
 vfd
 VFILE
 VID

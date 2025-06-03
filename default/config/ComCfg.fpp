@@ -34,7 +34,7 @@ module ComCfg {
         INVALID_UNINITIALIZED    = 0x0800  @< Anything equal or higher value is invalid and should not be used
     } default INVALID_UNINITIALIZED
 
-# TODO ???: add alias with name ComPacketDscriptor for the ComPacket.hpp
+# TODO ???: add alias with name ComPacketDescriptor for the ComPacket.hpp
 
     @ Type used to pass context info between components during framing/deframing
     struct FrameContext {

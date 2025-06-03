@@ -25,17 +25,17 @@ The `Svc::CCSDS::TMFramer` component, as well as the rest of the CCSDS communica
 
 | Name | Description | Validation |
 |---|---|---|
-| SVC-CCSDS-TMFRAMER-001 | The TMFramer shall implement the `Svc.FramerInterface`. | Inspection, Unit Test |
-| SVC-CCSDS-TMFRAMER-002 | The TMFramer shall construct CCSDS Telemetry (TM) Transfer Frames compliant with the CCSDS 132.0-B-3 standard. | Unit Test, Inspection |
-| SVC-CCSDS-TMFRAMER-002 | The TMFramer shall use a fixed frame size that is configurable by the project. | Unit Test, Inspection |
-| SVC-CCSDS-TMFRAMER-003 | The TMFramer shall accept payload data (Space Packets or VCA_SDU) to be framed via its `dataIn` port. | Unit Test |
-| SVC-CCSDS-TMFRAMER-004 | The TMFramer shall output the constructed TM Transfer Frame via its `dataOut` port. | Unit Test |
-| SVC-CCSDS-TMFRAMER-005 | The TMFramer shall return ownership of the input buffer via the `dataReturnOut` port after the framing process is complete. | Unit Test |
-| SVC-CCSDS-TMFRAMER-006 | The TMFramer shall accept returned buffers (previously sent via `dataOut`) through the `dataReturnIn` port for deallocation or reuse. | Unit Test |
-| SVC-CCSDS-TMFRAMER-007 | The TMFramer shall receive communication status from downstream components via the `comStatusIn` port, and pass it through to `comStatusOut` | Unit Test, Integration Test |
-| SVC-CCSDS-TMFRAMER-008 | The TMFramer shall use exactly one Virtual Channel. | Unit Test, Integration Test |
-| SVC-CCSDS-TMFRAMER-009 | The TMFramer shall correctly populate all mandatory fields of the TM Transfer Frame Primary Header, including Transfer Frame Version Number, Spacecraft Identifier, Virtual Channel Identifier, Operational Control Field Flag, Master Channel Frame Count, Virtual Channel Frame Count, Transfer Frame Secondary Header Flag, Synchronization Flag, Packet Order Flag, Segment Length Identifier, and First Header Pointer. | Unit Test, Inspection |
-| SVC-CCSDS-TMFRAMER-010 | The TMFramer shall be configurable with a Spacecraft Identifier. | Inspection, Unit Test |
-| SVC-CCSDS-TMFRAMER-011 | The TMFramer shall use the Virtual Channel Identifier passed in the `context` object on `dataIn`. | Unit Test |
-| SVC-CCSDS-TMFRAMER-012 | The TMFramer shall manage Master Channel Frame Count and Virtual Channel Frame Count. | Unit Test |
-| SVC-CCSDS-TMFRAMER-013 | The TMFramer shall fill the data field of the TM Transfer Frame with the payload data received on `dataIn`, and fill up the rest of the fixed-size frame with a single Idle Packet as defined by the protocol. | Unit Test |
+| SVC-CCSDS-TM-FRAMER-001 | The TMFramer shall implement the `Svc.FramerInterface`. | Inspection, Unit Test |
+| SVC-CCSDS-TM-FRAMER-002 | The TMFramer shall construct CCSDS Telemetry (TM) Transfer Frames compliant with the CCSDS 132.0-B-3 standard. | Unit Test, Inspection |
+| SVC-CCSDS-TM-FRAMER-002 | The TMFramer shall use a fixed frame size that is configurable by the project. | Unit Test, Inspection |
+| SVC-CCSDS-TM-FRAMER-003 | The TMFramer shall accept payload data (Space Packets or VCA_SDU) to be framed via its `dataIn` port. | Unit Test |
+| SVC-CCSDS-TM-FRAMER-004 | The TMFramer shall output the constructed TM Transfer Frame via its `dataOut` port. | Unit Test |
+| SVC-CCSDS-TM-FRAMER-005 | The TMFramer shall return ownership of the input buffer via the `dataReturnOut` port after the framing process is complete. | Unit Test |
+| SVC-CCSDS-TM-FRAMER-006 | The TMFramer shall accept returned buffers (previously sent via `dataOut`) through the `dataReturnIn` port for deallocation or reuse. | Unit Test |
+| SVC-CCSDS-TM-FRAMER-007 | The TMFramer shall receive communication status from downstream components via the `comStatusIn` port, and pass it through to `comStatusOut` | Unit Test, Integration Test |
+| SVC-CCSDS-TM-FRAMER-008 | The TMFramer shall use exactly one Virtual Channel. | Unit Test, Integration Test |
+| SVC-CCSDS-TM-FRAMER-009 | The TMFramer shall correctly populate all mandatory fields of the TM Transfer Frame Primary Header, including Transfer Frame Version Number, Spacecraft Identifier, Virtual Channel Identifier, Operational Control Field Flag, Master Channel Frame Count, Virtual Channel Frame Count, Transfer Frame Secondary Header Flag, Synchronization Flag, Packet Order Flag, Segment Length Identifier, and First Header Pointer. | Unit Test, Inspection |
+| SVC-CCSDS-TM-FRAMER-010 | The TMFramer shall be configurable with a Spacecraft Identifier. | Inspection, Unit Test |
+| SVC-CCSDS-TM-FRAMER-011 | The TMFramer shall use the Virtual Channel Identifier passed in the `context` object on `dataIn`. | Unit Test |
+| SVC-CCSDS-TM-FRAMER-012 | The TMFramer shall manage Master Channel Frame Count and Virtual Channel Frame Count. | Unit Test |
+| SVC-CCSDS-TM-FRAMER-013 | The TMFramer shall fill the data field of the TM Transfer Frame with the payload data received on `dataIn`, and fill up the rest of the fixed-size frame with a single Idle Packet as defined by the protocol. | Unit Test |
