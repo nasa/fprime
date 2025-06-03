@@ -40,7 +40,7 @@ Defined as `= default`.
 
 ## 3. Public Member Functions
 
-**at:**
+### 3.1. at
 
 ```c++
 virtual const T& at(FwSizeType i) const = 0
@@ -66,7 +66,7 @@ void f(FifoQueueBase& queue) {
 }
 ```
 
-**clear:**
+### 3.2. clear
 
 ```c++
 virtual void clear() = 0
@@ -82,7 +82,7 @@ void f(FifoQueueBase& queue) {
 }
 ```
 
-**copyDataFrom:**
+### 3.3. copyDataFrom
 
 ```c++
 virtual void copyDataFrom(const FifoQueueBase<T>& queue) = 0
@@ -97,7 +97,7 @@ void f(const FifoQueueBase& q1, FifoQueueBase& q2) {
 }
 ```
 
-**enqueue:**
+### 3.4. enqueue
 
 ```c++
 virtual void Fw::Success enqueue(const T& e) = 0
@@ -120,7 +120,7 @@ void f(FifoQueueBase& queue) {
 }
 ```
 
-**peek:**
+### 3.5. peek
 
 ```c++
 void Fw::Success peek(T& e)
@@ -149,7 +149,7 @@ void f(FifoQueueBase& queue) {
 }
 ```
 
-**dequeue:**
+### 3.6. dequeue
 
 ```c++
 virtual void Fw::Success dequeue(T& e) = 0
@@ -162,7 +162,7 @@ virtual void Fw::Success dequeue(T& e) = 0
 
 1. Return `status`.
 
-**getSize:**
+### 3.7. getSize
 
 ```c++
 virtual void FwSizeType getSize() const = 0
@@ -183,7 +183,7 @@ void f(const FifoQueueBase& queue) {
 }
 ```
 
-**getCapacity:**
+### 3.8. getCapacity
 
 ```c++
 virtual FwSizeType getCapacity() const = 0
