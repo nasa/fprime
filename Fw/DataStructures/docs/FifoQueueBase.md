@@ -100,15 +100,19 @@ void f(FifoQueueBase& queue) {
 Success copyDataFrom(const FifoQueueBase<T>& queue)
 ```
 
-1. Call `clear()`.
+1. Set `status = Success::FAILURE`.
 
-1. Set `status = Success::SUCCESS`.
+1. If `getCapacity() <= queue.getSize()`
 
-1. For `i` from 0 to `queue.getSize() - 1`
+    1. Call `clear()`.
 
-    1. Set `status = enqueue(queue.at(i))`.
+    1. For `i` from 0 to `queue.getSize() - 1`
 
-    1. If `status == Success::FAILURE` then break out of the loop.
+        1. Set `enqueueStatus = enqueue(queue.at(i))`.
+
+        1. Assert `enqueueStatus == Success::SUCCESS`
+
+    1. Set `status = Success::SUCCESS`.
 
 1. Return `status`.
 
