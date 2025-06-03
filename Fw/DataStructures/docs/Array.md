@@ -187,17 +187,17 @@ ASSERT_EQ(ea[0], 1);
 
 ## 6. Public Static Functions
 
-### 6.1. getSize
+### 6.1. getStaticSize
 
 ```c++
-static constexpr FwSizeType getSize()
+static constexpr FwSizeType getStaticSize()
 ```
 
-Return the size `S` of the array.
+Return the static size `S` of the array.
 
 _Example:_
 ```c++
-const auto size = Array<U32, 3>::getSize();
+const auto size = Array<U32, 3>::getStaticSize();
 ASSERT_EQ(size, 3);
 ```
 
