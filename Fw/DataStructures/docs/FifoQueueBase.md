@@ -12,17 +12,9 @@ It represents an abstract base class for a FIFO queue.
 |----|----|-------|
 |`typename`|`T`|The type of an item on the queue|
 
-## 2. Protected Constructors and Destructors
+## 2. Private Constructors
 
-### 2.1. Zero-argument Constructor
-
-```c++
-FifoQueueBase()
-```
-
-Defined as `= default`.
-
-### 2.2. Copy Constructor
+### 2.1. Copy Constructor
 
 ```c++
 FifoQueueBase(const FifoQueueBase<T>& queue)
@@ -30,7 +22,17 @@ FifoQueueBase(const FifoQueueBase<T>& queue)
 
 Defined as `= delete`.
 
-### 2.3. Destructor
+## 3. Protected Constructors and Destructors
+
+### 3.1. Zero-argument Constructor
+
+```c++
+FifoQueueBase()
+```
+
+Defined as `= default`.
+
+### 3.2. Destructor
 
 ```c++
 virtual FifoQueueBase()
@@ -38,9 +40,19 @@ virtual FifoQueueBase()
 
 Defined as `= default`.
 
-## 3. Public Member Functions
+## 4. Private Member Functions
 
-### 3.1. at
+### 4.1. operator=
+
+```c++
+FifoQueueBase& operator=(const FifoQueueBase&)
+```
+
+Defined as `= delete`.
+
+## 5. Public Member Functions
+
+### 5.1. at
 
 ```c++
 virtual const T& at(FwSizeType i) const = 0
@@ -66,7 +78,7 @@ void f(FifoQueueBase& queue) {
 }
 ```
 
-### 3.2. clear
+### 5.2. clear
 
 ```c++
 virtual void clear() = 0
@@ -82,7 +94,7 @@ void f(FifoQueueBase& queue) {
 }
 ```
 
-### 3.3. copyDataFrom
+### 5.3. copyDataFrom
 
 ```c++
 Success copyDataFrom(const FifoQueueBase<T>& queue)
@@ -114,7 +126,7 @@ void f(FifoQueueBase<U32>& q1, FifoQueueBase<U32>& q2) {
 }
 ```
 
-### 3.4. enqueue
+### 5.4. enqueue
 
 ```c++
 virtual void Success enqueue(const T& e) = 0
@@ -137,7 +149,7 @@ void f(FifoQueueBase& queue) {
 }
 ```
 
-### 3.5. peek
+### 5.5. peek
 
 ```c++
 void Success peek(T& e)
@@ -166,7 +178,7 @@ void f(FifoQueueBase<U32>& queue) {
 }
 ```
 
-### 3.6. dequeue
+### 5.6. dequeue
 
 ```c++
 virtual void Success dequeue(T& e) = 0
@@ -194,7 +206,7 @@ void f(FifoQueueBase<U32>& queue) {
 }
 ```
 
-### 3.7. getSize
+### 5.7. getSize
 
 ```c++
 virtual void FwSizeType getSize() const = 0
@@ -215,7 +227,7 @@ void f(const FifoQueueBase& queue) {
 }
 ```
 
-### 3.8. getCapacity
+### 5.8. getCapacity
 
 ```c++
 virtual FwSizeType getCapacity() const = 0
