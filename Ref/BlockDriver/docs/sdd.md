@@ -1,18 +1,18 @@
-# Drv::BlockDriver Component
+# Ref::BlockDriver Component
 
 ## 1. Introduction
 
-The `Drv::BlockDriver` is a demonstration component that loops back data buffers. It also emulates a timing interrupt driven by the public method `void callIsr(void)`.
+The `Ref::BlockDriver` is a demonstration component that loops back data buffers. It also emulates a timing interrupt driven by the public method `void callIsr(void)`.
 
 ## 2. Requirements
 
-The requirements for `Drv::BlockDriver` are as follows:
+The requirements for `Ref::BlockDriver` are as follows:
 
 Requirement | Description | Verification Method
 ----------- | ----------- | -------------------
-ISF-BDV-001 | The `Drv::BlockDriver` component shall loop back packets from its input port to its output port | System test, unit test
-ISF-BDV-002 | The `Drv::BlockDriver` component shall loop back the key value from  `PingIn` port to `PingOut` port | System test, unit test
-ISF-BDV-003 | The `Drv::BlockDriver` component shall send a timing interrupt whenever `callIsr()` is invoked | System test, unit test
+ISF-BDV-001 | The `Ref::BlockDriver` component shall loop back packets from its input port to its output port | System test, unit test
+ISF-BDV-002 | The `Ref::BlockDriver` component shall loop back the key value from  `PingIn` port to `PingOut` port | System test, unit test
+ISF-BDV-003 | The `Ref::BlockDriver` component shall send a timing interrupt whenever `callIsr()` is invoked | System test, unit test
 
 ## 3. Design
 
@@ -20,9 +20,9 @@ ISF-BDV-003 | The `Drv::BlockDriver` component shall send a timing interrupt whe
 
 #### 3.1.1 Component Diagram
 
-The `Drv::BlockDriver` component has the following component diagram:
+The `Ref::BlockDriver` component has the following component diagram:
 
-![`Drv::BlockDriver` Diagram](img/BlockDriverBDD.jpg "Drv::BlockDriver")
+![`Ref::BlockDriver` Diagram](img/BlockDriverBDD.jpg "Ref::BlockDriver")
 
 ## 4. Dictionaries
 
