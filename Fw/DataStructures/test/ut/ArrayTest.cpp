@@ -88,8 +88,8 @@ TEST(Array, GetElements) {
     ASSERT_EQ(elements2[0], 1);
 }
 
-TEST(Array, GetSize) {
-    const auto size = Array<U32, 3>::getSize();
+TEST(Array, GetStaticSize) {
+    const auto size = Array<U32, 3>::getStaticSize();
     ASSERT_EQ(size, 3);
 }
 

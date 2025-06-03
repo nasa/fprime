@@ -115,9 +115,9 @@ class Array final {
     // Public static functions
     // ----------------------------------------------------------------------
 
-    //! Get the array size
+    //! Get the static array size
     //! \return The size
-    static constexpr FwSizeType getSize() { return S; }
+    static constexpr FwSizeType getStaticSize() { return S; }
 
   private:
     // ----------------------------------------------------------------------
