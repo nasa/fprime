@@ -1,26 +1,49 @@
 # Svc::CCSDS::ApidManager
 
-## 1. Overview
+The `Svc::CCSDS::ApidManager` component manages CCSDS Application Process Identifier (APID) sequence counts for the F Prime communications stack. It provides per-APID sequence count tracking and validation, supporting the construction and checking of CCSDS Space Packet headers by other components (such as `SpacePacketFramer` and `SpacePacketDeframer`).
 
-The `ApidManager` component is a passive F´ component that maps the descriptor type (ComPacketType/APID) found in the first two bytes of a data buffer to a CCSDS Space Packet APID. It also tracks and manages a sequence count for each APID, as required by the CCSDS protocol. This enables downstream components to generate correct CCSDS Space Packets with the appropriate APID and sequence count.
+The `ApidManager` is typically used in conjunction with the `SpacePacketFramer` (to provide incrementing sequence counts for each APID) and the `SpacePacketDeframer` (to validate received sequence counts and detect dropped or out-of-order packets).
 
-## 2. Requirements
+## Functionality
 
-- Extract the APID (descriptor type) from the first two bytes of each incoming buffer.
-- Set the APID in the outgoing `FrameContext`.
-- Track a 14-bit sequence count for each APID, incrementing and wrapping as required by the CCSDS standard.
-- Support a small, fixed set of non-contiguous APIDs.
-- Operate without dynamic memory allocation or standard library containers.
+- Maintains a table of APIDs and their associated 14-bit sequence counts.
+- Handles a fixed maximum number of tracked APIDs (as configured in the project).
+- Provides a way to retrieve the current sequence count for a given APID through a port call.
+- Provides a way to validate a received sequence counts for a given APID through a port call.
 
-## 3. Interfaces
+## Port Descriptions
 
-### Ports
+| Kind            | Name                  | Port Type                | Description                                                                 |
+|-----------------|-----------------------|--------------------------|-----------------------------------------------------------------------------|
+| guarded input   | validateApidSeqCountIn| CCSDS.ApidSequenceCount  | Validates a received sequence count for a given APID.                       |
+| guarded input   | getApidSeqCountIn     | CCSDS.ApidSequenceCount  | Returns and increments the sequence count for a given APID.                 |
 
-| Port Name      | Direction | Description                                                      |
-|----------------|-----------|------------------------------------------------------------------|
-| dataIn         | input     | Receives data buffers and context from upstream                  |
-| dataOut        | output    | Forwards buffer with updated context (APID and sequence count)   |
-| dataReturnIn   | input     | Receives returned buffers from downstream                        |
-| dataReturnOut  | output    | Returns buffers to upstream                                      |
-| comStatusIn    | input     | Receives status from downstream                                  |
-| comStatusOut   | output    | Forwards status upstream                                         |
+## Events
+
+| Name                   | Severity      | Description                                                                 |
+|------------------------|---------------|-----------------------------------------------------------------------------|
+| UnexpectedSequenceCount| warning high  | Received an unexpected sequence count for an APID.                          |
+| ApidTableFull          | warning high  | APID table is full; cannot track additional APIDs.                          |
+
+## Usage
+
+- The `getApidSeqCountIn` port is called by a component (e.g., `SpacePacketFramer`) to obtain and increment the sequence count for a given APID when constructing a new Space Packet.
+- The `validateApidSeqCountIn` port is called by a component (e.g., `SpacePacketDeframer`) to check the sequence count of a received Space Packet. If the count does not match the expected value, an event is logged and the onboard count is synchronized.
+
+## Requirements
+
+| Name                              | Description                                                                 | Validation           |
+|-----------------------------------|-----------------------------------------------------------------------------|----------------------|
+| SVC-CCSDS-APID-MANAGER-001         | The ApidManager shall track a 14-bit sequence count for each APID.          | Unit Test            |
+| SVC-CCSDS-APID-MANAGER-002         | The ApidManager shall provide the current sequence count for a given APID.  | Unit Test            |
+| SVC-CCSDS-APID-MANAGER-003         | The ApidManager shall increment the sequence count for each APID on request.| Unit Test            |
+| SVC-CCSDS-APID-MANAGER-004         | The ApidManager shall provide validation of a received sequence counts for each APID.  | Unit Test |
+| SVC-CCSDS-APID-MANAGER-005         | The ApidManager shall emit an event if an unexpected sequence count is received.| Unit Test        |
+| SVC-CCSDS-APID-MANAGER-006         | The ApidManager shall emit an event if the APID table is full and an APID is not able to be added to the tracking. | Unit Test |
+| SVC-CCSDS-APID-MANAGER-007         | The ApidManager shall synchronize the onboard sequence count if a mismatch is detected.| Unit Test   |
+
+## See Also
+
+- [`Svc::CCSDS::SpacePacketFramer`](../../SpacePacketFramer/docs/sdd.md)
+- [`Svc::CCSDS::SpacePacketDeframer`](../../SpacePacketDeframer/docs/sdd.md)
+- [CCSDS Space Packet Protocol (CCSDS 133.0-B-2)](https://public.ccsds.org/Pubs/133x0b2e1.pdf)
