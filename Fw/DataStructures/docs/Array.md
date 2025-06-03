@@ -31,7 +31,7 @@ It is an alias of `T[S]`.
 
 ## 4. Public Constructors and Destructors
 
-**Zero-argument constructor:**
+### 4.1. Zero-argument Constructor
 
 ```c++
 Array()
@@ -44,7 +44,7 @@ _Example:_
 Array<U32, 3> a;
 ```
 
-**Initializer list constructor:**
+### 4.2. Initializer List Constructor
 
 ```c++
 Array(const std::initializer_list<T>& il)
@@ -62,7 +62,7 @@ Array<U32, 3> a({ 1, 2, 3 });
 Array<U32, 3> b = { 1, 2, 3 };
 ```
 
-**Single-element constructor:**
+### 4.3. Single-element Constructor
 
 ```c++
 explicit Array(const T& element)
@@ -78,7 +78,7 @@ Array<U32, 3> a(1);
 a = Array<U32, 3>(2);
 ```
 
-**Copy constructor:**
+### 4.4. Copy Constructor
 
 ```c++
 Array(const Array<T, S>& a)
@@ -95,7 +95,7 @@ Array<U32, 3> a1(3);
 Array<U32, 3> a2(a1);
 ```
 
-**Destructor:**
+### 4.5. Destructor
 
 ```c++
 ~Array()
@@ -105,7 +105,7 @@ Defined as `= default`.
 
 ## 5. Public Member Functions
 
-**operator[]:**
+### 5.1. operator[]
 
 ```c++
 T& operator[](FwSizeType i)
@@ -129,7 +129,7 @@ ASSERT_EQ(a[0], 1);
 ASSERT_DEATH(a[size], "Assert");
 ```
 
-**Copy assignment operator:**
+### 5.2. Copy Assignment Operator
 
 ```c++
 Array<T, S>& operator=(const Array<T, S>& a)
@@ -147,7 +147,7 @@ Array<U32, 3> a2(2);
 a1 = a2;
 ```
 
-**getElements:**
+### 5.3. getElements
 
 ```c++
 Elements& getElements()
@@ -169,7 +169,7 @@ const auto& elements2 = a.getElements();
 ASSERT_EQ(elements2[0], 1);
 ```
 
-**asExternalArray:**
+### 5.4. asExternalArray
 
 ```c++
 ExternalArray<T> asExternalArray()
@@ -187,7 +187,7 @@ ASSERT_EQ(ea[0], 1);
 
 ## 6. Public Static Functions
 
-**getSize:**
+### 6.1. getSize
 
 ```c++
 static constexpr FwSizeType getSize()

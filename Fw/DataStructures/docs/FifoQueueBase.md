@@ -84,8 +84,6 @@ void f(FifoQueueBase& queue) {
 
 ### 3.3. copyDataFrom
 
-**copyDataFrom:**
-
 ```c++
 void copyDataFrom(const FifoQueueBase<T>& queue) override
 ```
