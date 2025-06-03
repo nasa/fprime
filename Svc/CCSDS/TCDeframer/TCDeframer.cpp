@@ -54,7 +54,7 @@ void TCDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     U16 frame_length = header.getvcIdAndLength() & TCSubfields::FrameLengthMask;
-    U8 vc_id = (header.getvcIdAndLength() & TCSubfields::VcIdMask) >> TCSubfields::VcIdOffset;
+    U8 vc_id = static_cast<U8>((header.getvcIdAndLength() & TCSubfields::VcIdMask) >> TCSubfields::VcIdOffset);
     U16 spacecraft_id = header.getflagsAndScId() & TCSubfields::SpacecraftIdMask;
 
     if (spacecraft_id != this->m_spacecraftId) {
