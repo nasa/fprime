@@ -24,7 +24,7 @@ Defined as `= delete`.
 
 ## 3. Protected Constructors and Destructors
 
-### 3.1. Zero-argument Constructor
+### 3.1. Zero-Argument Constructor
 
 ```c++
 FifoQueueBase()
@@ -186,8 +186,7 @@ virtual void Success dequeue(T& e) = 0
 
 1. Set `status = peek(e)`.
 
-1. If `status == Success::SUCCESS` then dequeue an item and store it into 
-   `e`.
+1. If `status == Success::SUCCESS` then dequeue the last-inserted item.
 
 1. Return `status`.
 
