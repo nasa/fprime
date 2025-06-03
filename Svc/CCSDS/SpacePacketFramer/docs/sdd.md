@@ -1,6 +1,6 @@
 # Svc::CCSDS::SpacePacketFramer
 
-The `Svc::CCSDS::SpacePacketFramer` is an implementation of the [FramerInterface](../../Interfaces/docs/sdd.md) for the CCSDS [Space Packet Protocol](https://public.ccsds.org/Pubs/133x0b2e1.pdf).
+The `Svc::CCSDS::SpacePacketFramer` is an implementation of the [FramerInterface](../../../Interfaces/docs/sdd.md) for the CCSDS [Space Packet Protocol](https://public.ccsds.org/Pubs/133x0b2e1.pdf).
 
 It receives user data on its input port and constructs a CCSDS Space Packet. Please refer to the CCSDS [Space Packet Protocol specification (CCSDS 133.0-B-2)](https://public.ccsds.org/Pubs/133x0b2e1.pdf) for details on the packet format.
 

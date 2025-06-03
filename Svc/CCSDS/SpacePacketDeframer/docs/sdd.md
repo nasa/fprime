@@ -1,6 +1,6 @@
 # Svc::CCSDS::SpacePacketDeframer
 
-The `Svc::CCSDS::SpacePacketDeframer` is an implementation of the [DeframerInterface](../../Interfaces/docs/sdd.md) for the CCSDS [Space Packet Protocol](https://ccsds.org/Pubs/133x0b2e2.pdf).
+The `Svc::CCSDS::SpacePacketDeframer` is an implementation of the [DeframerInterface](../../../Interfaces/docs/sdd.md) for the CCSDS [Space Packet Protocol](https://ccsds.org/Pubs/133x0b2e2.pdf).
 
 It receives data containing a Space Packet on its input port and extracts the Space Packet. Please refer to the CCSDS [Space Packet Protocol specification (CCSDS 133.0-B-2)](https://ccsds.org/Pubs/133x0b2e2.pdf) for details on the packet format.
 

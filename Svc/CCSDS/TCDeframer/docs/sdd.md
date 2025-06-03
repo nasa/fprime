@@ -1,10 +1,10 @@
 # Svc::TCDeframer
 
-The `Svc::CCSDS::TCDeframer` is an implementation of the [DeframerInterface](../../Interfaces/docs/sdd.md) for the CCSDS [TC Space Data Link Protocol](https://ccsds.org/Pubs/232x0b4e1c1.pdf). 
+The `Svc::CCSDS::TCDeframer` is an implementation of the [DeframerInterface](../../../Interfaces/docs/sdd.md) for the CCSDS [TC Space Data Link Protocol](https://ccsds.org/Pubs/232x0b4e1c1.pdf). 
 
 It receives payload data (such as a Space Packet or a VCA_SDU) on input and produces a TC frame on its output port as a result. Please refer to the CCSDS [TC specification (CCSDS 232.0-B-4)](https://ccsds.org/Pubs/232x0b4e1c1.pdf) for details on the frame format and protocol.
 
-The `Svc::CCSDS::TCDeframer` is designed to work in the common F Prime telemetry stack, receiving data from an upstream [`Svc::ComQueue`](../../../ComQueue/docs/sdd.md) and passing frames to a [Communications Adapter](../../Interfaces/docs/sdd.md), such as a Radio manager component or [`Svc::ComStub`](../../ComStub/docs/sdd.md), for transmission on the wire. It is commonly coupled with the [`Svc::CCSDS::SpacePacketFramer`](../../SpacePacketFramer/docs/sdd.md) to wrap CCSDS Space Packets into TM frames.
+The `Svc::CCSDS::TCDeframer` is designed to work in the common F Prime telemetry stack, receiving data from an upstream [`Svc::ComQueue`](../../../ComQueue/docs/sdd.md) and passing frames to a [Communications Adapter](../../../Interfaces/docs/sdd.md), such as a Radio manager component or [`Svc::ComStub`](../../../ComStub/docs/sdd.md), for transmission on the wire. It is commonly coupled with the [`Svc::CCSDS::SpacePacketFramer`](../../SpacePacketFramer/docs/sdd.md) to wrap CCSDS Space Packets into TM frames.
 
 The TCDeframer currently functions only in the "Expedited Service" mode, for Type-B Frames. This means that should Type-A frames be received, no FARM checks would be performed on board.
 
