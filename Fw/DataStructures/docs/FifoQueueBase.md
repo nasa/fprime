@@ -104,13 +104,15 @@ void copyDataFrom(const FifoQueueBase<T>& queue)
 
 1. Otherwise
 
+    1. Call `clear()`.
+
     1. Let `size` be the minimum of `queue.getSize()` and `getCapacity()`.
 
     1. For `i` in [0, `size`)
 
-        1. Set `enqueueStatus = enqueue(queue.at(i))`.
+        1. Set `status = enqueue(queue.at(i))`.
 
-        1. Assert `enqueueStatus == Success::SUCCESS`.
+        1. Assert `status == Success::SUCCESS`.
 
 _Example:_
 ```c++
@@ -129,7 +131,7 @@ void f(FifoQueueBase<U32>& q1, FifoQueueBase<U32>& q2) {
 ### 5.4. enqueue
 
 ```c++
-virtual void Success enqueue(const T& e) = 0
+virtual Success enqueue(const T& e) = 0
 ```
 
 1. If there is no room on the queue for a new item, then return `Success::FAILURE`.
@@ -152,16 +154,18 @@ void f(FifoQueueBase<U32>& queue) {
 ### 5.5. peek
 
 ```c++
-void Success peek(T& e)
+void Success peek(T& e) const
 ```
 
-1. If `getSize() == 0` return `Success::FAILURE`.
+1. Set `status = Success::FAILURE`.
 
-1. Otherwise
+1. If `getSize() > 0`
 
-    1. Set `e = (*this)[getSize() - 1]`.
+    1. Set `e = at(getSize() - 1)`.
 
-    1. Return `Success::SUCCESS`.
+    1. Set `status = Success::SUCCESS`.
+
+1. Return `status`.
 
 _Example:_
 ```c++
@@ -181,7 +185,7 @@ void f(FifoQueueBase<U32>& queue) {
 ### 5.6. dequeue
 
 ```c++
-virtual void Success dequeue(T& e) = 0
+virtual Success dequeue(T& e) = 0
 ```
 
 1. Set `status = peek(e)`.
@@ -208,7 +212,7 @@ void f(FifoQueueBase<U32>& queue) {
 ### 5.7. getSize
 
 ```c++
-virtual void FwSizeType getSize() const = 0
+virtual FwSizeType getSize() const = 0
 ```
 
 Return the current size.

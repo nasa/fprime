@@ -7,8 +7,7 @@
 #ifndef Fw_ExternalArray_HPP
 #define Fw_ExternalArray_HPP
 
-#include <Fw/FPrimeBasicTypes.hpp>
-
+#include "Fw/FPrimeBasicTypes.hpp"
 #include "Fw/Types/Assert.hpp"
 
 namespace Fw {

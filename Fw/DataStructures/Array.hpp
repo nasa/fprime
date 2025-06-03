@@ -7,10 +7,10 @@
 #ifndef Fw_Array_HPP
 #define Fw_Array_HPP
 
-#include <Fw/FPrimeBasicTypes.hpp>
 #include <initializer_list>
 
 #include "Fw/DataStructures/ExternalArray.hpp"
+#include "Fw/FPrimeBasicTypes.hpp"
 #include "Fw/Types/Assert.hpp"
 
 namespace Fw {
