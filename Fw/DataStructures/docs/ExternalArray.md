@@ -137,9 +137,9 @@ void copyDataFrom(const ExternalArray<T>& a)
 
 1. Otherwise 
 
-    1. Let `size` be the minimum of `this->m_size` and `a.m_size`
+    1. Let `size` be the minimum of `m_size` and `a.m_size`
 
-    1. For each `i` from 0 through `size - 1`, set `m_elements[i] = a.m_elements[i]`
+    1. For each `i` in [0, `size), set `m_elements[i] = a.m_elements[i]`
 
 _Example:_
 ```c++

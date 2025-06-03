@@ -97,24 +97,20 @@ void f(FifoQueueBase& queue) {
 ### 5.3. copyDataFrom
 
 ```c++
-Success copyDataFrom(const FifoQueueBase<T>& queue)
+void copyDataFrom(const FifoQueueBase<T>& queue)
 ```
 
-1. Set `status = Success::FAILURE`.
+1. If `&queue == this` then do nothing.
 
-1. If `getCapacity() <= queue.getSize()`
+1. Otherwise
 
-    1. Call `clear()`.
+    1. Let `size` be the minimum of `queue.getSize()` and `getCapacity()`.
 
-    1. For `i` in [0, `queue.getSize()`)
+    1. For `i` in [0, `size`)
 
         1. Set `enqueueStatus = enqueue(queue.at(i))`.
 
         1. Assert `enqueueStatus == Success::SUCCESS`
-
-    1. Set `status = Success::SUCCESS`.
-
-1. Return `status`.
 
 _Example:_
 ```c++
