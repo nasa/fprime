@@ -6,11 +6,11 @@
 
 #include "Svc/CCSDS/TMFramer/TMFramer.hpp"
 #include "Svc/CCSDS/Types/FppConstantsAc.hpp"
+#include "Svc/CCSDS/Types/SpacePacketHeaderSerializableAc.hpp"
 #include "Svc/CCSDS/Types/TMHeaderSerializableAc.hpp"
 #include "Svc/CCSDS/Types/TMTrailerSerializableAc.hpp"
 #include "Svc/CCSDS/Utils/CRC16.hpp"
 #include "config/FppConstantsAc.hpp"
-#include "Svc/CCSDS/Types/SpacePacketHeaderSerializableAc.hpp"
 
 namespace Svc {
 
@@ -39,9 +39,9 @@ void TMFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
     // -----------------------------------------------
     TMHeader header;
 
-    U16 globalVcId = 0;
-    globalVcId |= ComCfg::SpacecraftId << TMSubfields::spacecraftIdOffset;
-    globalVcId |= static_cast<U16>(context.getvcId() << TMSubfields::virtualChannelIdOffset);
+    // GVCID (Global Virtual Channel ID) (Standard 4.1.2.2 and 4.1.2.3)
+    U16 globalVcId = static_cast<U16>(context.getvcId() << TMSubfields::virtualChannelIdOffset);
+    globalVcId |= static_cast<U16>(ComCfg::SpacecraftId << TMSubfields::spacecraftIdOffset);
     globalVcId |= 0x0;  // Operational Control Field: Flag set to 0 (Standard 4.1.2.4)
 
     // Data Field Status (Standard 4.1.2.7):
@@ -80,13 +80,12 @@ void TMFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
     // -------------------------------------------------
     TMTrailer trailer;
     // Compute CRC over the entire frame buffer minus the FECF trailer (Standard 4.1.6)
-    U16 crc = CCSDS::Utils::CRC16::compute(frameBuffer.getData(),
-                                           sizeof(this->m_frameBuffer) - TMTrailer::SERIALIZED_SIZE);
+    U16 crc =
+        CCSDS::Utils::CRC16::compute(frameBuffer.getData(), sizeof(this->m_frameBuffer) - TMTrailer::SERIALIZED_SIZE);
     // Set the Frame Error Control Field (FECF)
     trailer.setfecf(crc);
     // Move the serializer pointer to the end of the location where the trailer will be serialized
-    frameSerializer.moveSerToOffset(ComCfg::TmFrameFixedSize -
-                                    TMTrailer::SERIALIZED_SIZE);
+    frameSerializer.moveSerToOffset(ComCfg::TmFrameFixedSize - TMTrailer::SERIALIZED_SIZE);
     status = frameSerializer.serialize(trailer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
@@ -111,28 +110,26 @@ void TMFramer ::dataReturnIn_handler(FwIndexType portNum,
 }
 
 void TMFramer ::fill_with_idle_packet(Fw::SerializeBufferBase& serializer) {
-    constexpr U16 endIndex = ComCfg::TmFrameFixedSize -
-                           TMTrailer::SERIALIZED_SIZE;
+    constexpr U16 endIndex = ComCfg::TmFrameFixedSize - TMTrailer::SERIALIZED_SIZE;
     constexpr U16 idleApid = static_cast<U16>(ComCfg::APID::SPP_IDLE_PACKET);
     const U16 startIndex = static_cast<U16>(serializer.getBuffLength());
-    const U16 idlePacketLength = endIndex - startIndex;
+    const U16 idlePacketLength = static_cast<U16>(endIndex - startIndex);
 
     FW_ASSERT(idlePacketLength > 0, static_cast<FwAssertArgType>(idlePacketLength));
-    FW_ASSERT(idlePacketLength >= 7, static_cast<FwAssertArgType>(idlePacketLength)); // 7 bytes minimum for idle packet
-    FW_ASSERT(idlePacketLength <= ComCfg::TmFrameFixedSize,
-              static_cast<FwAssertArgType>(idlePacketLength));
+    FW_ASSERT(idlePacketLength >= 7, static_cast<FwAssertArgType>(idlePacketLength));  // 7 bytes minimum for idle packet
+    FW_ASSERT(idlePacketLength <= ComCfg::TmFrameFixedSize, static_cast<FwAssertArgType>(idlePacketLength));
 
     SpacePacketHeader header;
     header.setpacketIdentification(idleApid);
-    header.setpacketSequenceControl(0x3 << SpacePacketSubfields::SeqFlagsOffset); // Sequence Flags = 0b11 (unsegmented) & unused Seq count
+    header.setpacketSequenceControl(
+        0x3 << SpacePacketSubfields::SeqFlagsOffset);  // Sequence Flags = 0b11 (unsegmented) & unused Seq count
     header.setpacketDataLength(idlePacketLength);
     // Serialize header and idle data into the frame
     serializer.serialize(header);
-    for (U16 i = startIndex + SpacePacketHeader::SERIALIZED_SIZE; i < endIndex; i++) {
+    for (U16 i = static_cast<U16>(startIndex + SpacePacketHeader::SERIALIZED_SIZE); i < endIndex; i++) {
         serializer.serialize(IDLE_DATA_PATTERN);  // Idle data
     }
 }
-
 
 }  // namespace CCSDS
 }  // namespace Svc

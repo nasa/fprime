@@ -47,7 +47,6 @@ class TCDeframerTester final : public TCDeframerGTestBase {
     void testInvalidScId();
     void testInvalidVcId();
     void testInvalidLengthToken();
-    // void testInvalidSequenceNumber();
     void testInvalidCrc();
 
 

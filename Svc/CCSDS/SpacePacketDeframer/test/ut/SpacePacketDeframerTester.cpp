@@ -70,7 +70,7 @@ void SpacePacketDeframerTester ::testDeframingIncorrectLength() {
     ComCfg::APID::T apid = static_cast<ComCfg::APID::T>(STest::Random::lowerUpper(0, 0x7FF));  // random 11 bit APID
     U16 seqCount = static_cast<U8>(STest::Random::lowerUpper(0, 0x3FFF));  // random 14 bit sequence count
     U16 realDataLength = static_cast<U8>(STest::Random::lowerUpper(1, MAX_TEST_PACKET_DATA_SIZE)); // bytes of data, random length
-    U16 invalidLengthToken = realDataLength + 1;  // Length token is greater than actual data available
+    U16 invalidLengthToken = static_cast<U16>(realDataLength + 1);  // Length token is greater than actual data available
     U8 data[realDataLength];
 
     Fw::Buffer buffer = this->assemblePacket(apid, seqCount, invalidLengthToken, data, realDataLength);

@@ -140,7 +140,7 @@ U16 TMFramerTester::getFrameScId(U8* frameData) {
     return static_cast<U16>((frameData[0] & 0x3F) << 4 | (frameData[1] >> 4));
 }
 U8 TMFramerTester::getFrameVcId(U8* frameData) {
-    return (frameData[1] & 0x0E) >> 1;
+    return static_cast<U8>((frameData[1] & 0x0E) >> 1);
 }
 U8 TMFramerTester::getFrameMcCount(U8* frameData) {
     return frameData[2];
