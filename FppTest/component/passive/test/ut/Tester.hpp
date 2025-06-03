@@ -61,11 +61,11 @@ class Tester : public PassiveTestGTestBase {
 
     void testTime();
 
-  PRIVATE:
+  private:
 
     #include "FppTest/component/common/tester.hpp"
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Handlers for serial from ports
     // ----------------------------------------------------------------------
@@ -107,7 +107,7 @@ class Tester : public PassiveTestGTestBase {
     //! Check unsuccessful status of a serial port invocation
     void checkSerializeStatusBufferEmpty();
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Variables
     // ----------------------------------------------------------------------

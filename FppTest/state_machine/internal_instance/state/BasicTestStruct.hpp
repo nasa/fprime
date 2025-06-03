@@ -48,7 +48,7 @@ class BasicTestStruct : public BasicTestStructComponentBase {
     //! The type FppTest_SmState_BasicTestStruct
     using SmState_BasicTestStruct = FppTest_SmState_BasicTestStruct;
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Implementations for internal state machine actions
     // ----------------------------------------------------------------------
