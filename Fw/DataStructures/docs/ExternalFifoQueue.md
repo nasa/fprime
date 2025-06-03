@@ -38,7 +38,7 @@ storing the items on the queue.
 ExternalFifoQueue()
 ```
 
-Initialize the member variables with their default values.
+Initialize each member variable with its default value.
 
 _Example:_
 ```c++

@@ -50,7 +50,7 @@ Array<U32, 3> a;
 Array(const std::initializer_list<T>& il)
 ```
 
-1. Assert that `il.m_size == S`.
+1. Assert that `il.size() == S`.
 
 1. Initialize `m_elements` from `il`.
 

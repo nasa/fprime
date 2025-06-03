@@ -3,7 +3,7 @@
 `FifoQueue` is a `final` class template
 defined in [`Fw/DataStructures`](sdd.md).
 It represents a FIFO queue with internal storage.
-Internally it maintains an <a href="#array">`Array`</a>
+Internally it maintains an [`Array`](Array.md)
 for storing the items on the queue.
 
 ## 1. Template Parameters
@@ -33,26 +33,67 @@ for storing the items on the queue.
 
 ## 4. Public Constructors and Destructors
 
-**Zero-argument constructor:**
+### 4.1. Zero-Argument Constructor
 
 ```c++
 FifoQueue()
 ```
 
-Initialize each member with default initialization.
+Initialize each member variable with its default value.
 
 _Example:_
 ```c++
 FifoQueue<U32, 10> queue;
 ```
 
-**Copy constructor:**
+### 4.2. Copy Constructor
 
 ```c++
 FifoQueue(const FifoQueue<T, S>& queue)
 ```
 
-Call `m_extQueue.copyItemsFrom(queue.m_extQueue)`.
+Set `*this = queue`.
+
+_Example:_
+```c++
+FifoQueue<U32, 10> q1;
+auto status = q1.enqueue(3);
+ASSERT_EQ(status, Success::SUCCESS);
+FifoQueue<U32, 10> q2(q1);
+ASSERT_EQ(q2.size(), 1);
+U32 value = 0;
+status = q2.dequeue(value);
+ASSERT_EQ(status, Success::SUCCESS);
+ASSERT_EQ(value, 3);
+```
+
+### 4.3. Destructor
+
+```c++
+~FifoQueue() override
+```
+
+Defined as `= default`.
+
+## 5. Public Member Functions
+
+### 5.1. at
+
+```c++
+const T& operator[](FwSizeType i) const override
+```
+
+Return `m_extQueue(i)`.
+
+### 5.2. operator=
+
+```c++
+FifoQueue<T>& operator=(const FifoQueue<T>& queue)
+```
+
+1. Set `status = m_extQueue.copyDataFrom(queue.m_extQueue)`.
+
+1. Assert `status == Success::SUCCESS`.
 
 _Example:_
 ```c++
@@ -60,93 +101,84 @@ FifoQueue<U32, 10> q1;
 auto status = q1.enqueue(3);
 ASSERT_EQ(status, Success::SUCCESS);
 FifoQueue<U32, 10> q2;
+ASSERT_EQ(q2.size(), 0);
 q2 = q1;
+ASSERT_EQ(q2.size(), 1);
 U32 value = 0;
 status = q2.dequeue(value);
 ASSERT_EQ(status, Success::SUCCESS);
 ASSERT_EQ(value, 3);
 ```
 
-**Destructor:**
+### 5.3. clear
 
 ```c++
-~FifoQueue()
+void clear() override
 ```
 
-Defined as `= default`.
+Call `m_extQueue.clear()`.
 
-## 5. Public Member Functions
-
-**operator[]:**
+### 5.4. enqueue
 
 ```c++
-T& operator[](FwSizeType i)
-const T& operator[](FwSizeType i) const
+Success enqueue(const T& e) override
 ```
 
-TODO
+Return `m_extQueue.enqueue(e)`.
 
-**Copy assignment operator:**
+### 5.5. dequeue
 
 ```c++
-FifoQueue<T>& operator=(const FifoQueue<T>& queue)
+Success dequeue(T& e) override
 ```
 
-TODO
+Return `m_extQueue.dequeue(e)`.
 
-**clear:**
-
-```c++
-void clear()
-```
-
-TODO
-
-**enqueue:**
-
-```c++
-Success enqueue(const T& e)
-```
-
-TODO
-
-**peek:**
-
-```c++
-Success peek(T& e)
-```
-
-TODO
-
-**dequeue:**
-
-```c++
-Success dequeue(T& e)
-```
-
-TODO
-
-**getSize:**
+### 5.6. getSize
 
 ```c++
 FwSizeType getSize() const
 ```
 
-TODO
+Return `m_extQueue.getSize()`.
 
-**getCapacity:**
+### 5.7. getCapacity
 
 ```c++
 FwSizeType getCapacity() const
 ```
 
-TODO
+Return `m_extQueue.getCapacity()`.
 
-**asExternalFifoQueue:**
+### 5.8. asExternalFifoQueue
 
 ```c++
 ExternalFifoQueue<T> asExternalFifoQueue()
 ```
 
-TODO
+Return [`ExternalFifoQueue<T>(m_items, C)`](ExternalFifoQueue.md#4-public-constructors-and-destructors)
 
+_Example:_
+```c++
+constexpr FwSizeType size = 3;
+FifoQueue<U32, size> queue;
+(void) queue.enqueue(3);
+ExternalFifoQueue<U32> extQueue = queue.asExternalFifoQueue();
+ASSERT_EQ(extQueue.size(), 1);
+```
+
+## 6. Public Static Functions
+
+### 6.1. getStaticCapacity
+
+```c++
+static constexpr FwSizeType getStaticCapacity()
+```
+
+Return the static capacity `C`.
+
+_Example:_
+```c++
+const auto capacity = FifoQueue<U32, 3>::getStaticCapacity();
+ASSERT_EQ(capacity, 3);
+```
