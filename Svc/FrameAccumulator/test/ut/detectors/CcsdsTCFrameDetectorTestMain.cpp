@@ -69,7 +69,7 @@ FwSizeType generate_random_tc_frame(Types::CircularBuffer& circular_buffer) {
 
     // Calculate CRC on header + packet_data
     Svc::CCSDS::Utils::CRC16 crc;
-    for (FwSizeType i = 0; i < packet_size + TCHeader::SERIALIZED_SIZE; ++i) {
+    for (FwSizeType i = 0; i < static_cast<FwSizeType>(packet_size + TCHeader::SERIALIZED_SIZE); ++i) {
         U8 byte = 0;
         circular_buffer.peek(byte, i);
         crc.update(byte);

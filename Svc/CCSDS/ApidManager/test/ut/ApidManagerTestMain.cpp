@@ -8,37 +8,40 @@
 #include "STest/Scenario/BoundedScenario.hpp"
 #include "STest/Scenario/RandomScenario.hpp"
 
-TEST(ApidManager, getExistingSeqCount) {
+TEST(ApidManager, GetSequenceCounts) {
     Svc::CCSDS::ApidManagerTester tester;
-    Svc::CCSDS::ApidManagerTester::GetExistingSeqCount rule1;
-    Svc::CCSDS::ApidManagerTester::GetNewSeqCountOk rule2;
-    Svc::CCSDS::ApidManagerTester::GetNewSeqCountTableFull rule3;
-
-
-    rule1.apply(tester);
-    rule2.apply(tester);
-    // rule3.apply(tester);
+    Svc::CCSDS::ApidManagerTester::GetExistingSeqCount getExistingSeqCount;
+    Svc::CCSDS::ApidManagerTester::GetNewSeqCountOk getNewSeqCountOk;
+    getExistingSeqCount.apply(tester);
+    getNewSeqCountOk.apply(tester);
 }
 
+TEST(ApidManager, ValidateSequenceCounts) {
+    Svc::CCSDS::ApidManagerTester tester;
+    Svc::CCSDS::ApidManagerTester::ValidateSeqCountOk validateSeqCountOkRule;
+    Svc::CCSDS::ApidManagerTester::ValidateSeqCountFailure validateSeqCountFailureRule;
+    validateSeqCountOkRule.apply(tester);
+    validateSeqCountFailureRule.apply(tester);
+}
 
-// Randomized sequence of conditioned take/release/lock/unlock
-TEST(ApidManager, RandomizedInterfaceTesting) {
+// Randomized testing
+TEST(ApidManager, RandomizedTesting) {
 
     Svc::CCSDS::ApidManagerTester tester;
     
-    Svc::CCSDS::ApidManagerTester::GetExistingSeqCount rule1;
-    Svc::CCSDS::ApidManagerTester::GetNewSeqCountOk rule2;
-    Svc::CCSDS::ApidManagerTester::GetNewSeqCountTableFull rule3;
-    Svc::CCSDS::ApidManagerTester::ValidateSeqCountOk rule4;
-    Svc::CCSDS::ApidManagerTester::ValidateSeqCountFailure rule5;
+    Svc::CCSDS::ApidManagerTester::GetExistingSeqCount getExistingSeqCountRule;
+    Svc::CCSDS::ApidManagerTester::GetNewSeqCountOk getNewSeqCountOkRule;
+    Svc::CCSDS::ApidManagerTester::GetNewSeqCountTableFull getNewSeqCountTableFullRule;
+    Svc::CCSDS::ApidManagerTester::ValidateSeqCountOk validateSeqCountOkRule;
+    Svc::CCSDS::ApidManagerTester::ValidateSeqCountFailure validateSeqCountFailureRule;
 
     // Place these rules into a list of rules
     STest::Rule<Svc::CCSDS::ApidManagerTester>* rules[] = {
-            &rule1,
-            &rule2,
-            &rule3,
-            &rule4,
-            &rule5
+            &getExistingSeqCountRule,
+            &getNewSeqCountOkRule,
+            &getNewSeqCountTableFullRule,
+            &validateSeqCountOkRule,
+            &validateSeqCountFailureRule
     };
 
     // Take the rules and place them into a random scenario

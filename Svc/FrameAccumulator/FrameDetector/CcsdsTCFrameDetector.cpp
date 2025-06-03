@@ -45,7 +45,7 @@ FrameDetector::Status CcsdsTCFrameDetector::detect(const Types::CircularBuffer& 
 
     const U16 frame_data_length = header.getvcIdAndLength() & CCSDS::TCSubfields::FrameLengthMask;
     const FwSizeType expected_frame_length = frame_data_length + CCSDS::TCHeader::SERIALIZED_SIZE + CCSDS::TCTrailer::SERIALIZED_SIZE;
-    const U16 data_to_crc_length = frame_data_length + CCSDS::TCHeader::SERIALIZED_SIZE;
+    const U16 data_to_crc_length = static_cast<U16>(frame_data_length + CCSDS::TCHeader::SERIALIZED_SIZE);
 
     if (data.get_allocated_size() < expected_frame_length) {
         size_out = expected_frame_length;
