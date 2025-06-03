@@ -38,6 +38,8 @@ first in first out (FIFO) order.
 
 `Fw/DataStructures` provides the following FIFO queue templates:
 
+* [`FifoQueueBase`](FifoQueueBase.md)
+
 * [`ExternalFifoQueue`](ExternalFifoQueue.md)
 
 * [`FifoQueue`](FifoQueue.md)

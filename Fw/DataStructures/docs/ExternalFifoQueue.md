@@ -14,7 +14,12 @@ storing the items on the queue.
 |----|----|-------|
 |`typename`|`T`|The type of an item on the queue|
 
-## 2. Private Member Variables
+## 2. Base Class
+
+`ExternalFifoQueue<T>` is publicly derived from 
+[`FifoQueueBase<T>`](FifoQueueBase.md).
+
+## 3. Private Member Variables
 
 `ExternalFifoQueue` has the following private member variables.
 
@@ -25,7 +30,7 @@ storing the items on the queue.
 |`m_dequeueIndex`|[`CircularIndex`](CircularIndex.md)|The dequeue index|`CircularIndex(m_items.size(), 0)`|
 |`m_size`|`FwSizeType`|The number of items on the queue|0|
 
-## 3. Public Constructors and Destructors
+## 4. Public Constructors and Destructors
 
 **Zero-argument constructor:**
 
@@ -33,23 +38,28 @@ storing the items on the queue.
 ExternalFifoQueue()
 ```
 
-`ExternalFifoQueue` is a `final` class template representing a FIFO queue with 
-internal storage.
-It maintains an `Array` for storing the items on the queue.
+Initialize the member variables with their default values.
+
+_Example:_
+```c++
+ExternalFifoQueue()
+```
 
 **Constructor providing backing storage:**
 
 ```c++
-ExternalFifoQueue(T* items, FwSizeType size)
+ExternalFifoQueue(T* items, FwSizeType capacity)
 ```
 
-Initialize `m_items` with `items` and `size`.
+1. Initialize `m_items` with `ExternalArray<T>(items, capacity)`.
+
+1. Initialize the other member variables with their default values.
 
 _Example:_
 ```c++
-constexpr FwSizeType size = 10;
-U32 items[size];
-ExternalFifoQueue queue(items, size);
+constexpr FwSizeType capacity = 10;
+U32 items[capacity];
+ExternalFifoQueue queue(items, capacity);
 ```
 
 **Copy constructor:**
@@ -58,41 +68,71 @@ ExternalFifoQueue queue(items, size);
 ExternalFifoQueue(const ExternalFifoQueue<T>& queue)
 ```
 
-1. Set `m_items = queue.m_items`.
-
-1. Set `m_enqueueIndex = queue.m_enqueueIndex`.
-
-1. Set `m_dequeueIndex = queue.m_dequeueIndex`.
-
-1. Set `m_size = queue.size`.
+Set `*this = queue`.
 
 _Example:_
 ```c++
-constexpr FwSizeType size = 3;
-U32 items[size];
+constexpr FwSizeType capacity = 3;
+U32 items[capacity];
 // Call the constructor providing backing storage
-ExternalFifoQueue<U32> q1(elements, 10);
-// Enqueue an element
+ExternalFifoQueue<U32> q1(items, capacity);
+// Enqueue an item
 U32 value = 42;
 (void) q1.enqueue(value);
 // Call the copy constructor
-ExternalFifoQueue<U32> a2(a1);
+ExternalFifoQueue<U32> q2(q1);
+ASSERT_EQ(q2.getSize(), 1);
 ```
 
 **Destructor:**
 
 ```c++
-ExternalFifoQueue()
+~ExternalFifoQueue() override
 ```
 
 Defined as `= default`.
 
-## 4. Public Member Functions
+## 5. Public Member Functions
 
-**operator[]:**
+**Copy assignment operator:**
 
 ```c++
-const T& operator[](FwSizeType i) const
+ExternalFifoQueue<T>& operator=(const ExternalFifoQueue<T>& queue)
+```
+
+1. If `&queue == this` then do nothing.
+
+1. Otherwise 
+
+    1. Set `m_items = queue.m_items`.
+
+    1. Set `m_enqueueIndex = queue.m_enqueueIndex`.
+
+    1. Set `m_dequeueIndex = queue.m_dequeueIndex`.
+
+    1. Set `m_size = queue.size`.
+
+_Example:_
+```c++
+constexpr FwSizeType capacity = 3;
+U32 items[capacity];
+// Call the constructor providing backing storage
+ExternalFifoQueue<U32> q1(items, capacity);
+// Enqueue an item
+U32 value = 42;
+(void) q1.enqueue(value);
+// Call the default constructor
+ExternalFifoQueue q2;
+ASSERT_EQ(q2.getSize(), 0);
+// Call the copy assignment operator
+q2 = q1;
+ASSERT_EQ(q2.getSize(), 1);
+```
+
+**at:**
+
+```c++
+const T& at(FwSizeType i) const override
 ```
 
 1. Assert that `i < m_size`.
@@ -101,20 +141,20 @@ const T& operator[](FwSizeType i) const
 
 _Example:_
 ```c++
-constexpr FwSizeType size = 3;
-U32 elements[size] = {};
-ExternalFifoQueue<U32> queue(elements, size);
+constexpr FwSizeType capacity = 10;
+U32 items[size] = {};
+ExternalFifoQueue<U32> queue(items, capacity);
 const auto status = queue.enqueue(3);
 // Constant access
-ASSERT_EQ(queue[0], 3);
+ASSERT_EQ(queue.at(0), 3);
 // Out-of-bounds access
-ASSERT_DEATH(queue[1], "Assert");
+ASSERT_DEATH(queue.at(1), "Assert");
 ```
 
 **clear:**
 
 ```c++
-void clear()
+void clear() override
 ```
 
 1. Call `m_enqueueIndex.setValue(0)`.
@@ -123,12 +163,11 @@ void clear()
 
 1. Set `m_size = 0`.
 
-
 _Example:_
 ```c++
-constexpr FwSizeType size = 3;
-U32 elements[size] = {};
-ExternalFifoQueue<U32> queue(elements, size);
+constexpr FwSizeType capacity = 10;
+U32 items[capacity] = {};
+ExternalFifoQueue<U32> queue(items, capacity);
 const auto status = queue.enqueue(3);
 ASSERT_EQ(queue.getSize(), 1);
 queue.clear();
@@ -145,77 +184,134 @@ Call `m_items.setStorage(items, size)`.
 
 _Example:_
 ```c++
-constexpr FwSizeType size = 3;
+constexpr FwSizeType capacity = 10;
 ExternalFifoQueue<U32> queue;
-U32 elements[size];
-queue.setStorage(elements, size);
+U32 items[capacity];
+queue.setStorage(items, capacity);
 ```
 
-**copyItemsFrom:**
+**copyDataFrom:**
 
 ```c++
-void copyItemsFrom(const ExternalFifoQueue<T>& queue)
+void copyDataFrom(const FifoQueueBase<T>& queue) override
 ```
 
-TODO
+1. Call `clear()`.
+
+1. For `i` from 0 to `queue.getSize() - 1`
+
+    1. Set `const auto status = enqueue(queue.at(i))`
+
+    1. Assert `status == Fw::Success::SUCCESS`.
+
+_Example:_
+```c++
+constexpr FwSizeType capacity = 3;
+U32 items1[capacity];
+// Call the constructor providing backing storage
+ExternalFifoQueue<U32> q1(items1, capacity);
+// Enqueue an item
+U32 value = 42;
+(void) q1.enqueue(value);
+U32 items2[capacity];
+// Call the constructor providing backing storage
+ExternalFifoQueue<U32> q2(items2, capacity);
+ASSERT_EQ(q2.getSize(), 0);
+q2.copyDataFrom(q1);
+ASSERT_EQ(q2.getSize(), 1);
+```
 
 **enqueue:**
 
 ```c++
-Fw::Success enqueue(const T& e)
+Fw::Success enqueue(const T& e) override
 ```
 
-TODO
+1. Set `status = Fw::Success::FAILURE`.
 
-**peek:**
+1. If `m_size < m_capacity` then
 
-```c++
-Fw::Success peek(T& e)
-```
+    1. Set `i = m_enqueueIndex.getValue()`.
 
-1. If `m_size == 0` return `Fw::Success::FAILURE`.
+    1. Set `m_items[i] = e`.
 
-1. Otherwise
+    1. Call `m_enqueueIndex.increment()`.
 
-    1. Set `e = (*this)[m_size - 1]`.
+    1. Increment `m_size`.
 
-    1. Return `Fw::Success::SUCCESS`.
+1. Return `status`.
 
 _Example:_
 ```c++
-constexpr FwSizeType size = 3;
-U32 elements[size] = {};
-ExternalFifoQueue<U32> queue(elements, size);
-U32 value = 0;
-auto status = queue.peek(value);
-ASSERT_EQ(status, Fw::Success::FAILURE);
-status = queue.enqueue(3);
+constexpr FwSizeType capacity = 3;
+U32 items[capacity];
+ExternalFifoQueue<U32> queue(items, capacity);
+ASSERT_EQ(queue.getSize(), 0);
+auto status = queue.enqueue(42);
 ASSERT_EQ(status, Fw::Success::SUCCESS);
-status = queue.peek(value);
-ASSERT_EQ(status, Fw::Success::SUCCESS);
-ASSERT_EQ(value, 3);
+ASSERT_EQ(queue.getSize(), 1);
 ```
 
 **dequeue:**
 
 ```c++
-Fw::Success dequeue(T& e)
+Fw::Success dequeue(T& e) override
 ```
 
-TODO
+1. Set `status = Fw::Success::FAILURE`.
+
+1. If `m_size > 0` then
+
+    1. Set `i = m_dequeueIndex.getValue()`.
+
+    1. Set `e = m_items[i]`.
+
+    1. Call `m_dequeueIndex.increment()`.
+
+    1. Decrement `m_size`.
+
+1. Return `status`.
+
+_Example:_
+```c++
+constexpr FwSizeType capacity = 3;
+U32 items[capacity];
+ExternalFifoQueue<U32> queue(items, capacity);
+U32 val;
+auto status = queue.dequeue(val);
+ASSERT_EQ(status, Fw::Success::FAILURE);
+status = queue.enqueue(42);
+ASSERT_EQ(status, Fw::Success::SUCCESS);
+status = queue.dequeue(val);
+ASSERT_EQ(status, Fw::Success::SUCCESS);
+ASSERT_EQ(val, 42);
+```
 
 **getSize:**
 
 ```c++
-FwSizeType getSize() const
+FwSizeType getSize() const override
 ```
 
-TODO
+Return `m_size`.
+
+_Example:_
+```c++
+constexpr FwSizeType capacity = 10;
+U32 items[capacity];
+ExternalFifoQueue<U32> queue(items, capacity);
+auto size = queue.getSize();
+ASSERT_EQ(size, 0);
+const auto status = queue.enqueue(3);
+ASSERT_EQ(status, Fw::Success::SUCCESS);
+size = queue.getSize();
+ASSERT_EQ(size, 1);
+```
 
 **getCapacity:**
 
 ```c++
-FwSizeType getCapacity() const
+FwSizeType getCapacity() const override
 ```
 
 TODO

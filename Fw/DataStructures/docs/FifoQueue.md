@@ -17,7 +17,12 @@ for storing the items on the queue.
 
 `FifoQueue` statically asserts that `C > 0`.
 
-## 2. Private Member Variables
+## 2. Base Class
+
+`ExternalFifoQueue<T>` is publicly derived from 
+[`FifoQueueBase<T>`](FifoQueueBase.md).
+
+## 3. Private Member Variables
 
 `FifoQueue` has the following private member variables.
 
@@ -26,7 +31,7 @@ for storing the items on the queue.
 |`m_extQueue`|`ExternalFifoQueue<T>`|The external queue implementation|C++ default initialization|
 |`m_array`|`Array<T, C>`|The array providing the backing memory for `m_extQueue`|C++ default initialization|
 
-## 3. Public Constructors and Destructors
+## 4. Public Constructors and Destructors
 
 **Zero-argument constructor:**
 
@@ -70,7 +75,7 @@ ASSERT_EQ(value, 3);
 
 Defined as `= default`.
 
-## 4. Public Member Functions
+## 5. Public Member Functions
 
 **operator[]:**
 
