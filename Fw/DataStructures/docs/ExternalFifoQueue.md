@@ -137,7 +137,9 @@ const T& at(FwSizeType i) const override
 
 1. Assert that `i < m_size`.
 
-1. Return `m_items[(m_enqueueIndex + i) % m_items.size()]`.
+1. Set `ci = m_enqueueIndex.increment(i)`.
+
+1. Return `m_items[ci]`.
 
 _Example:_
 ```c++

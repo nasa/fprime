@@ -1,6 +1,7 @@
 # 1. CircularIndex
 
-`CircularIndex` represents an index value that
+`CircularIndex` is a `final` class.
+It represents an index value that
 wraps around modulo an integer.
 
 ## 1. Private Member Variables
@@ -14,15 +15,15 @@ wraps around modulo an integer.
 
 ## 2. Public Constructors and Destructors
 
-**Zero-argument constructor:**
+### 2.1. Zero-Argument Constructor
 
 ```c++
 CircularIndex()
 ```
 
-Initialize the member variables with their default values.
+Defined as `= default`.
 
-**Constructor with specified members:**
+### 2.2. Constructor with Specified Members
 
 ```c++
 CircularIndex(FwSizeType modulus, FwSizeType value = 0)
@@ -34,9 +35,37 @@ CircularIndex(FwSizeType modulus, FwSizeType value = 0)
 
 1. Call `setValue(value)`.
 
+### 2.3. Copy Constructor
+
+```c++
+CircularIndex(const CircularIndex& ci)
+```
+
+Set `*this = ci`.
+
+### 2.4. Destructor
+
+```c++
+~CircularIndex()
+```
+
+Defined as `= default`.
+
 ## 3. Public Member Functions
 
-**getValue:**
+### 3.1. operator=
+
+```c++
+CircularIndex& operator=(const CircularIndex& ci)
+```
+
+1. Set `m_value = ci.m_value`.
+
+1. Set `m_modulus = ci.m_modulus`.
+
+1. Return `*this`.
+
+### 3.2. getValue
 
 ```c++
 FwSizeType getValue() const
@@ -46,7 +75,7 @@ FwSizeType getValue() const
 
 1. Return `m_value`.
 
-**setValue:**
+### 3.3. setValue
 
 ```c++
 void setValue(FwSizeType value)
@@ -54,7 +83,7 @@ void setValue(FwSizeType value)
 
 Set `m_value = m_value % m_modulus`.
 
-**getModulus:**
+### 3.4. getModulus
 
 ```c++
 FwSizeType CircularIndex::getModulus() const
@@ -64,7 +93,7 @@ FwSizeType CircularIndex::getModulus() const
 
 1. Return `m_modulus`.
 
-**setModulus:**
+### 3.5. setModulus
 
 ```c++
 void setModulus(FwSizeType modulus)
@@ -74,7 +103,7 @@ void setModulus(FwSizeType modulus)
 
 2. Call `setValue(m_value)`.
 
-**increment:**
+### 3.6. increment
 
 ```c++
 FwSizeType increment(FwSizeType amount = 1)
@@ -86,7 +115,7 @@ FwSizeType increment(FwSizeType amount = 1)
 
 1. Return `m_value`.
 
-**decrement:**
+### 3.7. decrement
 
 ```c++
 FwSizeType decrement(FwSizeType amount = 1)
