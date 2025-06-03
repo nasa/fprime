@@ -197,7 +197,8 @@ void FpySequencerTester::add_CMD(FwOpcodeType opcode) {
 
 void FpySequencerTester::add_CMD(FpySequencer_CmdDirective dir) {
     Fw::StatementArgBuffer buf;
-    FW_ASSERT(buf.serialize(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    FW_ASSERT(buf.serialize(dir.getopCode()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    FW_ASSERT(buf.serialize(dir.getargBuf(), dir.get_argBufSize(), true) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     addDirective(Fpy::DirectiveId::CMD, buf);
 }
 

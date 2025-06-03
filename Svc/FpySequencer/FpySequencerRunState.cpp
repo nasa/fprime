@@ -29,6 +29,7 @@ Signal FpySequencer::dispatchStatement() {
     }
 
     if (this->m_runtime.currentStatementOpcode == Fpy::DirectiveId::CMD) {
+        printf("deserialized a cmd %d\n", directiveUnion.cmd.getopCode());
         // update the opcode of the cmd we will await
         this->m_runtime.currentCmdOpcode = directiveUnion.cmd.getopCode();
     }
@@ -39,11 +40,7 @@ Signal FpySequencer::dispatchStatement() {
 
     this->m_statementsDispatched++;
 
-    if (result == Fw::Success::SUCCESS) {
-        return Signal::result_dispatchStatement_success;
-    } else {
-        return Signal::result_dispatchStatement_failure;
-    }
+    return Signal::result_dispatchStatement_success;
 }
 
 // deserializes a directive from bytes into the Fpy type
@@ -79,6 +76,7 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
             break;
         }
         case Fpy::DirectiveId::SET_LVAR: {
+            new (&deserializedDirective.setLVar) FpySequencer_SetLocalVarDirective();
             // set local var has some custom deserialization behavior
             // we don't write a custom class for it though because that deserialization behavior only
             // applies for the initial time we deserialize it out of the statement
@@ -98,7 +96,6 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
                 return Fw::Success::FAILURE;
             }
 
-            new (&deserializedDirective.setLVar) FpySequencer_SetLocalVarDirective();
             deserializedDirective.setLVar.setindex(index);
 
             // okay, now deserialize the remaining bytes in the stmt arg buf into the value buf
@@ -185,11 +182,21 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
             new (&deserializedDirective.cmd) FpySequencer_CmdDirective();
             // same deserialization behavior as SET_LVAR
 
-            //  how many bytes are left?
-            FwSizeType valueSize = argBuf.getBuffLeft();
+            // first deserialize the opcode
+            FwOpcodeType opcode;
+            status = argBuf.deserialize(opcode);
+            if (status != Fw::SerializeStatus::FW_SERIALIZE_OK) {
+                this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), this->m_runtime.nextStatementIndex - 1,
+                                                               status, argBuf.getBuffLeft(), argBuf.getBuffLength());
+                return Fw::Success::FAILURE;
+            }
 
-            // check to make sure the value will fit in the FpySequencer_SetLocalVarDirective::value buf
-            if (valueSize > Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE) {
+            deserializedDirective.cmd.setopCode(opcode);
+            //  how many bytes are left?
+            FwSizeType cmdArgBufSize = argBuf.getBuffLeft();
+
+            // check to make sure the value will fit in the FpySequencer_CmdDirective::argBuf
+            if (cmdArgBufSize > Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE) {
                 this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), this->m_runtime.nextStatementIndex - 1,
                                                                Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR,
                                                                argBuf.getBuffLeft(), argBuf.getBuffLength());
@@ -197,7 +204,7 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
             }
 
             // okay, it will fit. put it in
-            status = argBuf.deserialize(deserializedDirective.setLVar.getvalue(), valueSize, true);
+            status = argBuf.deserialize(deserializedDirective.cmd.getargBuf(), cmdArgBufSize, true);
 
             if (status != Fw::SerializeStatus::FW_SERIALIZE_OK) {
                 this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), this->m_runtime.nextStatementIndex - 1,
@@ -209,7 +216,7 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
             FW_ASSERT(argBuf.getBuffLeft() == 0, static_cast<FwAssertArgType>(argBuf.getBuffLeft()));
 
             // and set the buf size now that we know it
-            deserializedDirective.setLVar.set_valueSize(valueSize);
+            deserializedDirective.cmd.set_argBufSize(cmdArgBufSize);
             break;
         }
         default: {
@@ -255,6 +262,10 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
         }
         case Fpy::DirectiveId::GET_PRM: {
             this->directive_getPrm_internalInterfaceInvoke(directive.getPrm);
+            break;
+        }
+        case Fpy::DirectiveId::CMD: {
+            this->directive_cmd_internalInterfaceInvoke(directive.cmd);
             break;
         }
         default: {

@@ -17,6 +17,10 @@ void FpySequencer::sendSignal(Signal signal) {
             this->sequencer_sendSignal_stmtResponse_failure();
             break;
         }
+        case Signal::stmtResponse_keepWaiting: {
+            this->sequencer_sendSignal_stmtResponse_keepWaiting();
+            break;
+        }
         default: {
             FW_ASSERT(0, static_cast<FwAssertArgType>(signal));
         }
