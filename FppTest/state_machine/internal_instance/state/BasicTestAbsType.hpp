@@ -48,7 +48,7 @@ class BasicTestAbsType : public BasicTestAbsTypeComponentBase {
     //! The type FppTest_SmState_BasicTestAbsType
     using SmState_BasicTestAbsType = FppTest_SmState_BasicTestAbsType;
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Implementations for internal state machine actions
     // ----------------------------------------------------------------------

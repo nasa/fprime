@@ -48,7 +48,7 @@ class BasicTestArray : public BasicTestArrayComponentBase {
     //! The type FppTest_SmState_BasicTestArray
     using SmState_BasicTestArray = FppTest_SmState_BasicTestArray;
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Implementations for internal state machine actions
     // ----------------------------------------------------------------------

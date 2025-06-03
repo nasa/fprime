@@ -48,7 +48,7 @@ class Internal : public InternalComponentBase {
     //! The type FppTest_SmState_Internal
     using SmState_Internal = FppTest_SmState_Internal;
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Implementations for internal state machine actions
     // ----------------------------------------------------------------------

@@ -49,7 +49,7 @@ class BasicGuard : public BasicGuardComponentBase {
     //! Destroy BasicGuard object
     ~BasicGuard();
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Implementations for internal state machine actions
     // ----------------------------------------------------------------------
@@ -61,7 +61,7 @@ class BasicGuard : public BasicGuardComponentBase {
                                              FppTest_SmState_BasicGuard::Signal signal  //!< The signal
                                              ) override;
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Implementations for internal state machine guards
     // ----------------------------------------------------------------------
