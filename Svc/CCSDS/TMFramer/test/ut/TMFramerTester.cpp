@@ -77,8 +77,10 @@ void TMFramerTester ::testNominalFraming() {
     FwSizeType expectedIdleDataOffset = TMHeader::SERIALIZED_SIZE + sizeof(bufferData) + SpacePacketHeader::SERIALIZED_SIZE;
 
     // The frame is composed of the payload + a SpacePacket Idle Packet (Header + idle_pattern)
+    const U8 idlePattern = this->component.IDLE_DATA_PATTERN;
     for (FwSizeType i = expectedIdleDataOffset; i < ComCfg::TmFrameFixedSize - TMTrailer::SERIALIZED_SIZE; ++i) {
-        ASSERT_EQ(outBuffer.getData()[i], 0x44);
+        ASSERT_EQ(outBuffer.getData()[i], idlePattern)
+            << "Idle data at index " << i << " does not match expected idle pattern";
     }
 }
 

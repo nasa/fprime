@@ -49,8 +49,6 @@ class TMFramer final : public TMFramerComponentBase {
     //! This is essentially the CCSDS TM VCP.request Service Primitive, with
     //! Packet=data and GVCID implicitly passed in context (TM Protocol 3.3.3.2)
     //!
-    //! TODO: mention context values that are being used 
-    //!
     void dataIn_handler(FwIndexType portNum,  //!< The port number
                         Fw::Buffer& data,
                         const ComCfg::FrameContext& context) override;

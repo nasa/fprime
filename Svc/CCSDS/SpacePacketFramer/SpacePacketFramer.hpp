@@ -43,6 +43,9 @@ class SpacePacketFramer final : public SpacePacketFramerComponentBase {
     //! Handler implementation for dataIn
     //!
     //! Port to receive data to frame, in a Fw::Buffer with optional context
+    //!
+    //! Header fields are set according to the CCSDS Space Packet standard, and
+    //! is described in the component SDD.
     void dataIn_handler(FwIndexType portNum,  //!< The port number
                         Fw::Buffer& data,
                         const ComCfg::FrameContext& context) override;

@@ -9,6 +9,20 @@ The `Svc::CCSDS::SpacePacketFramer` is typically used upstream of a component th
 ## Configuration
 The `Svc::CCSDS::SpacePacketFramer` requires an Application Process Identifier (APID) for the Space Packets it generates. This APID is typically provided during instantiation or configuration. It also uses a sequence count, which is managed per APID via the `getApidSeqCount` port.
 
+## CCSDS Header Fields
+
+For each Space Packet generated, the `Svc::CCSDS::SpacePacketFramer` will populate the CCSDS Space Packet Primary Header fields as follows:
+
+| Field | Value | Notes |
+|---|---|---|
+| Version Number | 000 | As per protocol 4.1.3.2 |
+| Packet Type | 0 (Telemetry) | SpacePacketFramer emits reporting packets only (no commanding), as per 4.1.3.3.2 |
+| Secondary Header Flag | 0 | F Prime does not use secondary headers formally |
+| Application Process Identifier (APID) | Uses value passed in the `context` argument | Project APIDs are defined in `config/ComCfg.fpp` |
+| Sequence Flags | `0b11` (Unsegmented) | Unsegmented user data, F´ data fits in a single packet |
+| Packet Sequence Count | Incremented for each packet, unique count per APID | Managed externally by a [`Svc::CCSDS::ApidManager`](../../ApidManager/docs/sdd.md) |
+| Packet Data Length | Set to the length of the passed in data | Calculated based on the length of the data received on `dataIn` |
+
 ## Port Descriptions
 
 | Kind | Name | Port Type | Description |
@@ -33,8 +47,3 @@ The `Svc::CCSDS::SpacePacketFramer` requires an Application Process Identifier (
 | SPF-008 | The SpacePacketFramer shall correctly populate all mandatory fields of the Space Packet Primary Header, including Version Number, Packet Type, Secondary Header Flag, APID, Sequence Flags, Packet Sequence Count, and Packet Data Length. | Unit Test |
 | SPF-009 | The SpacePacketFramer shall be configurable with an Application Process Identifier (APID) to be used in the Space Packet Header. | Inspection, Unit Test |
 | SPF-010 | The SpacePacketFramer shall accurately calculate and set the Packet Data Length field in the Space Packet header based on the length of the user data. | Unit Test |
-
-## Change Log
-| Date | Description |
-|---|---|
-| May 28, 2025 | Initial Draft |
