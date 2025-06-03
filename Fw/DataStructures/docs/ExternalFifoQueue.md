@@ -42,7 +42,7 @@ Initialize the member variables with their default values.
 
 _Example:_
 ```c++
-ExternalFifoQueue()
+ExternalFifoQueue<U32> queue;
 ```
 
 **Constructor providing backing storage:**
@@ -59,7 +59,7 @@ _Example:_
 ```c++
 constexpr FwSizeType capacity = 10;
 U32 items[capacity];
-ExternalFifoQueue queue(items, capacity);
+ExternalFifoQueue<U32> queue(items, capacity);
 ```
 
 **Copy constructor:**
