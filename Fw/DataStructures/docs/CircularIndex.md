@@ -1,6 +1,7 @@
 # CircularIndex
 
-`CircularIndex` is a `final` class.
+`CircularIndex` is a `final` class defined in
+[`Fw/DataStructures`](sdd.md).
 It represents an index value that
 wraps around modulo an integer.
 
