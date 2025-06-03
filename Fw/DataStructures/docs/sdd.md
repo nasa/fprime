@@ -13,7 +13,7 @@ The data structures defined here use the following concepts:
 For a fixed-size array, the size and the capacity are the same.
 For other data structures, the size and the capacity are not
 in general the same.
-For example, at all times a map has a fixed capacity _C_ and a size between 0 
+For example, a map has a capacity _C_ and a size between 0 
 and _C_.
 
 ## 1. Arrays

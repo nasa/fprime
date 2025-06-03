@@ -207,8 +207,8 @@ Set `m_elements = elements` and `m_size = size`.
 
 _Example:_
 ```c++
-constexpr FwSizeType size = 3;
 ExternalArray<U32> a;
+constexpr FwSizeType size = 3;
 U32 elements[size];
 a.setStorage(elements, size);
 ```
