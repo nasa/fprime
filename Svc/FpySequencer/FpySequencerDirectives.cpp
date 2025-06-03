@@ -227,31 +227,32 @@ Signal FpySequencer::getPrm_directiveHandler(const FpySequencer_GetPrmDirective&
     return Signal::stmtResponse_success;
 }
 
-Signal FpySequencer::cmd_directiveHandler(const FpySequencer_GetPrmDirective& directive) {
+Signal FpySequencer::cmd_directiveHandler(const FpySequencer_CmdDirective& directive) {
     Fw::ComBuffer cmdBuf;
     Fw::SerializeStatus stat = cmdBuf.serialize(Fw::ComPacket::FW_PACKET_COMMAND);
     // TODO should I assert here? this really shouldn't fail, I should just add a static assert
     // on com buf size and then assert here
     if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
-        this->log_WARNING_HI_CommandSerializeError(stmt.getopCode(), cmdBuf.getBuffCapacity(), cmdBuf.getBuffLength(),
+        this->log_WARNING_HI_CommandSerializeError(directive.getopCode(), cmdBuf.getBuffCapacity(), cmdBuf.getBuffLength(),
                                                    sizeof(Fw::ComPacket::FW_PACKET_COMMAND), stat,
                                                    this->m_runtime.nextStatementIndex - 1);
-        return Fw::Success::FAILURE;
+        return Signal::stmtResponse_failure;
     }
     // TODO same as above
-    stat = cmdBuf.serialize(stmt.getopCode());
+    stat = cmdBuf.serialize(directive.getopCode());
     if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
-        this->log_WARNING_HI_CommandSerializeError(stmt.getopCode(), cmdBuf.getBuffCapacity(), cmdBuf.getBuffLength(),
-                                                   sizeof(stmt.getopCode()), stat,
+        this->log_WARNING_HI_CommandSerializeError(directive.getopCode(), cmdBuf.getBuffCapacity(), cmdBuf.getBuffLength(),
+                                                   sizeof(directive.getopCode()), stat,
                                                    this->m_runtime.nextStatementIndex - 1);
-        return Fw::Success::FAILURE;
+        return Signal::stmtResponse_failure;
     }
-    stat = cmdBuf.serialize(stmt.getargBuf().getBuffAddr(), stmt.getargBuf().getBuffLength(), true);
+    stat = cmdBuf.serialize(directive.getargBuf(), directive.get_argBufSize(), true);
     if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
-        this->log_WARNING_HI_CommandSerializeError(stmt.getopCode(), cmdBuf.getBuffCapacity(), cmdBuf.getBuffLength(),
-                                                   stmt.getargBuf().getBuffLength(), stat,
+        // most failures of directives are not error messages... TODO should this just fail silently?
+        this->log_WARNING_HI_CommandSerializeError(directive.getopCode(), cmdBuf.getBuffCapacity(), cmdBuf.getBuffLength(),
+                                                   directive.get_argBufSize(), stat,
                                                    this->m_runtime.nextStatementIndex - 1);
-        return Fw::Success::FAILURE;
+        return Signal::stmtResponse_failure;
     }
 
     // calculate the unique command identifier:
@@ -269,7 +270,7 @@ Signal FpySequencer::cmd_directiveHandler(const FpySequencer_GetPrmDirective& di
     // always get processed first, leaving us in the right state for the cmdresponse
     this->cmdOut_out(0, cmdBuf, cmdUid);
 
-    return Fw::Success::SUCCESS;
-    return Signal::stmtResponse_success;
+    // now tell the SM to wait some more until we get the cmd response back
+    return Signal::stmtResponse_keepWaiting;
 }
 }  // namespace Svc

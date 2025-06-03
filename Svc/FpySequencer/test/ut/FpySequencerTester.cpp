@@ -104,7 +104,9 @@ void FpySequencerTester::resetRuntime() {
     new (&cmp.m_runtime) FpySequencer::Runtime();
 }
 
-void FpySequencerTester::addStmt(const Fpy::Statement& stmt) {
+void FpySequencerTester::addDirective(Fpy::DirectiveId id, Fw::StatementArgBuffer& buf) {
+    Fpy::Statement stmt(id.e, buf);
+
     // if fails, cannot add a new stmt (out of space)
     FW_ASSERT(seq.getheader().getstatementCount() < std::numeric_limits<U16>::max());
 
@@ -113,17 +115,6 @@ void FpySequencerTester::addStmt(const Fpy::Statement& stmt) {
     seq.getheader().setstatementCount(static_cast<U16>(stateCount + 1));
 }
 
-void FpySequencerTester::addCmd(FwOpcodeType opcode) {
-    Fpy::Statement stmt(Fpy::StatementType::COMMAND, opcode, Fw::StatementArgBuffer());
-
-    addStmt(stmt);
-}
-
-void FpySequencerTester::addDirective(Fpy::DirectiveId id, Fw::StatementArgBuffer& buf) {
-    Fpy::Statement stmt(Fpy::StatementType::DIRECTIVE, static_cast<FwOpcodeType>(id.e), buf);
-
-    addStmt(stmt);
-}
 void FpySequencerTester::add_WAIT_REL(Fw::TimeInterval duration) {
     add_WAIT_REL(FpySequencer_WaitRelDirective(duration));
 }
@@ -198,6 +189,16 @@ void FpySequencerTester::add_GET_PRM(FpySequencer_GetPrmDirective dir) {
     Fw::StatementArgBuffer buf;
     FW_ASSERT(buf.serialize(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     addDirective(Fpy::DirectiveId::GET_PRM, buf);
+}
+
+void FpySequencerTester::add_CMD(FwOpcodeType opcode) {
+    add_CMD(FpySequencer_CmdDirective(opcode, 0, 0));
+}
+
+void FpySequencerTester::add_CMD(FpySequencer_CmdDirective dir) {
+    Fw::StatementArgBuffer buf;
+    FW_ASSERT(buf.serialize(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    addDirective(Fpy::DirectiveId::CMD, buf);
 }
 
 //! Handle a text event

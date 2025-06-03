@@ -467,6 +467,22 @@ class FpySequencer : public FpySequencerComponentBase {
             // the size of the data in the lvar buf
             FwSizeType valueSize = 0;
         } localVariables[Fpy::MAX_SEQUENCE_LOCAL_VARIABLES] = {};
+
+        // all the registers in the sequence
+        struct Registers {
+            bool b0 = false;
+            bool b1 = false;
+            bool b2 = false;
+            bool b3 = false;
+            F64 f0 = 0.0;
+            F64 f1 = 0.0;
+            F64 f2 = 0.0;
+            F64 f3 = 0.0;
+            I64 i0 = 0;
+            I64 i1 = 0;
+            I64 i2 = 0;
+            I64 i3 = 0;
+        } reg;
     } m_runtime;
 
     // the state of the debugger. debugger is separate from runtime
@@ -539,7 +555,6 @@ class FpySequencer : public FpySequencerComponentBase {
     Fw::Success deserializeDirective(const Fpy::Statement& stmt, DirectiveUnion& deserializedDirective);
 
     // dispatches a deserialized sequencer directive to the right handler.
-    // return success if successfully handled.
     void dispatchDirective(const DirectiveUnion& directive, const Fpy::DirectiveId& id);
 
     // checks whether the currently executing statement timed out
@@ -571,7 +586,7 @@ class FpySequencer : public FpySequencerComponentBase {
     Signal noOp_directiveHandler(const FpySequencer_NoOpDirective& directive);
     Signal getTlm_directiveHandler(const FpySequencer_GetTlmDirective& directive);
     Signal getPrm_directiveHandler(const FpySequencer_GetPrmDirective& directive);
-    Signal cmd_directiveHandler(const FpySequencer_GetPrmDirective& directive);
+    Signal cmd_directiveHandler(const FpySequencer_CmdDirective& directive);
 };
 
 }  // namespace Svc

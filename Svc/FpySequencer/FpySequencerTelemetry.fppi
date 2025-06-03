@@ -24,6 +24,8 @@ telemetry SeqPath: string size FileNameStringSize update on change
 struct DebugTelemetry {
     @ true if there are no statements remaining in the sequence file
     reachedEndOfFile: bool
+    @ true if we were able to deserialize the next statement successfully
+    nextStatementReadSuccess: bool
     @ the opcode of the next statement to dispatch.
     nextStatementOpcode: U8
     @ if the next statement is a cmd directive, the opcode of that cmd

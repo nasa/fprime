@@ -78,8 +78,6 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     // writes up to maxBytes bytes
     void writeToFile(const char* name, FwSizeType maxBytes = Fpy::Sequence::SERIALIZED_SIZE);
     void removeFile(const char* name);
-    void addStmt(const Fpy::Statement& stmt);
-    void addCmd(FwOpcodeType opcode);
     void addDirective(Fpy::DirectiveId id, Fw::StatementArgBuffer& buf);
 
     void add_WAIT_REL(Fw::TimeInterval duration);
@@ -97,6 +95,8 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     void add_GET_TLM(FpySequencer_GetTlmDirective dir);
     void add_GET_PRM(U8 lvarIdx, FwPrmIdType id);
     void add_GET_PRM(FpySequencer_GetPrmDirective dir);
+    void add_CMD(FwOpcodeType opcode);
+    void add_CMD(FpySequencer_CmdDirective dir);
     //! Handle a text event
     void textLogIn(FwEventIdType id,                //!< The event ID
                    const Fw::Time& timeTag,         //!< The time

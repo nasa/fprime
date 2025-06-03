@@ -17,24 +17,25 @@ Signal FpySequencer::dispatchStatement() {
     const Fpy::Statement& nextStatement = this->m_sequenceObj.getstatements()[this->m_runtime.nextStatementIndex];
     this->m_runtime.nextStatementIndex++;
     this->m_runtime.currentStatementOpcode = nextStatement.getopCode();
-    this->m_runtime.currentStatementType = nextStatement.gettype();
-    this->m_runtime.currentStatementDispatchTime = getTime();
+    this->m_runtime.currentCmdOpcode = 0; // we haven't deserialized the directive yet, so we don't know if it's a cmd
 
     Fw::Success result;
+    DirectiveUnion directiveUnion;
 
-    // based on the statement type (directive or cmd)
-    // send it to where it needs to go
-    if (nextStatement.gettype() == Fpy::StatementType::DIRECTIVE) {
-        // directives need to be deserialized first before dispatching
-        DirectiveUnion directiveUnion;
-        result = this->deserializeDirective(nextStatement, directiveUnion);
-        if (result) {
-            this->dispatchDirective(directiveUnion,
-                                    Fpy::DirectiveId(static_cast<Fpy::DirectiveId::T>(nextStatement.getopCode())));
-        }
-    } else {
-        result = this->dispatchCommand(nextStatement);
+    result = this->deserializeDirective(nextStatement, directiveUnion);
+
+    if (!result) {
+        return Signal::result_dispatchStatement_failure;
     }
+
+    if (this->m_runtime.currentStatementOpcode == Fpy::DirectiveId::CMD) {
+        // update the opcode of the cmd we will await
+        this->m_runtime.currentCmdOpcode = directiveUnion.cmd.getopCode();
+    }
+
+    this->dispatchDirective(directiveUnion,
+                            Fpy::DirectiveId(static_cast<Fpy::DirectiveId::T>(nextStatement.getopCode())));
+    this->m_runtime.currentStatementDispatchTime = getTime(); // set dispatch time right after we have successfully dispatched
 
     this->m_statementsDispatched++;
 
@@ -45,16 +46,10 @@ Signal FpySequencer::dispatchStatement() {
     }
 }
 
-// dispatches a command out via port.
-// return true if successfully dispatched.
-Fw::Success FpySequencer::dispatchCommand(const Fpy::Statement& stmt) {
-}
-
 // deserializes a directive from bytes into the Fpy type
 // returns success if able to deserialize, and returns the Fpy type object
 // as a reference, in a union of all the possible directive type objects
 Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, DirectiveUnion& deserializedDirective) {
-    FW_ASSERT(stmt.gettype() == Fpy::StatementType::DIRECTIVE);
     Fw::SerializeStatus status;
     // make our own esb so we can deser from stmt without breaking its constness
     Fw::ExternalSerializeBuffer argBuf(const_cast<U8*>(stmt.getargBuf().getBuffAddr()),
@@ -228,7 +223,6 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
 }
 
 // dispatches a deserialized sequencer directive to the right handler.
-// return success if successfully handled.
 void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy::DirectiveId& id) {
     switch (id) {
         case Fpy::DirectiveId::WAIT_REL: {
@@ -350,8 +344,16 @@ Signal FpySequencer::checkStatementTimeout() {
         return Signal::result_checkStatementTimeout_noTimeout;
     }
 
-    this->log_WARNING_HI_StatementTimedOut(this->m_runtime.currentStatementType, this->m_runtime.currentStatementOpcode,
-                                           this->m_runtime.nextStatementIndex - 1, this->m_sequenceFilePath);
+    // we timed out
+    if (this->m_runtime.currentStatementOpcode == Fpy::DirectiveId::CMD) {
+        // if we were executing a command, warn that the cmd timed out with its opcode
+        this->log_WARNING_HI_CommandTimedOut(this->m_runtime.currentCmdOpcode,
+                                             this->m_runtime.nextStatementIndex - 1, this->m_sequenceFilePath);
+    } else {
+        this->log_WARNING_HI_DirectiveTimedOut(this->m_runtime.currentStatementOpcode,
+                                               this->m_runtime.nextStatementIndex - 1, this->m_sequenceFilePath);
+    }
+
     return Signal::result_checkStatementTimeout_statementTimeout;
 }
 

@@ -196,6 +196,40 @@ TEST_F(FpySequencerTester, getPrm) {
     directive.setdestLvarIndex(0);
 }
 
+TEST_F(FpySequencerTester, cmd) {
+    U8 data[4] = {0x12, 0x23, 0x34, 0x45};
+    Fw::StatementArgBuffer buf(data, sizeof(data));
+    buf.setBuffLen(sizeof(data));
+    Fpy::Statement cmd(Fpy::DirectiveId::CMD, buf);
+    Fw::Success result = cmp.dispatchCommand(cmd);
+    ASSERT_EQ(result, Fw::Success::SUCCESS);
+
+    Fw::ComBuffer expected;
+    ASSERT_EQ(expected.serialize(Fw::ComPacket::FW_PACKET_COMMAND), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    ASSERT_EQ(expected.serialize(cmd.getopCode()), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    ASSERT_EQ(expected.serialize(buf.getBuffAddr(), buf.getBuffLength(), true), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    ASSERT_from_cmdOut_SIZE(1);
+    ASSERT_from_cmdOut(0, expected, 0);
+    this->clearHistory();
+
+    // try dispatching again, make sure cmd uid is right
+    cmp.m_statementsDispatched = 123;
+    result = cmp.dispatchCommand(cmd);
+    ASSERT_EQ(result, Fw::Success::SUCCESS);
+    ASSERT_from_cmdOut(0, expected, cmp.m_statementsDispatched);
+    this->clearHistory();
+
+    // modify sequences started, make sure correct
+    cmp.m_sequencesStarted = 456;
+    result = cmp.dispatchCommand(cmd);
+    ASSERT_EQ(result, Fw::Success::SUCCESS);
+    ASSERT_from_cmdOut(0, expected,
+                       (((cmp.m_sequencesStarted & 0xFFFF) << 16) | (cmp.m_statementsDispatched & 0xFFFF)));
+
+    cmd.settype(Fpy::StatementType::DIRECTIVE);
+    ASSERT_DEATH_IF_SUPPORTED(cmp.dispatchCommand(cmd), "Assert: ");
+}
+
 TEST_F(FpySequencerTester, checkShouldWakeMismatchBase) {
     Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 0, 100, 100);
     setTestTime(testTime);
@@ -547,7 +581,7 @@ TEST_F(FpySequencerTester, readBody) {
         ASSERT_EQ(cmp.m_sequenceBuffer.serialize(static_cast<U8>(123)), Fw::SerializeStatus::FW_SERIALIZE_OK);
     }
     // write some statements
-    Fpy::Statement stmt(Fpy::StatementType::DIRECTIVE, Fpy::DirectiveId::NO_OP, Fw::StatementArgBuffer());
+    Fpy::Statement stmt(Fpy::DirectiveId::NO_OP, Fw::StatementArgBuffer());
     for (U32 ii = 0; ii < Fpy::MAX_SEQUENCE_STATEMENT_COUNT; ii++) {
         ASSERT_EQ(cmp.m_sequenceBuffer.serialize(stmt), Fw::SerializeStatus::FW_SERIALIZE_OK);
     }
@@ -726,7 +760,6 @@ TEST_F(FpySequencerTester, dispatchStatement) {
     Signal result = cmp.dispatchStatement();
     ASSERT_EQ(result, Signal::result_dispatchStatement_success);
     ASSERT_EQ(cmp.m_runtime.currentStatementOpcode, Fpy::DirectiveId::NO_OP);
-    ASSERT_EQ(cmp.m_runtime.currentStatementType, Fpy::StatementType::DIRECTIVE);
     ASSERT_EQ(cmp.m_runtime.currentStatementDispatchTime, time);
     ASSERT_EQ(cmp.m_statementsDispatched, 1);
     // try dispatching again, should fail cuz no more stmts
@@ -743,51 +776,17 @@ TEST_F(FpySequencerTester, dispatchStatement) {
     time = Fw::Time(456, 123);
     setTestTime(time);
     // okay try adding a command
-    addCmd(123);
+    add_CMD(123);
     cmp.m_sequenceObj = seq;
     cmp.m_runtime.nextStatementIndex = 0;
     result = cmp.dispatchStatement();
     ASSERT_EQ(result, Signal::result_dispatchStatement_success);
-    ASSERT_EQ(cmp.m_runtime.currentStatementOpcode, 123);
-    ASSERT_EQ(cmp.m_runtime.currentStatementType, Fpy::StatementType::COMMAND);
+    ASSERT_EQ(cmp.m_runtime.currentStatementOpcode, Fpy::DirectiveId::CMD);
+    ASSERT_EQ(cmp.m_runtime.currentCmdOpcode, 123);
     ASSERT_EQ(cmp.m_runtime.currentStatementDispatchTime, time);
 
     cmp.m_runtime.nextStatementIndex = cmp.m_sequenceObj.getheader().getstatementCount() + 1;
     ASSERT_DEATH_IF_SUPPORTED(cmp.dispatchStatement(), "Assert: ");
-}
-
-TEST_F(FpySequencerTester, dispatchCommand) {
-    U8 data[4] = {0x12, 0x23, 0x34, 0x45};
-    Fw::StatementArgBuffer buf(data, sizeof(data));
-    buf.setBuffLen(sizeof(data));
-    Fpy::Statement cmd(Fpy::StatementType::COMMAND, 123, buf);
-    Fw::Success result = cmp.dispatchCommand(cmd);
-    ASSERT_EQ(result, Fw::Success::SUCCESS);
-
-    Fw::ComBuffer expected;
-    ASSERT_EQ(expected.serialize(Fw::ComPacket::FW_PACKET_COMMAND), Fw::SerializeStatus::FW_SERIALIZE_OK);
-    ASSERT_EQ(expected.serialize(cmd.getopCode()), Fw::SerializeStatus::FW_SERIALIZE_OK);
-    ASSERT_EQ(expected.serialize(buf.getBuffAddr(), buf.getBuffLength(), true), Fw::SerializeStatus::FW_SERIALIZE_OK);
-    ASSERT_from_cmdOut_SIZE(1);
-    ASSERT_from_cmdOut(0, expected, 0);
-    this->clearHistory();
-
-    // try dispatching again, make sure cmd uid is right
-    cmp.m_statementsDispatched = 123;
-    result = cmp.dispatchCommand(cmd);
-    ASSERT_EQ(result, Fw::Success::SUCCESS);
-    ASSERT_from_cmdOut(0, expected, cmp.m_statementsDispatched);
-    this->clearHistory();
-
-    // modify sequences started, make sure correct
-    cmp.m_sequencesStarted = 456;
-    result = cmp.dispatchCommand(cmd);
-    ASSERT_EQ(result, Fw::Success::SUCCESS);
-    ASSERT_from_cmdOut(0, expected,
-                       (((cmp.m_sequencesStarted & 0xFFFF) << 16) | (cmp.m_statementsDispatched & 0xFFFF)));
-
-    cmd.settype(Fpy::StatementType::DIRECTIVE);
-    ASSERT_DEATH_IF_SUPPORTED(cmp.dispatchCommand(cmd), "Assert: ");
 }
 
 TEST_F(FpySequencerTester, deserialize_waitRel) {
