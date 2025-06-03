@@ -44,7 +44,7 @@ namespace ExampleComponents {
       //!
       ~ExampleComponentImpl();
 
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Handler implementations for user-defined typed input ports

@@ -239,7 +239,7 @@ namespace ${namespace} {
     void loadParameters();
 
 #end if
-  PROTECTED:
+  protected:
 
     // ----------------------------------------------------------------------
     // Component construction, initialization, and destruction
@@ -267,13 +267,13 @@ namespace ${namespace} {
 #end if
     );
 
-  PROTECTED:
+  protected:
     //! Destroy a ${name}ComponentBase object
     //!
     virtual ~${name}ComponentBase();
 
 #if $has_guarded_ports
-  PROTECTED:
+  protected:
 
     // ----------------------------------------------------------------------
     //! Mutex operations for guarded ports.
@@ -292,7 +292,7 @@ namespace ${namespace} {
 
 #end if
 #if len($handlers_typed) > 0:
-  PROTECTED:
+  protected:
 
     // ----------------------------------------------------------------------
     // Handlers to implement for typed input ports
@@ -313,7 +313,7 @@ $emit_port_params(8, $params)
     ) = 0;
 
   #end for
-  PROTECTED:
+  protected:
 
     // ----------------------------------------------------------------------
     // Port handler base-class functions for typed input ports.
@@ -338,7 +338,7 @@ $emit_port_params(8, $params)
   #end for
 #end if
 #if len($handlers_serial) > 0:
-  PROTECTED:
+  protected:
 
     // ----------------------------------------------------------------------
     // Handlers to implement for serial input ports
@@ -353,7 +353,7 @@ $emit_port_params(8, $params)
     ) = 0;
 
   #end for
-  PROTECTED:
+  protected:
 
     // ----------------------------------------------------------------------
     // Port handler base-class functions for serial input ports.
@@ -372,7 +372,7 @@ $emit_port_params(8, $params)
   #end for
 #end if
 #if len($pre_message_hooks_typed) > 0:
-  PROTECTED:
+  protected:
 
     // ----------------------------------------------------------------------
     // Pre-message hooks for typed async input ports.
@@ -398,7 +398,7 @@ $emit_port_params(8, $params)
   #end for
 #end if
 #if len($pre_message_hooks_serial) > 0:
-  PROTECTED:
+  protected:
 
     // ----------------------------------------------------------------------
     // Pre-message hooks for serial async input ports.
@@ -421,7 +421,7 @@ $emit_port_params(8, $params)
   #end for
 #end if
 #if len($typed_invocation_functions) > 0:
-  PROTECTED:
+  protected:
 
     // ----------------------------------------------------------------------
     // Invocation functions for typed output ports
@@ -444,7 +444,7 @@ $emit_port_params(8, $params)
   #end for
 #end if
 #if len($serial_invocation_functions) > 0:
-  PROTECTED:
+  protected:
 
     // ----------------------------------------------------------------------
     // Invocation functions for serial output ports
@@ -461,7 +461,7 @@ $emit_port_params(8, $params)
   #end for
 #end if
 #if $has_input_ports:
-  PROTECTED:
+  protected:
 
     // ----------------------------------------------------------------------
     // Getters for numbers of input ports
@@ -488,7 +488,7 @@ $emit_port_params(8, $params)
 
 #end if
 #if $has_output_ports
-  PROTECTED:
+  protected:
 
     // ----------------------------------------------------------------------
     // Getters for numbers of output ports
@@ -515,7 +515,7 @@ $emit_port_params(8, $params)
   #end for
     };
 
-  PROTECTED:
+  protected:
 
     // ----------------------------------------------------------------------
     // Connection status queries for output ports
@@ -539,7 +539,7 @@ $emit_port_params(8, $params)
   #end for
 #end if
 #if $kind == "queued":
-  PROTECTED:
+  protected:
 
     // ----------------------------------------------------------------------
     // Message dispatch
@@ -551,7 +551,7 @@ $emit_port_params(8, $params)
 
 #end if
 #if len($command_enums) > 0:
-  PROTECTED:
+  protected:
 
     // ----------------------------------------------------------------------
     // Command enums
@@ -568,7 +568,7 @@ $emit_port_params(8, $params)
   #end for
 #end if
 #if $has_commands or $has_parameters:
-  PROTECTED:
+  protected:
 
     // ----------------------------------------------------------------------
     // Command opcodes
@@ -610,7 +610,7 @@ $emit_port_params(8, $params)
 
 #end if
 #if $has_commands:
-  PROTECTED:
+  protected:
 
     // ----------------------------------------------------------------------
     // Command handlers to implement
@@ -638,7 +638,7 @@ $emit_non_port_params(8, $params)
   if $sync == "async" \
 ]
 #if len($mnemonics) > 0:
-  PROTECTED:
+  protected:
 
     // ----------------------------------------------------------------------
     // Pre-message hooks for async commands.
@@ -659,7 +659,7 @@ $emit_non_port_params(8, $params)
   #end for
 #end if
 #if $has_commands:
-  PROTECTED:
+  protected:
 
     // ----------------------------------------------------------------------
     // Command handler base-class functions.
@@ -678,7 +678,7 @@ $emit_non_port_params(8, $params)
   #end for
 #end if
 #if $has_commands or $has_parameters
-  PROTECTED:
+  protected:
 
     // ----------------------------------------------------------------------
     // Command response
@@ -694,7 +694,7 @@ $emit_non_port_params(8, $params)
 
 #end if
 #if $has_events
-  PROTECTED:
+  protected:
 
     // ----------------------------------------------------------------------
     // Event IDs
@@ -733,7 +733,7 @@ $emit_non_port_params(8, $params)
   #end if
 #end if
 #if len($event_enums) > 0:
-  PROTECTED:
+  protected:
 
     // ----------------------------------------------------------------------
     // Event enums
@@ -749,7 +749,7 @@ $emit_non_port_params(8, $params)
 
   #end for
 #end if
-  PROTECTED:
+  protected:
 
     // ----------------------------------------------------------------------
     // Event logging functions
@@ -773,7 +773,7 @@ $emit_non_port_params(8, $params)
 
 #end for
 #if $has_telemetry
-  PROTECTED:
+  protected:
 
     // ----------------------------------------------------------------------
     // Channel IDs
@@ -795,7 +795,7 @@ $emit_non_port_params(8, $params)
 
 #end if
 #if len($channel_enums) > 0:
-  PROTECTED:
+  protected:
 
     // ----------------------------------------------------------------------
     // Channel enums
@@ -812,7 +812,7 @@ $emit_non_port_params(8, $params)
   #end for
 #end if
 #if $has_telemetry:
-  PROTECTED:
+  protected:
 
     // ----------------------------------------------------------------------
     // Telemetry write functions
@@ -840,7 +840,7 @@ $emit_non_port_params(8, $params)
   #end for
 #end if
 #if $has_telemetry or $has_events or $has_time_get:
-  PROTECTED:
+  protected:
 
     // ----------------------------------------------------------------------
     // Time
@@ -855,7 +855,7 @@ $emit_non_port_params(8, $params)
 #end if
 #if len($parameter_enums) > 0:
   #for $enum_type, $enum_members in $parameter_enums:
-  PROTECTED:
+  protected:
 
     // ----------------------------------------------------------------------
     // Parameter enums
@@ -871,7 +871,7 @@ $emit_non_port_params(8, $params)
   #end for
 #end if
 #if $has_parameters
-  PROTECTED:
+  protected:
 
     // ----------------------------------------------------------------------
     // Parameter IDs
@@ -896,7 +896,7 @@ $emit_non_port_params(8, $params)
   #end for
     };
 
-  PROTECTED:
+  protected:
 
     // ----------------------------------------------------------------------
     // Parameter update hook
@@ -920,7 +920,7 @@ $emit_non_port_params(8, $params)
     //!
     virtual void parametersLoaded();
 
-  PROTECTED:
+  protected:
 
     // ----------------------------------------------------------------------
     // Parameter get functions
@@ -947,7 +947,7 @@ $emit_non_port_params(8, $params)
   #end for
 #end if
 #if len($internal_interface_enums) > 0:
-  PROTECTED:
+  protected:
 
     // ----------------------------------------------------------------------
     // Internal interface enums
@@ -964,7 +964,7 @@ $emit_non_port_params(8, $params)
   #end for
 #end if
 #if $has_internal_interfaces:
-  PROTECTED:
+  protected:
 
     // ----------------------------------------------------------------------
     // Internal interface handlers
@@ -983,7 +983,7 @@ $emit_non_port_params(8, $params)
     #end if
 
  #end for
-  PROTECTED:
+  protected:
 
     // ----------------------------------------------------------------------
     // Internal interface base-class functions
@@ -1006,12 +1006,12 @@ $emit_non_port_params(8, $params)
 
 #if $needs_msg_size:
 
-  PRIVATE:
+  private:
     NATIVE_INT_TYPE m_msgSize; //!< store max message size
 #end if
 #if $has_typed_input_ports:
 
-  PRIVATE:
+  private:
 
     // ----------------------------------------------------------------------
     // Typed input ports
@@ -1026,7 +1026,7 @@ $emit_non_port_params(8, $params)
   #end for
 #end if
 #if $has_serial_input_ports:
-  PRIVATE:
+  private:
 
     // ----------------------------------------------------------------------
     // Serial input ports
@@ -1040,7 +1040,7 @@ $emit_non_port_params(8, $params)
   #end for
 #end if
 #if $has_typed_output_ports:
-  PRIVATE:
+  private:
 
     // ----------------------------------------------------------------------
     // Typed output ports
@@ -1061,7 +1061,7 @@ $emit_non_port_params(8, $params)
   #end for
 #end if
 #if $has_serial_output_ports:
-  PRIVATE:
+  private:
 
     // ----------------------------------------------------------------------
     // Serial output ports
@@ -1075,7 +1075,7 @@ $emit_non_port_params(8, $params)
   #end for
 #end if
 #if $has_typed_input_ports:
-  PRIVATE:
+  private:
 
     // ----------------------------------------------------------------------
     // Calls for messages received on typed input ports
@@ -1099,7 +1099,7 @@ $emit_port_params(8, $params)
   #end for
 #end if
 #if $has_serializable_ports:
-  PRIVATE:
+  private:
 
     // ----------------------------------------------------------------------
     // Call for messages received on serial input ports
@@ -1122,7 +1122,7 @@ $emit_port_params(8, $params)
 
 #end if
 #if $kind == "active":
-  PRIVATE:
+  private:
 
     // ----------------------------------------------------------------------
     // Message dispatch functions
@@ -1134,7 +1134,7 @@ $emit_port_params(8, $params)
 
 #end if
 #if $has_guarded_ports or $has_parameters:
-  PRIVATE:
+  private:
 
     // ----------------------------------------------------------------------
     // Mutexes
@@ -1154,7 +1154,7 @@ $emit_port_params(8, $params)
 
 #end if
 #if $has_parameters:
-  PRIVATE:
+  private:
 
     // ----------------------------------------------------------------------
     // Parameter validity flags
@@ -1166,7 +1166,7 @@ $emit_port_params(8, $params)
     Fw::ParamValid m_param_${name}_valid;
 
   #end for
-  PRIVATE:
+  private:
 
     // ----------------------------------------------------------------------
     // Parameter variables
@@ -1183,7 +1183,7 @@ $emit_port_params(8, $params)
     #end if
 
   #end for
-  PRIVATE:
+  private:
 
     // ----------------------------------------------------------------------
     // Private parameter get function
@@ -1198,7 +1198,7 @@ $emit_port_params(8, $params)
         Fw::ParamBuffer& buff $doxygen_post_comment("The parameter value")
     );
 
-  PRIVATE:
+  private:
 
     // ----------------------------------------------------------------------
     // Parameter set functions
@@ -1214,7 +1214,7 @@ $emit_port_params(8, $params)
     );
 
   #end for
-  PRIVATE:
+  private:
 
     // ----------------------------------------------------------------------
     // Parameter save functions
@@ -1235,7 +1235,7 @@ $emit_port_params(8, $params)
   if $update != None and $update != "always" \
 ]
 #if len($update_channels) > 0:
-  PRIVATE:
+  private:
 
     // ----------------------------------------------------------------------
     // First update flags for telemetry channels
@@ -1247,7 +1247,7 @@ $emit_port_params(8, $params)
     bool m_first_update_${name};
 
   #end for
-  PRIVATE:
+  private:
 
     // ----------------------------------------------------------------------
     // Last value storage for telemetry channels
@@ -1266,7 +1266,7 @@ $emit_port_params(8, $params)
 #end if
 
 #if len($events) > 0
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Counter values for event throttling
     // ----------------------------------------------------------------------

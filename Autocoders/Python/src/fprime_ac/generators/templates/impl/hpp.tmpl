@@ -36,7 +36,7 @@ $emit_non_port_params([ $param_compName ])
       ~${name}();
 
 #if len($typed_user_input_ports) > 0:
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Handler implementations for user-defined typed input ports
@@ -53,7 +53,7 @@ $emit_port_params([ $param_portNum ] + $port_params[$instance])
   #end for
 #end if
 #if len($serial_input_ports) > 0:
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Handler implementations for user-defined serial input ports
@@ -70,7 +70,7 @@ $emit_port_params([ $param_portNum ] + $port_params[$instance])
   #end for
 #end if
 #if $has_commands:
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Command handler implementations

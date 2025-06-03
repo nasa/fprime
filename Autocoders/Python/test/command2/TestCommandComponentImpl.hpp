@@ -44,7 +44,7 @@ namespace AcTest {
       //!
       ~TestCommandComponentImpl();
 
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Handler implementations for user-defined typed input ports
@@ -59,7 +59,7 @@ namespace AcTest {
           U8 arg6 /*!< The third argument*/
       );
 
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Command handler implementations

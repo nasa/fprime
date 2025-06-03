@@ -44,7 +44,7 @@ namespace Ref {
       //!
       ~MathSenderComponentImpl();
 
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Handler implementations for user-defined typed input ports
@@ -57,7 +57,7 @@ namespace Ref {
           F32 result /*!< the result of the operation*/
       );
 
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Command handler implementations
