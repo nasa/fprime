@@ -65,7 +65,7 @@ Index 0 is the first element inserted in the queue.
 
 _Example:_
 ```c++
-void f(FifoQueueBase& queue) {
+void f(FifoQueueBase<U32>& queue) {
     queue.clear();
     auto status = queue.enqueue(10);
     ASSERT_EQ(status, Success::SUCCESS);
@@ -88,7 +88,7 @@ Clear the queue.
 
 _Example:_
 ```c++
-void f(FifoQueueBase& queue) {
+void f(FifoQueueBase<U32>& queue) {
     queue.clear();
     ASSERT_EQ(queue.getSize(), 0);
 }
@@ -110,7 +110,7 @@ void copyDataFrom(const FifoQueueBase<T>& queue)
 
         1. Set `enqueueStatus = enqueue(queue.at(i))`.
 
-        1. Assert `enqueueStatus == Success::SUCCESS`
+        1. Assert `enqueueStatus == Success::SUCCESS`.
 
 _Example:_
 ```c++
@@ -142,7 +142,7 @@ virtual void Success enqueue(const T& e) = 0
 
 _Example:_
 ```c++
-void f(FifoQueueBase& queue) {
+void f(FifoQueueBase<U32>& queue) {
     queue.clear();
     status = queue.enqueue(3);
     ASSERT_EQ(status, Success::SUCCESS);
@@ -216,7 +216,7 @@ Return the current size.
 
 _Example:_
 ```c++
-void f(const FifoQueueBase& queue) {
+void f(const FifoQueueBase<U32>& queue) {
     queue.clear();
     auto size = queue.getSize();
     ASSERT_EQ(size, 0);
@@ -237,7 +237,7 @@ Return the current capacity.
 
 _Example:_
 ```c++
-void f(const FifoQueueBase& queue) {
+void f(const FifoQueueBase<U32>& queue) {
     const auto size = queue.getSize();
     const auto capacity = queue.getCapacity();
     ASSERT_LE(size, capacity);
