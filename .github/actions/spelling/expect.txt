@@ -542,6 +542,7 @@ LINEHANDLE
 linelength
 lineoffset
 lineroo
+linux
 listdir
 Listst
 LJR
