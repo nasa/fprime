@@ -19,7 +19,7 @@ function(version_add_global_target TARGET)
     endif()
     add_custom_command(OUTPUT "${OUTPUT_HPP}" "${OUTPUT_CPP}" "${OUTPUT_JSON}"
         COMMAND "${CMAKE_COMMAND}" 
-            -E env "PYTHONPATH=${PYTHONPATH}:${FPRIME_FRAMEWORK_PATH}/Autocoders/Python/src" 
+            -E env "PYTHONPATH=${PYTHONPATH}:${CMAKE_CURRENT_LIST_DIR}/version"
                     "FPRIME_PROJECT_ROOT=${FPRIME_PROJECT_ROOT}"
                     "FPRIME_FRAMEWORK_PATH=${FPRIME_FRAMEWORK_PATH}"
                     "FPRIME_LIBRARY_LOCATIONS=${FPRIME_LIBRARY_LOCATIONS_CSV}"
