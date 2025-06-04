@@ -26,12 +26,13 @@ class ExternalFifoQueue final : public FifoQueueBase<T> {
     //! Constructor providing backing storage
     ExternalFifoQueue(T* items,            //!< The items
                       FwSizeType capacity  //!< The capacity
-    ) {
+                      )
+        : FifoQueueBase<T>() {
         this->setStorage(items, capacity);
     }
 
     //! Copy constructor
-    ExternalFifoQueue(const ExternalFifoQueue<T>& queue) { *this = queue; }
+    ExternalFifoQueue(const ExternalFifoQueue<T>& queue) : FifoQueueBase<T>() { *this = queue; }
 
     //! Destructor
     ~ExternalFifoQueue() override = default;
