@@ -20,6 +20,9 @@
 // Used for 1Hz synthetic cycling
 #include <Os/Mutex.hpp>
 
+//Subtopology includes
+#include <CDHCore/Subtopology/CDHCoreTopologyDefs.hpp>
+
 // Allows easy reference to objects in FPP/autocoder required namespaces
 using namespace Ref;
 

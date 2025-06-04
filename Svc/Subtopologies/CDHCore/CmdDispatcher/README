@@ -1,0 +1,6 @@
+This directory contains the CmdDispatcher component. This component takes incoming Com packets that have commands encoded in them and decodes them. 
+It looks up opcodes in a table build by component registrations. It also handles completions, passing the status back to the sender of the packet.
+
+CommandDispatcherComponentAi.xml - Command dispatcher component specification
+CommandDispatcherImpl.hpp(.cpp) - Command dispatcher implementation
+CommandDispatcherImplCfg.hpp - Command dispatcher configuration

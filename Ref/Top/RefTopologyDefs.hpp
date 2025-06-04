@@ -16,6 +16,9 @@
 #include "Ref/Top/FppConstantsAc.hpp"
 #include "Svc/Health/Health.hpp"
 
+// Subtopology includes
+#include <CDHCore/Subtopology/CDHCoreTopologyDefs.hpp>
+
 // Definitions are placed within a namespace named after the deployment
 namespace Ref {
 

@@ -1,0 +1,6 @@
+This directory defines an ActiveLogger component. This is an active component that stores events generated in the system. 
+It has the ability to filter the types of events for storage and for sending.
+
+ActiveLoggerComponentAi.xml - Defines the active logger component type
+ActiveLoggerImpl.hpp(.cpp) - The implementation class for the active logger
+ActiveLoggerImplCfg.hpp - Set of configuration settings for logger
