@@ -148,9 +148,7 @@ a2 = a1;
 void copyDataFrom(const ExternalArray<T>& a)
 ```
 
-1. If `&a == this` then do nothing.
-
-1. Otherwise 
+1. If `&a != this` then do nothing.
 
     1. Let `size` be the minimum of `m_size` and `a.m_size`
 
