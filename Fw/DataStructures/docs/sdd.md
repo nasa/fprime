@@ -36,6 +36,8 @@ A **FIFO queue** is a data structure backed by an array.
 It supports enqueue and dequeue operations in
 first in first out (FIFO) order.
 
+### 2.1. Templates
+
 `Fw/DataStructures` provides the following FIFO queue templates:
 
 * [`FifoQueueBase`](FifoQueueBase.md)
@@ -43,6 +45,17 @@ first in first out (FIFO) order.
 * [`ExternalFifoQueue`](ExternalFifoQueue.md)
 
 * [`FifoQueue`](FifoQueue.md)
+
+The queue implementations use a template called [`CircularIndex`](CircularIndex.md)
+for representing an index that wraps around modulo an integer.
+
+### 2.2. Class Diagram
+
+```mermaid
+classDiagram
+    FifoQueueBase <|-- ExternalFifoQueue
+    FifoQueueBase <|-- FifoQueue
+```
 
 ## 3. Maps
 
