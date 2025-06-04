@@ -27,7 +27,7 @@ Defined as `= default`.
 ### 2.2. Constructor with Specified Members
 
 ```c++
-CircularIndex(FwSizeType modulus, FwSizeType value = 0)
+explicit CircularIndex(FwSizeType modulus, FwSizeType value = 0)
 ```
 
 1. Assert `modulus > 0`.
@@ -60,9 +60,11 @@ Defined as `= default`.
 CircularIndex& operator=(const CircularIndex& ci)
 ```
 
-1. Set `m_value = ci.m_value`.
+1. If `this != &ci`
 
-1. Set `m_modulus = ci.m_modulus`.
+    1. Set `m_value = ci.m_value`.
+
+    1. Set `m_modulus = ci.m_modulus`.
 
 1. Return `*this`.
 

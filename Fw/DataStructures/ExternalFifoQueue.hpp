@@ -1,0 +1,134 @@
+// ======================================================================
+// \file   ExternalFifoQueue.hpp
+// \author bocchino
+// \brief  A FIFO queue with external storage
+// ======================================================================
+
+#ifndef Fw_ExternalFifoQueue_HPP
+#define Fw_ExternalFifoQueue_HPP
+
+#include "Fw/DataStructures/CircularIndex.hpp"
+#include "Fw/DataStructures/ExternalArray.hpp"
+#include "Fw/DataStructures/FifoQueueBase.hpp"
+
+namespace Fw {
+
+template <typename T>
+class ExternalFifoQueue final : public FifoQueueBase<T> {
+  public:
+    // ----------------------------------------------------------------------
+    // Public constructors and destructors
+    // ----------------------------------------------------------------------
+
+    //! Zero-argument constructor
+    ExternalFifoQueue() = default;
+
+    //! Constructor providing backing storage
+    ExternalFifoQueue(T* items,            //!< The items
+                      FwSizeType capacity  //!< The capacity
+    ) {
+        this->setStorage(items, capacity);
+    }
+
+    //! Copy constructor
+    ExternalFifoQueue(const ExternalFifoQueue<T>& queue) { *this = queue; }
+
+    //! Destructor
+    ~ExternalFifoQueue() override = default;
+
+  public:
+    // ----------------------------------------------------------------------
+    // Public member functions
+    // ----------------------------------------------------------------------
+
+    //! operator=
+    ExternalFifoQueue<T>& operator=(const ExternalFifoQueue<T>& queue) {
+        if (&queue != this) {
+            this->m_items = queue.m_items;
+            this->m_enqueueIndex = queue.m_enqueueIndex;
+            this->m_dequeueIndex = queue.m_dequeueIndex;
+            this->m_size = queue.m_size;
+        }
+    }
+
+    //! Get the element at a specified index
+    //! Fail an assertion if i is out of bounds
+    //! \return The element at index i
+    const T& at(FwSizeType i  //!< The index
+    ) const override {
+        FW_ASSERT(i < this->m_size, static_cast<FwAssertArgType>(i), static_cast<FwAssertArgType>(this->m_size));
+        CircularIndex ci = this->m_enqueueIndex;
+        return this->m_items[ci.increment(i)];
+    }
+
+    //! Clear the queue
+    void clear() override {
+        this->m_enqueueIndex.setValue(0);
+        this->m_dequeueIndex.setValue(0);
+        this->m_size = 0;
+    }
+
+    //! Set the storage
+    void setStorage(T* items,            //!< The items
+                    FwSizeType capacity  //!< The capacity
+    ) {
+        this->m_items.setStorage(items, capacity);
+    }
+
+    //! Enqueue an element
+    //! \return SUCCESS if element enqueued
+    Success enqueue(const T& e  //!< The element
+                    ) override {
+        auto status = Success::FAILURE;
+        if (this->m_size < this->getCapacity()) {
+            const auto i = this->m_enqueueIndex.getValue();
+            this->m_items[i] = e;
+            (void)this->m_enqueueIndex.increment();
+            this->m_size++;
+        }
+        return status;
+    }
+
+    //! Dequeue an element
+    //! \return SUCCESS if element dequeued
+    virtual Success dequeue(T& e  //!< The element
+                            ) override {
+        auto status = this->peek(e);
+        if (this->m_size > 0) {
+            const auto i = this->m_dequeueIndex.getValue();
+            e = this->m_items[i];
+            (void)this->m_dequeueIndex.increment();
+            this->m_size--;
+        }
+        return status;
+    }
+
+    //! Get the size (number of items stored in the queue)
+    //! \return The size
+    FwSizeType getSize() const override { return this->m_size; }
+
+    //! Get the capacity (maximum number of items stored in the queue)
+    //! \return The capacity
+    FwSizeType getCapacity() const override { return this->m_items.getSize(); }
+
+  private:
+    // ----------------------------------------------------------------------
+    // Private member variables
+    // ----------------------------------------------------------------------
+
+    //! The array for storing the queue items
+    ExternalArray<T> m_items = {};
+
+    //! The enqueue index
+    CircularIndex m_enqueueIndex = {};
+
+    //! The dequeue index
+    CircularIndex m_dequeueIndex = {};
+
+    //! The number of items on the queue
+    FwSizeType m_size = 0;
+};
+
+}  // namespace Fw
+
+#endif

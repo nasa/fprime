@@ -134,13 +134,15 @@ void f(FifoQueueBase<U32>& q1, FifoQueueBase<U32>& q2) {
 virtual Success enqueue(const T& e) = 0
 ```
 
-1. If there is no room on the queue for a new item, then return `Success::FAILURE`.
+1. Set `status = Success::FAILURE`.
 
-1. Otherwise
+1. If there is room on the queue for a new item, then
 
     1. Enqueue `e`.
 
-    1. Return `Success::SUCCESS`.
+    1. Set `status = Success::SUCCESS`.
+
+1. Return `status`.
 
 _Example:_
 ```c++
@@ -159,9 +161,11 @@ void Success peek(T& e) const
 
 1. Set `status = Success::FAILURE`.
 
-1. If `getSize() > 0`
+1. Set `size = getSize()`.
 
-    1. Set `e = at(getSize() - 1)`.
+1. If `size > 0`
+
+    1. Set `e = at(size - 1)`.
 
     1. Set `status = Success::SUCCESS`.
 
@@ -188,9 +192,13 @@ void f(FifoQueueBase<U32>& queue) {
 virtual Success dequeue(T& e) = 0
 ```
 
-1. Set `status = peek(e)`.
+1. Set `status = Success::FAILURE`.
 
-1. If `status == Success::SUCCESS` then dequeue the last-inserted item.
+1. If `size > 0`
+
+    1. Dequeue the last-inserted item and store it into `e`.
+
+    1. Set `status = Success::SUCCESS`.
 
 1. Return `status`.
 

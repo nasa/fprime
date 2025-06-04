@@ -51,7 +51,7 @@ ExternalFifoQueue<U32> queue;
 ExternalFifoQueue(T* items, FwSizeType capacity)
 ```
 
-1. Call `m_items.setStorage(items, capacity)`.
+1. Call `setStorage(items, capacity)`.
 
 1. Initialize the other member variables with their default values.
 
@@ -110,7 +110,7 @@ ExternalFifoQueue<T>& operator=(const ExternalFifoQueue<T>& queue)
 
     1. Set `m_dequeueIndex = queue.m_dequeueIndex`.
 
-    1. Set `m_size = queue.size`.
+    1. Set `m_size = queue.m_size`.
 
 _Example:_
 ```c++
@@ -137,9 +137,9 @@ const T& at(FwSizeType i) const override
 
 1. Assert that `i < m_size`.
 
-1. Set `ci = m_enqueueIndex.increment(i)`.
+1. Set `ci = m_enqueueIndex`.
 
-1. Return `m_items[ci]`.
+1. Return `m_items[ci.increment(i)]`.
 
 _Example:_
 ```c++
@@ -200,7 +200,7 @@ Success enqueue(const T& e) override
 
 1. Set `status = Success::FAILURE`.
 
-1. If `m_size < m_capacity` then
+1. If `m_size < getCapacity()` then
 
     1. Set `i = m_enqueueIndex.getValue()`.
 

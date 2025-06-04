@@ -22,9 +22,9 @@ class CircularIndex final {
     CircularIndex() : m_value(0), m_modulus(1) {}
 
     //! Constructor with specified members
-    CircularIndex(const FwSizeType modulus,   //!< The modulus
-                  const FwSizeType value = 0  //!< The initial value
-                  )
+    explicit CircularIndex(const FwSizeType modulus,   //!< The modulus
+                           const FwSizeType value = 0  //!< The initial value
+                           )
         : m_modulus(modulus) {
         FW_ASSERT(modulus > 0);
         this->setValue(value);
@@ -40,6 +40,15 @@ class CircularIndex final {
     // ----------------------------------------------------------------------
     // Public functions
     // ----------------------------------------------------------------------
+
+    //! operator=
+    CircularIndex& operator=(const CircularIndex& ci) {
+        if (this != &ci) {
+            this->m_value = ci.m_value;
+            this->m_modulus = ci.m_modulus;
+        }
+        return *this;
+    }
 
     //! Get the index value
     //! \return The index value

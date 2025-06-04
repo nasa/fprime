@@ -48,6 +48,7 @@ class FifoQueueBase {
     // ----------------------------------------------------------------------
 
     //! Get the element at a specified index
+    //! Fail an assertion if i is out of bounds
     //! \return The element at index i
     virtual const T& at(FwSizeType i  //!< The index
     ) const = 0;
