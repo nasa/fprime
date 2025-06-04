@@ -305,6 +305,20 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
     }
 }
 
+//! Handler for input port seqRunIn
+void FpySequencer::seqRunIn_handler(FwIndexType portNum,
+                                    const Fw::StringBase& filename
+) {
+    // can only run a seq while in idle
+    if (sequencer_getState() != State::IDLE) {
+        this->log_WARNING_HI_InvalidSeqRunCall(static_cast<I32>(sequencer_getState()));
+        return;
+    }
+
+    // seqRunIn is never blocking
+    this->sequencer_sendSignal_cmd_RUN(FpySequencer_SequenceExecutionArgs(filename, FpySequencer_BlockState::NO_BLOCK));
+}
+
 //! Handler for input port tlmWrite
 void FpySequencer::tlmWrite_handler(FwIndexType portNum,  //!< The port number
                                     U32 context           //!< The call order

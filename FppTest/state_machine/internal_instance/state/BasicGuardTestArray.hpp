@@ -49,7 +49,7 @@ class BasicGuardTestArray : public BasicGuardTestArrayComponentBase {
     //! Destroy BasicGuardTestArray object
     ~BasicGuardTestArray();
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Implementations for internal state machine actions
     // ----------------------------------------------------------------------
@@ -63,7 +63,7 @@ class BasicGuardTestArray : public BasicGuardTestArrayComponentBase {
         const SmHarness::TestArray& value                    //!< The value
         ) override;
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Implementations for internal state machine guards
     // ----------------------------------------------------------------------

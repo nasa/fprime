@@ -56,6 +56,8 @@ namespace Svc
     class BufferManagerComponentImpl final : public BufferManagerComponentBase
     {
 
+    friend class BufferManagerTester;
+
     public:
 
         // ----------------------------------------------------------------------
@@ -98,7 +100,7 @@ namespace Svc
         //!
         ~BufferManagerComponentImpl();
 
-    PRIVATE :
+    private :
 
         // ----------------------------------------------------------------------
         // Handler implementations for user-defined typed input ports

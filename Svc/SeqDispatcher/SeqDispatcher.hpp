@@ -30,7 +30,7 @@ class SeqDispatcher final : public SeqDispatcherComponentBase {
     //!
     ~SeqDispatcher();
 
-  PROTECTED:
+  protected:
 
     //! Handler for input port seqDoneIn
     void
@@ -50,7 +50,7 @@ class SeqDispatcher final : public SeqDispatcherComponentBase {
                           const Fw::StringBase& fileName //!< The sequence file
     );
 
-  PRIVATE:
+  private:
 
     // number of sequences dispatched (successful or otherwise)
     U32 m_dispatchedCount = 0;
@@ -71,8 +71,8 @@ class SeqDispatcher final : public SeqDispatcherComponentBase {
 
     FwIndexType getNextAvailableSequencerIdx();
 
-    void runSequence(FwIndexType sequencerIdx, 
-                     const Fw::StringBase& fileName, 
+    void runSequence(FwIndexType sequencerIdx,
+                     const Fw::StringBase& fileName,
                      Fw::Wait block);
 
     // ----------------------------------------------------------------------

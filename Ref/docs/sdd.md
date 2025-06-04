@@ -15,7 +15,7 @@ The application illustrates some example application components:
 |---|---|---|
 |SendBuffApp | A component that sends a buffer | [SDD](../SendBuffApp/docs/sdd.md) |
 |RecvBuffApp | A component that receives a buffer | [SDD](../RecvBuffApp/docs/sdd.md) |
-|BlockDriver  | A notional driver that relays buffers from SendBuffApp to RecvBuffApp | [SDD](../../Drv/BlockDriver/docs/sdd.md)|
+|BlockDriver  | A notional driver that relays buffers from SendBuffApp to RecvBuffApp | [SDD](../BlockDriver/docs/sdd.md)|
 |SignalGen | A component that generates telemetry following a waveform| [SDD](../SignalGen/docs/sdd.md)|
 |PingReceiver|A test component that gets health pings that can be turned off| [SDD](../SignalGen/docs/sdd.md)| 
 

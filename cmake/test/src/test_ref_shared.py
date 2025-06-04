@@ -59,19 +59,6 @@ def test_ref_installation(REF_BUILD):
     assert output_path.exists(), "Failed to locate Ref in build output"
 
 
-def test_ref_dictionary(REF_BUILD):
-    """Run reference and assert reference targets exit"""
-    cmake.assert_process_success(REF_BUILD)
-    output_path = (
-        REF_BUILD["install"]
-        / platform.system()
-        / "Ref"
-        / "dict"
-        / "RefTopologyAppDictionary.xml"
-    )
-    assert output_path.exists(), "Failed to locate Ref in build output"
-
-
 def test_ref_dictionary_json(REF_BUILD):
     """Build Ref and assert JSON dictionary exists"""
     cmake.assert_process_success(REF_BUILD)
@@ -125,12 +112,6 @@ def test_ref_module_info(REF_BUILD):
         actual_ac
     ), "Did not find expected autocoder sources"
     expected_gen = [
-        "SignalGenComponentAi.xml",
-        "SignalInfoSerializableAi.xml",
-        "SignalPairSerializableAi.xml",
-        "SignalPairSetArrayAi.xml",
-        "SignalSetArrayAi.xml",
-        "SignalTypeEnumAi.xml",
         "SignalGenComponentAc.cpp",
         "SignalGenComponentAc.hpp",
         "SignalInfoSerializableAc.cpp",
@@ -145,7 +126,6 @@ def test_ref_module_info(REF_BUILD):
         "SignalTypeEnumAc.hpp",
         "SignalGen_DpReqTypeEnumAc.cpp",
         "SignalGen_DpReqTypeEnumAc.hpp",
-        "SignalGen_DpReqTypeEnumAi.xml",
     ]
     actual_gen = [Path(source).name for source in generated]
     assert sorted(expected_gen) == sorted(

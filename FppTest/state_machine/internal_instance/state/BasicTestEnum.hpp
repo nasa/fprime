@@ -48,7 +48,7 @@ class BasicTestEnum : public BasicTestEnumComponentBase {
     //! The type FppTest_SmState_BasicTestEnum
     using SmState_BasicTestEnum = FppTest_SmState_BasicTestEnum;
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Implementations for internal state machine actions
     // ----------------------------------------------------------------------

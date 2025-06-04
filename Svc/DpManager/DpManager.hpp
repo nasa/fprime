@@ -57,7 +57,7 @@ class DpManager final : public DpManagerComponentBase {
     //! Destroy the DpManager
     ~DpManager();
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
@@ -86,7 +86,7 @@ class DpManager final : public DpManagerComponentBase {
                          U32 context                     //!< The call order
                          ) final;
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Handler implementations for commands
     // ----------------------------------------------------------------------
@@ -98,7 +98,7 @@ class DpManager final : public DpManagerComponentBase {
                                          U32 cmdSeq            //!< The command sequence number
                                          ) override;
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Private helper functions
     // ----------------------------------------------------------------------
@@ -111,7 +111,7 @@ class DpManager final : public DpManagerComponentBase {
                           Fw::Buffer& buffer    //!< The buffer (output)
     );
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Private member variables
     // ----------------------------------------------------------------------

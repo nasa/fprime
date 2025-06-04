@@ -126,8 +126,6 @@ macro(fprime_setup_standard_targets)
         # FPP locations must come at the front of the list, then build
         register_fprime_target(target/build)
         register_fprime_build_autocoder(autocoder/fpp OFF)
-        register_fprime_build_autocoder(autocoder/ai_xml OFF)
-        register_fprime_build_autocoder(autocoder/packets OFF)
         register_fprime_target(target/version)
         register_fprime_target(target/install)
         register_fprime_ut_target(target/ut)
@@ -198,13 +196,6 @@ function(fprime_setup_included_code)
     if (BUILD_TESTING)
         add_subdirectory("${FPRIME_FRAMEWORK_PATH}/STest/" "${CMAKE_BINARY_DIR}/F-Prime/STest")
     endif()
-    # By default we shutoff framework UTs
-    set(__FPRIME_NO_UT_GEN__ ON)
-    # Check for autocoder UTs
-    if (FPRIME_ENABLE_FRAMEWORK_UTS AND FPRIME_ENABLE_AUTOCODER_UTS)
-        set(__FPRIME_NO_UT_GEN__ OFF)
-    endif()
-    add_subdirectory("${FPRIME_FRAMEWORK_PATH}/Autocoders/" "${CMAKE_BINARY_DIR}/F-Prime/Autocoders")
     # Check if we are allowing framework UTs
     if (FPRIME_ENABLE_FRAMEWORK_UTS)
         set(__FPRIME_NO_UT_GEN__ OFF)
@@ -220,7 +211,7 @@ function(fprime_setup_included_code)
     # the current module and then calling stock "add_subdirectory".
     fprime__include_platform_file()
     
-    set(_FP_CORE_PACKAGES default Fw Svc Os Drv CFDP Utils)
+    set(_FP_CORE_PACKAGES Fpp default Fw Svc Os Drv CFDP Utils)
     foreach (_FP_PACKAGE_DIR IN LISTS _FP_CORE_PACKAGES)
         set(FPRIME_CURRENT_MODULE "${_FP_PACKAGE_DIR}")
         add_subdirectory("${FPRIME_FRAMEWORK_PATH}/${_FP_PACKAGE_DIR}/" "${CMAKE_BINARY_DIR}/F-Prime/${_FP_PACKAGE_DIR}")

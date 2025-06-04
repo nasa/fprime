@@ -48,7 +48,7 @@ class BasicString : public BasicStringComponentBase {
     //! The type FppTest_SmState_BasicString
     using SmState_BasicString = FppTest_SmState_BasicString;
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Implementations for internal state machine actions
     // ----------------------------------------------------------------------
