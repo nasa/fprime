@@ -212,7 +212,7 @@ const auto size1 = a.getSize();
 ASSERT_EQ(size1, size);
 ```
 
-### 4.6. setStorage
+### 4.6. setStorage (Typed Data)
 
 ```c++
 void setStorage(T* elements, FwSizeType size)
@@ -227,6 +227,8 @@ constexpr FwSizeType size = 3;
 U32 elements[size];
 a.setStorage(elements, size);
 ```
+
+### 4.7. setStorage (Untyped Data)
 
 ```c++
 void setStorage(ByteArray data, FwSizeType size)
