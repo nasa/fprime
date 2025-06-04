@@ -7,11 +7,11 @@ module CCSDS {
 
         @ Deframing received an invalid SCID
         event InvalidSpacecraftId(transmitted: U16, configured: U16) \
-            severity activity low \
+            severity warning low \ 
             format "Invalid Spacecraft ID Received. Received: {} | Deframer configured with: {}"
 
         @ Deframing received an invalid frame length
-        event InvalidFrameLength(transmitted: U16, actual: U32) \
+        event InvalidFrameLength(transmitted: U16, actual: FwSizeType) \
             severity warning high \
             format "Not enough data received. Header length specified: {} | Received data length: {}"
 

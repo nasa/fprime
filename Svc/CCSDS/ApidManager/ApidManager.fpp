@@ -8,8 +8,8 @@ module CCSDS {
 
         @ Deframing received an unexpected sequence count
         event UnexpectedSequenceCount(transmitted: U16, expected: U16) \
-            severity warning high \
-            format "Unexpected sequence count received. Packets may have been lost. Transmitted: {} | Expected on board: {}"
+            severity warning low \
+            format "Unexpected sequence count received. Packets may have been dropped. Transmitted: {} | Expected on board: {}"
 
         @ Received an unregistered APID
         event ApidTableFull(invalidApidValue: U16) \

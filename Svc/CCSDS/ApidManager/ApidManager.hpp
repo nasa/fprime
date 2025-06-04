@@ -35,7 +35,7 @@ class ApidManager final : public ApidManagerComponentBase {
     friend class ApidManagerTester;  //!< Friend class for testing
 
   public:
-    static constexpr U8 MAX_TRACKED_APIDS = ComCfg::APID::NUM_CONSTANTS;
+    static constexpr U16 MAX_TRACKED_APIDS = ComCfg::APID::NUM_CONSTANTS;
     static constexpr U16 SEQUENCE_COUNT_ERROR = std::numeric_limits<U16>::max();
     // ----------------------------------------------------------------------
     // Component construction and destruction
@@ -46,7 +46,7 @@ class ApidManager final : public ApidManagerComponentBase {
     );
 
     //! Destroy ApidManager object
-    ~ApidManager();
+    ~ApidManager() = default;
 
   private:
     // ----------------------------------------------------------------------
@@ -75,6 +75,7 @@ class ApidManager final : public ApidManagerComponentBase {
     void setNextSeqCount(ComCfg::APID::T apid, U16 seqCount);
 
     //! This struct helps track sequence counts per APID
+    //! Future work: update to using a map from Fw/DataStructures when available
     struct ApidSequenceEntry {
         ComCfg::APID::T apid = ComCfg::APID::INVALID_UNINITIALIZED;
         U16 sequenceCount = 0;

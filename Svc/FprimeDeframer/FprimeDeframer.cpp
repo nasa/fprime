@@ -58,11 +58,11 @@ void FprimeDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, cons
         return;
     }
     // Extract packet descriptor from the packet data to set the APID for the Router
-    // FwPacketDescriptorType packetDescriptor;
-    // status = deserializer.deserialize(packetDescriptor);
-    // FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK, status);
-    // ComCfg::FrameContext contextCopy = context;
-    // contextCopy.setapid(static_cast<ComCfg::APID::T>(packetDescriptor));
+    FwPacketDescriptorType packetDescriptor;
+    status = deserializer.deserialize(packetDescriptor);
+    FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK, status);
+    ComCfg::FrameContext contextCopy = context;
+    contextCopy.setapid(static_cast<ComCfg::APID::T>(packetDescriptor));
 
     // ---------------- Validate Frame Trailer ----------------
     // Deserialize transmitted trailer: trailer is at offset = len(header) + len(body)

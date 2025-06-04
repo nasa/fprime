@@ -27,13 +27,6 @@ FprimeRouter ::~FprimeRouter() {}
 void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer, const ComCfg::FrameContext& context) {
     Fw::SerializeStatus status;
     Fw::ComPacketType packetType = context.getapid();
-    // If APID is unknown (i.e. not provided), attempt to introspect the packet to determine the packet type
-    if (packetType == Fw::ComPacketType::FW_PACKET_UNKNOWN) {
-        FwPacketDescriptorType packetDescriptor;
-        auto esb = packetBuffer.getDeserializer();
-        (void) esb.deserialize(packetDescriptor);
-        packetType = static_cast<Fw::ComPacketType>(packetDescriptor);
-    }
     // Route based on received APID (packet type)
     switch (packetType) {
         // Handle a command packet

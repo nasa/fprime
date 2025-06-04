@@ -12,16 +12,6 @@ module CCSDS {
             severity warning high \
             format "Invalid length received. Header specified packet length of {} | Actual received data length: {}"
 
-        # @ Deframing received an unexpected sequence count
-        # event UnexpectedSequenceCount(transmitted: U16, expected: U16) \
-        #     severity warning high \
-        #     format "Unexpected sequence count received. Packets may have been lost. Transmitted: {} | Expected on board: {}"
-
-        # @ Deframing received an unexpected sequence count
-        # event UntrackedApid(apid: U16) \
-        #     severity activity low \
-        #     format "Received APID not registered with the deframer. Not checking sequence count. APID={}"
-
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #
         ###############################################################################
