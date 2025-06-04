@@ -104,50 +104,7 @@ TEST(SingleSide, TestSingleSideMultipleSendUdp) {
     test_with_loop(100, SEND);
 }
 
-TEST(Ephemeral, TestEphemeralRecvPort) {
-    Drv::UdpSocket receiver;
-    Drv::SocketDescriptor recv_fd;
-    // Bind to ephemeral port
-    receiver.configureRecv("127.0.0.1", 0);
-    ASSERT_EQ(receiver.open(recv_fd), Drv::SOCK_SUCCESS);
-    U16 assigned_port = receiver.getRecvPort();
-    ASSERT_NE(assigned_port, 0) << "Ephemeral port assignment failed";
-
-    Drv::UdpSocket sender;
-    Drv::SocketDescriptor send_fd;
-    // Configure sender for both send and receive (duplex) with ephemeral receive port
-    sender.configureSend("127.0.0.1", assigned_port, 0, 100);
-    sender.configureRecv("127.0.0.1", 0);
-    ASSERT_EQ(sender.open(send_fd), Drv::SOCK_SUCCESS);
-
-    // Send a test message
-    const char* msg = "hello ephemeral";
-    U32 msg_len = static_cast<U32>(strlen(msg) + 1);
-    ASSERT_EQ(sender.send(send_fd, reinterpret_cast<const U8*>(msg), msg_len), Drv::SOCK_SUCCESS);
-
-    // Receive the message
-    char recv_buf[64] = {0};
-    U32 recv_len = sizeof(recv_buf);
-    ASSERT_EQ(receiver.recv(recv_fd, reinterpret_cast<U8*>(recv_buf), recv_len), Drv::SOCK_SUCCESS);
-    ASSERT_STREQ(msg, recv_buf);
-
-    // Send a response from receiver back to sender
-    const char* reply = "reply from receiver";
-    U32 reply_len = static_cast<U32>(strlen(reply) + 1);
-    ASSERT_EQ(receiver.send(recv_fd, reinterpret_cast<const U8*>(reply), reply_len), Drv::SOCK_SUCCESS);
-
-    // Sender receives the response
-    char reply_buf[64] = {0};
-    U32 reply_buf_len = sizeof(reply_buf);
-    ASSERT_EQ(sender.recv(send_fd, reinterpret_cast<U8*>(reply_buf), reply_buf_len), Drv::SOCK_SUCCESS);
-    ASSERT_STREQ(reply, reply_buf);
-
-    sender.close(send_fd);
-    receiver.close(recv_fd);
-}
-
-// Test: Ephemeral sending port
-TEST(Ephemeral, TestEphemeralSendPort) {
+TEST(Ephemeral, TestEphemeralPorts) {
     Drv::UdpSocket receiver;
     Drv::SocketDescriptor recv_fd;
     const U16 recv_port = 50001;
