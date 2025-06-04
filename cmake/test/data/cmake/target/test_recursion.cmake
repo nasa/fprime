@@ -55,9 +55,9 @@ set(EXPECTED_FULL_DEPENDENCIES
     TestDeployment
     TestLibrary2_TestComponent
     TestLibrary_TestComponent
+    UnixPlatformTypes
     Utils_Hash
     __fprime_config
-    cmake_platform_unix_Platform
     default_config
 )
 
