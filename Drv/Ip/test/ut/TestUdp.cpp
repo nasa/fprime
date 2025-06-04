@@ -151,7 +151,9 @@ TEST(Ephemeral, TestEphemeralSendPort) {
     Drv::UdpSocket receiver;
     Drv::SocketDescriptor recv_fd;
     const U16 recv_port = 50001;
+    // Configure receiver as receiver-only with no send port.
     receiver.configureRecv("127.0.0.1", recv_port);
+    receiver.configureSend("127.0.0.1", 0, 0, 100);
     ASSERT_EQ(receiver.open(recv_fd), Drv::SOCK_SUCCESS);
 
     Drv::UdpSocket sender;
