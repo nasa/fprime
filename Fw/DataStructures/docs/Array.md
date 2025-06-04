@@ -198,4 +198,3 @@ _Example:_
 const auto size = Array<U32, 3>::getStaticSize();
 ASSERT_EQ(size, 3);
 ```
-

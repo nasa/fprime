@@ -232,9 +232,11 @@ a.setStorage(elements, size);
 void setStorage(ByteArray data, FwSizeType size)
 ```
 
+1. Check that `data.bytes != nullptr`.
+
 1. Check that `data.bytes` is correctly aligned for type `T`.
 
-1. Check that `size * sizeof(FwSizeType) <= data.size`.
+1. Check that `size * sizeof(T) <= data.size`.
 
 1. Initialize `m_elements` with `data.bytes`.
 
