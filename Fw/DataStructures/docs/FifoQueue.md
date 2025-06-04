@@ -33,8 +33,8 @@ for storing the items on the queue.
 
 ```mermaid
 classDiagram
-    queue:FifoQueue<T,C> *-- m_extQueue:ExternalFifoQueue<T>
-    queue:FifoQueue<T,C> *-- m_array:Array<T, C>
+    FifoQueue *-- ExternalFifoQueue
+    FifoQueue *-- Array
 ```
 
 ## 4. Public Constructors and Destructors
