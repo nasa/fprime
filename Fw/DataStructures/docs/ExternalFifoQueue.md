@@ -30,6 +30,13 @@ storing the items on the queue.
 |`m_dequeueIndex`|[`CircularIndex`](CircularIndex.md)|The dequeue index|`CircularIndex(m_items.size(), 0)`|
 |`m_size`|`FwSizeType`|The number of items on the queue|0|
 
+```mermaid
+classDiagram
+    FifoQueue *-- ExternalArray
+    FifoQueue *-- CircularIndex
+    FifoQueue *-- CircularIndex
+```
+
 ## 4. Public Constructors and Destructors
 
 ### 4.1. Zero-Argument Constructor
