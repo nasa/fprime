@@ -9,8 +9,8 @@ import os
 #from enum import Enum
 from pathlib import Path
 
-from fprime_gds.common.testing_fw import predicates
-from fprime_gds.common.utils.event_severity import EventSeverity
+#from fprime_gds.common.testing_fw import predicates
+#from fprime_gds.common.utils.event_severity import EventSeverity
 
 ## regenerate .seq file
 
