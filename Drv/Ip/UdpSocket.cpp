@@ -182,10 +182,8 @@ SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
         Fw::Logger::log("Setup to only send udp at %s:%hu\n", m_hostname, port);
     } else if ((port > 0) && (recv_port > 0)) {
         Fw::Logger::log("Setup to receive udp at %s:%hu and send to %s:%hu\n", m_recv_hostname, recv_port, m_hostname, port);
-    } else {
-        // At least one direction must be configured
-        FW_ASSERT((port > 0) || (recv_port >= 0), static_cast<FwAssertArgType>(port), static_cast<FwAssertArgType>(recv_port));
     }
+    
     FW_ASSERT(status == SOCK_SUCCESS, static_cast<FwAssertArgType>(status));
     socketDescriptor.fd = socketFd;
     return status;
