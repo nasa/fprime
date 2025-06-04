@@ -1,0 +1,8 @@
+---
+library: false
+warnOnImplicitThis: false
+compileForOverlayEval: false
+name: getting-started/codeql-cpp
+version: 1.0.0
+dependencies:
+  codeql/cpp-all: ^4.1.0
