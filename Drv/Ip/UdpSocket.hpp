@@ -55,7 +55,7 @@ class UdpSocket : public IpSocket {
      * ephemeral send (dynamic reply-to) and will use the sender's address from the first received datagram for replies.
      * It is possible to configure the UDP port as a single-direction send port only.
      *
-     * Note: delegates to `IpSocket::configure`.
+     * Note: delegates to `IpSocket::configure`
      *
      * \param hostname: socket uses for outgoing transmissions. Must be of form x.x.x.x
      * \param port: port socket uses for outgoing transmissions. Can be 0 for ephemeral reply-to mode.
