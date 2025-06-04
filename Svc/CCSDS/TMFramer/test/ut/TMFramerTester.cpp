@@ -58,7 +58,8 @@ void TMFramerTester ::testNominalFraming() {
     ASSERT_from_dataOut_SIZE(1);
     Fw::Buffer outBuffer = this->fromPortHistory_dataOut->at(0).data;
     ComCfg::FrameContext outContext = this->fromPortHistory_dataOut->at(0).context;
-    ASSERT_EQ(outBuffer.getSize(), ComCfg::TmFrameFixedSize);
+    const FwSizeType expectedFrameSize = ComCfg::TmFrameFixedSize;
+    ASSERT_EQ(outBuffer.getSize(), expectedFrameSize);
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.getvcId(), defaultContext.getvcId());
 
     U16 outScId = this->getFrameScId(outBuffer.getData());
@@ -66,7 +67,8 @@ void TMFramerTester ::testNominalFraming() {
     U8 outMcCount = this->getFrameMcCount(outBuffer.getData());
     U8 outVcCount = this->getFrameVcCount(outBuffer.getData());
 
-    ASSERT_EQ(outScId, ComCfg::SpacecraftId);
+    const U16 expectedScId = ComCfg::SpacecraftId;
+    ASSERT_EQ(outScId, expectedScId);
     ASSERT_EQ(outVcId, defaultContext.getvcId());
     ASSERT_EQ(outMcCount, 0);
     ASSERT_EQ(outVcCount, 0);
@@ -78,7 +80,8 @@ void TMFramerTester ::testNominalFraming() {
 
     // The frame is composed of the payload + a SpacePacket Idle Packet (Header + idle_pattern)
     const U8 idlePattern = this->component.IDLE_DATA_PATTERN;
-    for (FwSizeType i = expectedIdleDataOffset; i < ComCfg::TmFrameFixedSize - TMTrailer::SERIALIZED_SIZE; ++i) {
+    const FwSizeType ideDataEndOffset = ComCfg::TmFrameFixedSize - TMTrailer::SERIALIZED_SIZE;
+    for (FwSizeType i = expectedIdleDataOffset; i < ideDataEndOffset; ++i) {
         ASSERT_EQ(outBuffer.getData()[i], idlePattern)
             << "Idle data at index " << i << " does not match expected idle pattern";
     }
@@ -112,7 +115,7 @@ void TMFramerTester ::testSeqCountWrapAround() {
 }
 
 void TMFramerTester ::testInputBufferTooLarge() {
-    FwSizeType tooLargeSize = ComCfg::TmFrameFixedSize; // This is too large since we need room for header+trailer as well
+    const FwSizeType tooLargeSize = ComCfg::TmFrameFixedSize; // This is too large since we need room for header+trailer as well
     U8 bufferData[tooLargeSize];
     Fw::Buffer buffer(bufferData, static_cast<Fw::Buffer::SizeType>(tooLargeSize));
     ComCfg::FrameContext defaultContext;
