@@ -14,6 +14,7 @@
 #define LinuxTimer_HPP
 
 #include "Os/Mutex.hpp"
+#include "Os/RawTime.hpp"
 #include "Svc/LinuxTimer/LinuxTimerComponentAc.hpp"
 
 namespace Svc {

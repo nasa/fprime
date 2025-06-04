@@ -12,7 +12,6 @@ Requirement | Description | Verification Method
 ----------- | ----------- | -------------------
 ISF-BDV-001 | The `Ref::BlockDriver` component shall loop back packets from its input port to its output port | System test, unit test
 ISF-BDV-002 | The `Ref::BlockDriver` component shall loop back the key value from  `PingIn` port to `PingOut` port | System test, unit test
-ISF-BDV-003 | The `Ref::BlockDriver` component shall send a timing interrupt whenever `callIsr()` is invoked | System test, unit test
 
 ## 3. Design
 
