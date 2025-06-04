@@ -206,11 +206,9 @@ I32 UdpSocket::recvProtocol(const SocketDescriptor& socketDescriptor, U8* const 
     if (received > 0 && this->m_state->m_addr_send.sin_port == 0) {
         this->m_state->m_addr_send = sender_addr;
 
-        CHAR ip_str[INET_ADDRSTRLEN] = {0};
-        const CHAR* address = ::inet_ntop(AF_INET, &(sender_addr.sin_addr), ip_str, INET_ADDRSTRLEN);
-        FW_ASSERT(address != nullptr);
-        Drv::SocketIpStatus configStat = this->configureSend(ip_str, ntohs(sender_addr.sin_port), 0, 100);
-        FW_ASSERT(configStat == SOCK_SUCCESS);
+        char ip_str[INET_ADDRSTRLEN] = {0};
+        ::inet_ntop(AF_INET, &(sender_addr.sin_addr), ip_str, INET_ADDRSTRLEN);
+        this->configureSend(ip_str, ntohs(sender_addr.sin_port), 0, 100);
         Fw::Logger::log("Configured send address to %s:%hu as specified by the last received packet.\n", ip_str, ntohs(sender_addr.sin_port));
     }
     return received;
