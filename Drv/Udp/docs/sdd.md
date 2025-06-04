@@ -27,6 +27,15 @@ wait for the thread to exit using `join`.
 Since UDP support single or bidirectional communication, configuring each direction is done separately using the two
 methods `configureSend` and `configureRecv`. The user must call at least one of the configure methods and may call both.
 
+### Ephemeral Port Support
+
+The Drv::UdpComponentImpl supports ephemeral ports for receiving data. This is done by setting the port number to 0
+when calling `configureRecv`. The port number will be returned when the socket is opened.
+
+When configured as a receiver-only the Drv::UdpComponentImpl can also be set up to send a response back to the sender and use the
+response port that the sender has indicated in the UDP datagram. This is done by setting the port number to 0 when calling
+`configureSend`.
+
 ```c++
 Drv::UdpComponentImpl comm = Drv::UdpComponentImpl("UDP Client");
 
