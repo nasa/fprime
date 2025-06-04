@@ -38,22 +38,37 @@ _Example:_
 ExternalArray<U32> a;
 ```
 
-### 3.2. Constructor Providing Backing Storage
+### 3.2. Constructor Providing Typed Backing Storage
 
 ```c++
 ExternalArray(T* elements, FwSizeType size)
 ```
 
-Initialize `m_elements` with `elements` and `m_size` with `size`.
+Call `setStorage(elements, size)`.
 
 _Example:_
 ```c++
 constexpr FwSizeType size = 3;
 U32 elements[size];
-ExternalArray a(elements, size);
+ExternalArray<U32> a(elements, size);
 ```
 
-### 3.3. Copy Constructor
+### 3.3. Constructor Providing Untyped Backing Storage
+
+```c++
+ExternalArray(ByteArray data, FwSizeType size)
+```
+
+Call `setStorage(data, size)`.
+
+_Example:_
+```c++
+constexpr FwSizeType size = 3;
+alignas(U32) U8 bytes[size * sizeof(U32)];
+ExternalArray<U32> a(ByteArray(&bytes[0], sizeof bytes), size);
+```
+
+### 3.4. Copy Constructor
 
 ```c++
 ExternalArray(const ExternalArray<T>& a)
@@ -71,7 +86,7 @@ ExternalArray<U32> a1(elements, size);
 ExternalArray<U32> a2(a1);
 ```
 
-### 3.4. Destructor
+### 3.5. Destructor
 
 ```c++
 ~ExternalArray()
@@ -211,4 +226,24 @@ ExternalArray<U32> a;
 constexpr FwSizeType size = 3;
 U32 elements[size];
 a.setStorage(elements, size);
+```
+
+```c++
+void setStorage(ByteArray data, FwSizeType size)
+```
+
+1. Check that `data.bytes` is correctly aligned for type `T`.
+
+1. Check that `size * sizeof(FwSizeType) <= data.size`.
+
+1. Initialize `m_elements` with `data.bytes`.
+
+1. Initialize `m_size` with `size`.
+
+_Example:_
+```c++
+constexpr FwSizeType size = 3;
+alignas(U32) U8 bytes[size * sizeof(U32)];
+ExternalArray<U32> a;
+a.setStorage(ByteArray(&bytes[0], sizeof bytes), size);
 ```

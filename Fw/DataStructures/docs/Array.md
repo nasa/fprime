@@ -135,10 +135,8 @@ ASSERT_DEATH(a[size], "Assert");
 Array<T, S>& operator=(const Array<T, S>& a)
 ```
 
-1. If `&a == this` then do nothing.
-
-1. Otherwise overwrite each element of `m_elements` with the corresponding
-element of `a`.
+1. If `&a != this`, overwrite each element of `m_elements` with the 
+corresponding element of `a`.
 
 _Example:_
 ```c++
