@@ -124,7 +124,7 @@ class UdpSocket : public IpSocket {
   private:
     SocketState* m_state; //!< State storage
     U16 m_recv_port;  //!< Port to receive on
-    char m_recv_hostname[SOCKET_MAX_HOSTNAME_SIZE]; //!< Hostname to receive on
+    CHAR m_recv_hostname[SOCKET_MAX_HOSTNAME_SIZE]; //!< Hostname to receive on
     bool m_recv_configured; //!< True if configureRecv was called
 };
 }  // namespace Drv
