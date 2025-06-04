@@ -107,9 +107,7 @@ Defined as `= default`.
 ExternalFifoQueue<T>& operator=(const ExternalFifoQueue<T>& queue)
 ```
 
-1. If `&queue == this` then do nothing.
-
-1. Otherwise 
+1. If `&queue != this`
 
     1. Set `m_items = queue.m_items`.
 
@@ -118,6 +116,8 @@ ExternalFifoQueue<T>& operator=(const ExternalFifoQueue<T>& queue)
     1. Set `m_dequeueIndex = queue.m_dequeueIndex`.
 
     1. Set `m_size = queue.m_size`.
+
+1. Return `*this`.
 
 _Example:_
 ```c++

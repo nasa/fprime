@@ -24,4 +24,17 @@ TEST(ExternalFifoQueue, StorageConstructor) {
     ASSERT_EQ(queue.getSize(), 0);
 }
 
+TEST(ExternalFifoQueue, CopyConstructor) {
+    constexpr FwSizeType capacity = 3;
+    U32 items[capacity];
+    // Call the constructor providing backing storage
+    ExternalFifoQueue<U32> q1(items, capacity);
+    // Enqueue an item
+    U32 value = 42;
+    (void) q1.enqueue(value);
+    // Call the copy constructor
+    ExternalFifoQueue<U32> q2(q1);
+    ASSERT_EQ(q2.getSize(), 1);
+}
+
 }  // namespace Fw

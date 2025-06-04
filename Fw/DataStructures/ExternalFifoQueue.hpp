@@ -50,6 +50,7 @@ class ExternalFifoQueue final : public FifoQueueBase<T> {
             this->m_dequeueIndex = queue.m_dequeueIndex;
             this->m_size = queue.m_size;
         }
+        return *this;
     }
 
     //! Get the element at a specified index
