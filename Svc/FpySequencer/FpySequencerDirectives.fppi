@@ -26,8 +26,8 @@ struct GotoDirective {
 }
 
 struct IfDirective {
-    @ the local variable to interpret as a boolean
-    conditionalLocalVarIndex: U8
+    @ the register to branch based off of. register will be interpreted as a C++ boolean
+    conditionalReg: U8
     @ the statement index to go to if the local variable is false
     falseGotoStmtIndex: U32
     # this directive will not goto anywhere if the variable is true
@@ -64,6 +64,25 @@ struct CmdDirective {
     _argBufSize: FwSizeType
 }
 
+@ calculates a bitwise OR between the two registers, and stores the result in the third register
+struct OrDirective {
+    lhs: U8
+    rhs: U8
+    res: U8
+}
+
+@ deser up to 8 bytes out of an lvar
+struct DeserLocalVarDirective {
+    @ the lvar to deser from
+    srcLvarIdx: U8
+    @ the start offset to deser from
+    srcOffset: FwSizeType
+    @ the destination register to deser into
+    destReg: U8
+    @ the number of bytes to deserialize from the lvar, max of 8
+    _deserSize: U8
+}
+
 internal port directive_waitRel(directive: WaitRelDirective) priority 6 assert
 
 internal port directive_waitAbs(directive: WaitAbsDirective) priority 6 assert
@@ -81,3 +100,22 @@ internal port directive_getTlm(directive: GetTlmDirective) priority 6 assert
 internal port directive_getPrm(directive: GetPrmDirective) priority 6 assert
 
 internal port directive_cmd(directive: CmdDirective) priority 6 assert
+
+internal port directive_or(directive: OrDirective) priority 6 assert
+
+internal port directive_deserLocalVar(directive: DeserLocalVarDirective) priority 6 assert
+
+enum DirectiveErrorCode {
+    NO_ERROR
+    LVAR_OUT_OF_BOUNDS
+    STMT_OUT_OF_BOUNDS
+    LVAR_DESERIALIZE_FAILURE
+    LVAR_SERIALIZE_FAILURE
+    TLM_GET_NOT_CONNECTED
+    TLM_CHAN_NOT_FOUND
+    PRM_GET_NOT_CONNECTED
+    PRM_NOT_FOUND
+    CMD_SERIALIZE_FAILURE
+    REGISTER_OUT_OF_BOUNDS
+    LVAR_ACCESS_OUT_OF_BOUNDS
+}

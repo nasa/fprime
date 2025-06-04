@@ -23,6 +23,8 @@
 
 static_assert(Svc::Fpy::MAX_SEQUENCE_ARG_COUNT <= std::numeric_limits<U8>::max(),
               "Sequence arg count must be below U8 max");
+static_assert(Svc::Fpy::NUM_REGISTERS <= std::numeric_limits<U8>::max(),
+              "Register count must be below U8 max");
 static_assert(Svc::Fpy::MAX_SEQUENCE_STATEMENT_COUNT <= std::numeric_limits<U16>::max(),
               "Sequence statement count must be below U16 max");
 static_assert(Svc::Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE <= std::numeric_limits<FwSizeType>::max(),
@@ -50,6 +52,8 @@ class FpySequencer : public FpySequencerComponentBase {
         FpySequencer_GetTlmDirective getTlm;
         FpySequencer_GetPrmDirective getPrm;
         FpySequencer_CmdDirective cmd;
+        FpySequencer_OrDirective orDirective;
+        FpySequencer_DeserLocalVarDirective deserLocalVar;
 
         DirectiveUnion() {}
         ~DirectiveUnion() {}
@@ -399,6 +403,12 @@ class FpySequencer : public FpySequencerComponentBase {
     //! Internal interface handler for directive_cmd
     void directive_cmd_internalInterfaceHandler(const Svc::FpySequencer_CmdDirective& directive) override;
 
+    //! Internal interface handler for directive_or
+    void directive_or_internalInterfaceHandler(const Svc::FpySequencer_OrDirective& directive) override;
+
+    //! Internal interface handler for directive_deserLocalVar
+    void directive_deserLocalVar_internalInterfaceHandler(const Svc::FpySequencer_DeserLocalVarDirective& directive) override;
+
     void parametersLoaded() override;
     void parameterUpdated(FwPrmIdType id) override;
 
@@ -469,21 +479,9 @@ class FpySequencer : public FpySequencerComponentBase {
             FwSizeType valueSize = 0;
         } localVariables[Fpy::MAX_SEQUENCE_LOCAL_VARIABLES] = {};
 
-        // all the registers in the sequence
-        struct Registers {
-            bool b0 = false;
-            bool b1 = false;
-            bool b2 = false;
-            bool b3 = false;
-            F64 f0 = 0.0;
-            F64 f1 = 0.0;
-            F64 f2 = 0.0;
-            F64 f3 = 0.0;
-            I64 i0 = 0;
-            I64 i1 = 0;
-            I64 i2 = 0;
-            I64 i3 = 0;
-        } reg;
+        // all the registers in the sequence. registers are 8 byte
+        // values of unspecified type
+        I64 registers[Fpy::NUM_REGISTERS] = {0};
     } m_runtime;
 
     // the state of the debugger. debugger is separate from runtime
@@ -580,6 +578,10 @@ class FpySequencer : public FpySequencerComponentBase {
     // sends a signal based on a signal id
     void sendSignal(Signal signal);
 
+    // helper function to get a reference to a register from an index
+    // saves a bunch of typing
+    I64& reg(U8 idx);
+
     // we split these functions up into the internalInterfaceInvoke and these custom member funcs
     // so that we can unit test them easier
     Signal waitRel_directiveHandler(const FpySequencer_WaitRelDirective& directive, DirectiveError& error);
@@ -591,6 +593,8 @@ class FpySequencer : public FpySequencerComponentBase {
     Signal getTlm_directiveHandler(const FpySequencer_GetTlmDirective& directive, DirectiveError& error);
     Signal getPrm_directiveHandler(const FpySequencer_GetPrmDirective& directive, DirectiveError& error);
     Signal cmd_directiveHandler(const FpySequencer_CmdDirective& directive, DirectiveError& error);
+    Signal or_directiveHandler(const FpySequencer_OrDirective& directive, DirectiveError& error);
+    Signal deserLocalVar_directiveHandler(const FpySequencer_DeserLocalVarDirective& directive, DirectiveError& error);
 };
 
 }  // namespace Svc

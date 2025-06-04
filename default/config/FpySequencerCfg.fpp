@@ -9,5 +9,8 @@ module Svc {
         @ The maximum size a local variable's buffer can be
         # FW_COM_BUFFER_MAX_SIZE - sizeof(FwChanIdType) - sizeof(FwPacketDescriptorType)
         constant MAX_LOCAL_VARIABLE_BUFFER_SIZE = 512 - 4 - 4
+
+        @ The number of registers available to a sequence
+        constant NUM_REGISTERS = 4
     }
 }

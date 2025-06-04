@@ -13,7 +13,12 @@ module Svc {
             NO_OP = 6,
             GET_TLM = 7,
             GET_PRM = 8,
-            CMD = 9
+            CMD = 9,
+            OR = 10,
+            DESER_LVAR_8 = 11
+            DESER_LVAR_4 = 12
+            DESER_LVAR_2 = 13
+            DESER_LVAR_1 = 14
         }
 
         struct Header {
@@ -43,7 +48,7 @@ module Svc {
 
         @ a statement is a directive opcode paired with an argument buffer
         struct Statement {
-            opCode: U8
+            opCode: DirectiveId
             argBuf: Fw.StatementArgBuffer
         }
 

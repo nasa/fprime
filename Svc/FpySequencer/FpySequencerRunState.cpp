@@ -217,6 +217,69 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
             deserializedDirective.cmd.set_argBufSize(cmdArgBufSize);
             break;
         }
+        case Fpy::DirectiveId::OR: {
+            new (&deserializedDirective.orDirective) FpySequencer_OrDirective();
+            status = argBuf.deserialize(deserializedDirective.orDirective);
+            if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || argBuf.getBuffLeft() != 0) {
+                this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), this->m_runtime.nextStatementIndex - 1,
+                                                               status, argBuf.getBuffLeft(), argBuf.getBuffLength());
+                return Fw::Success::FAILURE;
+            }
+            break;
+        }
+        case Fpy::DirectiveId::DESER_LVAR_8:
+            // fallthrough on purpose
+        case Fpy::DirectiveId::DESER_LVAR_4:
+            // fallthrough on purpose
+        case Fpy::DirectiveId::DESER_LVAR_2:
+            // fallthrough on purpose
+        case Fpy::DirectiveId::DESER_LVAR_1: {
+            new (&deserializedDirective.deserLocalVar) FpySequencer_DeserLocalVarDirective();
+
+            U8 deserSize;
+
+            if (stmt.getopCode() == Fpy::DirectiveId::DESER_LVAR_1) {
+                deserSize = 1;
+            } else if (stmt.getopCode() == Fpy::DirectiveId::DESER_LVAR_2) {
+                deserSize = 2;
+            } else if (stmt.getopCode() == Fpy::DirectiveId::DESER_LVAR_4) {
+                deserSize = 4;
+            } else if (stmt.getopCode() == Fpy::DirectiveId::DESER_LVAR_8) {
+                deserSize = 8;
+            } else {
+                FW_ASSERT(0, static_cast<FwAssertArgType>(stmt.getopCode()));
+            }
+
+            deserializedDirective.deserLocalVar.set_deserSize(deserSize);
+
+            U8 srcLvarIdx;
+            status = argBuf.deserialize(srcLvarIdx);
+            if (status != Fw::SerializeStatus::FW_SERIALIZE_OK) {
+                this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), this->m_runtime.nextStatementIndex - 1,
+                                                               status, argBuf.getBuffLeft(), argBuf.getBuffLength());
+                return Fw::Success::FAILURE;
+            }
+            deserializedDirective.deserLocalVar.setsrcLvarIdx(srcLvarIdx);
+
+            FwSizeType srcOffset;
+            status = argBuf.deserialize(srcOffset);
+            if (status != Fw::SerializeStatus::FW_SERIALIZE_OK) {
+                this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), this->m_runtime.nextStatementIndex - 1,
+                                                               status, argBuf.getBuffLeft(), argBuf.getBuffLength());
+                return Fw::Success::FAILURE;
+            }
+            deserializedDirective.deserLocalVar.setsrcOffset(srcOffset);
+
+            U8 destReg;
+            status = argBuf.deserialize(destReg);
+            if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || argBuf.getBuffLeft() != 0) {
+                this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), this->m_runtime.nextStatementIndex - 1,
+                                                               status, argBuf.getBuffLeft(), argBuf.getBuffLength());
+                return Fw::Success::FAILURE;
+            }
+            deserializedDirective.deserLocalVar.setdestReg(destReg);
+            break;
+        }
         default: {
             // unsure what this opcode is. check compiler version matches sequencer
             this->log_WARNING_HI_UnknownSequencerDirective(stmt.getopCode(), this->m_runtime.nextStatementIndex - 1,
@@ -264,6 +327,20 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
         }
         case Fpy::DirectiveId::CMD: {
             this->directive_cmd_internalInterfaceInvoke(directive.cmd);
+            break;
+        }
+        case Fpy::DirectiveId::OR: {
+            this->directive_or_internalInterfaceInvoke(directive.orDirective);
+            break;
+        }
+        case Fpy::DirectiveId::DESER_LVAR_8:
+            // fallthrough on purpose
+        case Fpy::DirectiveId::DESER_LVAR_4:
+            // fallthrough on purpose
+        case Fpy::DirectiveId::DESER_LVAR_2:
+            // fallthrough on purpose
+        case Fpy::DirectiveId::DESER_LVAR_1: {
+            this->directive_deserLocalVar_internalInterfaceInvoke(directive.deserLocalVar);
             break;
         }
         default: {

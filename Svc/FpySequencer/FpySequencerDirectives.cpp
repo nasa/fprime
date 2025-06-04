@@ -27,6 +27,10 @@ void FpySequencer::sendSignal(Signal signal) {
     }
 }
 
+I64& FpySequencer::reg(U8 idx) {
+    return this->m_runtime.registers[idx];
+}
+
 //! Internal interface handler for directive_waitRel
 void FpySequencer::directive_waitRel_internalInterfaceHandler(const FpySequencer_WaitRelDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
@@ -91,6 +95,20 @@ void FpySequencer::directive_cmd_internalInterfaceHandler(const Svc::FpySequence
     this->m_tlm.lastDirectiveError = error;
 }
 
+//! Internal interface handler for directive_or
+void FpySequencer::directive_or_internalInterfaceHandler(const Svc::FpySequencer_OrDirective& directive) {
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->or_directiveHandler(directive, error));
+    this->m_tlm.lastDirectiveError = error;
+}
+
+//! Internal interface handler for directive_deserLocalVar
+void FpySequencer::directive_deserLocalVar_internalInterfaceHandler(const Svc::FpySequencer_DeserLocalVarDirective& directive) {
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->deserLocalVar_directiveHandler(directive, error));
+    this->m_tlm.lastDirectiveError = error;
+}
+
 //! Internal interface handler for directive_waitRel
 Signal FpySequencer::waitRel_directiveHandler(const FpySequencer_WaitRelDirective& directive, DirectiveError& error) {
     Fw::Time wakeupTime = this->getTime();
@@ -139,8 +157,8 @@ Signal FpySequencer::goto_directiveHandler(const FpySequencer_GotoDirective& dir
 
 //! Internal interface handler for directive_if
 Signal FpySequencer::if_directiveHandler(const FpySequencer_IfDirective& directive, DirectiveError& error) {
-    if (directive.getconditionalLocalVarIndex() >= Fpy::MAX_SEQUENCE_LOCAL_VARIABLES) {
-        error = DirectiveError::LVAR_OUT_OF_BOUNDS;
+    if (directive.getconditionalReg() >= Fpy::NUM_REGISTERS) {
+        error = DirectiveError::REGISTER_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
     // check within sequence bounds, or at EOF (we allow == case cuz this just ends the sequence)
@@ -149,27 +167,7 @@ Signal FpySequencer::if_directiveHandler(const FpySequencer_IfDirective& directi
         return Signal::stmtResponse_failure;
     }
 
-    Runtime::LocalVariable& lvar = this->m_runtime.localVariables[directive.getconditionalLocalVarIndex()];
-    // create an esb so we don't modify the actual buf
-    Fw::ExternalSerializeBuffer conditionalEsb(lvar.value, lvar.valueSize);
-    Fw::SerializeStatus status = conditionalEsb.setBuffLen(lvar.valueSize);
-    FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK);  // coding error if this fails
-    bool conditional;
-    status = conditionalEsb.deserialize(conditional);
-
-    if (status != Fw::SerializeStatus::FW_SERIALIZE_OK) {
-        // failed to interpret this local variable as a boolean
-        error = DirectiveError::LVAR_DESERIALIZE_FAILURE;
-        return Signal::stmtResponse_failure;
-    }
-
-    if (conditionalEsb.getBuffLeft() != 0) {
-        // fail cuz this buf contained more than just a boolean
-        error = DirectiveError::LVAR_DESERIALIZE_FAILURE;
-        return Signal::stmtResponse_failure;
-    }
-
-    if (conditional) {
+    if (reg(directive.getconditionalReg())) {
         // proceed to next instruction
         return Signal::stmtResponse_success;
     }
@@ -301,5 +299,75 @@ Signal FpySequencer::cmd_directiveHandler(const FpySequencer_CmdDirective& direc
 
     // now tell the SM to wait some more until we get the cmd response back
     return Signal::stmtResponse_keepWaiting;
+}
+
+Signal FpySequencer::or_directiveHandler(const FpySequencer_OrDirective& directive, DirectiveError& error) {
+    
+    if (directive.getlhs() >= Fpy::NUM_REGISTERS 
+        || directive.getrhs() >= Fpy::NUM_REGISTERS 
+        || directive.getres() >= Fpy::NUM_REGISTERS) {
+        error = DirectiveError::REGISTER_OUT_OF_BOUNDS;
+        return Signal::stmtResponse_failure;
+    }
+
+    reg(directive.getres()) = reg(directive.getlhs()) | reg(directive.getrhs());
+
+    return Signal::stmtResponse_success;
+}
+
+Signal FpySequencer::deserLocalVar_directiveHandler(const FpySequencer_DeserLocalVarDirective& directive, DirectiveError& error) {
+    if (directive.getsrcLvarIdx() >= Fpy::MAX_SEQUENCE_LOCAL_VARIABLES) {
+        error = DirectiveError::LVAR_OUT_OF_BOUNDS;
+        return Signal::stmtResponse_failure;
+    }
+    if (directive.getdestReg() >= Fpy::NUM_REGISTERS) {
+        error = DirectiveError::REGISTER_OUT_OF_BOUNDS;
+        return Signal::stmtResponse_failure;
+    }
+    Runtime::LocalVariable& lvar = this->m_runtime.localVariables[directive.getsrcLvarIdx()];
+    if (directive.getsrcOffset() + directive.get_deserSize() > lvar.valueSize) {
+        error = DirectiveError::LVAR_ACCESS_OUT_OF_BOUNDS;
+        return Signal::stmtResponse_failure;
+    }
+
+    // TODO can I use htons/htonl? this code could be way simpler
+    Fw::ExternalSerializeBuffer esb(lvar.value, lvar.valueSize);
+    esb.setBuffLen(lvar.valueSize);
+    FW_ASSERT(esb.deserializeSkip(directive.getsrcOffset()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+
+    I8 oneByte;
+    I16 twoBytes;
+    I32 fourBytes;
+    I64 eightBytes;
+
+    switch (directive.get_deserSize()) {
+        case 1: {
+            // all these desers should succeed as we've already checked the size above
+            FW_ASSERT(esb.deserialize(oneByte) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+            reg(directive.getdestReg()) = oneByte;
+            break;
+        }
+        case 2: {
+            FW_ASSERT(esb.deserialize(twoBytes) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+            reg(directive.getdestReg()) = twoBytes;
+            break;
+        }
+        case 4: {
+            FW_ASSERT(esb.deserialize(fourBytes) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+            reg(directive.getdestReg()) = fourBytes;
+            break;
+        }
+        case 8: {
+            FW_ASSERT(esb.deserialize(eightBytes) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+            reg(directive.getdestReg()) = eightBytes;
+            break;
+        }
+        default: {
+            FW_ASSERT(0, static_cast<FwAssertArgType>(directive.get_deserSize()));
+            return Signal::stmtResponse_failure;
+        }
+    }
+
+    return Signal::stmtResponse_success;
 }
 }  // namespace Svc

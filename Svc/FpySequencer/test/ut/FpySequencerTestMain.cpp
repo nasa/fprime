@@ -88,9 +88,7 @@ TEST_F(FpySequencerTester, setLvar) {
 TEST_F(FpySequencerTester, if) {
     cmp.m_runtime.nextStatementIndex = 100;
     cmp.m_sequenceObj.getheader().setstatementCount(123);
-    Fw::ExternalSerializeBuffer buf(cmp.m_runtime.localVariables[0].value, Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE);
-    buf.serialize(true);
-    cmp.m_runtime.localVariables[0].valueSize = buf.getBuffLength();
+    cmp.m_runtime.registers[0] = 1;
     FpySequencer_IfDirective directive(0, 111);
     DirectiveError err = DirectiveError::NO_ERROR;
     Signal result = cmp.if_directiveHandler(directive, err);
@@ -99,9 +97,7 @@ TEST_F(FpySequencerTester, if) {
     // should not have changed stmtidx
     ASSERT_EQ(cmp.m_runtime.nextStatementIndex, 100);
 
-    buf.resetSer();
-    buf.serialize(false);
-    cmp.m_runtime.localVariables[0].valueSize = buf.getBuffLength();
+    cmp.m_runtime.registers[0] = 0; // set it to false
     result = cmp.if_directiveHandler(directive, err);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(result, Signal::stmtResponse_success);
@@ -119,26 +115,16 @@ TEST_F(FpySequencerTester, if) {
 
     cmp.m_runtime.nextStatementIndex = 100;
 
-    buf.resetSer();
-    // check failure to interpret as bool
-    buf.serialize(static_cast<U8>(111));
-    cmp.m_runtime.localVariables[0].valueSize = buf.getBuffLength();
+    // check reg out of bounds
+    directive.setconditionalReg(Fpy::NUM_REGISTERS);
     result = cmp.if_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
-    ASSERT_EQ(err, DirectiveError::LVAR_DESERIALIZE_FAILURE);
+    ASSERT_EQ(err, DirectiveError::REGISTER_OUT_OF_BOUNDS);
     err = DirectiveError::NO_ERROR;
     // should not have changed stmtidx
     ASSERT_NE(cmp.m_runtime.nextStatementIndex, 111);
 
-    directive.setconditionalLocalVarIndex(Fpy::MAX_SEQUENCE_LOCAL_VARIABLES);
-    result = cmp.if_directiveHandler(directive, err);
-    ASSERT_EQ(result, Signal::stmtResponse_failure);
-    ASSERT_EQ(err, DirectiveError::LVAR_OUT_OF_BOUNDS);
-    err = DirectiveError::NO_ERROR;
-    // should not have changed stmtidx
-    ASSERT_NE(cmp.m_runtime.nextStatementIndex, 111);
-
-    directive.setconditionalLocalVarIndex(0);
+    directive.setconditionalReg(0);
     directive.setfalseGotoStmtIndex(cmp.m_sequenceObj.getheader().getstatementCount() + 1);
     result = cmp.if_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
@@ -807,7 +793,7 @@ TEST_F(FpySequencerTester, dispatchStatement) {
     ASSERT_EQ(cmp.m_statementsDispatched, 1);
     // reset counter, try dispatching a bad statement
     cmp.m_runtime.nextStatementIndex = 0;
-    cmp.m_sequenceObj.getstatements()[0].setopCode(Fpy::DirectiveId::NUM_CONSTANTS);
+    cmp.m_sequenceObj.getstatements()[0].setopCode(static_cast<Svc::Fpy::DirectiveId::T>(Fpy::DirectiveId::NUM_CONSTANTS));
     result = cmp.dispatchStatement();
     ASSERT_EQ(result, Signal::result_dispatchStatement_failure);
 
@@ -1170,7 +1156,7 @@ TEST_F(FpySequencerTester, seqRunIn) {
 
 }  // namespace Svc
 
-int main(int argc, char** argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}
+// int main(int argc, char** argv) {
+//     ::testing::InitGoogleTest(&argc, argv);
+//     return RUN_ALL_TESTS();
+// }
