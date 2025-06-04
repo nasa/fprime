@@ -1,5 +1,5 @@
 // ======================================================================
-// \title  Array
+// \file   Array.hpp
 // \author bocchino
 // \brief  A statically-sized, bounds checked array
 // ======================================================================

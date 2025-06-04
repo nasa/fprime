@@ -1,7 +1,7 @@
 // ======================================================================
-// @title  ExternalArray
-// @author bocchino
-// @brief  A bounds-checked array with external memory
+// \file   ExternalArray.hpp
+// \author bocchino
+// \brief  A bounds-checked array with external memory
 // ======================================================================
 
 #ifndef Fw_ExternalArray_HPP

@@ -82,7 +82,9 @@ FwSizeType getValue() const
 void setValue(FwSizeType value)
 ```
 
-Set `m_value = m_value % m_modulus`.
+1. Assert `m_modulus > 0`.
+
+2. Set `m_value = m_value % m_modulus`.
 
 ### 3.4. getModulus
 
@@ -110,6 +112,8 @@ void setModulus(FwSizeType modulus)
 FwSizeType increment(FwSizeType amount = 1)
 ```
 
+1. Assert `m_modulus > 0`.
+
 1. Set `offset = amount % m_modulus`.
 
 1. Call `setValue(m_value + offset)`.
@@ -121,6 +125,8 @@ FwSizeType increment(FwSizeType amount = 1)
 ```c++
 FwSizeType decrement(FwSizeType amount = 1)
 ```
+
+1. Assert `m_modulus > 0`.
 
 1. Set `offset = amount % m_modulus`.
 
