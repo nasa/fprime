@@ -31,6 +31,12 @@ for storing the items on the queue.
 |`m_extQueue`|`ExternalFifoQueue<T>`|The external queue implementation|C++ default initialization|
 |`m_array`|`Array<T, C>`|The array providing the backing memory for `m_extQueue`|C++ default initialization|
 
+```mermaid
+classDiagram
+    queue:FifoQueue<T,C> *-- m_extQueue:ExternalFifoQueue<T>
+    queue:FifoQueue<T,C> *-- m_array:Array<T, C>
+```
+
 ## 4. Public Constructors and Destructors
 
 ### 4.1. Zero-Argument Constructor
