@@ -16,4 +16,12 @@ TEST(ExternalFifoQueue, ZeroArgConstructor) {
     ASSERT_EQ(queue.getSize(), 0);
 }
 
+TEST(ExternalFifoQueue, StorageConstructor) {
+    constexpr FwSizeType capacity = 10;
+    U32 items[capacity];
+    ExternalFifoQueue<U32> queue(items, capacity);
+    ASSERT_EQ(queue.getCapacity(), capacity);
+    ASSERT_EQ(queue.getSize(), 0);
+}
+
 }  // namespace Fw

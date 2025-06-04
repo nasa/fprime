@@ -17,26 +17,29 @@ TEST(ExternalArray, ZeroArgConstructor) {
 }
 
 TEST(ExternalArray, StorageConstructor) {
-    U32 elements[3];
-    ExternalArray<U32> a(elements, 3);
+    constexpr FwSizeType size = 3;
+    U32 elements[size];
+    ExternalArray<U32> a(elements, size);
     ASSERT_EQ(a.getElements(), elements);
-    ASSERT_EQ(a.getSize(), 3);
+    ASSERT_EQ(a.getSize(), size);
 }
 
 TEST(ExternalArray, CopyConstructor) {
-    U32 elements[3];
+    constexpr FwSizeType size = 3;
+    U32 elements[size];
     // Call the constructor providing backing storage
-    ExternalArray<U32> a1(elements, 3);
+    ExternalArray<U32> a1(elements, size);
     // Call the copy constructor
     ExternalArray<U32> a2(a1);
     ASSERT_EQ(a2.getElements(), elements);
-    ASSERT_EQ(a2.getSize(), 3);
+    ASSERT_EQ(a2.getSize(), size);
 }
 
 TEST(ExternalArray, CopyAssignment) {
-    U32 elements[3];
+    constexpr FwSizeType size = 3;
+    U32 elements[size];
     // Call the constructor providing backing storage
-    ExternalArray<U32> a1(elements, 3);
+    ExternalArray<U32> a1(elements, size);
     // Call the copy assignment operator
     ExternalArray<U32> a2;
     a2 = a1;
@@ -62,31 +65,34 @@ static void testCopyDataFrom(ExternalArray<U32> a1, ExternalArray<U32> a2) {
 
 TEST(ExternalArray, CopyDataFrom) {
     constexpr FwSizeType maxSize = 10;
+    constexpr FwSizeType smallSize = maxSize / 2;
     U32 elements1[maxSize];
     U32 elements2[maxSize];
     // size1 < size2
-    testCopyDataFrom(ExternalArray<U32>(elements1, 5), ExternalArray<U32>(elements2, 10));
+    testCopyDataFrom(ExternalArray<U32>(elements1, smallSize), ExternalArray<U32>(elements2, maxSize));
     // size1 == size2
-    testCopyDataFrom(ExternalArray<U32>(elements1, 10), ExternalArray<U32>(elements2, 10));
+    testCopyDataFrom(ExternalArray<U32>(elements1, maxSize), ExternalArray<U32>(elements2, maxSize));
     // size1 > size2
-    testCopyDataFrom(ExternalArray<U32>(elements1, 10), ExternalArray<U32>(elements2, 5));
+    testCopyDataFrom(ExternalArray<U32>(elements1, maxSize), ExternalArray<U32>(elements2, smallSize));
 }
 
 TEST(ExternalArray, Subscript) {
-    U32 elements[3] = {};
-    ExternalArray<U32> a(elements, 3);
+    constexpr FwSizeType size = 10;
+    U32 elements[size] = {};
+    ExternalArray<U32> a(elements, size);
     // Constant access
     ASSERT_EQ(a[0], 0);
     // Mutable access
     a[0]++;
     ASSERT_EQ(a[0], 1);
     // Out-of-bounds access
-    ASSERT_DEATH(a[3], "Assert");
+    ASSERT_DEATH(a[size], "Assert");
 }
 
 TEST(ExternalArray, SetStorage) {
-    U32 elements[3];
-    ExternalArray<U32> a1(elements, 3);
+    constexpr FwSizeType size = 10;
+    U32 elements[size];
+    ExternalArray<U32> a1(elements, size);
     ExternalArray<U32> a2;
     a2.setStorage(a1.getElements(), a1.getSize());
     ASSERT_EQ(a2.getElements(), a1.getElements());
