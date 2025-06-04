@@ -15,6 +15,13 @@ namespace Fw {
 
 template <typename T>
 class ExternalFifoQueue final : public FifoQueueBase<T> {
+
+    // ----------------------------------------------------------------------
+    // Friend class for testing
+    // ----------------------------------------------------------------------
+
+    template<typename TT> friend class ExternalFifoQueueTester;
+
   public:
     // ----------------------------------------------------------------------
     // Public constructors and destructors
