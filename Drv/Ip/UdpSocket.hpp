@@ -75,7 +75,7 @@ class UdpSocket : public IpSocket {
      * single-direction receive port only.
      *
      * \param hostname: socket uses for incoming transmissions. Must be of form x.x.x.x
-     * \param port: port socket uses for incoming transmissions.
+     * \param port: port socket uses for incoming transmissions. Can be 0 for ephemeral port assignment.
      * \return status of configure
      */
     SocketIpStatus configureRecv(const char* hostname, const U16 port);
@@ -122,8 +122,9 @@ class UdpSocket : public IpSocket {
     I32 recvProtocol(const SocketDescriptor& socketDescriptor, U8* const data, const U32 size) override;
   private:
     SocketState* m_state; //!< State storage
-    U16 m_recv_port;  //!< IP address port used
-    char m_recv_hostname[SOCKET_MAX_HOSTNAME_SIZE];  //!< Hostname to supply
+    U16 m_recv_port;  //!< Port to receive on
+    char m_recv_hostname[SOCKET_MAX_HOSTNAME_SIZE]; //!< Hostname to receive on
+    bool m_recv_configured; //!< True if configureRecv was called
 };
 }  // namespace Drv
 
