@@ -22,8 +22,8 @@ class CircularIndex final {
     CircularIndex() : m_value(0), m_modulus(1) {}
 
     //! Constructor with specified members
-    explicit CircularIndex(const FwSizeType modulus,   //!< The modulus
-                           const FwSizeType value = 0  //!< The initial value
+    explicit CircularIndex(FwSizeType modulus,   //!< The modulus
+                           FwSizeType value = 0  //!< The initial value
                            )
         : m_modulus(modulus) {
         FW_ASSERT(modulus > 0);
@@ -58,7 +58,7 @@ class CircularIndex final {
     }
 
     //! Set the index value
-    void setValue(const FwSizeType value  //!< The index value
+    void setValue(FwSizeType value  //!< The index value
     ) {
         FW_ASSERT(this->m_modulus > 0);
         this->m_value = value % this->m_modulus;
@@ -71,7 +71,7 @@ class CircularIndex final {
     }
 
     //! Set the modulus
-    void setModulus(const FwSizeType modulus  //!< The modulus value
+    void setModulus(FwSizeType modulus  //!< The modulus value
     ) {
         this->m_modulus = modulus;
         this->setValue(this->m_value);
@@ -79,7 +79,7 @@ class CircularIndex final {
 
     //! Increment the index value
     //! \return The new value
-    FwSizeType increment(const FwSizeType amount = 1  //!< The amount by which to increment
+    FwSizeType increment(FwSizeType amount = 1  //!< The amount by which to increment
     ) {
         FW_ASSERT(this->m_modulus > 0);
         const FwSizeType offset = amount % m_modulus;
@@ -89,7 +89,7 @@ class CircularIndex final {
 
     //! Decrement the index value
     //! \return The new value
-    FwSizeType decrement(const FwSizeType amount = 1  //!< The amount by which to decrement
+    FwSizeType decrement(FwSizeType amount = 1  //!< The amount by which to decrement
     ) {
         FW_ASSERT(this->m_modulus > 0);
         const FwSizeType offset = amount % this->m_modulus;
