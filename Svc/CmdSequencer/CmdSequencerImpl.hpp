@@ -19,11 +19,30 @@
 
 namespace Svc {
 
+  // Forward declaration for UTs
+  namespace ImmediateBase{ class CmdSequencerTester; }
+  namespace Immediate{ class CmdSequencerTester; }
+  namespace ImmediateEOS{ class CmdSequencerTester; }
+  namespace Mixed{ class CmdSequencerTester; }
+  namespace MixedRelativeBase{ class CmdSequencerTester; }
+  namespace Relative{ class CmdSequencerTester; }
+  namespace JoinWait{ class CmdSequencerTester; }
+
   class CmdSequencerComponentImpl final :
     public CmdSequencerComponentBase
   {
 
-    PRIVATE:
+
+    friend class CmdSequencerTester;
+    friend class Svc::ImmediateBase::CmdSequencerTester;
+    friend class Svc::Immediate::CmdSequencerTester;
+    friend class Svc::ImmediateEOS::CmdSequencerTester;
+    friend class Svc::Mixed::CmdSequencerTester;
+    friend class Svc::MixedRelativeBase::CmdSequencerTester;
+    friend class Svc::Relative::CmdSequencerTester;
+    friend class Svc::JoinWait::CmdSequencerTester;
+
+    private:
 
       // ----------------------------------------------------------------------
       // Private enumerations
@@ -111,10 +130,10 @@ namespace Svc {
                   const FwTimeContextStoreType seqTimeContext //!< The sequence file time context
               );
 
-              // No Records 
+              // No Records
               void noRecords();
 
-            PRIVATE:
+            private:
 
               //! The enclosing component
               Sequence& m_sequence;
@@ -270,7 +289,7 @@ namespace Svc {
           //! After calling this, hasMoreRecords should return false
           virtual void clear() = 0;
 
-        PROTECTED:
+        protected:
 
           //! The enclosing component
           CmdSequencerComponentImpl& m_component;
@@ -304,7 +323,7 @@ namespace Svc {
         public Sequence
       {
 
-        PRIVATE:
+        private:
 
           enum Constants {
             INITIAL_COMPUTED_VALUE = 0xFFFFFFFFU
@@ -373,7 +392,7 @@ namespace Svc {
           //! After calling this, hasMoreRecords should return false.
           void clear();
 
-        PRIVATE:
+        private:
 
           //! Read a sequence file
           //! \return Success or failure
@@ -439,7 +458,7 @@ namespace Svc {
           //! \return Success or failure
           bool validateRecords();
 
-        PRIVATE:
+        private:
 
           //! The CRC values
           CRC m_crc;
@@ -449,7 +468,7 @@ namespace Svc {
 
       };
 
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Private classes
@@ -459,7 +478,17 @@ namespace Svc {
       //! \brief A class representing a timer
       class Timer {
 
-        PRIVATE:
+        friend class CmdSequencerTester;
+        friend class Svc::ImmediateBase::CmdSequencerTester;
+        friend class Svc::Immediate::CmdSequencerTester;
+        friend class Svc::ImmediateEOS::CmdSequencerTester;
+        friend class Svc::Mixed::CmdSequencerTester;
+        friend class Svc::MixedRelativeBase::CmdSequencerTester;
+        friend class Svc::Relative::CmdSequencerTester;
+        friend class Svc::JoinWait::CmdSequencerTester;
+
+
+        private:
 
           //! The timer state
           typedef enum {
@@ -503,7 +532,7 @@ namespace Svc {
             return true;
           }
 
-        PRIVATE:
+        private:
 
           //! The timer state
           State m_state;
@@ -563,7 +592,7 @@ namespace Svc {
       //! Destroy a CmdDispatcherComponentBase
       ~CmdSequencerComponentImpl();
 
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Handler implementations for input ports
@@ -601,7 +630,7 @@ namespace Svc {
           const FwIndexType portNum /*!< The port number*/
       );
 
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Command handler implementations
@@ -668,7 +697,7 @@ namespace Svc {
           const U32 cmdSeq /*!< The command sequence number*/
       );
 
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Private helper methods
@@ -725,7 +754,7 @@ namespace Svc {
           const Fw::Time &currentTime //!< The current time
       );
 
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Private member variables
