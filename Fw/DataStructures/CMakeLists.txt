@@ -6,6 +6,7 @@ register_fprime_module()
 
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/ArrayTest.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/CircularIndexTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/DataStructuresTestMain.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/ExternalArrayTest.cpp"
 )

@@ -57,7 +57,7 @@ class ExternalFifoQueue final : public FifoQueueBase<T> {
     const T& at(FwSizeType i  //!< The index
     ) const override {
         FW_ASSERT(i < this->m_size, static_cast<FwAssertArgType>(i), static_cast<FwAssertArgType>(this->m_size));
-        CircularIndex ci = this->m_enqueueIndex;
+        auto ci = this->m_enqueueIndex;
         return this->m_items[ci.increment(i)];
     }
 
