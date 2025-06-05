@@ -83,6 +83,31 @@ struct DeserLocalVarDirective {
     _deserSize: U8
 }
 
+@ writes a constant value to a register
+struct StoreDirective {
+    @ the register to store the value in
+    dest: U8
+    @ the value to store in the register
+    value: I64
+}
+
+enum BinaryCmpOperation {
+    GT
+    LT
+    EQ
+    LE
+    GE
+}
+
+@ performs a binary comparison operator on the lhs and rhs registers, and stores the result in the third register
+struct BinaryCmpDirective {
+    lhs: U8
+    rhs: U8
+    res: U8
+    
+    _op: BinaryCmpOperation
+}
+
 internal port directive_waitRel(directive: WaitRelDirective) priority 6 assert
 
 internal port directive_waitAbs(directive: WaitAbsDirective) priority 6 assert
@@ -104,6 +129,10 @@ internal port directive_cmd(directive: CmdDirective) priority 6 assert
 internal port directive_or(directive: OrDirective) priority 6 assert
 
 internal port directive_deserLocalVar(directive: DeserLocalVarDirective) priority 6 assert
+
+internal port directive_store(directive: StoreDirective) priority 6 assert
+
+internal port directive_binaryCmp(directive: BinaryCmpDirective) priority 6 assert
 
 enum DirectiveErrorCode {
     NO_ERROR

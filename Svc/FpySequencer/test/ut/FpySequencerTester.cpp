@@ -206,6 +206,51 @@ void FpySequencerTester::add_CMD(FpySequencer_CmdDirective dir) {
     addDirective(Fpy::DirectiveId::CMD, buf);
 }
 
+void FpySequencerTester::add_OR(U8 lhs, U8 rhs, U8 res) {
+    add_OR(FpySequencer_OrDirective(lhs, rhs, res));
+}
+
+void FpySequencerTester::add_OR(FpySequencer_OrDirective dir) {
+    Fw::StatementArgBuffer buf;
+    FW_ASSERT(buf.serialize(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    addDirective(Fpy::DirectiveId::OR, buf);
+}
+
+void FpySequencerTester::add_DESER_LVAR(U8 srcLvarIdx, FwSizeType srcOffset, U8 destReg, U8 deserSize) {
+    add_DESER_LVAR(FpySequencer_DeserLocalVarDirective(srcLvarIdx, srcOffset, destReg, deserSize));
+}
+
+void FpySequencerTester::add_DESER_LVAR(FpySequencer_DeserLocalVarDirective dir) {
+    Fw::StatementArgBuffer buf;
+    FW_ASSERT(buf.serialize(dir.getsrcLvarIdx()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    FW_ASSERT(buf.serialize(dir.getsrcOffset()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    FW_ASSERT(buf.serialize(dir.getdestReg()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    Fpy::DirectiveId id;
+    if (dir.get_deserSize() == 1) {
+        id = Fpy::DirectiveId::DESER_LVAR_1;
+    } else if (dir.get_deserSize() == 2) {
+        id = Fpy::DirectiveId::DESER_LVAR_2;
+    } else if (dir.get_deserSize() == 4) {
+        id = Fpy::DirectiveId::DESER_LVAR_4;
+    } else if (dir.get_deserSize() == 8) {
+        id = Fpy::DirectiveId::DESER_LVAR_8;
+    } else {
+        FW_ASSERT(0, static_cast<FwAssertArgType>(dir.get_deserSize()));
+    }
+
+    addDirective(id, buf);
+}
+
+void FpySequencerTester::add_STORE(U8 dest, I64 value) {
+    add_STORE(FpySequencer_StoreDirective(dest, value));
+}
+
+void FpySequencerTester::add_STORE(FpySequencer_StoreDirective dir) {
+    Fw::StatementArgBuffer buf;
+    FW_ASSERT(buf.serialize(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    addDirective(Fpy::DirectiveId::STORE, buf);
+}
+
 //! Handle a text event
 void FpySequencerTester::textLogIn(FwEventIdType id,                //!< The event ID
                                    const Fw::Time& timeTag,         //!< The time

@@ -4,21 +4,27 @@ module Svc {
         constant SCHEMA_VERSION = 1;
 
         enum DirectiveId : U8 {
-            INVALID = 0,
-            WAIT_REL = 1,
-            WAIT_ABS = 2,
-            SET_LVAR = 3,
-            GOTO = 4,
-            IF = 5,
-            NO_OP = 6,
-            GET_TLM = 7,
-            GET_PRM = 8,
-            CMD = 9,
-            OR = 10,
+            INVALID = 0
+            WAIT_REL = 1
+            WAIT_ABS = 2
+            SET_LVAR = 3
+            GOTO = 4
+            IF = 5
+            NO_OP = 6
+            GET_TLM = 7
+            GET_PRM = 8
+            CMD = 9
+            STORE = 10
             DESER_LVAR_8 = 11
             DESER_LVAR_4 = 12
             DESER_LVAR_2 = 13
             DESER_LVAR_1 = 14
+            OR = 15
+            GT = 16
+            LT = 17
+            EQ = 18
+            LE = 19
+            GE = 20
         }
 
         struct Header {

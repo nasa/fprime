@@ -97,6 +97,12 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     void add_GET_PRM(FpySequencer_GetPrmDirective dir);
     void add_CMD(FwOpcodeType opcode);
     void add_CMD(FpySequencer_CmdDirective dir);
+    void add_OR(U8 lhs, U8 rhs, U8 res);
+    void add_OR(FpySequencer_OrDirective dir);
+    void add_DESER_LVAR(U8 srcLvarIdx, FwSizeType srcOffset, U8 destReg, U8 deserSize);
+    void add_DESER_LVAR(FpySequencer_DeserLocalVarDirective dir);
+    void add_STORE(U8 dest, I64 value);
+    void add_STORE(FpySequencer_StoreDirective dir);
     //! Handle a text event
     void textLogIn(FwEventIdType id,                //!< The event ID
                    const Fw::Time& timeTag,         //!< The time

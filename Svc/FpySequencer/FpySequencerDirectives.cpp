@@ -109,6 +109,20 @@ void FpySequencer::directive_deserLocalVar_internalInterfaceHandler(const Svc::F
     this->m_tlm.lastDirectiveError = error;
 }
 
+//! Internal interface handler for directive_store
+void FpySequencer::directive_store_internalInterfaceHandler(const Svc::FpySequencer_StoreDirective& directive) {
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->store_directiveHandler(directive, error));
+    this->m_tlm.lastDirectiveError = error;
+}
+
+//! Internal interface handler for directive_binaryCmp
+void FpySequencer::directive_binaryCmp_internalInterfaceHandler(const Svc::FpySequencer_BinaryCmpDirective& directive) {
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->binaryCmp_directiveHandler(directive, error));
+    this->m_tlm.lastDirectiveError = error;
+}
+
 //! Internal interface handler for directive_waitRel
 Signal FpySequencer::waitRel_directiveHandler(const FpySequencer_WaitRelDirective& directive, DirectiveError& error) {
     Fw::Time wakeupTime = this->getTime();
@@ -366,6 +380,57 @@ Signal FpySequencer::deserLocalVar_directiveHandler(const FpySequencer_DeserLoca
             FW_ASSERT(0, static_cast<FwAssertArgType>(directive.get_deserSize()));
             return Signal::stmtResponse_failure;
         }
+    }
+
+    return Signal::stmtResponse_success;
+}
+
+Signal FpySequencer::store_directiveHandler(const FpySequencer_StoreDirective& directive, DirectiveError& error) {
+    if (directive.getdest() >= Fpy::NUM_REGISTERS) {
+        error = DirectiveError::REGISTER_OUT_OF_BOUNDS;
+        return Signal::stmtResponse_failure;
+    }
+    reg(directive.getdest()) = directive.getvalue();
+    return Signal::stmtResponse_success;
+}
+
+Signal FpySequencer::binaryCmp_directiveHandler(const FpySequencer_BinaryCmpDirective& directive, DirectiveError& error) {
+    if (directive.getlhs() >= Fpy::NUM_REGISTERS 
+        || directive.getrhs() >= Fpy::NUM_REGISTERS 
+        || directive.getres() >= Fpy::NUM_REGISTERS) {
+        error = DirectiveError::REGISTER_OUT_OF_BOUNDS;
+        return Signal::stmtResponse_failure;
+    }
+    
+    I8 cmpResult;
+
+    if (reg(directive.getlhs()) < reg(directive.getrhs())) {
+        cmpResult = -1;
+    } else if (reg(directive.getlhs()) == reg(directive.getrhs())) {
+        cmpResult = 0;
+    } else {
+        cmpResult = 1;
+    }
+
+    if ((directive.get_op() == FpySequencer_BinaryCmpOperation::LT
+        || directive.get_op() == FpySequencer_BinaryCmpOperation::LE)
+        && cmpResult == -1) {
+        // op was less than, and cmp was less than
+        reg(directive.getres()) = 1;
+    } else if ((directive.get_op() == FpySequencer_BinaryCmpOperation::GT
+                || directive.get_op() == FpySequencer_BinaryCmpOperation::GE)
+                && cmpResult == 1) {
+        // op was greater than, and cmp was greater than
+        reg(directive.getres()) = 1;
+    } else if ((directive.get_op() == FpySequencer_BinaryCmpOperation::EQ
+                || directive.get_op() == FpySequencer_BinaryCmpOperation::GE
+                || directive.get_op() == FpySequencer_BinaryCmpOperation::GT)
+                && cmpResult == 0) {
+        // op was equal to, and cmp was equal to
+        reg(directive.getres()) = 1;
+    } else {
+        // no match between operation and cmp result
+        reg(directive.getres()) = 0;
     }
 
     return Signal::stmtResponse_success;

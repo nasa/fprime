@@ -54,6 +54,8 @@ class FpySequencer : public FpySequencerComponentBase {
         FpySequencer_CmdDirective cmd;
         FpySequencer_OrDirective orDirective;
         FpySequencer_DeserLocalVarDirective deserLocalVar;
+        FpySequencer_StoreDirective store;
+        FpySequencer_BinaryCmpDirective binaryCmp;
 
         DirectiveUnion() {}
         ~DirectiveUnion() {}
@@ -409,6 +411,12 @@ class FpySequencer : public FpySequencerComponentBase {
     //! Internal interface handler for directive_deserLocalVar
     void directive_deserLocalVar_internalInterfaceHandler(const Svc::FpySequencer_DeserLocalVarDirective& directive) override;
 
+    //! Internal interface handler for directive_store
+    void directive_store_internalInterfaceHandler(const Svc::FpySequencer_StoreDirective& directive) override;
+
+    //! Internal interface handler for directive_binaryCmp
+    void directive_binaryCmp_internalInterfaceHandler(const Svc::FpySequencer_BinaryCmpDirective& directive) override;
+
     void parametersLoaded() override;
     void parameterUpdated(FwPrmIdType id) override;
 
@@ -595,6 +603,8 @@ class FpySequencer : public FpySequencerComponentBase {
     Signal cmd_directiveHandler(const FpySequencer_CmdDirective& directive, DirectiveError& error);
     Signal or_directiveHandler(const FpySequencer_OrDirective& directive, DirectiveError& error);
     Signal deserLocalVar_directiveHandler(const FpySequencer_DeserLocalVarDirective& directive, DirectiveError& error);
+    Signal store_directiveHandler(const FpySequencer_StoreDirective& directive, DirectiveError& error);
+    Signal binaryCmp_directiveHandler(const FpySequencer_BinaryCmpDirective& directive, DirectiveError& error);
 };
 
 }  // namespace Svc
