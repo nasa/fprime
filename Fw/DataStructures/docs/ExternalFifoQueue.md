@@ -254,7 +254,32 @@ ASSERT_EQ(status, Success::SUCCESS);
 ASSERT_EQ(queue.getSize(), 1);
 ```
 
-### 5.6. dequeue
+### 5.6. at
+
+```c++
+const T& at(FwSizeType index) const override
+```
+
+1. Assert `index < m_size`.
+
+1. Set `ci = m_dequeueIndex`.
+
+1. Set `i = ci.increment(index)`.
+
+1. Return `m_items[i]`.
+
+_Example:_
+```c++
+constexpr FwSizeType capacity = 3;
+U32 items[capacity];
+ExternalFifoQueue<U32> queue(items, capacity);
+const auto status = queue.enqueue(3);
+ASSERT_EQ(status, Success::SUCCESS);
+ASSERT_EQ(queue.at(0), 3);
+ASSERT_DEATH(queue.at(1), "Assert");
+```
+
+### 5.7. dequeue
 
 ```c++
 Success dequeue(T& e) override
@@ -289,7 +314,7 @@ ASSERT_EQ(status, Success::SUCCESS);
 ASSERT_EQ(val, 42);
 ```
 
-### 5.7. getSize
+### 5.8. getSize
 
 ```c++
 FwSizeType getSize() const override
@@ -310,7 +335,7 @@ size = queue.getSize();
 ASSERT_EQ(size, 1);
 ```
 
-### 5.8. getCapacity
+### 5.9. getCapacity
 
 ```c++
 FwSizeType getCapacity() const override
@@ -325,17 +350,3 @@ U32 items[capacity];
 ExternalFifoQueue<U32> queue(items, capacity);
 ASSERT_EQ(queue.getCapacity(), capacity);
 ```
-
-## 6. Private Member Functions
-
-### 6.1. getItemAtIndex
-
-```c++
-const T& getItemAtIndex(FwSizeType index) const override
-```
-
-1. Set `ci = m_dequeueIndex`.
-
-1. Set `i = ci.increment(index)`.
-
-1. Return `m_items[i]`.

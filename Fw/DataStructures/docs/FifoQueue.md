@@ -122,7 +122,15 @@ Success enqueue(const T& e) override
 
 Return `m_extQueue.enqueue(e)`.
 
-### 5.4. dequeue
+### 5.4. at
+
+```c++
+const T& at(FwSizeType index) const override
+```
+
+Return `m_extQueue.at(index)`.
+
+### 5.5. dequeue
 
 ```c++
 Success dequeue(T& e) override
@@ -130,7 +138,7 @@ Success dequeue(T& e) override
 
 Return `m_extQueue.dequeue(e)`.
 
-### 5.5. getSize
+### 5.6. getSize
 
 ```c++
 FwSizeType getSize() const override
@@ -138,7 +146,7 @@ FwSizeType getSize() const override
 
 Return `m_extQueue.getSize()`.
 
-### 5.6. getCapacity
+### 5.7. getCapacity
 
 ```c++
 FwSizeType getCapacity() const override
@@ -161,13 +169,3 @@ _Example:_
 const auto capacity = FifoQueue<U32, 3>::getStaticCapacity();
 ASSERT_EQ(capacity, 3);
 ```
-
-## 7. Private Member Functions
-
-### 7.1. getItemAtIndex
-
-```c++
-const T& getItemAtIndex(FwSizeType index) const override
-```
-
-Return `m_extQueue.getItemAtIndex(index)`.

@@ -82,7 +82,7 @@ void copyDataFrom(const FifoQueueBase<T>& queue)
 
     1. For `i` in [0, `size`)
 
-        1. Set `e = getItemAtIndex(i)`.
+        1. Set `e = at(i)`.
 
         1. Set `status = enqueue(e)`.
 
@@ -123,12 +123,37 @@ _Example:_
 ```c++
 void f(FifoQueueBase<U32>& queue) {
     queue.clear();
-    status = queue.enqueue(3);
+    const auto status = queue.enqueue(3);
     ASSERT_EQ(status, Success::SUCCESS);
 }
 ```
 
-### 5.4. peek
+### 5.4. at
+
+```c++
+virtual const T& at(FwSizeType index) const = 0
+```
+
+Return the item at the specified index.
+Index 0 is the leftmost (earliest) element in the queue.
+Increasing indices go from left to right.
+Fails an assertion if the index is out of range.
+
+_Example:_
+```c++
+void f(FifoQueueBase<U32>& queue) {
+    queue.clear();
+    const auto status = queue.enqueue(3);
+    ASSERT_EQ(status, Success::SUCCESS);
+    const auto status = queue.enqueue(4);
+    ASSERT_EQ(status, Success::SUCCESS);
+    ASSERT_EQ(queue.at(0), 3);
+    ASSERT_EQ(queue.at(1), 4);
+    ASSERT_DEATH(queue.at(2), "Assert");
+}
+```
+
+### 5.5. peek
 
 ```c++
 Success peek(T& e, FwSizeType index = 0) const
@@ -138,7 +163,7 @@ Success peek(T& e, FwSizeType index = 0) const
 
 1. If `index < getSize()`
 
-    1. Set `e = getItemAtIndex(index)`.
+    1. Set `e = at(index)`.
 
     1. Set `status = Success::SUCCESS`.
 
@@ -164,7 +189,7 @@ void f(FifoQueueBase<U32>& queue) {
 }
 ```
 
-### 5.5. dequeue
+### 5.6. dequeue
 
 ```c++
 virtual Success dequeue(T& e) = 0
@@ -195,7 +220,7 @@ void f(FifoQueueBase<U32>& queue) {
 }
 ```
 
-### 5.6. getSize
+### 5.7. getSize
 
 ```c++
 virtual FwSizeType getSize() const = 0
@@ -216,7 +241,7 @@ void f(const FifoQueueBase<U32>& queue) {
 }
 ```
 
-### 5.7. getCapacity
+### 5.8. getCapacity
 
 ```c++
 virtual FwSizeType getCapacity() const = 0
@@ -232,16 +257,4 @@ void f(const FifoQueueBase<U32>& queue) {
     ASSERT_LE(size, capacity);
 }
 ```
-
-## 6. Protected Member Functions
-
-### 6.1. getItemAtIndex
-
-```c++
-virtual const T& getItemAtIndex(FwSizeType index) const = 0
-```
-
-Return the item at the specified index.
-Index 0 is the leftmost (earliest) element in the queue.
-Increasing indices go from left to right.
 
