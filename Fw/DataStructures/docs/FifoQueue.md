@@ -29,7 +29,7 @@ for storing the items on the queue.
 |Name|Type|Purpose|Default Value|
 |----|----|-------|-------------|
 |`m_extQueue`|`ExternalFifoQueue<T>`|The external queue implementation|C++ default initialization|
-|`m_array`|`Array<T, C>`|The array providing the backing memory for `m_extQueue`|C++ default initialization|
+|`m_items`|`T[C]`|The array providing the backing memory for `m_extQueue`|C++ default initialization|
 
 ```mermaid
 classDiagram
@@ -45,7 +45,7 @@ classDiagram
 FifoQueue()
 ```
 
-Defined as `= default`.
+Initialize `m_extQueue` with `ExternalFifoQueue<T>(m_items, C)`.
 
 _Example:_
 ```c++

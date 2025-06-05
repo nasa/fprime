@@ -115,13 +115,25 @@ class ExternalFifoQueue final : public FifoQueueBase<T> {
         return status;
     }
 
+    //! Get an item at an index
+    //! Indices go from left to right in the queue
+    //! Fails an assertion if the index is out of range
+    //! \return The item
+    const T& at(FwSizeType index  //!< The index
+    ) const override {
+        FW_ASSERT(index < this->m_size);
+        auto ci = this->m_dequeueIndex;
+        const auto i = ci.increment(index);
+        return this->m_items[i];
+    }
+
     //! Dequeue an element (pop from the left)
     //! \return SUCCESS if element dequeued
     Success dequeue(T& e  //!< The element (output)
                             ) override {
         auto status = Success::FAILURE;
         if (this->m_size > 0) {
-            e = this->getItemAtIndex(0);
+            e = this->at(0);
             (void)this->m_dequeueIndex.increment();
             this->m_size--;
             status = Success::SUCCESS;
@@ -136,21 +148,6 @@ class ExternalFifoQueue final : public FifoQueueBase<T> {
     //! Get the capacity (maximum number of items stored in the queue)
     //! \return The capacity
     FwSizeType getCapacity() const override { return this->m_items.getSize(); }
-
-  private:
-    // ----------------------------------------------------------------------
-    // Private member functions
-    // ----------------------------------------------------------------------
-
-    //! Get an item at an index
-    //! Indices go from left to right in the queue
-    //! \return The item
-    const T& getItemAtIndex(FwSizeType index  //!< The index
-    ) const override {
-        auto ci = this->m_dequeueIndex;
-        const auto i = ci.increment(index);
-        return this->m_items[i];
-    }
 
   private:
     // ----------------------------------------------------------------------

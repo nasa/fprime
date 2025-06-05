@@ -53,6 +53,13 @@ class FifoQueueBase {
     //! Clear the queue
     virtual void clear() = 0;
 
+    //! Get an item at an index
+    //! Indices go from left to right in the queue
+    //! Fails an assertion if the index is out of range
+    //! \return The item
+    virtual const T& at(FwSizeType index  //!< The index
+    ) const = 0;
+
     //! Copy data from another queue
     void copyDataFrom(const FifoQueueBase<T>& queue  //!< The queue
     ) {
@@ -60,7 +67,7 @@ class FifoQueueBase {
             this->clear();
             const FwSizeType size = FW_MIN(queue.getSize(), this->getCapacity());
             for (FwSizeType i = 0; i < size; i++) {
-                const auto& e = queue.getItemAtIndex(i);
+                const auto& e = queue.at(i);
                 const auto status = this->enqueue(e);
                 FW_ASSERT(status == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(status));
             }
@@ -80,7 +87,7 @@ class FifoQueueBase {
     ) const {
         auto status = Success::FAILURE;
         if (index < this->getSize()) {
-            e = this->getItemAtIndex(index);
+            e = this->at(index);
             status = Success::SUCCESS;
         }
         return status;
@@ -99,16 +106,6 @@ class FifoQueueBase {
     //! \return The capacity
     virtual FwSizeType getCapacity() const = 0;
 
-  protected:
-    // ----------------------------------------------------------------------
-    // Protected member functions
-    // ----------------------------------------------------------------------
-
-    //! Get an item at an index
-    //! Indices go from left to right in the queue
-    //! \return The item
-    virtual const T& getItemAtIndex(FwSizeType index  //!< The index
-    ) const = 0;
 };
 
 }  // namespace Fw

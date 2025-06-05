@@ -18,7 +18,7 @@ class FifoQueue final : public FifoQueueBase<T> {
     // Friend class for testing
     // ----------------------------------------------------------------------
 
-    template <typename TT>
+    template <typename TT, FwSizeType CC>
     friend class FifoQueueTester;
 
   public:
@@ -27,7 +27,7 @@ class FifoQueue final : public FifoQueueBase<T> {
     // ----------------------------------------------------------------------
 
     //! Zero-argument constructor
-    FifoQueue() = default;
+    FifoQueue() : m_extQueue(m_items, C) {}
 
     //! Copy constructor
     FifoQueue(const FifoQueue<T, C>& queue) : FifoQueueBase<T>() { *this = queue; }
@@ -70,16 +70,12 @@ class FifoQueue final : public FifoQueueBase<T> {
     //! \return The capacity
     FwSizeType getCapacity() const override { return this->m_extQueue.getCapacity(); }
 
-  private:
-    // ----------------------------------------------------------------------
-    // Private member functions
-    // ----------------------------------------------------------------------
-
     //! Get an item at an index
     //! Indices go from left to right in the queue
+    //! Fails an assertion if the index is out of range
     //! \return The item
-    const T& getItemAtIndex(FwSizeType index  //!< The index
-    ) const override { return this->m_extQueue.getItemAtIndex(index);
+    const T& at(FwSizeType index  //!< The index
+    ) const override { return this->m_extQueue.at(index);
     }
 
   private:
@@ -91,7 +87,7 @@ class FifoQueue final : public FifoQueueBase<T> {
     ExternalFifoQueue<T> m_extQueue = {};
 
     //! The array providing the backing memory for m_extQueue
-    Array<T, C> m_array = {};
+    T m_items[C] = {};
 
 };
 

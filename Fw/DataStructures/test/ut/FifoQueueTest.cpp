@@ -6,32 +6,32 @@
 
 #include <gtest/gtest.h>
 
+#include "Fw/DataStructures/Array.hpp"
 #include "Fw/DataStructures/FifoQueue.hpp"
 
-#if 0
 namespace Fw {
 
-template <typename T>
+template <typename T, FwSizeType C>
 class FifoQueueTester {
   public:
-    FifoQueueTester<T>(const FifoQueue<T>& queue) : m_queue(queue) {}
+    FifoQueueTester(const FifoQueue<T, C>& queue) : m_queue(queue) {}
 
-    const Array<T> getItems() const { return this->m_queue.m_items; }
+    const ExternalFifoQueue<T> getExtQueue() const { return this->m_queue.extQueue; }
 
-    const CircularIndex& getEnqueueIndex() const { return this->m_queue.m_enqueueIndex; }
-
-    const CircularIndex& getDequeueIndex() const { return this->m_queue.m_dequeueIndex; }
+    const typename Array<T, C>::Elements& getItems() const { return this->m_queue.m_items; }
 
   private:
-    const FifoQueue<T>& m_queue;
+    const FifoQueue<T, C>& m_queue;
 };
 
 TEST(FifoQueue, ZeroArgConstructor) {
-    FifoQueue<U32> queue;
-    ASSERT_EQ(queue.getCapacity(), 0);
+    constexpr FwSizeType C = 10;
+    FifoQueue<U32, C> queue;
+    ASSERT_EQ(queue.getCapacity(), C);
     ASSERT_EQ(queue.getSize(), 0);
 }
 
+#if 0
 TEST(FifoQueue, TypedStorageConstructor) {
     constexpr FwSizeType capacity = 10;
     U32 items[capacity];
@@ -213,5 +213,5 @@ TEST(FifoQueue, CopyDataFrom) {
         testCopyDataFrom(q1, maxSize, q2);
     }
 }
-}  // namespace Fw
 #endif
+}  // namespace Fw
