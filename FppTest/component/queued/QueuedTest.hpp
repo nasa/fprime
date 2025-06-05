@@ -29,7 +29,7 @@ class QueuedTest :
     //! Destroy QueuedTest object
     ~QueuedTest();
 
-  PRIVATE:
+  private:
 
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
@@ -39,7 +39,7 @@ class QueuedTest :
     #include "FppTest/component/common/typed_async.hpp"
     #include "FppTest/component/common/typed.hpp"
 
-  PRIVATE:
+  private:
 
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined serial input ports
@@ -81,7 +81,7 @@ class QueuedTest :
         Fw::SerializeBufferBase& buffer //!< The serialization buffer
     ) override;
 
-  PRIVATE:
+  private:
 
     // ----------------------------------------------------------------------
     // Handler implementations for commands
@@ -181,7 +181,7 @@ class QueuedTest :
         FormalParamStruct str //!< A struct
     ) override;
 
-  PRIVATE:
+  private:
 
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined internal interfaces
@@ -221,7 +221,7 @@ class QueuedTest :
         const FormalParamStruct& str //!< A struct
     ) override;
 
-  PRIVATE:
+  private:
 
     // ----------------------------------------------------------------------
     // Overflow hook implementations for user-defined async ports interfaces

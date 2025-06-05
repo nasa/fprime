@@ -71,6 +71,7 @@ module Ref {
     instance dpWriter
     instance dpBufferManager
     instance version
+    instance linuxTimer
 
     # ----------------------------------------------------------------------
     # Pattern graph specifiers
@@ -133,8 +134,8 @@ module Ref {
 
     connections RateGroups {
 
-      # Block driver
-      blockDrv.CycleOut -> rateGroupDriverComp.CycleIn
+      # Linux timer to drive cycle
+      linuxTimer.CycleOut -> rateGroupDriverComp.CycleIn
 
       # Rate group 1
       rateGroupDriverComp.CycleOut[Ports_RateGroups.rateGroup1] -> rateGroup1Comp.CycleIn

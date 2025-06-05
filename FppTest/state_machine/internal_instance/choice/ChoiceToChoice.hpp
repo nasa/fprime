@@ -56,7 +56,7 @@ class ChoiceToChoice : public ChoiceToChoiceComponentBase {
     //! Destroy ChoiceToChoice object
     ~ChoiceToChoice();
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Implementations for internal state machine actions
     // ----------------------------------------------------------------------
@@ -82,7 +82,7 @@ class ChoiceToChoice : public ChoiceToChoiceComponentBase {
                                                         FppTest_SmChoice_ChoiceToChoice::Signal signal  //!< The signal
                                                         ) override;
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Implementations for internal state machine guards
     // ----------------------------------------------------------------------
@@ -101,7 +101,7 @@ class ChoiceToChoice : public ChoiceToChoiceComponentBase {
                                                   FppTest_SmChoice_ChoiceToChoice::Signal signal  //!< The signal
     ) const override;
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Overflow hook implementations for internal state machines
     // ----------------------------------------------------------------------

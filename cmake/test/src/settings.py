@@ -64,7 +64,7 @@ REF_MODULES = [
     "Svc_StaticMemory",
     "Svc_Time",
     "Svc_TlmChan",
-    "Drv_BlockDriver",
+    "Ref_BlockDriver",
     "Ref_PingReceiver",
     "Ref_RecvBuffApp",
     "Ref_SendBuffApp",

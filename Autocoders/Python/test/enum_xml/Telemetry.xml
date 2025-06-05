@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<telemetry>
-
-  <channel id="0x00" name="Enum" data_type="Example::Enum2" update="always">
-    <comment>Example telemetry channel with an enum type</comment>
-  </channel>
-
-</telemetry>

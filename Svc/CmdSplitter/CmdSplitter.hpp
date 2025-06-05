@@ -31,7 +31,7 @@ class CmdSplitter final : public CmdSplitterComponentBase {
     //!
     void configure(const FwOpcodeType remoteBaseOpcode /*!< Base remote opcode*/);
 
-  PRIVATE:
+  private:
 
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports

@@ -1,7 +1,0 @@
-    <telemetry>
-        <channel id="0" name="BD_Cycles" data_type="U32" abbrev="T001-1234">
-            <comment>
-            Driver cycle count
-            </comment>
-        </channel>
-    </telemetry>
