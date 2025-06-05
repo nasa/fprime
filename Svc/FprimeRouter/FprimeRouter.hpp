@@ -24,7 +24,7 @@ class FprimeRouter final : public FprimeRouterComponentBase {
     //! Destroy FprimeRouter object
     ~FprimeRouter();
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------

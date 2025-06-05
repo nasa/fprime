@@ -38,7 +38,7 @@ class TlmPacketizer final : public TlmPacketizerComponentBase {
     //!
     ~TlmPacketizer(void);
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------

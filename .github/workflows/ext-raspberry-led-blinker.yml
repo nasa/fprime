@@ -67,13 +67,14 @@ jobs:
 
   RPI-integration:
     name: "RPI Integration Tests"
-    runs-on: self-hosted
+    runs-on: [self-hosted, raspberrypi]
     needs: cross-compilation
     steps:
       - name: "Checkout F´ Repository"
         uses: actions/checkout@v4
         with:
           sparse-checkout: 'requirements.txt'
+          sparse-checkout-cone-mode: false
       - name: "Setup environment"
         run: |
           python -m venv venv

@@ -27,7 +27,7 @@ class Version final : public VersionComponentBase {
     //! configure version's verbosity and startup
     void config(bool enable);
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
@@ -79,7 +79,7 @@ class Version final : public VersionComponentBase {
                             Svc::VersionType version_type  //!< which version type event is requested
                             ) override;
 
-  PRIVATE:
+  private:
             // An enumeration for TLM slot access
     enum VersionSlot {
         VER_SLOT_00 = 0,
@@ -95,9 +95,9 @@ class Version final : public VersionComponentBase {
     };
 
     // function to log framework version events and channels
-    void fwVersion_tlm(); 
+    void fwVersion_tlm();
     // function to log project version events and channels
-    void projectVersion_tlm(); 
+    void projectVersion_tlm();
     // function to log library version events and channels
     void libraryVersion_tlm();
     // function to log custom version events and channels

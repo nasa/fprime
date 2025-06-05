@@ -126,8 +126,6 @@ macro(fprime_setup_standard_targets)
         # FPP locations must come at the front of the list, then build
         register_fprime_target(target/build)
         register_fprime_build_autocoder(autocoder/fpp OFF)
-        register_fprime_build_autocoder(autocoder/ai_xml OFF)
-        register_fprime_build_autocoder(autocoder/packets OFF)
         register_fprime_target(target/version)
         register_fprime_target(target/install)
         register_fprime_ut_target(target/ut)
@@ -166,7 +164,11 @@ macro(fprime_initialize_build_system)
     set_property(GLOBAL PROPERTY FPRIME_BUILD_SYSTEM_LOADED ON)
 
     # Perform necessary sub-builds
-    run_sub_build(info-cache target/fpp_locs target/fpp_depend)
+    if (NOT FPRIME_IS_SUB_BUILD)
+        run_sub_build(info-cache target/sub-build/fpp_locs target/sub-build/fpp_depend target/sub-build/module_info)
+        # Import the pre-computed properties!
+        include("${CMAKE_BINARY_DIR}/fprime_module_info.cmake")
+    endif()
 endmacro(fprime_initialize_build_system)
 
 ####
@@ -176,7 +178,6 @@ endmacro(fprime_initialize_build_system)
 # registered.
 ####
 function(fprime_setup_included_code)
-    choose_fprime_implementation(Fw_StringFormat snprintf-format FRAMEWORK_DEFAULT) # Default choice is snprintf
     # Must be done before code is registered but after custom target registration
     setup_global_targets()
     # For BUILD_TESTING builds then set up libraries that support testing
@@ -195,13 +196,6 @@ function(fprime_setup_included_code)
     if (BUILD_TESTING)
         add_subdirectory("${FPRIME_FRAMEWORK_PATH}/STest/" "${CMAKE_BINARY_DIR}/F-Prime/STest")
     endif()
-    # By default we shutoff framework UTs
-    set(__FPRIME_NO_UT_GEN__ ON)
-    # Check for autocoder UTs
-    if (FPRIME_ENABLE_FRAMEWORK_UTS AND FPRIME_ENABLE_AUTOCODER_UTS)
-        set(__FPRIME_NO_UT_GEN__ OFF)
-    endif()
-    add_subdirectory("${FPRIME_FRAMEWORK_PATH}/Autocoders/" "${CMAKE_BINARY_DIR}/F-Prime/Autocoders")
     # Check if we are allowing framework UTs
     if (FPRIME_ENABLE_FRAMEWORK_UTS)
         set(__FPRIME_NO_UT_GEN__ OFF)
@@ -217,7 +211,7 @@ function(fprime_setup_included_code)
     # the current module and then calling stock "add_subdirectory".
     fprime__include_platform_file()
     
-    set(_FP_CORE_PACKAGES default Fw Svc Os Drv CFDP Utils)
+    set(_FP_CORE_PACKAGES Fpp default Fw Svc Os Drv CFDP Utils)
     foreach (_FP_PACKAGE_DIR IN LISTS _FP_CORE_PACKAGES)
         set(FPRIME_CURRENT_MODULE "${_FP_PACKAGE_DIR}")
         add_subdirectory("${FPRIME_FRAMEWORK_PATH}/${_FP_PACKAGE_DIR}/" "${CMAKE_BINARY_DIR}/F-Prime/${_FP_PACKAGE_DIR}")

@@ -86,7 +86,7 @@ class LinuxUartDriver final : public LinuxUartDriverComponentBase {
     //!
     ~LinuxUartDriver();
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------

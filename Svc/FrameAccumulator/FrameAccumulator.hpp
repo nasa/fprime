@@ -15,6 +15,9 @@
 namespace Svc {
 
 class FrameAccumulator final : public FrameAccumulatorComponentBase {
+
+  friend class FrameAccumulatorTester;
+
   public:
     // ----------------------------------------------------------------------
     // Component construction and destruction
@@ -41,7 +44,7 @@ class FrameAccumulator final : public FrameAccumulatorComponentBase {
     void cleanup();
 
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
@@ -58,10 +61,10 @@ class FrameAccumulator final : public FrameAccumulatorComponentBase {
     //! Port receiving ownership back of buffers sent on dataOut
     void dataReturnIn_handler(FwIndexType portNum,  //!< The port number
                                 Fw::Buffer& fwBuffer,  //!< The buffer
-                                const ComCfg::FrameContext& context  //!< The context object  
+                                const ComCfg::FrameContext& context  //!< The context object
                               ) override;
 
-  PRIVATE:
+  private:
     //! \brief process raw buffer
     //! \return raw data buffer
     void processBuffer(Fw::Buffer& buffer);

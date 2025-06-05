@@ -1,7 +1,7 @@
 // ======================================================================
 // \title  UdpComponentImpl.hpp
 // \author mstarch
-// \brief  hpp file for UdpComponentImpl component implementation class
+// \brief  hpp file for UdpComponentImpl component implementation
 //
 // \copyright
 // Copyright 2009-2020, by the California Institute of Technology.
@@ -21,6 +21,9 @@
 namespace Drv {
 
 class UdpComponentImpl : public UdpComponentBase, public SocketComponentHelper {
+
+  friend class UdpTester;
+
   public:
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction
@@ -86,7 +89,7 @@ class UdpComponentImpl : public UdpComponentBase, public SocketComponentHelper {
     U16 getRecvPort();
 
 
-PROTECTED:
+protected:
     // ----------------------------------------------------------------------
     // Implementations for socket read task virtual methods
     // ----------------------------------------------------------------------
@@ -126,7 +129,7 @@ PROTECTED:
     */
     void connected() override;
 
-  PRIVATE:
+  private:
 
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports

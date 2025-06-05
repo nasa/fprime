@@ -49,7 +49,7 @@ class BasicGuardTestEnum : public BasicGuardTestEnumComponentBase {
     //! Destroy BasicGuardTestEnum object
     ~BasicGuardTestEnum();
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Implementations for internal state machine actions
     // ----------------------------------------------------------------------
@@ -62,7 +62,7 @@ class BasicGuardTestEnum : public BasicGuardTestEnumComponentBase {
                                                      const SmHarness::TestEnum& value                    //!< The value
                                                      ) override;
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Implementations for internal state machine guards
     // ----------------------------------------------------------------------

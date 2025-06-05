@@ -37,7 +37,7 @@ namespace Ref {
       //!
       ~PingReceiverComponentImpl();
 
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Handler implementations for user-defined typed input ports

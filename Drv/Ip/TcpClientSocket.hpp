@@ -29,7 +29,7 @@ class TcpClientSocket : public IpSocket {
      * \brief Constructor for client socket tcp implementation
      */
     TcpClientSocket();
-  PROTECTED:
+  protected:
     /**
      * \brief Check if the given port is valid for the socket
      *

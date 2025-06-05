@@ -65,26 +65,26 @@ void setupTopology(const TopologyState& state);
 void teardownTopology(const TopologyState& state);
 
 /**
- * \brief cycle the rate group driver at a crude rate
+ * \brief cycle the rate group driver based in a system timer
  *
- * The reference topology does not have a true 1Hz input clock for the rate group driver because it is designed to
- * operate across various computing endpoints (e.g. laptops) where a clear 1Hz source may not be easily and generically
- * achieved. This function mimics the cycling via a Task::delay(Fw::TimeInterval()) loop that manually invokes the ISR call
- * to the example block driver.
+ * In order to be a portable demonstration, the reference topology does not have a direct hardware timer that is typically used
+ * in embedded applications. Instead, a linux system timer is used to drive the rate groups at 1Hz. The slower rate groups are 
+ * derived from this fundamental rate using the RateGroupDriver component to divide the rate down to slower rates.
+ * 
+ * For embedded Linux, this could be used to drive the system rate groups. For other embedded systems, projects should write components
+ * that implement whatever timers are available for that platform in place of Svc/LinuxTimer.
  *
- * This loop is stopped via a startSimulatedCycle call.
- *
- * Note: projects should replace this with a component that produces an output port call at the appropriate frequency.
+ * This loop is stopped via a stopRateGroups call.
  *
  */
-void startSimulatedCycle(Fw::TimeInterval interval);
+void startRateGroups(Fw::TimeInterval interval);
 
 /**
- * \brief stop the simulated cycle started by startSimulatedCycle
+ * \brief stop the rate groups 
  *
- * This stops the cycle started by startSimulatedCycle.
+ * This stops the cycle started by startRateGroups.
  */
-void stopSimulatedCycle();
+void stopRateGroups();
 
 } // namespace Ref
 #endif

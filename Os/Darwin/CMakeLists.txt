@@ -14,16 +14,30 @@ register_os_implementation(Memory Darwin)
 # -----------------------------------------
 ### Os/Darwin/Cpu Section
 # -----------------------------------------
-set(UT_SOURCE_FILES
+register_fprime_ut(
+    DarwinCpuTest
+  SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/../test/ut/cpu/CommonCpuTests.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/DarwinCpuTests.cpp"
+  CHOOSES_IMPLEMENTATIONS
+    Os_Cpu_Darwin
+  DEPENDS
+    Fw_Types
+    Fw_Time
+    STest
 )
-add_fprime_os_test(DarwinCpuTest "${UT_SOURCE_FILES}" "Os_Cpu\;Os_Cpu_Darwin")
 # -----------------------------------------
 ### Os/Darwin/Memory Section
 # -----------------------------------------
-set(UT_SOURCE_FILES
+register_fprime_ut(
+    DarwinMemoryTest
+  SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/../test/ut/memory/CommonMemoryTests.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/DarwinMemoryTests.cpp"
+  CHOOSES_IMPLEMENTATIONS
+    Os_Memory_Darwin
+  DEPENDS
+    Fw_Types
+    Fw_Time
+    STest
 )
-add_fprime_os_test(DarwinMemoryTest "${UT_SOURCE_FILES}" "Os_Cpu\;Os_Memory_Darwin")

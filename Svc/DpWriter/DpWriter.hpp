@@ -18,6 +18,9 @@
 namespace Svc {
 
 class DpWriter final : public DpWriterComponentBase {
+
+  friend class DpWriterTester;
+
   public:
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction
@@ -36,7 +39,7 @@ class DpWriter final : public DpWriterComponentBase {
     void configure(const Fw::StringBase& dpFileNamePrefix  //!< The file name prefix for writing DP files
     );
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
@@ -53,7 +56,7 @@ class DpWriter final : public DpWriterComponentBase {
                          U32 context                     //!< The call order
                          ) final;
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Handler implementations for commands
     // ----------------------------------------------------------------------
@@ -65,7 +68,7 @@ class DpWriter final : public DpWriterComponentBase {
                                          U32 cmdSeq            //!< The command sequence number
                                          ) final;
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Private helper functions
     // ----------------------------------------------------------------------
@@ -93,7 +96,7 @@ class DpWriter final : public DpWriterComponentBase {
                           FwSizeType packetSize                //!< The packet size
     );
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Private member variables
     // ----------------------------------------------------------------------

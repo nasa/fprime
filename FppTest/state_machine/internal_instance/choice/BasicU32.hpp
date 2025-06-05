@@ -49,7 +49,7 @@ class BasicU32 : public BasicU32ComponentBase {
     //! Destroy BasicU32 object
     ~BasicU32();
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Implementations for internal state machine actions
     // ----------------------------------------------------------------------
@@ -69,7 +69,7 @@ class BasicU32 : public BasicU32ComponentBase {
                                             FppTest_SmChoice_BasicU32::Signal signal  //!< The signal
                                             ) override;
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Implementations for internal state machine guards
     // ----------------------------------------------------------------------

@@ -38,7 +38,7 @@ namespace Svc {
       //!
       ~FileManager();
 
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Command handler implementations
@@ -111,7 +111,7 @@ namespace Svc {
           U32 key /*!< Value to return to pinger*/
       );
 
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Helper methods
@@ -138,7 +138,7 @@ namespace Svc {
           const Os::FileSystem::Status status //!< The status
       );
 
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Variables

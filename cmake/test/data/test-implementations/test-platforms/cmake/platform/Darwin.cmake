@@ -5,5 +5,10 @@
 # Linux implementations to use the posix types defined there.
 ####
 include("${FPRIME_FRAMEWORK_PATH}/cmake/platform/Darwin.cmake")
-choose_fprime_implementation(Test/Implementation Test/Implementation/Platform)
-choose_fprime_implementation(Test/Override Test/Implementation/Unused)
+register_fprime_config(
+        Darwin_Special_Config
+    INTERFACE
+    CHOOSES_IMPLEMENTATIONS
+        Test_Implementation_Platform
+        Test_Override_Unused
+)

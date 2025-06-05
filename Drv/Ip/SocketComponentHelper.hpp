@@ -156,7 +156,7 @@ class SocketComponentHelper {
      */
     Os::Task::Status join();
 
-  PROTECTED:
+  protected:
     /**
      * \brief receive off the TCP socket
      */
@@ -210,7 +210,7 @@ class SocketComponentHelper {
      */
     static void readTask(void* pointer);
 
-  PRIVATE:
+  private:
     /**
      * \brief Re-open port if it has been disconnected
      *
@@ -222,7 +222,7 @@ class SocketComponentHelper {
      */
     SocketIpStatus reopen();
 
-  PROTECTED:
+  protected:
     Os::Task m_task;
     Os::Mutex m_lock;
     SocketDescriptor m_descriptor;

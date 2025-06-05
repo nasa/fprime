@@ -22,6 +22,8 @@ namespace Svc {
   class ComLogger final :
     public ComLoggerComponentBase
   {
+    friend class ComLoggerTester;
+
       // ----------------------------------------------------------------------
       // Construction, initialization, and destruction
       // ----------------------------------------------------------------------
@@ -56,7 +58,7 @@ namespace Svc {
       // Handler implementations
       // ----------------------------------------------------------------------
 
-    PRIVATE:
+    private:
 
       void comIn_handler(
           FwIndexType portNum,

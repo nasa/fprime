@@ -24,7 +24,7 @@ class FprimeFramer final : public FprimeFramerComponentBase {
     //! Destroy FprimeFramer object
     ~FprimeFramer();
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Handler implementations for typed input ports
     // ----------------------------------------------------------------------

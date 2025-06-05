@@ -29,11 +29,11 @@ class PassiveTest :
     //! Destroy PassiveTest object
     ~PassiveTest();
 
-  PRIVATE:
+  private:
 
     #include "FppTest/component/common/typed.hpp"
 
-  PRIVATE:
+  private:
 
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined serial input ports
@@ -51,7 +51,7 @@ class PassiveTest :
         Fw::SerializeBufferBase& buffer //!< The serialization buffer
     ) override;
 
-  PRIVATE:
+  private:
 
     // ----------------------------------------------------------------------
     // Handler implementations for commands

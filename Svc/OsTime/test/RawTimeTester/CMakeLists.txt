@@ -1,9 +1,10 @@
-
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/RawTimeTester.cpp"
+register_fprime_implementation(
+        Svc_OsTime_test_RawTimeTester
+    IMPLEMENTS
+        Os_RawTime
+    SOURCES
+        "${CMAKE_CURRENT_LIST_DIR}/RawTimeTester.cpp"
+    DEPENDS
+        Fw_Types
 )
-set(MOD_DEPS Fw_Types)
-register_fprime_module()
-
-register_fprime_implementation(RawTime Svc_OsTime_test_RawTimeTester)
 

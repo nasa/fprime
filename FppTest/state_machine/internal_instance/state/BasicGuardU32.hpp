@@ -49,7 +49,7 @@ class BasicGuardU32 : public BasicGuardU32ComponentBase {
     //! Destroy BasicGuardU32 object
     ~BasicGuardU32();
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Implementations for internal state machine actions
     // ----------------------------------------------------------------------
@@ -62,7 +62,7 @@ class BasicGuardU32 : public BasicGuardU32ComponentBase {
                                                 U32 value                                      //!< The value
                                                 ) override;
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Implementations for internal state machine guards
     // ----------------------------------------------------------------------

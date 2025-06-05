@@ -59,7 +59,7 @@ class DeframingProtocol {
                                     U32& needed  /*!< Return needed number of bytes */
     ) = 0;
 
-  PROTECTED:
+  protected:
     DeframingProtocolInterface* m_interface;
 };
 }

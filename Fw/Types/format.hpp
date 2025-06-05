@@ -39,7 +39,7 @@ enum class FormatStatus {
 //! \param formatString: format string to fill
 //! \param ...: variable arguments inputs
 //! \return: SUCCESS on successful formatting, OVERFLOWED on overflow, and something else on any error
-    FormatStatus stringFormat(char* destination, const FwSizeType maximumSize, const char* formatString, ...);
+FormatStatus stringFormat(char* destination, const FwSizeType maximumSize, const char* formatString, ...);
 
 //! \brief format a c-string
 //!

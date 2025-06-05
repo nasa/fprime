@@ -21,6 +21,8 @@ arduino
 ARef
 argcomplete
 ARGN
+argname
+argtype
 ARINC
 arpa
 ASize
@@ -38,6 +40,8 @@ bfree
 bibtex
 Bies
 BINDIR
+binrel
+Bitfields
 bitmaps
 bocchino
 boolt
@@ -341,6 +345,11 @@ LINEEVENT
 LINEHANDLE
 linelength
 lineoffset
+lineroo
+linux
+listdir
+Listst
+LJR
 lld
 llu
 LOCALSTATEDIR
@@ -362,6 +371,7 @@ MCT
 MDFILE
 MEMALLOCATOR
 MEMB
+membername
 memcheck
 MEMTEST
 mentations
@@ -524,6 +534,9 @@ RGD
 RHH
 Rizvi
 ROOTDIR
+ror
+rowspan
+rpaetz
 rpi
 RPIDEMO
 RPIDEMOCOMPONENTIMPLCFG

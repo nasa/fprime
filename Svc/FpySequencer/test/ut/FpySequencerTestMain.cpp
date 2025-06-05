@@ -1107,6 +1107,29 @@ TEST_F(FpySequencerTester, tlmWrite) {
     // make sure that all tlm is written every call
     ASSERT_TLM_SIZE(9);
 }
+
+TEST_F(FpySequencerTester, seqRunIn) {
+    allocMem();
+    add_NO_OP();
+    writeToFile("test.bin");
+
+    invoke_to_seqRunIn(0, Fw::String("test.bin"));
+    cmp.doDispatch();
+    dispatchUntilState(State::VALIDATING);
+    dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
+    dispatchUntilState(State::IDLE);
+
+    this->clearHistory();
+
+    // try running while already running
+    cmp.m_stateMachine_sequencer.m_state = State::RUNNING_DISPATCH_STATEMENT;
+    invoke_to_seqRunIn(0, Fw::String("test.bin"));
+    // dispatch cmd
+    cmp.doDispatch();
+    ASSERT_EVENTS_InvalidSeqRunCall_SIZE(1);
+    removeFile("test.bin");
+}
+
 }  // namespace Svc
 
 int main(int argc, char** argv) {

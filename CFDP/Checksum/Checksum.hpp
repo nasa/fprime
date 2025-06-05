@@ -106,7 +106,7 @@ namespace CFDP {
       //! Get the checksum value
       U32 getValue() const;
 
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Private instance methods
@@ -130,7 +130,7 @@ namespace CFDP {
           const U8 offset //! The offset
       );
 
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Private member variables

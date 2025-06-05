@@ -15,6 +15,7 @@ include_guard()
 include(utilities)
 include(module)
 include(config_assembler)
+include(sub-build/sub-build)
 set(FPRIME_TARGET_LIST "" CACHE INTERNAL "FPRIME_TARGET_LIST: custom fprime targets" FORCE)
 set(FPRIME_UT_TARGET_LIST "" CACHE INTERNAL "FPRIME_UT_TARGET_LIST: custom fprime targets" FORCE)
 set(FPRIME_AUTOCODER_TARGET_LIST "" CACHE INTERNAL "FPRIME_AUTOCODER_TARGET_LIST: custom fprime targets" FORCE)
@@ -27,7 +28,7 @@ set(FPRIME_AUTOCODER_TARGET_LIST "" CACHE INTERNAL "FPRIME_AUTOCODER_TARGET_LIST
 # and should be skipped.
 ####
 macro(skip_on_sub_build)
-    if (DEFINED FPRIME_SUB_BUILD_TARGETS)
+    if (FPRIME_IS_SUB_BUILD)
         return()
     endif()
 endmacro()
@@ -230,7 +231,7 @@ endfunction(register_fprime_module)
 #
 ####
 function(fprime_add_library_build_target)
-    fprime__internal_add_build_target("Library" "" ${ARGN})
+    fprime__internal_add_build_target("Library" "INTERFACE;OBJECT" ${ARGN})
     clear_historical_variables()
     set(INTERNAL_MODULE_NAME "${INTERNAL_MODULE_NAME}" PARENT_SCOPE)
 endfunction()
@@ -292,7 +293,7 @@ endfunction(register_fprime_executable)
 #
 ####
 function(fprime_add_executable_build_target)
-    fprime__internal_add_build_target("Executable" "" ${ARGN})
+    fprime__internal_add_build_target("Executable" "CHOOSES_IMPLEMENTATIONS" ${ARGN})
     clear_historical_variables()
     set(INTERNAL_MODULE_NAME "${INTERNAL_MODULE_NAME}" PARENT_SCOPE)
 endfunction()
@@ -357,7 +358,7 @@ endfunction(register_fprime_deployment)
 #
 ####
 function(fprime_add_deployment_build_target)
-    fprime__internal_add_build_target("Deployment" "" ${ARGN})
+    fprime__internal_add_build_target("Deployment" "CHOOSES_IMPLEMENTATIONS" ${ARGN})
     clear_historical_variables()
     set(INTERNAL_MODULE_NAME "${INTERNAL_MODULE_NAME}" PARENT_SCOPE)
 endfunction()
@@ -398,6 +399,7 @@ endfunction()
 #     CONFIGURATION_OVERRIDES
 #         FpConfig.fpp
 #         FpConfig.hpp
+# ```
 ####
 function(register_fprime_config)
     fprime_add_config_build_target(${ARGN})
@@ -423,17 +425,25 @@ endfunction()
 #
 ####
 function(fprime_add_config_build_target)
-    set(FPRIME__INTERNAL_CONFIG_TARGET_NAME "__fprime_config")
-    # Set up interface target and directory for configuration files
-    if (NOT TARGET "${FPRIME__INTERNAL_CONFIG_TARGET_NAME}")
-        add_library("${FPRIME__INTERNAL_CONFIG_TARGET_NAME}" INTERFACE)
+    set(ARGN_PASS ${ARGN})
+    # Ensure library is STATIC when supplying SOURCE or AUTOCODER_INPUTS
+    if (SOURCE IN_LIST ARGN_PASS OR AUTOCODER_INPUTS IN_LIST ARGN_PASS)
+        if (NOT "STATIC" IN_LIST ARGN_PASS AND NOT INTERFACE IN_LIST ARGN_PASS)
+            list(APPEND ARGN_PASS STATIC)
+        endif()
     endif()
-    # Process the module arguments
-    fprime__process_module_setup("Library" "CONFIGURATION_OVERRIDES;INTERFACE" ${ARGN})
-    # Prevent configuration from having dependencies or being excluded from the all build
-    if (INTERNAL_DEPENDS OR INTERNAL_EXCLUDE_FROM_ALL)
-        message(FATAL_ERROR "Cannot use DEPENDS or EXCLUDE_FROM_ALL with fprime_add_config_build_target")
-    endif()
+    #### Split module processing ####
+    #
+    # Configuration works by copying sources into the build cache. These new copied sources are
+    # substituted for the original sources. Thus the module processing must happen before the
+    # configuration processing, which is before the build target processing.
+    #
+    # This implies:
+    # 1. The helper cannot be used as it combines module and build target processing
+    # 2. Configuration processing must be called in-between
+    ####
+    fprime__process_module_setup("Library"
+        "CONFIGURATION_OVERRIDES;STATIC;INTERFACE;CHOOSES_IMPLEMENTATIONS" ${ARGN_PASS})
     fprime__internal_process_configuration_sources(
         "${INTERNAL_MODULE_NAME}"
         "${INTERNAL_SOURCES}"
@@ -442,33 +452,28 @@ function(fprime_add_config_build_target)
         "${INTERNAL_CONFIGURATION_OVERRIDES}"
         "${INTERNAL_DEPENDS}"
     )
+    fprime__internal_add_build_target_helper("${INTERNAL_MODULE_NAME}" "Library" "${INTERNAL_SOURCES}"
+                                             "${INTERNAL_AUTOCODER_INPUTS}" "${INTERNAL_HEADERS}" "${INTERNAL_DEPENDS}"
+                                             "${INTERNAL_REQUIRES_IMPLEMENTATIONS}"
+                                             "${INTERNAL_CHOOSES_IMPLEMENTATIONS}" "${INTERNAL_CMAKE_ADD_OPTIONS}")
 
-    # Set up scoping variables for the new module
-    set(CONFIG_LIBRARY_TYPE "STATIC")
-    set(SCOPE "PUBLIC")
-    if (DEFINED INTERNAL_INTERFACE)
-        set(CONFIG_LIBRARY_TYPE "INTERFACE")
-        set(SCOPE "INTERFACE")
-    endif()
-    
-    # Make a library for this configuration module specifying the library type
-    # This is a static library by default, but can be overridden to INTERFACE
-    fprime__internal_add_build_target_helper(
-        "${INTERNAL_MODULE_NAME}" "Library"
-        "${INTERNAL_SOURCES}" "${INTERNAL_AUTOCODER_INPUTS}" "${INTERNAL_HEADERS}" "${INTERNAL_DEPENDS}" "${CONFIG_LIBRARY_TYPE}"
-    )
     # The new module should include the root configuration directory
-    target_include_directories("${INTERNAL_MODULE_NAME}" "${SCOPE}" "${CMAKE_CURRENT_BINARY_DIR}/..")
+    fprime_target_include_directories("${INTERNAL_MODULE_NAME}" PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/..")
     # The configuration target should depend on the new module
     target_link_libraries("${FPRIME__INTERNAL_CONFIG_TARGET_NAME}" INTERFACE "${INTERNAL_MODULE_NAME}")
     # Set up the new module to be marked as FPRIME_CONFIGURATION
     append_list_property("${INTERNAL_MODULE_NAME}" GLOBAL PROPERTY "FPRIME_CONFIG_MODULES")
     set_property(TARGET "${INTERNAL_MODULE_NAME}" PROPERTY FPRIME_CONFIGURATION TRUE)
-    set_property(TARGET "${FPRIME__INTERNAL_CONFIG_TARGET_NAME}" PROPERTY FPRIME_CONFIGURATION TRUE)
+    # Targets likely do not exist yet, so just aggregate the complete list of chosen implementations
+    # for processing later
+    append_list_property("${INTERNAL_CHOOSES_IMPLEMENTATIONS}" TARGET "${FPRIME__INTERNAL_CONFIG_TARGET_NAME}" PROPERTY FPRIME_CHOSEN_IMPLEMENTATIONS)
+
     # Static libraries must be position independent when building shared libraries
-    if (BUILD_SHARED_LIBS AND CONFIG_LIBRARY_TYPE STREQUAL "STATIC")
+    get_target_property(CONFIG_LIBRARY_TYPE "${INTERNAL_MODULE_NAME}" TYPE)
+    if (BUILD_SHARED_LIBS AND CONFIG_LIBRARY_TYPE STREQUAL "STATIC_LIBRARY")
         target_compile_options(${INTERNAL_MODULE_NAME} PRIVATE -fPIC)
     endif()
+    # Set INTERNAL_MODULE_NAME for caller
     set(INTERNAL_MODULE_NAME "${INTERNAL_MODULE_NAME}" PARENT_SCOPE)
 endfunction()
 
@@ -534,7 +539,7 @@ endfunction(register_fprime_ut)
 #
 ####
 function(fprime_add_unit_test_build_target)
-    fprime__internal_add_build_target("Unit Test" "INCLUDE_GTEST;UT_AUTO_HELPERS" ${ARGN})
+    fprime__internal_add_build_target("Unit Test" "INCLUDE_GTEST;UT_AUTO_HELPERS;CHOOSES_IMPLEMENTATIONS" ${ARGN})
     clear_historical_variables()
     set(INTERNAL_MODULE_NAME "${INTERNAL_MODULE_NAME}" PARENT_SCOPE)
 endfunction()
@@ -641,49 +646,63 @@ function (create_implementation_interface IMPLEMENTATION)
     add_library("${IMPLEMENTATION}" INTERFACE)
 endfunction()
 
-
-####
-# Function `require_fprime_implementation`:
-#
-# Designates that the current module requires a separate implementation in order for it to function properly. As an
-# example, Os requires an implementation of `Os_Task`. These implementations must be set via
-# `choose_fprime_implementation` in the platform and may be overridden in in the executable/deployment.
-#
-# **IMPLEMENTATION:** implementation module name that must be covered
-# **REQUESTER:** (optional) the requester of the implementation. Default: ${FPRIME_CURRENT_MODULE}
-####
-function(require_fprime_implementation IMPLEMENTATION)
-    if (ARGC EQUAL 2)
-        set(REQUESTER "${ARGV1}")
-    elseif (FPRIME_CURRENT_MODULE)
-        set(REQUESTER "${FPRIME_CURRENT_MODULE}")
-    else ()
-        message(FATAL_ERROR "Cannot determine current module, please supply as second argument")
-    endif()
-    resolve_dependencies(IMPLEMENTATION "${IMPLEMENTATION}")
-    resolve_dependencies(REQUESTER "${REQUESTER}")
-    create_implementation_interface("${IMPLEMENTATION}")
-    append_list_property("${IMPLEMENTATION}" GLOBAL PROPERTY "REQUIRED_IMPLEMENTATIONS")
-    add_dependencies("${REQUESTER}" "${IMPLEMENTATION}")
-endfunction()
-
 ####
 # Function `register_fprime_implementation`:
 #
-# Designates that the given implementor implements the required implementation. As an example Os_Task_Posix implements
-# Os_Task. These implementations must be set via
-## `choose_fprime_implementation` in the platform and may be overridden in in the executable/deployment.
+# Designates that the given implementor implements the required implementation and registers it as a library. This
+# library will always be of type OBJECT to ensure that it will override at link time as expected. The call format is
+# identical to `register_fprime_library`, but requires the IMPLEMENTS <implementation interface> directive to indicate
+# which implementation is being implemented. 
 #
-# **IMPLEMENTATION:** implementation module name that is implemented by IMPLEMENTOR
-# **IMPLEMENTOR:** implementor of IMPLEMENTATION
-# **ARGN:** (optional) list of source files required to build the implementor
+# > [!WARNING]  
+# > The result of this call will always be an OBJECT library.
+#
+# **Example:**
+#
+# ```
+# register_fprime_implementation(
+#         MyImplementation
+#     IMPLEMENTS
+#         SomeImplementationInterface
+#     SOURCES
+#         source1.cpp
+#         source2.cpp
+#     AUTOCODER_INPUTS
+#         model.fpp
+#     HEADERS
+#         module.h
+# )
+# ```
+#
+# **MODULE_NAME**: (optional) module name. Default: ${FPRIME_CURRENT_MODULE}
+# **ARGN**: sources, autocoder inputs, etc preceded by a directive (i.e. SOURCES or DEPENDS)
+#
 ####
-function(register_fprime_implementation IMPLEMENTATION IMPLEMENTOR)
-    resolve_dependencies(IMPLEMENTATION "${IMPLEMENTATION}")
-    resolve_dependencies(IMPLEMENTOR "${IMPLEMENTOR}")
-    create_implementation_interface("${IMPLEMENTATION}")
-    append_list_property("${IMPLEMENTOR}" GLOBAL PROPERTY "${IMPLEMENTATION}_IMPLEMENTORS")
-    append_list_property("${ARGN}" TARGET "${IMPLEMENTOR}" PROPERTY "REQUIRED_SOURCE_FILES")
+function(register_fprime_implementation)
+    # Update ARGN to include OBJECT and EX
+    set(ARGN_PASS "${ARGN}")
+    if (NOT "OBJECT" IN_LIST ARGN_PASS AND NOT INTERFACE IN_LIST ARGN_PASS)
+        list(APPEND ARGN_PASS OBJECT)
+    endif()
+    fprime__internal_add_build_target("Library" "IMPLEMENTS;OBJECT;INTERFACE" ${ARGN_PASS})
+
+    #### Special implementation handling ####
+
+    # Validate the number of implementations passed to "IMPLEMENTS"
+    list(LENGTH INTERNAL_IMPLEMENTS INTERNAL_IMPLEMENTS_LENGTH)
+    if (NOT INTERNAL_IMPLEMENTS_LENGTH EQUAL 1 OR "${INTERNAL_IMPLEMENTS}" STREQUAL "TRUE")
+        fprime_cmake_fatal_error("Must supply exactly 1 argument to the IMPLEMENTS directive")
+    endif()
+    # Check implementation properties still in-sync before setting the target-driven equivalents
+    get_property(OLD_IMPLEMENTS GLOBAL PROPERTY FPRIME_${INTERNAL_MODULE_NAME}_IMPLEMENTS)
+    fprime_cmake_ASSERT(
+        "${INTERNAL_MODULE_NAME} implementation changed from: ${OLD_IMPLEMENTS} to ${INTERNAL_IMPLEMENTS}"
+        NOT OLD_IMPLEMENTS OR OLD_IMPLEMENTS STREQUAL INTERNAL_IMPLEMENTS
+    )
+    set_target_properties("${INTERNAL_MODULE_NAME}" PROPERTIES FPRIME_IMPLEMENTS "${INTERNAL_IMPLEMENTS}")
+    append_list_property("${INTERNAL_MODULE_NAME}" GLOBAL PROPERTY "FPRIME_${INTERNAL_IMPLEMENTS}_IMPLEMENTORS")
+
+    fprime_attach_custom_targets("${INTERNAL_MODULE_NAME}")
 endfunction()
 
 ####
@@ -703,36 +722,6 @@ endfunction()
 ####
 function(register_os_implementation NAMES SUFFIX)
     add_fprime_supplied_os_module("${NAMES}" "${SUFFIX}" "${ARGN}")
-endfunction()
-
-####
-# Function `choose_fprime_implementation`:
-#
-# Designates that the given implementor is the selected implementor for the needed implementation. Platforms must call
-# this function once for each defined IMPLEMENTATION. An executable/deployment/unit-test may call this function to set
-# a specific implementor for any needed implementation. FRAMEWORK_DEFAULT may be supplied to indicate a default choice
-# set by the framework, which can be overridden by the platform and module selections.
-#
-# **IMPLEMENTATION:** implementation module name that is implemented by IMPLEMENTOR
-# **IMPLEMENTOR:** implementor of IMPLEMENTATION
-####
-function(choose_fprime_implementation IMPLEMENTATION IMPLEMENTOR)
-    resolve_dependencies(IMPLEMENTATION "${IMPLEMENTATION}")
-    resolve_dependencies(IMPLEMENTOR "${IMPLEMENTOR}")
-    # Check for passed in module name
-    if (ARGC EQUAL 3)
-        set(ACTIVE_MODULE "${ARGV2}")
-    elseif (FPRIME_CURRENT_MODULE)
-        set(ACTIVE_MODULE "${FPRIME_CURRENT_MODULE}")
-    elseif(FPRIME_PLATFORM)
-        set(ACTIVE_MODULE "${FPRIME_PLATFORM}")
-    else()
-        message(FATAL_ERROR "Cannot call 'choose_fprime_implementation' outside an fprime module or platform CMake file")
-    endif()
-    create_implementation_interface("${IMPLEMENTATION}")
-    # Add this implementation in the case it has not been added
-    append_list_property("${IMPLEMENTATION}" GLOBAL PROPERTY "REQUIRED_IMPLEMENTATIONS")
-    set_property(GLOBAL PROPERTY "${ACTIVE_MODULE}_${IMPLEMENTATION}" "${IMPLEMENTOR}")
 endfunction()
 
 #### Documentation links

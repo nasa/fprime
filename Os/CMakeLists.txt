@@ -18,21 +18,28 @@
 function(add_named_os_module NAMES)
     # Get first element of list
     list(GET NAMES 0 FIRST_ITEM)
-    set(OS_MODULE_NAME "Os_${FIRST_ITEM}_Common")
+    set(OS_MODULE_NAME "Os_${FIRST_ITEM}")
     # Clear variables
-    set(SOURCE_FILES)
-    set(SOURCE_HEADERS)
+    set(SOURCE_INPUTS)
+    set(HEADER_INPUTS)
     # Add files for each name supplied
     foreach (NAME IN LISTS NAMES)
-        list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/${NAME}.cpp")
-        list(APPEND SOURCE_HEADERS "${CMAKE_CURRENT_LIST_DIR}/${NAME}.hpp")
+        list(APPEND SOURCE_INPUTS "${CMAKE_CURRENT_LIST_DIR}/${NAME}.cpp")
+        list(APPEND HEADER_INPUTS "${CMAKE_CURRENT_LIST_DIR}/${NAME}.hpp")
     endforeach ()
     # Set up module
-    set(MOD_DEPS Fw_Types ${ARGN})
-    require_fprime_implementation("Os_${FIRST_ITEM}")
-    register_fprime_module("${OS_MODULE_NAME}")
-    add_dependencies(Os "${OS_MODULE_NAME}")
-    target_link_libraries(Os PUBLIC "${OS_MODULE_NAME}")
+    register_fprime_module(
+          "${OS_MODULE_NAME}"
+        REQUIRES_IMPLEMENTATIONS
+          "Os_${FIRST_ITEM}"
+        SOURCES
+          ${SOURCE_INPUTS}
+        HEADERS
+          ${HEADER_INPUTS}
+        DEPENDS
+          Fw_Types ${ARGN}
+    )
+    fprime_target_dependencies(Os PUBLIC "${OS_MODULE_NAME}")
 endfunction()
 
 ####
@@ -66,36 +73,35 @@ function(add_fprime_supplied_os_module NAMES SUFFIX)
     # Setup variables
     set(OS_MODULE_NAME "Os_${FIRST_ITEM}_${SUFFIX}")
     # Clear variables
-    set(SOURCE_FILES)
-    set(SOURCE_HEADERS)
+    set(SOURCE_INPUTS)
+    set(HEADERS_INPUTS)
     # Add files for each name supplied
     foreach (NAME IN LISTS NAMES)
-        list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/${NAME}.cpp")
-        list(APPEND SOURCE_HEADERS "${CMAKE_CURRENT_LIST_DIR}/${NAME}.hpp")
+        list(APPEND SOURCE_INPUTS "${CMAKE_CURRENT_LIST_DIR}/${NAME}.cpp")
+        list(APPEND HEADERS_INPUTS "${CMAKE_CURRENT_LIST_DIR}/${NAME}.hpp")
     endforeach ()
     # Set up module
-    set(MOD_DEPS "Os_${FIRST_ITEM}_Common" ${ARGN})
-    register_fprime_module("${OS_MODULE_NAME}")
-    register_fprime_implementation("Os_${FIRST_ITEM}" "${OS_MODULE_NAME}" "${CMAKE_CURRENT_LIST_DIR}/Default${FIRST_ITEM}.cpp")
-endfunction()
-
-####
-# WARNING: not for use outside of fprime/Os
-#
-# Adds a test for OSAL layer. Helper to allow multiple tests per file.
-#
-# NAME: Name of test
-# UT_SOURCE_FILES: list of source files
-# IMPLEMENTATION_PAIRS: a list of pairs of implementation choices.  e.g. "Os_File\;Os_File_Posix;Os_Task\;Os_Task_Stub"
-#                       pairs are represented with internal escaped list separators.
-# ARGN: extra MOD_DEPS to add
-####
-function(add_fprime_os_test NAME UT_SOURCE_FILES IMPLEMENTATION_PAIRS)
-    set(UT_MOD_DEPS Os STest ${ARGN})
-    foreach (PAIR IN LISTS IMPLEMENTATION_PAIRS)
-        choose_fprime_implementation(${PAIR})
-    endforeach ()
-    register_fprime_ut("${NAME}")
+    register_fprime_module(
+        "${OS_MODULE_NAME}_Implementation"
+      SOURCES
+        ${SOURCE_INPUTS}
+      HEADERS
+        ${HEADER_INPUTS}
+      DEPENDS
+        Fw_Types
+        "Os_${FIRST_ITEM}"
+        ${ARGN}
+    )
+    register_fprime_implementation(
+         "${OS_MODULE_NAME}"
+      SOURCES
+        "${CMAKE_CURRENT_LIST_DIR}/Default${FIRST_ITEM}.cpp"
+      IMPLEMENTS
+        "Os_${FIRST_ITEM}"
+      DEPENDS
+        Fw_Types
+        "${OS_MODULE_NAME}_Implementation"
+    )
 endfunction()
 
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Models")
@@ -105,23 +111,24 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Generic")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Linux")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Darwin")
 
-# Basic source files used in every OSAL layer.  Contains common code and helpers.
-set(SOURCE_FILES
-    "${CMAKE_CURRENT_LIST_DIR}/ValidateFileCommon.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/ValidatedFile.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/IntervalTimer.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/Types.fpp"
-    "${CMAKE_CURRENT_LIST_DIR}/Os.cpp"
+register_fprime_module(
+      Os
+    AUTOCODER_INPUTS
+      "${CMAKE_CURRENT_LIST_DIR}/Types.fpp"
+    SOURCES
+      "${CMAKE_CURRENT_LIST_DIR}/ValidateFileCommon.cpp"
+      "${CMAKE_CURRENT_LIST_DIR}/ValidatedFile.cpp"
+      "${CMAKE_CURRENT_LIST_DIR}/IntervalTimer.cpp"
+      "${CMAKE_CURRENT_LIST_DIR}/Os.cpp"
+    HEADERS
+      "${CMAKE_CURRENT_LIST_DIR}/ValidatedFile.hpp"
+      "${CMAKE_CURRENT_LIST_DIR}/Os.hpp"
+    DEPENDS
+      Fw_Types
 )
-set(SOURCE_HEADERS
-    "${CMAKE_CURRENT_LIST_DIR}/ValidatedFile.hpp"
-    "${CMAKE_CURRENT_LIST_DIR}/Os.hpp"
-)
-set(MOD_DEPS Fw_Types)
-register_fprime_module()
 
 add_named_os_module(Console Fw_Logger)
-add_named_os_module("File;FileSystem;Directory" Utils/Hash)
+add_named_os_module("File;FileSystem;Directory" Utils_Hash)
 add_named_os_module(Task ${CMAKE_THREAD_LIBS_INIT})
 add_named_os_module("Mutex;Condition")
 add_named_os_module(Queue)
