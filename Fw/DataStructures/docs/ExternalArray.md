@@ -148,11 +148,11 @@ a2 = a1;
 void copyDataFrom(const ExternalArray<T>& a)
 ```
 
-1. If `&a != this` then do nothing.
+1. If `&a != this`
 
     1. Let `size` be the minimum of `m_size` and `a.m_size`
 
-    1. For each `i` in [0, `size), set `m_elements[i] = a.m_elements[i]`
+    1. For each `i` in [0, `size`), set `m_elements[i] = a.m_elements[i]`
 
 _Example:_
 ```c++
