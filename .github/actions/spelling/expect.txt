@@ -624,6 +624,7 @@ nbits
 ncsl
 ndiffs
 neascout
+netinet
 newloc
 newroot
 newself
