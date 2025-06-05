@@ -20,7 +20,8 @@ class FifoQueueBase {
     // Private constructors
     // ----------------------------------------------------------------------
 
-    //! Deleted copy constructor
+    //! Copy constructor deleted in the abstract class
+    //! Behavior depends on the implementation
     FifoQueueBase(const FifoQueueBase<T>&) = delete;
 
   protected:
@@ -39,7 +40,9 @@ class FifoQueueBase {
     // Private member functions
     // ----------------------------------------------------------------------
 
-    //! Deleted operator=
+    //! operator= deleted in the abstract class
+    //! Behavior depends on the implementation
+    //! We avoid virtual user-defined operators
     FifoQueueBase<T>& operator=(const FifoQueueBase<T>&) = delete;
 
   public:

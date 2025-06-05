@@ -52,33 +52,7 @@ Defined as `= delete`.
 
 ## 5. Public Member Functions
 
-### 5.1. at
-
-```c++
-virtual const T& at(FwSizeType i) const = 0
-```
-
-1. Assert that `i < getSize()`.
-
-1. Get a reference to the element of the queue at index `i`.
-Index 0 is the first element inserted in the queue.
-
-_Example:_
-```c++
-void f(FifoQueueBase<U32>& queue) {
-    queue.clear();
-    auto status = queue.enqueue(10);
-    ASSERT_EQ(status, Success::SUCCESS);
-    auto status = queue.enqueue(11);
-    ASSERT_EQ(status, Success::SUCCESS);
-    ASSERT_EQ(queue.at(0), 10);
-    ASSERT_EQ(queue.at(1), 11);
-    // Out-of-bounds access
-    ASSERT_DEATH(queue.at(2), "Assert");
-}
-```
-
-### 5.2. clear
+### 5.1. clear
 
 ```c++
 virtual void clear() = 0
@@ -94,7 +68,7 @@ void f(FifoQueueBase<U32>& queue) {
 }
 ```
 
-### 5.3. copyDataFrom
+### 5.2. copyDataFrom
 
 ```c++
 void copyDataFrom(const FifoQueueBase<T>& queue)
@@ -110,7 +84,13 @@ void copyDataFrom(const FifoQueueBase<T>& queue)
 
     1. For `i` in [0, `size`)
 
-        1. Set `status = enqueue(queue.at(i))`.
+        1. Set `T value = {}`.
+
+        1. Set `status = queue.peek(value)`.
+
+        1. Assert `status == Success::SUCCESS`.
+
+        1. Set `status = enqueue(value)`.
 
         1. Assert `status == Success::SUCCESS`.
 
@@ -128,7 +108,7 @@ void f(FifoQueueBase<U32>& q1, FifoQueueBase<U32>& q2) {
 }
 ```
 
-### 5.4. enqueue
+### 5.3. enqueue
 
 ```c++
 virtual Success enqueue(const T& e) = 0
@@ -138,7 +118,7 @@ virtual Success enqueue(const T& e) = 0
 
 1. If there is room on the queue for a new item, then
 
-    1. Enqueue `e`.
+    1. Add `e` to the right of the queue.
 
     1. Set `status = Success::SUCCESS`.
 
@@ -153,19 +133,19 @@ void f(FifoQueueBase<U32>& queue) {
 }
 ```
 
-### 5.5. peek
+### 5.4. peek
 
 ```c++
-void Success peek(T& e) const
+void Success peek(T& e, FwSizeType index = 0) const
 ```
 
 1. Set `status = Success::FAILURE`.
 
-1. Set `size = getSize()`.
+1. If `index < getSize()`
 
-1. If `size > 0`
-
-    1. Set `e = at(size - 1)`.
+    1. Assign the element at index `index` to `e`.
+       Index 0 is the leftmost (earliest) element in the queue.
+       Increasing indices go from left to right.
 
     1. Set `status = Success::SUCCESS`.
 
@@ -179,14 +159,19 @@ void f(FifoQueueBase<U32>& queue) {
     auto status = queue.peek(value);
     ASSERT_EQ(status, Success::FAILURE);
     status = queue.enqueue(3);
-    ASSERT_EQ(status, Success::SUCCESS);
     status = queue.peek(value);
     ASSERT_EQ(status, Success::SUCCESS);
     ASSERT_EQ(value, 3);
+    status = queue.peek(value, 1);
+    ASSERT_EQ(status, Success::FAILURE);
+    status = queue.enqueue(4);
+    status = queue.peek(value, 1);
+    ASSERT_EQ(status, Success::SUCCESS);
+    ASSERT_EQ(value, 4);
 }
 ```
 
-### 5.6. dequeue
+### 5.5. dequeue
 
 ```c++
 virtual Success dequeue(T& e) = 0
@@ -196,7 +181,7 @@ virtual Success dequeue(T& e) = 0
 
 1. If `size > 0`
 
-    1. Dequeue the last-inserted item and store it into `e`.
+    1. Remove the leftmost item from the queue and store it into `e`.
 
     1. Set `status = Success::SUCCESS`.
 
@@ -217,7 +202,7 @@ void f(FifoQueueBase<U32>& queue) {
 }
 ```
 
-### 5.7. getSize
+### 5.6. getSize
 
 ```c++
 virtual FwSizeType getSize() const = 0
@@ -238,7 +223,7 @@ void f(const FifoQueueBase<U32>& queue) {
 }
 ```
 
-### 5.8. getCapacity
+### 5.7. getCapacity
 
 ```c++
 virtual FwSizeType getCapacity() const = 0
