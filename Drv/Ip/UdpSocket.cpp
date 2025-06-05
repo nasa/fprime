@@ -67,10 +67,6 @@ SocketIpStatus UdpSocket::configure(const char* const hostname, const U16 port, 
 
 SocketIpStatus UdpSocket::configureSend(const char* const hostname, const U16 port, const U32 timeout_seconds, const U32 timeout_microseconds) {
     //Timeout is for the send, so configure send will work with the base class
-    if (port == 0) {
-        // Ephemeral port, do not configure
-        return SOCK_SUCCESS;
-    }
     FW_ASSERT(hostname != nullptr);
     return this->IpSocket::configure(hostname, port, timeout_seconds, timeout_microseconds);
 }
@@ -202,16 +198,11 @@ I32 UdpSocket::recvProtocol(const SocketDescriptor& socketDescriptor, U8* const 
     socklen_t sender_addr_len = sizeof(sender_addr);
     I32 received = static_cast<I32>(::recvfrom(socketDescriptor.fd, data, size, SOCKET_IP_RECV_FLAGS,
                                               reinterpret_cast<struct sockaddr*>(&sender_addr), &sender_addr_len));
-    // If we have not configured a send address, set it to the sender of the last received packet
+    // If we have not configured a send port, set it to the source of the last received packet
     if (received > 0 && this->m_state->m_addr_send.sin_port == 0) {
         this->m_state->m_addr_send = sender_addr;
-
-        CHAR ip_str[INET_ADDRSTRLEN] = {0};
-        const CHAR* address = ::inet_ntop(AF_INET, &(sender_addr.sin_addr), ip_str, INET_ADDRSTRLEN);
-        FW_ASSERT(address != nullptr);
-        SocketIpStatus confSendStatus = this->configureSend(ip_str, ntohs(sender_addr.sin_port), 0, 100);
-        FW_ASSERT(confSendStatus == SOCK_SUCCESS);
-        Fw::Logger::log("Configured send address to %s:%hu as specified by the last received packet.\n", ip_str, ntohs(sender_addr.sin_port));
+        this->m_port = ntohs(sender_addr.sin_port);
+        Fw::Logger::log("Configured send port to %hu as specified by the last received packet.\n", this->m_port);
     }
     return received;
 }
