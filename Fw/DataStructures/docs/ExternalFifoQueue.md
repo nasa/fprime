@@ -1,4 +1,3 @@
-# ExternalFifoQueue
 
 `ExternalFifoQueue` is a `final` class template
 defined in [`Fw/DataStructures`](sdd.md).
@@ -153,31 +152,7 @@ q2 = q1;
 ASSERT_EQ(q2.getSize(), 1);
 ```
 
-### 5.2. at
-
-```c++
-const T& at(FwSizeType i) const override
-```
-
-1. Assert that `i < m_size`.
-
-1. Set `ci = m_enqueueIndex`.
-
-1. Return `m_items[ci.increment(i)]`.
-
-_Example:_
-```c++
-constexpr FwSizeType capacity = 10;
-U32 items[size] = {};
-ExternalFifoQueue<U32> queue(items, capacity);
-const auto status = queue.enqueue(3);
-// Constant access
-ASSERT_EQ(queue.at(0), 3);
-// Out-of-bounds access
-ASSERT_DEATH(queue.at(1), "Assert");
-```
-
-### 5.3. clear
+### 5.2. clear
 
 ```c++
 void clear() override
@@ -200,7 +175,7 @@ queue.clear();
 ASSERT_EQ(queue.getSize(), 0);
 ```
 
-### 5.4. setStorage (Typed Data)
+### 5.3. setStorage (Typed Data)
 
 ```c++
 void setStorage(T* items, FwSizeType capacity)
@@ -224,7 +199,7 @@ U32 items[capacity];
 queue.setStorage(items, capacity);
 ```
 
-### 5.5. setStorage (Untyped Data)
+### 5.4. setStorage (Untyped Data)
 
 ```c++
 void setStorage(ByteArray data, FwSizeType capacity)
@@ -248,7 +223,7 @@ ExternalFifoQueue<U32> queue;
 queue.setStorage(ByteArray(&bytes[0], sizeof bytes), capacity);
 ```
 
-### 5.6. copyDataFrom
+### 5.5. copyDataFrom
 
 ```c++
 void copyDataFrom(const FifoQueueBase<T>& queue) override
@@ -281,7 +256,7 @@ q2.copyDataFrom(q1);
 ASSERT_EQ(q2.getSize(), 1);
 ```
 
-### 5.7. enqueue
+### 5.6. enqueue
 
 ```c++
 Success enqueue(const T& e) override
@@ -312,7 +287,7 @@ ASSERT_EQ(status, Success::SUCCESS);
 ASSERT_EQ(queue.getSize(), 1);
 ```
 
-### 5.8. peek
+### 5.7. peek
 
 ```c++
 Success peek(T& e, FwSizeType index = 0) override
@@ -353,7 +328,7 @@ ASSERT_EQ(value, 4);
 }
 ```
 
-### 5.9. dequeue
+### 5.8. dequeue
 
 ```c++
 Success dequeue(T& e) override
@@ -388,7 +363,7 @@ ASSERT_EQ(status, Success::SUCCESS);
 ASSERT_EQ(val, 42);
 ```
 
-### 5.10. getSize
+### 5.9. getSize
 
 ```c++
 FwSizeType getSize() const override
@@ -409,7 +384,7 @@ size = queue.getSize();
 ASSERT_EQ(size, 1);
 ```
 
-### 5.11. getCapacity
+### 5.10. getCapacity
 
 ```c++
 FwSizeType getCapacity() const override

@@ -83,23 +83,13 @@ Defined as `= default`.
 
 ## 5. Public Member Functions
 
-### 5.1. at
-
-```c++
-const T& operator[](FwSizeType i) const override
-```
-
-Return `m_extQueue(i)`.
-
-### 5.2. operator=
+### 5.1. operator=
 
 ```c++
 FifoQueue<T>& operator=(const FifoQueue<T>& queue)
 ```
 
-1. Set `status = m_extQueue.copyDataFrom(queue.m_extQueue)`.
-
-1. Assert `status == Success::SUCCESS`.
+Call `m_extQueue.copyDataFrom(queue.m_extQueue)`.
 
 _Example:_
 ```c++
@@ -116,13 +106,21 @@ ASSERT_EQ(status, Success::SUCCESS);
 ASSERT_EQ(value, 3);
 ```
 
-### 5.3. clear
+### 5.2. clear
 
 ```c++
 void clear() override
 ```
 
 Call `m_extQueue.clear()`.
+
+### 5.3. copyDataFrom
+
+```c++
+void copyDataFrom(const FifoQueueBase<T>& queue) override
+```
+
+Call `m_extQueue.copyDataFrom(queue)`.
 
 ### 5.4. enqueue
 
@@ -132,7 +130,15 @@ Success enqueue(const T& e) override
 
 Return `m_extQueue.enqueue(e)`.
 
-### 5.5. dequeue
+### 5.5. peek
+
+```c++
+Success peek(T& e, FwSizeType index = 0) override
+```
+
+Return `m_extQueue.peek(e, index)`.
+
+### 5.6. dequeue
 
 ```c++
 Success dequeue(T& e) override
@@ -140,7 +146,7 @@ Success dequeue(T& e) override
 
 Return `m_extQueue.dequeue(e)`.
 
-### 5.6. getSize
+### 5.7. getSize
 
 ```c++
 FwSizeType getSize() const
@@ -148,7 +154,7 @@ FwSizeType getSize() const
 
 Return `m_extQueue.getSize()`.
 
-### 5.7. getCapacity
+### 5.8. getCapacity
 
 ```c++
 FwSizeType getCapacity() const
@@ -156,7 +162,7 @@ FwSizeType getCapacity() const
 
 Return `m_extQueue.getCapacity()`.
 
-### 5.8. asExternalFifoQueue
+### 5.9. asExternalFifoQueue
 
 ```c++
 ExternalFifoQueue<T> asExternalFifoQueue()
