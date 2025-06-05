@@ -429,8 +429,6 @@ Signal FpySequencer::binaryCmp_directiveHandler(const FpySequencer_BinaryCmpDire
         sign = false;
     }
 
-    printf("sign: %d\n", sign);
-
     I8 cmpResult;
 
     if (sign) {
@@ -442,7 +440,6 @@ Signal FpySequencer::binaryCmp_directiveHandler(const FpySequencer_BinaryCmpDire
         cmpResult = (ulhs == urhs) ? 0 : (ulhs < urhs) ? -1 : 1;
     }
 
-    printf("cmp: %d\n", cmpResult);
     if (cmpResult == 0) {
         // values were equal
         // result is true if equality is okay
