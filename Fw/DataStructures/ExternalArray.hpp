@@ -7,8 +7,11 @@
 #ifndef Fw_ExternalArray_HPP
 #define Fw_ExternalArray_HPP
 
+#include <cstdint>
+
 #include "Fw/FPrimeBasicTypes.hpp"
 #include "Fw/Types/Assert.hpp"
+#include "Fw/Types/ByteArray.hpp"
 
 namespace Fw {
 
@@ -22,11 +25,18 @@ class ExternalArray final {
     //! Zero-argument constructor
     ExternalArray() {}
 
-    //! Constructor providing backing storage
+    //! Constructor providing typed backing storage
     ExternalArray(T* elements,     //!< The elements
                   FwSizeType size  //!< The array size
                   )
         : m_elements(elements), m_size(size) {}
+
+    //! Constructor providing untyped backing storage
+    ExternalArray(ByteArray data,  //!< The data
+                  FwSizeType size  //!< The array size
+    ) {
+        this->setStorage(data, size);
+    }
 
     //! Copy constructor
     ExternalArray(const ExternalArray<T>& a) : m_elements(a.m_elements), m_size(a.m_size) {}
@@ -87,11 +97,26 @@ class ExternalArray final {
     //! \return The size
     FwSizeType getSize() const { return this->m_size; }
 
-    //! Set the backing storage
+    //! Set the backing storage (typed data)
     void setStorage(T* elements,     //!< The array elements
                     FwSizeType size  //!< The size
     ) {
         this->m_elements = elements;
+        this->m_size = size;
+    }
+
+    //! Set the backing storage (untyped data)
+    void setStorage(ByteArray data,  //!< The data
+                    FwSizeType size  //!< The array size
+    ) {
+        // Check that data.bytes is not null
+        FW_ASSERT(data.bytes != nullptr);
+        // Check that data.bytes is properly aligned
+        FW_ASSERT(reinterpret_cast<uintptr_t>(data.bytes) % alignof(T) == 0);
+        // Check that data.size is large enough to hold the array
+        FW_ASSERT(size * sizeof(T) <= data.size);
+        // Initialize the array members
+        this->m_elements = reinterpret_cast<T*>(data.bytes);
         this->m_size = size;
     }
 
