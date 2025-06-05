@@ -77,16 +77,13 @@ class ExternalFifoQueue final : public FifoQueueBase<T> {
     }
 
     //! Copy data from another queue
-    virtual void copyDataFrom(const FifoQueueBase<T>& queue  //!< The queue
-    ) override {
+    void copyDataFrom(const FifoQueueBase<T>& queue  //!< The queue
+                              ) override {
         if (&queue != this) {
             this->clear();
             const FwSizeType size = FW_MIN(queue.getSize(), this->getCapacity());
             for (FwSizeType i = 0; i < size; i++) {
-                T value;
-                auto status = queue.peek(value, i);
-                FW_ASSERT(status == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(status));
-                status = this->enqueue(value);
+                const auto status = this->enqueue(this->getElementAtIndex(i));
                 FW_ASSERT(status == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(status));
             }
         }
@@ -134,9 +131,8 @@ class ExternalFifoQueue final : public FifoQueueBase<T> {
     ) const override {
         auto status = Success::FAILURE;
         const auto size = this->getSize();
-        if (size > 0) {
-            auto ci = this->m_enqueueIndex;
-            e = this->m_items[ci.increment(index)];
+        if (index < size) {
+            e = this->getElementAtIndex(index);
             status = Success::SUCCESS;
         }
         return status;
@@ -144,7 +140,7 @@ class ExternalFifoQueue final : public FifoQueueBase<T> {
 
     //! Dequeue an element (pop from the left)
     //! \return SUCCESS if element dequeued
-    virtual Success dequeue(T& e  //!< The element (output)
+    Success dequeue(T& e  //!< The element (output)
                             ) override {
         auto status = this->peek(e);
         if (this->m_size > 0) {
@@ -163,6 +159,18 @@ class ExternalFifoQueue final : public FifoQueueBase<T> {
     //! Get the capacity (maximum number of items stored in the queue)
     //! \return The capacity
     FwSizeType getCapacity() const override { return this->m_items.getSize(); }
+
+  private:
+    // ----------------------------------------------------------------------
+    // Private member functions
+    // ----------------------------------------------------------------------
+
+    //! Get an element at an index
+    const T& getElementAtIndex(FwSizeType index  //!< The index
+    ) const {
+        auto ci = this->m_enqueueIndex;
+        return this->m_items[ci.increment(index)];
+    }
 
   private:
     // ----------------------------------------------------------------------
