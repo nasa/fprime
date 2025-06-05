@@ -134,8 +134,7 @@ class ExternalFifoQueue final : public FifoQueueBase<T> {
                  FwSizeType index = 0  //!< The index (input)
     ) const override {
         auto status = Success::FAILURE;
-        const auto size = this->getSize();
-        if (index < size) {
+        if (index < this->m_size) {
             e = this->getElementAtIndex(index);
             status = Success::SUCCESS;
         }
@@ -146,10 +145,9 @@ class ExternalFifoQueue final : public FifoQueueBase<T> {
     //! \return SUCCESS if element dequeued
     Success dequeue(T& e  //!< The element (output)
                             ) override {
-        auto status = this->peek(e);
+        auto status = Success::FAILURE;
         if (this->m_size > 0) {
-            const auto i = this->m_dequeueIndex.getValue();
-            e = this->m_items[i];
+            e = this->getElementAtIndex(0);
             (void)this->m_dequeueIndex.increment();
             this->m_size--;
         }
