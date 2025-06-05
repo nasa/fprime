@@ -136,7 +136,7 @@ void f(FifoQueueBase<U32>& queue) {
 ### 5.4. peek
 
 ```c++
-Success peek(T& e, FwSizeType index = 0) const
+Success peek(T& e, FwSizeType index = 0) const = 0
 ```
 
 1. Set `status = Success::FAILURE`.

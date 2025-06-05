@@ -20,7 +20,7 @@ class FifoQueueBase {
     // Private constructors
     // ----------------------------------------------------------------------
 
-    //! Copy constructor deleted in the abstract class
+    //! Copy constructor deleted in the base class
     //! Behavior depends on the implementation
     FifoQueueBase(const FifoQueueBase<T>&) = delete;
 
@@ -40,7 +40,7 @@ class FifoQueueBase {
     // Private member functions
     // ----------------------------------------------------------------------
 
-    //! operator= deleted in the abstract class
+    //! operator= deleted in the base class
     //! Behavior depends on the implementation
     //! We avoid virtual user-defined operators
     FifoQueueBase<T>& operator=(const FifoQueueBase<T>&) = delete;
@@ -49,12 +49,6 @@ class FifoQueueBase {
     // ----------------------------------------------------------------------
     // Public member functions
     // ----------------------------------------------------------------------
-
-    //! Get the element at a specified index
-    //! Fail an assertion if i is out of bounds
-    //! \return The element at index i
-    virtual const T& at(FwSizeType i  //!< The index
-    ) const = 0;
 
     //! Clear the queue
     virtual void clear() = 0;
@@ -65,33 +59,30 @@ class FifoQueueBase {
             this->clear();
             const FwSizeType size = FW_MIN(queue.getSize(), this->getCapacity());
             for (FwSizeType i = 0; i < size; i++) {
-                const auto status = this->enqueue(queue.at(i));
+                T value = {};
+                auto status = queue.peek(value, i);
+                FW_ASSERT(status == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(status));
+                status = this->enqueue(value);
                 FW_ASSERT(status == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(status));
             }
         }
     }
 
-    //! Enqueue an element
+    //! Enqueue an element (add to the right)
     //! \return SUCCESS if element enqueued
-    virtual Success enqueue(const T& e  //!< The element
+    virtual Success enqueue(const T& e  //!< The element (output)
                             ) = 0;
 
-    //! Peek an element
+    //! Peek an element at an index
+    //! Indices go from left to right in the range [0, size)
     //! \return SUCCESS if element exists
-    Success peek(T& e  //!< The element
-    ) const {
-        auto status = Success::FAILURE;
-        auto size = this->getSize();
-        if (size > 0) {
-            e = this->at(size - 1);
-            status = Success::SUCCESS;
-        }
-        return status;
-    }
+    virtual Success peek(T& e,                 //!< The element (output)
+                         FwSizeType index = 0  //!< The index (input)
+    ) const = 0;
 
-    //! Dequeue an element
+    //! Dequeue an element (pop from the left)
     //! \return SUCCESS if element dequeued
-    virtual Success dequeue(T& e  //!< The element
+    virtual Success dequeue(T& e  //!< The element (output)
                             ) = 0;
 
     //! Get the size (number of items stored in the queue)

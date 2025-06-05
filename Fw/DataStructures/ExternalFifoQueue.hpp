@@ -10,17 +10,18 @@
 #include "Fw/DataStructures/CircularIndex.hpp"
 #include "Fw/DataStructures/ExternalArray.hpp"
 #include "Fw/DataStructures/FifoQueueBase.hpp"
+#include "Fw/Types/ByteArray.hpp"
 
 namespace Fw {
 
 template <typename T>
 class ExternalFifoQueue final : public FifoQueueBase<T> {
-
     // ----------------------------------------------------------------------
     // Friend class for testing
     // ----------------------------------------------------------------------
 
-    template<typename TT> friend class ExternalFifoQueueTester;
+    template <typename TT>
+    friend class ExternalFifoQueueTester;
 
   public:
     // ----------------------------------------------------------------------
@@ -30,12 +31,20 @@ class ExternalFifoQueue final : public FifoQueueBase<T> {
     //! Zero-argument constructor
     ExternalFifoQueue() = default;
 
-    //! Constructor providing backing storage
+    //! Constructor providing typed backing storage
     ExternalFifoQueue(T* items,            //!< The items
                       FwSizeType capacity  //!< The capacity
                       )
         : FifoQueueBase<T>() {
         this->setStorage(items, capacity);
+    }
+
+    //! Constructor providing untyped backing storage
+    ExternalFifoQueue(ByteArray data,      //!< The data
+                      FwSizeType capacity  //!< The capacity
+                      )
+        : FifoQueueBase<T>() {
+        this->setStorage(data, capacity);
     }
 
     //! Copy constructor
@@ -60,16 +69,6 @@ class ExternalFifoQueue final : public FifoQueueBase<T> {
         return *this;
     }
 
-    //! Get the element at a specified index
-    //! Fail an assertion if i is out of bounds
-    //! \return The element at index i
-    const T& at(FwSizeType i  //!< The index
-    ) const override {
-        FW_ASSERT(i < this->m_size, static_cast<FwAssertArgType>(i), static_cast<FwAssertArgType>(this->m_size));
-        auto ci = this->m_enqueueIndex;
-        return this->m_items[ci.increment(i)];
-    }
-
     //! Clear the queue
     void clear() override {
         this->m_enqueueIndex.setValue(0);
@@ -77,16 +76,23 @@ class ExternalFifoQueue final : public FifoQueueBase<T> {
         this->m_size = 0;
     }
 
-    //! Set the storage
+    //! Set the storage (typed data)
     void setStorage(T* items,            //!< The items
                     FwSizeType capacity  //!< The capacity
     ) {
         this->m_items.setStorage(items, capacity);
     }
 
-    //! Enqueue an element
+    //! Set the storage (untyped data)
+    void setStorage(ByteArray data,      //!< The data
+                    FwSizeType capacity  //!< The capacity
+    ) {
+        this->m_items.setStorage(data, capacity);
+    }
+
+    //! Enqueue an element (push on the right)
     //! \return SUCCESS if element enqueued
-    Success enqueue(const T& e  //!< The element
+    Success enqueue(const T& e  //!< The element (output)
                     ) override {
         auto status = Success::FAILURE;
         if (this->m_size < this->getCapacity()) {
@@ -98,9 +104,25 @@ class ExternalFifoQueue final : public FifoQueueBase<T> {
         return status;
     }
 
-    //! Dequeue an element
+    //! Peek an element at an index
+    //! Indices go from left to right in the range [0, size)
+    //! \return SUCCESS if element exists
+    Success peek(T& e,                 //!< The element (output)
+                 FwSizeType index = 0  //!< The index (input)
+    ) const override {
+        auto status = Success::FAILURE;
+        const auto size = this->getSize();
+        if (size > 0) {
+            auto ci = this->m_enqueueIndex;
+            e = this->m_items[ci.increment(index)];
+            status = Success::SUCCESS;
+        }
+        return status;
+    }
+
+    //! Dequeue an element (pop from the left)
     //! \return SUCCESS if element dequeued
-    virtual Success dequeue(T& e  //!< The element
+    virtual Success dequeue(T& e  //!< The element (output)
                             ) override {
         auto status = this->peek(e);
         if (this->m_size > 0) {
