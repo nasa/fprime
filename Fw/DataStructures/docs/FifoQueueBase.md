@@ -130,9 +130,11 @@ Success peek(T& e, FwSizeType index = 0) const = 0
 
 1. If `index < getSize()`
 
-    1. Assign the element at index `index` to `e`.
+    1. Let `e1` be the element at index `index`.
        Index 0 is the leftmost (earliest) element in the queue.
        Increasing indices go from left to right.
+
+    1. Set `e = e1`.
 
     1. Set `status = Success::SUCCESS`.
 

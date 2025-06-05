@@ -69,7 +69,7 @@ U32 items[capacity];
 ExternalFifoQueue<U32> queue(items, capacity);
 ```
 
-### 4.2. Constructor Providing Untyped Backing Storage
+### 4.3. Constructor Providing Untyped Backing Storage
 
 ```c++
 ExternalFifoQueue(ByteArray data, FwSizeType capacity)
@@ -86,7 +86,7 @@ alignas(U32) U8 bytes[capacity * sizeof(U32)];
 ExternalFifoQueue<U32> queue(ByteArray(&bytes[0], sizeof bytes), capacity);
 ```
 
-### 4.3. Copy Constructor
+### 4.4. Copy Constructor
 
 ```c++
 ExternalFifoQueue(const ExternalFifoQueue<T>& queue)
@@ -108,7 +108,7 @@ ExternalFifoQueue<U32> q2(q1);
 ASSERT_EQ(q2.getSize(), 1);
 ```
 
-### 4.4. Destructor
+### 4.5. Destructor
 
 ```c++
 ~ExternalFifoQueue() override
@@ -224,7 +224,7 @@ U32 items[capacity];
 queue.setStorage(items, capacity);
 ```
 
-### 5.4. setStorage (Untyped Data)
+### 5.5. setStorage (Untyped Data)
 
 ```c++
 void setStorage(ByteArray data, FwSizeType capacity)
@@ -248,10 +248,10 @@ ExternalFifoQueue<U32> queue;
 queue.setStorage(ByteArray(&bytes[0], sizeof bytes), capacity);
 ```
 
-### 5.2. copyDataFrom
+### 5.6. copyDataFrom
 
 ```c++
-void copyDataFrom(const FifoQueueBase<T>& queue)
+void copyDataFrom(const FifoQueueBase<T>& queue) override
 ```
 
 1. If `&queue != this`
@@ -281,7 +281,7 @@ q2.copyDataFrom(q1);
 ASSERT_EQ(q2.getSize(), 1);
 ```
 
-### 5.5. enqueue
+### 5.7. enqueue
 
 ```c++
 Success enqueue(const T& e) override
@@ -312,7 +312,48 @@ ASSERT_EQ(status, Success::SUCCESS);
 ASSERT_EQ(queue.getSize(), 1);
 ```
 
-### 5.6. dequeue
+### 5.8. peek
+
+```c++
+Success peek(T& e, FwSizeType index = 0) override
+```
+
+1. Set `status = Success::FAILURE`.
+
+1. If `index < getSize()`
+
+    1. Let `e1` be the element at index `index`.
+       Index 0 is the leftmost (earliest) element in the queue.
+       Increasing indices go from left to right.
+
+    1. Set `e = e1`.
+
+    1. Set `status = Success::SUCCESS`.
+
+1. Return `status`.
+
+_Example:_
+```c++
+constexpr FwSizeType size = 10;
+U32 items[size];
+ExternalFifoQueue<U32> queue(items, size);
+U32 value = 0;
+auto status = queue.peek(value);
+ASSERT_EQ(status, Success::FAILURE);
+status = queue.enqueue(3);
+status = queue.peek(value);
+ASSERT_EQ(status, Success::SUCCESS);
+ASSERT_EQ(value, 3);
+status = queue.peek(value, 1);
+ASSERT_EQ(status, Success::FAILURE);
+status = queue.enqueue(4);
+status = queue.peek(value, 1);
+ASSERT_EQ(status, Success::SUCCESS);
+ASSERT_EQ(value, 4);
+}
+```
+
+### 5.9. dequeue
 
 ```c++
 Success dequeue(T& e) override
@@ -347,7 +388,7 @@ ASSERT_EQ(status, Success::SUCCESS);
 ASSERT_EQ(val, 42);
 ```
 
-### 5.7. getSize
+### 5.10. getSize
 
 ```c++
 FwSizeType getSize() const override
@@ -368,7 +409,7 @@ size = queue.getSize();
 ASSERT_EQ(size, 1);
 ```
 
-### 5.8. getCapacity
+### 5.11. getCapacity
 
 ```c++
 FwSizeType getCapacity() const override
