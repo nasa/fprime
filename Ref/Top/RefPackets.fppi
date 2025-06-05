@@ -1,7 +1,8 @@
 telemetry packets RefPackets {
 
   packet CDH id 1 group 1 {
-    Ref.cmdDisp.CommandsDispatched
+    #Ref.cmdDisp.CommandsDispatched
+    CDHCore.cmdDisp.CommandsDispatched
     Ref.rateGroup1Comp.RgMaxTime
     Ref.rateGroup2Comp.RgMaxTime
     Ref.rateGroup3Comp.RgMaxTime
@@ -29,7 +30,7 @@ telemetry packets RefPackets {
     Ref.cmdSeq.CS_Errors
     Ref.fileUplink.Warnings
     Ref.fileDownlink.Warnings
-    Ref.$health.PingLateWarnings
+    CDHCore.$health.PingLateWarnings
     Ref.fileManager.Errors
     Ref.commsBufferManager.NoBuffs
     Ref.commsBufferManager.EmptyBuffs
@@ -264,5 +265,5 @@ telemetry packets RefPackets {
   }
 
 } omit {
-  Ref.cmdDisp.CommandErrors
+  CDHCore.cmdDisp.CommandErrors
 }

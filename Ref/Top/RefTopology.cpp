@@ -21,7 +21,7 @@
 #include <Os/Mutex.hpp>
 
 //Subtopology includes
-#include <CDHCore/Subtopology/CDHCoreTopologyDefs.hpp>
+#include <Svc/Subtopologies/CDHCore/CDHCoreTopologyDefs.hpp>
 
 // Allows easy reference to objects in FPP/autocoder required namespaces
 using namespace Ref;
@@ -99,8 +99,8 @@ void configureTopology() {
     prmDb.readParamFile();
 
     // Health is supplied a set of ping entires.
-    health.setPingEntries(ConfigObjects::Ref_health::pingEntries,
-                          FW_NUM_ARRAY_ELEMENTS(ConfigObjects::Ref_health::pingEntries), HEALTH_WATCHDOG_CODE);
+    CDHCore::health.setPingEntries(ConfigObjects::CDHCore_health::pingEntries,
+                          FW_NUM_ARRAY_ELEMENTS(ConfigObjects::CDHCore_health::pingEntries), HEALTH_WATCHDOG_CODE);
 
     // Buffer managers need a configured set of buckets and an allocator used to allocate memory for those buckets.
     Svc::BufferManager::BufferBins commsBuffMgrBins;
