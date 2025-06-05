@@ -71,28 +71,15 @@ void f(FifoQueueBase<U32>& queue) {
 ### 5.2. copyDataFrom
 
 ```c++
-void copyDataFrom(const FifoQueueBase<T>& queue)
+void copyDataFrom(const FifoQueueBase<T>& queue) = 0
 ```
 
-1. If `&queue == this` then do nothing.
-
-1. Otherwise
+1. If `&queue != this` then
 
     1. Call `clear()`.
 
-    1. Let `size` be the minimum of `queue.getSize()` and `getCapacity()`.
-
-    1. For `i` in [0, `size`)
-
-        1. Set `T value = {}`.
-
-        1. Set `status = queue.peek(value)`.
-
-        1. Assert `status == Success::SUCCESS`.
-
-        1. Set `status = enqueue(value)`.
-
-        1. Assert `status == Success::SUCCESS`.
+    1. For each item `e` on `queue`, in left-to-right order,
+       enqueue `e`.
 
 _Example:_
 ```c++

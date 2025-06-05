@@ -248,6 +248,39 @@ ExternalFifoQueue<U32> queue;
 queue.setStorage(ByteArray(&bytes[0], sizeof bytes), capacity);
 ```
 
+### 5.2. copyDataFrom
+
+```c++
+void copyDataFrom(const FifoQueueBase<T>& queue)
+```
+
+1. If `&queue != this`
+
+    1. Call `clear()`.
+
+    1. Let `size` be the minimum of `queue.getSize()` and `getCapacity()`.
+
+    1. For `i` in [0, `size`)
+
+        1. Let `e` be the element at index `i`.
+
+        1. Set `status = enqueue(e)`.
+
+        1. Assert `status == Success::SUCCESS`.
+
+_Example:_
+```c++
+ExternalFifoQueue<U32>& q1, ExternalFifoQueue<U32>& q2);
+q1.clear();
+// Enqueue an item
+U32 value = 42;
+(void) q1.enqueue(value);
+q2.clear();
+ASSERT_EQ(q2.getSize(), 0);
+q2.copyDataFrom(q1);
+ASSERT_EQ(q2.getSize(), 1);
+```
+
 ### 5.5. enqueue
 
 ```c++
