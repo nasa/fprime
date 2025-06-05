@@ -81,4 +81,37 @@ TEST_F(FpySequencerTester, OrOfTlmAndReg) {
     ASSERT_EQ(cmp.m_statementsDispatched, 8);
 }
 
+TEST_F(FpySequencerTester, CmpIntTlm) {
+    allocMem();
+    
+    nextTlmId = 123;
+    ASSERT_EQ(nextTlmValue.serialize(999), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    add_GET_TLM(0, 1, 123);
+    add_DESER_LVAR(0, 0, 0, 4);
+    add_SET_REG(1, 999);
+    // unsigned >= between tlm and reg
+    add_BINARY_CMP(0, 1, 2, Fpy::DirectiveId::UGE);
+    add_IF(2, 7);
+    // if true
+    add_NO_OP();
+    add_GOTO(10); // goto end
+    // else
+    add_NO_OP();
+    add_NO_OP();
+    add_NO_OP();
+
+    writeAndRun();
+    dispatchUntilState(State::IDLE);
+    // should be equal on first try
+    ASSERT_EQ(cmp.m_tlm.lastDirectiveError, DirectiveError::NO_ERROR);
+    ASSERT_EQ(cmp.m_statementsDispatched, 7);
+    nextTlmValue.resetSer();
+    // should fail if tlm is 998
+    nextTlmValue.serialize(998);
+    cmp.m_statementsDispatched = 0;
+    writeAndRun();
+    dispatchUntilState(State::IDLE);
+    ASSERT_EQ(cmp.m_statementsDispatched, 8);
+}
+
 }

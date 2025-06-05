@@ -103,6 +103,8 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     void add_DESER_LVAR(FpySequencer_DeserLocalVarDirective dir);
     void add_SET_REG(U8 dest, I64 value);
     void add_SET_REG(FpySequencer_SetRegDirective dir);
+    void add_BINARY_CMP(U8 lhs, U8 rhs, U8 res, Fpy::DirectiveId op);
+    void add_BINARY_CMP(FpySequencer_BinaryCmpDirective dir);
     //! Handle a text event
     void textLogIn(FwEventIdType id,                //!< The event ID
                    const Fw::Time& timeTag,         //!< The time

@@ -251,6 +251,18 @@ void FpySequencerTester::add_SET_REG(FpySequencer_SetRegDirective dir) {
     addDirective(Fpy::DirectiveId::SET_REG, buf);
 }
 
+void FpySequencerTester::add_BINARY_CMP(U8 lhs, U8 rhs, U8 res, Fpy::DirectiveId op) {
+    add_BINARY_CMP(FpySequencer_BinaryCmpDirective(lhs, rhs, res, op));
+}
+
+void FpySequencerTester::add_BINARY_CMP(FpySequencer_BinaryCmpDirective dir) {
+    Fw::StatementArgBuffer buf;
+    FW_ASSERT(buf.serialize(dir.getlhs()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    FW_ASSERT(buf.serialize(dir.getrhs()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    FW_ASSERT(buf.serialize(dir.getres()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    addDirective(dir.get_op(), buf);
+}
+
 //! Handle a text event
 void FpySequencerTester::textLogIn(FwEventIdType id,                //!< The event ID
                                    const Fw::Time& timeTag,         //!< The time

@@ -395,6 +395,10 @@ Signal FpySequencer::setReg_directiveHandler(const FpySequencer_SetRegDirective&
 }
 
 Signal FpySequencer::binaryCmp_directiveHandler(const FpySequencer_BinaryCmpDirective& directive, DirectiveError& error) {
+
+    // coding error, should not have gotten to this binary cmp handler
+    FW_ASSERT(directive.get_op() >= Fpy::DirectiveId::EQ && directive.get_op() <= Fpy::DirectiveId::SGE, static_cast<FwAssertArgType>(directive.get_op()));
+
     if (directive.getlhs() >= Fpy::NUM_REGISTERS 
         || directive.getrhs() >= Fpy::NUM_REGISTERS 
         || directive.getres() >= Fpy::NUM_REGISTERS) {
@@ -425,6 +429,8 @@ Signal FpySequencer::binaryCmp_directiveHandler(const FpySequencer_BinaryCmpDire
         sign = false;
     }
 
+    printf("sign: %d\n", sign);
+
     I8 cmpResult;
 
     if (sign) {
@@ -436,6 +442,7 @@ Signal FpySequencer::binaryCmp_directiveHandler(const FpySequencer_BinaryCmpDire
         cmpResult = (ulhs == urhs) ? 0 : (ulhs < urhs) ? -1 : 1;
     }
 
+    printf("cmp: %d\n", cmpResult);
     if (cmpResult == 0) {
         // values were equal
         // result is true if equality is okay

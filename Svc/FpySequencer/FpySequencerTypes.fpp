@@ -20,9 +20,9 @@ module Svc {
             DESER_LVAR_2 = 13
             DESER_LVAR_1 = 14
             OR = 15
+            # NO REORDER
             EQ = 16
             NE = 17
-            # NO REORDER
             # unsigned inequalities
             ULT = 18
             ULE = 19
