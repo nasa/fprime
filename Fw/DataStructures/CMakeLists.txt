@@ -10,6 +10,7 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/DataStructuresTestMain.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/ExternalArrayTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/ExternalFifoQueueTest.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/FifoQueueTest.cpp"
 )
 
 set(UT_MOD_DEPS

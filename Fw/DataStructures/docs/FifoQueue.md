@@ -45,7 +45,7 @@ classDiagram
 FifoQueue()
 ```
 
-Initialize each member variable with its default value.
+Defined as `= default`.
 
 _Example:_
 ```c++
@@ -89,7 +89,7 @@ Defined as `= default`.
 FifoQueue<T>& operator=(const FifoQueue<T>& queue)
 ```
 
-Call `m_extQueue.copyDataFrom(queue.m_extQueue)`.
+Call `m_extQueue.copyDataFrom(queue)`.
 
 _Example:_
 ```c++
@@ -114,15 +114,7 @@ void clear() override
 
 Call `m_extQueue.clear()`.
 
-### 5.3. copyDataFrom
-
-```c++
-void copyDataFrom(const FifoQueueBase<T>& queue) override
-```
-
-Call `m_extQueue.copyDataFrom(queue)`.
-
-### 5.4. enqueue
+### 5.3. enqueue
 
 ```c++
 Success enqueue(const T& e) override
@@ -130,15 +122,7 @@ Success enqueue(const T& e) override
 
 Return `m_extQueue.enqueue(e)`.
 
-### 5.5. peek
-
-```c++
-Success peek(T& e, FwSizeType index = 0) override
-```
-
-Return `m_extQueue.peek(e, index)`.
-
-### 5.6. dequeue
+### 5.4. dequeue
 
 ```c++
 Success dequeue(T& e) override
@@ -146,7 +130,7 @@ Success dequeue(T& e) override
 
 Return `m_extQueue.dequeue(e)`.
 
-### 5.7. getSize
+### 5.5. getSize
 
 ```c++
 FwSizeType getSize() const
@@ -154,7 +138,7 @@ FwSizeType getSize() const
 
 Return `m_extQueue.getSize()`.
 
-### 5.8. getCapacity
+### 5.6. getCapacity
 
 ```c++
 FwSizeType getCapacity() const
@@ -162,7 +146,7 @@ FwSizeType getCapacity() const
 
 Return `m_extQueue.getCapacity()`.
 
-### 5.9. asExternalFifoQueue
+### 5.7. asExternalFifoQueue
 
 ```c++
 ExternalFifoQueue<T> asExternalFifoQueue()
@@ -194,3 +178,13 @@ _Example:_
 const auto capacity = FifoQueue<U32, 3>::getStaticCapacity();
 ASSERT_EQ(capacity, 3);
 ```
+
+## 7. Private Member Functions
+
+### 7.1. getItemAtIndex
+
+```c++
+const T& getItemAtIndex(FwSizeType index) const override
+```
+
+Return `m_extQueue.getItemAtIndex(index)`.
