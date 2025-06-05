@@ -8,6 +8,7 @@
 
 #include "Fw/DataStructures/Array.hpp"
 #include "Fw/DataStructures/FifoQueue.hpp"
+#include "Fw/DataStructures/test/ut/STest/FifoQueue/FifoQueueRules.hpp"
 
 namespace Fw {
 
@@ -77,7 +78,7 @@ TEST(FifoQueue, EnqueueOK) {
     ASSERT_EQ(queue.getSize(), 0);
 }
 
-TEST(ArrayFIFO, EnqueueFull) {
+TEST(FifoQueue, EnqueueFull) {
     constexpr const FwSizeType capacity = 1000;
     U32 elts[capacity];
     FifoQueue<U32> queue(elts, capacity);
@@ -214,4 +215,23 @@ TEST(FifoQueue, CopyDataFrom) {
     }
 }
 #endif
+
+TEST(FifoQueueRules, EnqueueOK) {
+  constexpr FwSizeType capacity = 10;
+  FifoQueueRules<capacity>::TestState state;
+  FifoQueueRules<capacity>::EnqueueOK enqueueOK;
+  enqueueOK.apply(state);
+}
+
+TEST(FifoQueueRules, EnqueueFull) {
+  constexpr FwSizeType capacity = 10;
+  FifoQueueRules<capacity>::TestState state;
+  FifoQueueRules<capacity>::EnqueueOK enqueueOK;
+  FifoQueueRules<capacity>::EnqueueFull enqueueFull;
+  for (FwSizeType i = 0; i < capacity; i++) {
+      enqueueOK.apply(state);
+  }
+  enqueueFull.apply(state);
+}
+
 }  // namespace Fw

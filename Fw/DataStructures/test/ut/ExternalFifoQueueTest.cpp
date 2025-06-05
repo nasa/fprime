@@ -77,7 +77,7 @@ TEST(ExternalFifoQueue, EnqueueOK) {
     ASSERT_EQ(queue.getSize(), 0);
 }
 
-TEST(ArrayFIFO, EnqueueFull) {
+TEST(ExternalFifoQueue, EnqueueFull) {
     constexpr const FwSizeType capacity = 1000;
     U32 elts[capacity];
     ExternalFifoQueue<U32> queue(elts, capacity);
