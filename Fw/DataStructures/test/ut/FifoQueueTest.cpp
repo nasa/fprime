@@ -64,11 +64,11 @@ TEST(FifoQueue, EnqueueOK) {
         const U32 val = STest::Pick::any();
         // Enqueue it
         auto status = queue.enqueue(val);
-        ASSERT_EQ(status, Fw::Success::SUCCESS);
+        ASSERT_EQ(status, Success::SUCCESS);
         // Peek it
         U32 val1 = 0;
         status = queue.peek(val1, i);
-        ASSERT_EQ(status, Fw::Success::SUCCESS);
+        ASSERT_EQ(status, Success::SUCCESS);
         ASSERT_EQ(val1, val);
         // Check the size
         ASSERT_EQ(queue.getSize(), i + 1);
@@ -89,7 +89,7 @@ TEST(ArrayFIFO, EnqueueFull) {
     const U32 val = STest::Pick::any();
     const auto status = queue.enqueue(val);
     // Push should fail
-    ASSERT_EQ(status, Fw::Success::FAILURE);
+    ASSERT_EQ(status, Success::FAILURE);
 }
 
 TEST(FifoQueue, CopyConstructor) {
@@ -140,18 +140,18 @@ TEST(FifoQueue, DequeueOK) {
         // Enqueue it
         const auto status = queue.enqueue(val);
         ASSERT_EQ(val, items[i]);
-        ASSERT_EQ(status, Fw::Success::SUCCESS);
+        ASSERT_EQ(status, Success::SUCCESS);
         ASSERT_EQ(queue.getSize(), i + 1);
     }
     for (FwSizeType i = 0; i < size; i++) {
         U32 val = 0;
         // Peek
         auto status = queue.peek(val);
-        ASSERT_EQ(status, Fw::Success::SUCCESS);
+        ASSERT_EQ(status, Success::SUCCESS);
         ASSERT_EQ(val, items[i]);
         // Dequeue it
         status = queue.dequeue(val);
-        ASSERT_EQ(status, Fw::Success::SUCCESS);
+        ASSERT_EQ(status, Success::SUCCESS);
         ASSERT_EQ(val, items[i]);
         ASSERT_EQ(queue.getSize(), size - i - 1);
     }
@@ -164,7 +164,7 @@ TEST(FifoQueue, DequeueEmpty) {
     FifoQueue<U32> queue(items, capacity);
     U32 val = 0;
     const auto status = queue.dequeue(val);
-    ASSERT_EQ(status, Fw::Success::FAILURE);
+    ASSERT_EQ(status, Success::FAILURE);
 }
 
 namespace {
