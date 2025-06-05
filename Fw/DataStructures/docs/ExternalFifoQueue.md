@@ -52,7 +52,7 @@ _Example:_
 ExternalFifoQueue<U32> queue;
 ```
 
-### 4.2. Constructor Providing Backing Storage
+### 4.2. Constructor Providing Typed Backing Storage
 
 ```c++
 ExternalFifoQueue(T* items, FwSizeType capacity)
@@ -67,6 +67,23 @@ _Example:_
 constexpr FwSizeType capacity = 10;
 U32 items[capacity];
 ExternalFifoQueue<U32> queue(items, capacity);
+```
+
+### 4.2. Constructor Providing Untyped Backing Storage
+
+```c++
+ExternalFifoQueue(ByteArray data, FwSizeType capacity)
+```
+
+1. Call `setStorage(data, capacity)`.
+
+1. Initialize the other member variables with their default values.
+
+_Example:_
+```c++
+constexpr FwSizeType capacity = 10;
+alignas(U32) U8 bytes[capacity * sizeof(U32)];
+ExternalFifoQueue<U32> queue(ByteArray(&bytes[0], sizeof bytes), capacity);
 ```
 
 ### 4.3. Copy Constructor
@@ -183,7 +200,7 @@ queue.clear();
 ASSERT_EQ(queue.getSize(), 0);
 ```
 
-### 5.4. setStorage
+### 5.4. setStorage (Typed Data)
 
 ```c++
 void setStorage(T* items, FwSizeType size)
@@ -197,6 +214,22 @@ constexpr FwSizeType capacity = 10;
 ExternalFifoQueue<U32> queue;
 U32 items[capacity];
 queue.setStorage(items, capacity);
+```
+
+### 5.4. setStorage (Untyped Data)
+
+```c++
+void setStorage(ByteArray data, FwSizeType capacity)
+```
+
+Call `m_items.setStorage(data, capacity)`.
+
+_Example:_
+```c++
+constexpr FwSizeType capacity = 10;
+alignas(U32) U8 bytes[capacity * sizeof(U32)];
+ExternalFifoQueue<U32> queue;
+queue.setStorage(ByteArray(&bytes[0], sizeof bytes), capacity);
 ```
 
 ### 5.5. enqueue
