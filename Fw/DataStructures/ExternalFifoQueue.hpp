@@ -94,8 +94,10 @@ class ExternalFifoQueue final : public FifoQueueBase<T> {
                     FwSizeType capacity  //!< The capacity
     ) {
         this->m_items.setStorage(items, capacity);
-        this->m_enqueueIndex.setModulus(capacity);
-        this->m_dequeueIndex.setModulus(capacity);
+        if (capacity > 0) {
+            this->m_enqueueIndex.setModulus(capacity);
+            this->m_dequeueIndex.setModulus(capacity);
+        }
         this->clear();
     }
 
@@ -104,8 +106,10 @@ class ExternalFifoQueue final : public FifoQueueBase<T> {
                     FwSizeType capacity  //!< The capacity
     ) {
         this->m_items.setStorage(data, capacity);
-        this->m_enqueueIndex.setModulus(capacity);
-        this->m_dequeueIndex.setModulus(capacity);
+        if (capacity > 0) {
+            this->m_enqueueIndex.setModulus(capacity);
+            this->m_dequeueIndex.setModulus(capacity);
+        }
         this->clear();
     }
 

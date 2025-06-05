@@ -208,9 +208,11 @@ void setStorage(T* items, FwSizeType capacity)
 
 1. Call `m_items.setStorage(items, capacity)`.
 
-1. Call `this->m_enqueueIndex.setModulus(capacity)`.
+1. If `capacity > 0`
 
-1. Call `this->m_dequeueIndex.setModulus(capacity)`.
+    1. Call `this->m_enqueueIndex.setModulus(capacity)`.
+
+    1. Call `this->m_dequeueIndex.setModulus(capacity)`.
 
 1. Call `this->clear()`.
 
@@ -230,9 +232,11 @@ void setStorage(ByteArray data, FwSizeType capacity)
 
 1. Call `m_items.setStorage(data, capacity)`.
 
-1. Call `this->m_enqueueIndex.setModulus(capacity)`.
+1. If `capacity > 0`
 
-1. Call `this->m_dequeueIndex.setModulus(capacity)`.
+    1. Call `this->m_enqueueIndex.setModulus(capacity)`.
+
+    1. Call `this->m_dequeueIndex.setModulus(capacity)`.
 
 1. Call `this->clear()`.
 
