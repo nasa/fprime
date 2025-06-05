@@ -55,7 +55,9 @@ TEST(ExternalArray, CopyAssignment) {
     ASSERT_EQ(a1.getSize(), a2.getSize());
 }
 
-static void testCopyDataFrom(ExternalArray<U32> a1, ExternalArray<U32> a2) {
+namespace {
+
+void testCopyDataFrom(ExternalArray<U32> a1, ExternalArray<U32> a2) {
     const FwSizeType size1 = a1.getSize();
     for (FwSizeType i = 0; i < size1; i++) {
         a1[i] = static_cast<U32>(i);
@@ -70,6 +72,8 @@ static void testCopyDataFrom(ExternalArray<U32> a1, ExternalArray<U32> a2) {
         ASSERT_EQ(a2[i], a1[i]);
     }
 }
+
+}  // namespace
 
 TEST(ExternalArray, CopyDataFrom) {
     constexpr FwSizeType maxSize = 10;

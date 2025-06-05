@@ -54,8 +54,17 @@ class FifoQueueBase {
     virtual void clear() = 0;
 
     //! Copy data from another queue
-    virtual void copyDataFrom(const FifoQueueBase<T>& queue  //!< The queue
-                              ) = 0;
+    void copyDataFrom(const FifoQueueBase<T>& queue  //!< The queue
+    ) {
+        if (&queue != this) {
+            this->clear();
+            const FwSizeType size = FW_MIN(queue.getSize(), this->getCapacity());
+            for (FwSizeType i = 0; i < size; i++) {
+                const auto status = this->enqueue(queue.getElementAtIndex(i));
+                FW_ASSERT(status == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(status));
+            }
+        }
+    }
 
     //! Enqueue an element (add to the right)
     //! \return SUCCESS if element enqueued
@@ -81,6 +90,16 @@ class FifoQueueBase {
     //! Get the capacity (maximum number of items stored in the queue)
     //! \return The capacity
     virtual FwSizeType getCapacity() const = 0;
+
+  protected:
+    // ----------------------------------------------------------------------
+    // Protected member functions
+    // ----------------------------------------------------------------------
+
+    //! Get an element at an index
+    //! Indices go from left to right in the queue
+    virtual const T& getElementAtIndex(FwSizeType index  //!< The index
+    ) const = 0;
 };
 
 }  // namespace Fw
