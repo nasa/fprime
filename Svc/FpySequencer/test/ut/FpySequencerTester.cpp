@@ -241,14 +241,14 @@ void FpySequencerTester::add_DESER_LVAR(FpySequencer_DeserLocalVarDirective dir)
     addDirective(id, buf);
 }
 
-void FpySequencerTester::add_STORE(U8 dest, I64 value) {
-    add_STORE(FpySequencer_StoreDirective(dest, value));
+void FpySequencerTester::add_SET_REG(U8 dest, I64 value) {
+    add_SET_REG(FpySequencer_SetRegDirective(dest, value));
 }
 
-void FpySequencerTester::add_STORE(FpySequencer_StoreDirective dir) {
+void FpySequencerTester::add_SET_REG(FpySequencer_SetRegDirective dir) {
     Fw::StatementArgBuffer buf;
     FW_ASSERT(buf.serialize(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    addDirective(Fpy::DirectiveId::STORE, buf);
+    addDirective(Fpy::DirectiveId::SET_REG, buf);
 }
 
 //! Handle a text event

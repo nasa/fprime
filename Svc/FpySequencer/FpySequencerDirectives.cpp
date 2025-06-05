@@ -109,10 +109,10 @@ void FpySequencer::directive_deserLocalVar_internalInterfaceHandler(const Svc::F
     this->m_tlm.lastDirectiveError = error;
 }
 
-//! Internal interface handler for directive_store
-void FpySequencer::directive_store_internalInterfaceHandler(const Svc::FpySequencer_StoreDirective& directive) {
+//! Internal interface handler for directive_setReg
+void FpySequencer::directive_setReg_internalInterfaceHandler(const Svc::FpySequencer_SetRegDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
-    this->sendSignal(this->store_directiveHandler(directive, error));
+    this->sendSignal(this->setReg_directiveHandler(directive, error));
     this->m_tlm.lastDirectiveError = error;
 }
 
@@ -265,7 +265,7 @@ Signal FpySequencer::getPrm_directiveHandler(const FpySequencer_GetPrmDirective&
     }
 
     if (prmValue.getBuffLength() > Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE) {
-        // cannot store the prm value in the lvar
+        // cannot setReg the prm value in the lvar
         error = DirectiveError::LVAR_SERIALIZE_FAILURE;
         return Signal::stmtResponse_failure;
     }
@@ -385,7 +385,7 @@ Signal FpySequencer::deserLocalVar_directiveHandler(const FpySequencer_DeserLoca
     return Signal::stmtResponse_success;
 }
 
-Signal FpySequencer::store_directiveHandler(const FpySequencer_StoreDirective& directive, DirectiveError& error) {
+Signal FpySequencer::setReg_directiveHandler(const FpySequencer_SetRegDirective& directive, DirectiveError& error) {
     if (directive.getdest() >= Fpy::NUM_REGISTERS) {
         error = DirectiveError::REGISTER_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;

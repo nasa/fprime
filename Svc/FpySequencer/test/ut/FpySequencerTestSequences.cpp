@@ -57,7 +57,7 @@ TEST_F(FpySequencerTester, OrOfTlmAndReg) {
     ASSERT_EQ(nextTlmValue.serialize(true), Fw::SerializeStatus::FW_SERIALIZE_OK);
     add_GET_TLM(0, 1, 123);
     add_DESER_LVAR(0, 0, 0, 1);
-    add_STORE(1, 0);
+    add_SET_REG(1, 0);
     // or between the stored const and the tlm val
     add_OR(0, 1, 2);
     add_IF(2, 7);

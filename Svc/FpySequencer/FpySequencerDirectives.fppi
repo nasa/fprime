@@ -83,8 +83,8 @@ struct DeserLocalVarDirective {
     _deserSize: U8
 }
 
-@ writes a constant value to a register
-struct StoreDirective {
+@ sets a register to a constant value
+struct SetRegDirective {
     @ the register to store the value in
     dest: U8
     @ the value to store in the register
@@ -122,7 +122,7 @@ internal port directive_or(directive: OrDirective) priority 6 assert
 
 internal port directive_deserLocalVar(directive: DeserLocalVarDirective) priority 6 assert
 
-internal port directive_store(directive: StoreDirective) priority 6 assert
+internal port directive_setReg(directive: SetRegDirective) priority 6 assert
 
 internal port directive_binaryCmp(directive: BinaryCmpDirective) priority 6 assert
 

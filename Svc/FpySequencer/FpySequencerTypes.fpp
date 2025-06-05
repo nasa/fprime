@@ -14,7 +14,7 @@ module Svc {
             GET_TLM = 7
             GET_PRM = 8
             CMD = 9
-            STORE = 10
+            SET_REG = 10
             DESER_LVAR_8 = 11
             DESER_LVAR_4 = 12
             DESER_LVAR_2 = 13
