@@ -1,6 +1,6 @@
-""" ref_integration_test.py:
+""" test_cmd_sequencer.py:
 
-A set of integration tests to apply to the Ref app. This is intended to be a reference of integration testing.
+A set of integration tests to apply to the CmdSequencer app. This is intended to be a reference of integration testing.
 """
 
 import subprocess
@@ -14,25 +14,25 @@ from pathlib import Path
 
 ## regenerate .seq file
 
-def regen_file(seqfile,deployment):
+def regenerate_file(seqfile1,deployment):
     # ex: test_seq.seq
-    oldfile = open (seqfile +".seq", "r")
-    newfile = open (seqfile +"_new.seq", "w")
+    oldfile1 = open (seqfile1 +".seq", "r")
+    newfile1 = open (seqfile1 +"_new.seq", "w")
 
-    eachline = oldfile.readlines()
+    eachline1 = oldfile1.readlines()
     line = 1
-    for writing in eachline:
+    for writing in eachline1:
         
         index = writing.find("cmdDisp.")
         if index != -1:
             writing = writing[:index] + deployment + "." + writing[index:]
         
-        newfile.write(writing)        
+        newfile1.write(writing)        
         line = line + 1
 
-    oldfile.close()
-    newfile.close()
-    return seqfile +"_new.seq"
+    oldfile1.close()
+    newfile1.close()
+    return seqfile1 +"_new.seq"
 
 def test_seqgen(fprime_test_api):
     
@@ -45,8 +45,8 @@ def test_seqgen(fprime_test_api):
 #    sequence = Path(__file__).parent / "test_seq_new.seq"
 #    sequence2 = Path(__file__).parent / "test_seq_wait_new.seq"
 
-    sequence = Path(__file__).parent / regen_file("test_seq",deployment)
-    sequence2 = Path(__file__).parent / regen_file("test_seq_wait",deployment)
+    sequence = Path(__file__).parent / regenerate_file("test_seq",deployment)
+    sequence2 = Path(__file__).parent / regenerate_file("test_seq_wait",deployment)
 
     
     assert (
@@ -79,7 +79,7 @@ def test_seqgen(fprime_test_api):
         fprime_test_api.getCmdDispName('Svc.CmdSequencer') + '.' + 'CS_RUN', args=["/tmp/ref_test_seq.bin", "BLOCK"], max_delay=5
     )
 
-    ######    ###### remove newfile   ######
+    ######    ###### remove newfile1   ######
     print(f" file:",sequence)
     os.remove(sequence)
     os.remove(sequence2)
@@ -128,7 +128,7 @@ def test_send_seq(fprime_test_api):
     ######    ######    ######    
     fprime_test_api.send_and_assert_command(fprime_test_api.getCmdDispName('Svc.CmdSequencer') + '.' + 'CS_MANUAL', max_delay=1)
     ## Manual Mode testing Start  WARNING_LO = No sequence active
-    # WARNING_LO => No sequence active and EXECUTION_ERROR.  No completion (will cause pytest to assert when no completion) use send_command will ingore completion?
+    # WARNING_LO => No sequence active and EXECUTION_ERROR.  No completion (will cause pytest to assert when no completion) use send_command will ignore completion?
 
     #fprime_test_api.send_and_assert_command(fprime_test_api.getCmdDispName('Svc.CmdSequencer') + '.' + 'CS_START', max_delay=1)
     fprime_test_api.send_command(fprime_test_api.getCmdDispName('Svc.CmdSequencer') + '.' + 'CS_START')
