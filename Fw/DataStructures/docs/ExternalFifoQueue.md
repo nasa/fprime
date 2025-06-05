@@ -203,10 +203,16 @@ ASSERT_EQ(queue.getSize(), 0);
 ### 5.4. setStorage (Typed Data)
 
 ```c++
-void setStorage(T* items, FwSizeType size)
+void setStorage(T* items, FwSizeType capacity)
 ```
 
-Call `m_items.setStorage(items, size)`.
+1. Call `m_items.setStorage(items, capacity)`.
+
+1. Call `this->m_enqueueIndex.setModulus(capacity)`.
+
+1. Call `this->m_dequeueIndex.setModulus(capacity)`.
+
+1. Call `this->clear()`.
 
 _Example:_
 ```c++
@@ -222,7 +228,13 @@ queue.setStorage(items, capacity);
 void setStorage(ByteArray data, FwSizeType capacity)
 ```
 
-Call `m_items.setStorage(data, capacity)`.
+1. Call `m_items.setStorage(data, capacity)`.
+
+1. Call `this->m_enqueueIndex.setModulus(capacity)`.
+
+1. Call `this->m_dequeueIndex.setModulus(capacity)`.
+
+1. Call `this->clear()`.
 
 _Example:_
 ```c++

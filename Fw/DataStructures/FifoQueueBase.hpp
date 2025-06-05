@@ -54,19 +54,8 @@ class FifoQueueBase {
     virtual void clear() = 0;
 
     //! Copy data from another queue
-    void copyDataFrom(const FifoQueueBase<T>& queue) {
-        if (&queue != this) {
-            this->clear();
-            const FwSizeType size = FW_MIN(queue.getSize(), this->getCapacity());
-            for (FwSizeType i = 0; i < size; i++) {
-                T value = {};
-                auto status = queue.peek(value, i);
-                FW_ASSERT(status == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(status));
-                status = this->enqueue(value);
-                FW_ASSERT(status == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(status));
-            }
-        }
-    }
+    virtual void copyDataFrom(const FifoQueueBase<T>& queue  //!< The queue
+                              ) = 0;
 
     //! Enqueue an element (add to the right)
     //! \return SUCCESS if element enqueued

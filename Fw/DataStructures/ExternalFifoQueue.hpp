@@ -76,11 +76,30 @@ class ExternalFifoQueue final : public FifoQueueBase<T> {
         this->m_size = 0;
     }
 
+    //! Copy data from another queue
+    virtual void copyDataFrom(const FifoQueueBase<T>& queue  //!< The queue
+    ) override {
+        if (&queue != this) {
+            this->clear();
+            const FwSizeType size = FW_MIN(queue.getSize(), this->getCapacity());
+            for (FwSizeType i = 0; i < size; i++) {
+                T value;
+                auto status = queue.peek(value, i);
+                FW_ASSERT(status == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(status));
+                status = this->enqueue(value);
+                FW_ASSERT(status == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(status));
+            }
+        }
+    }
+
     //! Set the storage (typed data)
     void setStorage(T* items,            //!< The items
                     FwSizeType capacity  //!< The capacity
     ) {
         this->m_items.setStorage(items, capacity);
+        this->m_enqueueIndex.setModulus(capacity);
+        this->m_dequeueIndex.setModulus(capacity);
+        this->clear();
     }
 
     //! Set the storage (untyped data)
@@ -88,6 +107,9 @@ class ExternalFifoQueue final : public FifoQueueBase<T> {
                     FwSizeType capacity  //!< The capacity
     ) {
         this->m_items.setStorage(data, capacity);
+        this->m_enqueueIndex.setModulus(capacity);
+        this->m_dequeueIndex.setModulus(capacity);
+        this->clear();
     }
 
     //! Enqueue an element (push on the right)

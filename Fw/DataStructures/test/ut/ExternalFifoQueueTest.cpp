@@ -34,7 +34,7 @@ TEST(ExternalFifoQueue, ZeroArgConstructor) {
     ASSERT_EQ(queue.getSize(), 0);
 }
 
-TEST(ExternalFifoQueue, StorageConstructor) {
+TEST(ExternalFifoQueue, TypedStorageConstructor) {
     constexpr FwSizeType capacity = 10;
     U32 items[capacity];
     ExternalFifoQueue<U32> queue(items, capacity);
@@ -58,10 +58,8 @@ TEST(ExternalFifoQueue, CopyConstructor) {
     ExternalFifoQueueTester<U32> tester2(q2);
     ASSERT_EQ(tester2.getItems().getElements(), items);
     ASSERT_EQ(tester2.getItems().getSize(), capacity);
-#if 0
     ASSERT_EQ(tester2.getEnqueueIndex().getValue(), 1);
     ASSERT_EQ(tester2.getDequeueIndex().getValue(), 0);
-#endif
     ASSERT_EQ(q2.getSize(), 1);
 }
 
