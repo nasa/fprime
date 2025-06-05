@@ -91,21 +91,13 @@ struct StoreDirective {
     value: I64
 }
 
-enum BinaryCmpOperation {
-    GT
-    LT
-    EQ
-    LE
-    GE
-}
-
 @ performs a binary comparison operator on the lhs and rhs registers, and stores the result in the third register
 struct BinaryCmpDirective {
     lhs: U8
     rhs: U8
     res: U8
     
-    _op: BinaryCmpOperation
+    _op: Fpy.DirectiveId
 }
 
 internal port directive_waitRel(directive: WaitRelDirective) priority 6 assert

@@ -401,36 +401,62 @@ Signal FpySequencer::binaryCmp_directiveHandler(const FpySequencer_BinaryCmpDire
         error = DirectiveError::REGISTER_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
-    
-    I8 cmpResult;
 
-    if (reg(directive.getlhs()) < reg(directive.getrhs())) {
-        cmpResult = -1;
-    } else if (reg(directive.getlhs()) == reg(directive.getrhs())) {
-        cmpResult = 0;
-    } else {
-        cmpResult = 1;
+    I64 lhs = reg(directive.getlhs());
+    I64 rhs = reg(directive.getrhs());
+    I64& res = reg(directive.getres());
+    
+    if (directive.get_op() == Fpy::DirectiveId::EQ) {
+        res = lhs == rhs;
+        return Signal::stmtResponse_success;
     }
 
-    if ((directive.get_op() == FpySequencer_BinaryCmpOperation::LT
-        || directive.get_op() == FpySequencer_BinaryCmpOperation::LE)
-        && cmpResult == -1) {
-        // op was less than, and cmp was less than
-        reg(directive.getres()) = 1;
-    } else if ((directive.get_op() == FpySequencer_BinaryCmpOperation::GT
-                || directive.get_op() == FpySequencer_BinaryCmpOperation::GE)
-                && cmpResult == 1) {
-        // op was greater than, and cmp was greater than
-        reg(directive.getres()) = 1;
-    } else if ((directive.get_op() == FpySequencer_BinaryCmpOperation::EQ
-                || directive.get_op() == FpySequencer_BinaryCmpOperation::GE
-                || directive.get_op() == FpySequencer_BinaryCmpOperation::GT)
-                && cmpResult == 0) {
-        // op was equal to, and cmp was equal to
-        reg(directive.getres()) = 1;
+    if (directive.get_op() == Fpy::DirectiveId::NE) {
+        res = lhs != rhs;
+        return Signal::stmtResponse_success;
+    }
+
+    // okay, it is an inequality comparison
+
+    // whether the comparison is signed or unsigned
+    bool sign = true;
+
+    if (directive.get_op() >= Fpy::DirectiveId::ULT && directive.get_op() <= Fpy::DirectiveId::UGE) {
+        sign = false;
+    }
+
+    I8 cmpResult;
+
+    if (sign) {
+        cmpResult = (lhs == rhs) ? 0 : (lhs < rhs) ? -1 : 1;
     } else {
-        // no match between operation and cmp result
-        reg(directive.getres()) = 0;
+        // unsigned comparison. static cast to unsigned longs
+        U64 ulhs = static_cast<U64>(lhs);
+        U64 urhs = static_cast<U64>(rhs);
+        cmpResult = (ulhs == urhs) ? 0 : (ulhs < urhs) ? -1 : 1;
+    }
+
+    if (cmpResult == 0) {
+        // values were equal
+        // result is true if equality is okay
+        res = (directive.get_op() == Fpy::DirectiveId::UGE 
+            || directive.get_op() == Fpy::DirectiveId::ULE 
+            || directive.get_op() == Fpy::DirectiveId::SGE 
+            || directive.get_op() == Fpy::DirectiveId::SLE);
+    } else if (cmpResult == -1) {
+        // lhs < rhs
+        // result is true if < is okay
+        res = (directive.get_op() == Fpy::DirectiveId::ULT
+            || directive.get_op() == Fpy::DirectiveId::ULE 
+            || directive.get_op() == Fpy::DirectiveId::SLT
+            || directive.get_op() == Fpy::DirectiveId::SLE);
+    } else {
+        // lhs > rhs
+        // result is true if > is okay
+        res = (directive.get_op() == Fpy::DirectiveId::UGT
+            || directive.get_op() == Fpy::DirectiveId::UGE 
+            || directive.get_op() == Fpy::DirectiveId::SGT
+            || directive.get_op() == Fpy::DirectiveId::SGE);
     }
 
     return Signal::stmtResponse_success;

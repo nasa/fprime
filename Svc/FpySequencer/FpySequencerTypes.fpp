@@ -20,11 +20,20 @@ module Svc {
             DESER_LVAR_2 = 13
             DESER_LVAR_1 = 14
             OR = 15
-            GT = 16
-            LT = 17
-            EQ = 18
-            LE = 19
-            GE = 20
+            EQ = 16
+            NE = 17
+            # NO REORDER
+            # unsigned inequalities
+            ULT = 18
+            ULE = 19
+            UGT = 20
+            UGE = 21
+            # signed inequalities
+            SLT = 22
+            SLE = 23
+            SGT = 24
+            SGE = 25
+            # END NO REORDER
         }
 
         struct Header {
