@@ -46,8 +46,11 @@ first in first out (FIFO) order.
 
 * [`FifoQueue`](FifoQueue.md)
 
-The queue implementations use a template called [`CircularIndex`](CircularIndex.md)
-for representing an index that wraps around modulo an integer.
+The queue implementations use a template called 
+[`CircularIndex`](CircularIndex.md)
+for representing a **circular index**, i.e., an index that wraps around modulo 
+an integer.
+You can use this template to represent any circular index.
 
 ### 2.2. Class Diagram
 
