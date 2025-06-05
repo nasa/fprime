@@ -16,18 +16,21 @@ module CDHCore {
         priority CDHCoreConfig.Priorities.tlmSend_PRIORITY
 
     instance $health: Svc.Health base id CDHCoreConfig.CDHCore_BASE_ID + 0x0400 \
-        queue size 25
+        queue size CDHCoreConfig.Defaults.$health_QUEUE_SIZE \
     
     topology Subtopology {
+        #Active Components
         instance cmdDisp 
         instance eventLogger
         instance tlmSend
 
+        #Queued Components
         instance $health
 
         command connections instance cmdDisp
         event connections instance eventLogger
         telemetry connections instance tlmSend
+        health connections instance $health
 
     } # end topology
 } # end CDHCore Subtopology

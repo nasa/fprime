@@ -1,5 +1,5 @@
 module CDHCoreConfig {
-    # Base ID for your subtopology. All instantiated components will be offsets of this
+    #Base ID for the CDHCore Subtopology, all components are offsets from this base ID
     constant CDHCore_BASE_ID = 0xFFFF0000
     
     # include default Queue and Stack sizes here
