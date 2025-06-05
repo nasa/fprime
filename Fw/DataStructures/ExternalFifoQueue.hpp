@@ -123,6 +123,7 @@ class ExternalFifoQueue final : public FifoQueueBase<T> {
             this->m_items[i] = e;
             (void)this->m_enqueueIndex.increment();
             this->m_size++;
+            status = Success::SUCCESS;
         }
         return status;
     }
@@ -150,6 +151,7 @@ class ExternalFifoQueue final : public FifoQueueBase<T> {
             e = this->getElementAtIndex(0);
             (void)this->m_dequeueIndex.increment();
             this->m_size--;
+            status = Success::SUCCESS;
         }
         return status;
     }
@@ -170,8 +172,9 @@ class ExternalFifoQueue final : public FifoQueueBase<T> {
     //! Get an element at an index
     const T& getElementAtIndex(FwSizeType index  //!< The index
     ) const {
-        auto ci = this->m_enqueueIndex;
-        return this->m_items[ci.increment(index)];
+        auto ci = this->m_dequeueIndex;
+        const auto i = ci.increment(index);
+        return this->m_items[i];
     }
 
   private:

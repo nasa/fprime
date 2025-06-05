@@ -7,6 +7,7 @@
 #include <gtest/gtest.h>
 
 #include "Fw/DataStructures/ExternalFifoQueue.hpp"
+#include "STest/Pick/Pick.hpp"
 
 namespace Fw {
 
@@ -42,6 +43,41 @@ TEST(ExternalFifoQueue, TypedStorageConstructor) {
     ASSERT_EQ(tester.getItems().getElements(), items);
     ASSERT_EQ(queue.getCapacity(), capacity);
     ASSERT_EQ(queue.getSize(), 0);
+}
+
+TEST(ExternalFifoQueue, UntypedStorageConstructor) {
+    constexpr FwSizeType capacity = 10;
+    alignas(U32) U8 bytes[capacity * sizeof(U32)];
+    ExternalFifoQueue<U32> queue(ByteArray(&bytes[0], sizeof bytes), capacity);
+    ExternalFifoQueueTester<U32> tester(queue);
+    ASSERT_EQ(tester.getItems().getElements(), reinterpret_cast<U32*>(bytes));
+    ASSERT_EQ(queue.getCapacity(), capacity);
+    ASSERT_EQ(queue.getSize(), 0);
+}
+
+TEST(ExternalFifoQueue, EnqueueOK) {
+  constexpr const FwSizeType capacity = 1000;
+  const FwSizeType size = STest::Pick::lowerUpper(1, capacity);
+  U32 elts[capacity];
+  ExternalFifoQueue<U32> queue(elts, capacity);
+  ASSERT_EQ(queue.getCapacity(), capacity);
+  ASSERT_EQ(queue.getSize(), 0);
+  for (FwSizeType i = 0; i < size; i++) {
+    // Pick a value
+    const U32 val = STest::Pick::any();
+    // Enqueue it
+    auto status = queue.enqueue(val);
+    ASSERT_EQ(status, Fw::Success::SUCCESS);
+    // Peek it
+    U32 val1 = 0;
+    status = queue.peek(val1, i);
+    ASSERT_EQ(status, Fw::Success::SUCCESS);
+    ASSERT_EQ(val1, val);
+    // Check the size
+    ASSERT_EQ(queue.getSize(), i + 1);
+  }
+  queue.clear();
+  ASSERT_EQ(queue.getSize(), 0);
 }
 
 TEST(ExternalFifoQueue, CopyConstructor) {
