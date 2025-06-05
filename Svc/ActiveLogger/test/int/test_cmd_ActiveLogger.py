@@ -23,7 +23,7 @@ def test_send_command(fprime_test_api):
     fprime_test_api.send_and_assert_command(fprime_test_api.getCmdDispName('Svc.ActiveLogger') + '.' + 'SET_ID_FILTER', ["0x507", "ENABLED"], max_delay=1)
 
     # send noop command.
-    # Confirm SET_ID_FILTER: NO evr specfic Event Id 0x507 report due SET_ID_FILTER is enable
+    # Confirm SET_ID_FILTER: NO evr specific Event Id 0x507 report due SET_ID_FILTER is enable
     fprime_test_api.send_and_assert_command(fprime_test_api.getCmdDispName('Svc.CommandDispatcher') + '.' + 'CMD_NO_OP', max_delay=0.1)    
 
     # dump_filter_state, Expected True for (WARNING_HI, WARNING_LO, COMMAND, ACTIVITY_HI, ACTIVITY_LO) & False for DIAGNOSTIC)

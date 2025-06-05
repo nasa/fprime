@@ -128,7 +128,7 @@ def test_send_seq(fprime_test_api):
     ######    ######    ######    
     fprime_test_api.send_and_assert_command(fprime_test_api.getCmdDispName('Svc.CmdSequencer') + '.' + 'CS_MANUAL', max_delay=1)
     ## Manual Mode testing Start  WARNING_LO = No sequence active
-    # WARNING_LO => No sequence active and EXCUTION_ERROR.  No completion (will cause pytest to assert when no completion) use send_command will ingore completion?
+    # WARNING_LO => No sequence active and EXECUTION_ERROR.  No completion (will cause pytest to assert when no completion) use send_command will ingore completion?
 
     #fprime_test_api.send_and_assert_command(fprime_test_api.getCmdDispName('Svc.CmdSequencer') + '.' + 'CS_START', max_delay=1)
     fprime_test_api.send_command(fprime_test_api.getCmdDispName('Svc.CmdSequencer') + '.' + 'CS_START')

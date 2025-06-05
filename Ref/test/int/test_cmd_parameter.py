@@ -8,21 +8,21 @@ def test_send_parameter(fprime_test_api):
 
      Tests command send, dispatch, and receipt using send_and_assert command with a pair of CmdDispatcher commands.
 
-     recvBuffComp.PARAMTER1_PRM_SET  (call telemetry confirm value)
-     recvBuffComp.PARAMTER1_PRM_SAVE
-     recvBuffComp.PARAMTER2_PRM_SET  (call telemetry confirm value)
-     recvBuffComp.PARAMTER2_PRM_SAVE
+     recvBuffComp.PARAMETER1_PRM_SET  (call telemetry confirm value)
+     recvBuffComp.PARAMETER1_PRM_SAVE
+     recvBuffComp.PARAMETER2_PRM_SET  (call telemetry confirm value)
+     recvBuffComp.PARAMETER2_PRM_SAVE
 
-     sendBuffComp.PARAMTER3_PRM_SET  (call telemetry confirm value)
-     sendBuffComp.PARAMTER3_PRM_SAVE
-     sendBuffComp.PARAMTER4_PRM_SET  (call telemetry confirm value)
-     sendBuffComp.PARAMTER4_PRM_SAVE
+     sendBuffComp.PARAMETER3_PRM_SET  (call telemetry confirm value)
+     sendBuffComp.PARAMETER3_PRM_SAVE
+     sendBuffComp.PARAMETER4_PRM_SET  (call telemetry confirm value)
+     sendBuffComp.PARAMETER4_PRM_SAVE
 
      Notes: send a parameterX_set,value=current telemetry channel.  
         the function assert_telemetry will fail because no_change
     """
 
-    ## setup defaul-value
+    ## setup default-value
     fprime_test_api.send_and_assert_command(fprime_test_api.getCmdDispName('Ref.RecvBuff') + '.' + 'PARAMETER1_PRM_SET', [1], max_delay=5)
     fprime_test_api.send_and_assert_command(fprime_test_api.getCmdDispName('Ref.RecvBuff') + '.' + 'PARAMETER2_PRM_SET', [2], max_delay=5)
     fprime_test_api.send_and_assert_command(fprime_test_api.getCmdDispName('Ref.SendBuff') + '.' + 'PARAMETER3_PRM_SET', [3], max_delay=5)
@@ -63,7 +63,7 @@ def test_send_parameter(fprime_test_api):
                                             
     fprime_test_api.send_and_assert_command(fprime_test_api.getCmdDispName('Ref.SendBuff') + '.' + 'PARAMETER4_PRM_SAVE', max_delay=5)
 
-    # Notes: send a xxx_set,value=current will not update telemetry channel.  call assert_telemetry wil fail
+    # Notes: send a xxx_set,value=current will not update telemetry channel.  call assert_telemetry will fail
 
 
 
