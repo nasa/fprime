@@ -71,15 +71,23 @@ void f(FifoQueueBase<U32>& queue) {
 ### 5.2. copyDataFrom
 
 ```c++
-void copyDataFrom(const FifoQueueBase<T>& queue) = 0
+void copyDataFrom(const FifoQueueBase<T>& queue)
 ```
 
 1. If `&queue != this` then
 
     1. Call `clear()`.
 
-    1. For each item `e` on `queue`, in left-to-right order,
-       enqueue `e`.
+    1. Let `size` be the minimum of `queue.getSize()` and `getCapacity()`.
+
+    1. For `i` in [0, `size`)
+
+        1. Set `e = getItemAtIndex(i)`.
+
+        1. Set `status = enqueue(e)`.
+
+        1. Assert `status == Success::SUCCESS`.
+
 
 _Example:_
 ```c++
@@ -123,18 +131,14 @@ void f(FifoQueueBase<U32>& queue) {
 ### 5.4. peek
 
 ```c++
-Success peek(T& e, FwSizeType index = 0) const = 0
+Success peek(T& e, FwSizeType index = 0) const
 ```
 
 1. Set `status = Success::FAILURE`.
 
 1. If `index < getSize()`
 
-    1. Let `e1` be the element at index `index`.
-       Index 0 is the leftmost (earliest) element in the queue.
-       Increasing indices go from left to right.
-
-    1. Set `e = e1`.
+    1. Set `e = getItemAtIndex(index)`.
 
     1. Set `status = Success::SUCCESS`.
 
@@ -228,3 +232,16 @@ void f(const FifoQueueBase<U32>& queue) {
     ASSERT_LE(size, capacity);
 }
 ```
+
+## 6. Protected Member Functions
+
+### 6.1. getItemAtIndex
+
+```c++
+virtual const T& getItemAtIndex(FwSizeType index) const = 0
+```
+
+Return the item at the specified index.
+Index 0 is the leftmost (earliest) element in the queue.
+Increasing indices go from left to right.
+

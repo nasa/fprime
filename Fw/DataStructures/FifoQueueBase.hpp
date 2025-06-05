@@ -60,27 +60,35 @@ class FifoQueueBase {
             this->clear();
             const FwSizeType size = FW_MIN(queue.getSize(), this->getCapacity());
             for (FwSizeType i = 0; i < size; i++) {
-                const auto status = this->enqueue(queue.getElementAtIndex(i));
+                const auto& e = queue.getItemAtIndex(i);
+                const auto status = this->enqueue(e);
                 FW_ASSERT(status == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(status));
             }
         }
     }
 
-    //! Enqueue an element (add to the right)
-    //! \return SUCCESS if element enqueued
-    virtual Success enqueue(const T& e  //!< The element (output)
+    //! Enqueue an item (add to the right)
+    //! \return SUCCESS if item enqueued
+    virtual Success enqueue(const T& e  //!< The item (output)
                             ) = 0;
 
-    //! Peek an element at an index
+    //! Peek an item at an index
     //! Indices go from left to right in the range [0, size)
-    //! \return SUCCESS if element exists
-    virtual Success peek(T& e,                 //!< The element (output)
-                         FwSizeType index = 0  //!< The index (input)
-    ) const = 0;
+    //! \return SUCCESS if item exists
+    Success peek(T& e,                 //!< The item (output)
+                 FwSizeType index = 0  //!< The index (input)
+    ) const {
+        auto status = Success::FAILURE;
+        if (index < this->getSize()) {
+            e = this->getItemAtIndex(index);
+            status = Success::SUCCESS;
+        }
+        return status;
+    }
 
-    //! Dequeue an element (pop from the left)
-    //! \return SUCCESS if element dequeued
-    virtual Success dequeue(T& e  //!< The element (output)
+    //! Dequeue an item (pop from the left)
+    //! \return SUCCESS if item dequeued
+    virtual Success dequeue(T& e  //!< The item (output)
                             ) = 0;
 
     //! Get the size (number of items stored in the queue)
@@ -96,9 +104,10 @@ class FifoQueueBase {
     // Protected member functions
     // ----------------------------------------------------------------------
 
-    //! Get an element at an index
+    //! Get an item at an index
     //! Indices go from left to right in the queue
-    virtual const T& getElementAtIndex(FwSizeType index  //!< The index
+    //! \return The item
+    virtual const T& getItemAtIndex(FwSizeType index  //!< The index
     ) const = 0;
 };
 

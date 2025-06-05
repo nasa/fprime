@@ -223,40 +223,7 @@ ExternalFifoQueue<U32> queue;
 queue.setStorage(ByteArray(&bytes[0], sizeof bytes), capacity);
 ```
 
-### 5.5. copyDataFrom
-
-```c++
-void copyDataFrom(const FifoQueueBase<T>& queue) override
-```
-
-1. If `&queue != this`
-
-    1. Call `clear()`.
-
-    1. Let `size` be the minimum of `queue.getSize()` and `getCapacity()`.
-
-    1. For `i` in [0, `size`)
-
-        1. Let `e` be the element at index `i`.
-
-        1. Set `status = enqueue(e)`.
-
-        1. Assert `status == Success::SUCCESS`.
-
-_Example:_
-```c++
-ExternalFifoQueue<U32>& q1, ExternalFifoQueue<U32>& q2);
-q1.clear();
-// Enqueue an item
-U32 value = 42;
-(void) q1.enqueue(value);
-q2.clear();
-ASSERT_EQ(q2.getSize(), 0);
-q2.copyDataFrom(q1);
-ASSERT_EQ(q2.getSize(), 1);
-```
-
-### 5.6. enqueue
+### 5.5. enqueue
 
 ```c++
 Success enqueue(const T& e) override
@@ -287,48 +254,7 @@ ASSERT_EQ(status, Success::SUCCESS);
 ASSERT_EQ(queue.getSize(), 1);
 ```
 
-### 5.7. peek
-
-```c++
-Success peek(T& e, FwSizeType index = 0) override
-```
-
-1. Set `status = Success::FAILURE`.
-
-1. If `index < getSize()`
-
-    1. Let `e1` be the element at index `index`.
-       Index 0 is the leftmost (earliest) element in the queue.
-       Increasing indices go from left to right.
-
-    1. Set `e = e1`.
-
-    1. Set `status = Success::SUCCESS`.
-
-1. Return `status`.
-
-_Example:_
-```c++
-constexpr FwSizeType size = 10;
-U32 items[size];
-ExternalFifoQueue<U32> queue(items, size);
-U32 value = 0;
-auto status = queue.peek(value);
-ASSERT_EQ(status, Success::FAILURE);
-status = queue.enqueue(3);
-status = queue.peek(value);
-ASSERT_EQ(status, Success::SUCCESS);
-ASSERT_EQ(value, 3);
-status = queue.peek(value, 1);
-ASSERT_EQ(status, Success::FAILURE);
-status = queue.enqueue(4);
-status = queue.peek(value, 1);
-ASSERT_EQ(status, Success::SUCCESS);
-ASSERT_EQ(value, 4);
-}
-```
-
-### 5.8. dequeue
+### 5.6. dequeue
 
 ```c++
 Success dequeue(T& e) override
@@ -363,7 +289,7 @@ ASSERT_EQ(status, Success::SUCCESS);
 ASSERT_EQ(val, 42);
 ```
 
-### 5.9. getSize
+### 5.7. getSize
 
 ```c++
 FwSizeType getSize() const override
@@ -384,7 +310,7 @@ size = queue.getSize();
 ASSERT_EQ(size, 1);
 ```
 
-### 5.10. getCapacity
+### 5.8. getCapacity
 
 ```c++
 FwSizeType getCapacity() const override
@@ -399,3 +325,17 @@ U32 items[capacity];
 ExternalFifoQueue<U32> queue(items, capacity);
 ASSERT_EQ(queue.getCapacity(), capacity);
 ```
+
+## 6. Private Member Functions
+
+### 6.1. getItemAtIndex
+
+```c++
+const T& getItemAtIndex(FwSizeType index) const override
+```
+
+1. Set `ci = m_dequeueIndex`.
+
+1. Set `i = ci.increment(index)`.
+
+1. Return `m_items[i]`.

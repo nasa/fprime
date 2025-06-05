@@ -115,27 +115,13 @@ class ExternalFifoQueue final : public FifoQueueBase<T> {
         return status;
     }
 
-    //! Peek an element at an index
-    //! Indices go from left to right in the range [0, size)
-    //! \return SUCCESS if element exists
-    Success peek(T& e,                 //!< The element (output)
-                 FwSizeType index = 0  //!< The index (input)
-    ) const override {
-        auto status = Success::FAILURE;
-        if (index < this->m_size) {
-            e = this->getElementAtIndex(index);
-            status = Success::SUCCESS;
-        }
-        return status;
-    }
-
     //! Dequeue an element (pop from the left)
     //! \return SUCCESS if element dequeued
     Success dequeue(T& e  //!< The element (output)
                             ) override {
         auto status = Success::FAILURE;
         if (this->m_size > 0) {
-            e = this->getElementAtIndex(0);
+            e = this->getItemAtIndex(0);
             (void)this->m_dequeueIndex.increment();
             this->m_size--;
             status = Success::SUCCESS;
@@ -156,8 +142,10 @@ class ExternalFifoQueue final : public FifoQueueBase<T> {
     // Private member functions
     // ----------------------------------------------------------------------
 
-    //! Get an element at an index
-    const T& getElementAtIndex(FwSizeType index  //!< The index
+    //! Get an item at an index
+    //! Indices go from left to right in the queue
+    //! \return The item
+    const T& getItemAtIndex(FwSizeType index  //!< The index
     ) const override {
         auto ci = this->m_dequeueIndex;
         const auto i = ci.increment(index);
