@@ -65,9 +65,9 @@ classDiagram
 
 * [`ArrayMap`](ArrayMap.md)
 
-* [`AvlTreeMap`](AvlTreeMap.md)
+* [`RedBlackTreeMap`](RedBlackTreeMap.md)
 
-* [`ExternalAvlTreeMap`](ExternalAvlTreeMap.md)
+* [`ExternalRedBlackTreeMap`](ExternalRedBlackTreeMap.md)
 
 ## 4. Sets
 
@@ -77,6 +77,6 @@ classDiagram
 
 * [`ArraySet`](ArraySet.md)
 
-* [`ExternalAvlTreeSet`](ExternalAvlTreeSet.md)
+* [`ExternalRedBlackTreeSet`](ExternalRedBlackTreeSet.md)
 
-* [`AvlTreeSet`](AvlTreeSet.md)
+* [`RedBlackTreeSet`](RedBlackTreeSet.md)

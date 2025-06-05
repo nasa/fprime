@@ -1,4 +1,0 @@
-# ExternalAvlTreeSet
-
-TODO
-
