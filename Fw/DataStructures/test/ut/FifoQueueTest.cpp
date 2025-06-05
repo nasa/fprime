@@ -234,4 +234,16 @@ TEST(FifoQueueRules, EnqueueFull) {
   enqueueFull.apply(state);
 }
 
+
+TEST(FifoQueueRules, Clear) {
+  constexpr FwSizeType capacity = 10;
+  FifoQueueRules<capacity>::TestState state;
+  FifoQueueRules<capacity>::Clear clear;
+  FifoQueueRules<capacity>::EnqueueOK enqueueOK;
+  enqueueOK.apply(state);
+  ASSERT_EQ(state.queue.getSize(), 1);
+  clear.apply(state);
+  ASSERT_EQ(state.queue.getSize(), 0);
+}
+
 }  // namespace Fw
