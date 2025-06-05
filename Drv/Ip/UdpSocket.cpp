@@ -107,7 +107,7 @@ SocketIpStatus UdpSocket::bind(const PlatformIntType fd) {
         return SOCK_FAILED_TO_BIND;
     }
 
-    U32 size = sizeof(address);
+    FwSizeType size = sizeof(address);
     if (::getsockname(fd, reinterpret_cast<struct sockaddr *>(&address), &size) == -1) {
         return SOCK_FAILED_TO_READ_BACK_PORT;
     }
@@ -195,7 +195,7 @@ I32 UdpSocket::recvProtocol(const SocketDescriptor& socketDescriptor, U8* const 
     FW_ASSERT(this->m_state->m_addr_recv.sin_family != 0); // Make sure the address was previously setup
 
     struct sockaddr_in sender_addr;
-    U32 sender_addr_len = sizeof(sender_addr);
+    FwSizeType sender_addr_len = sizeof(sender_addr);
     I32 received = static_cast<I32>(::recvfrom(socketDescriptor.fd, data, size, SOCKET_IP_RECV_FLAGS,
                                               reinterpret_cast<struct sockaddr*>(&sender_addr), &sender_addr_len));
     // If we have not configured a send port, set it to the source of the last received packet
