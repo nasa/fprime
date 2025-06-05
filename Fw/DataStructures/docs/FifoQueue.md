@@ -133,7 +133,7 @@ Return `m_extQueue.dequeue(e)`.
 ### 5.5. getSize
 
 ```c++
-FwSizeType getSize() const
+FwSizeType getSize() const override
 ```
 
 Return `m_extQueue.getSize()`.
@@ -141,27 +141,10 @@ Return `m_extQueue.getSize()`.
 ### 5.6. getCapacity
 
 ```c++
-FwSizeType getCapacity() const
+FwSizeType getCapacity() const override
 ```
 
 Return `m_extQueue.getCapacity()`.
-
-### 5.7. asExternalFifoQueue
-
-```c++
-ExternalFifoQueue<T> asExternalFifoQueue()
-```
-
-Return [`ExternalFifoQueue<T>(m_items, C)`](ExternalFifoQueue.md#4-public-constructors-and-destructors)
-
-_Example:_
-```c++
-constexpr FwSizeType size = 3;
-FifoQueue<U32, size> queue;
-(void) queue.enqueue(3);
-ExternalFifoQueue<U32> extQueue = queue.asExternalFifoQueue();
-ASSERT_EQ(extQueue.size(), 1);
-```
 
 ## 6. Public Static Functions
 
