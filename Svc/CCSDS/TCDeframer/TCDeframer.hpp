@@ -36,11 +36,7 @@ class TCDeframer : public TCDeframerComponentBase {
     //! \param spacecraftId The spacecraft ID to accept
     //! \param acceptAllVcid If true, the deframer will accept all VCIDs. If false, it will only accept configured vcId
     //!
-    void configure(U16 vcId, U16 spacecraftId, bool acceptAllVcid) {
-        this->m_vcId = vcId;
-        this->m_spacecraftId = spacecraftId;
-        this->m_acceptAllVcid = acceptAllVcid;
-    }
+    void configure(U16 vcId, U16 spacecraftId, bool acceptAllVcid);
 
   private:
     // ----------------------------------------------------------------------

@@ -40,13 +40,15 @@ void SpacePacketDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data,
     // 16b - n/a - Packet Data Length
     // ################################
 
-    FW_ASSERT(data.getSize() >= SpacePacketHeader::SERIALIZED_SIZE, static_cast<FwAssertArgType>(data.getSize()));
+    FW_ASSERT(data.getSize() > SpacePacketHeader::SERIALIZED_SIZE, static_cast<FwAssertArgType>(data.getSize()));
 
     SpacePacketHeader header;
     Fw::SerializeStatus status = data.getDeserializer().deserialize(header);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
-    U16 pkt_length = header.getpacketDataLength();
+    // Space Packet protocol defines the Data Length as number of bytes minus 1
+    // so we need to add 1 to the length to get the actual data size
+    U16 pkt_length = header.getpacketDataLength() + 1;
     if (pkt_length > data.getSize() - SpacePacketHeader::SERIALIZED_SIZE) {
         U32 maxDataAvailable = data.getSize() - SpacePacketHeader::SERIALIZED_SIZE;
         this->log_WARNING_HI_InvalidLength(pkt_length, maxDataAvailable);
@@ -66,7 +68,7 @@ void SpacePacketDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data,
 
     // Set data buffer to be of the encapsulated data: HEADER (6 bytes) | PACKET DATA
     data.setData(data.getData() + SpacePacketHeader::SERIALIZED_SIZE);
-    data.setSize(pkt_length);
+    data.setSize(pkt_length); 
 
     this->dataOut_out(0, data, contextCopy);
 }

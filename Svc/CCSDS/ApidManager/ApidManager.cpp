@@ -24,7 +24,7 @@ U16 ApidManager ::validateApidSeqCountIn_handler(FwIndexType portNum, const ComC
     U16 expectedSequenceCount = this->getAndIncrementSeqCount(apid);
     if (receivedSeqCount != expectedSequenceCount && receivedSeqCount != SEQUENCE_COUNT_ERROR) {
         // Likely a packet was dropped or out of order
-        this->log_WARNING_HI_UnexpectedSequenceCount(receivedSeqCount, expectedSequenceCount);
+        this->log_WARNING_LO_UnexpectedSequenceCount(receivedSeqCount, expectedSequenceCount);
         // Synchronize onboard count with received number so that count can keep going
         this->setNextSeqCount(apid, static_cast<U16>(receivedSeqCount + 1));
     }

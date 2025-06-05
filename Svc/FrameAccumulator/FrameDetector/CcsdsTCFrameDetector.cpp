@@ -42,10 +42,9 @@ FrameDetector::Status CcsdsTCFrameDetector::detect(const Types::CircularBuffer& 
         // If the flags and SC ID do not match the expected token, we don't have a valid frame
         return Status::NO_FRAME_DETECTED;
     }
-
-    const U16 frame_data_length = header.getvcIdAndLength() & CCSDS::TCSubfields::FrameLengthMask;
-    const FwSizeType expected_frame_length = frame_data_length + CCSDS::TCHeader::SERIALIZED_SIZE + CCSDS::TCTrailer::SERIALIZED_SIZE;
-    const U16 data_to_crc_length = static_cast<U16>(frame_data_length + CCSDS::TCHeader::SERIALIZED_SIZE);
+    // TC protocol defines the Frame Length as number of bytes minus 1, so we add 1 back to get length in bytes
+    const FwSizeType expected_frame_length = static_cast<FwSizeType>((header.getvcIdAndLength() & CCSDS::TCSubfields::FrameLengthMask) + 1);
+    const U16 data_to_crc_length = static_cast<U16>(expected_frame_length - CCSDS::TCTrailer::SERIALIZED_SIZE);
 
     if (data.get_allocated_size() < expected_frame_length) {
         size_out = expected_frame_length;

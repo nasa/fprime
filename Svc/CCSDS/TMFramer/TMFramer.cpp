@@ -30,7 +30,6 @@ TMFramer ::~TMFramer() {}
 // ----------------------------------------------------------------------
 
 void TMFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
-    // TODO: make this an event probably
     FW_ASSERT(data.getSize() <= ComCfg::TmFrameFixedSize - TMHeader::SERIALIZED_SIZE - TMTrailer::SERIALIZED_SIZE,
               static_cast<FwAssertArgType>(data.getSize()));
 
@@ -104,32 +103,32 @@ void TMFramer ::dataReturnIn_handler(FwIndexType portNum,
                                      const ComCfg::FrameContext& context) {
     // dataReturnIn is our own member buffer coming back from the dataOut call - memset it to 0
     FW_ASSERT(frameBuffer.getData() == static_cast<U8*>(this->m_frameBuffer));
-    ::memset(this->m_frameBuffer, 0, sizeof(this->m_frameBuffer));
+    // Maybe check that pointer is within the bounds of m_frameBuffer?
     // NOTE: should we set a flag to track that it has been returned and ready for reuse?
-    // NOTE: a nice trick for efficiency would be to memset to IDLE_DATA_PATTERN instead... but eh
+    // --> yes that would be nice, and assert if not
 }
 
 void TMFramer ::fill_with_idle_packet(Fw::SerializeBufferBase& serializer) {
     constexpr U16 endIndex = ComCfg::TmFrameFixedSize - TMTrailer::SERIALIZED_SIZE;
     constexpr U16 idleApid = static_cast<U16>(ComCfg::APID::SPP_IDLE_PACKET);
     const U16 startIndex = static_cast<U16>(serializer.getBuffLength());
-    const U16 idlePacketLength = static_cast<U16>(endIndex - startIndex);
+    const U16 idlePacketSize = static_cast<U16>(endIndex - startIndex);
+    // Length token is defined as the number of bytes of payload data minus 1
+    const U16 lengthToken = static_cast<U16>(idlePacketSize - SpacePacketHeader::SERIALIZED_SIZE - 1);
 
-    FW_ASSERT(idlePacketLength > 0, static_cast<FwAssertArgType>(idlePacketLength));
-    FW_ASSERT(idlePacketLength >= 7, static_cast<FwAssertArgType>(idlePacketLength));  // 7 bytes minimum for idle packet
-    FW_ASSERT(idlePacketLength <= ComCfg::TmFrameFixedSize, static_cast<FwAssertArgType>(idlePacketLength));
+    FW_ASSERT(idlePacketSize >= 7, static_cast<FwAssertArgType>(idlePacketSize));  // 7 bytes minimum for idle packet
+    FW_ASSERT(idlePacketSize <= ComCfg::TmFrameFixedSize, static_cast<FwAssertArgType>(idlePacketSize));
 
     SpacePacketHeader header;
     header.setpacketIdentification(idleApid);
     header.setpacketSequenceControl(
         0x3 << SpacePacketSubfields::SeqFlagsOffset);  // Sequence Flags = 0b11 (unsegmented) & unused Seq count
-    header.setpacketDataLength(idlePacketLength);
+    header.setpacketDataLength(lengthToken); // this should be payload length - 1 ???
     // Serialize header and idle data into the frame
     serializer.serialize(header);
     for (U16 i = static_cast<U16>(startIndex + SpacePacketHeader::SERIALIZED_SIZE); i < endIndex; i++) {
         serializer.serialize(IDLE_DATA_PATTERN);  // Idle data
     }
 }
-
 }  // namespace CCSDS
 }  // namespace Svc

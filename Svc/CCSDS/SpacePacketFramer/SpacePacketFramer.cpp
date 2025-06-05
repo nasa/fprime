@@ -28,10 +28,8 @@ void SpacePacketFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, c
     SpacePacketHeader header;
     Fw::SerializeStatus status;
     FwSizeType frameSize = SpacePacketHeader::SERIALIZED_SIZE + data.getSize();
-    FW_ASSERT(data.getSize() <= std::numeric_limits<Fw::Buffer::SizeType>::max(), static_cast<FwAssertArgType>(frameSize));
-    FW_ASSERT(frameSize <= std::numeric_limits<Fw::Buffer::SizeType>::max(), static_cast<FwAssertArgType>(frameSize));
+    FW_ASSERT(data.getSize() <= std::numeric_limits<Fw::Buffer::SizeType>::max() - SpacePacketHeader::SERIALIZED_SIZE, static_cast<FwAssertArgType>(data.getSize()));
 
-    // TODO: Maybe can use a member as well, instead of allocating a new one each time
     // Allocate frame buffer
     Fw::Buffer frameBuffer = this->bufferAllocate_out(0, static_cast<Fw::Buffer::SizeType>(frameSize));
     auto frameSerializer = frameBuffer.getSerializer();
@@ -45,12 +43,9 @@ void SpacePacketFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, c
     FW_ASSERT((apid >> 11) == 0, static_cast<FwAssertArgType>(apid)); // apid must fit in 11 bits
     packetIdentification |= static_cast<U16>(apid) & SpacePacketSubfields::ApidMask; // 11 bit APID
 
+    U16 sequenceCount = this->getApidSeqCount_out(0, apid, 0); // retrieve the sequence count for this APID
     U16 packetSequenceControl = 0;
     packetSequenceControl |= 0x3 << SpacePacketSubfields::SeqFlagsOffset; // Sequence Flags 0b11 = unsegmented User Data
-
-    U16 sequenceCount = this->getApidSeqCount_out(0, apid, 0); // retrieve the sequence count for this APID
-    // NOTE: this will assert if ApidManager's table is full (because error value is max(U16)) - should it??
-    FW_ASSERT((sequenceCount >> 14) == 0, static_cast<FwAssertArgType>(sequenceCount)); // sequence count must fit in 14 bits
     packetSequenceControl |= sequenceCount & SpacePacketSubfields::SeqCountMask; // 14 bit sequence count
 
     FW_ASSERT(data.getSize() <= std::numeric_limits<U16>::max(), static_cast<FwAssertArgType>(data.getSize()));
