@@ -10,8 +10,8 @@ namespace Fw {
 template<typename T, FwSizeType C> struct FifoQueueTestState {
   //! The queue under test
   FifoQueue<T, C> queue;
-  //! The abstract queue for modeling correct behavior
-  std::vector<T> abstractQueue;
+  //! The queue for modeling correct behavior
+  std::vector<T> modelQueue;
 };
 
 }

@@ -17,12 +17,12 @@ struct FifoQueueRules {
     struct EnqueueOK : public Rule {
         EnqueueOK() : Rule("EnqueueOK") {}
         bool precondition(const TestState& state) { 
-            return static_cast<FwSizeType>(state.abstractQueue.size()) < C;
+            return static_cast<FwSizeType>(state.modelQueue.size()) < C;
         }
         void action(TestState& state) {
             const U32 value = STest::Pick::any();
             const auto status = state.queue.enqueue(value);
-            state.abstractQueue.push_back(value);
+            state.modelQueue.push_back(value);
             ASSERT_EQ(status, Success::SUCCESS);
         }
     };
@@ -30,12 +30,22 @@ struct FifoQueueRules {
     struct EnqueueFull : public Rule {
         EnqueueFull() : Rule("EnqueueFull") {}
         bool precondition(const TestState& state) { 
-            return static_cast<FwSizeType>(state.abstractQueue.size()) >= C;
+            return static_cast<FwSizeType>(state.modelQueue.size()) >= C;
         }
         void action(TestState& state) {
             const U32 value = STest::Pick::any();
             const auto status = state.queue.enqueue(value);
             ASSERT_EQ(status, Success::FAILURE);
+        }
+    };
+
+    struct Clear : public Rule {
+        Clear() : Rule("Clear") {}
+        bool precondition(const TestState& state) { return true; }
+        void action(TestState& state) {
+            state.queue.clear();
+            ASSERT_EQ(state.queue.getSize(), 0);
+            state.modelQueue.clear();
         }
     };
 
