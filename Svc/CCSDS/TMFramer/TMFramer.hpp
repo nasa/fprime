@@ -8,6 +8,10 @@
 #define Svc_CCSDS_TMFramer_HPP
 
 #include "Svc/CCSDS/TMFramer/TMFramerComponentAc.hpp"
+#include "Svc/CCSDS/Types/FppConstantsAc.hpp"
+#include "Svc/CCSDS/Types/SpacePacketHeaderSerializableAc.hpp"
+#include "Svc/CCSDS/Types/TMHeaderSerializableAc.hpp"
+#include "Svc/CCSDS/Types/TMTrailerSerializableAc.hpp"
 
 namespace Svc {
 
@@ -91,9 +95,8 @@ class TMFramer final : public TMFramerComponentBase {
   private:
     // Because the TM protocol use fixed width frames, and only one frame is in transit between ComQueue and
     // ComInterface at a time, we can use a member fixed-size buffer to hold the frame data
-    U8 m_frameBuffer[ComCfg::TmFrameFixedSize];  //!< Buffer to hold the frame data
-    BufferOwnershipState m_bufferState =
-        BufferOwnershipState::OWNED;  //!< Whether m_frameBuffer is owned by the TMFramer or not
+    U8 m_frameBuffer[ComCfg::TmFrameFixedSize];                        //!< Buffer to hold the frame data
+    BufferOwnershipState m_bufferState = BufferOwnershipState::OWNED;  //!< wheter m_frameBuffer is owned by TMFramer
 
     // Current implementation uses a single virtual channel, so we can use a single virtual frame count
     U8 m_masterFrameCount;   //!< Master Frame Count - 8 bits - wraps around at 255

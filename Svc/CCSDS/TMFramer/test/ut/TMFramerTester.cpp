@@ -103,6 +103,7 @@ void TMFramerTester ::testSeqCountWrapAround() {
     this->component.m_virtualFrameCount = 250;
     U8 countWrapAround = 250; // will wrap around to 0 after 255
     for (U32 iter = 0; iter < 10; iter++) {
+        this->component.m_bufferState = TMFramer::BufferOwnershipState::OWNED; // reset state to OWNED
         this->invoke_to_dataIn(0, buffer, defaultContext);
         ASSERT_from_dataOut_SIZE(iter + 1);
         Fw::Buffer outBuffer = this->fromPortHistory_dataOut->at(iter).data;
@@ -129,12 +130,26 @@ void TMFramerTester ::testDataReturn() {
     ComCfg::FrameContext defaultContext;
     // Send a buffer that is not the internal buffer of the component, and expect an assertion
     ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataReturnIn(0, buffer, defaultContext), "TMFramer.cpp");
-
-    // Now send the expected buffer and expect it to be cleared
-    this->component.m_frameBuffer[0] = 0xFF;  // Set some data in the internal buffer
+    
+    // Now send the expected buffer and expect state to go back to OWNED
+    this->component.m_bufferState = TMFramer::BufferOwnershipState::NOT_OWNED;
     Fw::Buffer internalBuffer(this->component.m_frameBuffer, sizeof(this->component.m_frameBuffer));
     this->invoke_to_dataReturnIn(0, internalBuffer, defaultContext);
-    ASSERT_EQ(this->component.m_frameBuffer[0], 0x00); // data should have been cleared
+    ASSERT_EQ(this->component.m_bufferState, TMFramer::BufferOwnershipState::OWNED);
+
+}
+
+void TMFramerTester ::testBufferOwnershipState() {
+    U8 bufferData[10];
+    Fw::Buffer buffer(bufferData, sizeof(bufferData));
+    ComCfg::FrameContext context;
+    // force state to be NOT_OWNED and test that assertion is triggered
+    this->component.m_bufferState = TMFramer::BufferOwnershipState::NOT_OWNED;
+    ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataIn(0, buffer, context), "TMFramer.cpp");
+    this->component.m_bufferState = TMFramer::BufferOwnershipState::OWNED;
+    this->invoke_to_dataIn(0, buffer, context); // this should work now
+    ASSERT_EQ(this->component.m_bufferState, TMFramer::BufferOwnershipState::NOT_OWNED);
+
 }
 
 // ----------------------------------------------------------------------

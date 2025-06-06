@@ -10,7 +10,7 @@ module CCSDS {
         @ Deframing received an invalid frame length
         event InvalidLength(transmitted: U16, actual: U32) \
             severity warning high \
-            format "Invalid length received. Header specified packet length of {} | Actual received data length: {}"
+            format "Invalid length received. Header specified packet byte size of {} | Actual received data length: {}"
 
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #

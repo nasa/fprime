@@ -31,6 +31,11 @@ TEST(TMFramer, testInputBufferTooLarge) {
     tester.testInputBufferTooLarge();
 }
 
+TEST(TMFramer, testBufferOwnershipState) {
+    Svc::CCSDS::TMFramerTester tester;
+    tester.testBufferOwnershipState();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

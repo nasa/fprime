@@ -51,7 +51,7 @@ FwSizeType generate_random_tc_frame(Types::CircularBuffer& circular_buffer) {
     }
     TCHeader tcHeader(
         EXPECTED_START_TOKEN,  // Use a predefined token for flags and SC ID
-        static_cast<U16>(packet_size),  // Length (and unused VcId)
+        static_cast<U16>(total_frame_size - 1),  // Length (and unused VcId)
         static_cast<U8>(STest::Random::lowerUpper(0, 255))  // Random frame sequence number
     );
 

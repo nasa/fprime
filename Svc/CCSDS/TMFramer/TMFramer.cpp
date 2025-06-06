@@ -5,10 +5,6 @@
 // ======================================================================
 
 #include "Svc/CCSDS/TMFramer/TMFramer.hpp"
-#include "Svc/CCSDS/Types/FppConstantsAc.hpp"
-#include "Svc/CCSDS/Types/SpacePacketHeaderSerializableAc.hpp"
-#include "Svc/CCSDS/Types/TMHeaderSerializableAc.hpp"
-#include "Svc/CCSDS/Types/TMTrailerSerializableAc.hpp"
 #include "Svc/CCSDS/Utils/CRC16.hpp"
 #include "config/FppConstantsAc.hpp"
 

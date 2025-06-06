@@ -42,7 +42,7 @@ void TCDeframerTester::testDataReturn() {
 }
 
 void TCDeframerTester::testNominalDeframing() {
-    // Frame: 5 bytes (header) + 1 byte (data) + 2 bytes (trailer)
+    // Frame: 5 bytes (header) + bytes (data) + 2 bytes (trailer)
     U16 scId = static_cast<U16>(STest::Random::lowerUpper(0, 0x3FF)); // random 10 bit Spacecraft ID
     U8 vcId = static_cast<U8>(STest::Random::lowerUpper(0, 0x3F)); // random 6 bit virtual channel ID
     U8 seqCount = static_cast<U8>(STest::Random::lowerUpper(0, 0xFF)); // random 8 bit sequence count
@@ -110,10 +110,10 @@ void TCDeframerTester::testInvalidVcId() {
 void TCDeframerTester::testInvalidLengthToken() {
     U8 dataLength = static_cast<U8>(STest::Random::lowerUpper(1, 200)); // bytes of data, random length
     U8 data[dataLength];
-    U8 fakeLength = 255; // more than max dataLength value
+    U8 incorrectLengthToken = dataLength + TCHeader::SERIALIZED_SIZE + TCTrailer::SERIALIZED_SIZE + 1;
 
     Fw::Buffer buffer = this->assembleFrameBuffer(data, dataLength);
-    buffer.getData()[3] = fakeLength; // Override length token to invalid value
+    buffer.getData()[3] = incorrectLengthToken; // Override length token to invalid value
     ComCfg::FrameContext nullContext;
 
     this->setComponentState();
@@ -125,7 +125,8 @@ void TCDeframerTester::testInvalidLengthToken() {
     ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(0).data.getSize(), buffer.getSize());
     ASSERT_EVENTS_SIZE(1); // exactly 1 event emitted
     ASSERT_EVENTS_InvalidFrameLength_SIZE(1); // event was emitted for invalid frame length
-    ASSERT_EVENTS_InvalidFrameLength(0, fakeLength, dataLength);
+    // event logs size in bytes which is length token + 1
+    ASSERT_EVENTS_InvalidFrameLength(0, incorrectLengthToken + 1, dataLength + TCHeader::SERIALIZED_SIZE + TCTrailer::SERIALIZED_SIZE);
 }
 
 void TCDeframerTester::testInvalidCrc() {
@@ -150,21 +151,22 @@ void TCDeframerTester::testInvalidCrc() {
 }
 
 void TCDeframerTester::setComponentState(U16 scid, U8 vcid, U8 sequenceNumber, bool acceptAllVcid) {
-    this->component.m_spacecraftId = scid;
-    this->component.m_vcId = vcid;
-    // this->component.m_sequenceCount = sequenceNumber;
-    this->component.m_acceptAllVcid = acceptAllVcid;
+    this->component.configure(vcid, scid, acceptAllVcid);
+    // this->component.m_spacecraftId = scid;
+    // this->component.m_vcId = vcid;
+    // // this->component.m_sequenceCount = sequenceNumber;
+    // this->component.m_acceptAllVcid = acceptAllVcid;
 }
 
 Fw::Buffer TCDeframerTester::assembleFrameBuffer(U8* data, U8 dataLength, U16 scid, U8 vcid, U8 seqNumber){
     ::memset(this->m_frameData, 0, sizeof(this->m_frameData));
     U16 frameLength = static_cast<U16>(TCHeader::SERIALIZED_SIZE + dataLength + TCTrailer::SERIALIZED_SIZE);
-
+    U16 frameLengthToken = static_cast<U16>(frameLength - 1); // length token is length - 1
     // Header
     this->m_frameData[0] = static_cast<U8>(scid >> 8);
     this->m_frameData[1] = static_cast<U8>(scid & 0xFF);
-    this->m_frameData[2] = static_cast<U8>((vcid << 2) | static_cast<U8>((dataLength >> 8) & 0x03));
-    this->m_frameData[3] = dataLength & 0xFF;
+    this->m_frameData[2] = static_cast<U8>((vcid << 2) | static_cast<U8>((frameLengthToken >> 8) & 0x03));
+    this->m_frameData[3] = frameLengthToken & 0xFF;
     this->m_frameData[4] = seqNumber;
 
     // Data

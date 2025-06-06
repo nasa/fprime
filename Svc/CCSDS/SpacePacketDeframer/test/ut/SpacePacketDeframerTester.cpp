@@ -45,11 +45,12 @@ void SpacePacketDeframerTester ::testNominalDeframing() {
     U16 seqCount = static_cast<U8>(STest::Random::lowerUpper(0, 0x3FFF));  // random 14 bit sequence count
     U16 dataLength = static_cast<U8>(STest::Random::lowerUpper(1, MAX_TEST_PACKET_DATA_SIZE)); // bytes of data, random length
     U8 data[dataLength];
+    U16 lengthToken = static_cast<U16>(dataLength - 1);  // Length token is length - 1
     for (FwIndexType i = 0; i < static_cast<FwIndexType>(dataLength); ++i) {
         data[i] = static_cast<U8>(i);
     }
 
-    Fw::Buffer buffer = this->assemblePacket(apid, seqCount, dataLength, data, dataLength);
+    Fw::Buffer buffer = this->assemblePacket(apid, seqCount, lengthToken, data, dataLength);
     ComCfg::FrameContext nullContext;
 
     this->invoke_to_dataIn(0, buffer, nullContext);
@@ -92,7 +93,7 @@ void SpacePacketDeframerTester ::testDeframingIncorrectLength() {
     // Event logging failure
     ASSERT_EVENTS_SIZE(1);  // No events should be generated in the nominal case
     ASSERT_EVENTS_InvalidLength_SIZE(1);  // No events should be generated in the nominal case
-    ASSERT_EVENTS_InvalidLength(0, invalidLengthToken, realDataLength);
+    ASSERT_EVENTS_InvalidLength(0, invalidLengthToken + 1, realDataLength); // Event logs the size in bytes, so add 1 to length token
 }
 
 // ----------------------------------------------------------------------

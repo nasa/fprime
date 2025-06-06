@@ -47,6 +47,7 @@ class TMFramerTester final : public TMFramerGTestBase {
     void testSeqCountWrapAround();
     void testInputBufferTooLarge();
     void testDataReturn();
+    void testBufferOwnershipState();
 
   private:
     // ----------------------------------------------------------------------
