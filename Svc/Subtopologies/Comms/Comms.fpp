@@ -9,9 +9,14 @@ module Comms {
     # Active Components
     # ----------------------------------------------------------------------
     instance comQueue: Svc.ComQueue base id CommsConfig.BASE_ID + 0x0100 \
-        queue size CommsConfig.QueueSizes.comQueue\
-        stack size CommsConfig.StackSizes.comQueue\
+        queue size CommsConfig.QueueSizes.comQueue \
+        stack size CommsConfig.StackSizes.comQueue \
         priority CommsConfig.Priorities.comQueue
+
+    instance cmdSeq: Svc.CmdSequencer base id CommsConfig.BASE_ID + 0x0200 \
+        queue size CommsConfig.QueueSizes.cmdSeq \
+        stack size CommsConfig.StackSizes.cmdSeq \
+        priority CommsConfig.Priorities.cmdSeq
 
 
     # ----------------------------------------------------------------------
@@ -35,11 +40,13 @@ module Comms {
     
     instance comStub: Svc.ComStub base id CommsConfig.BASE_ID + 0x0A00 \
 
+  @ Communications driver. May be swapped with other comm drivers like UART
     instance comDriver: Drv.TcpClient base id CommsConfig.BASE_ID + 0x0B00 \
 
     topology Subtopology {
         #Active Components
         instance comQueue
+        instance cmdSeq
 
         #Passive Components
         instance commsBufferManager
@@ -53,10 +60,9 @@ module Comms {
         import CDHCore.Subtopology
 
         connections Downlink {
-            # Inputs to ComQueue (events, telemetry, file)
+            # Inputs to ComQueue (events, telemetry)
             CDHCore.events.PktSend        -> comQueue.comPacketQueueIn[Ports_ComPacketQueue.EVENTS]
             CDHCore.tlmSend.PktSend            -> comQueue.comPacketQueueIn[Ports_ComPacketQueue.TELEMETRY]
-            #fileDownlink.bufferSendOut -> comQueue.bufferQueueIn[Ports_ComBufferQueue.FILE_DOWNLINK] comQueue.bufferReturnOut[Ports_ComBufferQueue.FILE_DOWNLINK] -> fileDownlink.bufferReturn
             # ComQueue <-> Framer
             comQueue.dataOut           -> fprimeFramer.dataIn
             fprimeFramer.dataReturnOut -> comQueue.dataReturnIn
@@ -97,12 +103,15 @@ module Comms {
             # Router buffer allocations
             fprimeRouter.bufferAllocate   -> commsBufferManager.bufferGetCallee
             fprimeRouter.bufferDeallocate -> commsBufferManager.bufferSendIn
-            # Router <-> CmdDispatcher/FileUplink
+            # Router <-> CmdDispatcher
             fprimeRouter.commandOut  -> CDHCore.cmdDisp.seqCmdBuff
             CDHCore.cmdDisp.seqCmdStatus     -> fprimeRouter.cmdResponseIn
-            #fprimeRouter.fileOut     -> fileUplink.bufferSendIn
-            #fileUplink.bufferSendOut -> fprimeRouter.fileBufferReturnIn
-    }
+        }
+
+        connections Sequencer {
+            cmdSeq.comCmdOut -> CDHCore.cmdDisp.seqCmdBuff
+            CDHCore.cmdDisp.seqCmdStatus -> cmdSeq.cmdResponseIn
+        }
 
     } # end topology
 } # end Comms Subtopology

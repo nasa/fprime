@@ -81,7 +81,7 @@ enum TopologyConstants {
  */
 void configureTopology() {
     // Command sequencer needs to allocate memory to hold contents of command sequences
-    cmdSeq.allocateBuffer(0, mallocator, CMD_SEQ_BUFFER_SIZE);
+    Comms::cmdSeq.allocateBuffer(0, mallocator, CMD_SEQ_BUFFER_SIZE);
 
     // Rate group driver needs a divisor list
     rateGroupDriverComp.configure(rateGroupDivisorsSet);
@@ -200,7 +200,7 @@ void teardownTopology(const TopologyState& state) {
     (void)Comms::comDriver.join();
 
     // Resource deallocation
-    cmdSeq.deallocateBuffer(mallocator);
+    Comms::cmdSeq.deallocateBuffer(mallocator);
     Comms::commsBufferManager.cleanup();
     Comms::frameAccumulator.cleanup();
 }

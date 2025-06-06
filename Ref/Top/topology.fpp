@@ -11,6 +11,9 @@ module Ref {
     rateGroup3
   }
 
+
+  #The topology CPP expects these enums to be defined here, so though the actual comms subtopology does not use it, we cannot remove yet. 
+  #Comms.fpp subtopology file has its own enum, and that is what is really used in the subtopology.
   enum Ports_ComPacketQueue {
     EVENTS,
     TELEMETRY
@@ -31,29 +34,16 @@ module Ref {
     # Instances used in the topology
     # ----------------------------------------------------------------------
 
-    #instance $health
     instance SG1
     instance SG2
     instance SG3
     instance SG4
     instance SG5
     instance blockDrv
-    #instance tlmSend
-    #instance cmdDisp
-    instance cmdSeq
-    #instance comDriver
-    #instance comStub
-    #instance comQueue
-    #instance deframer
-    #instance eventLogger
-    #instance fatalAdapter
     instance fatalHandler
     instance fileDownlink
     instance fileManager
     instance fileUplink
-    #instance Comms.commsBufferManager
-    #instance frameAccumulator
-    #instance fprimeFramer
     instance posixTime
     instance pingRcvr
     instance prmDb
@@ -62,16 +52,13 @@ module Ref {
     instance rateGroup3Comp
     instance rateGroupDriverComp
     instance recvBuffComp
-    #instance fprimeRouter
     instance sendBuffComp
-    #instance textLogger
     instance typeDemo
     instance systemResources
     instance dpCat
     instance dpMgr
     instance dpWriter
     instance dpBufferManager
-    #instance version
     instance linuxTimer
 
     # ----------------------------------------------------------------------
@@ -122,7 +109,7 @@ module Ref {
 
       # Rate group 2
       rateGroupDriverComp.CycleOut[Ports_RateGroups.rateGroup2] -> rateGroup2Comp.CycleIn
-      rateGroup2Comp.RateGroupMemberOut[0] -> cmdSeq.schedIn
+      rateGroup2Comp.RateGroupMemberOut[0] -> Comms.cmdSeq.schedIn
       rateGroup2Comp.RateGroupMemberOut[1] -> sendBuffComp.SchedIn
       rateGroup2Comp.RateGroupMemberOut[2] -> SG3.schedIn
       rateGroup2Comp.RateGroupMemberOut[3] -> SG4.schedIn
@@ -143,10 +130,6 @@ module Ref {
       blockDrv.BufferOut -> recvBuffComp.Data
     }
 
-    connections Sequencer {
-      cmdSeq.comCmdOut -> CDHCore.cmdDisp.seqCmdBuff
-      CDHCore.cmdDisp.seqCmdStatus -> cmdSeq.cmdResponseIn
-    }
 
     connections DataProducts {
       # DpMgr and DpWriter connections. Have explicit port indexes for demo

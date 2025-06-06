@@ -18,10 +18,10 @@
 
 // Subtopology includes
 #include "Svc/Subtopologies/CDHCore/CDHCoreTopologyDefs.hpp"
+#include "Svc/Subtopologies/Comms/CommsTopologyDefs.hpp"
 
 namespace PingEntries {
     namespace Ref_blockDrv       {enum { WARN = 3, FATAL = 5 };}
-    namespace Ref_cmdSeq         {enum { WARN = 3, FATAL = 5 };}
     namespace Ref_fileDownlink   {enum { WARN = 3, FATAL = 5 };}
     namespace Ref_fileManager    {enum { WARN = 3, FATAL = 5 };}
     namespace Ref_fileUplink     {enum { WARN = 3, FATAL = 5 };}
@@ -31,20 +31,6 @@ namespace PingEntries {
     namespace Ref_rateGroup2Comp {enum { WARN = 3, FATAL = 5 };}
     namespace Ref_rateGroup3Comp {enum { WARN = 3, FATAL = 5 };}
     namespace Ref_dpCat          {enum { WARN = 3, FATAL = 5 };}
-    /* For the purposes of the subtopology, we comment out what is included in the it
-    namespace Ref_tlmSend {
-    enum { WARN = 3, FATAL = 5 };
-    }
-
-    namespace Ref_cmdDisp {
-    enum { WARN = 3, FATAL = 5 };
-    }
-
-    namespace Ref_eventLogger {
-    enum { WARN = 3, FATAL = 5 };
-    }
-
-    */
 }  // namespace PingEntries
 /**
  * \brief required ping constants
