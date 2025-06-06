@@ -20,7 +20,7 @@ namespace Svc {
     static const bool FILEDOWNLINK_COMMAND_FAILURES_DISABLED = true;
     // Size of the internal file downlink buffer. This must now be static as
     // file down maintains its own internal buffer.
-    static const U32 FILEDOWNLINK_INTERNAL_BUFFER_SIZE = FW_COM_BUFFER_MAX_SIZE;
+    static const U32 FILEDOWNLINK_INTERNAL_BUFFER_SIZE = FW_FILE_BUFFER_MAX_SIZE;
 }
 
 #endif /* SVC_FILEDOWNLINK_FILEDOWNLINKCFG_HPP_ */

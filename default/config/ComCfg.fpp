@@ -28,13 +28,10 @@ module ComCfg {
         FW_PACKET_IDLE           = 0x0006  @< F Prime idle
         FW_PACKET_HAND           = 0x00FE  @< F Prime handshake
         FW_PACKET_UNKNOWN        = 0x00FF  @< F Prime unknown packet
-        SPP_FILE_DOWNLINK        = 0x0103  @< Extra APID for File packets on downlink so APID isn't shared between uplink and downlink
         MY_USER_APID_EXAMPLE     = 0x0777  @< Example APID for user defined packets
         SPP_IDLE_PACKET          = 0x07FF  @< Per Space Packet Standard, all 1s (11bits) is reserved for Idle Packets
         INVALID_UNINITIALIZED    = 0x0800  @< Anything equal or higher value is invalid and should not be used
     } default INVALID_UNINITIALIZED
-
-# TODO ???: add alias with name ComPacketDescriptor for the ComPacket.hpp
 
     @ Type used to pass context info between components during framing/deframing
     struct FrameContext {

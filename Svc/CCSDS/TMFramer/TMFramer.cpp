@@ -32,6 +32,10 @@ TMFramer ::~TMFramer() {}
 void TMFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
     FW_ASSERT(data.getSize() <= ComCfg::TmFrameFixedSize - TMHeader::SERIALIZED_SIZE - TMTrailer::SERIALIZED_SIZE,
               static_cast<FwAssertArgType>(data.getSize()));
+    // Ensure the buffer is owned by the TMFramer
+    // TODO: add UTs
+    FW_ASSERT(this->m_bufferState == BufferOwnershipState::OWNED,
+              static_cast<FwAssertArgType>(this->m_bufferState));
 
     // -----------------------------------------------
     // Header
@@ -88,6 +92,7 @@ void TMFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
     status = frameSerializer.serialize(trailer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
+    this->m_bufferState = BufferOwnershipState::NOT_OWNED;
     this->dataOut_out(0, frameBuffer, context);
     this->dataReturnOut_out(0, data, context);  // return ownership of the original data buffer
 }
@@ -101,11 +106,10 @@ void TMFramer ::comStatusIn_handler(FwIndexType portNum, Fw::Success& condition)
 void TMFramer ::dataReturnIn_handler(FwIndexType portNum,
                                      Fw::Buffer& frameBuffer,
                                      const ComCfg::FrameContext& context) {
-    // dataReturnIn is our own member buffer coming back from the dataOut call - memset it to 0
-    FW_ASSERT(frameBuffer.getData() == static_cast<U8*>(this->m_frameBuffer));
-    // Maybe check that pointer is within the bounds of m_frameBuffer?
-    // NOTE: should we set a flag to track that it has been returned and ready for reuse?
-    // --> yes that would be nice, and assert if not
+    // Assert that the returned buffer is the member, and set ownership state
+    FW_ASSERT(frameBuffer.getData() >= &this->m_frameBuffer[0]);
+    FW_ASSERT(frameBuffer.getData() < &this->m_frameBuffer[0] + sizeof(this->m_frameBuffer));
+    this->m_bufferState = BufferOwnershipState::OWNED;
 }
 
 void TMFramer ::fill_with_idle_packet(Fw::SerializeBufferBase& serializer) {
