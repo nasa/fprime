@@ -22,7 +22,7 @@ class TMFramer final : public TMFramerComponentBase {
 
     static_assert(ComCfg::TmFrameFixedSize > TMHeader::SERIALIZED_SIZE + TMTrailer::SERIALIZED_SIZE,
                   "TM Frame Fixed Size must be at least large enough to hold header, trailer and data");
-    // These are to ensure the frame can hold the the packet buffer, its SP header and an idle packet of 1 byte
+    // These are to ensure the frame can hold the packet buffer, its SP header and an idle packet of 1 byte
     // This is because TM specifies a frame to be padded with an idle packet of at least 1 byte of idle data
     static_assert(
         ComCfg::TmFrameFixedSize >= FW_COM_BUFFER_MAX_SIZE + (2 * SpacePacketHeader::SERIALIZED_SIZE) + 1,
