@@ -478,14 +478,6 @@ depend on the source code in this directory. There is no particular
 significance to the name; rather, it was selected to represent how a
 developer might organize their code. The subdirectories are as follows.
 
-### BlockDriver
-
-This represents a hardware driver that accepts buffers of data to send
-to a device, and sends buffers that it receives from the device. Since
-there is no real hardware behind the driver, the driver takes any
-incoming data buffers from the input port and sends them out the output
-port.
-
 ### DataTypes
 
 This directory contains the port and data buffer types used by the
@@ -498,6 +490,14 @@ represent what an adapter might do when writing application-specific
 logic. An adapter would use the framework layers, drivers, and services
 that are meant to be reusable, along with application components for a
 particular task.
+
+### BlockDriver
+
+This represents a hardware driver that accepts buffers of data to send
+to a device, and sends buffers that it receives from the device. Since
+there is no real hardware behind the driver, the driver takes any
+incoming data buffers from the input port and sends them out the output
+port.
 
 ### SendBuffApp
 

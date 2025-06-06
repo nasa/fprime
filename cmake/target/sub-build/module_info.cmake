@@ -81,10 +81,8 @@ function(module_info_add_module_target BUILD_MODULE_NAME CUSTOM_TARGET_NAME SOUR
     get_target_property(AUTOCODER_INPUTS "${BUILD_MODULE_NAME}" AUTOCODER_INPUTS)
     foreach(AUTOCODER_INPUT IN LISTS AUTOCODER_INPUTS)
         list(APPEND "FILE_LINES"
-            "define_property(SOURCE PROPERTY FPRIME_MODULE INHERITED)\n"
-            "set_property(SOURCE \"${AUTOCODER_INPUT}\"\n"
-            "    DIRECTORY \"${CMAKE_SOURCE_DIR}\"\n"
-            "    PROPERTY FPRIME_MODULE \"${BUILD_MODULE_NAME}\")\n"
+            "set_property(GLOBAL PROPERTY \"FPRIME_${AUTOCODER_INPUT}_MODULE\"\n"
+            "    \"${BUILD_MODULE_NAME}\")\n"
         )
     endforeach()
     set(OUTPUT_FILE_NAME "${CMAKE_CURRENT_BINARY_DIR}/implements-snippet-${BUILD_MODULE_NAME}.cmake")

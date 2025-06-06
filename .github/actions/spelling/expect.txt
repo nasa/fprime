@@ -41,7 +41,7 @@ argcount
 ARGN
 argname
 argtype
-arinc
+ARINC
 arpa
 ASize
 ASTRING
@@ -68,7 +68,7 @@ BDV
 bfree
 bibtex
 Bies
-bindir
+BINDIR
 binrel
 Bitfields
 bitmaps
@@ -418,13 +418,13 @@ Graphviz
 grayscales
 grnd
 GROUNDINTERFACERULES
-gse
+GSE
 gtags
 gtest
 gtimeout
 Guire
 HACKSM
-handcoded
+Handcoded
 handleflags
 hardtoaccess
 hashvalue
@@ -479,7 +479,7 @@ instrlen
 integertypename
 interoperate
 intlimits
-inttype
+inttypes
 INVALIDBUFFER
 INVALIDHEADER
 INVALIDHEADERHASH
@@ -542,6 +542,7 @@ LINEHANDLE
 linelength
 lineoffset
 lineroo
+linux
 listdir
 Listst
 LJR
@@ -576,7 +577,7 @@ MCT
 mday
 MDFILE
 MEMALLOCATOR
-memb
+MEMB
 membername
 memcheck
 memname
@@ -727,7 +728,7 @@ PERLMOD
 PINGSEND
 pinit
 pkill
-pkts
+PKTS
 plainnat
 plantuml
 pname
@@ -833,7 +834,7 @@ RGD
 RHH
 riverbankcomputing
 Rizvi
-rootdir
+ROOTDIR
 ror
 rowspan
 rpaetz

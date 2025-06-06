@@ -49,7 +49,7 @@ class Sequence : public SequenceComponentBase {
     //! Destroy Sequence object
     ~Sequence();
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Implementations for internal state machine actions
     // ----------------------------------------------------------------------
@@ -68,7 +68,7 @@ class Sequence : public SequenceComponentBase {
                                             FppTest_SmChoice_Sequence::Signal signal  //!< The signal
                                             ) override;
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Implementations for internal state machine guards
     // ----------------------------------------------------------------------

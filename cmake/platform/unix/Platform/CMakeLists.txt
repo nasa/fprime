@@ -4,6 +4,7 @@
 # This file defines a configuration module for unix platforms.
 ####
 register_fprime_config(
+        UnixPlatformTypes
     AUTOCODER_INPUTS
         "${CMAKE_CURRENT_LIST_DIR}/PlatformTypes.fpp"
     HEADERS

@@ -48,7 +48,7 @@ class BasicU32 : public BasicU32ComponentBase {
     //! The type FppTest_SmState_BasicU32
     using SmState_BasicU32 = FppTest_SmState_BasicU32;
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Implementations for internal state machine actions
     // ----------------------------------------------------------------------

@@ -22,11 +22,28 @@
 
 namespace Svc {
 
+// Forward declaration for UTs
+  namespace Logging {
+    class CloseFileTester;
+    class SendBuffersTester;
+    class OnOffTester;
+  }
+  namespace Errors {
+    class BufferLoggerTester;
+  }
+
+
   class BufferLogger final :
     public BufferLoggerComponentBase
   {
 
-    PRIVATE:
+    friend class BufferLoggerTester;
+    friend class Svc::Logging::CloseFileTester;
+    friend class Svc::Logging::SendBuffersTester;
+    friend class Svc::Logging::OnOffTester;
+    friend class Svc::Errors::BufferLoggerTester;
+
+    private:
 
       // ----------------------------------------------------------------------
       // Types
@@ -34,6 +51,12 @@ namespace Svc {
 
       //! A BufferLogger file
       class File {
+
+        friend class BufferLoggerTester;
+        friend class Svc::Logging::CloseFileTester;
+        friend class Svc::Logging::SendBuffersTester;
+        friend class Svc::Logging::OnOffTester;
+        friend class Svc::Errors::BufferLoggerTester;
 
         public:
 
@@ -82,7 +105,7 @@ namespace Svc {
           //! Flush the file
           bool flush();
 
-        PRIVATE:
+        private:
 
           //! Open the file
           void open();
@@ -113,7 +136,7 @@ namespace Svc {
           //! Close the file
           void close();
 
-        PRIVATE:
+        private:
 
           //! The enclosing BufferLogger instance
           BufferLogger& m_bufferLogger;
@@ -174,7 +197,7 @@ namespace Svc {
           const U8 sizeOfSize //!< The number of bytes to use when storing the size field at the start of each buffer
       );
 
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Handler implementations for user-defined typed input ports
@@ -209,7 +232,7 @@ namespace Svc {
           U32 context /*!< The call order*/
       );
 
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Command handler implementations
@@ -245,7 +268,7 @@ namespace Svc {
           const U32 cmdSeq /*!< The command sequence number*/
       );
 
-  PRIVATE:
+  private:
 
       // ----------------------------------------------------------------------
       // Private instance variables

@@ -144,7 +144,7 @@ will be done automatically:
 8. The user is given the option to generate a unit test directory with necessary
    unit test files within it.
 9. An SDD file is generated with documentation about ports, commands, events,  
-   telemetry, parameters, and time of creation already filled out
+   telemetry, parameters, and time of creation already filled out. Note: Developers should explicitly state in the SDD if they use the FPP `priority` for their ports.
 
 The `fprime-util new --component` uses the built-in cookiecutter template by default, 
 but users can substitute their own component template by using the component_cookiecutter 

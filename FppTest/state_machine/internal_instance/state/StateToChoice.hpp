@@ -51,7 +51,7 @@ class StateToChoice : public StateToChoiceComponentBase {
     //! Action IDs
     enum class ActionId { EXIT_S1, EXIT_S2, EXIT_S3, A, ENTER_S1, ENTER_S2, ENTER_S3, ENTER_S4 };
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Implementations for internal state machine actions
     // ----------------------------------------------------------------------
@@ -112,7 +112,7 @@ class StateToChoice : public StateToChoiceComponentBase {
                                                       FppTest_SmState_StateToChoice::Signal signal  //!< The signal
                                                       ) override;
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Implementations for internal state machine guards
     // ----------------------------------------------------------------------

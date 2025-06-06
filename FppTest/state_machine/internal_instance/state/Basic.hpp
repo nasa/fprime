@@ -52,7 +52,7 @@ class Basic : public BasicComponentBase {
     //! Destroy Basic object
     ~Basic();
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Handler implementations for typed input ports
     // ----------------------------------------------------------------------
@@ -62,7 +62,7 @@ class Basic : public BasicComponentBase {
                          U32 context           //!< The call order
                          ) override;
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Implementations for internal state machine actions
     // ----------------------------------------------------------------------
