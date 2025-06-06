@@ -93,7 +93,7 @@ void SpacePacketDeframerTester ::testDeframingIncorrectLength() {
     // Event logging failure
     ASSERT_EVENTS_SIZE(1);  // No events should be generated in the nominal case
     ASSERT_EVENTS_InvalidLength_SIZE(1);  // No events should be generated in the nominal case
-    ASSERT_EVENTS_InvalidLength(0, invalidLengthToken + 1, realDataLength); // Event logs the size in bytes, so add 1 to length token
+    ASSERT_EVENTS_InvalidLength(0, static_cast<U16>(invalidLengthToken + 1), realDataLength); // Event logs the size in bytes, so add 1 to length token
 }
 
 // ----------------------------------------------------------------------

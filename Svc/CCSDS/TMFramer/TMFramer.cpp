@@ -47,7 +47,7 @@ void TMFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
     // - all flags to 0 except segment length id 0b11 per standard (4.1.2.7)
     // - First Header Pointer is always 0 since we are always wrapping a single entire packet at offset 0
     U16 dataFieldStatus = 0;
-    dataFieldStatus |= 0x3 << TMSubfields::segLengthOffset;  // Seg Length Id 0b11 per Standard (4.1.2.7.5)
+    dataFieldStatus |= 0x3 << TMSubfields::segLengthOffset;  // Seg Length Id '11' (0x3) per Standard (4.1.2.7.5)
 
     header.setglobalVcId(globalVcId);
     header.setmasterFrameCount(this->m_masterFrameCount);

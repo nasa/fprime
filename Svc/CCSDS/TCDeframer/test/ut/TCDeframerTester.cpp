@@ -110,7 +110,7 @@ void TCDeframerTester::testInvalidVcId() {
 void TCDeframerTester::testInvalidLengthToken() {
     U8 dataLength = static_cast<U8>(STest::Random::lowerUpper(1, 200)); // bytes of data, random length
     U8 data[dataLength];
-    U8 incorrectLengthToken = dataLength + TCHeader::SERIALIZED_SIZE + TCTrailer::SERIALIZED_SIZE + 1;
+    U8 incorrectLengthToken = static_cast<U8>(dataLength + TCHeader::SERIALIZED_SIZE + TCTrailer::SERIALIZED_SIZE + 1);
 
     Fw::Buffer buffer = this->assembleFrameBuffer(data, dataLength);
     buffer.getData()[3] = incorrectLengthToken; // Override length token to invalid value
@@ -126,7 +126,7 @@ void TCDeframerTester::testInvalidLengthToken() {
     ASSERT_EVENTS_SIZE(1); // exactly 1 event emitted
     ASSERT_EVENTS_InvalidFrameLength_SIZE(1); // event was emitted for invalid frame length
     // event logs size in bytes which is length token + 1
-    ASSERT_EVENTS_InvalidFrameLength(0, incorrectLengthToken + 1, dataLength + TCHeader::SERIALIZED_SIZE + TCTrailer::SERIALIZED_SIZE);
+    ASSERT_EVENTS_InvalidFrameLength(0, static_cast<U16>(incorrectLengthToken + 1), static_cast<FwSizeType>(dataLength + TCHeader::SERIALIZED_SIZE + TCTrailer::SERIALIZED_SIZE));
 }
 
 void TCDeframerTester::testInvalidCrc() {
@@ -166,7 +166,7 @@ Fw::Buffer TCDeframerTester::assembleFrameBuffer(U8* data, U8 dataLength, U16 sc
     this->m_frameData[0] = static_cast<U8>(scid >> 8);
     this->m_frameData[1] = static_cast<U8>(scid & 0xFF);
     this->m_frameData[2] = static_cast<U8>((vcid << 2) | static_cast<U8>((frameLengthToken >> 8) & 0x03));
-    this->m_frameData[3] = frameLengthToken & 0xFF;
+    this->m_frameData[3] = static_cast<U8>(frameLengthToken & 0xFF);
     this->m_frameData[4] = seqNumber;
 
     // Data

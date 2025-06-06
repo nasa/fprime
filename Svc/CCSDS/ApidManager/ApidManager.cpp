@@ -69,7 +69,7 @@ void ApidManager::setNextSeqCount(ComCfg::APID::T apid, U16 seqCount) {
             return;
         }
     }
-    // This code should not be reahcable with the if statement in validateApidSeqCountIn_handler
+    // This code should not be reachable with the if statement in validateApidSeqCountIn_handler
     FW_ASSERT(false, static_cast<FwAssertArgType>(apid));
 }
 

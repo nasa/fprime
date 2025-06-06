@@ -96,7 +96,7 @@ class TMFramer final : public TMFramerComponentBase {
     // Because the TM protocol use fixed width frames, and only one frame is in transit between ComQueue and
     // ComInterface at a time, we can use a member fixed-size buffer to hold the frame data
     U8 m_frameBuffer[ComCfg::TmFrameFixedSize];                        //!< Buffer to hold the frame data
-    BufferOwnershipState m_bufferState = BufferOwnershipState::OWNED;  //!< wheter m_frameBuffer is owned by TMFramer
+    BufferOwnershipState m_bufferState = BufferOwnershipState::OWNED;  //!< whether m_frameBuffer is owned by TMFramer
 
     // Current implementation uses a single virtual channel, so we can use a single virtual frame count
     U8 m_masterFrameCount;   //!< Master Frame Count - 8 bits - wraps around at 255

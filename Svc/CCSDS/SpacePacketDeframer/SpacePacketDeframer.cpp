@@ -48,7 +48,7 @@ void SpacePacketDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data,
 
     // Space Packet protocol defines the Data Length as number of bytes minus 1
     // so we need to add 1 to the length to get the actual data size
-    U16 pkt_length = header.getpacketDataLength() + 1;
+    U16 pkt_length = static_cast<U16>(header.getpacketDataLength() + 1);
     if (pkt_length > data.getSize() - SpacePacketHeader::SERIALIZED_SIZE) {
         U32 maxDataAvailable = data.getSize() - SpacePacketHeader::SERIALIZED_SIZE;
         this->log_WARNING_HI_InvalidLength(pkt_length, maxDataAvailable);
