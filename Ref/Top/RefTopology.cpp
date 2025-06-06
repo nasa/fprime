@@ -22,6 +22,7 @@
 
 //Subtopology includes
 #include <Svc/Subtopologies/CDHCore/CDHCoreTopologyDefs.hpp>
+#include <Svc/Subtopologies/Comms/CommsTopologyDefs.hpp>
 
 // Allows easy reference to objects in FPP/autocoder required namespaces
 using namespace Ref;
@@ -109,7 +110,7 @@ void configureTopology() {
     commsBuffMgrBins.bins[0].numBuffers = COMMS_BUFFER_MANAGER_STORE_COUNT;
     commsBuffMgrBins.bins[1].bufferSize = COMMS_BUFFER_MANAGER_FILE_STORE_SIZE;
     commsBuffMgrBins.bins[1].numBuffers = COMMS_BUFFER_MANAGER_FILE_QUEUE_SIZE;
-    commsBufferManager.setup(COMMS_BUFFER_MANAGER_ID, 0, mallocator, commsBuffMgrBins);
+    Comms::commsBufferManager.setup(COMMS_BUFFER_MANAGER_ID, 0, mallocator, commsBuffMgrBins);
 
     Svc::BufferManager::BufferBins dpBuffMgrBins;
     memset(&dpBuffMgrBins, 0, sizeof(dpBuffMgrBins));
@@ -117,7 +118,7 @@ void configureTopology() {
     dpBuffMgrBins.bins[0].numBuffers = DP_BUFFER_MANAGER_STORE_COUNT;
     dpBufferManager.setup(DP_BUFFER_MANAGER_ID, 0, mallocator, dpBuffMgrBins);
 
-    frameAccumulator.configure(frameDetector, 1, mallocator, 2048);
+    Comms::frameAccumulator.configure(frameDetector, 1, mallocator, 2048);
 
     Fw::FileNameString dpDir("./DpCat");
     Fw::FileNameString dpState("./DpCat/DpState.dat");
@@ -139,7 +140,7 @@ void configureTopology() {
     configurationTable.entries[Ref::Ports_ComPacketQueue::NUM_CONSTANTS].depth = 100;
     configurationTable.entries[Ref::Ports_ComPacketQueue::NUM_CONSTANTS].priority = 1;
     // Allocation identifier is 0 as the MallocAllocator discards it
-    comQueue.configure(configurationTable, 0, mallocator);
+    Comms::comQueue.configure(configurationTable, 0, mallocator);
 
     // Note: Uncomment when using Svc:TlmPacketizer
     // tlmSend.setPacketList(Ref::Ref_RefPacketsTlmPackets::packetList, Ref::Ref_RefPacketsTlmPackets::omittedChannels, 1);
@@ -159,7 +160,7 @@ void setupTopology(const TopologyState& state) {
     // Autocoded configuration. Function provided by autocoder.
     configComponents(state);
     if (state.hostname != nullptr && state.port != 0) {
-        comDriver.configure(state.hostname, state.port);
+        Comms::comDriver.configure(state.hostname, state.port);
     }
     // Project-specific component configuration. Function provided above. May be inlined, if desired.
     configureTopology();
@@ -173,7 +174,7 @@ void setupTopology(const TopologyState& state) {
     if (state.hostname != nullptr && state.port != 0) {
         Os::TaskString name("ReceiveTask");
         // Uplink is configured for receive so a socket task is started
-        comDriver.start(name, COMM_PRIORITY, Default::STACK_SIZE);
+        Comms::comDriver.start(name, COMM_PRIORITY, Default::STACK_SIZE);
     }
 }
 
@@ -195,12 +196,12 @@ void teardownTopology(const TopologyState& state) {
     freeThreads(state);
 
     // Other task clean-up.
-    comDriver.stop();
-    (void)comDriver.join();
+    Comms::comDriver.stop();
+    (void)Comms::comDriver.join();
 
     // Resource deallocation
     cmdSeq.deallocateBuffer(mallocator);
-    commsBufferManager.cleanup();
-    frameAccumulator.cleanup();
+    Comms::commsBufferManager.cleanup();
+    Comms::frameAccumulator.cleanup();
 }
 }  // namespace Ref

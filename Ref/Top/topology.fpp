@@ -25,6 +25,7 @@ module Ref {
     # Subtopology imports
     # ----------------------------------------------------------------------
     import CDHCore.Subtopology
+    import Comms.Subtopology
 
     # ----------------------------------------------------------------------
     # Instances used in the topology
@@ -40,19 +41,19 @@ module Ref {
     #instance tlmSend
     #instance cmdDisp
     instance cmdSeq
-    instance comDriver
-    instance comStub
-    instance comQueue
-    instance deframer
+    #instance comDriver
+    #instance comStub
+    #instance comQueue
+    #instance deframer
     #instance eventLogger
     #instance fatalAdapter
     instance fatalHandler
     instance fileDownlink
     instance fileManager
     instance fileUplink
-    instance commsBufferManager
-    instance frameAccumulator
-    instance fprimeFramer
+    #instance Comms.commsBufferManager
+    #instance frameAccumulator
+    #instance fprimeFramer
     instance posixTime
     instance pingRcvr
     instance prmDb
@@ -61,7 +62,7 @@ module Ref {
     instance rateGroup3Comp
     instance rateGroupDriverComp
     instance recvBuffComp
-    instance fprimeRouter
+    #instance fprimeRouter
     instance sendBuffComp
     #instance textLogger
     instance typeDemo
@@ -101,33 +102,6 @@ module Ref {
     # Direct graph specifiers
     # ----------------------------------------------------------------------
 
-    connections Downlink {
-      # Data Products
-      dpCat.fileOut             -> fileDownlink.SendFile
-      fileDownlink.FileComplete -> dpCat.fileDone
-      # Inputs to ComQueue (events, telemetry, file)
-      CDHCore.events.PktSend        -> comQueue.comPacketQueueIn[Ports_ComPacketQueue.EVENTS]
-      CDHCore.tlmSend.PktSend            -> comQueue.comPacketQueueIn[Ports_ComPacketQueue.TELEMETRY]
-      fileDownlink.bufferSendOut -> comQueue.bufferQueueIn[Ports_ComBufferQueue.FILE_DOWNLINK]
-      comQueue.bufferReturnOut[Ports_ComBufferQueue.FILE_DOWNLINK] -> fileDownlink.bufferReturn
-      # ComQueue <-> Framer
-      comQueue.dataOut           -> fprimeFramer.dataIn
-      fprimeFramer.dataReturnOut -> comQueue.dataReturnIn
-      # Buffer Management for Framer
-      fprimeFramer.bufferAllocate   -> commsBufferManager.bufferGetCallee
-      fprimeFramer.bufferDeallocate -> commsBufferManager.bufferSendIn
-      # Framer <-> ComStub
-      fprimeFramer.dataOut  -> comStub.dataIn
-      comStub.dataReturnOut -> fprimeFramer.dataReturnIn
-      # ComStub <-> ComDriver
-      comStub.drvSendOut      -> comDriver.$send
-      comDriver.sendReturnOut -> comStub.drvSendReturnIn
-      comDriver.ready         -> comStub.drvConnected
-      # ComStatus
-      comStub.comStatusOut       -> fprimeFramer.comStatusIn
-      fprimeFramer.comStatusOut  -> comQueue.comStatusIn
-    }
-
     connections FaultProtection {
       CDHCore.events.FatalAnnounce -> fatalHandler.FatalReceive
     }
@@ -144,7 +118,7 @@ module Ref {
       rateGroup1Comp.RateGroupMemberOut[2] -> CDHCore.tlmSend.Run
       rateGroup1Comp.RateGroupMemberOut[3] -> fileDownlink.Run
       rateGroup1Comp.RateGroupMemberOut[4] -> systemResources.run
-      rateGroup1Comp.RateGroupMemberOut[5] -> comQueue.run
+      rateGroup1Comp.RateGroupMemberOut[5] -> Comms.comQueue.run
 
       # Rate group 2
       rateGroupDriverComp.CycleOut[Ports_RateGroups.rateGroup2] -> rateGroup2Comp.CycleIn
@@ -158,7 +132,7 @@ module Ref {
       rateGroup3Comp.RateGroupMemberOut[0] -> CDHCore.$health.Run
       rateGroup3Comp.RateGroupMemberOut[1] -> SG5.schedIn
       rateGroup3Comp.RateGroupMemberOut[2] -> blockDrv.Sched
-      rateGroup3Comp.RateGroupMemberOut[3] -> commsBufferManager.schedIn
+      rateGroup3Comp.RateGroupMemberOut[3] -> Comms.commsBufferManager.schedIn
       rateGroup3Comp.RateGroupMemberOut[4] -> dpBufferManager.schedIn
       rateGroup3Comp.RateGroupMemberOut[5] -> dpWriter.schedIn
       rateGroup3Comp.RateGroupMemberOut[6] -> dpMgr.schedIn
@@ -172,35 +146,6 @@ module Ref {
     connections Sequencer {
       cmdSeq.comCmdOut -> CDHCore.cmdDisp.seqCmdBuff
       CDHCore.cmdDisp.seqCmdStatus -> cmdSeq.cmdResponseIn
-    }
-
-    connections Uplink {
-      # ComDriver buffer allocations
-      comDriver.allocate      -> commsBufferManager.bufferGetCallee
-      comDriver.deallocate    -> commsBufferManager.bufferSendIn
-      # ComDriver <-> ComStub
-      comDriver.$recv             -> comStub.drvReceiveIn
-      comStub.drvReceiveReturnOut -> comDriver.recvReturnIn
-      # ComStub <-> FrameAccumulator
-      comStub.dataOut                -> frameAccumulator.dataIn
-      frameAccumulator.dataReturnOut -> comStub.dataReturnIn
-      # FrameAccumulator buffer allocations
-      frameAccumulator.bufferDeallocate -> commsBufferManager.bufferSendIn
-      frameAccumulator.bufferAllocate   -> commsBufferManager.bufferGetCallee
-      # FrameAccumulator <-> Deframer
-      frameAccumulator.dataOut -> deframer.dataIn
-      deframer.dataReturnOut   -> frameAccumulator.dataReturnIn
-      # Deframer <-> Router
-      deframer.dataOut           -> fprimeRouter.dataIn
-      fprimeRouter.dataReturnOut -> deframer.dataReturnIn
-      # Router buffer allocations
-      fprimeRouter.bufferAllocate   -> commsBufferManager.bufferGetCallee
-      fprimeRouter.bufferDeallocate -> commsBufferManager.bufferSendIn
-      # Router <-> CmdDispatcher/FileUplink
-      fprimeRouter.commandOut  -> CDHCore.cmdDisp.seqCmdBuff
-      CDHCore.cmdDisp.seqCmdStatus     -> fprimeRouter.cmdResponseIn
-      fprimeRouter.fileOut     -> fileUplink.bufferSendIn
-      fileUplink.bufferSendOut -> fprimeRouter.fileBufferReturnIn
     }
 
     connections DataProducts {

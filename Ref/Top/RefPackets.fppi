@@ -12,14 +12,14 @@ telemetry packets RefPackets {
     Ref.cmdSeq.CS_SequencesCompleted
     Ref.fileUplink.FilesReceived
     Ref.fileUplink.PacketsReceived
-    Ref.commsBufferManager.TotalBuffs
-    Ref.commsBufferManager.CurrBuffs
-    Ref.commsBufferManager.HiBuffs
+    Comms.commsBufferManager.TotalBuffs
+    Comms.commsBufferManager.CurrBuffs
+    Comms.commsBufferManager.HiBuffs
     Ref.fileDownlink.FilesSent
     Ref.fileDownlink.PacketsSent
     Ref.fileManager.CommandsExecuted
-    Ref.comQueue.comQueueDepth
-    Ref.comQueue.buffQueueDepth
+    Comms.comQueue.comQueueDepth
+    Comms.comQueue.buffQueueDepth
     # Ref.tlmSend.SendLevel
   }
 
@@ -32,8 +32,8 @@ telemetry packets RefPackets {
     Ref.fileDownlink.Warnings
     CDHCore.$health.PingLateWarnings
     Ref.fileManager.Errors
-    Ref.commsBufferManager.NoBuffs
-    Ref.commsBufferManager.EmptyBuffs
+    Comms.commsBufferManager.NoBuffs
+    Comms.commsBufferManager.EmptyBuffs
     Ref.fileManager.Errors
   }
 

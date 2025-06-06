@@ -143,13 +143,13 @@ module Ref {
   # ----------------------------------------------------------------------
 
   @ Communications driver. May be swapped with other comm drivers like UART
-  instance comDriver: Drv.TcpClient base id 0x4000
+  #instance comDriver: Drv.TcpClient base id 0x4000
 
   #instance fatalAdapter: Svc.AssertFatalAdapter base id 0x4100
 
   instance fatalHandler: Svc.FatalHandler base id 0x4200
 
-  instance commsBufferManager: Svc.BufferManager base id 0x4300
+  #instance commsBufferManager: Svc.BufferManager base id 0x4300
 
   instance posixTime: Svc.PosixTime base id 0x4400
 
@@ -165,15 +165,15 @@ module Ref {
 
   instance dpBufferManager: Svc.BufferManager base id 0x4A00
 
-  instance frameAccumulator: Svc.FrameAccumulator base id 0x4B00
+  #instance frameAccumulator: Svc.FrameAccumulator base id 0x4B00
 
-  instance deframer: Svc.FprimeDeframer base id 0x4C00
+  #instance deframer: Svc.FprimeDeframer base id 0x4C00
 
-  instance fprimeRouter: Svc.FprimeRouter base id 0x4D00
+  #instance fprimeRouter: Svc.FprimeRouter base id 0x4D00
 
-  instance fprimeFramer: Svc.FprimeFramer base id 0x4E00
+  #instance fprimeFramer: Svc.FprimeFramer base id 0x4E00
 
-  instance comStub: Svc.ComStub base id 0x4F00
+  #instance comStub: Svc.ComStub base id 0x4F00
 
   instance linuxTimer: Svc.LinuxTimer base id 0x5000
 
