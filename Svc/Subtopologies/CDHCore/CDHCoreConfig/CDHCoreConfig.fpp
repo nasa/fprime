@@ -2,24 +2,24 @@ module CDHCoreConfig {
     #Base ID for the CDHCore Subtopology, all components are offsets from this base ID
     constant CDHCore_BASE_ID = 0xFFFF0000
     
-    # include default Queue and Stack sizes here
-    module Defaults {
-        constant cmdDisp_QUEUE_SIZE = 10
-        constant cmdDisp_STACK_SIZE = 64 * 1024
+    module QueueSizes {
+        constant cmdDisp     = 10
+        constant events      = 10
+        constant tlmSend     = 10
+        constant $health     = 25
+    }
+    
 
-        constant eventLogger_QUEUE_SIZE = 10
-        constant eventLogger_STACK_SIZE = 10
-
-        constant tlmSend_QUEUE_SIZE = 10
-        constant tlmSend_STACK_SIZE = 64 * 1024
-
-        constant $health_QUEUE_SIZE = 25
+    module StackSizes {
+        constant cmdDisp     = 64 * 1024
+        constant events      = 10
+        constant tlmSend     = 64 * 1024
     }
 
     module Priorities {
-        constant cmdDisp_PRIORITY = 101
-        constant $health_PRIORITY = 100
-        constant eventLogger_PRIORITY = 99
-        constant tlmSend_PRIORITY = 98
+        constant cmdDisp     = 101
+        constant $health     = 100
+        constant events      = 99
+        constant tlmSend     = 98
     }
 }

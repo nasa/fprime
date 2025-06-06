@@ -45,7 +45,7 @@ module Ref {
     instance comQueue
     instance deframer
     #instance eventLogger
-    instance fatalAdapter
+    #instance fatalAdapter
     instance fatalHandler
     instance fileDownlink
     instance fileManager
@@ -63,14 +63,14 @@ module Ref {
     instance recvBuffComp
     instance fprimeRouter
     instance sendBuffComp
-    instance textLogger
+    #instance textLogger
     instance typeDemo
     instance systemResources
     instance dpCat
     instance dpMgr
     instance dpWriter
     instance dpBufferManager
-    instance version
+    #instance version
     instance linuxTimer
 
     # ----------------------------------------------------------------------
@@ -79,13 +79,13 @@ module Ref {
 
     command connections instance CDHCore.cmdDisp
 
-    event connections instance CDHCore.eventLogger
+    event connections instance CDHCore.events
 
     param connections instance prmDb
 
     telemetry connections instance CDHCore.tlmSend
 
-    text event connections instance textLogger
+    text event connections instance CDHCore.textLogger
 
     time connections instance posixTime
 
@@ -106,7 +106,7 @@ module Ref {
       dpCat.fileOut             -> fileDownlink.SendFile
       fileDownlink.FileComplete -> dpCat.fileDone
       # Inputs to ComQueue (events, telemetry, file)
-      CDHCore.eventLogger.PktSend        -> comQueue.comPacketQueueIn[Ports_ComPacketQueue.EVENTS]
+      CDHCore.events.PktSend        -> comQueue.comPacketQueueIn[Ports_ComPacketQueue.EVENTS]
       CDHCore.tlmSend.PktSend            -> comQueue.comPacketQueueIn[Ports_ComPacketQueue.TELEMETRY]
       fileDownlink.bufferSendOut -> comQueue.bufferQueueIn[Ports_ComBufferQueue.FILE_DOWNLINK]
       comQueue.bufferReturnOut[Ports_ComBufferQueue.FILE_DOWNLINK] -> fileDownlink.bufferReturn
@@ -129,7 +129,7 @@ module Ref {
     }
 
     connections FaultProtection {
-      CDHCore.eventLogger.FatalAnnounce -> fatalHandler.FatalReceive
+      CDHCore.events.FatalAnnounce -> fatalHandler.FatalReceive
     }
 
     connections RateGroups {

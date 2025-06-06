@@ -1,36 +1,50 @@
 module CDHCore {
-
+    # ----------------------------------------------------------------------
+    # Active Components
+    # ----------------------------------------------------------------------
     instance cmdDisp: Svc.CommandDispatcher base id CDHCoreConfig.CDHCore_BASE_ID + 0x0100 \
-        queue size CDHCoreConfig.Defaults.cmdDisp_QUEUE_SIZE \
-        stack size CDHCoreConfig.Defaults.cmdDisp_STACK_SIZE \
-        priority CDHCoreConfig.Priorities.cmdDisp_PRIORITY
+        queue size CDHCoreConfig.QueueSizes.cmdDisp \
+        stack size CDHCoreConfig.StackSizes.cmdDisp \
+        priority CDHCoreConfig.Priorities.cmdDisp
 
-    instance eventLogger: Svc.ActiveLogger base id CDHCoreConfig.CDHCore_BASE_ID + 0x0200 \
-        queue size CDHCoreConfig.Defaults.eventLogger_QUEUE_SIZE \
-        stack size CDHCoreConfig.Defaults.eventLogger_STACK_SIZE \
-        priority CDHCoreConfig.Priorities.eventLogger_PRIORITY
+    instance events: Svc.ActiveLogger base id CDHCoreConfig.CDHCore_BASE_ID + 0x0200 \
+        queue size CDHCoreConfig.QueueSizes.events \
+        stack size CDHCoreConfig.StackSizes.events \
+        priority CDHCoreConfig.Priorities.events
 
     instance tlmSend: Svc.TlmChan base id CDHCoreConfig.CDHCore_BASE_ID + 0x0300 \
-        queue size CDHCoreConfig.Defaults.tlmSend_QUEUE_SIZE \
-        stack size CDHCoreConfig.Defaults.tlmSend_STACK_SIZE \
-        priority CDHCoreConfig.Priorities.tlmSend_PRIORITY
+        queue size CDHCoreConfig.QueueSizes.tlmSend \
+        stack size CDHCoreConfig.StackSizes.tlmSend \
+        priority CDHCoreConfig.Priorities.tlmSend
 
+    # ----------------------------------------------------------------------
+    # Queued Components
+    # ----------------------------------------------------------------------
     instance $health: Svc.Health base id CDHCoreConfig.CDHCore_BASE_ID + 0x0400 \
-        queue size CDHCoreConfig.Defaults.$health_QUEUE_SIZE \
+        queue size CDHCoreConfig.QueueSizes.$health \
+    
+    # ----------------------------------------------------------------------
+    # Passive Components
+    # ----------------------------------------------------------------------
+    instance version: Svc.Version base id CDHCoreConfig.CDHCore_BASE_ID + 0x0500 \
+
+    instance textLogger: Svc.PassiveTextLogger base id CDHCoreConfig.CDHCore_BASE_ID + 0x0600 \
+  
+    instance fatalAdapter: Svc.AssertFatalAdapter base id CDHCoreConfig.CDHCore_BASE_ID + 0x0700 \
     
     topology Subtopology {
         #Active Components
         instance cmdDisp 
-        instance eventLogger
+        instance events
         instance tlmSend
 
         #Queued Components
         instance $health
 
-        command connections instance cmdDisp
-        event connections instance eventLogger
-        telemetry connections instance tlmSend
-        health connections instance $health
+        #Passive Components
+        instance version
+        instance textLogger
+        instance fatalAdapter
 
     } # end topology
 } # end CDHCore Subtopology

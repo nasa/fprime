@@ -145,7 +145,7 @@ module Ref {
   @ Communications driver. May be swapped with other comm drivers like UART
   instance comDriver: Drv.TcpClient base id 0x4000
 
-  instance fatalAdapter: Svc.AssertFatalAdapter base id 0x4100
+  #instance fatalAdapter: Svc.AssertFatalAdapter base id 0x4100
 
   instance fatalHandler: Svc.FatalHandler base id 0x4200
 
@@ -157,9 +157,9 @@ module Ref {
 
   instance recvBuffComp: Ref.RecvBuff base id 0x4600
 
-  instance version: Svc.Version base id 0x4700
+  #instance version: Svc.Version base id 0x4700
 
-  instance textLogger: Svc.PassiveTextLogger base id 0x4800
+  #instance textLogger: Svc.PassiveTextLogger base id 0x4800
 
   instance systemResources: Svc.SystemResources base id 0x4900
 
