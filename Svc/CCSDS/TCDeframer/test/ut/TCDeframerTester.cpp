@@ -46,13 +46,14 @@ void TCDeframerTester::testNominalDeframing() {
     U16 scId = static_cast<U16>(STest::Random::lowerUpper(0, 0x3FF)); // random 10 bit Spacecraft ID
     U8 vcId = static_cast<U8>(STest::Random::lowerUpper(0, 0x3F)); // random 6 bit virtual channel ID
     U8 seqCount = static_cast<U8>(STest::Random::lowerUpper(0, 0xFF)); // random 8 bit sequence count
-    U8 dataLength = static_cast<U8>(STest::Random::lowerUpper(1, 200)); // bytes of data, random length
-    U8 data[dataLength];
-    for (FwIndexType i = 0; i < dataLength; i++) {
-        data[i] = i % std::numeric_limits<U8>::max();
+    U8 payloadLength = static_cast<U8>(STest::Random::lowerUpper(1, 200)); // bytes of data, random length
+    U8 payload[payloadLength];
+    // Initialize payload with some data
+    for (FwIndexType i = 0; i < payloadLength; i++) {
+        payload[i] = static_cast<U8>(i % std::numeric_limits<U8>::max());
     }
 
-    Fw::Buffer buffer = this->assembleFrameBuffer(data, dataLength, scId, vcId, seqCount);
+    Fw::Buffer buffer = this->assembleFrameBuffer(payload, payloadLength, scId, vcId, seqCount);
     ComCfg::FrameContext nullContext;
 
     this->setComponentState(scId, vcId, seqCount);
@@ -60,9 +61,9 @@ void TCDeframerTester::testNominalDeframing() {
 
     ASSERT_from_dataOut_SIZE(1);
     Fw::Buffer outBuffer = this->fromPortHistory_dataOut->at(0).data;
-    ASSERT_EQ(outBuffer.getSize(), dataLength);
-    for (FwIndexType i = 0; i < dataLength; i++) {
-        ASSERT_EQ(outBuffer.getData()[i], data[i]);
+    ASSERT_EQ(outBuffer.getSize(), payloadLength);
+    for (FwIndexType i = 0; i < payloadLength; i++) {
+        ASSERT_EQ(outBuffer.getData()[i], payload[i]);
     }
 }
 
