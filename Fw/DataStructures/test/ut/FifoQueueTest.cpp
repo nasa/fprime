@@ -8,9 +8,11 @@
 
 #include "Fw/DataStructures/Array.hpp"
 #include "Fw/DataStructures/FifoQueue.hpp"
-#include "Fw/DataStructures/test/ut/STest/FifoQueue/FifoQueueRules.hpp"
+#include "Fw/DataStructures/test/ut/STest/FifoQueueTestRules.hpp"
 
 namespace Fw {
+
+namespace FifoQueueTest {
 
 template <typename T, FwSizeType C>
 class FifoQueueTester {
@@ -217,33 +219,31 @@ TEST(FifoQueue, CopyDataFrom) {
 #endif
 
 TEST(FifoQueueRules, EnqueueOK) {
-  constexpr FwSizeType capacity = 10;
-  FifoQueueRules<capacity>::TestState state;
-  FifoQueueRules<capacity>::EnqueueOK enqueueOK;
+  State state;
+  Rules::EnqueueOK enqueueOK;
   enqueueOK.apply(state);
 }
 
 TEST(FifoQueueRules, EnqueueFull) {
-  constexpr FwSizeType capacity = 10;
-  FifoQueueRules<capacity>::TestState state;
-  FifoQueueRules<capacity>::EnqueueOK enqueueOK;
-  FifoQueueRules<capacity>::EnqueueFull enqueueFull;
-  for (FwSizeType i = 0; i < capacity; i++) {
+  State state;
+  Rules::EnqueueOK enqueueOK;
+  Rules::EnqueueFull enqueueFull;
+  for (FwSizeType i = 0; i < State::capacity; i++) {
       enqueueOK.apply(state);
   }
   enqueueFull.apply(state);
 }
 
-
 TEST(FifoQueueRules, Clear) {
-  constexpr FwSizeType capacity = 10;
-  FifoQueueRules<capacity>::TestState state;
-  FifoQueueRules<capacity>::Clear clear;
-  FifoQueueRules<capacity>::EnqueueOK enqueueOK;
+  State state;
+  Rules::Clear clear;
+  Rules::EnqueueOK enqueueOK;
   enqueueOK.apply(state);
   ASSERT_EQ(state.queue.getSize(), 1);
   clear.apply(state);
   ASSERT_EQ(state.queue.getSize(), 0);
+}
+
 }
 
 }  // namespace Fw
