@@ -31,7 +31,7 @@ TCDeframerTester ::~TCDeframerTester() {}
 // ----------------------------------------------------------------------
 
 void TCDeframerTester::testDataReturn() {
-    U8 data[1];
+    U8 data[1] = {0};
     Fw::Buffer buffer(data, sizeof(data));
     ComCfg::FrameContext nullContext;
     this->invoke_to_dataReturnIn(0, buffer, nullContext);
@@ -48,6 +48,9 @@ void TCDeframerTester::testNominalDeframing() {
     U8 seqCount = static_cast<U8>(STest::Random::lowerUpper(0, 0xFF)); // random 8 bit sequence count
     U8 dataLength = static_cast<U8>(STest::Random::lowerUpper(1, 200)); // bytes of data, random length
     U8 data[dataLength];
+    for (FwIndexType i = 0; i < dataLength; i++) {
+        data[i] = i % std::numeric_limits<U8>::max();
+    }
 
     Fw::Buffer buffer = this->assembleFrameBuffer(data, dataLength, scId, vcId, seqCount);
     ComCfg::FrameContext nullContext;
