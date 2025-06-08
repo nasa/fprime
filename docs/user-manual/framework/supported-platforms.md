@@ -50,8 +50,8 @@ We welcome contributions to expand the list of supported platforms! Here’s how
 3. Include build, run, and hardware setup instructions in a README.md.
 4. Set up CI for your deployment and have CI run the F Prime provided integration test scripts.
 5. Optional: submit a request to add your reference deployment to [`fprime-community`](https://github.com/fprime-community). Provide platform description in your request.
-
-> [!TIP] Tips for Platform Developers
-> Follow the naming and file-structure convention as the example reference deployments.
-> Avoid using hardcoded paths in your toolchain file. Use environment variables.
-> Test on actual hardware if possible—emulated environments may behave differently.
+   
+> [!TIP]
+> 1. Follow the naming and file-structure convention as the example reference deployments.
+> 1. Avoid using hardcoded paths in your toolchain file. Use environment variables.
+> 1. Test on actual hardware if possible—emulated environments may behave differently.
