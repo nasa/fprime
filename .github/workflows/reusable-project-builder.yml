@@ -157,6 +157,7 @@ jobs:
       - name: "Start up GDS"
         working-directory: ${{ inputs.build_location }}
         run: |
+          chmod -R +x ${{ inputs.project_root }}/build-artifacts/
           mkdir -p gds-logs
           fprime-gds --gui none -l gds-logs &
           sleep 10
