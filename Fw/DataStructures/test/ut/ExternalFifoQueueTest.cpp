@@ -83,7 +83,8 @@ TEST(ExternalFifoQueue, EnqueueFull) {
     ExternalFifoQueue<U32> queue(elts, capacity);
     // Fill up the FIFO
     for (FwSizeType i = 0; i < capacity; i++) {
-        queue.enqueue(0);
+        const auto status = queue.enqueue(0);
+        ASSERT_EQ(status, Success::SUCCESS);
     }
     // Now try to push another element
     const U32 val = STest::Pick::any();

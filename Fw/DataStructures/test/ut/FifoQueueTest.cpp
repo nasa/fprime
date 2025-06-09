@@ -30,32 +30,23 @@ TEST(FifoQueue, ZeroArgConstructor) {
     ASSERT_EQ(queue.getSize(), 0);
 }
 
-#if 0
-TEST(FifoQueue, TypedStorageConstructor) {
-    constexpr FwSizeType capacity = 10;
-    U32 items[capacity];
-    FifoQueue<U32> queue(items, capacity);
-    FifoQueueTester<U32> tester(queue);
-    ASSERT_EQ(tester.getItems().getElements(), items);
-    ASSERT_EQ(queue.getCapacity(), capacity);
-    ASSERT_EQ(queue.getSize(), 0);
-}
-
-TEST(FifoQueue, UntypedStorageConstructor) {
-    constexpr FwSizeType capacity = 10;
-    alignas(U32) U8 bytes[capacity * sizeof(U32)];
-    FifoQueue<U32> queue(ByteArray(&bytes[0], sizeof bytes), capacity);
-    FifoQueueTester<U32> tester(queue);
-    ASSERT_EQ(tester.getItems().getElements(), reinterpret_cast<U32*>(bytes));
-    ASSERT_EQ(queue.getCapacity(), capacity);
-    ASSERT_EQ(queue.getSize(), 0);
+TEST(FifoQueue, CopyConstructor) {
+    constexpr FwSizeType capacity = 3;
+    // Construct q1
+    FifoQueue<U32, capacity> q1;
+    // Enqueue an item
+    U32 value = 42;
+    (void)q1.enqueue(value);
+    ASSERT_EQ(q1.getSize(), 1);
+    // Use the copy constructor to construct q2
+    FifoQueue<U32, capacity> q2(q1);
+    ASSERT_EQ(q2.getSize(), 1);
 }
 
 TEST(FifoQueue, EnqueueOK) {
     constexpr const FwSizeType capacity = 1000;
     const FwSizeType size = STest::Pick::lowerUpper(1, capacity);
-    U32 elts[capacity];
-    FifoQueue<U32> queue(elts, capacity);
+    FifoQueue<U32, capacity> queue;
     ASSERT_EQ(queue.getCapacity(), capacity);
     ASSERT_EQ(queue.getSize(), 0);
     for (FwSizeType i = 0; i < size; i++) {
@@ -78,11 +69,11 @@ TEST(FifoQueue, EnqueueOK) {
 
 TEST(FifoQueue, EnqueueFull) {
     constexpr const FwSizeType capacity = 1000;
-    U32 elts[capacity];
-    FifoQueue<U32> queue(elts, capacity);
+    FifoQueue<U32, capacity> queue;
     // Fill up the FIFO
     for (FwSizeType i = 0; i < capacity; i++) {
-        queue.enqueue(0);
+        const auto status = queue.enqueue(0);
+        ASSERT_EQ(status, Success::SUCCESS);
     }
     // Now try to push another element
     const U32 val = STest::Pick::any();
@@ -91,35 +82,15 @@ TEST(FifoQueue, EnqueueFull) {
     ASSERT_EQ(status, Success::FAILURE);
 }
 
-TEST(FifoQueue, CopyConstructor) {
-    constexpr FwSizeType capacity = 3;
-    U32 items[capacity];
-    // Call the constructor providing backing storage
-    FifoQueue<U32> q1(items, capacity);
-    // Enqueue an item
-    U32 value = 42;
-    (void)q1.enqueue(value);
-    // Call the copy constructor
-    FifoQueue<U32> q2(q1);
-    FifoQueueTester<U32> tester1(q1);
-    FifoQueueTester<U32> tester2(q2);
-    ASSERT_EQ(tester2.getItems().getElements(), items);
-    ASSERT_EQ(tester2.getItems().getSize(), capacity);
-    ASSERT_EQ(tester2.getEnqueueIndex().getValue(), 1);
-    ASSERT_EQ(tester2.getDequeueIndex().getValue(), 0);
-    ASSERT_EQ(q2.getSize(), 1);
-}
-
 TEST(FifoQueue, CopyAssignmentOperator) {
     constexpr FwSizeType capacity = 3;
-    U32 items[capacity];
     // Call the constructor providing backing storage
-    FifoQueue<U32> q1(items, capacity);
+    FifoQueue<U32, capacity> q1;
     // Enqueue an item
     U32 value = 42;
     (void)q1.enqueue(value);
     // Call the default constructor
-    FifoQueue<U32> q2;
+    FifoQueue<U32, capacity> q2;
     ASSERT_EQ(q2.getSize(), 0);
     // Call the copy assignment operator
     q2 = q1;
@@ -130,7 +101,7 @@ TEST(FifoQueue, DequeueOK) {
     constexpr const FwSizeType capacity = 1000;
     const FwSizeType size = STest::Pick::lowerUpper(1, capacity);
     U32 items[capacity];
-    FifoQueue<U32> queue(items, capacity);
+    FifoQueue<U32, capacity> queue;
     ASSERT_EQ(queue.getCapacity(), capacity);
     ASSERT_EQ(queue.getSize(), 0);
     for (FwSizeType i = 0; i < size; i++) {
@@ -138,7 +109,7 @@ TEST(FifoQueue, DequeueOK) {
         const U32 val = STest::Pick::any();
         // Enqueue it
         const auto status = queue.enqueue(val);
-        ASSERT_EQ(val, items[i]);
+        items[i] = val;
         ASSERT_EQ(status, Success::SUCCESS);
         ASSERT_EQ(queue.getSize(), i + 1);
     }
@@ -159,8 +130,7 @@ TEST(FifoQueue, DequeueOK) {
 
 TEST(FifoQueue, DequeueEmpty) {
     constexpr const FwSizeType capacity = 1000;
-    U32 items[capacity];
-    FifoQueue<U32> queue(items, capacity);
+    FifoQueue<U32, capacity> queue;
     U32 val = 0;
     const auto status = queue.dequeue(val);
     ASSERT_EQ(status, Success::FAILURE);
@@ -193,26 +163,23 @@ void testCopyDataFrom(FifoQueueBase<U32>& q1, FwSizeType size1, FifoQueueBase<U3
 TEST(FifoQueue, CopyDataFrom) {
     constexpr FwSizeType maxSize = 10;
     constexpr FwSizeType smallSize = maxSize / 2;
-    U32 items1[maxSize];
-    U32 items2[maxSize];
-    FifoQueue<U32> q1(items1, maxSize);
+    FifoQueue<U32, maxSize> q1;
     // size1 < capacity2
     {
-        FifoQueue<U32> q2(items2, maxSize);
+        FifoQueue<U32, maxSize> q2;
         testCopyDataFrom(q1, smallSize, q2);
     }
     // size1 == size2
     {
-        FifoQueue<U32> q2(items2, maxSize);
+        FifoQueue<U32, maxSize> q2;
         testCopyDataFrom(q1, maxSize, q2);
     }
     // size1 > size2
     {
-        FifoQueue<U32> q2(items2, smallSize);
+        FifoQueue<U32, smallSize> q2;
         testCopyDataFrom(q1, maxSize, q2);
     }
 }
-#endif
 
 TEST(FifoQueueRules, EnqueueOK) {
   State state;

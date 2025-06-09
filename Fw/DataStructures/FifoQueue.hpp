@@ -7,8 +7,8 @@
 #ifndef Fw_FifoQueue_HPP
 #define Fw_FifoQueue_HPP
 
-#include "Fw/DataStructures/ExternalFifoQueue.hpp"
 #include "Fw/DataStructures/Array.hpp"
+#include "Fw/DataStructures/ExternalFifoQueue.hpp"
 
 namespace Fw {
 
@@ -27,10 +27,10 @@ class FifoQueue final : public FifoQueueBase<T> {
     // ----------------------------------------------------------------------
 
     //! Zero-argument constructor
-    FifoQueue() : m_extQueue(m_items, C) {}
+    FifoQueue() : FifoQueueBase<T>(), m_extQueue(m_items, C) {}
 
     //! Copy constructor
-    FifoQueue(const FifoQueue<T, C>& queue) : FifoQueueBase<T>() { *this = queue; }
+    FifoQueue(const FifoQueue<T, C>& queue) : FifoQueueBase<T>(), m_extQueue(m_items, C) { *this = queue; }
 
     //! Destructor
     ~FifoQueue() override = default;
@@ -43,6 +43,7 @@ class FifoQueue final : public FifoQueueBase<T> {
     //! operator=
     FifoQueue<T, C>& operator=(const FifoQueue<T, C>& queue) {
         this->m_extQueue.copyDataFrom(queue);
+        return *this;
     }
 
     //! Clear the queue
@@ -52,14 +53,14 @@ class FifoQueue final : public FifoQueueBase<T> {
     //! \return SUCCESS if item enqueued
     Success enqueue(const T& e  //!< The item (output)
                     ) override {
-      return this->m_extQueue.enqueue(e);
+        return this->m_extQueue.enqueue(e);
     }
 
     //! Dequeue an item (pop from the left)
     //! \return SUCCESS if item dequeued
     Success dequeue(T& e  //!< The item (output)
-                            ) override {
-      return this->m_extQueue.dequeue(e);
+                    ) override {
+        return this->m_extQueue.dequeue(e);
     }
 
     //! Get the size (number of items stored in the queue)
@@ -75,7 +76,8 @@ class FifoQueue final : public FifoQueueBase<T> {
     //! Fails an assertion if the index is out of range
     //! \return The item
     const T& at(FwSizeType index  //!< The index
-    ) const override { return this->m_extQueue.at(index);
+    ) const override {
+        return this->m_extQueue.at(index);
     }
 
   private:
@@ -88,7 +90,6 @@ class FifoQueue final : public FifoQueueBase<T> {
 
     //! The array providing the backing memory for m_extQueue
     T m_items[C] = {};
-
 };
 
 }  // namespace Fw

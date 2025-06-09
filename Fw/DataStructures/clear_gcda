@@ -1,0 +1,4 @@
+#!/bin/sh -e
+
+cd `dirname $0`
+find ../.. -name '*.gcda' | xargs rm
