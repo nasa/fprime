@@ -8,8 +8,6 @@
 
 namespace Fw {
 
-namespace FifoQueueTest {
-
 template <typename T, FwSizeType C>
 class FifoQueueTester {
   public:
@@ -22,6 +20,8 @@ class FifoQueueTester {
   private:
     const FifoQueue<T, C>& m_queue;
 };
+
+namespace FifoQueueTest {
 
 TEST(FifoQueue, ZeroArgConstructor) {
     constexpr FwSizeType C = 10;
@@ -228,7 +228,7 @@ TEST(FifoQueueRules, Clear) {
 TEST(FifoQueueScenarios, Random) {
     State::Queue queue;
     State state(queue);
-    Scenarios::random(state, 1000);
+    Scenarios::random(Fw::String("FifoQueueRandom"), state, 1000);
 }
 
 }  // namespace FifoQueueTest

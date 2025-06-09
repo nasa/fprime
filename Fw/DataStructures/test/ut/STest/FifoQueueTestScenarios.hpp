@@ -17,10 +17,10 @@ namespace Scenarios {
 Rule* rules[] = {&Rules::enqueueOK, &Rules::enqueueFull,  &Rules::at,
                  &Rules::dequeueOK, &Rules::dequeueEmpty, &Rules::clear};
 
-void random(State& state, U32 maxNumSteps) {
+void random(const Fw::StringBase& name, State& state, U32 maxNumSteps) {
     STest::RandomScenario<State> scenario("RandomScenario", rules,
                                           sizeof(rules) / sizeof(STest::RandomScenario<State>*));
-    STest::BoundedScenario<State> boundedScenario("BoundedRandomScenario", scenario, maxNumSteps);
+    STest::BoundedScenario<State> boundedScenario(name.toChar(), scenario, maxNumSteps);
     const U32 numSteps = boundedScenario.run(state);
     printf("Ran %u steps.\n", numSteps);
 }

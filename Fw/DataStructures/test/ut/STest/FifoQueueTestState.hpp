@@ -15,12 +15,16 @@ struct State {
   using ItemType = U32;
   //! The queue capacity
   static constexpr FwSizeType capacity = 1024;
-  //! The FifoQueue type
+  //! The Queue type
   using Queue = FifoQueue<ItemType, capacity>;
+  //! The ExternalQueue type
+  using ExternalQueue = ExternalFifoQueue<ItemType>;
+  //! THe QueueBase type
+  using QueueBase = FifoQueueBase<ItemType>;
   //! Constructor
-  State(Queue& a_queue) : queue(a_queue) {}
+  State(QueueBase& a_queue) : queue(a_queue) {}
   //! The queue under test
-  Queue& queue;
+  QueueBase& queue;
   //! The queue for modeling correct behavior
   std::deque<ItemType> modelQueue;
   //! Get a random item

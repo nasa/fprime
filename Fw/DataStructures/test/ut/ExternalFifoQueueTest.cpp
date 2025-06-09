@@ -4,10 +4,7 @@
 // \brief  cpp file for ExternalFifoQueue tests
 // ======================================================================
 
-#include <gtest/gtest.h>
-
-#include "Fw/DataStructures/ExternalFifoQueue.hpp"
-#include "STest/Pick/Pick.hpp"
+#include "Fw/DataStructures/test/ut/STest/FifoQueueTestRules.hpp"
 
 namespace Fw {
 
@@ -25,6 +22,8 @@ class ExternalFifoQueueTester {
   private:
     const ExternalFifoQueue<T>& m_queue;
 };
+
+namespace FifoQueueTest {
 
 TEST(ExternalFifoQueue, ZeroArgConstructor) {
     ExternalFifoQueue<U32> queue;
@@ -214,4 +213,64 @@ TEST(ExternalFifoQueue, CopyDataFrom) {
         testCopyDataFrom(q1, maxSize, q2);
     }
 }
+
+TEST(ExternalFifoQueueRules, EnqueueOK) {
+    U32 items[State::capacity];
+    State::ExternalQueue queue(items, State::capacity);
+    State state(queue);
+    Rules::enqueueOK.apply(state);
+}
+
+TEST(ExternalFifoQueueRules, EnqueueFull) {
+    U32 items[State::capacity];
+    State::ExternalQueue queue(items, State::capacity);
+    State state(queue);
+    for (FwSizeType i = 0; i < State::capacity; i++) {
+        Rules::enqueueOK.apply(state);
+    }
+    Rules::enqueueFull.apply(state);
+}
+
+TEST(ExternalFifoQueueRules, At) {
+    U32 items[State::capacity];
+    State::ExternalQueue queue(items, State::capacity);
+    State state(queue);
+    Rules::enqueueOK.apply(state);
+    Rules::at.apply(state);
+}
+
+TEST(ExternalFifoQueueRules, DequeueOK) {
+    U32 items[State::capacity];
+    State::ExternalQueue queue(items, State::capacity);
+    State state(queue);
+    Rules::enqueueOK.apply(state);
+    Rules::dequeueOK.apply(state);
+}
+
+TEST(ExternalFifoQueueRules, DequeueEmpty) {
+    U32 items[State::capacity];
+    State::ExternalQueue queue(items, State::capacity);
+    State state(queue);
+    Rules::dequeueEmpty.apply(state);
+}
+
+TEST(ExternalFifoQueueRules, Clear) {
+    U32 items[State::capacity];
+    State::ExternalQueue queue(items, State::capacity);
+    State state(queue);
+    Rules::enqueueOK.apply(state);
+    ASSERT_EQ(state.queue.getSize(), 1);
+    Rules::clear.apply(state);
+    ASSERT_EQ(state.queue.getSize(), 0);
+}
+
+#if 0
+TEST(ExternalFifoQueueScenarios, Random) {
+    State::Queue queue;
+    State state(queue);
+    Scenarios::random(state, 1000);
+}
+#endif
+
+}  // namespace FifoQueueTest
 }  // namespace Fw
