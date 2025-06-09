@@ -50,7 +50,7 @@ Signal FpySequencer::dispatchStatement() {
 Fw::Success FpySequencer::dispatchCommand(const Fpy::Statement& stmt) {
     FW_ASSERT(stmt.gettype() == Fpy::StatementType::COMMAND);
     Fw::ComBuffer cmdBuf;
-    Fw::SerializeStatus stat = cmdBuf.serialize(Fw::ComPacket::FW_PACKET_COMMAND);
+    Fw::SerializeStatus stat = cmdBuf.serialize(static_cast<U8>(Fw::ComPacket::FW_PACKET_COMMAND));
     // TODO should I assert here? this really shouldn't fail, I should just add a static assert
     // on com buf size and then assert here
     if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
