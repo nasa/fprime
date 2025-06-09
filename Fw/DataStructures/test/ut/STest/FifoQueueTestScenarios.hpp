@@ -14,7 +14,8 @@ namespace FifoQueueTest {
 
 namespace Scenarios {
 
-Rule* rules[] = {&Rules::enqueueOK, &Rules::enqueueFull, &Rules::at, &Rules::clear};
+Rule* rules[] = {&Rules::enqueueOK, &Rules::enqueueFull,  &Rules::at,
+                 &Rules::dequeueOK, &Rules::dequeueEmpty, &Rules::clear};
 
 void random(State& state, U32 maxNumSteps) {
     STest::RandomScenario<State> scenario("RandomScenario", rules,
