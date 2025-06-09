@@ -19,6 +19,11 @@ on:
         required: false
         type: boolean
         default: true
+      run_integration_tests:
+        description: "Run an additional job in parallel to run integration tests (pytest)."
+        required: false
+        type: boolean
+        default: false
       fprime_location:
         description: "Relative path from the external project root to its F´ submodule"
         required: false
@@ -71,6 +76,13 @@ jobs:
         run: |
           fprime-util build -j8 ${{ runner.debug == '1' && '--verbose' || '' }} ${{ inputs.target_platform }}
         shell: bash
+      - if: ${{ inputs.run_integration_tests}}
+        name: "Archive Build Artifacts"
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: build-artifacts
+
 
   runUT:
     if: ${{ inputs.run_unit_tests }}
@@ -108,3 +120,34 @@ jobs:
           fprime-util check -j8 ${{ runner.debug == '1' && '--verbose' || '' }} ${{ inputs.target_platform }}
         shell: bash
 
+  integration-tests:
+    if: ${{ inputs.run_integration_tests }}
+    runs-on: ${{ inputs.runs_on }}
+    name: "Integration Tests"
+    needs: build
+    steps:
+      - name: "Checkout target repository"
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          repository: ${{ inputs.target_repository }}
+          ref: ${{ inputs.target_ref }}
+      - name: "Overlay current F´ revision"
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          path: ${{ inputs.fprime_location }}
+      - name: "Install requirements.txt"
+        run: |
+          pip3 install -r ${{ inputs.fprime_location }}/requirements.txt
+        shell: bash
+      - name: "Download Build Artifacts"
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+      - name: "Run Integration Tests"
+        run: |
+          mkdir -p gds-logs
+          fprime-gds -n --gui none -l gds-logs 1>gds-logs/fprime-gds.stdout.log 2>gds-logs/fprime-gds.stderr.log &
+          sleep 10
+          pytest
