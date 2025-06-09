@@ -32,7 +32,7 @@ Fw::MallocAllocator mallocator;
 
 // The reference topology uses the F´ packet protocol when communicating with the ground and therefore uses the F´
 // framing and deframing implementations.
-Svc::FrameDetectors::FprimeFrameDetector frameDetector;
+Svc::FrameDetector::FprimeFrameDetector frameDetector;
 
 
 // The reference topology divides the incoming clock signal (1Hz) into sub-signals: 1Hz, 1/2Hz, and 1/4Hz and
@@ -49,23 +49,23 @@ Svc::ComQueue::QueueConfigurationTable configurationTable;
 
 // A number of constants are needed for construction of the topology. These are specified here.
 enum TopologyConstants {
-    CMD_SEQ_BUFFER_SIZE = 5 * 1024,
-    FILE_DOWNLINK_TIMEOUT = 1000,
-    FILE_DOWNLINK_COOLDOWN = 1000,
-    FILE_DOWNLINK_CYCLE_TIME = 1000,
-    FILE_DOWNLINK_FILE_QUEUE_DEPTH = 10,
-    HEALTH_WATCHDOG_CODE = 0x123,
+    //CMD_SEQ_BUFFER_SIZE = 5 * 1024,
+    //FILE_DOWNLINK_TIMEOUT = 1000,
+    //FILE_DOWNLINK_COOLDOWN = 1000,
+    //FILE_DOWNLINK_CYCLE_TIME = 1000,
+    //FILE_DOWNLINK_FILE_QUEUE_DEPTH = 10,
+    //HEALTH_WATCHDOG_CODE = 0x123,
     COMM_PRIORITY = 100,
     // Buffer manager for Uplink/Downlink
-    COMMS_BUFFER_MANAGER_STORE_SIZE = 2048,
-    COMMS_BUFFER_MANAGER_STORE_COUNT = 20,
-    COMMS_BUFFER_MANAGER_FILE_STORE_SIZE = 3000,
-    COMMS_BUFFER_MANAGER_FILE_QUEUE_SIZE = 30,
-    COMMS_BUFFER_MANAGER_ID = 200,
+    //COMMS_BUFFER_MANAGER_STORE_SIZE = 2048,
+    //COMMS_BUFFER_MANAGER_STORE_COUNT = 20,
+    //COMMS_BUFFER_MANAGER_FILE_STORE_SIZE = 3000,
+    //COMMS_BUFFER_MANAGER_FILE_QUEUE_SIZE = 30,
+    //COMMS_BUFFER_MANAGER_ID = 200,
     // Buffer manager for Data Products
-    DP_BUFFER_MANAGER_STORE_SIZE = 10000,
-    DP_BUFFER_MANAGER_STORE_COUNT = 10,
-    DP_BUFFER_MANAGER_ID = 300,
+    //DP_BUFFER_MANAGER_STORE_SIZE = 10000,
+    //DP_BUFFER_MANAGER_STORE_COUNT = 10,
+    //DP_BUFFER_MANAGER_ID = 300,
 };
 
 /**
@@ -77,7 +77,7 @@ enum TopologyConstants {
  */
 void configureTopology() {
     // Command sequencer needs to allocate memory to hold contents of command sequences
-    Comms::cmdSeq.allocateBuffer(0, mallocator, CMD_SEQ_BUFFER_SIZE);
+    Comms::cmdSeq.allocateBuffer(0, mallocator, Ref::ConfigConstants::Comms_cmdSeq::CMD_SEQ_BUFFER_SIZE);
 
     // Rate group driver needs a divisor list
     rateGroupDriverComp.configure(rateGroupDivisorsSet);
@@ -88,55 +88,55 @@ void configureTopology() {
     rateGroup3Comp.configure(rateGroup3Context, FW_NUM_ARRAY_ELEMENTS(rateGroup3Context));
 
     // File downlink requires some project-derived properties.
-    FileHandling::fileDownlink.configure(FILE_DOWNLINK_TIMEOUT, FILE_DOWNLINK_COOLDOWN, FILE_DOWNLINK_CYCLE_TIME,
-                           FILE_DOWNLINK_FILE_QUEUE_DEPTH);
+    //FileHandling::fileDownlink.configure(FILE_DOWNLINK_TIMEOUT, FILE_DOWNLINK_COOLDOWN, FILE_DOWNLINK_CYCLE_TIME,
+                           //FILE_DOWNLINK_FILE_QUEUE_DEPTH);
 
     // Parameter database is configured with a database file name, and that file must be initially read.
-    FileHandling::prmDb.configure("PrmDb.dat");
-    FileHandling::prmDb.readParamFile();
+    //FileHandling::prmDb.configure("PrmDb.dat");
+    //FileHandling::prmDb.readParamFile();
 
     // Health is supplied a set of ping entires.
-    CDHCore::health.setPingEntries(ConfigObjects::CDHCore_health::pingEntries,
-                          FW_NUM_ARRAY_ELEMENTS(ConfigObjects::CDHCore_health::pingEntries), HEALTH_WATCHDOG_CODE);
+    //CDHCore::health.setPingEntries(ConfigObjects::CDHCore_health::pingEntries,
+    //                      FW_NUM_ARRAY_ELEMENTS(ConfigObjects::CDHCore_health::pingEntries), HEALTH_WATCHDOG_CODE);
 
     // Buffer managers need a configured set of buckets and an allocator used to allocate memory for those buckets.
-    Svc::BufferManager::BufferBins commsBuffMgrBins;
-    memset(&commsBuffMgrBins, 0, sizeof(commsBuffMgrBins));
-    commsBuffMgrBins.bins[0].bufferSize = COMMS_BUFFER_MANAGER_STORE_SIZE;
-    commsBuffMgrBins.bins[0].numBuffers = COMMS_BUFFER_MANAGER_STORE_COUNT;
-    commsBuffMgrBins.bins[1].bufferSize = COMMS_BUFFER_MANAGER_FILE_STORE_SIZE;
-    commsBuffMgrBins.bins[1].numBuffers = COMMS_BUFFER_MANAGER_FILE_QUEUE_SIZE;
-    Comms::commsBufferManager.setup(COMMS_BUFFER_MANAGER_ID, 0, mallocator, commsBuffMgrBins);
+    //Svc::BufferManager::BufferBins commsBuffMgrBins;
+    //memset(&commsBuffMgrBins, 0, sizeof(commsBuffMgrBins));
+    //commsBuffMgrBins.bins[0].bufferSize = COMMS_BUFFER_MANAGER_STORE_SIZE;
+    //commsBuffMgrBins.bins[0].numBuffers = COMMS_BUFFER_MANAGER_STORE_COUNT;
+    //commsBuffMgrBins.bins[1].bufferSize = COMMS_BUFFER_MANAGER_FILE_STORE_SIZE;
+    //commsBuffMgrBins.bins[1].numBuffers = COMMS_BUFFER_MANAGER_FILE_QUEUE_SIZE;
+    //Comms::commsBufferManager.setup(COMMS_BUFFER_MANAGER_ID, 0, mallocator, commsBuffMgrBins);
 
-    Svc::BufferManager::BufferBins dpBuffMgrBins;
-    memset(&dpBuffMgrBins, 0, sizeof(dpBuffMgrBins));
-    dpBuffMgrBins.bins[0].bufferSize = DP_BUFFER_MANAGER_STORE_SIZE;
-    dpBuffMgrBins.bins[0].numBuffers = DP_BUFFER_MANAGER_STORE_COUNT;
-    DataProducts::dpBufferManager.setup(DP_BUFFER_MANAGER_ID, 0, mallocator, dpBuffMgrBins);
+    //Svc::BufferManager::BufferBins dpBuffMgrBins;
+    //memset(&dpBuffMgrBins, 0, sizeof(dpBuffMgrBins));
+    //dpBuffMgrBins.bins[0].bufferSize = DP_BUFFER_MANAGER_STORE_SIZE;
+    //dpBuffMgrBins.bins[0].numBuffers = DP_BUFFER_MANAGER_STORE_COUNT;
+    //DataProducts::dpBufferManager.setup(DP_BUFFER_MANAGER_ID, 0, mallocator, dpBuffMgrBins);
 
-    Comms::frameAccumulator.configure(frameDetector, 1, mallocator, 2048);
+    //Comms::frameAccumulator.configure(frameDetector, 1, mallocator, 2048);
 
-    Fw::FileNameString dpDir("./DpCat");
-    Fw::FileNameString dpState("./DpCat/DpState.dat");
+    //Fw::FileNameString dpDir("./DpCat");
+    //Fw::FileNameString dpState("./DpCat/DpState.dat");
 
     // create the DP directory if it doesn't exist
-    Os::FileSystem::createDirectory(dpDir.toChar());
+    //Os::FileSystem::createDirectory(dpDir.toChar());
 
-    DataProducts::dpCat.configure(&dpDir,1,dpState,0,mallocator);
-    DataProducts::dpWriter.configure(dpDir);
+    //DataProducts::dpCat.configure(&dpDir,1,dpState,0,mallocator);
+    //DataProducts::dpWriter.configure(dpDir);
 
     // ComQueue configuration
     // Events (highest-priority)
-    configurationTable.entries[Ref::Ports_ComPacketQueue::EVENTS].depth = 100;
-    configurationTable.entries[Ref::Ports_ComPacketQueue::EVENTS].priority = 0;
+    //configurationTable.entries[Ref::Ports_ComPacketQueue::EVENTS].depth = 100;
+    //configurationTable.entries[Ref::Ports_ComPacketQueue::EVENTS].priority = 0;
     // Telemetry
-    configurationTable.entries[Ref::Ports_ComPacketQueue::TELEMETRY].depth = 500;
-    configurationTable.entries[Ref::Ports_ComPacketQueue::TELEMETRY].priority = 2;
+    //configurationTable.entries[Ref::Ports_ComPacketQueue::TELEMETRY].depth = 500;
+    //configurationTable.entries[Ref::Ports_ComPacketQueue::TELEMETRY].priority = 2;
     // File Downlink (first entry after the ComPacket queues = NUM_CONSTANTS)
-    configurationTable.entries[Ref::Ports_ComPacketQueue::NUM_CONSTANTS].depth = 100;
-    configurationTable.entries[Ref::Ports_ComPacketQueue::NUM_CONSTANTS].priority = 1;
+    //configurationTable.entries[Ref::Ports_ComPacketQueue::NUM_CONSTANTS].depth = 100;
+    //configurationTable.entries[Ref::Ports_ComPacketQueue::NUM_CONSTANTS].priority = 1;
     // Allocation identifier is 0 as the MallocAllocator discards it
-    Comms::comQueue.configure(configurationTable, 0, mallocator);
+    //Comms::comQueue.configure(configurationTable, 0, mallocator);
 
     // Note: Uncomment when using Svc:TlmPacketizer
     // tlmSend.setPacketList(Ref::Ref_RefPacketsTlmPackets::packetList, Ref::Ref_RefPacketsTlmPackets::omittedChannels, 1);
@@ -165,7 +165,7 @@ void setupTopology(const TopologyState& state) {
     // Autocoded task kick-off (active components). Function provided by autocoder.
     startTasks(state);
     // Startup TLM and Config verbosity for Versions
-    CDHCore::version.config(true);
+    //CDHCore::version.config(true);
     // Initialize socket client communication if and only if there is a valid specification
     if (state.hostname != nullptr && state.port != 0) {
         Os::TaskString name("ReceiveTask");
