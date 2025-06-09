@@ -142,7 +142,7 @@ jobs:
         with:
           submodules: true
           path: ${{ inputs.fprime_location }}
-      - name: "Install requirements.txt"
+      - name: "Install F´ and Project requirements.txt"
         run: |
           pip3 install -r ${{ inputs.fprime_location }}/requirements.txt
           if [ -f ./requirements.txt ]; then
@@ -154,12 +154,12 @@ jobs:
         with:
           name: build-artifacts
           path: ${{ inputs.project_root }}/build-artifacts
+      - name: "Start up GDS"
+        working-directory: ${{ inputs.build_location }}
+        run: |
+          mkdir -p gds-logs
+          fprime-gds -n --gui none -l gds-logs &
+          sleep 10
       - name: "Run Integration Tests"
         working-directory: ${{ inputs.project_root }}
-        run: |
-          ls -la .
-          ls -la build-artifacts
-          mkdir -p gds-logs
-          fprime-gds -n --gui none -l gds-logs 1>gds-logs/fprime-gds.stdout.log 2>gds-logs/fprime-gds.stderr.log &
-          sleep 10
-          pytest --ignore=lib
+        run: pytest --ignore=lib
