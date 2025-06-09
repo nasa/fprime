@@ -7,7 +7,7 @@ on:
   workflow_call:
     inputs:
       build_location:
-        description: "Path to F´ module to build. E.g. MyDeployment/"
+        description: "Path to F´ module to build. If run_integration_tests is true, this must be a path to the deployment."
         required: true
         type: string
       target_repository:
@@ -62,9 +62,12 @@ jobs:
         with:
           submodules: true
           path: ${{ inputs.fprime_location }}
-      - name: "Install requirements.txt"
+      - name: "Install F´ and Project requirements.txt"
         run: |
           pip3 install -r ${{ inputs.fprime_location }}/requirements.txt
+          if [ -f ./requirements.txt ]; then
+            pip3 install -r ./requirements.txt
+          fi
         shell: bash
       - name: "Generate build cache"
         working-directory: ${{ inputs.build_location }}
@@ -81,7 +84,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
-          path: build-artifacts
+          # This implies if run_integration_tests is true, build_location must be a single deployment
+          path: ${{ inputs.build_location }}/../build-artifacts
 
 
   runUT:
@@ -146,6 +150,7 @@ jobs:
         with:
           name: build-artifacts
       - name: "Run Integration Tests"
+        working-directory: ${{ inputs.build_location }}
         run: |
           mkdir -p gds-logs
           fprime-gds -n --gui none -l gds-logs 1>gds-logs/fprime-gds.stdout.log 2>gds-logs/fprime-gds.stderr.log &

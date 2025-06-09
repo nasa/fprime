@@ -28,7 +28,7 @@ jobs:
     uses: ./.github/workflows/reusable-project-builder.yml
     with: 
       target_repository: nasa/fprime-examples
-      build_location: FlightExamples
+      build_location: FlightExamples/ExamplesDeployment
       run_unit_tests: true
       run_integration_tests: true
       target_ref: ci/examples-int
