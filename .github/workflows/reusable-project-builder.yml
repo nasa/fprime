@@ -153,7 +153,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build-artifacts
-          path: ${{ inputs.project_root }}/
+          path: ${{ inputs.project_root }}/build-artifacts
       - name: "Run Integration Tests"
         working-directory: ${{ inputs.project_root }}
         run: |
