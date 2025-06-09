@@ -182,31 +182,37 @@ TEST(FifoQueue, CopyDataFrom) {
 }
 
 TEST(FifoQueueRules, EnqueueOK) {
-  State state;
-  Rules::enqueueOK.apply(state);
+    State state;
+    Rules::enqueueOK.apply(state);
 }
 
 TEST(FifoQueueRules, EnqueueFull) {
-  State state;
-  for (FwSizeType i = 0; i < State::capacity; i++) {
+    State state;
+    for (FwSizeType i = 0; i < State::capacity; i++) {
+        Rules::enqueueOK.apply(state);
+    }
+    Rules::enqueueFull.apply(state);
+}
+
+TEST(FifoQueueRules, At) {
+    State state;
     Rules::enqueueOK.apply(state);
-  }
-  Rules::enqueueFull.apply(state);
+    Rules::at.apply(state);
 }
 
 TEST(FifoQueueRules, Clear) {
-  State state;
-  Rules::enqueueOK.apply(state);
-  ASSERT_EQ(state.queue.getSize(), 1);
-  Rules::clear.apply(state);
-  ASSERT_EQ(state.queue.getSize(), 0);
+    State state;
+    Rules::enqueueOK.apply(state);
+    ASSERT_EQ(state.queue.getSize(), 1);
+    Rules::clear.apply(state);
+    ASSERT_EQ(state.queue.getSize(), 0);
 }
 
 TEST(FifoQueueScenarios, Random) {
-  State state;
-  Scenarios::random(state, 1000);
+    State state;
+    Scenarios::random(state, 1000);
 }
 
-}
+}  // namespace FifoQueueTest
 
 }  // namespace Fw
