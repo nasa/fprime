@@ -149,10 +149,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build-artifacts
+          path: ${{ inputs.build_location }}/
       - name: "Run Integration Tests"
         working-directory: ${{ inputs.build_location }}
         run: |
+          ls -la .
+          ls -la build-artifacts
           mkdir -p gds-logs
-          fprime-gds -n --gui none -l gds-logs 1>gds-logs/fprime-gds.stdout.log 2>gds-logs/fprime-gds.stderr.log &
+          fprime-gds -n --gui none -l gds-logs -d ./build-artifact/*/* 1>gds-logs/fprime-gds.stdout.log 2>gds-logs/fprime-gds.stderr.log &
           sleep 10
           pytest
