@@ -24,6 +24,11 @@ on:
         required: false
         type: boolean
         default: false
+      project_root:
+        description: "Path to the root of the F´ project. This is used to find artifacts directory for integration tests."
+        required: false
+        type: string
+        default: "."
       fprime_location:
         description: "Relative path from the external project root to its F´ submodule"
         required: false
@@ -84,8 +89,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
-          # This implies if run_integration_tests is true, build_location must be a single deployment
-          path: ${{ inputs.build_location }}/../build-artifacts
+          path: ${{ inputs.project_root }}/build-artifacts
 
 
   runUT:
@@ -149,13 +153,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build-artifacts
-          path: ${{ inputs.build_location }}/
+          path: ${{ inputs.project_root }}/
       - name: "Run Integration Tests"
-        working-directory: ${{ inputs.build_location }}
+        working-directory: ${{ inputs.project_root }}
         run: |
           ls -la .
           ls -la build-artifacts
           mkdir -p gds-logs
           fprime-gds -n --gui none -l gds-logs -d ./build-artifact/*/* 1>gds-logs/fprime-gds.stdout.log 2>gds-logs/fprime-gds.stderr.log &
           sleep 10
-          pytest
+          pytest --ignore=lib
