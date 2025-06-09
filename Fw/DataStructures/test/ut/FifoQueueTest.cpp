@@ -206,6 +206,11 @@ TEST(FifoQueueRules, DequeueOK) {
     Rules::dequeueOK.apply(state);
 }
 
+TEST(FifoQueueRules, DequeueEmpty) {
+    State state;
+    Rules::dequeueEmpty.apply(state);
+}
+
 TEST(FifoQueueRules, Clear) {
     State state;
     Rules::enqueueOK.apply(state);

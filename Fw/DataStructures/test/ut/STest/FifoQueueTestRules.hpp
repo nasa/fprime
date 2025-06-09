@@ -63,6 +63,17 @@ struct DequeueOK : public Rule {
 };
 static DequeueOK dequeueOK;
 
+struct DequeueEmpty : public Rule {
+    DequeueEmpty() : Rule("DequeueEmpty") {}
+    bool precondition(const State& state) { return static_cast<FwSizeType>(state.queue.getSize()) == 0; }
+    void action(State& state) {
+        U32 value = 0;
+        const auto status = state.queue.dequeue(value);
+        ASSERT_EQ(status, Success::FAILURE);
+    }
+};
+static DequeueEmpty dequeueEmpty;
+
 struct Clear : public Rule {
     Clear() : Rule("Clear") {}
     bool precondition(const State& state) { return state.queue.getSize() > 0; }
