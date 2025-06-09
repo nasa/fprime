@@ -48,6 +48,21 @@ struct At : public Rule {
 };
 static At at;
 
+struct DequeueOK : public Rule {
+    DequeueOK() : Rule("DequeueOK") {}
+    bool precondition(const State& state) { return static_cast<FwSizeType>(state.queue.getSize()) > 0; }
+    void action(State& state) {
+        U32 value = 0;
+        const auto status = state.queue.dequeue(value);
+        ASSERT_EQ(status, Success::SUCCESS);
+        const auto expectedValue = state.modelQueue.at(0);
+        ASSERT_EQ(value, expectedValue);
+        state.modelQueue.pop_front();
+        ASSERT_EQ(state.queue.getSize(), state.modelQueue.size());
+    }
+};
+static DequeueOK dequeueOK;
+
 struct Clear : public Rule {
     Clear() : Rule("Clear") {}
     bool precondition(const State& state) { return state.queue.getSize() > 0; }

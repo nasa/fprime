@@ -1,7 +1,7 @@
 #ifndef FifoQueueTestState_HPP
 #define FifoQueueTestState_HPP
 
-#include <vector>
+#include <deque>
 
 #include "Fw/DataStructures/FifoQueue.hpp"
 #include "STest/STest/Pick/Pick.hpp"
@@ -18,7 +18,7 @@ struct State {
   //! The queue under test
   FifoQueue<ItemType, capacity> queue;
   //! The queue for modeling correct behavior
-  std::vector<ItemType> modelQueue;
+  std::deque<ItemType> modelQueue;
   //! Get a random item
   static ItemType getRandomItem() { return STest::Pick::any(); }
 };

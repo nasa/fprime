@@ -200,6 +200,12 @@ TEST(FifoQueueRules, At) {
     Rules::at.apply(state);
 }
 
+TEST(FifoQueueRules, DequeueOK) {
+    State state;
+    Rules::enqueueOK.apply(state);
+    Rules::dequeueOK.apply(state);
+}
+
 TEST(FifoQueueRules, Clear) {
     State state;
     Rules::enqueueOK.apply(state);

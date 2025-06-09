@@ -121,7 +121,8 @@ class ExternalFifoQueue final : public FifoQueueBase<T> {
     //! \return The item
     const T& at(FwSizeType index  //!< The index
     ) const override {
-        FW_ASSERT(index < this->m_size);
+        FW_ASSERT(index < this->m_size, static_cast<FwAssertArgType>(index),
+                  static_cast<FwAssertArgType>(this->m_size));
         auto ci = this->m_dequeueIndex;
         const auto i = ci.increment(index);
         return this->m_items[i];
@@ -130,7 +131,7 @@ class ExternalFifoQueue final : public FifoQueueBase<T> {
     //! Dequeue an element (pop from the left)
     //! \return SUCCESS if element dequeued
     Success dequeue(T& e  //!< The element (output)
-                            ) override {
+                    ) override {
         auto status = Success::FAILURE;
         if (this->m_size > 0) {
             e = this->at(0);
