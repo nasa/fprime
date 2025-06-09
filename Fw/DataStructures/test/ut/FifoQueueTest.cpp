@@ -182,12 +182,14 @@ TEST(FifoQueue, CopyDataFrom) {
 }
 
 TEST(FifoQueueRules, EnqueueOK) {
-    State state;
+    State::Queue queue;
+    State state(queue);
     Rules::enqueueOK.apply(state);
 }
 
 TEST(FifoQueueRules, EnqueueFull) {
-    State state;
+    State::Queue queue;
+    State state(queue);
     for (FwSizeType i = 0; i < State::capacity; i++) {
         Rules::enqueueOK.apply(state);
     }
@@ -195,24 +197,28 @@ TEST(FifoQueueRules, EnqueueFull) {
 }
 
 TEST(FifoQueueRules, At) {
-    State state;
+    State::Queue queue;
+    State state(queue);
     Rules::enqueueOK.apply(state);
     Rules::at.apply(state);
 }
 
 TEST(FifoQueueRules, DequeueOK) {
-    State state;
+    State::Queue queue;
+    State state(queue);
     Rules::enqueueOK.apply(state);
     Rules::dequeueOK.apply(state);
 }
 
 TEST(FifoQueueRules, DequeueEmpty) {
-    State state;
+    State::Queue queue;
+    State state(queue);
     Rules::dequeueEmpty.apply(state);
 }
 
 TEST(FifoQueueRules, Clear) {
-    State state;
+    State::Queue queue;
+    State state(queue);
     Rules::enqueueOK.apply(state);
     ASSERT_EQ(state.queue.getSize(), 1);
     Rules::clear.apply(state);
@@ -220,7 +226,8 @@ TEST(FifoQueueRules, Clear) {
 }
 
 TEST(FifoQueueScenarios, Random) {
-    State state;
+    State::Queue queue;
+    State state(queue);
     Scenarios::random(state, 1000);
 }
 
