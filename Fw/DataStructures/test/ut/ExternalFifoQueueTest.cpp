@@ -5,6 +5,7 @@
 // ======================================================================
 
 #include "Fw/DataStructures/test/ut/STest/FifoQueueTestRules.hpp"
+#include "Fw/DataStructures/test/ut/STest/FifoQueueTestScenarios.hpp"
 
 namespace Fw {
 

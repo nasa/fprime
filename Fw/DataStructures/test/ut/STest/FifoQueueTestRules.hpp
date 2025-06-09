@@ -25,7 +25,8 @@ struct EnqueueOK : public Rule {
         state.modelQueue.push_back(value);
     }
 };
-static EnqueueOK enqueueOK;
+
+extern EnqueueOK enqueueOK;
 
 struct EnqueueFull : public Rule {
     EnqueueFull() : Rule("EnqueueFull") {}
@@ -36,7 +37,8 @@ struct EnqueueFull : public Rule {
         ASSERT_EQ(status, Success::FAILURE);
     }
 };
-static EnqueueFull enqueueFull;
+
+extern EnqueueFull enqueueFull;
 
 struct At : public Rule {
     At() : Rule("At") {}
@@ -46,7 +48,8 @@ struct At : public Rule {
         ASSERT_EQ(state.queue.at(index), state.modelQueue.at(index));
     }
 };
-static At at;
+
+extern At at;
 
 struct DequeueOK : public Rule {
     DequeueOK() : Rule("DequeueOK") {}
@@ -61,7 +64,8 @@ struct DequeueOK : public Rule {
         ASSERT_EQ(state.queue.getSize(), state.modelQueue.size());
     }
 };
-static DequeueOK dequeueOK;
+
+extern DequeueOK dequeueOK;
 
 struct DequeueEmpty : public Rule {
     DequeueEmpty() : Rule("DequeueEmpty") {}
@@ -72,7 +76,8 @@ struct DequeueEmpty : public Rule {
         ASSERT_EQ(status, Success::FAILURE);
     }
 };
-static DequeueEmpty dequeueEmpty;
+
+extern DequeueEmpty dequeueEmpty;
 
 struct Clear : public Rule {
     Clear() : Rule("Clear") {}
@@ -83,7 +88,9 @@ struct Clear : public Rule {
         state.modelQueue.clear();
     }
 };
-static Clear clear;
+
+extern Clear clear;
+
 };  // namespace Rules
 
 }  // namespace FifoQueueTest
