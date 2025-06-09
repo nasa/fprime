@@ -21,8 +21,6 @@
 #include <Os/Mutex.hpp>
 
 //Subtopology includes
-#include <Svc/Subtopologies/CDHCore/CDHCoreTopologyDefs.hpp>
-#include <Svc/Subtopologies/Comms/CommsTopologyDefs.hpp>
 
 // Allows easy reference to objects in FPP/autocoder required namespaces
 using namespace Ref;
@@ -92,7 +90,7 @@ void configureTopology() {
     rateGroup3Comp.configure(rateGroup3Context, FW_NUM_ARRAY_ELEMENTS(rateGroup3Context));
 
     // File downlink requires some project-derived properties.
-    fileDownlink.configure(FILE_DOWNLINK_TIMEOUT, FILE_DOWNLINK_COOLDOWN, FILE_DOWNLINK_CYCLE_TIME,
+    FileHandling::fileDownlink.configure(FILE_DOWNLINK_TIMEOUT, FILE_DOWNLINK_COOLDOWN, FILE_DOWNLINK_CYCLE_TIME,
                            FILE_DOWNLINK_FILE_QUEUE_DEPTH);
 
     // Parameter database is configured with a database file name, and that file must be initially read.
@@ -116,7 +114,7 @@ void configureTopology() {
     memset(&dpBuffMgrBins, 0, sizeof(dpBuffMgrBins));
     dpBuffMgrBins.bins[0].bufferSize = DP_BUFFER_MANAGER_STORE_SIZE;
     dpBuffMgrBins.bins[0].numBuffers = DP_BUFFER_MANAGER_STORE_COUNT;
-    dpBufferManager.setup(DP_BUFFER_MANAGER_ID, 0, mallocator, dpBuffMgrBins);
+    DataProducts::dpBufferManager.setup(DP_BUFFER_MANAGER_ID, 0, mallocator, dpBuffMgrBins);
 
     Comms::frameAccumulator.configure(frameDetector, 1, mallocator, 2048);
 
@@ -126,8 +124,8 @@ void configureTopology() {
     // create the DP directory if it doesn't exist
     Os::FileSystem::createDirectory(dpDir.toChar());
 
-    dpCat.configure(&dpDir,1,dpState,0,mallocator);
-    dpWriter.configure(dpDir);
+    DataProducts::dpCat.configure(&dpDir,1,dpState,0,mallocator);
+    DataProducts::dpWriter.configure(dpDir);
 
     // ComQueue configuration
     // Events (highest-priority)

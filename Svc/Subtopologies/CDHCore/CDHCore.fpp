@@ -46,5 +46,6 @@ module CDHCore {
         instance textLogger
         instance fatalAdapter
 
+
     } # end topology
 } # end CDHCore Subtopology

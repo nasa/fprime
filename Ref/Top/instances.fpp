@@ -33,21 +33,6 @@ module Ref {
     stack size Default.STACK_SIZE \
     priority 118
 
-  instance fileDownlink: Svc.FileDownlink base id 0x0700 \
-    queue size 30 \
-    stack size Default.STACK_SIZE \
-    priority 100
-
-  instance fileManager: Svc.FileManager base id 0x0800 \
-    queue size 30 \
-    stack size Default.STACK_SIZE \
-    priority 100
-
-  instance fileUplink: Svc.FileUplink base id 0x0900 \
-    queue size 30 \
-    stack size Default.STACK_SIZE \
-    priority 100
-
   instance pingRcvr: Ref.PingReceiver base id 0x0A00 \
     queue size Default.QUEUE_SIZE \
     stack size Default.STACK_SIZE \
@@ -73,20 +58,6 @@ module Ref {
     stack size Default.STACK_SIZE \
     priority 96
 
-  instance dpCat: Svc.DpCatalog base id 0x0E00 \
-    queue size Default.QUEUE_SIZE \
-    stack size Default.STACK_SIZE \
-    priority 96
-
-  instance dpMgr: Svc.DpManager base id 0x0F00 \
-    queue size Default.QUEUE_SIZE \
-    stack size Default.STACK_SIZE \
-    priority 96
-
-  instance dpWriter: Svc.DpWriter base id 0x1000 \
-    queue size Default.QUEUE_SIZE \
-    stack size Default.STACK_SIZE \
-    priority 96
 
   instance typeDemo: Ref.TypeDemo base id 0x1200
 
@@ -126,7 +97,6 @@ module Ref {
 
   instance systemResources: Svc.SystemResources base id 0x4900
 
-  instance dpBufferManager: Svc.BufferManager base id 0x4A00
 
   instance linuxTimer: Svc.LinuxTimer base id 0x5000
 

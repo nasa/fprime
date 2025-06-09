@@ -19,6 +19,7 @@ module Ref {
     TELEMETRY
   }
 
+  #Same here
   enum Ports_ComBufferQueue {
     FILE_DOWNLINK
   }
@@ -29,6 +30,8 @@ module Ref {
     # ----------------------------------------------------------------------
     import CDHCore.Subtopology
     import Comms.Subtopology
+    import FileHandling.Subtopology
+    import DataProducts.Subtopology
 
     # ----------------------------------------------------------------------
     # Instances used in the topology
@@ -41,9 +44,6 @@ module Ref {
     instance SG5
     instance blockDrv
     instance fatalHandler
-    instance fileDownlink
-    instance fileManager
-    instance fileUplink
     instance posixTime
     instance pingRcvr
     instance prmDb
@@ -55,10 +55,6 @@ module Ref {
     instance sendBuffComp
     instance typeDemo
     instance systemResources
-    instance dpCat
-    instance dpMgr
-    instance dpWriter
-    instance dpBufferManager
     instance linuxTimer
 
     # ----------------------------------------------------------------------
@@ -103,7 +99,7 @@ module Ref {
       rateGroup1Comp.RateGroupMemberOut[0] -> SG1.schedIn
       rateGroup1Comp.RateGroupMemberOut[1] -> SG2.schedIn
       rateGroup1Comp.RateGroupMemberOut[2] -> CDHCore.tlmSend.Run
-      rateGroup1Comp.RateGroupMemberOut[3] -> fileDownlink.Run
+      rateGroup1Comp.RateGroupMemberOut[3] -> FileHandling.fileDownlink.Run
       rateGroup1Comp.RateGroupMemberOut[4] -> systemResources.run
       rateGroup1Comp.RateGroupMemberOut[5] -> Comms.comQueue.run
 
@@ -120,33 +116,23 @@ module Ref {
       rateGroup3Comp.RateGroupMemberOut[1] -> SG5.schedIn
       rateGroup3Comp.RateGroupMemberOut[2] -> blockDrv.Sched
       rateGroup3Comp.RateGroupMemberOut[3] -> Comms.commsBufferManager.schedIn
-      rateGroup3Comp.RateGroupMemberOut[4] -> dpBufferManager.schedIn
-      rateGroup3Comp.RateGroupMemberOut[5] -> dpWriter.schedIn
-      rateGroup3Comp.RateGroupMemberOut[6] -> dpMgr.schedIn
+      rateGroup3Comp.RateGroupMemberOut[4] -> DataProducts.dpBufferManager.schedIn
+      rateGroup3Comp.RateGroupMemberOut[5] -> DataProducts.dpWriter.schedIn
+      rateGroup3Comp.RateGroupMemberOut[6] -> DataProducts.dpMgr.schedIn
     }
 
     connections Ref {
       sendBuffComp.Data -> blockDrv.BufferIn
       blockDrv.BufferOut -> recvBuffComp.Data
-    }
 
-
-    connections DataProducts {
-      # DpMgr and DpWriter connections. Have explicit port indexes for demo
-      dpMgr.bufferGetOut[0] -> dpBufferManager.bufferGetCallee
-      dpMgr.productSendOut[0] -> dpWriter.bufferSendIn
-      dpWriter.deallocBufferSendOut -> dpBufferManager.bufferSendIn
-
-      # Component DP connections
-
+      ### Moved this out of DataProducts Subtopology --> anything specific to deployment should live in Ref connections
       # Synchronous request. Will have both request kinds for demo purposes, not typical
-      SG1.productGetOut -> dpMgr.productGetIn[0]
+      SG1.productGetOut -> DataProducts.dpMgr.productGetIn[0]
       # Asynchronous request
-      SG1.productRequestOut -> dpMgr.productRequestIn[0]
-      dpMgr.productResponseOut[0] -> SG1.productRecvIn
+      SG1.productRequestOut -> DataProducts.dpMgr.productRequestIn[0]
+      DataProducts.dpMgr.productResponseOut[0] -> SG1.productRecvIn
       # Send filled DP
-      SG1.productSendOut -> dpMgr.productSendIn[0]
-
+      SG1.productSendOut -> DataProducts.dpMgr.productSendIn[0]
     }
 
   }
