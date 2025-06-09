@@ -3,4 +3,3 @@
 cd `dirname $0`
 fprime-util build --ut --jobs 4
 cp ../../build-fprime-automatic-native-ut/bin/Darwin/Fw_DataStructures_ut_exe .
-./Fw_DataStructures_ut_exe
