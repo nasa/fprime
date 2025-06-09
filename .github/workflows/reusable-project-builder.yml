@@ -158,7 +158,7 @@ jobs:
         working-directory: ${{ inputs.build_location }}
         run: |
           mkdir -p gds-logs
-          fprime-gds -n --gui none -l gds-logs &
+          fprime-gds --gui none -l gds-logs &
           sleep 10
       - name: "Run Integration Tests"
         working-directory: ${{ inputs.project_root }}
