@@ -1,6 +1,8 @@
 #ifndef FifoQueueTestRules_HPP
 #define FifoQueueTestRules_HPP
 
+#include <gtest/gtest.h>
+
 #include "Fw/DataStructures/test/ut/STest/FifoQueueTestState.hpp"
 #include "STest/STest/Pick/Pick.hpp"
 #include "STest/STest/Rule/Rule.hpp"
@@ -11,7 +13,7 @@ namespace FifoQueueTest {
 
 using Rule = STest::Rule<State>;
 
-struct Rules {
+namespace Rules {
 
     struct EnqueueOK : public Rule {
         EnqueueOK() : Rule("EnqueueOK") {}
@@ -21,10 +23,11 @@ struct Rules {
         void action(State& state) {
             const U32 value = STest::Pick::any();
             const auto status = state.queue.enqueue(value);
-            state.modelQueue.push_back(value);
             ASSERT_EQ(status, Success::SUCCESS);
+            state.modelQueue.push_back(value);
         }
     };
+    static EnqueueOK enqueueOK;
 
     struct EnqueueFull : public Rule {
         EnqueueFull() : Rule("EnqueueFull") {}
@@ -37,6 +40,7 @@ struct Rules {
             ASSERT_EQ(status, Success::FAILURE);
         }
     };
+    static EnqueueFull enqueueFull;
 
     struct Clear : public Rule {
         Clear() : Rule("Clear") {}
@@ -47,6 +51,7 @@ struct Rules {
             state.modelQueue.clear();
         }
     };
+    static Clear clear;
 };
 
 }

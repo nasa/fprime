@@ -4,11 +4,7 @@
 // \brief  cpp file for FifoQueue tests
 // ======================================================================
 
-#include <gtest/gtest.h>
-
-#include "Fw/DataStructures/Array.hpp"
-#include "Fw/DataStructures/FifoQueue.hpp"
-#include "Fw/DataStructures/test/ut/STest/FifoQueueTestRules.hpp"
+#include "Fw/DataStructures/test/ut/STest/FifoQueueTestScenarios.hpp"
 
 namespace Fw {
 
@@ -220,28 +216,28 @@ TEST(FifoQueue, CopyDataFrom) {
 
 TEST(FifoQueueRules, EnqueueOK) {
   State state;
-  Rules::EnqueueOK enqueueOK;
-  enqueueOK.apply(state);
+  Rules::enqueueOK.apply(state);
 }
 
 TEST(FifoQueueRules, EnqueueFull) {
   State state;
-  Rules::EnqueueOK enqueueOK;
-  Rules::EnqueueFull enqueueFull;
   for (FwSizeType i = 0; i < State::capacity; i++) {
-      enqueueOK.apply(state);
+    Rules::enqueueOK.apply(state);
   }
-  enqueueFull.apply(state);
+  Rules::enqueueFull.apply(state);
 }
 
 TEST(FifoQueueRules, Clear) {
   State state;
-  Rules::Clear clear;
-  Rules::EnqueueOK enqueueOK;
-  enqueueOK.apply(state);
+  Rules::enqueueOK.apply(state);
   ASSERT_EQ(state.queue.getSize(), 1);
-  clear.apply(state);
+  Rules::clear.apply(state);
   ASSERT_EQ(state.queue.getSize(), 0);
+}
+
+TEST(FifoQueueScenarios, Random) {
+  State state;
+  Scenarios::random(state, 1000);
 }
 
 }
