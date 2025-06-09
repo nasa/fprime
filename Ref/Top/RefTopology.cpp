@@ -20,8 +20,6 @@
 // Used for 1Hz synthetic cycling
 #include <Os/Mutex.hpp>
 
-//Subtopology includes
-
 // Allows easy reference to objects in FPP/autocoder required namespaces
 using namespace Ref;
 
@@ -94,8 +92,8 @@ void configureTopology() {
                            FILE_DOWNLINK_FILE_QUEUE_DEPTH);
 
     // Parameter database is configured with a database file name, and that file must be initially read.
-    prmDb.configure("PrmDb.dat");
-    prmDb.readParamFile();
+    FileHandling::prmDb.configure("PrmDb.dat");
+    FileHandling::prmDb.readParamFile();
 
     // Health is supplied a set of ping entires.
     CDHCore::health.setPingEntries(ConfigObjects::CDHCore_health::pingEntries,

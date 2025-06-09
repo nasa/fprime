@@ -53,12 +53,6 @@ module Ref {
   #    stack size Default.STACK_SIZE \
   #    priority 97
 
-  instance prmDb: Svc.PrmDb base id 0x0D00 \
-    queue size Default.QUEUE_SIZE \
-    stack size Default.STACK_SIZE \
-    priority 96
-
-
   instance typeDemo: Ref.TypeDemo base id 0x1200
 
   # ----------------------------------------------------------------------
@@ -87,7 +81,6 @@ module Ref {
   # Passive component instances
   # ----------------------------------------------------------------------
 
-  instance fatalHandler: Svc.FatalHandler base id 0x4200
 
   instance posixTime: Svc.PosixTime base id 0x4400
 
@@ -96,7 +89,6 @@ module Ref {
   instance recvBuffComp: Ref.RecvBuff base id 0x4600
 
   instance systemResources: Svc.SystemResources base id 0x4900
-
 
   instance linuxTimer: Svc.LinuxTimer base id 0x5000
 

@@ -1,6 +1,5 @@
 module Ref {
 
-
   # ----------------------------------------------------------------------
   # Symbolic constants for port numbers
   # ----------------------------------------------------------------------
@@ -10,7 +9,6 @@ module Ref {
     rateGroup2
     rateGroup3
   }
-
 
   #The topology CPP expects these enums to be defined here, so though the actual comms subtopology does not use it, we cannot remove yet. 
   #Comms.fpp subtopology file has its own enum, and that is what is really used in the subtopology.
@@ -43,10 +41,8 @@ module Ref {
     instance SG4
     instance SG5
     instance blockDrv
-    instance fatalHandler
     instance posixTime
     instance pingRcvr
-    instance prmDb
     instance rateGroup1Comp
     instance rateGroup2Comp
     instance rateGroup3Comp
@@ -65,15 +61,15 @@ module Ref {
 
     event connections instance CDHCore.events
 
-    param connections instance prmDb
-
     telemetry connections instance CDHCore.tlmSend
 
     text event connections instance CDHCore.textLogger
 
-    time connections instance posixTime
-
     health connections instance CDHCore.$health
+
+    param connections instance FileHandling.prmDb
+
+    time connections instance posixTime
 
     # ----------------------------------------------------------------------
     # Telemetry packets
@@ -85,9 +81,6 @@ module Ref {
     # Direct graph specifiers
     # ----------------------------------------------------------------------
 
-    connections FaultProtection {
-      CDHCore.events.FatalAnnounce -> fatalHandler.FatalReceive
-    }
 
     connections RateGroups {
 

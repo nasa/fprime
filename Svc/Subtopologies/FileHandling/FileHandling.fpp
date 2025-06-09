@@ -29,6 +29,11 @@ module FileHandling{
         stack size FileHandlingConfig.StackSizes.fileManager \
         priority FileHandlingConfig.Priorities.fileManager
 
+    instance prmDb: Svc.PrmDb base id FileHandlingConfig.BASE_ID + 0x0400 \
+        queue size FileHandlingConfig.QueueSizes.prmDb \
+        stack size FileHandlingConfig.StackSizes.prmDb \
+        priority FileHandlingConfig.Priorities.prmDb
+
     # ----------------------------------------------------------------------
     # Queued Components
     # ----------------------------------------------------------------------
@@ -47,6 +52,7 @@ module FileHandling{
         instance fileUplink
         instance fileDownlink
         instance fileManager
+        instance prmDb
 
         #Passive Components
 

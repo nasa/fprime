@@ -31,6 +31,8 @@ module CDHCore {
     instance textLogger: Svc.PassiveTextLogger base id CDHCoreConfig.BASE_ID + 0x0600 \
   
     instance fatalAdapter: Svc.AssertFatalAdapter base id CDHCoreConfig.BASE_ID + 0x0700 \
+
+    instance fatalHandler: Svc.FatalHandler base id CDHCoreConfig.BASE_ID + 0x0800 \ 
     
     topology Subtopology {
         #Active Components
@@ -45,7 +47,11 @@ module CDHCore {
         instance version
         instance textLogger
         instance fatalAdapter
+        instance fatalHandler
 
+        connections FaultProtection {
+            events.FatalAnnounce -> fatalHandler.FatalReceive
+        }
 
     } # end topology
 } # end CDHCore Subtopology
