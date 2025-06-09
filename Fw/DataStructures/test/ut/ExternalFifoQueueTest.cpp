@@ -265,13 +265,12 @@ TEST(ExternalFifoQueueRules, Clear) {
     ASSERT_EQ(state.queue.getSize(), 0);
 }
 
-#if 0
 TEST(ExternalFifoQueueScenarios, Random) {
-    State::Queue queue;
+    U32 items[State::capacity];
+    State::ExternalQueue queue(items, State::capacity);
     State state(queue);
-    Scenarios::random(state, 1000);
+    Scenarios::random(Fw::String("ExternalFifoQueueRandom"), state, 1000);
 }
-#endif
 
 }  // namespace FifoQueueTest
 }  // namespace Fw
