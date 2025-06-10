@@ -8,7 +8,7 @@
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Os/Os.hpp>
 
-// Forward declation for UTs
+// Forward declaration for UTs
 namespace Os {namespace Test {namespace FileTest {struct Tester;}}}
 
 namespace Os {
