@@ -51,7 +51,7 @@ We welcome contributions to expand the list of supported platforms! Here’s how
 2. Create a reference deployment for your platform. Use [`fprime-vxworks-reference`](https://github.com/fprime-community/fprime-vxworks-reference) or [`fprime-baremetal-reference`](https://github.com/fprime-community/fprime-baremetal-reference) as examples for the file structure and for the cmake platform/toolchain files.
 3. Include build, run, and hardware setup instructions in a README.md.
 4. Set up CI for your deployment and have CI run the F Prime provided integration test scripts.
-5. Optional: submit a request to add your reference deployment to [`fprime-community`](https://github.com/fprime-community). Provide platform description in your request.
+5. Optional: submit a request to add your reference deployment to fprime-community by [opening a discussion](https://github.com/nasa/fprime/discussions). Provide platform description in your request.
    
 > [!TIP]
 > 1. Follow the naming and file-structure convention as the example reference deployments.
