@@ -12,19 +12,19 @@
 
 register_fprime_library(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/TCDeframer.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/TcDeframer.cpp"
   AUTOCODER_INPUTS
-    "${CMAKE_CURRENT_LIST_DIR}/TCDeframer.fpp"
+    "${CMAKE_CURRENT_LIST_DIR}/TcDeframer.fpp"
   DEPENDS
     Svc_CCSDS_Types
 )
 
 register_fprime_ut(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/test/ut/TCDeframerTestMain.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/test/ut/TCDeframerTester.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/TcDeframerTestMain.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/TcDeframerTester.cpp"
   AUTOCODER_INPUTS
-    "${CMAKE_CURRENT_LIST_DIR}/TCDeframer.fpp"
+    "${CMAKE_CURRENT_LIST_DIR}/TcDeframer.fpp"
   DEPENDS
     Svc_CCSDS_Types
     STest

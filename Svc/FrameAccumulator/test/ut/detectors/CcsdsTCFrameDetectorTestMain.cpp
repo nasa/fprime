@@ -1,11 +1,11 @@
 // ======================================================================
-// \title  CcsdsTCFrameDetectorTestMain.cpp
+// \title  CcsdsTcFrameDetectorTestMain.cpp
 // \author thomas-bc
 // \brief  cpp file for FrameAccumulator component test main function
 // ======================================================================
 
 #include "STest/Random/Random.hpp"
-#include "Svc/FrameAccumulator/FrameDetector/CcsdsTCFrameDetector.hpp"
+#include "Svc/FrameAccumulator/FrameDetector/CcsdsTcFrameDetector.hpp"
 #include "Svc/CCSDS/Utils/CRC16.hpp"
 #include "Svc/CCSDS/Types/TCHeaderSerializableAc.hpp"
 #include "Svc/CCSDS/Types/TCTrailerSerializableAc.hpp"
@@ -28,7 +28,7 @@ class CcsdsFrameDetectorTest : public ::testing::Test {
     }
 
     U8 m_buffer[CIRCULAR_BUFFER_TEST_SIZE];
-    Svc::FrameDetectors::CcsdsTCFrameDetector detector;
+    Svc::FrameDetectors::CcsdsTcFrameDetector detector;
     Types::CircularBuffer circular_buffer;
 
 };

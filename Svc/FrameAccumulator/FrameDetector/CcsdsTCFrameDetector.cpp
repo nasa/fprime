@@ -1,10 +1,10 @@
 // ======================================================================
-// \title  CcsdsTCFrameDetector.hpp
+// \title  CcsdsTcFrameDetector.hpp
 // \author thomas-bc
 // \brief  hpp file for fprime frame detector definitions
 // ======================================================================
 
-#include "Svc/FrameAccumulator/FrameDetector/CcsdsTCFrameDetector.hpp"
+#include "Svc/FrameAccumulator/FrameDetector/CcsdsTcFrameDetector.hpp"
 #include "Svc/CCSDS/Types/FppConstantsAc.hpp"
 #include <cstdio>
 #include "config/FppConstantsAc.hpp"
@@ -16,7 +16,7 @@
 namespace Svc {
 namespace FrameDetectors {
 
-FrameDetector::Status CcsdsTCFrameDetector::detect(const Types::CircularBuffer& data, FwSizeType& size_out) const {
+FrameDetector::Status CcsdsTcFrameDetector::detect(const Types::CircularBuffer& data, FwSizeType& size_out) const {
 
     if (data.get_allocated_size() < CCSDS::TCHeader::SERIALIZED_SIZE + CCSDS::TCTrailer::SERIALIZED_SIZE) {
         size_out = CCSDS::TCHeader::SERIALIZED_SIZE + CCSDS::TCTrailer::SERIALIZED_SIZE;

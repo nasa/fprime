@@ -1,10 +1,10 @@
 // ======================================================================
-// \title  TCDeframer.cpp
+// \title  TcDeframer.cpp
 // \author thomas-bc
-// \brief  cpp file for TCDeframer component implementation class
+// \brief  cpp file for TcDeframer component implementation class
 // ======================================================================
 
-#include "Svc/CCSDS/TCDeframer/TCDeframer.hpp"
+#include "Svc/CCSDS/TcDeframer/TcDeframer.hpp"
 #include "Svc/CCSDS/Types/FppConstantsAc.hpp"
 #include "Svc/CCSDS/Types/TCHeaderSerializableAc.hpp"
 #include "Svc/CCSDS/Types/TCTrailerSerializableAc.hpp"
@@ -18,12 +18,12 @@ namespace CCSDS {
 // Component construction and destruction
 // ----------------------------------------------------------------------
 
-TCDeframer ::TCDeframer(const char* const compName)
-    : TCDeframerComponentBase(compName), m_spacecraftId(ComCfg::SpacecraftId) {}
+TcDeframer ::TcDeframer(const char* const compName)
+    : TcDeframerComponentBase(compName), m_spacecraftId(ComCfg::SpacecraftId) {}
 
-TCDeframer ::~TCDeframer() {}
+TcDeframer ::~TcDeframer() {}
 
-void TCDeframer::configure(U16 vcId, U16 spacecraftId, bool acceptAllVcid) {
+void TcDeframer::configure(U16 vcId, U16 spacecraftId, bool acceptAllVcid) {
     this->m_vcId = vcId;
     this->m_spacecraftId = spacecraftId;
     this->m_acceptAllVcid = acceptAllVcid;
@@ -32,7 +32,7 @@ void TCDeframer::configure(U16 vcId, U16 spacecraftId, bool acceptAllVcid) {
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void TCDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
+void TcDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
     // CCSDS TC Format:
     // 5 octets - TC Primary Header
     // Up to 1019 octets - Data Field (including optional 2 octets frame error control field)
@@ -107,7 +107,7 @@ void TCDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
     this->dataOut_out(0, data, context);
 }
 
-void TCDeframer ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer, const ComCfg::FrameContext& context) {
+void TcDeframer ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer, const ComCfg::FrameContext& context) {
     this->dataReturnOut_out(0, fwBuffer, context);
 }
 

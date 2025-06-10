@@ -1,10 +1,10 @@
 // ======================================================================
-// \title  TCDeframerTester.cpp
+// \title  TcDeframerTester.cpp
 // \author thomas-bc
-// \brief  cpp file for TCDeframer component test harness implementation class
+// \brief  cpp file for TcDeframer component test harness implementation class
 // ======================================================================
 
-#include "TCDeframerTester.hpp"
+#include "TcDeframerTester.hpp"
 #include "STest/Random/Random.hpp"
 #include "Svc/CCSDS/Utils/CRC16.hpp"
 #include "Svc/CCSDS/Types/TCHeaderSerializableAc.hpp"
@@ -18,19 +18,19 @@ namespace CCSDS {
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-TCDeframerTester ::TCDeframerTester()
-    : TCDeframerGTestBase("TCDeframerTester", TCDeframerTester::MAX_HISTORY_SIZE), component("TCDeframer") {
+TcDeframerTester ::TcDeframerTester()
+    : TcDeframerGTestBase("TcDeframerTester", TcDeframerTester::MAX_HISTORY_SIZE), component("TcDeframer") {
     this->initComponents();
     this->connectPorts();
 }
 
-TCDeframerTester ::~TCDeframerTester() {}
+TcDeframerTester ::~TcDeframerTester() {}
 
 // ----------------------------------------------------------------------
 // Tests
 // ----------------------------------------------------------------------
 
-void TCDeframerTester::testDataReturn() {
+void TcDeframerTester::testDataReturn() {
     U8 data[1] = {0};
     Fw::Buffer buffer(data, sizeof(data));
     ComCfg::FrameContext nullContext;
@@ -41,7 +41,7 @@ void TCDeframerTester::testDataReturn() {
     ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(0).context, nullContext);
 }
 
-void TCDeframerTester::testNominalDeframing() {
+void TcDeframerTester::testNominalDeframing() {
     // Frame: 5 bytes (header) + bytes (data) + 2 bytes (trailer)
     U16 scId = static_cast<U16>(STest::Random::lowerUpper(0, 0x3FF)); // random 10 bit Spacecraft ID
     U8 vcId = static_cast<U8>(STest::Random::lowerUpper(0, 0x3F)); // random 6 bit virtual channel ID
@@ -67,7 +67,7 @@ void TCDeframerTester::testNominalDeframing() {
     }
 }
 
-void TCDeframerTester::testInvalidScId() {
+void TcDeframerTester::testInvalidScId() {
     // Frame: 5 bytes (header) + 1 byte (data) + 2 bytes (trailer)
     U16 scId = static_cast<U16>(STest::Random::lowerUpper(1, 0x3FF)); // random 10 bit Spacecraft ID
     U8 dataLength = static_cast<U8>(STest::Random::lowerUpper(1, 200)); // bytes of data, random length
@@ -90,7 +90,7 @@ void TCDeframerTester::testInvalidScId() {
 }
 
 
-void TCDeframerTester::testInvalidVcId() {
+void TcDeframerTester::testInvalidVcId() {
     U8 vcId = static_cast<U8>(STest::Random::lowerUpper(1, 0x3F)); // random 6 bit VCID
     U8 dataLength = static_cast<U8>(STest::Random::lowerUpper(1, 200)); // bytes of data, random length
     U8 data[dataLength];
@@ -111,7 +111,7 @@ void TCDeframerTester::testInvalidVcId() {
     ASSERT_EVENTS_InvalidVcId(0, static_cast<U16>(vcId - 1), vcId); // event was emitted for invalid VCID
 }
 
-void TCDeframerTester::testInvalidLengthToken() {
+void TcDeframerTester::testInvalidLengthToken() {
     U8 dataLength = static_cast<U8>(STest::Random::lowerUpper(1, 200)); // bytes of data, random length
     U8 data[dataLength];
     U8 incorrectLengthToken = static_cast<U8>(dataLength + TCHeader::SERIALIZED_SIZE + TCTrailer::SERIALIZED_SIZE + 1);
@@ -133,7 +133,7 @@ void TCDeframerTester::testInvalidLengthToken() {
     ASSERT_EVENTS_InvalidFrameLength(0, static_cast<U16>(incorrectLengthToken + 1), static_cast<FwSizeType>(dataLength + TCHeader::SERIALIZED_SIZE + TCTrailer::SERIALIZED_SIZE));
 }
 
-void TCDeframerTester::testInvalidCrc() {
+void TcDeframerTester::testInvalidCrc() {
     U8 dataLength = static_cast<U8>(STest::Random::lowerUpper(1, 200)); // bytes of data, random length
     U8 data[dataLength];
     
@@ -154,7 +154,7 @@ void TCDeframerTester::testInvalidCrc() {
     ASSERT_EVENTS_InvalidCrc_SIZE(1);
 }
 
-void TCDeframerTester::setComponentState(U16 scid, U8 vcid, U8 sequenceNumber, bool acceptAllVcid) {
+void TcDeframerTester::setComponentState(U16 scid, U8 vcid, U8 sequenceNumber, bool acceptAllVcid) {
     this->component.configure(vcid, scid, acceptAllVcid);
     // this->component.m_spacecraftId = scid;
     // this->component.m_vcId = vcid;
@@ -162,7 +162,7 @@ void TCDeframerTester::setComponentState(U16 scid, U8 vcid, U8 sequenceNumber, b
     // this->component.m_acceptAllVcid = acceptAllVcid;
 }
 
-Fw::Buffer TCDeframerTester::assembleFrameBuffer(U8* data, U8 dataLength, U16 scid, U8 vcid, U8 seqNumber){
+Fw::Buffer TcDeframerTester::assembleFrameBuffer(U8* data, U8 dataLength, U16 scid, U8 vcid, U8 seqNumber){
     ::memset(this->m_frameData, 0, sizeof(this->m_frameData));
     U16 frameLength = static_cast<U16>(TCHeader::SERIALIZED_SIZE + dataLength + TCTrailer::SERIALIZED_SIZE);
     U16 frameLengthToken = static_cast<U16>(frameLength - 1); // length token is length - 1

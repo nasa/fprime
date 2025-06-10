@@ -4,7 +4,7 @@ The `Svc::CCSDS::SpacePacketDeframer` is an implementation of the [DeframerInter
 
 It receives data containing a Space Packet on its input port and extracts the Space Packet. Please refer to the CCSDS [Space Packet Protocol specification (CCSDS 133.0-B-2)](https://ccsds.org/Pubs/133x0b2e2.pdf) for details on the packet format.
 
-The `Svc::CCSDS::SpacePacketDeframer` is typically used downstream of a component that removes transfer frame headers, such as the `Svc::CCSDS::TCDeframer`. It validates the Space Packet header and extracts the payload.
+The `Svc::CCSDS::SpacePacketDeframer` is typically used downstream of a component that removes transfer frame headers, such as the `Svc::CCSDS::TcDeframer`. It validates the Space Packet header and extracts the payload.
 
 ## Port Descriptions
 

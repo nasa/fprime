@@ -1,5 +1,5 @@
 // ======================================================================
-// \title  CcsdsTCFrameDetector.hpp
+// \title  CcsdsTcFrameDetector.hpp
 // \author thomas-bc
 // \brief  hpp file for fprime frame detector definitions
 // ======================================================================
@@ -14,7 +14,7 @@ namespace Svc {
 namespace FrameDetectors {
 
 //! \brief interface class used to codify what must be supported to allow frame detection
-class CcsdsTCFrameDetector : public FrameDetector {
+class CcsdsTcFrameDetector : public FrameDetector {
   public:
     //! \brief detect if a frame is available within the circular buffer
     //!
@@ -46,7 +46,7 @@ class CcsdsTCFrameDetector : public FrameDetector {
     const U16 m_expectedFlagsAndScIdToken =
         0x1 << CCSDS::TCSubfields::BypassFlagOffset | (ComCfg::FppConstant_SpacecraftId::SpacecraftId);
 
-};  // class CcsdsTCFrameDetector
+};  // class CcsdsTcFrameDetector
 }  // namespace FrameDetectors
 }  // namespace Svc
 

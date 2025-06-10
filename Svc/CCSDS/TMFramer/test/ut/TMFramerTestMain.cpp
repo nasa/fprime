@@ -1,38 +1,38 @@
 // ======================================================================
-// \title  TMFramerTestMain.cpp
+// \title  TmFramerTestMain.cpp
 // \author thomas-bc
-// \brief  cpp file for TMFramer component test main function
+// \brief  cpp file for TmFramer component test main function
 // ======================================================================
 
-#include "TMFramerTester.hpp"
+#include "TmFramerTester.hpp"
 
-TEST(TMFramer, testComStatusPassthrough) {
-    Svc::CCSDS::TMFramerTester tester;
+TEST(TmFramer, testComStatusPassthrough) {
+    Svc::CCSDS::TmFramerTester tester;
     tester.testComStatusPassthrough();
 }
 
-TEST(TMFramer, testDataReturn) {
-    Svc::CCSDS::TMFramerTester tester;
+TEST(TmFramer, testDataReturn) {
+    Svc::CCSDS::TmFramerTester tester;
     tester.testDataReturn();
 }
 
-TEST(TMFramer, testNominalFraming) {
-    Svc::CCSDS::TMFramerTester tester;
+TEST(TmFramer, testNominalFraming) {
+    Svc::CCSDS::TmFramerTester tester;
     tester.testNominalFraming();
 }
 
-TEST(TMFramer, testSeqCountWrapAround) {
-    Svc::CCSDS::TMFramerTester tester;
+TEST(TmFramer, testSeqCountWrapAround) {
+    Svc::CCSDS::TmFramerTester tester;
     tester.testSeqCountWrapAround();
 }
 
-TEST(TMFramer, testInputBufferTooLarge) {
-    Svc::CCSDS::TMFramerTester tester;
+TEST(TmFramer, testInputBufferTooLarge) {
+    Svc::CCSDS::TmFramerTester tester;
     tester.testInputBufferTooLarge();
 }
 
-TEST(TMFramer, testBufferOwnershipState) {
-    Svc::CCSDS::TMFramerTester tester;
+TEST(TmFramer, testBufferOwnershipState) {
+    Svc::CCSDS::TmFramerTester tester;
     tester.testBufferOwnershipState();
 }
 

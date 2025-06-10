@@ -115,7 +115,7 @@ module Ref {
       spacePacketFramer.bufferAllocate   -> commsBufferManager.bufferGetCallee
       spacePacketFramer.bufferDeallocate -> commsBufferManager.bufferSendIn
       spacePacketFramer.getApidSeqCount  -> apidManager.getApidSeqCountIn
-      # SpacePacketFramer <-> TMFramer
+      # SpacePacketFramer <-> TmFramer
       spacePacketFramer.dataOut -> tmFramer.dataIn
       tmFramer.dataReturnOut    -> spacePacketFramer.dataReturnIn
       # Framer <-> ComStub
@@ -193,7 +193,7 @@ module Ref {
       # FrameAccumulator <-> Deframer
       frameAccumulator.dataOut          -> tcDeframer.dataIn
       tcDeframer.dataReturnOut          -> frameAccumulator.dataReturnIn
-      # TCDeframer <-> SpacePacketDeframer
+      # TcDeframer <-> SpacePacketDeframer
       tcDeframer.dataOut                -> spacePacketDeframer.dataIn
       spacePacketDeframer.dataReturnOut -> tcDeframer.dataReturnIn
       # SpacePacketDeframer APID validation

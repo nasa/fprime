@@ -4,7 +4,7 @@ The `Svc::CCSDS::SpacePacketFramer` is an implementation of the [FramerInterface
 
 It receives user data on its input port and constructs a CCSDS Space Packet. Please refer to the CCSDS [Space Packet Protocol specification (CCSDS 133.0-B-2)](https://public.ccsds.org/Pubs/133x0b2e1.pdf) for details on the packet format.
 
-The `Svc::CCSDS::SpacePacketFramer` is typically used upstream of a component that adds transfer frame headers, such as the `Svc::CCSDS::TMFramer`. It encapsulates user data into a Space Packet, adding the necessary header fields.
+The `Svc::CCSDS::SpacePacketFramer` is typically used upstream of a component that adds transfer frame headers, such as the `Svc::CCSDS::TmFramer`. It encapsulates user data into a Space Packet, adding the necessary header fields.
 
 ## Configuration
 The `Svc::CCSDS::SpacePacketFramer` requires an Application Process Identifier (APID) for the Space Packets it generates. This APID is typically provided during instantiation or configuration. It also uses a sequence count, which is managed per APID via the `getApidSeqCount` port.

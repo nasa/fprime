@@ -12,19 +12,19 @@
 
 register_fprime_library(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/TMFramer.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/TmFramer.cpp"
   AUTOCODER_INPUTS  
-    "${CMAKE_CURRENT_LIST_DIR}/TMFramer.fpp"
+    "${CMAKE_CURRENT_LIST_DIR}/TmFramer.fpp"
   DEPENDS
     Svc_CCSDS_Types
 )
 
 register_fprime_ut(
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/test/ut/TMFramerTestMain.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/test/ut/TMFramerTester.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/TmFramerTestMain.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/TmFramerTester.cpp"
   AUTOCODER_INPUTS
-    "${CMAKE_CURRENT_LIST_DIR}/TMFramer.fpp"
+    "${CMAKE_CURRENT_LIST_DIR}/TmFramer.fpp"
   DEPENDS
     Svc_CCSDS_Types
     STest

@@ -1,20 +1,20 @@
 // ======================================================================
-// \title  TMFramerTester.hpp
+// \title  TmFramerTester.hpp
 // \author thomas-bc
-// \brief  hpp file for TMFramer component test harness implementation class
+// \brief  hpp file for TmFramer component test harness implementation class
 // ======================================================================
 
-#ifndef Svc_CCSDS_TMFramerTester_HPP
-#define Svc_CCSDS_TMFramerTester_HPP
+#ifndef Svc_CCSDS_TmFramerTester_HPP
+#define Svc_CCSDS_TmFramerTester_HPP
 
-#include "Svc/CCSDS/TMFramer/TMFramer.hpp"
-#include "Svc/CCSDS/TMFramer/TMFramerGTestBase.hpp"
+#include "Svc/CCSDS/TmFramer/TmFramer.hpp"
+#include "Svc/CCSDS/TmFramer/TmFramerGTestBase.hpp"
 
 namespace Svc {
 
 namespace CCSDS {
 
-class TMFramerTester final : public TMFramerGTestBase {
+class TmFramerTester final : public TmFramerGTestBase {
   public:
     // ----------------------------------------------------------------------
     // Constants
@@ -31,11 +31,11 @@ class TMFramerTester final : public TMFramerGTestBase {
     // Construction and destruction
     // ----------------------------------------------------------------------
 
-    //! Construct object TMFramerTester
-    TMFramerTester();
+    //! Construct object TmFramerTester
+    TmFramerTester();
 
-    //! Destroy object TMFramerTester
-    ~TMFramerTester();
+    //! Destroy object TmFramerTester
+    ~TmFramerTester();
 
   public:
     // ----------------------------------------------------------------------
@@ -71,7 +71,7 @@ class TMFramerTester final : public TMFramerGTestBase {
     // ----------------------------------------------------------------------
 
     //! The component under test
-    TMFramer component;
+    TmFramer component;
 };
 
 }  // namespace CCSDS

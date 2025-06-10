@@ -1,35 +1,35 @@
 // ======================================================================
-// \title  TCDeframer.hpp
+// \title  TcDeframer.hpp
 // \author thomas-bc
-// \brief  hpp file for TCDeframer component implementation class
+// \brief  hpp file for TcDeframer component implementation class
 // ======================================================================
 
-#ifndef Svc_CCSDS_TCDeframer_HPP
-#define Svc_CCSDS_TCDeframer_HPP
+#ifndef Svc_CCSDS_TcDeframer_HPP
+#define Svc_CCSDS_TcDeframer_HPP
 
-#include "Svc/CCSDS/TCDeframer/TCDeframerComponentAc.hpp"
+#include "Svc/CCSDS/TcDeframer/TcDeframerComponentAc.hpp"
 
 namespace Svc {
 namespace CCSDS {
-class TCDeframer : public TCDeframerComponentBase {
-  friend class TCDeframerTester;
+class TcDeframer : public TcDeframerComponentBase {
+  friend class TcDeframerTester;
 
   public:
     // ----------------------------------------------------------------------
     // Component construction and destruction
     // ----------------------------------------------------------------------
 
-    //! Construct TCDeframer object
-    TCDeframer(const char* const compName  //!< The component name
+    //! Construct TcDeframer object
+    TcDeframer(const char* const compName  //!< The component name
     );
 
-    //! Destroy TCDeframer object
-    ~TCDeframer();
+    //! Destroy TcDeframer object
+    ~TcDeframer();
 
-    //! \brief Configure the TCDeframer to deframe only a specific VCID and spacecraft ID
+    //! \brief Configure the TcDeframer to deframe only a specific VCID and spacecraft ID
     //!
-    //! By default, the TCDeframer is configured with the spacecraft ID set in the config/ComCfg.fpp file,
-    //! and deframes all incoming frames regardless of their VCID. Should project instantiate a TCDeframer
+    //! By default, the TcDeframer is configured with the spacecraft ID set in the config/ComCfg.fpp file,
+    //! and deframes all incoming frames regardless of their VCID. Should project instantiate a TcDeframer
     //! with a different configuration, they can use this configure method to set the desired properties.
     //!
     //! \param vcId The virtual channel ID to accept (if acceptAllVcid is false)

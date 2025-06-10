@@ -1,20 +1,20 @@
 // ======================================================================
-// \title  TCDeframerTester.hpp
+// \title  TcDeframerTester.hpp
 // \author thomas-bc
-// \brief  hpp file for TCDeframer component test harness implementation class
+// \brief  hpp file for TcDeframer component test harness implementation class
 // ======================================================================
 
-#ifndef Svc_CCSDS_TCDeframerTester_HPP
-#define Svc_CCSDS_TCDeframerTester_HPP
+#ifndef Svc_CCSDS_TcDeframerTester_HPP
+#define Svc_CCSDS_TcDeframerTester_HPP
 
-#include "Svc/CCSDS/TCDeframer/TCDeframer.hpp"
-#include "Svc/CCSDS/TCDeframer/TCDeframerGTestBase.hpp"
+#include "Svc/CCSDS/TcDeframer/TcDeframer.hpp"
+#include "Svc/CCSDS/TcDeframer/TcDeframerGTestBase.hpp"
 
 namespace Svc {
 
 namespace CCSDS {
 
-class TCDeframerTester final : public TCDeframerGTestBase {
+class TcDeframerTester final : public TcDeframerGTestBase {
   public:
     // ----------------------------------------------------------------------
     // Constants
@@ -31,11 +31,11 @@ class TCDeframerTester final : public TCDeframerGTestBase {
     // Construction and destruction
     // ----------------------------------------------------------------------
 
-    //! Construct object TCDeframerTester
-    TCDeframerTester();
+    //! Construct object TcDeframerTester
+    TcDeframerTester();
 
-    //! Destroy object TCDeframerTester
-    ~TCDeframerTester();
+    //! Destroy object TcDeframerTester
+    ~TcDeframerTester();
 
   public:
     // ----------------------------------------------------------------------
@@ -72,7 +72,7 @@ class TCDeframerTester final : public TCDeframerGTestBase {
     // ----------------------------------------------------------------------
 
     //! The component under test
-    TCDeframer component;
+    TcDeframer component;
 
     U8 m_frameData[300]; // data buffer used to produce test frames
 };

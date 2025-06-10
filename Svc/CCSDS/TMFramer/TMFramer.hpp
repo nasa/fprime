@@ -1,13 +1,13 @@
 // ======================================================================
-// \title  TMFramer.hpp
+// \title  TmFramer.hpp
 // \author thomas-bc
-// \brief  hpp file for TMFramer component implementation class
+// \brief  hpp file for TmFramer component implementation class
 // ======================================================================
 
-#ifndef Svc_CCSDS_TMFramer_HPP
-#define Svc_CCSDS_TMFramer_HPP
+#ifndef Svc_CCSDS_TmFramer_HPP
+#define Svc_CCSDS_TmFramer_HPP
 
-#include "Svc/CCSDS/TMFramer/TMFramerComponentAc.hpp"
+#include "Svc/CCSDS/TmFramer/TmFramerComponentAc.hpp"
 #include "Svc/CCSDS/Types/FppConstantsAc.hpp"
 #include "Svc/CCSDS/Types/SpacePacketHeaderSerializableAc.hpp"
 #include "Svc/CCSDS/Types/TMHeaderSerializableAc.hpp"
@@ -17,8 +17,8 @@ namespace Svc {
 
 namespace CCSDS {
 
-class TMFramer final : public TMFramerComponentBase {
-    friend class TMFramerTester;
+class TmFramer final : public TmFramerComponentBase {
+    friend class TmFramerTester;
 
     static_assert(ComCfg::TmFrameFixedSize > TMHeader::SERIALIZED_SIZE + TMTrailer::SERIALIZED_SIZE,
                   "TM Frame Fixed Size must be at least large enough to hold header, trailer and data");
@@ -34,8 +34,8 @@ class TMFramer final : public TMFramerComponentBase {
     static constexpr U8 IDLE_DATA_PATTERN = 0x44;
 
     enum class BufferOwnershipState {
-        NOT_OWNED,  //!< The buffer is currently not owned by the TMFramer
-        OWNED,      //!< The buffer is currently owned by the TMFramer
+        NOT_OWNED,  //!< The buffer is currently not owned by the TmFramer
+        OWNED,      //!< The buffer is currently owned by the TmFramer
     };
 
   public:
@@ -43,12 +43,12 @@ class TMFramer final : public TMFramerComponentBase {
     // Component construction and destruction
     // ----------------------------------------------------------------------
 
-    //! Construct TMFramer object
-    TMFramer(const char* const compName  //!< The component name
+    //! Construct TmFramer object
+    TmFramer(const char* const compName  //!< The component name
     );
 
-    //! Destroy TMFramer object
-    ~TMFramer();
+    //! Destroy TmFramer object
+    ~TmFramer();
 
   private:
     // ----------------------------------------------------------------------
@@ -96,7 +96,7 @@ class TMFramer final : public TMFramerComponentBase {
     // Because the TM protocol use fixed width frames, and only one frame is in transit between ComQueue and
     // ComInterface at a time, we can use a member fixed-size buffer to hold the frame data
     U8 m_frameBuffer[ComCfg::TmFrameFixedSize];                        //!< Buffer to hold the frame data
-    BufferOwnershipState m_bufferState = BufferOwnershipState::OWNED;  //!< whether m_frameBuffer is owned by TMFramer
+    BufferOwnershipState m_bufferState = BufferOwnershipState::OWNED;  //!< whether m_frameBuffer is owned by TmFramer
 
     // Current implementation uses a single virtual channel, so we can use a single virtual frame count
     U8 m_masterFrameCount;   //!< Master Frame Count - 8 bits - wraps around at 255

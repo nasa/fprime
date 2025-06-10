@@ -1,7 +1,7 @@
 module Svc {
 module CCSDS {
     @ Deframer for the TC Space Data Link Protocol (CCSDS Standard)
-    passive component TCDeframer {
+    passive component TcDeframer {
 
         include "../../Interfaces/DeframerInterface.fppi"
 

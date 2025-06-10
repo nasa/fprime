@@ -11,7 +11,7 @@ register_fprime_library(
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/FrameAccumulator.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/FrameDetector/FprimeFrameDetector.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/FrameDetector/CcsdsTCFrameDetector.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/FrameDetector/CcsdsTcFrameDetector.cpp"
   AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/FrameAccumulator.fpp"
   DEPENDS
@@ -46,11 +46,11 @@ register_fprime_ut(
 )
 
 register_fprime_ut(
-  "Svc_FrameAccumulator_CcsdsTCFrameDetector_test"
+  "Svc_FrameAccumulator_CcsdsTcFrameDetector_test"
   SOURCES 
-    "${CMAKE_CURRENT_LIST_DIR}/test/ut/detectors/CcsdsTCFrameDetectorTestMain.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/detectors/CcsdsTcFrameDetectorTestMain.cpp"
   HEADERS
-    "${CMAKE_CURRENT_LIST_DIR}/FrameDetector/CcsdsTCFrameDetector.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/FrameDetector/CcsdsTcFrameDetector.hpp"
   DEPENDS
     STest
   UT_AUTO_HELPERS

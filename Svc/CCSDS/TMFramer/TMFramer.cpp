@@ -1,10 +1,10 @@
 // ======================================================================
-// \title  TMFramer.cpp
+// \title  TmFramer.cpp
 // \author thomas-bc
-// \brief  cpp file for TMFramer component implementation class
+// \brief  cpp file for TmFramer component implementation class
 // ======================================================================
 
-#include "Svc/CCSDS/TMFramer/TMFramer.hpp"
+#include "Svc/CCSDS/TmFramer/TmFramer.hpp"
 #include "Svc/CCSDS/Utils/CRC16.hpp"
 #include "config/FppConstantsAc.hpp"
 
@@ -16,20 +16,18 @@ namespace CCSDS {
 // Component construction and destruction
 // ----------------------------------------------------------------------
 
-TMFramer ::TMFramer(const char* const compName)
-    : TMFramerComponentBase(compName), m_masterFrameCount(0), m_virtualFrameCount(0) {}
+TmFramer ::TmFramer(const char* const compName)
+    : TmFramerComponentBase(compName), m_masterFrameCount(0), m_virtualFrameCount(0) {}
 
-TMFramer ::~TMFramer() {}
+TmFramer ::~TmFramer() {}
 
 // ----------------------------------------------------------------------
 // Handler implementations for typed input ports
 // ----------------------------------------------------------------------
 
-void TMFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
+void TmFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
     FW_ASSERT(data.getSize() <= ComCfg::TmFrameFixedSize - TMHeader::SERIALIZED_SIZE - TMTrailer::SERIALIZED_SIZE,
               static_cast<FwAssertArgType>(data.getSize()));
-    // Ensure the buffer is owned by the TMFramer
-    // TODO: add UTs
     FW_ASSERT(this->m_bufferState == BufferOwnershipState::OWNED,
               static_cast<FwAssertArgType>(this->m_bufferState));
 
@@ -93,13 +91,13 @@ void TMFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
     this->dataReturnOut_out(0, data, context);  // return ownership of the original data buffer
 }
 
-void TMFramer ::comStatusIn_handler(FwIndexType portNum, Fw::Success& condition) {
+void TmFramer ::comStatusIn_handler(FwIndexType portNum, Fw::Success& condition) {
     if (this->isConnected_comStatusOut_OutputPort(portNum)) {
         this->comStatusOut_out(portNum, condition);
     }
 }
 
-void TMFramer ::dataReturnIn_handler(FwIndexType portNum,
+void TmFramer ::dataReturnIn_handler(FwIndexType portNum,
                                      Fw::Buffer& frameBuffer,
                                      const ComCfg::FrameContext& context) {
     // Assert that the returned buffer is the member, and set ownership state
@@ -108,7 +106,7 @@ void TMFramer ::dataReturnIn_handler(FwIndexType portNum,
     this->m_bufferState = BufferOwnershipState::OWNED;
 }
 
-void TMFramer ::fill_with_idle_packet(Fw::SerializeBufferBase& serializer) {
+void TmFramer ::fill_with_idle_packet(Fw::SerializeBufferBase& serializer) {
     constexpr U16 endIndex = ComCfg::TmFrameFixedSize - TMTrailer::SERIALIZED_SIZE;
     constexpr U16 idleApid = static_cast<U16>(ComCfg::APID::SPP_IDLE_PACKET);
     const U16 startIndex = static_cast<U16>(serializer.getBuffLength());

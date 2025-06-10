@@ -1,10 +1,10 @@
 // ======================================================================
-// \title  TMFramerTester.cpp
+// \title  TmFramerTester.cpp
 // \author thomas-bc
-// \brief  cpp file for TMFramer component test harness implementation class
+// \brief  cpp file for TmFramer component test harness implementation class
 // ======================================================================
 
-#include "TMFramerTester.hpp"
+#include "TmFramerTester.hpp"
 #include "Svc/CCSDS/Types/TMHeaderSerializableAc.hpp"
 #include "Svc/CCSDS/Types/TMTrailerSerializableAc.hpp"
 #include "Svc/CCSDS/Types/SpacePacketHeaderSerializableAc.hpp"
@@ -17,19 +17,19 @@ namespace CCSDS {
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-TMFramerTester ::TMFramerTester()
-    : TMFramerGTestBase("TMFramerTester", TMFramerTester::MAX_HISTORY_SIZE), component("TMFramer") {
+TmFramerTester ::TmFramerTester()
+    : TmFramerGTestBase("TmFramerTester", TmFramerTester::MAX_HISTORY_SIZE), component("TmFramer") {
     this->initComponents();
     this->connectPorts();
 }
 
-TMFramerTester ::~TMFramerTester() {}
+TmFramerTester ::~TmFramerTester() {}
 
 // ----------------------------------------------------------------------
 // Tests
 // ----------------------------------------------------------------------
 
-void TMFramerTester ::testComStatusPassthrough() {
+void TmFramerTester ::testComStatusPassthrough() {
     // Send a status message to the component
     Fw::Success inputStatus = Fw::Success::SUCCESS;
     this->invoke_to_comStatusIn(0, inputStatus);
@@ -41,7 +41,7 @@ void TMFramerTester ::testComStatusPassthrough() {
     ASSERT_from_comStatusOut(1, inputStatus);  // at index 1, received FAILURE
 }
 
-void TMFramerTester ::testNominalFraming() {
+void TmFramerTester ::testNominalFraming() {
     U8 bufferData[100];
     Fw::Buffer buffer(bufferData, sizeof(bufferData));
     ComCfg::FrameContext defaultContext;
@@ -87,7 +87,7 @@ void TMFramerTester ::testNominalFraming() {
     }
 }
 
-void TMFramerTester ::testSeqCountWrapAround() {
+void TmFramerTester ::testSeqCountWrapAround() {
     U8 bufferData[100];
     Fw::Buffer buffer(bufferData, sizeof(bufferData));
     ComCfg::FrameContext defaultContext;
@@ -103,7 +103,7 @@ void TMFramerTester ::testSeqCountWrapAround() {
     this->component.m_virtualFrameCount = 250;
     U8 countWrapAround = 250; // will wrap around to 0 after 255
     for (U32 iter = 0; iter < 10; iter++) {
-        this->component.m_bufferState = TMFramer::BufferOwnershipState::OWNED; // reset state to OWNED
+        this->component.m_bufferState = TmFramer::BufferOwnershipState::OWNED; // reset state to OWNED
         this->invoke_to_dataIn(0, buffer, defaultContext);
         ASSERT_from_dataOut_SIZE(iter + 1);
         Fw::Buffer outBuffer = this->fromPortHistory_dataOut->at(iter).data;
@@ -115,40 +115,40 @@ void TMFramerTester ::testSeqCountWrapAround() {
     }
 }
 
-void TMFramerTester ::testInputBufferTooLarge() {
+void TmFramerTester ::testInputBufferTooLarge() {
     const FwSizeType tooLargeSize = ComCfg::TmFrameFixedSize; // This is too large since we need room for header+trailer as well
     U8 bufferData[tooLargeSize];
     Fw::Buffer buffer(bufferData, static_cast<Fw::Buffer::SizeType>(tooLargeSize));
     ComCfg::FrameContext defaultContext;
     // Send a buffer larger than the 
-    ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataIn(0, buffer, defaultContext), "TMFramer.cpp");
+    ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataIn(0, buffer, defaultContext), "TmFramer.cpp");
 }
 
-void TMFramerTester ::testDataReturn() {
+void TmFramerTester ::testDataReturn() {
     U8 bufferData[10];
     Fw::Buffer buffer(bufferData, sizeof(bufferData));
     ComCfg::FrameContext defaultContext;
     // Send a buffer that is not the internal buffer of the component, and expect an assertion
-    ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataReturnIn(0, buffer, defaultContext), "TMFramer.cpp");
+    ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataReturnIn(0, buffer, defaultContext), "TmFramer.cpp");
     
     // Now send the expected buffer and expect state to go back to OWNED
-    this->component.m_bufferState = TMFramer::BufferOwnershipState::NOT_OWNED;
+    this->component.m_bufferState = TmFramer::BufferOwnershipState::NOT_OWNED;
     Fw::Buffer internalBuffer(this->component.m_frameBuffer, sizeof(this->component.m_frameBuffer));
     this->invoke_to_dataReturnIn(0, internalBuffer, defaultContext);
-    ASSERT_EQ(this->component.m_bufferState, TMFramer::BufferOwnershipState::OWNED);
+    ASSERT_EQ(this->component.m_bufferState, TmFramer::BufferOwnershipState::OWNED);
 
 }
 
-void TMFramerTester ::testBufferOwnershipState() {
+void TmFramerTester ::testBufferOwnershipState() {
     U8 bufferData[10];
     Fw::Buffer buffer(bufferData, sizeof(bufferData));
     ComCfg::FrameContext context;
     // force state to be NOT_OWNED and test that assertion is triggered
-    this->component.m_bufferState = TMFramer::BufferOwnershipState::NOT_OWNED;
-    ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataIn(0, buffer, context), "TMFramer.cpp");
-    this->component.m_bufferState = TMFramer::BufferOwnershipState::OWNED;
+    this->component.m_bufferState = TmFramer::BufferOwnershipState::NOT_OWNED;
+    ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataIn(0, buffer, context), "TmFramer.cpp");
+    this->component.m_bufferState = TmFramer::BufferOwnershipState::OWNED;
     this->invoke_to_dataIn(0, buffer, context); // this should work now
-    ASSERT_EQ(this->component.m_bufferState, TMFramer::BufferOwnershipState::NOT_OWNED);
+    ASSERT_EQ(this->component.m_bufferState, TmFramer::BufferOwnershipState::NOT_OWNED);
 
 }
 
@@ -156,16 +156,16 @@ void TMFramerTester ::testBufferOwnershipState() {
 // Helper functions
 // ----------------------------------------------------------------------
 
-U16 TMFramerTester::getFrameScId(U8* frameData) {
+U16 TmFramerTester::getFrameScId(U8* frameData) {
     return static_cast<U16>((frameData[0] & 0x3F) << 4 | (frameData[1] >> 4));
 }
-U8 TMFramerTester::getFrameVcId(U8* frameData) {
+U8 TmFramerTester::getFrameVcId(U8* frameData) {
     return static_cast<U8>((frameData[1] & 0x0E) >> 1);
 }
-U8 TMFramerTester::getFrameMcCount(U8* frameData) {
+U8 TmFramerTester::getFrameMcCount(U8* frameData) {
     return frameData[2];
 }
-U8 TMFramerTester::getFrameVcCount(U8* frameData) {
+U8 TmFramerTester::getFrameVcCount(U8* frameData) {
     return frameData[3];
 }
 

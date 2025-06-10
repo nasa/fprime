@@ -1,38 +1,38 @@
 // ======================================================================
-// \title  TCDeframerTestMain.cpp
+// \title  TcDeframerTestMain.cpp
 // \author thomas-bc
-// \brief  cpp file for TCDeframer component test main function
+// \brief  cpp file for TcDeframer component test main function
 // ======================================================================
 
-#include "TCDeframerTester.hpp"
+#include "TcDeframerTester.hpp"
 
-TEST(TCDeframer, testDataReturn) {
-    Svc::CCSDS::TCDeframerTester tester;
+TEST(TcDeframer, testDataReturn) {
+    Svc::CCSDS::TcDeframerTester tester;
     tester.testDataReturn();
 }
 
-TEST(TCDeframer, testNominalDeframing) {
-    Svc::CCSDS::TCDeframerTester tester;
+TEST(TcDeframer, testNominalDeframing) {
+    Svc::CCSDS::TcDeframerTester tester;
     tester.testNominalDeframing();
 }
 
-TEST(TCDeframer, testInvalidScId) {
-    Svc::CCSDS::TCDeframerTester tester;
+TEST(TcDeframer, testInvalidScId) {
+    Svc::CCSDS::TcDeframerTester tester;
     tester.testInvalidScId();
 }
 
-TEST(TCDeframer, testInvalidVcId) {
-    Svc::CCSDS::TCDeframerTester tester;
+TEST(TcDeframer, testInvalidVcId) {
+    Svc::CCSDS::TcDeframerTester tester;
     tester.testInvalidVcId();
 }
 
-TEST(TCDeframer, testInvalidLengthToken) {
-    Svc::CCSDS::TCDeframerTester tester;
+TEST(TcDeframer, testInvalidLengthToken) {
+    Svc::CCSDS::TcDeframerTester tester;
     tester.testInvalidLengthToken();
 }
 
-TEST(TCDeframer, testInvalidCrc) {
-    Svc::CCSDS::TCDeframerTester tester;
+TEST(TcDeframer, testInvalidCrc) {
+    Svc::CCSDS::TcDeframerTester tester;
     tester.testInvalidCrc();
 }
 
