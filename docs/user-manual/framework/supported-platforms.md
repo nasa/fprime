@@ -1,10 +1,10 @@
 ## What does "Supported Platform" Mean?
 
-A **platform** refers to a combination of hardware and operating system (OS). A **supported platform** satifies the following criteria:
+A **platform** refers to a combination of hardware and operating system (OS). A **supported platform** satisfies the following criteria:
 
 ✅ Reference deployment exists and is accessible to the core F Prime team.
 
-🔁 Tested continuously as part of a continous integration (CI) pipeline (e.g., unit tests, integration tests).
+🔁 Tested continuously as part of a continuous integration (CI) pipeline (e.g., unit tests, integration tests).
 
 🔧 Actively maintained by the F Prime community or core F Prime team.
 
