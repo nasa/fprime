@@ -1,3 +1,5 @@
+# Supported Platform
+
 ## What does "Supported Platform" Mean?
 
 A **platform** refers to a combination of hardware and operating system (OS). A **supported platform** satisfies the following criteria:
