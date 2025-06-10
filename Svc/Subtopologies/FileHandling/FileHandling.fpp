@@ -57,7 +57,6 @@ module FileHandling{
         #Passive Components
 
         # Subtopology imports
-        # DataProducts does not exist yet, but we will need it for the file handling subtopology
         import DataProducts.Subtopology
         import Comms.Subtopology
 
