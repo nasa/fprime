@@ -66,7 +66,7 @@ python-slugify==8.0.4
 pytz==2024.2
 PyYAML==6.0.2
 pyzmq==26.2.0
-requests==2.32.3
+requests==2.32.4
 rich==13.9.2
 setuptools==78.1.1; python_version > "3.8"
 setuptools==75.3.2; python_version <= "3.8"
