@@ -28,6 +28,9 @@ module CCSDS {
         constant SeqFlagsMask   = 0xC000  @< 0b1100000000000000
         constant SeqCountMask   = 0x3FFF  @< 0b0011111111111111
         constant SeqFlagsOffset = 14 
+        # Widths
+        constant ApidWidth      = 11
+        constant SeqCountWidth  = 14
     }
 
     # ------------------------------------------------

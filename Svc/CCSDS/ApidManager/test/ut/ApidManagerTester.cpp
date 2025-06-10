@@ -6,6 +6,7 @@
 
 #include "ApidManagerTester.hpp"
 #include "STest/Random/Random.hpp"
+#include "Svc/CCSDS/Types/FppConstantsAc.hpp"
 
 namespace Svc {
 
@@ -115,7 +116,7 @@ void ApidManagerTester::ValidateSeqCountFailure::action(ApidManagerTester& teste
     testerState.clearHistory();
     ComCfg::APID::T apid = testerState.shadow_getRandomTrackedApid();
     U16 shadow_expectedSeqCount = testerState.shadow_seqCounts.at(apid);
-    U16 invalidSeqCount = static_cast<U16>((shadow_expectedSeqCount + 1) % (1 << 14)); // Or any other value that's different, ensure wrap around
+    U16 invalidSeqCount = static_cast<U16>((shadow_expectedSeqCount + 1) % (1 << SpacePacketSubfields::SeqCountWidth)); // Or any other value that's different, ensure wrap around
 
     // Invoke the port with the deliberately incorrect sequence count
     testerState.invoke_to_validateApidSeqCountIn(0, apid, invalidSeqCount);
@@ -137,7 +138,7 @@ U16 ApidManagerTester::shadow_getAndIncrementSeqCount(ComCfg::APID::T apid) {
     auto found = this->shadow_seqCounts.find(apid);
     if (found != this->shadow_seqCounts.end()) {
         U16 seqCount = found->second;
-        found->second = static_cast<U16>((seqCount + 1) % (1 << 14));  // Increment for next call
+        found->second = static_cast<U16>((seqCount + 1) % (1 << SpacePacketSubfields::SeqCountWidth));  // Increment for next call
         return seqCount;                             // Return the current sequence count
     }
     // If APID not found, initialize a new entry
@@ -153,7 +154,7 @@ void ApidManagerTester::shadow_validateApidSeqCount(ComCfg::APID::T apid, U16 ex
     // This simply updates the shadow state to the next expected sequence count
     auto found = this->shadow_seqCounts.find(apid);
     if (found != this->shadow_seqCounts.end()) {
-        found->second = static_cast<U16>((expectedSeqCount + 1) % (1 << 14));
+        found->second = static_cast<U16>((expectedSeqCount + 1) % (1 << SpacePacketSubfields::SeqCountWidth));
     }
 }
 

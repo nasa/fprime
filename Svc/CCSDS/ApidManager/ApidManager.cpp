@@ -5,6 +5,7 @@
 // ======================================================================
 
 #include "Svc/CCSDS/ApidManager/ApidManager.hpp"
+#include "Svc/CCSDS/Types/FppConstantsAc.hpp"
 
 namespace Svc {
 
@@ -40,22 +41,26 @@ U16 ApidManager ::getApidSeqCountIn_handler(FwIndexType portNum, const ComCfg::A
 // ----------------------------------------------------------------------
 
 U16 ApidManager ::getAndIncrementSeqCount(ComCfg::APID::T apid) {
-    U16 seqCount = SEQUENCE_COUNT_ERROR; // Default to error value
+    U16 seqCount = SEQUENCE_COUNT_ERROR;  // Default to error value
     // Search the APID in the sequence table
     for (U16 i = 0; i < MAX_TRACKED_APIDS; i++) {
         if (this->m_apidSequences[i].apid == apid) {
             seqCount = this->m_apidSequences[i].sequenceCount;
-            this->m_apidSequences[i].sequenceCount = static_cast<U16>((seqCount + 1) % (1 << 14)); // Increment for next call
-            return seqCount; // Return the current sequence count
+            // Increment entry for next call
+            this->m_apidSequences[i].sequenceCount =
+                static_cast<U16>((seqCount + 1) % (1 << SpacePacketSubfields::SeqCountWidth));
+            return seqCount;  // Return the current sequence count
         }
     }
     // If not found, search for an uninitialized entry to track this APID
     for (U16 i = 0; i < MAX_TRACKED_APIDS; i++) {
         if (this->m_apidSequences[i].apid == ComCfg::APID::INVALID_UNINITIALIZED) {
-            this->m_apidSequences[i].apid = apid; // Initialize this entry with the new APID
-            seqCount = this->m_apidSequences[i].sequenceCount; // Entries default to 0 unless otherwise specified
-            this->m_apidSequences[i].sequenceCount = static_cast<U16>((seqCount + 1) % (1 << 14)); // Increment for next call
-            return seqCount; // Return the initialized sequence count
+            this->m_apidSequences[i].apid = apid;               // Initialize this entry with the new APID
+            seqCount = this->m_apidSequences[i].sequenceCount;  // Entries default to 0 unless otherwise specified
+            // Increment entry for next call
+            this->m_apidSequences[i].sequenceCount =
+                static_cast<U16>((seqCount + 1) % (1 << SpacePacketSubfields::SeqCountWidth));
+            return seqCount;  // Return the initialized sequence count
         }
     }
     this->log_WARNING_HI_ApidTableFull(apid);
