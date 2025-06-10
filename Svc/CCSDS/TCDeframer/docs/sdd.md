@@ -1,4 +1,4 @@
-# Svc::TCDeframer
+# Svc::CCSDS::TCDeframer
 
 The `Svc::CCSDS::TCDeframer` is an implementation of the [DeframerInterface](../../../Interfaces/docs/sdd.md) for the CCSDS [TC Space Data Link Protocol](https://ccsds.org/Pubs/232x0b4e1c1.pdf). 
 
@@ -33,7 +33,7 @@ void configure(U16 vcId, U16 spacecraftId, bool acceptAllVcid);
 
 | Name | Severity | Description |
 |---|---|---|
-| InvalidSpacecraftId | `activity low` | Deframing received an invalid SCID |
+| InvalidSpacecraftId | `warning low` | Deframing received an invalid SCID |
 | InvalidFrameLength | `warning high` | Deframing received an invalid frame length |
 | InvalidVcId | `activity low` | Deframing received an invalid VCID |
 | InvalidCrc | `warning high` | Deframing received an invalid checksum |

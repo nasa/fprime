@@ -2,7 +2,7 @@
 
 The `Svc::CCSDS::ApidManager` component manages CCSDS Application Process Identifier (APID) sequence counts for the F Prime communications stack. It provides per-APID sequence count tracking and validation, supporting the construction and checking of CCSDS Space Packet headers by other components (such as `SpacePacketFramer` and `SpacePacketDeframer`).
 
-The `ApidManager` is typically used in conjunction with the `SpacePacketFramer` (to provide incrementing sequence counts for each APID) and the `SpacePacketDeframer` (to validate received sequence counts and detect dropped or out-of-order packets).
+The `ApidManager` is typically used in conjunction with the [`SpacePacketFramer`](../../SpacePacketFramer/docs/sdd.md) (to provide incrementing sequence counts for each APID) and the [`SpacePacketDeframer`](../../SpacePacketDeframer/docs/sdd.md) (to validate received sequence counts and detect dropped or out-of-order packets).
 
 ## Functionality
 
@@ -22,7 +22,7 @@ The `ApidManager` is typically used in conjunction with the `SpacePacketFramer` 
 
 | Name                   | Severity      | Description                                                                 |
 |------------------------|---------------|-----------------------------------------------------------------------------|
-| UnexpectedSequenceCount| warning high  | Received an unexpected sequence count for an APID.                          |
+| UnexpectedSequenceCount| warning low   | Received an unexpected sequence count for an APID.                          |
 | ApidTableFull          | warning high  | APID table is full; cannot track additional APIDs.                          |
 
 ## Usage
