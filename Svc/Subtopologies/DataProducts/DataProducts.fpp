@@ -1,9 +1,5 @@
 module DataProducts{
 
-    enum Ports_ComBufferQueue {
-        FILE_DOWNLINK
-    }
-
     # ----------------------------------------------------------------------
     # Active Components
     # ----------------------------------------------------------------------
@@ -17,7 +13,7 @@ module DataProducts{
             Fw::FileNameString dpDir("./DpCat");
             Fw::FileNameString dpState("./DpCat/DpState.dat");
             Os::FileSystem::createDirectory(dpDir.toChar());
-            DataProducts::dpCat.configure(&dpDir,1,dpState,0,mallocator);
+            DataProducts::dpCat.configure(&dpDir,1,dpState,0, DataProducts::Allocation::mallocator);
         """
     }
 
@@ -35,11 +31,6 @@ module DataProducts{
             DataProducts::dpWriter.configure(dpDir);
         """
     }
-    # ----------------------------------------------------------------------
-    # Queued Components
-    # ----------------------------------------------------------------------
-    #none
-
     
     # ----------------------------------------------------------------------
     # Passive Components
@@ -55,16 +46,14 @@ module DataProducts{
         };
         """
         phase Fpp.ToCpp.Phases.configComponents """
-        Fw::MallocAllocator mallocator;
-        Svc::BufferManager::BufferBins bins;
-        memset(&bins, 0, sizeof(bins));
-        bins.bins[0].bufferSize = ConfigConstants::DataProducts_dpBufferManager::DP_BUFFER_MANAGER_STORE_SIZE;
-        bins.bins[0].numBuffers  = ConfigConstants::DataProducts_dpBufferManager::DP_BUFFER_MANAGER_STORE_COUNT;
+        memset(&DataProducts::BufferManagerBins::bins, 0, sizeof(DataProducts::BufferManagerBins::bins));
+        DataProducts::BufferManagerBins::bins.bins[0].bufferSize = ConfigConstants::DataProducts_dpBufferManager::DP_BUFFER_MANAGER_STORE_SIZE;
+        DataProducts::BufferManagerBins::bins.bins[0].numBuffers  = ConfigConstants::DataProducts_dpBufferManager::DP_BUFFER_MANAGER_STORE_COUNT;
         DataProducts::dpBufferManager.setup(
             ConfigConstants::DataProducts_dpBufferManager::DP_BUFFER_MANAGER_ID,
             0,
-            mallocator,
-            bins
+            DataProducts::Allocation::mallocator,
+            DataProducts::BufferManagerBins::bins
         );
         """
     }
@@ -77,17 +66,11 @@ module DataProducts{
         #Passive Components
         instance dpBufferManager
 
-        # Subtopology imports
-        import Comms.Subtopology
-
         connections DataProducts {
             # DpMgr and DpWriter connections. Have explicit port indexes for demo
             dpMgr.bufferGetOut[0] -> dpBufferManager.bufferGetCallee
             dpMgr.productSendOut[0] -> dpWriter.bufferSendIn
             dpWriter.deallocBufferSendOut -> dpBufferManager.bufferSendIn
-
-            # Component DP connections
-
         }
     } # end topology
-} # end Comms Subtopology
+} # end DataProducts Subtopology

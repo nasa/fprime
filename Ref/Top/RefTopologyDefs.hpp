@@ -17,10 +17,10 @@
 #include "Svc/Health/Health.hpp"
 
 // Subtopology includes
-#include "Svc/Subtopologies/CDHCore/CDHCoreTopologyDefs.hpp"
-#include "Svc/Subtopologies/Comms/CommsTopologyDefs.hpp"
-#include "Svc/Subtopologies/DataProducts/DataProductsTopologyDefs.hpp"
-#include "Svc/Subtopologies/FileHandling/FileHandlingTopologyDefs.hpp"
+#include "Svc/Subtopologies/CDHCore/SubtopologyTopologyDefs.hpp"
+#include "Svc/Subtopologies/Comms/SubtopologyTopologyDefs.hpp"
+#include "Svc/Subtopologies/DataProducts/SubtopologyTopologyDefs.hpp"
+#include "Svc/Subtopologies/FileHandling/SubtopologyTopologyDefs.hpp"
 
 namespace PingEntries {
     namespace Ref_blockDrv       {enum { WARN = 3, FATAL = 5 };}

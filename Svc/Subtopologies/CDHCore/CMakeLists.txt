@@ -4,6 +4,6 @@ register_fprime_module(
     AUTOCODER_INPUTS
         "${CMAKE_CURRENT_LIST_DIR}/CDHCore.fpp"
     HEADERS
-        "${CMAKE_CURRENT_LIST_DIR}/CDHCoreTopologyDefs.hpp"
+        "${CMAKE_CURRENT_LIST_DIR}/SubtopologyTopologyDefs.hpp"
     INTERFACE
 )

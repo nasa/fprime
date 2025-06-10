@@ -2,9 +2,8 @@
 #define FILEHANDLINGSUBTOPOLOGY_DEFS_HPP
 
 namespace FileHandling {
-    struct FileHandlingState {
-        /* include any variables that are needed for 
-        configuring/starting/tearing down the topology */
+    // State for topology construction
+    struct TopologyState {
     };
 }
 

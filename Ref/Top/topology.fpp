@@ -17,10 +17,6 @@ module Ref {
     TELEMETRY
   }
 
-  #Same here
-  enum Ports_ComBufferQueue {
-    FILE_DOWNLINK
-  }
 
   topology Ref {
     # ----------------------------------------------------------------------
@@ -126,7 +122,38 @@ module Ref {
       DataProducts.dpMgr.productResponseOut[0] -> SG1.productRecvIn
       # Send filled DP
       SG1.productSendOut -> DataProducts.dpMgr.productSendIn[0]
+
+
     }
+
+    connections Comms_CDHCore{
+
+      # events and telemetry to comQueue
+      CDHCore.events.PktSend        -> Comms.comQueue.comPacketQueueIn[Ports_ComPacketQueue.EVENTS]
+      CDHCore.tlmSend.PktSend            -> Comms.comQueue.comPacketQueueIn[Ports_ComPacketQueue.TELEMETRY]
+
+      # Router <-> CmdDispatcher
+      Comms.fprimeRouter.commandOut  -> CDHCore.cmdDisp.seqCmdBuff
+      CDHCore.cmdDisp.seqCmdStatus     -> Comms.fprimeRouter.cmdResponseIn
+      Comms.cmdSeq.comCmdOut -> CDHCore.cmdDisp.seqCmdBuff
+      CDHCore.cmdDisp.seqCmdStatus -> Comms.cmdSeq.cmdResponseIn
+    }
+
+    connections Comms_FileHandling {
+      # File Downlink <-> ComQueue
+      FileHandling.fileDownlink.bufferSendOut -> Comms.comQueue.bufferQueueIn[FileHandling.Ports_ComBufferQueue.FILE_DOWNLINK]
+      Comms.comQueue.bufferReturnOut[FileHandling.Ports_ComBufferQueue.FILE_DOWNLINK] -> FileHandling.fileDownlink.bufferReturn
+
+      # Router <-> FileUplink
+      Comms.fprimeRouter.fileOut     -> FileHandling.fileUplink.bufferSendIn
+      FileHandling.fileUplink.bufferSendOut -> Comms.fprimeRouter.fileBufferReturnIn
+    }
+
+    connections FileHandling_DataProducts{
+      # Data Products
+      DataProducts.dpCat.fileOut             -> FileHandling.fileDownlink.SendFile
+      FileHandling.fileDownlink.FileComplete -> DataProducts.dpCat.fileDone
+  }
 
   }
 
