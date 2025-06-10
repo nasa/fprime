@@ -22,21 +22,40 @@ module CDHCore {
     # ----------------------------------------------------------------------
     instance $health: Svc.Health base id CDHCoreConfig.BASE_ID + 0x0400 \
         queue size CDHCoreConfig.QueueSizes.$health \
-    
+    {
+        phase Fpp.ToCpp.Phases.configConstants """
+        enum {
+            HEALTH_WATCHDOG_CODE = 0x123
+        };
+        """
+        phase Fpp.ToCpp.Phases.configComponents """
+        CDHCore::health.setPingEntries(
+            ConfigObjects::CDHCore_health::pingEntries,
+            FW_NUM_ARRAY_ELEMENTS(ConfigObjects::CDHCore_health::pingEntries),
+            ConfigConstants::CDHCore_health::HEALTH_WATCHDOG_CODE
+        );
+        """
+    }
+
     # ----------------------------------------------------------------------
     # Passive Components
     # ----------------------------------------------------------------------
     instance version: Svc.Version base id CDHCoreConfig.BASE_ID + 0x0500 \
+    {
+        phase Fpp.ToCpp.Phases.configComponents """
+        CDHCore::version.config(true);
+        """
+    }
 
-    instance textLogger: Svc.PassiveTextLogger base id CDHCoreConfig.BASE_ID + 0x0600 \
-  
-    instance fatalAdapter: Svc.AssertFatalAdapter base id CDHCoreConfig.BASE_ID + 0x0700 \
+    instance textLogger: Svc.PassiveTextLogger base id CDHCoreConfig.BASE_ID + 0x0600
 
-    instance fatalHandler: Svc.FatalHandler base id CDHCoreConfig.BASE_ID + 0x0800 \ 
-    
+    instance fatalAdapter: Svc.AssertFatalAdapter base id CDHCoreConfig.BASE_ID + 0x0700
+
+    instance fatalHandler: Svc.FatalHandler base id CDHCoreConfig.BASE_ID + 0x0800
+
     topology Subtopology {
         #Active Components
-        instance cmdDisp 
+        instance cmdDisp
         instance events
         instance tlmSend
 

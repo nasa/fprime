@@ -14,6 +14,7 @@
 // autocoder, but are also used in this hand-coded topology.
 #include <Ref/Top/RefTopologyDefs.hpp>
 
+
 // Remove unnecessary Ref:: qualifications
 using namespace Ref;
 namespace Ref {
