@@ -5,6 +5,7 @@ module CCSDS {
 
         include "../../Interfaces/DeframerInterface.fppi"
 
+        @ Port to validate a received sequence count for a given APID
         output port validateApidSeqCount: CCSDS.ApidSequenceCount
 
         @ Deframing received an invalid frame length

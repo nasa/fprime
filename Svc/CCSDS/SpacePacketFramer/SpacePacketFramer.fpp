@@ -5,9 +5,13 @@ module CCSDS {
 
         include "../../Interfaces/FramerInterface.fppi"
 
+        @ Port to allocate a buffer for a space packet
         output port bufferAllocate: Fw.BufferGet
+
+        @ Port to deallocate a buffer once space packet is sent
         output port bufferDeallocate: Fw.BufferSend
 
+        @ Port to retrieve the current sequence count for a given APID
         output port getApidSeqCount: CCSDS.ApidSequenceCount
 
         ###############################################################################
