@@ -3,33 +3,8 @@
 #
 # Functions supporting the F prime target additions. These targets allow building against modules
 # and top-level targets. This allows for multi-part builds like `sloc` or `dict` where some part
-# applies to the module and is rolled up into some global command. Target files must define two
-# functions `add_module_target` and `add_global_target`.
+# applies to the module and is rolled up into some global command. 
 #
-# ### `add_global_target` Specification:
-#
-# Adds a global target for the custom target. This handles the top-level target for the build.
-# Think `make dict`. It is the global root for all of the children module defines. This should call
-# CMake's `add_custom_target("${TARGET_NAME}" ...)` at some point in the function. Also pass the
-# `ALL` argument if it should be built as part of a standard build i.e. `make`.
-#
-# **Arguments passed in:**
-#  - **TARGET_NAME:** target name to be added. **Must** be passed to a call to `add_custom_target`
-#
-# ### `add_module_target` Specification:
-#
-# Adds a module-by-module target for this given target. Any subtargets for each module and their
-# commands should be registered via CMake's `add_custom_target("${TARGET_NAME}" ...)`. This command
-# is supplied with all of the modules knowledge. Add a `DEPENDS` call on AC_OUTPUTS to come after
-# the autocoding step.
-#
-# **Arguments passed in:**
-#  - **MODULE_NAME:** name of the module being built.
-#  - **TARGET_NAME:** target name to be added. **Must** be passed to a call to `add_custom_target`
-#  - **AC_INPUTS:** list of autocoder inputs. These are Ai.xml files
-#  - **SOURCE_FILES:** list of source file inputs. These are handwritten *.cpp and *.hpp.
-#  - **AC_OUTPUTS:** list of autocoder outputs. These are Ac.cpp and Ac.hpp files.
-#  - **MOD_DEPS:** list of specified dependencies of target. Use: fprime_ai_info for Ai.xml info
 ####
 include_guard()
 

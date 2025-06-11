@@ -57,9 +57,6 @@ void exitTasks() {
     (void) comm.join();
 }
 ```
-## Class Diagram
-
-![classdiagram](./img/class_diagram_udp.png)
 
 ## Requirements
 

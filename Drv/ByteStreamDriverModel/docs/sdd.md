@@ -19,8 +19,6 @@ These responses are an enumeration whose values are described in the following t
 
 ### Receive
 
-![Callback](./img/canvas-callback.png)
-
 In the callback formation, the byte stream driver component initiates the transfer of received data by calling the
 "recv" output port. This port transfers any read data in a `Fw::Buffer` along with a status for the receive.
 This status is an enumeration whose values are described in the following table:
@@ -35,9 +33,8 @@ The following components implement the byte stream model using a callback format
 - [`Drv::TcpClient`](../../TcpClient/docs/sdd.md): a F´ component wrapper of the tcp client
 - [`Drv::TcpServer`](../../TcpServer/docs/sdd.md): a F´ component wrapper of the tcp server
 - [`Drv::Udp`](../../Udp/docs/sdd.md): a F´ component wrapper of the udp
+- `Drv::LinuxUartDriver`
 
-## Class Diagram
-![classdiagram](./img/class_diagram.png)
 
 ## Requirements
 
