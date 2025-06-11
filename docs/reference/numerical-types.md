@@ -8,6 +8,9 @@ represent concepts in the system (e.g. size) and are configured to use a specifi
 
 This document describes: fixed-width types and logical types.
 
+> [!TIP]
+> Many APIs (e.g. POSIX APIs) use types such as `int` or `long`. Projects should use those types when interfacing with the API and convert into fixed-width or logical types within the calling code.
+
 ## Fixed Width Types
 
 In F´, fixed width types map to the standard definitions either in the C standard or in the `stdint.h` header as seen

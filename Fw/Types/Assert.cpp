@@ -6,9 +6,9 @@
 #include <cstdio>
 
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
-#define fileIdFs "Assert: 0x%08" PRIx32 ":%" PRI_unsigned int
+#define fileIdFs "Assert: 0x%08" PRIx32 ":%u"
 #else
-#define fileIdFs "Assert: \"%s:%" PRI_unsigned int "\""
+#define fileIdFs "Assert: \"%s:%u\""
 #endif
 
 namespace Fw {
