@@ -163,8 +163,6 @@ jobs:
           mkdir -p gds-logs
           fprime-gds --gui none -l gds-logs &
           sleep 10
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
       - name: "Run Integration Tests"
         working-directory: ${{ inputs.project_root }}
         run: pytest --ignore=lib
