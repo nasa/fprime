@@ -633,7 +633,7 @@ tcflush
 tcgetattr
 TCPCLIENT
 TCPHELPER
-tcpserver
+TCPSERVER
 TCSANOW
 Telecommand
 telem
