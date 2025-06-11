@@ -10,12 +10,6 @@ module Ref {
     rateGroup3
   }
 
-  #The topology CPP expects these enums to be defined here, so though the actual comms subtopology does not use it, we cannot remove yet. 
-  #Comms.fpp subtopology file has its own enum, and that is what is really used in the subtopology.
-  enum Ports_ComPacketQueue {
-    EVENTS,
-    TELEMETRY
-  }
 
 
   topology Ref {
@@ -129,8 +123,8 @@ module Ref {
     connections Comms_CDHCore{
 
       # events and telemetry to comQueue
-      CDHCore.events.PktSend        -> Comms.comQueue.comPacketQueueIn[Ports_ComPacketQueue.EVENTS]
-      CDHCore.tlmSend.PktSend            -> Comms.comQueue.comPacketQueueIn[Ports_ComPacketQueue.TELEMETRY]
+      CDHCore.events.PktSend        -> Comms.comQueue.comPacketQueueIn[Comms.Ports_ComPacketQueue.EVENTS]
+      CDHCore.tlmSend.PktSend            -> Comms.comQueue.comPacketQueueIn[Comms.Ports_ComPacketQueue.TELEMETRY]
 
       # Router <-> CmdDispatcher
       Comms.fprimeRouter.commandOut  -> CDHCore.cmdDisp.seqCmdBuff
