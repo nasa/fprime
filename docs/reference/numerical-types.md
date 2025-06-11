@@ -76,8 +76,6 @@ functions.
 | PlatformSignedSizeType  | Signed sizes                  | PRI_PlatformSignedSizeType  | Yes    | Minimum 4 Bytes |
 | PlatformPointerCastType | Pointers stored as integers   | PRI_PlatformPointerCastType | No     | sizeof(void*)   |
 | PlatformAssertArgType   | Argument to FW_ASSERT         | PRI_PlatformAssertArgType   | Yes/No | Any             |
-| PlatformIntType         | Deprecated (see note)         | PRI_PlatformIntType         | Yes    | sizeof(int)     |
-| PlatformUIntType        | Deprecated (see note)         | PRI_PlatformUIntType        | Yes    | sizeof(int)     |
 
 > [!WARNING]
 > `PlatformPointerCastType` values shall never be sent nor used outside the address space where a value was initialized because these values represent pointers only valid in a single address space.

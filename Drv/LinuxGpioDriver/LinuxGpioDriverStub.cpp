@@ -22,18 +22,18 @@ LinuxGpioDriver ::~LinuxGpioDriver() {}
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-Os::File::Status LinuxGpioDriver ::setupLineHandle(const PlatformIntType chip_descriptor,
+Os::File::Status LinuxGpioDriver ::setupLineHandle(const int chip_descriptor,
                                                    const U32 gpio,
                                                    const GpioConfiguration& configuration,
                                                    const Fw::Logic& default_state,
-                                                   PlatformIntType& fd) {
+                                                   int& fd) {
     return Os::File::Status::NOT_SUPPORTED;
 }
 
-Os::File::Status LinuxGpioDriver ::setupLineEvent(const PlatformIntType chip_descriptor,
+Os::File::Status LinuxGpioDriver ::setupLineEvent(const int chip_descriptor,
                                                   const U32 gpio,
                                                   const GpioConfiguration& configuration,
-                                                  PlatformIntType& fd) {
+                                                  int& fd) {
     return Os::File::Status::NOT_SUPPORTED;
 }
 

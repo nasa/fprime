@@ -16,12 +16,6 @@ extern "C" {
 #endif
 #include <stdint.h>
 
-typedef int PlatformIntType;
-#define PRI_PlatformIntType "d"
-
-typedef unsigned int PlatformUIntType;
-#define PRI_PlatformUIntType "u"
-
 // Linux/Darwin definitions for pointer have various sizes across platforms
 // and since these definitions need to be consistent we must ask the size.
 // Check for __SIZEOF_POINTER__ or cause error

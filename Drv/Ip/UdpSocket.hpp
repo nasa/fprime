@@ -98,7 +98,7 @@ class UdpSocket : public IpSocket {
      * \param socketDescriptor: socket descriptor used in bind
      * \return status of the bind
      */
-    SocketIpStatus bind(const PlatformIntType fd);
+    SocketIpStatus bind(const int fd);
     /**
      * \brief udp specific implementation for opening a socket.
      * \param socketDescriptor: (output) file descriptor opened. Only valid on SOCK_SUCCESS. Otherwise will be invalid

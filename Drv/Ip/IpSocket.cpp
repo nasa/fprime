@@ -65,7 +65,7 @@ bool IpSocket::isValidPort(U16 port) {
     return true;
 }
 
-SocketIpStatus IpSocket::setupTimeouts(PlatformIntType socketFd) {
+SocketIpStatus IpSocket::setupTimeouts(int socketFd) {
 // Get the IP address from host
 #ifdef TGT_OS_TYPE_VXWORKS
     // No timeouts set on Vxworks
@@ -87,7 +87,7 @@ SocketIpStatus IpSocket::addressToIp4(const char* address, void* ip4) {
     FW_ASSERT(ip4 != nullptr);
     // Get the IP address from host
 #ifdef TGT_OS_TYPE_VXWORKS
-    PlatformIntType ip = inet_addr(address);
+    int ip = inet_addr(address);
     if (ip == ERROR) {
         return SOCK_INVALID_IP_ADDRESS;
     }
@@ -109,7 +109,7 @@ void IpSocket::close(const SocketDescriptor& socketDescriptor) {
 
 void IpSocket::shutdown(const SocketDescriptor& socketDescriptor) {
     errno = 0;
-    PlatformIntType status = ::shutdown(socketDescriptor.fd, SHUT_RDWR);
+    int status = ::shutdown(socketDescriptor.fd, SHUT_RDWR);
     // If shutdown fails, go straight to the hard-shutdown
     if (status != 0) {
         this->close(socketDescriptor);
