@@ -97,6 +97,7 @@ struct BinaryCmpDirective {
     rhs: U8
     res: U8
     
+    @ which binary comparison op to perform
     _op: Fpy.DirectiveId
 }
 
