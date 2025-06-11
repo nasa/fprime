@@ -1,6 +1,6 @@
 module CDHCoreConfig {
     #Base ID for the CDHCore Subtopology, all components are offsets from this base ID
-    constant BASE_ID = 0x7000
+    constant BASE_ID = 0x3000
     
     module QueueSizes {
         constant cmdDisp     = 10
@@ -27,11 +27,13 @@ module CDHCoreConfig {
 
 
 module CDHCore {
-    instance tlmSend: Svc.TlmPacketizer base id CDHCoreConfig.BASE_ID + 0x0300 \
+    instance tlmSend: Svc.TlmPacketizer base id CDHCoreConfig.BASE_ID + 0x0700 \
         queue size CDHCoreConfig.QueueSizes.tlmSend \
         stack size CDHCoreConfig.StackSizes.tlmSend \
         priority CDHCoreConfig.Priorities.tlmSend \
     {
+        # NOTE: The Name Ref is specific to the Reference deployment, Ref
+        # This name will need to be updated if wishing to use this in a custom deployment
         phase Fpp.ToCpp.Phases.configComponents """
         CDHCore::tlmSend.setPacketList(
             Ref::Ref_RefPacketsTlmPackets::packetList, 
@@ -41,9 +43,11 @@ module CDHCore {
         """
     }
 
+    # Uncomment the following block and comment the above block to use TlmChan instead of TlmPacketizer
     #instance tlmSend: Svc.TlmChan base id CDHCoreConfig.BASE_ID + 0x0300 \
     #    queue size CDHCoreConfig.QueueSizes.tlmSend \
     #    stack size CDHCoreConfig.StackSizes.tlmSend \
     #    priority CDHCoreConfig.Priorities.tlmSend \
-    
+
+    instance fatalHandler: Svc.FatalHandler base id CDHCoreConfig.BASE_ID + 0x0800
 }
