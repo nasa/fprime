@@ -80,7 +80,7 @@ void ComQueueTester ::emitOneAndCheck(FwIndexType expectedIndex,
 // ----------------------------------------------------------------------
 
 void ComQueueTester ::testQueueSend() {
-    U8 data[BUFFER_LENGTH] = {0xde, 0xad, 0xbe};
+    U8 data[BUFFER_LENGTH] = BUFFER_DATA;
     Fw::ComBuffer comBuffer(&data[0], sizeof(data));
     Fw::Buffer buffer(&data[0], sizeof(data));
     configure();
@@ -100,7 +100,7 @@ void ComQueueTester ::testQueueSend() {
 }
 
 void ComQueueTester ::testQueuePause() {
-    U8 data[BUFFER_LENGTH] = {0xde, 0xad, 0xbe};
+    U8 data[BUFFER_LENGTH] = BUFFER_DATA;
     Fw::ComBuffer comBuffer(&data[0], sizeof(data));
     Fw::Buffer buffer(&data[0], sizeof(data));
     configure();
@@ -130,20 +130,21 @@ void ComQueueTester ::testQueuePause() {
 }
 
 void ComQueueTester ::testPrioritySend() {
-    U8 data[ComQueue::TOTAL_PORT_COUNT][BUFFER_LENGTH];
+    U8 data[ComQueue::TOTAL_PORT_COUNT][BUFFER_LENGTH] = {};
 
     ComQueue::QueueConfigurationTable configurationTable;
 
     for (FwIndexType i = 0; i < ComQueue::TOTAL_PORT_COUNT; i++) {
         configurationTable.entries[i].priority = ComQueue::TOTAL_PORT_COUNT - i - 1;
         configurationTable.entries[i].depth = 3;
-        data[i][0] = ComQueue::TOTAL_PORT_COUNT - i - 1;
+        // Set a unique data value in the buffer (at offset, accounting for mandatory packet type)
+        data[i][BUFFER_DATA_OFFSET] = ComQueue::TOTAL_PORT_COUNT - i - 1;
     }
 
     // Make the last message have the same priority as the second message
     configurationTable.entries[ComQueue::TOTAL_PORT_COUNT - 1].priority = 1;
-    data[ComQueue::TOTAL_PORT_COUNT - 2][0] = 0;
-    data[ComQueue::TOTAL_PORT_COUNT - 1][0] = 1;
+    data[ComQueue::TOTAL_PORT_COUNT - 2][BUFFER_DATA_OFFSET] = 0;
+    data[ComQueue::TOTAL_PORT_COUNT - 1][BUFFER_DATA_OFFSET] = 1;
 
     component.configure(configurationTable, 0, mallocAllocator);
 
@@ -168,7 +169,7 @@ void ComQueueTester ::testPrioritySend() {
         // Check that the size changed by exactly one
         ASSERT_EQ(fromPortHistory_dataOut->size(), (previousSize + 1));
 
-        orderKey = fromPortHistory_dataOut->at(index).data.getData()[0];
+        orderKey = fromPortHistory_dataOut->at(index).data.getData()[BUFFER_DATA_OFFSET];
         ASSERT_EQ(orderKey, index);
     }
     clearFromPortHistory();
@@ -196,7 +197,7 @@ void ComQueueTester::testExternalQueueOverflow() {
 
     component.configure(configurationTable, 0, mallocAllocator);
 
-    U8 data[BUFFER_LENGTH] = {0xde, 0xad, 0xbe};
+    U8 data[BUFFER_LENGTH] = BUFFER_DATA;
     Fw::Buffer buffer(&data[0], sizeof(data));
 
     for (FwIndexType queueNum = 0; queueNum < ComQueue::TOTAL_PORT_COUNT; queueNum++) {
@@ -254,7 +255,7 @@ void ComQueueTester::testExternalQueueOverflow() {
 
 void ComQueueTester::testInternalQueueOverflow() {
     // Internal queue is the message queue for async input ports
-    U8 data[BUFFER_LENGTH] = {0xde, 0xad, 0xbe};
+    U8 data[BUFFER_LENGTH] = BUFFER_DATA;
     Fw::Buffer buffer(data, sizeof(data));
 
     const FwIndexType queueNum = ComQueue::COM_PORT_COUNT;
@@ -285,7 +286,7 @@ void ComQueueTester::testInternalQueueOverflow() {
 }
 
 void ComQueueTester ::testReadyFirst() {
-    U8 data[BUFFER_LENGTH] = {0xde, 0xad, 0xbe};
+    U8 data[BUFFER_LENGTH] = BUFFER_DATA;
     Fw::ComBuffer comBuffer(&data[0], sizeof(data));
     Fw::Buffer buffer(&data[0], sizeof(data));
     configure();
@@ -318,7 +319,7 @@ void ComQueueTester ::testReadyFirst() {
 }
 
 void ComQueueTester ::testContextData() {
-    U8 data[BUFFER_LENGTH] = {0xde, 0xad, 0xbe};
+    U8 data[BUFFER_LENGTH] = BUFFER_DATA;
     Fw::ComBuffer comBuffer(&data[0], sizeof(data));
     Fw::Buffer buffer(&data[0], sizeof(data));
     configure();
@@ -346,7 +347,7 @@ void ComQueueTester ::testContextData() {
 }
 
 void ComQueueTester ::testBufferQueueReturn() {
-    U8 data[BUFFER_LENGTH] = {0xde, 0xad, 0xbe};
+    U8 data[BUFFER_LENGTH] = BUFFER_DATA;
     Fw::Buffer buffer(&data[0], sizeof(data));
     ComCfg::FrameContext context;
     configure();

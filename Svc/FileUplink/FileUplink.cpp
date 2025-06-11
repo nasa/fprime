@@ -39,7 +39,7 @@ FileUplink ::~FileUplink() {}
 void FileUplink ::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& buffer) {
     // If packet is too small to contain a packet type, log + deallocate and return
     if (buffer.getSize() < sizeof(FwPacketDescriptorType)) {
-        this->log_WARNING_HI_InvalidPacketReceived(Fw::ComPacket::FW_PACKET_UNKNOWN);
+        this->log_WARNING_HI_InvalidPacketReceived(Fw::ComPacketType::FW_PACKET_UNKNOWN);
         this->bufferSendOut_out(0, buffer);
         return;
     }
@@ -50,7 +50,7 @@ void FileUplink ::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& bu
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     // If packet type is not a file packet, log + deallocate and return
-    if (packetType != Fw::ComPacket::FW_PACKET_FILE) {
+    if (packetType != Fw::ComPacketType::FW_PACKET_FILE) {
         this->log_WARNING_HI_InvalidPacketReceived(packetType);
         this->bufferSendOut_out(0, buffer);
         return;

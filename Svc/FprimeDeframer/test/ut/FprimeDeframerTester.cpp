@@ -27,7 +27,7 @@ FprimeDeframerTester ::~FprimeDeframerTester() {}
 
 void FprimeDeframerTester ::testNominalFrame() {
     // Get random byte of data
-    U8 randomByte = static_cast<U8>(STest::Random::lowerUpper(0, 255));
+    U8 randomByte = static_cast<U8>(STest::Random::lowerUpper(1, 255));
     //           |  F´ start word        |     Length (= 1)      |   Data     |   Checksum (4 bytes)   |
     U8 data[13] = {0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0x00, 0x00, 0x01,  randomByte,  0x00, 0x00, 0x00, 0x00};
     // Inject the checksum into the data and send it to the component under test
@@ -38,6 +38,23 @@ void FprimeDeframerTester ::testNominalFrame() {
     ASSERT_from_dataReturnOut_SIZE(0); // nothing emitted on dataReturnOut
     // Assert that the data that was emitted on dataOut is equal to Data field above (randomByte)
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getData()[0], randomByte);
+    // Not enough data to read a valid APID -> should default to FW_PACKET_UNKNOWN
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.getapid(), ComCfg::APID::FW_PACKET_UNKNOWN);
+    ASSERT_EVENTS_SIZE(0); // no events emitted
+}
+
+void FprimeDeframerTester ::testNominalFrameApid() {
+    // Get random byte of data which represents the APID (PacketDescriptor)
+    U8 randomByte = static_cast<U8>(STest::Random::lowerUpper(0, 255));
+    //           |  F´ start word        |     Length (= 4)      |   PacketDescriptor (APID)   |   Checksum (4 bytes)   |
+    U8 data[16] = {0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, randomByte,  0x00, 0x00, 0x00, 0x00};
+    // Inject the checksum into the data and send it to the component under test
+    this->injectChecksum(data, sizeof(data));
+    this->mockReceiveData(data, sizeof(data));
+
+    ASSERT_from_dataOut_SIZE(1); // something emitted on dataOut
+    ASSERT_from_dataReturnOut_SIZE(0); // nothing emitted on dataReturnOut
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.getapid(), randomByte); // APID should be set in context
     ASSERT_EVENTS_SIZE(0); // no events emitted
 }
 

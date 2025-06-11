@@ -11,7 +11,7 @@
 namespace Fw {
 
     TlmPacket::TlmPacket() : m_numEntries(0) {
-        this->m_type = FW_PACKET_TELEM;
+        this->m_type = ComPacketType::FW_PACKET_TELEM;
         this->m_tlmBuffer.resetSer();
     }
 
@@ -24,7 +24,7 @@ namespace Fw {
         this->m_numEntries = 0;
         // make sure packet type is correct before serializing. It should
         // never be anything but FW_PACKET_TELEM, so assert.
-        FW_ASSERT(FW_PACKET_TELEM == this->m_type, static_cast<FwAssertArgType>(this->m_type));
+        FW_ASSERT(ComPacketType::FW_PACKET_TELEM == this->m_type, static_cast<FwAssertArgType>(this->m_type));
         // serialize descriptor
         // The function serializeBase inherited from ComPacket converts this->m_type
         // to type FwPacketDescriptorType and serializes the result into this->m_tlmBuffer.
@@ -42,7 +42,7 @@ namespace Fw {
             return stat;
         }
         // make sure that this->m_tlmBuffer stores a telemetry packet
-        if (this->m_type != FW_PACKET_TELEM) {
+        if (this->m_type != ComPacketType::FW_PACKET_TELEM) {
             return Fw::FW_DESERIALIZE_TYPE_MISMATCH;
         }
 

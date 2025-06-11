@@ -8,7 +8,11 @@
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Os/Os.hpp>
 
+// Forward declaration for UTs
+namespace Os {namespace Test {namespace FileTest {struct Tester;}}}
+
 namespace Os {
+
 //! \brief base implementation of FileHandle
 //!
 struct FileHandle {};
@@ -213,6 +217,9 @@ class FileInterface {
 };
 
 class File final : public FileInterface {
+
+  friend struct Os::Test::FileTest::Tester;
+
   public:
     //! \brief constructor
     //!
@@ -504,7 +511,8 @@ class File final : public FileInterface {
     Status finalizeCrc(U32& crc);
 
   private:
-    PRIVATE : static const U32 INITIAL_CRC = 0xFFFFFFFF;  //!< Initial value for CRC calculation
+    static const U32 INITIAL_CRC = 0xFFFFFFFF;            //!< Initial value for CRC calculation
+
     Mode m_mode = Mode::OPEN_NO_MODE;                     //!< Stores mode for error checking
     const CHAR* m_path = nullptr;                         //!< Path last opened
 
