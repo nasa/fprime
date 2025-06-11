@@ -21,5 +21,29 @@ module CDHCoreConfig {
         constant $health     = 100
         constant events      = 99
         constant tlmSend     = 98
+
     }
+}
+
+
+module CDHCore {
+    instance tlmSend: Svc.TlmPacketizer base id CDHCoreConfig.BASE_ID + 0x0300 \
+        queue size CDHCoreConfig.QueueSizes.tlmSend \
+        stack size CDHCoreConfig.StackSizes.tlmSend \
+        priority CDHCoreConfig.Priorities.tlmSend \
+    {
+        phase Fpp.ToCpp.Phases.configComponents """
+        CDHCore::tlmSend.setPacketList(
+            Ref::Ref_RefPacketsTlmPackets::packetList, 
+            Ref::Ref_RefPacketsTlmPackets::omittedChannels, 
+            1
+        );
+        """
+    }
+
+    #instance tlmSend: Svc.TlmChan base id CDHCoreConfig.BASE_ID + 0x0300 \
+    #    queue size CDHCoreConfig.QueueSizes.tlmSend \
+    #    stack size CDHCoreConfig.StackSizes.tlmSend \
+    #    priority CDHCoreConfig.Priorities.tlmSend \
+    
 }

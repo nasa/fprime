@@ -12,10 +12,6 @@ module CDHCore {
         stack size CDHCoreConfig.StackSizes.events \
         priority CDHCoreConfig.Priorities.events
 
-    instance tlmSend: Svc.TlmChan base id CDHCoreConfig.BASE_ID + 0x0300 \
-        queue size CDHCoreConfig.QueueSizes.tlmSend \
-        stack size CDHCoreConfig.StackSizes.tlmSend \
-        priority CDHCoreConfig.Priorities.tlmSend
 
     # ----------------------------------------------------------------------
     # Queued Components
