@@ -17,7 +17,7 @@
 
 namespace Os {
 namespace Test {
-namespace File {
+namespace FileTest {
 
 struct Tester {
     //! State data for an open OS file.
@@ -153,8 +153,8 @@ struct Tester {
 //! Get the tester implementation for the given backend.
 //! \return pointer to tester subclass implementation
 //!
-std::unique_ptr<Os::Test::File::Tester> get_tester_implementation();
-}  // namespace File
+std::unique_ptr<Os::Test::FileTest::Tester> get_tester_implementation();
+}  // namespace FileTester
 }  // namespace Test
 }  // namespace Os
 #endif  // __RULES_HEADERS__

@@ -51,13 +51,14 @@ class UdpSocket : public IpSocket {
      * Configures the UDP handler to use the given hostname and port for outgoing transmissions. Incoming hostname
      * and port are configured using the `configureRecv` function call for UDP as it requires separate host/port pairs
      * for outgoing and incoming transmissions. Hostname DNS translation is left up to the caller and thus hostname must
-     * be an IP address in dot-notation of the form "x.x.x.x". Port cannot be set to 0 as dynamic port assignment is not
-     * supported on remote ports.  It is possible to configure the UDP port as a single-direction send port only.
+     * be an IP address in dot-notation of the form "x.x.x.x". If port is set to 0, the socket will be configured for
+     * ephemeral send (dynamic reply-to) and will use the sender's address from the first received datagram for replies.
+     * It is possible to configure the UDP port as a single-direction send port only.
      *
      * Note: delegates to `IpSocket::configure`
      *
      * \param hostname: socket uses for outgoing transmissions. Must be of form x.x.x.x
-     * \param port: port socket uses for outgoing transmissions. Must NOT be 0.
+     * \param port: port socket uses for outgoing transmissions. Can be 0 for ephemeral reply-to mode.
      * \param send_timeout_seconds: send timeout seconds portion
      * \param send_timeout_microseconds: send timeout microseconds portion. Must be less than 1000000
      * \return status of configure
@@ -75,7 +76,7 @@ class UdpSocket : public IpSocket {
      * single-direction receive port only.
      *
      * \param hostname: socket uses for incoming transmissions. Must be of form x.x.x.x
-     * \param port: port socket uses for incoming transmissions.
+     * \param port: port socket uses for incoming transmissions. Can be 0 for ephemeral port assignment.
      * \return status of configure
      */
     SocketIpStatus configureRecv(const char* hostname, const U16 port);
@@ -122,8 +123,9 @@ class UdpSocket : public IpSocket {
     I32 recvProtocol(const SocketDescriptor& socketDescriptor, U8* const data, const U32 size) override;
   private:
     SocketState* m_state; //!< State storage
-    U16 m_recv_port;  //!< IP address port used
-    char m_recv_hostname[SOCKET_MAX_HOSTNAME_SIZE];  //!< Hostname to supply
+    U16 m_recv_port;  //!< Port to receive on
+    CHAR m_recv_hostname[SOCKET_MAX_HOSTNAME_SIZE]; //!< Hostname to receive on
+    bool m_recv_configured; //!< True if configureRecv was called
 };
 }  // namespace Drv
 
