@@ -26,9 +26,10 @@ stored in _M_.
 
 `Fw/DataStructures` provides the following array templates:
 
-* [`ExternalArray`](ExternalArray.md)
-
-* [`Array`](Array.md)
+|Name|Description|
+|----|-----------|
+|[`Array`](Array.md)|A bounds-checked array with internal memory for storing the array elements|
+|[`ExternalArray`](ExternalArray.md)|A bounds-checked array with external memory for storing the array elements|
 
 ## 2. FIFO Queues
 
@@ -40,11 +41,11 @@ first in first out (FIFO) order.
 
 `Fw/DataStructures` provides the following FIFO queue templates:
 
-* [`FifoQueueBase`](FifoQueueBase.md)
-
-* [`ExternalFifoQueue`](ExternalFifoQueue.md)
-
-* [`FifoQueue`](FifoQueue.md)
+|Name|Description|
+|----|-----------|
+|[`ExternalFifoQueue`](ExternalFifoQueue.md)|A FIFO queue with external memory for storing the queue items|
+|[`FifoQueue`](FifoQueue.md)|A FIFO queue with internal memory for storing the queue items|
+|[`FifoQueueBase`](FifoQueueBase.md)|The abstract base class for a FIFO queue|
 
 The queue implementations use a template called 
 [`CircularIndex`](CircularIndex.md)
