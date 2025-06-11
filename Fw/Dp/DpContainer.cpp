@@ -46,7 +46,7 @@ Fw::SerializeStatus DpContainer::deserializeHeader() {
     if (status == Fw::FW_SERIALIZE_OK) {
         FwPacketDescriptorType packetDescriptor;
         status = deserializer.deserialize(packetDescriptor);
-        if (packetDescriptor != Fw::ComPacket::FW_PACKET_DP) {
+        if (packetDescriptor != ComPacketType::FW_PACKET_DP) {
             status = Fw::FW_SERIALIZE_FORMAT_ERROR;
         }
     }
@@ -91,7 +91,7 @@ void DpContainer::serializeHeader() {
     auto serializer = this->m_buffer.getSerializer();
     // Serialize the packet type
     Fw::SerializeStatus status =
-        serializer.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacket::FW_PACKET_DP));
+        serializer.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_DP));
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     // Serialize the container id
     status = serializer.serialize(this->m_id);

@@ -11,7 +11,7 @@
 
 namespace Os {
 namespace Test {
-namespace File {
+namespace FileTest {
 
 //! Set up for the test ensures that the test can run at all
 //!
@@ -59,8 +59,8 @@ class StubsTester : public Tester {
 
 };
 
-std::unique_ptr<Os::Test::File::Tester> get_tester_implementation() {
-    return std::unique_ptr<Os::Test::File::Tester>(new Os::Test::File::StubsTester());
+std::unique_ptr<Os::Test::FileTest::Tester> get_tester_implementation() {
+    return std::unique_ptr<Os::Test::FileTest::Tester>(new Os::Test::FileTest::StubsTester());
 }
 
 

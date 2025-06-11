@@ -144,7 +144,7 @@ TEST(Framing, CommandPacket) {
   COMMENT("Apply framing to a command packet");
   REQUIREMENT("Svc-FramingProtocol-001");
   REQUIREMENT("Svc-FramingProtocol-003");
-  Svc::FramingTester tester(Fw::ComPacket::FW_PACKET_COMMAND);
+  Svc::FramingTester tester(Fw::ComPacketType::FW_PACKET_COMMAND);
   tester.check();
 }
 
@@ -152,7 +152,7 @@ TEST(Framing, FilePacket) {
   COMMENT("Apply framing to a file packet");
   REQUIREMENT("Svc-FramingProtocol-001");
   REQUIREMENT("Svc-FramingProtocol-003");
-  Svc::FramingTester tester(Fw::ComPacket::FW_PACKET_FILE);
+  Svc::FramingTester tester(Fw::ComPacketType::FW_PACKET_FILE);
   tester.check();
 }
 
@@ -160,7 +160,7 @@ TEST(Framing, UnknownPacket) {
   COMMENT("Apply framing to a packet of unknown type");
   REQUIREMENT("Svc-FramingProtocol-001");
   REQUIREMENT("Svc-FramingProtocol-003");
-  Svc::FramingTester tester(Fw::ComPacket::FW_PACKET_UNKNOWN);
+  Svc::FramingTester tester(Fw::ComPacketType::FW_PACKET_UNKNOWN);
   tester.check();
 }
 

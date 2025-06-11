@@ -15,7 +15,7 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   FramingTester ::
-    FramingTester(Fw::ComPacket::ComPacketType a_packetType) :
+    FramingTester(Fw::ComPacketType a_packetType) :
       // Pick a random data size
       dataSize(STest::Pick::lowerUpper(1, MAX_DATA_SIZE)),
       packetType(a_packetType),
@@ -94,7 +94,7 @@ namespace Svc {
     sb.fill();
     const Fw::SerializeStatus status = sb.deserialize(serialPacketType);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
-    typedef Fw::ComPacket::ComPacketType PacketType;
+    typedef Fw::ComPacketType PacketType;
     const PacketType pt = static_cast<PacketType>(serialPacketType);
     ASSERT_EQ(pt, this->packetType);
   }

@@ -331,7 +331,7 @@ are less restrictive in size.
 
 | Macro                      | Definition                                                 | Default | Valid Values     |
 | -------------------------- | -----------------------------------------------------------|---------|------------------|
-| FW_FILE_BUFFER_MAX_SIZE    | Defines buffer and chunk size for file uplink and downlink | 255     | Positive integer |
+| FW_FILE_BUFFER_MAX_SIZE    | Defines buffer and chunk size for file uplink and downlink | `FW_COM_BUFFER_MAX_SIZE`     | Positive integer |
 | FW_INTERNAL_INTERFACE_STRING_MAX_SIZE | Maximum size for interface string               | 40      | Positive integer |
 
 ### Text Logging
