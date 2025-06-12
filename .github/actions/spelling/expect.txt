@@ -66,7 +66,7 @@ CComponent
 ccsds
 ccsparc
 CDH
-CDHCORESUBTOPOLOGY
+CDHCORE
 cerrno
 CFDP
 cff
@@ -79,13 +79,11 @@ CHIPINFO
 CHK
 CHNG
 CIRCULARSTATE
-classdiagram
 CLOSEFILE
 cloudbees
 CMDDISP
 CMDDISPATCHER
 CMDPACKET
-CMDREG
 cmdresponse
 cmdseq
 cmdsequencer
@@ -97,7 +95,6 @@ COMBUFFER
 comlogger
 COMMANDDISPATCHERIMPL
 COMMANDDISPATCHERIMPLCFG
-COMMSSUBTOPOLOGY
 COMPACKET
 COMPACKETQUEUEIN
 COMQUEUE
@@ -133,7 +130,6 @@ ctu
 culates
 cuz
 CYCLEOUT
-DATAPRODUCTSSUBTOPOLOGY
 DATAROOTDIR
 DDDTHH
 Debian
@@ -213,7 +209,6 @@ ffff
 Ffs
 FILEDOWNLINK
 FILEDOWNLINKCFG
-FILEHANDLINGSUBTOPOLOGY
 FILEID
 FILEOPENERROR
 FILEWRITEERROR
@@ -224,7 +219,6 @@ FONTPATH
 foodoodie
 foodoodiehoo
 FPCONFIG
-FPL
 fpp
 fppi
 fpptest
@@ -292,7 +286,6 @@ ieeetr
 iflag
 ifstr
 imple
-importables
 inbool
 INCLUDEDIR
 initstate
@@ -395,11 +388,7 @@ NACI
 nasafprime
 nbits
 ncsl
-ndiffs
-neascout
 netinet
-newloc
-newroot
 newtio
 nmsgs
 NOBLOCK
@@ -459,6 +448,7 @@ pdflatex
 PEB
 penv
 PERLMOD
+PINGENTRIES
 PINGSEND
 pkill
 PKTS
@@ -536,7 +526,6 @@ rpi
 RPIDEMO
 RPIDEMOCOMPONENTIMPLCFG
 rptr
-RSend
 RXD
 SAlias
 sanitizers
@@ -603,7 +592,6 @@ subgrouping
 subhist
 subhistory
 subseconds
-subtargets
 subtopology
 suppr
 suseconds
@@ -653,11 +641,8 @@ TLMPACKET
 TLMPACKETIZER
 TLMPACKETIZERCOMPONENTIMPLCFG
 TLMPACKETIZERTYPES
-tmpl
-tmptree
 TODOLIST
 TOKENBUCKETTESTER
-topologyapp
 topologydefs
 totalram
 tparam
