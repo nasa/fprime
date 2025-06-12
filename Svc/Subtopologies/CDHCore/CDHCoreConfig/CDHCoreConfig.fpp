@@ -17,37 +17,38 @@ module CDHCoreConfig {
     }
 
     module Priorities {
-        constant cmdDisp     = 101
-        constant $health     = 100
-        constant events      = 99
-        constant tlmSend     = 98
+        constant cmdDisp     = 98
+        constant $health     = 97
+        constant events      = 96
+        constant tlmSend     = 95
 
     }
 }
 
 
 module CDHCore {
-    instance tlmSend: Svc.TlmPacketizer base id CDHCoreConfig.BASE_ID + 0x0700 \
+
+    instance tlmSend: Svc.TlmChan base id CDHCoreConfig.BASE_ID + 0x0700 \
         queue size CDHCoreConfig.QueueSizes.tlmSend \
         stack size CDHCoreConfig.StackSizes.tlmSend \
         priority CDHCoreConfig.Priorities.tlmSend \
-    {
-        # NOTE: The Name Ref is specific to the Reference deployment, Ref
-        # This name will need to be updated if wishing to use this in a custom deployment
-        phase Fpp.ToCpp.Phases.configComponents """
-        CDHCore::tlmSend.setPacketList(
-            Ref::Ref_RefPacketsTlmPackets::packetList, 
-            Ref::Ref_RefPacketsTlmPackets::omittedChannels, 
-            1
-        );
-        """
-    }
 
-    # Uncomment the following block and comment the above block to use TlmChan instead of TlmPacketizer
-    #instance tlmSend: Svc.TlmChan base id CDHCoreConfig.BASE_ID + 0x0300 \
+    # Uncomment the following block and comment the above block to use TlmPacketizer instead of TlmChan
+    #instance tlmSend: Svc.TlmPacketizer base id CDHCoreConfig.BASE_ID + 0x0700 \
     #    queue size CDHCoreConfig.QueueSizes.tlmSend \
     #    stack size CDHCoreConfig.StackSizes.tlmSend \
     #    priority CDHCoreConfig.Priorities.tlmSend \
+    #{
+    #    # NOTE: The Name Ref is specific to the Reference deployment, Ref
+    #    # This name will need to be updated if wishing to use this in a custom deployment
+    #    phase Fpp.ToCpp.Phases.configComponents """
+    #    CDHCore::tlmSend.setPacketList(
+    #        Ref::Ref_RefPacketsTlmPackets::packetList, 
+    #        Ref::Ref_RefPacketsTlmPackets::omittedChannels, 
+    #        1
+    #    );
+    #    """
+    #}
 
-    instance fatalHandler: Svc.FatalHandler base id CDHCoreConfig.BASE_ID + 0x0800
+
 }

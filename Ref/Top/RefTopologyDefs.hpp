@@ -16,8 +16,8 @@
 #include "Ref/Top/FppConstantsAc.hpp"
 #include "Svc/Health/Health.hpp"
 
-// Subtopology includes
-#include "Svc/Subtopologies/CDHCore/SubtopologyTopologyDefs.hpp"
+// Subtopology PingEntries includes 
+#include "Svc/Subtopologies/CDHCore/PingEntries.hpp"
 
 namespace PingEntries {
     namespace Ref_blockDrv {enum { WARN = 3, FATAL = 5 };}
@@ -31,11 +31,6 @@ namespace PingEntries {
     namespace Ref_rateGroup2Comp {enum { WARN = 3, FATAL = 5 };}
     namespace Ref_rateGroup3Comp {enum { WARN = 3, FATAL = 5 };}
     namespace Ref_dpCat {enum { WARN = 3, FATAL = 5 };}
-    /* For the purposes of the subtopology
-    namespace Ref_tlmSend {enum { WARN = 3, FATAL = 5 };}
-    namespace Ref_cmdDisp {enum { WARN = 3, FATAL = 5 };}
-    namespace Ref_eventLogger {enum { WARN = 3, FATAL = 5 };}
-    */
 }  // namespace PingEntries
 
 /**

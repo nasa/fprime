@@ -19,7 +19,7 @@ telemetry packets RefPackets {
     Ref.fileManager.CommandsExecuted
     Ref.comQueue.comQueueDepth
     Ref.comQueue.buffQueueDepth
-    CDHCore.tlmSend.SendLevel
+    #CDHCore.tlmSend.SendLevel
   }
 
   packet CDHErrors id 2 group 1 {

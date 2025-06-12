@@ -67,6 +67,7 @@ module Ref {
     instance dpWriter
     instance dpBufferManager
     instance linuxTimer
+    instance fatalHandler
 
     # ----------------------------------------------------------------------
     # Pattern graph specifiers
@@ -221,6 +222,10 @@ module Ref {
       # Send filled DP
       SG1.productSendOut -> dpMgr.productSendIn[0]
 
+    }
+
+    connections FaultProtection {
+        CDHCore.events.FatalAnnounce -> fatalHandler.FatalReceive
     }
 
   }
