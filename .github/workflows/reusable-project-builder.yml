@@ -67,7 +67,7 @@ jobs:
         with:
           submodules: true
           path: ${{ inputs.fprime_location }}
-      - name: "Install F´ and Project requirements.txt"
+      - name: "Install requirements.txt"
         run: |
           pip3 install -r ${{ inputs.fprime_location }}/requirements.txt
         shell: bash
