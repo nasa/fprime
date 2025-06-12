@@ -138,17 +138,17 @@ TEST_F(Functionality, GetFreeSpace) {
     free_space_rule.apply(*tester);
 }
 
-//    // Test both get and set working directory
-    TEST_F(Functionality, GetSetWorkingDirectory) {
-        Os::Test::FileSystem::Tester::GetSetWorkingDirectory change_cwd_rule;
-        change_cwd_rule.apply(*tester);
-    }
+// Test both get and set working directory
+TEST_F(Functionality, GetSetWorkingDirectory) {
+    Os::Test::FileSystem::Tester::GetSetWorkingDirectory change_cwd_rule;
+    change_cwd_rule.apply(*tester);
+}
 
-    // Test directory detection
-    TEST_F(Functionality, DetectDirectory) {
-        Os::Test::FileSystem::Tester::DetectDirectory detect_rule;
-        detect_rule.apply(*tester);
-    }
+// Test directory detection
+TEST_F(Functionality, DetectDirectory) {
+    Os::Test::FileSystem::Tester::DetectDirectory detect_rule;
+    detect_rule.apply(*tester);
+}
 
 // Randomized testing
 TEST_F(Functionality, RandomizedTesting) {
