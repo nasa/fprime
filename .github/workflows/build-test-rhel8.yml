@@ -26,7 +26,7 @@ jobs:
     steps:
     - name: "Install dependencies"
       run: |
-        sudo dnf install -y git python3.12 python3.12-pip llvm-toolset
+        dnf install -y git python3.12 python3.12-pip llvm-toolset
     - name: "Checkout F´ Repository"
       uses: actions/checkout@v4
       with:
@@ -45,7 +45,7 @@ jobs:
     steps:
     - name: "Install dependencies"
       run: |
-        sudo dnf install -y git python3.12 python3.12-pip llvm-toolset
+        dnf install -y git python3.12 python3.12-pip llvm-toolset
     - name: "Checkout F´ Repository"
       uses: actions/checkout@v4
       with:
@@ -65,7 +65,7 @@ jobs:
     steps:
     - name: "Install dependencies"
       run: |
-        sudo dnf install -y git python3.12 python3.12-pip llvm-toolset
+        dnf install -y git python3.12 python3.12-pip llvm-toolset
     - name: "Checkout F´ Repository"
       uses: actions/checkout@v4
       with:
