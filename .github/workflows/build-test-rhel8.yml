@@ -1,4 +1,4 @@
-# This is a basic workflow to help you get started with Actions
+# Run suite of CI builds and tests in a RHEL8 container
 
 name: CI [RHEL8]
 
@@ -16,9 +16,7 @@ on:
       - '.github/actions/spelling/**'
       - '.github/ISSUE_TEMPLATE/**'
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-
   Framework:
     runs-on: ubuntu-latest
     container:

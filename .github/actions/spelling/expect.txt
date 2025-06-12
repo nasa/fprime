@@ -152,6 +152,7 @@ DHTML
 diafile
 diles
 dinkel
+dnf
 dnp
 docbook
 docset
@@ -527,6 +528,7 @@ rcvd
 rdwr
 Readback
 Recvd
+redhat
 refspec
 REFTOPOLOGY
 REFTOPOLOGYDEFS
@@ -535,6 +537,7 @@ REMOVEDIRECTORY
 REMOVEFILE
 reprioritize
 RGD
+rhel
 RHH
 Rizvi
 ROOTDIR
