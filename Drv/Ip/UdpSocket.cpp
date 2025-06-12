@@ -54,14 +54,12 @@ SocketIpStatus UdpSocket::configure(const char* const hostname, const U16 port, 
 
 
 SocketIpStatus UdpSocket::configureSend(const char* const hostname, const U16 port, const U32 timeout_seconds, const U32 timeout_microseconds) {
-    //Timeout is for the send, so configure send will work with the base class
     if (hostname == nullptr) {
         return SOCK_INVALID_IP_ADDRESS;
     }
     if (timeout_microseconds >= 1000000) {
         return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
     }
-    // Call the base class configure method directly
     return IpSocket::configure(hostname, port, timeout_seconds, timeout_microseconds);
 }
 
@@ -101,7 +99,6 @@ SocketIpStatus UdpSocket::bind(const PlatformIntType fd) {
         return SOCK_FAILED_TO_BIND;
     }
     
-    // Use a local copy of the address structure
     struct sockaddr_in address = this->m_addr_recv;
     
     // OS specific settings
@@ -121,7 +118,6 @@ SocketIpStatus UdpSocket::bind(const PlatformIntType fd) {
     // Update m_addr_recv with the actual port assigned (for ephemeral port support)
     this->m_addr_recv.sin_port = address.sin_port;
 
-    // No need to copy the entire structure since we only updated the port
 
     return SOCK_SUCCESS;
 }
@@ -185,15 +181,15 @@ SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
     }
 
     // Log message for UDP
-    char recv_ip[INET_ADDRSTRLEN];
-    inet_ntop(AF_INET, &(this->m_addr_recv.sin_addr), recv_ip, INET_ADDRSTRLEN);
+    char recv_addr[INET_ADDRSTRLEN];
+    inet_ntop(AF_INET, &(this->m_addr_recv.sin_addr), recv_addr, INET_ADDRSTRLEN);
     
     if ((port == 0) && (recv_port > 0)) {
-        Fw::Logger::log("Setup to only receive udp at %s:%hu\n", recv_ip, recv_port);
+        Fw::Logger::log("Setup to only receive udp at %s:%hu\n", recv_addr, recv_port);
     } else if ((port > 0) && (recv_port == 0)) {
         Fw::Logger::log("Setup to only send udp at %s:%hu\n", m_hostname, port);
     } else if ((port > 0) && (recv_port > 0)) {
-        Fw::Logger::log("Setup to receive udp at %s:%hu and send to %s:%hu\n", recv_ip, recv_port, m_hostname, port);
+        Fw::Logger::log("Setup to receive udp at %s:%hu and send to %s:%hu\n", recv_addr, recv_port, m_hostname, port);
     }
     
     FW_ASSERT(status == SOCK_SUCCESS, static_cast<FwAssertArgType>(status));
