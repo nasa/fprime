@@ -137,6 +137,8 @@ FileSystem::PathType FileSystem::getPathType(const char* path) {
             return PathType::DIRECTORY;
         } else if (S_ISREG(path_stat.st_mode)) {
             return PathType::FILE;
+        } else {
+            return PathType::OTHER;
         }
     }
     return PathType::NOT_EXIST;

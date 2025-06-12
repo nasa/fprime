@@ -44,6 +44,7 @@ class FileSystemInterface {
     enum PathType {
         FILE,      //!< Path is a file
         DIRECTORY, //!< Path is a directory
+        OTHER,     //!< Path is not a file or directory, e.g. a socket
         NOT_EXIST, //!< Path does not exist
     };
 

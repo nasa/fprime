@@ -6,6 +6,8 @@
 #include "RulesHeaders.hpp"
 #include "FileSystemRules.hpp"
 #include "STest/Pick/Pick.hpp"
+#include <sys/stat.h>
+#include <unistd.h>
 
 // ------------------------------------------------------------------------------------------------------
 // Utility functions
@@ -377,10 +379,24 @@ void Os::Test::FileSystem::Tester::DetectDirectory::action(Os::Test::FileSystem:
     Os::FileSystem::PathType fileType = Os::FileSystem::getSingleton().getPathType(filePath.c_str());
     ASSERT_EQ(fileType, Os::FileSystem::PathType::FILE) << "Failed to detect file: " << filePath;
 
-    // Test non-existent path
+    // Test nonexistent path
     std::string nonExistentPath = "non_existent_path";
     Os::FileSystem::PathType nonExistentType = Os::FileSystem::getSingleton().getPathType(nonExistentPath.c_str());
-    ASSERT_EQ(nonExistentType, Os::FileSystem::PathType::NOT_EXIST) << "Failed to detect non-existent path";
+    ASSERT_EQ(nonExistentType, Os::FileSystem::PathType::NOT_EXIST) << "Failed to detect nonexistent path";
+
+    // Test OTHER path type using a named pipe (FIFO)
+    std::string fifoPath = state.get_random_directory().path + "/test_fifo";
+    int mkfifoResult = mkfifo(fifoPath.c_str(), 0666);
+    if (mkfifoResult == 0) {
+        Os::FileSystem::PathType fifoType = Os::FileSystem::getSingleton().getPathType(fifoPath.c_str());
+        ASSERT_EQ(fifoType, Os::FileSystem::PathType::OTHER) << "Failed to detect FIFO as OTHER type: " << fifoPath;
+        
+        // Clean up the FIFO
+        unlink(fifoPath.c_str());
+    } else {
+        // If mkfifo fails (e.g., on systems that don't support it), skip this test
+        printf("Warning: Could not create FIFO for OTHER PathType test, skipping.\n");
+    }
 
     // Test directory vs file in same path
     std::string subdirPath = state.get_random_directory().path + "/test_subdir";
