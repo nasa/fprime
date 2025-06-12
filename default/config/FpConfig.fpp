@@ -41,6 +41,9 @@ type FwQueuePriorityType = PlatformQueuePriorityType
 @ The id type.
 type FwIdType = U32
 
+@ The type of task priorities used.
+type FwTaskIdType = PlatformTaskIdType
+
 ####
 # GDS type aliases:
 # Used for the project to override types shared with GDSes and other remote systems.
