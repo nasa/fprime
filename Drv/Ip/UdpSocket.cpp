@@ -40,23 +40,13 @@
 
 namespace Drv {
 
-struct SocketState {
-    struct sockaddr_in m_addr_send;  //!< UDP server address, maybe unused
-    struct sockaddr_in m_addr_recv;  //!< UDP server address, maybe unused
-
-    SocketState() {
-        ::memset(&m_addr_send, 0, sizeof(m_addr_send));
-        ::memset(&m_addr_recv, 0, sizeof(m_addr_recv));
-    }
-};
-
-UdpSocket::UdpSocket() : IpSocket(), m_state(new(std::nothrow) SocketState), m_recv_port(0), m_recv_configured(false) {
-    FW_ASSERT(m_state != nullptr);
+UdpSocket::UdpSocket() : IpSocket(), m_recv_port(0), m_recv_configured(false) {
+    ::memset(&m_addr_send, 0, sizeof(m_addr_send));
+    ::memset(&m_addr_recv, 0, sizeof(m_addr_recv));
 }
 
 UdpSocket::~UdpSocket() {
-    FW_ASSERT(m_state);
-    delete m_state;
+    // No dynamic memory to clean up
 }
 
 SocketIpStatus UdpSocket::configure(const char* const hostname, const U16 port, const U32 timeout_seconds, const U32 timeout_microseconds) {
@@ -68,10 +58,12 @@ SocketIpStatus UdpSocket::configure(const char* const hostname, const U16 port, 
 SocketIpStatus UdpSocket::configureSend(const char* const hostname, const U16 port, const U32 timeout_seconds, const U32 timeout_microseconds) {
     //Timeout is for the send, so configure send will work with the base class
     FW_ASSERT(hostname != nullptr);
-    return this->IpSocket::configure(hostname, port, timeout_seconds, timeout_microseconds);
+    // Call the base class configure method directly
+    return IpSocket::configure(hostname, port, timeout_seconds, timeout_microseconds);
 }
 
 SocketIpStatus UdpSocket::configureRecv(const char* hostname, const U16 port) {
+    // Call isValidPort directly as a member of this class
     FW_ASSERT(this->isValidPort(port));
     FW_ASSERT(hostname != nullptr);
     this->m_recv_port = port;
@@ -115,8 +107,8 @@ SocketIpStatus UdpSocket::bind(const PlatformIntType fd) {
     // Update m_recv_port with the actual port assigned (for ephemeral port support)
     this->m_recv_port = ntohs(address.sin_port);
 
-    FW_ASSERT(sizeof(this->m_state->m_addr_recv) == sizeof(address), static_cast<FwAssertArgType>(sizeof(this->m_state->m_addr_recv)), static_cast<FwAssertArgType>(sizeof(address)));
-    memcpy(&this->m_state->m_addr_recv, &address, sizeof(this->m_state->m_addr_recv));
+    FW_ASSERT(sizeof(this->m_addr_recv) == sizeof(address), static_cast<FwAssertArgType>(sizeof(this->m_addr_recv)), static_cast<FwAssertArgType>(sizeof(address)));
+    memcpy(&this->m_addr_recv, &address, sizeof(this->m_addr_recv));
 
     return SOCK_SUCCESS;
 }
@@ -152,13 +144,14 @@ SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
         };
 
         // Now apply timeouts
-        if ((status = IpSocket::setupTimeouts(socketFd)) != SOCK_SUCCESS) {
+        // Call setupTimeouts directly as a member of this class
+        if ((status = this->setupTimeouts(socketFd)) != SOCK_SUCCESS) {
             ::close(socketFd);
             return status;
         }
-        FW_ASSERT(sizeof(this->m_state->m_addr_send) == sizeof(address), static_cast<FwAssertArgType>(sizeof(this->m_state->m_addr_send)),
+        FW_ASSERT(sizeof(this->m_addr_send) == sizeof(address), static_cast<FwAssertArgType>(sizeof(this->m_addr_send)),
                   static_cast<FwAssertArgType>(sizeof(address)));
-        memcpy(&this->m_state->m_addr_send, &address, sizeof(this->m_state->m_addr_send));
+        memcpy(&this->m_addr_send, &address, sizeof(this->m_addr_send));
     }
 
     // Only bind if configureRecv was called (including ephemeral)
@@ -186,21 +179,21 @@ SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
 }
 
 I32 UdpSocket::sendProtocol(const SocketDescriptor& socketDescriptor, const U8* const data, const U32 size) {
-    FW_ASSERT(this->m_state->m_addr_send.sin_family != 0); // Make sure the address was previously setup
+    FW_ASSERT(this->m_addr_send.sin_family != 0); // Make sure the address was previously setup
     return static_cast<I32>(::sendto(socketDescriptor.fd, data, size, SOCKET_IP_SEND_FLAGS,
-                    reinterpret_cast<struct sockaddr *>(&this->m_state->m_addr_send), sizeof(this->m_state->m_addr_send)));
+                    reinterpret_cast<struct sockaddr *>(&this->m_addr_send), sizeof(this->m_addr_send)));
 }
 
 I32 UdpSocket::recvProtocol(const SocketDescriptor& socketDescriptor, U8* const data, const U32 size) {
-    FW_ASSERT(this->m_state->m_addr_recv.sin_family != 0); // Make sure the address was previously setup
+    FW_ASSERT(this->m_addr_recv.sin_family != 0); // Make sure the address was previously setup
 
     struct sockaddr_in sender_addr;
     socklen_t sender_addr_len = sizeof(sender_addr);
     I32 received = static_cast<I32>(::recvfrom(socketDescriptor.fd, data, size, SOCKET_IP_RECV_FLAGS,
                                               reinterpret_cast<struct sockaddr*>(&sender_addr), &sender_addr_len));
     // If we have not configured a send port, set it to the source of the last received packet
-    if (received > 0 && this->m_state->m_addr_send.sin_port == 0) {
-        this->m_state->m_addr_send = sender_addr;
+    if (received > 0 && this->m_addr_send.sin_port == 0) {
+        this->m_addr_send = sender_addr;
         this->m_port = ntohs(sender_addr.sin_port);
         Fw::Logger::log("Configured send port to %hu as specified by the last received packet.\n", this->m_port);
     }

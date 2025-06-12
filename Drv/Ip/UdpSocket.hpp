@@ -16,9 +16,18 @@
 #include <Drv/Ip/IpSocket.hpp>
 #include <config/IpCfg.hpp>
 
-namespace Drv {
+// Include system headers for sockaddr_in
+#ifdef TGT_OS_TYPE_VXWORKS
+    #include <socket.h>
+    #include <inetLib.h>
+#elif defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    #include <sys/socket.h>
+    #include <arpa/inet.h>
+#else
+    #error OS not supported for IP Socket Communications
+#endif
 
-struct SocketState;
+namespace Drv {
 
 /**
  * \brief Helper for setting up Udp using Berkeley sockets as a client
@@ -122,7 +131,8 @@ class UdpSocket : public IpSocket {
      */
     I32 recvProtocol(const SocketDescriptor& socketDescriptor, U8* const data, const U32 size) override;
   private:
-    SocketState* m_state; //!< State storage
+    struct sockaddr_in m_addr_send;  //!< UDP server address for sending
+    struct sockaddr_in m_addr_recv;  //!< UDP server address for receiving
     U16 m_recv_port;  //!< Port to receive on
     CHAR m_recv_hostname[SOCKET_MAX_HOSTNAME_SIZE]; //!< Hostname to receive on
     bool m_recv_configured; //!< True if configureRecv was called
