@@ -29,6 +29,7 @@ void SpacePacketFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, c
     Fw::SerializeStatus status;
     FwSizeType frameSize = SpacePacketHeader::SERIALIZED_SIZE + data.getSize();
     FW_ASSERT(data.getSize() <= std::numeric_limits<Fw::Buffer::SizeType>::max() - SpacePacketHeader::SERIALIZED_SIZE, static_cast<FwAssertArgType>(data.getSize()));
+    FW_ASSERT(data.getSize() > 0, static_cast<FwAssertArgType>(data.getSize())); // Protocol specifies at least 1 byte of data for a valid packet
 
     // Allocate frame buffer
     Fw::Buffer frameBuffer = this->bufferAllocate_out(0, static_cast<Fw::Buffer::SizeType>(frameSize));
