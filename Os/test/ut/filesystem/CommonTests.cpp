@@ -138,11 +138,17 @@ TEST_F(Functionality, GetFreeSpace) {
     free_space_rule.apply(*tester);
 }
 
-// // Test both get and set working directory
-TEST_F(Functionality, GetSetWorkingDirectory) {
-    Os::Test::FileSystem::Tester::GetSetWorkingDirectory change_cwd_rule;
-    change_cwd_rule.apply(*tester);
-}
+//    // Test both get and set working directory
+    TEST_F(Functionality, GetSetWorkingDirectory) {
+        Os::Test::FileSystem::Tester::GetSetWorkingDirectory change_cwd_rule;
+        change_cwd_rule.apply(*tester);
+    }
+
+    // Test directory detection
+    TEST_F(Functionality, DetectDirectory) {
+        Os::Test::FileSystem::Tester::DetectDirectory detect_rule;
+        detect_rule.apply(*tester);
+    }
 
 // Randomized testing
 TEST_F(Functionality, RandomizedTesting) {
@@ -163,6 +169,7 @@ TEST_F(Functionality, RandomizedTesting) {
     Os::Test::FileSystem::Tester::GetFileSize file_size_rule;
     Os::Test::FileSystem::Tester::GetFreeSpace free_space_rule;
     Os::Test::FileSystem::Tester::GetSetWorkingDirectory cwd_rule;
+    Os::Test::FileSystem::Tester::DetectDirectory detect_directory_rule;
 
     // Place these rules into a list of rules
     STest::Rule<Os::Test::FileSystem::Tester>* rules[] = {
@@ -180,7 +187,8 @@ TEST_F(Functionality, RandomizedTesting) {
             &append_new_rule,
             &file_size_rule,
             &free_space_rule,
-            &cwd_rule
+            &cwd_rule,
+            &detect_directory_rule
     };
 
     // Take the rules and place them into a random scenario

@@ -4,6 +4,7 @@
 // ======================================================================
 #include <Fw/Types/Assert.hpp>
 #include <Os/FileSystem.hpp>
+#include <sys/stat.h>
 
 namespace Os {
 
@@ -130,17 +131,13 @@ FileSystem::Status FileSystem::touch(const char* path) {
 
 FileSystem::PathType FileSystem::getPathType(const char* path) {
     FW_ASSERT(path != nullptr);
-    Os::File file;
-    File::Status file_status = file.open(path, Os::File::OPEN_READ);
-    file.close();
-    if (file_status == File::OP_OK) {
-        return PathType::FILE;
-    }
-    Os::Directory dir;
-    Directory::Status dir_status = dir.open(path, Os::Directory::OpenMode::READ);
-    dir.close();
-    if (dir_status == Directory::Status::OP_OK) {
-        return PathType::DIRECTORY;
+    struct stat path_stat;
+    if (stat(path, &path_stat) == 0) {
+        if (S_ISDIR(path_stat.st_mode)) {
+            return PathType::DIRECTORY;
+        } else if (S_ISREG(path_stat.st_mode)) {
+            return PathType::FILE;
+        }
     }
     return PathType::NOT_EXIST;
 }  // end getPathType

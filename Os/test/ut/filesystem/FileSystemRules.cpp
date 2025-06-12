@@ -357,6 +357,54 @@ void Os::Test::FileSystem::Tester::GetFreeSpace::action(Os::Test::FileSystem::Te
 }
 
 // ------------------------------------------------------------------------------------------------------
+// Rule:  DetectDirectory: Verify directory detection functionality
+// ------------------------------------------------------------------------------------------------------
+Os::Test::FileSystem::Tester::DetectDirectory::DetectDirectory() :
+    STest::Rule<Os::Test::FileSystem::Tester>("DetectDirectory") {}
+
+bool Os::Test::FileSystem::Tester::DetectDirectory::precondition(const Os::Test::FileSystem::Tester &state) {
+    return state.m_test_dirs.size() > 0 && state.m_test_files.size() > 0;
+}
+
+void Os::Test::FileSystem::Tester::DetectDirectory::action(Os::Test::FileSystem::Tester &state) {
+    // Test directory detection
+    std::string dirPath = state.get_random_directory().path;
+    Os::FileSystem::PathType dirType = Os::FileSystem::getSingleton().getPathType(dirPath.c_str());
+    ASSERT_EQ(dirType, Os::FileSystem::PathType::DIRECTORY) << "Failed to detect directory: " << dirPath;
+
+    // Test file detection
+    std::string filePath = state.get_random_file().path;
+    Os::FileSystem::PathType fileType = Os::FileSystem::getSingleton().getPathType(filePath.c_str());
+    ASSERT_EQ(fileType, Os::FileSystem::PathType::FILE) << "Failed to detect file: " << filePath;
+
+    // Test non-existent path
+    std::string nonExistentPath = "non_existent_path";
+    Os::FileSystem::PathType nonExistentType = Os::FileSystem::getSingleton().getPathType(nonExistentPath.c_str());
+    ASSERT_EQ(nonExistentType, Os::FileSystem::PathType::NOT_EXIST) << "Failed to detect non-existent path";
+
+    // Test directory vs file in same path
+    std::string subdirPath = state.get_random_directory().path + "/test_subdir";
+    Os::FileSystem::Status status = Os::FileSystem::getSingleton().createDirectory(subdirPath.c_str());
+    ASSERT_EQ(status, Os::FileSystem::Status::OP_OK) << "Failed to create test subdirectory";
+
+    // Create a file with the same name as the directory
+    Os::FileSystem::Status fileStatus = Os::FileSystem::getSingleton().touch((subdirPath + ".txt").c_str());
+    ASSERT_EQ(fileStatus, Os::FileSystem::Status::OP_OK) << "Failed to create test file";
+
+    // Verify directory detection
+    Os::FileSystem::PathType subdirType = Os::FileSystem::getSingleton().getPathType(subdirPath.c_str());
+    ASSERT_EQ(subdirType, Os::FileSystem::PathType::DIRECTORY) << "Failed to detect directory with file in same path";
+
+    // Verify file detection
+    Os::FileSystem::PathType fileInDirType = Os::FileSystem::getSingleton().getPathType((subdirPath + ".txt").c_str());
+    ASSERT_EQ(fileInDirType, Os::FileSystem::PathType::FILE) << "Failed to detect file with directory in same path";
+
+    // Clean up
+    status = Os::FileSystem::getSingleton().removeDirectory(subdirPath.c_str());
+    ASSERT_EQ(status, Os::FileSystem::Status::OP_OK) << "Failed to remove test directory";
+}
+
+// ------------------------------------------------------------------------------------------------------
 // Rule:  GetSetWorkingDirectory: Test both get and set working directory
 // ------------------------------------------------------------------------------------------------------
 Os::Test::FileSystem::Tester::GetSetWorkingDirectory::GetSetWorkingDirectory() :
