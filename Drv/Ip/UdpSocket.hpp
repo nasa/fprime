@@ -133,8 +133,6 @@ class UdpSocket : public IpSocket {
   private:
     struct sockaddr_in m_addr_send;  //!< UDP server address for sending
     struct sockaddr_in m_addr_recv;  //!< UDP server address for receiving
-    U16 m_recv_port;  //!< Port to receive on
-    CHAR m_recv_hostname[SOCKET_MAX_HOSTNAME_SIZE]; //!< Hostname to receive on
     bool m_recv_configured; //!< True if configureRecv was called
 };
 }  // namespace Drv

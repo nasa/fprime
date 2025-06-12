@@ -40,7 +40,7 @@
 
 namespace Drv {
 
-UdpSocket::UdpSocket() : IpSocket(), m_recv_port(0), m_recv_configured(false) {
+UdpSocket::UdpSocket() : IpSocket(), m_recv_configured(false) {
     ::memset(&m_addr_send, 0, sizeof(m_addr_send));
     ::memset(&m_addr_recv, 0, sizeof(m_addr_recv));
 }
@@ -77,14 +77,22 @@ SocketIpStatus UdpSocket::configureRecv(const char* hostname, const U16 port) {
         return SOCK_INVALID_IP_ADDRESS;
     }
     
-    this->m_recv_port = port;
-    (void) Fw::StringUtils::string_copy(this->m_recv_hostname, hostname, static_cast<FwSizeType>(SOCKET_MAX_HOSTNAME_SIZE));
+    // Initialize the receive address structure
+    ::memset(&m_addr_recv, 0, sizeof(m_addr_recv));
+    m_addr_recv.sin_family = AF_INET;
+    m_addr_recv.sin_port = htons(port);
+    
+    // Convert hostname to IP address
+    if (IpSocket::addressToIp4(hostname, &m_addr_recv.sin_addr) != SOCK_SUCCESS) {
+        return SOCK_INVALID_IP_ADDRESS;
+    }
+    
     this->m_recv_configured = true;
     return SOCK_SUCCESS;
 }
 
 U16 UdpSocket::getRecvPort() {
-    return this->m_recv_port;
+    return ntohs(this->m_addr_recv.sin_port);
 }
 
 
@@ -93,22 +101,13 @@ SocketIpStatus UdpSocket::bind(const PlatformIntType fd) {
         return SOCK_FAILED_TO_BIND;
     }
     
-    // Initialize address structure to zero before use
-    struct sockaddr_in address;
-    ::memset(&address, 0, sizeof(address));
-
-    // Set up the address port and name
-    address.sin_family = AF_INET;
-    address.sin_port = htons(this->m_recv_port);
+    // Use a local copy of the address structure
+    struct sockaddr_in address = this->m_addr_recv;
+    
     // OS specific settings
 #if defined TGT_OS_TYPE_VXWORKS || TGT_OS_TYPE_DARWIN
     address.sin_len = static_cast<U8>(sizeof(struct sockaddr_in));
 #endif
-
-    // First IP address to socket sin_addr
-    if (IpSocket::addressToIp4(m_recv_hostname, &address.sin_addr) != SOCK_SUCCESS) {
-        return SOCK_INVALID_IP_ADDRESS;
-    };
     // UDP (for receiving) requires bind to an address to the socket
     if (::bind(fd, reinterpret_cast<struct sockaddr*>(&address), sizeof(address)) < 0) {
         return SOCK_FAILED_TO_BIND;
@@ -119,17 +118,15 @@ SocketIpStatus UdpSocket::bind(const PlatformIntType fd) {
         return SOCK_FAILED_TO_READ_BACK_PORT;
     }
 
-    // Update m_recv_port with the actual port assigned (for ephemeral port support)
-    this->m_recv_port = ntohs(address.sin_port);
+    // Update m_addr_recv with the actual port assigned (for ephemeral port support)
+    this->m_addr_recv.sin_port = address.sin_port;
 
-    FW_ASSERT(sizeof(this->m_addr_recv) == sizeof(address), static_cast<FwAssertArgType>(sizeof(this->m_addr_recv)), static_cast<FwAssertArgType>(sizeof(address)));
-    memcpy(&this->m_addr_recv, &address, sizeof(this->m_addr_recv));
+    // No need to copy the entire structure since we only updated the port
 
     return SOCK_SUCCESS;
 }
 
 SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
-    // Add validation for edge case where neither send nor receive is configured
     if (this->m_port == 0 && !this->m_recv_configured) {
         return SOCK_INVALID_CALL; // Neither send nor receive is configured
     }
@@ -142,7 +139,7 @@ SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
     ::memset(&address, 0, sizeof(address));
 
     U16 port = this->m_port;
-    U16 recv_port = this->m_recv_port;
+    U16 recv_port = ntohs(this->m_addr_recv.sin_port);
 
     // Acquire a socket, or return error
     if ((socketFd = ::socket(AF_INET, SOCK_DGRAM, 0)) == -1) {
@@ -188,12 +185,15 @@ SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
     }
 
     // Log message for UDP
+    char recv_ip[INET_ADDRSTRLEN];
+    inet_ntop(AF_INET, &(this->m_addr_recv.sin_addr), recv_ip, INET_ADDRSTRLEN);
+    
     if ((port == 0) && (recv_port > 0)) {
-        Fw::Logger::log("Setup to only receive udp at %s:%hu\n", m_recv_hostname, recv_port);
+        Fw::Logger::log("Setup to only receive udp at %s:%hu\n", recv_ip, recv_port);
     } else if ((port > 0) && (recv_port == 0)) {
         Fw::Logger::log("Setup to only send udp at %s:%hu\n", m_hostname, port);
     } else if ((port > 0) && (recv_port > 0)) {
-        Fw::Logger::log("Setup to receive udp at %s:%hu and send to %s:%hu\n", m_recv_hostname, recv_port, m_hostname, port);
+        Fw::Logger::log("Setup to receive udp at %s:%hu and send to %s:%hu\n", recv_ip, recv_port, m_hostname, port);
     }
     
     FW_ASSERT(status == SOCK_SUCCESS, static_cast<FwAssertArgType>(status));
@@ -203,7 +203,9 @@ SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
 
 I32 UdpSocket::sendProtocol(const SocketDescriptor& socketDescriptor, const U8* const data, const U32 size) {
     FW_ASSERT(this->m_addr_send.sin_family != 0); // Make sure the address was previously setup
-    FW_ASSERT(socketDescriptor.fd < 0 || data == nullptr || size == 0);
+    FW_ASSERT(socketDescriptor.fd >= 0); // File descriptor should be valid
+    FW_ASSERT(data != nullptr); // Data pointer should not be null
+    FW_ASSERT(size > 0); // Size should be positive
     
     return static_cast<I32>(::sendto(socketDescriptor.fd, data, size, SOCKET_IP_SEND_FLAGS,
                     reinterpret_cast<struct sockaddr *>(&this->m_addr_send), sizeof(this->m_addr_send)));
@@ -211,11 +213,14 @@ I32 UdpSocket::sendProtocol(const SocketDescriptor& socketDescriptor, const U8* 
 
 I32 UdpSocket::recvProtocol(const SocketDescriptor& socketDescriptor, U8* const data, const U32 size) {
     FW_ASSERT(this->m_addr_recv.sin_family != 0); // Make sure the address was previously setup
-    FW_ASSERT(socketDescriptor.fd < 0 || data == nullptr || size == 0);
+    FW_ASSERT(socketDescriptor.fd >= 0); // File descriptor should be valid
+    FW_ASSERT(data != nullptr); // Data pointer should not be null
+    FW_ASSERT(size > 0); // Size should be positive
 
     // Initialize sender address structure to zero
     struct sockaddr_in sender_addr;
     ::memset(&sender_addr, 0, sizeof(sender_addr));
+
     socklen_t sender_addr_len = sizeof(sender_addr);
     I32 received = static_cast<I32>(::recvfrom(socketDescriptor.fd, data, size, SOCKET_IP_RECV_FLAGS,
                                               reinterpret_cast<struct sockaddr*>(&sender_addr), &sender_addr_len));
