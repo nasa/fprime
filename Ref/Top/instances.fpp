@@ -156,6 +156,4 @@ module Ref {
 
   instance linuxTimer: Svc.LinuxTimer base id 0x2A00
 
-  instance fatalHandler: Svc.FatalHandler base id 0x2B00 \
-
 }

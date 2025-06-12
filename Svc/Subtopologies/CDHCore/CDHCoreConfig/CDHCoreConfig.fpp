@@ -17,10 +17,10 @@ module CDHCoreConfig {
     }
 
     module Priorities {
-        constant cmdDisp     = 98
-        constant $health     = 97
-        constant events      = 96
-        constant tlmSend     = 95
+        constant cmdDisp     = 102
+        constant $health     = 101
+        constant events      = 100
+        constant tlmSend     = 99
 
     }
 }
