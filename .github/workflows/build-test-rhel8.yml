@@ -18,77 +18,54 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+
   Framework:
     runs-on: ubuntu-latest
     container:
       image: redhat/ubi8:8.10
     steps:
+    - name: "Install dependencies"
+      run: |
+        sudo dnf install -y git python3.12 python3.12-pip llvm-toolset
     - name: "Checkout F´ Repository"
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
         submodules: true
     - uses: ./.github/actions/setup
-    - name: F prime CI step
-      run: ./ci/tests/Framework.bash
-    # Archive the outputs
-    - name: 'Archive Logs'
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: ci-framework-logs
-        path: ci-logs.tar.gz
-        retention-days: 5
+    - name: Build Framework
+      run: |
+        fprime-util generate
+        fprime-util build --all -j4
 
   Ref:
     runs-on: ubuntu-latest
     container:
       image: redhat/ubi8:8.10
     steps:
+    - name: "Install dependencies"
+      run: |
+        sudo dnf install -y git python3.12 python3.12-pip llvm-toolset
     - name: "Checkout F´ Repository"
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
         submodules: true
     - uses: ./.github/actions/setup
-    - name: F prime CI step
-      run: ./ci/tests/Ref.bash
-    # Archive the outputs
-    - name: 'Archive Logs'
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: ci-ref-logs
-        path: ci-logs.tar.gz
-        retention-days: 5
+    - name: Build Ref
+      run: |
+        cd Ref
+        fprime-util generate
+        fprime-util build -j4
 
-  Integration:
+  UTs:
     runs-on: ubuntu-latest
     container:
       image: redhat/ubi8:8.10
     steps:
-    - name: "Checkout F´ Repository"
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-        submodules: true
-    - uses: ./.github/actions/setup
-    - name: F prime CI step
-      run: ./ci/tests/30-ints.bash
-    # Archive the outputs
-    - name: 'Archive Logs'
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: ci-int-logs
-        path: ci-logs.tar.gz
-        retention-days: 5
-
-  Quality:
-    runs-on: ubuntu-latest
-    container:
-      image: redhat/ubi8:8.10
-    steps:
+    - name: "Install dependencies"
+      run: |
+        sudo dnf install -y git python3.12 python3.12-pip llvm-toolset
     - name: "Checkout F´ Repository"
       uses: actions/checkout@v4
       with:
@@ -99,3 +76,4 @@ jobs:
       run: |
         fprime-util generate --ut
         fprime-util build --all --ut -j4
+        fprime-util check --all -j4
