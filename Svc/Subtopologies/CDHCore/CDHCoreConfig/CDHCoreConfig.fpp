@@ -12,7 +12,7 @@ module CDHCoreConfig {
 
     module StackSizes {
         constant cmdDisp     = 64 * 1024
-        constant events      = 10
+        constant events      = 64 * 1024
         constant tlmSend     = 64 * 1024
     }
 
