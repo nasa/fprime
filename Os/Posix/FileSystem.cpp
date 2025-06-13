@@ -98,8 +98,10 @@ FileSystemHandle* PosixFileSystem::getHandle() {
 }
 
 PosixFileSystem::Status PosixFileSystem::_getPathType(const char* path, PathType& pathType) {
+    FW_ASSERT(path != nullptr);
     struct stat path_stat;
-    if (stat(path, &path_stat) == 0) {
+    const I32 status = lstat(path, &path_stat);
+    if (status == 0) {
         if (S_ISDIR(path_stat.st_mode)) {
             pathType = PathType::DIRECTORY;
         } else if (S_ISREG(path_stat.st_mode)) {

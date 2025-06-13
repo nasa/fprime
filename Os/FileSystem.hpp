@@ -124,7 +124,7 @@ class FileSystemInterface {
 //! This class provides a common interface for file system operations.
 //! This class uses the singleton pattern and should be accessed through
 //! its static functions, for example using `Os::FileSystem::removeFile(path)`.
-class FileSystem : public FileSystemInterface {
+class FileSystem final : public FileSystemInterface {
   private:
     FileSystem();         //!<  Constructor (private because singleton pattern)
   public:
