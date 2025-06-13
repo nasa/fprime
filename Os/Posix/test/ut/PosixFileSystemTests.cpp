@@ -14,8 +14,6 @@
 // Posix Test Cases
 // ----------------------------------------------------------------------
 
-// All tests are inherited from the common tests in CommonTests.hpp
-
 // POSIX-specific test class
 class PosixFileSystemTest : public ::testing::Test {
 protected:

@@ -6,8 +6,6 @@
 #include "RulesHeaders.hpp"
 #include "FileSystemRules.hpp"
 #include "STest/Pick/Pick.hpp"
-#include <sys/stat.h>
-#include <unistd.h>
 
 // ------------------------------------------------------------------------------------------------------
 // Utility functions
