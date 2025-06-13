@@ -4,7 +4,6 @@
 // ======================================================================
 #include <Fw/Types/Assert.hpp>
 #include <Os/FileSystem.hpp>
-#include <sys/stat.h>
 
 namespace Os {
 
@@ -39,6 +38,12 @@ FileSystem::Status FileSystem::_rename(const char* sourcePath, const char* destP
     FW_ASSERT(sourcePath != nullptr);
     FW_ASSERT(destPath != nullptr);
     return this->m_delegate._rename(sourcePath, destPath);
+}
+
+FileSystem::Status FileSystem::_getPathType(const char* path, PathType& pathType) {
+    FW_ASSERT(&this->m_delegate == reinterpret_cast<FileSystemInterface*>(&this->m_handle_storage[0]));
+    FW_ASSERT(path != nullptr);
+    return this->m_delegate._getPathType(path, pathType);
 }
 
 FileSystem::Status FileSystem::_getWorkingDirectory(char* path, FwSizeType bufferSize) {
@@ -131,17 +136,12 @@ FileSystem::Status FileSystem::touch(const char* path) {
 
 FileSystem::PathType FileSystem::getPathType(const char* path) {
     FW_ASSERT(path != nullptr);
-    struct stat path_stat;
-    if (stat(path, &path_stat) == 0) {
-        if (S_ISDIR(path_stat.st_mode)) {
-            return PathType::DIRECTORY;
-        } else if (S_ISREG(path_stat.st_mode)) {
-            return PathType::FILE;
-        } else {
-            return PathType::OTHER;
-        }
+    PathType pathType;
+    Status status = getSingleton()._getPathType(path, pathType);
+    if (status != Status::OP_OK) {
+        return PathType::NOT_EXIST;
     }
-    return PathType::NOT_EXIST;
+    return pathType;
 }  // end getPathType
 
 bool FileSystem::exists(const char* path) {

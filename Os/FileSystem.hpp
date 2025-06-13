@@ -97,6 +97,15 @@ class FileSystemInterface {
     //! \return Status of the operation
     virtual Status _getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBytes) = 0;
 
+    //! \brief Get the type of the path (file, directory, etc.)
+    //!
+    //! It is invalid to pass `nullptr` as the path.
+    //!
+    //! \param path The path to check
+    //! \param pathType Reference to store the path type
+    //! \return Status of the operation
+    virtual Status _getPathType(const char* path, PathType& pathType) = 0;
+
     //! \brief Get the current working directory
     //! \param path Buffer to store the current working directory path
     //! \param bufferSize Size of the buffer
@@ -115,7 +124,7 @@ class FileSystemInterface {
 //! This class provides a common interface for file system operations.
 //! This class uses the singleton pattern and should be accessed through
 //! its static functions, for example using `Os::FileSystem::removeFile(path)`.
-class FileSystem final : public FileSystemInterface {
+class FileSystem : public FileSystemInterface {
   private:
     FileSystem();         //!<  Constructor (private because singleton pattern)
   public:
@@ -188,6 +197,15 @@ class FileSystem final : public FileSystemInterface {
     //! \param path The path of the new working directory
     //! \return Status of the operation
     Status _changeWorkingDirectory(const char* path) override;
+
+    //! \brief Get the type of the path (file, directory, etc.)
+    //!
+    //! It is invalid to pass `nullptr` as the path.
+    //!
+    //! \param path The path to check
+    //! \param pathType Reference to store the path type
+    //! \return Status of the operation
+    Status _getPathType(const char* path, PathType& pathType) override;
 
 
     // ------------------------------------------------------------

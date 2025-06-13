@@ -97,6 +97,22 @@ FileSystemHandle* PosixFileSystem::getHandle() {
     return &this->m_handle;
 }
 
+PosixFileSystem::Status PosixFileSystem::_getPathType(const char* path, PathType& pathType) {
+    struct stat path_stat;
+    if (stat(path, &path_stat) == 0) {
+        if (S_ISDIR(path_stat.st_mode)) {
+            pathType = PathType::DIRECTORY;
+        } else if (S_ISREG(path_stat.st_mode)) {
+            pathType = PathType::FILE;
+        } else {
+            pathType = PathType::OTHER;
+        }
+        return Status::OP_OK;
+    } else {
+        return errno_to_filesystem_status(errno);
+    }
+}
+
 }  // namespace FileSystem
 }  // namespace Posix
 }  // namespace Os
