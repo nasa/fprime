@@ -14,7 +14,7 @@ _ = cmake.get_build(
             ]
         )
     },
-    make_targets=["TestBuildAutocoderModule", "TestTargetAutocoderModule", "TestChainedAutocoderModule", "TestHeadersAutocoderModule"],
+    make_targets=["TestBuildAutocoderModule", "TestTargetAutocoderModule", "TestChainedAutocoderModule", "TestHeaderAutocoderModule"],
 )
 
 
@@ -54,6 +54,6 @@ def test_autocoder_chaining(AUTOCODER_BUILD):
         assert final_path.exists(), f"Failed to create chained autocoder output: {final}"
 
 
-def test_autocoder_headers_as_sources(AUTOCODER_BUILD):
+def test_autocoder_header_as_sources(AUTOCODER_BUILD):
     """Test that autocoders can generate header files that are treated as sources"""
-    cmake.assert_process_success(AUTOCODER_BUILD, targets=["TestHeadersAutocoderModule"])
+    cmake.assert_process_success(AUTOCODER_BUILD, targets=["TestHeaderAutocoderModule"])

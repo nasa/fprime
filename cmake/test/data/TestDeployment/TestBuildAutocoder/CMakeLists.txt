@@ -5,4 +5,3 @@ register_fprime_module(
         "${CMAKE_CURRENT_LIST_DIR}/test2.test-build.cpp"
     EXCLUDE_FROM_ALL
 )
-target_include_directories(TestBuildAutocoderModule PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
