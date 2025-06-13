@@ -138,7 +138,7 @@ TEST_F(Functionality, GetFreeSpace) {
     free_space_rule.apply(*tester);
 }
 
-// Test both get and set working directory
+// // Test both get and set working directory
 TEST_F(Functionality, GetSetWorkingDirectory) {
     Os::Test::FileSystem::Tester::GetSetWorkingDirectory change_cwd_rule;
     change_cwd_rule.apply(*tester);

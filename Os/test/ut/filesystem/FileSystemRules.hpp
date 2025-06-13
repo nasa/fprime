@@ -147,7 +147,7 @@ struct GetFreeSpace : public STest::Rule<Os::Test::FileSystem::Tester> {
 };
 
 // ------------------------------------------------------------------------------------------------------
-// Rule:  GetSetWorkingDirectory: Test both get and set working directory
+// Rule:  GetSetWorkingDirectory: Get working directory, set working directory
 // ------------------------------------------------------------------------------------------------------
 struct GetSetWorkingDirectory : public STest::Rule<Os::Test::FileSystem::Tester> {
     GetSetWorkingDirectory();
