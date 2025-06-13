@@ -14,12 +14,12 @@ _ = cmake.get_build(
             ]
         )
     },
-    make_targets=[],
+    make_targets=["TestBuildAutocoderModule", "TestTargetAutocoderModule", "TestChainedAutocoderModule", "TestHeadersAutocoderModule"],
 )
 
 
 def test_build_autocoder(AUTOCODER_BUILD):
-    """Test that a build-autocoder workss"""
+    """Test that a build-autocoder works"""
     cmake.assert_process_success(AUTOCODER_BUILD, targets=["TestBuildAutocoderModule"])
 
 
@@ -32,6 +32,28 @@ def test_autocoder_non_build_files(AUTOCODER_BUILD):
     """Test that a target-triggered autocoder works"""
     cmake.assert_process_success(AUTOCODER_BUILD, targets=["TestTargetAutocoderModule"])
     build_cache_path = AUTOCODER_BUILD["build"] / "TestDeployment" / "TestTargetAutocoder"
-    for created in ["test1.test-target.txt", "test2.test-target.txt"]:
+    for created in ["test1.test-target.generated.txt", "test2.test-target.generated.txt"]:
         full_created_path = build_cache_path / created
         assert full_created_path.exists(), f"Failed to create non-build output: {created}"
+
+
+def test_autocoder_chaining(AUTOCODER_BUILD):
+    """Test that autocoder chaining works - where one autocoder's output becomes another's input"""
+    cmake.assert_process_success(AUTOCODER_BUILD, targets=["TestChainedAutocoderModule"])
+    build_cache_path = AUTOCODER_BUILD["build"] / "TestDeployment" / "TestChainedAutocoder"
+    
+    # Verify that chained autocoder files are created
+    # First autocoder should create intermediate files with .generated suffix
+    for intermediate in ["test1.test-target.generated.txt", "test2.test-target.generated.txt"]:
+        intermediate_path = build_cache_path / intermediate
+        assert intermediate_path.exists(), f"Failed to create intermediate autocoder output: {intermediate}"
+    
+    # Second autocoder should process the intermediate files and create final outputs
+    for final in ["test1.chained.txt", "test2.chained.txt"]:
+        final_path = build_cache_path / final
+        assert final_path.exists(), f"Failed to create chained autocoder output: {final}"
+
+
+def test_autocoder_headers_as_sources(AUTOCODER_BUILD):
+    """Test that autocoders can generate header files that are treated as sources"""
+    cmake.assert_process_success(AUTOCODER_BUILD, targets=["TestHeadersAutocoderModule"])

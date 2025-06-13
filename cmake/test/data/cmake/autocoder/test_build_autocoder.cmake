@@ -39,6 +39,5 @@ function(test_build_autocoder_setup_autocode MODULE_NAME AC_INPUT_FILES)
     )
 
     # Generate files, mark them as build sources
-    set(AUTOCODER_GENERATED "${GENERATED_SOURCES}" PARENT_SCOPE)
-    set(AUTOCODER_BUILD_SOURCES "${GENERATED_SOURCES}" PARENT_SCOPE)
+    set(AUTOCODER_GENERATED_BUILD_SOURCES "${GENERATED_SOURCES}" PARENT_SCOPE)
 endfunction(test_build_autocoder_setup_autocode)

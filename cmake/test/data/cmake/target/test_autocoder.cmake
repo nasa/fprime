@@ -12,5 +12,8 @@ function(test_autocoder_add_deployment_target MODULE TARGET SOURCES DIRECT_DEPEN
 endfunction(test_autocoder_add_deployment_target)
 
 function(test_autocoder_add_module_target MODULE TARGET SOURCES DEPENDENCIES)
-    run_ac_set(MODULE "${CMAKE_CURRENT_LIST_DIR}/../autocoder/test_target_autocoder.cmake")
+    run_ac_set("${MODULE}" "autocoder/test_target_autocoder")
+    # Use the variable from this run as set by the autocoder
+    add_custom_target("${MODULE}_test_autocode" DEPENDS "${AUTOCODER_GENERATED_OTHER}")
+    add_dependencies("${MODULE}" "${MODULE}_test_autocode")
 endfunction(test_autocoder_add_module_target)

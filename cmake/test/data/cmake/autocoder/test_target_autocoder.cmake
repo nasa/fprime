@@ -25,16 +25,19 @@ endfunction(test_target_autocoder_is_supported)
 # AC_INPUT_FILES: list of supported autocoder input files
 ####
 function(test_target_autocoder_setup_autocode MODULE_NAME AC_INPUT_FILE)
-    # Set up generated sources list
-    get_filename_component(BASENAME "${AC_INPUT_FILE}" NAME)
-    set(GENERATED_SOURCE "${CMAKE_CURRENT_BINARY_DIR}/${BASENAME}")
+    # Set up generated sources list - add .generated suffix to avoid name collision
+    get_filename_component(BASENAME "${AC_INPUT_FILE}" NAME_WE)
+    set(GENERATED_SOURCE "${CMAKE_CURRENT_BINARY_DIR}/${BASENAME}.test-target.generated.txt")
 
-    # This autocoder just touches files
+    # This autocoder copies the input file and adds .generated suffix
     add_custom_command(
         OUTPUT ${GENERATED_SOURCE}
-        COMMAND "${CMAKE_COMMAND}" -E copy ${AC_INPUT_FILE} "${CMAKE_CURRENT_BINARY_DIR}"
+        COMMAND "${CMAKE_COMMAND}" -E copy ${AC_INPUT_FILE} "${GENERATED_SOURCE}"
+        DEPENDS ${AC_INPUT_FILE}
+        COMMENT "Generating target file from ${AC_INPUT_FILE}"
     )
 
     # Generate files, mark them as build sources
-    set(AUTOCODER_GENERATED "${GENERATED_SOURCE}" PARENT_SCOPE)
-endfunction(test_build_autocoder_setup_autocode)
+    set(AUTOCODER_GENERATED_OTHER "${GENERATED_SOURCE}" PARENT_SCOPE)
+    set(AUTOCODER_GENERATED_AUTOCODER_INPUTS "${GENERATED_SOURCE}" PARENT_SCOPE)
+endfunction(test_target_autocoder_setup_autocode)
