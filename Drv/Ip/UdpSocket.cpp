@@ -169,8 +169,7 @@ SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
     // Log message for UDP
     char recv_addr[INET_ADDRSTRLEN];
     if (inet_ntop(AF_INET, &(this->m_addr_recv.sin_addr), recv_addr, INET_ADDRSTRLEN) == nullptr) {
-        strncpy(recv_addr, "INVALID_ADDR", INET_ADDRSTRLEN);
-        recv_addr[INET_ADDRSTRLEN - 1] = '\0';
+        (void) Fw::StringUtils::string_copy(recv_addr, "INVALID_ADDR", INET_ADDRSTRLEN);
     }
     
     if ((port == 0) && (recv_port > 0)) {
