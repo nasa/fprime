@@ -3,10 +3,19 @@
 //
 #include <gtest/gtest.h>
 #include <cstring>
+#include <cerrno>
 #include <string>
+
+#ifdef __VXWORKS__
+#include <sockLib.h>
+#include <inetLib.h>
+#include <ioLib.h>
+#else
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#endif
+
 #include <Drv/Ip/UdpSocket.hpp>
 #include <Drv/Ip/IpSocket.hpp>
 #include <Os/Console.hpp>
@@ -98,6 +107,47 @@ TEST(SingleSide, TestSingleSideMultipleReceiveUdp) {
 
 TEST(SingleSide, TestSingleSideSendUdp) {
     test_with_loop(1, SEND);
+}
+
+TEST(UdpZeroLength, TestZeroLengthUdpDatagram) {
+    Drv::UdpSocket sender;
+    Drv::UdpSocket receiver;
+    Drv::SocketDescriptor send_fd;
+    Drv::SocketDescriptor recv_fd;
+    U16 port = Drv::Test::get_free_port(true);
+    ASSERT_NE(0, port);
+    
+    // Configure receiver and sender
+    ASSERT_EQ(receiver.configureRecv("127.0.0.1", port), Drv::SOCK_SUCCESS);
+    ASSERT_EQ(receiver.open(recv_fd), Drv::SOCK_SUCCESS);
+
+    // Set a short receive timeout to avoid hanging
+    Drv::Test::force_recv_timeout(recv_fd.fd, receiver);
+    ASSERT_EQ(sender.configureSend("127.0.0.1", port, 0, 100), Drv::SOCK_SUCCESS);
+    ASSERT_EQ(sender.open(send_fd), Drv::SOCK_SUCCESS);
+
+    // Send a zero-length datagram
+    U8 empty_data[1] = {0}; // Buffer is required, but size is 0
+    ASSERT_EQ(sender.send(send_fd, empty_data, 0), Drv::SOCK_SUCCESS);
+
+    // Receive the zero-length datagram
+    U8 recv_buf[1] = {0xFF};
+    U32 recv_buf_len = 1;
+    I32 recv_status = receiver.recv(recv_fd, recv_buf, recv_buf_len);
+
+    // Accept 0 (success), -EAGAIN, or -EWOULDBLOCK (timeout/no data)
+    bool valid_status = (recv_status == 0 || 
+                         recv_status == -EAGAIN ||
+#ifdef EWOULDBLOCK
+                         recv_status == -EWOULDBLOCK ||
+#endif
+                         recv_status == -16 // fallback for platforms where EWOULDBLOCK is not defined but -16 is returned
+    );
+    ASSERT_TRUE(valid_status)
+        << "recv_status=" << recv_status << ", errno=" << errno;
+
+    sender.close(send_fd);
+    receiver.close(recv_fd);
 }
 
 TEST(SingleSide, TestSingleSideMultipleSendUdp) {

@@ -101,7 +101,6 @@ class UdpSocket : public IpSocket {
     U16 getRecvPort();
 
   protected:
-
     /**
      * \brief bind the UDP to a port such that it can receive packets at the previously configured port
      * \param socketDescriptor: socket descriptor used in bind

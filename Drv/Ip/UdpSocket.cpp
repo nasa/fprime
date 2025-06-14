@@ -41,8 +41,8 @@
 namespace Drv {
 
 UdpSocket::UdpSocket() : IpSocket(), m_recv_configured(false) {
-    ::memset(&m_addr_send, 0, sizeof(m_addr_send));
-    ::memset(&m_addr_recv, 0, sizeof(m_addr_recv));
+    (void)::memset(&m_addr_send, 0, sizeof(m_addr_send));
+    (void)::memset(&m_addr_recv, 0, sizeof(m_addr_recv));
 }
 
 UdpSocket::~UdpSocket() = default;
@@ -54,29 +54,19 @@ SocketIpStatus UdpSocket::configure(const char* const hostname, const U16 port, 
 
 
 SocketIpStatus UdpSocket::configureSend(const char* const hostname, const U16 port, const U32 timeout_seconds, const U32 timeout_microseconds) {
-    if (hostname == nullptr) {
-        return SOCK_INVALID_IP_ADDRESS;
-    }
-    if (timeout_microseconds >= 1000000) {
-        return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
-    }
+    FW_ASSERT(hostname != nullptr);
+    FW_ASSERT(this->isValidPort(port));
+    FW_ASSERT(timeout_microseconds < 1000000);
     return IpSocket::configure(hostname, port, timeout_seconds, timeout_microseconds);
 }
 
 SocketIpStatus UdpSocket::configureRecv(const char* hostname, const U16 port) {
-    if (hostname == nullptr) {
-        return SOCK_INVALID_IP_ADDRESS;
-    }
-    if (!this->isValidPort(port)) {
-        return SOCK_INVALID_CALL;
-    }
-    // Check hostname length to prevent potential buffer overflow
-    if (strlen(hostname) >= SOCKET_MAX_HOSTNAME_SIZE) {
-        return SOCK_INVALID_IP_ADDRESS;
-    }
+    FW_ASSERT(hostname != nullptr);
+    FW_ASSERT(this->isValidPort(port));
+    FW_ASSERT(Fw::StringUtils::string_length(hostname, SOCKET_MAX_HOSTNAME_SIZE) < SOCKET_MAX_HOSTNAME_SIZE);
     
     // Initialize the receive address structure
-    ::memset(&m_addr_recv, 0, sizeof(m_addr_recv));
+    (void)::memset(&m_addr_recv, 0, sizeof(m_addr_recv));
     m_addr_recv.sin_family = AF_INET;
     m_addr_recv.sin_port = htons(port);
     
@@ -93,12 +83,8 @@ U16 UdpSocket::getRecvPort() {
     return ntohs(this->m_addr_recv.sin_port);
 }
 
-
 SocketIpStatus UdpSocket::bind(const PlatformIntType fd) {
-    if (fd < 0) {
-        return SOCK_FAILED_TO_BIND;
-    }
-    
+    FW_ASSERT(fd != -1);
     struct sockaddr_in address = this->m_addr_recv;
     
     // OS specific settings
@@ -132,7 +118,7 @@ SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
     
     // Initialize address structure to zero before use
     struct sockaddr_in address;
-    ::memset(&address, 0, sizeof(address));
+    (void)::memset(&address, 0, sizeof(address));
 
     U16 port = this->m_port;
     U16 recv_port = ntohs(this->m_addr_recv.sin_port);
@@ -167,7 +153,7 @@ SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
         }
         FW_ASSERT(sizeof(this->m_addr_send) == sizeof(address), static_cast<FwAssertArgType>(sizeof(this->m_addr_send)),
                   static_cast<FwAssertArgType>(sizeof(address)));
-        memcpy(&this->m_addr_send, &address, sizeof(this->m_addr_send));
+        (void)memcpy(&this->m_addr_send, &address, sizeof(this->m_addr_send));
     }
 
     // Only bind if configureRecv was called (including ephemeral)
@@ -182,7 +168,10 @@ SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
 
     // Log message for UDP
     char recv_addr[INET_ADDRSTRLEN];
-    inet_ntop(AF_INET, &(this->m_addr_recv.sin_addr), recv_addr, INET_ADDRSTRLEN);
+    if (inet_ntop(AF_INET, &(this->m_addr_recv.sin_addr), recv_addr, INET_ADDRSTRLEN) == nullptr) {
+        strncpy(recv_addr, "INVALID_ADDR", INET_ADDRSTRLEN);
+        recv_addr[INET_ADDRSTRLEN - 1] = '\0';
+    }
     
     if ((port == 0) && (recv_port > 0)) {
         Fw::Logger::log("Setup to only receive udp at %s:%hu\n", recv_addr, recv_port);
@@ -201,7 +190,6 @@ I32 UdpSocket::sendProtocol(const SocketDescriptor& socketDescriptor, const U8* 
     FW_ASSERT(this->m_addr_send.sin_family != 0); // Make sure the address was previously setup
     FW_ASSERT(socketDescriptor.fd >= 0); // File descriptor should be valid
     FW_ASSERT(data != nullptr); // Data pointer should not be null
-    FW_ASSERT(size > 0); // Size should be positive
     
     return static_cast<I32>(::sendto(socketDescriptor.fd, data, size, SOCKET_IP_SEND_FLAGS,
                     reinterpret_cast<struct sockaddr *>(&this->m_addr_send), sizeof(this->m_addr_send)));
@@ -211,17 +199,16 @@ I32 UdpSocket::recvProtocol(const SocketDescriptor& socketDescriptor, U8* const 
     FW_ASSERT(this->m_addr_recv.sin_family != 0); // Make sure the address was previously setup
     FW_ASSERT(socketDescriptor.fd >= 0); // File descriptor should be valid
     FW_ASSERT(data != nullptr); // Data pointer should not be null
-    FW_ASSERT(size > 0); // Size should be positive
 
     // Initialize sender address structure to zero
     struct sockaddr_in sender_addr;
-    ::memset(&sender_addr, 0, sizeof(sender_addr));
+    (void)::memset(&sender_addr, 0, sizeof(sender_addr));
 
     socklen_t sender_addr_len = sizeof(sender_addr);
     I32 received = static_cast<I32>(::recvfrom(socketDescriptor.fd, data, size, SOCKET_IP_RECV_FLAGS,
                                               reinterpret_cast<struct sockaddr*>(&sender_addr), &sender_addr_len));
     // If we have not configured a send port, set it to the source of the last received packet
-    if (received > 0 && this->m_addr_send.sin_port == 0) {
+    if (received >= 0 && this->m_addr_send.sin_port == 0) {
         this->m_addr_send = sender_addr;
         this->m_port = ntohs(sender_addr.sin_port);
         Fw::Logger::log("Configured send port to %hu as specified by the last received packet.\n", this->m_port);
