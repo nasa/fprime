@@ -21,7 +21,7 @@ It represents an entry in a map.
 |----|----|-------|-------------|
 |`m_key`|`K`|The key|C++ default initialization|
 |`m_value`|`V`|The value|C++ default initialization|
-|`m_nextEntry|`MapEntry<K, V>`|The next map entry|`nullptr`|
+|`m_nextEntry`|`MapEntry<K, V>`|The next map entry|`nullptr`|
 
 ## 3. Private Constructors
 
