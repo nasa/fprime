@@ -90,7 +90,7 @@ function(fpp_get_framework_dependency_helper MODULE_NAME FRAMEWORK)
     elseif (NOT DEFINED FPRIME_FRAMEWORK_MODULES)
         fprime_fatal_cmake_error("${MODULE_NAME} Fw/CMakeLists.txt not included in deployment")
     elseif (MODULE_NAME STREQUAL Fw_Types)
-        # Skip Fw_Types as it is the root dependency 
+        # Skip Fw_Types as it is the root dependency
     elseif (NOT TARGET Fw OR MODULE_NAME IN_LIST FPRIME_FRAMEWORK_MODULES)
         list(APPEND FRAMEWORK ${FPRIME_FRAMEWORK_MODULES})
         list(FIND FRAMEWORK "${MODULE_NAME}" START_INDEX)
@@ -236,7 +236,7 @@ function(fpp_setup_autocode MODULE_NAME AC_INPUT_FILES)
             OUTPUT ${GENERATED_DICT}
             COMMAND ${FPRIME_FPP_TO_DICT_WRAPPER}
                 "--executable" "${FPP_TO_DICT}"
-                "--cmake-bin-dir" "${CMAKE_CURRENT_BINARY_DIR}" 
+                "--cmake-bin-dir" "${CMAKE_CURRENT_BINARY_DIR}"
                 "--jsonVersionFile" "${FPRIME_JSON_VERSION_FILE}"
                 ${IMPORTS} ${AC_INPUT_FILES}
             DEPENDS ${FILE_DEPENDENCIES}
@@ -244,6 +244,7 @@ function(fpp_setup_autocode MODULE_NAME AC_INPUT_FILES)
                     version_generate
         )
     endif()
+
     set(AUTOCODER_DEPENDENCIES "${MODULE_DEPENDENCIES}" PARENT_SCOPE)
     set(AUTOCODER_GENERATED_BUILD_SOURCES "${GENERATED_CPP}" PARENT_SCOPE)
     set(AUTOCODER_GENERATED_OTHER "${GENERATED_DICT}" PARENT_SCOPE)
