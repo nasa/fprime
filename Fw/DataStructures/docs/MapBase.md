@@ -126,8 +126,10 @@ _Example:_
 ```c++
 void f(const MapBase<U16, U32>& map) {
   map.clear();
+  auto* e = map.getHeadEntry();
+  FW_ASSERT(e == nullptr);
   map.insert(0, 1);
-  const auto* e = map.getHeadEntry();
+  e = map.getHeadEntry();
   FW_ASSERT(e != nullptr);
   ASSERT_EQ(e.getKey(), 0);
   ASSERT_EQ(e.getValue(), 1);
