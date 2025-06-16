@@ -187,7 +187,7 @@ void TlmChanTester::checkBuff(FwChanIdType chanNum, FwChanIdType totalChan, FwCh
         FwPacketDescriptorType desc;
         stat = this->m_rcvdBuffer[packet].deserialize(desc);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat);
-        ASSERT_EQ(desc, static_cast<FwPacketDescriptorType>(Fw::ComPacket::FW_PACKET_TELEM));
+        ASSERT_EQ(desc, static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_TELEM));
 
         for (FwChanIdType chan = 0; chan < CHANS_PER_COMBUFFER; chan++) {
             // decode channel ID

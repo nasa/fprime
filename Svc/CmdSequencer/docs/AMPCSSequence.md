@@ -63,7 +63,7 @@ argument field:
 
 Field             | Size in Bytes | Value
 ----------------- | ------------- | -----------
-Packet Descriptor | 4             | `Fw::ComPacket::FW_PACKET_COMMAND`
+Packet Descriptor | 4             | `Fw::ComPacketType::FW_PACKET_COMMAND`
 Opcode            | 4             | The opcode stored in bytes 0-1 of the serial record, zero-extended to four bytes
 Arguments         | Variable      | Bytes 2-end of the serial record
 

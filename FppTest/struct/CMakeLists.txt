@@ -2,8 +2,6 @@
 # CMakeLists.txt
 # ====================================================================== 
 
-# We need to declare the XML source files this way to invoke the autocoder.
-# However, only the UT build is allowed here.
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/struct.fpp"
 )

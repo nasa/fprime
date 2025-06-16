@@ -35,7 +35,7 @@ fprime-fpp-to-dict==3.0.0a11
 fprime-fpp-to-json==3.0.0a11
 fprime-fpp-to-xml==3.0.0a11
 fprime-fpp-to-layout==3.0.0a11
-fprime-gds==4.0.0a2
+fprime-gds==4.0.0a3
 fprime-tools==4.0.0a1
 fprime-visual==1.0.2
 gcovr==8.2
@@ -68,8 +68,7 @@ PyYAML==6.0.2
 pyzmq==26.2.0
 requests==2.32.4
 rich==13.9.2
-setuptools==78.1.1; python_version > "3.8"
-setuptools==75.3.2; python_version <= "3.8"
+setuptools==78.1.1
 six==1.16.0
 text-unidecode==1.3
 tomli==2.0.1
