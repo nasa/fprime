@@ -116,30 +116,6 @@ module Comms {
     
     instance comStub: Svc.ComStub base id CommsConfig.BASE_ID + 0x0A00 \
 
-    @ Communications driver. May be swapped with other comm drivers like UART
-    instance comDriver: Drv.TcpClient base id CommsConfig.BASE_ID + 0x0B00 \ 
-    {
-        phase Fpp.ToCpp.Phases.configComponents """
-        if (state.hostname != nullptr && state.port != 0) {
-            Comms::comDriver.configure(state.hostname, state.port);
-        }
-        """
-
-        phase Fpp.ToCpp.Phases.startTasks """
-        if (state.hostname != nullptr && state.port != 0) {
-            Os::TaskString name("ReceiveTask");
-            Comms::comDriver.start(name, 100, 100);
-        }
-        """
-
-        phase Fpp.ToCpp.Phases.stopTasks """
-        Comms::comDriver.stop();
-        """
-
-        phase Fpp.ToCpp.Phases.freeThreads """
-        (void)Comms::comDriver.join();
-        """
-    }
 
     topology Subtopology {
         # Active Components

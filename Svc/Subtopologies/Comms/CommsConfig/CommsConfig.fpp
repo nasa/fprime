@@ -18,3 +18,31 @@ module CommsConfig {
         constant cmdSeq     = 100
     }
 }
+
+module Comms {
+    # Communications driver. May be swapped out with other comm drivers like UART in this file
+    # to use another driver in the Comms Subtopology
+    instance comDriver: Drv.TcpClient base id CommsConfig.BASE_ID + 0x0B00 \ 
+    {
+        phase Fpp.ToCpp.Phases.configComponents """
+        if (state.hostname != nullptr && state.port != 0) {
+            Comms::comDriver.configure(state.hostname, state.port);
+        }
+        """
+
+        phase Fpp.ToCpp.Phases.startTasks """
+        if (state.hostname != nullptr && state.port != 0) {
+            Os::TaskString name("ReceiveTask");
+            Comms::comDriver.start(name, 100, 100);
+        }
+        """
+
+        phase Fpp.ToCpp.Phases.stopTasks """
+        Comms::comDriver.stop();
+        """
+
+        phase Fpp.ToCpp.Phases.freeThreads """
+        (void)Comms::comDriver.join();
+        """
+    }
+}
