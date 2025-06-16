@@ -244,6 +244,8 @@ gcgandhi
 gcov
 gdiplus
 GENHUB
+getfooter
+getstatements
 gettime
 getty
 ghprb
