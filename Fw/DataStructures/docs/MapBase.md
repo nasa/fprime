@@ -36,7 +36,7 @@ Defined as `= default`.
 ### 3.2. Destructor
 
 ```c++
-virtual MapBase()
+virtual ~MapBase()
 ```
 
 Defined as `= default`.
@@ -81,38 +81,73 @@ void copyDataFrom(const MapBase<K, V>& map)
 
     1. Let `size` be the minimum of `map.getSize()` and `getCapacity()`.
 
-    1. If `getHeedEntry(e)` returns SUCCESS
+    1. Set `e = getHeadEntry`.
 
-        1. For `i` in [0, `size`)
+    1. For `i` in [0, `size`)
 
-            1. Set `e = at(i)`.
+        1. Assert `e != nullptr`.
 
-            1. Set `status = enqueue(e)`.
+        1. Set `status = insert(*e)`.
 
-            1. Assert `status == Success::SUCCESS`.
+        1. Assert `status == Success::SUCCESS`.
+
+        1. Set `e = e.getNextEntry()`
+
+_Example:_
+```c++
+void f(MapBase<U16, U32>& m1, MapBase<U16, U32>& m2) {
+    m1.clear();
+    // Insert an entry
+    const U16 key = 0
+    const U32 value = 42;
+    const auto status = m1.enqueue(key, value);
+    ASSERT_EQ(status, Fw::Success::SUCCESS);
+    m2.clear();
+    ASSERT_EQ(m2.getSize(), 0);
+    m2.copyDataFrom(q1);
+    ASSERT_EQ(m2.getSize(), 1);
+}
+```
+
+### 5.3. find
+
+TODO
+
+### 5.4. getHeadEntry
+
+```c++
+MapEntry<K, V>& getHeadEntry()
+const MapEntry<K, V>& getHeadEntry const
+```
+
+Get the head entry of the map.
+
+### 5.5. getCapacity
+
+```c++
+virtual FwSizeType getCapacity() const = 0
+```
+
+Return the current capacity.
+
+_Example:_
+```c++
+void f(const MapBase<U16, U32>& map) {
+    const auto size = map.getSize();
+    const auto capacity = map.getCapacity();
+    ASSERT_LE(size, capacity);
+}
+```
+
+### 5.6. getSize
 
 TODO
 
-### 5.3. delete
+### 5.7. insert
 
 TODO
 
-### 5.4. find
+### 5.8. remove
 
 TODO
 
-### 5.5. getHeadEntry
-
-TODO
-
-### 5.6. getCapacity
-
-TODO
-
-### 5.7. getSize
-
-TODO
-
-### 5.8. insert
-
-TODO

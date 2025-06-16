@@ -35,7 +35,7 @@ Defined as `= default`.
 ### 3.2. Destructor
 
 ```c++
-virtual FifoQueueBase()
+virtual ~FifoQueueBase()
 ```
 
 Defined as `= default`.
