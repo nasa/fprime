@@ -19,9 +19,9 @@ and _C_.
 The data structures in this directory are **sequential data structures**,
 i.e., they do not support direct concurrent access by multiple threads.
 To use these data structures in a multithreaded context, you have
-to guard the access yourself.
-The most common way to do this in F Prime is to make the data
-structure a member of an active or queued component and use
+to guard the access separately.
+The most common way to do this is to make the data
+structure a member of an active or queued component and to use
 the component queue to guard the access to the structure.
 
 ## 1. Arrays
