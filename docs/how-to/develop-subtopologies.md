@@ -296,11 +296,7 @@ void teardownTopology(const TopologyState& state){
 ```
 <!-- {% endraw %} -->
 
-Lastly, since our RNG component has some telemetry, we need to include (or ignore) these channels within the `Packets.xml` file in this folder. As with any other component that is added to a deployment, you use the same syntax with the name of the instance followed by the name of the telemetry channel. For example:
-
-```xml
-<channel name="rng.RNGValue"/> <!-- based on our instance name -->
-```
+Lastly, since our RNG component has some telemetry, we need to include (or ignore) these channels within the `Packets.fppi` file in this folder. As with any other component that is added to a deployment, you use the same syntax with the name of the instance followed by the name of the telemetry channel.
 
 Now go ahead and run and build your deployment, and you should see that you have a built deployment that uses a subtopology.
 

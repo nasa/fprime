@@ -1,6 +1,0 @@
-CmdPortAi.xml - XML definition of a command port, which is used to send commands to components
-CmdResponseAi.xml - XML definition of command response port, which is used to report the completion status of a command
-CmdRegPortAi.xml - XML definition of a command registration port, which is used by components to register their set of commands
-CmdArgBuffer.hpp(.cpp) - C++ Definition of command argument buffer. Buffer is used to store serialized arguments for component commands
-CmdString.hpp(.cpp) - C++ Definition of a command string argument. Used by the code generator when a command has a string argument
-CmdPacket.hpp(.cpp) - C++ Definition of command packet. It is a derived class of ComPacket, which is the type used to send and receive data from ground or test software
