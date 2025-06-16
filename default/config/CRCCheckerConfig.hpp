@@ -12,9 +12,4 @@
 // Default block size used when reading files for CRC calculation
 constexpr FwSignedSizeType CONFIG_CRC_FILE_READ_BLOCK = 2048;
 
-
-// Maximum size allowed for filename strings in CRC checking
-
-constexpr FwSizeType CONFIG_CRC_MAX_FILENAME_SIZE = 128;
-
 #endif 
