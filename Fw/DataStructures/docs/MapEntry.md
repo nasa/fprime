@@ -13,9 +13,18 @@ It represents an entry in a map.
 |`typename`|`K`|The type of a key in the map|
 |`typename`|`V`|The type of a value in the map|
 
-## 2. Private Constructors
+## 2. Private Member Variables
 
-### 2.1. Copy Constructor
+`MapEntry` has the following private member variables.
+
+|Name|Type|Purpose|Default Value|
+|----|----|-------|-------------|
+|`m_key`|`K`|The key|C++ default initialization|
+|`m_value`|`V`|The value|C++ default initialization|
+
+## 3. Private Constructors
+
+### 3.1. Copy Constructor
 
 ```c++
 MapEntry(const MapEntry<K,V>& map)
@@ -23,17 +32,9 @@ MapEntry(const MapEntry<K,V>& map)
 
 Defined as `= default`.
 
-## 3. Protected Constructors and Destructors
+## 4. Protected Constructors and Destructors
 
-### 3.1. Zero-Argument Constructor
-
-```c++
-MapEntry()
-```
-
-Defined as `= default`.
-
-### 3.2. Destructor
+### 4.1. Zero-Argument Constructor
 
 ```c++
 MapEntry()
@@ -41,9 +42,17 @@ MapEntry()
 
 Defined as `= default`.
 
-## 4. Private Member Functions
+### 4.2. Destructor
 
-### 4.1. operator=
+```c++
+MapEntry()
+```
+
+Defined as `= default`.
+
+## 5. Private Member Functions
+
+### 5.1. operator=
 
 ```c++
 MapEntry& operator=(const MapEntry&)
@@ -51,9 +60,9 @@ MapEntry& operator=(const MapEntry&)
 
 Defined as `= default`.
 
-## 5. Public Member Functions
+## 6. Public Member Functions
 
-### 5.1. getKey
+### 6.1. getKey
 
 ```c++
 const K& getKey() const
@@ -61,7 +70,7 @@ const K& getKey() const
 
 Get a reference to the key.
 
-### 5.2. getValue
+### 6.2. getValue
 
 ```c++
 const V& getValue() const
@@ -69,7 +78,7 @@ const V& getValue() const
 
 Get a reference to the value.
 
-### 5.3. getNextEntry
+### 6.3. getNextEntry
 
 ```c++
 Fw::Success getNextEntry(MapEntry<K,V>& entry)

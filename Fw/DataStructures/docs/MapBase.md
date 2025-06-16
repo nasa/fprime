@@ -18,7 +18,7 @@ It represents an abstract base class for a map.
 ### 2.1. Copy Constructor
 
 ```c++
-MapBase(const MapBase<K,V>& map)
+MapBase(const MapBase<K, V>& map)
 ```
 
 Defined as `= delete`.
@@ -63,13 +63,33 @@ Clear the map.
 
 _Example:_
 ```c++
-void f(MapBase<U32>& map) {
+void f(MapBase<U16, U32>& map) {
     map.clear();
     ASSERT_EQ(map.getSize(), 0);
 }
 ```
 
 ### 5.2. copyDataFrom
+
+```c++
+void copyDataFrom(const MapBase<K, V>& map)
+```
+
+1. If `&queue != this` then
+
+    1. Call `clear()`.
+
+    1. Let `size` be the minimum of `map.getSize()` and `getCapacity()`.
+
+    1. If `getHeedEntry(e)` returns SUCCESS
+
+        1. For `i` in [0, `size`)
+
+            1. Set `e = at(i)`.
+
+            1. Set `status = enqueue(e)`.
+
+            1. Assert `status == Success::SUCCESS`.
 
 TODO
 
