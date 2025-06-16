@@ -31,7 +31,7 @@ namespace Svc {
             const U8 *const buffAddr = opcodeAndArgument.getBuffAddr();
             const U32 size = opcodeAndArgument.getBuffLength();
             const U32 recSize = sizeof(FwPacketDescriptorType) + size;
-            const FwPacketDescriptorType cmdDescriptor = Fw::ComPacket::FW_PACKET_COMMAND;
+            const FwPacketDescriptorType cmdDescriptor = Fw::ComPacketType::FW_PACKET_COMMAND;
             const U32 seconds = time.getSeconds();
             const U32 uSeconds = time.getUSeconds();
             ASSERT_EQ(Fw::FW_SERIALIZE_OK, destBuffer.serialize(seconds));

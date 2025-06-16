@@ -42,20 +42,6 @@ and port numbers to be changed without modifying the component FPP itself.
 The Types directory contains basic types and other base classes used in
 the architecture, as shown in Table 2.
 
-**Table 2.** Types directory
-files.
-
-| File                              | Description                                                                                         |
-| --------------------------------- | --------------------------------------------------------------------------------------------------- |
-| BasicTypes.hpp                    | Defines portable built-in data types and common macros                                              |
-| Assert.hpp(.cpp)                  | Defines macros to declare an assertion in C++ code                                                  |
-| CAssert.hpp                       | Defines macros to declare an assertion in C code                                                    |
-| StringType.hpp(.cpp)              | Declares a string base class                                                                        |
-| Serializable.hpp(.cpp)            | Declares the serializable base classes and helper functions                                         |
-| PolyType.hpp(.cpp)                | Describes a serializable polymorphic type class that can be used to uniformly store different types |
-| String.hpp(.cpp)       | A fixed length string available for general usage if the developer does not wish to write one       |
-| InternalInterfaceString.hpp(.cpp) | A string class used by internal interfaces when a string argument is specified                      |
-
 ### Obj
 
 The Obj directory contains class declarations and implementations for
@@ -69,27 +55,11 @@ representation of each object. Components and ports use the object class
 as a base class. Table 3 lists the files and their descriptions.
 
 
-**Table 3.** Obj directory files.
-
-| File                        | Description                                                                                                                                                  |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| ObjBase.hpp(.cpp)           | Declaration for object base class                                                                                                                            |
-| SimpleObjRegistry.hpp(.cpp) | An implementation of a simple object registry: This registry simply stores created object pointers in an array and calls their toString() method when asked. |
-
 ### Port
 
 The Port directory contains the base classes for ports. Table 4 lists
 the files and their descriptions.
 
-**Table 4.** Port directory files.
-
-| File                          | Description                                                                                                                                                                                                           |
-| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| PortBase.hpp(.cpp)            | Port base class; contains methods and attributes common to all ports                                                                                                                                                  |
-| InputPort.hpp(.cpp)           | Input port base class that is derived from port base class; contains methods and attributes common to all input ports                                                                                                 |
-| OutputPort.hpp(.cpp)          | Output port base class that is derived from port base class; contains methods and attributes common to all output ports                                                                                               |
-| InputSerializePort.hpp(.cpp)  | Input serialize port class: Typed output ports can be connected to input serialize ports. The typed output port will serialize its arguments prior to invoking the port.                                              |
-| OutputSerializePort.hpp(.cpp) | Output serialize port class: Output serialize ports can be connected to typed input port. The serialize port passes the typed port a buffer representing the serialized arguments, which the typed port deserializes. |
 
 ### Comp
 
@@ -98,42 +68,24 @@ of components. These classes act as base classes for components created
 by the code generation and are not directly used by developers. Table 5
 lists the files and their descriptions.
 
-**Table 5.** Comp directory files.
-
-| File                           | Description                                                                                                                                                         |
-| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| PassiveComponentBase.hpp(.cpp) | The base class for unthreaded passive components: These components have no thread of execution associated with them. This class derives from the object base class. |
-| QueuedComponentBase.hpp(.cpp)  | The base class for queued components: These components have a message queue but no thread. It is derived from the passive component base class.                     |
-| ActiveComponentBase.hpp(.cpp)  | The base class for active components: Active components have a thread of execution as well as a message queue. It is derived from the queued component class.       |
 
 ### Cmd
 
-This Cmd directory contains XML and class declarations used to generate
-code for command interfaces to components. The XML generates port
+This Cmd directory contains FPP and class declarations used to generate
+code for command interfaces to components. The FPP generates port
 classes in the normal way via the code generator. The code generator
 then uses those generated classes as special command input ports for
-components that define commands in their component XML. Since the ports
+components that define commands in their component FPP. Since the ports
 themselves are generated in the same way as any other port, they can be
 used by developers in other components that process commands, such as command dispatchers. Table 6 lists the files and their descriptions.
 
-**Table 6.** Cmd directory files.
-
-| File                   | Description                                                                                                                                                                       |
-| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| CmdPortAi.xml          | XML description of a command port                                                                                                                                                 |
-| CmdResponsePortAi.xml  | XML description of a command response port                                                                                                                                        |
-| CmdRegPortAi.xml       | XML description of a command registration port                                                                                                                                    |
-| CmdArgBuffer.hpp(.cpp) | A class used by the command port that is a data buffer containing the serialized form of the command arguments                                                                    |
-| CmdString.hpp(.cpp)    | A string class used by the command code generator for string arguments                                                                                                            |
-| CmdPacket.hpp(.cpp)    | A class representing an encoded command packet that contains a command opcode and arguments: The code generator does not depend on this class, so it can be modified or not used. |
-
 ### Tlm
 
-This Tlm directory contains XML and class declarations used to generate
+This Tlm directory contains FPP and class declarations used to generate
 code for channelized telemetry interfaces for components. Channelized
 telemetry has historically been a snapshot in time of a set of data. Every
 value of that data is not necessarily stored permanently, but is
-sampled. The XML generates port classes in the normal way via the code
+sampled. The FPP generates port classes in the normal way via the code
 generator. The code generator then uses those generated classes as
 special telemetry output ports for components needing telemetry. Since
 the ports themselves are generated in the same way as any other port,
@@ -141,76 +93,42 @@ they can be used by developers in other components that process
 telemetry, such as a telemetry buffer for downlinking telemetry. Table 7
 lists the files and their descriptions.
 
-**Table 7.** Tlm directory files.
-
-| File                | Description                                                                                                                                                                                                       |
-| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| TlmPortAi.xml       | XML description of a telemetry port                                                                                                                                                                               |
-| TlmBuffer.hpp(.cpp) | A data buffer class that represents the serialized form of the telemetry channel                                                                                                                                  |
-| TlmString.hpp(.cpp) | A string class used by the telemetry code generator when a string is the telemetry channel                                                                                                                        |
-| TlmPacket.hpp(.cpp) | A notional class representing an encoded telemetry packet that contains a telemetry channel identifier and serialized value: The code generator does not depend on this class, so it can be modified or not used. |
 
 ###  Log
 
-This Log directory contains XML and class declarations used to generate
+This Log directory contains FPP and class declarations used to generate
 code logging (event) interfaces for components. Developer implementation
 code sends log events to capture all the events of interest in a system
 as they happen. Other components serve to store events for forwarding to
-a ground interface or test software. An XML definition for telemetry
+a ground interface or test software. An FPP definition for telemetry
 ports is defined, which the code generator then uses as special logging
 output ports for components. Since the ports themselves are generated in
 the same way as any other port, they can be used by developers in other
 components that process logging, such as a logging history. Table 8
 lists the files and their descriptions.
 
-**Table 8.** Log directory files.
-
-| File                    | Description                                                                                                                                                                                                           |
-| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| LogPortAi.xml           | XML description of a logging port                                                                                                                                                                                     |
-| LogTextPortAi.xml       | XML description of an optional text logging port: This port generates a string representing the logged event. The code generator generates code to use both kinds of logging ports, but the text log can be disabled. |
-| LogBuffer.hpp(.cpp)     | A data buffer class that represents the serialized form of the log entry                                                                                                                                              |
-| LogString.hpp(.cpp)     | A string class used by the log code generator when a string is the telemetry channel                                                                                                                                  |
-| TextLogString.hpp(.cpp) | A string class used by the text log interface to pass strings                                                                                                                                                         |
-| LogPacket.hpp(.cpp)     | A notional class representing an encoded log packet that contains a log entry identifier and serialized set of values: The code generator does not depend on this class, so it can be modified or not used.           |
 
 ### Prm
 
-This Prm directory contains XML and class declarations used to generate
+This Prm directory contains FPP and class declarations used to generate
 parameter interfaces for components. Parameters are values are meant to
 be stored in nonvolatile storage that affect various properties of the
 software. Parameters are loaded at run time and given to components on
-request. An XML definition for a parameter port is used by the code
+request. An FPP definition for a parameter port is used by the code
 generator to create special parameter output ports for components. Since
 the ports themselves are generated in the same way as any other port,
 they can be used by developers in other components that provide
 parameters. Table 9 lists the files and their descriptions.
 
-**Table 9.** Prm directory files.
-
-| File                | Description                                                                                                                                                                                               |
-| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| PrmPortAi.xml       | XML description of a parameter port                                                                                                                                                                       |
-| PrmBuffer.hpp(.cpp) | A data buffer that represents a serialized parameter                                                                                                                                                      |
-| PrmString.hpp(.cpp) | A string class used by the parameter code generator when a string is the parameter value                                                                                                                  |
-| PrmPacket.hpp(.cpp) | A notional class representing an encoded parameter packet that contains a parameter identifier and serialized value: The code generator does not depend on this class, so it can be modified or not used. |
-
 ### Time
 
-This Time directory contains XML and class declarations used to generate
+This Time directory contains FPP and class declarations used to generate
 time interfaces for components. The time interface port is created by
 the code generator as a source of time for time-tagging telemetry
 samples and log events. Since the ports themselves are generated in the
 same way as any other port, they can be used by developers in other
 components that provide time from whatever sources are present in the
 system. Table 10 lists the files and their descriptions.
-
-**Table 10.** Time directory files.
-
-| File           | Description                                                                        |
-| -------------- | ---------------------------------------------------------------------------------- |
-| TimePortAi.xml | XML description of a time port                                                     |
-| Time.hpp       | A class containing a time value that represents the time when the port was invoked |
 
 
 ### Com
@@ -220,13 +138,7 @@ port could be used as an interface to components that send and receive
 data to ground or test software. Table 11 lists the files and their
 descriptions.
 
-**Table 11.** Com directory files.
 
-| File                | Description                                                                                                                      |
-| ------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| ComPortAi.xml       | XML description of a communication port                                                                                          |
-| ComBuffer.hpp(.cpp) | A data buffer class used to represent a packet of serialized communication data                                                  |
-| ComPacket.hpp(.cpp) | A data packet class representing data from one of the telemetry or command types: The specific packet types are derived classes. |
 
 ## Svc
 
@@ -238,7 +150,7 @@ ports, and other types are examples of how the architecture can be
 applied. The component example implementations are very simple; flight
 versions would most likely be more sophisticated. The way development is
 done is that the developer will define the components and their
-properties in XML. The code generator will generate C++ classes that
+properties in FPP. The code generator will generate C++ classes that
 encapsulate the features of the component. The developer will then write
 a class that derives from those generated classes and implement the port
 methods. For these directories, each file will not be described, but a
@@ -247,7 +159,7 @@ instead. The descriptions are as follows.
 
 ### ActiveLogger
 
-This directory contains a component XML description and implementation
+This directory contains a component FPP description and implementation
 for an active component that accepts serialized log events. The input
 port accepting log entries puts them in a message queue for the
 component thread. The component thread calls the port handler in the
@@ -307,7 +219,7 @@ component when it receives a FATAL event from a component.
 
 ### GndIf
 
-The directory contains just the XML definition of a component that could
+The directory contains just the FPP definition of a component that could
 be used to send and receive communications packets. The uplink port
 would be connected to the command dispatcher for executing commands, and
 the downlink port would be connected by components collecting downlink
@@ -414,7 +326,7 @@ connected to telemetry sources and the command dispatcher.
 
 ### Time
 
-This directory contains the XML definition for the time source base
+This directory contains the FPP definition for the time source base
 class. A time source is necessary for time-tagging the telemetry and log
 events in components. Various implementations that derive from this base
 class will provide time.
