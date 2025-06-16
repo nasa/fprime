@@ -19,7 +19,7 @@ TEST_F(FpySequencerTester, waitRel) {
 
     Signal result = tester_waitRel_directiveHandler(directive);
     ASSERT_EQ(result, Signal::stmtResponse_beginSleep);
-    ASSERT_EQ(tester_get_m_runtime().wakeupTime, Fw::Time(105, 223));
+    ASSERT_EQ(tester_get_m_runtime_ptr()->wakeupTime, Fw::Time(105, 223));
 }
 
 TEST_F(FpySequencerTester, waitAbs) {
@@ -27,32 +27,29 @@ TEST_F(FpySequencerTester, waitAbs) {
 
     Signal result = tester_waitAbs_directiveHandler(directive);
     ASSERT_EQ(result, Signal::stmtResponse_beginSleep);
-    ASSERT_EQ(tester_get_m_runtime().wakeupTime, Fw::Time(5, 123));
+    ASSERT_EQ(tester_get_m_runtime_ptr()->wakeupTime, Fw::Time(5, 123));
 }
 
 TEST_F(FpySequencerTester, goto) {
     FpySequencer_GotoDirective directive(123);
-    // cmp.m_sequenceObj.getheader().setstatementCount(456);
-    tester_getheader_setstatementCount(456);
+    tester_get_m_sequenceObj_ptr()->getheader().setstatementCount(456);
     Signal result = tester_goto_directiveHandler(directive);
     ASSERT_EQ(result, Signal::stmtResponse_success);
-    ASSERT_EQ(tester_get_m_runtime().nextStatementIndex, 123);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->nextStatementIndex, 123);
 
-    // tester_set_m_runtime_nextStatementIndex(0);
     tester_get_m_runtime_ptr()->nextStatementIndex = 0;
     // out of bounds
     directive.setstatementIndex(111111);
     result = tester_goto_directiveHandler(directive);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
-    ASSERT_EQ(tester_get_m_runtime().nextStatementIndex, 0);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->nextStatementIndex, 0);
 
-    // tester_set_m_runtime_nextStatementIndex(0);
     tester_get_m_runtime_ptr()->nextStatementIndex = 0;
     // just inside bounds
     directive.setstatementIndex(456);
     result = tester_goto_directiveHandler(directive);
     ASSERT_EQ(result, Signal::stmtResponse_success);
-    ASSERT_EQ(tester_get_m_runtime().nextStatementIndex, 456);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->nextStatementIndex, 456);
 }
 
 TEST_F(FpySequencerTester, setLvar) {
@@ -61,8 +58,8 @@ TEST_F(FpySequencerTester, setLvar) {
     FpySequencer_SetLocalVarDirective directive(static_cast<U8>(0), 1, static_cast<FwSizeType>(sizeof(buf)));
     Signal result = tester_setLocalVar_directiveHandler(directive);
     ASSERT_EQ(result, Signal::stmtResponse_success);
-    ASSERT_EQ(tester_get_m_runtime().localVariables[0].valueSize, sizeof(buf));
-    ASSERT_EQ(memcmp(buf, tester_get_m_runtime().localVariables[0].value, sizeof(buf)), 0);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->localVariables[0].valueSize, sizeof(buf));
+    ASSERT_EQ(memcmp(buf, tester_get_m_runtime_ptr()->localVariables[0].value, sizeof(buf)), 0);
 
     // outside of lvar range
     directive.setindex(Fpy::MAX_SEQUENCE_LOCAL_VARIABLES);
@@ -76,62 +73,56 @@ TEST_F(FpySequencerTester, setLvar) {
 }
 
 TEST_F(FpySequencerTester, if) {
-    // tester_set_m_runtime_nextStatementIndex(100);
     tester_get_m_runtime_ptr()->nextStatementIndex = 100;
-    tester_getheader_setstatementCount(123);
+    tester_get_m_sequenceObj_ptr()->getheader().setstatementCount(123);
     Fw::ExternalSerializeBuffer buf(tester_get_m_runtime_ptr()->localVariables[0].value, Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE);
     buf.serialize(true);
     tester_get_m_runtime_ptr()->localVariables[0].valueSize = buf.getBuffLength();
-    // tester_get_m_runtime_ptr()->localVariables[0].valueSize = buf.getBuffLength();
     FpySequencer_IfDirective directive(0, 111);
     Signal result = tester_if_directiveHandler(directive);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     // should not have changed stmtidx
-    ASSERT_EQ(tester_get_m_runtime().nextStatementIndex, 100);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->nextStatementIndex, 100);
 
     buf.resetSer();
     buf.serialize(false);
-    // tester_get_m_runtime_ptr()->localVariables[0].valueSize = buf.getBuffLength();
     tester_get_m_runtime_ptr()->localVariables[0].valueSize = buf.getBuffLength();
     result = tester_if_directiveHandler(directive);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     // should have changed stmtidx
-    ASSERT_EQ(tester_get_m_runtime().nextStatementIndex, 111);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->nextStatementIndex, 111);
 
     tester_get_m_runtime_ptr()->nextStatementIndex = 100;
-    // tester_set_m_runtime_nextStatementIndex(100);
 
-    directive.setfalseGotoStmtIndex(tester_get_m_sequenceObj().getheader().getstatementCount());
+    directive.setfalseGotoStmtIndex(tester_get_m_sequenceObj_ptr()->getheader().getstatementCount());
     result = tester_if_directiveHandler(directive);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     // should have succeeded
-    ASSERT_EQ(tester_get_m_runtime().nextStatementIndex, tester_get_m_sequenceObj().getheader().getstatementCount());
+    ASSERT_EQ(tester_get_m_runtime_ptr()->nextStatementIndex, tester_get_m_sequenceObj_ptr()->getheader().getstatementCount());
 
     tester_get_m_runtime_ptr()->nextStatementIndex = 100;
-    // tester_set_m_runtime_nextStatementIndex(100);
 
     buf.resetSer();
     // check failure to interpret as bool
     buf.serialize(static_cast<U8>(111));
-    // tester_get_m_runtime_ptr()->localVariables[0].valueSize = buf.getBuffLength();
     tester_get_m_runtime_ptr()->localVariables[0].valueSize = buf.getBuffLength();
     result = tester_if_directiveHandler(directive);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     // should not have changed stmtidx
-    ASSERT_NE(tester_get_m_runtime().nextStatementIndex, 111);
+    ASSERT_NE(tester_get_m_runtime_ptr()->nextStatementIndex, 111);
 
     directive.setconditionalLocalVarIndex(Fpy::MAX_SEQUENCE_LOCAL_VARIABLES);
     result = tester_if_directiveHandler(directive);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     // should not have changed stmtidx
-    ASSERT_NE(tester_get_m_runtime().nextStatementIndex, 111);
+    ASSERT_NE(tester_get_m_runtime_ptr()->nextStatementIndex, 111);
 
     directive.setconditionalLocalVarIndex(0);
-    directive.setfalseGotoStmtIndex(tester_get_m_sequenceObj().getheader().getstatementCount() + 1);
+    directive.setfalseGotoStmtIndex(tester_get_m_sequenceObj_ptr()->getheader().getstatementCount() + 1);
     result = tester_if_directiveHandler(directive);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     // should not have changed stmtidx
-    ASSERT_NE(tester_get_m_runtime().nextStatementIndex, 111);
+    ASSERT_NE(tester_get_m_runtime_ptr()->nextStatementIndex, 111);
 }
 
 TEST_F(FpySequencerTester, noOp) {
@@ -609,7 +600,7 @@ TEST_F(FpySequencerTester, readFooter) {
     ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serialize(footer), Fw::SerializeStatus::FW_SERIALIZE_OK);
 
     ASSERT_EQ(tester_readFooter(), Fw::Success::SUCCESS);
-    ASSERT_EQ(tester_get_m_sequenceObj().getfooter(), footer);
+    ASSERT_EQ(tester_get_m_sequenceObj_ptr()->getfooter(), footer);
 
     tester_get_m_sequenceBuffer_ptr()->resetDeser();
     // try wrong crc
@@ -731,21 +722,20 @@ TEST_F(FpySequencerTester, dispatchStatement) {
     setTestTime(time);
 
     add_NO_OP();
-    tester_set_m_sequenceObj();
+    *(tester_get_m_sequenceObj_ptr()) = seq;
     Signal result = tester_dispatchStatement();
     ASSERT_EQ(result, Signal::result_dispatchStatement_success);
-    ASSERT_EQ(tester_get_m_runtime().currentStatementOpcode, Fpy::DirectiveId::NO_OP);
-    ASSERT_EQ(tester_get_m_runtime().currentStatementType, Fpy::StatementType::DIRECTIVE);
-    ASSERT_EQ(tester_get_m_runtime().currentStatementDispatchTime, time);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->currentStatementOpcode, Fpy::DirectiveId::NO_OP);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->currentStatementType, Fpy::StatementType::DIRECTIVE);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->currentStatementDispatchTime, time);
     ASSERT_EQ(tester_get_m_statementsDispatched(), 1);
     // try dispatching again, should fail cuz no more stmts
     result = tester_dispatchStatement();
     ASSERT_EQ(result, Signal::result_dispatchStatement_noMoreStatements);
     ASSERT_EQ(tester_get_m_statementsDispatched(), 1);
     // reset counter, try dispatching a bad statement
-    // tester_set_m_runtime_nextStatementIndex(0);
     tester_get_m_runtime_ptr()->nextStatementIndex = 0;
-    tester_set_m_sequenceObj_opCode(0, Fpy::DirectiveId::NUM_CONSTANTS);
+    tester_get_m_sequenceObj_ptr()->getstatements()[0].setopCode(Fpy::DirectiveId::NUM_CONSTANTS);
     result = tester_dispatchStatement();
     ASSERT_EQ(result, Signal::result_dispatchStatement_failure);
 
@@ -754,18 +744,14 @@ TEST_F(FpySequencerTester, dispatchStatement) {
     setTestTime(time);
     // okay try adding a command
     addCmd(123);
-    tester_set_m_sequenceObj();
-    // tester_set_m_runtime_nextStatementIndex(0);
+    *(tester_get_m_sequenceObj_ptr()) = seq;
     tester_get_m_runtime_ptr()->nextStatementIndex = 0;
     result = tester_dispatchStatement();
     ASSERT_EQ(result, Signal::result_dispatchStatement_success);
-    ASSERT_EQ(tester_get_m_runtime().currentStatementOpcode, 123);
-    ASSERT_EQ(tester_get_m_runtime().currentStatementType, Fpy::StatementType::COMMAND);
-    ASSERT_EQ(tester_get_m_runtime().currentStatementDispatchTime, time);
-
-    // tester_set_m_runtime_nextStatementIndex(tester_get_m_sequenceObj().getheader().getstatementCount() + 1);
-
-    tester_get_m_runtime_ptr()->nextStatementIndex = tester_get_m_sequenceObj().getheader().getstatementCount() + 1;
+    ASSERT_EQ(tester_get_m_runtime_ptr()->currentStatementOpcode, 123);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->currentStatementType, Fpy::StatementType::COMMAND);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->currentStatementDispatchTime, time);
+    tester_get_m_runtime_ptr()->nextStatementIndex = tester_get_m_sequenceObj_ptr()->getheader().getstatementCount() + 1;
     ASSERT_DEATH_IF_SUPPORTED(tester_dispatchStatement(), "Assert: ");
 }
 

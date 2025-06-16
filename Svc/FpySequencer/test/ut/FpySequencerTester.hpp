@@ -121,17 +121,13 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
                                                                //!< Unmodified if param not found.
                                          ) override;
 
-    // Access to private and protected FpySequencer methods and members
-    // for UTs
+    // Access to private and protected FpySequencer methods and members for UTs
     Signal tester_noOp_directiveHandler(const FpySequencer_NoOpDirective& directive);
     Signal tester_waitRel_directiveHandler(const FpySequencer_WaitRelDirective& directive);
     Signal tester_waitAbs_directiveHandler(const FpySequencer_WaitAbsDirective& directive);
     Signal tester_goto_directiveHandler(const Svc::FpySequencer_GotoDirective &directive);
-    FpySequencer::Runtime tester_get_m_runtime();
     FpySequencer::Runtime* tester_get_m_runtime_ptr();
     Fw::ExternalSerializeBuffer* tester_get_m_sequenceBuffer_ptr();
-    void tester_set_m_runtime_nextStatementIndex(U32 val);
-    void tester_getheader_setstatementCount(U16 statementCount);
     Signal tester_setLocalVar_directiveHandler(const FpySequencer_SetLocalVarDirective& directive);
     void tester_set_m_sequencesStarted(U64 val);
     void tester_set_m_statementsDispatched(U64 val);
@@ -139,11 +135,8 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     U64 tester_get_m_statementsDispatched();
     Fw::Success tester_deserializeDirective(const Fpy::Statement& stmt, Svc::FpySequencer::DirectiveUnion& deserializedDirective);
     Fw::Success tester_dispatchCommand(const Fpy::Statement& stmt);
-    void tester_set_m_sequenceObj();
-    Fpy::Sequence tester_get_m_sequenceObj();
     Fpy::Sequence* tester_get_m_sequenceObj_ptr();
     Svc::Signal tester_dispatchStatement();
-    void tester_set_m_sequenceObj_opCode(U32 statement, FwOpcodeType opCode);
     Signal tester_if_directiveHandler(const FpySequencer_IfDirective& directive);
     Fw::Success tester_validate();
     Fw::String tester_get_m_sequenceFilePath();

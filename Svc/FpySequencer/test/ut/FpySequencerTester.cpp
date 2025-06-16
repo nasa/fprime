@@ -252,9 +252,9 @@ Fw::ParamValid FpySequencerTester::from_getParam_handler(
 }
 
 
-// Access to private and protected FpySequencer methods and members
-// for UTs
+// Access to private and protected FpySequencer methods and members for UTs
 
+// Call cmp methods
 Signal FpySequencerTester::tester_noOp_directiveHandler(const FpySequencer_NoOpDirective& directive) {
     return this->cmp.noOp_directiveHandler(directive);
 }
@@ -267,47 +267,13 @@ Signal FpySequencerTester::tester_waitAbs_directiveHandler(const FpySequencer_Wa
     return this->cmp.waitAbs_directiveHandler(directive);
 }
 
-FpySequencer::Runtime FpySequencerTester::tester_get_m_runtime(){
-    return this->cmp.m_runtime;
-}
-
-FpySequencer::Runtime* FpySequencerTester::tester_get_m_runtime_ptr(){
-    return &(this->cmp.m_runtime);
-}
-
-
-void FpySequencerTester::tester_getheader_setstatementCount(U16 statementCount){
-    return this->cmp.m_sequenceObj.getheader().setstatementCount(statementCount);
-}
-
 Signal FpySequencerTester::tester_goto_directiveHandler(const Svc::FpySequencer_GotoDirective &directive){
     return this->cmp.goto_directiveHandler(directive);
-}
-
-void FpySequencerTester::tester_set_m_runtime_nextStatementIndex(U32 val){
-    this->cmp.m_runtime.nextStatementIndex = val;
 }
 
 Signal FpySequencerTester::tester_setLocalVar_directiveHandler(const FpySequencer_SetLocalVarDirective& directive){
     return this->cmp.setLocalVar_directiveHandler(directive);
 }
-
-void FpySequencerTester::tester_set_m_sequencesStarted(U64 val){
-    this->cmp.m_sequencesStarted = val;
-}
-
-void FpySequencerTester::tester_set_m_statementsDispatched(U64 val){
-    this->cmp.m_statementsDispatched = val;
-}
-
-U64 FpySequencerTester::tester_get_m_sequencesStarted(){
-    return this->cmp.m_sequencesStarted;
-}
-
-U64 FpySequencerTester::tester_get_m_statementsDispatched(){
-    return this->cmp.m_statementsDispatched;
-}
-
 
 Fw::Success FpySequencerTester::tester_deserializeDirective(const Fpy::Statement& stmt, Svc::FpySequencer::DirectiveUnion& deserializedDirective){
     return this->cmp.deserializeDirective(stmt, deserializedDirective);
@@ -317,26 +283,6 @@ Fw::Success FpySequencerTester::tester_dispatchCommand(const Fpy::Statement& stm
     return this->cmp.dispatchCommand(stmt);
 }
 
-
-void FpySequencerTester::tester_set_m_sequenceObj(){
-    this->cmp.m_sequenceObj = this->seq;
-}
-
-
-void FpySequencerTester::tester_set_m_sequenceObj_opCode(U32 statement, FwOpcodeType opCode){
-    this->cmp.m_sequenceObj.getstatements()[statement].setopCode(opCode);
-}
-
-
-Fpy::Sequence FpySequencerTester::tester_get_m_sequenceObj(){
-    return this->cmp.m_sequenceObj;
-}
-
-Fpy::Sequence* FpySequencerTester::tester_get_m_sequenceObj_ptr(){
-    return &(this->cmp.m_sequenceObj);
-}
-
-
 Svc::Signal FpySequencerTester::tester_dispatchStatement(){
     return this->cmp.dispatchStatement();
 }
@@ -345,22 +291,24 @@ Signal FpySequencerTester::tester_if_directiveHandler(const FpySequencer_IfDirec
     return this->cmp.if_directiveHandler(directive);
 }
 
-
-Fw::ExternalSerializeBuffer* FpySequencerTester::tester_get_m_sequenceBuffer_ptr(){
-    return & (this->cmp.m_sequenceBuffer);
-}
-
 Fw::Success FpySequencerTester::tester_validate(){
     return this->cmp.validate();
 }
 
-
-Fw::String FpySequencerTester::tester_get_m_sequenceFilePath(){
-    return this->cmp.m_sequenceFilePath;
+Svc::Signal FpySequencerTester::tester_checkStatementTimeout(){
+    return this->cmp.checkStatementTimeout();
 }
 
-void FpySequencerTester::tester_set_m_sequenceFilePath(Fw::String str){
-    this->cmp.m_sequenceFilePath = str;
+Svc::Signal FpySequencerTester::tester_checkShouldWake(){
+    return this->cmp.checkShouldWake();
+}
+
+Signal FpySequencerTester::tester_getPrm_directiveHandler(const FpySequencer_GetPrmDirective& directive){
+    return this->cmp.getPrm_directiveHandler(directive);
+}
+
+Signal FpySequencerTester::tester_getTlm_directiveHandler(const FpySequencer_GetTlmDirective& directive){
+    return this->cmp.getTlm_directiveHandler(directive);
 }
 
 Fw::Success FpySequencerTester::tester_readBytes(Os::File& file, FwSizeType readLen, bool updateCrc){
@@ -379,32 +327,52 @@ Fw::Success FpySequencerTester::tester_readHeader(){
     return this->cmp.readHeader();
 }
 
+// Get & Set cmp variables
+Fw::String FpySequencerTester::tester_get_m_sequenceFilePath(){
+    return this->cmp.m_sequenceFilePath;
+}
+
+void FpySequencerTester::tester_set_m_sequenceFilePath(Fw::String str){
+    this->cmp.m_sequenceFilePath = str;
+}
+
+U64 FpySequencerTester::tester_get_m_sequencesStarted(){
+    return this->cmp.m_sequencesStarted;
+}
+
+void FpySequencerTester::tester_set_m_sequencesStarted(U64 val){
+    this->cmp.m_sequencesStarted = val;
+}
+
+U64 FpySequencerTester::tester_get_m_statementsDispatched(){
+    return this->cmp.m_statementsDispatched;
+}
+
+void FpySequencerTester::tester_set_m_statementsDispatched(U64 val){
+    this->cmp.m_statementsDispatched = val;
+}
 
 void FpySequencerTester::tester_set_m_computedCRC(U32 crc){
     this->cmp.m_computedCRC = crc;
 }
 
+// Get cmp member pointers
+FpySequencer::Runtime* FpySequencerTester::tester_get_m_runtime_ptr(){
+    return &(this->cmp.m_runtime);
+}
+
+Fpy::Sequence* FpySequencerTester::tester_get_m_sequenceObj_ptr(){
+    return &(this->cmp.m_sequenceObj);
+}
+
+Fw::ExternalSerializeBuffer* FpySequencerTester::tester_get_m_sequenceBuffer_ptr(){
+    return &(this->cmp.m_sequenceBuffer);
+}
+
 Svc::FpySequencer::Debug* FpySequencerTester::tester_get_m_debug_ptr(){
-    return & (this->cmp.m_debug);
+    return &(this->cmp.m_debug);
 }
+// End UT private/protected access
 
-
-Svc::Signal FpySequencerTester::tester_checkStatementTimeout(){
-    return this->cmp.checkStatementTimeout();
-}
-
-Svc::Signal FpySequencerTester::tester_checkShouldWake(){
-    return this->cmp.checkShouldWake();
-}
-
-
-Signal FpySequencerTester::tester_getPrm_directiveHandler(const FpySequencer_GetPrmDirective& directive){
-    return this->cmp.getPrm_directiveHandler(directive);
-}
-
-
-Signal FpySequencerTester::tester_getTlm_directiveHandler(const FpySequencer_GetTlmDirective& directive){
-    return this->cmp.getTlm_directiveHandler(directive);
-}
 
 }  // namespace Svc

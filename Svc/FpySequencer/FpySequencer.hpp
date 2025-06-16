@@ -21,8 +21,6 @@
 #include "Svc/FpySequencer/StatementSerializableAc.hpp"
 #include "config/FppConstantsAc.hpp"
 
-
-
 static_assert(Svc::Fpy::MAX_SEQUENCE_ARG_COUNT <= std::numeric_limits<U8>::max(),
               "Sequence arg count must be below U8 max");
 static_assert(Svc::Fpy::MAX_SEQUENCE_STATEMENT_COUNT <= std::numeric_limits<U16>::max(),
@@ -41,7 +39,7 @@ using State = FpySequencer_SequencerStateMachineStateMachineBase::State;
 
 class FpySequencer : public FpySequencerComponentBase {
 
-    friend class FpySequencerTester;
+  friend class FpySequencerTester;
 
   public:
     union DirectiveUnion {
