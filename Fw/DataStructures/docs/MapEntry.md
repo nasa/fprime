@@ -56,7 +56,7 @@ Defined as `= default`.
 ### 3.4. Destructor
 
 ```c++
-MapEntry()
+~MapEntry()
 ```
 
 Defined as `= default`.
