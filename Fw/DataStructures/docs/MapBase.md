@@ -53,7 +53,7 @@ Defined as `= delete`.
 
 ## 5. Public Member Functions
 
-### 5.2. clear
+### 5.1. clear
 
 ```c++
 virtual void clear() = 0
@@ -69,7 +69,19 @@ void f(MapBase<U32>& map) {
 }
 ```
 
-### 5.3. copyDataFrom
+### 5.2. copyDataFrom
+
+TODO
+
+### 5.3. delete
+
+TODO
+
+### 5.4. find
+
+TODO
+
+### 5.5. getHeadEntry
 
 TODO
 
@@ -78,5 +90,9 @@ TODO
 TODO
 
 ### 5.7. getSize
+
+TODO
+
+### 5.8. insert
 
 TODO
