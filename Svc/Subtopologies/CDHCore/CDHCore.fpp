@@ -24,6 +24,7 @@ module CDHCore {
         };
         """
         phase Fpp.ToCpp.Phases.configComponents """
+        // Health is supplied a set of ping entires.
         CDHCore::health.setPingEntries(
             ConfigObjects::CDHCore_health::pingEntries,
             FW_NUM_ARRAY_ELEMENTS(ConfigObjects::CDHCore_health::pingEntries),
@@ -38,6 +39,7 @@ module CDHCore {
     instance version: Svc.Version base id CDHCoreConfig.BASE_ID + 0x0400 \
     {
         phase Fpp.ToCpp.Phases.configComponents """
+        // Startup TLM and Config verbosity for Versions
         CDHCore::version.config(true);
         """
     }

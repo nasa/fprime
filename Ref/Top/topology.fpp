@@ -1,6 +1,5 @@
 module Ref {
 
-
   # ----------------------------------------------------------------------
   # Symbolic constants for port numbers
   # ----------------------------------------------------------------------
@@ -86,7 +85,6 @@ module Ref {
     param connections instance prmDb
 
     time connections instance posixTime
-
 
     # ----------------------------------------------------------------------
     # Telemetry packets
