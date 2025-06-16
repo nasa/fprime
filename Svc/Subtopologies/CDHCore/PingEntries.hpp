@@ -1,12 +1,5 @@
-#ifndef CDHCORESUBTOPOLOGY_DEFS_HPP
-#define CDHCORESUBTOPOLOGY_DEFS_HPP
-
-namespace CDHCore {
-
-    // State for topology construction
-    struct TopologyState {
-    };
-}
+#ifndef CDHCORE_PINGENTRIES_HPP
+#define CDHCORE_PINGENTRIES_HPP
 
   namespace PingEntries {
     struct CDHCore_cmdDisp    { enum { WARN=3, FATAL=5 }; };

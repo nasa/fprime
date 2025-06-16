@@ -12,15 +12,10 @@ module CDHCore {
         stack size CDHCoreConfig.StackSizes.events \
         priority CDHCoreConfig.Priorities.events
 
-    instance tlmSend: Svc.TlmChan base id CDHCoreConfig.BASE_ID + 0x0300 \
-        queue size CDHCoreConfig.QueueSizes.tlmSend \
-        stack size CDHCoreConfig.StackSizes.tlmSend \
-        priority CDHCoreConfig.Priorities.tlmSend
-
     # ----------------------------------------------------------------------
     # Queued Components
     # ----------------------------------------------------------------------
-    instance $health: Svc.Health base id CDHCoreConfig.BASE_ID + 0x0400 \
+    instance $health: Svc.Health base id CDHCoreConfig.BASE_ID + 0x0300 \
         queue size CDHCoreConfig.QueueSizes.$health \
     {
         phase Fpp.ToCpp.Phases.configConstants """
@@ -40,18 +35,16 @@ module CDHCore {
     # ----------------------------------------------------------------------
     # Passive Components
     # ----------------------------------------------------------------------
-    instance version: Svc.Version base id CDHCoreConfig.BASE_ID + 0x0500 \
+    instance version: Svc.Version base id CDHCoreConfig.BASE_ID + 0x0400 \
     {
         phase Fpp.ToCpp.Phases.configComponents """
         CDHCore::version.config(true);
         """
     }
 
-    instance textLogger: Svc.PassiveTextLogger base id CDHCoreConfig.BASE_ID + 0x0600
+    instance textLogger: Svc.PassiveTextLogger base id CDHCoreConfig.BASE_ID + 0x0500
 
-    instance fatalAdapter: Svc.AssertFatalAdapter base id CDHCoreConfig.BASE_ID + 0x0700
-
-    instance fatalHandler: Svc.FatalHandler base id CDHCoreConfig.BASE_ID + 0x0800
+    instance fatalAdapter: Svc.AssertFatalAdapter base id CDHCoreConfig.BASE_ID + 0x0600
 
     topology Subtopology {
         #Active Components
@@ -66,11 +59,6 @@ module CDHCore {
         instance version
         instance textLogger
         instance fatalAdapter
-        instance fatalHandler
-
-        connections FaultProtection {
-            events.FatalAnnounce -> fatalHandler.FatalReceive
-        }
 
     } # end topology
 } # end CDHCore Subtopology

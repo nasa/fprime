@@ -17,7 +17,7 @@
 #include "Svc/Health/Health.hpp"
 
 // Subtopology includes
-#include "Svc/Subtopologies/CDHCore/SubtopologyTopologyDefs.hpp"
+#include "Svc/Subtopologies/CDHCore/PingEntries.hpp"
 #include "Svc/Subtopologies/Comms/SubtopologyTopologyDefs.hpp"
 #include "Svc/Subtopologies/DataProducts/SubtopologyTopologyDefs.hpp"
 #include "Svc/Subtopologies/FileHandling/SubtopologyTopologyDefs.hpp"

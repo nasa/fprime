@@ -121,7 +121,6 @@ module Ref {
     }
 
     connections Comms_CDHCore{
-
       # events and telemetry to comQueue
       CDHCore.events.PktSend        -> Comms.comQueue.comPacketQueueIn[Comms.Ports_ComPacketQueue.EVENTS]
       CDHCore.tlmSend.PktSend            -> Comms.comQueue.comPacketQueueIn[Comms.Ports_ComPacketQueue.TELEMETRY]
