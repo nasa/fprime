@@ -64,15 +64,17 @@ module Comms {
     {
         phase Fpp.ToCpp.Phases.configConstants """
         enum {
-          COMMS_BUFFER_MANAGER_ID = 200,
+          // Buffer Manager for Uplink/Downlink
           COMMS_BUFFER_MANAGER_STORE_SIZE = 2048,
           COMMS_BUFFER_MANAGER_STORE_COUNT = 20,
           COMMS_BUFFER_MANAGER_FILE_STORE_SIZE = 3000,
-          COMMS_BUFFER_MANAGER_FILE_QUEUE_SIZE = 30
+          COMMS_BUFFER_MANAGER_FILE_QUEUE_SIZE = 30,
+          COMMS_BUFFER_MANAGER_ID = 200
         };
         """
 
         phase Fpp.ToCpp.Phases.configComponents """
+        // Buffer managers need a configured set of buckets and an allocator used to allocate memory for those buckets.
         memset(&Comms::BufferManagerBins::bins, 0, sizeof(Comms::BufferManagerBins::bins));
         Comms::BufferManagerBins::bins.bins[0].bufferSize = ConfigConstants::Comms_commsBufferManager::COMMS_BUFFER_MANAGER_STORE_SIZE;
         Comms::BufferManagerBins::bins.bins[0].numBuffers = ConfigConstants::Comms_commsBufferManager::COMMS_BUFFER_MANAGER_STORE_COUNT;
@@ -116,30 +118,6 @@ module Comms {
     
     instance comStub: Svc.ComStub base id CommsConfig.BASE_ID + 0x0A00 \
 
-    @ Communications driver. May be swapped with other comm drivers like UART
-    instance comDriver: Drv.TcpClient base id CommsConfig.BASE_ID + 0x0B00 \ 
-    {
-        phase Fpp.ToCpp.Phases.configComponents """
-        if (state.hostname != nullptr && state.port != 0) {
-            Comms::comDriver.configure(state.hostname, state.port);
-        }
-        """
-
-        phase Fpp.ToCpp.Phases.startTasks """
-        if (state.hostname != nullptr && state.port != 0) {
-            Os::TaskString name("ReceiveTask");
-            Comms::comDriver.start(name, 100, 100);
-        }
-        """
-
-        phase Fpp.ToCpp.Phases.stopTasks """
-        Comms::comDriver.stop();
-        """
-
-        phase Fpp.ToCpp.Phases.freeThreads """
-        (void)Comms::comDriver.join();
-        """
-    }
 
     topology Subtopology {
         # Active Components

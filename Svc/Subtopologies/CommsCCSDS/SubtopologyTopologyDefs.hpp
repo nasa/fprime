@@ -1,7 +1,7 @@
-#ifndef COMMSSUBTOPOLOGY_DEFS_HPP
-#define COMMSSUBTOPOLOGY_DEFS_HPP
+#ifndef COMMSCCSDSSUBTOPOLOGY_DEFS_HPP
+#define COMMSCCSDSSUBTOPOLOGY_DEFS_HPP
 
-#include <Svc/FrameAccumulator/FrameDetector/FprimeFrameDetector.hpp>
+#include <Svc/FrameAccumulator/FrameDetector/CcsdsTcFrameDetector.hpp>
 #include <Fw/Types/MallocAllocator.hpp>
 #include <Svc/BufferManager/BufferManager.hpp>
 
@@ -17,8 +17,9 @@ namespace Comms {
     }
 
     namespace Detector {
-        // Frame detector for Comms
-        extern Svc::FrameDetectors::FprimeFrameDetector frameDetector;
+        // The subtopology uses the CCSDS packet protocol when communicating with the ground and therefore uses the CCSDS
+        // framing and deframing implementations.
+        extern Svc::FrameDetectors::CcsdsTcFrameDetector frameDetector;
     }
 
     // State for topology construction
@@ -28,9 +29,5 @@ namespace Comms {
     };
 
 }
-
-  namespace PingEntries {
-    namespace Comms_cmdSeq         {enum { WARN = 3, FATAL = 5 };}
-  }
 
 #endif
