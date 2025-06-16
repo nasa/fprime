@@ -123,7 +123,7 @@ const MapEntry<K, V>* getHeadEntry const = 0
 Get the head entry of the map.
 
 _Example:_
-See **copyDataFrom**.
+See [**copyDataFrom**](MapEntry.md#52-copydatafrom).
 
 ### 5.5. getCapacity
 
