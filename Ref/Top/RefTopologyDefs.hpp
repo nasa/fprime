@@ -16,22 +16,19 @@
 #include "Ref/Top/FppConstantsAc.hpp"
 #include "Svc/Health/Health.hpp"
 
-// Definitions are placed within a namespace named after the deployment
-namespace Ref {
+// Subtopology includes
+#include "Svc/Subtopologies/CDHCore/PingEntries.hpp"
+#include "Svc/Subtopologies/Comms/SubtopologyTopologyDefs.hpp"
+#include "Svc/Subtopologies/DataProducts/SubtopologyTopologyDefs.hpp"
+#include "Svc/Subtopologies/FileHandling/SubtopologyTopologyDefs.hpp"
 
-/**
- * \brief required type definition to carry state
- *
- * The topology autocoder requires an object that carries state with the name `Ref::TopologyState`. Only the type
- * definition is required by the autocoder and the contents of this object are otherwise opaque to the autocoder. The
- * contents are entirely up to the definition of the project. This reference application specifies hostname and port
- * fields, which are derived by command line inputs.
- */
-struct TopologyState {
-    const char* hostname;
-    U16 port;
-};
-
+namespace PingEntries {
+    namespace Ref_blockDrv       {enum { WARN = 3, FATAL = 5 };}
+    namespace Ref_pingRcvr       {enum { WARN = 3, FATAL = 5 };}
+    namespace Ref_rateGroup1Comp {enum { WARN = 3, FATAL = 5 };}
+    namespace Ref_rateGroup2Comp {enum { WARN = 3, FATAL = 5 };}
+    namespace Ref_rateGroup3Comp {enum { WARN = 3, FATAL = 5 };}
+}  // namespace PingEntries
 /**
  * \brief required ping constants
  *
@@ -51,49 +48,25 @@ struct TopologyState {
  * }
  * ```
  */
-namespace PingEntries {
-namespace Ref_blockDrv {
-enum { WARN = 3, FATAL = 5 };
-}
-namespace Ref_tlmSend {
-enum { WARN = 3, FATAL = 5 };
-}
-namespace Ref_cmdDisp {
-enum { WARN = 3, FATAL = 5 };
-}
-namespace Ref_cmdSeq {
-enum { WARN = 3, FATAL = 5 };
-}
-namespace Ref_eventLogger {
-enum { WARN = 3, FATAL = 5 };
-}
-namespace Ref_fileDownlink {
-enum { WARN = 3, FATAL = 5 };
-}
-namespace Ref_fileManager {
-enum { WARN = 3, FATAL = 5 };
-}
-namespace Ref_fileUplink {
-enum { WARN = 3, FATAL = 5 };
-}
-namespace Ref_pingRcvr {
-enum { WARN = 3, FATAL = 5 };
-}
-namespace Ref_prmDb {
-enum { WARN = 3, FATAL = 5 };
-}
-namespace Ref_rateGroup1Comp {
-enum { WARN = 3, FATAL = 5 };
-}
-namespace Ref_rateGroup2Comp {
-enum { WARN = 3, FATAL = 5 };
-}
-namespace Ref_rateGroup3Comp {
-enum { WARN = 3, FATAL = 5 };
-}
-namespace Ref_dpCat {
-enum { WARN = 3, FATAL = 5 };
-}
-}  // namespace PingEntries
+
+// Definitions are placed within a namespace named after the deployment
+namespace Ref {
+
+/**
+ * \brief required type definition to carry state
+ *
+ * The topology autocoder requires an object that carries state with the name `Ref::TopologyState`. Only the type
+ * definition is required by the autocoder and the contents of this object are otherwise opaque to the autocoder. The
+ * contents are entirely up to the definition of the project. This reference application specifies hostname and port
+ * fields, which are derived by command line inputs.
+ */
+struct TopologyState {
+    const char* hostname;
+    U16 port;
+};
+
+namespace PingEntries = ::PingEntries;
+
 }  // namespace Ref
+
 #endif

@@ -45,7 +45,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime.cmake")
 # NOTE: register custom targets between these two lines
 fprime_setup_included_code()
 ##
-# Section 3: Components and Topology
+# Section 3: Components and Topology and Subtopologies
 #
 # This section includes deployment specific directories. This allows use of non-
 # core components in the topology, which is also added here.

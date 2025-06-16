@@ -30,9 +30,11 @@ Os::Console logger;
 // initialization phase.
 Fw::MallocAllocator mallocator;
 
+
 // The reference topology uses the F´ packet protocol when communicating with the ground and therefore uses the F´
 // framing and deframing implementations.
 Svc::FrameDetectors::CcsdsTcFrameDetector frameDetector;
+
 
 
 // The reference topology divides the incoming clock signal (1Hz) into sub-signals: 1Hz, 1/2Hz, and 1/4Hz and
@@ -45,23 +47,12 @@ U32 rateGroup1Context[Svc::ActiveRateGroup::CONNECTION_COUNT_MAX] = {};
 U32 rateGroup2Context[Svc::ActiveRateGroup::CONNECTION_COUNT_MAX] = {};
 U32 rateGroup3Context[Svc::ActiveRateGroup::CONNECTION_COUNT_MAX] = {};
 
-Svc::ComQueue::QueueConfigurationTable configurationTable;
-
 // A number of constants are needed for construction of the topology. These are specified here.
 enum TopologyConstants {
-    CMD_SEQ_BUFFER_SIZE = 5 * 1024,
     FILE_DOWNLINK_TIMEOUT = 1000,
     FILE_DOWNLINK_COOLDOWN = 1000,
     FILE_DOWNLINK_CYCLE_TIME = 1000,
     FILE_DOWNLINK_FILE_QUEUE_DEPTH = 10,
-    HEALTH_WATCHDOG_CODE = 0x123,
-    COMM_PRIORITY = 100,
-    // Buffer manager for Uplink/Downlink
-    COMMS_BUFFER_MANAGER_STORE_SIZE = 2048,
-    COMMS_BUFFER_MANAGER_STORE_COUNT = 20,
-    COMMS_BUFFER_MANAGER_FILE_STORE_SIZE = 3000,
-    COMMS_BUFFER_MANAGER_FILE_QUEUE_SIZE = 30,
-    COMMS_BUFFER_MANAGER_ID = 200,
     // Buffer manager for Data Products
     DP_BUFFER_MANAGER_STORE_SIZE = 10000,
     DP_BUFFER_MANAGER_STORE_COUNT = 10,
@@ -76,9 +67,6 @@ enum TopologyConstants {
  * desired, but is extracted here for clarity.
  */
 void configureTopology() {
-    // Command sequencer needs to allocate memory to hold contents of command sequences
-    cmdSeq.allocateBuffer(0, mallocator, CMD_SEQ_BUFFER_SIZE);
-
     // Rate group driver needs a divisor list
     rateGroupDriverComp.configure(rateGroupDivisorsSet);
 
@@ -95,26 +83,11 @@ void configureTopology() {
     prmDb.configure("PrmDb.dat");
     prmDb.readParamFile();
 
-    // Health is supplied a set of ping entires.
-    health.setPingEntries(ConfigObjects::Ref_health::pingEntries,
-                          FW_NUM_ARRAY_ELEMENTS(ConfigObjects::Ref_health::pingEntries), HEALTH_WATCHDOG_CODE);
-
-    // Buffer managers need a configured set of buckets and an allocator used to allocate memory for those buckets.
-    Svc::BufferManager::BufferBins commsBuffMgrBins;
-    memset(&commsBuffMgrBins, 0, sizeof(commsBuffMgrBins));
-    commsBuffMgrBins.bins[0].bufferSize = COMMS_BUFFER_MANAGER_STORE_SIZE;
-    commsBuffMgrBins.bins[0].numBuffers = COMMS_BUFFER_MANAGER_STORE_COUNT;
-    commsBuffMgrBins.bins[1].bufferSize = COMMS_BUFFER_MANAGER_FILE_STORE_SIZE;
-    commsBuffMgrBins.bins[1].numBuffers = COMMS_BUFFER_MANAGER_FILE_QUEUE_SIZE;
-    commsBufferManager.setup(COMMS_BUFFER_MANAGER_ID, 0, mallocator, commsBuffMgrBins);
-
     Svc::BufferManager::BufferBins dpBuffMgrBins;
     memset(&dpBuffMgrBins, 0, sizeof(dpBuffMgrBins));
     dpBuffMgrBins.bins[0].bufferSize = DP_BUFFER_MANAGER_STORE_SIZE;
     dpBuffMgrBins.bins[0].numBuffers = DP_BUFFER_MANAGER_STORE_COUNT;
     dpBufferManager.setup(DP_BUFFER_MANAGER_ID, 0, mallocator, dpBuffMgrBins);
-
-    frameAccumulator.configure(frameDetector, 1, mallocator, 2048);
 
     Fw::FileNameString dpDir("./DpCat");
     Fw::FileNameString dpState("./DpCat/DpState.dat");
@@ -124,19 +97,6 @@ void configureTopology() {
 
     dpCat.configure(&dpDir,1,dpState,0,mallocator);
     dpWriter.configure(dpDir);
-
-    // ComQueue configuration
-    // Events (highest-priority)
-    configurationTable.entries[Ref::Ports_ComPacketQueue::EVENTS].depth = 100;
-    configurationTable.entries[Ref::Ports_ComPacketQueue::EVENTS].priority = 0;
-    // Telemetry
-    configurationTable.entries[Ref::Ports_ComPacketQueue::TELEMETRY].depth = 500;
-    configurationTable.entries[Ref::Ports_ComPacketQueue::TELEMETRY].priority = 2;
-    // File Downlink (first entry after the ComPacket queues = NUM_CONSTANTS)
-    configurationTable.entries[Ref::Ports_ComPacketQueue::NUM_CONSTANTS].depth = 100;
-    configurationTable.entries[Ref::Ports_ComPacketQueue::NUM_CONSTANTS].priority = 1;
-    // Allocation identifier is 0 as the MallocAllocator discards it
-    comQueue.configure(configurationTable, 0, mallocator);
 
     // Note: Uncomment when using Svc:TlmPacketizer
     // tlmSend.setPacketList(Ref::Ref_RefPacketsTlmPackets::packetList, Ref::Ref_RefPacketsTlmPackets::omittedChannels, 1);
@@ -155,23 +115,12 @@ void setupTopology(const TopologyState& state) {
     regCommands();
     // Autocoded configuration. Function provided by autocoder.
     configComponents(state);
-    if (state.hostname != nullptr && state.port != 0) {
-        comDriver.configure(state.hostname, state.port);
-    }
     // Project-specific component configuration. Function provided above. May be inlined, if desired.
     configureTopology();
     // Autocoded parameter loading. Function provided by autocoder.
     loadParameters();
     // Autocoded task kick-off (active components). Function provided by autocoder.
     startTasks(state);
-    // Startup TLM and Config verbosity for Versions
-    version.config(true);
-    // Initialize socket client communication if and only if there is a valid specification
-    if (state.hostname != nullptr && state.port != 0) {
-        Os::TaskString name("ReceiveTask");
-        // Uplink is configured for receive so a socket task is started
-        comDriver.start(name, COMM_PRIORITY, Default::STACK_SIZE);
-    }
 }
 
 void startRateGroups(Fw::TimeInterval interval) {
@@ -190,14 +139,4 @@ void teardownTopology(const TopologyState& state) {
     // Autocoded (active component) task clean-up. Functions provided by topology autocoder.
     stopTasks(state);
     freeThreads(state);
-
-    // Other task clean-up.
-    comDriver.stop();
-    (void)comDriver.join();
-
-    // Resource deallocation
-    cmdSeq.deallocateBuffer(mallocator);
-    commsBufferManager.cleanup();
-    frameAccumulator.cleanup();
-}
 }  // namespace Ref
