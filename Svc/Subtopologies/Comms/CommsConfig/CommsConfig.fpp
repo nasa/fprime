@@ -31,9 +31,10 @@ module Comms {
         """
 
         phase Fpp.ToCpp.Phases.startTasks """
+        // Initialize socket client communication if and only if there is a valid specification
         if (state.hostname != nullptr && state.port != 0) {
             Os::TaskString name("ReceiveTask");
-            Comms::comDriver.start(name, 100, 100);
+            Comms::comDriver.start(name, CommsConfig::Priorities::comQueue, CommsConfig::StackSizes::comQueue);
         }
         """
 
