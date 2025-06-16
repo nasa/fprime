@@ -44,6 +44,8 @@ type FwTaskPriorityType = PlatformTaskPriorityType
 @ The type of queue priorities used.
 type FwQueuePriorityType = PlatformQueuePriorityType
 
+@ The type of task priorities used.
+type FwTaskIdType = PlatformTaskIdType
 
 ####
 # GDS type aliases:
