@@ -108,7 +108,7 @@ Set `m_key = key`.
 ### 5.6. setValue
 
 ```c++
-setValue(const V& value) const
+void setValue(const V& value) const
 ```
 
 Set `m_value = value`.
@@ -116,7 +116,7 @@ Set `m_value = value`.
 ### 5.7. setNextEntry
 
 ```c++
-setNextEntry(MapEntry<K, V>* nextEntry)
+void setNextEntry(MapEntry<K, V>* nextEntry)
 ```
 
 Set `m_nextEntry = nextEntry`.
