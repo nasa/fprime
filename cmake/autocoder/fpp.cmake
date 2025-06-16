@@ -226,12 +226,11 @@ function(fpp_setup_autocode MODULE_NAME AC_INPUT_FILES)
                 OUTPUT ${GENERATED_CPP}
                 COMMAND ${FPP_TO_CPP} "-d" "${CMAKE_CURRENT_BINARY_DIR_RESOLVED}" ${IMPORTS} ${AC_INPUT_FILES}
                     "-p" "${FPRIME_BUILD_LOCATIONS_COMMA_SEP},${CMAKE_BINARY_DIR_RESOLVED}"
-                DEPENDS ${FILE_DEPENDENCIES} ${MODULE_DEPENDENCIES}
+                DEPENDS ${FILE_DEPENDENCIES}
         )
     endif()
     # Add in dictionary generation
     if (GENERATED_DICT)
-        set(FPRIME_CURRENT_DICTIONARY_FILE_JSON "${GENERATED_DICT}" CACHE INTERNAL "" FORCE)
         set(FPRIME_JSON_VERSION_FILE "${CMAKE_BINARY_DIR}/versions/version.json")
         add_custom_command(
             OUTPUT ${GENERATED_DICT}
@@ -240,9 +239,9 @@ function(fpp_setup_autocode MODULE_NAME AC_INPUT_FILES)
                 "--cmake-bin-dir" "${CMAKE_CURRENT_BINARY_DIR}" 
                 "--jsonVersionFile" "${FPRIME_JSON_VERSION_FILE}"
                 ${IMPORTS} ${AC_INPUT_FILES}
-            DEPENDS ${FILE_DEPENDENCIES} ${MODULE_DEPENDENCIES} 
+            DEPENDS ${FILE_DEPENDENCIES}
                     ${FPRIME_JSON_VERSION_FILE}
-                    version
+                    version_generate
         )
     endif()
     set(AUTOCODER_DEPENDENCIES "${MODULE_DEPENDENCIES}" PARENT_SCOPE)
