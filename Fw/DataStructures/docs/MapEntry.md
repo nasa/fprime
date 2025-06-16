@@ -23,19 +23,9 @@ It represents an entry in a map.
 |`m_value`|`V`|The value|C++ default initialization|
 |`m_nextEntry`|`MapEntry<K, V>`|The next map entry|`nullptr`|
 
-## 3. Private Constructors
+## 3. Public Constructors and Destructors
 
-### 3.1. Copy Constructor
-
-```c++
-MapEntry(const MapEntry<K,V>& map)
-```
-
-Defined as `= default`.
-
-## 4. Public Constructors and Destructors
-
-### 4.1. Zero-Argument Constructor
+### 3.1. Zero-Argument Constructor
 
 ```c++
 MapEntry()
@@ -43,7 +33,7 @@ MapEntry()
 
 Defined as `= default`.
 
-### 4.2. Constructor Providing Members
+### 3.2. Constructor Providing Members
 
 ```c++
 MapEntry(const K& key, const V& value, MapEntry<K, V>* nextEntry = nullptr)
@@ -55,7 +45,15 @@ MapEntry(const K& key, const V& value, MapEntry<K, V>* nextEntry = nullptr)
 
 3. Set `m_nextEntry = nextEntry`.
 
-### 4.3. Destructor
+### 3.3. Copy Constructor
+
+```c++
+MapEntry(const MapEntry<K,V>& map)
+```
+
+Defined as `= default`.
+
+### 3.4. Destructor
 
 ```c++
 MapEntry()
@@ -63,9 +61,9 @@ MapEntry()
 
 Defined as `= default`.
 
-## 5. Public Member Functions
+## 4. Public Member Functions
 
-### 5.1. operator=
+### 4.1. operator=
 
 ```c++
 MapEntry& operator=(const MapEntry&)
@@ -73,7 +71,7 @@ MapEntry& operator=(const MapEntry&)
 
 Defined as `= default`.
 
-### 5.2. getKey
+### 4.2. getKey
 
 ```c++
 const K& getKey() const
@@ -81,7 +79,7 @@ const K& getKey() const
 
 Return a reference to the `m_key`.
 
-### 5.3. getValue
+### 4.3. getValue
 
 ```c++
 const V& getValue() const
@@ -89,7 +87,7 @@ const V& getValue() const
 
 Return a reference to `m_value`.
 
-### 5.4. getNextEntry
+### 4.4. getNextEntry
 
 ```c++
 MapEntry<K, V>* getNextEntry()
@@ -97,7 +95,7 @@ MapEntry<K, V>* getNextEntry()
 
 Return `m_nextEntry`.
 
-### 5.5. setKey
+### 4.5. setKey
 
 ```c++
 void setKey(const K& key) const
@@ -105,7 +103,7 @@ void setKey(const K& key) const
 
 Set `m_key = key`.
 
-### 5.6. setValue
+### 4.6. setValue
 
 ```c++
 void setValue(const V& value) const
@@ -113,7 +111,7 @@ void setValue(const V& value) const
 
 Set `m_value = value`.
 
-### 5.7. setNextEntry
+### 4.7. setNextEntry
 
 ```c++
 void setNextEntry(MapEntry<K, V>* nextEntry)
