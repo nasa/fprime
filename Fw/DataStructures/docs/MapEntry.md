@@ -115,7 +115,7 @@ Set `m_value = value`.
 
 ### 5.7. setNextEntry
 
-```c+
+```c++
 setNextEntry(MapEntry<K, V>* nextEntry)
 ```
 
