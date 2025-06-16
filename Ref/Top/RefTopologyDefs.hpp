@@ -16,43 +16,44 @@
 #include "Ref/Top/FppConstantsAc.hpp"
 #include "Svc/Health/Health.hpp"
 
+// Subtopology PingEntries includes 
+#include "Svc/Subtopologies/CDHCore/PingEntries.hpp"
+
+/**
+ * \brief required ping constants
+ *
+ * The topology autocoder requires a WARN and FATAL constant definition for each component that supports the health-ping
+ * interface. These are expressed as enum constants placed in a namespace named for the component instance. These
+ * are all placed in the PingEntries namespace.
+ *
+ * Each constant specifies how many missed pings are allowed before a WARNING_HI/FATAL event is triggered. In the
+ * following example, the health component will emit a WARNING_HI event if the component instance cmdDisp does not
+ * respond for 3 pings and will FATAL if responses are not received after a total of 5 pings.
+ *
+ * ```c++
+ * namespace PingEntries {
+ * namespace cmdDisp {
+ *     enum { WARN = 3, FATAL = 5 };
+ * }
+ * }
+ * ```
+ */
+namespace PingEntries {
+    namespace Ref_blockDrv {enum { WARN = 3, FATAL = 5 };}
+    namespace Ref_cmdSeq {enum { WARN = 3, FATAL = 5 };}
+    namespace Ref_fileDownlink {enum { WARN = 3, FATAL = 5 };}
+    namespace Ref_fileManager {enum { WARN = 3, FATAL = 5 };}
+    namespace Ref_fileUplink {enum { WARN = 3, FATAL = 5 };}
+    namespace Ref_pingRcvr {enum { WARN = 3, FATAL = 5 };}
+    namespace Ref_prmDb {enum { WARN = 3, FATAL = 5 };}
+    namespace Ref_rateGroup1Comp {enum { WARN = 3, FATAL = 5 };}
+    namespace Ref_rateGroup2Comp {enum { WARN = 3, FATAL = 5 };}
+    namespace Ref_rateGroup3Comp {enum { WARN = 3, FATAL = 5 };}
+    namespace Ref_dpCat {enum { WARN = 3, FATAL = 5 };}
+}  // namespace PingEntries
+
 // Definitions are placed within a namespace named after the deployment
 namespace Ref {
-
-    /**
-     * \brief required ping constants
-     *
-     * The topology autocoder requires a WARN and FATAL constant definition for each component that supports the health-ping
-     * interface. These are expressed as enum constants placed in a namespace named for the component instance. These
-     * are all placed in the PingEntries namespace.
-     *
-     * Each constant specifies how many missed pings are allowed before a WARNING_HI/FATAL event is triggered. In the
-     * following example, the health component will emit a WARNING_HI event if the component instance cmdDisp does not
-     * respond for 3 pings and will FATAL if responses are not received after a total of 5 pings.
-     *
-     * ```c++
-     * namespace PingEntries {
-     * namespace cmdDisp {
-     *     enum { WARN = 3, FATAL = 5 };
-     * }
-     * }
-     * ```
-     */
-    // Subtopology PingEntries includes 
-    #include "Svc/Subtopologies/CDHCore/PingEntries.hpp"
-    namespace PingEntries {
-        namespace Ref_blockDrv {enum { WARN = 3, FATAL = 5 };}
-        namespace Ref_cmdSeq {enum { WARN = 3, FATAL = 5 };}
-        namespace Ref_fileDownlink {enum { WARN = 3, FATAL = 5 };}
-        namespace Ref_fileManager {enum { WARN = 3, FATAL = 5 };}
-        namespace Ref_fileUplink {enum { WARN = 3, FATAL = 5 };}
-        namespace Ref_pingRcvr {enum { WARN = 3, FATAL = 5 };}
-        namespace Ref_prmDb {enum { WARN = 3, FATAL = 5 };}
-        namespace Ref_rateGroup1Comp {enum { WARN = 3, FATAL = 5 };}
-        namespace Ref_rateGroup2Comp {enum { WARN = 3, FATAL = 5 };}
-        namespace Ref_rateGroup3Comp {enum { WARN = 3, FATAL = 5 };}
-        namespace Ref_dpCat {enum { WARN = 3, FATAL = 5 };}
-    }  // namespace PingEntries
 
     /**
      * \brief required type definition to carry state
@@ -67,5 +68,6 @@ namespace Ref {
         U16 port;
     };
 
+    namespace PingEntries = ::PingEntries;
 }  // namespace Ref
 #endif
