@@ -2,5 +2,5 @@
 
 cd `dirname $0`
 ./clear_gcda
-fprime-util build --ut --jobs 4
+fprime-util build --ut "$@"
 cp ../../build-fprime-automatic-native-ut/bin/Darwin/Fw_DataStructures_ut_exe .

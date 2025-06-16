@@ -63,15 +63,30 @@ classDiagram
 
 ## 3. Maps
 
-* [`MapBase`](MapBase.md)
+A *map* is a data structure that associates keys to values.
+It provides insert, remove, and find operations.
 
-* [`ExternalArrayMap`](ExternalArrayMap.md)
+### 3.1. Templates
 
-* [`ArrayMap`](ArrayMap.md)
+`Fw/DataStructures` provides the following map templates:
 
-* [`RedBlackTreeMap`](RedBlackTreeMap.md)
+|Name|Description|
+|----|-----------|
+|[`ArrayMap`](ArrayMap.md)|An array-based map with internal memory for storing the array|
+|[`ExternalArrayMap`](ExternalArrayMap.md)|An array-based map with external memory for storing the array|
+|[`ExternalRedBlackTreeMap`](ExternalRedBlackTreeMap.md)|A red-black tree with external memory storing the tree|
+|[`MapBase`](MapBase.md)|The abstract base class for a map|
+|[`RedBlackTreeMap`](RedBlackTreeMap.md)|A red-black tree with internal memory for storing the tree|
 
-* [`ExternalRedBlackTreeMap`](ExternalRedBlackTreeMap.md)
+### 3.2. Class Diagram
+
+```mermaid
+classDiagram
+    MapBase <|-- ArrayMap
+    MapBase <|-- ExternalArrayMap
+    MapBase <|-- ExternalRedBlackTreeMap
+    MapBase <|-- RedBlackTreeMap
+```
 
 ## 4. Sets
 
