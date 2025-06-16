@@ -21,6 +21,7 @@ It represents an entry in a map.
 |----|----|-------|-------------|
 |`m_key`|`K`|The key|C++ default initialization|
 |`m_value`|`V`|The value|C++ default initialization|
+|`m_nextEntry|`MapEntry<K, V>`|The next map entry|`nullptr`|
 
 ## 3. Private Constructors
 
@@ -32,7 +33,7 @@ MapEntry(const MapEntry<K,V>& map)
 
 Defined as `= default`.
 
-## 4. Protected Constructors and Destructors
+## 4. Public Constructors and Destructors
 
 ### 4.1. Zero-Argument Constructor
 
@@ -42,7 +43,19 @@ MapEntry()
 
 Defined as `= default`.
 
-### 4.2. Destructor
+### 4.2. Constructor Providing Members
+
+```c++
+MapEntry(const K& key, const V& value, MapEntry<K, V>* nextEntry = nullptr)
+```
+
+1. Set `m_key = key`.
+
+2. Set `m_value = value`.
+
+3. Set `m_nextEntry = nextEntry`.
+
+### 4.3. Destructor
 
 ```c++
 MapEntry()
@@ -50,7 +63,7 @@ MapEntry()
 
 Defined as `= default`.
 
-## 5. Private Member Functions
+## 5. Public Member Functions
 
 ### 5.1. operator=
 
@@ -60,30 +73,50 @@ MapEntry& operator=(const MapEntry&)
 
 Defined as `= default`.
 
-## 6. Public Member Functions
-
-### 6.1. getKey
+### 5.2. getKey
 
 ```c++
 const K& getKey() const
 ```
 
-Get a reference to the key.
+Return a reference to the `m_key`.
 
-### 6.2. getValue
+### 5.3. getValue
 
 ```c++
 const V& getValue() const
 ```
 
-Get a reference to the value.
+Return a reference to `m_value`.
 
-### 6.3. getNextEntry
+### 5.4. getNextEntry
 
 ```c++
-Fw::Success getNextEntry(MapEntry<K,V>& entry)
+MapEntry<K, V>* getNextEntry()
 ```
 
-If the map has a next entry _E_, then set `entry`
-to _E_ and return `SUCCESS`.
-Otherwise return `FAILURE`.
+Return `m_nextEntry`.
+
+### 5.5. setKey
+
+```c++
+void setKey(const K& key) const
+```
+
+Set `m_key = key`.
+
+### 5.6. setValue
+
+```c++
+setValue(const V& value) const
+```
+
+Set `m_value = value`.
+
+### 5.7. setNextEntry
+
+```c+
+setNextEntry(MapEntry<K, V>* nextEntry)
+```
+
+Set `m_nextEntry = nextEntry`.
