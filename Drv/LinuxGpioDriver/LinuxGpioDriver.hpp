@@ -70,7 +70,7 @@ class LinuxGpioDriver final : public LinuxGpioDriverComponentBase {
     Drv::GpioStatus start(const FwTaskPriorityType priority = Os::Task::TASK_PRIORITY_DEFAULT,
                           const FwSizeType stackSize = Os::Task::TASK_DEFAULT,
                           const FwSizeType cpuAffinity = Os::Task::TASK_DEFAULT,
-                          const unsigned int identifier = static_cast<unsigned int>(Os::Task::TASK_DEFAULT));
+                          const FwTaskIdType identifier = static_cast<FwTaskIdType>(Os::Task::TASK_DEFAULT));
 
     //! \brief stop interrupt detection thread
     //!
