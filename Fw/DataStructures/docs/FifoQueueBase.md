@@ -52,7 +52,32 @@ Defined as `= delete`.
 
 ## 5. Public Member Functions
 
-### 5.1. clear
+### 5.1. at
+
+```c++
+virtual const T& at(FwSizeType index) const = 0
+```
+
+Return the item at the specified index.
+Index 0 is the leftmost (earliest) element in the queue.
+Increasing indices go from left to right.
+Fails an assertion if the index is out of range.
+
+_Example:_
+```c++
+void f(FifoQueueBase<U32>& queue) {
+    queue.clear();
+    const auto status = queue.enqueue(3);
+    ASSERT_EQ(status, Success::SUCCESS);
+    const auto status = queue.enqueue(4);
+    ASSERT_EQ(status, Success::SUCCESS);
+    ASSERT_EQ(queue.at(0), 3);
+    ASSERT_EQ(queue.at(1), 4);
+    ASSERT_DEATH(queue.at(2), "Assert");
+}
+```
+
+### 5.2. clear
 
 ```c++
 virtual void clear() = 0
@@ -68,7 +93,7 @@ void f(FifoQueueBase<U32>& queue) {
 }
 ```
 
-### 5.2. copyDataFrom
+### 5.3. copyDataFrom
 
 ```c++
 void copyDataFrom(const FifoQueueBase<T>& queue)
@@ -103,7 +128,38 @@ void f(FifoQueueBase<U32>& q1, FifoQueueBase<U32>& q2) {
 }
 ```
 
-### 5.3. enqueue
+### 5.4. dequeue
+
+```c++
+virtual Success dequeue(T& e) = 0
+```
+
+1. Set `status = Success::FAILURE`.
+
+1. If `size > 0`
+
+    1. Remove the leftmost item from the queue and store it into `e`.
+
+    1. Set `status = Success::SUCCESS`.
+
+1. Return `status`.
+
+_Example:_
+```c++
+void f(FifoQueueBase<U32>& queue) {
+    queue.clear();
+    U32 val = 0;
+    auto status = queue.dequeue(val);
+    ASSERT_EQ(status, Success::FAILURE);
+    status = queue.enqueue(3);
+    ASSERT_EQ(status, Success::SUCCESS);
+    status = queue.dequeue(val);
+    ASSERT_EQ(status, Success::SUCCESS);
+    ASSERT_EQ(val, 3);
+}
+```
+
+### 5.5. enqueue
 
 ```c++
 virtual Success enqueue(const T& e) = 0
@@ -128,32 +184,45 @@ void f(FifoQueueBase<U32>& queue) {
 }
 ```
 
-### 5.4. at
+### 5.6. getCapacity
 
 ```c++
-virtual const T& at(FwSizeType index) const = 0
+virtual FwSizeType getCapacity() const = 0
 ```
 
-Return the item at the specified index.
-Index 0 is the leftmost (earliest) element in the queue.
-Increasing indices go from left to right.
-Fails an assertion if the index is out of range.
+Return the current capacity.
 
 _Example:_
 ```c++
-void f(FifoQueueBase<U32>& queue) {
-    queue.clear();
-    const auto status = queue.enqueue(3);
-    ASSERT_EQ(status, Success::SUCCESS);
-    const auto status = queue.enqueue(4);
-    ASSERT_EQ(status, Success::SUCCESS);
-    ASSERT_EQ(queue.at(0), 3);
-    ASSERT_EQ(queue.at(1), 4);
-    ASSERT_DEATH(queue.at(2), "Assert");
+void f(const FifoQueueBase<U32>& queue) {
+    const auto size = queue.getSize();
+    const auto capacity = queue.getCapacity();
+    ASSERT_LE(size, capacity);
 }
 ```
 
-### 5.5. peek
+### 5.7. getSize
+
+```c++
+virtual FwSizeType getSize() const = 0
+```
+
+Return the current size.
+
+_Example:_
+```c++
+void f(const FifoQueueBase<U32>& queue) {
+    queue.clear();
+    auto size = queue.getSize();
+    ASSERT_EQ(size, 0);
+    const auto status = queue.enqueue(3);
+    ASSERT_EQ(status, Success::SUCCESS);
+    size = queue.getSize();
+    ASSERT_EQ(size, 1);
+}
+```
+
+### 5.8. peek
 
 ```c++
 Success peek(T& e, FwSizeType index = 0) const
@@ -186,75 +255,6 @@ void f(FifoQueueBase<U32>& queue) {
     status = queue.peek(value, 1);
     ASSERT_EQ(status, Success::SUCCESS);
     ASSERT_EQ(value, 4);
-}
-```
-
-### 5.6. dequeue
-
-```c++
-virtual Success dequeue(T& e) = 0
-```
-
-1. Set `status = Success::FAILURE`.
-
-1. If `size > 0`
-
-    1. Remove the leftmost item from the queue and store it into `e`.
-
-    1. Set `status = Success::SUCCESS`.
-
-1. Return `status`.
-
-_Example:_
-```c++
-void f(FifoQueueBase<U32>& queue) {
-    queue.clear();
-    U32 val = 0;
-    auto status = queue.dequeue(val);
-    ASSERT_EQ(status, Success::FAILURE);
-    status = queue.enqueue(3);
-    ASSERT_EQ(status, Success::SUCCESS);
-    status = queue.dequeue(val);
-    ASSERT_EQ(status, Success::SUCCESS);
-    ASSERT_EQ(val, 3);
-}
-```
-
-### 5.7. getSize
-
-```c++
-virtual FwSizeType getSize() const = 0
-```
-
-Return the current size.
-
-_Example:_
-```c++
-void f(const FifoQueueBase<U32>& queue) {
-    queue.clear();
-    auto size = queue.getSize();
-    ASSERT_EQ(size, 0);
-    const auto status = queue.enqueue(3);
-    ASSERT_EQ(status, Success::SUCCESS);
-    size = queue.getSize();
-    ASSERT_EQ(size, 1);
-}
-```
-
-### 5.8. getCapacity
-
-```c++
-virtual FwSizeType getCapacity() const = 0
-```
-
-Return the current capacity.
-
-_Example:_
-```c++
-void f(const FifoQueueBase<U32>& queue) {
-    const auto size = queue.getSize();
-    const auto capacity = queue.getCapacity();
-    ASSERT_LE(size, capacity);
 }
 ```
 
