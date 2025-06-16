@@ -64,7 +64,7 @@ Get a reference to the key.
 ### 5.2. getValue
 
 ```c++
-const K& getValue() const
+const V& getValue() const
 ```
 
 Get a reference to the value.
