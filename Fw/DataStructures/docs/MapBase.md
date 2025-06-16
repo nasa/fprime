@@ -182,7 +182,7 @@ specified key-value pair and return `SUCCESS`.
 
 _Example:_
 ```c++
-void f(const MapBase<U16, U32>& map) {
+void f(MapBase<U16, U32>& map) {
     map.clear();
     auto size = map.getSize();
     ASSERT_EQ(size, 0);
@@ -199,13 +199,14 @@ void f(const MapBase<U16, U32>& map) {
 Fw::Success remove(const K& key) = 0
 ```
 
-1. If an entry `e` exists, then remove `e` and return `SUCCESS`.
+1. If an entry `e` exists with key `key`, then
+remove `e` from the map and return `SUCCESS`.
 
 1. Otherwise return `FAILURE`.
 
 _Example:_
 ```c++
-void f(const MapBase<U16, U32>& map) {
+void f(MapBase<U16, U32>& map) {
     map.clear();
     auto size = map.getSize();
     ASSERT_EQ(size, 0);
