@@ -123,6 +123,17 @@ const MapEntry<K, V>* getHeadEntry const = 0
 Get the head entry of the map.
 
 _Example:_
+```c++
+void f(const MapBase<U16, U32>& map) {
+  map.clear();
+  map.insert(0, 1);
+  const auto* e = map.getHeadEntry();
+  FW_ASSERT(e != nullptr);
+  ASSERT_EQ(e.getKey(), 0);
+  ASSERT_EQ(e.getValue(), 1);
+}
+
+```
 See [**copyDataFrom**](MapBase.md#52-copydatafrom).
 
 ### 5.5. getCapacity
