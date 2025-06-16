@@ -82,9 +82,13 @@ It provides insert, remove, and find operations.
 |----|-----------|
 |[`ArrayMap`](ArrayMap.md)|An array-based map with internal memory for storing the array|
 |[`ExternalArrayMap`](ExternalArrayMap.md)|An array-based map with external memory for storing the array|
-|[`ExternalRedBlackTreeMap`](ExternalRedBlackTreeMap.md)|A red-black tree with external memory storing the tree|
+|[`ExternalRedBlackTreeMap`](ExternalRedBlackTreeMap.md)|A red-black tree with external memory for storing the tree|
 |[`MapBase`](MapBase.md)|The abstract base class for a map|
 |[`RedBlackTreeMap`](RedBlackTreeMap.md)|A red-black tree with internal memory for storing the tree|
+
+The queue implementations use a template called 
+[`MapEntry`](MapEntry.md) for representing
+an entry in the map.
 
 ### 3.2. Class Diagram
 
