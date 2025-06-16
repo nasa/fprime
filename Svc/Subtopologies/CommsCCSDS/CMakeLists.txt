@@ -1,4 +1,4 @@
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/CommsConfig/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/CommsCCSDSConfig/")
 
 register_fprime_module(
     AUTOCODER_INPUTS

@@ -142,14 +142,6 @@ module CommsCCSDS {
         instance apidManager
 
         connections Downlink {
-            # Data Products
-            dpCat.fileOut             -> fileDownlink.SendFile
-            fileDownlink.FileComplete -> dpCat.fileDone
-            # Inputs to ComQueue (events, telemetry, file)
-            eventLogger.PktSend        -> comQueue.comPacketQueueIn[Ports_ComPacketQueue.EVENTS]
-            tlmSend.PktSend            -> comQueue.comPacketQueueIn[Ports_ComPacketQueue.TELEMETRY]
-            fileDownlink.bufferSendOut -> comQueue.bufferQueueIn[Ports_ComBufferQueue.FILE_DOWNLINK]
-            comQueue.bufferReturnOut[Ports_ComBufferQueue.FILE_DOWNLINK] -> fileDownlink.bufferReturn
 
 
             # ComQueue <-> SpacePacketFramer
@@ -173,11 +165,6 @@ module CommsCCSDS {
             comStub.comStatusOut            -> tmFramer.comStatusIn
             tmFramer.comStatusOut           -> spacePacketFramer.comStatusIn
             spacePacketFramer.comStatusOut  -> comQueue.comStatusIn
-        }
-
-        connections Sequencer {
-            cmdSeq.comCmdOut -> cmdDisp.seqCmdBuff
-            cmdDisp.seqCmdStatus -> cmdSeq.cmdResponseIn
         }
 
         connections Uplink {
