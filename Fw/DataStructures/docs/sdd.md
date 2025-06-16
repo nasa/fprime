@@ -16,6 +16,14 @@ in general the same.
 For example, a map has a capacity _C_ and a size between 0 
 and _C_.
 
+The data structures in this directory are **sequential data structures**,
+i.e., they do not support direct concurrent access by multiple threads.
+To use these data structures in a multithreaded context, you have
+to guard the access yourself.
+The most common way to do this in F Prime is to make the data
+structure a member of an active or queued component and use
+the component queue to guard the access to the structure.
+
 ## 1. Arrays
 
 An **array** _A_ stores _S_ elements for _S > 0_ at indices
@@ -63,7 +71,7 @@ classDiagram
 
 ## 3. Maps
 
-A *map* is a data structure that associates keys to values.
+A **map** is a data structure that associates keys to values.
 It provides insert, remove, and find operations.
 
 ### 3.1. Templates
