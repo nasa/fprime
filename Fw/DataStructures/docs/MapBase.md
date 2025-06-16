@@ -116,11 +116,14 @@ TODO
 ### 5.4. getHeadEntry
 
 ```c++
-MapEntry<K, V>& getHeadEntry()
-const MapEntry<K, V>& getHeadEntry const
+MapEntry<K, V>* getHeadEntry() = 0
+const MapEntry<K, V>* getHeadEntry const = 0
 ```
 
 Get the head entry of the map.
+
+_Example:_
+See **copyDataFrom**.
 
 ### 5.5. getCapacity
 
@@ -141,7 +144,24 @@ void f(const MapBase<U16, U32>& map) {
 
 ### 5.6. getSize
 
-TODO
+```c++
+virtual FwSizeType getSize() const = 0
+```
+
+Return the current size.
+
+_Example:_
+```c++
+void f(const MapBase<U16, U32>& map) {
+    map.clear();
+    auto size = map.getSize();
+    ASSERT_EQ(size, 0);
+    const auto status = map.insert(0, 1);
+    ASSERT_EQ(status, Success::SUCCESS);
+    size = map.getSize();
+    ASSERT_EQ(size, 1);
+}
+```
 
 ### 5.7. insert
 
