@@ -14,6 +14,7 @@
 // Necessary project-specified types
 #include <Fw/Types/MallocAllocator.hpp>
 #include <Os/Console.hpp>
+#include <Svc/FrameAccumulator/FrameDetector/CcsdsTcFrameDetector.hpp>
 #include <Ref/Top/Ports_ComPacketQueueEnumAc.hpp>
 
 // Used for 1Hz synthetic cycling
@@ -28,6 +29,13 @@ Os::Console logger;
 // The reference topology uses a malloc-based allocator for components that need to allocate memory during the
 // initialization phase.
 Fw::MallocAllocator mallocator;
+
+
+// The reference topology uses the F´ packet protocol when communicating with the ground and therefore uses the F´
+// framing and deframing implementations.
+Svc::FrameDetectors::CcsdsTcFrameDetector frameDetector;
+
+
 
 // The reference topology divides the incoming clock signal (1Hz) into sub-signals: 1Hz, 1/2Hz, and 1/4Hz and
 // zero offset for all the dividers

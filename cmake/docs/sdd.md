@@ -222,8 +222,8 @@ this component is built as an F´ module.  This call passes in the above variabl
 # SOURCE_FILES: Handcoded C++ source files
 
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/PingReceiverComponentAi.xml"
-  "${CMAKE_CURRENT_LIST_DIR}/PingReceiverComponentImpl.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/PingReceiver.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/PingReceiver.cpp"
 )
 
 # Note: no MOD_DEPS needed.
@@ -256,7 +256,7 @@ Topology `CMakeLists.txt` follow the same format as the Module files with two de
 # MOD_DEPS: Modules needed by this deployment
 
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/RefTopologyAppAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/RefTopology.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/Topology.cpp"
 )
 
@@ -375,9 +375,9 @@ Module functions are designed to create a library (static or shared) out of an F
 module name is determined from the directory path relative to the root of the repository.
 i.e. `Fw/Comp` becomes *Fw_Comp* and yields `libFw_Comp.a`. This library is added as an output of
 the CMake system. This library is built from `SOURCE_FILES`, which are split into inputs to the
-autocoder (*.xml and *.txt) and normal source files. Specific dependencies can be supplied using
+autocoder (*.fpp and/or *.txt) and normal source files. Specific dependencies can be supplied using
 the `MOD_DEPS` variable, but is only required when the dependencies are not detected via a recursive
-search of all *.xml includes in the autocoder files. The autocoder generation steps are registered
+search of all *.fpp includes in the autocoder files. The autocoder generation steps are registered
 for each of the autocoder input files. These autocoder input files are also used to detect all
 dependencies of the given module. The normal source files are supplied to the build directory.
 

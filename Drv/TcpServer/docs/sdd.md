@@ -57,8 +57,6 @@ void exitTasks() {
     (void) comm.join();
 }
 ```
-## Class Diagram
-![class diagram](./img/class_diagram_tcpserver.png)
 
 ## Requirements
 

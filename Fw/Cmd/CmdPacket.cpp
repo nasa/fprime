@@ -12,7 +12,7 @@
 namespace Fw {
 
     CmdPacket::CmdPacket() : m_opcode(0) {
-        this->m_type = FW_PACKET_COMMAND;
+        this->m_type = ComPacketType::FW_PACKET_COMMAND;
     }
 
     CmdPacket::~CmdPacket() {
@@ -34,7 +34,7 @@ namespace Fw {
         }
 
         // double check packet type
-        if (this->m_type != FW_PACKET_COMMAND) {
+        if (this->m_type != ComPacketType::FW_PACKET_COMMAND) {
             return FW_DESERIALIZE_TYPE_MISMATCH;
         }
 

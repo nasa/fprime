@@ -105,7 +105,7 @@ namespace Svc {
         U32 testContext = 110;
         this->clearEvents();
         Fw::ComBuffer buff;
-        ASSERT_EQ(buff.serialize(FwPacketDescriptorType(Fw::ComPacket::FW_PACKET_COMMAND)),Fw::FW_SERIALIZE_OK);
+        ASSERT_EQ(buff.serialize(FwPacketDescriptorType(Fw::ComPacketType::FW_PACKET_COMMAND)),Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(buff.serialize(testOpCode),Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(buff.serialize(testCmdArg),Fw::FW_SERIALIZE_OK);
 
@@ -207,7 +207,7 @@ namespace Svc {
         // send NO_OP command
         this->m_seqStatusRcvd = false;
         Fw::ComBuffer buff;
-        ASSERT_EQ(buff.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacket::FW_PACKET_COMMAND)),Fw::FW_SERIALIZE_OK);
+        ASSERT_EQ(buff.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_COMMAND)),Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(buff.serialize(static_cast<FwOpcodeType>(CommandDispatcherImpl::OPCODE_CMD_NO_OP)),Fw::FW_SERIALIZE_OK);
 
         this->clearEvents();
@@ -234,7 +234,7 @@ namespace Svc {
         this->clearEvents();
         this->m_seqStatusRcvd = false;
         buff.resetSer();
-        ASSERT_EQ(buff.serialize(FwPacketDescriptorType(Fw::ComPacket::FW_PACKET_COMMAND)),Fw::FW_SERIALIZE_OK);
+        ASSERT_EQ(buff.serialize(FwPacketDescriptorType(Fw::ComPacketType::FW_PACKET_COMMAND)),Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(buff.serialize(FwOpcodeType(CommandDispatcherImpl::OPCODE_CMD_NO_OP_STRING)),Fw::FW_SERIALIZE_OK);
         // serialize arg1
         Fw::CmdStringArg argString("BOO!");
@@ -261,7 +261,7 @@ namespace Svc {
         // send TEST_CMD_1 command
         this->m_seqStatusRcvd = false;
         buff.resetSer();
-        ASSERT_EQ(buff.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacket::FW_PACKET_COMMAND)),Fw::FW_SERIALIZE_OK);
+        ASSERT_EQ(buff.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_COMMAND)),Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(buff.serialize(static_cast<FwOpcodeType>(CommandDispatcherImpl::OPCODE_CMD_TEST_CMD_1)),Fw::FW_SERIALIZE_OK);
         // serialize arg1
         ASSERT_EQ(buff.serialize(static_cast<I32>(1)),Fw::FW_SERIALIZE_OK);
@@ -384,7 +384,7 @@ namespace Svc {
         this->clearEvents();
         this->m_seqStatusRcvd = false;
         Fw::ComBuffer buff;
-        ASSERT_EQ(buff.serialize(FwPacketDescriptorType(Fw::ComPacket::FW_PACKET_COMMAND)),Fw::FW_SERIALIZE_OK);
+        ASSERT_EQ(buff.serialize(FwPacketDescriptorType(Fw::ComPacketType::FW_PACKET_COMMAND)),Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(buff.serialize(FwOpcodeType(testOpCode + 1)),Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(buff.serialize(testCmdArg),Fw::FW_SERIALIZE_OK);
 
@@ -466,7 +466,7 @@ namespace Svc {
         U32 testContext = 13;
         this->clearEvents();
         Fw::ComBuffer buff;
-        ASSERT_EQ(buff.serialize(FwPacketDescriptorType(Fw::ComPacket::FW_PACKET_COMMAND)),Fw::FW_SERIALIZE_OK);
+        ASSERT_EQ(buff.serialize(FwPacketDescriptorType(Fw::ComPacketType::FW_PACKET_COMMAND)),Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(buff.serialize(testOpCode),Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(buff.serialize(testCmdArg),Fw::FW_SERIALIZE_OK);
 
@@ -520,7 +520,7 @@ namespace Svc {
         currSeq++;
         this->clearEvents();
         buff.resetSer();
-        ASSERT_EQ(buff.serialize(FwPacketDescriptorType(Fw::ComPacket::FW_PACKET_COMMAND)),Fw::FW_SERIALIZE_OK);
+        ASSERT_EQ(buff.serialize(FwPacketDescriptorType(Fw::ComPacketType::FW_PACKET_COMMAND)),Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(buff.serialize(testOpCode),Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(buff.serialize(testCmdArg),Fw::FW_SERIALIZE_OK);
 
@@ -574,7 +574,7 @@ namespace Svc {
         // dispatch a test command
         this->clearEvents();
         buff.resetSer();
-        ASSERT_EQ(buff.serialize(FwPacketDescriptorType(Fw::ComPacket::FW_PACKET_COMMAND)),Fw::FW_SERIALIZE_OK);
+        ASSERT_EQ(buff.serialize(FwPacketDescriptorType(Fw::ComPacketType::FW_PACKET_COMMAND)),Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(buff.serialize(testOpCode),Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(buff.serialize(testCmdArg),Fw::FW_SERIALIZE_OK);
 
@@ -720,7 +720,7 @@ namespace Svc {
             U32 testContext = 13;
             this->clearEvents();
             Fw::ComBuffer buff;
-            ASSERT_EQ(buff.serialize(FwPacketDescriptorType(Fw::ComPacket::FW_PACKET_COMMAND)),Fw::FW_SERIALIZE_OK);
+            ASSERT_EQ(buff.serialize(FwPacketDescriptorType(Fw::ComPacketType::FW_PACKET_COMMAND)),Fw::FW_SERIALIZE_OK);
             ASSERT_EQ(buff.serialize(testOpCode),Fw::FW_SERIALIZE_OK);
             ASSERT_EQ(buff.serialize(testCmdArg),Fw::FW_SERIALIZE_OK);
 
@@ -816,7 +816,7 @@ namespace Svc {
         U32 testCmdArg = 100;
         this->clearEvents();
         Fw::ComBuffer buff;
-        ASSERT_EQ(buff.serialize(FwPacketDescriptorType(Fw::ComPacket::FW_PACKET_COMMAND)),Fw::FW_SERIALIZE_OK);
+        ASSERT_EQ(buff.serialize(FwPacketDescriptorType(Fw::ComPacketType::FW_PACKET_COMMAND)),Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(buff.serialize(testOpCode),Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(buff.serialize(testCmdArg),Fw::FW_SERIALIZE_OK);
 
@@ -848,7 +848,7 @@ namespace Svc {
         // dispatch command to clear sequence tracker table
 
         buff.resetSer();
-        ASSERT_EQ(buff.serialize(FwPacketDescriptorType(Fw::ComPacket::FW_PACKET_COMMAND)),Fw::FW_SERIALIZE_OK);
+        ASSERT_EQ(buff.serialize(FwPacketDescriptorType(Fw::ComPacketType::FW_PACKET_COMMAND)),Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(buff.serialize(static_cast<FwOpcodeType>(CommandDispatcherImpl::OPCODE_CMD_CLEAR_TRACKING)),Fw::FW_SERIALIZE_OK);
 
         this->invoke_to_seqCmdBuff(0,buff,testContext);

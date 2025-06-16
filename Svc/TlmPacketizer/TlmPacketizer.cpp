@@ -90,7 +90,7 @@ void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
         memset(this->m_fillBuffers[pktEntry].buffer.getBuffAddr(), 0, static_cast<size_t>(packetLen));
         // serialize packet descriptor and packet ID now since it will always be the same
         Fw::SerializeStatus stat = this->m_fillBuffers[pktEntry].buffer.serialize(
-            static_cast<FwPacketDescriptorType>(Fw::ComPacket::FW_PACKET_PACKETIZED_TLM));
+            static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM));
         FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, stat);
         stat = this->m_fillBuffers[pktEntry].buffer.serialize(packetList.list[pktEntry]->id);
         FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, stat);

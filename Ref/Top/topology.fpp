@@ -44,6 +44,9 @@ module Ref {
     instance spacePacketDeframer
     instance tmFramer
     instance spacePacketFramer
+    instance eventLogger
+    instance fatalAdapter
+    instance fatalHandler
     instance fileDownlink
     instance fileManager
     instance fileUplink
@@ -97,6 +100,42 @@ module Ref {
     # Direct graph specifiers
     # ----------------------------------------------------------------------
 
+    connections Downlink {
+      # Data Products
+      dpCat.fileOut             -> fileDownlink.SendFile
+      fileDownlink.FileComplete -> dpCat.fileDone
+      # Inputs to ComQueue (events, telemetry, file)
+      eventLogger.PktSend        -> comQueue.comPacketQueueIn[Ports_ComPacketQueue.EVENTS]
+      tlmSend.PktSend            -> comQueue.comPacketQueueIn[Ports_ComPacketQueue.TELEMETRY]
+      fileDownlink.bufferSendOut -> comQueue.bufferQueueIn[Ports_ComBufferQueue.FILE_DOWNLINK]
+      comQueue.bufferReturnOut[Ports_ComBufferQueue.FILE_DOWNLINK] -> fileDownlink.bufferReturn
+      # ComQueue <-> SpacePacketFramer
+      comQueue.dataOut                -> spacePacketFramer.dataIn
+      spacePacketFramer.dataReturnOut -> comQueue.dataReturnIn
+      # SpacePacketFramer buffer and APID management
+      spacePacketFramer.bufferAllocate   -> commsBufferManager.bufferGetCallee
+      spacePacketFramer.bufferDeallocate -> commsBufferManager.bufferSendIn
+      spacePacketFramer.getApidSeqCount  -> apidManager.getApidSeqCountIn
+      # SpacePacketFramer <-> TmFramer
+      spacePacketFramer.dataOut -> tmFramer.dataIn
+      tmFramer.dataReturnOut    -> spacePacketFramer.dataReturnIn
+      # Framer <-> ComStub
+      tmFramer.dataOut      -> comStub.dataIn
+      comStub.dataReturnOut -> tmFramer.dataReturnIn
+      # ComStub <-> ComDriver
+      comStub.drvSendOut      -> comDriver.$send
+      comDriver.sendReturnOut -> comStub.drvSendReturnIn
+      comDriver.ready         -> comStub.drvConnected
+      # ComStatus
+      comStub.comStatusOut            -> tmFramer.comStatusIn
+      tmFramer.comStatusOut           -> spacePacketFramer.comStatusIn
+      spacePacketFramer.comStatusOut  -> comQueue.comStatusIn
+    }
+
+    connections FaultProtection {
+      eventLogger.FatalAnnounce -> fatalHandler.FatalReceive
+    }
+
     connections RateGroups {
 
       # Linux timer to drive cycle
@@ -137,6 +176,42 @@ module Ref {
     connections Sequencer {
       CommsCCSDS.cmdSeq.comCmdOut -> CDHCore.cmdDisp.seqCmdBuff
       CDHCore.cmdDisp.seqCmdStatus -> CommsCCSDS.cmdSeq.cmdResponseIn
+      cmdSeq.comCmdOut -> cmdDisp.seqCmdBuff
+      cmdDisp.seqCmdStatus -> cmdSeq.cmdResponseIn
+    }
+
+    connections Uplink {
+      # ComDriver buffer allocations
+      comDriver.allocate      -> commsBufferManager.bufferGetCallee
+      comDriver.deallocate    -> commsBufferManager.bufferSendIn
+      # ComDriver <-> ComStub
+      comDriver.$recv             -> comStub.drvReceiveIn
+      comStub.drvReceiveReturnOut -> comDriver.recvReturnIn
+      # ComStub <-> FrameAccumulator
+      comStub.dataOut                -> frameAccumulator.dataIn
+      frameAccumulator.dataReturnOut -> comStub.dataReturnIn
+      # FrameAccumulator buffer allocations
+      frameAccumulator.bufferDeallocate -> commsBufferManager.bufferSendIn
+      frameAccumulator.bufferAllocate   -> commsBufferManager.bufferGetCallee
+      # FrameAccumulator <-> Deframer
+      frameAccumulator.dataOut          -> tcDeframer.dataIn
+      tcDeframer.dataReturnOut          -> frameAccumulator.dataReturnIn
+      # TcDeframer <-> SpacePacketDeframer
+      tcDeframer.dataOut                -> spacePacketDeframer.dataIn
+      spacePacketDeframer.dataReturnOut -> tcDeframer.dataReturnIn
+      # SpacePacketDeframer APID validation
+      spacePacketDeframer.validateApidSeqCount -> apidManager.validateApidSeqCountIn
+      # SpacePacketDeframer <-> Router
+      spacePacketDeframer.dataOut -> fprimeRouter.dataIn
+      fprimeRouter.dataReturnOut  -> spacePacketDeframer.dataReturnIn
+      # Router buffer allocations
+      fprimeRouter.bufferAllocate   -> commsBufferManager.bufferGetCallee
+      fprimeRouter.bufferDeallocate -> commsBufferManager.bufferSendIn
+      # Router <-> CmdDispatcher/FileUplink
+      fprimeRouter.commandOut  -> cmdDisp.seqCmdBuff
+      cmdDisp.seqCmdStatus     -> fprimeRouter.cmdResponseIn
+      fprimeRouter.fileOut     -> fileUplink.bufferSendIn
+      fileUplink.bufferSendOut -> fprimeRouter.fileBufferReturnIn
     }
 
     connections DataProducts {

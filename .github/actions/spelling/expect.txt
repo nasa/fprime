@@ -63,10 +63,12 @@ CBF
 CBLOCK
 CCB
 CComponent
-CCSDS
+ccsds
 ccsparc
 CDH
+
 CDHCORESUBTOPOLOGY
+
 cerrno
 CFDP
 cff
@@ -151,6 +153,7 @@ DHTML
 diafile
 diles
 dinkel
+dnf
 dnp
 docbook
 docset
@@ -206,6 +209,7 @@ externalproject
 FAKELOGGER
 fbuild
 fdp
+fecf
 FEEDNAME
 fetchcontent
 ffff
@@ -264,6 +268,7 @@ gtags
 gtest
 gtimeout
 Guire
+GVCID
 HACKSM
 Handcoded
 handleflags
@@ -290,6 +295,7 @@ ieeetr
 iflag
 ifstr
 imple
+importables
 inbool
 INCLUDEDIR
 initstate
@@ -392,6 +398,11 @@ NACI
 nasafprime
 nbits
 ncsl
+ndiffs
+neascout
+netinet
+newloc
+newroot
 newtio
 nmsgs
 NOBLOCK
@@ -406,6 +417,7 @@ NSHUFF
 NSPACES
 ntohs
 objcopy
+OCF
 oflag
 okidocki
 OLDINCLUDEDIR
@@ -489,6 +501,7 @@ ptbool
 ptf
 pthread
 ptrt
+Pvn
 qch
 qhelpgenerator
 QHG
@@ -510,6 +523,7 @@ rcvd
 rdwr
 Readback
 Recvd
+redhat
 refspec
 REFTOPOLOGY
 REFTOPOLOGYDEFS
@@ -518,6 +532,7 @@ REMOVEDIRECTORY
 REMOVEFILE
 reprioritize
 RGD
+rhel
 RHH
 Rizvi
 ROOTDIR
@@ -533,6 +548,7 @@ sats
 SBF
 SBINDIR
 sbom
+scid
 scm
 sdd
 searchdata
@@ -612,8 +628,9 @@ tcflush
 tcgetattr
 TCPCLIENT
 TCPHELPER
-tcpserver
+TCPSERVER
 TCSANOW
+Telecommand
 telem
 TELEMCHANIMPL
 testerbase
@@ -642,6 +659,11 @@ TLMPACKETIZERCOMPONENTIMPLCFG
 TLMPACKETIZERTYPES
 TODOLIST
 TOKENBUCKETTESTER
+tmpl
+tmptree
+TODOLIST
+TOKENBUCKETTESTER
+topologyapp
 topologydefs
 totalram
 tparam
@@ -662,6 +684,9 @@ useconds
 usecs
 valgrind
 vbai
+VCA
+vcid
+VCP
 VFILE
 VID
 vla

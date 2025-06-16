@@ -118,7 +118,7 @@ namespace Svc {
         FwPacketDescriptorType desc;
         stat = this->m_sentPacket.deserialize(desc);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
-        ASSERT_EQ(desc,static_cast<FwPacketDescriptorType>(Fw::ComPacket::FW_PACKET_LOG));
+        ASSERT_EQ(desc,static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_LOG));
         // next piece should be event ID
         FwEventIdType sentId;
         stat = this->m_sentPacket.deserialize(sentId);
@@ -451,7 +451,7 @@ namespace Svc {
         FwPacketDescriptorType desc;
         stat = this->m_sentPacket.deserialize(desc);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
-        ASSERT_EQ(desc,static_cast<FwPacketDescriptorType>(Fw::ComPacket::FW_PACKET_LOG));
+        ASSERT_EQ(desc,static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_LOG));
         // next piece should be event ID
         FwEventIdType sentId;
         stat = this->m_sentPacket.deserialize(sentId);
@@ -503,7 +503,7 @@ namespace Svc {
         // first piece should be log packet descriptor
         stat = this->m_sentPacket.deserialize(desc);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
-        ASSERT_EQ(desc,static_cast<FwPacketDescriptorType>(Fw::ComPacket::FW_PACKET_LOG));
+        ASSERT_EQ(desc,static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_LOG));
         // next piece should be event ID
         stat = this->m_sentPacket.deserialize(sentId);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
@@ -552,7 +552,7 @@ namespace Svc {
         FwPacketDescriptorType desc;
         stat = this->m_sentPacket.deserialize(desc);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
-        ASSERT_EQ(desc,static_cast<FwPacketDescriptorType>(Fw::ComPacket::FW_PACKET_LOG));
+        ASSERT_EQ(desc,static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_LOG));
         // next piece should be event ID
         FwEventIdType sentId;
         stat = this->m_sentPacket.deserialize(sentId);

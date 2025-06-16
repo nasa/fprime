@@ -45,7 +45,7 @@ namespace Svc {
       void frame(
           const U8* const data, //!< The data
           const U32 size, //!< The data size in bytes
-          Fw::ComPacket::ComPacketType packet_type //!< The packet type
+          Fw::ComPacketType packet_type //!< The packet type
       ) override;
 
   };

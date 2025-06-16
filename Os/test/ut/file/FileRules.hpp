@@ -9,7 +9,7 @@
 //  OpenFile: base rule for all open rules
 //
 // ------------------------------------------------------------------------------------------------------
-struct OpenBaseRule : public STest::Rule<Os::Test::File::Tester> {
+struct OpenBaseRule : public STest::Rule<Os::Test::FileTest::Tester> {
     //! Constructor
     OpenBaseRule(const char *rule_name, Os::File::Mode mode = Os::File::Mode::OPEN_CREATE, const bool overwrite = false,
                  const bool randomize_filename = false);
@@ -23,11 +23,11 @@ struct OpenBaseRule : public STest::Rule<Os::Test::File::Tester> {
     // ----------------------------------------------------------------------
 
     //! Precondition
-    bool precondition(const Os::Test::File::Tester &state  //!< The test state
+    bool precondition(const Os::Test::FileTest::Tester &state  //!< The test state
     );
 
     //! Action
-    void action(Os::Test::File::Tester &state  //!< The test state
+    void action(Os::Test::FileTest::Tester &state  //!< The test state
     );
 };
 
@@ -101,7 +101,7 @@ struct OpenForRead : public OpenBaseRule {
 // Rule:  CloseFile
 //
 // ------------------------------------------------------------------------------------------------------
-struct CloseFile : public STest::Rule<Os::Test::File::Tester> {
+struct CloseFile : public STest::Rule<Os::Test::FileTest::Tester> {
     // ----------------------------------------------------------------------
     // Construction
     // ----------------------------------------------------------------------
@@ -114,11 +114,11 @@ struct CloseFile : public STest::Rule<Os::Test::File::Tester> {
     // ----------------------------------------------------------------------
 
     //! Precondition
-    bool precondition(const Os::Test::File::Tester &state  //!< The test state
+    bool precondition(const Os::Test::FileTest::Tester &state  //!< The test state
     );
 
     //! Action
-    void action(Os::Test::File::Tester &state  //!< The test state
+    void action(Os::Test::FileTest::Tester &state  //!< The test state
     );
 };
 
@@ -127,7 +127,7 @@ struct CloseFile : public STest::Rule<Os::Test::File::Tester> {
 // Rule:  Read
 //
 // ------------------------------------------------------------------------------------------------------
-struct Read : public STest::Rule<Os::Test::File::Tester> {
+struct Read : public STest::Rule<Os::Test::FileTest::Tester> {
 
     // ----------------------------------------------------------------------
     // Construction
@@ -142,12 +142,12 @@ struct Read : public STest::Rule<Os::Test::File::Tester> {
 
     //! Precondition
     bool precondition(
-            const Os::Test::File::Tester &state //!< The test state
+            const Os::Test::FileTest::Tester &state //!< The test state
     );
 
     //! Action
     void action(
-            Os::Test::File::Tester &state //!< The test state
+            Os::Test::FileTest::Tester &state //!< The test state
     );
 
 };
@@ -157,7 +157,7 @@ struct Read : public STest::Rule<Os::Test::File::Tester> {
 // Rule:  Write
 //
 // ------------------------------------------------------------------------------------------------------
-struct Write : public STest::Rule<Os::Test::File::Tester> {
+struct Write : public STest::Rule<Os::Test::FileTest::Tester> {
 
     // ----------------------------------------------------------------------
     // Construction
@@ -172,12 +172,12 @@ struct Write : public STest::Rule<Os::Test::File::Tester> {
 
     //! Precondition
     bool precondition(
-            const Os::Test::File::Tester &state //!< The test state
+            const Os::Test::FileTest::Tester &state //!< The test state
     );
 
     //! Action
     void action(
-            Os::Test::File::Tester &state //!< The test state
+            Os::Test::FileTest::Tester &state //!< The test state
     );
 
 };
@@ -187,7 +187,7 @@ struct Write : public STest::Rule<Os::Test::File::Tester> {
 // Rule:  Seek
 //
 // ------------------------------------------------------------------------------------------------------
-struct Seek : public STest::Rule<Os::Test::File::Tester> {
+struct Seek : public STest::Rule<Os::Test::FileTest::Tester> {
 
     // ----------------------------------------------------------------------
     // Construction
@@ -202,12 +202,12 @@ struct Seek : public STest::Rule<Os::Test::File::Tester> {
 
     //! Precondition
     bool precondition(
-            const Os::Test::File::Tester &state //!< The test state
+            const Os::Test::FileTest::Tester &state //!< The test state
     );
 
     //! Action
     void action(
-            Os::Test::File::Tester &state //!< The test state
+            Os::Test::FileTest::Tester &state //!< The test state
     );
 
 };
@@ -216,7 +216,7 @@ struct Seek : public STest::Rule<Os::Test::File::Tester> {
 // Rule:  Preallocate
 //
 // ------------------------------------------------------------------------------------------------------
-struct Preallocate : public STest::Rule<Os::Test::File::Tester> {
+struct Preallocate : public STest::Rule<Os::Test::FileTest::Tester> {
 
     // ----------------------------------------------------------------------
     // Construction
@@ -231,12 +231,12 @@ struct Preallocate : public STest::Rule<Os::Test::File::Tester> {
 
     //! Precondition
     bool precondition(
-            const Os::Test::File::Tester &state //!< The test state
+            const Os::Test::FileTest::Tester &state //!< The test state
     );
 
     //! Action
     void action(
-            Os::Test::File::Tester &state //!< The test state
+            Os::Test::FileTest::Tester &state //!< The test state
     );
 
 };
@@ -246,7 +246,7 @@ struct Preallocate : public STest::Rule<Os::Test::File::Tester> {
 // Rule:  Flush
 //
 // ------------------------------------------------------------------------------------------------------
-struct Flush : public STest::Rule<Os::Test::File::Tester> {
+struct Flush : public STest::Rule<Os::Test::FileTest::Tester> {
 
     // ----------------------------------------------------------------------
     // Construction
@@ -261,12 +261,12 @@ struct Flush : public STest::Rule<Os::Test::File::Tester> {
 
     //! Precondition
     bool precondition(
-            const Os::Test::File::Tester &state //!< The test state
+            const Os::Test::FileTest::Tester &state //!< The test state
     );
 
     //! Action
     void action(
-            Os::Test::File::Tester &state //!< The test state
+            Os::Test::FileTest::Tester &state //!< The test state
     );
 
 };
@@ -276,7 +276,7 @@ struct Flush : public STest::Rule<Os::Test::File::Tester> {
 // Rule:  OpenInvalidModes
 //
 // ------------------------------------------------------------------------------------------------------
-struct OpenInvalidModes : public STest::Rule<Os::Test::File::Tester> {
+struct OpenInvalidModes : public STest::Rule<Os::Test::FileTest::Tester> {
     // ----------------------------------------------------------------------
     // Construction
     // ----------------------------------------------------------------------
@@ -289,11 +289,11 @@ struct OpenInvalidModes : public STest::Rule<Os::Test::File::Tester> {
     // ----------------------------------------------------------------------
 
     //! Precondition
-    bool precondition(const Os::Test::File::Tester &state  //!< The test state
+    bool precondition(const Os::Test::FileTest::Tester &state  //!< The test state
     );
 
     //! Action
-    void action(Os::Test::File::Tester &state  //!< The test state
+    void action(Os::Test::FileTest::Tester &state  //!< The test state
     );
 };
 
@@ -301,7 +301,7 @@ struct OpenInvalidModes : public STest::Rule<Os::Test::File::Tester> {
 // Rule:  PreallocateWithoutOpen
 //
 // ------------------------------------------------------------------------------------------------------
-struct PreallocateWithoutOpen : public STest::Rule<Os::Test::File::Tester> {
+struct PreallocateWithoutOpen : public STest::Rule<Os::Test::FileTest::Tester> {
     // ----------------------------------------------------------------------
     // Construction
     // ----------------------------------------------------------------------
@@ -314,11 +314,11 @@ struct PreallocateWithoutOpen : public STest::Rule<Os::Test::File::Tester> {
     // ----------------------------------------------------------------------
 
     //! Precondition
-    bool precondition(const Os::Test::File::Tester &state  //!< The test state
+    bool precondition(const Os::Test::FileTest::Tester &state  //!< The test state
     );
 
     //! Action
-    void action(Os::Test::File::Tester &state  //!< The test state
+    void action(Os::Test::FileTest::Tester &state  //!< The test state
     );
 };
 
@@ -326,7 +326,7 @@ struct PreallocateWithoutOpen : public STest::Rule<Os::Test::File::Tester> {
 // Rule:  SeekWithoutOpen
 //
 // ------------------------------------------------------------------------------------------------------
-struct SeekWithoutOpen : public STest::Rule<Os::Test::File::Tester> {
+struct SeekWithoutOpen : public STest::Rule<Os::Test::FileTest::Tester> {
     // ----------------------------------------------------------------------
     // Construction
     // ----------------------------------------------------------------------
@@ -339,11 +339,11 @@ struct SeekWithoutOpen : public STest::Rule<Os::Test::File::Tester> {
     // ----------------------------------------------------------------------
 
     //! Precondition
-    bool precondition(const Os::Test::File::Tester &state  //!< The test state
+    bool precondition(const Os::Test::FileTest::Tester &state  //!< The test state
     );
 
     //! Action
-    void action(Os::Test::File::Tester &state  //!< The test state
+    void action(Os::Test::FileTest::Tester &state  //!< The test state
     );
 };
 
@@ -351,7 +351,7 @@ struct SeekWithoutOpen : public STest::Rule<Os::Test::File::Tester> {
 // Rule:  SeekInvalidSize
 //
 // ------------------------------------------------------------------------------------------------------
-struct SeekInvalidSize : public STest::Rule<Os::Test::File::Tester> {
+struct SeekInvalidSize : public STest::Rule<Os::Test::FileTest::Tester> {
     // ----------------------------------------------------------------------
     // Construction
     // ----------------------------------------------------------------------
@@ -364,11 +364,11 @@ struct SeekInvalidSize : public STest::Rule<Os::Test::File::Tester> {
     // ----------------------------------------------------------------------
 
     //! Precondition
-    bool precondition(const Os::Test::File::Tester &state  //!< The test state
+    bool precondition(const Os::Test::FileTest::Tester &state  //!< The test state
     );
 
     //! Action
-    void action(Os::Test::File::Tester &state  //!< The test state
+    void action(Os::Test::FileTest::Tester &state  //!< The test state
     );
 };
 
@@ -376,7 +376,7 @@ struct SeekInvalidSize : public STest::Rule<Os::Test::File::Tester> {
 // Rule:  FlushInvalidModes
 //
 // ------------------------------------------------------------------------------------------------------
-struct FlushInvalidModes : public STest::Rule<Os::Test::File::Tester> {
+struct FlushInvalidModes : public STest::Rule<Os::Test::FileTest::Tester> {
     // ----------------------------------------------------------------------
     // Construction
     // ----------------------------------------------------------------------
@@ -389,11 +389,11 @@ struct FlushInvalidModes : public STest::Rule<Os::Test::File::Tester> {
     // ----------------------------------------------------------------------
 
     //! Precondition
-    bool precondition(const Os::Test::File::Tester &state  //!< The test state
+    bool precondition(const Os::Test::FileTest::Tester &state  //!< The test state
     );
 
     //! Action
-    void action(Os::Test::File::Tester &state  //!< The test state
+    void action(Os::Test::FileTest::Tester &state  //!< The test state
     );
 };
 
@@ -401,7 +401,7 @@ struct FlushInvalidModes : public STest::Rule<Os::Test::File::Tester> {
 // Rule:  ReadInvalidModes
 //
 // ------------------------------------------------------------------------------------------------------
-struct ReadInvalidModes : public STest::Rule<Os::Test::File::Tester> {
+struct ReadInvalidModes : public STest::Rule<Os::Test::FileTest::Tester> {
     // ----------------------------------------------------------------------
     // Construction
     // ----------------------------------------------------------------------
@@ -414,11 +414,11 @@ struct ReadInvalidModes : public STest::Rule<Os::Test::File::Tester> {
     // ----------------------------------------------------------------------
 
     //! Precondition
-    bool precondition(const Os::Test::File::Tester &state  //!< The test state
+    bool precondition(const Os::Test::FileTest::Tester &state  //!< The test state
     );
 
     //! Action
-    void action(Os::Test::File::Tester &state  //!< The test state
+    void action(Os::Test::FileTest::Tester &state  //!< The test state
     );
 };
 
@@ -426,7 +426,7 @@ struct ReadInvalidModes : public STest::Rule<Os::Test::File::Tester> {
 // Rule:  WriteInvalidModes
 //
 // ------------------------------------------------------------------------------------------------------
-struct WriteInvalidModes : public STest::Rule<Os::Test::File::Tester> {
+struct WriteInvalidModes : public STest::Rule<Os::Test::FileTest::Tester> {
     // ----------------------------------------------------------------------
     // Construction
     // ----------------------------------------------------------------------
@@ -439,11 +439,11 @@ struct WriteInvalidModes : public STest::Rule<Os::Test::File::Tester> {
     // ----------------------------------------------------------------------
 
     //! Precondition
-    bool precondition(const Os::Test::File::Tester &state  //!< The test state
+    bool precondition(const Os::Test::FileTest::Tester &state  //!< The test state
     );
 
     //! Action
-    void action(Os::Test::File::Tester &state  //!< The test state
+    void action(Os::Test::FileTest::Tester &state  //!< The test state
     );
 };
 
@@ -451,7 +451,7 @@ struct WriteInvalidModes : public STest::Rule<Os::Test::File::Tester> {
 // Base Rule:  AssertRule
 //
 // ------------------------------------------------------------------------------------------------------
-struct AssertRule : public STest::Rule<Os::Test::File::Tester> {
+struct AssertRule : public STest::Rule<Os::Test::FileTest::Tester> {
     // ----------------------------------------------------------------------
     // Construction
     // ----------------------------------------------------------------------
@@ -464,11 +464,11 @@ struct AssertRule : public STest::Rule<Os::Test::File::Tester> {
     // ----------------------------------------------------------------------
 
     //! Precondition
-    bool precondition(const Os::Test::File::Tester &state  //!< The test state
+    bool precondition(const Os::Test::FileTest::Tester &state  //!< The test state
     );
 
     //! Action
-    virtual void action(Os::Test::File::Tester &state  //!< The test state
+    virtual void action(Os::Test::FileTest::Tester &state  //!< The test state
     ) = 0;
 };
 
@@ -489,7 +489,7 @@ struct OpenIllegalPath : public AssertRule {
     // ----------------------------------------------------------------------
 
     //! Action
-    void action(Os::Test::File::Tester &state  //!< The test state
+    void action(Os::Test::FileTest::Tester &state  //!< The test state
     ) override;
 };
 
@@ -510,7 +510,7 @@ struct OpenIllegalMode : public AssertRule {
     // ----------------------------------------------------------------------
 
     //! Action
-    void action(Os::Test::File::Tester &state  //!< The test state
+    void action(Os::Test::FileTest::Tester &state  //!< The test state
     );
 };
 
@@ -531,7 +531,7 @@ struct SeekIllegal : public AssertRule {
     // ----------------------------------------------------------------------
 
     //! Action
-    void action(Os::Test::File::Tester &state  //!< The test state
+    void action(Os::Test::FileTest::Tester &state  //!< The test state
     );
 };
 
@@ -552,7 +552,7 @@ struct ReadIllegalBuffer : public AssertRule {
     // ----------------------------------------------------------------------
 
     //! Action
-    void action(Os::Test::File::Tester &state  //!< The test state
+    void action(Os::Test::FileTest::Tester &state  //!< The test state
     );
 };
 
@@ -573,7 +573,7 @@ struct WriteIllegalBuffer : public AssertRule {
     // ----------------------------------------------------------------------
 
     //! Action
-    void action(Os::Test::File::Tester &state  //!< The test state
+    void action(Os::Test::FileTest::Tester &state  //!< The test state
     );
 };
 
@@ -581,7 +581,7 @@ struct WriteIllegalBuffer : public AssertRule {
 // Rule:  CopyAssignment
 //
 // ------------------------------------------------------------------------------------------------------
-struct CopyAssignment : public STest::Rule<Os::Test::File::Tester> {
+struct CopyAssignment : public STest::Rule<Os::Test::FileTest::Tester> {
 
         // ----------------------------------------------------------------------
         // Construction
@@ -596,12 +596,12 @@ struct CopyAssignment : public STest::Rule<Os::Test::File::Tester> {
 
         //! Precondition
         bool precondition(
-            const Os::Test::File::Tester& state //!< The test state
+            const Os::Test::FileTest::Tester& state //!< The test state
         );
 
         //! Action
         void action(
-            Os::Test::File::Tester& state //!< The test state
+            Os::Test::FileTest::Tester& state //!< The test state
         );
 
 };
@@ -610,7 +610,7 @@ struct CopyAssignment : public STest::Rule<Os::Test::File::Tester> {
 // Rule:  CopyConstruction
 //
 // ------------------------------------------------------------------------------------------------------
-struct CopyConstruction : public STest::Rule<Os::Test::File::Tester> {
+struct CopyConstruction : public STest::Rule<Os::Test::FileTest::Tester> {
 
         // ----------------------------------------------------------------------
         // Construction
@@ -625,12 +625,12 @@ struct CopyConstruction : public STest::Rule<Os::Test::File::Tester> {
 
         //! Precondition
         bool precondition(
-            const Os::Test::File::Tester& state //!< The test state
+            const Os::Test::FileTest::Tester& state //!< The test state
         );
 
         //! Action
         void action(
-            Os::Test::File::Tester& state //!< The test state
+            Os::Test::FileTest::Tester& state //!< The test state
         );
 
 };
@@ -639,7 +639,7 @@ struct CopyConstruction : public STest::Rule<Os::Test::File::Tester> {
 // Rule:  FullCrc
 //
 // ------------------------------------------------------------------------------------------------------
-struct FullCrc : public STest::Rule<Os::Test::File::Tester> {
+struct FullCrc : public STest::Rule<Os::Test::FileTest::Tester> {
 
         // ----------------------------------------------------------------------
         // Construction
@@ -654,12 +654,12 @@ struct FullCrc : public STest::Rule<Os::Test::File::Tester> {
 
         //! Precondition
         bool precondition(
-            const Os::Test::File::Tester& state //!< The test state
+            const Os::Test::FileTest::Tester& state //!< The test state
         );
 
         //! Action
         void action(
-            Os::Test::File::Tester& state //!< The test state
+            Os::Test::FileTest::Tester& state //!< The test state
         );
 };
 
@@ -667,7 +667,7 @@ struct FullCrc : public STest::Rule<Os::Test::File::Tester> {
 // Rule:  IncrementalCrc
 //
 // ------------------------------------------------------------------------------------------------------
-struct IncrementalCrc : public STest::Rule<Os::Test::File::Tester> {
+struct IncrementalCrc : public STest::Rule<Os::Test::FileTest::Tester> {
 
         // ----------------------------------------------------------------------
         // Construction
@@ -682,12 +682,12 @@ struct IncrementalCrc : public STest::Rule<Os::Test::File::Tester> {
 
         //! Precondition
         bool precondition(
-            const Os::Test::File::Tester& state //!< The test state
+            const Os::Test::FileTest::Tester& state //!< The test state
         );
 
         //! Action
         void action(
-            Os::Test::File::Tester& state //!< The test state
+            Os::Test::FileTest::Tester& state //!< The test state
         );
 
 };
@@ -696,7 +696,7 @@ struct IncrementalCrc : public STest::Rule<Os::Test::File::Tester> {
 // Rule:  FinalizeCrc
 //
 // ------------------------------------------------------------------------------------------------------
-struct FinalizeCrc : public STest::Rule<Os::Test::File::Tester> {
+struct FinalizeCrc : public STest::Rule<Os::Test::FileTest::Tester> {
 
         // ----------------------------------------------------------------------
         // Construction
@@ -711,12 +711,12 @@ struct FinalizeCrc : public STest::Rule<Os::Test::File::Tester> {
 
         //! Precondition
         bool precondition(
-            const Os::Test::File::Tester& state //!< The test state
+            const Os::Test::FileTest::Tester& state //!< The test state
         );
 
         //! Action
         void action(
-            Os::Test::File::Tester& state //!< The test state
+            Os::Test::FileTest::Tester& state //!< The test state
         );
 
 };
@@ -725,7 +725,7 @@ struct FinalizeCrc : public STest::Rule<Os::Test::File::Tester> {
 // Rule:  FullCrcInvalidModes
 //
 // ------------------------------------------------------------------------------------------------------
-struct FullCrcInvalidModes : public STest::Rule<Os::Test::File::Tester> {
+struct FullCrcInvalidModes : public STest::Rule<Os::Test::FileTest::Tester> {
 
         // ----------------------------------------------------------------------
         // Construction
@@ -740,12 +740,12 @@ struct FullCrcInvalidModes : public STest::Rule<Os::Test::File::Tester> {
 
         //! Precondition
         bool precondition(
-            const Os::Test::File::Tester& state //!< The test state
+            const Os::Test::FileTest::Tester& state //!< The test state
         );
 
         //! Action
         void action(
-            Os::Test::File::Tester& state //!< The test state
+            Os::Test::FileTest::Tester& state //!< The test state
         );
 };
 
@@ -753,7 +753,7 @@ struct FullCrcInvalidModes : public STest::Rule<Os::Test::File::Tester> {
 // Rule:  IncrementalCrcInvalidModes
 //
 // ------------------------------------------------------------------------------------------------------
-struct IncrementalCrcInvalidModes : public STest::Rule<Os::Test::File::Tester> {
+struct IncrementalCrcInvalidModes : public STest::Rule<Os::Test::FileTest::Tester> {
 
         // ----------------------------------------------------------------------
         // Construction
@@ -768,11 +768,11 @@ struct IncrementalCrcInvalidModes : public STest::Rule<Os::Test::File::Tester> {
 
         //! Precondition
         bool precondition(
-            const Os::Test::File::Tester& state //!< The test state
+            const Os::Test::FileTest::Tester& state //!< The test state
         );
 
         //! Action
         void action(
-            Os::Test::File::Tester& state //!< The test state
+            Os::Test::FileTest::Tester& state //!< The test state
         );
 };

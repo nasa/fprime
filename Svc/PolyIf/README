@@ -1,4 +1,0 @@
-This contains the definition for a PolyPort, or a port that passes a PolyType. 
-It is used to set and get values for the PolyDb component.
-
-PolyPortAi.xml - XML definition for a port that passes PolyType values
