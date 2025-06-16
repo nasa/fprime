@@ -81,13 +81,13 @@ void copyDataFrom(const MapBase<K, V>& map)
 
     1. Let `size` be the minimum of `map.getSize()` and `getCapacity()`.
 
-    1. Set `e = getHeadEntry`.
+    1. Set `e = map.getHeadEntry`.
 
     1. For `i` in [0, `size`)
 
         1. Assert `e != nullptr`.
 
-        1. Set `status = insert(*e)`.
+        1. Set `e1 = insert(*e)`.
 
         1. Assert `status == Success::SUCCESS`.
 
@@ -126,7 +126,7 @@ _Example:_
 ```c++
 void f(const MapBase<U16, U32>& map) {
   map.clear();
-  auto* e = map.getHeadEntry();
+  const auto* e = map.getHeadEntry();
   FW_ASSERT(e == nullptr);
   map.insert(0, 1);
   e = map.getHeadEntry();
@@ -136,7 +136,6 @@ void f(const MapBase<U16, U32>& map) {
 }
 
 ```
-See [**copyDataFrom**](MapBase.md#52-copydatafrom).
 
 ### 5.5. getCapacity
 
@@ -164,6 +163,24 @@ virtual FwSizeType getSize() const = 0
 Return the current size.
 
 _Example:_
+See [**getCapacity**](MapBase.md#55-getCapacity).
+
+### 5.7. insert
+
+```c++
+Fw::Success insert(const K& key, const V& value) = 0
+Fw::Success insert(const MapEntry<K, V>& e) = 0
+```
+
+1. If an entry `e` exists with the specified key, then update the 
+   value in `e` and return `SUCCESS`.
+
+1. Otherwise if there is room in the map, then add a new entry `e` with the
+specified key-value pair and return `SUCCESS`.
+
+1. Otherwise return `FAILURE`.
+
+_Example:_
 ```c++
 void f(const MapBase<U16, U32>& map) {
     map.clear();
@@ -176,11 +193,34 @@ void f(const MapBase<U16, U32>& map) {
 }
 ```
 
-### 5.7. insert
-
-TODO
-
 ### 5.8. remove
 
-TODO
+```c++
+Fw::Success remove(const K& key) = 0
+```
+
+1. If an entry `e` exists, then remove `e` and return `SUCCESS`.
+
+1. Otherwise return `FAILURE`.
+
+_Example:_
+```c++
+void f(const MapBase<U16, U32>& map) {
+    map.clear();
+    auto size = map.getSize();
+    ASSERT_EQ(size, 0);
+    auto status = map.insert(0, 1);
+    ASSERT_EQ(status, Success::SUCCESS);
+    size = map.getSize();
+    ASSERT_EQ(size, 1);
+    // Key does not exist
+    status = map.remove(10);
+    ASSERT_EQ(status, Success::FAILURE);
+    ASSERT_EQ(size, 1);
+    // Key exists
+    status = map.remove(0);
+    ASSERT_EQ(status, Success::SUCCESS);
+    ASSERT_EQ(size, 0);
+}
+```
 
