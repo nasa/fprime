@@ -17,6 +17,7 @@ register_fprime_target("target/test") # Test target and autocoder supporting it
 register_fprime_target("target/test_recursion") # Test recursive dependencies
 register_fprime_target("target/test_autocoder") # Test target-triggered autocoder
 register_fprime_target("target/test_chained_autocoder") # Test chained autocoder
+register_fprime_target("target/test_rerun_autocoder") # Test rerun autocoder
 
 # NOTE: register custom targets between these two lines
 include("${FPRIME_FRAMEWORK_PATH}/cmake/FPrime-Code.cmake")

@@ -57,3 +57,11 @@ def test_autocoder_chaining(AUTOCODER_BUILD):
 def test_autocoder_header_as_sources(AUTOCODER_BUILD):
     """Test that autocoders can generate header files that are treated as sources"""
     cmake.assert_process_success(AUTOCODER_BUILD, targets=["TestHeaderAutocoderModule"])
+
+
+def test_autocoder_rerun_autocoder(AUTOCODER_BUILD):
+    """Test that autocoders can generate header files that are treated as sources"""
+    cmake.assert_process_success(AUTOCODER_BUILD, targets=["TestBuildAutocoderModule"])
+    build_cache_path = AUTOCODER_BUILD["build"] / "TestDeployment" / "TestBuildAutocoder"
+    rerun_autocoder_output = build_cache_path / "test-rerun-autocoder.txt"
+    assert rerun_autocoder_output.exists(), "Failed to create rerun autocoder output"
