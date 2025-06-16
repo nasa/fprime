@@ -9,7 +9,7 @@
 #define OS_TEST_UT_COMMON_FILE_TESTS_HPP
 namespace Os {
 namespace Test {
-namespace File {
+namespace FileTest {
 
 //! Set up function as defined by the unit test implementor
 void setUp(bool requires_io  //!< Does this test require functional io devices
@@ -18,7 +18,7 @@ void setUp(bool requires_io  //!< Does this test require functional io devices
 //! Tear down function as defined by the unit test implementor
 void tearDown();
 
-}  // namespace File
+}  // namespace FileTest
 }  // namespace Test
 }  // namespace Os
 
@@ -35,7 +35,7 @@ class Functionality : public ::testing::Test {
     void TearDown() override;
 
     //! Tester/state implementation
-    std::unique_ptr<Os::Test::File::Tester> tester;
+    std::unique_ptr<Os::Test::FileTest::Tester> tester;
 };
 
 //! Interface testing

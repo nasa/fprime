@@ -19,7 +19,7 @@ FprimeFraming::FprimeFraming(): FramingProtocol() {}
 
 FprimeDeframing::FprimeDeframing(): DeframingProtocol() {}
 
-void FprimeFraming::frame(const U8* const data, const U32 size, Fw::ComPacket::ComPacketType packet_type) {
+void FprimeFraming::frame(const U8* const data, const U32 size, Fw::ComPacketType packet_type) {
     // NOTE: packet_type is not used in this implementation
 
     FW_ASSERT(data != nullptr);

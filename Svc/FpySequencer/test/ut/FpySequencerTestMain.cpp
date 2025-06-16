@@ -765,7 +765,7 @@ TEST_F(FpySequencerTester, dispatchCommand) {
     ASSERT_EQ(result, Fw::Success::SUCCESS);
 
     Fw::ComBuffer expected;
-    ASSERT_EQ(expected.serialize(Fw::ComPacket::FW_PACKET_COMMAND), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    ASSERT_EQ(expected.serialize(Fw::ComPacketType::FW_PACKET_COMMAND), Fw::SerializeStatus::FW_SERIALIZE_OK);
     ASSERT_EQ(expected.serialize(cmd.getopCode()), Fw::SerializeStatus::FW_SERIALIZE_OK);
     ASSERT_EQ(expected.serialize(buf.getBuffAddr(), buf.getBuffLength(), true), Fw::SerializeStatus::FW_SERIALIZE_OK);
     ASSERT_from_cmdOut_SIZE(1);

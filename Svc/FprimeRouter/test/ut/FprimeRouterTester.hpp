@@ -77,7 +77,7 @@ class FprimeRouterTester : public FprimeRouterGTestBase {
     void initComponents();
 
     //! Mock the reception of a packet of a specific type
-    void mockReceivePacketType(Fw::ComPacket::ComPacketType packetType);
+    void mockReceivePacketType(Fw::ComPacketType packetType);
 
     // ----------------------------------------------------------------------
     // Port handler overrides

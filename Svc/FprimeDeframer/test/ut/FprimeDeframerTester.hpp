@@ -43,6 +43,9 @@ class FprimeDeframerTester : public FprimeDeframerGTestBase {
     //! Test receiving a nominal frame
     void testNominalFrame();
 
+    //! Test receiving a nominal frame that contains a valid packet (with APID)
+    void testNominalFrameApid();
+
     //! Test receiving a truncated frame
     void testTruncatedFrame();
 
