@@ -10,6 +10,11 @@ include_guard()
 include(utilities)
 include(autocoder/helpers)
 
+# Allowed return values
+set(FPRIME_AUTOCODER_UNSUPPORTED AUTOCODER_GENERATED AUTOCODER_SCRIPT AUTOCODER_INPUTS AUTOCODER_INCLUDES)
+set(FPRIME_AUTOCODER_REQUIRED AUTOCODER_GENERATED_AUTOCODER_INPUTS AUTOCODER_GENERATED_BUILD_SOURCES AUTOCODER_GENERATED_OTHER)
+set(FPRIME_AUTOCODER_OPTIONAL AUTOCODER_DEPENDENCIES)
+
 ####
 # run_ac_set:
 #
@@ -29,29 +34,35 @@ function (run_ac_set BUILD_TARGET_NAME)
         set(AC_LIST "${ARGN}")
     endif()
     # Do not init GENERATED_FILE_LIST as it is read from previous AC runs above
-    init_variables(MODULE_DEPENDENCIES_LIST GENERATED_FILE_LIST CONSUMED_SOURCES_LIST FILE_DEPENDENCY_LIST)
+    
+    # Create a hash of the autocoder set to isolate results
+    string(SHA1 "AC_SET_HASH" "${AC_LIST}")
+    
     foreach(AC_CMAKE IN LISTS AC_LIST)
-        init_variables(MODULE_DEPENDENCIES GENERATED_FILES CONSUMED_SOURCES)
-        run_ac("${BUILD_TARGET_NAME}" "${AC_CMAKE}" "${AUTOCODER_INPUT_SOURCES}" "${GENERATED_FILE_LIST}")
-        list(APPEND MODULE_DEPENDENCIES_LIST ${MODULE_DEPENDENCIES})
-        list(APPEND GENERATED_FILE_LIST ${GENERATED_FILES})
-        list(APPEND FILE_DEPENDENCY_LIST ${FILE_DEPENDENCIES})
-        list(APPEND BUILD_SOURCES_LIST ${BUILD_SOURCES})
-        list(APPEND AUTOCODER_INPUT_SOURCES ${NEW_AUTOCODER_INPUTS})
+        run_ac("${BUILD_TARGET_NAME}" "${AC_CMAKE}" "${AUTOCODER_INPUT_SOURCES}" "${GENERATED_FILE_LIST}" "${AC_SET_HASH}")
+        get_property(AUTOCODER_GENERATED_AUTOCODER_INPUTS_VALUES TARGET "${BUILD_TARGET_NAME}" PROPERTY "${AC_SET_HASH}_AUTOCODER_GENERATED_AUTOCODER_INPUTS")
+        list(APPEND AUTOCODER_INPUT_SOURCES ${AUTOCODER_GENERATED_AUTOCODER_INPUTS_VALUES})
     endforeach()
+    
 
-    # Append all autocoder properties to the various target properties
-    append_list_property("${GENERATED_FILE_LIST}" TARGET "${BUILD_TARGET_NAME}" PROPERTY AC_GENERATED)
-    append_list_property("${FILE_DEPENDENCY_LIST}" TARGET "${BUILD_TARGET_NAME}" PROPERTY AC_FILE_DEPENDENCIES)
-    append_list_property("${AUTOCODER_INPUT_SOURCES}" TARGET "${BUILD_TARGET_NAME}" PROPERTY AUTOCODER_INPUTS)
+    # Read from hash-specific properties for this autocoder set
+    get_property(AUTOCODER_GENERATED_VALUES TARGET "${BUILD_TARGET_NAME}" PROPERTY "${AC_SET_HASH}_AUTOCODER_GENERATED")
+    get_property(AUTOCODER_GENERATED_BUILD_SOURCES_VALUES TARGET "${BUILD_TARGET_NAME}" PROPERTY "${AC_SET_HASH}_AUTOCODER_GENERATED_BUILD_SOURCES")
+    get_property(AUTOCODER_GENERATED_AUTOCODER_INPUTS_VALUES TARGET "${BUILD_TARGET_NAME}" PROPERTY "${AC_SET_HASH}_AUTOCODER_GENERATED_AUTOCODER_INPUTS")
+    get_property(AUTOCODER_DEPENDENCIES_VALUES TARGET "${BUILD_TARGET_NAME}" PROPERTY "${AC_SET_HASH}_AUTOCODER_DEPENDENCIES")
+    get_property(AUTOCODER_GENERATED_OTHER_VALUES TARGET "${BUILD_TARGET_NAME}" PROPERTY "${AC_SET_HASH}_AUTOCODER_GENERATED_OTHER")
+    
+    # Append to final target properties (aggregate of all runs)
+    append_list_property("${AUTOCODER_GENERATED_VALUES}" TARGET "${BUILD_TARGET_NAME}" PROPERTY AC_GENERATED)
+    append_list_property("${AUTOCODER_GENERATED_AUTOCODER_INPUTS_VALUES}" TARGET "${BUILD_TARGET_NAME}" PROPERTY AUTOCODER_INPUTS)
     # Cannot use `target_sources` as it does not respect the "GENERATED" flag. Thus the sources need to be added
     # to the SOURCES property directly.
-    append_list_property("${BUILD_SOURCES_LIST}" TARGET "${BUILD_TARGET_NAME}" PROPERTY SOURCES)
-    append_list_property("${MODULE_DEPENDENCIES_LIST}" TARGET "${BUILD_TARGET_NAME}" PROPERTY LINK_LIBRARIES)
-    append_list_property("${MODULE_DEPENDENCIES_LIST}" TARGET "${BUILD_TARGET_NAME}" PROPERTY INTERFACE_LINK_LIBRARIES)
-    append_list_property("${MODULE_DEPENDENCIES_LIST}" TARGET "${BUILD_TARGET_NAME}" PROPERTY FPRIME_DEPENDENCIES)
+    append_list_property("${AUTOCODER_GENERATED_BUILD_SOURCES_VALUES}" TARGET "${BUILD_TARGET_NAME}" PROPERTY SOURCES)
+    append_list_property("${AUTOCODER_DEPENDENCIES_VALUES}" TARGET "${BUILD_TARGET_NAME}" PROPERTY LINK_LIBRARIES)
+    append_list_property("${AUTOCODER_DEPENDENCIES_VALUES}" TARGET "${BUILD_TARGET_NAME}" PROPERTY INTERFACE_LINK_LIBRARIES)
+    append_list_property("${AUTOCODER_DEPENDENCIES_VALUES}" TARGET "${BUILD_TARGET_NAME}" PROPERTY FPRIME_DEPENDENCIES)
     # Invalidate the TRANSITIVE_DEPENDENCIES on the target
-    if (MODULE_DEPENDENCIES_LIST)
+    if (AUTOCODER_DEPENDENCIES_VALUES)
         set_property(TARGET "${BUILD_TARGET_NAME}" PROPERTY TRANSITIVE_DEPENDENCIES)
     endif()
     # CMake claims that all generated files are marked generated. This asserts this fact.
@@ -60,6 +71,13 @@ function (run_ac_set BUILD_TARGET_NAME)
         get_source_file_property(IS_GENERATED ${SOURCE} GENERATED)
         fprime_cmake_ASSERT("${SOURCE} is not marked generated." IS_GENERATED)
     endforeach()
+    
+    # Set variables in parent scope for this run's results
+    set(AUTOCODER_GENERATED "${AUTOCODER_GENERATED_VALUES}" PARENT_SCOPE)
+    set(AUTOCODER_GENERATED_BUILD_SOURCES "${AUTOCODER_GENERATED_BUILD_SOURCES_VALUES}" PARENT_SCOPE)
+    set(AUTOCODER_GENERATED_AUTOCODER_INPUTS "${AUTOCODER_GENERATED_AUTOCODER_INPUTS_VALUES}" PARENT_SCOPE)
+    set(AUTOCODER_DEPENDENCIES "${AUTOCODER_DEPENDENCIES_VALUES}" PARENT_SCOPE)
+    set(AUTOCODER_GENERATED_OTHER "${AUTOCODER_GENERATED_OTHER_VALUES}" PARENT_SCOPE)
 endfunction()
 
 ####
@@ -72,7 +90,7 @@ endfunction()
 # AUTOCODER_CMAKE: cmake file containing autocoder definition
 # SOURCES: sources input to run on the autocoder
 ####
-function(run_ac BUILD_TARGET_NAME AUTOCODER_CMAKE SOURCES)
+function(run_ac BUILD_TARGET_NAME AUTOCODER_CMAKE SOURCES GENERATED_FILE_LIST HASH)
     plugin_include_helper(AUTOCODER_NAME "${AUTOCODER_CMAKE}" is_supported setup_autocode get_generated_files get_dependencies)
     # Normalize and filter source paths so that what we intend to run is in a standard form
     normalize_paths(AC_INPUT_SOURCES "${SOURCES}")
@@ -86,14 +104,19 @@ function(run_ac BUILD_TARGET_NAME AUTOCODER_CMAKE SOURCES)
         return()
     endif()
 
-    # Has the source files and autocoder, then check to see if this autocoder was run on these inputs for this target
+    # Check if this autocoder has been run before by comparing the hash of inputs. This allows us to skip running
     # at a previous time.  If so, skip autocoder and use old results
     string(SHA1 "SRCS_HASH" "${AC_INPUT_SOURCES};${AUTOCODER_CMAKE}")
-    get_property(DEP_SET TARGET "${BUILD_TARGET_NAME}" PROPERTY "${SRCS_HASH}_DEPENDENCIES" SET)
-    get_property(GEN_SET TARGET "${BUILD_TARGET_NAME}" PROPERTY "${SRCS_HASH}_GENERATED" SET)
-
-    # If we have not set these properties, run the autocoder setup function
-    if (NOT DEP_SET AND NOT GEN_SET)
+    
+    # Check if we have a previously stored hash and compare it
+    get_property(STORED_HASH TARGET "${BUILD_TARGET_NAME}" PROPERTY "${AUTOCODER_NAME}_SRCS_HASH")
+    get_property(HASH_SET TARGET "${BUILD_TARGET_NAME}" PROPERTY "${AUTOCODER_NAME}_SRCS_HASH" SET)
+    
+    # If we have not run this autocoder before, or if the hash has changed, run the autocoder
+    if (NOT HASH_SET)
+        # Store the hash for future runs
+        set_property(TARGET "${BUILD_TARGET_NAME}" PROPERTY "${AUTOCODER_NAME}_SRCS_HASH" "${SRCS_HASH}")
+        
         _describe_autocoder_prep("${AUTOCODER_NAME}" "${AC_INPUT_SOURCES}")
 
         # Find the one variable set in the autocoder
@@ -102,48 +125,31 @@ function(run_ac BUILD_TARGET_NAME AUTOCODER_CMAKE SOURCES)
             message(FATAL_ERROR "${AUTOCODER_CMAKE} did not call one of the autocoder_setup_for_*_sources functions")
         endif()
         get_property(HANDLES_INDIVIDUAL_SOURCES GLOBAL PROPERTY "${AUTOCODER_NAME}_HANDLES_INDIVIDUAL_SOURCES")
-        set(CONSUMED_SOURCES)
+
         # Handles individual/multiple source handling
         if (HANDLES_INDIVIDUAL_SOURCES)
-            init_variables(MODULE_DEPENDENCIES_LIST GENERATED_FILES_LIST FILE_DEPENDENCY_LIST BUILD_SOURCES_LIST NEW_AUTOCODER_INPUTS_LIST)
             foreach(SOURCE IN LISTS AC_INPUT_SOURCES)
                 __ac_process_sources("${BUILD_TARGET_NAME}" "${SOURCE}")
-                list(APPEND MODULE_DEPENDENCIES_LIST ${MODULE_DEPENDENCIES})
-                list(APPEND GENERATED_FILES_LIST ${GENERATED_FILES})
-                list(APPEND FILE_DEPENDENCY_LIST ${FILE_DEPENDENCIES})
-
-                list(APPEND BUILD_SOURCES_LIST ${BUILD_SOURCES})
-                list(APPEND NEW_AUTOCODER_INPUTS_LIST ${NEW_AUTOCODER_INPUTS})
             endforeach()
-            set(MODULE_DEPENDENCIES ${MODULE_DEPENDENCIES_LIST})
-            set(GENERATED_FILES ${GENERATED_FILES_LIST})
-            set(FILE_DEPENDENCIES ${FILE_DEPENDENCY_LIST})
-            set(BUILD_SOURCES ${BUILD_SOURCES_LIST})
-            set(NEW_AUTOCODER_INPUTS ${NEW_AUTOCODER_INPUTS_LIST})
         else()
             __ac_process_sources("${BUILD_TARGET_NAME}" "${AC_INPUT_SOURCES}")
         endif()
-
-        set_property(TARGET "${BUILD_TARGET_NAME}" PROPERTY "${SRCS_HASH}_DEPENDENCIES" "${MODULE_DEPENDENCIES}")
-        set_property(TARGET "${BUILD_TARGET_NAME}" PROPERTY "${SRCS_HASH}_GENERATED" "${GENERATED_FILES}")
-        set_property(TARGET "${BUILD_TARGET_NAME}" PROPERTY "${SRCS_HASH}_FILE_DEPENDENCIES" "${FILE_DEPENDENCIES}")
-        set_property(TARGET "${BUILD_TARGET_NAME}" PROPERTY "${SRCS_HASH}_BUILD_SOURCES" "${BUILD_SOURCES}")
-        set_property(TARGET "${BUILD_TARGET_NAME}" PROPERTY "${SRCS_HASH}_NEW_AUTOCODER_INPUTS" "${NEW_AUTOCODER_INPUTS}")
-
+        # Read autocoder outputs from properties using the centralized variable lists
+        set(ALL_AUTOCODER_VARIABLES ${FPRIME_AUTOCODER_REQUIRED} ${FPRIME_AUTOCODER_OPTIONAL} AUTOCODER_GENERATED)
+        
+        # Process each autocoder variable and append to target properties with the same name
+        foreach(VARIABLE_NAME IN LISTS ALL_AUTOCODER_VARIABLES)
+            get_property(VARIABLE_VALUES TARGET "${BUILD_TARGET_NAME}" PROPERTY "${AUTOCODER_NAME}_${VARIABLE_NAME}")
+            if (VARIABLE_VALUES)
+                append_list_property("${VARIABLE_VALUES}" TARGET "${BUILD_TARGET_NAME}" PROPERTY "${HASH}_${VARIABLE_NAME}")
+            endif()
+        endforeach()
         _describe_autocoder_run("${AUTOCODER_NAME}")
+    else()
+        # Assert runs are identical for the same autocoder
+        fprime_cmake_ASSERT("Hash mismatch for autocoder ${AUTOCODER_NAME}: stored '${STORED_HASH}' vs calculated '${SRCS_HASH}'" 
+                            "${STORED_HASH}" STREQUAL "${SRCS_HASH}")
     endif()
-    get_property(DEPS TARGET "${BUILD_TARGET_NAME}" PROPERTY "${SRCS_HASH}_DEPENDENCIES")
-    get_property(GENS TARGET "${BUILD_TARGET_NAME}" PROPERTY "${SRCS_HASH}_GENERATED")
-    get_property(FLDP TARGET "${BUILD_TARGET_NAME}" PROPERTY "${SRCS_HASH}_FILE_DEPENDENCIES")
-    get_property(BLDS TARGET "${BUILD_TARGET_NAME}" PROPERTY "${SRCS_HASH}_BUILD_SOURCES")
-    get_property(NACI TARGET "${BUILD_TARGET_NAME}" PROPERTY "${SRCS_HASH}_NEW_AUTOCODER_INPUTS")
-
-    # Return variables
-    set(MODULE_DEPENDENCIES "${DEPS}" PARENT_SCOPE)
-    set(GENERATED_FILES "${GENS}" PARENT_SCOPE)
-    set(FILE_DEPENDENCIES "${FLDP}" PARENT_SCOPE)
-    set(BUILD_SOURCES "${BLDS}" PARENT_SCOPE)
-    set(NEW_AUTOCODER_INPUTS "${NACI}" PARENT_SCOPE)
 endfunction(run_ac)
 
 ####
@@ -176,44 +182,33 @@ endfunction()
 function(_describe_autocoder_run AUTOCODER_NAME)
     # When actually generating items, explain what is done and why
     if (CMAKE_DEBUG_OUTPUT)
-        get_property(DEPS TARGET "${BUILD_TARGET_NAME}" PROPERTY "${SRCS_HASH}_DEPENDENCIES")
-        get_property(GENS TARGET "${BUILD_TARGET_NAME}" PROPERTY "${SRCS_HASH}_GENERATED")
-        get_property(BLDS TARGET "${BUILD_TARGET_NAME}" PROPERTY "${SRCS_HASH}_BUILD_SOURCES")
-        get_property(NACI TARGET "${BUILD_TARGET_NAME}" PROPERTY "${SRCS_HASH}_NEW_AUTOCODER_INPUTS")
-        get_property(FILES TARGET "${BUILD_TARGET_NAME}" PROPERTY "${SRCS_HASH}_FILE_DEPENDENCIES")
-        message(STATUS "[Autocode/${AUTOCODER_NAME}] Generated Files:")
-        foreach(GENERATED_FILE IN LISTS GENS)
-            message(STATUS "[Autocode/${AUTOCODER_NAME}]   ${GENERATED_FILE}")
-        endforeach()
-        # Output module autocoder inputs status block
-        if (NACI)
-            message(STATUS "[Autocode/${AUTOCODER_NAME}] Additional Autocode Inputs:")
-            foreach(NEXT_INPUT IN LISTS NACI)
-                message(STATUS "[Autocode/${AUTOCODER_NAME}]   ${NEXT_INPUT}")
-            endforeach()
-        endif()
-        # Output module build sources status block
-        if (BLDS)
-            message(STATUS "[Autocode/${AUTOCODER_NAME}] New Build Sources:")
-            foreach(BUILD_SOURCE IN LISTS BLDS)
-                message(STATUS "[Autocode/${AUTOCODER_NAME}]   ${BUILD_SOURCE}")
-            endforeach()
-        endif()
-        # Output file dependency status block
-        if (FILES)
-            message(STATUS "[Autocode/${AUTOCODER_NAME}] File Dependencies:")
-            foreach(FILE_DEPENDENCY IN LISTS FILES)
-                message(STATUS "[Autocode/${AUTOCODER_NAME}]   ${FILE_DEPENDENCY}")
-            endforeach()
-        endif()
-        # Output module dependency status block
-        if (DEPS)
-            message(STATUS "[Autocode/${AUTOCODER_NAME}] Module Dependencies:")
-            foreach(MODULE_DEPENDENCY IN LISTS DEPS)
-                message(STATUS "[Autocode/${AUTOCODER_NAME}]   ${MODULE_DEPENDENCY}")
-            endforeach()
-        endif()
+        # Create a map of property names to display names
+        set(PROPERTY_DISPLAY_NAMES)
+        list(APPEND PROPERTY_DISPLAY_NAMES "AUTOCODER_GENERATED" "Generated Files")
+        list(APPEND PROPERTY_DISPLAY_NAMES "AUTOCODER_GENERATED_BUILD_SOURCES" "New Build Sources")
+        list(APPEND PROPERTY_DISPLAY_NAMES "AUTOCODER_GENERATED_AUTOCODER_INPUTS" "Additional Autocode Inputs")
+        list(APPEND PROPERTY_DISPLAY_NAMES "AUTOCODER_GENERATED_OTHER" "Other Generated Files")
+        list(APPEND PROPERTY_DISPLAY_NAMES "AUTOCODER_DEPENDENCIES" "Module Dependencies")
         
+        # Process all variables from the FPRIME_AUTOCODER lists plus AUTOCODER_GENERATED
+        set(ALL_AUTOCODER_VARIABLES ${FPRIME_AUTOCODER_REQUIRED} ${FPRIME_AUTOCODER_OPTIONAL} AUTOCODER_GENERATED)
+        
+        foreach(VARIABLE_NAME IN LISTS ALL_AUTOCODER_VARIABLES)
+            # Find the display name for this variable
+            list(FIND PROPERTY_DISPLAY_NAMES "${VARIABLE_NAME}" NAME_INDEX)
+            if (NAME_INDEX GREATER_EQUAL 0)
+                math(EXPR DISPLAY_INDEX "${NAME_INDEX} + 1")
+                list(GET PROPERTY_DISPLAY_NAMES ${DISPLAY_INDEX} DISPLAY_NAME)
+                
+                get_property(PROPERTY_VALUES TARGET "${BUILD_TARGET_NAME}" PROPERTY "${AUTOCODER_NAME}_${VARIABLE_NAME}")
+                if (PROPERTY_VALUES)
+                    message(STATUS "[Autocode/${AUTOCODER_NAME}] ${DISPLAY_NAME}:")
+                    foreach(VALUE IN LISTS PROPERTY_VALUES)
+                        message(STATUS "[Autocode/${AUTOCODER_NAME}]   ${VALUE}")
+                    endforeach()
+                endif()
+            endif()
+        endforeach()
     endif()
 endfunction()
 
@@ -248,41 +243,37 @@ endfunction(_filter_sources)
 # SOURCES: source file list. Note: if the autocoder sets HANDLES_INDIVIDUAL_SOURCES this will be singular
 ####
 function(__ac_process_sources BUILD_TARGET_NAME SOURCES)
-    # Asserts for consistency
-    if (DEFINED AUTOCODER_SCRIPT)
-        message(FATAL_ERROR "AUTOCODER_SCRIPT set to ${AUTOCODER_SCRIPT} before setup autocoder call.")
-    elseif(DEFINED AUTOCODER_GENERATED)
-        message(FATAL_ERROR "AUTOCODER_GENERATED set to ${AUTOCODER_GENERATED} before setup autocoder call.")
-    elseif(DEFINED AUTOCODER_INPUTS)
-        message(FATAL_ERROR "AUTOCODER_INPUTS set to ${AUTOCODER_INPUTS} before setup autocoder call.")
-    elseif(DEFINED AUTOCODER_DEPENDENCIES)
-        message(FATAL_ERROR "AUTOCODER_DEPENDENCIES set to ${AUTOCODER_DEPENDENCIES} before setup autocoder call.")
-    elseif(DEFINED AUTOCODER_INCLUDES)
-        message(FATAL_ERROR "AUTOCODER_INCLUDES set to ${AUTOCODER_INCLUDES} before setup autocoder call.")
-    elseif(DEFINED AUTOCODER_NEW_AUTOCODER_INPUTS)
-        message(FATAL_ERROR "AUTOCODER_NEW_AUTOCODER_INPUTS set to ${AUTOCODER_NEW_AUTOCODER_INPUTS} before setup autocoder call.")
-    endif()
-
+    # Loop through the variables from the various lists and make sure they are undefined
+    foreach(VARIABLE IN LISTS FPRIME_AUTOCODER_UNSUPPORTED FPRIME_AUTOCODER_REQUIRED FPRIME_AUTOCODER_OPTIONAL)
+        fprime_cmake_ASSERT("'${VARIABLE}' set to '${${VARIABLE}}' before call" NOT DEFINED ${VARIABLE})
+    endforeach()
     # Run the generation setup when not requesting "info only"
     cmake_language(CALL "${AUTOCODER_NAME}_setup_autocode" "${BUILD_TARGET_NAME}" "${SOURCES}")
-    set(FILE_DEPENDENCIES ${AUTOCODER_INPUTS})
-    list(APPEND FILE_DEPENDENCIES ${AUTOCODER_INCLUDES})
 
-    if (NOT DEFINED AUTOCODER_GENERATED)
-        message(FATAL_ERROR "Autocoder ${AUTOCODER_NAME} did not set AUTOCODER_GENERATED to files to be generated")
-    elseif(DEFINED AUTOCODER_SCRIPT AND NOT DEFINED AUTOCODER_INPUTS)
-        message(FATAL_ERROR "Autocoder ${AUTOCODER_NAME} did not set both AUTOCODER_INPUTS when using AUTOCODER_SCRIPT")
-    elseif(DEFINED AUTOCODER_SCRIPT)
-        add_custom_command(OUTPUT ${AUTOCODER_GENERATED} COMMAND ${AUTOCODER_SCRIPT} ${AUTOCODER_INPUTS} DEPENDS ${FILE_DEPENDENCIES} ${AUTOCODER_DEPENDENCIES})
-    endif()
-    # Print warning if autocoders are not behaving
-    if (NOT DEFINED AUTOCODER_NEW_AUTOCODER_INPUTS AND NOT DEFINED AUTOCODER_BUILD_SOURCES)
-        message(WARNING "Autocoder for build target '${BUILD_TARGET_NAME}' should set either AUTOCODER_BUILD_SOURCES, AUTOCODER_NEW_AUTOCODER_INPUTS, or both")
-    endif()
+    # Check for removed support
+    foreach(VARIABLE IN LISTS FPRIME_AUTOCODER_UNSUPPORTED)
+        fprime_cmake_ASSERT("Unsupported '${VARIABLE}' set to '${${VARIABLE}}' by autocoder ${AUTOCODER_NAME}"
+                            NOT DEFINED ${VARIABLE})
+    endforeach()
 
-    set(NEW_AUTOCODER_INPUTS ${AUTOCODER_NEW_AUTOCODER_INPUTS} PARENT_SCOPE)
-    set(BUILD_SOURCES ${AUTOCODER_BUILD_SOURCES} PARENT_SCOPE)
-    set(MODULE_DEPENDENCIES "${AUTOCODER_DEPENDENCIES}" PARENT_SCOPE)
-    set(GENERATED_FILES "${AUTOCODER_GENERATED}" PARENT_SCOPE)
-    set(FILE_DEPENDENCIES "${FILE_DEPENDENCIES}" PARENT_SCOPE)
+    # Search through requirements ensuring one was set
+    set(AUTOCODER_MET_REQUIRED FALSE)
+    foreach(REQUIREMENT IN LISTS FPRIME_AUTOCODER_REQUIRED)
+        if (DEFINED ${REQUIREMENT})
+            list(APPEND AUTOCODER_GENERATED ${${REQUIREMENT}})
+            set(AUTOCODER_MET_REQUIRED TRUE)
+        endif()
+    endforeach()
+    fprime_cmake_ASSERT("Autocoder must define at least one of: ${FPRIME_AUTOCODER_REQUIRED}" AUTOCODER_MET_REQUIRED)
+
+    # Set autocoder output variables as target properties
+    foreach(VARIABLE IN LISTS FPRIME_AUTOCODER_REQUIRED FPRIME_AUTOCODER_OPTIONAL)
+        if (DEFINED ${VARIABLE})
+            append_list_property("${${VARIABLE}}" TARGET "${BUILD_TARGET_NAME}" PROPERTY "${AUTOCODER_NAME}_${VARIABLE}")
+        endif()
+    endforeach()
+    # Also set the calculated AUTOCODER_GENERATED
+    if (DEFINED AUTOCODER_GENERATED)
+        append_list_property("${AUTOCODER_GENERATED}" TARGET "${BUILD_TARGET_NAME}" PROPERTY "${AUTOCODER_NAME}_AUTOCODER_GENERATED")
+    endif()
 endfunction()

@@ -72,7 +72,7 @@ class LinuxUartDriver final : public LinuxUartDriverComponentBase {
     //! start the serial poll thread.
     //! buffSize is the max receive buffer size
     //!
-    void start(Os::Task::ParamType priority = Os::Task::TASK_DEFAULT,
+    void start(FwTaskPriorityType priority = Os::Task::TASK_PRIORITY_DEFAULT,
                Os::Task::ParamType stackSize = Os::Task::TASK_DEFAULT,
                Os::Task::ParamType cpuAffinity = Os::Task::TASK_DEFAULT);
 
@@ -86,7 +86,7 @@ class LinuxUartDriver final : public LinuxUartDriverComponentBase {
     //!
     ~LinuxUartDriver();
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
@@ -103,7 +103,7 @@ class LinuxUartDriver final : public LinuxUartDriverComponentBase {
                                 Fw::Buffer& fwBuffer  //!< The buffer
                                 ) override;
 
-    PlatformIntType m_fd;  //!< file descriptor returned for I/O device
+    int m_fd;  //!< file descriptor returned for I/O device
     U32 m_allocationSize; //!< size of allocation request to memory manager
     const char* m_device;  //!< original device path
 

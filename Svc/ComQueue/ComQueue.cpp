@@ -257,12 +257,16 @@ bool ComQueue::enqueue(const FwIndexType queueNum, QueueType queueType, const U8
 
 void ComQueue::sendComBuffer(Fw::ComBuffer& comBuffer, FwIndexType queueIndex) {
     FW_ASSERT(this->m_state == READY);
-
     Fw::Buffer outBuffer(comBuffer.getBuffAddr(), static_cast<Fw::Buffer::SizeType>(comBuffer.getBuffLength()));
 
-    // Context APID is set to the queue index for now. A future implementation may want this to be configurable
+    // Context value is used to determine what to do when the buffer returns on the dataReturnIn port
     ComCfg::FrameContext context;
+    FwPacketDescriptorType descriptor;
+    Fw::SerializeStatus status = comBuffer.deserialize(descriptor);
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
+    context.setapid(static_cast<ComCfg::APID::T>(descriptor));
     context.setcomQueueIndex(queueIndex);
+
     this->dataOut_out(0, outBuffer, context);
     // Set state to WAITING for the status to come back
     this->m_state = WAITING;
@@ -272,11 +276,15 @@ void ComQueue::sendBuffer(Fw::Buffer& buffer, FwIndexType queueIndex) {
     // Retry buffer expected to be cleared as we are either transferring ownership or have already deallocated it.
     FW_ASSERT(this->m_state == READY);
 
-    // Context APID is set to the queue index for now. A future implementation may want this to be configurable
+    // Context value is used to determine what to do when the buffer returns on the dataReturnIn port
     ComCfg::FrameContext context;
+    FwPacketDescriptorType descriptor;
+    Fw::SerializeStatus status = buffer.getDeserializer().deserialize(descriptor);
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
+    context.setapid(static_cast<ComCfg::APID::T>(descriptor));
     context.setcomQueueIndex(queueIndex);
+    
     this->dataOut_out(0, buffer, context);
-
     // Set state to WAITING for the status to come back
     this->m_state = WAITING;
 }

@@ -22,7 +22,7 @@ namespace Task {
     //! TaskHandle class definition for posix implementations.
     //!
     struct PosixTaskHandle : public TaskHandle {
-        static constexpr PlatformIntType SUCCESS = 0;
+        static constexpr int SUCCESS = 0;
 
         //! Posix task descriptor
         pthread_t m_task_descriptor;
@@ -103,7 +103,7 @@ namespace Task {
         //! \brief return the underlying task handle (implementation specific)
         //! \return internal task handle representation
         TaskHandle* getHandle() override;
-      PRIVATE:
+      private:
         //! \brief create a configured pthread
         //!
         //! Creates, and configures, but does not start a pthread. This may be called twice, once to try setting

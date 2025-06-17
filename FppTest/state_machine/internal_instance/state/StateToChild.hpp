@@ -51,7 +51,7 @@ class StateToChild : public StateToChildComponentBase {
     //! Action IDs
     enum class ActionId { EXIT_S2, EXIT_S3, A, ENTER_S2, ENTER_S3 };
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Implementations for internal state machine actions
     // ----------------------------------------------------------------------

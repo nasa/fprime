@@ -38,7 +38,7 @@ class TlmPacketizer final : public TlmPacketizerComponentBase {
     //!
     ~TlmPacketizer(void);
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
@@ -75,7 +75,7 @@ class TlmPacketizer final : public TlmPacketizerComponentBase {
     //! Set telemetry send leve
     void SET_LEVEL_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
                               const U32 cmdSeq,          /*!< The command sequence number*/
-                              U32 level                  /*!< The I32 command argument*/
+                              FwChanIdType level                  /*!< The I32 command argument*/
     ) override;
 
     //! Implementation for SEND_PKT command handler

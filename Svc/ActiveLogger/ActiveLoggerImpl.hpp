@@ -18,8 +18,8 @@ namespace Svc {
         public:
             ActiveLoggerImpl(const char* compName); //!< constructor
             virtual ~ActiveLoggerImpl(); //!< destructor
-        PROTECTED:
-        PRIVATE:
+        protected:
+        private:
             void LogRecv_handler(FwIndexType portNum, FwEventIdType id, Fw::Time &timeTag, const Fw::LogSeverity& severity, Fw::LogBuffer &args);
             void loqQueue_internalInterfaceHandler(FwEventIdType id, const Fw::Time &timeTag, const Fw::LogSeverity& severity, const Fw::LogBuffer &args);
 
@@ -32,7 +32,7 @@ namespace Svc {
             void SET_ID_FILTER_cmdHandler(
                     FwOpcodeType opCode, //!< The opcode
                     U32 cmdSeq, //!< The command sequence number
-                    U32 ID,
+                    FwEventIdType ID,
                     ActiveLogger_Enabled idFilterEnabled //!< ID filter state
                 );
 

@@ -19,11 +19,11 @@
 namespace Fw {
 class ActiveComponentBase : public QueuedComponentBase {
   public:
-    void start(Os::Task::ParamType priority = Os::Task::TASK_DEFAULT,
-               Os::Task::ParamType stackSize = Os::Task::TASK_DEFAULT,
-               Os::Task::ParamType cpuAffinity = Os::Task::TASK_DEFAULT,
-               Os::Task::ParamType identifier =
-               Os::Task::TASK_DEFAULT);           //!< called by instantiator when task is to be started
+    void start(FwTaskPriorityType priority = Os::Task::TASK_PRIORITY_DEFAULT,
+               FwSizeType stackSize = Os::Task::TASK_DEFAULT,
+               FwSizeType cpuAffinity = Os::Task::TASK_DEFAULT,
+               FwTaskIdType identifier =
+               static_cast<FwTaskIdType>(Os::Task::TASK_DEFAULT));  //!< called by instantiator when task is to be started
     void exit();                                  //!< exit task in active component
     Os::Task::Status join();  //!< Join the thread
     DEPRECATED(Os::Task::Status join(void** value_ptr), "Switch to .join()");  //!< Join to thread with discarded value_ptr
@@ -32,7 +32,7 @@ class ActiveComponentBase : public QueuedComponentBase {
         ACTIVE_COMPONENT_EXIT  //!< message to exit active component task
     };
 
-  PROTECTED:
+  protected:
     //! Tracks the lifecycle of the component
     enum Lifecycle {
         CREATED,     //!< Initial stage, call preamble
@@ -52,7 +52,7 @@ class ActiveComponentBase : public QueuedComponentBase {
 #if FW_OBJECT_TO_STRING == 1
     virtual const char* getToStringFormatString(); //!< Format string for toString function
 #endif
-  PRIVATE:
+  private:
     Lifecycle m_stage;         //!< Lifecycle stage of the component
     static void s_taskStateMachine(void*); //!< Task lifecycle state machine
     static void s_taskLoop(void*);  //!< Standard multi-threading task loop

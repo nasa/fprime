@@ -16,6 +16,13 @@ register_os_implementation(Memory Stub)
 register_os_implementation(Queue Stub)
 register_os_implementation(RawTime Stub)
 
+register_fprime_implementation(
+    Os_File_None
+  IMPLEMENTS
+    Os_File
+  INTERFACE
+)
+
 # Remainder of file is specific to UTs
 if (NOT BUILD_TESTING)
     return()
@@ -24,18 +31,24 @@ endif ()
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test")
 
 ## Stubs test: checks that all the no-op stubs can be selected and compile ##
-set(UT_SOURCE_FILES
+register_fprime_ut(
+    StubTest
+  SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/StubTests.cpp"
+  DEPENDS
+    Fw_Types
+    Fw_Time
+    Os
+    Os_Models
+  CHOOSES_IMPLEMENTATIONS
+    Os_Task_Stub
+    Os_Mutex_Stub
+    Os_File_Stub
+    Os_Console_Stub
+    Os_Cpu_Stub
+    Os_Memory_Stub
+    Os_RawTime_Stub
 )
-set(UT_MOD_DEPS Os Os_Models Fw_Time)
-choose_fprime_implementation(Os/Task Os_Task_Stub)
-choose_fprime_implementation(Os/Mutex Os_Mutex_Stub)
-choose_fprime_implementation(Os/File Os_File_Stub)
-choose_fprime_implementation(Os/Console Os_Console_Stub)
-choose_fprime_implementation(Os/Cpu Os_Cpu_Stub)
-choose_fprime_implementation(Os/Memory Os_Memory_Stub)
-choose_fprime_implementation(Os/RawTime Os_RawTime_Stub)
-register_fprime_ut(StubTest)
 if (TARGET StubTest)
     target_compile_options(StubTest PRIVATE -Wno-conversion)
 endif()

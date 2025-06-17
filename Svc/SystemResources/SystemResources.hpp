@@ -37,7 +37,7 @@ class SystemResources final : public SystemResourcesComponentBase {
 
     typedef void (SystemResourcesComponentBase::*cpuTlmFunc)(F32, Fw::Time) const;
 
-    PRIVATE :
+    private :
 
         // ----------------------------------------------------------------------
         // Handler implementations for user-defined typed input ports

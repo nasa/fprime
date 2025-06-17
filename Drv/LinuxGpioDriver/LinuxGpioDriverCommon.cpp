@@ -21,10 +21,10 @@ namespace Drv {
 
 LinuxGpioDriver ::LinuxGpioDriver(const char* const compName) : LinuxGpioDriverComponentBase(compName) {}
 
-Drv::GpioStatus LinuxGpioDriver ::start(const FwSizeType priority,
+Drv::GpioStatus LinuxGpioDriver ::start(const FwTaskPriorityType priority,
                                         const FwSizeType stackSize,
                                         const FwSizeType cpuAffinity,
-                                        const PlatformUIntType identifier) {
+                                        const FwTaskIdType identifier) {
     Drv::GpioStatus status = Drv::GpioStatus::INVALID_MODE;
     if (this->m_configuration < GpioConfiguration::MAX_GPIO_CONFIGURATION &&
         this->m_configuration >= GpioConfiguration::GPIO_INTERRUPT_RISING_EDGE) {

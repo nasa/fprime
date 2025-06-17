@@ -49,7 +49,7 @@ class SequenceU32 : public SequenceU32ComponentBase {
     //! Destroy SequenceU32 object
     ~SequenceU32();
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Implementations for internal state machine actions
     // ----------------------------------------------------------------------
@@ -69,7 +69,7 @@ class SequenceU32 : public SequenceU32ComponentBase {
                                                FppTest_SmChoice_SequenceU32::Signal signal  //!< The signal
                                                ) override;
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Implementations for internal state machine guards
     // ----------------------------------------------------------------------

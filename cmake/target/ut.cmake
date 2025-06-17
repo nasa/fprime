@@ -80,6 +80,7 @@ function(ut_setup_unit_test_include_directories UT_EXE_NAME SOURCE_FILES)
     set(UT_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_BINARY_DIR}")
     # When running with auto-helpers, we need to include the .hpp directories as things are imported without path
     # e.g. "#include <Tester.hpp>" and there is no guarantee for the location of these files
+    get_target_property(UT_AUTO_HELPERS "${UT_EXE_NAME}" FPRIME_UT_AUTO_HELPERS)
     if (DEFINED UT_AUTO_HELPERS AND UT_AUTO_HELPERS)
         foreach(SOURCE_FILE IN LISTS SOURCE_FILES)
             get_filename_component(SOURCE_EXT "${SOURCE_FILE}" LAST_EXT)

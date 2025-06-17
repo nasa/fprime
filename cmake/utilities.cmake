@@ -35,7 +35,7 @@ endfunction()
 #
 # This is a macro to ensure the caller's scope is affected.
 #
-# **ARGN:** passed to the `unset` calls (for things like PARENT_SCOPE) 
+# **ARGN:** passed to the `unset` calls (for things like PARENT_SCOPE)
 ####
 function(clear_historical_variables)
     unset(SOURCE_FILES ${ARGN})
@@ -522,7 +522,7 @@ endfunction(get_module_name)
 ####
 function(get_expected_tool_version VID FILL_VARIABLE)
     find_program(TOOLS_CHECK NAMES fprime-version-check REQUIRED)
-    
+
     # Try project root as a source
     set(REQUIREMENT_FILE "${FPRIME_PROJECT_ROOT}/requirements.txt")
     if (EXISTS "${REQUIREMENT_FILE}")
@@ -737,11 +737,23 @@ endfunction(resolve_path_variables)
 # Prints a fatal error message to the user, highlighted with ---- to make it obvious. For multi-line
 # messages, place a \n at the end of the previous message.
 #
-# - **ARGN**: message(s) to print separated by ' 's 
+# - **ARGN**: message(s) to print separated by ' 's
 ####
 function(fprime_cmake_fatal_error)
     fprime_cmake_clear_message(FATAL_ERROR ${ARGN})
 endfunction(fprime_cmake_fatal_error)
+
+####
+# Function `fprime_cmake_warning`:
+#
+# Prints a warning message to the user, highlighted with ---- to make it obvious. For multi-line
+# messages, place a \n at the end of the previous message.
+#
+# - **ARGN**: message(s) to print separated by ' 's
+####
+function(fprime_cmake_warning)
+    fprime_cmake_clear_message(WARNING ${ARGN})
+endfunction(fprime_cmake_warning)
 
 ####
 # Function `fprime_cmake_debug_message`:
@@ -763,7 +775,7 @@ endfunction(fprime_cmake_debug_message)
 # that is failing. For multi-line messages, place a \n at the end of the previous message.
 #
 # - **SEVERITY**: message severity to use
-# - **ARGN**: message(s) to print separated by ' 's 
+# - **ARGN**: message(s) to print separated by ' 's
 ####
 function(fprime_cmake_clear_message SEVERITY)
     string(REPLACE ";" " " MESSAGE "${ARGN}")
@@ -850,7 +862,7 @@ function(recurse_target_properties CMAKE_BUILD_TARGET_NAME PROPERTY_NAMES TRANSI
         return()
     endif()
     set(PREVIOUSLY_RECURSED ${ARGN} ${CMAKE_BUILD_TARGET_NAME})
-    
+
     # Look through each current link library using a recursive call
     set(RECURSED_TRANSITIVE)
     set(RECURSED_UNKNOWN)
@@ -883,4 +895,67 @@ function(recurse_target_properties CMAKE_BUILD_TARGET_NAME PROPERTY_NAMES TRANSI
     set("${NON_EXISTENT_LINKS_OUTPUT}" ${RECURSED_UNKNOWN} PARENT_SCOPE)
     set("${TRANSITIVE_LINKS_OUTPUT}" ${CMAKE_BUILD_TARGET_NAME} ${RECURSED_TRANSITIVE} PARENT_SCOPE)
     set("${EXTERNAL_LINKS_OUTPUT}" ${RECURSED_EXTERNAL} PARENT_SCOPE)
+endfunction()
+
+####
+# Function `fprime__internal_target_interceptor`:
+#
+# A function that intercepts calls to target_* functions and translates the scope from PUBLIC to INTERFACE when the
+# target is an INTERFACE target.
+#
+# - **FUNCTION_NAME**: name of the target_* function to intercept
+# - **BUILD_TARGET_NAME**: name of the target to set
+# - **SCOPE**: scope of the target to intercept and change
+# - **ARGN**: arguments to pass to the target_* function
+####
+function(fprime__internal_target_interceptor FUNCTION_NAME BUILD_TARGET_NAME SCOPE)
+    # Get the target type
+    get_target_property(TARGET_TYPE "${BUILD_TARGET_NAME}" TYPE)
+    # If the target is an INTERFACE_LIBRARY, change the scope to INTERFACE
+    if (TARGET_TYPE STREQUAL "INTERFACE_LIBRARY" AND SCOPE STREQUAL "PUBLIC")
+        set(SCOPE INTERFACE)
+    endif()
+    # Call the target_* function with the new scope
+    cmake_language(CALL "${FUNCTION_NAME}" "${BUILD_TARGET_NAME}" "${SCOPE}" ${ARGN})
+endfunction()
+####
+# Function `fprime_target_link_libraries`:
+#
+# This function wraps `target_link_libraries` to ensure that PUBLIC scope additions translate to INTERFACE when
+# the target is an INTERFACE target. This makes it easier to deal with INTERFACE targets.
+#
+# See: target_link_libraries
+####
+function(fprime_target_link_libraries BUILD_TARGET_NAME SCOPE)
+    fprime__internal_target_interceptor("target_link_libraries" "${BUILD_TARGET_NAME}" "${SCOPE}" ${ARGN})
+endfunction()
+
+####
+# Function `fprime_target_include_directories`:
+#
+# This function wraps `target_include_directories` to ensure that PUBLIC scope additions translate to INTERFACE when
+# the target is an INTERFACE target. This makes it easier to deal with INTERFACE targets.
+#
+# See: target_include_directories
+#
+####
+function(fprime_target_include_directories BUILD_TARGET_NAME SCOPE)
+    fprime__internal_target_interceptor("target_include_directories" "${BUILD_TARGET_NAME}" "${SCOPE}" ${ARGN})
+endfunction()
+
+####
+# Function `fprime_target_dependencies`:
+#
+# Adds dependencies to the supplied BUILD_TARGET_NAME properly handling scope (see fprime_target_link_libraries). Adding a dependency
+# involves 2 steps:
+# 1. Adding a link dependency from BUILD_TARGET_NAME to supplied dependencies
+# 2. Append supplied dependencies to the FPRIME_DEPENDENCIES property of BUILD_TARGET_NAME
+#
+# - **BUILD_TARGET_NAME**: name of the target to add dependencies to
+# - **SCOPE**: scope of the target to intercept and change from PUBLIC to INTERFACE for INTERFACE_LIBRARY targets targets
+# - **ARGN**: dependencies to add to the target
+####
+function(fprime_target_dependencies BUILD_TARGET_NAME SCOPE)
+    fprime_target_link_libraries("${BUILD_TARGET_NAME}" "${SCOPE}" ${ARGN})
+    append_list_property("${ARGN}" TARGET "${BUILD_TARGET_NAME}" PROPERTY FPRIME_DEPENDENCIES)
 endfunction()

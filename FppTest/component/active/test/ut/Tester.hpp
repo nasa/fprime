@@ -73,11 +73,11 @@ class Tester : public ActiveTestGTestBase {
 
     void testOverflowHook();
 
-  PRIVATE:
+  private:
 
     #include "FppTest/component/common/tester.hpp"
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Handlers for serial from ports
     // ----------------------------------------------------------------------
@@ -125,7 +125,7 @@ class Tester : public ActiveTestGTestBase {
     //! Check unsuccessful status of a serial port invocation
     void checkSerializeStatusBufferEmpty();
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Variables
     // ----------------------------------------------------------------------

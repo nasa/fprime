@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: RPI-CI
+name: CI [RPI]
 
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
@@ -52,12 +52,13 @@ jobs:
         retention-days: 5
 
   RPI-Integration:
-    runs-on: self-hosted
+    runs-on: [self-hosted, raspberrypi]
     needs: RPI
     steps:
     - uses: actions/checkout@v4
       with:
         sparse-checkout: 'requirements.txt'
+        sparse-checkout-cone-mode: false
     - name: "Setup environment"
       run: |
         python -m venv venv

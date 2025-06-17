@@ -14,7 +14,7 @@
 // Necessary project-specified types
 #include <Fw/Types/MallocAllocator.hpp>
 #include <Os/Console.hpp>
-#include <Svc/FrameAccumulator/FrameDetector/FprimeFrameDetector.hpp>
+#include <Svc/FrameAccumulator/FrameDetector/CcsdsTcFrameDetector.hpp>
 #include <Ref/Top/Ports_ComPacketQueueEnumAc.hpp>
 
 // Used for 1Hz synthetic cycling
@@ -32,8 +32,7 @@ Fw::MallocAllocator mallocator;
 
 // The reference topology uses the F´ packet protocol when communicating with the ground and therefore uses the F´
 // framing and deframing implementations.
-Svc::FrameDetectors::FprimeFrameDetector frameDetector;
-
+Svc::FrameDetectors::CcsdsTcFrameDetector frameDetector;
 
 // The reference topology divides the incoming clock signal (1Hz) into sub-signals: 1Hz, 1/2Hz, and 1/4Hz and
 // zero offset for all the dividers
@@ -54,7 +53,6 @@ enum TopologyConstants {
     FILE_DOWNLINK_COOLDOWN = 1000,
     FILE_DOWNLINK_CYCLE_TIME = 1000,
     FILE_DOWNLINK_FILE_QUEUE_DEPTH = 10,
-    HEALTH_WATCHDOG_CODE = 0x123,
     COMM_PRIORITY = 100,
     // Buffer manager for Uplink/Downlink
     COMMS_BUFFER_MANAGER_STORE_SIZE = 2048,
@@ -95,10 +93,6 @@ void configureTopology() {
     prmDb.configure("PrmDb.dat");
     prmDb.readParamFile();
 
-    // Health is supplied a set of ping entires.
-    health.setPingEntries(ConfigObjects::Ref_health::pingEntries,
-                          FW_NUM_ARRAY_ELEMENTS(ConfigObjects::Ref_health::pingEntries), HEALTH_WATCHDOG_CODE);
-
     // Buffer managers need a configured set of buckets and an allocator used to allocate memory for those buckets.
     Svc::BufferManager::BufferBins commsBuffMgrBins;
     memset(&commsBuffMgrBins, 0, sizeof(commsBuffMgrBins));
@@ -137,9 +131,6 @@ void configureTopology() {
     configurationTable.entries[Ref::Ports_ComPacketQueue::NUM_CONSTANTS].priority = 1;
     // Allocation identifier is 0 as the MallocAllocator discards it
     comQueue.configure(configurationTable, 0, mallocator);
-
-    // Note: Uncomment when using Svc:TlmPacketizer
-    // tlmSend.setPacketList(Ref::Ref_RefPacketsTlmPackets::packetList, Ref::Ref_RefPacketsTlmPackets::omittedChannels, 1);
 }
 
 // Public functions for use in main program are namespaced with deployment name Ref
@@ -164,8 +155,6 @@ void setupTopology(const TopologyState& state) {
     loadParameters();
     // Autocoded task kick-off (active components). Function provided by autocoder.
     startTasks(state);
-    // Startup TLM and Config verbosity for Versions
-    version.config(true);
     // Initialize socket client communication if and only if there is a valid specification
     if (state.hostname != nullptr && state.port != 0) {
         Os::TaskString name("ReceiveTask");
@@ -174,30 +163,16 @@ void setupTopology(const TopologyState& state) {
     }
 }
 
-// Variables used for cycle simulation
-Os::Mutex cycleLock;
-volatile bool cycleFlag = true;
-
-void startSimulatedCycle(Fw::TimeInterval interval) {
-    cycleLock.lock();
-    bool cycling = cycleFlag;
-    cycleLock.unLock();
-
-    // Main loop
-    while (cycling) {
-        Ref::blockDrv.callIsr();
-        Os::Task::delay(interval);
-
-        cycleLock.lock();
-        cycling = cycleFlag;
-        cycleLock.unLock();
-    }
+void startRateGroups(Fw::TimeInterval interval) {
+    // This timer drives the fundamental tick rate of the system.
+    // Svc::RateGroupDriver will divide this down to the slower rate groups.
+    // This call will block until the stopRateGroups() call is made.
+    // For this Linux demo, that call is made from a signal handler.
+    linuxTimer.startTimer(interval.getSeconds()*1000+interval.getUSeconds()/1000);
 }
 
-void stopSimulatedCycle() {
-    cycleLock.lock();
-    cycleFlag = false;
-    cycleLock.unLock();
+void stopRateGroups() {
+    linuxTimer.quit();
 }
 
 void teardownTopology(const TopologyState& state) {

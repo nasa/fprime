@@ -49,7 +49,7 @@ class BasicSelf : public BasicSelfComponentBase {
     //! Destroy BasicSelf object
     ~BasicSelf();
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Implementations for internal state machine actions
     // ----------------------------------------------------------------------

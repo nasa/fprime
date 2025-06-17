@@ -56,14 +56,20 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/RecvBuffApp/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SendBuffApp/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SignalGen/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/TypeDemo/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/BlockDriver/")
 
 # Add Topology subdirectory
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Top/")
 
-set(SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Main.cpp")
-set(MOD_DEPS ${PROJECT_NAME}/Top)
+#set(SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Main.cpp")
+#set(MOD_DEPS ${PROJECT_NAME}/Top)
 
-register_fprime_deployment()
+register_fprime_deployment(
+    SOURCES
+        "${CMAKE_CURRENT_LIST_DIR}/Main.cpp"
+    DEPENDS
+        ${PROJECT_NAME}_Top
+)
 # The following compile options will only apply to the deployment executable.
 # The extra warnings trigger in core F Prime so we don't apply them there.
 target_compile_options("${PROJECT_NAME}" PUBLIC -Wall)

@@ -48,7 +48,7 @@ bool TcpClientSocket::isValidPort(U16 port) {
 
 
 SocketIpStatus TcpClientSocket::openProtocol(SocketDescriptor& socketDescriptor) {
-    PlatformIntType socketFd = -1;
+    int socketFd = -1;
     struct sockaddr_in address;
 
     // Acquire a socket, or return error

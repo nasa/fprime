@@ -31,6 +31,8 @@ namespace Svc {
 
     class RateGroupDriver final : public RateGroupDriverComponentBase {
 
+        friend class RateGroupDriverImplTester;
+
         public:
             //! Size of the divider table, provided as a constants to users passing the table in
             static const FwIndexType DIVIDER_SIZE = NUM_CYCLEOUT_OUTPUT_PORTS;
@@ -41,7 +43,7 @@ namespace Svc {
                 //! Initializes divisor and offset to 0 (unused)
                 Divider() : divisor(0), offset(0)
                 {}
-                //! Initializes divisor and offset to passed-in pair 
+                //! Initializes divisor and offset to passed-in pair
                 Divider(FwSizeType divisorIn, FwSizeType offsetIn) :
                     divisor(divisorIn), offset(offsetIn)
                 {}
@@ -76,7 +78,7 @@ namespace Svc {
 
             ~RateGroupDriver();
 
-        PRIVATE:
+        private:
 
             //! downcall for input port
             //! NOTE: This port can execute in ISR context.

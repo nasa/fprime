@@ -19,7 +19,7 @@ static constexpr U16 MAX_ITER = 10;
  * @param fd: socket file descriptor
  * @param socket: socket to make timeout
  */
-void force_recv_timeout(PlatformIntType fd, Drv::IpSocket &socket);
+void force_recv_timeout(int fd, Drv::IpSocket &socket);
 
 /**
  * Validate random data from data against truth

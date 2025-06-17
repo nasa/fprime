@@ -20,8 +20,19 @@
 
 namespace Svc {
 
+    // Forward declaration for UTs
+    namespace Accumulate { class BufferAccumulatorTester; }
+    namespace Drain { class BufferAccumulatorTester; }
+    namespace Errors { class BufferAccumulatorTester; }
+
     class BufferAccumulator final : public BufferAccumulatorComponentBase {
-      PRIVATE:
+
+      friend class BufferAccumulatorTester;
+      friend class Svc::Accumulate::BufferAccumulatorTester;
+      friend class Svc::Drain::BufferAccumulatorTester;
+      friend class Svc::Errors::BufferAccumulatorTester;
+
+      private:
 
         // ----------------------------------------------------------------------
         // Types
@@ -59,7 +70,7 @@ namespace Svc {
                 //! \return The capacity
                 FwSizeType getCapacity() const;
 
-      PRIVATE:
+      private:
 
                 // ----------------------------------------------------------------------
                 // Private member variables
@@ -110,7 +121,7 @@ namespace Svc {
         //! Return allocated queue. Should be done during shutdown
         void deallocateQueue(Fw::MemAllocator& allocator);
 
-      PRIVATE:
+      private:
 
         // ----------------------------------------------------------------------
         // Handler implementations for user-defined typed input ports
@@ -135,7 +146,7 @@ namespace Svc {
                             U32 key  //!< Value to return to pinger
                             );
 
-      PRIVATE:
+      private:
 
         // ----------------------------------------------------------------------
         // Command handler implementations
@@ -156,7 +167,7 @@ namespace Svc {
                                         BufferAccumulator_BlockMode blockMode
                                         );
 
-      PRIVATE:
+      private:
 
         // ----------------------------------------------------------------------
         // Private helper methods
@@ -165,7 +176,7 @@ namespace Svc {
         //! Send a stored buffer
         void sendStoredBuffer();
 
-      PRIVATE:
+      private:
 
         // ----------------------------------------------------------------------
         // Private member variables

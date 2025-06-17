@@ -35,7 +35,7 @@ namespace Fw {
             U8* getBuffAddr();
             const U8* getBuffAddr() const;
 
-        PRIVATE:
+        private:
             U8 m_bufferData[FW_TLM_BUFFER_MAX_SIZE]; // command argument buffer
     };
 

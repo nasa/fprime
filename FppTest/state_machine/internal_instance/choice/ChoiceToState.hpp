@@ -57,7 +57,7 @@ class ChoiceToState : public ChoiceToStateComponentBase {
     //! Destroy ChoiceToState object
     ~ChoiceToState();
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Implementations for internal state machine actions
     // ----------------------------------------------------------------------
@@ -90,7 +90,7 @@ class ChoiceToState : public ChoiceToStateComponentBase {
                                                        FppTest_SmChoice_ChoiceToState::Signal signal  //!< The signal
                                                        ) override;
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Implementations for internal state machine guards
     // ----------------------------------------------------------------------

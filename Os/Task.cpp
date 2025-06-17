@@ -8,9 +8,9 @@
 namespace Os {
 
 TaskInterface::Arguments::Arguments(const Fw::StringBase &name, const Os::TaskInterface::taskRoutine routine,
-                                    void * const routine_argument, const FwSizeType priority,
+                                    void * const routine_argument, const FwTaskPriorityType priority,
                                     const FwSizeType stackSize, const FwSizeType cpuAffinity,
-                                    const PlatformUIntType identifier) :
+                                    const FwTaskIdType identifier) :
     m_name(name),
     m_routine(routine),
     m_routine_argument(routine_argument),
@@ -80,14 +80,14 @@ Task::State Task::getState() {
 }
 
 Task::Status Task::start(const Fw::StringBase &name, const taskRoutine routine, void* const arg,
-                         const ParamType priority, const ParamType stackSize, const ParamType cpuAffinity,
+                         const FwTaskPriorityType priority, const ParamType stackSize, const ParamType cpuAffinity,
                          const ParamType identifier) {
     FW_ASSERT(routine != nullptr);
     return this->start(Task::Arguments(name, routine, arg,
                                        priority,
                                        stackSize,
                                        cpuAffinity,
-                                       static_cast<PlatformUIntType>(identifier)));
+                                       static_cast<FwTaskIdType>(identifier)));
 }
 
 
@@ -166,7 +166,7 @@ bool Task::isCooperative() {
     return this->m_delegate.isCooperative();
 }
 
-FwSizeType Task::getPriority() {
+FwTaskPriorityType Task::getPriority() {
     Os::ScopeLock lock(this->m_lock);
     return this->m_priority;
 }

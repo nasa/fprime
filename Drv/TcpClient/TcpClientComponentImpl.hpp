@@ -21,6 +21,9 @@
 namespace Drv {
 
 class TcpClientComponentImpl final : public TcpClientComponentBase, public SocketComponentHelper {
+
+  friend class TcpClientTester;
+
   public:
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction
@@ -63,7 +66,7 @@ class TcpClientComponentImpl final : public TcpClientComponentBase, public Socke
                              const U32 send_timeout_microseconds = SOCKET_SEND_TIMEOUT_MICROSECONDS,
                              FwSizeType buffer_size = 1024);
 
-  PROTECTED:
+  protected:
     // ----------------------------------------------------------------------
     // Implementations for socket read task virtual methods
     // ----------------------------------------------------------------------
@@ -104,7 +107,7 @@ class TcpClientComponentImpl final : public TcpClientComponentBase, public Socke
     void connected() override;
 
 
-  PRIVATE:
+  private:
 
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports

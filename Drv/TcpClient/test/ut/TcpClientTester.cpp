@@ -40,7 +40,7 @@ void TcpClientTester ::setup_helper(Drv::TcpServerSocket& server, Drv::SocketDes
     if (recv_thread) {
         Os::TaskString name("receiver thread");
         this->component.setAutomaticOpen(reconnect);
-        this->component.start(name, Os::Task::TASK_DEFAULT, Os::Task::TASK_DEFAULT);
+        this->component.start(name, Os::Task::TASK_PRIORITY_DEFAULT, Os::Task::TASK_DEFAULT);
     }
 }
 

@@ -30,6 +30,9 @@ namespace Svc {
     //! as the port that submitted the command, the command status will be returned.
 
     class CommandDispatcherImpl final : public CommandDispatcherComponentBase {
+
+        friend class CommandDispatcherImplTester;
+
         public:
             //!  \brief Command Dispatcher constructor
             //!
@@ -43,8 +46,8 @@ namespace Svc {
             //!
             //!  The destructor for this component is empty
             virtual ~CommandDispatcherImpl();
-        PROTECTED:
-        PRIVATE:
+        protected:
+        private:
             //!  \brief component command status handler
             //!
             //!  The command status handler is called when a component

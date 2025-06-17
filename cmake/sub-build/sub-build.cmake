@@ -14,6 +14,13 @@ include(utilities)
 include(sub-build/sub-build-config)
 include(API)
 
+# Helper for sub builds
+if (DEFINED FPRIME_SUB_BUILD_TARGETS AND DEFINED FPRIME_BINARY_DIR)
+    set(FPRIME_IS_SUB_BUILD TRUE)
+else()
+    set(FPRIME_IS_SUB_BUILD FALSE)
+endif()
+
 ####
 # Function `run_sub_build`:
 #

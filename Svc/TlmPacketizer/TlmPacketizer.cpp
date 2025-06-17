@@ -90,7 +90,7 @@ void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
         memset(this->m_fillBuffers[pktEntry].buffer.getBuffAddr(), 0, static_cast<size_t>(packetLen));
         // serialize packet descriptor and packet ID now since it will always be the same
         Fw::SerializeStatus stat = this->m_fillBuffers[pktEntry].buffer.serialize(
-            static_cast<FwPacketDescriptorType>(Fw::ComPacket::FW_PACKET_PACKETIZED_TLM));
+            static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM));
         FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, stat);
         stat = this->m_fillBuffers[pktEntry].buffer.serialize(packetList.list[pktEntry]->id);
         FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, stat);
@@ -380,7 +380,7 @@ void TlmPacketizer ::pingIn_handler(const FwIndexType portNum, U32 key) {
 // Command handler implementations
 // ----------------------------------------------------------------------
 
-void TlmPacketizer ::SET_LEVEL_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, U32 level) {
+void TlmPacketizer ::SET_LEVEL_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, FwChanIdType level) {
     this->m_startLevel = level;
     if (level > this->m_maxLevel) {
         this->log_WARNING_LO_MaxLevelExceed(level, this->m_maxLevel);
