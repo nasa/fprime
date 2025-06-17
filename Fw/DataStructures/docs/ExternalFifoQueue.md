@@ -75,6 +75,9 @@ ExternalFifoQueue<U32> queue(items, capacity);
 ExternalFifoQueue(ByteArray data, FwSizeType capacity)
 ```
 
+`data` must be correctly aligned for `T` and must
+contain at least `ExternalArray<T>::getByteArraySize(size)` bytes.
+
 1. Call `setStorage(data, capacity)`.
 
 1. Initialize the other member variables with their default values.
@@ -205,6 +208,9 @@ queue.setStorage(items, capacity);
 ```c++
 void setStorage(ByteArray data, FwSizeType capacity)
 ```
+
+`data` must be correctly aligned for `T` and must
+contain at least `ExternalArray<T>::getByteArraySize(size)` bytes.
 
 1. Call `m_items.setStorage(data, capacity)`.
 
@@ -351,3 +357,13 @@ U32 items[capacity];
 ExternalFifoQueue<U32> queue(items, capacity);
 ASSERT_EQ(queue.getCapacity(), capacity);
 ```
+
+## 6. Public Static Functions
+
+### 6.1. getByteArraySize
+
+```c++
+static constexpr FwSizeType getByteArraySize(FwSizeType capacity)
+```
+
+Return `ExternalArray<T>::getByteArraySize(capacity)`.

@@ -31,7 +31,8 @@ class ExternalArray final {
                   )
         : m_elements(elements), m_size(size) {}
 
-    //! Constructor providing untyped backing storage
+    //! Constructor providing untyped backing storage.
+    //! Data must be aligned for T and must contain at least getByteArraySize(size) bytes.
     ExternalArray(ByteArray data,  //!< The data
                   FwSizeType size  //!< The array size
     ) {
@@ -106,6 +107,7 @@ class ExternalArray final {
     }
 
     //! Set the backing storage (untyped data)
+    //! Data must be aligned for T and must contain at least getByteArraySize(size) bytes.
     void setStorage(ByteArray data,  //!< The data
                     FwSizeType size  //!< The array size
     ) {
@@ -125,8 +127,9 @@ class ExternalArray final {
     // Public static functions
     // ----------------------------------------------------------------------
 
-    //! Get the size of the storage for an array of the specified size,
+    //! Get the size of the storage for an ExternalArray of the specified size,
     //! as a byte array
+    //! \return The byte array size
     static constexpr FwSizeType getByteArraySize(FwSizeType size  //!< The size
     ) {
         return size * sizeof(T);

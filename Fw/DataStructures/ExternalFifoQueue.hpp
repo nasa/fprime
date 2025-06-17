@@ -150,6 +150,19 @@ class ExternalFifoQueue final : public FifoQueueBase<T> {
     //! \return The capacity
     FwSizeType getCapacity() const override { return this->m_items.getSize(); }
 
+  public:
+    // ----------------------------------------------------------------------
+    // Public static functions
+    // ----------------------------------------------------------------------
+
+    //! Get the size of the storage for an ExternalFifoQueue of the specified 
+    //! capacity, as a byte array
+    //! \return The byte array size
+    static constexpr FwSizeType getByteArraySize(FwSizeType capacity  //!< The capacity
+    ) {
+        return ExternalArray<T>::getByteArraySize(capacity);
+    }
+
   private:
     // ----------------------------------------------------------------------
     // Private member variables
