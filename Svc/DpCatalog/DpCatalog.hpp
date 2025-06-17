@@ -22,6 +22,8 @@ namespace Svc {
         public DpCatalogComponentBase
     {
 
+    friend class DpCatalogTester;
+
     public:
 
         // ----------------------------------------------------------------------
@@ -43,7 +45,7 @@ namespace Svc {
         /// @param numDirs number of supplied directories
         /// @param stateFile file to store transmit state. Provide a zero-length string if no state tracking
         /// @param memId  memory ID for allocator
-        /// @param allocator Allocator to supply memory for catalog. 
+        /// @param allocator Allocator to supply memory for catalog.
         ///        Instance must survive for shutdown to use for reclaiming memory
         void configure(
             Fw::FileNameString directories[DP_MAX_DIRECTORIES],
@@ -53,11 +55,11 @@ namespace Svc {
             Fw::MemAllocator& allocator
         );
 
-        // @brief clean up component. 
-        // Deallocates memory.       
+        // @brief clean up component.
+        // Deallocates memory.
         void shutdown();
 
-    PRIVATE:
+    private:
 
         // ----------------------------------------------------------------------
         // Handler implementations for user-defined typed input ports
@@ -79,7 +81,7 @@ namespace Svc {
             U32 key //!< Value to return to pinger
         ) override;
 
-    PRIVATE:
+    private:
 
         // ----------------------------------------------------------------------
         // Handler implementations for commands
@@ -124,6 +126,7 @@ namespace Svc {
         // ----------------------------------
 
         struct DpStateEntry {
+            friend class DpCatalogTester;
             FwIndexType dir; //!< index to m_directories entry that has directory name where DP exists
             DpRecord record; //!< data product metadata
         };
@@ -136,7 +139,7 @@ namespace Svc {
 
         /// @brief A list sorted in priority order for downlink
         struct DpBtreeNode {
-            DpStateEntry entry; //!< pointer to DP record          
+            DpStateEntry entry; //!< pointer to DP record
             DpBtreeNode* left; //!< left child. Also used for free list
             DpBtreeNode* right; //!< right child
         };
@@ -194,7 +197,7 @@ namespace Svc {
         /// @param entry entry to add
         /// @return true if a node could be allocated
         bool allocateNode(
-            DpBtreeNode* &newNode, 
+            DpBtreeNode* &newNode,
             const DpStateEntry& newEntry);
 
         /// @brief send the next entry to file downlink
