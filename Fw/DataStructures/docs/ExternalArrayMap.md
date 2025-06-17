@@ -355,8 +355,7 @@ static constexpr FwSizeType getByteArraySize(FwSizeType capacity)
 Return `ExternalArray<T>::getByteArraySize(capacity)`.
 
 _Example:_
-```
-c++
+```c++
 const FwSizeType size = 10;
 const FwSizeType byteArraySize = ExternalFifoQueue<U32>::getByteArraySize(size);
 ASSERT_EQ(byteArraySize, 10 * sizeof(U32));
