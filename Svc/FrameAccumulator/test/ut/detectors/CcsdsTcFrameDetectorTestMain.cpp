@@ -10,6 +10,7 @@
 #include "Svc/CCSDS/Types/TCHeaderSerializableAc.hpp"
 #include "Svc/CCSDS/Types/TCTrailerSerializableAc.hpp"
 #include "Svc/CCSDS/Utils/CRC16.hpp"
+#include "Utils/Types/test/ut/CircularBuffer/CircularBufferTester.hpp"
 #include "gtest/gtest.h"
 
 using namespace Svc::CCSDS;
@@ -41,7 +42,7 @@ FwSizeType generate_random_tc_frame(Types::CircularBuffer& circular_buffer) {
     // Generate random packet size (1-1024 bytes; because 0 would trigger undefined behavior warnings)
     // U16 packet_size = static_cast<U16>(STest::Random::lowerUpper(1, 1024));
     U16 packet_size = 10;
-    
+
     FwSizeType total_frame_size = packet_size + TCHeader::SERIALIZED_SIZE + TCTrailer::SERIALIZED_SIZE;
 
     U8 packet_data[packet_size];
@@ -133,7 +134,8 @@ TEST_F(CcsdsFrameDetectorTest, TestNoFrameDetected) {
 
 TEST_F(CcsdsFrameDetectorTest, TestMoreDataNeeded) {
     (void)generate_random_tc_frame(this->circular_buffer);
-    this->circular_buffer.m_allocated_size--;  // Remove 1 byte from the end of the frame to trigger "more data needed"
+    // Remove 1 byte from the end of the frame to trigger "more data needed"
+    Types::CircularBufferTester::tester_m_allocated_size_decrement(this->circular_buffer);
     Svc::FrameDetector::Status status;
     FwSizeType unused = 0;
     status = this->detector.detect(this->circular_buffer, unused);
