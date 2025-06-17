@@ -94,7 +94,6 @@ void FrameAccumulatorTester ::testReceiveZeroSizeBuffer() {
     ASSERT_from_dataReturnOut_SIZE(1); // input buffer ownership was returned
     ASSERT_from_dataOut_SIZE(0); // No frame was sent out
     ASSERT_EQ(this->component.m_inRing.get_allocated_size(), 0); // No data in ring buffer
-    // ASSERT_EQ(this->component.m_inRing.m_head_idx, 0);
     ASSERT_EQ(Types::CircularBufferTester::tester_get_m_head_idx(this->component.m_inRing), 0);
 }
 
