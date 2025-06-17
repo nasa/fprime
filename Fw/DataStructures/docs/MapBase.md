@@ -20,7 +20,7 @@ It represents an abstract base class for a map.
 
 |Name|Definition|
 |----|----------|
-|`Entry`|`MapEntry<K, V>|
+|`Entry`|`MapEntry<K, V>`|
 
 ## 3. Private Constructors
 
