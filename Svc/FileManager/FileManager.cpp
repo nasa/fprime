@@ -165,7 +165,7 @@ namespace Svc {
     this->log_ACTIVITY_HI_ShellCommandStarted(
           logStringCommand
       );
-    PlatformIntType status =
+    int status =
       this->systemCall(command, logFileName);
     if (status == 0) {
       this->log_ACTIVITY_HI_ShellCommandSucceeded(
@@ -256,7 +256,7 @@ namespace Svc {
   // Helper methods
   // ----------------------------------------------------------------------
 
-  PlatformIntType FileManager ::
+  int FileManager ::
     systemCall(
         const Fw::CmdStringArg& command,
         const Fw::CmdStringArg& logFileName

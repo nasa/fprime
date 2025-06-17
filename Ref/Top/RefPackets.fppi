@@ -1,7 +1,9 @@
 telemetry packets RefPackets {
 
   packet CDH id 1 group 1 {
+
     #Ref.cmdDisp.CommandsDispatched
+
     CDHCore.cmdDisp.CommandsDispatched
     Ref.rateGroup1Comp.RgMaxTime
     Ref.rateGroup2Comp.RgMaxTime
@@ -35,6 +37,7 @@ telemetry packets RefPackets {
     Comms.commsBufferManager.NoBuffs
     Comms.commsBufferManager.EmptyBuffs
     FileHandling.fileManager.Errors
+
   }
 
   packet DriveTlm id 3 group 1 {

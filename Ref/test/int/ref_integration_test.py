@@ -1,4 +1,4 @@
-""" ref_integration_test.py:
+"""ref_integration_test.py:
 
 A set of integration tests to apply to the Ref app. This is intended to be a reference of integration testing.
 """
@@ -93,7 +93,9 @@ def test_send_command_args(fprime_test_api):
     """
     for count, value in enumerate(["Test String 1", "Some other string"], 1):
         events = [
-            fprime_test_api.get_event_pred("CDHCore.cmdDisp.NoOpStringReceived", [value])
+            fprime_test_api.get_event_pred(
+                "CDHCore.cmdDisp.NoOpStringReceived", [value]
+            )
         ]
         fprime_test_api.send_and_assert_command(
             "CDHCore.cmdDisp.CMD_NO_OP_STRING",

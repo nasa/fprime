@@ -12,6 +12,11 @@ TEST(FprimeDeframer, NominalFrame) {
     tester.testNominalFrame();
 }
 
+TEST(FprimeDeframer, NominalFrameApid) {
+    Svc::FprimeDeframerTester tester;
+    tester.testNominalFrameApid();
+}
+
 TEST(FprimeDeframer, TruncatedFrame) {
     Svc::FprimeDeframerTester tester;
     tester.testTruncatedFrame();

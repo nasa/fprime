@@ -9,7 +9,7 @@
 
 namespace Fw {
 
-    ComPacket::ComPacket() : m_type(FW_PACKET_UNKNOWN) {
+    ComPacket::ComPacket() : m_type(ComPacketType::FW_PACKET_UNKNOWN) {
     }
 
     ComPacket::~ComPacket() {

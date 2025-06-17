@@ -20,7 +20,7 @@ module Ref {
     import Comms.Subtopology
     import FileHandling.Subtopology
     import DataProducts.Subtopology
-
+    
     # ----------------------------------------------------------------------
     # Instances used in the topology
     # ----------------------------------------------------------------------
@@ -42,6 +42,7 @@ module Ref {
     instance typeDemo
     instance systemResources
     instance linuxTimer
+    instance fatalHandler
 
     # ----------------------------------------------------------------------
     # Pattern graph specifiers
@@ -70,7 +71,6 @@ module Ref {
     # ----------------------------------------------------------------------
     # Direct graph specifiers
     # ----------------------------------------------------------------------
-
 
     connections RateGroups {
 
@@ -117,7 +117,6 @@ module Ref {
       # Send filled DP
       SG1.productSendOut -> DataProducts.dpMgr.productSendIn[0]
 
-
     }
 
     connections Comms_CDHCore{
@@ -146,7 +145,7 @@ module Ref {
       # Data Products
       DataProducts.dpCat.fileOut             -> FileHandling.fileDownlink.SendFile
       FileHandling.fileDownlink.FileComplete -> DataProducts.dpCat.fileDone
-  }
+    }
 
   }
 

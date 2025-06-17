@@ -79,7 +79,7 @@ namespace Os {
                           const FwTaskPriorityType priority = TASK_PRIORITY_DEFAULT,
                           const FwSizeType stackSize = TASK_DEFAULT,
                           const FwSizeType cpuAffinity = TASK_DEFAULT,
-                          const PlatformUIntType identifier = static_cast<PlatformUIntType>(TASK_DEFAULT));
+                          const FwTaskIdType identifier = static_cast<FwTaskIdType>(TASK_DEFAULT));
 
               public:
                 const Os::TaskString m_name;
@@ -88,7 +88,7 @@ namespace Os {
                 FwTaskPriorityType m_priority;
                 FwSizeType m_stackSize;
                 FwSizeType m_cpuAffinity;
-                PlatformUIntType m_identifier;
+                FwTaskIdType m_identifier;
             };
 
             //! \brief default constructor

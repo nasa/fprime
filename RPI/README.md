@@ -140,12 +140,12 @@ CTRL-C in both terminals will stop the software from running.
 
 **Things to look at**
 
-The demo consists of a single component along with all the infrastructure components that are part of the repository. The demo component can be found in `RPI/RpiDemo`. The topology for the demo can be found in `RPI/Top`. That directory contains the program `main()` as well as the topology XML (`RPITopologyAppAi.xml`). You can modify and reuse the demo component, or you can create a whole series of interconnected components to do a project. Developers are encouraged to fork the repo to add functionality to the basic demo to enable whatever projects they have in mind.
+The demo consists of a single component along with all the infrastructure components that are part of the repository. The demo component can be found in `RPI/RpiDemo`. The topology for the demo can be found in `RPI/Top`. That directory contains the program `main()` as well as the topology FPP (`topology.fpp`). You can modify and reuse the demo component, or you can create a whole series of interconnected components to do a project. Developers are encouraged to fork the repo to add functionality to the basic demo to enable whatever projects they have in mind.
 
 **Some tips:**
 
  * If you would like to add your own components, read the User's manual on how to add new directories to the build.
- * If you have defined some component XML, you can generate an empty implementation class by typing `fprime-util impl`. 
+ * If you have defined some component FPP, you can generate an empty implementation class by typing `fprime-util impl`. 
  * You can see the telemetry and events in `RPI/logs/<date>/channel.log` and `RPI/logs/<date>/event.log` respectively.
  * Sometimes you see the error: Could not connect to socket at host addr localhost, port 50000, or address in use
 This means that the GUI was restarted before the socket was released by Linux. Wait a minute or so and try again.

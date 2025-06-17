@@ -14,8 +14,9 @@
 // Necessary project-specified types
 #include <Fw/Types/MallocAllocator.hpp>
 #include <Os/Console.hpp>
-#include <Svc/FrameAccumulator/FrameDetector/FprimeFrameDetector.hpp>
-//#include <Ref/Top/Ports_ComPacketQueueEnumAc.hpp>
+
+#include <Svc/FrameAccumulator/FrameDetector/CcsdsTcFrameDetector.hpp>
+
 
 // Used for 1Hz synthetic cycling
 #include <Os/Mutex.hpp>
@@ -51,10 +52,6 @@ void configureTopology() {
     rateGroup1Comp.configure(rateGroup1Context, FW_NUM_ARRAY_ELEMENTS(rateGroup1Context));
     rateGroup2Comp.configure(rateGroup2Context, FW_NUM_ARRAY_ELEMENTS(rateGroup2Context));
     rateGroup3Comp.configure(rateGroup3Context, FW_NUM_ARRAY_ELEMENTS(rateGroup3Context));
-
-
-    // Note: Uncomment when using Svc:TlmPacketizer
-    // tlmSend.setPacketList(Ref::Ref_RefPacketsTlmPackets::packetList, Ref::Ref_RefPacketsTlmPackets::omittedChannels, 1);
 }
 
 // Public functions for use in main program are namespaced with deployment name Ref
@@ -79,7 +76,9 @@ void setupTopology(const TopologyState& state) {
     loadParameters();
     // Autocoded task kick-off (active components). Function provided by autocoder.
     startTasks(state);
+
     // Startup TLM and Config verbosity for Versions
+
 }
 
 void startRateGroups(Fw::TimeInterval interval) {

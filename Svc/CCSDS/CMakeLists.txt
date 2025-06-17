@@ -1,0 +1,7 @@
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Types/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Ports/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SpacePacketDeframer/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SpacePacketFramer/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/TcDeframer/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/TmFramer/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ApidManager/")

@@ -46,7 +46,7 @@ U16 TcpServerSocket::getListenPort() {
 }
 
 SocketIpStatus TcpServerSocket::startup(SocketDescriptor& socketDescriptor) {
-    PlatformIntType serverFd = -1;
+    int serverFd = -1;
     struct sockaddr_in address;
     // Acquire a socket, or return error
     if ((serverFd = ::socket(AF_INET, SOCK_STREAM, 0)) == -1) {
@@ -94,8 +94,8 @@ void TcpServerSocket::terminate(const SocketDescriptor& socketDescriptor) {
 }
 
 SocketIpStatus TcpServerSocket::openProtocol(SocketDescriptor& socketDescriptor) {
-    PlatformIntType clientFd = -1;
-    PlatformIntType serverFd = socketDescriptor.serverFd;
+    int clientFd = -1;
+    int serverFd = socketDescriptor.serverFd;
 
     // Check for not started yet, may be true in the case of start-up reconnect attempts
     if (serverFd == -1) {

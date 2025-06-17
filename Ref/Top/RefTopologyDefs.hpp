@@ -16,6 +16,7 @@
 #include "Ref/Top/FppConstantsAc.hpp"
 #include "Svc/Health/Health.hpp"
 
+
 // Subtopology includes
 #include "Svc/Subtopologies/CDHCore/PingEntries.hpp"
 #include "Svc/Subtopologies/Comms/SubtopologyTopologyDefs.hpp"
@@ -52,21 +53,20 @@ namespace PingEntries {
 // Definitions are placed within a namespace named after the deployment
 namespace Ref {
 
-/**
- * \brief required type definition to carry state
- *
- * The topology autocoder requires an object that carries state with the name `Ref::TopologyState`. Only the type
- * definition is required by the autocoder and the contents of this object are otherwise opaque to the autocoder. The
- * contents are entirely up to the definition of the project. This reference application specifies hostname and port
- * fields, which are derived by command line inputs.
- */
-struct TopologyState {
-    const char* hostname;
-    U16 port;
-};
+    /**
+     * \brief required type definition to carry state
+     *
+     * The topology autocoder requires an object that carries state with the name `Ref::TopologyState`. Only the type
+     * definition is required by the autocoder and the contents of this object are otherwise opaque to the autocoder. The
+     * contents are entirely up to the definition of the project. This reference application specifies hostname and port
+     * fields, which are derived by command line inputs.
+     */
+    struct TopologyState {
+        const char* hostname;
+        U16 port;
+    };
 
-namespace PingEntries = ::PingEntries;
-
+    namespace PingEntries = ::PingEntries;
 }  // namespace Ref
 
 #endif

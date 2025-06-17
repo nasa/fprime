@@ -8,7 +8,7 @@
 namespace Os {
 namespace Posix {
 
-File::Status errno_to_file_status(PlatformIntType errno_input) {
+File::Status errno_to_file_status(int errno_input) {
     File::Status status = File::Status::OP_OK;
     switch (errno_input) {
         case 0:
@@ -48,7 +48,7 @@ File::Status errno_to_file_status(PlatformIntType errno_input) {
     return status;
 }
 
-FileSystem::Status errno_to_filesystem_status(PlatformIntType errno_input) {
+FileSystem::Status errno_to_filesystem_status(int errno_input) {
     FileSystem::Status status = FileSystem::Status::OP_OK;
     switch (errno_input) {
         case 0:
@@ -103,7 +103,7 @@ FileSystem::Status errno_to_filesystem_status(PlatformIntType errno_input) {
     return status;
 }
 
-Directory::Status errno_to_directory_status(PlatformIntType errno_input) {
+Directory::Status errno_to_directory_status(int errno_input) {
     Directory::Status status = Directory::Status::OP_OK;
     switch (errno_input) {
         case 0:
@@ -128,7 +128,7 @@ Directory::Status errno_to_directory_status(PlatformIntType errno_input) {
     return status;
 }
 
-RawTime::Status errno_to_rawtime_status(PlatformIntType errno_input) {
+RawTime::Status errno_to_rawtime_status(int errno_input) {
     RawTime::Status status = RawTime::Status::OP_OK;
     switch (errno_input) {
         case 0:
@@ -144,7 +144,7 @@ RawTime::Status errno_to_rawtime_status(PlatformIntType errno_input) {
     return status;
 }
 
-Task::Status posix_status_to_task_status(PlatformIntType posix_status) {
+Task::Status posix_status_to_task_status(int posix_status) {
     Task::Status status = Task::Status::OP_OK;
     switch (posix_status) {
         case 0:
@@ -166,7 +166,7 @@ Task::Status posix_status_to_task_status(PlatformIntType posix_status) {
     return status;
 }
 
-Mutex::Status posix_status_to_mutex_status(PlatformIntType posix_status){
+Mutex::Status posix_status_to_mutex_status(int posix_status){
     Mutex::Status status = Mutex::Status::ERROR_OTHER;
     switch (posix_status) {
         case 0:
@@ -185,7 +185,7 @@ Mutex::Status posix_status_to_mutex_status(PlatformIntType posix_status){
     return status;
 }
 
-ConditionVariable::Status posix_status_to_conditional_status(PlatformIntType posix_status) {
+ConditionVariable::Status posix_status_to_conditional_status(int posix_status) {
     ConditionVariable::Status status = ConditionVariable::Status::ERROR_OTHER;
     switch (posix_status) {
         case 0:

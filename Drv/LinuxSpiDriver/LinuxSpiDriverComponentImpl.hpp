@@ -87,7 +87,7 @@ namespace Drv {
             void SpiReadWrite_handler(const FwIndexType portNum, /*!< The port number*/
             Fw::Buffer &WriteBuffer, Fw::Buffer &readBuffer);
 
-            PlatformIntType m_fd;
+            int m_fd;
             FwIndexType m_device;
             FwIndexType m_select;
             U32 m_bytes;

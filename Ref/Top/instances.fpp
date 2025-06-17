@@ -59,6 +59,10 @@ module Ref {
   # Queued component instances
   # ----------------------------------------------------------------------
 
+
+  instance sendBuffComp: Ref.SendBuff base id 0x2000 \
+    queue size Default.QUEUE_SIZE
+
   instance SG1: Ref.SignalGen base id 0x2100 \
     queue size Default.QUEUE_SIZE
 
@@ -74,23 +78,16 @@ module Ref {
   instance SG5: Ref.SignalGen base id 0x2500 \
     queue size Default.QUEUE_SIZE
 
-  instance sendBuffComp: Ref.SendBuff base id 0x2600 \
-    queue size Default.QUEUE_SIZE
-  
   # ----------------------------------------------------------------------
   # Passive component instances
   # ----------------------------------------------------------------------
 
+  instance rateGroupDriverComp: Svc.RateGroupDriver base id 0x4400
 
-  instance posixTime: Svc.PosixTime base id 0x4400
+  instance recvBuffComp: Ref.RecvBuff base id 0x4500
 
-  instance rateGroupDriverComp: Svc.RateGroupDriver base id 0x4500
-
-  instance recvBuffComp: Ref.RecvBuff base id 0x4600
-
-  instance systemResources: Svc.SystemResources base id 0x4900
+  instance systemResources: Svc.SystemResources base id 0x4600
 
   instance linuxTimer: Svc.LinuxTimer base id 0x5000
 
 }
-

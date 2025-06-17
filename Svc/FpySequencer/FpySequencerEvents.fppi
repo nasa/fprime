@@ -66,7 +66,7 @@ event InsufficientBufferSpace(
 
 event StatementFailed(
     stmtType: Fpy.StatementType
-    stmtOpcode: U32
+    stmtOpcode: FwOpcodeType
     stmtIdx: U32
     filePath: string
     response: Fw.CmdResponse
@@ -87,7 +87,7 @@ event SequenceCancelled(
     format "Cancelled sequence file {}"
 
 event UnknownSequencerDirective(
-    $opcode: U32
+    $opcode: FwOpcodeType
     stmtIdx: U32
     filePath: string
 ) \
@@ -95,7 +95,7 @@ event UnknownSequencerDirective(
     format "Unknown sequencer directive id {} at index {} in file {}"
 
 event CommandSerializeError(
-    cmdOpcode: U32
+    cmdOpcode: FwOpcodeType
     bufCapacity: U64
     curPos: U64
     writeSize: U64
@@ -107,14 +107,14 @@ event CommandSerializeError(
 
 event CmdResponseWhileNotRunningSequence(
     $state: I32
-    $opcode: U32
+    $opcode: FwOpcodeType
     response: Fw.CmdResponse
 ) \
     severity warning low \
     format "Received a command response while not running a sequence (was in state {} opcode was {} response code {})"
 
 event CmdResponseFromOldSequence(
-    $opcode: U32
+    $opcode: FwOpcodeType
     response: Fw.CmdResponse
     oldSequenceIdx: U16
     currentSequenceIdx: U16
@@ -123,22 +123,22 @@ event CmdResponseFromOldSequence(
     format "Received a response from cmd opcode {} (response {}), but it was from a previous sequence, not the current one (old idx: {}, current idx: {})"
 
 event CmdResponseWhileNotAwaiting(
-    $opcode: U32
+    $opcode: FwOpcodeType
     response: Fw.CmdResponse
 ) \
     severity warning high \
     format "Received a response from cmd opcode {} (response {}) from this sequence, but was not awaiting a response"
 
 event WrongCmdResponseOpcode(
-    $opcode: U32
+    $opcode: FwOpcodeType
     response: Fw.CmdResponse
-    expectedOpcode: U32
+    expectedOpcode: FwOpcodeType
 ) \
     severity warning high \
     format "Received a response from cmd opcode {} (response {}) from this sequence, but was expecting a response from command opcode {}"
 
 event WrongCmdResponseIndex(
-    $opcode: U32
+    $opcode: FwOpcodeType
     response: Fw.CmdResponse
     actualCmdIdx: U16
     expectedCmdIdx: U16
@@ -148,7 +148,7 @@ event WrongCmdResponseIndex(
 
 # TODO make sure to call this with appropriate stmt idx when directive is dynamically constructed
 event DirectiveDeserializeError(
-    $opcode: U32
+    $opcode: FwOpcodeType
     stmtIdx: U32
     errorCode: I32
     buffLeft: U64
@@ -173,7 +173,7 @@ event MismatchedTimeContext(
 
 event StatementTimedOut(
     stmtType: Fpy.StatementType
-    stmtOpcode: U32
+    stmtOpcode: FwOpcodeType
     stmtIdx: U32
     filePath: string
 ) \

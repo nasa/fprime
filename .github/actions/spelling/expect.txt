@@ -63,10 +63,9 @@ CBF
 CBLOCK
 CCB
 CComponent
-CCSDS
+ccsds
 ccsparc
 CDH
-CDHCORESUBTOPOLOGY
 cerrno
 CFDP
 cff
@@ -79,13 +78,11 @@ CHIPINFO
 CHK
 CHNG
 CIRCULARSTATE
-classdiagram
 CLOSEFILE
 cloudbees
 CMDDISP
 CMDDISPATCHER
 CMDPACKET
-CMDREG
 cmdresponse
 cmdseq
 cmdsequencer
@@ -97,7 +94,6 @@ COMBUFFER
 comlogger
 COMMANDDISPATCHERIMPL
 COMMANDDISPATCHERIMPLCFG
-COMMSSUBTOPOLOGY
 COMPACKET
 COMPACKETQUEUEIN
 COMQUEUE
@@ -133,7 +129,6 @@ ctu
 culates
 cuz
 CYCLEOUT
-DATAPRODUCTSSUBTOPOLOGY
 DATAROOTDIR
 DDDTHH
 Debian
@@ -206,6 +201,7 @@ externalproject
 FAKELOGGER
 fbuild
 fdp
+fecf
 FEEDNAME
 fetchcontent
 ffff
@@ -223,7 +219,6 @@ FONTPATH
 foodoodie
 foodoodiehoo
 FPCONFIG
-FPL
 fpp
 fppi
 fpptest
@@ -264,6 +259,7 @@ gtags
 gtest
 gtimeout
 Guire
+GVCID
 HACKSM
 Handcoded
 handleflags
@@ -449,6 +445,7 @@ pdflatex
 PEB
 penv
 PERLMOD
+PINGENTRIES
 PINGSEND
 pkill
 PKTS
@@ -518,6 +515,7 @@ REMOVEDIRECTORY
 REMOVEFILE
 reprioritize
 RGD
+rhel
 RHH
 Rizvi
 ROOTDIR
@@ -525,7 +523,6 @@ rpi
 RPIDEMO
 RPIDEMOCOMPONENTIMPLCFG
 rptr
-RSend
 RXD
 SAlias
 sanitizers
@@ -591,7 +588,6 @@ subgrouping
 subhist
 subhistory
 subseconds
-subtargets
 subtopology
 suppr
 suseconds
@@ -612,7 +608,7 @@ tcflush
 tcgetattr
 TCPCLIENT
 TCPHELPER
-tcpserver
+TCPSERVER
 TCSANOW
 telem
 TELEMCHANIMPL

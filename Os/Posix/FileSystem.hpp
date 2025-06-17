@@ -96,6 +96,14 @@ class PosixFileSystem : public FileSystemInterface {
     //! \return raw fileSystem handle
     FileSystemHandle* getHandle() override;
 
+    //! \brief Get the type of the path (file, directory, etc.)
+    //!
+    //! It is invalid to pass `nullptr` as the path.
+    //!
+    //! \param path The path to check
+    //! \return PathType of the path
+    Status _getPathType(const char* path, PathType& pathType) override;
+
   private:
     //! FileSystem handle for PosixFileSystem
     PosixFileSystemHandle m_handle;
