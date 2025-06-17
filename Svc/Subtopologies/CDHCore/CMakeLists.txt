@@ -1,4 +1,4 @@
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/CDHCoreConfig/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/config/")
 
 register_fprime_module(
     AUTOCODER_INPUTS

@@ -113,9 +113,7 @@ module Ref {
   # ----------------------------------------------------------------------
 
   @ Communications driver. May be swapped with other comm drivers like UART
-  instance comDriver: Drv.TcpClient base id 0x4000
-
-  instance fatalHandler: Svc.FatalHandler base id 0x4100
+  instance comDriver: Drv.TcpClient base id 0x4100
 
   instance commsBufferManager: Svc.BufferManager base id 0x4200
 
