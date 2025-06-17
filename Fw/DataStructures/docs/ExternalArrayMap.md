@@ -178,9 +178,7 @@ Success find(const K& key, V& value) override
 
 1. Set `status = Success::FAILURE`.
 
-1. Let `size = getSize()`.
-
-1. For `i` in `[0, size)`
+1. For `i` in `[0, m_size)`
 
     1. Let `const auto& e = &m_entries[i]`.
 
@@ -231,7 +229,7 @@ ASSERT_EQ(map.getCapacity(), capacity);
 const Entry* getHeadEntry const override
 ```
 
-Get the head entry of the map.
+Return `(m_size > 0) ? &m_entries[0] : nullptr`.
 
 _Example:_
 ```c++
@@ -275,7 +273,32 @@ Success insert(const K& key, const V& value) override
 Success insert(const Entry& e) override
 ```
 
-TODO
+1. Set `status = Success::FAILURE`.
+
+1. For `i` in `[0, m_size)`
+
+    1. Let `auto& e = m_entries[i]`.
+
+    1. If `e.getKey() == key`
+
+        1. Call `e.setValue(value)`.
+
+        1. Set `status = Success::SUCCESS`.
+
+        1. Break out of the loop
+
+1. If `(status == Success::FAILURE) && (m_size < getCapacity())`
+
+    1. Set `m_entries[m_size] = Entry(key, value)`.
+
+    1. If `m_size > 0` then
+       call `m_entries[m_size - 1].setNextEntry(&m_entries[m_size])`.
+
+    1. Increment `m_size`.
+
+    1. Set `status = Success::SUCCESS`.
+
+1. Return `status`.
 
 ### 5.8. remove
 
