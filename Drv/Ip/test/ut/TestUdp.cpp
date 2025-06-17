@@ -121,7 +121,7 @@ TEST(UdpZeroLength, TestZeroLengthUdpDatagram) {
     ASSERT_EQ(receiver.configureRecv("127.0.0.1", port), Drv::SOCK_SUCCESS);
     ASSERT_EQ(receiver.open(recv_fd), Drv::SOCK_SUCCESS);
 
-    // Set a short receive timeout to avoid hanging
+    // Set a receive timeout to avoid hanging (now 100ms)
     Drv::Test::force_recv_timeout(recv_fd.fd, receiver);
     ASSERT_EQ(sender.configureSend("127.0.0.1", port, 0, 100), Drv::SOCK_SUCCESS);
     ASSERT_EQ(sender.open(send_fd), Drv::SOCK_SUCCESS);
@@ -135,16 +135,9 @@ TEST(UdpZeroLength, TestZeroLengthUdpDatagram) {
     U32 recv_buf_len = 1;
     I32 recv_status = receiver.recv(recv_fd, recv_buf, recv_buf_len);
 
-    // Accept 0 (success), -EAGAIN, or -EWOULDBLOCK (timeout/no data)
-    bool valid_status = (recv_status == 0 || 
-                         recv_status == -EAGAIN ||
-#ifdef EWOULDBLOCK
-                         recv_status == -EWOULDBLOCK ||
-#endif
-                         recv_status == -16 // fallback for platforms where EWOULDBLOCK is not defined but -16 is returned
-    );
-    ASSERT_TRUE(valid_status)
-        << "recv_status=" << recv_status << ", errno=" << errno;
+    // Expect 0 (success) for a zero-length datagram.
+    ASSERT_EQ(recv_status, 0)
+        << "Expected recv_status 0 for zero-length datagram, but got " << recv_status << " with errno=" << errno;
 
     sender.close(send_fd);
     receiver.close(recv_fd);

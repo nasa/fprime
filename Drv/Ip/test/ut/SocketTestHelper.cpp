@@ -21,7 +21,7 @@ void force_recv_timeout(PlatformIntType fd, Drv::IpSocket& socket) {
     // Set timeout socket option
     struct timeval timeout;
     timeout.tv_sec = 0;
-    timeout.tv_usec = 50; // 50ms max before test failure
+    timeout.tv_usec = 100000; // 100ms max before test failure
     setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<char *>(&timeout), sizeof(timeout));
 }
 
@@ -65,10 +65,23 @@ void receive_all(Drv::IpSocket& receiver, Drv::SocketDescriptor& receiver_fd, U8
     U32 received_size = 0;
     Drv::SocketIpStatus status;
     do {
-        U32 size_in_out = size - received_size;
-        status = receiver.recv(receiver_fd, buffer + received_size, size_in_out);
-        ASSERT_TRUE((status == Drv::SOCK_NO_DATA_AVAILABLE || status == Drv::SOCK_SUCCESS));
-        received_size += size_in_out;
+        U32 bytes_to_request = size - received_size;
+        U32 bytes_actually_received = bytes_to_request; // Will be updated by receiver.recv
+        status = receiver.recv(receiver_fd, buffer + received_size, bytes_actually_received);
+
+        if (status == Drv::SOCK_SUCCESS) {
+            received_size += bytes_actually_received;
+        } else if (status == Drv::SOCK_NO_DATA_AVAILABLE) {
+            // Socket timeout occurred before all expected data was received.
+            FAIL() << "Drv::Test::receive_all timed out (SOCK_NO_DATA_AVAILABLE) expecting " << size
+                   << " bytes, but received only " << received_size << " bytes so far.";
+            return; // Exit to prevent infinite loop and mark test as failed
+        } else {
+            // Other unexpected socket error
+            FAIL() << "Drv::Test::receive_all encountered an unexpected socket error: " << status
+                   << " while expecting " << size << " bytes. Received " << received_size << " bytes so far.";
+            return; // Exit to prevent infinite loop and mark test as failed
+        }
     } while (size > received_size);
     EXPECT_EQ(received_size, size);
 }
