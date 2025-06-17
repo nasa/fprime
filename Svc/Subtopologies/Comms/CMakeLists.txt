@@ -1,0 +1,10 @@
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/CommsConfig/")
+
+register_fprime_module(
+    AUTOCODER_INPUTS
+        "${CMAKE_CURRENT_LIST_DIR}/Comms.fpp"
+    SOURCES
+        "${CMAKE_CURRENT_LIST_DIR}/CommsTopologyDefs.cpp"
+    HEADERS
+        "${CMAKE_CURRENT_LIST_DIR}/SubtopologyTopologyDefs.hpp"
+)

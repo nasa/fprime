@@ -1,39 +1,43 @@
 telemetry packets RefPackets {
 
   packet CDH id 1 group 1 {
+
+    #Ref.cmdDisp.CommandsDispatched
+
     CDHCore.cmdDisp.CommandsDispatched
     Ref.rateGroup1Comp.RgMaxTime
     Ref.rateGroup2Comp.RgMaxTime
     Ref.rateGroup3Comp.RgMaxTime
-    Ref.cmdSeq.CS_LoadCommands
-    Ref.cmdSeq.CS_CancelCommands
-    Ref.cmdSeq.CS_CommandsExecuted
-    Ref.cmdSeq.CS_SequencesCompleted
-    Ref.fileUplink.FilesReceived
-    Ref.fileUplink.PacketsReceived
-    Ref.commsBufferManager.TotalBuffs
-    Ref.commsBufferManager.CurrBuffs
-    Ref.commsBufferManager.HiBuffs
-    Ref.fileDownlink.FilesSent
-    Ref.fileDownlink.PacketsSent
-    Ref.fileManager.CommandsExecuted
-    Ref.comQueue.comQueueDepth
-    Ref.comQueue.buffQueueDepth
-    #CDHCore.tlmSend.SendLevel
+    Comms.cmdSeq.CS_LoadCommands
+    Comms.cmdSeq.CS_CancelCommands
+    Comms.cmdSeq.CS_CommandsExecuted
+    Comms.cmdSeq.CS_SequencesCompleted
+    FileHandling.fileUplink.FilesReceived
+    FileHandling.fileUplink.PacketsReceived
+    Comms.commsBufferManager.TotalBuffs
+    Comms.commsBufferManager.CurrBuffs
+    Comms.commsBufferManager.HiBuffs
+    FileHandling.fileDownlink.FilesSent
+    FileHandling.fileDownlink.PacketsSent
+    FileHandling.fileManager.CommandsExecuted
+    Comms.comQueue.comQueueDepth
+    Comms.comQueue.buffQueueDepth
+    # Ref.tlmSend.SendLevel
   }
 
   packet CDHErrors id 2 group 1 {
     Ref.rateGroup1Comp.RgCycleSlips
     Ref.rateGroup2Comp.RgCycleSlips
     Ref.rateGroup3Comp.RgCycleSlips
-    Ref.cmdSeq.CS_Errors
-    Ref.fileUplink.Warnings
-    Ref.fileDownlink.Warnings
+    Comms.cmdSeq.CS_Errors
+    FileHandling.fileUplink.Warnings
+    FileHandling.fileDownlink.Warnings
     CDHCore.$health.PingLateWarnings
-    Ref.fileManager.Errors
-    Ref.commsBufferManager.NoBuffs
-    Ref.commsBufferManager.EmptyBuffs
-    Ref.fileManager.Errors
+    FileHandling.fileManager.Errors
+    Comms.commsBufferManager.NoBuffs
+    Comms.commsBufferManager.EmptyBuffs
+    FileHandling.fileManager.Errors
+
   }
 
   packet DriveTlm id 3 group 1 {
@@ -175,22 +179,22 @@ telemetry packets RefPackets {
   }
 
   packet DataProducts id 21 group 3 {
-    Ref.dpCat.CatalogDps
-    Ref.dpCat.DpsSent
-    Ref.dpMgr.NumSuccessfulAllocations
-    Ref.dpMgr.NumFailedAllocations
-    Ref.dpMgr.NumDataProducts
-    Ref.dpMgr.NumBytes
-    Ref.dpWriter.NumBuffersReceived
-    Ref.dpWriter.NumBytesWritten
-    Ref.dpWriter.NumSuccessfulWrites
-    Ref.dpWriter.NumFailedWrites
-    Ref.dpWriter.NumErrors
-    Ref.dpBufferManager.TotalBuffs
-    Ref.dpBufferManager.CurrBuffs
-    Ref.dpBufferManager.HiBuffs
-    Ref.dpBufferManager.NoBuffs
-    Ref.dpBufferManager.EmptyBuffs
+    DataProducts.dpCat.CatalogDps
+    DataProducts.dpCat.DpsSent
+    DataProducts.dpMgr.NumSuccessfulAllocations
+    DataProducts.dpMgr.NumFailedAllocations
+    DataProducts.dpMgr.NumDataProducts
+    DataProducts.dpMgr.NumBytes
+    DataProducts.dpWriter.NumBuffersReceived
+    DataProducts.dpWriter.NumBytesWritten
+    DataProducts.dpWriter.NumSuccessfulWrites
+    DataProducts.dpWriter.NumFailedWrites
+    DataProducts.dpWriter.NumErrors
+    DataProducts.dpBufferManager.TotalBuffs
+    DataProducts.dpBufferManager.CurrBuffs
+    DataProducts.dpBufferManager.HiBuffs
+    DataProducts.dpBufferManager.NoBuffs
+    DataProducts.dpBufferManager.EmptyBuffs
   }
 
   packet Version1 id 22 group 2 {
