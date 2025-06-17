@@ -81,7 +81,7 @@ void copyDataFrom(const MapBase<K, V>& map)
 
     1. Let `size` be the minimum of `map.getSize()` and `getCapacity()`.
 
-    1. Set `e = map.getHeadEntry`.
+    1. Set `e = map.getHeadEntry()`.
 
     1. For `i` in [0, `size`)
 
@@ -221,7 +221,7 @@ Fw::Success remove(const K& key, V& value) = 0
 ```
 
 1. If an entry `e` exists with key `key`, then
-store the value of `e` into `value,
+store the value of `e` into `value`,
 remove `e` from the map, and return `SUCCESS`.
 
 1. Otherwise return `FAILURE`.
@@ -237,13 +237,15 @@ void f(MapBase<U16, U32>& map) {
     size = map.getSize();
     ASSERT_EQ(size, 1);
     // Key does not exist
-    status = map.remove(10);
+    U32 value = 0;
+    status = map.remove(10, value);
     ASSERT_EQ(status, Success::FAILURE);
     ASSERT_EQ(size, 1);
     // Key exists
-    status = map.remove(0);
+    status = map.remove(0, value);
     ASSERT_EQ(status, Success::SUCCESS);
     ASSERT_EQ(size, 0);
+    ASSERT_EQ(value, 1);
 }
 ```
 
