@@ -344,3 +344,20 @@ ExternalArrayMap<U32> queue(entries, capacity);
 ASSERT_EQ(queue.getCapacity(), capacity);
 ```
 
+## 6. Public Static Functions
+
+### 6.1. getByteArraySize
+
+```c++
+static constexpr FwSizeType getByteArraySize(FwSizeType capacity)
+```
+
+Return `ExternalArray<T>::getByteArraySize(capacity)`.
+
+_Example:_
+```
+c++
+const FwSizeType size = 10;
+const FwSizeType byteArraySize = ExternalFifoQueue<U32>::getByteArraySize(size);
+ASSERT_EQ(byteArraySize, 10 * sizeof(U32));
+```

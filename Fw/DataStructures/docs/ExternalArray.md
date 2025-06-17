@@ -264,3 +264,11 @@ static constexpr FwSizeType getByteArraySize(FwSizeType size)
 ```
 
 Return `size * sizeof(T)`.
+
+_Example:_
+```
+c++
+const FwSizeType size = 10;
+const FwSizeType byteArraySize = ExternalArrayMap<U32>::getByteArraySize(size);
+ASSERT_EQ(byteArraySize, 10 * sizeof(U32));
+```
