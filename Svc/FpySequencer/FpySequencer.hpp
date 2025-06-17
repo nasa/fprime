@@ -38,6 +38,9 @@ using Signal = FpySequencer_SequencerStateMachineStateMachineBase::Signal;
 using State = FpySequencer_SequencerStateMachineStateMachineBase::State;
 
 class FpySequencer : public FpySequencerComponentBase {
+
+  friend class FpySequencerTester;
+
   public:
     union DirectiveUnion {
         FpySequencer_WaitRelDirective waitRel;
@@ -66,7 +69,7 @@ class FpySequencer : public FpySequencerComponentBase {
     //!
     ~FpySequencer();
 
-    PRIVATE :
+    private:
 
         //! Handler for command RUN
         //!
@@ -307,7 +310,7 @@ class FpySequencer : public FpySequencerComponentBase {
         const Svc::FpySequencer_DebugBreakpointArgs& value      //!< The value
         ) override;
 
-    PROTECTED :
+    protected:
 
         // ----------------------------------------------------------------------
         // Functions to implement for internal state machine guards
@@ -401,7 +404,7 @@ class FpySequencer : public FpySequencerComponentBase {
     void allocateBuffer(FwEnumStoreType identifier, Fw::MemAllocator& allocator, FwSizeType bytes);
 
     void deallocateBuffer(Fw::MemAllocator& allocator);
-    PRIVATE :
+    private :
 
         static constexpr U32 CRC_INITIAL_VALUE = 0xFFFFFFFFU;
 
