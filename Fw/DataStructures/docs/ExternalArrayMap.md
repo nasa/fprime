@@ -87,7 +87,7 @@ ExternalArrayMap<U16, U32> map(ByteArray(&bytes[0], sizeof bytes), capacity);
 ### 4.4. Copy Constructor
 
 ```c++
-ExternalArrayMap(const ExternalArrayMap<T>& map)
+ExternalArrayMap(const ExternalArrayMap<K, V>& map)
 ```
 
 Set `*this = map`.
@@ -121,7 +121,7 @@ Defined as `= default`.
 ### 5.1. operator=
 
 ```c++
-ExternalArrayMap<T>& operator=(const ExternalArrayMap<T>& map)
+ExternalArrayMap<K, V>& operator=(const ExternalArrayMap<K, V>& map)
 ```
 
 1. If `&map != this`
@@ -433,7 +433,7 @@ map.setStorage(ByteArray(&bytes[0], sizeof bytes), capacity);
 static constexpr FwSizeType getByteArraySize(FwSizeType capacity)
 ```
 
-Return `ExternalArray<T>::getByteArraySize(capacity)`.
+Return `ExternalArray<Entry>::getByteArraySize(capacity)`.
 
 _Example:_
 ```c++
