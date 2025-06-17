@@ -120,6 +120,18 @@ class ExternalArray final {
         this->m_size = size;
     }
 
+  public:
+    // ----------------------------------------------------------------------
+    // Public static functions
+    // ----------------------------------------------------------------------
+
+    //! Get the size of the storage for an array of the specified size,
+    //! as a byte array
+    static constexpr FwSizeType getByteArraySize(FwSizeType size  //!< The size
+    ) {
+        return size * sizeof(T);
+    }
+
   private:
     // ----------------------------------------------------------------------
     // Private member variables

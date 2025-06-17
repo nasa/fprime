@@ -60,6 +60,8 @@ ExternalArray(ByteArray data, FwSizeType size)
 ```
 
 Call `setStorage(data, size)`.
+`data` must be correctly aligned for `T` and must
+contain at least `getByteArraySize(size)` bytes.
 
 _Example:_
 ```c++
@@ -249,3 +251,13 @@ alignas(U32) U8 bytes[size * sizeof(U32)];
 ExternalArray<U32> a;
 a.setStorage(ByteArray(&bytes[0], sizeof bytes), size);
 ```
+
+## 5. Public Static Functions
+
+### 5.1. getByteArraySize
+
+```c++
+static constexpr FwSizeType getByteArraySize(FwSizeType size)
+```
+
+Return the size of a byte array for an array of the specified size.

@@ -13,6 +13,15 @@ It represents an abstract base class for a map.
 |`typename`|`K`|The type of a key in the map|
 |`typename`|`V`|The type of a value in the map|
 
+## Types
+
+`MapBase` defines the following types:
+
+
+|Name|Definition|
+|----|----------|
+|`Entry`|`MapEntry<K, V>|
+
 ## 2. Private Constructors
 
 ### 2.1. Copy Constructor
@@ -138,7 +147,7 @@ void f(const MapBase<U16, U32>& map) {
 ### 5.4. getHeadEntry
 
 ```c++
-const MapEntry<K, V>* getHeadEntry const = 0
+const Entry* getHeadEntry const = 0
 ```
 
 Get the head entry of the map.
@@ -190,7 +199,7 @@ See [**getCapacity**](MapBase.md#55-getCapacity).
 
 ```c++
 Fw::Success insert(const K& key, const V& value) = 0
-Fw::Success insert(const MapEntry<K, V>& e) = 0
+Fw::Success insert(const Entry& e) = 0
 ```
 
 1. If an entry `e` exists with the specified key, then update the 
