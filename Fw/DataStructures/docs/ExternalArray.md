@@ -260,4 +260,4 @@ a.setStorage(ByteArray(&bytes[0], sizeof bytes), size);
 static constexpr FwSizeType getByteArraySize(FwSizeType size)
 ```
 
-Return the size of a byte array for an array of the specified size.
+Return `size * sizeof(T)`.
