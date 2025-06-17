@@ -654,12 +654,15 @@ namespace Svc {
         U8 *const packetData
     )
   {
-    const Fw::FilePacket::DataPacket dataPacket = {
-      { Fw::FilePacket::T_DATA, this->sequenceIndex++ },
-      static_cast<U32>(byteOffset),
-      PACKET_SIZE,
-      packetData
-    };
+    Fw::FilePacket::DataPacket tempDataPacket;
+    tempDataPacket.initialize(
+        this->sequenceIndex++,
+        static_cast<U32>(byteOffset),
+        PACKET_SIZE,
+        packetData
+    );
+    const Fw::FilePacket::DataPacket dataPacket = tempDataPacket;
+
     Fw::FilePacket filePacket;
     filePacket.fromDataPacket(dataPacket);
     this->sendFilePacket(filePacket);
@@ -668,10 +671,10 @@ namespace Svc {
   void FileUplinkTester ::
     sendEndPacket(const CFDP::Checksum& checksum)
   {
-    const Fw::FilePacket::Header header = {
-      Fw::FilePacket::T_END,
-      this->sequenceIndex++
-    };
+    Fw::FilePacket::Header tempHeader;
+    tempHeader.initialize(Fw::FilePacket::T_END, this->sequenceIndex++);
+    const Fw::FilePacket::Header header = tempHeader;
+
     Fw::FilePacket::EndPacket endPacket;
     endPacket.m_header = header;
     endPacket.setChecksum(checksum);
@@ -683,11 +686,15 @@ namespace Svc {
   void FileUplinkTester ::
     sendCancelPacket()
   {
-    const Fw::FilePacket::Header header = {
-      Fw::FilePacket::T_CANCEL,
-      this->sequenceIndex++
-    };
-    const Fw::FilePacket::CancelPacket cancelPacket = { header };
+    Fw::FilePacket::Header tmpHeader;
+    tmpHeader.initialize(Fw::FilePacket::T_CANCEL, this->sequenceIndex++);
+    const Fw::FilePacket::Header header = tmpHeader;
+
+    Fw::FilePacket::CancelPacket tmpCancelPacket;
+    tmpCancelPacket.initialize(header.getSequenceIndex());
+    tmpCancelPacket.m_header = header;
+    const Fw::FilePacket::CancelPacket cancelPacket = tmpCancelPacket;
+
     Fw::FilePacket filePacket;
     filePacket.fromCancelPacket(cancelPacket);
     this->sendFilePacket(filePacket);
