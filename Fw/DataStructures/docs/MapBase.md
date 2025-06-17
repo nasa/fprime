@@ -110,7 +110,7 @@ void f(MapBase<U16, U32>& m1, MapBase<U16, U32>& m2) {
     const U16 key = 0
     const U32 value = 42;
     const auto status = m1.enqueue(key, value);
-    ASSERT_EQ(status, Fw::Success::SUCCESS);
+    ASSERT_EQ(status, Success::SUCCESS);
     m2.clear();
     ASSERT_EQ(m2.getSize(), 0);
     m2.copyDataFrom(q1);
@@ -121,7 +121,7 @@ void f(MapBase<U16, U32>& m1, MapBase<U16, U32>& m2) {
 ### 6.3. find
 
 ```c++
-Fw::Success find(const K& key, V& value) = 0
+Success find(const K& key, V& value) = 0
 ```
 
 1. If an entry `e` with value `key` exists in the map,
@@ -135,11 +135,11 @@ void f(const MapBase<U16, U32>& map) {
     map.clear();
     U32 value = 0;
     auto status = map.find(0, value);
-    ASSERT_EQ(status, Fw::Success::FAILURE);
+    ASSERT_EQ(status, Success::FAILURE);
     status = map.insert(0, 1);
-    ASSERT_EQ(status, Fw::Success::SUCCESS);
+    ASSERT_EQ(status, Success::SUCCESS);
     status = map.find(0, value);
-    ASSERT_EQ(status, Fw::Success::SUCCESS);
+    ASSERT_EQ(status, Success::SUCCESS);
     ASSERT_EQ(value, 1);
 }
 ```
@@ -198,8 +198,8 @@ See [**getCapacity**](MapBase.md#55-getCapacity).
 ### 6.7. insert
 
 ```c++
-Fw::Success insert(const K& key, const V& value) = 0
-Fw::Success insert(const Entry& e) = 0
+Success insert(const K& key, const V& value) = 0
+Success insert(const Entry& e) = 0
 ```
 
 1. If an entry `e` exists with the specified key, then update the 
@@ -226,7 +226,7 @@ void f(MapBase<U16, U32>& map) {
 ### 6.8. remove
 
 ```c++
-Fw::Success remove(const K& key, V& value) = 0
+Success remove(const K& key, V& value) = 0
 ```
 
 1. If an entry `e` exists with key `key`, then

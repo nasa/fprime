@@ -102,7 +102,7 @@ ExternalArrayMap<U16, U32> m1(entries, capacity);
 const U16 key = 0;
 const U32 value = 42;
 const auto status = m1.insert(key, value);
-ASSERT_EQ(status, Fw::Success::SUCCESS);
+ASSERT_EQ(status, Success::SUCCESS);
 // Call the copy constructor
 ExternalArrayMap<U16, U32> m2(m1);
 ASSERT_EQ(m2.getSize(), 1);
@@ -142,7 +142,7 @@ ExternalArrayMap<U16, U32> m1(entries, capacity);
 U16 key = 0;
 U32 value = 42;
 const auto status = m1.insert(value);
-ASSERT_EQ(status, Fw::Success::SUCCESS);
+ASSERT_EQ(status, Success::SUCCESS);
 // Call the default constructor
 ExternalArrayMap m2;
 ASSERT_EQ(m2.getSize(), 0);
@@ -157,7 +157,7 @@ ASSERT_EQ(m2.getSize(), 1);
 void clear() override
 ```
 
-1. Set `m_size = 0`.
+Set `m_size = 0`.
 
 _Example:_
 ```c++
@@ -173,10 +173,41 @@ ASSERT_EQ(map.getSize(), 0);
 ### 5.3. find
 
 ```c++
-Fw::Success find(const K& key, V& value) override
+Success find(const K& key, V& value) override
 ```
 
-TODO
+1. Set `status = Success::FAILURE`.
+
+1. Let `size = getSize()`.
+
+1. For `i` in `[0, size)`
+
+    1. Let `const auto& e = &m_entries[i]`.
+
+    1. If `e.getKey() == key`
+
+        1. Set `value = e.getValue()`.
+
+        1. Set `status = Success::SUCCESS`.
+
+        1. Break out of the loop.
+
+1. Return `status`.
+
+_Example:_
+```c++
+constexpr FwSizeType capacity = 10;
+U32 entries[capacity];
+ExternalArrayMap<U16, U32> map(entries, capacity);
+U32 value = 0;
+auto status = map.find(0, value);
+ASSERT_EQ(status, Success::FAILURE);
+status = map.insert(0, 1);
+ASSERT_EQ(status, Success::SUCCESS);
+status = map.find(0, value);
+ASSERT_EQ(status, Success::SUCCESS);
+ASSERT_EQ(value, 1);
+```
 
 ### 5.4. getCapacity
 
@@ -196,7 +227,25 @@ ASSERT_EQ(map.getCapacity(), capacity);
 
 ### 5.5. getHeadEntry
 
-TODO
+```c++
+const Entry* getHeadEntry const override
+```
+
+Get the head entry of the map.
+
+_Example:_
+```c++
+constexpr FwSizeType capacity = 10;
+U32 entries[capacity];
+ExternalArrayMap<U16, U32> map(entries, capacity);
+const auto* e = map.getHeadEntry();
+FW_ASSERT(e == nullptr);
+map.insert(0, 1);
+e = map.getHeadEntry();
+FW_ASSERT(e != nullptr);
+ASSERT_EQ(e.getKey(), 0);
+ASSERT_EQ(e.getValue(), 1);
+```
 
 ### 5.6. getSize
 
@@ -222,8 +271,8 @@ ASSERT_EQ(size, 1);
 ### 5.7. insert
 
 ```c++
-Fw::Success insert(const K& key, const V& value) override
-Fw::Success insert(const Entry& e) override
+Success insert(const K& key, const V& value) override
+Success insert(const Entry& e) override
 ```
 
 TODO
@@ -231,7 +280,7 @@ TODO
 ### 5.8. remove
 
 ```c++
-Fw::Success remove(const K& key, V& value) override
+Success remove(const K& key, V& value) override
 ```
 
 TODO
