@@ -29,6 +29,8 @@ storing the entries in the map.
 |`m_entries`|[`ExternalArray<Entry>`](ExternalArray.md)|The array for storing the map entries|C++ default initialization|
 |`m_size`|`FwSizeType`|The number of entries in the map|0|
 
+The type `Entry` is defined [in the base class](MapBase.md#2-types).
+
 ## 4. Public Constructors and Destructors
 
 ### 4.1. Zero-Argument Constructor
@@ -67,6 +69,9 @@ ExternalArrayMap<U16, U32> map(entries, capacity);
 ExternalArrayMap(ByteArray data, FwSizeType capacity)
 ```
 
+`data` must be correctly aligned for `Entry` and must
+contain at least `ExternalArrayMap<K, V>::getByteArraySize(capacity)` bytes.
+
 1. Call `setStorage(data, capacity)`.
 
 1. Initialize the other member variables with their default values.
@@ -74,7 +79,8 @@ ExternalArrayMap(ByteArray data, FwSizeType capacity)
 _Example:_
 ```c++
 constexpr FwSizeType capacity = 10;
-alignas(U32) U8 bytes[capacity * sizeof(MapEntry<U16, U32>)];
+constexpr FwSizeType byteArraySize = ExternalArrayMap<U16, U32>::getByteArraySize();
+alignas(MapEntry<U16, U32>) U8 bytes[byteArraySize];
 ExternalArrayMap<U16, U32> map(ByteArray(&bytes[0], sizeof bytes), capacity);
 ```
 
@@ -198,6 +204,9 @@ queue.setStorage(entries, capacity);
 void setStorage(ByteArray data, FwSizeType capacity)
 ```
 
+`data` must be correctly aligned for `Entry` and must
+contain at least `ExternalArrayMap<K, V>::getByteArraySize(capacity)` bytes.
+
 1. Call `m_entries.setStorage(data, capacity)`.
 
 1. If `capacity > 0`
@@ -211,9 +220,10 @@ void setStorage(ByteArray data, FwSizeType capacity)
 _Example:_
 ```c++
 constexpr FwSizeType capacity = 10;
-alignas(U32) U8 bytes[capacity * sizeof(U32)];
-ExternalArrayMap<U32> queue;
-queue.setStorage(ByteArray(&bytes[0], sizeof bytes), capacity);
+constexpr FwSizeType byteArraySize = ExternalArrayMap<U16, U32>::getByteArraySize();
+alignas(MapEntry<U16, U32>) U8 bytes[byteArraySize];
+ExternalArrayMap<U16, U32> map;
+map.setStorage(ByteArray(&bytes[0], sizeof bytes), capacity);
 ```
 
 ### 5.5. enqueue

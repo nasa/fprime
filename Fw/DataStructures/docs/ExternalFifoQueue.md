@@ -76,7 +76,7 @@ ExternalFifoQueue(ByteArray data, FwSizeType capacity)
 ```
 
 `data` must be correctly aligned for `T` and must
-contain at least `ExternalArray<T>::getByteArraySize(size)` bytes.
+contain at least `ExternalFifoQueue<T>::getByteArraySize(capacity)` bytes.
 
 1. Call `setStorage(data, capacity)`.
 
@@ -85,7 +85,8 @@ contain at least `ExternalArray<T>::getByteArraySize(size)` bytes.
 _Example:_
 ```c++
 constexpr FwSizeType capacity = 10;
-alignas(U32) U8 bytes[capacity * sizeof(U32)];
+constexpr FwSizeType byteArraySize = ExternalFifoQueue<U32>::getByteArraySize();
+alignas(U32) U8 bytes[byteArraySize];
 ExternalFifoQueue<U32> queue(ByteArray(&bytes[0], sizeof bytes), capacity);
 ```
 
@@ -210,7 +211,7 @@ void setStorage(ByteArray data, FwSizeType capacity)
 ```
 
 `data` must be correctly aligned for `T` and must
-contain at least `ExternalArray<T>::getByteArraySize(size)` bytes.
+contain at least `ExternalFifoQueue<T>::getByteArraySize(capacity)` bytes.
 
 1. Call `m_items.setStorage(data, capacity)`.
 
@@ -225,7 +226,8 @@ contain at least `ExternalArray<T>::getByteArraySize(size)` bytes.
 _Example:_
 ```c++
 constexpr FwSizeType capacity = 10;
-alignas(U32) U8 bytes[capacity * sizeof(U32)];
+constexpr FwSizeType byteArraySize = ExternalFifoQueue<U32>::getByteArraySize();
+alignas(U32) U8 bytes[byteArraySize];
 ExternalFifoQueue<U32> queue;
 queue.setStorage(ByteArray(&bytes[0], sizeof bytes), capacity);
 ```
