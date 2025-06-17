@@ -9,7 +9,9 @@
 namespace Os {
 
 FwSizeType Queue::s_queueCount = 0;
+#if FW_QUEUE_REGISTRATION
 QueueRegistry* Queue::s_queueRegistry = nullptr;
+#endif
 
 Queue::Queue() : m_name(""), m_depth(0), m_size(0), m_delegate(*QueueInterface::getDelegate(m_handle_storage)) {}
 
@@ -32,9 +34,11 @@ QueueInterface::Status Queue ::create(const Fw::StringBase& name, FwSizeType dep
         this->m_size = messageSize;
         ScopeLock lock(Queue::getStaticMutex());
         Queue::s_queueCount++;
+#if FW_QUEUE_REGISTRATION
         if (Queue::s_queueRegistry != nullptr) {
             Queue::s_queueRegistry->registerQueue(this);
         }
+#endif
     }
     return status;
 }
