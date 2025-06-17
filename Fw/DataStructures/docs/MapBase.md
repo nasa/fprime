@@ -111,12 +111,33 @@ void f(MapBase<U16, U32>& m1, MapBase<U16, U32>& m2) {
 
 ### 5.3. find
 
-TODO
+```c++
+Fw::Success find(const K& key, V& value) = 0
+```
+
+1. If an entry `e` with value `key` exists in the map,
+then store the value of `e` into `value` and return `SUCCESS`.
+
+1. Otherwise return `FAILURE`.
+
+_Example:_
+```c++
+void f(const MapBase<U16, U32>& map) {
+    map.clear();
+    U32 value = 0;
+    auto status = map.find(0, value);
+    ASSERT_EQ(status, Fw::Success::FAILURE);
+    status = map.insert(0, 1);
+    ASSERT_EQ(status, Fw::Success::SUCCESS);
+    status = map.find(0, value);
+    ASSERT_EQ(status, Fw::Success::SUCCESS);
+    ASSERT_EQ(value, 1);
+}
+```
 
 ### 5.4. getHeadEntry
 
 ```c++
-MapEntry<K, V>* getHeadEntry() = 0
 const MapEntry<K, V>* getHeadEntry const = 0
 ```
 
@@ -125,14 +146,14 @@ Get the head entry of the map.
 _Example:_
 ```c++
 void f(const MapBase<U16, U32>& map) {
-  map.clear();
-  const auto* e = map.getHeadEntry();
-  FW_ASSERT(e == nullptr);
-  map.insert(0, 1);
-  e = map.getHeadEntry();
-  FW_ASSERT(e != nullptr);
-  ASSERT_EQ(e.getKey(), 0);
-  ASSERT_EQ(e.getValue(), 1);
+    map.clear();
+    const auto* e = map.getHeadEntry();
+    FW_ASSERT(e == nullptr);
+    map.insert(0, 1);
+    e = map.getHeadEntry();
+    FW_ASSERT(e != nullptr);
+    ASSERT_EQ(e.getKey(), 0);
+    ASSERT_EQ(e.getValue(), 1);
 }
 
 ```
@@ -196,11 +217,12 @@ void f(MapBase<U16, U32>& map) {
 ### 5.8. remove
 
 ```c++
-Fw::Success remove(const K& key) = 0
+Fw::Success remove(const K& key, V& value) = 0
 ```
 
 1. If an entry `e` exists with key `key`, then
-remove `e` from the map and return `SUCCESS`.
+store the value of `e` into `value,
+remove `e` from the map, and return `SUCCESS`.
 
 1. Otherwise return `FAILURE`.
 
