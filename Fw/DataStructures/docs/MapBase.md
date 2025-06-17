@@ -144,7 +144,24 @@ void f(const MapBase<U16, U32>& map) {
 }
 ```
 
-### 6.4. getHeadEntry
+### 6.4. getCapacity
+
+```c++
+virtual FwSizeType getCapacity() const = 0
+```
+
+Return the current capacity.
+
+_Example:_
+```c++
+void f(const MapBase<U16, U32>& map) {
+    const auto size = map.getSize();
+    const auto capacity = map.getCapacity();
+    ASSERT_LE(size, capacity);
+}
+```
+
+### 6.5. getHeadEntry
 
 ```c++
 const Entry* getHeadEntry const = 0
@@ -165,23 +182,6 @@ void f(const MapBase<U16, U32>& map) {
     ASSERT_EQ(e.getValue(), 1);
 }
 
-```
-
-### 6.5. getCapacity
-
-```c++
-virtual FwSizeType getCapacity() const = 0
-```
-
-Return the current capacity.
-
-_Example:_
-```c++
-void f(const MapBase<U16, U32>& map) {
-    const auto size = map.getSize();
-    const auto capacity = map.getCapacity();
-    ASSERT_LE(size, capacity);
-}
 ```
 
 ### 6.6. getSize
