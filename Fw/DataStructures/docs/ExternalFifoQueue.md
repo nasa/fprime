@@ -85,7 +85,7 @@ contain at least `ExternalFifoQueue<T>::getByteArraySize(capacity)` bytes.
 _Example:_
 ```c++
 constexpr FwSizeType capacity = 10;
-constexpr FwSizeType byteArraySize = ExternalFifoQueue<U32>::getByteArraySize();
+constexpr FwSizeType byteArraySize = ExternalFifoQueue<U32>::getByteArraySize(capacity);
 alignas(U32) U8 bytes[byteArraySize];
 ExternalFifoQueue<U32> queue(ByteArray(&bytes[0], sizeof bytes), capacity);
 ```
@@ -226,7 +226,7 @@ contain at least `ExternalFifoQueue<T>::getByteArraySize(capacity)` bytes.
 _Example:_
 ```c++
 constexpr FwSizeType capacity = 10;
-constexpr FwSizeType byteArraySize = ExternalFifoQueue<U32>::getByteArraySize();
+constexpr FwSizeType byteArraySize = ExternalFifoQueue<U32>::getByteArraySize(capacity);
 alignas(U32) U8 bytes[byteArraySize];
 ExternalFifoQueue<U32> queue;
 queue.setStorage(ByteArray(&bytes[0], sizeof bytes), capacity);
