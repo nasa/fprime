@@ -434,7 +434,7 @@ namespace Svc {
     for(FwIndexType i = 0; i < bytesToExtend; i++){
       status = comBuffer.serialize(zeros);
       FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
-      sizeOfZeros += sizeof(zeros);
+      sizeOfZeros += static_cast<U32>(sizeof(zeros));
     }
     // Set the buffer length
     const U32 fixedBuffLen = static_cast<U32>(comBuffer.getBuffLength());
