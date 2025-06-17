@@ -82,6 +82,8 @@ module Ref {
   # Passive component instances
   # ----------------------------------------------------------------------
 
+  instance posixTime: Svc.PosixTime base id 0x4300
+
   instance rateGroupDriverComp: Svc.RateGroupDriver base id 0x4400
 
   instance recvBuffComp: Ref.RecvBuff base id 0x4500

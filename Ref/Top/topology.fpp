@@ -42,7 +42,6 @@ module Ref {
     instance typeDemo
     instance systemResources
     instance linuxTimer
-    instance fatalHandler
 
     # ----------------------------------------------------------------------
     # Pattern graph specifiers
