@@ -1,3 +1,4 @@
+# ExternalFifoQueue
 
 `ExternalFifoQueue` is a `final` class template
 defined in [`Fw/DataStructures`](sdd.md).
