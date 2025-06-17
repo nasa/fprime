@@ -151,6 +151,27 @@ m2 = m1;
 ASSERT_EQ(m2.getSize(), 1);
 ```
 
+### 5.6. at
+
+```c++
+const V& at(FwSizeType index) const
+```
+
+1. Assert `index < m_size`.
+
+1. Return `m_entries[index].getValue()`.
+
+_Example:_
+```c++
+constexpr FwSizeType capacity = 3;
+MapEntry<U16, U32> entries[capacity];
+ExternalArrayMap<U16, U32> map(entries, capacity);
+const auto status = map.insert(0, 1);
+ASSERT_EQ(status, Success::SUCCESS);
+ASSERT_EQ(map.at(0), 1);
+ASSERT_DEATH(map.at(1), "Assert");
+```
+
 ### 5.2. clear
 
 ```c++
@@ -300,13 +321,69 @@ Success insert(const Entry& e) override
 
 1. Return `status`.
 
+_Example:_
+```c++
+constexpr FwSizeType capacity = 10;
+MapEntry<U16, U32> entries[capacity];
+ExternalArrayMap<U16, U32> map(entries, capacity);
+auto size = map.getSize();
+ASSERT_EQ(size, 0);
+const auto status = map.insert(0, 1);
+ASSERT_EQ(status, Success::SUCCESS);
+size = map.getSize();
+ASSERT_EQ(size, 1);
+```
+
 ### 5.8. remove
 
 ```c++
 Success remove(const K& key, V& value) override
 ```
 
-TODO
+1. Set `status = Success::FAILURE`.
+
+1. For `i` in `[0, m_size)`
+
+    1. If `m_entries[i].getKey() == key`
+
+        1. If `i < m_size - 1` then
+
+            1. `m_entries[i] = m_entries[m_size - 1]`.
+
+            1. Call `m_entries[i].setNextEntry(&m_entries[i + 1])`.
+
+        1. Otherwise call `m_entries[i].setNextEntry(nullptr)`.
+
+        1. Decrement `size`.
+
+        1. Set `status = Success::SUCCESS`.
+
+        1. Break out of the loop.
+
+1. Return `status`.
+
+_Example:_
+```c++
+constexpr FwSizeType capacity = 10;
+MapEntry<U16, U32> entries[capacity];
+ExternalArrayMap<U16, U32> map(entries, capacity);
+auto size = map.getSize();
+ASSERT_EQ(size, 0);
+auto status = map.insert(0, 1);
+ASSERT_EQ(status, Success::SUCCESS);
+size = map.getSize();
+ASSERT_EQ(size, 1);
+// Key does not exist
+U32 value = 0;
+status = map.remove(10, value);
+ASSERT_EQ(status, Success::FAILURE);
+ASSERT_EQ(size, 1);
+// Key exists
+status = map.remove(0, value);
+ASSERT_EQ(status, Success::SUCCESS);
+ASSERT_EQ(size, 0);
+ASSERT_EQ(value, 1);
+```
 
 ### 5.9. setStorage (Typed Data)
 
@@ -316,7 +393,7 @@ void setStorage(T* entries, FwSizeType capacity)
 
 1. Call `m_entries.setStorage(entries, capacity)`.
 
-1. Call `this->clear()`.
+1. Call `clear()`.
 
 _Example:_
 ```c++
@@ -337,7 +414,7 @@ contain at least `ExternalArrayMap<K, V>::getByteArraySize(capacity)` bytes.
 
 1. Call `m_entries.setStorage(data, capacity)`.
 
-1. Call `this->clear()`.
+1. Call `clear()`.
 
 _Example:_
 ```c++
