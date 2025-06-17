@@ -291,7 +291,6 @@ ASSERT_EQ(size, 1);
 
 ```c++
 Success insert(const K& key, const V& value) override
-Success insert(const Entry& e) override
 ```
 
 1. Set `status = Success::FAILURE`.
@@ -333,6 +332,12 @@ ASSERT_EQ(status, Success::SUCCESS);
 size = map.getSize();
 ASSERT_EQ(size, 1);
 ```
+
+```c++
+Success insert(const Entry& e) override
+```
+
+Call `insert(e.getKey(), e.getValue())`.
 
 ### 5.8. remove
 
