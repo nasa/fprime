@@ -7,7 +7,9 @@
 #include "STest/Random/Random.hpp"
 #include "Svc/FrameAccumulator/FrameDetector/FprimeFrameDetector.hpp"
 #include "Utils/Hash/Hash.hpp"
+#include "Utils/Types/test/ut/CircularBuffer/CircularBufferTester.hpp"
 #include "gtest/gtest.h"
+
 
 constexpr U32 CIRCULAR_BUFFER_TEST_SIZE = 2048;
 
@@ -149,7 +151,8 @@ TEST(FprimeFrameDetector, TestMoreDataNeeded) {
     Types::CircularBuffer circular_buffer(buffer, CIRCULAR_BUFFER_TEST_SIZE);
 
     (void)generate_random_fprime_frame(circular_buffer);
-    circular_buffer.m_allocated_size--;  // Remove 1 byte from the end of the frame to trigger "more data needed"
+     // Remove 1 byte from the end of the frame to trigger "more data needed"
+    Types::CircularBufferTester::tester_m_allocated_size_decrement(circular_buffer);
 
     Svc::FrameDetector::Status status;
     FwSizeType unused = 0;
