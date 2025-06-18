@@ -11,14 +11,14 @@ It represents an iterator for a set or a map.
 |Kind|Name|Purpose|
 |----|----|-------|
 |`typename`|`KE`|The type of a key in a map or the element of a set|
-|`typename`|`V`|The type of a value in a map; unused in a set|
+|`typename`|`VN`|The type of a value in a map or Nil in a set|
 
 ## 2. Base Class
 
-`SetOrMapIterator<KE, V>` is publicly derived from the following
+`SetOrMapIterator<KE, VN>` is publicly derived from the following
 templates:
 
-1. [`MapIterator<KE, V>`](MapIterator.md).
+1. [`MapIterator<KE, VN>`](MapIterator.md).
 
 1. [`SetIterator<KE>`](SetIterator.md).
 
@@ -35,8 +35,8 @@ classDiagram
 |Name|Type|Purpose|Default Value|
 |----|----|-------|-------------|
 |`m_keyOrElement`|`KE`|The map key or set element|C++ default initialization|
-|`m_value`|`V`|The value|C++ default initialization|
-|`m_next`|`SetOrMapIterator<KE, V>*`|Pointer to the next iterator or `nullptr` if none|`nullptr`|
+|`m_valueOrNil`|`VN`|The value or Nil|C++ default initialization|
+|`m_next`|`SetOrMapIterator<KE, VN>*`|Pointer to the next iterator or `nullptr` if none|`nullptr`|
 
 ## 4. Public Constructors and Destructors
 
@@ -51,19 +51,19 @@ Defined as `= default`.
 ### 4.2. Constructor Providing Members
 
 ```c++
-SetOrMapIterator(const KE& keyOrElement, const V& value, SetOrMapIterator<KE, V>* next = nullptr)
+SetOrMapIterator(const KE& keyOrElement, const VN& valueOrNil, SetOrMapIterator<KE, VN>* next = nullptr)
 ```
 
 1. Set `m_keyOrElement = keyOrElement`.
 
-2. Set `m_value = value`.
+2. Set `m_valueOrNil = valueOrNil`.
 
 3. Set `m_next = next`.
 
 ### 4.3. Copy Constructor
 
 ```c++
-SetOrMapIterator(const SetOrMapIterator<KE, V>& map)
+SetOrMapIterator(const SetOrMapIterator<KE, VN>& map)
 ```
 
 Defined as `= default`.
@@ -81,7 +81,7 @@ Defined as `= default`.
 ### 5.1. operator=
 
 ```c++
-SetOrMapIterator& operator=(const SetOrMapIterator&<KE, V>)
+SetOrMapIterator& operator=(const SetOrMapIterator&<KE, VN>)
 ```
 
 Defined as `= default`.
@@ -105,15 +105,15 @@ Return a reference to `m_keyOrElement`.
 ### 5.3. getValue
 
 ```c++
-const V& getValue() const
+const VN& getValue() const
 ```
 
-Return a reference to `m_value`.
+Return a reference to `m_valueOrNil`.
 
 ### 5.4. getNextIterator
 
 ```c++
-SetOrMapIterator<KE, V> getNextIterator()
+SetOrMapIterator<KE, VN> getNextIterator()
 ```
 
 Return `m_next`.
@@ -121,7 +121,7 @@ Return `m_next`.
 ### 5.4. getNextMapIterator
 
 ```c++
-MapIterator<KE, V> getNextMapIterator() override
+MapIterator<KE, VN> getNextMapIterator() override
 ```
 
 Return `m_next`.
@@ -145,7 +145,7 @@ Set `m_keyOrElement = keyOrElement`.
 ### 5.8. setNextIterator
 
 ```c++
-void setNextIterator(SetOrMapIterator<KE, V>* next)
+void setNextIterator(SetOrMapIterator<KE, VN>* next)
 ```
 
 Set `m_next = next`.
@@ -153,7 +153,7 @@ Set `m_next = next`.
 ### 5.7. setValue
 
 ```c++
-void setValue(const V& value) const
+void setValue(const VN& valueOrNil) const
 ```
 
-Set `m_value = value`.
+Set `m_valueOrNil = valueOrNil`.
