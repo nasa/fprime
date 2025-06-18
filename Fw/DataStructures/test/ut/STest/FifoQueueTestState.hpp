@@ -1,3 +1,9 @@
+// ======================================================================
+// \title  FifoQueueTestState.hpp
+// \author bocchino
+// \brief  hpp file for FIFO queue test state
+// ======================================================================
+
 #ifndef FifoQueueTestState_HPP
 #define FifoQueueTestState_HPP
 

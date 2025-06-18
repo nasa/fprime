@@ -14,7 +14,7 @@ class ExternalFifoQueueTester {
   public:
     ExternalFifoQueueTester<T>(const ExternalFifoQueue<T>& queue) : m_queue(queue) {}
 
-    const ExternalArray<T> getItems() const { return this->m_queue.m_items; }
+    const ExternalArray<T>& getItems() const { return this->m_queue.m_items; }
 
     const CircularIndex& getEnqueueIndex() const { return this->m_queue.m_enqueueIndex; }
 
