@@ -19,7 +19,7 @@ It represents an abstract base class for a map.
 
 |Name|Definition|
 |----|----------|
-|`Iterator`|[`MapIterator<K, V>`](MapIterator.md)|
+|`Iterator`|Alias of [`MapIterator<K, V>`](MapIterator.md)|
 |`Entry`|Alias of [`SetOrMapIterator<K, V>`](SetOrMapIterator.md)|
 
 
