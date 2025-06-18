@@ -1,11 +1,11 @@
 // ======================================================================
-// \title  FifoQueueBase
+// \title  StackBase
 // \author bocchino
-// \brief  An abstract base class for a FIFO queue
+// \brief  An abstract base class for a stack
 // ======================================================================
 
-#ifndef Fw_FifoQueueBase_HPP
-#define Fw_FifoQueueBase_HPP
+#ifndef Fw_StackBase_HPP
+#define Fw_StackBase_HPP
 
 #include "Fw/FPrimeBasicTypes.hpp"
 #include "Fw/Types/Assert.hpp"
@@ -14,7 +14,7 @@
 namespace Fw {
 
 template <typename T>
-class FifoQueueBase {
+class StackBase {
   private:
     // ----------------------------------------------------------------------
     // Private constructors
@@ -22,7 +22,7 @@ class FifoQueueBase {
 
     //! Copy constructor deleted in the base class
     //! Behavior depends on the implementation
-    FifoQueueBase(const FifoQueueBase<T>&) = delete;
+    StackBase(const StackBase<T>&) = delete;
 
   protected:
     // ----------------------------------------------------------------------
@@ -30,10 +30,10 @@ class FifoQueueBase {
     // ----------------------------------------------------------------------
 
     //! Zero-argument constructor
-    FifoQueueBase() = default;
+    StackBase() = default;
 
     //! Destructor
-    virtual ~FifoQueueBase() = default;
+    virtual ~StackBase() = default;
 
   private:
     // ----------------------------------------------------------------------
@@ -43,41 +43,41 @@ class FifoQueueBase {
     //! operator= deleted in the base class
     //! Behavior depends on the implementation
     //! We avoid virtual user-defined operators
-    FifoQueueBase<T>& operator=(const FifoQueueBase<T>&) = delete;
+    StackBase<T>& operator=(const StackBase<T>&) = delete;
 
   public:
     // ----------------------------------------------------------------------
     // Public member functions
     // ----------------------------------------------------------------------
 
-    //! Clear the queue
+    //! Clear the stack
     virtual void clear() = 0;
 
     //! Get an item at an index
-    //! Indices go from left to right in the queue
+    //! Indices go from left to right in the stack
     //! Fails an assertion if the index is out of range
     //! \return The item
     virtual const T& at(FwSizeType index  //!< The index
     ) const = 0;
 
-    //! Copy data from another queue
-    void copyDataFrom(const FifoQueueBase<T>& queue  //!< The queue
+    //! Copy data from another stack
+    void copyDataFrom(const StackBase<T>& stack  //!< The stack
     ) {
-        if (&queue != this) {
+        if (&stack != this) {
             this->clear();
-            const FwSizeType size = FW_MIN(queue.getSize(), this->getCapacity());
+            const FwSizeType size = FW_MIN(stack.getSize(), this->getCapacity());
             for (FwSizeType i = 0; i < size; i++) {
-                const auto& e = queue.at(i);
-                const auto status = this->enqueue(e);
+                const auto& e = stack.at(i);
+                const auto status = this->push(e);
                 FW_ASSERT(status == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(status));
             }
         }
     }
 
-    //! Enqueue an item (add to the right)
-    //! \return SUCCESS if item enqueued
-    virtual Success enqueue(const T& e  //!< The item (output)
-                            ) = 0;
+    //! Push an item (add to the right)
+    //! \return SUCCESS if item pushd
+    virtual Success push(const T& e  //!< The item (output)
+                         ) = 0;
 
     //! Peek an item at an index
     //! Indices go from left to right in the range [0, size)
@@ -93,19 +93,18 @@ class FifoQueueBase {
         return status;
     }
 
-    //! Dequeue an item (remove from the left)
-    //! \return SUCCESS if item dequeued
-    virtual Success dequeue(T& e  //!< The item (output)
-                            ) = 0;
+    //! Pop an item (remove from the right)
+    //! \return SUCCESS if item popped
+    virtual Success pop(T& e  //!< The item (output)
+                        ) = 0;
 
-    //! Get the size (number of items stored in the queue)
+    //! Get the size (number of items stored in the stack)
     //! \return The size
     virtual FwSizeType getSize() const = 0;
 
-    //! Get the capacity (maximum number of items stored in the queue)
+    //! Get the capacity (maximum number of items stored in the stack)
     //! \return The capacity
     virtual FwSizeType getCapacity() const = 0;
-
 };
 
 }  // namespace Fw
