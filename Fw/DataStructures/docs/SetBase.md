@@ -18,7 +18,7 @@ It represents an abstract base class for a set.
 
 |Name|Definition|
 |----|----------|
-|`Iterator`|`SetIterator<T>`|
+|`Iterator`|[`SetIterator<T>`](SetIterator.md)|
 
 ## 3. Private Constructors
 

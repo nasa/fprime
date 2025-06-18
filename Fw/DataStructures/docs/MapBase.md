@@ -19,7 +19,7 @@ It represents an abstract base class for a map.
 
 |Name|Definition|
 |----|----------|
-|`Iterator`|`MapIterator<K, V>`|
+|`Iterator`|[`MapIterator<K, V>`](MapIterator.md)|
 
 ## 3. Private Constructors
 
