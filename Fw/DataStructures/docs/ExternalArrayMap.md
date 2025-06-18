@@ -26,7 +26,7 @@ as the map implementation.
 
 |Name|Type|Purpose|Default Value|
 |----|----|-------|-------------|
-|`m_mapImpl`|[`ArraySetOrMapImpl<K, V>`](ArraySetOrMapImpl.md)|The map implementation|C++ default initialization|
+|`m_impl`|[`ArraySetOrMapImpl<K, V>`](ArraySetOrMapImpl.md)|The map implementation|C++ default initialization|
 
 ```mermaid
 classDiagram
@@ -56,7 +56,7 @@ ExternalArrayMap(Entry* entries, FwSizeType capacity)
 
 The type `Entry` is defined [in the base class](MapBase.md#2-public-types).
 
-Call `m_mapImpl.setStorage(entries, capacity)`.
+Call `m_impl.setStorage(entries, capacity)`.
 
 _Example:_
 ```c++
@@ -75,7 +75,7 @@ ExternalArrayMap(ByteArray data, FwSizeType capacity)
 [`getByteArrayAlignment()`](#61-getbytearrayalignment) and must
 contain at least [`getByteArraySize(size)`](#62-getbytearraysize) bytes.
 
-Call `m_mapImpl.setStorage(data, capacity)`.
+Call `m_impl.setStorage(data, capacity)`.
 
 _Example:_
 ```c++
@@ -128,7 +128,7 @@ ExternalArrayMap<K, V>& operator=(const ExternalArrayMap<K, V>& map)
 
 1. If `&map != this`
 
-    1. Set `m_mapImpl = map.m_mapImpl`.
+    1. Set `m_impl = map.m_impl`.
 
 1. Return `*this`.
 
@@ -157,7 +157,7 @@ ASSERT_EQ(m2.getSize(), 1);
 const V& at(FwSizeType index) const
 ```
 
-Return `m_mapImpl.at(index)`.
+Return `m_impl.at(index)`.
 
 _Example:_
 ```c++
@@ -176,7 +176,7 @@ ASSERT_DEATH(map.at(1), "Assert");
 void clear() override
 ```
 
-Call `m_mapImpl.clear()`.
+Call `m_impl.clear()`.
 
 _Example:_
 ```c++
@@ -197,7 +197,7 @@ Success find(const K& key, V& value) override
 
 1. Set `status = Success::FAILURE`.
 
-1. Set `iterator = m_mapImpl.find(key)`.
+1. Set `iterator = m_impl.find(key)`.
 
 1. If `iterator != nullptr`
 
@@ -228,7 +228,7 @@ ASSERT_EQ(value, 1);
 FwSizeType getCapacity() const override
 ```
 
-Return `m_mapImpl.getCapacity()`.
+Return `m_impl.getCapacity()`.
 
 _Example:_
 ```c++
@@ -268,7 +268,7 @@ ASSERT_EQ(e->getValue(), 1);
 FwSizeType getSize() const override
 ```
 
-Return `m_mapImpl.getSize()`.
+Return `m_impl.getSize()`.
 
 _Example:_
 ```c++
@@ -289,7 +289,7 @@ ASSERT_EQ(size, 1);
 Success insert(const K& key, const V& value) override
 ```
 
-Return `m_mapImpl.insert(key, value)`.
+Return `m_impl.insert(key, value)`.
 
 _Example:_
 ```c++
@@ -310,7 +310,7 @@ ASSERT_EQ(size, 1);
 Success remove(const K& key, V& value) override
 ```
 
-Return `m_mapImpl.remove(key, value)`.
+Return `m_impl.remove(key, value)`.
 
 _Example:_
 ```c++
@@ -343,7 +343,7 @@ void setStorage(Entry* entries, FwSizeType capacity)
 
 The type `Entry` is defined [in the base class](MapBase.md#2-public-types).
 
-Call `m_mapImpl.setStorage(entries, capacity)`.
+Call `m_impl.setStorage(entries, capacity)`.
 
 _Example:_
 ```c++

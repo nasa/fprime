@@ -25,7 +25,7 @@ as the set implementation.
 
 |Name|Type|Purpose|Default Value|
 |----|----|-------|-------------|
-|`m_setImpl`|[`ArraySetOrMapImpl<T, Nil>`](ArraySetOrMapImpl.md)|The set implementation|C++ default initialization|
+|`m_impl`|[`ArraySetOrMapImpl<T, Nil>`](ArraySetOrMapImpl.md)|The set implementation|C++ default initialization|
 
 The type `Nil` is defined [in the base class](SetBase.md#2-public-types).
 
@@ -57,7 +57,7 @@ ExternalArraySet(Entry* entries, FwSizeType capacity)
 
 The type `Entry` is defined [in the base class](SetBase.md#2-public-types).
 
-Call `m_setImpl.setStorage(entries, capacity)`.
+Call `m_impl.setStorage(entries, capacity)`.
 
 _Example:_
 ```c++
@@ -76,7 +76,7 @@ ExternalArraySet(ByteArray data, FwSizeType capacity)
 [`getByteArrayAlignment()`](#61-getbytearrayalignment) and must
 contain at least [`getByteArraySize(size)`](#62-getbytearraysize) bytes.
 
-Call `m_setImpl.setStorage(data, capacity)`.
+Call `m_impl.setStorage(data, capacity)`.
 
 _Example:_
 ```c++
@@ -127,7 +127,7 @@ ExternalArraySet<T>& operator=(const ExternalArraySet<T>& set)
 
 1. If `&set != this`
 
-    1. Set `m_setImpl = set.m_setImpl`.
+    1. Set `m_impl = set.m_impl`.
 
 1. Return `*this`.
 
@@ -154,7 +154,7 @@ ASSERT_EQ(m2.getSize(), 1);
 const V& at(FwSizeType index) const
 ```
 
-Return `m_setImpl.at(index)`.
+Return `m_impl.at(index)`.
 
 _Example:_
 ```c++
@@ -173,7 +173,7 @@ ASSERT_DEATH(set.at(1), "Assert");
 void clear() override
 ```
 
-Call `m_setImpl.clear()`.
+Call `m_impl.clear()`.
 
 _Example:_
 ```c++
@@ -192,7 +192,7 @@ ASSERT_EQ(set.getSize(), 0);
 Success find(const T& element) override
 ```
 
-1. Set `iterator = m_setImpl.find(element, Nil())`.
+1. Set `iterator = m_impl.find(element, Nil())`.
 
 1. Return `(iterator != nullptr) ? Success::SUCCESS : Success::FAILURE
 
@@ -215,7 +215,7 @@ ASSERT_EQ(status, Success::SUCCESS);
 FwSizeType getCapacity() const override
 ```
 
-Return `m_setImpl.getCapacity()`.
+Return `m_impl.getCapacity()`.
 
 _Example:_
 ```c++
@@ -254,7 +254,7 @@ ASSERT_EQ(e->getElement(), 42);
 FwSizeType getSize() const override
 ```
 
-Return `m_setImpl.getSize()`.
+Return `m_impl.getSize()`.
 
 _Example:_
 ```c++
@@ -275,7 +275,7 @@ ASSERT_EQ(size, 1);
 Success insert(const T& element) override
 ```
 
-Return `m_setImpl.insert(key, Nil())`.
+Return `m_impl.insert(key, Nil())`.
 
 _Example:_
 ```c++
@@ -298,7 +298,7 @@ Success remove(const T& element) override
 
 1. Set `Nil nil = {}`.
 
-1. Return `m_setImpl.remove(key, nil)`.
+1. Return `m_impl.remove(key, nil)`.
 
 _Example:_
 ```c++
@@ -329,7 +329,7 @@ void setStorage(Entry* entries, FwSizeType capacity)
 
 The type `Entry` is defined [in the base class](SetBase.md#2-public-types).
 
-Call `m_setImpl.setStorage(entries, capacity)`.
+Call `m_impl.setStorage(entries, capacity)`.
 
 _Example:_
 ```c++
