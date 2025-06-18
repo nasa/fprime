@@ -7,7 +7,7 @@
 #ifndef StackTestState_HPP
 #define StackTestState_HPP
 
-#include <deque>
+#include <vector>
 
 #include "Fw/DataStructures/Stack.hpp"
 #include "STest/STest/Pick/Pick.hpp"
@@ -32,7 +32,7 @@ struct State {
   //! The stack under test
   StackBase& stack;
   //! The stack for modeling correct behavior
-  std::deque<ItemType> modelStack;
+  std::vector<ItemType> modelStack;
   //! Get a random item
   static ItemType getRandomItem() { return STest::Pick::any(); }
 };

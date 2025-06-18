@@ -21,77 +21,77 @@ using Rule = STest::Rule<State>;
 
 namespace Rules {
 
-#if 0
-struct EnqueueOK : public Rule {
-    EnqueueOK() : Rule("EnqueueOK") {}
-    bool precondition(const State& state) { return static_cast<FwSizeType>(state.queue.getSize()) < State::capacity; }
+struct PushOK : public Rule {
+    PushOK() : Rule("PushOK") {}
+    bool precondition(const State& state) { return static_cast<FwSizeType>(state.stack.getSize()) < State::capacity; }
     void action(State& state) {
         const U32 value = STest::Pick::any();
-        const auto status = state.queue.enqueue(value);
+        const auto status = state.stack.push(value);
         ASSERT_EQ(status, Success::SUCCESS);
-        state.modelQueue.push_back(value);
+        state.modelStack.push_back(value);
     }
 };
 
-extern EnqueueOK enqueueOK;
+extern PushOK pushOK;
 
-struct EnqueueFull : public Rule {
-    EnqueueFull() : Rule("EnqueueFull") {}
-    bool precondition(const State& state) { return static_cast<FwSizeType>(state.queue.getSize()) >= State::capacity; }
+struct PushFull : public Rule {
+    PushFull() : Rule("PushFull") {}
+    bool precondition(const State& state) { return static_cast<FwSizeType>(state.stack.getSize()) >= State::capacity; }
     void action(State& state) {
         const auto item = State::getRandomItem();
-        const auto status = state.queue.enqueue(item);
+        const auto status = state.stack.push(item);
         ASSERT_EQ(status, Success::FAILURE);
     }
 };
 
-extern EnqueueFull enqueueFull;
+extern PushFull pushFull;
 
+#if 0
 struct At : public Rule {
     At() : Rule("At") {}
-    bool precondition(const State& state) { return state.queue.getSize() > 0; }
+    bool precondition(const State& state) { return state.stack.getSize() > 0; }
     void action(State& state) {
-        const auto index = STest::Pick::startLength(0, static_cast<U32>(state.queue.getSize()));
-        ASSERT_EQ(state.queue.at(index), state.modelQueue.at(index));
+        const auto index = STest::Pick::startLength(0, static_cast<U32>(state.stack.getSize()));
+        ASSERT_EQ(state.stack.at(index), state.modelQueue.at(index));
     }
 };
 
 extern At at;
 
-struct DequeueOK : public Rule {
-    DequeueOK() : Rule("DequeueOK") {}
-    bool precondition(const State& state) { return static_cast<FwSizeType>(state.queue.getSize()) > 0; }
+struct DestackOK : public Rule {
+    DestackOK() : Rule("DestackOK") {}
+    bool precondition(const State& state) { return static_cast<FwSizeType>(state.stack.getSize()) > 0; }
     void action(State& state) {
         U32 value = 0;
-        const auto status = state.queue.dequeue(value);
+        const auto status = state.stack.pop(value);
         ASSERT_EQ(status, Success::SUCCESS);
         const auto expectedValue = state.modelQueue.at(0);
         ASSERT_EQ(value, expectedValue);
         state.modelQueue.pop_front();
-        ASSERT_EQ(state.queue.getSize(), state.modelQueue.size());
+        ASSERT_EQ(state.stack.getSize(), state.modelQueue.size());
     }
 };
 
-extern DequeueOK dequeueOK;
+extern DestackOK popOK;
 
-struct DequeueEmpty : public Rule {
-    DequeueEmpty() : Rule("DequeueEmpty") {}
-    bool precondition(const State& state) { return static_cast<FwSizeType>(state.queue.getSize()) == 0; }
+struct DestackEmpty : public Rule {
+    DestackEmpty() : Rule("DestackEmpty") {}
+    bool precondition(const State& state) { return static_cast<FwSizeType>(state.stack.getSize()) == 0; }
     void action(State& state) {
         U32 value = 0;
-        const auto status = state.queue.dequeue(value);
+        const auto status = state.stack.pop(value);
         ASSERT_EQ(status, Success::FAILURE);
     }
 };
 
-extern DequeueEmpty dequeueEmpty;
+extern DestackEmpty popEmpty;
 
 struct Clear : public Rule {
     Clear() : Rule("Clear") {}
-    bool precondition(const State& state) { return state.queue.getSize() > 0; }
+    bool precondition(const State& state) { return state.stack.getSize() > 0; }
     void action(State& state) {
-        state.queue.clear();
-        ASSERT_EQ(state.queue.getSize(), 0);
+        state.stack.clear();
+        ASSERT_EQ(state.stack.getSize(), 0);
         state.modelQueue.clear();
     }
 };

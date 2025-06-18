@@ -221,17 +221,16 @@ TEST(ExternalStack, CopyDataFrom) {
     }
 }
 
-#if 0
 TEST(ExternalStackRules, PushOK) {
     U32 items[State::capacity];
-    State::ExternalQueue stack(items, State::capacity);
+    State::ExternalStack stack(items, State::capacity);
     State state(stack);
     Rules::pushOK.apply(state);
 }
 
 TEST(ExternalStackRules, PushFull) {
     U32 items[State::capacity];
-    State::ExternalQueue stack(items, State::capacity);
+    State::ExternalStack stack(items, State::capacity);
     State state(stack);
     for (FwSizeType i = 0; i < State::capacity; i++) {
         Rules::pushOK.apply(state);
@@ -239,9 +238,10 @@ TEST(ExternalStackRules, PushFull) {
     Rules::pushFull.apply(state);
 }
 
+#if 0
 TEST(ExternalStackRules, At) {
     U32 items[State::capacity];
-    State::ExternalQueue stack(items, State::capacity);
+    State::ExternalStack stack(items, State::capacity);
     State state(stack);
     Rules::pushOK.apply(state);
     Rules::at.apply(state);
@@ -249,7 +249,7 @@ TEST(ExternalStackRules, At) {
 
 TEST(ExternalStackRules, PopOK) {
     U32 items[State::capacity];
-    State::ExternalQueue stack(items, State::capacity);
+    State::ExternalStack stack(items, State::capacity);
     State state(stack);
     Rules::pushOK.apply(state);
     Rules::popOK.apply(state);
@@ -257,14 +257,14 @@ TEST(ExternalStackRules, PopOK) {
 
 TEST(ExternalStackRules, PopEmpty) {
     U32 items[State::capacity];
-    State::ExternalQueue stack(items, State::capacity);
+    State::ExternalStack stack(items, State::capacity);
     State state(stack);
     Rules::popEmpty.apply(state);
 }
 
 TEST(ExternalStackRules, Clear) {
     U32 items[State::capacity];
-    State::ExternalQueue stack(items, State::capacity);
+    State::ExternalStack stack(items, State::capacity);
     State state(stack);
     Rules::pushOK.apply(state);
     ASSERT_EQ(state.stack.getSize(), 1);
@@ -274,7 +274,7 @@ TEST(ExternalStackRules, Clear) {
 
 TEST(ExternalStackScenarios, Random) {
     U32 items[State::capacity];
-    State::ExternalQueue stack(items, State::capacity);
+    State::ExternalStack stack(items, State::capacity);
     State state(stack);
     Scenarios::random(Fw::String("ExternalStackRandom"), state, 1000);
 }

@@ -12,16 +12,16 @@ namespace StackTest {
 
 namespace Rules {
 
+PushOK pushOK;
+
+PushFull pushFull;
+
 #if 0
-EnqueueOK enqueueOK;
-
-EnqueueFull enqueueFull;
-
 At at;
 
-DequeueOK dequeueOK;
+PopOK popOK;
 
-DequeueEmpty dequeueEmpty;
+PopEmpty popEmpty;
 
 Clear clear;
 #endif
