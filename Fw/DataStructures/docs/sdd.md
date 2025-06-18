@@ -18,8 +18,8 @@ and _C_.
 
 The data structures in this directory are **sequential data structures**,
 i.e., they do not support direct concurrent access by multiple threads.
-To use these data structures in a multithreaded context, you have
-to guard the access separately.
+To use these data structures in a multithreaded context, you need
+to provide separate concurrency control.
 The most common way to do this is to make the data
 structure a member of an active or queued component and to use
 the component queue to guard the access to the structure.
@@ -86,10 +86,6 @@ It provides insert, remove, and find operations.
 |[`MapBase`](MapBase.md)|The abstract base class for a map|
 |[`RedBlackTreeMap`](RedBlackTreeMap.md)|A red-black tree with internal memory for storing the tree|
 
-The queue implementations use a template called 
-[`MapEntry`](MapEntry.md) for representing
-an entry in the map.
-
 ### 3.2. Class Diagram
 
 ```mermaid
@@ -102,12 +98,25 @@ classDiagram
 
 ## 4. Sets
 
-* [`SetBase`](SetBase.md)
+A **set** is a data structure that contains elements.
+It provides insert, remove, and find operations.
 
-* [`ExternalArraySet`](ExternalArraySet.md)
+### 4.1. Templates
 
-* [`ArraySet`](ArraySet.md)
+|Name|Description|
+|----|-----------|
+|[`ArraySet`](ArraySet.md)|An array-based set with internal memory for storing the array|
+|[`ExternalArraySet`](ExternalArraySet.md)|An array-based set with external memory for storing the array|
+|[`ExternalRedBlackTreeSet`](ExternalRedBlackTreeSet.md)|A red-black tree with external memory for storing the tree|
+|[`RedBlackTreeSet`](RedBlackTreeSet.md)|A red-black tree with internal memory for storing the tree|
+|[`SetBase`](SetBase.md)|The abstract base class for a set|
 
-* [`ExternalRedBlackTreeSet`](ExternalRedBlackTreeSet.md)
+### 4.2. Class Diagram
 
-* [`RedBlackTreeSet`](RedBlackTreeSet.md)
+```mermaid
+classDiagram
+    SetBase <|-- ArraySet
+    SetBase <|-- ExternalArraySet
+    SetBase <|-- ExternalRedBlackTreeSet
+    SetBase <|-- RedBlackTreeSet
+```

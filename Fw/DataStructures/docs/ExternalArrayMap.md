@@ -3,8 +3,8 @@
 `ExternalArrayMap` is a `final` class template
 defined in [`Fw/DataStructures`](sdd.md).
 It represents an array-based map with external storage.
-Internally it maintains an [`ExternalArray`](ExternalArray.md) for
-storing the entries in the map.
+Internally it maintains an [`ArraySetOrMapImpl<Entry>`](ArraySetOrMapImpl.md)
+as the map implementation.
 
 ## 1. Template Parameters
 
@@ -36,7 +36,7 @@ The type `SetOrMapIterator` is defined [here](SetOrMapIterator.md).
 
 |Name|Type|Purpose|Default Value|
 |----|----|-------|-------------|
-|`m_mapImpl`|[`ArraySetOrMapImpl<Entry>`](ArraySetOrMapImpl.md)|The array for storing the map entries|C++ default initialization|
+|`m_mapImpl`|[`ArraySetOrMapImpl<Entry>`](ArraySetOrMapImpl.md)|The map implementation|C++ default initialization|
 
 ```mermaid
 classDiagram

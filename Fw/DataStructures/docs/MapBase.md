@@ -1,6 +1,6 @@
 # MapBase
 
-`MapBase` is a class template
+`MapBase` is an abstract class template
 defined in [`Fw/DataStructures`](sdd.md).
 It represents an abstract base class for a map.
 
@@ -83,7 +83,7 @@ void f(MapBase<U16, U32>& map) {
 void copyDataFrom(const MapBase<K, V>& map)
 ```
 
-1. If `&queue != this` then
+1. If `&map != this` then
 
     1. Call `clear()`.
 
@@ -95,11 +95,11 @@ void copyDataFrom(const MapBase<K, V>& map)
 
         1. Assert `e != nullptr`.
 
-        1. Set `e1 = insert(*e)`.
+        1. Set `e1 = insert(e->getKey(), e->getValue())`.
 
         1. Assert `status == Success::SUCCESS`.
 
-        1. Set `e = e.getNextIterator()`
+        1. Set `e = e->getNextMapIterator()`
 
 _Example:_
 ```c++
@@ -166,19 +166,19 @@ void f(const MapBase<U16, U32>& map) {
 const Iterator* getHeadIterator const = 0
 ```
 
-Get the head entry of the map.
+Get the head iterator for the map.
 
 _Example:_
 ```c++
 void f(const MapBase<U16, U32>& map) {
     map.clear();
     const auto* e = map.getHeadIterator();
-    FW_ASSERT(e == nullptr);
+    ASSERT_EQ(e, nullptr);
     map.insert(0, 1);
     e = map.getHeadIterator();
-    FW_ASSERT(e != nullptr);
-    ASSERT_EQ(e.getKey(), 0);
-    ASSERT_EQ(e.getValue(), 1);
+    ASSERT_EQ(e, nullptr);
+    ASSERT_EQ(e->getKey(), 0);
+    ASSERT_EQ(e->getValue(), 1);
 }
 
 ```
@@ -192,13 +192,12 @@ virtual FwSizeType getSize() const = 0
 Return the current size.
 
 _Example:_
-See [**getCapacity**](MapBase.md#55-getCapacity).
+See [**getCapacity**](MapBase.md#65-getcapacity).
 
 ### 6.7. insert
 
 ```c++
 Success insert(const K& key, const V& value) = 0
-Success insert(const Iterator& e) = 0
 ```
 
 1. If an entry `e` exists with the specified key, then update the 

@@ -1,6 +1,6 @@
 # SetIterator
 
-`SetIterator` is a class template
+`SetIterator` is an abstract class template
 defined in [`Fw/DataStructures`](sdd.md).
 It represents an iterator for a set.
 

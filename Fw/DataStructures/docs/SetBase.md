@@ -1,6 +1,6 @@
 # SetBase
 
-`SetBase` is a class template
+`SetBase` is an abstract class template
 defined in [`Fw/DataStructures`](sdd.md).
 It represents an abstract base class for a set.
 
@@ -12,45 +12,35 @@ It represents an abstract base class for a set.
 |----|----|-------|
 |`typename`|`T`|The type of an element in the set|
 
-## 2. Protected Types
+## 2. Public Types
 
-`SetBase` defines the following protected types:
+`SetBase` defines the following public types:
 
 |Name|Definition|
 |----|----------|
-|`Nil`|`struct Nil {}`|
-|`MapImpl`|`MapBase<T, Nil>`|
-|`Entry`|`SetEntry<T>`|
+|`Iterator`|`SetIterator<T>`|
 
-## 3. Protected Member Variables
+## 3. Private Constructors
 
-`SetBase` has the following protected member variables.
-
-|Name|Type|Purpose|Default Value|
-|----|----|-------|-------------|
-|`m_mapImpl`|`MapImpl&`|The implementation of the set as a map|
-
-## 4. Protected Constructors and Destructors
-
-### 4.1. Constructor Providing the Map Implementation
+### 3.1. Copy Constructor
 
 ```c++
-SetBase(MapImpl& mapImpl)
-```
-
-Set `m_mapImpl = mapImpl`.
-
-## 5. Private Constructors and Destructors
-
-### 5.1. Copy Constructor
-
-```c++
-SetBase(const SetBase<K, V>& set)
+SetBase(const SetBase<T>& set)
 ```
 
 Defined as `= delete`.
 
-### 5.2. Destructor
+## 4. Protected Constructors and Destructors
+
+### 4.1. Zero-Argument Constructor
+
+```c++
+SetBase()
+```
+
+Defined as `= default`.
+
+### 4.2. Destructor
 
 ```c++
 virtual ~SetBase()
@@ -58,9 +48,9 @@ virtual ~SetBase()
 
 Defined as `= default`.
 
-## 6. Private Member Functions
+## 5. Private Member Functions
 
-### 6.1. operator=
+### 5.1. operator=
 
 ```c++
 SetBase& operator=(const SetBase&)
@@ -68,15 +58,15 @@ SetBase& operator=(const SetBase&)
 
 Defined as `= delete`.
 
-## 7. Public Member Functions
+## 6. Public Member Functions
 
-### 7.1. clear
+### 6.1. clear
 
 ```c++
 virtual void clear() = 0
 ```
 
-Call `m_mapImpl.clear()`.
+Call `m_setImpl.clear()`.
 
 _Example:_
 ```c++
@@ -86,38 +76,56 @@ void f(SetBase<U32>& set) {
 }
 ```
 
-### 7.2. copyDataFrom
+### 6.2. copyDataFrom
 
 ```c++
 void copyDataFrom(const SetBase<T>& set)
 ```
 
-Call `m_mapImpl.copyDataFrom(set.m_mapImpl)`.
+1. If `&set != this` then
+
+    1. Call `clear()`.
+
+    1. Let `size` be the minimum of `set.getSize()` and `getCapacity()`.
+
+    1. Set `e = set.getHeadIterator()`.
+
+    1. For `i` in [0, `size`)
+
+        1. Assert `e != nullptr`.
+
+        1. Set `status = insert(e->getElement())`.
+
+        1. Assert `status == Success::SUCCESS`.
+
+        1. Set `e = e->getNextSetIterator()`
+
 
 _Example:_
 ```c++
-void f(SetBase<U32>& m1, SetBase<U32>& m2) {
-    m1.clear();
+void f(SetBase<U32>& s1, SetBase<U32>& s2) {
+    s1.clear();
     // Insert an entry
-    const auto status = m1.insert(42);
+    const auto status = s1.insert(42);
     ASSERT_EQ(status, Success::SUCCESS);
-    ASSERT_EQ(m1.getSize(), 1);
-    m2.clear();
-    ASSERT_EQ(m2.getSize(), 0);
-    m2.copyDataFrom(q1);
-    ASSERT_EQ(m2.getSize(), 1);
+    ASSERT_EQ(s1.getSize(), 1);
+    s2.clear();
+    ASSERT_EQ(s2.getSize(), 0);
+    s2.copyDataFrom(q1);
+    ASSERT_EQ(s2.getSize(), 1);
 }
 ```
 
-### 7.3. find
+### 6.3. find
 
 ```c++
 Success find(const T& element) = 0
 ```
 
-1. Let `Nil nil = {}`.
+1. If an entry `e` with value `key` exists in the set,
+then set `element = e.getElement()` and return `SUCCESS`.
 
-1. Return `m_mapImpl.find(element, nil);
+1. Otherwise return `FAILURE`.
 
 _Example:_
 ```c++
@@ -129,16 +137,17 @@ void f(const SetBase<U32>& set) {
     ASSERT_EQ(status, Success::SUCCESS);
     status = set.find(42);
     ASSERT_EQ(status, Success::SUCCESS);
+    ASSERT_EQ(value, 1);
 }
 ```
 
-### 7.4. getCapacity
+### 6.4. getCapacity
 
 ```c++
 virtual FwSizeType getCapacity() const = 0
 ```
 
-Return `m_mapImpl.getCapacity()`.
+Return the current capacity.
 
 _Example:_
 ```c++
@@ -149,29 +158,29 @@ void f(const SetBase<U32>& set) {
 }
 ```
 
-### 7.5. getHeadEntry
+### 6.5. getHeadIterator
 
 ```c++
-const Entry* getHeadEntry const = 0
+const Iterator* getHeadIterator const = 0
 ```
 
-Return `m_mapImpl.getHeadEntry()`.
+Get the head iterator for the set.
 
 _Example:_
 ```c++
 void f(const SetBase<U32>& set) {
     set.clear();
-    const auto* e = set.getHeadEntry();
-    FW_ASSERT(e == nullptr);
+    const auto* e = set.getHeadIterator();
+    ASSERT_EQ(e, nullptr);
     set.insert(42);
-    e = set.getHeadEntry();
-    FW_ASSERT(e != nullptr);
-    ASSERT_EQ(e.getElement(), 42);
+    e = set.getHeadIterator();
+    ASSERT_NE(e, nullptr);
+    ASSERT_EQ(e->getElement(), 42);
 }
 
 ```
 
-### 7.6. getSize
+### 6.6. getSize
 
 ```c++
 virtual FwSizeType getSize() const = 0
@@ -180,26 +189,24 @@ virtual FwSizeType getSize() const = 0
 Return the current size.
 
 _Example:_
-See [**getCapacity**](SetBase.md#55-getCapacity).
+See [**getCapacity**](SetBase.md#65-getcapacity).
 
-### 7.7. insert
+### 6.7. insert
 
 ```c++
-Success insert(const K& key, const V& value) = 0
-Success insert(const Entry& e) = 0
+Success insert(const T& element) = 0
 ```
 
-1. If an entry `e` exists with the specified key, then update the 
-   value in `e` and return `SUCCESS`.
+1. If an entry `e` exists with the specified element, then return `SUCCESS`.
 
 1. Otherwise if there is room in the set, then add a new entry `e` with the
-specified key-value pair and return `SUCCESS`.
+   specified element and return `SUCCESS`.
 
 1. Otherwise return `FAILURE`.
 
 _Example:_
 ```c++
-void f(SetBase<U32>& set) {
+void f(SetBase<U16, U32>& set) {
     set.clear();
     auto size = set.getSize();
     ASSERT_EQ(size, 0);
@@ -210,14 +217,13 @@ void f(SetBase<U32>& set) {
 }
 ```
 
-### 7.8. remove
+### 6.8. remove
 
 ```c++
-Success remove(const K& key, V& value) = 0
+Success remove(const T& element) = 0
 ```
 
 1. If an entry `e` exists with key `key`, then
-store the value of `e` into `value`,
 remove `e` from the set, and return `SUCCESS`.
 
 1. Otherwise return `FAILURE`.
@@ -228,20 +234,17 @@ void f(SetBase<U32>& set) {
     set.clear();
     auto size = set.getSize();
     ASSERT_EQ(size, 0);
-    auto status = set.insert(0, 1);
+    auto status = set.insert(0);
     ASSERT_EQ(status, Success::SUCCESS);
     size = set.getSize();
     ASSERT_EQ(size, 1);
-    // Key does not exist
-    U32 value = 0;
-    status = set.remove(10, value);
+    // Element does not exist
+    status = set.remove(42);
     ASSERT_EQ(status, Success::FAILURE);
     ASSERT_EQ(size, 1);
     // Key exists
-    status = set.remove(0, value);
+    status = set.remove(0);
     ASSERT_EQ(status, Success::SUCCESS);
     ASSERT_EQ(size, 0);
-    ASSERT_EQ(value, 1);
 }
 ```
-
