@@ -238,12 +238,13 @@ TEST(ExternalStackRules, PushFull) {
     Rules::pushFull.apply(state);
 }
 
-#if 0
 TEST(ExternalStackRules, At) {
     U32 items[State::capacity];
     State::ExternalStack stack(items, State::capacity);
     State state(stack);
-    Rules::pushOK.apply(state);
+    for (FwSizeType i = 0; i < State::capacity; i++) {
+        Rules::pushOK.apply(state);
+    }
     Rules::at.apply(state);
 }
 
@@ -252,9 +253,12 @@ TEST(ExternalStackRules, PopOK) {
     State::ExternalStack stack(items, State::capacity);
     State state(stack);
     Rules::pushOK.apply(state);
+    Rules::pushOK.apply(state);
+    Rules::popOK.apply(state);
     Rules::popOK.apply(state);
 }
 
+#if 0
 TEST(ExternalStackRules, PopEmpty) {
     U32 items[State::capacity];
     State::ExternalStack stack(items, State::capacity);

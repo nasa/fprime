@@ -46,36 +46,38 @@ struct PushFull : public Rule {
 
 extern PushFull pushFull;
 
-#if 0
 struct At : public Rule {
     At() : Rule("At") {}
     bool precondition(const State& state) { return state.stack.getSize() > 0; }
     void action(State& state) {
-        const auto index = STest::Pick::startLength(0, static_cast<U32>(state.stack.getSize()));
-        ASSERT_EQ(state.stack.at(index), state.modelQueue.at(index));
+        const auto size = state.stack.getSize();
+        const auto index = STest::Pick::startLength(0, static_cast<U32>(size));
+        ASSERT_EQ(state.stack.at(index), state.modelStack.at(size - 1 - index));
     }
 };
 
 extern At at;
 
-struct DestackOK : public Rule {
-    DestackOK() : Rule("DestackOK") {}
+struct PopOK : public Rule {
+    PopOK() : Rule("PopOK") {}
     bool precondition(const State& state) { return static_cast<FwSizeType>(state.stack.getSize()) > 0; }
     void action(State& state) {
+        const auto size = state.stack.getSize();
         U32 value = 0;
         const auto status = state.stack.pop(value);
         ASSERT_EQ(status, Success::SUCCESS);
-        const auto expectedValue = state.modelQueue.at(0);
+        const auto expectedValue = state.modelStack.at(size - 1);
         ASSERT_EQ(value, expectedValue);
-        state.modelQueue.pop_front();
-        ASSERT_EQ(state.stack.getSize(), state.modelQueue.size());
+        state.modelStack.pop_back();
+        ASSERT_EQ(state.stack.getSize(), state.modelStack.size());
     }
 };
 
-extern DestackOK popOK;
+extern PopOK popOK;
 
-struct DestackEmpty : public Rule {
-    DestackEmpty() : Rule("DestackEmpty") {}
+#if 0
+struct PopEmpty : public Rule {
+    PopEmpty() : Rule("PopEmpty") {}
     bool precondition(const State& state) { return static_cast<FwSizeType>(state.stack.getSize()) == 0; }
     void action(State& state) {
         U32 value = 0;
@@ -84,7 +86,7 @@ struct DestackEmpty : public Rule {
     }
 };
 
-extern DestackEmpty popEmpty;
+extern PopEmpty popEmpty;
 
 struct Clear : public Rule {
     Clear() : Rule("Clear") {}
@@ -92,7 +94,7 @@ struct Clear : public Rule {
     void action(State& state) {
         state.stack.clear();
         ASSERT_EQ(state.stack.getSize(), 0);
-        state.modelQueue.clear();
+        state.modelStack.clear();
     }
 };
 
