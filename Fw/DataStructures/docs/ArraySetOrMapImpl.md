@@ -19,7 +19,7 @@ storing the entries in the set or map.
 
 `ArraySetOrMapImpl` defines the following types:
 ```c++
-using Entry = SetOrMapIterator<KE, V>
+using Iterator = SetOrMapIterator<KE, V>
 ```
 
 The type `SetOrMapIterator` is defined [here](SetOrMapIterator.md).
@@ -30,7 +30,7 @@ The type `SetOrMapIterator` is defined [here](SetOrMapIterator.md).
 
 |Name|Type|Purpose|Default Value|
 |----|----|-------|-------------|
-|`m_entries`|[`ExternalArray<Entry>`](ExternalArray.md)|The array for storing the set or map entries|C++ default initialization|
+|`m_entries`|[`ExternalArray<Iterator>`](ExternalArray.md)|The array for storing the set or map entries|C++ default initialization|
 |`m_size`|`FwSizeType`|The number of entries in the map|0|
 
 ## 4. Public Constructors and Destructors
@@ -46,7 +46,7 @@ Initialize each member variable with its default value.
 ### 4.2. Constructor Providing Typed Backing Storage
 
 ```c++
-ArraySetOrMapImpl(Entry* entries, FwSizeType capacity)
+ArraySetOrMapImpl(Iterator* entries, FwSizeType capacity)
 ```
 
 1. Call `setStorage(entries, capacity)`.
@@ -102,7 +102,7 @@ ArraySetOrMapImpl<K, V>& operator=(const ArraySetOrMapImpl<K, V>& map)
 ### 5.2. at
 
 ```c++
-const Entry& at(FwSizeType index) const
+const Iterator& at(FwSizeType index) const
 ```
 
 1. Assert `index < m_size`.
@@ -120,7 +120,7 @@ Set `m_size = 0`.
 ### 5.4. find
 
 ```c++
-const Entry* find(const K& key)
+const Iterator* find(const K& key)
 ```
 
 1. Set `result = nullptr`.
@@ -145,10 +145,10 @@ FwSizeType getCapacity() const
 
 Return `m_entries.getSize()`.
 
-### 5.6. getHeadEntry
+### 5.6. getHeadIterator
 
 ```c++
-const Entry* getHeadEntry const
+const Iterator* getHeadIterator const
 ```
 
 1. Set `result = nullptr`.
@@ -172,7 +172,7 @@ Return `m_size`.
 ### 5.8. insert
 
 ```c++
-Success insert(const Entry& e)
+Success insert(const Iterator& e)
 ```
 
 1. Set `status = Success::FAILURE`.
@@ -191,10 +191,10 @@ Success insert(const Entry& e)
 
 1. If `(status == Success::FAILURE) && (m_size < getCapacity())`
 
-    1. Set `m_entries[m_size] = Entry(e.key, e.value)`.
+    1. Set `m_entries[m_size] = Iterator(e.key, e.value)`.
 
     1. If `m_size > 0` then
-       call `m_entries[m_size - 1].setNextEntry(&m_entries[m_size])`.
+       call `m_entries[m_size - 1].setNextIterator(&m_entries[m_size])`.
 
     1. Increment `m_size`.
 
@@ -218,9 +218,9 @@ Success remove(const K& key, V& value)
 
             1. `m_entries[i] = m_entries[m_size - 1]`.
 
-            1. Call `m_entries[i].setNextEntry(&m_entries[i + 1])`.
+            1. Call `m_entries[i].setNextIterator(&m_entries[i + 1])`.
 
-        1. Otherwise call `m_entries[i].setNextEntry(nullptr)`.
+        1. Otherwise call `m_entries[i].setNextIterator(nullptr)`.
 
         1. Decrement `size`.
 
@@ -262,7 +262,7 @@ contain at least [`getByteArraySize(size)`](#62-getbytearraysize) bytes.
 static constexpr U8 getByteArrayAlignment()
 ```
 
-Return `ArraySetOrMapImpl<Entry>::getByteArrayAlignment()`.
+Return `ExternalArray<Iterator>::getByteArrayAlignment()`.
 
 ### 6.2. getByteArraySize
 
@@ -270,4 +270,4 @@ Return `ArraySetOrMapImpl<Entry>::getByteArrayAlignment()`.
 static constexpr FwSizeType getByteArraySize(FwSizeType capacity)
 ```
 
-Return `ExternalArray<Entry>::getByteArraySize(capacity)`.
+Return `ExternalArray<Iterator>::getByteArraySize(capacity)`.
