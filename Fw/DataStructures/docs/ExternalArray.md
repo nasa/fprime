@@ -270,9 +270,8 @@ static constexpr U8 getByteArrayAlignment()
 Return `alignof(T)`.
 
 _Example:_
-```
-c++
-const U8 byteArrayAlignment = ExternalArray<U32>::getByteArraySize(size);
+```c++
+const U8 byteArrayAlignment = ExternalArray<U32>::getByteArrayAlignment(size);
 ASSERT_EQ(byteArrayAlignment, alignof(U32));
 ```
 
