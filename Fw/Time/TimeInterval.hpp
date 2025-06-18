@@ -8,9 +8,9 @@
 //!
 //! @class TimeInterval
 //! @brief A class to represent a time interval holding two U32 seconds and microseconds values.
-//! 
-//! The TimeInterval class is designed to hold a time interval and provides various methods 
-//! to manipulate and compare time intervals. It supports serialization and deserialization 
+//!
+//! The TimeInterval class is designed to hold a time interval and provides various methods
+//! to manipulate and compare time intervals. It supports serialization and deserialization
 //! for easy storage and transmission.
 //!
 namespace Fw {
@@ -80,7 +80,7 @@ namespace Fw {
 #ifdef BUILD_UT // Stream operators to support Googletest
             friend std::ostream& operator<<(std::ostream& os,  const TimeInterval& val);
 #endif
-        PRIVATE:
+        private:
             U32 m_seconds; // !< seconds portion of TimeInterval
             U32 m_useconds; // !< microseconds portion of TimeInterval
     };
