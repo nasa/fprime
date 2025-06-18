@@ -1,7 +1,7 @@
 // ======================================================================
-// \title  ExternalStackTest.cpp
+// \title  StackTest.cpp
 // \author bocchino
-// \brief  cpp file for ExternalStack tests
+// \brief  cpp file for Stack tests
 // ======================================================================
 
 #include "Fw/DataStructures/test/ut/STest/StackTestRules.hpp"
@@ -9,65 +9,46 @@
 
 namespace Fw {
 
-template <typename T>
-class ExternalStackTester {
+template <typename T, FwSizeType C>
+class StackTester {
   public:
-    ExternalStackTester<T>(const ExternalStack<T>& stack) : m_stack(stack) {}
+    StackTester(const Stack<T, C>& stack) : m_stack(stack) {}
 
-    const ExternalArray<T> getItems() const { return this->m_stack.m_items; }
+    const ExternalStack<T> getExtStack() const { return this->m_stack.extStack; }
+
+    const typename Array<T, C>::Elements& getItems() const { return this->m_stack.m_items; }
 
   private:
-    const ExternalStack<T>& m_stack;
+    const Stack<T, C>& m_stack;
 };
 
 namespace StackTest {
 
-TEST(ExternalStack, ZeroArgConstructor) {
-    ExternalStack<U32> stack;
-    ASSERT_EQ(stack.getCapacity(), 0);
+TEST(Stack, ZeroArgConstructor) {
+    constexpr FwSizeType C = 10;
+    Stack<U32, C> stack;
+    ASSERT_EQ(stack.getCapacity(), C);
     ASSERT_EQ(stack.getSize(), 0);
 }
 
-TEST(ExternalStack, TypedStorageConstructor) {
-    constexpr FwSizeType capacity = 10;
-    U32 items[capacity];
-    ExternalStack<U32> stack(items, capacity);
-    ExternalStackTester<U32> tester(stack);
-    ASSERT_EQ(tester.getItems().getElements(), items);
-    ASSERT_EQ(stack.getCapacity(), capacity);
-    ASSERT_EQ(stack.getSize(), 0);
-}
-
-TEST(ExternalStack, UntypedStorageConstructor) {
-    constexpr FwSizeType capacity = 10;
-    constexpr U8 alignment = ExternalStack<U32>::getByteArrayAlignment();
-    constexpr FwSizeType byteArraySize = ExternalStack<U32>::getByteArraySize(capacity);
-    alignas(alignment) U8 bytes[byteArraySize];
-    ExternalStack<U32> stack(ByteArray(&bytes[0], sizeof bytes), capacity);
-    ExternalStackTester<U32> tester(stack);
-    ASSERT_EQ(tester.getItems().getElements(), reinterpret_cast<U32*>(bytes));
-    ASSERT_EQ(stack.getCapacity(), capacity);
-    ASSERT_EQ(stack.getSize(), 0);
-}
-
-TEST(ExternalStack, At) {
-    constexpr FwSizeType capacity = 10;
-    U32 items[capacity];
-    ExternalStack<U32> stack(items, capacity);
-    auto status = stack.push(3);
+TEST(Stack, CopyConstructor) {
+    constexpr FwSizeType capacity = 3;
+    // Construct s1
+    Stack<U32, capacity> s1;
+    // Push an item
+    U32 value = 42;
+    const auto status = s1.push(value);
     ASSERT_EQ(status, Success::SUCCESS);
-    status = stack.push(4);
-    ASSERT_EQ(status, Success::SUCCESS);
-    ASSERT_EQ(stack.at(0), 4);
-    ASSERT_EQ(stack.at(1), 3);
-    ASSERT_DEATH(stack.at(2), "Assert");
+    ASSERT_EQ(s1.getSize(), 1);
+    // Use the copy constructor to construct s2
+    Stack<U32, capacity> s2(s1);
+    ASSERT_EQ(s2.getSize(), 1);
 }
 
-TEST(ExternalStack, PushOK) {
+TEST(Stack, PushOK) {
     constexpr const FwSizeType capacity = 1000;
     const FwSizeType size = STest::Pick::lowerUpper(1, capacity);
-    U32 elts[capacity];
-    ExternalStack<U32> stack(elts, capacity);
+    Stack<U32, capacity> stack;
     ASSERT_EQ(stack.getCapacity(), capacity);
     ASSERT_EQ(stack.getSize(), 0);
     for (FwSizeType i = 0; i < size; i++) {
@@ -88,11 +69,10 @@ TEST(ExternalStack, PushOK) {
     ASSERT_EQ(stack.getSize(), 0);
 }
 
-TEST(ExternalStack, PushFull) {
+TEST(Stack, PushFull) {
     constexpr const FwSizeType capacity = 1000;
-    U32 elts[capacity];
-    ExternalStack<U32> stack(elts, capacity);
-    // Fill up the stack
+    Stack<U32, capacity> stack;
+    // Fill up the FIFO
     for (FwSizeType i = 0; i < capacity; i++) {
         const auto status = stack.push(0);
         ASSERT_EQ(status, Success::SUCCESS);
@@ -104,46 +84,26 @@ TEST(ExternalStack, PushFull) {
     ASSERT_EQ(status, Success::FAILURE);
 }
 
-TEST(ExternalStack, CopyConstructor) {
+TEST(Stack, CopyAssignmentOperator) {
     constexpr FwSizeType capacity = 3;
-    U32 items[capacity];
     // Call the constructor providing backing storage
-    ExternalStack<U32> s1(items, capacity);
+    Stack<U32, capacity> s1;
     // Push an item
     U32 value = 42;
-    const auto status = s1.push(value);
-    ASSERT_EQ(status, Success::SUCCESS);
-    // Call the copy constructor
-    ExternalStack<U32> s2(s1);
-    ExternalStackTester<U32> tester1(s1);
-    ExternalStackTester<U32> tester2(s2);
-    ASSERT_EQ(tester2.getItems().getElements(), items);
-    ASSERT_EQ(tester2.getItems().getSize(), capacity);
-    ASSERT_EQ(s2.getSize(), 1);
-}
-
-TEST(ExternalStack, CopyAssignmentOperator) {
-    constexpr FwSizeType capacity = 3;
-    U32 items[capacity];
-    // Call the constructor providing backing storage
-    ExternalStack<U32> s1(items, capacity);
-    // Push an item
-    U32 value = 42;
-    const auto status = s1.push(value);
-    ASSERT_EQ(status, Success::SUCCESS);
+    (void)s1.push(value);
     // Call the default constructor
-    ExternalStack<U32> s2;
+    Stack<U32, capacity> s2;
     ASSERT_EQ(s2.getSize(), 0);
     // Call the copy assignment operator
     s2 = s1;
     ASSERT_EQ(s2.getSize(), 1);
 }
 
-TEST(ExternalStack, PopOK) {
+TEST(Stack, PopOK) {
     constexpr const FwSizeType capacity = 1000;
     const FwSizeType size = STest::Pick::lowerUpper(1, capacity);
     U32 items[capacity];
-    ExternalStack<U32> stack(items, capacity);
+    Stack<U32, capacity> stack;
     ASSERT_EQ(stack.getCapacity(), capacity);
     ASSERT_EQ(stack.getSize(), 0);
     for (FwSizeType i = 0; i < size; i++) {
@@ -151,7 +111,7 @@ TEST(ExternalStack, PopOK) {
         const U32 val = STest::Pick::any();
         // Push it
         const auto status = stack.push(val);
-        ASSERT_EQ(val, items[i]);
+        items[i] = val;
         ASSERT_EQ(status, Success::SUCCESS);
         ASSERT_EQ(stack.getSize(), i + 1);
     }
@@ -171,10 +131,9 @@ TEST(ExternalStack, PopOK) {
     ASSERT_EQ(stack.getSize(), 0);
 }
 
-TEST(ExternalStack, PopEmpty) {
+TEST(Stack, PopEmpty) {
     constexpr const FwSizeType capacity = 1000;
-    U32 items[capacity];
-    ExternalStack<U32> stack(items, capacity);
+    Stack<U32, capacity> stack;
     U32 val = 0;
     const auto status = stack.pop(val);
     ASSERT_EQ(status, Success::FAILURE);
@@ -198,39 +157,35 @@ void testCopyDataFrom(StackBase<U32>& s1, FwSizeType size1, StackBase<U32>& s2) 
 
 }  // namespace
 
-TEST(ExternalStack, CopyDataFrom) {
+TEST(Stack, CopyDataFrom) {
     constexpr FwSizeType maxSize = 10;
     constexpr FwSizeType smallSize = maxSize / 2;
-    U32 items1[maxSize];
-    U32 items2[maxSize];
-    ExternalStack<U32> s1(items1, maxSize);
+    Stack<U32, maxSize> s1;
     // size1 < capacity2
     {
-        ExternalStack<U32> s2(items2, maxSize);
+        Stack<U32, maxSize> s2;
         testCopyDataFrom(s1, smallSize, s2);
     }
     // size1 == size2
     {
-        ExternalStack<U32> s2(items2, maxSize);
+        Stack<U32, maxSize> s2;
         testCopyDataFrom(s1, maxSize, s2);
     }
     // size1 > size2
     {
-        ExternalStack<U32> s2(items2, smallSize);
+        Stack<U32, smallSize> s2;
         testCopyDataFrom(s1, maxSize, s2);
     }
 }
 
-TEST(ExternalStackRules, PushOK) {
-    U32 items[State::capacity];
-    State::ExternalStack stack(items, State::capacity);
+TEST(StackRules, PushOK) {
+    State::Stack stack;
     State state(stack);
     Rules::pushOK.apply(state);
 }
 
-TEST(ExternalStackRules, PushFull) {
-    U32 items[State::capacity];
-    State::ExternalStack stack(items, State::capacity);
+TEST(StackRules, PushFull) {
+    State::Stack stack;
     State state(stack);
     for (FwSizeType i = 0; i < State::capacity; i++) {
         Rules::pushOK.apply(state);
@@ -238,47 +193,41 @@ TEST(ExternalStackRules, PushFull) {
     Rules::pushFull.apply(state);
 }
 
-TEST(ExternalStackRules, At) {
-    U32 items[State::capacity];
-    State::ExternalStack stack(items, State::capacity);
+TEST(StackRules, At) {
+    State::Stack stack;
     State state(stack);
+    Rules::pushOK.apply(state);
     for (FwSizeType i = 0; i < State::capacity; i++) {
-        Rules::pushOK.apply(state);
+        Rules::at.apply(state);
     }
-    Rules::at.apply(state);
 }
 
-TEST(ExternalStackRules, PopOK) {
-    U32 items[State::capacity];
-    State::ExternalStack stack(items, State::capacity);
+TEST(StackRules, PopOK) {
+    State::Stack stack;
     State state(stack);
     Rules::pushOK.apply(state);
-    Rules::pushOK.apply(state);
-    Rules::popOK.apply(state);
     Rules::popOK.apply(state);
 }
 
-TEST(ExternalStackRules, PopEmpty) {
-    U32 items[State::capacity];
-    State::ExternalStack stack(items, State::capacity);
+TEST(StackRules, PopEmpty) {
+    State::Stack stack;
     State state(stack);
     Rules::popEmpty.apply(state);
 }
 
-TEST(ExternalStackRules, Clear) {
-    U32 items[State::capacity];
-    State::ExternalStack stack(items, State::capacity);
+TEST(StackRules, Clear) {
+    State::Stack stack;
     State state(stack);
     Rules::pushOK.apply(state);
     Rules::clear.apply(state);
 }
 
-TEST(ExternalStackScenarios, Random) {
-    U32 items[State::capacity];
-    State::ExternalStack stack(items, State::capacity);
+TEST(StackScenarios, Random) {
+    State::Stack stack;
     State state(stack);
-    Scenarios::random(Fw::String("ExternalStackRandom"), state, 1000);
+    Scenarios::random(Fw::String("StackRandom"), state, 1000);
 }
 
 }  // namespace StackTest
+
 }  // namespace Fw

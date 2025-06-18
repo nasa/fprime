@@ -12,6 +12,7 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/ExternalFifoQueueTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/ExternalStackTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/FifoQueueTest.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/StackTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/FifoQueueTestRules.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/FifoQueueTestScenarios.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/StackTestRules.cpp"
