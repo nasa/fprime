@@ -41,7 +41,7 @@ module Ref {
   # comment in Svc.TlmChan or Svc.TlmPacketizer
   # depending on which form of telemetry downlink
   # you wish to use
-  # NOTE: Svc.TlmChan is provided in the CDHCore Subtopology
+  # NOTE: Svc.TlmChan is provided in the CdhCore Subtopology
 
   #instance tlmSend: Svc.TlmChan base id 0x0C00 \
   #  queue size Default.QUEUE_SIZE \

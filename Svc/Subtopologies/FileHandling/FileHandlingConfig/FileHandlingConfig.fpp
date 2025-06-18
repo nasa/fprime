@@ -1,5 +1,5 @@
 module FileHandlingConfig {
-    #Base ID for the CDHCore Subtopology, all components are offsets from this base ID
+    #Base ID for the FileHandling Subtopology, all components are offsets from this base ID
     constant BASE_ID = 0xA000
     
     module QueueSizes {

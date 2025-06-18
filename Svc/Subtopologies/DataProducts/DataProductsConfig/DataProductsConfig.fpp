@@ -1,5 +1,5 @@
 module DataProductsConfig {
-    #Base ID for the CDHCore Subtopology, all components are offsets from this base ID
+    #Base ID for the DataProducts Subtopology, all components are offsets from this base ID
     constant BASE_ID = 0x9000
     
     module QueueSizes {
