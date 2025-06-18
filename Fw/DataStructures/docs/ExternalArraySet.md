@@ -27,7 +27,7 @@ as the set implementation.
 |----|----|-------|-------------|
 |`m_setImpl`|[`ArraySetOrMapImpl<Entry>`](ArraySetOrMapImpl.md)|The set implementation|C++ default initialization|
 
-The type `Entry` is defined [in the base class](MapBase.md#2-publictypes).
+The type `Entry` is defined [in the base class](MapBase.md#2-public-types).
 
 ```mermaid
 classDiagram
@@ -229,7 +229,7 @@ ASSERT_EQ(set.getCapacity(), capacity);
 const Iterator* getHeadIterator const override
 ```
 
-The type `Iterator` is defined [in the base class](SetBase.md#2-publictypes).
+The type `Iterator` is defined [in the base class](SetBase.md#2-public-types).
 
 Return `m_impl.getHeadIterator()`.
 
