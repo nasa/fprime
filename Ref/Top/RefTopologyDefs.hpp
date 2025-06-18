@@ -17,12 +17,12 @@
 #include "Svc/Health/Health.hpp"
 
 
-// Subtopology includes
+// Subtopology PingEntries includes
 #include "Svc/Subtopologies/CDHCore/PingEntries.hpp"
 #include "Svc/Subtopologies/CommsCCSDS/PingEntries.hpp"
 
+// SubtopologyTopologyDefs includes
 #include "Svc/Subtopologies/CommsCCSDS/SubtopologyTopologyDefs.hpp"
-
 #include "Svc/Subtopologies/DataProducts/SubtopologyTopologyDefs.hpp"
 #include "Svc/Subtopologies/FileHandling/SubtopologyTopologyDefs.hpp"
 

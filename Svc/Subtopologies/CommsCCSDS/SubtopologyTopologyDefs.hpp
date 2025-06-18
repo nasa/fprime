@@ -5,14 +5,14 @@
 #include <Fw/Types/MallocAllocator.hpp>
 #include <Svc/BufferManager/BufferManager.hpp>
 
-namespace Comms {
+namespace CommsCCSDS {
     namespace Allocation {
         // Malloc allocator for topology construction
         extern Fw::MallocAllocator mallocator;
     }
 
     namespace BufferManagerBins {
-        // Buffer manager bins for Comms
+        // Buffer manager bins for CommsCCSDS
         extern Svc::BufferManager::BufferBins bins;
     }
 

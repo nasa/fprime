@@ -1,6 +1,6 @@
 module CDHCoreConfig {
     #Base ID for the CDHCore Subtopology, all components are offsets from this base ID
-    constant BASE_ID = 0x3000
+    constant BASE_ID = 0x6000
     
     module QueueSizes {
         constant cmdDisp     = 10

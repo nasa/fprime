@@ -1,6 +1,6 @@
 module CommsCCSDSConfig {
     #Base ID for the CDHCore Subtopology, all components are offsets from this base ID
-    constant BASE_ID = 0x6000
+    constant BASE_ID = 0x8000
     
     module QueueSizes {
         constant comQueue    = 10
@@ -26,7 +26,7 @@ module CommsCCSDS {
     {
         phase Fpp.ToCpp.Phases.configComponents """
         if (state.hostname != nullptr && state.port != 0) {
-            Comms::comDriver.configure(state.hostname, state.port);
+            CommsCCSDS::comDriver.configure(state.hostname, state.port);
         }
         """
 
@@ -34,16 +34,16 @@ module CommsCCSDS {
         // Initialize socket client communication if and only if there is a valid specification
         if (state.hostname != nullptr && state.port != 0) {
             Os::TaskString name("ReceiveTask");
-            Comms::comDriver.start(name, CommsConfig::Priorities::comQueue, CommsConfig::StackSizes::comQueue);
+            CommsCCSDS::comDriver.start(name, 100, 100);
         }
         """
 
         phase Fpp.ToCpp.Phases.stopTasks """
-        Comms::comDriver.stop();
+        CommsCCSDS::comDriver.stop();
         """
 
         phase Fpp.ToCpp.Phases.freeThreads """
-        (void)Comms::comDriver.join();
+        (void)CommsCCSDS::comDriver.join();
         """
     }
 }

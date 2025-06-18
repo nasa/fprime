@@ -24,16 +24,16 @@ module CommsCCSDS {
         phase Fpp.ToCpp.Phases.configComponents """
         Svc::ComQueue::QueueConfigurationTable configurationTable;
         // Events (highest-priority)
-        configurationTable.entries[ConfigConstants::Comms_comQueue::EVENTS].depth = 100;
-        configurationTable.entries[ConfigConstants::Comms_comQueue::EVENTS].priority = 0;
+        configurationTable.entries[ConfigConstants::CommsCCSDS_comQueue::EVENTS].depth = 100;
+        configurationTable.entries[ConfigConstants::CommsCCSDS_comQueue::EVENTS].priority = 0;
         // Telemetry
-        configurationTable.entries[ConfigConstants::Comms_comQueue::TELEMETRY].depth = 500;
-        configurationTable.entries[ConfigConstants::Comms_comQueue::TELEMETRY].priority = 2;
+        configurationTable.entries[ConfigConstants::CommsCCSDS_comQueue::TELEMETRY].depth = 500;
+        configurationTable.entries[ConfigConstants::CommsCCSDS_comQueue::TELEMETRY].priority = 2;
         // File Downlink Queue
-        configurationTable.entries[ConfigConstants::Comms_comQueue::FILE_QUEUE].depth = 100;
-        configurationTable.entries[ConfigConstants::Comms_comQueue::FILE_QUEUE].priority = 1;
+        configurationTable.entries[ConfigConstants::CommsCCSDS_comQueue::FILE_QUEUE].depth = 100;
+        configurationTable.entries[ConfigConstants::CommsCCSDS_comQueue::FILE_QUEUE].priority = 1;
         // Allocation identifier is 0 as the MallocAllocator discards it
-        Comms::comQueue.configure(configurationTable, 0, Comms::Allocation::mallocator);
+        CommsCCSDS::comQueue.configure(configurationTable, 0, CommsCCSDS::Allocation::mallocator);
         """
     }
 
@@ -49,11 +49,11 @@ module CommsCCSDS {
         """
 
         phase Fpp.ToCpp.Phases.configComponents """
-        Comms::cmdSeq.allocateBuffer(0, Comms::Allocation::mallocator, ConfigConstants::Comms_cmdSeq::CMD_SEQ_BUFFER_SIZE);
+        CommsCCSDS::cmdSeq.allocateBuffer(0, CommsCCSDS::Allocation::mallocator, ConfigConstants::CommsCCSDS_cmdSeq::CMD_SEQ_BUFFER_SIZE);
         """
 
         phase Fpp.ToCpp.Phases.tearDownComponents """
-        Comms::cmdSeq.deallocateBuffer(Comms::Allocation::mallocator);
+        CommsCCSDS::cmdSeq.deallocateBuffer(CommsCCSDS::Allocation::mallocator);
         """
     }
 
@@ -75,21 +75,21 @@ module CommsCCSDS {
 
         phase Fpp.ToCpp.Phases.configComponents """
         // Buffer managers need a configured set of buckets and an allocator used to allocate memory for those buckets.
-        memset(&Comms::BufferManagerBins::bins, 0, sizeof(Comms::BufferManagerBins::bins));
-        Comms::BufferManagerBins::bins.bins[0].bufferSize = ConfigConstants::Comms_commsBufferManager::COMMS_BUFFER_MANAGER_STORE_SIZE;
-        Comms::BufferManagerBins::bins.bins[0].numBuffers = ConfigConstants::Comms_commsBufferManager::COMMS_BUFFER_MANAGER_STORE_COUNT;
-        Comms::BufferManagerBins::bins.bins[1].bufferSize = ConfigConstants::Comms_commsBufferManager::COMMS_BUFFER_MANAGER_FILE_STORE_SIZE;
-        Comms::BufferManagerBins::bins.bins[1].numBuffers = ConfigConstants::Comms_commsBufferManager::COMMS_BUFFER_MANAGER_FILE_QUEUE_SIZE;
-        Comms::commsBufferManager.setup(
-            ConfigConstants::Comms_commsBufferManager::COMMS_BUFFER_MANAGER_ID,
+        memset(&CommsCCSDS::BufferManagerBins::bins, 0, sizeof(CommsCCSDS::BufferManagerBins::bins));
+        CommsCCSDS::BufferManagerBins::bins.bins[0].bufferSize = ConfigConstants::CommsCCSDS_commsBufferManager::COMMS_BUFFER_MANAGER_STORE_SIZE;
+        CommsCCSDS::BufferManagerBins::bins.bins[0].numBuffers = ConfigConstants::CommsCCSDS_commsBufferManager::COMMS_BUFFER_MANAGER_STORE_COUNT;
+        CommsCCSDS::BufferManagerBins::bins.bins[1].bufferSize = ConfigConstants::CommsCCSDS_commsBufferManager::COMMS_BUFFER_MANAGER_FILE_STORE_SIZE;
+        CommsCCSDS::BufferManagerBins::bins.bins[1].numBuffers = ConfigConstants::CommsCCSDS_commsBufferManager::COMMS_BUFFER_MANAGER_FILE_QUEUE_SIZE;
+        CommsCCSDS::commsBufferManager.setup(
+            ConfigConstants::CommsCCSDS_commsBufferManager::COMMS_BUFFER_MANAGER_ID,
             0,
-            Comms::Allocation::mallocator,
-            Comms::BufferManagerBins::bins
+            CommsCCSDS::Allocation::mallocator,
+            CommsCCSDS::BufferManagerBins::bins
         );
         """
 
         phase Fpp.ToCpp.Phases.tearDownComponents """
-        Comms::commsBufferManager.cleanup();
+        CommsCCSDS::commsBufferManager.cleanup();
         """
     }
 
@@ -97,16 +97,16 @@ module CommsCCSDS {
     {
 
         phase Fpp.ToCpp.Phases.configComponents """
-        Comms::frameAccumulator.configure(
-            Comms::Detector::frameDetector,
+        CommsCCSDS::frameAccumulator.configure(
+            CommsCCSDS::Detector::frameDetector,
             1,
-            Comms::Allocation::mallocator,
+            CommsCCSDS::Allocation::mallocator,
             2048
         );
         """
 
         phase Fpp.ToCpp.Phases.tearDownComponents """
-        Comms::frameAccumulator.cleanup();
+        CommsCCSDS::frameAccumulator.cleanup();
         """
     }
 
@@ -194,12 +194,8 @@ module CommsCCSDS {
             # Router buffer allocations
             fprimeRouter.bufferAllocate   -> commsBufferManager.bufferGetCallee
             fprimeRouter.bufferDeallocate -> commsBufferManager.bufferSendIn
-            # Router <-> CmdDispatcher/FileUplink
-            fprimeRouter.commandOut  -> cmdDisp.seqCmdBuff
-            cmdDisp.seqCmdStatus     -> fprimeRouter.cmdResponseIn
-            fprimeRouter.fileOut     -> fileUplink.bufferSendIn
-            fileUplink.bufferSendOut -> fprimeRouter.fileBufferReturnIn
+         
         }
 
     } # end topology
-} # end Comms Subtopology
+} # end CommsCCSDS Subtopology
