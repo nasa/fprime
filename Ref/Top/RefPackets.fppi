@@ -4,24 +4,24 @@ telemetry packets RefPackets {
 
     #Ref.cmdDisp.CommandsDispatched
 
-    CDHCore.cmdDisp.CommandsDispatched
+    CdhCore.cmdDisp.CommandsDispatched
     Ref.rateGroup1Comp.RgMaxTime
     Ref.rateGroup2Comp.RgMaxTime
     Ref.rateGroup3Comp.RgMaxTime
-    CommsCCSDS.cmdSeq.CS_LoadCommands
-    CommsCCSDS.cmdSeq.CS_CancelCommands
-    CommsCCSDS.cmdSeq.CS_CommandsExecuted
-    CommsCCSDS.cmdSeq.CS_SequencesCompleted
+    ComCcsds.cmdSeq.CS_LoadCommands
+    ComCcsds.cmdSeq.CS_CancelCommands
+    ComCcsds.cmdSeq.CS_CommandsExecuted
+    ComCcsds.cmdSeq.CS_SequencesCompleted
     FileHandling.fileUplink.FilesReceived
     FileHandling.fileUplink.PacketsReceived
-    CommsCCSDS.commsBufferManager.TotalBuffs
-    CommsCCSDS.commsBufferManager.CurrBuffs
-    CommsCCSDS.commsBufferManager.HiBuffs
+    ComCcsds.commsBufferManager.TotalBuffs
+    ComCcsds.commsBufferManager.CurrBuffs
+    ComCcsds.commsBufferManager.HiBuffs
     FileHandling.fileDownlink.FilesSent
     FileHandling.fileDownlink.PacketsSent
     FileHandling.fileManager.CommandsExecuted
-    CommsCCSDS.comQueue.comQueueDepth
-    CommsCCSDS.comQueue.buffQueueDepth
+    ComCcsds.comQueue.comQueueDepth
+    ComCcsds.comQueue.buffQueueDepth
     # Ref.tlmSend.SendLevel
   }
 
@@ -29,13 +29,13 @@ telemetry packets RefPackets {
     Ref.rateGroup1Comp.RgCycleSlips
     Ref.rateGroup2Comp.RgCycleSlips
     Ref.rateGroup3Comp.RgCycleSlips
-    CommsCCSDS.cmdSeq.CS_Errors
+    ComCcsds.cmdSeq.CS_Errors
     FileHandling.fileUplink.Warnings
     FileHandling.fileDownlink.Warnings
-    CDHCore.$health.PingLateWarnings
+    CdhCore.$health.PingLateWarnings
     FileHandling.fileManager.Errors
-    CommsCCSDS.commsBufferManager.NoBuffs
-    CommsCCSDS.commsBufferManager.EmptyBuffs
+    ComCcsds.commsBufferManager.NoBuffs
+    ComCcsds.commsBufferManager.EmptyBuffs
     FileHandling.fileManager.Errors
 
   }
@@ -198,75 +198,75 @@ telemetry packets RefPackets {
   }
 
   packet Version1 id 22 group 2 {
-    CDHCore.version.FrameworkVersion
-    CDHCore.version.ProjectVersion
+    CdhCore.version.FrameworkVersion
+    CdhCore.version.ProjectVersion
   }
 
   packet Version_Library1 id 23 group 2 {
-    CDHCore.version.LibraryVersion01
-    CDHCore.version.LibraryVersion02
+    CdhCore.version.LibraryVersion01
+    CdhCore.version.LibraryVersion02
   }
 
   packet Version_Library2 id 24 group 2 {
-    CDHCore.version.LibraryVersion03
-    CDHCore.version.LibraryVersion04
+    CdhCore.version.LibraryVersion03
+    CdhCore.version.LibraryVersion04
   }
 
   packet Version_Library3 id 25 group 2 {
-    CDHCore.version.LibraryVersion05
-    CDHCore.version.LibraryVersion06
+    CdhCore.version.LibraryVersion05
+    CdhCore.version.LibraryVersion06
   }
 
   packet Version_Library4 id 26 group 2 {
-    CDHCore.version.LibraryVersion07
-    CDHCore.version.LibraryVersion08
+    CdhCore.version.LibraryVersion07
+    CdhCore.version.LibraryVersion08
   }
 
   packet Version_Library5 id 27 group 2 {
-    CDHCore.version.LibraryVersion09
-    CDHCore.version.LibraryVersion10
+    CdhCore.version.LibraryVersion09
+    CdhCore.version.LibraryVersion10
   }
 
   packet Version_Custom1 id 28 group 2 {
-    CDHCore.version.CustomVersion01
+    CdhCore.version.CustomVersion01
   }
 
   packet Version_Custom2 id 29 group 2 {
-    CDHCore.version.CustomVersion02
+    CdhCore.version.CustomVersion02
   }
 
   packet Version_Custom3 id 30 group 2 {
-    CDHCore.version.CustomVersion03
+    CdhCore.version.CustomVersion03
   }
 
   packet Version_Custom4 id 31 group 2 {
-    CDHCore.version.CustomVersion04
+    CdhCore.version.CustomVersion04
   }
 
   packet Version_Custom5 id 32 group 2 {
-    CDHCore.version.CustomVersion05
+    CdhCore.version.CustomVersion05
   }
 
   packet Version_Custom6 id 33 group 2 {
-    CDHCore.version.CustomVersion06
+    CdhCore.version.CustomVersion06
   }
 
   packet Version_Custom7 id 34 group 2 {
-    CDHCore.version.CustomVersion07
+    CdhCore.version.CustomVersion07
   }
 
   packet Version_Custom8 id 35 group 2 {
-    CDHCore.version.CustomVersion08
+    CdhCore.version.CustomVersion08
   }
 
   packet Version_Custom9 id 36 group 2 {
-    CDHCore.version.CustomVersion09
+    CdhCore.version.CustomVersion09
   }
 
   packet Version_Custom10 id 37 group 2 {
-    CDHCore.version.CustomVersion10
+    CdhCore.version.CustomVersion10
   }
 
 } omit {
-  CDHCore.cmdDisp.CommandErrors
+  CdhCore.cmdDisp.CommandErrors
 }

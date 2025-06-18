@@ -1,4 +1,4 @@
-module CommsCCSDS {
+module ComCcsds {
 
     enum Ports_ComPacketQueue {
         EVENTS,
@@ -9,10 +9,10 @@ module CommsCCSDS {
     # ----------------------------------------------------------------------
     # Active Components
     # ----------------------------------------------------------------------
-    instance comQueue: Svc.ComQueue base id CommsCCSDSConfig.BASE_ID + 0x0100 \
-        queue size CommsCCSDSConfig.QueueSizes.comQueue \
-        stack size CommsCCSDSConfig.StackSizes.comQueue \
-        priority CommsCCSDSConfig.Priorities.comQueue \
+    instance comQueue: Svc.ComQueue base id ComCcsdsConfig.BASE_ID + 0x0100 \
+        queue size ComCcsdsConfig.QueueSizes.comQueue \
+        stack size ComCcsdsConfig.StackSizes.comQueue \
+        priority ComCcsdsConfig.Priorities.comQueue \
     {
         phase Fpp.ToCpp.Phases.configConstants """
         enum{
@@ -24,23 +24,23 @@ module CommsCCSDS {
         phase Fpp.ToCpp.Phases.configComponents """
         Svc::ComQueue::QueueConfigurationTable configurationTable;
         // Events (highest-priority)
-        configurationTable.entries[ConfigConstants::CommsCCSDS_comQueue::EVENTS].depth = 100;
-        configurationTable.entries[ConfigConstants::CommsCCSDS_comQueue::EVENTS].priority = 0;
+        configurationTable.entries[ConfigConstants::ComCcsds_comQueue::EVENTS].depth = 100;
+        configurationTable.entries[ConfigConstants::ComCcsds_comQueue::EVENTS].priority = 0;
         // Telemetry
-        configurationTable.entries[ConfigConstants::CommsCCSDS_comQueue::TELEMETRY].depth = 500;
-        configurationTable.entries[ConfigConstants::CommsCCSDS_comQueue::TELEMETRY].priority = 2;
+        configurationTable.entries[ConfigConstants::ComCcsds_comQueue::TELEMETRY].depth = 500;
+        configurationTable.entries[ConfigConstants::ComCcsds_comQueue::TELEMETRY].priority = 2;
         // File Downlink Queue
-        configurationTable.entries[ConfigConstants::CommsCCSDS_comQueue::FILE_QUEUE].depth = 100;
-        configurationTable.entries[ConfigConstants::CommsCCSDS_comQueue::FILE_QUEUE].priority = 1;
+        configurationTable.entries[ConfigConstants::ComCcsds_comQueue::FILE_QUEUE].depth = 100;
+        configurationTable.entries[ConfigConstants::ComCcsds_comQueue::FILE_QUEUE].priority = 1;
         // Allocation identifier is 0 as the MallocAllocator discards it
-        CommsCCSDS::comQueue.configure(configurationTable, 0, CommsCCSDS::Allocation::mallocator);
+        ComCcsds::comQueue.configure(configurationTable, 0, ComCcsds::Allocation::mallocator);
         """
     }
 
-    instance cmdSeq: Svc.CmdSequencer base id CommsCCSDSConfig.BASE_ID + 0x0200 \
-        queue size CommsCCSDSConfig.QueueSizes.cmdSeq \
-        stack size CommsCCSDSConfig.StackSizes.cmdSeq \
-        priority CommsCCSDSConfig.Priorities.cmdSeq \
+    instance cmdSeq: Svc.CmdSequencer base id ComCcsdsConfig.BASE_ID + 0x0200 \
+        queue size ComCcsdsConfig.QueueSizes.cmdSeq \
+        stack size ComCcsdsConfig.StackSizes.cmdSeq \
+        priority ComCcsdsConfig.Priorities.cmdSeq \
     {
         phase Fpp.ToCpp.Phases.configConstants """
         enum {
@@ -49,18 +49,18 @@ module CommsCCSDS {
         """
 
         phase Fpp.ToCpp.Phases.configComponents """
-        CommsCCSDS::cmdSeq.allocateBuffer(0, CommsCCSDS::Allocation::mallocator, ConfigConstants::CommsCCSDS_cmdSeq::CMD_SEQ_BUFFER_SIZE);
+        ComCcsds::cmdSeq.allocateBuffer(0, ComCcsds::Allocation::mallocator, ConfigConstants::ComCcsds_cmdSeq::CMD_SEQ_BUFFER_SIZE);
         """
 
         phase Fpp.ToCpp.Phases.tearDownComponents """
-        CommsCCSDS::cmdSeq.deallocateBuffer(CommsCCSDS::Allocation::mallocator);
+        ComCcsds::cmdSeq.deallocateBuffer(ComCcsds::Allocation::mallocator);
         """
     }
 
     # ----------------------------------------------------------------------
     # Passive Components
     # ----------------------------------------------------------------------
-    instance commsBufferManager: Svc.BufferManager base id CommsCCSDSConfig.BASE_ID + 0x0500 \
+    instance commsBufferManager: Svc.BufferManager base id ComCcsdsConfig.BASE_ID + 0x0500 \
     {
         phase Fpp.ToCpp.Phases.configConstants """
         enum {
@@ -75,54 +75,54 @@ module CommsCCSDS {
 
         phase Fpp.ToCpp.Phases.configComponents """
         // Buffer managers need a configured set of buckets and an allocator used to allocate memory for those buckets.
-        memset(&CommsCCSDS::BufferManagerBins::bins, 0, sizeof(CommsCCSDS::BufferManagerBins::bins));
-        CommsCCSDS::BufferManagerBins::bins.bins[0].bufferSize = ConfigConstants::CommsCCSDS_commsBufferManager::COMMS_BUFFER_MANAGER_STORE_SIZE;
-        CommsCCSDS::BufferManagerBins::bins.bins[0].numBuffers = ConfigConstants::CommsCCSDS_commsBufferManager::COMMS_BUFFER_MANAGER_STORE_COUNT;
-        CommsCCSDS::BufferManagerBins::bins.bins[1].bufferSize = ConfigConstants::CommsCCSDS_commsBufferManager::COMMS_BUFFER_MANAGER_FILE_STORE_SIZE;
-        CommsCCSDS::BufferManagerBins::bins.bins[1].numBuffers = ConfigConstants::CommsCCSDS_commsBufferManager::COMMS_BUFFER_MANAGER_FILE_QUEUE_SIZE;
-        CommsCCSDS::commsBufferManager.setup(
-            ConfigConstants::CommsCCSDS_commsBufferManager::COMMS_BUFFER_MANAGER_ID,
+        memset(&ComCcsds::BufferManagerBins::bins, 0, sizeof(ComCcsds::BufferManagerBins::bins));
+        ComCcsds::BufferManagerBins::bins.bins[0].bufferSize = ConfigConstants::ComCcsds_commsBufferManager::COMMS_BUFFER_MANAGER_STORE_SIZE;
+        ComCcsds::BufferManagerBins::bins.bins[0].numBuffers = ConfigConstants::ComCcsds_commsBufferManager::COMMS_BUFFER_MANAGER_STORE_COUNT;
+        ComCcsds::BufferManagerBins::bins.bins[1].bufferSize = ConfigConstants::ComCcsds_commsBufferManager::COMMS_BUFFER_MANAGER_FILE_STORE_SIZE;
+        ComCcsds::BufferManagerBins::bins.bins[1].numBuffers = ConfigConstants::ComCcsds_commsBufferManager::COMMS_BUFFER_MANAGER_FILE_QUEUE_SIZE;
+        ComCcsds::commsBufferManager.setup(
+            ConfigConstants::ComCcsds_commsBufferManager::COMMS_BUFFER_MANAGER_ID,
             0,
-            CommsCCSDS::Allocation::mallocator,
-            CommsCCSDS::BufferManagerBins::bins
+            ComCcsds::Allocation::mallocator,
+            ComCcsds::BufferManagerBins::bins
         );
         """
 
         phase Fpp.ToCpp.Phases.tearDownComponents """
-        CommsCCSDS::commsBufferManager.cleanup();
+        ComCcsds::commsBufferManager.cleanup();
         """
     }
 
-    instance frameAccumulator: Svc.FrameAccumulator base id CommsCCSDSConfig.BASE_ID + 0x0600 \ 
+    instance frameAccumulator: Svc.FrameAccumulator base id ComCcsdsConfig.BASE_ID + 0x0600 \ 
     {
 
         phase Fpp.ToCpp.Phases.configComponents """
-        CommsCCSDS::frameAccumulator.configure(
-            CommsCCSDS::Detector::frameDetector,
+        ComCcsds::frameAccumulator.configure(
+            ComCcsds::Detector::frameDetector,
             1,
-            CommsCCSDS::Allocation::mallocator,
+            ComCcsds::Allocation::mallocator,
             2048
         );
         """
 
         phase Fpp.ToCpp.Phases.tearDownComponents """
-        CommsCCSDS::frameAccumulator.cleanup();
+        ComCcsds::frameAccumulator.cleanup();
         """
     }
 
-    instance fprimeRouter: Svc.FprimeRouter base id CommsCCSDSConfig.BASE_ID + 0x0700 \
+    instance fprimeRouter: Svc.FprimeRouter base id ComCcsdsConfig.BASE_ID + 0x0700 \
     
-    instance comStub: Svc.ComStub base id CommsCCSDSConfig.BASE_ID + 0x0800 \
+    instance comStub: Svc.ComStub base id ComCcsdsConfig.BASE_ID + 0x0800 \
 
-    instance tcDeframer: Svc.CCSDS.TcDeframer base id CommsCCSDSConfig.BASE_ID + 0x0900 \
+    instance tcDeframer: Svc.CCSDS.TcDeframer base id ComCcsdsConfig.BASE_ID + 0x0900 \
 
-    instance spacePacketDeframer: Svc.CCSDS.SpacePacketDeframer base id CommsCCSDSConfig.BASE_ID + 0x0A00 \
+    instance spacePacketDeframer: Svc.CCSDS.SpacePacketDeframer base id ComCcsdsConfig.BASE_ID + 0x0A00 \
 
-    instance tmFramer: Svc.CCSDS.TmFramer base id CommsCCSDSConfig.BASE_ID + 0x0B00 \
+    instance tmFramer: Svc.CCSDS.TmFramer base id ComCcsdsConfig.BASE_ID + 0x0B00 \
 
-    instance spacePacketFramer: Svc.CCSDS.SpacePacketFramer base id CommsCCSDSConfig.BASE_ID + 0x0C00 \
+    instance spacePacketFramer: Svc.CCSDS.SpacePacketFramer base id ComCcsdsConfig.BASE_ID + 0x0C00 \
 
-    instance apidManager: Svc.CCSDS.ApidManager base id CommsCCSDSConfig.BASE_ID + 0x0D00 \
+    instance apidManager: Svc.CCSDS.ApidManager base id ComCcsdsConfig.BASE_ID + 0x0D00 \
 
     topology Subtopology {
         # Active Components
@@ -198,4 +198,4 @@ module CommsCCSDS {
         }
 
     } # end topology
-} # end CommsCCSDS Subtopology
+} # end ComCcsds Subtopology

@@ -1,8 +1,8 @@
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/DataProductsConfig/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ComCcsdsConfig/")
 
 register_fprime_module(
     AUTOCODER_INPUTS
-        "${CMAKE_CURRENT_LIST_DIR}/DataProducts.fpp"
+        "${CMAKE_CURRENT_LIST_DIR}/ComCcsds.fpp"
     SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/SubtopologyTopologyDefs.cpp"
     HEADERS

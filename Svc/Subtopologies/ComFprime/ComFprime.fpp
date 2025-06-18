@@ -1,4 +1,4 @@
-module Comms {
+module ComFprime {
 
     enum Ports_ComPacketQueue {
         EVENTS,
@@ -9,10 +9,10 @@ module Comms {
     # ----------------------------------------------------------------------
     # Active Components
     # ----------------------------------------------------------------------
-    instance comQueue: Svc.ComQueue base id CommsConfig.BASE_ID + 0x0100 \
-        queue size CommsConfig.QueueSizes.comQueue \
-        stack size CommsConfig.StackSizes.comQueue \
-        priority CommsConfig.Priorities.comQueue \
+    instance comQueue: Svc.ComQueue base id ComFprimeConfig.BASE_ID + 0x0100 \
+        queue size ComFprimeConfig.QueueSizes.comQueue \
+        stack size ComFprimeConfig.StackSizes.comQueue \
+        priority ComFprimeConfig.Priorities.comQueue \
     {
         phase Fpp.ToCpp.Phases.configConstants """
         enum{
@@ -24,23 +24,23 @@ module Comms {
         phase Fpp.ToCpp.Phases.configComponents """
         Svc::ComQueue::QueueConfigurationTable configurationTable;
         // Events (highest-priority)
-        configurationTable.entries[ConfigConstants::Comms_comQueue::EVENTS].depth = 100;
-        configurationTable.entries[ConfigConstants::Comms_comQueue::EVENTS].priority = 0;
+        configurationTable.entries[ConfigConstants::ComFprime_comQueue::EVENTS].depth = 100;
+        configurationTable.entries[ConfigConstants::ComFprime_comQueue::EVENTS].priority = 0;
         // Telemetry
-        configurationTable.entries[ConfigConstants::Comms_comQueue::TELEMETRY].depth = 500;
-        configurationTable.entries[ConfigConstants::Comms_comQueue::TELEMETRY].priority = 2;
+        configurationTable.entries[ConfigConstants::ComFprime_comQueue::TELEMETRY].depth = 500;
+        configurationTable.entries[ConfigConstants::ComFprime_comQueue::TELEMETRY].priority = 2;
         // File Downlink Queue
-        configurationTable.entries[ConfigConstants::Comms_comQueue::FILE_QUEUE].depth = 100;
-        configurationTable.entries[ConfigConstants::Comms_comQueue::FILE_QUEUE].priority = 1;
+        configurationTable.entries[ConfigConstants::ComFprime_comQueue::FILE_QUEUE].depth = 100;
+        configurationTable.entries[ConfigConstants::ComFprime_comQueue::FILE_QUEUE].priority = 1;
         // Allocation identifier is 0 as the MallocAllocator discards it
-        Comms::comQueue.configure(configurationTable, 0, Comms::Allocation::mallocator);
+        ComFprime::comQueue.configure(configurationTable, 0, ComFprime::Allocation::mallocator);
         """
     }
 
-    instance cmdSeq: Svc.CmdSequencer base id CommsConfig.BASE_ID + 0x0200 \
-        queue size CommsConfig.QueueSizes.cmdSeq \
-        stack size CommsConfig.StackSizes.cmdSeq \
-        priority CommsConfig.Priorities.cmdSeq \
+    instance cmdSeq: Svc.CmdSequencer base id ComFprimeConfig.BASE_ID + 0x0200 \
+        queue size ComFprimeConfig.QueueSizes.cmdSeq \
+        stack size ComFprimeConfig.StackSizes.cmdSeq \
+        priority ComFprimeConfig.Priorities.cmdSeq \
     {
         phase Fpp.ToCpp.Phases.configConstants """
         enum {
@@ -49,18 +49,18 @@ module Comms {
         """
 
         phase Fpp.ToCpp.Phases.configComponents """
-        Comms::cmdSeq.allocateBuffer(0, Comms::Allocation::mallocator, ConfigConstants::Comms_cmdSeq::CMD_SEQ_BUFFER_SIZE);
+        ComFprime::cmdSeq.allocateBuffer(0, ComFprime::Allocation::mallocator, ConfigConstants::ComFprime_cmdSeq::CMD_SEQ_BUFFER_SIZE);
         """
 
         phase Fpp.ToCpp.Phases.tearDownComponents """
-        Comms::cmdSeq.deallocateBuffer(Comms::Allocation::mallocator);
+        ComFprime::cmdSeq.deallocateBuffer(ComFprime::Allocation::mallocator);
         """
     }
 
     # ----------------------------------------------------------------------
     # Passive Components
     # ----------------------------------------------------------------------
-    instance commsBufferManager: Svc.BufferManager base id CommsConfig.BASE_ID + 0x0500 \
+    instance commsBufferManager: Svc.BufferManager base id ComFprimeConfig.BASE_ID + 0x0500 \
     {
         phase Fpp.ToCpp.Phases.configConstants """
         enum {
@@ -73,73 +73,48 @@ module Comms {
         """
 
         phase Fpp.ToCpp.Phases.configComponents """
-        memset(&Comms::BufferManagerBins::bins, 0, sizeof(Comms::BufferManagerBins::bins));
-        Comms::BufferManagerBins::bins.bins[0].bufferSize = ConfigConstants::Comms_commsBufferManager::COMMS_BUFFER_MANAGER_STORE_SIZE;
-        Comms::BufferManagerBins::bins.bins[0].numBuffers = ConfigConstants::Comms_commsBufferManager::COMMS_BUFFER_MANAGER_STORE_COUNT;
-        Comms::BufferManagerBins::bins.bins[1].bufferSize = ConfigConstants::Comms_commsBufferManager::COMMS_BUFFER_MANAGER_FILE_STORE_SIZE;
-        Comms::BufferManagerBins::bins.bins[1].numBuffers = ConfigConstants::Comms_commsBufferManager::COMMS_BUFFER_MANAGER_FILE_QUEUE_SIZE;
-        Comms::commsBufferManager.setup(
-            ConfigConstants::Comms_commsBufferManager::COMMS_BUFFER_MANAGER_ID,
+        memset(&ComFprime::BufferManagerBins::bins, 0, sizeof(ComFprime::BufferManagerBins::bins));
+        ComFprime::BufferManagerBins::bins.bins[0].bufferSize = ConfigConstants::ComFprime_commsBufferManager::COMMS_BUFFER_MANAGER_STORE_SIZE;
+        ComFprime::BufferManagerBins::bins.bins[0].numBuffers = ConfigConstants::ComFprime_commsBufferManager::COMMS_BUFFER_MANAGER_STORE_COUNT;
+        ComFprime::BufferManagerBins::bins.bins[1].bufferSize = ConfigConstants::ComFprime_commsBufferManager::COMMS_BUFFER_MANAGER_FILE_STORE_SIZE;
+        ComFprime::BufferManagerBins::bins.bins[1].numBuffers = ConfigConstants::ComFprime_commsBufferManager::COMMS_BUFFER_MANAGER_FILE_QUEUE_SIZE;
+        ComFprime::commsBufferManager.setup(
+            ConfigConstants::ComFprime_commsBufferManager::COMMS_BUFFER_MANAGER_ID,
             0,
-            Comms::Allocation::mallocator,
-            Comms::BufferManagerBins::bins
+            ComFprime::Allocation::mallocator,
+            ComFprime::BufferManagerBins::bins
         );
         """
 
         phase Fpp.ToCpp.Phases.tearDownComponents """
-        Comms::commsBufferManager.cleanup();
+        ComFprime::commsBufferManager.cleanup();
         """
     }
 
-    instance frameAccumulator: Svc.FrameAccumulator base id CommsConfig.BASE_ID + 0x0600 \ 
+    instance frameAccumulator: Svc.FrameAccumulator base id ComFprimeConfig.BASE_ID + 0x0600 \ 
     {
 
         phase Fpp.ToCpp.Phases.configComponents """
-        Comms::frameAccumulator.configure(
-            Comms::Detector::frameDetector,
+        ComFprime::frameAccumulator.configure(
+            ComFprime::Detector::frameDetector,
             1,
-            Comms::Allocation::mallocator,
+            ComFprime::Allocation::mallocator,
             2048
         );
         """
 
         phase Fpp.ToCpp.Phases.tearDownComponents """
-        Comms::frameAccumulator.cleanup();
+        ComFprime::frameAccumulator.cleanup();
         """
     }
 
-    instance deframer: Svc.FprimeDeframer base id CommsConfig.BASE_ID + 0x0700 \
+    instance deframer: Svc.FprimeDeframer base id ComFprimeConfig.BASE_ID + 0x0700 \
 
-    instance fprimeFramer: Svc.FprimeFramer base id CommsConfig.BASE_ID + 0x0800 \
+    instance fprimeFramer: Svc.FprimeFramer base id ComFprimeConfig.BASE_ID + 0x0800 \
 
-    instance fprimeRouter: Svc.FprimeRouter base id CommsConfig.BASE_ID + 0x0900 \
+    instance fprimeRouter: Svc.FprimeRouter base id ComFprimeConfig.BASE_ID + 0x0900 \
     
-    instance comStub: Svc.ComStub base id CommsConfig.BASE_ID + 0x0A00 \
-
-    @ Communications driver. May be swapped with other comm drivers like UART
-    instance comDriver: Drv.TcpClient base id CommsConfig.BASE_ID + 0x0B00 \ 
-    {
-        phase Fpp.ToCpp.Phases.configComponents """
-        if (state.hostname != nullptr && state.port != 0) {
-            Comms::comDriver.configure(state.hostname, state.port);
-        }
-        """
-
-        phase Fpp.ToCpp.Phases.startTasks """
-        if (state.hostname != nullptr && state.port != 0) {
-            Os::TaskString name("ReceiveTask");
-            Comms::comDriver.start(name, 100, 100);
-        }
-        """
-
-        phase Fpp.ToCpp.Phases.stopTasks """
-        Comms::comDriver.stop();
-        """
-
-        phase Fpp.ToCpp.Phases.freeThreads """
-        (void)Comms::comDriver.join();
-        """
-    }
+    instance comStub: Svc.ComStub base id ComFprimeConfig.BASE_ID + 0x0A00 \
 
     topology Subtopology {
         # Active Components
@@ -202,4 +177,4 @@ module Comms {
 
 
     } # end topology
-} # end Comms Subtopology
+} # end ComFprime Subtopology

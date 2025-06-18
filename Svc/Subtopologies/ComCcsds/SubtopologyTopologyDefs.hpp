@@ -1,18 +1,18 @@
-#ifndef COMMSCCSDSSUBTOPOLOGY_DEFS_HPP
-#define COMMSCCSDSSUBTOPOLOGY_DEFS_HPP
+#ifndef COMCCSDSSUBTOPOLOGY_DEFS_HPP
+#define COMCCSDSSUBTOPOLOGY_DEFS_HPP
 
 #include <Svc/FrameAccumulator/FrameDetector/CcsdsTcFrameDetector.hpp>
 #include <Fw/Types/MallocAllocator.hpp>
 #include <Svc/BufferManager/BufferManager.hpp>
 
-namespace CommsCCSDS {
+namespace ComCcsds {
     namespace Allocation {
         // Malloc allocator for topology construction
         extern Fw::MallocAllocator mallocator;
     }
 
     namespace BufferManagerBins {
-        // Buffer manager bins for CommsCCSDS
+        // Buffer manager bins for ComCcsds
         extern Svc::BufferManager::BufferBins bins;
     }
 

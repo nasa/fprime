@@ -18,13 +18,14 @@
 
 
 // Subtopology PingEntries includes
-#include "Svc/Subtopologies/CDHCore/PingEntries.hpp"
-#include "Svc/Subtopologies/CommsCCSDS/PingEntries.hpp"
+#include "Svc/Subtopologies/CdhCore/PingEntries.hpp"
+#include "Svc/Subtopologies/ComCcsds/PingEntries.hpp"
+#include "Svc/Subtopologies/DataProducts/PingEntries.hpp"
+#include "Svc/Subtopologies/FileHandling/PingEntries.hpp"
 
 // SubtopologyTopologyDefs includes
-#include "Svc/Subtopologies/CommsCCSDS/SubtopologyTopologyDefs.hpp"
+#include "Svc/Subtopologies/ComCcsds/SubtopologyTopologyDefs.hpp"
 #include "Svc/Subtopologies/DataProducts/SubtopologyTopologyDefs.hpp"
-#include "Svc/Subtopologies/FileHandling/SubtopologyTopologyDefs.hpp"
 
 namespace PingEntries {
     namespace Ref_blockDrv       {enum { WARN = 3, FATAL = 5 };}

@@ -21,8 +21,4 @@ namespace DataProducts {
     };
 }
 
-  namespace PingEntries {
-    namespace DataProducts_dpCat          {enum { WARN = 3, FATAL = 5 };}
-  }
-
 #endif

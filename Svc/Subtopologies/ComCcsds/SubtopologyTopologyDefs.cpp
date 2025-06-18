@@ -1,6 +1,6 @@
 #include "SubtopologyTopologyDefs.hpp"
 
-namespace CommsCCSDS {
+namespace ComCcsds {
     namespace Allocation {
         Fw::MallocAllocator mallocator;
     }

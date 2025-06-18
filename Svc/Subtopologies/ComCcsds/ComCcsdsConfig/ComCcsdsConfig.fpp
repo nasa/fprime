@@ -1,5 +1,5 @@
-module CommsCCSDSConfig {
-    #Base ID for the CDHCore Subtopology, all components are offsets from this base ID
+module ComCcsdsConfig {
+    #Base ID for the ComCcsds Subtopology, all components are offsets from this base ID
     constant BASE_ID = 0x8000
     
     module QueueSizes {
@@ -19,14 +19,14 @@ module CommsCCSDSConfig {
     }
 }
 
-module CommsCCSDS {
+module ComCcsds {
     # Communications driver. May be swapped out with other comm drivers like UART in this file
     # to use another driver in the Comms Subtopology
-    instance comDriver: Drv.TcpClient base id CommsCCSDSConfig.BASE_ID + 0x0B00 \ 
+    instance comDriver: Drv.TcpClient base id ComCcsdsConfig.BASE_ID + 0x0B00 \ 
     {
         phase Fpp.ToCpp.Phases.configComponents """
         if (state.hostname != nullptr && state.port != 0) {
-            CommsCCSDS::comDriver.configure(state.hostname, state.port);
+            ComCcsds::comDriver.configure(state.hostname, state.port);
         }
         """
 
@@ -34,16 +34,16 @@ module CommsCCSDS {
         // Initialize socket client communication if and only if there is a valid specification
         if (state.hostname != nullptr && state.port != 0) {
             Os::TaskString name("ReceiveTask");
-            CommsCCSDS::comDriver.start(name, 100, 100);
+            ComCcsds::comDriver.start(name, 100, 100);
         }
         """
 
         phase Fpp.ToCpp.Phases.stopTasks """
-        CommsCCSDS::comDriver.stop();
+        ComCcsds::comDriver.stop();
         """
 
         phase Fpp.ToCpp.Phases.freeThreads """
-        (void)CommsCCSDS::comDriver.join();
+        (void)ComCcsds::comDriver.join();
         """
     }
 }
