@@ -191,7 +191,7 @@ virtual FwSizeType getSize() const = 0
 Return the current size.
 
 _Example:_
-See [**getCapacity**](SetBase.md#65-getcapacity).
+See [**getCapacity**](SetBase.md#64-getcapacity).
 
 ### 6.7. insert
 
