@@ -125,7 +125,7 @@ Success find(const T& element) = 0
 ```
 
 1. If an entry `e` with element `element` exists in the set,
-then set `element = e.getElement()` and return `SUCCESS`.
+then return `SUCCESS`.
 
 1. Otherwise return `FAILURE`.
 
