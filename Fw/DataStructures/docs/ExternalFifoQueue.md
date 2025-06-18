@@ -376,7 +376,7 @@ Return `ExternalArray<T>::getByteArrayAlignment()`.
 
 _Example:_
 ```c++
-const U8 byteArrayAlignment = ExternalFifoQueue<U32>::getByteArrayAlignment(size);
+constexpr U8 byteArrayAlignment = ExternalFifoQueue<U32>::getByteArrayAlignment();
 ASSERT_EQ(byteArrayAlignment, alignof(U32));
 ```
 

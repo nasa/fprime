@@ -15,7 +15,7 @@ storing the entries in the set or map.
 |`typename`|`KE`|The type of a key in a map or the element of a set|
 |`typename`|`V`|The type of a value in a map; unused in a set|
 
-## Public Types
+## 2. Public Types
 
 `ArraySetOrMapImpl` defines the following types:
 ```c++
@@ -59,8 +59,9 @@ ArraySetOrMapImpl(Entry* entries, FwSizeType capacity)
 ArraySetOrMapImpl(ByteArray data, FwSizeType capacity)
 ```
 
-`data` must be correctly aligned for `Entry` and must
-contain at least `ArraySetOrMapImpl<K, V>::getByteArraySize(capacity)` bytes.
+`data` must be aligned according to 
+[`getByteArrayAlignment()`](#61-getbytearrayalignment) and must
+contain at least [`getByteArraySize(size)`](#62-getbytearraysize) bytes.
 
 1. Call `setStorage(data, capacity)`.
 
@@ -98,7 +99,7 @@ ArraySetOrMapImpl<K, V>& operator=(const ArraySetOrMapImpl<K, V>& map)
 
 1. Return `*this`.
 
-### 5.6. at
+### 5.2. at
 
 ```c++
 const Entry& at(FwSizeType index) const
@@ -108,7 +109,7 @@ const Entry& at(FwSizeType index) const
 
 1. Return `m_entries[index]`.
 
-### 5.2. clear
+### 5.3. clear
 
 ```c++
 void clear()
@@ -116,7 +117,7 @@ void clear()
 
 Set `m_size = 0`.
 
-### 5.3. find
+### 5.4. find
 
 ```c++
 const Entry* find(const K& key)
@@ -136,7 +137,7 @@ const Entry* find(const K& key)
 
 1. Return `result`.
 
-### 5.4. getCapacity
+### 5.5. getCapacity
 
 ```c++
 FwSizeType getCapacity() const
@@ -144,7 +145,7 @@ FwSizeType getCapacity() const
 
 Return `m_entries.getSize()`.
 
-### 5.5. getHeadEntry
+### 5.6. getHeadEntry
 
 ```c++
 const Entry* getHeadEntry const
@@ -152,7 +153,7 @@ const Entry* getHeadEntry const
 
 Return `(m_size > 0) ? &m_entries[0] : nullptr`.
 
-### 5.6. getSize
+### 5.7. getSize
 
 ```c++
 FwSizeType getSize()
@@ -160,7 +161,7 @@ FwSizeType getSize()
 
 Return `m_size`.
 
-### 5.7. insert
+### 5.8. insert
 
 ```c++
 Success insert(const Entry& e)
@@ -193,7 +194,7 @@ Success insert(const Entry& e)
 
 1. Return `status`.
 
-### 5.8. remove
+### 5.9. remove
 
 ```c++
 Success remove(const K& key, V& value)
@@ -221,7 +222,7 @@ Success remove(const K& key, V& value)
 
 1. Return `status`.
 
-### 5.9. setStorage (Typed Data)
+### 5.10. setStorage (Typed Data)
 
 ```c++
 void setStorage(T* entries, FwSizeType capacity)
@@ -231,14 +232,15 @@ void setStorage(T* entries, FwSizeType capacity)
 
 1. Call `clear()`.
 
-### 5.10. setStorage (Untyped Data)
+### 5.11. setStorage (Untyped Data)
 
 ```c++
 void setStorage(ByteArray data, FwSizeType capacity)
 ```
 
-`data` must be correctly aligned for `Entry` and must
-contain at least `ArraySetOrMapImpl<K, V>::getByteArraySize(capacity)` bytes.
+`data` must be aligned according to 
+[`getByteArrayAlignment()`](#61-getbytearrayalignment) and must
+contain at least [`getByteArraySize(size)`](#62-getbytearraysize) bytes.
 
 1. Call `m_entries.setStorage(data, capacity)`.
 
@@ -246,7 +248,15 @@ contain at least `ArraySetOrMapImpl<K, V>::getByteArraySize(capacity)` bytes.
 
 ## 6. Public Static Functions
 
-### 6.1. getByteArraySize
+### 6.1. getByteArrayAlignment
+
+```c++
+static constexpr U8 getByteArrayAlignment()
+```
+
+Return `ArraySetOrMapImpl<Entry>::getByteArrayAlignment()`.
+
+### 6.2. getByteArraySize
 
 ```c++
 static constexpr FwSizeType getByteArraySize(FwSizeType capacity)
