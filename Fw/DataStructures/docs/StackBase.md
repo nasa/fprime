@@ -1,3 +1,259 @@
 # StackBase
 
-TODO
+`StackBase` is a class template
+defined in [`Fw/DataStructures`](sdd.md).
+It represents an abstract base class for a stack.
+
+## 1. Template Parameters
+
+`StackBase` has the following template parameters.
+
+|Kind|Name|Purpose|
+|----|----|-------|
+|`typename`|`T`|The type of an item on the stack|
+
+## 2. Private Constructors
+
+### 2.1. Copy Constructor
+
+```c++
+StackBase(const StackBase<T>& stack)
+```
+
+Defined as `= delete`.
+
+## 3. Protected Constructors and Destructors
+
+### 3.1. Zero-Argument Constructor
+
+```c++
+StackBase()
+```
+
+Defined as `= default`.
+
+### 3.2. Destructor
+
+```c++
+virtual ~StackBase()
+```
+
+Defined as `= default`.
+
+## 4. Private Member Functions
+
+### 4.1. operator=
+
+```c++
+StackBase& operator=(const StackBase&)
+```
+
+Defined as `= delete`.
+
+## 5. Public Member Functions
+
+### 5.1. at
+
+```c++
+virtual const T& at(FwSizeType index) const = 0
+```
+
+Return the item at the specified index.
+Index 0 is the leftmost (earliest) element in the stack.
+Increasing indices go from left to right.
+Fails an assertion if the index is out of range.
+
+_Example:_
+```c++
+void f(StackBase<U32>& stack) {
+    stack.clear();
+    const auto status = stack.push(3);
+    ASSERT_EQ(status, Success::SUCCESS);
+    const auto status = stack.push(4);
+    ASSERT_EQ(status, Success::SUCCESS);
+    ASSERT_EQ(stack.at(0), 3);
+    ASSERT_EQ(stack.at(1), 4);
+    ASSERT_DEATH(stack.at(2), "Assert");
+}
+```
+
+### 5.2. clear
+
+```c++
+virtual void clear() = 0
+```
+
+Clear the stack.
+
+_Example:_
+```c++
+void f(StackBase<U32>& stack) {
+    stack.clear();
+    ASSERT_EQ(stack.getSize(), 0);
+}
+```
+
+### 5.3. copyDataFrom
+
+```c++
+void copyDataFrom(const StackBase<T>& stack)
+```
+
+1. If `&stack != this` then
+
+    1. Call `clear()`.
+
+    1. Let `size` be the minimum of `stack.getSize()` and `getCapacity()`.
+
+    1. For `i` in [0, `size`)
+
+        1. Set `e = at(i)`.
+
+        1. Set `status = push(e)`.
+
+        1. Assert `status == Success::SUCCESS`.
+
+
+_Example:_
+```c++
+void f(StackBase<U32>& q1, StackBase<U32>& q2) {
+    q1.clear();
+    // Push an item
+    U32 value = 42;
+    (void) q1.push(value);
+    q2.clear();
+    ASSERT_EQ(q2.getSize(), 0);
+    q2.copyDataFrom(q1);
+    ASSERT_EQ(q2.getSize(), 1);
+}
+```
+
+### 5.4. getCapacity
+
+```c++
+virtual FwSizeType getCapacity() const = 0
+```
+
+Return the current capacity.
+
+_Example:_
+```c++
+void f(const StackBase<U32>& stack) {
+    const auto size = stack.getSize();
+    const auto capacity = stack.getCapacity();
+    ASSERT_LE(size, capacity);
+}
+```
+
+### 5.5. getSize
+
+```c++
+virtual FwSizeType getSize() const = 0
+```
+
+Return the current size.
+
+_Example:_
+```c++
+void f(const StackBase<U32>& stack) {
+    stack.clear();
+    auto size = stack.getSize();
+    ASSERT_EQ(size, 0);
+    const auto status = stack.push(3);
+    ASSERT_EQ(status, Success::SUCCESS);
+    size = stack.getSize();
+    ASSERT_EQ(size, 1);
+}
+```
+
+### 5.6. peek
+
+```c++
+Success peek(T& e, FwSizeType index = 0) const
+```
+
+1. Set `status = Success::FAILURE`.
+
+1. If `index < getSize()`
+
+    1. Set `e = at(index)`.
+
+    1. Set `status = Success::SUCCESS`.
+
+1. Return `status`.
+
+_Example:_
+```c++
+void f(StackBase<U32>& stack) {
+    stack.clear();
+    U32 value = 0;
+    auto status = stack.peek(value);
+    ASSERT_EQ(status, Success::FAILURE);
+    status = stack.push(3);
+    status = stack.peek(value);
+    ASSERT_EQ(status, Success::SUCCESS);
+    ASSERT_EQ(value, 3);
+    status = stack.peek(value, 1);
+    ASSERT_EQ(status, Success::FAILURE);
+    status = stack.push(4);
+    status = stack.peek(value, 1);
+    ASSERT_EQ(status, Success::SUCCESS);
+    ASSERT_EQ(value, 4);
+}
+```
+
+### 5.7. push
+
+```c++
+virtual Success push(const T& e) = 0
+```
+
+1. Set `status = Success::FAILURE`.
+
+1. If there is room on the stack for a new item, then
+
+    1. Add `e` to the right of the stack.
+
+    1. Set `status = Success::SUCCESS`.
+
+1. Return `status`.
+
+_Example:_
+```c++
+void f(StackBase<U32>& stack) {
+    stack.clear();
+    const auto status = stack.push(3);
+    ASSERT_EQ(status, Success::SUCCESS);
+}
+```
+
+### 5.8. pop
+
+```c++
+virtual Success pop(T& e) = 0
+```
+
+1. Set `status = Success::FAILURE`.
+
+1. If `size > 0`
+
+    1. Remove the rightmost item from the stack and store it into `e`.
+
+    1. Set `status = Success::SUCCESS`.
+
+1. Return `status`.
+
+_Example:_
+```c++
+void f(StackBase<U32>& stack) {
+    stack.clear();
+    U32 val = 0;
+    auto status = stack.pop(val);
+    ASSERT_EQ(status, Success::FAILURE);
+    status = stack.push(3);
+    ASSERT_EQ(status, Success::SUCCESS);
+    status = stack.pop(val);
+    ASSERT_EQ(status, Success::SUCCESS);
+    ASSERT_EQ(val, 3);
+}
+```
