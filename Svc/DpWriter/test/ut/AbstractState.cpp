@@ -26,7 +26,7 @@ namespace Svc {
 Fw::Buffer AbstractState::getDpBuffer() {
     // Generate the ID
     const FwDpIdType id =
-        STest::Pick::lowerUpper(std::numeric_limits<FwDpIdType>::min(), std::numeric_limits<FwDpIdType>::max());
+        static_cast<FwDpIdType>(STest::Pick::lowerUpper(std::numeric_limits<FwDpIdType>::min(), static_cast<U32>(std::numeric_limits<FwDpIdType>::max())));
     // Get the data size
     const FwSizeType dataSize = this->getDataSize();
     const FwSizeType bufferSize = Fw::DpContainer::getPacketSizeForDataSize(dataSize);

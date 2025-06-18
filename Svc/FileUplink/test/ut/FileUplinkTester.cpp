@@ -617,7 +617,7 @@ namespace Svc {
     Fw::Buffer buffer(bufferData, bufferSize);
 
     // Serialize the packet descriptor FW_PACKET_FILE to the buffer
-    Fw::SerializeStatus status = buffer.getSerializer().serialize(Fw::ComPacket::FW_PACKET_FILE);
+    Fw::SerializeStatus status = buffer.getSerializer().serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_FILE));
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
     // Serialize the filePacket content into the buffer after the packet descriptor token
     Fw::Buffer offsetBuffer(buffer.getData() + sizeof(FwPacketDescriptorType),
@@ -721,7 +721,7 @@ namespace Svc {
     removeFile(const char *const path)
   {
     // status from unlink is a platform integer
-    const PlatformIntType status = ::unlink(path);
+    const int status = ::unlink(path);
     if (status != 0) {
       ASSERT_EQ(ENOENT, errno);
     }

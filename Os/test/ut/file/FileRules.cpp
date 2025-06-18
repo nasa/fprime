@@ -12,7 +12,7 @@ extern "C" {
 // For testing, limit files to 32K
 const FwSizeType FILE_DATA_MAXIMUM = 32 * 1024;
 
-Os::File::Status Os::Test::File::Tester::shadow_open(const std::string &path, Os::File::Mode open_mode, bool overwrite) {
+Os::File::Status Os::Test::FileTest::Tester::shadow_open(const std::string &path, Os::File::Mode open_mode, bool overwrite) {
     Os::File::Status status = this->m_shadow.open(path.c_str(), open_mode, overwrite ? Os::File::OverwriteType::OVERWRITE : Os::File::OverwriteType::NO_OVERWRITE);
     if (Os::File::Status::OP_OK == status) {
         this->m_current_path = path;
@@ -25,7 +25,7 @@ Os::File::Status Os::Test::File::Tester::shadow_open(const std::string &path, Os
     return status;
 }
 
-void Os::Test::File::Tester::shadow_close() {
+void Os::Test::FileTest::Tester::shadow_close() {
     this->m_shadow.close();
     this->m_current_path.clear();
     this->m_mode = Os::File::Mode::OPEN_NO_MODE;
@@ -33,7 +33,7 @@ void Os::Test::File::Tester::shadow_close() {
     ASSERT_TRUE(this->m_current_path.empty());
 }
 
-std::vector<U8> Os::Test::File::Tester::shadow_read(FwSizeType size) {
+std::vector<U8> Os::Test::FileTest::Tester::shadow_read(FwSizeType size) {
     std::vector<U8> output;
     output.resize(size);
     Os::File::Status status = m_shadow.read(output.data(), size, Os::File::WaitType::WAIT);
@@ -42,7 +42,7 @@ std::vector<U8> Os::Test::File::Tester::shadow_read(FwSizeType size) {
     return output;
 }
 
-void Os::Test::File::Tester::shadow_write(const std::vector<U8>& write_data) {
+void Os::Test::FileTest::Tester::shadow_write(const std::vector<U8>& write_data) {
     FwSizeType size = static_cast<FwSizeType>(write_data.size());
     FwSizeType original_size = size;
     Os::File::Status status = Os::File::OP_OK;
@@ -53,22 +53,22 @@ void Os::Test::File::Tester::shadow_write(const std::vector<U8>& write_data) {
     ASSERT_EQ(size, original_size);
 }
 
-void Os::Test::File::Tester::shadow_seek(const FwSignedSizeType offset, const bool absolute) {
+void Os::Test::FileTest::Tester::shadow_seek(const FwSignedSizeType offset, const bool absolute) {
     Os::File::Status status = m_shadow.seek(offset, absolute ?Os::File::SeekType::ABSOLUTE : Os::File::SeekType::RELATIVE);
     ASSERT_EQ(status, Os::File::Status::OP_OK);
 }
 
-void Os::Test::File::Tester::shadow_preallocate(const FwSizeType offset, const FwSizeType length) {
+void Os::Test::FileTest::Tester::shadow_preallocate(const FwSizeType offset, const FwSizeType length) {
     Os::File::Status status = m_shadow.preallocate(offset, length);
     ASSERT_EQ(status, Os::File::Status::OP_OK);
 }
 
-void Os::Test::File::Tester::shadow_flush() {
+void Os::Test::FileTest::Tester::shadow_flush() {
     Os::File::Status status = m_shadow.flush();
     ASSERT_EQ(status, Os::File::Status::OP_OK);
 }
 
-void Os::Test::File::Tester::shadow_crc(U32& crc) {
+void Os::Test::FileTest::Tester::shadow_crc(U32& crc) {
     crc = this->m_independent_crc;
     SyntheticFileData& data = *reinterpret_cast<SyntheticFileData*>(this->m_shadow.getHandle());
 
@@ -80,7 +80,7 @@ void Os::Test::File::Tester::shadow_crc(U32& crc) {
     this->m_independent_crc = Os::File::INITIAL_CRC;
 }
 
-void Os::Test::File::Tester::shadow_partial_crc(FwSizeType& size) {
+void Os::Test::FileTest::Tester::shadow_partial_crc(FwSizeType& size) {
     SyntheticFileData data = *reinterpret_cast<SyntheticFileData*>(this->m_shadow.getHandle());
 
     // Calculate CRC on full file starting at m_pointer
@@ -92,14 +92,14 @@ void Os::Test::File::Tester::shadow_partial_crc(FwSizeType& size) {
     }
 }
 
-void Os::Test::File::Tester::shadow_finalize(U32& crc) {
+void Os::Test::FileTest::Tester::shadow_finalize(U32& crc) {
     crc = this->m_independent_crc;
     this->m_independent_crc = Os::File::INITIAL_CRC;
 }
 
 
-Os::Test::File::Tester::FileState Os::Test::File::Tester::current_file_state() {
-    Os::Test::File::Tester::FileState state;
+Os::Test::FileTest::Tester::FileState Os::Test::FileTest::Tester::current_file_state() {
+    Os::Test::FileTest::Tester::FileState state;
     // Invariant: mode must not be closed, or path must be nullptr
     EXPECT_TRUE((Os::File::Mode::OPEN_NO_MODE != this->m_file.m_mode) || (nullptr == this->m_file.m_path));
 
@@ -115,7 +115,7 @@ Os::Test::File::Tester::FileState Os::Test::File::Tester::current_file_state() {
     return state;
 }
 
-void Os::Test::File::Tester::assert_valid_mode_status(Os::File::Status &status) const {
+void Os::Test::FileTest::Tester::assert_valid_mode_status(Os::File::Status &status) const {
     if (Os::File::Mode::OPEN_NO_MODE == this->m_mode) {
         ASSERT_EQ(status, Os::File::Status::NOT_OPENED);
     } else {
@@ -124,7 +124,7 @@ void Os::Test::File::Tester::assert_valid_mode_status(Os::File::Status &status) 
 }
 
 
-void Os::Test::File::Tester::assert_file_consistent() {
+void Os::Test::FileTest::Tester::assert_file_consistent() {
     // Ensure file mode
     ASSERT_EQ(this->m_mode, this->m_file.m_mode);
     // Ensure CRC match
@@ -162,7 +162,7 @@ void Os::Test::File::Tester::assert_file_consistent() {
     }
 }
 
-void Os::Test::File::Tester::assert_file_opened(const std::string &path, Os::File::Mode newly_opened_mode, bool overwrite) {
+void Os::Test::FileTest::Tester::assert_file_opened(const std::string &path, Os::File::Mode newly_opened_mode, bool overwrite) {
     // Assert the that the file is opened in some mode
     ASSERT_NE(this->m_file.m_mode, Os::File::Mode::OPEN_NO_MODE);
     ASSERT_TRUE(this->m_file.isOpen()) << "`isOpen()` failed to indicate file is open";
@@ -191,12 +191,12 @@ void Os::Test::File::Tester::assert_file_opened(const std::string &path, Os::Fil
     }
 }
 
-void Os::Test::File::Tester::assert_file_closed() {
+void Os::Test::FileTest::Tester::assert_file_closed() {
     ASSERT_EQ(this->m_file.m_mode, Os::File::Mode::OPEN_NO_MODE) << "File is in unexpected mode";
     ASSERT_FALSE(this->m_file.isOpen()) << "`isOpen()` failed to indicate file is open";
 }
 
-void Os::Test::File::Tester::assert_file_read(const std::vector<U8>& state_data, const unsigned char *read_data, FwSizeType size_read) {
+void Os::Test::FileTest::Tester::assert_file_read(const std::vector<U8>& state_data, const unsigned char *read_data, FwSizeType size_read) {
     // Functional tests
     if (functional()) {
         ASSERT_EQ(size_read, state_data.size());
@@ -209,7 +209,7 @@ void Os::Test::File::Tester::assert_file_read(const std::vector<U8>& state_data,
     }
 }
 
-void Os::Test::File::Tester::assert_file_write(const std::vector<U8>& write_data, FwSizeType size_written) {
+void Os::Test::FileTest::Tester::assert_file_write(const std::vector<U8>& write_data, FwSizeType size_written) {
     ASSERT_EQ(size_written, write_data.size());
     FwSizeType file_size = 0;
     FwSizeType shadow_size = 0;
@@ -223,7 +223,7 @@ void Os::Test::File::Tester::assert_file_write(const std::vector<U8>& write_data
     ASSERT_EQ(file_position, shadow_position);
 }
 
-void Os::Test::File::Tester::assert_file_seek(const FwSizeType original_position, const FwSignedSizeType seek_desired, const bool absolute) {
+void Os::Test::FileTest::Tester::assert_file_seek(const FwSizeType original_position, const FwSignedSizeType seek_desired, const bool absolute) {
     FwSizeType new_position = 0;
     FwSizeType shadow_position = 0;
 
@@ -243,20 +243,20 @@ void Os::Test::File::Tester::assert_file_seek(const FwSizeType original_position
 //  OpenFile: base rule for all open rules
 //
 // ------------------------------------------------------------------------------------------------------
-Os::Test::File::Tester::OpenBaseRule::OpenBaseRule(const char *rule_name,
+Os::Test::FileTest::Tester::OpenBaseRule::OpenBaseRule(const char *rule_name,
                                                    Os::File::Mode mode,
                                                    const bool overwrite,
                                                    const bool randomize_filename)
-        : STest::Rule<Os::Test::File::Tester>(rule_name), m_mode(mode),
+        : STest::Rule<Os::Test::FileTest::Tester>(rule_name), m_mode(mode),
           m_overwrite(overwrite ? Os::File::OverwriteType::OVERWRITE : Os::File::OverwriteType::NO_OVERWRITE),
           m_random(randomize_filename) {}
 
-bool Os::Test::File::Tester::OpenBaseRule::precondition(const Os::Test::File::Tester &state  //!< The test state
+bool Os::Test::FileTest::Tester::OpenBaseRule::precondition(const Os::Test::FileTest::Tester &state  //!< The test state
 ) {
     return state.m_mode == Os::File::Mode::OPEN_NO_MODE;
 }
 
-void Os::Test::File::Tester::OpenBaseRule::action(Os::Test::File::Tester &state  //!< The test state
+void Os::Test::FileTest::Tester::OpenBaseRule::action(Os::Test::FileTest::Tester &state  //!< The test state
 ) {
     printf("--> Rule: %s mode %d\n", this->getName(), this->m_mode);
     // Initial variables used for this test
@@ -286,8 +286,8 @@ void Os::Test::File::Tester::OpenBaseRule::action(Os::Test::File::Tester &state 
 //
 // ------------------------------------------------------------------------------------------------------
 
-Os::Test::File::Tester::OpenFileCreate::OpenFileCreate(const bool randomize_filename)
-        : Os::Test::File::Tester::OpenBaseRule("OpenFileCreate", Os::File::Mode::OPEN_CREATE, false,
+Os::Test::FileTest::Tester::OpenFileCreate::OpenFileCreate(const bool randomize_filename)
+        : Os::Test::FileTest::Tester::OpenBaseRule("OpenFileCreate", Os::File::Mode::OPEN_CREATE, false,
                                                randomize_filename) {}
 
 
@@ -296,8 +296,8 @@ Os::Test::File::Tester::OpenFileCreate::OpenFileCreate(const bool randomize_file
 //
 // ------------------------------------------------------------------------------------------------------
 
-Os::Test::File::Tester::OpenFileCreateOverwrite::OpenFileCreateOverwrite(const bool randomize_filename)
-        : Os::Test::File::Tester::OpenBaseRule("OpenFileCreate", Os::File::Mode::OPEN_CREATE, true,
+Os::Test::FileTest::Tester::OpenFileCreateOverwrite::OpenFileCreateOverwrite(const bool randomize_filename)
+        : Os::Test::FileTest::Tester::OpenBaseRule("OpenFileCreate", Os::File::Mode::OPEN_CREATE, true,
                                                randomize_filename) {}
 
 
@@ -306,8 +306,8 @@ Os::Test::File::Tester::OpenFileCreateOverwrite::OpenFileCreateOverwrite(const b
 //
 // ------------------------------------------------------------------------------------------------------
 
-Os::Test::File::Tester::OpenForWrite::OpenForWrite(const bool randomize_filename)
-        : Os::Test::File::Tester::OpenBaseRule("OpenForWrite",
+Os::Test::FileTest::Tester::OpenForWrite::OpenForWrite(const bool randomize_filename)
+        : Os::Test::FileTest::Tester::OpenBaseRule("OpenForWrite",
         // Randomized write mode
                                                static_cast<Os::File::Mode>(STest::Pick::lowerUpper(
                                                        Os::File::Mode::OPEN_WRITE,
@@ -327,8 +327,8 @@ Os::Test::File::Tester::OpenForWrite::OpenForWrite(const bool randomize_filename
 //
 // ------------------------------------------------------------------------------------------------------
 
-Os::Test::File::Tester::OpenForAppend::OpenForAppend(const bool randomize_filename)
-        : Os::Test::File::Tester::OpenBaseRule("OpenForAppend",
+Os::Test::FileTest::Tester::OpenForAppend::OpenForAppend(const bool randomize_filename)
+        : Os::Test::FileTest::Tester::OpenBaseRule("OpenForAppend",
         // Randomized write mode
                                                Os::File::Mode::OPEN_APPEND,
         // Randomized overwrite
@@ -346,8 +346,8 @@ Os::Test::File::Tester::OpenForAppend::OpenForAppend(const bool randomize_filena
 //
 // ------------------------------------------------------------------------------------------------------
 
-Os::Test::File::Tester::OpenForRead::OpenForRead(const bool randomize_filename)
-        : Os::Test::File::Tester::OpenBaseRule("OpenForRead", Os::File::Mode::OPEN_READ,
+Os::Test::FileTest::Tester::OpenForRead::OpenForRead(const bool randomize_filename)
+        : Os::Test::FileTest::Tester::OpenBaseRule("OpenForRead", Os::File::Mode::OPEN_READ,
         // Randomized overwrite
                                                static_cast<bool>(STest::Pick::lowerUpper(0, 1)),
                                                randomize_filename) {}
@@ -357,14 +357,14 @@ Os::Test::File::Tester::OpenForRead::OpenForRead(const bool randomize_filename)
 //
 // ------------------------------------------------------------------------------------------------------
 
-Os::Test::File::Tester::CloseFile::CloseFile() : STest::Rule<Os::Test::File::Tester>("CloseFile") {}
+Os::Test::FileTest::Tester::CloseFile::CloseFile() : STest::Rule<Os::Test::FileTest::Tester>("CloseFile") {}
 
-bool Os::Test::File::Tester::CloseFile::precondition(const Os::Test::File::Tester &state  //!< The test state
+bool Os::Test::FileTest::Tester::CloseFile::precondition(const Os::Test::FileTest::Tester &state  //!< The test state
 ) {
     return Os::File::Mode::OPEN_NO_MODE != state.m_mode;
 }
 
-void Os::Test::File::Tester::CloseFile::action(Os::Test::File::Tester &state  //!< The test state
+void Os::Test::FileTest::Tester::CloseFile::action(Os::Test::FileTest::Tester &state  //!< The test state
 ) {
     printf("--> Rule: %s \n", this->getName());
     // Make sure test state and file state synchronized
@@ -383,20 +383,20 @@ void Os::Test::File::Tester::CloseFile::action(Os::Test::File::Tester &state  //
 //
 // ------------------------------------------------------------------------------------------------------
 
-Os::Test::File::Tester::Read::Read() :
-        STest::Rule<Os::Test::File::Tester>("Read") {
+Os::Test::FileTest::Tester::Read::Read() :
+        STest::Rule<Os::Test::FileTest::Tester>("Read") {
 }
 
 
-bool Os::Test::File::Tester::Read::precondition(
-        const Os::Test::File::Tester &state //!< The test state
+bool Os::Test::FileTest::Tester::Read::precondition(
+        const Os::Test::FileTest::Tester &state //!< The test state
 ) {
     return Os::File::Mode::OPEN_READ == state.m_mode;
 }
 
 
-void Os::Test::File::Tester::Read::action(
-        Os::Test::File::Tester &state //!< The test state
+void Os::Test::FileTest::Tester::Read::action(
+        Os::Test::FileTest::Tester &state //!< The test state
 ) {
     printf("--> Rule: %s \n", this->getName());
     U8 buffer[FILE_DATA_MAXIMUM];
@@ -420,20 +420,20 @@ void Os::Test::File::Tester::Read::action(
 //
 // ------------------------------------------------------------------------------------------------------
 
-Os::Test::File::Tester::Write::Write() :
-        STest::Rule<Os::Test::File::Tester>("Write") {
+Os::Test::FileTest::Tester::Write::Write() :
+        STest::Rule<Os::Test::FileTest::Tester>("Write") {
 }
 
 
-bool Os::Test::File::Tester::Write::precondition(
-        const Os::Test::File::Tester &state //!< The test state
+bool Os::Test::FileTest::Tester::Write::precondition(
+        const Os::Test::FileTest::Tester &state //!< The test state
 ) {
     return Os::File::Mode::OPEN_CREATE <= state.m_mode;
 }
 
 
-void Os::Test::File::Tester::Write::action(
-        Os::Test::File::Tester &state //!< The test state
+void Os::Test::FileTest::Tester::Write::action(
+        Os::Test::FileTest::Tester &state //!< The test state
 ) {
     printf("--> Rule: %s \n", this->getName());
     U8 buffer[FILE_DATA_MAXIMUM];
@@ -463,20 +463,20 @@ void Os::Test::File::Tester::Write::action(
 //
 // ------------------------------------------------------------------------------------------------------
 
-Os::Test::File::Tester::Seek::Seek() :
-        STest::Rule<Os::Test::File::Tester>("Seek") {
+Os::Test::FileTest::Tester::Seek::Seek() :
+        STest::Rule<Os::Test::FileTest::Tester>("Seek") {
 }
 
 
-bool Os::Test::File::Tester::Seek::precondition(
-        const Os::Test::File::Tester &state //!< The test state
+bool Os::Test::FileTest::Tester::Seek::precondition(
+        const Os::Test::FileTest::Tester &state //!< The test state
 ) {
     return Os::File::Mode::OPEN_NO_MODE < state.m_mode;
 }
 
 
-void Os::Test::File::Tester::Seek::action(
-        Os::Test::File::Tester &state //!< The test state
+void Os::Test::FileTest::Tester::Seek::action(
+        Os::Test::FileTest::Tester &state //!< The test state
 ) {
     printf("--> Rule: %s \n", this->getName());
     FwSignedSizeType seek_offset = 0;
@@ -503,20 +503,20 @@ void Os::Test::File::Tester::Seek::action(
 //
 // ------------------------------------------------------------------------------------------------------
 
-Os::Test::File::Tester::Preallocate::Preallocate() :
-        STest::Rule<Os::Test::File::Tester>("Preallocate") {
+Os::Test::FileTest::Tester::Preallocate::Preallocate() :
+        STest::Rule<Os::Test::FileTest::Tester>("Preallocate") {
 }
 
 
-bool Os::Test::File::Tester::Preallocate::precondition(
-        const Os::Test::File::Tester &state //!< The test state
+bool Os::Test::FileTest::Tester::Preallocate::precondition(
+        const Os::Test::FileTest::Tester &state //!< The test state
 ) {
     return Os::File::Mode::OPEN_CREATE <= state.m_mode;
 }
 
 
-void Os::Test::File::Tester::Preallocate::action(
-        Os::Test::File::Tester &state //!< The test state
+void Os::Test::FileTest::Tester::Preallocate::action(
+        Os::Test::FileTest::Tester &state //!< The test state
 ) {
     printf("--> Rule: %s \n", this->getName());
     state.assert_file_consistent();
@@ -537,20 +537,20 @@ void Os::Test::File::Tester::Preallocate::action(
 //
 // ------------------------------------------------------------------------------------------------------
 
-Os::Test::File::Tester::Flush::Flush() :
-        STest::Rule<Os::Test::File::Tester>("Flush") {
+Os::Test::FileTest::Tester::Flush::Flush() :
+        STest::Rule<Os::Test::FileTest::Tester>("Flush") {
 }
 
 
-bool Os::Test::File::Tester::Flush::precondition(
-        const Os::Test::File::Tester &state //!< The test state
+bool Os::Test::FileTest::Tester::Flush::precondition(
+        const Os::Test::FileTest::Tester &state //!< The test state
 ) {
     return Os::File::Mode::OPEN_CREATE <= state.m_mode;
 }
 
 
-void Os::Test::File::Tester::Flush::action(
-        Os::Test::File::Tester &state //!< The test state
+void Os::Test::FileTest::Tester::Flush::action(
+        Os::Test::FileTest::Tester &state //!< The test state
 ) {
     printf("--> Rule: %s \n", this->getName());
     state.assert_file_consistent();
@@ -573,15 +573,15 @@ void Os::Test::File::Tester::Flush::action(
 //
 // ------------------------------------------------------------------------------------------------------
 
-Os::Test::File::Tester::OpenInvalidModes::OpenInvalidModes()
-        : STest::Rule<Os::Test::File::Tester>("OpenInvalidModes") {}
+Os::Test::FileTest::Tester::OpenInvalidModes::OpenInvalidModes()
+        : STest::Rule<Os::Test::FileTest::Tester>("OpenInvalidModes") {}
 
-bool Os::Test::File::Tester::OpenInvalidModes::precondition(const Os::Test::File::Tester &state  //!< The test state
+bool Os::Test::FileTest::Tester::OpenInvalidModes::precondition(const Os::Test::FileTest::Tester &state  //!< The test state
 ) {
     return Os::File::Mode::OPEN_NO_MODE != state.m_mode;
 }
 
-void Os::Test::File::Tester::OpenInvalidModes::action(Os::Test::File::Tester &state  //!< The test state
+void Os::Test::FileTest::Tester::OpenInvalidModes::action(Os::Test::FileTest::Tester &state  //!< The test state
 ) {
     printf("--> Rule: %s \n", this->getName());
     state.assert_file_consistent();
@@ -604,16 +604,16 @@ void Os::Test::File::Tester::OpenInvalidModes::action(Os::Test::File::Tester &st
 //
 // ------------------------------------------------------------------------------------------------------
 
-Os::Test::File::Tester::PreallocateWithoutOpen::PreallocateWithoutOpen()
-        : STest::Rule<Os::Test::File::Tester>("PreallocateWithoutOpen") {}
+Os::Test::FileTest::Tester::PreallocateWithoutOpen::PreallocateWithoutOpen()
+        : STest::Rule<Os::Test::FileTest::Tester>("PreallocateWithoutOpen") {}
 
-bool Os::Test::File::Tester::PreallocateWithoutOpen::precondition(
-        const Os::Test::File::Tester &state  //!< The test state
+bool Os::Test::FileTest::Tester::PreallocateWithoutOpen::precondition(
+        const Os::Test::FileTest::Tester &state  //!< The test state
 ) {
     return Os::File::Mode::OPEN_NO_MODE == state.m_mode;
 }
 
-void Os::Test::File::Tester::PreallocateWithoutOpen::action(Os::Test::File::Tester &state  //!< The test state
+void Os::Test::FileTest::Tester::PreallocateWithoutOpen::action(Os::Test::FileTest::Tester &state  //!< The test state
 ) {
     printf("--> Rule: %s \n", this->getName());
     state.assert_file_consistent();
@@ -633,14 +633,14 @@ void Os::Test::File::Tester::PreallocateWithoutOpen::action(Os::Test::File::Test
 //
 // ------------------------------------------------------------------------------------------------------
 
-Os::Test::File::Tester::SeekWithoutOpen::SeekWithoutOpen() : STest::Rule<Os::Test::File::Tester>("SeekWithoutOpen") {}
+Os::Test::FileTest::Tester::SeekWithoutOpen::SeekWithoutOpen() : STest::Rule<Os::Test::FileTest::Tester>("SeekWithoutOpen") {}
 
-bool Os::Test::File::Tester::SeekWithoutOpen::precondition(const Os::Test::File::Tester &state  //!< The test state
+bool Os::Test::FileTest::Tester::SeekWithoutOpen::precondition(const Os::Test::FileTest::Tester &state  //!< The test state
 ) {
     return Os::File::Mode::OPEN_NO_MODE == state.m_mode;
 }
 
-void Os::Test::File::Tester::SeekWithoutOpen::action(Os::Test::File::Tester &state  //!< The test state
+void Os::Test::FileTest::Tester::SeekWithoutOpen::action(Os::Test::FileTest::Tester &state  //!< The test state
 ) {
     printf("--> Rule: %s \n", this->getName());
     state.assert_file_consistent();
@@ -660,19 +660,19 @@ void Os::Test::File::Tester::SeekWithoutOpen::action(Os::Test::File::Tester &sta
 //
 // ------------------------------------------------------------------------------------------------------
 
-Os::Test::File::Tester::SeekInvalidSize::SeekInvalidSize() : STest::Rule<Os::Test::File::Tester>("SeekInvalidSize") {}
+Os::Test::FileTest::Tester::SeekInvalidSize::SeekInvalidSize() : STest::Rule<Os::Test::FileTest::Tester>("SeekInvalidSize") {}
 
-bool Os::Test::File::Tester::SeekInvalidSize::precondition(const Os::Test::File::Tester &state  //!< The test state
+bool Os::Test::FileTest::Tester::SeekInvalidSize::precondition(const Os::Test::FileTest::Tester &state  //!< The test state
 ) {
     FwSizeType position = 0;
     // Operation is effectively constant
-    Os::File::Status status = const_cast<Os::Test::File::Tester&>(state).m_file.position(position);
+    Os::File::Status status = const_cast<Os::Test::FileTest::Tester&>(state).m_file.position(position);
     return (Os::File::Mode::OPEN_NO_MODE < state.m_mode) &&
        // Limitation of the test harness: max random value is U32_MAX, thus we need at least 1 byte headroom
        (status == Os::File::Status::OP_OK) && (position < std::numeric_limits<U32>::max());
 }
 
-void Os::Test::File::Tester::SeekInvalidSize::action(Os::Test::File::Tester &state  //!< The test state
+void Os::Test::FileTest::Tester::SeekInvalidSize::action(Os::Test::FileTest::Tester &state  //!< The test state
 ) {
     printf("--> Rule: %s \n", this->getName());
     state.assert_file_consistent();
@@ -695,15 +695,15 @@ void Os::Test::File::Tester::SeekInvalidSize::action(Os::Test::File::Tester &sta
 //
 // ------------------------------------------------------------------------------------------------------
 
-Os::Test::File::Tester::FlushInvalidModes::FlushInvalidModes()
-        : STest::Rule<Os::Test::File::Tester>("FlushInvalidModes") {}
+Os::Test::FileTest::Tester::FlushInvalidModes::FlushInvalidModes()
+        : STest::Rule<Os::Test::FileTest::Tester>("FlushInvalidModes") {}
 
-bool Os::Test::File::Tester::FlushInvalidModes::precondition(const Os::Test::File::Tester &state  //!< The test state
+bool Os::Test::FileTest::Tester::FlushInvalidModes::precondition(const Os::Test::FileTest::Tester &state  //!< The test state
 ) {
     return Os::File::Mode::OPEN_NO_MODE == state.m_mode || Os::File::Mode::OPEN_READ == state.m_mode;
 }
 
-void Os::Test::File::Tester::FlushInvalidModes::action(Os::Test::File::Tester &state  //!< The test state
+void Os::Test::FileTest::Tester::FlushInvalidModes::action(Os::Test::FileTest::Tester &state  //!< The test state
 ) {
     printf("--> Rule: %s \n", this->getName());
     state.assert_file_consistent();
@@ -723,15 +723,15 @@ void Os::Test::File::Tester::FlushInvalidModes::action(Os::Test::File::Tester &s
 //
 // ------------------------------------------------------------------------------------------------------
 
-Os::Test::File::Tester::ReadInvalidModes::ReadInvalidModes()
-        : STest::Rule<Os::Test::File::Tester>("ReadInvalidModes") {}
+Os::Test::FileTest::Tester::ReadInvalidModes::ReadInvalidModes()
+        : STest::Rule<Os::Test::FileTest::Tester>("ReadInvalidModes") {}
 
-bool Os::Test::File::Tester::ReadInvalidModes::precondition(const Os::Test::File::Tester &state  //!< The test state
+bool Os::Test::FileTest::Tester::ReadInvalidModes::precondition(const Os::Test::FileTest::Tester &state  //!< The test state
 ) {
     return Os::File::Mode::OPEN_READ != state.m_mode;
 }
 
-void Os::Test::File::Tester::ReadInvalidModes::action(Os::Test::File::Tester &state  //!< The test state
+void Os::Test::FileTest::Tester::ReadInvalidModes::action(Os::Test::FileTest::Tester &state  //!< The test state
 ) {
     printf("--> Rule: %s \n", this->getName());
     U8 buffer[10];
@@ -755,15 +755,15 @@ void Os::Test::File::Tester::ReadInvalidModes::action(Os::Test::File::Tester &st
 //
 // ------------------------------------------------------------------------------------------------------
 
-Os::Test::File::Tester::WriteInvalidModes::WriteInvalidModes()
-        : STest::Rule<Os::Test::File::Tester>("WriteInvalidModes") {}
+Os::Test::FileTest::Tester::WriteInvalidModes::WriteInvalidModes()
+        : STest::Rule<Os::Test::FileTest::Tester>("WriteInvalidModes") {}
 
-bool Os::Test::File::Tester::WriteInvalidModes::precondition(const Os::Test::File::Tester &state  //!< The test state
+bool Os::Test::FileTest::Tester::WriteInvalidModes::precondition(const Os::Test::FileTest::Tester &state  //!< The test state
 ) {
     return Os::File::Mode::OPEN_NO_MODE == state.m_mode || Os::File::Mode::OPEN_READ == state.m_mode;
 }
 
-void Os::Test::File::Tester::WriteInvalidModes::action(Os::Test::File::Tester &state  //!< The test state
+void Os::Test::FileTest::Tester::WriteInvalidModes::action(Os::Test::FileTest::Tester &state  //!< The test state
 ) {
     printf("--> Rule: %s \n", this->getName());
     U8 buffer[10];
@@ -786,9 +786,9 @@ void Os::Test::File::Tester::WriteInvalidModes::action(Os::Test::File::Tester &s
 //
 // ------------------------------------------------------------------------------------------------------
 
-Os::Test::File::Tester::AssertRule::AssertRule(const char *name) : STest::Rule<Os::Test::File::Tester>(name) {}
+Os::Test::FileTest::Tester::AssertRule::AssertRule(const char *name) : STest::Rule<Os::Test::FileTest::Tester>(name) {}
 
-bool Os::Test::File::Tester::AssertRule::precondition(const Os::Test::File::Tester &state  //!< The test state
+bool Os::Test::FileTest::Tester::AssertRule::precondition(const Os::Test::FileTest::Tester &state  //!< The test state
 ) {
     return true;
 }
@@ -798,9 +798,9 @@ bool Os::Test::File::Tester::AssertRule::precondition(const Os::Test::File::Test
 //
 // ------------------------------------------------------------------------------------------------------
 
-Os::Test::File::Tester::OpenIllegalPath::OpenIllegalPath() : Os::Test::File::Tester::AssertRule("OpenIllegalPath") {}
+Os::Test::FileTest::Tester::OpenIllegalPath::OpenIllegalPath() : Os::Test::FileTest::Tester::AssertRule("OpenIllegalPath") {}
 
-void Os::Test::File::Tester::OpenIllegalPath::action(Os::Test::File::Tester &state  //!< The test state
+void Os::Test::FileTest::Tester::OpenIllegalPath::action(Os::Test::FileTest::Tester &state  //!< The test state
 ) {
     printf("--> Rule: %s \n", this->getName());
     state.assert_file_consistent();
@@ -820,9 +820,9 @@ void Os::Test::File::Tester::OpenIllegalPath::action(Os::Test::File::Tester &sta
 //
 // ------------------------------------------------------------------------------------------------------
 
-Os::Test::File::Tester::OpenIllegalMode::OpenIllegalMode() : Os::Test::File::Tester::AssertRule("OpenIllegalMode") {}
+Os::Test::FileTest::Tester::OpenIllegalMode::OpenIllegalMode() : Os::Test::FileTest::Tester::AssertRule("OpenIllegalMode") {}
 
-void Os::Test::File::Tester::OpenIllegalMode::action(Os::Test::File::Tester &state  //!< The test state
+void Os::Test::FileTest::Tester::OpenIllegalMode::action(Os::Test::FileTest::Tester &state  //!< The test state
 ) {
     printf("--> Rule: %s \n", this->getName());
     state.assert_file_consistent();
@@ -833,7 +833,7 @@ void Os::Test::File::Tester::OpenIllegalMode::action(Os::Test::File::Tester &sta
             state.m_file.open(random_filename->c_str(),
                               (mode == 0) ? Os::File::Mode::MAX_OPEN_MODE : Os::File::Mode::OPEN_NO_MODE,
                               overwrite ? Os::File::OverwriteType::OVERWRITE : Os::File::OverwriteType::NO_OVERWRITE),
-                              Os::Test::File::Tester::ASSERT_IN_FILE_CPP);
+                              Os::Test::FileTest::Tester::ASSERT_IN_FILE_CPP);
     state.assert_file_consistent();
 }
 
@@ -842,13 +842,13 @@ void Os::Test::File::Tester::OpenIllegalMode::action(Os::Test::File::Tester &sta
 //
 // ------------------------------------------------------------------------------------------------------
 
-Os::Test::File::Tester::SeekIllegal::SeekIllegal() : Os::Test::File::Tester::AssertRule("SeekIllegal") {}
+Os::Test::FileTest::Tester::SeekIllegal::SeekIllegal() : Os::Test::FileTest::Tester::AssertRule("SeekIllegal") {}
 
-void Os::Test::File::Tester::SeekIllegal::action(Os::Test::File::Tester &state  //!< The test state
+void Os::Test::FileTest::Tester::SeekIllegal::action(Os::Test::FileTest::Tester &state  //!< The test state
 ) {
     printf("--> Rule: %s \n", this->getName());
     state.assert_file_consistent();
-    ASSERT_DEATH_IF_SUPPORTED(state.m_file.seek(-1, Os::File::SeekType::ABSOLUTE), Os::Test::File::Tester::ASSERT_IN_FILE_CPP);
+    ASSERT_DEATH_IF_SUPPORTED(state.m_file.seek(-1, Os::File::SeekType::ABSOLUTE), Os::Test::FileTest::Tester::ASSERT_IN_FILE_CPP);
     state.assert_file_consistent();
 }
 
@@ -857,10 +857,10 @@ void Os::Test::File::Tester::SeekIllegal::action(Os::Test::File::Tester &state  
 //
 // ------------------------------------------------------------------------------------------------------
 
-Os::Test::File::Tester::ReadIllegalBuffer::ReadIllegalBuffer()
-        : Os::Test::File::Tester::AssertRule("ReadIllegalBuffer") {}
+Os::Test::FileTest::Tester::ReadIllegalBuffer::ReadIllegalBuffer()
+        : Os::Test::FileTest::Tester::AssertRule("ReadIllegalBuffer") {}
 
-void Os::Test::File::Tester::ReadIllegalBuffer::action(Os::Test::File::Tester &state  //!< The test state
+void Os::Test::FileTest::Tester::ReadIllegalBuffer::action(Os::Test::FileTest::Tester &state  //!< The test state
 ) {
     printf("--> Rule: %s \n", this->getName());
     state.assert_file_consistent();
@@ -868,7 +868,7 @@ void Os::Test::File::Tester::ReadIllegalBuffer::action(Os::Test::File::Tester &s
     bool random_wait = static_cast<bool>(STest::Pick::lowerUpper(0, 1));
     ASSERT_DEATH_IF_SUPPORTED(
             state.m_file.read(nullptr, size, random_wait ? Os::File::WaitType::WAIT : Os::File::WaitType::NO_WAIT),
-            Os::Test::File::Tester::ASSERT_IN_FILE_CPP);
+            Os::Test::FileTest::Tester::ASSERT_IN_FILE_CPP);
     state.assert_file_consistent();
 }
 
@@ -877,10 +877,10 @@ void Os::Test::File::Tester::ReadIllegalBuffer::action(Os::Test::File::Tester &s
 //
 // ------------------------------------------------------------------------------------------------------
 
-Os::Test::File::Tester::WriteIllegalBuffer::WriteIllegalBuffer()
-        : Os::Test::File::Tester::AssertRule("WriteIllegalBuffer") {}
+Os::Test::FileTest::Tester::WriteIllegalBuffer::WriteIllegalBuffer()
+        : Os::Test::FileTest::Tester::AssertRule("WriteIllegalBuffer") {}
 
-void Os::Test::File::Tester::WriteIllegalBuffer::action(Os::Test::File::Tester &state  //!< The test state
+void Os::Test::FileTest::Tester::WriteIllegalBuffer::action(Os::Test::FileTest::Tester &state  //!< The test state
 ) {
     printf("--> Rule: %s \n", this->getName());
     state.assert_file_consistent();
@@ -888,7 +888,7 @@ void Os::Test::File::Tester::WriteIllegalBuffer::action(Os::Test::File::Tester &
     bool random_wait = static_cast<bool>(STest::Pick::lowerUpper(0, 1));
     ASSERT_DEATH_IF_SUPPORTED(
             state.m_file.write(nullptr, size, random_wait ? Os::File::WaitType::WAIT : Os::File::WaitType::NO_WAIT),
-            Os::Test::File::Tester::ASSERT_IN_FILE_CPP);
+            Os::Test::FileTest::Tester::ASSERT_IN_FILE_CPP);
     state.assert_file_consistent();
 }
 
@@ -897,17 +897,17 @@ void Os::Test::File::Tester::WriteIllegalBuffer::action(Os::Test::File::Tester &
 //
 // ------------------------------------------------------------------------------------------------------
 
-Os::Test::File::Tester::CopyAssignment::CopyAssignment() :
-    STest::Rule<Os::Test::File::Tester>("CopyAssignment") {}
+Os::Test::FileTest::Tester::CopyAssignment::CopyAssignment() :
+    STest::Rule<Os::Test::FileTest::Tester>("CopyAssignment") {}
 
 
-bool Os::Test::File::Tester::CopyAssignment::precondition(const Os::Test::File::Tester& state //!< The test state
+bool Os::Test::FileTest::Tester::CopyAssignment::precondition(const Os::Test::FileTest::Tester& state //!< The test state
 ) {
   return true;
 }
 
 
-void Os::Test::File::Tester::CopyAssignment::action(Os::Test::File::Tester& state //!< The test state
+void Os::Test::FileTest::Tester::CopyAssignment::action(Os::Test::FileTest::Tester& state //!< The test state
 ) {
     printf("--> Rule: %s \n", this->getName());
     state.assert_file_consistent();
@@ -922,17 +922,17 @@ void Os::Test::File::Tester::CopyAssignment::action(Os::Test::File::Tester& stat
 //
 // ------------------------------------------------------------------------------------------------------
 
-Os::Test::File::Tester::CopyConstruction::CopyConstruction() :
-    STest::Rule<Os::Test::File::Tester>("CopyConstruction") {}
+Os::Test::FileTest::Tester::CopyConstruction::CopyConstruction() :
+    STest::Rule<Os::Test::FileTest::Tester>("CopyConstruction") {}
 
 
-bool Os::Test::File::Tester::CopyConstruction::precondition(const Os::Test::File::Tester& state //!< The test state
+bool Os::Test::FileTest::Tester::CopyConstruction::precondition(const Os::Test::FileTest::Tester& state //!< The test state
 ) {
   return true;
 }
 
 
-void Os::Test::File::Tester::CopyConstruction::action(Os::Test::File::Tester& state //!< The test state
+void Os::Test::FileTest::Tester::CopyConstruction::action(Os::Test::FileTest::Tester& state //!< The test state
 ) {
     printf("--> Rule: %s \n", this->getName());
     state.assert_file_consistent();
@@ -947,18 +947,18 @@ void Os::Test::File::Tester::CopyConstruction::action(Os::Test::File::Tester& st
 //
 // ------------------------------------------------------------------------------------------------------
 
-Os::Test::File::Tester::FullCrc::FullCrc() :
-    STest::Rule<Os::Test::File::Tester>("FullCrc") {}
+Os::Test::FileTest::Tester::FullCrc::FullCrc() :
+    STest::Rule<Os::Test::FileTest::Tester>("FullCrc") {}
 
-bool Os::Test::File::Tester::FullCrc::precondition(
-        const Os::Test::File::Tester& state //!< The test state
+bool Os::Test::FileTest::Tester::FullCrc::precondition(
+        const Os::Test::FileTest::Tester& state //!< The test state
 ) {
     return state.m_mode == Os::File::Mode::OPEN_READ;
 }
 
 
-void Os::Test::File::Tester::FullCrc::action(
-        Os::Test::File::Tester& state //!< The test state
+void Os::Test::FileTest::Tester::FullCrc::action(
+        Os::Test::FileTest::Tester& state //!< The test state
 ) {
     printf("--> Rule: %s \n", this->getName());
     U32 crc = 1;
@@ -976,19 +976,19 @@ void Os::Test::File::Tester::FullCrc::action(
 //
 // ------------------------------------------------------------------------------------------------------
 
-Os::Test::File::Tester::IncrementalCrc::IncrementalCrc() :
-    STest::Rule<Os::Test::File::Tester>("IncrementalCrc") {}
+Os::Test::FileTest::Tester::IncrementalCrc::IncrementalCrc() :
+    STest::Rule<Os::Test::FileTest::Tester>("IncrementalCrc") {}
 
 
-bool Os::Test::File::Tester::IncrementalCrc::precondition(
-        const Os::Test::File::Tester& state //!< The test state
+bool Os::Test::FileTest::Tester::IncrementalCrc::precondition(
+        const Os::Test::FileTest::Tester& state //!< The test state
 ) {
     return state.m_mode == Os::File::Mode::OPEN_READ;
 }
 
 
-void Os::Test::File::Tester::IncrementalCrc::action(
-        Os::Test::File::Tester& state //!< The test state
+void Os::Test::FileTest::Tester::IncrementalCrc::action(
+        Os::Test::FileTest::Tester& state //!< The test state
 ){
     printf("--> Rule: %s \n", this->getName());
     state.assert_file_consistent();
@@ -1007,17 +1007,17 @@ void Os::Test::File::Tester::IncrementalCrc::action(
 //
 // ------------------------------------------------------------------------------------------------------
 
-Os::Test::File::Tester::FinalizeCrc::FinalizeCrc() :
-    STest::Rule<Os::Test::File::Tester>("FinalizeCrc") {}
+Os::Test::FileTest::Tester::FinalizeCrc::FinalizeCrc() :
+    STest::Rule<Os::Test::FileTest::Tester>("FinalizeCrc") {}
 
-bool Os::Test::File::Tester::FinalizeCrc::precondition(
-        const Os::Test::File::Tester& state //!< The test state
+bool Os::Test::FileTest::Tester::FinalizeCrc::precondition(
+        const Os::Test::FileTest::Tester& state //!< The test state
 ) {
     return true;
 }
 
-void Os::Test::File::Tester::FinalizeCrc::action(
-        Os::Test::File::Tester& state //!< The test state
+void Os::Test::FileTest::Tester::FinalizeCrc::action(
+        Os::Test::FileTest::Tester& state //!< The test state
 ) {
     printf("--> Rule: %s \n", this->getName());
     U32 crc = 1;
@@ -1035,18 +1035,18 @@ void Os::Test::File::Tester::FinalizeCrc::action(
 //
 // ------------------------------------------------------------------------------------------------------
 
-Os::Test::File::Tester::FullCrcInvalidModes::FullCrcInvalidModes() :
-    STest::Rule<Os::Test::File::Tester>("FullCrcInvalidModes") {}
+Os::Test::FileTest::Tester::FullCrcInvalidModes::FullCrcInvalidModes() :
+    STest::Rule<Os::Test::FileTest::Tester>("FullCrcInvalidModes") {}
 
 
-bool Os::Test::File::Tester::FullCrcInvalidModes::precondition(
-        const Os::Test::File::Tester& state //!< The test state
+bool Os::Test::FileTest::Tester::FullCrcInvalidModes::precondition(
+        const Os::Test::FileTest::Tester& state //!< The test state
 ) {
     return Os::File::Mode::OPEN_READ != state.m_mode;
 }
 
-void Os::Test::File::Tester::FullCrcInvalidModes::action(
-        Os::Test::File::Tester& state //!< The test state
+void Os::Test::FileTest::Tester::FullCrcInvalidModes::action(
+        Os::Test::FileTest::Tester& state //!< The test state
 ) {
     printf("--> Rule: %s \n", this->getName());
     state.assert_file_consistent();
@@ -1068,19 +1068,19 @@ void Os::Test::File::Tester::FullCrcInvalidModes::action(
 //
 // ------------------------------------------------------------------------------------------------------
 
-Os::Test::File::Tester::IncrementalCrcInvalidModes::IncrementalCrcInvalidModes() :
-    STest::Rule<Os::Test::File::Tester>("IncrementalCrcInvalidModes") {}
+Os::Test::FileTest::Tester::IncrementalCrcInvalidModes::IncrementalCrcInvalidModes() :
+    STest::Rule<Os::Test::FileTest::Tester>("IncrementalCrcInvalidModes") {}
 
 
-bool Os::Test::File::Tester::IncrementalCrcInvalidModes::precondition(
-        const Os::Test::File::Tester& state //!< The test state
+bool Os::Test::FileTest::Tester::IncrementalCrcInvalidModes::precondition(
+        const Os::Test::FileTest::Tester& state //!< The test state
 ) {
     return Os::File::Mode::OPEN_READ != state.m_mode;;
 }
 
 
-void Os::Test::File::Tester::IncrementalCrcInvalidModes::action(
-        Os::Test::File::Tester& state //!< The test state
+void Os::Test::FileTest::Tester::IncrementalCrcInvalidModes::action(
+        Os::Test::FileTest::Tester& state //!< The test state
 ) {
     printf("--> Rule: %s \n", this->getName());
     state.assert_file_consistent();

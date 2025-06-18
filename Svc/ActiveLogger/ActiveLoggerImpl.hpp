@@ -32,7 +32,7 @@ namespace Svc {
             void SET_ID_FILTER_cmdHandler(
                     FwOpcodeType opCode, //!< The opcode
                     U32 cmdSeq, //!< The command sequence number
-                    U32 ID,
+                    FwEventIdType ID,
                     ActiveLogger_Enabled idFilterEnabled //!< ID filter state
                 );
 

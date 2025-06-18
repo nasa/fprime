@@ -22,7 +22,7 @@ namespace Svc {
         const U32 argument
     ) {
       comBuff.resetSer();
-      const FwPacketDescriptorType descriptor = Fw::ComPacket::FW_PACKET_COMMAND;
+      const FwPacketDescriptorType descriptor = Fw::ComPacketType::FW_PACKET_COMMAND;
       ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(descriptor));
       ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(opcode));
       ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(argument));

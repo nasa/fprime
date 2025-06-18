@@ -4,7 +4,11 @@
 
 `Svc::ComStub` is an example  F´ component implementing the
 [communication adapter interface](../../../docs/reference/communication-adapter-interface.md) required
-to work with F´ communication components. Projects and users may choose to replace this with a complete communication
+to work with F´ communication components. Projects would typically switch this component out for a
+radio manager component. The purpose of ComStub is to implement the communication adapter interface by delegating
+to a [`Drv.ByteStreamDriver`](../../../Drv/Interfaces/docs/sdd.md) (e.g. `Drv.TcpClient` or `Drv.LinuxUartDriver`) to send and receive data.
+
+Projects and users may choose to replace this with a complete communication
 implementation (i.e. a component managing a specific radio) once ready. As long as any communication implementation
 implements the communication adapter interface it can drop in and work with the standard F´ uplink and downlink setup.
 

@@ -25,7 +25,7 @@
 namespace Drv {
 
 
-Os::File::Status errno_to_file_status(PlatformIntType errno_input) {
+Os::File::Status errno_to_file_status(int errno_input) {
     Os::File::Status status = Os::File::Status::OTHER_ERROR;
     switch (errno_input) {
         case 0:
@@ -61,7 +61,7 @@ Os::File::Status errno_to_file_status(PlatformIntType errno_input) {
     return status;
 }
 
-Drv::GpioStatus errno_to_gpio_status(PlatformIntType errno_input) {
+Drv::GpioStatus errno_to_gpio_status(int errno_input) {
     Drv::GpioStatus status = Drv::GpioStatus::T::UNKNOWN_ERROR;
     switch (errno_input) {
         case EBADF:
@@ -130,11 +130,11 @@ LinuxGpioDriver ::~LinuxGpioDriver() {
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-Os::File::Status LinuxGpioDriver ::setupLineHandle(const PlatformIntType chip_descriptor,
+Os::File::Status LinuxGpioDriver ::setupLineHandle(const int chip_descriptor,
                                                    const U32 gpio,
                                                    const GpioConfiguration& configuration,
                                                    const Fw::Logic& default_state,
-                                                   PlatformIntType& fd) {
+                                                   int& fd) {
     Os::File::Status status = Os::File::OP_OK;
     // Set up the GPIO request
     struct gpiohandle_request request;
@@ -148,7 +148,7 @@ Os::File::Status LinuxGpioDriver ::setupLineHandle(const PlatformIntType chip_de
     request.flags = configuration_to_handler_flags(configuration);
 
     errno = 0;
-    PlatformIntType return_value = ioctl(chip_descriptor, GPIO_GET_LINEHANDLE_IOCTL, &request);
+    int return_value = ioctl(chip_descriptor, GPIO_GET_LINEHANDLE_IOCTL, &request);
     fd = request.fd;
     if (return_value != 0) {
         status = errno_to_file_status(errno);
@@ -157,10 +157,10 @@ Os::File::Status LinuxGpioDriver ::setupLineHandle(const PlatformIntType chip_de
     return status;
 }
 
-Os::File::Status LinuxGpioDriver ::setupLineEvent(const PlatformIntType chip_descriptor,
+Os::File::Status LinuxGpioDriver ::setupLineEvent(const int chip_descriptor,
                                                   const U32 gpio,
                                                   const GpioConfiguration& configuration,
-                                                  PlatformIntType& fd) {
+                                                  int& fd) {
     Os::File::Status status = Os::File::OP_OK;
     // Set up the GPIO request
     struct gpioevent_request event;
@@ -172,7 +172,7 @@ Os::File::Status LinuxGpioDriver ::setupLineEvent(const PlatformIntType chip_des
     event.handleflags = configuration_to_handler_flags(configuration);
     event.eventflags = configuration_to_event_flags(configuration);
     errno = 0;
-    PlatformIntType return_value = ioctl(chip_descriptor, GPIO_GET_LINEEVENT_IOCTL, &event);
+    int return_value = ioctl(chip_descriptor, GPIO_GET_LINEEVENT_IOCTL, &event);
     fd = event.fd;
     if (return_value != 0) {
         status = errno_to_file_status(errno);
@@ -197,11 +197,11 @@ Os::File::Status LinuxGpioDriver ::open(const char* device,
         return status;
     }
     // Read chip information and check for correctness
-    PlatformIntType chip_descriptor =
+    int chip_descriptor =
         reinterpret_cast<Os::Posix::File::PosixFileHandle*>(chip_file.getHandle())->m_file_descriptor;
     struct gpiochip_info chip_info;
     (void) ::memset(&chip_info, 0, sizeof chip_info);
-    PlatformIntType return_value = ioctl(chip_descriptor, GPIO_GET_CHIPINFO_IOCTL, &chip_info);
+    int return_value = ioctl(chip_descriptor, GPIO_GET_CHIPINFO_IOCTL, &chip_info);
     if (return_value != 0) {
         status = errno_to_file_status(errno);
         this->log_WARNING_HI_OpenChipError(Fw::String(device), Os::FileStatus(static_cast<Os::FileStatus::T>(status)));
@@ -225,7 +225,7 @@ Os::File::Status LinuxGpioDriver ::open(const char* device,
     }
 
     // Set up pin and set file descriptor for it
-    PlatformIntType pin_fd = -1;
+    int pin_fd = -1;
     switch (configuration) {
         // Cascade intended
         case GPIO_OUTPUT:
@@ -260,7 +260,7 @@ Drv::GpioStatus LinuxGpioDriver ::gpioRead_handler(const FwIndexType portNum, Fw
     if (this->m_configuration == GpioConfiguration::GPIO_INPUT) {
         struct gpiohandle_data values;
         (void) ::memset(&values, 0, sizeof values);
-        PlatformIntType return_value = ioctl(this->m_fd, GPIOHANDLE_GET_LINE_VALUES_IOCTL, &values);
+        int return_value = ioctl(this->m_fd, GPIOHANDLE_GET_LINE_VALUES_IOCTL, &values);
         if (return_value != 0) {
             status = errno_to_gpio_status(errno);
         } else {
@@ -277,7 +277,7 @@ Drv::GpioStatus LinuxGpioDriver ::gpioWrite_handler(const FwIndexType portNum, c
         struct gpiohandle_data values;
         (void) ::memset(&values, 0, sizeof values);
         values.values[0] = (state == Fw::Logic::HIGH) ? 1 : 0;
-        PlatformIntType return_value = ioctl(this->m_fd, GPIOHANDLE_SET_LINE_VALUES_IOCTL, &values);
+        int return_value = ioctl(this->m_fd, GPIOHANDLE_SET_LINE_VALUES_IOCTL, &values);
         if (return_value != 0) {
             status = errno_to_gpio_status(errno);
         } else {
@@ -304,7 +304,7 @@ void LinuxGpioDriver ::pollLoop() {
         file_descriptors[0].fd = this->m_fd;
         file_descriptors[0].events = POLLIN;  // Ask for read data available
         // Poll for fd bing ready
-        PlatformIntType status = ::poll(file_descriptors, 1, static_cast<int>(GPIO_POLL_TIMEOUT));
+        int status = ::poll(file_descriptors, 1, static_cast<int>(GPIO_POLL_TIMEOUT));
         // Check for some file descriptor to be ready
         if (status > 0) {
             struct gpioevent_data event_data;

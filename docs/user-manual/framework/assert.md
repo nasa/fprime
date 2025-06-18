@@ -32,7 +32,7 @@ arguments can consist of any basic types shown below.
 
   - bool C++ Boolean type
 
-These types are used in XML specifications. Note that not all types are
+These types are used in FPP specifications. Note that not all types are
 available on all processor architectures. The types that are available
 is a configurable feature of the architecture and is typically set by
 compiler arguments.

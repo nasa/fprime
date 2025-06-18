@@ -9,7 +9,11 @@
 
 #include "ComQueueGTestBase.hpp"
 #include "Svc/ComQueue/ComQueue.hpp"
-#define BUFFER_LENGTH 3u
+#include "Fw/Com/ComPacket.hpp"
+
+#define BUFFER_LENGTH 7u
+#define BUFFER_DATA {0x00, 0x00, 0x00, 0x01, 0xad, 0xbe, 0xde} // First 4 bytes are the ComPacketType
+#define BUFFER_DATA_OFFSET sizeof(Fw::ComPacketType)
 
 namespace Svc {
 

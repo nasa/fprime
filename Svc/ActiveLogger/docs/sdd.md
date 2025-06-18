@@ -40,7 +40,7 @@ Port Data Type | Name | Direction | Kind | Usage
 ### 3.2 Functional Description
 
 The `Svc::ActiveLogger` component provides an event logging function for the software. The framework autocoder allows
-developers to specify a set of events in the component XML
+developers to specify a set of events in the component FPP.
 (see [Events](../../../docs/user-manual/overview/04-cmd-evt-chn-prm.md). For these components, the
 autocoder will add an `Fw::Log` output port to send events in serialized form. The ActiveLogger receives these port
 calls and provides commands to filter these events. The filtered events are sent to other components such as the ground
