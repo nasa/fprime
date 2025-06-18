@@ -10,7 +10,7 @@ TEST(FwTlmTest,TlmPacketSerializeSingle) {
     Fw::TlmBuffer buffIn;
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,buffIn.serialize(static_cast<U32>(12)));
     Fw::Time timeIn(TB_WORKSTATION_TIME,10,11);
-    U32 id = 10;
+    FwChanIdType id = 10;
 
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,pktIn.resetPktSer());
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,pktIn.addValue(id,timeIn,buffIn));
@@ -58,7 +58,7 @@ TEST(FwTlmTest,TlmPacketSerializeFill) {
         Fw::TlmBuffer buffIn;
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,buffIn.serialize(static_cast<U32>(entry)));
         Fw::Time timeIn(TB_WORKSTATION_TIME,entry+1,entry+2);
-        U32 id = static_cast<U32>(NUM_ENTRIES-entry);
+        FwChanIdType id = static_cast<FwChanIdType>(NUM_ENTRIES-entry);
 
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,pktIn.addValue(id,timeIn,buffIn));
     }
@@ -68,7 +68,7 @@ TEST(FwTlmTest,TlmPacketSerializeFill) {
         Fw::TlmBuffer buffIn;
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,buffIn.serialize(static_cast<U32>(12)));
         Fw::Time timeIn(TB_WORKSTATION_TIME,10,11);
-        U32 id = 10;
+        FwChanIdType id = 10;
 
         ASSERT_EQ(Fw::FW_SERIALIZE_NO_ROOM_LEFT,pktIn.addValue(id,timeIn,buffIn));
     }
@@ -85,7 +85,7 @@ TEST(FwTlmTest,TlmPacketSerializeFill) {
         // Deserialize data
         Fw::TlmBuffer buffOut;
         Fw::Time timeOut;
-        U32 id = 0;
+        FwChanIdType id = 0;
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,pktOut.extractValue(id,timeOut,buffOut,sizeof(U32)));
         ASSERT_EQ(NUM_ENTRIES-entry,id);
         Fw::Time expTime(TB_WORKSTATION_TIME,entry+1,entry+2);
@@ -99,7 +99,7 @@ TEST(FwTlmTest,TlmPacketSerializeFill) {
     {
         Fw::TlmBuffer buffOut;
         Fw::Time timeOut;
-        U32 id = 0;
+        FwChanIdType id = 0;
         ASSERT_EQ(Fw::FW_DESERIALIZE_BUFFER_EMPTY,pktOut.extractValue(id,timeOut,buffOut,sizeof(U32)));
     }
 

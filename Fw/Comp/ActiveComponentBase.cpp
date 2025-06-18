@@ -43,7 +43,7 @@ namespace Fw {
     }
 #endif
 
-    void ActiveComponentBase::start(FwTaskPriorityType priority, Os::Task::ParamType stackSize, Os::Task::ParamType cpuAffinity, Os::Task::ParamType identifier) {
+    void ActiveComponentBase::start(FwTaskPriorityType priority, FwSizeType stackSize, FwSizeType cpuAffinity, FwTaskIdType identifier) {
         Os::TaskString taskName;
 
 #if FW_OBJECT_NAMES == 1
@@ -54,7 +54,7 @@ namespace Fw {
         // Cooperative threads tasks externalize the task loop, and as such use the state machine as their task function
         // Standard multithreading tasks use the task loop to respectively call the state machine
         Os::Task::taskRoutine routine = (m_task.isCooperative()) ? this->s_taskStateMachine : this->s_taskLoop;
-        Os::Task::Arguments arguments(taskName, routine, this, priority, stackSize, cpuAffinity, static_cast<PlatformUIntType>(identifier));
+        Os::Task::Arguments arguments(taskName, routine, this, priority, stackSize, cpuAffinity, identifier);
         Os::Task::Status status = this->m_task.start(arguments);
         FW_ASSERT(status == Os::Task::Status::OP_OK,static_cast<FwAssertArgType>(status));
     }

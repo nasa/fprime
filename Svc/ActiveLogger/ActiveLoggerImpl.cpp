@@ -127,7 +127,7 @@ namespace Svc {
     void ActiveLoggerImpl::SET_ID_FILTER_cmdHandler(
             FwOpcodeType opCode, //!< The opcode
             U32 cmdSeq, //!< The command sequence number
-            U32 ID,
+            FwEventIdType ID,
             Enabled idEnabled //!< ID filter state
         ) {
 

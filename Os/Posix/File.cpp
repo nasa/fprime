@@ -74,7 +74,7 @@ PosixFile& PosixFile::operator=(const PosixFile& other) {
 PosixFile::Status PosixFile::open(const char* filepath,
                                   PosixFile::Mode requested_mode,
                                   PosixFile::OverwriteType overwrite) {
-    PlatformIntType mode_flags = 0;
+    int mode_flags = 0;
     Status status = OP_OK;
     switch (requested_mode) {
         case OPEN_READ:
@@ -97,9 +97,9 @@ PosixFile::Status PosixFile::open(const char* filepath,
             FW_ASSERT(0, requested_mode);
             break;
     }
-    PlatformIntType descriptor = ::open(filepath, mode_flags, USER_FLAGS);
+    int descriptor = ::open(filepath, mode_flags, USER_FLAGS);
     if (PosixFileHandle::INVALID_FILE_DESCRIPTOR == descriptor) {
-        PlatformIntType errno_store = errno;
+        int errno_store = errno;
         status = Os::Posix::errno_to_file_status(errno_store);
     }
     this->m_handle.m_file_descriptor = descriptor;
@@ -124,7 +124,7 @@ PosixFile::Status PosixFile::size(FwSizeType& size_result) {
         // Seek to the end of the file to determine size
         off_t end_of_file = ::lseek(this->m_handle.m_file_descriptor, 0, SEEK_END);
         if (PosixFileHandle::ERROR_RETURN_VALUE == end_of_file) {
-            PlatformIntType errno_store = errno;
+            int errno_store = errno;
             status = Os::Posix::errno_to_file_status(errno_store);
         }
         // Return to original position
@@ -139,7 +139,7 @@ PosixFile::Status PosixFile::position(FwSizeType& position_result) {
     position_result = 0;
     off_t actual = ::lseek(this->m_handle.m_file_descriptor, 0, SEEK_CUR);
     if (PosixFileHandle::ERROR_RETURN_VALUE == actual) {
-        PlatformIntType errno_store = errno;
+        int errno_store = errno;
         status = Os::Posix::errno_to_file_status(errno_store);
     }
     // Protected by static assertion (FwSizeType >= off_t)
@@ -161,7 +161,7 @@ PosixFile::Status PosixFile::preallocate(FwSizeType offset, FwSizeType length) {
     // code is engaged to synthesize this behavior.
 #if _POSIX_C_SOURCE >= 200112L
     else {
-        PlatformIntType errno_status = ::posix_fallocate(this->m_handle.m_file_descriptor, static_cast<off_t>(offset), static_cast<off_t>(length));
+        int errno_status = ::posix_fallocate(this->m_handle.m_file_descriptor, static_cast<off_t>(offset), static_cast<off_t>(length));
         status = Os::Posix::errno_to_file_status(errno_status);
     }
 #endif
@@ -211,7 +211,7 @@ PosixFile::Status PosixFile::seek(FwSignedSizeType offset, PosixFile::SeekType s
     } else {
         off_t actual =
             ::lseek(this->m_handle.m_file_descriptor, static_cast<off_t>(offset), (seekType == SeekType::ABSOLUTE) ? SEEK_SET : SEEK_CUR);
-        PlatformIntType errno_store = errno;
+        int errno_store = errno;
         if (actual == PosixFileHandle::ERROR_RETURN_VALUE) {
             status = Os::Posix::errno_to_file_status(errno_store);
         } else if ((seekType == SeekType::ABSOLUTE) && (actual != offset)) {
@@ -224,7 +224,7 @@ PosixFile::Status PosixFile::seek(FwSignedSizeType offset, PosixFile::SeekType s
 PosixFile::Status PosixFile::flush() {
     PosixFile::Status status = OP_OK;
     if (PosixFileHandle::ERROR_RETURN_VALUE == ::fsync(this->m_handle.m_file_descriptor)) {
-        PlatformIntType errno_store = errno;
+        int errno_store = errno;
         status = Os::Posix::errno_to_file_status(errno_store);
     }
     return status;
@@ -249,7 +249,7 @@ PosixFile::Status PosixFile::read(U8* buffer, FwSizeType& size, PosixFile::WaitT
                                    static_cast<size_t>(size - accumulated));
         // Non-interrupt error
         if (PosixFileHandle::ERROR_RETURN_VALUE == read_size) {
-            PlatformIntType errno_store = errno;
+            int errno_store = errno;
             // Interrupted w/o read, try again
             if (EINTR != errno_store) {
                 continue;
@@ -291,7 +291,7 @@ PosixFile::Status PosixFile::write(const U8* buffer, FwSizeType& size, PosixFile
                     static_cast<size_t>(size - accumulated));
         // Non-interrupt error
         if (PosixFileHandle::ERROR_RETURN_VALUE == write_size || write_size < 0) {
-            PlatformIntType errno_store = errno;
+            int errno_store = errno;
             // Interrupted w/o write, try again
             if (EINTR != errno_store) {
                 continue;
@@ -304,9 +304,9 @@ PosixFile::Status PosixFile::write(const U8* buffer, FwSizeType& size, PosixFile
     size = accumulated;
     // When waiting, sync to disk
     if (wait) {
-        PlatformIntType fsync_return = ::fsync(this->m_handle.m_file_descriptor);
+        int fsync_return = ::fsync(this->m_handle.m_file_descriptor);
         if (PosixFileHandle::ERROR_RETURN_VALUE == fsync_return) {
-            PlatformIntType errno_store = errno;
+            int errno_store = errno;
             status = Os::Posix::errno_to_file_status(errno_store);
         }
     }

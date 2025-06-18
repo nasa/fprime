@@ -11,11 +11,11 @@ namespace Fw {
         public:
             //! Set the ID base
             void setIdBase(
-                const U32 //< The new ID base
+                const FwIdType //< The new ID base
             );
             //! Get the ID base
             //! \return The ID base
-            U32 getIdBase() const;
+            FwIdType getIdBase() const;
 
         protected:
             PassiveComponentBase(const char* name); //!< Named constructor
@@ -29,7 +29,7 @@ namespace Fw {
             void toString(char* str, FwSizeType size) override; //!< returns string description of component
 #endif
         private:
-            U32 m_idBase; //!< ID base for opcodes etc.
+            FwIdType m_idBase; //!< ID base for opcodes etc.
             FwEnumStoreType m_instance; //!< instance of component object
 
 

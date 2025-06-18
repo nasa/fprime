@@ -20,10 +20,10 @@ namespace Fw {
 class ActiveComponentBase : public QueuedComponentBase {
   public:
     void start(FwTaskPriorityType priority = Os::Task::TASK_PRIORITY_DEFAULT,
-               Os::Task::ParamType stackSize = Os::Task::TASK_DEFAULT,
-               Os::Task::ParamType cpuAffinity = Os::Task::TASK_DEFAULT,
-               Os::Task::ParamType identifier =
-               Os::Task::TASK_DEFAULT);           //!< called by instantiator when task is to be started
+               FwSizeType stackSize = Os::Task::TASK_DEFAULT,
+               FwSizeType cpuAffinity = Os::Task::TASK_DEFAULT,
+               FwTaskIdType identifier =
+               static_cast<FwTaskIdType>(Os::Task::TASK_DEFAULT));  //!< called by instantiator when task is to be started
     void exit();                                  //!< exit task in active component
     Os::Task::Status join();  //!< Join the thread
     DEPRECATED(Os::Task::Status join(void** value_ptr), "Switch to .join()");  //!< Join to thread with discarded value_ptr

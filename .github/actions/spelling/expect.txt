@@ -21,8 +21,6 @@ arduino
 ARef
 argcomplete
 ARGN
-argname
-argtype
 ARINC
 arpa
 ASize
@@ -40,8 +38,6 @@ bfree
 bibtex
 Bies
 BINDIR
-binrel
-Bitfields
 bitmaps
 bocchino
 boolt
@@ -70,6 +66,7 @@ CComponent
 ccsds
 ccsparc
 CDH
+CDHCORE
 cerrno
 CFDP
 cff
@@ -82,13 +79,11 @@ CHIPINFO
 CHK
 CHNG
 CIRCULARSTATE
-classdiagram
 CLOSEFILE
 cloudbees
 CMDDISP
 CMDDISPATCHER
 CMDPACKET
-CMDREG
 cmdresponse
 cmdseq
 cmdsequencer
@@ -152,6 +147,7 @@ DHTML
 diafile
 diles
 dinkel
+dnf
 dnp
 docbook
 docset
@@ -224,7 +220,6 @@ FONTPATH
 foodoodie
 foodoodiehoo
 FPCONFIG
-FPL
 fpp
 fppi
 fpptest
@@ -244,6 +239,8 @@ gcgandhi
 gcov
 gdiplus
 GENHUB
+getfooter
+getstatements
 gettime
 getty
 ghprb
@@ -292,7 +289,6 @@ ieeetr
 iflag
 ifstr
 imple
-importables
 inbool
 INCLUDEDIR
 initstate
@@ -345,11 +341,6 @@ LINEEVENT
 LINEHANDLE
 linelength
 lineoffset
-lineroo
-linux
-listdir
-Listst
-LJR
 lld
 llu
 LOCALSTATEDIR
@@ -371,7 +362,6 @@ MCT
 MDFILE
 MEMALLOCATOR
 MEMB
-membername
 memcheck
 MEMTEST
 mentations
@@ -401,11 +391,7 @@ NACI
 nasafprime
 nbits
 ncsl
-ndiffs
-neascout
 netinet
-newloc
-newroot
 newtio
 nmsgs
 NOBLOCK
@@ -465,6 +451,7 @@ pdflatex
 PEB
 penv
 PERLMOD
+PINGENTRIES
 PINGSEND
 pkill
 PKTS
@@ -527,6 +514,7 @@ rcvd
 rdwr
 Readback
 Recvd
+redhat
 refspec
 REFTOPOLOGY
 REFTOPOLOGYDEFS
@@ -535,17 +523,14 @@ REMOVEDIRECTORY
 REMOVEFILE
 reprioritize
 RGD
+rhel
 RHH
 Rizvi
 ROOTDIR
-ror
-rowspan
-rpaetz
 rpi
 RPIDEMO
 RPIDEMOCOMPONENTIMPLCFG
 rptr
-RSend
 RXD
 SAlias
 sanitizers
@@ -612,7 +597,6 @@ subgrouping
 subhist
 subhistory
 subseconds
-subtargets
 subtopology
 suppr
 suseconds
@@ -662,11 +646,8 @@ TLMPACKET
 TLMPACKETIZER
 TLMPACKETIZERCOMPONENTIMPLCFG
 TLMPACKETIZERTYPES
-tmpl
-tmptree
 TODOLIST
 TOKENBUCKETTESTER
-topologyapp
 topologydefs
 totalram
 tparam

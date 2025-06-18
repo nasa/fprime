@@ -61,11 +61,11 @@ Deserialize and return the next record stored in the serial buffer.
 The deserialized record contains the following binary data in its 
 argument field:
 
-Field             | Size in Bytes | Value
------------------ | ------------- | -----------
-Packet Descriptor | 4             | `Fw::ComPacketType::FW_PACKET_COMMAND`
-Opcode            | 4             | The opcode stored in bytes 0-1 of the serial record, zero-extended to four bytes
-Arguments         | Variable      | Bytes 2-end of the serial record
+Field             | Size in Bytes                    | Value
+----------------- | -------------------------------- | -----------------
+Packet Descriptor | sizeof(FwPacketDescriptorType)   | `Fw::ComPacketType::FW_PACKET_COMMAND`
+Opcode            | sizeof(FwOpcodeType)             | The opcode stored in bytes 0-1 of the serial record, zero-extended to sizeof(FwOpcodeType) bytes
+Arguments         | Variable                         | Bytes 2-end of the serial record
 
 ### 2.4 `reset`
 

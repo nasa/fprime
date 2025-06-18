@@ -120,6 +120,38 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
                                          Fw::ParamBuffer& val  //!< Buffer containing serialized parameter value.
                                                                //!< Unmodified if param not found.
                                          ) override;
+
+    // Access to private and protected FpySequencer methods and members for UTs
+    Signal tester_noOp_directiveHandler(const FpySequencer_NoOpDirective& directive);
+    Signal tester_waitRel_directiveHandler(const FpySequencer_WaitRelDirective& directive);
+    Signal tester_waitAbs_directiveHandler(const FpySequencer_WaitAbsDirective& directive);
+    Signal tester_goto_directiveHandler(const Svc::FpySequencer_GotoDirective &directive);
+    FpySequencer::Runtime* tester_get_m_runtime_ptr();
+    Fw::ExternalSerializeBuffer* tester_get_m_sequenceBuffer_ptr();
+    Signal tester_setLocalVar_directiveHandler(const FpySequencer_SetLocalVarDirective& directive);
+    void tester_set_m_sequencesStarted(U64 val);
+    void tester_set_m_statementsDispatched(U64 val);
+    U64 tester_get_m_sequencesStarted();
+    U64 tester_get_m_statementsDispatched();
+    Fw::Success tester_deserializeDirective(const Fpy::Statement& stmt, Svc::FpySequencer::DirectiveUnion& deserializedDirective);
+    Fw::Success tester_dispatchCommand(const Fpy::Statement& stmt);
+    Fpy::Sequence* tester_get_m_sequenceObj_ptr();
+    Svc::Signal tester_dispatchStatement();
+    Signal tester_if_directiveHandler(const FpySequencer_IfDirective& directive);
+    Fw::Success tester_validate();
+    Fw::String tester_get_m_sequenceFilePath();
+    void tester_set_m_sequenceFilePath(Fw::String str);
+    Fw::Success tester_readBytes(Os::File& file, FwSizeType readLen, bool updateCrc = true);
+    Fw::Success tester_readFooter();
+    Fw::Success tester_readBody();
+    Fw::Success tester_readHeader();
+    void tester_set_m_computedCRC(U32 crc);
+    Svc::FpySequencer::Debug* tester_get_m_debug_ptr();
+    Svc::Signal tester_checkStatementTimeout();
+    Svc::Signal tester_checkShouldWake();
+    Signal tester_getPrm_directiveHandler(const FpySequencer_GetPrmDirective& directive);
+    Signal tester_getTlm_directiveHandler(const FpySequencer_GetTlmDirective& directive);
+
 };
 
 }  // namespace Svc

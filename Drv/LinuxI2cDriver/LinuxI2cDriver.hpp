@@ -69,7 +69,7 @@ namespace Drv {
 
       // Prevent unused field error when using stub
       #ifndef STUBBED_LINUX_I2C_DRIVER
-      PlatformIntType m_fd; //!< i2c file descriptor
+      int m_fd; //!< i2c file descriptor
       #endif
     };
 

@@ -380,7 +380,7 @@ void TlmPacketizer ::pingIn_handler(const FwIndexType portNum, U32 key) {
 // Command handler implementations
 // ----------------------------------------------------------------------
 
-void TlmPacketizer ::SET_LEVEL_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, U32 level) {
+void TlmPacketizer ::SET_LEVEL_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, FwChanIdType level) {
     this->m_startLevel = level;
     if (level > this->m_maxLevel) {
         this->log_WARNING_LO_MaxLevelExceed(level, this->m_maxLevel);

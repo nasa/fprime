@@ -15,6 +15,7 @@ This document describes the format of FPP JSON dictionaries.
     - [String Type Descriptors](#string-type-descriptors)
         - [String Types](#string-types)
     - [Qualified Identifier Type Descriptors](#qualified-identifier-type-descriptors)
+- [Constants](#constants)
 - [Type Definitions](#type-definitions)
     - [Array Type Definition](#array-type-definition)
     - [Enumeration Type Definition](#enumeration-type-definition)
@@ -29,6 +30,7 @@ This document describes the format of FPP JSON dictionaries.
     - [Boolean Values](#boolean-values)
     - [String Values](#string-values)
     - [Array Values](#array-values)
+    - [Constant Values](#constant-values)
     - [Enumeration Values](#enumeration-values)
     - [Struct Values](#struct-values)
     - [Invalid Values](#invalid-values)
@@ -50,6 +52,7 @@ This document describes the format of FPP JSON dictionaries.
 - [Dictionaries](#dictionaries)
     - [Dictionary Metadata](#dictionary-metadata)
     - [Dictionary Content](#dictionary-content)
+    - [Framework Definitions Required by the Dictionary](#framework-definitions-required-by-the-dictionary)
 
 ## Type Descriptors
 
@@ -175,6 +178,42 @@ Example JSON of qualified name
 }
 ```
 
+## Constants
+
+| Field | Description | Options | Required | 
+| ----- | ----------- | ------- | -------- |
+| `qualifiedName` | Fully qualified name of element in FPP model | Period-separated **String** | true |
+| `type` | The type of the constant value | **[Type Descriptor](#type-descriptors)** | true
+| `value` | Value associated with the constant | **[Constant Value](#constant-values)** | true |
+| `annotation` | User-defined annotation | **String** | false |
+
+Type information for integer constant dictionary entries is determined by
+checking the sign of a constant and will always default to the maximum integer size (64 bits):
+- If the constant is positive, the type of the constant is U64.
+- If the constant is negative, the type of the constant is I64.
+  
+Example FPP model with JSON representation:
+```
+module M1 {
+  @ Constant with value 1
+  constant C = 1
+}
+```
+
+```json
+{
+  "qualifiedName" : "M1.C",
+  "type" : {
+    "name" : "U64",
+    "kind" : "integer",
+    "size" : 64,
+    "signed" : false
+  },
+  "value" : 1,
+  "annotation" : "Constant with value 1"
+}
+```
+
 ## Type Definitions
 
 ### Array Type Definition
@@ -185,7 +224,7 @@ Example JSON of qualified name
 | `qualifiedName` | Fully qualified name of element in FPP model | Period-separated **String** | true |
 | `size` | Size of the data structure | **Number** | true |
 | `elementType` | The type of the array's elements | **[Type Descriptor](#type-descriptors)** | true
-| `default` | Default array value | Value of type specified in `elementType` | true |
+| `default` | Default array value |  **[Array Value](#array-values)**  | true |
 | `annotation` | User-defined annotation | **String** | false |
 
 Example FPP model with JSON representation:
@@ -221,7 +260,7 @@ module M1 {
 | `qualifiedName` | Fully qualified name of element in FPP model | Period-separated **String** | true |
 | `representationType` | Type of the enumerated values | **[Type Descriptor](#type-descriptors)** | true |
 | `enumeratedConstants` | The enumerated constants | JSON Dictionary of enumerated constants (keys) to [Enumerated Constant Descriptor](#enumerated-constant-descriptors) (values) | true |
-| `default` | Qualified name of the enumeration's default value | **String** | true |
+| `default` | Qualified name of the enumeration's default value | **[Enumeration Value](#enumeration-values)** | true |
 | `annotation` | User-defined annotation | **String** | false |
 
 #### Enumerated Constant Descriptors
@@ -282,7 +321,7 @@ module M1 {
 | `kind` | The kind of type | `struct` | true |
 | `qualifiedName` | Fully qualified name of element in FPP model | Period-separated **String** | true |
 | `members` | The members of the struct | JSON dictionary of Member Name (key) to [Struct Member Descriptor](#struct-member-descriptor) (value) | true |
-| `default` | The default value of the struct | JSON dictionary of Member Name (key) to default value (value) | true |
+| `default` | The default value of the struct | JSON dictionary of Member Name (key) to **[Struct Value](#struct-values)** (value) | true |
 | `annotation` | User-defined annotation | **String** extracted from FPP model | false |
 
 #### Struct Member Descriptor
@@ -452,6 +491,10 @@ Example JSON of an array of type U32 consisting of 10 elements
 ```json
 [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 ```
+
+### Constant Values
+Constant values include [Primitive Integer](#primitive-integer-values), [Floating-Point](#floating-point-values), 
+[String](#string-values), and [Boolean](#boolean-values) values.
 
 ### Enumeration Values
 String qualified identifier name of enumeration value
@@ -998,6 +1041,7 @@ module M {
 | ----- | ------- | -------- |
 | `metadata` | [Dictionary Metadata](#dictionary-metadata) | true |
 | `typeDefinitions` | Array of [Type Definitions](#type-definitions)| true |
+| `constants` | Array of [Constants](#constants)| true |
 | `commands` | Array of [Commands](#commands) | true |
 | `events` | Array of [Events](#events) | true |
 | `telemetryChannels` | Array of [Telemetry Channels](#telemetry-channels) | true |
@@ -1165,6 +1209,7 @@ module M {
       }
     }
   ],
+  "constants": [],
   "commands" : [
     {
       "name" : "M.c1.CommandString",
@@ -1330,3 +1375,21 @@ module M {
 }
 
 ```
+
+### Framework Definitions Required by the Dictionary
+The following framework definitions are required by the dictionary and will always be present in the dictionary content:
+| Name  | Kind    | Location | Purpose  |
+| ----- | ------- | -------- | -------- |
+| `FwChanIdType` | [Alias type definition](#type-alias-definition)| `typeDefinitions` | The type of a telemetry channel identifier |
+| `FwEventIdType` | [Alias type definition](#type-alias-definition)| `typeDefinitions` | The type of an event identifier |
+| `FwOpcodeType` | [Alias type definition](#type-alias-definition)| `typeDefinitions` | The type of a command opcode | 
+| `FwPacketDescriptorType` | [Alias type definition](#type-alias-definition)| `typeDefinitions` | The type of a com packet descriptor | 
+| `FwDpIdType` | [Alias type definition](#type-alias-definition)| `typeDefinitions` | The type of a data product identifier | 
+| `FwDpPriorityType` | [Alias type definition](#type-alias-definition)| `typeDefinitions` | The type of a data product priority |
+| `FwSizeStoreType` | [Alias type definition](#type-alias-definition)| `typeDefinitions` | The type used to serialize a size value | 
+| `FwTimeBaseStoreType` | [Alias type definition](#type-alias-definition)| `typeDefinitions` | The type used to serialize a time base value |
+| `FwTimeContextStoreType` | [Alias type definition](#type-alias-definition)| `typeDefinitions` | The type used to serialize a time context value |
+| `Fw.DpState` | [Enum type definition](#enumeration-type-definition)| `typeDefinitions` | The data product state | |
+| `Fw.DpCfg.ProcType` | [Enum type definition](#enumeration-type-definition)| `typeDefinitions` | A bit mask for selecting the type of processing to perform on a container before writing it to disk. |
+| `Fw.DpCfg.CONTAINER_USER_DATA_SIZE` | [Constant Definition](#constants)| `constants` | The size in bytes of the user-configurable data in the container packet header |
+
