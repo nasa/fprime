@@ -155,24 +155,22 @@ TEST(ExternalStack, PopOK) {
         ASSERT_EQ(status, Success::SUCCESS);
         ASSERT_EQ(stack.getSize(), i + 1);
     }
-#if 0
     for (FwSizeType i = 0; i < size; i++) {
+        const FwSizeType stackIndex = size - 1 - i;
         U32 val = 0;
         // Peek
         auto status = stack.peek(val);
         ASSERT_EQ(status, Success::SUCCESS);
-        ASSERT_EQ(val, items[i]);
+        ASSERT_EQ(val, items[stackIndex]);
         // Pop it
         status = stack.pop(val);
         ASSERT_EQ(status, Success::SUCCESS);
-        ASSERT_EQ(val, items[i]);
-        ASSERT_EQ(stack.getSize(), size - 1 - i);
+        ASSERT_EQ(val, items[stackIndex]);
+        ASSERT_EQ(stack.getSize(), stackIndex);
     }
     ASSERT_EQ(stack.getSize(), 0);
-#endif
 }
 
-#if 0
 TEST(ExternalStack, PopEmpty) {
     constexpr const FwSizeType capacity = 1000;
     U32 items[capacity];
@@ -194,13 +192,7 @@ void testCopyDataFrom(StackBase<U32>& q1, FwSizeType size1, StackBase<U32>& q2) 
     const auto capacity2 = q2.getCapacity();
     const FwSizeType size = FW_MIN(size1, capacity2);
     for (FwSizeType i = 0; i < size; i++) {
-        U32 val1 = 0;
-        auto status = q1.peek(val1, i);
-        ASSERT_EQ(status, Success::SUCCESS);
-        U32 val2 = 1;
-        status = q2.peek(val2, i);
-        ASSERT_EQ(status, Success::SUCCESS);
-        ASSERT_EQ(val1, val2);
+        ASSERT_EQ(q1.at(i), q2.at(i));
     }
 }
 
@@ -229,6 +221,7 @@ TEST(ExternalStack, CopyDataFrom) {
     }
 }
 
+#if 0
 TEST(ExternalStackRules, PushOK) {
     U32 items[State::capacity];
     State::ExternalQueue stack(items, State::capacity);

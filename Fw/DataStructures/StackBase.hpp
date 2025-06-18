@@ -67,7 +67,7 @@ class StackBase {
             this->clear();
             const FwSizeType size = FW_MIN(stack.getSize(), this->getCapacity());
             for (FwSizeType i = 0; i < size; i++) {
-                const auto& e = stack.at(i);
+                const auto& e = stack.at(size - 1 - i);
                 const auto status = this->push(e);
                 FW_ASSERT(status == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(status));
             }
