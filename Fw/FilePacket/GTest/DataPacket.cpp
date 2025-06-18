@@ -23,10 +23,10 @@ namespace Fw {
           const FilePacket::DataPacket& actual
       )
     {
-      FilePackets::Header::compare(expected.m_header, actual.m_header);
-      ASSERT_EQ(expected.m_byteOffset, actual.m_byteOffset);
-      Bytes expectedData(expected.m_data, expected.m_dataSize);
-      Bytes actualData(actual.m_data, actual.m_dataSize);
+      FilePackets::Header::compare(expected.asHeader(), actual.asHeader());
+      ASSERT_EQ(expected.getByteOffset(), actual.getByteOffset());
+      Bytes expectedData(expected.getData(), expected.getDataSize());
+      Bytes actualData(actual.getData(), actual.getDataSize());
       Bytes::compare(expectedData, actualData);
     }
 

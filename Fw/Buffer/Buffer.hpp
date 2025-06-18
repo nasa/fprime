@@ -22,6 +22,9 @@
     #endif
 #endif
 
+// Forward declaration for UTs
+namespace Fw { class BufferTester; }
+
 namespace Fw {
 
 //! Buffer used for wrapping pointer to data for efficient transmission
@@ -40,6 +43,8 @@ namespace Fw {
 //! prevent excessive copying.
 //!
 class Buffer : public Fw::Serializable {
+
+friend class Fw::BufferTester;
 
 public:
 
@@ -98,8 +103,8 @@ public:
     //! Returns a ExternalSerializeBufferWithMemberCopy representation of the wrapped data for serializing
     //!
     //! \warning The serialization pointer of the returned ExternalSerializeBufferWithMemberCopy object is set to zero
-    //! \warning so that serialization will start at the beginning of the memory pointed to by the Fw::Buffer. If that 
-    //! \warning behavior is not desired the caller may manipulate the serialization offsets with moveSerToOffset 
+    //! \warning so that serialization will start at the beginning of the memory pointed to by the Fw::Buffer. If that
+    //! \warning behavior is not desired the caller may manipulate the serialization offsets with moveSerToOffset
     //! \warning and serializeSkip methods prior to serialization.
     //!
     //! \return representation of the wrapped data to aid in serializing to it
@@ -107,7 +112,7 @@ public:
 
 
     //! Returns a ExternalSerializeBufferWithMemberCopy representation of the wrapped data for deserializing
-    //! 
+    //!
     //! \warning The entire buffer (up to getSize) is available for deserialization.
     //!
     //! \return representation of the wrapped data to aid in deserializing to it
@@ -183,7 +188,7 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const Buffer& obj);
 #endif
 
-PRIVATE:
+private:
     Fw::ExternalSerializeBuffer m_serialize_repr; //<! Representation for serialization and deserialization functions
     U8* m_bufferData; //<! data - A pointer to the data
     SizeType m_size; //<! size - The data size in bytes

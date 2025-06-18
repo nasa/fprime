@@ -22,8 +22,8 @@ namespace Fw {
           const FilePacket::Header& actual
       )
     {
-      ASSERT_EQ(expected.m_type, actual.m_type);
-      ASSERT_EQ(expected.m_sequenceIndex, actual.m_sequenceIndex);
+      ASSERT_EQ(expected.getType(), actual.getType());
+      ASSERT_EQ(expected.getSequenceIndex(), actual.getSequenceIndex());
     }
 
   }
