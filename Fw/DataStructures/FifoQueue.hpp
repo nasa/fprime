@@ -56,7 +56,7 @@ class FifoQueue final : public FifoQueueBase<T> {
         return this->m_extQueue.enqueue(e);
     }
 
-    //! Dequeue an item (pop from the left)
+    //! Dequeue an item (remove from the left)
     //! \return SUCCESS if item dequeued
     Success dequeue(T& e  //!< The item (output)
                     ) override {

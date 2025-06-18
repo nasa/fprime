@@ -280,9 +280,9 @@ Success pop(T& e) override
 
 1. If `m_size > 0` then
 
-    1. Set `e = m_items[m_size]`.
-
     1. Decrement `m_size`.
+
+    1. Set `e = m_items[m_size]`.
 
 1. Return `status`.
 

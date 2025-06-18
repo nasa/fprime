@@ -1,27 +1,26 @@
 // ======================================================================
-// \file   ExternalFifoQueue.hpp
+// \file   ExternalStack.hpp
 // \author bocchino
-// \brief  A FIFO queue with external storage
+// \brief  A stack with external storage
 // ======================================================================
 
-#ifndef Fw_ExternalFifoQueue_HPP
-#define Fw_ExternalFifoQueue_HPP
+#ifndef Fw_ExternalStack_HPP
+#define Fw_ExternalStack_HPP
 
-#include "Fw/DataStructures/CircularIndex.hpp"
 #include "Fw/DataStructures/ExternalArray.hpp"
-#include "Fw/DataStructures/FifoQueueBase.hpp"
+#include "Fw/DataStructures/StackBase.hpp"
 #include "Fw/Types/ByteArray.hpp"
 
 namespace Fw {
 
 template <typename T>
-class ExternalFifoQueue final : public FifoQueueBase<T> {
+class ExternalStack final : public StackBase<T> {
     // ----------------------------------------------------------------------
     // Friend class for testing
     // ----------------------------------------------------------------------
 
     template <typename TT>
-    friend class ExternalFifoQueueTester;
+    friend class ExternalStackTester;
 
   public:
     // ----------------------------------------------------------------------
@@ -29,29 +28,29 @@ class ExternalFifoQueue final : public FifoQueueBase<T> {
     // ----------------------------------------------------------------------
 
     //! Zero-argument constructor
-    ExternalFifoQueue() = default;
+    ExternalStack() = default;
 
     //! Constructor providing typed backing storage
-    ExternalFifoQueue(T* items,            //!< The items
-                      FwSizeType capacity  //!< The capacity
-                      )
-        : FifoQueueBase<T>() {
+    ExternalStack(T* items,            //!< The items
+                  FwSizeType capacity  //!< The capacity
+                  )
+        : StackBase<T>() {
         this->setStorage(items, capacity);
     }
 
     //! Constructor providing untyped backing storage
-    ExternalFifoQueue(ByteArray data,      //!< The data
-                      FwSizeType capacity  //!< The capacity
-                      )
-        : FifoQueueBase<T>() {
+    ExternalStack(ByteArray data,      //!< The data
+                  FwSizeType capacity  //!< The capacity
+                  )
+        : StackBase<T>() {
         this->setStorage(data, capacity);
     }
 
     //! Copy constructor
-    ExternalFifoQueue(const ExternalFifoQueue<T>& queue) : FifoQueueBase<T>() { *this = queue; }
+    ExternalStack(const ExternalStack<T>& stack) : StackBase<T>() { *this = stack; }
 
     //! Destructor
-    ~ExternalFifoQueue() override = default;
+    ~ExternalStack() override = default;
 
   public:
     // ----------------------------------------------------------------------
@@ -59,32 +58,22 @@ class ExternalFifoQueue final : public FifoQueueBase<T> {
     // ----------------------------------------------------------------------
 
     //! operator=
-    ExternalFifoQueue<T>& operator=(const ExternalFifoQueue<T>& queue) {
-        if (&queue != this) {
-            this->m_items = queue.m_items;
-            this->m_enqueueIndex = queue.m_enqueueIndex;
-            this->m_dequeueIndex = queue.m_dequeueIndex;
-            this->m_size = queue.m_size;
+    ExternalStack<T>& operator=(const ExternalStack<T>& stack) {
+        if (&stack != this) {
+            this->m_items = stack.m_items;
+            this->m_size = stack.m_size;
         }
         return *this;
     }
 
-    //! Clear the queue
-    void clear() override {
-        this->m_enqueueIndex.setValue(0);
-        this->m_dequeueIndex.setValue(0);
-        this->m_size = 0;
-    }
+    //! Clear the stack
+    void clear() override { this->m_size = 0; }
 
     //! Set the storage (typed data)
     void setStorage(T* items,            //!< The items
                     FwSizeType capacity  //!< The capacity
     ) {
         this->m_items.setStorage(items, capacity);
-        if (capacity > 0) {
-            this->m_enqueueIndex.setModulus(capacity);
-            this->m_dequeueIndex.setModulus(capacity);
-        }
         this->clear();
     }
 
@@ -93,22 +82,16 @@ class ExternalFifoQueue final : public FifoQueueBase<T> {
                     FwSizeType capacity  //!< The capacity
     ) {
         this->m_items.setStorage(data, capacity);
-        if (capacity > 0) {
-            this->m_enqueueIndex.setModulus(capacity);
-            this->m_dequeueIndex.setModulus(capacity);
-        }
         this->clear();
     }
 
-    //! Enqueue an element (push on the right)
-    //! \return SUCCESS if element enqueued
-    Success enqueue(const T& e  //!< The element (output)
-                    ) override {
+    //! Push an element (push on the right)
+    //! \return SUCCESS if element pushed
+    Success push(const T& e  //!< The element (output)
+                 ) override {
         auto status = Success::FAILURE;
         if (this->m_size < this->getCapacity()) {
-            const auto i = this->m_enqueueIndex.getValue();
-            this->m_items[i] = e;
-            (void)this->m_enqueueIndex.increment();
+            this->m_items[this->m_size] = e;
             this->m_size++;
             status = Success::SUCCESS;
         }
@@ -116,37 +99,34 @@ class ExternalFifoQueue final : public FifoQueueBase<T> {
     }
 
     //! Get an item at an index
-    //! Indices go from left to right in the queue
+    //! Indices go from left to right in the stack
     //! Fails an assertion if the index is out of range
     //! \return The item
     const T& at(FwSizeType index  //!< The index
     ) const override {
         FW_ASSERT(index < this->m_size, static_cast<FwAssertArgType>(index),
                   static_cast<FwAssertArgType>(this->m_size));
-        auto ci = this->m_dequeueIndex;
-        const auto i = ci.increment(index);
-        return this->m_items[i];
+        return this->m_items[this->m_size];
     }
 
-    //! Dequeue an element (remove from the left)
-    //! \return SUCCESS if element dequeued
-    Success dequeue(T& e  //!< The element (output)
-                    ) override {
+    //! Pop an element (remove from the right)
+    //! \return SUCCESS if element popped
+    Success pop(T& e  //!< The element (output)
+                ) override {
         auto status = Success::FAILURE;
         if (this->m_size > 0) {
-            e = this->at(0);
-            (void)this->m_dequeueIndex.increment();
             this->m_size--;
+            e = this->at(this->m_size);
             status = Success::SUCCESS;
         }
         return status;
     }
 
-    //! Get the size (number of items stored in the queue)
+    //! Get the size (number of items stored in the stack)
     //! \return The size
     FwSizeType getSize() const override { return this->m_size; }
 
-    //! Get the capacity (maximum number of items stored in the queue)
+    //! Get the capacity (maximum number of items stored in the stack)
     //! \return The capacity
     FwSizeType getCapacity() const override { return this->m_items.getSize(); }
 
@@ -155,13 +135,11 @@ class ExternalFifoQueue final : public FifoQueueBase<T> {
     // Public static functions
     // ----------------------------------------------------------------------
 
-    //! Get the alignment of the storage for an ExternalFifoQueue
+    //! Get the alignment of the storage for an ExternalStack
     //! \return The alignment
-    static constexpr U8 getByteArrayAlignment() {
-        return ExternalArray<T>::getByteArrayAlignment();
-    }
+    static constexpr U8 getByteArrayAlignment() { return ExternalArray<T>::getByteArrayAlignment(); }
 
-    //! Get the size of the storage for an ExternalFifoQueue of the specified 
+    //! Get the size of the storage for an ExternalStack of the specified
     //! capacity, as a byte array
     //! \return The byte array size
     static constexpr FwSizeType getByteArraySize(FwSizeType capacity  //!< The capacity
@@ -174,16 +152,10 @@ class ExternalFifoQueue final : public FifoQueueBase<T> {
     // Private member variables
     // ----------------------------------------------------------------------
 
-    //! The array for storing the queue items
+    //! The array for storing the stack items
     ExternalArray<T> m_items = {};
 
-    //! The enqueue index
-    CircularIndex m_enqueueIndex = {};
-
-    //! The dequeue index
-    CircularIndex m_dequeueIndex = {};
-
-    //! The number of items on the queue
+    //! The number of items on the stack
     FwSizeType m_size = 0;
 };
 
