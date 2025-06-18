@@ -19,7 +19,10 @@
 
 // Subtopology includes
 #include "Svc/Subtopologies/CDHCore/PingEntries.hpp"
-#include "Svc/Subtopologies/Comms/SubtopologyTopologyDefs.hpp"
+#include "Svc/Subtopologies/CommsCCSDS/PingEntries.hpp"
+
+#include "Svc/Subtopologies/CommsCCSDS/SubtopologyTopologyDefs.hpp"
+
 #include "Svc/Subtopologies/DataProducts/SubtopologyTopologyDefs.hpp"
 #include "Svc/Subtopologies/FileHandling/SubtopologyTopologyDefs.hpp"
 

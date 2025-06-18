@@ -17,7 +17,7 @@ module Ref {
     # Subtopology imports
     # ----------------------------------------------------------------------
     import CDHCore.Subtopology
-    import Comms.Subtopology
+    import CommsCCSDS.Subtopology
     import FileHandling.Subtopology
     import DataProducts.Subtopology
     
@@ -83,11 +83,11 @@ module Ref {
       rateGroup1Comp.RateGroupMemberOut[2] -> CDHCore.tlmSend.Run
       rateGroup1Comp.RateGroupMemberOut[3] -> FileHandling.fileDownlink.Run
       rateGroup1Comp.RateGroupMemberOut[4] -> systemResources.run
-      rateGroup1Comp.RateGroupMemberOut[5] -> Comms.comQueue.run
+      rateGroup1Comp.RateGroupMemberOut[5] -> CommsCCSDS.comQueue.run
 
       # Rate group 2
       rateGroupDriverComp.CycleOut[Ports_RateGroups.rateGroup2] -> rateGroup2Comp.CycleIn
-      rateGroup2Comp.RateGroupMemberOut[0] -> Comms.cmdSeq.schedIn
+      rateGroup2Comp.RateGroupMemberOut[0] -> CommsCCSDS.cmdSeq.schedIn
       rateGroup2Comp.RateGroupMemberOut[1] -> sendBuffComp.SchedIn
       rateGroup2Comp.RateGroupMemberOut[2] -> SG3.schedIn
       rateGroup2Comp.RateGroupMemberOut[3] -> SG4.schedIn
@@ -97,7 +97,7 @@ module Ref {
       rateGroup3Comp.RateGroupMemberOut[0] -> CDHCore.$health.Run
       rateGroup3Comp.RateGroupMemberOut[1] -> SG5.schedIn
       rateGroup3Comp.RateGroupMemberOut[2] -> blockDrv.Sched
-      rateGroup3Comp.RateGroupMemberOut[3] -> Comms.commsBufferManager.schedIn
+      rateGroup3Comp.RateGroupMemberOut[3] -> CommsCCSDS.commsBufferManager.schedIn
       rateGroup3Comp.RateGroupMemberOut[4] -> DataProducts.dpBufferManager.schedIn
       rateGroup3Comp.RateGroupMemberOut[5] -> DataProducts.dpWriter.schedIn
       rateGroup3Comp.RateGroupMemberOut[6] -> DataProducts.dpMgr.schedIn
@@ -118,26 +118,26 @@ module Ref {
 
     }
 
-    connections Comms_CDHCore{
+    connections CommsCCSDS_CDHCore{
       # events and telemetry to comQueue
-      CDHCore.events.PktSend        -> Comms.comQueue.comPacketQueueIn[Comms.Ports_ComPacketQueue.EVENTS]
-      CDHCore.tlmSend.PktSend            -> Comms.comQueue.comPacketQueueIn[Comms.Ports_ComPacketQueue.TELEMETRY]
+      CDHCore.events.PktSend        -> CommsCCSDS.comQueue.comPacketQueueIn[CommsCCSDS.Ports_ComPacketQueue.EVENTS]
+      CDHCore.tlmSend.PktSend            -> CommsCCSDS.comQueue.comPacketQueueIn[CommsCCSDS.Ports_ComPacketQueue.TELEMETRY]
 
       # Router <-> CmdDispatcher
-      Comms.fprimeRouter.commandOut  -> CDHCore.cmdDisp.seqCmdBuff
-      CDHCore.cmdDisp.seqCmdStatus     -> Comms.fprimeRouter.cmdResponseIn
-      Comms.cmdSeq.comCmdOut -> CDHCore.cmdDisp.seqCmdBuff
-      CDHCore.cmdDisp.seqCmdStatus -> Comms.cmdSeq.cmdResponseIn
+      CommsCCSDS.fprimeRouter.commandOut  -> CDHCore.cmdDisp.seqCmdBuff
+      CDHCore.cmdDisp.seqCmdStatus     -> CommsCCSDS.fprimeRouter.cmdResponseIn
+      CommsCCSDS.cmdSeq.comCmdOut -> CDHCore.cmdDisp.seqCmdBuff
+      CDHCore.cmdDisp.seqCmdStatus -> CommsCCSDS.cmdSeq.cmdResponseIn
     }
 
-    connections Comms_FileHandling {
+    connections CommsCCSDS_FileHandling {
       # File Downlink <-> ComQueue
-      FileHandling.fileDownlink.bufferSendOut -> Comms.comQueue.bufferQueueIn[FileHandling.Ports_ComBufferQueue.FILE_DOWNLINK]
-      Comms.comQueue.bufferReturnOut[FileHandling.Ports_ComBufferQueue.FILE_DOWNLINK] -> FileHandling.fileDownlink.bufferReturn
+      FileHandling.fileDownlink.bufferSendOut -> CommsCCSDS.comQueue.bufferQueueIn[FileHandling.Ports_ComBufferQueue.FILE_DOWNLINK]
+      CommsCCSDS.comQueue.bufferReturnOut[FileHandling.Ports_ComBufferQueue.FILE_DOWNLINK] -> FileHandling.fileDownlink.bufferReturn
 
       # Router <-> FileUplink
-      Comms.fprimeRouter.fileOut     -> FileHandling.fileUplink.bufferSendIn
-      FileHandling.fileUplink.bufferSendOut -> Comms.fprimeRouter.fileBufferReturnIn
+      CommsCCSDS.fprimeRouter.fileOut     -> FileHandling.fileUplink.bufferSendIn
+      FileHandling.fileUplink.bufferSendOut -> CommsCCSDS.fprimeRouter.fileBufferReturnIn
     }
 
     connections FileHandling_DataProducts{
