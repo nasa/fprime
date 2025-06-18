@@ -3,7 +3,7 @@
 `ExternalArraySet` is a `final` class template
 defined in [`Fw/DataStructures`](sdd.md).
 It represents an array-based set with external storage.
-Internally it maintains an [`ArraySetOrSetImpl<Entry>`](ArraySetOrSetImpl.md)
+Internally it maintains an [`ArraySetOrMapImpl<Entry>`](ArraySetOrMapImpl.md)
 as the set implementation.
 
 ## 1. Template Parameters
@@ -24,10 +24,10 @@ as the set implementation.
 `ExternalArraySet` defines the following public types:
 
 ```c++
-using Entry = SetOrSetIterator<K, V>
+using Entry = SetOrMapIterator<K, V>
 ```
 
-The type `SetOrMapIterator` is defined [here](SetOrSetIterator.md).
+The type `SetOrMapIterator` is defined [here](SetOrMapIterator.md).
 
 ## 4. Private Member Variables
 
@@ -35,11 +35,11 @@ The type `SetOrMapIterator` is defined [here](SetOrSetIterator.md).
 
 |Name|Type|Purpose|Default Value|
 |----|----|-------|-------------|
-|`m_setImpl`|[`ArraySetOrSetImpl<Entry>`](ArraySetOrSetImpl.md)|The set implementation|C++ default initialization|
+|`m_setImpl`|[`ArraySetOrMapImpl<Entry>`](ArraySetOrMapImpl.md)|The set implementation|C++ default initialization|
 
 ```mermaid
 classDiagram
-    ExternalArraySet *-- ArraySetOrSetImpl
+    ExternalArraySet *-- ArraySetOrMapImpl
 ```
 
 ## 5. Public Constructors and Destructors
