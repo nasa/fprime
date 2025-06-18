@@ -106,7 +106,7 @@ class ExternalStack final : public StackBase<T> {
     ) const override {
         FW_ASSERT(index < this->m_size, static_cast<FwAssertArgType>(index),
                   static_cast<FwAssertArgType>(this->m_size));
-        return this->m_items[this->m_size];
+        return this->m_items[this->m_size - 1 - index];
     }
 
     //! Pop an element (remove from the right)
@@ -115,8 +115,8 @@ class ExternalStack final : public StackBase<T> {
                 ) override {
         auto status = Success::FAILURE;
         if (this->m_size > 0) {
+            e = this->at(0);
             this->m_size--;
-            e = this->at(this->m_size);
             status = Success::SUCCESS;
         }
         return status;

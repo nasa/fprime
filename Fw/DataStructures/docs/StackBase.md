@@ -59,20 +59,20 @@ virtual const T& at(FwSizeType index) const = 0
 ```
 
 Return the item at the specified index.
-Index 0 is the leftmost (earliest) element in the stack.
-Increasing indices go from left to right.
+Index 0 is the rightmost (latest) element in the stack.
+Increasing indices go from right to left.
 Fails an assertion if the index is out of range.
 
 _Example:_
 ```c++
 void f(StackBase<U32>& stack) {
     stack.clear();
-    const auto status = stack.push(3);
+    auto status = stack.push(3);
     ASSERT_EQ(status, Success::SUCCESS);
-    const auto status = stack.push(4);
+    status = stack.push(4);
     ASSERT_EQ(status, Success::SUCCESS);
-    ASSERT_EQ(stack.at(0), 3);
-    ASSERT_EQ(stack.at(1), 4);
+    ASSERT_EQ(stack.at(0), 4);
+    ASSERT_EQ(stack.at(1), 3);
     ASSERT_DEATH(stack.at(2), "Assert");
 }
 ```
@@ -196,9 +196,12 @@ void f(StackBase<U32>& stack) {
     status = stack.peek(value, 1);
     ASSERT_EQ(status, Success::FAILURE);
     status = stack.push(4);
-    status = stack.peek(value, 1);
+    status = stack.peek(value);
     ASSERT_EQ(status, Success::SUCCESS);
     ASSERT_EQ(value, 4);
+    status = stack.peek(value, 1);
+    ASSERT_EQ(status, Success::SUCCESS);
+    ASSERT_EQ(value, 3);
 }
 ```
 
