@@ -152,7 +152,7 @@ ASSERT_EQ(m2.getSize(), 1);
 const V& at(FwSizeType index) const
 ```
 
-Return `m_setImpl[index]`.
+Return `m_setImpl.at(index)`.
 
 _Example:_
 ```c++

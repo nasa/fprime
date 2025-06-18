@@ -157,7 +157,7 @@ ASSERT_EQ(m2.getSize(), 1);
 const V& at(FwSizeType index) const
 ```
 
-Return `m_mapImpl[index]`.
+Return `m_mapImpl.at(index)`.
 
 _Example:_
 ```c++
