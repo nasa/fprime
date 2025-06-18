@@ -195,17 +195,7 @@ ASSERT_EQ(map.getSize(), 0);
 Success find(const K& key, V& value) override
 ```
 
-1. Set `status = Success::FAILURE`.
-
-1. Set `iterator = m_impl.find(key)`.
-
-1. If `iterator != nullptr`
-
-    1. Set `value = iterator->getValue()`.
-
-    1. Set `status = Success::SUCCESS`.
-
-1. Return `status`.
+Return `m_impl.find(key, value)`.
 
 _Example:_
 ```c++
