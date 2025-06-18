@@ -1,17 +1,18 @@
 // ======================================================================
-// \title  FifoQueueTestRules.cpp
+// \title  StackTestRules.cpp
 // \author Rob Bocchino
-// \brief  cpp file for FifoQueue test rules
+// \brief  cpp file for Stack test rules
 // ======================================================================
 
-#include "Fw/DataStructures/test/ut/STest/FifoQueueTestRules.hpp"
+#include "Fw/DataStructures/test/ut/STest/StackTestRules.hpp"
 
 namespace Fw {
 
-namespace FifoQueueTest {
+namespace StackTest {
 
 namespace Rules {
 
+#if 0
 EnqueueOK enqueueOK;
 
 EnqueueFull enqueueFull;
@@ -23,9 +24,10 @@ DequeueOK dequeueOK;
 DequeueEmpty dequeueEmpty;
 
 Clear clear;
+#endif
 
 };  // namespace Rules
 
-}  // namespace FifoQueueTest
+}  // namespace StackTest
 
 }  // namespace Fw

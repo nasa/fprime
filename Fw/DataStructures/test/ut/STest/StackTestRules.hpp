@@ -1,3 +1,9 @@
+// ======================================================================
+// \title  StackTestRules.hpp
+// \author bocchino
+// \brief  hpp file for Stack test rules
+// ======================================================================
+
 #ifndef StackTestRules_HPP
 #define StackTestRules_HPP
 
@@ -7,7 +13,6 @@
 #include "STest/STest/Pick/Pick.hpp"
 #include "STest/STest/Rule/Rule.hpp"
 
-#if 0
 namespace Fw {
 
 namespace StackTest {
@@ -16,6 +21,7 @@ using Rule = STest::Rule<State>;
 
 namespace Rules {
 
+#if 0
 struct EnqueueOK : public Rule {
     EnqueueOK() : Rule("EnqueueOK") {}
     bool precondition(const State& state) { return static_cast<FwSizeType>(state.queue.getSize()) < State::capacity; }
@@ -91,12 +97,12 @@ struct Clear : public Rule {
 };
 
 extern Clear clear;
+#endif
 
 };  // namespace Rules
 
 }  // namespace StackTest
 
 }  // namespace Fw
-#endif
 
 #endif

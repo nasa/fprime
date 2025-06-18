@@ -14,6 +14,8 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/FifoQueueTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/FifoQueueTestRules.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/FifoQueueTestScenarios.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/StackTestRules.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/StackTestScenarios.cpp"
 )
 
 set(UT_MOD_DEPS

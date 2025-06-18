@@ -6,7 +6,6 @@
 
 #include "Fw/DataStructures/test/ut/STest/StackTestState.hpp"
 
-#if 0
 namespace Fw {
 
 namespace StackTest {
@@ -20,4 +19,3 @@ void random(const Fw::StringBase& name, State& state, U32 maxNumSteps);
 }  // namespace StackTest
 
 }  // namespace Fw
-#endif
