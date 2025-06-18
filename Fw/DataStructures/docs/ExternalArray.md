@@ -60,7 +60,7 @@ ExternalArray(ByteArray data, FwSizeType size)
 ```
 
 Call `setStorage(data, size)`.
-`data` must be aligned according to `getByteArrayAlignment` and must
+`data` must be aligned according to `getByteArrayAlignment()` and must
 contain at least `getByteArraySize(size)` bytes.
 
 _Example:_
@@ -285,8 +285,7 @@ static constexpr FwSizeType getByteArraySize(FwSizeType size)
 Return `size * sizeof(T)`.
 
 _Example:_
-```
-c++
+```c++
 const FwSizeType size = 10;
 const FwSizeType byteArraySize = ExternalArray<U32>::getByteArraySize(size);
 ASSERT_EQ(byteArraySize, 10 * sizeof(U32));
