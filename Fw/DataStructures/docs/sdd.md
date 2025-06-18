@@ -13,7 +13,7 @@ The data structures defined here use the following concepts:
 For a fixed-size array, the size and the capacity are the same.
 For other data structures, the size and the capacity are not
 in general the same.
-For example, a map has a capacity _C_ and a size between 0 
+For example, a map has a capacity _C_ and a size _S_ between 0 
 and _C_.
 
 The data structures in this directory are **sequential data structures**,
@@ -27,7 +27,7 @@ the component queue to guard the access to the structure.
 ## 1. Arrays
 
 An **array** _A_ stores _S_ elements for _S > 0_ at indices
-0, 1, ..., _S - 1_.
+0, 1, ..., _S_ - 1.
 The elements are stored in **backing memory** _M_.
 An array provides bounds-checked access to the array elements
 stored in _M_.
@@ -39,13 +39,36 @@ stored in _M_.
 |[`Array`](Array.md)|A bounds-checked array with internal memory for storing the array elements|
 |[`ExternalArray`](ExternalArray.md)|A bounds-checked array with external memory for storing the array elements|
 
-## 2. FIFO Queues
+## 2. Stacks
 
-A **FIFO queue** is a data structure backed by an array.
-It supports enqueue and dequeue operations in
-first in first out (FIFO) order.
+A **stack** is a data structure that provides push and pop
+operations in last-in-first-out (LIFO) order.
 
 ### 2.1. Templates
+
+`Fw/DataStructures` provides the following stack templates:
+
+|Name|Description|
+|----|-----------|
+|[`ExternalStack`](ExternalStack.md)|A stack with external memory for storing the stack items|
+|[`Stack`](Stack.md)|A stack with internal memory for storing the stack items|
+|[`StackBase`](StackBase.md)|The abstract base class for a stack|
+
+### 2.2. Class Diagram
+
+```mermaid
+classDiagram
+    StackBase <|-- ExternalStack
+    StackBase <|-- Stack
+```
+
+## 3. FIFO Queues
+
+A **FIFO queue** is a data structure that
+provides enqueue and dequeue operations in
+first-in-first-out (FIFO) order.
+
+### 3.1. Templates
 
 `Fw/DataStructures` provides the following FIFO queue templates:
 
@@ -61,7 +84,7 @@ for representing a **circular index**, i.e., an index that wraps around modulo
 an integer.
 You can use this template to represent any circular index.
 
-### 2.2. Class Diagram
+### 3.2. Class Diagram
 
 ```mermaid
 classDiagram
@@ -69,12 +92,12 @@ classDiagram
     FifoQueueBase <|-- FifoQueue
 ```
 
-## 3. Maps
+## 4. Maps
 
 A **map** is a data structure that associates keys to values.
 It provides insert, remove, and find operations.
 
-### 3.1. Templates
+### 4.1. Templates
 
 `Fw/DataStructures` provides the following map templates:
 
@@ -86,7 +109,7 @@ It provides insert, remove, and find operations.
 |[`MapBase`](MapBase.md)|The abstract base class for a map|
 |[`RedBlackTreeMap`](RedBlackTreeMap.md)|A red-black tree with internal memory for storing the tree|
 
-### 3.2. Class Diagram
+### 4.2. Class Diagram
 
 ```mermaid
 classDiagram
@@ -96,12 +119,12 @@ classDiagram
     MapBase <|-- RedBlackTreeMap
 ```
 
-## 4. Sets
+## 5. Sets
 
 A **set** is a data structure that contains elements.
 It provides insert, remove, and find operations.
 
-### 4.1. Templates
+### 5.1. Templates
 
 |Name|Description|
 |----|-----------|
@@ -111,7 +134,7 @@ It provides insert, remove, and find operations.
 |[`RedBlackTreeSet`](RedBlackTreeSet.md)|A red-black tree with internal memory for storing the tree|
 |[`SetBase`](SetBase.md)|The abstract base class for a set|
 
-### 4.2. Class Diagram
+### 5.2. Class Diagram
 
 ```mermaid
 classDiagram
