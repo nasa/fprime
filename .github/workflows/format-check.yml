@@ -25,6 +25,6 @@ jobs:
       - uses: ./.github/actions/setup
       - name: "Check C++ Formatting"
         run: |
-          pip install git+https://github.com/nasa/fprime-tools@formatting-ci-improvements
+          pip install -U git+https://github.com/thomas-bc/fprime-tools@formatting-ci-improvements
           fprime-util format --check --dirs Fw/Buffer Fw/Cmd Fw/Com
         shell: bash
