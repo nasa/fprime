@@ -17,11 +17,17 @@ namespace Test {
 
 const U32 MAX_DRV_TEST_MESSAGE_SIZE = 1024;
 
-void force_recv_timeout(PlatformIntType fd, Drv::IpSocket& socket) {
+void force_recv_timeout(PlatformIntType fd, Drv::IpSocket& socket, const TestTimeouts* custom_timeouts) {
     // Set timeout socket option
     struct timeval timeout;
-    timeout.tv_sec = 0;
-    timeout.tv_usec = 100000; // 100ms max before test failure
+    if (custom_timeouts != nullptr) {
+        timeout.tv_sec = static_cast<time_t>(custom_timeouts->m_sec);
+        timeout.tv_usec = static_cast<suseconds_t>(custom_timeouts->m_usec);
+    } else {
+        // Default timeout if no custom one is provided
+        timeout.tv_sec = 0;
+        timeout.tv_usec = static_cast<suseconds_t>(100000); // 100ms default
+    }
     setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<char *>(&timeout), sizeof(timeout));
 }
 

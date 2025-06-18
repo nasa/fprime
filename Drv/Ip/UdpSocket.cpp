@@ -27,16 +27,15 @@
     #include <sysLib.h>
     #include <errnoLib.h>
     #include <cstring>
-#elif defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+#else
     #include <sys/socket.h>
     #include <unistd.h>
     #include <arpa/inet.h>
-#else
-    #error OS not supported for IP Socket Communications
 #endif
 
 #include <cstring>
 #include <new>
+#include <cerrno>
 
 namespace Drv {
 
@@ -71,8 +70,9 @@ SocketIpStatus UdpSocket::configureRecv(const char* hostname, const U16 port) {
     m_addr_recv.sin_port = htons(port);
     
     // Convert hostname to IP address
-    if (IpSocket::addressToIp4(hostname, &m_addr_recv.sin_addr) != SOCK_SUCCESS) {
-        return SOCK_INVALID_IP_ADDRESS;
+    SocketIpStatus status = IpSocket::addressToIp4(hostname, &m_addr_recv.sin_addr);
+    if (status != SOCK_SUCCESS) {
+        return status;
     }
     
     this->m_recv_configured = true;
@@ -140,14 +140,16 @@ SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
 #endif
 
         // First IP address to socket sin_addr
-        if ((status = IpSocket::addressToIp4(m_hostname, &(address.sin_addr))) != SOCK_SUCCESS) {
+        status = IpSocket::addressToIp4(m_hostname, &(address.sin_addr));
+        if (status != SOCK_SUCCESS) {
             Fw::Logger::log("Failed to resolve hostname %s: %d\n", m_hostname, static_cast<I32>(status));
             ::close(socketFd);
             return status;
         };
 
         // Now apply timeouts
-        if ((status = this->setupTimeouts(socketFd)) != SOCK_SUCCESS) {
+        status = this->setupTimeouts(socketFd);
+        if (status != SOCK_SUCCESS) {
             ::close(socketFd);
             return status;
         }
@@ -168,7 +170,8 @@ SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
 
     // Log message for UDP
     char recv_addr[INET_ADDRSTRLEN];
-    if (inet_ntop(AF_INET, &(this->m_addr_recv.sin_addr), recv_addr, INET_ADDRSTRLEN) == nullptr) {
+    const char* recv_addr_str = inet_ntop(AF_INET, &(this->m_addr_recv.sin_addr), recv_addr, INET_ADDRSTRLEN);
+    if (recv_addr_str == nullptr) {
         (void) Fw::StringUtils::string_copy(recv_addr, "INVALID_ADDR", INET_ADDRSTRLEN);
     }
     
@@ -213,6 +216,82 @@ I32 UdpSocket::recvProtocol(const SocketDescriptor& socketDescriptor, U8* const 
         Fw::Logger::log("Configured send port to %hu as specified by the last received packet.\n", this->m_port);
     }
     return received;
+}
+
+SocketIpStatus UdpSocket::send(const SocketDescriptor& socketDescriptor, const U8* const data, const U32 size) {
+    // Special case for zero-length datagrams in UDP
+    if (size == 0) {
+        errno = 0;
+        I32 sent = this->sendProtocol(socketDescriptor, data, 0);
+        if (sent == -1) {
+            if (errno == EINTR) {
+                // For zero-length datagrams, we'll just try once more if interrupted
+                errno = 0;
+                sent = this->sendProtocol(socketDescriptor, data, 0);
+            }
+            
+            if (sent == -1) {
+                if ((errno == EBADF) || (errno == ECONNRESET)) {
+                    return SOCK_DISCONNECTED;
+                } else {
+                    return SOCK_SEND_ERROR;
+                }
+            }
+        }
+        // For zero-length datagrams in UDP, success is either 0 or a non-negative value
+        return SOCK_SUCCESS;
+    }
+    
+    // For non-zero-length data, delegate to the base class implementation
+    return IpSocket::send(socketDescriptor, data, size);
+}
+
+SocketIpStatus UdpSocket::recv(const SocketDescriptor& socketDescriptor, U8* data, U32& req_read) {
+    I32 bytes_received_or_status; // Stores the return from recvProtocol, which is byte count or -1
+
+    // Loop primarily for EINTR. Other conditions should lead to an earlier exit.
+    for (U32 i = 0; i < SOCKET_MAX_ITERATIONS; i++) {
+        errno = 0;
+        // Note: recvProtocol for UdpSocket takes 'size' as const U32,
+        // so it won't modify 'req_read' directly. We pass req_read.
+        // The actual number of bytes read will be the return value 'bytes_received_or_status'.
+        bytes_received_or_status = this->recvProtocol(socketDescriptor, data, req_read);
+
+        if (bytes_received_or_status > 0) {
+            // Successfully read data
+            req_read = static_cast<U32>(bytes_received_or_status);
+            return SOCK_SUCCESS;
+        } else if (bytes_received_or_status == 0) {
+            // For UDP, a return of 0 from recvfrom means a 0-byte datagram was received.
+            // This is a success case for UDP, not a disconnection.
+            req_read = 0;
+            return SOCK_SUCCESS;
+        } else { // bytes_received_or_status == -1, an error occurred
+            if ((errno == EAGAIN) || (errno == EWOULDBLOCK)) {
+                // Timeout or would block (non-blocking socket)
+                req_read = 0; // No data read
+                return SOCK_NO_DATA_AVAILABLE;
+            } else if (errno == EINTR) {
+                // Interrupted system call. Retry if not the last iteration.
+                if (i == (SOCKET_MAX_ITERATIONS - 1)) { // Last attempt
+                    req_read = 0;
+                    return SOCK_INTERRUPTED_TRY_AGAIN; // Max retries for EINTR reached
+                }
+                // Loop will continue for EINTR. The 'continue' is implicit here.
+            } else if ((errno == ECONNRESET) || (errno == EBADF)) {
+                // Connection reset or bad file descriptor.
+                req_read = 0;
+                return SOCK_DISCONNECTED;
+            } else {
+                // Other unhandled socket read error.
+                req_read = 0;
+                return SOCK_READ_ERROR;
+            }
+        }
+    }
+    // If the loop completes, it means SOCKET_MAX_ITERATIONS of EINTR occurred.
+    req_read = 0;
+    return SOCK_INTERRUPTED_TRY_AGAIN;
 }
 
 }  // namespace Drv

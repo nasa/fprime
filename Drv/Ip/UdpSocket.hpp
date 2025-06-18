@@ -20,11 +20,9 @@
 #ifdef TGT_OS_TYPE_VXWORKS
     #include <socket.h>
     #include <inetLib.h>
-#elif defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+#else
     #include <sys/socket.h>
     #include <arpa/inet.h>
-#else
-    #error OS not supported for IP Socket Communications
 #endif
 
 namespace Drv {
@@ -99,6 +97,24 @@ class UdpSocket : public IpSocket {
      * \return receive port
      */
     U16 getRecvPort();
+
+    /**
+     * \brief UDP-specific implementation of send that handles zero-length datagrams correctly.
+     * \param socketDescriptor: descriptor to send to
+     * \param data: data pointer to send
+     * \param size: size of data to send
+     * \return: status of the send operation
+     */
+    SocketIpStatus send(const SocketDescriptor& socketDescriptor, const U8* const data, const U32 size) override;
+
+    /**
+     * \brief UDP-specific implementation of recv that handles zero-length datagrams as success.
+     * \param socketDescriptor: descriptor to recv from
+     * \param data: data pointer to fill
+     * \param req_read: size of data buffer on input, size of data received on output
+     * \return: status of the receive operation
+     */
+    SocketIpStatus recv(const SocketDescriptor& socketDescriptor, U8* data, U32& req_read) override;
 
   protected:
     /**

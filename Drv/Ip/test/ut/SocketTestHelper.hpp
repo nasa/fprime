@@ -13,13 +13,21 @@ namespace Drv {
 namespace Test {
 
 static constexpr U16 MAX_ITER = 10;
+
+// Define the TestTimeouts struct
+struct TestTimeouts {
+    U32 m_sec;
+    U32 m_usec;
+};
+
 /**
  * Force a receive timeout on a socket such that it will not hang our testing despite the normal recv behavior of
  * "block forever" until it gets data.
  * @param fd: socket file descriptor
  * @param socket: socket to make timeout
+ * @param custom_timeouts: optional custom timeout values. If nullptr, a default is used.
  */
-void force_recv_timeout(PlatformIntType fd, Drv::IpSocket &socket);
+void force_recv_timeout(PlatformIntType fd, Drv::IpSocket &socket, const TestTimeouts* custom_timeouts = nullptr);
 
 /**
  * Validate random data from data against truth

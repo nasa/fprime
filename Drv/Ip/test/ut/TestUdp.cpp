@@ -6,16 +6,6 @@
 #include <cerrno>
 #include <string>
 
-#ifdef __VXWORKS__
-#include <sockLib.h>
-#include <inetLib.h>
-#include <ioLib.h>
-#else
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#endif
-
 #include <Drv/Ip/UdpSocket.hpp>
 #include <Drv/Ip/IpSocket.hpp>
 #include <Os/Console.hpp>
@@ -121,16 +111,21 @@ TEST(UdpZeroLength, TestZeroLengthUdpDatagram) {
     ASSERT_EQ(receiver.configureRecv("127.0.0.1", port), Drv::SOCK_SUCCESS);
     ASSERT_EQ(receiver.open(recv_fd), Drv::SOCK_SUCCESS);
 
-    // Set a receive timeout to avoid hanging (now 100ms)
-    Drv::Test::force_recv_timeout(recv_fd.fd, receiver);
-    ASSERT_EQ(sender.configureSend("127.0.0.1", port, 0, 100), Drv::SOCK_SUCCESS);
+    // Set a custom, longer receive timeout for this specific test to 500ms
+    const Drv::Test::TestTimeouts custom_recv_timeout = {0, 500000};
+    Drv::Test::force_recv_timeout(recv_fd.fd, receiver, &custom_recv_timeout);
+    ASSERT_EQ(sender.configureSend("127.0.0.1", port, 1, 0), Drv::SOCK_SUCCESS); // Send timeout set to 1 sec
     ASSERT_EQ(sender.open(send_fd), Drv::SOCK_SUCCESS);
 
-    // Send a zero-length datagram
+    // Send a zero-length datagram using the F' socket wrapper
     U8 empty_data[1] = {0}; // Buffer is required, but size is 0
-    ASSERT_EQ(sender.send(send_fd, empty_data, 0), Drv::SOCK_SUCCESS);
+    ASSERT_EQ(sender.send(send_fd, empty_data, 0), Drv::SOCK_SUCCESS) 
+        << "Failed to send zero-length datagram using F' socket wrapper";
 
-    // Receive the zero-length datagram
+    // Add a small delay to ensure the packet has time to be processed by the OS
+    usleep(10000); // 10ms delay
+
+    // Receive the zero-length datagram using the F' socket wrapper
     U8 recv_buf[1] = {0xFF};
     U32 recv_buf_len = 1;
     I32 recv_status = receiver.recv(recv_fd, recv_buf, recv_buf_len);
@@ -138,6 +133,12 @@ TEST(UdpZeroLength, TestZeroLengthUdpDatagram) {
     // Expect 0 (success) for a zero-length datagram.
     ASSERT_EQ(recv_status, 0)
         << "Expected recv_status 0 for zero-length datagram, but got " << recv_status << " with errno=" << errno;
+    
+    // Check that the received length is reported as 0
+    ASSERT_EQ(recv_buf_len, 0) << "Expected received length 0, but got " << recv_buf_len;
+    
+    // Check that the received buffer is unchanged meaning no data was received
+    ASSERT_EQ(recv_buf[0], 0xFF) << "Expected unchanged buffer (0xFF), but got " << recv_buf[0];
 
     sender.close(send_fd);
     receiver.close(recv_fd);

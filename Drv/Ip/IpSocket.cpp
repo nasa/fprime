@@ -161,40 +161,50 @@ SocketIpStatus IpSocket::send(const SocketDescriptor& socketDescriptor, const U8
 }
 
 SocketIpStatus IpSocket::recv(const SocketDescriptor& socketDescriptor, U8* data, U32& req_read) {
-    I32 size = 0;
-    // Try to read until we fail to receive data
-    for (U32 i = 0; (i < SOCKET_MAX_ITERATIONS) && (size <= 0); i++) {
+    I32 bytes_received_or_status; // Stores the return value from recvProtocol
+
+    // Loop primarily for EINTR. Other conditions should lead to an earlier exit.
+    for (U32 i = 0; i < SOCKET_MAX_ITERATIONS; i++) {
         errno = 0;
-        // Attempt to recv out data
-        size = this->recvProtocol(socketDescriptor, data, req_read);
+        // Pass the current value of req_read (max buffer size) to recvProtocol.
+        // recvProtocol returns bytes read or -1 on error.
+        bytes_received_or_status = this->recvProtocol(socketDescriptor, data, req_read);
 
-        // Nothing to be received
-        if ((size == -1) && ((errno == EAGAIN) || (errno == EWOULDBLOCK))) {
+        if (bytes_received_or_status > 0) {
+            // Successfully read data
+            req_read = static_cast<U32>(bytes_received_or_status);
+            return SOCK_SUCCESS;
+        } else if (bytes_received_or_status == 0) {
+            // For TCP (which IpSocket primarily serves as a base for, or when not overridden),
+            // a return of 0 from ::recv means the peer has performed an orderly shutdown.
             req_read = 0;
-            return SOCK_NO_DATA_AVAILABLE;
-        }
-
-        // Error is EINTR, just try again
-        if ((size == -1) && (errno == EINTR)) {
-            continue;
-        }
-        // Zero bytes read reset or bad ef means we've disconnected
-        else if (size == 0 || ((size == -1) && ((errno == ECONNRESET) || (errno == EBADF)))) {
-            req_read = static_cast<U32>(size);
             return SOCK_DISCONNECTED;
-        }
-        // Error returned, and it wasn't an interrupt, nor a disconnect
-        else if (size == -1) {
-            req_read = static_cast<U32>(size);
-            return SOCK_READ_ERROR;  // Stop recv task on error
+        } else { // bytes_received_or_status == -1, an error occurred
+            if ((errno == EAGAIN) || (errno == EWOULDBLOCK)) {
+                // Non-blocking socket would block, or SO_RCVTIMEO timeout occurred.
+                req_read = 0;
+                return SOCK_NO_DATA_AVAILABLE;
+            } else if (errno == EINTR) {
+                // Interrupted system call. Retry if not the last iteration.
+                if (i == (SOCKET_MAX_ITERATIONS - 1)) {
+                    req_read = 0;
+                    return SOCK_INTERRUPTED_TRY_AGAIN; // Max retries for EINTR reached
+                }
+                // Loop will continue for EINTR. The 'continue' is implicit here.
+            } else if ((errno == ECONNRESET) || (errno == EBADF)) {
+                // Connection reset or bad file descriptor.
+                req_read = 0;
+                return SOCK_DISCONNECTED; // Or a more specific error like SOCK_READ_ERROR
+            } else {
+                // Other socket read error.
+                req_read = 0;
+                return SOCK_READ_ERROR;
+            }
         }
     }
-    req_read = static_cast<U32>(size);
-    // Prevent interrupted socket being viewed as success
-    if (size == -1) {
-        return SOCK_INTERRUPTED_TRY_AGAIN;
-    }
-    return SOCK_SUCCESS;
+    // If the loop completes, it means SOCKET_MAX_ITERATIONS of EINTR occurred.
+    req_read = 0;
+    return SOCK_INTERRUPTED_TRY_AGAIN;
 }
 
 }  // namespace Drv

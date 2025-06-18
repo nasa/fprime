@@ -114,7 +114,7 @@ class IpSocket {
      * \param size: size of data to send
      * \return status of the send, SOCK_DISCONNECTED to reopen, SOCK_SUCCESS on success, something else on error
      */
-    SocketIpStatus send(const SocketDescriptor& socketDescriptor, const U8* const data, const U32 size);
+    virtual SocketIpStatus send(const SocketDescriptor& socketDescriptor, const U8* const data, const U32 size);
     /**
      * \brief receive data from the IP socket from the given buffer
      *
@@ -131,7 +131,7 @@ class IpSocket {
      * \param size: maximum size of data buffer to fill
      * \return status of the send, SOCK_DISCONNECTED to reopen, SOCK_SUCCESS on success, something else on error
      */
-    SocketIpStatus recv(const SocketDescriptor& fd, U8* const data, U32& size);
+    virtual SocketIpStatus recv(const SocketDescriptor& fd, U8* const data, U32& size);
 
     /**
      * \brief closes the socket
