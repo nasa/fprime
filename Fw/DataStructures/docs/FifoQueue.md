@@ -3,8 +3,6 @@
 `FifoQueue` is a `final` class template
 defined in [`Fw/DataStructures`](sdd.md).
 It represents a FIFO queue with internal storage.
-Internally it maintains an [`Array`](Array.md)
-for storing the items on the queue.
 
 ## 1. Template Parameters
 
@@ -34,7 +32,6 @@ for storing the items on the queue.
 ```mermaid
 classDiagram
     FifoQueue *-- ExternalFifoQueue
-    FifoQueue *-- Array
 ```
 
 ## 4. Public Constructors and Destructors
