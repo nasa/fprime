@@ -122,7 +122,7 @@ void f(SetBase<U32>& s1, SetBase<U32>& s2) {
 Success find(const T& element) = 0
 ```
 
-1. If an entry `e` with value `key` exists in the set,
+1. If an entry `e` with element `element` exists in the set,
 then set `element = e.getElement()` and return `SUCCESS`.
 
 1. Otherwise return `FAILURE`.
@@ -223,7 +223,7 @@ void f(SetBase<U16, U32>& set) {
 Success remove(const T& element) = 0
 ```
 
-1. If an entry `e` exists with key `key`, then
+1. If an entry `e` exists with element `element`, then
 remove `e` from the set, and return `SUCCESS`.
 
 1. Otherwise return `FAILURE`.
