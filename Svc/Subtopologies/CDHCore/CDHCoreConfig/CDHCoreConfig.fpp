@@ -50,7 +50,7 @@ module CDHCore {
     #    """
     #}
 
-    # Comment this out and use a different fatal handler to use a different fatal handler in the subtopology
+    # Update this as a custom fatal handler if needed
     instance fatalHandler: Svc.FatalHandler base id CDHCoreConfig.BASE_ID + 0x0800
 
 }
