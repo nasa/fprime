@@ -20,11 +20,9 @@ At at;
 
 PopOK popOK;
 
-#if 0
 PopEmpty popEmpty;
 
 Clear clear;
-#endif
 
 };  // namespace Rules
 

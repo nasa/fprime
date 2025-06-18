@@ -258,7 +258,6 @@ TEST(ExternalStackRules, PopOK) {
     Rules::popOK.apply(state);
 }
 
-#if 0
 TEST(ExternalStackRules, PopEmpty) {
     U32 items[State::capacity];
     State::ExternalStack stack(items, State::capacity);
@@ -271,9 +270,7 @@ TEST(ExternalStackRules, Clear) {
     State::ExternalStack stack(items, State::capacity);
     State state(stack);
     Rules::pushOK.apply(state);
-    ASSERT_EQ(state.stack.getSize(), 1);
     Rules::clear.apply(state);
-    ASSERT_EQ(state.stack.getSize(), 0);
 }
 
 TEST(ExternalStackScenarios, Random) {
@@ -282,7 +279,6 @@ TEST(ExternalStackScenarios, Random) {
     State state(stack);
     Scenarios::random(Fw::String("ExternalStackRandom"), state, 1000);
 }
-#endif
 
 }  // namespace StackTest
 }  // namespace Fw

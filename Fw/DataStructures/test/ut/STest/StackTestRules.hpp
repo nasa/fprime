@@ -75,7 +75,6 @@ struct PopOK : public Rule {
 
 extern PopOK popOK;
 
-#if 0
 struct PopEmpty : public Rule {
     PopEmpty() : Rule("PopEmpty") {}
     bool precondition(const State& state) { return static_cast<FwSizeType>(state.stack.getSize()) == 0; }
@@ -99,7 +98,6 @@ struct Clear : public Rule {
 };
 
 extern Clear clear;
-#endif
 
 };  // namespace Rules
 
