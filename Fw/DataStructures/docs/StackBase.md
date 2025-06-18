@@ -107,7 +107,7 @@ void copyDataFrom(const StackBase<T>& stack)
 
     1. For `i` in [0, `size`)
 
-        1. Set `e = at(i)`.
+        1. Set `e = at(size - 1 - i)`.
 
         1. Set `status = push(e)`.
 
@@ -205,32 +205,7 @@ void f(StackBase<U32>& stack) {
 }
 ```
 
-### 5.7. push
-
-```c++
-virtual Success push(const T& e) = 0
-```
-
-1. Set `status = Success::FAILURE`.
-
-1. If there is room on the stack for a new item, then
-
-    1. Add `e` to the right of the stack.
-
-    1. Set `status = Success::SUCCESS`.
-
-1. Return `status`.
-
-_Example:_
-```c++
-void f(StackBase<U32>& stack) {
-    stack.clear();
-    const auto status = stack.push(3);
-    ASSERT_EQ(status, Success::SUCCESS);
-}
-```
-
-### 5.8. pop
+### 5.7. pop
 
 ```c++
 virtual Success pop(T& e) = 0
@@ -258,5 +233,30 @@ void f(StackBase<U32>& stack) {
     status = stack.pop(val);
     ASSERT_EQ(status, Success::SUCCESS);
     ASSERT_EQ(val, 3);
+}
+```
+
+### 5.8. push
+
+```c++
+virtual Success push(const T& e) = 0
+```
+
+1. Set `status = Success::FAILURE`.
+
+1. If there is room on the stack for a new item, then
+
+    1. Add `e` to the right of the stack.
+
+    1. Set `status = Success::SUCCESS`.
+
+1. Return `status`.
+
+_Example:_
+```c++
+void f(StackBase<U32>& stack) {
+    stack.clear();
+    const auto status = stack.push(3);
+    ASSERT_EQ(status, Success::SUCCESS);
 }
 ```

@@ -220,7 +220,7 @@ const T& at(FwSizeType index) const override
 
 1. Assert `index < m_size`.
 
-1. Return `m_items[index]`.
+1. Return `m_items[m_size - 1 - index]`.
 
 _Example:_
 ```c++
