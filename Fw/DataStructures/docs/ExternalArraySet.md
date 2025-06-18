@@ -190,7 +190,9 @@ ASSERT_EQ(set.getSize(), 0);
 Success find(const T& element) override
 ```
 
-1. Return `m_setImpl.find(element, Nil())`.
+1. Set `iterator = m_setImpl.find(element, Nil())`.
+
+1. Return `(iterator != nullptr) ? Success::SUCCESS : Success::FAILURE
 
 _Example:_
 ```c++

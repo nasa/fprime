@@ -201,7 +201,7 @@ Success find(const K& key, V& value) override
 
 1. If `iterator != nullptr`
 
-    1. Set `value = iterator.getValue()`.
+    1. Set `value = iterator->getValue()`.
 
     1. Set `status = Success::SUCCESS`.
 
