@@ -1,0 +1,76 @@
+# MapIterator
+
+`MapIterator` is a class template
+defined in [`Fw/DataStructures`](sdd.md).
+It represents an iterator for a map.
+
+## 1. Template Parameters
+
+`MapIterator` has the following template parameters.
+
+|Kind|Name|Purpose|
+|----|----|-------|
+|`typename`|`K`|The type of a key in the map|
+|`typename`|`V`|The type of a value in the map|
+
+## 2. Protected Constructors and Destructors
+
+### 2.1. Zero-Argument Constructor
+
+```c++
+MapIterator()
+```
+
+Defined as `= default`.
+
+### 2.2. Destructor
+
+```c++
+virtual ~MapIterator()
+```
+
+Defined as `= default`.
+
+## 3. Private Constructors
+
+### 3.1. Copy Constructor
+
+```c++
+MapIterator(const MapIterator<K, V>& map)
+```
+
+Defined as `= delete`.
+
+## 4. Public Member Functions
+
+### 4.1. operator=
+
+```c++
+MapIterator<K, V>& operator=(const MapIterator<K, V>&)
+```
+
+Defined as `= delete`.
+
+### 4.2. getKey
+
+```c++
+virtual const K& getKey() const = 0
+```
+
+Return a reference to the key.
+
+### 4.3. getValue
+
+```c++
+virtual const V& getValue() const = 0
+```
+
+Return a reference to the value.
+
+### 4.4. getNextMapIterator
+
+```c++
+virtual MapIterator<K, V>* getNextMapIterator() = 0
+```
+
+Return a pointer to the next map iterator, or `nullptr` if there is none.

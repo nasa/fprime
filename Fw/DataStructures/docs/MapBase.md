@@ -13,10 +13,9 @@ It represents an abstract base class for a map.
 |`typename`|`K`|The type of a key in the map|
 |`typename`|`V`|The type of a value in the map|
 
-## 2. Types
+## 2. Public Types
 
-`MapBase` defines the following types:
-
+`MapBase` defines the following public types:
 
 |Name|Definition|
 |----|----------|
@@ -109,7 +108,7 @@ void f(MapBase<U16, U32>& m1, MapBase<U16, U32>& m2) {
     // Insert an entry
     const U16 key = 0
     const U32 value = 42;
-    const auto status = m1.enqueue(key, value);
+    const auto status = m1.insert(key, value);
     ASSERT_EQ(status, Success::SUCCESS);
     m2.clear();
     ASSERT_EQ(m2.getSize(), 0);
@@ -125,7 +124,7 @@ Success find(const K& key, V& value) = 0
 ```
 
 1. If an entry `e` with value `key` exists in the map,
-then store the value of `e` into `value` and return `SUCCESS`.
+then set `value = e.getValue()` and return `SUCCESS`.
 
 1. Otherwise return `FAILURE`.
 
