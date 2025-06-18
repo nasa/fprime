@@ -63,7 +63,7 @@ SetOrMapIterator(const KE& keyOrElement, const VN& valueOrNil, SetOrMapIterator<
 ### 4.3. Copy Constructor
 
 ```c++
-SetOrMapIterator(const SetOrMapIterator<KE, VN>& map)
+SetOrMapIterator(const SetOrMapIterator<KE, VN>& iterator)
 ```
 
 Defined as `= default`.
@@ -81,7 +81,7 @@ Defined as `= default`.
 ### 5.1. operator=
 
 ```c++
-SetOrMapIterator& operator=(const SetOrMapIterator&<KE, VN>)
+SetOrMapIterator& operator=(const SetOrMapIterator&<KE, VN> iterator)
 ```
 
 Defined as `= default`.
@@ -113,7 +113,7 @@ Return a reference to `m_valueOrNil`.
 ### 5.4. getNextIterator
 
 ```c++
-SetOrMapIterator<KE, VN> getNextIterator()
+SetOrMapIterator<KE, VN>* getNextIterator()
 ```
 
 Return `m_next`.
@@ -121,7 +121,7 @@ Return `m_next`.
 ### 5.4. getNextMapIterator
 
 ```c++
-MapIterator<KE, VN> getNextMapIterator() override
+MapIterator<KE, VN>* getNextMapIterator() override
 ```
 
 Return `m_next`.
