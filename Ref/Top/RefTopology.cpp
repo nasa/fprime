@@ -15,9 +15,6 @@
 #include <Fw/Types/MallocAllocator.hpp>
 #include <Os/Console.hpp>
 
-#include <Svc/FrameAccumulator/FrameDetector/CcsdsTcFrameDetector.hpp>
-
-
 // Used for 1Hz synthetic cycling
 #include <Os/Mutex.hpp>
 
@@ -76,9 +73,6 @@ void setupTopology(const TopologyState& state) {
     loadParameters();
     // Autocoded task kick-off (active components). Function provided by autocoder.
     startTasks(state);
-
-    // Startup TLM and Config verbosity for Versions
-
 }
 
 void startRateGroups(Fw::TimeInterval interval) {
