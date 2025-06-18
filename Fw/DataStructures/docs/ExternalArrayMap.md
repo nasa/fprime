@@ -92,7 +92,7 @@ contain at least [`getByteArraySize(size)`](#72-getbytearraysize) bytes.
 _Example:_
 ```c++
 constexpr FwSizeType capacity = 10;
-constexpr U8 alignment = ExternalArrayMap<U16, U32>::getByteAlignment();
+constexpr U8 alignment = ExternalArrayMap<U16, U32>::getByteArrayAlignment();
 constexpr FwSizeType byteArraySize = ExternalArrayMap<U16, U32>::getByteArraySize(capacity);
 alignas(alignment) U8 bytes[byteArraySize];
 ExternalArrayMap<U16, U32> map(ByteArray(&bytes[0], sizeof bytes), capacity);
@@ -385,7 +385,7 @@ contain at least [`getByteArraySize(size)`](#72-getbytearraysize) bytes.
 
 ```c++
 constexpr FwSizeType capacity = 10;
-constexpr U8 alignment = ExternalArrayMap<U16, U32>::getByteAlignment();
+constexpr U8 alignment = ExternalArrayMap<U16, U32>::getByteArrayAlignment();
 constexpr FwSizeType byteArraySize = ExternalArrayMap<U16, U32>::getByteArraySize(capacity);
 alignas(alignment) U8 bytes[byteArraySize];
 ExternalArrayMap<U16, U32> map;
