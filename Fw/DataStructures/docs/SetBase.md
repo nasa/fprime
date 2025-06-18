@@ -18,7 +18,9 @@ It represents an abstract base class for a set.
 
 |Name|Definition|
 |----|----------|
+|`Entry`|Alias of [`SetOrMapIterator<T, Nil>`(SetOrMapIterator.md)|
 |`Iterator`|[`SetIterator<T>`](SetIterator.md)|
+|`Nil`|`struct Nil {}`|
 
 ## 3. Private Constructors
 

@@ -19,17 +19,7 @@ as the set implementation.
 `ExternalArraySet` is publicly derived from
 [`SetBase<T>`](SetBase.md).
 
-## 3. Public Types
-
-`ExternalArraySet` defines the following public types:
-
-```c++
-using Entry = SetOrMapIterator<K, V>
-```
-
-The type `SetOrMapIterator` is defined [here](SetOrMapIterator.md).
-
-## 4. Private Member Variables
+## 3. Private Member Variables
 
 `ExternalArraySet` has the following private member variables.
 
@@ -37,14 +27,16 @@ The type `SetOrMapIterator` is defined [here](SetOrMapIterator.md).
 |----|----|-------|-------------|
 |`m_setImpl`|[`ArraySetOrMapImpl<Entry>`](ArraySetOrMapImpl.md)|The set implementation|C++ default initialization|
 
+The type `Entry` is defined [in the base class](MapBase.md#2-publictypes).
+
 ```mermaid
 classDiagram
     ExternalArraySet *-- ArraySetOrMapImpl
 ```
 
-## 5. Public Constructors and Destructors
+## 4. Public Constructors and Destructors
 
-### 5.1. Zero-Argument Constructor
+### 4.1. Zero-Argument Constructor
 
 ```c++
 ExternalArraySet()
@@ -54,53 +46,49 @@ Initialize each member variable with its default value.
 
 _Example:_
 ```c++
-ExternalArraySet<U16, U32> set;
+ExternalArraySet<U32> set;
 ```
 
-### 5.2. Constructor Providing Typed Backing Storage
+### 4.2. Constructor Providing Typed Backing Storage
 
 ```c++
 ExternalArraySet(Entry* entries, FwSizeType capacity)
 ```
 
-1. Call `m_setImpl.setStorage(entries, capacity)`.
-
-1. Initialize the other member variables with their default values.
+Call `m_setImpl.setStorage(entries, capacity)`.
 
 _Example:_
 ```c++
 constexpr FwSizeType capacity = 10;
-ExternalArraySet<U16, U32>::Entry entries[capacity];
-ExternalArraySet<U16, U32> set(entries, capacity);
+ExternalArraySet<U32>::Entry entries[capacity];
+ExternalArraySet<U32> set(entries, capacity);
 ```
 
-### 5.3. Constructor Providing Untyped Backing Storage
+### 4.3. Constructor Providing Untyped Backing Storage
 
 ```c++
 ExternalArraySet(ByteArray data, FwSizeType capacity)
 ```
 
 `data` must be aligned according to 
-[`getByteArrayAlignment()`](#71-getbytearrayalignment) and must
-contain at least [`getByteArraySize(size)`](#72-getbytearraysize) bytes.
+[`getByteArrayAlignment()`](#61-getbytearrayalignment) and must
+contain at least [`getByteArraySize(size)`](#62-getbytearraysize) bytes.
 
-1. Call `m_setImpl.setStorage(data, capacity)`.
-
-1. Initialize the other member variables with their default values.
+Call `m_setImpl.setStorage(data, capacity)`.
 
 _Example:_
 ```c++
 constexpr FwSizeType capacity = 10;
-constexpr U8 alignment = ExternalArraySet<U16, U32>::getByteArrayAlignment();
-constexpr FwSizeType byteArraySize = ExternalArraySet<U16, U32>::getByteArraySize(capacity);
+constexpr U8 alignment = ExternalArraySet<U32>::getByteArrayAlignment();
+constexpr FwSizeType byteArraySize = ExternalArraySet<U32>::getByteArraySize(capacity);
 alignas(alignment) U8 bytes[byteArraySize];
-ExternalArraySet<U16, U32> set(ByteArray(&bytes[0], sizeof bytes), capacity);
+ExternalArraySet<U32> set(ByteArray(&bytes[0], sizeof bytes), capacity);
 ```
 
-### 5.4. Copy Constructor
+### 4.4. Copy Constructor
 
 ```c++
-ExternalArraySet(const ExternalArraySet<K, V>& set)
+ExternalArraySet(const ExternalArraySet<T>& set)
 ```
 
 Set `*this = set`.
@@ -108,20 +96,18 @@ Set `*this = set`.
 _Example:_
 ```c++
 constexpr FwSizeType capacity = 3;
-ExternalArraySet<U16, U32>::Entry entries[capacity];
+ExternalArraySet<U32>::Entry entries[capacity];
 // Call the constructor providing backing storage
-ExternalArraySet<U16, U32> m1(entries, capacity);
+ExternalArraySet<U32> m1(entries, capacity);
 // Insert an item
-const U16 key = 0;
-const U32 value = 42;
-const auto status = m1.insert(key, value);
+const auto status = m1.insert(42);
 ASSERT_EQ(status, Success::SUCCESS);
 // Call the copy constructor
-ExternalArraySet<U16, U32> m2(m1);
+ExternalArraySet<U32> m2(m1);
 ASSERT_EQ(m2.getSize(), 1);
 ```
 
-### 5.5. Destructor
+### 4.5. Destructor
 
 ```c++
 ~ExternalArraySet() override
@@ -129,12 +115,12 @@ ASSERT_EQ(m2.getSize(), 1);
 
 Defined as `= default`.
 
-## 6. Public Member Functions
+## 5. Public Member Functions
 
-### 6.1. operator=
+### 5.1. operator=
 
 ```c++
-ExternalArraySet<K, V>& operator=(const ExternalArraySet<K, V>& set)
+ExternalArraySet<T>& operator=(const ExternalArraySet<T>& set)
 ```
 
 1. If `&set != this`
@@ -146,13 +132,11 @@ ExternalArraySet<K, V>& operator=(const ExternalArraySet<K, V>& set)
 _Example:_
 ```c++
 constexpr FwSizeType capacity = 3;
-ExternalArraySet<U16, U32>::Entry entries[capacity];
+ExternalArraySet<U32>::Entry entries[capacity];
 // Call the constructor providing backing storage
-ExternalArraySet<U16, U32> m1(entries, capacity);
+ExternalArraySet<U32> m1(entries, capacity);
 // Insert an item
-U16 key = 0;
-U32 value = 42;
-const auto status = m1.insert(value);
+const auto status = m1.insert(42);
 ASSERT_EQ(status, Success::SUCCESS);
 // Call the default constructor
 ExternalArraySet m2;
@@ -162,7 +146,7 @@ m2 = m1;
 ASSERT_EQ(m2.getSize(), 1);
 ```
 
-### 6.2. at
+### 5.2. at
 
 ```c++
 const V& at(FwSizeType index) const
@@ -173,15 +157,15 @@ Return `m_setImpl[index]`.
 _Example:_
 ```c++
 constexpr FwSizeType capacity = 3;
-ExternalArraySet<U16, U32>::Entry entries[capacity];
-ExternalArraySet<U16, U32> set(entries, capacity);
-const auto status = set.insert(0, 1);
+ExternalArraySet<U32>::Entry entries[capacity];
+ExternalArraySet<U32> set(entries, capacity);
+const auto status = set.insert(42);
 ASSERT_EQ(status, Success::SUCCESS);
-ASSERT_EQ(set.at(0), 1);
+ASSERT_EQ(set.at(0), 42);
 ASSERT_DEATH(set.at(1), "Assert");
 ```
 
-### 6.3. clear
+### 5.3. clear
 
 ```c++
 void clear() override
@@ -192,48 +176,36 @@ Call `m_setImpl.clear()`.
 _Example:_
 ```c++
 constexpr FwSizeType capacity = 10;
-ExternalArraySet<U16, U32>::Entry entries[capacity];
-ExternalArraySet<U16, U32> set(entries, capacity);
-const auto status = set.enqueue(3);
+ExternalArraySet<U32>::Entry entries[capacity];
+ExternalArraySet<U32> set(entries, capacity);
+const auto status = set.insert(42);
 ASSERT_EQ(set.getSize(), 1);
 set.clear();
 ASSERT_EQ(set.getSize(), 0);
 ```
 
-### 6.4. find
+### 5.4. find
 
 ```c++
-Success find(const K& key, V& value) override
+Success find(const T& element) override
 ```
 
-1. Set `status = Success::FAILURE`.
-
-1. Set `iterator = m_setImpl.find(key)`.
-
-1. If `iterator != nullptr`
-
-    1. Set `value = iterator.getValue()`.
-
-    1. Set `status = Success::SUCCESS`.
-
-1. Return `status`.
+1. Return `m_setImpl.find(element, Nil())`.
 
 _Example:_
 ```c++
 constexpr FwSizeType capacity = 10;
-ExternalArraySet<U16, U32>::Entry entries[capacity];
-ExternalArraySet<U16, U32> set(entries, capacity);
-U32 value = 0;
-auto status = set.find(0, value);
+ExternalArraySet<U32>::Entry entries[capacity];
+ExternalArraySet<U32> set(entries, capacity);
+auto status = set.find(42);
 ASSERT_EQ(status, Success::FAILURE);
-status = set.insert(0, 1);
+status = set.insert(42);
 ASSERT_EQ(status, Success::SUCCESS);
-status = set.find(0, value);
+status = set.find(42);
 ASSERT_EQ(status, Success::SUCCESS);
-ASSERT_EQ(value, 1);
 ```
 
-### 6.5. getCapacity
+### 5.5. getCapacity
 
 ```c++
 FwSizeType getCapacity() const override
@@ -244,12 +216,12 @@ Return `m_setImpl.getCapacity()`.
 _Example:_
 ```c++
 constexpr FwSizeType capacity = 10;
-ExternalArraySet<U16, U32>::Entry entries[capacity];
-ExternalArraySet<U16, U32> set(entries, capacity);
+ExternalArraySet<U32>::Entry entries[capacity];
+ExternalArraySet<U32> set(entries, capacity);
 ASSERT_EQ(set.getCapacity(), capacity);
 ```
 
-### 6.6. getHeadIterator
+### 5.6. getHeadIterator
 
 ```c++
 const Iterator* getHeadIterator const override
@@ -262,18 +234,17 @@ Return `m_impl.getHeadIterator()`.
 _Example:_
 ```c++
 constexpr FwSizeType capacity = 10;
-ExternalArraySet<U16, U32>::Entry entries[capacity];
-ExternalArraySet<U16, U32> set(entries, capacity);
+ExternalArraySet<U32>::Entry entries[capacity];
+ExternalArraySet<U32> set(entries, capacity);
 const auto* e = set.getHeadIterator();
 FW_ASSERT(e == nullptr);
-set.insert(0, 1);
+set.insert(42);
 e = set.getHeadIterator();
 FW_ASSERT(e != nullptr);
-ASSERT_EQ(e.getKey(), 0);
-ASSERT_EQ(e.getValue(), 1);
+ASSERT_EQ(e->getElement(), 42);
 ```
 
-### 6.7. getSize
+### 5.7. getSize
 
 ```c++
 FwSizeType getSize() const override
@@ -284,99 +255,93 @@ Return `m_setImpl.getSize()`.
 _Example:_
 ```c++
 constexpr FwSizeType capacity = 10;
-ExternalArraySet<U16, U32>::Entry entries[capacity];
-ExternalArraySet<U16, U32> set(entries, capacity);
+ExternalArraySet<U32>::Entry entries[capacity];
+ExternalArraySet<U32> set(entries, capacity);
 auto size = set.getSize();
 ASSERT_EQ(size, 0);
-const auto status = set.enqueue(3);
+const auto status = set.insert(42);
 ASSERT_EQ(status, Success::SUCCESS);
 size = set.getSize();
 ASSERT_EQ(size, 1);
 ```
 
-### 6.8. insert
+### 5.8. insert
 
 ```c++
-Success insert(const K& key, const V& value) override
+Success insert(const T& element) override
 ```
 
-Return `m_setImpl.insert(key, value)`.
+Return `m_setImpl.insert(key, Nil())`.
 
 _Example:_
 ```c++
 constexpr FwSizeType capacity = 10;
-ExternalArraySet<U16, U32>::Entry entries[capacity];
-ExternalArraySet<U16, U32> set(entries, capacity);
+ExternalArraySet<U32>::Entry entries[capacity];
+ExternalArraySet<U32> set(entries, capacity);
 auto size = set.getSize();
 ASSERT_EQ(size, 0);
-const auto status = set.insert(0, 1);
+const auto status = set.insert(42);
 ASSERT_EQ(status, Success::SUCCESS);
 size = set.getSize();
 ASSERT_EQ(size, 1);
 ```
 
-```c++
-Success insert(const Iterator& e) override
-```
-
-Call `insert(e.getKey(), e.getValue())`.
-
-### 6.9. remove
+### 5.9. remove
 
 ```c++
-Success remove(const K& key, V& value) override
+Success remove(const T& element) override
 ```
 
-Return `m_setImpl.remove(key, value)`.
+1. Set `Nil nil = {}`.
+
+1. Return `m_setImpl.remove(key, nil)`.
 
 _Example:_
 ```c++
 constexpr FwSizeType capacity = 10;
-ExternalArraySet<U16, U32>::Entry entries[capacity];
-ExternalArraySet<U16, U32> set(entries, capacity);
+ExternalArraySet<U32>::Entry entries[capacity];
+ExternalArraySet<U32> set(entries, capacity);
 auto size = set.getSize();
 ASSERT_EQ(size, 0);
-auto status = set.insert(0, 1);
+auto status = set.insert(42);
 ASSERT_EQ(status, Success::SUCCESS);
 size = set.getSize();
 ASSERT_EQ(size, 1);
-// Key does not exist
-U32 value = 0;
-status = set.remove(10, value);
+// Element does not exist
+status = set.remove(0);
 ASSERT_EQ(status, Success::FAILURE);
 ASSERT_EQ(size, 1);
-// Key exists
-status = set.remove(0, value);
+// Element exists
+status = set.remove(42, value);
 ASSERT_EQ(status, Success::SUCCESS);
 ASSERT_EQ(size, 0);
-ASSERT_EQ(value, 1);
 ```
 
-### 6.10. setStorage (Typed Data)
+### 5.10. setStorage (Typed Data)
 
 ```c++
 void setStorage(Entry* entries, FwSizeType capacity)
 ```
 
-1. Call `m_setImpl.setStorage(entries, capacity)`.
+Call `m_setImpl.setStorage(entries, capacity)`.
 
 _Example:_
 ```c++
 constexpr FwSizeType capacity = 10;
-ExternalArraySet<U16, U32> set;
-ExternalArraySet<U16, U32>::Entry entries[capacity];
+ExternalArraySet<U32> set;
+ExternalArraySet<U32>::Entry entries[capacity];
 set.setStorage(entries, capacity);
 ```
 
-### 6.11. setStorage (Untyped Data)
+### 5.11. setStorage (Untyped Data)
 
 ```c++
 void setStorage(ByteArray data, FwSizeType capacity)
 ```
 
 `data` must be aligned according to 
-[`getByteArrayAlignment()`](#71-getbytearrayalignment) and must
-contain at least [`getByteArraySize(size)`](#72-getbytearraysize) bytes.
+[`getByteArrayAlignment()`](#61-getbytearrayalignment) and must
+contain at least [`getByteArraySize(size)`](#62-getbytearraysize) bytes.
 
 1. Call `m_entries.setStorage(data, capacity)`.
 
@@ -384,27 +349,27 @@ contain at least [`getByteArraySize(size)`](#72-getbytearraysize) bytes.
 
 ```c++
 constexpr FwSizeType capacity = 10;
-constexpr U8 alignment = ExternalArraySet<U16, U32>::getByteArrayAlignment();
-constexpr FwSizeType byteArraySize = ExternalArraySet<U16, U32>::getByteArraySize(capacity);
+constexpr U8 alignment = ExternalArraySet<U32>::getByteArrayAlignment();
+constexpr FwSizeType byteArraySize = ExternalArraySet<U32>::getByteArraySize(capacity);
 alignas(alignment) U8 bytes[byteArraySize];
-ExternalArraySet<U16, U32> set;
+ExternalArraySet<U32> set;
 set.setStorage(ByteArray(&bytes[0], sizeof bytes), capacity);
 ```
 
-## 7. Public Static Functions
+## 6. Public Static Functions
 
-### 7.1. getByteArrayAlignment
+### 6.1. getByteArrayAlignment
 
 ```c++
 static constexpr U8 getByteArrayAlignment()
 ```
 
-Return `ExternalArray<T>::getByteArrayAlignment()`.
+Return `ArraySetOrMapImpl<Entry>::getByteArrayAlignment()`.
 
-### 7.2. getByteArraySize
+### 6.2. getByteArraySize
 
 ```c++
 static constexpr FwSizeType getByteArraySize(FwSizeType capacity)
 ```
 
-Return `ExternalArray<T>::getByteArraySize(capacity)`.
+Return `ArraySetOrMapImpl<Entry>::getByteArraySize(capacity)`.
