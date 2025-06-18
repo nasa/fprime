@@ -20,7 +20,7 @@ It stores a pointer to the backing memory _M_.
 
 |Name|Type|Purpose|Default Value|
 |----|----|-------|-------------|
-|`m_elements`|`T*`|Points to the backing memory|`nullptr`|
+|`m_elements`|`T*`|Pointer to backing memory or `nullptr`|`nullptr`|
 |`m_size`|`FwSizeType`|Stores the size (number of elements) of the array|0|
 
 ## 3. Public Constructors and Destructors
@@ -60,8 +60,9 @@ ExternalArray(ByteArray data, FwSizeType size)
 ```
 
 Call `setStorage(data, size)`.
-`data` must be aligned according to `getByteArrayAlignment()` and must
-contain at least `getByteArraySize(size)` bytes.
+`data` must be aligned according to 
+[`getByteArrayAlignment()`](#getbytearrayalignment) and must
+contain at least [`getByteArraySize(size)`](#getbytearraysize) bytes.
 
 _Example:_
 ```c++
@@ -236,8 +237,8 @@ a.setStorage(elements, size);
 void setStorage(ByteArray data, FwSizeType size)
 ```
 
-`data` must be correctly aligned according to `getByteArrayAlignment`
-and must contain at least `getByteArraySize(size)` bytes.
+`data` must be correctly aligned according to [`getByteArrayAlignment`](#getbytearrayalignment)
+and must contain at least [`getByteArraySize(size)`](#getbytearraysize) bytes.
 
 1. Assert that `data.bytes != nullptr`.
 
