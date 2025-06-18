@@ -44,8 +44,9 @@ TEST(ExternalFifoQueue, TypedStorageConstructor) {
 
 TEST(ExternalFifoQueue, UntypedStorageConstructor) {
     constexpr FwSizeType capacity = 10;
+    constexpr U8 alignment = ExternalFifoQueue<U32>::getByteArrayAlignment();
     constexpr FwSizeType byteArraySize = ExternalFifoQueue<U32>::getByteArraySize(capacity);
-    alignas(U32) U8 bytes[byteArraySize];
+    alignas(alignment) U8 bytes[byteArraySize];
     ExternalFifoQueue<U32> queue(ByteArray(&bytes[0], sizeof bytes), capacity);
     ExternalFifoQueueTester<U32> tester(queue);
     ASSERT_EQ(tester.getItems().getElements(), reinterpret_cast<U32*>(bytes));

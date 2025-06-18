@@ -155,6 +155,12 @@ class ExternalFifoQueue final : public FifoQueueBase<T> {
     // Public static functions
     // ----------------------------------------------------------------------
 
+    //! Get the alignment of the storage for an ExternalFifoQueue
+    //! \return The alignment
+    static constexpr U8 getByteArrayAlignment() {
+        return ExternalArray<T>::getByteArrayAlignment();
+    }
+
     //! Get the size of the storage for an ExternalFifoQueue of the specified 
     //! capacity, as a byte array
     //! \return The byte array size

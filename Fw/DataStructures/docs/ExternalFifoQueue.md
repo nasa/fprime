@@ -362,7 +362,21 @@ ASSERT_EQ(queue.getCapacity(), capacity);
 
 ## 6. Public Static Functions
 
-### 6.1. getByteArraySize
+### 6.1. getByteArrayAlignment
+
+```c++
+static constexpr U8 getByteArrayAlignment()
+```
+
+Return `ExternalArray<T>::getByteArrayAlignment()`.
+
+_Example:_
+```c++
+const U8 byteArrayAlignment = ExternalFifoQueue<U32>::getByteArrayAlignment(size);
+ASSERT_EQ(byteArrayAlignment, alignof(U32));
+```
+
+### 6.2. getByteArraySize
 
 ```c++
 static constexpr FwSizeType getByteArraySize(FwSizeType capacity)
