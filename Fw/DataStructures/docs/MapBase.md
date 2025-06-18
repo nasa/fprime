@@ -168,7 +168,7 @@ void f(const MapBase<U16, U32>& map) {
 const Iterator* getHeadIterator const = 0
 ```
 
-Get the head iterator for the map.
+Get a pointer to the head iterator for the map, or `nullptr` if there is none.
 
 _Example:_
 ```c++

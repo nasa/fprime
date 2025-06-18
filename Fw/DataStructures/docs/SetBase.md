@@ -166,7 +166,7 @@ void f(const SetBase<U32>& set) {
 const Iterator* getHeadIterator const = 0
 ```
 
-Get the head iterator for the set.
+Get a pointer to the head iterator for the set, or `nullptr` if there is none.
 
 _Example:_
 ```c++
