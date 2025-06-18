@@ -151,7 +151,15 @@ Return `m_entries.getSize()`.
 const Entry* getHeadEntry const
 ```
 
-Return `(m_size > 0) ? &m_entries[0] : nullptr`.
+1. Set `result = nullptr`.
+
+1. If `m_size > 0`
+
+    1. Assert `m_entries != nullptr`.
+
+    1. Set `result = &m_entries[0]`.
+
+1. Return `result`.
 
 ### 5.7. getSize
 
