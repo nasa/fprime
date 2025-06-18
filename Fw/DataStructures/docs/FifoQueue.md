@@ -17,7 +17,7 @@ It represents a FIFO queue with internal storage.
 
 ## 2. Base Class
 
-`ExternalFifoQueue<T>` is publicly derived from 
+`FifoQueue<T>` is publicly derived from 
 [`FifoQueueBase<T>`](FifoQueueBase.md).
 
 ## 3. Private Member Variables
