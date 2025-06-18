@@ -1,22 +1,22 @@
-module CDHCore {
+module CdhCore {
     # ----------------------------------------------------------------------
     # Active Components
     # ----------------------------------------------------------------------
-    instance cmdDisp: Svc.CommandDispatcher base id CDHCoreConfig.BASE_ID + 0x0100 \
-        queue size CDHCoreConfig.QueueSizes.cmdDisp \
-        stack size CDHCoreConfig.StackSizes.cmdDisp \
-        priority CDHCoreConfig.Priorities.cmdDisp
+    instance cmdDisp: Svc.CommandDispatcher base id CdhCoreConfig.BASE_ID + 0x0100 \
+        queue size CdhCoreConfig.QueueSizes.cmdDisp \
+        stack size CdhCoreConfig.StackSizes.cmdDisp \
+        priority CdhCoreConfig.Priorities.cmdDisp
 
-    instance events: Svc.ActiveLogger base id CDHCoreConfig.BASE_ID + 0x0200 \
-        queue size CDHCoreConfig.QueueSizes.events \
-        stack size CDHCoreConfig.StackSizes.events \
-        priority CDHCoreConfig.Priorities.events
+    instance events: Svc.ActiveLogger base id CdhCoreConfig.BASE_ID + 0x0200 \
+        queue size CdhCoreConfig.QueueSizes.events \
+        stack size CdhCoreConfig.StackSizes.events \
+        priority CdhCoreConfig.Priorities.events
 
     # ----------------------------------------------------------------------
     # Queued Components
     # ----------------------------------------------------------------------
-    instance $health: Svc.Health base id CDHCoreConfig.BASE_ID + 0x0300 \
-        queue size CDHCoreConfig.QueueSizes.$health \
+    instance $health: Svc.Health base id CdhCoreConfig.BASE_ID + 0x0300 \
+        queue size CdhCoreConfig.QueueSizes.$health \
     {
         phase Fpp.ToCpp.Phases.configConstants """
         enum {
@@ -25,10 +25,10 @@ module CDHCore {
         """
         phase Fpp.ToCpp.Phases.configComponents """
         // Health is supplied a set of ping entires.
-        CDHCore::health.setPingEntries(
-            ConfigObjects::CDHCore_health::pingEntries,
-            FW_NUM_ARRAY_ELEMENTS(ConfigObjects::CDHCore_health::pingEntries),
-            ConfigConstants::CDHCore_health::HEALTH_WATCHDOG_CODE
+        CdhCore::health.setPingEntries(
+            ConfigObjects::CdhCore_health::pingEntries,
+            FW_NUM_ARRAY_ELEMENTS(ConfigObjects::CdhCore_health::pingEntries),
+            ConfigConstants::CdhCore_health::HEALTH_WATCHDOG_CODE
         );
         """
     }
@@ -36,17 +36,17 @@ module CDHCore {
     # ----------------------------------------------------------------------
     # Passive Components
     # ----------------------------------------------------------------------
-    instance version: Svc.Version base id CDHCoreConfig.BASE_ID + 0x0400 \
+    instance version: Svc.Version base id CdhCoreConfig.BASE_ID + 0x0400 \
     {
         phase Fpp.ToCpp.Phases.configComponents """
         // Startup TLM and Config verbosity for Versions
-        CDHCore::version.config(true);
+        CdhCore::version.config(true);
         """
     }
 
-    instance textLogger: Svc.PassiveTextLogger base id CDHCoreConfig.BASE_ID + 0x0500
+    instance textLogger: Svc.PassiveTextLogger base id CdhCoreConfig.BASE_ID + 0x0500
 
-    instance fatalAdapter: Svc.AssertFatalAdapter base id CDHCoreConfig.BASE_ID + 0x0600
+    instance fatalAdapter: Svc.AssertFatalAdapter base id CdhCoreConfig.BASE_ID + 0x0600
 
     topology Subtopology {
         #Active Components
@@ -68,4 +68,4 @@ module CDHCore {
         }
         
     } # end topology
-} # end CDHCore Subtopology
+} # end CdhCore Subtopology

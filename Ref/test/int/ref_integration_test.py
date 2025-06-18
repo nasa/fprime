@@ -57,7 +57,7 @@ def set_event_filter(fprime_test_api, severity, enabled):
         severity = FilterSeverity[severity].name
     try:
         fprime_test_api.send_command(
-            "CDHCore.events.SET_EVENT_FILTER",
+            "CdhCore.events.SET_EVENT_FILTER",
             [severity, enabled],
         )
         return True
@@ -80,9 +80,9 @@ def test_send_command(fprime_test_api):
 
     Tests command send, dispatch, and receipt using send_and_assert command with a pair of NO-OP commands.
     """
-    fprime_test_api.send_and_assert_command("CDHCore.cmdDisp.CMD_NO_OP", max_delay=0.1)
+    fprime_test_api.send_and_assert_command("CdhCore.cmdDisp.CMD_NO_OP", max_delay=0.1)
     assert fprime_test_api.get_command_test_history().size() == 1
-    fprime_test_api.send_and_assert_command("CDHCore.cmdDisp.CMD_NO_OP", max_delay=0.1)
+    fprime_test_api.send_and_assert_command("CdhCore.cmdDisp.CMD_NO_OP", max_delay=0.1)
     assert fprime_test_api.get_command_test_history().size() == 2
 
 
@@ -94,11 +94,11 @@ def test_send_command_args(fprime_test_api):
     for count, value in enumerate(["Test String 1", "Some other string"], 1):
         events = [
             fprime_test_api.get_event_pred(
-                "CDHCore.cmdDisp.NoOpStringReceived", [value]
+                "CdhCore.cmdDisp.NoOpStringReceived", [value]
             )
         ]
         fprime_test_api.send_and_assert_command(
-            "CDHCore.cmdDisp.CMD_NO_OP_STRING",
+            "CdhCore.cmdDisp.CMD_NO_OP_STRING",
             [
                 value,
             ],
@@ -117,15 +117,15 @@ def test_send_and_assert_no_op(fprime_test_api):
     length = 100
     failed = 0
     evr_seq = [
-        "CDHCore.cmdDisp.OpCodeDispatched",
-        "CDHCore.cmdDisp.NoOpReceived",
-        "CDHCore.cmdDisp.OpCodeCompleted",
+        "CdhCore.cmdDisp.OpCodeDispatched",
+        "CdhCore.cmdDisp.NoOpReceived",
+        "CdhCore.cmdDisp.OpCodeCompleted",
     ]
     any_reordered = False
     dropped = False
     for i in range(0, length):
         results = fprime_test_api.send_and_await_event(
-            "CDHCore.cmdDisp.CMD_NO_OP", events=evr_seq, timeout=25
+            "CdhCore.cmdDisp.CMD_NO_OP", events=evr_seq, timeout=25
         )
         msg = "Send and assert NO_OP Trial #{}".format(i)
         if not fprime_test_api.test_assert(len(results) == 3, msg, True):
@@ -232,8 +232,8 @@ def test_active_logger_filter(fprime_test_api):
         # Drain time for dispatch events
         time.sleep(10)
 
-        fprime_test_api.send_and_assert_command("CDHCore.cmdDisp.CMD_NO_OP")
-        fprime_test_api.send_and_assert_command("CDHCore.cmdDisp.CMD_NO_OP")
+        fprime_test_api.send_and_assert_command("CdhCore.cmdDisp.CMD_NO_OP")
+        fprime_test_api.send_and_assert_command("CdhCore.cmdDisp.CMD_NO_OP")
 
         time.sleep(0.5)
 
@@ -244,8 +244,8 @@ def test_active_logger_filter(fprime_test_api):
         # Drain time for dispatch events
         time.sleep(10)
         fprime_test_api.clear_histories()
-        fprime_test_api.send_command("CDHCore.cmdDisp.CMD_NO_OP")
-        fprime_test_api.send_command("CDHCore.cmdDisp.CMD_NO_OP")
+        fprime_test_api.send_command("CdhCore.cmdDisp.CMD_NO_OP")
+        fprime_test_api.send_command("CdhCore.cmdDisp.CMD_NO_OP")
 
         time.sleep(0.5)
 
@@ -285,5 +285,5 @@ def test_seqgen(fprime_test_api):
         == 0
     ), "Failed to run fprime-seqgen"
     fprime_test_api.send_and_assert_command(
-        "Ref.cmdSeq.CS_RUN", args=["/tmp/ref_test_int.bin", "BLOCK"], max_delay=5
+        "ComCcsds.cmdSeq.CS_RUN", args=["/tmp/ref_test_int.bin", "BLOCK"], max_delay=5
     )
