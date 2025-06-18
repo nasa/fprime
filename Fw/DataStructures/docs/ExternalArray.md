@@ -61,8 +61,8 @@ ExternalArray(ByteArray data, FwSizeType size)
 
 Call `setStorage(data, size)`.
 `data` must be aligned according to 
-[`getByteArrayAlignment()`](#getbytearrayalignment) and must
-contain at least [`getByteArraySize(size)`](#getbytearraysize) bytes.
+[`getByteArrayAlignment()`](#51-getbytearrayalignment) and must
+contain at least [`getByteArraySize(size)`](#52-getbytearraysize) bytes.
 
 _Example:_
 ```c++
@@ -237,8 +237,8 @@ a.setStorage(elements, size);
 void setStorage(ByteArray data, FwSizeType size)
 ```
 
-`data` must be correctly aligned according to [`getByteArrayAlignment`](#getbytearrayalignment)
-and must contain at least [`getByteArraySize(size)`](#getbytearraysize) bytes.
+`data` must be correctly aligned according to [`getByteArrayAlignment`](#51-getbytearrayalignment)
+and must contain at least [`getByteArraySize(size)`](#52-getbytearraysize) bytes.
 
 1. Assert that `data.bytes != nullptr`.
 
