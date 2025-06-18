@@ -15,11 +15,11 @@
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Serializable.hpp>
 #if FW_SERIALIZABLE_TO_STRING
-    #include <Fw/Types/StringType.hpp>
-    #ifdef BUILD_UT
-        #include <iostream>
-        #include <Fw/Types/String.hpp>
-    #endif
+#include <Fw/Types/StringType.hpp>
+#ifdef BUILD_UT
+#include <Fw/Types/String.hpp>
+#include <iostream>
+#endif
 #endif
 
 namespace Fw {
@@ -40,15 +40,13 @@ namespace Fw {
 //! prevent excessive copying.
 //!
 class Buffer : public Fw::Serializable {
-
-public:
-
+  public:
     //! The size type for a buffer
     using SizeType = U32;
 
     enum {
-        SERIALIZED_SIZE = sizeof(SizeType) + sizeof(U32) + sizeof(U8*), //!< Size of Fw::Buffer when serialized
-        NO_CONTEXT = 0xFFFFFFFF //!< Value representing no context
+        SERIALIZED_SIZE = sizeof(SizeType) + sizeof(U32) + sizeof(U8*),  //!< Size of Fw::Buffer when serialized
+        NO_CONTEXT = 0xFFFFFFFF                                          //!< Value representing no context
     };
 
     //! Construct a buffer with no context nor data
@@ -68,7 +66,7 @@ public:
     //! \param data: data pointer to wrap
     //! \param size: size of data located at data pointer
     //! \param context: user-specified context to track creation. Default: no context
-    Buffer(U8* data, SizeType size, U32 context=NO_CONTEXT);
+    Buffer(U8* data, SizeType size, U32 context = NO_CONTEXT);
 
     //! Assignment operator to set given buffer's members from another without copying wrapped data
     //!
@@ -98,16 +96,15 @@ public:
     //! Returns a ExternalSerializeBufferWithMemberCopy representation of the wrapped data for serializing
     //!
     //! \warning The serialization pointer of the returned ExternalSerializeBufferWithMemberCopy object is set to zero
-    //! \warning so that serialization will start at the beginning of the memory pointed to by the Fw::Buffer. If that 
-    //! \warning behavior is not desired the caller may manipulate the serialization offsets with moveSerToOffset 
+    //! \warning so that serialization will start at the beginning of the memory pointed to by the Fw::Buffer. If that
+    //! \warning behavior is not desired the caller may manipulate the serialization offsets with moveSerToOffset
     //! \warning and serializeSkip methods prior to serialization.
     //!
     //! \return representation of the wrapped data to aid in serializing to it
     ExternalSerializeBufferWithMemberCopy getSerializer();
 
-
     //! Returns a ExternalSerializeBufferWithMemberCopy representation of the wrapped data for deserializing
-    //! 
+    //!
     //! \warning The entire buffer (up to getSize) is available for deserialization.
     //!
     //! \return representation of the wrapped data to aid in deserializing to it
@@ -132,7 +129,6 @@ public:
     //! \param buffer: serialize buffer to read data into
     //! \return: status of serialization
     Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer);
-
 
     // ----------------------------------------------------------------------
     // Accessor functions
@@ -170,7 +166,7 @@ public:
     //! \param data: data pointer to wrap
     //! \param size: size of data located at data pointer
     //! \param context: user-specified context to track creation. Default: no context
-    void set(U8* data, SizeType size, U32 context=NO_CONTEXT);
+    void set(U8* data, SizeType size, U32 context = NO_CONTEXT);
 
 #if FW_SERIALIZABLE_TO_STRING || BUILD_UT
     //! Supports writing this buffer to a string representation
@@ -183,13 +179,11 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const Buffer& obj);
 #endif
 
-PRIVATE:
-    Fw::ExternalSerializeBuffer m_serialize_repr; //<! Representation for serialization and deserialization functions
-    U8* m_bufferData; //<! data - A pointer to the data
-    SizeType m_size; //<! size - The data size in bytes
-    U32 m_context; //!< Creation context for disposal
-
+  PRIVATE:
+    Fw::ExternalSerializeBuffer m_serialize_repr;  //<! Representation for serialization and deserialization functions
+    U8* m_bufferData;                              //<! data - A pointer to the data
+    SizeType m_size;                               //<! size - The data size in bytes
+    U32 m_context;                                 //!< Creation context for disposal
 };
-} // end namespace Fw
+}  // end namespace Fw
 #endif /* BUFFER_HPP_ */
-
