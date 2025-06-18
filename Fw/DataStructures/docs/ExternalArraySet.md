@@ -3,7 +3,7 @@
 `ExternalArraySet` is a `final` class template
 defined in [`Fw/DataStructures`](sdd.md).
 It represents an array-based set with external storage.
-Internally it maintains an [`ArraySetOrMapImpl<Entry>`](ArraySetOrMapImpl.md)
+Internally it maintains an [`ArraySetOrMapImpl`](ArraySetOrMapImpl.md)
 as the set implementation.
 
 ## 1. Template Parameters
@@ -25,9 +25,9 @@ as the set implementation.
 
 |Name|Type|Purpose|Default Value|
 |----|----|-------|-------------|
-|`m_setImpl`|[`ArraySetOrMapImpl<Entry>`](ArraySetOrMapImpl.md)|The set implementation|C++ default initialization|
+|`m_setImpl`|[`ArraySetOrMapImpl<T, Nil>`](ArraySetOrMapImpl.md)|The set implementation|C++ default initialization|
 
-The type `Entry` is defined [in the base class](MapBase.md#2-public-types).
+The type `Nil` is defined [in the base class](SetBase.md#2-public-types).
 
 ```mermaid
 classDiagram
@@ -54,6 +54,8 @@ ExternalArraySet<U32> set;
 ```c++
 ExternalArraySet(Entry* entries, FwSizeType capacity)
 ```
+
+The type `Entry` is defined [in the base class](SetBase.md#2-public-types).
 
 Call `m_setImpl.setStorage(entries, capacity)`.
 
@@ -324,6 +326,8 @@ ASSERT_EQ(size, 0);
 ```c++
 void setStorage(Entry* entries, FwSizeType capacity)
 ```
+
+The type `Entry` is defined [in the base class](SetBase.md#2-public-types).
 
 Call `m_setImpl.setStorage(entries, capacity)`.
 

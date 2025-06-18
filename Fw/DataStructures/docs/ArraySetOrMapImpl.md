@@ -13,16 +13,16 @@ storing the entries in the set or map.
 |Kind|Name|Purpose|
 |----|----|-------|
 |`typename`|`KE`|The type of a key in a map or the element of a set|
-|`typename`|`V`|The type of a value in a map; unused in a set|
+|`typename`|`VN`|The type of a value in a map or Nil for set|
 
 ## 2. Public Types
 
 `ArraySetOrMapImpl` defines the following types:
-```c++
-using Iterator = SetOrMapIterator<KE, V>
-```
 
-The type `SetOrMapIterator` is defined [here](SetOrMapIterator.md).
+|Name|Definition|
+|----|----------|
+|`Entry`|Alias for [`SetOrMapIterator<KE, VN>`](SetOrMapIterator.md)|
+|`Iterator`|Alias for [`SetOrMapIterator<KE, VN>`](SetOrMapIterator.md)|
 
 ## 3. Private Member Variables
 
@@ -30,7 +30,7 @@ The type `SetOrMapIterator` is defined [here](SetOrMapIterator.md).
 
 |Name|Type|Purpose|Default Value|
 |----|----|-------|-------------|
-|`m_entries`|[`ExternalArray<Iterator>`](ExternalArray.md)|The array for storing the set or map entries|C++ default initialization|
+|`m_entries`|[`ExternalArray<Entry>`](ExternalArray.md)|The array for storing the set or map entries|C++ default initialization|
 |`m_size`|`FwSizeType`|The number of entries in the map|0|
 
 ```mermaid
@@ -75,7 +75,7 @@ contain at least [`getByteArraySize(size)`](#62-getbytearraysize) bytes.
 ### 4.4. Copy Constructor
 
 ```c++
-ArraySetOrMapImpl(const ArraySetOrMapImpl<K, V>& map)
+ArraySetOrMapImpl(const ArraySetOrMapImpl<KE, VN>& map)
 ```
 
 Set `*this = map`.
@@ -93,14 +93,14 @@ Defined as `= default`.
 ### 5.1. operator=
 
 ```c++
-ArraySetOrMapImpl<K, V>& operator=(const ArraySetOrMapImpl<K, V>& map)
+ArraySetOrMapImpl<KE, VN>& operator=(const ArraySetOrMapImpl<KE, VN>& impl)
 ```
 
-1. If `&map != this`
+1. If `&impl != this`
 
-    1. Set `m_entries = map.m_entries`.
+    1. Set `m_entries = impl.m_entries`.
 
-    1. Set `m_size = map.m_size`.
+    1. Set `m_size = impl.m_size`.
 
 1. Return `*this`.
 
@@ -125,22 +125,24 @@ Set `m_size = 0`.
 ### 5.4. find
 
 ```c++
-const Iterator* find(const K& key)
+Success find(const KE& keyOrElement, VN& valueOrNil)
 ```
 
-1. Set `result = nullptr`.
+1. Set `status = Success::FAILURE`.
 
 1. For `i` in `[0, m_size)`
 
-    1. Let `const auto& e = &m_entries[i]`.
+    1. Let `const auto& e = m_entries[i]`.
 
-    1. If `e.getKey() == key`
+    1. If `e.getKey() == keyOrElement`
 
-        1. Set `result = e`.
+        1. Set `valueOrNil = e.getValue()`.
+
+        1. Set `status = Success::SUCCESS`.
 
         1. Break out of the loop.
 
-1. Return `result`.
+1. Return `status`.
 
 ### 5.5. getCapacity
 
@@ -177,7 +179,7 @@ Return `m_size`.
 ### 5.8. insert
 
 ```c++
-Success insert(const KE& keyOrElement, const V& value)
+Success insert(const KE& keyOrElement, const VN& valueOrNil)
 ```
 
 1. Set `status = Success::FAILURE`.
@@ -188,7 +190,7 @@ Success insert(const KE& keyOrElement, const V& value)
 
     1. If `e.getKey() == e.keyOrElement`
 
-        1. Call `e.setValue(value)`.
+        1. Call `e.setValue(valueOrNil)`.
 
         1. Set `status = Success::SUCCESS`.
 
@@ -196,7 +198,7 @@ Success insert(const KE& keyOrElement, const V& value)
 
 1. If `(status == Success::FAILURE) && (m_size < getCapacity())`
 
-    1. Set `m_entries[m_size] = Iterator(keyOrElement, value)`.
+    1. Set `m_entries[m_size] = Iterator(keyOrElement, valueOrNil)`.
 
     1. If `m_size > 0` then
        call `m_entries[m_size - 1].setNextIterator(&m_entries[m_size])`.
@@ -210,14 +212,16 @@ Success insert(const KE& keyOrElement, const V& value)
 ### 5.9. remove
 
 ```c++
-Success remove(const K& key, V& value)
+Success remove(const KE& keyOrElement, VN& valueOrNil)
 ```
 
 1. Set `status = Success::FAILURE`.
 
 1. For `i` in `[0, m_size)`
 
-    1. If `m_entries[i].getKey() == key`
+    1. If `m_entries[i].getKey() == keyOrElement`
+
+        1. Set `valueOrNil = m_entries[i].getValue()`.
 
         1. If `i < m_size - 1` then
 
@@ -267,7 +271,7 @@ contain at least [`getByteArraySize(size)`](#62-getbytearraysize) bytes.
 static constexpr U8 getByteArrayAlignment()
 ```
 
-Return `ExternalArray<Iterator>::getByteArrayAlignment()`.
+Return `ExternalArray<Entry>::getByteArrayAlignment()`.
 
 ### 6.2. getByteArraySize
 
@@ -275,4 +279,4 @@ Return `ExternalArray<Iterator>::getByteArrayAlignment()`.
 static constexpr FwSizeType getByteArraySize(FwSizeType capacity)
 ```
 
-Return `ExternalArray<Iterator>::getByteArraySize(capacity)`.
+Return `ExternalArray<Entry>::getByteArraySize(capacity)`.

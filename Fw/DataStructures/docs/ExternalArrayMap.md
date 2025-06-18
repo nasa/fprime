@@ -3,7 +3,7 @@
 `ExternalArrayMap` is a `final` class template
 defined in [`Fw/DataStructures`](sdd.md).
 It represents an array-based map with external storage.
-Internally it maintains an [`ArraySetOrMapImpl<Entry>`](ArraySetOrMapImpl.md)
+Internally it maintains an [`ArraySetOrMapImpl`](ArraySetOrMapImpl.md)
 as the map implementation.
 
 ## 1. Template Parameters
@@ -26,9 +26,7 @@ as the map implementation.
 
 |Name|Type|Purpose|Default Value|
 |----|----|-------|-------------|
-|`m_mapImpl`|[`ArraySetOrMapImpl<Entry>`](ArraySetOrMapImpl.md)|The map implementation|C++ default initialization|
-
-The type `Entry` is defined [in the base class](MapBase.md#2-public-types).
+|`m_mapImpl`|[`ArraySetOrMapImpl<K, V>`](ArraySetOrMapImpl.md)|The map implementation|C++ default initialization|
 
 ```mermaid
 classDiagram
@@ -55,6 +53,8 @@ ExternalArrayMap<U16, U32> map;
 ```c++
 ExternalArrayMap(Entry* entries, FwSizeType capacity)
 ```
+
+The type `Entry` is defined [in the base class](MapBase.md#2-public-types).
 
 Call `m_mapImpl.setStorage(entries, capacity)`.
 
@@ -340,6 +340,8 @@ ASSERT_EQ(value, 1);
 ```c++
 void setStorage(Entry* entries, FwSizeType capacity)
 ```
+
+The type `Entry` is defined [in the base class](MapBase.md#2-public-types).
 
 Call `m_mapImpl.setStorage(entries, capacity)`.
 
