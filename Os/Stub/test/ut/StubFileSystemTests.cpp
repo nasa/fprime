@@ -73,8 +73,15 @@ TEST_F(Interface, GetFreeSpace) {
 
 // Ensure that Os::FileSystem properly calls the implementation getHandle()
 TEST_F(Interface, GetHandle) {
-    ASSERT_EQ(Os::FileSystem::getSingleton().getHandle(), nullptr);
+    ASSERT_NE(Os::FileSystem::getSingleton().getHandle(), nullptr);
     ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::GET_HANDLE_FN);
+}
+
+// Ensure that Os::FileSystem properly calls the implementation getPathType()
+TEST_F(Interface, GetPathType) {
+    Os::FileSystem::PathType pathType = Os::FileSystem::getPathType("/does/not/matter");
+    ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::GET_PATH_TYPE_FN);
+    ASSERT_EQ(pathType, Os::FileSystem::PathType::NOT_EXIST);
 }
 
 int main(int argc, char **argv) {

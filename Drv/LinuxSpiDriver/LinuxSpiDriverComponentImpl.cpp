@@ -56,7 +56,7 @@ namespace Drv {
             .pad = 0
 */
 
-        PlatformIntType stat = ioctl(this->m_fd, SPI_IOC_MESSAGE(1), &tr);
+        int stat = ioctl(this->m_fd, SPI_IOC_MESSAGE(1), &tr);
 
         if (stat < 1) {
             this->log_WARNING_HI_SPI_WriteError(this->m_device,this->m_select,stat);
@@ -74,8 +74,8 @@ namespace Drv {
 
         this->m_device = device;
         this->m_select = select;
-        PlatformIntType fd;
-        PlatformIntType ret;
+        int fd;
+        int ret;
 
         // Open:
         Fw::FileNameString devString;

@@ -13,7 +13,7 @@ namespace Mutex {
 PosixMutex::PosixMutex() : Os::MutexInterface(), m_handle() {
     // set attributes
     pthread_mutexattr_t attribute;
-    PlatformIntType status = pthread_mutexattr_init(&attribute);
+    int status = pthread_mutexattr_init(&attribute);
     FW_ASSERT(status == 0, static_cast<FwAssertArgType>(status));
 
     // set to normal mutex type
@@ -29,17 +29,17 @@ PosixMutex::PosixMutex() : Os::MutexInterface(), m_handle() {
 }
 
 PosixMutex::~PosixMutex() {
-    PlatformIntType status = pthread_mutex_destroy(&this->m_handle.m_mutex_descriptor);
+    int status = pthread_mutex_destroy(&this->m_handle.m_mutex_descriptor);
     FW_ASSERT(status == 0, static_cast<FwAssertArgType>(status));
 }
 
 PosixMutex::Status PosixMutex::take() {
-    PlatformIntType status = pthread_mutex_lock(&this->m_handle.m_mutex_descriptor);
+    int status = pthread_mutex_lock(&this->m_handle.m_mutex_descriptor);
     return Os::Posix::posix_status_to_mutex_status(status);
 }
 
 PosixMutex::Status PosixMutex::release() {
-    PlatformIntType status = pthread_mutex_unlock(&this->m_handle.m_mutex_descriptor);
+    int status = pthread_mutex_unlock(&this->m_handle.m_mutex_descriptor);
     return Os::Posix::posix_status_to_mutex_status(status);
 }
 

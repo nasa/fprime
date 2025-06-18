@@ -70,7 +70,7 @@ void TlmChanTester::runMultiChannel() {
     this->clearBuffs();
     // send all updates
     for (FwChanIdType n = 0; n < FW_NUM_ARRAY_ELEMENTS(ID_0); n++) {
-        this->sendBuff(ID_0[n], n);
+        this->sendBuff(ID_0[n], static_cast<U32>(n));
     }
 
     ASSERT_EQ(0, this->component.m_activeBuffer);
@@ -84,7 +84,7 @@ void TlmChanTester::runMultiChannel() {
     // verify packets
     for (FwChanIdType n = 0; n < FW_NUM_ARRAY_ELEMENTS(ID_0); n++) {
         // printf("#: %d\n",n);
-        this->checkBuff(n, FW_NUM_ARRAY_ELEMENTS(ID_0), ID_0[n], n);
+        this->checkBuff(n, FW_NUM_ARRAY_ELEMENTS(ID_0), ID_0[n], static_cast<U32>(n));
     }
 
     // send another set
@@ -97,7 +97,7 @@ void TlmChanTester::runMultiChannel() {
     this->clearBuffs();
     // send all updates
     for (FwChanIdType n = 0; n < FW_NUM_ARRAY_ELEMENTS(ID_1); n++) {
-        this->sendBuff(ID_1[n], n);
+        this->sendBuff(ID_1[n], static_cast<U32>(n));
     }
 
     ASSERT_EQ(1, this->component.m_activeBuffer);
@@ -111,7 +111,7 @@ void TlmChanTester::runMultiChannel() {
     // verify packets
     for (FwChanIdType n = 0; n < FW_NUM_ARRAY_ELEMENTS(ID_1); n++) {
         // printf("#: %d\n",n);
-        this->checkBuff(n, FW_NUM_ARRAY_ELEMENTS(ID_1), ID_1[n], n);
+        this->checkBuff(n, FW_NUM_ARRAY_ELEMENTS(ID_1), ID_1[n], static_cast<U32>(n));
     }
 }
 
@@ -270,16 +270,17 @@ void TlmChanTester::dumpTlmEntry(TlmChan::TlmEntry* entry) {
     printf(
         "Entry "
         " Ptr: %p"
-        " id: 0x%08X"
-        " bucket: %d"
+        " id: 0x%" PRI_FwChanIdType
+        " bucket: %" PRI_FwChanIdType
         " next: %p\n",
         static_cast<void*>(entry), entry->id, entry->bucketNo, static_cast<void*>(entry->next));
+    
 }
 
 void TlmChanTester::dumpHash() {
     //        printf("**Buffer 0\n");
     for (FwChanIdType slot = 0; slot < TLMCHAN_NUM_TLM_HASH_SLOTS; slot++) {
-        printf("Slot: %d\n", slot);
+        printf("Slot: %" PRI_FwChanIdType "\n", slot);
         if (this->component.m_tlmEntries[0].slots[slot]) {
             TlmChan::TlmEntry* entry = component.m_tlmEntries[0].slots[slot];
             for (FwChanIdType bucket = 0; bucket < TLMCHAN_HASH_BUCKETS; bucket++) {

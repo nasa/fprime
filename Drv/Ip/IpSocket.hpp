@@ -19,8 +19,8 @@
 namespace Drv {
 
 struct SocketDescriptor final {
-    PlatformIntType fd = -1; //!< Used for all sockets to track the communication file descriptor
-    PlatformIntType serverFd = -1; //!< Used for server sockets to track the listening file descriptor
+    int fd = -1; //!< Used for all sockets to track the communication file descriptor
+    int serverFd = -1; //!< Used for server sockets to track the listening file descriptor
 };
 
 /**
@@ -174,7 +174,7 @@ class IpSocket {
      * \param socketDescriptor: socket descriptor to setup
      * \return status of timeout setup
     */
-    SocketIpStatus setupTimeouts(PlatformIntType socketFd);
+    SocketIpStatus setupTimeouts(int socketFd);
 
     /**
      * \brief converts a given address in dot form x.x.x.x to an ip address. ONLY works for IPv4.

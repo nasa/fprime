@@ -90,6 +90,11 @@ struct Tester : public Os::TaskRegistry {
     static Tester* s_current_registry;
 
   public:
+
+    static void resetNumTasks(){
+      Os::Task::s_numTasks = 0;
+    }
+
 #include "TaskRules.hpp"
 };
 

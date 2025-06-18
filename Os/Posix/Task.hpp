@@ -22,7 +22,7 @@ namespace Task {
     //! TaskHandle class definition for posix implementations.
     //!
     struct PosixTaskHandle : public TaskHandle {
-        static constexpr PlatformIntType SUCCESS = 0;
+        static constexpr int SUCCESS = 0;
 
         //! Posix task descriptor
         pthread_t m_task_descriptor;

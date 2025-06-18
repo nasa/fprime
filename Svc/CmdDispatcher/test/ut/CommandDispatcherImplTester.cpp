@@ -645,7 +645,7 @@ namespace Svc {
         FwOpcodeType testOpCode = 0x50;
         this->clearEvents();
         Fw::ComBuffer buff;
-        ASSERT_EQ(buff.serialize(U32(100)),Fw::FW_SERIALIZE_OK);
+        ASSERT_EQ(buff.serialize(static_cast<FwOpcodeType>(100)),Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(buff.serialize(testOpCode),Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(buff.serialize(testCmdArg),Fw::FW_SERIALIZE_OK);
 

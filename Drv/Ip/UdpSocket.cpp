@@ -83,7 +83,7 @@ U16 UdpSocket::getRecvPort() {
     return ntohs(this->m_addr_recv.sin_port);
 }
 
-SocketIpStatus UdpSocket::bind(const PlatformIntType fd) {
+SocketIpStatus UdpSocket::bind(const int fd) {
     FW_ASSERT(fd != -1);
     struct sockaddr_in address = this->m_addr_recv;
     
@@ -114,7 +114,7 @@ SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
     }
     
     SocketIpStatus status = SOCK_SUCCESS;
-    PlatformIntType socketFd = -1;
+    int socketFd = -1;
     
     // Initialize address structure to zero before use
     struct sockaddr_in address;

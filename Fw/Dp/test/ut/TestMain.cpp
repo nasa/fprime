@@ -107,7 +107,7 @@ TEST(Header, BufferInConstructor) {
     // Fill with data
     fillWithData(buffer);
     // Use the buffer to create a container
-    const FwDpIdType id = STest::Pick::lowerUpper(0, std::numeric_limits<FwDpIdType>::max());
+    const FwDpIdType id = static_cast<FwDpIdType>(STest::Pick::lowerUpper(0, static_cast<U32>(std::numeric_limits<FwDpIdType>::max())));
     DpContainer container(id, buffer);
     // Check the header
     checkHeader(id, buffer, container);
@@ -144,7 +144,7 @@ TEST(Header, BufferSet) {
     // Fill with data
     fillWithData(buffer);
     // Use the buffer to create a container
-    const FwDpIdType id = STest::Pick::lowerUpper(0, std::numeric_limits<FwDpIdType>::max());
+    const FwDpIdType id = static_cast<FwDpIdType>(STest::Pick::lowerUpper(0, static_cast<U32>(std::numeric_limits<FwDpIdType>::max())));
     DpContainer container;
     container.setId(id);
     container.setBuffer(buffer);

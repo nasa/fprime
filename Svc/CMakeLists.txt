@@ -54,6 +54,9 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/TlmChan/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/TlmPacketizer/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SystemResources/")
 
+# Subtopologies
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Subtopologies/")
+
 # Text logger components included by default, 
 # but can be disabled if FW_ENABLE_TEXT_LOGGING=0 is desired.
 if (FPRIME_ENABLE_TEXT_LOGGERS)

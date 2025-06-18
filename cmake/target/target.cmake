@@ -178,8 +178,10 @@ function(setup_module_targets BUILD_TARGET)
     endif()
 
     # Now run through each of the determined targets
+    set(DEPENDENCIES ${MODULE_LINK_LIBRARIES} ${MODULE_INTERFACE_LINK_LIBRARIES})
+    list(REMOVE_DUPLICATES DEPENDENCIES)
     foreach(FPRIME_TARGET IN LISTS TARGETS)
-        setup_single_target("${FPRIME_TARGET}" "${BUILD_TARGET}" "${MODULE_SOURCES}" "${MODULE_LINK_LIBRARIES};${MODULE_INTERFACE_LINK_LIBRARIES}")
+        setup_single_target("${FPRIME_TARGET}" "${BUILD_TARGET}" "${MODULE_SOURCES}" "${DEPENDENCIES}")
     endforeach()
 endfunction(setup_module_targets)
 #### Documentation links

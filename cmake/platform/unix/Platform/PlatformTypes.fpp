@@ -26,6 +26,10 @@ type PlatformAssertArgType = I32
 @ overridable by project.
 type PlatformTaskPriorityType = U8
 
+@ The type of task identifiers. Supplied by platform,
+@ overridable by project.
+type PlatformTaskIdType = I32
+
 @ The type of queue priorities used. Supplied by platform,
 @ overridable by project.
 type PlatformQueuePriorityType = U8

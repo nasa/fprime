@@ -17,7 +17,7 @@ namespace Test {
 
 const U32 MAX_DRV_TEST_MESSAGE_SIZE = 1024;
 
-void force_recv_timeout(PlatformIntType fd, Drv::IpSocket& socket, const TestTimeouts* custom_timeouts) {
+void force_recv_timeout(int fd, Drv::IpSocket& socket, const TestTimeouts* custom_timeouts) {
     // Set timeout socket option
     struct timeval timeout;
     if (custom_timeouts != nullptr) {

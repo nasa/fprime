@@ -27,7 +27,7 @@ struct TestTimeouts {
  * @param socket: socket to make timeout
  * @param custom_timeouts: optional custom timeout values. If nullptr, a default is used.
  */
-void force_recv_timeout(PlatformIntType fd, Drv::IpSocket &socket, const TestTimeouts* custom_timeouts = nullptr);
+void force_recv_timeout(int fd, Drv::IpSocket &socket, const TestTimeouts* custom_timeouts = nullptr);
 
 /**
  * Validate random data from data against truth
