@@ -38,6 +38,10 @@ The type `SetOrMapIterator` is defined [here](SetOrMapIterator.md).
 |----|----|-------|-------------|
 |`m_mapImpl`|[`ArraySetOrMapImpl<Entry>`](ArraySetOrMapImpl.md)|The array for storing the map entries|C++ default initialization|
 
+```mermaid
+classDiagram
+    ExternalArrayMap *-- ArraySetOrMapImpl
+```
 
 ## 5. Public Constructors and Destructors
 

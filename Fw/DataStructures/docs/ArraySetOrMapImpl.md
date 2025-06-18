@@ -33,6 +33,11 @@ The type `SetOrMapIterator` is defined [here](SetOrMapIterator.md).
 |`m_entries`|[`ExternalArray<Iterator>`](ExternalArray.md)|The array for storing the set or map entries|C++ default initialization|
 |`m_size`|`FwSizeType`|The number of entries in the map|0|
 
+```mermaid
+classDiagram
+    ArraySetOrMapImpl *-- ExternalArray
+```
+
 ## 4. Public Constructors and Destructors
 
 ### 4.1. Zero-Argument Constructor

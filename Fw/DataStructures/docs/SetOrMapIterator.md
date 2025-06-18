@@ -22,6 +22,12 @@ templates:
 
 1. [`SetIterator<KE>`](SetIterator.md).
 
+```mermaid
+classDiagram
+    MapIterator <|-- SetOrMapIterator
+    SetIterator <|-- SetOrMapIterator
+```
+
 ## 3. Private Member Variables
 
 `SetOrMapIterator` has the following private member variables.
