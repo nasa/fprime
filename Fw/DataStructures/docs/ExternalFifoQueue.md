@@ -174,7 +174,7 @@ void clear() override
 _Example:_
 ```c++
 constexpr FwSizeType capacity = 10;
-U32 items[capacity] = {};
+U32 items[capacity];
 ExternalFifoQueue<U32> queue(items, capacity);
 const auto status = queue.enqueue(3);
 ASSERT_EQ(queue.getSize(), 1);
