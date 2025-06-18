@@ -236,8 +236,8 @@ a.setStorage(elements, size);
 void setStorage(ByteArray data, FwSizeType size)
 ```
 
-`data` must be correctly aligned for `T` and must
-contain at least `getByteArraySize(size)` bytes.
+`data` must be correctly aligned according to `getByteArrayAlignment`
+and must contain at least `getByteArraySize(size)` bytes.
 
 1. Assert that `data.bytes != nullptr`.
 
