@@ -26,8 +26,9 @@ TEST(ExternalArray, StorageConstructorTyped) {
 
 TEST(ExternalArray, StorageConstructorUntyped) {
     constexpr FwSizeType size = 3;
+    constexpr U8 alignment = ExternalArray<U32>::getByteArrayAlignment();
     constexpr FwSizeType byteArraySize = ExternalArray<U32>::getByteArraySize(size);
-    alignas(U32) U8 bytes[byteArraySize];
+    alignas(alignment) U8 bytes[byteArraySize];
     ExternalArray<U32> a(ByteArray(&bytes[0], sizeof bytes), size);
     ASSERT_EQ(a.getElements(), reinterpret_cast<U32*>(&bytes[0]));
     ASSERT_EQ(a.getSize(), size);
@@ -113,8 +114,9 @@ TEST(ExternalArray, SetStorageTyped) {
 
 TEST(ExternalArray, SetStorageUnypedOK) {
     constexpr FwSizeType size = 10;
+    constexpr U8 alignment = ExternalArray<U32>::getByteArrayAlignment();
     constexpr FwSizeType byteArraySize = ExternalArray<U32>::getByteArraySize(size);
-    alignas(U32) U8 bytes[byteArraySize];
+    alignas(alignment) U8 bytes[byteArraySize];
     ExternalArray<U32> a;
     a.setStorage(ByteArray(&bytes[0], sizeof bytes), size);
     ASSERT_EQ(a.getElements(), reinterpret_cast<U32*>(bytes));
@@ -123,16 +125,18 @@ TEST(ExternalArray, SetStorageUnypedOK) {
 
 TEST(ExternalArray, SetStorageUnypedBadSize) {
     constexpr FwSizeType size = 10;
+    constexpr U8 alignment = ExternalArray<U32>::getByteArrayAlignment();
     constexpr FwSizeType byteArraySize = ExternalArray<U32>::getByteArraySize(size);
-    alignas(U32) U8 bytes[byteArraySize];
+    alignas(alignment) U8 bytes[byteArraySize];
     ExternalArray<U32> a;
     ASSERT_DEATH(a.setStorage(ByteArray(&bytes[0], sizeof bytes), size + 1), "Assert");
 }
 
 TEST(ExternalArray, SetStorageUnypedBadAlignment) {
     constexpr FwSizeType size = 10;
+    constexpr U8 alignment = ExternalArray<U32>::getByteArrayAlignment();
     constexpr FwSizeType byteArraySize = ExternalArray<U32>::getByteArraySize(size);
-    alignas(U32) U8 bytes[byteArraySize];
+    alignas(alignment) U8 bytes[byteArraySize];
     ExternalArray<U32> a;
     ASSERT_DEATH(a.setStorage(ByteArray(&bytes[1], sizeof bytes), size), "Assert");
 }

@@ -127,6 +127,12 @@ class ExternalArray final {
     // Public static functions
     // ----------------------------------------------------------------------
 
+    //! Get the alignment of the storage for an ExternalArray
+    //! \return The alignment
+    static constexpr U8 getByteArrayAlignment() {
+        return alignof(T);
+    }
+
     //! Get the size of the storage for an ExternalArray of the specified size,
     //! as a byte array
     //! \return The byte array size

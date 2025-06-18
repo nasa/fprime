@@ -30,7 +30,7 @@ templates:
 |----|----|-------|-------------|
 |`m_keyOrElement`|`KE`|The map key or set element|C++ default initialization|
 |`m_value`|`V`|The value|C++ default initialization|
-|`m_nextIterator`|`SetOrMapIterator<KE, V>*`|Pointer to the next iterator or `nullptr` if none|`nullptr`|
+|`m_next`|`SetOrMapIterator<KE, V>*`|Pointer to the next iterator or `nullptr` if none|`nullptr`|
 
 ## 4. Public Constructors and Destructors
 
@@ -45,14 +45,14 @@ Defined as `= default`.
 ### 4.2. Constructor Providing Members
 
 ```c++
-SetOrMapIterator(const KE& keyOrElement, const V& value, SetOrMapIterator<KE, V>* nextIterator = nullptr)
+SetOrMapIterator(const KE& keyOrElement, const V& value, SetOrMapIterator<KE, V>* next = nullptr)
 ```
 
 1. Set `m_keyOrElement = keyOrElement`.
 
 2. Set `m_value = value`.
 
-3. Set `m_nextIterator = nextIterator`.
+3. Set `m_next = next`.
 
 ### 4.3. Copy Constructor
 
@@ -110,7 +110,7 @@ Return a reference to `m_value`.
 SetOrMapIterator<KE, V> getNextIterator()
 ```
 
-Return `m_nextIterator`.
+Return `m_next`.
 
 ### 5.4. getNextMapIterator
 
@@ -118,7 +118,7 @@ Return `m_nextIterator`.
 MapIterator<KE, V> getNextMapIterator() override
 ```
 
-Return `m_nextIterator`.
+Return `m_next`.
 
 ### 5.5. getNextSetIterator
 
@@ -126,7 +126,7 @@ Return `m_nextIterator`.
 SetIterator<KE>* getNextSetIterator()
 ```
 
-Return `m_nextIterator`.
+Return `m_next`.
 
 ### 5.6. setKeyOrElement
 
@@ -139,10 +139,10 @@ Set `m_keyOrElement = keyOrElement`.
 ### 5.8. setNextIterator
 
 ```c++
-void setNextIterator(SetOrMapIterator<KE, V>* nextIterator)
+void setNextIterator(SetOrMapIterator<KE, V>* next)
 ```
 
-Set `m_nextIterator = nextIterator`.
+Set `m_next = next`.
 
 ### 5.7. setValue
 

@@ -60,13 +60,15 @@ ExternalArray(ByteArray data, FwSizeType size)
 ```
 
 Call `setStorage(data, size)`.
-`data` must be correctly aligned for `T` and must
+`data` must be aligned according to `getByteArrayAlignment` and must
 contain at least `getByteArraySize(size)` bytes.
 
 _Example:_
 ```c++
 constexpr FwSizeType size = 3;
-alignas(U32) U8 bytes[size * sizeof(U32)];
+constexpr U8 alignment = ExternalArray<U32>::byteArrayAlignment();
+constepxr FwSizeType byteArraySize = ExternalArray<U32>::getByteArraySize(size);
+alignas(alignment) U8 bytes[byteArraySize];
 ExternalArray<U32> a(ByteArray(&bytes[0], sizeof bytes), size);
 ```
 
@@ -250,14 +252,31 @@ contain at least `getByteArraySize(size)` bytes.
 _Example:_
 ```c++
 constexpr FwSizeType size = 3;
-alignas(U32) U8 bytes[size * sizeof(U32)];
+constexpr U8 alignment = ExternalArray<U32>::byteArrayAlignment();
+constepxr FwSizeType byteArraySize = ExternalArray<U32>::getByteArraySize(size);
+alignas(alignment) U8 bytes[byteArraySize];
 ExternalArray<U32> a;
 a.setStorage(ByteArray(&bytes[0], sizeof bytes), size);
 ```
 
 ## 5. Public Static Functions
 
-### 5.1. getByteArraySize
+### 5.1. getByteArrayAlignment
+
+```c++
+static constexpr U8 getByteArrayAlignment()
+```
+
+Return `alignof(T)`.
+
+_Example:_
+```
+c++
+const U8 byteArrayAlignment = ExternalArray<U32>::getByteArraySize(size);
+ASSERT_EQ(byteArrayAlignment, alignof(U32));
+```
+
+### 5.2. getByteArraySize
 
 ```c++
 static constexpr FwSizeType getByteArraySize(FwSizeType size)
@@ -269,6 +288,6 @@ _Example:_
 ```
 c++
 const FwSizeType size = 10;
-const FwSizeType byteArraySize = ExternalArrayMap<U32>::getByteArraySize(size);
+const FwSizeType byteArraySize = ExternalArray<U32>::getByteArraySize(size);
 ASSERT_EQ(byteArraySize, 10 * sizeof(U32));
 ```
