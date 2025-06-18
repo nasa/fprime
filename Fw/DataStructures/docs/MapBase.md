@@ -19,7 +19,7 @@ It represents an abstract base class for a map.
 
 |Name|Definition|
 |----|----------|
-|`Entry`|`MapEntry<K, V>`|
+|`Iterator`|`MapIterator<K, V>`|
 
 ## 3. Private Constructors
 
@@ -89,7 +89,7 @@ void copyDataFrom(const MapBase<K, V>& map)
 
     1. Let `size` be the minimum of `map.getSize()` and `getCapacity()`.
 
-    1. Set `e = map.getHeadEntry()`.
+    1. Set `e = map.getHeadIterator()`.
 
     1. For `i` in [0, `size`)
 
@@ -99,7 +99,7 @@ void copyDataFrom(const MapBase<K, V>& map)
 
         1. Assert `status == Success::SUCCESS`.
 
-        1. Set `e = e.getNextEntry()`
+        1. Set `e = e.getNextIterator()`
 
 _Example:_
 ```c++
@@ -160,10 +160,10 @@ void f(const MapBase<U16, U32>& map) {
 }
 ```
 
-### 6.5. getHeadEntry
+### 6.5. getHeadIterator
 
 ```c++
-const Entry* getHeadEntry const = 0
+const Iterator* getHeadIterator const = 0
 ```
 
 Get the head entry of the map.
@@ -172,10 +172,10 @@ _Example:_
 ```c++
 void f(const MapBase<U16, U32>& map) {
     map.clear();
-    const auto* e = map.getHeadEntry();
+    const auto* e = map.getHeadIterator();
     FW_ASSERT(e == nullptr);
     map.insert(0, 1);
-    e = map.getHeadEntry();
+    e = map.getHeadIterator();
     FW_ASSERT(e != nullptr);
     ASSERT_EQ(e.getKey(), 0);
     ASSERT_EQ(e.getValue(), 1);
@@ -198,7 +198,7 @@ See [**getCapacity**](MapBase.md#55-getCapacity).
 
 ```c++
 Success insert(const K& key, const V& value) = 0
-Success insert(const Entry& e) = 0
+Success insert(const Iterator& e) = 0
 ```
 
 1. If an entry `e` exists with the specified key, then update the 

@@ -172,18 +172,18 @@ Return `m_size`.
 ### 5.8. insert
 
 ```c++
-Success insert(const Iterator& e)
+Success insert(const KE& keyOrElement, const V& value)
 ```
 
 1. Set `status = Success::FAILURE`.
 
 1. For `i` in `[0, m_size)`
 
-    1. Let `auto& ei = m_entries[i]`.
+    1. Let `auto& e = m_entries[i]`.
 
-    1. If `ei.getKey() == e.key`
+    1. If `e.getKey() == e.keyOrElement`
 
-        1. Call `ei.setValue(e.value)`.
+        1. Call `e.setValue(value)`.
 
         1. Set `status = Success::SUCCESS`.
 
@@ -191,7 +191,7 @@ Success insert(const Iterator& e)
 
 1. If `(status == Success::FAILURE) && (m_size < getCapacity())`
 
-    1. Set `m_entries[m_size] = Iterator(e.key, e.value)`.
+    1. Set `m_entries[m_size] = Iterator(keyOrElement, value)`.
 
     1. If `m_size > 0` then
        call `m_entries[m_size - 1].setNextIterator(&m_entries[m_size])`.

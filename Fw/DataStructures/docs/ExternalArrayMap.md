@@ -17,23 +17,31 @@ storing the entries in the map.
 
 ## 2. Base Class
 
-`ExternalArrayMap<K, V>` is publicly derived from
+`ExternalArrayMap` is publicly derived from
 [`MapBase<K, V>`](MapBase.md).
 
-## 3. Private Member Variables
+## 3. Public Types
+
+`ExternalArrayMap` defines the following public types:
+
+```c++
+using Entry = SetOrMapIterator<K, V>
+```
+
+The type `SetOrMapIterator` is defined [here](SetOrMapIterator.md).
+
+## 4. Private Member Variables
 
 `ExternalArrayMap` has the following private member variables.
 
 |Name|Type|Purpose|Default Value|
 |----|----|-------|-------------|
-|`m_entries`|[`ExternalArray<Entry>`](ExternalArray.md)|The array for storing the map entries|C++ default initialization|
-|`m_size`|`FwSizeType`|The number of entries in the map|0|
+|`m_mapImpl`|[`ArraySetOrMapImpl<Entry>`](ArraySetOrMapImpl.md)|The array for storing the map entries|C++ default initialization|
 
-The type `Entry` is defined [in the base class](MapBase.md#2-types).
 
-## 4. Public Constructors and Destructors
+## 5. Public Constructors and Destructors
 
-### 4.1. Zero-Argument Constructor
+### 5.1. Zero-Argument Constructor
 
 ```c++
 ExternalArrayMap()
@@ -46,45 +54,47 @@ _Example:_
 ExternalArrayMap<U16, U32> map;
 ```
 
-### 4.2. Constructor Providing Typed Backing Storage
+### 5.2. Constructor Providing Typed Backing Storage
 
 ```c++
 ExternalArrayMap(Entry* entries, FwSizeType capacity)
 ```
 
-1. Call `setStorage(entries, capacity)`.
+1. Call `m_mapImpl.setStorage(entries, capacity)`.
 
 1. Initialize the other member variables with their default values.
 
 _Example:_
 ```c++
 constexpr FwSizeType capacity = 10;
-MapEntry<U16, U32> entries[capacity];
+ExternalArrayMap<U16, U32>::Entry entries[capacity];
 ExternalArrayMap<U16, U32> map(entries, capacity);
 ```
 
-### 4.3. Constructor Providing Untyped Backing Storage
+### 5.3. Constructor Providing Untyped Backing Storage
 
 ```c++
 ExternalArrayMap(ByteArray data, FwSizeType capacity)
 ```
 
-`data` must be correctly aligned for `Entry` and must
-contain at least `ExternalArrayMap<K, V>::getByteArraySize(capacity)` bytes.
+`data` must be aligned according to 
+[`getByteArrayAlignment()`](#71-getbytearrayalignment) and must
+contain at least [`getByteArraySize(size)`](#72-getbytearraysize) bytes.
 
-1. Call `setStorage(data, capacity)`.
+1. Call `m_mapImpl.setStorage(data, capacity)`.
 
 1. Initialize the other member variables with their default values.
 
 _Example:_
 ```c++
 constexpr FwSizeType capacity = 10;
+constexpr U8 alignment = ExternalArrayMap<U16, U32>::getByteAlignment();
 constexpr FwSizeType byteArraySize = ExternalArrayMap<U16, U32>::getByteArraySize(capacity);
-alignas(MapEntry<U16, U32>) U8 bytes[byteArraySize];
+alignas(alignment) U8 bytes[byteArraySize];
 ExternalArrayMap<U16, U32> map(ByteArray(&bytes[0], sizeof bytes), capacity);
 ```
 
-### 4.4. Copy Constructor
+### 5.4. Copy Constructor
 
 ```c++
 ExternalArrayMap(const ExternalArrayMap<K, V>& map)
@@ -95,7 +105,7 @@ Set `*this = map`.
 _Example:_
 ```c++
 constexpr FwSizeType capacity = 3;
-U32 entries[capacity];
+ExternalArrayMap<U16, U32>::Entry entries[capacity];
 // Call the constructor providing backing storage
 ExternalArrayMap<U16, U32> m1(entries, capacity);
 // Insert an item
@@ -108,7 +118,7 @@ ExternalArrayMap<U16, U32> m2(m1);
 ASSERT_EQ(m2.getSize(), 1);
 ```
 
-### 4.5. Destructor
+### 5.5. Destructor
 
 ```c++
 ~ExternalArrayMap() override
@@ -116,9 +126,9 @@ ASSERT_EQ(m2.getSize(), 1);
 
 Defined as `= default`.
 
-## 5. Public Member Functions
+## 6. Public Member Functions
 
-### 5.1. operator=
+### 6.1. operator=
 
 ```c++
 ExternalArrayMap<K, V>& operator=(const ExternalArrayMap<K, V>& map)
@@ -126,16 +136,14 @@ ExternalArrayMap<K, V>& operator=(const ExternalArrayMap<K, V>& map)
 
 1. If `&map != this`
 
-    1. Set `m_entries = map.m_entries`.
-
-    1. Set `m_size = map.m_size`.
+    1. Set `m_mapImpl = map.m_mapImpl`.
 
 1. Return `*this`.
 
 _Example:_
 ```c++
 constexpr FwSizeType capacity = 3;
-MapEntry<U16, U32> entries[capacity];
+ExternalArrayMap<U16, U32>::Entry entries[capacity];
 // Call the constructor providing backing storage
 ExternalArrayMap<U16, U32> m1(entries, capacity);
 // Insert an item
@@ -151,20 +159,18 @@ m2 = m1;
 ASSERT_EQ(m2.getSize(), 1);
 ```
 
-### 5.6. at
+### 6.2. at
 
 ```c++
 const V& at(FwSizeType index) const
 ```
 
-1. Assert `index < m_size`.
-
-1. Return `m_entries[index].getValue()`.
+Return `m_mapImpl[index]`.
 
 _Example:_
 ```c++
 constexpr FwSizeType capacity = 3;
-MapEntry<U16, U32> entries[capacity];
+ExternalArrayMap<U16, U32>::Entry entries[capacity];
 ExternalArrayMap<U16, U32> map(entries, capacity);
 const auto status = map.insert(0, 1);
 ASSERT_EQ(status, Success::SUCCESS);
@@ -172,18 +178,18 @@ ASSERT_EQ(map.at(0), 1);
 ASSERT_DEATH(map.at(1), "Assert");
 ```
 
-### 5.2. clear
+### 6.3. clear
 
 ```c++
 void clear() override
 ```
 
-Set `m_size = 0`.
+Call `m_mapImpl.clear()`.
 
 _Example:_
 ```c++
 constexpr FwSizeType capacity = 10;
-MapEntry<U16, U32> entries[capacity];
+ExternalArrayMap<U16, U32>::Entry entries[capacity];
 ExternalArrayMap<U16, U32> map(entries, capacity);
 const auto status = map.enqueue(3);
 ASSERT_EQ(map.getSize(), 1);
@@ -191,7 +197,7 @@ map.clear();
 ASSERT_EQ(map.getSize(), 0);
 ```
 
-### 5.3. find
+### 6.4. find
 
 ```c++
 Success find(const K& key, V& value) override
@@ -199,24 +205,20 @@ Success find(const K& key, V& value) override
 
 1. Set `status = Success::FAILURE`.
 
-1. For `i` in `[0, m_size)`
+1. Set `iterator = m_mapImpl.find(key)`.
 
-    1. Let `const auto& e = &m_entries[i]`.
+1. If `iterator != nullptr`
 
-    1. If `e.getKey() == key`
+    1. Set `value = iterator.getValue()`.
 
-        1. Set `value = e.getValue()`.
-
-        1. Set `status = Success::SUCCESS`.
-
-        1. Break out of the loop.
+    1. Set `status = Success::SUCCESS`.
 
 1. Return `status`.
 
 _Example:_
 ```c++
 constexpr FwSizeType capacity = 10;
-U32 entries[capacity];
+ExternalArrayMap<U16, U32>::Entry entries[capacity];
 ExternalArrayMap<U16, U32> map(entries, capacity);
 U32 value = 0;
 auto status = map.find(0, value);
@@ -228,56 +230,58 @@ ASSERT_EQ(status, Success::SUCCESS);
 ASSERT_EQ(value, 1);
 ```
 
-### 5.4. getCapacity
+### 6.5. getCapacity
 
 ```c++
 FwSizeType getCapacity() const override
 ```
 
-Return `m_entries.getSize()`.
+Return `m_mapImpl.getCapacity()`.
 
 _Example:_
 ```c++
 constexpr FwSizeType capacity = 10;
-U32 entries[capacity];
+ExternalArrayMap<U16, U32>::Entry entries[capacity];
 ExternalArrayMap<U16, U32> map(entries, capacity);
 ASSERT_EQ(map.getCapacity(), capacity);
 ```
 
-### 5.5. getHeadEntry
+### 6.6. getHeadIterator
 
 ```c++
-const Entry* getHeadEntry const override
+const Iterator* getHeadIterator const override
 ```
 
-Return `(m_size > 0) ? &m_entries[0] : nullptr`.
+The type `Iterator` is defined [in the base class](MapBase.md#2-publictypes).
+
+Return `m_impl.getHeadIterator()`.
 
 _Example:_
 ```c++
 constexpr FwSizeType capacity = 10;
-U32 entries[capacity];
+ExternalArrayMap<U16, U32>::Entry entries[capacity];
 ExternalArrayMap<U16, U32> map(entries, capacity);
-const auto* e = map.getHeadEntry();
+const auto* e = map.getHeadIterator();
 FW_ASSERT(e == nullptr);
 map.insert(0, 1);
-e = map.getHeadEntry();
+e = map.getHeadIterator();
 FW_ASSERT(e != nullptr);
 ASSERT_EQ(e.getKey(), 0);
 ASSERT_EQ(e.getValue(), 1);
 ```
 
-### 5.6. getSize
+### 6.7. getSize
 
 ```c++
 FwSizeType getSize() const override
 ```
 
-Return `m_size`.
+Return `m_mapImpl.getSize()`.
 
 _Example:_
 ```c++
 constexpr FwSizeType capacity = 10;
-U32 entries[capacity];
+ExternalArrayMap<U16, U32>::Entry entries[capacity];
 ExternalArrayMap<U16, U32> map(entries, capacity);
 auto size = map.getSize();
 ASSERT_EQ(size, 0);
@@ -287,43 +291,18 @@ size = map.getSize();
 ASSERT_EQ(size, 1);
 ```
 
-### 5.7. insert
+### 6.8. insert
 
 ```c++
 Success insert(const K& key, const V& value) override
 ```
 
-1. Set `status = Success::FAILURE`.
-
-1. For `i` in `[0, m_size)`
-
-    1. Let `auto& e = m_entries[i]`.
-
-    1. If `e.getKey() == key`
-
-        1. Call `e.setValue(value)`.
-
-        1. Set `status = Success::SUCCESS`.
-
-        1. Break out of the loop
-
-1. If `(status == Success::FAILURE) && (m_size < getCapacity())`
-
-    1. Set `m_entries[m_size] = Entry(key, value)`.
-
-    1. If `m_size > 0` then
-       call `m_entries[m_size - 1].setNextEntry(&m_entries[m_size])`.
-
-    1. Increment `m_size`.
-
-    1. Set `status = Success::SUCCESS`.
-
-1. Return `status`.
+Return `m_mapImpl.insert(key, value)`.
 
 _Example:_
 ```c++
 constexpr FwSizeType capacity = 10;
-MapEntry<U16, U32> entries[capacity];
+ExternalArrayMap<U16, U32>::Entry entries[capacity];
 ExternalArrayMap<U16, U32> map(entries, capacity);
 auto size = map.getSize();
 ASSERT_EQ(size, 0);
@@ -334,43 +313,23 @@ ASSERT_EQ(size, 1);
 ```
 
 ```c++
-Success insert(const Entry& e) override
+Success insert(const Iterator& e) override
 ```
 
 Call `insert(e.getKey(), e.getValue())`.
 
-### 5.8. remove
+### 6.9. remove
 
 ```c++
 Success remove(const K& key, V& value) override
 ```
 
-1. Set `status = Success::FAILURE`.
-
-1. For `i` in `[0, m_size)`
-
-    1. If `m_entries[i].getKey() == key`
-
-        1. If `i < m_size - 1` then
-
-            1. `m_entries[i] = m_entries[m_size - 1]`.
-
-            1. Call `m_entries[i].setNextEntry(&m_entries[i + 1])`.
-
-        1. Otherwise call `m_entries[i].setNextEntry(nullptr)`.
-
-        1. Decrement `size`.
-
-        1. Set `status = Success::SUCCESS`.
-
-        1. Break out of the loop.
-
-1. Return `status`.
+Return `m_mapImpl.remove(key, value)`.
 
 _Example:_
 ```c++
 constexpr FwSizeType capacity = 10;
-MapEntry<U16, U32> entries[capacity];
+ExternalArrayMap<U16, U32>::Entry entries[capacity];
 ExternalArrayMap<U16, U32> map(entries, capacity);
 auto size = map.getSize();
 ASSERT_EQ(size, 0);
@@ -390,59 +349,59 @@ ASSERT_EQ(size, 0);
 ASSERT_EQ(value, 1);
 ```
 
-### 5.9. setStorage (Typed Data)
+### 6.10. setStorage (Typed Data)
 
 ```c++
-void setStorage(T* entries, FwSizeType capacity)
+void setStorage(Entry* entries, FwSizeType capacity)
 ```
 
-1. Call `m_entries.setStorage(entries, capacity)`.
-
-1. Call `clear()`.
+1. Call `m_mapImpl.setStorage(entries, capacity)`.
 
 _Example:_
 ```c++
 constexpr FwSizeType capacity = 10;
 ExternalArrayMap<U16, U32> map;
-MapEntry<U16, U32> entries[capacity];
+ExternalArrayMap<U16, U32>::Entry entries[capacity];
 map.setStorage(entries, capacity);
 ```
 
-### 5.10. setStorage (Untyped Data)
+### 6.11. setStorage (Untyped Data)
 
 ```c++
 void setStorage(ByteArray data, FwSizeType capacity)
 ```
 
-`data` must be correctly aligned for `Entry` and must
-contain at least `ExternalArrayMap<K, V>::getByteArraySize(capacity)` bytes.
+`data` must be aligned according to 
+[`getByteArrayAlignment()`](#71-getbytearrayalignment) and must
+contain at least [`getByteArraySize(size)`](#72-getbytearraysize) bytes.
 
 1. Call `m_entries.setStorage(data, capacity)`.
 
 1. Call `clear()`.
 
-_Example:_
 ```c++
 constexpr FwSizeType capacity = 10;
+constexpr U8 alignment = ExternalArrayMap<U16, U32>::getByteAlignment();
 constexpr FwSizeType byteArraySize = ExternalArrayMap<U16, U32>::getByteArraySize(capacity);
-alignas(MapEntry<U16, U32>) U8 bytes[byteArraySize];
+alignas(alignment) U8 bytes[byteArraySize];
 ExternalArrayMap<U16, U32> map;
 map.setStorage(ByteArray(&bytes[0], sizeof bytes), capacity);
 ```
 
-## 6. Public Static Functions
+## 7. Public Static Functions
 
-### 6.1. getByteArraySize
+### 7.1. getByteArrayAlignment
+
+```c++
+static constexpr U8 getByteArrayAlignment()
+```
+
+Return `ExternalArray<T>::getByteArrayAlignment()`.
+
+### 7.2. getByteArraySize
 
 ```c++
 static constexpr FwSizeType getByteArraySize(FwSizeType capacity)
 ```
 
-Return `ExternalArray<Entry>::getByteArraySize(capacity)`.
-
-_Example:_
-```c++
-const FwSizeType size = 10;
-const FwSizeType byteArraySize = ExternalFifoQueue<U16, U32>::getByteArraySize(size);
-ASSERT_EQ(byteArraySize, 10 * sizeof(U32));
-```
+Return `ExternalArray<T>::getByteArraySize(capacity)`.

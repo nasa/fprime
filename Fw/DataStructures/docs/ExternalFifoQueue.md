@@ -374,12 +374,6 @@ static constexpr U8 getByteArrayAlignment()
 
 Return `ExternalArray<T>::getByteArrayAlignment()`.
 
-_Example:_
-```c++
-constexpr U8 byteArrayAlignment = ExternalFifoQueue<U32>::getByteArrayAlignment();
-ASSERT_EQ(byteArrayAlignment, alignof(U32));
-```
-
 ### 6.2. getByteArraySize
 
 ```c++
@@ -387,11 +381,3 @@ static constexpr FwSizeType getByteArraySize(FwSizeType capacity)
 ```
 
 Return `ExternalArray<T>::getByteArraySize(capacity)`.
-
-_Example:_
-```
-c++
-const FwSizeType size = 10;
-const FwSizeType byteArraySize = ExternalFifoQueue<U32>::getByteArraySize(size);
-ASSERT_EQ(byteArraySize, 10 * sizeof(U32));
-```
