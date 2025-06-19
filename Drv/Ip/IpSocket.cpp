@@ -130,7 +130,8 @@ SocketIpStatus IpSocket::open(SocketDescriptor& socketDescriptor) {
 
 SocketIpStatus IpSocket::send(const SocketDescriptor& socketDescriptor, const U8* const data, const U32 size) {
     FW_ASSERT(socketDescriptor.fd != -1, static_cast<FwAssertArgType>(socketDescriptor.fd));
-    FW_ASSERT((size == 0) || (data != nullptr));
+    FW_ASSERT(data != nullptr);
+    FW_ASSERT(size > 0);
     
     U32 total = 0;
     I32 sent  = 0;
@@ -164,8 +165,10 @@ SocketIpStatus IpSocket::send(const SocketDescriptor& socketDescriptor, const U8
 }
 
 SocketIpStatus IpSocket::recv(const SocketDescriptor& socketDescriptor, U8* data, U32& req_read) {
-    // Note: socketDescriptor.fd can be -1 in some test cases
+    //TODO: Uncomment FW_ASSERT for socketDescriptor.fd once we fix TcpClientTester to not pass in unconfigured socketDescriptor
+    // FW_ASSERT(socketDescriptor.fd != -1, static_cast<FwAssertArgType>(socketDescriptor.fd));
     FW_ASSERT(data != nullptr);
+
     
     I32 bytes_received_or_status; // Stores the return value from recvProtocol
 
