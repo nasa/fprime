@@ -66,7 +66,8 @@ CCB
 CComponent
 ccsds
 ccsparc
-CDH
+cdh
+CDHCORE
 cerrno
 CFDP
 cff
@@ -92,6 +93,10 @@ CODEFILE
 COLORSTYLE
 colorwheel
 COMBUFFER
+COMCCSDS
+COMCCSDSSUBTOPOLOGY
+COMFPRIME
+COMFPRIMESUBTOPOLOGY
 comlogger
 COMMANDDISPATCHERIMPL
 COMMANDDISPATCHERIMPLCFG
@@ -130,6 +135,8 @@ ctu
 culates
 cuz
 CYCLEOUT
+DATAPRODUCTS
+DATAPRODUCTSSUBTOPOLOGY
 DATAROOTDIR
 DDDTHH
 Debian
@@ -147,6 +154,7 @@ DHTML
 diafile
 diles
 dinkel
+dnf
 dnp
 docbook
 docset
@@ -209,12 +217,12 @@ ffff
 Ffs
 FILEDOWNLINK
 FILEDOWNLINKCFG
+FILEHANDLING
 FILEHANDLINGSUBTOPOLOGY
 FILEID
 FILEOPENERROR
 FILEWRITEERROR
 fio
-FLDP
 FNDELAY
 FONTPATH
 foodoodie
@@ -239,6 +247,8 @@ gcgandhi
 gcov
 gdiplus
 GENHUB
+getfooter
+getstatements
 gettime
 getty
 ghprb
@@ -385,10 +395,10 @@ multitool
 mutexattr
 Mutexed
 mycompany
-NACI
 nasafprime
 nbits
 ncsl
+netinet
 newtio
 nmsgs
 NOBLOCK
@@ -403,6 +413,8 @@ NSHUFF
 NSPACES
 ntohs
 objcopy
+OCF
+ODR
 oflag
 okidocki
 OLDINCLUDEDIR
@@ -443,7 +455,6 @@ PASSIVERATEGROUP
 PASSIVERATEGROUPIMPLTESTER
 patsubst
 pdflatex
-PEB
 penv
 PERLMOD
 PINGENTRIES
@@ -487,6 +498,7 @@ ptbool
 ptf
 pthread
 ptrt
+Pvn
 qch
 qhelpgenerator
 QHG
@@ -508,6 +520,7 @@ rcvd
 rdwr
 Readback
 Recvd
+redhat
 refspec
 REFTOPOLOGY
 REFTOPOLOGYDEFS
@@ -531,6 +544,7 @@ sats
 SBF
 SBINDIR
 sbom
+scid
 scm
 sdd
 searchdata
@@ -611,6 +625,7 @@ TCPCLIENT
 TCPHELPER
 TCPSERVER
 TCSANOW
+Telecommand
 telem
 TELEMCHANIMPL
 testerbase
@@ -659,6 +674,9 @@ useconds
 usecs
 valgrind
 vbai
+VCA
+vcid
+VCP
 VFILE
 VID
 vla
