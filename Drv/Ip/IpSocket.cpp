@@ -165,7 +165,7 @@ SocketIpStatus IpSocket::send(const SocketDescriptor& socketDescriptor, const U8
 }
 
 SocketIpStatus IpSocket::recv(const SocketDescriptor& socketDescriptor, U8* data, U32& req_read) {
-    //TODO: Uncomment FW_ASSERT for socketDescriptor.fd once we fix TcpClientTester to not pass in unconfigured socketDescriptor
+    //TODO: Uncomment FW_ASSERT for socketDescriptor.fd once we fix TcpClientTester to not pass in uninitialized socketDescriptor
     // FW_ASSERT(socketDescriptor.fd != -1, static_cast<FwAssertArgType>(socketDescriptor.fd));
     FW_ASSERT(data != nullptr);
 
