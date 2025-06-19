@@ -64,6 +64,10 @@ class SetOrMapIterator final : public MapIterator<KE, VN>, SetIterator<KE> {
     //! \return The map iterator, or nullptr if none
     const MapIterator<KE, VN>* getNextMapIterator() const override { return this->m_next; }
 
+    //! Get the next set iterator
+    //! \return The set iterator, or nullptr if none
+    const SetIterator<KE>* getNextSetIterator() const override { return this->m_next; }
+
     //! Set the key or element
     void setKeyOrElement(const KE& keyOrElement  //!< The key or element
     ) {

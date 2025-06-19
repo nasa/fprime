@@ -1,7 +1,7 @@
 // ======================================================================
 // \title  StackBase
 // \author bocchino
-// \brief  An abstract base class for a stack
+// \brief  An abstract base class template for a stack
 // ======================================================================
 
 #ifndef Fw_StackBase_HPP

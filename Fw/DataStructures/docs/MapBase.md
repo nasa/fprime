@@ -97,7 +97,7 @@ void copyDataFrom(const MapBase<K, V>& map)
 
         1. Assert `e != nullptr`.
 
-        1. Set `e1 = insert(e->getKey(), e->getValue())`.
+        1. Set `status = insert(e->getKey(), e->getValue())`.
 
         1. Assert `status == Success::SUCCESS`.
 
@@ -122,7 +122,7 @@ void f(MapBase<U16, U32>& m1, MapBase<U16, U32>& m2) {
 ### 6.3. find
 
 ```c++
-Success find(const K& key, V& value) = 0
+Success find(const K& key, V& value) const = 0
 ```
 
 1. If an entry `e` with value `key` exists in the map,
@@ -165,7 +165,7 @@ void f(const MapBase<U16, U32>& map) {
 ### 6.5. getHeadIterator
 
 ```c++
-const Iterator* getHeadIterator const = 0
+virtual const Iterator* getHeadIterator() const = 0
 ```
 
 Get a pointer to the head iterator for the map, or `nullptr` if there is none.
@@ -199,7 +199,7 @@ See [**getCapacity**](MapBase.md#64-getcapacity).
 ### 6.7. insert
 
 ```c++
-Success insert(const K& key, const V& value) = 0
+virtual Success insert(const K& key, const V& value) = 0
 ```
 
 1. If an entry `e` exists with the specified key, then update the 
@@ -226,7 +226,7 @@ void f(MapBase<U16, U32>& map) {
 ### 6.8. remove
 
 ```c++
-Success remove(const K& key, V& value) = 0
+virtual Success remove(const K& key, V& value) = 0
 ```
 
 1. If an entry `e` exists with key `key`, then

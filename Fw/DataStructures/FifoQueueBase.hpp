@@ -1,7 +1,7 @@
 // ======================================================================
 // \title  FifoQueueBase
 // \author bocchino
-// \brief  An abstract base class for a FIFO queue
+// \brief  An abstract base class template for a FIFO queue
 // ======================================================================
 
 #ifndef Fw_FifoQueueBase_HPP
