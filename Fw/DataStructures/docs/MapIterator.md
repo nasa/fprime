@@ -13,27 +13,9 @@ It represents an iterator for a map.
 |`typename`|`K`|The type of a key in the map|
 |`typename`|`V`|The type of a value in the map|
 
-## 2. Protected Constructors and Destructors
+## 2. Private Constructors and Destructors
 
-### 2.1. Zero-Argument Constructor
-
-```c++
-MapIterator()
-```
-
-Defined as `= default`.
-
-### 2.2. Destructor
-
-```c++
-virtual ~MapIterator()
-```
-
-Defined as `= default`.
-
-## 3. Private Constructors
-
-### 3.1. Copy Constructor
+### 2.1. Copy Constructor
 
 ```c++
 MapIterator(const MapIterator<K, V>& map)
@@ -41,7 +23,25 @@ MapIterator(const MapIterator<K, V>& map)
 
 Defined as `= delete`.
 
-## 4. Public Member Functions
+## 3. Protected Constructors and Destructors
+
+### 3.1. Zero-Argument Constructor
+
+```c++
+MapIterator()
+```
+
+Defined as `= default`.
+
+### 3.2. Destructor
+
+```c++
+virtual ~MapIterator()
+```
+
+Defined as `= default`.
+
+## 4. Private Member Functions
 
 ### 4.1. operator=
 
@@ -51,7 +51,9 @@ MapIterator<K, V>& operator=(const MapIterator<K, V>&)
 
 Defined as `= delete`.
 
-### 4.2. getKey
+## 5. Public Member Functions
+
+### 5.1. getKey
 
 ```c++
 virtual const K& getKey() const = 0
@@ -59,7 +61,7 @@ virtual const K& getKey() const = 0
 
 Return a reference to the key.
 
-### 4.3. getValue
+### 5.2. getValue
 
 ```c++
 virtual const V& getValue() const = 0
@@ -67,7 +69,7 @@ virtual const V& getValue() const = 0
 
 Return a reference to the value.
 
-### 4.4. getNextMapIterator
+### 5.3. getNextMapIterator
 
 ```c++
 virtual MapIterator<K, V>* getNextMapIterator() = 0

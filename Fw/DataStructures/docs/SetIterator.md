@@ -12,6 +12,16 @@ It represents an iterator for a set.
 |----|----|-------|
 |`typename`|`T`|The type of an element in the set|
 
+## 2. Private Constructors and Destructors
+
+### 2.1. Copy Constructor
+
+```c++
+SetIterator(const SetIterator<T>& set)
+```
+
+Defined as `= delete`.
+
 ## 3. Protected Constructors and Destructors
 
 ### 3.1. Zero-Argument Constructor
@@ -22,23 +32,13 @@ SetIterator()
 
 Defined as `= default`.
 
-### 3.4. Destructor
+### 3.2. Destructor
 
 ```c++
 virtual ~SetIterator()
 ```
 
 Defined as `= default`.
-
-## Private Constructors and Destructors
-
-### 3.3. Copy Constructor
-
-```c++
-SetIterator(const SetIterator<T>& set)
-```
-
-Defined as `= delete`.
 
 ## 4. Private Member Functions
 
@@ -50,9 +50,9 @@ SetIterator& operator=(const SetIterator<T>& setIterator)
 
 Defined as `= delete`.
 
-## Public Member Functions
+## 5. Public Member Functions
 
-### 4.2. getElement
+### 5.1. getElement
 
 ```c++
 virtual const T& getElement() const = 0
@@ -60,7 +60,7 @@ virtual const T& getElement() const = 0
 
 Return a reference to the set element stored in the iterator.
 
-### 4.4. getNextSetIterator
+### 5.2. getNextSetIterator
 
 ```c++
 virtual SetIterator<T>* getNextSetIterator() = 0
