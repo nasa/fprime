@@ -189,13 +189,6 @@ SocketIpStatus IpSocket::recv(const SocketDescriptor& socketDescriptor, U8* data
                 // Non-blocking socket would block, or SO_RCVTIMEO timeout occurred.
                 req_read = 0;
                 return SOCK_NO_DATA_AVAILABLE;
-            } else if (errno == EINTR) {
-                // Interrupted system call. Retry if not the last iteration.
-                if (i == (SOCKET_MAX_ITERATIONS - 1)) {
-                    req_read = 0;
-                    return SOCK_INTERRUPTED_TRY_AGAIN; // Max retries for EINTR reached
-                }
-                // Loop will continue for EINTR. The 'continue' is implicit here.
             } else if ((errno == ECONNRESET) || (errno == EBADF)) {
                 // Connection reset or bad file descriptor.
                 req_read = 0;
