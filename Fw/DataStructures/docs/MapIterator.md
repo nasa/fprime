@@ -72,7 +72,7 @@ Return a reference to the value.
 ### 5.3. getNextMapIterator
 
 ```c++
-virtual MapIterator<K, V>* getNextMapIterator() = 0
+virtual const MapIterator<K, V>* getNextMapIterator() = 0
 ```
 
 Return a pointer to the next map iterator, or `nullptr` if there is none.

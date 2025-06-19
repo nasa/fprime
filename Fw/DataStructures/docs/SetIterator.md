@@ -63,7 +63,7 @@ Return a reference to the set element stored in the iterator.
 ### 5.2. getNextSetIterator
 
 ```c++
-virtual SetIterator<T>* getNextSetIterator() = 0
+virtual const SetIterator<T>* getNextSetIterator() = 0
 ```
 
 Return a pointer to the next iterator for the set, or `nullptr` if
