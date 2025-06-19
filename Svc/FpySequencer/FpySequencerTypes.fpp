@@ -19,21 +19,28 @@ module Svc {
             DESER_LVAR_4 = 12
             DESER_LVAR_2 = 13
             DESER_LVAR_1 = 14
-            OR = 15
+            # binary comparison directives
+            # all of these are handled at the CPP level by one BinaryCmpDirective
             # NO REORDER
-            EQ = 16
-            NE = 17
+            # boolean ops
+            OR = 15
+            AND = 16
+            # equality ops
+            EQ = 17
+            NE = 18
             # unsigned inequalities
-            ULT = 18
-            ULE = 19
-            UGT = 20
-            UGE = 21
+            ULT = 19
+            ULE = 20
+            UGT = 21
+            UGE = 22
             # signed inequalities
-            SLT = 22
-            SLE = 23
-            SGT = 24
-            SGE = 25
+            SLT = 23
+            SLE = 24
+            SGT = 25
+            SGE = 26
             # END NO REORDER
+            # end binary comparison directives
+            NOT = 27
         }
 
         struct Header {

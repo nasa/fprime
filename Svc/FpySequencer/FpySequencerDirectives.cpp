@@ -95,13 +95,6 @@ void FpySequencer::directive_cmd_internalInterfaceHandler(const Svc::FpySequence
     this->m_tlm.lastDirectiveError = error;
 }
 
-//! Internal interface handler for directive_or
-void FpySequencer::directive_or_internalInterfaceHandler(const Svc::FpySequencer_OrDirective& directive) {
-    DirectiveError error = DirectiveError::NO_ERROR;
-    this->sendSignal(this->or_directiveHandler(directive, error));
-    this->m_tlm.lastDirectiveError = error;
-}
-
 //! Internal interface handler for directive_deserLocalVar
 void FpySequencer::directive_deserLocalVar_internalInterfaceHandler(const Svc::FpySequencer_DeserLocalVarDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
@@ -127,7 +120,7 @@ void FpySequencer::directive_binaryCmp_internalInterfaceHandler(const Svc::FpySe
 Signal FpySequencer::waitRel_directiveHandler(const FpySequencer_WaitRelDirective& directive, DirectiveError& error) {
     Fw::Time wakeupTime = this->getTime();
 
-    wakeupTime.add(directive.getduration().getSeconds(), directive.getduration().getUSeconds());
+    wakeupTime.add(directive.getseconds(), directive.getuSeconds());
     this->m_runtime.wakeupTime = wakeupTime;
     return Signal::stmtResponse_beginSleep;
 }
@@ -315,20 +308,6 @@ Signal FpySequencer::cmd_directiveHandler(const FpySequencer_CmdDirective& direc
     return Signal::stmtResponse_keepWaiting;
 }
 
-Signal FpySequencer::or_directiveHandler(const FpySequencer_OrDirective& directive, DirectiveError& error) {
-    
-    if (directive.getlhs() >= Fpy::NUM_REGISTERS 
-        || directive.getrhs() >= Fpy::NUM_REGISTERS 
-        || directive.getres() >= Fpy::NUM_REGISTERS) {
-        error = DirectiveError::REGISTER_OUT_OF_BOUNDS;
-        return Signal::stmtResponse_failure;
-    }
-
-    reg(directive.getres()) = reg(directive.getlhs()) | reg(directive.getrhs());
-
-    return Signal::stmtResponse_success;
-}
-
 Signal FpySequencer::deserLocalVar_directiveHandler(const FpySequencer_DeserLocalVarDirective& directive, DirectiveError& error) {
     if (directive.getsrcLvarIdx() >= Fpy::MAX_SEQUENCE_LOCAL_VARIABLES) {
         error = DirectiveError::LVAR_OUT_OF_BOUNDS;
@@ -420,6 +399,16 @@ Signal FpySequencer::binaryCmp_directiveHandler(const FpySequencer_BinaryCmpDire
         return Signal::stmtResponse_success;
     }
 
+    if (directive.get_op() == Fpy::DirectiveId::OR) {
+        res = lhs | rhs;
+        return Signal::stmtResponse_success;
+    }
+
+    if (directive.get_op() == Fpy::DirectiveId::AND) {
+        res = lhs & rhs;
+        return Signal::stmtResponse_success;
+    }
+
     // okay, it is an inequality comparison
 
     // whether the comparison is signed or unsigned
@@ -463,6 +452,19 @@ Signal FpySequencer::binaryCmp_directiveHandler(const FpySequencer_BinaryCmpDire
             || directive.get_op() == Fpy::DirectiveId::SGE);
     }
 
+    return Signal::stmtResponse_success;
+}
+
+Signal FpySequencer::not_directiveHandler(const FpySequencer_NotDirective& directive, DirectiveError& error) {
+    if (directive.getsrc() >= Fpy::NUM_REGISTERS 
+        || directive.getres() >= Fpy::NUM_REGISTERS) {
+        error = DirectiveError::REGISTER_OUT_OF_BOUNDS;
+        return Signal::stmtResponse_failure;
+    }
+
+    I64 src = reg(directive.getsrc());
+    I64& res = reg(directive.getres());
+    res = ~src;
     return Signal::stmtResponse_success;
 }
 }  // namespace Svc

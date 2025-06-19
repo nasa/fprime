@@ -217,22 +217,10 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
             deserializedDirective.cmd.set_argBufSize(cmdArgBufSize);
             break;
         }
-        case Fpy::DirectiveId::OR: {
-            new (&deserializedDirective.orDirective) FpySequencer_OrDirective();
-            status = argBuf.deserialize(deserializedDirective.orDirective);
-            if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || argBuf.getBuffLeft() != 0) {
-                this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), this->m_runtime.nextStatementIndex - 1,
-                                                               status, argBuf.getBuffLeft(), argBuf.getBuffLength());
-                return Fw::Success::FAILURE;
-            }
-            break;
-        }
+        // fallthrough on purpose
         case Fpy::DirectiveId::DESER_LVAR_8:
-            // fallthrough on purpose
         case Fpy::DirectiveId::DESER_LVAR_4:
-            // fallthrough on purpose
         case Fpy::DirectiveId::DESER_LVAR_2:
-            // fallthrough on purpose
         case Fpy::DirectiveId::DESER_LVAR_1: {
             new (&deserializedDirective.deserLocalVar) FpySequencer_DeserLocalVarDirective();
 
@@ -291,7 +279,9 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
             }
             break;
         }
-        // purposeful fallthroughs
+        // fallthrough on purpose
+        case Fpy::DirectiveId::OR:
+        case Fpy::DirectiveId::AND:
         case Fpy::DirectiveId::EQ:
         case Fpy::DirectiveId::NE:
         case Fpy::DirectiveId::UGT:
@@ -331,6 +321,16 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
             deserializedDirective.binaryCmp.setres(res);
 
             deserializedDirective.binaryCmp.set_op(stmt.getopCode());
+            break;
+        }
+        case Fpy::DirectiveId::NOT: {
+            new (&deserializedDirective.notDirective) FpySequencer_NotDirective();
+            status = argBuf.deserialize(deserializedDirective.notDirective);
+            if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || argBuf.getBuffLeft() != 0) {
+                this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), this->m_runtime.nextStatementIndex - 1,
+                                                               status, argBuf.getBuffLeft(), argBuf.getBuffLength());
+                return Fw::Success::FAILURE;
+            }
             break;
         }
         default: {
@@ -382,10 +382,6 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
             this->directive_cmd_internalInterfaceInvoke(directive.cmd);
             break;
         }
-        case Fpy::DirectiveId::OR: {
-            this->directive_or_internalInterfaceInvoke(directive.orDirective);
-            break;
-        }
         case Fpy::DirectiveId::DESER_LVAR_8:
             // fallthrough on purpose
         case Fpy::DirectiveId::DESER_LVAR_4:
@@ -400,6 +396,8 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
             this->directive_setReg_internalInterfaceInvoke(directive.setReg);
             break;
         }
+        case Fpy::DirectiveId::OR:
+        case Fpy::DirectiveId::AND:
         case Fpy::DirectiveId::EQ:
         case Fpy::DirectiveId::NE:
         case Fpy::DirectiveId::UGT:
@@ -411,6 +409,10 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
         case Fpy::DirectiveId::SLE:
         case Fpy::DirectiveId::SGE: {
             this->directive_binaryCmp_internalInterfaceInvoke(directive.binaryCmp);
+            break;
+        }
+        case Fpy::DirectiveId::NOT: {
+            this->directive_not_internalInterfaceInvoke(directive.notDirective);
             break;
         }
         default: {

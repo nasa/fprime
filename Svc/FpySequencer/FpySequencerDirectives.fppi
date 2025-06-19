@@ -1,5 +1,6 @@
 struct WaitRelDirective {
-    duration: Fw.TimeInterval
+    seconds: U32
+    uSeconds: U32
 }
 
 struct WaitAbsDirective {
@@ -64,13 +65,6 @@ struct CmdDirective {
     _argBufSize: FwSizeType
 }
 
-@ calculates a bitwise OR between the two registers, and stores the result in the third register
-struct OrDirective {
-    lhs: U8
-    rhs: U8
-    res: U8
-}
-
 @ deser up to 8 bytes out of an lvar
 struct DeserLocalVarDirective {
     @ the lvar to deser from
@@ -100,6 +94,12 @@ struct BinaryCmpDirective {
     _op: Fpy.DirectiveId
 }
 
+@ performs a binary complement on the src register, and stores the result in res
+struct NotDirective {
+    src: U8
+    res: U8
+}
+
 internal port directive_waitRel(directive: WaitRelDirective) priority 6 assert
 
 internal port directive_waitAbs(directive: WaitAbsDirective) priority 6 assert
@@ -118,13 +118,13 @@ internal port directive_getPrm(directive: GetPrmDirective) priority 6 assert
 
 internal port directive_cmd(directive: CmdDirective) priority 6 assert
 
-internal port directive_or(directive: OrDirective) priority 6 assert
-
 internal port directive_deserLocalVar(directive: DeserLocalVarDirective) priority 6 assert
 
 internal port directive_setReg(directive: SetRegDirective) priority 6 assert
 
 internal port directive_binaryCmp(directive: BinaryCmpDirective) priority 6 assert
+
+internal port directive_not(directive: NotDirective) priority 6 assert
 
 enum DirectiveErrorCode {
     NO_ERROR

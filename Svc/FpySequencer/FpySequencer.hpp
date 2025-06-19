@@ -52,10 +52,10 @@ class FpySequencer : public FpySequencerComponentBase {
         FpySequencer_GetTlmDirective getTlm;
         FpySequencer_GetPrmDirective getPrm;
         FpySequencer_CmdDirective cmd;
-        FpySequencer_OrDirective orDirective;
         FpySequencer_DeserLocalVarDirective deserLocalVar;
         FpySequencer_SetRegDirective setReg;
         FpySequencer_BinaryCmpDirective binaryCmp;
+        FpySequencer_NotDirective notDirective;
 
         DirectiveUnion() {}
         ~DirectiveUnion() {}
@@ -405,9 +405,6 @@ class FpySequencer : public FpySequencerComponentBase {
     //! Internal interface handler for directive_cmd
     void directive_cmd_internalInterfaceHandler(const Svc::FpySequencer_CmdDirective& directive) override;
 
-    //! Internal interface handler for directive_or
-    void directive_or_internalInterfaceHandler(const Svc::FpySequencer_OrDirective& directive) override;
-
     //! Internal interface handler for directive_deserLocalVar
     void directive_deserLocalVar_internalInterfaceHandler(const Svc::FpySequencer_DeserLocalVarDirective& directive) override;
 
@@ -416,6 +413,9 @@ class FpySequencer : public FpySequencerComponentBase {
 
     //! Internal interface handler for directive_binaryCmp
     void directive_binaryCmp_internalInterfaceHandler(const Svc::FpySequencer_BinaryCmpDirective& directive) override;
+
+    //! Internal interface handler for directive_not
+    void directive_not_internalInterfaceHandler(const Svc::FpySequencer_NotDirective& directive) override;
 
     void parametersLoaded() override;
     void parameterUpdated(FwPrmIdType id) override;
@@ -490,6 +490,12 @@ class FpySequencer : public FpySequencerComponentBase {
         // all the registers in the sequence. registers are 8 byte
         // values of unspecified type
         I64 registers[Fpy::NUM_REGISTERS] = {0};
+
+        // local var -> local array, scratch array
+        // register -> local var
+
+        // 
+
     } m_runtime;
 
     // the state of the debugger. debugger is separate from runtime
@@ -601,10 +607,10 @@ class FpySequencer : public FpySequencerComponentBase {
     Signal getTlm_directiveHandler(const FpySequencer_GetTlmDirective& directive, DirectiveError& error);
     Signal getPrm_directiveHandler(const FpySequencer_GetPrmDirective& directive, DirectiveError& error);
     Signal cmd_directiveHandler(const FpySequencer_CmdDirective& directive, DirectiveError& error);
-    Signal or_directiveHandler(const FpySequencer_OrDirective& directive, DirectiveError& error);
     Signal deserLocalVar_directiveHandler(const FpySequencer_DeserLocalVarDirective& directive, DirectiveError& error);
     Signal setReg_directiveHandler(const FpySequencer_SetRegDirective& directive, DirectiveError& error);
     Signal binaryCmp_directiveHandler(const FpySequencer_BinaryCmpDirective& directive, DirectiveError& error);
+    Signal not_directiveHandler(const FpySequencer_NotDirective& directive, DirectiveError& error);
 };
 
 }  // namespace Svc
