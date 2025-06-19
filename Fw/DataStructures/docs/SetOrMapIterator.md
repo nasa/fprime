@@ -1,6 +1,6 @@
 # SetOrMapIterator
 
-`SetOrMapIterator` is a class template
+`SetOrMapIterator` is a final class template
 defined in [`Fw/DataStructures`](sdd.md).
 It represents an iterator for a set or a map.
 
@@ -36,7 +36,7 @@ classDiagram
 |----|----|-------|-------------|
 |`m_keyOrElement`|`KE`|The map key or set element|C++ default initialization|
 |`m_valueOrNil`|`VN`|The value or Nil|C++ default initialization|
-|`m_next`|`SetOrMapIterator<KE, VN>*`|Pointer to the next iterator or `nullptr` if none|`nullptr`|
+|`m_next`|`const SetOrMapIterator<KE, VN>*`|Pointer to the next iterator or `nullptr` if none|`nullptr`|
 
 ## 4. Public Constructors and Destructors
 
@@ -51,7 +51,7 @@ Defined as `= default`.
 ### 4.2. Constructor Providing Members
 
 ```c++
-SetOrMapIterator(const KE& keyOrElement, const VN& valueOrNil, SetOrMapIterator<KE, VN>* next = nullptr)
+SetOrMapIterator(const KE& keyOrElement, const VN& valueOrNil, const SetOrMapIterator<KE, VN>* next = nullptr)
 ```
 
 1. Set `m_keyOrElement = keyOrElement`.
@@ -105,7 +105,7 @@ Return a reference to `m_keyOrElement`.
 ### 5.3. getValue
 
 ```c++
-const VN& getValue() const
+const VN& getValue() const override
 ```
 
 Return a reference to `m_valueOrNil`.
@@ -129,7 +129,7 @@ Return `m_next`.
 ### 5.5. getNextSetIterator
 
 ```c++
-SetIterator<KE>* getNextSetIterator()
+SetIterator<KE>* getNextSetIterator() override
 ```
 
 Return `m_next`.
@@ -145,15 +145,15 @@ Set `m_keyOrElement = keyOrElement`.
 ### 5.8. setNextIterator
 
 ```c++
-void setNextIterator(SetOrMapIterator<KE, VN>* next)
+void setNextIterator(const SetOrMapIterator<KE, VN>* next)
 ```
 
 Set `m_next = next`.
 
-### 5.7. setValue
+### 5.7. setValueOrNil
 
 ```c++
-void setValue(const VN& valueOrNil) const
+void setValueOrNil(const VN& valueOrNil) const
 ```
 
 Set `m_valueOrNil = valueOrNil`.

@@ -1,7 +1,7 @@
 // ======================================================================
 // \title  SetIterator
 // \author bocchino
-// \brief  An abstract class representing an iterator for a set
+// \brief  An abstract class template representing an iterator for a set
 // ======================================================================
 
 #ifndef Fw_SetIterator_HPP

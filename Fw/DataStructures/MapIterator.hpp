@@ -1,7 +1,7 @@
 // ======================================================================
 // \title  MapIterator
 // \author bocchino
-// \brief  An abstract class representing an iterator for a map
+// \brief  An abstract class template representing an iterator for a map
 // ======================================================================
 
 #ifndef Fw_MapIterator_HPP
