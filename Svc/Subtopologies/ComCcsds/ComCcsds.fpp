@@ -60,7 +60,24 @@ module ComCcsds {
     # ----------------------------------------------------------------------
     # Passive Components
     # ----------------------------------------------------------------------
-    instance commsBufferManager: Svc.BufferManager base id ComCcsdsConfig.BASE_ID + 0x0500 \
+    instance frameAccumulator: Svc.FrameAccumulator base id ComCcsdsConfig.BASE_ID + 0x0500 \ 
+    {
+
+        phase Fpp.ToCpp.Phases.configComponents """
+        ComCcsds::frameAccumulator.configure(
+            ComCcsds::Detector::frameDetector,
+            1,
+            ComCcsds::Allocation::mallocator,
+            2048
+        );
+        """
+
+        phase Fpp.ToCpp.Phases.tearDownComponents """
+        ComCcsds::frameAccumulator.cleanup();
+        """
+    }
+
+    instance commsBufferManager: Svc.BufferManager base id ComCcsdsConfig.BASE_ID + 0x0600 \
     {
         phase Fpp.ToCpp.Phases.configConstants """
         enum {
@@ -90,23 +107,6 @@ module ComCcsds {
 
         phase Fpp.ToCpp.Phases.tearDownComponents """
         ComCcsds::commsBufferManager.cleanup();
-        """
-    }
-
-    instance frameAccumulator: Svc.FrameAccumulator base id ComCcsdsConfig.BASE_ID + 0x0600 \ 
-    {
-
-        phase Fpp.ToCpp.Phases.configComponents """
-        ComCcsds::frameAccumulator.configure(
-            ComCcsds::Detector::frameDetector,
-            1,
-            ComCcsds::Allocation::mallocator,
-            2048
-        );
-        """
-
-        phase Fpp.ToCpp.Phases.tearDownComponents """
-        ComCcsds::frameAccumulator.cleanup();
         """
     }
 

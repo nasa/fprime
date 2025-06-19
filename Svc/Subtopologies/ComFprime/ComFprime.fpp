@@ -60,7 +60,24 @@ module ComFprime {
     # ----------------------------------------------------------------------
     # Passive Components
     # ----------------------------------------------------------------------
-    instance commsBufferManager: Svc.BufferManager base id ComFprimeConfig.BASE_ID + 0x0500 \
+    instance frameAccumulator: Svc.FrameAccumulator base id ComFprimeConfig.BASE_ID + 0x0500 \ 
+    {
+
+        phase Fpp.ToCpp.Phases.configComponents """
+        ComFprime::frameAccumulator.configure(
+            ComFprime::Detector::frameDetector,
+            1,
+            ComFprime::Allocation::mallocator,
+            2048
+        );
+        """
+
+        phase Fpp.ToCpp.Phases.tearDownComponents """
+        ComFprime::frameAccumulator.cleanup();
+        """
+    }
+
+    instance commsBufferManager: Svc.BufferManager base id ComFprimeConfig.BASE_ID + 0x0600 \
     {
         phase Fpp.ToCpp.Phases.configConstants """
         enum {
@@ -88,23 +105,6 @@ module ComFprime {
 
         phase Fpp.ToCpp.Phases.tearDownComponents """
         ComFprime::commsBufferManager.cleanup();
-        """
-    }
-
-    instance frameAccumulator: Svc.FrameAccumulator base id ComFprimeConfig.BASE_ID + 0x0600 \ 
-    {
-
-        phase Fpp.ToCpp.Phases.configComponents """
-        ComFprime::frameAccumulator.configure(
-            ComFprime::Detector::frameDetector,
-            1,
-            ComFprime::Allocation::mallocator,
-            2048
-        );
-        """
-
-        phase Fpp.ToCpp.Phases.tearDownComponents """
-        ComFprime::frameAccumulator.cleanup();
         """
     }
 
