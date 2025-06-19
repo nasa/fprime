@@ -129,6 +129,7 @@ SocketIpStatus IpSocket::open(SocketDescriptor& socketDescriptor) {
 }
 
 SocketIpStatus IpSocket::send(const SocketDescriptor& socketDescriptor, const U8* const data, const U32 size) {
+    FW_ASSERT(socketDescriptor.fd != -1, static_cast<FwAssertArgType>(socketDescriptor.fd));
     FW_ASSERT((size == 0) || (data != nullptr));
     
     U32 total = 0;
@@ -164,7 +165,7 @@ SocketIpStatus IpSocket::send(const SocketDescriptor& socketDescriptor, const U8
 
 SocketIpStatus IpSocket::recv(const SocketDescriptor& socketDescriptor, U8* data, U32& req_read) {
     // Note: socketDescriptor.fd can be -1 in some test cases
-    FW_ASSERT((req_read == 0) || (data != nullptr));
+    FW_ASSERT(data != nullptr);
     
     I32 bytes_received_or_status; // Stores the return value from recvProtocol
 
@@ -180,10 +181,9 @@ SocketIpStatus IpSocket::recv(const SocketDescriptor& socketDescriptor, U8* data
             req_read = static_cast<U32>(bytes_received_or_status);
             return SOCK_SUCCESS;
         } else if (bytes_received_or_status == 0) {
-            // For TCP (which IpSocket primarily serves as a base for, or when not overridden),
-            // a return of 0 from ::recv means the peer has performed an orderly shutdown.
+            // Handle zero return based on protocol-specific behavior
             req_read = 0;
-            return SOCK_DISCONNECTED;
+            return this->handleZeroReturn();
         } else { // bytes_received_or_status == -1, an error occurred
             if ((errno == EAGAIN) || (errno == EWOULDBLOCK)) {
                 // Non-blocking socket would block, or SO_RCVTIMEO timeout occurred.
@@ -210,6 +210,12 @@ SocketIpStatus IpSocket::recv(const SocketDescriptor& socketDescriptor, U8* data
     // If the loop completes, it means SOCKET_MAX_ITERATIONS of EINTR occurred.
     req_read = 0;
     return SOCK_INTERRUPTED_TRY_AGAIN;
+}
+
+SocketIpStatus IpSocket::handleZeroReturn() {
+    // For TCP (which IpSocket primarily serves as a base for, or when not overridden),
+    // a return of 0 from ::recv means the peer has performed an orderly shutdown.
+    return SOCK_DISCONNECTED;
 }
 
 }  // namespace Drv

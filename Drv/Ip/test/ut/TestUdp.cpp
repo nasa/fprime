@@ -110,11 +110,8 @@ TEST(UdpZeroLength, TestZeroLengthUdpDatagram) {
     // Configure receiver and sender
     ASSERT_EQ(receiver.configureRecv("127.0.0.1", port), Drv::SOCK_SUCCESS);
     ASSERT_EQ(receiver.open(recv_fd), Drv::SOCK_SUCCESS);
-
-    // Set a custom, longer receive timeout for this specific test to 500ms
-    const Drv::Test::TestTimeouts custom_recv_timeout = {0, 500000};
-    Drv::Test::force_recv_timeout(recv_fd.fd, receiver, &custom_recv_timeout);
-    ASSERT_EQ(sender.configureSend("127.0.0.1", port, 1, 0), Drv::SOCK_SUCCESS); // Send timeout set to 1 sec
+ 
+    ASSERT_EQ(sender.configureSend("127.0.0.1", port, 1, 0), Drv::SOCK_SUCCESS);
     ASSERT_EQ(sender.open(send_fd), Drv::SOCK_SUCCESS);
 
     // Send a zero-length datagram using the F' socket wrapper

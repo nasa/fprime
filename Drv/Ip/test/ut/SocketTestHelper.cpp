@@ -17,17 +17,11 @@ namespace Test {
 
 const U32 MAX_DRV_TEST_MESSAGE_SIZE = 1024;
 
-void force_recv_timeout(int fd, Drv::IpSocket& socket, const TestTimeouts* custom_timeouts) {
+void force_recv_timeout(int fd, Drv::IpSocket& socket) {
     // Set timeout socket option
     struct timeval timeout;
-    if (custom_timeouts != nullptr) {
-        timeout.tv_sec = static_cast<time_t>(custom_timeouts->m_sec);
-        timeout.tv_usec = static_cast<suseconds_t>(custom_timeouts->m_usec);
-    } else {
-        // Default timeout if no custom one is provided
-        timeout.tv_sec = 0;
-        timeout.tv_usec = static_cast<suseconds_t>(100000); // 100ms default
-    }
+    timeout.tv_sec = 0;
+    timeout.tv_usec = 50; // 50ms max before test failure
     setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<char *>(&timeout), sizeof(timeout));
 }
 
@@ -71,23 +65,10 @@ void receive_all(Drv::IpSocket& receiver, Drv::SocketDescriptor& receiver_fd, U8
     U32 received_size = 0;
     Drv::SocketIpStatus status;
     do {
-        U32 bytes_to_request = size - received_size;
-        U32 bytes_actually_received = bytes_to_request; // Will be updated by receiver.recv
-        status = receiver.recv(receiver_fd, buffer + received_size, bytes_actually_received);
-
-        if (status == Drv::SOCK_SUCCESS) {
-            received_size += bytes_actually_received;
-        } else if (status == Drv::SOCK_NO_DATA_AVAILABLE) {
-            // Socket timeout occurred before all expected data was received.
-            FAIL() << "Drv::Test::receive_all timed out (SOCK_NO_DATA_AVAILABLE) expecting " << size
-                   << " bytes, but received only " << received_size << " bytes so far.";
-            return; // Exit to prevent infinite loop and mark test as failed
-        } else {
-            // Other unexpected socket error
-            FAIL() << "Drv::Test::receive_all encountered an unexpected socket error: " << status
-                   << " while expecting " << size << " bytes. Received " << received_size << " bytes so far.";
-            return; // Exit to prevent infinite loop and mark test as failed
-        }
+        U32 size_in_out = size - received_size;
+        status = receiver.recv(receiver_fd, buffer + received_size, size_in_out);
+        ASSERT_TRUE((status == Drv::SOCK_NO_DATA_AVAILABLE || status == Drv::SOCK_SUCCESS));
+        received_size += size_in_out;
     } while (size > received_size);
     EXPECT_EQ(received_size, size);
 }

@@ -107,15 +107,6 @@ class UdpSocket : public IpSocket {
      */
     SocketIpStatus send(const SocketDescriptor& socketDescriptor, const U8* const data, const U32 size) override;
 
-    /**
-     * \brief UDP-specific implementation of recv that handles zero-length datagrams as success.
-     * \param socketDescriptor: descriptor to recv from
-     * \param data: data pointer to fill
-     * \param req_read: size of data buffer on input, size of data received on output
-     * \return: status of the receive operation
-     */
-    SocketIpStatus recv(const SocketDescriptor& socketDescriptor, U8* data, U32& req_read) override;
-
   protected:
     /**
      * \brief bind the UDP to a port such that it can receive packets at the previously configured port
@@ -145,6 +136,16 @@ class UdpSocket : public IpSocket {
      * \return: size of data received, or -1 on error.
      */
     I32 recvProtocol(const SocketDescriptor& socketDescriptor, U8* const data, const U32 size) override;
+    /**
+     * \brief Handle zero return from recvProtocol for UDP
+     *
+     * For UDP, a return of 0 from recvfrom means a 0-byte datagram was received,
+     * which is a success case, not a disconnection.
+     *
+     * @return SocketIpStatus Status to return from recv
+     */
+    SocketIpStatus handleZeroReturn() override;
+
   private:
     struct sockaddr_in m_addr_send;  //!< UDP server address for sending
     struct sockaddr_in m_addr_recv;  //!< UDP server address for receiving

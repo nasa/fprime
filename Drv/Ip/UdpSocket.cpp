@@ -222,7 +222,6 @@ SocketIpStatus UdpSocket::send(const SocketDescriptor& socketDescriptor, const U
     // Note: socketDescriptor.fd can be -1 in some test cases
     FW_ASSERT((size == 0) || (data != nullptr));
     
-    
     // Special case for zero-length datagrams in UDP
     if (size == 0) {
         errno = 0;
@@ -250,55 +249,10 @@ SocketIpStatus UdpSocket::send(const SocketDescriptor& socketDescriptor, const U
     return IpSocket::send(socketDescriptor, data, size);
 }
 
-SocketIpStatus UdpSocket::recv(const SocketDescriptor& socketDescriptor, U8* data, U32& req_read) {
-    // Note: socketDescriptor.fd can be -1 in some test cases
-    FW_ASSERT((req_read == 0) || (data != nullptr));
-    
-    I32 bytes_received_or_status; // Stores the return from recvProtocol, which is byte count or -1
-
-    // Loop primarily for EINTR. Other conditions should lead to an earlier exit.
-    for (U32 i = 0; i < SOCKET_MAX_ITERATIONS; i++) {
-        errno = 0;
-        // Note: recvProtocol for UdpSocket takes 'size' as const U32,
-        // so it won't modify 'req_read' directly. We pass req_read.
-        // The actual number of bytes read will be the return value 'bytes_received_or_status'.
-        bytes_received_or_status = this->recvProtocol(socketDescriptor, data, req_read);
-
-        if (bytes_received_or_status > 0) {
-            // Successfully read data
-            req_read = static_cast<U32>(bytes_received_or_status);
-            return SOCK_SUCCESS;
-        } else if (bytes_received_or_status == 0) {
-            // For UDP, a return of 0 from recvfrom means a 0-byte datagram was received.
-            // This is a success case for UDP, not a disconnection.
-            req_read = 0;
-            return SOCK_SUCCESS;
-        } else { // bytes_received_or_status == -1, an error occurred
-            if ((errno == EAGAIN) || (errno == EWOULDBLOCK)) {
-                // Timeout or would block (non-blocking socket)
-                req_read = 0; // No data read
-                return SOCK_NO_DATA_AVAILABLE;
-            } else if (errno == EINTR) {
-                // Interrupted system call. Retry if not the last iteration.
-                if (i == (SOCKET_MAX_ITERATIONS - 1)) { // Last attempt
-                    req_read = 0;
-                    return SOCK_INTERRUPTED_TRY_AGAIN; // Max retries for EINTR reached
-                }
-                // Loop will continue for EINTR. The 'continue' is implicit here.
-            } else if ((errno == ECONNRESET) || (errno == EBADF)) {
-                // Connection reset or bad file descriptor.
-                req_read = 0;
-                return SOCK_DISCONNECTED;
-            } else {
-                // Other unhandled socket read error.
-                req_read = 0;
-                return SOCK_READ_ERROR;
-            }
-        }
-    }
-    // If the loop completes, it means SOCKET_MAX_ITERATIONS of EINTR occurred.
-    req_read = 0;
-    return SOCK_INTERRUPTED_TRY_AGAIN;
+SocketIpStatus UdpSocket::handleZeroReturn() {
+    // For UDP, a return of 0 from recvfrom means a 0-byte datagram was received.
+    // This is a success case for UDP, not a disconnection.
+    return SOCK_SUCCESS;
 }
 
 }  // namespace Drv
