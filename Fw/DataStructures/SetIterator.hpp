@@ -1,18 +1,18 @@
 // ======================================================================
-// \title  MapIterator
+// \title  SetIterator
 // \author bocchino
-// \brief  An abstract class representing an iterator for a map
+// \brief  An abstract class representing an iterator for a set
 // ======================================================================
 
-#ifndef Fw_MapIterator_HPP
-#define Fw_MapIterator_HPP
+#ifndef Fw_SetIterator_HPP
+#define Fw_SetIterator_HPP
 
 #include "Fw/FPrimeBasicTypes.hpp"
 
 namespace Fw {
 
-template <typename K, typename V>
-class MapIterator {
+template <typename T>
+class SetIterator {
   private:
     // ----------------------------------------------------------------------
     // Private constructors
@@ -20,7 +20,7 @@ class MapIterator {
 
     //! Copy constructor deleted in the base class
     //! Behavior depends on the implementation
-    MapIterator(const MapIterator<K, V>&) = delete;
+    SetIterator(const SetIterator<T>&) = delete;
 
   protected:
     // ----------------------------------------------------------------------
@@ -28,10 +28,10 @@ class MapIterator {
     // ----------------------------------------------------------------------
 
     //! Zero-argument constructor
-    MapIterator() = default;
+    SetIterator() = default;
 
     //! Destructor
-    virtual ~MapIterator() = default;
+    virtual ~SetIterator() = default;
 
   private:
     // ----------------------------------------------------------------------
@@ -41,24 +41,20 @@ class MapIterator {
     //! operator= deleted in the base class
     //! Behavior depends on the implementation
     //! We avoid virtual user-defined operators
-    MapIterator<K, V>& operator=(const MapIterator<K, V>&) = delete;
+    SetIterator<T>& operator=(const SetIterator<T>&) = delete;
 
   public:
     // ----------------------------------------------------------------------
     // Public member functions
     // ----------------------------------------------------------------------
 
-    //! Get the key associated with this iterator
-    //! \return The key
-    virtual const K& getKey() const = 0;
+    //! Get the element associated with this iterator
+    //! \return The element
+    virtual const T& getElement() const = 0;
 
-    //! Get the value associated with this iterator
-    //! \return The value
-    virtual const V& getValue() const = 0;
-
-    //! Get the next map iterator
-    //! \return The map iterator, or nullptr if none
-    virtual const MapIterator<K, V>* getNextMapIterator() const = 0;
+    //! Get the next set iterator
+    //! \return The set iterator, or nullptr if none
+    virtual const SetIterator<T>* getNextSetIterator() const = 0;
 };
 
 }  // namespace Fw
