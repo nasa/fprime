@@ -36,7 +36,7 @@ storing the entries in the set or map.
 ```mermaid
 classDiagram
     ArraySetOrMapImpl *-- ExternalArray
-    ExternalArray "_n_" *-- Entry
+    ExternalArray "1..*" *-- Entry
 ```
 
 ## 4. Public Constructors and Destructors
