@@ -1,9 +1,6 @@
 telemetry packets RefPackets {
 
   packet CDH id 1 group 1 {
-
-    #Ref.cmdDisp.CommandsDispatched
-
     CdhCore.cmdDisp.CommandsDispatched
     Ref.rateGroup1Comp.RgMaxTime
     Ref.rateGroup2Comp.RgMaxTime

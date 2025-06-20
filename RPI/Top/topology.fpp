@@ -162,7 +162,6 @@ module RPI {
       fileUplink.bufferSendOut -> fprimeRouter.fileBufferReturnIn
     }
 
-
   }
 
 }

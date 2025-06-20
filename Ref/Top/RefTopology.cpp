@@ -64,9 +64,6 @@ void setupTopology(const TopologyState& state) {
     regCommands();
     // Autocoded configuration. Function provided by autocoder.
     configComponents(state);
-    //if (state.hostname != nullptr && state.port != 0) {
-        //Comms::comDriver.configure(state.hostname, state.port);
-    //}
     // Project-specific component configuration. Function provided above. May be inlined, if desired.
     configureTopology();
     // Autocoded parameter loading. Function provided by autocoder.

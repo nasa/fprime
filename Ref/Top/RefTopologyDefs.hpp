@@ -16,7 +16,6 @@
 #include "Ref/Top/FppConstantsAc.hpp"
 #include "Svc/Health/Health.hpp"
 
-
 // Subtopology PingEntries includes
 #include "Svc/Subtopologies/CdhCore/PingEntries.hpp"
 #include "Svc/Subtopologies/ComCcsds/PingEntries.hpp"
@@ -72,5 +71,4 @@ namespace Ref {
 
     namespace PingEntries = ::PingEntries;
 }  // namespace Ref
-
 #endif
