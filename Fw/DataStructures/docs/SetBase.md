@@ -12,7 +12,7 @@ It represents an abstract base class for a set.
 |----|----|-------|
 |`typename`|`T`|The type of an element in the set|
 
-<a name="PublicTypes"></a>
+<a name="Public-Types"></a>
 ## 2. Public Types
 
 `SetBase` defines the following public types:

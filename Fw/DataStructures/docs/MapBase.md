@@ -13,7 +13,7 @@ It represents an abstract base class for a map.
 |`typename`|`K`|The type of a key in the map|
 |`typename`|`V`|The type of a value in the map|
 
-<a name="PublicTypes"></a>
+<a name="Public-Types"></a>
 ## 2. Public Types
 
 `MapBase` defines the following public types:

@@ -36,7 +36,7 @@ as the set implementation.
 |----|----|-------|-------------|
 |`m_impl`|[`ArraySetOrMapImpl<T, Nil>`](ArraySetOrMapImpl.md)|The set implementation|C++ default initialization|
 
-The type `Nil` is defined [in the base class](SetBase.md#PublicTypes).
+The type `Nil` is defined [in the base class](SetBase.md#Public-Types).
 
 ```mermaid
 classDiagram
@@ -66,7 +66,7 @@ ExternalArraySet(Entry* entries, FwSizeType capacity)
 
 `entries` must point to a primitive array of at least `capacity`
 elements of type `Entry`.
-The type `Entry` is defined [in the base class](SetBase.md#2PublicTypes).
+The type `Entry` is defined [in the base class](SetBase.md#2Public-Types).
 
 Call `m_impl.setStorage(entries, capacity)`.
 
@@ -240,7 +240,7 @@ ASSERT_EQ(set.getCapacity(), capacity);
 const Iterator* getHeadIterator const override
 ```
 
-The type `Iterator` is defined [in the base class](SetBase.md#2PublicTypes).
+The type `Iterator` is defined [in the base class](SetBase.md#2Public-Types).
 
 Return `m_impl.getHeadIterator()`.
 
@@ -338,7 +338,7 @@ void setStorage(Entry* entries, FwSizeType capacity)
 
 `entries` must point to a primitive array of at least `capacity`
 elements of type `Entry`.
-The type `Entry` is defined [in the base class](SetBase.md#PublicTypes).
+The type `Entry` is defined [in the base class](SetBase.md#Public-Types).
 
 Call `m_impl.setStorage(entries, capacity)`.
 

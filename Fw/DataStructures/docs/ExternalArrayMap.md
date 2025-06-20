@@ -64,7 +64,7 @@ ExternalArrayMap(Entry* entries, FwSizeType capacity)
 
 `entries` must point to a primitive array of at least `capacity`
 elements of type `Entry`.
-The type `Entry` is defined [in the base class](MapBase.md#PublicTypes).
+The type `Entry` is defined [in the base class](MapBase.md#Public-Types).
 
 Call `m_impl.setStorage(entries, capacity)`.
 
@@ -244,7 +244,7 @@ ASSERT_EQ(map.getCapacity(), capacity);
 const Iterator* getHeadIterator const override
 ```
 
-The type `Iterator` is defined [in the base class](MapBase.md#PublicTypes).
+The type `Iterator` is defined [in the base class](MapBase.md#Public-Types).
 
 Return `m_impl.getHeadIterator()`.
 
@@ -343,7 +343,7 @@ void setStorage(Entry* entries, FwSizeType capacity)
 
 `entries` must point to a primitive array of at least `capacity`
 elements of type `Entry`.
-The type `Entry` is defined [in the base class](MapBase.md#PublicTypes).
+The type `Entry` is defined [in the base class](MapBase.md#Public-Types).
 
 Call `m_impl.setStorage(entries, capacity)`.
 
