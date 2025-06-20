@@ -16,5 +16,5 @@ endfunction(test_add_deployment_target)
 function(test_add_module_target MODULE TARGET SOURCES DEPENDENCIES)
     run_ac_set("${MODULE}" autocoder/test)
     add_custom_target("${MODULE}_${TARGET}" COMMAND ${CMAKE_COMMAND} -E touch "${CMAKE_BINARY_DIR}/${MODULE}-test"
-                      DEPENDS ${AC_GENERATED})
+                      DEPENDS ${AUTOCODER_GENERATED_OTHER})
 endfunction(test_add_module_target)

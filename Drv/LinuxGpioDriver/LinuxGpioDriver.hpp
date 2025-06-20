@@ -70,7 +70,7 @@ class LinuxGpioDriver final : public LinuxGpioDriverComponentBase {
     Drv::GpioStatus start(const FwTaskPriorityType priority = Os::Task::TASK_PRIORITY_DEFAULT,
                           const FwSizeType stackSize = Os::Task::TASK_DEFAULT,
                           const FwSizeType cpuAffinity = Os::Task::TASK_DEFAULT,
-                          const PlatformUIntType identifier = static_cast<PlatformUIntType>(Os::Task::TASK_DEFAULT));
+                          const FwTaskIdType identifier = static_cast<FwTaskIdType>(Os::Task::TASK_DEFAULT));
 
     //! \brief stop interrupt detection thread
     //!
@@ -82,17 +82,17 @@ class LinuxGpioDriver final : public LinuxGpioDriverComponentBase {
 
   private:
     //! \brief helper to setup a line handle (read or write).
-    Os::File::Status setupLineHandle(const PlatformIntType chip_descriptor,
+    Os::File::Status setupLineHandle(const int chip_descriptor,
                                      const U32 gpio,
                                      const GpioConfiguration& configuration,
                                      const Fw::Logic& default_state,
-                                     PlatformIntType& fd);
+                                     int& fd);
 
     //! \brief helper to setup a line event (interrupt)
-    Os::File::Status setupLineEvent(const PlatformIntType chip_descriptor,
+    Os::File::Status setupLineEvent(const int chip_descriptor,
                                     const U32 gpio,
                                     const GpioConfiguration& configuration,
-                                    PlatformIntType& fd);
+                                    int& fd);
 
     //! \brief poll for interrupt loop helper
     //!
@@ -129,7 +129,7 @@ class LinuxGpioDriver final : public LinuxGpioDriverComponentBase {
     GpioConfiguration m_configuration = GpioConfiguration::MAX_GPIO_CONFIGURATION;
 
     //! File descriptor for GPIO
-    PlatformIntType m_fd = -1;
+    int m_fd = -1;
 
     //! Determine if the interrupt polling thread is running
     bool m_running = false;

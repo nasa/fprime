@@ -1,6 +1,0 @@
-This component implements a PolyType database that can be used to save and retrieve telemetry needed in the software. 
-It has guarded ports that control access to the database.
-
-PolyDbComponentAi.xml - The XML definition of the PolyDb component
-PolyDbImpl.hpp(.cpp) - The implementation file for PolyDb
-PolyDbImplCfg.hpp - configuration for implementation class

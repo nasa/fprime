@@ -18,7 +18,7 @@ namespace Svc {
     invalidReceiveMode(const Fw::FilePacket::Type packetType)
   {
     this->m_fileUplink->log_WARNING_HI_InvalidReceiveMode(
-        static_cast<U32>(packetType),
+        static_cast<FwPacketDescriptorType>(packetType),
         static_cast<U32>(m_fileUplink->m_receiveMode)
     );
     this->warning();

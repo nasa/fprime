@@ -424,7 +424,7 @@ namespace Svc {
     void CmdSequencerComponentImpl ::
       commandError(
           const U32 number,
-          const U32 opCode,
+          const FwOpcodeType opCode,
           const U32 error
       )
     {
@@ -483,7 +483,7 @@ namespace Svc {
 
     }
 
-    void CmdSequencerComponentImpl::commandComplete(const U32 opcode) {
+    void CmdSequencerComponentImpl::commandComplete(const FwOpcodeType opcode) {
         this->log_ACTIVITY_LO_CS_CommandComplete(
             this->m_sequence->getLogFileName(),
             this->m_executedCount,

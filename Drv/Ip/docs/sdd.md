@@ -152,6 +152,17 @@ socketBoth.configureSend(127.0.0.1, 60211, 0, 100);
 socketBoth.configureRecv(127.0.0.1, 60212);
 ...
 ```
+### Support for Ephemeral Ports
+
+Drv::UdpSocket supports ephemeral ports through passing a 0 as the port argument for either `Drv::UdpSocket::configureSend` 
+or `Drv::UdpSocket::configureRecv`.
+
+For `Drv::UdpSocket::configureSend` this means that you would like to set up the UdpSocket to be able to respond to the source 
+port that is indicated in the UDP datagrams you receive. Note that this configuration will set up the send port to the port 
+specified only in the first message received.
+
+For `Drv::UdpSocket::configureRecv` this means that you would like to be assigned an ephemeral port. This would generally be used
+for setting up a sender that would like to receive responses to messages on an ephemeral port.
 
 ## Drv::SocketComponentHelper Virtual Baseclass
 

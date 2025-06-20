@@ -24,7 +24,7 @@ Requirements:
 1. Linux, macOS, or WSL on Windows
 2. git
 3. CLang or GNU C and C++ compilers (e.g. gcc and g++)
-4. [Python 3.8+](https://www.python.org/downloads/), virtual environments, and PIP
+4. [Python 3.9+](https://www.python.org/downloads/), virtual environments, and PIP
 
 > [!NOTE]
 > Latest versions of PIP are strongly recommended. See [Recommended PIP Versions](#recommended-pip-versions)

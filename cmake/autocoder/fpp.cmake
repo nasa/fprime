@@ -90,7 +90,7 @@ function(fpp_get_framework_dependency_helper MODULE_NAME FRAMEWORK)
     elseif (NOT DEFINED FPRIME_FRAMEWORK_MODULES)
         fprime_fatal_cmake_error("${MODULE_NAME} Fw/CMakeLists.txt not included in deployment")
     elseif (MODULE_NAME STREQUAL Fw_Types)
-        # Skip Fw_Types as it is the root dependency 
+        # Skip Fw_Types as it is the root dependency
     elseif (NOT TARGET Fw OR MODULE_NAME IN_LIST FPRIME_FRAMEWORK_MODULES)
         list(APPEND FRAMEWORK ${FPRIME_FRAMEWORK_MODULES})
         list(FIND FRAMEWORK "${MODULE_NAME}" START_INDEX)
@@ -226,31 +226,28 @@ function(fpp_setup_autocode MODULE_NAME AC_INPUT_FILES)
                 OUTPUT ${GENERATED_CPP}
                 COMMAND ${FPP_TO_CPP} "-d" "${CMAKE_CURRENT_BINARY_DIR_RESOLVED}" ${IMPORTS} ${AC_INPUT_FILES}
                     "-p" "${FPRIME_BUILD_LOCATIONS_COMMA_SEP},${CMAKE_BINARY_DIR_RESOLVED}"
-                DEPENDS ${FILE_DEPENDENCIES} ${MODULE_DEPENDENCIES}
+                DEPENDS ${FILE_DEPENDENCIES}
         )
     endif()
     # Add in dictionary generation
     if (GENERATED_DICT)
-        set(FPRIME_CURRENT_DICTIONARY_FILE_JSON "${GENERATED_DICT}" CACHE INTERNAL "" FORCE)
         set(FPRIME_JSON_VERSION_FILE "${CMAKE_BINARY_DIR}/versions/version.json")
         add_custom_command(
             OUTPUT ${GENERATED_DICT}
             COMMAND ${FPRIME_FPP_TO_DICT_WRAPPER}
                 "--executable" "${FPP_TO_DICT}"
-                "--cmake-bin-dir" "${CMAKE_CURRENT_BINARY_DIR}" 
+                "--cmake-bin-dir" "${CMAKE_CURRENT_BINARY_DIR}"
                 "--jsonVersionFile" "${FPRIME_JSON_VERSION_FILE}"
                 ${IMPORTS} ${AC_INPUT_FILES}
-            DEPENDS ${FILE_DEPENDENCIES} ${MODULE_DEPENDENCIES} 
+            DEPENDS ${FILE_DEPENDENCIES}
                     ${FPRIME_JSON_VERSION_FILE}
-                    version
+                    version_generate
         )
     endif()
-    set(AUTOCODER_GENERATED ${GENERATED_CPP} ${GENERATED_DICT})
-    set(AUTOCODER_GENERATED "${AUTOCODER_GENERATED}" PARENT_SCOPE)
+
     set(AUTOCODER_DEPENDENCIES "${MODULE_DEPENDENCIES}" PARENT_SCOPE)
-    set(AUTOCODER_INCLUDES "${FILE_DEPENDENCIES}" PARENT_SCOPE)
-    set(AUTOCODER_BUILD_SOURCES "${GENERATED_CPP};${GENERATED_DICT}" PARENT_SCOPE)
-    set(AUTOCODER_NEW_AUTOCODER_INPUTS "${GENERATED_DICT}" PARENT_SCOPE)
+    set(AUTOCODER_GENERATED_BUILD_SOURCES "${GENERATED_CPP}" PARENT_SCOPE)
+    set(AUTOCODER_GENERATED_OTHER "${GENERATED_DICT}" PARENT_SCOPE)
 endfunction(fpp_setup_autocode)
 
 ####

@@ -11,7 +11,7 @@
 namespace Fw {
 
     LogPacket::LogPacket() : m_id(0) {
-        this->m_type = FW_PACKET_LOG;
+        this->m_type = ComPacketType::FW_PACKET_LOG;
     }
 
     LogPacket::~LogPacket() {

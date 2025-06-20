@@ -42,8 +42,6 @@ void exitTasks() {
     (void) comm.join();
 }
 ```
-## Class Diagram
-![tcp client](./img/class_diagram_tcp_client.png)
 
 ## Requirements
 

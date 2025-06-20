@@ -40,6 +40,12 @@ FileSystem::Status FileSystem::_rename(const char* sourcePath, const char* destP
     return this->m_delegate._rename(sourcePath, destPath);
 }
 
+FileSystem::Status FileSystem::_getPathType(const char* path, PathType& pathType) {
+    FW_ASSERT(&this->m_delegate == reinterpret_cast<FileSystemInterface*>(&this->m_handle_storage[0]));
+    FW_ASSERT(path != nullptr);
+    return this->m_delegate._getPathType(path, pathType);
+}
+
 FileSystem::Status FileSystem::_getWorkingDirectory(char* path, FwSizeType bufferSize) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileSystemInterface*>(&this->m_handle_storage[0]));
     FW_ASSERT(path != nullptr);
@@ -130,19 +136,12 @@ FileSystem::Status FileSystem::touch(const char* path) {
 
 FileSystem::PathType FileSystem::getPathType(const char* path) {
     FW_ASSERT(path != nullptr);
-    Os::File file;
-    File::Status file_status = file.open(path, Os::File::OPEN_READ);
-    file.close();
-    if (file_status == File::OP_OK) {
-        return PathType::FILE;
+    PathType pathType;
+    Status status = getSingleton()._getPathType(path, pathType);
+    if (status != Status::OP_OK) {
+        return PathType::NOT_EXIST;
     }
-    Os::Directory dir;
-    Directory::Status dir_status = dir.open(path, Os::Directory::OpenMode::READ);
-    dir.close();
-    if (dir_status == Directory::Status::OP_OK) {
-        return PathType::DIRECTORY;
-    }
-    return PathType::NOT_EXIST;
+    return pathType;
 }  // end getPathType
 
 bool FileSystem::exists(const char* path) {

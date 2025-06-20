@@ -93,7 +93,7 @@ module Svc {
     # ----------------------------------------------------------------------
 
     event OpCodeRegistered(
-                            Opcode: U32 @< The opcode to register
+                            Opcode: FwOpcodeType @< The opcode to register
                             $port: I32 @< The registration port
                             slot: I32 @< The dispatch slot it was placed in
                           ) \
@@ -103,7 +103,7 @@ module Svc {
 
     @ Op code dispatched event
     event OpCodeDispatched(
-                            Opcode: U32 @< The opcode dispatched
+                            Opcode: FwOpcodeType @< The opcode dispatched
                             $port: I32 @< The port dispatched to
                           ) \
       severity command \
@@ -112,7 +112,7 @@ module Svc {
 
     @ Op code completed event
     event OpCodeCompleted(
-                           Opcode: U32 @< The I32 command argument
+                           Opcode: FwOpcodeType @< The I32 command argument
                          ) \
       severity command \
       id 2 \
@@ -120,7 +120,7 @@ module Svc {
 
     @ Op code completed with error event
     event OpCodeError(
-                       Opcode: U32 @< The opcode with the error
+                       Opcode: FwOpcodeType @< The opcode with the error
                        error: Fw.CmdResponse @< The error value
                      ) \
       severity command \
@@ -137,7 +137,7 @@ module Svc {
 
     @ Received an invalid opcode
     event InvalidCommand(
-                          Opcode: U32 @< Invalid opcode
+                          Opcode: FwOpcodeType @< Invalid opcode
                         ) \
       severity warning high \
       id 5 \
@@ -145,7 +145,7 @@ module Svc {
 
     @ Exceeded the number of commands that can be simultaneously executed
     event TooManyCommands(
-                           Opcode: U32 @< The opcode that overflowed the list
+                           Opcode: FwOpcodeType @< The opcode that overflowed the list
                          ) \
       severity warning high \
       id 6 \
@@ -177,7 +177,7 @@ module Svc {
 
     @ Op code reregistered event
     event OpCodeReregistered(
-                              Opcode: U32 @< The opcode reregistered
+                              Opcode: FwOpcodeType @< The opcode reregistered
                               $port: I32 @< The reregistration port
                             ) \
       severity diagnostic \
