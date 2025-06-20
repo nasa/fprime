@@ -41,6 +41,7 @@ module Svc {
             # END NO REORDER
             # end binary comparison directives
             NOT = 27
+            EXIT = 28
         }
 
         struct Header {

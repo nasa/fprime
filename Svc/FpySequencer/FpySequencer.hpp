@@ -56,6 +56,7 @@ class FpySequencer : public FpySequencerComponentBase {
         FpySequencer_SetRegDirective setReg;
         FpySequencer_BinaryCmpDirective binaryCmp;
         FpySequencer_NotDirective notDirective;
+        FpySequencer_ExitDirective exit;
 
         DirectiveUnion() {}
         ~DirectiveUnion() {}
@@ -417,6 +418,9 @@ class FpySequencer : public FpySequencerComponentBase {
     //! Internal interface handler for directive_not
     void directive_not_internalInterfaceHandler(const Svc::FpySequencer_NotDirective& directive) override;
 
+    //! Internal interface handler for directive_exit
+    void directive_exit_internalInterfaceHandler(const Svc::FpySequencer_ExitDirective& directive) override;
+
     void parametersLoaded() override;
     void parameterUpdated(FwPrmIdType id) override;
 
@@ -611,6 +615,7 @@ class FpySequencer : public FpySequencerComponentBase {
     Signal setReg_directiveHandler(const FpySequencer_SetRegDirective& directive, DirectiveError& error);
     Signal binaryCmp_directiveHandler(const FpySequencer_BinaryCmpDirective& directive, DirectiveError& error);
     Signal not_directiveHandler(const FpySequencer_NotDirective& directive, DirectiveError& error);
+    Signal exit_directiveHandler(const FpySequencer_ExitDirective& directive, DirectiveError& error);
 };
 
 }  // namespace Svc

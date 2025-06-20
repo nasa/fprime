@@ -123,6 +123,13 @@ void FpySequencer::directive_not_internalInterfaceHandler(const Svc::FpySequence
     this->m_tlm.lastDirectiveError = error;
 }
 
+//! Internal interface handler for directive_exit
+void FpySequencer::directive_exit_internalInterfaceHandler(const Svc::FpySequencer_ExitDirective& directive) {
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->exit_directiveHandler(directive, error));
+    this->m_tlm.lastDirectiveError = error;
+}
+
 //! Internal interface handler for directive_waitRel
 Signal FpySequencer::waitRel_directiveHandler(const FpySequencer_WaitRelDirective& directive, DirectiveError& error) {
     Fw::Time wakeupTime = this->getTime();
@@ -473,5 +480,12 @@ Signal FpySequencer::not_directiveHandler(const FpySequencer_NotDirective& direc
     I64& res = reg(directive.getres());
     res = ~src;
     return Signal::stmtResponse_success;
+}
+
+Signal FpySequencer::exit_directiveHandler(const FpySequencer_ExitDirective& directive, DirectiveError& error) {
+    if (directive.getsuccess()) {
+        return Signal::stmtResponse_success;
+    }
+    return Signal::stmtResponse_failure;
 }
 }  // namespace Svc

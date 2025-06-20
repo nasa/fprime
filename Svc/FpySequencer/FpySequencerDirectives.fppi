@@ -101,6 +101,11 @@ struct NotDirective {
     res: U8
 }
 
+struct ExitDirective {
+    @ whether or not to consider the sequence successful
+    success: bool
+}
+
 internal port directive_waitRel(directive: WaitRelDirective) priority 6 assert
 
 internal port directive_waitAbs(directive: WaitAbsDirective) priority 6 assert
@@ -126,6 +131,8 @@ internal port directive_setReg(directive: SetRegDirective) priority 6 assert
 internal port directive_binaryCmp(directive: BinaryCmpDirective) priority 6 assert
 
 internal port directive_not(directive: NotDirective) priority 6 assert
+
+internal port directive_exit(directive: ExitDirective) priority 6 assert
 
 enum DirectiveErrorCode {
     NO_ERROR
