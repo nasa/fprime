@@ -57,8 +57,8 @@ module DataProducts{
         );
         """
         phase Fpp.ToCpp.Phases.tearDownComponents """
-        //DataProducts::dpCat.shutdown();
-        //DataProducts::dpBufferManager.cleanup();
+        DataProducts::dpCat.shutdown();
+        DataProducts::dpBufferManager.cleanup();
         """
     }
     topology Subtopology {
