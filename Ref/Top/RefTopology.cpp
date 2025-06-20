@@ -91,5 +91,6 @@ void teardownTopology(const TopologyState& state) {
     // Autocoded (active component) task clean-up. Functions provided by topology autocoder.
     stopTasks(state);
     freeThreads(state);
+    tearDownComponents(state);
 }
 }  // namespace Ref
