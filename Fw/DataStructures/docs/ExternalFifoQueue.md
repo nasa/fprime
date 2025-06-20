@@ -58,6 +58,9 @@ ExternalFifoQueue<U32> queue;
 ExternalFifoQueue(T* items, FwSizeType capacity)
 ```
 
+`items` must point to a primitive array of at least `capacity`
+items of type `T`.
+
 1. Call `setStorage(items, capacity)`.
 
 1. Initialize the other member variables with their default values.
@@ -187,6 +190,9 @@ ASSERT_EQ(queue.getSize(), 0);
 ```c++
 void setStorage(T* items, FwSizeType capacity)
 ```
+
+`items` must point to a primitive array of at least `capacity`
+items of type `T`.
 
 1. Call `m_items.setStorage(items, capacity)`.
 

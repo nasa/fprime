@@ -23,6 +23,7 @@ It stores a pointer to the backing memory _M_.
 |`m_elements`|`T*`|Pointer to backing memory or `nullptr`|`nullptr`|
 |`m_size`|`FwSizeType`|Stores the size (number of elements) of the array|0|
 
+<a name="Public-Constructors-and-Destructors"></a>
 ## 3. Public Constructors and Destructors
 
 ### 3.1. Zero-Argument Constructor

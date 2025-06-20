@@ -64,7 +64,9 @@ ExternalArraySet<U32> set;
 ExternalArraySet(Entry* entries, FwSizeType capacity)
 ```
 
-The type `Entry` is defined [in the base class](SetBase.md#2-public-types).
+`entries` must point to a primitive array of at least `capacity`
+elements of type `Entry`.
+The type `Entry` is defined [in the base class](SetBase.md#2PublicTypes).
 
 Call `m_impl.setStorage(entries, capacity)`.
 
@@ -238,7 +240,7 @@ ASSERT_EQ(set.getCapacity(), capacity);
 const Iterator* getHeadIterator const override
 ```
 
-The type `Iterator` is defined [in the base class](SetBase.md#2-public-types).
+The type `Iterator` is defined [in the base class](SetBase.md#2PublicTypes).
 
 Return `m_impl.getHeadIterator()`.
 
@@ -334,7 +336,9 @@ ASSERT_EQ(size, 0);
 void setStorage(Entry* entries, FwSizeType capacity)
 ```
 
-The type `Entry` is defined [in the base class](SetBase.md#2-public-types).
+`entries` must point to a primitive array of at least `capacity`
+elements of type `Entry`.
+The type `Entry` is defined [in the base class](SetBase.md#PublicTypes).
 
 Call `m_impl.setStorage(entries, capacity)`.
 
