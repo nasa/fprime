@@ -38,27 +38,11 @@ module Ref {
     stack size Default.STACK_SIZE \
     priority 100
 
-  # comment in Svc.TlmChan or Svc.TlmPacketizer
-  # depending on which form of telemetry downlink
-  # you wish to use
-  # NOTE: Svc.TlmChan is provided in the CdhCore Subtopology
-
-  #instance tlmSend: Svc.TlmChan base id 0x0C00 \
-  #  queue size Default.QUEUE_SIZE \
-  #  stack size Default.STACK_SIZE \
-  #  priority 97
-
-  #instance tlmSend: Svc.TlmPacketizer base id 0x0C00 \
-  #    queue size Default.QUEUE_SIZE \
-  #    stack size Default.STACK_SIZE \
-  #    priority 97
-
   instance typeDemo: Ref.TypeDemo base id 0x1200
 
   # ----------------------------------------------------------------------
   # Queued component instances
   # ----------------------------------------------------------------------
-
 
   instance sendBuffComp: Ref.SendBuff base id 0x2000 \
     queue size Default.QUEUE_SIZE
