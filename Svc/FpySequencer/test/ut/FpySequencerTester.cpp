@@ -119,8 +119,8 @@ void FpySequencerTester::addDirective(Fpy::DirectiveId id, Fw::StatementArgBuffe
     seq.getheader().setstatementCount(static_cast<U16>(stateCount + 1));
 }
 
-void FpySequencerTester::add_WAIT_REL(Fw::TimeInterval duration) {
-    add_WAIT_REL(FpySequencer_WaitRelDirective(duration));
+void FpySequencerTester::add_WAIT_REL(U32 seconds, U32 uSeconds) {
+    add_WAIT_REL(FpySequencer_WaitRelDirective(seconds, uSeconds));
 }
 
 void FpySequencerTester::add_WAIT_REL(FpySequencer_WaitRelDirective dir) {
@@ -204,16 +204,6 @@ void FpySequencerTester::add_CMD(FpySequencer_CmdDirective dir) {
     FW_ASSERT(buf.serialize(dir.getopCode()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     FW_ASSERT(buf.serialize(dir.getargBuf(), dir.get_argBufSize(), true) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     addDirective(Fpy::DirectiveId::CMD, buf);
-}
-
-void FpySequencerTester::add_OR(U8 lhs, U8 rhs, U8 res) {
-    add_OR(FpySequencer_OrDirective(lhs, rhs, res));
-}
-
-void FpySequencerTester::add_OR(FpySequencer_OrDirective dir) {
-    Fw::StatementArgBuffer buf;
-    FW_ASSERT(buf.serialize(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    addDirective(Fpy::DirectiveId::OR, buf);
 }
 
 void FpySequencerTester::add_DESER_LVAR(U8 srcLvarIdx, FwSizeType srcOffset, U8 destReg, U8 deserSize) {
@@ -319,24 +309,36 @@ Fw::ParamValid FpySequencerTester::from_getParam_handler(
 // Access to private and protected FpySequencer methods and members for UTs
 
 // Call cmp methods
-Signal FpySequencerTester::tester_noOp_directiveHandler(const FpySequencer_NoOpDirective& directive) {
-    return this->cmp.noOp_directiveHandler(directive);
+Signal FpySequencerTester::tester_noOp_directiveHandler(const FpySequencer_NoOpDirective& directive, DirectiveError& err) {
+    return this->cmp.noOp_directiveHandler(directive, err);
 }
 
-Signal FpySequencerTester::tester_waitRel_directiveHandler(const FpySequencer_WaitRelDirective& directive){
-    return this->cmp.waitRel_directiveHandler(directive);
+Signal FpySequencerTester::tester_waitRel_directiveHandler(const FpySequencer_WaitRelDirective& directive, DirectiveError& err){
+    return this->cmp.waitRel_directiveHandler(directive, err);
 }
 
-Signal FpySequencerTester::tester_waitAbs_directiveHandler(const FpySequencer_WaitAbsDirective& directive){
-    return this->cmp.waitAbs_directiveHandler(directive);
+Signal FpySequencerTester::tester_waitAbs_directiveHandler(const FpySequencer_WaitAbsDirective& directive, DirectiveError& err){
+    return this->cmp.waitAbs_directiveHandler(directive, err);
 }
 
-Signal FpySequencerTester::tester_goto_directiveHandler(const Svc::FpySequencer_GotoDirective &directive){
-    return this->cmp.goto_directiveHandler(directive);
+Signal FpySequencerTester::tester_goto_directiveHandler(const Svc::FpySequencer_GotoDirective &directive, DirectiveError& err){
+    return this->cmp.goto_directiveHandler(directive, err);
 }
 
-Signal FpySequencerTester::tester_setLocalVar_directiveHandler(const FpySequencer_SetLocalVarDirective& directive){
-    return this->cmp.setLocalVar_directiveHandler(directive);
+Signal FpySequencerTester::tester_setLocalVar_directiveHandler(const FpySequencer_SetLocalVarDirective& directive, DirectiveError& err){
+    return this->cmp.setLocalVar_directiveHandler(directive, err);
+}
+
+Signal FpySequencerTester::tester_getPrm_directiveHandler(const FpySequencer_GetPrmDirective& directive, DirectiveError& err){
+    return this->cmp.getPrm_directiveHandler(directive, err);
+}
+
+Signal FpySequencerTester::tester_getTlm_directiveHandler(const FpySequencer_GetTlmDirective& directive, DirectiveError& err){
+    return this->cmp.getTlm_directiveHandler(directive, err);
+}
+
+Signal FpySequencerTester::tester_getTlm_directiveHandler(const FpySequencer_GetTlmDirective& directive, DirectiveError& err){
+    return this->cmp.getTlm_directiveHandler(directive, err);
 }
 
 Fw::Success FpySequencerTester::tester_deserializeDirective(const Fpy::Statement& stmt, Svc::FpySequencer::DirectiveUnion& deserializedDirective){
@@ -365,14 +367,6 @@ Svc::Signal FpySequencerTester::tester_checkStatementTimeout(){
 
 Svc::Signal FpySequencerTester::tester_checkShouldWake(){
     return this->cmp.checkShouldWake();
-}
-
-Signal FpySequencerTester::tester_getPrm_directiveHandler(const FpySequencer_GetPrmDirective& directive){
-    return this->cmp.getPrm_directiveHandler(directive);
-}
-
-Signal FpySequencerTester::tester_getTlm_directiveHandler(const FpySequencer_GetTlmDirective& directive){
-    return this->cmp.getTlm_directiveHandler(directive);
 }
 
 Fw::Success FpySequencerTester::tester_readBytes(Os::File& file, FwSizeType readLen, bool updateCrc){

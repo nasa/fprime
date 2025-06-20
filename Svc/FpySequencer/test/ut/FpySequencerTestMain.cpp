@@ -14,12 +14,12 @@ using State = FpySequencer_SequencerStateMachineStateMachineBase::State;
 using DirectiveError = FpySequencer_DirectiveErrorCode;
 
 TEST_F(FpySequencerTester, waitRel) {
-    FpySequencer_WaitRelDirective directive(Fw::TimeInterval(5, 123));
+    FpySequencer_WaitRelDirective directive(5, 123);
     Fw::Time testTime(100, 100);
     setTestTime(testTime);
 
     DirectiveError err = DirectiveError::NO_ERROR;
-    Signal result = cmp.waitRel_directiveHandler(directive, err);
+    Signal result = tester_waitRel_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_beginSleep);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(cmp.m_runtime.wakeupTime, Fw::Time(105, 223));
