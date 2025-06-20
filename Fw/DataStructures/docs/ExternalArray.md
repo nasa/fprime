@@ -44,6 +44,9 @@ ExternalArray<U32> a;
 ExternalArray(T* elements, FwSizeType size)
 ```
 
+`elements` must point to a primitive array of at least `size`
+elements of type `T`.
+
 Call `setStorage(elements, size)`.
 
 _Example:_
@@ -59,10 +62,11 @@ ExternalArray<U32> a(elements, size);
 ExternalArray(ByteArray data, FwSizeType size)
 ```
 
-Call `setStorage(data, size)`.
 `data` must be aligned according to 
 [`getByteArrayAlignment()`](#51-getbytearrayalignment) and must
 contain at least [`getByteArraySize(size)`](#52-getbytearraysize) bytes.
+
+Call `setStorage(data, size)`.
 
 _Example:_
 ```c++
@@ -220,6 +224,9 @@ ASSERT_EQ(size1, size);
 ```c++
 void setStorage(T* elements, FwSizeType size)
 ```
+
+`elements` must point to a primitive array of at least `size`
+elements of type `T`.
 
 Set `m_elements = elements` and `m_size = size`.
 
