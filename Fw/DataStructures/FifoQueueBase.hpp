@@ -53,9 +53,9 @@ class FifoQueueBase {
     //! Clear the queue
     virtual void clear() = 0;
 
-    //! Get an item at an index
-    //! Indices go from left to right in the queue
-    //! Fails an assertion if the index is out of range
+    //! Get an item at an index.
+    //! Indices go from left to right in the queue.
+    //! Fails an assertion if the index is out of range.
     //! \return The item
     virtual const T& at(FwSizeType index  //!< The index
     ) const = 0;

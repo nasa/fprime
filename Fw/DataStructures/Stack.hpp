@@ -71,9 +71,9 @@ class Stack final : public StackBase<T> {
     //! \return The capacity
     FwSizeType getCapacity() const override { return this->m_extStack.getCapacity(); }
 
-    //! Get an item at an index
-    //! Indices go from left to right in the stack
-    //! Fails an assertion if the index is out of range
+    //! Get an item at an index.
+    //! Indices go from left to right in the stack.
+    //! Fails an assertion if the index is out of range.
     //! \return The item
     const T& at(FwSizeType index  //!< The index
     ) const override {
