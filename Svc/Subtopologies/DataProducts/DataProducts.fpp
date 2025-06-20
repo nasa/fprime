@@ -15,6 +15,9 @@ module DataProducts{
             Os::FileSystem::createDirectory(dpDir.toChar());
             DataProducts::dpCat.configure(&dpDir,1,dpState,0, DataProducts::Allocation::mallocator);
         """
+        phase Fpp.ToCpp.Phases.tearDownComponents """
+        DataProducts::dpCat.shutdown();
+        """
     }
 
     instance dpMgr: Svc.DpManager base id DataProductsConfig.BASE_ID + 0x0200 \
@@ -57,7 +60,7 @@ module DataProducts{
         );
         """
         phase Fpp.ToCpp.Phases.tearDownComponents """
-        DataProducts::dpBufferManager.deallocateBuffer(DataProducts::Allocation::mallocator);
+        DataProducts::dpBufferManager.cleanup();
         """
     }
     topology Subtopology {
