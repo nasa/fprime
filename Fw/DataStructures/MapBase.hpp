@@ -7,7 +7,7 @@
 #ifndef Fw_MapBase_HPP
 #define Fw_MapBase_HPP
 
-#include "Fw/DataStructures/SetOrMapIterator.hpp"
+#include "Fw/DataStructures/MapIterator.hpp"
 #include "Fw/FPrimeBasicTypes.hpp"
 #include "Fw/Types/Assert.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
@@ -23,9 +23,6 @@ class MapBase {
 
     //! The type of an abstract map iterator
     using Iterator = MapIterator<K, V>;
-
-    //! The type of a concrete map entry
-    using Entry = SetOrMapIterator<K, V>;
 
   private:
     // ----------------------------------------------------------------------

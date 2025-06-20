@@ -20,7 +20,15 @@ as the map implementation.
 `ExternalArrayMap` is publicly derived from
 [`MapBase<K, V>`](MapBase.md).
 
-## 3. Private Member Variables
+## 3. Public Types
+
+`ExternalArrayMap` defines the following public types:
+
+|Name|Definition|
+|----|----------|
+|`Entry`|Alias of [`SetOrMapIterator<K, V>`](SetOrMapIterator.md)|
+
+## 4. Private Member Variables
 
 `ExternalArrayMap` has the following private member variables.
 
@@ -33,9 +41,9 @@ classDiagram
     ExternalArrayMap *-- ArraySetOrMapImpl
 ```
 
-## 4. Public Constructors and Destructors
+## 5. Public Constructors and Destructors
 
-### 4.1. Zero-Argument Constructor
+### 5.1. Zero-Argument Constructor
 
 ```c++
 ExternalArrayMap()
@@ -48,13 +56,13 @@ _Example:_
 ExternalArrayMap<U16, U32> map;
 ```
 
-### 4.2. Constructor Providing Typed Backing Storage
+### 5.2. Constructor Providing Typed Backing Storage
 
 ```c++
 ExternalArrayMap(Entry* entries, FwSizeType capacity)
 ```
 
-The type `Entry` is defined [in the base class](MapBase.md#2-public-types).
+The type `Entry` is defined [in the base class](MapBase.md#PublicTypes).
 
 Call `m_impl.setStorage(entries, capacity)`.
 
@@ -65,15 +73,15 @@ ExternalArrayMap<U16, U32>::Entry entries[capacity];
 ExternalArrayMap<U16, U32> map(entries, capacity);
 ```
 
-### 4.3. Constructor Providing Untyped Backing Storage
+### 5.3. Constructor Providing Untyped Backing Storage
 
 ```c++
 ExternalArrayMap(ByteArray data, FwSizeType capacity)
 ```
 
 `data` must be aligned according to 
-[`getByteArrayAlignment()`](#61-getbytearrayalignment) and must
-contain at least [`getByteArraySize(size)`](#62-getbytearraysize) bytes.
+[`getByteArrayAlignment()`](#getByteArrayAlignment) and must
+contain at least [`getByteArraySize(size)`](#getByteArraySize) bytes.
 
 Call `m_impl.setStorage(data, capacity)`.
 
@@ -86,7 +94,7 @@ alignas(alignment) U8 bytes[byteArraySize];
 ExternalArrayMap<U16, U32> map(ByteArray(&bytes[0], sizeof bytes), capacity);
 ```
 
-### 4.4. Copy Constructor
+### 5.4. Copy Constructor
 
 ```c++
 ExternalArrayMap(const ExternalArrayMap<K, V>& map)
@@ -110,7 +118,7 @@ ExternalArrayMap<U16, U32> m2(m1);
 ASSERT_EQ(m2.getSize(), 1);
 ```
 
-### 4.5. Destructor
+### 5.5. Destructor
 
 ```c++
 ~ExternalArrayMap() override
@@ -118,9 +126,9 @@ ASSERT_EQ(m2.getSize(), 1);
 
 Defined as `= default`.
 
-## 5. Public Member Functions
+## 6. Public Member Functions
 
-### 5.1. operator=
+### 6.1. operator=
 
 ```c++
 ExternalArrayMap<K, V>& operator=(const ExternalArrayMap<K, V>& map)
@@ -151,7 +159,7 @@ m2 = m1;
 ASSERT_EQ(m2.getSize(), 1);
 ```
 
-### 5.2. at
+### 6.2. at
 
 ```c++
 const V& at(FwSizeType index) const
@@ -170,7 +178,7 @@ ASSERT_EQ(map.at(0), 1);
 ASSERT_DEATH(map.at(1), "Assert");
 ```
 
-### 5.3. clear
+### 6.3. clear
 
 ```c++
 void clear() override
@@ -189,7 +197,7 @@ map.clear();
 ASSERT_EQ(map.getSize(), 0);
 ```
 
-### 5.4. find
+### 6.4. find
 
 ```c++
 Success find(const K& key, V& value) override
@@ -212,7 +220,7 @@ ASSERT_EQ(status, Success::SUCCESS);
 ASSERT_EQ(value, 1);
 ```
 
-### 5.5. getCapacity
+### 6.5. getCapacity
 
 ```c++
 FwSizeType getCapacity() const override
@@ -228,7 +236,7 @@ ExternalArrayMap<U16, U32> map(entries, capacity);
 ASSERT_EQ(map.getCapacity(), capacity);
 ```
 
-### 5.6. getHeadIterator
+### 6.6. getHeadIterator
 
 ```c++
 const Iterator* getHeadIterator const override
@@ -252,7 +260,7 @@ ASSERT_EQ(e->getKey(), 0);
 ASSERT_EQ(e->getValue(), 1);
 ```
 
-### 5.7. getSize
+### 6.7. getSize
 
 ```c++
 FwSizeType getSize() const override
@@ -273,7 +281,7 @@ size = map.getSize();
 ASSERT_EQ(size, 1);
 ```
 
-### 5.8. insert
+### 6.8. insert
 
 ```c++
 Success insert(const K& key, const V& value) override
@@ -294,7 +302,7 @@ size = map.getSize();
 ASSERT_EQ(size, 1);
 ```
 
-### 5.9. remove
+### 6.9. remove
 
 ```c++
 Success remove(const K& key, V& value) override
@@ -325,7 +333,7 @@ ASSERT_EQ(size, 0);
 ASSERT_EQ(value, 1);
 ```
 
-### 5.10. setStorage (Typed Data)
+### 6.10. setStorage (Typed Data)
 
 ```c++
 void setStorage(Entry* entries, FwSizeType capacity)
@@ -343,15 +351,15 @@ ExternalArrayMap<U16, U32>::Entry entries[capacity];
 map.setStorage(entries, capacity);
 ```
 
-### 5.11. setStorage (Untyped Data)
+### 6.11. setStorage (Untyped Data)
 
 ```c++
 void setStorage(ByteArray data, FwSizeType capacity)
 ```
 
 `data` must be aligned according to 
-[`getByteArrayAlignment()`](#61-getbytearrayalignment) and must
-contain at least [`getByteArraySize(size)`](#62-getbytearraysize) bytes.
+[`getByteArrayAlignment()`](#getByteArrayAlignment) and must
+contain at least [`getByteArraySize(size)`](#getByteArraySize) bytes.
 
 1. Call `m_entries.setStorage(data, capacity)`.
 
@@ -366,9 +374,10 @@ ExternalArrayMap<U16, U32> map;
 map.setStorage(ByteArray(&bytes[0], sizeof bytes), capacity);
 ```
 
-## 6. Public Static Functions
+## 7. Public Static Functions
 
-### 6.1. getByteArrayAlignment
+<a name="getByteArrayAlignment"></a>
+### 7.1. getByteArrayAlignment
 
 ```c++
 static constexpr U8 getByteArrayAlignment()
@@ -376,7 +385,8 @@ static constexpr U8 getByteArrayAlignment()
 
 Return `ArraySetOrMapImpl<Entry>::getByteArrayAlignment()`.
 
-### 6.2. getByteArraySize
+<a name="getByteArraySize"></a>
+### 7.2. getByteArraySize
 
 ```c++
 static constexpr FwSizeType getByteArraySize(FwSizeType capacity)

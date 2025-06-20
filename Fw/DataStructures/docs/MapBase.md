@@ -13,6 +13,7 @@ It represents an abstract base class for a map.
 |`typename`|`K`|The type of a key in the map|
 |`typename`|`V`|The type of a value in the map|
 
+<a name="PublicTypes"></a>
 ## 2. Public Types
 
 `MapBase` defines the following public types:
@@ -20,8 +21,6 @@ It represents an abstract base class for a map.
 |Name|Definition|
 |----|----------|
 |`Iterator`|Alias of [`MapIterator<K, V>`](MapIterator.md)|
-|`Entry`|Alias of [`SetOrMapIterator<K, V>`](SetOrMapIterator.md)|
-
 
 ## 3. Private Constructors
 

@@ -19,7 +19,16 @@ as the set implementation.
 `ExternalArraySet` is publicly derived from
 [`SetBase<T>`](SetBase.md).
 
-## 3. Private Member Variables
+
+## 3. Public Types
+
+`ExternalArrayMap` defines the following public types:
+
+|Name|Definition|
+|----|----------|
+|`Entry`|Alias of [`SetOrMapIterator<K, V>`](SetOrMapIterator.md)|
+
+## 4. Private Member Variables
 
 `ExternalArraySet` has the following private member variables.
 
@@ -27,16 +36,16 @@ as the set implementation.
 |----|----|-------|-------------|
 |`m_impl`|[`ArraySetOrMapImpl<T, Nil>`](ArraySetOrMapImpl.md)|The set implementation|C++ default initialization|
 
-The type `Nil` is defined [in the base class](SetBase.md#2-public-types).
+The type `Nil` is defined [in the base class](SetBase.md#PublicTypes).
 
 ```mermaid
 classDiagram
     ExternalArraySet *-- ArraySetOrMapImpl
 ```
 
-## 4. Public Constructors and Destructors
+## 5. Public Constructors and Destructors
 
-### 4.1. Zero-Argument Constructor
+### 5.1. Zero-Argument Constructor
 
 ```c++
 ExternalArraySet()
@@ -49,7 +58,7 @@ _Example:_
 ExternalArraySet<U32> set;
 ```
 
-### 4.2. Constructor Providing Typed Backing Storage
+### 5.2. Constructor Providing Typed Backing Storage
 
 ```c++
 ExternalArraySet(Entry* entries, FwSizeType capacity)
@@ -66,15 +75,15 @@ ExternalArraySet<U32>::Entry entries[capacity];
 ExternalArraySet<U32> set(entries, capacity);
 ```
 
-### 4.3. Constructor Providing Untyped Backing Storage
+### 5.3. Constructor Providing Untyped Backing Storage
 
 ```c++
 ExternalArraySet(ByteArray data, FwSizeType capacity)
 ```
 
 `data` must be aligned according to 
-[`getByteArrayAlignment()`](#61-getbytearrayalignment) and must
-contain at least [`getByteArraySize(size)`](#62-getbytearraysize) bytes.
+[`getByteArrayAlignment()`](#getByteArrayAlignment) and must
+contain at least [`getByteArraySize(size)`](#getByteArraySize) bytes.
 
 Call `m_impl.setStorage(data, capacity)`.
 
@@ -87,7 +96,7 @@ alignas(alignment) U8 bytes[byteArraySize];
 ExternalArraySet<U32> set(ByteArray(&bytes[0], sizeof bytes), capacity);
 ```
 
-### 4.4. Copy Constructor
+### 5.4. Copy Constructor
 
 ```c++
 ExternalArraySet(const ExternalArraySet<T>& set)
@@ -109,7 +118,7 @@ ExternalArraySet<U32> m2(m1);
 ASSERT_EQ(m2.getSize(), 1);
 ```
 
-### 4.5. Destructor
+### 5.5. Destructor
 
 ```c++
 ~ExternalArraySet() override
@@ -117,9 +126,9 @@ ASSERT_EQ(m2.getSize(), 1);
 
 Defined as `= default`.
 
-## 5. Public Member Functions
+## 6. Public Member Functions
 
-### 5.1. operator=
+### 6.1. operator=
 
 ```c++
 ExternalArraySet<T>& operator=(const ExternalArraySet<T>& set)
@@ -148,7 +157,7 @@ m2 = m1;
 ASSERT_EQ(m2.getSize(), 1);
 ```
 
-### 5.2. at
+### 6.2. at
 
 ```c++
 const V& at(FwSizeType index) const
@@ -167,7 +176,7 @@ ASSERT_EQ(set.at(0), 42);
 ASSERT_DEATH(set.at(1), "Assert");
 ```
 
-### 5.3. clear
+### 6.3. clear
 
 ```c++
 void clear() override
@@ -186,7 +195,7 @@ set.clear();
 ASSERT_EQ(set.getSize(), 0);
 ```
 
-### 5.4. find
+### 6.4. find
 
 ```c++
 Success find(const T& element) override
@@ -207,7 +216,7 @@ status = set.find(42);
 ASSERT_EQ(status, Success::SUCCESS);
 ```
 
-### 5.5. getCapacity
+### 6.5. getCapacity
 
 ```c++
 FwSizeType getCapacity() const override
@@ -223,7 +232,7 @@ ExternalArraySet<U32> set(entries, capacity);
 ASSERT_EQ(set.getCapacity(), capacity);
 ```
 
-### 5.6. getHeadIterator
+### 6.6. getHeadIterator
 
 ```c++
 const Iterator* getHeadIterator const override
@@ -246,7 +255,7 @@ FW_ASSERT(e != nullptr);
 ASSERT_EQ(e->getElement(), 42);
 ```
 
-### 5.7. getSize
+### 6.7. getSize
 
 ```c++
 FwSizeType getSize() const override
@@ -267,7 +276,7 @@ size = set.getSize();
 ASSERT_EQ(size, 1);
 ```
 
-### 5.8. insert
+### 6.8. insert
 
 ```c++
 Success insert(const T& element) override
@@ -288,7 +297,7 @@ size = set.getSize();
 ASSERT_EQ(size, 1);
 ```
 
-### 5.9. remove
+### 6.9. remove
 
 ```c++
 Success remove(const T& element) override
@@ -319,7 +328,7 @@ ASSERT_EQ(status, Success::SUCCESS);
 ASSERT_EQ(size, 0);
 ```
 
-### 5.10. setStorage (Typed Data)
+### 6.10. setStorage (Typed Data)
 
 ```c++
 void setStorage(Entry* entries, FwSizeType capacity)
@@ -337,15 +346,15 @@ ExternalArraySet<U32>::Entry entries[capacity];
 set.setStorage(entries, capacity);
 ```
 
-### 5.11. setStorage (Untyped Data)
+### 6.11. setStorage (Untyped Data)
 
 ```c++
 void setStorage(ByteArray data, FwSizeType capacity)
 ```
 
 `data` must be aligned according to 
-[`getByteArrayAlignment()`](#61-getbytearrayalignment) and must
-contain at least [`getByteArraySize(size)`](#62-getbytearraysize) bytes.
+[`getByteArrayAlignment()`](#getByteArrayAlignment) and must
+contain at least [`getByteArraySize(size)`](#getByteArraySize) bytes.
 
 1. Call `m_entries.setStorage(data, capacity)`.
 
@@ -360,9 +369,10 @@ ExternalArraySet<U32> set;
 set.setStorage(ByteArray(&bytes[0], sizeof bytes), capacity);
 ```
 
-## 6. Public Static Functions
+## 7. Public Static Functions
 
-### 6.1. getByteArrayAlignment
+<a name="getByteArrayAlignment"></a>
+### 7.1. getByteArrayAlignment
 
 ```c++
 static constexpr U8 getByteArrayAlignment()
@@ -370,7 +380,8 @@ static constexpr U8 getByteArrayAlignment()
 
 Return `ArraySetOrMapImpl<Entry>::getByteArrayAlignment()`.
 
-### 6.2. getByteArraySize
+<a name="getByteArraySize"></a>
+### 7.2. getByteArraySize
 
 ```c++
 static constexpr FwSizeType getByteArraySize(FwSizeType capacity)
