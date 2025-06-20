@@ -16,7 +16,7 @@ namespace Fw {
 
 template <typename K, typename V>
 class MapBase {
-  private:
+  public:
     // ----------------------------------------------------------------------
     // Public types
     // ----------------------------------------------------------------------
