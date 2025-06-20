@@ -4,6 +4,7 @@
 #include "Fw/Buffer/Buffer.hpp"
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <gtest/gtest.h>
+#include "Fw/Types/test/ut/SerializeBufferBaseTester.hpp"
 
 namespace Fw {
     class BufferTester{
@@ -129,7 +130,7 @@ namespace Fw {
 
                 Fw::ExternalSerializeBuffer externalSerializeBuffer(wire, sizeof(wire));
                 externalSerializeBuffer.serialize(buffer);
-                ASSERT_LT(externalSerializeBuffer.m_serLoc, sizeof(data));
+                Fw::SerializeBufferBaseTester::verifySerLocLT(externalSerializeBuffer, sizeof(data));
 
                 Fw::Buffer buffer_new;
                 externalSerializeBuffer.deserialize(buffer_new);

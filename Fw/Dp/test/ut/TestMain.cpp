@@ -12,6 +12,7 @@
 #include "Fw/Test/UnitTest.hpp"
 #include "STest/Pick/Pick.hpp"
 #include "STest/Random/Random.hpp"
+#include "Fw/Dp/test/ut/DpContainerTester.hpp"
 
 using namespace Fw;
 
@@ -83,13 +84,13 @@ void checkHeader(FwDpIdType id, Fw::Buffer& buffer, DpContainer& container) {
 
 void checkBuffers(DpContainer& container, FwSizeType bufferSize) {
     // Check the packet buffer
-    ASSERT_EQ(container.m_buffer.getSize(), bufferSize);
+    ASSERT_TRUE(Fw::DpContainerTester::verifyBufferSize(container, bufferSize));
     // Check the data buffer
-    U8* const buffPtr = container.m_buffer.getData();
+    U8* const buffPtr = Fw::DpContainerTester::getBufferPointers(container);
     U8* const dataPtr = &buffPtr[Fw::DpContainer::DATA_OFFSET];
-    const FwSizeType dataCapacity = container.m_buffer.getSize() - Fw::DpContainer::MIN_PACKET_SIZE;
-    ASSERT_EQ(container.m_dataBuffer.getBuffAddr(), dataPtr);
-    ASSERT_EQ(container.m_dataBuffer.getBuffCapacity(), dataCapacity);
+    const FwSizeType dataCapacity = bufferSize - Fw::DpContainer::MIN_PACKET_SIZE;
+    ASSERT_TRUE(Fw::DpContainerTester::verifyDataBufferAddress(container, dataPtr));
+    ASSERT_TRUE(Fw::DpContainerTester::verifyDataBufferCapacity(container, dataCapacity));
 }
 
 void fillWithData(Fw::Buffer& buffer) {
