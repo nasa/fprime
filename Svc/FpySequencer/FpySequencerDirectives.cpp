@@ -484,8 +484,11 @@ Signal FpySequencer::not_directiveHandler(const FpySequencer_NotDirective& direc
 
 Signal FpySequencer::exit_directiveHandler(const FpySequencer_ExitDirective& directive, DirectiveError& error) {
     if (directive.getsuccess()) {
+        // just goto the end of the sequence
+        this->m_runtime.nextStatementIndex = this->m_sequenceObj.getheader().getstatementCount();
         return Signal::stmtResponse_success;
     }
+    // otherwise, kill the sequence here
     return Signal::stmtResponse_failure;
 }
 }  // namespace Svc
