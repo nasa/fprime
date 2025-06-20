@@ -53,7 +53,7 @@ module ComCcsds {
         """
 
         phase Fpp.ToCpp.Phases.tearDownComponents """
-        ComCcsds::cmdSeq.deallocateBuffer(ComCcsds::Allocation::mallocator);
+        //ComCcsds::cmdSeq.deallocateBuffer(ComCcsds::Allocation::mallocator);
         """
     }
 
@@ -73,7 +73,7 @@ module ComCcsds {
         """
 
         phase Fpp.ToCpp.Phases.tearDownComponents """
-        ComCcsds::frameAccumulator.cleanup();
+        //ComCcsds::frameAccumulator.cleanup();
         """
     }
 
@@ -106,7 +106,7 @@ module ComCcsds {
         """
 
         phase Fpp.ToCpp.Phases.tearDownComponents """
-        ComCcsds::commsBufferManager.cleanup();
+        //ComCcsds::commsBufferManager.cleanup();
         """
     }
 
