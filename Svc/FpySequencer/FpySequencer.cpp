@@ -281,12 +281,11 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
     // in the same file?
 
     // pull the cmd index (modulo 2^16) out of cmdUid. this should be equal to the first 16 bits of the
-    // m_statementsDispatched variable - 1. the -1 is because the count gets incremented immediately
-    // after we dispatch the cmd.
+    // m_statementsDispatched variable
     U16 cmdIndex = static_cast<U16>(cmdUid & 0xFFFF);
     // check for coding errors. at this point in the function, we have definitely dispatched a stmt
     FW_ASSERT(this->m_statementsDispatched > 0);
-    U16 currentCmdIndex = static_cast<U16>((this->m_statementsDispatched - 1) & 0xFFFF);
+    U16 currentCmdIndex = static_cast<U16>((this->m_statementsDispatched) & 0xFFFF);
 
     if (cmdIndex != currentCmdIndex) {
         // we were not awaiting this exact statement, it was a different one with the same opcode. coding error

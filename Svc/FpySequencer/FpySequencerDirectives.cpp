@@ -116,6 +116,13 @@ void FpySequencer::directive_binaryCmp_internalInterfaceHandler(const Svc::FpySe
     this->m_tlm.lastDirectiveError = error;
 }
 
+//! Internal interface handler for directive_not
+void FpySequencer::directive_not_internalInterfaceHandler(const Svc::FpySequencer_NotDirective& directive) {
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->not_directiveHandler(directive, error));
+    this->m_tlm.lastDirectiveError = error;
+}
+
 //! Internal interface handler for directive_waitRel
 Signal FpySequencer::waitRel_directiveHandler(const FpySequencer_WaitRelDirective& directive, DirectiveError& error) {
     Fw::Time wakeupTime = this->getTime();
