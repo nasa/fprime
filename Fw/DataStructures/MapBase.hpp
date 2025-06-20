@@ -94,13 +94,13 @@ class MapBase {
     virtual FwSizeType getSize() const = 0;
 
     //! Insert a (key, value) pair in the map
-    //! \return Success if there is room in the map
+    //! \return SUCCESS if there is room in the map
     virtual Success insert(const K& key,   //!< The key
                            const V& value  //!< The value
                            ) = 0;
     //! Remove a (key, value) pair from the map
     //! Store the value into the value parameter if the key was there
-    //! \return Success if the key was there
+    //! \return SUCCESS if the key was there
     virtual Success remove(const K& key,  //!< The key (input)
                            V& value       //!< The value (output)
                            ) = 0;
