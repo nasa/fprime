@@ -13,7 +13,7 @@ module DataProducts{
             Fw::FileNameString dpDir("./DpCat");
             Fw::FileNameString dpState("./DpCat/DpState.dat");
             Os::FileSystem::createDirectory(dpDir.toChar());
-            DataProducts::dpCat.configure(&dpDir,1,dpState,0, CommsCcsds::Allocation::mallocator);
+            DataProducts::dpCat.configure(&dpDir,1,dpState,0, DataProducts::Allocation::mallocator);
         """
     }
 
@@ -52,13 +52,12 @@ module DataProducts{
         DataProducts::dpBufferManager.setup(
             ConfigConstants::DataProducts_dpBufferManager::DP_BUFFER_MANAGER_ID,
             0,
-            CommsCcsds::Allocation::mallocator,
+            DataProducts::Allocation::mallocator,
             DataProducts::BufferManagerBins::bins
         );
         """
-
         phase Fpp.ToCpp.Phases.tearDownComponents """
-        DataProducts::dpBufferManager.cleanup();
+        DataProducts::dpBufferManager.deallocateBuffer(DataProducts::Allocation::mallocator);
         """
     }
     topology Subtopology {
