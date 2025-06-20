@@ -56,6 +56,10 @@ module DataProducts{
             DataProducts::BufferManagerBins::bins
         );
         """
+
+        phase Fpp.ToCpp.Phases.tearDownComponents """
+        DataProducts::dpBufferManager.cleanup();
+        """
     }
     topology Subtopology {
         #Active Components
