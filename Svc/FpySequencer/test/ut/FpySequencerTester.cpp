@@ -353,6 +353,11 @@ Signal FpySequencerTester::tester_cmd_directiveHandler(const FpySequencer_CmdDir
     return this->cmp.cmd_directiveHandler(directive, err);
 }
 
+Signal FpySequencerTester::tester_deserLocalVar_directiveHandler(const FpySequencer_DeserLocalVarDirective& directive,
+                                                                 DirectiveError& err) {
+    return this->cmp.deserLocalVar_directiveHandler(directive, err);
+}
+
 Fw::Success FpySequencerTester::tester_deserializeDirective(const Fpy::Statement& stmt, Svc::FpySequencer::DirectiveUnion& deserializedDirective){
     return this->cmp.deserializeDirective(stmt, deserializedDirective);
 }

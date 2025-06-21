@@ -392,12 +392,10 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
             this->directive_cmd_internalInterfaceInvoke(directive.cmd);
             break;
         }
+            // fallthrough on purpose
         case Fpy::DirectiveId::DESER_LVAR_8:
-            // fallthrough on purpose
         case Fpy::DirectiveId::DESER_LVAR_4:
-            // fallthrough on purpose
         case Fpy::DirectiveId::DESER_LVAR_2:
-            // fallthrough on purpose
         case Fpy::DirectiveId::DESER_LVAR_1: {
             this->directive_deserLocalVar_internalInterfaceInvoke(directive.deserLocalVar);
             break;
@@ -406,6 +404,7 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
             this->directive_setReg_internalInterfaceInvoke(directive.setReg);
             break;
         }
+            // fallthrough on purpose
         case Fpy::DirectiveId::OR:
         case Fpy::DirectiveId::AND:
         case Fpy::DirectiveId::EQ:
