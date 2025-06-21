@@ -27,11 +27,11 @@ static_assert(Svc::Fpy::NUM_REGISTERS <= std::numeric_limits<U8>::max(),
               "Register count must be below U8 max");
 static_assert(Svc::Fpy::MAX_SEQUENCE_STATEMENT_COUNT <= std::numeric_limits<U16>::max(),
               "Sequence statement count must be below U16 max");
-static_assert(Svc::Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE <= std::numeric_limits<FwSizeType>::max(),
+static_assert(Svc::Fpy::MAX_SERIALIZABLE_REGISTER_SIZE <= std::numeric_limits<FwSizeType>::max(),
               "Local variable buffer size must be below FwSizeType max");
-static_assert(Svc::Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE >= FW_TLM_BUFFER_MAX_SIZE,
+static_assert(Svc::Fpy::MAX_SERIALIZABLE_REGISTER_SIZE >= FW_TLM_BUFFER_MAX_SIZE,
               "Local variable buffer size must be greater than FW_TLM_BUFFER_MAX_SIZE");
-static_assert(Svc::Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE >= FW_PARAM_BUFFER_MAX_SIZE,
+static_assert(Svc::Fpy::MAX_SERIALIZABLE_REGISTER_SIZE >= FW_PARAM_BUFFER_MAX_SIZE,
               "Local variable buffer size must be greater than FW_PARAM_BUFFER_MAX_SIZE");
 
 namespace Svc {
@@ -489,10 +489,10 @@ class FpySequencer : public FpySequencerComponentBase {
         // all the serializable registers in the sequence
         struct SerializableReg {
             // the value buffer of the serReg
-            U8 value[Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE] = {};
+            U8 value[Fpy::MAX_SERIALIZABLE_REGISTER_SIZE] = {};
             // the size of the data in the serReg buf
             FwSizeType valueSize = 0;
-        } serRegs[Fpy::MAX_SEQUENCE_LOCAL_VARIABLES] = {};
+        } serRegs[Fpy::NUM_SERIALIZABLE_REGISTERS] = {};
 
         // all the regs in the sequence. regs are 8 byte
         // values of unspecified type

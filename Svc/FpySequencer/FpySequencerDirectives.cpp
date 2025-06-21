@@ -147,15 +147,15 @@ Signal FpySequencer::waitAbs_directiveHandler(const FpySequencer_WaitAbsDirectiv
 
 //! Internal interface handler for directive_setSerReg
 Signal FpySequencer::setSerReg_directiveHandler(const FpySequencer_SetSerRegDirective& directive, DirectiveError& error) {
-    if (directive.getindex() >= Fpy::MAX_SEQUENCE_LOCAL_VARIABLES) {
+    if (directive.getindex() >= Fpy::NUM_SERIALIZABLE_REGISTERS) {
         error = DirectiveError::SER_REG_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
     // coding error. should have checked this when we were deserializing the directive. prefer to crash
     // rather than just fail the sequence
-    FW_ASSERT(directive.get_valueSize() <= Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE,
+    FW_ASSERT(directive.get_valueSize() <= Fpy::MAX_SERIALIZABLE_REGISTER_SIZE,
               static_cast<FwAssertArgType>(directive.get_valueSize()),
-              static_cast<FwAssertArgType>(Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE));
+              static_cast<FwAssertArgType>(Fpy::MAX_SERIALIZABLE_REGISTER_SIZE));
 
     this->m_runtime.serRegs[directive.getindex()].valueSize = directive.get_valueSize();
 
@@ -203,11 +203,11 @@ Signal FpySequencer::noOp_directiveHandler(const FpySequencer_NoOpDirective& dir
 }
 
 Signal FpySequencer::getTlm_directiveHandler(const FpySequencer_GetTlmDirective& directive, DirectiveError& error) {
-    if (directive.getvalueDestSerReg() >= Fpy::MAX_SEQUENCE_LOCAL_VARIABLES) {
+    if (directive.getvalueDestSerReg() >= Fpy::NUM_SERIALIZABLE_REGISTERS) {
         error = DirectiveError::SER_REG_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
-    if (directive.gettimeDestSerReg() >= Fpy::MAX_SEQUENCE_LOCAL_VARIABLES) {
+    if (directive.gettimeDestSerReg() >= Fpy::NUM_SERIALIZABLE_REGISTERS) {
         error = DirectiveError::SER_REG_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
@@ -226,7 +226,7 @@ Signal FpySequencer::getTlm_directiveHandler(const FpySequencer_GetTlmDirective&
     }
 
     // this is an assert in the hpp, the buf should never be bigger than TLM_BUF_MAX
-    FW_ASSERT(tlmValue.getBuffLength() <= Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE,
+    FW_ASSERT(tlmValue.getBuffLength() <= Fpy::MAX_SERIALIZABLE_REGISTER_SIZE,
               static_cast<FwAssertArgType>(tlmValue.getBuffLength()));
 
     // copy value into serReg
@@ -238,7 +238,7 @@ Signal FpySequencer::getTlm_directiveHandler(const FpySequencer_GetTlmDirective&
     Runtime::SerializableReg& timeSerReg = this->m_runtime.serRegs[directive.gettimeDestSerReg()];
     // clear the serReg in case of early return
     timeSerReg.valueSize = 0;
-    Fw::ExternalSerializeBuffer esb(timeSerReg.value, Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE);
+    Fw::ExternalSerializeBuffer esb(timeSerReg.value, Fpy::MAX_SERIALIZABLE_REGISTER_SIZE);
     Fw::SerializeStatus stat = esb.serialize(tlmTime);
 
     if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
@@ -252,7 +252,7 @@ Signal FpySequencer::getTlm_directiveHandler(const FpySequencer_GetTlmDirective&
 }
 
 Signal FpySequencer::getPrm_directiveHandler(const FpySequencer_GetPrmDirective& directive, DirectiveError& error) {
-    if (directive.getdestSerRegIndex() >= Fpy::MAX_SEQUENCE_LOCAL_VARIABLES) {
+    if (directive.getdestSerRegIndex() >= Fpy::NUM_SERIALIZABLE_REGISTERS) {
         error = DirectiveError::SER_REG_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
@@ -271,7 +271,7 @@ Signal FpySequencer::getPrm_directiveHandler(const FpySequencer_GetPrmDirective&
         return Signal::stmtResponse_failure;
     }
 
-    if (prmValue.getBuffLength() > Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE) {
+    if (prmValue.getBuffLength() > Fpy::MAX_SERIALIZABLE_REGISTER_SIZE) {
         // cannot setReg the prm value in the serReg
         error = DirectiveError::SER_REG_SERIALIZE_FAILURE;
         return Signal::stmtResponse_failure;
@@ -323,7 +323,7 @@ Signal FpySequencer::cmd_directiveHandler(const FpySequencer_CmdDirective& direc
 }
 
 Signal FpySequencer::deserSerReg_directiveHandler(const FpySequencer_DeserSerRegDirective& directive, DirectiveError& error) {
-    if (directive.getsrcSerRegIdx() >= Fpy::MAX_SEQUENCE_LOCAL_VARIABLES) {
+    if (directive.getsrcSerRegIdx() >= Fpy::NUM_SERIALIZABLE_REGISTERS) {
         error = DirectiveError::SER_REG_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }

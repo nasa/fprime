@@ -63,7 +63,7 @@ TEST_F(FpySequencerTester, goto) {
 }
 
 TEST_F(FpySequencerTester, setSerReg) {
-    U8 buf[Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE];
+    U8 buf[Fpy::MAX_SERIALIZABLE_REGISTER_SIZE];
     memset(buf, 1, sizeof(buf));
     FpySequencer_SetSerRegDirective directive(static_cast<U8>(0), 1, static_cast<FwSizeType>(sizeof(buf)));
     DirectiveError err = DirectiveError::NO_ERROR;
@@ -74,13 +74,13 @@ TEST_F(FpySequencerTester, setSerReg) {
     ASSERT_EQ(memcmp(buf, tester_get_m_runtime_ptr()->serRegs[0].value, sizeof(buf)), 0);
 
     // outside of serReg range
-    directive.setindex(Fpy::MAX_SEQUENCE_LOCAL_VARIABLES);
+    directive.setindex(Fpy::NUM_SERIALIZABLE_REGISTERS);
     result = tester_setSerReg_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::SER_REG_OUT_OF_BOUNDS);
 
     // check what happens if buf too big
-    directive = FpySequencer_SetSerRegDirective(static_cast<U8>(0), 1, Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE + 1);
+    directive = FpySequencer_SetSerRegDirective(static_cast<U8>(0), 1, Fpy::MAX_SERIALIZABLE_REGISTER_SIZE + 1);
 
     ASSERT_DEATH_IF_SUPPORTED(tester_setSerReg_directiveHandler(directive, err), "Assert: ");
 }
@@ -174,7 +174,7 @@ TEST_F(FpySequencerTester, getTlm) {
     directive.setchanId(456);
 
     // try setting bad value serReg
-    directive.setvalueDestSerReg(Fpy::MAX_SEQUENCE_LOCAL_VARIABLES);
+    directive.setvalueDestSerReg(Fpy::NUM_SERIALIZABLE_REGISTERS);
     result = tester_getTlm_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::SER_REG_OUT_OF_BOUNDS);
@@ -182,7 +182,7 @@ TEST_F(FpySequencerTester, getTlm) {
     directive.setvalueDestSerReg(0);
 
     // try setting bad time serReg
-    directive.settimeDestSerReg(Fpy::MAX_SEQUENCE_LOCAL_VARIABLES);
+    directive.settimeDestSerReg(Fpy::NUM_SERIALIZABLE_REGISTERS);
     result = tester_getTlm_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::SER_REG_OUT_OF_BOUNDS);
@@ -214,7 +214,7 @@ TEST_F(FpySequencerTester, getPrm) {
     directive.setprmId(456);
 
     // try setting bad serReg
-    directive.setdestSerRegIndex(Fpy::MAX_SEQUENCE_LOCAL_VARIABLES);
+    directive.setdestSerRegIndex(Fpy::NUM_SERIALIZABLE_REGISTERS);
     result = tester_getPrm_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::SER_REG_OUT_OF_BOUNDS);
@@ -300,7 +300,7 @@ TEST_F(FpySequencerTester, deserSerReg) {
     ASSERT_EQ(tester_get_m_runtime_ptr()->regs[0], 0x0123456789ABCDEF);
 
     // Error case: Out-of-bounds serializable register index
-    directive = FpySequencer_DeserSerRegDirective(Fpy::MAX_SEQUENCE_LOCAL_VARIABLES, 0, 0, 1);
+    directive = FpySequencer_DeserSerRegDirective(Fpy::NUM_SERIALIZABLE_REGISTERS, 0, 0, 1);
     result = tester_deserSerReg_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::SER_REG_OUT_OF_BOUNDS);
@@ -1072,9 +1072,9 @@ TEST_F(FpySequencerTester, deserialize_setSerReg) {
     this->clearHistory();
     clearSeq();
     // run with valueSize too big
-    if (Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE + 6 <= FW_STATEMENT_ARG_BUFFER_MAX_SIZE) {
+    if (Fpy::MAX_SERIALIZABLE_REGISTER_SIZE + 6 <= FW_STATEMENT_ARG_BUFFER_MAX_SIZE) {
         // we can test this
-        setSerReg = FpySequencer_SetSerRegDirective(0, 123, Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE + 1);
+        setSerReg = FpySequencer_SetSerRegDirective(0, 123, Fpy::MAX_SERIALIZABLE_REGISTER_SIZE + 1);
         add_SET_SER_REG(setSerReg);
         result = tester_deserializeDirective(seq.getstatements()[0], actual);
         ASSERT_EQ(result, Fw::Success::FAILURE);

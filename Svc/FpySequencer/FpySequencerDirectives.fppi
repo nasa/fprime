@@ -13,7 +13,7 @@ struct SetSerRegDirective {
     index: U8
 
     @ the value of the serializable register
-    value: [Fpy.MAX_LOCAL_VARIABLE_BUFFER_SIZE] U8
+    value: [Fpy.MAX_SERIALIZABLE_REGISTER_SIZE] U8
 
     @ the length of the value byte array. 
     # note, the underscore signifies this field is implied and 
@@ -59,7 +59,7 @@ struct CmdDirective {
     opCode: FwOpcodeType
     @ the arg buf of the cmd
     # TODO please don't let me merge this. need to find a better const here
-    argBuf: [Fpy.MAX_LOCAL_VARIABLE_BUFFER_SIZE] U8
+    argBuf: [Fpy.MAX_SERIALIZABLE_REGISTER_SIZE] U8
 
     @ the length of the arg buf byte array
     _argBufSize: FwSizeType

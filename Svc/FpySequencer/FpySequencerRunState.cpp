@@ -102,7 +102,7 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
             FwSizeType valueSize = argBuf.getBuffLeft();
 
             // check to make sure the value will fit in the FpySequencer_SetSerRegDirective::value buf
-            if (valueSize > Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE) {
+            if (valueSize > Fpy::MAX_SERIALIZABLE_REGISTER_SIZE) {
                 this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), this->m_runtime.nextStatementIndex - 1,
                                                                Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR,
                                                                argBuf.getBuffLeft(), argBuf.getBuffLength());
@@ -194,7 +194,7 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
             FwSizeType cmdArgBufSize = argBuf.getBuffLeft();
 
             // check to make sure the value will fit in the FpySequencer_CmdDirective::argBuf
-            if (cmdArgBufSize > Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE) {
+            if (cmdArgBufSize > Fpy::MAX_SERIALIZABLE_REGISTER_SIZE) {
                 this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), this->m_runtime.nextStatementIndex - 1,
                                                                Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR,
                                                                argBuf.getBuffLeft(), argBuf.getBuffLength());
