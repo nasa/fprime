@@ -73,8 +73,8 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
             }
             break;
         }
-        case Fpy::DirectiveId::SET_LVAR: {
-            new (&deserializedDirective.setLVar) FpySequencer_SetLocalVarDirective();
+        case Fpy::DirectiveId::SET_SER_REG: {
+            new (&deserializedDirective.setSerReg) FpySequencer_SetSerRegDirective();
             // set local var has some custom deserialization behavior
             // we don't write a custom class for it though because that deserialization behavior only
             // applies for the initial time we deserialize it out of the statement
@@ -94,14 +94,14 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
                 return Fw::Success::FAILURE;
             }
 
-            deserializedDirective.setLVar.setindex(index);
+            deserializedDirective.setSerReg.setindex(index);
 
             // okay, now deserialize the remaining bytes in the stmt arg buf into the value buf
 
             //  how many bytes are left?
             FwSizeType valueSize = argBuf.getBuffLeft();
 
-            // check to make sure the value will fit in the FpySequencer_SetLocalVarDirective::value buf
+            // check to make sure the value will fit in the FpySequencer_SetSerRegDirective::value buf
             if (valueSize > Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE) {
                 this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), this->m_runtime.nextStatementIndex - 1,
                                                                Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR,
@@ -110,7 +110,7 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
             }
 
             // okay, it will fit. put it in
-            status = argBuf.deserialize(deserializedDirective.setLVar.getvalue(), valueSize, true);
+            status = argBuf.deserialize(deserializedDirective.setSerReg.getvalue(), valueSize, true);
 
             if (status != Fw::SerializeStatus::FW_SERIALIZE_OK) {
                 this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), this->m_runtime.nextStatementIndex - 1,
@@ -122,7 +122,7 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
             FW_ASSERT(argBuf.getBuffLeft() == 0, static_cast<FwAssertArgType>(argBuf.getBuffLeft()));
 
             // and set the buf size now that we know it
-            deserializedDirective.setLVar.set_valueSize(valueSize);
+            deserializedDirective.setSerReg.set_valueSize(valueSize);
             break;
         }
         case Fpy::DirectiveId::GOTO: {
@@ -178,7 +178,7 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
         }
         case Fpy::DirectiveId::CMD: {
             new (&deserializedDirective.cmd) FpySequencer_CmdDirective();
-            // same deserialization behavior as SET_LVAR
+            // same deserialization behavior as SET_SER_REG
 
             // first deserialize the opcode
             FwOpcodeType opcode;
@@ -218,37 +218,37 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
             break;
         }
         // fallthrough on purpose
-        case Fpy::DirectiveId::DESER_LVAR_8:
-        case Fpy::DirectiveId::DESER_LVAR_4:
-        case Fpy::DirectiveId::DESER_LVAR_2:
-        case Fpy::DirectiveId::DESER_LVAR_1: {
-            new (&deserializedDirective.deserLocalVar) FpySequencer_DeserLocalVarDirective();
+        case Fpy::DirectiveId::DESER_SER_REG_8:
+        case Fpy::DirectiveId::DESER_SER_REG_4:
+        case Fpy::DirectiveId::DESER_SER_REG_2:
+        case Fpy::DirectiveId::DESER_SER_REG_1: {
+            new (&deserializedDirective.deserSerReg) FpySequencer_DeserSerRegDirective();
 
             U8 deserSize;
 
-            if (stmt.getopCode() == Fpy::DirectiveId::DESER_LVAR_1) {
+            if (stmt.getopCode() == Fpy::DirectiveId::DESER_SER_REG_1) {
                 deserSize = 1;
-            } else if (stmt.getopCode() == Fpy::DirectiveId::DESER_LVAR_2) {
+            } else if (stmt.getopCode() == Fpy::DirectiveId::DESER_SER_REG_2) {
                 deserSize = 2;
-            } else if (stmt.getopCode() == Fpy::DirectiveId::DESER_LVAR_4) {
+            } else if (stmt.getopCode() == Fpy::DirectiveId::DESER_SER_REG_4) {
                 deserSize = 4;
-            } else if (stmt.getopCode() == Fpy::DirectiveId::DESER_LVAR_8) {
+            } else if (stmt.getopCode() == Fpy::DirectiveId::DESER_SER_REG_8) {
                 deserSize = 8;
             } else {
                 FW_ASSERT(0, static_cast<FwAssertArgType>(stmt.getopCode()));
                 return Fw::Success::FAILURE;
             }
 
-            deserializedDirective.deserLocalVar.set_deserSize(deserSize);
+            deserializedDirective.deserSerReg.set_deserSize(deserSize);
 
-            U8 srcLvarIdx;
-            status = argBuf.deserialize(srcLvarIdx);
+            U8 srcSerRegIdx;
+            status = argBuf.deserialize(srcSerRegIdx);
             if (status != Fw::SerializeStatus::FW_SERIALIZE_OK) {
                 this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), this->m_runtime.nextStatementIndex - 1,
                                                                status, argBuf.getBuffLeft(), argBuf.getBuffLength());
                 return Fw::Success::FAILURE;
             }
-            deserializedDirective.deserLocalVar.setsrcLvarIdx(srcLvarIdx);
+            deserializedDirective.deserSerReg.setsrcSerRegIdx(srcSerRegIdx);
 
             FwSizeType srcOffset;
             status = argBuf.deserialize(srcOffset);
@@ -257,7 +257,7 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
                                                                status, argBuf.getBuffLeft(), argBuf.getBuffLength());
                 return Fw::Success::FAILURE;
             }
-            deserializedDirective.deserLocalVar.setsrcOffset(srcOffset);
+            deserializedDirective.deserSerReg.setsrcOffset(srcOffset);
 
             U8 destReg;
             status = argBuf.deserialize(destReg);
@@ -266,7 +266,7 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
                                                                status, argBuf.getBuffLeft(), argBuf.getBuffLength());
                 return Fw::Success::FAILURE;
             }
-            deserializedDirective.deserLocalVar.setdestReg(destReg);
+            deserializedDirective.deserSerReg.setdestReg(destReg);
             break;
         }
         case Fpy::DirectiveId::SET_REG: {
@@ -364,8 +364,8 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
             this->directive_waitAbs_internalInterfaceInvoke(directive.waitAbs);
             break;
         }
-        case Fpy::DirectiveId::SET_LVAR: {
-            this->directive_setLocalVar_internalInterfaceInvoke(directive.setLVar);
+        case Fpy::DirectiveId::SET_SER_REG: {
+            this->directive_setSerReg_internalInterfaceInvoke(directive.setSerReg);
             break;
         }
         case Fpy::DirectiveId::GOTO: {
@@ -393,11 +393,11 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
             break;
         }
             // fallthrough on purpose
-        case Fpy::DirectiveId::DESER_LVAR_8:
-        case Fpy::DirectiveId::DESER_LVAR_4:
-        case Fpy::DirectiveId::DESER_LVAR_2:
-        case Fpy::DirectiveId::DESER_LVAR_1: {
-            this->directive_deserLocalVar_internalInterfaceInvoke(directive.deserLocalVar);
+        case Fpy::DirectiveId::DESER_SER_REG_8:
+        case Fpy::DirectiveId::DESER_SER_REG_4:
+        case Fpy::DirectiveId::DESER_SER_REG_2:
+        case Fpy::DirectiveId::DESER_SER_REG_1: {
+            this->directive_deserSerReg_internalInterfaceInvoke(directive.deserSerReg);
             break;
         }
         case Fpy::DirectiveId::SET_REG: {

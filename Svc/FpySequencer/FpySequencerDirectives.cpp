@@ -28,7 +28,7 @@ void FpySequencer::sendSignal(Signal signal) {
 }
 
 I64& FpySequencer::reg(U8 idx) {
-    return this->m_runtime.registers[idx];
+    return this->m_runtime.regs[idx];
 }
 
 //! Internal interface handler for directive_waitRel
@@ -45,11 +45,11 @@ void FpySequencer::directive_waitAbs_internalInterfaceHandler(const FpySequencer
     this->m_tlm.lastDirectiveError = error;
 }
 
-//! Internal interface handler for directive_setLocalVar
-void FpySequencer::directive_setLocalVar_internalInterfaceHandler(
-    const Svc::FpySequencer_SetLocalVarDirective& directive) {
+//! Internal interface handler for directive_setSerReg
+void FpySequencer::directive_setSerReg_internalInterfaceHandler(
+    const Svc::FpySequencer_SetSerRegDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
-    this->sendSignal(this->setLocalVar_directiveHandler(directive, error));
+    this->sendSignal(this->setSerReg_directiveHandler(directive, error));
     this->m_tlm.lastDirectiveError = error;
 }
 
@@ -95,10 +95,10 @@ void FpySequencer::directive_cmd_internalInterfaceHandler(const Svc::FpySequence
     this->m_tlm.lastDirectiveError = error;
 }
 
-//! Internal interface handler for directive_deserLocalVar
-void FpySequencer::directive_deserLocalVar_internalInterfaceHandler(const Svc::FpySequencer_DeserLocalVarDirective& directive) {
+//! Internal interface handler for directive_deserSerReg
+void FpySequencer::directive_deserSerReg_internalInterfaceHandler(const Svc::FpySequencer_DeserSerRegDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
-    this->sendSignal(this->deserLocalVar_directiveHandler(directive, error));
+    this->sendSignal(this->deserSerReg_directiveHandler(directive, error));
     this->m_tlm.lastDirectiveError = error;
 }
 
@@ -145,10 +145,10 @@ Signal FpySequencer::waitAbs_directiveHandler(const FpySequencer_WaitAbsDirectiv
     return Signal::stmtResponse_beginSleep;
 }
 
-//! Internal interface handler for directive_setLocalVar
-Signal FpySequencer::setLocalVar_directiveHandler(const FpySequencer_SetLocalVarDirective& directive, DirectiveError& error) {
+//! Internal interface handler for directive_setSerReg
+Signal FpySequencer::setSerReg_directiveHandler(const FpySequencer_SetSerRegDirective& directive, DirectiveError& error) {
     if (directive.getindex() >= Fpy::MAX_SEQUENCE_LOCAL_VARIABLES) {
-        error = DirectiveError::LVAR_OUT_OF_BOUNDS;
+        error = DirectiveError::SER_REG_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
     // coding error. should have checked this when we were deserializing the directive. prefer to crash
@@ -157,9 +157,9 @@ Signal FpySequencer::setLocalVar_directiveHandler(const FpySequencer_SetLocalVar
               static_cast<FwAssertArgType>(directive.get_valueSize()),
               static_cast<FwAssertArgType>(Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE));
 
-    this->m_runtime.localVariables[directive.getindex()].valueSize = directive.get_valueSize();
+    this->m_runtime.serRegs[directive.getindex()].valueSize = directive.get_valueSize();
 
-    (void)memcpy(this->m_runtime.localVariables[directive.getindex()].value, directive.getvalue(),
+    (void)memcpy(this->m_runtime.serRegs[directive.getindex()].value, directive.getvalue(),
                  static_cast<size_t>(directive.get_valueSize()));
 
     return Signal::stmtResponse_success;
@@ -203,12 +203,12 @@ Signal FpySequencer::noOp_directiveHandler(const FpySequencer_NoOpDirective& dir
 }
 
 Signal FpySequencer::getTlm_directiveHandler(const FpySequencer_GetTlmDirective& directive, DirectiveError& error) {
-    if (directive.getvalueDestLvar() >= Fpy::MAX_SEQUENCE_LOCAL_VARIABLES) {
-        error = DirectiveError::LVAR_OUT_OF_BOUNDS;
+    if (directive.getvalueDestSerReg() >= Fpy::MAX_SEQUENCE_LOCAL_VARIABLES) {
+        error = DirectiveError::SER_REG_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
-    if (directive.gettimeDestLvar() >= Fpy::MAX_SEQUENCE_LOCAL_VARIABLES) {
-        error = DirectiveError::LVAR_OUT_OF_BOUNDS;
+    if (directive.gettimeDestSerReg() >= Fpy::MAX_SEQUENCE_LOCAL_VARIABLES) {
+        error = DirectiveError::SER_REG_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
     if (!this->isConnected_getTlmChan_OutputPort(0)) {
@@ -229,31 +229,31 @@ Signal FpySequencer::getTlm_directiveHandler(const FpySequencer_GetTlmDirective&
     FW_ASSERT(tlmValue.getBuffLength() <= Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE,
               static_cast<FwAssertArgType>(tlmValue.getBuffLength()));
 
-    // copy value into lvar
-    Runtime::LocalVariable& valueLvar = this->m_runtime.localVariables[directive.getvalueDestLvar()];
-    memcpy(valueLvar.value, tlmValue.getBuffAddr(), static_cast<size_t>(tlmValue.getBuffLength()));
-    valueLvar.valueSize = tlmValue.getBuffLength();
+    // copy value into serReg
+    Runtime::SerializableReg& valueSerReg = this->m_runtime.serRegs[directive.getvalueDestSerReg()];
+    memcpy(valueSerReg.value, tlmValue.getBuffAddr(), static_cast<size_t>(tlmValue.getBuffLength()));
+    valueSerReg.valueSize = tlmValue.getBuffLength();
 
-    // serialize time into lvar
-    Runtime::LocalVariable& timeLvar = this->m_runtime.localVariables[directive.gettimeDestLvar()];
-    // clear the lvar in case of early return
-    timeLvar.valueSize = 0;
-    Fw::ExternalSerializeBuffer esb(timeLvar.value, Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE);
+    // serialize time into serReg
+    Runtime::SerializableReg& timeSerReg = this->m_runtime.serRegs[directive.gettimeDestSerReg()];
+    // clear the serReg in case of early return
+    timeSerReg.valueSize = 0;
+    Fw::ExternalSerializeBuffer esb(timeSerReg.value, Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE);
     Fw::SerializeStatus stat = esb.serialize(tlmTime);
 
     if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
-        // failed to serialize Fw::Time into the lvar
-        error = DirectiveError::LVAR_SERIALIZE_FAILURE;
+        // failed to serialize Fw::Time into the serReg
+        error = DirectiveError::SER_REG_SERIALIZE_FAILURE;
         return Signal::stmtResponse_failure;
     }
 
-    timeLvar.valueSize = esb.getBuffLength();
+    timeSerReg.valueSize = esb.getBuffLength();
     return Signal::stmtResponse_success;
 }
 
 Signal FpySequencer::getPrm_directiveHandler(const FpySequencer_GetPrmDirective& directive, DirectiveError& error) {
-    if (directive.getdestLvarIndex() >= Fpy::MAX_SEQUENCE_LOCAL_VARIABLES) {
-        error = DirectiveError::LVAR_OUT_OF_BOUNDS;
+    if (directive.getdestSerRegIndex() >= Fpy::MAX_SEQUENCE_LOCAL_VARIABLES) {
+        error = DirectiveError::SER_REG_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
     if (!this->isConnected_prmGet_OutputPort(0)) {
@@ -272,14 +272,14 @@ Signal FpySequencer::getPrm_directiveHandler(const FpySequencer_GetPrmDirective&
     }
 
     if (prmValue.getBuffLength() > Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE) {
-        // cannot setReg the prm value in the lvar
-        error = DirectiveError::LVAR_SERIALIZE_FAILURE;
+        // cannot setReg the prm value in the serReg
+        error = DirectiveError::SER_REG_SERIALIZE_FAILURE;
         return Signal::stmtResponse_failure;
     }
-    // copy value into lvar
-    Runtime::LocalVariable& lvar = this->m_runtime.localVariables[directive.getdestLvarIndex()];
-    memcpy(lvar.value, prmValue.getBuffAddr(), static_cast<size_t>(prmValue.getBuffLength()));
-    lvar.valueSize = prmValue.getBuffLength();
+    // copy value into serReg
+    Runtime::SerializableReg& serReg = this->m_runtime.serRegs[directive.getdestSerRegIndex()];
+    memcpy(serReg.value, prmValue.getBuffAddr(), static_cast<size_t>(prmValue.getBuffLength()));
+    serReg.valueSize = prmValue.getBuffLength();
     return Signal::stmtResponse_success;
 }
 
@@ -322,24 +322,24 @@ Signal FpySequencer::cmd_directiveHandler(const FpySequencer_CmdDirective& direc
     return Signal::stmtResponse_keepWaiting;
 }
 
-Signal FpySequencer::deserLocalVar_directiveHandler(const FpySequencer_DeserLocalVarDirective& directive, DirectiveError& error) {
-    if (directive.getsrcLvarIdx() >= Fpy::MAX_SEQUENCE_LOCAL_VARIABLES) {
-        error = DirectiveError::LVAR_OUT_OF_BOUNDS;
+Signal FpySequencer::deserSerReg_directiveHandler(const FpySequencer_DeserSerRegDirective& directive, DirectiveError& error) {
+    if (directive.getsrcSerRegIdx() >= Fpy::MAX_SEQUENCE_LOCAL_VARIABLES) {
+        error = DirectiveError::SER_REG_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
     if (directive.getdestReg() >= Fpy::NUM_REGISTERS) {
         error = DirectiveError::REGISTER_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
-    Runtime::LocalVariable& lvar = this->m_runtime.localVariables[directive.getsrcLvarIdx()];
-    if (directive.getsrcOffset() + directive.get_deserSize() > lvar.valueSize) {
-        error = DirectiveError::LVAR_ACCESS_OUT_OF_BOUNDS;
+    Runtime::SerializableReg& serReg = this->m_runtime.serRegs[directive.getsrcSerRegIdx()];
+    if (directive.getsrcOffset() + directive.get_deserSize() > serReg.valueSize) {
+        error = DirectiveError::SER_REG_ACCESS_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
 
     // TODO can I use htons/htonl? this code could be way simpler
-    Fw::ExternalSerializeBuffer esb(lvar.value, lvar.valueSize);
-    esb.setBuffLen(lvar.valueSize);
+    Fw::ExternalSerializeBuffer esb(serReg.value, serReg.valueSize);
+    esb.setBuffLen(serReg.valueSize);
     FW_ASSERT(esb.deserializeSkip(directive.getsrcOffset()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
 
     I8 oneByte;

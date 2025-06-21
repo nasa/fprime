@@ -27,7 +27,7 @@ TEST_F(FpySequencerTester, ComplexControlFlow) {
     nextTlmId = 123;
     ASSERT_EQ(nextTlmValue.serialize(true), Fw::SerializeStatus::FW_SERIALIZE_OK);
     add_GET_TLM(0, 1, 123);
-    add_DESER_LVAR(0, 0, 0, 1);
+    add_DESER_SER_REG(0, 0, 0, 1);
     add_IF(0, 5);
     // if true
     add_NO_OP();
@@ -56,7 +56,7 @@ TEST_F(FpySequencerTester, OrOfTlmAndReg) {
     nextTlmId = 123;
     ASSERT_EQ(nextTlmValue.serialize(true), Fw::SerializeStatus::FW_SERIALIZE_OK);
     add_GET_TLM(0, 1, 123);
-    add_DESER_LVAR(0, 0, 0, 1);
+    add_DESER_SER_REG(0, 0, 0, 1);
     add_SET_REG(1, 0);
     // or between the stored const and the tlm val
     add_BINARY_CMP(0, 1, 2, Fpy::DirectiveId::OR);
@@ -87,7 +87,7 @@ TEST_F(FpySequencerTester, CmpIntTlm) {
     nextTlmId = 123;
     ASSERT_EQ(nextTlmValue.serialize(999), Fw::SerializeStatus::FW_SERIALIZE_OK);
     add_GET_TLM(0, 1, 123);
-    add_DESER_LVAR(0, 0, 0, 4);
+    add_DESER_SER_REG(0, 0, 0, 4);
     add_SET_REG(1, 999);
     // unsigned >= between tlm and reg
     add_BINARY_CMP(0, 1, 2, Fpy::DirectiveId::UGE);

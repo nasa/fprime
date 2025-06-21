@@ -62,33 +62,33 @@ TEST_F(FpySequencerTester, goto) {
     ASSERT_EQ(tester_get_m_runtime_ptr()->nextStatementIndex, 456);
 }
 
-TEST_F(FpySequencerTester, setLvar) {
+TEST_F(FpySequencerTester, setSerReg) {
     U8 buf[Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE];
     memset(buf, 1, sizeof(buf));
-    FpySequencer_SetLocalVarDirective directive(static_cast<U8>(0), 1, static_cast<FwSizeType>(sizeof(buf)));
+    FpySequencer_SetSerRegDirective directive(static_cast<U8>(0), 1, static_cast<FwSizeType>(sizeof(buf)));
     DirectiveError err = DirectiveError::NO_ERROR;
-    Signal result = tester_setLocalVar_directiveHandler(directive, err);
+    Signal result = tester_setSerReg_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->localVariables[0].valueSize, sizeof(buf));
-    ASSERT_EQ(memcmp(buf, tester_get_m_runtime_ptr()->localVariables[0].value, sizeof(buf)), 0);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->serRegs[0].valueSize, sizeof(buf));
+    ASSERT_EQ(memcmp(buf, tester_get_m_runtime_ptr()->serRegs[0].value, sizeof(buf)), 0);
 
-    // outside of lvar range
+    // outside of serReg range
     directive.setindex(Fpy::MAX_SEQUENCE_LOCAL_VARIABLES);
-    result = tester_setLocalVar_directiveHandler(directive, err);
+    result = tester_setSerReg_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
-    ASSERT_EQ(err, DirectiveError::LVAR_OUT_OF_BOUNDS);
+    ASSERT_EQ(err, DirectiveError::SER_REG_OUT_OF_BOUNDS);
 
     // check what happens if buf too big
-    directive = FpySequencer_SetLocalVarDirective(static_cast<U8>(0), 1, Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE + 1);
+    directive = FpySequencer_SetSerRegDirective(static_cast<U8>(0), 1, Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE + 1);
 
-    ASSERT_DEATH_IF_SUPPORTED(tester_setLocalVar_directiveHandler(directive, err), "Assert: ");
+    ASSERT_DEATH_IF_SUPPORTED(tester_setSerReg_directiveHandler(directive, err), "Assert: ");
 }
 
 TEST_F(FpySequencerTester, if) {
     tester_get_m_runtime_ptr()->nextStatementIndex = 100;
     tester_get_m_sequenceObj_ptr()->getheader().setstatementCount(123);
-    tester_get_m_runtime_ptr()->registers[0] = 1;
+    tester_get_m_runtime_ptr()->regs[0] = 1;
     FpySequencer_IfDirective directive(0, 111);
     DirectiveError err = DirectiveError::NO_ERROR;
     Signal result = tester_if_directiveHandler(directive, err);
@@ -97,7 +97,7 @@ TEST_F(FpySequencerTester, if) {
     // should not have changed stmtidx
     ASSERT_EQ(tester_get_m_runtime_ptr()->nextStatementIndex, 100);
 
-    tester_get_m_runtime_ptr()->registers[0] = 0;  // set it to false
+    tester_get_m_runtime_ptr()->regs[0] = 0;  // set it to false
     result = tester_if_directiveHandler(directive, err);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(result, Signal::stmtResponse_success);
@@ -155,11 +155,11 @@ TEST_F(FpySequencerTester, getTlm) {
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_from_getTlmChan_SIZE(1);
     ASSERT_from_getTlmChan(0, 456, Fw::Time(), Fw::TlmBuffer());
-    ASSERT_EQ(tester_get_m_runtime_ptr()->localVariables[0].value[0], nextTlmValue.getBuffAddr()[0]);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->localVariables[0].valueSize, nextTlmValue.getBuffLength());
-    Fw::ExternalSerializeBuffer timeBuf(tester_get_m_runtime_ptr()->localVariables[1].value,
-                                        tester_get_m_runtime_ptr()->localVariables[1].valueSize);
-    timeBuf.setBuffLen(tester_get_m_runtime_ptr()->localVariables[1].valueSize);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->serRegs[0].value[0], nextTlmValue.getBuffAddr()[0]);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->serRegs[0].valueSize, nextTlmValue.getBuffLength());
+    Fw::ExternalSerializeBuffer timeBuf(tester_get_m_runtime_ptr()->serRegs[1].value,
+                                        tester_get_m_runtime_ptr()->serRegs[1].valueSize);
+    timeBuf.setBuffLen(tester_get_m_runtime_ptr()->serRegs[1].valueSize);
     Fw::Time resultTime;
     ASSERT_EQ(timeBuf.deserialize(resultTime), Fw::SerializeStatus::FW_SERIALIZE_OK);
     ASSERT_EQ(resultTime, nextTlmTime);
@@ -173,21 +173,21 @@ TEST_F(FpySequencerTester, getTlm) {
     err = DirectiveError::NO_ERROR;
     directive.setchanId(456);
 
-    // try setting bad value lvar
-    directive.setvalueDestLvar(Fpy::MAX_SEQUENCE_LOCAL_VARIABLES);
+    // try setting bad value serReg
+    directive.setvalueDestSerReg(Fpy::MAX_SEQUENCE_LOCAL_VARIABLES);
     result = tester_getTlm_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
-    ASSERT_EQ(err, DirectiveError::LVAR_OUT_OF_BOUNDS);
+    ASSERT_EQ(err, DirectiveError::SER_REG_OUT_OF_BOUNDS);
     err = DirectiveError::NO_ERROR;
-    directive.setvalueDestLvar(0);
+    directive.setvalueDestSerReg(0);
 
-    // try setting bad time lvar
-    directive.settimeDestLvar(Fpy::MAX_SEQUENCE_LOCAL_VARIABLES);
+    // try setting bad time serReg
+    directive.settimeDestSerReg(Fpy::MAX_SEQUENCE_LOCAL_VARIABLES);
     result = tester_getTlm_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
-    ASSERT_EQ(err, DirectiveError::LVAR_OUT_OF_BOUNDS);
+    ASSERT_EQ(err, DirectiveError::SER_REG_OUT_OF_BOUNDS);
     err = DirectiveError::NO_ERROR;
-    directive.settimeDestLvar(0);
+    directive.settimeDestSerReg(0);
 }
 
 TEST_F(FpySequencerTester, getPrm) {
@@ -201,8 +201,8 @@ TEST_F(FpySequencerTester, getPrm) {
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_from_getParam_SIZE(1);
     ASSERT_from_getParam(0, 456, Fw::ParamBuffer());
-    ASSERT_EQ(tester_get_m_runtime_ptr()->localVariables[0].value[0], nextPrmValue.getBuffAddr()[0]);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->localVariables[0].valueSize, nextPrmValue.getBuffLength());
+    ASSERT_EQ(tester_get_m_runtime_ptr()->serRegs[0].value[0], nextPrmValue.getBuffAddr()[0]);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->serRegs[0].valueSize, nextPrmValue.getBuffLength());
     clearHistory();
 
     // try getting a nonexistent param
@@ -213,13 +213,13 @@ TEST_F(FpySequencerTester, getPrm) {
     err = DirectiveError::NO_ERROR;
     directive.setprmId(456);
 
-    // try setting bad lvar
-    directive.setdestLvarIndex(Fpy::MAX_SEQUENCE_LOCAL_VARIABLES);
+    // try setting bad serReg
+    directive.setdestSerRegIndex(Fpy::MAX_SEQUENCE_LOCAL_VARIABLES);
     result = tester_getPrm_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
-    ASSERT_EQ(err, DirectiveError::LVAR_OUT_OF_BOUNDS);
+    ASSERT_EQ(err, DirectiveError::SER_REG_OUT_OF_BOUNDS);
     err = DirectiveError::NO_ERROR;
-    directive.setdestLvarIndex(0);
+    directive.setdestSerRegIndex(0);
 }
 
 TEST_F(FpySequencerTester, cmd) {
@@ -257,131 +257,131 @@ TEST_F(FpySequencerTester, cmd) {
         (((tester_get_m_sequencesStarted() & 0xFFFF) << 16) | (tester_get_m_statementsDispatched() & 0xFFFF)));
 }
 
-TEST_F(FpySequencerTester, deserLocalVar) {
+TEST_F(FpySequencerTester, deserSerReg) {
     // Nominal case: Deserialize 1-byte value
-    FpySequencer_DeserLocalVarDirective directive(0, 0, 0, 1);
-    tester_get_m_runtime_ptr()->localVariables[0].value[0] = 0x12;
-    tester_get_m_runtime_ptr()->localVariables[0].valueSize = 1;
+    FpySequencer_DeserSerRegDirective directive(0, 0, 0, 1);
+    tester_get_m_runtime_ptr()->serRegs[0].value[0] = 0x12;
+    tester_get_m_runtime_ptr()->serRegs[0].valueSize = 1;
     DirectiveError err = DirectiveError::NO_ERROR;
-    Signal result = tester_deserLocalVar_directiveHandler(directive, err);
+    Signal result = tester_deserSerReg_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->registers[0], 0x12);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->regs[0], 0x12);
 
     // Deserialize 2-byte value
-    directive = FpySequencer_DeserLocalVarDirective(0, 0, 0, 2);
-    tester_get_m_runtime_ptr()->localVariables[0].value[0] = 0x34;
-    tester_get_m_runtime_ptr()->localVariables[0].value[1] = 0x56;
-    tester_get_m_runtime_ptr()->localVariables[0].valueSize = 2;
-    result = tester_deserLocalVar_directiveHandler(directive, err);
+    directive = FpySequencer_DeserSerRegDirective(0, 0, 0, 2);
+    tester_get_m_runtime_ptr()->serRegs[0].value[0] = 0x34;
+    tester_get_m_runtime_ptr()->serRegs[0].value[1] = 0x56;
+    tester_get_m_runtime_ptr()->serRegs[0].valueSize = 2;
+    result = tester_deserSerReg_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->registers[0], 0x3456);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->regs[0], 0x3456);
 
     // Deserialize 4-byte value
-    directive = FpySequencer_DeserLocalVarDirective(0, 0, 0, 4);
-    tester_get_m_runtime_ptr()->localVariables[0].value[0] = 0x78;
-    tester_get_m_runtime_ptr()->localVariables[0].value[1] = 0x9A;
-    tester_get_m_runtime_ptr()->localVariables[0].value[2] = 0xBC;
-    tester_get_m_runtime_ptr()->localVariables[0].value[3] = 0xDE;
-    tester_get_m_runtime_ptr()->localVariables[0].valueSize = 4;
-    result = tester_deserLocalVar_directiveHandler(directive, err);
+    directive = FpySequencer_DeserSerRegDirective(0, 0, 0, 4);
+    tester_get_m_runtime_ptr()->serRegs[0].value[0] = 0x78;
+    tester_get_m_runtime_ptr()->serRegs[0].value[1] = 0x9A;
+    tester_get_m_runtime_ptr()->serRegs[0].value[2] = 0xBC;
+    tester_get_m_runtime_ptr()->serRegs[0].value[3] = 0xDE;
+    tester_get_m_runtime_ptr()->serRegs[0].valueSize = 4;
+    result = tester_deserSerReg_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->registers[0], 0x789ABCDE);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->regs[0], 0x789ABCDE);
 
     // Deserialize 8-byte value
-    directive = FpySequencer_DeserLocalVarDirective(0, 0, 0, 8);
-    memcpy(tester_get_m_runtime_ptr()->localVariables[0].value, "\x01\x23\x45\x67\x89\xAB\xCD\xEF", 8);
-    tester_get_m_runtime_ptr()->localVariables[0].valueSize = 8;
-    result = tester_deserLocalVar_directiveHandler(directive, err);
+    directive = FpySequencer_DeserSerRegDirective(0, 0, 0, 8);
+    memcpy(tester_get_m_runtime_ptr()->serRegs[0].value, "\x01\x23\x45\x67\x89\xAB\xCD\xEF", 8);
+    tester_get_m_runtime_ptr()->serRegs[0].valueSize = 8;
+    result = tester_deserSerReg_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->registers[0], 0x0123456789ABCDEF);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->regs[0], 0x0123456789ABCDEF);
 
-    // Error case: Out-of-bounds local variable index
-    directive = FpySequencer_DeserLocalVarDirective(Fpy::MAX_SEQUENCE_LOCAL_VARIABLES, 0, 0, 1);
-    result = tester_deserLocalVar_directiveHandler(directive, err);
+    // Error case: Out-of-bounds serializable register index
+    directive = FpySequencer_DeserSerRegDirective(Fpy::MAX_SEQUENCE_LOCAL_VARIABLES, 0, 0, 1);
+    result = tester_deserSerReg_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
-    ASSERT_EQ(err, DirectiveError::LVAR_OUT_OF_BOUNDS);
+    ASSERT_EQ(err, DirectiveError::SER_REG_OUT_OF_BOUNDS);
 
     // Error case: Out-of-bounds register index
-    directive = FpySequencer_DeserLocalVarDirective(0, 0, Fpy::NUM_REGISTERS, 1);
-    result = tester_deserLocalVar_directiveHandler(directive, err);
+    directive = FpySequencer_DeserSerRegDirective(0, 0, Fpy::NUM_REGISTERS, 1);
+    result = tester_deserSerReg_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::REGISTER_OUT_OF_BOUNDS);
 
-    // Error case: Offset + size exceeds local variable size
-    directive = FpySequencer_DeserLocalVarDirective(0, 1, 0, 1);
-    tester_get_m_runtime_ptr()->localVariables[0].valueSize = 1;
-    result = tester_deserLocalVar_directiveHandler(directive, err);
+    // Error case: Offset + size exceeds serializable register size
+    directive = FpySequencer_DeserSerRegDirective(0, 1, 0, 1);
+    tester_get_m_runtime_ptr()->serRegs[0].valueSize = 1;
+    result = tester_deserSerReg_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
-    ASSERT_EQ(err, DirectiveError::LVAR_ACCESS_OUT_OF_BOUNDS);
+    ASSERT_EQ(err, DirectiveError::SER_REG_ACCESS_OUT_OF_BOUNDS);
 }
 
 TEST_F(FpySequencerTester, binaryCmp) {
     // Test EQ (equal)
     FpySequencer_BinaryCmpDirective directiveEQ(0, 1, 2, Fpy::DirectiveId::EQ);
-    tester_get_m_runtime_ptr()->registers[0] = 10;
-    tester_get_m_runtime_ptr()->registers[1] = 10;
+    tester_get_m_runtime_ptr()->regs[0] = 10;
+    tester_get_m_runtime_ptr()->regs[1] = 10;
     DirectiveError err = DirectiveError::NO_ERROR;
     Signal result = tester_binaryCmp_directiveHandler(directiveEQ, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->registers[2], 1);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->regs[2], 1);
 
     // Test NE (not equal)
     FpySequencer_BinaryCmpDirective directiveNE(0, 1, 2, Fpy::DirectiveId::NE);
-    tester_get_m_runtime_ptr()->registers[1] = 20;
+    tester_get_m_runtime_ptr()->regs[1] = 20;
     result = tester_binaryCmp_directiveHandler(directiveNE, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->registers[2], 1);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->regs[2], 1);
 
     // Test OR (bitwise OR)
     FpySequencer_BinaryCmpDirective directiveOR(0, 1, 2, Fpy::DirectiveId::OR);
-    tester_get_m_runtime_ptr()->registers[0] = 10; // 0b1010;
-    tester_get_m_runtime_ptr()->registers[1] = 5; // 0b0101;
+    tester_get_m_runtime_ptr()->regs[0] = 10; // 0b1010;
+    tester_get_m_runtime_ptr()->regs[1] = 5; // 0b0101;
     result = tester_binaryCmp_directiveHandler(directiveOR, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->registers[2], 15);  // 0b1111
+    ASSERT_EQ(tester_get_m_runtime_ptr()->regs[2], 15);  // 0b1111
 
     // Test AND (bitwise AND)
     FpySequencer_BinaryCmpDirective directiveAND(0, 1, 2, Fpy::DirectiveId::AND);
-    tester_get_m_runtime_ptr()->registers[0] = 10; // 0b1010;
-    tester_get_m_runtime_ptr()->registers[1] = 12; // 0b1100;
+    tester_get_m_runtime_ptr()->regs[0] = 10; // 0b1010;
+    tester_get_m_runtime_ptr()->regs[1] = 12; // 0b1100;
     result = tester_binaryCmp_directiveHandler(directiveAND, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->registers[2], 8); // 0b1000
+    ASSERT_EQ(tester_get_m_runtime_ptr()->regs[2], 8); // 0b1000
 
     // Test signed comparison (SLT - signed less than)
     FpySequencer_BinaryCmpDirective directiveSLT(0, 1, 2, Fpy::DirectiveId::SLT);
-    tester_get_m_runtime_ptr()->registers[0] = -5;
-    tester_get_m_runtime_ptr()->registers[1] = 10;
+    tester_get_m_runtime_ptr()->regs[0] = -5;
+    tester_get_m_runtime_ptr()->regs[1] = 10;
     result = tester_binaryCmp_directiveHandler(directiveSLT, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->registers[2], 1);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->regs[2], 1);
 
     // Test unsigned comparison (ULT - unsigned less than)
     FpySequencer_BinaryCmpDirective directiveULT(0, 1, 2, Fpy::DirectiveId::ULT);
-    tester_get_m_runtime_ptr()->registers[0] = 5;
-    tester_get_m_runtime_ptr()->registers[1] = 10;
+    tester_get_m_runtime_ptr()->regs[0] = 5;
+    tester_get_m_runtime_ptr()->regs[1] = 10;
     result = tester_binaryCmp_directiveHandler(directiveULT, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->registers[2], 1);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->regs[2], 1);
 
     // Test unsigned comparison (UGT - unsigned greater than)
     FpySequencer_BinaryCmpDirective directiveUGT(0, 1, 2, Fpy::DirectiveId::UGT);
-    tester_get_m_runtime_ptr()->registers[0] = 10;
-    tester_get_m_runtime_ptr()->registers[1] = 5;
+    tester_get_m_runtime_ptr()->regs[0] = 10;
+    tester_get_m_runtime_ptr()->regs[1] = 5;
     result = tester_binaryCmp_directiveHandler(directiveUGT, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->registers[2], 1);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->regs[2], 1);
 
     // Test out-of-bounds register index
     FpySequencer_BinaryCmpDirective directiveOOB(Fpy::NUM_REGISTERS, 1, 2, Fpy::DirectiveId::EQ);
@@ -400,7 +400,7 @@ TEST_F(FpySequencerTester, setReg) {
     Signal result = tester_setReg_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->registers[0], -123);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->regs[0], -123);
 
     directive.setdest(Fpy::NUM_REGISTERS);
     result = tester_setReg_directiveHandler(directive, err);
@@ -411,11 +411,11 @@ TEST_F(FpySequencerTester, setReg) {
 TEST_F(FpySequencerTester, not) {
     FpySequencer_NotDirective directive(0, 1);
     DirectiveError err = DirectiveError::NO_ERROR;
-    tester_get_m_runtime_ptr()->registers[0] = 0x123;
+    tester_get_m_runtime_ptr()->regs[0] = 0x123;
     Signal result = tester_not_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->registers[1], ~0x123);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->regs[1], ~0x123);
 
     directive.setsrc(Fpy::NUM_REGISTERS);
     result = tester_not_directiveHandler(directive, err);
@@ -791,7 +791,7 @@ TEST_F(FpySequencerTester, readBody) {
     tester_get_m_sequenceBuffer_ptr()->setExtBuffer(data, sizeof(data));
     // write some args mappings
     for (U32 ii = 0; ii < Fpy::MAX_SEQUENCE_ARG_COUNT; ii++) {
-        // map arg idx ii to lvar pos 123
+        // map arg idx ii to serReg pos 123
         ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serialize(static_cast<U8>(123)),
                   Fw::SerializeStatus::FW_SERIALIZE_OK);
     }
@@ -817,7 +817,7 @@ TEST_F(FpySequencerTester, readBody) {
     tester_get_m_sequenceObj_ptr()->getheader().setstatementCount(0);
     // now see what happens if we don't write enough args
     for (U32 ii = 0; ii < Fpy::MAX_SEQUENCE_ARG_COUNT - 1; ii++) {
-        // map arg idx ii to lvar pos 123
+        // map arg idx ii to serReg pos 123
         ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serialize(static_cast<U8>(123)),
                   Fw::SerializeStatus::FW_SERIALIZE_OK);
     }
@@ -830,7 +830,7 @@ TEST_F(FpySequencerTester, readBody) {
     tester_get_m_sequenceObj_ptr()->getheader().setargumentCount(Fpy::MAX_SEQUENCE_ARG_COUNT);
     tester_get_m_sequenceObj_ptr()->getheader().setstatementCount(Fpy::MAX_SEQUENCE_STATEMENT_COUNT);
     for (U32 ii = 0; ii < Fpy::MAX_SEQUENCE_ARG_COUNT; ii++) {
-        // map arg idx ii to lvar pos 123
+        // map arg idx ii to serReg pos 123
         ASSERT_EQ(tester_get_m_sequenceBuffer_ptr()->serialize(static_cast<U8>(123)),
                   Fw::SerializeStatus::FW_SERIALIZE_OK);
     }
@@ -1048,17 +1048,17 @@ TEST_F(FpySequencerTester, deserialize_waitAbs) {
     ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
 }
 
-TEST_F(FpySequencerTester, deserialize_setLVar) {
+TEST_F(FpySequencerTester, deserialize_setSerReg) {
     FpySequencer::DirectiveUnion actual;
-    FpySequencer_SetLocalVarDirective setLVar(0, 123, 10);
-    add_SET_LVAR(setLVar);
+    FpySequencer_SetSerRegDirective setSerReg(0, 123, 10);
+    add_SET_SER_REG(setSerReg);
     Fw::Success result = tester_deserializeDirective(seq.getstatements()[0], actual);
     ASSERT_EQ(result, Fw::Success::SUCCESS);
     // for some reason, can't just use the equality method here... i get a huge asan err
-    ASSERT_EQ(actual.setLVar.get_valueSize(), setLVar.get_valueSize());
-    ASSERT_EQ(actual.setLVar.getindex(), setLVar.getindex());
-    ASSERT_EQ(memcmp(actual.setLVar.getvalue(), setLVar.getvalue(), setLVar.get_valueSize()), 0);
-    // write some junk after buf, setlocalvar should eat it up and succeed
+    ASSERT_EQ(actual.setSerReg.get_valueSize(), setSerReg.get_valueSize());
+    ASSERT_EQ(actual.setSerReg.getindex(), setSerReg.getindex());
+    ASSERT_EQ(memcmp(actual.setSerReg.getvalue(), setSerReg.getvalue(), setSerReg.get_valueSize()), 0);
+    // write some junk after buf, setlocaserReg should eat it up and succeed
     seq.getstatements()[0].getargBuf().serialize(123);
     result = tester_deserializeDirective(seq.getstatements()[0], actual);
     ASSERT_EQ(result, Fw::Success::SUCCESS);
@@ -1074,8 +1074,8 @@ TEST_F(FpySequencerTester, deserialize_setLVar) {
     // run with valueSize too big
     if (Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE + 6 <= FW_STATEMENT_ARG_BUFFER_MAX_SIZE) {
         // we can test this
-        setLVar = FpySequencer_SetLocalVarDirective(0, 123, Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE + 1);
-        add_SET_LVAR(setLVar);
+        setSerReg = FpySequencer_SetSerRegDirective(0, 123, Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE + 1);
+        add_SET_SER_REG(setSerReg);
         result = tester_deserializeDirective(seq.getstatements()[0], actual);
         ASSERT_EQ(result, Fw::Success::FAILURE);
         ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
