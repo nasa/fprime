@@ -140,6 +140,8 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     Signal tester_exit_directiveHandler(const FpySequencer_ExitDirective& directive, DirectiveError& err);
     Signal tester_cmd_directiveHandler(const FpySequencer_CmdDirective& directive, DirectiveError& err);
     Signal tester_deserLocalVar_directiveHandler(const FpySequencer_DeserLocalVarDirective& directive, DirectiveError& err);
+    Signal tester_binaryCmp_directiveHandler(const FpySequencer_BinaryCmpDirective& directive, DirectiveError& err);
+    Signal tester_setReg_directiveHandler(const FpySequencer_SetRegDirective& directive, DirectiveError& err);
     FpySequencer::Runtime* tester_get_m_runtime_ptr();
     Fw::ExternalSerializeBuffer* tester_get_m_sequenceBuffer_ptr();
     void tester_set_m_sequencesStarted(U64 val);

@@ -489,6 +489,7 @@ Signal FpySequencer::exit_directiveHandler(const FpySequencer_ExitDirective& dir
         return Signal::stmtResponse_success;
     }
     // otherwise, kill the sequence here
+    error = DirectiveError::DELIBERATE_FAILURE;
     return Signal::stmtResponse_failure;
 }
 }  // namespace Svc
