@@ -133,8 +133,12 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     Signal tester_waitAbs_directiveHandler(const FpySequencer_WaitAbsDirective& directive, DirectiveError& err);
     Signal tester_goto_directiveHandler(const Svc::FpySequencer_GotoDirective &directive, DirectiveError& err);
     Signal tester_setLocalVar_directiveHandler(const FpySequencer_SetLocalVarDirective& directive, DirectiveError& err);
+    Signal tester_if_directiveHandler(const FpySequencer_IfDirective& directive, DirectiveError& err);
     Signal tester_getPrm_directiveHandler(const FpySequencer_GetPrmDirective& directive, DirectiveError& err);
     Signal tester_getTlm_directiveHandler(const FpySequencer_GetTlmDirective& directive, DirectiveError& err);
+    Signal tester_not_directiveHandler(const FpySequencer_NotDirective& directive, DirectiveError& err);
+    Signal tester_exit_directiveHandler(const FpySequencer_ExitDirective& directive, DirectiveError& err);
+    Signal tester_cmd_directiveHandler(const FpySequencer_CmdDirective& directive, DirectiveError& err);
     FpySequencer::Runtime* tester_get_m_runtime_ptr();
     Fw::ExternalSerializeBuffer* tester_get_m_sequenceBuffer_ptr();
     void tester_set_m_sequencesStarted(U64 val);
@@ -142,10 +146,8 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     U64 tester_get_m_sequencesStarted();
     U64 tester_get_m_statementsDispatched();
     Fw::Success tester_deserializeDirective(const Fpy::Statement& stmt, Svc::FpySequencer::DirectiveUnion& deserializedDirective);
-    Fw::Success tester_dispatchCommand(const Fpy::Statement& stmt);
     Fpy::Sequence* tester_get_m_sequenceObj_ptr();
     Svc::Signal tester_dispatchStatement();
-    Signal tester_if_directiveHandler(const FpySequencer_IfDirective& directive);
     Fw::Success tester_validate();
     Fw::String tester_get_m_sequenceFilePath();
     void tester_set_m_sequenceFilePath(Fw::String str);
@@ -157,6 +159,7 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     Svc::FpySequencer::Debug* tester_get_m_debug_ptr();
     Svc::Signal tester_checkStatementTimeout();
     Svc::Signal tester_checkShouldWake();
+    Svc::FpySequencer::Telemetry* tester_get_m_tlm_ptr();
 
 };
 

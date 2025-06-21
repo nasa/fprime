@@ -390,7 +390,7 @@ Signal FpySequencer::setReg_directiveHandler(const FpySequencer_SetRegDirective&
 Signal FpySequencer::binaryCmp_directiveHandler(const FpySequencer_BinaryCmpDirective& directive, DirectiveError& error) {
 
     // coding error, should not have gotten to this binary cmp handler
-    FW_ASSERT(directive.get_op() >= Fpy::DirectiveId::EQ && directive.get_op() <= Fpy::DirectiveId::SGE, static_cast<FwAssertArgType>(directive.get_op()));
+    FW_ASSERT(directive.get_op() >= Fpy::DirectiveId::OR && directive.get_op() <= Fpy::DirectiveId::SGE, static_cast<FwAssertArgType>(directive.get_op()));
 
     if (directive.getlhs() >= Fpy::NUM_REGISTERS 
         || directive.getrhs() >= Fpy::NUM_REGISTERS 

@@ -22,44 +22,44 @@ TEST_F(FpySequencerTester, waitRel) {
     Signal result = tester_waitRel_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_beginSleep);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(cmp.m_runtime.wakeupTime, Fw::Time(105, 223));
+    ASSERT_EQ(tester_get_m_runtime_ptr()->wakeupTime, Fw::Time(105, 223));
 }
 
 TEST_F(FpySequencerTester, waitAbs) {
     FpySequencer_WaitAbsDirective directive(Fw::Time(5, 123));
 
     DirectiveError err = DirectiveError::NO_ERROR;
-    Signal result = cmp.waitAbs_directiveHandler(directive, err);
+    Signal result = tester_waitAbs_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_beginSleep);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(cmp.m_runtime.wakeupTime, Fw::Time(5, 123));
+    ASSERT_EQ(tester_get_m_runtime_ptr()->wakeupTime, Fw::Time(5, 123));
 }
 
 TEST_F(FpySequencerTester, goto) {
     FpySequencer_GotoDirective directive(123);
-    cmp.m_sequenceObj.getheader().setstatementCount(456);
+    tester_get_m_sequenceObj_ptr()->getheader().setstatementCount(456);
     DirectiveError err = DirectiveError::NO_ERROR;
-    Signal result = cmp.goto_directiveHandler(directive, err);
+    Signal result = tester_goto_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(cmp.m_runtime.nextStatementIndex, 123);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->nextStatementIndex, 123);
 
     tester_get_m_runtime_ptr()->nextStatementIndex = 0;
     // out of bounds
     directive.setstatementIndex(111111);
-    result = cmp.goto_directiveHandler(directive, err);
+    result = tester_goto_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STMT_OUT_OF_BOUNDS);
     err = DirectiveError::NO_ERROR;
-    ASSERT_EQ(cmp.m_runtime.nextStatementIndex, 0);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->nextStatementIndex, 0);
 
     tester_get_m_runtime_ptr()->nextStatementIndex = 0;
     // just inside bounds
     directive.setstatementIndex(456);
-    result = cmp.goto_directiveHandler(directive, err);
+    result = tester_goto_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(cmp.m_runtime.nextStatementIndex, 456);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->nextStatementIndex, 456);
 }
 
 TEST_F(FpySequencerTester, setLvar) {
@@ -67,38 +67,38 @@ TEST_F(FpySequencerTester, setLvar) {
     memset(buf, 1, sizeof(buf));
     FpySequencer_SetLocalVarDirective directive(static_cast<U8>(0), 1, static_cast<FwSizeType>(sizeof(buf)));
     DirectiveError err = DirectiveError::NO_ERROR;
-    Signal result = cmp.setLocalVar_directiveHandler(directive, err);
+    Signal result = tester_setLocalVar_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(cmp.m_runtime.localVariables[0].valueSize, sizeof(buf));
-    ASSERT_EQ(memcmp(buf, cmp.m_runtime.localVariables[0].value, sizeof(buf)), 0);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->localVariables[0].valueSize, sizeof(buf));
+    ASSERT_EQ(memcmp(buf, tester_get_m_runtime_ptr()->localVariables[0].value, sizeof(buf)), 0);
 
     // outside of lvar range
     directive.setindex(Fpy::MAX_SEQUENCE_LOCAL_VARIABLES);
-    result = cmp.setLocalVar_directiveHandler(directive, err);
+    result = tester_setLocalVar_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::LVAR_OUT_OF_BOUNDS);
 
     // check what happens if buf too big
     directive = FpySequencer_SetLocalVarDirective(static_cast<U8>(0), 1, Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE + 1);
 
-    ASSERT_DEATH_IF_SUPPORTED(cmp.setLocalVar_directiveHandler(directive, err), "Assert: ");
+    ASSERT_DEATH_IF_SUPPORTED(tester_setLocalVar_directiveHandler(directive, err), "Assert: ");
 }
 
 TEST_F(FpySequencerTester, if) {
-    cmp.m_runtime.nextStatementIndex = 100;
-    cmp.m_sequenceObj.getheader().setstatementCount(123);
-    cmp.m_runtime.registers[0] = 1;
+    tester_get_m_runtime_ptr()->nextStatementIndex = 100;
+    tester_get_m_sequenceObj_ptr()->getheader().setstatementCount(123);
+    tester_get_m_runtime_ptr()->registers[0] = 1;
     FpySequencer_IfDirective directive(0, 111);
     DirectiveError err = DirectiveError::NO_ERROR;
-    Signal result = cmp.if_directiveHandler(directive, err);
+    Signal result = tester_if_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     // should not have changed stmtidx
     ASSERT_EQ(tester_get_m_runtime_ptr()->nextStatementIndex, 100);
 
-    cmp.m_runtime.registers[0] = 0; // set it to false
-    result = cmp.if_directiveHandler(directive, err);
+    tester_get_m_runtime_ptr()->registers[0] = 0; // set it to false
+    result = tester_if_directiveHandler(directive, err);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     // should have changed stmtidx
@@ -106,8 +106,8 @@ TEST_F(FpySequencerTester, if) {
 
     tester_get_m_runtime_ptr()->nextStatementIndex = 100;
 
-    directive.setfalseGotoStmtIndex(cmp.m_sequenceObj.getheader().getstatementCount());
-    result = cmp.if_directiveHandler(directive, err);
+    directive.setfalseGotoStmtIndex(tester_get_m_sequenceObj_ptr()->getheader().getstatementCount());
+    result = tester_if_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     // should have succeeded
@@ -117,7 +117,7 @@ TEST_F(FpySequencerTester, if) {
 
     // check reg out of bounds
     directive.setconditionalReg(Fpy::NUM_REGISTERS);
-    result = cmp.if_directiveHandler(directive, err);
+    result = tester_if_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::REGISTER_OUT_OF_BOUNDS);
     err = DirectiveError::NO_ERROR;
@@ -125,8 +125,8 @@ TEST_F(FpySequencerTester, if) {
     ASSERT_NE(tester_get_m_runtime_ptr()->nextStatementIndex, 111);
 
     directive.setconditionalReg(0);
-    directive.setfalseGotoStmtIndex(cmp.m_sequenceObj.getheader().getstatementCount() + 1);
-    result = cmp.if_directiveHandler(directive, err);
+    directive.setfalseGotoStmtIndex(tester_get_m_sequenceObj_ptr()->getheader().getstatementCount() + 1);
+    result = tester_if_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::STMT_OUT_OF_BOUNDS);
     err = DirectiveError::NO_ERROR;
@@ -137,7 +137,7 @@ TEST_F(FpySequencerTester, if) {
 TEST_F(FpySequencerTester, noOp) {
     FpySequencer_NoOpDirective directive;
     DirectiveError err = DirectiveError::NO_ERROR;
-    Signal result = cmp.noOp_directiveHandler(directive, err);
+    Signal result = tester_noOp_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
 }
@@ -149,7 +149,7 @@ TEST_F(FpySequencerTester, getTlm) {
     nextTlmValue.getBuffAddr()[0] = 200;
     nextTlmTime.set(888, 777);
     DirectiveError err = DirectiveError::NO_ERROR;
-    Signal result = cmp.getTlm_directiveHandler(directive, err);
+    Signal result = tester_getTlm_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_from_getTlmChan_SIZE(1);
@@ -166,7 +166,7 @@ TEST_F(FpySequencerTester, getTlm) {
 
     // try getting a nonexistent chan
     directive.setchanId(111);
-    result = cmp.getTlm_directiveHandler(directive, err);
+    result = tester_getTlm_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::TLM_CHAN_NOT_FOUND);
     err = DirectiveError::NO_ERROR;
@@ -174,7 +174,7 @@ TEST_F(FpySequencerTester, getTlm) {
 
     // try setting bad value lvar
     directive.setvalueDestLvar(Fpy::MAX_SEQUENCE_LOCAL_VARIABLES);
-    result = cmp.getTlm_directiveHandler(directive, err);
+    result = tester_getTlm_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::LVAR_OUT_OF_BOUNDS);
     err = DirectiveError::NO_ERROR;
@@ -182,7 +182,7 @@ TEST_F(FpySequencerTester, getTlm) {
 
     // try setting bad time lvar
     directive.settimeDestLvar(Fpy::MAX_SEQUENCE_LOCAL_VARIABLES);
-    result = cmp.getTlm_directiveHandler(directive, err);
+    result = tester_getTlm_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::LVAR_OUT_OF_BOUNDS);
     err = DirectiveError::NO_ERROR;
@@ -195,7 +195,7 @@ TEST_F(FpySequencerTester, getPrm) {
     nextPrmValue.setBuffLen(1);
     nextPrmValue.getBuffAddr()[0] = 200;
     DirectiveError err = DirectiveError::NO_ERROR;
-    Signal result = cmp.getPrm_directiveHandler(directive, err);
+    Signal result = tester_getPrm_directiveHandler(directive, err);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_from_getParam_SIZE(1);
@@ -206,7 +206,7 @@ TEST_F(FpySequencerTester, getPrm) {
 
     // try getting a nonexistent param
     directive.setprmId(111);
-    result = cmp.getPrm_directiveHandler(directive, err);
+    result = tester_getPrm_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::PRM_NOT_FOUND);
     err = DirectiveError::NO_ERROR;
@@ -214,7 +214,7 @@ TEST_F(FpySequencerTester, getPrm) {
 
     // try setting bad lvar
     directive.setdestLvarIndex(Fpy::MAX_SEQUENCE_LOCAL_VARIABLES);
-    result = cmp.getPrm_directiveHandler(directive, err);
+    result = tester_getPrm_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::LVAR_OUT_OF_BOUNDS);
     err = DirectiveError::NO_ERROR;
@@ -226,12 +226,12 @@ TEST_F(FpySequencerTester, cmd) {
     FpySequencer_CmdDirective directive(123, 0, sizeof(data));
     memcpy(directive.getargBuf(), data, sizeof(data));
     DirectiveError err = DirectiveError::NO_ERROR;
-    Signal result = cmp.cmd_directiveHandler(directive, err);
+    Signal result = tester_cmd_directiveHandler(directive, err);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(result, Signal::stmtResponse_keepWaiting);
 
     Fw::ComBuffer expected;
-    ASSERT_EQ(expected.serialize(Fw::ComPacket::FW_PACKET_COMMAND), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    ASSERT_EQ(expected.serialize(Fw::ComPacketType::FW_PACKET_COMMAND), Fw::SerializeStatus::FW_SERIALIZE_OK);
     ASSERT_EQ(expected.serialize(directive.getopCode()), Fw::SerializeStatus::FW_SERIALIZE_OK);
     ASSERT_EQ(expected.serialize(data, sizeof(data), true), Fw::SerializeStatus::FW_SERIALIZE_OK);
     ASSERT_from_cmdOut_SIZE(1);
@@ -239,20 +239,20 @@ TEST_F(FpySequencerTester, cmd) {
     this->clearHistory();
 
     // try dispatching again, make sure cmd uid is right
-    cmp.m_statementsDispatched = 123;
-    result = cmp.cmd_directiveHandler(directive, err);
+    tester_set_m_statementsDispatched(123);
+    result = tester_cmd_directiveHandler(directive, err);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(result, Signal::stmtResponse_keepWaiting);
-    ASSERT_from_cmdOut(0, expected, cmp.m_statementsDispatched);
+    ASSERT_from_cmdOut(0, expected, tester_get_m_statementsDispatched());
     this->clearHistory();
 
     // modify sequences started, make sure correct
-    cmp.m_sequencesStarted = 456;
-    result = cmp.cmd_directiveHandler(directive, err);
+    tester_set_m_sequencesStarted(456);
+    result = tester_cmd_directiveHandler(directive, err);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(result, Signal::stmtResponse_keepWaiting);
     ASSERT_from_cmdOut(0, expected,
-                       (((cmp.m_sequencesStarted & 0xFFFF) << 16) | (cmp.m_statementsDispatched & 0xFFFF)));
+                       (((tester_get_m_sequencesStarted() & 0xFFFF) << 16) | (tester_get_m_statementsDispatched() & 0xFFFF)));
 }
 
 TEST_F(FpySequencerTester, checkShouldWakeMismatchBase) {
@@ -784,9 +784,9 @@ TEST_F(FpySequencerTester, dispatchStatement) {
     *(tester_get_m_sequenceObj_ptr()) = seq;
     Signal result = tester_dispatchStatement();
     ASSERT_EQ(result, Signal::result_dispatchStatement_success);
-    ASSERT_EQ(cmp.m_runtime.currentStatementOpcode, Fpy::DirectiveId::NO_OP);
-    ASSERT_EQ(cmp.m_runtime.currentStatementDispatchTime, time);
-    ASSERT_EQ(cmp.m_statementsDispatched, 1);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->currentStatementOpcode, Fpy::DirectiveId::NO_OP);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->currentStatementDispatchTime, time);
+    ASSERT_EQ(tester_get_m_statementsDispatched(), 1);
     // try dispatching again, should fail cuz no more stmts
     result = tester_dispatchStatement();
     ASSERT_EQ(result, Signal::result_dispatchStatement_noMoreStatements);
@@ -803,21 +803,21 @@ TEST_F(FpySequencerTester, dispatchStatement) {
     setTestTime(time);
     // okay try adding a command
     add_CMD(123);
-    cmp.m_sequenceObj = seq;
-    cmp.m_runtime.nextStatementIndex = 0;
-    result = cmp.dispatchStatement();
+    *(tester_get_m_sequenceObj_ptr()) = seq;
+    tester_get_m_runtime_ptr()->nextStatementIndex = 0;
+    result = tester_dispatchStatement();
     ASSERT_EQ(result, Signal::result_dispatchStatement_success);
-    ASSERT_EQ(cmp.m_runtime.currentStatementOpcode, Fpy::DirectiveId::CMD);
-    ASSERT_EQ(cmp.m_runtime.currentCmdOpcode, 123);
-    ASSERT_EQ(cmp.m_runtime.currentStatementDispatchTime, time);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->currentStatementOpcode, Fpy::DirectiveId::CMD);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->currentCmdOpcode, 123);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->currentStatementDispatchTime, time);
 
-    cmp.m_runtime.nextStatementIndex = cmp.m_sequenceObj.getheader().getstatementCount() + 1;
-    ASSERT_DEATH_IF_SUPPORTED(cmp.dispatchStatement(), "Assert: ");
+    tester_get_m_runtime_ptr()->nextStatementIndex = tester_get_m_sequenceObj_ptr()->getheader().getstatementCount() + 1;
+    ASSERT_DEATH_IF_SUPPORTED(tester_dispatchStatement(), "Assert: ");
 }
 
 TEST_F(FpySequencerTester, deserialize_waitRel) {
     FpySequencer::DirectiveUnion actual;
-    FpySequencer_WaitRelDirective waitRel(Fw::TimeInterval(123, 123));
+    FpySequencer_WaitRelDirective waitRel(123, 123);
     add_WAIT_REL(waitRel);
     Fw::Success result = tester_deserializeDirective(seq.getstatements()[0], actual);
     ASSERT_EQ(result, Fw::Success::SUCCESS);
@@ -990,7 +990,7 @@ TEST_F(FpySequencerTester, deserialize_getPrm) {
 // caught a bug
 TEST_F(FpySequencerTester, checkTimers) {
     allocMem();
-    add_WAIT_REL(FpySequencer_WaitRelDirective(Fw::TimeInterval(10, 0)));
+    add_WAIT_REL(FpySequencer_WaitRelDirective(10, 0));
     writeToFile("test.bin");
     sendCmd_RUN(0, 0, Fw::String("test.bin"), FpySequencer_BlockState::BLOCK);
     Fw::Time time(0, 0);
@@ -1054,9 +1054,12 @@ TEST_F(FpySequencerTester, cmdResponse) {
     tester_set_m_statementsDispatched(255);
     sendCmd_RUN(0, 0, Fw::String("test.bin"), FpySequencer_BlockState::BLOCK);
     dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
+    // once we're here, we should have just added the cmd dir to the queue
+    cmp.doDispatch();
+    // dispatch once more to execute the cmd dir, sending out the command
 
-    // should be 256 for seq idx and 255 for cmd idx
-    invoke_to_cmdResponseIn(0, 123, 0x010000FF, Fw::CmdResponse::OK);
+    // should be 256 for seq idx and 256 for cmd idx
+    invoke_to_cmdResponseIn(0, 123, 0x01000100, Fw::CmdResponse::OK);
     // should be successful
     dispatchUntilState(State::IDLE);
     ASSERT_CMD_RESPONSE_SIZE(1);
@@ -1080,15 +1083,15 @@ TEST_F(FpySequencerTester, cmdResponse) {
     sendCmd_RUN(0, 0, Fw::String("test.bin"), FpySequencer_BlockState::BLOCK);
     dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
     // send wrong cmd uid
-    // should be 256 for seq idx and 255 for cmd idx
-    // but we're gonna send 255 for seq idx and 255 for cmd idx
-    invoke_to_cmdResponseIn(0, 123, 0x00FF00FF, Fw::CmdResponse::OK);
+    // should be 256 for seq idx and 256 for cmd idx
+    // but we're gonna send 255 for seq idx and 256 for cmd idx
+    invoke_to_cmdResponseIn(0, 123, 0x00FF0100, Fw::CmdResponse::OK);
     // should fail on seq idx, but should stay in running
     dispatchCurrentMessages(cmp);
     ASSERT_EQ(cmp.sequencer_getState(), State::RUNNING_AWAITING_STATEMENT_RESPONSE);
 
     // okay now send right seq idx but wrong cmd idx
-    invoke_to_cmdResponseIn(0, 123, 0x01000100, Fw::CmdResponse::OK);
+    invoke_to_cmdResponseIn(0, 123, 0x01000101, Fw::CmdResponse::OK);
     // should fail on cmd idx and go back to IDLE
     dispatchUntilState(State::IDLE);
     ASSERT_CMD_RESPONSE_SIZE(1);
@@ -1098,14 +1101,14 @@ TEST_F(FpySequencerTester, cmdResponse) {
     // okay now have a command response come in from this seq
     // while sleeping (coding err)
     clearSeq();
-    add_WAIT_REL(FpySequencer_WaitRelDirective(Fw::TimeInterval(10, 0)));
+    add_WAIT_REL(FpySequencer_WaitRelDirective(10, 0));
     add_CMD(123);
     writeToFile("test.bin");
     tester_set_m_sequencesStarted(255);
     tester_set_m_statementsDispatched(255);
     sendCmd_RUN(0, 0, Fw::String("test.bin"), FpySequencer_BlockState::BLOCK);
     dispatchUntilState(State::RUNNING_SLEEPING);
-    invoke_to_cmdResponseIn(0, 123, 0x010000FF, Fw::CmdResponse::OK);
+    invoke_to_cmdResponseIn(0, 123, 0x01000100, Fw::CmdResponse::OK);
     dispatchUntilState(State::IDLE);
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, FpySequencer::OPCODE_RUN, 0, Fw::CmdResponse::EXECUTION_ERROR);
@@ -1119,7 +1122,7 @@ TEST_F(FpySequencerTester, cmdResponse) {
     tester_set_m_statementsDispatched(255);
     sendCmd_RUN(0, 0, Fw::String("test.bin"), FpySequencer_BlockState::BLOCK);
     dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
-    invoke_to_cmdResponseIn(0, 456, 0x010000FF, Fw::CmdResponse::OK);
+    invoke_to_cmdResponseIn(0, 456, 0x01000100, Fw::CmdResponse::OK);
     dispatchUntilState(State::IDLE);
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, FpySequencer::OPCODE_RUN, 0, Fw::CmdResponse::EXECUTION_ERROR);

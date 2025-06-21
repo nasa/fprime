@@ -40,14 +40,14 @@ TEST_F(FpySequencerTester, ComplexControlFlow) {
 
     writeAndRun();
     dispatchUntilState(State::IDLE);
-    ASSERT_EQ(cmp.m_tlm.lastDirectiveError, DirectiveError::NO_ERROR);
-    ASSERT_EQ(cmp.m_statementsDispatched, 5);
+    ASSERT_EQ(tester_get_m_tlm_ptr()->lastDirectiveError, DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_get_m_statementsDispatched(), 5);
     nextTlmValue.resetSer();
     nextTlmValue.serialize(false);
-    cmp.m_statementsDispatched = 0;
+    tester_set_m_statementsDispatched(0);
     writeAndRun();
     dispatchUntilState(State::IDLE);
-    ASSERT_EQ(cmp.m_statementsDispatched, 6);
+    ASSERT_EQ(tester_get_m_statementsDispatched(), 6);
 }
 
 TEST_F(FpySequencerTester, OrOfTlmAndReg) {
@@ -59,7 +59,7 @@ TEST_F(FpySequencerTester, OrOfTlmAndReg) {
     add_DESER_LVAR(0, 0, 0, 1);
     add_SET_REG(1, 0);
     // or between the stored const and the tlm val
-    add_OR(0, 1, 2);
+    add_BINARY_CMP(0, 1, 2, Fpy::DirectiveId::OR);
     add_IF(2, 7);
     // if true
     add_NO_OP();
@@ -71,14 +71,14 @@ TEST_F(FpySequencerTester, OrOfTlmAndReg) {
 
     writeAndRun();
     dispatchUntilState(State::IDLE);
-    ASSERT_EQ(cmp.m_tlm.lastDirectiveError, DirectiveError::NO_ERROR);
-    ASSERT_EQ(cmp.m_statementsDispatched, 7);
+    ASSERT_EQ(tester_get_m_tlm_ptr()->lastDirectiveError, DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_get_m_statementsDispatched(), 7);
     nextTlmValue.resetSer();
     nextTlmValue.serialize(false);
-    cmp.m_statementsDispatched = 0;
+    tester_set_m_statementsDispatched(0);
     writeAndRun();
     dispatchUntilState(State::IDLE);
-    ASSERT_EQ(cmp.m_statementsDispatched, 8);
+    ASSERT_EQ(tester_get_m_statementsDispatched(), 8);
 }
 
 TEST_F(FpySequencerTester, CmpIntTlm) {
@@ -103,15 +103,15 @@ TEST_F(FpySequencerTester, CmpIntTlm) {
     writeAndRun();
     dispatchUntilState(State::IDLE);
     // should be equal on first try
-    ASSERT_EQ(cmp.m_tlm.lastDirectiveError, DirectiveError::NO_ERROR);
-    ASSERT_EQ(cmp.m_statementsDispatched, 7);
+    ASSERT_EQ(tester_get_m_tlm_ptr()->lastDirectiveError, DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_get_m_statementsDispatched(), 7);
     nextTlmValue.resetSer();
     // should fail if tlm is 998
     nextTlmValue.serialize(998);
-    cmp.m_statementsDispatched = 0;
+    tester_set_m_statementsDispatched(0);
     writeAndRun();
     dispatchUntilState(State::IDLE);
-    ASSERT_EQ(cmp.m_statementsDispatched, 8);
+    ASSERT_EQ(tester_get_m_statementsDispatched(), 8);
 }
 
 }

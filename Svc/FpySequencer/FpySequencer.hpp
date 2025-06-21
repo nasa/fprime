@@ -568,10 +568,6 @@ class FpySequencer : public FpySequencerComponentBase {
     // dispatches the next statement
     Signal dispatchStatement();
 
-    // dispatches a command out via port.
-    // return success if successfully dispatched.
-    Fw::Success dispatchCommand(const Fpy::Statement& stmt);
-
     // deserializes a directive from bytes into the Fpy type
     // returns success if able to deserialize, and returns the Fpy type object
     // as a reference, in a union of all the possible directive type objects
