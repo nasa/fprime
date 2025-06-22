@@ -31,7 +31,7 @@ storing the entries in the set or map.
 |Name|Type|Purpose|Default Value|
 |----|----|-------|-------------|
 |`m_entries`|[`ExternalArray<Entry>`](ExternalArray.md)|The array for storing the set or map entries|C++ default initialization|
-|`m_size`|`FwSizeType`|The number of entries in the map|0|
+|`m_size`|`FwSizeType`|The number of entries in the set or map|0|
 
 ```mermaid
 classDiagram
@@ -55,9 +55,7 @@ Initialize each member variable with its default value.
 ArraySetOrMapImpl(Entry* entries, FwSizeType capacity)
 ```
 
-1. Call `setStorage(entries, capacity)`.
-
-1. Initialize the other member variables with their default values.
+Call `setStorage(entries, capacity)`.
 
 ### 4.3. Constructor Providing Untyped Backing Storage
 
@@ -69,9 +67,7 @@ ArraySetOrMapImpl(ByteArray data, FwSizeType capacity)
 [`getByteArrayAlignment()`](#61-getbytearrayalignment) and must
 contain at least [`getByteArraySize(size)`](#62-getbytearraysize) bytes.
 
-1. Call `setStorage(data, capacity)`.
-
-1. Initialize the other member variables with their default values.
+Call `setStorage(data, capacity)`.
 
 ### 4.4. Copy Constructor
 
@@ -156,14 +152,12 @@ Return `m_entries.getSize()`.
 ### 5.6. getHeadIterator
 
 ```c++
-const Iterator* getHeadIterator const
+const Iterator* getHeadIterator() const
 ```
 
 1. Set `result = nullptr`.
 
 1. If `m_size > 0`
-
-    1. Assert `m_entries != nullptr`.
 
     1. Set `result = &m_entries[0]`.
 
@@ -243,7 +237,7 @@ Success remove(const KE& keyOrElement, VN& valueOrNil)
 ### 5.10. setStorage (Typed Data)
 
 ```c++
-void setStorage(T* entries, FwSizeType capacity)
+void setStorage(Entry* entries, FwSizeType capacity)
 ```
 
 1. Call `m_entries.setStorage(entries, capacity)`.

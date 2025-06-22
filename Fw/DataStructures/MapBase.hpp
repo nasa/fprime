@@ -8,7 +8,6 @@
 #define Fw_MapBase_HPP
 
 #include "Fw/DataStructures/MapIterator.hpp"
-#include "Fw/FPrimeBasicTypes.hpp"
 #include "Fw/Types/Assert.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
 
@@ -21,7 +20,7 @@ class MapBase {
     // Public types
     // ----------------------------------------------------------------------
 
-    //! The type of an abstract map iterator
+    //! The type of a map iterator
     using Iterator = MapIterator<K, V>;
 
   private:
@@ -78,6 +77,7 @@ class MapBase {
     }
 
     //! Find the value associated with a key in the map
+    //! SUCCESS if the item was found
     Success find(const K& key,  //!< The key (input)
                  V& value       //!< The value (output)
     ) const = 0;

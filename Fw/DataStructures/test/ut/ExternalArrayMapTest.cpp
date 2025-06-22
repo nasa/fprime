@@ -5,6 +5,7 @@
 // ======================================================================
 
 #include "Fw/DataStructures/SetOrMapIterator.hpp"
+#include "Fw/DataStructures/ArraySetOrMapImpl.hpp"
 
 namespace Fw {
 

@@ -25,14 +25,16 @@ class ExternalArray final {
     //! Zero-argument constructor
     ExternalArray() {}
 
-    //! Constructor providing typed backing storage
+    //! Constructor providing typed backing storage.
+    //! elements must point to at least size elements of type T.
     ExternalArray(T* elements,     //!< The elements
                   FwSizeType size  //!< The array size
                   )
         : m_elements(elements), m_size(size) {}
 
     //! Constructor providing untyped backing storage.
-    //! Data must be aligned for T and must contain at least getByteArraySize(size) bytes.
+    //! data must be aligned according to getByteArrayAlignment().
+    //! data must contain at least getByteArraySize(size) bytes.
     ExternalArray(ByteArray data,  //!< The data
                   FwSizeType size  //!< The array size
     ) {
