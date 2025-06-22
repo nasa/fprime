@@ -48,7 +48,7 @@ We welcome contributions to expand the list of supported platforms! Here’s how
 1. Create a reference project for your platform that uses your platform library. Use [`fprime-vxworks-reference`](https://github.com/fprime-community/fprime-vxworks-reference) or [`fprime-baremetal-reference`](https://github.com/fprime-community/fprime-baremetal-reference) as examples for the file structure.
 1. Include build, run, and hardware setup instructions in a README.md.
 1. Set up CI for your reference project and have CI run the F Prime provided integration test scripts.
-1. Optional: submit a request to add your reference project to fprime-community by [opening a discussion](https://github.com/nasa/fprime/discussions). Provide platform description in your request.
+1. Optional: You may submit a request to add your reference project to the fprime-community by [opening a discussion](https://github.com/nasa/fprime/discussions). Please include a description of your platform and links to your reference project repositories. Additionally, grant admin privileges to your repositories for the fprime-community maintainers so they can transfer them to the fprime-community.
    
 > [!TIP]
 > 1. Follow the naming and file-structure convention as the example reference projects.
