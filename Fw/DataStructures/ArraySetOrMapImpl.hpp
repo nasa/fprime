@@ -72,19 +72,20 @@ class ArraySetOrMapImpl {
         return *this;
     }
 
-    //! Clear the set or map
-    void clear() { this->m_size = 0; }
-
-    //! Get an item at an index in the array.
+    //! Get an iterator at an index in the array.
     //! Fails an assertion if the index is out of range for the set or map.
+    //! \return The iterator
     const Iterator& at(FwSizeType index  //!< The index
     ) const {
         FW_ASSERT(index < this->m_size, static_cast<FwSizeType>(index), static_cast<FwSizeType>(this->m_size));
         return this->m_entries[index];
     }
 
+    //! Clear the set or map
+    void clear() { this->m_size = 0; }
+
     //! Find a value associated with a key in the map or an element in a set
-    //! SUCCESS if the item was found
+    //! \return SUCCESS if the item was found
     Success find(const KE& keyOrElement,  //!< The key or element
                  VN& valueOrNil           //!< The value or Nil
     ) {
@@ -105,6 +106,7 @@ class ArraySetOrMapImpl {
     FwSizeType getCapacity() const { return this->m_entries.getSize(); }
 
     //! Get the head iterator for the set or map
+    //! \return The iterator
     const Iterator* getHeadIterator() const {
         Iterator* result = nullptr;
         if (this->m_size > 0) {

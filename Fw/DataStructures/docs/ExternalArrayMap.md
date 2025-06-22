@@ -387,7 +387,7 @@ map.setStorage(ByteArray(&bytes[0], sizeof bytes), capacity);
 static constexpr U8 getByteArrayAlignment()
 ```
 
-Return `ArraySetOrMapImpl<Entry>::getByteArrayAlignment()`.
+Return `ArraySetOrMapImpl<K, V>::getByteArrayAlignment()`.
 
 <a name="getByteArraySize"></a>
 ### 7.2. getByteArraySize
@@ -396,4 +396,4 @@ Return `ArraySetOrMapImpl<Entry>::getByteArrayAlignment()`.
 static constexpr FwSizeType getByteArraySize(FwSizeType capacity)
 ```
 
-Return `ArraySetOrMapImpl<Entry>::getByteArraySize(capacity)`.
+Return `ArraySetOrMapImpl<K, V>::getByteArraySize(capacity)`.
