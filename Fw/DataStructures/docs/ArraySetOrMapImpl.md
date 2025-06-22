@@ -36,7 +36,7 @@ storing the entries in the set or map.
 ```mermaid
 classDiagram
     ArraySetOrMapImpl *-- ExternalArray
-    ExternalArray "1..*" *-- Entry
+    ExternalArray *-- "1..*" Entry
 ```
 
 ## 4. Public Constructors and Destructors
@@ -52,7 +52,7 @@ Initialize each member variable with its default value.
 ### 4.2. Constructor Providing Typed Backing Storage
 
 ```c++
-ArraySetOrMapImpl(Iterator* entries, FwSizeType capacity)
+ArraySetOrMapImpl(Entry* entries, FwSizeType capacity)
 ```
 
 1. Call `setStorage(entries, capacity)`.
