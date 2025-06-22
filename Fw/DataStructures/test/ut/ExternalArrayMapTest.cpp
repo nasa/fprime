@@ -4,8 +4,7 @@
 // \brief  cpp file for ExternalArrayMap tests
 // ======================================================================
 
-#include "Fw/DataStructures/SetOrMapIterator.hpp"
-#include "Fw/DataStructures/ArraySetOrMapImpl.hpp"
+#include "Fw/DataStructures/ExternalArrayMap.hpp"
 
 namespace Fw {
 
