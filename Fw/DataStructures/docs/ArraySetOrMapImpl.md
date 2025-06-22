@@ -183,7 +183,7 @@ Success insert(const KE& keyOrElement, const VN& valueOrNil)
 
     1. Let `auto& e = m_entries[i]`.
 
-    1. If `e.getKey() == e.keyOrElement`
+    1. If `e.getKey() == keyOrElement`
 
         1. Call `e.setValue(valueOrNil)`.
 
