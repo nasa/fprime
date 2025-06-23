@@ -9,6 +9,7 @@ ACTIVERATEGROUPCFG
 ACTIVERATEGROUPIMPLTESTER
 ACTIVETEXTLOGGERIMPL
 adminlist
+aleem
 ALLEXTERNALS
 alphanums
 ampcs
@@ -239,6 +240,8 @@ gcgandhi
 gcov
 gdiplus
 GENHUB
+getfooter
+getstatements
 gettime
 getty
 ghprb

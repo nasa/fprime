@@ -54,7 +54,7 @@ namespace Svc {
 
         //! Test tree construction
         void testTree(
-            DpCatalog::DpStateEntry* list, 
+            DpCatalog::DpStateEntry* list,
             DpCatalog::DpStateEntry* output,
             FwIndexType numEntries);
 
@@ -146,6 +146,23 @@ namespace Svc {
 
         //! The component under test
         DpCatalog component;
+
+    public:
+        // ----------------------------------------------------------------------
+        // Moved Tests due to private/protected access
+        // ----------------------------------------------------------------------
+        static bool EntryCompare(const Svc::DpCatalog::DpStateEntry& a, const Svc::DpCatalog::DpStateEntry& b);
+        void test_NominalManual_DISABLED_TreeTestRandomTransmitted();
+        void test_TreeTestManual1();
+        void test_TreeTestManual2();
+        void test_TreeTestManual3();
+        void test_TreeTestManual5();
+        void test_TreeTestManual1_Transmitted();
+        void test_TreeTestManual_All_Transmitted();
+        void test_TreeTestRandomPriority();
+        void test_TreeTestRandomTime();
+        void test_TreeTestRandomId();
+        void test_TreeTestRandomPrioIdTime();
 
     };
 

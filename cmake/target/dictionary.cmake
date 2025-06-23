@@ -32,11 +32,11 @@ endfunction(dictionary_add_global_target)
 function(dictionary_add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPENDENCIES)
     # Create deployment level target and remove the module from the list of dependencies
     add_custom_target("${MODULE}_${TARGET}")
-    list(REMOVE_ITEM FULL_DEPENDENCIES "${MODULE}")
+    list(REMOVE_ITEM DEPENDENCIES "${MODULE}")
     # Loop through all recursive dependencies and find dictionary targets
-    foreach(DEPENDENCY IN LISTS FULL_DEPENDENCIES)
-        get_target_property(DICTIONARY_FILES "${DEPENDENCY}" FPRIME_DICTIONARIES)
+    foreach(DEPENDENCY IN LISTS DEPENDENCIES)
         if (TARGET "${DEPENDENCY}_${TARGET}")
+            get_target_property(DICTIONARY_FILES "${DEPENDENCY}" FPRIME_DICTIONARIES)
             fprime_cmake_ASSERT("No dictionary files defined for ${DEPENDENCY}" DICTIONARY_FILES)
             # Install the files as a component. This is done here so it is output to the deployment directory
             install(FILES ${DICTIONARY_FILES} DESTINATION ${TOOLCHAIN_NAME}/${MODULE}/dict COMPONENT "${MODULE}_${DEPENDENCY}_${TARGET}")
