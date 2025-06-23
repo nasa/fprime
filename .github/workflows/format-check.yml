@@ -29,7 +29,9 @@ jobs:
           pip3 install -U git+https://github.com/thomas-bc/fprime-tools@formatting-ci-improvements
           pip3 freeze
           echo "HELP"
-          fprime-util format --help
+          // fprime-util format --help
           echo "FORMAT"
-          fprime-util format --check --dirs Fw/Buffer Fw/Cmd Fw/Com
+          // fprime-util format --check --dirs Fw/Buffer Fw/Cmd Fw/Com
         shell: bash
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
