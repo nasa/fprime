@@ -78,7 +78,7 @@ class SetBase {
 
     //! Find the an element in a set
     //! SUCCESS if the item was found
-    Success find(const T& element  //!< The element
+    virtual Success find(const T& element  //!< The element
     ) const = 0;
 
     //! Get the capacity (maximum number of items stored in the set)
