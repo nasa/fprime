@@ -26,5 +26,9 @@ jobs:
       - name: "Check C++ Formatting"
         run: |
           pip install -U git+https://github.com/thomas-bc/fprime-tools@formatting-ci-improvements
+          pip freeze | grep fprime-tools
+          echo "HELP"
+          fprime-util format --help
+          echo "FORMAT"
           fprime-util format --check --dirs Fw/Buffer Fw/Cmd Fw/Com
         shell: bash
