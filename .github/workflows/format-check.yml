@@ -25,9 +25,9 @@ jobs:
       - uses: ./.github/actions/setup
       - name: "Check C++ Formatting"
         run: |
-          pip uninstall -y fprime-tools
-          pip install -U git+https://github.com/thomas-bc/fprime-tools@formatting-ci-improvements
-          pip freeze | grep fprime-tools
+          pip3 uninstall -y fprime-tools
+          pip3 install -U git+https://github.com/thomas-bc/fprime-tools@formatting-ci-improvements
+          pip3 freeze
           echo "HELP"
           fprime-util format --help
           echo "FORMAT"
