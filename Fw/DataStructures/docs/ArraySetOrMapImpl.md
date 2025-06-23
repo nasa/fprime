@@ -23,6 +23,7 @@ storing the entries in the set or map.
 |----|----------|
 |`Entry`|Alias for [`SetOrMapIterator<KE, VN>`](SetOrMapIterator.md)|
 |`Iterator`|Alias for [`SetOrMapIterator<KE, VN>`](SetOrMapIterator.md)|
+|`Nil`|`struct Nil {}`|
 
 ## 3. Private Member Variables
 

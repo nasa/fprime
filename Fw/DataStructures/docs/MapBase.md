@@ -121,7 +121,7 @@ void f(MapBase<U16, U32>& m1, MapBase<U16, U32>& m2) {
 ### 6.3. find
 
 ```c++
-Success find(const K& key, V& value) const = 0
+virtual Success find(const K& key, V& value) const = 0
 ```
 
 1. If an entry `e` with value `key` exists in the map,

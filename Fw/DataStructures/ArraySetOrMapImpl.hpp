@@ -27,6 +27,9 @@ class ArraySetOrMapImpl {
     //! The type of a set or map iterator
     using Iterator = SetOrMapIterator<KE, VN>;
 
+    //! The Nil type
+    struct Nil {};
+
   public:
     // ----------------------------------------------------------------------
     // Public constructors and destructors
@@ -88,7 +91,7 @@ class ArraySetOrMapImpl {
     //! \return SUCCESS if the item was found
     Success find(const KE& keyOrElement,  //!< The key or element
                  VN& valueOrNil           //!< The value or Nil
-    ) {
+    ) const {
         auto status = Success::FAILURE;
         for (FwSizeType i = 0; i < this->m_size; i++) {
             const auto& e = this->m_entries[i];
@@ -108,7 +111,7 @@ class ArraySetOrMapImpl {
     //! Get the head iterator for the set or map
     //! \return The iterator
     const Iterator* getHeadIterator() const {
-        Iterator* result = nullptr;
+        const Iterator* result = nullptr;
         if (this->m_size > 0) {
             result = &this->m_entries[0];
         }
@@ -126,9 +129,9 @@ class ArraySetOrMapImpl {
     ) {
         auto status = Success::FAILURE;
         for (FwSizeType i = 0; i < this->m_size; i++) {
-            const auto& e = this->m_entries[i];
+            auto& e = this->m_entries[i];
             if (e.getKey() == keyOrElement) {
-                e.setValue(valueOrNil);
+                e.setValueOrNil(valueOrNil);
                 status = Success::SUCCESS;
                 break;
             }

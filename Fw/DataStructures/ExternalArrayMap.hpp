@@ -88,42 +88,42 @@ class ExternalArrayMap final : public MapBase<K, V> {
     }
 
     //! Clear the set or map
-    void clear() { this->m_impl.clear(); }
+    void clear() override { this->m_impl.clear(); }
 
     //! Find a value associated with a key in the map
     //! \return SUCCESS if the item was found
     Success find(const K& key,  //!< The key
                  V& value       //!< The value
-    ) {
-        return this->find(key, value);
+    ) const override {
+        return this->m_impl.find(key, value);
     }
 
     //! Get the capacity of the set or map (max number of entries)
     //! \return The capacity
-    FwSizeType getCapacity() const { return this->m_impl.getCapacity(); }
+    FwSizeType getCapacity() const override { return this->m_impl.getCapacity(); }
 
     //! Get the head iterator for the set or map
     //! \return The iterator
-    const Iterator* getHeadIterator() const { return this->m_impl.getHeadIterator(); }
+    const Iterator* getHeadIterator() const override { return this->m_impl.getHeadIterator(); }
 
     //! Get the size (number of entries)
     //! \return The size
-    FwSizeType getSize() const { return this->m_impl.getSize(); }
+    FwSizeType getSize() const override { return this->m_impl.getSize(); }
 
     //! Insert a (key, value) pair in the map
     //! \return SUCCESS if there is room in the map
     Success insert(const K& key,   //!< The key
                    const V& value  //!< The value
-    ) {
-        this->m_impl.insert(key, value);
+    ) override {
+        return this->m_impl.insert(key, value);
     }
 
     //! Remove an element from the set or a (key, value) pair from the map
     //! \return SUCCESS if the key or element was there
     Success remove(const K& key,  //!< The key
                    V& value       //!< The value
-    ) {
-        this->m_impl.remove(key, value);
+    ) override {
+        return this->m_impl.remove(key, value);
     }
 
     //! Set the backing storage (typed data)

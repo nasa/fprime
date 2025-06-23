@@ -10,7 +10,7 @@ namespace Fw {
 
 namespace MapTest {
 
-SetOrMapIterator<U16, U32> iterator;
+ExternalArrayMap<U16, U32> map;
 
 }  // namespace MapTest
 }  // namespace Fw

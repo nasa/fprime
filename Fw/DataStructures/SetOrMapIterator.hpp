@@ -31,18 +31,27 @@ class SetOrMapIterator final : public MapIterator<KE, VN>, SetIterator<KE> {
         : m_keyOrElement(keyOrElement), m_valueOrNil(valueOrNil), m_next(next) {}
 
     //! Copy constructor
-    SetOrMapIterator(const SetOrMapIterator<KE, VN>&) = default;
+    SetOrMapIterator(const SetOrMapIterator<KE, VN>& iterator) {
+      *this = iterator;
+    }
 
     //! Destructor
     ~SetOrMapIterator() override = default;
 
-  private:
+  public:
     // ----------------------------------------------------------------------
     // Public member functions
     // ----------------------------------------------------------------------
 
     //! operator=
-    SetOrMapIterator<KE, VN>& operator=(const SetOrMapIterator<KE, VN>&) = default;
+    SetOrMapIterator<KE, VN>& operator=(const SetOrMapIterator<KE, VN>& iterator) {
+      if (this != &iterator) {
+        this->m_keyOrElement = iterator.m_keyOrElement;
+        this->m_valueOrNil = iterator.m_valueOrNil;
+        this->m_next = iterator.m_next;
+      }
+      return *this;
+    }
 
     //! Get the element associated with this iterator
     //! \return The element

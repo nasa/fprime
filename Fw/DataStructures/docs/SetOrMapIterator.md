@@ -66,7 +66,7 @@ SetOrMapIterator(const KE& keyOrElement, const VN& valueOrNil, const SetOrMapIte
 SetOrMapIterator(const SetOrMapIterator<KE, VN>& iterator)
 ```
 
-Defined as `= default`.
+Set `*this = iterator`.
 
 ### 4.4. Destructor
 
@@ -84,7 +84,13 @@ Defined as `= default`.
 SetOrMapIterator& operator=(const SetOrMapIterator&<KE, VN> iterator)
 ```
 
-Defined as `= default`.
+1. If `this != &iterator`
+
+    1. Set `m_keyOrElement = iterator.keyOrElement`.
+
+    1. Set `m_valueOrNil = iterator.valueOrNil`.
+
+    1. Set `m_next = iterator.next`.
 
 ### 5.3. getElement
 

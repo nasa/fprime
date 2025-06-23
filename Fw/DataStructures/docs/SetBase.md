@@ -19,9 +19,7 @@ It represents an abstract base class for a set.
 
 |Name|Definition|
 |----|----------|
-|`Entry`|Alias of [`SetOrMapIterator<T, Nil>`](SetOrMapIterator.md)|
 |`Iterator`|Alias of [`SetIterator<T>`](SetIterator.md)|
-|`Nil`|`struct Nil {}`|
 
 ## 3. Private Constructors
 
@@ -122,7 +120,7 @@ void f(SetBase<U32>& s1, SetBase<U32>& s2) {
 ### 6.3. find
 
 ```c++
-Success find(const T& element) = 0
+virtual Success find(const T& element) = 0
 ```
 
 1. If an entry `e` with element `element` exists in the set,
@@ -164,7 +162,7 @@ void f(const SetBase<U32>& set) {
 ### 6.5. getHeadIterator
 
 ```c++
-const Iterator* getHeadIterator const = 0
+virtual const Iterator* getHeadIterator const = 0
 ```
 
 Get a pointer to the head iterator for the set, or `nullptr` if there is none.
@@ -197,7 +195,7 @@ See [**getCapacity**](SetBase.md#64-getcapacity).
 ### 6.7. insert
 
 ```c++
-Success insert(const T& element) = 0
+virtual Success insert(const T& element) = 0
 ```
 
 1. If an entry `e` exists with the specified element, then return `SUCCESS`.
@@ -223,7 +221,7 @@ void f(SetBase<U16, U32>& set) {
 ### 6.8. remove
 
 ```c++
-Success remove(const T& element) = 0
+virtual Success remove(const T& element) = 0
 ```
 
 1. If an entry `e` exists with element `element`, then
