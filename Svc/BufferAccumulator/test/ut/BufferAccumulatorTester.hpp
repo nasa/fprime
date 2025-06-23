@@ -81,6 +81,14 @@ class BufferAccumulatorTester : public BufferAccumulatorGTestBase {
 
   //! Whether to allocate/deallocate a queue for the user
   bool doAllocateQueue;
+
+
+  // ----------------------------------------------------------------------
+  //  Methods
+  // ----------------------------------------------------------------------
+
+  //! Helper method to call doDispatch
+  void dispatchOne(void);
 };
 
 }  // end namespace Svc
