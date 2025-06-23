@@ -8,25 +8,26 @@
 #ifndef CMDPACKET_HPP_
 #define CMDPACKET_HPP_
 
-#include <Fw/Cmd/CmdArgBuffer.hpp>
 #include <Fw/Com/ComPacket.hpp>
+#include <Fw/Cmd/CmdArgBuffer.hpp>
 
 namespace Fw {
 
-class CmdPacket : public ComPacket {
-  public:
-    CmdPacket();
-    virtual ~CmdPacket();
+    class CmdPacket : public ComPacket {
+        public:
 
-    SerializeStatus serialize(SerializeBufferBase& buffer) const;  //!< serialize contents
-    SerializeStatus deserialize(SerializeBufferBase& buffer);
-    FwOpcodeType getOpCode() const;
-    CmdArgBuffer& getArgBuffer();
+            CmdPacket();
+            virtual ~CmdPacket();
 
-  protected:
-    FwOpcodeType m_opcode;
-    CmdArgBuffer m_argBuffer;
-};
+            SerializeStatus serialize(SerializeBufferBase& buffer) const; //!< serialize contents
+            SerializeStatus deserialize(SerializeBufferBase& buffer);
+            FwOpcodeType getOpCode() const;
+            CmdArgBuffer& getArgBuffer();
+
+        protected:
+            FwOpcodeType m_opcode;
+            CmdArgBuffer m_argBuffer;
+    };
 
 } /* namespace Fw */
 

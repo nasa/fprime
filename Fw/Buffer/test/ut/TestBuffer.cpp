@@ -1,9 +1,10 @@
 //
 // Created by mstarch on 11/13/20.
 //
-#include <gtest/gtest.h>
-#include <Fw/FPrimeBasicTypes.hpp>
 #include "Fw/Buffer/Buffer.hpp"
+#include <Fw/FPrimeBasicTypes.hpp>
+#include <gtest/gtest.h>
+
 
 void test_basic() {
     U8 data[100];
@@ -31,7 +32,7 @@ void test_basic() {
     ASSERT_EQ(buffer, buffer_new);
 
     // Creating empty buffer
-    Fw::Buffer testBuffer(nullptr, 0);
+    Fw::Buffer testBuffer(nullptr,0);
     ASSERT_EQ(testBuffer.getData(), nullptr);
     ASSERT_EQ(testBuffer.getSize(), 0);
 
@@ -76,7 +77,7 @@ void test_representations() {
 
     // Test serialization and that it stops before overflowing
     auto serializer = buffer.getSerializer();
-    for (U32 i = 0; i < sizeof(data) / 4; i++) {
+    for (U32 i = 0; i < sizeof(data)/4; i++) {
         ASSERT_EQ(serializer.serialize(i), Fw::FW_SERIALIZE_OK);
     }
     Fw::SerializeStatus stat = serializer.serialize(100);
@@ -89,7 +90,7 @@ void test_representations() {
     // Now deserialize all the things
     auto deserializer = buffer.getDeserializer();
     U32 out;
-    for (U32 i = 0; i < sizeof(data) / 4; i++) {
+    for (U32 i = 0; i < sizeof(data)/4; i++) {
         ASSERT_EQ(deserializer.deserialize(out), Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(i, out);
     }
@@ -117,6 +118,7 @@ void test_serialization() {
     ASSERT_EQ(buffer_new, buffer);
 }
 
+
 TEST(Nominal, BasicBuffer) {
     test_basic();
 }
@@ -129,7 +131,8 @@ TEST(Nominal, Serialization) {
     test_serialization();
 }
 
-int main(int argc, char** argv) {
+
+int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
