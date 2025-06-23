@@ -25,6 +25,7 @@
 // SubtopologyTopologyDefs includes
 #include "Svc/Subtopologies/ComCcsds/SubtopologyTopologyDefs.hpp"
 #include "Svc/Subtopologies/DataProducts/SubtopologyTopologyDefs.hpp"
+#include "Svc/Subtopologies/FileHandling/SubtopologyTopologyDefs.hpp"
 
 namespace PingEntries {
     namespace Ref_blockDrv       {enum { WARN = 3, FATAL = 5 };}

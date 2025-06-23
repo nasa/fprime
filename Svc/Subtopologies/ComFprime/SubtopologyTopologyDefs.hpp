@@ -4,6 +4,7 @@
 #include <Svc/FrameAccumulator/FrameDetector/FprimeFrameDetector.hpp>
 #include <Fw/Types/MallocAllocator.hpp>
 #include <Svc/BufferManager/BufferManager.hpp>
+#include "Svc/Subtopologies/ComFprime/ComFprimeConfig/FppConstantsAc.hpp"
 
 namespace ComFprime {
     namespace Allocation {

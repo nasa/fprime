@@ -2,39 +2,43 @@ telemetry packets RefPackets {
 
   packet CDH id 1 group 1 {
     CdhCore.cmdDisp.CommandsDispatched
-    Ref.rateGroup1Comp.RgMaxTime
-    Ref.rateGroup2Comp.RgMaxTime
-    Ref.rateGroup3Comp.RgMaxTime
+
+    FileHandling.fileUplink.FilesReceived
+    FileHandling.fileUplink.PacketsReceived
+    FileHandling.fileDownlink.FilesSent
+    FileHandling.fileDownlink.PacketsSent
+    FileHandling.fileManager.CommandsExecuted
+
     ComCcsds.cmdSeq.CS_LoadCommands
     ComCcsds.cmdSeq.CS_CancelCommands
     ComCcsds.cmdSeq.CS_CommandsExecuted
     ComCcsds.cmdSeq.CS_SequencesCompleted
-    FileHandling.fileUplink.FilesReceived
-    FileHandling.fileUplink.PacketsReceived
+    ComCcsds.comQueue.comQueueDepth
+    ComCcsds.comQueue.buffQueueDepth
     ComCcsds.commsBufferManager.TotalBuffs
     ComCcsds.commsBufferManager.CurrBuffs
     ComCcsds.commsBufferManager.HiBuffs
-    FileHandling.fileDownlink.FilesSent
-    FileHandling.fileDownlink.PacketsSent
-    FileHandling.fileManager.CommandsExecuted
-    ComCcsds.comQueue.comQueueDepth
-    ComCcsds.comQueue.buffQueueDepth
-    # Ref.tlmSend.SendLevel
+    #ComCcsds.tlmSend.SendLevel
+
+    Ref.rateGroup1Comp.RgMaxTime
+    Ref.rateGroup2Comp.RgMaxTime
+    Ref.rateGroup3Comp.RgMaxTime
   }
 
   packet CDHErrors id 2 group 1 {
+    CdhCore.$health.PingLateWarnings
+
+    FileHandling.fileUplink.Warnings
+    FileHandling.fileDownlink.Warnings
+    FileHandling.fileManager.Errors
+
+    ComCcsds.cmdSeq.CS_Errors
+    ComCcsds.commsBufferManager.NoBuffs
+    ComCcsds.commsBufferManager.EmptyBuffs
+
     Ref.rateGroup1Comp.RgCycleSlips
     Ref.rateGroup2Comp.RgCycleSlips
     Ref.rateGroup3Comp.RgCycleSlips
-    ComCcsds.cmdSeq.CS_Errors
-    FileHandling.fileUplink.Warnings
-    FileHandling.fileDownlink.Warnings
-    CdhCore.$health.PingLateWarnings
-    FileHandling.fileManager.Errors
-    ComCcsds.commsBufferManager.NoBuffs
-    ComCcsds.commsBufferManager.EmptyBuffs
-    FileHandling.fileManager.Errors
-
   }
 
   packet DriveTlm id 3 group 1 {
@@ -178,15 +182,18 @@ telemetry packets RefPackets {
   packet DataProducts id 21 group 3 {
     DataProducts.dpCat.CatalogDps
     DataProducts.dpCat.DpsSent
+
     DataProducts.dpMgr.NumSuccessfulAllocations
     DataProducts.dpMgr.NumFailedAllocations
     DataProducts.dpMgr.NumDataProducts
     DataProducts.dpMgr.NumBytes
+
     DataProducts.dpWriter.NumBuffersReceived
     DataProducts.dpWriter.NumBytesWritten
     DataProducts.dpWriter.NumSuccessfulWrites
     DataProducts.dpWriter.NumFailedWrites
     DataProducts.dpWriter.NumErrors
+
     DataProducts.dpBufferManager.TotalBuffs
     DataProducts.dpBufferManager.CurrBuffs
     DataProducts.dpBufferManager.HiBuffs

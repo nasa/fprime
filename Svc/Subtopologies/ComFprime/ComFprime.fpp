@@ -24,14 +24,14 @@ module ComFprime {
         phase Fpp.ToCpp.Phases.configComponents """
         Svc::ComQueue::QueueConfigurationTable configurationTable;
         // Events (highest-priority)
-        configurationTable.entries[ConfigConstants::ComFprime_comQueue::EVENTS].depth = 100;
-        configurationTable.entries[ConfigConstants::ComFprime_comQueue::EVENTS].priority = 0;
+        configurationTable.entries[ConfigConstants::ComFprime_comQueue::EVENTS].depth = ComFprimeConfig::QueueDepths::events;
+        configurationTable.entries[ConfigConstants::ComFprime_comQueue::EVENTS].priority = ComFprimeConfig::QueuePriorities::events;
         // Telemetry
-        configurationTable.entries[ConfigConstants::ComFprime_comQueue::TELEMETRY].depth = 500;
-        configurationTable.entries[ConfigConstants::ComFprime_comQueue::TELEMETRY].priority = 2;
+        configurationTable.entries[ConfigConstants::ComFprime_comQueue::TELEMETRY].depth = ComFprimeConfig::QueueDepths::tlm;
+        configurationTable.entries[ConfigConstants::ComFprime_comQueue::TELEMETRY].priority = ComFprimeConfig::QueuePriorities::tlm;
         // File Downlink Queue
-        configurationTable.entries[ConfigConstants::ComFprime_comQueue::FILE_QUEUE].depth = 100;
-        configurationTable.entries[ConfigConstants::ComFprime_comQueue::FILE_QUEUE].priority = 1;
+        configurationTable.entries[ConfigConstants::ComFprime_comQueue::FILE_QUEUE].depth = ComFprimeConfig::QueueDepths::file;
+        configurationTable.entries[ConfigConstants::ComFprime_comQueue::FILE_QUEUE].priority = ComFprimeConfig::QueuePriorities::file;
         // Allocation identifier is 0 as the MallocAllocator discards it
         ComFprime::comQueue.configure(configurationTable, 0, ComFprime::Allocation::mallocator);
         """
@@ -42,14 +42,8 @@ module ComFprime {
         stack size ComFprimeConfig.StackSizes.cmdSeq \
         priority ComFprimeConfig.Priorities.cmdSeq \
     {
-        phase Fpp.ToCpp.Phases.configConstants """
-        enum {
-          CMD_SEQ_BUFFER_SIZE = 5 * 1024
-        };
-        """
-
         phase Fpp.ToCpp.Phases.configComponents """
-        ComFprime::cmdSeq.allocateBuffer(0, ComFprime::Allocation::mallocator, ConfigConstants::ComFprime_cmdSeq::CMD_SEQ_BUFFER_SIZE);
+        ComFprime::cmdSeq.allocateBuffer(0, ComFprime::Allocation::mallocator, ComFprimeConfig::BufferMgr::cmdSeqBuffer);
         """
 
         phase Fpp.ToCpp.Phases.tearDownComponents """
@@ -68,7 +62,7 @@ module ComFprime {
             ComFprime::Detector::frameDetector,
             1,
             ComFprime::Allocation::mallocator,
-            2048
+            ComFprimeConfig::BufferMgr::frameAccumulator
         );
         """
 
@@ -79,24 +73,14 @@ module ComFprime {
 
     instance commsBufferManager: Svc.BufferManager base id ComFprimeConfig.BASE_ID + 0x0600 \
     {
-        phase Fpp.ToCpp.Phases.configConstants """
-        enum {
-          COMMS_BUFFER_MANAGER_ID = 200,
-          COMMS_BUFFER_MANAGER_STORE_SIZE = 2048,
-          COMMS_BUFFER_MANAGER_STORE_COUNT = 20,
-          COMMS_BUFFER_MANAGER_FILE_STORE_SIZE = 3000,
-          COMMS_BUFFER_MANAGER_FILE_QUEUE_SIZE = 30
-        };
-        """
-
         phase Fpp.ToCpp.Phases.configComponents """
         memset(&ComFprime::BufferManagerBins::bins, 0, sizeof(ComFprime::BufferManagerBins::bins));
-        ComFprime::BufferManagerBins::bins.bins[0].bufferSize = ConfigConstants::ComFprime_commsBufferManager::COMMS_BUFFER_MANAGER_STORE_SIZE;
-        ComFprime::BufferManagerBins::bins.bins[0].numBuffers = ConfigConstants::ComFprime_commsBufferManager::COMMS_BUFFER_MANAGER_STORE_COUNT;
-        ComFprime::BufferManagerBins::bins.bins[1].bufferSize = ConfigConstants::ComFprime_commsBufferManager::COMMS_BUFFER_MANAGER_FILE_STORE_SIZE;
-        ComFprime::BufferManagerBins::bins.bins[1].numBuffers = ConfigConstants::ComFprime_commsBufferManager::COMMS_BUFFER_MANAGER_FILE_QUEUE_SIZE;
+        ComFprime::BufferManagerBins::bins.bins[0].bufferSize = ComFprimeConfig::BufferMgr::commsBufferStore;
+        ComFprime::BufferManagerBins::bins.bins[0].numBuffers = ComFprimeConfig::BufferMgr::commsBufferCount;
+        ComFprime::BufferManagerBins::bins.bins[1].bufferSize = ComFprimeConfig::BufferMgr::commsFileBufferStore;
+        ComFprime::BufferManagerBins::bins.bins[1].numBuffers = ComFprimeConfig::BufferMgr::commsFileBufferQueue;
         ComFprime::commsBufferManager.setup(
-            ConfigConstants::ComFprime_commsBufferManager::COMMS_BUFFER_MANAGER_ID,
+            ComFprimeConfig::BufferMgr::commsBufferManager,
             0,
             ComFprime::Allocation::mallocator,
             ComFprime::BufferManagerBins::bins

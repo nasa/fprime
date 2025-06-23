@@ -17,20 +17,12 @@ module FileHandling {
         stack size FileHandlingConfig.StackSizes.fileDownlink \
         priority FileHandlingConfig.Priorities.fileDownlink \
     {
-        phase Fpp.ToCpp.Phases.configConstants """
-        enum {
-            FILE_DOWNLINK_TIMEOUT        = 1000,
-            FILE_DOWNLINK_COOLDOWN       = 1000,
-            FILE_DOWNLINK_CYCLE_TIME     = 1000,
-            FILE_DOWNLINK_FILE_QUEUE_DEPTH = 10
-        };
-        """
         phase Fpp.ToCpp.Phases.configComponents """
         FileHandling::fileDownlink.configure(
-            ConfigConstants::FileHandling_fileDownlink::FILE_DOWNLINK_TIMEOUT,
-            ConfigConstants::FileHandling_fileDownlink::FILE_DOWNLINK_COOLDOWN,
-            ConfigConstants::FileHandling_fileDownlink::FILE_DOWNLINK_CYCLE_TIME,
-            ConfigConstants::FileHandling_fileDownlink::FILE_DOWNLINK_FILE_QUEUE_DEPTH
+            FileHandlingConfig::DownlinkConfig::timeout,
+            FileHandlingConfig::DownlinkConfig::cooldown,
+            FileHandlingConfig::DownlinkConfig::cycleTime,
+            FileHandlingConfig::DownlinkConfig::fileQueueDepth
         );
         """
     }

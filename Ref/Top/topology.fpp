@@ -109,12 +109,12 @@ module Ref {
 
       ### Moved this out of DataProducts Subtopology --> anything specific to deployment should live in Ref connections
       # Synchronous request. Will have both request kinds for demo purposes, not typical
-      SG1.productGetOut -> DataProducts.dpMgr.productGetIn[0]
+      SG1.productGetOut -> DataProducts.dpMgr.productGetIn
       # Asynchronous request
-      SG1.productRequestOut -> DataProducts.dpMgr.productRequestIn[0]
-      DataProducts.dpMgr.productResponseOut[0] -> SG1.productRecvIn
+      SG1.productRequestOut -> DataProducts.dpMgr.productRequestIn
+      DataProducts.dpMgr.productResponseOut -> SG1.productRecvIn
       # Send filled DP
-      SG1.productSendOut -> DataProducts.dpMgr.productSendIn[0]
+      SG1.productSendOut -> DataProducts.dpMgr.productSendIn
 
     }
 

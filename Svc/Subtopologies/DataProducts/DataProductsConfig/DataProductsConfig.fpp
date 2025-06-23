@@ -23,4 +23,11 @@ module DataProductsConfig {
         constant dpWriter   = 99
         constant dpBufferManager  = 98
     }
+
+    # Buffer management constants
+    module BufferMgr {
+        constant dpBufferStoreSize  = 10000    # Data products buffer store size
+        constant dpBufferStoreCount = 10       # Number of data products buffers
+        constant dpBufferManagerId  = 300      # Buffer manager identifier
+    }
 }

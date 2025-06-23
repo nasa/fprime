@@ -4,6 +4,7 @@
 #include <Fw/Types/MallocAllocator.hpp>
 #include <Svc/BufferManager/BufferManager.hpp>
 #include <Os/FileSystem.hpp>
+#include "Svc/Subtopologies/DataProducts/DataProductsConfig/FppConstantsAc.hpp"
 
 namespace DataProducts {
     namespace Allocation {

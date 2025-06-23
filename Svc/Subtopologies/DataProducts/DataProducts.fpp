@@ -36,21 +36,14 @@ module DataProducts{
     # Passive Components
     # ----------------------------------------------------------------------
     
-    instance dpBufferManager: Svc.BufferManager base id 0x4A00 \ 
+    instance dpBufferManager: Svc.BufferManager base id DataProductsConfig.BASE_ID + 0x0400 \ 
     {
-        phase Fpp.ToCpp.Phases.configConstants """
-        enum {
-            DP_BUFFER_MANAGER_STORE_SIZE  = 10000,
-            DP_BUFFER_MANAGER_STORE_COUNT = 10,
-            DP_BUFFER_MANAGER_ID          = 300
-        };
-        """
         phase Fpp.ToCpp.Phases.configComponents """
         memset(&DataProducts::BufferManagerBins::bins, 0, sizeof(DataProducts::BufferManagerBins::bins));
-        DataProducts::BufferManagerBins::bins.bins[0].bufferSize = ConfigConstants::DataProducts_dpBufferManager::DP_BUFFER_MANAGER_STORE_SIZE;
-        DataProducts::BufferManagerBins::bins.bins[0].numBuffers  = ConfigConstants::DataProducts_dpBufferManager::DP_BUFFER_MANAGER_STORE_COUNT;
+        DataProducts::BufferManagerBins::bins.bins[0].bufferSize = DataProductsConfig::BufferMgr::dpBufferStoreSize;
+        DataProducts::BufferManagerBins::bins.bins[0].numBuffers = DataProductsConfig::BufferMgr::dpBufferStoreCount;
         DataProducts::dpBufferManager.setup(
-            ConfigConstants::DataProducts_dpBufferManager::DP_BUFFER_MANAGER_ID,
+            DataProductsConfig::BufferMgr::dpBufferManagerId,
             0,
             DataProducts::Allocation::mallocator,
             DataProducts::BufferManagerBins::bins

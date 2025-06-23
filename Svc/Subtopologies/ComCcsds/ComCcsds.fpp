@@ -1,10 +1,11 @@
 module ComCcsds {
 
+    # ComPacket Queue enum for queue types
     enum Ports_ComPacketQueue {
         EVENTS,
         TELEMETRY,
         FILE_QUEUE 
-    };
+    }
 
     # ----------------------------------------------------------------------
     # Active Components
@@ -15,7 +16,7 @@ module ComCcsds {
         priority ComCcsdsConfig.Priorities.comQueue \
     {
         phase Fpp.ToCpp.Phases.configConstants """
-        enum{
+        enum {
             EVENTS,
             TELEMETRY,
             FILE_QUEUE
@@ -23,15 +24,19 @@ module ComCcsds {
         """
         phase Fpp.ToCpp.Phases.configComponents """
         Svc::ComQueue::QueueConfigurationTable configurationTable;
+
         // Events (highest-priority)
-        configurationTable.entries[ConfigConstants::ComCcsds_comQueue::EVENTS].depth = 100;
-        configurationTable.entries[ConfigConstants::ComCcsds_comQueue::EVENTS].priority = 0;
+        configurationTable.entries[ConfigConstants::ComCcsds_comQueue::EVENTS].depth = ComCcsdsConfig::QueueDepths::events;
+        configurationTable.entries[ConfigConstants::ComCcsds_comQueue::EVENTS].priority = ComCcsdsConfig::QueuePriorities::events;
+
         // Telemetry
-        configurationTable.entries[ConfigConstants::ComCcsds_comQueue::TELEMETRY].depth = 500;
-        configurationTable.entries[ConfigConstants::ComCcsds_comQueue::TELEMETRY].priority = 2;
+        configurationTable.entries[ConfigConstants::ComCcsds_comQueue::TELEMETRY].depth = ComCcsdsConfig::QueueDepths::tlm;
+        configurationTable.entries[ConfigConstants::ComCcsds_comQueue::TELEMETRY].priority = ComCcsdsConfig::QueuePriorities::tlm;
+
         // File Downlink Queue
-        configurationTable.entries[ConfigConstants::ComCcsds_comQueue::FILE_QUEUE].depth = 100;
-        configurationTable.entries[ConfigConstants::ComCcsds_comQueue::FILE_QUEUE].priority = 1;
+        configurationTable.entries[ConfigConstants::ComCcsds_comQueue::FILE_QUEUE].depth = ComCcsdsConfig::QueueDepths::file;
+        configurationTable.entries[ConfigConstants::ComCcsds_comQueue::FILE_QUEUE].priority = ComCcsdsConfig::QueuePriorities::file;
+
         // Allocation identifier is 0 as the MallocAllocator discards it
         ComCcsds::comQueue.configure(configurationTable, 0, ComCcsds::Allocation::mallocator);
         """
@@ -45,14 +50,8 @@ module ComCcsds {
         stack size ComCcsdsConfig.StackSizes.cmdSeq \
         priority ComCcsdsConfig.Priorities.cmdSeq \
     {
-        phase Fpp.ToCpp.Phases.configConstants """
-        enum {
-          CMD_SEQ_BUFFER_SIZE = 5 * 1024
-        };
-        """
-
         phase Fpp.ToCpp.Phases.configComponents """
-        ComCcsds::cmdSeq.allocateBuffer(0, ComCcsds::Allocation::mallocator, ConfigConstants::ComCcsds_cmdSeq::CMD_SEQ_BUFFER_SIZE);
+        ComCcsds::cmdSeq.allocateBuffer(0, ComCcsds::Allocation::mallocator, ComCcsdsConfig::BufferMgr::cmdSeqBuffer);
         """
 
         phase Fpp.ToCpp.Phases.tearDownComponents """
@@ -71,7 +70,7 @@ module ComCcsds {
             ComCcsds::Detector::frameDetector,
             1,
             ComCcsds::Allocation::mallocator,
-            2048
+            ComCcsdsConfig::BufferMgr::frameAccumulator
         );
         """
 
@@ -82,26 +81,15 @@ module ComCcsds {
 
     instance commsBufferManager: Svc.BufferManager base id ComCcsdsConfig.BASE_ID + 0x0600 \
     {
-        phase Fpp.ToCpp.Phases.configConstants """
-        enum {
-          // Buffer Manager for Uplink/Downlink
-          COMMS_BUFFER_MANAGER_STORE_SIZE = 2048,
-          COMMS_BUFFER_MANAGER_STORE_COUNT = 20,
-          COMMS_BUFFER_MANAGER_FILE_STORE_SIZE = 3000,
-          COMMS_BUFFER_MANAGER_FILE_QUEUE_SIZE = 30,
-          COMMS_BUFFER_MANAGER_ID = 200
-        };
-        """
-
         phase Fpp.ToCpp.Phases.configComponents """
         // Buffer managers need a configured set of buckets and an allocator used to allocate memory for those buckets.
         memset(&ComCcsds::BufferManagerBins::bins, 0, sizeof(ComCcsds::BufferManagerBins::bins));
-        ComCcsds::BufferManagerBins::bins.bins[0].bufferSize = ConfigConstants::ComCcsds_commsBufferManager::COMMS_BUFFER_MANAGER_STORE_SIZE;
-        ComCcsds::BufferManagerBins::bins.bins[0].numBuffers = ConfigConstants::ComCcsds_commsBufferManager::COMMS_BUFFER_MANAGER_STORE_COUNT;
-        ComCcsds::BufferManagerBins::bins.bins[1].bufferSize = ConfigConstants::ComCcsds_commsBufferManager::COMMS_BUFFER_MANAGER_FILE_STORE_SIZE;
-        ComCcsds::BufferManagerBins::bins.bins[1].numBuffers = ConfigConstants::ComCcsds_commsBufferManager::COMMS_BUFFER_MANAGER_FILE_QUEUE_SIZE;
+        ComCcsds::BufferManagerBins::bins.bins[0].bufferSize = ComCcsdsConfig::BufferMgr::commsBufferStore;
+        ComCcsds::BufferManagerBins::bins.bins[0].numBuffers = ComCcsdsConfig::BufferMgr::commsBufferCount;
+        ComCcsds::BufferManagerBins::bins.bins[1].bufferSize = ComCcsdsConfig::BufferMgr::commsFileBufferStore;
+        ComCcsds::BufferManagerBins::bins.bins[1].numBuffers = ComCcsdsConfig::BufferMgr::commsFileBufferCount;
         ComCcsds::commsBufferManager.setup(
-            ConfigConstants::ComCcsds_commsBufferManager::COMMS_BUFFER_MANAGER_ID,
+            ComCcsdsConfig::BufferMgr::commsBufferManager,
             0,
             ComCcsds::Allocation::mallocator,
             ComCcsds::BufferManagerBins::bins

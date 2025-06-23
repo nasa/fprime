@@ -4,6 +4,7 @@
 #include <Svc/FrameAccumulator/FrameDetector/CcsdsTcFrameDetector.hpp>
 #include <Fw/Types/MallocAllocator.hpp>
 #include <Svc/BufferManager/BufferManager.hpp>
+#include "Svc/Subtopologies/ComCcsds/ComCcsdsConfig/FppConstantsAc.hpp"
 
 namespace ComCcsds {
     namespace Allocation {
