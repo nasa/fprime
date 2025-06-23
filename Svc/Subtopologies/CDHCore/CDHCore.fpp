@@ -61,6 +61,11 @@ module CDHCore {
         instance version
         instance textLogger
         instance fatalAdapter
+        instance fatalHandler
 
+        connections FaultProtection {
+            events.FatalAnnounce -> fatalHandler.FatalReceive
+        }
+        
     } # end topology
 } # end CDHCore Subtopology
