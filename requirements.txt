@@ -36,7 +36,7 @@ fprime-fpp-to-json==3.0.0a11
 fprime-fpp-to-xml==3.0.0a11
 fprime-fpp-to-layout==3.0.0a11
 fprime-gds==4.0.0a3
-fprime-tools @ git+https://github.com/nasa/fprime-tools@1d2112b73648cb920d10ca0713831a724ec5a221
+fprime-tools==4.0.0a2
 fprime-visual==1.0.2
 gcovr==8.2
 idna==3.10
