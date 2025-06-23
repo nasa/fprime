@@ -8,4 +8,6 @@ register_fprime_module(
     HEADERS
         "${CMAKE_CURRENT_LIST_DIR}/SubtopologyTopologyDefs.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/PingEntries.hpp"
+    DEPENDS
+        ComFprimeConfig
 )
