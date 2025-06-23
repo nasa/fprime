@@ -1,7 +1,5 @@
 module Svc {
-    @ ----------------------------------------------------------------------
-    @ Com Data and Status
-    @ ----------------------------------------------------------------------
+    @ Communications Adapter Interface
     interface Com {
         @ Data to be sent on the wire (coming in to the component)
         sync input port dataIn: Svc.ComDataWithContext

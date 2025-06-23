@@ -1,8 +1,10 @@
-@ ---------------------------------------------
-@ Router <-> Deframers
-@ ---------------------------------------------
+
 module Svc {
     interface Router {
+        # ---------------------------------------------
+        # Router <-> Deframers
+        # ---------------------------------------------
+
         @ Receiving data (Fw::Buffer) to be routed with optional context to help with routing
         sync input port dataIn: Svc.ComDataWithContext
 
@@ -12,6 +14,7 @@ module Svc {
         # ---------------------------------------------
         # Router <-> CmdDispatch/FileUplink
         # ---------------------------------------------
+
         @ Port for sending file packets as Fw::Buffer (ownership passed to receiver)
         output port fileOut: Fw.BufferSend
 
