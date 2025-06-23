@@ -27,8 +27,6 @@ jobs:
         with:
           python-version: 3.12
       - uses: ./.github/actions/setup
-      # - name: Setup tmate session
-      #   uses: mxschmitt/action-tmate@v3
       - name: "Check C++ Formatting"
         run: |
           fprime-util format --check --dirs Fw/Buffer Fw/Cmd Fw/Com
