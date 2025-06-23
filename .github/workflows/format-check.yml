@@ -28,6 +28,11 @@ jobs:
           python-version: 3.12
       - uses: ./.github/actions/setup
       - name: "Check C++ Formatting"
+        env:
+          DIRS: >-
+            Fw/Buffer
+            Fw/Cmd
+            Fw/Com
         run: |
-          fprime-util format --check --dirs Fw/Buffer Fw/Cmd Fw/Com
+          fprime-util format --check --dirs $DIRS
         shell: bash
