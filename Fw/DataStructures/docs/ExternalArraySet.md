@@ -19,7 +19,7 @@ as the set implementation.
 `ExternalArraySet` is publicly derived from
 [`SetBase<T>`](SetBase.md).
 
-
+<a name="Public-Types"></a>
 ## 3. Public Types
 
 `ExternalArrayMap` defines the following public types:
@@ -27,6 +27,7 @@ as the set implementation.
 |Name|Definition|
 |----|----------|
 |`Entry`|Alias of [`SetOrMapIterator<K, V>`](SetOrMapIterator.md)|
+|`Iterator`|Alias of [`SetIterator<K, V>`](SetIterator.md)|
 
 ## 4. Private Member Variables
 
@@ -66,7 +67,7 @@ ExternalArraySet(Entry* entries, FwSizeType capacity)
 
 `entries` must point to a primitive array of at least `capacity`
 elements of type `Entry`.
-The type `Entry` is defined [in the base class](SetBase.md#2Public-Types).
+The type `Entry` is defined [here](ExternalArraySet.md#Public-Types).
 
 Call `m_impl.setStorage(entries, capacity)`.
 
@@ -240,7 +241,7 @@ ASSERT_EQ(set.getCapacity(), capacity);
 const Iterator* getHeadIterator const override
 ```
 
-The type `Iterator` is defined [in the base class](SetBase.md#2Public-Types).
+The type `Iterator` is defined [here](ExternalArraySet.md#Public-Types).
 
 Return `m_impl.getHeadIterator()`.
 
@@ -338,7 +339,7 @@ void setStorage(Entry* entries, FwSizeType capacity)
 
 `entries` must point to a primitive array of at least `capacity`
 elements of type `Entry`.
-The type `Entry` is defined [in the base class](SetBase.md#Public-Types).
+The type `Entry` is defined [here](ExternalArraySet.md#Public-Types).
 
 Call `m_impl.setStorage(entries, capacity)`.
 
