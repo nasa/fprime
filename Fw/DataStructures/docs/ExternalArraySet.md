@@ -26,10 +26,9 @@ as the set implementation.
 
 |Name|Definition|
 |----|----------|
+|`Nil`|`struct Nil {}`|
 |`Entry`|Alias of [`SetOrMapIterator<T, Nil>`](SetOrMapIterator.md)|
 |`Iterator`|Alias of [`SetIterator<T>`](SetIterator.md)|
-
-The type `Nil` is defined [here](ArraySetOrMapImpl.md#Public-Types).
 
 ## 4. Private Member Variables
 
@@ -39,7 +38,7 @@ The type `Nil` is defined [here](ArraySetOrMapImpl.md#Public-Types).
 |----|----|-------|-------------|
 |`m_impl`|[`ArraySetOrMapImpl<T, Nil>`](ArraySetOrMapImpl.md)|The set implementation|C++ default initialization|
 
-The type `Nil` is defined [here](ArraySetOrMapImpl.md#Public-Types).
+The type `Nil` is defined [here](ExternalArraySet.md#Public-Types).
 
 ```mermaid
 classDiagram
@@ -165,7 +164,7 @@ ASSERT_EQ(m2.getSize(), 1);
 ### 6.2. at
 
 ```c++
-const V& at(FwSizeType index) const
+const Iterator& at(FwSizeType index) const
 ```
 
 Return `m_impl.at(index)`.
@@ -206,7 +205,9 @@ ASSERT_EQ(set.getSize(), 0);
 Success find(const T& element) override
 ```
 
-Return `m_impl.find(key, Nil())`.
+1. Set `Nil nil = {}`.
+
+1. Return `m_impl.find(key, nil)`.
 
 _Example:_
 ```c++

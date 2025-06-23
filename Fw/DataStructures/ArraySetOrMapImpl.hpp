@@ -27,9 +27,6 @@ class ArraySetOrMapImpl {
     //! The type of a set or map iterator
     using Iterator = SetOrMapIterator<KE, VN>;
 
-    //! The Nil type
-    struct Nil {};
-
   public:
     // ----------------------------------------------------------------------
     // Public constructors and destructors

@@ -14,7 +14,7 @@
 namespace Fw {
 
 template <typename KE, typename VN>
-class SetOrMapIterator final : public MapIterator<KE, VN>, SetIterator<KE> {
+class SetOrMapIterator final : public MapIterator<KE, VN>, public SetIterator<KE> {
   public:
     // ----------------------------------------------------------------------
     // Public constructors and destructors

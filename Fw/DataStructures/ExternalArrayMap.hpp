@@ -80,14 +80,14 @@ class ExternalArrayMap final : public MapBase<K, V> {
     }
 
     //! Get an iterator at an index in the array.
-    //! Fails an assertion if the index is out of range for the set or map.
+    //! Fails an assertion if the index is out of range for the map.
     //! \return The iterator
     const Iterator& at(FwSizeType index  //!< The index
     ) const {
         return this->m_impl.at[index];
     }
 
-    //! Clear the set or map
+    //! Clear the map
     void clear() override { this->m_impl.clear(); }
 
     //! Find a value associated with a key in the map
@@ -98,11 +98,11 @@ class ExternalArrayMap final : public MapBase<K, V> {
         return this->m_impl.find(key, value);
     }
 
-    //! Get the capacity of the set or map (max number of entries)
+    //! Get the capacity of the map (max number of entries)
     //! \return The capacity
     FwSizeType getCapacity() const override { return this->m_impl.getCapacity(); }
 
-    //! Get the head iterator for the set or map
+    //! Get the head iterator for the map
     //! \return The iterator
     const Iterator* getHeadIterator() const override { return this->m_impl.getHeadIterator(); }
 
@@ -118,8 +118,8 @@ class ExternalArrayMap final : public MapBase<K, V> {
         return this->m_impl.insert(key, value);
     }
 
-    //! Remove an element from the set or a (key, value) pair from the map
-    //! \return SUCCESS if the key or element was there
+    //! Remove a (key, value) pair from the map
+    //! \return SUCCESS if the key was there
     Success remove(const K& key,  //!< The key
                    V& value       //!< The value
     ) override {
