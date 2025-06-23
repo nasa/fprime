@@ -22,10 +22,14 @@ jobs:
         with:
           fetch-depth: 0
           submodules: true
+      - name: "Setup Python"
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
       - uses: ./.github/actions/setup
+      # - name: Setup tmate session
+      #   uses: mxschmitt/action-tmate@v3
       - name: "Check C++ Formatting"
         run: |
           fprime-util format --check --dirs Fw/Buffer Fw/Cmd Fw/Com
         shell: bash
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
