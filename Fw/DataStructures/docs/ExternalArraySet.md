@@ -26,7 +26,6 @@ as the set implementation.
 
 |Name|Definition|
 |----|----------|
-|`Nil`|`struct Nil {}`|
 |`Entry`|Alias of [`SetOrMapIterator<T, Nil>`](SetOrMapIterator.md)|
 |`Iterator`|Alias of [`SetIterator<T>`](SetIterator.md)|
 
@@ -38,7 +37,7 @@ as the set implementation.
 |----|----|-------|-------------|
 |`m_impl`|[`ArraySetOrMapImpl<T, Nil>`](ArraySetOrMapImpl.md)|The set implementation|C++ default initialization|
 
-The type `Nil` is defined [here](ExternalArraySet.md#Public-Types).
+The type `Nil` is defined [here](Nil.md).
 
 ```mermaid
 classDiagram
