@@ -6,7 +6,7 @@ name: CI [RHEL8]
 # events but only for the master branch
 on:
   push:
-    branches: [ devel, release/**, ci/** ]
+    branches: [ devel, release/** ]
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ devel, release/** ]
