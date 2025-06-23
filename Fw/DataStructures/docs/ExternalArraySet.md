@@ -26,8 +26,10 @@ as the set implementation.
 
 |Name|Definition|
 |----|----------|
-|`Entry`|Alias of [`SetOrMapIterator<K, V>`](SetOrMapIterator.md)|
-|`Iterator`|Alias of [`SetIterator<K, V>`](SetIterator.md)|
+|`Entry`|Alias of [`SetOrMapIterator<T, Nil>`](SetOrMapIterator.md)|
+|`Iterator`|Alias of [`SetIterator<T>`](SetIterator.md)|
+
+The type `Nil` is defined [here](ArraySetOrMapImpl.md#Public-Types).
 
 ## 4. Private Member Variables
 
