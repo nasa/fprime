@@ -20,6 +20,7 @@ as the map implementation.
 `ExternalArrayMap` is publicly derived from
 [`MapBase<K, V>`](MapBase.md).
 
+<a name="Public-Types"></a>
 ## 3. Public Types
 
 `ExternalArrayMap` defines the following public types:
@@ -27,6 +28,7 @@ as the map implementation.
 |Name|Definition|
 |----|----------|
 |`Entry`|Alias of [`SetOrMapIterator<K, V>`](SetOrMapIterator.md)|
+|`Iterator`|Alias of [`MapIterator<K, V>`](MapIterator.md)|
 
 ## 4. Private Member Variables
 
@@ -63,8 +65,7 @@ ExternalArrayMap(Entry* entries, FwSizeType capacity)
 ```
 
 `entries` must point to a primitive array of at least `capacity`
-elements of type `Entry`.
-The type `Entry` is defined [in the base class](MapBase.md#Public-Types).
+elements of type [`Entry`](ExternalArrayMap.md#Public-Types).
 
 Call `m_impl.setStorage(entries, capacity)`.
 
@@ -244,7 +245,7 @@ ASSERT_EQ(map.getCapacity(), capacity);
 const Iterator* getHeadIterator const override
 ```
 
-The type `Iterator` is defined [in the base class](MapBase.md#Public-Types).
+The type `Iterator` is defined [here](ExternalArrayMap.md#Public-Types).
 
 Return `m_impl.getHeadIterator()`.
 
@@ -343,7 +344,7 @@ void setStorage(Entry* entries, FwSizeType capacity)
 
 `entries` must point to a primitive array of at least `capacity`
 elements of type `Entry`.
-The type `Entry` is defined [in the base class](MapBase.md#Public-Types).
+The type `Entry` is defined [here](ExternalArrayMap.md#Public-Types).
 
 Call `m_impl.setStorage(entries, capacity)`.
 

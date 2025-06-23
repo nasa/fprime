@@ -36,7 +36,7 @@ as the set implementation.
 |----|----|-------|-------------|
 |`m_impl`|[`ArraySetOrMapImpl<T, Nil>`](ArraySetOrMapImpl.md)|The set implementation|C++ default initialization|
 
-The type `Nil` is defined [in the base class](SetBase.md#Public-Types).
+The type `Nil` is defined [here](ArraySetOrMapImpl.md#Public-Types).
 
 ```mermaid
 classDiagram
