@@ -15,6 +15,7 @@ storing the entries in the set or map.
 |`typename`|`KE`|The type of a key in a map or the element of a set|
 |`typename`|`VN`|The type of a value in a map or Nil for set|
 
+<a name="Public-Types"></a>
 ## 2. Public Types
 
 `ArraySetOrMapImpl` defines the following types:
