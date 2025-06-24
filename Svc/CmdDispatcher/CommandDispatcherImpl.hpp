@@ -31,7 +31,7 @@ namespace Svc {
 
     class CommandDispatcherImpl final : public CommandDispatcherComponentBase {
 
-        friend class CommandDispatcherImplTester;
+        friend class CommandDispatcherTester;
 
         public:
             //!  \brief Command Dispatcher constructor
