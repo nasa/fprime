@@ -11,7 +11,7 @@ on:
      - '**.md'
      - '.github/actions/spelling/**'
      - '.github/ISSUE_TEMPLATE/**'
-# Cancel in-progress runs if a new run is triggered on the same PR, except for devel and release
+# Cancel in-progress runs if a newer run is started on a given PR
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/')}}
