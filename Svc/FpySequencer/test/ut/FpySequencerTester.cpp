@@ -372,6 +372,21 @@ Fw::ExternalSerializeBuffer* FpySequencerTester::tester_get_m_sequenceBuffer_ptr
 Svc::FpySequencer::Debug* FpySequencerTester::tester_get_m_debug_ptr(){
     return &(this->cmp.m_debug);
 }
+
+void FpySequencerTester::doDispatch() {
+    this->cmp.doDispatch();
+}
+
+void FpySequencerTester::setState(Svc::FpySequencer_SequencerStateMachineStateMachineBase::State state) {
+    // error: 'm_stateMachine_sequencer' is a private member of 'Svc::FpySequencerComponentBase' (FpySequencerTester is a friend)
+    // error: 'm_state' is a protected member of 'Svc::FpySequencer_SequencerStateMachineStateMachineBase' (No friends)
+    // this->cmp.m_stateMachine_sequencer.m_state = state;
+}
+
+Svc::FpySequencer_SequencerStateMachineStateMachineBase::State FpySequencerTester::getState() {
+    return this->cmp.m_stateMachine_sequencer.getState();
+}
+
 // End UT private/protected access
 
 

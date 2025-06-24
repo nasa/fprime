@@ -152,6 +152,60 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     Signal tester_getPrm_directiveHandler(const FpySequencer_GetPrmDirective& directive);
     Signal tester_getTlm_directiveHandler(const FpySequencer_GetTlmDirective& directive);
 
+  public:
+    // ----------------------------------------------------------------------
+    // Static methods for accessing protected opcodes
+    // ----------------------------------------------------------------------
+
+    //! Get the OPCODE_RUN value
+    static FwOpcodeType get_OPCODE_RUN() {
+        return FpySequencerComponentBase::OPCODE_RUN;
+    }
+
+    //! Get the OPCODE_VALIDATE value
+    static FwOpcodeType get_OPCODE_VALIDATE() {
+        return FpySequencerComponentBase::OPCODE_VALIDATE;
+    }
+
+    //! Get the OPCODE_RUN_VALIDATED value
+    static FwOpcodeType get_OPCODE_RUN_VALIDATED() {
+        return FpySequencerComponentBase::OPCODE_RUN_VALIDATED;
+    }
+
+    //! Get the OPCODE_CANCEL value
+    static FwOpcodeType get_OPCODE_CANCEL() {
+        return FpySequencerComponentBase::OPCODE_CANCEL;
+    }
+
+    //! Get the OPCODE_DEBUG_CLEAR_BREAKPOINT value
+    static FwOpcodeType get_OPCODE_DEBUG_CLEAR_BREAKPOINT() {
+        return FpySequencerComponentBase::OPCODE_DEBUG_CLEAR_BREAKPOINT;
+    }
+
+    //! Get the OPCODE_DEBUG_SET_BREAKPOINT value
+    static FwOpcodeType get_OPCODE_DEBUG_SET_BREAKPOINT() {
+        return FpySequencerComponentBase::OPCODE_DEBUG_SET_BREAKPOINT;
+    }
+
+    //! Get the OPCODE_DEBUG_BREAK value
+    static FwOpcodeType get_OPCODE_DEBUG_BREAK() {
+        return FpySequencerComponentBase::OPCODE_DEBUG_BREAK;
+    }
+
+    //! Get the OPCODE_DEBUG_CONTINUE value
+    static FwOpcodeType get_OPCODE_DEBUG_CONTINUE() {
+        return FpySequencerComponentBase::OPCODE_DEBUG_CONTINUE;
+    }
+
+    //! Call doDispatch on the component
+    void doDispatch();
+
+    //! Set the state machine state
+    void setState(Svc::FpySequencer_SequencerStateMachineStateMachineBase::State state);
+
+    //! Get the state machine state
+    Svc::FpySequencer_SequencerStateMachineStateMachineBase::State getState();
+
 };
 
 }  // namespace Svc
