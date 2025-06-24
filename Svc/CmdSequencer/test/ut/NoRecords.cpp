@@ -55,7 +55,7 @@ namespace Svc {
             ASSERT_CMD_RESPONSE_SIZE(1);
             ASSERT_CMD_RESPONSE(
                 0,
-                CmdSequencerComponentBase::OPCODE_CS_VALIDATE,
+                this->getValidateOpcode(),
                 0,
                 Fw::CmdResponse::EXECUTION_ERROR
             );
@@ -68,7 +68,7 @@ namespace Svc {
             RunNoRecords()
         {
             SequenceFiles::NoRecordsFile file(this->format);
-            
+
             // Set the time
             Fw::Time testTime(TB_WORKSTATION_TIME, 0, 0);
             this->setTestTime(testTime);
@@ -84,7 +84,7 @@ namespace Svc {
             ASSERT_CMD_RESPONSE_SIZE(1);
             ASSERT_CMD_RESPONSE(
                 0,
-                CmdSequencerComponentBase::OPCODE_CS_RUN,
+                this->getRunOpcode(),
                 0,
                 Fw::CmdResponse::EXECUTION_ERROR
             );
