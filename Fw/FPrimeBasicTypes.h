@@ -35,8 +35,10 @@ extern "C" {
 #include <config/FwSignedSizeTypeAliasAc.h>
 #include <config/FwAssertArgTypeAliasAc.h>
 #include <config/FwTaskPriorityTypeAliasAc.h>
+#include <config/FwTaskIdTypeAliasAc.h>
 #include <config/FwQueuePriorityTypeAliasAc.h>
 
+#include <config/FwIdTypeAliasAc.h>
 #include <config/FwChanIdTypeAliasAc.h>
 #include <config/FwDpIdTypeAliasAc.h>
 #include <config/FwDpPriorityTypeAliasAc.h>

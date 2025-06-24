@@ -74,7 +74,7 @@ event CS_FileCrcFailure(
 event CS_CommandComplete(
                           fileName: string size 60 @< The name of the sequence file
                           recordNumber: U32 @< The record number of the command
-                          opCode: U32 @< The command opcode
+                          opCode: FwOpcodeType @< The command opcode
                         ) \
   severity activity low \
   id 8 \
@@ -92,7 +92,7 @@ event CS_SequenceComplete(
 event CS_CommandError(
                        fileName: string size 60 @< The name of the sequence file
                        recordNumber: U32 @< The record number
-                       opCode: U32 @< The opcode
+                       opCode: FwOpcodeType @< The opcode
                        errorStatus: U32 @< The error status
                      ) \
   severity warning high \
@@ -145,7 +145,7 @@ event CS_PortSequenceStarted(
 
 @ A command status came back when no sequence was running
 event CS_UnexpectedCompletion(
-                               $opcode: U32 @< The reported opcode
+                               $opcode: FwOpcodeType @< The reported opcode
                              ) \
   severity warning high \
   id 16 \
@@ -203,7 +203,7 @@ event CS_CmdStarted(
 event CS_JoinWaiting(
                       filename: string size 60 @< The sequence file
                       recordNumber: U32 @< The record number
-                      opCode: U32 @< The opcode
+                      opCode: FwOpcodeType @< The opcode
                     ) \
   severity activity high \
   id 23 \

@@ -1,7 +1,7 @@
 module Drv {
     passive component Udp {
 
-        include "../Interfaces/ByteStreamDriverInterface.fppi"
+        import ByteStreamDriver
         
         output port allocate: Fw.BufferGet
 

@@ -23,14 +23,14 @@ namespace Fw {
           const FilePacket::PathName& actual
       )
     {
-      ASSERT_EQ(expected.m_length, actual.m_length);
+      ASSERT_EQ(expected.getLength(), actual.getLength());
       Bytes expectedPath(
-          reinterpret_cast<const U8*>(expected.m_value),
-          expected.m_length
+          reinterpret_cast<const U8*>(expected.getValue()),
+          expected.getLength()
       );
       Bytes actualPath(
-          reinterpret_cast<const U8*>(actual.m_value),
-          actual.m_length
+          reinterpret_cast<const U8*>(actual.getValue()),
+          actual.getLength()
       );
       Bytes::compare(expectedPath, actualPath);
     }

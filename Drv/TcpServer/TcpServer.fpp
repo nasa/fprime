@@ -1,7 +1,7 @@
 module Drv {
     passive component TcpServer {
 
-        include "../Interfaces/ByteStreamDriverInterface.fppi"
+        import ByteStreamDriver
 
         @ Allocation for received data
         output port allocate: Fw.BufferGet

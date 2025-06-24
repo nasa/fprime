@@ -37,8 +37,8 @@ bool LinuxUartDriver::open(const char* const device,
                            UartParity parity,
                            U32 allocationSize) {
     FW_ASSERT(device != nullptr);
-    PlatformIntType fd = -1;
-    PlatformIntType stat = -1;
+    int fd = -1;
+    int stat = -1;
     this->m_allocationSize = allocationSize;
 
     this->m_device = device;
@@ -126,7 +126,7 @@ bool LinuxUartDriver::open(const char* const device,
         }
     }
 
-    PlatformIntType relayRate = B0;
+    int relayRate = B0;
     switch (baud) {
         case BAUD_9600:
             relayRate = B9600;

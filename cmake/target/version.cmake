@@ -28,7 +28,8 @@ function(version_add_global_target TARGET)
         COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${OUTPUT_CPP}.tmp" "${OUTPUT_CPP}"
         COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${OUTPUT_JSON}.tmp" "${OUTPUT_JSON}"
         WORKING_DIRECTORY "${FPRIME_PROJECT_ROOT}"
-    )
+    ) 
+    add_custom_target("${TARGET}_generate" DEPENDS ${OUTPUT_JSON})
     add_library("${TARGET}" "${OUTPUT_CPP}")
     target_link_libraries("${TARGET}" PUBLIC "Fw_Types")
 endfunction()

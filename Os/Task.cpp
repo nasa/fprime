@@ -10,7 +10,7 @@ namespace Os {
 TaskInterface::Arguments::Arguments(const Fw::StringBase &name, const Os::TaskInterface::taskRoutine routine,
                                     void * const routine_argument, const FwTaskPriorityType priority,
                                     const FwSizeType stackSize, const FwSizeType cpuAffinity,
-                                    const PlatformUIntType identifier) :
+                                    const FwTaskIdType identifier) :
     m_name(name),
     m_routine(routine),
     m_routine_argument(routine_argument),
@@ -87,7 +87,7 @@ Task::Status Task::start(const Fw::StringBase &name, const taskRoutine routine, 
                                        priority,
                                        stackSize,
                                        cpuAffinity,
-                                       static_cast<PlatformUIntType>(identifier)));
+                                       static_cast<FwTaskIdType>(identifier)));
 }
 
 

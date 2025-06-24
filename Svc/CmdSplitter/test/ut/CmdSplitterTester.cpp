@@ -44,18 +44,18 @@ Fw::ComBuffer CmdSplitterTester ::build_command_around_opcode(FwOpcodeType opcod
 }
 
 FwOpcodeType CmdSplitterTester ::setup_and_pick_valid_opcode(bool for_local) {
-    const FwOpcodeType MAX_OPCODE = std::numeric_limits<FwOpcodeType>::max();
+    const U32 MAX_OPCODE = static_cast<U32>(std::numeric_limits<FwOpcodeType>::max());
     if (for_local) {
-        FwOpcodeType base = STest::Pick::lowerUpper(1, MAX_OPCODE);
+        FwOpcodeType base = static_cast<FwOpcodeType>(STest::Pick::lowerUpper(1, MAX_OPCODE));
         component.configure(base);
         EXPECT_GT(base, 0);  // Must leave some room for local commands
         return static_cast<FwOpcodeType>(
-            STest::Pick::lowerUpper(0, FW_MIN(base - 1, MAX_OPCODE))
+            STest::Pick::lowerUpper(0, FW_MIN(static_cast<U32>(base)- 1, MAX_OPCODE))
         );
     }
-    FwOpcodeType base = STest::Pick::lowerUpper(0, MAX_OPCODE);
+    FwOpcodeType base = static_cast<FwOpcodeType>(STest::Pick::lowerUpper(0, MAX_OPCODE));
     component.configure(base);
-    return static_cast<FwOpcodeType>(STest::Pick::lowerUpper(base, MAX_OPCODE));
+    return static_cast<FwOpcodeType>(STest::Pick::lowerUpper(static_cast<U32>(base), MAX_OPCODE));
 }
 
 void CmdSplitterTester ::test_local_routing() {
@@ -112,7 +112,7 @@ void CmdSplitterTester ::test_response_forwarding() {
     REQUIREMENT("SVC-CMD-SPLITTER-005");
 
     FwOpcodeType opcode =
-        static_cast<FwOpcodeType>(STest::Pick::lowerUpper(0, std::numeric_limits<FwOpcodeType>::max()));
+        static_cast<FwOpcodeType>(STest::Pick::lowerUpper(0, static_cast<U32>(std::numeric_limits<FwOpcodeType>::max())));
     Fw::CmdResponse response;
     response.e = static_cast<Fw::CmdResponse::T>(STest::Pick::lowerUpper(0, Fw::CmdResponse::NUM_CONSTANTS));
     U32 cmdSeq = static_cast<U32>(STest::Pick::any());

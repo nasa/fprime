@@ -13,11 +13,12 @@
 #define CRC_CHECKER_HPP
 
 #include <Fw/FPrimeBasicTypes.hpp>
+#include <config/CRCCheckerConfig.hpp>
 
 namespace Utils {
 
-  static const FwSignedSizeType CRC_FILE_READ_BLOCK = 2048;
-  static const U32 CRC_MAX_FILENAME_SIZE = 128; // TODO use a config variable
+  static const FwSignedSizeType CRC_FILE_READ_BLOCK = CONFIG_CRC_FILE_READ_BLOCK ;
+ 
 
   typedef enum
   {

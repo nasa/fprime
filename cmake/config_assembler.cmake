@@ -1,7 +1,13 @@
+####
+# config_assembler.cmake:
+#
+# CMake configuration handling function.
+####
 include_guard()
 # Create a target to act as an interface to all fprime configuration modules
 set(FPRIME__INTERNAL_CONFIG_TARGET_NAME "__fprime_config")
 add_library(${FPRIME__INTERNAL_CONFIG_TARGET_NAME} INTERFACE)
+
 ####
 # Function `fprime__internal_process_configuration_sources`:
 #

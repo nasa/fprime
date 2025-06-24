@@ -1,7 +1,7 @@
 telemetry packets RefPackets {
 
   packet CDH id 1 group 1 {
-    Ref.cmdDisp.CommandsDispatched
+    CDHCore.cmdDisp.CommandsDispatched
     Ref.rateGroup1Comp.RgMaxTime
     Ref.rateGroup2Comp.RgMaxTime
     Ref.rateGroup3Comp.RgMaxTime
@@ -19,7 +19,7 @@ telemetry packets RefPackets {
     Ref.fileManager.CommandsExecuted
     Ref.comQueue.comQueueDepth
     Ref.comQueue.buffQueueDepth
-    # Ref.tlmSend.SendLevel
+    #CDHCore.tlmSend.SendLevel
   }
 
   packet CDHErrors id 2 group 1 {
@@ -29,7 +29,7 @@ telemetry packets RefPackets {
     Ref.cmdSeq.CS_Errors
     Ref.fileUplink.Warnings
     Ref.fileDownlink.Warnings
-    Ref.$health.PingLateWarnings
+    CDHCore.$health.PingLateWarnings
     Ref.fileManager.Errors
     Ref.commsBufferManager.NoBuffs
     Ref.commsBufferManager.EmptyBuffs
@@ -194,75 +194,75 @@ telemetry packets RefPackets {
   }
 
   packet Version1 id 22 group 2 {
-    Ref.version.FrameworkVersion
-    Ref.version.ProjectVersion
+    CDHCore.version.FrameworkVersion
+    CDHCore.version.ProjectVersion
   }
 
   packet Version_Library1 id 23 group 2 {
-    Ref.version.LibraryVersion01
-    Ref.version.LibraryVersion02
+    CDHCore.version.LibraryVersion01
+    CDHCore.version.LibraryVersion02
   }
 
   packet Version_Library2 id 24 group 2 {
-    Ref.version.LibraryVersion03
-    Ref.version.LibraryVersion04
+    CDHCore.version.LibraryVersion03
+    CDHCore.version.LibraryVersion04
   }
 
   packet Version_Library3 id 25 group 2 {
-    Ref.version.LibraryVersion05
-    Ref.version.LibraryVersion06
+    CDHCore.version.LibraryVersion05
+    CDHCore.version.LibraryVersion06
   }
 
   packet Version_Library4 id 26 group 2 {
-    Ref.version.LibraryVersion07
-    Ref.version.LibraryVersion08
+    CDHCore.version.LibraryVersion07
+    CDHCore.version.LibraryVersion08
   }
 
   packet Version_Library5 id 27 group 2 {
-    Ref.version.LibraryVersion09
-    Ref.version.LibraryVersion10
+    CDHCore.version.LibraryVersion09
+    CDHCore.version.LibraryVersion10
   }
 
   packet Version_Custom1 id 28 group 2 {
-    Ref.version.CustomVersion01
+    CDHCore.version.CustomVersion01
   }
 
   packet Version_Custom2 id 29 group 2 {
-    Ref.version.CustomVersion02
+    CDHCore.version.CustomVersion02
   }
 
   packet Version_Custom3 id 30 group 2 {
-    Ref.version.CustomVersion03
+    CDHCore.version.CustomVersion03
   }
 
   packet Version_Custom4 id 31 group 2 {
-    Ref.version.CustomVersion04
+    CDHCore.version.CustomVersion04
   }
 
   packet Version_Custom5 id 32 group 2 {
-    Ref.version.CustomVersion05
+    CDHCore.version.CustomVersion05
   }
 
   packet Version_Custom6 id 33 group 2 {
-    Ref.version.CustomVersion06
+    CDHCore.version.CustomVersion06
   }
 
   packet Version_Custom7 id 34 group 2 {
-    Ref.version.CustomVersion07
+    CDHCore.version.CustomVersion07
   }
 
   packet Version_Custom8 id 35 group 2 {
-    Ref.version.CustomVersion08
+    CDHCore.version.CustomVersion08
   }
 
   packet Version_Custom9 id 36 group 2 {
-    Ref.version.CustomVersion09
+    CDHCore.version.CustomVersion09
   }
 
   packet Version_Custom10 id 37 group 2 {
-    Ref.version.CustomVersion10
+    CDHCore.version.CustomVersion10
   }
 
 } omit {
-  Ref.cmdDisp.CommandErrors
+  CDHCore.cmdDisp.CommandErrors
 }

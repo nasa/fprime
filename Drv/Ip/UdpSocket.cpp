@@ -86,7 +86,7 @@ U16 UdpSocket::getRecvPort() {
 }
 
 
-SocketIpStatus UdpSocket::bind(const PlatformIntType fd) {
+SocketIpStatus UdpSocket::bind(const int fd) {
     struct sockaddr_in address;
     FW_ASSERT(fd != -1);
 
@@ -123,7 +123,7 @@ SocketIpStatus UdpSocket::bind(const PlatformIntType fd) {
 
 SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
     SocketIpStatus status = SOCK_SUCCESS;
-    PlatformIntType socketFd = -1;
+    int socketFd = -1;
     struct sockaddr_in address;
 
     U16 port = this->m_port;

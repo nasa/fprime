@@ -56,7 +56,7 @@ module Svc {
 
     @ Set telemetry send level
     async command SET_LEVEL(
-                             level: U32 @< The I32 command argument
+                             level: FwChanIdType @< The I32 command argument
                            ) \
       opcode 0
 
@@ -72,7 +72,7 @@ module Svc {
 
     @ Telemetry channel is not part of a telemetry packet.
     event NoChan(
-                  Id: U32 @< The telemetry ID
+                  Id: FwChanIdType @< The telemetry ID
                 ) \
       severity warning low \
       id 0 \
@@ -80,7 +80,7 @@ module Svc {
 
     @ Telemetry send level set
     event LevelSet(
-                    $id: U32 @< The level
+                    $id: FwChanIdType @< The level
                   ) \
       severity activity high \
       id 1 \
@@ -88,8 +88,8 @@ module Svc {
 
     @ Telemetry send level set
     event MaxLevelExceed(
-                          level: U32 @< The level
-                          max: U32 @< The max packet level
+                          level: FwChanIdType @< The level
+                          max: FwChanIdType @< The max packet level
                         ) \
       severity warning low \
       id 2 \
@@ -116,7 +116,7 @@ module Svc {
     # ----------------------------------------------------------------------
 
     @ Telemetry send level
-    telemetry SendLevel: U32 id 0
+    telemetry SendLevel: FwChanIdType id 0
 
   }
 

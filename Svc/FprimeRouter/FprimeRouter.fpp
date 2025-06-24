@@ -5,7 +5,7 @@ module Svc {
         # ----------------------------------------------------------------------
         # Router interface
         # ----------------------------------------------------------------------
-        include "../Interfaces/RouterInterface.fppi"
+        import Router
 
         @ Port for forwarding non-recognized packet types
         @ Ownership of the buffer is retained by the FprimeRouter, meaning receiving

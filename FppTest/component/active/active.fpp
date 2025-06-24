@@ -2,13 +2,12 @@
 active component ActiveTest {
 
   include "../include/internal_ports.fppi"
-  include "../include/serial_ports.fppi"
-  include "../include/serial_ports_async.fppi"
-  include "../include/special_ports.fppi"
-  include "../include/typed_ports.fppi"
-  include "../include/typed_ports_async.fppi"
-
-  include "../include/output_ports.fppi"
+  import FppTest.SerialPorts
+  import FppTest.SerialPortsAsync
+  import FppTest.SpecialPorts
+  import FppTest.TypedPorts
+  import FppTest.TypedPortsAsync
+  import FppTest.OutputPorts
 
   include "../include/commands.fppi"
   include "../include/commands_async.fppi"
