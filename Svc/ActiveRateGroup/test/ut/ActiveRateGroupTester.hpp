@@ -13,18 +13,18 @@
 *
 */
 
-#ifndef ACTIVERATEGROUP_TEST_UT_ACTIVERATEGROUPIMPLTESTER_HPP_
-#define ACTIVERATEGROUP_TEST_UT_ACTIVERATEGROUPIMPLTESTER_HPP_
+#ifndef ACTIVERATEGROUP_TEST_UT_ACTIVERATEGROUPTESTER_HPP_
+#define ACTIVERATEGROUP_TEST_UT_ACTIVERATEGROUPTESTER_HPP_
 
 #include <ActiveRateGroupGTestBase.hpp>
 #include <Svc/ActiveRateGroup/ActiveRateGroup.hpp>
 
 namespace Svc {
 
-    class ActiveRateGroupImplTester: public ActiveRateGroupGTestBase {
+    class ActiveRateGroupTester: public ActiveRateGroupGTestBase {
         public:
-            ActiveRateGroupImplTester(Svc::ActiveRateGroup& inst);
-            virtual ~ActiveRateGroupImplTester();
+            ActiveRateGroupTester(Svc::ActiveRateGroup& inst);
+            virtual ~ActiveRateGroupTester();
 
             void runNominal(U32 contexts[], FwIndexType numContexts, FwEnumStoreType instance);
             void runCycleOverrun(U32 contexts[], FwIndexType numContexts, FwEnumStoreType instance);
@@ -58,4 +58,4 @@ namespace Svc {
 
 } /* namespace Svc */
 
-#endif /* ACTIVERATEGROUP_TEST_UT_ACTIVERATEGROUPIMPLTESTER_HPP_ */
+#endif /* ACTIVERATEGROUP_TEST_UT_ACTIVERATEGROUPTESTER_HPP_ */
