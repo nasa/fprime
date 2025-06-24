@@ -4,7 +4,7 @@ module Svc {
   passive component LinuxTimer {
 
     @ implement tick interface
-    include "../../Drv/Interfaces/TickInterface.fppi"
+    import Drv.Tick
 
   }
 

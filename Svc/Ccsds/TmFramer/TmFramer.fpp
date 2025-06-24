@@ -3,7 +3,7 @@ module Ccsds {
     @ Deframer for the TM Space Data Link Protocol (CCSDS Standard)
     passive component TmFramer {
 
-        include "../../Interfaces/FramerInterface.fppi"
+        import Framer
 
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #

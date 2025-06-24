@@ -1,14 +1,14 @@
 @ A queued component
 queued component QueuedTest {
 
-  include "../include/typed_ports.fppi"
-  include "../include/typed_ports_async.fppi"
-  include "../include/serial_ports.fppi"
-  include "../include/serial_ports_async.fppi"
-  include "../include/special_ports.fppi"
-  include "../include/internal_ports.fppi"
+  import FppTest.SerialPorts
+  import FppTest.SerialPortsAsync
+  import FppTest.SpecialPorts
+  import FppTest.TypedPorts
+  import FppTest.TypedPortsAsync
+  import FppTest.OutputPorts
 
-  include "../include/output_ports.fppi"
+  include "../include/internal_ports.fppi"
 
   include "../include/commands.fppi"
   include "../include/commands_async.fppi"

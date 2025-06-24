@@ -3,7 +3,7 @@ module Ccsds {
     @ Deframer for the CCSDS Space Packet protocol
     passive component SpacePacketFramer {
 
-        include "../../Interfaces/FramerInterface.fppi"
+        import Framer
 
         @ Port to allocate a buffer for a space packet
         output port bufferAllocate: Fw.BufferGet

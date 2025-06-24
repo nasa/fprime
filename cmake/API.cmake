@@ -443,7 +443,7 @@ function(fprime_add_config_build_target)
     # 2. Configuration processing must be called in-between
     ####
     fprime__process_module_setup("Library"
-        "CONFIGURATION_OVERRIDES;STATIC;INTERFACE;CHOOSES_IMPLEMENTATIONS" ${ARGN_PASS})
+        "CONFIGURATION_OVERRIDES;STATIC;INTERFACE;CHOOSES_IMPLEMENTATIONS;BASE_CONFIG" ${ARGN_PASS})
     fprime__internal_process_configuration_sources(
         "${INTERNAL_MODULE_NAME}"
         "${INTERNAL_SOURCES}"
@@ -460,7 +460,9 @@ function(fprime_add_config_build_target)
     # The new module should include the root configuration directory
     fprime_target_include_directories("${INTERNAL_MODULE_NAME}" PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/..")
     # The configuration target should depend on the new module
-    target_link_libraries("${FPRIME__INTERNAL_CONFIG_TARGET_NAME}" INTERFACE "${INTERNAL_MODULE_NAME}")
+    if (INTERNAL_BASE_CONFIG)
+        target_link_libraries("${FPRIME__INTERNAL_CONFIG_TARGET_NAME}" INTERFACE "${INTERNAL_MODULE_NAME}")
+    endif()
     # Set up the new module to be marked as FPRIME_CONFIGURATION
     append_list_property("${INTERNAL_MODULE_NAME}" GLOBAL PROPERTY "FPRIME_CONFIG_MODULES")
     set_property(TARGET "${INTERNAL_MODULE_NAME}" PROPERTY FPRIME_CONFIGURATION TRUE)
