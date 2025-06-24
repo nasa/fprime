@@ -8,7 +8,7 @@
 
 #include "Svc/FrameAccumulator/FrameDetector.hpp"
 #include "Fw/FPrimeBasicTypes.hpp"
-#include "Svc/CCSDS/Types/FppConstantsAc.hpp"
+#include "Svc/Ccsds/Types/FppConstantsAc.hpp"
 
 namespace Svc {
 namespace FrameDetectors {
@@ -44,7 +44,7 @@ class CcsdsTcFrameDetector : public FrameDetector {
 
     //! \brief expected flags and spacecraft ID token for a valid CCSDS TC frame
     const U16 m_expectedFlagsAndScIdToken =
-        0x1 << CCSDS::TCSubfields::BypassFlagOffset | (ComCfg::FppConstant_SpacecraftId::SpacecraftId);
+        0x1 << Ccsds::TCSubfields::BypassFlagOffset | (ComCfg::FppConstant_SpacecraftId::SpacecraftId);
 
 };  // class CcsdsTcFrameDetector
 }  // namespace FrameDetectors

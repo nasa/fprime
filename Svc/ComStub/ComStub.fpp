@@ -1,7 +1,7 @@
 module Svc {
     @ Communication adapter interface implementing communication adapter interface via a Drv.ByteStreamDriverModel.
     passive component ComStub {
-        include "../Interfaces/ComInterface.fppi"
+        import Com
 
         # ----------------------------------------------------------------------
         # Byte stream model

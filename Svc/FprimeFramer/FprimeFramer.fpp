@@ -2,7 +2,7 @@ module Svc {
     @ Framer implementation for the F Prime protocol
     passive component FprimeFramer {
 
-        include "../Interfaces/FramerInterface.fppi"
+        import Framer
 
         # ----------------------------------------------------------------------
         # Allocation of buffers
