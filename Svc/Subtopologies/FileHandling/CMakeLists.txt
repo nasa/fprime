@@ -7,6 +7,4 @@ register_fprime_module(
         "${CMAKE_CURRENT_LIST_DIR}/SubtopologyTopologyDefs.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/PingEntries.hpp"
     INTERFACE
-    DEPENDS
-        FileHandlingConfig
 )

@@ -10,8 +10,8 @@ module DataProducts{
         priority DataProductsConfig.Priorities.dpCat \
     {
         phase Fpp.ToCpp.Phases.configComponents """
-            Fw::FileNameString dpDir("./DpCat");
-            Fw::FileNameString dpState("./DpCat/DpState.dat");
+            Fw::FileNameString dpDir(DataProductsConfig::Paths::DP_DIR);
+            Fw::FileNameString dpState(DataProductsConfig::Paths::DP_STATE);
             Os::FileSystem::createDirectory(dpDir.toChar());
             DataProducts::dpCat.configure(&dpDir,1,dpState,0, DataProducts::Allocation::mallocator);
         """

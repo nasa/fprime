@@ -105,15 +105,15 @@ module ComCcsds {
     
     instance comStub: Svc.ComStub base id ComCcsdsConfig.BASE_ID + 0x0800 \
 
-    instance tcDeframer: Svc.CCSDS.TcDeframer base id ComCcsdsConfig.BASE_ID + 0x0900 \
+    instance tcDeframer: Svc.Ccsds.TcDeframer base id ComCcsdsConfig.BASE_ID + 0x0900 \
 
-    instance spacePacketDeframer: Svc.CCSDS.SpacePacketDeframer base id ComCcsdsConfig.BASE_ID + 0x0A00 \
+    instance spacePacketDeframer: Svc.Ccsds.SpacePacketDeframer base id ComCcsdsConfig.BASE_ID + 0x0A00 \
 
-    instance tmFramer: Svc.CCSDS.TmFramer base id ComCcsdsConfig.BASE_ID + 0x0B00 \
+    instance tmFramer: Svc.Ccsds.TmFramer base id ComCcsdsConfig.BASE_ID + 0x0B00 \
 
-    instance spacePacketFramer: Svc.CCSDS.SpacePacketFramer base id ComCcsdsConfig.BASE_ID + 0x0C00 \
+    instance spacePacketFramer: Svc.Ccsds.SpacePacketFramer base id ComCcsdsConfig.BASE_ID + 0x0C00 \
 
-    instance apidManager: Svc.CCSDS.ApidManager base id ComCcsdsConfig.BASE_ID + 0x0D00 \
+    instance apidManager: Svc.Ccsds.ApidManager base id ComCcsdsConfig.BASE_ID + 0x0D00 \
 
     topology Subtopology {
         # Active Components

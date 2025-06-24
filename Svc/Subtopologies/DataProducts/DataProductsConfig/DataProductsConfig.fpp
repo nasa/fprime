@@ -30,4 +30,10 @@ module DataProductsConfig {
         constant dpBufferStoreCount = 10       # Number of data products buffers
         constant dpBufferManagerId  = 300      # Buffer manager identifier
     }
+    
+    # Directory and file paths
+    module Paths {
+        constant DP_DIR = "./DpCat"                # Data products directory
+        constant DP_STATE = "./DpCat/DpState.dat"  # Data products state file
+    }
 }
