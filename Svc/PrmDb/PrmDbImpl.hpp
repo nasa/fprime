@@ -30,7 +30,7 @@ namespace Svc {
     class PrmDbImpl final : public PrmDbComponentBase {
         public:
 
-            friend class PrmDbImplTester;
+            friend class PrmDbTester;
 
             //!  \brief PrmDb constructor
             //!

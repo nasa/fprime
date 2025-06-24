@@ -1,12 +1,12 @@
 /*
- * PrmDbImplTester.hpp
+ * PrmDbTester.hpp
  *
  *  Created on: Mar 18, 2015
  *      Author: tcanham
  */
 
-#ifndef PRMDB_TEST_UT_PRMDBIMPLTESTER_HPP_
-#define PRMDB_TEST_UT_PRMDBIMPLTESTER_HPP_
+#ifndef PRMDB_TEST_UT_PRMDBTESTER_HPP_
+#define PRMDB_TEST_UT_PRMDBTESTER_HPP_
 
 #include <PrmDbGTestBase.hpp>
 #include <config/PrmDbImplTesterCfg.hpp>
@@ -15,10 +15,10 @@
 
 namespace Svc {
 
-    class PrmDbImplTester : public PrmDbGTestBase {
+    class PrmDbTester : public PrmDbGTestBase {
         public:
-            PrmDbImplTester(Svc::PrmDbImpl& inst);
-            virtual ~PrmDbImplTester();
+            PrmDbTester(Svc::PrmDbImpl& inst);
+            virtual ~PrmDbTester();
 
             void runNominalPopulate();
             void runNominalSaveFile();
@@ -66,8 +66,8 @@ namespace Svc {
             Status write(const U8 *buffer, FwSizeType &size, WaitType wait) override;
 
             // Tracks the current tester
-            static void setTester(PrmDbImplTester* tester);
-            static PrmDbImplTester* s_tester;
+            static void setTester(PrmDbTester* tester);
+            static PrmDbTester* s_tester;
 
         };
 
@@ -75,4 +75,4 @@ namespace Svc {
 
 } /* namespace SvcTest */
 
-#endif /* PRMDB_TEST_UT_PRMDBIMPLTESTER_HPP_ */
+#endif /* PRMDB_TEST_UT_PRMDBTESTER_HPP_ */
