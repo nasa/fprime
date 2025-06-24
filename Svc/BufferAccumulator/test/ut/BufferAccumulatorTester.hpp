@@ -88,7 +88,7 @@ class BufferAccumulatorTester : public BufferAccumulatorGTestBase {
   // ----------------------------------------------------------------------
 
   //! Helper method to call doDispatch
-  void dispatchOne(void);
+  void doDispatch(void);
 };
 
 }  // end namespace Svc
