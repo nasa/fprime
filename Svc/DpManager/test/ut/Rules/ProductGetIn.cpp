@@ -67,7 +67,7 @@ void TestState ::action__ProductGetIn__BufferInvalid() {
     ASSERT_EQ(status, Fw::Success::FAILURE);
     // Check events
     if (this->abstractState.bufferAllocationFailedEventCount <
-        DpManagerComponentBase::EVENTID_BUFFERALLOCATIONFAILED_THROTTLE) {
+        Svc::DpManagerTester::getBufferAllocationFailedThrottle()) {
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_BufferAllocationFailed(0, id);
         ++this->abstractState.bufferAllocationFailedEventCount;
