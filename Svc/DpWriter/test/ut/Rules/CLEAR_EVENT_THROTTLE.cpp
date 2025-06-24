@@ -30,18 +30,18 @@ void TestState ::action__CLEAR_EVENT_THROTTLE__OK() {
     const FwEnumStoreType instance = static_cast<FwEnumStoreType>(STest::Pick::any());
     const U32 cmdSeq = STest::Pick::any();
     this->sendCmd_CLEAR_EVENT_THROTTLE(instance, cmdSeq);
-    this->component.doDispatch();
+    this->doDispatch();
     // Check the command response
     ASSERT_CMD_RESPONSE_SIZE(1);
-    ASSERT_CMD_RESPONSE(0, DpWriterComponentBase::OPCODE_CLEAR_EVENT_THROTTLE, cmdSeq, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(0, DpWriterTester::getOpCodeClearEventThrottle(), cmdSeq, Fw::CmdResponse::OK);
     // Check the concrete state
-    ASSERT_EQ(this->component.DpWriterComponentBase::m_BufferTooSmallForDataThrottle, 0);
-    ASSERT_EQ(this->component.DpWriterComponentBase::m_BufferTooSmallForPacketThrottle, 0);
-    ASSERT_EQ(this->component.DpWriterComponentBase::m_FileOpenErrorThrottle, 0);
-    ASSERT_EQ(this->component.DpWriterComponentBase::m_FileWriteErrorThrottle, 0);
-    ASSERT_EQ(this->component.DpWriterComponentBase::m_InvalidBufferThrottle, 0);
-    ASSERT_EQ(this->component.DpWriterComponentBase::m_InvalidHeaderHashThrottle, 0);
-    ASSERT_EQ(this->component.DpWriterComponentBase::m_InvalidHeaderThrottle, 0);
+    ASSERT_EQ(this->getBufferTooSmallForDataThrottleCount(), 0);
+    ASSERT_EQ(this->getBufferTooSmallForPacketThrottleCount(), 0);
+    ASSERT_EQ(this->getFileOpenErrorThrottleCount(), 0);
+    ASSERT_EQ(this->getFileWriteErrorThrottleCount(), 0);
+    ASSERT_EQ(this->getInvalidBufferThrottleCount(), 0);
+    ASSERT_EQ(this->getInvalidHeaderHashThrottleCount(), 0);
+    ASSERT_EQ(this->getInvalidHeaderThrottleCount(), 0);
     // Update the abstract state
     this->abstractState.m_bufferTooSmallForDataEventCount = 0;
     this->abstractState.m_bufferTooSmallForPacketEventCount = 0;
@@ -59,7 +59,7 @@ namespace CLEAR_EVENT_THROTTLE {
 // ----------------------------------------------------------------------
 
 void Tester ::OK() {
-    for (FwSizeType i = 0; i <= DpWriterComponentBase::EVENTID_INVALIDBUFFER_THROTTLE; i++) {
+    for (FwSizeType i = 0; i <= DpWriterTester::getInvalidBufferThrottle(); i++) {
         Testers::bufferSendIn.ruleInvalidBuffer.apply(this->testState);
     }
     this->ruleOK.apply(this->testState);
