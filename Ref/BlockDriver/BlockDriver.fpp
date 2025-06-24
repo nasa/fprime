@@ -7,7 +7,7 @@ module Ref {
     # General ports
     # ----------------------------------------------------------------------
 
-    include "../../Drv/Interfaces/TickInterface.fppi"
+    import Drv.Tick
 
     @ The rate group scheduler input
     async input port Sched: Svc.Sched
