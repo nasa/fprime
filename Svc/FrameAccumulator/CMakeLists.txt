@@ -17,7 +17,7 @@ register_fprime_library(
   DEPENDS
     Utils_Types
     Svc_FprimeProtocol
-    Svc_CCSDS_Types
+    Svc_Ccsds_Types
 )
 
 #### UTs ####

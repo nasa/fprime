@@ -8,7 +8,7 @@ module Svc {
     # Deframer interface
     # ----------------------------------------------------------------------
 
-    include "../Interfaces/DeframerInterface.fppi"
+    import Deframer
 
     @ An invalid frame was received (too short to be a frame)
     event InvalidBufferReceived \
