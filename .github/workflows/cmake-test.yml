@@ -18,7 +18,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/')}}
 
-
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   CMake:
