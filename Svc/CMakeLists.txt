@@ -3,6 +3,7 @@
 # Ports
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Cycle/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Fatal/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Interfaces/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Ping/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PolyIf/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Sched/")
@@ -68,4 +69,4 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PosixTime/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/LinuxTimer/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Version/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FpySequencer/")
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/CCSDS/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Ccsds/")

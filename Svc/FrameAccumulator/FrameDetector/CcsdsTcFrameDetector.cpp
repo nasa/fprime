@@ -5,12 +5,12 @@
 // ======================================================================
 
 #include "Svc/FrameAccumulator/FrameDetector/CcsdsTcFrameDetector.hpp"
-#include "Svc/CCSDS/Types/FppConstantsAc.hpp"
+#include "Svc/Ccsds/Types/FppConstantsAc.hpp"
 #include <cstdio>
 #include "config/FppConstantsAc.hpp"
-#include "Svc/CCSDS/Types/TCHeaderSerializableAc.hpp"
-#include "Svc/CCSDS/Types/TCTrailerSerializableAc.hpp"
-#include "Svc/CCSDS/Utils/CRC16.hpp"
+#include "Svc/Ccsds/Types/TCHeaderSerializableAc.hpp"
+#include "Svc/Ccsds/Types/TCTrailerSerializableAc.hpp"
+#include "Svc/Ccsds/Utils/CRC16.hpp"
 #include "Utils/Hash/Hash.hpp"
 
 namespace Svc {
@@ -18,23 +18,23 @@ namespace FrameDetectors {
 
 FrameDetector::Status CcsdsTcFrameDetector::detect(const Types::CircularBuffer& data, FwSizeType& size_out) const {
 
-    if (data.get_allocated_size() < CCSDS::TCHeader::SERIALIZED_SIZE + CCSDS::TCTrailer::SERIALIZED_SIZE) {
-        size_out = CCSDS::TCHeader::SERIALIZED_SIZE + CCSDS::TCTrailer::SERIALIZED_SIZE;
+    if (data.get_allocated_size() < Ccsds::TCHeader::SERIALIZED_SIZE + Ccsds::TCTrailer::SERIALIZED_SIZE) {
+        size_out = Ccsds::TCHeader::SERIALIZED_SIZE + Ccsds::TCTrailer::SERIALIZED_SIZE;
         return Status::MORE_DATA_NEEDED;
     }
 
     // ---------------- Frame Header ----------------
     // Copy CircularBuffer data into linear buffer, for serialization into FrameHeader object
-    U8 header_data[CCSDS::TCHeader::SERIALIZED_SIZE];
-    Fw::SerializeStatus status = data.peek(header_data, CCSDS::TCHeader::SERIALIZED_SIZE, 0);
+    U8 header_data[Ccsds::TCHeader::SERIALIZED_SIZE];
+    Fw::SerializeStatus status = data.peek(header_data, Ccsds::TCHeader::SERIALIZED_SIZE, 0);
     if (status != Fw::FW_SERIALIZE_OK) {
         return Status::NO_FRAME_DETECTED;
     }
-    Fw::ExternalSerializeBuffer header_ser_buffer(header_data, CCSDS::TCHeader::SERIALIZED_SIZE);
-    status = header_ser_buffer.setBuffLen(CCSDS::TCHeader::SERIALIZED_SIZE);
+    Fw::ExternalSerializeBuffer header_ser_buffer(header_data, Ccsds::TCHeader::SERIALIZED_SIZE);
+    status = header_ser_buffer.setBuffLen(Ccsds::TCHeader::SERIALIZED_SIZE);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     // Attempt to deserialize data into the FrameHeader object
-    CCSDS::TCHeader header;
+    Ccsds::TCHeader header;
     status = header.deserialize(header_ser_buffer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
@@ -43,8 +43,8 @@ FrameDetector::Status CcsdsTcFrameDetector::detect(const Types::CircularBuffer& 
         return Status::NO_FRAME_DETECTED;
     }
     // TC protocol defines the Frame Length as number of bytes minus 1, so we add 1 back to get length in bytes
-    const FwSizeType expected_frame_length = static_cast<FwSizeType>((header.getvcIdAndLength() & CCSDS::TCSubfields::FrameLengthMask) + 1);
-    const U16 data_to_crc_length = static_cast<U16>(expected_frame_length - CCSDS::TCTrailer::SERIALIZED_SIZE);
+    const FwSizeType expected_frame_length = static_cast<FwSizeType>((header.getvcIdAndLength() & Ccsds::TCSubfields::FrameLengthMask) + 1);
+    const U16 data_to_crc_length = static_cast<U16>(expected_frame_length - Ccsds::TCTrailer::SERIALIZED_SIZE);
 
     if (data.get_allocated_size() < expected_frame_length) {
         size_out = expected_frame_length;
@@ -53,7 +53,7 @@ FrameDetector::Status CcsdsTcFrameDetector::detect(const Types::CircularBuffer& 
 
     // ---------------- Frame Trailer ----------------
     // Compute CRC on the received data
-    CCSDS::Utils::CRC16 crc;
+    Ccsds::Utils::CRC16 crc;
     for (FwSizeType i = 0; i < data_to_crc_length; ++i) {
         U8 byte = 0;
         status = data.peek(byte, i);
@@ -62,16 +62,16 @@ FrameDetector::Status CcsdsTcFrameDetector::detect(const Types::CircularBuffer& 
     }
     U16 computed_fecf = crc.finalize();
     // Retrieve CRC field from the trailer
-    U8 trailer_data[CCSDS::TCTrailer::SERIALIZED_SIZE];
-    status = data.peek(trailer_data, CCSDS::TCTrailer::SERIALIZED_SIZE, data_to_crc_length);
+    U8 trailer_data[Ccsds::TCTrailer::SERIALIZED_SIZE];
+    status = data.peek(trailer_data, Ccsds::TCTrailer::SERIALIZED_SIZE, data_to_crc_length);
     if (status != Fw::FW_SERIALIZE_OK) {
         return Status::NO_FRAME_DETECTED;
     }
-    Fw::ExternalSerializeBuffer trailer_ser_buffer(trailer_data, CCSDS::TCTrailer::SERIALIZED_SIZE);
-    status = trailer_ser_buffer.setBuffLen(CCSDS::TCTrailer::SERIALIZED_SIZE);
+    Fw::ExternalSerializeBuffer trailer_ser_buffer(trailer_data, Ccsds::TCTrailer::SERIALIZED_SIZE);
+    status = trailer_ser_buffer.setBuffLen(Ccsds::TCTrailer::SERIALIZED_SIZE);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     // Attempt to deserialize data into the FrameTrailer object
-    CCSDS::TCTrailer trailer;
+    Ccsds::TCTrailer trailer;
     status = trailer.deserialize(trailer_ser_buffer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
     U16 transmitted_fecf = trailer.getfecf();

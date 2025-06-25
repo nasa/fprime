@@ -6,14 +6,14 @@
 
 #include "STest/Random/Random.hpp"
 #include "Svc/FrameAccumulator/FrameDetector/CcsdsTcFrameDetector.hpp"
-#include "Svc/CCSDS/Utils/CRC16.hpp"
-#include "Svc/CCSDS/Types/TCHeaderSerializableAc.hpp"
-#include "Svc/CCSDS/Types/TCTrailerSerializableAc.hpp"
-#include "Svc/CCSDS/Utils/CRC16.hpp"
+#include "Svc/Ccsds/Utils/CRC16.hpp"
+#include "Svc/Ccsds/Types/TCHeaderSerializableAc.hpp"
+#include "Svc/Ccsds/Types/TCTrailerSerializableAc.hpp"
+#include "Svc/Ccsds/Utils/CRC16.hpp"
 #include "Utils/Types/test/ut/CircularBuffer/CircularBufferTester.hpp"
 #include "gtest/gtest.h"
 
-using namespace Svc::CCSDS;
+using namespace Svc::Ccsds;
 
 constexpr U32 CIRCULAR_BUFFER_TEST_SIZE = 2048;
 constexpr U16 EXPECTED_START_TOKEN = 0x1 << TCSubfields::BypassFlagOffset | (ComCfg::FppConstant_SpacecraftId::SpacecraftId);
@@ -69,7 +69,7 @@ FwSizeType generate_random_tc_frame(Types::CircularBuffer& circular_buffer) {
     TCTrailer tcTrailer;
 
     // Calculate CRC on header + packet_data
-    Svc::CCSDS::Utils::CRC16 crc;
+    Svc::Ccsds::Utils::CRC16 crc;
     for (FwSizeType i = 0; i < static_cast<FwSizeType>(packet_size + TCHeader::SERIALIZED_SIZE); ++i) {
         U8 byte = 0;
         circular_buffer.peek(byte, i);

@@ -45,7 +45,7 @@ namespace Svc {
       //! Quit timer
       void quit();
 
-    PRIVATE:
+    private:
 
       Os::Mutex m_mutex; //!< mutex for quit flag
 
