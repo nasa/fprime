@@ -1,20 +1,15 @@
 # Cross-compile and continuously soak test the LED blinker on AArch64 Linux
-# Builds on release changes, tests every 30 minutes until crash
+# Builds on release publication, then runs continuously until failure
+# Cross-compile https://github.com/fprime-community/fprime-workshop-led-blinker
 
 name: "External Repo: AArch64 Linux LedBlinker Soak Test"
 
 on:
   release: 
-    types: [published, edited]
-  push:
-    branches: [ release/** ]
-  schedule:
-    # Run soak tests every 30 minutes
-    - cron: '*/30 * * * *'
-
-# Should we cancel old soak tests? Currently set so that only one soak test runs at a time
+    types: [published]
+# New releases cancel running soak tests and start fresh
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}
   cancel-in-progress: true
 
 env:
@@ -26,7 +21,7 @@ jobs:
   get-branch:
     name: "Get target branch"
     runs-on: ubuntu-22.04
-    if: github.event_name == 'push'
+    if: github.event_name == 'release'
     outputs:
       target-branch: ${{ steps.get-branch.outputs.target-branch }}
     steps:
@@ -41,7 +36,7 @@ jobs:
     name: "Cross Compilation"
     runs-on: ubuntu-22.04
     needs: get-branch
-    if: github.event_name == 'push' 
+    if: github.event_name == 'release' 
     steps:
       - name: "Checkout target repository"
         uses: actions/checkout@v4
@@ -78,16 +73,16 @@ jobs:
       - name: 'Archive Build Artifacts'
         uses: actions/upload-artifact@v4
         with:
-          name: aarch64-linux-soak-artifacts
+          name: aarch64-linux-artifacts
           path: aarch64-linux-artifacts
           #Should be longer? We want scheduled runs to have access without needing to recompile
-          retention-days: 30
+          retention-days: 365
 
   aarch64-soak-test:
-    name: "Aarch64 Soak Test"
+    name: "aarch64 Soak Test"
     runs-on: [self-hosted, aarch64-linux]
     needs: cross-compilation
-    if: github.event_name == 'push' 
+    timeout-minutes: 0  # No timeout, run until failure
     steps:
       - name: "Checkout F´ Repository"
         uses: actions/checkout@v4
@@ -103,60 +98,74 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: aarch64-linux-artifacts
-        # Below might not be needed
-        #if: github.event_name == 'push' && needs.cross-compilation.result == 'success'
-      - name: "Start F' GDS"
-          run: |
-            # venv setup
-            . venv/bin/activate
-
-            #start GDS, wait for it to start
-            chmod +x ./aarch64-linux-artifacts/build-artifacts/aarch64-linux/LedBlinker/bin/LedBlinker
-            fprime-gds --ip-client -d ./aarch64-linux-artifacts/build-artifacts/aarch64-linux/LedBlinker --logs ./ci-logs-soak-${TIMESTAMP} &
-            GDS_PID=$!
+      - name: "Start Continuous Soak Testing"
+        run: |
+          . venv/bin/activate
+          echo "Soak testing started with fresh release at $(date)"
+          
+          # Setup GDS once
+          OG_TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+          mkdir -p ci-logs-soak-${OG_TIMESTAMP}
+          
+          echo "Starting F' GDS for continuous soak testing..."
+          chmod +x ./aarch64-linux-artifacts/build-artifacts/aarch64-linux/LedBlinker/bin/LedBlinker
+          fprime-gds --ip-client -d ./aarch64-linux-artifacts/build-artifacts/aarch64-linux/LedBlinker --logs ./ci-logs-soak-${OG_TIMESTAMP} &
+          GDS_PID=$!
+          
+          # Wait for GDS to start
+          sleep 10
+          echo "GDS started with PID: $GDS_PID - beginning continuous soak testing"
+          
+          # Function to run a single test iteration
+          run_test_iteration() {
+            local iteration=$1
+            local test_timestamp=$(date +%Y%m%d_%H%M%S)
             
-            sleep 10
-
-  aarch64-linux-soak-test:
-    name: "AArch64 Linux Soak Test"
-    runs-on: [self-hosted, aarch64-linux]
-    needs: cross-compilation
-    if: always() && (needs.cross-compilation.result == 'success' || github.event_name == 'schedule')
-    steps:
-      - name: "Check for Previous Failures"
-        if: github.event_name == 'schedule'
-        run: |
-          if [ -f ~/.fprime-soak/SOAK_DISABLED ]; then
-            echo "Soak testing disabled due to previous failure at: $(cat ~/.fprime-soak/SOAK_DISABLED)"
-            echo "To re-enable, delete ~/.fprime-soak/SOAK_DISABLED or push a new release"
-            exit 1
-          fi
-      - name: "Clear Failure State on New Build"
-        if: github.event_name == 'push' && needs.cross-compilation.result == 'success'
-        run: |
-          mkdir -p ~/.fprime-soak
-          rm -f ~/.fprime-soak/SOAK_DISABLED
-          echo "Soak testing re-enabled with fresh build"
-      - name: Run Soak Integration Tests
-        id: soak-test
-        run: |
-          TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-          mkdir -p ci-logs-soak-${TIMESTAMP}
+            echo "=== Soak test iteration $iteration starting at $(date) ==="
+            
+            # Run the test
+            if pytest --dictionary ./aarch64-linux-artifacts/build-artifacts/aarch64-linux/LedBlinker/dict/LedBlinkerTopologyDictionary.json ./aarch64-linux-artifacts/int/led_integration_tests.py -v --tb=short; then
+              echo "=== Iteration $iteration PASSED at $(date) ==="
+              return 0
+            else
+              echo "=== Iteration $iteration FAILED at $(date) ==="
+              return 1
+            fi
+          }
           
-          echo "Starting soak test iteration ${{ github.run_number }} at $(date)"
-        
-          pytest --dictionary ./aarch64-linux-artifacts/build-artifacts/aarch64-linux/LedBlinker/dict/LedBlinkerTopologyDictionary.json ./aarch64-linux-artifacts/int/led_integration_tests.py -v --tb=short
+          # Main continuous testing loop
+          iteration=1
           
-          echo "Soak test iteration completed at $(date)"
-      - name: "Disable Soak Testing on Failure"
-        if: failure() && steps.soak-test.outcome == 'failure'
-        run: |
-          kill $GDS_PID 2>/dev/null || true
-          mkdir -p ~/.fprime-soak
-          echo "$(date): Soak test failed on run ${{ github.run_number }}" > ~/.fprime-soak/SOAK_DISABLED
-          echo "SOAK TEST FAILURE !"
-          echo "Disabling future scheduled runs until new release or manual intervention"
-          echo "Failure logged at: $(date)"
+          echo "Starting continuous soak testing - will run until failure"
+          echo "Testing every 30 minutes with the same GDS instance"
+          
+          while true; do
+            # Run test iteration
+            if ! run_test_iteration $iteration; then
+              echo "SOAK TEST FAILURE: Test iteration $iteration failed at $(date)"
+              echo "Stopping continuous soak testing"
+              
+              # Cleanup GDS process
+              echo "Cleaning up GDS process..."
+              kill $GDS_PID 2>/dev/null || true
+              wait $GDS_PID 2>/dev/null || true
+              
+              echo "SOAK TEST FAILURE - Continuous soak testing stopped due to failure"
+              exit 1
+            fi
+            
+            iteration=$((iteration + 1))
+            
+            # Log progress periodically
+            if [ $((iteration % 10)) -eq 0 ]; then
+              echo "=== Milestone: Completed $iteration successful iterations ==="
+              echo "=== Continuous soak testing still running strong ==="
+            fi
+            
+            # Sleep for 30 minutes before next iteration
+            echo "Sleeping 30 minutes before iteration $iteration..."
+            sleep 1800
+          done
       - name: 'Archive Soak Test Logs'
         uses: actions/upload-artifact@v4
         if: always()
