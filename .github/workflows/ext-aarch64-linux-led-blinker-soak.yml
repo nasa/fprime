@@ -1,0 +1,67 @@
+# Soak test that runs every 30 minutes on release branches until crash
+# Assumes the binary is already deployed via the setup workflow
+
+name: "External Repo: AArch64 Linux LedBlinker, Soak Test"
+
+on:
+  schedule:
+    # Run every 30 minutes, but only when enabled
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+    inputs:
+      release_branch:
+        description: 'Release branch to test (e.g., release/v1.0.0)'
+        required: true
+        default: 'release/v3.6.0-hotfixes'
+        type: string
+# Don't cancel soak tests - let them run to completion to detect issues
+concurrency:
+  group: ${{ github.workflow }}-soak-test
+  cancel-in-progress: false
+
+jobs:
+  aarch64-soak-test:
+    name: "AArch64 Linux Soak Test - Continuous"
+    runs-on: [self-hosted, aarch64-linux]
+    # Add a condition to only run on release branches or manual dispatch
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && github.ref_name != 'devel')
+    steps:
+      - name: "Checkout F´ Repository"
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: 'requirements.txt'
+          sparse-checkout-cone-mode: false
+      - name: "Setup environment"
+        run: |
+          python -m venv venv
+          . venv/bin/activate
+          pip install -r requirements.txt
+      - name: "Download Latest Soak Artifacts"
+        uses: actions/download-artifact@v4
+        with:
+          name: aarch64-linux-soak-artifacts
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run Soak Integration Tests
+        run: |
+          . venv/bin/activate
+          TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+          mkdir -p ci-logs-soak-${TIMESTAMP}
+          
+          echo "Starting soak test iteration ${{ github.run_number }} at $(date)"
+          
+          chmod +x ./build-artifacts/aarch64-linux/LedBlinker/bin/LedBlinker
+          fprime-gds --ip-client -d ./build-artifacts/aarch64-linux/LedBlinker --logs ./ci-logs-soak-${TIMESTAMP} &
+          GDS_PID=$!
+          
+          sleep 10
+          pytest --dictionary ./build-artifacts/aarch64-linux/LedBlinker/dict/LedBlinkerTopologyDictionary.json ./int/led_integration_tests.py -v --tb=short
+          
+          kill $GDS_PID 2>/dev/null || true
+          echo "Soak test iteration completed at $(date)"
+      - name: 'Archive Soak Test Logs'
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: soak-logs-${{ github.run_number }}
+          path: ci-logs-soak-*
+          retention-days: 30
