@@ -104,7 +104,7 @@ class LinuxUartDriver final : public LinuxUartDriverComponentBase {
                                 ) override;
 
     int m_fd;  //!< file descriptor returned for I/O device
-    U32 m_allocationSize; //!< size of allocation request to memory manager
+    FwSizeType m_allocationSize; //!< size of allocation request to memory manager
     const char* m_device;  //!< original device path
 
     //! This method will be called by the new thread to wait for input on the serial port.

@@ -68,8 +68,7 @@ void BufferRepeater ::portIn_handler(FwIndexType portNum, /*!< The port number*/
             Fw::Buffer new_allocation = this->allocate_out(0, buffer.getSize());
             if (this->check_allocation(i, new_allocation, buffer)) {
                 // Clone the data and send it
-                FW_ASSERT(buffer.getSize() <= std::numeric_limits<size_t>::max(),
-                          static_cast<FwAssertArgType>(buffer.getSize()));
+                FW_ASSERT_NO_OVERFLOW(buffer.getSize(), size_t);
                 ::memcpy(new_allocation.getData(), buffer.getData(), static_cast<size_t>(buffer.getSize()));
                 new_allocation.setSize(buffer.getSize());
                 this->portOut_out(i, new_allocation);

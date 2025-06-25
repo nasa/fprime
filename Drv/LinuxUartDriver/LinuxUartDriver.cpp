@@ -341,8 +341,7 @@ void LinuxUartDriver ::serialReadTaskEntry(void* ptr) {
 
         // Read until something is received or an error occurs. Only loop when
         // stat == 0 as this is the timeout condition and the read should spin
-        FW_ASSERT(buff.getSize() <= std::numeric_limits<size_t>::max(),
-                  static_cast<FwAssertArgType>(buff.getSize()));
+        FW_ASSERT_NO_OVERFLOW(buff.getSize(), size_t);
         while ((stat == 0) && !comp->m_quitReadThread) {
             stat = static_cast<int>(::read(comp->m_fd, buff.getData(), static_cast<size_t>(buff.getSize())));
         }
