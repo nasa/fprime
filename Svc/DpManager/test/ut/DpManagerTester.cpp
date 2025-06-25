@@ -80,4 +80,13 @@ void DpManagerTester::checkTelemetry() {
     TESTER_CHECK_CHANNEL(NumBytes);
 }
 
+
+void DpManagerTester::doDispatch() {
+    this->component.doDispatch();
+}
+
+FwIndexType DpManagerTester::getBufferAllocationFailedThrottleCount() {
+    return this->component.DpManagerComponentBase::m_BufferAllocationFailedThrottle;
+}
+
 }  // end namespace Svc

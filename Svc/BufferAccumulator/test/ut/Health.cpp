@@ -20,7 +20,7 @@ void BufferAccumulatorTester ::Ping() {
   U32 key = 42;
 
   this->invoke_to_pingIn(0, key);
-  this->component.doDispatch();
+  this->doDispatch();
 
   ASSERT_EVENTS_SIZE(0);
   ASSERT_from_pingOut_SIZE(1);

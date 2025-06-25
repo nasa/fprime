@@ -42,6 +42,35 @@ namespace Svc {
       static const FwSizeType TEST_SEQ_BUFFER_SIZE = 255;
 
     protected:
+      // ----------------------------------------------------------------------
+      // Accessor methods for opcodes
+      // ----------------------------------------------------------------------
+
+      static FwOpcodeType getRunOpcode() {
+          return CmdSequencerComponentBase::OPCODE_CS_RUN;
+      }
+
+      static FwOpcodeType getStartOpcode() {
+          return CmdSequencerComponentBase::OPCODE_CS_START;
+      }
+
+      static FwOpcodeType getAutoOpcode() {
+          return CmdSequencerComponentBase::OPCODE_CS_AUTO;
+      }
+
+      static FwOpcodeType getManualOpcode() {
+          return CmdSequencerComponentBase::OPCODE_CS_MANUAL;
+      }
+
+      static FwOpcodeType getStepOpcode() {
+          return CmdSequencerComponentBase::OPCODE_CS_STEP;
+      }
+
+      static FwOpcodeType getValidateOpcode() {
+          return CmdSequencerComponentBase::OPCODE_CS_VALIDATE;
+      }
+
+    protected:
 
       // ----------------------------------------------------------------------
       // Types

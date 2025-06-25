@@ -16,20 +16,21 @@
 
 namespace Fw {
 
-    // This type is defined in config/ComCfg.fpp
-    using ComPacketType = ComCfg::APID::T;
+// This type is defined in config/ComCfg.fpp
+using ComPacketType = ComCfg::APID::T;
 
-    class ComPacket: public Serializable {
-        public:
+class ComPacket : public Serializable {
+  public:
+    ComPacket();
+    virtual ~ComPacket();
 
-            ComPacket();
-            virtual ~ComPacket();
-
-        protected:
-            ComPacketType m_type;
-            SerializeStatus serializeBase(SerializeBufferBase& buffer) const ; // called by derived classes to serialize common fields
-            SerializeStatus deserializeBase(SerializeBufferBase& buffer); // called by derived classes to deserialize common fields
-    };
+  protected:
+    ComPacketType m_type;
+    SerializeStatus serializeBase(
+        SerializeBufferBase& buffer) const;  // called by derived classes to serialize common fields
+    SerializeStatus deserializeBase(
+        SerializeBufferBase& buffer);  // called by derived classes to deserialize common fields
+};
 
 } /* namespace Fw */
 
