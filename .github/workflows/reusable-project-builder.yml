@@ -165,4 +165,4 @@ jobs:
           sleep 10
       - name: "Run Integration Tests"
         working-directory: ${{ inputs.project_root }}
-        run: pytest --ignore=lib
+        run: pytest --ignore=lib --ignore=fprime
