@@ -6,4 +6,6 @@ register_fprime_module(
     HEADERS
         "${CMAKE_CURRENT_LIST_DIR}/PingEntries.hpp"
     INTERFACE
+    DEPENDS
+        Svc_Subtopologies_CdhCore_CdhCoreConfig
 )
