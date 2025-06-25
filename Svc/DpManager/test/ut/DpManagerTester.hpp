@@ -39,7 +39,7 @@ class DpManagerTester : public DpManagerGTestBase {
 
     //! Handler for from_bufferGetOut
     Fw::Buffer from_bufferGetOut_handler(const FwIndexType portNum,  //!< The port number
-                                         U32 size                        //!< The size
+                                         FwSizeType size                        //!< The size
     );
 
     //! Handler for from_productResponseOut

@@ -92,7 +92,7 @@ U16 SpacePacketFramerTester ::from_getApidSeqCount_handler(FwIndexType portNum,
 }
 
 Fw::Buffer SpacePacketFramerTester ::from_bufferAllocate_handler(FwIndexType portNum,
-                                                           U32 size) {
+                                                           FwSizeType size) {
     return Fw::Buffer(this->m_internalDataBuffer, size);
 }
 

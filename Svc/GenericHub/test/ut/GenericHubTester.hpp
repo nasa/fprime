@@ -98,7 +98,7 @@ class GenericHubTester : public GenericHubGTestBase {
     //! Handler for from_dataOutAllocate
     //!
     Fw::Buffer from_dataOutAllocate_handler(const FwIndexType portNum, /*!< The port number*/
-                                            U32 size);
+                                            FwSizeType size);
 
     //! Handler for from_dataOut
     //!

@@ -48,7 +48,7 @@ void StaticMemoryComponentImpl ::bufferDeallocate_handler(const FwIndexType port
     m_allocated[portNum] = false;
 }
 
-Fw::Buffer StaticMemoryComponentImpl ::bufferAllocate_handler(const FwIndexType portNum, Fw::Buffer::SizeType size) {
+Fw::Buffer StaticMemoryComponentImpl ::bufferAllocate_handler(const FwIndexType portNum, FwSizeType size) {
     FW_ASSERT(portNum < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(m_static_memory)));
     FW_ASSERT(size <= sizeof(m_static_memory[portNum])); // It is a topology error to ask for too much from this component
     FW_ASSERT(not m_allocated[portNum], static_cast<FwAssertArgType>(portNum)); // It is also an error to allocate again before returning

@@ -48,8 +48,8 @@ class Buffer : public Fw::Serializable {
     friend class Fw::BufferTester;
 
   public:
-    //! The size type for a buffer
-    using SizeType = U32;
+    //! The size type for a buffer - for backwards compatibility
+    using SizeType = FwSizeType;
 
     enum {
         SERIALIZED_SIZE = sizeof(SizeType) + sizeof(U32) + sizeof(U8*),  //!< Size of Fw::Buffer when serialized
@@ -73,7 +73,7 @@ class Buffer : public Fw::Serializable {
     //! \param data: data pointer to wrap
     //! \param size: size of data located at data pointer
     //! \param context: user-specified context to track creation. Default: no context
-    Buffer(U8* data, SizeType size, U32 context = NO_CONTEXT);
+    Buffer(U8* data, FwSizeType size, U32 context = NO_CONTEXT);
 
     //! Assignment operator to set given buffer's members from another without copying wrapped data
     //!
@@ -167,7 +167,7 @@ class Buffer : public Fw::Serializable {
 
     //! Sets creation context
     //!
-    void setContext(SizeType context);
+    void setContext(U32 context);
 
     //! Sets all values
     //! \param data: data pointer to wrap

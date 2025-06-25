@@ -245,7 +245,7 @@ void TcpServerTester ::from_recv_handler(const FwIndexType portNum, Fw::Buffer& 
 Fw::Buffer TcpServerTester ::
     from_allocate_handler(
         const FwIndexType portNum,
-        U32 size
+        FwSizeType size
     )
   {
     this->pushFromPortEntry_allocate(size);

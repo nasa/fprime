@@ -195,7 +195,9 @@ void SocketComponentHelper::readLoop() {
             Fw::Buffer buffer = this->getBuffer();
             U8* data = buffer.getData();
             FW_ASSERT(data);
-            U32 size = buffer.getSize();
+            FW_ASSERT(buffer.getSize() < std::numeric_limits<U32>::max(),
+                      static_cast<FwAssertArgType>(buffer.getSize()));
+            U32 size = static_cast<U32>(buffer.getSize());
             // recv blocks, so it may have been a while since its done an isOpened check
             status = this->recv(data, size);
             if ((status != SOCK_SUCCESS) && (status != SOCK_INTERRUPTED_TRY_AGAIN) && (status != SOCK_NO_DATA_AVAILABLE)) {

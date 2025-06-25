@@ -77,7 +77,9 @@ void TcpClientComponentImpl::connected() {
 // ----------------------------------------------------------------------
 
 void TcpClientComponentImpl::send_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
-    Drv::SocketIpStatus status = send(fwBuffer.getData(), fwBuffer.getSize());
+    FW_ASSERT(fwBuffer.getSize() <= std::numeric_limits<U32>::max(),
+              static_cast<FwAssertArgType>(fwBuffer.getSize()));
+    Drv::SocketIpStatus status = send(fwBuffer.getData(), static_cast<U32>(fwBuffer.getSize()));
     Drv::ByteStreamStatus returnStatus;
     switch (status) {
         case SOCK_INTERRUPTED_TRY_AGAIN:

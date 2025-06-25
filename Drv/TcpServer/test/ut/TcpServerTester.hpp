@@ -99,7 +99,7 @@ namespace Drv {
       //!
       Fw::Buffer from_allocate_handler(
           const FwIndexType portNum, /*!< The port number*/
-          U32 size
+          FwSizeType size
       ) override;
 
     private:
