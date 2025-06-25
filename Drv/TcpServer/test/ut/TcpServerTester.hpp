@@ -51,7 +51,7 @@ namespace Drv {
       // Tests
       // ----------------------------------------------------------------------
 
-      void setup_helper(bool recv_thread, bool reconnect);
+      void setup_helper(bool recv_thread, bool reconnect, bool expect_started = true);
 
       //! Test basic messaging
       //!

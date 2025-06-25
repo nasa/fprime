@@ -23,7 +23,7 @@ namespace Drv {
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-void TcpServerTester ::setup_helper(bool recv_thread, bool reconnect) {
+void TcpServerTester ::setup_helper(bool recv_thread, bool reconnect, bool expect_started) {
     Drv::SocketIpStatus status1 = Drv::SOCK_SUCCESS;
     U16 port =  0;
     EXPECT_FALSE(component.isStarted());
@@ -36,9 +36,12 @@ void TcpServerTester ::setup_helper(bool recv_thread, bool reconnect) {
         this->component.start(name, Os::Task::TASK_PRIORITY_DEFAULT, Os::Task::TASK_DEFAULT);
     }
     // Component should always launch the listening server on configure
-    // The thread will retry if the configure fails
-    EXPECT_TRUE(this->wait_on_started(true, Drv::Test::get_configured_delay_ms()/10 + 1));
-    EXPECT_TRUE(component.isStarted());
+    // The thread will retry if the configure fails. When we do not expect it to be started, we must wait for it to
+    // stop.
+    if (expect_started) {
+        EXPECT_TRUE(this->wait_on_started(true, Drv::Test::get_configured_delay_ms() / 10 + 1));
+        EXPECT_TRUE(component.isStarted());
+    }
 }
 
 void TcpServerTester ::test_with_loop(U32 iterations, bool recv_thread) {
@@ -180,8 +183,8 @@ void TcpServerTester ::test_no_automatic_send_connection() {
     Drv::TcpClientSocket client;
     Drv::SocketDescriptor client_fd;
 
-    // Set up the server without automatic connection
-    this->setup_helper(false, true);
+    // Set up the server without automatic connection, and don't expect it to stay started
+    this->setup_helper(false, true, false);
     this->component.setAutomaticOpen(false);
     Drv::Test::force_recv_timeout(client_fd.fd, client);
 
@@ -202,8 +205,8 @@ void TcpServerTester ::test_no_automatic_recv_connection() {
     Drv::TcpClientSocket client;
     Drv::SocketDescriptor client_fd;
 
-    // Set up the server without automatic connection
-    this->setup_helper(true, false);
+    // Set up the server without automatic connection, and don't expect it to stay started
+    this->setup_helper(true, false, false);
 
     // Connect a client to the server so it is waiting in the "listen" queue
     // The read thread should not automatically connect and will thus exit with a failure
