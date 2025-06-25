@@ -1,30 +1,93 @@
-# Soak test that runs every 30 minutes on release branches until crash
-# Assumes the binary is already deployed via the setup workflow
+# Cross-compile and continuously soak test the LED blinker on AArch64 Linux
+# Builds on release changes, tests every 30 minutes until crash
 
-name: "External Repo: AArch64 Linux LedBlinker, Soak Test"
+name: "External Repo: AArch64 Linux LedBlinker Soak Test"
 
 on:
+  release: 
+    types: [published, edited]
+  push:
+    branches: [ release/** ]
   schedule:
-    # Run every 30 minutes, but only when enabled
+    # Run soak tests every 30 minutes
     - cron: '*/30 * * * *'
-  workflow_dispatch:
-    inputs:
-      release_branch:
-        description: 'Release branch to test (e.g., release/v1.0.0)'
-        required: true
-        default: 'release/v3.6.0-hotfixes'
-        type: string
-# Don't cancel soak tests - let them run to completion to detect issues
+
+# Should we cancel old soak tests? Currently set so that only one soak test runs at a time
 concurrency:
-  group: ${{ github.workflow }}-soak-test
-  cancel-in-progress: false
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  AARCH64_TOOLCHAIN_DIR: /tmp/aarch64-toolchain
+  AARCH64_TOOLCHAIN_URL: https://developer.arm.com/-/media/Files/downloads/gnu-a/10.2-2020.11/binrel/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu.tar.xz
+  ARM_TOOLS_PATH: /tmp/aarch64-toolchain
 
 jobs:
+  get-branch:
+    name: "Get target branch"
+    runs-on: ubuntu-22.04
+    if: github.event_name == 'push'
+    outputs:
+      target-branch: ${{ steps.get-branch.outputs.target-branch }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get target branch
+        id: get-branch
+        uses: ./.github/workflows/reusable-get-pr-branch.yml
+        with:
+          target_repository: fprime-community/fprime-workshop-led-blinker
+
+  cross-compilation:
+    name: "Cross Compilation"
+    runs-on: ubuntu-22.04
+    needs: get-branch
+    if: github.event_name == 'push' 
+    steps:
+      - name: "Checkout target repository"
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+          repository: fprime-community/fprime-workshop-led-blinker
+          ref: ${{ needs.get-branch.outputs.target-branch }}
+      - name: "Overlay current F´ revision"
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          path: ./fprime
+          fetch-depth: 0
+      - uses: ./fprime/.github/actions/setup
+        with:
+          location: ./fprime
+      - name: "Download and Setup AArch64 Linux Toolchain"
+        run: |
+          mkdir -p ${AARCH64_TOOLCHAIN_DIR}
+          wget -q ${AARCH64_TOOLCHAIN_URL}
+          tar -xf $(basename ${AARCH64_TOOLCHAIN_URL}) -C ${AARCH64_TOOLCHAIN_DIR} --strip-components 1
+          echo "${AARCH64_TOOLCHAIN_DIR}/bin" >> $GITHUB_PATH
+      - name: "Generate AArch64 Linux Build Cache"
+        run: |
+          fprime-util generate aarch64-linux
+      - name: "Build AArch64 Linux"
+        run: |
+          fprime-util build aarch64-linux
+      - name: "Prepare artifacts"
+        run: |
+          mkdir -p aarch64-linux-artifacts
+          cp -r ./build-artifacts aarch64-linux-artifacts
+          cp -r Components/Led/test/int aarch64-linux-artifacts
+      - name: 'Archive Build Artifacts'
+        uses: actions/upload-artifact@v4
+        with:
+          name: aarch64-linux-soak-artifacts
+          path: aarch64-linux-artifacts
+          #Should be longer? We want scheduled runs to have access without needing to recompile
+          retention-days: 30
+
   aarch64-soak-test:
-    name: "AArch64 Linux Soak Test - Continuous"
+    name: "Aarch64 Soak Test"
     runs-on: [self-hosted, aarch64-linux]
-    # Add a condition to only run on release branches or manual dispatch
-    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && github.ref_name != 'devel')
+    needs: cross-compilation
+    if: github.event_name == 'push' 
     steps:
       - name: "Checkout F´ Repository"
         uses: actions/checkout@v4
@@ -36,28 +99,64 @@ jobs:
           python -m venv venv
           . venv/bin/activate
           pip install -r requirements.txt
-      - name: "Download Latest Soak Artifacts"
+      - name: "Download Soak Artifacts"
         uses: actions/download-artifact@v4
         with:
-          name: aarch64-linux-soak-artifacts
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Run Soak Integration Tests
+          name: aarch64-linux-artifacts
+        # Below might not be needed
+        #if: github.event_name == 'push' && needs.cross-compilation.result == 'success'
+      - name: "Start F' GDS"
+          run: |
+            # venv setup
+            . venv/bin/activate
+
+            #start GDS, wait for it to start
+            chmod +x ./aarch64-linux-artifacts/build-artifacts/aarch64-linux/LedBlinker/bin/LedBlinker
+            fprime-gds --ip-client -d ./aarch64-linux-artifacts/build-artifacts/aarch64-linux/LedBlinker --logs ./ci-logs-soak-${TIMESTAMP} &
+            GDS_PID=$!
+            
+            sleep 10
+
+  aarch64-linux-soak-test:
+    name: "AArch64 Linux Soak Test"
+    runs-on: [self-hosted, aarch64-linux]
+    needs: cross-compilation
+    if: always() && (needs.cross-compilation.result == 'success' || github.event_name == 'schedule')
+    steps:
+      - name: "Check for Previous Failures"
+        if: github.event_name == 'schedule'
         run: |
-          . venv/bin/activate
+          if [ -f ~/.fprime-soak/SOAK_DISABLED ]; then
+            echo "Soak testing disabled due to previous failure at: $(cat ~/.fprime-soak/SOAK_DISABLED)"
+            echo "To re-enable, delete ~/.fprime-soak/SOAK_DISABLED or push a new release"
+            exit 1
+          fi
+      - name: "Clear Failure State on New Build"
+        if: github.event_name == 'push' && needs.cross-compilation.result == 'success'
+        run: |
+          mkdir -p ~/.fprime-soak
+          rm -f ~/.fprime-soak/SOAK_DISABLED
+          echo "Soak testing re-enabled with fresh build"
+      - name: Run Soak Integration Tests
+        id: soak-test
+        run: |
           TIMESTAMP=$(date +%Y%m%d_%H%M%S)
           mkdir -p ci-logs-soak-${TIMESTAMP}
           
           echo "Starting soak test iteration ${{ github.run_number }} at $(date)"
+        
+          pytest --dictionary ./aarch64-linux-artifacts/build-artifacts/aarch64-linux/LedBlinker/dict/LedBlinkerTopologyDictionary.json ./aarch64-linux-artifacts/int/led_integration_tests.py -v --tb=short
           
-          chmod +x ./build-artifacts/aarch64-linux/LedBlinker/bin/LedBlinker
-          fprime-gds --ip-client -d ./build-artifacts/aarch64-linux/LedBlinker --logs ./ci-logs-soak-${TIMESTAMP} &
-          GDS_PID=$!
-          
-          sleep 10
-          pytest --dictionary ./build-artifacts/aarch64-linux/LedBlinker/dict/LedBlinkerTopologyDictionary.json ./int/led_integration_tests.py -v --tb=short
-          
-          kill $GDS_PID 2>/dev/null || true
           echo "Soak test iteration completed at $(date)"
+      - name: "Disable Soak Testing on Failure"
+        if: failure() && steps.soak-test.outcome == 'failure'
+        run: |
+          kill $GDS_PID 2>/dev/null || true
+          mkdir -p ~/.fprime-soak
+          echo "$(date): Soak test failed on run ${{ github.run_number }}" > ~/.fprime-soak/SOAK_DISABLED
+          echo "SOAK TEST FAILURE !"
+          echo "Disabling future scheduled runs until new release or manual intervention"
+          echo "Failure logged at: $(date)"
       - name: 'Archive Soak Test Logs'
         uses: actions/upload-artifact@v4
         if: always()
