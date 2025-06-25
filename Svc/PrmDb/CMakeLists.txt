@@ -19,8 +19,8 @@ register_fprime_ut(
   AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/PrmDb.fpp"
   SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/PrmDbTestMain.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/PrmDbTester.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/test/ut/PrmDbImplTester.cpp"
   DEPENDS
     Os_File_Test_Stub_Implementation
     Os_File_Stub_Implementation

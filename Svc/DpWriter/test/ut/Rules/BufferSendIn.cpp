@@ -46,7 +46,7 @@ void TestState ::action__BufferSendIn__OK() {
     Fw::Buffer buffer = this->abstractState.getDpBuffer();
     // Send the buffer
     this->invoke_to_bufferSendIn(0, buffer);
-    this->component.doDispatch();
+    this->doDispatch();
     // Deserialize the container header
     Fw::DpContainer container;
     container.setBuffer(buffer);
@@ -92,9 +92,9 @@ void TestState ::action__BufferSendIn__InvalidBuffer() {
     Fw::Buffer buffer;
     // Send the buffer
     this->invoke_to_bufferSendIn(0, buffer);
-    this->component.doDispatch();
+    this->doDispatch();
     // Check events
-    if (this->abstractState.m_invalidBufferEventCount < DpWriterComponentBase::EVENTID_INVALIDBUFFER_THROTTLE) {
+    if (this->abstractState.m_invalidBufferEventCount < Svc::DpWriterTester::getInvalidBufferThrottle()) {
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_InvalidBuffer_SIZE(1);
         this->abstractState.m_invalidBufferEventCount++;
@@ -129,10 +129,10 @@ void TestState ::action__BufferSendIn__BufferTooSmallForPacket() {
     Fw::Buffer buffer(this->abstractState.m_bufferData, bufferSize);
     // Send the buffer
     this->invoke_to_bufferSendIn(0, buffer);
-    this->component.doDispatch();
+    this->doDispatch();
     // Check events
     if (this->abstractState.m_bufferTooSmallForPacketEventCount <
-        DpWriterComponentBase::EVENTID_BUFFERTOOSMALLFORPACKET_THROTTLE) {
+        Svc::DpWriterTester::getBufferTooSmallForPacketThrottle()) {
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_BufferTooSmallForPacket(0, bufferSize, minPacketSize);
         this->abstractState.m_bufferTooSmallForPacketEventCount++;
@@ -176,9 +176,9 @@ void TestState ::action__BufferSendIn__InvalidHeaderHash() {
     container.setHeaderHash(storedHashBuffer);
     // Send the buffer
     this->invoke_to_bufferSendIn(0, buffer);
-    this->component.doDispatch();
+    this->doDispatch();
     // Check events
-    if (this->abstractState.m_invalidHeaderHashEventCount < DpWriterComponentBase::EVENTID_INVALIDHEADERHASH_THROTTLE) {
+    if (this->abstractState.m_invalidHeaderHashEventCount < Svc::DpWriterTester::getInvalidHeaderHashThrottle()) {
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_InvalidHeaderHash(0, buffer.getSize(), storedHash, computedHash);
         this->abstractState.m_invalidHeaderHashEventCount++;
@@ -219,9 +219,9 @@ void TestState ::action__BufferSendIn__InvalidHeader() {
     container.updateHeaderHash();
     // Send the buffer
     this->invoke_to_bufferSendIn(0, buffer);
-    this->component.doDispatch();
+    this->doDispatch();
     // Check events
-    if (this->abstractState.m_invalidHeaderEventCount < DpWriterComponentBase::EVENTID_INVALIDHEADER_THROTTLE) {
+    if (this->abstractState.m_invalidHeaderEventCount < Svc::DpWriterTester::getInvalidHeaderThrottle()) {
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_InvalidHeader(0, buffer.getSize(), static_cast<U32>(Fw::FW_SERIALIZE_FORMAT_ERROR));
         this->abstractState.m_invalidHeaderEventCount++;
@@ -265,9 +265,9 @@ void TestState ::action__BufferSendIn__BufferTooSmallForData() {
     container.serializeHeader();
     // Send the buffer
     this->invoke_to_bufferSendIn(0, buffer);
-    this->component.doDispatch();
+    this->doDispatch();
     // Check events
-    if (this->abstractState.m_bufferTooSmallForDataEventCount < DpWriterComponentBase::EVENTID_INVALIDHEADER_THROTTLE) {
+    if (this->abstractState.m_bufferTooSmallForDataEventCount < Svc::DpWriterTester::getInvalidHeaderThrottle()) {
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_BufferTooSmallForData(0, buffer.getSize(), static_cast<U32>(container.getPacketSize()));
         this->abstractState.m_bufferTooSmallForDataEventCount++;
@@ -309,9 +309,9 @@ void TestState ::action__BufferSendIn__FileOpenError() {
     container.deserializeHeader();
     // Send the buffer
     this->invoke_to_bufferSendIn(0, buffer);
-    this->component.doDispatch();
+    this->doDispatch();
     // Check events
-    if (this->abstractState.m_fileOpenErrorEventCount < DpWriterComponentBase::EVENTID_FILEOPENERROR_THROTTLE) {
+    if (this->abstractState.m_fileOpenErrorEventCount < Svc::DpWriterTester::getFileOpenErrorThrottle()) {
         ASSERT_EVENTS_SIZE(1);
         Fw::FileNameString fileName;
         this->constructDpFileName(container.getId(), container.getTimeTag(), fileName);
@@ -366,9 +366,9 @@ void TestState ::action__BufferSendIn__FileWriteError() {
     fileData.writeSizeResult = STest::Pick::lowerUpper(0, static_cast<U32>(fileSize));
     // Send the buffer
     this->invoke_to_bufferSendIn(0, buffer);
-    this->component.doDispatch();
+    this->doDispatch();
     // Check events
-    if (this->abstractState.m_fileWriteErrorEventCount < DpWriterComponentBase::EVENTID_FILEWRITEERROR_THROTTLE) {
+    if (this->abstractState.m_fileWriteErrorEventCount < Svc::DpWriterTester::getFileWriteErrorThrottle()) {
         ASSERT_EVENTS_SIZE(1);
         Fw::FileNameString fileName;
         this->constructDpFileName(container.getId(), container.getTimeTag(), fileName);

@@ -88,4 +88,36 @@ void DpWriterTester::checkTelemetry() {
     TESTER_CHECK_CHANNEL(NumErrors);
 }
 
+void DpWriterTester::doDispatch() {
+    this->component.doDispatch();
+}
+
+FwIndexType DpWriterTester::getBufferTooSmallForDataThrottleCount() {
+    return this->component.DpWriterComponentBase::m_BufferTooSmallForDataThrottle;
+}
+
+FwIndexType DpWriterTester::getBufferTooSmallForPacketThrottleCount() {
+    return this->component.DpWriterComponentBase::m_BufferTooSmallForPacketThrottle;
+}
+
+FwIndexType DpWriterTester::getFileOpenErrorThrottleCount() {
+    return this->component.DpWriterComponentBase::m_FileOpenErrorThrottle;
+}
+
+FwIndexType DpWriterTester::getFileWriteErrorThrottleCount() {
+    return this->component.DpWriterComponentBase::m_FileWriteErrorThrottle;
+}
+
+FwIndexType DpWriterTester::getInvalidBufferThrottleCount() {
+    return this->component.DpWriterComponentBase::m_InvalidBufferThrottle;
+}
+
+FwIndexType DpWriterTester::getInvalidHeaderHashThrottleCount() {
+    return this->component.DpWriterComponentBase::m_InvalidHeaderHashThrottle;
+}
+
+FwIndexType DpWriterTester::getInvalidHeaderThrottleCount() {
+    return this->component.DpWriterComponentBase::m_InvalidHeaderThrottle;
+}
+
 }  // namespace Svc

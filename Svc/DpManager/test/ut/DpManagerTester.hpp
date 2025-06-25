@@ -82,6 +82,28 @@ class DpManagerTester : public DpManagerGTestBase {
 
     //! The component under test
     DpManager component;
+
+    public:
+      // ----------------------------------------------------------------------
+      // Accessor methods for protected/private members
+      // ----------------------------------------------------------------------
+
+      //! Dispatch
+      void doDispatch();
+
+      //! Get the m_BufferAllocationFailedThrottle value
+      FwIndexType getBufferAllocationFailedThrottleCount();
+
+      //! Get the OPCODE_CLEAR_EVENT_THROTTLE value
+      static FwOpcodeType getClearEventThrottleOpcode() {
+        return DpManagerComponentBase::OPCODE_CLEAR_EVENT_THROTTLE;
+      }
+
+      //! Get the EVENTID_BUFFERALLOCATIONFAILED_THROTTLE value
+      static FwSizeType getBufferAllocationFailedThrottle() {
+        return DpManagerComponentBase::EVENTID_BUFFERALLOCATIONFAILED_THROTTLE;
+      }
+
 };
 
 }  // end namespace Svc

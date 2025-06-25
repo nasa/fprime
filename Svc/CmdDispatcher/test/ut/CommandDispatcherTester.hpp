@@ -1,5 +1,5 @@
 /*
- * CommandDispatcherImplTester.hpp
+ * CommandDispatcherTester.hpp
  *
  *  Created on: Mar 18, 2015
  *      Author: tcanham
@@ -13,10 +13,10 @@
 
 namespace Svc {
 
-    class CommandDispatcherImplTester: public CommandDispatcherGTestBase {
+    class CommandDispatcherTester: public CommandDispatcherGTestBase {
         public:
-            CommandDispatcherImplTester(Svc::CommandDispatcherImpl& inst);
-            virtual ~CommandDispatcherImplTester();
+            CommandDispatcherTester(Svc::CommandDispatcherImpl& inst);
+            virtual ~CommandDispatcherTester();
 
             void runNominalDispatch();
             void runInvalidOpcodeDispatch();

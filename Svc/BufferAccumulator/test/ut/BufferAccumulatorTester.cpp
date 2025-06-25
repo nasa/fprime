@@ -130,4 +130,8 @@ void BufferAccumulatorTester ::initComponents() {
   this->component.init(QUEUE_DEPTH, INSTANCE);
 }
 
+void BufferAccumulatorTester ::doDispatch() {
+  this->component.doDispatch();
+}
+
 }  // end namespace Svc
