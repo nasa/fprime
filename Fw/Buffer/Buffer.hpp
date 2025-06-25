@@ -151,7 +151,7 @@ class Buffer : public Fw::Serializable {
 
     //! Returns size of wrapped data
     //!
-    SizeType getSize() const;
+    FwSizeType getSize() const;
 
     //! Returns creation context
     //!
@@ -163,7 +163,7 @@ class Buffer : public Fw::Serializable {
 
     //! Sets pointer to wrapped data and the size of the given data
     //!
-    void setSize(SizeType size);
+    void setSize(FwSizeType size);
 
     //! Sets creation context
     //!
@@ -173,7 +173,7 @@ class Buffer : public Fw::Serializable {
     //! \param data: data pointer to wrap
     //! \param size: size of data located at data pointer
     //! \param context: user-specified context to track creation. Default: no context
-    void set(U8* data, SizeType size, U32 context = NO_CONTEXT);
+    void set(U8* data, FwSizeType size, U32 context = NO_CONTEXT);
 
 #if FW_SERIALIZABLE_TO_STRING || BUILD_UT
     //! Supports writing this buffer to a string representation
@@ -189,7 +189,7 @@ class Buffer : public Fw::Serializable {
   private:
     Fw::ExternalSerializeBuffer m_serialize_repr;  //<! Representation for serialization and deserialization functions
     U8* m_bufferData;                              //<! data - A pointer to the data
-    SizeType m_size;                               //<! size - The data size in bytes
+    FwSizeType m_size;                               //<! size - The data size in bytes
     U32 m_context;                                 //!< Creation context for disposal
 };
 }  // end namespace Fw

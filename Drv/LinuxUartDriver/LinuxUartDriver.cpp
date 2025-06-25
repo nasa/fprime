@@ -35,7 +35,7 @@ bool LinuxUartDriver::open(const char* const device,
                            UartBaudRate baud,
                            UartFlowControl fc,
                            UartParity parity,
-                           U32 allocationSize) {
+                           FwSizeType allocationSize) {
     FW_ASSERT(device != nullptr);
     int fd = -1;
     int stat = -1;
