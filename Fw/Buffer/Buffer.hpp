@@ -189,7 +189,7 @@ class Buffer : public Fw::Serializable {
   private:
     Fw::ExternalSerializeBuffer m_serialize_repr;  //<! Representation for serialization and deserialization functions
     U8* m_bufferData;                              //<! data - A pointer to the data
-    FwSizeType m_size;                               //<! size - The data size in bytes
+    FwSizeType m_size;                             //<! size - The data size in bytes
     U32 m_context;                                 //!< Creation context for disposal
 };
 }  // end namespace Fw
