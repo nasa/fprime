@@ -549,6 +549,7 @@ serializables
 setaffinity
 setinheritsched
 setlocalvar
+setlocaser
 SETLOGGING
 setprotocol
 setschedparam
@@ -557,7 +558,9 @@ setstacksize
 settime
 sev
 sfregoso
+SGE
 SGN
+SGT
 SHAREDSTATEDIR
 SHELLCOMMAND
 showinitializer
@@ -660,6 +663,8 @@ typedef'ed
 typedef
 uart
 UDPSOCKET
+UGE
+ulhs
 UML
 UNEXP
 unistd
@@ -667,6 +672,7 @@ UNITTESTASSERT
 unittests
 useconds
 usecs
+urhs
 valgrind
 vbai
 VCA
