@@ -25,23 +25,31 @@ module Svc {
             # boolean ops
             OR = 15
             AND = 16
-            # equality ops
+            # integer equalities
             EQ = 17
             NE = 18
-            # unsigned inequalities
+            # unsigned integer inequalities
             ULT = 19
             ULE = 20
             UGT = 21
             UGE = 22
-            # signed inequalities
+            # signed integer inequalities
             SLT = 23
             SLE = 24
             SGT = 25
             SGE = 26
+            # floating point equalities
+            FEQ = 27
+            FNE = 28
+            # floating point inequalities
+            FLT = 29
+            FLE = 30
+            FGT = 31
+            FGE = 32
             # END NO REORDER
             # end binary comparison directives
-            NOT = 27
-            EXIT = 28
+            NOT = 33
+            EXIT = 34
         }
 
         struct Header {

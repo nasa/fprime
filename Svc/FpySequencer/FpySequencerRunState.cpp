@@ -292,6 +292,12 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
         case Fpy::DirectiveId::SLT:
         case Fpy::DirectiveId::SLE:
         case Fpy::DirectiveId::SGE: 
+        case Fpy::DirectiveId::FEQ:
+        case Fpy::DirectiveId::FNE:
+        case Fpy::DirectiveId::FLT:
+        case Fpy::DirectiveId::FLE:
+        case Fpy::DirectiveId::FGT:
+        case Fpy::DirectiveId::FGE:
         {
             new (&deserializedDirective.binaryCmp) FpySequencer_BinaryCmpDirective();
             
@@ -416,7 +422,13 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
         case Fpy::DirectiveId::SGT:
         case Fpy::DirectiveId::SLT:
         case Fpy::DirectiveId::SLE:
-        case Fpy::DirectiveId::SGE: {
+        case Fpy::DirectiveId::SGE:
+        case Fpy::DirectiveId::FEQ:
+        case Fpy::DirectiveId::FNE:
+        case Fpy::DirectiveId::FLT:
+        case Fpy::DirectiveId::FLE:
+        case Fpy::DirectiveId::FGT:
+        case Fpy::DirectiveId::FGE: {
             this->directive_binaryCmp_internalInterfaceInvoke(directive.binaryCmp);
             break;
         }
