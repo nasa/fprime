@@ -43,7 +43,7 @@ module ComFprime {
         priority ComFprimeConfig.Priorities.cmdSeq \
     {
         phase Fpp.ToCpp.Phases.configComponents """
-        ComFprime::cmdSeq.allocateBuffer(0, ComFprime::Allocation::memAllocator, ComFprimeConfig::BufferMgr::cmdSeqBuffer);
+        ComFprime::cmdSeq.allocateBuffer(0, ComFprime::Allocation::memAllocator, ComFprimeConfig::BuffMgr::cmdSeqBuffSize);
         """
 
         phase Fpp.ToCpp.Phases.tearDownComponents """
@@ -62,7 +62,7 @@ module ComFprime {
             ComFprime::Detector::frameDetector,
             1,
             ComFprime::Allocation::memAllocator,
-            ComFprimeConfig::BufferMgr::frameAccumulator
+            ComFprimeConfig::BuffMgr::frameAccumulatorSize
         );
         """
 
@@ -75,12 +75,12 @@ module ComFprime {
     {
         phase Fpp.ToCpp.Phases.configComponents """
         memset(&ComFprime::BufferManagerBins::bins, 0, sizeof(ComFprime::BufferManagerBins::bins));
-        ComFprime::BufferManagerBins::bins.bins[0].bufferSize = ComFprimeConfig::BufferMgr::commsBufferStore;
-        ComFprime::BufferManagerBins::bins.bins[0].numBuffers = ComFprimeConfig::BufferMgr::commsBufferCount;
-        ComFprime::BufferManagerBins::bins.bins[1].bufferSize = ComFprimeConfig::BufferMgr::commsFileBufferStore;
-        ComFprime::BufferManagerBins::bins.bins[1].numBuffers = ComFprimeConfig::BufferMgr::commsFileBufferQueue;
+        ComFprime::BufferManagerBins::bins.bins[0].bufferSize = ComFprimeConfig::BuffMgr::commsBuffSize;
+        ComFprime::BufferManagerBins::bins.bins[0].numBuffers = ComFprimeConfig::BuffMgr::commsBuffCount;
+        ComFprime::BufferManagerBins::bins.bins[1].bufferSize = ComFprimeConfig::BuffMgr::commsFileBuffSize;
+        ComFprime::BufferManagerBins::bins.bins[1].numBuffers = ComFprimeConfig::BuffMgr::commsFileBuffCount;
         ComFprime::commsBufferManager.setup(
-            ComFprimeConfig::BufferMgr::commsBufferManager,
+            ComFprimeConfig::BuffMgr::commsBuffMgrId,
             0,
             ComFprime::Allocation::memAllocator,
             ComFprime::BufferManagerBins::bins

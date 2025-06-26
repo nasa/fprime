@@ -51,7 +51,7 @@ module ComCcsds {
         priority ComCcsdsConfig.Priorities.cmdSeq \
     {
         phase Fpp.ToCpp.Phases.configComponents """
-        ComCcsds::cmdSeq.allocateBuffer(0, ComCcsds::Allocation::memAllocator, ComCcsdsConfig::BufferMgr::cmdSeqBuffer);
+        ComCcsds::cmdSeq.allocateBuffer(0, ComCcsds::Allocation::memAllocator, ComCcsdsConfig::BuffMgr::cmdSeqBuffSize);
         """
 
         phase Fpp.ToCpp.Phases.tearDownComponents """
@@ -73,7 +73,7 @@ module ComCcsds {
             ConfigObjects::ComCcsds_frameAccumulator::frameDetector,
             1,
             ComCcsds::Allocation::memAllocator,
-            ComCcsdsConfig::BufferMgr::frameAccumulator
+            ComCcsdsConfig::BuffMgr::frameAccumulatorSize
         );
         """
 
@@ -90,12 +90,12 @@ module ComCcsds {
 
         phase Fpp.ToCpp.Phases.configComponents """
         memset(&ConfigObjects::ComCcsds_commsBufferManager::bins, 0, sizeof(ConfigObjects::ComCcsds_commsBufferManager::bins));
-        ConfigObjects::ComCcsds_commsBufferManager::bins.bins[0].bufferSize = ComCcsdsConfig::BufferMgr::commsBufferStore;
-        ConfigObjects::ComCcsds_commsBufferManager::bins.bins[0].numBuffers = ComCcsdsConfig::BufferMgr::commsBufferCount;
-        ConfigObjects::ComCcsds_commsBufferManager::bins.bins[1].bufferSize = ComCcsdsConfig::BufferMgr::commsFileBufferStore;
-        ConfigObjects::ComCcsds_commsBufferManager::bins.bins[1].numBuffers = ComCcsdsConfig::BufferMgr::commsFileBufferCount;
+        ConfigObjects::ComCcsds_commsBufferManager::bins.bins[0].bufferSize = ComCcsdsConfig::BuffMgr::commsBuffSize;
+        ConfigObjects::ComCcsds_commsBufferManager::bins.bins[0].numBuffers = ComCcsdsConfig::BuffMgr::commsBuffCount;
+        ConfigObjects::ComCcsds_commsBufferManager::bins.bins[1].bufferSize = ComCcsdsConfig::BuffMgr::commsFileBuffSize;
+        ConfigObjects::ComCcsds_commsBufferManager::bins.bins[1].numBuffers = ComCcsdsConfig::BuffMgr::commsFileBuffCount;
         ComCcsds::commsBufferManager.setup(
-            ComCcsdsConfig::BufferMgr::commsBufferManager,
+            ComCcsdsConfig::BuffMgr::commsBuffMgrId,
             0,
             ComCcsds::Allocation::memAllocator,
             ConfigObjects::ComCcsds_commsBufferManager::bins

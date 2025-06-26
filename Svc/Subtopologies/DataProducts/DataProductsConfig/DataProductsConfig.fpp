@@ -25,15 +25,15 @@ module DataProductsConfig {
     }
 
     # Buffer management constants
-    module BufferMgr {
-        constant dpBufferStoreSize  = 10000    # Data products buffer store size
-        constant dpBufferStoreCount = 10       # Number of data products buffers
-        constant dpBufferManagerId  = 300      # Buffer manager identifier
+    module BuffMgr {
+        constant dpBufferStoreSize  = 10000   
+        constant dpBufferStoreCount = 10       
+        constant dpBufferManagerId  = 300         
     }
     
     # Directory and file paths
     module Paths {
-        constant DP_DIR = "./DpCat"                # Data products directory
-        constant DP_STATE = "./DpCat/DpState.dat"  # Data products state file
+        constant dpDir    = "./DpCat"                
+        constant dpState  = "./DpCat/DpState.dat"  
     }
 }

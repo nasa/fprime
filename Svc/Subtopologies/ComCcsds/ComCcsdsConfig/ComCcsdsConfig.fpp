@@ -33,13 +33,13 @@ module ComCcsdsConfig {
     }
 
     # Buffer management constants
-    module BufferMgr {
-        constant cmdSeqBuffer           = 5 * 1024  # 5KB for command sequencer buffer
-        constant frameAccumulator       = 2048      # 2KB frame accumulator buffer
-        constant commsBufferStore       = 2048      # 2KB communications buffer store
-        constant commsFileBufferStore   = 3000      # 3KB file buffer store
-        constant commsBufferCount       = 20        # Number of comms buffers
-        constant commsFileBufferCount   = 30        # File queue buffer count
-        constant commsBufferManager     = 200       # Buffer manager identifier
+    module BuffMgr {
+        constant cmdSeqBuffSize        = 5 * 1024 
+        constant frameAccumulatorSize  = 2048     
+        constant commsBuffSize         = 2048      
+        constant commsFileBuffSize     = 3000      
+        constant commsBuffCount        = 20        
+        constant commsFileBuffCount    = 30       
+        constant commsBuffMgrId        = 200      
     }
 }
