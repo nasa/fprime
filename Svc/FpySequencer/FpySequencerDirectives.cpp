@@ -1,5 +1,6 @@
 #include "Svc/FpySequencer/FpySequencer.hpp"
 #include "Fw/Com/ComPacket.hpp"
+#include <cmath>
 
 namespace Svc {
 
@@ -424,6 +425,28 @@ Signal FpySequencer::binaryCmp_directiveHandler(const FpySequencer_BinaryCmpDire
     }
 
     // okay, it is an inequality comparison
+
+    bool fp = false;
+
+    if (directive.get_op() >= Fpy::DirectiveId::FEQ && directive.get_op() <= Fpy::DirectiveId::FGE) {
+        fp = true;
+    }
+
+    if (fp) {
+        F64 frhs, flhs;
+        memcpy(&frhs, &rhs, sizeof(frhs));
+        memcpy(&flhs, &lhs, sizeof(flhs));
+
+        if (std::isunordered(frhs, flhs)) {
+            // nan is one of the args
+            res = 0;
+
+            
+
+        }
+
+        return Signal::stmtResponse_success;
+    }
 
     // whether the comparison is signed or unsigned
     bool sign = true;
