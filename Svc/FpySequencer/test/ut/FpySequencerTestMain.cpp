@@ -299,7 +299,7 @@ TEST_F(FpySequencerTester, cmd_RUN) {
     this->clearHistory();
 
     sendCmd_RUN(0, 0, Fw::String("test.bin"), FpySequencer_BlockState::NO_BLOCK);
-    this->doDispatch();
+    this->tester_doDispatch();
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_RUN(), 0, Fw::CmdResponse::OK);
     dispatchUntilState(State::VALIDATING);
@@ -321,10 +321,10 @@ TEST_F(FpySequencerTester, cmd_RUN) {
     this->clearHistory();
 
     // try running while already running
-    this->setState(State::RUNNING_DISPATCH_STATEMENT);
+    this->tester_setState(State::RUNNING_DISPATCH_STATEMENT);
     sendCmd_RUN(0, 0, Fw::String("invalid seq"), FpySequencer_BlockState::BLOCK);
     // dispatch cmd
-    this->doDispatch();
+    this->tester_doDispatch();
     ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_RUN(), 0, Fw::CmdResponse::EXECUTION_ERROR);
     removeFile("test.bin");
 }
@@ -350,16 +350,16 @@ TEST_F(FpySequencerTester, cmd_VALIDATE) {
     ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_VALIDATE(), 0, Fw::CmdResponse::OK);
     this->clearHistory();
 
-    this->setState(State::VALIDATING);
+    this->tester_setState(State::VALIDATING);
     sendCmd_VALIDATE(0, 0, Fw::String("test.bin"));
-    this->doDispatch();
+    this->tester_doDispatch();
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_VALIDATE(), 0, Fw::CmdResponse::EXECUTION_ERROR);
 }
 
 TEST_F(FpySequencerTester, cmd_RUN_VALIDATED) {
     // should fail because in idle
-    this->setState(State::IDLE);
+    this->tester_setState(State::IDLE);
     sendCmd_RUN_VALIDATED(0, 0, FpySequencer_BlockState::NO_BLOCK);
     dispatchCurrentMessages(cmp);
     ASSERT_CMD_RESPONSE_SIZE(1);
@@ -374,7 +374,7 @@ TEST_F(FpySequencerTester, cmd_RUN_VALIDATED) {
     this->clearHistory();
     // should succeed immediately
     sendCmd_RUN_VALIDATED(0, 0, FpySequencer_BlockState::NO_BLOCK);
-    this->doDispatch();
+    this->tester_doDispatch();
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_RUN_VALIDATED(), 0, Fw::CmdResponse::OK);
     // should go back to IDLE because sequence is bad
@@ -387,7 +387,7 @@ TEST_F(FpySequencerTester, cmd_RUN_VALIDATED) {
     this->clearHistory();
     // should succeed immediately
     sendCmd_RUN_VALIDATED(0, 0, FpySequencer_BlockState::BLOCK);
-    this->doDispatch();
+    this->tester_doDispatch();
     ASSERT_CMD_RESPONSE_SIZE(0);
     // should go back to IDLE because sequence is bad
     dispatchUntilState(State::IDLE);
@@ -396,20 +396,20 @@ TEST_F(FpySequencerTester, cmd_RUN_VALIDATED) {
 }
 
 TEST_F(FpySequencerTester, cmd_CANCEL) {
-    this->setState(State::IDLE);
+    this->tester_setState(State::IDLE);
     sendCmd_CANCEL(0, 0);
-    this->doDispatch();
+    this->tester_doDispatch();
     ASSERT_CMD_RESPONSE_SIZE(1);
     // should fail if we're in IDLE
     ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_CANCEL(), 0, Fw::CmdResponse::EXECUTION_ERROR);
 
     dispatchCurrentMessages(cmp);
-    ASSERT_EQ(this->getState(), State::IDLE);
+    ASSERT_EQ(this->tester_getState(), State::IDLE);
 
     this->clearHistory();
-    this->setState(State::RUNNING_SLEEPING);
+    this->tester_setState(State::RUNNING_SLEEPING);
     sendCmd_CANCEL(0, 0);
-    this->doDispatch();
+    this->tester_doDispatch();
     ASSERT_CMD_RESPONSE_SIZE(1);
     // should succeed instantly
     ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_CANCEL(), 0, Fw::CmdResponse::OK);
@@ -421,31 +421,31 @@ TEST_F(FpySequencerTester, cmd_DEBUG_CLEAR_BREAKPOINT) {
     tester_get_m_debug_ptr()->breakOnBreakpoint = true;
     sendCmd_DEBUG_CLEAR_BREAKPOINT(0, 0);
     // dispatch cmd
-    this->doDispatch();
+    this->tester_doDispatch();
     ASSERT_CMD_RESPONSE_SIZE(1);
     // should always work
     ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_DEBUG_CLEAR_BREAKPOINT(), 0, Fw::CmdResponse::OK);
     // dispatch signal
-    this->doDispatch();
+    this->tester_doDispatch();
     ASSERT_FALSE(tester_get_m_debug_ptr()->breakOnBreakpoint);
 }
 
 TEST_F(FpySequencerTester, cmd_DEBUG_SET_BREAKPOINT) {
     sendCmd_DEBUG_SET_BREAKPOINT(0, 0, 123, true);
     // dispatch cmd handler
-    this->doDispatch();
+    this->tester_doDispatch();
     ASSERT_CMD_RESPONSE_SIZE(1);
     // should always work
     ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_DEBUG_SET_BREAKPOINT(), 0, Fw::CmdResponse::OK);
     // dispatch signal
-    this->doDispatch();
+    this->tester_doDispatch();
     ASSERT_TRUE(tester_get_m_debug_ptr()->breakOnBreakpoint);
     ASSERT_TRUE(tester_get_m_debug_ptr()->breakOnlyOnceOnBreakpoint);
     ASSERT_EQ(tester_get_m_debug_ptr()->breakpointIndex, 123);
 }
 
 TEST_F(FpySequencerTester, cmd_DEBUG_BREAK) {
-    this->setState(State::IDLE);
+    this->tester_setState(State::IDLE);
     tester_get_m_debug_ptr()->breakOnBreakpoint = false;
     tester_get_m_debug_ptr()->breakOnlyOnceOnBreakpoint = false;
     sendCmd_DEBUG_BREAK(0, 0, true);
@@ -457,7 +457,7 @@ TEST_F(FpySequencerTester, cmd_DEBUG_BREAK) {
 
     // now try while running
     this->clearHistory();
-    this->setState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
+    this->tester_setState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
     sendCmd_DEBUG_BREAK(0, 0, true);
     // dispatch cmd handler
     dispatchCurrentMessages(cmp);
@@ -471,25 +471,25 @@ TEST_F(FpySequencerTester, cmd_DEBUG_BREAK) {
 }
 
 TEST_F(FpySequencerTester, cmd_DEBUG_CONTINUE) {
-    this->setState(State::IDLE);
+    this->tester_setState(State::IDLE);
     sendCmd_DEBUG_CONTINUE(0, 0);
-    this->doDispatch();
+    this->tester_doDispatch();
     ASSERT_CMD_RESPONSE_SIZE(1);
     // should fail in IDLE
     ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_DEBUG_CONTINUE(), 0, Fw::CmdResponse::EXECUTION_ERROR);
     this->clearHistory();
 
-    this->setState(State::RUNNING_DEBUG_BROKEN);
+    this->tester_setState(State::RUNNING_DEBUG_BROKEN);
     sendCmd_DEBUG_CONTINUE(0, 0);
     // dispatch cmd handler
-    this->doDispatch();
+    this->tester_doDispatch();
     ASSERT_CMD_RESPONSE_SIZE(1);
     // should work in debug_broken
     ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_DEBUG_CONTINUE(), 0, Fw::CmdResponse::OK);
     // dispatch signal handler
-    this->doDispatch();
+    this->tester_doDispatch();
     // should have gone to dispatch stmt
-    ASSERT_EQ(this->getState(), State::RUNNING_DISPATCH_STATEMENT);
+    ASSERT_EQ(this->tester_getState(), State::RUNNING_DISPATCH_STATEMENT);
 }
 
 TEST_F(FpySequencerTester, readHeader) {
@@ -977,7 +977,7 @@ TEST_F(FpySequencerTester, checkTimers) {
     invoke_to_checkTimers(0, 0);
     dispatchCurrentMessages(cmp);
     // should not leave sleep
-    ASSERT_EQ(this->getState(), State::RUNNING_SLEEPING);
+    ASSERT_EQ(this->tester_getState(), State::RUNNING_SLEEPING);
 
     time = Fw::Time(10, 0);
     setTestTime(time);
@@ -1000,7 +1000,7 @@ TEST_F(FpySequencerTester, checkTimers) {
     invoke_to_checkTimers(0, 0);
     dispatchCurrentMessages(cmp);
     // should not leave sleep
-    ASSERT_EQ(this->getState(), State::RUNNING_SLEEPING);
+    ASSERT_EQ(this->tester_getState(), State::RUNNING_SLEEPING);
     time = Fw::Time(15, 0);
     setTestTime(time);
     invoke_to_checkTimers(0, 0);
@@ -1012,13 +1012,13 @@ TEST_F(FpySequencerTester, checkTimers) {
 
 TEST_F(FpySequencerTester, ping) {
     invoke_to_pingIn(0, 0);
-    this->doDispatch();
+    this->tester_doDispatch();
     ASSERT_from_pingOut_SIZE(1);
 }
 
 TEST_F(FpySequencerTester, cmdResponse) {
     invoke_to_cmdResponseIn(0, 0, 0, Fw::CmdResponse::OK);
-    this->doDispatch();
+    this->tester_doDispatch();
     ASSERT_EVENTS_CmdResponseWhileNotRunningSequence_SIZE(1);
     clearHistory();
 
@@ -1060,7 +1060,7 @@ TEST_F(FpySequencerTester, cmdResponse) {
     invoke_to_cmdResponseIn(0, 123, 0x00FF00FF, Fw::CmdResponse::OK);
     // should fail on seq idx, but should stay in running
     dispatchCurrentMessages(cmp);
-    ASSERT_EQ(this->getState(), State::RUNNING_AWAITING_STATEMENT_RESPONSE);
+    ASSERT_EQ(this->tester_getState(), State::RUNNING_AWAITING_STATEMENT_RESPONSE);
 
     // okay now send right seq idx but wrong cmd idx
     invoke_to_cmdResponseIn(0, 123, 0x01000100, Fw::CmdResponse::OK);
@@ -1103,7 +1103,7 @@ TEST_F(FpySequencerTester, cmdResponse) {
 
 TEST_F(FpySequencerTester, tlmWrite) {
     invoke_to_tlmWrite(0, 0);
-    this->doDispatch();
+    this->tester_doDispatch();
     // make sure that all tlm is written every call
     ASSERT_TLM_SIZE(9);
 }
@@ -1114,7 +1114,7 @@ TEST_F(FpySequencerTester, seqRunIn) {
     writeToFile("test.bin");
 
     invoke_to_seqRunIn(0, Fw::String("test.bin"));
-    this->doDispatch();
+    this->tester_doDispatch();
     dispatchUntilState(State::VALIDATING);
     dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
     dispatchUntilState(State::IDLE);
@@ -1122,10 +1122,10 @@ TEST_F(FpySequencerTester, seqRunIn) {
     this->clearHistory();
 
     // try running while already running
-    this->setState(State::RUNNING_DISPATCH_STATEMENT);
+    this->tester_setState(State::RUNNING_DISPATCH_STATEMENT);
     invoke_to_seqRunIn(0, Fw::String("test.bin"));
     // dispatch cmd
-    this->doDispatch();
+    this->tester_doDispatch();
     ASSERT_EVENTS_InvalidSeqRunCall_SIZE(1);
     removeFile("test.bin");
 }

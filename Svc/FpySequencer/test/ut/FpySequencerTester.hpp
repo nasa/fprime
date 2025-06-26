@@ -151,6 +151,9 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     Svc::Signal tester_checkShouldWake();
     Signal tester_getPrm_directiveHandler(const FpySequencer_GetPrmDirective& directive);
     Signal tester_getTlm_directiveHandler(const FpySequencer_GetTlmDirective& directive);
+    void tester_doDispatch();
+    void tester_setState(Svc::FpySequencer_SequencerStateMachineStateMachineBase::State state);
+    Svc::FpySequencer_SequencerStateMachineStateMachineBase::State tester_getState();
 
   public:
     // ----------------------------------------------------------------------
@@ -197,14 +200,6 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
         return FpySequencerComponentBase::OPCODE_DEBUG_CONTINUE;
     }
 
-    //! Call doDispatch on the component
-    void doDispatch();
-
-    //! Set the state machine state
-    void setState(Svc::FpySequencer_SequencerStateMachineStateMachineBase::State state);
-
-    //! Get the state machine state
-    Svc::FpySequencer_SequencerStateMachineStateMachineBase::State getState();
 
 };
 

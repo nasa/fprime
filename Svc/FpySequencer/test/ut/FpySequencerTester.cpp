@@ -373,11 +373,11 @@ Svc::FpySequencer::Debug* FpySequencerTester::tester_get_m_debug_ptr(){
     return &(this->cmp.m_debug);
 }
 
-void FpySequencerTester::doDispatch() {
+void FpySequencerTester::tester_doDispatch() {
     this->cmp.doDispatch();
 }
 
-void FpySequencerTester::setState(Svc::FpySequencer_SequencerStateMachineStateMachineBase::State state) {
+void FpySequencerTester::tester_setState(Svc::FpySequencer_SequencerStateMachineStateMachineBase::State state) {
     /*
     The goal of this method is to set the state of the underlying FpySequencer State machine. Constraints:
 
@@ -402,7 +402,7 @@ void FpySequencerTester::setState(Svc::FpySequencer_SequencerStateMachineStateMa
     reinterpret_cast<StateMachineHack*>(&this->cmp.m_stateMachine_sequencer)->hackState(state);
 }
 
-Svc::FpySequencer_SequencerStateMachineStateMachineBase::State FpySequencerTester::getState() {
+Svc::FpySequencer_SequencerStateMachineStateMachineBase::State FpySequencerTester::tester_getState() {
     return this->cmp.m_stateMachine_sequencer.getState();
 }
 
