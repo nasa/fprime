@@ -554,6 +554,7 @@ setprotocol
 setschedparam
 setschedpolicy
 setstacksize
+setser
 settime
 sev
 sfregoso
