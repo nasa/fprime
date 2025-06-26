@@ -67,7 +67,7 @@ class LinuxUartDriver final : public LinuxUartDriverComponentBase {
     enum UartParity { PARITY_NONE, PARITY_ODD, PARITY_EVEN };
 
     // Open device with specified baud and flow control.
-    bool open(const char* const device, UartBaudRate baud, UartFlowControl fc, UartParity parity, U32 allocationSize);
+    bool open(const char* const device, UartBaudRate baud, UartFlowControl fc, UartParity parity, FwSizeType allocationSize);
 
     //! start the serial poll thread.
     //! buffSize is the max receive buffer size
@@ -104,7 +104,7 @@ class LinuxUartDriver final : public LinuxUartDriverComponentBase {
                                 ) override;
 
     int m_fd;  //!< file descriptor returned for I/O device
-    U32 m_allocationSize; //!< size of allocation request to memory manager
+    FwSizeType m_allocationSize; //!< size of allocation request to memory manager
     const char* m_device;  //!< original device path
 
     //! This method will be called by the new thread to wait for input on the serial port.

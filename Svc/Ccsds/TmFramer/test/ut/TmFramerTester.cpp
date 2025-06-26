@@ -118,7 +118,7 @@ void TmFramerTester ::testSeqCountWrapAround() {
 void TmFramerTester ::testInputBufferTooLarge() {
     const FwSizeType tooLargeSize = ComCfg::TmFrameFixedSize; // This is too large since we need room for header+trailer as well
     U8 bufferData[tooLargeSize];
-    Fw::Buffer buffer(bufferData, static_cast<Fw::Buffer::SizeType>(tooLargeSize));
+    Fw::Buffer buffer(bufferData, tooLargeSize);
     ComCfg::FrameContext defaultContext;
     // Send a buffer larger than the 
     ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataIn(0, buffer, defaultContext), "TmFramer.cpp");

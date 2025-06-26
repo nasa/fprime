@@ -208,7 +208,7 @@ void FrameAccumulatorTester ::mockAccumulateFullFrame(U32& frame_size, U32& buff
 // ----------------------------------------------------------------------
 Fw::Buffer FrameAccumulatorTester ::from_bufferAllocate_handler(
         FwIndexType portNum,
-        U32 size
+        FwSizeType size
     )
   {
     this->pushFromPortEntry_bufferAllocate(size);
