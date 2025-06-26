@@ -218,7 +218,7 @@ class FpySequencer_SequencerStateMachineTester {
     ~FpySequencer_SequencerStateMachineTester();
 
     // ----------------------------------------------------------------------
-    // Test access to private and protected methods and memebers
+    // Test access to private and protected methods and members
     // ----------------------------------------------------------------------
     static void setState(FpySequencer_SequencerStateMachineStateMachineBase& sm, State s){
         sm.m_state = s;
