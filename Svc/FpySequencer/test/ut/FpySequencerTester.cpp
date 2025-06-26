@@ -378,9 +378,28 @@ void FpySequencerTester::doDispatch() {
 }
 
 void FpySequencerTester::setState(Svc::FpySequencer_SequencerStateMachineStateMachineBase::State state) {
-    // error: 'm_stateMachine_sequencer' is a private member of 'Svc::FpySequencerComponentBase' (FpySequencerTester is a friend)
-    // error: 'm_state' is a protected member of 'Svc::FpySequencer_SequencerStateMachineStateMachineBase' (No friends)
-    // this->cmp.m_stateMachine_sequencer.m_state = state;
+    /*
+    The goal of this method is to set the state of the underlying FpySequencer State machine. Constraints:
+
+     1) m_stateMachine_sequencer is a private member of FpySequencerComponentBase. FpySequencerTester class is
+        a friend of FpySequencerComponentBase so it can access this member
+     2) m_state is a protected member of FpySequencer_SequencerStateMachineStateMachineBase, which means it's only
+        accessible from within that class or from derived classes. FpySequencerTester is NOT a friend of this class.
+     3) There's no public or protected method available to directly set the state.
+
+    Use type punning "hack:" to directly modify the m_state member
+    */
+
+    // Create a hack struct that inherits from FpySequencer_SequencerStateMachineStateMachineBase,
+    // so it has access to the protected m_state
+    struct StateMachineHack : public Svc::FpySequencer_SequencerStateMachineStateMachineBase {
+        void hackState(Svc::FpySequencer_SequencerStateMachineStateMachineBase::State s) {
+            this->m_state = s;
+        }
+    };
+
+    // Cast m_stateMachine_sequencer to our hack struct to access set the protected m_state member
+    reinterpret_cast<StateMachineHack*>(&this->cmp.m_stateMachine_sequencer)->hackState(state);
 }
 
 Svc::FpySequencer_SequencerStateMachineStateMachineBase::State FpySequencerTester::getState() {
