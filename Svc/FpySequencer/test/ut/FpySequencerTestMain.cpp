@@ -1058,7 +1058,7 @@ TEST_F(FpySequencerTester, deserialize_setSerReg) {
     ASSERT_EQ(actual.setSerReg.get_valueSize(), setSerReg.get_valueSize());
     ASSERT_EQ(actual.setSerReg.getindex(), setSerReg.getindex());
     ASSERT_EQ(memcmp(actual.setSerReg.getvalue(), setSerReg.getvalue(), setSerReg.get_valueSize()), 0);
-    // write some junk after buf, setlocaserReg should eat it up and succeed
+    // write some junk after buf, setserReg should eat it up and succeed
     seq.getstatements()[0].getargBuf().serialize(123);
     result = tester_deserializeDirective(seq.getstatements()[0], actual);
     ASSERT_EQ(result, Fw::Success::SUCCESS);

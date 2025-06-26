@@ -549,7 +549,6 @@ serializables
 setaffinity
 setinheritsched
 setlocalvar
-setlocaser
 SETLOGGING
 setprotocol
 setschedparam
