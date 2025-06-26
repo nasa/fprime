@@ -32,9 +32,9 @@ The FpySequencer has a set of debugging commands which can be used to pause and 
 | NO_OP | Does nothing |
 | WAIT_REL | Sleeps for a time duration relative to the current time |
 | WAIT_ABS | Sleeps until an absolute time is reached |
-| SET_LVAR | Sets a local variable to a byte array value |
+| SET_SER_REG | Sets a serializable register to a byte array value |
 | GOTO | Sets the index of the next statement to be executed |
-| IF | Interprets an lvar as a boolean. If false, goto a specified statement index, otherwise proceed |
+| IF | Interprets an serReg as a boolean. If false, goto a specified statement index, otherwise proceed |
 
 ## Variables
 A variable is a byte array accessible to sequences. 

@@ -1,6 +1,5 @@
 #include "Svc/FpySequencer/FppConstantsAc.hpp"
 #include "Svc/FpySequencer/FpySequencer.hpp"
-#include "Svc/FpySequencer/StatementTypeEnumAc.hpp"
 extern "C" {
 #include "Utils/Hash/libcrc/lib_crc.h"
 }
@@ -137,8 +136,8 @@ Fw::Success FpySequencer::readBody() {
     // deser body:
     // deser arg mappings
     for (U8 argMappingIdx = 0; argMappingIdx < this->m_sequenceObj.getheader().getargumentCount(); argMappingIdx++) {
-        // local variable index of arg $argMappingIdx
-        // TODO should probably check that this lvar is inside range
+        // serializable register index of arg $argMappingIdx
+        // TODO should probably check that this serReg is inside range
         deserStatus = this->m_sequenceBuffer.deserialize(this->m_sequenceObj.getargs()[argMappingIdx]);
         if (deserStatus != Fw::FW_SERIALIZE_OK) {
             this->log_WARNING_HI_FileReadDeserializeError(this->m_sequenceFilePath, static_cast<I32>(deserStatus),
