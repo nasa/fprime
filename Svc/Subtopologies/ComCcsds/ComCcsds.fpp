@@ -38,7 +38,7 @@ module ComCcsds {
         configurationTable.entries[ConfigConstants::ComCcsds_comQueue::FILE_QUEUE].priority = ComCcsdsConfig::QueuePriorities::file;
 
         // Allocation identifier is 0 as the MallocAllocator discards it
-        ComCcsds::comQueue.configure(configurationTable, 0, ComCcsds::Allocation::mallocator);
+        ComCcsds::comQueue.configure(configurationTable, 0, ComCcsds::Allocation::memAllocator);
         """
         phase Fpp.ToCpp.Phases.tearDownComponents """
         ComCcsds::comQueue.cleanup();
@@ -51,11 +51,11 @@ module ComCcsds {
         priority ComCcsdsConfig.Priorities.cmdSeq \
     {
         phase Fpp.ToCpp.Phases.configComponents """
-        ComCcsds::cmdSeq.allocateBuffer(0, ComCcsds::Allocation::mallocator, ComCcsdsConfig::BufferMgr::cmdSeqBuffer);
+        ComCcsds::cmdSeq.allocateBuffer(0, ComCcsds::Allocation::memAllocator, ComCcsdsConfig::BufferMgr::cmdSeqBuffer);
         """
 
         phase Fpp.ToCpp.Phases.tearDownComponents """
-        ComCcsds::cmdSeq.deallocateBuffer(ComCcsds::Allocation::mallocator);
+        ComCcsds::cmdSeq.deallocateBuffer(ComCcsds::Allocation::memAllocator);
         """
     }
 
@@ -65,11 +65,14 @@ module ComCcsds {
     instance frameAccumulator: Svc.FrameAccumulator base id ComCcsdsConfig.BASE_ID + 0x0500 \ 
     {
 
+        phase Fpp.ToCpp.Phases.configObjects """
+        Svc::FrameDetectors::CcsdsTcFrameDetector frameDetector;
+        """
         phase Fpp.ToCpp.Phases.configComponents """
         ComCcsds::frameAccumulator.configure(
-            ComCcsds::Detector::frameDetector,
+            ConfigObjects::ComCcsds_frameAccumulator::frameDetector,
             1,
-            ComCcsds::Allocation::mallocator,
+            ComCcsds::Allocation::memAllocator,
             ComCcsdsConfig::BufferMgr::frameAccumulator
         );
         """
@@ -81,18 +84,21 @@ module ComCcsds {
 
     instance commsBufferManager: Svc.BufferManager base id ComCcsdsConfig.BASE_ID + 0x0600 \
     {
+        phase Fpp.ToCpp.Phases.configObjects """
+        Svc::BufferManager::BufferBins bins;
+        """
+
         phase Fpp.ToCpp.Phases.configComponents """
-        // Buffer managers need a configured set of buckets and an allocator used to allocate memory for those buckets.
-        memset(&ComCcsds::BufferManagerBins::bins, 0, sizeof(ComCcsds::BufferManagerBins::bins));
-        ComCcsds::BufferManagerBins::bins.bins[0].bufferSize = ComCcsdsConfig::BufferMgr::commsBufferStore;
-        ComCcsds::BufferManagerBins::bins.bins[0].numBuffers = ComCcsdsConfig::BufferMgr::commsBufferCount;
-        ComCcsds::BufferManagerBins::bins.bins[1].bufferSize = ComCcsdsConfig::BufferMgr::commsFileBufferStore;
-        ComCcsds::BufferManagerBins::bins.bins[1].numBuffers = ComCcsdsConfig::BufferMgr::commsFileBufferCount;
+        memset(&ConfigObjects::ComCcsds_commsBufferManager::bins, 0, sizeof(ConfigObjects::ComCcsds_commsBufferManager::bins));
+        ConfigObjects::ComCcsds_commsBufferManager::bins.bins[0].bufferSize = ComCcsdsConfig::BufferMgr::commsBufferStore;
+        ConfigObjects::ComCcsds_commsBufferManager::bins.bins[0].numBuffers = ComCcsdsConfig::BufferMgr::commsBufferCount;
+        ConfigObjects::ComCcsds_commsBufferManager::bins.bins[1].bufferSize = ComCcsdsConfig::BufferMgr::commsFileBufferStore;
+        ConfigObjects::ComCcsds_commsBufferManager::bins.bins[1].numBuffers = ComCcsdsConfig::BufferMgr::commsFileBufferCount;
         ComCcsds::commsBufferManager.setup(
             ComCcsdsConfig::BufferMgr::commsBufferManager,
             0,
-            ComCcsds::Allocation::mallocator,
-            ComCcsds::BufferManagerBins::bins
+            ComCcsds::Allocation::memAllocator,
+            ConfigObjects::ComCcsds_commsBufferManager::bins
         );
         """
 

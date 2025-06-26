@@ -13,7 +13,7 @@ module DataProducts{
             Fw::FileNameString dpDir(DataProductsConfig::Paths::DP_DIR);
             Fw::FileNameString dpState(DataProductsConfig::Paths::DP_STATE);
             Os::FileSystem::createDirectory(dpDir.toChar());
-            DataProducts::dpCat.configure(&dpDir,1,dpState,0, DataProducts::Allocation::mallocator);
+            DataProducts::dpCat.configure(&dpDir,1,dpState,0, DataProducts::Allocation::memAllocator);
         """
     }
 
@@ -38,15 +38,18 @@ module DataProducts{
     
     instance dpBufferManager: Svc.BufferManager base id DataProductsConfig.BASE_ID + 0x0400 \ 
     {
+        phase Fpp.ToCpp.Phases.configObjects """
+        Svc::BufferManager::BufferBins bins;
+        """
         phase Fpp.ToCpp.Phases.configComponents """
-        memset(&DataProducts::BufferManagerBins::bins, 0, sizeof(DataProducts::BufferManagerBins::bins));
-        DataProducts::BufferManagerBins::bins.bins[0].bufferSize = DataProductsConfig::BufferMgr::dpBufferStoreSize;
-        DataProducts::BufferManagerBins::bins.bins[0].numBuffers = DataProductsConfig::BufferMgr::dpBufferStoreCount;
+        memset(&ConfigObjects::DataProducts_dpBufferManager::bins, 0, sizeof(ConfigObjects::DataProducts_dpBufferManager::bins));
+        ConfigObjects::DataProducts_dpBufferManager::bins.bins[0].bufferSize = DataProductsConfig::BufferMgr::dpBufferStoreSize;
+        ConfigObjects::DataProducts_dpBufferManager::bins.bins[0].numBuffers = DataProductsConfig::BufferMgr::dpBufferStoreCount;
         DataProducts::dpBufferManager.setup(
             DataProductsConfig::BufferMgr::dpBufferManagerId,
             0,
-            DataProducts::Allocation::mallocator,
-            DataProducts::BufferManagerBins::bins
+            DataProducts::Allocation::memAllocator,
+            ConfigObjects::DataProducts_dpBufferManager::bins
         );
         """
         phase Fpp.ToCpp.Phases.tearDownComponents """

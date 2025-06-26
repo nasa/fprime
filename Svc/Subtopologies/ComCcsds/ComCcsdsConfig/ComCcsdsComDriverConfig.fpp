@@ -4,14 +4,14 @@ module ComCcsds {
     instance comDriver: Drv.TcpClient base id ComCcsdsConfig.BASE_ID + 0x0B00 \ 
     {
         phase Fpp.ToCpp.Phases.configComponents """
-        if (state.hostname != nullptr && state.port != 0) {
-            ComCcsds::comDriver.configure(state.hostname, state.port);
+        if (state.comCcsds.hostname != nullptr && state.comCcsds.port != 0) {
+            ComCcsds::comDriver.configure(state.comCcsds.hostname, state.comCcsds.port);
         }
         """
 
         phase Fpp.ToCpp.Phases.startTasks """
         // Initialize socket client communication if and only if there is a valid specification
-        if (state.hostname != nullptr && state.port != 0) {
+        if (state.comCcsds.hostname != nullptr && state.comCcsds.port != 0) {
             Os::TaskString name("ReceiveTask");
             ComCcsds::comDriver.start(name, ComCcsdsConfig::Priorities::comDriver, ComCcsdsConfig::StackSizes::comDriver);
         }

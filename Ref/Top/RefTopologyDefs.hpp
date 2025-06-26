@@ -66,8 +66,7 @@ namespace Ref {
      * fields, which are derived by command line inputs.
      */
     struct TopologyState {
-        const char* hostname;
-        U16 port;
+        ComCcsds::SubtopologyState comCcsds;  //!< Subtopology state for ComCcsds 
     };
 
     namespace PingEntries = ::PingEntries;

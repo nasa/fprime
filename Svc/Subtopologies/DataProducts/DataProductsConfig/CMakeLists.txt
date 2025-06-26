@@ -1,4 +1,8 @@
 register_fprime_config(
+    SOURCES
+        "${CMAKE_CURRENT_LIST_DIR}/DataProductsSubtopologyConfig.cpp"
+    HEADERS
+        "${CMAKE_CURRENT_LIST_DIR}/DataProductsSubtopologyConfig.hpp"
     AUTOCODER_INPUTS
         "${CMAKE_CURRENT_LIST_DIR}/DataProductsConfig.fpp"
     DEPENDS

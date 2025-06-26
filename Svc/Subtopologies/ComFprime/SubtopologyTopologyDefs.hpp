@@ -5,29 +5,16 @@
 #include <Fw/Types/MallocAllocator.hpp>
 #include <Svc/BufferManager/BufferManager.hpp>
 #include "Svc/Subtopologies/ComFprime/ComFprimeConfig/FppConstantsAc.hpp"
+#include "ComFprimeConfig/ComFprimeSubtopologyConfig.hpp"
 
 namespace ComFprime {
-    namespace Allocation {
-        // Malloc allocator for topology construction
-        extern Fw::MallocAllocator mallocator;
-    }
-
-    namespace BufferManagerBins {
-        // Buffer manager bins for ComFprime
-        extern Svc::BufferManager::BufferBins bins;
-    }
-
-    namespace Detector {
-        // Frame detector for ComFprime
-        extern Svc::FrameDetectors::FprimeFrameDetector frameDetector;
-    }
-
-    // State for topology construction
-    struct TopologyState {
+    struct SubtopologyState {
       const char* hostname;
       U16 port;
     };
 
+    struct TopologyState {
+        SubtopologyState comFprime;
+    };
 }
-
 #endif

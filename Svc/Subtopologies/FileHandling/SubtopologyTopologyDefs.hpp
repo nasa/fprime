@@ -4,6 +4,8 @@
 #include "Svc/Subtopologies/FileHandling/FileHandlingConfig/FppConstantsAc.hpp"
 namespace FileHandling {
     // State for topology construction
+    struct TopologyState {
+    };
 }
 
 #endif

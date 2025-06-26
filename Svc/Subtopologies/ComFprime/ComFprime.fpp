@@ -33,7 +33,7 @@ module ComFprime {
         configurationTable.entries[ConfigConstants::ComFprime_comQueue::FILE_QUEUE].depth = ComFprimeConfig::QueueDepths::file;
         configurationTable.entries[ConfigConstants::ComFprime_comQueue::FILE_QUEUE].priority = ComFprimeConfig::QueuePriorities::file;
         // Allocation identifier is 0 as the MallocAllocator discards it
-        ComFprime::comQueue.configure(configurationTable, 0, ComFprime::Allocation::mallocator);
+        ComFprime::comQueue.configure(configurationTable, 0, ComFprime::Allocation::memAllocator);
         """
     }
 
@@ -43,11 +43,11 @@ module ComFprime {
         priority ComFprimeConfig.Priorities.cmdSeq \
     {
         phase Fpp.ToCpp.Phases.configComponents """
-        ComFprime::cmdSeq.allocateBuffer(0, ComFprime::Allocation::mallocator, ComFprimeConfig::BufferMgr::cmdSeqBuffer);
+        ComFprime::cmdSeq.allocateBuffer(0, ComFprime::Allocation::memAllocator, ComFprimeConfig::BufferMgr::cmdSeqBuffer);
         """
 
         phase Fpp.ToCpp.Phases.tearDownComponents """
-        ComFprime::cmdSeq.deallocateBuffer(ComFprime::Allocation::mallocator);
+        ComFprime::cmdSeq.deallocateBuffer(ComFprime::Allocation::memAllocator);
         """
     }
 
@@ -61,7 +61,7 @@ module ComFprime {
         ComFprime::frameAccumulator.configure(
             ComFprime::Detector::frameDetector,
             1,
-            ComFprime::Allocation::mallocator,
+            ComFprime::Allocation::memAllocator,
             ComFprimeConfig::BufferMgr::frameAccumulator
         );
         """
@@ -82,7 +82,7 @@ module ComFprime {
         ComFprime::commsBufferManager.setup(
             ComFprimeConfig::BufferMgr::commsBufferManager,
             0,
-            ComFprime::Allocation::mallocator,
+            ComFprime::Allocation::memAllocator,
             ComFprime::BufferManagerBins::bins
         );
         """
