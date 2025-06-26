@@ -43,10 +43,10 @@ module DataProducts{
         """
         phase Fpp.ToCpp.Phases.configComponents """
         memset(&ConfigObjects::DataProducts_dpBufferManager::bins, 0, sizeof(ConfigObjects::DataProducts_dpBufferManager::bins));
-        ConfigObjects::DataProducts_dpBufferManager::bins.bins[0].bufferSize = DataProductsConfig::BufferMgr::dpBufferStoreSize;
-        ConfigObjects::DataProducts_dpBufferManager::bins.bins[0].numBuffers = DataProductsConfig::BufferMgr::dpBufferStoreCount;
+        ConfigObjects::DataProducts_dpBufferManager::bins.bins[0].bufferSize = DataProductsConfig::BuffMgr::dpBufferStoreSize;
+        ConfigObjects::DataProducts_dpBufferManager::bins.bins[0].numBuffers = DataProductsConfig::BuffMgr::dpBufferStoreCount;
         DataProducts::dpBufferManager.setup(
-            DataProductsConfig::BufferMgr::dpBufferManagerId,
+            DataProductsConfig::BuffMgr::dpBufferManagerId,
             0,
             DataProducts::Allocation::memAllocator,
             ConfigObjects::DataProducts_dpBufferManager::bins
