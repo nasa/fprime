@@ -64,7 +64,7 @@ class FprimeFramerTester final : public FprimeFramerGTestBase {
     // Test Harness: Handler implementations for output ports
     // ----------------------------------------------------------------------
 
-    Fw::Buffer from_bufferAllocate_handler(FwIndexType portNum, U32 size) override;
+    Fw::Buffer from_bufferAllocate_handler(FwIndexType portNum, FwSizeType size) override;
 
   private:
     // ----------------------------------------------------------------------

@@ -50,7 +50,7 @@ class StaticMemoryComponentImpl final : public StaticMemoryComponentBase {
     //! Handler implementation for bufferAllocate
     //!
     Fw::Buffer bufferAllocate_handler(const FwIndexType portNum, /*!< The port number*/
-                                      U32 size);
+                                      FwSizeType size);
 
     bool m_allocated[NUM_BUFFERALLOCATE_INPUT_PORTS];
     U8 m_static_memory[NUM_BUFFERALLOCATE_INPUT_PORTS][STATIC_MEMORY_ALLOCATION_SIZE];

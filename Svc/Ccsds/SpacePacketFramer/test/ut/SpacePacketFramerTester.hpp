@@ -65,7 +65,7 @@ class SpacePacketFramerTester final : public SpacePacketFramerGTestBase {
                                      const ComCfg::APID& apid,
                                      U16 sequenceCount) override;
 
-    Fw::Buffer from_bufferAllocate_handler(FwIndexType portNum, U32 size) override;
+    Fw::Buffer from_bufferAllocate_handler(FwIndexType portNum, FwSizeType size) override;
 
   private:
     // ----------------------------------------------------------------------

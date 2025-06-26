@@ -13,7 +13,7 @@ module Fw {
   @ Returns the buffer
   port BufferGet(
                   @ The requested size
-                  $size: U32
+                  $size: FwSizeType
                 ) -> Fw.Buffer
 
 }

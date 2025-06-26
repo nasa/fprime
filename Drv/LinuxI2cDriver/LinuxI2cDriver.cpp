@@ -78,8 +78,9 @@ namespace Drv {
       }
       // make sure it isn't a null pointer
       FW_ASSERT(serBuffer.getData());
+      FW_ASSERT_NO_OVERFLOW(serBuffer.getSize(), size_t);
       // write data
-      stat = static_cast<int>(write(this->m_fd, serBuffer.getData(), serBuffer.getSize()));
+      stat = static_cast<int>(write(this->m_fd, serBuffer.getData(), static_cast<size_t>(serBuffer.getSize())));
       if (stat == -1) {
 	  return I2cStatus::I2C_WRITE_ERR;
       }
@@ -130,6 +131,10 @@ namespace Drv {
     // make sure they are not null pointers
     FW_ASSERT(writeBuffer.getData());
     FW_ASSERT(readBuffer.getData());
+    // make sure downcasts are safe
+    FW_ASSERT_NO_OVERFLOW(addr, U16);
+    FW_ASSERT_NO_OVERFLOW(writeBuffer.getSize(), U16);
+    FW_ASSERT_NO_OVERFLOW(readBuffer.getSize(), U16);
 
     struct i2c_msg rdwr_msgs[2];
 
