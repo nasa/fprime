@@ -26,9 +26,8 @@ TEST(ApidManager, ValidateSequenceCounts) {
 
 // Randomized testing
 TEST(ApidManager, RandomizedTesting) {
-
     Svc::Ccsds::ApidManagerTester tester;
-    
+
     Svc::Ccsds::ApidManagerTester::GetExistingSeqCount getExistingSeqCountRule;
     Svc::Ccsds::ApidManagerTester::GetNewSeqCountOk getNewSeqCountOkRule;
     Svc::Ccsds::ApidManagerTester::GetNewSeqCountTableFull getNewSeqCountTableFullRule;
@@ -36,27 +35,15 @@ TEST(ApidManager, RandomizedTesting) {
     Svc::Ccsds::ApidManagerTester::ValidateSeqCountFailure validateSeqCountFailureRule;
 
     // Place these rules into a list of rules
-    STest::Rule<Svc::Ccsds::ApidManagerTester>* rules[] = {
-            &getExistingSeqCountRule,
-            &getNewSeqCountOkRule,
-            &getNewSeqCountTableFullRule,
-            &validateSeqCountOkRule,
-            &validateSeqCountFailureRule
-    };
+    STest::Rule<Svc::Ccsds::ApidManagerTester>* rules[] = {&getExistingSeqCountRule, &getNewSeqCountOkRule,
+                                                           &getNewSeqCountTableFullRule, &validateSeqCountOkRule,
+                                                           &validateSeqCountFailureRule};
 
     // Take the rules and place them into a random scenario
-    STest::RandomScenario<Svc::Ccsds::ApidManagerTester> random(
-            "Random Rules",
-            rules,
-            FW_NUM_ARRAY_ELEMENTS(rules)
-    );
+    STest::RandomScenario<Svc::Ccsds::ApidManagerTester> random("Random Rules", rules, FW_NUM_ARRAY_ELEMENTS(rules));
 
     // Create a bounded scenario wrapping the random scenario
-    STest::BoundedScenario<Svc::Ccsds::ApidManagerTester> bounded(
-            "Bounded Random Rules Scenario",
-            random,
-            1000
-    );
+    STest::BoundedScenario<Svc::Ccsds::ApidManagerTester> bounded("Bounded Random Rules Scenario", random, 1000);
     // Run!
     const U32 numSteps = bounded.run(tester);
     printf("Ran %u steps.\n", numSteps);

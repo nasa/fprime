@@ -5,8 +5,8 @@
 // ======================================================================
 
 #include "Svc/Ccsds/SpacePacketFramer/SpacePacketFramer.hpp"
-#include "Svc/Ccsds/Types/SpacePacketHeaderSerializableAc.hpp"
 #include "Svc/Ccsds/Types/FppConstantsAc.hpp"
+#include "Svc/Ccsds/Types/SpacePacketHeaderSerializableAc.hpp"
 
 namespace Svc {
 
@@ -28,8 +28,11 @@ void SpacePacketFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, c
     SpacePacketHeader header;
     Fw::SerializeStatus status;
     FwSizeType frameSize = SpacePacketHeader::SERIALIZED_SIZE + data.getSize();
-    FW_ASSERT(data.getSize() <= std::numeric_limits<Fw::Buffer::SizeType>::max() - SpacePacketHeader::SERIALIZED_SIZE, static_cast<FwAssertArgType>(data.getSize()));
-    FW_ASSERT(data.getSize() > 0, static_cast<FwAssertArgType>(data.getSize())); // Protocol specifies at least 1 byte of data for a valid packet
+    FW_ASSERT(data.getSize() <= std::numeric_limits<Fw::Buffer::SizeType>::max() - SpacePacketHeader::SERIALIZED_SIZE,
+              static_cast<FwAssertArgType>(data.getSize()));
+    FW_ASSERT(
+        data.getSize() > 0,
+        static_cast<FwAssertArgType>(data.getSize()));  // Protocol specifies at least 1 byte of data for a valid packet
 
     // Allocate frame buffer
     Fw::Buffer frameBuffer = this->bufferAllocate_out(0, static_cast<Fw::Buffer::SizeType>(frameSize));
@@ -38,19 +41,23 @@ void SpacePacketFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, c
     // -----------------------------------------------
     // Header
     // -----------------------------------------------
-    // PVN is always 0 per Standard - Packet Type is 0 for Telemetry (downlink) - SecHdr flag is 0 for no secondary header
+    // PVN is always 0 per Standard - Packet Type is 0 for Telemetry (downlink) - SecHdr flag is 0 for no secondary
+    // header
     U16 packetIdentification = 0;
     ComCfg::APID::T apid = context.getapid();
-    FW_ASSERT((apid >> SpacePacketSubfields::ApidWidth) == 0, static_cast<FwAssertArgType>(apid)); // apid must fit in 11 bits
-    packetIdentification |= static_cast<U16>(apid) & SpacePacketSubfields::ApidMask; // 11 bit APID
+    FW_ASSERT((apid >> SpacePacketSubfields::ApidWidth) == 0,
+              static_cast<FwAssertArgType>(apid));                                    // apid must fit in 11 bits
+    packetIdentification |= static_cast<U16>(apid) & SpacePacketSubfields::ApidMask;  // 11 bit APID
 
-    U16 sequenceCount = this->getApidSeqCount_out(0, apid, 0); // retrieve the sequence count for this APID
+    U16 sequenceCount = this->getApidSeqCount_out(0, apid, 0);  // retrieve the sequence count for this APID
     U16 packetSequenceControl = 0;
-    packetSequenceControl |= 0x3 << SpacePacketSubfields::SeqFlagsOffset; // Sequence Flags 0b11 = unsegmented User Data
-    packetSequenceControl |= sequenceCount & SpacePacketSubfields::SeqCountMask; // 14 bit sequence count
+    packetSequenceControl |=
+        0x3 << SpacePacketSubfields::SeqFlagsOffset;  // Sequence Flags 0b11 = unsegmented User Data
+    packetSequenceControl |= sequenceCount & SpacePacketSubfields::SeqCountMask;  // 14 bit sequence count
 
     FW_ASSERT(data.getSize() <= std::numeric_limits<U16>::max(), static_cast<FwAssertArgType>(data.getSize()));
-    U16 packetDataLength = static_cast<U16>(data.getSize() - 1); // Standard specifies length is number of bytes minus 1
+    U16 packetDataLength =
+        static_cast<U16>(data.getSize() - 1);  // Standard specifies length is number of bytes minus 1
 
     header.setpacketIdentification(packetIdentification);
     header.setpacketSequenceControl(packetSequenceControl);
@@ -65,7 +72,7 @@ void SpacePacketFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, c
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     this->dataOut_out(0, frameBuffer, context);
-    this->dataReturnOut_out(0, data, context); // return ownership of the original data buffer
+    this->dataReturnOut_out(0, data, context);  // return ownership of the original data buffer
 }
 
 void SpacePacketFramer ::comStatusIn_handler(FwIndexType portNum, Fw::Success& condition) {
@@ -74,11 +81,12 @@ void SpacePacketFramer ::comStatusIn_handler(FwIndexType portNum, Fw::Success& c
     }
 }
 
-void SpacePacketFramer ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& frameBuffer, const ComCfg::FrameContext& context) {
+void SpacePacketFramer ::dataReturnIn_handler(FwIndexType portNum,
+                                              Fw::Buffer& frameBuffer,
+                                              const ComCfg::FrameContext& context) {
     // dataReturnIn is the allocated buffer coming back from the dataOut port
     this->bufferDeallocate_out(0, frameBuffer);
 }
-
 
 }  // namespace Ccsds
 }  // namespace Svc

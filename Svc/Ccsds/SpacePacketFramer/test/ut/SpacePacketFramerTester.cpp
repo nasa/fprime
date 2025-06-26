@@ -63,7 +63,7 @@ void SpacePacketFramerTester::testNominalFraming() {
     U16 seqCount = static_cast<U8>(STest::Random::lowerUpper(0, 0x3FFF));  // random 14 bit sequence count
     ComCfg::FrameContext context;
     context.setapid(apid);
-    this->m_nextSeqCount = seqCount; // seqCount to be returned by getApidSeqCount output port
+    this->m_nextSeqCount = seqCount;  // seqCount to be returned by getApidSeqCount output port
 
     this->invoke_to_dataIn(0, data, context);
 
@@ -91,8 +91,7 @@ U16 SpacePacketFramerTester ::from_getApidSeqCount_handler(FwIndexType portNum,
     return this->m_nextSeqCount;
 }
 
-Fw::Buffer SpacePacketFramerTester ::from_bufferAllocate_handler(FwIndexType portNum,
-                                                           FwSizeType size) {
+Fw::Buffer SpacePacketFramerTester ::from_bufferAllocate_handler(FwIndexType portNum, FwSizeType size) {
     return Fw::Buffer(this->m_internalDataBuffer, size);
 }
 

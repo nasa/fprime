@@ -5,9 +5,9 @@
 // ======================================================================
 
 #include "TmFramerTester.hpp"
+#include "Svc/Ccsds/Types/SpacePacketHeaderSerializableAc.hpp"
 #include "Svc/Ccsds/Types/TMHeaderSerializableAc.hpp"
 #include "Svc/Ccsds/Types/TMTrailerSerializableAc.hpp"
-#include "Svc/Ccsds/Types/SpacePacketHeaderSerializableAc.hpp"
 
 namespace Svc {
 
@@ -76,7 +76,8 @@ void TmFramerTester ::testNominalFraming() {
     ASSERT_EQ(this->component.m_virtualFrameCount, outVcCount + 1);
 
     // Idle data should be filled at the offset of header + payload + the Space Packet Idle Packet header
-    FwSizeType expectedIdleDataOffset = TMHeader::SERIALIZED_SIZE + sizeof(bufferData) + SpacePacketHeader::SERIALIZED_SIZE;
+    FwSizeType expectedIdleDataOffset =
+        TMHeader::SERIALIZED_SIZE + sizeof(bufferData) + SpacePacketHeader::SERIALIZED_SIZE;
 
     // The frame is composed of the payload + a SpacePacket Idle Packet (Header + idle_pattern)
     const U8 idlePattern = this->component.IDLE_DATA_PATTERN;
@@ -101,9 +102,9 @@ void TmFramerTester ::testSeqCountWrapAround() {
     // to test the wrap around of the sequence counts
     this->component.m_masterFrameCount = 250;
     this->component.m_virtualFrameCount = 250;
-    U8 countWrapAround = 250; // will wrap around to 0 after 255
+    U8 countWrapAround = 250;  // will wrap around to 0 after 255
     for (U32 iter = 0; iter < 10; iter++) {
-        this->component.m_bufferState = TmFramer::BufferOwnershipState::OWNED; // reset state to OWNED
+        this->component.m_bufferState = TmFramer::BufferOwnershipState::OWNED;  // reset state to OWNED
         this->invoke_to_dataIn(0, buffer, defaultContext);
         ASSERT_from_dataOut_SIZE(iter + 1);
         Fw::Buffer outBuffer = this->fromPortHistory_dataOut->at(iter).data;
@@ -116,11 +117,12 @@ void TmFramerTester ::testSeqCountWrapAround() {
 }
 
 void TmFramerTester ::testInputBufferTooLarge() {
-    const FwSizeType tooLargeSize = ComCfg::TmFrameFixedSize; // This is too large since we need room for header+trailer as well
+    const FwSizeType tooLargeSize =
+        ComCfg::TmFrameFixedSize;  // This is too large since we need room for header+trailer as well
     U8 bufferData[tooLargeSize];
     Fw::Buffer buffer(bufferData, tooLargeSize);
     ComCfg::FrameContext defaultContext;
-    // Send a buffer larger than the 
+    // Send a buffer larger than the
     ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataIn(0, buffer, defaultContext), "TmFramer.cpp");
 }
 
@@ -130,13 +132,12 @@ void TmFramerTester ::testDataReturn() {
     ComCfg::FrameContext defaultContext;
     // Send a buffer that is not the internal buffer of the component, and expect an assertion
     ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataReturnIn(0, buffer, defaultContext), "TmFramer.cpp");
-    
+
     // Now send the expected buffer and expect state to go back to OWNED
     this->component.m_bufferState = TmFramer::BufferOwnershipState::NOT_OWNED;
     Fw::Buffer internalBuffer(this->component.m_frameBuffer, sizeof(this->component.m_frameBuffer));
     this->invoke_to_dataReturnIn(0, internalBuffer, defaultContext);
     ASSERT_EQ(this->component.m_bufferState, TmFramer::BufferOwnershipState::OWNED);
-
 }
 
 void TmFramerTester ::testBufferOwnershipState() {
@@ -147,9 +148,8 @@ void TmFramerTester ::testBufferOwnershipState() {
     this->component.m_bufferState = TmFramer::BufferOwnershipState::NOT_OWNED;
     ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataIn(0, buffer, context), "TmFramer.cpp");
     this->component.m_bufferState = TmFramer::BufferOwnershipState::OWNED;
-    this->invoke_to_dataIn(0, buffer, context); // this should work now
+    this->invoke_to_dataIn(0, buffer, context);  // this should work now
     ASSERT_EQ(this->component.m_bufferState, TmFramer::BufferOwnershipState::NOT_OWNED);
-
 }
 
 // ----------------------------------------------------------------------
