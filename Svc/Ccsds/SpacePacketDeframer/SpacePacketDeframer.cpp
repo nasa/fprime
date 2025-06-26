@@ -68,7 +68,7 @@ void SpacePacketDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data,
 
     // Set data buffer to be of the encapsulated data: HEADER (6 bytes) | PACKET DATA
     data.setData(data.getData() + SpacePacketHeader::SERIALIZED_SIZE);
-    data.setSize(pkt_length); 
+    data.setSize(pkt_length);
 
     this->dataOut_out(0, data, contextCopy);
 }

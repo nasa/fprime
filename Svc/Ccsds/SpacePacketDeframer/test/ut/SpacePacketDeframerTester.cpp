@@ -43,7 +43,8 @@ void SpacePacketDeframerTester ::testDataReturnPassthrough() {
 void SpacePacketDeframerTester ::testNominalDeframing() {
     ComCfg::APID::T apid = static_cast<ComCfg::APID::T>(STest::Random::lowerUpper(0, 0x7FF));  // random 11 bit APID
     U16 seqCount = static_cast<U8>(STest::Random::lowerUpper(0, 0x3FFF));  // random 14 bit sequence count
-    U16 dataLength = static_cast<U8>(STest::Random::lowerUpper(1, MAX_TEST_PACKET_DATA_SIZE)); // bytes of data, random length
+    U16 dataLength =
+        static_cast<U8>(STest::Random::lowerUpper(1, MAX_TEST_PACKET_DATA_SIZE));  // bytes of data, random length
     U8 data[dataLength];
     U16 lengthToken = static_cast<U16>(dataLength - 1);  // Length token is length - 1
     for (FwIndexType i = 0; i < static_cast<FwIndexType>(dataLength); ++i) {
@@ -73,8 +74,10 @@ void SpacePacketDeframerTester ::testNominalDeframing() {
 void SpacePacketDeframerTester ::testDeframingIncorrectLength() {
     ComCfg::APID::T apid = static_cast<ComCfg::APID::T>(STest::Random::lowerUpper(0, 0x7FF));  // random 11 bit APID
     U16 seqCount = static_cast<U8>(STest::Random::lowerUpper(0, 0x3FFF));  // random 14 bit sequence count
-    U16 realDataLength = static_cast<U8>(STest::Random::lowerUpper(1, MAX_TEST_PACKET_DATA_SIZE)); // bytes of data, random length
-    U16 invalidLengthToken = static_cast<U16>(realDataLength + 1);  // Length token is greater than actual data available
+    U16 realDataLength =
+        static_cast<U8>(STest::Random::lowerUpper(1, MAX_TEST_PACKET_DATA_SIZE));  // bytes of data, random length
+    U16 invalidLengthToken =
+        static_cast<U16>(realDataLength + 1);  // Length token is greater than actual data available
     U8 data[realDataLength];
 
     Fw::Buffer buffer = this->assemblePacket(apid, seqCount, invalidLengthToken, data, realDataLength);
@@ -91,25 +94,31 @@ void SpacePacketDeframerTester ::testDeframingIncorrectLength() {
     ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(0).context, nullContext);  // Data should be the same as input
 
     // Event logging failure
-    ASSERT_EVENTS_SIZE(1);  // No events should be generated in the nominal case
+    ASSERT_EVENTS_SIZE(1);                // No events should be generated in the nominal case
     ASSERT_EVENTS_InvalidLength_SIZE(1);  // No events should be generated in the nominal case
-    ASSERT_EVENTS_InvalidLength(0, static_cast<U16>(invalidLengthToken + 1), realDataLength); // Event logs the size in bytes, so add 1 to length token
+    ASSERT_EVENTS_InvalidLength(0, static_cast<U16>(invalidLengthToken + 1),
+                                realDataLength);  // Event logs the size in bytes, so add 1 to length token
 }
 
 // ----------------------------------------------------------------------
 // Helper functions
 // ----------------------------------------------------------------------
 
-Fw::Buffer SpacePacketDeframerTester ::assemblePacket(U16 apid, U16 seqCount, U16 lengthToken, U8* packetData, U16 packetDataLen) {
+Fw::Buffer SpacePacketDeframerTester ::assemblePacket(U16 apid,
+                                                      U16 seqCount,
+                                                      U16 lengthToken,
+                                                      U8* packetData,
+                                                      U16 packetDataLen) {
     SpacePacketHeader header;
     header.setpacketIdentification(apid);
-    header.setpacketSequenceControl(seqCount); // Sequence Flags = 0b11 (unsegmented) & unused Seq count
+    header.setpacketSequenceControl(seqCount);  // Sequence Flags = 0b11 (unsegmented) & unused Seq count
     header.setpacketDataLength(lengthToken);
 
     Fw::ExternalSerializeBuffer serializer(static_cast<U8*>(this->m_packetBuffer), sizeof(this->m_packetBuffer));
     serializer.serialize(header);
     serializer.serialize(packetData, packetDataLen, Fw::Serialization::OMIT_LENGTH);
-    return Fw::Buffer(this->m_packetBuffer, static_cast<Fw::Buffer::SizeType>(packetDataLen + SpacePacketHeader::SERIALIZED_SIZE));
+    return Fw::Buffer(this->m_packetBuffer,
+                      static_cast<Fw::Buffer::SizeType>(packetDataLen + SpacePacketHeader::SERIALIZED_SIZE));
 }
 
 }  // namespace Ccsds
