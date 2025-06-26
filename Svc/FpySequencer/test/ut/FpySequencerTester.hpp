@@ -203,6 +203,30 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
 
 };
 
+class FpySequencer_SequencerStateMachineTester {
+    // ----------------------------------------------------------------------
+    // Construction and destruction
+    // ----------------------------------------------------------------------
+
+  public:
+    //! Construct object FpySequencer_SequencerStateMachineTester
+    //!
+    FpySequencer_SequencerStateMachineTester();
+
+    //! Destroy object FpySequencer_SequencerStateMachineTester
+    //!
+    ~FpySequencer_SequencerStateMachineTester();
+
+    // ----------------------------------------------------------------------
+    // Test access to private and protected methods and memebers
+    // ----------------------------------------------------------------------
+    static void setState(FpySequencer_SequencerStateMachineStateMachineBase& sm, State s){
+        sm.m_state = s;
+    }
+};
+
 }  // namespace Svc
+
+
 
 #endif
