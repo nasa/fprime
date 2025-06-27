@@ -57,7 +57,7 @@ namespace Fw {
 
         // remainder of buffer must be telemetry value
         FwSizeType size = buffer.getBuffLeft();
-        stat = buffer.deserialize(this->m_logBuffer.getBuffAddr(), size, Fw::Serialization::OMIT_LENGTH);
+        stat = buffer.deserialize(this->m_logBuffer.getBuffAddr(),size,Fw::Serialization::OMIT_LENGTH);
         if (stat == FW_SERIALIZE_OK) {
             // Shouldn't fail
             stat = this->m_logBuffer.setBuffLen(size);
