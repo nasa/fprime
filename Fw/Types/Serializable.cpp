@@ -225,11 +225,6 @@ SerializeStatus SerializeBufferBase::serialize(const U8* buff, Serializable::Siz
     return this->serialize(buff, static_cast<FwSizeType>(length), Serialization::INCLUDE_LENGTH);
 }
 
-SerializeStatus SerializeBufferBase::serialize(const U8* buff, Serializable::SizeType length, bool noLength) {
-    return this->serialize(buff, static_cast<FwSizeType>(length),
-                           noLength ? Serialization::OMIT_LENGTH : Serialization::INCLUDE_LENGTH);
-}
-
 SerializeStatus SerializeBufferBase::serialize(const U8* buff, FwSizeType length, Fw::Serialization::t mode) {
     // First serialize length
     SerializeStatus stat;
@@ -503,14 +498,6 @@ SerializeStatus SerializeBufferBase::deserialize(U8* buff, Serializable::SizeTyp
     return status;
 }
 
-SerializeStatus SerializeBufferBase::deserialize(U8* buff, Serializable::SizeType& length, bool noLength) {
-    FwSizeType length_in_out = static_cast<FwSizeType>(length);
-    SerializeStatus status =
-        this->deserialize(buff, length_in_out, noLength ? Serialization::OMIT_LENGTH : Serialization::INCLUDE_LENGTH);
-    length = static_cast<Serializable::SizeType>(length_in_out);
-    return status;
-}
-
 SerializeStatus SerializeBufferBase::deserialize(U8* buff, FwSizeType& length, Serialization::t mode) {
     FW_ASSERT(this->getBuffAddr());
 
@@ -695,7 +682,7 @@ SerializeStatus SerializeBufferBase::copyRawOffset(SerializeBufferBase& dest, Se
     }
 
     // otherwise, serialize bytes to destination without writing length
-    SerializeStatus stat = dest.serialize(&this->getBuffAddr()[this->m_deserLoc], size, true);
+    SerializeStatus stat = dest.serialize(&this->getBuffAddr()[this->m_deserLoc], size, Fw::Serialization::OMIT_LENGTH);
     if (stat == FW_SERIALIZE_OK) {
         this->m_deserLoc += size;
     }
