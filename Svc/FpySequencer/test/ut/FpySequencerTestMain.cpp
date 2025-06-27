@@ -340,8 +340,8 @@ TEST_F(FpySequencerTester, binaryCmp) {
 
     // Test OR (bitwise OR)
     FpySequencer_BinaryCmpDirective directiveOR(0, 1, 2, Fpy::DirectiveId::OR);
-    tester_get_m_runtime_ptr()->regs[0] = 10; // 0b1010;
-    tester_get_m_runtime_ptr()->regs[1] = 5; // 0b0101;
+    tester_get_m_runtime_ptr()->regs[0] = 10;  // 0b1010;
+    tester_get_m_runtime_ptr()->regs[1] = 5;   // 0b0101;
     result = tester_binaryCmp_directiveHandler(directiveOR, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
@@ -349,12 +349,12 @@ TEST_F(FpySequencerTester, binaryCmp) {
 
     // Test AND (bitwise AND)
     FpySequencer_BinaryCmpDirective directiveAND(0, 1, 2, Fpy::DirectiveId::AND);
-    tester_get_m_runtime_ptr()->regs[0] = 10; // 0b1010;
-    tester_get_m_runtime_ptr()->regs[1] = 12; // 0b1100;
+    tester_get_m_runtime_ptr()->regs[0] = 10;  // 0b1010;
+    tester_get_m_runtime_ptr()->regs[1] = 12;  // 0b1100;
     result = tester_binaryCmp_directiveHandler(directiveAND, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->regs[2], 8); // 0b1000
+    ASSERT_EQ(tester_get_m_runtime_ptr()->regs[2], 8);  // 0b1000
 
     // Test signed comparison (SLT - signed less than)
     FpySequencer_BinaryCmpDirective directiveSLT(0, 1, 2, Fpy::DirectiveId::SLT);
@@ -379,6 +379,28 @@ TEST_F(FpySequencerTester, binaryCmp) {
     tester_get_m_runtime_ptr()->regs[0] = 10;
     tester_get_m_runtime_ptr()->regs[1] = 5;
     result = tester_binaryCmp_directiveHandler(directiveUGT, err);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->regs[2], 1);
+
+    // Test floating-point comparison (FLT - floating-point less than)
+    FpySequencer_BinaryCmpDirective directiveFLT(0, 1, 2, Fpy::DirectiveId::FLT);
+    double lhsValueFLT = 5.5;
+    double rhsValueFLT = 10.1;
+    tester_get_m_runtime_ptr()->regs[0] = *reinterpret_cast<I64*>(&lhsValueFLT);
+    tester_get_m_runtime_ptr()->regs[1] = *reinterpret_cast<I64*>(&rhsValueFLT);
+    result = tester_binaryCmp_directiveHandler(directiveFLT, err);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->regs[2], 1);
+
+    // Test floating-point comparison (FGE - floating-point greater or equal)
+    FpySequencer_BinaryCmpDirective directiveFGE(0, 1, 2, Fpy::DirectiveId::FGE);
+    double lhsValueFGE = 10.1;
+    double rhsValueFGE = 10.1;
+    tester_get_m_runtime_ptr()->regs[0] = *reinterpret_cast<I64*>(&lhsValueFGE);
+    tester_get_m_runtime_ptr()->regs[1] = *reinterpret_cast<I64*>(&rhsValueFGE);
+    result = tester_binaryCmp_directiveHandler(directiveFGE, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(tester_get_m_runtime_ptr()->regs[2], 1);
@@ -1224,8 +1246,8 @@ TEST_F(FpySequencerTester, checkTimers) {
     setTestTime(time);
     invoke_to_checkTimers(0, 0);
     dispatchUntilState(State::IDLE);
-    ASSERT_CMD_RESPONSE_SIZE(1);
     // timed out, should give exec error
+    ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, FpySequencer::OPCODE_RUN, 0, Fw::CmdResponse::EXECUTION_ERROR);
 }
 
