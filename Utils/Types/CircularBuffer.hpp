@@ -23,6 +23,9 @@
 namespace Types {
 
 class CircularBuffer {
+
+    friend class CircularBufferTester;
+
     public:
         /**
          * Circular buffer constructor. Wraps the supplied buffer as the new data store. Buffer
@@ -132,7 +135,7 @@ class CircularBuffer {
          */
         void clear_high_water_mark();
 
-    PRIVATE:
+    private:
         /**
          * Returns a wrap-advanced index into the store.
          * \param idx: index to advance and wrap.

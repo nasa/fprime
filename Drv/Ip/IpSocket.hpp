@@ -114,7 +114,7 @@ class IpSocket {
      * \param size: size of data to send
      * \return status of the send, SOCK_DISCONNECTED to reopen, SOCK_SUCCESS on success, something else on error
      */
-    SocketIpStatus send(const SocketDescriptor& socketDescriptor, const U8* const data, const U32 size);
+    virtual SocketIpStatus send(const SocketDescriptor& socketDescriptor, const U8* const data, const U32 size);
     /**
      * \brief receive data from the IP socket from the given buffer
      *
@@ -200,12 +200,23 @@ class IpSocket {
 
     /**
      * \brief Protocol specific implementation of recv.  Called directly with error handling from recv.
-     * \param socket: socket descriptor to recv from
+     * \param socketDescriptor: socket descriptor to recv from
      * \param data: data pointer to fill
      * \param size: size of data buffer
      * \return: size of data received, or -1 on error.
      */
     virtual I32 recvProtocol(const SocketDescriptor& socketDescriptor, U8* const data, const U32 size) = 0;
+
+    /**
+     * \brief Handle zero return from recvProtocol
+     *
+     * This method is called when recvProtocol returns 0. The default implementation
+     * treats this as a disconnection (appropriate for TCP). Subclasses can override
+     * this to provide different behavior.
+     *
+     * @return SocketIpStatus Status to return from recv
+     */
+    virtual SocketIpStatus handleZeroReturn();
 
     U32 m_timeoutSeconds;
     U32 m_timeoutMicroseconds;

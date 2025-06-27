@@ -128,6 +128,7 @@ void FrameAccumulator ::processRing() {
             if (buffer.isValid()) {
                 // Copy data out of ring buffer into the allocated buffer
                 Fw::SerializeStatus serialize_status = this->m_inRing.peek(buffer.getData(), size_out);
+                buffer.setSize(static_cast<Fw::Buffer::SizeType>(size_out));
                 FW_ASSERT(serialize_status == Fw::SerializeStatus::FW_SERIALIZE_OK);
                 // Consume (rotate) the data from the ring buffer
                 serialize_status = this->m_inRing.rotate(size_out);

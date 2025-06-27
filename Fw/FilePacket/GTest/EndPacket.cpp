@@ -24,7 +24,7 @@ namespace Fw {
           const FilePacket::EndPacket& actual
       )
     {
-      FilePackets::Header::compare(expected.m_header, actual.m_header);
+      FilePackets::Header::compare(expected.asHeader(), actual.asHeader());
       CFDP::Checksum expectedChecksum;
       CFDP::Checksum actualChecksum;
       expected.getChecksum(expectedChecksum);

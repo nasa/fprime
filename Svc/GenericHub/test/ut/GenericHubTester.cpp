@@ -206,7 +206,7 @@ void GenericHubTester ::from_portOut_handler(FwIndexType portNum,        /*!< Th
     ASSERT_from_buffersOut_SIZE(0);
 }
 
-Fw::Buffer GenericHubTester ::from_dataOutAllocate_handler(const FwIndexType portNum, const U32 size) {
+Fw::Buffer GenericHubTester ::from_dataOutAllocate_handler(const FwIndexType portNum, const FwSizeType size) {
     EXPECT_EQ(m_allocate.getData(), nullptr) << "Allocation buffer is still in use";
     EXPECT_LE(size, sizeof(m_data_for_allocation)) << "Allocation buffer is still in use";
     m_allocate.set(m_data_for_allocation, size);

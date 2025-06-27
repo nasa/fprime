@@ -1,13 +1,9 @@
-#include "../include/fpp_types.fppi"
-#include "../include/port_types.fppi"
-#include "../include/port_index_enums.fppi"
-
 @ A passive component
 passive component PassiveTest {
 
-  include "../include/typed_ports.fppi"
-  include "../include/serial_ports.fppi"
-  include "../include/special_ports.fppi"
+  import FppTest.SerialPorts
+  import FppTest.SpecialPorts
+  import FppTest.TypedPorts
 
   include "../include/commands.fppi"
   include "../include/events.fppi"

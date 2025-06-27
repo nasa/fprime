@@ -35,7 +35,7 @@ bool LinuxUartDriver::open(const char* const device,
                            UartBaudRate baud,
                            UartFlowControl fc,
                            UartParity parity,
-                           U32 allocationSize) {
+                           FwSizeType allocationSize) {
     FW_ASSERT(device != nullptr);
     int fd = -1;
     int stat = -1;
@@ -341,8 +341,9 @@ void LinuxUartDriver ::serialReadTaskEntry(void* ptr) {
 
         // Read until something is received or an error occurs. Only loop when
         // stat == 0 as this is the timeout condition and the read should spin
+        FW_ASSERT_NO_OVERFLOW(buff.getSize(), size_t);
         while ((stat == 0) && !comp->m_quitReadThread) {
-            stat = static_cast<int>(::read(comp->m_fd, buff.getData(), buff.getSize()));
+            stat = static_cast<int>(::read(comp->m_fd, buff.getData(), static_cast<size_t>(buff.getSize())));
         }
         buff.setSize(0);
 

@@ -16,9 +16,16 @@
 #include <Drv/Ip/IpSocket.hpp>
 #include <config/IpCfg.hpp>
 
-namespace Drv {
+// Include system headers for sockaddr_in
+#ifdef TGT_OS_TYPE_VXWORKS
+    #include <socket.h>
+    #include <inetLib.h>
+#else
+    #include <sys/socket.h>
+    #include <arpa/inet.h>
+#endif
 
-struct SocketState;
+namespace Drv {
 
 /**
  * \brief Helper for setting up Udp using Berkeley sockets as a client
@@ -91,8 +98,16 @@ class UdpSocket : public IpSocket {
      */
     U16 getRecvPort();
 
-  protected:
+    /**
+     * \brief UDP-specific implementation of send that handles zero-length datagrams correctly.
+     * \param socketDescriptor: descriptor to send to
+     * \param data: data pointer to send
+     * \param size: size of data to send
+     * \return: status of the send operation
+     */
+    SocketIpStatus send(const SocketDescriptor& socketDescriptor, const U8* const data, const U32 size) override;
 
+  protected:
     /**
      * \brief bind the UDP to a port such that it can receive packets at the previously configured port
      * \param socketDescriptor: socket descriptor used in bind
@@ -121,10 +136,19 @@ class UdpSocket : public IpSocket {
      * \return: size of data received, or -1 on error.
      */
     I32 recvProtocol(const SocketDescriptor& socketDescriptor, U8* const data, const U32 size) override;
+    /**
+     * \brief Handle zero return from recvProtocol for UDP
+     *
+     * For UDP, a return of 0 from recvfrom means a 0-byte datagram was received,
+     * which is a success case, not a disconnection.
+     *
+     * @return SocketIpStatus Status to return from recv
+     */
+    SocketIpStatus handleZeroReturn() override;
+
   private:
-    SocketState* m_state; //!< State storage
-    U16 m_recv_port;  //!< Port to receive on
-    CHAR m_recv_hostname[SOCKET_MAX_HOSTNAME_SIZE]; //!< Hostname to receive on
+    struct sockaddr_in m_addr_send;  //!< UDP server address for sending
+    struct sockaddr_in m_addr_recv;  //!< UDP server address for receiving
     bool m_recv_configured; //!< True if configureRecv was called
 };
 }  // namespace Drv

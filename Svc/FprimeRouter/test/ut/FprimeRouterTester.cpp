@@ -114,7 +114,7 @@ void FprimeRouterTester::connectPortsExceptUnknownData() {
 // ----------------------------------------------------------------------
 // Port handler overrides
 // ----------------------------------------------------------------------
-Fw::Buffer FprimeRouterTester::from_bufferAllocate_handler(FwIndexType portNum, U32 size) {
+Fw::Buffer FprimeRouterTester::from_bufferAllocate_handler(FwIndexType portNum, FwSizeType size) {
     this->pushFromPortEntry_bufferAllocate(size);
     this->m_buffer.setData(this->m_buffer_slot);
     this->m_buffer.setSize(size);

@@ -187,12 +187,14 @@ state machine SequencerStateMachine {
     signal result_timeOpFailed
     @ a statement is telling the sequencer to go to sleep
     signal stmtResponse_beginSleep
-    @ called when the expected statement response comes in, and it is OK. only raised in the RUNNING.AWAITING_CMD_RESPONSE state
+    @ called when statement successfully executed. only raised in the RUNNING.AWAITING_CMD_RESPONSE state
     signal stmtResponse_success
-    @ called when the expected statement response comes in, and it is not OK. only raised in the RUNNING.AWAITING_CMD_RESPONSE state
+    @ called when the statement unsuccessfully executed. only raised in the RUNNING.AWAITING_CMD_RESPONSE state
     signal stmtResponse_failure
     @ called when an unexpected or incorrect statement response comes in. only raised in the RUNNING state
     signal stmtResponse_unexpected
+    @ called when the statement is telling the sequencer to await a later stmt response
+    signal stmtResponse_keepWaiting
     @ raised when the statement times out, according to the timeout parameter
     signal result_checkStatementTimeout_statementTimeout
     @ raised when the statement has not timed out yet
@@ -242,6 +244,7 @@ state machine SequencerStateMachine {
             on stmtResponse_success enter DEBUG_BREAK_CHECK
             on stmtResponse_failure do { sendCmdResponse_EXECUTION_ERROR } enter IDLE
             on stmtResponse_beginSleep enter SLEEPING
+            # stmtResponse_keepWaiting not handled, we're already in the awaiting state
         }
 
         @ sequencer is not taking any action, waiting for a time in the future to continue
