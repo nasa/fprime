@@ -21,39 +21,6 @@ using Rule = STest::Rule<State>;
 
 namespace Rules {
 
-struct InsertNotFull : public Rule {
-    InsertNotFull() : Rule("InsertNotFull") {}
-    bool precondition(const State& state) { return static_cast<FwSizeType>(state.impl.getSize()) < State::capacity; }
-    void action(State& state) {
-        const auto key = state.getKey();
-        const auto value = state.getValue();
-        const auto size = state.impl.getSize();
-        const auto expectedSize = state.modelMapContains(key) ? size : size + 1;
-        const auto status = state.impl.insert(key, value);
-        ASSERT_EQ(status, Success::SUCCESS);
-        ASSERT_EQ(state.impl.getSize(), expectedSize);
-        state.modelMap[key] = value;
-    }
-};
-
-extern InsertNotFull insertNotFull;
-
-struct InsertFull : public Rule {
-    InsertFull() : Rule("InsertFull") {}
-    bool precondition(const State& state) { return static_cast<FwSizeType>(state.impl.getSize()) >= State::capacity; }
-    void action(State& state) {
-        const auto key = state.getKey();
-        const auto value = state.getValue();
-        const auto size = state.impl.getSize();
-        const auto expectedStatus = state.modelMapContains(key) ? Success::SUCCESS : Success::FAILURE;
-        const auto status = state.impl.insert(key, value);
-        ASSERT_EQ(status, expectedStatus);
-        ASSERT_EQ(state.impl.getSize(), size);
-    }
-};
-
-extern InsertFull insertFull;
-
 struct At : public Rule {
     At() : Rule("At") {}
     bool precondition(const State& state) { return state.impl.getSize() > 0; }
@@ -71,29 +38,60 @@ struct At : public Rule {
     }
 };
 
-extern At at;
+struct Clear : public Rule {
+    Clear() : Rule("Clear") {}
+    bool precondition(const State& state) { return state.impl.getSize() > 0; }
+    void action(State& state) {
+        state.impl.clear();
+        ASSERT_EQ(state.impl.getSize(), 0);
+        state.modelMap.clear();
+    }
+};
 
-struct RemoveExisting : public Rule {
-    RemoveExisting() : Rule("RemoveExisting") {}
+struct FindExisting : public Rule {
+    FindExisting() : Rule("FindExisting") {}
     bool precondition(const State& state) { return static_cast<FwSizeType>(state.impl.getSize()) > 0; }
     void action(State& state) {
         const auto size = state.impl.getSize();
         const auto index = STest::Pick::startLength(0, static_cast<U32>(size));
         const auto& it = state.impl.at(index);
         const auto key = it.getKey();
-        const auto expectedValue = it.getValue();
+        const auto expectedValue = state.modelMap[key];
         State::ValueType value = 0;
-        const auto status = state.impl.remove(key, value);
+        const auto status = state.impl.find(key, value);
         ASSERT_EQ(status, Success::SUCCESS);
         ASSERT_EQ(value, expectedValue);
-        const auto n = state.modelMap.erase(key);
-        ASSERT_EQ(n, 1);
-        ASSERT_EQ(state.impl.getSize(), state.modelMap.size());
     }
 };
 
-extern RemoveExisting removeExisting;
+struct InsertFull : public Rule {
+    InsertFull() : Rule("InsertFull") {}
+    bool precondition(const State& state) { return static_cast<FwSizeType>(state.impl.getSize()) >= State::capacity; }
+    void action(State& state) {
+        const auto key = state.getKey();
+        const auto value = state.getValue();
+        const auto size = state.impl.getSize();
+        const auto expectedStatus = state.modelMapContains(key) ? Success::SUCCESS : Success::FAILURE;
+        const auto status = state.impl.insert(key, value);
+        ASSERT_EQ(status, expectedStatus);
+        ASSERT_EQ(state.impl.getSize(), size);
+    }
+};
 
+struct InsertNotFull : public Rule {
+    InsertNotFull() : Rule("InsertNotFull") {}
+    bool precondition(const State& state) { return static_cast<FwSizeType>(state.impl.getSize()) < State::capacity; }
+    void action(State& state) {
+        const auto key = state.getKey();
+        const auto value = state.getValue();
+        const auto size = state.impl.getSize();
+        const auto expectedSize = state.modelMapContains(key) ? size : size + 1;
+        const auto status = state.impl.insert(key, value);
+        ASSERT_EQ(status, Success::SUCCESS);
+        ASSERT_EQ(state.impl.getSize(), expectedSize);
+        state.modelMap[key] = value;
+    }
+};
 
 struct Remove : public Rule {
     Remove() : Rule("Remove") {}
@@ -118,19 +116,38 @@ struct Remove : public Rule {
     }
 };
 
-extern Remove remove;
-
-struct Clear : public Rule {
-    Clear() : Rule("Clear") {}
-    bool precondition(const State& state) { return state.impl.getSize() > 0; }
+struct RemoveExisting : public Rule {
+    RemoveExisting() : Rule("RemoveExisting") {}
+    bool precondition(const State& state) { return static_cast<FwSizeType>(state.impl.getSize()) > 0; }
     void action(State& state) {
-        state.impl.clear();
-        ASSERT_EQ(state.impl.getSize(), 0);
-        state.modelMap.clear();
+        const auto size = state.impl.getSize();
+        const auto index = STest::Pick::startLength(0, static_cast<U32>(size));
+        const auto& it = state.impl.at(index);
+        const auto key = it.getKey();
+        const auto expectedValue = state.modelMap[key];
+        State::ValueType value = 0;
+        const auto status = state.impl.remove(key, value);
+        ASSERT_EQ(status, Success::SUCCESS);
+        ASSERT_EQ(value, expectedValue);
+        const auto n = state.modelMap.erase(key);
+        ASSERT_EQ(n, 1);
+        ASSERT_EQ(state.impl.getSize(), state.modelMap.size());
     }
 };
 
+extern At at;
+
 extern Clear clear;
+
+extern FindExisting findExisting;
+
+extern InsertFull insertFull;
+
+extern InsertNotFull insertNotFull;
+
+extern Remove remove;
+
+extern RemoveExisting removeExisting;
 
 };  // namespace Rules
 
