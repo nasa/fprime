@@ -27,8 +27,11 @@ struct InsertNotFull : public Rule {
     void action(State& state) {
         const auto key = state.getKey();
         const auto value = state.getValue();
+        const auto size = state.impl.getSize();
+        const auto expectedSize = state.modelMapContains(key) ? size : size + 1;
         const auto status = state.impl.insert(key, value);
         ASSERT_EQ(status, Success::SUCCESS);
+        ASSERT_EQ(state.impl.getSize(), expectedSize);
         state.modelMap[key] = value;
     }
 };
@@ -41,10 +44,11 @@ struct InsertFull : public Rule {
     void action(State& state) {
         const auto key = state.getKey();
         const auto value = state.getValue();
-        const auto expectedStatus =
-            (state.modelMap.find(key) == state.modelMap.end()) ? Success::FAILURE : Success::SUCCESS;
+        const auto size = state.impl.getSize();
+        const auto expectedStatus = state.modelMapContains(key) ? Success::SUCCESS : Success::FAILURE;
         const auto status = state.impl.insert(key, value);
         ASSERT_EQ(status, expectedStatus);
+        ASSERT_EQ(state.impl.getSize(), size);
     }
 };
 
