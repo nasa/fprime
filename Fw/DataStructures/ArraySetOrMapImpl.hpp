@@ -16,6 +16,13 @@ namespace Fw {
 
 template <typename KE, typename VN>
 class ArraySetOrMapImpl {
+    // ----------------------------------------------------------------------
+    // Friend class for testing
+    // ----------------------------------------------------------------------
+
+    template <typename KK, typename VV>
+    friend class ArraySetOrMapImplTester;
+
   public:
     // ----------------------------------------------------------------------
     // Public types
