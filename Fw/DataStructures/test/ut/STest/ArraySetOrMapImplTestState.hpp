@@ -33,10 +33,18 @@ struct State {
   Impl& impl;
   //! The map for modeling correct behavior
   std::map<KeyType, ValueType> modelMap;
+  //! Whether to use the stored key
+  bool useStoredKey = false;
+  //! The stored key
+  KeyType storedKey = 0;
+  //! Whether to use the stored value
+  bool useStoredValue = false;
+  //! The stored value
+  ValueType storedValue = 0;
   //! Get a random key
-  static KeyType getRandomKey() { return static_cast<KeyType>(STest::Pick::any()); }
+  KeyType getKey() { return useStoredKey ? storedKey : static_cast<KeyType>(STest::Pick::any()); }
   //! Get a random value
-  static ValueType getRandomValue() { return static_cast<ValueType>(STest::Pick::any()); }
+  ValueType getValue() { return useStoredValue ? storedValue : static_cast<ValueType>(STest::Pick::any()); }
 };
 
 }

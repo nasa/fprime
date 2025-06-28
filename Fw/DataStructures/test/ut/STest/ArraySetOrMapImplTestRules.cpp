@@ -14,9 +14,9 @@ namespace Rules {
 
 InsertNotFull insertNotFull;
 
-#if 0
-PushFull pushFull;
+InsertFull insertFull;
 
+#if 0
 At at;
 
 PopOK popOK;

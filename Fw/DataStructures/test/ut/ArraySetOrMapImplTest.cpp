@@ -152,17 +152,20 @@ TEST(ArraySetOrMapImplRules, InsertNotFull) {
     Rules::insertNotFull.apply(state);
 }
 
-#if 0
 TEST(ArraySetOrMapImplRules, InsertFull) {
-    Entry entries[State::capacity];
-    State::ExternalQueue impl(entries, State::capacity);
+    State::Entry entries[State::capacity];
+    State::Impl impl(entries, State::capacity);
     State state(impl);
+    state.useStoredKey = true;
     for (FwSizeType i = 0; i < State::capacity; i++) {
-        Rules::insertOK.apply(state);
+        state.storedKey = static_cast<State::KeyType>(i);
+        Rules::insertNotFull.apply(state);
     }
+    state.useStoredKey = false;
     Rules::insertFull.apply(state);
 }
 
+#if 0
 TEST(ArraySetOrMapImplRules, At) {
     Entry entries[State::capacity];
     State::ExternalQueue impl(entries, State::capacity);

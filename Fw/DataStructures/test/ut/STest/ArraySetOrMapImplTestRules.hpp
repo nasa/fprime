@@ -23,33 +23,34 @@ namespace Rules {
 
 struct InsertNotFull : public Rule {
     InsertNotFull() : Rule("InsertNotFull") {}
-    bool precondition(const State& state) { 
-      return static_cast<FwSizeType>(state.impl.getSize()) < State::capacity;
-    }
+    bool precondition(const State& state) { return static_cast<FwSizeType>(state.impl.getSize()) < State::capacity; }
     void action(State& state) {
-      const State::KeyType key = state.getRandomKey();
-      const State::ValueType value = state.getRandomValue();
-      const auto status = state.impl.insert(key, value);
-      ASSERT_EQ(status, Success::SUCCESS);
-      state.modelMap[key] = value;
+        const auto key = state.getKey();
+        const auto value = state.getValue();
+        const auto status = state.impl.insert(key, value);
+        ASSERT_EQ(status, Success::SUCCESS);
+        state.modelMap[key] = value;
     }
 };
 
 extern InsertNotFull insertNotFull;
 
-#if 0
-struct PushFull : public Rule {
-    PushFull() : Rule("PushFull") {}
+struct InsertFull : public Rule {
+    InsertFull() : Rule("InsertFull") {}
     bool precondition(const State& state) { return static_cast<FwSizeType>(state.impl.getSize()) >= State::capacity; }
     void action(State& state) {
-        const auto item = State::getRandomItem();
-        const auto status = state.impl.push(item);
-        ASSERT_EQ(status, Success::FAILURE);
+        const auto key = state.getKey();
+        const auto value = state.getValue();
+        const auto expectedStatus =
+            (state.modelMap.find(key) == state.modelMap.end()) ? Success::FAILURE : Success::SUCCESS;
+        const auto status = state.impl.insert(key, value);
+        ASSERT_EQ(status, expectedStatus);
     }
 };
 
-extern PushFull pushFull;
+extern InsertFull insertFull;
 
+#if 0
 struct At : public Rule {
     At() : Rule("At") {}
     bool precondition(const State& state) { return state.impl.getSize() > 0; }
