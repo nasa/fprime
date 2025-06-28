@@ -18,6 +18,7 @@ namespace Scenarios {
 void random(const Fw::StringBase& name, State& state, U32 maxNumSteps) {
     Rule* rules[] = {
       &Rules::at,
+      &Rules::clear,
       &Rules::insertFull,
       &Rules::insertNotFull,
       &Rules::remove,
