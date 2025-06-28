@@ -170,6 +170,16 @@ TEST(ArraySetOrMapImplRules, RemoveExisting) {
     Rules::removeExisting.apply(state);
 }
 
+TEST(ArraySetOrMapImplRules, Remove) {
+    State::Entry entries[State::capacity];
+    State::Impl impl(entries, State::capacity);
+    State state(impl);
+    state.useStoredKey = true;
+    Rules::insertNotFull.apply(state);
+    Rules::remove.apply(state);
+    Rules::remove.apply(state);
+}
+
 #if 0
 TEST(ArraySetOrMapImplRules, DeimplEmpty) {
     Entry entries[State::capacity];

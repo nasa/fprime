@@ -20,6 +20,8 @@ At at;
 
 RemoveExisting removeExisting;
 
+Remove remove;
+
 #if 0
 PopEmpty popEmpty;
 

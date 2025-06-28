@@ -94,6 +94,32 @@ struct RemoveExisting : public Rule {
 
 extern RemoveExisting removeExisting;
 
+
+struct Remove : public Rule {
+    Remove() : Rule("Remove") {}
+    bool precondition(const State& state) { return true; }
+    void action(State& state) {
+        const auto size = state.impl.getSize();
+        ASSERT_EQ(size, state.modelMap.size());
+        const auto key = state.getKey();
+        State::ValueType value = 0;
+        const auto status = state.impl.remove(key, value);
+        if (state.modelMap.count(key) != 0) {
+            ASSERT_EQ(status, Success::SUCCESS);
+            ASSERT_EQ(value, state.modelMap[key]);
+            ASSERT_EQ(state.impl.getSize(), size - 1);
+        }
+        else {
+            ASSERT_EQ(status, Success::FAILURE);
+            ASSERT_EQ(state.impl.getSize(), size);
+        }
+        (void) state.modelMap.erase(key);
+        ASSERT_EQ(state.impl.getSize(), state.modelMap.size());
+    }
+};
+
+extern Remove remove;
+
 #if 0
 struct PopEmpty : public Rule {
     PopEmpty() : Rule("PopEmpty") {}
