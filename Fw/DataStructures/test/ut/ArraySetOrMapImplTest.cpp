@@ -11,9 +11,7 @@
 
 #include "Fw/DataStructures/test/ut/ArraySetOrMapImplTester.hpp"
 #include "Fw/DataStructures/test/ut/STest/ArraySetOrMapImplTestRules.hpp"
-#if 0
-#include "Fw/DataStructures/test/ut/STest/SetOrMapTestScenarios.hpp"
-#endif
+#include "Fw/DataStructures/test/ut/STest/ArraySetOrMapImplTestScenarios.hpp"
 
 namespace Fw {
 
@@ -190,14 +188,14 @@ TEST(ArraySetOrMapImplRules, Clear) {
     Rules::clear.apply(state);
     ASSERT_EQ(state.impl.getSize(), 0);
 }
+#endif
 
 TEST(ArraySetOrMapImplScenarios, Random) {
-    Entry entries[State::capacity];
-    State::ExternalQueue impl(entries, State::capacity);
+    State::Entry entries[State::capacity];
+    State::Impl impl(entries, State::capacity);
     State state(impl);
     Scenarios::random(Fw::String("ArraySetOrMapImplRandom"), state, 1000);
 }
-#endif
 
 }  // namespace ArraySetOrMapTest
 }  // namespace Fw
