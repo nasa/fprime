@@ -12,21 +12,17 @@ namespace ArraySetOrMapImplTest {
 
 namespace Rules {
 
-InsertNotFull insertNotFull;
+At at;
+
+Clear clear;
 
 InsertFull insertFull;
 
-At at;
-
-RemoveExisting removeExisting;
+InsertNotFull insertNotFull;
 
 Remove remove;
 
-#if 0
-PopEmpty popEmpty;
-
-Clear clear;
-#endif
+RemoveExisting removeExisting;
 
 };  // namespace Rules
 

@@ -24,25 +24,22 @@ TEST(ArraySetOrMapImpl, ZeroArgConstructor) {
 }
 
 TEST(ArraySetOrMapImpl, TypedStorageConstructor) {
-    constexpr FwSizeType capacity = 10;
-    State::Entry entries[capacity];
-    State::Impl impl(entries, capacity);
+    State::Entry entries[State::capacity];
+    State::Impl impl(entries, State::capacity);
     State::Tester tester(impl);
     ASSERT_EQ(tester.getEntries().getElements(), entries);
-    ASSERT_EQ(impl.getCapacity(), capacity);
+    ASSERT_EQ(impl.getCapacity(), FwSizeType(State::capacity));
     ASSERT_EQ(impl.getSize(), 0);
 }
 
 TEST(ArraySetOrMapImpl, UntypedStorageConstructor) {
-    constexpr FwSizeType capacity = 10;
-    using Entry = SetOrMapIterator<U16, U32>;
-    constexpr U8 alignment = ArraySetOrMapImpl<U16, U32>::getByteArrayAlignment();
-    constexpr FwSizeType byteArraySize = ArraySetOrMapImpl<U16, U32>::getByteArraySize(capacity);
+    constexpr auto alignment = State::Impl::getByteArrayAlignment();
+    constexpr auto byteArraySize = State::Impl::getByteArraySize(State::capacity);
     alignas(alignment) U8 bytes[byteArraySize];
-    ArraySetOrMapImpl<U16, U32> impl(ByteArray(&bytes[0], sizeof bytes), capacity);
-    ArraySetOrMapImplTester<U16, U32> tester(impl);
-    ASSERT_EQ(tester.getEntries().getElements(), reinterpret_cast<Entry*>(bytes));
-    ASSERT_EQ(impl.getCapacity(), capacity);
+    State::Impl impl(ByteArray(&bytes[0], sizeof bytes), State::capacity);
+    State::Tester tester(impl);
+    ASSERT_EQ(tester.getEntries().getElements(), reinterpret_cast<State::Entry*>(bytes));
+    ASSERT_EQ(impl.getCapacity(), FwSizeType(State::capacity));
     ASSERT_EQ(impl.getSize(), 0);
 }
 
@@ -180,24 +177,15 @@ TEST(ArraySetOrMapImplRules, Remove) {
     Rules::remove.apply(state);
 }
 
-#if 0
-TEST(ArraySetOrMapImplRules, DeimplEmpty) {
-    Entry entries[State::capacity];
-    State::Impl impl(entries, State::capacity);
-    State state(impl);
-    Rules::deimplEmpty.apply(state);
-}
-
 TEST(ArraySetOrMapImplRules, Clear) {
-    Entry entries[State::capacity];
+  State::Entry entries[State::capacity];
     State::Impl impl(entries, State::capacity);
     State state(impl);
-    Rules::insertOK.apply(state);
+    Rules::insertNotFull.apply(state);
     ASSERT_EQ(state.impl.getSize(), 1);
     Rules::clear.apply(state);
     ASSERT_EQ(state.impl.getSize(), 0);
 }
-#endif
 
 TEST(ArraySetOrMapImplScenarios, Random) {
     State::Entry entries[State::capacity];

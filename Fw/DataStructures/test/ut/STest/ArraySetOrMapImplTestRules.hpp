@@ -120,32 +120,18 @@ struct Remove : public Rule {
 
 extern Remove remove;
 
-#if 0
-struct PopEmpty : public Rule {
-    PopEmpty() : Rule("PopEmpty") {}
-    bool precondition(const State& state) { return static_cast<FwSizeType>(state.impl.getSize()) == 0; }
-    void action(State& state) {
-        U32 value = 0;
-        const auto status = state.impl.pop(value);
-        ASSERT_EQ(status, Success::FAILURE);
-    }
-};
-
-extern PopEmpty popEmpty;
-
 struct Clear : public Rule {
     Clear() : Rule("Clear") {}
     bool precondition(const State& state) { return state.impl.getSize() > 0; }
     void action(State& state) {
         state.impl.clear();
         ASSERT_EQ(state.impl.getSize(), 0);
-        state.modelArraySetOrMapImpl.clear();
+        state.modelMap.clear();
     }
 };
 
 extern Clear clear;
 
-#endif
 };  // namespace Rules
 
 }  // namespace ArraySetOrMapImplTest
