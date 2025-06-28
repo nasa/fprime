@@ -17,9 +17,10 @@ namespace Scenarios {
 
 void random(const Fw::StringBase& name, State& state, U32 maxNumSteps) {
     Rule* rules[] = {
+      &Rules::at,
       &Rules::insertNotFull,
       &Rules::insertFull,
-      &Rules::at
+      &Rules::removeExisting
     };
     STest::RandomScenario<State> scenario("RandomScenario", rules,
                                           sizeof(rules) / sizeof(STest::RandomScenario<State>*));

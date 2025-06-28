@@ -25,10 +25,9 @@ TEST(ArraySetOrMapImpl, ZeroArgConstructor) {
 
 TEST(ArraySetOrMapImpl, TypedStorageConstructor) {
     constexpr FwSizeType capacity = 10;
-    using Entry = SetOrMapIterator<U16, U32>;
-    Entry entries[capacity];
-    ArraySetOrMapImpl<U16, U32> impl(entries, capacity);
-    ArraySetOrMapImplTester<U16, U32> tester(impl);
+    State::Entry entries[capacity];
+    State::Impl impl(entries, capacity);
+    State::Tester tester(impl);
     ASSERT_EQ(tester.getEntries().getElements(), entries);
     ASSERT_EQ(impl.getCapacity(), capacity);
     ASSERT_EQ(impl.getSize(), 0);
@@ -163,25 +162,25 @@ TEST(ArraySetOrMapImplRules, At) {
     Rules::at.apply(state);
 }
 
-#if 0
-TEST(ArraySetOrMapImplRules, DeimplOK) {
-    Entry entries[State::capacity];
-    State::ExternalQueue impl(entries, State::capacity);
+TEST(ArraySetOrMapImplRules, RemoveExisting) {
+    State::Entry entries[State::capacity];
+    State::Impl impl(entries, State::capacity);
     State state(impl);
-    Rules::insertOK.apply(state);
-    Rules::deimplOK.apply(state);
+    Rules::insertNotFull.apply(state);
+    Rules::removeExisting.apply(state);
 }
 
+#if 0
 TEST(ArraySetOrMapImplRules, DeimplEmpty) {
     Entry entries[State::capacity];
-    State::ExternalQueue impl(entries, State::capacity);
+    State::Impl impl(entries, State::capacity);
     State state(impl);
     Rules::deimplEmpty.apply(state);
 }
 
 TEST(ArraySetOrMapImplRules, Clear) {
     Entry entries[State::capacity];
-    State::ExternalQueue impl(entries, State::capacity);
+    State::Impl impl(entries, State::capacity);
     State state(impl);
     Rules::insertOK.apply(state);
     ASSERT_EQ(state.impl.getSize(), 1);

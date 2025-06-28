@@ -73,24 +73,28 @@ struct At : public Rule {
 
 extern At at;
 
-#if 0
-struct PopOK : public Rule {
-    PopOK() : Rule("PopOK") {}
+struct RemoveExisting : public Rule {
+    RemoveExisting() : Rule("RemoveExisting") {}
     bool precondition(const State& state) { return static_cast<FwSizeType>(state.impl.getSize()) > 0; }
     void action(State& state) {
         const auto size = state.impl.getSize();
-        U32 value = 0;
-        const auto status = state.impl.pop(value);
+        const auto index = STest::Pick::startLength(0, static_cast<U32>(size));
+        const auto& it = state.impl.at(index);
+        const auto key = it.getKey();
+        const auto expectedValue = it.getValue();
+        State::ValueType value = 0;
+        const auto status = state.impl.remove(key, value);
         ASSERT_EQ(status, Success::SUCCESS);
-        const auto expectedValue = state.modelArraySetOrMapImpl.at(size - 1);
         ASSERT_EQ(value, expectedValue);
-        state.modelArraySetOrMapImpl.pop_back();
-        ASSERT_EQ(state.impl.getSize(), state.modelArraySetOrMapImpl.size());
+        const auto n = state.modelMap.erase(key);
+        ASSERT_EQ(n, 1);
+        ASSERT_EQ(state.impl.getSize(), state.modelMap.size());
     }
 };
 
-extern PopOK popOK;
+extern RemoveExisting removeExisting;
 
+#if 0
 struct PopEmpty : public Rule {
     PopEmpty() : Rule("PopEmpty") {}
     bool precondition(const State& state) { return static_cast<FwSizeType>(state.impl.getSize()) == 0; }
