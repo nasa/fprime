@@ -9,25 +9,13 @@
 #include "Fw/DataStructures/ArraySetOrMapImpl.hpp"
 #include "STest/STest/Pick/Pick.hpp"
 
+#include "Fw/DataStructures/test/ut/ArraySetOrMapImplTester.hpp"
 #include "Fw/DataStructures/test/ut/STest/ArraySetOrMapImplTestRules.hpp"
 #if 0
 #include "Fw/DataStructures/test/ut/STest/SetOrMapTestScenarios.hpp"
 #endif
 
 namespace Fw {
-
-template <typename KE, typename VN>
-class ArraySetOrMapImplTester {
-  public:
-    using Entry = SetOrMapIterator<KE, VN>;
-
-    ArraySetOrMapImplTester<KE, VN>(const ArraySetOrMapImpl<KE, VN>& impl) : m_impl(impl) {}
-
-    const ExternalArray<Entry>& getEntries() const { return this->m_impl.m_entries; }
-
-  private:
-    const ArraySetOrMapImpl<KE, VN>& m_impl;
-};
 
 namespace ArraySetOrMapImplTest {
 
@@ -165,15 +153,19 @@ TEST(ArraySetOrMapImplRules, InsertFull) {
     Rules::insertFull.apply(state);
 }
 
-#if 0
 TEST(ArraySetOrMapImplRules, At) {
-    Entry entries[State::capacity];
-    State::ExternalQueue impl(entries, State::capacity);
+    State::Entry entries[State::capacity];
+    State::Impl impl(entries, State::capacity);
     State state(impl);
-    Rules::insertOK.apply(state);
+    state.useStoredKey = true;
+    Rules::insertNotFull.apply(state);
+    Rules::insertNotFull.apply(state);
+    state.storedKey = 1;
+    Rules::insertNotFull.apply(state);
     Rules::at.apply(state);
 }
 
+#if 0
 TEST(ArraySetOrMapImplRules, DeimplOK) {
     Entry entries[State::capacity];
     State::ExternalQueue impl(entries, State::capacity);

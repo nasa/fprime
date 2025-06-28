@@ -54,19 +54,26 @@ struct InsertFull : public Rule {
 
 extern InsertFull insertFull;
 
-#if 0
 struct At : public Rule {
     At() : Rule("At") {}
     bool precondition(const State& state) { return state.impl.getSize() > 0; }
     void action(State& state) {
         const auto size = state.impl.getSize();
-        const auto index = STest::Pick::startLength(0, static_cast<U32>(size));
-        ASSERT_EQ(state.impl.at(index), state.modelArraySetOrMapImpl.at(size - 1 - index));
+        const auto* it = state.impl.getHeadIterator();
+        for (FwSizeType i = 0; i < size; i++) {
+            const auto& it1 = state.impl.at(i);
+            ASSERT_NE(it, nullptr);
+            const auto& it2 = *it;
+            ASSERT_EQ(it1.getKey(), it2.getKey());
+            ASSERT_EQ(it1.getValue(), it2.getValue());
+            it = it->getNextIterator();
+        }
     }
 };
 
 extern At at;
 
+#if 0
 struct PopOK : public Rule {
     PopOK() : Rule("PopOK") {}
     bool precondition(const State& state) { return static_cast<FwSizeType>(state.impl.getSize()) > 0; }

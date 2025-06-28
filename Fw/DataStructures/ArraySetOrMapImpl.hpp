@@ -84,7 +84,8 @@ class ArraySetOrMapImpl {
     //! \return The iterator
     const Iterator& at(FwSizeType index  //!< The index
     ) const {
-        FW_ASSERT(index < this->m_size, static_cast<FwSizeType>(index), static_cast<FwSizeType>(this->m_size));
+        FW_ASSERT(index < this->m_size, static_cast<FwAssertArgType>(index),
+                  static_cast<FwAssertArgType>(this->m_size));
         return this->m_entries[index];
     }
 

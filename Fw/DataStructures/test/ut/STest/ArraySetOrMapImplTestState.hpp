@@ -10,6 +10,7 @@
 #include <map>
 
 #include "Fw/DataStructures/ArraySetOrMapImpl.hpp"
+#include "Fw/DataStructures/test/ut/ArraySetOrMapImplTester.hpp"
 #include "STest/STest/Pick/Pick.hpp"
 
 namespace Fw {
@@ -25,12 +26,16 @@ struct State {
     static constexpr FwSizeType capacity = 1024;
     //! The Impl type
     using Impl = ArraySetOrMapImpl<KeyType, ValueType>;
+    //! The Tester type
+    using Tester = ArraySetOrMapImplTester<KeyType, ValueType>;
     //! The entry type
     using Entry = SetOrMapIterator<U16, U32>;
     //! Constructor
-    State(Impl& a_impl) : impl(a_impl) {}
+    State(Impl& a_impl) : impl(a_impl), tester(a_impl) {}
     //! The array set or map under test
     Impl& impl;
+    //! The tester
+    Tester tester;
     //! The map for modeling correct behavior
     std::map<KeyType, ValueType> modelMap;
     //! Whether to use the stored key
