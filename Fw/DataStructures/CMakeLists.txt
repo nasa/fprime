@@ -6,9 +6,10 @@ register_fprime_module()
 
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/ArraySetOrMapImplTest.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/DataStructuresTestMain.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/ArraySetOrMapImplTestRules.cpp"
 #  "${CMAKE_CURRENT_LIST_DIR}/test/ut/ArrayTest.cpp"
 #  "${CMAKE_CURRENT_LIST_DIR}/test/ut/CircularIndexTest.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/DataStructuresTestMain.cpp"
 #  "${CMAKE_CURRENT_LIST_DIR}/test/ut/ExternalArrayMapTest.cpp"
 #  "${CMAKE_CURRENT_LIST_DIR}/test/ut/ExternalArraySetTest.cpp"
 #  "${CMAKE_CURRENT_LIST_DIR}/test/ut/ExternalArrayTest.cpp"

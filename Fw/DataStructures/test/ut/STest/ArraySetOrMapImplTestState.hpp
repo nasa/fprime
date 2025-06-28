@@ -23,12 +23,14 @@ struct State {
   using ValueType = U32;
   //! The array set or map capacity
   static constexpr FwSizeType capacity = 1024;
-  //! The ArraySetOrMapImpl type
-  using ArraySetOrMapImpl = ArraySetOrMapImpl<KeyType, ValueType>;
+  //! The Impl type
+  using Impl = ArraySetOrMapImpl<KeyType, ValueType>;
+  //! The entry type
+  using Entry = SetOrMapIterator<U16, U32>;
   //! Constructor
-  State(ArraySetOrMapImpl& a_impl) : impl(a_impl) {}
+  State(Impl& a_impl) : impl(a_impl) {}
   //! The array set or map under test
-  ArraySetOrMapImpl& impl;
+  Impl& impl;
   //! The map for modeling correct behavior
   std::map<KeyType, ValueType> modelMap;
   //! Get a random key

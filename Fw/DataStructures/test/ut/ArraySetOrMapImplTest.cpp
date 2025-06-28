@@ -9,9 +9,8 @@
 #include "Fw/DataStructures/ArraySetOrMapImpl.hpp"
 #include "STest/STest/Pick/Pick.hpp"
 
-#include "Fw/DataStructures/test/ut/STest/ArraySetOrMapImplTestState.hpp"
+#include "Fw/DataStructures/test/ut/STest/ArraySetOrMapImplTestRules.hpp"
 #if 0
-#include "Fw/DataStructures/test/ut/STest/SetOrMapTestRules.hpp"
 #include "Fw/DataStructures/test/ut/STest/SetOrMapTestScenarios.hpp"
 #endif
 
@@ -144,14 +143,16 @@ TEST(ArraySetOrMapImpl, CopyDataFrom) {
         testCopyDataFrom(q1, maxSize, q2);
     }
 }
+#endif
 
-TEST(ArraySetOrMapImplRules, InsertOK) {
-    Entry entries[State::capacity];
-    State::ExternalQueue impl(entries, State::capacity);
+TEST(ArraySetOrMapImplRules, InsertNotFull) {
+    State::Entry entries[State::capacity];
+    State::Impl impl(entries, State::capacity);
     State state(impl);
-    Rules::insertOK.apply(state);
+    Rules::insertNotFull.apply(state);
 }
 
+#if 0
 TEST(ArraySetOrMapImplRules, InsertFull) {
     Entry entries[State::capacity];
     State::ExternalQueue impl(entries, State::capacity);
