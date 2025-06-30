@@ -105,15 +105,15 @@ jobs:
           sudo mkdir -p ${INSTALL_DIR}/test
           
           # Copy binary and make executable
-          sudo cp ./aarch64-linux-artifacts-soak/build-artifacts/aarch64-linux/LedBlinker/bin/LedBlinker ${INSTALL_DIR}/bin/
+          sudo cp ./aarch64-linux-artifacts-soak/aarch64-linux/LedBlinker/bin/LedBlinker ${INSTALL_DIR}/bin/
           sudo chmod +x ${INSTALL_DIR}/bin/LedBlinker
           
           # Copy dictionary and test files
-          sudo cp -r ./aarch64-linux-artifacts-soak/build-artifacts/aarch64-linux/LedBlinker/dict/* ${INSTALL_DIR}/dict/
+          sudo cp -r ./aarch64-linux-artifacts-soak/aarch64-linux/LedBlinker/dict/* ${INSTALL_DIR}/dict/
           sudo cp -r ./aarch64-linux-artifacts-soak/int/* ${INSTALL_DIR}/test/
           
           # Set ownership, so service can access files
-          sudo chown -R pi:pi ${INSTALL_DIR}
+          sudo chown -R fprime:fprime ${INSTALL_DIR}
           
       - name: "Create systemd service file"
         run: |
@@ -126,7 +126,7 @@ jobs:
           
           [Service]
           Type=simple
-          User=pi
+          User=fprime
           WorkingDirectory=${INSTALL_DIR}
           ExecStart=${INSTALL_DIR}/bin/LedBlinker -a 127.0.0.1 -p 50000
           Restart=always
