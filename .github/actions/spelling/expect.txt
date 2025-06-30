@@ -7,7 +7,6 @@ ACTIVELOGGERIMPLTESTER
 ACTIVERATEGROUP
 ACTIVERATEGROUPCFG
 ACTIVERATEGROUPTESTER
-ACTIVERATEGROUPIMPLTESTER
 ACTIVETEXTLOGGERIMPL
 ADDRSTRLEN
 adminlist
@@ -328,6 +327,7 @@ jenkins
 jenkinsci
 Joaquim
 jobrestrictions
+journalctl
 jpl
 jplffs
 jre
@@ -338,6 +338,7 @@ lammertbies
 LASTLOG
 LBLOCK
 LCHILD
+ledblinker
 leisher
 lestarch
 lflag
@@ -357,7 +358,6 @@ LOCALSTATEDIR
 LOGGERRULES
 LOGPACKET
 lseek
-lvar
 LVL
 lxml
 MACROFILE
@@ -400,7 +400,6 @@ mycompany
 nasafprime
 nbits
 ncsl
-netinet
 newtio
 nmsgs
 NOBLOCK
@@ -478,10 +477,9 @@ PRIORITYQUEUE
 prm
 PRMDB
 PRMDBIMPL
-PRMDBTESTER
-PRMDBIMPLTESTER
 PRMDBIMPLTESTERCFG
 PRMDBLIMPLCFG
+PRMDBTESTER
 PRMLEDINITSTATE
 PROCBUFFERSENDOUT
 PRODUCTGETIN
@@ -556,13 +554,12 @@ seqgen
 serializables
 setaffinity
 setinheritsched
-setlocalvar
 SETLOGGING
 setprotocol
 setschedparam
 setschedpolicy
-setstacksize
 setser
+setstacksize
 settime
 sev
 sfregoso
@@ -678,9 +675,9 @@ UNEXP
 unistd
 UNITTESTASSERT
 unittests
+urhs
 useconds
 usecs
-urhs
 valgrind
 vbai
 VCA
