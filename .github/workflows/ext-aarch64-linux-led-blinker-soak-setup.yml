@@ -128,7 +128,7 @@ jobs:
           Type=simple
           User=fprime
           WorkingDirectory=${INSTALL_DIR}
-          ExecStart=${INSTALL_DIR}/bin/LedBlinker -a 127.0.0.1 -p 50000
+          ExecStart=${INSTALL_DIR}/bin/LedBlinker -a 0.0.0.0 -p 50000
           Restart=always
           RestartSec=5
           StandardOutput=journal

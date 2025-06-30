@@ -57,7 +57,7 @@ jobs:
           
           # Start GDS connected to the running service
           echo "Starting F' GDS to connect to running service..."
-          fprime-gds  --ip-address 127.0.0.1 --ip-port 50000 -d ${INSTALL_DIR} --logs ${TEST_LOG_DIR} &
+          fprime-gds --ip-client --ip-address 127.0.0.1 --ip-port 50000 -d ${INSTALL_DIR} --logs ${TEST_LOG_DIR} &
           GDS_PID=$!
           
           # Wait for GDS to start
