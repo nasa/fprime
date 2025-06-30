@@ -163,6 +163,78 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     Svc::Signal tester_checkStatementTimeout();
     Svc::Signal tester_checkShouldWake();
     Svc::FpySequencer::Telemetry* tester_get_m_tlm_ptr();
+    void tester_doDispatch();
+    void tester_setState(Svc::FpySequencer_SequencerStateMachineStateMachineBase::State state);
+    Svc::FpySequencer_SequencerStateMachineStateMachineBase::State tester_getState();
+
+  public:
+    // ----------------------------------------------------------------------
+    // Static methods for accessing protected opcodes
+    // ----------------------------------------------------------------------
+
+    //! Get the OPCODE_RUN value
+    static FwOpcodeType get_OPCODE_RUN() {
+        return FpySequencerComponentBase::OPCODE_RUN;
+    }
+
+    //! Get the OPCODE_VALIDATE value
+    static FwOpcodeType get_OPCODE_VALIDATE() {
+        return FpySequencerComponentBase::OPCODE_VALIDATE;
+    }
+
+    //! Get the OPCODE_RUN_VALIDATED value
+    static FwOpcodeType get_OPCODE_RUN_VALIDATED() {
+        return FpySequencerComponentBase::OPCODE_RUN_VALIDATED;
+    }
+
+    //! Get the OPCODE_CANCEL value
+    static FwOpcodeType get_OPCODE_CANCEL() {
+        return FpySequencerComponentBase::OPCODE_CANCEL;
+    }
+
+    //! Get the OPCODE_DEBUG_CLEAR_BREAKPOINT value
+    static FwOpcodeType get_OPCODE_DEBUG_CLEAR_BREAKPOINT() {
+        return FpySequencerComponentBase::OPCODE_DEBUG_CLEAR_BREAKPOINT;
+    }
+
+    //! Get the OPCODE_DEBUG_SET_BREAKPOINT value
+    static FwOpcodeType get_OPCODE_DEBUG_SET_BREAKPOINT() {
+        return FpySequencerComponentBase::OPCODE_DEBUG_SET_BREAKPOINT;
+    }
+
+    //! Get the OPCODE_DEBUG_BREAK value
+    static FwOpcodeType get_OPCODE_DEBUG_BREAK() {
+        return FpySequencerComponentBase::OPCODE_DEBUG_BREAK;
+    }
+
+    //! Get the OPCODE_DEBUG_CONTINUE value
+    static FwOpcodeType get_OPCODE_DEBUG_CONTINUE() {
+        return FpySequencerComponentBase::OPCODE_DEBUG_CONTINUE;
+    }
+
+
+};
+
+class FpySequencer_SequencerStateMachineTester {
+    // ----------------------------------------------------------------------
+    // Construction and destruction
+    // ----------------------------------------------------------------------
+
+  public:
+    //! Construct object FpySequencer_SequencerStateMachineTester
+    //!
+    FpySequencer_SequencerStateMachineTester();
+
+    //! Destroy object FpySequencer_SequencerStateMachineTester
+    //!
+    ~FpySequencer_SequencerStateMachineTester();
+
+    // ----------------------------------------------------------------------
+    // Test access to private and protected methods and members
+    // ----------------------------------------------------------------------
+    static void setState(FpySequencer_SequencerStateMachineStateMachineBase& sm, State s){
+        sm.m_state = s;
+    }
 
 };
 
