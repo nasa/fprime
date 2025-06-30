@@ -16,7 +16,7 @@ env:
 jobs:
   scheduled-test:
     name: "Scheduled Integration Test"
-    runs-on: [self-hosted, aarch64-linux]
+    runs-on: [self-hosted, ARM64]
     timeout-minutes: 10  # Each test should complete within 10 minutes
     steps:
       - name: "Checkout F´ Repository"
