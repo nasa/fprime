@@ -33,6 +33,7 @@ jobs:
             Fw/Buffer
             Fw/Cmd
             Fw/Com
+            Svc/Ccsds
         run: |
           fprime-util format --check --dirs $CHECKED_DIRS
         shell: bash

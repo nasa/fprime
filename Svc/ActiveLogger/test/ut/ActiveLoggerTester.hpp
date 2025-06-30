@@ -1,12 +1,12 @@
 /*
- * ActiveLoggerImplTester.hpp
+ * ActiveLoggerTester.hpp
  *
  *  Created on: Mar 18, 2015
  *      Author: tcanham
  */
 
-#ifndef ACTIVELOGGER_TEST_UT_ACTIVELOGGERIMPLTESTER_HPP_
-#define ACTIVELOGGER_TEST_UT_ACTIVELOGGERIMPLTESTER_HPP_
+#ifndef ACTIVELOGGER_TEST_UT_ACTIVELOGGER_TESTER_HPP_
+#define ACTIVELOGGER_TEST_UT_ACTIVELOGGER_TESTER_HPP_
 
 #include <ActiveLoggerGTestBase.hpp>
 #include <Svc/ActiveLogger/ActiveLoggerImpl.hpp>
@@ -14,10 +14,10 @@
 
 namespace Svc {
 
-    class ActiveLoggerImplTester: public Svc::ActiveLoggerGTestBase {
+    class ActiveLoggerTester: public Svc::ActiveLoggerGTestBase {
         public:
-            ActiveLoggerImplTester(Svc::ActiveLoggerImpl& inst);
-            virtual ~ActiveLoggerImplTester();
+            explicit ActiveLoggerTester(Svc::ActiveLoggerImpl& inst);
+            virtual ~ActiveLoggerTester();
 
             void runEventNominal();
             void runFilterEventNominal();
@@ -77,4 +77,4 @@ namespace Svc {
 
 } /* namespace Svc */
 
-#endif /* ACTIVELOGGER_TEST_UT_ACTIVELOGGERIMPLTESTER_HPP_ */
+#endif /* ACTIVELOGGER_TEST_UT_ACTIVELOGGER_TESTER_HPP_ */

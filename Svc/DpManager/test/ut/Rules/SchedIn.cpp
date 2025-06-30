@@ -29,7 +29,7 @@ void TestState ::action__SchedIn__OK() {
     // Invoke schedIn port
     const U32 context = STest::Pick::any();
     this->invoke_to_schedIn(0, context);
-    this->component.doDispatch();
+    this->doDispatch();
     // Check telemetry
     this->checkTelemetry();
 }

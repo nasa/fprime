@@ -253,7 +253,7 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
 
     // okay, it was from this sequence. now if anything's wrong from this point on we should fail the sequence
 
-    // first, make sure we're actually awaiting a command
+    // first, make sure we're actually awaiting a statement response
     if (this->sequencer_getState() != State::RUNNING_AWAITING_STATEMENT_RESPONSE) {
         // okay, crap. something from this sequence responded, and we weren't awaiting anything. end it all
         this->log_WARNING_HI_CmdResponseWhileNotAwaiting(opCode, response);
@@ -261,12 +261,18 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
         return;
     }
 
-    // okay, we were awaiting a command. were we awaiting this opcode?
-    if (opCode != this->m_runtime.currentStatementOpcode ||
-        this->m_runtime.currentStatementType != Fpy::StatementType::COMMAND) {
+    if (this->m_runtime.currentStatementOpcode != Fpy::DirectiveId::CMD) {
+        // we were not awaiting a cmd response, we were waiting for a directive
+        this->log_WARNING_HI_CmdResponseWhileAwaitingDirective(opCode, response, this->m_runtime.currentStatementOpcode);
+        this->sequencer_sendSignal_stmtResponse_unexpected();
+        return;
+    }
+
+    // okay, we were awaiting a cmd response. were we awaiting this opcode?
+    if (opCode != this->m_runtime.currentCmdOpcode) {
         // we were not awaiting this opcode. coding error, likely on the part of the responding component or cmd
         // dispatcher
-        this->log_WARNING_HI_WrongCmdResponseOpcode(opCode, response, this->m_runtime.currentStatementOpcode);
+        this->log_WARNING_HI_WrongCmdResponseOpcode(opCode, response, this->m_runtime.currentCmdOpcode);
         this->sequencer_sendSignal_stmtResponse_unexpected();
         return;
     }
@@ -275,12 +281,11 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
     // in the same file?
 
     // pull the cmd index (modulo 2^16) out of cmdUid. this should be equal to the first 16 bits of the
-    // m_statementsDispatched variable - 1. the -1 is because the count gets incremented immediately
-    // after we dispatch the cmd.
+    // m_statementsDispatched variable
     U16 cmdIndex = static_cast<U16>(cmdUid & 0xFFFF);
     // check for coding errors. at this point in the function, we have definitely dispatched a stmt
     FW_ASSERT(this->m_statementsDispatched > 0);
-    U16 currentCmdIndex = static_cast<U16>((this->m_statementsDispatched - 1) & 0xFFFF);
+    U16 currentCmdIndex = static_cast<U16>((this->m_statementsDispatched) & 0xFFFF);
 
     if (cmdIndex != currentCmdIndex) {
         // we were not awaiting this exact statement, it was a different one with the same opcode. coding error
@@ -298,9 +303,9 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
     if (response == Fw::CmdResponse::OK) {
         this->sequencer_sendSignal_stmtResponse_success();
     } else {
-        this->log_WARNING_HI_StatementFailed(Fpy::StatementType::COMMAND, opCode,
-                                             this->m_runtime.nextStatementIndex - 1, this->m_sequenceFilePath,
-                                             response);
+        this->log_WARNING_HI_CommandFailed(opCode,
+                                           this->m_runtime.nextStatementIndex - 1, this->m_sequenceFilePath,
+                                           response);
         this->sequencer_sendSignal_stmtResponse_failure();
     }
 }
@@ -329,6 +334,7 @@ void FpySequencer::tlmWrite_handler(FwIndexType portNum,  //!< The port number
     this->tlmWrite_SequencesCancelled(this->m_tlm.sequencesCancelled);
     this->tlmWrite_SequencesSucceeded(this->m_tlm.sequencesSucceeded);
     this->tlmWrite_SequencesFailed(this->m_tlm.sequencesFailed);
+    this->tlmWrite_LastDirectiveError(this->m_tlm.lastDirectiveError);
     this->tlmWrite_SeqPath(this->m_sequenceFilePath);
     this->tlmWrite_DebugBreakpointIdx(this->m_debug.breakpointIndex);
     this->tlmWrite_Debug(this->getDebugTelemetry());
@@ -339,14 +345,24 @@ FpySequencer_DebugTelemetry FpySequencer::getDebugTelemetry() {
     if (this->sequencer_getState() == State::RUNNING_DEBUG_BROKEN) {
         if (this->m_runtime.nextStatementIndex >= this->m_sequenceObj.getheader().getstatementCount()) {
             // reached end of file, turn on EOF flag and otherwise send some default tlm
-            return FpySequencer_DebugTelemetry(true, 0, Fpy::StatementType::COMMAND);
-        } else {
-            const Fpy::Statement& nextStmt = this->m_sequenceObj.getstatements()[this->m_runtime.nextStatementIndex];
-            return FpySequencer_DebugTelemetry(false, nextStmt.getopCode(), nextStmt.gettype());
+            return FpySequencer_DebugTelemetry(true, false, 0, 0);
         }
+
+        const Fpy::Statement& nextStmt = this->m_sequenceObj.getstatements()[this->m_runtime.nextStatementIndex];
+        DirectiveUnion directiveUnion;
+        Fw::Success status = this->deserializeDirective(nextStmt, directiveUnion);
+        if (status != Fw::Success::SUCCESS) {
+            return FpySequencer_DebugTelemetry(false, false, nextStmt.getopCode(), 0);
+        }
+        if (nextStmt.getopCode() == Fpy::DirectiveId::CMD) {
+            // send opcode of the cmd to the ground
+            return FpySequencer_DebugTelemetry(false, true, nextStmt.getopCode(), directiveUnion.cmd.getopCode());
+        }
+
+        return FpySequencer_DebugTelemetry(false, true, nextStmt.getopCode(), 0);
     }
     // send some default tlm when we aren't in debug break
-    return FpySequencer_DebugTelemetry(false, 0, Fpy::StatementType::COMMAND);
+    return FpySequencer_DebugTelemetry(false, false, 0, 0);
 }
 
 void FpySequencer::parametersLoaded() {

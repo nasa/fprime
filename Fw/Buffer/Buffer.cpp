@@ -29,7 +29,7 @@ Buffer::Buffer(const Buffer& src)
     }
 }
 
-Buffer::Buffer(U8* data, SizeType size, U32 context)
+Buffer::Buffer(U8* data, FwSizeType size, U32 context)
     : Serializable(), m_serialize_repr(), m_bufferData(data), m_size(size), m_context(context) {
     if (m_bufferData != nullptr) {
         this->m_serialize_repr.setExtBuffer(this->m_bufferData, this->m_size);
@@ -57,7 +57,7 @@ U8* Buffer::getData() const {
     return this->m_bufferData;
 }
 
-Buffer::SizeType Buffer::getSize() const {
+FwSizeType Buffer::getSize() const {
     return this->m_size;
 }
 
@@ -72,7 +72,7 @@ void Buffer::setData(U8* const data) {
     }
 }
 
-void Buffer::setSize(const SizeType size) {
+void Buffer::setSize(const FwSizeType size) {
     this->m_size = size;
     if (m_bufferData != nullptr) {
         this->m_serialize_repr.setExtBuffer(this->m_bufferData, this->m_size);
@@ -83,7 +83,7 @@ void Buffer::setContext(const U32 context) {
     this->m_context = context;
 }
 
-void Buffer::set(U8* const data, const SizeType size, const U32 context) {
+void Buffer::set(U8* const data, const FwSizeType size, const U32 context) {
     this->m_bufferData = data;
     this->m_size = size;
     if (m_bufferData != nullptr) {
@@ -94,8 +94,7 @@ void Buffer::set(U8* const data, const SizeType size, const U32 context) {
 
 Fw::ExternalSerializeBufferWithMemberCopy Buffer::getSerializer() {
     if (this->isValid()) {
-        Fw::ExternalSerializeBufferWithMemberCopy esb(this->m_bufferData,
-                                                      static_cast<Fw::Serializable::SizeType>(this->m_size));
+        Fw::ExternalSerializeBufferWithMemberCopy esb(this->m_bufferData, this->m_size);
         esb.resetSer();
         return esb;
     } else {
@@ -105,9 +104,8 @@ Fw::ExternalSerializeBufferWithMemberCopy Buffer::getSerializer() {
 
 Fw::ExternalSerializeBufferWithMemberCopy Buffer::getDeserializer() {
     if (this->isValid()) {
-        Fw::ExternalSerializeBufferWithMemberCopy esb(this->m_bufferData,
-                                                      static_cast<Fw::Serializable::SizeType>(this->m_size));
-        Fw::SerializeStatus stat = esb.setBuffLen(static_cast<Fw::Serializable::SizeType>(this->m_size));
+        Fw::ExternalSerializeBufferWithMemberCopy esb(this->m_bufferData, this->m_size);
+        Fw::SerializeStatus stat = esb.setBuffLen(this->m_size);
         FW_ASSERT(stat == Fw::FW_SERIALIZE_OK);
         return esb;
     } else {

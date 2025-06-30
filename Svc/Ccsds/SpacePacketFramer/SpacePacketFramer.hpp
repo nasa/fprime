@@ -56,7 +56,6 @@ class SpacePacketFramer final : public SpacePacketFramerComponentBase {
     void dataReturnIn_handler(FwIndexType portNum,  //!< The port number
                               Fw::Buffer& data,
                               const ComCfg::FrameContext& context) override;
-
 };
 
 }  // namespace Ccsds

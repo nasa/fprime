@@ -16,9 +16,24 @@
 #include "Ref/Top/FppConstantsAc.hpp"
 #include "Svc/Health/Health.hpp"
 
-// Subtopology PingEntries includes 
-#include "Svc/Subtopologies/CDHCore/PingEntries.hpp"
+// Subtopology PingEntries includes
+#include "Svc/Subtopologies/CdhCore/PingEntries.hpp"
+#include "Svc/Subtopologies/ComCcsds/PingEntries.hpp"
+#include "Svc/Subtopologies/DataProducts/PingEntries.hpp"
+#include "Svc/Subtopologies/FileHandling/PingEntries.hpp"
 
+// SubtopologyTopologyDefs includes
+#include "Svc/Subtopologies/ComCcsds/SubtopologyTopologyDefs.hpp"
+#include "Svc/Subtopologies/DataProducts/SubtopologyTopologyDefs.hpp"
+#include "Svc/Subtopologies/FileHandling/SubtopologyTopologyDefs.hpp"
+
+namespace PingEntries {
+    namespace Ref_blockDrv       {enum { WARN = 3, FATAL = 5 };}
+    namespace Ref_pingRcvr       {enum { WARN = 3, FATAL = 5 };}
+    namespace Ref_rateGroup1Comp {enum { WARN = 3, FATAL = 5 };}
+    namespace Ref_rateGroup2Comp {enum { WARN = 3, FATAL = 5 };}
+    namespace Ref_rateGroup3Comp {enum { WARN = 3, FATAL = 5 };}
+}  // namespace PingEntries
 /**
  * \brief required ping constants
  *
@@ -38,19 +53,6 @@
  * }
  * ```
  */
-namespace PingEntries {
-    namespace Ref_blockDrv {enum { WARN = 3, FATAL = 5 };}
-    namespace Ref_cmdSeq {enum { WARN = 3, FATAL = 5 };}
-    namespace Ref_fileDownlink {enum { WARN = 3, FATAL = 5 };}
-    namespace Ref_fileManager {enum { WARN = 3, FATAL = 5 };}
-    namespace Ref_fileUplink {enum { WARN = 3, FATAL = 5 };}
-    namespace Ref_pingRcvr {enum { WARN = 3, FATAL = 5 };}
-    namespace Ref_prmDb {enum { WARN = 3, FATAL = 5 };}
-    namespace Ref_rateGroup1Comp {enum { WARN = 3, FATAL = 5 };}
-    namespace Ref_rateGroup2Comp {enum { WARN = 3, FATAL = 5 };}
-    namespace Ref_rateGroup3Comp {enum { WARN = 3, FATAL = 5 };}
-    namespace Ref_dpCat {enum { WARN = 3, FATAL = 5 };}
-}  // namespace PingEntries
 
 // Definitions are placed within a namespace named after the deployment
 namespace Ref {
@@ -64,8 +66,7 @@ namespace Ref {
      * fields, which are derived by command line inputs.
      */
     struct TopologyState {
-        const char* hostname;
-        U16 port;
+        ComCcsds::SubtopologyState comCcsds;  //!< Subtopology state for ComCcsds 
     };
 
     namespace PingEntries = ::PingEntries;
