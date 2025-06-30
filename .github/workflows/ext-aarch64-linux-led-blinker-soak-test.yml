@@ -1,6 +1,6 @@
 # Scheduled testing of LED blinker system service every 30 minutes
 # Connects to running service via GDS and runs integration tests
-name: "External Repo: AArch64 Linux LedBlinker Scheduled Test"
+name: "Soak Test AArch64 Linux: External Repo LedBlinker"
 
 on:
   schedule:
@@ -10,8 +10,8 @@ on:
   workflow_dispatch:
 
 env:
-  SERVICE_NAME: fprime-ledblinker
-  INSTALL_DIR: /opt/fprime-ledblinker
+  SERVICE_NAME: fprime-ledblinker-soak
+  INSTALL_DIR: /opt/fprime-ledblinker-soak
 
 jobs:
   scheduled-test:
@@ -35,10 +35,10 @@ jobs:
         run: |
           echo "Checking if ${SERVICE_NAME} service is running..."
           if sudo systemctl is-active --quiet ${SERVICE_NAME}; then
-            echo "✅ Service ${SERVICE_NAME} is running"
+            echo "Service ${SERVICE_NAME} is running"
             sudo systemctl status ${SERVICE_NAME} --no-pager -l
           else
-            echo "❌ Service ${SERVICE_NAME} is not running"
+            echo "Service ${SERVICE_NAME} is not running"
             sudo systemctl status ${SERVICE_NAME} --no-pager -l
             echo "Recent service logs:"
             sudo journalctl -u ${SERVICE_NAME} --no-pager -n 20
@@ -57,39 +57,18 @@ jobs:
           
           # Start GDS connected to the running service
           echo "Starting F' GDS to connect to running service..."
-          fprime-gds --ip-client -d ${INSTALL_DIR} --logs ${TEST_LOG_DIR} &
+          fprime-gds  --ip-address 127.0.0.1 --ip-port 50000 -d ${INSTALL_DIR} --logs ${TEST_LOG_DIR} &
           GDS_PID=$!
           
           # Wait for GDS to start
           sleep 10
           echo "GDS started with PID: ${GDS_PID}"
           
-          # Function for cleanup
-          cleanup_test() {
-            echo "Cleaning up test environment..."
-            kill $GDS_PID 2>/dev/null || true
-            wait $GDS_PID 2>/dev/null || true
-          }
-          
-          # Set trap for cleanup on exit
-          trap cleanup_test EXIT
-          
           # Run the integration test
           echo "Running integration tests..."
-          if pytest --dictionary ${INSTALL_DIR}/dict/LedBlinkerTopologyDictionary.json ${INSTALL_DIR}/test/led_integration_tests.py -v --tb=short --junit-xml=${TEST_LOG_DIR}/test-results.xml; then
-            echo "=== Integration test PASSED at $(date) (${TEST_TIMESTAMP}) ==="
-            TEST_RESULT="PASSED"
-          else
-            echo "=== Integration test FAILED at $(date) (${TEST_TIMESTAMP}) ==="
-            TEST_RESULT="FAILED"
-            
-            # Get recent service logs for debugging
-            echo "Getting recent service logs for debugging..."
-            sudo journalctl -u ${SERVICE_NAME} --no-pager -n 50 > ${TEST_LOG_DIR}/service-logs.txt
-            
-            cleanup_test
-            exit 1
-          fi
+          pytest --dictionary ${INSTALL_DIR}/dict/LedBlinkerTopologyDictionary.json ${INSTALL_DIR}/test/led_integration_tests.py 
+          
+          echo "=== Integration test completed at $(date) (${TEST_TIMESTAMP}) ==="
           
       - name: 'Archive Test Results'
         uses: actions/upload-artifact@v4
@@ -97,15 +76,4 @@ jobs:
         with:
           name: test-results-${{ github.run_number }}-${{ github.run_attempt }}
           path: test-logs-*
-          retention-days: 7
-          
-      - name: "Test Summary"
-        if: always()
-        run: |
-          echo "=== Test Execution Summary ==="
-          echo "Timestamp: $(date)"
-          echo "Service Status: $(sudo systemctl is-active ${SERVICE_NAME})"
-          echo "Test Result: ${TEST_RESULT:-FAILED}"
-          echo ""
-          echo "Service uptime:"
-          sudo systemctl show ${SERVICE_NAME} --property=ActiveEnterTimestamp --property=StatusText --no-pager
+          retention-days: 5

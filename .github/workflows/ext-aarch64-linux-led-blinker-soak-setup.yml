@@ -1,10 +1,12 @@
-# Cross-compile and deploy LED blinker as system service on AArch64 Linux
+# Cross-compile https://github.com/fprime-community/fprime-workshop-led-blinker as system service on AArch64 Linux
 # Builds on release publication, stops old service, starts new service
-name: "External Repo: AArch64 Linux LedBlinker Release Deploy"
+name: "Soak Test Setup AArch64 Linux: External Repo LedBlinker"
 
 on:
   release: 
     types: [published]
+  workflow_dispatch:
+    #parameters needed to specify which release?
 
 # New releases cancel running deployments
 concurrency:
@@ -14,29 +16,20 @@ concurrency:
 env:
   AARCH64_TOOLCHAIN_DIR: /tmp/aarch64-toolchain
   AARCH64_TOOLCHAIN_URL: https://developer.arm.com/-/media/Files/downloads/gnu-a/10.2-2020.11/binrel/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu.tar.xz
-  SERVICE_NAME: fprime-ledblinker
-  INSTALL_DIR: /opt/fprime-ledblinker
+  SERVICE_NAME: fprime-ledblinker-soak
+  INSTALL_DIR: /opt/fprime-ledblinker-soak
 
 jobs:
   get-branch:
     name: "Get target branch"
-    runs-on: ubuntu-22.04
-    if: github.event_name == 'release'
-    outputs:
-      target-branch: ${{ steps.get-branch.outputs.target-branch }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: Get target branch
-        id: get-branch
-        uses: ./.github/workflows/reusable-get-pr-branch.yml
-        with:
-          target_repository: fprime-community/fprime-workshop-led-blinker
+    uses: ./.github/workflows/reusable-get-pr-branch.yml
+    with:
+      target_repository: fprime-community/fprime-workshop-led-blinker
 
   cross-compilation:
     name: "Cross Compilation"
     runs-on: ubuntu-22.04
     needs: get-branch
-    if: github.event_name == 'release' 
     steps:
       - name: "Checkout target repository"
         uses: actions/checkout@v4
@@ -67,38 +60,37 @@ jobs:
           fprime-util build aarch64-linux
       - name: "Prepare artifacts"
         run: |
-          mkdir -p aarch64-linux-artifacts
-          cp -r ./build-artifacts aarch64-linux-artifacts
-          cp -r Components/Led/test/int aarch64-linux-artifacts
+          mkdir -p aarch64-linux-artifacts-soak
+          cp -r ./build-artifacts aarch64-linux-artifacts-soak
+          cp -r Components/Led/test/int aarch64-linux-artifacts-soak
       - name: 'Archive Build Artifacts'
         uses: actions/upload-artifact@v4
         with:
-          name: aarch64-linux-artifacts
-          path: aarch64-linux-artifacts
-          retention-days: 365
+          name: aarch64-linux-artifacts-soak
+          path: aarch64-linux-artifacts-soak
+          retention-days: 5
 
   deploy-service:
     name: "Deploy as System Service"
     runs-on: [self-hosted, aarch64-linux]
     needs: cross-compilation
     steps:
-      - name: "Download Build Artifacts"
+      - name: "Artifacts Download"
         uses: actions/download-artifact@v4
         with:
-          name: aarch64-linux-artifacts
+          name: aarch64-linux-artifacts-soak
       
       - name: "Stop existing service if running"
         run: |
           echo "Stopping existing service if it exists..."
-          sudo systemctl stop ${SERVICE_NAME} 2>/dev/null || true
-          sudo systemctl disable ${SERVICE_NAME} 2>/dev/null || true
+          sudo systemctl stop ${SERVICE_NAME}
+          sudo systemctl disable ${SERVICE_NAME} 
           
       - name: "Install new binary"
         run: |
           echo "Installing new binary to ${INSTALL_DIR}..."
           sudo mkdir -p ${INSTALL_DIR}/bin
           sudo mkdir -p ${INSTALL_DIR}/dict
-          sudo mkdir -p ${INSTALL_DIR}/logs
           sudo mkdir -p ${INSTALL_DIR}/test
           
           # Copy binary and make executable
@@ -109,22 +101,23 @@ jobs:
           sudo cp -r ./aarch64-linux-artifacts/build-artifacts/aarch64-linux/LedBlinker/dict/* ${INSTALL_DIR}/dict/
           sudo cp -r ./aarch64-linux-artifacts/int/* ${INSTALL_DIR}/test/
           
-          # Set ownership
-          sudo chown -R $(whoami):$(whoami) ${INSTALL_DIR}
+          # Set ownership, so service can access files
+          sudo chown -R pi:pi ${INSTALL_DIR}
           
       - name: "Create systemd service file"
         run: |
           echo "Creating systemd service file..."
-          sudo tee /etc/systemd/system/${SERVICE_NAME}.service > /dev/null <<EOF
+          sudo tee /etc/systemd/system/${SERVICE_NAME}.service > /dev/null << END
+
           [Unit]
-          Description=F' LED Blinker Application
+          Description=F' LED Blinker Application, system service meant for soak testing
           After=network.target
           
           [Service]
           Type=simple
-          User=$(whoami)
+          User=pi
           WorkingDirectory=${INSTALL_DIR}
-          ExecStart=${INSTALL_DIR}/bin/LedBlinker
+          ExecStart=${INSTALL_DIR}/bin/LedBlinker -a 127.0.0.1 -p 50000
           Restart=always
           RestartSec=5
           StandardOutput=journal
@@ -132,8 +125,7 @@ jobs:
           
           [Install]
           WantedBy=multi-user.target
-          EOF
-          
+          END 
       - name: "Start and enable service"
         run: |
           echo "Starting and enabling service..."
@@ -141,26 +133,6 @@ jobs:
           sudo systemctl enable ${SERVICE_NAME}
           sudo systemctl start ${SERVICE_NAME}
           
-          # Wait a moment and check status
-          sleep 5
-          if sudo systemctl is-active --quiet ${SERVICE_NAME}; then
-            echo "Service ${SERVICE_NAME} started successfully"
-            sudo systemctl status ${SERVICE_NAME} --no-pager
-          else
-            echo "Service ${SERVICE_NAME} failed to start"
-            sudo systemctl status ${SERVICE_NAME} --no-pager
-            sudo journalctl -u ${SERVICE_NAME} --no-pager -n 20
-            exit 1
-          fi
-          
-      - name: "Deployment Summary"
-        run: |
-          echo "=== Deployment Summary ==="
-          echo "Service: ${SERVICE_NAME}"
-          echo "Install Directory: ${INSTALL_DIR}"
-          echo "Binary: ${INSTALL_DIR}/bin/LedBlinker"
-          echo "Dictionary: ${INSTALL_DIR}/dict/"
-          echo "Tests: ${INSTALL_DIR}/test/"
-          echo ""
-          echo "Service Status:"
-          sudo systemctl status ${SERVICE_NAME} --no-pager -l
+          # Wait a moment for service to start?
+          #sleep 5
+     
