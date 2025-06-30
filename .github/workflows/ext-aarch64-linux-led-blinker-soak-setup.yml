@@ -105,12 +105,12 @@ jobs:
           sudo mkdir -p ${INSTALL_DIR}/test
           
           # Copy binary and make executable
-          sudo cp ./aarch64-linux-artifacts/build-artifacts/aarch64-linux/LedBlinker/bin/LedBlinker ${INSTALL_DIR}/bin/
+          sudo cp ./aarch64-linux-artifacts-soak/build-artifacts/aarch64-linux/LedBlinker/bin/LedBlinker ${INSTALL_DIR}/bin/
           sudo chmod +x ${INSTALL_DIR}/bin/LedBlinker
           
           # Copy dictionary and test files
-          sudo cp -r ./aarch64-linux-artifacts/build-artifacts/aarch64-linux/LedBlinker/dict/* ${INSTALL_DIR}/dict/
-          sudo cp -r ./aarch64-linux-artifacts/int/* ${INSTALL_DIR}/test/
+          sudo cp -r ./aarch64-linux-artifacts-soak/build-artifacts/aarch64-linux/LedBlinker/dict/* ${INSTALL_DIR}/dict/
+          sudo cp -r ./aarch64-linux-artifacts-soak/int/* ${INSTALL_DIR}/test/
           
           # Set ownership, so service can access files
           sudo chown -R pi:pi ${INSTALL_DIR}
@@ -146,4 +146,3 @@ jobs:
           
           # Wait a moment for service to start?
           #sleep 5
-     
