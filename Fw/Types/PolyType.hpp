@@ -105,7 +105,7 @@ class PolyType : public Serializable {
     SerializeStatus serialize(SerializeBufferBase& buffer) const;  //!< Serialize function
     SerializeStatus deserialize(SerializeBufferBase& buffer);      //!< Deserialize function
 
-  PRIVATE:
+  private:
     typedef enum {
         TYPE_NOTYPE,  // !< No type stored yet
         TYPE_U8,      // !< U8 type stored

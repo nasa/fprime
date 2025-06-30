@@ -22,7 +22,7 @@ namespace Fw {
           const FilePacket::CancelPacket& actual
       )
     {
-      FilePackets::Header::compare(expected.m_header, actual.m_header);
+      FilePackets::Header::compare(expected.asHeader(), actual.asHeader());
     }
 
   }

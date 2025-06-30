@@ -5,7 +5,7 @@ module Svc {
         # ----------------------------------------------------------------------
         # FrameAccumulator interface
         # ----------------------------------------------------------------------
-        include "../Interfaces/FrameAccumulatorInterface.fppi"
+        import FrameAccumulator
 
         @ Port for deallocating buffers holding extracted frames
         output port bufferDeallocate: Fw.BufferSend

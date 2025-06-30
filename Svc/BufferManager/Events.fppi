@@ -1,6 +1,6 @@
 @ The BufferManager was unable to allocate a requested buffer
 event NoBuffsAvailable(
-                        $size: U32 @< The requested size
+                        $size: FwSizeType @< The requested size
                       ) \
   severity warning high \
   id 0x00 \

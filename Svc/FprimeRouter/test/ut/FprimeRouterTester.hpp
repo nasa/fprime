@@ -77,13 +77,13 @@ class FprimeRouterTester : public FprimeRouterGTestBase {
     void initComponents();
 
     //! Mock the reception of a packet of a specific type
-    void mockReceivePacketType(Fw::ComPacket::ComPacketType packetType);
+    void mockReceivePacketType(Fw::ComPacketType packetType);
 
     // ----------------------------------------------------------------------
     // Port handler overrides
     // ----------------------------------------------------------------------
     //! Overriding bufferAllocate handler to be able to request a buffer in component tests
-    Fw::Buffer from_bufferAllocate_handler(FwIndexType portNum, U32 size) override;
+    Fw::Buffer from_bufferAllocate_handler(FwIndexType portNum, FwSizeType size) override;
 
   private:
     // ----------------------------------------------------------------------

@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: RPI-CI
+name: CI [RPI]
 
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
@@ -15,6 +15,11 @@ on:
       - '**.md'
       - '.github/actions/spelling/**'
       - '.github/ISSUE_TEMPLATE/**'
+# Cancel in-progress runs if a newer run is started on a given PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/')}}
+
 env:
   RPI_TOOLCHAIN_DIR: /tmp/rpi-toolchain
   DICTIONARY_PATH: build-artifacts/raspberrypi/RPI/dict/RPITopologyDictionary.json

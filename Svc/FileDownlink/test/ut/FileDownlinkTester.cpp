@@ -602,7 +602,7 @@ namespace Svc {
   void FileDownlinkTester ::
     removeFile(const char *const name)
   {
-    const PlatformIntType status = ::unlink(name);
+    const int status = ::unlink(name);
     if (status != 0) {
       // OK if file is not there
       ASSERT_EQ(ENOENT, errno);

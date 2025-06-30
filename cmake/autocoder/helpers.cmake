@@ -11,9 +11,8 @@ include("utilities")
 # Macro `autocoder_support_by_suffix`:
 #
 # This sets up an autocoder to handle files based on a suffix. For example, passing in "*.fpp" will support all files
-# ending in ".fpp" i.e. FPP files or passing in "ComponentAi.xml" will support all component XMLs. It is implemented as
-# a macro such that users need not do anything other than call it with the suffix to setup the system correctly. This
-# performs raw ascii comparison, not regular expression matching.
+# ending in ".fpp" i.e. FPP files. It is implemented as a macro such that users need not do anything other than call it
+# with the suffix to setup the system correctly. This performs raw ascii comparison, not regular expression matching.
 #
 # **Note:** this will set the appropriate variable in PARENT_SCOPE and since it is macro this will be the parent scope
 # of the caller.

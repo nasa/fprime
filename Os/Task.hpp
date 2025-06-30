@@ -15,6 +15,9 @@
 #include <Fw/Deprecate.hpp>
 #include <limits>
 
+// Forward declare for UTs
+namespace Os {namespace Test {namespace Task { struct Tester; }}}
+
 namespace Os {
 
     // Forward declarations
@@ -79,7 +82,7 @@ namespace Os {
                           const FwTaskPriorityType priority = TASK_PRIORITY_DEFAULT,
                           const FwSizeType stackSize = TASK_DEFAULT,
                           const FwSizeType cpuAffinity = TASK_DEFAULT,
-                          const PlatformUIntType identifier = static_cast<PlatformUIntType>(TASK_DEFAULT));
+                          const FwTaskIdType identifier = static_cast<FwTaskIdType>(TASK_DEFAULT));
 
               public:
                 const Os::TaskString m_name;
@@ -88,7 +91,7 @@ namespace Os {
                 FwTaskPriorityType m_priority;
                 FwSizeType m_stackSize;
                 FwSizeType m_cpuAffinity;
-                PlatformUIntType m_identifier;
+                FwTaskIdType m_identifier;
             };
 
             //! \brief default constructor
@@ -196,6 +199,7 @@ namespace Os {
     //! parent class. Instead it wraps a delegate provided by `TaskInterface::getDelegate()` to provide system specific
     //! behaviour.
     class Task final : public TaskInterface {
+      friend struct Os::Test::Task::Tester;
       public:
         //! Wrapper for task routine that ensures `onStart()` is called once the task actually begins
         class TaskRoutineWrapper {
@@ -363,7 +367,7 @@ namespace Os {
         //! \return status of the delay
         static Status delay(Fw::TimeInterval interval);
 
-      PRIVATE:
+      private:
         static TaskRegistry* s_taskRegistry; //!< Pointer to registered task registry
         static FwSizeType s_numTasks; //!< Stores the number of tasks created.
         static Mutex s_taskMutex; //!< Guards s_numTasks

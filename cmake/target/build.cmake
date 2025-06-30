@@ -35,26 +35,6 @@ function(fprime__internal_TECH_DEBT_module_setup BUILD_MODULE_NAME MODULE_NAME_H
         endif()
     endforeach()
 
-    #TODO:
-    # Filter LINK_LIBRARIES and INTERFACE_LINK_LIBRARIES
-
-    #### Create module-info.txt ####
-    # module-info.txt is used as a cache to enable build system quasi-dependent tools to work as expected.
-    # However, this really ought to be implemented as an autocoder itself, as it depends on nothing other
-    # than the input sources, and previous autocoder runs.
-    #
-    # To do this correctly, headers should be passed to autocoders **and** autocoders would need to be
-    # registered in-between this "last autocoder" and the other pre-autocoders.
-    #
-    # Create lists of hand-coded and generated sources. This should be handled in the autocoder sub-system
-    # and not pushed to the build module.
-    #
-    # HEADER_FILES should not be read from a variable.
-    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/module${MODULE_NAME_HELPER}-info.txt"
-        "${MODULE_SUPPLIED_HEADERS}\n${MODULE_SUPPLIED_SOURCES}\n${MODULE_AC_GENERATED}\n${MODULE_AC_FILE_DEPENDENCIES}\n${MODULE_LINK_LIBRARIES}\n"
-    )
-    #### End module-info.txt ####
-
     #### Remove empty.cpp ####
     # This section removes empty.cpp "fake source" from the various modules. This source is added to make
     # sub-builds work correctly (targets need at least one source, even if they are there just to be a name).
@@ -67,25 +47,6 @@ function(fprime__internal_TECH_DEBT_module_setup BUILD_MODULE_NAME MODULE_NAME_H
         SOURCES "${MODULE_SOURCES}"
     )
     #### End Remove empty.cpp ####
-
-    #### Set Implementation Choices ####
-    # Extra source files, dependencies, and link libraries need to be added to executables to account for the chosen
-    # implementations. First, for modules whose names differ from FPRIME_CURRENT_MODULE the chosen implementation is
-    # remapped to them. Then the implementation set are calculated and sources, link libraries and dependencies added.
-    #
-    # This should be done per-target using IMPLEMENTATION_OVERRIDES supplied to API registration call and should not
-    # be set to the current module.
-#    if (NOT ${MODULE_TYPE} STREQUAL "Library")
-#        # Handle updates when the types have diverged
-#        if (NOT MODULE STREQUAL "${FPRIME_CURRENT_MODULE}")
-#            # Update implementation choices
-#            remap_implementation_choices("${FPRIME_CURRENT_MODULE}" "${BUILD_MODULE_NAME}")
-#        endif()
-#        setup_executable_implementations("${BUILD_MODULE_NAME}")
-        # Clear transitive dependencies to force a re-evaluation
-#        set_property(TARGET "${BUILD_MODULE_NAME}" PROPERTY TRANSITIVE_DEPENDENCIES)
-#    endif ()
-    #### End Implementation Choices ####
 endfunction()
 
 

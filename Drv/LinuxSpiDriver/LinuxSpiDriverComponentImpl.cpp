@@ -45,7 +45,8 @@ namespace Drv {
         memset(&tr, 0, sizeof(tr));
         tr.tx_buf = reinterpret_cast<__u64>(writeBuffer.getData());
         tr.rx_buf = reinterpret_cast<__u64>(readBuffer.getData());
-        tr.len = writeBuffer.getSize();
+        FW_ASSERT_NO_OVERFLOW(writeBuffer.getSize(), __u32);
+        tr.len = static_cast<__u32>(writeBuffer.getSize());
 /*
             .speed_hz = 0,
             .delay_usecs = 0,
@@ -56,7 +57,7 @@ namespace Drv {
             .pad = 0
 */
 
-        PlatformIntType stat = ioctl(this->m_fd, SPI_IOC_MESSAGE(1), &tr);
+        int stat = ioctl(this->m_fd, SPI_IOC_MESSAGE(1), &tr);
 
         if (stat < 1) {
             this->log_WARNING_HI_SPI_WriteError(this->m_device,this->m_select,stat);
@@ -74,8 +75,8 @@ namespace Drv {
 
         this->m_device = device;
         this->m_select = select;
-        PlatformIntType fd;
-        PlatformIntType ret;
+        int fd;
+        int ret;
 
         // Open:
         Fw::FileNameString devString;

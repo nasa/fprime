@@ -5,9 +5,11 @@ module Svc {
         # ----------------------------------------------------------------------
         # Router interface
         # ----------------------------------------------------------------------
-        include "../Interfaces/RouterInterface.fppi"
+        import Router
 
         @ Port for forwarding non-recognized packet types
+        @ Ownership of the buffer is retained by the FprimeRouter, meaning receiving
+        @ components should either process data synchronously, or copy the data if needed
         output port unknownDataOut: Svc.ComDataWithContext
 
         @ Port for allocating buffers

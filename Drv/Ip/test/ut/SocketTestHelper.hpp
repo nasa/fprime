@@ -19,7 +19,7 @@ static constexpr U16 MAX_ITER = 10;
  * @param fd: socket file descriptor
  * @param socket: socket to make timeout
  */
-void force_recv_timeout(PlatformIntType fd, Drv::IpSocket &socket);
+void force_recv_timeout(int fd, Drv::IpSocket &socket);
 
 /**
  * Validate random data from data against truth
@@ -27,14 +27,14 @@ void force_recv_timeout(PlatformIntType fd, Drv::IpSocket &socket);
  * @param truth: truth data to validate
  * @param size: size to validate
  */
-void validate_random_data(U8 *data, U8 *truth, U32 size);
+void validate_random_data(U8 *data, U8 *truth, FwSizeType size);
 
 /**
  * Fills in the given data buffer with randomly picked data.
  * @param data: data to file
  * @param size: size of fill
  */
-void fill_random_data(U8 *data, U32 size);
+void fill_random_data(U8 *data, FwSizeType size);
 
 /**
  * Validates a given buffer against the data provided.

@@ -31,10 +31,10 @@ void TestState::action__ProductRequestIn__BufferValid() {
     this->clearHistory();
     // Send the invocation
     const auto portNum = static_cast<FwIndexType>(STest::Pick::startLength(0, DpManagerNumPorts));
-    const auto id = static_cast<FwDpIdType>(STest::Pick::lowerUpper(0, std::numeric_limits<FwDpIdType>::max()));
+    const auto id = static_cast<FwDpIdType>(STest::Pick::lowerUpper(0, static_cast<U32>(std::numeric_limits<FwDpIdType>::max())));
     const FwSizeType size = this->abstractState.getBufferSize();
     this->invoke_to_productRequestIn(portNum, id, size);
-    this->component.doDispatch();
+    this->doDispatch();
     // Check events
     ASSERT_EVENTS_SIZE(0);
     // Update test state
@@ -62,13 +62,13 @@ void TestState ::action__ProductRequestIn__BufferInvalid() {
     this->clearHistory();
     // Send the invocation
     const auto portNum = static_cast<FwIndexType>(STest::Pick::startLength(0, DpManagerNumPorts));
-    const FwDpIdType id = STest::Pick::lowerUpper(0, std::numeric_limits<FwDpIdType>::max());
+    const FwDpIdType id = static_cast<FwDpIdType>(STest::Pick::lowerUpper(0, static_cast<U32>(std::numeric_limits<FwDpIdType>::max())));
     const FwSizeType size = this->abstractState.getBufferSize();
     this->invoke_to_productRequestIn(portNum, id, size);
-    this->component.doDispatch();
+    this->doDispatch();
     // Check events
     if (this->abstractState.bufferAllocationFailedEventCount <
-        DpManagerComponentBase::EVENTID_BUFFERALLOCATIONFAILED_THROTTLE) {
+        Svc::DpManagerTester::getBufferAllocationFailedThrottle()) {
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_BufferAllocationFailed(0, id);
         ++this->abstractState.bufferAllocationFailedEventCount;

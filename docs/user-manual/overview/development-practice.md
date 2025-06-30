@@ -96,8 +96,8 @@ It's recommended that ports are kept in their own directories, separate from com
 To create a new port:
 
 1. If necessary, create a new port directory
-2. Create a new port `*Ai.xml` file, possibly by copying from an existing port.
-3. Add the new port xml file to `SOURCE_FILES` in the `CMakeLists.txt` file in the directory
+2. Create a new port `*.fpp` file, possibly by copying from an existing port.
+3. Add the new port file to `SOURCE_FILES` in the `CMakeLists.txt` file in the directory
 4. If necessary, add the port directory to the deployment's cmake file with `add_fprime_subdirectory`.
 
 Alternatively, you may use `fprime-util new --port` from the fprime-tools package. This will 
@@ -105,7 +105,7 @@ walk the user through a few prompts about the port they want to create. Then the
 will be done automatically:
 
 1. If the specified directory for the port does not exist, it will be created
-2. The `*Ai.xml` file will be generated, with information and arguments filled in
+2. The `*.fpp` file will be generated, with information and arguments filled in
 3. The port will be added to the source files of `CMakeLists.txt`. If there is no `CMakeLists.txt`
    file, one will be automatically generated and filled out
 4. If necessary, the port directory will be added to the deployment's cmake file with 
@@ -113,18 +113,18 @@ will be done automatically:
 
 ### Creating a Component Definition
 
-The first step in creating a component is to create the component xml definition, which defines
+The first step in creating a component is to create the component FPP definition, which defines
 which interfaces it implements, what commands it supports, which telemetry it provides, and what
 events it produces. This can be done by hand or by using `fprime-util new --component`.
 
 To create a new component definition by hand:
 
 1. Create a new component directory
-2. Create a new component `*Ai.xml` file, possibly by copying from an existing component.
-3. Optional, create a commands xml file for GDS commands and include it in the component xml file.
-4. Optional, create an events xml file and include it in the component xml file.
-5. Optional, create a telemetry xml for telemetry channels and include it in the component xml file.
-6. Create a component `CMakeLists.txt` test file and add the component xml file to `SOURCE_FILES`
+2. Create a new component `*.fpp` file, possibly by copying from an existing component.
+3. Optional, create a commands `.fppi` file for GDS commands and include it in the component file.
+4. Optional, create an events `.fppi` file and include it in the component file.
+5. Optional, create a telemetry `.fppi` for telemetry channels and include it in the component file.
+6. Create a component `CMakeLists.txt` test file and add the component file to `SOURCE_FILES`
    variable in the file.
 7. Add component directory to the deployment's cmake file with `add_fprime_subdirectory`.
 
@@ -133,10 +133,10 @@ walk the user through a few prompts about the component they are creating. Then 
 will be done automatically:
 
 1. A new component directory will be created
-2. The `*Ai.xml` file will be generated and filled out with all of the information provided by the user
-3. Commands, telemetry, events, and parameters will be added to the xml file based on what the user chooses through the prompts
-4. Ports necessary for commands, telemetry, events, and parameters will be automatically added to the `*Ai.xml` file depending which elements the user chooses to include
-5. A component `CMakeLists.txt` file will be generated and the component xml will be added
+2. The `*.fpp` file will be generated and filled out with all of the information provided by the user
+3. Commands, telemetry, events, and parameters will be added to the file based on what the user chooses through the prompts
+4. Ports necessary for commands, telemetry, events, and parameters will be automatically added to the `*.fpp` file depending which elements the user chooses to include
+5. A component `CMakeLists.txt` file will be generated and the component  will be added
    to the source files.
 6. The component directory will be added to the deployments cmake file with
    `add_fprime-subdirectory`
@@ -187,15 +187,11 @@ the project. The full deployment should be built at this stage to ensure that th
 
 To add a component to the topology:
 
-1. In the topology `*Ai.xml` file
-    - Import the component `*Ai.xml` xml file.
+1. In the topology `*.fpp` file
     - Instantiate the component as many times as necessary.
     - Connect component output ports with the corresponding input port and vice versa.
-2. In the topology `Components.hpp` file, declare the component with the same name as the topology
-   xml file.
-3. In the topology `Topology.cpp` file:
+2. In the topology `Topology.cpp` file:
     - Instantiate the component.
-    - Call the component's `init` function.
     - If additional setup is required, call a user-defined setup function.
     - If using commands, register the component's commands.
     - If using health checking, add the component to ping entries.

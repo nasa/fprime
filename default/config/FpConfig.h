@@ -244,9 +244,9 @@ typedef enum {
 #define FW_PARAM_STRING_MAX_SIZE 40  //!< Max size of parameter string type
 #endif
 
-// Specifies the maximum size of a file upload chunk
+// Specifies the maximum size of a file downlink chunk
 #ifndef FW_FILE_BUFFER_MAX_SIZE
-#define FW_FILE_BUFFER_MAX_SIZE 255  //!< Max size of file buffer (i.e. chunk of file)
+#define FW_FILE_BUFFER_MAX_SIZE FW_COM_BUFFER_MAX_SIZE  //!< Max size of file buffer (i.e. chunk of file)
 #endif
 
 // Specifies the maximum size of a string in an interface call

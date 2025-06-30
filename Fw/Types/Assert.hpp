@@ -45,6 +45,11 @@
 #endif
 #endif  // if ASSERT is defined
 
+// Helper macro asserting that a value fits into a type without overflow. Helpful for checking before static casts
+#define FW_ASSERT_NO_OVERFLOW(value, T) \
+    FW_ASSERT((value) <= std::numeric_limits<T>::max(), \
+              static_cast<FwAssertArgType>(value))
+
 // F' Assertion functions can technically return even though the intention is for the assertion to terminate the
 // program. This breaks static analysis depending on assertions, since the analyzer has to assume the assertion will
 // return. When supported, annotate assertion functions as noreturn when statically analyzing.

@@ -423,17 +423,23 @@ namespace Svc {
     Fw::SerializeBufferBase& buffer = this->m_buffer;
     comBuffer.resetSer();
     // Serialize the command packet descriptor
-    const FwPacketDescriptorType cmdDescriptor = Fw::ComPacket::FW_PACKET_COMMAND;
+    const FwPacketDescriptorType cmdDescriptor = Fw::ComPacketType::FW_PACKET_COMMAND;
     Fw::SerializeStatus status = comBuffer.serialize(cmdDescriptor);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
-    // Zero-extend the two-byte AMPCS opcode by two bytes
-    const U16 zeros = 0;
-    status = comBuffer.serialize(zeros);
-    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
+    // Zero-extend the two-byte AMPCS opcode by (sizeof(FwOpcodeType) - 2) bytes
+    FW_ASSERT(sizeof(FwOpcodeType) >= 2);
+    U32 sizeOfZeros = 0;
+    const FwIndexType bytesToExtend = sizeof(FwOpcodeType) - 2;
+    const U8 zeros = 0;
+    for(FwIndexType i = 0; i < bytesToExtend; i++){
+      status = comBuffer.serialize(zeros);
+      FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
+      sizeOfZeros += static_cast<U32>(sizeof(zeros));
+    }
     // Set the buffer length
     const U32 fixedBuffLen = static_cast<U32>(comBuffer.getBuffLength());
     FW_ASSERT(
-        fixedBuffLen == sizeof(cmdDescriptor) + sizeof(zeros),
+        fixedBuffLen == sizeof(cmdDescriptor) + sizeOfZeros,
         static_cast<FwAssertArgType>(fixedBuffLen)
     );
     const U32 totalBuffLen = fixedBuffLen + cmdLength;

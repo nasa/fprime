@@ -2,6 +2,10 @@
 // Created by mstarch on 12/7/20.
 //
 #include <gtest/gtest.h>
+#include <cstring>
+#include <cerrno>
+#include <string>
+
 #include <Drv/Ip/UdpSocket.hpp>
 #include <Drv/Ip/IpSocket.hpp>
 #include <Os/Console.hpp>
@@ -95,8 +99,92 @@ TEST(SingleSide, TestSingleSideSendUdp) {
     test_with_loop(1, SEND);
 }
 
+TEST(UdpZeroLength, TestZeroLengthUdpDatagram) {
+    Drv::UdpSocket sender;
+    Drv::UdpSocket receiver;
+    Drv::SocketDescriptor send_fd;
+    Drv::SocketDescriptor recv_fd;
+    U16 port = Drv::Test::get_free_port(true);
+    ASSERT_NE(0, port);
+    
+    // Configure receiver and sender
+    ASSERT_EQ(receiver.configureRecv("127.0.0.1", port), Drv::SOCK_SUCCESS);
+    ASSERT_EQ(receiver.open(recv_fd), Drv::SOCK_SUCCESS);
+ 
+    ASSERT_EQ(sender.configureSend("127.0.0.1", port, 1, 0), Drv::SOCK_SUCCESS);
+    ASSERT_EQ(sender.open(send_fd), Drv::SOCK_SUCCESS);
+
+    // Send a zero-length datagram using the F' socket wrapper
+    U8 empty_data[1] = {0}; // Buffer is required, but size is 0
+    ASSERT_EQ(sender.send(send_fd, empty_data, 0), Drv::SOCK_SUCCESS) 
+        << "Failed to send zero-length datagram using F' socket wrapper";
+
+    // Add a small delay to ensure the packet has time to be processed by the OS
+    usleep(10000); // 10ms delay
+
+    // Receive the zero-length datagram using the F' socket wrapper
+    U8 recv_buf[1] = {0xFF};
+    U32 recv_buf_len = 1;
+    I32 recv_status = receiver.recv(recv_fd, recv_buf, recv_buf_len);
+
+    // Expect 0 (success) for a zero-length datagram.
+    ASSERT_EQ(recv_status, 0)
+        << "Expected recv_status 0 for zero-length datagram, but got " << recv_status << " with errno=" << errno;
+    
+    // Check that the received length is reported as 0
+    ASSERT_EQ(recv_buf_len, 0) << "Expected received length 0, but got " << recv_buf_len;
+    
+    // Check that the received buffer is unchanged meaning no data was received
+    ASSERT_EQ(recv_buf[0], 0xFF) << "Expected unchanged buffer (0xFF), but got " << recv_buf[0];
+
+    sender.close(send_fd);
+    receiver.close(recv_fd);
+}
+
 TEST(SingleSide, TestSingleSideMultipleSendUdp) {
     test_with_loop(100, SEND);
+}
+
+TEST(Ephemeral, TestEphemeralPorts) {
+    Drv::UdpSocket receiver;
+    Drv::SocketDescriptor recv_fd;
+    const U16 recv_port = 50001;
+    // Configure receiver as receiver-only with no send port.
+    receiver.configureRecv("127.0.0.1", recv_port);
+    receiver.configureSend("127.0.0.1", 0, 0, 100);
+    ASSERT_EQ(receiver.open(recv_fd), Drv::SOCK_SUCCESS);
+
+    Drv::UdpSocket sender;
+    Drv::SocketDescriptor send_fd;
+    // Configure sender for both send and receive (duplex) with ephemeral receive port
+    sender.configureSend("127.0.0.1", recv_port, 0, 100);
+    sender.configureRecv("127.0.0.1", 0);
+    ASSERT_EQ(sender.open(send_fd), Drv::SOCK_SUCCESS);
+
+    // Send a test message
+    const char* msg = "hello from ephemeral sender";
+    U32 msg_len = static_cast<U32>(strlen(msg) + 1);
+    ASSERT_EQ(sender.send(send_fd, reinterpret_cast<const U8*>(msg), msg_len), Drv::SOCK_SUCCESS);
+
+    // Receive the message and capture sender's port
+    char recv_buf[64] = {0};
+    U32 recv_buf_len = sizeof(recv_buf);
+    ASSERT_EQ(receiver.recv(recv_fd, reinterpret_cast<U8*>(recv_buf), recv_buf_len), Drv::SOCK_SUCCESS);
+    ASSERT_STREQ(msg, recv_buf);
+
+    // Receiver sends a response back to sender
+    const char* reply = "reply from receiver";
+    U32 reply_len = static_cast<U32>(strlen(reply) + 1);
+    ASSERT_EQ(receiver.send(recv_fd, reinterpret_cast<const U8*>(reply), reply_len), Drv::SOCK_SUCCESS);
+
+    // Sender receives the response
+    char reply_buf[64] = {0};
+    U32 reply_buf_len = sizeof(reply_buf);
+    ASSERT_EQ(sender.recv(send_fd, reinterpret_cast<U8*>(reply_buf), reply_buf_len), Drv::SOCK_SUCCESS);
+    ASSERT_STREQ(reply, reply_buf);
+
+    sender.close(send_fd);
+    receiver.close(recv_fd);
 }
 
 int main(int argc, char** argv) {

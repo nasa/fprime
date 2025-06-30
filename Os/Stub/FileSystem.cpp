@@ -36,6 +36,10 @@ FileSystemHandle* StubFileSystem::getHandle() {
     return &this->m_handle;
 }
 
-} // namespace File
+StubFileSystem::Status StubFileSystem::_getPathType(const char* path, PathType& pathType) {
+    return Status::NOT_SUPPORTED;
+}
+
+} // namespace FileSystem
 } // namespace Stub
 } // namespace Os

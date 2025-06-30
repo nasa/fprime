@@ -617,7 +617,7 @@ namespace Svc {
     Fw::Buffer buffer(bufferData, bufferSize);
 
     // Serialize the packet descriptor FW_PACKET_FILE to the buffer
-    Fw::SerializeStatus status = buffer.getSerializer().serialize(Fw::ComPacket::FW_PACKET_FILE);
+    Fw::SerializeStatus status = buffer.getSerializer().serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_FILE));
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
     // Serialize the filePacket content into the buffer after the packet descriptor token
     Fw::Buffer offsetBuffer(buffer.getData() + sizeof(FwPacketDescriptorType),
@@ -654,12 +654,15 @@ namespace Svc {
         U8 *const packetData
     )
   {
-    const Fw::FilePacket::DataPacket dataPacket = {
-      { Fw::FilePacket::T_DATA, this->sequenceIndex++ },
-      static_cast<U32>(byteOffset),
-      PACKET_SIZE,
-      packetData
-    };
+    Fw::FilePacket::DataPacket tempDataPacket;
+    tempDataPacket.initialize(
+        this->sequenceIndex++,
+        static_cast<U32>(byteOffset),
+        PACKET_SIZE,
+        packetData
+    );
+    const Fw::FilePacket::DataPacket dataPacket = tempDataPacket;
+
     Fw::FilePacket filePacket;
     filePacket.fromDataPacket(dataPacket);
     this->sendFilePacket(filePacket);
@@ -668,10 +671,10 @@ namespace Svc {
   void FileUplinkTester ::
     sendEndPacket(const CFDP::Checksum& checksum)
   {
-    const Fw::FilePacket::Header header = {
-      Fw::FilePacket::T_END,
-      this->sequenceIndex++
-    };
+    Fw::FilePacket::Header tempHeader;
+    tempHeader.initialize(Fw::FilePacket::T_END, this->sequenceIndex++);
+    const Fw::FilePacket::Header header = tempHeader;
+
     Fw::FilePacket::EndPacket endPacket;
     endPacket.m_header = header;
     endPacket.setChecksum(checksum);
@@ -683,11 +686,15 @@ namespace Svc {
   void FileUplinkTester ::
     sendCancelPacket()
   {
-    const Fw::FilePacket::Header header = {
-      Fw::FilePacket::T_CANCEL,
-      this->sequenceIndex++
-    };
-    const Fw::FilePacket::CancelPacket cancelPacket = { header };
+    Fw::FilePacket::Header tmpHeader;
+    tmpHeader.initialize(Fw::FilePacket::T_CANCEL, this->sequenceIndex++);
+    const Fw::FilePacket::Header header = tmpHeader;
+
+    Fw::FilePacket::CancelPacket tmpCancelPacket;
+    tmpCancelPacket.initialize(header.getSequenceIndex());
+    tmpCancelPacket.m_header = header;
+    const Fw::FilePacket::CancelPacket cancelPacket = tmpCancelPacket;
+
     Fw::FilePacket filePacket;
     filePacket.fromCancelPacket(cancelPacket);
     this->sendFilePacket(filePacket);
@@ -721,7 +728,7 @@ namespace Svc {
     removeFile(const char *const path)
   {
     // status from unlink is a platform integer
-    const PlatformIntType status = ::unlink(path);
+    const int status = ::unlink(path);
     if (status != 0) {
       ASSERT_EQ(ENOENT, errno);
     }

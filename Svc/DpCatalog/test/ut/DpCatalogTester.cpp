@@ -13,6 +13,7 @@
 #include "Fw/Types/FileNameString.hpp"
 #include "config/DpCfg.hpp"
 #include <list>
+
 namespace Svc {
 
     // ----------------------------------------------------------------------
@@ -46,14 +47,14 @@ namespace Svc {
         Fw::FileNameString dirs[2];
         dirs[0] = "dir0";
         dirs[1] = "dir1";
-        Fw::FileNameString stateFile("dpState.dat");    
+        Fw::FileNameString stateFile("dpState.dat");
         this->component.configure(dirs,FW_NUM_ARRAY_ELEMENTS(dirs),stateFile,100,alloc);
         this->component.shutdown();
     }
 
     void DpCatalogTester::testTree(
-            DpCatalog::DpStateEntry* input, 
-            DpCatalog::DpStateEntry* output, 
+            DpCatalog::DpStateEntry* input,
+            DpCatalog::DpStateEntry* output,
             FwIndexType numEntries) {
         ASSERT_TRUE(input != nullptr);
         ASSERT_TRUE(output != nullptr);
@@ -112,7 +113,7 @@ namespace Svc {
             const DpSet *dpSet,
             FwSizeType numDps
         ) {
- 
+
         // make a directory for the files
         for (FwSizeType dir = 0; dir < numDirs; dir++) {
             this->makeDpDir(dpDirs[dir].toChar());
@@ -212,7 +213,7 @@ namespace Svc {
             return;
         }
         dpFile.close();
-        
+
     }
 
     void DpCatalogTester::delDp(
@@ -277,5 +278,544 @@ namespace Svc {
     {
         // TODO
     }
+
+    // ----------------------------------------------------------------------
+    // Moved Tests due to private/protected access
+    // ----------------------------------------------------------------------
+
+    bool DpCatalogTester :: EntryCompare(const Svc::DpCatalog::DpStateEntry& a, const Svc::DpCatalog::DpStateEntry& b) {
+            if (a.record.getpriority() == b.record.getpriority()) { // check priority first - lower value = higher priority
+                if (a.record.gettSec() == b.record.gettSec()) { // check time next - older = higher priority
+                    return a.record.getid() < b.record.getid(); // finally check ID - lower = higher priority
+                } else {
+                    return a.record.gettSec() < b.record.gettSec();
+                }
+            } else {
+                return a.record.getpriority() < b.record.getpriority();
+            }
+    }
+
+    void DpCatalogTester ::
+        test_NominalManual_DISABLED_TreeTestRandomTransmitted()
+        {
+            static const FwIndexType NUM_ENTRIES = 10;
+            static const FwIndexType NUM_ITERS = 1;
+
+            for (FwIndexType iter = 0; iter < NUM_ITERS; iter++) {
+
+                Svc::DpCatalog::DpStateEntry inputs[NUM_ENTRIES];
+                Svc::DpCatalog::DpStateEntry outputs[NUM_ENTRIES];
+
+                Svc::DpCatalogTester tester;
+                Fw::FileNameString dir;
+
+                std::list<Svc::DpCatalog::DpStateEntry> entryList;
+
+                srand(time(nullptr));
+
+                // fill the input entries with random priorities
+                for (FwIndexType entry = 0; entry < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(inputs)); entry++) {
+                    U32 randVal = rand()%NUM_ENTRIES;
+                    inputs[entry].record.setpriority(randVal);
+                    randVal = rand()%NUM_ENTRIES;
+                    inputs[entry].record.setid(randVal);
+                    randVal = rand()%NUM_ENTRIES;
+                    inputs[entry].record.settSec(randVal);
+                    inputs[entry].record.settSub(1500);
+                    inputs[entry].record.setsize(100);
+                    // randomly set if it is transmitted or not
+                    randVal = rand()%2;
+                    if (randVal == 0) {
+                        inputs[entry].record.setstate(Fw::DpState::UNTRANSMITTED);
+                        // only put untransmitted products in list, since the catalog algorithm only returns untransmitted product IDs
+                        entryList.push_back(inputs[entry]);
+                    } else {
+                        inputs[entry].record.setstate(Fw::DpState::TRANSMITTED);
+                    }
+
+                }
+
+                entryList.sort(EntryCompare);
+
+                FwIndexType entryIndex = 0;
+
+                for (const auto& entry: entryList) {
+                    outputs[entryIndex].record.setpriority(entry.record.getpriority());
+                    outputs[entryIndex].record.setid(entry.record.getid());
+                    outputs[entryIndex].record.setstate(entry.record.getstate());
+                    outputs[entryIndex].record.settSec(entry.record.gettSec());
+                    outputs[entryIndex].record.settSub(1500);
+                    outputs[entryIndex].record.setsize(100);
+                    entryIndex++;
+                }
+
+                this->testTree(
+                    inputs,
+                    outputs,
+                    FW_NUM_ARRAY_ELEMENTS(inputs)
+                );
+            }
+        }
+
+    void DpCatalogTester ::
+        test_TreeTestManual1()
+        {
+            Fw::FileNameString dir;
+
+            Svc::DpCatalog::DpStateEntry inputs[1];
+            Svc::DpCatalog::DpStateEntry outputs[1];
+
+            inputs[0].record.setid(1);
+            inputs[0].record.setpriority(2);
+            inputs[0].record.setstate(Fw::DpState::UNTRANSMITTED);
+            inputs[0].record.settSec(1000);
+            inputs[0].record.settSub(1500);
+            inputs[0].record.setsize(100);
+
+            outputs[0].record.setid(1);
+            outputs[0].record.setpriority(2);
+            outputs[0].record.setstate(Fw::DpState::UNTRANSMITTED);
+            outputs[0].record.settSec(1000);
+            outputs[0].record.settSub(1500);
+            outputs[0].record.setsize(100);
+
+            testTree(
+                inputs,
+                outputs,
+                1
+            );
+
+        }
+
+    void DpCatalogTester ::
+        test_TreeTestManual2()
+        {
+            Fw::FileNameString dir;
+
+            Svc::DpCatalog::DpStateEntry inputs[2];
+            Svc::DpCatalog::DpStateEntry outputs[2];
+
+            inputs[0].record.setid(1);
+            inputs[0].record.setpriority(2);
+            inputs[0].record.setstate(Fw::DpState::UNTRANSMITTED);
+            inputs[0].record.settSec(1000);
+            inputs[0].record.settSub(1500);
+            inputs[0].record.setsize(100);
+
+            inputs[1].record.setid(2);
+            inputs[1].record.setpriority(1);
+            inputs[1].record.setstate(Fw::DpState::UNTRANSMITTED);
+            inputs[1].record.settSec(1000);
+            inputs[1].record.settSub(1500);
+            inputs[1].record.setsize(100);
+
+
+            outputs[0].record = inputs[1].record;
+            outputs[1].record = inputs[0].record;
+
+            testTree(
+                inputs,
+                outputs,
+                FW_NUM_ARRAY_ELEMENTS(inputs)
+            );
+
+        }
+
+    void DpCatalogTester ::
+        test_TreeTestManual3()
+        {
+
+            Svc::DpCatalogTester tester;
+            Fw::FileNameString dir;
+
+            Svc::DpCatalog::DpStateEntry inputs[3];
+            Svc::DpCatalog::DpStateEntry outputs[3];
+
+            inputs[0].record.setid(1);
+            inputs[0].record.setpriority(2);
+            inputs[0].record.setstate(Fw::DpState::UNTRANSMITTED);
+            inputs[0].record.settSec(1000);
+            inputs[0].record.settSub(1500);
+            inputs[0].record.setsize(100);
+
+            inputs[1].record.setid(2);
+            inputs[1].record.setpriority(1);
+            inputs[1].record.setstate(Fw::DpState::UNTRANSMITTED);
+            inputs[1].record.settSec(1000);
+            inputs[1].record.settSub(1500);
+            inputs[1].record.setsize(100);
+
+            inputs[2].record.setid(3);
+            inputs[2].record.setpriority(3);
+            inputs[2].record.setstate(Fw::DpState::UNTRANSMITTED);
+            inputs[2].record.settSec(1000);
+            inputs[2].record.settSub(1500);
+            inputs[2].record.setsize(100);
+
+            outputs[0].record = inputs[1].record;
+            outputs[1].record = inputs[0].record;
+            outputs[2].record = inputs[2].record;
+
+            testTree(
+                inputs,
+                outputs,
+                FW_NUM_ARRAY_ELEMENTS(inputs)
+            );
+
+        }
+
+    void DpCatalogTester ::
+        test_TreeTestManual5()
+        {
+            Svc::DpCatalog::DpStateEntry inputs[5];
+            Svc::DpCatalog::DpStateEntry outputs[5];
+
+            inputs[0].record.setid(1);
+            inputs[0].record.setpriority(2);
+            inputs[0].record.setstate(Fw::DpState::UNTRANSMITTED);
+            inputs[0].record.settSec(1000);
+            inputs[0].record.settSub(1500);
+            inputs[0].record.setsize(100);
+
+            inputs[1].record.setid(2);
+            inputs[1].record.setpriority(1);
+            inputs[1].record.setstate(Fw::DpState::UNTRANSMITTED);
+            inputs[1].record.settSec(1000);
+            inputs[1].record.settSub(1500);
+            inputs[1].record.setsize(100);
+
+            inputs[2].record.setid(3);
+            inputs[2].record.setpriority(3);
+            inputs[2].record.setstate(Fw::DpState::UNTRANSMITTED);
+            inputs[2].record.settSec(1000);
+            inputs[2].record.settSub(1500);
+            inputs[2].record.setsize(100);
+
+            inputs[3].record.setid(4);
+            inputs[3].record.setpriority(5);
+            inputs[3].record.setstate(Fw::DpState::UNTRANSMITTED);
+            inputs[3].record.settSec(1000);
+            inputs[3].record.settSub(1500);
+            inputs[3].record.setsize(100);
+
+            inputs[4].record.setid(5);
+            inputs[4].record.setpriority(4);
+            inputs[4].record.setstate(Fw::DpState::UNTRANSMITTED);
+            inputs[4].record.settSec(1000);
+            inputs[4].record.settSub(1500);
+            inputs[4].record.setsize(100);
+
+            outputs[0].record = inputs[1].record;
+            outputs[1].record = inputs[0].record;
+            outputs[2].record = inputs[2].record;
+            outputs[3].record = inputs[4].record;
+            outputs[4].record = inputs[3].record;
+
+            testTree(
+                inputs,
+                outputs,
+                FW_NUM_ARRAY_ELEMENTS(inputs)
+            );
+
+        }
+
+
+    void DpCatalogTester ::
+        test_TreeTestManual1_Transmitted()
+        {
+            Fw::FileNameString dir;
+
+            Svc::DpCatalog::DpStateEntry inputs[1];
+            Svc::DpCatalog::DpStateEntry outputs[1];
+
+            inputs[0].record.setid(1);
+            inputs[0].record.setpriority(2);
+            inputs[0].record.setstate(Fw::DpState::TRANSMITTED);
+            inputs[0].record.settSec(1000);
+            inputs[0].record.settSub(1500);
+            inputs[0].record.setsize(100);
+
+            outputs[0].record.setstate(Fw::DpState::TRANSMITTED);
+
+            testTree(
+                inputs,
+                outputs,
+                1
+            );
+
+        }
+
+
+    void DpCatalogTester ::
+        test_TreeTestManual_All_Transmitted()
+        {
+            Svc::DpCatalog::DpStateEntry inputs[5];
+            Svc::DpCatalog::DpStateEntry outputs[5];
+
+            inputs[0].record.setid(1);
+            inputs[0].record.setpriority(2);
+            inputs[0].record.setstate(Fw::DpState::TRANSMITTED);
+            inputs[0].record.settSec(1000);
+            inputs[0].record.settSub(1500);
+            inputs[0].record.setsize(100);
+
+            inputs[1].record.setid(2);
+            inputs[1].record.setpriority(1);
+            inputs[1].record.setstate(Fw::DpState::TRANSMITTED);
+            inputs[1].record.settSec(1000);
+            inputs[1].record.settSub(1500);
+            inputs[1].record.setsize(100);
+
+            inputs[2].record.setid(3);
+            inputs[2].record.setpriority(3);
+            inputs[2].record.setstate(Fw::DpState::TRANSMITTED);
+            inputs[2].record.settSec(1000);
+            inputs[2].record.settSub(1500);
+            inputs[2].record.setsize(100);
+
+            inputs[3].record.setid(4);
+            inputs[3].record.setpriority(5);
+            inputs[3].record.setstate(Fw::DpState::TRANSMITTED);
+            inputs[3].record.settSec(1000);
+            inputs[3].record.settSub(1500);
+            inputs[3].record.setsize(100);
+
+            inputs[4].record.setid(5);
+            inputs[4].record.setpriority(4);
+            inputs[4].record.setstate(Fw::DpState::TRANSMITTED);
+            inputs[4].record.settSec(1000);
+            inputs[4].record.settSub(1500);
+            inputs[4].record.setsize(100);
+
+            outputs[0].record.setstate(Fw::DpState::TRANSMITTED);
+            outputs[1].record.setstate(Fw::DpState::TRANSMITTED);
+            outputs[2].record.setstate(Fw::DpState::TRANSMITTED);
+            outputs[3].record.setstate(Fw::DpState::TRANSMITTED);
+            outputs[4].record.setstate(Fw::DpState::TRANSMITTED);
+
+
+            testTree(
+                inputs,
+                outputs,
+                FW_NUM_ARRAY_ELEMENTS(inputs)
+            );
+
+        }
+
+    void DpCatalogTester ::
+        test_TreeTestRandomPriority()
+        {
+            static const FwIndexType NUM_ENTRIES = Svc::DP_MAX_FILES;
+            static const FwIndexType NUM_ITERS = 100;
+
+            for (FwIndexType iter = 0; iter < NUM_ITERS; iter++) {
+
+                Svc::DpCatalog::DpStateEntry inputs[NUM_ENTRIES];
+                Svc::DpCatalog::DpStateEntry outputs[NUM_ENTRIES];
+
+                Svc::DpCatalogTester tester;
+                Fw::FileNameString dir;
+
+                std::list<Svc::DpCatalog::DpStateEntry> entryList;
+
+                srand(time(nullptr));
+
+                // fill the input entries with random priorities
+                for (FwIndexType entry = 0; entry < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(inputs)); entry++) {
+                    U32 randVal = rand()%NUM_ENTRIES;
+                    inputs[entry].record.setpriority(randVal);
+                    inputs[entry].record.setid(entry);
+                    inputs[entry].record.setstate(Fw::DpState::UNTRANSMITTED);
+                    inputs[entry].record.settSec(1000);
+                    inputs[entry].record.settSub(1500);
+                    inputs[entry].record.setsize(100);
+                    entryList.push_back(inputs[entry]);
+
+                }
+
+                entryList.sort(EntryCompare);
+
+                FwIndexType entryIndex = 0;
+
+                for (const auto& entry: entryList) {
+                    outputs[entryIndex].record.setpriority(entry.record.getpriority());
+                    outputs[entryIndex].record.setid(entry.record.getid());
+                    outputs[entryIndex].record.setstate(entry.record.getstate());
+                    outputs[entryIndex].record.settSec(1000);
+                    outputs[entryIndex].record.settSub(1500);
+                    outputs[entryIndex].record.setsize(100);
+                    entryIndex++;
+                }
+
+                tester.testTree(
+                    inputs,
+                    outputs,
+                    FW_NUM_ARRAY_ELEMENTS(inputs)
+                );
+            }
+        }
+
+    void DpCatalogTester ::
+        test_TreeTestRandomTime()
+        {
+            static const FwIndexType NUM_ENTRIES = Svc::DP_MAX_FILES;
+            static const FwIndexType NUM_ITERS = 100;
+
+            for (FwIndexType iter = 0; iter < NUM_ITERS; iter++) {
+
+                Svc::DpCatalog::DpStateEntry inputs[NUM_ENTRIES];
+                Svc::DpCatalog::DpStateEntry outputs[NUM_ENTRIES];
+
+                Svc::DpCatalogTester tester;
+                Fw::FileNameString dir;
+
+                std::list<Svc::DpCatalog::DpStateEntry> entryList;
+
+                srand(time(nullptr));
+
+                // fill the input entries with random priorities
+                for (FwIndexType entry = 0; entry < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(inputs)); entry++) {
+                    U32 randVal = rand()%NUM_ENTRIES;
+                    inputs[entry].record.setpriority(100);
+                    inputs[entry].record.setid(entry);
+                    inputs[entry].record.setstate(Fw::DpState::UNTRANSMITTED);
+                    inputs[entry].record.settSec(randVal);
+                    inputs[entry].record.settSub(1500);
+                    inputs[entry].record.setsize(100);
+                    entryList.push_back(inputs[entry]);
+
+                }
+
+                entryList.sort(EntryCompare);
+
+                FwIndexType entryIndex = 0;
+
+                for (const auto& entry: entryList) {
+                    outputs[entryIndex].record.setpriority(entry.record.getpriority());
+                    outputs[entryIndex].record.setid(entry.record.getid());
+                    outputs[entryIndex].record.setstate(entry.record.getstate());
+                    outputs[entryIndex].record.settSec(entry.record.gettSec());
+                    outputs[entryIndex].record.settSub(1500);
+                    outputs[entryIndex].record.setsize(100);
+                    entryIndex++;
+                }
+
+                testTree(
+                    inputs,
+                    outputs,
+                    FW_NUM_ARRAY_ELEMENTS(inputs)
+                );
+            }
+
+        }
+
+    void DpCatalogTester ::
+        test_TreeTestRandomId()
+        {
+
+            static const FwIndexType NUM_ENTRIES = Svc::DP_MAX_FILES;
+            static const FwIndexType NUM_ITERS = 100;
+
+            for (FwIndexType iter = 0; iter < NUM_ITERS; iter++) {
+
+                Svc::DpCatalog::DpStateEntry inputs[NUM_ENTRIES];
+                Svc::DpCatalog::DpStateEntry outputs[NUM_ENTRIES];
+
+                Svc::DpCatalogTester tester;
+                Fw::FileNameString dir;
+
+                std::list<Svc::DpCatalog::DpStateEntry> entryList;
+
+                srand(time(nullptr));
+
+                // fill the input entries with random priorities
+                for (FwIndexType entry = 0; entry < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(inputs)); entry++) {
+                    U32 randVal = rand()%NUM_ENTRIES;
+                    inputs[entry].record.setpriority(100);
+                    inputs[entry].record.setid(randVal);
+                    inputs[entry].record.setstate(Fw::DpState::UNTRANSMITTED);
+                    inputs[entry].record.settSec(1000);
+                    inputs[entry].record.settSub(1500);
+                    inputs[entry].record.setsize(100);
+                    entryList.push_back(inputs[entry]);
+
+                }
+
+                entryList.sort(EntryCompare);
+
+                FwIndexType entryIndex = 0;
+
+                for (const auto& entry: entryList) {
+                    outputs[entryIndex].record.setpriority(entry.record.getpriority());
+                    outputs[entryIndex].record.setid(entry.record.getid());
+                    outputs[entryIndex].record.setstate(entry.record.getstate());
+                    outputs[entryIndex].record.settSec(entry.record.gettSec());
+                    outputs[entryIndex].record.settSub(1500);
+                    outputs[entryIndex].record.setsize(100);
+                    entryIndex++;
+                }
+
+                testTree(
+                    inputs,
+                    outputs,
+                    FW_NUM_ARRAY_ELEMENTS(inputs)
+                );
+            }
+        }
+
+    void DpCatalogTester ::
+        test_TreeTestRandomPrioIdTime()
+        {
+            static const FwIndexType NUM_ENTRIES = Svc::DP_MAX_FILES;
+            static const FwIndexType NUM_ITERS = 100;
+
+            for (FwIndexType iter = 0; iter < NUM_ITERS; iter++) {
+
+                Svc::DpCatalog::DpStateEntry inputs[NUM_ENTRIES];
+                Svc::DpCatalog::DpStateEntry outputs[NUM_ENTRIES];
+
+                Svc::DpCatalogTester tester;
+                Fw::FileNameString dir;
+
+                std::list<Svc::DpCatalog::DpStateEntry> entryList;
+
+                srand(time(nullptr));
+
+                // fill the input entries with random priorities
+                for (FwIndexType entry = 0; entry < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(inputs)); entry++) {
+                    U32 randVal = rand()%NUM_ENTRIES;
+                    inputs[entry].record.setpriority(randVal);
+                    randVal = rand()%NUM_ENTRIES;
+                    inputs[entry].record.setid(randVal);
+                    inputs[entry].record.setstate(Fw::DpState::UNTRANSMITTED);
+                    randVal = rand()%NUM_ENTRIES;
+                    inputs[entry].record.settSec(randVal);
+                    inputs[entry].record.settSub(1500);
+                    inputs[entry].record.setsize(100);
+                    entryList.push_back(inputs[entry]);
+
+                }
+
+                entryList.sort(EntryCompare);
+
+                FwIndexType entryIndex = 0;
+
+                for (const auto& entry: entryList) {
+                    outputs[entryIndex].record.setpriority(entry.record.getpriority());
+                    outputs[entryIndex].record.setid(entry.record.getid());
+                    outputs[entryIndex].record.setstate(entry.record.getstate());
+                    outputs[entryIndex].record.settSec(entry.record.gettSec());
+                    outputs[entryIndex].record.settSub(1500);
+                    outputs[entryIndex].record.setsize(100);
+                    entryIndex++;
+                }
+
+                tester.testTree(
+                    inputs,
+                    outputs,
+                    FW_NUM_ARRAY_ELEMENTS(inputs)
+                );
+            }
+        }
 
 }

@@ -52,6 +52,9 @@ class Serialization {
 };
 
 class SerializeBufferBase {
+
+  friend class SerializeBufferBaseTester;
+
   protected:
     SerializeBufferBase& operator=(const SerializeBufferBase& src);  //!< copy assignment operator
 
@@ -186,12 +189,12 @@ class SerializeBufferBase {
     friend std::ostream& operator<<(std::ostream& os, const SerializeBufferBase& buff);
 #endif
 
-  PROTECTED:
+  protected:
     SerializeBufferBase();  //!< default constructor
     Serializable::SizeType m_serLoc;                //!< current offset in buffer of serialized data
     Serializable::SizeType m_deserLoc;              //!< current offset for deserialization
 
-  PRIVATE:
+  private:
     // Copy constructor can be used only by the implementation
     SerializeBufferBase(const SerializeBufferBase& src);  //!< constructor with buffer as source
 
@@ -220,7 +223,7 @@ class ExternalSerializeBuffer : public SerializeBufferBase {
     //! deleted copy assignment operator
     ExternalSerializeBuffer& operator=(const SerializeBufferBase& src) = delete;
 
-  PROTECTED:
+  protected:
     // data members
     U8* m_buff;                         //!< pointer to external buffer
     Serializable::SizeType m_buffSize;  //!< size of external buffer

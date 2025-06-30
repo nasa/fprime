@@ -6,6 +6,10 @@ on:
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ devel, release/** ]
+# Cancel in-progress runs if a newer run is started on a given PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/')}}
 
 jobs:
   format:
@@ -13,10 +17,10 @@ jobs:
       runs-on: ubuntu-22.04
       steps:
       - uses: actions/checkout@v4
-      - name: Setup Python 3.8
+      - name: Setup Python 3.11
         uses: actions/setup-python@v5
         with:
-          python-version: 3.8
+          python-version: 3.11
       - name: Check formatting
         run: |
           pip install click==8.0.4 black==21.6b0

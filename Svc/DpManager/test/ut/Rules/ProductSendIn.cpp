@@ -29,11 +29,11 @@ void TestState ::action__ProductSendIn__OK() {
     this->clearHistory();
     // Send the invocation
     const auto portNum = static_cast<FwIndexType>(STest::Pick::startLength(0, DpManagerNumPorts));
-    const auto id = static_cast<FwDpIdType>(STest::Pick::lowerUpper(0, std::numeric_limits<FwDpIdType>::max()));
+    const auto id = static_cast<FwDpIdType>(STest::Pick::lowerUpper(0, static_cast<U32>(std::numeric_limits<FwDpIdType>::max())));
     const FwSizeType size = this->abstractState.getBufferSize();
     const Fw::Buffer buffer(this->abstractState.bufferData, static_cast<Fw::Buffer::SizeType>(size));
     this->invoke_to_productSendIn(portNum, id, buffer);
-    this->component.doDispatch();
+    this->doDispatch();
     // Check events
     ASSERT_EVENTS_SIZE(0);
     // Update test state

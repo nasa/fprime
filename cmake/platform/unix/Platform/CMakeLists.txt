@@ -21,4 +21,5 @@ register_fprime_config(
         Os_Cpu_Stub
         Os_Memory_Stub
     INTERFACE # No compilable outputs produced
+    BASE_CONFIG
 )

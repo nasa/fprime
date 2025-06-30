@@ -1,0 +1,92 @@
+# Run suite of CI builds and tests in a RHEL8 container
+
+name: CI [RHEL8]
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches: [ devel, release/** ]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ devel, release/** ]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.github/actions/spelling/**'
+      - '.github/ISSUE_TEMPLATE/**'
+# Cancel in-progress runs if a newer run is started on a given PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/')}}
+
+jobs:
+  Framework:
+    runs-on: ubuntu-latest
+    container:
+      image: redhat/ubi8:8.10
+    steps:
+    - name: "Install dependencies"
+      run: |
+        dnf install -y git python3.12 python3.12-pip llvm-toolset libasan libubsan
+        git config --global --add safe.directory ${GITHUB_WORKSPACE}
+    - name: "Checkout F´ Repository"
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        submodules: true
+    - uses: ./.github/actions/setup
+    - name: Build Framework
+      run: |
+        fprime-util generate
+        fprime-util build --all -j4
+
+  Ref:
+    runs-on: ubuntu-latest
+    container:
+      image: redhat/ubi8:8.10
+    steps:
+    - name: "Install dependencies"
+      run: |
+        dnf install -y git python3.12 python3.12-pip llvm-toolset libasan libubsan
+        git config --global --add safe.directory ${GITHUB_WORKSPACE}
+    - name: "Checkout F´ Repository"
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        submodules: true
+    - uses: ./.github/actions/setup
+    - name: Build Ref
+      run: |
+        cd Ref
+        fprime-util generate
+        fprime-util build -j4
+
+  UTs:
+    runs-on: ubuntu-latest
+    container:
+      image: redhat/ubi8:8.10
+    steps:
+    - name: "Install dependencies"
+      run: |
+        dnf install -y git python3.12 python3.12-pip llvm-toolset libasan libubsan
+        git config --global --add safe.directory ${GITHUB_WORKSPACE}
+    - name: "Checkout F´ Repository"
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        submodules: true
+    - uses: ./.github/actions/setup
+    # Some UTs require a non-root user to run properly due to using file permissions in tests
+    # This issue shows up on RHEL8 containers
+    - name: Setup test environment for permission tests
+      run: |
+        useradd -m -u 1001 -s /bin/bash test-user
+        chown -R test-user:test-user .
+    - name: UT Build and Run
+      run: |
+        su test-user -c "
+          fprime-util generate --ut &&
+          fprime-util build --all --ut -j4 &&
+          fprime-util check --all -j4
+        "

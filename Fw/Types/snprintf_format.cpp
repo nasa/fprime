@@ -27,7 +27,7 @@ Fw::FormatStatus Fw::stringFormat(char* destination, const FwSizeType maximumSiz
     else if (maximumSize > std::numeric_limits<size_t>::max()) {
         formatStatus = Fw::FormatStatus::SIZE_OVERFLOW;
     } else {
-        PlatformIntType needed_size = vsnprintf(destination, static_cast<size_t>(maximumSize), formatString, args);
+        int needed_size = vsnprintf(destination, static_cast<size_t>(maximumSize), formatString, args);
         destination[maximumSize - 1] = 0; // Force null-termination
         if (needed_size < 0) {
             formatStatus = Fw::FormatStatus::OTHER_ERROR;
