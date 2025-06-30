@@ -225,6 +225,11 @@ SerializeStatus SerializeBufferBase::serialize(const U8* buff, Serializable::Siz
     return this->serialize(buff, static_cast<FwSizeType>(length), Serialization::INCLUDE_LENGTH);
 }
 
+SerializeStatus SerializeBufferBase::serialize(const U8* buff, Serializable::SizeType length, bool noLength) {
+    return this->serialize(buff, static_cast<FwSizeType>(length),
+    noLength ? Serialization::OMIT_LENGTH : Serialization::INCLUDE_LENGTH);
+}
+
 SerializeStatus SerializeBufferBase::serialize(const U8* buff, FwSizeType length, Fw::Serialization::t mode) {
     // First serialize length
     SerializeStatus stat;
@@ -494,6 +499,14 @@ SerializeStatus SerializeBufferBase::deserialize(F32& val) {
 SerializeStatus SerializeBufferBase::deserialize(U8* buff, Serializable::SizeType& length) {
     FwSizeType length_in_out = static_cast<FwSizeType>(length);
     SerializeStatus status = this->deserialize(buff, length_in_out, Serialization::INCLUDE_LENGTH);
+    length = static_cast<Serializable::SizeType>(length_in_out);
+    return status;
+}
+
+SerializeStatus SerializeBufferBase::deserialize(U8* buff, Serializable::SizeType& length, bool noLength) {
+    FwSizeType length_in_out = static_cast<FwSizeType>(length);
+    SerializeStatus status =
+        this->deserialize(buff, length_in_out, noLength ? Serialization::OMIT_LENGTH : Serialization::INCLUDE_LENGTH);
     length = static_cast<Serializable::SizeType>(length_in_out);
     return status;
 }
