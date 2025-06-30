@@ -90,6 +90,7 @@ CMDPACKET
 cmdresponse
 cmdseq
 cmdsequencer
+cmps
 cntx
 CODEFILE
 COLORSTYLE
@@ -214,9 +215,12 @@ fbuild
 fdp
 fecf
 FEEDNAME
+FEQ
 fetchcontent
 ffff
 Ffs
+FGE
+FGT
 FILEDOWNLINK
 FILEDOWNLINKCFG
 FILEHANDLING
@@ -225,7 +229,10 @@ FILEID
 FILEOPENERROR
 FILEWRITEERROR
 fio
+FLE
+flhs
 FNDELAY
+FNE
 FONTPATH
 foodoodie
 foodoodiehoo
@@ -240,6 +247,7 @@ fpy
 FPYSEQUENCER
 freeram
 Fregoso
+frhs
 frsize
 fsblkcnt
 fsw
@@ -316,7 +324,10 @@ ipas
 IPCFG
 IPHELPER
 isf
+isgreater
+isless
 isr
+isunordered
 itimerspec
 itr
 itval
