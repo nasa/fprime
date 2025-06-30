@@ -227,7 +227,7 @@ SerializeStatus SerializeBufferBase::serialize(const U8* buff, Serializable::Siz
 
 SerializeStatus SerializeBufferBase::serialize(const U8* buff, Serializable::SizeType length, bool noLength) {
     return this->serialize(buff, static_cast<FwSizeType>(length),
-    noLength ? Serialization::OMIT_LENGTH : Serialization::INCLUDE_LENGTH);
+        noLength ? Serialization::OMIT_LENGTH : Serialization::INCLUDE_LENGTH);
 }
 
 SerializeStatus SerializeBufferBase::serialize(const U8* buff, FwSizeType length, Fw::Serialization::t mode) {
