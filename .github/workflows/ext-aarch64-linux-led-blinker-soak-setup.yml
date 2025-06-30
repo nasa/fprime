@@ -82,8 +82,8 @@ jobs:
       
       - name: "List artifact files"
         run: |
-          echo "Listing files in aarch64-linux-artifacts-soak:"
-          find ./aarch64-linux-artifacts-soak
+          echo "Listing files in current directory:"
+          find . -name "*LedBlinker*" -type f
           
       - name: "Stop existing service if running"
         run: |
@@ -110,12 +110,12 @@ jobs:
           sudo mkdir -p ${INSTALL_DIR}/test
           
           # Copy binary and make executable
-          sudo cp ./aarch64-linux-artifacts-soak/aarch64-linux/LedBlinker/bin/LedBlinker ${INSTALL_DIR}/bin/
+          sudo cp ./build-artifacts/aarch64-linux/LedBlinker/bin/LedBlinker ${INSTALL_DIR}/bin/
           sudo chmod +x ${INSTALL_DIR}/bin/LedBlinker
           
           # Copy dictionary and test files
-          sudo cp -r ./aarch64-linux-artifacts-soak/aarch64-linux/LedBlinker/dict/* ${INSTALL_DIR}/dict/
-          sudo cp -r ./aarch64-linux-artifacts-soak/int/* ${INSTALL_DIR}/test/
+          sudo cp -r ./build-artifacts/aarch64-linux/LedBlinker/dict/* ${INSTALL_DIR}/dict/
+          sudo cp -r ./int/* ${INSTALL_DIR}/test/
           
           # Set ownership, so service can access files
           sudo chown -R fprime:fprime ${INSTALL_DIR}
