@@ -50,6 +50,10 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_report_seqSucce
 ) {
     this->m_tlm.sequencesSucceeded++;
     this->log_ACTIVITY_HI_SequenceDone(this->m_sequenceFilePath);
+    if (this->isConnected_seqDoneOut_OutputPort(0)) {
+        // report that the sequence succeeded to internal callers
+        this->seqDoneOut_out(0, 0, 0, Fw::CmdResponse::OK);
+    }
 }
 
 //! Implementation for action report_seqCancelled of state machine
@@ -62,6 +66,10 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_report_seqCance
 ) {
     this->m_tlm.sequencesCancelled++;
     this->log_ACTIVITY_HI_SequenceCancelled(this->m_sequenceFilePath);
+    if (this->isConnected_seqDoneOut_OutputPort(0)) {
+        // report that the sequence failed to internal callers
+        this->seqDoneOut_out(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
+    }
 }
 
 //! Implementation for action dispatchStatement of state machine
@@ -293,6 +301,31 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_setDebugBreakpo
     this->log_ACTIVITY_HI_DebugBreakpointSet(value.getbreakpointIndex(), value.getbreakOnlyOnceOnBreakpoint());
 }
 
+//! Implementation for action report_seqFailed of state machine Svc_FpySequencer_SequencerStateMachine
+//!
+//! called when a sequence failed to execute successfully
+void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_report_seqFailed(
+    SmId smId, //!< The state machine id
+    Svc_FpySequencer_SequencerStateMachine::Signal signal //!< The signal
+) {
+    if (this->isConnected_seqDoneOut_OutputPort(0)) {
+        // report that the sequence failed to internal callers
+        this->seqDoneOut_out(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
+    }
+}
+
+//! Implementation for action report_seqStarted of state machine Svc_FpySequencer_SequencerStateMachine
+//!
+//! reports that a sequence was started
+void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_report_seqStarted(
+    SmId smId, //!< The state machine id
+    Svc_FpySequencer_SequencerStateMachine::Signal signal //!< The signal
+) {
+    if (this->isConnected_seqDoneOut_OutputPort(0)) {
+        // report that the sequence started to internal callers
+        this->seqStartOut_out(0, this->m_sequenceFilePath);
+    }
+}
 // ----------------------------------------------------------------------
 // Functions to implement for internal state machine guards
 // ----------------------------------------------------------------------

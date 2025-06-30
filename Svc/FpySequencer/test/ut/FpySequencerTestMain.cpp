@@ -539,11 +539,15 @@ TEST_F(FpySequencerTester, cmd_RUN) {
     ASSERT_EQ(tester_get_m_sequencesStarted(), 0);
     ASSERT_EQ(tester_get_m_statementsDispatched(), 0);
     dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
+    ASSERT_from_seqStartOut_SIZE(1);
+    ASSERT_from_seqStartOut(0, Fw::String("test.bin"));
     ASSERT_EQ(tester_get_m_sequencesStarted(), 1);
     dispatchUntilState(State::IDLE);
     ASSERT_EQ(tester_get_m_statementsDispatched(), 1);
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, FpySequencer::OPCODE_RUN, 0, Fw::CmdResponse::OK);
+    ASSERT_from_seqDoneOut_SIZE(1);
+    ASSERT_from_seqDoneOut(0, 0, 0, Fw::CmdResponse::OK);
     this->clearHistory();
 
     sendCmd_RUN(0, 0, Fw::String("test.bin"), FpySequencer_BlockState::NO_BLOCK);
@@ -565,6 +569,8 @@ TEST_F(FpySequencerTester, cmd_RUN) {
     dispatchUntilState(State::IDLE);
 
     ASSERT_CMD_RESPONSE(0, FpySequencer::OPCODE_RUN, 0, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_from_seqDoneOut_SIZE(1);
+    ASSERT_from_seqDoneOut(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
 
     this->clearHistory();
 
@@ -1340,6 +1346,11 @@ TEST_F(FpySequencerTester, seqRunIn) {
     dispatchUntilState(State::VALIDATING);
     dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
     dispatchUntilState(State::IDLE);
+
+    ASSERT_from_seqStartOut_SIZE(1);
+    ASSERT_from_seqStartOut(0, Fw::String("test.bin"));
+    ASSERT_from_seqDoneOut_SIZE(1);
+    ASSERT_from_seqDoneOut(0, 0, 0, Fw::CmdResponse::OK);
 
     this->clearHistory();
 
