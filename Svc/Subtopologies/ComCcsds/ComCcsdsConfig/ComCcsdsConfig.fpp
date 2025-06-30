@@ -3,7 +3,7 @@ module ComCcsdsConfig {
     constant BASE_ID = 0x8000
     
     module QueueSizes {
-        constant comQueue    = 10
+        constant comQueue    = 50
         constant cmdSeq      = 10
     }
     

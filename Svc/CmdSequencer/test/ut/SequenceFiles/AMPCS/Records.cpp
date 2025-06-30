@@ -35,8 +35,7 @@ namespace Svc {
           ASSERT_EQ(Fw::FW_SERIALIZE_OK, dest.serialize(cmdLength));
           ASSERT_EQ(
               Fw::FW_SERIALIZE_OK,
-              // true means "don't serialize the length"
-              dest.serialize(addr, cmdLength, true)
+              dest.serialize(addr, cmdLength, Fw::Serialization::OMIT_LENGTH)
           );
         }
 

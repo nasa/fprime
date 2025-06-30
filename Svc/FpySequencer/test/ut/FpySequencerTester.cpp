@@ -156,7 +156,7 @@ void FpySequencerTester::add_SET_SER_REG(U8 serRegIdx, Fw::StatementArgBuffer va
 void FpySequencerTester::add_SET_SER_REG(FpySequencer_SetSerRegDirective dir) {
     Fw::StatementArgBuffer buf;
     FW_ASSERT(buf.serialize(dir.getindex()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    FW_ASSERT(buf.serialize(dir.getvalue(), dir.get_valueSize(), true) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    FW_ASSERT(buf.serialize(dir.getvalue(), dir.get_valueSize(), Fw::Serialization::OMIT_LENGTH) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     addDirective(Fpy::DirectiveId::SET_SER_REG, buf);
 }
 
@@ -202,7 +202,7 @@ void FpySequencerTester::add_CMD(FwOpcodeType opcode) {
 void FpySequencerTester::add_CMD(FpySequencer_CmdDirective dir) {
     Fw::StatementArgBuffer buf;
     FW_ASSERT(buf.serialize(dir.getopCode()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    FW_ASSERT(buf.serialize(dir.getargBuf(), dir.get_argBufSize(), true) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    FW_ASSERT(buf.serialize(dir.getargBuf(), dir.get_argBufSize(), Fw::Serialization::OMIT_LENGTH) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     addDirective(Fpy::DirectiveId::CMD, buf);
 }
 
@@ -463,6 +463,20 @@ Fw::ExternalSerializeBuffer* FpySequencerTester::tester_get_m_sequenceBuffer_ptr
 Svc::FpySequencer::Debug* FpySequencerTester::tester_get_m_debug_ptr() {
     return &(this->cmp.m_debug);
 }
+
+void FpySequencerTester::tester_doDispatch() {
+    this->cmp.doDispatch();
+}
+
+Svc::FpySequencer_SequencerStateMachineStateMachineBase::State FpySequencerTester::tester_getState() {
+    return this->cmp.m_stateMachine_sequencer.getState();
+}
+
+void FpySequencerTester::tester_setState(Svc::FpySequencer_SequencerStateMachineStateMachineBase::State state) {
+    FpySequencer_SequencerStateMachineTester::setState(this->cmp.m_stateMachine_sequencer, state);
+}
+
+
 // End UT private/protected access
 
 }  // namespace Svc
