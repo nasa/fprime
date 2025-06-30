@@ -80,6 +80,11 @@ jobs:
         with:
           name: aarch64-linux-artifacts-soak
       
+      - name: "List artifact files"
+        run: |
+          echo "Listing files in aarch64-linux-artifacts-soak:"
+          find ./aarch64-linux-artifacts-soak
+          
       - name: "Stop existing service if running"
         run: |
           echo "Stopping existing service if it exists..."
