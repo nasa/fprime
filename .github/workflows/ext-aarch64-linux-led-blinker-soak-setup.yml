@@ -72,7 +72,7 @@ jobs:
 
   deploy-service:
     name: "Deploy as System Service"
-    runs-on: [self-hosted, aarch64-linux]
+    runs-on: [self-hosted, ARM64]
     needs: cross-compilation
     steps:
       - name: "Artifacts Download"
