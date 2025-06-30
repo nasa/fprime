@@ -100,14 +100,13 @@ jobs:
           name: aarch64-linux-artifacts
       - name: "Start Continuous Soak Testing"
         run: |
-          . venv/bin/activate
           echo "Soak testing started with fresh release at $(date)"
           
           # Setup GDS once
           OG_TIMESTAMP=$(date +%Y%m%d_%H%M%S)
           mkdir -p ci-logs-soak-${OG_TIMESTAMP}
           
-          echo "Starting F' GDS for continuous soak testing..."
+          echo "Starting F' GDS for soak testing..."
           chmod +x ./aarch64-linux-artifacts/build-artifacts/aarch64-linux/LedBlinker/bin/LedBlinker
           fprime-gds --ip-client -d ./aarch64-linux-artifacts/build-artifacts/aarch64-linux/LedBlinker --logs ./ci-logs-soak-${OG_TIMESTAMP} &
           GDS_PID=$!
@@ -121,14 +120,14 @@ jobs:
             local iteration=$1
             local test_timestamp=$(date +%Y%m%d_%H%M%S)
             
-            echo "=== Soak test iteration $iteration starting at $(date) ==="
+            echo "=== Soak test iteration $iteration starting at (${test_timestamp}) ==="
             
             # Run the test
             if pytest --dictionary ./aarch64-linux-artifacts/build-artifacts/aarch64-linux/LedBlinker/dict/LedBlinkerTopologyDictionary.json ./aarch64-linux-artifacts/int/led_integration_tests.py -v --tb=short; then
-              echo "=== Iteration $iteration PASSED at $(date) ==="
+              echo "=== Iteration $iteration PASSED at (${test_timestamp}) ==="
               return 0
             else
-              echo "=== Iteration $iteration FAILED at $(date) ==="
+              echo "=== Iteration $iteration FAILED at (${test_timestamp}) ==="
               return 1
             fi
           }

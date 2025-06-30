@@ -1,0 +1,166 @@
+# Cross-compile and deploy LED blinker as system service on AArch64 Linux
+# Builds on release publication, stops old service, starts new service
+name: "External Repo: AArch64 Linux LedBlinker Release Deploy"
+
+on:
+  release: 
+    types: [published]
+
+# New releases cancel running deployments
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+env:
+  AARCH64_TOOLCHAIN_DIR: /tmp/aarch64-toolchain
+  AARCH64_TOOLCHAIN_URL: https://developer.arm.com/-/media/Files/downloads/gnu-a/10.2-2020.11/binrel/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu.tar.xz
+  SERVICE_NAME: fprime-ledblinker
+  INSTALL_DIR: /opt/fprime-ledblinker
+
+jobs:
+  get-branch:
+    name: "Get target branch"
+    runs-on: ubuntu-22.04
+    if: github.event_name == 'release'
+    outputs:
+      target-branch: ${{ steps.get-branch.outputs.target-branch }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get target branch
+        id: get-branch
+        uses: ./.github/workflows/reusable-get-pr-branch.yml
+        with:
+          target_repository: fprime-community/fprime-workshop-led-blinker
+
+  cross-compilation:
+    name: "Cross Compilation"
+    runs-on: ubuntu-22.04
+    needs: get-branch
+    if: github.event_name == 'release' 
+    steps:
+      - name: "Checkout target repository"
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+          repository: fprime-community/fprime-workshop-led-blinker
+          ref: ${{ needs.get-branch.outputs.target-branch }}
+      - name: "Overlay current F´ revision"
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          path: ./fprime
+          fetch-depth: 0
+      - uses: ./fprime/.github/actions/setup
+        with:
+          location: ./fprime
+      - name: "Download and Setup AArch64 Linux Toolchain"
+        run: |
+          mkdir -p ${AARCH64_TOOLCHAIN_DIR}
+          wget -q ${AARCH64_TOOLCHAIN_URL}
+          tar -xf $(basename ${AARCH64_TOOLCHAIN_URL}) -C ${AARCH64_TOOLCHAIN_DIR} --strip-components 1
+          echo "${AARCH64_TOOLCHAIN_DIR}/bin" >> $GITHUB_PATH
+      - name: "Generate AArch64 Linux Build Cache"
+        run: |
+          fprime-util generate aarch64-linux
+      - name: "Build AArch64 Linux"
+        run: |
+          fprime-util build aarch64-linux
+      - name: "Prepare artifacts"
+        run: |
+          mkdir -p aarch64-linux-artifacts
+          cp -r ./build-artifacts aarch64-linux-artifacts
+          cp -r Components/Led/test/int aarch64-linux-artifacts
+      - name: 'Archive Build Artifacts'
+        uses: actions/upload-artifact@v4
+        with:
+          name: aarch64-linux-artifacts
+          path: aarch64-linux-artifacts
+          retention-days: 365
+
+  deploy-service:
+    name: "Deploy as System Service"
+    runs-on: [self-hosted, aarch64-linux]
+    needs: cross-compilation
+    steps:
+      - name: "Download Build Artifacts"
+        uses: actions/download-artifact@v4
+        with:
+          name: aarch64-linux-artifacts
+      
+      - name: "Stop existing service if running"
+        run: |
+          echo "Stopping existing service if it exists..."
+          sudo systemctl stop ${SERVICE_NAME} 2>/dev/null || true
+          sudo systemctl disable ${SERVICE_NAME} 2>/dev/null || true
+          
+      - name: "Install new binary"
+        run: |
+          echo "Installing new binary to ${INSTALL_DIR}..."
+          sudo mkdir -p ${INSTALL_DIR}/bin
+          sudo mkdir -p ${INSTALL_DIR}/dict
+          sudo mkdir -p ${INSTALL_DIR}/logs
+          sudo mkdir -p ${INSTALL_DIR}/test
+          
+          # Copy binary and make executable
+          sudo cp ./aarch64-linux-artifacts/build-artifacts/aarch64-linux/LedBlinker/bin/LedBlinker ${INSTALL_DIR}/bin/
+          sudo chmod +x ${INSTALL_DIR}/bin/LedBlinker
+          
+          # Copy dictionary and test files
+          sudo cp -r ./aarch64-linux-artifacts/build-artifacts/aarch64-linux/LedBlinker/dict/* ${INSTALL_DIR}/dict/
+          sudo cp -r ./aarch64-linux-artifacts/int/* ${INSTALL_DIR}/test/
+          
+          # Set ownership
+          sudo chown -R $(whoami):$(whoami) ${INSTALL_DIR}
+          
+      - name: "Create systemd service file"
+        run: |
+          echo "Creating systemd service file..."
+          sudo tee /etc/systemd/system/${SERVICE_NAME}.service > /dev/null <<EOF
+          [Unit]
+          Description=F' LED Blinker Application
+          After=network.target
+          
+          [Service]
+          Type=simple
+          User=$(whoami)
+          WorkingDirectory=${INSTALL_DIR}
+          ExecStart=${INSTALL_DIR}/bin/LedBlinker
+          Restart=always
+          RestartSec=5
+          StandardOutput=journal
+          StandardError=journal
+          
+          [Install]
+          WantedBy=multi-user.target
+          EOF
+          
+      - name: "Start and enable service"
+        run: |
+          echo "Starting and enabling service..."
+          sudo systemctl daemon-reload
+          sudo systemctl enable ${SERVICE_NAME}
+          sudo systemctl start ${SERVICE_NAME}
+          
+          # Wait a moment and check status
+          sleep 5
+          if sudo systemctl is-active --quiet ${SERVICE_NAME}; then
+            echo "Service ${SERVICE_NAME} started successfully"
+            sudo systemctl status ${SERVICE_NAME} --no-pager
+          else
+            echo "Service ${SERVICE_NAME} failed to start"
+            sudo systemctl status ${SERVICE_NAME} --no-pager
+            sudo journalctl -u ${SERVICE_NAME} --no-pager -n 20
+            exit 1
+          fi
+          
+      - name: "Deployment Summary"
+        run: |
+          echo "=== Deployment Summary ==="
+          echo "Service: ${SERVICE_NAME}"
+          echo "Install Directory: ${INSTALL_DIR}"
+          echo "Binary: ${INSTALL_DIR}/bin/LedBlinker"
+          echo "Dictionary: ${INSTALL_DIR}/dict/"
+          echo "Tests: ${INSTALL_DIR}/test/"
+          echo ""
+          echo "Service Status:"
+          sudo systemctl status ${SERVICE_NAME} --no-pager -l
