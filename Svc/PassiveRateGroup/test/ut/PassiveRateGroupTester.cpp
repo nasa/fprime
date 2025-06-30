@@ -3,7 +3,7 @@
  * \file
  * \brief
  *
- * This file is the test driver for the active rate group unit test.
+ * This file is the test component for the active rate group unit test.
  *
  * Code Generated Source Code Header
  *
@@ -11,45 +11,73 @@
  *   ALL RIGHTS RESERVED. United States Government Sponsorship
  *   acknowledged.
  */
-#include <config/FppConstantsAc.hpp>
-
-#include <Fw/Obj/SimpleObjRegistry.hpp>
-#include <Svc/PassiveRateGroup/PassiveRateGroup.hpp>
-#include <Svc/PassiveRateGroup/test/ut/PassiveRateGroupTester.hpp>
 
 #include <gtest/gtest.h>
+#include <Fw/Test/UnitTest.hpp>
+#include <Svc/PassiveRateGroup/test/ut/PassiveRateGroupTester.hpp>
 
-void connectPorts(Svc::PassiveRateGroup& impl, Svc::PassiveRateGroupTester& tester) {
-    tester.connect_to_CycleIn(0, impl.get_CycleIn_InputPort(0));
+#include <cstdio>
+#include <cstring>
+#include <unistd.h>
 
+namespace Svc {
+
+PassiveRateGroupTester::PassiveRateGroupTester(Svc::PassiveRateGroup& inst)
+    : PassiveRateGroupGTestBase("testerbase", 100), m_impl(inst), m_callOrder(0) {
+    this->clearPortCalls();
+}
+
+void PassiveRateGroupTester::clearPortCalls() {
+    memset(this->m_callLog, 0, sizeof(this->m_callLog));
+    this->m_callOrder = 0;
+}
+
+PassiveRateGroupTester::~PassiveRateGroupTester() {}
+
+void PassiveRateGroupTester::from_RateGroupMemberOut_handler(FwIndexType portNum, U32 context) {
+    ASSERT_TRUE(portNum < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(m_impl.m_RateGroupMemberOut_OutputPort)));
+    this->m_callLog[portNum].portCalled = true;
+    this->m_callLog[portNum].contextVal = context;
+    this->m_callLog[portNum].order = this->m_callOrder++;
+    // Adding a small sleep to ensure that the cycle time is bigger than 0 us
+    usleep(1);
+}
+
+void PassiveRateGroupTester::runNominal(U32 contexts[],
+                                            FwIndexType numContexts,
+                                            FwEnumStoreType instance) {
+    TEST_CASE(101.1.1, "Run nominal rate group execution");
+
+    // clear events
+    this->clearTlm();
+
+    Os::RawTime timestamp;
+    timestamp.now();
+
+    // clear port call log
+    this->clearPortCalls();
+
+    REQUIREMENT("FPRIME-PRG-001");
+    // call active rate group with timestamp val
+    this->invoke_to_CycleIn(0, timestamp);
+
+
+    // check calls
+    REQUIREMENT("FPRIME-PRG-002");
     for (FwIndexType portNum = 0;
-         portNum < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(impl.m_RateGroupMemberOut_OutputPort)); portNum++) {
-        impl.set_RateGroupMemberOut_OutputPort(portNum, tester.get_from_RateGroupMemberOut(portNum));
+         portNum < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_RateGroupMemberOut_OutputPort)); portNum++) {
+        ASSERT_TRUE(this->m_callLog[portNum].portCalled);
+        ASSERT_EQ(this->m_callLog[portNum].contextVal, contexts[portNum]);
+        ASSERT_EQ(this->m_callLog[portNum].order, portNum);
     }
-
-    impl.set_Tlm_OutputPort(0, tester.get_from_Tlm(0));
-    impl.set_Time_OutputPort(0, tester.get_from_Time(0));
+    // Cycle times should be non-zero
+    REQUIREMENT("FPRIME-PRG-003");
+    ASSERT_TLM_MaxCycleTime_SIZE(1);
+    ASSERT_TLM_CycleTime_SIZE(1);
+    ASSERT_TLM_CycleCount_SIZE(1);
+    ASSERT_GT(this->tlmHistory_MaxCycleTime->at(0).arg, 0);
+    ASSERT_GT(this->tlmHistory_CycleTime->at(0).arg, 0);
+    ASSERT_GT(this->tlmHistory_CycleCount->at(0).arg, 0);
 }
 
-TEST(PassiveRateGroupTest, NominalSchedule) {
-    for (FwEnumStoreType inst = 0; inst < 3; inst++) {
-        U32 contexts[FppConstant_PassiveRateGroupOutputPorts::PassiveRateGroupOutputPorts] = {1, 2, 3, 4, 5};
-
-        Svc::PassiveRateGroup impl("PassiveRateGroup");
-        impl.configure(contexts, FW_NUM_ARRAY_ELEMENTS(contexts));
-        Svc::PassiveRateGroupTester tester(impl);
-
-        tester.init();
-        impl.init(inst);
-
-        // connect ports
-        connectPorts(impl, tester);
-
-        tester.runNominal(contexts, FW_NUM_ARRAY_ELEMENTS(contexts), inst);
-    }
-}
-
-int main(int argc, char* argv[]) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}
+}  // namespace Svc

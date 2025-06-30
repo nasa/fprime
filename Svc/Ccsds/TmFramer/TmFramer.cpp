@@ -28,8 +28,7 @@ TmFramer ::~TmFramer() {}
 void TmFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
     FW_ASSERT(data.getSize() <= ComCfg::TmFrameFixedSize - TMHeader::SERIALIZED_SIZE - TMTrailer::SERIALIZED_SIZE,
               static_cast<FwAssertArgType>(data.getSize()));
-    FW_ASSERT(this->m_bufferState == BufferOwnershipState::OWNED,
-              static_cast<FwAssertArgType>(this->m_bufferState));
+    FW_ASSERT(this->m_bufferState == BufferOwnershipState::OWNED, static_cast<FwAssertArgType>(this->m_bufferState));
 
     // -----------------------------------------------
     // Header
@@ -121,7 +120,7 @@ void TmFramer ::fill_with_idle_packet(Fw::SerializeBufferBase& serializer) {
     header.setpacketIdentification(idleApid);
     header.setpacketSequenceControl(
         0x3 << SpacePacketSubfields::SeqFlagsOffset);  // Sequence Flags = 0b11 (unsegmented) & unused Seq count
-    header.setpacketDataLength(lengthToken); // this should be payload length - 1 ???
+    header.setpacketDataLength(lengthToken);
     // Serialize header and idle data into the frame
     serializer.serialize(header);
     for (U16 i = static_cast<U16>(startIndex + SpacePacketHeader::SERIALIZED_SIZE); i < endIndex; i++) {

@@ -9,7 +9,7 @@ module Ccsds {
         output port validateApidSeqCount: Ccsds.ApidSequenceCount
 
         @ Deframing received an invalid frame length
-        event InvalidLength(transmitted: U16, actual: U32) \
+        event InvalidLength(transmitted: U16, actual: FwSizeType) \
             severity warning high \
             format "Invalid length received. Header specified packet byte size of {} | Actual received data length: {}"
 

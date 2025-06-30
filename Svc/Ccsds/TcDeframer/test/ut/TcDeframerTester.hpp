@@ -49,7 +49,6 @@ class TcDeframerTester final : public TcDeframerGTestBase {
     void testInvalidLengthToken();
     void testInvalidCrc();
 
-
   private:
     // ----------------------------------------------------------------------
     // Helper functions
@@ -74,7 +73,7 @@ class TcDeframerTester final : public TcDeframerGTestBase {
     //! The component under test
     TcDeframer component;
 
-    U8 m_frameData[300]; // data buffer used to produce test frames
+    U8 m_frameData[300];  // data buffer used to produce test frames
 };
 
 }  // namespace Ccsds

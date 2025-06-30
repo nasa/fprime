@@ -24,7 +24,7 @@ DpManagerTester ::~DpManagerTester() {}
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-Fw::Buffer DpManagerTester::from_bufferGetOut_handler(const FwIndexType portNum, U32 size) {
+Fw::Buffer DpManagerTester::from_bufferGetOut_handler(const FwIndexType portNum, FwSizeType size) {
     this->abstractState.bufferGetOutPortNumOpt = TestUtils::Option<FwIndexType>::some(portNum);
     this->pushFromPortEntry_bufferGetOut(size);
     Fw::Buffer buffer;
@@ -78,6 +78,15 @@ void DpManagerTester::checkTelemetry() {
     TESTER_CHECK_CHANNEL(NumFailedAllocations);
     TESTER_CHECK_CHANNEL(NumDataProducts);
     TESTER_CHECK_CHANNEL(NumBytes);
+}
+
+
+void DpManagerTester::doDispatch() {
+    this->component.doDispatch();
+}
+
+FwIndexType DpManagerTester::getBufferAllocationFailedThrottleCount() {
+    return this->component.DpManagerComponentBase::m_BufferAllocationFailedThrottle;
 }
 
 }  // end namespace Svc

@@ -112,6 +112,17 @@ namespace Svc {
                 const Fw::TextLogString& text //!< The event string
                 ) override;
 
+
+    public:
+
+      // ----------------------------------------------------------------------
+      // Accessor methods for protected/private members
+      // ----------------------------------------------------------------------
+      //! Get the NUM_PINGSEND_OUTPUT_PORTS value
+      static constexpr FwSizeType getNumPingSendOutputPorts() {
+          return HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS;
+      }
+
   };
 
 } // end namespace Svc

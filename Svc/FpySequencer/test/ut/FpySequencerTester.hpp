@@ -78,25 +78,31 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     // writes up to maxBytes bytes
     void writeToFile(const char* name, FwSizeType maxBytes = Fpy::Sequence::SERIALIZED_SIZE);
     void removeFile(const char* name);
-    void addStmt(const Fpy::Statement& stmt);
-    void addCmd(FwOpcodeType opcode);
     void addDirective(Fpy::DirectiveId id, Fw::StatementArgBuffer& buf);
 
-    void add_WAIT_REL(Fw::TimeInterval duration);
+    void add_WAIT_REL(U32 seconds, U32 uSeconds);
     void add_WAIT_REL(FpySequencer_WaitRelDirective dir);
     void add_WAIT_ABS(Fw::Time wakeupTime);
     void add_WAIT_ABS(FpySequencer_WaitAbsDirective dir);
     void add_GOTO(U32 stmtIdx);
     void add_GOTO(FpySequencer_GotoDirective dir);
-    void add_SET_LVAR(U8 lvarIdx, Fw::StatementArgBuffer value);
-    void add_SET_LVAR(FpySequencer_SetLocalVarDirective dir);
-    void add_IF(U8 lvarIdx, U32 gotoIfFalse);
+    void add_SET_SER_REG(U8 serRegIdx, Fw::StatementArgBuffer value);
+    void add_SET_SER_REG(FpySequencer_SetSerRegDirective dir);
+    void add_IF(U8 serRegIdx, U32 gotoIfFalse);
     void add_IF(FpySequencer_IfDirective dir);
     void add_NO_OP();
-    void add_GET_TLM(U8 valueDestLvar, U8 timeDestLvar, FwChanIdType id);
+    void add_GET_TLM(U8 valueDestSerReg, U8 timeDestSerReg, FwChanIdType id);
     void add_GET_TLM(FpySequencer_GetTlmDirective dir);
-    void add_GET_PRM(U8 lvarIdx, FwPrmIdType id);
+    void add_GET_PRM(U8 serRegIdx, FwPrmIdType id);
     void add_GET_PRM(FpySequencer_GetPrmDirective dir);
+    void add_CMD(FwOpcodeType opcode);
+    void add_CMD(FpySequencer_CmdDirective dir);
+    void add_DESER_SER_REG(U8 srcSerRegIdx, FwSizeType srcOffset, U8 destReg, U8 deserSize);
+    void add_DESER_SER_REG(FpySequencer_DeserSerRegDirective dir);
+    void add_SET_REG(U8 dest, I64 value);
+    void add_SET_REG(FpySequencer_SetRegDirective dir);
+    void add_BINARY_CMP(U8 lhs, U8 rhs, U8 res, Fpy::DirectiveId op);
+    void add_BINARY_CMP(FpySequencer_BinaryCmpDirective dir);
     //! Handle a text event
     void textLogIn(FwEventIdType id,                //!< The event ID
                    const Fw::Time& timeTag,         //!< The time
@@ -122,22 +128,29 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
                                          ) override;
 
     // Access to private and protected FpySequencer methods and members for UTs
-    Signal tester_noOp_directiveHandler(const FpySequencer_NoOpDirective& directive);
-    Signal tester_waitRel_directiveHandler(const FpySequencer_WaitRelDirective& directive);
-    Signal tester_waitAbs_directiveHandler(const FpySequencer_WaitAbsDirective& directive);
-    Signal tester_goto_directiveHandler(const Svc::FpySequencer_GotoDirective &directive);
+    Signal tester_noOp_directiveHandler(const FpySequencer_NoOpDirective& directive, DirectiveError& err);
+    Signal tester_waitRel_directiveHandler(const FpySequencer_WaitRelDirective& directive, DirectiveError& err);
+    Signal tester_waitAbs_directiveHandler(const FpySequencer_WaitAbsDirective& directive, DirectiveError& err);
+    Signal tester_goto_directiveHandler(const Svc::FpySequencer_GotoDirective &directive, DirectiveError& err);
+    Signal tester_setSerReg_directiveHandler(const FpySequencer_SetSerRegDirective& directive, DirectiveError& err);
+    Signal tester_if_directiveHandler(const FpySequencer_IfDirective& directive, DirectiveError& err);
+    Signal tester_getPrm_directiveHandler(const FpySequencer_GetPrmDirective& directive, DirectiveError& err);
+    Signal tester_getTlm_directiveHandler(const FpySequencer_GetTlmDirective& directive, DirectiveError& err);
+    Signal tester_not_directiveHandler(const FpySequencer_NotDirective& directive, DirectiveError& err);
+    Signal tester_exit_directiveHandler(const FpySequencer_ExitDirective& directive, DirectiveError& err);
+    Signal tester_cmd_directiveHandler(const FpySequencer_CmdDirective& directive, DirectiveError& err);
+    Signal tester_deserSerReg_directiveHandler(const FpySequencer_DeserSerRegDirective& directive, DirectiveError& err);
+    Signal tester_binaryCmp_directiveHandler(const FpySequencer_BinaryCmpDirective& directive, DirectiveError& err);
+    Signal tester_setReg_directiveHandler(const FpySequencer_SetRegDirective& directive, DirectiveError& err);
     FpySequencer::Runtime* tester_get_m_runtime_ptr();
     Fw::ExternalSerializeBuffer* tester_get_m_sequenceBuffer_ptr();
-    Signal tester_setLocalVar_directiveHandler(const FpySequencer_SetLocalVarDirective& directive);
     void tester_set_m_sequencesStarted(U64 val);
     void tester_set_m_statementsDispatched(U64 val);
     U64 tester_get_m_sequencesStarted();
     U64 tester_get_m_statementsDispatched();
     Fw::Success tester_deserializeDirective(const Fpy::Statement& stmt, Svc::FpySequencer::DirectiveUnion& deserializedDirective);
-    Fw::Success tester_dispatchCommand(const Fpy::Statement& stmt);
     Fpy::Sequence* tester_get_m_sequenceObj_ptr();
     Svc::Signal tester_dispatchStatement();
-    Signal tester_if_directiveHandler(const FpySequencer_IfDirective& directive);
     Fw::Success tester_validate();
     Fw::String tester_get_m_sequenceFilePath();
     void tester_set_m_sequenceFilePath(Fw::String str);
@@ -149,8 +162,7 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     Svc::FpySequencer::Debug* tester_get_m_debug_ptr();
     Svc::Signal tester_checkStatementTimeout();
     Svc::Signal tester_checkShouldWake();
-    Signal tester_getPrm_directiveHandler(const FpySequencer_GetPrmDirective& directive);
-    Signal tester_getTlm_directiveHandler(const FpySequencer_GetTlmDirective& directive);
+    Svc::FpySequencer::Telemetry* tester_get_m_tlm_ptr();
 
 };
 

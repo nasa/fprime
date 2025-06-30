@@ -7,8 +7,8 @@
 #ifndef Svc_Ccsds_ApidManager_HPP
 #define Svc_Ccsds_ApidManager_HPP
 
-#include "Svc/Ccsds/ApidManager/ApidManagerComponentAc.hpp"
 #include "Fw/Com/ComPacket.hpp"
+#include "Svc/Ccsds/ApidManager/ApidManagerComponentAc.hpp"
 
 namespace Svc {
 

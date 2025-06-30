@@ -33,7 +33,7 @@ void TestState ::action__ProductSendIn__OK() {
     const FwSizeType size = this->abstractState.getBufferSize();
     const Fw::Buffer buffer(this->abstractState.bufferData, static_cast<Fw::Buffer::SizeType>(size));
     this->invoke_to_productSendIn(portNum, id, buffer);
-    this->component.doDispatch();
+    this->doDispatch();
     // Check events
     ASSERT_EVENTS_SIZE(0);
     // Update test state

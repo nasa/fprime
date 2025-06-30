@@ -9,7 +9,7 @@
 *
 *   Copyright 2014-2015, by the California Institute of Technology.
 *   ALL RIGHTS RESERVED. United States Government Sponsorship
-*   acknowledged. 
+*   acknowledged.
 */
 
 #ifndef PASSIVERATEGROUP_TEST_UT_PASSIVERATEGROUPIMPLTESTER_HPP_
@@ -27,6 +27,11 @@ namespace Svc {
 
             void runNominal(U32 contexts[], FwIndexType numContexts, FwEnumStoreType instance);
 
+            static FwSizeType getNumRateGroupMemberOutPorts() {
+                return Svc::PassiveRateGroupComponentBase::NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS;
+            }
+
+
         private:
 
             void from_RateGroupMemberOut_handler(FwIndexType portNum, U32 context);
@@ -43,7 +48,7 @@ namespace Svc {
 
             FwIndexType m_callOrder; //!< tracks order of port call.
 
-    };
+        };
 
 } /* namespace Svc */
 

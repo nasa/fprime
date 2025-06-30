@@ -23,19 +23,22 @@
 
 static_assert(Svc::Fpy::MAX_SEQUENCE_ARG_COUNT <= std::numeric_limits<U8>::max(),
               "Sequence arg count must be below U8 max");
+static_assert(Svc::Fpy::NUM_REGISTERS <= std::numeric_limits<U8>::max(),
+              "Register count must be below U8 max");
 static_assert(Svc::Fpy::MAX_SEQUENCE_STATEMENT_COUNT <= std::numeric_limits<U16>::max(),
               "Sequence statement count must be below U16 max");
-static_assert(Svc::Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE <= std::numeric_limits<FwSizeType>::max(),
+static_assert(Svc::Fpy::MAX_SERIALIZABLE_REGISTER_SIZE <= std::numeric_limits<FwSizeType>::max(),
               "Local variable buffer size must be below FwSizeType max");
-static_assert(Svc::Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE >= FW_TLM_BUFFER_MAX_SIZE,
+static_assert(Svc::Fpy::MAX_SERIALIZABLE_REGISTER_SIZE >= FW_TLM_BUFFER_MAX_SIZE,
               "Local variable buffer size must be greater than FW_TLM_BUFFER_MAX_SIZE");
-static_assert(Svc::Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE >= FW_PARAM_BUFFER_MAX_SIZE,
+static_assert(Svc::Fpy::MAX_SERIALIZABLE_REGISTER_SIZE >= FW_PARAM_BUFFER_MAX_SIZE,
               "Local variable buffer size must be greater than FW_PARAM_BUFFER_MAX_SIZE");
 
 namespace Svc {
 
 using Signal = FpySequencer_SequencerStateMachineStateMachineBase::Signal;
 using State = FpySequencer_SequencerStateMachineStateMachineBase::State;
+using DirectiveError = FpySequencer_DirectiveErrorCode;
 
 class FpySequencer : public FpySequencerComponentBase {
 
@@ -45,12 +48,18 @@ class FpySequencer : public FpySequencerComponentBase {
     union DirectiveUnion {
         FpySequencer_WaitRelDirective waitRel;
         FpySequencer_WaitAbsDirective waitAbs;
-        FpySequencer_SetLocalVarDirective setLVar;
+        FpySequencer_SetSerRegDirective setSerReg;
         FpySequencer_GotoDirective gotoDirective;
         FpySequencer_IfDirective ifDirective;
         FpySequencer_NoOpDirective noOp;
         FpySequencer_GetTlmDirective getTlm;
         FpySequencer_GetPrmDirective getPrm;
+        FpySequencer_CmdDirective cmd;
+        FpySequencer_DeserSerRegDirective deserSerReg;
+        FpySequencer_SetRegDirective setReg;
+        FpySequencer_BinaryCmpDirective binaryCmp;
+        FpySequencer_NotDirective notDirective;
+        FpySequencer_ExitDirective exit;
 
         DirectiveUnion() {}
         ~DirectiveUnion() {}
@@ -379,8 +388,8 @@ class FpySequencer : public FpySequencerComponentBase {
     //! Internal interface handler for directive_waitRel
     void directive_waitRel_internalInterfaceHandler(const FpySequencer_WaitRelDirective& directive) override;
 
-    //! Internal interface handler for directive_setLocalVar
-    void directive_setLocalVar_internalInterfaceHandler(const FpySequencer_SetLocalVarDirective& directive) override;
+    //! Internal interface handler for directive_setSerReg
+    void directive_setSerReg_internalInterfaceHandler(const FpySequencer_SetSerRegDirective& directive) override;
 
     //! Internal interface handler for directive_goto
     void directive_goto_internalInterfaceHandler(const Svc::FpySequencer_GotoDirective& directive) override;
@@ -396,6 +405,24 @@ class FpySequencer : public FpySequencerComponentBase {
 
     //! Internal interface handler for directive_getPrm
     void directive_getPrm_internalInterfaceHandler(const Svc::FpySequencer_GetPrmDirective& directive) override;
+
+    //! Internal interface handler for directive_cmd
+    void directive_cmd_internalInterfaceHandler(const Svc::FpySequencer_CmdDirective& directive) override;
+
+    //! Internal interface handler for directive_deserSerReg
+    void directive_deserSerReg_internalInterfaceHandler(const Svc::FpySequencer_DeserSerRegDirective& directive) override;
+
+    //! Internal interface handler for directive_setReg
+    void directive_setReg_internalInterfaceHandler(const Svc::FpySequencer_SetRegDirective& directive) override;
+
+    //! Internal interface handler for directive_binaryCmp
+    void directive_binaryCmp_internalInterfaceHandler(const Svc::FpySequencer_BinaryCmpDirective& directive) override;
+
+    //! Internal interface handler for directive_not
+    void directive_not_internalInterfaceHandler(const Svc::FpySequencer_NotDirective& directive) override;
+
+    //! Internal interface handler for directive_exit
+    void directive_exit_internalInterfaceHandler(const Svc::FpySequencer_ExitDirective& directive) override;
 
     void parametersLoaded() override;
     void parameterUpdated(FwPrmIdType id) override;
@@ -449,9 +476,9 @@ class FpySequencer : public FpySequencerComponentBase {
         U32 nextStatementIndex = 0;
 
         // the opcode of the statement that is currently executing
-        FwOpcodeType currentStatementOpcode = Fpy::DirectiveId::INVALID;
-        // the stmt type of the stmt currently executing (cmd or directive)
-        Fpy::StatementType currentStatementType = Fpy::StatementType::DIRECTIVE;
+        U8 currentStatementOpcode = Fpy::DirectiveId::INVALID;
+        // the opcode of the command that we are currently awaiting, or 0 if we are executing a directive
+        FwOpcodeType currentCmdOpcode = 0;
         // the time we dispatched the statement that is currently executing
         Fw::Time currentStatementDispatchTime = Fw::Time();
 
@@ -459,13 +486,18 @@ class FpySequencer : public FpySequencerComponentBase {
         // a statement response
         Fw::Time wakeupTime = Fw::Time();
 
-        // all the local variables in the sequence
-        struct LocalVariable {
-            // the value buffer of the lvar
-            U8 value[Fpy::MAX_LOCAL_VARIABLE_BUFFER_SIZE] = {};
-            // the size of the data in the lvar buf
+        // all the serializable registers in the sequence
+        struct SerializableReg {
+            // the value buffer of the serReg
+            U8 value[Fpy::MAX_SERIALIZABLE_REGISTER_SIZE] = {};
+            // the size of the data in the serReg buf
             FwSizeType valueSize = 0;
-        } localVariables[Fpy::MAX_SEQUENCE_LOCAL_VARIABLES] = {};
+        } serRegs[Fpy::NUM_SERIALIZABLE_REGISTERS] = {};
+
+        // all the regs in the sequence. regs are 8 byte
+        // values of unspecified type
+        I64 regs[Fpy::NUM_REGISTERS] = {0};
+
     } m_runtime;
 
     // the state of the debugger. debugger is separate from runtime
@@ -491,6 +523,9 @@ class FpySequencer : public FpySequencerComponentBase {
 
         // the number of sequences that have been cancelled
         U64 sequencesCancelled = 0;
+
+        // the error code of the last directive that ran
+        DirectiveError lastDirectiveError = DirectiveError::NO_ERROR;
     } m_tlm;
 
     // ----------------------------------------------------------------------
@@ -528,17 +563,12 @@ class FpySequencer : public FpySequencerComponentBase {
     // dispatches the next statement
     Signal dispatchStatement();
 
-    // dispatches a command out via port.
-    // return success if successfully dispatched.
-    Fw::Success dispatchCommand(const Fpy::Statement& stmt);
-
     // deserializes a directive from bytes into the Fpy type
     // returns success if able to deserialize, and returns the Fpy type object
     // as a reference, in a union of all the possible directive type objects
     Fw::Success deserializeDirective(const Fpy::Statement& stmt, DirectiveUnion& deserializedDirective);
 
     // dispatches a deserialized sequencer directive to the right handler.
-    // return success if successfully handled.
     void dispatchDirective(const DirectiveUnion& directive, const Fpy::DirectiveId& id);
 
     // checks whether the currently executing statement timed out
@@ -560,16 +590,26 @@ class FpySequencer : public FpySequencerComponentBase {
     // sends a signal based on a signal id
     void sendSignal(Signal signal);
 
+    // helper function to get a reference to a register from an index
+    // saves a bunch of typing
+    I64& reg(U8 idx);
+
     // we split these functions up into the internalInterfaceInvoke and these custom member funcs
     // so that we can unit test them easier
-    Signal waitRel_directiveHandler(const FpySequencer_WaitRelDirective& directive);
-    Signal waitAbs_directiveHandler(const FpySequencer_WaitAbsDirective& directive);
-    Signal setLocalVar_directiveHandler(const FpySequencer_SetLocalVarDirective& directive);
-    Signal goto_directiveHandler(const FpySequencer_GotoDirective& directive);
-    Signal if_directiveHandler(const FpySequencer_IfDirective& directive);
-    Signal noOp_directiveHandler(const FpySequencer_NoOpDirective& directive);
-    Signal getTlm_directiveHandler(const FpySequencer_GetTlmDirective& directive);
-    Signal getPrm_directiveHandler(const FpySequencer_GetPrmDirective& directive);
+    Signal waitRel_directiveHandler(const FpySequencer_WaitRelDirective& directive, DirectiveError& error);
+    Signal waitAbs_directiveHandler(const FpySequencer_WaitAbsDirective& directive, DirectiveError& error);
+    Signal setSerReg_directiveHandler(const FpySequencer_SetSerRegDirective& directive, DirectiveError& error);
+    Signal goto_directiveHandler(const FpySequencer_GotoDirective& directive, DirectiveError& error);
+    Signal if_directiveHandler(const FpySequencer_IfDirective& directive, DirectiveError& error);
+    Signal noOp_directiveHandler(const FpySequencer_NoOpDirective& directive, DirectiveError& error);
+    Signal getTlm_directiveHandler(const FpySequencer_GetTlmDirective& directive, DirectiveError& error);
+    Signal getPrm_directiveHandler(const FpySequencer_GetPrmDirective& directive, DirectiveError& error);
+    Signal cmd_directiveHandler(const FpySequencer_CmdDirective& directive, DirectiveError& error);
+    Signal deserSerReg_directiveHandler(const FpySequencer_DeserSerRegDirective& directive, DirectiveError& error);
+    Signal setReg_directiveHandler(const FpySequencer_SetRegDirective& directive, DirectiveError& error);
+    Signal binaryCmp_directiveHandler(const FpySequencer_BinaryCmpDirective& directive, DirectiveError& error);
+    Signal not_directiveHandler(const FpySequencer_NotDirective& directive, DirectiveError& error);
+    Signal exit_directiveHandler(const FpySequencer_ExitDirective& directive, DirectiveError& error);
 };
 
 }  // namespace Svc

@@ -51,7 +51,7 @@ namespace Drv {
       // Tests
       // ----------------------------------------------------------------------
 
-      void setup_helper(bool recv_thread, bool reconnect);
+      void setup_helper(bool recv_thread, bool reconnect, bool expect_started = true);
 
       //! Test basic messaging
       //!
@@ -99,7 +99,7 @@ namespace Drv {
       //!
       Fw::Buffer from_allocate_handler(
           const FwIndexType portNum, /*!< The port number*/
-          U32 size
+          FwSizeType size
       ) override;
 
     private:

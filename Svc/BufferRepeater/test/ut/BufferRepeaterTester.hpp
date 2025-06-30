@@ -53,7 +53,7 @@ class BufferRepeaterTester : public BufferRepeaterGTestBase {
     //! Handler for from_allocate
     //!
     Fw::Buffer from_allocate_handler(const FwIndexType portNum, /*!< The port number*/
-                                     U32 size);
+                                     FwSizeType size);
 
     //! Handler for from_deallocate
     //!

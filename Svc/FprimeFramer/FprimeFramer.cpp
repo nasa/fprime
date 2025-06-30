@@ -34,13 +34,13 @@ void FprimeFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const 
     FW_ASSERT(frameSize <= std::numeric_limits<Fw::Buffer::SizeType>::max(), static_cast<FwAssertArgType>(frameSize));
 
     // Allocate frame buffer
-    Fw::Buffer frameBuffer = this->bufferAllocate_out(0, static_cast<Fw::Buffer::SizeType>(frameSize));
+    Fw::Buffer frameBuffer = this->bufferAllocate_out(0, frameSize);
     auto frameSerializer = frameBuffer.getSerializer();
     Fw::SerializeStatus status;
 
     // Serialize the header
     // 0xDEADBEEF is already set as the default value for the header startWord field in the FPP type definition
-    header.setlengthField(data.getSize());
+    header.setlengthField(static_cast<FprimeProtocol::TokenType>(data.getSize()));
     status = frameSerializer.serialize(header);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 

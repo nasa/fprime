@@ -90,7 +90,7 @@ namespace Drv {
             int m_fd;
             FwIndexType m_device;
             FwIndexType m_select;
-            U32 m_bytes;
+            FwSizeType m_bytes;
 
     };
 

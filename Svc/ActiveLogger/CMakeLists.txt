@@ -16,8 +16,8 @@ register_fprime_module()
 ### UTs ###
 set(UT_SOURCE_FILES
   "${FPRIME_FRAMEWORK_PATH}/Svc/ActiveLogger/ActiveLogger.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/ActiveLoggerTestMain.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/ActiveLoggerTester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/ActiveLoggerImplTester.cpp"
 )
 register_fprime_ut()
 set (UT_TARGET_NAME "${FPRIME_CURRENT_MODULE}_ut_exe")
