@@ -13,6 +13,7 @@ include(options)
 include(sanitizers) # Enable sanitizers if they are requested
 include(required)
 include(config_assembler)
+include(fprime-util)
 
 # Add project root's cmake folder to module path
 if (IS_DIRECTORY "${FPRIME_PROJECT_ROOT}/cmake")
@@ -131,11 +132,7 @@ macro(fprime_setup_standard_targets)
         register_fprime_target(target/install)
         register_fprime_ut_target(target/ut)
         register_fprime_target(target/sbom)
-
-        if (FPRIME_ENABLE_UTIL_TARGETS)
-            register_fprime_target(target/refresh_cache)
-            register_fprime_ut_target(target/check)
-        endif()
+        register_fprime_target(target/refresh_cache)
     endif()
 endmacro(fprime_setup_standard_targets)
 
@@ -213,10 +210,10 @@ function(fprime_setup_included_code)
     # for model specific post processing is messed up. Thus we synthesize the behavior by setting
     # the current module and then calling stock "add_subdirectory".
     fprime__include_platform_file()
-    
     set(_FP_CORE_PACKAGES Fpp default Fw Svc Os Drv CFDP Utils)
     foreach (_FP_PACKAGE_DIR IN LISTS _FP_CORE_PACKAGES)
         set(FPRIME_CURRENT_MODULE "${_FP_PACKAGE_DIR}")
+        fprime_util_metadata_add_subdirectory("${FPRIME_FRAMEWORK_PATH}/${_FP_PACKAGE_DIR}/" "${CMAKE_BINARY_DIR}/F-Prime/${_FP_PACKAGE_DIR}")
         add_subdirectory("${FPRIME_FRAMEWORK_PATH}/${_FP_PACKAGE_DIR}/" "${CMAKE_BINARY_DIR}/F-Prime/${_FP_PACKAGE_DIR}")
     endforeach ()
     unset(FPRIME_CURRENT_MODULE)
