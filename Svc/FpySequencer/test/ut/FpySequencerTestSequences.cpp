@@ -7,7 +7,7 @@ TEST_F(FpySequencerTester, Empty) {
     writeAndRun();
     dispatchUntilState(State::IDLE);
     ASSERT_CMD_RESPONSE_SIZE(1);
-    ASSERT_CMD_RESPONSE(0, FpySequencer::OPCODE_RUN, 0, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(0, FpySequencerTester::get_OPCODE_RUN(), 0, Fw::CmdResponse::OK);
 }
 
 TEST_F(FpySequencerTester, Full) {
@@ -18,12 +18,12 @@ TEST_F(FpySequencerTester, Full) {
     writeAndRun();
     dispatchUntilState(State::IDLE, Fpy::MAX_SEQUENCE_STATEMENT_COUNT * 4);
     ASSERT_CMD_RESPONSE_SIZE(1);
-    ASSERT_CMD_RESPONSE(0, FpySequencer::OPCODE_RUN, 0, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(0, FpySequencerTester::get_OPCODE_RUN(), 0, Fw::CmdResponse::OK);
 }
 
 TEST_F(FpySequencerTester, ComplexControlFlow) {
     allocMem();
-    
+
     nextTlmId = 123;
     ASSERT_EQ(nextTlmValue.serialize(true), Fw::SerializeStatus::FW_SERIALIZE_OK);
     add_GET_TLM(0, 1, 123);
@@ -52,7 +52,7 @@ TEST_F(FpySequencerTester, ComplexControlFlow) {
 
 TEST_F(FpySequencerTester, OrOfTlmAndReg) {
     allocMem();
-    
+
     nextTlmId = 123;
     ASSERT_EQ(nextTlmValue.serialize(true), Fw::SerializeStatus::FW_SERIALIZE_OK);
     add_GET_TLM(0, 1, 123);
@@ -83,7 +83,7 @@ TEST_F(FpySequencerTester, OrOfTlmAndReg) {
 
 TEST_F(FpySequencerTester, CmpIntTlm) {
     allocMem();
-    
+
     nextTlmId = 123;
     ASSERT_EQ(nextTlmValue.serialize(999), Fw::SerializeStatus::FW_SERIALIZE_OK);
     add_GET_TLM(0, 1, 123);

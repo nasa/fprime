@@ -463,6 +463,20 @@ Fw::ExternalSerializeBuffer* FpySequencerTester::tester_get_m_sequenceBuffer_ptr
 Svc::FpySequencer::Debug* FpySequencerTester::tester_get_m_debug_ptr() {
     return &(this->cmp.m_debug);
 }
+
+void FpySequencerTester::tester_doDispatch() {
+    this->cmp.doDispatch();
+}
+
+Svc::FpySequencer_SequencerStateMachineStateMachineBase::State FpySequencerTester::tester_getState() {
+    return this->cmp.m_stateMachine_sequencer.getState();
+}
+
+void FpySequencerTester::tester_setState(Svc::FpySequencer_SequencerStateMachineStateMachineBase::State state) {
+    FpySequencer_SequencerStateMachineTester::setState(this->cmp.m_stateMachine_sequencer, state);
+}
+
+
 // End UT private/protected access
 
 }  // namespace Svc
