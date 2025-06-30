@@ -83,8 +83,19 @@ jobs:
       - name: "Stop existing service if running"
         run: |
           echo "Stopping existing service if it exists..."
-          sudo systemctl stop ${SERVICE_NAME}
-          sudo systemctl disable ${SERVICE_NAME} 
+          if sudo systemctl is-active --quiet ${SERVICE_NAME}; then
+            echo "Service is running, stopping it..."
+            sudo systemctl stop ${SERVICE_NAME}
+          else
+            echo "Service is not running"
+          fi
+          
+          if sudo systemctl is-enabled --quiet ${SERVICE_NAME} 2>/dev/null; then
+            echo "Service is enabled, disabling it..."
+            sudo systemctl disable ${SERVICE_NAME}
+          else
+            echo "Service is not enabled or does not exist"
+          fi 
           
       - name: "Install new binary"
         run: |
