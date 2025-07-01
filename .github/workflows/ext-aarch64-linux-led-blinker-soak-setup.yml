@@ -112,44 +112,44 @@ jobs:
         run: |
           echo "Creating systemd service file for LedBlinker..."
           sudo tee /etc/systemd/system/${SERVICE_NAME}.service > /dev/null << 'EOF'
-[Unit]
-Description=F' LED Blinker Application, system service meant for soak testing
-After=network.target
+          [Unit]
+          Description=F' LED Blinker Application, system service meant for soak testing
+          After=network.target
 
-[Service]
-Type=simple
-User=fprime
-WorkingDirectory=/opt/fprime-ledblinker-soak
-ExecStart=/opt/fprime-ledblinker-soak/bin/LedBlinker -a 0.0.0.0 -p 50000
-Restart=always
-RestartSec=5
-StandardOutput=journal
-StandardError=journal
+          [Service]
+          Type=simple
+          User=fprime
+          WorkingDirectory=/opt/fprime-ledblinker-soak
+          ExecStart=/opt/fprime-ledblinker-soak/bin/LedBlinker -a 0.0.0.0 -p 50000
+          Restart=always
+          RestartSec=5
+          StandardOutput=journal
+          StandardError=journal
 
-[Install]
-WantedBy=multi-user.target
-EOF
+          [Install]
+          WantedBy=multi-user.target
+          EOF
           
           echo "Creating systemd service file for GDS..."
           sudo tee /etc/systemd/system/${SERVICE_NAME}-gds.service > /dev/null << 'EOF'
-[Unit]
-Description=F' GDS for LED Blinker soak testing
-After=network.target fprime-ledblinker-soak.service
-Requires=fprime-ledblinker-soak.service
+          [Unit]
+          Description=F' GDS for LED Blinker soak testing
+          After=network.target fprime-ledblinker-soak.service
+          Requires=fprime-ledblinker-soak.service
 
-[Service]
-Type=simple
-User=fprime
-WorkingDirectory=/opt/fprime-ledblinker-soak
-ExecStart=fprime-gds --ip-address 127.0.0.1 --ip-port 50000 -d /opt/fprime-ledblinker-soak --logs /opt/fprime-ledblinker-soak/logs -g none --framing-selection fprime
-Restart=always
-RestartSec=10
-StandardOutput=journal
-StandardError=journal
+          [Service]
+          Type=simple
+          User=fprime
+          WorkingDirectory=/opt/fprime-ledblinker-soak
+          ExecStart=fprime-gds --ip-address 127.0.0.1 --ip-port 50000 -d /opt/fprime-ledblinker-soak --logs /opt/fprime-ledblinker-soak/logs -g none --framing-selection fprime
+          Restart=always
+          RestartSec=10
+          StandardOutput=journal
+          StandardError=journal
 
-[Install]
-WantedBy=multi-user.target
-EOF 
+          [Install]
+          WantedBy=multi-user.target
+          EOF 
 
       - name: "Start and enable services"
         run: |
