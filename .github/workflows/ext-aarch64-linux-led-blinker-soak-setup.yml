@@ -63,8 +63,7 @@ jobs:
           mkdir -p aarch64-linux-artifacts-soak
           cp -r ./build-artifacts aarch64-linux-artifacts-soak
           cp -r Components/Led/test/int aarch64-linux-artifacts-soak
-          # Copy F´ requirements.txt for GDS installation
-          cp ./fprime/requirements.txt aarch64-linux-artifacts-soak
+          cp ./fprime/requirements.txt  aarch64-linux-artifacts-soak/requirements.txt
       - name: 'Archive Build Artifacts'
         uses: actions/upload-artifact@v4
         with:
@@ -104,7 +103,7 @@ jobs:
           sudo python3 -m venv ${INSTALL_DIR}/venv
           
           # Activate virtual environment and install F´ requirements
-          sudo ${INSTALL_DIR}/venv/bin/pip install -r requirements.txt
+          sudo ${INSTALL_DIR}/venv/bin/pip install -r ./build-artifacts/requirements.txt
 
       - name: "Install new binary"
         run: |
