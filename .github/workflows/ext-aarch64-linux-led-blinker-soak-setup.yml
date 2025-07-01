@@ -111,7 +111,7 @@ jobs:
       - name: "Create systemd service file"
         run: |
           echo "Creating systemd service file for LedBlinker..."
-          sudo tee /etc/systemd/system/${SERVICE_NAME}.service > /dev/null << 'EOF'
+          sudo tee /etc/systemd/system/${SERVICE_NAME}.service > /dev/null << EOF
           [Unit]
           Description=F' LED Blinker Application, system service meant for soak testing
           After=network.target
@@ -121,8 +121,6 @@ jobs:
           User=fprime
           WorkingDirectory=/opt/fprime-ledblinker-soak
           ExecStart=/opt/fprime-ledblinker-soak/bin/LedBlinker -a 0.0.0.0 -p 50000
-          Restart=always
-          RestartSec=5
           StandardOutput=journal
           StandardError=journal
 
@@ -131,7 +129,7 @@ jobs:
           EOF
           
           echo "Creating systemd service file for GDS..."
-          sudo tee /etc/systemd/system/${SERVICE_NAME}-gds.service > /dev/null << 'EOF'
+          sudo tee /etc/systemd/system/${SERVICE_NAME}-gds.service > /dev/null << EOF
           [Unit]
           Description=F' GDS for LED Blinker soak testing
           After=network.target fprime-ledblinker-soak.service
@@ -142,47 +140,29 @@ jobs:
           User=fprime
           WorkingDirectory=/opt/fprime-ledblinker-soak
           ExecStart=fprime-gds --ip-client --ip-address 127.0.0.1 --ip-port 50000 -d /opt/fprime-ledblinker-soak --logs /opt/fprime-ledblinker-soak/logs --framing-selection fprime -g none
-          Restart=always
-          RestartSec=10
           StandardOutput=journal
           StandardError=journal
 
           [Install]
           WantedBy=multi-user.target
-          EOF 
+          EOF
 
       - name: "Start and enable services"
         run: |
           echo "Starting and enabling services..."
           sudo systemctl daemon-reload
           
-          # Start LedBlinker service first
+          # enable services
           sudo systemctl enable ${SERVICE_NAME}
-          if ! sudo systemctl start ${SERVICE_NAME}; then
-            echo "Failed to start ${SERVICE_NAME} service. Checking status..."
-            sudo systemctl status ${SERVICE_NAME} --no-pager -l || true
-            echo "Recent service logs:"
-            sudo journalctl -u ${SERVICE_NAME} --no-pager -n 20 || true
-            echo "Service file contents:"
-            sudo cat /etc/systemd/system/${SERVICE_NAME}.service || true
-            exit 1
-          fi
-          
-          # Wait for LedBlinker to be ready
-          sleep 10
-          
-          # Start GDS service
           sudo systemctl enable ${SERVICE_NAME}-gds
-          if ! sudo systemctl start ${SERVICE_NAME}-gds; then
-            echo "Failed to start ${SERVICE_NAME}-gds service. Checking status..."
-            sudo systemctl status ${SERVICE_NAME}-gds --no-pager -l || true
-            echo "Recent GDS service logs:"
-            sudo journalctl -u ${SERVICE_NAME}-gds --no-pager -n 20 || true
-            echo "GDS service file contents:"
-            sudo cat /etc/systemd/system/${SERVICE_NAME}-gds.service || true
-            exit 1
-          fi
-          
+
+          # start services
+          sudo systemctl start ${SERVICE_NAME}
+          sudo systemctl start ${SERVICE_NAME}-gds
+
+          echo "Waiting for services to stabilize..."
+          sleep 10  # Wait for services to stabilize
+
           echo "Checking final service status..."
           sudo systemctl status ${SERVICE_NAME} --no-pager -l
           sudo systemctl status ${SERVICE_NAME}-gds --no-pager -l
