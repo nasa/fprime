@@ -103,7 +103,7 @@ jobs:
           sudo python3 -m venv ${INSTALL_DIR}/venv
           
           # Activate virtual environment and install F´ requirements
-          sudo ${INSTALL_DIR}/venv/bin/pip install -r ./build-artifacts/requirements.txt
+          sudo ${INSTALL_DIR}/venv/bin/pip install -r requirements.txt
 
       - name: "Install new binary"
         run: |
