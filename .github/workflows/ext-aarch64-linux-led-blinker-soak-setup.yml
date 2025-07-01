@@ -176,6 +176,6 @@ jobs:
           sleep 10  # Wait for services to stabilize
 
           echo "Checking final service status..."
-          sudo systemctl status ${SERVICE_NAME} --no-pager -l
-          sudo systemctl status ${SERVICE_NAME}-gds --no-pager -l
+          sudo systemctl status ${SERVICE_NAME} --no-pager -l -n 50
+          sudo systemctl status ${SERVICE_NAME}-gds --no-pager -l -n 50
           
