@@ -86,7 +86,8 @@ class SerializeBufferBase {
         const void* val);  //!< serialize pointer (careful, only pointer value, not contents are serialized)
 
     //! serialize data buffer
-    SerializeStatus serialize(const U8* buff, FwSizeType length, bool noLength);
+    DEPRECATED(SerializeStatus serialize(const U8* buff, Serializable::SizeType length, bool noLength),
+               "Use serialize(const U8* buff, FwSizeType length, Serialization::t mode) instead");
     //! serialize data buffer
     SerializeStatus serialize(const U8* buff, FwSizeType length);
 
@@ -132,7 +133,8 @@ class SerializeBufferBase {
     SerializeStatus deserialize(void*& val);  //!< deserialize point value (careful, pointer value only, not contents)
 
     //! deserialize data buffer
-    SerializeStatus deserialize(U8* buff, FwSizeType& length, bool noLength);
+    DEPRECATED(SerializeStatus deserialize(U8* buff, Serializable::SizeType& length, bool noLength),
+    "Use deserialize(U8* buff, FwSizeType& length, Serialization::t mode) instead");
 
     //! deserialize data buffer
     SerializeStatus deserialize(U8* buff, FwSizeType& length);
