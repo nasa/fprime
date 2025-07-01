@@ -63,6 +63,8 @@ jobs:
           mkdir -p aarch64-linux-artifacts-soak
           cp -r ./build-artifacts aarch64-linux-artifacts-soak
           cp -r Components/Led/test/int aarch64-linux-artifacts-soak
+          # Copy F´ requirements.txt for GDS installation
+          cp ./fprime/requirements.txt aarch64-linux-artifacts-soak/
       - name: 'Archive Build Artifacts'
         uses: actions/upload-artifact@v4
         with:
@@ -89,6 +91,16 @@ jobs:
           sudo systemctl stop ${SERVICE_NAME}-gds || true
           sudo systemctl disable ${SERVICE_NAME}-gds || true 
           
+      - name: "Setup F´ Python Environment"
+        run: |
+          echo "Setting up F´ Python virtual environment..."
+          sudo mkdir -p ${INSTALL_DIR}/venv
+          sudo python3 -m venv ${INSTALL_DIR}/venv
+          
+          # Activate virtual environment and install F´ requirements
+          sudo ${INSTALL_DIR}/venv/bin/pip install --upgrade pip
+          sudo ${INSTALL_DIR}/venv/bin/pip install -r ./requirements.txt
+
       - name: "Install new binary"
         run: |
           echo "Installing new binary to ${INSTALL_DIR}..."
@@ -139,7 +151,7 @@ jobs:
           Type=simple
           User=fprime
           WorkingDirectory=/opt/fprime-ledblinker-soak
-          ExecStart=fprime-gds  --ip-address 127.0.0.1 --ip-port 50000 -d /opt/fprime-ledblinker-soak --logs /opt/fprime-ledblinker-soak/logs --framing-selection fprime -g none
+          ExecStart=/opt/fprime-ledblinker-soak/venv/bin/fprime-gds --ip-address 127.0.0.1 --ip-port 50000 -d /opt/fprime-ledblinker-soak --logs /opt/fprime-ledblinker-soak/logs -g none
           StandardOutput=journal
           StandardError=journal
 
