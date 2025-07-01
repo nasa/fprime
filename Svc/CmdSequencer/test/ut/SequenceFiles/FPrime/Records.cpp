@@ -40,8 +40,7 @@ namespace Svc {
             ASSERT_EQ(Fw::FW_SERIALIZE_OK, destBuffer.serialize(cmdDescriptor));
             ASSERT_EQ(
                 Fw::FW_SERIALIZE_OK,
-                // true means "don't serialize the size"
-                destBuffer.serialize(buffAddr, size, true)
+                destBuffer.serialize(buffAddr, size, Fw::Serialization::OMIT_LENGTH)
             );
           }
         }

@@ -93,7 +93,7 @@ void AssertHook::doAssert() {
     assert(0);
 }
 
-STATIC AssertHook* s_assertHook = nullptr;
+static AssertHook* s_assertHook = nullptr;
 
 void AssertHook::registerHook() {
     this->previousHook = s_assertHook;

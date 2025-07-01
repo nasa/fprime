@@ -411,7 +411,7 @@ namespace Svc {
     FwSizeType size = recordSize;
     Fw::SerializeStatus status = comBuffer.setBuffLen(recordSize);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
-    status = buffer.deserialize(comBuffer.getBuffAddr(), size, true);
+    status = buffer.deserialize(comBuffer.getBuffAddr(), size, Fw::Serialization::OMIT_LENGTH);
     return status;
   }
 

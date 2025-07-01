@@ -450,7 +450,7 @@ namespace Svc {
     U8 *const addr = comBuffer.getBuffAddr();
     FW_ASSERT(addr != nullptr);
     // true means "don't serialize the length"
-    status = buffer.deserialize(&addr[fixedBuffLen], size, true);
+    status = buffer.deserialize(&addr[fixedBuffLen], size, Fw::Serialization::OMIT_LENGTH);
     return status;
   }
 
