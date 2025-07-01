@@ -158,12 +158,35 @@ jobs:
           
           # Start LedBlinker service first
           sudo systemctl enable ${SERVICE_NAME}
-          sudo systemctl start ${SERVICE_NAME}
+          if ! sudo systemctl start ${SERVICE_NAME}; then
+            echo "Failed to start ${SERVICE_NAME} service. Checking status..."
+            sudo systemctl status ${SERVICE_NAME} --no-pager -l || true
+            echo "Recent service logs:"
+            sudo journalctl -u ${SERVICE_NAME} --no-pager -n 20 || true
+            echo "Service file contents:"
+            sudo cat /etc/systemd/system/${SERVICE_NAME}.service || true
+            exit 1
+          fi
           
           # Wait for LedBlinker to be ready
-          sleep 1
+          sleep 5
           
           # Start GDS service
           sudo systemctl enable ${SERVICE_NAME}-gds
-          sudo systemctl start ${SERVICE_NAME}-gds
+          if ! sudo systemctl start ${SERVICE_NAME}-gds; then
+            echo "Failed to start ${SERVICE_NAME}-gds service. Checking status..."
+            sudo systemctl status ${SERVICE_NAME}-gds --no-pager -l || true
+            echo "Recent GDS service logs:"
+            sudo journalctl -u ${SERVICE_NAME}-gds --no-pager -n 20 || true
+            echo "GDS service file contents:"
+            sudo cat /etc/systemd/system/${SERVICE_NAME}-gds.service || true
+            exit 1
+          fi
+          
+          # Wait for both services to be ready
+          sleep 10
+          
+          echo "Checking final service status..."
+          sudo systemctl status ${SERVICE_NAME} --no-pager -l
+          sudo systemctl status ${SERVICE_NAME}-gds --no-pager -l
           
