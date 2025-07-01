@@ -132,8 +132,7 @@ jobs:
           END 
           
           echo "Creating systemd service file for GDS..."
-          sudo tee /etc/systemd/system/${SERVICE_NAME}-gds.service > /dev/null << END
-
+          sudo tee /etc/systemd/system/${SERVICE_NAME}-gds.service > /dev/null << EOF
           [Unit]
           Description=F' GDS for LED Blinker soak testing
           After=network.target ${SERVICE_NAME}.service
@@ -151,7 +150,7 @@ jobs:
           
           [Install]
           WantedBy=multi-user.target
-          END 
+          EOF 
       - name: "Start and enable services"
         run: |
           echo "Starting and enabling services..."
