@@ -19,17 +19,7 @@ jobs:
     runs-on: [self-hosted, ARM64]
     timeout-minutes: 10  # Each test should complete within 10 minutes
     steps:
-      - name: "Checkout F´ Repository"
-        uses: actions/checkout@v4
-        with:
-          sparse-checkout: 'requirements.txt'
-          sparse-checkout-cone-mode: false
-          
-      - name: "Setup Python environment"
-        run: |
-          python -m venv venv-test
-          . venv-test/bin/activate
-          pip install -r requirements.txt
+      
           
       - name: "Check service status"
         run: |
@@ -68,7 +58,8 @@ jobs:
           
       - name: "Run integration tests"
         run: |
-          . venv-test/bin/activate
+          # Use the virtual environment created during setup
+          . ${INSTALL_DIR}/venv/bin/activate
           
           TEST_TIMESTAMP=$(date +%Y%m%d_%H%M%S)
           TEST_LOG_DIR="test-logs-${TEST_TIMESTAMP}"

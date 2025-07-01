@@ -77,11 +77,6 @@ jobs:
     runs-on: [self-hosted, ARM64]
     needs: cross-compilation
     steps:
-      - name: "Artifacts Download"
-        uses: actions/download-artifact@v4
-        with:
-          name: aarch64-linux-artifacts-soak
-      
       - name: "Stop existing services if running"
         run: |
           echo "Stopping existing services if they exist..."
@@ -90,7 +85,18 @@ jobs:
           sudo systemctl disable ${SERVICE_NAME} || true
           sudo systemctl stop ${SERVICE_NAME}-gds || true
           sudo systemctl disable ${SERVICE_NAME}-gds || true 
-          
+
+      - name: "Artifacts Download"
+        uses: actions/download-artifact@v4
+        with:
+          name: aarch64-linux-artifacts-soak
+
+      - name: "Checkout F´ Repository"
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: 'requirements.txt'
+          sparse-checkout-cone-mode: false
+
       - name: "Setup F´ Python Environment"
         run: |
           echo "Setting up F´ Python virtual environment..."
@@ -98,8 +104,7 @@ jobs:
           sudo python3 -m venv ${INSTALL_DIR}/venv
           
           # Activate virtual environment and install F´ requirements
-          sudo ${INSTALL_DIR}/venv/bin/pip install --upgrade pip
-          sudo ${INSTALL_DIR}/venv/bin/pip install -r ./requirements.txt
+          sudo ${INSTALL_DIR}/venv/bin/pip -r requirements.txt
 
       - name: "Install new binary"
         run: |
@@ -109,11 +114,8 @@ jobs:
           sudo mkdir -p ${INSTALL_DIR}/test
           sudo mkdir -p ${INSTALL_DIR}/logs
           
-          # Copy binary and make executable
+          # Copy binary, dict, and test files
           sudo cp ./build-artifacts/aarch64-linux/LedBlinker/bin/LedBlinker ${INSTALL_DIR}/bin/
-          sudo chmod +x ${INSTALL_DIR}/bin/LedBlinker
-          
-          # Copy dictionary and test files
           sudo cp -r ./build-artifacts/aarch64-linux/LedBlinker/dict/* ${INSTALL_DIR}/dict/
           sudo cp -r ./int/* ${INSTALL_DIR}/test/
           
@@ -177,5 +179,5 @@ jobs:
 
           echo "Checking final service status..."
           sudo systemctl status ${SERVICE_NAME} --no-pager -l -n 50
-          sudo systemctl status ${SERVICE_NAME}-gds --no-pager -l -n 50
+          sudo systemctl status ${SERVICE_NAME}-gds --no-pager -l -n 150
           
