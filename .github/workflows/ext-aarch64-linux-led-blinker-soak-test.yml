@@ -33,6 +33,14 @@ jobs:
           
       - name: "Check service status"
         run: |
+          echo "=== Checking current service file contents ==="
+          echo "LedBlinker service file:"
+          sudo cat /etc/systemd/system/${SERVICE_NAME}.service || true
+          echo ""
+          echo "GDS service file:"
+          sudo cat /etc/systemd/system/${SERVICE_NAME}-gds.service || true
+          echo ""
+          
           echo "Checking if ${SERVICE_NAME} service is running..."
           if sudo systemctl is-active --quiet ${SERVICE_NAME}; then
             echo "Service ${SERVICE_NAME} is running"
