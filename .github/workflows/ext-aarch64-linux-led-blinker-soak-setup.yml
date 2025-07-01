@@ -169,7 +169,7 @@ jobs:
           fi
           
           # Wait for LedBlinker to be ready
-          sleep 5
+          sleep 10
           
           # Start GDS service
           sudo systemctl enable ${SERVICE_NAME}-gds
@@ -182,9 +182,6 @@ jobs:
             sudo cat /etc/systemd/system/${SERVICE_NAME}-gds.service || true
             exit 1
           fi
-          
-          # Wait for both services to be ready
-          sleep 10
           
           echo "Checking final service status..."
           sudo systemctl status ${SERVICE_NAME} --no-pager -l
