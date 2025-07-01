@@ -45,6 +45,18 @@ jobs:
             exit 1
           fi
           
+          echo "Checking if ${SERVICE_NAME}-gds service is running..."
+          if sudo systemctl is-active --quiet ${SERVICE_NAME}-gds; then
+            echo "Service ${SERVICE_NAME}-gds is running"
+            sudo systemctl status ${SERVICE_NAME}-gds --no-pager -l
+          else
+            echo "Service ${SERVICE_NAME}-gds is not running"
+            sudo systemctl status ${SERVICE_NAME}-gds --no-pager -l
+            echo "Recent GDS service logs:"
+            sudo journalctl -u ${SERVICE_NAME}-gds --no-pager -n 20
+            exit 1
+          fi
+          
       - name: "Run integration tests"
         run: |
           . venv-test/bin/activate
@@ -55,18 +67,9 @@ jobs:
           
           echo "=== Integration test started at $(date) (${TEST_TIMESTAMP}) ==="
           
-          # Start GDS connected to the running service
-          echo "Starting F' GDS to connect to running service..."
-          fprime-gds --ip-address 127.0.0.1 --ip-port 50000 -d ${INSTALL_DIR} --logs ${TEST_LOG_DIR} --framing-selection fprime &
-          GDS_PID=$!
-          
-          # Wait for GDS to start
-          sleep 10
-          echo "GDS started with PID: ${GDS_PID}"
-          
-          # Run the integration test
+          # Run the integration test 
           echo "Running integration tests..."
-          pytest --dictionary ${INSTALL_DIR}/dict/LedBlinkerTopologyDictionary.json ${INSTALL_DIR}/test/led_integration_tests.py 
+          pytest --dictionary ${INSTALL_DIR}/dict/LedBlinkerTopologyDictionary.json ${INSTALL_DIR}/test/led_integration_tests.py
           
           echo "=== Integration test completed at $(date) (${TEST_TIMESTAMP}) ==="
           

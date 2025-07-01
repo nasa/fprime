@@ -80,22 +80,14 @@ jobs:
         with:
           name: aarch64-linux-artifacts-soak
       
-      - name: "Stop existing service if running"
+      - name: "Stop existing services if running"
         run: |
-          echo "Stopping existing service if it exists..."
-          if sudo systemctl is-active --quiet ${SERVICE_NAME}; then
-            echo "Service is running, stopping it..."
-            sudo systemctl stop ${SERVICE_NAME}
-          else
-            echo "Service is not running"
-          fi
-          
-          if sudo systemctl is-enabled --quiet ${SERVICE_NAME} 2>/dev/null; then
-            echo "Service is enabled, disabling it..."
-            sudo systemctl disable ${SERVICE_NAME}
-          else
-            echo "Service is not enabled or does not exist"
-          fi 
+          echo "Stopping existing services if they exist..."
+          # Stop and disable services - these commands won't fail if services don't exist
+          sudo systemctl stop ${SERVICE_NAME} || true
+          sudo systemctl disable ${SERVICE_NAME} || true
+          sudo systemctl stop ${SERVICE_NAME}-gds || true
+          sudo systemctl disable ${SERVICE_NAME}-gds || true 
           
       - name: "Install new binary"
         run: |
@@ -103,6 +95,7 @@ jobs:
           sudo mkdir -p ${INSTALL_DIR}/bin
           sudo mkdir -p ${INSTALL_DIR}/dict
           sudo mkdir -p ${INSTALL_DIR}/test
+          sudo mkdir -p ${INSTALL_DIR}/logs
           
           # Copy binary and make executable
           sudo cp ./build-artifacts/aarch64-linux/LedBlinker/bin/LedBlinker ${INSTALL_DIR}/bin/
@@ -117,7 +110,7 @@ jobs:
           
       - name: "Create systemd service file"
         run: |
-          echo "Creating systemd service file..."
+          echo "Creating systemd service file for LedBlinker..."
           sudo tee /etc/systemd/system/${SERVICE_NAME}.service > /dev/null << END
 
           [Unit]
@@ -137,12 +130,41 @@ jobs:
           [Install]
           WantedBy=multi-user.target
           END 
-      - name: "Start and enable service"
+          
+          echo "Creating systemd service file for GDS..."
+          sudo tee /etc/systemd/system/${SERVICE_NAME}-gds.service > /dev/null << END
+
+          [Unit]
+          Description=F' GDS for LED Blinker soak testing
+          After=network.target ${SERVICE_NAME}.service
+          Requires=${SERVICE_NAME}.service
+          
+          [Service]
+          Type=simple
+          User=fprime
+          WorkingDirectory=${INSTALL_DIR}
+          ExecStart=fprime-gds --ip-address 127.0.0.1 --ip-port 50000 -d ${INSTALL_DIR} --logs ${INSTALL_DIR}/logs
+          Restart=always
+          RestartSec=10
+          StandardOutput=journal
+          StandardError=journal
+          
+          [Install]
+          WantedBy=multi-user.target
+          END 
+      - name: "Start and enable services"
         run: |
-          echo "Starting and enabling service..."
+          echo "Starting and enabling services..."
           sudo systemctl daemon-reload
+          
+          # Start LedBlinker service first
           sudo systemctl enable ${SERVICE_NAME}
           sudo systemctl start ${SERVICE_NAME}
           
-          # Wait a moment for service to start?
-          #sleep 5
+          # Wait for LedBlinker to be ready
+          sleep 1
+          
+          # Start GDS service
+          sudo systemctl enable ${SERVICE_NAME}-gds
+          sudo systemctl start ${SERVICE_NAME}-gds
+          
