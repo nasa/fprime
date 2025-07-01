@@ -390,6 +390,90 @@ Signal FpySequencer::setReg_directiveHandler(const FpySequencer_SetRegDirective&
     return Signal::stmtResponse_success;
 }
 
+I8 floatCmp(F64 lhs, F64 rhs) {
+    if (std::isunordered(lhs, rhs)) {
+        // nan is one of the args
+        // always fail a comparison if nan
+        return -2;
+    } else if (std::isgreater(lhs, rhs)) {
+        return 1;
+    } else if (std::isless(lhs, rhs)) {
+        return -1;
+    }
+    return 0;
+}
+
+I64 FpySequencer::binaryCmp_or(I64 lhs, I64 rhs) {
+    return lhs | rhs;
+}
+I64 FpySequencer::binaryCmp_and(I64 lhs, I64 rhs) {
+    return lhs & rhs;
+}
+I64 FpySequencer::binaryCmp_ieq(I64 lhs, I64 rhs) {
+    return lhs == rhs;
+}
+I64 FpySequencer::binaryCmp_ine(I64 lhs, I64 rhs) {
+    return lhs != rhs;
+}
+I64 FpySequencer::binaryCmp_ult(I64 lhs, I64 rhs) {
+    return static_cast<U64>(lhs) < static_cast<U64>(rhs);
+}
+I64 FpySequencer::binaryCmp_ule(I64 lhs, I64 rhs) {
+    return static_cast<U64>(lhs) <= static_cast<U64>(rhs);
+}
+I64 FpySequencer::binaryCmp_ugt(I64 lhs, I64 rhs) {
+    return static_cast<U64>(lhs) > static_cast<U64>(rhs);
+}
+I64 FpySequencer::binaryCmp_uge(I64 lhs, I64 rhs) {
+    return static_cast<U64>(lhs) >= static_cast<U64>(rhs);
+}
+I64 FpySequencer::binaryCmp_slt(I64 lhs, I64 rhs) {
+    return lhs < rhs;
+}
+I64 FpySequencer::binaryCmp_sle(I64 lhs, I64 rhs) {
+    return lhs <= rhs;
+}
+I64 FpySequencer::binaryCmp_sgt(I64 lhs, I64 rhs) {
+    return lhs > rhs;
+}
+I64 FpySequencer::binaryCmp_sge(I64 lhs, I64 rhs) {
+    return lhs >= rhs;
+}
+I64 FpySequencer::binaryCmp_feq(I64 lhs, I64 rhs) {
+    F64 left = *reinterpret_cast<F64*>(&lhs);
+    F64 right = *reinterpret_cast<F64*>(&rhs);
+    return floatCmp(left, right) == 0;
+}
+I64 FpySequencer::binaryCmp_fne(I64 lhs, I64 rhs) {
+    F64 left = *reinterpret_cast<F64*>(&lhs);
+    F64 right = *reinterpret_cast<F64*>(&rhs);
+    I8 cmp = floatCmp(left, right);
+    // ne is true if they are not equal and neither is nan
+    return cmp != 0 && cmp != -2;
+}
+I64 FpySequencer::binaryCmp_flt(I64 lhs, I64 rhs) {
+    F64 left = *reinterpret_cast<F64*>(&lhs);
+    F64 right = *reinterpret_cast<F64*>(&rhs);
+    return floatCmp(left, right) == -1;
+}
+I64 FpySequencer::binaryCmp_fle(I64 lhs, I64 rhs) {
+    F64 left = *reinterpret_cast<F64*>(&lhs);
+    F64 right = *reinterpret_cast<F64*>(&rhs);
+    I8 cmp = floatCmp(left, right);
+    return cmp == 0 || cmp == -1;
+}
+I64 FpySequencer::binaryCmp_fgt(I64 lhs, I64 rhs) {
+    F64 left = *reinterpret_cast<F64*>(&lhs);
+    F64 right = *reinterpret_cast<F64*>(&rhs);
+    return floatCmp(left, right) == 1;
+}
+I64 FpySequencer::binaryCmp_fge(I64 lhs, I64 rhs) {
+    F64 left = *reinterpret_cast<F64*>(&lhs);
+    F64 right = *reinterpret_cast<F64*>(&rhs);
+    I8 cmp = floatCmp(left, right);
+    return cmp == 0 || cmp == 1;
+}
+
 Signal FpySequencer::binaryCmp_directiveHandler(const FpySequencer_BinaryCmpDirective& directive,
                                                 DirectiveError& error) {
     // coding error, should not have gotten to this binary cmp handler
@@ -406,87 +490,65 @@ Signal FpySequencer::binaryCmp_directiveHandler(const FpySequencer_BinaryCmpDire
     I64 rhs = reg(directive.getrhs());
     I64& res = reg(directive.getres());
 
-    if (directive.get_op() == Fpy::DirectiveId::EQ) {
-        res = lhs == rhs;
-        return Signal::stmtResponse_success;
+    switch (directive.get_op()) {
+        case Fpy::DirectiveId::OR:
+            res = this->binaryCmp_or(lhs, rhs);
+            break;
+        case Fpy::DirectiveId::AND:
+            res = this->binaryCmp_and(lhs, rhs);
+            break;
+        case Fpy::DirectiveId::IEQ:
+            res = this->binaryCmp_ieq(lhs, rhs);
+            break;
+        case Fpy::DirectiveId::INE:
+            res = this->binaryCmp_ine(lhs, rhs);
+            break;
+        case Fpy::DirectiveId::ULT:
+            res = this->binaryCmp_ult(lhs, rhs);
+            break;
+        case Fpy::DirectiveId::ULE:
+            res = this->binaryCmp_ule(lhs, rhs);
+            break;
+        case Fpy::DirectiveId::UGT:
+            res = this->binaryCmp_ugt(lhs, rhs);
+            break;
+        case Fpy::DirectiveId::UGE:
+            res = this->binaryCmp_uge(lhs, rhs);
+            break;
+        case Fpy::DirectiveId::SLT:
+            res = this->binaryCmp_slt(lhs, rhs);
+            break;
+        case Fpy::DirectiveId::SLE:
+            res = this->binaryCmp_sle(lhs, rhs);
+            break;
+        case Fpy::DirectiveId::SGT:
+            res = this->binaryCmp_sgt(lhs, rhs);
+            break;
+        case Fpy::DirectiveId::SGE:
+            res = this->binaryCmp_sge(lhs, rhs);
+            break;
+        case Fpy::DirectiveId::FEQ:
+            res = this->binaryCmp_feq(lhs, rhs);
+            break;
+        case Fpy::DirectiveId::FNE:
+            res = this->binaryCmp_fne(lhs, rhs);
+            break;
+        case Fpy::DirectiveId::FLT:
+            res = this->binaryCmp_flt(lhs, rhs);
+            break;
+        case Fpy::DirectiveId::FLE:
+            res = this->binaryCmp_fle(lhs, rhs);
+            break;
+        case Fpy::DirectiveId::FGT:
+            res = this->binaryCmp_fgt(lhs, rhs);
+            break;
+        case Fpy::DirectiveId::FGE:
+            res = this->binaryCmp_fge(lhs, rhs);
+            break;
+        default:
+            FW_ASSERT(0, directive.get_op());
+            break;
     }
-
-    if (directive.get_op() == Fpy::DirectiveId::NE) {
-        res = lhs != rhs;
-        return Signal::stmtResponse_success;
-    }
-
-    if (directive.get_op() == Fpy::DirectiveId::OR) {
-        res = lhs | rhs;
-        return Signal::stmtResponse_success;
-    }
-
-    if (directive.get_op() == Fpy::DirectiveId::AND) {
-        res = lhs & rhs;
-        return Signal::stmtResponse_success;
-    }
-
-    I8 cmpResult;
-
-    if (directive.get_op() >= Fpy::DirectiveId::FEQ && directive.get_op() <= Fpy::DirectiveId::FGE) {
-        F64 frhs, flhs;
-        memcpy(&frhs, &rhs, sizeof(frhs));
-        memcpy(&flhs, &lhs, sizeof(flhs));
-
-        if (std::isunordered(flhs, frhs)) {
-            // nan is one of the args
-            // always fail
-            res = 0;
-            return Signal::stmtResponse_success;
-        } else if (std::isgreater(flhs, frhs)) {
-            cmpResult = 1;
-        } else if (std::isless(flhs, frhs)) {
-            cmpResult = -1;
-        } else {
-            cmpResult = 0;
-        }
-
-        // handle the floating equality cmps
-        if (directive.get_op() == Fpy::DirectiveId::FEQ) {
-            res = cmpResult == 0;
-            return Signal::stmtResponse_success;
-        }
-        if (directive.get_op() == Fpy::DirectiveId::FNE) {
-            res = cmpResult != 0;
-            return Signal::stmtResponse_success;
-        }
-    } else {
-        // integer comparison
-        if (directive.get_op() >= Fpy::DirectiveId::ULT && directive.get_op() <= Fpy::DirectiveId::UGE) {
-            // unsigned comparison. static cast to unsigned longs
-            U64 ulhs = static_cast<U64>(lhs);
-            U64 urhs = static_cast<U64>(rhs);
-            cmpResult = (ulhs == urhs) ? 0 : (ulhs < urhs) ? -1 : 1;
-        } else {
-            cmpResult = (lhs == rhs) ? 0 : (lhs < rhs) ? -1 : 1;
-        }
-    }
-
-    if (cmpResult == 0) {
-        // values were equal
-        // result is true if equality is okay
-        res = (directive.get_op() == Fpy::DirectiveId::UGE || directive.get_op() == Fpy::DirectiveId::ULE ||
-               directive.get_op() == Fpy::DirectiveId::SGE || directive.get_op() == Fpy::DirectiveId::SLE ||
-               directive.get_op() == Fpy::DirectiveId::FGE || directive.get_op() == Fpy::DirectiveId::FLE);
-    } else if (cmpResult == -1) {
-        // lhs < rhs
-        // result is true if < is okay
-        res = (directive.get_op() == Fpy::DirectiveId::ULT || directive.get_op() == Fpy::DirectiveId::ULE ||
-               directive.get_op() == Fpy::DirectiveId::SLT || directive.get_op() == Fpy::DirectiveId::SLE ||
-               directive.get_op() == Fpy::DirectiveId::FLE || directive.get_op() == Fpy::DirectiveId::FLT);
-    } else {
-        // lhs > rhs
-        // result is true if > is okay
-        res = (directive.get_op() == Fpy::DirectiveId::UGT || directive.get_op() == Fpy::DirectiveId::UGE ||
-               directive.get_op() == Fpy::DirectiveId::SGT || directive.get_op() == Fpy::DirectiveId::SGE ||
-               directive.get_op() == Fpy::DirectiveId::FGE || directive.get_op() == Fpy::DirectiveId::FGT);
-    }
-
     return Signal::stmtResponse_success;
 }
 

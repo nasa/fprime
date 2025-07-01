@@ -26,8 +26,8 @@ module Svc {
             OR = 15
             AND = 16
             # integer equalities
-            EQ = 17
-            NE = 18
+            IEQ = 17
+            INE = 18
             # unsigned integer inequalities
             ULT = 19
             ULE = 20

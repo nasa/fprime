@@ -607,7 +607,27 @@ class FpySequencer : public FpySequencerComponentBase {
     Signal cmd_directiveHandler(const FpySequencer_CmdDirective& directive, DirectiveError& error);
     Signal deserSerReg_directiveHandler(const FpySequencer_DeserSerRegDirective& directive, DirectiveError& error);
     Signal setReg_directiveHandler(const FpySequencer_SetRegDirective& directive, DirectiveError& error);
+
     Signal binaryCmp_directiveHandler(const FpySequencer_BinaryCmpDirective& directive, DirectiveError& error);
+    I64 binaryCmp_or(I64 lhs, I64 rhs);
+    I64 binaryCmp_and(I64 lhs, I64 rhs);
+    I64 binaryCmp_ieq(I64 lhs, I64 rhs);
+    I64 binaryCmp_ine(I64 lhs, I64 rhs);
+    I64 binaryCmp_ult(I64 lhs, I64 rhs);
+    I64 binaryCmp_ule(I64 lhs, I64 rhs);
+    I64 binaryCmp_ugt(I64 lhs, I64 rhs);
+    I64 binaryCmp_uge(I64 lhs, I64 rhs);
+    I64 binaryCmp_slt(I64 lhs, I64 rhs);
+    I64 binaryCmp_sle(I64 lhs, I64 rhs);
+    I64 binaryCmp_sgt(I64 lhs, I64 rhs);
+    I64 binaryCmp_sge(I64 lhs, I64 rhs);
+    I64 binaryCmp_feq(I64 lhs, I64 rhs);
+    I64 binaryCmp_fne(I64 lhs, I64 rhs);
+    I64 binaryCmp_flt(I64 lhs, I64 rhs);
+    I64 binaryCmp_fle(I64 lhs, I64 rhs);
+    I64 binaryCmp_fgt(I64 lhs, I64 rhs);
+    I64 binaryCmp_fge(I64 lhs, I64 rhs);
+
     Signal not_directiveHandler(const FpySequencer_NotDirective& directive, DirectiveError& error);
     Signal exit_directiveHandler(const FpySequencer_ExitDirective& directive, DirectiveError& error);
 };

@@ -282,8 +282,8 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
         // fallthrough on purpose
         case Fpy::DirectiveId::OR:
         case Fpy::DirectiveId::AND:
-        case Fpy::DirectiveId::EQ:
-        case Fpy::DirectiveId::NE:
+        case Fpy::DirectiveId::IEQ:
+        case Fpy::DirectiveId::INE:
         case Fpy::DirectiveId::UGT:
         case Fpy::DirectiveId::ULT:
         case Fpy::DirectiveId::ULE:
@@ -413,8 +413,8 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
             // fallthrough on purpose
         case Fpy::DirectiveId::OR:
         case Fpy::DirectiveId::AND:
-        case Fpy::DirectiveId::EQ:
-        case Fpy::DirectiveId::NE:
+        case Fpy::DirectiveId::IEQ:
+        case Fpy::DirectiveId::INE:
         case Fpy::DirectiveId::UGT:
         case Fpy::DirectiveId::ULT:
         case Fpy::DirectiveId::ULE:

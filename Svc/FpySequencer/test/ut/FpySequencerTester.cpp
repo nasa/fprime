@@ -463,6 +463,60 @@ Fw::ExternalSerializeBuffer* FpySequencerTester::tester_get_m_sequenceBuffer_ptr
 Svc::FpySequencer::Debug* FpySequencerTester::tester_get_m_debug_ptr() {
     return &(this->cmp.m_debug);
 }
+I64 FpySequencerTester::tester_binaryCmp_or(I64 lhs, I64 rhs) {
+    return this->cmp.binaryCmp_or(lhs, rhs);
+}
+I64 FpySequencerTester::tester_binaryCmp_and(I64 lhs, I64 rhs) {
+    return this->cmp.binaryCmp_and(lhs, rhs);
+}
+I64 FpySequencerTester::tester_binaryCmp_ieq(I64 lhs, I64 rhs) {
+    return this->cmp.binaryCmp_ieq(lhs, rhs);
+}
+I64 FpySequencerTester::tester_binaryCmp_ine(I64 lhs, I64 rhs) {
+    return this->cmp.binaryCmp_ine(lhs, rhs);
+}
+I64 FpySequencerTester::tester_binaryCmp_ult(I64 lhs, I64 rhs) {
+    return this->cmp.binaryCmp_ult(lhs, rhs);
+}
+I64 FpySequencerTester::tester_binaryCmp_ule(I64 lhs, I64 rhs) {
+    return this->cmp.binaryCmp_ule(lhs, rhs);
+}
+I64 FpySequencerTester::tester_binaryCmp_ugt(I64 lhs, I64 rhs) {
+    return this->cmp.binaryCmp_ugt(lhs, rhs);
+}
+I64 FpySequencerTester::tester_binaryCmp_uge(I64 lhs, I64 rhs) {
+    return this->cmp.binaryCmp_uge(lhs, rhs);
+}
+I64 FpySequencerTester::tester_binaryCmp_slt(I64 lhs, I64 rhs) {
+    return this->cmp.binaryCmp_slt(lhs, rhs);
+}
+I64 FpySequencerTester::tester_binaryCmp_sle(I64 lhs, I64 rhs) {
+    return this->cmp.binaryCmp_sle(lhs, rhs);
+}
+I64 FpySequencerTester::tester_binaryCmp_sgt(I64 lhs, I64 rhs) {
+    return this->cmp.binaryCmp_sgt(lhs, rhs);
+}
+I64 FpySequencerTester::tester_binaryCmp_sge(I64 lhs, I64 rhs) {
+    return this->cmp.binaryCmp_sge(lhs, rhs);
+}
+I64 FpySequencerTester::tester_binaryCmp_feq(I64 lhs, I64 rhs) {
+    return this->cmp.binaryCmp_feq(lhs, rhs);
+}
+I64 FpySequencerTester::tester_binaryCmp_fne(I64 lhs, I64 rhs) {
+    return this->cmp.binaryCmp_fne(lhs, rhs);
+}
+I64 FpySequencerTester::tester_binaryCmp_flt(I64 lhs, I64 rhs) {
+    return this->cmp.binaryCmp_flt(lhs, rhs);
+}
+I64 FpySequencerTester::tester_binaryCmp_fle(I64 lhs, I64 rhs) {
+    return this->cmp.binaryCmp_fle(lhs, rhs);
+}
+I64 FpySequencerTester::tester_binaryCmp_fgt(I64 lhs, I64 rhs) {
+    return this->cmp.binaryCmp_fgt(lhs, rhs);
+}
+I64 FpySequencerTester::tester_binaryCmp_fge(I64 lhs, I64 rhs) {
+    return this->cmp.binaryCmp_fge(lhs, rhs);
+}
 // End UT private/protected access
 
 }  // namespace Svc
