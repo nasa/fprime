@@ -25,7 +25,7 @@ namespace Fw {
 
         SerializeStatus stat;
 
-        stat = buffer.serialize(this->m_taskName, AMPCS_EVR_TASK_NAME_LEN, true);
+        stat = buffer.serialize(this->m_taskName, AMPCS_EVR_TASK_NAME_LEN, Fw::Serialization::OMIT_LENGTH);
         if (stat != FW_SERIALIZE_OK) {
             return stat;
         }
@@ -45,7 +45,7 @@ namespace Fw {
             return stat;
         }
 
-        return buffer.serialize(this->m_logBuffer.getBuffAddr(),m_logBuffer.getBuffLength(),true);
+        return buffer.serialize(this->m_logBuffer.getBuffAddr(),m_logBuffer.getBuffLength(),Fw::Serialization::OMIT_LENGTH);
 
     }
 
