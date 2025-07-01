@@ -119,8 +119,8 @@ jobs:
           [Service]
           Type=simple
           User=fprime
-          WorkingDirectory=/opt/fprime-ledblinker-soak
-          ExecStart=/opt/fprime-ledblinker-soak/bin/LedBlinker -a 0.0.0.0 -p 50000
+          WorkingDirectory=${INSTALL_DIR}
+          ExecStart=${INSTALL_DIR}/bin/LedBlinker -a 0.0.0.0 -p 50000
           Restart=always
           RestartSec=5
           StandardOutput=journal
@@ -134,14 +134,14 @@ jobs:
           sudo tee /etc/systemd/system/${SERVICE_NAME}-gds.service > /dev/null << 'EOF'
           [Unit]
           Description=F' GDS for LED Blinker soak testing
-          After=network.target fprime-ledblinker-soak.service
-          Requires=fprime-ledblinker-soak.service
+          After=network.target ${SERVICE_NAME}.service
+          Requires=${SERVICE_NAME}.service
           
           [Service]
           Type=simple
           User=fprime
-          WorkingDirectory=/opt/fprime-ledblinker-soak
-          ExecStart=fprime-gds --ip-client --ip-address 127.0.0.1 --ip-port 50000 -d /opt/fprime-ledblinker-soak --logs /opt/fprime-ledblinker-soak/logs --log-directly --gui none
+          WorkingDirectory=${INSTALL_DIR}
+          ExecStart=fprime-gds --ip-address 127.0.0.1 --ip-port 50000 -d ${INSTALL_DIR} --logs ${INSTALL_DIR}/logs
           Restart=always
           RestartSec=10
           StandardOutput=journal
