@@ -139,7 +139,7 @@ jobs:
           Type=simple
           User=fprime
           WorkingDirectory=/opt/fprime-ledblinker-soak
-          ExecStart=fprime-gds --ip-client --ip-address 127.0.0.1 --ip-port 50000 -d /opt/fprime-ledblinker-soak --logs /opt/fprime-ledblinker-soak/logs --framing-selection fprime -g none
+          ExecStart=sudo fprime-gds --ip-client --ip-address 127.0.0.1 --ip-port 50000 -d /opt/fprime-ledblinker-soak --logs /opt/fprime-ledblinker-soak/logs --framing-selection fprime -g none
           StandardOutput=journal
           StandardError=journal
 
