@@ -103,6 +103,7 @@ jobs:
           sudo python3 -m venv ${INSTALL_DIR}/venv
           
           # Activate virtual environment and install F´ requirements
+          sudo ${INSTALL_DIR}/venv/bin/pip install --upgrade pip
           sudo ${INSTALL_DIR}/venv/bin/pip install -r requirements.txt
 
       - name: "Install new binary"
@@ -113,8 +114,11 @@ jobs:
           sudo mkdir -p ${INSTALL_DIR}/test
           sudo mkdir -p ${INSTALL_DIR}/logs
           
-          # Copy binary, dict, and test files
+          # Copy binary and make executable
           sudo cp ./build-artifacts/aarch64-linux/LedBlinker/bin/LedBlinker ${INSTALL_DIR}/bin/
+          sudo chmod +x ${INSTALL_DIR}/bin/LedBlinker
+          
+          # Copy dictionary and test files
           sudo cp -r ./build-artifacts/aarch64-linux/LedBlinker/dict/* ${INSTALL_DIR}/dict/
           sudo cp -r ./int/* ${INSTALL_DIR}/test/
           
