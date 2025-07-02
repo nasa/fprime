@@ -141,7 +141,7 @@ function(add_fprime_subdirectory FP_SOURCE_DIR)
     get_nearest_build_root("${FP_SOURCE_DIR}")
     file(RELATIVE_PATH NEW_BIN_DIR "${FPRIME_CLOSEST_BUILD_ROOT}" "${FP_SOURCE_DIR}")
     # Add component subdirectories using normal add_subdirectory with overridden binary_dir
-    fprime_util_metadata_add_subdirectory("${FP_SOURCE_DIR}" "${NEW_BIN_DIR}")
+    fprime_util_metadata_add_subdirectory("${FP_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/${NEW_BIN_DIR}")
     add_subdirectory("${FP_SOURCE_DIR}" "${NEW_BIN_DIR}" ${ARGN})
 endfunction(add_fprime_subdirectory)
 
@@ -544,7 +544,7 @@ endfunction(register_fprime_ut)
 #
 ####
 function(fprime_add_unit_test_build_target)
-    fprime__internal_add_build_target("Unit Test" "INCLUDE_GTEST;UT_AUTO_HELPERS;CHOOSES_IMPLEMENTATIONS" ${ARGN})
+    fprime__internal_add_build_target("Unit Test" "INCLUDE_GTEST;UT_AUTO_HELPERS;CHOOSES_IMPLEMENTATIONS;TESTED_MODULE" ${ARGN})
     clear_historical_variables()
     set(INTERNAL_MODULE_NAME "${INTERNAL_MODULE_NAME}" PARENT_SCOPE)
 endfunction()

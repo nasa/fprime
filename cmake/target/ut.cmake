@@ -18,6 +18,7 @@ set(FPRIME__INTERNAL_UT_CLEAN_SCRIPT "${CMAKE_BINARY_DIR}/clean.cmake")
 function(_ut_setup_clean_file)
     set(REMOVAL_GLOB "*.gcda")
     file(WRITE "${FPRIME__INTERNAL_UT_CLEAN_SCRIPT}" "
+        message(STATUS \"Cleaning up gcda files\")
         file(GLOB_RECURSE GCDA_FILES \"${CMAKE_BINARY_DIR}/**/${REMOVAL_GLOB}\")
         if (GCDA_FILES)
             file(REMOVE \${GCDA_FILES})
@@ -49,6 +50,16 @@ endfunction(ut_add_global_target)
 # - **FULL_DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
 ####
 function(ut_add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPENDENCIES)
+    # For the deployment augment the tests in this directory to include the recursive set tests and write to the test files
+    foreach(DEPENDENCY IN LISTS FULL_DEPENDENCIES)
+        get_property(DEPENDENCY_UNIT_TESTS TARGET ${DEPENDENCY} PROPERTY FPRIME_UNIT_TESTS)
+        message(STATUS "Adding Unit Tests from ${DEPENDENCY}: ${DEPENDENCY_UNIT_TESTS}")
+        if(DEPENDENCY_UNIT_TESTS)
+            foreach(UNIT_TEST IN LISTS DEPENDENCY_UNIT_TESTS)
+                fprime_util_metadata_add_test("${UNIT_TEST}")
+            endforeach()
+        endif()
+    endforeach()
 endfunction(ut_add_deployment_target)
 
 ####
@@ -138,6 +149,16 @@ function(ut_add_module_target UT_EXECUTABLE_TARGET TARGET_NAME SOURCE_FILES DEPE
 
     # Add the CTEST
     ut_add_ctest("${UT_EXECUTABLE_TARGET}")
+
+    # Register the test to the tested module, assuming "current module" unless previously specified
+    get_target_property(FPRIME_TESTED_MODULE "${UT_EXECUTABLE_TARGET}" FPRIME_TESTED_MODULE)
+    if (NOT FPRIME_TESTED_MODULE)
+        set(FPRIME_TESTED_MODULE "${FPRIME_CURRENT_MODULE}")
+    endif()
+    message(STATUS "Adding Unit Tests to ${FPRIME_TESTED_MODULE}: ${UT_EXECUTABLE_TARGET}")
+    if (TARGET "${FPRIME_TESTED_MODULE}")
+        append_list_property("${UT_EXECUTABLE_TARGET}" TARGET "${FPRIME_TESTED_MODULE}" PROPERTY FPRIME_UNIT_TESTS)
+    endif()
 
     # Module introspection when in debug mode
     if (CMAKE_DEBUG_OUTPUT)
