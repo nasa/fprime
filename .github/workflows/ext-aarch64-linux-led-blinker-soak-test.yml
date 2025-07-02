@@ -55,12 +55,14 @@ jobs:
           
       - name: "Run integration tests"
         run: |
+          # Clear previous logs before running tests
+          echo "Clearing previous logs from ${INSTALL_DIR}/logs..."
+          sudo rm -rf ${INSTALL_DIR}/logs/*
+          
           # Use the virtual environment created during setup
           . ${INSTALL_DIR}/venv/bin/activate
           
           TEST_TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-          TEST_LOG_DIR="test-logs-${TEST_TIMESTAMP}"
-          mkdir -p ${TEST_LOG_DIR}
           
           echo "=== Integration test started at $(date) (${TEST_TIMESTAMP}) ==="
           
@@ -75,5 +77,5 @@ jobs:
         if: always()
         with:
           name: test-results-${{ github.run_number }}-${{ github.run_attempt }}
-          path: test-logs-*
+          path: ${INSTALL_DIR}/logs
           retention-days: 5
