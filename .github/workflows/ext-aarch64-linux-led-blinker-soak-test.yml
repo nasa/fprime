@@ -77,5 +77,5 @@ jobs:
         if: always()
         with:
           name: test-results-${{ github.run_number }}-${{ github.run_attempt }}
-          path: ${INSTALL_DIR}/logs
+          path: ${{ env.INSTALL_DIR }}/logs
           retention-days: 5
