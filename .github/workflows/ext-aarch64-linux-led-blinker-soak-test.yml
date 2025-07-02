@@ -57,7 +57,7 @@ jobs:
         run: |
           # Clear previous logs before running tests
           echo "Clearing previous logs from ${INSTALL_DIR}/logs..."
-          sudo rm -rf ${INSTALL_DIR}/logs/*
+          # sudo rm -rf ${INSTALL_DIR}/logs/*
           
           # Use the virtual environment created during setup
           . ${INSTALL_DIR}/venv/bin/activate
