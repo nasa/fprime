@@ -78,7 +78,8 @@ jobs:
       - name: "Stop existing services if running"
         run: |
           echo "Stopping existing services if they exist..."
-          # Stop and disable services - these commands won't fail if services don't exist
+          # Stop and disable services, || true to avoid errors
+
           sudo systemctl stop ${SERVICE_NAME} || true
           sudo systemctl disable ${SERVICE_NAME} || true
           sudo systemctl stop ${SERVICE_NAME}-gds || true
@@ -174,7 +175,7 @@ jobs:
           sudo systemctl enable ${SERVICE_NAME}
 
           echo "Waiting for services to stabilize..."
-          sleep 10  # Wait for services to stabilize
+          sleep 5 # Wait for services to stabilize
 
           echo "Checking final service status..."
           sudo systemctl status ${SERVICE_NAME} --no-pager -l -n 50

@@ -5,7 +5,7 @@ name: "Soak Test AArch64 Linux: External Repo LedBlinker"
 on:
   schedule:
     # Run every 30 minutes
-    - cron: '*/30 * * * *'
+    #- cron: '*/30 * * * *'
   # Allow manual triggering for testing
   workflow_dispatch:
 
