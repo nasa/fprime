@@ -26,7 +26,7 @@ jobs:
           if sudo systemctl is-active --quiet ${FSW_SERVICE_NAME}; then
             echo "Service ${FSW_SERVICE_NAME} is running"
           else
-            echo "Service ${FSW_SERVICE_NAME} is not running, "
+            echo "Service ${FSW_SERVICE_NAME} is not running"
             sudo systemctl status ${FSW_SERVICE_NAME} --no-pager -l
             echo "Recent FSW service logs:"
             sudo journalctl -u ${FSW_SERVICE_NAME} --no-pager -n 20

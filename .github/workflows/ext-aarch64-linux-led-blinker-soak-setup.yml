@@ -120,6 +120,9 @@ jobs:
           sudo cp -r ./build-artifacts/aarch64-linux/LedBlinker/dict/* ${INSTALL_DIR}/dict/
           sudo cp -r ./int/* ${INSTALL_DIR}/test/
 
+          # Make binary executable
+          sudo chmod +x ${INSTALL_DIR}/bin/LedBlinker
+
           # Set ownership, so service can access files
           sudo chown -R fprime:fprime ${INSTALL_DIR}
           
