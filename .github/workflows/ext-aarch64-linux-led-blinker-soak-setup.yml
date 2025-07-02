@@ -63,8 +63,6 @@ jobs:
           mkdir -p aarch64-linux-artifacts-soak
           cp -r ./build-artifacts aarch64-linux-artifacts-soak
           cp -r Components/Led/test/int aarch64-linux-artifacts-soak
-          cp ./fprime/requirements.txt aarch64-linux-artifacts-soak/
-          ls -la aarch64-linux-artifacts-soak  # List contents for debugging
       - name: 'Archive Build Artifacts'
         uses: actions/upload-artifact@v4
         with:
@@ -86,11 +84,6 @@ jobs:
           sudo systemctl stop ${SERVICE_NAME}-gds || true
           sudo systemctl disable ${SERVICE_NAME}-gds || true 
 
-      - name: "Artifacts Download"
-        uses: actions/download-artifact@v4
-        with:
-          name: aarch64-linux-artifacts-soak
-
       - name: "Checkout F´ Repository"
         uses: actions/checkout@v4
         with:
@@ -107,6 +100,11 @@ jobs:
           sudo ${INSTALL_DIR}/venv/bin/pip install --upgrade pip
           sudo ${INSTALL_DIR}/venv/bin/pip install -r requirements.txt
 
+      - name: "Artifacts Download"
+        uses: actions/download-artifact@v4
+        with:
+          name: aarch64-linux-artifacts-soak
+
       - name: "Install new binary"
         run: |
           echo "Installing new binary to ${INSTALL_DIR}..."
@@ -115,15 +113,11 @@ jobs:
           sudo mkdir -p ${INSTALL_DIR}/test
           sudo mkdir -p ${INSTALL_DIR}/logs
           
-          ls -la
-          # Copy binary and make executable
-          sudo cp build-artifacts/aarch64-linux/LedBlinker/bin/LedBlinker ${INSTALL_DIR}/bin/
-          sudo chmod +x ${INSTALL_DIR}/bin/LedBlinker
-          
-          # Copy dictionary and test files
-          sudo cp -r build-artifacts/aarch64-linux/LedBlinker/dict/* ${INSTALL_DIR}/dict/
-          sudo cp -r int/* ${INSTALL_DIR}/test/
-          
+          # Copy binary, dict, and test files
+          sudo cp ./build-artifacts/aarch64-linux/LedBlinker/bin/LedBlinker ${INSTALL_DIR}/bin/
+          sudo cp -r ./build-artifacts/aarch64-linux/LedBlinker/dict/* ${INSTALL_DIR}/dict/
+          sudo cp -r ./int/* ${INSTALL_DIR}/test/
+
           # Set ownership, so service can access files
           sudo chown -R fprime:fprime ${INSTALL_DIR}
           
