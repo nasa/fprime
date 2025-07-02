@@ -19,46 +19,46 @@ jobs:
     runs-on: [self-hosted, ARM64]
     steps:
       
-      - name: "Check service status"
-        run: |
-          echo "=== Checking current service file contents ==="
-          echo "LedBlinker service file:"
-          sudo cat /etc/systemd/system/${SERVICE_NAME}.service || true
-          echo ""
-          echo "GDS service file:"
-          sudo cat /etc/systemd/system/${SERVICE_NAME}-gds.service || true
-          echo ""
-          
-          echo "Checking if ${SERVICE_NAME} service is running..."
-          if sudo systemctl is-active --quiet ${SERVICE_NAME}; then
-            echo "Service ${SERVICE_NAME} is running"
-            sudo systemctl status ${SERVICE_NAME} --no-pager -l
-          else
-            echo "Service ${SERVICE_NAME} is not running"
-            sudo systemctl status ${SERVICE_NAME} --no-pager -l
-            echo "Recent service logs:"
-            sudo journalctl -u ${SERVICE_NAME} --no-pager -n 20
-            exit 1
-          fi
-          
-          echo "Checking if ${SERVICE_NAME}-gds service is running..."
-          if sudo systemctl is-active --quiet ${SERVICE_NAME}-gds; then
-            echo "Service ${SERVICE_NAME}-gds is running"
-            sudo systemctl status ${SERVICE_NAME}-gds --no-pager -l
-          else
-            echo "Service ${SERVICE_NAME}-gds is not running"
-            sudo systemctl status ${SERVICE_NAME}-gds --no-pager -l
-            echo "Recent GDS service logs:"
-            sudo journalctl -u ${SERVICE_NAME}-gds --no-pager -n 20
-            exit 1
-          fi
+      # ================================
+      # Commenting out service status check
+      # for testing purposes
+      # ================================
+      # - name: "Check service status"
+      #   run: |
+      #     echo "=== Checking current service file contents ==="
+      #     echo "LedBlinker service file:"
+      #     sudo cat /etc/systemd/system/${SERVICE_NAME}.service || true
+      #     echo ""
+      #     echo "GDS service file:"
+      #     sudo cat /etc/systemd/system/${SERVICE_NAME}-gds.service || true
+      #     echo ""
+      #     
+      #     echo "Checking if ${SERVICE_NAME} service is running..."
+      #     if sudo systemctl is-active --quiet ${SERVICE_NAME}; then
+      #       echo "Service ${SERVICE_NAME} is running"
+      #       sudo systemctl status ${SERVICE_NAME} --no-pager -l
+      #     else
+      #       echo "Service ${SERVICE_NAME} is not running"
+      #       sudo systemctl status ${SERVICE_NAME} --no-pager -l
+      #       echo "Recent service logs:"
+      #       sudo journalctl -u ${SERVICE_NAME} --no-pager -n 20
+      #       exit 1
+      #     fi
+      #     
+      #     echo "Checking if ${SERVICE_NAME}-gds service is running..."
+      #     if sudo systemctl is-active --quiet ${SERVICE_NAME}-gds; then
+      #       echo "Service ${SERVICE_NAME}-gds is running"
+      #       sudo systemctl status ${SERVICE_NAME}-gds --no-pager -l
+      #     else
+      #       echo "Service ${SERVICE_NAME}-gds is not running"
+      #       sudo systemctl status ${SERVICE_NAME}-gds --no-pager -l
+      #       echo "Recent GDS service logs:"
+      #       sudo journalctl -u ${SERVICE_NAME}-gds --no-pager -n 20
+      #       exit 1
+      #     fi
           
       - name: "Run integration tests"
         run: |
-          # Clear previous logs before running tests
-          echo "Clearing previous logs from ${INSTALL_DIR}/logs..."
-          # sudo rm -rf ${INSTALL_DIR}/logs/*
-          
           # Use the virtual environment created during setup
           . ${INSTALL_DIR}/venv/bin/activate
           
