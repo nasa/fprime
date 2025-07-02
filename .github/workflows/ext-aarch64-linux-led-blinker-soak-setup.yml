@@ -16,8 +16,9 @@ concurrency:
 env:
   AARCH64_TOOLCHAIN_DIR: /tmp/aarch64-toolchain
   AARCH64_TOOLCHAIN_URL: https://developer.arm.com/-/media/Files/downloads/gnu-a/10.2-2020.11/binrel/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu.tar.xz
-  SERVICE_NAME: fprime-ledblinker-soak
-  INSTALL_DIR: /opt/fprime-ledblinker-soak
+  FSW_SERVICE_NAME: ledblinker-soak-fsw
+  GDS_SERVICE_NAME: ledblinker-soak-gds
+  INSTALL_DIR: /opt/ledblinker-soak
 
 jobs:
   get-branch:
@@ -80,10 +81,10 @@ jobs:
           echo "Stopping existing services if they exist..."
           # Stop and disable services, || true to avoid errors
 
-          sudo systemctl stop ${SERVICE_NAME} || true
-          sudo systemctl disable ${SERVICE_NAME} || true
-          sudo systemctl stop ${SERVICE_NAME}-gds || true
-          sudo systemctl disable ${SERVICE_NAME}-gds || true 
+          sudo systemctl stop ${FSW_SERVICE_NAME} || true
+          sudo systemctl disable ${FSW_SERVICE_NAME} || true
+          sudo systemctl stop ${GDS_SERVICE_NAME} || true
+          sudo systemctl disable ${GDS_SERVICE_NAME} || true 
 
       - name: "Checkout F´ Repository"
         uses: actions/checkout@v4
@@ -125,7 +126,7 @@ jobs:
       - name: "Create systemd service file"
         run: |
           echo "Creating systemd service file for LedBlinker..."
-          sudo tee /etc/systemd/system/${SERVICE_NAME}.service > /dev/null << EOF
+          sudo tee /etc/systemd/system/${FSW_SERVICE_NAME}.service > /dev/null << EOF
           [Unit]
           Description=F' LED Blinker Application, system service meant for soak testing
           After=network.target
@@ -143,11 +144,11 @@ jobs:
           EOF
           
           echo "Creating systemd service file for GDS..."
-          sudo tee /etc/systemd/system/${SERVICE_NAME}-gds.service > /dev/null << EOF
+          sudo tee /etc/systemd/system/${GDS_SERVICE_NAME}.service > /dev/null << EOF
           [Unit]
           Description=F' GDS for LED Blinker soak testing
-          After=network.target ${SERVICE_NAME}.service
-          Requires=${SERVICE_NAME}.service
+          After=network.target ${FSW_SERVICE_NAME}.service
+          Requires=${FSW_SERVICE_NAME}.service
 
           [Service]
           Type=simple
@@ -167,17 +168,17 @@ jobs:
           sudo systemctl daemon-reload
           
           # start and enable gds service
-          sudo systemctl enable ${SERVICE_NAME}-gds
-          sudo systemctl start ${SERVICE_NAME}-gds
+          sudo systemctl enable ${GDS_SERVICE_NAME}
+          sudo systemctl start ${GDS_SERVICE_NAME}
 
           # start and enable binary
-          sudo systemctl start ${SERVICE_NAME}
-          sudo systemctl enable ${SERVICE_NAME}
+          sudo systemctl start ${FSW_SERVICE_NAME}
+          sudo systemctl enable ${FSW_SERVICE_NAME}
 
           echo "Waiting for services to stabilize..."
           sleep 5 # Wait for services to stabilize
 
           echo "Checking final service status..."
-          sudo systemctl status ${SERVICE_NAME} --no-pager -l -n 50
-          sudo systemctl status ${SERVICE_NAME}-gds --no-pager -l -n 150
+          sudo systemctl status ${FSW_SERVICE_NAME} --no-pager -l -n 50
+          sudo systemctl status ${GDS_SERVICE_NAME} --no-pager -l -n 150
           

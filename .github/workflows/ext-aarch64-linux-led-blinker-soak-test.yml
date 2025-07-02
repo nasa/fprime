@@ -10,8 +10,9 @@ on:
   workflow_dispatch:
 
 env:
-  SERVICE_NAME: fprime-ledblinker-soak
-  INSTALL_DIR: /opt/fprime-ledblinker-soak
+  FSW_SERVICE_NAME: ledblinker-soak-fsw
+  GDS_SERVICE_NAME: ledblinker-soak-gds
+  INSTALL_DIR: /opt/ledblinker-soak
 
 jobs:
   scheduled-test:
@@ -19,43 +20,42 @@ jobs:
     runs-on: [self-hosted, ARM64]
     steps:
       
-      # ================================
-      # Commenting out service status check
-      # for testing purposes
-      # ================================
-      # - name: "Check service status"
-      #   run: |
-      #     echo "=== Checking current service file contents ==="
-      #     echo "LedBlinker service file:"
-      #     sudo cat /etc/systemd/system/${SERVICE_NAME}.service || true
-      #     echo ""
-      #     echo "GDS service file:"
-      #     sudo cat /etc/systemd/system/${SERVICE_NAME}-gds.service || true
-      #     echo ""
-      #     
-      #     echo "Checking if ${SERVICE_NAME} service is running..."
-      #     if sudo systemctl is-active --quiet ${SERVICE_NAME}; then
-      #       echo "Service ${SERVICE_NAME} is running"
-      #       sudo systemctl status ${SERVICE_NAME} --no-pager -l
-      #     else
-      #       echo "Service ${SERVICE_NAME} is not running"
-      #       sudo systemctl status ${SERVICE_NAME} --no-pager -l
-      #       echo "Recent service logs:"
-      #       sudo journalctl -u ${SERVICE_NAME} --no-pager -n 20
-      #       exit 1
-      #     fi
-      #     
-      #     echo "Checking if ${SERVICE_NAME}-gds service is running..."
-      #     if sudo systemctl is-active --quiet ${SERVICE_NAME}-gds; then
-      #       echo "Service ${SERVICE_NAME}-gds is running"
-      #       sudo systemctl status ${SERVICE_NAME}-gds --no-pager -l
-      #     else
-      #       echo "Service ${SERVICE_NAME}-gds is not running"
-      #       sudo systemctl status ${SERVICE_NAME}-gds --no-pager -l
-      #       echo "Recent GDS service logs:"
-      #       sudo journalctl -u ${SERVICE_NAME}-gds --no-pager -n 20
-      #       exit 1
-      #     fi
+      - name: "Check service status"
+        run: |
+          echo "Checking if ${FSW_SERVICE_NAME} service is running..."
+          if sudo systemctl is-active --quiet ${FSW_SERVICE_NAME}; then
+            echo "Service ${FSW_SERVICE_NAME} is running"
+          else
+            echo "Service ${FSW_SERVICE_NAME} is not running, "
+            sudo systemctl status ${FSW_SERVICE_NAME} --no-pager -l
+            echo "Recent FSW service logs:"
+            sudo journalctl -u ${FSW_SERVICE_NAME} --no-pager -n 20
+
+            # Check that the GDS is running in the case that FSW crashed
+            echo "Checking if ${GDS_SERVICE_NAME} service is running..."
+            if sudo systemctl is-active --quiet ${GDS_SERVICE_NAME}; then
+              echo "Service ${GDS_SERVICE_NAME} is running"
+            else
+              echo "Service ${GDS_SERVICE_NAME} is not running"
+              sudo systemctl status ${GDS_SERVICE_NAME} --no-pager -l
+              echo "Recent GDS service logs:"
+              sudo journalctl -u ${GDS_SERVICE_NAME} --no-pager -n 20
+              exit 1
+            fi
+
+            exit 1
+          fi
+          
+          echo "Checking if ${GDS_SERVICE_NAME} service is running..."
+          if sudo systemctl is-active --quiet ${GDS_SERVICE_NAME}; then
+            echo "Service ${GDS_SERVICE_NAME} is running"
+          else
+            echo "Service ${GDS_SERVICE_NAME} is not running"
+            sudo systemctl status ${GDS_SERVICE_NAME} --no-pager -l
+            echo "Recent GDS service logs:"
+            sudo journalctl -u ${GDS_SERVICE_NAME} --no-pager -n 20
+            exit 1
+          fi
           
       - name: "Run integration tests"
         run: |
