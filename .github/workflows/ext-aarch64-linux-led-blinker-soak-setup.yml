@@ -64,6 +64,7 @@ jobs:
           cp -r ./build-artifacts aarch64-linux-artifacts-soak
           cp -r Components/Led/test/int aarch64-linux-artifacts-soak
           cp ./fprime/requirements.txt aarch64-linux-artifacts-soak/
+          ls -la aarch64-linux-artifacts-soak  # List contents for debugging
       - name: 'Archive Build Artifacts'
         uses: actions/upload-artifact@v4
         with:
