@@ -115,6 +115,7 @@ jobs:
           sudo mkdir -p ${INSTALL_DIR}/test
           sudo mkdir -p ${INSTALL_DIR}/logs
           
+          ls -la
           # Copy binary and make executable
           sudo cp build-artifacts/aarch64-linux/LedBlinker/bin/LedBlinker ${INSTALL_DIR}/bin/
           sudo chmod +x ${INSTALL_DIR}/bin/LedBlinker
