@@ -20,7 +20,6 @@ jobs:
     timeout-minutes: 10  # Each test should complete within 10 minutes
     steps:
       
-          
       - name: "Check service status"
         run: |
           echo "=== Checking current service file contents ==="
