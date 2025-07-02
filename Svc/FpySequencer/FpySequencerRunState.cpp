@@ -356,41 +356,46 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
 // dispatches a deserialized sequencer directive to the right handler.
 void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy::DirectiveId& id) {
     switch (id) {
+        case Fpy::DirectiveId::INVALID: {
+            // coding err
+            FW_ASSERT(0);
+            return;
+        }
         case Fpy::DirectiveId::WAIT_REL: {
             this->directive_waitRel_internalInterfaceInvoke(directive.waitRel);
-            break;
+            return;
         }
         case Fpy::DirectiveId::WAIT_ABS: {
             this->directive_waitAbs_internalInterfaceInvoke(directive.waitAbs);
-            break;
+            return;
         }
         case Fpy::DirectiveId::SET_SER_REG: {
             this->directive_setSerReg_internalInterfaceInvoke(directive.setSerReg);
-            break;
+            return;
         }
         case Fpy::DirectiveId::GOTO: {
             this->directive_goto_internalInterfaceInvoke(directive.gotoDirective);
-            break;
+            return;
         }
         case Fpy::DirectiveId::IF: {
             this->directive_if_internalInterfaceInvoke(directive.ifDirective);
-            break;
+            return;
         }
         case Fpy::DirectiveId::NO_OP: {
             this->directive_noOp_internalInterfaceInvoke(directive.noOp);
-            break;
+            return;
         }
         case Fpy::DirectiveId::GET_TLM: {
             this->directive_getTlm_internalInterfaceInvoke(directive.getTlm);
-            break;
+            return;
         }
         case Fpy::DirectiveId::GET_PRM: {
             this->directive_getPrm_internalInterfaceInvoke(directive.getPrm);
-            break;
+            return;
         }
         case Fpy::DirectiveId::CMD: {
             this->directive_cmd_internalInterfaceInvoke(directive.cmd);
-            break;
+            return;
         }
             // fallthrough on purpose
         case Fpy::DirectiveId::DESER_SER_REG_8:
@@ -398,11 +403,11 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
         case Fpy::DirectiveId::DESER_SER_REG_2:
         case Fpy::DirectiveId::DESER_SER_REG_1: {
             this->directive_deserSerReg_internalInterfaceInvoke(directive.deserSerReg);
-            break;
+            return;
         }
         case Fpy::DirectiveId::SET_REG: {
             this->directive_setReg_internalInterfaceInvoke(directive.setReg);
-            break;
+            return;
         }
             // fallthrough on purpose
         case Fpy::DirectiveId::OR:
@@ -418,16 +423,19 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
         case Fpy::DirectiveId::SLE:
         case Fpy::DirectiveId::SGE: {
             this->directive_binaryCmp_internalInterfaceInvoke(directive.binaryCmp);
-            break;
+            return;
         }
         case Fpy::DirectiveId::NOT: {
             this->directive_not_internalInterfaceInvoke(directive.notDirective);
-            break;
+            return;
         }
-        default: {
-            FW_ASSERT(0, id);  // coding error, forgot to add switch case/port for this directive
+        case Fpy::DirectiveId::EXIT: {
+            this->directive_exit_internalInterfaceInvoke(directive.exit);
+            return;
         }
     }
+    // coding err
+    FW_ASSERT(0, static_cast<FwAssertArgType>(id));
 }
 
 Signal FpySequencer::checkShouldWake() {
