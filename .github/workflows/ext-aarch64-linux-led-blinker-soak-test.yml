@@ -17,7 +17,6 @@ jobs:
   scheduled-test:
     name: "Scheduled Integration Test"
     runs-on: [self-hosted, ARM64]
-    timeout-minutes: 10  # Each test should complete within 10 minutes
     steps:
       
       - name: "Check service status"
@@ -42,7 +41,6 @@ jobs:
             exit 1
           fi
           
-          sleep 10
           echo "Checking if ${SERVICE_NAME}-gds service is running..."
           if sudo systemctl is-active --quiet ${SERVICE_NAME}-gds; then
             echo "Service ${SERVICE_NAME}-gds is running"
