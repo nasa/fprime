@@ -152,7 +152,7 @@ jobs:
           Type=simple
           User=fprime
           WorkingDirectory=/opt/fprime-ledblinker-soak
-          ExecStart=/opt/fprime-ledblinker-soak/venv/bin/fprime-gds --ip-address 127.0.0.1 --ip-port 50000 -d /opt/fprime-ledblinker-soak --logs /opt/fprime-ledblinker-soak/logs -g none
+          ExecStart=/opt/fprime-ledblinker-soak/venv/bin/fprime-gds --ip-client --ip-address 127.0.0.1 --ip-port 50000 -d /opt/fprime-ledblinker-soak --logs /opt/fprime-ledblinker-soak/logs -g none
           StandardOutput=journal
           StandardError=journal
 
@@ -165,13 +165,13 @@ jobs:
           echo "Starting and enabling services..."
           sudo systemctl daemon-reload
           
-          # enable services
-          sudo systemctl enable ${SERVICE_NAME}
+          # start and enable gds service
           sudo systemctl enable ${SERVICE_NAME}-gds
-
-          # start services
-          sudo systemctl start ${SERVICE_NAME}
           sudo systemctl start ${SERVICE_NAME}-gds
+
+          # start and enable binary
+          sudo systemctl start ${SERVICE_NAME}
+          sudo systemctl enable ${SERVICE_NAME}
 
           echo "Waiting for services to stabilize..."
           sleep 10  # Wait for services to stabilize
