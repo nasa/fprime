@@ -377,6 +377,10 @@ Signal FpySequencerTester::tester_binaryRegOp_directiveHandler(const FpySequence
     return this->cmp.binaryRegOp_directiveHandler(directive, err);
 }
 
+Signal FpySequencerTester::tester_unaryRegOp_directiveHandler(const FpySequencer_UnaryRegOpDirective& directive,
+                                                             DirectiveError& err) {
+    return this->cmp.unaryRegOp_directiveHandler(directive, err);
+}
 Signal FpySequencerTester::tester_setReg_directiveHandler(const FpySequencer_SetRegDirective& directive,
                                                           DirectiveError& err) {
     return this->cmp.setReg_directiveHandler(directive, err);
