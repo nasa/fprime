@@ -297,7 +297,7 @@ Signal FpySequencer::cmd_directiveHandler(const FpySequencer_CmdDirective& direc
         error = DirectiveError::CMD_SERIALIZE_FAILURE;
         return Signal::stmtResponse_failure;
     }
-    stat = cmdBuf.serialize(directive.getargBuf(), directive.get_argBufSize(), true);
+    stat = cmdBuf.serialize(directive.getargBuf(), directive.get_argBufSize(), Fw::Serialization::OMIT_LENGTH);
     if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
         error = DirectiveError::CMD_SERIALIZE_FAILURE;
         return Signal::stmtResponse_failure;

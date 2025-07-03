@@ -156,7 +156,7 @@ void FpySequencerTester::add_SET_SER_REG(U8 serRegIdx, Fw::StatementArgBuffer va
 void FpySequencerTester::add_SET_SER_REG(FpySequencer_SetSerRegDirective dir) {
     Fw::StatementArgBuffer buf;
     FW_ASSERT(buf.serialize(dir.getindex()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    FW_ASSERT(buf.serialize(dir.getvalue(), dir.get_valueSize(), true) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    FW_ASSERT(buf.serialize(dir.getvalue(), dir.get_valueSize(), Fw::Serialization::OMIT_LENGTH) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     addDirective(Fpy::DirectiveId::SET_SER_REG, buf);
 }
 
@@ -202,7 +202,7 @@ void FpySequencerTester::add_CMD(FwOpcodeType opcode) {
 void FpySequencerTester::add_CMD(FpySequencer_CmdDirective dir) {
     Fw::StatementArgBuffer buf;
     FW_ASSERT(buf.serialize(dir.getopCode()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    FW_ASSERT(buf.serialize(dir.getargBuf(), dir.get_argBufSize(), true) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    FW_ASSERT(buf.serialize(dir.getargBuf(), dir.get_argBufSize(), Fw::Serialization::OMIT_LENGTH) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     addDirective(Fpy::DirectiveId::CMD, buf);
 }
 
@@ -251,6 +251,16 @@ void FpySequencerTester::add_BINARY_CMP(FpySequencer_BinaryCmpDirective dir) {
     FW_ASSERT(buf.serialize(dir.getrhs()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     FW_ASSERT(buf.serialize(dir.getres()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     addDirective(dir.get_op(), buf);
+}
+
+void FpySequencerTester::add_EXIT(bool success) {
+    add_EXIT(FpySequencer_ExitDirective(success));
+}
+
+void FpySequencerTester::add_EXIT(FpySequencer_ExitDirective dir) {
+    Fw::StatementArgBuffer buf;
+    FW_ASSERT(buf.serialize(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    addDirective(Fpy::DirectiveId::EXIT, buf);
 }
 
 //! Handle a text event
@@ -476,6 +486,9 @@ void FpySequencerTester::tester_setState(Svc::FpySequencer_SequencerStateMachine
     FpySequencer_SequencerStateMachineTester::setState(this->cmp.m_stateMachine_sequencer, state);
 }
 
+void FpySequencerTester::tester_dispatchDirective(const FpySequencer::DirectiveUnion& directive, const Fpy::DirectiveId& id) {
+    this->cmp.dispatchDirective(directive, id);
+}
 
 // End UT private/protected access
 

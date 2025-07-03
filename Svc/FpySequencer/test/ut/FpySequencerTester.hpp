@@ -103,6 +103,8 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     void add_SET_REG(FpySequencer_SetRegDirective dir);
     void add_BINARY_CMP(U8 lhs, U8 rhs, U8 res, Fpy::DirectiveId op);
     void add_BINARY_CMP(FpySequencer_BinaryCmpDirective dir);
+    void add_EXIT(bool success);
+    void add_EXIT(FpySequencer_ExitDirective dir);
     //! Handle a text event
     void textLogIn(FwEventIdType id,                //!< The event ID
                    const Fw::Time& timeTag,         //!< The time
@@ -166,6 +168,7 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     void tester_doDispatch();
     void tester_setState(Svc::FpySequencer_SequencerStateMachineStateMachineBase::State state);
     Svc::FpySequencer_SequencerStateMachineStateMachineBase::State tester_getState();
+    void tester_dispatchDirective(const FpySequencer::DirectiveUnion& directive, const Fpy::DirectiveId& id);
 
   public:
     // ----------------------------------------------------------------------
