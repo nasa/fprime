@@ -554,6 +554,30 @@ TEST_F(FpySequencerTester, not) {
     ASSERT_EQ(tester_unaryRegOp_not(0x123), ~0x123);
 }
 
+TEST_F(FpySequencerTester, fptrunc) {
+    F64 src = 123.123;
+    F32 expected = static_cast<F32>(src);
+
+    I64 res = tester_unaryRegOp_fptrunc(*reinterpret_cast<I64*>(&src));
+    I32 res_trunc = static_cast<I32>(res);
+    F32 res_f;
+    memcpy(&res_f, &res_trunc, sizeof(res_f));
+    ASSERT_EQ(res_f, expected);
+}
+
+TEST_F(FpySequencerTester, fpext) {
+    F32 src = 123.123f;
+    F64 expected = static_cast<F64>(src);
+    I32 isrc;
+    memcpy(&isrc, &src, sizeof(isrc));
+    I64 isrc_ext = static_cast<I64>(isrc);
+
+    I64 res = tester_unaryRegOp_fpext(isrc_ext);
+    F64 res_f;
+    memcpy(&res_f, &res, sizeof(res_f));
+    ASSERT_EQ(res_f, expected);
+}
+
 TEST_F(FpySequencerTester, exit) {
     FpySequencer_ExitDirective directive(true);
     DirectiveError err = DirectiveError::NO_ERROR;

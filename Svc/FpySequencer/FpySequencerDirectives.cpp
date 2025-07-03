@@ -441,36 +441,48 @@ I64 FpySequencer::binaryRegOp_sge(I64 lhs, I64 rhs) {
     return lhs >= rhs;
 }
 I64 FpySequencer::binaryRegOp_feq(I64 lhs, I64 rhs) {
-    F64 left = *reinterpret_cast<F64*>(&lhs);
-    F64 right = *reinterpret_cast<F64*>(&rhs);
+    F64 left;
+    memcpy(&left, &lhs, sizeof(left));
+    F64 right;
+    memcpy(&right, &rhs, sizeof(right));
     return floatCmp(left, right) == 0;
 }
 I64 FpySequencer::binaryRegOp_fne(I64 lhs, I64 rhs) {
-    F64 left = *reinterpret_cast<F64*>(&lhs);
-    F64 right = *reinterpret_cast<F64*>(&rhs);
+    F64 left;
+    memcpy(&left, &lhs, sizeof(left));
+    F64 right;
+    memcpy(&right, &rhs, sizeof(right));
     I8 cmp = floatCmp(left, right);
     // ne is true if they are not equal and neither is nan
     return cmp != 0 && cmp != -2;
 }
 I64 FpySequencer::binaryRegOp_flt(I64 lhs, I64 rhs) {
-    F64 left = *reinterpret_cast<F64*>(&lhs);
-    F64 right = *reinterpret_cast<F64*>(&rhs);
+    F64 left;
+    memcpy(&left, &lhs, sizeof(left));
+    F64 right;
+    memcpy(&right, &rhs, sizeof(right));
     return floatCmp(left, right) == -1;
 }
 I64 FpySequencer::binaryRegOp_fle(I64 lhs, I64 rhs) {
-    F64 left = *reinterpret_cast<F64*>(&lhs);
-    F64 right = *reinterpret_cast<F64*>(&rhs);
+    F64 left;
+    memcpy(&left, &lhs, sizeof(left));
+    F64 right;
+    memcpy(&right, &rhs, sizeof(right));
     I8 cmp = floatCmp(left, right);
     return cmp == 0 || cmp == -1;
 }
 I64 FpySequencer::binaryRegOp_fgt(I64 lhs, I64 rhs) {
-    F64 left = *reinterpret_cast<F64*>(&lhs);
-    F64 right = *reinterpret_cast<F64*>(&rhs);
+    F64 left;
+    memcpy(&left, &lhs, sizeof(left));
+    F64 right;
+    memcpy(&right, &rhs, sizeof(right));
     return floatCmp(left, right) == 1;
 }
 I64 FpySequencer::binaryRegOp_fge(I64 lhs, I64 rhs) {
-    F64 left = *reinterpret_cast<F64*>(&lhs);
-    F64 right = *reinterpret_cast<F64*>(&rhs);
+    F64 left;
+    memcpy(&left, &lhs, sizeof(left));
+    F64 right;
+    memcpy(&right, &rhs, sizeof(right));
     I8 cmp = floatCmp(left, right);
     return cmp == 0 || cmp == 1;
 }
@@ -560,20 +572,25 @@ I64 FpySequencer::unaryRegOp_fpext(I64 src) {
     // first get the first 32 bits of src
     I32 trunc = static_cast<I32>(src);
     // then interpret as float
-    F32 fsrc = *reinterpret_cast<F32*>(&trunc);
+    F32 fsrc;
+    memcpy(&fsrc, &trunc, sizeof(fsrc));
     // then cast to F64
     F64 ext = static_cast<F64>(fsrc);
     // then return bits as I64
-    return *reinterpret_cast<I64*>(&ext);
+    I64 iext;
+    memcpy(&iext, &ext, sizeof(iext));
+    return iext;
 }
 I64 FpySequencer::unaryRegOp_fptrunc(I64 src) {
     // convert F64 to F32
     // first interpret as F64
-    F64 fsrc = *reinterpret_cast<F64*>(&src);
+    F64 fsrc;
+    memcpy(&fsrc, &src, sizeof(fsrc));
     // then cast to F32
     F32 trunc = static_cast<F32>(fsrc);
     // then interpret bits as I32
-    I32 itrunc = *reinterpret_cast<I32*>(&trunc);
+    I32 itrunc;
+    memcpy(&itrunc, &trunc, sizeof(itrunc));
     // then extend to I64
     return static_cast<I64>(itrunc);
 }
