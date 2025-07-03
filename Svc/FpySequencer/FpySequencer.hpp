@@ -57,8 +57,8 @@ class FpySequencer : public FpySequencerComponentBase {
         FpySequencer_CmdDirective cmd;
         FpySequencer_DeserSerRegDirective deserSerReg;
         FpySequencer_SetRegDirective setReg;
-        FpySequencer_BinaryCmpDirective binaryCmp;
-        FpySequencer_NotDirective notDirective;
+        FpySequencer_BinaryRegOpDirective binaryRegOp;
+        FpySequencer_UnaryRegOpDirective unaryRegOp;
         FpySequencer_ExitDirective exit;
 
         DirectiveUnion() {}
@@ -431,11 +431,11 @@ class FpySequencer : public FpySequencerComponentBase {
     //! Internal interface handler for directive_setReg
     void directive_setReg_internalInterfaceHandler(const Svc::FpySequencer_SetRegDirective& directive) override;
 
-    //! Internal interface handler for directive_binaryCmp
-    void directive_binaryCmp_internalInterfaceHandler(const Svc::FpySequencer_BinaryCmpDirective& directive) override;
+    //! Internal interface handler for directive_binaryRegOp
+    void directive_binaryRegOp_internalInterfaceHandler(const Svc::FpySequencer_BinaryRegOpDirective& directive) override;
 
-    //! Internal interface handler for directive_not
-    void directive_not_internalInterfaceHandler(const Svc::FpySequencer_NotDirective& directive) override;
+    //! Internal interface handler for directive_unaryRegOp
+    void directive_unaryRegOp_internalInterfaceHandler(const Svc::FpySequencer_UnaryRegOpDirective& directive) override;
 
     //! Internal interface handler for directive_exit
     void directive_exit_internalInterfaceHandler(const Svc::FpySequencer_ExitDirective& directive) override;
@@ -624,27 +624,31 @@ class FpySequencer : public FpySequencerComponentBase {
     Signal deserSerReg_directiveHandler(const FpySequencer_DeserSerRegDirective& directive, DirectiveError& error);
     Signal setReg_directiveHandler(const FpySequencer_SetRegDirective& directive, DirectiveError& error);
 
-    Signal binaryCmp_directiveHandler(const FpySequencer_BinaryCmpDirective& directive, DirectiveError& error);
-    I64 binaryCmp_or(I64 lhs, I64 rhs);
-    I64 binaryCmp_and(I64 lhs, I64 rhs);
-    I64 binaryCmp_ieq(I64 lhs, I64 rhs);
-    I64 binaryCmp_ine(I64 lhs, I64 rhs);
-    I64 binaryCmp_ult(I64 lhs, I64 rhs);
-    I64 binaryCmp_ule(I64 lhs, I64 rhs);
-    I64 binaryCmp_ugt(I64 lhs, I64 rhs);
-    I64 binaryCmp_uge(I64 lhs, I64 rhs);
-    I64 binaryCmp_slt(I64 lhs, I64 rhs);
-    I64 binaryCmp_sle(I64 lhs, I64 rhs);
-    I64 binaryCmp_sgt(I64 lhs, I64 rhs);
-    I64 binaryCmp_sge(I64 lhs, I64 rhs);
-    I64 binaryCmp_feq(I64 lhs, I64 rhs);
-    I64 binaryCmp_fne(I64 lhs, I64 rhs);
-    I64 binaryCmp_flt(I64 lhs, I64 rhs);
-    I64 binaryCmp_fle(I64 lhs, I64 rhs);
-    I64 binaryCmp_fgt(I64 lhs, I64 rhs);
-    I64 binaryCmp_fge(I64 lhs, I64 rhs);
+    Signal binaryRegOp_directiveHandler(const FpySequencer_BinaryRegOpDirective& directive, DirectiveError& error);
+    I64 binaryRegOp_or(I64 lhs, I64 rhs);
+    I64 binaryRegOp_and(I64 lhs, I64 rhs);
+    I64 binaryRegOp_ieq(I64 lhs, I64 rhs);
+    I64 binaryRegOp_ine(I64 lhs, I64 rhs);
+    I64 binaryRegOp_ult(I64 lhs, I64 rhs);
+    I64 binaryRegOp_ule(I64 lhs, I64 rhs);
+    I64 binaryRegOp_ugt(I64 lhs, I64 rhs);
+    I64 binaryRegOp_uge(I64 lhs, I64 rhs);
+    I64 binaryRegOp_slt(I64 lhs, I64 rhs);
+    I64 binaryRegOp_sle(I64 lhs, I64 rhs);
+    I64 binaryRegOp_sgt(I64 lhs, I64 rhs);
+    I64 binaryRegOp_sge(I64 lhs, I64 rhs);
+    I64 binaryRegOp_feq(I64 lhs, I64 rhs);
+    I64 binaryRegOp_fne(I64 lhs, I64 rhs);
+    I64 binaryRegOp_flt(I64 lhs, I64 rhs);
+    I64 binaryRegOp_fle(I64 lhs, I64 rhs);
+    I64 binaryRegOp_fgt(I64 lhs, I64 rhs);
+    I64 binaryRegOp_fge(I64 lhs, I64 rhs);
 
-    Signal not_directiveHandler(const FpySequencer_NotDirective& directive, DirectiveError& error);
+    Signal unaryRegOp_directiveHandler(const FpySequencer_UnaryRegOpDirective& directive, DirectiveError& error);
+    I64 unaryRegOp_not(I64 src);
+    I64 unaryRegOp_fpext(I64 src);
+    I64 unaryRegOp_fptrunc(I64 src);
+
     Signal exit_directiveHandler(const FpySequencer_ExitDirective& directive, DirectiveError& error);
 };
 

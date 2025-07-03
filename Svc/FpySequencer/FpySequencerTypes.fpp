@@ -19,9 +19,8 @@ module Svc {
             DESER_SER_REG_4 = 12
             DESER_SER_REG_2 = 13
             DESER_SER_REG_1 = 14
-            # binary comparison directives
-            # all of these are handled at the CPP level by one BinaryCmpDirective
-            # NO REORDER
+            # binary reg op directives
+            # all of these are handled at the CPP level by one BinaryRegOpDirective
             # boolean ops
             OR = 15
             AND = 16
@@ -46,10 +45,15 @@ module Svc {
             FLE = 30
             FGT = 31
             FGE = 32
-            # END NO REORDER
-            # end binary comparison directives
+            # end binary reg op directives
+            
+            # unary reg op dirs
             NOT = 33
-            EXIT = 34
+            FPEXT = 34
+            FPTRUNC = 35
+            # end unary reg op dirs
+
+            EXIT = 36
         }
 
         struct Header {

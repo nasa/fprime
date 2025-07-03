@@ -85,20 +85,23 @@ struct SetRegDirective {
     value: I64
 }
 
-@ performs a binary comparison operator on the lhs and rhs regs, and stores the result in the third register
-struct BinaryCmpDirective {
+@ performs a binary reg operation on the lhs and rhs regs, and stores the result in the third register
+struct BinaryRegOpDirective {
     lhs: U8
     rhs: U8
     res: U8
     
-    @ which binary comparison op to perform
+    @ which binary reg op to perform
     _op: Fpy.DirectiveId
 }
 
-@ performs a binary complement on the src register, and stores the result in res
-struct NotDirective {
+@ performs a unary reg operation on src reg, and stores in res reg
+struct UnaryRegOpDirective {
     src: U8
     res: U8
+    
+    @ which unary reg op to perform
+    _op: Fpy.DirectiveId
 }
 
 struct ExitDirective {
@@ -128,9 +131,9 @@ internal port directive_deserSerReg(directive: DeserSerRegDirective) priority 6 
 
 internal port directive_setReg(directive: SetRegDirective) priority 6 assert
 
-internal port directive_binaryCmp(directive: BinaryCmpDirective) priority 6 assert
+internal port directive_binaryRegOp(directive: BinaryRegOpDirective) priority 6 assert
 
-internal port directive_not(directive: NotDirective) priority 6 assert
+internal port directive_unaryRegOp(directive: UnaryRegOpDirective) priority 6 assert
 
 internal port directive_exit(directive: ExitDirective) priority 6 assert
 
