@@ -376,7 +376,7 @@ void FpySequencer::parameterUpdated(FwPrmIdType id) {
     Fw::ParamValid valid;
     switch (id) {
         case PARAMID_STATEMENT_TIMEOUT_SECS: {
-            this->tlmWrite_STATEMENT_TIMEOUT_SECS(this->paramGet_STATEMENT_TIMEOUT_SECS(valid));
+            this->tlmWrite_PRM_STATEMENT_TIMEOUT_SECS(this->paramGet_STATEMENT_TIMEOUT_SECS(valid));
             break;
         }
         default: {

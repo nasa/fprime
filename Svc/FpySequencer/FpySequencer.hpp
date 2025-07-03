@@ -319,6 +319,22 @@ class FpySequencer : public FpySequencerComponentBase {
         const Svc::FpySequencer_DebugBreakpointArgs& value      //!< The value
         ) override;
 
+    //! Implementation for action report_seqFailed of state machine Svc_FpySequencer_SequencerStateMachine
+    //!
+    //! called when a sequence failed to execute successfully
+    void Svc_FpySequencer_SequencerStateMachine_action_report_seqFailed(
+        SmId smId, //!< The state machine id
+        Svc_FpySequencer_SequencerStateMachine::Signal signal //!< The signal
+    ) override;
+
+    //! Implementation for action report_seqStarted of state machine Svc_FpySequencer_SequencerStateMachine
+    //!
+    //! reports that a sequence was started
+    void Svc_FpySequencer_SequencerStateMachine_action_report_seqStarted(
+        SmId smId, //!< The state machine id
+        Svc_FpySequencer_SequencerStateMachine::Signal signal //!< The signal
+    ) override;
+
     protected:
 
         // ----------------------------------------------------------------------

@@ -60,6 +60,10 @@ state machine SequencerStateMachine {
     action report_seqSucceeded
     @ reports that a sequence was cancelled
     action report_seqCancelled
+    @ called when a sequence failed to execute successfully
+    action report_seqFailed
+    @ called when a sequence starts
+    action report_seqStarted
 
     @ sets the goal state to RUNNING
     # see explanation in FpySequencer::m_goalState
@@ -106,11 +110,11 @@ state machine SequencerStateMachine {
 
         # do it this way so we are only running validate while we
         # are in the VALIDATING state
-        entry do { signalEntered }
+        entry do { report_seqStarted, signalEntered }
 
         on entered do { validate }
         # -->
-        on result_failure do { sendCmdResponse_EXECUTION_ERROR } enter IDLE
+        on result_failure do { report_seqFailed, sendCmdResponse_EXECUTION_ERROR } enter IDLE
         on result_success enter VALID
 
         ####################
@@ -169,6 +173,7 @@ state machine SequencerStateMachine {
     action report_debugBroken
     @ sets the debug breakpoint to the provided args
     action setDebugBreakpoint: DebugBreakpointArgs
+
 
     @ called in dispatchStatement method when a statement was successfully dispatched
     signal result_dispatchStatement_success
@@ -229,20 +234,20 @@ state machine SequencerStateMachine {
             entry do { dispatchStatement }
             # -->
             on result_dispatchStatement_noMoreStatements do { report_seqSucceeded, sendCmdResponse_OK } enter IDLE
-            on result_dispatchStatement_failure do { sendCmdResponse_EXECUTION_ERROR } enter IDLE
+            on result_dispatchStatement_failure do { report_seqFailed, sendCmdResponse_EXECUTION_ERROR } enter IDLE
             on result_dispatchStatement_success enter AWAITING_STATEMENT_RESPONSE
         }
 
         state AWAITING_STATEMENT_RESPONSE {
             on checkTimersIn do { checkStatementTimeout }
             # -->
-            on result_checkStatementTimeout_statementTimeout do { sendCmdResponse_EXECUTION_ERROR } enter IDLE
+            on result_checkStatementTimeout_statementTimeout do { report_seqFailed, sendCmdResponse_EXECUTION_ERROR } enter IDLE
             # this can occur if the time base/ctx changes, or was invalid from the start
-            on result_timeOpFailed do { sendCmdResponse_EXECUTION_ERROR } enter IDLE
+            on result_timeOpFailed do { report_seqFailed, sendCmdResponse_EXECUTION_ERROR } enter IDLE
             # result_checkStatementTimeout_noTimeout not handled, no need
 
             on stmtResponse_success enter DEBUG_BREAK_CHECK
-            on stmtResponse_failure do { sendCmdResponse_EXECUTION_ERROR } enter IDLE
+            on stmtResponse_failure do { report_seqFailed, sendCmdResponse_EXECUTION_ERROR } enter IDLE
             on stmtResponse_beginSleep enter SLEEPING
             # stmtResponse_keepWaiting not handled, we're already in the awaiting state
         }
@@ -253,8 +258,8 @@ state machine SequencerStateMachine {
             # -->
             on result_checkShouldWake_wakeup enter DEBUG_BREAK_CHECK
             # this can occur if the time base/ctx changes, or was invalid from the start
-            on result_timeOpFailed do { sendCmdResponse_EXECUTION_ERROR } enter IDLE
-            on result_checkStatementTimeout_statementTimeout do { sendCmdResponse_EXECUTION_ERROR } enter IDLE
+            on result_timeOpFailed do { report_seqFailed, sendCmdResponse_EXECUTION_ERROR } enter IDLE
+            on result_checkStatementTimeout_statementTimeout do { report_seqFailed, sendCmdResponse_EXECUTION_ERROR } enter IDLE
             # if result_checkShouldWake_keepSleeping is raised, stay asleep
             # if result_checkStatementTimeout_noTimeout is raised, stay asleep
         }
@@ -274,7 +279,7 @@ state machine SequencerStateMachine {
         @ in general, it is "unexpected" if there isn't a nominal way of producing this response.
         @ sometimes, we can produce responses in strange situations nominally by cancelling and
         @ quickly running sequences. this signal does not cover such cases.
-        on stmtResponse_unexpected do { sendCmdResponse_EXECUTION_ERROR } enter IDLE
+        on stmtResponse_unexpected do { report_seqFailed, sendCmdResponse_EXECUTION_ERROR } enter IDLE
 
         ####################
         # commands         #
