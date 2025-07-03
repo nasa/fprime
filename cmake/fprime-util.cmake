@@ -63,6 +63,5 @@ endfunction()
 # - `TEST_NAME`: name of the test to add
 ####
 function(fprime_util_metadata_add_test TEST_NAME)
-    message(STATUS "Adding Unit Test: ${TEST_NAME} to ${CMAKE_CURRENT_BINARY_DIR}/${FPRIME__INTERNAL_UTILITY_TESTS_FILE}")
     file(APPEND "${CMAKE_CURRENT_BINARY_DIR}/${FPRIME__INTERNAL_UTILITY_TESTS_FILE}" "${TEST_NAME}\n")
 endfunction()

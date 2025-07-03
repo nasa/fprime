@@ -51,15 +51,19 @@ endfunction(ut_add_global_target)
 ####
 function(ut_add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPENDENCIES)
     # For the deployment augment the tests in this directory to include the recursive set tests and write to the test files
+    set(DEPLOYMENT_TESTS)
     foreach(DEPENDENCY IN LISTS FULL_DEPENDENCIES)
         get_property(DEPENDENCY_UNIT_TESTS TARGET ${DEPENDENCY} PROPERTY FPRIME_UNIT_TESTS)
-        message(STATUS "Adding Unit Tests from ${DEPENDENCY}: ${DEPENDENCY_UNIT_TESTS}")
         if(DEPENDENCY_UNIT_TESTS)
             foreach(UNIT_TEST IN LISTS DEPENDENCY_UNIT_TESTS)
                 fprime_util_metadata_add_test("${UNIT_TEST}")
+                list(APPEND DEPLOYMENT_TESTS "${UNIT_TEST}")
             endforeach()
         endif()
     endforeach()
+    add_custom_target("${MODULE}_${TARGET}")
+    add_dependencies("${MODULE}_${TARGET}" ${DEPLOYMENT_TESTS})
+    fprime_util_metadata_add_build_target("${MODULE}_${TARGET}")
 endfunction(ut_add_deployment_target)
 
 ####
@@ -155,7 +159,6 @@ function(ut_add_module_target UT_EXECUTABLE_TARGET TARGET_NAME SOURCE_FILES DEPE
     if (NOT FPRIME_TESTED_MODULE)
         set(FPRIME_TESTED_MODULE "${FPRIME_CURRENT_MODULE}")
     endif()
-    message(STATUS "Adding Unit Tests to ${FPRIME_TESTED_MODULE}: ${UT_EXECUTABLE_TARGET}")
     if (TARGET "${FPRIME_TESTED_MODULE}")
         append_list_property("${UT_EXECUTABLE_TARGET}" TARGET "${FPRIME_TESTED_MODULE}" PROPERTY FPRIME_UNIT_TESTS)
     endif()
