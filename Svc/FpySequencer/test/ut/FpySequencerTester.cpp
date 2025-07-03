@@ -241,11 +241,11 @@ void FpySequencerTester::add_SET_REG(FpySequencer_SetRegDirective dir) {
     addDirective(Fpy::DirectiveId::SET_REG, buf);
 }
 
-void FpySequencerTester::add_BINARY_CMP(U8 lhs, U8 rhs, U8 res, Fpy::DirectiveId op) {
-    add_BINARY_CMP(FpySequencer_BinaryRegOpDirective(lhs, rhs, res, op));
+void FpySequencerTester::add_BINARY_REG_OP(U8 lhs, U8 rhs, U8 res, Fpy::DirectiveId op) {
+    add_BINARY_REG_OP(FpySequencer_BinaryRegOpDirective(lhs, rhs, res, op));
 }
 
-void FpySequencerTester::add_BINARY_CMP(FpySequencer_BinaryRegOpDirective dir) {
+void FpySequencerTester::add_BINARY_REG_OP(FpySequencer_BinaryRegOpDirective dir) {
     Fw::StatementArgBuffer buf;
     FW_ASSERT(buf.serialize(dir.getlhs()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     FW_ASSERT(buf.serialize(dir.getrhs()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
@@ -253,6 +253,16 @@ void FpySequencerTester::add_BINARY_CMP(FpySequencer_BinaryRegOpDirective dir) {
     addDirective(dir.get_op(), buf);
 }
 
+void FpySequencerTester::add_UNARY_REG_OP(U8 src, U8 res, Fpy::DirectiveId op) {
+    add_UNARY_REG_OP(FpySequencer_UnaryRegOpDirective(src, res, op));
+}
+
+void FpySequencerTester::add_UNARY_REG_OP(FpySequencer_UnaryRegOpDirective dir) {
+    Fw::StatementArgBuffer buf;
+    FW_ASSERT(buf.serialize(dir.getsrc()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    FW_ASSERT(buf.serialize(dir.getres()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    addDirective(dir.get_op(), buf);
+}
 void FpySequencerTester::add_EXIT(bool success) {
     add_EXIT(FpySequencer_ExitDirective(success));
 }

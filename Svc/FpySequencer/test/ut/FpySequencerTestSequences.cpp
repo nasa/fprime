@@ -59,7 +59,7 @@ TEST_F(FpySequencerTester, OrOfTlmAndReg) {
     add_DESER_SER_REG(0, 0, 0, 1);
     add_SET_REG(1, 0);
     // or between the stored const and the tlm val
-    add_BINARY_CMP(0, 1, 2, Fpy::DirectiveId::OR);
+    add_BINARY_REG_OP(0, 1, 2, Fpy::DirectiveId::OR);
     add_IF(2, 7);
     // if true
     add_NO_OP();
@@ -90,7 +90,7 @@ TEST_F(FpySequencerTester, CmpIntTlm) {
     add_DESER_SER_REG(0, 0, 0, 4);
     add_SET_REG(1, 999);
     // unsigned >= between tlm and reg
-    add_BINARY_CMP(0, 1, 2, Fpy::DirectiveId::UGE);
+    add_BINARY_REG_OP(0, 1, 2, Fpy::DirectiveId::UGE);
     add_IF(2, 7);
     // if true
     add_NO_OP();

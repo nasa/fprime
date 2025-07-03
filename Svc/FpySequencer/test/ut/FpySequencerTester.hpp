@@ -101,8 +101,10 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     void add_DESER_SER_REG(FpySequencer_DeserSerRegDirective dir);
     void add_SET_REG(U8 dest, I64 value);
     void add_SET_REG(FpySequencer_SetRegDirective dir);
-    void add_BINARY_CMP(U8 lhs, U8 rhs, U8 res, Fpy::DirectiveId op);
-    void add_BINARY_CMP(FpySequencer_BinaryRegOpDirective dir);
+    void add_BINARY_REG_OP(U8 lhs, U8 rhs, U8 res, Fpy::DirectiveId op);
+    void add_BINARY_REG_OP(FpySequencer_BinaryRegOpDirective dir);
+    void add_UNARY_REG_OP(U8 src, U8 res, Fpy::DirectiveId op);
+    void add_UNARY_REG_OP(FpySequencer_UnaryRegOpDirective dir);
     void add_EXIT(bool success);
     void add_EXIT(FpySequencer_ExitDirective dir);
     //! Handle a text event

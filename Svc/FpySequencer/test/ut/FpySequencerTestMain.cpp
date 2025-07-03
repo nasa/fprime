@@ -1502,6 +1502,47 @@ TEST_F(FpySequencerTester, deserialize_getPrm) {
     ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
 }
 
+TEST_F(FpySequencerTester, deserialize_binaryRegOp) {
+    FpySequencer::DirectiveUnion actual;
+    FpySequencer_BinaryRegOpDirective dir(0, 1, 2, Fpy::DirectiveId::AND);
+    add_BINARY_REG_OP(dir);
+    Fw::Success result = tester_deserializeDirective(seq.getstatements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::SUCCESS);
+    ASSERT_EQ(actual.binaryRegOp, dir);
+    // write some junk after buf, make sure it fails
+    seq.getstatements()[0].getargBuf().serialize(123);
+    result = tester_deserializeDirective(seq.getstatements()[0], actual);
+    // caught two bugs (one here, and it reminded me of this somewhere else)
+    ASSERT_EQ(result, Fw::Success::FAILURE);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+    this->clearHistory();
+    // clear args, make sure it fails
+    seq.getstatements()[0].getargBuf().resetSer();
+    result = tester_deserializeDirective(seq.getstatements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::FAILURE);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+}
+
+TEST_F(FpySequencerTester, deserialize_unaryRegOp) {
+    FpySequencer::DirectiveUnion actual;
+    FpySequencer_UnaryRegOpDirective dir(0, 1, Fpy::DirectiveId::NOT);
+    add_UNARY_REG_OP(dir);
+    Fw::Success result = tester_deserializeDirective(seq.getstatements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::SUCCESS);
+    ASSERT_EQ(actual.unaryRegOp, dir);
+    // write some junk after buf, make sure it fails
+    seq.getstatements()[0].getargBuf().serialize(123);
+    result = tester_deserializeDirective(seq.getstatements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::FAILURE);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+    this->clearHistory();
+    // clear args, make sure it fails
+    seq.getstatements()[0].getargBuf().resetSer();
+    result = tester_deserializeDirective(seq.getstatements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::FAILURE);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+}
+
 TEST_F(FpySequencerTester, deserialize_exit) {
     FpySequencer::DirectiveUnion actual;
     FpySequencer_ExitDirective dir(false);
