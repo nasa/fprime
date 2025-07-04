@@ -181,7 +181,7 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     Fw::Success tester_validate();
     Fw::String tester_get_m_sequenceFilePath();
     void tester_set_m_sequenceFilePath(Fw::String str);
-    Fw::Success tester_readBytes(Os::File& file, FwSizeType readLen, bool updateCrc = true);
+    Fw::Success tester_readBytes(Os::File& file, FwSizeType readLen, FpySequencer_FileReadStage readStage, bool updateCrc = true);
     Fw::Success tester_readFooter();
     Fw::Success tester_readBody();
     Fw::Success tester_readHeader();
