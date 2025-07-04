@@ -740,7 +740,7 @@ TEST_F(FpySequencerTester, fpext) {
 }
 
 TEST_F(FpySequencerTester, fptoi) {
-    F64 src = 123.123f;
+    F64 src = 123.123;
     I64 expected = static_cast<I64>(src);
 
     I64 isrc;
