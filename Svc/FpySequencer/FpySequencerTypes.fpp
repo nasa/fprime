@@ -51,9 +51,11 @@ module Svc {
             NOT = 33
             FPEXT = 34
             FPTRUNC = 35
+            FPTOI = 36
+            ITOFP = 37
             # end unary reg op dirs
 
-            EXIT = 36
+            EXIT = 38
         }
 
         struct Header {

@@ -648,6 +648,8 @@ class FpySequencer : public FpySequencerComponentBase {
     I64 unaryRegOp_not(I64 src);
     I64 unaryRegOp_fpext(I64 src);
     I64 unaryRegOp_fptrunc(I64 src);
+    I64 unaryRegOp_fptoi(I64 src);
+    I64 unaryRegOp_itofp(I64 src);
 
     Signal exit_directiveHandler(const FpySequencer_ExitDirective& directive, DirectiveError& error);
 };

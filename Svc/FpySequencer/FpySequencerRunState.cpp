@@ -332,6 +332,8 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
         // fallthrough on purpose
         case Fpy::DirectiveId::NOT:
         case Fpy::DirectiveId::FPEXT:
+        case Fpy::DirectiveId::FPTOI:
+        case Fpy::DirectiveId::ITOFP:
         case Fpy::DirectiveId::FPTRUNC: {
             new (&deserializedDirective.unaryRegOp) FpySequencer_UnaryRegOpDirective();
             
@@ -456,7 +458,9 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
         // fallthrough on purpose
         case Fpy::DirectiveId::NOT:
         case Fpy::DirectiveId::FPEXT:
-        case Fpy::DirectiveId::FPTRUNC: {
+        case Fpy::DirectiveId::FPTRUNC:
+        case Fpy::DirectiveId::FPTOI:
+        case Fpy::DirectiveId::ITOFP: {
             this->directive_unaryRegOp_internalInterfaceInvoke(directive.unaryRegOp);
             return;
         }
