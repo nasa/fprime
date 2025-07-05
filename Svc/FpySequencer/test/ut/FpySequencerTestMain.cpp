@@ -739,22 +739,43 @@ TEST_F(FpySequencerTester, fpext) {
     ASSERT_EQ(res_f, expected);
 }
 
-TEST_F(FpySequencerTester, fptoi) {
+TEST_F(FpySequencerTester, fptosi) {
     F64 src = 123.123;
     I64 expected = static_cast<I64>(src);
 
     I64 isrc;
     memcpy(&isrc, &src, sizeof(isrc));
 
-    I64 res = tester_unaryRegOp_fptoi(isrc);
+    I64 res = tester_unaryRegOp_fptosi(isrc);
     ASSERT_EQ(res, expected);
 }
 
-TEST_F(FpySequencerTester, itofp) {
+TEST_F(FpySequencerTester, sitofp) {
     I64 src = 123;
     F64 expected = static_cast<F64>(src);
 
-    I64 res = tester_unaryRegOp_itofp(src);
+    I64 res = tester_unaryRegOp_sitofp(src);
+    F64 fres;
+    memcpy(&fres, &res, sizeof(res));
+    ASSERT_EQ(fres, expected);
+}
+
+TEST_F(FpySequencerTester, fptoui) {
+    F64 src = 123.123;
+    U64 expected = static_cast<U64>(src);
+
+    I64 isrc;
+    memcpy(&isrc, &src, sizeof(isrc));
+
+    I64 res = tester_unaryRegOp_fptoui(isrc);
+    ASSERT_EQ(static_cast<U64>(res), expected);
+}
+
+TEST_F(FpySequencerTester, uitofp) {
+    U64 src = -1; // should turn into a huge number
+    F64 expected = static_cast<F64>(src);
+
+    I64 res = tester_unaryRegOp_uitofp(src);
     F64 fres;
     memcpy(&fres, &res, sizeof(res));
     ASSERT_EQ(fres, expected);

@@ -167,8 +167,10 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     I64 tester_unaryRegOp_not(I64 src);
     I64 tester_unaryRegOp_fpext(I64 src);
     I64 tester_unaryRegOp_fptrunc(I64 src);
-    I64 tester_unaryRegOp_fptoi(I64 src);
-    I64 tester_unaryRegOp_itofp(I64 src);
+    I64 tester_unaryRegOp_fptoui(I64 src);
+    I64 tester_unaryRegOp_uitofp(I64 src);
+    I64 tester_unaryRegOp_fptosi(I64 src);
+    I64 tester_unaryRegOp_sitofp(I64 src);
     FpySequencer::Runtime* tester_get_m_runtime_ptr();
     Fw::ExternalSerializeBuffer* tester_get_m_sequenceBuffer_ptr();
     void tester_set_m_sequencesStarted(U64 val);

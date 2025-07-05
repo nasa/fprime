@@ -545,11 +545,17 @@ I64 FpySequencerTester::tester_unaryRegOp_fpext(I64 src) {
 I64 FpySequencerTester::tester_unaryRegOp_fptrunc(I64 src) {
     return this->cmp.unaryRegOp_fptrunc(src);
 }
-I64 FpySequencerTester::tester_unaryRegOp_fptoi(I64 src) {
-    return this->cmp.unaryRegOp_fptoi(src);
+I64 FpySequencerTester::tester_unaryRegOp_fptosi(I64 src) {
+    return this->cmp.unaryRegOp_fptosi(src);
 }
-I64 FpySequencerTester::tester_unaryRegOp_itofp(I64 src) {
-    return this->cmp.unaryRegOp_itofp(src);
+I64 FpySequencerTester::tester_unaryRegOp_sitofp(I64 src) {
+    return this->cmp.unaryRegOp_sitofp(src);
+}
+I64 FpySequencerTester::tester_unaryRegOp_fptoui(I64 src) {
+    return this->cmp.unaryRegOp_fptoui(src);
+}
+I64 FpySequencerTester::tester_unaryRegOp_uitofp(I64 src) {
+    return this->cmp.unaryRegOp_uitofp(src);
 }
 void FpySequencerTester::tester_doDispatch() {
     this->cmp.doDispatch();

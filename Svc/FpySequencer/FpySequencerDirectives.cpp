@@ -598,28 +598,41 @@ I64 FpySequencer::unaryRegOp_fptrunc(I64 src) {
     // then extend to I64
     return static_cast<I64>(itrunc);
 }
-
-I64 FpySequencer::unaryRegOp_fptoi(I64 src) {
+I64 FpySequencer::unaryRegOp_fptosi(I64 src) {
     // first interpret as F64
     F64 fsrc;
     memcpy(&fsrc, &src, sizeof(fsrc));
     // then static cast to int
     return static_cast<I64>(fsrc);
 }
-
-I64 FpySequencer::unaryRegOp_itofp(I64 src) {
+I64 FpySequencer::unaryRegOp_sitofp(I64 src) {
     // first static cast to float
     F64 fsrc = static_cast<F64>(src);
-    // then interpret bits as I64
+    // then return bits as I64
     I64 res;
     memcpy(&res, &fsrc, sizeof(res));
     return res;
 }
-
+I64 FpySequencer::unaryRegOp_fptoui(I64 src) {
+    // first interpret as F64
+    F64 fsrc;
+    memcpy(&fsrc, &src, sizeof(fsrc));
+    // then static cast to unsigned int
+    // then return as a signed int
+    return static_cast<I64>(static_cast<U64>(fsrc));
+}
+I64 FpySequencer::unaryRegOp_uitofp(I64 src) {
+    // first static cast to unsigned, then to float
+    F64 fsrc = static_cast<F64>(static_cast<U64>(src));
+    // then return bits as I64
+    I64 res;
+    memcpy(&res, &fsrc, sizeof(res));
+    return res;
+}
 Signal FpySequencer::unaryRegOp_directiveHandler(const FpySequencer_UnaryRegOpDirective& directive,
                                                  DirectiveError& error) {
     // coding error, should not have gotten to this unary reg op handler
-    FW_ASSERT(directive.get_op() >= Fpy::DirectiveId::NOT && directive.get_op() <= Fpy::DirectiveId::ITOFP,
+    FW_ASSERT(directive.get_op() >= Fpy::DirectiveId::NOT && directive.get_op() <= Fpy::DirectiveId::UITOFP,
               static_cast<FwAssertArgType>(directive.get_op()));
 
     if (directive.getsrc() >= Fpy::NUM_REGISTERS || directive.getres() >= Fpy::NUM_REGISTERS) {
@@ -640,11 +653,17 @@ Signal FpySequencer::unaryRegOp_directiveHandler(const FpySequencer_UnaryRegOpDi
         case Fpy::DirectiveId::FPTRUNC:
             res = this->unaryRegOp_fptrunc(src);
             break;
-        case Fpy::DirectiveId::FPTOI:
-            res = this->unaryRegOp_fptoi(src);
+        case Fpy::DirectiveId::FPTOSI:
+            res = this->unaryRegOp_fptosi(src);
             break;
-        case Fpy::DirectiveId::ITOFP:
-            res = this->unaryRegOp_itofp(src);
+        case Fpy::DirectiveId::FPTOUI:
+            res = this->unaryRegOp_fptoui(src);
+            break;
+        case Fpy::DirectiveId::SITOFP:
+            res = this->unaryRegOp_sitofp(src);
+            break;
+        case Fpy::DirectiveId::UITOFP:
+            res = this->unaryRegOp_uitofp(src);
             break;
         default:
             FW_ASSERT(0, directive.get_op());

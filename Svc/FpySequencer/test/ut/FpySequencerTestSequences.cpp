@@ -130,5 +130,4 @@ TEST_F(FpySequencerTester, NotTrueSeq) {
     ASSERT_EQ(tester_get_m_tlm_ptr()->lastDirectiveError, DirectiveError::NO_ERROR);
 }
 
-
 }
