@@ -15,6 +15,8 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/ExternalFifoQueueTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/ExternalStackTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/FifoQueueTest.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/ArrayMapTestRules.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/ArrayMapTestScenarios.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/ArraySetOrMapImplTestRules.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/ArraySetOrMapImplTestScenarios.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/FifoQueueTestRules.cpp"

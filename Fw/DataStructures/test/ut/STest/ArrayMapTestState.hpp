@@ -1,41 +1,40 @@
 // ======================================================================
-// \title  ArraySetOrMapImplTestState.hpp
+// \title  ArrayMapTestState.hpp
 // \author bocchino
-// \brief  hpp file for ArraySetOrMapImpl test state
+// \brief  hpp file for FIFO map test state
 // ======================================================================
 
-#ifndef ArraySetOrMapImplTestState_HPP
-#define ArraySetOrMapImplTestState_HPP
+#ifndef ArrayMapTestState_HPP
+#define ArrayMapTestState_HPP
 
 #include <map>
 
-#include "Fw/DataStructures/ArraySetOrMapImpl.hpp"
-#include "Fw/DataStructures/test/ut/ArraySetOrMapImplTester.hpp"
+#include "Fw/DataStructures/ExternalArrayMap.hpp"
 #include "STest/STest/Pick/Pick.hpp"
 
 namespace Fw {
 
-namespace ArraySetOrMapImplTest {
+namespace ArrayMapTest {
 
 struct State {
     //! The key type
     using KeyType = U16;
     //! The value type
     using ValueType = U32;
-    //! The array set or map capacity
+    //! The map capacity
     static constexpr FwSizeType capacity = 1024;
-    //! The Impl type
-    using Impl = ArraySetOrMapImpl<KeyType, ValueType>;
-    //! The Tester type
-    using Tester = ArraySetOrMapImplTester<KeyType, ValueType>;
-    //! The entry type
-    using Entry = SetOrMapIterator<U16, U32>;
+    //! The Map type
+    //using Map = ArrayMap<KeyType, ValueType, capacity>;
+    //! The ExternalMap type
+    using ExternalMap = ExternalArrayMap<KeyType, ValueType>;
+    //! THe MapBase type
+    using MapBase = MapBase<KeyType, ValueType>;
+    //! The iterator type
+    using Iterator = MapIterator<KeyType, ValueType>;
     //! Constructor
-    State(Impl& a_impl) : impl(a_impl), tester(a_impl) {}
-    //! The array set or map under test
-    Impl& impl;
-    //! The tester
-    Tester tester;
+    State(MapBase& a_map) : map(a_map) {}
+    //! The map under test
+    MapBase& map;
     //! The map for modeling correct behavior
     std::map<KeyType, ValueType> modelMap;
     //! Whether to use the stored key
@@ -54,7 +53,7 @@ struct State {
     bool modelMapContains(KeyType key) const { return modelMap.count(key) != 0; }
 };
 
-}  // namespace ArraySetOrMapImplTest
+}  // namespace ArrayMapTest
 
 }  // namespace Fw
 
