@@ -60,7 +60,7 @@ class ArraySetOrMapImpl {
     }
 
     //! Copy constructor
-    ArraySetOrMapImpl(const ArraySetOrMapImpl<KE, VN>& map) { *this = map; }
+    ArraySetOrMapImpl(const ArraySetOrMapImpl<KE, VN>& impl) { *this = impl; }
 
     //! Destructor
     virtual ~ArraySetOrMapImpl() = default;

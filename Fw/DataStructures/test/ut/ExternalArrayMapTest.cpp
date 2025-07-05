@@ -97,6 +97,53 @@ TEST(ExternalArrayMap, CopyAssignmentOperator) {
     ASSERT_EQ(map2.getSize(), 1);
 }
 
+namespace {
+
+void testCopyDataFrom(State::MapBase& m1, FwSizeType size1, State::MapBase& m2) {
+    m1.clear();
+    for (FwSizeType i = 0; i < size1; i++) {
+        const auto status = m1.insert(static_cast<State::KeyType>(i), static_cast<State::ValueType>(i));
+        ASSERT_EQ(status, Success::SUCCESS);
+    }
+    m2.copyDataFrom(m1);
+    const auto capacity2 = m2.getCapacity();
+    const FwSizeType size = FW_MIN(size1, capacity2);
+    for (FwSizeType i = 0; i < size; i++) {
+        State::KeyType key = static_cast<State::KeyType>(i);
+        U32 val = 0;
+        const auto status = m2.find(key, val);
+        ASSERT_EQ(status, Success::SUCCESS);
+        ASSERT_EQ(val, static_cast<State::ValueType>(i));
+    }
+}
+
+}  // namespace
+
+TEST(ExternalFifoQueue, CopyDataFrom) {
+    constexpr FwSizeType maxSize = 10;
+    constexpr FwSizeType smallSize = maxSize / 2;
+    Entry entries1[maxSize];
+    Entry entries2[maxSize];
+    Map m1(entries1, maxSize);
+    // size1 < capacity2
+    {
+        Map m2(entries2, maxSize);
+        testCopyDataFrom(m1, smallSize, m2);
+    }
+#if 0
+    // size1 == size2
+    {
+        ExternalFifoQueue<U32> m2(items2, maxSize);
+        testCopyDataFrom(m1, maxSize, m2);
+    }
+    // size1 > size2
+    {
+        ExternalFifoQueue<U32> m2(items2, smallSize);
+        testCopyDataFrom(m1, maxSize, m2);
+    }
+#endif
+}
+
 #if 0
 TEST(ExternalArrayMapRules, At) {
     Entry entries[State::capacity];

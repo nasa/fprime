@@ -170,30 +170,6 @@ TEST(ExternalFifoQueue, DequeueEmpty) {
     ASSERT_EQ(status, Success::FAILURE);
 }
 
-namespace {
-
-void testCopyDataFrom(FifoQueueBase<U32>& q1, FwSizeType size1, FifoQueueBase<U32>& q2) {
-    q1.clear();
-    for (FwSizeType i = 0; i < size1; i++) {
-        const auto status = q1.enqueue(static_cast<U32>(i));
-        ASSERT_EQ(status, Success::SUCCESS);
-    }
-    q2.copyDataFrom(q1);
-    const auto capacity2 = q2.getCapacity();
-    const FwSizeType size = FW_MIN(size1, capacity2);
-    for (FwSizeType i = 0; i < size; i++) {
-        U32 val1 = 0;
-        auto status = q1.peek(val1, i);
-        ASSERT_EQ(status, Success::SUCCESS);
-        U32 val2 = 1;
-        status = q2.peek(val2, i);
-        ASSERT_EQ(status, Success::SUCCESS);
-        ASSERT_EQ(val1, val2);
-    }
-}
-
-}  // namespace
-
 TEST(ExternalFifoQueue, CopyDataFrom) {
     constexpr FwSizeType maxSize = 10;
     constexpr FwSizeType smallSize = maxSize / 2;
@@ -203,17 +179,17 @@ TEST(ExternalFifoQueue, CopyDataFrom) {
     // size1 < capacity2
     {
         ExternalFifoQueue<U32> q2(items2, maxSize);
-        testCopyDataFrom(q1, smallSize, q2);
+        State::testCopyDataFrom(q1, smallSize, q2);
     }
     // size1 == size2
     {
         ExternalFifoQueue<U32> q2(items2, maxSize);
-        testCopyDataFrom(q1, maxSize, q2);
+        State::testCopyDataFrom(q1, maxSize, q2);
     }
     // size1 > size2
     {
         ExternalFifoQueue<U32> q2(items2, smallSize);
-        testCopyDataFrom(q1, maxSize, q2);
+        State::testCopyDataFrom(q1, maxSize, q2);
     }
 }
 
