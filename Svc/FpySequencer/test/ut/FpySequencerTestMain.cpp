@@ -691,12 +691,12 @@ TEST_F(FpySequencerTester, setReg) {
 TEST_F(FpySequencerTester, unaryRegOp) {
     // Test NOT
     FpySequencer_UnaryRegOpDirective directiveNOT(0, 1, Fpy::DirectiveId::NOT);
-    tester_get_m_runtime_ptr()->regs[0] = 10;
+    tester_get_m_runtime_ptr()->regs[0] = true;
     DirectiveError err = DirectiveError::NO_ERROR;
     Signal result = tester_unaryRegOp_directiveHandler(directiveNOT, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->regs[1], ~10);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->regs[1], false);
 
     // Test out-of-bounds register index
     FpySequencer_UnaryRegOpDirective directiveOOB(Fpy::NUM_REGISTERS, 1, Fpy::DirectiveId::FPEXT);
@@ -711,7 +711,7 @@ TEST_F(FpySequencerTester, unaryRegOp) {
 
 
 TEST_F(FpySequencerTester, not) {
-    ASSERT_EQ(tester_unaryRegOp_not(0x123), ~0x123);
+    ASSERT_EQ(tester_unaryRegOp_not(true), false);
 }
 
 TEST_F(FpySequencerTester, fptrunc) {

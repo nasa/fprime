@@ -566,7 +566,10 @@ Signal FpySequencer::binaryRegOp_directiveHandler(const FpySequencer_BinaryRegOp
     return Signal::stmtResponse_success;
 }
 I64 FpySequencer::unaryRegOp_not(I64 src) {
-    return ~src;
+    if (src) {
+        return static_cast<I64>(false);
+    }
+    return static_cast<I64>(true);
 }
 I64 FpySequencer::unaryRegOp_fpext(I64 src) {
     // convert F32 to F64
