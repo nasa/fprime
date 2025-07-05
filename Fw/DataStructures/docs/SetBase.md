@@ -80,7 +80,7 @@ void f(SetBase<U32>& set) {
 ### 6.2. copyDataFrom
 
 ```c++
-virtual void copyDataFrom(const SetBase<T>& set) = 0
+void copyDataFrom(const SetBase<T>& set)
 ```
 
 1. If `&set != this` then
@@ -89,7 +89,18 @@ virtual void copyDataFrom(const SetBase<T>& set) = 0
 
     1. Let `size` be the minimum of `set.getSize()` and `getCapacity()`.
 
-    1. For each element _E_ of `set`, up to `size` elements, insert `E` into the set.
+    1. Set `e = set.getHeadIterator()`.
+
+    1. For `i` in [0, `size`)
+
+        1. Assert `e != nullptr`.
+
+        1. Set `status = insert(e->getElement())`.
+
+        1. Assert `status == Success::SUCCESS`.
+
+        1. Set `e = e->getNextSetIterator()`
+
 
 _Example:_
 ```c++

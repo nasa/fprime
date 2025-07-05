@@ -73,10 +73,10 @@ Call `setStorage(data, capacity)`.
 ### 4.4. Copy Constructor
 
 ```c++
-ArraySetOrMapImpl(const ArraySetOrMapImpl<KE, VN>& impl)
+ArraySetOrMapImpl(const ArraySetOrMapImpl<KE, VN>& map)
 ```
 
-Set `*this = impl`.
+Set `*this = map`.
 
 ### 4.5. Destructor
 
@@ -120,31 +120,7 @@ void clear()
 
 Set `m_size = 0`.
 
-### 5.4. copyDataFrom
-
-```c++
-void copyDataFrom(const MapBase<K, V>& impl)
-```
-
-1. If `&impl != this` then
-
-    1. Call `clear()`.
-
-    1. Let `size` be the minimum of `impl.getSize()` and `getCapacity()`.
-
-    1. Set `e = impl.getHeadIterator()`.
-
-    1. For `i` in [0, `size`)
-
-        1. Assert `e != nullptr`.
-
-        1. Set `status = insert(e->getKey(), e->getValue())`.
-
-        1. Assert `status == Success::SUCCESS`.
-
-        1. Set `e = e->getNextIterator()`
-
-### 5.5. find
+### 5.4. find
 
 ```c++
 Success find(const KE& keyOrElement, VN& valueOrNil)
@@ -166,7 +142,7 @@ Success find(const KE& keyOrElement, VN& valueOrNil)
 
 1. Return `status`.
 
-### 5.6. getCapacity
+### 5.5. getCapacity
 
 ```c++
 FwSizeType getCapacity() const
@@ -174,7 +150,7 @@ FwSizeType getCapacity() const
 
 Return `m_entries.getSize()`.
 
-### 5.7. getHeadIterator
+### 5.6. getHeadIterator
 
 ```c++
 const Iterator* getHeadIterator() const
@@ -188,7 +164,7 @@ const Iterator* getHeadIterator() const
 
 1. Return `result`.
 
-### 5.8. getSize
+### 5.7. getSize
 
 ```c++
 FwSizeType getSize()
@@ -196,7 +172,7 @@ FwSizeType getSize()
 
 Return `m_size`.
 
-### 5.9. insert
+### 5.8. insert
 
 ```c++
 Success insert(const KE& keyOrElement, const VN& valueOrNil)
@@ -229,7 +205,7 @@ Success insert(const KE& keyOrElement, const VN& valueOrNil)
 
 1. Return `status`.
 
-### 5.10. remove
+### 5.9. remove
 
 ```c++
 Success remove(const KE& keyOrElement, VN& valueOrNil)
@@ -259,7 +235,7 @@ Success remove(const KE& keyOrElement, VN& valueOrNil)
 
 1. Return `status`.
 
-### 5.11. setStorage (Typed Data)
+### 5.10. setStorage (Typed Data)
 
 ```c++
 void setStorage(Entry* entries, FwSizeType capacity)
@@ -269,7 +245,7 @@ void setStorage(Entry* entries, FwSizeType capacity)
 
 1. Call `clear()`.
 
-### 5.12. setStorage (Untyped Data)
+### 5.11. setStorage (Untyped Data)
 
 ```c++
 void setStorage(ByteArray data, FwSizeType capacity)
