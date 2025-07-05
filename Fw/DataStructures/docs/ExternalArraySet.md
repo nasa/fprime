@@ -198,6 +198,28 @@ set.clear();
 ASSERT_EQ(set.getSize(), 0);
 ```
 
+### 6.4. copyDataFrom
+
+```c++
+void copyDataFrom(const SetBase<T>& set) override
+```
+
+Call `m_impl.copyDataFrom(set)`.
+
+_Example:_
+```c++
+using Set = ExternalArraySet<U32>;
+constexpr FwSizeType capacity = 10;
+Set::Entry entries1[capacity];
+Set set1(entries1, capacity);
+const auto status = set1.insert(42);
+Set::Entry entries2[capacity];
+Set set2(entries2, capacity);
+ASSERT_EQ(set2.getSize(), 0);
+set2.copyDataFrom(set1);
+ASSERT_EQ(set.getSize(), 1);
+```
+
 ### 6.4. find
 
 ```c++

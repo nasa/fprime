@@ -81,7 +81,7 @@ void f(MapBase<U16, U32>& map) {
 ### 6.2. copyDataFrom
 
 ```c++
-void copyDataFrom(const MapBase<K, V>& map)
+virtual void copyDataFrom(const MapBase<K, V>& map) = 0
 ```
 
 1. If `&map != this` then
@@ -90,17 +90,8 @@ void copyDataFrom(const MapBase<K, V>& map)
 
     1. Let `size` be the minimum of `map.getSize()` and `getCapacity()`.
 
-    1. Set `e = map.getHeadIterator()`.
-
-    1. For `i` in [0, `size`)
-
-        1. Assert `e != nullptr`.
-
-        1. Set `status = insert(e->getKey(), e->getValue())`.
-
-        1. Assert `status == Success::SUCCESS`.
-
-        1. Set `e = e->getNextMapIterator()`
+    1. For each (key, value) pair _P_ of `map` up to `size` pairs, insert _P_ 
+       into the map.
 
 _Example:_
 ```c++
