@@ -9,7 +9,7 @@
 
 #include <map>
 
-#include "Fw/DataStructures/ExternalArrayMap.hpp"
+#include "Fw/DataStructures/MapBase.hpp"
 #include "STest/STest/Pick/Pick.hpp"
 
 namespace Fw {
@@ -23,10 +23,6 @@ struct State {
     using ValueType = U32;
     //! The map capacity
     static constexpr FwSizeType capacity = 1024;
-    //! The Map type
-    //using Map = ArrayMap<KeyType, ValueType, capacity>;
-    //! The ExternalMap type
-    using ExternalMap = ExternalArrayMap<KeyType, ValueType>;
     //! THe MapBase type
     using MapBase = MapBase<KeyType, ValueType>;
     //! The iterator type

@@ -4,84 +4,104 @@
 // \brief  cpp file for ExternalArrayMap tests
 // ======================================================================
 
-#include <gtest/gtest.h>
-
 #include "Fw/DataStructures/ExternalArrayMap.hpp"
 #include "STest/STest/Pick/Pick.hpp"
 
+#include "Fw/DataStructures/ExternalArrayMap.hpp"
+#include "Fw/DataStructures/test/ut/ArraySetOrMapImplTester.hpp"
 #include "Fw/DataStructures/test/ut/STest/ArrayMapTestRules.hpp"
 #include "Fw/DataStructures/test/ut/STest/ArrayMapTestScenarios.hpp"
 
-#if 0
 namespace Fw {
 
-namespace ExternalArrayMapTest {
+template <typename K, typename V>
+class ExternalArrayMapTester {
+  public:
+    ExternalArrayMapTester<K, V>(const ExternalArrayMap<K, V>& map) : m_map(map) {}
+
+    const ArraySetOrMapImpl<K, V>& getImpl() const { return this->m_map.m_impl; }
+
+  private:
+    const ExternalArrayMap<K, V>& m_map;
+};
+
+namespace ArrayMapTest {
+
+using Entry = SetOrMapIterator<State::KeyType, State::ValueType>;
+using Map = ExternalArrayMap<State::KeyType, State::ValueType>;
+using MapTester = ExternalArrayMapTester<State::KeyType, State::ValueType>;
+using ImplTester = ArraySetOrMapImplTester<State::KeyType, State::ValueType>;
 
 TEST(ExternalArrayMap, ZeroArgConstructor) {
-    ExternalArrayMap<U16, U32> impl;
-    ASSERT_EQ(impl.getCapacity(), 0);
-    ASSERT_EQ(impl.getSize(), 0);
+    Map map;
+    ASSERT_EQ(map.getCapacity(), 0);
+    ASSERT_EQ(map.getSize(), 0);
 }
 
 TEST(ExternalArrayMap, TypedStorageConstructor) {
-    State::Entry entries[State::capacity];
-    State::Impl impl(entries, State::capacity);
-    State::Tester tester(impl);
-    ASSERT_EQ(tester.getEntries().getElements(), entries);
-    ASSERT_EQ(impl.getCapacity(), FwSizeType(State::capacity));
-    ASSERT_EQ(impl.getSize(), 0);
+    Entry entries[State::capacity];
+    Map map(entries, State::capacity);
+    MapTester mapTester(map);
+    ImplTester implTester(mapTester.getImpl());
+    ASSERT_EQ(implTester.getEntries().getElements(), entries);
+    ASSERT_EQ(map.getCapacity(), FwSizeType(State::capacity));
+    ASSERT_EQ(map.getSize(), 0);
 }
 
 TEST(ExternalArrayMap, UntypedStorageConstructor) {
-    constexpr auto alignment = State::Impl::getByteArrayAlignment();
-    constexpr auto byteArraySize = State::Impl::getByteArraySize(State::capacity);
+    constexpr auto alignment = Map::getByteArrayAlignment();
+    constexpr auto byteArraySize = Map::getByteArraySize(State::capacity);
     alignas(alignment) U8 bytes[byteArraySize];
-    State::Impl impl(ByteArray(&bytes[0], sizeof bytes), State::capacity);
-    State::Tester tester(impl);
-    ASSERT_EQ(tester.getEntries().getElements(), reinterpret_cast<State::Entry*>(bytes));
-    ASSERT_EQ(impl.getCapacity(), FwSizeType(State::capacity));
-    ASSERT_EQ(impl.getSize(), 0);
+    Map map(ByteArray(&bytes[0], sizeof bytes), State::capacity);
+    MapTester mapTester(map);
+    ImplTester implTester(mapTester.getImpl());
+    ASSERT_EQ(implTester.getEntries().getElements(), reinterpret_cast<Entry*>(bytes));
+    ASSERT_EQ(map.getCapacity(), FwSizeType(State::capacity));
+    ASSERT_EQ(map.getSize(), 0);
 }
 
 TEST(ExternalArrayMap, CopyConstructor) {
-    State::Entry entries[State::capacity];
+    Entry entries[State::capacity];
     // Call the constructor providing backing storage
-    State::Impl impl1(entries, State::capacity);
+    Map map1(entries, State::capacity);
     // Insert an item
     const State::KeyType key = 0;
     const State::ValueType value = 42;
-    const auto status = impl1.insert(key, value);
+    const auto status = map1.insert(key, value);
     ASSERT_EQ(status, Success::SUCCESS);
     // Call the copy constructor
-    State::Impl impl2(impl1);
-    State::Tester tester1(impl1);
-    State::Tester tester2(impl2);
-    ASSERT_EQ(tester2.getEntries().getElements(), entries);
-    ASSERT_EQ(tester2.getEntries().getSize(), FwSizeType(State::capacity));
-    ASSERT_EQ(impl2.getSize(), 1);
+    Map map2(map1);
+    MapTester mapTester1(map1);
+    ImplTester implTester1(mapTester1.getImpl());
+    MapTester mapTester2(map2);
+    ImplTester implTester2(mapTester2.getImpl());
+    ASSERT_EQ(implTester2.getEntries().getElements(), entries);
+    ASSERT_EQ(implTester2.getEntries().getSize(), FwSizeType(State::capacity));
+    ASSERT_EQ(map2.getSize(), 1);
 }
 
 TEST(ExternalArrayMap, CopyAssignmentOperator) {
-    State::Entry entries[State::capacity];
+    Entry entries[State::capacity];
     // Call the constructor providing backing storage
-    State::Impl impl1(entries, State::capacity);
+    Map map1(entries, State::capacity);
     // Insert an item
     const State::KeyType key = 0;
     const State::ValueType value = 42;
-    const auto status = impl1.insert(key, value);
+    const auto status = map1.insert(key, value);
     ASSERT_EQ(status, Success::SUCCESS);
     // Call the default constructor
-    State::Impl impl2;
-    ASSERT_EQ(impl2.getSize(), 0);
+    Map map2;
+    ASSERT_EQ(map2.getSize(), 0);
     // Call the copy assignment operator
-    impl2 = impl1;
-    ASSERT_EQ(impl2.getSize(), 1);
+    map2 = map1;
+    ASSERT_EQ(map2.getSize(), 1);
 }
 
+#if 0
 TEST(ExternalArrayMapRules, At) {
-    State::Entry entries[State::capacity];
-    State::Impl impl(entries, State::capacity);
-    State state(impl);
+    Entry entries[State::capacity];
+    Map map(entries, State::capacity);
+    State state(map);
     state.useStoredKey = true;
     Rules::insertNotFull.apply(state);
     Rules::insertNotFull.apply(state);
@@ -91,27 +111,27 @@ TEST(ExternalArrayMapRules, At) {
 }
 
 TEST(ExternalArrayMapRules, Clear) {
-  State::Entry entries[State::capacity];
-    State::Impl impl(entries, State::capacity);
-    State state(impl);
+  Entry entries[State::capacity];
+    Map map(entries, State::capacity);
+    State state(map);
     Rules::insertNotFull.apply(state);
-    ASSERT_EQ(state.impl.getSize(), 1);
+    ASSERT_EQ(state.map.getSize(), 1);
     Rules::clear.apply(state);
-    ASSERT_EQ(state.impl.getSize(), 0);
+    ASSERT_EQ(state.map.getSize(), 0);
 }
 
 TEST(ExternalArrayMapRules, FindExisting) {
-    State::Entry entries[State::capacity];
-    State::Impl impl(entries, State::capacity);
-    State state(impl);
+    Entry entries[State::capacity];
+    Map map(entries, State::capacity);
+    State state(map);
     Rules::insertNotFull.apply(state);
     Rules::findExisting.apply(state);
 }
 
 TEST(ExternalArrayMapRules, InsertFull) {
-    State::Entry entries[State::capacity];
-    State::Impl impl(entries, State::capacity);
-    State state(impl);
+    Entry entries[State::capacity];
+    Map map(entries, State::capacity);
+    State state(map);
     state.useStoredKey = true;
     for (FwSizeType i = 0; i < State::capacity; i++) {
         state.storedKey = static_cast<State::KeyType>(i);
@@ -122,16 +142,16 @@ TEST(ExternalArrayMapRules, InsertFull) {
 }
 
 TEST(ExternalArrayMapRules, InsertNotFull) {
-    State::Entry entries[State::capacity];
-    State::Impl impl(entries, State::capacity);
-    State state(impl);
+    Entry entries[State::capacity];
+    Map map(entries, State::capacity);
+    State state(map);
     Rules::insertNotFull.apply(state);
 }
 
 TEST(ExternalArrayMapRules, Remove) {
-    State::Entry entries[State::capacity];
-    State::Impl impl(entries, State::capacity);
-    State state(impl);
+    Entry entries[State::capacity];
+    Map map(entries, State::capacity);
+    State state(map);
     state.useStoredKey = true;
     Rules::insertNotFull.apply(state);
     Rules::remove.apply(state);
@@ -139,20 +159,20 @@ TEST(ExternalArrayMapRules, Remove) {
 }
 
 TEST(ExternalArrayMapRules, RemoveExisting) {
-    State::Entry entries[State::capacity];
-    State::Impl impl(entries, State::capacity);
-    State state(impl);
+    Entry entries[State::capacity];
+    Map map(entries, State::capacity);
+    State state(map);
     Rules::insertNotFull.apply(state);
     Rules::removeExisting.apply(state);
 }
 
 TEST(ExternalArrayMapScenarios, Random) {
-    State::Entry entries[State::capacity];
-    State::Impl impl(entries, State::capacity);
-    State state(impl);
+    Entry entries[State::capacity];
+    Map map(entries, State::capacity);
+    State state(map);
     Scenarios::random(Fw::String("ExternalArrayMapRandom"), state, 1000);
 }
-
-}  // namespace ArraySetOrMapTest
-}  // namespace Fw
 #endif
+
+}  // namespace ArrayMapTest
+}  // namespace Fw
