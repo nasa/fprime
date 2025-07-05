@@ -47,6 +47,24 @@ struct State {
     ValueType getValue() const { return useStoredValue ? storedValue : static_cast<ValueType>(STest::Pick::any()); }
     //! Check whether the model map contains the specified key
     bool modelMapContains(KeyType key) const { return modelMap.count(key) != 0; }
+    //! Test copy data from
+    static void testCopyDataFrom(MapBase& m1, FwSizeType size1, MapBase& m2) {
+        m1.clear();
+        for (FwSizeType i = 0; i < size1; i++) {
+            const auto status = m1.insert(static_cast<State::KeyType>(i), static_cast<State::ValueType>(i));
+            ASSERT_EQ(status, Success::SUCCESS);
+        }
+        m2.copyDataFrom(m1);
+        const auto capacity2 = m2.getCapacity();
+        const FwSizeType size = FW_MIN(size1, capacity2);
+        for (FwSizeType i = 0; i < size; i++) {
+            State::KeyType key = static_cast<State::KeyType>(i);
+            U32 val = 0;
+            const auto status = m2.find(key, val);
+            ASSERT_EQ(status, Success::SUCCESS);
+            ASSERT_EQ(val, static_cast<State::ValueType>(i));
+        }
+    }
 };
 
 }  // namespace ArrayMapTest
