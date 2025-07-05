@@ -180,24 +180,6 @@ TEST(ExternalStack, PopEmpty) {
     ASSERT_EQ(status, Success::FAILURE);
 }
 
-namespace {
-
-void testCopyDataFrom(StackBase<U32>& s1, FwSizeType size1, StackBase<U32>& s2) {
-    s1.clear();
-    for (FwSizeType i = 0; i < size1; i++) {
-        const auto status = s1.push(static_cast<U32>(i));
-        ASSERT_EQ(status, Success::SUCCESS);
-    }
-    s2.copyDataFrom(s1);
-    const auto capacity2 = s2.getCapacity();
-    const FwSizeType size = FW_MIN(size1, capacity2);
-    for (FwSizeType i = 0; i < size; i++) {
-        ASSERT_EQ(s1.at(i), s2.at(i));
-    }
-}
-
-}  // namespace
-
 TEST(ExternalStack, CopyDataFrom) {
     constexpr FwSizeType maxSize = 10;
     constexpr FwSizeType smallSize = maxSize / 2;
@@ -207,17 +189,17 @@ TEST(ExternalStack, CopyDataFrom) {
     // size1 < capacity2
     {
         ExternalStack<U32> s2(items2, maxSize);
-        testCopyDataFrom(s1, smallSize, s2);
+        State::testCopyDataFrom(s1, smallSize, s2);
     }
     // size1 == size2
     {
         ExternalStack<U32> s2(items2, maxSize);
-        testCopyDataFrom(s1, maxSize, s2);
+        State::testCopyDataFrom(s1, maxSize, s2);
     }
     // size1 > size2
     {
         ExternalStack<U32> s2(items2, smallSize);
-        testCopyDataFrom(s1, maxSize, s2);
+        State::testCopyDataFrom(s1, maxSize, s2);
     }
 }
 
