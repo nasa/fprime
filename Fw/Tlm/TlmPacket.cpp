@@ -85,7 +85,7 @@ namespace Fw {
         }
 
         // telemetry buffer
-        stat = this->m_tlmBuffer.serialize(buffer.getBuffAddr(),buffer.getBuffLength(),true);
+        stat = this->m_tlmBuffer.serialize(buffer.getBuffAddr(),buffer.getBuffLength(),Fw::Serialization::OMIT_LENGTH);
         if (stat != Fw::FW_SERIALIZE_OK) {
             return stat;
         }
@@ -114,7 +114,7 @@ namespace Fw {
         }
 
         // telemetry buffer
-        stat = this->m_tlmBuffer.deserialize(buffer.getBuffAddr(),bufferSize,true);
+        stat = this->m_tlmBuffer.deserialize(buffer.getBuffAddr(),bufferSize,Fw::Serialization::OMIT_LENGTH);
         if (stat != Fw::FW_SERIALIZE_OK) {
             return stat;
         }
@@ -136,7 +136,7 @@ namespace Fw {
             return stat;
         }
         // Serialize the ComBuffer
-        return buffer.serialize(this->m_tlmBuffer.getBuffAddr(),m_tlmBuffer.getBuffLength(),true);
+        return buffer.serialize(this->m_tlmBuffer.getBuffAddr(),m_tlmBuffer.getBuffLength(),Fw::Serialization::OMIT_LENGTH);
     }
 
     SerializeStatus TlmPacket::deserialize(SerializeBufferBase& buffer) {
@@ -148,7 +148,7 @@ namespace Fw {
         }
         // deserialize the channel value entry buffers
         FwSizeType size = buffer.getBuffLeft();
-        stat = buffer.deserialize(this->m_tlmBuffer.getBuffAddr(),size,true);
+        stat = buffer.deserialize(this->m_tlmBuffer.getBuffAddr(),size,Fw::Serialization::OMIT_LENGTH);
         if (stat == FW_SERIALIZE_OK) {
             // Shouldn't fail
             stat = this->m_tlmBuffer.setBuffLen(size);

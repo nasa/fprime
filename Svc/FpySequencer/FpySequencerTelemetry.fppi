@@ -43,4 +43,4 @@ telemetry DebugBreakpointIdx: U32 update on change
 telemetry Debug: DebugTelemetry update on change
 
 @ value of prm STATEMENT_TIMEOUT_SECS
-telemetry STATEMENT_TIMEOUT_SECS: F32 update on change
+telemetry PRM_STATEMENT_TIMEOUT_SECS: F32 update on change
