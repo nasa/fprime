@@ -132,6 +132,7 @@ TEST(ExternalArrayMapRules, At) {
     Rules::insertNotFull.apply(state);
     Rules::at.apply(state);
 }
+#endif
 
 TEST(ExternalArrayMapRules, Clear) {
   Entry entries[State::capacity];
@@ -143,6 +144,7 @@ TEST(ExternalArrayMapRules, Clear) {
     ASSERT_EQ(state.map.getSize(), 0);
 }
 
+#if 0
 TEST(ExternalArrayMapRules, FindExisting) {
     Entry entries[State::capacity];
     Map map(entries, State::capacity);
@@ -150,6 +152,7 @@ TEST(ExternalArrayMapRules, FindExisting) {
     Rules::insertNotFull.apply(state);
     Rules::findExisting.apply(state);
 }
+#endif
 
 TEST(ExternalArrayMapRules, InsertFull) {
     Entry entries[State::capacity];
@@ -171,6 +174,7 @@ TEST(ExternalArrayMapRules, InsertNotFull) {
     Rules::insertNotFull.apply(state);
 }
 
+#if 0
 TEST(ExternalArrayMapRules, Remove) {
     Entry entries[State::capacity];
     Map map(entries, State::capacity);
@@ -188,6 +192,7 @@ TEST(ExternalArrayMapRules, RemoveExisting) {
     Rules::insertNotFull.apply(state);
     Rules::removeExisting.apply(state);
 }
+#endif
 
 TEST(ExternalArrayMapScenarios, Random) {
     Entry entries[State::capacity];
@@ -195,7 +200,6 @@ TEST(ExternalArrayMapScenarios, Random) {
     State state(map);
     Scenarios::random(Fw::String("ExternalArrayMapRandom"), state, 1000);
 }
-#endif
 
 }  // namespace ArrayMapTest
 }  // namespace Fw

@@ -14,15 +14,19 @@ namespace Rules {
 
 #if 0
 At at;
+#endif
 
 Clear clear;
 
+#if 0
 FindExisting findExisting;
+#endif
 
 InsertFull insertFull;
 
 InsertNotFull insertNotFull;
 
+#if 0
 Remove remove;
 
 RemoveExisting removeExisting;

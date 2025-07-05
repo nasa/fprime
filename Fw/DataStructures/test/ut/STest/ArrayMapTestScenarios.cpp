@@ -19,21 +19,19 @@ void random(const Fw::StringBase& name, State& state, U32 maxNumSteps) {
     (void)name;
     (void)state;
     (void)maxNumSteps;
-#if 0
     Rule* rules[] = {
-      &Rules::at,
+      //&Rules::at,
       &Rules::clear,
       &Rules::insertFull,
-      &Rules::insertNotFull,
-      &Rules::remove,
-      &Rules::removeExisting
+      &Rules::insertNotFull
+      //&Rules::remove,
+      //&Rules::removeExisting
     };
     STest::RandomScenario<State> scenario("RandomScenario", rules,
                                           sizeof(rules) / sizeof(STest::RandomScenario<State>*));
     STest::BoundedScenario<State> boundedScenario(name.toChar(), scenario, maxNumSteps);
     const U32 numSteps = boundedScenario.run(state);
     printf("Ran %u steps.\n", numSteps);
-#endif
 }
 
 }  // namespace Scenarios
