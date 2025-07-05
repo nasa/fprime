@@ -11,7 +11,7 @@ It represents an iterator for a set or a map.
 |Kind|Name|Purpose|
 |----|----|-------|
 |`typename`|`KE`|The type of a key in a map or the element of a set|
-|`typename`|`VN`|The type of a value in a map or Nil in a set|
+|`typename`|`VN`|The type of a value in a map or [`Nil`](Nil.md) in a set|
 
 ## 2. Base Class
 
@@ -35,7 +35,7 @@ classDiagram
 |Name|Type|Purpose|Default Value|
 |----|----|-------|-------------|
 |`m_keyOrElement`|`KE`|The map key or set element|C++ default initialization|
-|`m_valueOrNil`|`VN`|The value or Nil|C++ default initialization|
+|`m_valueOrNil`|`VN`|The value or [`Nil`](Nil.md)|C++ default initialization|
 |`m_next`|`const SetOrMapIterator<KE, VN>*`|Pointer to the next iterator or `nullptr` if none|`nullptr`|
 
 ## 4. Public Constructors and Destructors
