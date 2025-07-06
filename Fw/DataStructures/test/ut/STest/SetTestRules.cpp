@@ -22,9 +22,9 @@ InsertFull insertFull;
 
 InsertNotFull insertNotFull;
 
-#if 0
 Remove remove;
 
+#if 0
 RemoveExisting removeExisting;
 #endif
 

@@ -19,9 +19,9 @@ void random(const Fw::StringBase& name, State& state, U32 maxNumSteps) {
     Rule* rules[] = {
         &Rules::clear,
         &Rules::find,
-        //&Rules::findExisting,
-        &Rules::insertFull, &Rules::insertNotFull
-        //&Rules::remove,
+        &Rules::findExisting,
+        &Rules::insertFull, &Rules::insertNotFull,
+        &Rules::remove
         //&Rules::removeExisting
     };
     STest::RandomScenario<State> scenario("RandomScenario", rules,

@@ -44,16 +44,29 @@ struct FindExisting : public Rule {
     FindExisting() : Rule("FindExisting") {}
     bool precondition(const State& state) { return static_cast<FwSizeType>(state.set.getSize()) > 0; }
     void action(State& state) {
+        // Check that sizes match
         const auto size = state.set.getSize();
-        const auto index = STest::Pick::startLength(0, static_cast<U32>(size));
-        const auto* it = state.set.getHeadIterator();
-        for (FwSizeType i = 0; i < index; i++) {
-            ASSERT_NE(it, nullptr);
-            const auto e = it->getElement();
-            const auto status = state.set.find(e);
-            ASSERT_EQ(status, Success::SUCCESS);
-            ASSERT_TRUE(state.modelSetContains(e));
-            it = it->getNextSetIterator();
+        const auto modelSize = state.modelSet.size();
+        ASSERT_EQ(size, modelSize);
+        // Check that all elements of set are in modelSet
+        {
+          const auto* it = state.set.getHeadIterator();
+          for (FwSizeType i = 0; i < size; i++) {
+              ASSERT_NE(it, nullptr);
+              const auto e = it->getElement();
+              ASSERT_TRUE(state.modelSetContains(e));
+              it = it->getNextSetIterator();
+          }
+        }
+        // Check that all elements of modelSet are in set
+        {
+          auto it = state.modelSet.begin();
+          for (FwSizeType i = 0; i < modelSize; i++) {
+              ASSERT_NE(it, state.modelSet.end());
+              const auto status = state.set.find(*it);
+              ASSERT_EQ(status, Success::SUCCESS);
+              it++;
+          }
         }
     }
 };
@@ -85,7 +98,6 @@ struct InsertNotFull : public Rule {
     }
 };
 
-#if 0
 struct Remove : public Rule {
     Remove() : Rule("Remove") {}
     bool precondition(const State& state) { return true; }
@@ -93,11 +105,9 @@ struct Remove : public Rule {
         const auto size = state.set.getSize();
         ASSERT_EQ(size, state.modelSet.size());
         const auto e = state.getElement();
-        State::ValueType value = 0;
-        const auto status = state.set.remove(e, value);
+        const auto status = state.set.remove(e);
         if (state.modelSetContains(e)) {
             ASSERT_EQ(status, Success::SUCCESS);
-            ASSERT_EQ(value, state.modelSet[e]);
             ASSERT_EQ(state.set.getSize(), size - 1);
         }
         else {
@@ -109,6 +119,7 @@ struct Remove : public Rule {
     }
 };
 
+#if 0
 struct RemoveExisting : public Rule {
     RemoveExisting() : Rule("RemoveExisting") {}
     bool precondition(const State& state) { return static_cast<FwSizeType>(state.set.getSize()) > 0; }
@@ -144,9 +155,9 @@ extern InsertFull insertFull;
 
 extern InsertNotFull insertNotFull;
 
-#if 0
 extern Remove remove;
 
+#if 0
 extern RemoveExisting removeExisting;
 #endif
 

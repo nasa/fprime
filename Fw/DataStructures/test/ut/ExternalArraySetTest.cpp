@@ -168,7 +168,6 @@ TEST(ExternalArraySetRules, InsertNotFull) {
     Rules::insertNotFull.apply(state);
 }
 
-#if 0
 TEST(ExternalArraySetRules, Remove) {
     Entry entries[State::capacity];
     Set set(entries, State::capacity);
@@ -179,6 +178,7 @@ TEST(ExternalArraySetRules, Remove) {
     Rules::remove.apply(state);
 }
 
+#if 0
 TEST(ExternalArraySetRules, RemoveExisting) {
     Entry entries[State::capacity];
     Set set(entries, State::capacity);
