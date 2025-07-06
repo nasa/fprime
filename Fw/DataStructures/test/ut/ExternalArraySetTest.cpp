@@ -136,7 +136,7 @@ TEST(ExternalArraysetRules, Find) {
     Set set(entries, State::capacity);
     State state(set);
     Rules::find.apply(state);
-    state.useStoredey = true;
+    state.useStoredElement = true;
     Rules::insertNotFull.apply(state);
     Rules::find.apply(state);
 }
@@ -148,17 +148,18 @@ TEST(ExternalArraySetRules, FindExisting) {
     Rules::insertNotFull.apply(state);
     Rules::findExisting.apply(state);
 }
+#endif
 
 TEST(ExternalArraySetRules, InsertFull) {
     Entry entries[State::capacity];
     Set set(entries, State::capacity);
     State state(set);
-    state.useStoredey = true;
+    state.useStoredElement = true;
     for (FwSizeType i = 0; i < State::capacity; i++) {
-        state.storedey = static_cast<State::KeyType>(i);
+        state.storedElement = static_cast<State::ElementType>(i);
         Rules::insertNotFull.apply(state);
     }
-    state.useStoredey = false;
+    state.useStoredElement = false;
     Rules::insertFull.apply(state);
 }
 
@@ -169,11 +170,12 @@ TEST(ExternalArraySetRules, InsertNotFull) {
     Rules::insertNotFull.apply(state);
 }
 
+#if 0
 TEST(ExternalArraySetRules, Remove) {
     Entry entries[State::capacity];
     Set set(entries, State::capacity);
     State state(set);
-    state.useStoredey = true;
+    state.useStoredElement = true;
     Rules::insertNotFull.apply(state);
     Rules::remove.apply(state);
     Rules::remove.apply(state);

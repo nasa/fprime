@@ -18,11 +18,13 @@ Clear clear;
 Find find;
 
 FindExisting findExisting;
+#endif
 
 InsertFull insertFull;
 
 InsertNotFull insertNotFull;
 
+#if 0
 Remove remove;
 
 RemoveExisting removeExisting;

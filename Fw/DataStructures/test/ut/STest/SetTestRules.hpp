@@ -66,16 +66,16 @@ struct FindExisting : public Rule {
         ASSERT_EQ(value, expectedValue);
     }
 };
+#endif
 
 struct InsertFull : public Rule {
     InsertFull() : Rule("InsertFull") {}
     bool precondition(const State& state) { return static_cast<FwSizeType>(state.set.getSize()) >= State::capacity; }
     void action(State& state) {
-        const auto key = state.getKey();
-        const auto value = state.getValue();
+        const auto e = state.getElement();
         const auto size = state.set.getSize();
-        const auto expectedStatus = state.modelSetContains(key) ? Success::SUCCESS : Success::FAILURE;
-        const auto status = state.set.insert(key, value);
+        const auto expectedStatus = state.modelSetContains(e) ? Success::SUCCESS : Success::FAILURE;
+        const auto status = state.set.insert(e);
         ASSERT_EQ(status, expectedStatus);
         ASSERT_EQ(state.set.getSize(), size);
     }
@@ -85,17 +85,17 @@ struct InsertNotFull : public Rule {
     InsertNotFull() : Rule("InsertNotFull") {}
     bool precondition(const State& state) { return static_cast<FwSizeType>(state.set.getSize()) < State::capacity; }
     void action(State& state) {
-        const auto key = state.getKey();
-        const auto value = state.getValue();
+        const auto e = state.getElement();
         const auto size = state.set.getSize();
-        const auto expectedSize = state.modelSetContains(key) ? size : size + 1;
-        const auto status = state.set.insert(key, value);
+        const auto expectedSize = state.modelSetContains(e) ? size : size + 1;
+        const auto status = state.set.insert(e);
         ASSERT_EQ(status, Success::SUCCESS);
         ASSERT_EQ(state.set.getSize(), expectedSize);
-        state.modelSet[key] = value;
+        state.modelSet.insert(e);
     }
 };
 
+#if 0
 struct Remove : public Rule {
     Remove() : Rule("Remove") {}
     bool precondition(const State& state) { return true; }
@@ -148,11 +148,13 @@ extern Clear clear;
 extern Find find;
 
 extern FindExisting findExisting;
+#endif
 
 extern InsertFull insertFull;
 
 extern InsertNotFull insertNotFull;
 
+#if 0
 extern Remove remove;
 
 extern RemoveExisting removeExisting;
