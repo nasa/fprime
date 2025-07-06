@@ -24,9 +24,7 @@ InsertNotFull insertNotFull;
 
 Remove remove;
 
-#if 0
 RemoveExisting removeExisting;
-#endif
 
 };  // namespace Rules
 

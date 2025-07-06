@@ -178,7 +178,6 @@ TEST(ExternalArraySetRules, Remove) {
     Rules::remove.apply(state);
 }
 
-#if 0
 TEST(ExternalArraySetRules, RemoveExisting) {
     Entry entries[State::capacity];
     Set set(entries, State::capacity);
@@ -186,7 +185,6 @@ TEST(ExternalArraySetRules, RemoveExisting) {
     Rules::insertNotFull.apply(state);
     Rules::removeExisting.apply(state);
 }
-#endif
 
 TEST(ExternalArraySetScenarios, Random) {
     Entry entries[State::capacity];
