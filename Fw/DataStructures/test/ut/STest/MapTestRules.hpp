@@ -120,15 +120,19 @@ struct Remove : public Rule {
     }
 };
 
-#if 0
 struct RemoveExisting : public Rule {
     RemoveExisting() : Rule("RemoveExisting") {}
     bool precondition(const State& state) { return static_cast<FwSizeType>(state.map.getSize()) > 0; }
     void action(State& state) {
         const auto size = state.map.getSize();
         const auto index = STest::Pick::startLength(0, static_cast<U32>(size));
-        const auto& it = state.map.at(index);
-        const auto key = it.getKey();
+        const auto* it = state.map.getHeadIterator();
+        for (FwSizeType i = 0; i < index; i++) {
+          ASSERT_NE(it, nullptr);
+          it = it->getNextMapIterator();
+        }
+        ASSERT_NE(it, nullptr);
+        const auto key = it->getKey();
         const auto expectedValue = state.modelMap[key];
         State::ValueType value = 0;
         const auto status = state.map.remove(key, value);
@@ -139,7 +143,6 @@ struct RemoveExisting : public Rule {
         ASSERT_EQ(state.map.getSize(), state.modelMap.size());
     }
 };
-#endif
 
 extern Clear clear;
 
@@ -153,9 +156,7 @@ extern InsertNotFull insertNotFull;
 
 extern Remove remove;
 
-#if 0
 extern RemoveExisting removeExisting;
-#endif
 
 };  // namespace Rules
 

@@ -192,7 +192,6 @@ TEST(ExternalArrayMapRules, Remove) {
     Rules::remove.apply(state);
 }
 
-#if 0
 TEST(ExternalArrayMapRules, RemoveExisting) {
     Entry entries[State::capacity];
     Map map(entries, State::capacity);
@@ -200,7 +199,6 @@ TEST(ExternalArrayMapRules, RemoveExisting) {
     Rules::insertNotFull.apply(state);
     Rules::removeExisting.apply(state);
 }
-#endif
 
 TEST(ExternalArrayMapScenarios, Random) {
     Entry entries[State::capacity];
