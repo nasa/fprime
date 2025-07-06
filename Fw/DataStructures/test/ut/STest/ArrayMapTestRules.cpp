@@ -18,9 +18,7 @@ At at;
 
 Clear clear;
 
-#if 0
 FindExisting findExisting;
-#endif
 
 InsertFull insertFull;
 

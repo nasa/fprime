@@ -145,6 +145,17 @@ TEST(ExternalArrayMapRules, Clear) {
 }
 
 #if 0
+TEST(ExternalArraymapRules, Find) {
+    Entry entries[State::capacity];
+    Map map(entries, State::capacity);
+    State state(map);
+    Rules::find.apply(state);
+    state.useStoredKey = true;
+    Rules::insertNotFull.apply(state);
+    Rules::find.apply(state);
+}
+#endif
+
 TEST(ExternalArrayMapRules, FindExisting) {
     Entry entries[State::capacity];
     Map map(entries, State::capacity);
@@ -152,7 +163,6 @@ TEST(ExternalArrayMapRules, FindExisting) {
     Rules::insertNotFull.apply(state);
     Rules::findExisting.apply(state);
 }
-#endif
 
 TEST(ExternalArrayMapRules, InsertFull) {
     Entry entries[State::capacity];

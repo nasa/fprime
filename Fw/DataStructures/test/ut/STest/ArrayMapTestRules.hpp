@@ -50,15 +50,19 @@ struct Clear : public Rule {
     }
 };
 
-#if 0
 struct FindExisting : public Rule {
     FindExisting() : Rule("FindExisting") {}
     bool precondition(const State& state) { return static_cast<FwSizeType>(state.map.getSize()) > 0; }
     void action(State& state) {
         const auto size = state.map.getSize();
         const auto index = STest::Pick::startLength(0, static_cast<U32>(size));
-        const auto& it = state.map.at(index);
-        const auto key = it.getKey();
+        const auto* it = state.map.getHeadIterator();
+        for (FwSizeType i = 0; i < index; i++) {
+          ASSERT_NE(it, nullptr);
+          it = it->getNextMapIterator();
+        }
+        ASSERT_NE(it, nullptr);
+        const auto key = it->getKey();
         const auto expectedValue = state.modelMap[key];
         State::ValueType value = 0;
         const auto status = state.map.find(key, value);
@@ -66,7 +70,6 @@ struct FindExisting : public Rule {
         ASSERT_EQ(value, expectedValue);
     }
 };
-#endif
 
 struct InsertFull : public Rule {
     InsertFull() : Rule("InsertFull") {}
@@ -145,9 +148,7 @@ extern At at;
 
 extern Clear clear;
 
-#if 0
 extern FindExisting findExisting;
-#endif
 
 extern InsertFull insertFull;
 
