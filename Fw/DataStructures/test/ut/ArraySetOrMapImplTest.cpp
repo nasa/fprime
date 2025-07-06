@@ -100,6 +100,16 @@ TEST(ArraySetOrMapImplRules, Clear) {
     ASSERT_EQ(state.impl.getSize(), 0);
 }
 
+TEST(ArraySetOrMapImplRules, Find) {
+    State::Entry entries[State::capacity];
+    State::Impl impl(entries, State::capacity);
+    State state(impl);
+    Rules::find.apply(state);
+    state.useStoredKey = true;
+    Rules::insertNotFull.apply(state);
+    Rules::find.apply(state);
+}
+
 TEST(ArraySetOrMapImplRules, FindExisting) {
     State::Entry entries[State::capacity];
     State::Impl impl(entries, State::capacity);

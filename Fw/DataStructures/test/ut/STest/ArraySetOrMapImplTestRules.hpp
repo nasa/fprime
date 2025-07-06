@@ -48,6 +48,22 @@ struct Clear : public Rule {
     }
 };
 
+struct Find : public Rule {
+    Find() : Rule("Find") {}
+    bool precondition(const State& state) { return true; }
+    void action(State& state) {
+        const auto key = state.getKey();
+        State::ValueType value = 0;
+        const auto status = state.impl.find(key, value);
+        if (state.modelMapContains(key)) {
+            ASSERT_EQ(status, Success::SUCCESS);
+            ASSERT_EQ(value, state.modelMap[key]);
+        } else {
+            ASSERT_EQ(status, Success::FAILURE);
+        }
+    }
+};
+
 struct FindExisting : public Rule {
     FindExisting() : Rule("FindExisting") {}
     bool precondition(const State& state) { return static_cast<FwSizeType>(state.impl.getSize()) > 0; }
@@ -138,6 +154,8 @@ struct RemoveExisting : public Rule {
 extern At at;
 
 extern Clear clear;
+
+extern Find find;
 
 extern FindExisting findExisting;
 

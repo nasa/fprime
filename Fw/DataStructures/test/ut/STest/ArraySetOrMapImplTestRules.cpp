@@ -16,6 +16,8 @@ At at;
 
 Clear clear;
 
+Find find;
+
 FindExisting findExisting;
 
 InsertFull insertFull;
