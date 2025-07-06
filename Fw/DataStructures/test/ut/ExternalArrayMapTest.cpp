@@ -148,6 +148,14 @@ TEST(ExternalArrayMapRules, FindExisting) {
     Rules::findExisting.apply(state);
 }
 
+TEST(ExternalArrayMapRules, InsertExisting) {
+    Entry entries[State::capacity];
+    Map map(entries, State::capacity);
+    State state(map);
+    Rules::insertNotFull.apply(state);
+    Rules::insertExisting.apply(state);
+}
+
 TEST(ExternalArrayMapRules, InsertFull) {
     Entry entries[State::capacity];
     Map map(entries, State::capacity);

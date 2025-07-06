@@ -18,6 +18,8 @@ Find find;
 
 FindExisting findExisting;
 
+InsertExisting insertExisting;
+
 InsertFull insertFull;
 
 InsertNotFull insertNotFull;
