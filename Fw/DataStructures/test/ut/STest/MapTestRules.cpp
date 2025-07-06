@@ -12,10 +12,6 @@ namespace MapTest {
 
 namespace Rules {
 
-#if 0
-At at;
-#endif
-
 Clear clear;
 
 Find find;
@@ -26,9 +22,9 @@ InsertFull insertFull;
 
 InsertNotFull insertNotFull;
 
-#if 0
 Remove remove;
 
+#if 0
 RemoveExisting removeExisting;
 #endif
 

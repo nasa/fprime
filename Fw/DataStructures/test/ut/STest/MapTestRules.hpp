@@ -21,25 +21,6 @@ using Rule = STest::Rule<State>;
 
 namespace Rules {
 
-#if 0
-struct At : public Rule {
-    At() : Rule("At") {}
-    bool precondition(const State& state) { return state.map.getSize() > 0; }
-    void action(State& state) {
-        const auto size = state.map.getSize();
-        const auto* it = state.map.getHeadIterator();
-        for (FwSizeType i = 0; i < size; i++) {
-            const auto& it1 = state.map.at(i);
-            ASSERT_NE(it, nullptr);
-            const auto& it2 = *it;
-            ASSERT_EQ(it1.getKey(), it2.getKey());
-            ASSERT_EQ(it1.getValue(), it2.getValue());
-            it = it->getNextIterator();
-        }
-    }
-};
-#endif
-
 struct Clear : public Rule {
     Clear() : Rule("Clear") {}
     bool precondition(const State& state) { return state.map.getSize() > 0; }
@@ -116,7 +97,6 @@ struct InsertNotFull : public Rule {
     }
 };
 
-#if 0
 struct Remove : public Rule {
     Remove() : Rule("Remove") {}
     bool precondition(const State& state) { return true; }
@@ -126,7 +106,7 @@ struct Remove : public Rule {
         const auto key = state.getKey();
         State::ValueType value = 0;
         const auto status = state.map.remove(key, value);
-        if (state.modelMap.count(key) != 0) {
+        if (state.modelMapContains(key)) {
             ASSERT_EQ(status, Success::SUCCESS);
             ASSERT_EQ(value, state.modelMap[key]);
             ASSERT_EQ(state.map.getSize(), size - 1);
@@ -140,6 +120,7 @@ struct Remove : public Rule {
     }
 };
 
+#if 0
 struct RemoveExisting : public Rule {
     RemoveExisting() : Rule("RemoveExisting") {}
     bool precondition(const State& state) { return static_cast<FwSizeType>(state.map.getSize()) > 0; }
@@ -158,8 +139,6 @@ struct RemoveExisting : public Rule {
         ASSERT_EQ(state.map.getSize(), state.modelMap.size());
     }
 };
-
-extern At at;
 #endif
 
 extern Clear clear;
@@ -172,9 +151,9 @@ extern InsertFull insertFull;
 
 extern InsertNotFull insertNotFull;
 
-#if 0
 extern Remove remove;
 
+#if 0
 extern RemoveExisting removeExisting;
 #endif
 

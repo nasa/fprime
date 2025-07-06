@@ -182,7 +182,6 @@ TEST(ExternalArrayMapRules, InsertNotFull) {
     Rules::insertNotFull.apply(state);
 }
 
-#if 0
 TEST(ExternalArrayMapRules, Remove) {
     Entry entries[State::capacity];
     Map map(entries, State::capacity);
@@ -193,6 +192,7 @@ TEST(ExternalArrayMapRules, Remove) {
     Rules::remove.apply(state);
 }
 
+#if 0
 TEST(ExternalArrayMapRules, RemoveExisting) {
     Entry entries[State::capacity];
     Map map(entries, State::capacity);
