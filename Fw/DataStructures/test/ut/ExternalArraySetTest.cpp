@@ -95,8 +95,7 @@ TEST(ExternalArraySet, CopyAssignmentOperator) {
     ASSERT_EQ(set2.getSize(), 1);
 }
 
-#if 0
-TEST(ExternalFifoQueue, CopyDataFrom) {
+TEST(ExternalArraySet, CopyDataFrom) {
     constexpr FwSizeType maxSize = 10;
     constexpr FwSizeType smallSize = maxSize / 2;
     Entry entries1[maxSize];
@@ -118,7 +117,6 @@ TEST(ExternalFifoQueue, CopyDataFrom) {
         State::testCopyDataFrom(m1, maxSize, m2);
     }
 }
-#endif
 
 TEST(ExternalArraySetRules, Clear) {
   Entry entries[State::capacity];

@@ -97,7 +97,7 @@ TEST(ExternalArrayMap, CopyAssignmentOperator) {
     ASSERT_EQ(map2.getSize(), 1);
 }
 
-TEST(ExternalFifoQueue, CopyDataFrom) {
+TEST(ExternalArrayMap, CopyDataFrom) {
     constexpr FwSizeType maxSize = 10;
     constexpr FwSizeType smallSize = maxSize / 2;
     Entry entries1[maxSize];
