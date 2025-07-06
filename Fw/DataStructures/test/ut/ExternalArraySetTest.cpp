@@ -146,6 +146,14 @@ TEST(ExternalArraySetRules, FindExisting) {
     Rules::findExisting.apply(state);
 }
 
+TEST(ExternalArraySetRules, InsertExisting) {
+    Entry entries[State::capacity];
+    Set set(entries, State::capacity);
+    State state(set);
+    Rules::insertNotFull.apply(state);
+    Rules::insertExisting.apply(state);
+}
+
 TEST(ExternalArraySetRules, InsertFull) {
     Entry entries[State::capacity];
     Set set(entries, State::capacity);
