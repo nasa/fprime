@@ -121,7 +121,7 @@ TEST(ExternalFifoQueue, CopyDataFrom) {
 }
 
 TEST(ExternalArrayMapRules, Clear) {
-  Entry entries[State::capacity];
+    Entry entries[State::capacity];
     Map map(entries, State::capacity);
     State state(map);
     Rules::insertNotFull.apply(state);
@@ -193,5 +193,5 @@ TEST(ExternalArrayMapScenarios, Random) {
     Scenarios::random(Fw::String("ExternalArrayMapRandom"), state, 1000);
 }
 
-}  // namespace ArrayMapTest
+}  // namespace MapTest
 }  // namespace Fw

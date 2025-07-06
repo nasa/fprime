@@ -12,26 +12,25 @@
 #include "Fw/DataStructures/test/ut/STest/SetTestRules.hpp"
 #include "Fw/DataStructures/test/ut/STest/SetTestScenarios.hpp"
 
-#if 0
 namespace Fw {
 
-template <typename , typename V>
+template <typename T>
 class ExternalArraySetTester {
   public:
-    ExternalArraySetTester<, V>(const ExternalArraySet<K, V>& set) : m_set(set) {}
+    ExternalArraySetTester<T>(const ExternalArraySet<T>& set) : m_set(set) {}
 
-    const ArraySetOrMapImpl<, V>& getImpl() const { return this->m_set.m_impl; }
+    const ArraySetOrMapImpl<T, Nil>& getImpl() const { return this->m_set.m_impl; }
 
   private:
-    const ExternalArraySet<, V>& m_set;
+    const ExternalArraySet<T>& m_set;
 };
 
 namespace SetTest {
 
-using Entry = SetOrMapIterator<State::eyType, State::ValueType>;
-using Set = ExternalArraySet<State::eyType, State::ValueType>;
-using SetTester = ExternalArraySetTester<State::eyType, State::ValueType>;
-using ImplTester = ArraySetOrMapImplTester<State::eyType, State::ValueType>;
+using Entry = SetOrMapIterator<State::ElementType, Nil>;
+using Set = ExternalArraySet<State::ElementType>;
+using SetTester = ExternalArraySetTester<State::ElementType>;
+using ImplTester = ArraySetOrMapImplTester<State::ElementType, Nil>;
 
 TEST(ExternalArraySet, ZeroArgConstructor) {
     Set set;
@@ -66,9 +65,8 @@ TEST(ExternalArraySet, CopyConstructor) {
     // Call the constructor providing backing storage
     Set set1(entries, State::capacity);
     // Insert an item
-    const State::eyType key = 0;
-    const State::ValueType value = 42;
-    const auto status = set1.insert(key, value);
+    const State::ElementType e = 42;
+    const auto status = set1.insert(e);
     ASSERT_EQ(status, Success::SUCCESS);
     // Call the copy constructor
     Set set2(set1);
@@ -86,9 +84,8 @@ TEST(ExternalArraySet, CopyAssignmentOperator) {
     // Call the constructor providing backing storage
     Set set1(entries, State::capacity);
     // Insert an item
-    const State::eyType key = 0;
-    const State::ValueType value = 42;
-    const auto status = set1.insert(key, value);
+    const State::ElementType e = 42;
+    const auto status = set1.insert(e);
     ASSERT_EQ(status, Success::SUCCESS);
     // Call the default constructor
     Set set2;
@@ -98,6 +95,7 @@ TEST(ExternalArraySet, CopyAssignmentOperator) {
     ASSERT_EQ(set2.getSize(), 1);
 }
 
+#if 0
 TEST(ExternalFifoQueue, CopyDataFrom) {
     constexpr FwSizeType maxSize = 10;
     constexpr FwSizeType smallSize = maxSize / 2;
@@ -120,7 +118,9 @@ TEST(ExternalFifoQueue, CopyDataFrom) {
         State::testCopyDataFrom(m1, maxSize, m2);
     }
 }
+#endif
 
+#if 0
 TEST(ExternalArraySetRules, Clear) {
   Entry entries[State::capacity];
     Set set(entries, State::capacity);
@@ -193,7 +193,7 @@ TEST(ExternalArraySetScenarios, Random) {
     State state(set);
     Scenarios::random(Fw::String("ExternalArraySetRandom"), state, 1000);
 }
-
-}  // namespace ArraySetTest
-}  // namespace Fw
 #endif
+
+}  // namespace SetTest
+}  // namespace Fw

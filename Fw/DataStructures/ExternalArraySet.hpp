@@ -48,7 +48,7 @@ class ExternalArraySet final : public SetBase<T> {
                      FwSizeType capacity  //!< The capacity
                      )
         : SetBase<T>() {
-        this->m_impl.setStorage(entries, capacity);
+        this->setStorage(entries, capacity);
     }
 
     //! Constructor providing untyped backing storage.
@@ -58,7 +58,7 @@ class ExternalArraySet final : public SetBase<T> {
                      FwSizeType capacity  //!< The capacity
                      )
         : SetBase<T>() {
-        this->m_impl.setStorage(data, capacity);
+        this->setStorage(data, capacity);
     }
 
     //! Copy constructor

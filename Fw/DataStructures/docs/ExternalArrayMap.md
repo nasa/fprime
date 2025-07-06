@@ -67,7 +67,7 @@ ExternalArrayMap(Entry* entries, FwSizeType capacity)
 `entries` must point to a primitive array of at least `capacity`
 elements of type [`Entry`](ExternalArrayMap.md#Public-Types).
 
-Call `m_impl.setStorage(entries, capacity)`.
+Call `setStorage(entries, capacity)`.
 
 _Example:_
 ```c++
@@ -86,7 +86,7 @@ ExternalArrayMap(ByteArray data, FwSizeType capacity)
 [`getByteArrayAlignment()`](#getByteArrayAlignment) and must
 contain at least [`getByteArraySize(size)`](#getByteArraySize) bytes.
 
-Call `m_impl.setStorage(data, capacity)`.
+Call `setStorage(data, capacity)`.
 
 _Example:_
 ```c++

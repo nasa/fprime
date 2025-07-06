@@ -47,7 +47,7 @@ class ExternalArrayMap final : public MapBase<K, V> {
                      FwSizeType capacity  //!< The capacity
                      )
         : MapBase<K, V>() {
-        this->m_impl.setStorage(entries, capacity);
+        this->setStorage(entries, capacity);
     }
 
     //! Constructor providing untyped backing storage.
@@ -57,7 +57,7 @@ class ExternalArrayMap final : public MapBase<K, V> {
                      FwSizeType capacity  //!< The capacity
                      )
         : MapBase<K, V>() {
-        this->m_impl.setStorage(data, capacity);
+        this->setStorage(data, capacity);
     }
 
     //! Copy constructor
