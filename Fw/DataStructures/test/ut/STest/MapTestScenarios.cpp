@@ -16,12 +16,10 @@ namespace MapTest {
 namespace Scenarios {
 
 void random(const Fw::StringBase& name, State& state, U32 maxNumSteps) {
-    (void)name;
-    (void)state;
-    (void)maxNumSteps;
     Rule* rules[] = {
       //&Rules::at,
       &Rules::clear,
+      &Rules::findExisting,
       &Rules::insertFull,
       &Rules::insertNotFull
       //&Rules::remove,
