@@ -16,9 +16,7 @@ Clear clear;
 
 Find find;
 
-#if 0
 FindExisting findExisting;
-#endif
 
 InsertFull insertFull;
 

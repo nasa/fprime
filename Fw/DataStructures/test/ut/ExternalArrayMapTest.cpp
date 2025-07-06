@@ -130,7 +130,7 @@ TEST(ExternalArrayMapRules, Clear) {
     ASSERT_EQ(state.map.getSize(), 0);
 }
 
-TEST(ExternalArraymapRules, Find) {
+TEST(ExternalArrayMapRules, Find) {
     Entry entries[State::capacity];
     Map map(entries, State::capacity);
     State state(map);

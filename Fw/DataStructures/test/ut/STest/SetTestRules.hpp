@@ -40,7 +40,6 @@ struct Find : public Rule {
     }
 };
 
-#if 0
 struct FindExisting : public Rule {
     FindExisting() : Rule("FindExisting") {}
     bool precondition(const State& state) { return static_cast<FwSizeType>(state.set.getSize()) > 0; }
@@ -49,19 +48,15 @@ struct FindExisting : public Rule {
         const auto index = STest::Pick::startLength(0, static_cast<U32>(size));
         const auto* it = state.set.getHeadIterator();
         for (FwSizeType i = 0; i < index; i++) {
-          ASSERT_NE(it, nullptr);
-          it = it->getNextSetIterator();
+            ASSERT_NE(it, nullptr);
+            const auto e = it->getElement();
+            const auto status = state.set.find(e);
+            ASSERT_EQ(status, Success::SUCCESS);
+            ASSERT_TRUE(state.modelSetContains(e));
+            it = it->getNextSetIterator();
         }
-        ASSERT_NE(it, nullptr);
-        const auto e = it->getElement();
-        const auto expectedValue = state.modelSet[e];
-        State::ValueType value = 0;
-        const auto status = state.set.find(e, value);
-        ASSERT_EQ(status, Success::SUCCESS);
-        ASSERT_EQ(value, expectedValue);
     }
 };
-#endif
 
 struct InsertFull : public Rule {
     InsertFull() : Rule("InsertFull") {}
@@ -143,9 +138,7 @@ extern Clear clear;
 
 extern Find find;
 
-#if 0
 extern FindExisting findExisting;
-#endif
 
 extern InsertFull insertFull;
 
