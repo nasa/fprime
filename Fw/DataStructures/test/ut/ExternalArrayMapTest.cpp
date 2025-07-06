@@ -144,7 +144,6 @@ TEST(ExternalArrayMapRules, Clear) {
     ASSERT_EQ(state.map.getSize(), 0);
 }
 
-#if 0
 TEST(ExternalArraymapRules, Find) {
     Entry entries[State::capacity];
     Map map(entries, State::capacity);
@@ -154,7 +153,6 @@ TEST(ExternalArraymapRules, Find) {
     Rules::insertNotFull.apply(state);
     Rules::find.apply(state);
 }
-#endif
 
 TEST(ExternalArrayMapRules, FindExisting) {
     Entry entries[State::capacity];
