@@ -106,6 +106,14 @@ TEST(ArraySetOrMapImplRules, FindExisting) {
     Rules::findExisting.apply(state);
 }
 
+TEST(ArraySetOrMapImplRules, InsertExisting) {
+    State::Entry entries[State::capacity];
+    State::Impl impl(entries, State::capacity);
+    State state(impl);
+    Rules::insertNotFull.apply(state);
+    Rules::insertExisting.apply(state);
+}
+
 TEST(ArraySetOrMapImplRules, InsertFull) {
     State::Entry entries[State::capacity];
     State::Impl impl(entries, State::capacity);

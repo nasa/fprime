@@ -68,6 +68,27 @@ struct FindExisting : public Rule {
     }
 };
 
+struct InsertExisting : public Rule {
+    InsertExisting() : Rule("InsertExisting") {}
+    bool precondition(const State& state) { return static_cast<FwSizeType>(state.impl.getSize()) > 0; }
+    void action(State& state) {
+        const auto size = state.impl.getSize();
+        const auto index = STest::Pick::startLength(0, static_cast<U32>(size));
+        const auto* it = state.impl.getHeadIterator();
+        for (FwSizeType i = 0; i < index; i++) {
+            ASSERT_NE(it, nullptr);
+            it = it->getNextIterator();
+        }
+        ASSERT_NE(it, nullptr);
+        const auto key = it->getKey();
+        const auto value = state.getValue();
+        const auto status = state.impl.insert(key, value);
+        ASSERT_EQ(status, Success::SUCCESS);
+        state.modelMap[key] = value;
+        ASSERT_EQ(state.impl.getSize(), size);
+    }
+};
+
 struct InsertFull : public Rule {
     InsertFull() : Rule("InsertFull") {}
     bool precondition(const State& state) { return static_cast<FwSizeType>(state.impl.getSize()) >= State::capacity; }
@@ -148,6 +169,8 @@ extern Clear clear;
 extern Find find;
 
 extern FindExisting findExisting;
+
+extern InsertExisting insertExisting;
 
 extern InsertFull insertFull;
 
