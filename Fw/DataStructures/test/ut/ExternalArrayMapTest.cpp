@@ -120,20 +120,6 @@ TEST(ExternalFifoQueue, CopyDataFrom) {
     }
 }
 
-#if 0
-TEST(ExternalArrayMapRules, At) {
-    Entry entries[State::capacity];
-    Map map(entries, State::capacity);
-    State state(map);
-    state.useStoredKey = true;
-    Rules::insertNotFull.apply(state);
-    Rules::insertNotFull.apply(state);
-    state.storedKey = 1;
-    Rules::insertNotFull.apply(state);
-    Rules::at.apply(state);
-}
-#endif
-
 TEST(ExternalArrayMapRules, Clear) {
   Entry entries[State::capacity];
     Map map(entries, State::capacity);
