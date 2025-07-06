@@ -120,7 +120,6 @@ TEST(ExternalFifoQueue, CopyDataFrom) {
 }
 #endif
 
-#if 0
 TEST(ExternalArraySetRules, Clear) {
   Entry entries[State::capacity];
     Set set(entries, State::capacity);
@@ -131,6 +130,7 @@ TEST(ExternalArraySetRules, Clear) {
     ASSERT_EQ(state.set.getSize(), 0);
 }
 
+#if 0
 TEST(ExternalArraysetRules, Find) {
     Entry entries[State::capacity];
     Set set(entries, State::capacity);
@@ -188,6 +188,7 @@ TEST(ExternalArraySetRules, RemoveExisting) {
     Rules::insertNotFull.apply(state);
     Rules::removeExisting.apply(state);
 }
+#endif
 
 TEST(ExternalArraySetScenarios, Random) {
     Entry entries[State::capacity];
@@ -195,7 +196,6 @@ TEST(ExternalArraySetScenarios, Random) {
     State state(set);
     Scenarios::random(Fw::String("ExternalArraySetRandom"), state, 1000);
 }
-#endif
 
 }  // namespace SetTest
 }  // namespace Fw

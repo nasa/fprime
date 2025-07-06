@@ -16,22 +16,19 @@ namespace SetTest {
 namespace Scenarios {
 
 void random(const Fw::StringBase& name, State& state, U32 maxNumSteps) {
-#if 0
     Rule* rules[] = {
-      &Rules::clear,
-      &Rules::find,
-      &Rules::findExisting,
-      &Rules::insertFull,
-      &Rules::insertNotFull,
-      &Rules::remove,
-      &Rules::removeExisting
+        &Rules::clear,
+        //&Rules::find,
+        //&Rules::findExisting,
+        &Rules::insertFull, &Rules::insertNotFull
+        //&Rules::remove,
+        //&Rules::removeExisting
     };
     STest::RandomScenario<State> scenario("RandomScenario", rules,
                                           sizeof(rules) / sizeof(STest::RandomScenario<State>*));
     STest::BoundedScenario<State> boundedScenario(name.toChar(), scenario, maxNumSteps);
     const U32 numSteps = boundedScenario.run(state);
     printf("Ran %u steps.\n", numSteps);
-#endif
 }
 
 }  // namespace Scenarios

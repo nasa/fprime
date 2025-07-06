@@ -19,7 +19,6 @@ using Rule = STest::Rule<State>;
 
 namespace Rules {
 
-#if 0
 struct Clear : public Rule {
     Clear() : Rule("Clear") {}
     bool precondition(const State& state) { return state.set.getSize() > 0; }
@@ -30,6 +29,7 @@ struct Clear : public Rule {
     }
 };
 
+#if 0
 struct Find : public Rule {
     Find() : Rule("Find") {}
     bool precondition(const State& state) { return true; }
@@ -142,9 +142,11 @@ struct RemoveExisting : public Rule {
         ASSERT_EQ(state.set.getSize(), state.modelSet.size());
     }
 };
+#endif
 
 extern Clear clear;
 
+#if 0
 extern Find find;
 
 extern FindExisting findExisting;

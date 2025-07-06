@@ -12,9 +12,9 @@ namespace SetTest {
 
 namespace Rules {
 
-#if 0
 Clear clear;
 
+#if 0
 Find find;
 
 FindExisting findExisting;
