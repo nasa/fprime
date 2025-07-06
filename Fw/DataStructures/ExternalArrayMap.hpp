@@ -79,14 +79,6 @@ class ExternalArrayMap final : public MapBase<K, V> {
         return *this;
     }
 
-    //! Get an iterator at an index in the array.
-    //! Fails an assertion if the index is out of range for the map.
-    //! \return The iterator
-    const Iterator& at(FwSizeType index  //!< The index
-    ) const {
-        return this->m_impl.at[index];
-    }
-
     //! Clear the map
     void clear() override { this->m_impl.clear(); }
 

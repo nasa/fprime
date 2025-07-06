@@ -102,17 +102,7 @@ ArraySetOrMapImpl<KE, VN>& operator=(const ArraySetOrMapImpl<KE, VN>& impl)
 
 1. Return `*this`.
 
-### 5.2. at
-
-```c++
-const Iterator& at(FwSizeType index) const
-```
-
-1. Assert `index < m_size`.
-
-1. Return `m_entries[index]`.
-
-### 5.3. clear
+### 5.2. clear
 
 ```c++
 void clear()
@@ -120,7 +110,7 @@ void clear()
 
 Set `m_size = 0`.
 
-### 5.4. find
+### 5.3. find
 
 ```c++
 Success find(const KE& keyOrElement, VN& valueOrNil)
@@ -142,7 +132,7 @@ Success find(const KE& keyOrElement, VN& valueOrNil)
 
 1. Return `status`.
 
-### 5.5. getCapacity
+### 5.4. getCapacity
 
 ```c++
 FwSizeType getCapacity() const
@@ -150,7 +140,7 @@ FwSizeType getCapacity() const
 
 Return `m_entries.getSize()`.
 
-### 5.6. getHeadIterator
+### 5.5. getHeadIterator
 
 ```c++
 const Iterator* getHeadIterator() const
@@ -164,7 +154,7 @@ const Iterator* getHeadIterator() const
 
 1. Return `result`.
 
-### 5.7. getSize
+### 5.6. getSize
 
 ```c++
 FwSizeType getSize()
@@ -172,7 +162,7 @@ FwSizeType getSize()
 
 Return `m_size`.
 
-### 5.8. insert
+### 5.7. insert
 
 ```c++
 Success insert(const KE& keyOrElement, const VN& valueOrNil)
@@ -205,7 +195,7 @@ Success insert(const KE& keyOrElement, const VN& valueOrNil)
 
 1. Return `status`.
 
-### 5.9. remove
+### 5.8. remove
 
 ```c++
 Success remove(const KE& keyOrElement, VN& valueOrNil)
@@ -235,7 +225,7 @@ Success remove(const KE& keyOrElement, VN& valueOrNil)
 
 1. Return `status`.
 
-### 5.10. setStorage (Typed Data)
+### 5.9. setStorage (Typed Data)
 
 ```c++
 void setStorage(Entry* entries, FwSizeType capacity)
@@ -245,7 +235,7 @@ void setStorage(Entry* entries, FwSizeType capacity)
 
 1. Call `clear()`.
 
-### 5.11. setStorage (Untyped Data)
+### 5.10. setStorage (Untyped Data)
 
 ```c++
 void setStorage(ByteArray data, FwSizeType capacity)

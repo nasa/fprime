@@ -78,18 +78,6 @@ TEST(ArraySetOrMapImpl, CopyAssignmentOperator) {
     ASSERT_EQ(impl2.getSize(), 1);
 }
 
-TEST(ArraySetOrMapImplRules, At) {
-    State::Entry entries[State::capacity];
-    State::Impl impl(entries, State::capacity);
-    State state(impl);
-    state.useStoredKey = true;
-    Rules::insertNotFull.apply(state);
-    Rules::insertNotFull.apply(state);
-    state.storedKey = 1;
-    Rules::insertNotFull.apply(state);
-    Rules::at.apply(state);
-}
-
 TEST(ArraySetOrMapImplRules, Clear) {
   State::Entry entries[State::capacity];
     State::Impl impl(entries, State::capacity);

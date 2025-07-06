@@ -160,26 +160,7 @@ m2 = m1;
 ASSERT_EQ(m2.getSize(), 1);
 ```
 
-### 6.2. at
-
-```c++
-const Iterator& at(FwSizeType index) const
-```
-
-Return `m_impl.at(index)`.
-
-_Example:_
-```c++
-constexpr FwSizeType capacity = 3;
-ExternalArraySet<U32>::Entry entries[capacity];
-ExternalArraySet<U32> set(entries, capacity);
-const auto status = set.insert(42);
-ASSERT_EQ(status, Success::SUCCESS);
-ASSERT_EQ(set.at(0), 42);
-ASSERT_DEATH(set.at(1), "Assert");
-```
-
-### 6.3. clear
+### 6.2. clear
 
 ```c++
 void clear() override
@@ -198,7 +179,7 @@ set.clear();
 ASSERT_EQ(set.getSize(), 0);
 ```
 
-### 6.4. find
+### 6.3. find
 
 ```c++
 Success find(const T& element) override
@@ -221,7 +202,7 @@ status = set.find(42);
 ASSERT_EQ(status, Success::SUCCESS);
 ```
 
-### 6.5. getCapacity
+### 6.4. getCapacity
 
 ```c++
 FwSizeType getCapacity() const override
@@ -237,7 +218,7 @@ ExternalArraySet<U32> set(entries, capacity);
 ASSERT_EQ(set.getCapacity(), capacity);
 ```
 
-### 6.6. getHeadIterator
+### 6.5. getHeadIterator
 
 ```c++
 const Iterator* getHeadIterator const override
@@ -260,7 +241,7 @@ FW_ASSERT(e != nullptr);
 ASSERT_EQ(e->getElement(), 42);
 ```
 
-### 6.7. getSize
+### 6.6. getSize
 
 ```c++
 FwSizeType getSize() const override
@@ -281,7 +262,7 @@ size = set.getSize();
 ASSERT_EQ(size, 1);
 ```
 
-### 6.8. insert
+### 6.7. insert
 
 ```c++
 Success insert(const T& element) override
@@ -302,7 +283,7 @@ size = set.getSize();
 ASSERT_EQ(size, 1);
 ```
 
-### 6.9. remove
+### 6.8. remove
 
 ```c++
 Success remove(const T& element) override
@@ -333,7 +314,7 @@ ASSERT_EQ(status, Success::SUCCESS);
 ASSERT_EQ(size, 0);
 ```
 
-### 6.10. setStorage (Typed Data)
+### 6.9. setStorage (Typed Data)
 
 ```c++
 void setStorage(Entry* entries, FwSizeType capacity)
@@ -353,7 +334,7 @@ ExternalArraySet<U32>::Entry entries[capacity];
 set.setStorage(entries, capacity);
 ```
 
-### 6.11. setStorage (Untyped Data)
+### 6.10. setStorage (Untyped Data)
 
 ```c++
 void setStorage(ByteArray data, FwSizeType capacity)

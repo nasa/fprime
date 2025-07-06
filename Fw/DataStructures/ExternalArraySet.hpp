@@ -80,15 +80,7 @@ class ExternalArraySet final : public SetBase<T> {
         return *this;
     }
 
-    //! Get an iterator at an index in the array.
-    //! Fails an assertion if the index is out of range for the set or set.
-    //! \return The iterator
-    const Iterator& at(FwSizeType index  //!< The index
-    ) const {
-        return this->m_impl.at[index];
-    }
-
-    //! Clear the set or set
+    //! Clear the set
     void clear() override { this->m_impl.clear(); }
 
     //! Find a value associated with an element in the set

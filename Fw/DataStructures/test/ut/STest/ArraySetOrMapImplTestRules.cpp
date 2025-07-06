@@ -12,8 +12,6 @@ namespace ArraySetOrMapImplTest {
 
 namespace Rules {
 
-At at;
-
 Clear clear;
 
 Find find;

@@ -21,23 +21,6 @@ using Rule = STest::Rule<State>;
 
 namespace Rules {
 
-struct At : public Rule {
-    At() : Rule("At") {}
-    bool precondition(const State& state) { return state.impl.getSize() > 0; }
-    void action(State& state) {
-        const auto size = state.impl.getSize();
-        const auto* it = state.impl.getHeadIterator();
-        for (FwSizeType i = 0; i < size; i++) {
-            const auto& it1 = state.impl.at(i);
-            ASSERT_NE(it, nullptr);
-            const auto& it2 = *it;
-            ASSERT_EQ(it1.getKey(), it2.getKey());
-            ASSERT_EQ(it1.getValue(), it2.getValue());
-            it = it->getNextIterator();
-        }
-    }
-};
-
 struct Clear : public Rule {
     Clear() : Rule("Clear") {}
     bool precondition(const State& state) { return state.impl.getSize() > 0; }
@@ -70,8 +53,13 @@ struct FindExisting : public Rule {
     void action(State& state) {
         const auto size = state.impl.getSize();
         const auto index = STest::Pick::startLength(0, static_cast<U32>(size));
-        const auto& it = state.impl.at(index);
-        const auto key = it.getKey();
+        const auto* it = state.impl.getHeadIterator();
+        for (FwSizeType i = 0; i < index; i++) {
+            ASSERT_NE(it, nullptr);
+            it = it->getNextIterator();
+        }
+        ASSERT_NE(it, nullptr);
+        const auto key = it->getKey();
         const auto expectedValue = state.modelMap[key];
         State::ValueType value = 0;
         const auto status = state.impl.find(key, value);
@@ -122,12 +110,11 @@ struct Remove : public Rule {
             ASSERT_EQ(status, Success::SUCCESS);
             ASSERT_EQ(value, state.modelMap[key]);
             ASSERT_EQ(state.impl.getSize(), size - 1);
-        }
-        else {
+        } else {
             ASSERT_EQ(status, Success::FAILURE);
             ASSERT_EQ(state.impl.getSize(), size);
         }
-        (void) state.modelMap.erase(key);
+        (void)state.modelMap.erase(key);
         ASSERT_EQ(state.impl.getSize(), state.modelMap.size());
     }
 };
@@ -138,8 +125,13 @@ struct RemoveExisting : public Rule {
     void action(State& state) {
         const auto size = state.impl.getSize();
         const auto index = STest::Pick::startLength(0, static_cast<U32>(size));
-        const auto& it = state.impl.at(index);
-        const auto key = it.getKey();
+        const auto* it = state.impl.getHeadIterator();
+        for (FwSizeType i = 0; i < index; i++) {
+            ASSERT_NE(it, nullptr);
+            it = it->getNextIterator();
+        }
+        ASSERT_NE(it, nullptr);
+        const auto key = it->getKey();
         const auto expectedValue = state.modelMap[key];
         State::ValueType value = 0;
         const auto status = state.impl.remove(key, value);
@@ -150,8 +142,6 @@ struct RemoveExisting : public Rule {
         ASSERT_EQ(state.impl.getSize(), state.modelMap.size());
     }
 };
-
-extern At at;
 
 extern Clear clear;
 

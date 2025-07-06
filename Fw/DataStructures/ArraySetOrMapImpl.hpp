@@ -79,16 +79,6 @@ class ArraySetOrMapImpl {
         return *this;
     }
 
-    //! Get an iterator at an index in the array.
-    //! Fails an assertion if the index is out of range for the set or map.
-    //! \return The iterator
-    const Iterator& at(FwSizeType index  //!< The index
-    ) const {
-        FW_ASSERT(index < this->m_size, static_cast<FwAssertArgType>(index),
-                  static_cast<FwAssertArgType>(this->m_size));
-        return this->m_entries[index];
-    }
-
     //! Clear the set or map
     void clear() { this->m_size = 0; }
 

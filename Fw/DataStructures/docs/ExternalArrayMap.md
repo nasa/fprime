@@ -162,26 +162,7 @@ m2 = m1;
 ASSERT_EQ(m2.getSize(), 1);
 ```
 
-### 6.2. at
-
-```c++
-const V& at(FwSizeType index) const
-```
-
-Return `m_impl.at(index)`.
-
-_Example:_
-```c++
-constexpr FwSizeType capacity = 3;
-ExternalArrayMap<U16, U32>::Entry entries[capacity];
-ExternalArrayMap<U16, U32> map(entries, capacity);
-const auto status = map.insert(0, 1);
-ASSERT_EQ(status, Success::SUCCESS);
-ASSERT_EQ(map.at(0), 1);
-ASSERT_DEATH(map.at(1), "Assert");
-```
-
-### 6.3. clear
+### 6.2. clear
 
 ```c++
 void clear() override
@@ -200,7 +181,7 @@ map.clear();
 ASSERT_EQ(map.getSize(), 0);
 ```
 
-### 6.4. find
+### 6.3. find
 
 ```c++
 Success find(const K& key, V& value) override
@@ -223,7 +204,7 @@ ASSERT_EQ(status, Success::SUCCESS);
 ASSERT_EQ(value, 1);
 ```
 
-### 6.5. getCapacity
+### 6.4. getCapacity
 
 ```c++
 FwSizeType getCapacity() const override
@@ -239,7 +220,7 @@ ExternalArrayMap<U16, U32> map(entries, capacity);
 ASSERT_EQ(map.getCapacity(), capacity);
 ```
 
-### 6.6. getHeadIterator
+### 6.5. getHeadIterator
 
 ```c++
 const Iterator* getHeadIterator const override
@@ -263,7 +244,7 @@ ASSERT_EQ(e->getKey(), 0);
 ASSERT_EQ(e->getValue(), 1);
 ```
 
-### 6.7. getSize
+### 6.6. getSize
 
 ```c++
 FwSizeType getSize() const override
@@ -284,7 +265,7 @@ size = map.getSize();
 ASSERT_EQ(size, 1);
 ```
 
-### 6.8. insert
+### 6.7. insert
 
 ```c++
 Success insert(const K& key, const V& value) override
@@ -305,7 +286,7 @@ size = map.getSize();
 ASSERT_EQ(size, 1);
 ```
 
-### 6.9. remove
+### 6.8. remove
 
 ```c++
 Success remove(const K& key, V& value) override
@@ -336,7 +317,7 @@ ASSERT_EQ(size, 0);
 ASSERT_EQ(value, 1);
 ```
 
-### 6.10. setStorage (Typed Data)
+### 6.9. setStorage (Typed Data)
 
 ```c++
 void setStorage(Entry* entries, FwSizeType capacity)
@@ -356,7 +337,7 @@ ExternalArrayMap<U16, U32>::Entry entries[capacity];
 map.setStorage(entries, capacity);
 ```
 
-### 6.11. setStorage (Untyped Data)
+### 6.10. setStorage (Untyped Data)
 
 ```c++
 void setStorage(ByteArray data, FwSizeType capacity)
