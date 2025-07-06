@@ -29,23 +29,18 @@ struct Clear : public Rule {
     }
 };
 
-#if 0
 struct Find : public Rule {
     Find() : Rule("Find") {}
     bool precondition(const State& state) { return true; }
     void action(State& state) {
-        const auto key = state.getKey();
-        State::ValueType value = 0;
-        const auto status = state.set.find(key, value);
-        if (state.modelSetContains(key)) {
-            ASSERT_EQ(status, Success::SUCCESS);
-            ASSERT_EQ(value, state.modelSet[key]);
-        } else {
-            ASSERT_EQ(status, Success::FAILURE);
-        }
+        const auto e = state.getElement();
+        const auto status = state.set.find(e);
+        const auto expectedStatus = state.modelSetContains(e) ? Success::SUCCESS : Success::FAILURE;
+        ASSERT_EQ(status, expectedStatus);
     }
 };
 
+#if 0
 struct FindExisting : public Rule {
     FindExisting() : Rule("FindExisting") {}
     bool precondition(const State& state) { return static_cast<FwSizeType>(state.set.getSize()) > 0; }
@@ -58,10 +53,10 @@ struct FindExisting : public Rule {
           it = it->getNextSetIterator();
         }
         ASSERT_NE(it, nullptr);
-        const auto key = it->getKey();
-        const auto expectedValue = state.modelSet[key];
+        const auto e = it->getElement();
+        const auto expectedValue = state.modelSet[e];
         State::ValueType value = 0;
-        const auto status = state.set.find(key, value);
+        const auto status = state.set.find(e, value);
         ASSERT_EQ(status, Success::SUCCESS);
         ASSERT_EQ(value, expectedValue);
     }
@@ -102,19 +97,19 @@ struct Remove : public Rule {
     void action(State& state) {
         const auto size = state.set.getSize();
         ASSERT_EQ(size, state.modelSet.size());
-        const auto key = state.getKey();
+        const auto e = state.getElement();
         State::ValueType value = 0;
-        const auto status = state.set.remove(key, value);
-        if (state.modelSetContains(key)) {
+        const auto status = state.set.remove(e, value);
+        if (state.modelSetContains(e)) {
             ASSERT_EQ(status, Success::SUCCESS);
-            ASSERT_EQ(value, state.modelSet[key]);
+            ASSERT_EQ(value, state.modelSet[e]);
             ASSERT_EQ(state.set.getSize(), size - 1);
         }
         else {
             ASSERT_EQ(status, Success::FAILURE);
             ASSERT_EQ(state.set.getSize(), size);
         }
-        (void) state.modelSet.erase(key);
+        (void) state.modelSet.erase(e);
         ASSERT_EQ(state.set.getSize(), state.modelSet.size());
     }
 };
@@ -131,13 +126,13 @@ struct RemoveExisting : public Rule {
           it = it->getNextSetIterator();
         }
         ASSERT_NE(it, nullptr);
-        const auto key = it->getKey();
-        const auto expectedValue = state.modelSet[key];
+        const auto e = it->getElement();
+        const auto expectedValue = state.modelSet[e];
         State::ValueType value = 0;
-        const auto status = state.set.remove(key, value);
+        const auto status = state.set.remove(e, value);
         ASSERT_EQ(status, Success::SUCCESS);
         ASSERT_EQ(value, expectedValue);
-        const auto n = state.modelSet.erase(key);
+        const auto n = state.modelSet.erase(e);
         ASSERT_EQ(n, 1);
         ASSERT_EQ(state.set.getSize(), state.modelSet.size());
     }
@@ -146,9 +141,9 @@ struct RemoveExisting : public Rule {
 
 extern Clear clear;
 
-#if 0
 extern Find find;
 
+#if 0
 extern FindExisting findExisting;
 #endif
 

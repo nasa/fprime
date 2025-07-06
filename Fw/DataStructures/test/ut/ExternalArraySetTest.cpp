@@ -130,7 +130,6 @@ TEST(ExternalArraySetRules, Clear) {
     ASSERT_EQ(state.set.getSize(), 0);
 }
 
-#if 0
 TEST(ExternalArraysetRules, Find) {
     Entry entries[State::capacity];
     Set set(entries, State::capacity);
@@ -141,6 +140,7 @@ TEST(ExternalArraysetRules, Find) {
     Rules::find.apply(state);
 }
 
+#if 0
 TEST(ExternalArraySetRules, FindExisting) {
     Entry entries[State::capacity];
     Set set(entries, State::capacity);
