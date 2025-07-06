@@ -4,6 +4,9 @@
 // \brief  Stack test scenarios
 // ======================================================================
 
+#ifndef StackTestScenarios_HPP
+#define StackTestScenarios_HPP
+
 #include "Fw/DataStructures/test/ut/STest/StackTestState.hpp"
 
 namespace Fw {
@@ -19,3 +22,5 @@ void random(const Fw::StringBase& name, State& state, U32 maxNumSteps);
 }  // namespace StackTest
 
 }  // namespace Fw
+
+#endif

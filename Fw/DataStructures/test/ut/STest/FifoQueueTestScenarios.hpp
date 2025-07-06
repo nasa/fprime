@@ -4,6 +4,9 @@
 // \brief  FifoQueue test scenarios
 // ======================================================================
 
+#ifndef FifoQueueTestScenarios_HPP
+#define FifoQueueTestScenarios_HPP
+
 #include "Fw/DataStructures/test/ut/STest/FifoQueueTestState.hpp"
 
 namespace Fw {
@@ -19,3 +22,5 @@ void random(const Fw::StringBase& name, State& state, U32 maxNumSteps);
 }  // namespace FifoQueueTest
 
 }  // namespace Fw
+
+#endif

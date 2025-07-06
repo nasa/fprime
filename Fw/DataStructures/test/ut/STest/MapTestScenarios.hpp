@@ -4,6 +4,9 @@
 // \brief  Map test scenarios
 // ======================================================================
 
+#ifndef MapTestScenarios_HPP
+#define MapTestScenarios_HPP
+
 #include "Fw/DataStructures/test/ut/STest/MapTestState.hpp"
 
 namespace Fw {
@@ -19,3 +22,5 @@ void random(const Fw::StringBase& name, State& state, U32 maxNumSteps);
 }  // namespace MapTest
 
 }  // namespace Fw
+
+#endif

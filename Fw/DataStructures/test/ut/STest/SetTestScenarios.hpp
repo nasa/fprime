@@ -1,17 +1,17 @@
 // ======================================================================
-// \title  ArraySetOrMapImplTestScenarios.hpp
+// \title  SetTestScenarios.hpp
 // \author Rob Bocchino
-// \brief  ArraySetOrMapImpl test scenarios
+// \brief  Set test scenarios
 // ======================================================================
 
-#ifndef ArraySetOrMapImplTestScenarios_HPP
-#define ArraySetOrMapImplTestScenarios_HPP
+#ifndef SetTestScenarios_HPP
+#define SetTestScenarios_HPP
 
-#include "Fw/DataStructures/test/ut/STest/ArraySetOrMapImplTestState.hpp"
+#include "Fw/DataStructures/test/ut/STest/SetTestState.hpp"
 
 namespace Fw {
 
-namespace ArraySetOrMapImplTest {
+namespace SetTest {
 
 namespace Scenarios {
 
@@ -19,7 +19,7 @@ void random(const Fw::StringBase& name, State& state, U32 maxNumSteps);
 
 }  // namespace Scenarios
 
-}  // namespace ArraySetOrMapImplTest
+}  // namespace SetTest
 
 }  // namespace Fw
 
