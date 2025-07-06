@@ -1,14 +1,14 @@
 // ======================================================================
-// \title  ArrayMapTestRules.cpp
+// \title  MapTestRules.cpp
 // \author Rob Bocchino
 // \brief  cpp file for ArrayMap test rules
 // ======================================================================
 
-#include "Fw/DataStructures/test/ut/STest/ArrayMapTestRules.hpp"
+#include "Fw/DataStructures/test/ut/STest/MapTestRules.hpp"
 
 namespace Fw {
 
-namespace ArrayMapTest {
+namespace MapTest {
 
 namespace Rules {
 
@@ -32,6 +32,6 @@ RemoveExisting removeExisting;
 
 };  // namespace Rules
 
-}  // namespace ArrayMapTest
+}  // namespace MapTest
 
 }  // namespace Fw

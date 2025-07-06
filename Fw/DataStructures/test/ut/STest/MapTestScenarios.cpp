@@ -1,17 +1,17 @@
 // ======================================================================
-// \title  ArrayMapTestScenarios.cpp
+// \title  MapTestScenarios.cpp
 // \author Rob Bocchino
-// \brief  ArrayMap test scenarios
+// \brief  Map test scenarios
 // ======================================================================
 
-#include "Fw/DataStructures/test/ut/STest/ArrayMapTestRules.hpp"
-#include "Fw/DataStructures/test/ut/STest/ArrayMapTestScenarios.hpp"
+#include "Fw/DataStructures/test/ut/STest/MapTestRules.hpp"
+#include "Fw/DataStructures/test/ut/STest/MapTestScenarios.hpp"
 #include "STest/Scenario/BoundedScenario.hpp"
 #include "STest/Scenario/RandomScenario.hpp"
 
 namespace Fw {
 
-namespace ArrayMapTest {
+namespace MapTest {
 
 namespace Scenarios {
 
@@ -36,6 +36,6 @@ void random(const Fw::StringBase& name, State& state, U32 maxNumSteps) {
 
 }  // namespace Scenarios
 
-}  // namespace ArrayMapTest
+}  // namespace MapTest
 
 }  // namespace Fw

@@ -1,21 +1,21 @@
 // ======================================================================
-// \title  ArrayMapTestRules.hpp
+// \title  MapTestRules.hpp
 // \author bocchino
-// \brief  hpp file for ArrayMap test rules
+// \brief  hpp file for map test rules
 // ======================================================================
 
-#ifndef ArrayMapTestRules_HPP
-#define ArrayMapTestRules_HPP
+#ifndef MapTestRules_HPP
+#define MapTestRules_HPP
 
 #include <gtest/gtest.h>
 
-#include "Fw/DataStructures/test/ut/STest/ArrayMapTestState.hpp"
+#include "Fw/DataStructures/test/ut/STest/MapTestState.hpp"
 #include "STest/STest/Pick/Pick.hpp"
 #include "STest/STest/Rule/Rule.hpp"
 
 namespace Fw {
 
-namespace ArrayMapTest {
+namespace MapTest {
 
 using Rule = STest::Rule<State>;
 
@@ -162,7 +162,7 @@ extern RemoveExisting removeExisting;
 
 };  // namespace Rules
 
-}  // namespace ArrayMapTest
+}  // namespace MapTest
 
 }  // namespace Fw
 

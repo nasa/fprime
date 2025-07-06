@@ -1,11 +1,11 @@
 // ======================================================================
-// \title  ArrayMapTestState.hpp
+// \title  MapTestState.hpp
 // \author bocchino
-// \brief  hpp file for FIFO map test state
+// \brief  hpp file for map test state
 // ======================================================================
 
-#ifndef ArrayMapTestState_HPP
-#define ArrayMapTestState_HPP
+#ifndef MapTestState_HPP
+#define MapTestState_HPP
 
 #include <map>
 
@@ -14,7 +14,7 @@
 
 namespace Fw {
 
-namespace ArrayMapTest {
+namespace MapTest {
 
 struct State {
     //! The key type
@@ -67,7 +67,7 @@ struct State {
     }
 };
 
-}  // namespace ArrayMapTest
+}  // namespace MapTest
 
 }  // namespace Fw
 

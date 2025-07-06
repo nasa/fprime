@@ -9,8 +9,8 @@
 
 #include "Fw/DataStructures/ExternalArrayMap.hpp"
 #include "Fw/DataStructures/test/ut/ArraySetOrMapImplTester.hpp"
-#include "Fw/DataStructures/test/ut/STest/ArrayMapTestRules.hpp"
-#include "Fw/DataStructures/test/ut/STest/ArrayMapTestScenarios.hpp"
+#include "Fw/DataStructures/test/ut/STest/MapTestRules.hpp"
+#include "Fw/DataStructures/test/ut/STest/MapTestScenarios.hpp"
 
 namespace Fw {
 
@@ -25,7 +25,7 @@ class ExternalArrayMapTester {
     const ExternalArrayMap<K, V>& m_map;
 };
 
-namespace ArrayMapTest {
+namespace MapTest {
 
 using Entry = SetOrMapIterator<State::KeyType, State::ValueType>;
 using Map = ExternalArrayMap<State::KeyType, State::ValueType>;
