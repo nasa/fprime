@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="ActivePhaser" kind="active" namespace="Common">
+    <import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>
+    <import_port_type>Svc/Cycle/CyclePortAi.xml</import_port_type>
+
+    <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>
+    <comment>A rate group phasing work on a given cycle</comment>
+    <ports>
+        <!-- Input time cycle port -->
+        <port name="CycleIn" data_type="Cycle" kind="sync_input" max_number="1">
+            <comment>The rate group cycle input</comment>
+        </port>
+        
+        <!-- Output Scheduler Ports -->
+        <port name="RateGroupMemberOut" data_type="Sched" kind="output" max_number="$ActiveRateGroupOutputPorts">
+            <comment>Scheduler output port to rate group members</comment>
+        </port>
+    </ports>
+    <internal_interfaces>
+        <internal_interface name="Tick" full="drop"></internal_interface>
+    </internal_interfaces>
+    <events>
+        <event id="0" name="MissedDeadline" severity="WARNING_HI" format_string="Port %d schedule at %d for %d ticks was long by %d ticks" throttle="5">
+            <args>
+                <arg name="port" type="U32" >
+                    <comment>Port that is delayed</comment>
+                </arg>
+                <arg name="start" type="U32" >
+                    <comment>Start of execution window</comment>
+                </arg>
+                <arg name="length" type="U32" >
+                    <comment>Length of the execution window</comment>
+                </arg>
+                <arg name="ticks" type="U32">
+                    <comment>Time in ticks the deadline was late</comment>
+                </arg>
+            </args>
+        </event>
+    </events>
+</component>
+
