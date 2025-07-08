@@ -18,6 +18,44 @@
 
 namespace Svc {
 
+static const U32 MAX_CHILDREN = 1000;
+static const U64 MAX_CYCLES = 100llu;
+
+struct CallContext {
+    FwIndexType port;
+    U32 context;
+    U32 tick;
+};
+
+struct TestChild {
+    FwIndexType port;
+    U32 length;
+    U32 actual_length;
+    U32 actual_start;
+    U32 start = ActivePhaser::DONT_CARE;
+    U32 context = ActivePhaser::DONT_CARE;
+    U32 runtime;
+};
+
+class FauxPhaser {
+  public:
+    enum State { RUNNING, IDLE, END_OF_CYCLE, STARTING };
+
+    void register_child(TestChild& child);
+
+    void reset();
+
+    State run(U32 ticks_of_cycle, U32 cycle_time);
+
+    TestChild* active();
+
+    // Member variables
+  private:
+    std::deque<TestChild> children;
+    std::deque<TestChild>::iterator current;
+    State state;
+};
+
 class ActivePhaserTester final : public ActivePhaserGTestBase {
   public:
     // ----------------------------------------------------------------------
@@ -49,10 +87,57 @@ class ActivePhaserTester final : public ActivePhaserGTestBase {
     // Tests
     // ----------------------------------------------------------------------
 
-    //! To do
-    void toDo();
+    //! \breif wrapper to create child and integrate it into the test harness
+    //!
+    void create_child(FwIndexType port,
+                      U32 length,
+                      U32 start = ActivePhaser::DONT_CARE,
+                      U32 context = ActivePhaser::DONT_CARE,
+                      U32 lethargy = 0);
+
+    //! \brief A test that assumes nominally behaving single child
+    //!
+    void test_nominal_child(void);
+
+    //! \brief A test that assumes nominally behaving children
+    //!
+    void test_nominal_children(void);
+
+    //! \brief A test for children that do things in a less-than sequential manner unrulely
+    //!
+    void test_unruly_children(void);
+
+    //! \brief A test that assumes one lethargic child followed by recovery
+    //!
+    void test_lethargic_child(void);
+
+    //! \brief A test that tests many lathargic children
+    //!
+    void test_lethargic_children(bool adjust_initial = false, U64 cycles = MAX_CYCLES, U32 tick_start = 0xFFFFFFFF);
+
+    //! \brief A test rollover engine
+    //!
+    void test_rollover();
 
   private:
+    // ----------------------------------------------------------------------
+    // Handlers for typed from ports
+    // ----------------------------------------------------------------------
+
+    //! Handler for from_RateGroupMemberOut
+    //!
+    void from_RateGroupMemberOut_handler(const FwIndexType portNum, /*!< The port number*/
+                                         U32 context                /*!< The call order*/
+    );
+
+  private:
+    void check_cycle(U64 outer);
+    bool new_cycle(U64 cycle_number);
+    bool cycle();
+
+    void start_active();
+    bool stop_active();
+
     // ----------------------------------------------------------------------
     // Helper functions
     // ----------------------------------------------------------------------
@@ -70,6 +155,17 @@ class ActivePhaserTester final : public ActivePhaserGTestBase {
 
     //! The component under test
     ActivePhaser component;
+
+    FauxPhaser mock;
+    std::deque<TestChild> children;
+    std::map<FwIndexType, std::deque<CallContext> > calls;
+    TestChild* active;
+
+    U32 m_start_counter;
+    U32 m_ticks;
+    U32 m_cycle;
+    bool m_nominal;
+    bool m_on_time;
 };
 
 }  // namespace Svc
