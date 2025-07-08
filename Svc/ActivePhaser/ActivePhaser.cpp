@@ -29,7 +29,7 @@ ActivePhaser ::ActivePhaser(const char* const compName)
 }
 
 void ActivePhaser ::init(const FwSizeType queueDepth, const FwIndexType instance) {
-    FW_ASSERT(queueDepth == 1);  // Dependent on queue-depth of one to prevent a rush to catch up
+    FW_ASSERT(queueDepth == 1, static_cast<FwAssertArgType>(queueDepth));  // Dependent on queue-depth of one to prevent a rush to catch up
     ActivePhaserComponentBase::init(queueDepth, instance);
 }
 
