@@ -12,17 +12,19 @@ namespace FifoQueueTest {
 
 namespace Rules {
 
-EnqueueOK enqueueOK;
-
-EnqueueFull enqueueFull;
-
 At at;
 
-DequeueOK dequeueOK;
+Clear clear;
 
 DequeueEmpty dequeueEmpty;
 
-Clear clear;
+DequeueOK dequeueOK;
+
+EnqueueFull enqueueFull;
+
+EnqueueOK enqueueOK;
+
+Peek peek;
 
 };  // namespace Rules
 

@@ -238,6 +238,15 @@ TEST(ExternalFifoQueueScenarios, EnqueueOK) {
     Rules::enqueueOK.apply(state);
 }
 
+TEST(ExternalFifoQueueTestScenarios, Peek) {
+    State::ItemType items[State::capacity];
+    State::ExternalQueue queue(items, State::capacity);
+    State state(queue);
+    Scenarios::enqueueOK(state);
+    Scenarios::enqueueOK(state);
+    Scenarios::peek(state);
+}
+
 TEST(ExternalFifoQueueScenarios, Random) {
     State::ItemType items[State::capacity];
     State::ExternalQueue queue(items, State::capacity);

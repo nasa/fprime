@@ -47,9 +47,20 @@ void enqueueOK(State& state) {
     Rules::enqueueOK.apply(state);
 }
 
+void peek(State& state) {
+    Rules::peek.apply(state);
+}
+
 void random(const Fw::StringBase& name, State& state, U32 maxNumSteps) {
-    Rule* rules[] = {&Rules::enqueueOK, &Rules::enqueueFull,  &Rules::at,
-                     &Rules::dequeueOK, &Rules::dequeueEmpty, &Rules::clear};
+    Rule* rules[] = {
+      &Rules::at,
+      &Rules::clear,
+      &Rules::dequeueEmpty,
+      &Rules::dequeueOK,
+      &Rules::enqueueFull,
+      &Rules::enqueueOK,
+      &Rules::peek
+    };
     STest::RandomScenario<State> scenario("RandomScenario", rules,
                                           sizeof(rules) / sizeof(STest::RandomScenario<State>*));
     STest::BoundedScenario<State> boundedScenario(name.toChar(), scenario, maxNumSteps);

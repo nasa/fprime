@@ -27,6 +27,8 @@ void enqueueFull(State& state);
 
 void enqueueOK(State& state);
 
+void peek(State& state);
+
 void random(const Fw::StringBase& name, State& state, U32 maxNumSteps);
 
 }  // namespace Scenarios
