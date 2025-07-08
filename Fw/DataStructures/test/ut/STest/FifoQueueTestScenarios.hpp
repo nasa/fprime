@@ -15,6 +15,18 @@ namespace FifoQueueTest {
 
 namespace Scenarios {
 
+void at(State& state);
+
+void clear(State& state);
+
+void dequeueEmpty(State& state);
+
+void dequeueOK(State& state);
+
+void enqueueFull(State& state);
+
+void enqueueOK(State& state);
+
 void random(const Fw::StringBase& name, State& state, U32 maxNumSteps);
 
 }  // namespace Scenarios

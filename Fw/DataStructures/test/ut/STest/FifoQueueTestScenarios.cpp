@@ -15,6 +15,38 @@ namespace FifoQueueTest {
 
 namespace Scenarios {
 
+void at(State& state) {
+    Rules::enqueueOK.apply(state);
+    Rules::at.apply(state);
+}
+
+void clear(State& state) {
+    Rules::enqueueOK.apply(state);
+    ASSERT_EQ(state.queue.getSize(), 1);
+    Rules::clear.apply(state);
+    ASSERT_EQ(state.queue.getSize(), 0);
+}
+
+void dequeueEmpty(State& state) {
+    Rules::dequeueEmpty.apply(state);
+}
+
+void dequeueOK(State& state) {
+    Rules::enqueueOK.apply(state);
+    Rules::dequeueOK.apply(state);
+}
+
+void enqueueFull(State& state) {
+    for (FwSizeType i = 0; i < State::capacity; i++) {
+        Rules::enqueueOK.apply(state);
+    }
+    Rules::enqueueFull.apply(state);
+}
+
+void enqueueOK(State& state) {
+    Rules::enqueueOK.apply(state);
+}
+
 void random(const Fw::StringBase& name, State& state, U32 maxNumSteps) {
     Rule* rules[] = {&Rules::enqueueOK, &Rules::enqueueFull,  &Rules::at,
                      &Rules::dequeueOK, &Rules::dequeueEmpty, &Rules::clear};
