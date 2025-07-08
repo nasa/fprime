@@ -772,7 +772,7 @@ TEST_F(FpySequencerTester, fptoui) {
 }
 
 TEST_F(FpySequencerTester, uitofp) {
-    U64 src = -1; // should turn into a huge number
+    U64 src = std::numeric_limits<U64>::max();
     F64 expected = static_cast<F64>(src);
 
     I64 res = tester_unaryRegOp_uitofp(src);
