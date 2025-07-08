@@ -30,7 +30,7 @@ Defined as `= delete`.
 SetIterator()
 ```
 
-Defined as `= default`.
+Use default initialization of members.
 
 ### 3.2. Destructor
 

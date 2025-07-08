@@ -30,7 +30,7 @@ class FifoQueueBase {
     // ----------------------------------------------------------------------
 
     //! Zero-argument constructor
-    FifoQueueBase() = default;
+    FifoQueueBase() {}
 
     //! Destructor
     virtual ~FifoQueueBase() = default;

@@ -30,7 +30,7 @@ class StackBase {
     // ----------------------------------------------------------------------
 
     //! Zero-argument constructor
-    StackBase() = default;
+    StackBase() {}
 
     //! Destructor
     virtual ~StackBase() = default;

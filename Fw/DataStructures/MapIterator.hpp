@@ -28,7 +28,7 @@ class MapIterator {
     // ----------------------------------------------------------------------
 
     //! Zero-argument constructor
-    MapIterator() = default;
+    MapIterator() {}
 
     //! Destructor
     virtual ~MapIterator() = default;

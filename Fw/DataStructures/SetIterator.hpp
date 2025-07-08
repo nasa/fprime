@@ -28,7 +28,7 @@ class SetIterator {
     // ----------------------------------------------------------------------
 
     //! Zero-argument constructor
-    SetIterator() = default;
+    SetIterator() {}
 
     //! Destructor
     virtual ~SetIterator() = default;

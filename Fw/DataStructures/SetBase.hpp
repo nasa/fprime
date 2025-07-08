@@ -38,7 +38,7 @@ class SetBase {
     // ----------------------------------------------------------------------
 
     //! Zero-argument constructor
-    SetBase() = default;
+    SetBase() {}
 
     //! Destructor
     virtual ~SetBase() = default;

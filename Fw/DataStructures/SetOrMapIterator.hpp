@@ -21,7 +21,7 @@ class SetOrMapIterator final : public MapIterator<KE, VN>, public SetIterator<KE
     // ----------------------------------------------------------------------
 
     //! Zero-argument constructor
-    SetOrMapIterator() = default;
+    SetOrMapIterator() : MapIterator<KE, VN>() {}
 
     //! Constructor providing members
     SetOrMapIterator(const KE& keyOrElement,                         //!< The key or element
@@ -31,9 +31,7 @@ class SetOrMapIterator final : public MapIterator<KE, VN>, public SetIterator<KE
         : m_keyOrElement(keyOrElement), m_valueOrNil(valueOrNil), m_next(next) {}
 
     //! Copy constructor
-    SetOrMapIterator(const SetOrMapIterator<KE, VN>& iterator) {
-      *this = iterator;
-    }
+    SetOrMapIterator(const SetOrMapIterator<KE, VN>& iterator) { *this = iterator; }
 
     //! Destructor
     ~SetOrMapIterator() override = default;
@@ -45,12 +43,12 @@ class SetOrMapIterator final : public MapIterator<KE, VN>, public SetIterator<KE
 
     //! operator=
     SetOrMapIterator<KE, VN>& operator=(const SetOrMapIterator<KE, VN>& iterator) {
-      if (this != &iterator) {
-        this->m_keyOrElement = iterator.m_keyOrElement;
-        this->m_valueOrNil = iterator.m_valueOrNil;
-        this->m_next = iterator.m_next;
-      }
-      return *this;
+        if (this != &iterator) {
+            this->m_keyOrElement = iterator.m_keyOrElement;
+            this->m_valueOrNil = iterator.m_valueOrNil;
+            this->m_next = iterator.m_next;
+        }
+        return *this;
     }
 
     //! Get the element associated with this iterator

@@ -22,7 +22,7 @@ wraps around modulo an integer.
 CircularIndex()
 ```
 
-Defined as `= default`.
+Use default initialization of members.
 
 ### 2.2. Constructor with Specified Members
 

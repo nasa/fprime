@@ -46,7 +46,7 @@ classDiagram
 SetOrMapIterator()
 ```
 
-Defined as `= default`.
+Use default initialization of members.
 
 ### 4.2. Constructor Providing Members
 

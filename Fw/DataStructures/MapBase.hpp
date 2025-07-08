@@ -38,7 +38,7 @@ class MapBase {
     // ----------------------------------------------------------------------
 
     //! Zero-argument constructor
-    MapBase() = default;
+    MapBase() {}
 
     //! Destructor
     virtual ~MapBase() = default;

@@ -40,7 +40,7 @@ Defined as `= delete`.
 MapBase()
 ```
 
-Defined as `= default`.
+Use default initialization of members.
 
 ### 4.2. Destructor
 
