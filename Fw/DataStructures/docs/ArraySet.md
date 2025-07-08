@@ -28,7 +28,7 @@ It represents an array-based set with internal storage.
 |Name|Definition|
 |----|----------|
 |`Entry`|Alias of [`SetOrMapIterator<T, Nil>`](SetOrMapIterator.md)|
-|`Iterator`|Alias of [`MapIterator<T>`](MapIterator.md)|
+|`Iterator`|Alias of [`SetIterator<T>`](SetIterator.md)|
 
 The type `Nil` is defined [here](Nil.md).
 
