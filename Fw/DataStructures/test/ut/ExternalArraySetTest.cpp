@@ -119,77 +119,59 @@ TEST(ExternalArraySet, CopyDataFrom) {
 }
 
 TEST(ExternalArraySetScenarios, Clear) {
-  Entry entries[State::capacity];
+    Entry entries[State::capacity];
     Set set(entries, State::capacity);
     State state(set);
-    Rules::insertNotFull.apply(state);
-    ASSERT_EQ(state.set.getSize(), 1);
-    Rules::clear.apply(state);
-    ASSERT_EQ(state.set.getSize(), 0);
+    Scenarios::clear(state);
 }
 
 TEST(ExternalArraySetScenarios, Find) {
     Entry entries[State::capacity];
     Set set(entries, State::capacity);
     State state(set);
-    Rules::find.apply(state);
-    state.useStoredElement = true;
-    Rules::insertNotFull.apply(state);
-    Rules::find.apply(state);
+    Scenarios::find(state);
 }
 
 TEST(ExternalArraySetScenarios, FindExisting) {
     Entry entries[State::capacity];
     Set set(entries, State::capacity);
     State state(set);
-    Rules::insertNotFull.apply(state);
-    Rules::findExisting.apply(state);
+    Scenarios::findExisting(state);
 }
 
 TEST(ExternalArraySetScenarios, InsertExisting) {
     Entry entries[State::capacity];
     Set set(entries, State::capacity);
     State state(set);
-    Rules::insertNotFull.apply(state);
-    Rules::insertExisting.apply(state);
+    Scenarios::insertExisting(state);
 }
 
 TEST(ExternalArraySetScenarios, InsertFull) {
     Entry entries[State::capacity];
     Set set(entries, State::capacity);
     State state(set);
-    state.useStoredElement = true;
-    for (FwSizeType i = 0; i < State::capacity; i++) {
-        state.storedElement = static_cast<State::ElementType>(i);
-        Rules::insertNotFull.apply(state);
-    }
-    state.useStoredElement = false;
-    Rules::insertFull.apply(state);
+    Scenarios::insertFull(state);
 }
 
 TEST(ExternalArraySetScenarios, InsertNotFull) {
     Entry entries[State::capacity];
     Set set(entries, State::capacity);
     State state(set);
-    Rules::insertNotFull.apply(state);
+    Scenarios::insertNotFull(state);
 }
 
 TEST(ExternalArraySetScenarios, Remove) {
     Entry entries[State::capacity];
     Set set(entries, State::capacity);
     State state(set);
-    state.useStoredElement = true;
-    Rules::insertNotFull.apply(state);
-    Rules::remove.apply(state);
-    Rules::remove.apply(state);
+    Scenarios::remove(state);
 }
 
 TEST(ExternalArraySetScenarios, RemoveExisting) {
     Entry entries[State::capacity];
     Set set(entries, State::capacity);
     State state(set);
-    Rules::insertNotFull.apply(state);
-    Rules::removeExisting.apply(state);
+    Scenarios::removeExisting(state);
 }
 
 TEST(ExternalArraySetScenarios, Random) {

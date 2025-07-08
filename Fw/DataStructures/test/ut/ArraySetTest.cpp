@@ -91,67 +91,49 @@ TEST(ArraySet, CopyDataFrom) {
 TEST(ArraySetScenarios, Clear) {
     Set set;
     State state(set);
-    Rules::insertNotFull.apply(state);
-    ASSERT_EQ(state.set.getSize(), 1);
-    Rules::clear.apply(state);
-    ASSERT_EQ(state.set.getSize(), 0);
+    Scenarios::clear(state);
 }
 
 TEST(ArraySetScenarios, Find) {
     Set set;
     State state(set);
-    Rules::find.apply(state);
-    state.useStoredElement = true;
-    Rules::insertNotFull.apply(state);
-    Rules::find.apply(state);
+    Scenarios::find(state);
 }
 
 TEST(ArraySetScenarios, FindExisting) {
     Set set;
     State state(set);
-    Rules::insertNotFull.apply(state);
-    Rules::findExisting.apply(state);
+    Scenarios::findExisting(state);
 }
 
 TEST(ArraySetScenarios, InsertExisting) {
     Set set;
     State state(set);
-    Rules::insertNotFull.apply(state);
-    Rules::insertExisting.apply(state);
+    Scenarios::insertExisting(state);
 }
 
 TEST(ArraySetScenarios, InsertFull) {
     Set set;
     State state(set);
-    state.useStoredElement = true;
-    for (FwSizeType i = 0; i < State::capacity; i++) {
-        state.storedElement = static_cast<State::ElementType>(i);
-        Rules::insertNotFull.apply(state);
-    }
-    state.useStoredElement = false;
-    Rules::insertFull.apply(state);
+    Scenarios::insertFull(state);
 }
 
 TEST(ArraySetScenarios, InsertNotFull) {
     Set set;
     State state(set);
-    Rules::insertNotFull.apply(state);
+    Scenarios::insertNotFull(state);
 }
 
 TEST(ArraySetScenarios, Remove) {
     Set set;
     State state(set);
-    state.useStoredElement = true;
-    Rules::insertNotFull.apply(state);
-    Rules::remove.apply(state);
-    Rules::remove.apply(state);
+    Scenarios::remove(state);
 }
 
 TEST(ArraySetScenarios, RemoveExisting) {
     Set set;
     State state(set);
-    Rules::insertNotFull.apply(state);
-    Rules::removeExisting.apply(state);
+    Scenarios::removeExisting(state);
 }
 
 TEST(ArraySetScenarios, Random) {
