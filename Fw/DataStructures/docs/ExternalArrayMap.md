@@ -152,7 +152,7 @@ ExternalArrayMap<U16, U32> m1(entries, capacity);
 // Insert an item
 U16 key = 0;
 U32 value = 42;
-const auto status = m1.insert(value);
+const auto status = m1.insert(key, value);
 ASSERT_EQ(status, Success::SUCCESS);
 // Call the default constructor
 ExternalArrayMap m2;
@@ -160,6 +160,10 @@ ASSERT_EQ(m2.getSize(), 0);
 // Call the copy assignment operator
 m2 = m1;
 ASSERT_EQ(m2.getSize(), 1);
+value = 0;
+status = m2.find(key, value);
+ASSERT_EQ(status, Success::SUCCESS);
+ASSERT_EQ(value, 42);
 ```
 
 ### 6.2. clear

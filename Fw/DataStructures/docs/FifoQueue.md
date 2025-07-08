@@ -17,7 +17,7 @@ It represents a FIFO queue with internal storage.
 
 ## 2. Base Class
 
-`FifoQueue<T>` is publicly derived from 
+`FifoQueue<T, C>` is publicly derived from 
 [`FifoQueueBase<T>`](FifoQueueBase.md).
 
 ## 3. Private Member Variables
@@ -52,7 +52,7 @@ FifoQueue<U32, 10> queue;
 ### 4.2. Copy Constructor
 
 ```c++
-FifoQueue(const FifoQueue<T, S>& queue)
+FifoQueue(const FifoQueue<T, C>& queue)
 ```
 
 Set `*this = queue`.
@@ -83,10 +83,10 @@ Defined as `= default`.
 ### 5.1. operator=
 
 ```c++
-FifoQueue<T>& operator=(const FifoQueue<T>& queue)
+FifoQueue<T, C>& operator=(const FifoQueue<T, C>& queue)
 ```
 
-Call `m_extQueue.copyDataFrom(queue)`.
+Return `m_extQueue.copyDataFrom(queue)`.
 
 _Example:_
 ```c++
