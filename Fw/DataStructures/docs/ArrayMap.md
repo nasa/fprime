@@ -74,14 +74,15 @@ ArrayMap(const ArrayMap<K, V, C>& map)
 
 _Example:_
 ```c++
-ArrayMap<U16, U32, 10> m1(entries, capacity);
+using Map = ArrayMap<U16, U32, 10>;
+Map m1(entries, capacity);
 // Insert an item
 const U16 key = 0;
 const U32 value = 42;
 const auto status = m1.insert(key, value);
 ASSERT_EQ(status, Success::SUCCESS);
 // Call the copy constructor
-ArrayMap<U16, U32, 10> m2(m1);
+Map m2(m1);
 ASSERT_EQ(m2.getSize(), 1);
 ```
 

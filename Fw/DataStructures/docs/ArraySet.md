@@ -56,7 +56,7 @@ classDiagram
 ArraySet()
 ```
 
-Initialize each member variable with its default value.
+Initialize `m_extSet` with `ExternalArraySet<T>(m_entries, C)`.
 
 _Example:_
 ```c++
@@ -69,17 +69,20 @@ ArraySet<U32, 10> set;
 ArraySet(const ArraySet<T, C>& set)
 ```
 
-Set `*this = set`.
+1. Initialize `m_extSet` with `ExternalArraySet<T>(m_entries, C)`.
+
+2. Set `*this = set`.
 
 _Example:_
 ```c++
-ArraySet<U32, 10> m1(entries, capacity);
+using Set = ArraySet<U32, 10>;
+Set m1;
 // Insert an item
 const U32 element = 42;
 const auto status = m1.insert(element);
 ASSERT_EQ(status, Success::SUCCESS);
 // Call the copy constructor
-ArraySet<U32, 10> m2(m1);
+Set m2;
 ASSERT_EQ(m2.getSize(), 1);
 ```
 
@@ -103,13 +106,14 @@ Return `m_extSet.copyDataFrom(set)`.
 
 _Example:_
 ```c++
-ArraySet<U32, 10> m1(entries, capacity);
+using Set = ArraySet<U32, 10>;
+Set m1;
 // Insert an item
 U32 element = 42;
 const auto status = m1.insert(element, value);
 ASSERT_EQ(status, Success::SUCCESS);
 // Call the default constructor
-ArraySet m2;
+Set m2;
 ASSERT_EQ(m2.getSize(), 0);
 // Call the copy assignment operator
 m2 = m1;
