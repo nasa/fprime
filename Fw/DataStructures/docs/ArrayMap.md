@@ -55,7 +55,7 @@ classDiagram
 ArrayMap()
 ```
 
-Initialize each member variable with its default value.
+Initialize `m_extMap` with `ExternalArrayMap<K, V>(m_entries, C)`.
 
 _Example:_
 ```c++
@@ -68,7 +68,9 @@ ArrayMap<U16, U32, 10> map;
 ArrayMap(const ArrayMap<K, V, C>& map)
 ```
 
-Set `*this = map`.
+1. Initialize `m_extMap` with `ExternalArrayMap<K, V>(m_entries, C)`.
+
+1. Set `*this = map`.
 
 _Example:_
 ```c++
@@ -103,14 +105,15 @@ Return `m_extMap.copyDataFrom(map)`.
 
 _Example:_
 ```c++
-ArrayMap<U16, U32, 10> m1(entries, capacity);
+using Map = ArrayMap<U16, U32, 10>;
+Map m1;
 // Insert an item
 U16 key = 0;
 U32 value = 42;
-const auto status = m1.insert(key, value);
+auto status = m1.insert(key, value);
 ASSERT_EQ(status, Success::SUCCESS);
 // Call the default constructor
-ArrayMap m2;
+Map m2;
 ASSERT_EQ(m2.getSize(), 0);
 // Call the copy assignment operator
 m2 = m1;

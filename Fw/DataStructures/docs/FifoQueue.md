@@ -55,7 +55,9 @@ FifoQueue<U32, 10> queue;
 FifoQueue(const FifoQueue<T, C>& queue)
 ```
 
-Set `*this = queue`.
+1. Initialize `m_extQueue` with `ExternalFifoQueue<T>(m_items, C)`.
+
+1. Set `*this = queue`.
 
 _Example:_
 ```c++
