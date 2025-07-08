@@ -5,12 +5,10 @@
 // ======================================================================
 
 #include "Fw/DataStructures/ExternalArrayMap.hpp"
-#include "STest/STest/Pick/Pick.hpp"
-
-#include "Fw/DataStructures/ExternalArrayMap.hpp"
 #include "Fw/DataStructures/test/ut/ArraySetOrMapImplTester.hpp"
 #include "Fw/DataStructures/test/ut/STest/MapTestRules.hpp"
 #include "Fw/DataStructures/test/ut/STest/MapTestScenarios.hpp"
+#include "STest/STest/Pick/Pick.hpp"
 
 namespace Fw {
 

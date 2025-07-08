@@ -178,20 +178,3 @@ Success remove(const K& key, V& value) override
 ```
 
 Return `m_extMap.remove(key, value)`.
-
-## 7. Public Static Functions
-
-### 7.1. getStaticCapacity
-
-```c++
-static constexpr FwSizeType getStaticCapacity()
-```
-
-Return the static capacity `C`.
-
-_Example:_
-```c++
-using Map = ArrayMap<U16, U32, 3>;
-const auto capacity = Map::getStaticCapacity();
-ASSERT_EQ(capacity, 3);
-```
