@@ -101,8 +101,12 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     void add_DESER_SER_REG(FpySequencer_DeserSerRegDirective dir);
     void add_SET_REG(U8 dest, I64 value);
     void add_SET_REG(FpySequencer_SetRegDirective dir);
-    void add_BINARY_CMP(U8 lhs, U8 rhs, U8 res, Fpy::DirectiveId op);
-    void add_BINARY_CMP(FpySequencer_BinaryCmpDirective dir);
+    void add_BINARY_REG_OP(U8 lhs, U8 rhs, U8 res, Fpy::DirectiveId op);
+    void add_BINARY_REG_OP(FpySequencer_BinaryRegOpDirective dir);
+    void add_UNARY_REG_OP(U8 src, U8 res, Fpy::DirectiveId op);
+    void add_UNARY_REG_OP(FpySequencer_UnaryRegOpDirective dir);
+    void add_EXIT(bool success);
+    void add_EXIT(FpySequencer_ExitDirective dir);
     //! Handle a text event
     void textLogIn(FwEventIdType id,                //!< The event ID
                    const Fw::Time& timeTag,         //!< The time
@@ -136,12 +140,33 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     Signal tester_if_directiveHandler(const FpySequencer_IfDirective& directive, DirectiveError& err);
     Signal tester_getPrm_directiveHandler(const FpySequencer_GetPrmDirective& directive, DirectiveError& err);
     Signal tester_getTlm_directiveHandler(const FpySequencer_GetTlmDirective& directive, DirectiveError& err);
-    Signal tester_not_directiveHandler(const FpySequencer_NotDirective& directive, DirectiveError& err);
     Signal tester_exit_directiveHandler(const FpySequencer_ExitDirective& directive, DirectiveError& err);
     Signal tester_cmd_directiveHandler(const FpySequencer_CmdDirective& directive, DirectiveError& err);
     Signal tester_deserSerReg_directiveHandler(const FpySequencer_DeserSerRegDirective& directive, DirectiveError& err);
-    Signal tester_binaryCmp_directiveHandler(const FpySequencer_BinaryCmpDirective& directive, DirectiveError& err);
+    Signal tester_unaryRegOp_directiveHandler(const FpySequencer_UnaryRegOpDirective& directive, DirectiveError& err);
+    Signal tester_binaryRegOp_directiveHandler(const FpySequencer_BinaryRegOpDirective& directive, DirectiveError& err);
     Signal tester_setReg_directiveHandler(const FpySequencer_SetRegDirective& directive, DirectiveError& err);
+    I64 tester_binaryRegOp_or(I64 lhs, I64 rhs);
+    I64 tester_binaryRegOp_and(I64 lhs, I64 rhs);
+    I64 tester_binaryRegOp_ieq(I64 lhs, I64 rhs);
+    I64 tester_binaryRegOp_ine(I64 lhs, I64 rhs);
+    I64 tester_binaryRegOp_ult(I64 lhs, I64 rhs);
+    I64 tester_binaryRegOp_ule(I64 lhs, I64 rhs);
+    I64 tester_binaryRegOp_ugt(I64 lhs, I64 rhs);
+    I64 tester_binaryRegOp_uge(I64 lhs, I64 rhs);
+    I64 tester_binaryRegOp_slt(I64 lhs, I64 rhs);
+    I64 tester_binaryRegOp_sle(I64 lhs, I64 rhs);
+    I64 tester_binaryRegOp_sgt(I64 lhs, I64 rhs);
+    I64 tester_binaryRegOp_sge(I64 lhs, I64 rhs);
+    I64 tester_binaryRegOp_feq(I64 lhs, I64 rhs);
+    I64 tester_binaryRegOp_fne(I64 lhs, I64 rhs);
+    I64 tester_binaryRegOp_flt(I64 lhs, I64 rhs);
+    I64 tester_binaryRegOp_fle(I64 lhs, I64 rhs);
+    I64 tester_binaryRegOp_fgt(I64 lhs, I64 rhs);
+    I64 tester_binaryRegOp_fge(I64 lhs, I64 rhs);
+    I64 tester_unaryRegOp_not(I64 src);
+    I64 tester_unaryRegOp_fpext(I64 src);
+    I64 tester_unaryRegOp_fptrunc(I64 src);
     FpySequencer::Runtime* tester_get_m_runtime_ptr();
     Fw::ExternalSerializeBuffer* tester_get_m_sequenceBuffer_ptr();
     void tester_set_m_sequencesStarted(U64 val);
@@ -166,6 +191,7 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     void tester_doDispatch();
     void tester_setState(Svc::FpySequencer_SequencerStateMachineStateMachineBase::State state);
     Svc::FpySequencer_SequencerStateMachineStateMachineBase::State tester_getState();
+    void tester_dispatchDirective(const FpySequencer::DirectiveUnion& directive, const Fpy::DirectiveId& id);
 
   public:
     // ----------------------------------------------------------------------

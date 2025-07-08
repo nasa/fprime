@@ -25,6 +25,7 @@ register_fprime_module(
   HEADERS
     "${CMAKE_CURRENT_LIST_DIR}/error.hpp"
   DEPENDS
+    Fw_Time
     Fw_Types
 )
 

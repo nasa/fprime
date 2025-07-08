@@ -1,5 +1,6 @@
-#include "Svc/FpySequencer/FpySequencer.hpp"
+#include <cmath>
 #include "Fw/Com/ComPacket.hpp"
+#include "Svc/FpySequencer/FpySequencer.hpp"
 
 namespace Svc {
 
@@ -46,8 +47,7 @@ void FpySequencer::directive_waitAbs_internalInterfaceHandler(const FpySequencer
 }
 
 //! Internal interface handler for directive_setSerReg
-void FpySequencer::directive_setSerReg_internalInterfaceHandler(
-    const Svc::FpySequencer_SetSerRegDirective& directive) {
+void FpySequencer::directive_setSerReg_internalInterfaceHandler(const Svc::FpySequencer_SetSerRegDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->setSerReg_directiveHandler(directive, error));
     this->m_tlm.lastDirectiveError = error;
@@ -96,7 +96,8 @@ void FpySequencer::directive_cmd_internalInterfaceHandler(const Svc::FpySequence
 }
 
 //! Internal interface handler for directive_deserSerReg
-void FpySequencer::directive_deserSerReg_internalInterfaceHandler(const Svc::FpySequencer_DeserSerRegDirective& directive) {
+void FpySequencer::directive_deserSerReg_internalInterfaceHandler(
+    const Svc::FpySequencer_DeserSerRegDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->deserSerReg_directiveHandler(directive, error));
     this->m_tlm.lastDirectiveError = error;
@@ -109,17 +110,18 @@ void FpySequencer::directive_setReg_internalInterfaceHandler(const Svc::FpySeque
     this->m_tlm.lastDirectiveError = error;
 }
 
-//! Internal interface handler for directive_binaryCmp
-void FpySequencer::directive_binaryCmp_internalInterfaceHandler(const Svc::FpySequencer_BinaryCmpDirective& directive) {
+//! Internal interface handler for directive_binaryRegOp
+void FpySequencer::directive_binaryRegOp_internalInterfaceHandler(const Svc::FpySequencer_BinaryRegOpDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
-    this->sendSignal(this->binaryCmp_directiveHandler(directive, error));
+    this->sendSignal(this->binaryRegOp_directiveHandler(directive, error));
     this->m_tlm.lastDirectiveError = error;
 }
 
-//! Internal interface handler for directive_not
-void FpySequencer::directive_not_internalInterfaceHandler(const Svc::FpySequencer_NotDirective& directive) {
+
+//! Internal interface handler for directive_unaryRegOp
+void FpySequencer::directive_unaryRegOp_internalInterfaceHandler(const Svc::FpySequencer_UnaryRegOpDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
-    this->sendSignal(this->not_directiveHandler(directive, error));
+    this->sendSignal(this->unaryRegOp_directiveHandler(directive, error));
     this->m_tlm.lastDirectiveError = error;
 }
 
@@ -146,7 +148,8 @@ Signal FpySequencer::waitAbs_directiveHandler(const FpySequencer_WaitAbsDirectiv
 }
 
 //! Internal interface handler for directive_setSerReg
-Signal FpySequencer::setSerReg_directiveHandler(const FpySequencer_SetSerRegDirective& directive, DirectiveError& error) {
+Signal FpySequencer::setSerReg_directiveHandler(const FpySequencer_SetSerRegDirective& directive,
+                                                DirectiveError& error) {
     if (directive.getindex() >= Fpy::NUM_SERIALIZABLE_REGISTERS) {
         error = DirectiveError::SER_REG_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
@@ -322,7 +325,8 @@ Signal FpySequencer::cmd_directiveHandler(const FpySequencer_CmdDirective& direc
     return Signal::stmtResponse_keepWaiting;
 }
 
-Signal FpySequencer::deserSerReg_directiveHandler(const FpySequencer_DeserSerRegDirective& directive, DirectiveError& error) {
+Signal FpySequencer::deserSerReg_directiveHandler(const FpySequencer_DeserSerRegDirective& directive,
+                                                  DirectiveError& error) {
     if (directive.getsrcSerRegIdx() >= Fpy::NUM_SERIALIZABLE_REGISTERS) {
         error = DirectiveError::SER_REG_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
@@ -387,14 +391,110 @@ Signal FpySequencer::setReg_directiveHandler(const FpySequencer_SetRegDirective&
     return Signal::stmtResponse_success;
 }
 
-Signal FpySequencer::binaryCmp_directiveHandler(const FpySequencer_BinaryCmpDirective& directive, DirectiveError& error) {
+I8 floatCmp(F64 lhs, F64 rhs) {
+    if (std::isunordered(lhs, rhs)) {
+        // nan is one of the args
+        // always fail a comparison if nan
+        return -2;
+    } else if (std::isgreater(lhs, rhs)) {
+        return 1;
+    } else if (std::isless(lhs, rhs)) {
+        return -1;
+    }
+    return 0;
+}
 
-    // coding error, should not have gotten to this binary cmp handler
-    FW_ASSERT(directive.get_op() >= Fpy::DirectiveId::OR && directive.get_op() <= Fpy::DirectiveId::SGE, static_cast<FwAssertArgType>(directive.get_op()));
+I64 FpySequencer::binaryRegOp_or(I64 lhs, I64 rhs) {
+    return lhs | rhs;
+}
+I64 FpySequencer::binaryRegOp_and(I64 lhs, I64 rhs) {
+    return lhs & rhs;
+}
+I64 FpySequencer::binaryRegOp_ieq(I64 lhs, I64 rhs) {
+    return lhs == rhs;
+}
+I64 FpySequencer::binaryRegOp_ine(I64 lhs, I64 rhs) {
+    return lhs != rhs;
+}
+I64 FpySequencer::binaryRegOp_ult(I64 lhs, I64 rhs) {
+    return static_cast<U64>(lhs) < static_cast<U64>(rhs);
+}
+I64 FpySequencer::binaryRegOp_ule(I64 lhs, I64 rhs) {
+    return static_cast<U64>(lhs) <= static_cast<U64>(rhs);
+}
+I64 FpySequencer::binaryRegOp_ugt(I64 lhs, I64 rhs) {
+    return static_cast<U64>(lhs) > static_cast<U64>(rhs);
+}
+I64 FpySequencer::binaryRegOp_uge(I64 lhs, I64 rhs) {
+    return static_cast<U64>(lhs) >= static_cast<U64>(rhs);
+}
+I64 FpySequencer::binaryRegOp_slt(I64 lhs, I64 rhs) {
+    return lhs < rhs;
+}
+I64 FpySequencer::binaryRegOp_sle(I64 lhs, I64 rhs) {
+    return lhs <= rhs;
+}
+I64 FpySequencer::binaryRegOp_sgt(I64 lhs, I64 rhs) {
+    return lhs > rhs;
+}
+I64 FpySequencer::binaryRegOp_sge(I64 lhs, I64 rhs) {
+    return lhs >= rhs;
+}
+I64 FpySequencer::binaryRegOp_feq(I64 lhs, I64 rhs) {
+    F64 left;
+    memcpy(&left, &lhs, sizeof(left));
+    F64 right;
+    memcpy(&right, &rhs, sizeof(right));
+    return floatCmp(left, right) == 0;
+}
+I64 FpySequencer::binaryRegOp_fne(I64 lhs, I64 rhs) {
+    F64 left;
+    memcpy(&left, &lhs, sizeof(left));
+    F64 right;
+    memcpy(&right, &rhs, sizeof(right));
+    I8 cmp = floatCmp(left, right);
+    // ne is true if they are not equal and neither is nan
+    return cmp != 0 && cmp != -2;
+}
+I64 FpySequencer::binaryRegOp_flt(I64 lhs, I64 rhs) {
+    F64 left;
+    memcpy(&left, &lhs, sizeof(left));
+    F64 right;
+    memcpy(&right, &rhs, sizeof(right));
+    return floatCmp(left, right) == -1;
+}
+I64 FpySequencer::binaryRegOp_fle(I64 lhs, I64 rhs) {
+    F64 left;
+    memcpy(&left, &lhs, sizeof(left));
+    F64 right;
+    memcpy(&right, &rhs, sizeof(right));
+    I8 cmp = floatCmp(left, right);
+    return cmp == 0 || cmp == -1;
+}
+I64 FpySequencer::binaryRegOp_fgt(I64 lhs, I64 rhs) {
+    F64 left;
+    memcpy(&left, &lhs, sizeof(left));
+    F64 right;
+    memcpy(&right, &rhs, sizeof(right));
+    return floatCmp(left, right) == 1;
+}
+I64 FpySequencer::binaryRegOp_fge(I64 lhs, I64 rhs) {
+    F64 left;
+    memcpy(&left, &lhs, sizeof(left));
+    F64 right;
+    memcpy(&right, &rhs, sizeof(right));
+    I8 cmp = floatCmp(left, right);
+    return cmp == 0 || cmp == 1;
+}
 
-    if (directive.getlhs() >= Fpy::NUM_REGISTERS 
-        || directive.getrhs() >= Fpy::NUM_REGISTERS 
-        || directive.getres() >= Fpy::NUM_REGISTERS) {
+Signal FpySequencer::binaryRegOp_directiveHandler(const FpySequencer_BinaryRegOpDirective& directive,
+                                                DirectiveError& error) {
+    // coding error, should not have gotten to this binary reg op handler
+    FW_ASSERT(directive.get_op() >= Fpy::DirectiveId::OR && directive.get_op() <= Fpy::DirectiveId::FGE,
+              static_cast<FwAssertArgType>(directive.get_op()));
+
+    if (directive.getlhs() >= Fpy::NUM_REGISTERS || directive.getrhs() >= Fpy::NUM_REGISTERS ||
+        directive.getres() >= Fpy::NUM_REGISTERS) {
         error = DirectiveError::REGISTER_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
@@ -402,83 +502,126 @@ Signal FpySequencer::binaryCmp_directiveHandler(const FpySequencer_BinaryCmpDire
     I64 lhs = reg(directive.getlhs());
     I64 rhs = reg(directive.getrhs());
     I64& res = reg(directive.getres());
-    
-    if (directive.get_op() == Fpy::DirectiveId::EQ) {
-        res = lhs == rhs;
-        return Signal::stmtResponse_success;
+
+    switch (directive.get_op()) {
+        case Fpy::DirectiveId::OR:
+            res = this->binaryRegOp_or(lhs, rhs);
+            break;
+        case Fpy::DirectiveId::AND:
+            res = this->binaryRegOp_and(lhs, rhs);
+            break;
+        case Fpy::DirectiveId::IEQ:
+            res = this->binaryRegOp_ieq(lhs, rhs);
+            break;
+        case Fpy::DirectiveId::INE:
+            res = this->binaryRegOp_ine(lhs, rhs);
+            break;
+        case Fpy::DirectiveId::ULT:
+            res = this->binaryRegOp_ult(lhs, rhs);
+            break;
+        case Fpy::DirectiveId::ULE:
+            res = this->binaryRegOp_ule(lhs, rhs);
+            break;
+        case Fpy::DirectiveId::UGT:
+            res = this->binaryRegOp_ugt(lhs, rhs);
+            break;
+        case Fpy::DirectiveId::UGE:
+            res = this->binaryRegOp_uge(lhs, rhs);
+            break;
+        case Fpy::DirectiveId::SLT:
+            res = this->binaryRegOp_slt(lhs, rhs);
+            break;
+        case Fpy::DirectiveId::SLE:
+            res = this->binaryRegOp_sle(lhs, rhs);
+            break;
+        case Fpy::DirectiveId::SGT:
+            res = this->binaryRegOp_sgt(lhs, rhs);
+            break;
+        case Fpy::DirectiveId::SGE:
+            res = this->binaryRegOp_sge(lhs, rhs);
+            break;
+        case Fpy::DirectiveId::FEQ:
+            res = this->binaryRegOp_feq(lhs, rhs);
+            break;
+        case Fpy::DirectiveId::FNE:
+            res = this->binaryRegOp_fne(lhs, rhs);
+            break;
+        case Fpy::DirectiveId::FLT:
+            res = this->binaryRegOp_flt(lhs, rhs);
+            break;
+        case Fpy::DirectiveId::FLE:
+            res = this->binaryRegOp_fle(lhs, rhs);
+            break;
+        case Fpy::DirectiveId::FGT:
+            res = this->binaryRegOp_fgt(lhs, rhs);
+            break;
+        case Fpy::DirectiveId::FGE:
+            res = this->binaryRegOp_fge(lhs, rhs);
+            break;
+        default:
+            FW_ASSERT(0, directive.get_op());
+            break;
     }
-
-    if (directive.get_op() == Fpy::DirectiveId::NE) {
-        res = lhs != rhs;
-        return Signal::stmtResponse_success;
-    }
-
-    if (directive.get_op() == Fpy::DirectiveId::OR) {
-        res = lhs | rhs;
-        return Signal::stmtResponse_success;
-    }
-
-    if (directive.get_op() == Fpy::DirectiveId::AND) {
-        res = lhs & rhs;
-        return Signal::stmtResponse_success;
-    }
-
-    // okay, it is an inequality comparison
-
-    // whether the comparison is signed or unsigned
-    bool sign = true;
-
-    if (directive.get_op() >= Fpy::DirectiveId::ULT && directive.get_op() <= Fpy::DirectiveId::UGE) {
-        sign = false;
-    }
-
-    I8 cmpResult;
-
-    if (sign) {
-        cmpResult = (lhs == rhs) ? 0 : (lhs < rhs) ? -1 : 1;
-    } else {
-        // unsigned comparison. static cast to unsigned longs
-        U64 ulhs = static_cast<U64>(lhs);
-        U64 urhs = static_cast<U64>(rhs);
-        cmpResult = (ulhs == urhs) ? 0 : (ulhs < urhs) ? -1 : 1;
-    }
-
-    if (cmpResult == 0) {
-        // values were equal
-        // result is true if equality is okay
-        res = (directive.get_op() == Fpy::DirectiveId::UGE 
-            || directive.get_op() == Fpy::DirectiveId::ULE 
-            || directive.get_op() == Fpy::DirectiveId::SGE 
-            || directive.get_op() == Fpy::DirectiveId::SLE);
-    } else if (cmpResult == -1) {
-        // lhs < rhs
-        // result is true if < is okay
-        res = (directive.get_op() == Fpy::DirectiveId::ULT
-            || directive.get_op() == Fpy::DirectiveId::ULE 
-            || directive.get_op() == Fpy::DirectiveId::SLT
-            || directive.get_op() == Fpy::DirectiveId::SLE);
-    } else {
-        // lhs > rhs
-        // result is true if > is okay
-        res = (directive.get_op() == Fpy::DirectiveId::UGT
-            || directive.get_op() == Fpy::DirectiveId::UGE 
-            || directive.get_op() == Fpy::DirectiveId::SGT
-            || directive.get_op() == Fpy::DirectiveId::SGE);
-    }
-
     return Signal::stmtResponse_success;
 }
+I64 FpySequencer::unaryRegOp_not(I64 src) {
+    return ~src;
+}
+I64 FpySequencer::unaryRegOp_fpext(I64 src) {
+    // convert F32 to F64
+    // first get the first 32 bits of src
+    I32 trunc = static_cast<I32>(src);
+    // then interpret as float
+    F32 fsrc;
+    memcpy(&fsrc, &trunc, sizeof(fsrc));
+    // then cast to F64
+    F64 ext = static_cast<F64>(fsrc);
+    // then return bits as I64
+    I64 iext;
+    memcpy(&iext, &ext, sizeof(iext));
+    return iext;
+}
+I64 FpySequencer::unaryRegOp_fptrunc(I64 src) {
+    // convert F64 to F32
+    // first interpret as F64
+    F64 fsrc;
+    memcpy(&fsrc, &src, sizeof(fsrc));
+    // then cast to F32
+    F32 trunc = static_cast<F32>(fsrc);
+    // then interpret bits as I32
+    I32 itrunc;
+    memcpy(&itrunc, &trunc, sizeof(itrunc));
+    // then extend to I64
+    return static_cast<I64>(itrunc);
+}
 
-Signal FpySequencer::not_directiveHandler(const FpySequencer_NotDirective& directive, DirectiveError& error) {
-    if (directive.getsrc() >= Fpy::NUM_REGISTERS 
-        || directive.getres() >= Fpy::NUM_REGISTERS) {
+Signal FpySequencer::unaryRegOp_directiveHandler(const FpySequencer_UnaryRegOpDirective& directive, DirectiveError& error) {
+    // coding error, should not have gotten to this unary reg op handler
+    FW_ASSERT(directive.get_op() >= Fpy::DirectiveId::NOT && directive.get_op() <= Fpy::DirectiveId::FPTRUNC,
+              static_cast<FwAssertArgType>(directive.get_op()));
+
+    if (directive.getsrc() >= Fpy::NUM_REGISTERS || directive.getres() >= Fpy::NUM_REGISTERS) {
         error = DirectiveError::REGISTER_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
 
     I64 src = reg(directive.getsrc());
     I64& res = reg(directive.getres());
-    res = ~src;
+    
+    switch (directive.get_op()) {
+        case Fpy::DirectiveId::NOT:
+            res = this->unaryRegOp_not(src);
+            break;
+        case Fpy::DirectiveId::FPEXT:
+            res = this->unaryRegOp_fpext(src);
+            break;
+        case Fpy::DirectiveId::FPTRUNC:
+            res = this->unaryRegOp_fptrunc(src);
+            break;
+        default:
+            FW_ASSERT(0, directive.get_op());
+            break;
+    }
     return Signal::stmtResponse_success;
 }
 
