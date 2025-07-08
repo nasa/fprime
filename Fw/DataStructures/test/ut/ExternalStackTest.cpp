@@ -203,14 +203,14 @@ TEST(ExternalStack, CopyDataFrom) {
     }
 }
 
-TEST(ExternalStackRules, PushOK) {
+TEST(ExternalStackScenarios, PushOK) {
     U32 items[State::capacity];
     State::ExternalStack stack(items, State::capacity);
     State state(stack);
     Rules::pushOK.apply(state);
 }
 
-TEST(ExternalStackRules, PushFull) {
+TEST(ExternalStackScenarios, PushFull) {
     U32 items[State::capacity];
     State::ExternalStack stack(items, State::capacity);
     State state(stack);
@@ -220,7 +220,7 @@ TEST(ExternalStackRules, PushFull) {
     Rules::pushFull.apply(state);
 }
 
-TEST(ExternalStackRules, At) {
+TEST(ExternalStackScenarios, At) {
     U32 items[State::capacity];
     State::ExternalStack stack(items, State::capacity);
     State state(stack);
@@ -230,7 +230,7 @@ TEST(ExternalStackRules, At) {
     Rules::at.apply(state);
 }
 
-TEST(ExternalStackRules, PopOK) {
+TEST(ExternalStackScenarios, PopOK) {
     U32 items[State::capacity];
     State::ExternalStack stack(items, State::capacity);
     State state(stack);
@@ -240,14 +240,14 @@ TEST(ExternalStackRules, PopOK) {
     Rules::popOK.apply(state);
 }
 
-TEST(ExternalStackRules, PopEmpty) {
+TEST(ExternalStackScenarios, PopEmpty) {
     U32 items[State::capacity];
     State::ExternalStack stack(items, State::capacity);
     State state(stack);
     Rules::popEmpty.apply(state);
 }
 
-TEST(ExternalStackRules, Clear) {
+TEST(ExternalStackScenarios, Clear) {
     U32 items[State::capacity];
     State::ExternalStack stack(items, State::capacity);
     State state(stack);

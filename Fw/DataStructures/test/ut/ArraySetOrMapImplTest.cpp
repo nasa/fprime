@@ -78,7 +78,7 @@ TEST(ArraySetOrMapImpl, CopyAssignmentOperator) {
     ASSERT_EQ(impl2.getSize(), 1);
 }
 
-TEST(ArraySetOrMapImplRules, Clear) {
+TEST(ArraySetOrMapImplScenarios, Clear) {
   State::Entry entries[State::capacity];
     State::Impl impl(entries, State::capacity);
     State state(impl);
@@ -88,7 +88,7 @@ TEST(ArraySetOrMapImplRules, Clear) {
     ASSERT_EQ(state.impl.getSize(), 0);
 }
 
-TEST(ArraySetOrMapImplRules, Find) {
+TEST(ArraySetOrMapImplScenarios, Find) {
     State::Entry entries[State::capacity];
     State::Impl impl(entries, State::capacity);
     State state(impl);
@@ -98,7 +98,7 @@ TEST(ArraySetOrMapImplRules, Find) {
     Rules::find.apply(state);
 }
 
-TEST(ArraySetOrMapImplRules, FindExisting) {
+TEST(ArraySetOrMapImplScenarios, FindExisting) {
     State::Entry entries[State::capacity];
     State::Impl impl(entries, State::capacity);
     State state(impl);
@@ -106,7 +106,7 @@ TEST(ArraySetOrMapImplRules, FindExisting) {
     Rules::findExisting.apply(state);
 }
 
-TEST(ArraySetOrMapImplRules, InsertExisting) {
+TEST(ArraySetOrMapImplScenarios, InsertExisting) {
     State::Entry entries[State::capacity];
     State::Impl impl(entries, State::capacity);
     State state(impl);
@@ -114,7 +114,7 @@ TEST(ArraySetOrMapImplRules, InsertExisting) {
     Rules::insertExisting.apply(state);
 }
 
-TEST(ArraySetOrMapImplRules, InsertFull) {
+TEST(ArraySetOrMapImplScenarios, InsertFull) {
     State::Entry entries[State::capacity];
     State::Impl impl(entries, State::capacity);
     State state(impl);
@@ -127,14 +127,14 @@ TEST(ArraySetOrMapImplRules, InsertFull) {
     Rules::insertFull.apply(state);
 }
 
-TEST(ArraySetOrMapImplRules, InsertNotFull) {
+TEST(ArraySetOrMapImplScenarios, InsertNotFull) {
     State::Entry entries[State::capacity];
     State::Impl impl(entries, State::capacity);
     State state(impl);
     Rules::insertNotFull.apply(state);
 }
 
-TEST(ArraySetOrMapImplRules, Remove) {
+TEST(ArraySetOrMapImplScenarios, Remove) {
     State::Entry entries[State::capacity];
     State::Impl impl(entries, State::capacity);
     State state(impl);
@@ -144,7 +144,7 @@ TEST(ArraySetOrMapImplRules, Remove) {
     Rules::remove.apply(state);
 }
 
-TEST(ArraySetOrMapImplRules, RemoveExisting) {
+TEST(ArraySetOrMapImplScenarios, RemoveExisting) {
     State::Entry entries[State::capacity];
     State::Impl impl(entries, State::capacity);
     State state(impl);

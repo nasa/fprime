@@ -118,7 +118,7 @@ TEST(ExternalArraySet, CopyDataFrom) {
     }
 }
 
-TEST(ExternalArraySetRules, Clear) {
+TEST(ExternalArraySetScenarios, Clear) {
   Entry entries[State::capacity];
     Set set(entries, State::capacity);
     State state(set);
@@ -128,7 +128,7 @@ TEST(ExternalArraySetRules, Clear) {
     ASSERT_EQ(state.set.getSize(), 0);
 }
 
-TEST(ExternalArraySetRules, Find) {
+TEST(ExternalArraySetScenarios, Find) {
     Entry entries[State::capacity];
     Set set(entries, State::capacity);
     State state(set);
@@ -138,7 +138,7 @@ TEST(ExternalArraySetRules, Find) {
     Rules::find.apply(state);
 }
 
-TEST(ExternalArraySetRules, FindExisting) {
+TEST(ExternalArraySetScenarios, FindExisting) {
     Entry entries[State::capacity];
     Set set(entries, State::capacity);
     State state(set);
@@ -146,7 +146,7 @@ TEST(ExternalArraySetRules, FindExisting) {
     Rules::findExisting.apply(state);
 }
 
-TEST(ExternalArraySetRules, InsertExisting) {
+TEST(ExternalArraySetScenarios, InsertExisting) {
     Entry entries[State::capacity];
     Set set(entries, State::capacity);
     State state(set);
@@ -154,7 +154,7 @@ TEST(ExternalArraySetRules, InsertExisting) {
     Rules::insertExisting.apply(state);
 }
 
-TEST(ExternalArraySetRules, InsertFull) {
+TEST(ExternalArraySetScenarios, InsertFull) {
     Entry entries[State::capacity];
     Set set(entries, State::capacity);
     State state(set);
@@ -167,14 +167,14 @@ TEST(ExternalArraySetRules, InsertFull) {
     Rules::insertFull.apply(state);
 }
 
-TEST(ExternalArraySetRules, InsertNotFull) {
+TEST(ExternalArraySetScenarios, InsertNotFull) {
     Entry entries[State::capacity];
     Set set(entries, State::capacity);
     State state(set);
     Rules::insertNotFull.apply(state);
 }
 
-TEST(ExternalArraySetRules, Remove) {
+TEST(ExternalArraySetScenarios, Remove) {
     Entry entries[State::capacity];
     Set set(entries, State::capacity);
     State state(set);
@@ -184,7 +184,7 @@ TEST(ExternalArraySetRules, Remove) {
     Rules::remove.apply(state);
 }
 
-TEST(ExternalArraySetRules, RemoveExisting) {
+TEST(ExternalArraySetScenarios, RemoveExisting) {
     Entry entries[State::capacity];
     Set set(entries, State::capacity);
     State state(set);

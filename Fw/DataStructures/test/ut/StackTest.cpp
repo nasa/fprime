@@ -160,13 +160,13 @@ TEST(Stack, CopyDataFrom) {
     }
 }
 
-TEST(StackRules, PushOK) {
+TEST(StackScenarios, PushOK) {
     State::Stack stack;
     State state(stack);
     Rules::pushOK.apply(state);
 }
 
-TEST(StackRules, PushFull) {
+TEST(StackScenarios, PushFull) {
     State::Stack stack;
     State state(stack);
     for (FwSizeType i = 0; i < State::capacity; i++) {
@@ -175,7 +175,7 @@ TEST(StackRules, PushFull) {
     Rules::pushFull.apply(state);
 }
 
-TEST(StackRules, At) {
+TEST(StackScenarios, At) {
     State::Stack stack;
     State state(stack);
     Rules::pushOK.apply(state);
@@ -184,20 +184,20 @@ TEST(StackRules, At) {
     }
 }
 
-TEST(StackRules, PopOK) {
+TEST(StackScenarios, PopOK) {
     State::Stack stack;
     State state(stack);
     Rules::pushOK.apply(state);
     Rules::popOK.apply(state);
 }
 
-TEST(StackRules, PopEmpty) {
+TEST(StackScenarios, PopEmpty) {
     State::Stack stack;
     State state(stack);
     Rules::popEmpty.apply(state);
 }
 
-TEST(StackRules, Clear) {
+TEST(StackScenarios, Clear) {
     State::Stack stack;
     State state(stack);
     Rules::pushOK.apply(state);

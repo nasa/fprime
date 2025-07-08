@@ -193,14 +193,14 @@ TEST(ExternalFifoQueue, CopyDataFrom) {
     }
 }
 
-TEST(ExternalFifoQueueRules, EnqueueOK) {
+TEST(ExternalFifoQueueScenarios, EnqueueOK) {
     U32 items[State::capacity];
     State::ExternalQueue queue(items, State::capacity);
     State state(queue);
     Rules::enqueueOK.apply(state);
 }
 
-TEST(ExternalFifoQueueRules, EnqueueFull) {
+TEST(ExternalFifoQueueScenarios, EnqueueFull) {
     U32 items[State::capacity];
     State::ExternalQueue queue(items, State::capacity);
     State state(queue);
@@ -210,7 +210,7 @@ TEST(ExternalFifoQueueRules, EnqueueFull) {
     Rules::enqueueFull.apply(state);
 }
 
-TEST(ExternalFifoQueueRules, At) {
+TEST(ExternalFifoQueueScenarios, At) {
     U32 items[State::capacity];
     State::ExternalQueue queue(items, State::capacity);
     State state(queue);
@@ -218,7 +218,7 @@ TEST(ExternalFifoQueueRules, At) {
     Rules::at.apply(state);
 }
 
-TEST(ExternalFifoQueueRules, DequeueOK) {
+TEST(ExternalFifoQueueScenarios, DequeueOK) {
     U32 items[State::capacity];
     State::ExternalQueue queue(items, State::capacity);
     State state(queue);
@@ -226,14 +226,14 @@ TEST(ExternalFifoQueueRules, DequeueOK) {
     Rules::dequeueOK.apply(state);
 }
 
-TEST(ExternalFifoQueueRules, DequeueEmpty) {
+TEST(ExternalFifoQueueScenarios, DequeueEmpty) {
     U32 items[State::capacity];
     State::ExternalQueue queue(items, State::capacity);
     State state(queue);
     Rules::dequeueEmpty.apply(state);
 }
 
-TEST(ExternalFifoQueueRules, Clear) {
+TEST(ExternalFifoQueueScenarios, Clear) {
     U32 items[State::capacity];
     State::ExternalQueue queue(items, State::capacity);
     State state(queue);
