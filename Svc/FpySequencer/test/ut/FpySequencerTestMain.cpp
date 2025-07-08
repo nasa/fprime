@@ -775,7 +775,7 @@ TEST_F(FpySequencerTester, uitofp) {
     U64 src = std::numeric_limits<U64>::max();
     F64 expected = static_cast<F64>(src);
 
-    I64 res = tester_unaryRegOp_uitofp(src);
+    I64 res = tester_unaryRegOp_uitofp(static_cast<I64>(src));
     F64 fres;
     memcpy(&fres, &res, sizeof(res));
     ASSERT_EQ(fres, expected);
