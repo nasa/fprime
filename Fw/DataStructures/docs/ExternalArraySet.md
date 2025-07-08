@@ -29,6 +29,8 @@ as the set implementation.
 |`Entry`|Alias of [`SetOrMapIterator<T, Nil>`](SetOrMapIterator.md)|
 |`Iterator`|Alias of [`SetIterator<T>`](SetIterator.md)|
 
+The type `Nil` is defined [here](Nil.md).
+
 ## 4. Private Member Variables
 
 `ExternalArraySet` has the following private member variables.
