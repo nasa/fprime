@@ -106,90 +106,72 @@ TEST(ExternalArrayMap, CopyDataFrom) {
         Map m2(entries2, maxSize);
         State::testCopyDataFrom(m1, smallSize, m2);
     }
-    // size1 == size2
+    // size1 == capacity2
     {
         Map m2(entries2, maxSize);
         State::testCopyDataFrom(m1, maxSize, m2);
     }
-    // size1 > size2
+    // size1 > capacity2
     {
         Map m2(entries2, smallSize);
         State::testCopyDataFrom(m1, maxSize, m2);
     }
 }
 
-TEST(ExternalArrayMapRules, Clear) {
+TEST(ExternalArrayMapScenarios, Clear) {
     Entry entries[State::capacity];
     Map map(entries, State::capacity);
     State state(map);
-    Rules::insertNotFull.apply(state);
-    ASSERT_EQ(state.map.getSize(), 1);
-    Rules::clear.apply(state);
-    ASSERT_EQ(state.map.getSize(), 0);
+    Scenarios::clear(state);
 }
 
-TEST(ExternalArrayMapRules, Find) {
+TEST(ExternalArrayMapScenarios, Find) {
     Entry entries[State::capacity];
     Map map(entries, State::capacity);
     State state(map);
-    Rules::find.apply(state);
-    state.useStoredKey = true;
-    Rules::insertNotFull.apply(state);
-    Rules::find.apply(state);
+    Scenarios::find(state);
 }
 
-TEST(ExternalArrayMapRules, FindExisting) {
+TEST(ExternalArrayMapScenarios, FindExisting) {
     Entry entries[State::capacity];
     Map map(entries, State::capacity);
     State state(map);
-    Rules::insertNotFull.apply(state);
-    Rules::findExisting.apply(state);
+    Scenarios::findExisting(state);
 }
 
-TEST(ExternalArrayMapRules, InsertExisting) {
+TEST(ExternalArrayMapScenarios, InsertExisting) {
     Entry entries[State::capacity];
     Map map(entries, State::capacity);
     State state(map);
-    Rules::insertNotFull.apply(state);
-    Rules::insertExisting.apply(state);
+    Scenarios::insertExisting(state);
 }
 
-TEST(ExternalArrayMapRules, InsertFull) {
+TEST(ExternalArrayMapScenarios, InsertFull) {
     Entry entries[State::capacity];
     Map map(entries, State::capacity);
     State state(map);
-    state.useStoredKey = true;
-    for (FwSizeType i = 0; i < State::capacity; i++) {
-        state.storedKey = static_cast<State::KeyType>(i);
-        Rules::insertNotFull.apply(state);
-    }
-    state.useStoredKey = false;
-    Rules::insertFull.apply(state);
+    Scenarios::insertFull(state);
 }
 
-TEST(ExternalArrayMapRules, InsertNotFull) {
+TEST(ExternalArrayMapScenarios, InsertNotFull) {
     Entry entries[State::capacity];
     Map map(entries, State::capacity);
     State state(map);
-    Rules::insertNotFull.apply(state);
+    Scenarios::insertNotFull(state);
 }
 
-TEST(ExternalArrayMapRules, Remove) {
+TEST(ExternalArrayMapScenarios, Remove) {
     Entry entries[State::capacity];
     Map map(entries, State::capacity);
     State state(map);
-    state.useStoredKey = true;
-    Rules::insertNotFull.apply(state);
-    Rules::remove.apply(state);
-    Rules::remove.apply(state);
+    Scenarios::remove(state);
 }
 
-TEST(ExternalArrayMapRules, RemoveExisting) {
+TEST(ExternalArrayMapScenarios, RemoveExisting) {
     Entry entries[State::capacity];
     Map map(entries, State::capacity);
     State state(map);
-    Rules::insertNotFull.apply(state);
-    Rules::removeExisting.apply(state);
+    Scenarios::removeExisting(state);
 }
 
 TEST(ExternalArrayMapScenarios, Random) {

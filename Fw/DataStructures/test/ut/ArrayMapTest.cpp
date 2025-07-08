@@ -92,70 +92,52 @@ TEST(ArrayMap, CopyDataFrom) {
     }
 }
 
-TEST(ArrayMapRules, Clear) {
+TEST(ArrayMapScenarios, Clear) {
     Map map;
     State state(map);
-    Rules::insertNotFull.apply(state);
-    ASSERT_EQ(state.map.getSize(), 1);
-    Rules::clear.apply(state);
-    ASSERT_EQ(state.map.getSize(), 0);
+    Scenarios::clear(state);
 }
 
-TEST(ArrayMapRules, Find) {
+TEST(ArrayMapScenarios, Find) {
     Map map;
     State state(map);
-    Rules::find.apply(state);
-    state.useStoredKey = true;
-    Rules::insertNotFull.apply(state);
-    Rules::find.apply(state);
+    Scenarios::find(state);
 }
 
-TEST(ArrayMapRules, FindExisting) {
+TEST(ArrayMapScenarios, FindExisting) {
     Map map;
     State state(map);
-    Rules::insertNotFull.apply(state);
-    Rules::findExisting.apply(state);
+    Scenarios::findExisting(state);
 }
 
-TEST(ArrayMapRules, InsertExisting) {
+TEST(ArrayMapScenarios, InsertExisting) {
     Map map;
     State state(map);
-    Rules::insertNotFull.apply(state);
-    Rules::insertExisting.apply(state);
+    Scenarios::insertExisting(state);
 }
 
-TEST(ArrayMapRules, InsertFull) {
+TEST(ArrayMapScenarios, InsertFull) {
     Map map;
     State state(map);
-    state.useStoredKey = true;
-    for (FwSizeType i = 0; i < State::capacity; i++) {
-        state.storedKey = static_cast<State::KeyType>(i);
-        Rules::insertNotFull.apply(state);
-    }
-    state.useStoredKey = false;
-    Rules::insertFull.apply(state);
+    Scenarios::insertFull(state);
 }
 
-TEST(ArrayMapRules, InsertNotFull) {
+TEST(ArrayMapScenarios, InsertNotFull) {
     Map map;
     State state(map);
-    Rules::insertNotFull.apply(state);
+    Scenarios::insertNotFull(state);
 }
 
-TEST(ArrayMapRules, Remove) {
+TEST(ArrayMapScenarios, Remove) {
     Map map;
     State state(map);
-    state.useStoredKey = true;
-    Rules::insertNotFull.apply(state);
-    Rules::remove.apply(state);
-    Rules::remove.apply(state);
+    Scenarios::remove(state);
 }
 
-TEST(ArrayMapRules, RemoveExisting) {
+TEST(ArrayMapScenarios, RemoveExisting) {
     Map map;
     State state(map);
-    Rules::insertNotFull.apply(state);
-    Rules::removeExisting.apply(state);
+    Scenarios::removeExisting(state);
 }
 
 TEST(ArrayMapScenarios, Random) {

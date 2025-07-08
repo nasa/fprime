@@ -15,6 +15,56 @@ namespace MapTest {
 
 namespace Scenarios {
 
+void clear(State& state) {
+    Rules::insertNotFull.apply(state);
+    ASSERT_EQ(state.map.getSize(), 1);
+    Rules::clear.apply(state);
+    ASSERT_EQ(state.map.getSize(), 0);
+}
+
+void find(State& state) {
+    Rules::find.apply(state);
+    state.useStoredKey = true;
+    Rules::insertNotFull.apply(state);
+    Rules::find.apply(state);
+}
+
+void findExisting(State& state) {
+    Rules::insertNotFull.apply(state);
+    Rules::findExisting.apply(state);
+}
+
+void insertExisting(State& state) {
+    Rules::insertNotFull.apply(state);
+    Rules::insertExisting.apply(state);
+}
+
+void insertFull(State& state) {
+    state.useStoredKey = true;
+    for (FwSizeType i = 0; i < State::capacity; i++) {
+        state.storedKey = static_cast<State::KeyType>(i);
+        Rules::insertNotFull.apply(state);
+    }
+    state.useStoredKey = false;
+    Rules::insertFull.apply(state);
+}
+
+void insertNotFull(State& state) {
+    Rules::insertNotFull.apply(state);
+}
+
+void remove(State& state) {
+    state.useStoredKey = true;
+    Rules::insertNotFull.apply(state);
+    Rules::remove.apply(state);
+    Rules::remove.apply(state);
+}
+
+void removeExisting(State& state) {
+    Rules::insertNotFull.apply(state);
+    Rules::removeExisting.apply(state);
+}
+
 void random(const Fw::StringBase& name, State& state, U32 maxNumSteps) {
     Rule* rules[] = {
       &Rules::clear,
