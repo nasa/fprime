@@ -19,13 +19,13 @@ module Svc {
         # Events
         # ----------------------------------------------------------------------
 
-        @ Warning event that rate group has had a cycle slip
-        event RateGroupCycleSlip(
-                                  p: U32 @< Port that is delayed
-                                  start: U32 @< Start of execution window
-                                  length: U32 @< Length of the execution window
-                                  ticks: U32 @< Time in ticks the deadline was late
-                                ) \
+        @ Warning event that rate group has had a missed deadline
+        event MissedDeadline(
+                                p: FwIndexType @< Port that is delayed
+                                start: U32 @< Start of execution window
+                                length: U32 @< Length of the execution window
+                                ticks: U32 @< Time in ticks the deadline was late
+                            ) \
           severity warning high \
           id 0 \
           format "Port {} schedule at {} for {} ticks was long by {} ticks" \

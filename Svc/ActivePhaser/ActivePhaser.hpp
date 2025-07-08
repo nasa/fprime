@@ -1,7 +1,13 @@
 // ======================================================================
 // \title  ActivePhaser.hpp
-// \author shaokail
-// \brief  hpp file for ActivePhaser component implementation class
+// \author mstarch
+// \brief  cpp file for ActivePhaser component implementation class
+//
+// \copyright
+// Copyright 2009-2015, by the California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
+//
 // ======================================================================
 
 #ifndef Svc_ActivePhaser_HPP
@@ -12,37 +18,98 @@
 namespace Svc {
 
 class ActivePhaser final : public ActivePhaserComponentBase {
-  public:
-    // ----------------------------------------------------------------------
-    // Component construction and destruction
-    // ----------------------------------------------------------------------
+    public:
+        static const U32 MAX_CHILDREN = 100;
+        static const U32 DONT_CARE = 0xFFFFFFFFlu;
 
-    //! Construct ActivePhaser object
-    ActivePhaser(const char* const compName  //!< The component name
-    );
+        enum PhaserContextType { SEQUENTIAL, COUNT };
 
-    //! Destroy ActivePhaser object
-    ~ActivePhaser();
+        /**
+         * \brief configuration for phasing
+         */
+        struct PhaserStateEntry {
+            FwIndexType port;
+            U32 start;
+            U32 length;
+            U32 context;
+            PhaserContextType contextType;
+            bool started;
+        };
 
-  PRIVATE:
-    // ----------------------------------------------------------------------
-    // Handler implementations for typed input ports
-    // ----------------------------------------------------------------------
+        struct PhaserStateTable {
+            U32 used;
+            U32 current;
+            PhaserStateEntry entries[MAX_CHILDREN];
+        };
 
-    //! Handler implementation for CycleIn
-    void CycleIn_handler(FwIndexType portNum,     //!< The port number
-                         Os::RawTime& cycleStart  //!< Cycle start timestamp
-                         ) override;
+        // ----------------------------------------------------------------------
+        // Component construction and destruction
+        // ----------------------------------------------------------------------
 
-  PRIVATE:
-    // ----------------------------------------------------------------------
-    // Handler implementations for user-defined internal interfaces
-    // ----------------------------------------------------------------------
+        //! Construct ActivePhaser object
+        ActivePhaser(const char* const compName  //!< The component name
+        );
 
-    //! Handler implementation for Tick
-    //!
-    //! An internal port for sending data of type T
-    void Tick_internalInterfaceHandler() override;
+        //! Initialize ActivePhaser object
+        //!
+        void init(const FwSizeType queueDepth,   /*!< The queue depth*/
+                const FwIndexType instance = 0 /*!< The instance number*/
+        );
+
+        //! Configure ActivePhaser object
+        //!
+        void configure(U32 cycle_ticks);
+
+        //! Register a phased port call
+        //!
+        void register_phased(FwIndexType port, U32 length, U32 start=DONT_CARE, U32 context=DONT_CARE);
+
+        //! Destroy ActivePhaser object
+        ~ActivePhaser();
+
+    PRIVATE :
+        // ----------------------------------------------------------------------
+        // Handler implementations for typed input ports
+        // ----------------------------------------------------------------------
+
+        //! Handler implementation for CycleIn
+        void
+        CycleIn_handler(FwIndexType portNum,     //!< The port number
+                        Os::RawTime& cycleStart  //!< Cycle start timestamp
+                        ) override;
+
+        // ----------------------------------------------------------------------
+        // Handler implementations for user-defined internal interfaces
+        // ----------------------------------------------------------------------
+
+        //! Handler implementation for Tick
+        //!
+        //! An internal port for sending data of type T
+        void Tick_internalInterfaceHandler() override;
+
+        //! Handle a finishing task
+        //!
+        bool finishChild(U32 current_ticks);
+
+        //! Handle a starting task
+        //!
+        void startChild(U32 current_ticks);
+
+        //! Auto-incrementing context helper
+        //!
+        U32 getNextContext(FwIndexType port);
+
+        //! Calculating the time in cycle
+        //!
+        U32 timeInCycle(U32 full_ticks);
+
+        Os::Mutex m_lock;
+        U32 m_cycle;
+        U32 m_ticks;
+        U32 m_last_start_ticks;
+        U32 m_last_cycle_ticks;
+        U32 m_cycle_count;
+        PhaserStateTable m_state;
 };
 
 }  // namespace Svc
