@@ -7,7 +7,6 @@ ACTIVELOGGERIMPLTESTER
 ACTIVERATEGROUP
 ACTIVERATEGROUPCFG
 ACTIVERATEGROUPTESTER
-ACTIVERATEGROUPIMPLTESTER
 ACTIVETEXTLOGGERIMPL
 ADDRSTRLEN
 adminlist
@@ -90,7 +89,6 @@ CMDPACKET
 cmdresponse
 cmdseq
 cmdsequencer
-cmps
 cntx
 CODEFILE
 COLORSTYLE
@@ -100,6 +98,7 @@ COMCCSDS
 COMCCSDSSUBTOPOLOGY
 COMFPRIME
 COMFPRIMESUBTOPOLOGY
+COMLOG
 comlogger
 COMMANDDISPATCHERIMPL
 COMMANDDISPATCHERIMPLCFG
@@ -230,7 +229,6 @@ FILEOPENERROR
 FILEWRITEERROR
 fio
 fle
-flhs
 FNDELAY
 fne
 FONTPATH
@@ -249,7 +247,6 @@ fpy
 FPYSEQUENCER
 freeram
 Fregoso
-frhs
 frsize
 fsblkcnt
 fsrc
@@ -261,10 +258,8 @@ gcov
 gdiplus
 GENHUB
 getfooter
-getseconds
 getstatements
 gettime
-getuseconds
 getty
 ghprb
 gitmodules
@@ -380,7 +375,6 @@ LOCALSTATEDIR
 LOGGERRULES
 LOGPACKET
 lseek
-lvar
 LVL
 lxml
 MACROFILE
@@ -423,7 +417,6 @@ mycompany
 nasafprime
 nbits
 ncsl
-netinet
 newtio
 nmsgs
 NOBLOCK
@@ -501,10 +494,9 @@ PRIORITYQUEUE
 prm
 PRMDB
 PRMDBIMPL
-PRMDBTESTER
-PRMDBIMPLTESTER
 PRMDBIMPLTESTERCFG
 PRMDBLIMPLCFG
+PRMDBTESTER
 PRMLEDINITSTATE
 PROCBUFFERSENDOUT
 PRODUCTGETIN
@@ -579,13 +571,12 @@ seqgen
 serializables
 setaffinity
 setinheritsched
-setlocalvar
 SETLOGGING
 setprotocol
 setschedparam
 setschedpolicy
-setstacksize
 setser
+setstacksize
 settime
 sev
 sfregoso
@@ -689,6 +680,7 @@ totalram
 tparam
 TPP
 trinomials
+TSplit
 tts
 TXD
 typedef'ed
@@ -696,7 +688,6 @@ typedef
 uart
 UDPSOCKET
 uge
-ulhs
 UML
 UNEXP
 unistd
@@ -704,7 +695,6 @@ UNITTESTASSERT
 unittests
 useconds
 usecs
-urhs
 valgrind
 vbai
 VCA
