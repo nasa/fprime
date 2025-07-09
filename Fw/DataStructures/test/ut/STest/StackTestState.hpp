@@ -9,7 +9,7 @@
 
 #include <vector>
 
-#include "Fw/DataStructures/ExternalStack.hpp"
+#include "Fw/DataStructures/StackBase.hpp"
 #include "STest/STest/Pick/Pick.hpp"
 
 namespace Fw {
@@ -21,8 +21,6 @@ struct State {
     using ItemType = U32;
     //! The stack capacity
     static constexpr FwSizeType capacity = 1024;
-    //! The ExternalStack type
-    using ExternalStack = ExternalStack<ItemType>;
     //! THe StackBase type
     using StackBase = StackBase<ItemType>;
     //! Constructor
