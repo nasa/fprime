@@ -29,7 +29,8 @@ ActivePhaser ::ActivePhaser(const char* const compName)
 }
 
 void ActivePhaser ::init(const FwSizeType queueDepth, const FwIndexType instance) {
-    FW_ASSERT(queueDepth == 1, static_cast<FwAssertArgType>(queueDepth));  // Dependent on queue-depth of one to prevent a rush to catch up
+    FW_ASSERT(queueDepth == 1, static_cast<FwAssertArgType>(
+                                   queueDepth));  // Dependent on queue-depth of one to prevent a rush to catch up
     ActivePhaserComponentBase::init(queueDepth, instance);
 }
 
@@ -52,9 +53,8 @@ void ActivePhaser ::register_phased(FwIndexType port, U32 length, U32 start, U32
                   static_cast<FwAssertArgType>(start));  // Must start after previous entry
         start = (start == DONT_CARE) ? previous.start + previous.length : start;
     }
-    start = (start == DONT_CARE)
-                ? 0
-                : start;  // Shaokai: If start == DONT_CARE, doesn't 0 overwrite the start value set above?
+    // Shaokai: If start == DONT_CARE, doesn't 0 overwrite the start value set above?
+    start = (start == DONT_CARE) ? 0 : start;
     PhaserStateEntry& entry = m_state.entries[m_state.used];
 
     // Check assertions on the ports
@@ -99,7 +99,7 @@ void ActivePhaser ::Tick_internalInterfaceHandler() {
     if ((this->timeInCycle(full_ticks) >= m_cycle) && (m_state.current == m_state.used)) {
         m_last_cycle_ticks = full_ticks;
         m_cycle_count++;
-        m_state.current = 0;
+        m_state.current = 0;  // Back to processing the first task.
     }
     // Finish active children and run the next child if it is not a short cycle
     if (!finishChild(full_ticks)) {
@@ -112,28 +112,35 @@ bool ActivePhaser ::finishChild(U32 full_ticks) {
     if ((m_state.current >= m_state.used) || (not m_state.entries[m_state.current].started)) {
         return false;
     }
-    // Shaokai: Only reachable here when m_state.current < m_state.used && m_state.entries[m_state.current].started
+    // Only reachable here when current has not reached used
+    // and the current task was previously marked started.
+    // Now the task can be marked as done and the next task
+    // can be launched.
     PhaserStateEntry& entry = m_state.entries[(m_state.current % m_state.used)];
     const U32 execution_time = full_ticks - m_last_start_ticks;
     const U32 expected_time = entry.length;
 
     // Mark entry as done
     entry.started = false;
-    // Shaokai: If they are the same, then there is no need to set it to used.
-    // Shaokai: I would check whether they are different, if so, increment current.
+    // Increment the current task index if it has not reached used, i.e., the max index registered.
     m_state.current = (m_state.current == m_state.used) ? m_state.used : (m_state.current + 1);
-    // Check for overrun in timing
+    // Check for overrun in timing. If a deadline violation is detected,
+    // return true to mark all children as finished and prevent another child task from launching.
     if (execution_time > expected_time) {
         this->log_WARNING_HI_MissedDeadline(entry.port, entry.start, entry.length, (execution_time - expected_time));
         return true;
     }
+    // If no overrun, proceed with the next child task.
     return false;
 }
 
 void ActivePhaser ::startChild(U32 full_ticks) {
     // Guard against starting improperly
-    if ((m_state.current >= m_state.used) || (m_state.entries[m_state.current].start > timeInCycle(full_ticks)) ||
-        m_state.entries[m_state.current].started) {
+    if ((m_state.current >= m_state.used)  // Invalid. Current index surpasses the indices of registered tasks.
+        || (m_state.entries[m_state.current].start >
+            timeInCycle(full_ticks))                  // Current time has not reached the intended start time.
+        || m_state.entries[m_state.current].started)  // The current child task has already started.
+    {
         return;
     }
     PhaserStateEntry& entry = m_state.entries[(m_state.current % m_state.used)];
@@ -145,8 +152,8 @@ void ActivePhaser ::startChild(U32 full_ticks) {
 
 U32 ActivePhaser ::getNextContext(FwIndexType port) {
     U32 context = 0;
-    // Shaokai: Do a linear search to see if the entry's port matches the target port,
-    // if so, bump the context.
+    // Linear search to see if the entry's port matches the target port,
+    // if so, increment the context.
     for (U32 i = 0; i < m_state.used; i++) {
         if (m_state.entries[i].port == port) {
             context = m_state.entries[i].context + 1;

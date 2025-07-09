@@ -37,8 +37,8 @@ class ActivePhaser final : public ActivePhaserComponentBase {
         };
 
         struct PhaserStateTable {
-            U32 used;
-            U32 current;
+            U32 used;       //!< The number of registered tasks (the last registered task is at used - 1)
+            U32 current;    //!< The current child task entry index
             PhaserStateEntry entries[MAX_CHILDREN];
         };
 
