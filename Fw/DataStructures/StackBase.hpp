@@ -54,7 +54,8 @@ class StackBase {
     virtual void clear() = 0;
 
     //! Get an item at an index.
-    //! Indices go from left to right in the stack.
+    //! Index 0 is the rightmost (latest) element in the stack.
+    //! Increasing indices go from right to left.
     //! Fails an assertion if the index is out of range.
     //! \return The item
     virtual const T& at(FwSizeType index  //!< The index
