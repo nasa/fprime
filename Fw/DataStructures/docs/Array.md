@@ -182,19 +182,3 @@ Array<U32, size> a = { 1, 2, 3 };
 ExternalArray<U32> ea = a.asExternalArray();
 ASSERT_EQ(ea[0], 1);
 ```
-
-## 6. Public Static Functions
-
-### 6.1. getStaticSize
-
-```c++
-static constexpr FwSizeType getStaticSize()
-```
-
-Return the static size `S` of the array.
-
-_Example:_
-```c++
-const auto size = Array<U32, 3>::getStaticSize();
-ASSERT_EQ(size, 3);
-```

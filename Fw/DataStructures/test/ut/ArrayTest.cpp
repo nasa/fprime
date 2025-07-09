@@ -88,11 +88,6 @@ TEST(Array, GetElements) {
     ASSERT_EQ(elements2[0], 1);
 }
 
-TEST(Array, GetStaticSize) {
-    const auto size = Array<U32, 3>::getStaticSize();
-    ASSERT_EQ(size, 3);
-}
-
 TEST(Array, AsExternalArray) {
     Array<U32, 3> a = { 1, 2, 3 };
     ExternalArray<U32> ea = a.asExternalArray();

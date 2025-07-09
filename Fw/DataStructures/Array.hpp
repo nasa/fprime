@@ -110,15 +110,6 @@ class Array final {
     // \return The ExternalArray
     ExternalArray<T> asExternalArray() { return ExternalArray<T>(this->m_elements, S); }
 
-  public:
-    // ----------------------------------------------------------------------
-    // Public static functions
-    // ----------------------------------------------------------------------
-
-    //! Get the static array size
-    //! \return The size
-    static constexpr FwSizeType getStaticSize() { return S; }
-
   private:
     // ----------------------------------------------------------------------
     // Private member variables
