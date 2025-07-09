@@ -20,6 +20,7 @@ void random(const Fw::StringBase& name, State& state, U32 maxNumSteps) {
       &Rules::pushOK, 
       &Rules::pushFull,
       &Rules::at, 
+      &Rules::peek, 
       &Rules::popOK,
       &Rules::popEmpty,
       &Rules::clear

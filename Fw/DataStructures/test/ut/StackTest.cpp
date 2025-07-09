@@ -184,6 +184,14 @@ TEST(StackScenarios, At) {
     }
 }
 
+TEST(StackScenarios, Peek) {
+    State::Stack stack;
+    State state(stack);
+    Rules::pushOK.apply(state);
+    Rules::pushOK.apply(state);
+    Rules::peek.apply(state);
+}
+
 TEST(StackScenarios, PopOK) {
     State::Stack stack;
     State state(stack);

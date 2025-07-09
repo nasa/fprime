@@ -12,17 +12,19 @@ namespace StackTest {
 
 namespace Rules {
 
-PushOK pushOK;
-
-PushFull pushFull;
-
 At at;
 
-PopOK popOK;
+Clear clear;
+
+Peek peek;
 
 PopEmpty popEmpty;
 
-Clear clear;
+PopOK popOK;
+
+PushFull pushFull;
+
+PushOK pushOK;
 
 };  // namespace Rules
 
