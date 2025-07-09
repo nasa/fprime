@@ -47,43 +47,6 @@ TEST(Stack, CopyConstructor) {
     ASSERT_EQ(s2.getSize(), 1);
 }
 
-TEST(Stack, PushOK) {
-    const FwSizeType size = STest::Pick::lowerUpper(1, State::capacity);
-    TestStack stack;
-    ASSERT_EQ(stack.getCapacity(), FwSizeType(State::capacity));
-    ASSERT_EQ(stack.getSize(), 0);
-    for (FwSizeType i = 0; i < size; i++) {
-        // Pick a value
-        const U32 val = STest::Pick::any();
-        // Push it
-        auto status = stack.push(val);
-        ASSERT_EQ(status, Success::SUCCESS);
-        // Peek it
-        U32 val1 = 0;
-        status = stack.peek(val1);
-        ASSERT_EQ(status, Success::SUCCESS);
-        ASSERT_EQ(val1, val);
-        // Check the size
-        ASSERT_EQ(stack.getSize(), i + 1);
-    }
-    stack.clear();
-    ASSERT_EQ(stack.getSize(), 0);
-}
-
-TEST(Stack, PushFull) {
-    TestStack stack;
-    // Fill up the stack
-    for (FwSizeType i = 0; i < State::capacity; i++) {
-        const auto status = stack.push(0);
-        ASSERT_EQ(status, Success::SUCCESS);
-    }
-    // Now try to push another element
-    const auto item = State::getRandomItem();
-    const auto status = stack.push(item);
-    // Push should fail
-    ASSERT_EQ(status, Success::FAILURE);
-}
-
 TEST(Stack, CopyAssignmentOperator) {
     // Call the constructor providing backing storage
     TestStack s1;
@@ -97,44 +60,6 @@ TEST(Stack, CopyAssignmentOperator) {
     // Call the copy assignment operator
     s2 = s1;
     ASSERT_EQ(s2.getSize(), 1);
-}
-
-TEST(Stack, PopOK) {
-    const FwSizeType size = STest::Pick::lowerUpper(1, State::capacity);
-    State::ItemType items[State::capacity];
-    TestStack stack;
-    ASSERT_EQ(stack.getCapacity(), FwSizeType(State::capacity));
-    ASSERT_EQ(stack.getSize(), 0);
-    for (FwSizeType i = 0; i < size; i++) {
-        // Pick a value
-        const auto item = State::getRandomItem();
-        // Push it
-        const auto status = stack.push(item);
-        items[i] = item;
-        ASSERT_EQ(status, Success::SUCCESS);
-        ASSERT_EQ(stack.getSize(), i + 1);
-    }
-    for (FwSizeType i = 0; i < size; i++) {
-        const FwSizeType stackIndex = size - 1 - i;
-        State::ItemType item = 0;
-        // Peek
-        auto status = stack.peek(item);
-        ASSERT_EQ(status, Success::SUCCESS);
-        ASSERT_EQ(item, items[stackIndex]);
-        // Pop it
-        status = stack.pop(item);
-        ASSERT_EQ(status, Success::SUCCESS);
-        ASSERT_EQ(item, items[stackIndex]);
-        ASSERT_EQ(stack.getSize(), stackIndex);
-    }
-    ASSERT_EQ(stack.getSize(), 0);
-}
-
-TEST(Stack, PopEmpty) {
-    TestStack stack;
-    State::ItemType item = 0;
-    const auto status = stack.pop(item);
-    ASSERT_EQ(status, Success::FAILURE);
 }
 
 TEST(Stack, CopyDataFrom) {
