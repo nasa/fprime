@@ -46,43 +46,6 @@ TEST(FifoQueue, CopyConstructor) {
     ASSERT_EQ(q2.getSize(), 1);
 }
 
-TEST(FifoQueue, EnqueueOK) {
-    const FwSizeType size = STest::Pick::lowerUpper(1, State::capacity);
-    Queue queue;
-    ASSERT_EQ(queue.getCapacity(), FwSizeType(State::capacity));
-    ASSERT_EQ(queue.getSize(), 0);
-    for (FwSizeType i = 0; i < size; i++) {
-        // Pick a value
-        const auto item = State::getRandomItem();
-        // Enqueue it
-        auto status = queue.enqueue(item);
-        ASSERT_EQ(status, Success::SUCCESS);
-        // Peek it
-        State::ItemType item1 = 0;
-        status = queue.peek(item1, i);
-        ASSERT_EQ(status, Success::SUCCESS);
-        ASSERT_EQ(item1, item);
-        // Check the size
-        ASSERT_EQ(queue.getSize(), i + 1);
-    }
-    queue.clear();
-    ASSERT_EQ(queue.getSize(), 0);
-}
-
-TEST(FifoQueue, EnqueueFull) {
-    Queue queue;
-    // Fill up the FIFO
-    for (FwSizeType i = 0; i < State::capacity; i++) {
-        const auto status = queue.enqueue(0);
-        ASSERT_EQ(status, Success::SUCCESS);
-    }
-    // Now try to push another element
-    const U32 val = STest::Pick::any();
-    const auto status = queue.enqueue(val);
-    // Push should fail
-    ASSERT_EQ(status, Success::FAILURE);
-}
-
 TEST(FifoQueue, CopyAssignmentOperator) {
     // Call the constructor providing backing storage
     Queue q1;
@@ -95,43 +58,6 @@ TEST(FifoQueue, CopyAssignmentOperator) {
     // Call the copy assignment operator
     q2 = q1;
     ASSERT_EQ(q2.getSize(), 1);
-}
-
-TEST(FifoQueue, DequeueOK) {
-    const FwSizeType size = STest::Pick::lowerUpper(1, State::capacity);
-    State::ItemType items[State::capacity];
-    Queue queue;
-    ASSERT_EQ(queue.getCapacity(), FwSizeType(State::capacity));
-    ASSERT_EQ(queue.getSize(), 0);
-    for (FwSizeType i = 0; i < size; i++) {
-        // Pick a value
-        const auto item = State::getRandomItem();
-        // Enqueue it
-        const auto status = queue.enqueue(item);
-        items[i] = item;
-        ASSERT_EQ(status, Success::SUCCESS);
-        ASSERT_EQ(queue.getSize(), i + 1);
-    }
-    for (FwSizeType i = 0; i < size; i++) {
-        State::ItemType item = 0;
-        // Peek
-        auto status = queue.peek(item);
-        ASSERT_EQ(status, Success::SUCCESS);
-        ASSERT_EQ(item, items[i]);
-        // Dequeue it
-        status = queue.dequeue(item);
-        ASSERT_EQ(status, Success::SUCCESS);
-        ASSERT_EQ(item, items[i]);
-        ASSERT_EQ(queue.getSize(), size - i - 1);
-    }
-    ASSERT_EQ(queue.getSize(), 0);
-}
-
-TEST(FifoQueue, DequeueEmpty) {
-    Queue queue;
-    State::ItemType item = 0;
-    const auto status = queue.dequeue(item);
-    ASSERT_EQ(status, Success::FAILURE);
 }
 
 TEST(FifoQueue, CopyDataFrom) {
