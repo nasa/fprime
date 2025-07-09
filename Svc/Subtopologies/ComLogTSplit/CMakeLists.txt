@@ -1,4 +1,4 @@
-add_fprime_subdirectory(ComLogTSplitConfig)
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ComLogTSplitConfig")
 
 register_fprime_module(
     AUTOCODER_INPUTS
