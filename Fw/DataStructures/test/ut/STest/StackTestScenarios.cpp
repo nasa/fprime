@@ -15,6 +15,44 @@ namespace StackTest {
 
 namespace Scenarios {
 
+void at(State& state) {
+    Rules::pushOK.apply(state);
+    for (FwSizeType i = 0; i < State::capacity; i++) {
+        Rules::at.apply(state);
+    }
+}
+
+void clear(State& state) {
+    Rules::pushOK.apply(state);
+    Rules::clear.apply(state);
+}
+
+void peek(State& state) {
+    Rules::pushOK.apply(state);
+    Rules::pushOK.apply(state);
+    Rules::peek.apply(state);
+}
+
+void popEmpty(State& state) {
+    Rules::popEmpty.apply(state);
+}
+
+void popOK(State& state) {
+    Rules::pushOK.apply(state);
+    Rules::popOK.apply(state);
+}
+
+void pushFull(State& state) {
+    for (FwSizeType i = 0; i < State::capacity; i++) {
+        Rules::pushOK.apply(state);
+    }
+    Rules::pushFull.apply(state);
+}
+
+void pushOK(State& state) {
+    Rules::pushOK.apply(state);
+}
+
 void random(const Fw::StringBase& name, State& state, U32 maxNumSteps) {
     Rule* rules[] = {
       &Rules::pushOK, 

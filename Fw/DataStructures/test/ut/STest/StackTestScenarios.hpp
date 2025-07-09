@@ -15,6 +15,20 @@ namespace StackTest {
 
 namespace Scenarios {
 
+void at(State& state);
+
+void clear(State& state);
+
+void peek(State& state);
+
+void popEmpty(State& state);
+
+void popOK(State& state);
+
+void pushFull(State& state);
+
+void pushOK(State& state);
+
 void random(const Fw::StringBase& name, State& state, U32 maxNumSteps);
 
 }  // namespace Scenarios

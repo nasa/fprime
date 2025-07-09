@@ -231,7 +231,8 @@ TEST(ExternalStackScenarios, At) {
 }
 
 TEST(ExternalStackScenarios, Peek) {
-    State::Stack stack;
+    U32 items[State::capacity];
+    State::ExternalStack stack(items, State::capacity);
     State state(stack);
     Rules::pushOK.apply(state);
     Rules::pushOK.apply(state);
