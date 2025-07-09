@@ -18,7 +18,7 @@ namespace Fw {
 namespace ArraySetOrMapImplTest {
 
 TEST(ArraySetOrMapImpl, ZeroArgConstructor) {
-    ArraySetOrMapImpl<U16, U32> impl;
+    State::Impl impl;
     ASSERT_EQ(impl.getCapacity(), 0);
     ASSERT_EQ(impl.getSize(), 0);
 }
