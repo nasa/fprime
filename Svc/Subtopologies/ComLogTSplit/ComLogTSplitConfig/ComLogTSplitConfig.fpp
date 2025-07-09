@@ -1,6 +1,4 @@
 module ComLogTSplitConfig {
-    # Base ID for the ComLogTSplit Subtopology, all components are offsets from this base ID
-    constant BASE_ID = 0x7000
     
     module QueueSizes {
         constant comLog      = 10
