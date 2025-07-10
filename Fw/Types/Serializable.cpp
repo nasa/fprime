@@ -17,6 +17,22 @@ Serializable::Serializable() {}
 
 Serializable::~Serializable() {}
 
+// ----------------------------------------------------------------------
+// Default implementations for new serialization methods
+//
+// These are provided for backward compatibility specifically for autocoding that
+// does not yet support the new serialization methods.
+// ----------------------------------------------------------------------
+
+SerializeStatus Serializable::serializeTo(SerializeBufferBase& buffer) const {
+    return this->serialize(buffer);
+}
+
+SerializeStatus Serializable::deserializeFrom(SerializeBufferBase& buffer) {
+    return this->deserialize(buffer);
+}
+
+// ----------------------------------------------------------------------
 #if FW_SERIALIZABLE_TO_STRING || FW_ENABLE_TEXT_LOGGING || BUILD_UT
 
 void Serializable::toString(StringBase& text) const {
@@ -503,10 +519,10 @@ SerializeStatus SerializeBufferBase::deserializeTo(U8* buff, Serializable::SizeT
     return status;
 }
 
-SerializeStatus SerializeBufferBase::deserializeTo(U8* buff, Serializable::SizeType& length, bool noLength) {
+SerializeStatus SerializeBufferBase::deserializeTo(U8* buff, Serializable::SizeType& length, Serialization::t mode) {
     FW_ASSERT(this->getBuffAddr());
 
-    if (!noLength) {
+    if (mode == Serialization::INCLUDE_LENGTH) {
         FwSizeStoreType storedLength;
         
         SerializeStatus stat = this->deserializeTo(storedLength);
@@ -700,16 +716,6 @@ const U8* SerializeBufferBase::getBuffAddrLeft() const {
     return &this->getBuffAddr()[this->m_deserLoc];
 }
 
-// ----------------------------------------------------------------------
-// Added overload to match header declaration
-// ----------------------------------------------------------------------
-SerializeStatus SerializeBufferBase::deserializeTo(U8* buff,
-                                                  Serializable::SizeType& length,
-                                                  Serialization::t mode) {
-    const bool noLength = (mode == Serialization::OMIT_LENGTH);
-    return this->deserializeTo(buff, length, noLength);
-}
-
 //!< gets address of end of serialization. Used to manually place data at the end
 U8* SerializeBufferBase::getBuffAddrSer() {
     return &this->getBuffAddr()[this->m_serLoc];
@@ -783,11 +789,8 @@ const U8* ExternalSerializeBuffer::getBuffAddr() const {
     return this->m_buff;
 }
 
-
-
-
 // ----------------------------------------------------------------------
-// Deprecated method implementations
+// Deprecated method implementations for backward compatibility
 // ----------------------------------------------------------------------
 
 SerializeStatus Serializable::serialize(SerializeBufferBase& buffer) const {
@@ -819,9 +822,8 @@ SerializeStatus SerializeBufferBase::serialize(const void* val) { return this->s
 SerializeStatus SerializeBufferBase::serialize(const U8* buff, FwSizeType length, bool noLength) { return this->serializeFrom(buff, length, noLength); }
 SerializeStatus SerializeBufferBase::serialize(const U8* buff, FwSizeType length) { return this->serializeFrom(buff, length); }
 SerializeStatus SerializeBufferBase::serialize(const U8* buff, FwSizeType length, Serialization::t mode) { return this->serializeFrom(buff, length, mode); }
-SerializeStatus SerializeBufferBase::serialize(const SerializeBufferBase& val) { return this->serializeFrom(val); }
 SerializeStatus SerializeBufferBase::serialize(const Serializable& val) { return this->serializeFrom(val); }
-
+SerializeStatus SerializeBufferBase::serialize(const SerializeBufferBase& val) { return this->serializeFrom(val); }
 
 SerializeStatus SerializeBufferBase::deserialize(U8& val) { return this->deserializeTo(val); }
 SerializeStatus SerializeBufferBase::deserialize(I8& val) { return this->deserializeTo(val); }
@@ -841,9 +843,19 @@ SerializeStatus SerializeBufferBase::deserialize(F32& val) { return this->deseri
 SerializeStatus SerializeBufferBase::deserialize(F64& val) { return this->deserializeTo(val); }
 SerializeStatus SerializeBufferBase::deserialize(bool& val) { return this->deserializeTo(val); }
 SerializeStatus SerializeBufferBase::deserialize(void*& val) { return this->deserializeTo(val); }
-SerializeStatus SerializeBufferBase::deserialize(U8* buff, FwSizeType& length, bool noLength) { return this->deserializeTo(buff, length, noLength); }
-SerializeStatus SerializeBufferBase::deserialize(U8* buff, FwSizeType& length) { return this->deserializeTo(buff, length); }
-SerializeStatus SerializeBufferBase::deserialize(U8* buff, FwSizeType& length, Serialization::t mode) { return this->deserializeTo(buff, length, mode); }
+SerializeStatus SerializeBufferBase::deserialize(U8* buff, FwSizeType& length, bool noLength) { 
+    const Serialization::t mode = noLength ? Serialization::OMIT_LENGTH : Serialization::INCLUDE_LENGTH;
+    return this->deserializeTo(buff, length, mode); 
+}
+
+SerializeStatus SerializeBufferBase::deserialize(U8* buff, FwSizeType& length) { 
+    return this->deserializeTo(buff, length, Serialization::INCLUDE_LENGTH); 
+}
+
+SerializeStatus SerializeBufferBase::deserialize(U8* buff, FwSizeType& length, Serialization::t mode) { 
+    return this->deserializeTo(buff, length, mode); 
+}
+
 SerializeStatus SerializeBufferBase::deserialize(Serializable& val) { return this->deserializeTo(val); }
 SerializeStatus SerializeBufferBase::deserialize(SerializeBufferBase& val) { return this->deserializeTo(val); }
 

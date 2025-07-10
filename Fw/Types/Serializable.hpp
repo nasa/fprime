@@ -28,19 +28,9 @@ class Serializable {
     using SizeType = FwSizeType;
 
   public:
-    virtual SerializeStatus serializeTo(SerializeBufferBase& buffer) const {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-        return this->serialize(buffer);
-#pragma GCC diagnostic pop
-    }  //!< serialize contents to buffer
+    virtual SerializeStatus serializeTo(SerializeBufferBase& buffer) const; //!< serialize contents to buffer
     
-    virtual SerializeStatus deserializeFrom(SerializeBufferBase& buffer) {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-        return this->deserialize(buffer);
-#pragma GCC diagnostic pop
-    }  //!< deserialize contents from buffer
+    virtual SerializeStatus deserializeFrom(SerializeBufferBase& buffer); //!< deserialize contents from buffer
 
     // ----------------------------------------------------------------------
     // Deprecated methods
@@ -105,8 +95,8 @@ class SerializeBufferBase {
         const void* val);  //!< serialize pointer (careful, only pointer value, not contents are serialized)
 
     //! serialize data buffer
-    DEPRECATED(SerializeStatus serialize(const U8* buff, Serializable::SizeType length, bool noLength),
-               "Use serialize(const U8* buff, FwSizeType length, Serialization::t mode) instead");
+    SerializeStatus serializeFrom(const U8* buff, FwSizeType length, bool noLength);
+
     //! serialize data buffer
     SerializeStatus serializeFrom(const U8* buff, FwSizeType length);
 
@@ -151,21 +141,13 @@ class SerializeBufferBase {
 
     SerializeStatus deserializeTo(void*& val);  //!< deserialize point value (careful, pointer value only, not contents)
 
-    //! deserialize data buffer
-    DEPRECATED(SerializeStatus deserialize(U8* buff, Serializable::SizeType& length, bool noLength),
-    "Use deserialize(U8* buff, FwSizeType& length, Serialization::t mode) instead");
+    SerializeStatus deserializeTo(U8* buff, FwSizeType& length);  //!< deserialize data buffer
 
-    //! deserialize data buffer
-    SerializeStatus deserializeTo(U8* buff, FwSizeType& length);
     //! \brief deserialize a byte buffer of a given length
-    //!
-    //! Deserialize bytes into `buff` of `length` bytes.  If `serializationMode` is set to `INCLUDE_LENGTH` then
-    //! the length is deserialized first followed by the bytes. Length may be omitted with `OMIT_LENGTH` and
-    //! in this case `length` bytes will be deserialized. `length` will be filled with the amount of data
-    //! deserialized.
-    //!
-    //! \param buff: buffer to hold deserialized data
-    //! \param length: length of data to deserialize length is filled with deserialized length
+    //! 
+    //! The `mode` parameter specifies whether the serialized length should be read from the buffer.
+    //! \param buff: buffer to deserialize into
+    //! \param length: length of the buffer, updated with the actual deserialized length
     //! \param mode: deserialization type
     //! \return status of serialization
     SerializeStatus deserializeTo(U8* buff, FwSizeType& length, Serialization::t mode);
@@ -201,12 +183,8 @@ class SerializeBufferBase {
     DEPRECATED(SerializeStatus serialize(const U8* buff, FwSizeType length, bool noLength), "Use serializeFrom instead");
     DEPRECATED(SerializeStatus serialize(const U8* buff, FwSizeType length), "Use serializeFrom instead");
     DEPRECATED(SerializeStatus serialize(const U8* buff, FwSizeType length, Serialization::t mode), "Use serializeFrom instead");
-    DEPRECATED(SerializeStatus serialize(const SerializeBufferBase& val), "Use serializeFrom instead");
     DEPRECATED(SerializeStatus serialize(const Serializable& val), "Use serializeFrom instead");
-
-    // ----------------------------------------------------------------------
-    // Deprecated deserialization methods
-    // ----------------------------------------------------------------------
+    DEPRECATED(SerializeStatus serialize(const SerializeBufferBase& val), "Use serializeFrom instead");
 
     DEPRECATED(SerializeStatus deserialize(U8& val), "Use deserializeTo instead");
     DEPRECATED(SerializeStatus deserialize(I8& val), "Use deserializeTo instead");

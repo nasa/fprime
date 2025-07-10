@@ -78,10 +78,7 @@ class RawTimeInterface : public Fw::Serializable {
     //! \param buffer The buffer to serialize the contents into.
     //! \return Fw::SerializeStatus indicating the result of the serialization.
     virtual Fw::SerializeStatus serializeTo(Fw::SerializeBufferBase& buffer) const {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
         return this->serialize(buffer);
-#pragma GCC diagnostic pop
     }
 
     //! \brief Deserialize the contents of the RawTimeInterface object from a buffer.
@@ -97,10 +94,7 @@ class RawTimeInterface : public Fw::Serializable {
     //! \param buffer The buffer to deserialize the contents from.
     //! \return Fw::SerializeStatus indicating the result of the deserialization.
     virtual Fw::SerializeStatus deserializeFrom(Fw::SerializeBufferBase& buffer) {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
         return this->deserialize(buffer);
-#pragma GCC diagnostic pop
     }
 
 };
