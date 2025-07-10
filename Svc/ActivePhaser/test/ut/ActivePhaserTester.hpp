@@ -29,12 +29,12 @@ struct CallContext {
 
 struct TestChild {
     FwIndexType port;
-    U32 length;
-    U32 actual_length;
+    U32 length;         // Execution time bound for a child task
+    U32 actual_length;  // Actual execution time configured by the test case
     U32 actual_start;
     U32 start = ActivePhaser::DONT_CARE;
     U32 context = ActivePhaser::DONT_CARE;
-    U32 runtime;
+    U32 runtime;  // A counter tracking ongoing execution time
 };
 
 class FauxPhaser {
