@@ -60,7 +60,7 @@ SerializeBufferBase& SerializeBufferBase::operator=(const SerializeBufferBase& s
 
 // serialization routines
 
-SerializeStatus SerializeBufferBase::serialize(U8 val) {
+SerializeStatus SerializeBufferBase::serializeFrom(U8 val) {
     if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(val)) - 1 >= this->getBuffCapacity()) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
     }
@@ -72,7 +72,7 @@ SerializeStatus SerializeBufferBase::serialize(U8 val) {
     return FW_SERIALIZE_OK;
 }
 
-SerializeStatus SerializeBufferBase::serialize(I8 val) {
+SerializeStatus SerializeBufferBase::serializeFrom(I8 val) {
     if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(val)) - 1 >= this->getBuffCapacity()) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
     }
@@ -84,7 +84,7 @@ SerializeStatus SerializeBufferBase::serialize(I8 val) {
 }
 
 #if FW_HAS_16_BIT == 1
-SerializeStatus SerializeBufferBase::serialize(U16 val) {
+SerializeStatus SerializeBufferBase::serializeFrom(U16 val) {
     if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(val)) - 1 >= this->getBuffCapacity()) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
     }
@@ -97,7 +97,7 @@ SerializeStatus SerializeBufferBase::serialize(U16 val) {
     return FW_SERIALIZE_OK;
 }
 
-SerializeStatus SerializeBufferBase::serialize(I16 val) {
+SerializeStatus SerializeBufferBase::serializeFrom(I16 val) {
     if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(val)) - 1 >= this->getBuffCapacity()) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
     }
@@ -111,7 +111,7 @@ SerializeStatus SerializeBufferBase::serialize(I16 val) {
 }
 #endif
 #if FW_HAS_32_BIT == 1
-SerializeStatus SerializeBufferBase::serialize(U32 val) {
+SerializeStatus SerializeBufferBase::serializeFrom(U32 val) {
     if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(val)) - 1 >= this->getBuffCapacity()) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
     }
@@ -126,7 +126,7 @@ SerializeStatus SerializeBufferBase::serialize(U32 val) {
     return FW_SERIALIZE_OK;
 }
 
-SerializeStatus SerializeBufferBase::serialize(I32 val) {
+SerializeStatus SerializeBufferBase::serializeFrom(I32 val) {
     if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(val)) - 1 >= this->getBuffCapacity()) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
     }
@@ -143,7 +143,7 @@ SerializeStatus SerializeBufferBase::serialize(I32 val) {
 #endif
 
 #if FW_HAS_64_BIT == 1
-SerializeStatus SerializeBufferBase::serialize(U64 val) {
+SerializeStatus SerializeBufferBase::serializeFrom(U64 val) {
     if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(val)) - 1 >= this->getBuffCapacity()) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
     }
@@ -162,7 +162,7 @@ SerializeStatus SerializeBufferBase::serialize(U64 val) {
     return FW_SERIALIZE_OK;
 }
 
-SerializeStatus SerializeBufferBase::serialize(I64 val) {
+SerializeStatus SerializeBufferBase::serializeFrom(I64 val) {
     if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(val)) - 1 >= this->getBuffCapacity()) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
     }
@@ -182,21 +182,21 @@ SerializeStatus SerializeBufferBase::serialize(I64 val) {
 }
 #endif
 
-SerializeStatus SerializeBufferBase::serialize(F64 val) {
+SerializeStatus SerializeBufferBase::serializeFrom(F64 val) {
     // floating point values need to be byte-swapped as well, so copy to U64 and use that routine
     U64 u64Val;
     (void)memcpy(&u64Val, &val, sizeof(val));
-    return this->serialize(u64Val);
+    return this->serializeFrom(u64Val);
 }
 
-SerializeStatus SerializeBufferBase::serialize(F32 val) {
+SerializeStatus SerializeBufferBase::serializeFrom(F32 val) {
     // floating point values need to be byte-swapped as well, so copy to U32 and use that routine
     U32 u32Val;
     (void)memcpy(&u32Val, &val, sizeof(val));
-    return this->serialize(u32Val);
+    return this->serializeFrom(u32Val);
 }
 
-SerializeStatus SerializeBufferBase::serialize(bool val) {
+SerializeStatus SerializeBufferBase::serializeFrom(bool val) {
     if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(U8)) - 1 >= this->getBuffCapacity()) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
     }
@@ -213,28 +213,28 @@ SerializeStatus SerializeBufferBase::serialize(bool val) {
     return FW_SERIALIZE_OK;
 }
 
-SerializeStatus SerializeBufferBase::serialize(const void* val) {
+SerializeStatus SerializeBufferBase::serializeFrom(const void* val) {
     if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(void*)) - 1 >= this->getBuffCapacity()) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
     }
 
-    return this->serialize(reinterpret_cast<PlatformPointerCastType>(val));
+    return this->serializeFrom(reinterpret_cast<PlatformPointerCastType>(val));
 }
 
-SerializeStatus SerializeBufferBase::serialize(const U8* buff, Serializable::SizeType length) {
-    return this->serialize(buff, static_cast<FwSizeType>(length), Serialization::INCLUDE_LENGTH);
+SerializeStatus SerializeBufferBase::serializeFrom(const U8* buff, Serializable::SizeType length) {
+    return this->serializeFrom(buff, static_cast<FwSizeType>(length), Serialization::INCLUDE_LENGTH);
 }
 
-SerializeStatus SerializeBufferBase::serialize(const U8* buff, Serializable::SizeType length, bool noLength) {
-    return this->serialize(buff, static_cast<FwSizeType>(length),
-                           noLength ? Serialization::OMIT_LENGTH : Serialization::INCLUDE_LENGTH);
+SerializeStatus SerializeBufferBase::serializeFrom(const U8* buff, Serializable::SizeType length, bool noLength) {
+    return this->serializeFrom(buff, static_cast<FwSizeType>(length),
+                            noLength ? Serialization::OMIT_LENGTH : Serialization::INCLUDE_LENGTH);
 }
 
-SerializeStatus SerializeBufferBase::serialize(const U8* buff, FwSizeType length, Fw::Serialization::t mode) {
+SerializeStatus SerializeBufferBase::serializeFrom(const U8* buff, FwSizeType length, Fw::Serialization::t mode) {
     // First serialize length
     SerializeStatus stat;
     if (mode == Serialization::INCLUDE_LENGTH) {
-        stat = this->serialize(static_cast<FwSizeStoreType>(length));
+        stat = this->serializeFrom(static_cast<FwSizeStoreType>(length));
         if (stat != FW_SERIALIZE_OK) {
             return stat;
         }
@@ -253,11 +253,11 @@ SerializeStatus SerializeBufferBase::serialize(const U8* buff, FwSizeType length
     return FW_SERIALIZE_OK;
 }
 
-SerializeStatus SerializeBufferBase::serialize(const Serializable& val) {
-    return val.serialize(*this);
+SerializeStatus SerializeBufferBase::serializeFrom(const Serializable& val) {
+    return val.serializeTo(*this);
 }
 
-SerializeStatus SerializeBufferBase::serialize(const SerializeBufferBase& val) {
+SerializeStatus SerializeBufferBase::serializeFrom(const SerializeBufferBase& val) {
     Serializable::SizeType size = val.getBuffLength();
     if (this->m_serLoc + size + static_cast<Serializable::SizeType>(sizeof(FwSizeStoreType)) >
         this->getBuffCapacity()) {
@@ -265,7 +265,7 @@ SerializeStatus SerializeBufferBase::serialize(const SerializeBufferBase& val) {
     }
 
     // First, serialize size
-    SerializeStatus stat = this->serialize(static_cast<FwSizeStoreType>(size));
+    SerializeStatus stat = this->serializeFrom(static_cast<FwSizeStoreType>(size));
     if (stat != FW_SERIALIZE_OK) {
         return stat;
     }
@@ -286,14 +286,14 @@ SerializeStatus SerializeBufferBase::serializeSize(const FwSizeType size) {
         status = FW_SERIALIZE_FORMAT_ERROR;
     }
     if (status == FW_SERIALIZE_OK) {
-        status = this->serialize(static_cast<FwSizeStoreType>(size));
+        status = this->serializeFrom(static_cast<FwSizeStoreType>(size));
     }
     return status;
 }
 
 // deserialization routines
 
-SerializeStatus SerializeBufferBase::deserialize(U8& val) {
+SerializeStatus SerializeBufferBase::deserializeTo(U8& val) {
     // check for room
     if (this->getBuffLength() == this->m_deserLoc) {
         return FW_DESERIALIZE_BUFFER_EMPTY;
@@ -307,7 +307,7 @@ SerializeStatus SerializeBufferBase::deserialize(U8& val) {
     return FW_SERIALIZE_OK;
 }
 
-SerializeStatus SerializeBufferBase::deserialize(I8& val) {
+SerializeStatus SerializeBufferBase::deserializeTo(I8& val) {
     // check for room
     if (this->getBuffLength() == this->m_deserLoc) {
         return FW_DESERIALIZE_BUFFER_EMPTY;
@@ -322,7 +322,7 @@ SerializeStatus SerializeBufferBase::deserialize(I8& val) {
 }
 
 #if FW_HAS_16_BIT == 1
-SerializeStatus SerializeBufferBase::deserialize(U16& val) {
+SerializeStatus SerializeBufferBase::deserializeTo(U16& val) {
     // check for room
     if (this->getBuffLength() == this->m_deserLoc) {
         return FW_DESERIALIZE_BUFFER_EMPTY;
@@ -338,7 +338,7 @@ SerializeStatus SerializeBufferBase::deserialize(U16& val) {
     return FW_SERIALIZE_OK;
 }
 
-SerializeStatus SerializeBufferBase::deserialize(I16& val) {
+SerializeStatus SerializeBufferBase::deserializeTo(I16& val) {
     // check for room
     if (this->getBuffLength() == this->m_deserLoc) {
         return FW_DESERIALIZE_BUFFER_EMPTY;
@@ -355,7 +355,7 @@ SerializeStatus SerializeBufferBase::deserialize(I16& val) {
 }
 #endif
 #if FW_HAS_32_BIT == 1
-SerializeStatus SerializeBufferBase::deserialize(U32& val) {
+SerializeStatus SerializeBufferBase::deserializeTo(U32& val) {
     // check for room
     if (this->getBuffLength() == this->m_deserLoc) {
         return FW_DESERIALIZE_BUFFER_EMPTY;
@@ -373,7 +373,7 @@ SerializeStatus SerializeBufferBase::deserialize(U32& val) {
     return FW_SERIALIZE_OK;
 }
 
-SerializeStatus SerializeBufferBase::deserialize(I32& val) {
+SerializeStatus SerializeBufferBase::deserializeTo(I32& val) {
     // check for room
     if (this->getBuffLength() == this->m_deserLoc) {
         return FW_DESERIALIZE_BUFFER_EMPTY;
@@ -394,7 +394,7 @@ SerializeStatus SerializeBufferBase::deserialize(I32& val) {
 
 #if FW_HAS_64_BIT == 1
 
-SerializeStatus SerializeBufferBase::deserialize(U64& val) {
+SerializeStatus SerializeBufferBase::deserializeTo(U64& val) {
     // check for room
     if (this->getBuffLength() == this->m_deserLoc) {
         return FW_DESERIALIZE_BUFFER_EMPTY;
@@ -417,7 +417,7 @@ SerializeStatus SerializeBufferBase::deserialize(U64& val) {
     return FW_SERIALIZE_OK;
 }
 
-SerializeStatus SerializeBufferBase::deserialize(I64& val) {
+SerializeStatus SerializeBufferBase::deserializeTo(I64& val) {
     // check for room
     if (this->getBuffLength() == this->m_deserLoc) {
         return FW_DESERIALIZE_BUFFER_EMPTY;
@@ -440,10 +440,10 @@ SerializeStatus SerializeBufferBase::deserialize(I64& val) {
 }
 #endif
 
-SerializeStatus SerializeBufferBase::deserialize(F64& val) {
+SerializeStatus SerializeBufferBase::deserializeTo(F64& val) {
     // deserialize as 64-bit int to handle endianness
     U64 tempVal;
-    SerializeStatus stat = this->deserialize(tempVal);
+    SerializeStatus stat = this->deserializeTo(tempVal);
     if (stat != FW_SERIALIZE_OK) {
         return stat;
     }
@@ -453,7 +453,7 @@ SerializeStatus SerializeBufferBase::deserialize(F64& val) {
     return FW_SERIALIZE_OK;
 }
 
-SerializeStatus SerializeBufferBase::deserialize(bool& val) {
+SerializeStatus SerializeBufferBase::deserializeTo(bool& val) {
     // check for room
     if (this->getBuffLength() == this->m_deserLoc) {
         return FW_DESERIALIZE_BUFFER_EMPTY;
@@ -474,20 +474,20 @@ SerializeStatus SerializeBufferBase::deserialize(bool& val) {
     return FW_SERIALIZE_OK;
 }
 
-SerializeStatus SerializeBufferBase::deserialize(void*& val) {
+SerializeStatus SerializeBufferBase::deserializeTo(void*& val) {
     // Deserialize as pointer cast, then convert to void*
     PlatformPointerCastType pointerCastVal = 0;
-    const SerializeStatus stat = this->deserialize(pointerCastVal);
+    const SerializeStatus stat = this->deserializeTo(pointerCastVal);
     if (stat == FW_SERIALIZE_OK) {
         val = reinterpret_cast<void*>(pointerCastVal);
     }
     return stat;
 }
 
-SerializeStatus SerializeBufferBase::deserialize(F32& val) {
+SerializeStatus SerializeBufferBase::deserializeTo(F32& val) {
     // deserialize as 64-bit int to handle endianness
     U32 tempVal;
-    SerializeStatus stat = this->deserialize(tempVal);
+    SerializeStatus stat = this->deserializeTo(tempVal);
     if (stat != FW_SERIALIZE_OK) {
         return stat;
     }
@@ -496,29 +496,21 @@ SerializeStatus SerializeBufferBase::deserialize(F32& val) {
     return FW_SERIALIZE_OK;
 }
 
-SerializeStatus SerializeBufferBase::deserialize(U8* buff, Serializable::SizeType& length) {
+SerializeStatus SerializeBufferBase::deserializeTo(U8* buff, Serializable::SizeType& length) {
     FwSizeType length_in_out = static_cast<FwSizeType>(length);
-    SerializeStatus status = this->deserialize(buff, length_in_out, Serialization::INCLUDE_LENGTH);
+    SerializeStatus status = this->deserializeTo(buff, length_in_out, Serialization::INCLUDE_LENGTH);
     length = static_cast<Serializable::SizeType>(length_in_out);
     return status;
 }
 
-SerializeStatus SerializeBufferBase::deserialize(U8* buff, Serializable::SizeType& length, bool noLength) {
-    FwSizeType length_in_out = static_cast<FwSizeType>(length);
-    SerializeStatus status =
-        this->deserialize(buff, length_in_out, noLength ? Serialization::OMIT_LENGTH : Serialization::INCLUDE_LENGTH);
-    length = static_cast<Serializable::SizeType>(length_in_out);
-    return status;
-}
-
-SerializeStatus SerializeBufferBase::deserialize(U8* buff, FwSizeType& length, Serialization::t mode) {
+SerializeStatus SerializeBufferBase::deserializeTo(U8* buff, Serializable::SizeType& length, bool noLength) {
     FW_ASSERT(this->getBuffAddr());
 
-    if (mode == Serialization::INCLUDE_LENGTH) {
+    if (!noLength) {
         FwSizeStoreType storedLength;
-
-        SerializeStatus stat = this->deserialize(storedLength);
-
+        
+        SerializeStatus stat = this->deserializeTo(storedLength);
+        
         if (stat != FW_SERIALIZE_OK) {
             return stat;
         }
@@ -545,17 +537,17 @@ SerializeStatus SerializeBufferBase::deserialize(U8* buff, FwSizeType& length, S
     return FW_SERIALIZE_OK;
 }
 
-SerializeStatus SerializeBufferBase::deserialize(Serializable& val) {
-    return val.deserialize(*this);
+SerializeStatus SerializeBufferBase::deserializeTo(Serializable& val) {
+    return val.deserializeFrom(*this);
 }
 
-SerializeStatus SerializeBufferBase::deserialize(SerializeBufferBase& val) {
+SerializeStatus SerializeBufferBase::deserializeTo(SerializeBufferBase& val) {
     FW_ASSERT(val.getBuffAddr());
     SerializeStatus stat = FW_SERIALIZE_OK;
 
     FwSizeStoreType storedLength;
 
-    stat = this->deserialize(storedLength);
+    stat = this->deserializeTo(storedLength);
 
     if (stat != FW_SERIALIZE_OK) {
         return stat;
@@ -583,7 +575,7 @@ SerializeStatus SerializeBufferBase::deserialize(SerializeBufferBase& val) {
 
 SerializeStatus SerializeBufferBase::deserializeSize(FwSizeType& size) {
     FwSizeStoreType storedSize = 0;
-    Fw::SerializeStatus status = this->deserialize(storedSize);
+    Fw::SerializeStatus status = this->deserializeTo(storedSize);
     if (status == FW_SERIALIZE_OK) {
         size = static_cast<FwSizeType>(storedSize);
     }
@@ -708,6 +700,16 @@ const U8* SerializeBufferBase::getBuffAddrLeft() const {
     return &this->getBuffAddr()[this->m_deserLoc];
 }
 
+// ----------------------------------------------------------------------
+// Added overload to match header declaration
+// ----------------------------------------------------------------------
+SerializeStatus SerializeBufferBase::deserializeTo(U8* buff,
+                                                  Serializable::SizeType& length,
+                                                  Serialization::t mode) {
+    const bool noLength = (mode == Serialization::OMIT_LENGTH);
+    return this->deserializeTo(buff, length, noLength);
+}
+
 //!< gets address of end of serialization. Used to manually place data at the end
 U8* SerializeBufferBase::getBuffAddrSer() {
     return &this->getBuffAddr()[this->m_serLoc];
@@ -780,5 +782,69 @@ U8* ExternalSerializeBuffer::getBuffAddr() {
 const U8* ExternalSerializeBuffer::getBuffAddr() const {
     return this->m_buff;
 }
+
+
+
+
+// ----------------------------------------------------------------------
+// Deprecated method implementations
+// ----------------------------------------------------------------------
+
+SerializeStatus Serializable::serialize(SerializeBufferBase& buffer) const {
+    return this->serializeTo(buffer);
+}
+
+SerializeStatus Serializable::deserialize(SerializeBufferBase& buffer) {
+    return this->deserializeFrom(buffer);
+}
+
+SerializeStatus SerializeBufferBase::serialize(U8 val) { return this->serializeFrom(val); }
+SerializeStatus SerializeBufferBase::serialize(I8 val) { return this->serializeFrom(val); }
+#if FW_HAS_16_BIT == 1
+SerializeStatus SerializeBufferBase::serialize(U16 val) { return this->serializeFrom(val); }
+SerializeStatus SerializeBufferBase::serialize(I16 val) { return this->serializeFrom(val); }
+#endif
+#if FW_HAS_32_BIT == 1
+SerializeStatus SerializeBufferBase::serialize(U32 val) { return this->serializeFrom(val); }
+SerializeStatus SerializeBufferBase::serialize(I32 val) { return this->serializeFrom(val); }
+#endif
+#if FW_HAS_64_BIT == 1
+SerializeStatus SerializeBufferBase::serialize(U64 val) { return this->serializeFrom(val); }
+SerializeStatus SerializeBufferBase::serialize(I64 val) { return this->serializeFrom(val); }
+#endif
+SerializeStatus SerializeBufferBase::serialize(F32 val) { return this->serializeFrom(val); }
+SerializeStatus SerializeBufferBase::serialize(F64 val) { return this->serializeFrom(val); }
+SerializeStatus SerializeBufferBase::serialize(bool val) { return this->serializeFrom(val); }
+SerializeStatus SerializeBufferBase::serialize(const void* val) { return this->serializeFrom(val); }
+SerializeStatus SerializeBufferBase::serialize(const U8* buff, FwSizeType length, bool noLength) { return this->serializeFrom(buff, length, noLength); }
+SerializeStatus SerializeBufferBase::serialize(const U8* buff, FwSizeType length) { return this->serializeFrom(buff, length); }
+SerializeStatus SerializeBufferBase::serialize(const U8* buff, FwSizeType length, Serialization::t mode) { return this->serializeFrom(buff, length, mode); }
+SerializeStatus SerializeBufferBase::serialize(const SerializeBufferBase& val) { return this->serializeFrom(val); }
+SerializeStatus SerializeBufferBase::serialize(const Serializable& val) { return this->serializeFrom(val); }
+
+
+SerializeStatus SerializeBufferBase::deserialize(U8& val) { return this->deserializeTo(val); }
+SerializeStatus SerializeBufferBase::deserialize(I8& val) { return this->deserializeTo(val); }
+#if FW_HAS_16_BIT == 1
+SerializeStatus SerializeBufferBase::deserialize(U16& val) { return this->deserializeTo(val); }
+SerializeStatus SerializeBufferBase::deserialize(I16& val) { return this->deserializeTo(val); }
+#endif
+#if FW_HAS_32_BIT == 1
+SerializeStatus SerializeBufferBase::deserialize(U32& val) { return this->deserializeTo(val); }
+SerializeStatus SerializeBufferBase::deserialize(I32& val) { return this->deserializeTo(val); }
+#endif
+#if FW_HAS_64_BIT == 1
+SerializeStatus SerializeBufferBase::deserialize(U64& val) { return this->deserializeTo(val); }
+SerializeStatus SerializeBufferBase::deserialize(I64& val) { return this->deserializeTo(val); }
+#endif
+SerializeStatus SerializeBufferBase::deserialize(F32& val) { return this->deserializeTo(val); }
+SerializeStatus SerializeBufferBase::deserialize(F64& val) { return this->deserializeTo(val); }
+SerializeStatus SerializeBufferBase::deserialize(bool& val) { return this->deserializeTo(val); }
+SerializeStatus SerializeBufferBase::deserialize(void*& val) { return this->deserializeTo(val); }
+SerializeStatus SerializeBufferBase::deserialize(U8* buff, FwSizeType& length, bool noLength) { return this->deserializeTo(buff, length, noLength); }
+SerializeStatus SerializeBufferBase::deserialize(U8* buff, FwSizeType& length) { return this->deserializeTo(buff, length); }
+SerializeStatus SerializeBufferBase::deserialize(U8* buff, FwSizeType& length, Serialization::t mode) { return this->deserializeTo(buff, length, mode); }
+SerializeStatus SerializeBufferBase::deserialize(Serializable& val) { return this->deserializeTo(val); }
+SerializeStatus SerializeBufferBase::deserialize(SerializeBufferBase& val) { return this->deserializeTo(val); }
 
 }  // namespace Fw

@@ -60,7 +60,7 @@ namespace Svc {
         U32 val = 10;
         FwEventIdType id = 29;
 
-        Fw::SerializeStatus stat = buff.serialize(val);
+        Fw::SerializeStatus stat = buff.serializeFrom(val);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
         Fw::Time timeTag(TB_NONE,0,0);
         U32 cmdSeq = 21;
@@ -116,22 +116,22 @@ namespace Svc {
         // verify contents
         // first piece should be log packet descriptor
         FwPacketDescriptorType desc;
-        stat = this->m_sentPacket.deserialize(desc);
+        stat = this->m_sentPacket.deserializeTo(desc);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
         ASSERT_EQ(desc,static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_LOG));
         // next piece should be event ID
         FwEventIdType sentId;
-        stat = this->m_sentPacket.deserialize(sentId);
+        stat = this->m_sentPacket.deserializeTo(sentId);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
         ASSERT_EQ(sentId,id);
         // next piece is time tag
         Fw::Time recTimeTag(TB_NONE,0,0);
-        stat = this->m_sentPacket.deserialize(recTimeTag);
+        stat = this->m_sentPacket.deserializeTo(recTimeTag);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
         ASSERT_TRUE(timeTag == recTimeTag);
         // next piece is event argument
         U32 readVal;
-        stat = this->m_sentPacket.deserialize(readVal);
+        stat = this->m_sentPacket.deserializeTo(readVal);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
         ASSERT_EQ(readVal, val);
         // packet should be empty
@@ -269,7 +269,7 @@ namespace Svc {
             U32 val = 10;
             FwEventIdType id = filterID;
 
-            Fw::SerializeStatus stat = buff.serialize(val);
+            Fw::SerializeStatus stat = buff.serializeFrom(val);
             ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
             Fw::Time timeTag(TB_NONE,0,0);
 
@@ -290,7 +290,7 @@ namespace Svc {
         U32 val = 10;
         FwEventIdType id = 1;
 
-        Fw::SerializeStatus stat = buff.serialize(val);
+        Fw::SerializeStatus stat = buff.serializeFrom(val);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
         Fw::Time timeTag(TB_NONE,0,0);
 
@@ -449,12 +449,12 @@ namespace Svc {
         // verify contents
         // first piece should be log packet descriptor
         FwPacketDescriptorType desc;
-        stat = this->m_sentPacket.deserialize(desc);
+        stat = this->m_sentPacket.deserializeTo(desc);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
         ASSERT_EQ(desc,static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_LOG));
         // next piece should be event ID
         FwEventIdType sentId;
-        stat = this->m_sentPacket.deserialize(sentId);
+        stat = this->m_sentPacket.deserializeTo(sentId);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
         ASSERT_EQ(sentId,id);
         // next piece is time tag
@@ -501,19 +501,19 @@ namespace Svc {
         ASSERT_TRUE(this->m_receivedPacket);
         // verify contents
         // first piece should be log packet descriptor
-        stat = this->m_sentPacket.deserialize(desc);
+        stat = this->m_sentPacket.deserializeTo(desc);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
         ASSERT_EQ(desc,static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_LOG));
         // next piece should be event ID
-        stat = this->m_sentPacket.deserialize(sentId);
+        stat = this->m_sentPacket.deserializeTo(sentId);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
         ASSERT_EQ(sentId,id);
         // next piece is time tag
-        stat = this->m_sentPacket.deserialize(recTimeTag);
+        stat = this->m_sentPacket.deserializeTo(recTimeTag);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
         ASSERT_TRUE(timeTag == recTimeTag);
         // next piece is event argument
-        stat = this->m_sentPacket.deserialize(readVal);
+        stat = this->m_sentPacket.deserializeTo(readVal);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
         ASSERT_EQ(readVal, val);
         // packet should be empty
@@ -533,7 +533,7 @@ namespace Svc {
     void ActiveLoggerTester::writeEvent(FwEventIdType id, Fw::LogSeverity severity, U32 value) {
         Fw::LogBuffer buff;
 
-        Fw::SerializeStatus stat = buff.serialize(value);
+        Fw::SerializeStatus stat = buff.serializeFrom(value);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
         Fw::Time timeTag(TB_NONE,1,2);
 
@@ -550,22 +550,22 @@ namespace Svc {
         // verify contents
         // first piece should be log packet descriptor
         FwPacketDescriptorType desc;
-        stat = this->m_sentPacket.deserialize(desc);
+        stat = this->m_sentPacket.deserializeTo(desc);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
         ASSERT_EQ(desc,static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_LOG));
         // next piece should be event ID
         FwEventIdType sentId;
-        stat = this->m_sentPacket.deserialize(sentId);
+        stat = this->m_sentPacket.deserializeTo(sentId);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
         ASSERT_EQ(sentId,id);
         // next piece is time tag
         Fw::Time recTimeTag(TB_NONE,1,2);
-        stat = this->m_sentPacket.deserialize(recTimeTag);
+        stat = this->m_sentPacket.deserializeTo(recTimeTag);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
         ASSERT_TRUE(timeTag == recTimeTag);
         // next piece is event argument
         U32 readVal;
-        stat = this->m_sentPacket.deserialize(readVal);
+        stat = this->m_sentPacket.deserializeTo(readVal);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
         ASSERT_EQ(readVal, value);
         // packet should be empty
@@ -593,14 +593,14 @@ namespace Svc {
         Fw::LogPacket packet;
         Fw::Time time(TB_NONE,1,2);
         Fw::LogBuffer logBuff;
-        ASSERT_EQ(comBuff.deserialize(packet),Fw::FW_SERIALIZE_OK);
+        ASSERT_EQ(comBuff.deserializeTo(packet),Fw::FW_SERIALIZE_OK);
 
         // read back values
         ASSERT_EQ(id,packet.getId());
         ASSERT_EQ(time,packet.getTimeTag());
         logBuff = packet.getLogBuffer();
         U32 readValue;
-        ASSERT_EQ(logBuff.deserialize(readValue),Fw::FW_SERIALIZE_OK);
+        ASSERT_EQ(logBuff.deserializeTo(readValue),Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(value,readValue);
 
     }

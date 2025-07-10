@@ -77,7 +77,12 @@ class RawTimeInterface : public Fw::Serializable {
     //!
     //! \param buffer The buffer to serialize the contents into.
     //! \return Fw::SerializeStatus indicating the result of the serialization.
-    virtual Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const = 0;
+    virtual Fw::SerializeStatus serializeTo(Fw::SerializeBufferBase& buffer) const {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+        return this->serialize(buffer);
+#pragma GCC diagnostic pop
+    }
 
     //! \brief Deserialize the contents of the RawTimeInterface object from a buffer.
     //!
@@ -91,7 +96,12 @@ class RawTimeInterface : public Fw::Serializable {
     //!
     //! \param buffer The buffer to deserialize the contents from.
     //! \return Fw::SerializeStatus indicating the result of the deserialization.
-    virtual Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer) = 0;
+    virtual Fw::SerializeStatus deserializeFrom(Fw::SerializeBufferBase& buffer) {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+        return this->deserialize(buffer);
+#pragma GCC diagnostic pop
+    }
 
 };
 
@@ -144,7 +154,7 @@ class RawTime final : public RawTimeInterface {
     //!
     //! \param buffer The buffer to serialize the contents into.
     //! \return Fw::SerializeStatus indicating the result of the serialization.
-    Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const override;
+    Fw::SerializeStatus serializeTo(Fw::SerializeBufferBase& buffer) const override;
 
     //! \brief Deserialize the contents of the RawTimeInterface object from a buffer.
     //!
@@ -158,7 +168,15 @@ class RawTime final : public RawTimeInterface {
     //!
     //! \param buffer The buffer to deserialize the contents from.
     //! \return Fw::SerializeStatus indicating the result of the deserialization.
-    Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer) override;
+    Fw::SerializeStatus deserializeFrom(Fw::SerializeBufferBase& buffer) override;
+
+    // ----------------------------------------------------------------------
+    // Deprecated methods
+    // ----------------------------------------------------------------------
+
+    DEPRECATED(Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const override, "Use serializeTo instead");
+
+    DEPRECATED(Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer) override, "Use deserializeFrom instead");
 
     // ------------------------------------------------------------
     // Common functions built on top of OS-specific functions

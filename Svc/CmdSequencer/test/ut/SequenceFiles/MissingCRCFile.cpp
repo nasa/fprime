@@ -43,7 +43,7 @@ namespace Svc {
       // Records + CRC
       ASSERT_EQ(
           Fw::FW_SERIALIZE_OK,
-          buffer.serialize(data)
+          buffer.serializeFrom(data)
       );
     }
 
@@ -56,7 +56,7 @@ namespace Svc {
       const U8 data = 1;
       ASSERT_EQ(
           Fw::FW_SERIALIZE_OK,
-          buffer.serialize(data)
+          buffer.serializeFrom(data)
       );
       // CRC
       AMPCS::CRCs::removeFile(this->getName().toChar());

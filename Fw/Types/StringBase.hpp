@@ -66,16 +66,20 @@ class StringBase : public Serializable {
     FormatStatus format(const CHAR* formatString, ...);  //!< write formatted string to buffer
     FormatStatus vformat(const CHAR* formatString, va_list args);  //!< write formatted string to buffer using va_list
 
-    virtual SerializeStatus serialize(SerializeBufferBase& buffer) const;                   //!< serialization function
-    virtual SerializeStatus serialize(SerializeBufferBase& buffer, SizeType maxLen) const;  //!< serialization function
-    virtual SerializeStatus deserialize(SerializeBufferBase& buffer);  //!< deserialization function
+    SerializeStatus serializeTo(SerializeBufferBase& buffer) const override;
+    SerializeStatus serializeTo(SerializeBufferBase& buffer, SizeType maxLen) const;
+    SerializeStatus deserializeFrom(SerializeBufferBase& buffer) override;
+
+    DEPRECATED(virtual SerializeStatus serialize(SerializeBufferBase& buffer) const override, "Use serializeTo(SerializeBufferBase& buffer) const");
+    DEPRECATED(virtual SerializeStatus serialize(SerializeBufferBase& buffer, SizeType maxLen) const, "Use serializeTo with other Fw::Buffer functions");
+    DEPRECATED(virtual SerializeStatus deserialize(SerializeBufferBase& buffer) override, "Use deserializeFrom(SerializeBufferBase& buffer)");
 
 #ifdef BUILD_UT
     // to support GoogleTest framework in unit tests
     friend std::ostream& operator<<(std::ostream& os, const StringBase& str);
 #endif
 #if FW_SERIALIZABLE_TO_STRING || BUILD_UT
-    void toString(StringBase& text) const;  //!< write string with contents
+    void toString(StringBase& text) const override;  //!< write string with contents
 #endif
 
   protected:

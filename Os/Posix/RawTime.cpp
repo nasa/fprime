@@ -44,26 +44,26 @@ PosixRawTime::Status PosixRawTime::getTimeInterval(const Os::RawTime& other, Fw:
     return Status::OP_OK;
 }
 
-Fw::SerializeStatus PosixRawTime::serialize(Fw::SerializeBufferBase& buffer) const {
+Fw::SerializeStatus PosixRawTime::serializeTo(Fw::SerializeBufferBase& buffer) const {
     static_assert(PosixRawTime::SERIALIZED_SIZE >= 2 * sizeof(U32),
                   "PosixRawTime implementation requires at least 2*sizeof(U32) serialization size");
-    Fw::SerializeStatus status = buffer.serialize(static_cast<U32>(this->m_handle.m_timespec.tv_sec));
+    Fw::SerializeStatus status = buffer.serializeFrom(static_cast<U32>(this->m_handle.m_timespec.tv_sec));
     if (status != Fw::SerializeStatus::FW_SERIALIZE_OK) {
         return status;
     }
-    return buffer.serialize(static_cast<U32>(this->m_handle.m_timespec.tv_nsec));
+    return buffer.serializeFrom(static_cast<U32>(this->m_handle.m_timespec.tv_nsec));
 }
 
-Fw::SerializeStatus PosixRawTime::deserialize(Fw::SerializeBufferBase& buffer) {
+Fw::SerializeStatus PosixRawTime::deserializeFrom(Fw::SerializeBufferBase& buffer) {
     static_assert(PosixRawTime::SERIALIZED_SIZE >= 2 * sizeof(U32),
                   "PosixRawTime implementation requires at least 2*sizeof(U32) serialization size");
     U32 sec = 0;
     U32 nsec = 0;
-    Fw::SerializeStatus status = buffer.deserialize(sec);
+    Fw::SerializeStatus status = buffer.deserializeTo(sec);
     if (status != Fw::SerializeStatus::FW_SERIALIZE_OK) {
         return status;
     }
-    status = buffer.deserialize(nsec);
+    status = buffer.deserializeTo(nsec);
     if (status != Fw::SerializeStatus::FW_SERIALIZE_OK) {
         return status;
     }
@@ -73,6 +73,15 @@ Fw::SerializeStatus PosixRawTime::deserialize(Fw::SerializeBufferBase& buffer) {
 
 RawTimeHandle* PosixRawTime::getHandle() {
     return &this->m_handle;
+}
+
+
+Fw::SerializeStatus PosixRawTime::serialize(Fw::SerializeBufferBase& buffer) const {
+    return this->serializeTo(buffer);
+}
+
+Fw::SerializeStatus PosixRawTime::deserialize(Fw::SerializeBufferBase& buffer) {
+    return this->deserializeFrom(buffer);
 }
 
 }  // namespace RawTime

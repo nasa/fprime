@@ -366,7 +366,7 @@ namespace Svc {
   {
     Fw::SerializeBufferBase& buffer = this->m_buffer;
     Record::TimeFlag::Serial::t timeFlagSerial;
-    Fw::SerializeStatus status = buffer.deserialize(timeFlagSerial);
+    Fw::SerializeStatus status = buffer.deserializeTo(timeFlagSerial);
     if (status == Fw::FW_SERIALIZE_OK) {
       switch (timeFlagSerial) {
         case Record::TimeFlag::ABSOLUTE:
@@ -388,7 +388,7 @@ namespace Svc {
   {
     Record::Time::t time;
     Fw::SerializeBufferBase& buffer = this->m_buffer;
-    Fw::SerializeStatus status = buffer.deserialize(time);
+    Fw::SerializeStatus status = buffer.deserializeTo(time);
     if (status == Fw::FW_SERIALIZE_OK) {
       timeTag.set(time, 0);
     }
@@ -399,7 +399,7 @@ namespace Svc {
     deserializeCmdLength(Record::CmdLength::t& cmdLength)
   {
     Fw::SerializeBufferBase& buffer = this->m_buffer;
-    Fw::SerializeStatus status = buffer.deserialize(cmdLength);
+    Fw::SerializeStatus status = buffer.deserializeTo(cmdLength);
     if (status == Fw::FW_SERIALIZE_OK and cmdLength > buffer.getBuffLeft()) {
       // Not enough data left
       status = Fw::FW_DESERIALIZE_SIZE_MISMATCH;
@@ -424,7 +424,7 @@ namespace Svc {
     comBuffer.resetSer();
     // Serialize the command packet descriptor
     const FwPacketDescriptorType cmdDescriptor = Fw::ComPacketType::FW_PACKET_COMMAND;
-    Fw::SerializeStatus status = comBuffer.serialize(cmdDescriptor);
+    Fw::SerializeStatus status = comBuffer.serializeFrom(cmdDescriptor);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
     // Zero-extend the two-byte AMPCS opcode by (sizeof(FwOpcodeType) - 2) bytes
     FW_ASSERT(sizeof(FwOpcodeType) >= 2);
@@ -432,7 +432,7 @@ namespace Svc {
     const FwIndexType bytesToExtend = sizeof(FwOpcodeType) - 2;
     const U8 zeros = 0;
     for(FwIndexType i = 0; i < bytesToExtend; i++){
-      status = comBuffer.serialize(zeros);
+      status = comBuffer.serializeFrom(zeros);
       FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
       sizeOfZeros += static_cast<U32>(sizeof(zeros));
     }
