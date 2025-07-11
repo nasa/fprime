@@ -62,6 +62,7 @@ export -f integration_test
 function integration_test_run {
     export SLEEP_TIME="10"
     export WORKDIR="${1}"
+    export PLATFORM="${2:-*}"
     export BINARY=`basename "${WORKDIR}"`
     export ROOTDIR="${WORKDIR}/build-artifacts"
     (
@@ -69,8 +70,7 @@ function integration_test_run {
         mkdir -p "${LOG_DIR}/gds-logs"
         # Start the GDS layer and give it time to run
         echo "[INFO] Starting headless GDS layer"
-	echo fprime-gds -n --dictionary "${ROOTDIR}/"*"/${BINARY}/dict/${BINARY}TopologyDictionary.json" -g none -l "${LOG_DIR}/gds-logs" 1>${LOG_DIR}/gds-logs/fprime-gds.stdout.log 2>${LOG_DIR}/gds-logs/fprime-gds.stderr.log &
-        fprime-gds -n --dictionary "${ROOTDIR}/"*"/${BINARY}/dict/${BINARY}TopologyDictionary.json" -g none -l "${LOG_DIR}/gds-logs" 1>${LOG_DIR}/gds-logs/fprime-gds.stdout.log 2>${LOG_DIR}/gds-logs/fprime-gds.stderr.log &
+        fprime-gds -n --dictionary "${ROOTDIR}/"${PLATFORM}"/${BINARY}/dict/${BINARY}TopologyDictionary.json" -g none -l "${LOG_DIR}/gds-logs" 1>${LOG_DIR}/gds-logs/fprime-gds.stdout.log 2>${LOG_DIR}/gds-logs/fprime-gds.stderr.log &
         GDS_PID=$!
         # run the app with valgrind in the background
         if command -v valgrind &> /dev/null
