@@ -124,7 +124,6 @@ Return `(direction == LEFT) ? RIGHT : LEFT`.
 |`m_nodes`|`Nodes`|The array for storing the tree nodes|C++ default initialization|
 |`m_freeNodes`|`FreeNodes`|The stack of indices of free nodes. The indices point into `m_nodes`.|C++ default initialization|
 |`m_root`|`Node::Index`|The index of the root node|Node::NONE|
-|`m_size`|`FwSizeType`|The number of nodes in the tree|0|
 
 ```mermaid
 classDiagram
@@ -197,8 +196,6 @@ RedBlackTreeSetOrMapImpl<KE, VN>& operator=(const RedBlackTreeSetOrMapImpl<KE, V
 
     1. Set `m_root = impl.m_root`.
 
-    1. Set `m_size = impl.m_size`.
-
 1. Return `*this`.
 
 ### 6.2. clear
@@ -206,8 +203,6 @@ RedBlackTreeSetOrMapImpl<KE, VN>& operator=(const RedBlackTreeSetOrMapImpl<KE, V
 ```c++
 void clear()
 ```
-
-1. Set `m_size = 0`.
 
 1. Call `m_freeNodes.clear()`.
 
@@ -258,10 +253,16 @@ TODO
 ### 6.6. getSize
 
 ```c++
-FwSizeType getSize()
+FwSizeType getSize() const
 ```
 
-Return `m_size`.
+1. Let `capacity = getCapacity()`.
+
+1. Let `freeNodesSize = m_freeNodes.getSize()`.
+
+1. Assert `freeNodesSize <= capacity`.
+
+1. Return `capacity - freeNodesSize`.
 
 ### 6.7. insert
 
