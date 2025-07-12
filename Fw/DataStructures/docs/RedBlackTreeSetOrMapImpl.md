@@ -60,6 +60,7 @@ It represents a node of the red-black tree.
 |----|----|-------|-------------|
 |`parent`|`Node::Index`|The index of the parent of this node|`Node::NONE`|
 |`predecessor`|`Node::Index`|The index of the predecessor of this node|`Node::NONE`|
+|`successor`|`Node::Index`|The index of the successor of this node|`Node::NONE`|
 |`left`|`Node::Index`|The index of the left child of this node|`Node::NONE`|
 |`right`|`Node::Index`|The index of the right child of this node|`Node::NONE`|
 |`color`|`Color`|The color of this node|`Color::BLACK`|
@@ -234,7 +235,7 @@ Success find(const KE& keyOrElement, VN& valueOrNil) const
 
     1. Set `status = SUCCESS`.
 
-1. Return `status`
+1. Return `status`.
 
 ### 6.4. getCapacity
 
@@ -296,7 +297,11 @@ Success insert(const KE& keyOrElement, const VN& valueOrNil)
 
        1. Call `insertNode(node, parent, direction)`.
 
-1. Return `status`
+       1. Let `predecessor = getPredecessorOfNone(Node::Index node, Direction direction)
+
+       1. Call `updateLinks(predecessor, node)`.
+
+1. Return `status`.
 
 ### 6.8. remove
 
@@ -391,9 +396,9 @@ Otherwise, on return
 
 1. If the tree is empty, then `node` holds `NONE`.
 
-1. Otherwise `node` holds the index of a node _N_ that would be the immediate 
-   predecessor of the new node created when inserting _ke_, and whose child in 
-   the direction `direction` (left or right) is `NONE`.
+1. Otherwise `node` holds the index of the node _N_ containing the `NONE`
+   child where _ke_ should be inserted.
+   `direction` is the direction of the child in _N_ (left or right).
 
 1. The return value is `FAILURE`.
 
@@ -474,7 +479,7 @@ not be `NONE`.
 ### 8.3. getParentDirection
 
 ```c++
-Direction getParentDirection(Node node)
+Direction getParentDirection(Node::Index node)
 ```
 
 **Overview:** Get the parent direction for a node.
@@ -492,7 +497,7 @@ The parent of `node` must not be `NONE`.
 ### 8.4. insertNode
 
 ```c++
-void insertNode(Node::index node, Node::index parent, Direction direction)
+void insertNode(Node::Index node, Node::index parent, Direction direction)
 ```
 
 **Overview:**
@@ -551,3 +556,62 @@ It is not permissible for `node` to be `NONE`.
         1. Set `parent = m_nodes[node].parent`.
 
 1. Assert `done == true`.
+
+### 8.5. getPredecessorOfNone
+
+```c++
+Node::Index getPredecessorOfNone(Node::Index node, Direction direction)
+```
+
+**Overview:**
+This function gets the predecessor of a `NONE` node, specified as
+(1) a node, which is either `NONE` itself or a node with a `NONE` child;
+and (2) a direction.
+If `node` is not `NONE`, then the child of node in the direction `direction`
+must be `NONE`.
+If `node` is `NONE`, then `direction` is ignored.
+
+**Algorithm:**
+
+1. Set `result = node`.
+
+1. If `node != NONE`
+
+    1. Set `parent = m_nodes[node].parent`.
+
+    1. If `parent == NONE` and `direction == LEFT` then set `result = NONE`.
+
+    1. If `parent != NONE` and `m_nodes[parent].direction != direction` then set `result = parent`.
+
+1. Return `result`.
+
+### 8.6. updateLinks
+
+```c++
+void updateLinks(Node::Index predecessor, Node::Index node)
+```
+
+**Overview:**
+Update the links in the nodes and entries.
+`node` is a node; it must not be `NONE`.
+`predecessor` is its predecessor; it may be `NONE`.
+
+**Algorithm:**
+
+1. Set `successor = (predecessor != NONE) ? m_nodes[predecessor].successor : NONE`.
+
+1. Set `m_nodes[node].predecessor = predecessor`.
+
+1. Set `m_nodes[node].successor = successor`.
+
+1. Set `nextIterator = (successor != NONE) ? &m_nodes[successor].entry : nullptr`;
+
+1. Call `m_nodes[node].entry.setNextIterator(nextIterator)`.
+
+1. If `predecessor != NONE` then
+
+    1. Set `m_nodes[predecessor].successor = node`.
+
+    1. Call `m_nodes[predecessor].entry.setNextIterator(&m_nodes[node].entry)`.
+
+1. If `successor != NONE` then set `m_nodes[successor].predecessor = node`.
