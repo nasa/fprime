@@ -396,17 +396,20 @@ Success findNode(const KE& keyOrElement, Node::Index& node, Direction& direction
 **Overview:**
 This function tries to find a node whose key or element _ke_ matches 
 `keyOrElement`.
-If it finds such a node _N_, then on return `node` holds the index of _N_, and
-the return value is `SUCCESS`.
-Otherwise, on return
+On return from the function:
 
-1. The return value is `FAILURE`.
+1. If the function found such a node _N_, then the return value is `SUCCESS`,
+and `node` stores the index of _N_.
 
-1. If the tree is empty, then `node` holds `NONE`.
+1. Otherwise
 
-1. Otherwise `node` holds the index of the node _N_ containing the `NONE`
-   child where _ke_ should be inserted, and
-   `direction` is the direction of the child in _N_ (left or right).
+    1. The return value is `FAILURE`.
+
+    1. If the tree is empty, then `node` holds `NONE`.
+
+    1. Otherwise `node` stores the index of the node _N_ containing the `NONE`
+       child where _ke_ should be inserted, and
+       `direction` stores the direction of the child in _N_ (left or right).
 
 **Algorithm:**
 
