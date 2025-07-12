@@ -428,7 +428,7 @@ The parent of `node` must not be `NONE`.
 
 **Algorithm:**
 
-1. Set `parentRight = m_nodes[m_nodes[node],parent].right`.
+1. Set `parentRight = m_nodes[m_nodes[node].parent].right`.
 
 1. Return `node == parentRight ? RIGHT : LEFT`.
 
