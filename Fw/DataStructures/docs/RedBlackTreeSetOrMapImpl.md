@@ -65,7 +65,45 @@ It represents a node of the red-black tree.
 |`color`|`Color`|The color of this node|`Color::BLACK`|
 |`entry`|`Entry`|The set or map entry stored in this node|C++ default initialization|
 
-### 3.2. Type Aliases
+#### 3.1.4. Public Member Functions
+
+### 3.2. getChild
+
+```c+++
+Node::Index getChild(Direction direction)
+```
+
+**Overview:**
+Gets the child of `this` in direction `direction`.
+
+**Algorithm:**
+Return `(direction == LEFT) ? left : right`.
+
+### 3.3. setChild
+
+```c++
+void setChild(Direction direction, Index node)
+```
+
+**Overview:**
+Sets the child of `this` in direction `direction`.
+
+**Algorithm:**
+`(direction == LEFT) ? (this.left = node) : (this.right = node)`.
+
+### 3.4. getOppositeDirection
+
+```c+++
+static Direction oppositeDirection(Direction direction)
+```
+
+**Overview:**
+Returns the opposite direction
+
+**Algorithm:**
+Return `(direction == LEFT) ? RIGHT : LEFT`.
+
+### 3.5. Type Aliases
 
 `RedBlackTreeSetOrMapImpl` defines the following private type aliases.
 
@@ -331,14 +369,45 @@ In detail, this function does the following:
 ### 8.2. rotateSubtree
 
 ```c++
-Node::Index rotateSubtree(Node::Index subtree, Direction direction)
+Node::Index rotateSubtree(Node::Index node, Direction direction)
 ```
 
 **Overview:**
-TODO
+This function performs a left or right rotation on the subtree
+whose root is `node`.
+`node` must not be `NONE`, or an assertion failure will occur.
+The child of `node` in the direction `direction` must also
+not be `NONE`.
 
 **Algorithm:**
-TODO
+
+1. Set `parent = m_nodes[node].parent`.
+
+1. Let `oppositeDirection = Node::getOppositeDirection(direction)`.
+
+1. Set `newRoot = m_nodes[node].getChild(oppositeDirection))`
+
+1. Set `newChild = m_nodes[node].getChild(direction)`.
+
+1. Call `m_nodes[node].setChild(oppositeDirection, newChild)`.
+
+1. If `newChild != NONE` then set `m_nodes[newChild].parent = node`.
+
+1. Call `m_nodes[newRoot].setChild(direction, node)`.
+
+1. Set `m_nodes[newRoot].parent = parent`.
+
+1. Set `m_nodes[node].parent = newRoot`.
+
+1. If `parent != NONE` then
+
+    1. Set `direction1 = (node == m_nodes[parent].right) ? RIGHT : LEFT
+
+    1. Call `m_nodes[parent].setChild(direction1, newRoot)`.
+
+1. Otherwise set `m_root = newRoot`.
+
+1. Return `newRoot`.
 
 ### 8.3. insertNode
 
