@@ -281,6 +281,7 @@ static constexpr FwSizeType getByteArraySize(FwSizeType capacity)
 Success findNodeAndDirection(const KE& keyOrElement, Node::Index& node, Direction& direction)
 ```
 
+**Overview:**
 This function tries to find a node whose key or element _ke_ matches 
 `keyOrElement`.
 If it finds such a node _N_, then on return `node` holds the index of _N_, and
@@ -295,6 +296,7 @@ Otherwise, on return
 
 1. The return value is `FAILURE`.
 
+**Algorithm:**
 In detail, this function does the following:
 
 1. Set `result = FAILURE`.
