@@ -479,7 +479,7 @@ not be `NONE`.
 ### 8.3. getParentDirection
 
 ```c++
-Direction getParentDirection(Node::Index node)
+Direction getParentDirection(Node::Index node) const
 ```
 
 **Overview:** Get the parent direction for a node.
@@ -514,6 +514,8 @@ It is not permissible for `node` to be `NONE`.
 
 **Algorithm:**
 
+1. let `oppositeDirection = Node::getOppositeDirection(direction)`.
+
 1. Set `m_nodes[node].color = RED`.
 
 1. Set `m_nodes[node].parent = parent`.
@@ -541,17 +543,33 @@ It is not permissible for `node` to be `NONE`.
 
         1. Set `direction = getParentDirection(parent)`.
 
-        1. Let `uncle = m_nodes[grandparent].getChild(Node::getOppositeDirection(direction))`.
+        1. Let `uncle = m_nodes[grandparent].getChild(oppositeDirection)`.
 
         1. If `uncle == NONE` or `m_nodes[uncle].color == BLACK` then
 
-            1. If ...
+            1. If `node = m_nodes[parent].getChild(oppositeDirection)`
 
-                1. TODO
+                1. Call `rotateSubtree(parent, direction)`.
 
-            1. TODO
+                1. Set `node = parent`.
 
-        1. TODO
+                1. Set `parent = m_nodes[grandparent].getChild(direction)`.
+
+            1. Call `rotateSubtree(grandparent, oppositeDirection)`.
+
+            1. Set `m_nodes[parent].color = BLACK`.
+
+            1. Set `m_nodes[grandparent].color = RED`.
+
+            1. Set `done = true` and break out of the loop.
+
+        1. Set `m_nodes[parent].color = BLACK`.
+
+        1. Set `m_nodes[uncle].color = BLACK`.
+
+        1. Set `m_nodes[grandparent].color = RED`.
+
+        1. Set `node = grandparent`.
 
         1. Set `parent = m_nodes[node].parent`.
 
@@ -560,7 +578,7 @@ It is not permissible for `node` to be `NONE`.
 ### 8.5. getPredecessorOfNone
 
 ```c++
-Node::Index getPredecessorOfNone(Node::Index node, Direction direction)
+Node::Index getPredecessorOfNone(Node::Index node, Direction direction) const
 ```
 
 **Overview:**
