@@ -433,50 +433,7 @@ Otherwise, on return
 
 1. Return `result`.
 
-### 8.2. rotateSubtree
-
-```c++
-Node::Index rotateSubtree(Node::Index node, Direction direction)
-```
-
-**Overview:**
-This function performs a left or right rotation on the subtree
-whose root is `node`.
-`node` must not be `NONE`, or an assertion failure will occur.
-The child of `node` in the direction `direction` must also
-not be `NONE`.
-
-**Algorithm:**
-
-1. Let `parent = m_nodes[node].parent`.
-
-1. Let `oppositeDirection = Node::getOppositeDirection(direction)`.
-
-1. Let `newRoot = m_nodes[node].getChild(oppositeDirection))`.
-
-1. Let `newChild = m_nodes[node].getChild(direction)`.
-
-1. Call `m_nodes[node].setChild(oppositeDirection, newChild)`.
-
-1. If `newChild != NONE` then set `m_nodes[newChild].parent = node`.
-
-1. Call `m_nodes[newRoot].setChild(direction, node)`.
-
-1. Set `m_nodes[newRoot].parent = parent`.
-
-1. Set `m_nodes[node].parent = newRoot`.
-
-1. If `parent != NONE` then
-
-    1. Set `newRootDirection = (node == m_nodes[parent].right) ? RIGHT : LEFT`.
-
-    1. Call `m_nodes[parent].setChild(newRootDirection, newRoot)`.
-
-1. Otherwise set `m_root = newRoot`.
-
-1. Return `newRoot`.
-
-### 8.3. getParentDirection
+### 8.2. getParentDirection
 
 ```c++
 Direction getParentDirection(Node::Index node) const
@@ -493,6 +450,35 @@ The parent of `node` must not be `NONE`.
 1. Set `parentRight = m_nodes[parent].right`.
 
 1. Return `node == parentRight ? RIGHT : LEFT`.
+
+### 8.3. getPredecessorOfNone
+
+```c++
+Node::Index getPredecessorOfNone(Node::Index node, Direction direction) const
+```
+
+**Overview:**
+This function gets the predecessor of a `NONE` node, specified as
+(1) a node, which is either `NONE` itself or a node with a `NONE` child;
+and (2) a direction.
+If `node` is `NONE`, then the function returns `NONE` and ignores `direction`.
+Otherwise, the function returns the predecessor of the
+the child of `node` in the direction `direction`, assuming that the
+child is `NONE`.
+
+**Algorithm:**
+
+1. Set `result = node`.
+
+1. If `node != NONE`
+
+    1. Set `parent = m_nodes[node].parent`.
+
+    1. If `parent == NONE` and `direction == LEFT` then set `result = NONE`.
+
+    1. If `parent != NONE` and `m_nodes[parent].direction != direction` then set `result = parent`.
+
+1. Return `result`.
 
 ### 8.4. insertNode
 
@@ -575,34 +561,48 @@ It is not permissible for `node` to be `NONE`.
 
 1. Assert `done == true`.
 
-### 8.5. getPredecessorOfNone
+### 8.5. rotateSubtree
 
 ```c++
-Node::Index getPredecessorOfNone(Node::Index node, Direction direction) const
+Node::Index rotateSubtree(Node::Index node, Direction direction)
 ```
 
 **Overview:**
-This function gets the predecessor of a `NONE` node, specified as
-(1) a node, which is either `NONE` itself or a node with a `NONE` child;
-and (2) a direction.
-If `node` is `NONE`, then the function returns `NONE` and ignores `direction`.
-Otherwise, the function returns the predecessor of the
-the child of `node` in the direction `direction`, assuming that the
-child is `NONE`.
+This function performs a left or right rotation on the subtree
+whose root is `node`.
+`node` must not be `NONE`, or an assertion failure will occur.
+The child of `node` in the direction `direction` must also
+not be `NONE`.
 
 **Algorithm:**
 
-1. Set `result = node`.
+1. Let `parent = m_nodes[node].parent`.
 
-1. If `node != NONE`
+1. Let `oppositeDirection = Node::getOppositeDirection(direction)`.
 
-    1. Set `parent = m_nodes[node].parent`.
+1. Let `newRoot = m_nodes[node].getChild(oppositeDirection))`.
 
-    1. If `parent == NONE` and `direction == LEFT` then set `result = NONE`.
+1. Let `newChild = m_nodes[node].getChild(direction)`.
 
-    1. If `parent != NONE` and `m_nodes[parent].direction != direction` then set `result = parent`.
+1. Call `m_nodes[node].setChild(oppositeDirection, newChild)`.
 
-1. Return `result`.
+1. If `newChild != NONE` then set `m_nodes[newChild].parent = node`.
+
+1. Call `m_nodes[newRoot].setChild(direction, node)`.
+
+1. Set `m_nodes[newRoot].parent = parent`.
+
+1. Set `m_nodes[node].parent = newRoot`.
+
+1. If `parent != NONE` then
+
+    1. Set `newRootDirection = (node == m_nodes[parent].right) ? RIGHT : LEFT`.
+
+    1. Call `m_nodes[parent].setChild(newRootDirection, newRoot)`.
+
+1. Otherwise set `m_root = newRoot`.
+
+1. Return `newRoot`.
 
 ### 8.6. updateLinks
 
