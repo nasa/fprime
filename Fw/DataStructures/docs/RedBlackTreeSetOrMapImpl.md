@@ -194,7 +194,15 @@ TODO
 void clear()
 ```
 
-TODO
+1. Set `m_size = 0`.
+
+1. Call `m_freeNodes.clear()`.
+
+1. For each `i` in the range `[0, m_freeNodes.getCapacity())`
+
+    1. Let `status = m_freeNodes.push(i)`.
+
+    1. Assert `status == SUCCESS`.
 
 ### 6.3. find
 
@@ -305,11 +313,11 @@ static constexpr FwSizeType getByteArraySize(FwSizeType capacity)
 
 1. Let `nodesSize = Nodes::getByteArraySize(capacity)`.
 
-1. Let `freeStackAlignment = FreeStack::getByteArrayAlignment()`.
+1. Let `freeNodesAlignment = FreeStack::getByteArrayAlignment()`.
 
-1. Let `freeStackSize = FreeStack::getByteArraySize(capacity)`.
+1. Let `freeNodesSize = FreeStack::getByteArraySize(capacity)`.
 
-1. Return `nodesSize + freeStackAlignment + freeStackSize`.
+1. Return `nodesSize + freeNodesAlignment + freeNodesSize`.
 
 ## 8. Private Helper Functions
 
