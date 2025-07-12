@@ -80,8 +80,8 @@ It represents a node of the red-black tree.
 
 |Name|Type|Purpose|Default Value|
 |----|----|-------|-------------|
-|`m_nodes`|[`Nodes`|The array for storing the tree nodes|C++ default initialization|
-|`m_freeNodes`|[`FreeNodes`|The stack of indices of free nodes. The indices point into `m_nodes`.|C++ default initialization|
+|`m_nodes`|`Nodes`|The array for storing the tree nodes|C++ default initialization|
+|`m_freeNodes`|`FreeNodes`|The stack of indices of free nodes. The indices point into `m_nodes`.|C++ default initialization|
 |`m_root`|`Node::Index`|The index of the root node|Node::NONE|
 |`m_size`|`FwSizeType`|The number of nodes in the tree|0|
 
@@ -161,7 +161,7 @@ TODO
 ### 6.3. find
 
 ```c++
-Success find(const KE& keyOrElement, VN& valueOrNil)
+Success find(const KE& keyOrElement, VN& valueOrNil) const
 ```
 
 TODO
@@ -278,7 +278,7 @@ static constexpr FwSizeType getByteArraySize(FwSizeType capacity)
 ### 8.1. findNode
 
 ```c++
-Success findNode(const KE& keyOrElement, Node::Index& node, Direction& direction)
+Success findNode(const KE& keyOrElement, Node::Index& node, Direction& direction) const
 ```
 
 **Overview:**
@@ -327,3 +327,27 @@ In detail, this function does the following:
 1. Assert `nodeFound == true`.
 
 1. Return `result`.
+
+### 8.2. rotateSubtree
+
+```c++
+Node::Index rotateSubtree(Node::Index subtree, Direction direction)
+```
+
+**Overview:**
+TODO
+
+**Algorithm:**
+TODO
+
+### insertNode
+
+```c++
+void insertNode(Node::index node, Node::index parent, Direction direction)
+```
+
+**Overview:**
+TODO
+
+**Algorithm:**
+TODO

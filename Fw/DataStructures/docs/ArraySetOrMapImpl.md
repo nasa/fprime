@@ -113,7 +113,7 @@ Set `m_size = 0`.
 ### 5.3. find
 
 ```c++
-Success find(const KE& keyOrElement, VN& valueOrNil)
+Success find(const KE& keyOrElement, VN& valueOrNil) const
 ```
 
 1. Set `status = Success::FAILURE`.
