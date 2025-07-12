@@ -381,13 +381,13 @@ not be `NONE`.
 
 **Algorithm:**
 
-1. Set `parent = m_nodes[node].parent`.
+1. Let `parent = m_nodes[node].parent`.
 
 1. Let `oppositeDirection = Node::getOppositeDirection(direction)`.
 
-1. Set `newRoot = m_nodes[node].getChild(oppositeDirection))`
+1. Let `newRoot = m_nodes[node].getChild(oppositeDirection))`.
 
-1. Set `newChild = m_nodes[node].getChild(direction)`.
+1. Let `newChild = m_nodes[node].getChild(direction)`.
 
 1. Call `m_nodes[node].setChild(oppositeDirection, newChild)`.
 
@@ -401,9 +401,9 @@ not be `NONE`.
 
 1. If `parent != NONE` then
 
-    1. Set `direction1 = (node == m_nodes[parent].right) ? RIGHT : LEFT
+    1. Set `newRootDirection = (node == m_nodes[parent].right) ? RIGHT : LEFT`.
 
-    1. Call `m_nodes[parent].setChild(direction1, newRoot)`.
+    1. Call `m_nodes[parent].setChild(newRootDirection, newRoot)`.
 
 1. Otherwise set `m_root = newRoot`.
 
