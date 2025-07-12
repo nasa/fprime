@@ -299,9 +299,13 @@ Success insert(const KE& keyOrElement, const VN& valueOrNil)
 
        1. Call `insertNode(node, parent, direction)`.
 
-       1. Let `predecessor = getPredecessorOfNone(Node::Index node, Direction direction)
+       1. Let `predecessor = getPredecessorOfNone(node, direction)
+
+       1. Let `successor = (predecessor == NONE) ? parent : m_nodes[predecessor].successor`.
 
        1. Call `updateLinks(predecessor, node)`.
+
+       1. Call `updateLinks(node, successor)`.
 
 1. Return `status`.
 
@@ -609,30 +613,21 @@ not be `NONE`.
 ### 8.6. updateLinks
 
 ```c++
-void updateLinks(Node::Index predecessor, Node::Index node)
+void updateLinks(Node::Index predecessor, Node::Index successor)
 ```
 
 **Overview:**
-Update the links in the nodes and entries.
-`node` is a node; it must not be `NONE`.
-`predecessor` is its predecessor; it may be `NONE`.
+Update the links in the nodes and entries for `predecessor` and `successor`.
+Either or both of `predecessor` and `successor` may be `NONE`.
 
 **Algorithm:**
 
-1. Set `successor = (predecessor != NONE) ? m_nodes[predecessor].successor : NONE`.
+1. If `predecessor != NONE`
 
-1. Set `m_nodes[node].predecessor = predecessor`.
+    1. Set `m_nodes[predecessor].successor = successor`.
 
-1. Set `m_nodes[node].successor = successor`.
+    1. Set `nextIterator = (successor != NONE) ? &m_nodes[successor].entry : nullptr`;
 
-1. Set `nextIterator = (successor != NONE) ? &m_nodes[successor].entry : nullptr`;
+    1. Call `m_nodes[predecessor].entry.setNextIterator(nextIterator)`.
 
-1. Call `m_nodes[node].entry.setNextIterator(nextIterator)`.
-
-1. If `predecessor != NONE` then
-
-    1. Set `m_nodes[predecessor].successor = node`.
-
-    1. Call `m_nodes[predecessor].entry.setNextIterator(&m_nodes[node].entry)`.
-
-1. If `successor != NONE` then set `m_nodes[successor].predecessor = node`.
+1. If `successor != NONE` then set `m_nodes[successor].predecessor = predecessor`.
