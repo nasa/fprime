@@ -585,9 +585,10 @@ Node::Index getPredecessorOfNone(Node::Index node, Direction direction) const
 This function gets the predecessor of a `NONE` node, specified as
 (1) a node, which is either `NONE` itself or a node with a `NONE` child;
 and (2) a direction.
-If `node` is not `NONE`, then the child of node in the direction `direction`
-must be `NONE`.
-If `node` is `NONE`, then `direction` is ignored.
+If `node` is `NONE`, then the function returns `NONE` and ignores `direction`.
+Otherwise, the function returns the predecessor of the
+the child of `node` in the direction `direction`, assuming that the
+child is `NONE`.
 
 **Algorithm:**
 
