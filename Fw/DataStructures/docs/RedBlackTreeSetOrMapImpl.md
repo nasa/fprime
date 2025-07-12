@@ -6,6 +6,8 @@ It represents a set or map implementation based on a red-black tree.
 Internally it maintains an [`ExternalArray`](ExternalArray.md)
 of tree nodes and an [`ExternalStack`](ExternalStack.md) of
 indices pointing into the array.
+The implementation uses the algorithm described here:
+https://en.wikipedia.org/wiki/Red%E2%80%93black_tree.
 
 ## 1. Template Parameters
 
