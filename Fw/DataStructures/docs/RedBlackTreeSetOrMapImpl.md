@@ -198,7 +198,7 @@ void clear()
 
 1. Call `m_freeNodes.clear()`.
 
-1. For each `i` in the range `[0, m_freeNodes.getCapacity())`
+1. For each `i` in the range `[0, getCapacity())`
 
     1. Let `status = m_freeNodes.push(i)`.
 
