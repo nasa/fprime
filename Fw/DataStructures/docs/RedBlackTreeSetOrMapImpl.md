@@ -186,7 +186,17 @@ Defined as `= default`.
 RedBlackTreeSetOrMapImpl<KE, VN>& operator=(const RedBlackTreeSetOrMapImpl<KE, VN>& impl)
 ```
 
-TODO
+1. If `&impl != this`
+
+    1. Set `m_nodes = impl.m_nodes`.
+
+    1. Set `m_freeNodes = impl.m_freeNodes`.
+
+    1. Set `m_root = impl.m_root`.
+
+    1. Set `m_size = impl.m_size`.
+
+1. Return `*this`.
 
 ### 6.2. clear
 
@@ -210,7 +220,21 @@ void clear()
 Success find(const KE& keyOrElement, VN& valueOrNil) const
 ```
 
-TODO
+1. Set `node = NONE`.
+
+1. Set `direction = LEFT`.
+
+1. Set `status = FAILURE`.
+
+1. Let `findStatus = findNode(keyOrElement, node, direction)`.
+
+1. If `findStatus == SUCCESS`
+
+    1. Set `valueOrNil = m_nodes[node].entry.getValue()`.
+
+    1. Set `status = SUCCESS`.
+
+1. Return `status`
 
 ### 6.4. getCapacity
 
@@ -242,7 +266,37 @@ Return `m_size`.
 Success insert(const KE& keyOrElement, const VN& valueOrNil)
 ```
 
-TODO
+1. Set `node = NONE`.
+
+1. Set `direction = LEFT`.
+
+1. Set `status = FAILURE`.
+
+1. Let `findStatus = findNode(keyOrElement, node, direction)`.
+
+1. If `findStatus == SUCCESS`
+
+    1. Call `m_nodes[node].setValue(valueOrNil)`.
+
+    1. Set `status = SUCCESS`.
+
+1. Otherwise
+
+   1. Set `parent = node`.
+
+   1. Set `status = m_freeNodes.pop(node)`.
+
+   1. If `status == SUCCESS`
+
+       1. Set `m_nodes[node] = Node()`.
+
+       1. Call `m_nodes[node].entry.setKey(keyOrElement)`.
+
+       1. Call `m_nodes[node].entry.setValue(valueOrNil)`.
+
+       1. Call `insertNode(node, parent, direction)`.
+
+1. Return `status`
 
 ### 6.8. remove
 
@@ -321,6 +375,7 @@ static constexpr FwSizeType getByteArraySize(FwSizeType capacity)
 
 ## 8. Private Helper Functions
 
+<a name="findNode"></a>
 ### 8.1. findNode
 
 ```c++
@@ -428,7 +483,7 @@ The parent of `node` must not be `NONE`.
 
 **Algorithm:**
 
-1. Set `parent = m_nodes[node].parent]`.
+1. Set `parent = m_nodes[node].parent`.
 
 1. Set `parentRight = m_nodes[parent].right`.
 
