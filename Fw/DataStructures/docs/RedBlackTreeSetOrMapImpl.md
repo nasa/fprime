@@ -299,7 +299,7 @@ Success insert(const KE& keyOrElement, const VN& valueOrNil)
 
        1. Call `insertNode(node, parent, direction)`.
 
-       1. Let `predecessor = getPredecessorOfNone(node, direction)
+       1. Let `predecessor = getPredecessorOfNone(node, direction)`.
 
        1. Let `successor = (predecessor == NONE) ? parent : m_nodes[predecessor].successor`.
 
@@ -626,7 +626,7 @@ Either or both of `predecessor` and `successor` may be `NONE`.
 
     1. Set `m_nodes[predecessor].successor = successor`.
 
-    1. Set `nextIterator = (successor != NONE) ? &m_nodes[successor].entry : nullptr`;
+    1. Set `nextIterator = (successor != NONE) ? &m_nodes[successor].entry : nullptr`.
 
     1. Call `m_nodes[predecessor].entry.setNextIterator(nextIterator)`.
 
