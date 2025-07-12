@@ -61,8 +61,8 @@ It represents a node of the red-black tree.
 |Name|Type|Purpose|Default Value|
 |----|----|-------|-------------|
 |`parent`|`Node::Index`|The index of the parent of this node|`Node::NONE`|
-|`predecessor`|`Node::Index`|The index of the predecessor of this node|`Node::NONE`|
-|`successor`|`Node::Index`|The index of the successor of this node|`Node::NONE`|
+|`predecessor`|`Node::Index`|The index of the predecessor of this node in the inorder traversal of the tree|`Node::NONE`|
+|`successor`|`Node::Index`|The index of the successor of this node in the inorder traversal of the tree|`Node::NONE`|
 |`left`|`Node::Index`|The index of the left child of this node|`Node::NONE`|
 |`right`|`Node::Index`|The index of the right child of this node|`Node::NONE`|
 |`color`|`Color`|The color of this node|`Color::BLACK`|
@@ -470,6 +470,9 @@ Node::Index getPredecessorOfNone(Node::Index node, Direction direction) const
 This function gets the predecessor of a `NONE` node, specified as
 (1) a node, which is either `NONE` itself or a node with a `NONE` child;
 and (2) a direction.
+The predecessor of a node is the predecessor in the inorder traversal of the 
+tree.
+
 If `node` is `NONE`, then the function returns `NONE` and ignores `direction`.
 Otherwise, the function returns the predecessor of the
 the child of `node` in the direction `direction`, assuming that the
