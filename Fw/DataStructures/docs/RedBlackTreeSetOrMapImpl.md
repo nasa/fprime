@@ -275,10 +275,10 @@ static constexpr FwSizeType getByteArraySize(FwSizeType capacity)
 
 ## 8. Private Helper Functions
 
-### 8.1. findNodeAndDirection
+### 8.1. findNode
 
 ```c++
-Success findNodeAndDirection(const KE& keyOrElement, Node::Index& node, Direction& direction)
+Success findNode(const KE& keyOrElement, Node::Index& node, Direction& direction)
 ```
 
 **Overview:**
