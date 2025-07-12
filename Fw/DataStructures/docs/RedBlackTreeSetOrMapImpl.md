@@ -340,7 +340,7 @@ TODO
 **Algorithm:**
 TODO
 
-### insertNode
+### 8.3. insertNode
 
 ```c++
 void insertNode(Node::index node, Node::index parent, Direction direction)
