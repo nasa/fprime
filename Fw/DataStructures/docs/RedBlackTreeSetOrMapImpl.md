@@ -343,7 +343,6 @@ Otherwise, on return
 1. The return value is `FAILURE`.
 
 **Algorithm:**
-In detail, this function does the following:
 
 1. Set `result = FAILURE`.
 
@@ -417,14 +416,81 @@ not be `NONE`.
 
 1. Return `newRoot`.
 
-### 8.3. insertNode
+### 8.3. getParentDirection
+
+```c++
+Direction getParentDirection(Node node)
+```
+
+**Overview:** Get the parent direction for a node.
+`node` must not be `NONE`.
+The parent of `node` must not be `NONE`.
+
+**Algorithm:**
+
+1. Set `parentRight = m_nodes[m_nodes[node],parent].right`.
+
+1. Return `node == parentRight ? RIGHT : LEFT`.
+
+### 8.4. insertNode
 
 ```c++
 void insertNode(Node::index node, Node::index parent, Direction direction)
 ```
 
 **Overview:**
-TODO
+This function inserts `node` into the tree as a left or right
+child of `parent`, according to `direction`.
+It rebalances the tree as needed to maintain the red-black 
+invariant.
+
+It is permissible for `parent` to be `NONE`.
+In this case we are inserting at the root of the tree, and `direction` is 
+ignored.
+
+It is not permissible for `node` to be `NONE`.
 
 **Algorithm:**
-TODO
+
+1. Set `m_nodes[node].color = RED`.
+
+1. Set `m_nodes[node].parent = parent`.
+
+1. If `parent == NONE` then set `m_root = node`.
+
+1. Set `done = false`.
+
+1. Otherwise 
+
+    1. Call `m_nodes[parent].setChild(direction, node)`.
+
+    1. In a for loop bounded by `getCapacity()`:
+
+        1. If `parent == NONE` or `m_nodes[parent].color == BLACK` 
+           then set `done = true` and break out of the loop.
+
+        1. Set `grandparent = m_nodes[parent].parent`.
+
+        1. If `grandparent == NONE` then
+
+            1. Set `m_nodes[parent].color = BLACK`.
+
+            1. Set `done = true` and break out of the loop.
+
+        1. Set `direction = getParentDirection(parent)`.
+
+        1. Let `uncle = m_nodes[grandparent].getChild(Node::getOppositeDirection(direction))`.
+
+        1. If `uncle == NONE` or `m_nodes[uncle].color == BLACK` then
+
+            1. If ...
+
+                1. TODO
+
+            1. TODO
+
+        1. TODO
+
+        1. Set `parent = m_nodes[node].parent`.
+
+1. Assert `done == true`.
