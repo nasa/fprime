@@ -27,8 +27,8 @@ as the map implementation.
 
 |Name|Definition|
 |----|----------|
-|`Entry`|Alias of [`SetOrMapEntry<K, V>`](SetOrMapEntry.md)|
-|`Entry`|Alias of [`MapEntry<K, V>`](MapEntry.md)|
+|`ImplEntry`|Alias of [`SetOrMapImplEntry<K, V>`](SetOrMapImplEntry.md)|
+|`MapEntry`|Alias of [`MapEntry<K, V>`](MapEntry.md)|
 
 ## 4. Private Member Variables
 
@@ -61,19 +61,20 @@ ExternalArrayMap<U16, U32> map;
 ### 5.2. Constructor Providing Typed Backing Storage
 
 ```c++
-ExternalArrayMap(Entry* entries, FwSizeType capacity)
+ExternalArrayMap(ImplEntry* entries, FwSizeType capacity)
 ```
 
 `entries` must point to a primitive array of at least `capacity`
-elements of type [`Entry`](ExternalArrayMap.md#Public-Types).
+elements of type [`ImplEntry`](ExternalArrayMap.md#Public-Types).
 
 Call `setStorage(entries, capacity)`.
 
 _Example:_
 ```c++
+using Map = ExternalArrayMap<U16, U32>;
 constexpr FwSizeType capacity = 10;
-ExternalArrayMap<U16, U32>::Entry entries[capacity];
-ExternalArrayMap<U16, U32> map(entries, capacity);
+Map::ImplEntry entries[capacity];
+Map map(entries, capacity);
 ```
 
 ### 5.3. Constructor Providing Untyped Backing Storage
@@ -90,11 +91,12 @@ Call `setStorage(data, capacity)`.
 
 _Example:_
 ```c++
+using Map = ExternalArrayMap<U16, U32>;
 constexpr FwSizeType capacity = 10;
-constexpr U8 alignment = ExternalArrayMap<U16, U32>::getByteArrayAlignment();
-constexpr FwSizeType byteArraySize = ExternalArrayMap<U16, U32>::getByteArraySize(capacity);
+constexpr U8 alignment = Map::getByteArrayAlignment();
+constexpr FwSizeType byteArraySize = Map::getByteArraySize(capacity);
 alignas(alignment) U8 bytes[byteArraySize];
-ExternalArrayMap<U16, U32> map(ByteArray(&bytes[0], sizeof bytes), capacity);
+Map map(ByteArray(&bytes[0], sizeof bytes), capacity);
 ```
 
 ### 5.4. Copy Constructor
@@ -107,17 +109,18 @@ Set `*this = map`.
 
 _Example:_
 ```c++
+using Map = ExternalArrayMap<U16, U32>;
 constexpr FwSizeType capacity = 3;
-ExternalArrayMap<U16, U32>::Entry entries[capacity];
+Map::ImplEntry entries[capacity];
 // Call the constructor providing backing storage
-ExternalArrayMap<U16, U32> m1(entries, capacity);
+Map m1(entries, capacity);
 // Insert an item
 const U16 key = 0;
 const U32 value = 42;
 const auto status = m1.insert(key, value);
 ASSERT_EQ(status, Success::SUCCESS);
 // Call the copy constructor
-ExternalArrayMap<U16, U32> m2(m1);
+Map m2(m1);
 ASSERT_EQ(m2.getSize(), 1);
 ```
 
@@ -145,10 +148,11 @@ ExternalArrayMap<K, V>& operator=(const ExternalArrayMap<K, V>& map)
 
 _Example:_
 ```c++
+using Map = ExternalArrayMap<U16, U32>;
 constexpr FwSizeType capacity = 3;
-ExternalArrayMap<U16, U32>::Entry entries[capacity];
+Map::ImplEntry entries[capacity];
 // Call the constructor providing backing storage
-ExternalArrayMap<U16, U32> m1(entries, capacity);
+Map m1(entries, capacity);
 // Insert an item
 U16 key = 0;
 U32 value = 42;
@@ -176,9 +180,10 @@ Call `m_impl.clear()`.
 
 _Example:_
 ```c++
+using Map = ExternalArrayMap<U16, U32>;
 constexpr FwSizeType capacity = 10;
-ExternalArrayMap<U16, U32>::Entry entries[capacity];
-ExternalArrayMap<U16, U32> map(entries, capacity);
+Map::ImplEntry entries[capacity];
+Map map(entries, capacity);
 const auto status = map.insert(0, 3);
 ASSERT_EQ(map.getSize(), 1);
 map.clear();
@@ -195,9 +200,10 @@ Return `m_impl.find(key, value)`.
 
 _Example:_
 ```c++
+using Map = ExternalArrayMap<U16, U32>;
 constexpr FwSizeType capacity = 10;
-ExternalArrayMap<U16, U32>::Entry entries[capacity];
-ExternalArrayMap<U16, U32> map(entries, capacity);
+Map::ImplEntry entries[capacity];
+Map map(entries, capacity);
 U32 value = 0;
 auto status = map.find(0, value);
 ASSERT_EQ(status, Success::FAILURE);
@@ -218,31 +224,33 @@ Return `m_impl.getCapacity()`.
 
 _Example:_
 ```c++
+using Map = ExternalArrayMap<U16, U32>;
 constexpr FwSizeType capacity = 10;
-ExternalArrayMap<U16, U32>::Entry entries[capacity];
-ExternalArrayMap<U16, U32> map(entries, capacity);
+Map::ImplEntry entries[capacity];
+Map map(entries, capacity);
 ASSERT_EQ(map.getCapacity(), capacity);
 ```
 
-### 6.5. getHeadEntry
+### 6.5. getHeadMapEntry
 
 ```c++
-const Entry* getHeadEntry const override
+const MapEntry* getHeadMapEntry const override
 ```
 
-The type `Entry` is defined [here](ExternalArrayMap.md#Public-Types).
+The type `MapEntry` is defined [here](ExternalArrayMap.md#Public-Types).
 
 Return `m_impl.getHeadEntry()`.
 
 _Example:_
 ```c++
+using Map = ExternalArrayMap<U16, U32>;
 constexpr FwSizeType capacity = 10;
-ExternalArrayMap<U16, U32>::Entry entries[capacity];
-ExternalArrayMap<U16, U32> map(entries, capacity);
-const auto* e = map.getHeadEntry();
+Map::ImplEntry entries[capacity];
+Map map(entries, capacity);
+const auto* e = map.getHeadMapEntry();
 FW_ASSERT(e == nullptr);
 map.insert(0, 1);
-e = map.getHeadEntry();
+e = map.getHeadMapEntry();
 FW_ASSERT(e != nullptr);
 ASSERT_EQ(e->getKey(), 0);
 ASSERT_EQ(e->getValue(), 1);
@@ -258,9 +266,10 @@ Return `m_impl.getSize()`.
 
 _Example:_
 ```c++
+using Map = ExternalArrayMap<U16, U32>;
 constexpr FwSizeType capacity = 10;
-ExternalArrayMap<U16, U32>::Entry entries[capacity];
-ExternalArrayMap<U16, U32> map(entries, capacity);
+Map::ImplEntry entries[capacity];
+Map map(entries, capacity);
 auto size = map.getSize();
 ASSERT_EQ(size, 0);
 const auto status = map.insert(0, 3);
@@ -279,9 +288,10 @@ Return `m_impl.insert(key, value)`.
 
 _Example:_
 ```c++
+using Map = ExternalArrayMap<U16, U32>;
 constexpr FwSizeType capacity = 10;
-ExternalArrayMap<U16, U32>::Entry entries[capacity];
-ExternalArrayMap<U16, U32> map(entries, capacity);
+Map::ImplEntry entries[capacity];
+Map map(entries, capacity);
 auto size = map.getSize();
 ASSERT_EQ(size, 0);
 const auto status = map.insert(0, 1);
@@ -300,9 +310,10 @@ Return `m_impl.remove(key, value)`.
 
 _Example:_
 ```c++
+using Map = ExternalArrayMap<U16, U32>;
 constexpr FwSizeType capacity = 10;
-ExternalArrayMap<U16, U32>::Entry entries[capacity];
-ExternalArrayMap<U16, U32> map(entries, capacity);
+Map::ImplEntry entries[capacity];
+Map map(entries, capacity);
 auto size = map.getSize();
 ASSERT_EQ(size, 0);
 auto status = map.insert(0, 1);
@@ -324,20 +335,21 @@ ASSERT_EQ(value, 1);
 ### 6.9. setStorage (Typed Data)
 
 ```c++
-void setStorage(Entry* entries, FwSizeType capacity)
+void setStorage(ImplEntry* entries, FwSizeType capacity)
 ```
 
 `entries` must point to a primitive array of at least `capacity`
-elements of type `Entry`.
-The type `Entry` is defined [here](ExternalArrayMap.md#Public-Types).
+elements of type `ImplEntry`.
+The type `ImplEntry` is defined [here](ExternalArrayMap.md#Public-Types).
 
 Call `m_impl.setStorage(entries, capacity)`.
 
 _Example:_
 ```c++
+using Map = ExternalArrayMap<U16, U32>;
 constexpr FwSizeType capacity = 10;
-ExternalArrayMap<U16, U32> map;
-ExternalArrayMap<U16, U32>::Entry entries[capacity];
+Map map;
+Map::ImplEntry entries[capacity];
 map.setStorage(entries, capacity);
 ```
 
@@ -356,11 +368,12 @@ contain at least [`getByteArraySize(size)`](#getByteArraySize) bytes.
 1. Call `clear()`.
 
 ```c++
+using Map = ExternalArrayMap<U16, U32>;
 constexpr FwSizeType capacity = 10;
-constexpr U8 alignment = ExternalArrayMap<U16, U32>::getByteArrayAlignment();
-constexpr FwSizeType byteArraySize = ExternalArrayMap<U16, U32>::getByteArraySize(capacity);
+constexpr U8 alignment = Map::getByteArrayAlignment();
+constexpr FwSizeType byteArraySize = Map::getByteArraySize(capacity);
 alignas(alignment) U8 bytes[byteArraySize];
-ExternalArrayMap<U16, U32> map;
+Map map;
 map.setStorage(ByteArray(&bytes[0], sizeof bytes), capacity);
 ```
 

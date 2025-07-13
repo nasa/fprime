@@ -27,7 +27,7 @@ It represents an array-based set with internal storage.
 
 |Name|Definition|
 |----|----------|
-|`Entry`|Alias of [`SetOrMapEntry<T, Nil>`](SetOrMapEntry.md)|
+|`Entry`|Alias of [`SetOrMapImplEntry<T, Nil>`](SetOrMapImplEntry.md)|
 |`SetEntry`|Alias of [`SetEntry<T>`](SetEntry.md)|
 
 The type `Nil` is defined [here](Nil.md).
@@ -76,14 +76,14 @@ ArraySet(const ArraySet<T, C>& set)
 _Example:_
 ```c++
 using Set = ArraySet<U32, 10>;
-Set m1;
+Set s1;
 // Insert an item
 const U32 element = 42;
-const auto status = m1.insert(element);
+const auto status = s1.insert(element);
 ASSERT_EQ(status, Success::SUCCESS);
 // Call the copy constructor
-Set m2;
-ASSERT_EQ(m2.getSize(), 1);
+Set s2;
+ASSERT_EQ(s2.getSize(), 1);
 ```
 
 ### 5.3. Destructor
@@ -107,18 +107,18 @@ Return `m_extSet.copyDataFrom(set)`.
 _Example:_
 ```c++
 using Set = ArraySet<U32, 10>;
-Set m1;
+Set s1;
 // Insert an item
 U32 element = 42;
-const auto status = m1.insert(element, value);
+const auto status = s1.insert(element, value);
 ASSERT_EQ(status, Success::SUCCESS);
 // Call the default constructor
-Set m2;
-ASSERT_EQ(m2.getSize(), 0);
+Set s2;
+ASSERT_EQ(s2.getSize(), 0);
 // Call the copy assignment operator
-m2 = m1;
-ASSERT_EQ(m2.getSize(), 1);
-status = m2.find(element);
+s2 = s1;
+ASSERT_EQ(s2.getSize(), 1);
+status = s2.find(element);
 ASSERT_EQ(status, Success::SUCCESS);
 ```
 

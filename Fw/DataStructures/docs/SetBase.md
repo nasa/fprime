@@ -89,7 +89,7 @@ void copyDataFrom(const SetBase<T>& set)
 
     1. Let `size` be the minimum of `set.getSize()` and `getCapacity()`.
 
-    1. Set `e = set.getHeadEntry()`.
+    1. Set `e = set.getHeadSetEntry()`.
 
     1. For `i` in [0, `size`)
 
@@ -159,10 +159,10 @@ void f(const SetBase<U32>& set) {
 }
 ```
 
-### 6.5. getHeadEntry
+### 6.5. getHeadSetEntry
 
 ```c++
-virtual const Entry* getHeadEntry const = 0
+virtual const Entry* getHeadSetEntry const = 0
 ```
 
 Get a pointer to the head iterator for the set, or `nullptr` if there is none.
@@ -171,10 +171,10 @@ _Example:_
 ```c++
 void f(const SetBase<U32>& set) {
     set.clear();
-    const auto* e = set.getHeadEntry();
+    const auto* e = set.getHeadSetEntry();
     ASSERT_EQ(e, nullptr);
     set.insert(42);
-    e = set.getHeadEntry();
+    e = set.getHeadSetEntry();
     ASSERT_NE(e, nullptr);
     ASSERT_EQ(e->getElement(), 42);
 }

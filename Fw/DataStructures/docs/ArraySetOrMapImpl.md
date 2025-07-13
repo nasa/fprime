@@ -22,7 +22,7 @@ storing the entries in the set or map.
 
 |Name|Definition|
 |----|----------|
-|`Entry`|Alias for [`SetOrMapEntry<KE, VN>`](SetOrMapEntry.md)|
+|`Entry`|Alias for [`SetOrMapImplEntry<KE, VN>`](SetOrMapImplEntry.md)|
 
 ## 3. Private Member Variables
 
