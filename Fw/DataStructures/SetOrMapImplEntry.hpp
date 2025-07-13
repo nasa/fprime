@@ -1,11 +1,11 @@
 // ======================================================================
-// \title  SetOrMapEntry
+// \title  SetOrMapImplEntry
 // \author bocchino
-// \brief  A class template representing an entry for a set or map
+// \brief  A class template representing an entry for a set or map implementation
 // ======================================================================
 
-#ifndef Fw_SetOrMapEntry_HPP
-#define Fw_SetOrMapEntry_HPP
+#ifndef Fw_SetOrMapImplEntry_HPP
+#define Fw_SetOrMapImplEntry_HPP
 
 #include "Fw/DataStructures/MapEntry.hpp"
 #include "Fw/DataStructures/SetEntry.hpp"
@@ -14,27 +14,27 @@
 namespace Fw {
 
 template <typename KE, typename VN>
-class SetOrMapEntry final : public MapEntry<KE, VN>, public SetEntry<KE> {
+class SetOrMapImplEntry final : public MapEntry<KE, VN>, public SetEntry<KE> {
   public:
     // ----------------------------------------------------------------------
     // Public constructors and destructors
     // ----------------------------------------------------------------------
 
     //! Zero-argument constructor
-    SetOrMapEntry() : MapEntry<KE, VN>() {}
+    SetOrMapImplEntry() : MapEntry<KE, VN>(), SetEntry<KE>() {}
 
     //! Constructor providing members
-    SetOrMapEntry(const KE& keyOrElement,                         //!< The key or element
-                     const VN& valueOrNil,                           //!< The value or Nil
-                     const SetOrMapEntry<KE, VN>* next = nullptr  //!< The next entry
-                     )
-        : m_keyOrElement(keyOrElement), m_valueOrNil(valueOrNil), m_next(next) {}
+    SetOrMapImplEntry(const KE& keyOrElement,                      //!< The key or element
+                  const VN& valueOrNil,                        //!< The value or Nil
+                  const SetOrMapImplEntry<KE, VN>* next = nullptr  //!< The next entry
+                  )
+        : MapEntry<KE, VN>(), SetEntry<KE>(), m_keyOrElement(keyOrElement), m_valueOrNil(valueOrNil), m_next(next) {}
 
     //! Copy constructor
-    SetOrMapEntry(const SetOrMapEntry<KE, VN>& entry) { *this = entry; }
+    SetOrMapImplEntry(const SetOrMapImplEntry<KE, VN>& entry) { *this = entry; }
 
     //! Destructor
-    ~SetOrMapEntry() override = default;
+    ~SetOrMapImplEntry() override = default;
 
   public:
     // ----------------------------------------------------------------------
@@ -42,7 +42,7 @@ class SetOrMapEntry final : public MapEntry<KE, VN>, public SetEntry<KE> {
     // ----------------------------------------------------------------------
 
     //! operator=
-    SetOrMapEntry<KE, VN>& operator=(const SetOrMapEntry<KE, VN>& entry) {
+    SetOrMapImplEntry<KE, VN>& operator=(const SetOrMapImplEntry<KE, VN>& entry) {
         if (this != &entry) {
             this->m_keyOrElement = entry.m_keyOrElement;
             this->m_valueOrNil = entry.m_valueOrNil;
@@ -65,7 +65,7 @@ class SetOrMapEntry final : public MapEntry<KE, VN>, public SetEntry<KE> {
 
     //! Get the next entry
     //! \return The entry, or nullptr if none
-    const SetOrMapEntry<KE, VN>* getNextEntry() const { return this->m_next; }
+    const SetOrMapImplEntry<KE, VN>* getNextEntry() const { return this->m_next; }
 
     //! Get the next map entry
     //! \return The map entry, or nullptr if none
@@ -82,7 +82,7 @@ class SetOrMapEntry final : public MapEntry<KE, VN>, public SetEntry<KE> {
     }
 
     //! Set the next entry
-    void setNextEntry(const SetOrMapEntry<KE, VN>* next) { this->m_next = next; }
+    void setNextEntry(const SetOrMapImplEntry<KE, VN>* next) { this->m_next = next; }
 
     //! Set the value or Nil
     void setValueOrNil(const VN& valueOrNil) { this->m_valueOrNil = valueOrNil; }
@@ -99,7 +99,7 @@ class SetOrMapEntry final : public MapEntry<KE, VN>, public SetEntry<KE> {
     VN m_valueOrNil = {};
 
     //! Pointer to the next entry or nullptr if none
-    const SetOrMapEntry<KE, VN>* m_next = nullptr;
+    const SetOrMapImplEntry<KE, VN>* m_next = nullptr;
 };
 
 }  // namespace Fw

@@ -26,7 +26,7 @@ class ArrayMap final : public MapBase<K, V> {
     // ----------------------------------------------------------------------
 
     //! The type of an entry
-    using Entry = SetOrMapEntry<K, V>;
+    using Entry = SetOrMapImplEntry<K, V>;
 
     //! The type of a map entry
     using MapEntry = MapEntry<K, V>;

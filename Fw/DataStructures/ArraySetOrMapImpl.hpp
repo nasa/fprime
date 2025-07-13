@@ -8,7 +8,7 @@
 #define Fw_ArraySetOrMapImpl_HPP
 
 #include "Fw/DataStructures/ExternalArray.hpp"
-#include "Fw/DataStructures/SetOrMapEntry.hpp"
+#include "Fw/DataStructures/SetOrMapImplEntry.hpp"
 #include "Fw/Types/Assert.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
 
@@ -29,7 +29,7 @@ class ArraySetOrMapImpl {
     // ----------------------------------------------------------------------
 
     //! The type of an entry in the set or map
-    using Entry = SetOrMapEntry<KE, VN>;
+    using Entry = SetOrMapImplEntry<KE, VN>;
 
   public:
     // ----------------------------------------------------------------------

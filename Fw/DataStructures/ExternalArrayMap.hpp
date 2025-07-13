@@ -28,7 +28,7 @@ class ExternalArrayMap final : public MapBase<K, V> {
     // ----------------------------------------------------------------------
 
     //! The type of a map entry
-    using Entry = SetOrMapEntry<K, V>;
+    using Entry = SetOrMapImplEntry<K, V>;
 
     //! The type of a map entry
     using MapEntry = MapEntry<K, V>;

@@ -26,7 +26,7 @@ class ArraySet final : public SetBase<T> {
     // ----------------------------------------------------------------------
 
     //! The type of a set entry
-    using Entry = SetOrMapEntry<T, Nil>;
+    using Entry = SetOrMapImplEntry<T, Nil>;
 
     //! The type of a set entry
     using SetEntry = SetEntry<T>;

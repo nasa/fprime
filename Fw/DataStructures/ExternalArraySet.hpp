@@ -29,7 +29,7 @@ class ExternalArraySet final : public SetBase<T> {
     // ----------------------------------------------------------------------
 
     //! The type of a set entry
-    using Entry = SetOrMapEntry<T, Nil>;
+    using Entry = SetOrMapImplEntry<T, Nil>;
 
     //! The type of a set iterator
     using SetEntry = SetEntry<T>;

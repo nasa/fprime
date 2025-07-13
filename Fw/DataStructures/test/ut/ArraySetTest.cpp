@@ -29,7 +29,7 @@ class ArraySetTester {
 
 namespace SetTest {
 
-using Entry = SetOrMapEntry<State::ElementType, Nil>;
+using Entry = SetOrMapImplEntry<State::ElementType, Nil>;
 using Set = ArraySet<State::ElementType, State::capacity>;
 using SetTester = ArraySetTester<State::ElementType, State::capacity>;
 using ImplTester = ArraySetOrMapImplTester<State::ElementType, Nil>;

@@ -29,7 +29,7 @@ struct State {
     //! The Tester type
     using Tester = ArraySetOrMapImplTester<KeyType, ValueType>;
     //! The entry type
-    using Entry = SetOrMapEntry<U16, U32>;
+    using Entry = SetOrMapImplEntry<U16, U32>;
     //! Constructor
     State(Impl& a_impl) : impl(a_impl), tester(a_impl) {}
     //! The array set or map under test
