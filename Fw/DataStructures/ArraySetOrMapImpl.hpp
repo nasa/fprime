@@ -31,6 +31,68 @@ class ArraySetOrMapImpl {
     //! The type of an entry in the set or map
     using Entry = SetOrMapImplEntry<KE, VN>;
 
+    //! Const iterator
+    class ConstIterator {
+      public:
+        //! Constructor providing the implementation
+        ConstIterator(const ArraySetOrMapImpl<KE, VN>& impl) : m_impl(impl) { this->reset(); }
+
+        //! Copy constructor
+        ConstIterator(const ConstIterator& it) = delete;
+
+        //! Destructor
+        ~ConstIterator() = default;
+
+      public:
+        //! Copy assignment operator
+        ConstIterator& operator=(const ConstIterator&) = delete;
+
+        //! Equality comparison operator
+        bool operator==(const ConstIterator& it) {
+            bool result = false;
+            if (&this->m_impl == &it.m_impl) {
+                result |= (this->m_index == it.m_index);
+                result |= (!this->isInRange() and !it.isInRange());
+            }
+            return result;
+        }
+
+        //! Increment operator
+        ConstIterator& operator++() {
+            if (this->isInRange()) {
+                this->m_index++;
+            }
+            return *this;
+        }
+
+        //! Get the key or element in the entry pointed to by this iterator
+        const KE& getKeyOrElement() const {
+            FW_ASSERT(this->isInRange(), static_cast<FwAssertArgType>(this->m_index),
+                      static_cast<FwAssertArgType>(this->m_impl.m_size));
+            return this->m_impl.m_entries[this->m_index].getKeyOrElement();
+        }
+
+        //! Get the value in the entry pointed to by this iterator, or nil for a set
+        const VN& getValueOrNil() const {
+            FW_ASSERT(this->isInRange(), static_cast<FwAssertArgType>(this->m_index),
+                      static_cast<FwAssertArgType>(this->m_impl.m_size));
+            return this->m_impl.m_entries[this->m_index].getValueOrNil();
+        }
+
+        //! Check whether the iterator is in range
+        bool isInRange() const { return this->m_index < this->m_impl.m_size; }
+
+        //! Reset the iterator
+        void reset() { this->m_index = 0; }
+
+      private:
+        //! The implementation over which to iterate
+        const ArraySetOrMapImpl<KE, VN>& m_impl;
+
+        //! The current iteration index
+        FwSizeType m_index = 0;
+    };
+
   public:
     // ----------------------------------------------------------------------
     // Public constructors and destructors
@@ -76,8 +138,18 @@ class ArraySetOrMapImpl {
         return *this;
     }
 
+    //! Get the begin iterator
+    ConstIterator begin() const { return ConstIterator(*this); }
+
     //! Clear the set or map
     void clear() { this->m_size = 0; }
+
+    //! Get the end iterator
+    ConstIterator end() const { 
+      auto it = begin();
+      it.m_index = this->m_size;
+      return it;
+    }
 
     //! Find a value associated with a key in the map or an element in a set
     //! \return SUCCESS if the item was found

@@ -59,9 +59,15 @@ class SetOrMapImplEntry final : public MapEntry<KE, VN>, public SetEntry<KE> {
     //! \return The key
     const KE& getKey() const override { return this->m_keyOrElement; }
 
+    // TODO
+    const KE& getKeyOrelement() const { return this->m_keyOrElement; }
+
     //! Get the value associated with this entry
     //! \return The value
     const VN& getValue() const override { return this->m_valueOrNil; }
+
+    // TODO
+    const KE& getValueOrNil() const { return this->m_valueOrNil; }
 
     //! Get the next entry
     //! \return The entry, or nullptr if none

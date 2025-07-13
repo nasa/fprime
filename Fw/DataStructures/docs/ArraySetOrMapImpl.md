@@ -57,7 +57,7 @@ ConstIterator(const ArraySetOrMapImpl<KE, VN>& impl)
 ##### 2.2.2.2. Copy Constructor
 
 ```c++
-ConstIterator(const ConstIterator<KE, VN>& it)
+ConstIterator(const ConstIterator& it)
 ```
 
 Defined as `= delete`.
@@ -102,7 +102,7 @@ bool operator==(const ConstIterator& it)
 ConstIterator& operator++()
 ```
 
-1. If `m_index < m_size` then increment `m_index`.
+1. If `isInRange()` then increment `m_index`.
 
 1. Return `*this`.
 
@@ -112,9 +112,9 @@ ConstIterator& operator++()
 const KE& getKeyOrElement() const
 ```
 
-1. Assert `m_index < m_size`.
+1. Assert `isInRange()`.
 
-1. Return `m_entries[index].getKeyOrElement()`.
+1. Return `m_impl.m_entries[m_index].getKeyOrElement()`.
 
 ##### 2.2.3.5. getValueOrNil
 
@@ -122,11 +122,19 @@ const KE& getKeyOrElement() const
 const KE& getValueOrNil() const
 ```
 
-1. Assert `m_index < m_size`.
+1. Assert `m_index < m_impl.m_size`.
 
-1. Return `m_entries[index].getValueOrNil()`.
+1. Return `m_impl.m_entries[index].getValueOrNil()`.
 
-##### 2.2.3.6. reset
+##### 2.2.3.6. isInRange
+
+```c++
+bool isInRange() const
+```
+
+Return `m_index < m_impl.m_size`.
+
+##### 2.2.3.7. reset
 
 ```c++
 void reset()
@@ -233,7 +241,7 @@ Set `m_size = 0`.
 ConstIterator end() const
 ```
 
-1. Set `it = ConstIterator(*this)`.
+1. Set `it = begin()`.
 
 1. Set `it.m_index = m_size`.
 
