@@ -28,8 +28,8 @@ It represents an array-based map with internal storage.
 
 |Name|Definition|
 |----|----------|
-|`Entry`|Alias of [`SetOrMapIterator<K, V>`](SetOrMapIterator.md)|
-|`Iterator`|Alias of [`MapIterator<K, V>`](MapIterator.md)|
+|`Entry`|Alias of [`SetOrMapEntry<K, V>`](SetOrMapEntry.md)|
+|`MapEntry`|Alias of [`MapEntry<K, V>`](MapEntry.md)|
 
 ## 4. Private Member Variables
 
@@ -149,15 +149,15 @@ FwSizeType getCapacity() const override
 
 Return `m_extMap.getCapacity()`.
 
-### 6.5. getHeadIterator
+### 6.5. getHeadMapEntry
 
 ```c++
-const Iterator* getHeadIterator const override
+const MapEntry* getHeadMapEntry const override
 ```
 
-The type `Iterator` is defined [here](ArrayMap.md#Public-Types).
+The type `MapEntry` is defined [here](ArrayMap.md#Public-Types).
 
-Return `m_extMap.getHeadIterator()`.
+Return `m_extMap.getHeadMapEntry()`.
 
 ### 6.6. getSize
 

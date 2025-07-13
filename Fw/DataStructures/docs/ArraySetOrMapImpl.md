@@ -22,8 +22,7 @@ storing the entries in the set or map.
 
 |Name|Definition|
 |----|----------|
-|`Entry`|Alias for [`SetOrMapIterator<KE, VN>`](SetOrMapIterator.md)|
-|`Iterator`|Alias for [`SetOrMapIterator<KE, VN>`](SetOrMapIterator.md)|
+|`Entry`|Alias for [`SetOrMapEntry<KE, VN>`](SetOrMapEntry.md)|
 
 ## 3. Private Member Variables
 
@@ -140,10 +139,10 @@ FwSizeType getCapacity() const
 
 Return `m_entries.getSize()`.
 
-### 5.5. getHeadIterator
+### 5.5. getHeadEntry
 
 ```c++
-const Iterator* getHeadIterator() const
+const Entry* getHeadEntry() const
 ```
 
 1. Set `result = nullptr`.
@@ -184,10 +183,10 @@ Success insert(const KE& keyOrElement, const VN& valueOrNil)
 
 1. If `(status == Success::FAILURE) && (m_size < getCapacity())`
 
-    1. Set `m_entries[m_size] = Iterator(keyOrElement, valueOrNil)`.
+    1. Set `m_entries[m_size] = Entry(keyOrElement, valueOrNil)`.
 
     1. If `m_size > 0` then
-       call `m_entries[m_size - 1].setNextIterator(&m_entries[m_size])`.
+       call `m_entries[m_size - 1].setNextEntry(&m_entries[m_size])`.
 
     1. Increment `m_size`.
 
@@ -213,9 +212,9 @@ Success remove(const KE& keyOrElement, VN& valueOrNil)
 
             1. `m_entries[i] = m_entries[m_size - 1]`.
 
-            1. Call `m_entries[i].setNextIterator(&m_entries[i + 1])`.
+            1. Call `m_entries[i].setNextEntry(&m_entries[i + 1])`.
 
-        1. Otherwise call `m_entries[i].setNextIterator(nullptr)`.
+        1. Otherwise call `m_entries[i].setNextEntry(nullptr)`.
 
         1. Decrement `size`.
 

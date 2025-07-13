@@ -27,8 +27,8 @@ as the map implementation.
 
 |Name|Definition|
 |----|----------|
-|`Entry`|Alias of [`SetOrMapIterator<K, V>`](SetOrMapIterator.md)|
-|`Iterator`|Alias of [`MapIterator<K, V>`](MapIterator.md)|
+|`Entry`|Alias of [`SetOrMapEntry<K, V>`](SetOrMapEntry.md)|
+|`Entry`|Alias of [`MapEntry<K, V>`](MapEntry.md)|
 
 ## 4. Private Member Variables
 
@@ -224,25 +224,25 @@ ExternalArrayMap<U16, U32> map(entries, capacity);
 ASSERT_EQ(map.getCapacity(), capacity);
 ```
 
-### 6.5. getHeadIterator
+### 6.5. getHeadEntry
 
 ```c++
-const Iterator* getHeadIterator const override
+const Entry* getHeadEntry const override
 ```
 
-The type `Iterator` is defined [here](ExternalArrayMap.md#Public-Types).
+The type `Entry` is defined [here](ExternalArrayMap.md#Public-Types).
 
-Return `m_impl.getHeadIterator()`.
+Return `m_impl.getHeadEntry()`.
 
 _Example:_
 ```c++
 constexpr FwSizeType capacity = 10;
 ExternalArrayMap<U16, U32>::Entry entries[capacity];
 ExternalArrayMap<U16, U32> map(entries, capacity);
-const auto* e = map.getHeadIterator();
+const auto* e = map.getHeadEntry();
 FW_ASSERT(e == nullptr);
 map.insert(0, 1);
-e = map.getHeadIterator();
+e = map.getHeadEntry();
 FW_ASSERT(e != nullptr);
 ASSERT_EQ(e->getKey(), 0);
 ASSERT_EQ(e->getValue(), 1);

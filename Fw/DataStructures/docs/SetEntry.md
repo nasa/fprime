@@ -1,12 +1,12 @@
-# SetIterator
+# SetEntry
 
-`SetIterator` is an abstract class template
+`SetEntry` is an abstract class template
 defined in [`Fw/DataStructures`](sdd.md).
 It represents an iterator for a set.
 
 ## 1. Template Parameters
 
-`SetIterator` has the following template parameters.
+`SetEntry` has the following template parameters.
 
 |Kind|Name|Purpose|
 |----|----|-------|
@@ -17,7 +17,7 @@ It represents an iterator for a set.
 ### 2.1. Copy Constructor
 
 ```c++
-SetIterator(const SetIterator<T>& set)
+SetEntry(const SetEntry<T>& set)
 ```
 
 Defined as `= delete`.
@@ -27,7 +27,7 @@ Defined as `= delete`.
 ### 3.1. Zero-Argument Constructor
 
 ```c++
-SetIterator()
+SetEntry()
 ```
 
 Use default initialization of members.
@@ -35,7 +35,7 @@ Use default initialization of members.
 ### 3.2. Destructor
 
 ```c++
-virtual ~SetIterator()
+virtual ~SetEntry()
 ```
 
 Defined as `= default`.
@@ -45,7 +45,7 @@ Defined as `= default`.
 ### 4.1. operator=
 
 ```c++
-SetIterator& operator=(const SetIterator<T>& setIterator)
+SetEntry& operator=(const SetEntry<T>& setEntry)
 ```
 
 Defined as `= delete`.
@@ -60,10 +60,10 @@ virtual const T& getElement() const = 0
 
 Return a reference to the set element stored in the iterator.
 
-### 5.2. getNextSetIterator
+### 5.2. getNextSetEntry
 
 ```c++
-virtual const SetIterator<T>* getNextSetIterator() = 0
+virtual const SetEntry<T>* getNextSetEntry() = 0
 ```
 
 Return a pointer to the next iterator for the set, or `nullptr` if

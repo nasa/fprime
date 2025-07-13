@@ -26,8 +26,8 @@ as the set implementation.
 
 |Name|Definition|
 |----|----------|
-|`Entry`|Alias of [`SetOrMapIterator<T, Nil>`](SetOrMapIterator.md)|
-|`Iterator`|Alias of [`SetIterator<T>`](SetIterator.md)|
+|`Entry`|Alias of [`SetOrMapEntry<T, Nil>`](SetOrMapEntry.md)|
+|`Entry`|Alias of [`SetEntry<T>`](SetEntry.md)|
 
 The type `Nil` is defined [here](Nil.md).
 
@@ -220,25 +220,25 @@ ExternalArraySet<U32> set(entries, capacity);
 ASSERT_EQ(set.getCapacity(), capacity);
 ```
 
-### 6.5. getHeadIterator
+### 6.5. getHeadEntry
 
 ```c++
-const Iterator* getHeadIterator const override
+const Entry* getHeadEntry const override
 ```
 
-The type `Iterator` is defined [here](ExternalArraySet.md#Public-Types).
+The type `Entry` is defined [here](ExternalArraySet.md#Public-Types).
 
-Return `m_impl.getHeadIterator()`.
+Return `m_impl.getHeadEntry()`.
 
 _Example:_
 ```c++
 constexpr FwSizeType capacity = 10;
 ExternalArraySet<U32>::Entry entries[capacity];
 ExternalArraySet<U32> set(entries, capacity);
-const auto* e = set.getHeadIterator();
+const auto* e = set.getHeadEntry();
 FW_ASSERT(e == nullptr);
 set.insert(42);
-e = set.getHeadIterator();
+e = set.getHeadEntry();
 FW_ASSERT(e != nullptr);
 ASSERT_EQ(e->getElement(), 42);
 ```

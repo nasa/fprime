@@ -27,8 +27,8 @@ It represents an array-based set with internal storage.
 
 |Name|Definition|
 |----|----------|
-|`Entry`|Alias of [`SetOrMapIterator<T, Nil>`](SetOrMapIterator.md)|
-|`Iterator`|Alias of [`SetIterator<T>`](SetIterator.md)|
+|`Entry`|Alias of [`SetOrMapEntry<T, Nil>`](SetOrMapEntry.md)|
+|`SetEntry`|Alias of [`SetEntry<T>`](SetEntry.md)|
 
 The type `Nil` is defined [here](Nil.md).
 
@@ -146,15 +146,15 @@ FwSizeType getCapacity() const override
 
 Return `m_extSet.getCapacity()`.
 
-### 6.5. getHeadIterator
+### 6.5. getHeadSetEntry
 
 ```c++
-const Iterator* getHeadIterator const override
+const SetEntry* getHeadSetEntry const override
 ```
 
-The type `Iterator` is defined [here](ArraySet.md#Public-Types).
+The type `SetEntry` is defined [here](ArraySet.md#Public-Types).
 
-Return `m_extSet.getHeadIterator()`.
+Return `m_extSet.getHeadSetEntry()`.
 
 ### 6.6. getSize
 

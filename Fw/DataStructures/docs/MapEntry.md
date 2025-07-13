@@ -1,12 +1,12 @@
-# MapIterator
+# MapEntry
 
-`MapIterator` is an abstract class template
+`MapEntry` is an abstract class template
 defined in [`Fw/DataStructures`](sdd.md).
 It represents an iterator for a map.
 
 ## 1. Template Parameters
 
-`MapIterator` has the following template parameters.
+`MapEntry` has the following template parameters.
 
 |Kind|Name|Purpose|
 |----|----|-------|
@@ -18,7 +18,7 @@ It represents an iterator for a map.
 ### 2.1. Copy Constructor
 
 ```c++
-MapIterator(const MapIterator<K, V>& map)
+MapEntry(const MapEntry<K, V>& map)
 ```
 
 Defined as `= delete`.
@@ -28,7 +28,7 @@ Defined as `= delete`.
 ### 3.1. Zero-Argument Constructor
 
 ```c++
-MapIterator()
+MapEntry()
 ```
 
 Use default initialization of members.
@@ -36,7 +36,7 @@ Use default initialization of members.
 ### 3.2. Destructor
 
 ```c++
-virtual ~MapIterator()
+virtual ~MapEntry()
 ```
 
 Defined as `= default`.
@@ -46,7 +46,7 @@ Defined as `= default`.
 ### 4.1. operator=
 
 ```c++
-MapIterator<K, V>& operator=(const MapIterator<K, V>&)
+MapEntry<K, V>& operator=(const MapEntry<K, V>&)
 ```
 
 Defined as `= delete`.
@@ -69,10 +69,10 @@ virtual const V& getValue() const = 0
 
 Return a reference to the value.
 
-### 5.3. getNextMapIterator
+### 5.3. getNextMapEntry
 
 ```c++
-virtual const MapIterator<K, V>* getNextMapIterator() = 0
+virtual const MapEntry<K, V>* getNextMapEntry() = 0
 ```
 
 Return a pointer to the next map iterator, or `nullptr` if there is none.
