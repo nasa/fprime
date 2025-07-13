@@ -1,18 +1,18 @@
 // ======================================================================
-// \title  SetIterator
+// \title  SetEntry
 // \author bocchino
 // \brief  An abstract class template representing an iterator for a set
 // ======================================================================
 
-#ifndef Fw_SetIterator_HPP
-#define Fw_SetIterator_HPP
+#ifndef Fw_SetEntry_HPP
+#define Fw_SetEntry_HPP
 
 #include "Fw/FPrimeBasicTypes.hpp"
 
 namespace Fw {
 
 template <typename T>
-class SetIterator {
+class SetEntry {
   private:
     // ----------------------------------------------------------------------
     // Private constructors
@@ -20,7 +20,7 @@ class SetIterator {
 
     //! Copy constructor deleted in the base class
     //! Behavior depends on the implementation
-    SetIterator(const SetIterator<T>&) = delete;
+    SetEntry(const SetEntry<T>&) = delete;
 
   protected:
     // ----------------------------------------------------------------------
@@ -28,10 +28,10 @@ class SetIterator {
     // ----------------------------------------------------------------------
 
     //! Zero-argument constructor
-    SetIterator() {}
+    SetEntry() {}
 
     //! Destructor
-    virtual ~SetIterator() = default;
+    virtual ~SetEntry() = default;
 
   private:
     // ----------------------------------------------------------------------
@@ -41,7 +41,7 @@ class SetIterator {
     //! operator= deleted in the base class
     //! Behavior depends on the implementation
     //! We avoid virtual user-defined operators
-    SetIterator<T>& operator=(const SetIterator<T>&) = delete;
+    SetEntry<T>& operator=(const SetEntry<T>&) = delete;
 
   public:
     // ----------------------------------------------------------------------
@@ -54,7 +54,7 @@ class SetIterator {
 
     //! Get the next set iterator
     //! \return The set iterator, or nullptr if none
-    virtual const SetIterator<T>* getNextSetIterator() const = 0;
+    virtual const SetEntry<T>* getNextSetEntry() const = 0;
 };
 
 }  // namespace Fw

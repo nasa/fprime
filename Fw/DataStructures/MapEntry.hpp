@@ -1,18 +1,18 @@
 // ======================================================================
-// \title  MapIterator
+// \title  MapEntry
 // \author bocchino
 // \brief  An abstract class template representing an iterator for a map
 // ======================================================================
 
-#ifndef Fw_MapIterator_HPP
-#define Fw_MapIterator_HPP
+#ifndef Fw_MapEntry_HPP
+#define Fw_MapEntry_HPP
 
 #include "Fw/FPrimeBasicTypes.hpp"
 
 namespace Fw {
 
 template <typename K, typename V>
-class MapIterator {
+class MapEntry {
   private:
     // ----------------------------------------------------------------------
     // Private constructors
@@ -20,7 +20,7 @@ class MapIterator {
 
     //! Copy constructor deleted in the base class
     //! Behavior depends on the implementation
-    MapIterator(const MapIterator<K, V>&) = delete;
+    MapEntry(const MapEntry<K, V>&) = delete;
 
   protected:
     // ----------------------------------------------------------------------
@@ -28,10 +28,10 @@ class MapIterator {
     // ----------------------------------------------------------------------
 
     //! Zero-argument constructor
-    MapIterator() {}
+    MapEntry() {}
 
     //! Destructor
-    virtual ~MapIterator() = default;
+    virtual ~MapEntry() = default;
 
   private:
     // ----------------------------------------------------------------------
@@ -41,7 +41,7 @@ class MapIterator {
     //! operator= deleted in the base class
     //! Behavior depends on the implementation
     //! We avoid virtual user-defined operators
-    MapIterator<K, V>& operator=(const MapIterator<K, V>&) = delete;
+    MapEntry<K, V>& operator=(const MapEntry<K, V>&) = delete;
 
   public:
     // ----------------------------------------------------------------------
@@ -58,7 +58,7 @@ class MapIterator {
 
     //! Get the next map iterator
     //! \return The map iterator, or nullptr if none
-    virtual const MapIterator<K, V>* getNextMapIterator() const = 0;
+    virtual const MapEntry<K, V>* getNextMapEntry() const = 0;
 };
 
 }  // namespace Fw

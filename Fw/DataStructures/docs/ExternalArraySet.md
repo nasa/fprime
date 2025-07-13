@@ -26,8 +26,8 @@ as the set implementation.
 
 |Name|Definition|
 |----|----------|
-|`Entry`|Alias of [`SetOrMapIterator<T, Nil>`](SetOrMapIterator.md)|
-|`Iterator`|Alias of [`SetIterator<T>`](SetIterator.md)|
+|`ImplEntry`|Alias of [`SetOrMapImplEntry<T, Nil>`](SetOrMapImplEntry.md)|
+|`SetEntry`|Alias of [`SetEntry<T>`](SetEntry.md)|
 
 The type `Nil` is defined [here](Nil.md).
 
@@ -64,20 +64,21 @@ ExternalArraySet<U32> set;
 ### 5.2. Constructor Providing Typed Backing Storage
 
 ```c++
-ExternalArraySet(Entry* entries, FwSizeType capacity)
+ExternalArraySet(ImplEntry* entries, FwSizeType capacity)
 ```
 
 `entries` must point to a primitive array of at least `capacity`
-elements of type `Entry`.
-The type `Entry` is defined [here](ExternalArraySet.md#Public-Types).
+elements of type `ImplEntry`.
+The type `ImplEntry` is defined [here](ExternalArraySet.md#Public-Types).
 
 Call `setStorage(entries, capacity)`.
 
 _Example:_
 ```c++
+using Set = ExternalArraySet<U32>;
 constexpr FwSizeType capacity = 10;
-ExternalArraySet<U32>::Entry entries[capacity];
-ExternalArraySet<U32> set(entries, capacity);
+Set::ImplEntry entries[capacity];
+Set set(entries, capacity);
 ```
 
 ### 5.3. Constructor Providing Untyped Backing Storage
@@ -94,9 +95,10 @@ Call `setStorage(data, capacity)`.
 
 _Example:_
 ```c++
+using Set = ExternalArraySet<U32>;
 constexpr FwSizeType capacity = 10;
-constexpr U8 alignment = ExternalArraySet<U32>::getByteArrayAlignment();
-constexpr FwSizeType byteArraySize = ExternalArraySet<U32>::getByteArraySize(capacity);
+constexpr U8 alignment = Set::getByteArrayAlignment();
+constexpr FwSizeType byteArraySize = Set::getByteArraySize(capacity);
 alignas(alignment) U8 bytes[byteArraySize];
 ExternalArraySet<U32> set(ByteArray(&bytes[0], sizeof bytes), capacity);
 ```
@@ -111,15 +113,16 @@ Set `*this = set`.
 
 _Example:_
 ```c++
+using Set = ExternalArraySet<U32>;
 constexpr FwSizeType capacity = 3;
-ExternalArraySet<U32>::Entry entries[capacity];
+Set::ImplEntry entries[capacity];
 // Call the constructor providing backing storage
-ExternalArraySet<U32> m1(entries, capacity);
+Set m1(entries, capacity);
 // Insert an item
 const auto status = m1.insert(42);
 ASSERT_EQ(status, Success::SUCCESS);
 // Call the copy constructor
-ExternalArraySet<U32> m2(m1);
+Set m2(m1);
 ASSERT_EQ(m2.getSize(), 1);
 ```
 
@@ -147,15 +150,16 @@ ExternalArraySet<T>& operator=(const ExternalArraySet<T>& set)
 
 _Example:_
 ```c++
+using Set = ExternalArraySet<U32>;
 constexpr FwSizeType capacity = 3;
-ExternalArraySet<U32>::Entry entries[capacity];
+Set::ImplEntry entries[capacity];
 // Call the constructor providing backing storage
-ExternalArraySet<U32> m1(entries, capacity);
+Set m1(entries, capacity);
 // Insert an item
 const auto status = m1.insert(42);
 ASSERT_EQ(status, Success::SUCCESS);
 // Call the default constructor
-ExternalArraySet m2;
+Set m2;
 ASSERT_EQ(m2.getSize(), 0);
 // Call the copy assignment operator
 m2 = m1;
@@ -172,9 +176,10 @@ Call `m_impl.clear()`.
 
 _Example:_
 ```c++
+using Set = ExternalArraySet<U32>;
 constexpr FwSizeType capacity = 10;
-ExternalArraySet<U32>::Entry entries[capacity];
-ExternalArraySet<U32> set(entries, capacity);
+Set::ImplEntry entries[capacity];
+Set set(entries, capacity);
 const auto status = set.insert(42);
 ASSERT_EQ(set.getSize(), 1);
 set.clear();
@@ -193,9 +198,10 @@ Success find(const T& element) override
 
 _Example:_
 ```c++
+using Set = ExternalArraySet<U32>;
 constexpr FwSizeType capacity = 10;
-ExternalArraySet<U32>::Entry entries[capacity];
-ExternalArraySet<U32> set(entries, capacity);
+Set::ImplEntry entries[capacity];
+Set set(entries, capacity);
 auto status = set.find(42);
 ASSERT_EQ(status, Success::FAILURE);
 status = set.insert(42);
@@ -214,31 +220,33 @@ Return `m_impl.getCapacity()`.
 
 _Example:_
 ```c++
+using Set = ExternalArraySet<U32>;
 constexpr FwSizeType capacity = 10;
-ExternalArraySet<U32>::Entry entries[capacity];
-ExternalArraySet<U32> set(entries, capacity);
+Set::ImplEntry entries[capacity];
+Set set(entries, capacity);
 ASSERT_EQ(set.getCapacity(), capacity);
 ```
 
-### 6.5. getHeadIterator
+### 6.5. getHeadSetEntry
 
 ```c++
-const Iterator* getHeadIterator const override
+const SetEntry* getHeadSetEntry const override
 ```
 
-The type `Iterator` is defined [here](ExternalArraySet.md#Public-Types).
+The type `SetEntry` is defined [here](ExternalArraySet.md#Public-Types).
 
-Return `m_impl.getHeadIterator()`.
+Return `m_impl.getHeadSetEntry()`.
 
 _Example:_
 ```c++
+using Set = ExternalArraySet<U32>;
 constexpr FwSizeType capacity = 10;
-ExternalArraySet<U32>::Entry entries[capacity];
-ExternalArraySet<U32> set(entries, capacity);
-const auto* e = set.getHeadIterator();
+Set::ImplEntry entries[capacity];
+Set set(entries, capacity);
+const auto* e = set.getHeadSetEntry();
 FW_ASSERT(e == nullptr);
 set.insert(42);
-e = set.getHeadIterator();
+e = set.getHeadSetEntry();
 FW_ASSERT(e != nullptr);
 ASSERT_EQ(e->getElement(), 42);
 ```
@@ -253,9 +261,10 @@ Return `m_impl.getSize()`.
 
 _Example:_
 ```c++
+using Set = ExternalArraySet<U32>;
 constexpr FwSizeType capacity = 10;
-ExternalArraySet<U32>::Entry entries[capacity];
-ExternalArraySet<U32> set(entries, capacity);
+Set::ImplEntry entries[capacity];
+Set set(entries, capacity);
 auto size = set.getSize();
 ASSERT_EQ(size, 0);
 const auto status = set.insert(42);
@@ -274,9 +283,10 @@ Return `m_impl.insert(key, Nil())`.
 
 _Example:_
 ```c++
+using Set = ExternalArraySet<U32>;
 constexpr FwSizeType capacity = 10;
-ExternalArraySet<U32>::Entry entries[capacity];
-ExternalArraySet<U32> set(entries, capacity);
+Set::ImplEntry entries[capacity];
+Set set(entries, capacity);
 auto size = set.getSize();
 ASSERT_EQ(size, 0);
 const auto status = set.insert(42);
@@ -297,9 +307,10 @@ Success remove(const T& element) override
 
 _Example:_
 ```c++
+using Set = ExternalArraySet<U32>;
 constexpr FwSizeType capacity = 10;
-ExternalArraySet<U32>::Entry entries[capacity];
-ExternalArraySet<U32> set(entries, capacity);
+Set::ImplEntry entries[capacity];
+Set set(entries, capacity);
 auto size = set.getSize();
 ASSERT_EQ(size, 0);
 auto status = set.insert(42);
@@ -319,20 +330,21 @@ ASSERT_EQ(size, 0);
 ### 6.9. setStorage (Typed Data)
 
 ```c++
-void setStorage(Entry* entries, FwSizeType capacity)
+void setStorage(ImplEntry* entries, FwSizeType capacity)
 ```
 
 `entries` must point to a primitive array of at least `capacity`
-elements of type `Entry`.
-The type `Entry` is defined [here](ExternalArraySet.md#Public-Types).
+elements of type `ImplEntry`.
+The type `ImplEntry` is defined [here](ExternalArraySet.md#Public-Types).
 
 Call `m_impl.setStorage(entries, capacity)`.
 
 _Example:_
 ```c++
+using Set = ExternalArraySet<U32>;
 constexpr FwSizeType capacity = 10;
-ExternalArraySet<U32> set;
-ExternalArraySet<U32>::Entry entries[capacity];
+Set set;
+Set::ImplEntry entries[capacity];
 set.setStorage(entries, capacity);
 ```
 
@@ -351,11 +363,12 @@ contain at least [`getByteArraySize(size)`](#getByteArraySize) bytes.
 1. Call `clear()`.
 
 ```c++
+using Set = ExternalArraySet<U32>;
 constexpr FwSizeType capacity = 10;
-constexpr U8 alignment = ExternalArraySet<U32>::getByteArrayAlignment();
-constexpr FwSizeType byteArraySize = ExternalArraySet<U32>::getByteArraySize(capacity);
+constexpr U8 alignment = Set::getByteArrayAlignment();
+constexpr FwSizeType byteArraySize = Set::getByteArraySize(capacity);
 alignas(alignment) U8 bytes[byteArraySize];
-ExternalArraySet<U32> set;
+Set set;
 set.setStorage(ByteArray(&bytes[0], sizeof bytes), capacity);
 ```
 
@@ -368,7 +381,7 @@ set.setStorage(ByteArray(&bytes[0], sizeof bytes), capacity);
 static constexpr U8 getByteArrayAlignment()
 ```
 
-Return `ArraySetOrMapImpl<Entry>::getByteArrayAlignment()`.
+Return `ArraySetOrMapImpl<ImplEntry>::getByteArrayAlignment()`.
 
 <a name="getByteArraySize"></a>
 ### 7.2. getByteArraySize
@@ -377,4 +390,4 @@ Return `ArraySetOrMapImpl<Entry>::getByteArrayAlignment()`.
 static constexpr FwSizeType getByteArraySize(FwSizeType capacity)
 ```
 
-Return `ArraySetOrMapImpl<Entry>::getByteArraySize(capacity)`.
+Return `ArraySetOrMapImpl<ImplEntry>::getByteArraySize(capacity)`.

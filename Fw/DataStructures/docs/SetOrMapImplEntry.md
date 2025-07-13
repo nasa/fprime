@@ -1,12 +1,12 @@
-# SetOrMapIterator
+# SetOrMapImplEntry
 
-`SetOrMapIterator` is a final class template
+`SetOrMapImplEntry` is a final class template
 defined in [`Fw/DataStructures`](sdd.md).
 It represents an iterator for a set or a map.
 
 ## 1. Template Parameters
 
-`SetOrMapIterator` has the following template parameters.
+`SetOrMapImplEntry` has the following template parameters.
 
 |Kind|Name|Purpose|
 |----|----|-------|
@@ -15,35 +15,35 @@ It represents an iterator for a set or a map.
 
 ## 2. Base Class
 
-`SetOrMapIterator<KE, VN>` is publicly derived from the following
+`SetOrMapImplEntry<KE, VN>` is publicly derived from the following
 templates:
 
-1. [`MapIterator<KE, VN>`](MapIterator.md).
+1. [`MapEntry<KE, VN>`](MapEntry.md).
 
-1. [`SetIterator<KE>`](SetIterator.md).
+1. [`SetEntry<KE>`](SetEntry.md).
 
 ```mermaid
 classDiagram
-    MapIterator <|-- SetOrMapIterator
-    SetIterator <|-- SetOrMapIterator
+    MapEntry <|-- SetOrMapImplEntry
+    SetEntry <|-- SetOrMapImplEntry
 ```
 
 ## 3. Private Member Variables
 
-`SetOrMapIterator` has the following private member variables.
+`SetOrMapImplEntry` has the following private member variables.
 
 |Name|Type|Purpose|Default Value|
 |----|----|-------|-------------|
 |`m_keyOrElement`|`KE`|The map key or set element|C++ default initialization|
 |`m_valueOrNil`|`VN`|The value or [`Nil`](Nil.md)|C++ default initialization|
-|`m_next`|`const SetOrMapIterator<KE, VN>*`|Pointer to the next iterator or `nullptr` if none|`nullptr`|
+|`m_next`|`const SetOrMapImplEntry<KE, VN>*`|Pointer to the next iterator or `nullptr` if none|`nullptr`|
 
 ## 4. Public Constructors and Destructors
 
 ### 4.1. Zero-Argument Constructor
 
 ```c++
-SetOrMapIterator()
+SetOrMapImplEntry()
 ```
 
 Use default initialization of members.
@@ -51,7 +51,7 @@ Use default initialization of members.
 ### 4.2. Constructor Providing Members
 
 ```c++
-SetOrMapIterator(const KE& keyOrElement, const VN& valueOrNil, const SetOrMapIterator<KE, VN>* next = nullptr)
+SetOrMapImplEntry(const KE& keyOrElement, const VN& valueOrNil, const SetOrMapImplEntry<KE, VN>* next = nullptr)
 ```
 
 1. Set `m_keyOrElement = keyOrElement`.
@@ -63,7 +63,7 @@ SetOrMapIterator(const KE& keyOrElement, const VN& valueOrNil, const SetOrMapIte
 ### 4.3. Copy Constructor
 
 ```c++
-SetOrMapIterator(const SetOrMapIterator<KE, VN>& iterator)
+SetOrMapImplEntry(const SetOrMapImplEntry<KE, VN>& iterator)
 ```
 
 Set `*this = iterator`.
@@ -71,7 +71,7 @@ Set `*this = iterator`.
 ### 4.4. Destructor
 
 ```c++
-~SetOrMapIterator() override
+~SetOrMapImplEntry() override
 ```
 
 Defined as `= default`.
@@ -81,7 +81,7 @@ Defined as `= default`.
 ### 5.1. operator=
 
 ```c++
-SetOrMapIterator& operator=(const SetOrMapIterator&<KE, VN> iterator)
+SetOrMapImplEntry& operator=(const SetOrMapImplEntry&<KE, VN> iterator)
 ```
 
 1. If `this != &iterator`
@@ -116,26 +116,26 @@ const VN& getValue() const override
 
 Return a reference to `m_valueOrNil`.
 
-### 5.4. getNextIterator
+### 5.4. getNextEntry
 
 ```c++
-SetOrMapIterator<KE, VN>* getNextIterator()
+SetOrMapImplEntry<KE, VN>* getNextEntry()
 ```
 
 Return `m_next`.
 
-### 5.4. getNextMapIterator
+### 5.4. getNextMapEntry
 
 ```c++
-MapIterator<KE, VN>* getNextMapIterator() override
+MapEntry<KE, VN>* getNextMapEntry() override
 ```
 
 Return `m_next`.
 
-### 5.5. getNextSetIterator
+### 5.5. getNextSetEntry
 
 ```c++
-SetIterator<KE>* getNextSetIterator() override
+SetEntry<KE>* getNextSetEntry() override
 ```
 
 Return `m_next`.
@@ -148,10 +148,10 @@ void setKeyOrElement(const KE& keyOrElement) const
 
 Set `m_keyOrElement = keyOrElement`.
 
-### 5.8. setNextIterator
+### 5.8. setNextEntry
 
 ```c++
-void setNextIterator(const SetOrMapIterator<KE, VN>* next)
+void setNextEntry(const SetOrMapImplEntry<KE, VN>* next)
 ```
 
 Set `m_next = next`.

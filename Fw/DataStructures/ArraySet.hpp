@@ -25,14 +25,14 @@ class ArraySet final : public SetBase<T> {
     // Public types
     // ----------------------------------------------------------------------
 
+    //! The type of animplementation entry
+    using ImplEntry = SetOrMapImplEntry<T, Nil>;
+
     //! The type of a set entry
-    using Entry = SetOrMapIterator<T, Nil>;
+    using SetEntry = SetEntry<T>;
 
-    //! The type of a set iterator
-    using Iterator = SetIterator<T>;
-
-    //! The type of the set entries
-    using Entries = Entry[C];
+    //! The type of the implementation entries
+    using ImplEntries = ImplEntry[C];
 
   public:
     // ----------------------------------------------------------------------
@@ -73,9 +73,9 @@ class ArraySet final : public SetBase<T> {
     //! \return The capacity
     FwSizeType getCapacity() const override { return this->m_extSet.getCapacity(); }
 
-    //! Get the head iterator for the set
-    //! \return The iterator
-    const Iterator* getHeadIterator() const override { return this->m_extSet.getHeadIterator(); }
+    //! Get the head set entry for the set
+    //! \return The set entry
+    const SetEntry* getHeadSetEntry() const override { return this->m_extSet.getHeadSetEntry(); }
 
     //! Get the size (number of entries)
     //! \return The size
@@ -104,7 +104,7 @@ class ArraySet final : public SetBase<T> {
     ExternalArraySet<T> m_extSet = {};
 
     //! The array providing the backing memory for m_extSet
-    Entries m_entries = {};
+    ImplEntries m_entries = {};
 };
 
 }  // namespace Fw

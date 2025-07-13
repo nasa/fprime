@@ -29,10 +29,10 @@ class ExternalArraySet final : public SetBase<T> {
     // ----------------------------------------------------------------------
 
     //! The type of a set entry
-    using Entry = SetOrMapIterator<T, Nil>;
+    using Entry = SetOrMapImplEntry<T, Nil>;
 
     //! The type of a set iterator
-    using Iterator = SetIterator<T>;
+    using SetEntry = SetEntry<T>;
 
   public:
     // ----------------------------------------------------------------------
@@ -43,7 +43,7 @@ class ExternalArraySet final : public SetBase<T> {
     ExternalArraySet() = default;
 
     //! Constructor providing typed backing storage.
-    //! entries must point to at least capacity elements of type Entry.
+    //! entries must point to at least capacity elements of type ImplEntry.
     ExternalArraySet(Entry* entries,      //!< The entries
                      FwSizeType capacity  //!< The capacity
                      )
@@ -95,9 +95,9 @@ class ExternalArraySet final : public SetBase<T> {
     //! \return The capacity
     FwSizeType getCapacity() const override { return this->m_impl.getCapacity(); }
 
-    //! Get the head iterator for the set
-    //! \return The iterator
-    const Iterator* getHeadIterator() const override { return this->m_impl.getHeadIterator(); }
+    //! Get the head set entry for the set
+    //! \return The set entry
+    const SetEntry* getHeadSetEntry() const override { return this->m_impl.getHeadEntry(); }
 
     //! Get the size (number of entries)
     //! \return The size
@@ -119,7 +119,7 @@ class ExternalArraySet final : public SetBase<T> {
     }
 
     //! Set the backing storage (typed data)
-    //! entries must point to at least capacity elements of type Entry.
+    //! entries must point to at least capacity elements of type ImplEntry.
     void setStorage(Entry* entries,      //!< The entries
                     FwSizeType capacity  //!< The capacity
     ) {

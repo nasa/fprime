@@ -7,7 +7,7 @@
 #ifndef Fw_SetBase_HPP
 #define Fw_SetBase_HPP
 
-#include "Fw/DataStructures/SetIterator.hpp"
+#include "Fw/DataStructures/SetEntry.hpp"
 #include "Fw/Types/Assert.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
 
@@ -20,8 +20,8 @@ class SetBase {
     // Public types
     // ----------------------------------------------------------------------
 
-    //! The type of a set iterator
-    using Iterator = SetIterator<T>;
+    //! The type of a set entry
+    using SetEntry = SetEntry<T>;
 
   private:
     // ----------------------------------------------------------------------
@@ -65,13 +65,13 @@ class SetBase {
     void copyDataFrom(const SetBase<T>& set) {
         if (&set != this) {
             this->clear();
-            const auto* e = set.getHeadIterator();
+            const auto* e = set.getHeadSetEntry();
             const FwSizeType size = FW_MIN(set.getSize(), this->getCapacity());
             for (FwSizeType i = 0; i < size; i++) {
                 FW_ASSERT(e != nullptr);
                 const auto status = this->insert(e->getElement());
                 FW_ASSERT(status == Success::SUCCESS, static_cast<FwAssertArgType>(status));
-                e = e->getNextSetIterator();
+                e = e->getNextSetEntry();
             }
         }
     }
@@ -85,9 +85,9 @@ class SetBase {
     //! \return The capacity
     virtual FwSizeType getCapacity() const = 0;
 
-    //! Get the head iterator for the set
-    //! \return The iterator
-    virtual const Iterator* getHeadIterator() const = 0;
+    //! Get the head set entry for the set
+    //! \return The set entry
+    virtual const SetEntry* getHeadSetEntry() const = 0;
 
     //! Get the size (number of items stored in the set)
     //! \return The size
