@@ -248,7 +248,23 @@ Return `m_nodes.getSize()`.
 const Iterator* getHeadIterator() const
 ```
 
-TODO
+1. Set `node = m_root`.
+
+1. Set `parent = NONE`.
+
+1. Set `done = false`.
+
+1. In a for loop bounded by `getCapacity()`
+
+    1. If `node == NONE` then set `done = true` and break out of the loop.
+
+    1. Set `parent = node`.
+
+    1. Set `node = m_nodes[node].left`.
+
+1. Assert `done == true`.
+
+1. Return `(parent == NONE) ? nullptr : &m_nodes[parent].entry`.
 
 ### 6.6. getSize
 
