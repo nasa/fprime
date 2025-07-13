@@ -16,11 +16,134 @@ It represents an abstract base class for a map.
 <a name="Public-Types"></a>
 ## 2. Public Types
 
-`MapBase` defines the following public types:
+<a name="Public-Type-Aliases"></a>
+### 2.1. Type Aliases
+
+`MapBase` defines the following public type aliases.
 
 |Name|Definition|
 |----|----------|
 |`MapEntry`|Alias of [`MapEntry<K, V>`](MapEntry.md)|
+
+### 2.2. ConstIterator
+
+`ConstIterator` is a public inner class of `MapBase`.  It provides
+non-modifying iteration over the elements of a `MapBase` instance.
+
+#### 2.2.1. Private Enumerations
+
+`ConstIterator` defines the following private enumerations.
+
+|Name|Definition|
+|----|----------|
+|ImplKind|An enumeration with values `ARRAY` and `RED_BLACK_TREE`|
+
+#### 2.2.2. Private Type Aliases
+
+`ConstIterator` defines the following private type aliases.
+
+|Name|Definition|
+|----|----------|
+|ImplIterator|A union with member variables `array` of type `ArraySetOrMapImpl<K, V>::ConstIterator` and `redBlackTree` of type `RedBlackTreeSetOrMapImpl::ConstIterator`|
+
+#### 2.2.3. Private Member Variables
+
+`ConstIterator` has the following private member variables.
+
+|Name|Type|Purpose|Default Value|
+|----|----|-------|-------------|
+|`m_implKind`|`ImplKind`|The implementation kind|None (must be set by the constructor)|
+|`m_impl`|`ImplIterator`|The iterator for the implementation|C++ default initialization|
+
+#### 2.2.4. Public Constructors and Destructors
+
+##### 2.2.4.1. Constructor Providing an Array Implementation
+
+```c++
+ConstIterator(const ArraySetOrMapImpl<K, V>::ConstIterator& it)
+```
+
+1. Set `m_implKind = ARRAY`.
+
+1. Set `m_implIterator.array = it;
+
+##### 2.2.4.2. Constructor Providing a Red-Black Tree Implementation
+
+```c++
+ConstIterator(const RedBlackTreeSetOrMapImpl<K, V>::ConstIterator& it)
+```
+
+1. Set `m_implKind = RED_BLACK_TREE`.
+
+1. Set `m_implIterator.array = it;
+
+##### 2.2.4.3. Copy Constructor
+
+```c++
+ConstIterator(const ConstIterator<KE, VN>& it)
+```
+
+Defined as `= delete`.
+
+##### 2.2.4.4. Destructor
+
+```c++
+~ConstIterator()
+```
+
+Defined as `= default`.
+
+#### 2.2.5. Public Member Functions
+
+##### 2.2.5.1. operator=
+
+```c++
+ConstIterator<KE, VN>& operator=(const ConstIterator<KE, VN>& it)
+```
+
+Defined as `= delete`.
+
+##### 2.2.5.2. operator==
+
+```c++
+bool operator==(const ConstIterator& it)
+```
+
+1. If the implementations don't match, then return `false`.
+
+1. Otherwise delegate to the implementations.
+
+##### 2.2.5.3. operator++
+
+```c++
+ConstIterator& operator++()
+```
+
+Delegated to the implementation.
+
+##### 2.2.5.4. getKeyOrElement
+
+```c++
+const KE& getKeyOrElement() const
+```
+
+Delegated to the implementation.
+
+##### 2.2.5.5. getValueOrNil
+
+```c++
+const KE& getValueOrNil() const
+```
+
+Delegated to the implementation.
+
+##### 2.2.5.6. reset
+
+```c++
+void reset()
+```
+
+Delegated to the implementation.
 
 ## 3. Private Constructors
 
@@ -62,7 +185,15 @@ Defined as `= delete`.
 
 ## 6. Public Member Functions
 
-### 6.1. clear
+### 6.1. begin
+
+```c++
+ConstIterator begin() const = 0.
+```
+
+Return the iterator for the implementation.
+
+### 6.2. clear
 
 ```c++
 virtual void clear() = 0
@@ -78,7 +209,7 @@ void f(MapBase<U16, U32>& map) {
 }
 ```
 
-### 6.2. copyDataFrom
+### 6.3. copyDataFrom
 
 ```c++
 void copyDataFrom(const MapBase<K, V>& map)
@@ -118,7 +249,15 @@ void f(MapBase<U16, U32>& m1, MapBase<U16, U32>& m2) {
 }
 ```
 
-### 6.3. find
+### 6.4. end
+
+```c++
+ConstIterator end() const = 0
+```
+
+Return the iterator for the implementation.
+
+### 6.5. find
 
 ```c++
 virtual Success find(const K& key, V& value) const = 0
@@ -144,7 +283,7 @@ void f(const MapBase<U16, U32>& map) {
 }
 ```
 
-### 6.4. getCapacity
+### 6.6. getCapacity
 
 ```c++
 virtual FwSizeType getCapacity() const = 0
@@ -161,7 +300,7 @@ void f(const MapBase<U16, U32>& map) {
 }
 ```
 
-### 6.5. getHeadMapEntry
+### 6.7. getHeadMapEntry
 
 ```c++
 virtual const MapEntry* getHeadMapEntry() const = 0
@@ -184,7 +323,7 @@ void f(const MapBase<U16, U32>& map) {
 
 ```
 
-### 6.6. getSize
+### 6.8. getSize
 
 ```c++
 virtual FwSizeType getSize() const = 0
@@ -195,7 +334,7 @@ Return the current size.
 _Example:_
 See [**getCapacity**](MapBase.md#64-getcapacity).
 
-### 6.7. insert
+### 6.9. insert
 
 ```c++
 virtual Success insert(const K& key, const V& value) = 0
@@ -222,7 +361,7 @@ void f(MapBase<U16, U32>& map) {
 }
 ```
 
-### 6.8. remove
+### 6.10. remove
 
 ```c++
 virtual Success remove(const K& key, V& value) = 0

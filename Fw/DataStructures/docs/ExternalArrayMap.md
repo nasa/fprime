@@ -170,7 +170,15 @@ ASSERT_EQ(status, Success::SUCCESS);
 ASSERT_EQ(value, 42);
 ```
 
-### 6.2. clear
+### 6.2. begin
+
+```c++
+ConstIterator begin() const
+```
+
+Return `m_impl.begin()`.
+
+### 6.3. clear
 
 ```c++
 void clear() override
@@ -190,7 +198,15 @@ map.clear();
 ASSERT_EQ(map.getSize(), 0);
 ```
 
-### 6.3. find
+### 6.4. end
+
+```c++
+ConstIterator end() const
+```
+
+Return `m_impl.end()`.
+
+### 6.5. find
 
 ```c++
 Success find(const K& key, V& value) override
@@ -214,7 +230,7 @@ ASSERT_EQ(status, Success::SUCCESS);
 ASSERT_EQ(value, 1);
 ```
 
-### 6.4. getCapacity
+### 6.6. getCapacity
 
 ```c++
 FwSizeType getCapacity() const override
@@ -231,7 +247,7 @@ Map map(entries, capacity);
 ASSERT_EQ(map.getCapacity(), capacity);
 ```
 
-### 6.5. getHeadMapEntry
+### 6.7. getHeadMapEntry
 
 ```c++
 const MapEntry* getHeadMapEntry const override
@@ -256,7 +272,7 @@ ASSERT_EQ(e->getKey(), 0);
 ASSERT_EQ(e->getValue(), 1);
 ```
 
-### 6.6. getSize
+### 6.8. getSize
 
 ```c++
 FwSizeType getSize() const override
@@ -278,7 +294,7 @@ size = map.getSize();
 ASSERT_EQ(size, 1);
 ```
 
-### 6.7. insert
+### 6.9. insert
 
 ```c++
 Success insert(const K& key, const V& value) override
@@ -300,7 +316,7 @@ size = map.getSize();
 ASSERT_EQ(size, 1);
 ```
 
-### 6.8. remove
+### 6.10. remove
 
 ```c++
 Success remove(const K& key, V& value) override
@@ -332,7 +348,7 @@ ASSERT_EQ(size, 0);
 ASSERT_EQ(value, 1);
 ```
 
-### 6.9. setStorage (Typed Data)
+### 6.11. setStorage (Typed Data)
 
 ```c++
 void setStorage(ImplEntry* entries, FwSizeType capacity)
@@ -353,7 +369,7 @@ Map::ImplEntry entries[capacity];
 map.setStorage(entries, capacity);
 ```
 
-### 6.10. setStorage (Untyped Data)
+### 6.12. setStorage (Untyped Data)
 
 ```c++
 void setStorage(ByteArray data, FwSizeType capacity)
