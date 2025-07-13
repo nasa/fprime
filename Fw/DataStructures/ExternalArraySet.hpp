@@ -43,7 +43,7 @@ class ExternalArraySet final : public SetBase<T> {
     ExternalArraySet() = default;
 
     //! Constructor providing typed backing storage.
-    //! entries must point to at least capacity elements of type Entry.
+    //! entries must point to at least capacity elements of type ImplEntry.
     ExternalArraySet(Entry* entries,      //!< The entries
                      FwSizeType capacity  //!< The capacity
                      )
@@ -119,7 +119,7 @@ class ExternalArraySet final : public SetBase<T> {
     }
 
     //! Set the backing storage (typed data)
-    //! entries must point to at least capacity elements of type Entry.
+    //! entries must point to at least capacity elements of type ImplEntry.
     void setStorage(Entry* entries,      //!< The entries
                     FwSizeType capacity  //!< The capacity
     ) {

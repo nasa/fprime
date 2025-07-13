@@ -25,14 +25,14 @@ class ArrayMap final : public MapBase<K, V> {
     // Public types
     // ----------------------------------------------------------------------
 
-    //! The type of an entry
-    using Entry = SetOrMapImplEntry<K, V>;
+    //! The type of an implementation entry
+    using ImplEntry = SetOrMapImplEntry<K, V>;
 
     //! The type of a map entry
     using MapEntry = MapEntry<K, V>;
 
-    //! The type of the entries
-    using Entries = Entry[C];
+    //! The type of the implementation entries
+    using ImplEntries = ImplEntry[C];
 
   public:
     // ----------------------------------------------------------------------
@@ -107,7 +107,7 @@ class ArrayMap final : public MapBase<K, V> {
     ExternalArrayMap<K, V> m_extMap = {};
 
     //! The array providing the backing memory for m_extMap
-    Entries m_entries = {};
+    ImplEntries m_entries = {};
 };
 
 }  // namespace Fw

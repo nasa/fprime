@@ -25,14 +25,14 @@ class ArraySet final : public SetBase<T> {
     // Public types
     // ----------------------------------------------------------------------
 
-    //! The type of a set entry
-    using Entry = SetOrMapImplEntry<T, Nil>;
+    //! The type of animplementation entry
+    using ImplEntry = SetOrMapImplEntry<T, Nil>;
 
     //! The type of a set entry
     using SetEntry = SetEntry<T>;
 
-    //! The type of the set entries
-    using Entries = Entry[C];
+    //! The type of the implementation entries
+    using ImplEntries = ImplEntry[C];
 
   public:
     // ----------------------------------------------------------------------
@@ -104,7 +104,7 @@ class ArraySet final : public SetBase<T> {
     ExternalArraySet<T> m_extSet = {};
 
     //! The array providing the backing memory for m_extSet
-    Entries m_entries = {};
+    ImplEntries m_entries = {};
 };
 
 }  // namespace Fw

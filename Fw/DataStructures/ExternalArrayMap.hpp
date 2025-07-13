@@ -27,8 +27,8 @@ class ExternalArrayMap final : public MapBase<K, V> {
     // Public types
     // ----------------------------------------------------------------------
 
-    //! The type of a map entry
-    using Entry = SetOrMapImplEntry<K, V>;
+    //! The type of a map implementation entry
+    using ImplEntry = SetOrMapImplEntry<K, V>;
 
     //! The type of a map entry
     using MapEntry = MapEntry<K, V>;
@@ -42,8 +42,8 @@ class ExternalArrayMap final : public MapBase<K, V> {
     ExternalArrayMap() = default;
 
     //! Constructor providing typed backing storage.
-    //! entries must point to at least capacity elements of type Entry.
-    ExternalArrayMap(Entry* entries,      //!< The entries
+    //! entries must point to at least capacity elements of type ImplEntry.
+    ExternalArrayMap(ImplEntry* entries,  //!< The entries
                      FwSizeType capacity  //!< The capacity
                      )
         : MapBase<K, V>() {
@@ -106,7 +106,7 @@ class ExternalArrayMap final : public MapBase<K, V> {
     //! \return SUCCESS if there is room in the map
     Success insert(const K& key,   //!< The key
                    const V& value  //!< The value
-    ) override {
+                   ) override {
         return this->m_impl.insert(key, value);
     }
 
@@ -114,13 +114,13 @@ class ExternalArrayMap final : public MapBase<K, V> {
     //! \return SUCCESS if the key was there
     Success remove(const K& key,  //!< The key
                    V& value       //!< The value
-    ) override {
+                   ) override {
         return this->m_impl.remove(key, value);
     }
 
     //! Set the backing storage (typed data)
-    //! entries must point to at least capacity elements of type Entry.
-    void setStorage(Entry* entries,      //!< The entries
+    //! entries must point to at least capacity elements of type ImplEntry.
+    void setStorage(ImplEntry* entries,  //!< The entries
                     FwSizeType capacity  //!< The capacity
     ) {
         this->m_impl.setStorage(entries, capacity);
