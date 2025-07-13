@@ -56,7 +56,7 @@ struct FindExisting : public Rule {
         const auto* it = state.map.getHeadIterator();
         for (FwSizeType i = 0; i < index; i++) {
           ASSERT_NE(it, nullptr);
-          it = it->getNextMapIterator();
+          it = it->getNextMapEntry();
         }
         ASSERT_NE(it, nullptr);
         const auto key = it->getKey();
@@ -77,7 +77,7 @@ struct InsertExisting : public Rule {
         const auto* it = state.map.getHeadIterator();
         for (FwSizeType i = 0; i < index; i++) {
             ASSERT_NE(it, nullptr);
-            it = it->getNextMapIterator();
+            it = it->getNextMapEntry();
         }
         ASSERT_NE(it, nullptr);
         const auto key = it->getKey();
@@ -150,7 +150,7 @@ struct RemoveExisting : public Rule {
         const auto* it = state.map.getHeadIterator();
         for (FwSizeType i = 0; i < index; i++) {
           ASSERT_NE(it, nullptr);
-          it = it->getNextMapIterator();
+          it = it->getNextMapEntry();
         }
         ASSERT_NE(it, nullptr);
         const auto key = it->getKey();

@@ -26,10 +26,10 @@ class ArrayMap final : public MapBase<K, V> {
     // ----------------------------------------------------------------------
 
     //! The type of a map entry
-    using Entry = SetOrMapIterator<K, V>;
+    using Entry = SetOrMapEntry<K, V>;
 
     //! The type of a map iterator
-    using Iterator = MapIterator<K, V>;
+    using Iterator = MapEntry<K, V>;
 
     //! The type of the map entries
     using Entries = Entry[C];

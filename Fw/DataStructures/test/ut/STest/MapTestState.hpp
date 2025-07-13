@@ -26,7 +26,7 @@ struct State {
     //! THe MapBase type
     using MapBase = MapBase<KeyType, ValueType>;
     //! The iterator type
-    using Iterator = MapIterator<KeyType, ValueType>;
+    using Iterator = MapEntry<KeyType, ValueType>;
     //! Constructor
     State(MapBase& a_map) : map(a_map) {}
     //! The map under test

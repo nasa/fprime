@@ -7,7 +7,7 @@
 #ifndef Fw_MapBase_HPP
 #define Fw_MapBase_HPP
 
-#include "Fw/DataStructures/MapIterator.hpp"
+#include "Fw/DataStructures/MapEntry.hpp"
 #include "Fw/Types/Assert.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
 
@@ -21,7 +21,7 @@ class MapBase {
     // ----------------------------------------------------------------------
 
     //! The type of a map iterator
-    using Iterator = MapIterator<K, V>;
+    using Iterator = MapEntry<K, V>;
 
   private:
     // ----------------------------------------------------------------------
@@ -71,7 +71,7 @@ class MapBase {
                 FW_ASSERT(e != nullptr);
                 const auto status = this->insert(e->getKey(), e->getValue());
                 FW_ASSERT(status == Success::SUCCESS, static_cast<FwAssertArgType>(status));
-                e = e->getNextMapIterator();
+                e = e->getNextMapEntry();
             }
         }
     }

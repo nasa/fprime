@@ -26,7 +26,7 @@ struct State {
     //! THe SetBase type
     using SetBase = SetBase<ElementType>;
     //! The iterator type
-    using Iterator = SetIterator<ElementType>;
+    using Iterator = SetEntry<ElementType>;
     //! Constructor
     State(SetBase& a_set) : set(a_set) {}
     //! The set under test

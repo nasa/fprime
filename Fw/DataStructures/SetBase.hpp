@@ -7,7 +7,7 @@
 #ifndef Fw_SetBase_HPP
 #define Fw_SetBase_HPP
 
-#include "Fw/DataStructures/SetIterator.hpp"
+#include "Fw/DataStructures/SetEntry.hpp"
 #include "Fw/Types/Assert.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
 
@@ -21,7 +21,7 @@ class SetBase {
     // ----------------------------------------------------------------------
 
     //! The type of a set iterator
-    using Iterator = SetIterator<T>;
+    using Iterator = SetEntry<T>;
 
   private:
     // ----------------------------------------------------------------------
@@ -71,7 +71,7 @@ class SetBase {
                 FW_ASSERT(e != nullptr);
                 const auto status = this->insert(e->getElement());
                 FW_ASSERT(status == Success::SUCCESS, static_cast<FwAssertArgType>(status));
-                e = e->getNextSetIterator();
+                e = e->getNextSetEntry();
             }
         }
     }

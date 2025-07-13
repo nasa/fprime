@@ -26,10 +26,10 @@ class ArraySet final : public SetBase<T> {
     // ----------------------------------------------------------------------
 
     //! The type of a set entry
-    using Entry = SetOrMapIterator<T, Nil>;
+    using Entry = SetOrMapEntry<T, Nil>;
 
     //! The type of a set iterator
-    using Iterator = SetIterator<T>;
+    using Iterator = SetEntry<T>;
 
     //! The type of the set entries
     using Entries = Entry[C];

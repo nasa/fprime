@@ -55,7 +55,7 @@ struct FindExisting : public Rule {
                 ASSERT_NE(it, nullptr);
                 const auto e = it->getElement();
                 ASSERT_TRUE(state.modelSetContains(e));
-                it = it->getNextSetIterator();
+                it = it->getNextSetEntry();
             }
         }
         // Check that all elements of modelSet are in set
@@ -80,7 +80,7 @@ struct InsertExisting : public Rule {
         const auto* it = state.set.getHeadIterator();
         for (FwSizeType i = 0; i < index; i++) {
             ASSERT_NE(it, nullptr);
-            it = it->getNextSetIterator();
+            it = it->getNextSetEntry();
         }
         ASSERT_NE(it, nullptr);
         const auto e = it->getElement();
@@ -146,7 +146,7 @@ struct RemoveExisting : public Rule {
         const auto* it = state.set.getHeadIterator();
         for (FwSizeType i = 0; i < index; i++) {
             ASSERT_NE(it, nullptr);
-            it = it->getNextSetIterator();
+            it = it->getNextSetEntry();
         }
         ASSERT_NE(it, nullptr);
         const auto e = it->getElement();

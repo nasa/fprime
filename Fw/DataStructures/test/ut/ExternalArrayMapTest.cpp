@@ -25,7 +25,7 @@ class ExternalArrayMapTester {
 
 namespace MapTest {
 
-using Entry = SetOrMapIterator<State::KeyType, State::ValueType>;
+using Entry = SetOrMapEntry<State::KeyType, State::ValueType>;
 using Map = ExternalArrayMap<State::KeyType, State::ValueType>;
 using MapTester = ExternalArrayMapTester<State::KeyType, State::ValueType>;
 using ImplTester = ArraySetOrMapImplTester<State::KeyType, State::ValueType>;

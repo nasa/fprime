@@ -8,7 +8,7 @@
 #define Fw_ArraySetOrMapImpl_HPP
 
 #include "Fw/DataStructures/ExternalArray.hpp"
-#include "Fw/DataStructures/SetOrMapIterator.hpp"
+#include "Fw/DataStructures/SetOrMapEntry.hpp"
 #include "Fw/Types/Assert.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
 
@@ -29,10 +29,10 @@ class ArraySetOrMapImpl {
     // ----------------------------------------------------------------------
 
     //! The type of an entry in the set or map
-    using Entry = SetOrMapIterator<KE, VN>;
+    using Entry = SetOrMapEntry<KE, VN>;
 
     //! The type of a set or map iterator
-    using Iterator = SetOrMapIterator<KE, VN>;
+    using Iterator = SetOrMapEntry<KE, VN>;
 
   public:
     // ----------------------------------------------------------------------
