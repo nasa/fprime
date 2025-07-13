@@ -53,13 +53,13 @@ struct FindExisting : public Rule {
     void action(State& state) {
         const auto size = state.map.getSize();
         const auto index = STest::Pick::startLength(0, static_cast<U32>(size));
-        const auto* it = state.map.getHeadIterator();
+        const auto* entry = state.map.getHeadMapEntry();
         for (FwSizeType i = 0; i < index; i++) {
-          ASSERT_NE(it, nullptr);
-          it = it->getNextMapEntry();
+          ASSERT_NE(entry, nullptr);
+          entry = entry->getNextMapEntry();
         }
-        ASSERT_NE(it, nullptr);
-        const auto key = it->getKey();
+        ASSERT_NE(entry, nullptr);
+        const auto key = entry->getKey();
         const auto expectedValue = state.modelMap[key];
         State::ValueType value = 0;
         const auto status = state.map.find(key, value);
@@ -74,13 +74,13 @@ struct InsertExisting : public Rule {
     void action(State& state) {
         const auto size = state.map.getSize();
         const auto index = STest::Pick::startLength(0, static_cast<U32>(size));
-        const auto* it = state.map.getHeadIterator();
+        const auto* entry = state.map.getHeadMapEntry();
         for (FwSizeType i = 0; i < index; i++) {
-            ASSERT_NE(it, nullptr);
-            it = it->getNextMapEntry();
+            ASSERT_NE(entry, nullptr);
+            entry = entry->getNextMapEntry();
         }
-        ASSERT_NE(it, nullptr);
-        const auto key = it->getKey();
+        ASSERT_NE(entry, nullptr);
+        const auto key = entry->getKey();
         const auto value = state.getValue();
         const auto status = state.map.insert(key, value);
         ASSERT_EQ(status, Success::SUCCESS);
@@ -147,13 +147,13 @@ struct RemoveExisting : public Rule {
     void action(State& state) {
         const auto size = state.map.getSize();
         const auto index = STest::Pick::startLength(0, static_cast<U32>(size));
-        const auto* it = state.map.getHeadIterator();
+        const auto* entry = state.map.getHeadMapEntry();
         for (FwSizeType i = 0; i < index; i++) {
-          ASSERT_NE(it, nullptr);
-          it = it->getNextMapEntry();
+          ASSERT_NE(entry, nullptr);
+          entry = entry->getNextMapEntry();
         }
-        ASSERT_NE(it, nullptr);
-        const auto key = it->getKey();
+        ASSERT_NE(entry, nullptr);
+        const auto key = entry->getKey();
         const auto expectedValue = state.modelMap[key];
         State::ValueType value = 0;
         const auto status = state.map.remove(key, value);

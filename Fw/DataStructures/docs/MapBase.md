@@ -20,7 +20,7 @@ It represents an abstract base class for a map.
 
 |Name|Definition|
 |----|----------|
-|`Entry`|Alias of [`MapEntry<K, V>`](MapEntry.md)|
+|`MapEntry`|Alias of [`MapEntry<K, V>`](MapEntry.md)|
 
 ## 3. Private Constructors
 
@@ -90,7 +90,7 @@ void copyDataFrom(const MapBase<K, V>& map)
 
     1. Let `size` be the minimum of `map.getSize()` and `getCapacity()`.
 
-    1. Set `e = map.getHeadEntry()`.
+    1. Set `e = map.getHeadMapEntry()`.
 
     1. For `i` in [0, `size`)
 
@@ -161,10 +161,10 @@ void f(const MapBase<U16, U32>& map) {
 }
 ```
 
-### 6.5. getHeadEntry
+### 6.5. getHeadMapEntry
 
 ```c++
-virtual const Entry* getHeadEntry() const = 0
+virtual const MapEntry* getHeadMapEntry() const = 0
 ```
 
 Get a pointer to the head iterator for the map, or `nullptr` if there is none.
@@ -173,11 +173,11 @@ _Example:_
 ```c++
 void f(const MapBase<U16, U32>& map) {
     map.clear();
-    const auto* e = map.getHeadEntry();
+    const auto* e = map.getHeadMapEntry();
     ASSERT_EQ(e, nullptr);
     map.insert(0, 1);
-    e = map.getHeadEntry();
-    ASSERT_EQ(e, nullptr);
+    e = map.getHeadMapEntry();
+    ASSERT_NE(e, nullptr);
     ASSERT_EQ(e->getKey(), 0);
     ASSERT_EQ(e->getValue(), 1);
 }

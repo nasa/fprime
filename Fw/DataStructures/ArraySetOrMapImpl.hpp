@@ -31,9 +31,6 @@ class ArraySetOrMapImpl {
     //! The type of an entry in the set or map
     using Entry = SetOrMapEntry<KE, VN>;
 
-    //! The type of a set or map iterator
-    using Iterator = SetOrMapEntry<KE, VN>;
-
   public:
     // ----------------------------------------------------------------------
     // Public constructors and destructors
@@ -105,8 +102,8 @@ class ArraySetOrMapImpl {
 
     //! Get the head iterator for the set or map
     //! \return The iterator
-    const Iterator* getHeadIterator() const {
-        const Iterator* result = nullptr;
+    const Entry* getHeadEntry() const {
+        const Entry* result = nullptr;
         if (this->m_size > 0) {
             result = &this->m_entries[0];
         }
@@ -132,9 +129,9 @@ class ArraySetOrMapImpl {
             }
         }
         if ((status == Success::FAILURE) && (this->m_size < this->getCapacity())) {
-            this->m_entries[this->m_size] = Iterator(keyOrElement, valueOrNil);
+            this->m_entries[this->m_size] = Entry(keyOrElement, valueOrNil);
             if (this->m_size > 0) {
-                this->m_entries[this->m_size - 1].setNextIterator(&this->m_entries[this->m_size]);
+                this->m_entries[this->m_size - 1].setNextEntry(&this->m_entries[this->m_size]);
             }
             this->m_size++;
             status = Success::SUCCESS;
@@ -153,9 +150,9 @@ class ArraySetOrMapImpl {
                 valueOrNil = this->m_entries[i].getValue();
                 if (i < this->m_size - 1) {
                     this->m_entries[i] = this->m_entries[this->m_size - 1];
-                    this->m_entries[i].setNextIterator(&this->m_entries[i + 1]);
+                    this->m_entries[i].setNextEntry(&this->m_entries[i + 1]);
                 } else {
-                    this->m_entries[i].setNextIterator(nullptr);
+                    this->m_entries[i].setNextEntry(nullptr);
                 }
                 this->m_size--;
                 status = Success::SUCCESS;

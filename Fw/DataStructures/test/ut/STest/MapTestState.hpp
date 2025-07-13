@@ -25,8 +25,6 @@ struct State {
     static constexpr FwSizeType capacity = 1024;
     //! THe MapBase type
     using MapBase = MapBase<KeyType, ValueType>;
-    //! The iterator type
-    using Iterator = MapEntry<KeyType, ValueType>;
     //! Constructor
     State(MapBase& a_map) : map(a_map) {}
     //! The map under test

@@ -30,8 +30,8 @@ class ExternalArrayMap final : public MapBase<K, V> {
     //! The type of a map entry
     using Entry = SetOrMapEntry<K, V>;
 
-    //! The type of a map iterator
-    using Iterator = MapEntry<K, V>;
+    //! The type of a map entry
+    using MapEntry = MapEntry<K, V>;
 
   public:
     // ----------------------------------------------------------------------
@@ -94,9 +94,9 @@ class ExternalArrayMap final : public MapBase<K, V> {
     //! \return The capacity
     FwSizeType getCapacity() const override { return this->m_impl.getCapacity(); }
 
-    //! Get the head iterator for the map
-    //! \return The iterator
-    const Iterator* getHeadIterator() const override { return this->m_impl.getHeadIterator(); }
+    //! Get the head map entry for the map
+    //! \return The map entry
+    const MapEntry* getHeadMapEntry() const override { return this->m_impl.getHeadEntry(); }
 
     //! Get the size (number of entries)
     //! \return The size

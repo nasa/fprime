@@ -28,8 +28,8 @@ class ArraySet final : public SetBase<T> {
     //! The type of a set entry
     using Entry = SetOrMapEntry<T, Nil>;
 
-    //! The type of a set iterator
-    using Iterator = SetEntry<T>;
+    //! The type of a set entry
+    using SetEntry = SetEntry<T>;
 
     //! The type of the set entries
     using Entries = Entry[C];
@@ -73,9 +73,9 @@ class ArraySet final : public SetBase<T> {
     //! \return The capacity
     FwSizeType getCapacity() const override { return this->m_extSet.getCapacity(); }
 
-    //! Get the head iterator for the set
-    //! \return The iterator
-    const Iterator* getHeadIterator() const override { return this->m_extSet.getHeadIterator(); }
+    //! Get the head set entry for the set
+    //! \return The set entry
+    const SetEntry* getHeadSetEntry() const override { return this->m_extSet.getHeadSetEntry(); }
 
     //! Get the size (number of entries)
     //! \return The size

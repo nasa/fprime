@@ -25,13 +25,13 @@ class ArrayMap final : public MapBase<K, V> {
     // Public types
     // ----------------------------------------------------------------------
 
-    //! The type of a map entry
+    //! The type of an entry
     using Entry = SetOrMapEntry<K, V>;
 
-    //! The type of a map iterator
-    using Iterator = MapEntry<K, V>;
+    //! The type of a map entry
+    using MapEntry = MapEntry<K, V>;
 
-    //! The type of the map entries
+    //! The type of the entries
     using Entries = Entry[C];
 
   public:
@@ -74,9 +74,9 @@ class ArrayMap final : public MapBase<K, V> {
     //! \return The capacity
     FwSizeType getCapacity() const override { return this->m_extMap.getCapacity(); }
 
-    //! Get the head iterator for the map
-    //! \return The iterator
-    const Iterator* getHeadIterator() const override { return this->m_extMap.getHeadIterator(); }
+    //! Get the head map entry for the map
+    //! \return The map entry
+    const MapEntry* getHeadMapEntry() const override { return this->m_extMap.getHeadMapEntry(); }
 
     //! Get the size (number of entries)
     //! \return The size

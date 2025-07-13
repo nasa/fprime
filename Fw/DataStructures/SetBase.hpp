@@ -20,8 +20,8 @@ class SetBase {
     // Public types
     // ----------------------------------------------------------------------
 
-    //! The type of a set iterator
-    using Iterator = SetEntry<T>;
+    //! The type of a set entry
+    using SetEntry = SetEntry<T>;
 
   private:
     // ----------------------------------------------------------------------
@@ -65,7 +65,7 @@ class SetBase {
     void copyDataFrom(const SetBase<T>& set) {
         if (&set != this) {
             this->clear();
-            const auto* e = set.getHeadIterator();
+            const auto* e = set.getHeadSetEntry();
             const FwSizeType size = FW_MIN(set.getSize(), this->getCapacity());
             for (FwSizeType i = 0; i < size; i++) {
                 FW_ASSERT(e != nullptr);
@@ -85,9 +85,9 @@ class SetBase {
     //! \return The capacity
     virtual FwSizeType getCapacity() const = 0;
 
-    //! Get the head iterator for the set
-    //! \return The iterator
-    virtual const Iterator* getHeadIterator() const = 0;
+    //! Get the head set entry for the set
+    //! \return The set entry
+    virtual const SetEntry* getHeadSetEntry() const = 0;
 
     //! Get the size (number of items stored in the set)
     //! \return The size

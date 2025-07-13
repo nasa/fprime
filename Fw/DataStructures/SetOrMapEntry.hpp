@@ -1,7 +1,7 @@
 // ======================================================================
 // \title  SetOrMapEntry
 // \author bocchino
-// \brief  A class template representing an iterator for a set or map
+// \brief  A class template representing an entry for a set or map
 // ======================================================================
 
 #ifndef Fw_SetOrMapEntry_HPP
@@ -26,12 +26,12 @@ class SetOrMapEntry final : public MapEntry<KE, VN>, public SetEntry<KE> {
     //! Constructor providing members
     SetOrMapEntry(const KE& keyOrElement,                         //!< The key or element
                      const VN& valueOrNil,                           //!< The value or Nil
-                     const SetOrMapEntry<KE, VN>* next = nullptr  //!< The next iterator
+                     const SetOrMapEntry<KE, VN>* next = nullptr  //!< The next entry
                      )
         : m_keyOrElement(keyOrElement), m_valueOrNil(valueOrNil), m_next(next) {}
 
     //! Copy constructor
-    SetOrMapEntry(const SetOrMapEntry<KE, VN>& iterator) { *this = iterator; }
+    SetOrMapEntry(const SetOrMapEntry<KE, VN>& entry) { *this = entry; }
 
     //! Destructor
     ~SetOrMapEntry() override = default;
@@ -42,37 +42,37 @@ class SetOrMapEntry final : public MapEntry<KE, VN>, public SetEntry<KE> {
     // ----------------------------------------------------------------------
 
     //! operator=
-    SetOrMapEntry<KE, VN>& operator=(const SetOrMapEntry<KE, VN>& iterator) {
-        if (this != &iterator) {
-            this->m_keyOrElement = iterator.m_keyOrElement;
-            this->m_valueOrNil = iterator.m_valueOrNil;
-            this->m_next = iterator.m_next;
+    SetOrMapEntry<KE, VN>& operator=(const SetOrMapEntry<KE, VN>& entry) {
+        if (this != &entry) {
+            this->m_keyOrElement = entry.m_keyOrElement;
+            this->m_valueOrNil = entry.m_valueOrNil;
+            this->m_next = entry.m_next;
         }
         return *this;
     }
 
-    //! Get the element associated with this iterator
+    //! Get the element associated with this entry
     //! \return The element
     const KE& getElement() const override { return this->m_keyOrElement; }
 
-    //! Get the key associated with this iterator
+    //! Get the key associated with this entry
     //! \return The key
     const KE& getKey() const override { return this->m_keyOrElement; }
 
-    //! Get the value associated with this iterator
+    //! Get the value associated with this entry
     //! \return The value
     const VN& getValue() const override { return this->m_valueOrNil; }
 
-    //! Get the next iterator
-    //! \return The iterator, or nullptr if none
-    const SetOrMapEntry<KE, VN>* getNextIterator() const { return this->m_next; }
+    //! Get the next entry
+    //! \return The entry, or nullptr if none
+    const SetOrMapEntry<KE, VN>* getNextEntry() const { return this->m_next; }
 
-    //! Get the next map iterator
-    //! \return The map iterator, or nullptr if none
+    //! Get the next map entry
+    //! \return The map entry, or nullptr if none
     const MapEntry<KE, VN>* getNextMapEntry() const override { return this->m_next; }
 
-    //! Get the next set iterator
-    //! \return The set iterator, or nullptr if none
+    //! Get the next set entry
+    //! \return The set entry, or nullptr if none
     const SetEntry<KE>* getNextSetEntry() const override { return this->m_next; }
 
     //! Set the key or element
@@ -81,8 +81,8 @@ class SetOrMapEntry final : public MapEntry<KE, VN>, public SetEntry<KE> {
         this->m_keyOrElement = keyOrElement;
     }
 
-    //! Set the next iterator
-    void setNextIterator(const SetOrMapEntry<KE, VN>* next) { this->m_next = next; }
+    //! Set the next entry
+    void setNextEntry(const SetOrMapEntry<KE, VN>* next) { this->m_next = next; }
 
     //! Set the value or Nil
     void setValueOrNil(const VN& valueOrNil) { this->m_valueOrNil = valueOrNil; }
@@ -98,7 +98,7 @@ class SetOrMapEntry final : public MapEntry<KE, VN>, public SetEntry<KE> {
     //! The value or nil
     VN m_valueOrNil = {};
 
-    //! Pointer to the next iterator or nullptr if none
+    //! Pointer to the next entry or nullptr if none
     const SetOrMapEntry<KE, VN>* m_next = nullptr;
 };
 

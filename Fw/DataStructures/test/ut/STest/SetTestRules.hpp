@@ -50,22 +50,22 @@ struct FindExisting : public Rule {
         ASSERT_EQ(size, modelSize);
         // Check that all elements of set are in modelSet
         {
-            const auto* it = state.set.getHeadIterator();
+            const auto* entry = state.set.getHeadSetEntry();
             for (FwSizeType i = 0; i < size; i++) {
-                ASSERT_NE(it, nullptr);
-                const auto e = it->getElement();
+                ASSERT_NE(entry, nullptr);
+                const auto e = entry->getElement();
                 ASSERT_TRUE(state.modelSetContains(e));
-                it = it->getNextSetEntry();
+                entry = entry->getNextSetEntry();
             }
         }
         // Check that all elements of modelSet are in set
         {
-            auto it = state.modelSet.begin();
+            auto entry = state.modelSet.begin();
             for (FwSizeType i = 0; i < modelSize; i++) {
-                ASSERT_NE(it, state.modelSet.end());
-                const auto status = state.set.find(*it);
+                ASSERT_NE(entry, state.modelSet.end());
+                const auto status = state.set.find(*entry);
                 ASSERT_EQ(status, Success::SUCCESS);
-                it++;
+                entry++;
             }
         }
     }
@@ -77,13 +77,13 @@ struct InsertExisting : public Rule {
     void action(State& state) {
         const auto size = state.set.getSize();
         const auto index = STest::Pick::startLength(0, static_cast<U32>(size));
-        const auto* it = state.set.getHeadIterator();
+        const auto* entry = state.set.getHeadSetEntry();
         for (FwSizeType i = 0; i < index; i++) {
-            ASSERT_NE(it, nullptr);
-            it = it->getNextSetEntry();
+            ASSERT_NE(entry, nullptr);
+            entry = entry->getNextSetEntry();
         }
-        ASSERT_NE(it, nullptr);
-        const auto e = it->getElement();
+        ASSERT_NE(entry, nullptr);
+        const auto e = entry->getElement();
         const auto status = state.set.insert(e);
         ASSERT_EQ(status, Success::SUCCESS);
         ASSERT_EQ(state.set.getSize(), size);
@@ -143,13 +143,13 @@ struct RemoveExisting : public Rule {
     void action(State& state) {
         const auto size = state.set.getSize();
         const auto index = STest::Pick::startLength(0, static_cast<U32>(size));
-        const auto* it = state.set.getHeadIterator();
+        const auto* entry = state.set.getHeadSetEntry();
         for (FwSizeType i = 0; i < index; i++) {
-            ASSERT_NE(it, nullptr);
-            it = it->getNextSetEntry();
+            ASSERT_NE(entry, nullptr);
+            entry = entry->getNextSetEntry();
         }
-        ASSERT_NE(it, nullptr);
-        const auto e = it->getElement();
+        ASSERT_NE(entry, nullptr);
+        const auto e = entry->getElement();
         const auto status = state.set.remove(e);
         ASSERT_EQ(status, Success::SUCCESS);
         const auto n = state.modelSet.erase(e);

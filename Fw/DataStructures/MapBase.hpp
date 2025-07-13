@@ -21,7 +21,7 @@ class MapBase {
     // ----------------------------------------------------------------------
 
     //! The type of a map iterator
-    using Iterator = MapEntry<K, V>;
+    using MapEntry = MapEntry<K, V>;
 
   private:
     // ----------------------------------------------------------------------
@@ -65,7 +65,7 @@ class MapBase {
     void copyDataFrom(const MapBase<K, V>& map) {
         if (&map != this) {
             this->clear();
-            const auto* e = map.getHeadIterator();
+            const auto* e = map.getHeadMapEntry();
             const FwSizeType size = FW_MIN(map.getSize(), this->getCapacity());
             for (FwSizeType i = 0; i < size; i++) {
                 FW_ASSERT(e != nullptr);
@@ -88,7 +88,7 @@ class MapBase {
 
     //! Get the head iterator for the map
     //! \return The iterator
-    virtual const Iterator* getHeadIterator() const = 0;
+    virtual const MapEntry* getHeadMapEntry() const = 0;
 
     //! Get the size (number of items stored in the map)
     //! \return The size
