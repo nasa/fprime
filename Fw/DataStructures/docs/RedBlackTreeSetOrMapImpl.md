@@ -332,7 +332,31 @@ Success insert(const KE& keyOrElement, const VN& valueOrNil)
 Success remove(const KE& keyOrElement, VN& valueOrNil)
 ```
 
-TODO
+1. Set `node = NONE`.
+
+1. Set `direction = LEFT`.
+
+1. Let `status = findNode(keyOrElement, node, direction)`.
+
+1. If `status == SUCCESS`
+
+    1. Set `valueOrNil = m_nodes[node].entry.getValue()`.
+
+    1. Set `removedNode = NONE`.
+
+    1. Call `removeNode(node, removedNode)`.
+
+    1. Let `predecessor = m_nodes[removedNode].predecessor`.
+
+    1. Let `successor = m_nodes[removedNode].successor`.
+
+    1. Call `updateLinks(predecessor, successor)`.
+
+    1. Let `pushStatus = m_freeNodes.push(removedNode)`.
+
+    1. Assert `pushStatus == SUCCESS`.
+
+1. Return `status`.
 
 ### 6.9. setStorage (Typed Data)
 
@@ -465,7 +489,9 @@ and `node` stores the index of _N_.
 Direction getParentDirection(Node::Index node) const
 ```
 
-**Overview:** Get the parent direction for a node.
+**Overview:** Get the parent direction for a node, i.e.,
+the direction (left or right) to follow from the parent
+of `node` to get to `node`.
 `node` must not be `NONE`.
 The parent of `node` must not be `NONE`.
 
@@ -590,7 +616,151 @@ It is not permissible for `node` to be `NONE`.
 
 1. Assert `done == true`.
 
-### 8.5. rotateSubtree
+### 8.5. removeNode
+
+```c++
+void removeNode(Node::Index node, Node::Index& removedNode)
+```
+
+**Overview:**
+This function removes a node of the tree.
+On entry, `node` stores the key and value to be removed.
+It must not be `NONE`.
+On return, `removedNode` stores the node that was actually removed.
+
+**Algorithm:**
+
+1. If `m_nodes[node].left != NONE` and `m_nodes[node].right != NONE`
+   then call `removeNodeWithTwoChildren(node, removedNode)`.
+
+1. Otherwise
+
+   1. Call `removeNodeWithAtMostOneChild(node)`.
+
+   1. Set `removedNode = node`.
+
+### 8.6. removeBlackNonRootLeafNode
+
+```c++
+void removeBlackNonRootLeafNode(Node::Index node)
+```
+
+**Overview:**
+This function removes a node that is colored black and
+is a leaf node (i.e., it has no children) and is not the root.
+`node` stores the node to remove.
+It must not be `NONE`.
+
+**Algorithm:**
+
+1. Assert `m_nodes[node].color == BLACK`.
+
+1. TODO
+
+### 8.7. removeNodeWithAtMostOneChild
+
+```c++
+void removeNodeWithAtMostOneChild(Node::Index node)
+```
+
+**Overview:**
+This function removes a node of the tree with at most one child.
+On entry, `node` stores the node to be removed.
+It must not be `NONE`.
+
+**Algorithm:**
+
+1. If `m_nodes[node].left != NONE` then
+   call `removeNodeWithOneChild(node, LEFT)`.
+
+1. Otherwise if `m_nodes[node].right != NONE` then
+   call `removeNodeWithOneChild(node, RIGHT)`.
+
+1. Otherwise if `node == m_root` then set `m_root = NONE`.
+
+1. Otherwise if `m_nodes[node].color == RED` then call
+   `removeRedNonRootLeafNode(node)`.
+
+1. Otherwise call `removeBlackNonRootLeafNode(node)`.
+
+### 8.8. removeNodeWithOneChild
+
+```c++
+void removeNodeWithOneChild(Node::Index node, Direction, direction)
+```
+
+**Overview:**
+This function removes a node of the tree with exactly one
+child.
+`node` stores the node to remove.
+It must not be `NONE`.
+`direction` stores the direction of the child.
+
+**Algorithm:**
+
+1. Assert `m_nodes[node].color == BLACK`.
+
+1. Let `parent = m_nodes[node]`.
+
+1. Let `child = m_nodes[node].getChild(direction)`.
+
+1. Assert `m_nodes[child].color == RED`.
+
+1. If `parent == NONE` then set `m_root = child`.
+
+1. Otherwise
+
+    1. Let `parentDirection = getParentDirection(node)`.
+
+    1. Call `m_nodes[parent].setChild(parentDirection, child)`.
+
+1. Set `m_nodes[node].color = BLACK`.
+
+### 8.9. removeNodeWithTwoChildren
+
+```c++
+void removeNodeWithTwoChildren(Node::Index node, Node::Index& removedNode)
+```
+
+**Overview:**
+This function removes a node of the tree that has two children.
+On entry, `node` stores the key and value to be removed.
+It must not be `NONE`.
+On return, `removedNode` stores the node that was actually removed.
+
+**Algorithm:**
+
+1. Set `successor = m_nodes[node].successor`.
+
+1. Call `m_nodes[node].setKeyOrElement(m_nodes[successor].getKey())`.
+
+1. Call `m_nodes[node].setValueOrNil(m_nodes[successor].getValue())`.
+
+1. Call `removeNodeWithAtMostOneChild(successor)`.
+
+### 8.10. removeRedNonRootLeafNode
+
+```c++
+void removeRedNonRootLeafNode(Node::Index node)
+```
+
+**Overview:**
+This function removes a node that is colored red and
+is a leaf node (i.e., it has no children) and is not the root.
+`node` stores the node to remove.
+It must not be `NONE`.
+
+**Algorithm:**
+
+1. Assert `m_nodes[node].color == RED`.
+
+1. Let `parent = m_nodes[node].parent`.
+
+1. Let `parentDirection = getParentDirection(node)`.
+
+1. Call `m_nodes[parent].setChild(parentDirection, NONE)`.
+
+### 8.11. rotateSubtree
 
 ```c++
 Node::Index rotateSubtree(Node::Index node, Direction direction)
@@ -633,7 +803,7 @@ not be `NONE`.
 
 1. Return `newRoot`.
 
-### 8.6. updateLinks
+### 8.12. updateLinks
 
 ```c++
 void updateLinks(Node::Index predecessor, Node::Index successor)
