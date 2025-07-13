@@ -83,9 +83,9 @@ function integration_test_run {
                 --show-leak-kinds=all \
                 --track-origins=yes \
                 --log-file=${LOG_DIR}/gds-logs/valgrind.log \
-            ${ROOTDIR}/*/${BINARY}/bin/${BINARY} -a 127.0.0.1 -p 50000 1>${LOG_DIR}/gds-logs/${BINARY}.stdout.log 2>${LOG_DIR}/gds-logs/${BINARY}.stderr.log &
+            ${ROOTDIR}/${PLATFORM}/${BINARY}/bin/${BINARY} -a 127.0.0.1 -p 50000 1>${LOG_DIR}/gds-logs/${BINARY}.stdout.log 2>${LOG_DIR}/gds-logs/${BINARY}.stderr.log &
         else
-            ${ROOTDIR}/*/${BINARY}/bin/${BINARY} -a 127.0.0.1 -p 50000 1>${LOG_DIR}/gds-logs/${BINARY}.stdout.log 2>${LOG_DIR}/gds-logs/${BINARY}.stderr.log &
+            ${ROOTDIR}/${PLATFORM}/${BINARY}/bin/${BINARY} -a 127.0.0.1 -p 50000 1>${LOG_DIR}/gds-logs/${BINARY}.stdout.log 2>${LOG_DIR}/gds-logs/${BINARY}.stderr.log &
         fi
         VALGRIND_PID=$!
 
