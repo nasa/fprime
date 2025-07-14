@@ -29,7 +29,7 @@ class ArraySet final : public SetBase<T> {
     using ImplEntry = SetOrMapImplEntry<T, Nil>;
 
     //! The type of a set entry
-    using SetEntry = SetEntry<T>;
+    using SetConstEntry = SetConstEntry<T>;
 
     //! The type of the implementation entries
     using ImplEntries = ImplEntry[C];
@@ -75,7 +75,7 @@ class ArraySet final : public SetBase<T> {
 
     //! Get the head set entry for the set
     //! \return The set entry
-    const SetEntry* getHeadSetEntry() const override { return this->m_extSet.getHeadSetEntry(); }
+    const SetConstEntry* getHeadSetConstEntry() const override { return this->m_extSet.getHeadSetConstEntry(); }
 
     //! Get the size (number of entries)
     //! \return The size

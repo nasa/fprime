@@ -32,7 +32,7 @@ class ExternalArraySet final : public SetBase<T> {
     using Entry = SetOrMapImplEntry<T, Nil>;
 
     //! The type of a set iterator
-    using SetEntry = SetEntry<T>;
+    using SetConstEntry = SetConstEntry<T>;
 
   public:
     // ----------------------------------------------------------------------
@@ -97,7 +97,7 @@ class ExternalArraySet final : public SetBase<T> {
 
     //! Get the head set entry for the set
     //! \return The set entry
-    const SetEntry* getHeadSetEntry() const override { return this->m_impl.getHeadEntry(); }
+    const SetConstEntry* getHeadSetConstEntry() const override { return this->m_impl.getHeadEntry(); }
 
     //! Get the size (number of entries)
     //! \return The size

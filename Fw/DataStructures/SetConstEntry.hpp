@@ -1,18 +1,18 @@
 // ======================================================================
-// \title  SetEntry
+// \title  SetConstEntry
 // \author bocchino
-// \brief  An abstract class template representing an iterator for a set
+// \brief  An abstract class template representing a const entry for a set
 // ======================================================================
 
-#ifndef Fw_SetEntry_HPP
-#define Fw_SetEntry_HPP
+#ifndef Fw_SetConstEntry_HPP
+#define Fw_SetConstEntry_HPP
 
 #include "Fw/FPrimeBasicTypes.hpp"
 
 namespace Fw {
 
 template <typename T>
-class SetEntry {
+class SetConstEntry {
   private:
     // ----------------------------------------------------------------------
     // Private constructors
@@ -20,7 +20,7 @@ class SetEntry {
 
     //! Copy constructor deleted in the base class
     //! Behavior depends on the implementation
-    SetEntry(const SetEntry<T>&) = delete;
+    SetConstEntry(const SetConstEntry<T>&) = delete;
 
   protected:
     // ----------------------------------------------------------------------
@@ -28,10 +28,10 @@ class SetEntry {
     // ----------------------------------------------------------------------
 
     //! Zero-argument constructor
-    SetEntry() {}
+    SetConstEntry() {}
 
     //! Destructor
-    virtual ~SetEntry() = default;
+    virtual ~SetConstEntry() = default;
 
   private:
     // ----------------------------------------------------------------------
@@ -41,20 +41,20 @@ class SetEntry {
     //! operator= deleted in the base class
     //! Behavior depends on the implementation
     //! We avoid virtual user-defined operators
-    SetEntry<T>& operator=(const SetEntry<T>&) = delete;
+    SetConstEntry<T>& operator=(const SetConstEntry<T>&) = delete;
 
   public:
     // ----------------------------------------------------------------------
     // Public member functions
     // ----------------------------------------------------------------------
 
-    //! Get the element associated with this iterator
+    //! Get the element associated with this entry
     //! \return The element
     virtual const T& getElement() const = 0;
 
-    //! Get the next set iterator
-    //! \return The set iterator, or nullptr if none
-    virtual const SetEntry<T>* getNextSetEntry() const = 0;
+    //! Get the next set entry
+    //! \return The set entry, or nullptr if none
+    virtual const SetConstEntry<T>* getNextSetConstEntry() const = 0;
 };
 
 }  // namespace Fw

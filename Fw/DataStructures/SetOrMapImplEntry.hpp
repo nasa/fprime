@@ -8,27 +8,27 @@
 #define Fw_SetOrMapImplEntry_HPP
 
 #include "Fw/DataStructures/MapConstEntry.hpp"
-#include "Fw/DataStructures/SetEntry.hpp"
+#include "Fw/DataStructures/SetConstEntry.hpp"
 #include "Fw/FPrimeBasicTypes.hpp"
 
 namespace Fw {
 
 template <typename KE, typename VN>
-class SetOrMapImplEntry final : public MapConstEntry<KE, VN>, public SetEntry<KE> {
+class SetOrMapImplEntry final : public MapConstEntry<KE, VN>, public SetConstEntry<KE> {
   public:
     // ----------------------------------------------------------------------
     // Public constructors and destructors
     // ----------------------------------------------------------------------
 
     //! Zero-argument constructor
-    SetOrMapImplEntry() : MapConstEntry<KE, VN>(), SetEntry<KE>() {}
+    SetOrMapImplEntry() : MapConstEntry<KE, VN>(), SetConstEntry<KE>() {}
 
     //! Constructor providing members
     SetOrMapImplEntry(const KE& keyOrElement,                          //!< The key or element
                       const VN& valueOrNil,                            //!< The value or Nil
                       const SetOrMapImplEntry<KE, VN>* next = nullptr  //!< The next entry
                       )
-        : MapConstEntry<KE, VN>(), SetEntry<KE>(), m_keyOrElement(keyOrElement), m_valueOrNil(valueOrNil), m_next(next) {}
+        : MapConstEntry<KE, VN>(), SetConstEntry<KE>(), m_keyOrElement(keyOrElement), m_valueOrNil(valueOrNil), m_next(next) {}
 
     //! Copy constructor
     SetOrMapImplEntry(const SetOrMapImplEntry<KE, VN>& entry) { *this = entry; }
@@ -73,7 +73,7 @@ class SetOrMapImplEntry final : public MapConstEntry<KE, VN>, public SetEntry<KE
 
     //! Get the next set entry
     //! \return The set entry, or nullptr if none
-    const SetEntry<KE>* getNextSetEntry() const override { return this->m_next; }
+    const SetConstEntry<KE>* getNextSetConstEntry() const override { return this->m_next; }
 
     //! Set the key or element
     void setKeyOrElement(const KE& keyOrElement  //!< The key or element

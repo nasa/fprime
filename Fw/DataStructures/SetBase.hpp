@@ -7,7 +7,7 @@
 #ifndef Fw_SetBase_HPP
 #define Fw_SetBase_HPP
 
-#include "Fw/DataStructures/SetEntry.hpp"
+#include "Fw/DataStructures/SetConstEntry.hpp"
 #include "Fw/Types/Assert.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
 
@@ -21,7 +21,7 @@ class SetBase {
     // ----------------------------------------------------------------------
 
     //! The type of a set entry
-    using SetEntry = SetEntry<T>;
+    using SetConstEntry = SetConstEntry<T>;
 
   private:
     // ----------------------------------------------------------------------
@@ -65,13 +65,13 @@ class SetBase {
     void copyDataFrom(const SetBase<T>& set) {
         if (&set != this) {
             this->clear();
-            const auto* e = set.getHeadSetEntry();
+            const auto* e = set.getHeadSetConstEntry();
             const FwSizeType size = FW_MIN(set.getSize(), this->getCapacity());
             for (FwSizeType i = 0; i < size; i++) {
                 FW_ASSERT(e != nullptr);
                 const auto status = this->insert(e->getElement());
                 FW_ASSERT(status == Success::SUCCESS, static_cast<FwAssertArgType>(status));
-                e = e->getNextSetEntry();
+                e = e->getNextSetConstEntry();
             }
         }
     }
@@ -87,7 +87,7 @@ class SetBase {
 
     //! Get the head set entry for the set
     //! \return The set entry
-    virtual const SetEntry* getHeadSetEntry() const = 0;
+    virtual const SetConstEntry* getHeadSetConstEntry() const = 0;
 
     //! Get the size (number of items stored in the set)
     //! \return The size
