@@ -16,11 +16,20 @@ namespace Fw {
 
 template <typename T>
 class SetConstIterator {
+
   public:
+    // ----------------------------------------------------------------------
+    // Public types
+    // ----------------------------------------------------------------------
+
     //! The type of an array iterator
     using ArrayIterator = typename ArraySetOrMapImpl<T, Nil>::ConstIterator;
 
   private:
+    // ----------------------------------------------------------------------
+    // Private types
+    // ----------------------------------------------------------------------
+
     //! The type of an implementation kind
     enum class ImplKind { ARRAY, RED_BLACK_TREE };
 
@@ -34,6 +43,10 @@ class SetConstIterator {
     };
 
   public:
+    // ----------------------------------------------------------------------
+    // Constructors and destructors
+    // ----------------------------------------------------------------------
+
     //! Constructor providing an array implementation
     SetConstIterator(const ArrayIterator& it) : m_implKind(ImplKind::ARRAY), m_impl(it), m_implIterator(m_impl.array) {}
 
@@ -47,6 +60,10 @@ class SetConstIterator {
     ~SetConstIterator() {}
 
   public:
+    // ----------------------------------------------------------------------
+    // Public member functions
+    // ----------------------------------------------------------------------
+
     //! Copy assignment operator
     SetConstIterator& operator=(const SetConstIterator&) = default;
 
@@ -97,6 +114,10 @@ class SetConstIterator {
     const SetConstEntry<T>* operator->() const { return &this->m_implIterator.getEntry(); }
 
   private:
+    // ----------------------------------------------------------------------
+    // Private member variables
+    // ----------------------------------------------------------------------
+
     //! The implementation kind
     ImplKind m_implKind;
 

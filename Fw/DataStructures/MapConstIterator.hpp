@@ -16,10 +16,18 @@ namespace Fw {
 template <typename K, typename V>
 class MapConstIterator {
   public:
+    // ----------------------------------------------------------------------
+    // Public
+    // ----------------------------------------------------------------------
+
     //! The type of an array iterator
     using ArrayIterator = typename ArraySetOrMapImpl<K, V>::ConstIterator;
 
   private:
+    // ----------------------------------------------------------------------
+    // Private types
+    // ----------------------------------------------------------------------
+
     //! The type of an implementation kind
     enum class ImplKind { ARRAY, RED_BLACK_TREE };
 
@@ -33,6 +41,10 @@ class MapConstIterator {
     };
 
   public:
+    // ----------------------------------------------------------------------
+    // Constructors and destructors
+    // ----------------------------------------------------------------------
+
     //! Constructor providing an array implementation
     MapConstIterator(const ArrayIterator& it) : m_implKind(ImplKind::ARRAY), m_impl(it), m_implIterator(m_impl.array) {}
 
