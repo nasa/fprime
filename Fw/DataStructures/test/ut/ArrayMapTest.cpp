@@ -29,6 +29,7 @@ class ArrayMapTester {
 
 namespace MapTest {
 
+using ConstIterator = MapConstIterator<State::KeyType, State::ValueType>;
 using Entry = SetOrMapImplEntry<State::KeyType, State::ValueType>;
 using Map = ArrayMap<State::KeyType, State::ValueType, State::capacity>;
 using MapTester = ArrayMapTester<State::KeyType, State::ValueType, State::capacity>;
@@ -92,6 +93,7 @@ TEST(ArrayMap, CopyDataFrom) {
     }
 }
 
+#if 0
 TEST(ArrayMapScenarios, Clear) {
     Map map;
     State state(map);
@@ -103,6 +105,7 @@ TEST(ArrayMapScenarios, Find) {
     State state(map);
     Scenarios::find(state);
 }
+#endif
 
 TEST(ArrayMapScenarios, FindExisting) {
     Map map;

@@ -65,10 +65,21 @@ class MapConstIterator {
         return result;
     }
 
-    //! Increment operator
+    //! Inequality comparison operator
+    bool operator!=(const MapConstIterator& it) { return !(*this == it); };
+
+    //! Prefix increment
     MapConstIterator& operator++() {
         this->m_implIterator.increment();
         return *this;
+    }
+
+    //! Prefix increment
+    MapConstIterator operator++(int) { MapConstIterator tmp = *this; ++(*this); return tmp; }
+
+    //! Postfix increment
+    void increment() {
+        this->m_implIterator.increment();
     }
 
     //! Get the key or element in the entry pointed to by this iterator
@@ -82,6 +93,12 @@ class MapConstIterator {
 
     //! Reset the iterator
     void reset() { return this->m_implIterator.reset(); }
+
+    //! Dereference
+    const MapConstIterator& operator*() const { return *this; }
+
+    //! Pointer
+    const MapConstIterator* operator->() const { return this; }
 
   private:
     //! The implementation kind

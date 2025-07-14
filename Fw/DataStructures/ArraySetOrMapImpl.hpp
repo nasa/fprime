@@ -48,7 +48,10 @@ class ArraySetOrMapImpl final {
 
       public:
         //! Copy assignment operator
-        ConstIterator& operator=(const ConstIterator&) = default;
+        ConstIterator& operator=(const ConstIterator& it) {
+            this->m_impl = it.m_impl;
+            this->m_index = it.m_index;
+        }
 
         //! Equality comparison operator
         bool compareEqual(const ConstIterator& it) const {
@@ -152,7 +155,7 @@ class ArraySetOrMapImpl final {
     //! Get the end iterator
     ConstIterator end() const {
         auto it = begin();
-        it.setIndex(this->m_size);
+        it.setIndex(this->m_size + 1);
         return it;
     }
 

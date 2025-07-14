@@ -74,13 +74,12 @@ class MapBase {
     void copyDataFrom(const MapBase<K, V>& map) {
         if (&map != this) {
             this->clear();
-            const auto* e = map.getHeadMapEntry();
             const FwSizeType size = FW_MIN(map.getSize(), this->getCapacity());
+            auto it = map.begin();
             for (FwSizeType i = 0; i < size; i++) {
-                FW_ASSERT(e != nullptr);
-                const auto status = this->insert(e->getKey(), e->getValue());
+                const auto status = this->insert(it.getKey(), it.getValue());
                 FW_ASSERT(status == Success::SUCCESS, static_cast<FwAssertArgType>(status));
-                e = e->getNextMapEntry();
+                it++;
             }
         }
     }

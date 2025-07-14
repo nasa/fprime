@@ -53,13 +53,13 @@ struct FindExisting : public Rule {
     void action(State& state) {
         const auto size = state.impl.getSize();
         const auto index = STest::Pick::startLength(0, static_cast<U32>(size));
-        const auto* entry = state.impl.getHeadEntry();
+        auto it = state.impl.begin();
         for (FwSizeType i = 0; i < index; i++) {
-            ASSERT_NE(entry, nullptr);
-            entry = entry->getNextEntry();
+            ASSERT_TRUE(it.isInRange());
+            it.increment();
         }
-        ASSERT_NE(entry, nullptr);
-        const auto key = entry->getKey();
+        ASSERT_TRUE(it.isInRange());
+        const auto key = it.getKeyOrElement();
         const auto expectedValue = state.modelMap[key];
         State::ValueType value = 0;
         const auto status = state.impl.find(key, value);
@@ -74,13 +74,13 @@ struct InsertExisting : public Rule {
     void action(State& state) {
         const auto size = state.impl.getSize();
         const auto index = STest::Pick::startLength(0, static_cast<U32>(size));
-        const auto* entry = state.impl.getHeadEntry();
+        auto it = state.impl.begin();
         for (FwSizeType i = 0; i < index; i++) {
-            ASSERT_NE(entry, nullptr);
-            entry = entry->getNextEntry();
+            ASSERT_TRUE(it.isInRange());
+            it.increment();
         }
-        ASSERT_NE(entry, nullptr);
-        const auto key = entry->getKey();
+        ASSERT_TRUE(it.isInRange());
+        const auto key = it.getKeyOrElement();
         const auto value = state.getValue();
         const auto status = state.impl.insert(key, value);
         ASSERT_EQ(status, Success::SUCCESS);
@@ -146,13 +146,13 @@ struct RemoveExisting : public Rule {
     void action(State& state) {
         const auto size = state.impl.getSize();
         const auto index = STest::Pick::startLength(0, static_cast<U32>(size));
-        const auto* entry = state.impl.getHeadEntry();
+        auto it = state.impl.begin();
         for (FwSizeType i = 0; i < index; i++) {
-            ASSERT_NE(entry, nullptr);
-            entry = entry->getNextEntry();
+            ASSERT_TRUE(it.isInRange());
+            it.increment();
         }
-        ASSERT_NE(entry, nullptr);
-        const auto key = entry->getKey();
+        ASSERT_TRUE(it.isInRange());
+        const auto key = it.getKeyOrElement();
         const auto expectedValue = state.modelMap[key];
         State::ValueType value = 0;
         const auto status = state.impl.remove(key, value);
