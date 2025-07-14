@@ -2,7 +2,7 @@
 
 `MapEntry` is an abstract class template
 defined in [`Fw/DataStructures`](sdd.md).
-It represents an iterator for a map.
+It represents an entry for a map.
 
 ## 1. Template Parameters
 
@@ -13,66 +13,32 @@ It represents an iterator for a map.
 |`typename`|`K`|The type of a key in the map|
 |`typename`|`V`|The type of a value in the map|
 
-## 2. Private Constructors and Destructors
+## 2. Deleted elements
 
-### 2.1. Copy Constructor
-
-```c++
-MapEntry(const MapEntry<K, V>& map)
-```
-
-Defined as `= delete`.
+Because this is an abstract base class,
+the copy constructor and copy assignment operator are deleted.
 
 ## 3. Protected Constructors and Destructors
 
-### 3.1. Zero-Argument Constructor
-
-```c++
-MapEntry()
-```
-
-Use default initialization of members.
-
-### 3.2. Destructor
-
-```c++
-virtual ~MapEntry()
-```
-
-Defined as `= default`.
-
-## 4. Private Member Functions
-
-### 4.1. operator=
-
-```c++
-MapEntry<K, V>& operator=(const MapEntry<K, V>&)
-```
-
+`MapEntry` provides a protected zero-argument constructor
+and a protected virtual destructor.
+It uses the default implementations.
 Defined as `= delete`.
 
-## 5. Public Member Functions
+## 4. Public Member Functions
 
-### 5.1. getKey
+### 4.1. getKey
 
 ```c++
 virtual const K& getKey() const = 0
 ```
 
-Return a reference to the key.
+Return a const reference to the key stored in the entry.
 
-### 5.2. getValue
+### 4.2. getValue
 
 ```c++
 virtual const V& getValue() const = 0
 ```
 
-Return a reference to the value.
-
-### 5.3. getNextMapEntry
-
-```c++
-virtual const MapEntry<K, V>* getNextMapEntry() = 0
-```
-
-Return a pointer to the next map iterator, or `nullptr` if there is none.
+Return a const reference to the value stored in the entry.

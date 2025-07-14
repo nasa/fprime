@@ -33,7 +33,7 @@ class MapEntry {
     // ----------------------------------------------------------------------
 
     //! Zero-argument constructor
-    MapEntry() {}
+    MapEntry() = default;
 
     //! Destructor
     virtual ~MapEntry() = default;

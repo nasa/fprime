@@ -82,7 +82,7 @@ const MapEntry& operator*() const
 ```
 
 Return a const reference to the `MapEntry` object
-pointed to by the itertor.
+pointed to by the iterator.
 
 ### 4.7. operator->
 
