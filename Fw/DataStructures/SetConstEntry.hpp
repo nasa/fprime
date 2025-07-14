@@ -51,10 +51,6 @@ class SetConstEntry {
     //! Get the element associated with this entry
     //! \return The element
     virtual const T& getElement() const = 0;
-
-    //! Get the next set entry
-    //! \return The set entry, or nullptr if none
-    virtual const SetConstEntry<T>* getNextSetConstEntry() const = 0;
 };
 
 }  // namespace Fw

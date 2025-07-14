@@ -194,9 +194,6 @@ class ArraySetOrMapImpl final {
         }
         if ((status == Success::FAILURE) && (this->m_size < this->getCapacity())) {
             this->m_entries[this->m_size] = Entry(keyOrElement, valueOrNil);
-            if (this->m_size > 0) {
-                this->m_entries[this->m_size - 1].setNextEntry(&this->m_entries[this->m_size]);
-            }
             this->m_size++;
             status = Success::SUCCESS;
         }
@@ -214,9 +211,6 @@ class ArraySetOrMapImpl final {
                 valueOrNil = this->m_entries[i].getValue();
                 if (i < this->m_size - 1) {
                     this->m_entries[i] = this->m_entries[this->m_size - 1];
-                    this->m_entries[i].setNextEntry(&this->m_entries[i + 1]);
-                } else {
-                    this->m_entries[i].setNextEntry(nullptr);
                 }
                 this->m_size--;
                 status = Success::SUCCESS;
