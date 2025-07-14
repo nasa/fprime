@@ -1,20 +1,4 @@
-# Supported Platform
-
-## What does "Supported Platform" Mean?
-
-A **platform** refers to a combination of hardware and operating system (OS). A **supported platform** satisfies the following criteria:
-
-✅ Reference project exists and is accessible to the core F Prime team.
-
-📚 Platform library exists and is used as part of a reference application. The platform library provides OSAL implementation, cmake support, drivers, and anything else needed to build and run the Reference project.
-
-🔁 Tested continuously as part of a continuous integration (CI) pipeline (e.g., unit tests, integration tests).
-
-🔧 Actively maintained by the F Prime community or core F Prime team.
-
-📄 Documented build and run instructions are available for users.
-
-## Supported Platforms
+# Supported Platforms
 
 | Hardware         | OS | Architecture   | Reference Project |
 | ---------------- | -------------------- | -------------- | ---------------------------------- |
@@ -23,7 +7,7 @@ A **platform** refers to a combination of hardware and operating system (OS). A 
 | x86              | Linux     | x86\_64 | [`F Prime Ref`](https://github.com/nasa/fprime) |
 | Apple M*         | Darwin    | ARM  | [`F Prime Ref`](https://github.com/nasa/fprime) |
 
-## Target Platforms (Planned Support)
+## Targeted Platforms (Planned Support)
 
 These are platforms that the F Prime community or core team is actively working or planning to support. They may have partial implementations, early-stage deployments, or nothing yet.
 
@@ -44,6 +28,16 @@ These are platforms that the F Prime community or core team is actively working 
 | GR712RC | VxWorks 7 | SPARC V8 | Not started | |
 | Vorago | Baremetal | ARM | In development | |
 | VOXL2 | Linux | ARM64 | In development | |
+
+## What does "Supported Platform" Mean?
+
+A **platform** refers to a combination of hardware and operating system (OS). A **supported platform** satisfies the following criteria:
+
+1. Reference project has been delivered to F Prime maintainers.
+1. Platform library exists and is used as part of a reference application. The platform library provides OSAL implementation, cmake support, drivers, and anything else needed to build and run the Reference project.
+1. Tested continuously as part of a continuous integration (CI) pipeline (e.g., unit tests, integration tests).
+1. Actively maintained by the F Prime community or core F Prime team.
+1. Documented build and run instructions are available for users.
 
 ## How to Contribute a New Supported Platform
 
