@@ -99,7 +99,7 @@ COMCCSDSSUBTOPOLOGY
 COMFPRIME
 COMFPRIMESUBTOPOLOGY
 comlogger
-COMLOGTSPLIT
+COMLOGGERTEE
 COMMANDDISPATCHERIMPL
 COMMANDDISPATCHERIMPLCFG
 COMPACKET
@@ -240,17 +240,16 @@ fpp
 fppi
 fpptest
 fprime
-fptr
-fptrunc
 fptosi
 fptoui
+fptr
+fptrunc
 fputil
 fpy
 FPYSEQUENCER
 freeram
 Fregoso
 fres
-frhs
 frsize
 fsblkcnt
 fsrc
@@ -685,7 +684,6 @@ totalram
 tparam
 TPP
 trinomials
-TSplit
 tts
 TXD
 typedef'ed
@@ -694,7 +692,6 @@ uart
 UDPSOCKET
 uge
 uitofp
-ulhs
 UML
 UNEXP
 unistd
