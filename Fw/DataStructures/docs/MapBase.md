@@ -158,7 +158,7 @@ void f(MapBase<U16, U32>& map) {
     // Check that iter is at the end
     ASSERT_EQ(iter, map.end());
 }
-``
+```
 
 ### 5.5. find
 
