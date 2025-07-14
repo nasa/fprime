@@ -25,7 +25,7 @@ storing the entries in the set or map.
 
 |Name|Definition|
 |----|----------|
-|`Entry`|Alias for [`SetOrMapImplEntry<KE, VN>`](SetOrMapImplEntry.md)|
+|`Entry`|Alias for [`MapEntry<KE, VN>`](MapEntry.md)|
 
 ### 2.2. ConstIterator
 

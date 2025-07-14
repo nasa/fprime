@@ -8,8 +8,8 @@
 #define Fw_ArraySetOrMapImpl_HPP
 
 #include "Fw/DataStructures/ExternalArray.hpp"
+#include "Fw/DataStructures/MapEntry.hpp"
 #include "Fw/DataStructures/SetOrMapImplConstIterator.hpp"
-#include "Fw/DataStructures/SetOrMapImplEntry.hpp"
 #include "Fw/Types/Assert.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
 
@@ -30,7 +30,7 @@ class ArraySetOrMapImpl final {
     // ----------------------------------------------------------------------
 
     //! The type of an entry in the set or map
-    using Entry = SetOrMapImplEntry<KE, VN>;
+    using Entry = MapEntry<KE, VN>;
 
     //! Const iterator
     class ConstIterator final : public SetOrMapImplConstIterator<KE, VN> {

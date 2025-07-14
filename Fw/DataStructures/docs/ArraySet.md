@@ -27,7 +27,7 @@ It represents an array-based set with internal storage.
 
 |Name|Definition|
 |----|----------|
-|`Entry`|Alias of [`SetOrMapImplEntry<T, Nil>`](SetOrMapImplEntry.md)|
+|`Entry`|Alias of [`MapEntry<T, Nil>`](MapEntry.md)|
 |`SetEntry`|Alias of [`SetEntry<T>`](SetEntry.md)|
 
 The type `Nil` is defined [here](Nil.md).
