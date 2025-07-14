@@ -24,7 +24,7 @@ class MapConstIterator {
 
     //! The type of an array iterator
     using ArrayIterator = typename ArraySetOrMapImpl<K, V>::ConstIterator;
-    using MapEntryBase = MapEntryBase<K, V>;
+    using EntryBase = MapEntryBase<K, V>;
 
   private:
     // ----------------------------------------------------------------------
@@ -123,10 +123,10 @@ class MapConstIterator {
     bool isInRange() const { return this->getImplIterator().isInRange(); }
 
     //! Dereference
-    const MapEntryBase& operator*() const { return this->getImplIterator().getEntry(); }
+    const EntryBase& operator*() const { return this->getImplIterator().getEntry(); }
 
     //! Pointer
-    const MapEntryBase* operator->() const { return &this->getImplIterator().getEntry(); }
+    const EntryBase* operator->() const { return &this->getImplIterator().getEntry(); }
 
   private:
     // ----------------------------------------------------------------------

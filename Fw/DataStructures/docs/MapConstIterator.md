@@ -17,7 +17,7 @@
 
 |Name|Definition|
 |----|----------|
-|`MapEntryBase`|Alias of [`MapEntryBase<K, V>`](MapEntryBase.md)|
+|`EntryBase`|Alias of [`MapEntryBase<K, V>`](MapEntryBase.md)|
 
 ## 3. Constructors and Destructors
 
@@ -78,17 +78,17 @@ Check whether the iterator is in range.
 ### 4.6. operator*
 
 ```c++
-const MapEntryBase& operator*() const
+const EntryBase& operator*() const
 ```
 
-Return a `const` reference to the `MapEntryBase` object
+Return a `const` reference to the `EntryBase` object
 pointed to by the iterator.
 
 ### 4.7. operator->
 
 ```c++
-const MapEntryBase* operator->() const
+const EntryBase* operator->() const
 ```
 
-Return a pointer to the `const MapEntryBase` object
+Return a pointer to the `const EntryBase` object
 pointed to by the iterator.
