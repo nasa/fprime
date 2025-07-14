@@ -51,7 +51,7 @@ class MapConstIterator {
     //! Copy constructor
     MapConstIterator(const MapConstIterator& it)
         : m_implKind(it.m_implKind), m_impl(it.m_impl.array), m_implIterator(it.m_implIterator) {
-      // TODO: Handle tree case
+        // TODO: Handle tree case
     }
 
     //! Destructor
@@ -88,12 +88,14 @@ class MapConstIterator {
     }
 
     //! Prefix increment
-    MapConstIterator operator++(int) { MapConstIterator tmp = *this; ++(*this); return tmp; }
+    MapConstIterator operator++(int) {
+        MapConstIterator tmp = *this;
+        ++(*this);
+        return tmp;
+    }
 
     //! Postfix increment
-    void increment() {
-        this->m_implIterator.increment();
-    }
+    void increment() { this->m_implIterator.increment(); }
 
     //! Check whether the iterator is in range
     bool isInRange() const { return this->m_implIterator.isInRange(); }

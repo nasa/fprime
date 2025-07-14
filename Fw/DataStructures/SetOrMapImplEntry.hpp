@@ -28,7 +28,11 @@ class SetOrMapImplEntry final : public MapConstEntry<KE, VN>, public SetConstEnt
                       const VN& valueOrNil,                            //!< The value or Nil
                       const SetOrMapImplEntry<KE, VN>* next = nullptr  //!< The next entry
                       )
-        : MapConstEntry<KE, VN>(), SetConstEntry<KE>(), m_keyOrElement(keyOrElement), m_valueOrNil(valueOrNil), m_next(next) {}
+        : MapConstEntry<KE, VN>(),
+          SetConstEntry<KE>(),
+          m_keyOrElement(keyOrElement),
+          m_valueOrNil(valueOrNil),
+          m_next(next) {}
 
     //! Copy constructor
     SetOrMapImplEntry(const SetOrMapImplEntry<KE, VN>& entry) { *this = entry; }

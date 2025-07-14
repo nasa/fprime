@@ -14,7 +14,6 @@ namespace Fw {
 
 template <typename KE, typename VN>
 class SetOrMapImplConstIterator {
-
     // ----------------------------------------------------------------------
     // Deleted elements
     // ----------------------------------------------------------------------
@@ -57,7 +56,6 @@ class SetOrMapImplConstIterator {
 
     //! Reset the iterator
     virtual void reset() = 0;
-
 };
 
 }  // namespace Fw
