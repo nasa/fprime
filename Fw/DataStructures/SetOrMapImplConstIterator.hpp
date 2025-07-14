@@ -7,6 +7,7 @@
 #ifndef Fw_SetOrMapImplConstIterator_HPP
 #define Fw_SetOrMapImplConstIterator_HPP
 
+#include "Fw/DataStructures/SetOrMapImplEntry.hpp"
 #include "Fw/FPrimeBasicTypes.hpp"
 
 namespace Fw {
@@ -46,6 +47,10 @@ class SetOrMapImplConstIterator {
     //! Increment the iterator
     virtual void increment() = 0;
 
+    //! Check whether the iterator is in range
+    //! \return True if the iterator is in range
+    virtual bool isInRange() const = 0;
+
     //! Get the key or element in the entry pointed to by this iterator
     //! \return The key or element
     virtual const KE& getKeyOrElement() const = 0;
@@ -54,9 +59,9 @@ class SetOrMapImplConstIterator {
     //! \return The value or nil
     virtual const VN& getValueOrNil() const = 0;
 
-    //! Check whether the iterator is in range
-    //! \return True if the iterator is in range
-    virtual bool isInRange() const = 0;
+    //! Get the set or map impl entry pointed to by this iterator
+    //! \return The set or map impl entry
+    virtual const SetOrMapImplEntry<KE, VN>& getEntry() const = 0;
 
     //! Reset the iterator
     virtual void reset() = 0;

@@ -1,7 +1,7 @@
 // ======================================================================
 // \title  MapEntry
 // \author bocchino
-// \brief  An abstract class template representing an iterator for a map
+// \brief  An abstract class template representing an entry for a map
 // ======================================================================
 
 #ifndef Fw_MapEntry_HPP
@@ -48,17 +48,13 @@ class MapEntry {
     // Public member functions
     // ----------------------------------------------------------------------
 
-    //! Get the key associated with this iterator
+    //! Get the key associated with this entry
     //! \return The key
     virtual const K& getKey() const = 0;
 
-    //! Get the value associated with this iterator
+    //! Get the value associated with this entry
     //! \return The value
     virtual const V& getValue() const = 0;
-
-    //! Get the next map iterator
-    //! \return The map iterator, or nullptr if none
-    virtual const MapEntry<K, V>* getNextMapEntry() const = 0;
 };
 
 }  // namespace Fw

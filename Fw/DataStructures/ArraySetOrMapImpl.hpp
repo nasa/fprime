@@ -63,6 +63,14 @@ class ArraySetOrMapImpl final {
             return result;
         }
 
+        //! Get the set or map impl entry pointed to by this iterator
+        //! \return The set or map impl entry
+        const Entry& getEntry() const override {
+            FW_ASSERT(this->isInRange(), static_cast<FwAssertArgType>(this->m_index),
+                      static_cast<FwAssertArgType>(this->m_impl.m_size));
+            return this->m_impl.m_entries[this->m_index];
+        }
+
         //! Increment operator
         void increment() override {
             if (this->isInRange()) {

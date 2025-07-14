@@ -8,6 +8,7 @@
 #define Fw_MapConstIterator_HPP
 
 #include "Fw/DataStructures/ArraySetOrMapImpl.hpp"
+#include "Fw/DataStructures/MapEntry.hpp"
 #include "Fw/FPrimeBasicTypes.hpp"
 
 namespace Fw {
@@ -95,10 +96,10 @@ class MapConstIterator {
     void reset() { return this->m_implIterator.reset(); }
 
     //! Dereference
-    const MapConstIterator& operator*() const { return *this; }
+    const MapEntry<K, V>& operator*() const { return this->m_implIterator.getEntry(); }
 
     //! Pointer
-    const MapConstIterator* operator->() const { return this; }
+    const MapEntry<K, V>& operator->() const { return &this->m_implIterator.getEntry(); }
 
   private:
     //! The implementation kind
