@@ -33,7 +33,7 @@ The following elements are private and are defined `= delete`:
 
 |Name|Definition|
 |----|----------|
-|`ConstItrator`|Alias of [`MapConstIterator<K, V>`](MapConstIterator.md)|
+|`ConstIterator`|Alias of [`MapConstIterator<K, V>`](MapConstIterator.md)|
 
 ## 4. Protected Constructors and Destructors
 
