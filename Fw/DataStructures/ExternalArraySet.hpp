@@ -31,9 +31,6 @@ class ExternalArraySet final : public SetBase<T> {
     //! The type of a set entry
     using Entry = SetOrMapImplEntry<T, Nil>;
 
-    //! The type of a set iterator
-    using SetConstEntry = SetConstEntry<T>;
-
   public:
     // ----------------------------------------------------------------------
     // Public constructors and destructors

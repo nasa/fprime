@@ -8,26 +8,25 @@
 #define Fw_SetOrMapImplEntry_HPP
 
 #include "Fw/DataStructures/MapConstEntry.hpp"
-#include "Fw/DataStructures/SetConstEntry.hpp"
 #include "Fw/FPrimeBasicTypes.hpp"
 
 namespace Fw {
 
 template <typename KE, typename VN>
-class SetOrMapImplEntry final : public MapConstEntry<KE, VN>, public SetConstEntry<KE> {
+class SetOrMapImplEntry final : public MapConstEntry<KE, VN> {
   public:
     // ----------------------------------------------------------------------
     // Public constructors and destructors
     // ----------------------------------------------------------------------
 
     //! Zero-argument constructor
-    SetOrMapImplEntry() : MapConstEntry<KE, VN>(), SetConstEntry<KE>() {}
+    SetOrMapImplEntry() : MapConstEntry<KE, VN>() {}
 
     //! Constructor providing members
     SetOrMapImplEntry(const KE& keyOrElement,  //!< The key or element
                       const VN& valueOrNil     //!< The value or Nil
                       )
-        : MapConstEntry<KE, VN>(), SetConstEntry<KE>(), m_keyOrElement(keyOrElement), m_valueOrNil(valueOrNil) {}
+        : MapConstEntry<KE, VN>(), m_keyOrElement(keyOrElement), m_valueOrNil(valueOrNil) {}
 
     //! Copy constructor
     SetOrMapImplEntry(const SetOrMapImplEntry<KE, VN>& entry) { *this = entry; }
@@ -48,10 +47,6 @@ class SetOrMapImplEntry final : public MapConstEntry<KE, VN>, public SetConstEnt
         }
         return *this;
     }
-
-    //! Get the element associated with this entry
-    //! \return The element
-    const KE& getElement() const override { return this->m_keyOrElement; }
 
     //! Get the key associated with this entry
     //! \return The key

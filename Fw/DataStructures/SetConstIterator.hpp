@@ -9,7 +9,6 @@
 
 #include "Fw/DataStructures/ArraySetOrMapImpl.hpp"
 #include "Fw/DataStructures/Nil.hpp"
-#include "Fw/DataStructures/SetConstEntry.hpp"
 #include "Fw/FPrimeBasicTypes.hpp"
 
 namespace Fw {

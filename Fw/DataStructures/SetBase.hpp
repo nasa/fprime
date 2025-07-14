@@ -7,7 +7,6 @@
 #ifndef Fw_SetBase_HPP
 #define Fw_SetBase_HPP
 
-#include "Fw/DataStructures/SetConstEntry.hpp"
 #include "Fw/DataStructures/SetConstIterator.hpp"
 #include "Fw/Types/Assert.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
@@ -16,13 +15,6 @@ namespace Fw {
 
 template <typename T>
 class SetBase {
-  public:
-    // ----------------------------------------------------------------------
-    // Public types
-    // ----------------------------------------------------------------------
-
-    //! The type of a set entry
-    using SetConstEntry = SetConstEntry<T>;
 
   private:
     // ----------------------------------------------------------------------
