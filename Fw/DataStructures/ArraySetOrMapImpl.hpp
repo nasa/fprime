@@ -168,7 +168,7 @@ class ArraySetOrMapImpl final {
     //! Get the end iterator
     ConstIterator end() const {
         auto it = begin();
-        it.setIndex(this->m_size + 1);
+        it.setIndex(this->m_size);
         return it;
     }
 
