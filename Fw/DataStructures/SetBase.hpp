@@ -8,6 +8,7 @@
 #define Fw_SetBase_HPP
 
 #include "Fw/DataStructures/SetConstEntry.hpp"
+#include "Fw/DataStructures/SetConstIterator.hpp"
 #include "Fw/Types/Assert.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
 

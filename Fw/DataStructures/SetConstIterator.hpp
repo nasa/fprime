@@ -1,23 +1,24 @@
 // ======================================================================
-// \title  MapConstIterator
+// \title  SetConstIterator
 // \author bocchino
-// \brief  An abstract class template representing a const iterator for a map
+// \brief  An abstract class template representing a const iterator for a set
 // ======================================================================
 
-#ifndef Fw_MapConstIterator_HPP
-#define Fw_MapConstIterator_HPP
+#ifndef Fw_SetConstIterator_HPP
+#define Fw_SetConstIterator_HPP
 
 #include "Fw/DataStructures/ArraySetOrMapImpl.hpp"
-#include "Fw/DataStructures/MapConstEntry.hpp"
+#include "Fw/DataStructures/Nil.hpp"
+#include "Fw/DataStructures/SetConstEntry.hpp"
 #include "Fw/FPrimeBasicTypes.hpp"
 
 namespace Fw {
 
-template <typename K, typename V>
-class MapConstIterator {
+template <typename T>
+class SetConstIterator {
   public:
     //! The type of an array iterator
-    using ArrayIterator = typename ArraySetOrMapImpl<K, V>::ConstIterator;
+    using ArrayIterator = typename ArraySetOrMapImpl<T, Nil>::ConstIterator;
 
   private:
     //! The type of an implementation kind
@@ -34,23 +35,23 @@ class MapConstIterator {
 
   public:
     //! Constructor providing an array implementation
-    MapConstIterator(const ArrayIterator& it) : m_implKind(ImplKind::ARRAY), m_impl(it), m_implIterator(m_impl.array) {}
+    SetConstIterator(const ArrayIterator& it) : m_implKind(ImplKind::ARRAY), m_impl(it), m_implIterator(m_impl.array) {}
 
     //! Copy constructor
-    MapConstIterator(const MapConstIterator& it)
+    SetConstIterator(const SetConstIterator& it)
         : m_implKind(it.m_implKind), m_impl(it.m_impl.array), m_implIterator(it.m_implIterator) {
       // TODO: Handle tree case
     }
 
     //! Destructor
-    ~MapConstIterator() {}
+    ~SetConstIterator() {}
 
   public:
     //! Copy assignment operator
-    MapConstIterator& operator=(const MapConstIterator&) = default;
+    SetConstIterator& operator=(const SetConstIterator&) = default;
 
     //! Equality comparison operator
-    bool operator==(const MapConstIterator& it) {
+    bool operator==(const SetConstIterator& it) {
         bool result = false;
         switch (this->m_implKind) {
             case ImplKind::ARRAY:
@@ -67,16 +68,16 @@ class MapConstIterator {
     }
 
     //! Inequality comparison operator
-    bool operator!=(const MapConstIterator& it) { return !(*this == it); };
+    bool operator!=(const SetConstIterator& it) { return !(*this == it); };
 
     //! Prefix increment
-    MapConstIterator& operator++() {
+    SetConstIterator& operator++() {
         this->m_implIterator.increment();
         return *this;
     }
 
     //! Prefix increment
-    MapConstIterator operator++(int) { MapConstIterator tmp = *this; ++(*this); return tmp; }
+    SetConstIterator operator++(int) { SetConstIterator tmp = *this; ++(*this); return tmp; }
 
     //! Postfix increment
     void increment() {
@@ -90,10 +91,10 @@ class MapConstIterator {
     void reset() { return this->m_implIterator.reset(); }
 
     //! Dereference
-    const MapConstEntry<K, V>& operator*() const { return this->m_implIterator.getEntry(); }
+    const SetConstEntry<T>& operator*() const { return this->m_implIterator.getEntry(); }
 
     //! Pointer
-    const MapConstEntry<K, V>* operator->() const { return &this->m_implIterator.getEntry(); }
+    const SetConstEntry<T>* operator->() const { return &this->m_implIterator.getEntry(); }
 
   private:
     //! The implementation kind
@@ -103,7 +104,7 @@ class MapConstIterator {
     Impl m_impl;
 
     //! The impl iterator
-    SetOrMapImplConstIterator<K, V>& m_implIterator;
+    SetOrMapImplConstIterator<T, Nil>& m_implIterator;
 };
 
 }  // namespace Fw

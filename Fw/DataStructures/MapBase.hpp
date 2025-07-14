@@ -7,8 +7,8 @@
 #ifndef Fw_MapBase_HPP
 #define Fw_MapBase_HPP
 
-#include "Fw/DataStructures/MapConstIterator.hpp"
 #include "Fw/DataStructures/MapConstEntry.hpp"
+#include "Fw/DataStructures/MapConstIterator.hpp"
 #include "Fw/Types/Assert.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
 
