@@ -40,7 +40,7 @@ class ExternalArraySet final : public SetBase<T> {
     ExternalArraySet() = default;
 
     //! Constructor providing typed backing storage.
-    //! entries must point to at least capacity elements of type ImplEntry.
+    //! entries must point to at least capacity elements of type Entry.
     ExternalArraySet(Entry* entries,      //!< The entries
                      FwSizeType capacity  //!< The capacity
                      )
@@ -120,7 +120,7 @@ class ExternalArraySet final : public SetBase<T> {
     }
 
     //! Set the backing storage (typed data)
-    //! entries must point to at least capacity elements of type ImplEntry.
+    //! entries must point to at least capacity elements of type Entry.
     void setStorage(Entry* entries,      //!< The entries
                     FwSizeType capacity  //!< The capacity
     ) {
@@ -130,7 +130,7 @@ class ExternalArraySet final : public SetBase<T> {
     //! Set the backing storage (untyped data)
     //! data must be aligned according to getByteArrayAlignment().
     //! data must contain at least getByteArraySize(capacity) bytes.
-    void setStorage(ByteArray data,      //!< THe data
+    void setStorage(ByteArray data,      //!< The data
                     FwSizeType capacity  //!< The capacity
     ) {
         this->m_impl.setStorage(data, capacity);

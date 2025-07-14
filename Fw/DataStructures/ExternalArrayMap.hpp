@@ -27,11 +27,8 @@ class ExternalArrayMap final : public MapBase<K, V> {
     // Public types
     // ----------------------------------------------------------------------
 
-    //! The type of a map implementation entry
-    using ImplEntry = MapEntry<K, V>;
-
     //! The type of a map entry
-    using MapEntry = MapEntry<K, V>;
+    using Entry = MapEntry<K, V>;
 
   public:
     // ----------------------------------------------------------------------
@@ -42,8 +39,8 @@ class ExternalArrayMap final : public MapBase<K, V> {
     ExternalArrayMap() = default;
 
     //! Constructor providing typed backing storage.
-    //! entries must point to at least capacity elements of type ImplEntry.
-    ExternalArrayMap(ImplEntry* entries,  //!< The entries
+    //! entries must point to at least capacity elements of type Entry.
+    ExternalArrayMap(Entry* entries,  //!< The entries
                      FwSizeType capacity  //!< The capacity
                      )
         : MapBase<K, V>() {
@@ -123,8 +120,8 @@ class ExternalArrayMap final : public MapBase<K, V> {
     }
 
     //! Set the backing storage (typed data)
-    //! entries must point to at least capacity elements of type ImplEntry.
-    void setStorage(ImplEntry* entries,  //!< The entries
+    //! entries must point to at least capacity elements of type Entry.
+    void setStorage(Entry* entries,  //!< The entries
                     FwSizeType capacity  //!< The capacity
     ) {
         this->m_impl.setStorage(entries, capacity);
