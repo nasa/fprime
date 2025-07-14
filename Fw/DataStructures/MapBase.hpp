@@ -59,8 +59,16 @@ class MapBase {
     // Public member functions
     // ----------------------------------------------------------------------
 
+    //! Get the begin iterator
+    //! \return The iterator
+    virtual MapConstIterator<K, V> begin() const = 0;
+
     //! Clear the map
     virtual void clear() = 0;
+
+    //! Get the end iterator
+    //! \return The iterator
+    virtual MapConstIterator<K, V> end() const = 0;
 
     //! Copy data from another map
     void copyDataFrom(const MapBase<K, V>& map) {

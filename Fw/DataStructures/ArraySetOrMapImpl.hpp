@@ -16,7 +16,7 @@
 namespace Fw {
 
 template <typename KE, typename VN>
-class ArraySetOrMapImpl {
+class ArraySetOrMapImpl final {
     // ----------------------------------------------------------------------
     // Friend class for testing
     // ----------------------------------------------------------------------
@@ -41,7 +41,7 @@ class ArraySetOrMapImpl {
         }
 
         //! Copy constructor
-        ConstIterator(const ConstIterator& it) = default;
+        ConstIterator(const ConstIterator& it) : m_impl(it.m_impl), m_index(it.m_index) {}
 
         //! Destructor
         ~ConstIterator() override = default;
@@ -87,6 +87,9 @@ class ArraySetOrMapImpl {
         //! Reset the iterator
         void reset() override { this->m_index = 0; }
 
+        //! Set the index value
+        void setIndex(FwSizeType index) { this->m_index = index; }
+
       private:
         //! The implementation over which to iterate
         const ArraySetOrMapImpl<KE, VN>& m_impl;
@@ -124,7 +127,7 @@ class ArraySetOrMapImpl {
     ArraySetOrMapImpl(const ArraySetOrMapImpl<KE, VN>& impl) { *this = impl; }
 
     //! Destructor
-    virtual ~ArraySetOrMapImpl() = default;
+    ~ArraySetOrMapImpl() = default;
 
   public:
     // ----------------------------------------------------------------------
@@ -149,7 +152,7 @@ class ArraySetOrMapImpl {
     //! Get the end iterator
     ConstIterator end() const {
         auto it = begin();
-        it.m_index = this->m_size;
+        it.setIndex(this->m_size);
         return it;
     }
 

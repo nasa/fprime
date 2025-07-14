@@ -59,8 +59,16 @@ class ArrayMap final : public MapBase<K, V> {
         return *this;
     }
 
+    //! Get the begin iterator
+    //! \return The iterator
+    MapConstIterator<K, V> begin() const override { return this->m_extMap.begin(); }
+
     //! Clear the map
     void clear() override { this->m_extMap.clear(); }
+
+    //! Get the end iterator
+    //! \return The iterator
+    MapConstIterator<K, V> end() const override { return this->m_extMap.end(); }
 
     //! Find a value associated with a key in the map
     //! \return SUCCESS if the item was found

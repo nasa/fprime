@@ -24,40 +24,43 @@ class MapConstIterator {
 
     //! The type of an implementation
     union Impl {
+        Impl(const ArrayIterator& it) : array(it) {}
         //! An array iterator
-        ArrayIterator arrayIterator;
+        ArrayIterator array;
         // TODO: Add red-black tree implementation
+        ~Impl() {}
     };
 
   public:
     //! Constructor providing an array implementation
-    MapConstIterator(const ArrayIterator& it) : m_implKind(ImplKind::ARRAY), m_implIterator(m_impl.array) {
-        this->m_impl.array = it;
-    }
+    MapConstIterator(const ArrayIterator& it) : m_implKind(ImplKind::ARRAY), m_impl(it), m_implIterator(m_impl.array) {}
 
     //! Copy constructor
-    MapConstIterator(const MapConstIterator& it) = delete;
+    MapConstIterator(const MapConstIterator& it)
+        : m_implKind(it.m_implKind), m_impl(it.m_impl.array), m_implIterator(it.m_implIterator) {
+      // TODO: Handle tree case
+    }
 
     //! Destructor
-    ~MapConstIterator() = default;
+    ~MapConstIterator() {}
 
   public:
     //! Copy assignment operator
-    MapConstIterator& operator=(const MapConstIterator&) = delete;
+    MapConstIterator& operator=(const MapConstIterator&) = default;
 
     //! Equality comparison operator
     bool operator==(const MapConstIterator& it) {
         bool result = false;
         switch (this->m_implKind) {
-          case ImplKind::ARRAY:
-            result = this->m_impl.array.compareEqual(it.m_impl.array);
-            break;
-          case ImplKind::RED_BLACK_TREE:
-            // TODO
-            break;
-          default:
-            FW_ASSERT(0, static_cast<FwAssertArgType>(this->m_implKind));
-            break;
+            case ImplKind::ARRAY:
+                result = this->m_impl.array.compareEqual(it.m_impl.array);
+                break;
+            case ImplKind::RED_BLACK_TREE:
+                // TODO
+                break;
+            default:
+                FW_ASSERT(0, static_cast<FwAssertArgType>(this->m_implKind));
+                break;
         }
         return result;
     }

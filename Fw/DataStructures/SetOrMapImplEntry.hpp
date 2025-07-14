@@ -24,10 +24,10 @@ class SetOrMapImplEntry final : public MapEntry<KE, VN>, public SetEntry<KE> {
     SetOrMapImplEntry() : MapEntry<KE, VN>(), SetEntry<KE>() {}
 
     //! Constructor providing members
-    SetOrMapImplEntry(const KE& keyOrElement,                      //!< The key or element
-                  const VN& valueOrNil,                        //!< The value or Nil
-                  const SetOrMapImplEntry<KE, VN>* next = nullptr  //!< The next entry
-                  )
+    SetOrMapImplEntry(const KE& keyOrElement,                          //!< The key or element
+                      const VN& valueOrNil,                            //!< The value or Nil
+                      const SetOrMapImplEntry<KE, VN>* next = nullptr  //!< The next entry
+                      )
         : MapEntry<KE, VN>(), SetEntry<KE>(), m_keyOrElement(keyOrElement), m_valueOrNil(valueOrNil), m_next(next) {}
 
     //! Copy constructor
