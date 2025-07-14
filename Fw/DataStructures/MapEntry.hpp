@@ -1,26 +1,31 @@
 // ======================================================================
-// \title  MapConstEntry
+// \title  MapEntry
 // \author bocchino
-// \brief  An abstract class template representing a constant entry for a map
+// \brief  An abstract class template representing an entry in a map
 // ======================================================================
 
-#ifndef Fw_MapConstEntry_HPP
-#define Fw_MapConstEntry_HPP
+#ifndef Fw_MapEntry_HPP
+#define Fw_MapEntry_HPP
 
 #include "Fw/FPrimeBasicTypes.hpp"
 
 namespace Fw {
 
 template <typename K, typename V>
-class MapConstEntry {
+class MapEntry {
   private:
     // ----------------------------------------------------------------------
-    // Private constructors
+    // Deleted elements
     // ----------------------------------------------------------------------
 
     //! Copy constructor deleted in the base class
     //! Behavior depends on the implementation
-    MapConstEntry(const MapConstEntry<K, V>&) = delete;
+    MapEntry(const MapEntry<K, V>&) = delete;
+
+    //! operator= deleted in the base class
+    //! Behavior depends on the implementation
+    //! We avoid virtual user-defined operators
+    MapEntry<K, V>& operator=(const MapEntry<K, V>&) = delete;
 
   protected:
     // ----------------------------------------------------------------------
@@ -28,20 +33,10 @@ class MapConstEntry {
     // ----------------------------------------------------------------------
 
     //! Zero-argument constructor
-    MapConstEntry() {}
+    MapEntry() {}
 
     //! Destructor
-    virtual ~MapConstEntry() = default;
-
-  private:
-    // ----------------------------------------------------------------------
-    // Private member functions
-    // ----------------------------------------------------------------------
-
-    //! operator= deleted in the base class
-    //! Behavior depends on the implementation
-    //! We avoid virtual user-defined operators
-    MapConstEntry<K, V>& operator=(const MapConstEntry<K, V>&) = delete;
+    virtual ~MapEntry() = default;
 
   public:
     // ----------------------------------------------------------------------

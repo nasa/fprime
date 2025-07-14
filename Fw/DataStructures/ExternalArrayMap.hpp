@@ -31,7 +31,7 @@ class ExternalArrayMap final : public MapBase<K, V> {
     using ImplEntry = SetOrMapImplEntry<K, V>;
 
     //! The type of a map entry
-    using MapConstEntry = MapConstEntry<K, V>;
+    using MapEntry = MapEntry<K, V>;
 
   public:
     // ----------------------------------------------------------------------
