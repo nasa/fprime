@@ -4,7 +4,7 @@
 
 ## 1. Template Parameters
 
-`MapConstIterator` has the following template parameters.
+`MapConstIterator` has the following template parameters:
 
 |Kind|Name|Purpose|
 |----|----|-------|
