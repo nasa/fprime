@@ -68,7 +68,7 @@ _Example:_
 void f(MapBase<U16, U32>& map) {
     map.clear();
     // Insert an entry in the map
-    auto status = map.insert(0, 1);
+    const auto status = map.insert(0, 1);
     ASSERT_EQ(status, Fw::Success::SUCCESS);
     // Get a map const iterator object
     auto it = map.begin();

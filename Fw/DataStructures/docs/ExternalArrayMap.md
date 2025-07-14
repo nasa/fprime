@@ -178,6 +178,25 @@ ConstIterator begin() const
 
 Return `m_impl.begin()`.
 
+_Example:_
+```c++
+using Map = ExternalArrayMap<U16, U32>;
+constexpr FwSizeType capacity = 10;
+Map::ImplEntry entries[capacity];
+// Call the constructor providing backing storage
+Map map(entries, capacity);
+// Insert an entry in the map
+const auto status = map.insert(0, 1);
+ASSERT_EQ(status, Fw::Success::SUCCESS);
+// Get a map const iterator object
+auto it = map.begin();
+// Use the iterator to access the underlying map const entry
+const key = it->getKey();
+const value = it->getValue();
+ASSERT_EQ(key, 0);
+ASSERT_EQ(value, 1);
+```
+
 ### 6.3. clear
 
 ```c++
@@ -205,6 +224,26 @@ ConstIterator end() const
 ```
 
 Return `m_impl.end()`.
+
+_Example:_
+```c++
+using Map = ExternalArrayMap<U16, U32>;
+constexpr FwSizeType capacity = 10;
+Map::ImplEntry entries[capacity];
+// Call the constructor providing backing storage
+Map map(entries, capacity);
+// Insert an entry in the map
+auto status = map.insert(0, 1);
+ASSERT_EQ(status, Fw::Success::SUCCESS);
+// Get a map const iterator object
+auto iter = map.begin();
+// Check that iter is not at the end
+ASSERT_NE(iter, map.end());
+// Increment iter
+it++;
+// Check that iter is at the end
+ASSERT_EQ(iter, map.end());
+```
 
 ### 6.5. find
 
@@ -247,32 +286,7 @@ Map map(entries, capacity);
 ASSERT_EQ(map.getCapacity(), capacity);
 ```
 
-### 6.7. getHeadMapEntry
-
-```c++
-const MapEntry* getHeadMapEntry const override
-```
-
-The type `MapEntry` is defined [here](ExternalArrayMap.md#Public-Types).
-
-Return `m_impl.getHeadEntry()`.
-
-_Example:_
-```c++
-using Map = ExternalArrayMap<U16, U32>;
-constexpr FwSizeType capacity = 10;
-Map::ImplEntry entries[capacity];
-Map map(entries, capacity);
-const auto* e = map.getHeadMapEntry();
-FW_ASSERT(e == nullptr);
-map.insert(0, 1);
-e = map.getHeadMapEntry();
-FW_ASSERT(e != nullptr);
-ASSERT_EQ(e->getKey(), 0);
-ASSERT_EQ(e->getValue(), 1);
-```
-
-### 6.8. getSize
+### 6.7. getSize
 
 ```c++
 FwSizeType getSize() const override
@@ -294,7 +308,7 @@ size = map.getSize();
 ASSERT_EQ(size, 1);
 ```
 
-### 6.9. insert
+### 6.8. insert
 
 ```c++
 Success insert(const K& key, const V& value) override
@@ -316,7 +330,7 @@ size = map.getSize();
 ASSERT_EQ(size, 1);
 ```
 
-### 6.10. remove
+### 6.9. remove
 
 ```c++
 Success remove(const K& key, V& value) override
@@ -348,7 +362,7 @@ ASSERT_EQ(size, 0);
 ASSERT_EQ(value, 1);
 ```
 
-### 6.11. setStorage (Typed Data)
+### 6.10. setStorage (Typed Data)
 
 ```c++
 void setStorage(ImplEntry* entries, FwSizeType capacity)
@@ -369,7 +383,7 @@ Map::ImplEntry entries[capacity];
 map.setStorage(entries, capacity);
 ```
 
-### 6.12. setStorage (Untyped Data)
+### 6.11. setStorage (Untyped Data)
 
 ```c++
 void setStorage(ByteArray data, FwSizeType capacity)
