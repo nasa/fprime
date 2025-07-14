@@ -59,8 +59,16 @@ class ArraySet final : public SetBase<T> {
         return *this;
     }
 
+    //! Get the begin iterator
+    //! \return The iterator
+    SetConstIterator<T> begin() const override { return this->m_extSet.begin(); }
+
     //! Clear the set
     void clear() override { this->m_extSet.clear(); }
+
+    //! Get the end iterator
+    //! \return The iterator
+    SetConstIterator<T> end() const override { return this->m_extSet.end(); }
 
     //! Find an element in the set
     //! \return SUCCESS if the element was found

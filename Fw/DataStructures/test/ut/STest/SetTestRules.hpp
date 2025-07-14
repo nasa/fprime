@@ -50,12 +50,12 @@ struct FindExisting : public Rule {
         ASSERT_EQ(size, modelSize);
         // Check that all elements of set are in modelSet
         {
-            const auto* entry = state.set.getHeadSetConstEntry();
+            auto it = state.set.begin();
             for (FwSizeType i = 0; i < size; i++) {
-                ASSERT_NE(entry, nullptr);
-                const auto e = entry->getElement();
+                ASSERT_TRUE(it.isInRange());
+                const auto e = it->getElement();
                 ASSERT_TRUE(state.modelSetContains(e));
-                entry = entry->getNextSetConstEntry();
+                it++;
             }
         }
         // Check that all elements of modelSet are in set
@@ -77,13 +77,13 @@ struct InsertExisting : public Rule {
     void action(State& state) {
         const auto size = state.set.getSize();
         const auto index = STest::Pick::startLength(0, static_cast<U32>(size));
-        const auto* entry = state.set.getHeadSetConstEntry();
+        auto it = state.set.begin();
         for (FwSizeType i = 0; i < index; i++) {
-            ASSERT_NE(entry, nullptr);
-            entry = entry->getNextSetConstEntry();
+            ASSERT_TRUE(it.isInRange());
+            it++;
         }
-        ASSERT_NE(entry, nullptr);
-        const auto e = entry->getElement();
+        ASSERT_TRUE(it.isInRange());
+        const auto e = it->getElement();
         const auto status = state.set.insert(e);
         ASSERT_EQ(status, Success::SUCCESS);
         ASSERT_EQ(state.set.getSize(), size);
@@ -143,13 +143,13 @@ struct RemoveExisting : public Rule {
     void action(State& state) {
         const auto size = state.set.getSize();
         const auto index = STest::Pick::startLength(0, static_cast<U32>(size));
-        const auto* entry = state.set.getHeadSetConstEntry();
+        auto it = state.set.begin();
         for (FwSizeType i = 0; i < index; i++) {
-            ASSERT_NE(entry, nullptr);
-            entry = entry->getNextSetConstEntry();
+            ASSERT_TRUE(it.isInRange());
+            it++;
         }
-        ASSERT_NE(entry, nullptr);
-        const auto e = entry->getElement();
+        ASSERT_TRUE(it.isInRange());
+        const auto e = it->getElement();
         const auto status = state.set.remove(e);
         ASSERT_EQ(status, Success::SUCCESS);
         const auto n = state.modelSet.erase(e);

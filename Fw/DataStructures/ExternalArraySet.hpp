@@ -80,8 +80,16 @@ class ExternalArraySet final : public SetBase<T> {
         return *this;
     }
 
+    //! Get the begin iterator
+    //! \return The iterator
+    SetConstIterator<T> begin() const override { return SetConstIterator<T>(this->m_impl.begin()); }
+
     //! Clear the set
     void clear() override { this->m_impl.clear(); }
+
+    //! Get the end iterator
+    //! \return The iterator
+    SetConstIterator<T> end() const override { return SetConstIterator<T>(this->m_impl.end()); }
 
     //! Find a value associated with an element in the set
     //! \return SUCCESS if the item was found

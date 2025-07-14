@@ -59,20 +59,27 @@ class SetBase {
     // Public member functions
     // ----------------------------------------------------------------------
 
+    //! Get the begin iterator
+    //! \return The iterator
+    virtual SetConstIterator<T> begin() const = 0;
+
     //! Clear the set
     virtual void clear() = 0;
+
+    //! Get the end iterator
+    //! \return The iterator
+    virtual SetConstIterator<T> end() const = 0;
 
     //! Copy data from another set
     void copyDataFrom(const SetBase<T>& set) {
         if (&set != this) {
             this->clear();
-            const auto* e = set.getHeadSetConstEntry();
             const FwSizeType size = FW_MIN(set.getSize(), this->getCapacity());
+            auto it = set.begin();
             for (FwSizeType i = 0; i < size; i++) {
-                FW_ASSERT(e != nullptr);
-                const auto status = this->insert(e->getElement());
+                const auto status = this->insert(it->getElement());
                 FW_ASSERT(status == Success::SUCCESS, static_cast<FwAssertArgType>(status));
-                e = e->getNextSetConstEntry();
+                it++;
             }
         }
     }
