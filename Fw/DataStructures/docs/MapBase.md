@@ -15,7 +15,7 @@ It represents an abstract base class for a map.
 
 ## 2. Deleted Elements
 
-The following elements are defined `= delete`:
+The following elements are private and are defined `= delete`:
 
 1. The copy constructor.
     ```c++
@@ -64,7 +64,7 @@ virtual ConstIterator begin() const = 0.
 Return the iterator for the implementation.
 
 _Example:_
-``c++
+```c++
 void f(MapBase<U16, U32>& map) {
     map.clear();
     // Insert an entry in the map
@@ -143,7 +143,7 @@ virtual ConstIterator end() const = 0
 Return the iterator for the implementation.
 
 _Example:_
-``c++
+```c++
 void f(MapBase<U16, U32>& map) {
     map.clear();
     // Insert an entry in the map
