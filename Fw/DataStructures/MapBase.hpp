@@ -7,7 +7,6 @@
 #ifndef Fw_MapBase_HPP
 #define Fw_MapBase_HPP
 
-#include "Fw/DataStructures/MapConstEntry.hpp"
 #include "Fw/DataStructures/MapConstIterator.hpp"
 #include "Fw/Types/Assert.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
@@ -16,14 +15,6 @@ namespace Fw {
 
 template <typename K, typename V>
 class MapBase {
-  public:
-    // ----------------------------------------------------------------------
-    // Public types
-    // ----------------------------------------------------------------------
-
-    //! The type of a map iterator
-    using MapConstEntry = MapConstEntry<K, V>;
-
   private:
     // ----------------------------------------------------------------------
     // Private constructors
