@@ -7,6 +7,8 @@
 #ifndef Fw_SetConstIterator_HPP
 #define Fw_SetConstIterator_HPP
 
+#include <new>
+
 #include "Fw/DataStructures/ArraySetOrMapImpl.hpp"
 #include "Fw/DataStructures/Nil.hpp"
 #include "Fw/FPrimeBasicTypes.hpp"
@@ -34,7 +36,7 @@ class SetConstIterator {
     //! The type of an implementation
     union Impl {
         //! Default constructor
-        Impl() : array() {}
+        Impl() {}
         //! Array constructor
         Impl(const ArrayIterator& it) : array(it) {}
         //! An array iterator
@@ -57,8 +59,7 @@ class SetConstIterator {
         const auto implKind = it.getImplIterator().implKind();
         switch (implKind) {
             case ImplKind::ARRAY:
-                this->m_impl.array = it.m_impl.array;
-                this->m_implIterator = &this->m_impl.array;
+                this->m_implIterator = new (&this->m_impl.array) ArrayIterator(it.m_impl.array);
                 break;
             case ImplKind::RED_BLACK_TREE:
                 // TODO
