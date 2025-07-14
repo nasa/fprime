@@ -121,9 +121,6 @@ class SetConstIterator {
     //! Check whether the iterator is in range
     bool isInRange() const { return this->getImplIterator().isInRange(); }
 
-    //! Reset the iterator
-    void reset() { return this->getImplIterator().reset(); }
-
     //! Dereference
     const T& operator*() const { return this->getImplIterator().getEntry().getKeyOrElement(); }
 

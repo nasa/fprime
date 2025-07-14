@@ -43,12 +43,12 @@ class ArraySetOrMapImpl final {
 
         //! Constructor providing the implementation
         ConstIterator(const ArraySetOrMapImpl<KE, VN>& impl) : SetOrMapImplConstIterator<KE, VN>(), m_impl(&impl) {
-            this->reset();
+            this->m_index = 0;
         }
 
         //! Copy constructor
         ConstIterator(const ConstIterator& it) : SetOrMapImplConstIterator<KE, VN>(), m_impl(it.m_impl) {
-            this->reset();
+            this->m_index = 0;
         }
 
         //! Destructor
@@ -99,9 +99,6 @@ class ArraySetOrMapImpl final {
             FW_ASSERT(this->m_impl != nullptr);
             return this->m_index < this->m_impl->m_size;
         }
-
-        //! Reset the iterator
-        void reset() override { this->m_index = 0; }
 
         //! Set the index value
         void setIndex(FwSizeType index) { this->m_index = index; }

@@ -121,9 +121,6 @@ class MapConstIterator {
     //! Check whether the iterator is in range
     bool isInRange() const { return this->getImplIterator().isInRange(); }
 
-    //! Reset the iterator
-    void reset() { return this->getImplIterator().reset(); }
-
     //! Dereference
     const MapConstEntry<K, V>& operator*() const { return this->getImplIterator().getEntry(); }
 

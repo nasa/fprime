@@ -64,8 +64,6 @@ class SetOrMapImplConstIterator {
     //! \return The set or map impl entry
     virtual const SetOrMapImplEntry<KE, VN>& getEntry() const = 0;
 
-    //! Reset the iterator
-    virtual void reset() = 0;
 };
 
 }  // namespace Fw
