@@ -8,6 +8,7 @@
 #define Fw_ArraySetOrMapImpl_HPP
 
 #include "Fw/DataStructures/ExternalArray.hpp"
+#include "Fw/DataStructures/SetOrMapImplConstIterator.hpp"
 #include "Fw/DataStructures/SetOrMapImplEntry.hpp"
 #include "Fw/Types/Assert.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
@@ -32,23 +33,25 @@ class ArraySetOrMapImpl {
     using Entry = SetOrMapImplEntry<KE, VN>;
 
     //! Const iterator
-    class ConstIterator {
+    class ConstIterator final : public SetOrMapImplConstIterator<KE, VN> {
       public:
         //! Constructor providing the implementation
-        ConstIterator(const ArraySetOrMapImpl<KE, VN>& impl) : m_impl(impl) { this->reset(); }
+        ConstIterator(const ArraySetOrMapImpl<KE, VN>& impl) : SetOrMapImplConstIterator<KE, VN>(), m_impl(impl) {
+            this->reset();
+        }
 
         //! Copy constructor
-        ConstIterator(const ConstIterator& it) = delete;
+        ConstIterator(const ConstIterator& it) = default;
 
         //! Destructor
-        ~ConstIterator() = default;
+        ~ConstIterator() override = default;
 
       public:
         //! Copy assignment operator
-        ConstIterator& operator=(const ConstIterator&) = delete;
+        ConstIterator& operator=(const ConstIterator&) = default;
 
         //! Equality comparison operator
-        bool operator==(const ConstIterator& it) {
+        bool compareEqual(const ConstIterator& it) const {
             bool result = false;
             if (&this->m_impl == &it.m_impl) {
                 result |= (this->m_index == it.m_index);
@@ -58,32 +61,31 @@ class ArraySetOrMapImpl {
         }
 
         //! Increment operator
-        ConstIterator& operator++() {
+        void increment() override {
             if (this->isInRange()) {
                 this->m_index++;
             }
-            return *this;
         }
 
         //! Get the key or element in the entry pointed to by this iterator
-        const KE& getKeyOrElement() const {
+        const KE& getKeyOrElement() const override {
             FW_ASSERT(this->isInRange(), static_cast<FwAssertArgType>(this->m_index),
                       static_cast<FwAssertArgType>(this->m_impl.m_size));
             return this->m_impl.m_entries[this->m_index].getKeyOrElement();
         }
 
         //! Get the value in the entry pointed to by this iterator, or nil for a set
-        const VN& getValueOrNil() const {
+        const VN& getValueOrNil() const override {
             FW_ASSERT(this->isInRange(), static_cast<FwAssertArgType>(this->m_index),
                       static_cast<FwAssertArgType>(this->m_impl.m_size));
             return this->m_impl.m_entries[this->m_index].getValueOrNil();
         }
 
         //! Check whether the iterator is in range
-        bool isInRange() const { return this->m_index < this->m_impl.m_size; }
+        bool isInRange() const override { return this->m_index < this->m_impl.m_size; }
 
         //! Reset the iterator
-        void reset() { this->m_index = 0; }
+        void reset() override { this->m_index = 0; }
 
       private:
         //! The implementation over which to iterate
@@ -145,10 +147,10 @@ class ArraySetOrMapImpl {
     void clear() { this->m_size = 0; }
 
     //! Get the end iterator
-    ConstIterator end() const { 
-      auto it = begin();
-      it.m_index = this->m_size;
-      return it;
+    ConstIterator end() const {
+        auto it = begin();
+        it.m_index = this->m_size;
+        return it;
     }
 
     //! Find a value associated with a key in the map or an element in a set

@@ -30,7 +30,16 @@ It represents an abstract base class for a map.
 `ConstIterator` is a public inner class of `MapBase`.  It provides
 non-modifying iteration over the elements of a `MapBase` instance.
 
-#### 2.2.1. Private Enumerations
+#### 2.2.1. Public Type Aliases
+
+`ConstIterator` defines the following public type aliases.
+
+|Name|Definition|
+|----|----------|
+|ArrayIterator|An alias for `ArraySetOrMapImpl<K, V>::ConstIterator`.
+|RedBlackTreeIterator|An alias for `RedBlackTreeSetOrMapImpl<K, V>::ConstIterator`.
+
+#### 2.2.2. Private Enumerations
 
 `ConstIterator` defines the following private enumerations.
 
@@ -38,15 +47,15 @@ non-modifying iteration over the elements of a `MapBase` instance.
 |----|----------|
 |ImplKind|An enumeration with values `ARRAY` and `RED_BLACK_TREE`|
 
-#### 2.2.2. Private Type Aliases
+#### 2.2.3. Private Type Aliases
 
 `ConstIterator` defines the following private type aliases.
 
 |Name|Definition|
 |----|----------|
-|ImplIterator|A union with member variables `array` of type `ArraySetOrMapImpl<K, V>::ConstIterator` and `redBlackTree` of type `RedBlackTreeSetOrMapImpl::ConstIterator`|
+|ImplIterator|A union with member variables `arrayIterator` of type `ArrayIterator` and `redBlackTreeIterator` of type `RedBlackTreeIterator`|
 
-#### 2.2.3. Private Member Variables
+#### 2.2.4. Private Member Variables
 
 `ConstIterator` has the following private member variables.
 
@@ -55,29 +64,29 @@ non-modifying iteration over the elements of a `MapBase` instance.
 |`m_implKind`|`ImplKind`|The implementation kind|None (must be set by the constructor)|
 |`m_impl`|`ImplIterator`|The iterator for the implementation|C++ default initialization|
 
-#### 2.2.4. Public Constructors and Destructors
+#### 2.2.5. Public Constructors and Destructors
 
-##### 2.2.4.1. Constructor Providing an Array Implementation
+##### 2.2.5.1. Constructor Providing an Array Implementation
 
 ```c++
-ConstIterator(const ArraySetOrMapImpl<K, V>::ConstIterator& it)
+ConstIterator(const ArraySetOrMapImpl<K, V>& impl)
 ```
 
 1. Set `m_implKind = ARRAY`.
 
-1. Set `m_implIterator.array = it;
+1. Set `m_implIterator.arrayIterator = ArrayIterator(impl);`
 
-##### 2.2.4.2. Constructor Providing a Red-Black Tree Implementation
+##### 2.2.5.2. Constructor Providing a Red-Black Tree Implementation
 
 ```c++
-ConstIterator(const RedBlackTreeSetOrMapImpl<K, V>::ConstIterator& it)
+ConstIterator(const RedBlackTreeSetOrMapImpl<K, V>& impl)
 ```
 
 1. Set `m_implKind = RED_BLACK_TREE`.
 
-1. Set `m_implIterator.array = it;
+1. Set `m_implIterator.array = RedBlackTreeIterator(impl);`
 
-##### 2.2.4.3. Copy Constructor
+##### 2.2.5.3. Copy Constructor
 
 ```c++
 ConstIterator(const ConstIterator<KE, VN>& it)
@@ -85,7 +94,7 @@ ConstIterator(const ConstIterator<KE, VN>& it)
 
 Defined as `= delete`.
 
-##### 2.2.4.4. Destructor
+##### 2.2.5.4. Destructor
 
 ```c++
 ~ConstIterator()
@@ -93,9 +102,9 @@ Defined as `= delete`.
 
 Defined as `= default`.
 
-#### 2.2.5. Public Member Functions
+#### 2.2.6. Public Member Functions
 
-##### 2.2.5.1. operator=
+##### 2.2.6.1. operator=
 
 ```c++
 ConstIterator<KE, VN>& operator=(const ConstIterator<KE, VN>& it)
@@ -103,7 +112,7 @@ ConstIterator<KE, VN>& operator=(const ConstIterator<KE, VN>& it)
 
 Defined as `= delete`.
 
-##### 2.2.5.2. operator==
+##### 2.2.6.2. operator==
 
 ```c++
 bool operator==(const ConstIterator& it)
@@ -113,7 +122,7 @@ bool operator==(const ConstIterator& it)
 
 1. Otherwise delegate to the implementations.
 
-##### 2.2.5.3. operator++
+##### 2.2.6.3. operator++
 
 ```c++
 ConstIterator& operator++()
@@ -121,7 +130,7 @@ ConstIterator& operator++()
 
 Delegated to the implementation.
 
-##### 2.2.5.4. getKeyOrElement
+##### 2.2.6.4. getKeyOrElement
 
 ```c++
 const KE& getKeyOrElement() const
@@ -129,7 +138,7 @@ const KE& getKeyOrElement() const
 
 Delegated to the implementation.
 
-##### 2.2.5.5. getValueOrNil
+##### 2.2.6.5. getValueOrNil
 
 ```c++
 const KE& getValueOrNil() const
@@ -137,7 +146,15 @@ const KE& getValueOrNil() const
 
 Delegated to the implementation.
 
-##### 2.2.5.6. reset
+##### 2.2.6.6. isInRange()
+
+```c++
+bool isInRange() const
+```
+
+Delegated to the implementation.
+
+##### 2.2.6.7. reset
 
 ```c++
 void reset()

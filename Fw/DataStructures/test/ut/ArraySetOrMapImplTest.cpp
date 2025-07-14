@@ -17,6 +17,8 @@ namespace Fw {
 
 namespace ArraySetOrMapImplTest {
 
+State::Impl impl_;
+State::Impl::ConstIterator it(impl_);
 TEST(ArraySetOrMapImpl, ZeroArgConstructor) {
     State::Impl impl;
     ASSERT_EQ(impl.getCapacity(), 0);

@@ -79,6 +79,10 @@ class ExternalArrayMap final : public MapBase<K, V> {
         return *this;
     }
 
+    //! Get the begin iterator
+    //! \return The iterator
+    MapConstIterator<K, V> begin() const { return MapConstIterator<K, V>(this->m_impl.begin()); }
+
     //! Clear the map
     void clear() override { this->m_impl.clear(); }
 
