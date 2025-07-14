@@ -105,7 +105,6 @@ class FifoQueueBase {
     //! Get the capacity (maximum number of items stored in the queue)
     //! \return The capacity
     virtual FwSizeType getCapacity() const = 0;
-
 };
 
 }  // namespace Fw

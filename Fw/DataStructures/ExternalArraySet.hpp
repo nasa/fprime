@@ -31,9 +31,6 @@ class ExternalArraySet final : public SetBase<T> {
     //! The type of a set entry
     using Entry = SetOrMapImplEntry<T, Nil>;
 
-    //! The type of a set iterator
-    using SetEntry = SetEntry<T>;
-
   public:
     // ----------------------------------------------------------------------
     // Public constructors and destructors
@@ -80,8 +77,16 @@ class ExternalArraySet final : public SetBase<T> {
         return *this;
     }
 
+    //! Get the begin iterator
+    //! \return The iterator
+    SetConstIterator<T> begin() const override { return SetConstIterator<T>(this->m_impl.begin()); }
+
     //! Clear the set
     void clear() override { this->m_impl.clear(); }
+
+    //! Get the end iterator
+    //! \return The iterator
+    SetConstIterator<T> end() const override { return SetConstIterator<T>(this->m_impl.end()); }
 
     //! Find a value associated with an element in the set
     //! \return SUCCESS if the item was found
@@ -95,10 +100,6 @@ class ExternalArraySet final : public SetBase<T> {
     //! \return The capacity
     FwSizeType getCapacity() const override { return this->m_impl.getCapacity(); }
 
-    //! Get the head set entry for the set
-    //! \return The set entry
-    const SetEntry* getHeadSetEntry() const override { return this->m_impl.getHeadEntry(); }
-
     //! Get the size (number of entries)
     //! \return The size
     FwSizeType getSize() const override { return this->m_impl.getSize(); }
@@ -106,14 +107,14 @@ class ExternalArraySet final : public SetBase<T> {
     //! Insert an element in the set
     //! \return SUCCESS if there is room in the set
     Success insert(const T& element  //!< The element
-    ) override {
+                   ) override {
         return this->m_impl.insert(element, Nil());
     }
 
     //! Remove an element from the set
     //! \return SUCCESS if the element was there
     Success remove(const T& element  //!< The element
-    ) override {
+                   ) override {
         Nil nil = {};
         return this->m_impl.remove(element, nil);
     }

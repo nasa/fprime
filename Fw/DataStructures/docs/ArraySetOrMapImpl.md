@@ -18,11 +18,129 @@ storing the entries in the set or map.
 <a name="Public-Types"></a>
 ## 2. Public Types
 
-`ArraySetOrMapImpl` defines the following types:
+<a name="Public-Type-Aliases"></a>
+### 2.1. Type Aliases
+
+`ArraySetOrMapImpl` defines the following type aliases:
 
 |Name|Definition|
 |----|----------|
 |`Entry`|Alias for [`SetOrMapImplEntry<KE, VN>`](SetOrMapImplEntry.md)|
+
+### 2.2. ConstIterator
+
+`ConstIterator` is a public inner class of `ArraySetOrMapImpl`.
+It provides non-modifying iteration over the elements of an `ArraySetOrMapImpl`
+instance.
+
+#### 2.2.1. Private Member Variables
+
+`ConstIterator` has the following private member variables.
+
+|Name|Type|Purpose|Default Value|
+|----|----|-------|-------------|
+|`m_impl`|[`const ArraySetOrMapImpl<KE, VN>&`]|The implementation over which to iterate|None (must be set by the constructor)|
+|`m_index`|`FwSizeType`|The current iteration index|0|
+
+#### 2.2.2. Public Constructors and Destructors
+
+##### 2.2.2.1. Constructor Providing the Implementation
+
+```c++
+ConstIterator(const ArraySetOrMapImpl<KE, VN>& impl)
+```
+
+1. Set `m_impl = impl`.
+
+1. Call `reset()`.
+
+##### 2.2.2.2. Copy Constructor
+
+```c++
+ConstIterator(const ConstIterator& it)
+```
+
+Defined as `= delete`.
+
+##### 2.2.2.3. Destructor
+
+```c++
+~ConstIterator()
+```
+
+Defined as `= default`.
+
+#### 2.2.3. Public Member Functions
+
+##### 2.2.3.1. operator=
+
+```c++
+ConstIterator<KE, VN>& operator=(const ConstIterator<KE, VN>& it)
+```
+
+Defined as `= delete`.
+
+##### 2.2.3.2. operator==
+
+```c++
+bool operator==(const ConstIterator& it)
+```
+
+1. Set `result = false`.
+
+1. If `&this->m_impl == &it.m_impl`
+
+    1. If `this->m_index == it.m_index` then set `result = true`.
+
+    1. Otherwise `!this->isInRange()` and `!it.isInRange()` then set `result = true`.
+
+1. Return `result`.
+
+##### 2.2.3.3. operator++
+
+```c++
+ConstIterator& operator++()
+```
+
+1. If `isInRange()` then increment `m_index`.
+
+1. Return `*this`.
+
+##### 2.2.3.4. getKeyOrElement
+
+```c++
+const KE& getKeyOrElement() const
+```
+
+1. Assert `isInRange()`.
+
+1. Return `m_impl.m_entries[m_index].getKeyOrElement()`.
+
+##### 2.2.3.5. getValueOrNil
+
+```c++
+const KE& getValueOrNil() const
+```
+
+1. Assert `m_index < m_impl.m_size`.
+
+1. Return `m_impl.m_entries[index].getValueOrNil()`.
+
+##### 2.2.3.6. isInRange
+
+```c++
+bool isInRange() const
+```
+
+Return `m_index < m_impl.m_size`.
+
+##### 2.2.3.7. reset
+
+```c++
+void reset()
+```
+
+Set `m_index = 0`.
 
 ## 3. Private Member Variables
 
@@ -63,7 +181,7 @@ Call `setStorage(entries, capacity)`.
 ArraySetOrMapImpl(ByteArray data, FwSizeType capacity)
 ```
 
-`data` must be aligned according to 
+`data` must be aligned according to
 [`getByteArrayAlignment()`](#61-getbytearrayalignment) and must
 contain at least [`getByteArraySize(size)`](#62-getbytearraysize) bytes.
 
@@ -101,7 +219,15 @@ ArraySetOrMapImpl<KE, VN>& operator=(const ArraySetOrMapImpl<KE, VN>& impl)
 
 1. Return `*this`.
 
-### 5.2. clear
+### 5.2. begin
+
+```c++
+ConstIterator begin() const
+```
+
+1. Return `ConstIterator(*this)`.
+
+### 5.3. clear
 
 ```c++
 void clear()
@@ -109,7 +235,20 @@ void clear()
 
 Set `m_size = 0`.
 
-### 5.3. find
+### 5.4. end
+
+```c++
+ConstIterator end() const
+```
+
+1. Set `it = begin()`.
+
+1. Set `it.m_index = m_size`.
+
+1. Return `it`.
+
+
+### 5.5. find
 
 ```c++
 Success find(const KE& keyOrElement, VN& valueOrNil) const
@@ -131,7 +270,7 @@ Success find(const KE& keyOrElement, VN& valueOrNil) const
 
 1. Return `status`.
 
-### 5.4. getCapacity
+### 5.6. getCapacity
 
 ```c++
 FwSizeType getCapacity() const
@@ -139,7 +278,7 @@ FwSizeType getCapacity() const
 
 Return `m_entries.getSize()`.
 
-### 5.5. getHeadEntry
+### 5.7. getHeadEntry
 
 ```c++
 const Entry* getHeadEntry() const
@@ -153,7 +292,7 @@ const Entry* getHeadEntry() const
 
 1. Return `result`.
 
-### 5.6. getSize
+### 5.8. getSize
 
 ```c++
 FwSizeType getSize()
@@ -161,7 +300,7 @@ FwSizeType getSize()
 
 Return `m_size`.
 
-### 5.7. insert
+### 5.9. insert
 
 ```c++
 Success insert(const KE& keyOrElement, const VN& valueOrNil)
@@ -194,7 +333,7 @@ Success insert(const KE& keyOrElement, const VN& valueOrNil)
 
 1. Return `status`.
 
-### 5.8. remove
+### 5.10. remove
 
 ```c++
 Success remove(const KE& keyOrElement, VN& valueOrNil)
@@ -224,7 +363,7 @@ Success remove(const KE& keyOrElement, VN& valueOrNil)
 
 1. Return `status`.
 
-### 5.9. setStorage (Typed Data)
+### 5.11. setStorage (Typed Data)
 
 ```c++
 void setStorage(Entry* entries, FwSizeType capacity)
@@ -234,13 +373,13 @@ void setStorage(Entry* entries, FwSizeType capacity)
 
 1. Call `clear()`.
 
-### 5.10. setStorage (Untyped Data)
+### 5.12. setStorage (Untyped Data)
 
 ```c++
 void setStorage(ByteArray data, FwSizeType capacity)
 ```
 
-`data` must be aligned according to 
+`data` must be aligned according to
 [`getByteArrayAlignment()`](#61-getbytearrayalignment) and must
 contain at least [`getByteArraySize(size)`](#62-getbytearraysize) bytes.
 

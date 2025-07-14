@@ -7,7 +7,8 @@
 #ifndef Fw_MapBase_HPP
 #define Fw_MapBase_HPP
 
-#include "Fw/DataStructures/MapEntry.hpp"
+#include "Fw/DataStructures/MapConstEntry.hpp"
+#include "Fw/DataStructures/MapConstIterator.hpp"
 #include "Fw/Types/Assert.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
 
@@ -21,7 +22,7 @@ class MapBase {
     // ----------------------------------------------------------------------
 
     //! The type of a map iterator
-    using MapEntry = MapEntry<K, V>;
+    using MapConstEntry = MapConstEntry<K, V>;
 
   private:
     // ----------------------------------------------------------------------
@@ -58,20 +59,27 @@ class MapBase {
     // Public member functions
     // ----------------------------------------------------------------------
 
+    //! Get the begin iterator
+    //! \return The iterator
+    virtual MapConstIterator<K, V> begin() const = 0;
+
     //! Clear the map
     virtual void clear() = 0;
+
+    //! Get the end iterator
+    //! \return The iterator
+    virtual MapConstIterator<K, V> end() const = 0;
 
     //! Copy data from another map
     void copyDataFrom(const MapBase<K, V>& map) {
         if (&map != this) {
             this->clear();
-            const auto* e = map.getHeadMapEntry();
             const FwSizeType size = FW_MIN(map.getSize(), this->getCapacity());
+            auto it = map.begin();
             for (FwSizeType i = 0; i < size; i++) {
-                FW_ASSERT(e != nullptr);
-                const auto status = this->insert(e->getKey(), e->getValue());
+                const auto status = this->insert(it->getKey(), it->getValue());
                 FW_ASSERT(status == Success::SUCCESS, static_cast<FwAssertArgType>(status));
-                e = e->getNextMapEntry();
+                it++;
             }
         }
     }
@@ -85,10 +93,6 @@ class MapBase {
     //! Get the capacity (maximum number of items stored in the map)
     //! \return The capacity
     virtual FwSizeType getCapacity() const = 0;
-
-    //! Get the head iterator for the map
-    //! \return The iterator
-    virtual const MapEntry* getHeadMapEntry() const = 0;
 
     //! Get the size (number of items stored in the map)
     //! \return The size

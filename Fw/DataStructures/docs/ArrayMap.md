@@ -126,7 +126,15 @@ ASSERT_EQ(status, Success::SUCCESS);
 ASSERT_EQ(value, 42);
 ```
 
-### 6.2. clear
+### 6.2. begin
+
+```c++
+ConstIterator begin() const
+```
+
+Return `m_extMap.begin()`.
+
+### 6.3. clear
 
 ```c++
 void clear() override
@@ -134,7 +142,15 @@ void clear() override
 
 Call `m_extMap.clear()`.
 
-### 6.3. find
+### 6.4. end
+
+```c++
+ConstIterator end() const
+```
+
+Return `m_extMap.end()`.
+
+### 6.5. find
 
 ```c++
 Success find(const K& key, V& value) override
@@ -142,7 +158,7 @@ Success find(const K& key, V& value) override
 
 Return `m_extMap.find(key, value)`.
 
-### 6.4. getCapacity
+### 6.6. getCapacity
 
 ```c++
 FwSizeType getCapacity() const override
@@ -150,7 +166,7 @@ FwSizeType getCapacity() const override
 
 Return `m_extMap.getCapacity()`.
 
-### 6.5. getHeadMapEntry
+### 6.7. getHeadMapEntry
 
 ```c++
 const MapEntry* getHeadMapEntry const override
@@ -160,7 +176,7 @@ The type `MapEntry` is defined [here](ArrayMap.md#Public-Types).
 
 Return `m_extMap.getHeadMapEntry()`.
 
-### 6.6. getSize
+### 6.8. getSize
 
 ```c++
 FwSizeType getSize() const override
@@ -168,7 +184,7 @@ FwSizeType getSize() const override
 
 Return `m_extMap.getSize()`.
 
-### 6.7. insert
+### 6.9. insert
 
 ```c++
 Success insert(const K& key, const V& value) override
@@ -176,7 +192,7 @@ Success insert(const K& key, const V& value) override
 
 Return `m_extMap.insert(key, value)`.
 
-### 6.8. remove
+### 6.10. remove
 
 ```c++
 Success remove(const K& key, V& value) override

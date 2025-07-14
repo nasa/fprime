@@ -51,20 +51,14 @@ struct FindExisting : public Rule {
     FindExisting() : Rule("FindExisting") {}
     bool precondition(const State& state) { return static_cast<FwSizeType>(state.map.getSize()) > 0; }
     void action(State& state) {
-        const auto size = state.map.getSize();
-        const auto index = STest::Pick::startLength(0, static_cast<U32>(size));
-        const auto* entry = state.map.getHeadMapEntry();
-        for (FwSizeType i = 0; i < index; i++) {
-          ASSERT_NE(entry, nullptr);
-          entry = entry->getNextMapEntry();
+        for (auto& entry : state.map) {
+            const auto key = entry.getKey();
+            const auto expectedValue = state.modelMap[key];
+            State::ValueType value = 0;
+            const auto status = state.map.find(key, value);
+            ASSERT_EQ(status, Success::SUCCESS);
+            ASSERT_EQ(value, expectedValue);
         }
-        ASSERT_NE(entry, nullptr);
-        const auto key = entry->getKey();
-        const auto expectedValue = state.modelMap[key];
-        State::ValueType value = 0;
-        const auto status = state.map.find(key, value);
-        ASSERT_EQ(status, Success::SUCCESS);
-        ASSERT_EQ(value, expectedValue);
     }
 };
 
@@ -74,13 +68,13 @@ struct InsertExisting : public Rule {
     void action(State& state) {
         const auto size = state.map.getSize();
         const auto index = STest::Pick::startLength(0, static_cast<U32>(size));
-        const auto* entry = state.map.getHeadMapEntry();
+        auto it = state.map.begin();
         for (FwSizeType i = 0; i < index; i++) {
-            ASSERT_NE(entry, nullptr);
-            entry = entry->getNextMapEntry();
+            ASSERT_TRUE(it.isInRange());
+            it++;
         }
-        ASSERT_NE(entry, nullptr);
-        const auto key = entry->getKey();
+        ASSERT_TRUE(it.isInRange());
+        const auto key = it->getKey();
         const auto value = state.getValue();
         const auto status = state.map.insert(key, value);
         ASSERT_EQ(status, Success::SUCCESS);
@@ -147,13 +141,13 @@ struct RemoveExisting : public Rule {
     void action(State& state) {
         const auto size = state.map.getSize();
         const auto index = STest::Pick::startLength(0, static_cast<U32>(size));
-        const auto* entry = state.map.getHeadMapEntry();
+        auto it = state.map.begin();
         for (FwSizeType i = 0; i < index; i++) {
-          ASSERT_NE(entry, nullptr);
-          entry = entry->getNextMapEntry();
+            ASSERT_TRUE(it.isInRange());
+            it++;
         }
-        ASSERT_NE(entry, nullptr);
-        const auto key = entry->getKey();
+        ASSERT_TRUE(it.isInRange());
+        const auto key = it->getKey();
         const auto expectedValue = state.modelMap[key];
         State::ValueType value = 0;
         const auto status = state.map.remove(key, value);

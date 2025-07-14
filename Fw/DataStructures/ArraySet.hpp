@@ -28,9 +28,6 @@ class ArraySet final : public SetBase<T> {
     //! The type of animplementation entry
     using ImplEntry = SetOrMapImplEntry<T, Nil>;
 
-    //! The type of a set entry
-    using SetEntry = SetEntry<T>;
-
     //! The type of the implementation entries
     using ImplEntries = ImplEntry[C];
 
@@ -59,8 +56,16 @@ class ArraySet final : public SetBase<T> {
         return *this;
     }
 
+    //! Get the begin iterator
+    //! \return The iterator
+    SetConstIterator<T> begin() const override { return this->m_extSet.begin(); }
+
     //! Clear the set
     void clear() override { this->m_extSet.clear(); }
+
+    //! Get the end iterator
+    //! \return The iterator
+    SetConstIterator<T> end() const override { return this->m_extSet.end(); }
 
     //! Find an element in the set
     //! \return SUCCESS if the element was found
@@ -72,10 +77,6 @@ class ArraySet final : public SetBase<T> {
     //! Get the capacity of the set (max number of entries)
     //! \return The capacity
     FwSizeType getCapacity() const override { return this->m_extSet.getCapacity(); }
-
-    //! Get the head set entry for the set
-    //! \return The set entry
-    const SetEntry* getHeadSetEntry() const override { return this->m_extSet.getHeadSetEntry(); }
 
     //! Get the size (number of entries)
     //! \return The size

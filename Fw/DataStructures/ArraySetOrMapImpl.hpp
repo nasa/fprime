@@ -8,6 +8,7 @@
 #define Fw_ArraySetOrMapImpl_HPP
 
 #include "Fw/DataStructures/ExternalArray.hpp"
+#include "Fw/DataStructures/SetOrMapImplConstIterator.hpp"
 #include "Fw/DataStructures/SetOrMapImplEntry.hpp"
 #include "Fw/Types/Assert.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
@@ -15,7 +16,7 @@
 namespace Fw {
 
 template <typename KE, typename VN>
-class ArraySetOrMapImpl {
+class ArraySetOrMapImpl final {
     // ----------------------------------------------------------------------
     // Friend class for testing
     // ----------------------------------------------------------------------
@@ -30,6 +31,69 @@ class ArraySetOrMapImpl {
 
     //! The type of an entry in the set or map
     using Entry = SetOrMapImplEntry<KE, VN>;
+
+    //! Const iterator
+    class ConstIterator final : public SetOrMapImplConstIterator<KE, VN> {
+      public:
+        //! Constructor providing the implementation
+        ConstIterator(const ArraySetOrMapImpl<KE, VN>& impl) : SetOrMapImplConstIterator<KE, VN>(), m_impl(impl) {
+            this->reset();
+        }
+
+        //! Copy constructor
+        ConstIterator(const ConstIterator& it) : m_impl(it.m_impl), m_index(it.m_index) {}
+
+        //! Destructor
+        ~ConstIterator() override = default;
+
+      public:
+        //! Copy assignment operator
+        ConstIterator& operator=(const ConstIterator& it) {
+            this->m_impl = it.m_impl;
+            this->m_index = it.m_index;
+        }
+
+        //! Equality comparison operator
+        bool compareEqual(const ConstIterator& it) const {
+            bool result = false;
+            if (&this->m_impl == &it.m_impl) {
+                result |= (this->m_index == it.m_index);
+                result |= (!this->isInRange() and !it.isInRange());
+            }
+            return result;
+        }
+
+        //! Get the set or map impl entry pointed to by this iterator
+        //! \return The set or map impl entry
+        const Entry& getEntry() const override {
+            FW_ASSERT(this->isInRange(), static_cast<FwAssertArgType>(this->m_index),
+                      static_cast<FwAssertArgType>(this->m_impl.m_size));
+            return this->m_impl.m_entries[this->m_index];
+        }
+
+        //! Increment operator
+        void increment() override {
+            if (this->isInRange()) {
+                this->m_index++;
+            }
+        }
+
+        //! Check whether the iterator is in range
+        bool isInRange() const override { return this->m_index < this->m_impl.m_size; }
+
+        //! Reset the iterator
+        void reset() override { this->m_index = 0; }
+
+        //! Set the index value
+        void setIndex(FwSizeType index) { this->m_index = index; }
+
+      private:
+        //! The implementation over which to iterate
+        const ArraySetOrMapImpl<KE, VN>& m_impl;
+
+        //! The current iteration index
+        FwSizeType m_index = 0;
+    };
 
   public:
     // ----------------------------------------------------------------------
@@ -60,7 +124,7 @@ class ArraySetOrMapImpl {
     ArraySetOrMapImpl(const ArraySetOrMapImpl<KE, VN>& impl) { *this = impl; }
 
     //! Destructor
-    virtual ~ArraySetOrMapImpl() = default;
+    ~ArraySetOrMapImpl() = default;
 
   public:
     // ----------------------------------------------------------------------
@@ -76,8 +140,18 @@ class ArraySetOrMapImpl {
         return *this;
     }
 
+    //! Get the begin iterator
+    ConstIterator begin() const { return ConstIterator(*this); }
+
     //! Clear the set or map
     void clear() { this->m_size = 0; }
+
+    //! Get the end iterator
+    ConstIterator end() const {
+        auto it = begin();
+        it.setIndex(this->m_size + 1);
+        return it;
+    }
 
     //! Find a value associated with a key in the map or an element in a set
     //! \return SUCCESS if the item was found
@@ -100,16 +174,6 @@ class ArraySetOrMapImpl {
     //! \return The capacity
     FwSizeType getCapacity() const { return this->m_entries.getSize(); }
 
-    //! Get the head iterator for the set or map
-    //! \return The iterator
-    const Entry* getHeadEntry() const {
-        const Entry* result = nullptr;
-        if (this->m_size > 0) {
-            result = &this->m_entries[0];
-        }
-        return result;
-    }
-
     //! Get the size (number of entries)
     //! \return The size
     FwSizeType getSize() const { return this->m_size; }
@@ -130,9 +194,6 @@ class ArraySetOrMapImpl {
         }
         if ((status == Success::FAILURE) && (this->m_size < this->getCapacity())) {
             this->m_entries[this->m_size] = Entry(keyOrElement, valueOrNil);
-            if (this->m_size > 0) {
-                this->m_entries[this->m_size - 1].setNextEntry(&this->m_entries[this->m_size]);
-            }
             this->m_size++;
             status = Success::SUCCESS;
         }
@@ -150,9 +211,6 @@ class ArraySetOrMapImpl {
                 valueOrNil = this->m_entries[i].getValue();
                 if (i < this->m_size - 1) {
                     this->m_entries[i] = this->m_entries[this->m_size - 1];
-                    this->m_entries[i].setNextEntry(&this->m_entries[i + 1]);
-                } else {
-                    this->m_entries[i].setNextEntry(nullptr);
                 }
                 this->m_size--;
                 status = Success::SUCCESS;

@@ -1,18 +1,18 @@
 // ======================================================================
-// \title  MapEntry
+// \title  MapConstEntry
 // \author bocchino
-// \brief  An abstract class template representing an iterator for a map
+// \brief  An abstract class template representing a constant entry for a map
 // ======================================================================
 
-#ifndef Fw_MapEntry_HPP
-#define Fw_MapEntry_HPP
+#ifndef Fw_MapConstEntry_HPP
+#define Fw_MapConstEntry_HPP
 
 #include "Fw/FPrimeBasicTypes.hpp"
 
 namespace Fw {
 
 template <typename K, typename V>
-class MapEntry {
+class MapConstEntry {
   private:
     // ----------------------------------------------------------------------
     // Private constructors
@@ -20,7 +20,7 @@ class MapEntry {
 
     //! Copy constructor deleted in the base class
     //! Behavior depends on the implementation
-    MapEntry(const MapEntry<K, V>&) = delete;
+    MapConstEntry(const MapConstEntry<K, V>&) = delete;
 
   protected:
     // ----------------------------------------------------------------------
@@ -28,10 +28,10 @@ class MapEntry {
     // ----------------------------------------------------------------------
 
     //! Zero-argument constructor
-    MapEntry() {}
+    MapConstEntry() {}
 
     //! Destructor
-    virtual ~MapEntry() = default;
+    virtual ~MapConstEntry() = default;
 
   private:
     // ----------------------------------------------------------------------
@@ -41,24 +41,20 @@ class MapEntry {
     //! operator= deleted in the base class
     //! Behavior depends on the implementation
     //! We avoid virtual user-defined operators
-    MapEntry<K, V>& operator=(const MapEntry<K, V>&) = delete;
+    MapConstEntry<K, V>& operator=(const MapConstEntry<K, V>&) = delete;
 
   public:
     // ----------------------------------------------------------------------
     // Public member functions
     // ----------------------------------------------------------------------
 
-    //! Get the key associated with this iterator
+    //! Get the key associated with this entry
     //! \return The key
     virtual const K& getKey() const = 0;
 
-    //! Get the value associated with this iterator
+    //! Get the value associated with this entry
     //! \return The value
     virtual const V& getValue() const = 0;
-
-    //! Get the next map iterator
-    //! \return The map iterator, or nullptr if none
-    virtual const MapEntry<K, V>* getNextMapEntry() const = 0;
 };
 
 }  // namespace Fw

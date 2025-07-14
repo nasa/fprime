@@ -29,7 +29,7 @@ class ArrayMap final : public MapBase<K, V> {
     using ImplEntry = SetOrMapImplEntry<K, V>;
 
     //! The type of a map entry
-    using MapEntry = MapEntry<K, V>;
+    using MapConstEntry = MapConstEntry<K, V>;
 
     //! The type of the implementation entries
     using ImplEntries = ImplEntry[C];
@@ -59,8 +59,16 @@ class ArrayMap final : public MapBase<K, V> {
         return *this;
     }
 
+    //! Get the begin iterator
+    //! \return The iterator
+    MapConstIterator<K, V> begin() const override { return this->m_extMap.begin(); }
+
     //! Clear the map
     void clear() override { this->m_extMap.clear(); }
+
+    //! Get the end iterator
+    //! \return The iterator
+    MapConstIterator<K, V> end() const override { return this->m_extMap.end(); }
 
     //! Find a value associated with a key in the map
     //! \return SUCCESS if the item was found
@@ -73,10 +81,6 @@ class ArrayMap final : public MapBase<K, V> {
     //! Get the capacity of the map (max number of entries)
     //! \return The capacity
     FwSizeType getCapacity() const override { return this->m_extMap.getCapacity(); }
-
-    //! Get the head map entry for the map
-    //! \return The map entry
-    const MapEntry* getHeadMapEntry() const override { return this->m_extMap.getHeadMapEntry(); }
 
     //! Get the size (number of entries)
     //! \return The size
