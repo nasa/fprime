@@ -13,6 +13,12 @@ module Svc {
             IDLE
         }
 
+        enum FileReadStage {
+            HEADER
+            BODY
+            FOOTER
+        }
+
         include "FpySequencerCommands.fppi"
         include "FpySequencerTelemetry.fppi"
         include "FpySequencerEvents.fppi"
