@@ -93,10 +93,6 @@ class SetBase {
     //! \return The capacity
     virtual FwSizeType getCapacity() const = 0;
 
-    //! Get the head set entry for the set
-    //! \return The set entry
-    virtual const SetConstEntry* getHeadSetConstEntry() const = 0;
-
     //! Get the size (number of items stored in the set)
     //! \return The size
     virtual FwSizeType getSize() const = 0;

@@ -174,16 +174,6 @@ class ArraySetOrMapImpl final {
     //! \return The capacity
     FwSizeType getCapacity() const { return this->m_entries.getSize(); }
 
-    //! Get the head iterator for the set or map
-    //! \return The iterator
-    const Entry* getHeadEntry() const {
-        const Entry* result = nullptr;
-        if (this->m_size > 0) {
-            result = &this->m_entries[0];
-        }
-        return result;
-    }
-
     //! Get the size (number of entries)
     //! \return The size
     FwSizeType getSize() const { return this->m_size; }

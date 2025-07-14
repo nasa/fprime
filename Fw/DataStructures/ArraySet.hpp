@@ -81,10 +81,6 @@ class ArraySet final : public SetBase<T> {
     //! \return The capacity
     FwSizeType getCapacity() const override { return this->m_extSet.getCapacity(); }
 
-    //! Get the head set entry for the set
-    //! \return The set entry
-    const SetConstEntry* getHeadSetConstEntry() const override { return this->m_extSet.getHeadSetConstEntry(); }
-
     //! Get the size (number of entries)
     //! \return The size
     FwSizeType getSize() const override { return this->m_extSet.getSize(); }

@@ -103,10 +103,6 @@ class ExternalArraySet final : public SetBase<T> {
     //! \return The capacity
     FwSizeType getCapacity() const override { return this->m_impl.getCapacity(); }
 
-    //! Get the head set entry for the set
-    //! \return The set entry
-    const SetConstEntry* getHeadSetConstEntry() const override { return this->m_impl.getHeadEntry(); }
-
     //! Get the size (number of entries)
     //! \return The size
     FwSizeType getSize() const override { return this->m_impl.getSize(); }
@@ -114,14 +110,14 @@ class ExternalArraySet final : public SetBase<T> {
     //! Insert an element in the set
     //! \return SUCCESS if there is room in the set
     Success insert(const T& element  //!< The element
-    ) override {
+                   ) override {
         return this->m_impl.insert(element, Nil());
     }
 
     //! Remove an element from the set
     //! \return SUCCESS if the element was there
     Success remove(const T& element  //!< The element
-    ) override {
+                   ) override {
         Nil nil = {};
         return this->m_impl.remove(element, nil);
     }
