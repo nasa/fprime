@@ -67,7 +67,7 @@ class SetOrMapImplEntry final : public MapConstEntry<KE, VN> {
 
   public:
     // ----------------------------------------------------------------------
-    // MapConstEntry implementation 
+    // MapConstEntry implementation
     // ----------------------------------------------------------------------
 
     //! Get the key associated with this entry

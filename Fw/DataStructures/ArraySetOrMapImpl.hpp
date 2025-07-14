@@ -35,7 +35,6 @@ class ArraySetOrMapImpl final {
     //! Const iterator
     class ConstIterator final : public SetOrMapImplConstIterator<KE, VN> {
       public:
-
         using ImplKind = typename SetOrMapImplConstIterator<KE, VN>::ImplKind;
 
       public:
@@ -68,8 +67,7 @@ class ArraySetOrMapImpl final {
             bool result = false;
             if ((this->m_impl == nullptr) && (it.m_impl == nullptr)) {
                 result = true;
-            }
-            else if (this->m_impl == it.m_impl) {
+            } else if (this->m_impl == it.m_impl) {
                 result |= (this->m_index == it.m_index);
                 result |= (!this->isInRange() and !it.isInRange());
             }
@@ -97,9 +95,10 @@ class ArraySetOrMapImpl final {
         }
 
         //! Check whether the iterator is in range
-        bool isInRange() const override { 
-          FW_ASSERT(this->m_impl != nullptr);
-          return this->m_index < this->m_impl->m_size; }
+        bool isInRange() const override {
+            FW_ASSERT(this->m_impl != nullptr);
+            return this->m_index < this->m_impl->m_size;
+        }
 
         //! Reset the iterator
         void reset() override { this->m_index = 0; }

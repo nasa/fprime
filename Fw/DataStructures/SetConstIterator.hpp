@@ -29,14 +29,18 @@ class SetConstIterator {
     // ----------------------------------------------------------------------
 
     //! The type of an implementation kind
-    enum class ImplKind { ARRAY, RED_BLACK_TREE };
+    using ImplKind = typename SetOrMapImplConstIterator<T, Nil>::ImplKind;
 
     //! The type of an implementation
     union Impl {
+        //! Default constructor
+        Impl() : array() {}
+        //! Array constructor
         Impl(const ArrayIterator& it) : array(it) {}
         //! An array iterator
         ArrayIterator array;
         // TODO: Add red-black tree implementation
+        // ! Destructor
         ~Impl() {}
     };
 
@@ -46,12 +50,23 @@ class SetConstIterator {
     // ----------------------------------------------------------------------
 
     //! Constructor providing an array implementation
-    SetConstIterator(const ArrayIterator& it) : m_implKind(ImplKind::ARRAY), m_impl(it), m_implIterator(m_impl.array) {}
+    SetConstIterator(const ArrayIterator& it) : m_impl(it), m_implIterator(&m_impl.array) {}
 
     //! Copy constructor
-    SetConstIterator(const SetConstIterator& it)
-        : m_implKind(it.m_implKind), m_impl(it.m_impl.array), m_implIterator(it.m_implIterator) {
-        // TODO: Handle tree case
+    SetConstIterator(const SetConstIterator& it) : m_impl(), m_implIterator() {
+        const auto implKind = it.getImplIterator().implKind();
+        switch (implKind) {
+            case ImplKind::ARRAY:
+                this->m_impl.array = it.m_impl.array;
+                this->m_implIterator = &this->m_impl.array;
+                break;
+            case ImplKind::RED_BLACK_TREE:
+                // TODO
+                break;
+            default:
+                FW_ASSERT(0, static_cast<FwAssertArgType>(implKind));
+                break;
+        }
     }
 
     //! Destructor
@@ -68,16 +83,20 @@ class SetConstIterator {
     //! Equality comparison operator
     bool operator==(const SetConstIterator& it) {
         bool result = false;
-        switch (this->m_implKind) {
-            case ImplKind::ARRAY:
-                result = this->m_impl.array.compareEqual(it.m_impl.array);
-                break;
-            case ImplKind::RED_BLACK_TREE:
-                // TODO
-                break;
-            default:
-                FW_ASSERT(0, static_cast<FwAssertArgType>(this->m_implKind));
-                break;
+        const auto implKind1 = this->getImplIterator().implKind();
+        const auto implKind2 = it.getImplIterator().implKind();
+        if (implKind1 == implKind2) {
+            switch (implKind1) {
+                case ImplKind::ARRAY:
+                    result = this->m_impl.array.compareEqual(it.m_impl.array);
+                    break;
+                case ImplKind::RED_BLACK_TREE:
+                    // TODO
+                    break;
+                default:
+                    FW_ASSERT(0, static_cast<FwAssertArgType>(implKind1));
+                    break;
+            }
         }
         return result;
     }
@@ -87,7 +106,7 @@ class SetConstIterator {
 
     //! Prefix increment
     SetConstIterator& operator++() {
-        this->m_implIterator.increment();
+        this->getImplIterator().increment();
         return *this;
     }
 
@@ -99,33 +118,47 @@ class SetConstIterator {
     }
 
     //! Postfix increment
-    void increment() { this->m_implIterator.increment(); }
+    void increment() { this->getImplIterator().increment(); }
 
     //! Check whether the iterator is in range
-    bool isInRange() const { return this->m_implIterator.isInRange(); }
+    bool isInRange() const { return this->getImplIterator().isInRange(); }
 
     //! Reset the iterator
-    void reset() { return this->m_implIterator.reset(); }
+    void reset() { return this->getImplIterator().reset(); }
 
     //! Dereference
-    const T& operator*() const { return this->m_implIterator.getEntry().getKeyOrElement(); }
+    const T& operator*() const { return this->getImplIterator().getEntry().getKeyOrElement(); }
 
     //! Pointer
-    const T* operator->() const { return &this->m_implIterator.getEntry().getKeyOrElement(); }
+    const T* operator->() const { return &this->getImplIterator().getEntry().getKeyOrElement(); }
+
+  private:
+    // ----------------------------------------------------------------------
+    // Private helper functions
+    // ----------------------------------------------------------------------
+
+    //! Assert and get the impl iterator
+    SetOrMapImplConstIterator<T, Nil>& getImplIterator() {
+        FW_ASSERT(this->m_implIterator != nullptr);
+        return *this->m_implIterator;
+    }
+
+    //! Assert and get the impl iterator
+    const SetOrMapImplConstIterator<T, Nil>& getImplIterator() const {
+        FW_ASSERT(this->m_implIterator != nullptr);
+        return *this->m_implIterator;
+    }
 
   private:
     // ----------------------------------------------------------------------
     // Private member variables
     // ----------------------------------------------------------------------
 
-    //! The implementation kind
-    ImplKind m_implKind;
-
     //! The implementation
     Impl m_impl;
 
     //! The impl iterator
-    SetOrMapImplConstIterator<T, Nil>& m_implIterator;
+    SetOrMapImplConstIterator<T, Nil>* m_implIterator = nullptr;
 };
 
 }  // namespace Fw

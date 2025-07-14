@@ -15,7 +15,6 @@ namespace Fw {
 
 template <typename T>
 class SetBase {
-
   private:
     // ----------------------------------------------------------------------
     // Private constructors

@@ -27,7 +27,7 @@ class SetOrMapImplConstIterator {
 
   public:
     // ----------------------------------------------------------------------
-    // Types 
+    // Types
     // ----------------------------------------------------------------------
 
     //! The kind of a const iterator implementation

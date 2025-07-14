@@ -17,7 +17,7 @@ template <typename K, typename V>
 class MapConstIterator {
   public:
     // ----------------------------------------------------------------------
-    // Public
+    // Public types
     // ----------------------------------------------------------------------
 
     //! The type of an array iterator
@@ -73,6 +73,10 @@ class MapConstIterator {
     ~MapConstIterator() {}
 
   public:
+    // ----------------------------------------------------------------------
+    // Public member functions
+    // ----------------------------------------------------------------------
+
     //! Copy assignment operator
     MapConstIterator& operator=(const MapConstIterator&) = default;
 
@@ -126,25 +130,30 @@ class MapConstIterator {
     const MapConstEntry<K, V>& operator*() const { return this->getImplIterator().getEntry(); }
 
     //! Pointer
-    const MapConstEntry<K, V>* operator->() const { 
-      return &this->getImplIterator().getEntry();
-    }
+    const MapConstEntry<K, V>* operator->() const { return &this->getImplIterator().getEntry(); }
 
   private:
+    // ----------------------------------------------------------------------
+    // Private helper functions
+    // ----------------------------------------------------------------------
 
     //! Assert and get the impl iterator
     SetOrMapImplConstIterator<K, V>& getImplIterator() {
-      FW_ASSERT(this->m_implIterator != nullptr);
-      return *this->m_implIterator;
+        FW_ASSERT(this->m_implIterator != nullptr);
+        return *this->m_implIterator;
     }
 
     //! Assert and get the impl iterator
     const SetOrMapImplConstIterator<K, V>& getImplIterator() const {
-      FW_ASSERT(this->m_implIterator != nullptr);
-      return *this->m_implIterator;
+        FW_ASSERT(this->m_implIterator != nullptr);
+        return *this->m_implIterator;
     }
 
   private:
+    // ----------------------------------------------------------------------
+    // Private member variables
+    // ----------------------------------------------------------------------
+
     //! The implementation
     Impl m_impl;
 
