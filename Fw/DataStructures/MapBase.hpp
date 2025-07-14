@@ -8,7 +8,7 @@
 #define Fw_MapBase_HPP
 
 #include "Fw/DataStructures/MapConstIterator.hpp"
-#include "Fw/DataStructures/MapEntry.hpp"
+#include "Fw/DataStructures/MapConstEntry.hpp"
 #include "Fw/Types/Assert.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
 
@@ -22,7 +22,7 @@ class MapBase {
     // ----------------------------------------------------------------------
 
     //! The type of a map iterator
-    using MapEntry = MapEntry<K, V>;
+    using MapConstEntry = MapConstEntry<K, V>;
 
   private:
     // ----------------------------------------------------------------------
@@ -96,7 +96,7 @@ class MapBase {
 
     //! Get the head iterator for the map
     //! \return The iterator
-    virtual const MapEntry* getHeadMapEntry() const = 0;
+    virtual const MapConstEntry* getHeadMapConstEntry() const = 0;
 
     //! Get the size (number of items stored in the map)
     //! \return The size

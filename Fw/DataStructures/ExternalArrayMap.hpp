@@ -31,7 +31,7 @@ class ExternalArrayMap final : public MapBase<K, V> {
     using ImplEntry = SetOrMapImplEntry<K, V>;
 
     //! The type of a map entry
-    using MapEntry = MapEntry<K, V>;
+    using MapConstEntry = MapConstEntry<K, V>;
 
   public:
     // ----------------------------------------------------------------------
@@ -104,7 +104,7 @@ class ExternalArrayMap final : public MapBase<K, V> {
 
     //! Get the head map entry for the map
     //! \return The map entry
-    const MapEntry* getHeadMapEntry() const override { return this->m_impl.getHeadEntry(); }
+    const MapConstEntry* getHeadMapConstEntry() const override { return this->m_impl.getHeadEntry(); }
 
     //! Get the size (number of entries)
     //! \return The size
