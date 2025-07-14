@@ -23,7 +23,6 @@ the copy constructor and copy assignment operator are deleted.
 `MapEntry` provides a protected zero-argument constructor
 and a protected virtual destructor.
 It uses the default implementations.
-Defined as `= delete`.
 
 ## 4. Public Member Functions
 
