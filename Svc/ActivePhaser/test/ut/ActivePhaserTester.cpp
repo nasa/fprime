@@ -98,6 +98,12 @@ void ActivePhaserTester ::create_child(FwIndexType port, U32 length, U32 start, 
     component.register_phased(child.port, child.length, child.start, child.context);
 }
 
+/**
+ * Execute a tick for both the ActivePhaser component and the FauxPhaser.
+ * When the tick reaches the end fo the cycle, check assertions.
+ *
+ * @returns True if the end of cycle (i.e., start of a new cycle) is reached, and False otherwise.
+ */
 bool ActivePhaserTester ::new_cycle(U64 cycle_number) {
     Os::RawTime nope;
     FauxPhaser::State response = mock.run(m_ticks, m_cycle);
