@@ -35,13 +35,22 @@ class ArraySetOrMapImpl final {
     //! Const iterator
     class ConstIterator final : public SetOrMapImplConstIterator<KE, VN> {
       public:
+
+        using ImplKind = typename SetOrMapImplConstIterator<KE, VN>::ImplKind;
+
+      public:
+        //! Default constructor
+        ConstIterator() {}
+
         //! Constructor providing the implementation
-        ConstIterator(const ArraySetOrMapImpl<KE, VN>& impl) : SetOrMapImplConstIterator<KE, VN>(), m_impl(impl) {
+        ConstIterator(const ArraySetOrMapImpl<KE, VN>& impl) : SetOrMapImplConstIterator<KE, VN>(), m_impl(&impl) {
             this->reset();
         }
 
         //! Copy constructor
-        ConstIterator(const ConstIterator& it) : m_impl(it.m_impl), m_index(it.m_index) {}
+        ConstIterator(const ConstIterator& it) : SetOrMapImplConstIterator<KE, VN>(), m_impl(it.m_impl) {
+            this->reset();
+        }
 
         //! Destructor
         ~ConstIterator() override = default;
@@ -51,24 +60,33 @@ class ArraySetOrMapImpl final {
         ConstIterator& operator=(const ConstIterator& it) {
             this->m_impl = it.m_impl;
             this->m_index = it.m_index;
+            return *this;
         }
 
         //! Equality comparison operator
         bool compareEqual(const ConstIterator& it) const {
             bool result = false;
-            if (&this->m_impl == &it.m_impl) {
+            if ((this->m_impl == nullptr) && (it.m_impl == nullptr)) {
+                result = true;
+            }
+            else if (this->m_impl == it.m_impl) {
                 result |= (this->m_index == it.m_index);
                 result |= (!this->isInRange() and !it.isInRange());
             }
             return result;
         }
 
+        //! Return the impl kind
+        //! \return The impl kind
+        ImplKind implKind() const override { return ImplKind::ARRAY; }
+
         //! Get the set or map impl entry pointed to by this iterator
         //! \return The set or map impl entry
         const Entry& getEntry() const override {
+            FW_ASSERT(this->m_impl != nullptr);
             FW_ASSERT(this->isInRange(), static_cast<FwAssertArgType>(this->m_index),
-                      static_cast<FwAssertArgType>(this->m_impl.m_size));
-            return this->m_impl.m_entries[this->m_index];
+                      static_cast<FwAssertArgType>(this->m_impl->m_size));
+            return this->m_impl->m_entries[this->m_index];
         }
 
         //! Increment operator
@@ -79,7 +97,9 @@ class ArraySetOrMapImpl final {
         }
 
         //! Check whether the iterator is in range
-        bool isInRange() const override { return this->m_index < this->m_impl.m_size; }
+        bool isInRange() const override { 
+          FW_ASSERT(this->m_impl != nullptr);
+          return this->m_index < this->m_impl->m_size; }
 
         //! Reset the iterator
         void reset() override { this->m_index = 0; }
@@ -89,7 +109,7 @@ class ArraySetOrMapImpl final {
 
       private:
         //! The implementation over which to iterate
-        const ArraySetOrMapImpl<KE, VN>& m_impl;
+        const ArraySetOrMapImpl<KE, VN>* m_impl = nullptr;
 
         //! The current iteration index
         FwSizeType m_index = 0;
