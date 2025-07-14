@@ -32,115 +32,8 @@ storing the entries in the set or map.
 `ConstIterator` is a public inner class of `ArraySetOrMapImpl`.
 It provides non-modifying iteration over the elements of an `ArraySetOrMapImpl`
 instance.
-
-#### 2.2.1. Private Member Variables
-
-`ConstIterator` has the following private member variables.
-
-|Name|Type|Purpose|Default Value|
-|----|----|-------|-------------|
-|`m_impl`|[`const ArraySetOrMapImpl<KE, VN>&`]|The implementation over which to iterate|None (must be set by the constructor)|
-|`m_index`|`FwSizeType`|The current iteration index|0|
-
-#### 2.2.2. Public Constructors and Destructors
-
-##### 2.2.2.1. Constructor Providing the Implementation
-
-```c++
-ConstIterator(const ArraySetOrMapImpl<KE, VN>& impl)
-```
-
-1. Set `m_impl = impl`.
-
-1. Call `reset()`.
-
-##### 2.2.2.2. Copy Constructor
-
-```c++
-ConstIterator(const ConstIterator& it)
-```
-
-Defined as `= delete`.
-
-##### 2.2.2.3. Destructor
-
-```c++
-~ConstIterator()
-```
-
-Defined as `= default`.
-
-#### 2.2.3. Public Member Functions
-
-##### 2.2.3.1. operator=
-
-```c++
-ConstIterator<KE, VN>& operator=(const ConstIterator<KE, VN>& it)
-```
-
-Defined as `= delete`.
-
-##### 2.2.3.2. operator==
-
-```c++
-bool operator==(const ConstIterator& it)
-```
-
-1. Set `result = false`.
-
-1. If `&this->m_impl == &it.m_impl`
-
-    1. If `this->m_index == it.m_index` then set `result = true`.
-
-    1. Otherwise `!this->isInRange()` and `!it.isInRange()` then set `result = true`.
-
-1. Return `result`.
-
-##### 2.2.3.3. operator++
-
-```c++
-ConstIterator& operator++()
-```
-
-1. If `isInRange()` then increment `m_index`.
-
-1. Return `*this`.
-
-##### 2.2.3.4. getKeyOrElement
-
-```c++
-const KE& getKeyOrElement() const
-```
-
-1. Assert `isInRange()`.
-
-1. Return `m_impl.m_entries[m_index].getKeyOrElement()`.
-
-##### 2.2.3.5. getValueOrNil
-
-```c++
-const KE& getValueOrNil() const
-```
-
-1. Assert `m_index < m_impl.m_size`.
-
-1. Return `m_impl.m_entries[index].getValueOrNil()`.
-
-##### 2.2.3.6. isInRange
-
-```c++
-bool isInRange() const
-```
-
-Return `m_index < m_impl.m_size`.
-
-##### 2.2.3.7. reset
-
-```c++
-void reset()
-```
-
-Set `m_index = 0`.
+It is a base class of [`SetOrMapImplConstIterator<KE, 
+VN>`](SetOrMapImplConstIterator.md).
 
 ## 3. Private Member Variables
 
@@ -182,8 +75,8 @@ ArraySetOrMapImpl(ByteArray data, FwSizeType capacity)
 ```
 
 `data` must be aligned according to
-[`getByteArrayAlignment()`](#61-getbytearrayalignment) and must
-contain at least [`getByteArraySize(size)`](#62-getbytearraysize) bytes.
+[`getByteArrayAlignment()`](#getByteArrayAlignment) and must
+contain at least [`getByteArraySize(size)`](#getByteArraySize) bytes.
 
 Call `setStorage(data, capacity)`.
 
@@ -278,20 +171,6 @@ FwSizeType getCapacity() const
 
 Return `m_entries.getSize()`.
 
-### 5.7. getHeadEntry
-
-```c++
-const Entry* getHeadEntry() const
-```
-
-1. Set `result = nullptr`.
-
-1. If `m_size > 0`
-
-    1. Set `result = &m_entries[0]`.
-
-1. Return `result`.
-
 ### 5.8. getSize
 
 ```c++
@@ -380,8 +259,8 @@ void setStorage(ByteArray data, FwSizeType capacity)
 ```
 
 `data` must be aligned according to
-[`getByteArrayAlignment()`](#61-getbytearrayalignment) and must
-contain at least [`getByteArraySize(size)`](#62-getbytearraysize) bytes.
+[`getByteArrayAlignment()`](#getByteArrayAlignment) and must
+contain at least [`getByteArraySize(size)`](#getByteArraySize) bytes.
 
 1. Call `m_entries.setStorage(data, capacity)`.
 
@@ -389,6 +268,7 @@ contain at least [`getByteArraySize(size)`](#62-getbytearraysize) bytes.
 
 ## 6. Public Static Functions
 
+<a name="getByteArrayAlignment"></a>
 ### 6.1. getByteArrayAlignment
 
 ```c++
@@ -397,6 +277,7 @@ static constexpr U8 getByteArrayAlignment()
 
 Return `ExternalArray<Entry>::getByteArrayAlignment()`.
 
+<a name="getByteArraySize"></a>
 ### 6.2. getByteArraySize
 
 ```c++
