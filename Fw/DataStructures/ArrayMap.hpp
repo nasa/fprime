@@ -29,7 +29,7 @@ class ArrayMap final : public MapBase<K, V> {
     using ImplEntry = SetOrMapImplEntry<K, V>;
 
     //! The type of a map entry
-    using MapEntry = MapEntry<K, V>;
+    using MapEntryBase = MapEntryBase<K, V>;
 
     //! The type of the implementation entries
     using ImplEntries = ImplEntry[C];

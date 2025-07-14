@@ -28,7 +28,7 @@ as the map implementation.
 |Name|Definition|
 |----|----------|
 |`ImplEntry`|Alias of [`SetOrMapImplEntry<K, V>`](SetOrMapImplEntry.md)|
-|`MapEntry`|Alias of [`MapEntry<K, V>`](MapEntry.md)|
+|`MapEntryBase`|Alias of [`MapEntryBase<K, V>`](MapEntryBase.md)|
 
 ## 4. Private Member Variables
 

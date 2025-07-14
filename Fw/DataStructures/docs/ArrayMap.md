@@ -29,7 +29,7 @@ It represents an array-based map with internal storage.
 |Name|Definition|
 |----|----------|
 |`ImplEntry`|Alias of [`SetOrMapImplEntry<K, V>`](SetOrMapImplEntry.md)|
-|`MapEntry`|Alias of [`MapEntry<K, V>`](MapEntry.md)|
+|`MapEntryBase`|Alias of [`MapEntryBase<K, V>`](MapEntryBase.md)|
 |`ImplEntries`|Alias of `ImplEntry[C]`|
 
 ## 4. Private Member Variables

@@ -18,11 +18,11 @@ It represents an iterator for a set or a map implementation.
 `SetOrMapImplEntry<KE, VN>` is publicly derived from the following
 templates:
 
-1. [`MapEntry<KE, VN>`](MapEntry.md).
+1. [`MapEntryBase<KE, VN>`](MapEntryBase.md).
 
 ```mermaid
 classDiagram
-    MapEntry <|-- SetOrMapImplEntry
+    MapEntryBase <|-- SetOrMapImplEntry
 ```
 
 ## 3. Private Member Variables

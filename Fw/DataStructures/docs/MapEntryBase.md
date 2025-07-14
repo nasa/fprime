@@ -1,12 +1,12 @@
-# MapEntry
+# MapEntryBase
 
-`MapEntry` is an abstract class template
+`MapEntryBase` is an abstract class template
 defined in [`Fw/DataStructures`](sdd.md).
-It represents an entry for a map.
+It provides the user-facing interface for a map entry.
 
 ## 1. Template Parameters
 
-`MapEntry` has the following template parameters.
+`MapEntryBase` has the following template parameters.
 
 |Kind|Name|Purpose|
 |----|----|-------|
@@ -20,7 +20,7 @@ the copy constructor and copy assignment operator are deleted.
 
 ## 3. Protected Constructors and Destructors
 
-`MapEntry` provides a protected zero-argument constructor
+`MapEntryBase` provides a protected zero-argument constructor
 and a protected virtual destructor.
 It uses the default implementations.
 

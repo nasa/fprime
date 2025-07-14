@@ -1,18 +1,18 @@
 // ======================================================================
-// \title  MapEntry
+// \title  MapEntryBase
 // \author bocchino
-// \brief  An abstract class template representing an entry in a map
+// \brief  An abstract base class representing an entry in a map
 // ======================================================================
 
-#ifndef Fw_MapEntry_HPP
-#define Fw_MapEntry_HPP
+#ifndef Fw_MapEntryBase_HPP
+#define Fw_MapEntryBase_HPP
 
 #include "Fw/FPrimeBasicTypes.hpp"
 
 namespace Fw {
 
 template <typename K, typename V>
-class MapEntry {
+class MapEntryBase {
   private:
     // ----------------------------------------------------------------------
     // Deleted elements
@@ -20,12 +20,12 @@ class MapEntry {
 
     //! Copy constructor deleted in the base class
     //! Behavior depends on the implementation
-    MapEntry(const MapEntry<K, V>&) = delete;
+    MapEntryBase(const MapEntryBase<K, V>&) = delete;
 
     //! operator= deleted in the base class
     //! Behavior depends on the implementation
     //! We avoid virtual user-defined operators
-    MapEntry<K, V>& operator=(const MapEntry<K, V>&) = delete;
+    MapEntryBase<K, V>& operator=(const MapEntryBase<K, V>&) = delete;
 
   protected:
     // ----------------------------------------------------------------------
@@ -33,10 +33,10 @@ class MapEntry {
     // ----------------------------------------------------------------------
 
     //! Zero-argument constructor
-    MapEntry() = default;
+    MapEntryBase() = default;
 
     //! Destructor
-    virtual ~MapEntry() = default;
+    virtual ~MapEntryBase() = default;
 
   public:
     // ----------------------------------------------------------------------
