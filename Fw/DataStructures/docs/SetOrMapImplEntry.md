@@ -2,7 +2,7 @@
 
 `SetOrMapImplEntry` is a final class template
 defined in [`Fw/DataStructures`](sdd.md).
-It represents an iterator for a set or a map.
+It represents an iterator for a set or a map implementation.
 
 ## 1. Template Parameters
 
@@ -20,12 +20,9 @@ templates:
 
 1. [`MapEntry<KE, VN>`](MapEntry.md).
 
-1. [`SetEntry<KE>`](SetEntry.md).
-
 ```mermaid
 classDiagram
     MapEntry <|-- SetOrMapImplEntry
-    SetEntry <|-- SetOrMapImplEntry
 ```
 
 ## 3. Private Member Variables
@@ -36,7 +33,6 @@ classDiagram
 |----|----|-------|-------------|
 |`m_keyOrElement`|`KE`|The map key or set element|C++ default initialization|
 |`m_valueOrNil`|`VN`|The value or [`Nil`](Nil.md)|C++ default initialization|
-|`m_next`|`const SetOrMapImplEntry<KE, VN>*`|Pointer to the next iterator or `nullptr` if none|`nullptr`|
 
 ## 4. Public Constructors and Destructors
 
@@ -51,14 +47,12 @@ Use default initialization of members.
 ### 4.2. Constructor Providing Members
 
 ```c++
-SetOrMapImplEntry(const KE& keyOrElement, const VN& valueOrNil, const SetOrMapImplEntry<KE, VN>* next = nullptr)
+SetOrMapImplEntry(const KE& keyOrElement, const VN& valueOrNil)
 ```
 
 1. Set `m_keyOrElement = keyOrElement`.
 
 2. Set `m_valueOrNil = valueOrNil`.
-
-3. Set `m_next = next`.
 
 ### 4.3. Copy Constructor
 
@@ -90,8 +84,6 @@ SetOrMapImplEntry& operator=(const SetOrMapImplEntry&<KE, VN> iterator)
 
     1. Set `m_valueOrNil = iterator.valueOrNil`.
 
-    1. Set `m_next = iterator.next`.
-
 ### 5.3. getElement
 
 ```c++
@@ -116,30 +108,6 @@ const VN& getValue() const override
 
 Return a reference to `m_valueOrNil`.
 
-### 5.4. getNextEntry
-
-```c++
-SetOrMapImplEntry<KE, VN>* getNextEntry()
-```
-
-Return `m_next`.
-
-### 5.4. getNextMapEntry
-
-```c++
-MapEntry<KE, VN>* getNextMapEntry() override
-```
-
-Return `m_next`.
-
-### 5.5. getNextSetEntry
-
-```c++
-SetEntry<KE>* getNextSetEntry() override
-```
-
-Return `m_next`.
-
 ### 5.6. setKeyOrElement
 
 ```c++
@@ -147,14 +115,6 @@ void setKeyOrElement(const KE& keyOrElement) const
 ```
 
 Set `m_keyOrElement = keyOrElement`.
-
-### 5.8. setNextEntry
-
-```c++
-void setNextEntry(const SetOrMapImplEntry<KE, VN>* next)
-```
-
-Set `m_next = next`.
 
 ### 5.7. setValueOrNil
 
