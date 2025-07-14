@@ -72,6 +72,45 @@ namespace Fw {
         ASSERT_EQ(time3.getContext(),0);
         EXPECT_EQ(time3.getSeconds(),0);
         EXPECT_EQ(time3.getUSeconds(),2);
+
+        // Addition - context is the same
+        time1.set(1000,0);
+        time2.set(2000,500);
+        time1.setTimeContext(2);
+        time2.setTimeContext(2);
+        time_sum = Fw::Time::add(time1,time2);
+        EXPECT_EQ(time_sum.getContext(),2);
+        EXPECT_EQ(time_sum.getSeconds(),3000);
+        EXPECT_EQ(time_sum.getUSeconds(),500);
+
+        // Addition - context differs
+        time1.set(1000,0);
+        time2.set(2000,500);
+        time1.setTimeContext(1);
+        time2.setTimeContext(2);
+        time_sum = Fw::Time::add(time1,time2);
+        EXPECT_EQ(time_sum.getContext(),0);
+        EXPECT_EQ(time_sum.getSeconds(),3000);
+        EXPECT_EQ(time_sum.getUSeconds(),500);
+
+        // Sub - context is the same
+        time1.set(3000,0);
+        time2.set(1500,0);
+        time1.setTimeContext(3);
+        time2.setTimeContext(3);
+        time_sum = Fw::Time::sub(time1,time2);
+        EXPECT_EQ(time_sum.getContext(),3);
+        EXPECT_EQ(time_sum.getSeconds(),1500);
+
+        // Sub - context differs
+        time1.set(3000,0);
+        time2.set(1500,0);
+        time1.setTimeContext(3);
+        time2.setTimeContext(2);
+        time_sum = Fw::Time::sub(time1,time2);
+        EXPECT_EQ(time_sum.getContext(),0);
+        EXPECT_EQ(time_sum.getSeconds(),1500);
+
     }
 
     void TimeTester::test_CopyTest() {

@@ -108,9 +108,13 @@ have access to a clock correlated to external operations. It can transition thro
 radio, Earth) on the way to becoming fully operational. The TimeBase type defines the set of clocks in the system that
 can produce a time tag. It lets users of the system see which clock was used when time tagging telemetry.
 
-Time contexts are another value associated with time.
+Time contexts are another value associated with time. By default time context is NOT used in Time comparisons, in
+other words Times having the same TimeBase are comparable regardless of what the context value is set to. This also
+means by default when doing mathematical operations on Fw:Time objects (i.e. add, subtract), by default it is NOT
+checked that the time contexts match. If they do match, math results will preserve the (matching) time context,
+otherwise it will be set to 0.
 
-Time base and time context are now always used in the Fw::Time class implementation. The TimeBase enum defines the 
+Time base and time context are now always used in the Fw::Time class implementation. The TimeBase enum defines the
 possible time base values used by the system and is set in the FpConfig.fpp file.
 
 The following time base options are required:

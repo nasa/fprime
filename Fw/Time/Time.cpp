@@ -145,7 +145,8 @@ namespace Fw {
       )
     {
       FW_ASSERT(a.getTimeBase() == b.getTimeBase(), static_cast<FwAssertArgType>(a.getTimeBase()), static_cast<FwAssertArgType>(b.getTimeBase()) );
-      FW_ASSERT(a.getContext() == b.getContext(), static_cast<FwAssertArgType>(a.getContext()), static_cast<FwAssertArgType>(b.getContext()) );
+      // Do not assert on time context match
+
       U32 seconds = a.getSeconds() + b.getSeconds();
       U32 uSeconds = a.getUSeconds() + b.getUSeconds();
       FW_ASSERT(uSeconds < 1999999);
@@ -153,7 +154,14 @@ namespace Fw {
         ++seconds;
         uSeconds -= 1000000;
       }
-      Time c(a.getTimeBase(),a.getContext(),seconds,uSeconds);
+
+      // Return a time context of 0 if they do not match
+      FwTimeContextStoreType context = a.getContext();
+      if (a.getContext() != b.getContext()){
+        context = 0;
+      }
+
+      Time c(a.getTimeBase(), context, seconds, uSeconds);
       return c;
     }
 
@@ -164,7 +172,7 @@ namespace Fw {
     )
     {
       FW_ASSERT(minuend.getTimeBase() == subtrahend.getTimeBase(), static_cast<FwAssertArgType>(minuend.getTimeBase()), static_cast<FwAssertArgType>(subtrahend.getTimeBase()));
-      FW_ASSERT(minuend.getContext() == subtrahend.getContext(), static_cast<FwAssertArgType>(minuend.getContext()), static_cast<FwAssertArgType>(subtrahend.getContext()));
+      // Do not assert on time context match
       // Assert minuend is greater than subtrahend
       FW_ASSERT(minuend >= subtrahend);
 
@@ -176,7 +184,14 @@ namespace Fw {
       } else {
           uSeconds = minuend.getUSeconds() - subtrahend.getUSeconds();
       }
-      return Time(minuend.getTimeBase(), minuend.getContext(), seconds, static_cast<U32>(uSeconds));
+
+      // Return a time context of 0 if they do not match
+      FwTimeContextStoreType context = minuend.getContext();
+      if (minuend.getContext() != subtrahend.getContext()){
+        context = 0;
+      }
+
+      return Time(minuend.getTimeBase(), context, seconds, static_cast<U32>(uSeconds));
     }
 
     void Time::add(U32 seconds, U32 useconds) {
