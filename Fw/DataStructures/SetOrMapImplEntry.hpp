@@ -48,17 +48,9 @@ class SetOrMapImplEntry final : public MapConstEntry<KE, VN> {
         return *this;
     }
 
-    //! Get the key associated with this entry
-    //! \return The key
-    const KE& getKey() const override { return this->m_keyOrElement; }
-
     //! Get the key or element associated with this entry
     //! \return The key or element
     const KE& getKeyOrElement() const { return this->m_keyOrElement; }
-
-    //! Get the value associated with this entry
-    //! \return The value
-    const VN& getValue() const override { return this->m_valueOrNil; }
 
     //! Get the value or nil associated with this entry
     //! \return The value or nil
@@ -72,6 +64,19 @@ class SetOrMapImplEntry final : public MapConstEntry<KE, VN> {
 
     //! Set the value or Nil
     void setValueOrNil(const VN& valueOrNil) { this->m_valueOrNil = valueOrNil; }
+
+  public:
+    // ----------------------------------------------------------------------
+    // MapConstEntry implementation 
+    // ----------------------------------------------------------------------
+
+    //! Get the key associated with this entry
+    //! \return The key
+    const KE& getKey() const override { return this->m_keyOrElement; }
+
+    //! Get the value associated with this entry
+    //! \return The value
+    const VN& getValue() const override { return this->m_valueOrNil; }
 
   private:
     // ----------------------------------------------------------------------
