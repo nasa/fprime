@@ -50,22 +50,16 @@ struct FindExisting : public Rule {
         ASSERT_EQ(size, modelSize);
         // Check that all elements of set are in modelSet
         {
-            auto it = state.set.begin();
-            for (FwSizeType i = 0; i < size; i++) {
-                ASSERT_TRUE(it.isInRange());
-                const auto e = it->getElement();
+            for (auto& entry : state.set) {
+                const auto e = entry.getElement();
                 ASSERT_TRUE(state.modelSetContains(e));
-                it++;
             }
         }
         // Check that all elements of modelSet are in set
         {
-            auto entry = state.modelSet.begin();
-            for (FwSizeType i = 0; i < modelSize; i++) {
-                ASSERT_NE(entry, state.modelSet.end());
-                const auto status = state.set.find(*entry);
+            for (auto& e : state.modelSet) {
+                const auto status = state.set.find(e);
                 ASSERT_EQ(status, Success::SUCCESS);
-                entry++;
             }
         }
     }
