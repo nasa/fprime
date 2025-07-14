@@ -27,7 +27,7 @@ class ExternalArraySetTester {
 
 namespace SetTest {
 
-using Entry = SetOrMapImplEntry<State::ElementType, Nil>;
+using Entry = SetOrMapImplConstEntry<State::ElementType, Nil>;
 using Set = ExternalArraySet<State::ElementType>;
 using SetTester = ExternalArraySetTester<State::ElementType>;
 using ImplTester = ArraySetOrMapImplTester<State::ElementType, Nil>;

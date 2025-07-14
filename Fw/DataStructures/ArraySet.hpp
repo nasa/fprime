@@ -26,7 +26,7 @@ class ArraySet final : public SetBase<T> {
     // ----------------------------------------------------------------------
 
     //! The type of animplementation entry
-    using ImplEntry = SetOrMapImplEntry<T, Nil>;
+    using ImplEntry = SetOrMapImplConstEntry<T, Nil>;
 
     //! The type of a set entry
     using SetEntry = SetEntry<T>;
