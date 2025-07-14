@@ -251,7 +251,7 @@ ConstIterator end() const
 ### 5.5. find
 
 ```c++
-Success find(const KE& keyOrElement, VN& valueOrNil)
+Success find(const KE& keyOrElement, VN& valueOrNil) const
 ```
 
 1. Set `status = Success::FAILURE`.

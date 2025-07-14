@@ -14,35 +14,45 @@ namespace Fw {
 
 template <typename KE, typename VN>
 class SetOrMapImplConstIterator {
+  private:
     // ----------------------------------------------------------------------
     // Deleted elements
     // ----------------------------------------------------------------------
 
-  private:
     //! Copy constructor
     SetOrMapImplConstIterator(const SetOrMapImplConstIterator<KE, VN>& it) = delete;
 
-  private:
     //! Copy assignment operator
     SetOrMapImplConstIterator& operator=(const SetOrMapImplConstIterator<KE, VN>&) = delete;
 
+  public:
+    // ----------------------------------------------------------------------
+    // Types
+    // ----------------------------------------------------------------------
+
+    //! The kind of a const iterator implementation
+    enum class ImplKind { ARRAY, RED_BLACK_TREE };
+
+  public:
     // ----------------------------------------------------------------------
     // Constructors and destructors
     // ----------------------------------------------------------------------
 
-  public:
     //! Zero-argument constructor
     SetOrMapImplConstIterator() = default;
 
-  public:
     //! Destructor
     virtual ~SetOrMapImplConstIterator() = default;
 
+  public:
     // ----------------------------------------------------------------------
     // Public member functions
     // ----------------------------------------------------------------------
 
-  public:
+    //! Return the impl kind
+    //! \return The impl kind
+    virtual ImplKind implKind() const = 0;
+
     //! Increment the iterator
     virtual void increment() = 0;
 

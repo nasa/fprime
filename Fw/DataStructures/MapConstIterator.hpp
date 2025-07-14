@@ -7,6 +7,8 @@
 #ifndef Fw_MapConstIterator_HPP
 #define Fw_MapConstIterator_HPP
 
+#include <new>
+
 #include "Fw/DataStructures/ArraySetOrMapImpl.hpp"
 #include "Fw/DataStructures/MapConstEntry.hpp"
 #include "Fw/FPrimeBasicTypes.hpp"
@@ -17,7 +19,7 @@ template <typename K, typename V>
 class MapConstIterator {
   public:
     // ----------------------------------------------------------------------
-    // Public
+    // Public types
     // ----------------------------------------------------------------------
 
     //! The type of an array iterator
@@ -29,14 +31,18 @@ class MapConstIterator {
     // ----------------------------------------------------------------------
 
     //! The type of an implementation kind
-    enum class ImplKind { ARRAY, RED_BLACK_TREE };
+    using ImplKind = typename SetOrMapImplConstIterator<K, V>::ImplKind;
 
     //! The type of an implementation
     union Impl {
+        //! Default constructor
+        Impl() {}
+        //! Array constructor
         Impl(const ArrayIterator& it) : array(it) {}
         //! An array iterator
         ArrayIterator array;
         // TODO: Add red-black tree implementation
+        // ! Destructor
         ~Impl() {}
     };
 
@@ -46,34 +52,52 @@ class MapConstIterator {
     // ----------------------------------------------------------------------
 
     //! Constructor providing an array implementation
-    MapConstIterator(const ArrayIterator& it) : m_implKind(ImplKind::ARRAY), m_impl(it), m_implIterator(m_impl.array) {}
+    MapConstIterator(const ArrayIterator& it) : m_impl(it), m_implIterator(&m_impl.array) {}
 
     //! Copy constructor
-    MapConstIterator(const MapConstIterator& it)
-        : m_implKind(it.m_implKind), m_impl(it.m_impl.array), m_implIterator(it.m_implIterator) {
-        // TODO: Handle tree case
+    MapConstIterator(const MapConstIterator& it) : m_impl(), m_implIterator() {
+        const auto implKind = it.getImplIterator().implKind();
+        switch (implKind) {
+            case ImplKind::ARRAY:
+                this->m_implIterator = new (&this->m_impl.array) ArrayIterator(it.m_impl.array);
+                break;
+            case ImplKind::RED_BLACK_TREE:
+                // TODO
+                break;
+            default:
+                FW_ASSERT(0, static_cast<FwAssertArgType>(implKind));
+                break;
+        }
     }
 
     //! Destructor
     ~MapConstIterator() {}
 
   public:
+    // ----------------------------------------------------------------------
+    // Public member functions
+    // ----------------------------------------------------------------------
+
     //! Copy assignment operator
     MapConstIterator& operator=(const MapConstIterator&) = default;
 
     //! Equality comparison operator
     bool operator==(const MapConstIterator& it) {
         bool result = false;
-        switch (this->m_implKind) {
-            case ImplKind::ARRAY:
-                result = this->m_impl.array.compareEqual(it.m_impl.array);
-                break;
-            case ImplKind::RED_BLACK_TREE:
-                // TODO
-                break;
-            default:
-                FW_ASSERT(0, static_cast<FwAssertArgType>(this->m_implKind));
-                break;
+        const auto implKind1 = this->getImplIterator().implKind();
+        const auto implKind2 = it.getImplIterator().implKind();
+        if (implKind1 == implKind2) {
+            switch (implKind1) {
+                case ImplKind::ARRAY:
+                    result = this->m_impl.array.compareEqual(it.m_impl.array);
+                    break;
+                case ImplKind::RED_BLACK_TREE:
+                    // TODO
+                    break;
+                default:
+                    FW_ASSERT(0, static_cast<FwAssertArgType>(implKind1));
+                    break;
+            }
         }
         return result;
     }
@@ -83,7 +107,7 @@ class MapConstIterator {
 
     //! Prefix increment
     MapConstIterator& operator++() {
-        this->m_implIterator.increment();
+        this->getImplIterator().increment();
         return *this;
     }
 
@@ -94,30 +118,45 @@ class MapConstIterator {
         return tmp;
     }
 
-    //! Postfix increment
-    void increment() { this->m_implIterator.increment(); }
-
     //! Check whether the iterator is in range
-    bool isInRange() const { return this->m_implIterator.isInRange(); }
+    bool isInRange() const { return this->getImplIterator().isInRange(); }
 
     //! Reset the iterator
-    void reset() { return this->m_implIterator.reset(); }
+    void reset() { return this->getImplIterator().reset(); }
 
     //! Dereference
-    const MapConstEntry<K, V>& operator*() const { return this->m_implIterator.getEntry(); }
+    const MapConstEntry<K, V>& operator*() const { return this->getImplIterator().getEntry(); }
 
     //! Pointer
-    const MapConstEntry<K, V>* operator->() const { return &this->m_implIterator.getEntry(); }
+    const MapConstEntry<K, V>* operator->() const { return &this->getImplIterator().getEntry(); }
 
   private:
-    //! The implementation kind
-    ImplKind m_implKind;
+    // ----------------------------------------------------------------------
+    // Private helper functions
+    // ----------------------------------------------------------------------
+
+    //! Assert and get the impl iterator
+    SetOrMapImplConstIterator<K, V>& getImplIterator() {
+        FW_ASSERT(this->m_implIterator != nullptr);
+        return *this->m_implIterator;
+    }
+
+    //! Assert and get the impl iterator (const)
+    const SetOrMapImplConstIterator<K, V>& getImplIterator() const {
+        FW_ASSERT(this->m_implIterator != nullptr);
+        return *this->m_implIterator;
+    }
+
+  private:
+    // ----------------------------------------------------------------------
+    // Private member variables
+    // ----------------------------------------------------------------------
 
     //! The implementation
     Impl m_impl;
 
     //! The impl iterator
-    SetOrMapImplConstIterator<K, V>& m_implIterator;
+    SetOrMapImplConstIterator<K, V>* m_implIterator = nullptr;
 };
 
 }  // namespace Fw
