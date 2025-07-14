@@ -77,7 +77,7 @@ class SetBase {
             const FwSizeType size = FW_MIN(set.getSize(), this->getCapacity());
             auto it = set.begin();
             for (FwSizeType i = 0; i < size; i++) {
-                const auto status = this->insert(it->getElement());
+                const auto status = this->insert(*it);
                 FW_ASSERT(status == Success::SUCCESS, static_cast<FwAssertArgType>(status));
                 it++;
             }

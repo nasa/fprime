@@ -50,8 +50,7 @@ struct FindExisting : public Rule {
         ASSERT_EQ(size, modelSize);
         // Check that all elements of set are in modelSet
         {
-            for (auto& entry : state.set) {
-                const auto e = entry.getElement();
+            for (auto& e : state.set) {
                 ASSERT_TRUE(state.modelSetContains(e));
             }
         }
@@ -77,8 +76,7 @@ struct InsertExisting : public Rule {
             it++;
         }
         ASSERT_TRUE(it.isInRange());
-        const auto e = it->getElement();
-        const auto status = state.set.insert(e);
+        const auto status = state.set.insert(*it);
         ASSERT_EQ(status, Success::SUCCESS);
         ASSERT_EQ(state.set.getSize(), size);
     }
@@ -143,7 +141,7 @@ struct RemoveExisting : public Rule {
             it++;
         }
         ASSERT_TRUE(it.isInRange());
-        const auto e = it->getElement();
+        const auto e = *it;
         const auto status = state.set.remove(e);
         ASSERT_EQ(status, Success::SUCCESS);
         const auto n = state.modelSet.erase(e);

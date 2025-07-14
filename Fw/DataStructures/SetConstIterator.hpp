@@ -109,10 +109,10 @@ class SetConstIterator {
     void reset() { return this->m_implIterator.reset(); }
 
     //! Dereference
-    const SetConstEntry<T>& operator*() const { return this->m_implIterator.getEntry(); }
+    const T& operator*() const { return this->m_implIterator.getEntry().getKeyOrElement(); }
 
     //! Pointer
-    const SetConstEntry<T>* operator->() const { return &this->m_implIterator.getEntry(); }
+    const T* operator->() const { return &this->m_implIterator.getEntry().getKeyOrElement(); }
 
   private:
     // ----------------------------------------------------------------------
