@@ -94,10 +94,6 @@ class MapBase {
     //! \return The capacity
     virtual FwSizeType getCapacity() const = 0;
 
-    //! Get the head iterator for the map
-    //! \return The iterator
-    virtual const MapConstEntry* getHeadMapConstEntry() const = 0;
-
     //! Get the size (number of items stored in the map)
     //! \return The size
     virtual FwSizeType getSize() const = 0;

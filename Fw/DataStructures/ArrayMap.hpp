@@ -82,10 +82,6 @@ class ArrayMap final : public MapBase<K, V> {
     //! \return The capacity
     FwSizeType getCapacity() const override { return this->m_extMap.getCapacity(); }
 
-    //! Get the head map entry for the map
-    //! \return The map entry
-    const MapConstEntry* getHeadMapConstEntry() const override { return this->m_extMap.getHeadMapConstEntry(); }
-
     //! Get the size (number of entries)
     //! \return The size
     FwSizeType getSize() const override { return this->m_extMap.getSize(); }
