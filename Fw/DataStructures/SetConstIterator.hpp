@@ -118,9 +118,6 @@ class SetConstIterator {
         return tmp;
     }
 
-    //! Postfix increment
-    void increment() { this->getImplIterator().increment(); }
-
     //! Check whether the iterator is in range
     bool isInRange() const { return this->getImplIterator().isInRange(); }
 
@@ -144,7 +141,7 @@ class SetConstIterator {
         return *this->m_implIterator;
     }
 
-    //! Assert and get the impl iterator
+    //! Assert and get the impl iterator (const)
     const SetOrMapImplConstIterator<T, Nil>& getImplIterator() const {
         FW_ASSERT(this->m_implIterator != nullptr);
         return *this->m_implIterator;
