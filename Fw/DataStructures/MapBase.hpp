@@ -53,7 +53,7 @@ class MapBase {
     // Public member functions
     // ----------------------------------------------------------------------
 
-    //! Get the begin iterator
+    //! Get the begin value of the iterator
     //! \return The iterator
     virtual ConstIterator begin() const = 0;
 
@@ -74,7 +74,7 @@ class MapBase {
         }
     }
 
-    //! Get the end iterator
+    //! Get the end value of the iterator
     //! \return The iterator
     virtual ConstIterator end() const = 0;
 

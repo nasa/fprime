@@ -1,10 +1,10 @@
 # MapConstIterator
 
-`MapConstIterator` is a class for performing const iteration over a map.
+`MapConstIterator` is a class for performing immutable iteration over a map.
 
 ## 1. Template Parameters
 
-`MapBase` has the following template parameters.
+`MapConstIterator` has the following template parameters.
 
 |Kind|Name|Purpose|
 |----|----|-------|
@@ -48,7 +48,7 @@ Compare two `MapConstIterator` instances for equality.
 
 1. If the implementations differ, then return `false`.
 
-1. Otherwise delegate the comparison to the common implementation.
+1. Otherwise check whether the implementations have equal values.
 
 ### 4.3. operator !=
 
@@ -56,7 +56,7 @@ Compare two `MapConstIterator` instances for equality.
 bool operator!=(const MapConstIterator& it)
 ```
 
-Defined as the negation of `operator=`.
+Return the negation of `operator=`.
 
 ### 4.4. operator++
 
@@ -81,7 +81,7 @@ Check whether the iterator is in range.
 const MapEntry& operator*() const
 ```
 
-Return a const reference to the `MapEntry` object
+Return a `const` reference to the `MapEntry` object
 pointed to by the iterator.
 
 ### 4.7. operator->
@@ -90,5 +90,5 @@ pointed to by the iterator.
 const MapEntry* operator->() const
 ```
 
-Return a pointer to the const `MapEntry` object
+Return a pointer to the `const MapEntry` object
 pointed to by the iterator.

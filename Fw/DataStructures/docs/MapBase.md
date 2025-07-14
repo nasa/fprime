@@ -61,7 +61,7 @@ Defined as `= default`.
 virtual ConstIterator begin() const = 0.
 ```
 
-Return the iterator for the implementation.
+Return the begin value of the iterator for the implementation.
 
 _Example:_
 ```c++
@@ -140,7 +140,7 @@ void f(MapBase<U16, U32>& m1, MapBase<U16, U32>& m2) {
 virtual ConstIterator end() const = 0
 ```
 
-Return the iterator for the implementation.
+Return the end value of the iterator for the implementation.
 
 _Example:_
 ```c++

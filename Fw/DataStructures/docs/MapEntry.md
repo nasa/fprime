@@ -33,7 +33,7 @@ Defined as `= delete`.
 virtual const K& getKey() const = 0
 ```
 
-Return a const reference to the key stored in the entry.
+Return a `const` reference to the key stored in the entry.
 
 ### 4.2. getValue
 
@@ -41,4 +41,4 @@ Return a const reference to the key stored in the entry.
 virtual const V& getValue() const = 0
 ```
 
-Return a const reference to the value stored in the entry.
+Return a `const` reference to the value stored in the entry.
