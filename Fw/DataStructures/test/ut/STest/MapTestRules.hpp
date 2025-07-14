@@ -60,7 +60,7 @@ struct FindExisting : public Rule {
 
         }
         ASSERT_TRUE(it.isInRange());
-        const auto key = it.getKey();
+        const auto key = it->getKey();
         const auto expectedValue = state.modelMap[key];
         State::ValueType value = 0;
         const auto status = state.map.find(key, value);
@@ -81,7 +81,7 @@ struct InsertExisting : public Rule {
             it++;
         }
         ASSERT_TRUE(it.isInRange());
-        const auto key = it.getKey();
+        const auto key = it->getKey();
         const auto value = state.getValue();
         const auto status = state.map.insert(key, value);
         ASSERT_EQ(status, Success::SUCCESS);
@@ -154,7 +154,7 @@ struct RemoveExisting : public Rule {
             it++;
         }
         ASSERT_TRUE(it.isInRange());
-        const auto key = it.getKey();
+        const auto key = it->getKey();
         const auto expectedValue = state.modelMap[key];
         State::ValueType value = 0;
         const auto status = state.map.remove(key, value);

@@ -83,12 +83,6 @@ class MapConstIterator {
         this->m_implIterator.increment();
     }
 
-    //! Get the key or element in the entry pointed to by this iterator
-    const K& getKey() const { return this->m_implIterator.getKeyOrElement(); }
-
-    //! Get the value in the entry pointed to by this iterator, or nil for a set
-    const V& getValue() const { return this->m_implIterator.getValueOrNil(); }
-
     //! Check whether the iterator is in range
     bool isInRange() const { return this->m_implIterator.isInRange(); }
 
@@ -99,7 +93,7 @@ class MapConstIterator {
     const MapEntry<K, V>& operator*() const { return this->m_implIterator.getEntry(); }
 
     //! Pointer
-    const MapEntry<K, V>& operator->() const { return &this->m_implIterator.getEntry(); }
+    const MapEntry<K, V>* operator->() const { return &this->m_implIterator.getEntry(); }
 
   private:
     //! The implementation kind

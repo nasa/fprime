@@ -78,20 +78,6 @@ class ArraySetOrMapImpl final {
             }
         }
 
-        //! Get the key or element in the entry pointed to by this iterator
-        const KE& getKeyOrElement() const override {
-            FW_ASSERT(this->isInRange(), static_cast<FwAssertArgType>(this->m_index),
-                      static_cast<FwAssertArgType>(this->m_impl.m_size));
-            return this->m_impl.m_entries[this->m_index].getKeyOrElement();
-        }
-
-        //! Get the value in the entry pointed to by this iterator, or nil for a set
-        const VN& getValueOrNil() const override {
-            FW_ASSERT(this->isInRange(), static_cast<FwAssertArgType>(this->m_index),
-                      static_cast<FwAssertArgType>(this->m_impl.m_size));
-            return this->m_impl.m_entries[this->m_index].getValueOrNil();
-        }
-
         //! Check whether the iterator is in range
         bool isInRange() const override { return this->m_index < this->m_impl.m_size; }
 

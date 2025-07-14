@@ -77,7 +77,7 @@ class MapBase {
             const FwSizeType size = FW_MIN(map.getSize(), this->getCapacity());
             auto it = map.begin();
             for (FwSizeType i = 0; i < size; i++) {
-                const auto status = this->insert(it.getKey(), it.getValue());
+                const auto status = this->insert(it->getKey(), it->getValue());
                 FW_ASSERT(status == Success::SUCCESS, static_cast<FwAssertArgType>(status));
                 it++;
             }

@@ -51,14 +51,6 @@ class SetOrMapImplConstIterator {
     //! \return True if the iterator is in range
     virtual bool isInRange() const = 0;
 
-    //! Get the key or element in the entry pointed to by this iterator
-    //! \return The key or element
-    virtual const KE& getKeyOrElement() const = 0;
-
-    //! Get the value in the entry pointed to by this iterator, or nil for a set
-    //! \return The value or nil
-    virtual const VN& getValueOrNil() const = 0;
-
     //! Get the set or map impl entry pointed to by this iterator
     //! \return The set or map impl entry
     virtual const SetOrMapImplEntry<KE, VN>& getEntry() const = 0;
