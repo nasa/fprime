@@ -22,7 +22,10 @@ class ActivePhaser final : public ActivePhaserComponentBase {
         static const U32 MAX_CHILDREN = 100;
         static const U32 DONT_CARE = 0xFFFFFFFFlu;
 
-        enum PhaserContextType { SEQUENTIAL, COUNT };
+        enum PhaserContextType {
+            SEQUENTIAL, // Context stores the number of times a port is called from the beginning of execution.
+            COUNT       // Context stores the number of phaser cycles elapsed within a user-specified time window.
+        };
 
         /**
          * \brief configuration for phasing

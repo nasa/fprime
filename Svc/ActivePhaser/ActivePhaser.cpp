@@ -53,7 +53,8 @@ void ActivePhaser ::register_phased(FwIndexType port, U32 length, U32 start, U32
                   static_cast<FwAssertArgType>(start));  // Must start after previous entry
         start = (start == DONT_CARE) ? previous.start + previous.length : start;
     }
-    // Shaokai: If start == DONT_CARE, doesn't 0 overwrite the start value set above?
+    // If start is DONT_CARE and does not inherit from the end of the previous task,
+    // which happens when registering the first task, set start to 0.
     start = (start == DONT_CARE) ? 0 : start;
     PhaserStateEntry& entry = m_state.entries[m_state.used];
 
@@ -67,6 +68,14 @@ void ActivePhaser ::register_phased(FwIndexType port, U32 length, U32 start, U32
     entry.port = port;
     entry.start = start;
     entry.length = length;
+    // By default, context is DONT_CARE, which means the context type is SEQUENTIAL
+    // and a port's context value by default increments every time it is registered.
+    // If a value is given to context, the context type becomes COUNT, and
+    // entry.context represents the ratio between the user-configured context and the phaser cycle.
+    // The user-configured context must be greater than the phaser cycle.
+    // Example: If context == 2000 and m_cycle == 100, then entry.context == 20 while contextType == COUNT.
+    // Shaokai: This is a point of confusion because entry.context and context are
+    // very different things, yet they have the same name.
     entry.context = (context != DONT_CARE) ? context / m_cycle : getNextContext(port);
     entry.contextType = (context != DONT_CARE) ? PhaserContextType::COUNT : PhaserContextType::SEQUENTIAL;
     entry.started = false;
@@ -98,7 +107,7 @@ void ActivePhaser ::Tick_internalInterfaceHandler() {
     // If the cycle is over, wait for the cycle to end before restarting
     if ((this->timeInCycle(full_ticks) >= m_cycle) && (m_state.current == m_state.used)) {
         m_last_cycle_ticks = full_ticks;
-        m_cycle_count++;
+        m_cycle_count++;      // FIXME: Overflow?
         m_state.current = 0;  // Back to processing the first task.
     }
     // Finish active children and run the next child if it is not a short cycle
@@ -125,7 +134,10 @@ bool ActivePhaser ::finishChild(U32 full_ticks) {
     // Increment the current task index if it has not reached used, i.e., the max index registered.
     m_state.current = (m_state.current == m_state.used) ? m_state.used : (m_state.current + 1);
     // Check for overrun in timing. If a deadline violation is detected,
-    // return true to mark all children as finished and prevent another child task from launching.
+    // return true to prevent the next child task from launching.
+    // Shaokai: It is unclear what the intended behavior of deadline handling here.
+    // Returning true here only stalls scheduling the child for one tick only,
+    // because in the next tick, not entries[current].started = true and gets launched.
     if (execution_time > expected_time) {
         this->log_WARNING_HI_MissedDeadline(entry.port, entry.start, entry.length, (execution_time - expected_time));
         return true;
@@ -144,6 +156,9 @@ void ActivePhaser ::startChild(U32 full_ticks) {
         return;
     }
     PhaserStateEntry& entry = m_state.entries[(m_state.current % m_state.used)];
+    // If context type is SEQUENTIAL, entry.context stores the number of times a port is called from the beginning of
+    // execution. If context type is COUNT, entry.context stores the number of phaser cycles elapsed within a
+    // user-specified time window.
     U32 context = (entry.contextType == SEQUENTIAL) ? entry.context : m_cycle_count % entry.context;
     entry.started = true;
     m_last_start_ticks = full_ticks;
@@ -154,6 +169,9 @@ U32 ActivePhaser ::getNextContext(FwIndexType port) {
     U32 context = 0;
     // Linear search to see if the entry's port matches the target port,
     // if so, increment the context.
+    // FIXME: Linear incrementation has a risk of overflow.
+    // If the port is called every millisecond, an overflow happens every 49.7 days.
+    // If the port is called every microsecond, an overflow happens every 71.6 minutes.
     for (U32 i = 0; i < m_state.used; i++) {
         if (m_state.entries[i].port == port) {
             context = m_state.entries[i].context + 1;
