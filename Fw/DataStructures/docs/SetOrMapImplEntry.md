@@ -1,12 +1,12 @@
-# MapEntry
+# SetOrMapImplEntry
 
-`MapEntry` is a final class template
+`SetOrMapImplEntry` is a final class template
 defined in [`Fw/DataStructures`](sdd.md).
-It represents an entry for a set or a map implementation.
+It represents an iterator for a set or a map implementation.
 
 ## 1. Template Parameters
 
-`MapEntry` has the following template parameters.
+`SetOrMapImplEntry` has the following template parameters.
 
 |Kind|Name|Purpose|
 |----|----|-------|
@@ -15,19 +15,19 @@ It represents an entry for a set or a map implementation.
 
 ## 2. Base Class
 
-`MapEntry<KE, VN>` is publicly derived from the following
+`SetOrMapImplEntry<KE, VN>` is publicly derived from the following
 templates:
 
 1. [`MapEntry<KE, VN>`](MapEntry.md).
 
 ```mermaid
 classDiagram
-    MapEntry <|-- MapEntry
+    MapEntry <|-- SetOrMapImplEntry
 ```
 
 ## 3. Private Member Variables
 
-`MapEntry` has the following private member variables.
+`SetOrMapImplEntry` has the following private member variables.
 
 |Name|Type|Purpose|Default Value|
 |----|----|-------|-------------|
@@ -39,7 +39,7 @@ classDiagram
 ### 4.1. Zero-Argument Constructor
 
 ```c++
-MapEntry()
+SetOrMapImplEntry()
 ```
 
 Use default initialization of members.
@@ -47,7 +47,7 @@ Use default initialization of members.
 ### 4.2. Constructor Providing Members
 
 ```c++
-MapEntry(const KE& keyOrElement, const VN& valueOrNil)
+SetOrMapImplEntry(const KE& keyOrElement, const VN& valueOrNil)
 ```
 
 1. Set `m_keyOrElement = keyOrElement`.
@@ -57,7 +57,7 @@ MapEntry(const KE& keyOrElement, const VN& valueOrNil)
 ### 4.3. Copy Constructor
 
 ```c++
-MapEntry(const MapEntry<KE, VN>& iterator)
+SetOrMapImplEntry(const SetOrMapImplEntry<KE, VN>& iterator)
 ```
 
 Set `*this = iterator`.
@@ -65,7 +65,7 @@ Set `*this = iterator`.
 ### 4.4. Destructor
 
 ```c++
-~MapEntry() override
+~SetOrMapImplEntry() override
 ```
 
 Defined as `= default`.
@@ -75,7 +75,7 @@ Defined as `= default`.
 ### 5.1. operator=
 
 ```c++
-MapEntry& operator=(const MapEntry&<KE, VN> iterator)
+SetOrMapImplEntry& operator=(const SetOrMapImplEntry&<KE, VN> iterator)
 ```
 
 1. If `this != &iterator`

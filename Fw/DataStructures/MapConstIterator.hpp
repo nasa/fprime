@@ -10,6 +10,7 @@
 #include <new>
 
 #include "Fw/DataStructures/ArraySetOrMapImpl.hpp"
+#include "Fw/DataStructures/MapEntry.hpp"
 #include "Fw/FPrimeBasicTypes.hpp"
 
 namespace Fw {

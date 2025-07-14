@@ -26,7 +26,7 @@ as the set implementation.
 
 |Name|Definition|
 |----|----------|
-|`ImplEntry`|Alias of [`MapEntry<T, Nil>`](MapEntry.md)|
+|`ImplEntry`|Alias of [`SetOrMapImplEntry<T, Nil>`](SetOrMapImplEntry.md)|
 |`SetEntry`|Alias of [`SetEntry<T>`](SetEntry.md)|
 
 The type `Nil` is defined [here](Nil.md).

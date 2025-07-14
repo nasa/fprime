@@ -17,7 +17,7 @@ namespace Fw {
 template <typename KE, typename VN>
 class ArraySetOrMapImplTester {
   public:
-    using Entry = MapEntry<KE, VN>;
+    using Entry = SetOrMapImplEntry<KE, VN>;
 
     ArraySetOrMapImplTester<KE, VN>(const ArraySetOrMapImpl<KE, VN>& impl) : m_impl(impl) {}
 

@@ -28,7 +28,7 @@ It represents an array-based map with internal storage.
 
 |Name|Definition|
 |----|----------|
-|`ImplEntry`|Alias of [`MapEntry<K, V>`](MapEntry.md)|
+|`ImplEntry`|Alias of [`SetOrMapImplEntry<K, V>`](SetOrMapImplEntry.md)|
 |`MapEntry`|Alias of [`MapEntry<K, V>`](MapEntry.md)|
 |`ImplEntries`|Alias of `ImplEntry[C]`|
 
