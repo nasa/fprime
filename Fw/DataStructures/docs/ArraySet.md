@@ -29,7 +29,6 @@ It represents an array-based set with internal storage.
 |----|----------|
 |`ConstIterator`|Alias of [`SetConstIterator<T>`](SetConstIterator.md)|
 |`Entry`|Alias of [`SetOrMapImplEntry<T, Nil>`](SetOrMapImplEntry.md)|
-|`SetEntry`|Alias of [`SetEntry<T>`](SetEntry.md)|
 
 The type `Nil` is defined [here](Nil.md).
 
