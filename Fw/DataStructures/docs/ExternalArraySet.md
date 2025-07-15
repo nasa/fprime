@@ -350,7 +350,7 @@ status = set.remove(0);
 ASSERT_EQ(status, Success::FAILURE);
 ASSERT_EQ(size, 1);
 // Element exists
-status = set.remove(42, value);
+status = set.remove(42);
 ASSERT_EQ(status, Success::SUCCESS);
 ASSERT_EQ(size, 0);
 ```
