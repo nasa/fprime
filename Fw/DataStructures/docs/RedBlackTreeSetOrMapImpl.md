@@ -734,7 +734,7 @@ It must not be `NONE`.
 
         1. Set `sibling = closeNephew`.
 
-        1. Set `distantNephew = m_nodes[sibling].child(oppositeDirection)`.
+        1. Set `distantNephew = m_nodes[sibling].getChild(oppositeDirection)`.
 
         1. If `distantNephew != NONE` and `m_nodes[distantNephew].color == RED`
            then call `removeBlackLeafNodeHelper2(parent, sibling, distantNephew, direction)`.
