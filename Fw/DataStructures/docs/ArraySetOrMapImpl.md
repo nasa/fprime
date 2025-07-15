@@ -118,7 +118,7 @@ ArraySetOrMapImpl<KE, VN>& operator=(const ArraySetOrMapImpl<KE, VN>& impl)
 ConstIterator begin() const
 ```
 
-1. Return `ConstIterator(*this)`.
+Return `ConstIterator(*this)`.
 
 ### 5.3. clear
 
@@ -136,10 +136,9 @@ ConstIterator end() const
 
 1. Set `it = begin()`.
 
-1. Set `it.m_index = m_size`.
+1. Call `it.setToEnd()`.
 
 1. Return `it`.
-
 
 ### 5.5. find
 

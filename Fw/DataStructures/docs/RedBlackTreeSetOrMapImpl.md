@@ -21,12 +21,21 @@ https://en.wikipedia.org/wiki/Red%E2%80%93black_tree.
 <a name="Public-Types"></a>
 ## 2. Public Types
 
+### 2.1. Type Aliases
+
 `RedBlackTreeSetOrMapImpl` defines the following public types.
 
 |Name|Definition|Purpose|
 |----|----------|-------|
-|`Entry`|Alias for [`SetOrMapIterator<KE, VN>`](SetOrMapIterator.md)|An entry in the set or map|
-|`Iterator`|Alias for [`SetOrMapIterator<KE, VN>`](SetOrMapIterator.md)|An iterator for the set or map|
+|`Entry`|Alias for [`SetOrMapImplEntry<KE, VN>`](SetOrMapImplEntry.md)|
+
+### 2.2. ConstIterator
+
+`ConstIterator` is a public inner class of `RedBlackTreeSetOrMapImpl`.
+It provides non-modifying iteration over the elements of a `RedBlackTreeSetOrMapImpl`
+instance.
+It is a base class of [`SetOrMapImplConstIterator<KE, 
+VN>`](SetOrMapImplConstIterator.md).
 
 ## 3. Private Types
 
@@ -61,8 +70,6 @@ It represents a node of the red-black tree.
 |Name|Type|Purpose|Default Value|
 |----|----|-------|-------------|
 |`parent`|`Node::Index`|The index of the parent of this node|`Node::NONE`|
-|`predecessor`|`Node::Index`|The index of the predecessor of this node in the inorder traversal of the tree|`Node::NONE`|
-|`successor`|`Node::Index`|The index of the successor of this node in the inorder traversal of the tree|`Node::NONE`|
 |`left`|`Node::Index`|The index of the left child of this node|`Node::NONE`|
 |`right`|`Node::Index`|The index of the right child of this node|`Node::NONE`|
 |`color`|`Color`|The color of this node|`Color::BLACK`|
@@ -101,7 +108,7 @@ static Direction oppositeDirection(Direction direction)
 ```
 
 **Overview:**
-Returns the opposite direction
+Returns the opposite direction.
 
 **Algorithm:**
 Return `(direction == LEFT) ? RIGHT : LEFT`.
@@ -198,6 +205,14 @@ RedBlackTreeSetOrMapImpl<KE, VN>& operator=(const RedBlackTreeSetOrMapImpl<KE, V
 
 1. Return `*this`.
 
+### 5.2. begin
+
+```c++
+ConstIterator begin() const
+```
+
+Return `ConstIterator(*this)`.
+
 ### 6.2. clear
 
 ```c++
@@ -211,6 +226,18 @@ void clear()
     1. Let `status = m_freeNodes.push(i)`.
 
     1. Assert `status == SUCCESS`.
+
+### 5.4. end
+
+```c++
+ConstIterator end() const
+```
+
+1. Set `it = begin()`.
+
+1. Call `it.setToEnd()`.
+
+1. Return `it`.
 
 ### 6.3. find
 

@@ -100,8 +100,11 @@ class ArraySetOrMapImpl final {
             return this->m_index < this->m_impl->m_size;
         }
 
-        //! Set the index value
-        void setIndex(FwSizeType index) { this->m_index = index; }
+        //! Set the iterator to the end value
+        void setToEnd() { 
+            FW_ASSERT(this->m_impl != nullptr);
+            this->m_index = this->m_impl->m_size;
+        }
 
       private:
         //! The implementation over which to iterate
@@ -165,7 +168,7 @@ class ArraySetOrMapImpl final {
     //! Get the end iterator
     ConstIterator end() const {
         auto it = begin();
-        it.setIndex(this->m_size);
+        it.setToEnd();
         return it;
     }
 
