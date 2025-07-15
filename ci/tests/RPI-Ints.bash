@@ -22,7 +22,7 @@ echo -e "${BLUE}Starting CI test ${FPUTIL_DEPLOYS} RPI${NOCOLOR}"
 
 # Run integration tests
 echo -e "${BLUE}Testing ${INT_DEPLOYS} against integration tests${NOCOLOR}"
-integration_test_run "${FPUTIL_DEPLOYS}"
+integration_test_run "${FPUTIL_DEPLOYS}" "raspberrypi"
 
 # Test Completed
 echo -e "${GREEN}CI test ${FPUTIL_DEPLOYS} Integration SUCCESSFUL${NOCOLOR}"
