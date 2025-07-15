@@ -10,7 +10,7 @@
 #include <new>
 
 #include "Fw/DataStructures/ArraySetOrMapImpl.hpp"
-#include "Fw/DataStructures/MapConstEntry.hpp"
+#include "Fw/DataStructures/MapEntryBase.hpp"
 #include "Fw/FPrimeBasicTypes.hpp"
 
 namespace Fw {
@@ -24,6 +24,7 @@ class MapConstIterator {
 
     //! The type of an array iterator
     using ArrayIterator = typename ArraySetOrMapImpl<K, V>::ConstIterator;
+    using EntryBase = MapEntryBase<K, V>;
 
   private:
     // ----------------------------------------------------------------------
@@ -121,14 +122,11 @@ class MapConstIterator {
     //! Check whether the iterator is in range
     bool isInRange() const { return this->getImplIterator().isInRange(); }
 
-    //! Reset the iterator
-    void reset() { return this->getImplIterator().reset(); }
-
     //! Dereference
-    const MapConstEntry<K, V>& operator*() const { return this->getImplIterator().getEntry(); }
+    const EntryBase& operator*() const { return this->getImplIterator().getEntry(); }
 
     //! Pointer
-    const MapConstEntry<K, V>* operator->() const { return &this->getImplIterator().getEntry(); }
+    const EntryBase* operator->() const { return &this->getImplIterator().getEntry(); }
 
   private:
     // ----------------------------------------------------------------------

@@ -1,26 +1,31 @@
 // ======================================================================
-// \title  MapConstEntry
+// \title  MapEntryBase
 // \author bocchino
-// \brief  An abstract class template representing a constant entry for a map
+// \brief  An abstract base class representing an entry in a map
 // ======================================================================
 
-#ifndef Fw_MapConstEntry_HPP
-#define Fw_MapConstEntry_HPP
+#ifndef Fw_MapEntryBase_HPP
+#define Fw_MapEntryBase_HPP
 
 #include "Fw/FPrimeBasicTypes.hpp"
 
 namespace Fw {
 
 template <typename K, typename V>
-class MapConstEntry {
+class MapEntryBase {
   private:
     // ----------------------------------------------------------------------
-    // Private constructors
+    // Deleted elements
     // ----------------------------------------------------------------------
 
     //! Copy constructor deleted in the base class
     //! Behavior depends on the implementation
-    MapConstEntry(const MapConstEntry<K, V>&) = delete;
+    MapEntryBase(const MapEntryBase<K, V>&) = delete;
+
+    //! operator= deleted in the base class
+    //! Behavior depends on the implementation
+    //! We avoid virtual user-defined operators
+    MapEntryBase<K, V>& operator=(const MapEntryBase<K, V>&) = delete;
 
   protected:
     // ----------------------------------------------------------------------
@@ -28,20 +33,10 @@ class MapConstEntry {
     // ----------------------------------------------------------------------
 
     //! Zero-argument constructor
-    MapConstEntry() {}
+    MapEntryBase() = default;
 
     //! Destructor
-    virtual ~MapConstEntry() = default;
-
-  private:
-    // ----------------------------------------------------------------------
-    // Private member functions
-    // ----------------------------------------------------------------------
-
-    //! operator= deleted in the base class
-    //! Behavior depends on the implementation
-    //! We avoid virtual user-defined operators
-    MapConstEntry<K, V>& operator=(const MapConstEntry<K, V>&) = delete;
+    virtual ~MapEntryBase() = default;
 
   public:
     // ----------------------------------------------------------------------

@@ -27,11 +27,11 @@ class ExternalArrayMap final : public MapBase<K, V> {
     // Public types
     // ----------------------------------------------------------------------
 
-    //! The type of a map implementation entry
-    using ImplEntry = SetOrMapImplEntry<K, V>;
+    //! The type of a const iterator
+    using ConstIterator = MapConstIterator<K, V>;
 
     //! The type of a map entry
-    using MapConstEntry = MapConstEntry<K, V>;
+    using Entry = SetOrMapImplEntry<K, V>;
 
   public:
     // ----------------------------------------------------------------------
@@ -42,8 +42,8 @@ class ExternalArrayMap final : public MapBase<K, V> {
     ExternalArrayMap() = default;
 
     //! Constructor providing typed backing storage.
-    //! entries must point to at least capacity elements of type ImplEntry.
-    ExternalArrayMap(ImplEntry* entries,  //!< The entries
+    //! entries must point to at least capacity elements of type Entry.
+    ExternalArrayMap(Entry* entries,      //!< The entries
                      FwSizeType capacity  //!< The capacity
                      )
         : MapBase<K, V>() {
@@ -81,14 +81,14 @@ class ExternalArrayMap final : public MapBase<K, V> {
 
     //! Get the begin iterator
     //! \return The iterator
-    MapConstIterator<K, V> begin() const override { return MapConstIterator<K, V>(this->m_impl.begin()); }
+    ConstIterator begin() const override { return ConstIterator(this->m_impl.begin()); }
 
     //! Clear the map
     void clear() override { this->m_impl.clear(); }
 
     //! Get the end iterator
     //! \return The iterator
-    MapConstIterator<K, V> end() const override { return MapConstIterator<K, V>(this->m_impl.end()); }
+    ConstIterator end() const override { return ConstIterator(this->m_impl.end()); }
 
     //! Find a value associated with a key in the map
     //! \return SUCCESS if the item was found
@@ -123,8 +123,8 @@ class ExternalArrayMap final : public MapBase<K, V> {
     }
 
     //! Set the backing storage (typed data)
-    //! entries must point to at least capacity elements of type ImplEntry.
-    void setStorage(ImplEntry* entries,  //!< The entries
+    //! entries must point to at least capacity elements of type Entry.
+    void setStorage(Entry* entries,      //!< The entries
                     FwSizeType capacity  //!< The capacity
     ) {
         this->m_impl.setStorage(entries, capacity);

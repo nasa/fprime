@@ -28,9 +28,10 @@ It represents an array-based map with internal storage.
 
 |Name|Definition|
 |----|----------|
-|`ImplEntry`|Alias of [`SetOrMapImplEntry<K, V>`](SetOrMapImplEntry.md)|
-|`MapEntry`|Alias of [`MapEntry<K, V>`](MapEntry.md)|
-|`ImplEntries`|Alias of `ImplEntry[C]`|
+|`ConstIterator`|Alias of [`MapConstIterator<K, V>`](MapConstIterator.md)|
+|`Entry`|Alias of [`SetOrMapImplEntry<K, V>`](SetOrMapImplEntry.md)|
+|`Entries`|Alias of `Entry[C]`|
+|`MapEntryBase`|Alias of [`MapEntryBase<K, V>`](MapEntryBase.md)|
 
 ## 4. Private Member Variables
 
@@ -39,9 +40,7 @@ It represents an array-based map with internal storage.
 |Name|Type|Purpose|Default Value|
 |----|----|-------|-------------|
 |`m_extMap`|[`ExternalArrayMap<K, V>`](ExternalArrayMap.md)|The external map implementation|C++ default initialization|
-|`m_entries`|`ImplEntries`|The array providing the backing memory for `m_extMap`|C++ default initialization|
-
-The type `ImplEntry` is defined [here](ArrayMap.md#Public-Types).
+|`m_entries`|`Entries`|The array providing the backing memory for `m_extMap`|C++ default initialization|
 
 ```mermaid
 classDiagram
@@ -134,6 +133,22 @@ ConstIterator begin() const
 
 Return `m_extMap.begin()`.
 
+_Example:_
+```c++
+using Map = ArrayMap<U16, U32, 10>;
+Map map;
+// Insert an entry in the map
+const auto status = map.insert(0, 1);
+ASSERT_EQ(status, Fw::Success::SUCCESS);
+// Get a map const iterator object
+auto it = map.begin();
+// Use the iterator to access the underlying map const entry
+const key = it->getKey();
+const value = it->getValue();
+ASSERT_EQ(key, 0);
+ASSERT_EQ(value, 1);
+```
+
 ### 6.3. clear
 
 ```c++
@@ -141,6 +156,16 @@ void clear() override
 ```
 
 Call `m_extMap.clear()`.
+
+_Example:_
+```c++
+using Map = ArrayMap<U16, U32, 10>;
+Map map;
+const auto status = map.insert(0, 3);
+ASSERT_EQ(map.getSize(), 1);
+map.clear();
+ASSERT_EQ(map.getSize(), 0);
+```
 
 ### 6.4. end
 
@@ -150,6 +175,24 @@ ConstIterator end() const
 
 Return `m_extMap.end()`.
 
+_Example:_
+```c++
+using Map = ArrayMap<U16, U32, 10>;
+// Call the constructor providing backing storage
+Map map;
+// Insert an entry in the map
+auto status = map.insert(0, 1);
+ASSERT_EQ(status, Fw::Success::SUCCESS);
+// Get a map const iterator object
+auto iter = map.begin();
+// Check that iter is not at the end
+ASSERT_NE(iter, map.end());
+// Increment iter
+it++;
+// Check that iter is at the end
+ASSERT_EQ(iter, map.end());
+```
+
 ### 6.5. find
 
 ```c++
@@ -157,6 +200,20 @@ Success find(const K& key, V& value) override
 ```
 
 Return `m_extMap.find(key, value)`.
+
+_Example:_
+```c++
+using Map = ArrayMap<U16, U32, 10>;
+Map map;
+U32 value = 0;
+auto status = map.find(0, value);
+ASSERT_EQ(status, Success::FAILURE);
+status = map.insert(0, 1);
+ASSERT_EQ(status, Success::SUCCESS);
+status = map.find(0, value);
+ASSERT_EQ(status, Success::SUCCESS);
+ASSERT_EQ(value, 1);
+```
 
 ### 6.6. getCapacity
 
@@ -166,15 +223,12 @@ FwSizeType getCapacity() const override
 
 Return `m_extMap.getCapacity()`.
 
-### 6.7. getHeadMapEntry
-
+_Example:_
 ```c++
-const MapEntry* getHeadMapEntry const override
+using Map = ArrayMap<U16, U32, 10>;
+Map map;
+ASSERT_EQ(map.getCapacity(), 10);
 ```
-
-The type `MapEntry` is defined [here](ArrayMap.md#Public-Types).
-
-Return `m_extMap.getHeadMapEntry()`.
 
 ### 6.8. getSize
 
@@ -184,6 +238,18 @@ FwSizeType getSize() const override
 
 Return `m_extMap.getSize()`.
 
+_Example:_
+```c++
+using Map = ArrayMap<U16, U32, 10>;
+Map map;
+auto size = map.getSize();
+ASSERT_EQ(size, 0);
+const auto status = map.insert(0, 3);
+ASSERT_EQ(status, Success::SUCCESS);
+size = map.getSize();
+ASSERT_EQ(size, 1);
+```
+
 ### 6.9. insert
 
 ```c++
@@ -192,6 +258,18 @@ Success insert(const K& key, const V& value) override
 
 Return `m_extMap.insert(key, value)`.
 
+_Example:_
+```c++
+using Map = ArrayMap<U16, U32, 10>;
+Map map;
+auto size = map.getSize();
+ASSERT_EQ(size, 0);
+const auto status = map.insert(0, 1);
+ASSERT_EQ(status, Success::SUCCESS);
+size = map.getSize();
+ASSERT_EQ(size, 1);
+```
+
 ### 6.10. remove
 
 ```c++
@@ -199,3 +277,25 @@ Success remove(const K& key, V& value) override
 ```
 
 Return `m_extMap.remove(key, value)`.
+
+_Example:_
+```c++
+using Map = ArrayMap<U16, U32, 10>;
+Map map;
+auto size = map.getSize();
+ASSERT_EQ(size, 0);
+auto status = map.insert(0, 1);
+ASSERT_EQ(status, Success::SUCCESS);
+size = map.getSize();
+ASSERT_EQ(size, 1);
+// Key does not exist
+U32 value = 0;
+status = map.remove(10, value);
+ASSERT_EQ(status, Success::FAILURE);
+ASSERT_EQ(size, 1);
+// Key exists
+status = map.remove(0, value);
+ASSERT_EQ(status, Success::SUCCESS);
+ASSERT_EQ(size, 0);
+ASSERT_EQ(value, 1);
+```

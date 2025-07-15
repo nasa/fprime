@@ -17,12 +17,25 @@ template <typename T>
 class SetBase {
   private:
     // ----------------------------------------------------------------------
-    // Private constructors
+    // Deleted elements
     // ----------------------------------------------------------------------
 
     //! Copy constructor deleted in the base class
     //! Behavior depends on the implementation
     SetBase(const SetBase<T>&) = delete;
+
+    //! operator= deleted in the base class
+    //! Behavior depends on the implementation
+    //! We avoid virtual user-defined operators
+    SetBase<T>& operator=(const SetBase<T>&) = delete;
+
+  public:
+    // ----------------------------------------------------------------------
+    // Public types
+    // ----------------------------------------------------------------------
+
+    //! The type of a set const iterator
+    using ConstIterator = SetConstIterator<T>;
 
   protected:
     // ----------------------------------------------------------------------
@@ -35,16 +48,6 @@ class SetBase {
     //! Destructor
     virtual ~SetBase() = default;
 
-  private:
-    // ----------------------------------------------------------------------
-    // Private member functions
-    // ----------------------------------------------------------------------
-
-    //! operator= deleted in the base class
-    //! Behavior depends on the implementation
-    //! We avoid virtual user-defined operators
-    SetBase<T>& operator=(const SetBase<T>&) = delete;
-
   public:
     // ----------------------------------------------------------------------
     // Public member functions
@@ -52,14 +55,14 @@ class SetBase {
 
     //! Get the begin iterator
     //! \return The iterator
-    virtual SetConstIterator<T> begin() const = 0;
+    virtual ConstIterator begin() const = 0;
 
     //! Clear the set
     virtual void clear() = 0;
 
     //! Get the end iterator
     //! \return The iterator
-    virtual SetConstIterator<T> end() const = 0;
+    virtual ConstIterator end() const = 0;
 
     //! Copy data from another set
     void copyDataFrom(const SetBase<T>& set) {

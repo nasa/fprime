@@ -7,7 +7,6 @@
 #ifndef Fw_MapBase_HPP
 #define Fw_MapBase_HPP
 
-#include "Fw/DataStructures/MapConstEntry.hpp"
 #include "Fw/DataStructures/MapConstIterator.hpp"
 #include "Fw/Types/Assert.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
@@ -16,22 +15,27 @@ namespace Fw {
 
 template <typename K, typename V>
 class MapBase {
-  public:
-    // ----------------------------------------------------------------------
-    // Public types
-    // ----------------------------------------------------------------------
-
-    //! The type of a map iterator
-    using MapConstEntry = MapConstEntry<K, V>;
-
   private:
     // ----------------------------------------------------------------------
-    // Private constructors
+    // Deleted elements
     // ----------------------------------------------------------------------
 
     //! Copy constructor deleted in the base class
     //! Behavior depends on the implementation
     MapBase(const MapBase<K, V>&) = delete;
+
+    //! operator= deleted in the base class
+    //! Behavior depends on the implementation
+    //! We avoid virtual user-defined operators
+    MapBase<K, V>& operator=(const MapBase<K, V>&) = delete;
+
+  public:
+    // ----------------------------------------------------------------------
+    // Public types
+    // ----------------------------------------------------------------------
+
+    //! The type of a map const iterator
+    using ConstIterator = MapConstIterator<K, V>;
 
   protected:
     // ----------------------------------------------------------------------
@@ -44,31 +48,17 @@ class MapBase {
     //! Destructor
     virtual ~MapBase() = default;
 
-  private:
-    // ----------------------------------------------------------------------
-    // Private member functions
-    // ----------------------------------------------------------------------
-
-    //! operator= deleted in the base class
-    //! Behavior depends on the implementation
-    //! We avoid virtual user-defined operators
-    MapBase<K, V>& operator=(const MapBase<K, V>&) = delete;
-
   public:
     // ----------------------------------------------------------------------
     // Public member functions
     // ----------------------------------------------------------------------
 
-    //! Get the begin iterator
+    //! Get the begin value of the iterator
     //! \return The iterator
-    virtual MapConstIterator<K, V> begin() const = 0;
+    virtual ConstIterator begin() const = 0;
 
     //! Clear the map
     virtual void clear() = 0;
-
-    //! Get the end iterator
-    //! \return The iterator
-    virtual MapConstIterator<K, V> end() const = 0;
 
     //! Copy data from another map
     void copyDataFrom(const MapBase<K, V>& map) {
@@ -83,6 +73,10 @@ class MapBase {
             }
         }
     }
+
+    //! Get the end value of the iterator
+    //! \return The iterator
+    virtual ConstIterator end() const = 0;
 
     //! Find the value associated with a key in the map
     //! SUCCESS if the item was found

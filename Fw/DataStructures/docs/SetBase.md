@@ -12,24 +12,27 @@ It represents an abstract base class for a set.
 |----|----|-------|
 |`typename`|`T`|The type of an element in the set|
 
-<a name="Public-Types"></a>
-## 2. Public Types
+## 2. Deleted Elements
+
+The following elements are private and are defined `= delete`:
+
+1. The copy constructor.
+    ```c++
+    SetBase(const SetBase<K, V>& map)
+    ```
+
+1. The assignment operator.
+   ```c++
+   SetBase& operator=(const SetBase&)
+   ```
+
+## 3. Public Types
 
 `SetBase` defines the following public types:
 
 |Name|Definition|
 |----|----------|
-|`Entry`|Alias of [`SetEntry<T>`](SetEntry.md)|
-
-## 3. Private Constructors
-
-### 3.1. Copy Constructor
-
-```c++
-SetBase(const SetBase<T>& set)
-```
-
-Defined as `= delete`.
+|`ConstIterator`|Alias of [`SetConstIterator<T>`](SetConstIterator.md)|
 
 ## 4. Protected Constructors and Destructors
 
@@ -49,19 +52,31 @@ virtual ~SetBase()
 
 Defined as `= default`.
 
-## 5. Private Member Functions
+## 5. Public Member Functions
 
-### 5.1. operator=
+### 5.1. begin
 
 ```c++
-SetBase& operator=(const SetBase&)
+virtual ConstIterator begin() const = 0.
 ```
 
-Defined as `= delete`.
+Return the begin value of the iterator for the implementation.
 
-## 6. Public Member Functions
+_Example:_
+```c++
+void f(SetBase<U16, U32>& set) {
+    set.clear();
+    // Insert an element in the set
+    const auto status = set.insert(42);
+    ASSERT_EQ(status, Fw::Success::SUCCESS);
+    // Get a set const iterator object
+    auto it = set.begin();
+    // Use the iterator to access the element
+    ASSERT_EQ(*it, 42);
+}
+```
 
-### 6.1. clear
+### 5.2. clear
 
 ```c++
 virtual void clear() = 0
@@ -77,7 +92,7 @@ void f(SetBase<U32>& set) {
 }
 ```
 
-### 6.2. copyDataFrom
+### 5.3. copyDataFrom
 
 ```c++
 void copyDataFrom(const SetBase<T>& set)
@@ -89,18 +104,15 @@ void copyDataFrom(const SetBase<T>& set)
 
     1. Let `size` be the minimum of `set.getSize()` and `getCapacity()`.
 
-    1. Set `e = set.getHeadSetEntry()`.
+    1. Set `it = map.begin()`.
 
     1. For `i` in [0, `size`)
 
-        1. Assert `e != nullptr`.
-
-        1. Set `status = insert(e->getElement())`.
+        1. Let `status = insert(*it)`.
 
         1. Assert `status == Success::SUCCESS`.
 
-        1. Set `e = e->getNextSetEntry()`
-
+        1. Call `it++`.
 
 _Example:_
 ```c++
@@ -117,7 +129,33 @@ void f(SetBase<U32>& s1, SetBase<U32>& s2) {
 }
 ```
 
-### 6.3. find
+### 5.4. end
+
+```c++
+virtual ConstIterator end() const = 0
+```
+
+Return the end value of the iterator for the implementation.
+
+_Example:_
+```c++
+void f(SetBase<U16, U32>& set) {
+    set.clear();
+    // Insert an element in the set
+    auto status = set.insert(42);
+    ASSERT_EQ(status, Fw::Success::SUCCESS);
+    // Get a set const iterator object
+    auto iter = set.begin();
+    // Check that iter is not at the end
+    ASSERT_NE(iter, set.end());
+    // Increment iter
+    it++;
+    // Check that iter is at the end
+    ASSERT_EQ(iter, set.end());
+}
+```
+
+### 5.5. find
 
 ```c++
 virtual Success find(const T& element) = 0
@@ -142,7 +180,8 @@ void f(const SetBase<U32>& set) {
 }
 ```
 
-### 6.4. getCapacity
+<a name="getCapacity"></a>
+### 5.6. getCapacity
 
 ```c++
 virtual FwSizeType getCapacity() const = 0
@@ -159,29 +198,7 @@ void f(const SetBase<U32>& set) {
 }
 ```
 
-### 6.5. getHeadSetEntry
-
-```c++
-virtual const Entry* getHeadSetEntry const = 0
-```
-
-Get a pointer to the head iterator for the set, or `nullptr` if there is none.
-
-_Example:_
-```c++
-void f(const SetBase<U32>& set) {
-    set.clear();
-    const auto* e = set.getHeadSetEntry();
-    ASSERT_EQ(e, nullptr);
-    set.insert(42);
-    e = set.getHeadSetEntry();
-    ASSERT_NE(e, nullptr);
-    ASSERT_EQ(e->getElement(), 42);
-}
-
-```
-
-### 6.6. getSize
+### 5.7. getSize
 
 ```c++
 virtual FwSizeType getSize() const = 0
@@ -190,9 +207,9 @@ virtual FwSizeType getSize() const = 0
 Return the current size.
 
 _Example:_
-See [**getCapacity**](SetBase.md#64-getcapacity).
+See [**getCapacity**](#getCapacity).
 
-### 6.7. insert
+### 5.8. insert
 
 ```c++
 virtual Success insert(const T& element) = 0
@@ -218,7 +235,7 @@ void f(SetBase<U16, U32>& set) {
 }
 ```
 
-### 6.8. remove
+### 5.9. remove
 
 ```c++
 virtual Success remove(const T& element) = 0

@@ -28,6 +28,9 @@ class ExternalArraySet final : public SetBase<T> {
     // Public types
     // ----------------------------------------------------------------------
 
+    //! The type of a const iterator
+    using ConstIterator = SetConstIterator<T>;
+
     //! The type of a set entry
     using Entry = SetOrMapImplEntry<T, Nil>;
 
@@ -79,14 +82,14 @@ class ExternalArraySet final : public SetBase<T> {
 
     //! Get the begin iterator
     //! \return The iterator
-    SetConstIterator<T> begin() const override { return SetConstIterator<T>(this->m_impl.begin()); }
+    ConstIterator begin() const override { return ConstIterator(this->m_impl.begin()); }
 
     //! Clear the set
     void clear() override { this->m_impl.clear(); }
 
     //! Get the end iterator
     //! \return The iterator
-    SetConstIterator<T> end() const override { return SetConstIterator<T>(this->m_impl.end()); }
+    ConstIterator end() const override { return ConstIterator(this->m_impl.end()); }
 
     //! Find a value associated with an element in the set
     //! \return SUCCESS if the item was found
