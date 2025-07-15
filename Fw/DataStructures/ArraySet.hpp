@@ -25,11 +25,14 @@ class ArraySet final : public SetBase<T> {
     // Public types
     // ----------------------------------------------------------------------
 
+    //! The type of a const iterator
+    using ConstIterator = SetConstIterator<T>;
+
     //! The type of animplementation entry
-    using ImplEntry = SetOrMapImplEntry<T, Nil>;
+    using Entry = SetOrMapImplEntry<T, Nil>;
 
     //! The type of the implementation entries
-    using ImplEntries = ImplEntry[C];
+    using Entries = Entry[C];
 
   public:
     // ----------------------------------------------------------------------
@@ -58,14 +61,14 @@ class ArraySet final : public SetBase<T> {
 
     //! Get the begin iterator
     //! \return The iterator
-    SetConstIterator<T> begin() const override { return this->m_extSet.begin(); }
+    ConstIterator begin() const override { return this->m_extSet.begin(); }
 
     //! Clear the set
     void clear() override { this->m_extSet.clear(); }
 
     //! Get the end iterator
     //! \return The iterator
-    SetConstIterator<T> end() const override { return this->m_extSet.end(); }
+    ConstIterator end() const override { return this->m_extSet.end(); }
 
     //! Find an element in the set
     //! \return SUCCESS if the element was found
@@ -105,7 +108,7 @@ class ArraySet final : public SetBase<T> {
     ExternalArraySet<T> m_extSet = {};
 
     //! The array providing the backing memory for m_extSet
-    ImplEntries m_entries = {};
+    Entries m_entries = {};
 };
 
 }  // namespace Fw
