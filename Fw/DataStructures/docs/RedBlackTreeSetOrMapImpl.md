@@ -963,7 +963,7 @@ It must not be `NONE`.
 ### 7.14. rotateSubtree
 
 ```c++
-Node::Index rotateSubtree(Node::Index node, Direction direction)
+void rotateSubtree(Node::Index node, Direction direction)
 ```
 
 **Overview:**
@@ -1000,5 +1000,3 @@ not be `NONE`.
     1. Call `m_nodes[parent].setChild(newRootDirection, newRoot)`.
 
 1. Otherwise set `m_root = newRoot`.
-
-1. Return `newRoot`.
