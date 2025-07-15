@@ -107,7 +107,8 @@ void ActivePhaser ::Tick_internalInterfaceHandler() {
     // If the cycle is over, wait for the cycle to end before restarting
     if ((this->timeInCycle(full_ticks) >= m_cycle) && (m_state.current == m_state.used)) {
         m_last_cycle_ticks = full_ticks;
-        m_cycle_count++;      // FIXME: Overflow?
+        // FIXME: Risk of overflow? If a tick occurs every microsecond, an overflow happens every 71.6 minutes.
+        m_cycle_count++;
         m_state.current = 0;  // Back to processing the first task.
     }
     // Finish active children and run the next child if it is not a short cycle
@@ -169,9 +170,7 @@ U32 ActivePhaser ::getNextContext(FwIndexType port) {
     U32 context = 0;
     // Linear search to see if the entry's port matches the target port,
     // if so, increment the context.
-    // FIXME: Linear incrementation has a risk of overflow.
-    // If the port is called every millisecond, an overflow happens every 49.7 days.
-    // If the port is called every microsecond, an overflow happens every 71.6 minutes.
+    // Unlikely to overflow because this happens during registration.
     for (U32 i = 0; i < m_state.used; i++) {
         if (m_state.entries[i].port == port) {
             context = m_state.entries[i].context + 1;
