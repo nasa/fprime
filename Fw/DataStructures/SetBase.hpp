@@ -17,12 +17,17 @@ template <typename T>
 class SetBase {
   private:
     // ----------------------------------------------------------------------
-    // Private constructors
+    // Deleted elements
     // ----------------------------------------------------------------------
 
     //! Copy constructor deleted in the base class
     //! Behavior depends on the implementation
     SetBase(const SetBase<T>&) = delete;
+
+    //! operator= deleted in the base class
+    //! Behavior depends on the implementation
+    //! We avoid virtual user-defined operators
+    SetBase<T>& operator=(const SetBase<T>&) = delete;
 
   protected:
     // ----------------------------------------------------------------------
@@ -34,16 +39,6 @@ class SetBase {
 
     //! Destructor
     virtual ~SetBase() = default;
-
-  private:
-    // ----------------------------------------------------------------------
-    // Private member functions
-    // ----------------------------------------------------------------------
-
-    //! operator= deleted in the base class
-    //! Behavior depends on the implementation
-    //! We avoid virtual user-defined operators
-    SetBase<T>& operator=(const SetBase<T>&) = delete;
 
   public:
     // ----------------------------------------------------------------------

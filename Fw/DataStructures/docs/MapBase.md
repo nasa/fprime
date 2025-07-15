@@ -73,8 +73,8 @@ void f(MapBase<U16, U32>& map) {
     // Get a map const iterator object
     auto it = map.begin();
     // Use the iterator to access the underlying map const entry
-    const key = it->getKey();
-    const value = it->getValue();
+    const auto key = it->getKey();
+    const auto value = it->getValue();
     ASSERT_EQ(key, 0);
     ASSERT_EQ(value, 1);
 }
@@ -112,7 +112,7 @@ void copyDataFrom(const MapBase<K, V>& map)
 
     1. For `i` in [0, `size`)
 
-        1. Set `status = insert(it->getKey(), it->getValue())`.
+        1. Let `status = insert(it->getKey(), it->getValue())`.
 
         1. Assert `status == Success::SUCCESS`.
 
