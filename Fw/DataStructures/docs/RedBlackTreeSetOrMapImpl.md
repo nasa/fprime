@@ -714,7 +714,7 @@ It must not be `NONE`.
 
 1. Call `m_nodes[parent].setChild(direction, NONE)`.
    This step performs the deletion.
-   The next step is for rebalancing.
+   The next steps are for rebalancing.
 
 1. Set `done = false`.
 
@@ -754,7 +754,7 @@ It must not be `NONE`.
 
     1. If `parent == NONE`
 
-        1. Call `removeBlackLeafNodeHelper1(closeNephew, direction, sibling, distantNephew).
+        1. Call `removeBlackLeafNodeHelper1(closeNephew, direction, sibling, distantNephew)`.
 
         1. Call `removeBlackLeafNodeHelper2(parent, sibling, distantNephew, direction)`.
 
