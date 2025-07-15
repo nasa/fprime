@@ -81,14 +81,14 @@ class ExternalArrayMap final : public MapBase<K, V> {
 
     //! Get the begin iterator
     //! \return The iterator
-    ConstIterator begin() const override { return MapConstIterator<K, V>(this->m_impl.begin()); }
+    ConstIterator begin() const override { return ConstIterator(this->m_impl.begin()); }
 
     //! Clear the map
     void clear() override { this->m_impl.clear(); }
 
     //! Get the end iterator
     //! \return The iterator
-    ConstIterator end() const override { return MapConstIterator<K, V>(this->m_impl.end()); }
+    ConstIterator end() const override { return ConstIterator(this->m_impl.end()); }
 
     //! Find a value associated with a key in the map
     //! \return SUCCESS if the item was found
