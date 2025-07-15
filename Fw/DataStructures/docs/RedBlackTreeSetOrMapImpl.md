@@ -596,7 +596,7 @@ It is not permissible for `node` to be `NONE`.
 
 **Algorithm:**
 
-1. let `oppositeDirection = Node::getOppositeDirection(direction)`.
+1. Let `oppositeDirection = Node::getOppositeDirection(direction)`.
 
 1. Set `m_nodes[node].color = RED`.
 
@@ -604,9 +604,9 @@ It is not permissible for `node` to be `NONE`.
 
 1. If `parent == NONE` then set `m_root = node`.
 
-1. Set `done = false`.
-
 1. Otherwise 
+
+    1. Set `done = false`.
 
     1. Call `m_nodes[parent].setChild(direction, node)`.
 
@@ -655,7 +655,7 @@ It is not permissible for `node` to be `NONE`.
 
         1. Set `parent = m_nodes[node].parent`.
 
-1. Assert `done == true`.
+    1. Assert `done == true`.
 
 ### 7.6. removeNode
 
