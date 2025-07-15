@@ -27,6 +27,7 @@ as the map implementation.
 
 |Name|Definition|
 |----|----------|
+|`ConstIterator`|Alias of [`MapConstIterator<K, V>`](MapConstIterator.md)|
 |`Entry`|Alias of [`SetOrMapEntry<K, V>`](SetOrMapEntry.md)|
 
 ## 4. Private Member Variables
@@ -190,8 +191,8 @@ ASSERT_EQ(status, Fw::Success::SUCCESS);
 // Get a map const iterator object
 auto it = map.begin();
 // Use the iterator to access the underlying map const entry
-const key = it->getKey();
-const value = it->getValue();
+const auto key = it->getKey();
+const auto value = it->getValue();
 ASSERT_EQ(key, 0);
 ASSERT_EQ(value, 1);
 ```

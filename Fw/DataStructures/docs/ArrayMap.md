@@ -28,9 +28,10 @@ It represents an array-based map with internal storage.
 
 |Name|Definition|
 |----|----------|
-|`ImplEntry`|Alias of [`SetOrMapImplEntry<K, V>`](SetOrMapImplEntry.md)|
+|`ConstIterator`|Alias of [`MapConstIterator<K, V>`](MapConstIterator.md)|
+|`Entry`|Alias of [`SetOrMapImplEntry<K, V>`](SetOrMapImplEntry.md)|
+|`Entries`|Alias of `Entry[C]`|
 |`MapEntryBase`|Alias of [`MapEntryBase<K, V>`](MapEntryBase.md)|
-|`ImplEntries`|Alias of `ImplEntry[C]`|
 
 ## 4. Private Member Variables
 
@@ -39,7 +40,7 @@ It represents an array-based map with internal storage.
 |Name|Type|Purpose|Default Value|
 |----|----|-------|-------------|
 |`m_extMap`|[`ExternalArrayMap<K, V>`](ExternalArrayMap.md)|The external map implementation|C++ default initialization|
-|`m_entries`|`ImplEntries`|The array providing the backing memory for `m_extMap`|C++ default initialization|
+|`m_entries`|`Entries`|The array providing the backing memory for `m_extMap`|C++ default initialization|
 
 ```mermaid
 classDiagram

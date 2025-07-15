@@ -27,6 +27,9 @@ class ExternalArrayMap final : public MapBase<K, V> {
     // Public types
     // ----------------------------------------------------------------------
 
+    //! The type of a const iterator
+    using ConstIterator = MapConstIterator<K, V>;
+
     //! The type of a map entry
     using Entry = SetOrMapImplEntry<K, V>;
 
@@ -78,14 +81,14 @@ class ExternalArrayMap final : public MapBase<K, V> {
 
     //! Get the begin iterator
     //! \return The iterator
-    MapConstIterator<K, V> begin() const override { return MapConstIterator<K, V>(this->m_impl.begin()); }
+    ConstIterator begin() const override { return MapConstIterator<K, V>(this->m_impl.begin()); }
 
     //! Clear the map
     void clear() override { this->m_impl.clear(); }
 
     //! Get the end iterator
     //! \return The iterator
-    MapConstIterator<K, V> end() const override { return MapConstIterator<K, V>(this->m_impl.end()); }
+    ConstIterator end() const override { return MapConstIterator<K, V>(this->m_impl.end()); }
 
     //! Find a value associated with a key in the map
     //! \return SUCCESS if the item was found

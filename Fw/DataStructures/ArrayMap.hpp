@@ -25,14 +25,17 @@ class ArrayMap final : public MapBase<K, V> {
     // Public types
     // ----------------------------------------------------------------------
 
+    //! The type of a const iterator
+    using ConstIterator = MapConstIterator<K, V>;
+
     //! The type of an implementation entry
-    using ImplEntry = SetOrMapImplEntry<K, V>;
+    using Entry = SetOrMapImplEntry<K, V>;
+
+    //! The type of the implementation entries
+    using Entries = Entry[C];
 
     //! The type of a map entry
     using MapEntryBase = MapEntryBase<K, V>;
-
-    //! The type of the implementation entries
-    using ImplEntries = ImplEntry[C];
 
   public:
     // ----------------------------------------------------------------------
@@ -61,14 +64,14 @@ class ArrayMap final : public MapBase<K, V> {
 
     //! Get the begin iterator
     //! \return The iterator
-    MapConstIterator<K, V> begin() const override { return this->m_extMap.begin(); }
+    ConstIterator begin() const override { return this->m_extMap.begin(); }
 
     //! Clear the map
     void clear() override { this->m_extMap.clear(); }
 
     //! Get the end iterator
     //! \return The iterator
-    MapConstIterator<K, V> end() const override { return this->m_extMap.end(); }
+    ConstIterator end() const override { return this->m_extMap.end(); }
 
     //! Find a value associated with a key in the map
     //! \return SUCCESS if the item was found
@@ -111,7 +114,7 @@ class ArrayMap final : public MapBase<K, V> {
     ExternalArrayMap<K, V> m_extMap = {};
 
     //! The array providing the backing memory for m_extMap
-    ImplEntries m_entries = {};
+    Entries m_entries = {};
 };
 
 }  // namespace Fw
