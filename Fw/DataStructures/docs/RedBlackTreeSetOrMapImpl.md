@@ -696,6 +696,8 @@ It must not be `NONE`.
 
 1. Assert `m_nodes[node].color == BLACK`.
 
+1. Assert `node != m_root`.
+
 1. Set `parent = m_nodes[node].parent`.
 
 1. Set `sibling = NONE`.
@@ -910,6 +912,8 @@ It must not be `NONE`.
 **Algorithm:**
 
 1. Assert `m_nodes[node].color == RED`.
+
+1. Assert `node != m_root`.
 
 1. Let `parent = m_nodes[node].parent`.
 
