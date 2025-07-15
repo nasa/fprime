@@ -190,7 +190,7 @@ auto it = set.begin();
 ASSERT_EQ(*it, 42);
 ```
 
-### 6.2. clear
+### 6.3. clear
 
 ```c++
 void clear() override
@@ -210,7 +210,35 @@ set.clear();
 ASSERT_EQ(set.getSize(), 0);
 ```
 
-### 6.3. find
+### 6.4. end
+
+```c++
+ConstIterator end() const
+```
+
+Return `m_impl.end()`.
+
+_Example:_
+```c++
+using Set = ExternalArraySet<U16, U32>;
+constexpr FwSizeType capacity = 10;
+Set::Entry entries[capacity];
+// Call the constructor providing backing storage
+Set set(entries, capacity);
+// Insert an entry in the set
+auto status = set.insert(42);
+ASSERT_EQ(status, Fw::Success::SUCCESS);
+// Get a set const iterator object
+auto iter = set.begin();
+// Check that iter is not at the end
+ASSERT_NE(iter, set.end());
+// Increment iter
+it++;
+// Check that iter is at the end
+ASSERT_EQ(iter, set.end());
+```
+
+### 6.5. find
 
 ```c++
 Success find(const T& element) override
@@ -234,7 +262,7 @@ status = set.find(42);
 ASSERT_EQ(status, Success::SUCCESS);
 ```
 
-### 6.4. getCapacity
+### 6.6. getCapacity
 
 ```c++
 FwSizeType getCapacity() const override
@@ -251,31 +279,7 @@ Set set(entries, capacity);
 ASSERT_EQ(set.getCapacity(), capacity);
 ```
 
-### 6.5. getHeadSetEntry
-
-```c++
-const SetEntry* getHeadSetEntry const override
-```
-
-The type `SetEntry` is defined [here](ExternalArraySet.md#Public-Types).
-
-Return `m_impl.getHeadSetEntry()`.
-
-_Example:_
-```c++
-using Set = ExternalArraySet<U32>;
-constexpr FwSizeType capacity = 10;
-Set::Entry entries[capacity];
-Set set(entries, capacity);
-const auto* e = set.getHeadSetEntry();
-FW_ASSERT(e == nullptr);
-set.insert(42);
-e = set.getHeadSetEntry();
-FW_ASSERT(e != nullptr);
-ASSERT_EQ(e->getElement(), 42);
-```
-
-### 6.6. getSize
+### 6.8. getSize
 
 ```c++
 FwSizeType getSize() const override
@@ -297,7 +301,7 @@ size = set.getSize();
 ASSERT_EQ(size, 1);
 ```
 
-### 6.7. insert
+### 6.9. insert
 
 ```c++
 Success insert(const T& element) override
@@ -319,7 +323,7 @@ size = set.getSize();
 ASSERT_EQ(size, 1);
 ```
 
-### 6.8. remove
+### 6.10. remove
 
 ```c++
 Success remove(const T& element) override
@@ -351,7 +355,7 @@ ASSERT_EQ(status, Success::SUCCESS);
 ASSERT_EQ(size, 0);
 ```
 
-### 6.9. setStorage (Typed Data)
+### 6.11. setStorage (Typed Data)
 
 ```c++
 void setStorage(Entry* entries, FwSizeType capacity)
@@ -372,7 +376,7 @@ Set::Entry entries[capacity];
 set.setStorage(entries, capacity);
 ```
 
-### 6.10. setStorage (Untyped Data)
+### 6.12. setStorage (Untyped Data)
 
 ```c++
 void setStorage(ByteArray data, FwSizeType capacity)
