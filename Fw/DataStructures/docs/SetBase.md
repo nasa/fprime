@@ -52,6 +52,8 @@ Defined as `= default`.
 virtual ConstIterator begin() const = 0.
 ```
 
+Return the begin value of the iterator for the implementation.
+
 _Example:_
 ```c++
 void f(SetBase<U16, U32>& set) {
@@ -65,8 +67,6 @@ void f(SetBase<U16, U32>& set) {
     ASSERT_EQ(*it, 42);
 }
 ```
-
-Return the begin value of the iterator for the implementation.
 
 ### 4.2. clear
 
