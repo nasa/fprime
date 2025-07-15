@@ -88,6 +88,13 @@ void ActivePhaserTester ::create_child(FwIndexType port, U32 length, U32 start, 
     child.port = port;
     child.length = length;
     child.start = start;
+    // Shaokai: It is quite confusing because child.actual_start is not affected by the previous task's child.actual_length.
+    // m_start_counter only increments the expected child.length. Is this correct?
+    // It seems like actual_start is not, in fact, actual, because if it is,
+    // m_start_counter = child.actual_start + child.actual_length, which further influences actual_start.
+    // But since child.actual_start is only affected by expected length, I suggest renaming it to expected_start,
+    // then checking EXPECT_LE(current.expected_start, m_ticks % m_cycle) below would make more sense,
+    // since m_ticks contains lethargy and makes it a real actual_start.
     child.actual_start = (start != ActivePhaser::DONT_CARE) ? start : m_start_counter;
     child.context = context;
     child.actual_length = length + lethargy;
@@ -107,6 +114,9 @@ void ActivePhaserTester ::create_child(FwIndexType port, U32 length, U32 start, 
 bool ActivePhaserTester ::new_cycle(U64 cycle_number) {
     Os::RawTime nope;
     FauxPhaser::State response = mock.run(m_ticks, m_cycle);
+    // Shaokai: CycleIn_handler sends a message to the internal every cycle,
+    // but does not dispatch every cycle. Is this correct modeling?
+    // Does it have an overflow issue?
     component.CycleIn_handler(0, nope);
 
     switch (response) {
@@ -275,6 +285,9 @@ void ActivePhaserTester ::test_rollover() {
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
+/**
+ * Invoked when the active phaser component writes to its output ports
+ */
 void ActivePhaserTester ::from_RateGroupMemberOut_handler(const FwIndexType portNum, U32 context) {
     active = mock.active();
     EXPECT_NE(active, nullptr) << "Component run when none should be active";
