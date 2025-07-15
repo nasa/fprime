@@ -684,10 +684,10 @@ On return, `removedNode` stores the node that was actually removed.
 
    1. Set `removedNode = node`.
 
-### 7.7. removeBlackNonRootLeafNode
+### 7.7. removeBlackLeafNode
 
 ```c++
-void removeBlackNonRootLeafNode(Node::Index node)
+void removeBlackLeafNode(Node::Index node)
 ```
 
 **Overview:**
@@ -700,9 +700,123 @@ It must not be `NONE`.
 
 1. Assert `m_nodes[node].color == BLACK`.
 
-1. TODO
+1. Set `parent = m_nodes[node].parent`.
 
-### 7.8. removeNodeWithAtMostOneChild
+1. Set `sibling = NONE`.
+
+1. Set `closeNephew = NONE`.
+
+1. Set `distantNephew = NONE`.
+
+1. Set `direction = getParentDirection(node)`.
+
+1. Set `oppositeDirection = Node::getOppositeDirection(direction)`.
+
+1. Call `m_nodes[parent].setChild(direction, NONE)`.
+   This step performs the deletion.
+   The next step is for rebalancing.
+
+1. Set `done = false`.
+
+1. For each `i` in the range `[0, getCapacity())`
+
+    1. Set `sibling = m_nodes[parent].getChild(oppositeDirection)`.
+
+    1. Set `distantNephew = m_nodes[sibling].getChild(oppositeDirection)`.
+
+    1. Set `closeNephew = m_nodes[sibling].getChild(direction)`.
+
+    1. If `m_nodes[sibling].color == RED`
+
+        1. TODO
+
+    1. If `m_nodes[distantNephew] != Node::NONE` and `m_nodes[distantNephew].color == RED`
+
+        1. TODO
+
+    1. If `m_nodes[closeNephew] != Node::NONE` and `m_nodes[closeNephew].color == RED`
+
+        1. TODO
+
+    1. If `m_nodes[parent].color == RED`
+
+        1. TODO
+
+    1. If `parent == NONE`
+
+        1. TODO
+
+    1. Set `m_nodes[sibling].color = RED`.
+
+    1. Set `node = parent`.
+
+    1. Set `parent = m_nodes[node].parent`.
+
+    1. If `parent == NONE`
+
+        1. Call `removeBlackLeafNodeHelper1(closeNephew, direction, sibling, distantNephew).
+
+        1. Call `removeBlackLeafNodeHelper2(parent, sibling, distantNephew, direction)`.
+
+        1. Set `done = true` and break out of the loop.
+
+    1. Set `direction = getParentDirection(node)`.
+
+1. Assert `done == true`.
+
+### 7.8. removeBlackLeafNodeHelper1
+
+```c++
+void removeBlackLeafNodeHelper1(
+    Node::Index closeNephew,
+    Direction direction
+    Node::Index& sibling, 
+    Node::Index& distantNephew,
+)
+```
+
+**Overview:**
+This is a helper function for `removeBlackLeafNode`.
+`sibling` and `distantNephew` are in-out parameters (they are both read and 
+written).
+
+**Algorithm:**
+
+1. Call `rotateSubtree(sibling, Node::getOppositeDirection(direction))`.
+
+1. Set `m_nodes[sibling].color = RED`.
+
+1. Set `m_nodes[closeNephew].color = BLACK`.
+
+1. Set `distantNephew = sibling`.
+
+1. Set `sibling = closeNephew`.
+
+### 7.9. removeBlackLeafNodeHelper2
+
+```c++
+void removeBlackLeafNodeHelper2(
+    Node::Index parent,
+    Node::Index sibling,
+    Node::Index distantNephew,
+    Direction direction
+)
+```
+
+**Overview:**
+This is a helper function for `removeBlackLeafNode`.
+
+**Algorithm:**
+
+1. Call `rotateSubtree(parent, direction)`.
+
+1. Set `m_nodes[sibling].color = m_nodes[parent].color`.
+
+1. Set `m_nodes[parent].color = Color::BLACK`.
+
+1. Set `m_nodes[distantNephew].color = Color::BLACK`.
+
+### 7.10. removeNodeWithAtMostOneChild
 
 ```c++
 void removeNodeWithAtMostOneChild(Node::Index node)
@@ -724,11 +838,11 @@ It must not be `NONE`.
 1. Otherwise if `node == m_root` then set `m_root = NONE`.
 
 1. Otherwise if `m_nodes[node].color == RED` then call
-   `removeRedNonRootLeafNode(node)`.
+   `removeRedLeafNode(node)`.
 
-1. Otherwise call `removeBlackNonRootLeafNode(node)`.
+1. Otherwise call `removeBlackLeafNode(node)`.
 
-### 7.9. removeNodeWithOneChild
+### 7.11. removeNodeWithOneChild
 
 ```c++
 void removeNodeWithOneChild(Node::Index node, Direction, direction)
@@ -761,7 +875,7 @@ It must not be `NONE`.
 
 1. Set `m_nodes[node].color = BLACK`.
 
-### 7.10. removeNodeWithTwoChildren
+### 7.12. removeNodeWithTwoChildren
 
 ```c++
 void removeNodeWithTwoChildren(Node::Index node, Node::Index& removedNode)
@@ -785,10 +899,10 @@ On return, `removedNode` stores the node that was actually removed.
 
 1. Call `removeNodeWithAtMostOneChild(successor)`.
 
-### 7.11. removeRedNonRootLeafNode
+### 7.13. removeRedLeafNode
 
 ```c++
-void removeRedNonRootLeafNode(Node::Index node)
+void removeRedLeafNode(Node::Index node)
 ```
 
 **Overview:**
@@ -807,7 +921,7 @@ It must not be `NONE`.
 
 1. Call `m_nodes[parent].setChild(parentDirection, NONE)`.
 
-### 7.12. rotateSubtree
+### 7.14. rotateSubtree
 
 ```c++
 Node::Index rotateSubtree(Node::Index node, Direction direction)
