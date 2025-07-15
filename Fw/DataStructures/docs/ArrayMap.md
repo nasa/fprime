@@ -227,7 +227,7 @@ _Example:_
 ```c++
 using Map = ArrayMap<U16, U32, 10>;
 Map map;
-ASSERT_EQ(map.getCapacity(), capacity);
+ASSERT_EQ(map.getCapacity(), 10);
 ```
 
 ### 6.8. getSize

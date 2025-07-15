@@ -27,6 +27,7 @@ It represents an array-based set with internal storage.
 
 |Name|Definition|
 |----|----------|
+|`ConstIterator`|Alias of [`SetConstIterator<T>`](SetConstIterator.md)|
 |`Entry`|Alias of [`SetOrMapImplEntry<T, Nil>`](SetOrMapImplEntry.md)|
 |`SetEntry`|Alias of [`SetEntry<T>`](SetEntry.md)|
 
@@ -122,7 +123,28 @@ status = s2.find(element);
 ASSERT_EQ(status, Success::SUCCESS);
 ```
 
-### 6.2. clear
+### 6.2. begin
+
+```c++
+ConstIterator begin() const
+```
+
+Return `m_extSet.begin()`.
+
+_Example:_
+```c++
+using Set = ArraySet<U16, U32, 10>;
+Set set;
+// Insert an element in the set
+const auto status = map.insert(42);
+ASSERT_EQ(status, Fw::Success::SUCCESS);
+// Get a set const iterator object
+auto it = set.begin();
+// Use the iterator to access the underlying map const entry
+ASSERT_EQ(*it, 42);
+```
+
+### 6.3. clear
 
 ```c++
 void clear() override
@@ -130,7 +152,43 @@ void clear() override
 
 Call `m_extSet.clear()`.
 
-### 6.3. find
+_Example:_
+```c++
+using Set = ArraySet<U32, 10>;
+Set set;
+const auto status = set.insert(42);
+ASSERT_EQ(set.getSize(), 1);
+set.clear();
+ASSERT_EQ(set.getSize(), 0);
+```
+
+### 6.4. end
+
+```c++
+ConstIterator end() const
+```
+
+Return `m_extSet.end()`.
+
+_Example:_
+```c++
+using Set = ArraySet<U32, 10>;
+// Call the constructor providing backing storage
+Set set;
+// Insert an element in the set
+auto status = set.insert(42);
+ASSERT_EQ(status, Fw::Success::SUCCESS);
+// Get a set const iterator object
+auto iter = set.begin();
+// Check that iter is not at the end
+ASSERT_NE(iter, set.end());
+// Increment iter
+it++;
+// Check that iter is at the end
+ASSERT_EQ(iter, set.end());
+```
+
+### 6.5. find
 
 ```c++
 Success find(const K& element, V& value) override
@@ -138,7 +196,19 @@ Success find(const K& element, V& value) override
 
 Return `m_extSet.find(element, value)`.
 
-### 6.4. getCapacity
+_Example:_
+```c++
+using Set = ArraySet<U32, 10>;
+Set set;
+auto status = set.find(42);
+ASSERT_EQ(status, Success::FAILURE);
+status = set.insert(42);
+ASSERT_EQ(status, Success::SUCCESS);
+status = set.find(42);
+ASSERT_EQ(status, Success::SUCCESS);
+```
+
+### 6.6. getCapacity
 
 ```c++
 FwSizeType getCapacity() const override
@@ -146,17 +216,14 @@ FwSizeType getCapacity() const override
 
 Return `m_extSet.getCapacity()`.
 
-### 6.5. getHeadSetEntry
-
+_Example:_
 ```c++
-const SetEntry* getHeadSetEntry const override
+using Set = ArraySet<U32, 10>;
+Set set;
+ASSERT_EQ(set.getCapacity(), 10);
 ```
 
-The type `SetEntry` is defined [here](ArraySet.md#Public-Types).
-
-Return `m_extSet.getHeadSetEntry()`.
-
-### 6.6. getSize
+### 6.7. getSize
 
 ```c++
 FwSizeType getSize() const override
@@ -164,7 +231,19 @@ FwSizeType getSize() const override
 
 Return `m_extSet.getSize()`.
 
-### 6.7. insert
+_Example:_
+```c++
+using Set = ArraySet<U32, 10>;
+Set set;
+auto size = set.getSize();
+ASSERT_EQ(size, 0);
+const auto status = set.insert(42);
+ASSERT_EQ(status, Success::SUCCESS);
+size = set.getSize();
+ASSERT_EQ(size, 1);
+```
+
+### 6.8. insert
 
 ```c++
 Success insert(const T& element) override
@@ -172,7 +251,19 @@ Success insert(const T& element) override
 
 Return `m_extSet.insert(element)`.
 
-### 6.8. remove
+_Example:_
+```c++
+using Set = ArraySet<U32, 10>;
+Set set;
+auto size = set.getSize();
+ASSERT_EQ(size, 0);
+const auto status = set.insert(42);
+ASSERT_EQ(status, Success::SUCCESS);
+size = set.getSize();
+ASSERT_EQ(size, 1);
+```
+
+### 6.9. remove
 
 ```c++
 Success remove(const T& element) override
@@ -180,19 +271,22 @@ Success remove(const T& element) override
 
 Return `m_extSet.remove(element)`.
 
-## 7. Public Static Functions
-
-### 7.1. getStaticCapacity
-
-```c++
-static constexpr FwSizeType getStaticCapacity()
-```
-
-Return the static capacity `C`.
-
 _Example:_
 ```c++
-using Set = ArraySet<U32, 3>;
-const auto capacity = Set::getStaticCapacity();
-ASSERT_EQ(capacity, 3);
+using Set = ArraySet<U32, 10>;
+Set set;
+auto size = set.getSize();
+ASSERT_EQ(size, 0);
+auto status = set.insert(42);
+ASSERT_EQ(status, Success::SUCCESS);
+size = set.getSize();
+ASSERT_EQ(size, 1);
+// Element does not exist
+status = set.remove(0);
+ASSERT_EQ(status, Success::FAILURE);
+ASSERT_EQ(size, 1);
+// Element exists
+status = set.remove(42, value);
+ASSERT_EQ(status, Success::SUCCESS);
+ASSERT_EQ(size, 0);
 ```
