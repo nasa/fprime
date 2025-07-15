@@ -181,7 +181,7 @@ RedBlackTreeSetOrMapImpl(Node* nodes, FwSizeType* freeNodes, FwSizeType capacity
 
 Each of `nodes` and `freeNodes` must point to at least `capacity` items.
 
-Call `setStorage(nodes, freeNodes, capacity)`.
+Call [`setStorage(nodes, freeNodes, capacity)`](#setStorageTyped).
 
 ### 4.3. Constructor Providing Untyped Backing Storage
 
@@ -191,9 +191,9 @@ RedBlackTreeSetOrMapImpl(ByteArray data, FwSizeType capacity)
 
 `data` must be aligned according to 
 [`getByteArrayAlignment()`](#getByteArrayAlignment) and must
-contain at least [`getByteArraySize(size)`](#getByteArraySize) bytes.
+contain at least [`getByteArraySize(capacity)`](#getByteArraySize) bytes.
 
-Call `setStorage(data, capacity)`.
+Call [`setStorage(data, capacity)`](#setStorageUntyped).
 
 ### 4.4. Copy Constructor
 
@@ -371,6 +371,7 @@ Success remove(const KE& keyOrElement, VN& valueOrNil)
 
 1. Return `status`.
 
+<a name="setStorageTyped"></a>
 ### 5.10. setStorage (Typed Data)
 
 ```c++
@@ -385,6 +386,7 @@ Each of `nodes` and `freeNodes` must point to at least `capacity` items.
 
 1. Call `clear()`.
 
+<a name="setStorageUntyped"></a>
 ### 5.11. setStorage (Untyped Data)
 
 ```c++
