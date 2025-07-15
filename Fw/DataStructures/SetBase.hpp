@@ -29,6 +29,14 @@ class SetBase {
     //! We avoid virtual user-defined operators
     SetBase<T>& operator=(const SetBase<T>&) = delete;
 
+  public:
+    // ----------------------------------------------------------------------
+    // Public types
+    // ----------------------------------------------------------------------
+
+    //! The type of a set const iterator
+    using ConstIterator = SetConstIterator<T>;
+
   protected:
     // ----------------------------------------------------------------------
     // Protected constructors and destructors
@@ -47,14 +55,14 @@ class SetBase {
 
     //! Get the begin iterator
     //! \return The iterator
-    virtual SetConstIterator<T> begin() const = 0;
+    virtual ConstIterator begin() const = 0;
 
     //! Clear the set
     virtual void clear() = 0;
 
     //! Get the end iterator
     //! \return The iterator
-    virtual SetConstIterator<T> end() const = 0;
+    virtual ConstIterator end() const = 0;
 
     //! Copy data from another set
     void copyDataFrom(const SetBase<T>& set) {

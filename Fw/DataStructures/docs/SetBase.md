@@ -26,9 +26,17 @@ The following elements are private and are defined `= delete`:
    SetBase& operator=(const SetBase&)
    ```
 
-## 3. Protected Constructors and Destructors
+## 3. Public Types
 
-### 3.1. Zero-Argument Constructor
+`SetBase` defines the following public types:
+
+|Name|Definition|
+|----|----------|
+|`ConstIterator`|Alias of [`SetConstIterator<T>`](SetConstIterator.md)|
+
+## 4. Protected Constructors and Destructors
+
+### 4.1. Zero-Argument Constructor
 
 ```c++
 SetBase()
@@ -36,7 +44,7 @@ SetBase()
 
 Use default initialization of members.
 
-### 3.2. Destructor
+### 4.2. Destructor
 
 ```c++
 virtual ~SetBase()
@@ -44,9 +52,9 @@ virtual ~SetBase()
 
 Defined as `= default`.
 
-## 4. Public Member Functions
+## 5. Public Member Functions
 
-### 4.1. begin
+### 5.1. begin
 
 ```c++
 virtual ConstIterator begin() const = 0.
@@ -68,7 +76,7 @@ void f(SetBase<U16, U32>& set) {
 }
 ```
 
-### 4.2. clear
+### 5.2. clear
 
 ```c++
 virtual void clear() = 0
@@ -84,7 +92,7 @@ void f(SetBase<U32>& set) {
 }
 ```
 
-### 4.3. copyDataFrom
+### 5.3. copyDataFrom
 
 ```c++
 void copyDataFrom(const SetBase<T>& set)
@@ -121,7 +129,7 @@ void f(SetBase<U32>& s1, SetBase<U32>& s2) {
 }
 ```
 
-### 4.4. end
+### 5.4. end
 
 ```c++
 virtual ConstIterator end() const = 0
@@ -147,7 +155,7 @@ void f(SetBase<U16, U32>& set) {
 }
 ```
 
-### 4.5. find
+### 5.5. find
 
 ```c++
 virtual Success find(const T& element) = 0
@@ -173,7 +181,7 @@ void f(const SetBase<U32>& set) {
 ```
 
 <a name="getCapacity"></a>
-### 4.6. getCapacity
+### 5.6. getCapacity
 
 ```c++
 virtual FwSizeType getCapacity() const = 0
@@ -190,7 +198,7 @@ void f(const SetBase<U32>& set) {
 }
 ```
 
-### 4.7. getSize
+### 5.7. getSize
 
 ```c++
 virtual FwSizeType getSize() const = 0
@@ -201,7 +209,7 @@ Return the current size.
 _Example:_
 See [**getCapacity**](#getCapacity).
 
-### 4.8. insert
+### 5.8. insert
 
 ```c++
 virtual Success insert(const T& element) = 0
@@ -227,7 +235,7 @@ void f(SetBase<U16, U32>& set) {
 }
 ```
 
-### 4.9. remove
+### 5.9. remove
 
 ```c++
 virtual Success remove(const T& element) = 0
