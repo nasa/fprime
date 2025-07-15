@@ -110,7 +110,7 @@ using Set = ArraySet<U32, 10>;
 Set s1;
 // Insert an item
 U32 element = 42;
-const auto status = s1.insert(element, value);
+const auto status = s1.insert(element);
 ASSERT_EQ(status, Success::SUCCESS);
 // Call the default constructor
 Set s2;
@@ -193,7 +193,7 @@ ASSERT_EQ(iter, set.end());
 Success find(const K& element, V& value) override
 ```
 
-Return `m_extSet.find(element, value)`.
+Return `m_extSet.find(element)`.
 
 _Example:_
 ```c++
@@ -285,7 +285,7 @@ status = set.remove(0);
 ASSERT_EQ(status, Success::FAILURE);
 ASSERT_EQ(size, 1);
 // Element exists
-status = set.remove(42, value);
+status = set.remove(42);
 ASSERT_EQ(status, Success::SUCCESS);
 ASSERT_EQ(size, 0);
 ```
