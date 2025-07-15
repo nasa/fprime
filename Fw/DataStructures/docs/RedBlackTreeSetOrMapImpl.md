@@ -142,10 +142,6 @@ Incrementing the iterator works as follows:
 1. Otherwise traverse the tree upwards, stopping when
    we have traversed through a left child or the node index is `NONE`.
 
-The pointer operation asserts that the node index is not `NONE`
-and returns a pointer to the node pointed to by the node index.
-The reference operation works similarly.
-
 ## 3. Private Member Variables
 
 `RedBlackTreeSetOrMapImpl` has the following private member variables.
