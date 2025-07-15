@@ -475,26 +475,26 @@ and `node` stores the index of _N_.
 
 1. Set `node = m_root`.
 
-1. Set `nodeFound = false`.
+1. Set `done = false`.
 
 1. In a for loop bounded by `getCapacity()`:
 
     1. Compare `keyOrElement` to the key or element in the entry stored in `m_nodes[node]`.
 
-    1. If the comparison result is equality, then set `nodeFound = true`,
+    1. If the comparison result is equality, then set `done = true`,
        set `result = SUCCESS`, and break out of the loop.
 
     1. Otherwise if the comparison result is less and `m_nodes[node].left == Node::NONE`, then
-       set `nodeFound = true` and break out of the loop.
+       set `done = true` and break out of the loop.
 
     1. Otherwise if the comparison result is less, then set `node = m_nodes[node].left`.
 
-    1. Otherwise if `m_nodes[node].right == Node::NONE`, then set `nodeFound = true`,
+    1. Otherwise if `m_nodes[node].right == Node::NONE`, then set `done = true`,
        set `direction = RIGHT`, and break out of the loop.
 
     1. Otherwise set `node = m_nodes[node].right`.
 
-1. Assert `nodeFound == true`.
+1. Assert `done == true`.
 
 1. Return `result`.
 
