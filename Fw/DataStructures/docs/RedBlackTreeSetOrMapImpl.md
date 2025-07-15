@@ -125,7 +125,7 @@ VN>`](SetOrMapImplConstIterator.md).
 
 **Operations:**
 To create the iterator in the `begin` state, we use
-[`getOuterChild`](#getOuterChild) to traverse the
+[`getOuterNodeUnder`](#getOuterNodeUnder) to traverse the
 tree to the leftmost node under the root, and we set the node index to point to
 that node.
 To set the iterator to the `end` state, we set the node index
@@ -135,7 +135,7 @@ Incrementing the iterator works as follows:
 1. If the node index is `NONE`, then do nothing.
 
 1. Otherwise if the current node has a non-null right child,
-   then use [`getOuterChild`](#getOuterChild) to traverse to the leftmost 
+   then use [`getOuterNodeUnder`](#getOuterNodeUnder) to traverse to the leftmost 
    element under the right child.
    Set the node index to point to this node.
 
@@ -498,33 +498,34 @@ and `node` stores the index of _N_.
 
 1. Return `result`.
 
-<a name="getOuterChild"></a>
-### 7.2. getOuterChild
+<a name="getOuterNodeUnder"></a>
+### 7.2. getOuterNodeUnder
 
 ```c++
-Node::Index getOuterChild(Node::Index node, Direction direction) const
+Node::Index getOuterNodeUnder(Node::Index node, Direction direction) const
 ```
 
 **Overview:**
-Get the outer child of `node` in the specified direction.
+Get the outer node under `node` in the specified direction.
+If `node` has no child in that direction, then the result is `node`.
 
 **Algorithm:**
 
-1. Set `parent = (node != NONE) ? m_nodes[node].parent : NONE`.
+1. Set `child = (node != NONE) ? m_nodes[node].getChild(direction) : NONE`.
 
 1. Set `done = false`.
 
 1. In a for loop bounded by `getCapacity()`
 
-    1. If `node == NONE` then set `done = true` and break out of the loop.
+    1. If `child == NONE` then set `done = true` and break out of the loop.
 
-    1. Set `parent = node`.
+    1. Set `node = child`.
 
-    1. Set `node = m_nodes[node].getChild(direction)`.
+    1. Set `child = m_nodes[child].getChild(direction)`.
 
 1. Assert `done == true`.
 
-1. Return `parent`.
+1. Return `node`.
 
 
 ### 7.3. getParentDirection
@@ -776,7 +777,7 @@ On return, `removedNode` stores the node that was actually removed.
 
 1. Let `successor` be the successor of `node`.
    This is the leftmost node under the right child of `node`.
-   Use [`getOuterChild`](#getOuterChild) to compute it.
+   Use [`getOuterNodeUnder`](#getOuterNodeUnder) to compute it.
 
 1. Call `m_nodes[node].setKeyOrElement(m_nodes[successor].getKey())`.
 
