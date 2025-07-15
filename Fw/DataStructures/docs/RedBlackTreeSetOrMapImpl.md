@@ -18,34 +18,20 @@ https://en.wikipedia.org/wiki/Red%E2%80%93black_tree.
 |`typename`|`KE`|The type of a key in a map or the element of a set|
 |`typename`|`VN`|The type of a value in a map or `Nil` for set|
 
-<a name="Public-Types"></a>
-## 2. Public Types
+<a name="Types"></a>
+## 2. Types
 
-### 2.1. Type Aliases
+### 2.1. Entry
 
-`RedBlackTreeSetOrMapImpl` defines the following public types.
+`Entry` is a public member of `RedBlackTreeSetOrMapImpl`.
+It is an alias for [`SetOrMapImplEntry<KE, VN>`](SetOrMapImplEntry.md).
 
-|Name|Definition|Purpose|
-|----|----------|-------|
-|`Entry`|Alias for [`SetOrMapImplEntry<KE, VN>`](SetOrMapImplEntry.md)|
-
-### 2.2. ConstIterator
-
-`ConstIterator` is a public inner class of `RedBlackTreeSetOrMapImpl`.
-It provides non-modifying iteration over the elements of a `RedBlackTreeSetOrMapImpl`
-instance.
-It is a base class of [`SetOrMapImplConstIterator<KE, 
-VN>`](SetOrMapImplConstIterator.md).
-
-## 3. Private Types
-
-<a name="Node-Struct"></a>
-### 3.1. The Node Struct
+### 2.2. Node
 
 `Node` is a struct defined as a private member of `RedBlackTreeSetOrMapImpl`.
 It represents a node of the red-black tree.
 
-#### 3.1.1. Public Types
+#### 2.2.1. Public Types
 
 `Node` defines the following public types.
 
@@ -55,7 +41,7 @@ It represents a node of the red-black tree.
 |`Direction`|An enumeration with values `LEFT` and `RIGHT`|A tree direction|
 |`Index`|`FwSizeType`|An array index representing a tree node|
 
-#### 3.1.2. Public Constants
+#### 2.2.2. Public Constants
 
 `Node` defines the following constants.
 
@@ -63,7 +49,7 @@ It represents a node of the red-black tree.
 |----|----|-------|-------------|
 |`NONE`|`Index`|An out-of-bounds index value corresponding to no node|`std::numeric_limits<FwSizeType>::max()`|
 
-#### 3.1.3. Public Member Variables
+#### 2.2.3. Public Member Variables
 
 `Node` has the following private member variables.
 
@@ -75,9 +61,9 @@ It represents a node of the red-black tree.
 |`color`|`Color`|The color of this node|`Color::BLACK`|
 |`entry`|`Entry`|The set or map entry stored in this node|C++ default initialization|
 
-#### 3.1.4. Public Member Functions
+#### 2.2.4. Public Member Functions
 
-### 3.2. getChild
+##### 2.2.4.1. getChild
 
 ```c+++
 Node::Index getChild(Direction direction)
@@ -89,7 +75,7 @@ Gets the child of `this` in direction `direction`.
 **Algorithm:**
 Return `(direction == LEFT) ? left : right`.
 
-### 3.3. setChild
+##### 2.2.4.2. setChild
 
 ```c++
 void setChild(Direction direction, Index node)
@@ -101,7 +87,7 @@ Sets the child of `this` in direction `direction`.
 **Algorithm:**
 `(direction == LEFT) ? (this.left = node) : (this.right = node)`.
 
-### 3.4. getOppositeDirection
+##### 2.2.4.3. getOppositeDirection
 
 ```c+++
 static Direction oppositeDirection(Direction direction)
@@ -113,7 +99,7 @@ Returns the opposite direction.
 **Algorithm:**
 Return `(direction == LEFT) ? RIGHT : LEFT`.
 
-### 3.5. Type Aliases
+### 2.3. Nodes and FreeNodes
 
 `RedBlackTreeSetOrMapImpl` defines the following private type aliases.
 
@@ -122,7 +108,43 @@ Return `(direction == LEFT) ? RIGHT : LEFT`.
 |`Nodes`|Alias for [`ExernalArray<Node>`](ExternalArray.md)|The type of the array for storing the tree nodes|
 |`FreeNodes`|Alias for [`ExernalStack<Node::Index>`](ExternalStack.md)|The type of the stack of indices of free nodes.|
 
-## 4. Private Member Variables
+### 2.4. ConstIterator
+
+`ConstIterator` is a public inner class of `RedBlackTreeSetOrMapImpl`.
+It provides non-modifying iteration over the elements of a `RedBlackTreeSetOrMapImpl`
+instance.
+It is a base class of [`SetOrMapImplConstIterator<KE, 
+VN>`](SetOrMapImplConstIterator.md).
+
+**State:**
+`ConstIterator` maintains the following state:
+
+1. A pointer to a `RedBlackTreeSetOrMapImpl` instance.
+
+1. A `Node::Index` value.
+
+**Operations:**
+To create the iterator in the `begin` state, we traverse the
+tree to the leftmost node and set the node index to point to
+that node.
+To set the iterator to the `end` state, we set the node index
+to `NONE`.
+Incrementing the iterator works as follows:
+
+1. If the node index is `NONE`, then do nothing.
+
+1. Otherwise if the current node has a non-null right child,
+   then set the node index to point to the leftmost element
+   under the right child.
+
+1. Otherwise traverse the tree upwards, stopping when
+   we traverse through a left child or the node index is `NONE`.
+
+The pointer operation asserts that the node index is not `NONE`
+and returns a pointer to the node pointed to by the node index.
+The reference operation works similarly.
+
+## 3. Private Member Variables
 
 `RedBlackTreeSetOrMapImpl` has the following private member variables.
 
@@ -139,9 +161,9 @@ classDiagram
     ExternalArray *-- "1..*" Node
 ```
 
-## 5. Public Constructors and Destructors
+## 4. Public Constructors and Destructors
 
-### 5.1. Zero-Argument Constructor
+### 4.1. Zero-Argument Constructor
 
 ```c++
 RedBlackTreeSetOrMapImpl()
@@ -149,7 +171,7 @@ RedBlackTreeSetOrMapImpl()
 
 Initialize each member variable with its default value.
 
-### 5.2. Constructor Providing Typed Backing Storage
+### 4.2. Constructor Providing Typed Backing Storage
 
 ```c++
 RedBlackTreeSetOrMapImpl(Node* nodes, FwSizeType* freeNodes, FwSizeType capacity)
@@ -159,7 +181,7 @@ Each of `nodes` and `freeNodes` must point to at least `capacity` items.
 
 Call `setStorage(nodes, freeNodes, capacity)`.
 
-### 5.3. Constructor Providing Untyped Backing Storage
+### 4.3. Constructor Providing Untyped Backing Storage
 
 ```c++
 RedBlackTreeSetOrMapImpl(ByteArray data, FwSizeType capacity)
@@ -171,7 +193,7 @@ contain at least [`getByteArraySize(size)`](#getByteArraySize) bytes.
 
 Call `setStorage(data, capacity)`.
 
-### 5.4. Copy Constructor
+### 4.4. Copy Constructor
 
 ```c++
 RedBlackTreeSetOrMapImpl(const RedBlackTreeSetOrMapImpl<KE, VN>& map)
@@ -179,7 +201,7 @@ RedBlackTreeSetOrMapImpl(const RedBlackTreeSetOrMapImpl<KE, VN>& map)
 
 Set `*this = map`.
 
-### 5.5. Destructor
+### 4.5. Destructor
 
 ```c++
 ~RedBlackTreeSetOrMapImpl()
@@ -187,9 +209,9 @@ Set `*this = map`.
 
 Defined as `= default`.
 
-## 6. Public Member Functions
+## 5. Public Member Functions
 
-### 6.1. operator=
+### 5.1. operator=
 
 ```c++
 RedBlackTreeSetOrMapImpl<KE, VN>& operator=(const RedBlackTreeSetOrMapImpl<KE, VN>& impl)
@@ -213,7 +235,7 @@ ConstIterator begin() const
 
 Return `ConstIterator(*this)`.
 
-### 6.2. clear
+### 5.3. clear
 
 ```c++
 void clear()
@@ -239,7 +261,7 @@ ConstIterator end() const
 
 1. Return `it`.
 
-### 6.3. find
+### 5.5. find
 
 ```c++
 Success find(const KE& keyOrElement, VN& valueOrNil) const
@@ -261,7 +283,7 @@ Success find(const KE& keyOrElement, VN& valueOrNil) const
 
 1. Return `status`.
 
-### 6.4. getCapacity
+### 5.6. getCapacity
 
 ```c++
 FwSizeType getCapacity() const
@@ -269,31 +291,7 @@ FwSizeType getCapacity() const
 
 Return `m_nodes.getSize()`.
 
-### 6.5. getHeadIterator
-
-```c++
-const Iterator* getHeadIterator() const
-```
-
-1. Set `node = m_root`.
-
-1. Set `parent = NONE`.
-
-1. Set `done = false`.
-
-1. In a for loop bounded by `getCapacity()`
-
-    1. If `node == NONE` then set `done = true` and break out of the loop.
-
-    1. Set `parent = node`.
-
-    1. Set `node = m_nodes[node].left`.
-
-1. Assert `done == true`.
-
-1. Return `(parent == NONE) ? nullptr : &m_nodes[parent].entry`.
-
-### 6.6. getSize
+### 5.7. getSize
 
 ```c++
 FwSizeType getSize() const
@@ -307,7 +305,7 @@ FwSizeType getSize() const
 
 1. Return `capacity - freeNodesSize`.
 
-### 6.7. insert
+### 5.8. insert
 
 ```c++
 Success insert(const KE& keyOrElement, const VN& valueOrNil)
@@ -343,17 +341,9 @@ Success insert(const KE& keyOrElement, const VN& valueOrNil)
 
        1. Call `insertNode(node, parent, direction)`.
 
-       1. Let `predecessor = getPredecessorOfNone(node, direction)`.
-
-       1. Let `successor = (predecessor == NONE) ? parent : m_nodes[predecessor].successor`.
-
-       1. Call `updateLinks(predecessor, node)`.
-
-       1. Call `updateLinks(node, successor)`.
-
 1. Return `status`.
 
-### 6.8. remove
+### 5.9. remove
 
 ```c++
 Success remove(const KE& keyOrElement, VN& valueOrNil)
@@ -373,19 +363,13 @@ Success remove(const KE& keyOrElement, VN& valueOrNil)
 
     1. Call `removeNode(node, removedNode)`.
 
-    1. Let `predecessor = m_nodes[removedNode].predecessor`.
-
-    1. Let `successor = m_nodes[removedNode].successor`.
-
-    1. Call `updateLinks(predecessor, successor)`.
-
     1. Let `pushStatus = m_freeNodes.push(removedNode)`.
 
     1. Assert `pushStatus == SUCCESS`.
 
 1. Return `status`.
 
-### 6.9. setStorage (Typed Data)
+### 5.10. setStorage (Typed Data)
 
 ```c++
 void setStorage(Node* nodes, FwSizeType* freeNodes, FwSizeType capacity)
@@ -399,7 +383,7 @@ Each of `nodes` and `freeNodes` must point to at least `capacity` items.
 
 1. Call `clear()`.
 
-### 6.10. setStorage (Untyped Data)
+### 5.11. setStorage (Untyped Data)
 
 ```c++
 void setStorage(ByteArray data, FwSizeType capacity)
@@ -426,10 +410,10 @@ that is aligned for `ExternalStack<FwSizeType>::getByteArrayAlignment()`.
 
 1. Call `clear()`.
 
-## 7. Public Static Functions
+## 6. Public Static Functions
 
 <a name="getByteArrayAlignment"></a>
-### 7.1. getByteArrayAlignment
+### 6.1. getByteArrayAlignment
 
 ```c++
 static constexpr U8 getByteArrayAlignment()
@@ -438,7 +422,7 @@ static constexpr U8 getByteArrayAlignment()
 Return `Nodes::getByteArrayAlignment()`.
 
 <a name="getByteArraySize"></a>
-### 7.2. getByteArraySize
+### 6.2. getByteArraySize
 
 ```c++
 static constexpr FwSizeType getByteArraySize(FwSizeType capacity)
@@ -452,10 +436,10 @@ static constexpr FwSizeType getByteArraySize(FwSizeType capacity)
 
 1. Return `nodesSize + freeNodesAlignment + freeNodesSize`.
 
-## 8. Private Helper Functions
+## 7. Private Helper Functions
 
 <a name="findNode"></a>
-### 8.1. findNode
+### 7.1. findNode
 
 ```c++
 Success findNode(const KE& keyOrElement, Node::Index& node, Direction& direction) const
@@ -510,7 +494,7 @@ and `node` stores the index of _N_.
 
 1. Return `result`.
 
-### 8.2. getParentDirection
+### 7.2. getParentDirection
 
 ```c++
 Direction getParentDirection(Node::Index node) const
@@ -530,7 +514,7 @@ The parent of `node` must not be `NONE`.
 
 1. Return `node == parentRight ? RIGHT : LEFT`.
 
-### 8.3. getPredecessorOfNone
+### 7.3. getPredecessorOfNone
 
 ```c++
 Node::Index getPredecessorOfNone(Node::Index node, Direction direction) const
@@ -562,7 +546,7 @@ child is `NONE`.
 
 1. Return `result`.
 
-### 8.4. insertNode
+### 7.4. insertNode
 
 ```c++
 void insertNode(Node::Index node, Node::index parent, Direction direction)
@@ -643,7 +627,7 @@ It is not permissible for `node` to be `NONE`.
 
 1. Assert `done == true`.
 
-### 8.5. removeNode
+### 7.5. removeNode
 
 ```c++
 void removeNode(Node::Index node, Node::Index& removedNode)
@@ -666,7 +650,7 @@ On return, `removedNode` stores the node that was actually removed.
 
    1. Set `removedNode = node`.
 
-### 8.6. removeBlackNonRootLeafNode
+### 7.6. removeBlackNonRootLeafNode
 
 ```c++
 void removeBlackNonRootLeafNode(Node::Index node)
@@ -684,7 +668,7 @@ It must not be `NONE`.
 
 1. TODO
 
-### 8.7. removeNodeWithAtMostOneChild
+### 7.7. removeNodeWithAtMostOneChild
 
 ```c++
 void removeNodeWithAtMostOneChild(Node::Index node)
@@ -710,7 +694,7 @@ It must not be `NONE`.
 
 1. Otherwise call `removeBlackNonRootLeafNode(node)`.
 
-### 8.8. removeNodeWithOneChild
+### 7.8. removeNodeWithOneChild
 
 ```c++
 void removeNodeWithOneChild(Node::Index node, Direction, direction)
@@ -743,7 +727,7 @@ It must not be `NONE`.
 
 1. Set `m_nodes[node].color = BLACK`.
 
-### 8.9. removeNodeWithTwoChildren
+### 7.9. removeNodeWithTwoChildren
 
 ```c++
 void removeNodeWithTwoChildren(Node::Index node, Node::Index& removedNode)
@@ -757,7 +741,8 @@ On return, `removedNode` stores the node that was actually removed.
 
 **Algorithm:**
 
-1. Set `successor = m_nodes[node].successor`.
+1. Let `successor` be the successor of `node`.
+   This is the leftmost node under the right child of `node`.
 
 1. Call `m_nodes[node].setKeyOrElement(m_nodes[successor].getKey())`.
 
@@ -765,7 +750,7 @@ On return, `removedNode` stores the node that was actually removed.
 
 1. Call `removeNodeWithAtMostOneChild(successor)`.
 
-### 8.10. removeRedNonRootLeafNode
+### 7.10. removeRedNonRootLeafNode
 
 ```c++
 void removeRedNonRootLeafNode(Node::Index node)
@@ -787,7 +772,7 @@ It must not be `NONE`.
 
 1. Call `m_nodes[parent].setChild(parentDirection, NONE)`.
 
-### 8.11. rotateSubtree
+### 7.11. rotateSubtree
 
 ```c++
 Node::Index rotateSubtree(Node::Index node, Direction direction)
@@ -829,25 +814,3 @@ not be `NONE`.
 1. Otherwise set `m_root = newRoot`.
 
 1. Return `newRoot`.
-
-### 8.12. updateLinks
-
-```c++
-void updateLinks(Node::Index predecessor, Node::Index successor)
-```
-
-**Overview:**
-Update the links in the nodes and entries for `predecessor` and `successor`.
-Either or both of `predecessor` and `successor` may be `NONE`.
-
-**Algorithm:**
-
-1. If `predecessor != NONE`
-
-    1. Set `m_nodes[predecessor].successor = successor`.
-
-    1. Set `nextIterator = (successor != NONE) ? &m_nodes[successor].entry : nullptr`.
-
-    1. Call `m_nodes[predecessor].entry.setNextIterator(nextIterator)`.
-
-1. If `successor != NONE` then set `m_nodes[successor].predecessor = predecessor`.
