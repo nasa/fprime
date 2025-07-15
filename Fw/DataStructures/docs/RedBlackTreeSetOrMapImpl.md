@@ -969,11 +969,17 @@ void rotateSubtree(Node::Index node, Direction direction)
 **Overview:**
 This function performs a left or right rotation on the subtree
 whose root is `node`.
-`node` must not be `NONE`, or an assertion failure will occur.
-The child of `node` in the direction `direction` must also
-not be `NONE`.
+The following invariants must hold on entry to this function,
+or an assertion failure will occur:
+
+1. `node` must not be `NONE`.
+
+1.  The child of `node` in the direction opposite
+    `direction` must not be `NONE`.
 
 **Algorithm:**
+
+1. Assert `m_nodes[node].getChild(oppositeDirection) == NONE`.
 
 1. Let `parent = m_nodes[node].parent`.
 
@@ -981,7 +987,7 @@ not be `NONE`.
 
 1. Let `newRoot = m_nodes[node].getChild(oppositeDirection))`.
 
-1. Let `newChild = m_nodes[node].getChild(direction)`.
+1. Let `newChild = m_nodes[newRoot].getChild(direction)`.
 
 1. Call `m_nodes[node].setChild(oppositeDirection, newChild)`.
 
@@ -995,8 +1001,8 @@ not be `NONE`.
 
 1. If `parent != NONE` then
 
-    1. Set `newRootDirection = (node == m_nodes[parent].right) ? RIGHT : LEFT`.
+    1. Let `parentDirection = getParentDirection(node)`.
 
-    1. Call `m_nodes[parent].setChild(newRootDirection, newRoot)`.
+    1. Call `m_nodes[parent].setChild(parentDirection, newRoot)`.
 
 1. Otherwise set `m_root = newRoot`.
