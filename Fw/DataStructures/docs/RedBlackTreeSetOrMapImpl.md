@@ -124,8 +124,9 @@ VN>`](SetOrMapImplConstIterator.md).
 1. A `Node::Index` value.
 
 **Operations:**
-To create the iterator in the `begin` state, we traverse the
-tree to the leftmost node and set the node index to point to
+To create the iterator in the `begin` state, we use
+[`getOuterChild`](#getOuterChild) to traverse the
+tree to the leftmost node under the root, and we set the node index to point to
 that node.
 To set the iterator to the `end` state, we set the node index
 to `NONE`.
@@ -134,11 +135,12 @@ Incrementing the iterator works as follows:
 1. If the node index is `NONE`, then do nothing.
 
 1. Otherwise if the current node has a non-null right child,
-   then set the node index to point to the leftmost element
-   under the right child.
+   then use [`getOuterChild`](#getOuterChild) to traverse to the leftmost 
+   element under the right child.
+   Set the node index to point to this node.
 
 1. Otherwise traverse the tree upwards, stopping when
-   we traverse through a left child or the node index is `NONE`.
+   we have traversed through a left child or the node index is `NONE`.
 
 The pointer operation asserts that the node index is not `NONE`
 and returns a pointer to the node pointed to by the node index.
@@ -494,7 +496,36 @@ and `node` stores the index of _N_.
 
 1. Return `result`.
 
-### 7.2. getParentDirection
+<a name="getOuterChild"></a>
+### 7.2. getOuterChild
+
+```c++
+Node::Index getOuterChild(Node::Index node, Direction direction) const
+```
+
+**Overview:**
+Get the outer child of `node` in the specified direction.
+
+**Algorithm:**
+
+1. Set `parent = (node != NONE) ? m_nodes[node].parent : NONE`.
+
+1. Set `done = false`.
+
+1. In a for loop bounded by `getCapacity()`
+
+    1. If `node == NONE` then set `done = true` and break out of the loop.
+
+    1. Set `parent = node`.
+
+    1. Set `node = m_nodes[node].getChild(direction)`.
+
+1. Assert `done == true`.
+
+1. Return `parent`.
+
+
+### 7.3. getParentDirection
 
 ```c++
 Direction getParentDirection(Node::Index node) const
@@ -514,7 +545,7 @@ The parent of `node` must not be `NONE`.
 
 1. Return `node == parentRight ? RIGHT : LEFT`.
 
-### 7.3. getPredecessorOfNone
+### 7.4. getPredecessorOfNone
 
 ```c++
 Node::Index getPredecessorOfNone(Node::Index node, Direction direction) const
@@ -546,7 +577,7 @@ child is `NONE`.
 
 1. Return `result`.
 
-### 7.4. insertNode
+### 7.5. insertNode
 
 ```c++
 void insertNode(Node::Index node, Node::index parent, Direction direction)
@@ -627,7 +658,7 @@ It is not permissible for `node` to be `NONE`.
 
 1. Assert `done == true`.
 
-### 7.5. removeNode
+### 7.6. removeNode
 
 ```c++
 void removeNode(Node::Index node, Node::Index& removedNode)
@@ -650,7 +681,7 @@ On return, `removedNode` stores the node that was actually removed.
 
    1. Set `removedNode = node`.
 
-### 7.6. removeBlackNonRootLeafNode
+### 7.7. removeBlackNonRootLeafNode
 
 ```c++
 void removeBlackNonRootLeafNode(Node::Index node)
@@ -668,7 +699,7 @@ It must not be `NONE`.
 
 1. TODO
 
-### 7.7. removeNodeWithAtMostOneChild
+### 7.8. removeNodeWithAtMostOneChild
 
 ```c++
 void removeNodeWithAtMostOneChild(Node::Index node)
@@ -694,7 +725,7 @@ It must not be `NONE`.
 
 1. Otherwise call `removeBlackNonRootLeafNode(node)`.
 
-### 7.8. removeNodeWithOneChild
+### 7.9. removeNodeWithOneChild
 
 ```c++
 void removeNodeWithOneChild(Node::Index node, Direction, direction)
@@ -727,7 +758,7 @@ It must not be `NONE`.
 
 1. Set `m_nodes[node].color = BLACK`.
 
-### 7.9. removeNodeWithTwoChildren
+### 7.10. removeNodeWithTwoChildren
 
 ```c++
 void removeNodeWithTwoChildren(Node::Index node, Node::Index& removedNode)
@@ -743,6 +774,7 @@ On return, `removedNode` stores the node that was actually removed.
 
 1. Let `successor` be the successor of `node`.
    This is the leftmost node under the right child of `node`.
+   Use [`getOuterChild`](#getOuterChild) to compute it.
 
 1. Call `m_nodes[node].setKeyOrElement(m_nodes[successor].getKey())`.
 
@@ -750,7 +782,7 @@ On return, `removedNode` stores the node that was actually removed.
 
 1. Call `removeNodeWithAtMostOneChild(successor)`.
 
-### 7.10. removeRedNonRootLeafNode
+### 7.11. removeRedNonRootLeafNode
 
 ```c++
 void removeRedNonRootLeafNode(Node::Index node)
@@ -772,7 +804,7 @@ It must not be `NONE`.
 
 1. Call `m_nodes[parent].setChild(parentDirection, NONE)`.
 
-### 7.11. rotateSubtree
+### 7.12. rotateSubtree
 
 ```c++
 Node::Index rotateSubtree(Node::Index node, Direction direction)
