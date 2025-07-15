@@ -63,7 +63,6 @@ class SetOrMapImplConstIterator {
     //! Get the set or map impl entry pointed to by this iterator
     //! \return The set or map impl entry
     virtual const SetOrMapImplEntry<KE, VN>& getEntry() const = 0;
-
 };
 
 }  // namespace Fw
