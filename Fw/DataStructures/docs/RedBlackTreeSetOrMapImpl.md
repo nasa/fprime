@@ -1089,3 +1089,5 @@ After applying the function, the tree looks like this:
 <img src="diagrams/rotateSubtree/final.png" width=300/">
 </div>
 </center>
+
+Notice that the rotation preserves the BST property.
