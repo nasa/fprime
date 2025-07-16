@@ -1,0 +1,10 @@
+digraph {
+
+  2 -> 1
+  2 -> 3
+
+  1 [color="red",fontcolor="red"]
+  2 
+  3
+
+}
