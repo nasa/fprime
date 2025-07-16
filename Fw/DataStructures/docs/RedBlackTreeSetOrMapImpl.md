@@ -23,7 +23,7 @@ are satisfied:
 1. For each node _N_ in _T_, every path from _N_ to any leaf
    node under _N_ passes through the same number of black nodes.
 
-For example, this tree is a valid red-black tree (search keys in the BST 
+For example, this tree is a valid red-black tree (search keys in the BST
 shown, null nodes implicit):
 
 <center>
@@ -132,7 +132,11 @@ Sets the child of `this` in direction `direction`.
 **Algorithm:**
 `(direction == LEFT) ? (this.left = node) : (this.right = node)`.
 
-##### 3.2.4.3. getOppositeDirection
+**Overview:**
+
+#### 3.2.5. Public Static Methods
+
+##### 3.2.5.1. getOppositeDirection
 
 ```c+++
 static Direction oppositeDirection(Direction direction)
@@ -158,7 +162,7 @@ Return `(direction == LEFT) ? RIGHT : LEFT`.
 `ConstIterator` is a public inner class of `RedBlackTreeSetOrMapImpl`.
 It provides non-modifying iteration over the elements of a `RedBlackTreeSetOrMapImpl`
 instance.
-It is a base class of [`SetOrMapImplConstIterator<KE, 
+It is a base class of [`SetOrMapImplConstIterator<KE,
 VN>`](SetOrMapImplConstIterator.md).
 
 **State:**
@@ -180,7 +184,7 @@ Incrementing the iterator works as follows:
 1. If the node index is `NONE`, then do nothing.
 
 1. Otherwise if the current node has a non-null right child,
-   then use [`getOuterNodeUnder`](#getOuterNodeUnder) to traverse to the leftmost 
+   then use [`getOuterNodeUnder`](#getOuterNodeUnder) to traverse to the leftmost
    element under the right child.
    Set the node index to point to this node.
 
@@ -230,7 +234,7 @@ Call [`setStorage(nodes, freeNodes, capacity)`](#setStorageTyped).
 RedBlackTreeSetOrMapImpl(ByteArray data, FwSizeType capacity)
 ```
 
-`data` must be aligned according to 
+`data` must be aligned according to
 [`getByteArrayAlignment()`](#getByteArrayAlignment) and must
 contain at least [`getByteArraySize(capacity)`](#getByteArraySize) bytes.
 
@@ -434,7 +438,7 @@ Each of `nodes` and `freeNodes` must point to at least `capacity` items.
 void setStorage(ByteArray data, FwSizeType capacity)
 ```
 
-`data` must be aligned according to 
+`data` must be aligned according to
 [`getByteArrayAlignment()`](#getByteArrayAlignment) and must
 contain at least [`getByteArraySize(size)`](#getByteArraySize) bytes.
 
@@ -481,6 +485,14 @@ static constexpr FwSizeType getByteArraySize(FwSizeType capacity)
 
 1. Return `nodesSize + freeNodesAlignment + freeNodesSize`.
 
+##### 7.2.0.1. getNodeColor
+
+```c++
+static Color getColor(Index index)
+```
+
+return `index == NONE ? BLACK : m_nodes[index].color`.
+
 ## 8. Private Helper Functions
 
 <a name="findNode"></a>
@@ -491,7 +503,7 @@ Success findNode(const KE& keyOrElement, Node::Index& node, Direction& direction
 ```
 
 **Overview:**
-This function tries to find a node whose key or element _ke_ matches 
+This function tries to find a node whose key or element _ke_ matches
 `keyOrElement`.
 On return from the function:
 
@@ -599,7 +611,7 @@ Node::Index getPredecessorOfNone(Node::Index node, Direction direction) const
 This function gets the predecessor of a `NONE` node, specified as
 (1) a node, which is either `NONE` itself or a node with a `NONE` child;
 and (2) a direction.
-The predecessor of a node is the predecessor in the inorder traversal of the 
+The predecessor of a node is the predecessor in the inorder traversal of the
 tree.
 
 If `node` is `NONE`, then the function returns `NONE` and ignores `direction`.
@@ -630,11 +642,11 @@ void insertNode(Node::Index node, Node::index parent, Direction direction)
 **Overview:**
 This function inserts `node` into the tree as a left or right
 child of `parent`, according to `direction`.
-It rebalances the tree as needed to maintain the red-black 
+It rebalances the tree as needed to maintain the red-black
 invariant.
 
 It is permissible for `parent` to be `NONE`.
-In this case we are inserting at the root of the tree, and `direction` is 
+In this case we are inserting at the root of the tree, and `direction` is
 ignored.
 
 It is not permissible for `node` to be `NONE`.
@@ -649,7 +661,7 @@ It is not permissible for `node` to be `NONE`.
 
 1. If `parent == NONE` then set `m_root = node`.
 
-1. Otherwise 
+1. Otherwise
 
     1. Set `done = false`.
 
@@ -675,7 +687,7 @@ It is not permissible for `node` to be `NONE`.
 
             1. Let `uncle = m_nodes[grandparent].getChild(parentOppositeDirection)`.
 
-            1. If `uncle == NONE` or `m_nodes[uncle].color == BLACK` then
+            1. If `getNodeColor(uncle) == BLACK` then
 
                 1. If `parent.getChild(parentOppositeDirection) == node`
 
@@ -861,14 +873,14 @@ It must not be `NONE`.
 void removeBlackLeafNodeHelper1(
     Node::Index closeNephew,
     Direction direction
-    Node::Index& sibling, 
+    Node::Index& sibling,
     Node::Index& distantNephew,
 )
 ```
 
 **Overview:**
 This is a helper function for `removeBlackLeafNode`.
-`sibling` and `distantNephew` are in-out parameters (they are both read and 
+`sibling` and `distantNephew` are in-out parameters (they are both read and
 written).
 
 **Algorithm:**
