@@ -1011,8 +1011,16 @@ Before applying the function, the tree looks like this
 (nodes numbered left to right and top to bottom,
 parent pointers and colors omitted, variable names shown):
 
-![initial](diagrams/rotateSubtree/initial.png)
+<center>
+<div>
+<img src="diagrams/rotateSubtree/initial.png" width=300/">
+</div>
+</center>
 
 After applying the function, the tree looks like this:
 
-![initial](diagrams/rotateSubtree/final.png)
+<center>
+<div>
+<img src="diagrams/rotateSubtree/final.png" width=300/">
+</div>
+</center>
