@@ -979,15 +979,13 @@ or an assertion failure will occur:
 
 **Algorithm:**
 
-1. Assert `m_nodes[node].getChild(oppositeDirection) == NONE`.
-
 1. Let `parent = m_nodes[node].parent`.
 
 1. Let `oppositeDirection = Node::getOppositeDirection(direction)`.
 
-1. Let `newRoot = m_nodes[node].getChild(oppositeDirection))`.
-
 1. Let `newChild = m_nodes[newRoot].getChild(direction)`.
+
+1. Let `newRoot = m_nodes[node].getChild(oppositeDirection))`.
 
 1. Call `m_nodes[node].setChild(oppositeDirection, newChild)`.
 
@@ -1006,3 +1004,15 @@ or an assertion failure will occur:
     1. Call `m_nodes[parent].setChild(parentDirection, newRoot)`.
 
 1. Otherwise set `m_root = newRoot`.
+
+**Example:**
+Here is an example of applying `rotateSubtree` to do a left rotation.
+Before applying the function, the tree looks like this
+(nodes numbered left to right and top to bottom,
+parent pointers and colors omitted, variable names shown):
+
+![initial](diagrams/rotateSubtree/initial.png)
+
+After applying the function, the tree looks like this:
+
+![initial](diagrams/rotateSubtree/final.png)
