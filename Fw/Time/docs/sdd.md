@@ -21,7 +21,7 @@ The following serializables are provided:
 
 ##### 2.1.2.1 Fw::Time
 
-`Fw::Time` is a class that stores:
+`Fw::Time` is a class that stores:  
     1. the time base (project specific)  
     2. the time context  
     3. seconds portion of the time stamp  
@@ -32,7 +32,7 @@ while the port itself uses a `Fw::Time` object.
 
 ##### 2.1.2.1 Fw::TimeInterval
 
-`Fw::TimeInterval` is a class that stores:
+`Fw::TimeInterval` is a class that stores:  
     1. seconds portion of a time interval  
     2. microseconds portion of a time interval  
 
