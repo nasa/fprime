@@ -657,50 +657,59 @@ It is not permissible for `node` to be `NONE`.
 
     1. In a for loop bounded by `getCapacity()`:
 
-        1. If `parent == NONE` or `m_nodes[parent].color == BLACK` 
-           then set `done = true` and break out of the loop.
+        1. Let `grandparent = m_nodes[parent].parent`.
 
-        1. Set `grandparent = m_nodes[parent].parent`.
+        1. If `m_nodes[parent].color == BLACK` then set `done = true`.
 
-        1. If `grandparent == NONE` then
-
-            1. Set `m_nodes[parent].color = BLACK`.
-
-            1. Set `done = true` and break out of the loop.
-
-        1. Set `direction = getParentDirection(parent)`.
-
-        1. Let `uncle = m_nodes[grandparent].getChild(oppositeDirection)`.
-
-        1. If `uncle == NONE` or `m_nodes[uncle].color == BLACK` then
-
-            1. If `node = m_nodes[parent].getChild(oppositeDirection)`
-
-                1. Call `rotateSubtree(parent, direction)`.
-
-                1. Set `node = parent`.
-
-                1. Set `parent = m_nodes[grandparent].getChild(direction)`.
-
-            1. Call `rotateSubtree(grandparent, oppositeDirection)`.
+        1. Otherwise if `grandparent == NONE` then
 
             1. Set `m_nodes[parent].color = BLACK`.
 
-            1. Set `m_nodes[grandparent].color = RED`.
+            1. Set `done = true`.
 
-            1. Set `done = true` and break out of the loop.
+        1. Otherwise
 
-        1. Set `m_nodes[parent].color = BLACK`.
+            1. Let `parentDirection = getParentDirection(parent)`.
 
-        1. Set `m_nodes[uncle].color = BLACK`.
+            1. Let `parentOppositeDirection = Node::getOppositeDirection(parentDirection)`.
 
-        1. Set `m_nodes[grandparent].color = RED`.
+            1. Let `uncle = m_nodes[grandparent].getChild(parentOppositeDirection)`.
 
-        1. Set `node = grandparent`.
+            1. If `uncle == NONE` or `m_nodes[uncle].color == BLACK` then
 
-        1. Set `parent = m_nodes[node].parent`.
+                1. If `parent.getChild(parentOppositeDirection) == node`
 
-    1. Assert `done == true`.
+                    1. Call `rotateSubtree(parent, parentDirection)`.
+
+                    1. Set `node = parent`.
+
+                    1. Set `parent = m_nodes[grandparent].getChild(parentDirection)`.
+
+                1. Call `rotateSubtree(grandparent, parentOppositeDirection)`.
+
+                1. Set `m_nodes[parent].color = BLACK`.
+
+                1. Set `m_nodes[grandparent].color = RED`.
+
+                1. Set `done = true`.
+
+            1. Otherwise
+
+                1. Set `m_nodes[parent].color = BLACK`.
+
+                1. Set `m_nodes[uncle].color = BLACK`.
+
+                1. Set `m_nodes[grandparent].color = RED`.
+
+                1. Set `node = grandparent`.
+
+                1. Set `parent = m_nodes[node].parent`.
+
+                1. If `parent == NONE` then set `done = true`.
+
+        1. If `done` then break out of the loop.
+
+    1. Assert `done`.
 
 ### 8.6. removeNode
 
