@@ -22,10 +22,10 @@ The following serializables are provided:
 ##### 2.1.2.1 Fw::Time
 
 `Fw::Time` is a class that stores:
-    * the time base (project specific)
-    * the time context
-    * seconds portion of the time stamp
-    * microseconds portion of the time stamp
+    - the time base (project specific)
+    - the time context
+    - seconds portion of the time stamp
+    - microseconds portion of the time stamp
 
 Note that the representation of the time value is defined by the FPP TimeValue data structure (in Time.fpp)
 while the port itself uses a `Fw::Time` object.
@@ -33,8 +33,8 @@ while the port itself uses a `Fw::Time` object.
 ##### 2.1.2.1 Fw::TimeInterval
 
 `Fw::TimeInterval` is a class that stores:
-    * seconds portion of a time interval
-    * microseconds portion of a time interval
+    - seconds portion of a time interval
+    - microseconds portion of a time interval
 
 Note that the representation of the time interval value is defined by the FPP TimeIntervalValue data structure (in
 Time.fpp) while the port itself uses a `Fw::TimeInterval` object.
