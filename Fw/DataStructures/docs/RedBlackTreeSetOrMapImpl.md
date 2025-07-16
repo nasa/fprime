@@ -24,13 +24,16 @@ are satisfied:
    node under _N_ passes through the same number of black nodes.
 
 For example, this tree is a valid red-black tree (search keys in the BST 
-shown):
+shown, null nodes implicit):
 
 <center>
 <div>
 <img src="diagrams/Red-Black-Trees/valid.png" width=300/">
 </div>
 </center>
+
+Note that each of nodes 1 and 3 has two null children,
+and these children are colored black.
 
 This tree is not a valid red-black tree because constraint 3 is not satisfied:
 
