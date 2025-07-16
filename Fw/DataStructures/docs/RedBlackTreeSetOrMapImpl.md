@@ -47,7 +47,7 @@ This guarantee ensures that search in the BST is fast.
 Naively inserting or deleting a node can invalidate the
 red-black coloring.
 Therefore, when inserting or deleting a node, the algorithm performs
-a **rebalancing**, i.e., a transformation that moves
+a **rebalancing**, i.e., a transformation that rearranges
 links and recolors nodes to maintain
 the BST property and produce another red-black coloring.
 
