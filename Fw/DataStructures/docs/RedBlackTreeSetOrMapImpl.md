@@ -9,6 +9,27 @@ indices pointing into the array.
 The implementation uses the algorithm described here:
 https://en.wikipedia.org/wiki/Red%E2%80%93black_tree.
 
+A red-black tree is a binary search tree (BST) _T_ together with
+a **coloring**, i.e., an assignment of a color (red or
+black) to each node, such that the following constraints
+are satisfied:
+
+1. All null nodes of _T_ are black.
+
+1. No red node of _T_ has a red child.
+
+1. For each node _N_ in _T_, every path from _N_ to any leaf
+   node under _N_ goes through the same number of black nodes.
+
+Naively inserting or deleting a node can cause the constraints
+to be invalidated.
+Therefore, when inserting or deleting a node, the algorithm performs
+**rebalancing**, i.e., a transformation that maintains
+the BST property and restores the red-black property.
+The red-black property guarantees that no path from the root
+of the tree to a leaf gets too long.
+This guarantee ensures that search in the BST is fast.
+
 ## 1. Template Parameters
 
 `RedBlackTreeSetOrMapImpl` has the following template parameters.
