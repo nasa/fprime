@@ -23,16 +23,110 @@ the other paths.
 Therefore the validity constraints ensure that search in the BST is fast
 (order log _n_).
 
-### 1.1. Validity Constraints
+### 1.1. Trees
 
-A valid red-black tree _T_ satisfies the following constraints:
+A **tree** _T_ is a data structure defined as 
+follows:
 
-1. **RBT1:** All null nodes of _T_ are black.
+1. _T_ has a set _S_ of **nodes**.
 
-1. **RBT2:** No red node of _T_ has a red child.
 
-1. **RBT3:** Each node _N_ in _T_, every path from _N_ to any leaf
-   node under _N_ passes through the same number of black nodes.
+1. If _S_ is nonempty, then
+
+    1. There is one node _R_ called the **root** of _T_.
+
+    1. Each node _N_ in _S_ may have has zero, one, or two **children**.
+
+    1. Each node _N_ except _R_ is the child of exactly one node.
+       (Equivalently, each node except _R_ has exactly one parent.)
+
+    1. _R_ is not the child of any node.
+       (Equivalently, _R_ has no parent.)
+
+    1. No path that starts at a node and follows child links
+       contains a cycle.
+
+Here is an example of a tree:
+
+<center>
+<div>
+<img src="diagrams/Red-Black-Trees/tree.png" width=200/">
+</div>
+</center>
+
+In this diagram we adopt the following conventions, which we will use
+throughout this document:
+
+1. The ovals are the nodes of the tree.
+
+1. An arrow indicates a parent-child relationship between nodes.
+   Each arrow goes from parent to child.
+
+Let _T_ be a tree, and let _N_ be a node of _T_.
+We say that _N_ is a **leaf** node of _T_ if _N_
+has no children.
+For example, the tree shown above has a root, two leaves,
+and no other nodes.
+
+### 1.2. Binary Search Trees
+
+A **binary search tree** (BST) is a tree _T_ with the following
+additional properties:
+
+1. Each node _N_ of _T_ stores a **key** _K_.
+All the keys are values of the same totally-ordered type,
+e.g., integers, strings, etc.
+
+1. For each node _N_ of _T_, each child of _N_ is designated the
+   **left** or **right** child of _N_.
+   If _N_ has two children, then there is exactly one left child
+   and exactly one right child.
+
+1. Each node _N_ of _T_ satisfies the following properties:
+
+    1. If _N_ has a left child _LC_, then the key stored in
+       _LC_ compares less than the key stored in _N_.
+
+    1. If _N_ has a right child _RC_, then the key stored in
+       _RC_ compares greater than the key stored in _N_.
+
+Here is an example of a BST:
+
+<center>
+<div>
+<img src="diagrams/Red-Black-Trees/bst.png" width=200/">
+</div>
+</center>
+
+In this diagram we adopt the following conventions, which we will use
+throughout this document:
+
+1. The labels in the nodes are symbolic names for the keys stored in the nodes.
+
+1. A lexically prior name stores a prior key.
+   For example, we could have K1 = 1, K2 = 2, K3 = 3; or K1 = `"a"`, K2 = 
+   `"b"`, K3 = `"c"`; etc.
+   This convention will help us keep track of the BST property
+   when we perform tree rotations.
+   
+### 1.3. Red-Black Colorings
+
+A **red-black tree** is a BST _T_ together with a **red-black coloring**,
+i.e., an assignment of a color (red or black) to each node of _T_.
+A red-black tree _T_ is **valid** if its coloring
+satisfies the following constraints:
+
+1. **RBT1:** No red node of _T_ has a red child.
+
+1. **RBT2:** Let _T'_ be the **leaf-augmented tree** constructed from _T_ as 
+   follows.
+   If _T_ is empty, then _T'_ consists of a single black node.
+   Otherwise, _T'_ is the tree that results from (1) adding a black
+   leaf node as a left child of every node of _T_ that has no left child
+   and (2) adding a black leaf node as a right child of every node of _T_
+   that has no right child.
+   For each node _N_ in _T'_, every path from _N_ to any leaf
+   node under _N_ must pass through the same number of black nodes.
 
 For example, this tree is a valid red-black tree:
 
@@ -42,36 +136,30 @@ For example, this tree is a valid red-black tree:
 </div>
 </center>
 
-In this diagram we adopt the following conventions, which we use
-throughout this document:
+The color of a node in the diagram is its color in the 
+red-black coloring.
+We adopt this convention throughout this document.
+The dotted nodes are the leaves of the leaf-augmented tree.
 
-1. The nodes store keys K1, K2, and K3.
-   These can be any values of any well-ordered type (e.g., integers),
-   with K1 < K2 < K3.
-   For example, we could have K1 = 1, K2 = 2, K3 = 3; or K1 = `"a"`, K2 = `"b"`, K3 
-   = `"c"`; etc.
-   
-2. We omit null children from the diagram.
-
-Note that each of nodes 1 and 3 has two null children,
-and these children are colored black.
-
-This tree is not a valid red-black tree because **RBT3** is not satisfied:
+This tree is not a valid red-black tree because **RBT2** is not satisfied:
 
 <center>
 <div>
-<img src="diagrams/Red-Black-Trees/invalid-paths.png" width=300/">
+<img src="diagrams/Red-Black-Trees/black-height-violation.png" width=300/">
 </div>
 </center>
 
-The standard BST insert and remove operations can invalidate constraints
-**RBT2** and **RBT3**.
-Therefore, when inserting or deleting a node, the algorithm performs
+Note that path from K2 to either child of K1 goes through two black nodes,
+while the path from K2 to its right child goes through one black node.
+
+The standard BST insert and remove operations can violate the
+validity constraints.
+Therefore, when inserting or deleting a node, we must perform
 a **rebalancing**, i.e., a transformation that rearranges
 links and recolors nodes to maintain
-the BST property and to produce a valid red-black coloring.
+the BST property and to produce a valid coloring.
 
-### 1.2. Black Height
+### 1.4. Black Height
 
 When describing the algorithms for maintaining a red-black tree,
 it will be useful to have the notion of the **black height**
@@ -87,7 +175,8 @@ of a path, a node, a tree, or a forest of trees.
    Otherwise the black height of _N_ is not defined.
 
 1. **Trees:** Let _T_ be a red-black tree.
-   If the root of _T_ has a defined black height _n_, then the black height of 
+   Let _T'_ be the leaf-augmented tree described in the definition of **RBT2**.
+   If the root of _T'_ has a defined black height _n_, then the black height of 
    _T_ is defined and is equal to _n_.
    Otherwise the black height of _T_ is not defined.
 
@@ -99,23 +188,23 @@ of a path, a node, a tree, or a forest of trees.
 
 Let _T_ be a red-black tree, and note the following:
 
-1. _T_ satisfies **RBT3** if and only if it has a defined black height.
+1. _T_ satisfies **RBT2** if and only if it has a defined black height.
 
 1. _T_ has a defined black height if and 
-   only if each of the child subtree of _T_ has a defined black height,
+   only if each of the child subtrees of _T_ has a defined black height,
    and the two black heights are the same.
 
-### 1.3. Representing Forests
+### 1.5. Representing Forests
 
-To represent a forest of red-black trees with a defined black height.
-we will write a dotted box, and we will write the black
-height in the box.
+Let _F_ be a forest of red-black trees with a defined black height.
+To represent such a forest, we will write a dotted box, and we will write the 
+black height in the box.
 For example, we may represent the first tree shown above
 as follows:
 
 <center>
 <div>
-<img src="diagrams/Red-Black-Trees/valid-forest.png" width=300/">
+<img src="diagrams/Red-Black-Trees/valid-forest.png" width=200/">
 </div>
 </center>
 
@@ -123,12 +212,27 @@ Similarly, we may represent the second tree shown above as follows:
 
 <center>
 <div>
-<img src="diagrams/Red-Black-Trees/invalid-paths-forest.png" width=500/">
+<img src="diagrams/Red-Black-Trees/black-height-violation-forest.png" width=300/">
 </div>
 </center>
 
-Then it is easy to see that the first tree has black height 2,
+Then it is easy to see that the first tree has black height 3,
 and the second tree has no defined black height.
+
+### 1.6. Local Constraint Violations
+
+To describe the algorithms, it will be useful to have a precise way to describe
+where a constraint violation occurs in a red-black tree.
+Therefore we make the following definitions for a red-black tree _T_:
+
+1. If any node _N_ is red and has at least one red child, then we say that _T_ has a
+   **red child violation** at _N_.
+
+1. If the subtree rooted at any node _N_ does not have a defined black height, 
+   then we say that _T_ has a **black height violation** at _N_.
+
+From the definitions, it is clear that _T_ is valid if and only if
+it has no violation at any node.
 
 ## 2. Template Parameters
 
