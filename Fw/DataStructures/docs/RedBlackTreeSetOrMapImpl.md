@@ -52,7 +52,7 @@ red-black coloring.
 Therefore, when inserting or deleting a node, the algorithm performs
 a **rebalancing**, i.e., a transformation that rearranges
 links and recolors nodes to maintain
-the BST property and produce another red-black coloring.
+the BST property and to produce another red-black coloring.
 
 ## 2. Template Parameters
 
@@ -653,6 +653,9 @@ It is not permissible for `node` to be `NONE`.
 
 **Algorithm:**
 
+_Here we assume that the tree is a red-black tree and that the
+child of `parent` in the direction `direction` is NONE._
+
 1. Let `oppositeDirection = Node::getOppositeDirection(direction)`.
 
 1. Set `m_nodes[node].color = RED`.
@@ -669,11 +672,15 @@ It is not permissible for `node` to be `NONE`.
 
     1. In a for loop bounded by `getCapacity()`:
 
-        1. Let `grandparent = m_nodes[parent].parent`.
+_Here the following invariants hold: (1) `node` is colored red;
+(2) the tree is a red-black tree, except that the parent of `node` may be red._
 
         1. If `m_nodes[parent].color == BLACK` then set `done = true`.
+           and break out of the loop.
 
-        1. Otherwise if `grandparent == NONE` then
+        1. Set `grandparent = m_nodes[parent].parent`.
+
+        1. If `grandparent == NONE` then
 
             1. Set `m_nodes[parent].color = BLACK`.
 
@@ -691,11 +698,27 @@ It is not permissible for `node` to be `NONE`.
 
                 1. If `parent.getChild(parentOppositeDirection) == node`
 
+_Here the subtree of `grandparent` has the following shape, assuming that 
+`parentDirection` is `RIGHT`:_
+
+<center>
+<div>
+<img src="diagrams/insertNode/black-uncle-1.png" width=300/">
+</div>
+</center>
+
                     1. Call `rotateSubtree(parent, parentDirection)`.
 
-                    1. Set `node = parent`.
-
                     1. Set `parent = m_nodes[grandparent].getChild(parentDirection)`.
+
+_Here the subtree of `grandparent` has the following shape, assuming that 
+`parentDirection` is `RIGHT`:_
+
+<center>
+<div>
+<img src="diagrams/insertNode/black-uncle-2.png" width=300/">
+</div>
+</center>
 
                 1. Call `rotateSubtree(grandparent, parentOppositeDirection)`.
 
@@ -705,7 +728,25 @@ It is not permissible for `node` to be `NONE`.
 
                 1. Set `done = true`.
 
+_Here the subtree of `grandparent` has the following shape:_
+
+<center>
+<div>
+<img src="diagrams/insertNode/black-uncle-3.png" width=300/">
+</div>
+</center>
+
             1. Otherwise
+
+_Here the subtree of `grandparent` has one of four shapes,
+one of which is shown below.
+Each of the arrows to red nodes may point the other way._
+
+<center>
+<div>
+<img src="diagrams/insertNode/red-uncle-1.png" width=300/">
+</div>
+</center>
 
                 1. Set `m_nodes[parent].color = BLACK`.
 
@@ -717,11 +758,21 @@ It is not permissible for `node` to be `NONE`.
 
                 1. Set `parent = m_nodes[node].parent`.
 
+_Here the subtree shown above is transformed into the following shape:_
+
+<center>
+<div>
+<img src="diagrams/insertNode/red-uncle-2.png" width=300/">
+</div>
+</center>
+
                 1. If `parent == NONE` then set `done = true`.
 
         1. If `done` then break out of the loop.
 
     1. Assert `done`.
+
+_Here the tree is a red-black tree._
 
 ### 8.6. removeNode
 

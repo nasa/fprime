@@ -1,0 +1,16 @@
+digraph {
+
+  P -> 2 [dir="back",style="dotted"]
+  2 -> 1
+  2 -> 3
+  3 -> X [color="white"]
+  3 -> 4
+
+  1 [label="1 (uncle)"]
+  2 [label="2 (node)",color="red",fontcolor="red"]
+  3 [label="3"]
+  4 [color="red",fontcolor="red"]
+
+  X [color="white",fontcolor="white"]
+  P [label="parent",color="gray",fontcolor="gray"]
+}

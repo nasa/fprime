@@ -1,0 +1,14 @@
+digraph {
+
+  3 -> 2
+  2 -> 1
+  2 -> X [color="white"]
+  3 -> 4
+
+  1 [label="1 (uncle)"]
+  2 [label="2 (grandparent)",color="red",fontcolor="red"]
+  3 [label="3 (parent)"]
+  4 [color="red",fontcolor="red"]
+
+  X [color="white",fontcolor="white"]
+}
