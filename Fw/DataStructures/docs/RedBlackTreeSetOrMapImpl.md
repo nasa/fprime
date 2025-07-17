@@ -202,8 +202,8 @@ Let _T_ be a red-black tree, and note the following:
 Let _F_ be a forest of red-black trees with a defined black height.
 To represent such a forest, we will write a dotted box, and we will write the 
 black height in the box.
-For example, we may represent the first tree shown above
-as follows:
+For example, we may represent the first tree shown in the
+section **Red-Black Colorings** as follows:
 
 <center>
 <div>
