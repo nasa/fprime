@@ -35,6 +35,9 @@ module ComFprime {
         // Allocation identifier is 0 as the MallocAllocator discards it
         ComFprime::comQueue.configure(configurationTable, 0, ComFprime::Allocation::memAllocator);
         """
+        phase Fpp.ToCpp.Phases.tearDownComponents """
+        ComFprime::comQueue.cleanup();
+        """
     }
 
     instance cmdSeq: Svc.CmdSequencer base id ComFprimeConfig.BASE_ID + 0x0200 \
