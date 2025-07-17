@@ -103,6 +103,10 @@ throughout this document:
 
 1. The labels in the nodes are symbolic names for the keys stored in the nodes.
 
+1. The left child of a node _N_, if it exists, is drawn to the left of and 
+   below _N_.
+   The right child of _N_, if it exists, is drawn to the right and below.
+
 1. A lexically prior name stores a prior key.
    For example, we could have K1 = 1, K2 = 2, K3 = 3; or K1 = `"a"`, K2 = 
    `"b"`, K3 = `"c"`; etc.
@@ -125,8 +129,8 @@ satisfies the following constraints:
    leaf node as a left child of every node of _T_ that has no left child
    and (2) adding a black leaf node as a right child of every node of _T_
    that has no right child.
-   For each node _N_ in _T'_, every path from _N_ to any leaf
-   node under _N_ must pass through the same number of black nodes.
+   For each node _N_ in _T'_, every path that follows child links from _N_ to a 
+   leaf node must pass through the same number of black nodes.
 
 For example, this tree is a valid red-black tree:
 
@@ -138,7 +142,6 @@ For example, this tree is a valid red-black tree:
 
 The color of a node in the diagram is its color in the 
 red-black coloring.
-We adopt this convention throughout this document.
 The dotted nodes are the leaves of the leaf-augmented tree.
 
 This tree is not a valid red-black tree because **RBT2** is not satisfied:
@@ -149,7 +152,7 @@ This tree is not a valid red-black tree because **RBT2** is not satisfied:
 </div>
 </center>
 
-Note that path from K2 to either child of K1 goes through two black nodes,
+Note that the path from K2 to either child of K1 goes through two black nodes,
 while the path from K2 to its right child goes through one black node.
 
 The standard BST insert and remove operations can violate the
