@@ -653,8 +653,9 @@ It is not permissible for `node` to be `NONE`.
 
 **Algorithm:**
 
-_Here we assume that the tree is a red-black tree and that the
-child of `parent` in the direction `direction` is NONE._
+_Here we assume that the tree is a red-black tree, that the
+child of `parent` in the direction `direction` is NONE,
+and that `node` has null children._
 
 1. Let `oppositeDirection = Node::getOppositeDirection(direction)`.
 
@@ -663,6 +664,7 @@ child of `parent` in the direction `direction` is NONE._
 1. Set `m_nodes[node].parent = parent`.
 
 1. If `parent == NONE` then set `m_root = node`.
+   _Here the tree was empty, and now it consists of a single red node._
 
 1. Otherwise
 
@@ -677,12 +679,17 @@ child of `parent` in the direction `direction` is NONE._
 
         1. If `m_nodes[parent].color == BLACK` then set `done = true`
            and break out of the loop.
+           _Here we have replaced a black child of `parent` (the null child)
+           with a red node (`node`) that has two black children (the null children).
+           Since `parent` is black, all invariants are preserved._
 
         1. Set `grandparent = m_nodes[parent].parent`.
 
         1. If `grandparent == NONE` then
 
             1. Set `m_nodes[parent].color = BLACK`.
+               _After this step the parent of `node` is no longer red, and
+               all other invariants are preserved._
 
             1. Set `done = true`.
 
@@ -728,7 +735,7 @@ child of `parent` in the direction `direction` is NONE._
 
                 1. Set `done = true`.
 
-                1. _Here the subtree of `grandparent` has the following shape:_
+                1. _Here the subtree has the following shape:_
 
                    <center>
                    <div>
