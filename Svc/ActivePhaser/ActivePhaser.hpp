@@ -21,6 +21,7 @@ class ActivePhaser final : public ActivePhaserComponentBase {
     public:
         static const U32 MAX_CHILDREN = 100;
         static const U32 DONT_CARE = 0xFFFFFFFFlu;
+        static constexpr FwIndexType CONNECTION_COUNT_MAX = NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS;
 
         enum PhaserContextType {
             SEQUENTIAL, // Context stores the number of times a port is called from the beginning of execution.
@@ -107,8 +108,8 @@ class ActivePhaser final : public ActivePhaserComponentBase {
         U32 timeInCycle(U32 full_ticks);
 
         Os::Mutex m_lock;
-        U32 m_cycle;
-        U32 m_ticks;
+        U32 m_cycle; // The number of ticks that makes up a phaser cycle
+        U32 m_ticks; // The current tick count
         U32 m_last_start_ticks;
         U32 m_last_cycle_ticks;
         U32 m_cycle_count;

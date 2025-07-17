@@ -112,6 +112,7 @@ void ActivePhaser ::Tick_internalInterfaceHandler() {
         m_state.current = 0;  // Back to processing the first task.
     }
     // Finish active children and run the next child if it is not a short cycle
+    // Shaokai: Finish active "children" or "child"?
     if (!finishChild(full_ticks)) {
         startChild(full_ticks);
     }
