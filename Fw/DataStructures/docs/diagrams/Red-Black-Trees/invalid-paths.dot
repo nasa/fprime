@@ -1,10 +1,10 @@
 digraph {
 
-  2 -> 1
-  2 -> 3
+  K2 -> K1
+  K2 -> K3
 
-  1 [color="red",fontcolor="red"]
-  2 
-  3
+  K1 [color="red",fontcolor="red"]
+  K2 
+  K3
 
 }

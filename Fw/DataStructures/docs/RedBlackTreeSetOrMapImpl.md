@@ -13,18 +13,28 @@ https://en.wikipedia.org/wiki/Red%E2%80%93black_tree.
 
 A red-black tree is a binary search tree (BST) _T_ together with
 a **red-black coloring**, i.e., an assignment of a color (red or
-black) to each node of _T_, such that the following constraints
-are satisfied:
+black) to each node of _T_.
+A red-black tree _T_ is **valid** if it satisfies certain
+validity constraints, which we state below.
+The validity constraints ensure that the tree is **balanced**,
+i.e., that no path from the root
+of the tree to a leaf is too much longer than any of
+the other paths.
+Therefore the validity constraints ensure that search in the BST is fast
+(order log _n_).
 
-1. All null nodes of _T_ are black.
+### 1.1. Validity Constraints
 
-1. No red node of _T_ has a red child.
+A valid red-black tree _T_ satisfies the following constraints:
 
-1. For each node _N_ in _T_, every path from _N_ to any leaf
+1. **RBT1:** All null nodes of _T_ are black.
+
+1. **RBT2:** No red node of _T_ has a red child.
+
+1. **RBT3:** Each node _N_ in _T_, every path from _N_ to any leaf
    node under _N_ passes through the same number of black nodes.
 
-For example, this tree is a valid red-black tree (search keys in the BST
-shown, null nodes implicit):
+For example, this tree is a valid red-black tree:
 
 <center>
 <div>
@@ -32,10 +42,21 @@ shown, null nodes implicit):
 </div>
 </center>
 
+In this diagram we adopt the following conventions, which we use
+throughout this document:
+
+1. The nodes store keys K1, K2, and K3.
+   These can be any values of any well-ordered type (e.g., integers),
+   with K1 < K2 < K3.
+   For example, we could have K1 = 1, K2 = 2, K3 = 3; or K1 = `"a"`, K2 = `"b"`, K3 
+   = `"c"`; etc.
+   
+2. We omit null children from the diagram.
+
 Note that each of nodes 1 and 3 has two null children,
 and these children are colored black.
 
-This tree is not a valid red-black tree because constraint 3 is not satisfied:
+This tree is not a valid red-black tree because **RBT3** is not satisfied:
 
 <center>
 <div>
@@ -43,16 +64,71 @@ This tree is not a valid red-black tree because constraint 3 is not satisfied:
 </div>
 </center>
 
-The red-black coloring guarantees that no path from the root
-of the tree to a leaf gets too long.
-This guarantee ensures that search in the BST is fast.
-
-The standard BST insert and remove operations can invalidate the
-red-black coloring.
+The standard BST insert and remove operations can invalidate constraints
+**RBT2** and **RBT3**.
 Therefore, when inserting or deleting a node, the algorithm performs
 a **rebalancing**, i.e., a transformation that rearranges
 links and recolors nodes to maintain
-the BST property and to produce another red-black coloring.
+the BST property and to produce a valid red-black coloring.
+
+### 1.2. Black Height
+
+When describing the algorithms for maintaining a red-black tree,
+it will be useful to have the notion of the **black height**
+of a path, a node, a tree, or a forest of trees.
+
+1. **Paths:** Let _P_ be a path from a node of a red-black tree to a leaf node.
+   The black height of _P_ is the number of black nodes in _P_.
+
+1. **Nodes:** Let _N_ be a node of a red-black tree.
+   If every path _P_ from _N_ to a leaf under _N_ has the same
+   black height _n_, then the black height of _N_ is defined
+   and is equal to _n_.
+   Otherwise the black height of _N_ is not defined.
+
+1. **Trees:** Let _T_ be a red-black tree.
+   If the root of _T_ has a defined black height _n_, then the black height of 
+   _T_ is defined and is equal to _n_.
+   Otherwise the black height of _T_ is not defined.
+
+1. **Forests:** Let _F_ be a forest of red-black trees.
+   If every tree _T_ in _F_ has a defined black height,
+   and the black heights all have the same value _n_,
+   then the black height of _F_ is defined and is equal to _n_.
+   Otherwise the black height of _F_ is not defined.
+
+Let _T_ be a red-black tree, and note the following:
+
+1. _T_ satisfies **RBT3** if and only if it has a defined black height.
+
+1. _T_ has a defined black height if and 
+   only if each of the child subtree of _T_ has a defined black height,
+   and the two black heights are the same.
+
+### 1.3. Representing Forests
+
+To represent a forest of red-black trees with a defined black height.
+we will write a dotted box, and we will write the black
+height in the box.
+For example, we may represent the first tree shown above
+as follows:
+
+<center>
+<div>
+<img src="diagrams/Red-Black-Trees/valid-forest.png" width=300/">
+</div>
+</center>
+
+Similarly, we may represent the second tree shown above as follows:
+
+<center>
+<div>
+<img src="diagrams/Red-Black-Trees/invalid-paths-forest.png" width=500/">
+</div>
+</center>
+
+Then it is easy to see that the first tree has black height 2,
+and the second tree has no defined black height.
 
 ## 2. Template Parameters
 

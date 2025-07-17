@@ -1,0 +1,8 @@
+digraph {
+
+  K2 -> BH1
+  K2 -> BH1
+
+  BH1 [shape="box",label="black height 1",style="dotted",fontname="Italic"]
+
+}
