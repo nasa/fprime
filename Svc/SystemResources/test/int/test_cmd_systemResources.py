@@ -26,7 +26,7 @@ def test_send_systemResources_command(fprime_test_api):
     nv_free_list = str(nv_free).split()
     print ("Index my_LIST", mem_total_list)               
     
-    # verify memory usuage
+    # verify memory usage
     if (int(mem_total_list[3]) >= 1 and mem_total_list[4] == "KB" and
       int(mem_used_list[3]) >= 1 and mem_used_list[4] == "KB" and
       int(nv_total_list[3]) >= 1 and nv_total_list[4] == "KB" and 

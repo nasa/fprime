@@ -12,8 +12,8 @@ def test_send_health_command(fprime_test_api):
     Tests command send, dispatch, and receipt using send_and_assert command with a pair of health commands.
 
      health.HLTH_ENABLE, [disabled/enabled}
-     health.HLTH_PING_ENABLE,["Ref_pingRcvr","DISABLED/ENABLED"]
-     health.HLTH_CHNG_PING,["Ref_pingRcvr",1,1]
+     health.HLTH_PING_ENABLE,["FileManager","DISABLED/ENABLED"]
+     health.HLTH_CHNG_PING,["FileManager",1,1]
     """
 
     cmd_events = fprime_test_api.get_event_pred(severity=EventSeverity.COMMAND)
@@ -23,38 +23,19 @@ def test_send_health_command(fprime_test_api):
     pred = predicates.greater_than(0)
     zero = predicates.equal_to(0)
     
-    ## Read NumPings
-    pingRcvr = fprime_test_api.await_telemetry(fprime_test_api.get_mnemonic('Ref.PingReceiver') + "." + "PR_NumPings", start="NOW")
-    # If no constraints are specified on the channels, the predicate will always return true    
-    ping_change = fprime_test_api.get_telemetry_pred(fprime_test_api.get_mnemonic('Ref.PingReceiver') + "." + "PR_NumPings", pingRcvr)
-    
     # Expect number still increment after clear_history
     fprime_test_api.clear_histories()  # will clear all history (can read telemetry channel again with latest value.  otherwise still have old value)
     time.sleep(5)
     
-    pingRcvra = fprime_test_api.await_telemetry(fprime_test_api.get_mnemonic('Ref.PingReceiver') + "." + "PR_NumPings", start="NOW")
-    # If no constraints are specified on the channels, the predicate will always return true    
-    pinga_change = fprime_test_api.get_telemetry_pred(fprime_test_api.get_mnemonic('Ref.PingReceiver') + "." + "PR_NumPings", pingRcvra)
-     
-    # Disable the health  HLTH_ENABLE command         
+    # Verify disable/enable the Health command
+    # Command: Disable the health  HLTH_ENABLE command         
     fprime_test_api.send_and_assert_command(fprime_test_api.get_mnemonic('Svc.Health') + '.' + 'HLTH_ENABLE',["DISABLED"])
-    assert fprime_test_api.get_command_test_history().size() == 1   # current command count    
-
+    assert fprime_test_api.get_command_test_history().size() == 1   # current command count
+    
     fprime_test_api.assert_event_count(pred, cmd_events)
     fprime_test_api.assert_event_count(pred, actHi_events)
 
-    # Expect number no change (stale or stop)    
-    pingRcvr1 = fprime_test_api.await_telemetry(fprime_test_api.get_mnemonic('Ref.PingReceiver') + "." + "PR_NumPings", start="NOW")
-    # If no constraints are specified on the channels, the predicate will always return true    
-    ping1_change = fprime_test_api.get_telemetry_pred(fprime_test_api.get_mnemonic('Ref.PingReceiver') + "." + "PR_NumPings", pingRcvr1)
-    time.sleep(5)
-
-    # When healh disable history search will not print out specific telemetry channel
-    pingRcvr1a = fprime_test_api.await_telemetry(fprime_test_api.get_mnemonic('Ref.PingReceiver') + "." + "PR_NumPings", start="NOW")
-    # If no constraints are specified on the channels, the predicate will always return true    
-    ping1a_change = fprime_test_api.get_telemetry_pred(fprime_test_api.get_mnemonic('Ref.PingReceiver') + "." + "PR_NumPings", pingRcvr1a)
-    
-    # Enable health Expect number increment HLTH_Enable command
+    # Command: Enable health Expect number increment HLTH_Enable command
     fprime_test_api.send_and_assert_command(fprime_test_api.get_mnemonic('Svc.Health') + '.' + 'HLTH_ENABLE',["ENABLED"])
     assert fprime_test_api.get_command_test_history().size() == 2   # current command count    
     
@@ -62,18 +43,7 @@ def test_send_health_command(fprime_test_api):
     fprime_test_api.assert_event_count(2, actHi_events)        #Verify event activity_hi
     time.sleep(5)
 
-    # Expect PR_NumPings channel increment
-    pingRcvr2 = fprime_test_api.await_telemetry(fprime_test_api.get_mnemonic('Ref.PingReceiver') + "." + "PR_NumPings", start="NOW")
-    # If no constraints are specified on the channels, the predicate will always return true    
-    ping2_change = fprime_test_api.get_telemetry_pred(fprime_test_api.get_mnemonic('Ref.PingReceiver') + "." + "PR_NumPings", pingRcvr2)
-    
-    time.sleep(5)    
-    pingRcvr2a = fprime_test_api.await_telemetry(fprime_test_api.get_mnemonic('Ref.PingReceiver') + "." + "PR_NumPings", start="NOW")
-    # If no constraints are specified on the channels, the predicate will always return true    
-    ping2a_change = fprime_test_api.get_telemetry_pred(fprime_test_api.get_mnemonic('Ref.PingReceiver') + "." + "PR_NumPings", pingRcvr2a)
-
-
-    ##### Disabled HLTH_PING_ENABLE command with invalid entry (expected warning_lo)
+    ## Command:  Disabled HLTH_PING_ENABLE command with invalid entry (expected warning_lo)
     # use send_command because No completion (will cause pytest to assert when no completion) use send_command will ignore completion)
     fprime_test_api.send_command(fprime_test_api.get_mnemonic('Svc.Health') + '.' + 'HLTH_PING_ENABLE',["Ref_cmdDispatch", "DISABLED"])
     assert fprime_test_api.get_command_test_history().size() == 3   # current command count
@@ -89,43 +59,18 @@ def test_send_health_command(fprime_test_api):
     fprime_test_api.assert_event_count(1, warnLo_events)       #Verify event warning_lo
 
     ##### Disabled/Enabled HLTH_PING_ENABLE command    (PR_NumPings channel will stop when command disabled) and count increment command is enabled
-    # namespace Ref_health {Svc::Health:PingEnntry pingEntries[NUM_PING_ENTRIES ]  (look at <deployment_name>/build-fprime-automatic-native/<deployment_name>/top/<deployment_name>TopologyAc.cpp
+    # namespace <deployment_name>_health {Svc::Health:PingEntry pingEntries[NUM_PING_ENTRIES ]  (look at <deployment_name>/build-fprime-automatic-native/<deployment_name>/top/<deployment_name>TopologyAc.cpp
     # Get mnemonic of PingReceiver => Ref.pingRcvr (replace . to _ )
-#    name2 = fprime_test_api.get_mnemonic('Ref.PingReceiver'); name2.replace(".","-")
-    fprime_test_api.send_and_assert_command(fprime_test_api.get_mnemonic('Svc.Health') + '.' + 'HLTH_PING_ENABLE',[fprime_test_api.get_mnemonic('Ref.PingReceiver').replace(".","_"), "DISABLED"])
-    assert fprime_test_api.get_command_test_history().size() == 4   # current command count    
-    time.sleep(3)
-    
-    #####
-    # Enable health Expect PR_num channel increment HLTH_PING_Enable command
-    fprime_test_api.send_and_assert_command(fprime_test_api.get_mnemonic('Svc.Health') + '.' + 'HLTH_PING_ENABLE',[fprime_test_api.get_mnemonic('Ref.PingReceiver').replace(".","_"), "ENABLED"])
-    assert fprime_test_api.get_command_test_history().size() == 5   # current command count    
-    time.sleep(3)
-    fprime_test_api.assert_event_count(10, cmd_events)         #Verify event command
-    fprime_test_api.assert_event_count(4, actHi_events)        #Verify event actHi
-    fprime_test_api.assert_event_count(1, warnLo_events)       #Verify event warning_lo
-
-    ##### HLTH_CHNG_PING command        
-    # threshold warningValue and fatalValue 
-    fprime_test_api.send_and_assert_command(fprime_test_api.get_mnemonic('Svc.Health') + '.' + 'HLTH_CHNG_PING',[fprime_test_api.get_mnemonic('Ref.PingReceiver').replace(".","_"), 1,1])
-    assert fprime_test_api.get_command_test_history().size() == 6   # current command count    
-    time.sleep(3)
-    
-    fprime_test_api.assert_event_count(12, cmd_events)          #Verify event command
-    fprime_test_api.assert_event_count(5, actHi_events)         #Verify event actHi
-    fprime_test_api.assert_event_count(1, warnLo_events)        #Verify event warning_lo
-
-
-    ### Notes:
+    # Notes:
     # After send cmd Ref.pingRcvr.PR_StopPings command the channel Ref.pingRcvr.PR_NumPIngs will stop increment
-    #  command htlh_enable or htlh_ping_enable (enable option) still not restart this channel ???
+    #  command health_enable or htlh_ping_enable (enable option) still not restart this channel ???
     #
     # Try append_file 1MiB.txt multi time trigger
     # Ref.health.HLTH_PING_WARN   WARNING_HI   Ping entry Ref_fileManager late warning
-
-
-    ##### HLTH_CHNG_PING command        
-    # threshold warningValue and Threshold fatalValue 
+    
+    # Verify can disable/enable ping for a particular set of components
+    # threshold warningValue and Threshold fatalValue
+    fprime_test_api.send_and_assert_command(fprime_test_api.get_mnemonic('Svc.Health') + '.' + 'HLTH_PING_ENABLE',[fprime_test_api.get_mnemonic('Svc.FileManager').replace(".","_"), "DISABLED"])            
     fprime_test_api.send_and_assert_command(fprime_test_api.get_mnemonic('Svc.Health') + '.' + 'HLTH_CHNG_PING',[fprime_test_api.get_mnemonic('Svc.FileManager').replace(".","_"), 1,1])    
     fprime_test_api.send_and_assert_command(fprime_test_api.get_mnemonic('Svc.Health') + '.' + 'HLTH_PING_ENABLE',[fprime_test_api.get_mnemonic('Svc.FileManager').replace(".","_"), "ENABLED"])    
     fprime_test_api.send_and_assert_command(fprime_test_api.get_mnemonic('Svc.FileManager') + '.' + 'AppendFile', ["/tmp/1MiB.txt", "/tmp/2MiB.txt"])
