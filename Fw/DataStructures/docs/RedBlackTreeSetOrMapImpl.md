@@ -47,7 +47,7 @@ The red-black coloring guarantees that no path from the root
 of the tree to a leaf gets too long.
 This guarantee ensures that search in the BST is fast.
 
-Naively inserting or deleting a node can invalidate the
+The standard BST insert and remove operations can invalidate the
 red-black coloring.
 Therefore, when inserting or deleting a node, the algorithm performs
 a **rebalancing**, i.e., a transformation that rearranges
@@ -835,8 +835,8 @@ It must not be `NONE`.
 1. Set `oppositeDirection = Node::getOppositeDirection(direction)`.
 
 1. Call `m_nodes[parent].setChild(direction, NONE)`.
-   This step performs the deletion.
-   The next steps are for rebalancing.
+   _This step performs the deletion.
+   The next steps are for rebalancing._
 
 1. Set `done = false`.
 
