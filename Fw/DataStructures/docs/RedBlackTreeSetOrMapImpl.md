@@ -158,14 +158,14 @@ while the path from K2 to its right child goes through one black node.
 
 The standard BST insert and remove operations can violate the
 validity constraints.
-Therefore, when inserting or deleting a node, we must perform
+Therefore, when inserting or removing a node, we must perform
 a **rebalancing**, i.e., a transformation that rearranges
 links and recolors nodes to maintain
 the BST property and to produce a valid coloring.
 
 ### 1.4. Black Height
 
-When describing the algorithms for maintaining a red-black tree,
+When describing the insert and remove algorithms,
 it will be useful to have the notion of the **black height**
 of a path, a node, a tree, or a forest of trees.
 
