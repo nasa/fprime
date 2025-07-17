@@ -16,7 +16,7 @@
 # ARGN: extra MOD_DEPS to add
 ####
 function(add_named_os_module NAMES)
-    # Get first element of list
+    # Get first element of lists
     list(GET NAMES 0 FIRST_ITEM)
     set(OS_MODULE_NAME "Os_${FIRST_ITEM}")
     # Clear variables
