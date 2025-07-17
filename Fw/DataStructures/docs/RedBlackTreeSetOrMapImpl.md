@@ -35,7 +35,7 @@ follows:
 
     1. There is one node _R_ called the **root** of _T_.
 
-    1. Each node _N_ in _S_ may have has zero, one, or two **children**.
+    1. Each node _N_ in _S_ may have zero, one, or two **children**.
 
     1. Each node _N_ except _R_ is the child of exactly one node.
        (Equivalently, each node except _R_ has exactly one parent.)
