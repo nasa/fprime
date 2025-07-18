@@ -691,12 +691,12 @@ TEST_F(FpySequencerTester, setReg) {
 TEST_F(FpySequencerTester, unaryRegOp) {
     // Test NOT
     FpySequencer_UnaryRegOpDirective directiveNOT(0, 1, Fpy::DirectiveId::NOT);
-    tester_get_m_runtime_ptr()->regs[0] = 10;
+    tester_get_m_runtime_ptr()->regs[0] = true;
     DirectiveError err = DirectiveError::NO_ERROR;
     Signal result = tester_unaryRegOp_directiveHandler(directiveNOT, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->regs[1], ~10);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->regs[1], false);
 
     // Test out-of-bounds register index
     FpySequencer_UnaryRegOpDirective directiveOOB(Fpy::NUM_REGISTERS, 1, Fpy::DirectiveId::FPEXT);
@@ -711,7 +711,7 @@ TEST_F(FpySequencerTester, unaryRegOp) {
 
 
 TEST_F(FpySequencerTester, not) {
-    ASSERT_EQ(tester_unaryRegOp_not(0x123), ~0x123);
+    ASSERT_EQ(tester_unaryRegOp_not(true), false);
 }
 
 TEST_F(FpySequencerTester, fptrunc) {
@@ -737,6 +737,48 @@ TEST_F(FpySequencerTester, fpext) {
     F64 res_f;
     memcpy(&res_f, &res, sizeof(res_f));
     ASSERT_EQ(res_f, expected);
+}
+
+TEST_F(FpySequencerTester, fptosi) {
+    F64 src = 123.123;
+    I64 expected = static_cast<I64>(src);
+
+    I64 isrc;
+    memcpy(&isrc, &src, sizeof(isrc));
+
+    I64 res = tester_unaryRegOp_fptosi(isrc);
+    ASSERT_EQ(res, expected);
+}
+
+TEST_F(FpySequencerTester, sitofp) {
+    I64 src = 123;
+    F64 expected = static_cast<F64>(src);
+
+    I64 res = tester_unaryRegOp_sitofp(src);
+    F64 fres;
+    memcpy(&fres, &res, sizeof(res));
+    ASSERT_EQ(fres, expected);
+}
+
+TEST_F(FpySequencerTester, fptoui) {
+    F64 src = 123.123;
+    U64 expected = static_cast<U64>(src);
+
+    I64 isrc;
+    memcpy(&isrc, &src, sizeof(isrc));
+
+    I64 res = tester_unaryRegOp_fptoui(isrc);
+    ASSERT_EQ(static_cast<U64>(res), expected);
+}
+
+TEST_F(FpySequencerTester, uitofp) {
+    U64 src = std::numeric_limits<U64>::max();
+    F64 expected = static_cast<F64>(src);
+
+    I64 res = tester_unaryRegOp_uitofp(static_cast<I64>(src));
+    F64 fres;
+    memcpy(&fres, &res, sizeof(res));
+    ASSERT_EQ(fres, expected);
 }
 
 TEST_F(FpySequencerTester, exit) {
@@ -1193,20 +1235,20 @@ TEST_F(FpySequencerTester, readBytes) {
     tester_get_m_sequenceBuffer_ptr()->setExtBuffer(data, sizeof(data));
     Os::File seqFile;
     ASSERT_EQ(seqFile.open("test.bin", Os::File::OPEN_READ), Os::File::OP_OK);
-    ASSERT_EQ(tester_readBytes(seqFile, Fpy::Header::SERIALIZED_SIZE, true), Fw::Success::SUCCESS);
+    ASSERT_EQ(tester_readBytes(seqFile, Fpy::Header::SERIALIZED_SIZE, FpySequencer_FileReadStage::HEADER, true), Fw::Success::SUCCESS);
     seqFile.close();
 
     // check capacity too low
     tester_get_m_sequenceBuffer_ptr()->setExtBuffer(data, Fpy::Header::SERIALIZED_SIZE - 1);
     ASSERT_EQ(seqFile.open("test.bin", Os::File::OPEN_READ), Os::File::OP_OK);
-    ASSERT_EQ(tester_readBytes(seqFile, Fpy::Header::SERIALIZED_SIZE, true), Fw::Success::FAILURE);
+    ASSERT_EQ(tester_readBytes(seqFile, Fpy::Header::SERIALIZED_SIZE, FpySequencer_FileReadStage::HEADER, true), Fw::Success::FAILURE);
     seqFile.close();
 
     // check not enough bytes
     tester_get_m_sequenceBuffer_ptr()->setExtBuffer(data,
                                                     Fpy::Header::SERIALIZED_SIZE + Fpy::Footer::SERIALIZED_SIZE + 1);
     ASSERT_EQ(seqFile.open("test.bin", Os::File::OPEN_READ), Os::File::OP_OK);
-    ASSERT_EQ(tester_readBytes(seqFile, Fpy::Header::SERIALIZED_SIZE + Fpy::Footer::SERIALIZED_SIZE + 1, true),
+    ASSERT_EQ(tester_readBytes(seqFile, Fpy::Header::SERIALIZED_SIZE + Fpy::Footer::SERIALIZED_SIZE + 1, FpySequencer_FileReadStage::HEADER, true),
               Fw::Success::FAILURE);
 
     seqFile.close();
@@ -1214,7 +1256,7 @@ TEST_F(FpySequencerTester, readBytes) {
 
     // read after close
     ASSERT_DEATH_IF_SUPPORTED(
-        tester_readBytes(seqFile, Fpy::Header::SERIALIZED_SIZE + Fpy::Footer::SERIALIZED_SIZE, true), "Assert: ");
+        tester_readBytes(seqFile, Fpy::Header::SERIALIZED_SIZE + Fpy::Footer::SERIALIZED_SIZE, FpySequencer_FileReadStage::HEADER, true), "Assert: ");
 }
 
 TEST_F(FpySequencerTester, validate) {
