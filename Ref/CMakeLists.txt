@@ -4,24 +4,18 @@
 # This sets up the build for the 'Ref' Application, including the custom reference
 # components. In addition, it imports FPrime.cmake, which includes the core F Prime
 # components.
-#
-# This file has several sections.
-#
-# 1. Header Section: define basic properties of the build
-# 2. F prime core: includes all F prime core components, and build-system properties
-# 3. Local subdirectories: contains all deployment specific directory additions
 ####
 
-##
-# Section 1: Basic Project Setup
-#
-# This contains the basic project information. Specifically, a cmake version and
-# project definition.
-##
-cmake_minimum_required(VERSION 3.16)
+# Allow CMake 3.0 - 4.0 projects to set the VERSION variable in the `project` call
 cmake_policy(SET CMP0048 NEW)
+# CMake basic setup: version consistent with requirements.txt, and define a project 
+cmake_minimum_required(VERSION 3.26)
 project(Ref VERSION 1.0.0 LANGUAGES C CXX)
-##
+
+# Find the fprime package and include the core codebase
+set(FPRIME_INCLUDE_FRAMEWORK_CODE ON)
+find_package(FPrime REQUIRED PATHS "${CMAKE_CURRENT_LIST_DIR}/..")
+
 add_compile_options(
     $<$<COMPILE_LANGUAGE:CXX>:-Wold-style-cast>
     -Wall
@@ -35,34 +29,14 @@ add_compile_options(
     -pedantic
 )
 
-# Section 2: F prime Core
-#
-# This includes all of the F prime core components, and imports the make-system. F prime core
-# components will be placed in the F-Prime binary subdirectory to keep them from
-# colliding with deployment specific items.
-##
-include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime.cmake")
-# NOTE: register custom targets between these two lines
-fprime_setup_included_code()
-##
-# Section 3: Components and Topology
-#
-# This section includes deployment specific directories. This allows use of non-
-# core components in the topology, which is also added here.
-##
-# Add component subdirectories
+# Add subdirectories for the Ref project specific components
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PingReceiver/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/RecvBuffApp/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SendBuffApp/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SignalGen/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/TypeDemo/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/BlockDriver/")
-
-# Add Topology subdirectory
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Top/")
-
-#set(SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Main.cpp")
-#set(MOD_DEPS ${PROJECT_NAME}/Top)
 
 register_fprime_deployment(
     SOURCES
@@ -85,4 +59,3 @@ target_compile_options("${PROJECT_NAME}" PUBLIC -Wold-style-cast)
 target_compile_options("${PROJECT_NAME}" PUBLIC -Woverloaded-virtual)
 target_compile_options("${PROJECT_NAME}" PUBLIC -Wno-unused-parameter)
 target_compile_options("${PROJECT_NAME}" PUBLIC -Wundef)
-set_property(TARGET "${PROJECT_NAME}" PROPERTY CXX_STANDARD 11)
