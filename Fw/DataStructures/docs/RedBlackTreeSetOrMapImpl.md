@@ -38,7 +38,7 @@ follows:
     1. For each node _N_, there may be zero, one, or two nodes designated as 
        the **children** of _N_.
 
-    1. Each node _N_ except _R_ is the child of exactly one node.
+    1. Each node except _R_ is the child of exactly one node.
        (Equivalently, each node except _R_ has exactly one parent.)
 
     1. _R_ is not the child of any node.
@@ -195,8 +195,8 @@ Let _T_ be a red-black tree, and note the following:
 1. _T_ satisfies **RBT2** if and only if it has a defined black height.
 
 1. _T_ has a defined black height if and 
-   only if each of the child subtrees of _T_ has a defined black height,
-   and the two black heights are the same.
+   only if each of the child subtrees of the root of _T_ has a
+   defined black height, and the two black heights are the same.
 
 ### 1.5. Representing Forests
 
@@ -212,7 +212,7 @@ section **Red-Black Colorings** as follows:
 </div>
 </center>
 
-Similarly, we may represent the second tree shown above as follows:
+Similarly, we may represent the second tree shown in that section as follows:
 
 <center>
 <div>
@@ -220,7 +220,7 @@ Similarly, we may represent the second tree shown above as follows:
 </div>
 </center>
 
-Then it is easy to see that the first tree has black height 3,
+Then it is easy to see that the first tree has black height 2,
 and the second tree has no defined black height.
 
 ### 1.6. Local Constraint Violations
