@@ -1,24 +1,25 @@
 digraph {
 
-  2 -> 1
-  2 -> 4
-  4 -> 3
-  4 -> X [color="white"]
+  K2 -> K1
+  K2 -> K4
+  K4 -> K3
+  K4 -> X [color="invis"]
 
-  1 -> BHn
-  1 -> BHn
+  K1 -> BHn
+  K1 -> BHn
 
-  4 -> BHnPlus1
-  3 -> BHnPlus1
-  3 -> BHnPlus1
+  K4 -> BHnPlus1
+  K3 -> BHnPlus1
+  K3 -> BHnPlus1
 
-  1 [label="1 (uncle)"]
-  2 [label="2 (grandparent)",color="gray",fontcolor="gray"]
-  4 [label="4 (parent)",color="red",fontcolor="red"]
-  3 [color="red",fontcolor="red"]
+  K1 [label="K1 (uncle)"]
+  K2 [label="K2 (grandparent)"]
+  K4 [label="K4 (parent)",color="red",fontcolor="red"]
+  K3 [color="red",fontcolor="red"]
 
-  X [color="white",fontcolor="white"]
+  X [color="invis",fontcolor="invis"]
 
   BHn [shape="box",label="black height n",style="dotted",fontname="Italic"]
   BHnPlus1 [shape="box",label="black height n + 1",style="dotted",fontname="Italic"]
+
 }

@@ -102,11 +102,11 @@ Here is an example of a BST:
 In this diagram we adopt the following conventions, which we will use
 throughout this document:
 
-1. The labels in the nodes are symbolic names for the keys stored in the nodes.
-
 1. The left child of a node _N_, if it exists, is drawn to the left of and 
    below _N_.
    The right child of _N_, if it exists, is drawn to the right and below.
+
+1. The labels in the nodes are symbolic names for the keys stored in the nodes.
 
 1. A lexically prior name stores a prior key.
    For example, we could have K1 = 1, K2 = 2, K3 = 3; or K1 = `"a"`, K2 = 
@@ -838,8 +838,8 @@ It is not permissible for `node` to be `NONE`.
 **Algorithm:**
 
 _Here we assume that the tree is a red-black tree, that the
-child of `parent` in the direction `direction` is NONE,
-and that `node` has null children._
+child of `parent` in the direction `direction` is `NONE`,
+and that both children of `node` are `NONE`._
 
 1. Let `oppositeDirection = Node::getOppositeDirection(direction)`.
 
@@ -858,13 +858,14 @@ and that `node` has null children._
 
     1. In a for loop bounded by `getCapacity()`:
 
-        1. _Here the following invariants hold: (1) `node` is colored red; (2) the
-           tree is a red-black tree, except that the parent of `node` may be red._
+        1. _Here the following invariants hold: (1) `node` is colored red; (2) there
+           may be a red child violation at `parent`; and (3) there are no other
+           violations at any nodes._
 
         1. If `m_nodes[parent].color == BLACK` then set `done = true`
            and break out of the loop.
-           _Here we have replaced a black child of `parent` (the null child)
-           with a red node (`node`) that has two black children (the null children).
+           _Here we have replaced a black child of `parent` (the `NONE` child)
+           with a red node (`node`) that has two black children (the `NONE` children).
            Since `parent` is black, all invariants are preserved._
 
         1. Set `grandparent = m_nodes[parent].parent`.
@@ -872,8 +873,8 @@ and that `node` has null children._
         1. If `grandparent == NONE` then
 
             1. Set `m_nodes[parent].color = BLACK`.
-               _After this step the parent of `node` is no longer red, and
-               all other invariants are preserved._
+               _This step removes the red child violation at `parent`, and it preserves
+               all other invariants._
 
             1. Set `done = true`.
 
