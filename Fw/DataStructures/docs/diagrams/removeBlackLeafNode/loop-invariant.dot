@@ -1,0 +1,10 @@
+digraph {
+
+  P -> BHnPlus1
+  P -> BHn
+
+  P [label="parent",color="gray",fontcolor="gray"]
+  BHn [shape="box",label="black height n",style="dotted",fontname="Italic"]
+  BHnPlus1 [shape="box",label="black height n + 1",style="dotted",fontname="Italic"]
+
+}

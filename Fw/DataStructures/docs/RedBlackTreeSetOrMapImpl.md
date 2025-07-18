@@ -1004,9 +1004,9 @@ It must not be `NONE`.
 
 **Algorithm:**
 
-1. Assert `m_nodes[node].color == BLACK`.
-
-1. Assert `node != m_root`.
+1. _We assume that the tree is a red-black tree, that `node`
+   is colored black, that `node` is a leaf node, and that `node`
+   is not the root._
 
 1. Set `parent = m_nodes[node].parent`.
 
@@ -1022,13 +1022,35 @@ It must not be `NONE`.
 
 1. For each `i` in the range `[0, getCapacity())`
 
-    1. Set `sibling = m_nodes[parent].getChild(oppositeDirection)`.
+    1. _Constraint RBT1 is satisfied. Constraint RBT2 is violated because
+       the subtrees of `parent` look like this, assuming `direction == RIGHT`:_
 
-    1. Set `distantNephew = m_nodes[sibling].getChild(oppositeDirection)`.
+       <center>
+       <div>
+       <img src="diagrams/removeBlackLeafNode/loop-invariant.png" width=400/">
+       </div>
+       </center>
+
+       _Constraint RBT2 would be satisfied
+       if the child of `parent` in the direction `oppositeDirection` were replaced
+       with a valid red-black tree of black height n._
+
+    1. Set `sibling = m_nodes[parent].getChild(oppositeDirection)`.
 
     1. Set `closeNephew = m_nodes[sibling].getChild(direction)`.
 
+    1. Set `distantNephew = m_nodes[sibling].getChild(oppositeDirection)`.
+
     1. If `m_nodes[sibling].color == RED`
+
+        1. _The leaf-augmented subtree rooted at `parent` has this
+           shape, assuming that `direction == RIGHT`:_
+
+           <center>
+           <div>
+           <img src="diagrams/removeBlackLeafNode/red-sibling-1.png" width=400/">
+           </div>
+           </center>
 
         1. Call `rotateSubtree(parent, direction)`.
 
@@ -1042,30 +1064,59 @@ It must not be `NONE`.
 
         1. Set `distantNephew = m_nodes[sibling].getChild(oppositeDirection)`.
 
-        1. If `distantNephew != NONE` and `m_nodes[distantNephew].color == RED`
-           then call `removeBlackLeafNodeHelper2(parent, sibling, distantNephew, direction)`.
+        1. If `getColor(distantNephew) == RED`
 
-        1. Otherwise if `closeNephew != NONE` and `m_nodes[closeNephew].color == RED`
+            1. _The subtree has this shape:_
+
+               TODO
+           
+            1. Call `removeBlackLeafNodeHelper2(parent, sibling, distantNephew, direction)`.
+
+            1. _The subtree has this shape:_
+
+               TODO
+
+        1. Otherwise if `getColor(closeNephew) == RED`
+
+            1. _The subtree has this shape:_
+
+               TODO
 
             1. Call `removeBlackLeafNodeHelper1(closeNephew, direction, sibling, distantNephew)`.
 
+            1. _The subtree has this shape:_
+
+               TODO
+
             1. Call `removeBlackLeafNodeHelper2(parent, sibling, distantNephew, direction)`.
 
+            1. _The subtree has this shape:_
+
+               TODO
+
         1. Otherwise
+
+            1. _The subtree has this shape:_
+
+               TODO
 
             1. Set `m_nodes[sibling].color = RED`.
 
             1. Set `m_nodes[parent].color = BLACK`.
 
+            1. _The subtree has this shape:_
+
+               TODO
+
         1. Set `done = true`.
 
-    1. Otherwise if `m_nodes[distantNephew] != NONE` and `m_nodes[distantNephew].color == RED`
+    1. Otherwise if `getColor(distantNephew) == RED`
 
         1. Call `removeBlackLeafNodeHelper2(parent, sibling, distantNephew, direction)`.
 
         1. Set `done = true`.
 
-    1. Otherwise if `m_nodes[closeNephew] != NONE` and `m_nodes[closeNephew].color == RED`
+    1. Otherwise if `getColor(closeNephew) == RED`
 
         1. Call `removeBlackLeafNodeHelper1(closeNephew, direction, sibling, distantNephew)`.
 
@@ -1073,7 +1124,7 @@ It must not be `NONE`.
 
         1. Set `done = true`.
 
-    1. Otherwise if `m_nodes[parent].color == RED`
+    1. Otherwise if `getColor(parent) == RED`
 
         1. Set `m_nodes[sibling].color = RED`.
 
@@ -1081,9 +1132,19 @@ It must not be `NONE`.
 
         1. Set `done = true`.
 
-    1. Otherwise if `parent == NONE` then set `done = true`.
-
     1. Otherwise
+
+        1. _The leaf-augmented subtree rooted at `parent` has this
+           shape, assuming that `direction == RIGHT` and `distantNephew != NONE`
+           and `closeNephew != NONE`.
+           If either `distantNephew` or `closeNephew` is `NONE`, then the other is,
+           and the right child of `parent` is also `NONE`._
+
+           <center>
+           <div>
+           <img src="diagrams/removeBlackLeafNode/all-black-1.png" width=400/">
+           </div>
+           </center>
 
         1. Set `m_nodes[sibling].color = RED`.
 
@@ -1093,17 +1154,36 @@ It must not be `NONE`.
 
         1. If `parent == NONE`
 
-            1. Call `removeBlackLeafNodeHelper1(closeNephew, direction, sibling, distantNephew)`.
+            1. _The entire tree has this shape. It is a valid red-black tree._
 
-            1. Call `removeBlackLeafNodeHelper2(parent, sibling, distantNephew, direction)`.
+               <center>
+               <div>
+               <img src="diagrams/removeBlackLeafNode/all-black-2.png" width=400/">
+               </div>
+               </center>
 
             1. Set `done = true`.
 
+        1. Otherwise
+
+            1. Set `direction = getParentDirection(node)`.
+
+            1. Set `oppositeDirection = Node::getOppositeDirection(direction)`.
+
+            1. _The subtree rooted at `parent` has this shape, assuming that direction == RIGHT:_
+
+               <center>
+               <div>
+               <img src="diagrams/removeBlackLeafNode/all-black-5.png" width=400/">
+               </div>
+               </center>
+
+
     1. If `done == true` then break out of the loop.
 
-    1. Otherwise set `direction = getParentDirection(node)`.
-
 1. Assert `done == true`.
+
+1. _The tree is a valid red-black tree._
 
 ### 8.8. removeBlackLeafNodeHelper1
 
@@ -1210,9 +1290,9 @@ It must not be `NONE`.
 
 1. Otherwise
 
-    1. Let `parentDirection = getParentDirection(node)`.
+    1. Let `direction = getParentDirection(node)`.
 
-    1. Call `m_nodes[parent].setChild(parentDirection, child)`.
+    1. Call `m_nodes[parent].setChild(direction, child)`.
 
 1. Set `m_nodes[node].color = BLACK`.
 
@@ -1260,9 +1340,9 @@ It must not be `NONE`.
 
 1. Let `parent = m_nodes[node].parent`.
 
-1. Let `parentDirection = getParentDirection(node)`.
+1. Let `direction = getParentDirection(node)`.
 
-1. Call `m_nodes[parent].setChild(parentDirection, NONE)`.
+1. Call `m_nodes[parent].setChild(direction, NONE)`.
 
 ### 8.14. rotateSubtree
 
