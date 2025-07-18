@@ -1399,6 +1399,8 @@ or an assertion failure will occur:
 
 **Algorithm:**
 
+1. _We assume that the tree is a BST._
+
 1. Let `parent = m_nodes[node].parent`.
 
 1. Let `oppositeDirection = Node::getOppositeDirection(direction)`.
@@ -1425,10 +1427,11 @@ or an assertion failure will occur:
 
 1. Otherwise set `m_root = newRoot`.
 
+1. _The tree is a BST._
+
 **Example:**
 Here is an example of applying `rotateSubtree` to do a left rotation.
-Before applying the function, the tree looks like this
-(search keys shown, parent pointers and colors omitted, variable names shown):
+Before applying the function, the tree looks like this:
 
 <center>
 <div>
