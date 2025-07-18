@@ -65,7 +65,7 @@ throughout this document:
 
 1. The ovals are the nodes of the tree.
 
-1. An arrow indicates a parent-child relationship between nodes.
+1. A solid arrow denotes a parent-child relationship between nodes.
    Each arrow goes from parent to child.
 
 Let _T_ be a binary tree, and let _N_ be a node of _T_.
@@ -111,8 +111,6 @@ throughout this document:
 1. A lexically prior name stores a prior key.
    For example, we could have K1 = 1, K2 = 2, K3 = 3; or K1 = `"a"`, K2 = 
    `"b"`, K3 = `"c"`; etc.
-   This convention will help us keep track of the BST property
-   when we perform tree rotations.
    
 ### 1.3. Red-Black Colorings
 
@@ -127,9 +125,9 @@ satisfies the following constraints:
    follows.
    If _T_ is empty, then _T'_ consists of a single black node.
    Otherwise, _T'_ is the red-black colored binary tree
-   that results from (1) adding a black
+   that results from (1) adding a new black
    leaf node as a left child of every node of _T_ that has no left child
-   and (2) adding a black leaf node as a right child of every node of _T_
+   and (2) adding a new black leaf node as a right child of every node of _T_
    that has no right child.
    For each node _N_ in _T'_, every path that follows child links from _N_ to a 
    leaf node must pass through the same number of black nodes.
@@ -220,8 +218,8 @@ Let _T_ be a red-black tree, and note the following:
 ### 1.5. Representing Forests
 
 Let _F_ be a forest of red-black trees with a defined black height.
-To represent such a forest, we will write a dotted box, and we will write the 
-black height in the box.
+To represent such a forest, we will write a dotted box, and we may write  
+a property of the forest in the box.
 For example, we may represent the first tree shown in the
 section **Red-Black Colorings** as follows:
 
@@ -1056,8 +1054,10 @@ It must not be `NONE`.
    </center>
 
    _Constraint RBT2 is violated, because the left subtree
-    of parent has black height 2, and the right subtree has black height 1.
-    Therefore we perform rebalancing._
+    of `parent` has black height 2, and the right subtree has black height 1.
+    Therefore there is a black height violation at `parent` and
+    at every node in the path from the root to `parent`.
+    To comply with RBT2, we must perform rebalancing._
 
 1. For each `i` in the range `[0, getCapacity())`
 
