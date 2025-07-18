@@ -142,7 +142,7 @@ For example, this tree is a valid red-black tree:
 
 The color of a node in the diagram is its color in the 
 red-black coloring.
-Here is the corresponding leaf-augmented tree for checking RBT2:
+Here is the corresponding leaf-augmented tree for checking **RBT2**:
 
 <center>
 <div>
@@ -150,7 +150,7 @@ Here is the corresponding leaf-augmented tree for checking RBT2:
 </div>
 </center>
 
-Notice that RBT2 is satisfied because each path from the root to a leaf
+Notice that **RBT2** is satisfied because each path from the root to a leaf
 in the leaf-augmented tree passes through two black nodes.
 
 This tree is not a valid red-black tree because **RBT2** is not satisfied:
