@@ -26,6 +26,7 @@ jobs:
     uses: ./.github/workflows/reusable-get-pr-branch.yml
     with:
       target_repository: moisesmata/fprime-soak-aarch64linux
+      default_target_ref: main
 
   cross-compilation:
     name: "Cross Compilation"
