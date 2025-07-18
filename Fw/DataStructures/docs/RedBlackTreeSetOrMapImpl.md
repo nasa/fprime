@@ -1009,12 +1009,6 @@ It must not be `NONE`.
 
 1. Set `parent = m_nodes[node].parent`.
 
-1. Set `sibling = NONE`.
-
-1. Set `closeNephew = NONE`.
-
-1. Set `distantNephew = NONE`.
-
 1. Set `direction = getParentDirection(node)`.
 
 1. Set `oppositeDirection = Node::getOppositeDirection(direction)`.
