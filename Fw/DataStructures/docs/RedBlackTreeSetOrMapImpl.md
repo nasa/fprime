@@ -1076,7 +1076,7 @@ It must not be `NONE`.
 
        _Constraint RBT2 would be satisfied
        if the child of `parent` in the direction `direction` were replaced
-       with a valid red-black tree of black height i + 2._
+       with a red-black tree of black height i + 2._
 
     1. Set `sibling = m_nodes[parent].getChild(oppositeDirection)`.
 
