@@ -225,8 +225,8 @@ and the second tree has no defined black height.
 
 ### 1.6. Local Constraint Violations
 
-To describe the algorithms, it will be useful to have a precise way to describe
-where a constraint violation occurs in a red-black tree.
+To describe the algorithms, it will be useful to have a precise way to state
+where a constraint violation occurs in an invalid red-black tree.
 Therefore we make the following definitions for a red-black tree _T_:
 
 1. If any node _N_ is red and has at least one red child, then we say that _T_ has a
@@ -837,9 +837,9 @@ It is not permissible for `node` to be `NONE`.
 
 **Algorithm:**
 
-_Here we assume that the tree is a red-black tree, that the
-child of `parent` in the direction `direction` is `NONE`,
-and that both children of `node` are `NONE`._
+1. _Here we assume that the tree is a red-black tree, that the
+   child of `parent` in the direction `direction` is `NONE`,
+   and that both children of `node` are `NONE`._
 
 1. Let `oppositeDirection = Node::getOppositeDirection(direction)`.
 
@@ -964,7 +964,7 @@ and that both children of `node` are `NONE`._
 
     1. Assert `done`.
 
-_Here the tree is a red-black tree._
+    1. _Here the tree is a red-black tree._
 
 ### 8.6. removeNode
 
