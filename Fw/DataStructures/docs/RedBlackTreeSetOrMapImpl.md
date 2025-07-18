@@ -1009,13 +1009,14 @@ It must not be `NONE`.
    is not the root._
 
 1. Set `parent = m_nodes[node].parent`.
+   _Since `node` is not the root, `parent` is not `NONE`._
 
 1. Set `direction = getParentDirection(node)`.
 
 1. Set `oppositeDirection = Node::getOppositeDirection(direction)`.
 
-1. _The subtrees of `parent` in the leaf-augmented tree
-   look like this, assuming `direction == RIGHT`:_
+1. _The subtree rooted at `parent` in the leaf-augmented tree
+   looks like this, assuming `direction == RIGHT`:_
 
    <center>
    <div>
@@ -1029,8 +1030,9 @@ It must not be `NONE`.
 
 1. Set `done = false`.
 
-1. _On entry to the loop, the subtrees of `parent` in the leaf-augmented tree
-   look like this, assuming `direction == RIGHT`:_
+1. _On entry to the loop, the subtree rooted at `parent`
+   in the leaf-augmented tree
+   looks like this, assuming `direction == RIGHT`:_
 
    <center>
    <div>
@@ -1042,7 +1044,9 @@ It must not be `NONE`.
 
     1. _Constraint RBT1 is satisfied. Constraint RBT2 is violated because
        the subtrees of `parent` in the leaf-augmented tree look like this,
-       assuming `direction == RIGHT`, where i is the loop index:_
+       assuming `direction == RIGHT`, where i is the loop index.
+       Note that this diagram agrees with the previous one when i = 0._
+
 
        <center>
        <div>
