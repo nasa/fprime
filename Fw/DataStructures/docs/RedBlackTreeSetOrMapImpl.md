@@ -890,7 +890,8 @@ It is not permissible for `node` to be `NONE`.
 
                 1. If `parent.getChild(parentOppositeDirection) == node`
 
-                    1. _Here the subtree rooted at `grandparent` has the following 
+                    1. _Here the leaf-augmented subtree of the tree rooted at
+                       `grandparent` has the following 
                        shape, assuming that `parentDirection` is `RIGHT`:_
 
                        <center>
@@ -903,8 +904,8 @@ It is not permissible for `node` to be `NONE`.
 
                     1. Set `parent = m_nodes[grandparent].getChild(parentDirection)`.
 
-                1. _Here the subtree rooted at `grandparent` has the following 
-                   shape, assuming that `parentDirection` is `RIGHT`:_
+                1. _Here the leaf-augmented subtree rooted at `grandparent` has
+                   the following shape, assuming that `parentDirection` is `RIGHT`:_
 
                    <center>
                    <div>
@@ -920,7 +921,7 @@ It is not permissible for `node` to be `NONE`.
 
                 1. Set `done = true`.
 
-                1. _Here the subtree has the following shape:_
+                1. _Here the leaf-augmented subtree has the following shape:_
 
                    <center>
                    <div>
@@ -930,7 +931,7 @@ It is not permissible for `node` to be `NONE`.
 
             1. Otherwise
 
-                1. _Here the subtree of `grandparent` has one of four shapes,
+                1. _Here the leaf-augmented subtree of `grandparent` has one of four shapes,
                     one of which is shown below.
                     Each of the arrows to red nodes may point the other way._
 
@@ -950,7 +951,7 @@ It is not permissible for `node` to be `NONE`.
 
                 1. Set `parent = m_nodes[node].parent`.
 
-                1. _Here the subtree shown above is transformed into the following shape:_
+                1. _Here the tree shown above is transformed into the following shape:_
 
                    <center>
                    <div>
