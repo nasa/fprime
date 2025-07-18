@@ -80,8 +80,8 @@ namespace Drv {
       FW_ASSERT(serBuffer.getData());
       FW_ASSERT_NO_OVERFLOW(serBuffer.getSize(), size_t);
       // write data
-      stat = static_cast<int>(write(this->m_fd, serBuffer.getData(), static_cast<size_t>(serBuffer.getSize())));
-      if (stat == -1) {
+      ssize_t status_write = write(this->m_fd, serBuffer.getData(), static_cast<size_t>(serBuffer.getSize()));
+      if (status_write == -1) {
 	  return I2cStatus::I2C_WRITE_ERR;
       }
       return I2cStatus::I2C_OK;
@@ -107,8 +107,9 @@ namespace Drv {
       // make sure it isn't a null pointer
       FW_ASSERT(serBuffer.getData());
       // read data
-      stat = static_cast<int>(read(this->m_fd, serBuffer.getData(), serBuffer.getSize()));
-      if (stat == -1) {
+      FW_ASSERT_NO_OVERFLOW(serBuffer.getSize(), size_t);
+      ssize_t status_read = read(this->m_fd, serBuffer.getData(), static_cast<size_t>(serBuffer.getSize()));
+      if (status_read == -1) {
 	  return I2cStatus::I2C_READ_ERR;
       }
       return I2cStatus::I2C_OK;
