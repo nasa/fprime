@@ -1014,16 +1014,35 @@ It must not be `NONE`.
 
 1. Set `oppositeDirection = Node::getOppositeDirection(direction)`.
 
+1. _The subtrees of `parent` in the leaf-augmented tree
+   look like this, assuming `direction == RIGHT`:_
+
+   <center>
+   <div>
+   <img src="diagrams/removeBlackLeafNode/initial.png" width=300/">
+   </div>
+   </center>
+
 1. Call `m_nodes[parent].setChild(direction, NONE)`.
    _This step performs the deletion.
    The next steps are for rebalancing._
 
 1. Set `done = false`.
 
+1. _On entry to the loop, the subtrees of `parent` in the leaf-augmented tree
+   look like this, assuming `direction == RIGHT`:_
+
+   <center>
+   <div>
+   <img src="diagrams/removeBlackLeafNode/loop-entry.png" width=300/">
+   </div>
+   </center>
+
 1. For each `i` in the range `[0, getCapacity())`
 
     1. _Constraint RBT1 is satisfied. Constraint RBT2 is violated because
-       the subtrees of `parent` look like this, assuming `direction == RIGHT`:_
+       the subtrees of `parent` in the leaf-augmented tree look like this,
+       assuming `direction == RIGHT`, where i is the loop index:_
 
        <center>
        <div>
@@ -1033,7 +1052,7 @@ It must not be `NONE`.
 
        _Constraint RBT2 would be satisfied
        if the child of `parent` in the direction `oppositeDirection` were replaced
-       with a valid red-black tree of black height n._
+       with a valid red-black tree of black height i + 1._
 
     1. Set `sibling = m_nodes[parent].getChild(oppositeDirection)`.
 
@@ -1043,8 +1062,11 @@ It must not be `NONE`.
 
     1. If `m_nodes[sibling].color == RED`
 
-        1. _The leaf-augmented subtree rooted at `parent` has this
-           shape, assuming that `direction == RIGHT`:_
+        1. _The leaf-augmented subtree rooted at `parent` has this shape,
+           assuming that `direction == RIGHT` and `distantNephew != NONE`
+           and `closeNephew != NONE`.
+           If either `distantNephew` or `closeNephew` is `NONE`, then the other is,
+           and the right child of `parent` is also `NONE`._
 
            <center>
            <div>
@@ -1130,6 +1152,19 @@ It must not be `NONE`.
 
         1. Set `m_nodes[parent].color = BLACK`.
 
+        1. _The subtree rooted at `parent` has this shape,
+           assuming that `direction == RIGHT` and `distantNephew != NONE`
+           and `closeNephew != NONE`.
+           If either `distantNephew` or `closeNephew` is `NONE`, then the other is,
+           and the right child of `parent` is also `NONE`.
+           The entire tree is a valid red-black tree._
+
+           <center>
+           <div>
+           <img src="diagrams/removeBlackLeafNode/red-parent.png" width=400/">
+           </div>
+           </center>
+
         1. Set `done = true`.
 
     1. Otherwise
@@ -1174,10 +1209,11 @@ It must not be `NONE`.
 
                <center>
                <div>
-               <img src="diagrams/removeBlackLeafNode/all-black-5.png" width=400/">
+               <img src="diagrams/removeBlackLeafNode/all-black-3.png" width=400/">
                </div>
                </center>
 
+            1. Continue to the next loop iteration.
 
     1. If `done == true` then break out of the loop.
 
