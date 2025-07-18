@@ -1,0 +1,194 @@
+# Cross-compile https://github.com/moisesmata/fprime-soak-aarch64linux as system service on AArch64 Linux
+# Builds on release publication, stops old service, starts new service
+name: "Soak Test Setup AArch64 Linux: Soak Deployment"
+
+on:
+  release: 
+    types: [published]
+  workflow_dispatch:
+    #parameters needed to specify which release?
+
+# New releases cancel running deployments
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+env:
+  AARCH64_TOOLCHAIN_DIR: /tmp/aarch64-toolchain
+  AARCH64_TOOLCHAIN_URL: https://developer.arm.com/-/media/Files/downloads/gnu-a/10.2-2020.11/binrel/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu.tar.xz
+  FSW_SERVICE_NAME: soak-deployment-fsw
+  GDS_SERVICE_NAME: soak-deployment-gds
+  INSTALL_DIR: /opt/soak-deployment
+
+jobs:
+  get-branch:
+    name: "Get target branch"
+    uses: ./.github/workflows/reusable-get-pr-branch.yml
+    with:
+      target_repository: moisesmata/fprime-soak-aarch64linux
+
+  cross-compilation:
+    name: "Cross Compilation"
+    runs-on: ubuntu-22.04
+    needs: get-branch
+    steps:
+      - name: "Checkout target repository"
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          repository: moisesmata/fprime-soak-aarch64linux
+          ref: ${{ needs.get-branch.outputs.target-branch }}
+      - name: "Overlay current F´ revision"
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          path: ./fprime
+          fetch-depth: 0
+      - uses: ./fprime/.github/actions/setup
+        with:
+          location: ./fprime
+      - name: "Download and Setup AArch64 Linux Toolchain"
+        run: |
+          mkdir -p ${AARCH64_TOOLCHAIN_DIR}
+          wget -q ${AARCH64_TOOLCHAIN_URL}
+          tar -xf $(basename ${AARCH64_TOOLCHAIN_URL}) -C ${AARCH64_TOOLCHAIN_DIR} --strip-components 1
+          echo "${AARCH64_TOOLCHAIN_DIR}/bin" >> $GITHUB_PATH
+      - name: "Generate AArch64 Linux Build Cache"
+        run: |
+          fprime-util generate aarch64-linux
+      - name: "Build AArch64 Linux"
+        run: |
+          fprime-util build aarch64-linux
+      - name: "Prepare artifacts"
+        run: |
+          mkdir -p aarch64-linux-artifacts-soak
+          cp -r ./build-artifacts aarch64-linux-artifacts-soak
+          # Copy integration tests if they exist
+          if [ -d "./SoakDeployment/test/int" ]; then
+            cp -r ./SoakDeployment/test/int aarch64-linux-artifacts-soak
+          fi
+      - name: 'Archive Build Artifacts'
+        uses: actions/upload-artifact@v4
+        with:
+          name: aarch64-linux-artifacts-soak
+          path: aarch64-linux-artifacts-soak
+          retention-days: 5
+
+  deploy-service:
+    name: "Deploy as System Service"
+    runs-on: [self-hosted, ARM64]
+    needs: cross-compilation
+    steps:
+      - name: "Stop existing services if running"
+        run: |
+          echo "Stopping existing services if they exist..."
+          # Stop and disable services, || true to avoid errors
+
+          sudo systemctl stop ${FSW_SERVICE_NAME} || true
+          sudo systemctl disable ${FSW_SERVICE_NAME} || true
+          sudo systemctl stop ${GDS_SERVICE_NAME} || true
+          sudo systemctl disable ${GDS_SERVICE_NAME} || true 
+
+      - name: "Checkout F´ Repository"
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: 'requirements.txt'
+          sparse-checkout-cone-mode: false
+
+      - name: "Setup F´ Python Environment"
+        run: |
+          echo "Setting up F´ Python virtual environment..."
+          sudo mkdir -p ${INSTALL_DIR}/venv
+          sudo python3 -m venv ${INSTALL_DIR}/venv
+          
+          # Activate virtual environment and install F´ requirements
+          sudo ${INSTALL_DIR}/venv/bin/pip install --upgrade pip
+          sudo ${INSTALL_DIR}/venv/bin/pip install -r requirements.txt
+
+      - name: "Artifacts Download"
+        uses: actions/download-artifact@v4
+        with:
+          name: aarch64-linux-artifacts-soak
+
+      - name: "Install new binary"
+        run: |
+          echo "Installing new binary to ${INSTALL_DIR}..."
+          sudo mkdir -p ${INSTALL_DIR}/bin
+          sudo mkdir -p ${INSTALL_DIR}/dict
+          sudo mkdir -p ${INSTALL_DIR}/test
+          sudo mkdir -p ${INSTALL_DIR}/logs
+          
+          # Copy binary, dict, and test files
+          sudo cp ./build-artifacts/aarch64-linux/SoakDeployment/bin/SoakDeployment ${INSTALL_DIR}/bin/
+          sudo cp -r ./build-artifacts/aarch64-linux/SoakDeployment/dict/* ${INSTALL_DIR}/dict/
+          
+          # Copy test files if they exist
+          if [ -d "./int" ]; then
+            sudo cp -r ./int/* ${INSTALL_DIR}/test/
+          fi
+
+          # Make binary executable
+          sudo chmod +x ${INSTALL_DIR}/bin/SoakDeployment
+
+          # Set ownership, so service can access files
+          sudo chown -R fprime:fprime ${INSTALL_DIR}
+          
+      - name: "Create systemd service file"
+        run: |
+          echo "Creating systemd service file for SoakDeployment..."
+          sudo tee /etc/systemd/system/${FSW_SERVICE_NAME}.service > /dev/null << EOF
+          [Unit]
+          Description=F' Soak Deployment Application, system service meant for soak testing
+          After=network.target
+
+          [Service]
+          Type=simple
+          User=fprime
+          WorkingDirectory=${INSTALL_DIR}
+          ExecStart=${INSTALL_DIR}/bin/SoakDeployment -a 0.0.0.0 -p 50000
+          StandardOutput=journal
+          StandardError=journal
+
+          [Install]
+          WantedBy=multi-user.target
+          EOF
+          
+          echo "Creating systemd service file for GDS..."
+          sudo tee /etc/systemd/system/${GDS_SERVICE_NAME}.service > /dev/null << EOF
+          [Unit]
+          Description=F' GDS for Soak Deployment testing
+          After=network.target ${FSW_SERVICE_NAME}.service
+          Requires=${FSW_SERVICE_NAME}.service
+
+          [Service]
+          Type=simple
+          User=fprime
+          WorkingDirectory=${INSTALL_DIR}
+          ExecStart=${INSTALL_DIR}/venv/bin/fprime-gds --ip-client --ip-address 127.0.0.1 --ip-port 50000 -d ${INSTALL_DIR} --logs ${INSTALL_DIR}/logs 
+          StandardOutput=journal
+          StandardError=journal
+
+          [Install]
+          WantedBy=multi-user.target
+          EOF
+
+      - name: "Start and enable services"
+        run: |
+          echo "Starting and enabling services..."
+          sudo systemctl daemon-reload
+          
+          # start and enable gds service
+          sudo systemctl enable ${GDS_SERVICE_NAME}
+          sudo systemctl start ${GDS_SERVICE_NAME}
+
+          # start and enable binary
+          sudo systemctl start ${FSW_SERVICE_NAME}
+          sudo systemctl enable ${FSW_SERVICE_NAME}
+
+          echo "Waiting for services to stabilize..."
+          sleep 5 # Wait for services to stabilize
+
+          echo "Checking final service status..."
+          sudo systemctl status ${FSW_SERVICE_NAME} --no-pager -l -n 50
+          sudo systemctl status ${GDS_SERVICE_NAME} --no-pager -l -n 150
+          
