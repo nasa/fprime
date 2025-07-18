@@ -5,10 +5,10 @@ digraph {
   N -> L1
   N -> L2
 
-  P [label="parent",color="gray",fontcolor="gray"]
+  P [label="parent",color="darkgray",fontcolor="darkgray"]
   BH2 [shape="box",label="black height 2",style="dotted",fontname="Italic"]
   N [label="node"]
-  L1 [style="dotted",fontcolor="invis"]
-  L2 [style="dotted",fontcolor="invis"]
+  L1 [fontcolor="invis"]
+  L2 [fontcolor="invis"]
 
 }

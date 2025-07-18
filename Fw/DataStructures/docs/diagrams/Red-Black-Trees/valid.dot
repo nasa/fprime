@@ -2,17 +2,9 @@ digraph {
 
   K2 -> K1
   K2 -> K3
-  K1 -> A
-  K1 -> B
-  K3 -> C
-  K3 -> D
 
   K1 [color="red",fontcolor="red"]
   K2 
   K3 [color="red",fontcolor="red"]
-  A [style="dotted",fontcolor="invis"]
-  B [style="dotted",fontcolor="invis"]
-  C [style="dotted",fontcolor="invis"]
-  D [style="dotted",fontcolor="invis"]
 
 }

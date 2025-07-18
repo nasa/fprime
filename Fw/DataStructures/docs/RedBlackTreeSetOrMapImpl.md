@@ -30,13 +30,18 @@ follows:
 
 1. _T_ has a set _S_ of **nodes**.
 
-
 1. If _S_ is nonempty, then
 
     1. There is one node _R_ called the **root** of _T_.
 
-    1. For each node _N_, there may be zero, one, or two nodes designated as 
-       the **children** of _N_.
+    1. For each node _N_
+
+        1. There may be zero, one, or two nodes designated as 
+           the **children** of _N_.
+
+        1. Each child of _N_ is designated the **left** or **right** child of _N_.
+           If N has two children, then there is exactly one left
+           child and one right child.
 
     1. Each node except _R_ is the child of exactly one node.
        (Equivalently, each node except _R_ has exactly one parent.)
@@ -77,11 +82,6 @@ additional properties:
 1. Each node _N_ of _T_ stores a **key** _K_.
 All the keys are values of the same totally-ordered type,
 e.g., integers, strings, etc.
-
-1. For each node _N_ of _T_, each child of _N_ is designated the
-   **left** or **right** child of _N_.
-   If _N_ has two children, then there is exactly one left child
-   and exactly one right child.
 
 1. Each node _N_ of _T_ satisfies the following properties:
 
@@ -126,7 +126,8 @@ satisfies the following constraints:
 1. **RBT2:** Let _T'_ be the **leaf-augmented tree** constructed from _T_ as 
    follows.
    If _T_ is empty, then _T'_ consists of a single black node.
-   Otherwise, _T'_ is the tree that results from (1) adding a black
+   Otherwise, _T'_ is the red-black colored binary tree
+   that results from (1) adding a black
    leaf node as a left child of every node of _T_ that has no left child
    and (2) adding a black leaf node as a right child of every node of _T_
    that has no right child.
@@ -137,23 +138,41 @@ For example, this tree is a valid red-black tree:
 
 <center>
 <div>
-<img src="diagrams/Red-Black-Trees/valid.png" width=300/">
+<img src="diagrams/Red-Black-Trees/valid.png" width=200/">
 </div>
 </center>
 
 The color of a node in the diagram is its color in the 
 red-black coloring.
-The dotted nodes are the leaves of the leaf-augmented tree.
+Here is the corresponding leaf-augmented tree for checking RBT2:
+
+<center>
+<div>
+<img src="diagrams/Red-Black-Trees/valid-augmented.png" width=300/">
+</div>
+</center>
+
+Notice that RBT2 is satisfied because each path from the root to a leaf
+in the leaf-augmented tree passes through two black nodes.
 
 This tree is not a valid red-black tree because **RBT2** is not satisfied:
 
 <center>
 <div>
-<img src="diagrams/Red-Black-Trees/black-height-violation.png" width=300/">
+<img src="diagrams/Red-Black-Trees/rbt2-violation.png" width=200/">
 </div>
 </center>
 
-Note that the path from K2 to either child of K1 goes through two black nodes,
+Here is the corresponding leaf-augmented tree:
+
+<center>
+<div>
+<img src="diagrams/Red-Black-Trees/rbt2-violation-augmented.png" width=300/">
+</div>
+</center>
+
+Note that in the leaf-augmented tree,
+the path from K2 to either child of K1 goes through two black nodes,
 while the path from K2 to its right child goes through one black node.
 
 The standard BST insert and remove operations can violate the
@@ -890,8 +909,7 @@ It is not permissible for `node` to be `NONE`.
 
                 1. If `parent.getChild(parentOppositeDirection) == node`
 
-                    1. _Here the leaf-augmented subtree of the tree rooted at
-                       `grandparent` has the following 
+                    1. _The leaf-augmented subtree rooted at `grandparent` has the following 
                        shape, assuming that `parentDirection` is `RIGHT`:_
 
                        <center>
@@ -904,7 +922,7 @@ It is not permissible for `node` to be `NONE`.
 
                     1. Set `parent = m_nodes[grandparent].getChild(parentDirection)`.
 
-                1. _Here the leaf-augmented subtree rooted at `grandparent` has
+                1. _The leaf-augmented subtree rooted at `grandparent` has
                    the following shape, assuming that `parentDirection` is `RIGHT`:_
 
                    <center>
@@ -921,7 +939,7 @@ It is not permissible for `node` to be `NONE`.
 
                 1. Set `done = true`.
 
-                1. _Here the leaf-augmented subtree has the following shape:_
+                1. _The subtree has the following shape:_
 
                    <center>
                    <div>
@@ -931,7 +949,7 @@ It is not permissible for `node` to be `NONE`.
 
             1. Otherwise
 
-                1. _Here the leaf-augmented subtree of `grandparent` has one of four shapes,
+                1. _The leaf-augmented subtree rooted at `grandparent` has one of four shapes,
                     one of which is shown below.
                     Each of the arrows to red nodes may point the other way._
 
@@ -1015,8 +1033,7 @@ It must not be `NONE`.
 
 1. Set `oppositeDirection = Node::getOppositeDirection(direction)`.
 
-1. _The subtree rooted at `parent` in the leaf-augmented tree
-   looks like this, assuming `direction == RIGHT`:_
+1. _The leaf-augmented subtree rooted at `parent` looks like this, assuming `direction == RIGHT`:_
 
    <center>
    <div>
@@ -1025,13 +1042,11 @@ It must not be `NONE`.
    </center>
 
 1. Call `m_nodes[parent].setChild(direction, NONE)`.
-   _This step performs the deletion.
-   The next steps are for rebalancing._
+   _This step performs the deletion._
 
 1. Set `done = false`.
 
-1. _On entry to the loop, the subtree rooted at `parent`
-   in the leaf-augmented tree
+1. _The leaf-augmented subtree rooted at `parent`
    looks like this, assuming `direction == RIGHT`:_
 
    <center>
@@ -1040,11 +1055,16 @@ It must not be `NONE`.
    </div>
    </center>
 
+   _Constraint RBT2 is violated, because the left subtree
+    of parent has black height 2, and the right subtree has black height 1.
+    Therefore we perform rebalancing._
+
 1. For each `i` in the range `[0, getCapacity())`
 
     1. _Constraint RBT1 is satisfied. Constraint RBT2 is violated because
-       the subtrees of `parent` in the leaf-augmented tree look like this,
-       assuming `direction == RIGHT`, where i is the loop index.
+       the leaf-augmented subtrees of `parent` look like this,
+       assuming `direction == RIGHT`.
+       i is the loop index.
        Note that this diagram agrees with the previous one when i = 0._
 
 
@@ -1055,8 +1075,8 @@ It must not be `NONE`.
        </center>
 
        _Constraint RBT2 would be satisfied
-       if the child of `parent` in the direction `oppositeDirection` were replaced
-       with a valid red-black tree of black height i + 1._
+       if the child of `parent` in the direction `direction` were replaced
+       with a valid red-black tree of black height i + 2._
 
     1. Set `sibling = m_nodes[parent].getChild(oppositeDirection)`.
 
@@ -1156,7 +1176,7 @@ It must not be `NONE`.
 
         1. Set `m_nodes[parent].color = BLACK`.
 
-        1. _The subtree rooted at `parent` has this shape,
+        1. _The leaf-augmented subtree rooted at `parent` has this shape,
            assuming that `direction == RIGHT` and `distantNephew != NONE`
            and `closeNephew != NONE`.
            If either `distantNephew` or `closeNephew` is `NONE`, then the other is,
@@ -1193,7 +1213,8 @@ It must not be `NONE`.
 
         1. If `parent == NONE`
 
-            1. _The entire tree has this shape. It is a valid red-black tree._
+            1. _The entire leaf-augmented tree has this shape.
+               The entire tree is a valid red-black tree._
 
                <center>
                <div>
@@ -1209,7 +1230,8 @@ It must not be `NONE`.
 
             1. Set `oppositeDirection = Node::getOppositeDirection(direction)`.
 
-            1. _The subtree rooted at `parent` has this shape, assuming that direction == RIGHT:_
+            1. _The leaf-augmented subtree rooted at `parent` has this shape, 
+               assuming that direction == RIGHT:_
 
                <center>
                <div>
@@ -1217,7 +1239,10 @@ It must not be `NONE`.
                </div>
                </center>
 
-            1. Continue to the next loop iteration.
+               _RBT2 is not satisfied because the left subtree of `parent` has
+               black height i + 3, and the right subtree has black height i + 2.
+               So we need at least one more loop iteration.
+               After incrementing i, the invariant at the top of the loop is satisfied._
 
     1. If `done == true` then break out of the loop.
 
