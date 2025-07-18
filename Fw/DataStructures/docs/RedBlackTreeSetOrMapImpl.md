@@ -964,7 +964,7 @@ It is not permissible for `node` to be `NONE`.
 
     1. Assert `done`.
 
-    1. _Here the tree is a red-black tree._
+1. _Here the tree is a red-black tree._
 
 ### 8.6. removeNode
 
