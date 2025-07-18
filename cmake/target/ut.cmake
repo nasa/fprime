@@ -62,7 +62,10 @@ function(ut_add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPEND
         endif()
     endforeach()
     add_custom_target("${MODULE}_${FPRIME__INTERNAL_UT_TARGET}")
-    add_dependencies("${MODULE}_${FPRIME__INTERNAL_UT_TARGET}" ${DEPLOYMENT_TESTS})
+    # Add dependencies if tests have been defined
+    if (DEPLOYMENT_TESTS)
+        add_dependencies("${MODULE}_${FPRIME__INTERNAL_UT_TARGET}" ${DEPLOYMENT_TESTS})
+    endif()
     fprime_util_metadata_add_build_target("${MODULE}_${FPRIME__INTERNAL_UT_TARGET}")
 endfunction(ut_add_deployment_target)
 
