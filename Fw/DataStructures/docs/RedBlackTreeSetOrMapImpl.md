@@ -890,7 +890,7 @@ and that both children of `node` are `NONE`._
 
                 1. If `parent.getChild(parentOppositeDirection) == node`
 
-                    1. _Here the subtree of `grandparent` has the following 
+                    1. _Here the subtree rooted at `grandparent` has the following 
                        shape, assuming that `parentDirection` is `RIGHT`:_
 
                        <center>
@@ -903,14 +903,14 @@ and that both children of `node` are `NONE`._
 
                     1. Set `parent = m_nodes[grandparent].getChild(parentDirection)`.
 
-                    1. _Here the subtree of `grandparent` has the following 
-                       shape, assuming that `parentDirection` is `RIGHT`:_
+                1. _Here the subtree rooted at `grandparent` has the following 
+                   shape, assuming that `parentDirection` is `RIGHT`:_
 
-                       <center>
-                       <div>
-                       <img src="diagrams/insertNode/black-uncle-2.png" width=300/">
-                       </div>
-                       </center>
+                   <center>
+                   <div>
+                   <img src="diagrams/insertNode/black-uncle-2.png" width=300/">
+                   </div>
+                   </center>
 
                 1. Call `rotateSubtree(grandparent, parentOppositeDirection)`.
 
