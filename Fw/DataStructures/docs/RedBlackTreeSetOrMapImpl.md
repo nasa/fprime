@@ -23,9 +23,9 @@ the other paths.
 Therefore the validity constraints ensure that search in the BST is fast
 (order log _n_).
 
-### 1.1. Trees
+### 1.1. Binary Trees
 
-A **tree** _T_ is a data structure defined as 
+A **binary tree** _T_ is a data structure defined as 
 follows:
 
 1. _T_ has a set _S_ of **nodes**.
@@ -47,7 +47,7 @@ follows:
     1. No path that starts at a node and follows child links
        contains a cycle.
 
-Here is an example of a tree:
+Here is an example of a binary tree:
 
 <center>
 <div>
@@ -63,7 +63,7 @@ throughout this document:
 1. An arrow indicates a parent-child relationship between nodes.
    Each arrow goes from parent to child.
 
-Let _T_ be a tree, and let _N_ be a node of _T_.
+Let _T_ be a binary tree, and let _N_ be a node of _T_.
 We say that _N_ is a **leaf** node of _T_ if _N_
 has no children.
 For example, the tree shown above has a root, two leaves,
@@ -71,7 +71,7 @@ and no other nodes.
 
 ### 1.2. Binary Search Trees
 
-A **binary search tree** (BST) is a tree _T_ with the following
+A **binary search tree** (BST) is a binary tree _T_ with the following
 additional properties:
 
 1. Each node _N_ of _T_ stores a **key** _K_.
