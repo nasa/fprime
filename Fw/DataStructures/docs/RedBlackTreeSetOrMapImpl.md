@@ -85,10 +85,12 @@ e.g., integers, strings, etc.
 
 1. Each node _N_ of _T_ satisfies the following properties:
 
-    1. If _N_ has a left child _LC_, then the key stored in
+    1. If _N_ has a left child _LC_, then any key stored in
+       _LC_ or in any node reachable by following child links from
        _LC_ compares less than the key stored in _N_.
 
     1. If _N_ has a right child _RC_, then the key stored in
+       _RC_ or in any node reachable by following child links from
        _RC_ compares greater than the key stored in _N_.
 
 Here is an example of a BST:
