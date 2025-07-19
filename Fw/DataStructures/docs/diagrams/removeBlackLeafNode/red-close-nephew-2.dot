@@ -11,7 +11,7 @@ digraph {
 
   K2 [label="K2 (distantNephew)",color="red",fontcolor="red"]
   K5 [label="K5 (sibling)"]
-  K6 [label="K6 (parent)"]
+  K6 [label="K6 (parent)",color="gray",fontcolor="gray"]
 
   BH1 [shape="box",label="black height i + 1",style="dotted",fontname="Italic"]
   BH2 [shape="box",label="black height i + 1",style="dotted",fontname="Italic"]
