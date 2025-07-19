@@ -1140,21 +1140,17 @@ It must not be `NONE`.
 
             1. Call `removeBlackLeafNodeHelper2(parent, sibling, distantNephew, direction)`.
 
-            1. _The subtree has this shape:_
+            1. _The subtree has this shape. The entire tree is a valid red-black tree._
 
                TODO
 
         1. Otherwise
 
-            1. _The subtree has this shape:_
-
-               TODO
-
             1. Set `m_nodes[sibling].color = RED`.
 
             1. Set `m_nodes[parent].color = BLACK`.
 
-            1. _The subtree has this shape:_
+            1. _The subtree has this shape. The entire tree is a valid red-black tree._
 
                TODO
 
@@ -1162,15 +1158,35 @@ It must not be `NONE`.
 
     1. Otherwise if `getColor(distantNephew) == RED`
 
+        1. _The subtree has this shape:_
+
+           TODO
+
         1. Call `removeBlackLeafNodeHelper2(parent, sibling, distantNephew, direction)`.
+
+        1. _The subtree has this shape. The entire tree is a valid red-black tree._
+
+           TODO
 
         1. Set `done = true`.
 
     1. Otherwise if `getColor(closeNephew) == RED`
 
+        1. _The subtree has this shape:_
+
+           TODO
+
         1. Call `removeBlackLeafNodeHelper1(closeNephew, direction, sibling, distantNephew)`.
 
+        1. _The subtree has this shape:_
+
+           TODO
+
         1. Call `removeBlackLeafNodeHelper2(parent, sibling, distantNephew, direction)`.
+
+        1. _The subtree has this shape. The entire tree is a valid red-black tree._
+
+           TODO
 
         1. Set `done = true`.
 
