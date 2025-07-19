@@ -7,8 +7,9 @@ digraph {
 
   K1 -> BH2
   K1 -> BH2
-  K4 -> BH2
-  K4 -> BH2
+
+  K4 -> BH3
+  K4 -> BH3
 
   K1 [label="K1 (distantNephew)"]
   K2 [label="K2 (sibling)",color="red",fontcolor="red"]
@@ -17,5 +18,6 @@ digraph {
 
   BH1 [shape="box",label="black height i + 1",style="dotted",fontname="Italic"]
   BH2 [shape="box",label="black height i + 1",style="dotted",fontname="Italic"]
+  BH3 [shape="box",label="black height i + 1",style="dotted",fontname="Italic"]
 
 }
