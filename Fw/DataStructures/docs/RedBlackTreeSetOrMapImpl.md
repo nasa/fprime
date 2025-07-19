@@ -1316,7 +1316,7 @@ written).
 
 **Algorithm:**
 
-1. Call `rotateSubtree(sibling, oppositDirection)`.
+1. Call `rotateSubtree(sibling, oppositeDirection)`.
 
 1. Set `m_nodes[sibling].color = RED`.
 
