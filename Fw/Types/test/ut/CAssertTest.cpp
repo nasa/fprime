@@ -12,41 +12,57 @@
  * in embedded systems.
  */
 
-// Define a simple test assert hook
+// Define an Assert handler
 class TestAssertHook : public Fw::AssertHook {
     public:
-        TestAssertHook() : m_asserted(false), m_numArgs(0), m_arg1(0) {}
+        TestAssertHook() {}
         virtual ~TestAssertHook() {}
-        
         void reportAssert(FILE_NAME_ARG file,
-                         FwSizeType lineNo,
-                         FwSizeType numArgs,
-                         FwAssertArgType arg1,
-                         FwAssertArgType arg2,
-                         FwAssertArgType arg3,
-                         FwAssertArgType arg4,
-                         FwAssertArgType arg5,
-                         FwAssertArgType arg6) {
-            m_file = file;
-            m_lineNo = lineNo;
-            m_numArgs = numArgs;
-            m_arg1 = arg1;
-        }
-        
-        void doAssert() { m_asserted = true; }
-        
-        bool assertFailed() const { return m_asserted; }
-        FwSizeType getNumArgs() const { return m_numArgs; }
-        FwAssertArgType getArg1() const { return m_arg1; }
-        
-    private:
-        bool m_asserted;
-        FILE_NAME_ARG m_file;
-        FwSizeType m_lineNo;
-        FwSizeType m_numArgs;
-        FwAssertArgType m_arg1;
-};
+                        FwSizeType lineNo,
+                        FwSizeType numArgs,
+                        FwAssertArgType arg1,
+                        FwAssertArgType arg2,
+                        FwAssertArgType arg3,
+                        FwAssertArgType arg4,
+                        FwAssertArgType arg5,
+                        FwAssertArgType arg6) {
+            this->m_file = file;
+            this->m_lineNo = lineNo;
+            this->m_numArgs = numArgs;
+            this->m_arg1 = arg1;
+        };
 
+        void doAssert() { this->m_asserted = true; }
+
+        FILE_NAME_ARG getFile() { return this->m_file; }
+
+        FwSizeType getLineNo() { return this->m_lineNo; }
+
+        FwSizeType getNumArgs() { return this->m_numArgs; }
+
+        FwAssertArgType getArg1() { return this->m_arg1; }
+
+        bool asserted() {
+            bool didAssert = this->m_asserted;
+            this->m_asserted = false;
+            return didAssert;
+        }
+
+    private:
+#if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
+        // Setting this to a non-zero initially as the test
+        // should set it to 0.
+        FILE_NAME_ARG m_file = 1; 
+#else
+        FILE_NAME_ARG m_file = nullptr;
+#endif
+        FwSizeType m_lineNo = 0;
+        FwSizeType m_numArgs = 0;
+        FwAssertArgType m_arg1 = 0;
+        bool m_asserted = false;
+    };
+
+    
 // Test that FW_CASSERT_1 macro compiles and works correctly when true
 TEST(CAssertTest, CAssert1Macro) {
     // Disable old-style cast warnings for this test since we're testing C macros
@@ -104,7 +120,7 @@ TEST(CAssertTest, CAssert1MacroFailure) {
     FW_CASSERT_1(testValue == 999, testValue); // This should trigger the assert hook
     
     // Verify that assertion was triggered
-    EXPECT_TRUE(hook.assertFailed());
+    EXPECT_TRUE(hook.asserted());
     EXPECT_EQ(hook.getNumArgs(), 1U);
     EXPECT_EQ(hook.getArg1(), static_cast<FwAssertArgType>(testValue));
     
@@ -132,7 +148,7 @@ TEST(CAssertTest, CAssertMacroFailure) {
     FW_CASSERT(1 == 2); // This should trigger the assert hook
     
     // Verify that assertion was triggered
-    EXPECT_TRUE(hook.assertFailed());
+    EXPECT_TRUE(hook.asserted());
     EXPECT_EQ(hook.getNumArgs(), 0U); // FW_CASSERT has no arguments
     
     // Deregister hook
