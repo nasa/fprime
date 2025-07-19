@@ -15,7 +15,7 @@ digraph {
   K1 [label="K1 (uncle)"]
   K2 [label="K2 (grandparent)"]
   K4 [label="K4 (parent)",color="red",fontcolor="red"]
-  K3 [color="red",fontcolor="red"]
+  K3 [label="K3 (node)",color="red",fontcolor="red"]
 
   X [color="invis",fontcolor="invis"]
 

@@ -858,7 +858,7 @@ It is not permissible for `node` to be `NONE`.
 
 **Algorithm:**
 
-1. _Here we assume that the tree is a red-black tree, that the
+1. _We assume that the tree is a red-black tree, that the
    child of `parent` in the direction `direction` is `NONE`,
    and that both children of `node` are `NONE`._
 
@@ -869,7 +869,7 @@ It is not permissible for `node` to be `NONE`.
 1. Set `m_nodes[node].parent = parent`.
 
 1. If `parent == NONE` then set `m_root = node`.
-   _Here the tree was empty, and now it consists of a single red node._
+   _The tree was empty, and now it consists of a single red node._
 
 1. Otherwise
 
@@ -879,15 +879,13 @@ It is not permissible for `node` to be `NONE`.
 
     1. In a for loop bounded by `getCapacity()`:
 
-        1. _Here the following invariants hold: (1) `node` is colored red; (2) there
+        1. _The following invariants hold: (1) `node` is colored red; (2) there
            may be a red child violation at `parent`; and (3) there are no other
            violations at any nodes._
 
         1. If `m_nodes[parent].color == BLACK` then set `done = true`
            and break out of the loop.
-           _Here we have replaced a black child of `parent` (the `NONE` child)
-           with a red node (`node`) that has two black children (the `NONE` children).
-           Since `parent` is black, all invariants are preserved._
+           _There is no red child violation at `parent`, because `parent` is black._
 
         1. Set `grandparent = m_nodes[parent].parent`.
 
@@ -1089,7 +1087,7 @@ It must not be `NONE`.
     1. Set `distantNephew = m_nodes[sibling].getChild(oppositeDirection)`.
 
     1. _The leaf-augmented subtree rooted at `parent` has this shape
-       (direction == `RIGHT`):_
+       (direction == `RIGHT`)._
 
        <center>
        <div>
