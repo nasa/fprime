@@ -29,7 +29,7 @@ set(UT_MOD_DEPS
 # UT_SOURCE_FILES: Sources for unit test
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/passive.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.hpp"
   "${CMAKE_CURRENT_LIST_DIR}/../tests/TestMain.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../tests/Tests.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../tests/TesterHandlers.cpp"
@@ -43,6 +43,7 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/../tests/TimeTests.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../types/FormalParamTypes.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../../utils/Utils.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/PassiveTestTester.cpp"
 )
 # Needed for compiling files using Tester.hpp from outside the directory
 include_directories("${CMAKE_CURRENT_LIST_DIR}/test/ut")
