@@ -240,6 +240,8 @@ Similarly, we may represent the second tree shown in that section as follows:
 Then it is easy to see that the first tree has black height 2,
 and the second tree has no defined black height.
 
+An arrow pointing to an empty forest means the same thing as no arrow.
+
 ### 1.6. Local Constraint Violations
 
 To describe the algorithms, it will be useful to have a precise way to state
@@ -1031,7 +1033,8 @@ It must not be `NONE`.
 
 1. Set `oppositeDirection = Node::getOppositeDirection(direction)`.
 
-1. _The leaf-augmented subtree rooted at `parent` looks like this, assuming `direction == RIGHT`:_
+1. _The leaf-augmented subtree rooted at `parent` has this shape, assuming `direction == RIGHT`.
+   We use gray to represent the unknown color (red or black) of `parent`._
 
    <center>
    <div>
@@ -1062,11 +1065,10 @@ It must not be `NONE`.
 1. For each `i` in the range `[0, getCapacity())`
 
     1. _Constraint RBT1 is satisfied. Constraint RBT2 is violated because
-       the leaf-augmented subtrees of `parent` look like this,
+       the leaf-augmented subtree rooted at `parent` has this shape,
        assuming `direction == RIGHT`.
        i is the loop index.
        Note that this diagram agrees with the previous one when i = 0._
-
 
        <center>
        <div>
@@ -1083,6 +1085,15 @@ It must not be `NONE`.
     1. Set `closeNephew = m_nodes[sibling].getChild(direction)`.
 
     1. Set `distantNephew = m_nodes[sibling].getChild(oppositeDirection)`.
+
+    1. _The leaf-augmented subtree rooted at `parent` has this shape
+       (direction == `RIGHT`):_
+
+       <center>
+       <div>
+       <img src="diagrams/removeBlackLeafNode/loop-invariant-a.png" width=400/">
+       </div>
+       </center>
 
     1. If `m_nodes[sibling].color == RED`
 
