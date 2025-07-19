@@ -1217,7 +1217,7 @@ It must not be `NONE`.
 
            <center>
            <div>
-           <img src="diagrams/removeBlackLeafNode/red-parent.png" width=400/">
+           <img src="diagrams/removeBlackLeafNode/red-parent.png" width=500/">
            </div>
            </center>
 
