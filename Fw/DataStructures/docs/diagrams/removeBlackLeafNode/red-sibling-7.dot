@@ -21,13 +21,13 @@ digraph {
   K2 [label="K2"]
   K3 [label="K3 (distant nephew)"]
   K4 [label="K4 (sibling)",color="red",fontcolor="red"]
-  K5 [label="K4 (close nephew)"]
+  K5 [label="K5 (close nephew)"]
   K6 [label="K6 (parent)"]
 
   BH1 [shape="box",label="black height i + 1",style="dotted",fontname="Italic"]
-  BH2 [shape="box",label="black height i + 1",style="dotted",fontname="Italic"]
+  BH2 [shape="box",label="black height i",style="dotted",fontname="Italic"]
   BH3 [shape="box",label="black height i + 1",style="dotted",fontname="Italic"]
-  BH4 [shape="box",label="black height i + 1",style="dotted",fontname="Italic"]
+  BH4 [shape="box",label="black height i",style="dotted",fontname="Italic"]
 
 
 }
