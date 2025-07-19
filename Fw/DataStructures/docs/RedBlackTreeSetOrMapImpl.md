@@ -1090,7 +1090,7 @@ It must not be `NONE`.
 
            <center>
            <div>
-           <img src="diagrams/removeBlackLeafNode/red-sibling-1.png" width=400/">
+           <img src="diagrams/removeBlackLeafNode/red-sibling-1.png" width=500/">
            </div>
            </center>
 
@@ -1112,7 +1112,7 @@ It must not be `NONE`.
 
                <center>
                <div>
-               <img src="diagrams/removeBlackLeafNode/red-sibling-2.png" width=400/">
+               <img src="diagrams/removeBlackLeafNode/red-sibling-2.png" width=500/">
                </div>
                </center>
            
@@ -1122,7 +1122,7 @@ It must not be `NONE`.
 
                <center>
                <div>
-               <img src="diagrams/removeBlackLeafNode/red-sibling-3.png" width=400/">
+               <img src="diagrams/removeBlackLeafNode/red-sibling-3.png" width=500/">
                </div>
                </center>
 
