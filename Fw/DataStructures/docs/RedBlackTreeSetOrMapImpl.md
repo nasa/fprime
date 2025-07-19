@@ -1106,6 +1106,14 @@ It must not be `NONE`.
 
         1. Set `distantNephew = m_nodes[sibling].getChild(oppositeDirection)`.
 
+        1. _The subtree has this shape:_
+
+           <center>
+           <div>
+           <img src="diagrams/removeBlackLeafNode/red-sibling-1a.png" width=500/">
+           </div>
+           </center>
+
         1. If `getColor(distantNephew) == RED`
 
             1. _The subtree has this shape:_
