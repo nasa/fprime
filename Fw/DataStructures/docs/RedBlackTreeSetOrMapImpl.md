@@ -1181,10 +1181,6 @@ It must not be `NONE`.
         1. Set `m_nodes[parent].color = BLACK`.
 
         1. _The leaf-augmented subtree rooted at `parent` has this shape,
-           assuming that `direction == RIGHT` and `distantNephew != NONE`
-           and `closeNephew != NONE`.
-           If either `distantNephew` or `closeNephew` is `NONE`, then the other is,
-           and the right child of `parent` is also `NONE`.
            The entire tree is a valid red-black tree._
 
            <center>
@@ -1197,11 +1193,7 @@ It must not be `NONE`.
 
     1. Otherwise
 
-        1. _The leaf-augmented subtree rooted at `parent` has this
-           shape, assuming that `direction == RIGHT` and `distantNephew != NONE`
-           and `closeNephew != NONE`.
-           If either `distantNephew` or `closeNephew` is `NONE`, then the other is,
-           and the right child of `parent` is also `NONE`._
+        1. _The leaf-augmented subtree rooted at `parent` has this shape._
 
            <center>
            <div>
