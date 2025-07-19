@@ -1136,7 +1136,7 @@ It must not be `NONE`.
                </div>
                </center>
 
-            1. Call `removeBlackLeafNodeHelper1(closeNephew, direction, sibling, distantNephew)`.
+            1. Call `removeBlackLeafNodeHelper1(closeNephew, oppositeDirection, sibling, distantNephew)`.
 
             1. _The subtree has this shape:_
 
@@ -1204,7 +1204,7 @@ It must not be `NONE`.
            </div>
            </center>
 
-        1. Call `removeBlackLeafNodeHelper1(closeNephew, direction, sibling, distantNephew)`.
+        1. Call `removeBlackLeafNodeHelper1(closeNephew, oppositeDirection, sibling, distantNephew)`.
 
         1. _The subtree has this shape:_
 
@@ -1303,7 +1303,7 @@ It must not be `NONE`.
 ```c++
 void removeBlackLeafNodeHelper1(
     Node::Index closeNephew,
-    Direction direction
+    Direction oppositeDirection
     Node::Index& sibling,
     Node::Index& distantNephew,
 )
@@ -1316,7 +1316,7 @@ written).
 
 **Algorithm:**
 
-1. Call `rotateSubtree(sibling, Node::getOppositeDirection(direction))`.
+1. Call `rotateSubtree(sibling, oppositDirection)`.
 
 1. Set `m_nodes[sibling].color = RED`.
 
