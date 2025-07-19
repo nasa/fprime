@@ -25,7 +25,7 @@ Therefore the validity constraints ensure that search in the BST is fast
 
 ### 1.1. Binary Trees
 
-A **binary tree** _T_ is a data structure defined as 
+A **binary tree** _T_ is a data structure defined as
 follows:
 
 1. _T_ has a set _S_ of **nodes**.
@@ -36,7 +36,7 @@ follows:
 
     1. For each node _N_
 
-        1. There may be zero, one, or two nodes designated as 
+        1. There may be zero, one, or two nodes designated as
            the **children** of _N_.
 
         1. Each child of _N_ is designated the **left** or **right** child of _N_.
@@ -104,16 +104,16 @@ Here is an example of a BST:
 In this diagram we adopt the following conventions, which we will use
 throughout this document:
 
-1. The left child of a node _N_, if it exists, is drawn to the left of and 
+1. The left child of a node _N_, if it exists, is drawn to the left of and
    below _N_.
    The right child of _N_, if it exists, is drawn to the right and below.
 
 1. The labels in the nodes are symbolic names for the keys stored in the nodes.
 
 1. A lexically prior name stores a prior key.
-   For example, we could have K1 = 1, K2 = 2, K3 = 3; or K1 = `"a"`, K2 = 
+   For example, we could have K1 = 1, K2 = 2, K3 = 3; or K1 = `"a"`, K2 =
    `"b"`, K3 = `"c"`; etc.
-   
+
 ### 1.3. Red-Black Colorings
 
 A **red-black tree** is a BST _T_ together with a **red-black coloring**,
@@ -123,7 +123,7 @@ satisfies the following constraints:
 
 1. **RBT1:** No red node of _T_ has a red child.
 
-1. **RBT2:** Let _T'_ be the **leaf-augmented tree** constructed from _T_ as 
+1. **RBT2:** Let _T'_ be the **leaf-augmented tree** constructed from _T_ as
    follows.
    If _T_ is empty, then _T'_ consists of a single black node.
    Otherwise, _T'_ is the red-black colored binary tree
@@ -131,7 +131,7 @@ satisfies the following constraints:
    leaf node as a left child of every node of _T_ that has no left child
    and (2) adding a new black leaf node as a right child of every node of _T_
    that has no right child.
-   For each node _N_ in _T'_, every path that follows child links from _N_ to a 
+   For each node _N_ in _T'_, every path that follows child links from _N_ to a
    leaf node must pass through the same number of black nodes.
 
 For example, this tree is a valid red-black tree:
@@ -142,7 +142,7 @@ For example, this tree is a valid red-black tree:
 </div>
 </center>
 
-The color of a node in the diagram is its color in the 
+The color of a node in the diagram is its color in the
 red-black coloring.
 Here is the corresponding leaf-augmented tree for checking **RBT2**:
 
@@ -199,7 +199,7 @@ of a path, a node, a tree, or a forest of trees.
 
 1. **Trees:** Let _T_ be a red-black tree.
    Let _T'_ be the leaf-augmented tree described in the definition of **RBT2**.
-   If the root of _T'_ has a defined black height _n_, then the black height of 
+   If the root of _T'_ has a defined black height _n_, then the black height of
    _T_ is defined and is equal to _n_.
    Otherwise the black height of _T_ is not defined.
 
@@ -213,14 +213,14 @@ Let _T_ be a red-black tree, and note the following:
 
 1. _T_ satisfies **RBT2** if and only if it has a defined black height.
 
-1. _T_ has a defined black height if and 
+1. _T_ has a defined black height if and
    only if each of the child subtrees of the root of _T_ has a
    defined black height, and the two black heights are the same.
 
 ### 1.5. Representing Forests
 
 Let _F_ be a forest of red-black trees with a defined black height.
-To represent such a forest, we will write a dotted box, and we may write  
+To represent such a forest, we will write a dotted box, and we may write
 a property of the forest in the box.
 For example, we may represent the first tree shown in the
 section **Red-Black Colorings** as follows:
@@ -253,7 +253,7 @@ Therefore we make the following definitions for a red-black tree _T_:
 1. If any node _N_ is red and has at least one red child, then we say that _T_ has a
    **red child violation** at _N_.
 
-1. If the subtree rooted at any node _N_ does not have a defined black height, 
+1. If the subtree rooted at any node _N_ does not have a defined black height,
    then we say that _T_ has a **black height violation** at _N_.
 
 From the definitions, it is clear that _T_ is valid if and only if
@@ -909,7 +909,7 @@ It is not permissible for `node` to be `NONE`.
 
                 1. If `parent.getChild(parentOppositeDirection) == node`
 
-                    1. _The leaf-augmented subtree rooted at `grandparent` has the following 
+                    1. _The leaf-augmented subtree rooted at `grandparent` has the following
                        shape, assuming that `parentDirection` is `RIGHT`:_
 
                        <center>
@@ -1087,7 +1087,10 @@ It must not be `NONE`.
     1. Set `distantNephew = m_nodes[sibling].getChild(oppositeDirection)`.
 
     1. _The leaf-augmented subtree rooted at `parent` has this shape
-       (direction == `RIGHT`)._
+       (direction == `RIGHT`).
+       If `distantNephew` or `closeNephew` are leaves in the leaf-augmented
+       tree, then K1 and K4 are names for the nodes; they are not keys in the
+       original tree._
 
        <center>
        <div>
@@ -1134,7 +1137,7 @@ It must not be `NONE`.
                <img src="diagrams/removeBlackLeafNode/red-sibling-2.png" width=500/">
                </div>
                </center>
-           
+
             1. Call `removeBlackLeafNodeHelper2(parent, sibling, distantNephew, direction)`.
 
             1. _The subtree has this shape. The entire tree is a valid red-black tree._
@@ -1297,7 +1300,7 @@ It must not be `NONE`.
 
             1. Set `oppositeDirection = Node::getOppositeDirection(direction)`.
 
-            1. _The leaf-augmented subtree rooted at `parent` has this shape, 
+            1. _The leaf-augmented subtree rooted at `parent` has this shape,
                assuming that direction == RIGHT:_
 
                <center>
