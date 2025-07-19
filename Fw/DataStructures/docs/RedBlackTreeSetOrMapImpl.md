@@ -1130,19 +1130,31 @@ It must not be `NONE`.
 
             1. _The subtree has this shape:_
 
-               TODO
+               <center>
+               <div>
+               <img src="diagrams/removeBlackLeafNode/red-sibling-4.png" width=500/">
+               </div>
+               </center>
 
             1. Call `removeBlackLeafNodeHelper1(closeNephew, direction, sibling, distantNephew)`.
 
             1. _The subtree has this shape:_
 
-               TODO
+               <center>
+               <div>
+               <img src="diagrams/removeBlackLeafNode/red-sibling-5.png" width=500/">
+               </div>
+               </center>
 
             1. Call `removeBlackLeafNodeHelper2(parent, sibling, distantNephew, direction)`.
 
             1. _The subtree has this shape. The entire tree is a valid red-black tree._
 
-               TODO
+               <center>
+               <div>
+               <img src="diagrams/removeBlackLeafNode/red-sibling-6.png" width=500/">
+               </div>
+               </center>
 
         1. Otherwise
 
@@ -1152,7 +1164,11 @@ It must not be `NONE`.
 
             1. _The subtree has this shape. The entire tree is a valid red-black tree._
 
-               TODO
+               <center>
+               <div>
+               <img src="diagrams/removeBlackLeafNode/red-sibling-7.png" width=500/">
+               </div>
+               </center>
 
         1. Set `done = true`.
 
