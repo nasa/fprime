@@ -10,6 +10,8 @@ digraph {
   K4 -> K6
 
   K3 -> BH2
+  K3 -> BH2
+  K6 -> BH3
   K6 -> BH3
 
   K1 [label="K1"]
