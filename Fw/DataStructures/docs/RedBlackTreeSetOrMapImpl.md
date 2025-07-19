@@ -1086,11 +1086,7 @@ It must not be `NONE`.
 
     1. If `m_nodes[sibling].color == RED`
 
-        1. _The leaf-augmented subtree rooted at `parent` has this shape,
-           assuming that `direction == RIGHT` and `distantNephew != NONE`
-           and `closeNephew != NONE`.
-           If either `distantNephew` or `closeNephew` is `NONE`, then the other is,
-           and the right child of `parent` is also `NONE`._
+        1. _The leaf-augmented subtree rooted at `parent` has this shape._
 
            <center>
            <div>
@@ -1114,13 +1110,21 @@ It must not be `NONE`.
 
             1. _The subtree has this shape:_
 
-               TODO
+               <center>
+               <div>
+               <img src="diagrams/removeBlackLeafNode/red-sibling-2.png" width=400/">
+               </div>
+               </center>
            
             1. Call `removeBlackLeafNodeHelper2(parent, sibling, distantNephew, direction)`.
 
-            1. _The subtree has this shape:_
+            1. _The subtree has this shape. The entire tree is a valid red-black tree._
 
-               TODO
+               <center>
+               <div>
+               <img src="diagrams/removeBlackLeafNode/red-sibling-3.png" width=400/">
+               </div>
+               </center>
 
         1. Otherwise if `getColor(closeNephew) == RED`
 
