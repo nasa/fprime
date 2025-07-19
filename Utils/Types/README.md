@@ -140,3 +140,48 @@ FwSizeType get_capacity() const;
 Return the maximum logical store size (equal to the physical store size).
 This is the total number of bytes that may be added to an empty
 circular buffer.
+
+#### Individual Type Serialization/Deserialization
+```c++
+// Serialize primitive types
+Fw::SerializeStatus serialize(U8/I8/U16/I16/U32/I32/U64/I64/F32/F64/bool val);
+
+// Deserialize primitive types  
+Fw::SerializeStatus deserialize(U8&/I8&/U16&/I16&/U32&/I32&/U64&/I64&/F32&/F64&/bool& val);
+```
+
+#### Serialization Position Management
+```c++
+// Reset serialization/deserialization state
+void resetSer();
+void resetDeser();
+
+// Move to specific offsets
+Fw::SerializeStatus moveSerToOffset(FwSizeType offset);
+Fw::SerializeStatus moveDeserToOffset(FwSizeType offset);
+
+// Skip bytes during serialization/deserialization
+Fw::SerializeStatus serializeSkip(FwSizeType numBytesToSkip);
+Fw::SerializeStatus deserializeSkip(FwSizeType numBytesToSkip);
+```
+
+#### Buffer Information
+```c++
+// Get buffer properties
+FwSizeType getBuffCapacity() const;     // Total buffer capacity
+FwSizeType getBuffLength() const;       // Current data length
+FwSizeType getBuffLeft() const;         // Remaining data for deserialization
+U8* getBuffAddr();                      // Buffer address
+const U8* getBuffAddrLeft() const;      // Address of remaining data
+```
+
+#### Advanced Serialization
+```c++
+// Array serialization with length encoding options
+Fw::SerializeStatus serialize(const U8* buff, FwSizeType length, Fw::Serialization::t mode);
+Fw::SerializeStatus deserialize(U8* buff, FwSizeType& length, Fw::Serialization::t mode);
+
+// F Prime object serialization
+Fw::SerializeStatus serialize(const Fw::Serializable& val);
+Fw::SerializeStatus deserialize(Fw::Serializable& val);
+```

@@ -89,7 +89,7 @@ class SerializeBufferBase {
     DEPRECATED(SerializeStatus serialize(const U8* buff, Serializable::SizeType length, bool noLength),
                "Use serialize(const U8* buff, FwSizeType length, Serialization::t mode) instead");
     //! serialize data buffer
-    SerializeStatus serialize(const U8* buff, FwSizeType length);
+    virtual SerializeStatus serialize(const U8* buff, FwSizeType length);
 
     //! \brief serialize a byte buffer of a given length
     //!

@@ -25,7 +25,7 @@ class CcsdsFrameDetectorTest : public ::testing::Test {
 
     void SetUp() override {
         ::memset(this->m_buffer, 0, CIRCULAR_BUFFER_TEST_SIZE);
-        this->circular_buffer = Types::CircularBuffer(this->m_buffer, CIRCULAR_BUFFER_TEST_SIZE);
+        this->circular_buffer.setup(this->m_buffer, CIRCULAR_BUFFER_TEST_SIZE);
     }
 
     U8 m_buffer[CIRCULAR_BUFFER_TEST_SIZE];

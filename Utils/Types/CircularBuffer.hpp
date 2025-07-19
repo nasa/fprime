@@ -22,7 +22,7 @@
 
 namespace Types {
 
-class CircularBuffer {
+class CircularBuffer : public Fw::SerializeBufferBase {
 
     friend class CircularBufferTester;
 
@@ -65,7 +65,7 @@ class CircularBuffer {
          * \param size: size of the supplied buffer.
          * \return Fw::FW_SERIALIZE_OK on success or something else on error
          */
-        Fw::SerializeStatus serialize(const U8* const buffer, const FwSizeType size);
+        Fw::SerializeStatus serialize(const U8* buffer, FwSizeType size) override;
 
         /**
          * Deserialize data into the given variable without moving the head index
@@ -135,6 +135,94 @@ class CircularBuffer {
          */
         void clear_high_water_mark();
 
+        // ----------------------------------------------------------------------
+        // SerializeBufferBase implementation
+        // ----------------------------------------------------------------------
+
+        // Pure virtual methods
+        FwSizeType getBuffCapacity() const override;
+        FwSizeType getBuffLength() const;
+        FwSizeType getBuffLeft() const;
+        U8* getBuffAddr() override;
+        const U8* getBuffAddr() const override;
+        const U8* getBuffAddrLeft() const;
+        U8* getBuffAddrSer();
+
+        // Serialization methods
+        Fw::SerializeStatus serialize(U8 val);
+        Fw::SerializeStatus serialize(I8 val);
+
+#if FW_HAS_16_BIT == 1
+        Fw::SerializeStatus serialize(U16 val);
+        Fw::SerializeStatus serialize(I16 val);
+#endif
+
+#if FW_HAS_32_BIT == 1
+        Fw::SerializeStatus serialize(U32 val);
+        Fw::SerializeStatus serialize(I32 val);
+#endif
+
+#if FW_HAS_64_BIT == 1
+        Fw::SerializeStatus serialize(U64 val);
+        Fw::SerializeStatus serialize(I64 val);
+#endif
+
+        Fw::SerializeStatus serialize(F32 val);
+        Fw::SerializeStatus serialize(F64 val);
+        Fw::SerializeStatus serialize(bool val);
+        Fw::SerializeStatus serialize(const void* val);
+
+        Fw::SerializeStatus serialize(const U8* buff, FwSizeType length, Fw::Serialization::t mode);
+        Fw::SerializeStatus serialize(const Fw::Serializable& val);
+
+        Fw::SerializeStatus serializeSize(const FwSizeType size);
+
+        // Deserialization methods
+        Fw::SerializeStatus deserialize(U8& val);
+        Fw::SerializeStatus deserialize(I8& val);
+
+#if FW_HAS_16_BIT == 1
+        Fw::SerializeStatus deserialize(U16& val);
+        Fw::SerializeStatus deserialize(I16& val);
+#endif
+
+#if FW_HAS_32_BIT == 1
+        Fw::SerializeStatus deserialize(U32& val);
+        Fw::SerializeStatus deserialize(I32& val);
+#endif
+
+#if FW_HAS_64_BIT == 1
+        Fw::SerializeStatus deserialize(U64& val);
+        Fw::SerializeStatus deserialize(I64& val);
+#endif
+
+        Fw::SerializeStatus deserialize(F32& val);
+        Fw::SerializeStatus deserialize(F64& val);
+        Fw::SerializeStatus deserialize(bool& val);
+        Fw::SerializeStatus deserialize(void*& val);
+        Fw::SerializeStatus deserialize(U8* buff, FwSizeType& length);
+        Fw::SerializeStatus deserialize(U8* buff, FwSizeType& length, Fw::Serialization::t mode);
+        Fw::SerializeStatus deserialize(Fw::Serializable& val);
+
+        Fw::SerializeStatus deserializeSize(FwSizeType& size);
+
+        // Buffer management methods
+        void resetSer();
+        void resetDeser();
+        Fw::SerializeStatus moveSerToOffset(FwSizeType offset);
+        Fw::SerializeStatus moveDeserToOffset(FwSizeType offset);
+        Fw::SerializeStatus serializeSkip(FwSizeType numBytesToSkip);
+        Fw::SerializeStatus deserializeSkip(FwSizeType numBytesToSkip);
+        Fw::SerializeStatus setBuff(const U8* src, FwSizeType length);
+        Fw::SerializeStatus setBuffLen(FwSizeType length);
+        Fw::SerializeStatus copyRaw(Fw::SerializeBufferBase& dest, FwSizeType size);
+        Fw::SerializeStatus copyRawOffset(Fw::SerializeBufferBase& dest, FwSizeType size);
+
+        // Override assignment operator to handle CircularBuffer's circular addressing
+        SerializeBufferBase& operator=(const SerializeBufferBase& src);
+
+
+
     private:
         /**
          * Returns a wrap-advanced index into the store.
@@ -154,6 +242,12 @@ class CircularBuffer {
         FwSizeType m_allocated_size;
         //! Maximum allocated size
         FwSizeType m_high_water_mark;
+
+        //! Current serialization position (relative to head)
+        FwSizeType m_ser_offset;
+
+        //! Current deserialization position (relative to head)
+        FwSizeType m_deser_offset;
 };
 } //End Namespace Types
 #endif
