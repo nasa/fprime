@@ -704,7 +704,7 @@ Fw::SerializeStatus CircularBuffer::copyRaw(Fw::SerializeBufferBase& dest, FwSiz
     }
     
     // Extract data from circular buffer into a linear temporary buffer
-    U8 temp_buffer[1024]; // Reasonable maximum for most use cases
+    U8 temp_buffer[FW_COM_BUFFER_MAX_SIZE]; // Maximum F' communication buffer size
     FW_ASSERT(size <= sizeof(temp_buffer)); // Size limitation
     
     // Copy data from current deserialization position
@@ -741,7 +741,7 @@ Fw::SerializeStatus CircularBuffer::copyRawOffset(Fw::SerializeBufferBase& dest,
     }
     
     // Extract data from circular buffer 
-    U8 temp_buffer[1024]; // Reasonable maximum
+    U8 temp_buffer[FW_COM_BUFFER_MAX_SIZE]; // Maximum F' communication buffer size
     FW_ASSERT(size <= sizeof(temp_buffer)); // Size limitation
     
     // Copy data from current deserialization position
