@@ -209,8 +209,11 @@ function(fprime_setup_included_code)
     # for model specific post processing is messed up. Thus we synthesize the behavior by setting
     # the current module and then calling stock "add_subdirectory".
     fprime__include_platform_file()
-    # Add all target to top level
+    # Add "all" target to top level and a target to match all tests
     fprime_util_metadata_add_build_target("all")
+    if (BUILD_TESTING)
+        fprime_util_metadata_add_test(".*")
+    endif()
     set(_FP_CORE_PACKAGES Fpp default Fw Svc Os Drv CFDP Utils)
     foreach (_FP_PACKAGE_DIR IN LISTS _FP_CORE_PACKAGES)
         set(FPRIME_CURRENT_MODULE "${_FP_PACKAGE_DIR}")
