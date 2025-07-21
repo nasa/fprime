@@ -938,7 +938,7 @@ It is not permissible for `node` to be `NONE`.
 
                 1. If `parent.getChild(parentOppositeDirection) == node`
 
-                    1. _The leaf-augmented subtree rooted at `grandparent` has the following
+                    1. _The subtree rooted at `grandparent` has the following
                        shape, assuming that `parentDirection` is `RIGHT`:_
 
                        <center>
@@ -951,7 +951,7 @@ It is not permissible for `node` to be `NONE`.
 
                     1. Set `parent = m_nodes[grandparent].getChild(parentDirection)`.
 
-                1. _The leaf-augmented subtree rooted at `grandparent` has
+                1. _The subtree rooted at `grandparent` has
                    the following shape, assuming that `parentDirection` is `RIGHT`:_
 
                    <center>
@@ -978,7 +978,7 @@ It is not permissible for `node` to be `NONE`.
 
             1. Otherwise
 
-                1. _The leaf-augmented subtree rooted at `grandparent` has one of four shapes,
+                1. _The subtree rooted at `grandparent` has one of four shapes,
                     one of which is shown below.
                     Each of the arrows to red nodes may point the other way._
 
@@ -1063,7 +1063,8 @@ It must not be `NONE`.
 1. Set `oppositeDirection = Node::getOppositeDirection(direction)`.
 
 1. _The leaf-augmented subtree rooted at `parent` has this shape, assuming `direction == RIGHT`.
-   We use gray to represent the unknown color (red or black) of `parent`._
+   We use gray to represent the unknown color (red or black) of `parent`.
+   The black heights are the black heights of the original tree._
 
    <center>
    <div>
