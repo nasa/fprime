@@ -40,7 +40,7 @@ def get_version_str(working_dir, fallback=FALLBACK_VERSION):
     try:
         output = subprocess.check_output(
             ["git", "describe", "--tags", "--always", "--dirty", "--broken"],
-            cwd=working_dir
+            cwd=working_dir,
         )
         return output.strip().decode("ascii")
     except Exception:
