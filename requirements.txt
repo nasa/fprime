@@ -8,8 +8,7 @@ Brotli==1.1.0
 certifi==2024.8.30
 chardet==5.2.0
 charset-normalizer==3.4.0
-# no pre-built wheels for armv7l - only needed for code formatting so skip it on armv7l
-clang-format==20.1.6 ; platform_machine != "armv7l"
+clang-format==20.1.8
 click==8.1.7
 cmake==3.26.0
 colorlog==6.8.2
