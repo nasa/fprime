@@ -54,7 +54,8 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/fpp_types.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/port_index_enums.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/port_types.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.hpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/ActiveTestTester.cpp"
 )
 # Needed for compiling files using Tester.hpp from outside the directory
 include_directories("${CMAKE_CURRENT_LIST_DIR}/test/ut")

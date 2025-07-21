@@ -1377,7 +1377,9 @@ module M {
 ```
 
 ### Framework Definitions Required by the Dictionary
+
 The following framework definitions are required by the dictionary and will always be present in the dictionary content:
+
 | Name  | Kind    | Location | Purpose  |
 | ----- | ------- | -------- | -------- |
 | `FwChanIdType` | [Alias type definition](#type-alias-definition)| `typeDefinitions` | The type of a telemetry channel identifier |

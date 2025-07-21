@@ -62,6 +62,7 @@ export -f integration_test
 function integration_test_run {
     export SLEEP_TIME="10"
     export WORKDIR="${1}"
+    export PLATFORM="${2:-*}"
     export BINARY=`basename "${WORKDIR}"`
     export ROOTDIR="${WORKDIR}/build-artifacts"
     (
@@ -69,7 +70,7 @@ function integration_test_run {
         mkdir -p "${LOG_DIR}/gds-logs"
         # Start the GDS layer and give it time to run
         echo "[INFO] Starting headless GDS layer"
-        fprime-gds -n --dictionary "${ROOTDIR}/"*"/${BINARY}/dict/${BINARY}TopologyDictionary.json" -g none -l "${LOG_DIR}/gds-logs" 1>${LOG_DIR}/gds-logs/fprime-gds.stdout.log 2>${LOG_DIR}/gds-logs/fprime-gds.stderr.log &
+        fprime-gds -n --dictionary "${ROOTDIR}/"${PLATFORM}"/${BINARY}/dict/${BINARY}TopologyDictionary.json" -g none -l "${LOG_DIR}/gds-logs" 1>${LOG_DIR}/gds-logs/fprime-gds.stdout.log 2>${LOG_DIR}/gds-logs/fprime-gds.stderr.log &
         GDS_PID=$!
         # run the app with valgrind in the background
         if command -v valgrind &> /dev/null
@@ -82,9 +83,9 @@ function integration_test_run {
                 --show-leak-kinds=all \
                 --track-origins=yes \
                 --log-file=${LOG_DIR}/gds-logs/valgrind.log \
-            ${ROOTDIR}/*/${BINARY}/bin/${BINARY} -a 127.0.0.1 -p 50000 1>${LOG_DIR}/gds-logs/${BINARY}.stdout.log 2>${LOG_DIR}/gds-logs/${BINARY}.stderr.log &
+            ${ROOTDIR}/${PLATFORM}/${BINARY}/bin/${BINARY} -a 127.0.0.1 -p 50000 1>${LOG_DIR}/gds-logs/${BINARY}.stdout.log 2>${LOG_DIR}/gds-logs/${BINARY}.stderr.log &
         else
-            ${ROOTDIR}/*/${BINARY}/bin/${BINARY} -a 127.0.0.1 -p 50000 1>${LOG_DIR}/gds-logs/${BINARY}.stdout.log 2>${LOG_DIR}/gds-logs/${BINARY}.stderr.log &
+            ${ROOTDIR}/${PLATFORM}/${BINARY}/bin/${BINARY} -a 127.0.0.1 -p 50000 1>${LOG_DIR}/gds-logs/${BINARY}.stdout.log 2>${LOG_DIR}/gds-logs/${BINARY}.stderr.log &
         fi
         VALGRIND_PID=$!
 
