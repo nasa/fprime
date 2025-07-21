@@ -68,6 +68,10 @@ throughout this document:
 1. A solid arrow denotes a parent-child relationship between nodes.
    Each arrow goes from parent to child.
 
+1. The left child of a node _N_, if it exists, is drawn to the left of and
+   below _N_.
+   The right child of _N_, if it exists, is drawn to the right and below.
+
 Let _T_ be a binary tree, and let _N_ be a node of _T_.
 We say that _N_ is a **leaf** node of _T_ if _N_
 has no children.
@@ -103,10 +107,6 @@ Here is an example of a BST:
 
 In this diagram we adopt the following conventions, which we will use
 throughout this document:
-
-1. The left child of a node _N_, if it exists, is drawn to the left of and
-   below _N_.
-   The right child of _N_, if it exists, is drawn to the right and below.
 
 1. The labels in the nodes are symbolic names for the keys stored in the nodes.
 
