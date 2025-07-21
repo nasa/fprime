@@ -79,7 +79,7 @@ cd MyProject
 > [!WARNING]
 > Always remember to activate the virtual environment whenever you work with this F´  project.
 
-[Next steps: HelloWorld Tutorial](https://fprime-community.github.io/fprime-tutorial-hello-world/){ .md-button .md-button--primary }
+[Next steps: HelloWorld Tutorial](https://fprime.jpl.nasa.gov/latest/tutorials-hello-world/docs/hello-world/){ .md-button .md-button--primary }
 
 ## Working With An Existing Project
 

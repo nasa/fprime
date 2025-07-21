@@ -35,7 +35,7 @@ namespace Fw {
         }
 
         // We want to add data but not size for the ground software
-        return buffer.serialize(this->m_logBuffer.getBuffAddr(),m_logBuffer.getBuffLength(),true);
+        return buffer.serialize(this->m_logBuffer.getBuffAddr(),m_logBuffer.getBuffLength(),Fw::Serialization::OMIT_LENGTH);
 
     }
 
@@ -57,7 +57,7 @@ namespace Fw {
 
         // remainder of buffer must be telemetry value
         FwSizeType size = buffer.getBuffLeft();
-        stat = buffer.deserialize(this->m_logBuffer.getBuffAddr(),size,true);
+        stat = buffer.deserialize(this->m_logBuffer.getBuffAddr(),size,Fw::Serialization::OMIT_LENGTH);
         if (stat == FW_SERIALIZE_OK) {
             // Shouldn't fail
             stat = this->m_logBuffer.setBuffLen(size);

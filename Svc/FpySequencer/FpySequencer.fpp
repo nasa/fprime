@@ -13,6 +13,12 @@ module Svc {
             IDLE
         }
 
+        enum FileReadStage {
+            HEADER
+            BODY
+            FOOTER
+        }
+
         include "FpySequencerCommands.fppi"
         include "FpySequencerTelemetry.fppi"
         include "FpySequencerEvents.fppi"
@@ -46,6 +52,12 @@ module Svc {
         @ port for requests to run sequences
         # same priority as RUN cmd
         async input port seqRunIn: Svc.CmdSeqIn priority 7 assert
+
+        @ called when a sequence begins running
+        output port seqStartOut: Svc.CmdSeqIn
+
+        @ called when a sequence finishes running, either successfully or not
+        output port seqDoneOut: Fw.CmdResponse
 
         @ Ping out port
         output port pingOut: Svc.Ping

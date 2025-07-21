@@ -3,7 +3,7 @@
 
 namespace Fw {
     TimeInterval::TimeInterval(const TimeInterval& other) : Serializable() {
-        this->set(other.m_seconds,other.m_useconds);
+        this->m_val = other.m_val;
     }
 
     TimeInterval::TimeInterval(U32 seconds, U32 useconds) : Serializable() {
@@ -11,70 +11,58 @@ namespace Fw {
     }
 
     void TimeInterval::set(U32 seconds, U32 useconds) {
-        this->m_seconds = seconds;
-        this->m_useconds = useconds;
+        this->m_val.set(seconds, useconds);
     }
 
     TimeInterval& TimeInterval::operator=(const TimeInterval& other) {
-        this->m_useconds = other.m_useconds;
-        this->m_seconds = other.m_seconds;
-
+        if (this != &other) {
+            this->m_val = other.m_val;
+        }
         return *this;
     }
 
     bool TimeInterval::operator==(const TimeInterval& other) const {
-        return (TimeInterval::compare(*this,other) == EQ);
+        return (TimeInterval::compare(*this, other) == EQ);
     }
 
     bool TimeInterval::operator!=(const TimeInterval& other) const {
-        return (TimeInterval::compare(*this,other) != EQ);
+        return (TimeInterval::compare(*this, other) != EQ);
     }
 
     bool TimeInterval::operator>(const TimeInterval& other) const {
-        return (TimeInterval::compare(*this,other) == GT);
+        return (TimeInterval::compare(*this, other) == GT);
     }
 
     bool TimeInterval::operator<(const TimeInterval& other) const {
-        return (TimeInterval::compare(*this,other) == LT);
+        return (TimeInterval::compare(*this, other) == LT);
     }
 
     bool TimeInterval::operator>=(const TimeInterval& other) const {
-        TimeInterval::Comparison c = TimeInterval::compare(*this,other);
+        TimeInterval::Comparison c = TimeInterval::compare(*this, other);
         return ((GT == c) or (EQ == c));
     }
 
     bool TimeInterval::operator<=(const TimeInterval& other) const {
-        TimeInterval::Comparison c = TimeInterval::compare(*this,other);
+        TimeInterval::Comparison c = TimeInterval::compare(*this, other);
         return ((LT == c) or (EQ == c));
     }
 
     SerializeStatus TimeInterval::serialize(SerializeBufferBase& buffer) const {
-        // serialize members
-        SerializeStatus stat = Fw::FW_SERIALIZE_OK;
-        stat = buffer.serialize(this->m_seconds);
-        if (stat != FW_SERIALIZE_OK) {
-            return stat;
-        }
-        return buffer.serialize(this->m_useconds);
+        // Use TimeIntervalValue's built-in serialization
+        return this->m_val.serialize(buffer);
     }
 
     SerializeStatus TimeInterval::deserialize(SerializeBufferBase& buffer) {
-
-        SerializeStatus stat = Fw::FW_SERIALIZE_OK;
-        stat = buffer.deserialize(this->m_seconds);
-        if (stat != FW_SERIALIZE_OK) {
-            return stat;
-        }
-
-        return buffer.deserialize(this->m_useconds);
+        // Use TimeIntervalValue's built-in deserialization
+        return this->m_val.deserialize(buffer);
     }
 
     U32 TimeInterval::getSeconds() const {
-        return this->m_seconds;
+        return this->m_val.getseconds();
     }
 
     U32 TimeInterval::getUSeconds() const {
-        return this->m_useconds;
+        return this->m_val.getuseconds();
     }
 
     TimeInterval::Comparison TimeInterval ::
@@ -139,13 +127,14 @@ namespace Fw {
     }
 
     void TimeInterval::add(U32 seconds, U32 useconds) {
-        this->m_seconds += seconds;
-        this->m_useconds += useconds;
-        FW_ASSERT(this->m_useconds < 1999999, static_cast<FwAssertArgType>(this->m_useconds));
-        if (this->m_useconds >= 1000000) {
-          this->m_seconds += 1;
-          this->m_useconds -= 1000000;
+        U32 newSeconds = this->m_val.getseconds() + seconds;
+        U32 newUSeconds = this->m_val.getuseconds() + useconds;
+        FW_ASSERT(newUSeconds < 1999999, static_cast<FwAssertArgType>(newUSeconds));
+        if (newUSeconds >= 1000000) {
+          newSeconds += 1;
+          newUSeconds -= 1000000;
         }
+        this->m_val.set(newSeconds, newUSeconds);
     }
 
 #ifdef BUILD_UT

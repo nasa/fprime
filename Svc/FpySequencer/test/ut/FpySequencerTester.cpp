@@ -156,7 +156,7 @@ void FpySequencerTester::add_SET_SER_REG(U8 serRegIdx, Fw::StatementArgBuffer va
 void FpySequencerTester::add_SET_SER_REG(FpySequencer_SetSerRegDirective dir) {
     Fw::StatementArgBuffer buf;
     FW_ASSERT(buf.serialize(dir.getindex()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    FW_ASSERT(buf.serialize(dir.getvalue(), dir.get_valueSize(), true) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    FW_ASSERT(buf.serialize(dir.getvalue(), dir.get_valueSize(), Fw::Serialization::OMIT_LENGTH) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     addDirective(Fpy::DirectiveId::SET_SER_REG, buf);
 }
 
@@ -202,7 +202,7 @@ void FpySequencerTester::add_CMD(FwOpcodeType opcode) {
 void FpySequencerTester::add_CMD(FpySequencer_CmdDirective dir) {
     Fw::StatementArgBuffer buf;
     FW_ASSERT(buf.serialize(dir.getopCode()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    FW_ASSERT(buf.serialize(dir.getargBuf(), dir.get_argBufSize(), true) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    FW_ASSERT(buf.serialize(dir.getargBuf(), dir.get_argBufSize(), Fw::Serialization::OMIT_LENGTH) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     addDirective(Fpy::DirectiveId::CMD, buf);
 }
 
@@ -241,16 +241,36 @@ void FpySequencerTester::add_SET_REG(FpySequencer_SetRegDirective dir) {
     addDirective(Fpy::DirectiveId::SET_REG, buf);
 }
 
-void FpySequencerTester::add_BINARY_CMP(U8 lhs, U8 rhs, U8 res, Fpy::DirectiveId op) {
-    add_BINARY_CMP(FpySequencer_BinaryCmpDirective(lhs, rhs, res, op));
+void FpySequencerTester::add_BINARY_REG_OP(U8 lhs, U8 rhs, U8 res, Fpy::DirectiveId op) {
+    add_BINARY_REG_OP(FpySequencer_BinaryRegOpDirective(lhs, rhs, res, op));
 }
 
-void FpySequencerTester::add_BINARY_CMP(FpySequencer_BinaryCmpDirective dir) {
+void FpySequencerTester::add_BINARY_REG_OP(FpySequencer_BinaryRegOpDirective dir) {
     Fw::StatementArgBuffer buf;
     FW_ASSERT(buf.serialize(dir.getlhs()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     FW_ASSERT(buf.serialize(dir.getrhs()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     FW_ASSERT(buf.serialize(dir.getres()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     addDirective(dir.get_op(), buf);
+}
+
+void FpySequencerTester::add_UNARY_REG_OP(U8 src, U8 res, Fpy::DirectiveId op) {
+    add_UNARY_REG_OP(FpySequencer_UnaryRegOpDirective(src, res, op));
+}
+
+void FpySequencerTester::add_UNARY_REG_OP(FpySequencer_UnaryRegOpDirective dir) {
+    Fw::StatementArgBuffer buf;
+    FW_ASSERT(buf.serialize(dir.getsrc()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    FW_ASSERT(buf.serialize(dir.getres()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    addDirective(dir.get_op(), buf);
+}
+void FpySequencerTester::add_EXIT(bool success) {
+    add_EXIT(FpySequencer_ExitDirective(success));
+}
+
+void FpySequencerTester::add_EXIT(FpySequencer_ExitDirective dir) {
+    Fw::StatementArgBuffer buf;
+    FW_ASSERT(buf.serialize(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    addDirective(Fpy::DirectiveId::EXIT, buf);
 }
 
 //! Handle a text event
@@ -347,11 +367,6 @@ Signal FpySequencerTester::tester_getTlm_directiveHandler(const FpySequencer_Get
     return this->cmp.getTlm_directiveHandler(directive, err);
 }
 
-Signal FpySequencerTester::tester_not_directiveHandler(const FpySequencer_NotDirective& directive,
-                                                       DirectiveError& err) {
-    return this->cmp.not_directiveHandler(directive, err);
-}
-
 Signal FpySequencerTester::tester_exit_directiveHandler(const FpySequencer_ExitDirective& directive,
                                                         DirectiveError& err) {
     return this->cmp.exit_directiveHandler(directive, err);
@@ -367,11 +382,15 @@ Signal FpySequencerTester::tester_deserSerReg_directiveHandler(const FpySequence
     return this->cmp.deserSerReg_directiveHandler(directive, err);
 }
 
-Signal FpySequencerTester::tester_binaryCmp_directiveHandler(const FpySequencer_BinaryCmpDirective& directive,
+Signal FpySequencerTester::tester_binaryRegOp_directiveHandler(const FpySequencer_BinaryRegOpDirective& directive,
                                                              DirectiveError& err) {
-    return this->cmp.binaryCmp_directiveHandler(directive, err);
+    return this->cmp.binaryRegOp_directiveHandler(directive, err);
 }
 
+Signal FpySequencerTester::tester_unaryRegOp_directiveHandler(const FpySequencer_UnaryRegOpDirective& directive,
+                                                             DirectiveError& err) {
+    return this->cmp.unaryRegOp_directiveHandler(directive, err);
+}
 Signal FpySequencerTester::tester_setReg_directiveHandler(const FpySequencer_SetRegDirective& directive,
                                                           DirectiveError& err) {
     return this->cmp.setReg_directiveHandler(directive, err);
@@ -402,8 +421,8 @@ Svc::FpySequencer::Telemetry* FpySequencerTester::tester_get_m_tlm_ptr() {
     return &this->cmp.m_tlm;
 }
 
-Fw::Success FpySequencerTester::tester_readBytes(Os::File& file, FwSizeType readLen, bool updateCrc) {
-    return this->cmp.readBytes(file, readLen, updateCrc);
+Fw::Success FpySequencerTester::tester_readBytes(Os::File& file, FwSizeType readLen, FpySequencer_FileReadStage readStage, bool updateCrc) {
+    return this->cmp.readBytes(file, readLen, readStage, updateCrc);
 }
 
 Fw::Success FpySequencerTester::tester_readFooter() {
@@ -463,6 +482,97 @@ Fw::ExternalSerializeBuffer* FpySequencerTester::tester_get_m_sequenceBuffer_ptr
 Svc::FpySequencer::Debug* FpySequencerTester::tester_get_m_debug_ptr() {
     return &(this->cmp.m_debug);
 }
+I64 FpySequencerTester::tester_binaryRegOp_or(I64 lhs, I64 rhs) {
+    return this->cmp.binaryRegOp_or(lhs, rhs);
+}
+I64 FpySequencerTester::tester_binaryRegOp_and(I64 lhs, I64 rhs) {
+    return this->cmp.binaryRegOp_and(lhs, rhs);
+}
+I64 FpySequencerTester::tester_binaryRegOp_ieq(I64 lhs, I64 rhs) {
+    return this->cmp.binaryRegOp_ieq(lhs, rhs);
+}
+I64 FpySequencerTester::tester_binaryRegOp_ine(I64 lhs, I64 rhs) {
+    return this->cmp.binaryRegOp_ine(lhs, rhs);
+}
+I64 FpySequencerTester::tester_binaryRegOp_ult(I64 lhs, I64 rhs) {
+    return this->cmp.binaryRegOp_ult(lhs, rhs);
+}
+I64 FpySequencerTester::tester_binaryRegOp_ule(I64 lhs, I64 rhs) {
+    return this->cmp.binaryRegOp_ule(lhs, rhs);
+}
+I64 FpySequencerTester::tester_binaryRegOp_ugt(I64 lhs, I64 rhs) {
+    return this->cmp.binaryRegOp_ugt(lhs, rhs);
+}
+I64 FpySequencerTester::tester_binaryRegOp_uge(I64 lhs, I64 rhs) {
+    return this->cmp.binaryRegOp_uge(lhs, rhs);
+}
+I64 FpySequencerTester::tester_binaryRegOp_slt(I64 lhs, I64 rhs) {
+    return this->cmp.binaryRegOp_slt(lhs, rhs);
+}
+I64 FpySequencerTester::tester_binaryRegOp_sle(I64 lhs, I64 rhs) {
+    return this->cmp.binaryRegOp_sle(lhs, rhs);
+}
+I64 FpySequencerTester::tester_binaryRegOp_sgt(I64 lhs, I64 rhs) {
+    return this->cmp.binaryRegOp_sgt(lhs, rhs);
+}
+I64 FpySequencerTester::tester_binaryRegOp_sge(I64 lhs, I64 rhs) {
+    return this->cmp.binaryRegOp_sge(lhs, rhs);
+}
+I64 FpySequencerTester::tester_binaryRegOp_feq(I64 lhs, I64 rhs) {
+    return this->cmp.binaryRegOp_feq(lhs, rhs);
+}
+I64 FpySequencerTester::tester_binaryRegOp_fne(I64 lhs, I64 rhs) {
+    return this->cmp.binaryRegOp_fne(lhs, rhs);
+}
+I64 FpySequencerTester::tester_binaryRegOp_flt(I64 lhs, I64 rhs) {
+    return this->cmp.binaryRegOp_flt(lhs, rhs);
+}
+I64 FpySequencerTester::tester_binaryRegOp_fle(I64 lhs, I64 rhs) {
+    return this->cmp.binaryRegOp_fle(lhs, rhs);
+}
+I64 FpySequencerTester::tester_binaryRegOp_fgt(I64 lhs, I64 rhs) {
+    return this->cmp.binaryRegOp_fgt(lhs, rhs);
+}
+I64 FpySequencerTester::tester_binaryRegOp_fge(I64 lhs, I64 rhs) {
+    return this->cmp.binaryRegOp_fge(lhs, rhs);
+}
+I64 FpySequencerTester::tester_unaryRegOp_not(I64 src) {
+    return this->cmp.unaryRegOp_not(src);
+}
+I64 FpySequencerTester::tester_unaryRegOp_fpext(I64 src) {
+    return this->cmp.unaryRegOp_fpext(src);
+}
+I64 FpySequencerTester::tester_unaryRegOp_fptrunc(I64 src) {
+    return this->cmp.unaryRegOp_fptrunc(src);
+}
+I64 FpySequencerTester::tester_unaryRegOp_fptosi(I64 src) {
+    return this->cmp.unaryRegOp_fptosi(src);
+}
+I64 FpySequencerTester::tester_unaryRegOp_sitofp(I64 src) {
+    return this->cmp.unaryRegOp_sitofp(src);
+}
+I64 FpySequencerTester::tester_unaryRegOp_fptoui(I64 src) {
+    return this->cmp.unaryRegOp_fptoui(src);
+}
+I64 FpySequencerTester::tester_unaryRegOp_uitofp(I64 src) {
+    return this->cmp.unaryRegOp_uitofp(src);
+}
+void FpySequencerTester::tester_doDispatch() {
+    this->cmp.doDispatch();
+}
+
+Svc::FpySequencer_SequencerStateMachineStateMachineBase::State FpySequencerTester::tester_getState() {
+    return this->cmp.m_stateMachine_sequencer.getState();
+}
+
+void FpySequencerTester::tester_setState(Svc::FpySequencer_SequencerStateMachineStateMachineBase::State state) {
+    FpySequencer_SequencerStateMachineTester::setState(this->cmp.m_stateMachine_sequencer, state);
+}
+
+void FpySequencerTester::tester_dispatchDirective(const FpySequencer::DirectiveUnion& directive, const Fpy::DirectiveId& id) {
+    this->cmp.dispatchDirective(directive, id);
+}
+
 // End UT private/protected access
 
 }  // namespace Svc

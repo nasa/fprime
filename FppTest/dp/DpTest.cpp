@@ -7,8 +7,8 @@
 #include <cstdio>
 
 #include "FppTest/dp/DpTest.hpp"
-#include "Fw/Types/Assert.hpp"
 #include "Fw/Dp/test/ut/DpContainerTester.hpp"
+#include "Fw/Types/Assert.hpp"
 
 namespace FppTest {
 

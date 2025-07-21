@@ -7,7 +7,7 @@ TEST_F(FpySequencerTester, Empty) {
     writeAndRun();
     dispatchUntilState(State::IDLE);
     ASSERT_CMD_RESPONSE_SIZE(1);
-    ASSERT_CMD_RESPONSE(0, FpySequencer::OPCODE_RUN, 0, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(0, FpySequencerTester::get_OPCODE_RUN(), 0, Fw::CmdResponse::OK);
 }
 
 TEST_F(FpySequencerTester, Full) {
@@ -18,12 +18,12 @@ TEST_F(FpySequencerTester, Full) {
     writeAndRun();
     dispatchUntilState(State::IDLE, Fpy::MAX_SEQUENCE_STATEMENT_COUNT * 4);
     ASSERT_CMD_RESPONSE_SIZE(1);
-    ASSERT_CMD_RESPONSE(0, FpySequencer::OPCODE_RUN, 0, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(0, FpySequencerTester::get_OPCODE_RUN(), 0, Fw::CmdResponse::OK);
 }
 
 TEST_F(FpySequencerTester, ComplexControlFlow) {
     allocMem();
-    
+
     nextTlmId = 123;
     ASSERT_EQ(nextTlmValue.serialize(true), Fw::SerializeStatus::FW_SERIALIZE_OK);
     add_GET_TLM(0, 1, 123);
@@ -52,14 +52,14 @@ TEST_F(FpySequencerTester, ComplexControlFlow) {
 
 TEST_F(FpySequencerTester, OrOfTlmAndReg) {
     allocMem();
-    
+
     nextTlmId = 123;
     ASSERT_EQ(nextTlmValue.serialize(true), Fw::SerializeStatus::FW_SERIALIZE_OK);
     add_GET_TLM(0, 1, 123);
     add_DESER_SER_REG(0, 0, 0, 1);
     add_SET_REG(1, 0);
     // or between the stored const and the tlm val
-    add_BINARY_CMP(0, 1, 2, Fpy::DirectiveId::OR);
+    add_BINARY_REG_OP(0, 1, 2, Fpy::DirectiveId::OR);
     add_IF(2, 7);
     // if true
     add_NO_OP();
@@ -83,14 +83,14 @@ TEST_F(FpySequencerTester, OrOfTlmAndReg) {
 
 TEST_F(FpySequencerTester, CmpIntTlm) {
     allocMem();
-    
+
     nextTlmId = 123;
     ASSERT_EQ(nextTlmValue.serialize(999), Fw::SerializeStatus::FW_SERIALIZE_OK);
     add_GET_TLM(0, 1, 123);
     add_DESER_SER_REG(0, 0, 0, 4);
     add_SET_REG(1, 999);
     // unsigned >= between tlm and reg
-    add_BINARY_CMP(0, 1, 2, Fpy::DirectiveId::UGE);
+    add_BINARY_REG_OP(0, 1, 2, Fpy::DirectiveId::UGE);
     add_IF(2, 7);
     // if true
     add_NO_OP();
@@ -112,6 +112,22 @@ TEST_F(FpySequencerTester, CmpIntTlm) {
     writeAndRun();
     dispatchUntilState(State::IDLE);
     ASSERT_EQ(tester_get_m_statementsDispatched(), 8);
+}
+TEST_F(FpySequencerTester, NotTrueSeq) {
+    // this sequence caught one bug
+    allocMem();
+
+    add_SET_REG(0, 255);
+    add_UNARY_REG_OP(0, 1, Fpy::DirectiveId::NOT);
+    add_IF(1, 4);
+    // should not get here
+    add_EXIT(false);
+    add_EXIT(true);
+
+    writeAndRun();
+    dispatchUntilState(State::IDLE);
+    // not of 255 should be interpreted as false
+    ASSERT_EQ(tester_get_m_tlm_ptr()->lastDirectiveError, DirectiveError::NO_ERROR);
 }
 
 }

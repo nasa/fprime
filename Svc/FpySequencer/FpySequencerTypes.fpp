@@ -19,29 +19,48 @@ module Svc {
             DESER_SER_REG_4 = 12
             DESER_SER_REG_2 = 13
             DESER_SER_REG_1 = 14
-            # binary comparison directives
-            # all of these are handled at the CPP level by one BinaryCmpDirective
-            # NO REORDER
+            # binary reg op directives
+            # all of these are handled at the CPP level by one BinaryRegOpDirective
             # boolean ops
             OR = 15
             AND = 16
-            # equality ops
-            EQ = 17
-            NE = 18
-            # unsigned inequalities
+            # integer equalities
+            IEQ = 17
+            INE = 18
+            # unsigned integer inequalities
             ULT = 19
             ULE = 20
             UGT = 21
             UGE = 22
-            # signed inequalities
+            # signed integer inequalities
             SLT = 23
             SLE = 24
             SGT = 25
             SGE = 26
-            # END NO REORDER
-            # end binary comparison directives
-            NOT = 27
-            EXIT = 28
+            # floating point equalities
+            FEQ = 27
+            FNE = 28
+            # floating point inequalities
+            FLT = 29
+            FLE = 30
+            FGT = 31
+            FGE = 32
+            # end binary reg op directives
+            
+            # unary reg op dirs
+            NOT = 33
+            # floating point extension and truncation
+            FPEXT = 34
+            FPTRUNC = 35
+            # floating point conversion to signed/unsigned integer,
+            # and vice versa
+            FPTOSI = 36
+            FPTOUI = 37
+            SITOFP = 38
+            UITOFP = 39
+            # end unary reg op dirs
+
+            EXIT = 40
         }
 
         struct Header {

@@ -53,6 +53,7 @@ function(install_add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_D
             ARCHIVE DESTINATION ${TOOLCHAIN_NAME}/${MODULE}/lib/static
             COMPONENT ${MODULE}
     )
+    install(FILES ${CMAKE_BINARY_DIR}/hashes.txt DESTINATION ${CMAKE_INSTALL_PREFIX} COMPONENT ${MODULE})
 
     # Set up installation
     add_custom_command(TARGET "${MODULE}" POST_BUILD COMMAND "${CMAKE_COMMAND}"
