@@ -421,8 +421,8 @@ Svc::FpySequencer::Telemetry* FpySequencerTester::tester_get_m_tlm_ptr() {
     return &this->cmp.m_tlm;
 }
 
-Fw::Success FpySequencerTester::tester_readBytes(Os::File& file, FwSizeType readLen, bool updateCrc) {
-    return this->cmp.readBytes(file, readLen, updateCrc);
+Fw::Success FpySequencerTester::tester_readBytes(Os::File& file, FwSizeType readLen, FpySequencer_FileReadStage readStage, bool updateCrc) {
+    return this->cmp.readBytes(file, readLen, readStage, updateCrc);
 }
 
 Fw::Success FpySequencerTester::tester_readFooter() {
@@ -544,6 +544,18 @@ I64 FpySequencerTester::tester_unaryRegOp_fpext(I64 src) {
 }
 I64 FpySequencerTester::tester_unaryRegOp_fptrunc(I64 src) {
     return this->cmp.unaryRegOp_fptrunc(src);
+}
+I64 FpySequencerTester::tester_unaryRegOp_fptosi(I64 src) {
+    return this->cmp.unaryRegOp_fptosi(src);
+}
+I64 FpySequencerTester::tester_unaryRegOp_sitofp(I64 src) {
+    return this->cmp.unaryRegOp_sitofp(src);
+}
+I64 FpySequencerTester::tester_unaryRegOp_fptoui(I64 src) {
+    return this->cmp.unaryRegOp_fptoui(src);
+}
+I64 FpySequencerTester::tester_unaryRegOp_uitofp(I64 src) {
+    return this->cmp.unaryRegOp_uitofp(src);
 }
 void FpySequencerTester::tester_doDispatch() {
     this->cmp.doDispatch();

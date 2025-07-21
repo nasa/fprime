@@ -111,15 +111,16 @@ void FpySequencer::directive_setReg_internalInterfaceHandler(const Svc::FpySeque
 }
 
 //! Internal interface handler for directive_binaryRegOp
-void FpySequencer::directive_binaryRegOp_internalInterfaceHandler(const Svc::FpySequencer_BinaryRegOpDirective& directive) {
+void FpySequencer::directive_binaryRegOp_internalInterfaceHandler(
+    const Svc::FpySequencer_BinaryRegOpDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->binaryRegOp_directiveHandler(directive, error));
     this->m_tlm.lastDirectiveError = error;
 }
 
-
 //! Internal interface handler for directive_unaryRegOp
-void FpySequencer::directive_unaryRegOp_internalInterfaceHandler(const Svc::FpySequencer_UnaryRegOpDirective& directive) {
+void FpySequencer::directive_unaryRegOp_internalInterfaceHandler(
+    const Svc::FpySequencer_UnaryRegOpDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->unaryRegOp_directiveHandler(directive, error));
     this->m_tlm.lastDirectiveError = error;
@@ -488,7 +489,7 @@ I64 FpySequencer::binaryRegOp_fge(I64 lhs, I64 rhs) {
 }
 
 Signal FpySequencer::binaryRegOp_directiveHandler(const FpySequencer_BinaryRegOpDirective& directive,
-                                                DirectiveError& error) {
+                                                  DirectiveError& error) {
     // coding error, should not have gotten to this binary reg op handler
     FW_ASSERT(directive.get_op() >= Fpy::DirectiveId::OR && directive.get_op() <= Fpy::DirectiveId::FGE,
               static_cast<FwAssertArgType>(directive.get_op()));
@@ -565,7 +566,10 @@ Signal FpySequencer::binaryRegOp_directiveHandler(const FpySequencer_BinaryRegOp
     return Signal::stmtResponse_success;
 }
 I64 FpySequencer::unaryRegOp_not(I64 src) {
-    return ~src;
+    if (src) {
+        return static_cast<I64>(false);
+    }
+    return static_cast<I64>(true);
 }
 I64 FpySequencer::unaryRegOp_fpext(I64 src) {
     // convert F32 to F64
@@ -594,10 +598,41 @@ I64 FpySequencer::unaryRegOp_fptrunc(I64 src) {
     // then extend to I64
     return static_cast<I64>(itrunc);
 }
-
-Signal FpySequencer::unaryRegOp_directiveHandler(const FpySequencer_UnaryRegOpDirective& directive, DirectiveError& error) {
+I64 FpySequencer::unaryRegOp_fptosi(I64 src) {
+    // first interpret as F64
+    F64 fsrc;
+    memcpy(&fsrc, &src, sizeof(fsrc));
+    // then static cast to int
+    return static_cast<I64>(fsrc);
+}
+I64 FpySequencer::unaryRegOp_sitofp(I64 src) {
+    // first static cast to float
+    F64 fsrc = static_cast<F64>(src);
+    // then return bits as I64
+    I64 res;
+    memcpy(&res, &fsrc, sizeof(res));
+    return res;
+}
+I64 FpySequencer::unaryRegOp_fptoui(I64 src) {
+    // first interpret as F64
+    F64 fsrc;
+    memcpy(&fsrc, &src, sizeof(fsrc));
+    // then static cast to unsigned int
+    // then return as a signed int
+    return static_cast<I64>(static_cast<U64>(fsrc));
+}
+I64 FpySequencer::unaryRegOp_uitofp(I64 src) {
+    // first static cast to unsigned, then to float
+    F64 fsrc = static_cast<F64>(static_cast<U64>(src));
+    // then return bits as I64
+    I64 res;
+    memcpy(&res, &fsrc, sizeof(res));
+    return res;
+}
+Signal FpySequencer::unaryRegOp_directiveHandler(const FpySequencer_UnaryRegOpDirective& directive,
+                                                 DirectiveError& error) {
     // coding error, should not have gotten to this unary reg op handler
-    FW_ASSERT(directive.get_op() >= Fpy::DirectiveId::NOT && directive.get_op() <= Fpy::DirectiveId::FPTRUNC,
+    FW_ASSERT(directive.get_op() >= Fpy::DirectiveId::NOT && directive.get_op() <= Fpy::DirectiveId::UITOFP,
               static_cast<FwAssertArgType>(directive.get_op()));
 
     if (directive.getsrc() >= Fpy::NUM_REGISTERS || directive.getres() >= Fpy::NUM_REGISTERS) {
@@ -607,7 +642,7 @@ Signal FpySequencer::unaryRegOp_directiveHandler(const FpySequencer_UnaryRegOpDi
 
     I64 src = reg(directive.getsrc());
     I64& res = reg(directive.getres());
-    
+
     switch (directive.get_op()) {
         case Fpy::DirectiveId::NOT:
             res = this->unaryRegOp_not(src);
@@ -617,6 +652,18 @@ Signal FpySequencer::unaryRegOp_directiveHandler(const FpySequencer_UnaryRegOpDi
             break;
         case Fpy::DirectiveId::FPTRUNC:
             res = this->unaryRegOp_fptrunc(src);
+            break;
+        case Fpy::DirectiveId::FPTOSI:
+            res = this->unaryRegOp_fptosi(src);
+            break;
+        case Fpy::DirectiveId::FPTOUI:
+            res = this->unaryRegOp_fptoui(src);
+            break;
+        case Fpy::DirectiveId::SITOFP:
+            res = this->unaryRegOp_sitofp(src);
+            break;
+        case Fpy::DirectiveId::UITOFP:
+            res = this->unaryRegOp_uitofp(src);
             break;
         default:
             FW_ASSERT(0, directive.get_op());

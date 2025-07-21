@@ -167,6 +167,10 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     I64 tester_unaryRegOp_not(I64 src);
     I64 tester_unaryRegOp_fpext(I64 src);
     I64 tester_unaryRegOp_fptrunc(I64 src);
+    I64 tester_unaryRegOp_fptoui(I64 src);
+    I64 tester_unaryRegOp_uitofp(I64 src);
+    I64 tester_unaryRegOp_fptosi(I64 src);
+    I64 tester_unaryRegOp_sitofp(I64 src);
     FpySequencer::Runtime* tester_get_m_runtime_ptr();
     Fw::ExternalSerializeBuffer* tester_get_m_sequenceBuffer_ptr();
     void tester_set_m_sequencesStarted(U64 val);
@@ -179,7 +183,7 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     Fw::Success tester_validate();
     Fw::String tester_get_m_sequenceFilePath();
     void tester_set_m_sequenceFilePath(Fw::String str);
-    Fw::Success tester_readBytes(Os::File& file, FwSizeType readLen, bool updateCrc = true);
+    Fw::Success tester_readBytes(Os::File& file, FwSizeType readLen, FpySequencer_FileReadStage readStage, bool updateCrc = true);
     Fw::Success tester_readFooter();
     Fw::Success tester_readBody();
     Fw::Success tester_readHeader();

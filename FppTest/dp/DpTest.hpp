@@ -16,7 +16,7 @@ namespace FppTest {
 
 class DpTest : public DpTestComponentBase {
     // Friend class for testing
-    friend class Tester;
+    friend class DpTestTester;
 
   public:
     // ----------------------------------------------------------------------
@@ -83,7 +83,7 @@ class DpTest : public DpTestComponentBase {
 
     //! Handler implementation for schedIn
     void schedIn_handler(const FwIndexType portNum,  //!< The port number
-                         U32 context                     //!< The call order
+                         U32 context                 //!< The call order
                          ) final;
 
   private:

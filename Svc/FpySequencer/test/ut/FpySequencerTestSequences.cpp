@@ -113,5 +113,21 @@ TEST_F(FpySequencerTester, CmpIntTlm) {
     dispatchUntilState(State::IDLE);
     ASSERT_EQ(tester_get_m_statementsDispatched(), 8);
 }
+TEST_F(FpySequencerTester, NotTrueSeq) {
+    // this sequence caught one bug
+    allocMem();
+
+    add_SET_REG(0, 255);
+    add_UNARY_REG_OP(0, 1, Fpy::DirectiveId::NOT);
+    add_IF(1, 4);
+    // should not get here
+    add_EXIT(false);
+    add_EXIT(true);
+
+    writeAndRun();
+    dispatchUntilState(State::IDLE);
+    // not of 255 should be interpreted as false
+    ASSERT_EQ(tester_get_m_tlm_ptr()->lastDirectiveError, DirectiveError::NO_ERROR);
+}
 
 }
