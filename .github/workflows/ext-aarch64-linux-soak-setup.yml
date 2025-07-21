@@ -68,6 +68,10 @@ jobs:
           if [ -d "./SoakDeployment/test/int" ]; then
             cp -r ./SoakDeployment/test/int aarch64-linux-artifacts-soak
           fi
+          # Copy monitoring script
+          if [ -f "./soak_monitor.py" ]; then
+            cp ./soak_monitor.py aarch64-linux-artifacts-soak/
+          fi
       - name: 'Archive Build Artifacts'
         uses: actions/upload-artifact@v4
         with:
@@ -105,6 +109,9 @@ jobs:
           # Activate virtual environment and install F´ requirements
           sudo ${INSTALL_DIR}/venv/bin/pip install --upgrade pip
           sudo ${INSTALL_DIR}/venv/bin/pip install -r requirements.txt
+          
+          # Install additional packages needed for soak testing
+          sudo ${INSTALL_DIR}/venv/bin/pip install psutil
 
       - name: "Artifacts Download"
         uses: actions/download-artifact@v4
@@ -118,6 +125,7 @@ jobs:
           sudo mkdir -p ${INSTALL_DIR}/dict
           sudo mkdir -p ${INSTALL_DIR}/test
           sudo mkdir -p ${INSTALL_DIR}/logs
+          sudo mkdir -p ${INSTALL_DIR}/monitoring
           
           # Copy binary, dict, and test files
           sudo cp ./build-artifacts/aarch64-linux/SoakDeployment/bin/SoakDeployment ${INSTALL_DIR}/bin/
@@ -126,6 +134,12 @@ jobs:
           # Copy test files if they exist
           if [ -d "./int" ]; then
             sudo cp -r ./int/* ${INSTALL_DIR}/test/
+          fi
+          
+          # Copy monitoring script if it exists
+          if [ -f "./soak_monitor.py" ]; then
+            sudo cp ./soak_monitor.py ${INSTALL_DIR}/monitoring/
+            sudo chmod +x ${INSTALL_DIR}/monitoring/soak_monitor.py
           fi
 
           # Make binary executable
