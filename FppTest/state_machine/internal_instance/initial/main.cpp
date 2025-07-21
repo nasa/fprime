@@ -4,28 +4,28 @@
 
 #include <gtest/gtest.h>
 
-#include "FppTest/state_machine/internal_instance/initial/Basic.hpp"
-#include "FppTest/state_machine/internal_instance/initial/Choice.hpp"
-#include "FppTest/state_machine/internal_instance/initial/Nested.hpp"
+#include "FppTest/state_machine/internal_instance/initial/BasicTester.hpp"
+#include "FppTest/state_machine/internal_instance/initial/ChoiceTester.hpp"
+#include "FppTest/state_machine/internal_instance/initial/NestedTester.hpp"
 #include "STest/STest/Random/Random.hpp"
 
 TEST(Basic, Test) {
-    FppTest::SmInstanceInitial::Basic basic("basic");
+    FppTest::SmInstanceInitial::BasicTester basic("basic");
     basic.test();
 }
 
 TEST(Choice, False) {
-    FppTest::SmInstanceInitial::Choice choice("choice");
+    FppTest::SmInstanceInitial::ChoiceTester choice("choice");
     choice.testFalse();
 }
 
 TEST(Choice, True) {
-    FppTest::SmInstanceInitial::Choice choice("choice");
+    FppTest::SmInstanceInitial::ChoiceTester choice("choice");
     choice.testTrue();
 }
 
 TEST(Nested, Test) {
-    FppTest::SmInstanceInitial::Nested nested("nested");
+    FppTest::SmInstanceInitial::NestedTester nested("nested");
     nested.test();
 }
 

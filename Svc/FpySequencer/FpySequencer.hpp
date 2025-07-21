@@ -23,8 +23,7 @@
 
 static_assert(Svc::Fpy::MAX_SEQUENCE_ARG_COUNT <= std::numeric_limits<U8>::max(),
               "Sequence arg count must be below U8 max");
-static_assert(Svc::Fpy::NUM_REGISTERS <= std::numeric_limits<U8>::max(),
-              "Register count must be below U8 max");
+static_assert(Svc::Fpy::NUM_REGISTERS <= std::numeric_limits<U8>::max(), "Register count must be below U8 max");
 static_assert(Svc::Fpy::MAX_SEQUENCE_STATEMENT_COUNT <= std::numeric_limits<U16>::max(),
               "Sequence statement count must be below U16 max");
 static_assert(Svc::Fpy::MAX_SERIALIZABLE_REGISTER_SIZE <= std::numeric_limits<FwSizeType>::max(),
@@ -41,8 +40,7 @@ using State = FpySequencer_SequencerStateMachineStateMachineBase::State;
 using DirectiveError = FpySequencer_DirectiveErrorCode;
 
 class FpySequencer : public FpySequencerComponentBase {
-
-  friend class FpySequencerTester;
+    friend class FpySequencerTester;
 
   public:
     union DirectiveUnion {
@@ -78,17 +76,15 @@ class FpySequencer : public FpySequencerComponentBase {
     //!
     ~FpySequencer();
 
-    private:
-
-        //! Handler for command RUN
-        //!
-        //! Loads, validates and runs a sequence
-        void
-        RUN_cmdHandler(FwOpcodeType opCode,               //!< The opcode
-                       U32 cmdSeq,                        //!< The command sequence number
-                       const Fw::CmdStringArg& fileName,  //!< The name of the sequence file
-                       FpySequencer_BlockState block      //!< Return command status when complete or not
-                       ) override;
+  private:
+    //! Handler for command RUN
+    //!
+    //! Loads, validates and runs a sequence
+    void RUN_cmdHandler(FwOpcodeType opCode,               //!< The opcode
+                        U32 cmdSeq,                        //!< The command sequence number
+                        const Fw::CmdStringArg& fileName,  //!< The name of the sequence file
+                        FpySequencer_BlockState block      //!< Return command status when complete or not
+                        ) override;
 
     //! Handler for command VALIDATE
     //!
@@ -323,32 +319,30 @@ class FpySequencer : public FpySequencerComponentBase {
     //!
     //! called when a sequence failed to execute successfully
     void Svc_FpySequencer_SequencerStateMachine_action_report_seqFailed(
-        SmId smId, //!< The state machine id
-        Svc_FpySequencer_SequencerStateMachine::Signal signal //!< The signal
-    ) override;
+        SmId smId,                                             //!< The state machine id
+        Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
+        ) override;
 
     //! Implementation for action report_seqStarted of state machine Svc_FpySequencer_SequencerStateMachine
     //!
     //! reports that a sequence was started
     void Svc_FpySequencer_SequencerStateMachine_action_report_seqStarted(
-        SmId smId, //!< The state machine id
-        Svc_FpySequencer_SequencerStateMachine::Signal signal //!< The signal
-    ) override;
+        SmId smId,                                             //!< The state machine id
+        Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
+        ) override;
 
-    protected:
+  protected:
+    // ----------------------------------------------------------------------
+    // Functions to implement for internal state machine guards
+    // ----------------------------------------------------------------------
 
-        // ----------------------------------------------------------------------
-        // Functions to implement for internal state machine guards
-        // ----------------------------------------------------------------------
-
-        //! Implementation for guard goalStateIs_RUNNING of state machine Svc_FpySequencer_SequencerStateMachine
-        //!
-        //! return true if the goal state is RUNNING
-        bool
-        Svc_FpySequencer_SequencerStateMachine_guard_goalStateIs_RUNNING(
-            SmId smId,                                             //!< The state machine id
-            Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
-        ) const override;
+    //! Implementation for guard goalStateIs_RUNNING of state machine Svc_FpySequencer_SequencerStateMachine
+    //!
+    //! return true if the goal state is RUNNING
+    bool Svc_FpySequencer_SequencerStateMachine_guard_goalStateIs_RUNNING(
+        SmId smId,                                             //!< The state machine id
+        Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
+    ) const override;
 
     //! Implementation for guard shouldDebugBreak of state machine Svc_FpySequencer_SequencerStateMachine
     //!
@@ -384,9 +378,7 @@ class FpySequencer : public FpySequencerComponentBase {
                                ) override;
 
     //! Handler for input port seqRunIn
-    void seqRunIn_handler(FwIndexType portNum,
-                          const Fw::StringBase& filename
-                          ) override;
+    void seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& filename) override;
 
     //! Handler for input port pingIn
     void pingIn_handler(FwIndexType portNum,  //!< The port number
@@ -426,13 +418,15 @@ class FpySequencer : public FpySequencerComponentBase {
     void directive_cmd_internalInterfaceHandler(const Svc::FpySequencer_CmdDirective& directive) override;
 
     //! Internal interface handler for directive_deserSerReg
-    void directive_deserSerReg_internalInterfaceHandler(const Svc::FpySequencer_DeserSerRegDirective& directive) override;
+    void directive_deserSerReg_internalInterfaceHandler(
+        const Svc::FpySequencer_DeserSerRegDirective& directive) override;
 
     //! Internal interface handler for directive_setReg
     void directive_setReg_internalInterfaceHandler(const Svc::FpySequencer_SetRegDirective& directive) override;
 
     //! Internal interface handler for directive_binaryRegOp
-    void directive_binaryRegOp_internalInterfaceHandler(const Svc::FpySequencer_BinaryRegOpDirective& directive) override;
+    void directive_binaryRegOp_internalInterfaceHandler(
+        const Svc::FpySequencer_BinaryRegOpDirective& directive) override;
 
     //! Internal interface handler for directive_unaryRegOp
     void directive_unaryRegOp_internalInterfaceHandler(const Svc::FpySequencer_UnaryRegOpDirective& directive) override;
@@ -447,9 +441,9 @@ class FpySequencer : public FpySequencerComponentBase {
     void allocateBuffer(FwEnumStoreType identifier, Fw::MemAllocator& allocator, FwSizeType bytes);
 
     void deallocateBuffer(Fw::MemAllocator& allocator);
-    private :
 
-        static constexpr U32 CRC_INITIAL_VALUE = 0xFFFFFFFFU;
+  private:
+    static constexpr U32 CRC_INITIAL_VALUE = 0xFFFFFFFFU;
 
     // allocated at startup
     Fw::ExternalSerializeBuffer m_sequenceBuffer;
@@ -570,7 +564,10 @@ class FpySequencer : public FpySequencerComponentBase {
     // updates the CRC by default, but can be turned off if the contents
     // aren't included in CRC.
     // return success if successful
-    Fw::Success readBytes(Os::File& file, FwSizeType readLen, bool updateCrc = true);
+    Fw::Success readBytes(Os::File& file,
+                          FwSizeType readLen,
+                          const FpySequencer_FileReadStage& readStage,
+                          bool updateCrc = true);
 
     // ----------------------------------------------------------------------
     // Run state
@@ -648,6 +645,10 @@ class FpySequencer : public FpySequencerComponentBase {
     I64 unaryRegOp_not(I64 src);
     I64 unaryRegOp_fpext(I64 src);
     I64 unaryRegOp_fptrunc(I64 src);
+    I64 unaryRegOp_fptoui(I64 src);
+    I64 unaryRegOp_fptosi(I64 src);
+    I64 unaryRegOp_sitofp(I64 src);
+    I64 unaryRegOp_uitofp(I64 src);
 
     Signal exit_directiveHandler(const FpySequencer_ExitDirective& directive, DirectiveError& error);
 };

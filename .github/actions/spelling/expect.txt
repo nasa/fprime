@@ -244,11 +244,14 @@ fpptest
 fprime
 fptr
 fptrunc
+fptosi
+fptoui
 fputil
 fpy
 FPYSEQUENCER
 freeram
 Fregoso
+fres
 frhs
 frsize
 fsblkcnt
@@ -599,6 +602,7 @@ sideeffect
 sighandler
 Signedness
 Silveira
+sitofp
 sle
 sloc
 socio
@@ -696,6 +700,7 @@ typedef
 uart
 UDPSOCKET
 uge
+uitofp
 ulhs
 UML
 UNEXP

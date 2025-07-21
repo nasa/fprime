@@ -298,8 +298,7 @@ void LinuxUartDriver ::send_handler(const FwIndexType portNum, Fw::Buffer& serBu
         status = Drv::ByteStreamStatus::OTHER_ERROR;
     } else {
         unsigned char *data = serBuffer.getData();
-        FW_ASSERT(static_cast<size_t>(serBuffer.getSize()) <= std::numeric_limits<size_t>::max(),
-                  static_cast<FwAssertArgType>(serBuffer.getSize()));
+        FW_ASSERT_NO_OVERFLOW(serBuffer.getSize(), size_t);
         size_t xferSize = static_cast<size_t>(serBuffer.getSize());
 
         ssize_t stat = ::write(this->m_fd, data, xferSize);

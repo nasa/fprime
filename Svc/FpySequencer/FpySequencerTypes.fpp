@@ -49,11 +49,18 @@ module Svc {
             
             # unary reg op dirs
             NOT = 33
+            # floating point extension and truncation
             FPEXT = 34
             FPTRUNC = 35
+            # floating point conversion to signed/unsigned integer,
+            # and vice versa
+            FPTOSI = 36
+            FPTOUI = 37
+            SITOFP = 38
+            UITOFP = 39
             # end unary reg op dirs
 
-            EXIT = 36
+            EXIT = 40
         }
 
         struct Header {

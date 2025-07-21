@@ -29,7 +29,8 @@ set(UT_MOD_DEPS
 # UT_SOURCE_FILES: Sources for unit test
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/queued.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.hpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/QueuedTestTester.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../tests/TestMain.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../tests/Tests.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../tests/TesterHandlers.cpp"

@@ -197,6 +197,8 @@ function(fprime_setup_included_code)
     if (BUILD_TESTING)
         add_subdirectory("${FPRIME_FRAMEWORK_PATH}/STest/" "${CMAKE_BINARY_DIR}/F-Prime/STest")
     endif()
+    # By default we shutoff framework UTs
+    set(__FPRIME_NO_UT_GEN__ ON)
     # Check if we are allowing framework UTs
     if (FPRIME_ENABLE_FRAMEWORK_UTS)
         set(__FPRIME_NO_UT_GEN__ OFF)
