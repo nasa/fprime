@@ -1284,7 +1284,7 @@ It must not be `NONE`.
 
         1. Set `m_nodes[parent].color = BLACK`.
 
-        1. _The leaf-augmented subtree rooted at `parent` has this shape,
+        1. _The leaf-augmented subtree rooted at `parent` has this shape.
            The entire tree is a valid red-black tree._
 
            <center>
