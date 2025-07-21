@@ -114,27 +114,12 @@ throughout this document:
    For example, we could have K1 = 1, K2 = 2, K3 = 3; or K1 = `"a"`, K2 =
    `"b"`, K3 = `"c"`; etc.
 
+<a name="red-black-colorings"></a>
 ### 1.3. Red-Black Colorings
 
 A **red-black tree** is a BST _T_ together with a **red-black coloring**,
 i.e., an assignment of a color (red or black) to each node of _T_.
-A red-black tree _T_ is **valid** if its coloring
-satisfies the following constraints:
-
-1. **RBT1:** No red node of _T_ has a red child.
-
-1. **RBT2:** Let _T'_ be the **leaf-augmented tree** constructed from _T_ as
-   follows.
-   If _T_ is empty, then _T'_ consists of a single black node.
-   Otherwise, _T'_ is the red-black colored binary tree
-   that results from (1) adding a new black
-   leaf node as a left child of every node of _T_ that has no left child
-   and (2) adding a new black leaf node as a right child of every node of _T_
-   that has no right child.
-   For each node _N_ in _T'_, every path that follows child links from _N_ to a
-   leaf node must pass through the same number of black nodes.
-
-For example, this tree is a valid red-black tree:
+For example, here is a red-black tree:
 
 <center>
 <div>
@@ -144,7 +129,35 @@ For example, this tree is a valid red-black tree:
 
 The color of a node in the diagram is its color in the
 red-black coloring.
-Here is the corresponding leaf-augmented tree for checking **RBT2**:
+
+Certain red-black trees are considered **valid**.
+In the rest of this section, we define the validity constraints.
+The standard BST insert and remove operations can violate the
+validity constraints.
+Therefore, when inserting or removing a node, we must perform
+a **rebalancing**, i.e., a transformation that rearranges
+links and recolors nodes to maintain
+the BST property and to produce a valid coloring.
+
+<a name="leaf-augmented-trees"></a>
+#### 1.3.1. Leaf-Augmented Trees
+
+In order to state the validity constraints for a red-black tree,
+we need to define the concept of a **leaf-augmented tree**.
+Let _T_ be a red-black tree.
+We define the leaf-augmented tree _T'_ corresponding to _T_
+as follows:
+
+1.  If _T_ is empty, then _T'_ consists of a single black node.
+
+1.  Otherwise, _T'_ is the red-black colored binary tree
+   that results from (1) adding a new black
+   leaf node as a left child of every node of _T_ that has no left child
+   and (2) adding a new black leaf node as a right child of every node of _T_
+   that has no right child.
+
+For example, here is the leaf-augmented tree corresponding to
+the tree shown above:
 
 <center>
 <div>
@@ -152,6 +165,27 @@ Here is the corresponding leaf-augmented tree for checking **RBT2**:
 </div>
 </center>
 
+Notice that a leaf-augmented tree has the following properties:
+
+1. Every leaf node is black.
+
+2. Every node either is a leaf node or has exactly two children.
+
+<a name="valid-colorings"></a>
+#### 1.3.2. Valid Colorings
+
+A red-black tree _T_ is **valid** if its coloring
+satisfies the following constraints:
+
+1. **RBT1:** No red node of _T_ has a red child.
+
+1. **RBT2:** Let _T'_ be the leaf-augmented tree constructed from _T_ as
+   described in the previous section.
+   For each node _N_ in _T'_, every path that follows child links from _N_ to a
+   leaf node must pass through the same number of black nodes.
+
+For example, the tree shown at the beginning of
+this section is a valid red-black tree.
 Notice that **RBT2** is satisfied because each path from the root to a leaf
 in the leaf-augmented tree passes through two black nodes.
 
@@ -175,14 +209,7 @@ Note that in the leaf-augmented tree,
 the path from K2 to either child of K1 goes through two black nodes,
 while the path from K2 to its right child goes through one black node.
 
-The standard BST insert and remove operations can violate the
-validity constraints.
-Therefore, when inserting or removing a node, we must perform
-a **rebalancing**, i.e., a transformation that rearranges
-links and recolors nodes to maintain
-the BST property and to produce a valid coloring.
-
-### 1.4. Black Height
+#### 1.3.3. Black Height
 
 When describing the insert and remove algorithms,
 it will be useful to have the notion of the **black height**
@@ -198,7 +225,8 @@ of a path, a node, a tree, or a forest of trees.
    Otherwise the black height of _N_ is not defined.
 
 1. **Trees:** Let _T_ be a red-black tree.
-   Let _T'_ be the leaf-augmented tree described in the definition of **RBT2**.
+   Let _T'_ be the corresponding <a href="#leaf-augmented-trees">leaf-augmented 
+   tree</a>.
    If the root of _T'_ has a defined black height _n_, then the black height of
    _T_ is defined and is equal to _n_.
    Otherwise the black height of _T_ is not defined.
@@ -217,13 +245,13 @@ Let _T_ be a red-black tree, and note the following:
    only if each of the child subtrees of the root of _T_ has a
    defined black height, and the two black heights are the same.
 
-### 1.5. Representing Forests
+#### 1.3.4. Representing Forests
 
 Let _F_ be a forest of red-black trees with a defined black height.
 To represent such a forest, we will write a dotted box, and we may write
 a property of the forest in the box.
 For example, we may represent the first tree shown in the
-section **Red-Black Colorings** as follows:
+section <a href="#red-black-colorings">**Red-Black Colorings**</a> as follows:
 
 <center>
 <div>
@@ -231,7 +259,8 @@ section **Red-Black Colorings** as follows:
 </div>
 </center>
 
-Similarly, we may represent the second tree shown in that section as follows:
+Similarly, we may represent the tree shown in the section <a 
+href="#valid-colorings">**Valid Colorings**</a> as follows:
 
 <center>
 <div>
@@ -244,7 +273,7 @@ and the second tree has no defined black height.
 
 An arrow pointing to an empty forest means the same thing as no arrow.
 
-### 1.6. Local Constraint Violations
+#### 1.3.5. Local Constraint Violations
 
 To describe the algorithms, it will be useful to have a precise way to state
 where a constraint violation occurs in an invalid red-black tree.
