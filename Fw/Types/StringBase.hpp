@@ -70,9 +70,9 @@ class StringBase : public Serializable {
     SerializeStatus serializeTo(SerializeBufferBase& buffer, SizeType maxLen) const;
     SerializeStatus deserializeFrom(SerializeBufferBase& buffer) override;
 
-    DEPRECATED(virtual SerializeStatus serialize(SerializeBufferBase& buffer) const override, "Use serializeTo(SerializeBufferBase& buffer) const");
-    DEPRECATED(virtual SerializeStatus serialize(SerializeBufferBase& buffer, SizeType maxLen) const, "Use serializeTo with other Fw::Buffer functions");
-    DEPRECATED(virtual SerializeStatus deserialize(SerializeBufferBase& buffer) override, "Use deserializeFrom(SerializeBufferBase& buffer)");
+    virtual SerializeStatus serialize(SerializeBufferBase& buffer) const override;
+    virtual SerializeStatus serialize(SerializeBufferBase& buffer, SizeType maxLen) const;
+    virtual SerializeStatus deserialize(SerializeBufferBase& buffer) override;
 
 #ifdef BUILD_UT
     // to support GoogleTest framework in unit tests

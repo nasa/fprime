@@ -141,9 +141,9 @@ class Buffer : public Fw::Serializable {
     // Deprecated methods
     // ----------------------------------------------------------------------
 
-    DEPRECATED(Fw::SerializeStatus serialize(Fw::SerializeBufferBase& serialBuffer) const, "Use serializeTo instead");
+    Fw::SerializeStatus serialize(Fw::SerializeBufferBase& serialBuffer) const;
 
-    DEPRECATED(Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer), "Use deserializeFrom instead");
+    Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer);
 
     // ----------------------------------------------------------------------
     // Accessor functions

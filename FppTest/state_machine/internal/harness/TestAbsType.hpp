@@ -61,21 +61,15 @@ struct TestAbsType final : public Fw::Serializable {
     }
 
     // ----------------------------------------------------------------------
-    // Deprecated methods
+    // Methods
     // ----------------------------------------------------------------------
 
-    DEPRECATED(
-        Fw::SerializeStatus serialize(Fw::SerializeBufferBase& sbb) const final,
-        "Use serializeTo instead"
-    )
+    Fw::SerializeStatus serialize(Fw::SerializeBufferBase& sbb) const final
     {
         return this->serializeTo(sbb);
     }
 
-    DEPRECATED(
-        Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& sbb) final,
-        "Use deserializeFrom instead"
-    )
+    Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& sbb) final
     {
         return this->deserializeFrom(sbb);
     }

@@ -33,12 +33,12 @@ class Serializable {
     virtual SerializeStatus deserializeFrom(SerializeBufferBase& buffer); //!< deserialize contents from buffer
 
     // ----------------------------------------------------------------------
-    // Deprecated methods
+    // Methods
     // ----------------------------------------------------------------------
 
-    DEPRECATED(virtual SerializeStatus serialize(SerializeBufferBase& buffer) const, "Use serializeTo instead");
+    virtual SerializeStatus serialize(SerializeBufferBase& buffer) const;
 
-    DEPRECATED(virtual SerializeStatus deserialize(SerializeBufferBase& buffer), "Use deserializeFrom instead");
+    virtual SerializeStatus deserialize(SerializeBufferBase& buffer);
 #if FW_SERIALIZABLE_TO_STRING || FW_ENABLE_TEXT_LOGGING || BUILD_UT
     virtual void toString(StringBase& text) const;  //!< generate text from serializable
 #endif
@@ -159,56 +159,56 @@ class SerializeBufferBase {
     SerializeStatus deserializeSize(FwSizeType& size);  //!< deserialize a size value
 
     // ----------------------------------------------------------------------
-    // Deprecated serialization methods
+    // Serialization methods
     // ----------------------------------------------------------------------
 
-    DEPRECATED(SerializeStatus serialize(U8 val), "Use serializeFrom instead");
-    DEPRECATED(SerializeStatus serialize(I8 val), "Use serializeFrom instead");
+    SerializeStatus serialize(U8 val);
+    SerializeStatus serialize(I8 val);
 #if FW_HAS_16_BIT == 1
-    DEPRECATED(SerializeStatus serialize(U16 val), "Use serializeFrom instead");
-    DEPRECATED(SerializeStatus serialize(I16 val), "Use serializeFrom instead");
+    SerializeStatus serialize(U16 val);
+    SerializeStatus serialize(I16 val);
 #endif
 #if FW_HAS_32_BIT == 1
-    DEPRECATED(SerializeStatus serialize(U32 val), "Use serializeFrom instead");
-    DEPRECATED(SerializeStatus serialize(I32 val), "Use serializeFrom instead");
+    SerializeStatus serialize(U32 val);
+    SerializeStatus serialize(I32 val);
 #endif
 #if FW_HAS_64_BIT == 1
-    DEPRECATED(SerializeStatus serialize(U64 val), "Use serializeFrom instead");
-    DEPRECATED(SerializeStatus serialize(I64 val), "Use serializeFrom instead");
+    SerializeStatus serialize(U64 val);
+    SerializeStatus serialize(I64 val);
 #endif
-    DEPRECATED(SerializeStatus serialize(F32 val), "Use serializeFrom instead");
-    DEPRECATED(SerializeStatus serialize(F64 val), "Use serializeFrom instead");
-    DEPRECATED(SerializeStatus serialize(bool val), "Use serializeFrom instead");
-    DEPRECATED(SerializeStatus serialize(const void* val), "Use serializeFrom instead");
-    DEPRECATED(SerializeStatus serialize(const U8* buff, FwSizeType length, bool noLength), "Use serializeFrom instead");
-    DEPRECATED(SerializeStatus serialize(const U8* buff, FwSizeType length), "Use serializeFrom instead");
-    DEPRECATED(SerializeStatus serialize(const U8* buff, FwSizeType length, Serialization::t mode), "Use serializeFrom instead");
-    DEPRECATED(SerializeStatus serialize(const Serializable& val), "Use serializeFrom instead");
-    DEPRECATED(SerializeStatus serialize(const SerializeBufferBase& val), "Use serializeFrom instead");
+    SerializeStatus serialize(F32 val);
+    SerializeStatus serialize(F64 val);
+    SerializeStatus serialize(bool val);
+    SerializeStatus serialize(const void* val);
+    SerializeStatus serialize(const U8* buff, FwSizeType length, bool noLength);
+    SerializeStatus serialize(const U8* buff, FwSizeType length);
+    SerializeStatus serialize(const U8* buff, FwSizeType length, Serialization::t mode);
+    SerializeStatus serialize(const Serializable& val);
+    SerializeStatus serialize(const SerializeBufferBase& val);
 
-    DEPRECATED(SerializeStatus deserialize(U8& val), "Use deserializeTo instead");
-    DEPRECATED(SerializeStatus deserialize(I8& val), "Use deserializeTo instead");
+    SerializeStatus deserialize(U8& val);
+    SerializeStatus deserialize(I8& val);
 #if FW_HAS_16_BIT == 1
-    DEPRECATED(SerializeStatus deserialize(U16& val), "Use deserializeTo instead");
-    DEPRECATED(SerializeStatus deserialize(I16& val), "Use deserializeTo instead");
+    SerializeStatus deserialize(U16& val);
+    SerializeStatus deserialize(I16& val);
 #endif
 #if FW_HAS_32_BIT == 1
-    DEPRECATED(SerializeStatus deserialize(U32& val), "Use deserializeTo instead");
-    DEPRECATED(SerializeStatus deserialize(I32& val), "Use deserializeTo instead");
+    SerializeStatus deserialize(U32& val);
+    SerializeStatus deserialize(I32& val);
 #endif
 #if FW_HAS_64_BIT == 1
-    DEPRECATED(SerializeStatus deserialize(U64& val), "Use deserializeTo instead");
-    DEPRECATED(SerializeStatus deserialize(I64& val), "Use deserializeTo instead");
+    SerializeStatus deserialize(U64& val);
+    SerializeStatus deserialize(I64& val);
 #endif
-    DEPRECATED(SerializeStatus deserialize(F32& val), "Use deserializeTo instead");
-    DEPRECATED(SerializeStatus deserialize(F64& val), "Use deserializeTo instead");
-    DEPRECATED(SerializeStatus deserialize(bool& val), "Use deserializeTo instead");
-    DEPRECATED(SerializeStatus deserialize(void*& val), "Use deserializeTo instead");
-    DEPRECATED(SerializeStatus deserialize(U8* buff, FwSizeType& length, bool noLength), "Use deserializeTo instead");
-    DEPRECATED(SerializeStatus deserialize(U8* buff, FwSizeType& length), "Use deserializeTo instead");
-    DEPRECATED(SerializeStatus deserialize(U8* buff, FwSizeType& length, Serialization::t mode), "Use deserializeTo instead");
-    DEPRECATED(SerializeStatus deserialize(Serializable& val), "Use deserializeTo instead");
-    DEPRECATED(SerializeStatus deserialize(SerializeBufferBase& val), "Use deserializeTo instead");
+    SerializeStatus deserialize(F32& val);
+    SerializeStatus deserialize(F64& val);
+    SerializeStatus deserialize(bool& val);
+    SerializeStatus deserialize(void*& val);
+    SerializeStatus deserialize(U8* buff, FwSizeType& length, bool noLength);
+    SerializeStatus deserialize(U8* buff, FwSizeType& length);
+    SerializeStatus deserialize(U8* buff, FwSizeType& length, Serialization::t mode);
+    SerializeStatus deserialize(Serializable& val);
+    SerializeStatus deserialize(SerializeBufferBase& val);
 
     void resetSer();    //!< reset to beginning of buffer to reuse for serialization
     void resetDeser();  //!< reset deserialization to beginning
