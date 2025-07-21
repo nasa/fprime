@@ -8,8 +8,7 @@ Brotli==1.1.0
 certifi==2024.8.30
 chardet==5.2.0
 charset-normalizer==3.4.0
-# no pre-built wheels for armv7l - only needed for code formatting so skip it on armv7l
-clang-format==20.1.6 ; platform_machine != "armv7l"
+clang-format==20.1.8
 click==8.1.7
 cmake==3.26.0
 colorlog==6.8.2
@@ -23,19 +22,19 @@ fprime-fpl-convert-xml==1.0.3
 fprime-fpl-extract-xml==1.0.3
 fprime-fpl-layout==1.0.3
 fprime-fpl-write-pic==1.0.3
-fprime-fpp-check==3.0.0a13
-fprime-fpp-depend==3.0.0a13
-fprime-fpp-filenames==3.0.0a13
-fprime-fpp-format==3.0.0a13
-fprime-fpp-from-xml==3.0.0a13
-fprime-fpp-locate-defs==3.0.0a13
-fprime-fpp-locate-uses==3.0.0a13
-fprime-fpp-syntax==3.0.0a13
-fprime-fpp-to-cpp==3.0.0a13
-fprime-fpp-to-dict==3.0.0a13
-fprime-fpp-to-json==3.0.0a13
-fprime-fpp-to-xml==3.0.0a13
-fprime-fpp-to-layout==3.0.0a13
+fprime-fpp-check==3.0.0a14
+fprime-fpp-depend==3.0.0a14
+fprime-fpp-filenames==3.0.0a14
+fprime-fpp-format==3.0.0a14
+fprime-fpp-from-xml==3.0.0a14
+fprime-fpp-locate-defs==3.0.0a14
+fprime-fpp-locate-uses==3.0.0a14
+fprime-fpp-syntax==3.0.0a14
+fprime-fpp-to-cpp==3.0.0a14
+fprime-fpp-to-dict==3.0.0a14
+fprime-fpp-to-json==3.0.0a14
+fprime-fpp-to-xml==3.0.0a14
+fprime-fpp-to-layout==3.0.0a14
 fprime-gds==4.0.0a7
 fprime-tools==4.0.0a6
 fprime-visual==1.0.2

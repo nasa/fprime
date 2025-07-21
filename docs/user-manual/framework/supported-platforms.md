@@ -11,23 +11,24 @@
 
 These are platforms that the F Prime community or core team is actively working or planning to support. They may have partial implementations, early-stage deployments, or nothing yet.
 
-| Hardware | OS        | Architecture | Status              | Reference Project             |
-| -------- | --------- | ------------ | ------------------- | ---------------- |
-| PyCubed  | Baremetal | RISC-V | In development |[`fprime-baremetal-reference`](https://github.com/fprime-community/fprime-baremetal-reference) |
-| PyCubed  | Zephyr | RISC-V | In development ||
-| 3PySquared | Baremetal  | ARM | In development |[`fprime-baremetal-reference`](https://github.com/fprime-community/fprime-baremetal-reference) |
-| 3PySquared | Zephyr  | ARM | In development | |
-| Pi Pico 2| Baremetal | RISC-V | In development |[`fprime-baremetal-reference`](https://github.com/fprime-community/fprime-baremetal-reference) |
-| Pi Pico 2| Zephyr | RISC-V | In development ||
-| Pi Pico  | Baremetal  | ARM | In development |[`fprime-baremetal-reference`](https://github.com/fprime-community/fprime-baremetal-reference) |
-| Feather M4 | FreeRTOS  | ARM | In development  | |
-| HPSC | VxWorks 7 | RISC-V | In development | |
-| HPSC | Linux | RISC-V | In development | |
-| PolarFire SoC  | VxWorks 7 | RISC-V | In development | |
-| PolarFire SoC  | Linux | RISC-V | Not started | |
-| GR712RC | VxWorks 7 | SPARC V8 | Not started | |
-| Vorago | Baremetal | ARM | In development | |
-| VOXL2 | Linux | ARM64 | In development | |
+| Hardware | OS        | Architecture | Status              | Reference Project             | Delivery Date |
+| -------- | --------- | ------------ | ------------------- | ---------------- |----------------|
+| PyCubed  | Baremetal | RISC-V | In development |[`fprime-baremetal-reference`](https://github.com/fprime-community/fprime-baremetal-reference) | 9/30/2025 |
+| PyCubed  | Zephyr | RISC-V | In development ||TBD|
+| 3PySquared | Baremetal  | ARM | In development |[`fprime-baremetal-reference`](https://github.com/fprime-community/fprime-baremetal-reference) | 9/30/2025 |
+| 3PySquared | Zephyr  | ARM | In development | |TBD|
+| Pi Pico 2| Baremetal | RISC-V | In development |[`fprime-baremetal-reference`](https://github.com/fprime-community/fprime-baremetal-reference) | 9/30/2025 |
+| Pi Pico 2| Zephyr | RISC-V | In development ||TBD|
+| Pi Pico  | Baremetal  | ARM | In development |[`fprime-baremetal-reference`](https://github.com/fprime-community/fprime-baremetal-reference) | 9/30/2025 |
+| Feather M4 | FreeRTOS  | ARM | In development  | | 9/30/2025 |
+| HPSC | VxWorks 7 | RISC-V | In development | | 9/30/2025 |
+| HPSC | Linux | RISC-V | In development | | 9/30/2025 |
+| PolarFire SoC  | VxWorks 7 | RISC-V | In development | | 9/30/2025 |
+| PolarFire SoC  | Linux | RISC-V | Not started | |TBD|
+| GR712RC | VxWorks 7 | SPARC V8 | Not started | |TBD|
+| GR740 | VxWorks 7 | SPARC V8 | Not started | |TBD|
+| Vorago | Baremetal | ARM | In development | |TBD|
+| VOXL2 | Linux | ARM64 | In development | | 9/30/2025 |
 
 ## What does "Supported Platform" Mean?
 
@@ -48,7 +49,7 @@ We welcome contributions to expand the list of supported platforms! Here’s how
 1. Create a reference project for your platform that uses your platform library. Use [`fprime-vxworks-reference`](https://github.com/fprime-community/fprime-vxworks-reference) or [`fprime-baremetal-reference`](https://github.com/fprime-community/fprime-baremetal-reference) as examples for the file structure.
 1. Include build, run, and hardware setup instructions in a README.md.
 1. Set up CI for your reference project and have CI run the F Prime provided integration test scripts.
-1. Optional: submit a request to add your reference project to fprime-community by [opening a discussion](https://github.com/nasa/fprime/discussions). Provide platform description in your request.
+1. Optional: You may submit a request to transfer your reference project to the fprime-community by [opening a discussion](https://github.com/nasa/fprime/discussions). Please include a description of your platform and links to your reference project repositories. To transfer a repository to fprime-community, you need to transfer ownership of the repository to an fprime maintainer. If accepted, then they will transfer the repository to the fprime-community organization.
    
 > [!TIP]
 > 1. Follow the naming and file-structure convention as the example reference projects.

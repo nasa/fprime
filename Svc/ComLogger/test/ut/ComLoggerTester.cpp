@@ -102,19 +102,19 @@ namespace Svc {
       for(int j = 0; j < 3; j++)
       {
         // Test times for the different iterations:
-        Fw::Time testTime(TB_NONE, j, 9876543);
-        Fw::Time testTimePrev(TB_NONE, j-1, 9876543);
-        Fw::Time testTimeNext(TB_NONE, j+1, 9876543);
+        Fw::Time testTime(TimeBase::TB_NONE, j, 9876543);
+        Fw::Time testTimePrev(TimeBase::TB_NONE, j-1, 9876543);
+        Fw::Time testTimeNext(TimeBase::TB_NONE, j+1, 9876543);
 
         // File names for the different iterations:
         memset(fileName, 0, sizeof(fileName));
-        snprintf(fileName, sizeof(fileName), "%s_%d_%d_%06d.com", FILE_STR, testTime.getTimeBase(), testTime.getSeconds(), testTime.getUSeconds());
+        snprintf(fileName, sizeof(fileName), "%s_%d_%d_%06d.com", FILE_STR, static_cast<FwTimeBaseStoreType>(testTime.getTimeBase()), testTime.getSeconds(), testTime.getUSeconds());
         memset(hashFileName, 0, sizeof(hashFileName));
-        snprintf(hashFileName, sizeof(hashFileName), "%s_%d_%d_%06d.com%s", FILE_STR, testTime.getTimeBase(), testTime.getSeconds(), testTime.getUSeconds(), Utils::Hash::getFileExtensionString());
+        snprintf(hashFileName, sizeof(hashFileName), "%s_%d_%d_%06d.com%s", FILE_STR, static_cast<FwTimeBaseStoreType>(testTime.getTimeBase()), testTime.getSeconds(), testTime.getUSeconds(), Utils::Hash::getFileExtensionString());
         memset(prevFileName, 0, sizeof(prevFileName));
-        snprintf(prevFileName, sizeof(prevFileName), "%s_%d_%d_%06d.com", FILE_STR, testTime.getTimeBase(), testTimePrev.getSeconds(), testTimePrev.getUSeconds());
+        snprintf(prevFileName, sizeof(prevFileName), "%s_%d_%d_%06d.com", FILE_STR, static_cast<FwTimeBaseStoreType>(testTime.getTimeBase()), testTimePrev.getSeconds(), testTimePrev.getUSeconds());
         memset(prevHashFileName, 0, sizeof(prevHashFileName));
-        snprintf(prevHashFileName, sizeof(prevHashFileName), "%s_%d_%d_%06d.com%s", FILE_STR, testTime.getTimeBase(), testTimePrev.getSeconds(), testTimePrev.getUSeconds(), Utils::Hash::getFileExtensionString());
+        snprintf(prevHashFileName, sizeof(prevHashFileName), "%s_%d_%d_%06d.com%s", FILE_STR, static_cast<FwTimeBaseStoreType>(testTime.getTimeBase()), testTimePrev.getSeconds(), testTimePrev.getUSeconds(), Utils::Hash::getFileExtensionString());
 
         // Set the test time to the current time:
         setTestTime(testTime);
@@ -224,19 +224,19 @@ namespace Svc {
       for(int j = 0; j < 3; j++)
       {
         // Test times for the different iterations:
-        Fw::Time testTime(TB_NONE, j, 123456);
-        Fw::Time testTimePrev(TB_NONE, j-1, 123456);
-        Fw::Time testTimeNext(TB_NONE, j+1, 123456);
+        Fw::Time testTime(TimeBase::TB_NONE, j, 123456);
+        Fw::Time testTimePrev(TimeBase::TB_NONE, j-1, 123456);
+        Fw::Time testTimeNext(TimeBase::TB_NONE, j+1, 123456);
 
         // File names for the different iterations:
         memset(fileName, 0, sizeof(fileName));
-        snprintf(fileName, sizeof(fileName), "%s_%d_%d_%06d.com", FILE_STR, testTime.getTimeBase(), testTime.getSeconds(), testTime.getUSeconds());
+        snprintf(fileName, sizeof(fileName), "%s_%d_%d_%06d.com", FILE_STR, static_cast<FwTimeBaseStoreType>(testTime.getTimeBase()), testTime.getSeconds(), testTime.getUSeconds());
         memset(hashFileName, 0, sizeof(hashFileName));
-        snprintf(hashFileName, sizeof(hashFileName), "%s_%d_%d_%06d.com%s", FILE_STR, testTime.getTimeBase(), testTime.getSeconds(), testTime.getUSeconds(), Utils::Hash::getFileExtensionString());
+        snprintf(hashFileName, sizeof(hashFileName), "%s_%d_%d_%06d.com%s", FILE_STR, static_cast<FwTimeBaseStoreType>(testTime.getTimeBase()), testTime.getSeconds(), testTime.getUSeconds(), Utils::Hash::getFileExtensionString());
         memset(prevFileName, 0, sizeof(prevFileName));
-        snprintf(prevFileName, sizeof(prevFileName), "%s_%d_%d_%06d.com", FILE_STR, testTime.getTimeBase(), testTimePrev.getSeconds(), testTimePrev.getUSeconds());
+        snprintf(prevFileName, sizeof(prevFileName), "%s_%d_%d_%06d.com", FILE_STR, static_cast<FwTimeBaseStoreType>(testTime.getTimeBase()), testTimePrev.getSeconds(), testTimePrev.getUSeconds());
         memset(prevHashFileName, 0, sizeof(prevHashFileName));
-        snprintf(prevHashFileName, sizeof(prevHashFileName), "%s_%d_%d_%06d.com%s", FILE_STR, testTime.getTimeBase(), testTimePrev.getSeconds(), testTimePrev.getUSeconds(), Utils::Hash::getFileExtensionString());
+        snprintf(prevHashFileName, sizeof(prevHashFileName), "%s_%d_%d_%06d.com%s", FILE_STR, static_cast<FwTimeBaseStoreType>(testTime.getTimeBase()), testTimePrev.getSeconds(), testTimePrev.getUSeconds(), Utils::Hash::getFileExtensionString());
 
         // Set the test time to the current time:
         setTestTime(testTime);
@@ -329,7 +329,7 @@ namespace Svc {
       const U8 data[COM_BUFFER_LENGTH] = {0xde,0xad,0xbe,0xef};
       Fw::ComBuffer buffer(data, sizeof(data));
 
-      Fw::Time testTime(TB_NONE, 4, 9876543);
+      Fw::Time testTime(TimeBase::TB_NONE, 4, 9876543);
       setTestTime(testTime);
 
       snprintf(fileName, sizeof(fileName), "%s_%d_%d_%06d.com", filePrefix, static_cast<U32>(testTime.getTimeBase()), testTime.getSeconds(), testTime.getUSeconds());
@@ -407,7 +407,7 @@ namespace Svc {
       const U8 data[4] = {0xde,0xad,0xbe,0xef};
       Fw::ComBuffer buffer(data, sizeof(data));
 
-      Fw::Time testTime(TB_NONE, 5, 9876543);
+      Fw::Time testTime(TimeBase::TB_NONE, 5, 9876543);
       setTestTime(testTime);
 
       for(int i = 0; i < 3; i++)
@@ -494,12 +494,12 @@ namespace Svc {
     Os::File::Status ret;
 
     // Form filenames:
-    Fw::Time testTime(TB_NONE, 6, 9876543);
+    Fw::Time testTime(TimeBase::TB_NONE, 6, 9876543);
     setTestTime(testTime);
     memset(fileName, 0, sizeof(fileName));
-    snprintf(fileName, sizeof(fileName), "%s_%d_%d_%06d.com", FILE_STR, testTime.getTimeBase(), testTime.getSeconds(), testTime.getUSeconds());
+    snprintf(fileName, sizeof(fileName), "%s_%d_%d_%06d.com", FILE_STR, static_cast<FwTimeBaseStoreType>(testTime.getTimeBase()), testTime.getSeconds(), testTime.getUSeconds());
     memset(hashFileName, 0, sizeof(hashFileName));
-    snprintf(hashFileName, sizeof(hashFileName), "%s_%d_%d_%06d.com%s", FILE_STR, testTime.getTimeBase(), testTime.getSeconds(), testTime.getUSeconds(), Utils::Hash::getFileExtensionString());
+    snprintf(hashFileName, sizeof(hashFileName), "%s_%d_%d_%06d.com%s", FILE_STR, static_cast<FwTimeBaseStoreType>(testTime.getTimeBase()), testTime.getSeconds(), testTime.getUSeconds(), Utils::Hash::getFileExtensionString());
 
     ASSERT_TRUE(comLogger.m_fileMode == ComLogger::CLOSED);
     ASSERT_EVENTS_SIZE(0);
@@ -589,19 +589,19 @@ namespace Svc {
     for(int j = 0; j < 3; j++)
     {
       // Test times for the different iterations:
-      Fw::Time testTime(TB_NONE, j, 9876543);
-      Fw::Time testTimePrev(TB_NONE, j-1, 9876543);
-      Fw::Time testTimeNext(TB_NONE, j+1, 9876543);
+      Fw::Time testTime(TimeBase::TB_NONE, j, 9876543);
+      Fw::Time testTimePrev(TimeBase::TB_NONE, j-1, 9876543);
+      Fw::Time testTimeNext(TimeBase::TB_NONE, j+1, 9876543);
 
       // File names for the different iterations:
       memset(fileName, 0, sizeof(fileName));
-      snprintf(fileName, sizeof(fileName), "%s_%d_%d_%06d.com", FILE_STR, testTime.getTimeBase(), testTime.getSeconds(), testTime.getUSeconds());
+      snprintf(fileName, sizeof(fileName), "%s_%d_%d_%06d.com", FILE_STR, static_cast<FwTimeBaseStoreType>(testTime.getTimeBase()), testTime.getSeconds(), testTime.getUSeconds());
       memset(hashFileName, 0, sizeof(hashFileName));
-      snprintf(hashFileName, sizeof(hashFileName), "%s_%d_%d_%06d.com%s", FILE_STR, testTime.getTimeBase(), testTime.getSeconds(), testTime.getUSeconds(), Utils::Hash::getFileExtensionString());
+      snprintf(hashFileName, sizeof(hashFileName), "%s_%d_%d_%06d.com%s", FILE_STR, static_cast<FwTimeBaseStoreType>(testTime.getTimeBase()), testTime.getSeconds(), testTime.getUSeconds(), Utils::Hash::getFileExtensionString());
       memset(prevFileName, 0, sizeof(prevFileName));
-      snprintf(prevFileName, sizeof(prevFileName), "%s_%d_%d_%06d.com", FILE_STR, testTime.getTimeBase(), testTimePrev.getSeconds(), testTimePrev.getUSeconds());
+      snprintf(prevFileName, sizeof(prevFileName), "%s_%d_%d_%06d.com", FILE_STR, static_cast<FwTimeBaseStoreType>(testTime.getTimeBase()), testTimePrev.getSeconds(), testTimePrev.getUSeconds());
       memset(prevHashFileName, 0, sizeof(prevHashFileName));
-      snprintf(prevHashFileName, sizeof(prevHashFileName), "%s_%d_%d_%06d.com%s", FILE_STR, testTime.getTimeBase(), testTimePrev.getSeconds(), testTimePrev.getUSeconds(), Utils::Hash::getFileExtensionString());
+      snprintf(prevHashFileName, sizeof(prevHashFileName), "%s_%d_%d_%06d.com%s", FILE_STR, static_cast<FwTimeBaseStoreType>(testTime.getTimeBase()), testTimePrev.getSeconds(), testTimePrev.getUSeconds(), Utils::Hash::getFileExtensionString());
 
       // Set the test time to the current time:
       setTestTime(testTime);

@@ -43,12 +43,12 @@ namespace Svc {
       FPrime::Headers::serialize(
           dataSize,
           this->n,
-          TB_WORKSTATION_TIME,
+          TimeBase::TB_WORKSTATION_TIME,
           0,
           buffer
       );
       // Standard records
-      Fw::Time t(TB_WORKSTATION_TIME, 0, 0);
+      Fw::Time t(TimeBase::TB_WORKSTATION_TIME, 0, 0);
       for (U32 i = 0; i < this->n - 1; i++) {
         const FwOpcodeType opcode = i;
         const U32 argument = i + 1;

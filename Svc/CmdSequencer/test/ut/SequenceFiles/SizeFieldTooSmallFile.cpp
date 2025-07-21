@@ -34,7 +34,7 @@ namespace Svc {
         sizeof(U32) + // subseconds (CRC should land here)
         sizeof(U16); // short size
       const U32 numRecs = 1;
-      const TimeBase timeBase = TB_WORKSTATION_TIME;
+      const TimeBase timeBase = TimeBase::TB_WORKSTATION_TIME;
       const U32 timeContext = 0;
       FPrime::Headers::serialize(
           dataSize,
