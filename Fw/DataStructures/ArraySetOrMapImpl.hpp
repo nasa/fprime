@@ -101,7 +101,7 @@ class ArraySetOrMapImpl final {
         }
 
         //! Set the iterator to the end value
-        void setToEnd() { 
+        void setToEnd() {
             FW_ASSERT(this->m_impl != nullptr);
             this->m_index = this->m_impl->m_size;
         }

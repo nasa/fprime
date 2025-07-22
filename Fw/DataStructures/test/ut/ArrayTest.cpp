@@ -49,7 +49,7 @@ TEST(Array, CopyConstructor) {
     // Call the copy constructor
     Array<U32, 3> a2(a1);
     for (FwSizeType i = 0; i < 3; i++) {
-      ASSERT_EQ(a2[i], 10);
+        ASSERT_EQ(a2[i], 10);
     }
 }
 
@@ -66,13 +66,13 @@ TEST(Array, Subscript) {
 
 TEST(Array, CopyAssignmentOperator) {
     Array<U32, 3> a1(1);
-    for (FwSizeType i = 0; i < 3; i ++) {
-      ASSERT_EQ(a1[i], 1);
+    for (FwSizeType i = 0; i < 3; i++) {
+        ASSERT_EQ(a1[i], 1);
     }
     Array<U32, 3> a2(2);
     auto& a = (a1 = a2);
-    for (FwSizeType i = 0; i < 3; i ++) {
-      ASSERT_EQ(a1[i], 2);
+    for (FwSizeType i = 0; i < 3; i++) {
+        ASSERT_EQ(a1[i], 2);
     }
     ASSERT_EQ(&a, &a1);
 }
@@ -89,7 +89,7 @@ TEST(Array, GetElements) {
 }
 
 TEST(Array, AsExternalArray) {
-    Array<U32, 3> a = { 1, 2, 3 };
+    Array<U32, 3> a = {1, 2, 3};
     ExternalArray<U32> ea = a.asExternalArray();
     ASSERT_EQ(ea[0], 1);
 }

@@ -81,7 +81,7 @@ TEST(ArraySetOrMapImpl, CopyAssignmentOperator) {
 }
 
 TEST(ArraySetOrMapImplScenarios, Clear) {
-  State::Entry entries[State::capacity];
+    State::Entry entries[State::capacity];
     State::Impl impl(entries, State::capacity);
     State state(impl);
     Rules::insertNotFull.apply(state);
@@ -161,5 +161,5 @@ TEST(ArraySetOrMapImplScenarios, Random) {
     Scenarios::random(Fw::String("ArraySetOrMapImplRandom"), state, 1000);
 }
 
-}  // namespace ArraySetOrMapTest
+}  // namespace ArraySetOrMapImplTest
 }  // namespace Fw
