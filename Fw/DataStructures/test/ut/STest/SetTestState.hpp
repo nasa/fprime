@@ -23,7 +23,7 @@ struct State {
     using ElementType = U32;
     //! The set capacity
     static constexpr FwSizeType capacity = 1024;
-    //! THe SetBase type
+    //! The SetBase type
     using SetBase = SetBase<ElementType>;
     //! Constructor
     State(SetBase& a_set) : set(a_set) {}

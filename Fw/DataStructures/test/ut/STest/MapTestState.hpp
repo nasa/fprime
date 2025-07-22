@@ -23,7 +23,7 @@ struct State {
     using ValueType = U32;
     //! The map capacity
     static constexpr FwSizeType capacity = 1024;
-    //! THe MapBase type
+    //! The MapBase type
     using MapBaseType = MapBase<KeyType, ValueType>;
     //! Constructor
     State(MapBaseType& a_map) : map(a_map) {}
