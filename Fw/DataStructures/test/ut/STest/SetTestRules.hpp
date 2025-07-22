@@ -166,7 +166,7 @@ extern Remove remove;
 
 extern RemoveExisting removeExisting;
 
-};  // namespace Rules
+}  // namespace Rules
 
 }  // namespace SetTest
 
