@@ -29,7 +29,7 @@ class SetOrMapImplEntry final : public MapEntryBase<KE, VN> {
         : MapEntryBase<KE, VN>(), m_keyOrElement(keyOrElement), m_valueOrNil(valueOrNil) {}
 
     //! Copy constructor
-    SetOrMapImplEntry(const SetOrMapImplEntry<KE, VN>& entry) { *this = entry; }
+    SetOrMapImplEntry(const SetOrMapImplEntry<KE, VN>& entry) : MapEntryBase<KE, VN>() { *this = entry; }
 
     //! Destructor
     ~SetOrMapImplEntry() override = default;

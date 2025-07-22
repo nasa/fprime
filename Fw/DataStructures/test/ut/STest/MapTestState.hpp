@@ -24,11 +24,11 @@ struct State {
     //! The map capacity
     static constexpr FwSizeType capacity = 1024;
     //! THe MapBase type
-    using MapBase = MapBase<KeyType, ValueType>;
+    using MapBaseType = MapBase<KeyType, ValueType>;
     //! Constructor
-    State(MapBase& a_map) : map(a_map) {}
+    State(MapBaseType& a_map) : map(a_map) {}
     //! The map under test
-    MapBase& map;
+    MapBaseType& map;
     //! The map for modeling correct behavior
     std::map<KeyType, ValueType> modelMap;
     //! Whether to use the stored key
@@ -46,7 +46,7 @@ struct State {
     //! Check whether the model map contains the specified key
     bool modelMapContains(KeyType key) const { return modelMap.count(key) != 0; }
     //! Test copy data from
-    static void testCopyDataFrom(MapBase& m1, FwSizeType size1, MapBase& m2) {
+    static void testCopyDataFrom(MapBaseType& m1, FwSizeType size1, MapBaseType& m2) {
         m1.clear();
         for (FwSizeType i = 0; i < size1; i++) {
             const auto status = m1.insert(static_cast<State::KeyType>(i), static_cast<State::ValueType>(i));
