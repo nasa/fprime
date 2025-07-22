@@ -11,6 +11,8 @@ namespace ComFprime {
     struct SubtopologyState {
       const char* hostname;
       U16 port;
+      const char* uartDevice;
+      U32 baudRate;
     };
 
     struct TopologyState {
