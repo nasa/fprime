@@ -50,7 +50,7 @@ module ComFprime {
     # Uncomment the section below to use UART serial communication instead of TCP.
     # When enabling UART, make sure to comment out the TCP driver above to avoid conflicts.
     
-    #instance comDriver: Drv.LinuxUartDriver base id ComFprimeConfig.BASE_ID + 0x0B00 \
+    #instance comDriver: Drv.LinuxUartDriver base id ComFprimeConfig.BASE_ID + 0x0300 \
     #{
     #    phase Fpp.ToCpp.Phases.startTasks"""
     #    if (state.comFprime.uartDevice != nullptr) {

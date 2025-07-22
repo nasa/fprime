@@ -18,8 +18,8 @@ module ComCcsds {
     # Choose between TcpClient (connects to a server) or TcpServer (accepts client connections)
     # To use TcpServer instead of TcpClient, simply swap the commented/uncommented lines below:
     
-    #instance comDriver: Drv.TcpServer base id ComCcsdsConfig.BASE_ID + 0x0B00 \
-    instance comDriver: Drv.TcpClient base id ComCcsdsConfig.BASE_ID + 0x0B00 \
+    #instance comDriver: Drv.TcpServer base id ComCcsdsConfig.BASE_ID + 0x0300 \
+    instance comDriver: Drv.TcpClient base id ComCcsdsConfig.BASE_ID + 0x0300 \
     {
         phase Fpp.ToCpp.Phases.configComponents """
         if (state.comCcsds.hostname != nullptr && state.comCcsds.port != 0) {
@@ -50,7 +50,7 @@ module ComCcsds {
     # Uncomment the section below to use UART serial communication instead of TCP.
     # When enabling UART, make sure to comment out the TCP driver above to avoid conflicts.
     
-    #instance comDriver: Drv.LinuxUartDriver base id ComCcsdsConfig.BASE_ID + 0x0B00 \
+    #instance comDriver: Drv.LinuxUartDriver base id ComCcsdsConfig.BASE_ID + 0x0300 \
     #{
     #    phase Fpp.ToCpp.Phases.startTasks"""
     #    if (state.comCcsds.uartDevice != nullptr) {
