@@ -26,7 +26,7 @@ EnqueueOK enqueueOK;
 
 Peek peek;
 
-};  // namespace Rules
+}  // namespace Rules
 
 }  // namespace FifoQueueTest
 
