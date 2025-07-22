@@ -180,6 +180,7 @@ I8 SwAssert(FILE_NAME_ARG file,
 // define C asserts with C linkage
 extern "C" {
 I8 CAssert0(FILE_NAME_ARG file, FwSizeType lineNo);
+I8 CAssert1(FILE_NAME_ARG file, FwAssertArgType arg1, FwSizeType lineNo);
 }
 
 I8 CAssert0(FILE_NAME_ARG file, FwSizeType lineNo) {
@@ -188,6 +189,17 @@ I8 CAssert0(FILE_NAME_ARG file, FwSizeType lineNo) {
         Fw::defaultReportAssert(file, lineNo, 0, 0, 0, 0, 0, 0, 0, assertMsg, static_cast<FwSizeType>(sizeof(assertMsg)));
     } else {
         Fw::s_assertHook->reportAssert(file, lineNo, 0, 0, 0, 0, 0, 0, 0);
+        Fw::s_assertHook->doAssert();
+    }
+    return 0;
+}
+
+I8 CAssert1(FILE_NAME_ARG file, FwAssertArgType arg1, FwSizeType lineNo) {
+    if (nullptr == Fw::s_assertHook) {
+        CHAR assertMsg[FW_ASSERT_TEXT_SIZE];
+        Fw::defaultReportAssert(file, lineNo, 1, arg1, 0, 0, 0, 0, 0, assertMsg, static_cast<FwSizeType>(sizeof(assertMsg)));
+    } else {
+        Fw::s_assertHook->reportAssert(file, lineNo, 1, arg1, 0, 0, 0, 0, 0);
         Fw::s_assertHook->doAssert();
     }
     return 0;

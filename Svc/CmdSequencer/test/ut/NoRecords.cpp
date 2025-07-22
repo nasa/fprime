@@ -40,7 +40,7 @@ namespace Svc {
             SequenceFiles::NoRecordsFile file(this->format);
 
             // Set the time
-            Fw::Time testTime(TB_WORKSTATION_TIME, 0, 0);
+            Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 0, 0);
             this->setTestTime(testTime);
 
             // Write the file
@@ -70,7 +70,7 @@ namespace Svc {
             SequenceFiles::NoRecordsFile file(this->format);
 
             // Set the time
-            Fw::Time testTime(TB_WORKSTATION_TIME, 0, 0);
+            Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 0, 0);
             this->setTestTime(testTime);
 
             // Write the file

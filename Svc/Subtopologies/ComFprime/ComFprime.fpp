@@ -35,6 +35,9 @@ module ComFprime {
         // Allocation identifier is 0 as the MallocAllocator discards it
         ComFprime::comQueue.configure(configurationTable, 0, ComFprime::Allocation::memAllocator);
         """
+        phase Fpp.ToCpp.Phases.tearDownComponents """
+        ComFprime::comQueue.cleanup();
+        """
     }
 
     instance cmdSeq: Svc.CmdSequencer base id ComFprimeConfig.BASE_ID + 0x0200 \
@@ -56,10 +59,13 @@ module ComFprime {
     # ----------------------------------------------------------------------
     instance frameAccumulator: Svc.FrameAccumulator base id ComFprimeConfig.BASE_ID + 0x0500 \ 
     {
-
+        phase Fpp.ToCpp.Phases.configObjects """
+        Svc::FrameDetectors::FprimeFrameDetector frameDetector;
+        """
+        
         phase Fpp.ToCpp.Phases.configComponents """
         ComFprime::frameAccumulator.configure(
-            ComFprime::Detector::frameDetector,
+            ConfigObjects::ComFprime_frameAccumulator::frameDetector,
             1,
             ComFprime::Allocation::memAllocator,
             ComFprimeConfig::BuffMgr::frameAccumulatorSize
@@ -73,17 +79,21 @@ module ComFprime {
 
     instance commsBufferManager: Svc.BufferManager base id ComFprimeConfig.BASE_ID + 0x0600 \
     {
+        phase Fpp.ToCpp.Phases.configObjects """
+        Svc::BufferManager::BufferBins bins;
+        """
+        
         phase Fpp.ToCpp.Phases.configComponents """
-        memset(&ComFprime::BufferManagerBins::bins, 0, sizeof(ComFprime::BufferManagerBins::bins));
-        ComFprime::BufferManagerBins::bins.bins[0].bufferSize = ComFprimeConfig::BuffMgr::commsBuffSize;
-        ComFprime::BufferManagerBins::bins.bins[0].numBuffers = ComFprimeConfig::BuffMgr::commsBuffCount;
-        ComFprime::BufferManagerBins::bins.bins[1].bufferSize = ComFprimeConfig::BuffMgr::commsFileBuffSize;
-        ComFprime::BufferManagerBins::bins.bins[1].numBuffers = ComFprimeConfig::BuffMgr::commsFileBuffCount;
+        memset(&ConfigObjects::ComFprime_commsBufferManager::bins, 0, sizeof(ConfigObjects::ComFprime_commsBufferManager::bins));
+        ConfigObjects::ComFprime_commsBufferManager::bins.bins[0].bufferSize = ComFprimeConfig::BuffMgr::commsBuffSize;
+        ConfigObjects::ComFprime_commsBufferManager::bins.bins[0].numBuffers = ComFprimeConfig::BuffMgr::commsBuffCount;
+        ConfigObjects::ComFprime_commsBufferManager::bins.bins[1].bufferSize = ComFprimeConfig::BuffMgr::commsFileBuffSize;
+        ConfigObjects::ComFprime_commsBufferManager::bins.bins[1].numBuffers = ComFprimeConfig::BuffMgr::commsFileBuffCount;
         ComFprime::commsBufferManager.setup(
             ComFprimeConfig::BuffMgr::commsBuffMgrId,
             0,
             ComFprime::Allocation::memAllocator,
-            ComFprime::BufferManagerBins::bins
+            ConfigObjects::ComFprime_commsBufferManager::bins
         );
         """
 

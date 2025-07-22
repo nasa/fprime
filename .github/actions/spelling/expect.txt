@@ -89,7 +89,6 @@ CMDPACKET
 cmdresponse
 cmdseq
 cmdsequencer
-cmps
 cntx
 CODEFILE
 COLORSTYLE
@@ -100,6 +99,7 @@ COMCCSDSSUBTOPOLOGY
 COMFPRIME
 COMFPRIMESUBTOPOLOGY
 comlogger
+COMLOGGERTEE
 COMMANDDISPATCHERIMPL
 COMMANDDISPATCHERIMPLCFG
 COMPACKET
@@ -229,7 +229,6 @@ FILEOPENERROR
 FILEWRITEERROR
 fio
 fle
-flhs
 FNDELAY
 fne
 FONTPATH
@@ -241,17 +240,16 @@ fpp
 fppi
 fpptest
 fprime
-fptr
-fptrunc
 fptosi
 fptoui
+fptr
+fptrunc
 fputil
 fpy
 FPYSEQUENCER
 freeram
 Fregoso
 fres
-frhs
 frsize
 fsblkcnt
 fsrc
@@ -263,10 +261,8 @@ gcov
 gdiplus
 GENHUB
 getfooter
-getseconds
 getstatements
 gettime
-getuseconds
 getty
 ghprb
 gitmodules
@@ -698,7 +694,6 @@ uart
 UDPSOCKET
 uge
 uitofp
-ulhs
 UML
 UNEXP
 unistd

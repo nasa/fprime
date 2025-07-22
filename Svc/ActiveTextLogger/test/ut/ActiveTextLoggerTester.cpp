@@ -46,14 +46,14 @@ namespace Svc {
       ASSERT_FALSE(this->component.m_log_file.m_openFile);
 
       FwEventIdType id = 1;
-      Fw::Time timeTag(TB_NONE,3,6);
+      Fw::Time timeTag(TimeBase::TB_NONE,3,6);
       Fw::LogSeverity severity = Fw::LogSeverity::ACTIVITY_HI;
       Fw::TextLogString text("This component is the greatest!");
       this->invoke_to_TextLogger(0,id,timeTag,severity,text);
       this->component.doDispatch();
 
       id = 2;
-      timeTag.set(TB_PROC_TIME,4,7);
+      timeTag.set(TimeBase::TB_PROC_TIME,4,7);
       severity = Fw::LogSeverity::ACTIVITY_LO;
       text = "This component is the probably the greatest!";
       this->invoke_to_TextLogger(0,id,timeTag,severity,text);
@@ -61,7 +61,7 @@ namespace Svc {
 
       // This will output in a different format b/c WORKSTATION_TIME
       id = 3;
-      timeTag.set(TB_WORKSTATION_TIME,5,876);
+      timeTag.set(TimeBase::TB_WORKSTATION_TIME,5,876);
       severity = Fw::LogSeverity::WARNING_LO;
       text = "This component is maybe the greatest!";
       this->invoke_to_TextLogger(0,id,timeTag,severity,text);
@@ -82,7 +82,7 @@ namespace Svc {
       ASSERT_EQ(512U, this->component.m_log_file.m_maxFileSize);
 
       id = 4;
-      timeTag.set(TB_NONE,5,8);
+      timeTag.set(TimeBase::TB_NONE,5,8);
       severity = Fw::LogSeverity::WARNING_LO;
       const char* severityString = "WARNING_LO";
       text = "This component may be the greatest!";
@@ -105,7 +105,7 @@ namespace Svc {
               char textStr[512];
               snprintf(textStr, sizeof(textStr),
                       "EVENT: (%" PRI_FwEventIdType ") (%d:%d,%d) %s: %s",
-                       id,timeTag.getTimeBase(),timeTag.getSeconds(),timeTag.getUSeconds(),severityString,text.toChar());
+                       id,static_cast<FwTimeBaseStoreType>(timeTag.getTimeBase()),timeTag.getSeconds(),timeTag.getUSeconds(),severityString,text.toChar());
               ASSERT_STREQ(textStr,buf);
               (void) Fw::StringUtils::string_copy(oldLine, buf, static_cast<FwSizeType>(sizeof(oldLine)));
           }
@@ -113,7 +113,7 @@ namespace Svc {
       stream1.close();
 
       id = 5;
-      timeTag.set(TB_PROC_TIME,6,9);
+      timeTag.set(TimeBase::TB_PROC_TIME,6,9);
       severity = Fw::LogSeverity::WARNING_HI;
       severityString = "WARNING_HI";
       text = "This component is probably not the greatest!";
@@ -146,7 +146,7 @@ namespace Svc {
                   char textStr[512];
                   snprintf(textStr, sizeof(textStr),
                           "EVENT: (%" PRI_FwEventIdType ") (%d:%d,%d) %s: %s",
-                           id,timeTag.getTimeBase(),timeTag.getSeconds(),timeTag.getUSeconds(),severityString,text.toChar());
+                           id,static_cast<FwTimeBaseStoreType>(timeTag.getTimeBase()),timeTag.getSeconds(),timeTag.getUSeconds(),severityString,text.toChar());
                   ASSERT_EQ(0,strcmp(textStr,buf));
               }
           }
@@ -185,7 +185,7 @@ namespace Svc {
 
       // Write once to the file:
       FwEventIdType id = 1;
-      Fw::Time timeTag(TB_NONE,3,6);
+      Fw::Time timeTag(TimeBase::TB_NONE,3,6);
       Fw::LogSeverity severity = Fw::LogSeverity::ACTIVITY_HI;
       const char* severityString = "ACTIVITY_HI";
       Fw::TextLogString text("abcd");
@@ -208,7 +208,7 @@ namespace Svc {
               char textStr[512];
               snprintf(textStr, sizeof(textStr),
                       "EVENT: (%" PRI_FwEventIdType ") (%d:%d,%d) %s: %s",
-                       id,timeTag.getTimeBase(),timeTag.getSeconds(),timeTag.getUSeconds(),severityString,text.toChar());
+                       id,static_cast<FwTimeBaseStoreType>(timeTag.getTimeBase()),timeTag.getSeconds(),timeTag.getUSeconds(),severityString,text.toChar());
               ASSERT_EQ(0,strcmp(textStr,buf));
               (void) Fw::StringUtils::string_copy(oldLine, buf, static_cast<FwSizeType>(sizeof(oldLine)));
           }
@@ -357,7 +357,7 @@ namespace Svc {
 
       // Log message:
       FwEventIdType id = 1;
-      Fw::Time timeTag(TB_WORKSTATION_TIME, 3, 6);
+      Fw::Time timeTag(TimeBase::TB_WORKSTATION_TIME, 3, 6);
       Fw::LogSeverity severity = Fw::LogSeverity::ACTIVITY_HI;
       const char* severityString = "ACTIVITY_HI";
       Fw::TextLogString text("This line has a valid timestamp.");
@@ -374,7 +374,7 @@ namespace Svc {
               char textStr[512];
               snprintf(textStr, sizeof(textStr),
                        "EVENT: (%" PRI_FwEventIdType ") (%d:%d,%d) %s: %s",
-                       id,timeTag.getTimeBase(), timeTag.getSeconds(), timeTag.getUSeconds(), severityString, text.toChar());
+                       id,static_cast<FwTimeBaseStoreType>(timeTag.getTimeBase()), timeTag.getSeconds(), timeTag.getUSeconds(), severityString, text.toChar());
               ASSERT_EQ(0, strcmp(textStr, buf));
           }
       }

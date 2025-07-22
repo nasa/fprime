@@ -130,7 +130,7 @@ namespace Svc {
       ASSERT_EQ(time_200ms, Fw::Time(0, 200*1000));
 
       // Change time base
-      const Fw::Time new_base(TB_WORKSTATION_TIME, 7, 1234, 0);
+      const Fw::Time new_base(TimeBase::TB_WORKSTATION_TIME, 7, 1234, 0);
       os_stat = epoch_os_time.now();
       ASSERT_EQ(os_stat, Os::RawTime::OP_OK);
       invoke_to_setEpoch(0, new_base, epoch_os_time);
@@ -138,13 +138,13 @@ namespace Svc {
       // Immediately get time
       Fw::Time time_200ms_2;
       invoke_to_timeGetPort(0, time_200ms_2);
-      ASSERT_EQ(time_200ms_2, Fw::Time(TB_WORKSTATION_TIME, 7, 1234, 0));
+      ASSERT_EQ(time_200ms_2, Fw::Time(TimeBase::TB_WORKSTATION_TIME, 7, 1234, 0));
 
       // 600 ms
       Fw::Time time_600ms;
       Svc::RawTimeTester::setNowTime(Fw::Time(0, 600*1000));
       invoke_to_timeGetPort(0, time_600ms);
-      ASSERT_EQ(time_600ms, Fw::Time(TB_WORKSTATION_TIME, 7, 1234, 400*1000));
+      ASSERT_EQ(time_600ms, Fw::Time(TimeBase::TB_WORKSTATION_TIME, 7, 1234, 400*1000));
   }
 
 }

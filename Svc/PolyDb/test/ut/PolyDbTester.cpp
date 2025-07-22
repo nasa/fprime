@@ -54,7 +54,7 @@ namespace Svc {
         vals[10] = true;
         vals[11] = reinterpret_cast<void*>(0x100);
 
-        Fw::Time ts(TB_NONE, 6, 7);
+        Fw::Time ts(TimeBase::TB_NONE, 6, 7);
 
         bool r001Emitted = false;
         bool r002Emitted = false;
