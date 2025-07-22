@@ -34,9 +34,6 @@ class ArrayMap final : public MapBase<K, V> {
     //! The type of the implementation entries
     using Entries = Entry[C];
 
-    //! The type of a map entry
-    using MapEntryBase = MapEntryBase<K, V>;
-
   public:
     // ----------------------------------------------------------------------
     // Public constructors and destructors
