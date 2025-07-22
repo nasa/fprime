@@ -31,7 +31,6 @@ It represents an array-based map with internal storage.
 |`ConstIterator`|Alias of [`MapConstIterator<K, V>`](MapConstIterator.md)|
 |`Entry`|Alias of [`SetOrMapImplEntry<K, V>`](SetOrMapImplEntry.md)|
 |`Entries`|Alias of `Entry[C]`|
-|`MapEntryBase`|Alias of [`MapEntryBase<K, V>`](MapEntryBase.md)|
 
 ## 4. Private Member Variables
 

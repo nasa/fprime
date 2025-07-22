@@ -23,12 +23,12 @@ struct State {
     using ElementType = U32;
     //! The set capacity
     static constexpr FwSizeType capacity = 1024;
-    //! THe SetBase type
-    using SetBase = SetBase<ElementType>;
+    //! The SetBase type
+    using SetBaseType = SetBase<ElementType>;
     //! Constructor
-    State(SetBase& a_set) : set(a_set) {}
+    State(SetBaseType& a_set) : set(a_set) {}
     //! The set under test
-    SetBase& set;
+    SetBaseType& set;
     //! The set for modeling correct behavior
     std::set<ElementType> modelSet;
     //! Whether to use the stored element
@@ -42,7 +42,7 @@ struct State {
     //! Check whether the model set contains the specified element
     bool modelSetContains(ElementType e) const { return modelSet.count(e) != 0; }
     //! Test copy data from
-    static void testCopyDataFrom(SetBase& m1, FwSizeType size1, SetBase& m2) {
+    static void testCopyDataFrom(SetBaseType& m1, FwSizeType size1, SetBaseType& m2) {
         m1.clear();
         for (FwSizeType i = 0; i < size1; i++) {
             const auto status = m1.insert(static_cast<ElementType>(i));

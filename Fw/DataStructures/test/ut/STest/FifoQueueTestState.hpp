@@ -25,7 +25,7 @@ struct State {
     using Queue = FifoQueue<ItemType, capacity>;
     //! The ExternalQueue type
     using ExternalQueue = ExternalFifoQueue<ItemType>;
-    //! THe QueueBase type
+    //! The QueueBase type
     using QueueBase = FifoQueueBase<ItemType>;
     //! Constructor
     State(QueueBase& a_queue) : queue(a_queue) {}

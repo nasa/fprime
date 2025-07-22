@@ -28,7 +28,7 @@ Remove remove;
 
 RemoveExisting removeExisting;
 
-};  // namespace Rules
+}  // namespace Rules
 
 }  // namespace SetTest
 

@@ -114,7 +114,7 @@ extern PushFull pushFull;
 
 extern PushOK pushOK;
 
-};  // namespace Rules
+}  // namespace Rules
 
 }  // namespace StackTest
 

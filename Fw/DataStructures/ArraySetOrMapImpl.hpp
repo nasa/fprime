@@ -101,7 +101,7 @@ class ArraySetOrMapImpl final {
         }
 
         //! Set the iterator to the end value
-        void setToEnd() { 
+        void setToEnd() {
             FW_ASSERT(this->m_impl != nullptr);
             this->m_index = this->m_impl->m_size;
         }
@@ -251,7 +251,7 @@ class ArraySetOrMapImpl final {
     //! Set the backing storage (untyped data)
     //! data must be aligned according to getByteArrayAlignment().
     //! data must contain at least getByteArraySize(capacity) bytes.
-    void setStorage(ByteArray data,      //!< THe data
+    void setStorage(ByteArray data,      //!< The data
                     FwSizeType capacity  //!< The capacity
     ) {
         this->m_entries.setStorage(data, capacity);

@@ -111,7 +111,7 @@ extern EnqueueOK enqueueOK;
 
 extern Peek peek;
 
-};  // namespace Rules
+}  // namespace Rules
 
 }  // namespace FifoQueueTest
 

@@ -26,7 +26,7 @@ PushFull pushFull;
 
 PushOK pushOK;
 
-};  // namespace Rules
+}  // namespace Rules
 
 }  // namespace StackTest
 

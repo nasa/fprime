@@ -21,18 +21,18 @@ struct State {
     using ItemType = U32;
     //! The stack capacity
     static constexpr FwSizeType capacity = 1024;
-    //! THe StackBase type
-    using StackBase = StackBase<ItemType>;
+    //! The StackBase type
+    using StackBaseType = StackBase<ItemType>;
     //! Constructor
-    State(StackBase& a_stack) : stack(a_stack) {}
+    State(StackBaseType& a_stack) : stack(a_stack) {}
     //! The stack under test
-    StackBase& stack;
+    StackBaseType& stack;
     //! The stack for modeling correct behavior
     std::vector<ItemType> modelStack;
     //! Get a random item
     static ItemType getRandomItem() { return STest::Pick::any(); }
     //! Test copy data from
-    static void testCopyDataFrom(StackBase& s1, FwSizeType size1, StackBase& s2) {
+    static void testCopyDataFrom(StackBaseType& s1, FwSizeType size1, StackBaseType& s2) {
         s1.clear();
         for (FwSizeType i = 0; i < size1; i++) {
             const auto status = s1.push(static_cast<U32>(i));

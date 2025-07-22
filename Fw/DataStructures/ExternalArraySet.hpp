@@ -133,7 +133,7 @@ class ExternalArraySet final : public SetBase<T> {
     //! Set the backing storage (untyped data)
     //! data must be aligned according to getByteArrayAlignment().
     //! data must contain at least getByteArraySize(capacity) bytes.
-    void setStorage(ByteArray data,      //!< THe data
+    void setStorage(ByteArray data,      //!< The data
                     FwSizeType capacity  //!< The capacity
     ) {
         this->m_impl.setStorage(data, capacity);

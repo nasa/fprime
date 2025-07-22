@@ -125,12 +125,11 @@ struct Remove : public Rule {
             ASSERT_EQ(status, Success::SUCCESS);
             ASSERT_EQ(value, state.modelMap[key]);
             ASSERT_EQ(state.map.getSize(), size - 1);
-        }
-        else {
+        } else {
             ASSERT_EQ(status, Success::FAILURE);
             ASSERT_EQ(state.map.getSize(), size);
         }
-        (void) state.modelMap.erase(key);
+        (void)state.modelMap.erase(key);
         ASSERT_EQ(state.map.getSize(), state.modelMap.size());
     }
 };
@@ -175,7 +174,7 @@ extern Remove remove;
 
 extern RemoveExisting removeExisting;
 
-};  // namespace Rules
+}  // namespace Rules
 
 }  // namespace MapTest
 
