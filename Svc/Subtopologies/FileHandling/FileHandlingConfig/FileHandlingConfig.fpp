@@ -1,6 +1,6 @@
 module FileHandlingConfig {
     #Base ID for the FileHandling Subtopology, all components are offsets from this base ID
-    constant BASE_ID = 0xA000
+    constant BASE_ID = 0x10600000
     
     module QueueSizes {
         constant fileUplink    = 10

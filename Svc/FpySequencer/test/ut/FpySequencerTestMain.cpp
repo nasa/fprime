@@ -809,7 +809,7 @@ TEST_F(FpySequencerTester, checkShouldWakeMismatchContext) {
     setTestTime(testTime);
     tester_get_m_runtime_ptr()->wakeupTime = Fw::Time(TimeBase::TB_WORKSTATION_TIME, 10, 100, 100);
     Signal result = tester_checkShouldWake();
-    ASSERT_EQ(result, Signal::result_timeOpFailed);
+    ASSERT_EQ(result, Signal::result_checkShouldWake_wakeup);
 }
 
 TEST_F(FpySequencerTester, checkShouldWake) {
@@ -879,7 +879,7 @@ TEST_F(FpySequencerTester, checkStatementTimeoutMismatchContext) {
     paramSend_STATEMENT_TIMEOUT_SECS(0, 0);
     tester_get_m_runtime_ptr()->currentStatementDispatchTime = Fw::Time(TimeBase::TB_WORKSTATION_TIME, 10, 200, 100);
     Signal result = tester_checkStatementTimeout();
-    ASSERT_EQ(result, Signal::result_timeOpFailed);
+    ASSERT_EQ(result, Signal::result_checkStatementTimeout_statementTimeout);
 }
 
 TEST_F(FpySequencerTester, cmd_RUN) {

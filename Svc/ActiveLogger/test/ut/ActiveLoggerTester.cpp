@@ -62,7 +62,7 @@ namespace Svc {
 
         Fw::SerializeStatus stat = buff.serialize(val);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
-        Fw::Time timeTag(TB_NONE,0,0);
+        Fw::Time timeTag(TimeBase::TB_NONE,0,0);
         U32 cmdSeq = 21;
 
         // enable report filter
@@ -125,7 +125,7 @@ namespace Svc {
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
         ASSERT_EQ(sentId,id);
         // next piece is time tag
-        Fw::Time recTimeTag(TB_NONE,0,0);
+        Fw::Time recTimeTag(TimeBase::TB_NONE,0,0);
         stat = this->m_sentPacket.deserialize(recTimeTag);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
         ASSERT_TRUE(timeTag == recTimeTag);
@@ -271,7 +271,7 @@ namespace Svc {
 
             Fw::SerializeStatus stat = buff.serialize(val);
             ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
-            Fw::Time timeTag(TB_NONE,0,0);
+            Fw::Time timeTag(TimeBase::TB_NONE,0,0);
 
             this->m_receivedPacket = false;
 
@@ -292,7 +292,7 @@ namespace Svc {
 
         Fw::SerializeStatus stat = buff.serialize(val);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
-        Fw::Time timeTag(TB_NONE,0,0);
+        Fw::Time timeTag(TimeBase::TB_NONE,0,0);
 
         this->m_receivedPacket = false;
 
@@ -431,7 +431,7 @@ namespace Svc {
 
         Fw::SerializeStatus stat = buff.serialize(val);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
-        Fw::Time timeTag(TB_NONE,0,0);
+        Fw::Time timeTag(TimeBase::TB_NONE,0,0);
 
         this->m_receivedPacket = false;
 
@@ -458,7 +458,7 @@ namespace Svc {
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
         ASSERT_EQ(sentId,id);
         // next piece is time tag
-        Fw::Time recTimeTag(TB_NONE,0,0);
+        Fw::Time recTimeTag(TimeBase::TB_NONE,0,0);
         stat = this->m_sentPacket.deserialize(recTimeTag);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
         ASSERT_TRUE(timeTag == recTimeTag);
@@ -535,7 +535,7 @@ namespace Svc {
 
         Fw::SerializeStatus stat = buff.serialize(value);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
-        Fw::Time timeTag(TB_NONE,1,2);
+        Fw::Time timeTag(TimeBase::TB_NONE,1,2);
 
         this->m_receivedPacket = false;
 
@@ -559,7 +559,7 @@ namespace Svc {
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
         ASSERT_EQ(sentId,id);
         // next piece is time tag
-        Fw::Time recTimeTag(TB_NONE,1,2);
+        Fw::Time recTimeTag(TimeBase::TB_NONE,1,2);
         stat = this->m_sentPacket.deserialize(recTimeTag);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
         ASSERT_TRUE(timeTag == recTimeTag);
@@ -591,7 +591,7 @@ namespace Svc {
 
         // deserialize LogPacket
         Fw::LogPacket packet;
-        Fw::Time time(TB_NONE,1,2);
+        Fw::Time time(TimeBase::TB_NONE,1,2);
         Fw::LogBuffer logBuff;
         ASSERT_EQ(comBuff.deserialize(packet),Fw::FW_SERIALIZE_OK);
 

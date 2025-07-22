@@ -72,7 +72,7 @@ namespace Svc {
       executeCommand1(const char* const fileName)
     {
       // Set the time to past absolute command
-      Fw::Time testTime(TB_WORKSTATION_TIME, 3, 0);
+      Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 3, 0);
       this->setTestTime(testTime);
       // Invoke schedIn
       this->invoke_to_schedIn(0, 0);
@@ -131,7 +131,7 @@ namespace Svc {
       executeCommand3(const char* const fileName)
     {
       // Set the time to past relative timer
-      Fw::Time testTime(TB_WORKSTATION_TIME, 5, 0);
+      Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 5, 0);
       this->setTestTime(testTime);
       // Invoke schedIn
       this->invoke_to_schedIn(0, 0);
