@@ -21,8 +21,8 @@ Version ::Version(const char* const compName)
     // initialize all custom entries
     for (FwIndexType id = 0; id < Svc::VersionCfg::VersionEnum::NUM_CONSTANTS; id++) {
         // setVersion_enum is by default set to the first enum value, so not setting it here
-        this->verId_db[id].setversion_value(version_string);
-        this->verId_db[id].setversion_status(VersionStatus::FAILURE);
+        this->verId_db[id].set_version_value(version_string);
+        this->verId_db[id].set_version_status(VersionStatus::FAILURE);
     }
 }
 
@@ -47,8 +47,8 @@ void Version ::getVersion_handler(FwIndexType portNum,
                                   Svc::VersionStatus& status) {
     FW_ASSERT(version_id.isValid(), version_id.e);
     U8 version_slot = VersionSlot(version_id.e);
-    version_string = this->verId_db[version_slot].getversion_value();
-    status = this->verId_db[version_slot].getversion_status();
+    version_string = this->verId_db[version_slot].get_version_value();
+    status = this->verId_db[version_slot].get_version_status();
 }
 
 void Version ::setVersion_handler(FwIndexType portNum,
@@ -57,9 +57,9 @@ void Version ::setVersion_handler(FwIndexType portNum,
                                   Svc::VersionStatus& status) {
     FW_ASSERT(version_id.isValid(), version_id.e);
     VersionSlot ver_slot = VersionSlot(version_id.e);
-    this->verId_db[ver_slot].setversion_enum(version_id);
-    this->verId_db[ver_slot].setversion_value(version_string);
-    this->verId_db[ver_slot].setversion_status(status);
+    this->verId_db[ver_slot].set_version_enum(version_id);
+    this->verId_db[ver_slot].set_version_value(version_string);
+    this->verId_db[ver_slot].set_version_status(status);
     this->m_num_custom_elements++;
     this->customVersion_tlm(ver_slot);
 }
@@ -187,12 +187,12 @@ void Version ::customVersion_tlm_all() {
 void Version ::customVersion_tlm(VersionSlot custom_slot) {
     // Process custom version TLM only if verbosity is enabled and there are any valid writes to it;
     //  it doesn't necessarily have to be consecutive
-    if ((this->verId_db[custom_slot].getversion_value() != "no_ver") && 
+    if ((this->verId_db[custom_slot].get_version_value() != "no_ver") && 
         (this->m_num_custom_elements > 0)) {  // Write TLM for valid writes
 
         // Emit Events/TLM on custom versions
-        this->log_ACTIVITY_LO_CustomVersions(this->verId_db[custom_slot].getversion_enum(),
-                                             this->verId_db[custom_slot].getversion_value());
+        this->log_ACTIVITY_LO_CustomVersions(this->verId_db[custom_slot].get_version_enum(),
+                                             this->verId_db[custom_slot].get_version_value());
 
         if (m_enable == true) { //Send TLM only if verbosity is enabled
         // Write to TLM

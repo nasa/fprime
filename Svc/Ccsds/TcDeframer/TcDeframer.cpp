@@ -58,9 +58,9 @@ void TcDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
     Fw::SerializeStatus status = data.getDeserializer().deserialize(header);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
     // TC protocol defines the Frame Length as number of bytes minus 1, so we add 1 back to get length in bytes
-    U16 total_frame_length = static_cast<U16>((header.getvcIdAndLength() & TCSubfields::FrameLengthMask) + 1);
-    U8 vc_id = static_cast<U8>((header.getvcIdAndLength() & TCSubfields::VcIdMask) >> TCSubfields::VcIdOffset);
-    U16 spacecraft_id = header.getflagsAndScId() & TCSubfields::SpacecraftIdMask;
+    U16 total_frame_length = static_cast<U16>((header.get_vcIdAndLength() & TCSubfields::FrameLengthMask) + 1);
+    U8 vc_id = static_cast<U8>((header.get_vcIdAndLength() & TCSubfields::VcIdMask) >> TCSubfields::VcIdOffset);
+    U16 spacecraft_id = header.get_flagsAndScId() & TCSubfields::SpacecraftIdMask;
 
     if (spacecraft_id != this->m_spacecraftId) {
         this->log_WARNING_LO_InvalidSpacecraftId(spacecraft_id, this->m_spacecraftId);
@@ -92,7 +92,7 @@ void TcDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
     status = deserializer.deserialize(trailer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
-    U16 transmitted_crc = trailer.getfecf();
+    U16 transmitted_crc = trailer.get_fecf();
     if (transmitted_crc != computed_crc) {
         this->log_WARNING_HI_InvalidCrc(computed_crc, transmitted_crc);
         this->dataReturnOut_out(0, data, context);  // drop the frame

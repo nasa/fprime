@@ -146,7 +146,7 @@ struct RemoveExisting : public Rule {
             it++;
         }
         ASSERT_TRUE(it.isInRange());
-        const auto key = it->getKey();
+        const auto key = (*it).getKey();
         const auto expectedValue = state.modelMap[key];
         State::ValueType value = 0;
         const auto status = state.map.remove(key, value);

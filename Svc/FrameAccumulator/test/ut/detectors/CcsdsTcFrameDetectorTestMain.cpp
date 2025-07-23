@@ -75,7 +75,7 @@ FwSizeType generate_random_tc_frame(Types::CircularBuffer& circular_buffer) {
         circular_buffer.peek(byte, i);
         crc.update(byte);
     }
-    tcTrailer.setfecf(crc.finalize());
+    tcTrailer.set_fecf(crc.finalize());
     tcTrailer.serialize(trailer_ser_buffer);
     // Serialize trailer into the circular buffer
     circular_buffer.serialize(frame_trailer, TCTrailer::SERIALIZED_SIZE);

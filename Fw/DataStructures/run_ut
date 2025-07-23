@@ -1,5 +1,0 @@
-#!/bin/sh -e
-
-cd `dirname $0`
-./build_ut "$@"
-./Fw_DataStructures_ut_exe

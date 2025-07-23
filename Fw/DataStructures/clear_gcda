@@ -1,7 +1,0 @@
-#!/bin/sh -e
-
-cd `dirname $0`
-for file in `find ../.. -name '*.gcda'`
-do
-  rm $file
-done

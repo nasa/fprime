@@ -58,11 +58,11 @@ namespace Fw {
     }
 
     U32 TimeInterval::getSeconds() const {
-        return this->m_val.getseconds();
+        return this->m_val.get_seconds();
     }
 
     U32 TimeInterval::getUSeconds() const {
-        return this->m_val.getuseconds();
+        return this->m_val.get_useconds();
     }
 
     TimeInterval::Comparison TimeInterval ::
@@ -127,8 +127,8 @@ namespace Fw {
     }
 
     void TimeInterval::add(U32 seconds, U32 useconds) {
-        U32 newSeconds = this->m_val.getseconds() + seconds;
-        U32 newUSeconds = this->m_val.getuseconds() + useconds;
+        U32 newSeconds = this->m_val.get_seconds() + seconds;
+        U32 newUSeconds = this->m_val.get_useconds() + useconds;
         FW_ASSERT(newUSeconds < 1999999, static_cast<FwAssertArgType>(newUSeconds));
         if (newUSeconds >= 1000000) {
           newSeconds += 1;

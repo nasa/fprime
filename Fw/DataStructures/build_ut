@@ -1,6 +1,0 @@
-#!/bin/sh -e
-
-cd `dirname $0`
-./clear_gcda
-fprime-util build --ut "$@"
-cp ../../build-fprime-automatic-native-ut/bin/`uname`/Fw_DataStructures_ut_exe .

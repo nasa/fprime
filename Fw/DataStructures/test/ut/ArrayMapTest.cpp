@@ -29,7 +29,6 @@ class ArrayMapTester {
 
 namespace MapTest {
 
-using ConstIterator = MapConstIterator<State::KeyType, State::ValueType>;
 using Entry = SetOrMapImplEntry<State::KeyType, State::ValueType>;
 using Map = ArrayMap<State::KeyType, State::ValueType, State::capacity>;
 using MapTester = ArrayMapTester<State::KeyType, State::ValueType, State::capacity>;
