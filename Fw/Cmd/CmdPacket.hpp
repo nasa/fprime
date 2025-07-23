@@ -21,7 +21,7 @@ class CmdPacket : public ComPacket {
     // New serialization interface methods
     SerializeStatus serializeTo(SerializeBufferBase& buffer) const;
     SerializeStatus deserializeFrom(SerializeBufferBase& buffer);
-    
+
     // Legacy serialization methods (backward compatibility)
     SerializeStatus serialize(SerializeBufferBase& buffer) const;  //!< serialize contents
     SerializeStatus deserialize(SerializeBufferBase& buffer);
