@@ -6,7 +6,7 @@
     "Svc.FileManager" : "FileHandling.fileManager",
     "Svc.FileUplink" : "FileHandling.fileUplink",
     "Ref.PingReceiver" : "Ref.pingRcvr",
-    "Svc.EventsLogger" : "CdhCore.events",
+    "Svc.EventsManager" : "CdhCore.events",
     "Svc.TlmChan" : "CdhCore.tlmSend",
     "Svc.PrmDb" : "FileHandling.prmDb",
     "Svc.PrmDb.filename" : "/tmp/PrmDb.dat",
