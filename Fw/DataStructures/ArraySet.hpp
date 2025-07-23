@@ -28,7 +28,7 @@ class ArraySet final : public SetBase<T> {
     //! The type of a const iterator
     using ConstIterator = SetConstIterator<T>;
 
-    //! The type of animplementation entry
+    //! The type of an implementation entry
     using Entry = SetOrMapImplEntry<T, Nil>;
 
     //! The type of the implementation entries

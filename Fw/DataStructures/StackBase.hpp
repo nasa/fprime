@@ -76,7 +76,7 @@ class StackBase {
     }
 
     //! Push an item (add to the right)
-    //! \return SUCCESS if item pushd
+    //! \return SUCCESS if item pushed
     virtual Success push(const T& e  //!< The item (output)
                          ) = 0;
 

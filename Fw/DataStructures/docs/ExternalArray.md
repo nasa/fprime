@@ -73,7 +73,7 @@ _Example:_
 ```c++
 constexpr FwSizeType size = 3;
 constexpr U8 alignment = ExternalArray<U32>::byteArrayAlignment();
-constepxr FwSizeType byteArraySize = ExternalArray<U32>::getByteArraySize(size);
+constexpr FwSizeType byteArraySize = ExternalArray<U32>::getByteArraySize(size);
 alignas(alignment) U8 bytes[byteArraySize];
 ExternalArray<U32> a(ByteArray(&bytes[0], sizeof bytes), size);
 ```
@@ -262,7 +262,7 @@ _Example:_
 ```c++
 constexpr FwSizeType size = 3;
 constexpr U8 alignment = ExternalArray<U32>::byteArrayAlignment();
-constepxr FwSizeType byteArraySize = ExternalArray<U32>::getByteArraySize(size);
+constexpr FwSizeType byteArraySize = ExternalArray<U32>::getByteArraySize(size);
 alignas(alignment) U8 bytes[byteArraySize];
 ExternalArray<U32> a;
 a.setStorage(ByteArray(&bytes[0], sizeof bytes), size);

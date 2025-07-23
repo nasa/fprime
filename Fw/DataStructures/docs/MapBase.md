@@ -186,6 +186,7 @@ void f(const MapBase<U16, U32>& map) {
 }
 ```
 
+<a name="getCapacity"></a>
 ### 5.6. getCapacity
 
 ```c++
@@ -212,7 +213,7 @@ virtual FwSizeType getSize() const = 0
 Return the current size.
 
 _Example:_
-See [**getCapacity**](MapBase.md#64-getcapacity).
+See [**getCapacity**](MapBase.md#getCapacity).
 
 ### 5.8. insert
 
