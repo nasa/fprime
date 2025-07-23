@@ -1,12 +1,12 @@
 // ======================================================================
-// \title  SequenceU32.cpp
+// \title  SequenceU32Tester.cpp
 // \author bocchino
-// \brief  cpp file for SequenceU32 component implementation class
+// \brief  cpp file for SequenceU32Tester component implementation class
 // ======================================================================
 
 #include <gtest/gtest.h>
 
-#include "FppTest/state_machine/internal_instance/choice/SequenceU32.hpp"
+#include "FppTest/state_machine/internal_instance/choice/SequenceU32Tester.hpp"
 #include "Fw/Types/Assert.hpp"
 
 namespace FppTest {
@@ -17,27 +17,27 @@ namespace SmInstanceChoice {
 // Component construction and destruction
 // ----------------------------------------------------------------------
 
-SequenceU32::SequenceU32(const char* const compName)
+SequenceU32Tester::SequenceU32Tester(const char* const compName)
     : SequenceU32ComponentBase(compName),
       m_smChoiceSequenceU32_action_a_history(),
       m_smChoiceSequenceU32_action_b_history(),
       m_smChoiceSequenceU32_guard_g1(),
       m_smChoiceSequenceU32_guard_g2() {}
 
-SequenceU32::~SequenceU32() {}
+SequenceU32Tester::~SequenceU32Tester() {}
 
 // ----------------------------------------------------------------------
 // Implementations for internal state machine actions
 // ----------------------------------------------------------------------
 
-void SequenceU32::FppTest_SmChoice_SequenceU32_action_a(SmId smId,
+void SequenceU32Tester::FppTest_SmChoice_SequenceU32_action_a(SmId smId,
                                                         FppTest_SmChoice_SequenceU32::Signal signal,
                                                         U32 value) {
     ASSERT_EQ(smId, SmId::smChoiceSequenceU32);
     this->m_smChoiceSequenceU32_action_a_history.push(signal, value);
 }
 
-void SequenceU32::FppTest_SmChoice_SequenceU32_action_b(SmId smId, FppTest_SmChoice_SequenceU32::Signal signal) {
+void SequenceU32Tester::FppTest_SmChoice_SequenceU32_action_b(SmId smId, FppTest_SmChoice_SequenceU32::Signal signal) {
     ASSERT_EQ(smId, SmId::smChoiceSequenceU32);
     this->m_smChoiceSequenceU32_action_b_history.push(signal);
 }
@@ -46,12 +46,12 @@ void SequenceU32::FppTest_SmChoice_SequenceU32_action_b(SmId smId, FppTest_SmCho
 // Implementations for internal state machine guards
 // ----------------------------------------------------------------------
 
-bool SequenceU32::FppTest_SmChoice_SequenceU32_guard_g1(SmId smId, FppTest_SmChoice_SequenceU32::Signal signal) const {
+bool SequenceU32Tester::FppTest_SmChoice_SequenceU32_guard_g1(SmId smId, FppTest_SmChoice_SequenceU32::Signal signal) const {
     FW_ASSERT(smId == SmId::smChoiceSequenceU32, static_cast<FwAssertArgType>(smId));
     return this->m_smChoiceSequenceU32_guard_g1.call(signal);
 }
 
-bool SequenceU32::FppTest_SmChoice_SequenceU32_guard_g2(SmId smId,
+bool SequenceU32Tester::FppTest_SmChoice_SequenceU32_guard_g2(SmId smId,
                                                         FppTest_SmChoice_SequenceU32::Signal signal,
                                                         U32 value) const {
     FW_ASSERT(smId == SmId::smChoiceSequenceU32, static_cast<FwAssertArgType>(smId));
@@ -62,7 +62,7 @@ bool SequenceU32::FppTest_SmChoice_SequenceU32_guard_g2(SmId smId,
 // Tests
 // ----------------------------------------------------------------------
 
-void SequenceU32::testG1True() {
+void SequenceU32Tester::testG1True() {
     this->m_smChoiceSequenceU32_action_a_history.clear();
     this->m_smChoiceSequenceU32_action_b_history.clear();
     this->m_smChoiceSequenceU32_guard_g1.reset();
@@ -85,7 +85,7 @@ void SequenceU32::testG1True() {
     ASSERT_EQ(this->smChoiceSequenceU32_getState(), SmChoice_SequenceU32::State::S2);
 }
 
-void SequenceU32::testG1FalseG2True() {
+void SequenceU32Tester::testG1FalseG2True() {
     this->m_smChoiceSequenceU32_action_a_history.clear();
     this->m_smChoiceSequenceU32_action_b_history.clear();
     this->m_smChoiceSequenceU32_guard_g1.reset();
@@ -99,7 +99,7 @@ void SequenceU32::testG1FalseG2True() {
     ASSERT_EQ(this->m_smChoiceSequenceU32_action_b_history.getSize(), 0);
     const U32 value = STest::Pick::any();
     this->smChoiceSequenceU32_sendSignal_s(value);
-    const auto status = this->doDispatch();
+    this->doDispatch();
     ASSERT_EQ(this->m_smChoiceSequenceU32_guard_g1.getCallHistory().getSize(), 1);
     ASSERT_EQ(this->m_smChoiceSequenceU32_guard_g1.getCallHistory().getItemAt(0), SmChoice_SequenceU32::Signal::s);
     ASSERT_EQ(this->m_smChoiceSequenceU32_guard_g2.getCallHistory().getSize(), 1);
@@ -113,7 +113,7 @@ void SequenceU32::testG1FalseG2True() {
     ASSERT_EQ(this->smChoiceSequenceU32_getState(), SmChoice_SequenceU32::State::S3);
 }
 
-void SequenceU32::testG1FalseG2False() {
+void SequenceU32Tester::testG1FalseG2False() {
     this->m_smChoiceSequenceU32_action_a_history.clear();
     this->m_smChoiceSequenceU32_action_b_history.clear();
     this->m_smChoiceSequenceU32_guard_g1.reset();
@@ -126,7 +126,7 @@ void SequenceU32::testG1FalseG2False() {
     ASSERT_EQ(this->m_smChoiceSequenceU32_action_b_history.getSize(), 0);
     const U32 value = STest::Pick::any();
     this->smChoiceSequenceU32_sendSignal_s(value);
-    const auto status = this->doDispatch();
+    this->doDispatch();
     ASSERT_EQ(this->m_smChoiceSequenceU32_guard_g1.getCallHistory().getSize(), 1);
     ASSERT_EQ(this->m_smChoiceSequenceU32_guard_g1.getCallHistory().getItemAt(0), SmChoice_SequenceU32::Signal::s);
     ASSERT_EQ(this->m_smChoiceSequenceU32_guard_g2.getCallHistory().getSize(), 1);

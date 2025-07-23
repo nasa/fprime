@@ -69,7 +69,6 @@ py_dict
 build-fprime-automatic*
 
 /Ref/bin
-/RPI/bin
 /ci-venv/
 /ci-logs*
 /ci-Framework-logs*
