@@ -42,6 +42,7 @@ module Ref {
     instance typeDemo
     instance systemResources
     instance linuxTimer
+    instance comDriver
 
     # ----------------------------------------------------------------------
     # Pattern graph specifiers
@@ -101,6 +102,21 @@ module Ref {
       rateGroup3Comp.RateGroupMemberOut[4] -> DataProducts.dpBufferManager.schedIn
       rateGroup3Comp.RateGroupMemberOut[5] -> DataProducts.dpWriter.schedIn
       rateGroup3Comp.RateGroupMemberOut[6] -> DataProducts.dpMgr.schedIn
+    }
+
+    connections Communications {
+      # ComDriver buffer allocations
+      comDriver.allocate      -> ComCcsds.commsBufferManager.bufferGetCallee
+      comDriver.deallocate    -> ComCcsds.commsBufferManager.bufferSendIn
+      
+      # ComDriver <-> ComStub (Uplink)
+      comDriver.$recv                     -> ComCcsds.comStub.drvReceiveIn
+      ComCcsds.comStub.drvReceiveReturnOut -> comDriver.recvReturnIn
+      
+      # ComStub <-> ComDriver (Downlink)
+      ComCcsds.comStub.drvSendOut      -> comDriver.$send
+      comDriver.sendReturnOut -> ComCcsds.comStub.drvSendReturnIn
+      comDriver.ready         -> ComCcsds.comStub.drvConnected
     }
 
     connections Ref {

@@ -66,14 +66,39 @@ module Ref {
   # Passive component instances
   # ----------------------------------------------------------------------
 
-  instance posixTime: Svc.PosixTime base id 0x010C0000
+  instance posixTime: Svc.PosixTime base id 0x01100000
 
-  instance rateGroupDriverComp: Svc.RateGroupDriver base id 0x010D0000
+  instance rateGroupDriverComp: Svc.RateGroupDriver base id 0x01110000
 
-  instance recvBuffComp: Ref.RecvBuff base id 0x010E0000
+  instance recvBuffComp: Ref.RecvBuff base id 0x01120000
 
-  instance systemResources: Svc.SystemResources base id 0x010F0000
+  instance systemResources: Svc.SystemResources base id 0x01140000
 
-  instance linuxTimer: Svc.LinuxTimer base id 0x01100000
+  instance linuxTimer: Svc.LinuxTimer base id 0x01150000
+
+  instance comDriver: Drv.TcpClient base id 0x01200000 \
+  {
+      phase Fpp.ToCpp.Phases.configComponents """
+      if (state.hostname != nullptr && state.port != 0) {
+          Ref::comDriver.configure(state.hostname, state.port);
+      }
+      """
+
+      phase Fpp.ToCpp.Phases.startTasks """
+      // Initialize socket client communication if and only if there is a valid specification
+      if (state.hostname != nullptr && state.port != 0) {
+          Os::TaskString name("ReceiveTask");
+          Ref::comDriver.start(name, 100, Default.STACK_SIZE);
+      }
+      """
+
+      phase Fpp.ToCpp.Phases.stopTasks """
+      Ref::comDriver.stop();
+      """
+
+      phase Fpp.ToCpp.Phases.freeThreads """
+      (void)Ref::comDriver.join();
+      """
+  }
 
 }

@@ -10,13 +10,11 @@ module ComFprimeConfig {
     module StackSizes {
         constant comQueue   = 64 * 1024
         constant cmdSeq    = 64 * 1024
-        constant comDriver = 100
     }
 
     module Priorities {
         constant comQueue   = 101
         constant cmdSeq     = 100
-        constant comDriver  = 100
     }
 
     # Queue configuration constants

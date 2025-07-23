@@ -9,14 +9,12 @@
 
 namespace ComFprime {
     struct SubtopologyState {
-      const char* hostname;
-      U16 port;
-      const char* uartDevice;
-      U32 baudRate;
+        // Empty - no external state needed for ComFprime subtopology
     };
 
     struct TopologyState {
         SubtopologyState comFprime;
     };
 }
+
 #endif

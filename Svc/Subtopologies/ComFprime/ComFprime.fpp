@@ -122,7 +122,6 @@ module ComFprime {
         instance fprimeFramer
         instance fprimeRouter
         instance comStub
-        instance comDriver
 
 
         connections Downlink {
@@ -136,22 +135,12 @@ module ComFprime {
             # Framer <-> ComStub
             fprimeFramer.dataOut  -> comStub.dataIn
             comStub.dataReturnOut -> fprimeFramer.dataReturnIn
-            # ComStub <-> ComDriver
-            comStub.drvSendOut      -> comDriver.$send
-            comDriver.sendReturnOut -> comStub.drvSendReturnIn
-            comDriver.ready         -> comStub.drvConnected
             # ComStatus
             comStub.comStatusOut       -> fprimeFramer.comStatusIn
             fprimeFramer.comStatusOut  -> comQueue.comStatusIn
         }
 
         connections Uplink {
-            # ComDriver buffer allocations
-            comDriver.allocate      -> commsBufferManager.bufferGetCallee
-            comDriver.deallocate    -> commsBufferManager.bufferSendIn
-            # ComDriver <-> ComStub
-            comDriver.$recv             -> comStub.drvReceiveIn
-            comStub.drvReceiveReturnOut -> comDriver.recvReturnIn
             # ComStub <-> FrameAccumulator
             comStub.dataOut                -> frameAccumulator.dataIn
             frameAccumulator.dataReturnOut -> comStub.dataReturnIn

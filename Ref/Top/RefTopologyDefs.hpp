@@ -64,6 +64,8 @@ namespace Ref {
      * fields, which are derived by command line inputs.
      */
     struct TopologyState {
+        const char* hostname;   //!< Hostname for TCP communication
+        U16 port;              //!< Port for TCP communication
         ComCcsds::SubtopologyState comCcsds;  //!< Subtopology state for ComCcsds 
     };
 

@@ -131,7 +131,6 @@ module ComCcsds {
         instance frameAccumulator
         instance fprimeRouter
         instance comStub
-        instance comDriver
         instance tcDeframer
         instance spacePacketDeframer
         instance tmFramer
@@ -154,10 +153,6 @@ module ComCcsds {
             # Framer <-> ComStub
             tmFramer.dataOut      -> comStub.dataIn
             comStub.dataReturnOut -> tmFramer.dataReturnIn
-            # ComStub <-> ComDriver
-            comStub.drvSendOut      -> comDriver.$send
-            comDriver.sendReturnOut -> comStub.drvSendReturnIn
-            comDriver.ready         -> comStub.drvConnected
             # ComStatus
             comStub.comStatusOut            -> tmFramer.comStatusIn
             tmFramer.comStatusOut           -> spacePacketFramer.comStatusIn
@@ -165,12 +160,6 @@ module ComCcsds {
         }
 
         connections Uplink {
-            # ComDriver buffer allocations
-            comDriver.allocate      -> commsBufferManager.bufferGetCallee
-            comDriver.deallocate    -> commsBufferManager.bufferSendIn
-            # ComDriver <-> ComStub
-            comDriver.$recv             -> comStub.drvReceiveIn
-            comStub.drvReceiveReturnOut -> comDriver.recvReturnIn
             # ComStub <-> FrameAccumulator
             comStub.dataOut                -> frameAccumulator.dataIn
             frameAccumulator.dataReturnOut -> comStub.dataReturnIn
