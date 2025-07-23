@@ -47,7 +47,7 @@ void FpySequencerTester::allocMem(FwSizeType bytes) {
 
 void FpySequencerTester::clearSeq() {
     seq = Fpy::Sequence();
-    seq.getheader().setschemaVersion(Fpy::SCHEMA_VERSION);
+    seq.get_header().set_schemaVersion(Fpy::SCHEMA_VERSION);
 }
 
 // writes the sequence we're building to a file with the given name
@@ -63,29 +63,29 @@ void FpySequencerTester::writeToFile(const char* name, FwSizeType maxBytes) {
 
     // first let's calculate the size of the body. do this by just writing the body,
     // then calculating how big that was, then clearing and writing the header, then writing the body again
-    for (U32 ii = 0; ii < seq.getheader().getargumentCount(); ii++) {
-        ASSERT_EQ(buf.serialize(seq.getargs()[ii]), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    for (U32 ii = 0; ii < seq.get_header().get_argumentCount(); ii++) {
+        ASSERT_EQ(buf.serialize(seq.get_args()[ii]), Fw::SerializeStatus::FW_SERIALIZE_OK);
     }
-    for (U32 ii = 0; ii < seq.getheader().getstatementCount(); ii++) {
-        ASSERT_EQ(buf.serialize(seq.getstatements()[ii]), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    for (U32 ii = 0; ii < seq.get_header().get_statementCount(); ii++) {
+        ASSERT_EQ(buf.serialize(seq.get_statements()[ii]), Fw::SerializeStatus::FW_SERIALIZE_OK);
     }
-    seq.getheader().setbodySize(static_cast<U32>(buf.getBuffLength()));
+    seq.get_header().set_bodySize(static_cast<U32>(buf.getBuffLength()));
     buf.resetSer();
 
-    ASSERT_EQ(buf.serialize(seq.getheader()), Fw::SerializeStatus::FW_SERIALIZE_OK);
-    for (U32 ii = 0; ii < seq.getheader().getargumentCount(); ii++) {
-        ASSERT_EQ(buf.serialize(seq.getargs()[ii]), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    ASSERT_EQ(buf.serialize(seq.get_header()), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    for (U32 ii = 0; ii < seq.get_header().get_argumentCount(); ii++) {
+        ASSERT_EQ(buf.serialize(seq.get_args()[ii]), Fw::SerializeStatus::FW_SERIALIZE_OK);
     }
-    for (U32 ii = 0; ii < seq.getheader().getstatementCount(); ii++) {
-        ASSERT_EQ(buf.serialize(seq.getstatements()[ii]), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    for (U32 ii = 0; ii < seq.get_header().get_statementCount(); ii++) {
+        ASSERT_EQ(buf.serialize(seq.get_statements()[ii]), Fw::SerializeStatus::FW_SERIALIZE_OK);
     }
 
     U32 crc = FpySequencer::CRC_INITIAL_VALUE;
     FpySequencer::updateCrc(crc, buf.getBuffAddr(), buf.getBuffLength());
 
-    seq.getfooter().setcrc(~crc);
+    seq.get_footer().set_crc(~crc);
 
-    ASSERT_EQ(buf.serialize(seq.getfooter()), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    ASSERT_EQ(buf.serialize(seq.get_footer()), Fw::SerializeStatus::FW_SERIALIZE_OK);
 
     FwSizeType intendedWriteSize = buf.getBuffLength();
     if (intendedWriteSize > maxBytes) {
@@ -112,11 +112,11 @@ void FpySequencerTester::addDirective(Fpy::DirectiveId id, Fw::StatementArgBuffe
     Fpy::Statement stmt(id.e, buf);
 
     // if fails, cannot add a new stmt (out of space)
-    FW_ASSERT(seq.getheader().getstatementCount() < std::numeric_limits<U16>::max());
+    FW_ASSERT(seq.get_header().get_statementCount() < std::numeric_limits<U16>::max());
 
-    U16 stateCount = seq.getheader().getstatementCount();
-    seq.getstatements()[stateCount] = stmt;
-    seq.getheader().setstatementCount(static_cast<U16>(stateCount + 1));
+    U16 stateCount = seq.get_header().get_statementCount();
+    seq.get_statements()[stateCount] = stmt;
+    seq.get_header().set_statementCount(static_cast<U16>(stateCount + 1));
 }
 
 void FpySequencerTester::add_WAIT_REL(U32 seconds, U32 uSeconds) {
@@ -155,8 +155,8 @@ void FpySequencerTester::add_SET_SER_REG(U8 serRegIdx, Fw::StatementArgBuffer va
 
 void FpySequencerTester::add_SET_SER_REG(FpySequencer_SetSerRegDirective dir) {
     Fw::StatementArgBuffer buf;
-    FW_ASSERT(buf.serialize(dir.getindex()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    FW_ASSERT(buf.serialize(dir.getvalue(), dir.get_valueSize(), Fw::Serialization::OMIT_LENGTH) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    FW_ASSERT(buf.serialize(dir.get_index()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    FW_ASSERT(buf.serialize(dir.get_value(), dir.get__valueSize(), Fw::Serialization::OMIT_LENGTH) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     addDirective(Fpy::DirectiveId::SET_SER_REG, buf);
 }
 
@@ -201,8 +201,8 @@ void FpySequencerTester::add_CMD(FwOpcodeType opcode) {
 
 void FpySequencerTester::add_CMD(FpySequencer_CmdDirective dir) {
     Fw::StatementArgBuffer buf;
-    FW_ASSERT(buf.serialize(dir.getopCode()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    FW_ASSERT(buf.serialize(dir.getargBuf(), dir.get_argBufSize(), Fw::Serialization::OMIT_LENGTH) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    FW_ASSERT(buf.serialize(dir.get_opCode()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    FW_ASSERT(buf.serialize(dir.get_argBuf(), dir.get__argBufSize(), Fw::Serialization::OMIT_LENGTH) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     addDirective(Fpy::DirectiveId::CMD, buf);
 }
 
@@ -212,20 +212,20 @@ void FpySequencerTester::add_DESER_SER_REG(U8 srcSerRegIdx, FwSizeType srcOffset
 
 void FpySequencerTester::add_DESER_SER_REG(FpySequencer_DeserSerRegDirective dir) {
     Fw::StatementArgBuffer buf;
-    FW_ASSERT(buf.serialize(dir.getsrcSerRegIdx()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    FW_ASSERT(buf.serialize(dir.getsrcOffset()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    FW_ASSERT(buf.serialize(dir.getdestReg()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    FW_ASSERT(buf.serialize(dir.get_srcSerRegIdx()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    FW_ASSERT(buf.serialize(dir.get_srcOffset()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    FW_ASSERT(buf.serialize(dir.get_destReg()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     Fpy::DirectiveId id;
-    if (dir.get_deserSize() == 1) {
+    if (dir.get__deserSize() == 1) {
         id = Fpy::DirectiveId::DESER_SER_REG_1;
-    } else if (dir.get_deserSize() == 2) {
+    } else if (dir.get__deserSize() == 2) {
         id = Fpy::DirectiveId::DESER_SER_REG_2;
-    } else if (dir.get_deserSize() == 4) {
+    } else if (dir.get__deserSize() == 4) {
         id = Fpy::DirectiveId::DESER_SER_REG_4;
-    } else if (dir.get_deserSize() == 8) {
+    } else if (dir.get__deserSize() == 8) {
         id = Fpy::DirectiveId::DESER_SER_REG_8;
     } else {
-        FW_ASSERT(0, static_cast<FwAssertArgType>(dir.get_deserSize()));
+        FW_ASSERT(0, static_cast<FwAssertArgType>(dir.get__deserSize()));
     }
 
     addDirective(id, buf);
@@ -247,10 +247,10 @@ void FpySequencerTester::add_BINARY_REG_OP(U8 lhs, U8 rhs, U8 res, Fpy::Directiv
 
 void FpySequencerTester::add_BINARY_REG_OP(FpySequencer_BinaryRegOpDirective dir) {
     Fw::StatementArgBuffer buf;
-    FW_ASSERT(buf.serialize(dir.getlhs()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    FW_ASSERT(buf.serialize(dir.getrhs()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    FW_ASSERT(buf.serialize(dir.getres()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    addDirective(dir.get_op(), buf);
+    FW_ASSERT(buf.serialize(dir.get_lhs()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    FW_ASSERT(buf.serialize(dir.get_rhs()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    FW_ASSERT(buf.serialize(dir.get_res()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    addDirective(dir.get__op(), buf);
 }
 
 void FpySequencerTester::add_UNARY_REG_OP(U8 src, U8 res, Fpy::DirectiveId op) {
@@ -259,9 +259,9 @@ void FpySequencerTester::add_UNARY_REG_OP(U8 src, U8 res, Fpy::DirectiveId op) {
 
 void FpySequencerTester::add_UNARY_REG_OP(FpySequencer_UnaryRegOpDirective dir) {
     Fw::StatementArgBuffer buf;
-    FW_ASSERT(buf.serialize(dir.getsrc()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    FW_ASSERT(buf.serialize(dir.getres()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    addDirective(dir.get_op(), buf);
+    FW_ASSERT(buf.serialize(dir.get_src()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    FW_ASSERT(buf.serialize(dir.get_res()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    addDirective(dir.get__op(), buf);
 }
 void FpySequencerTester::add_EXIT(bool success) {
     add_EXIT(FpySequencer_ExitDirective(success));

@@ -60,7 +60,7 @@ void TmFramerTester ::testNominalFraming() {
     ComCfg::FrameContext outContext = this->fromPortHistory_dataOut->at(0).context;
     const FwSizeType expectedFrameSize = ComCfg::TmFrameFixedSize;
     ASSERT_EQ(outBuffer.getSize(), expectedFrameSize);
-    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.getvcId(), defaultContext.getvcId());
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_vcId(), defaultContext.get_vcId());
 
     U16 outScId = this->getFrameScId(outBuffer.getData());
     U8 outVcId = this->getFrameVcId(outBuffer.getData());
@@ -69,7 +69,7 @@ void TmFramerTester ::testNominalFraming() {
 
     const U16 expectedScId = ComCfg::SpacecraftId;
     ASSERT_EQ(outScId, expectedScId);
-    ASSERT_EQ(outVcId, defaultContext.getvcId());
+    ASSERT_EQ(outVcId, defaultContext.get_vcId());
     ASSERT_EQ(outMcCount, 0);
     ASSERT_EQ(outVcCount, 0);
     ASSERT_EQ(this->component.m_masterFrameCount, outMcCount + 1);

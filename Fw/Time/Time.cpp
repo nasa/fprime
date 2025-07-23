@@ -5,17 +5,17 @@ namespace Fw {
     const Time ZERO_TIME = Time();
 
     Time::Time() : m_val() {
-        m_val.settimeBase(TimeBase::TB_NONE);
-        m_val.settimeContext(0);
-        m_val.setseconds(0);
-        m_val.setuseconds(0);
+        m_val.set_timeBase(TimeBase::TB_NONE);
+        m_val.set_timeContext(0);
+        m_val.set_seconds(0);
+        m_val.set_useconds(0);
     }
 
     Time::~Time() {
     }
 
     Time::Time(const Time& other) : Serializable() {
-        this->set(other.m_val.gettimeBase(),other.m_val.gettimeContext(),other.m_val.getseconds(),other.m_val.getuseconds());
+        this->set(other.m_val.get_timeBase(),other.m_val.get_timeContext(),other.m_val.get_seconds(),other.m_val.get_useconds());
     }
 
     Time::Time(U32 seconds, U32 useconds) {
@@ -27,11 +27,11 @@ namespace Fw {
     }
 
     void Time::set(U32 seconds, U32 useconds) {
-        this->set(this->m_val.gettimeBase(),this->m_val.gettimeContext(),seconds,useconds);
+        this->set(this->m_val.get_timeBase(),this->m_val.get_timeContext(),seconds,useconds);
     }
 
     void Time::set(TimeBase timeBase, U32 seconds, U32 useconds) {
-        this->set(timeBase,this->m_val.gettimeContext(),seconds,useconds);
+        this->set(timeBase,this->m_val.get_timeContext(),seconds,useconds);
     }
 
     Time::Time(TimeBase timeBase, FwTimeContextStoreType context, U32 seconds, U32 useconds) {
@@ -86,19 +86,19 @@ namespace Fw {
     }
 
     U32 Time::getSeconds() const {
-        return this->m_val.getseconds();
+        return this->m_val.get_seconds();
     }
 
     U32 Time::getUSeconds() const {
-        return this->m_val.getuseconds();
+        return this->m_val.get_useconds();
     }
 
     TimeBase Time::getTimeBase() const {
-        return this->m_val.gettimeBase();
+        return this->m_val.get_timeBase();
     }
 
     FwTimeContextStoreType Time::getContext() const {
-        return this->m_val.gettimeContext();
+        return this->m_val.get_timeContext();
     }
 
     Time Time ::
@@ -195,8 +195,8 @@ namespace Fw {
     }
 
     void Time::add(U32 seconds, U32 useconds) {
-        U32 newSeconds = this->m_val.getseconds() + seconds;
-        U32 newUSeconds = this->m_val.getuseconds() + useconds;
+        U32 newSeconds = this->m_val.get_seconds() + seconds;
+        U32 newUSeconds = this->m_val.get_useconds() + useconds;
         FW_ASSERT(newUSeconds < 1999999, static_cast<FwAssertArgType>(newUSeconds));
         if (newUSeconds >= 1000000) {
           newSeconds += 1;
@@ -206,11 +206,11 @@ namespace Fw {
     }
 
     void Time::setTimeBase(TimeBase timeBase) {
-        this->m_val.settimeBase(timeBase);
+        this->m_val.set_timeBase(timeBase);
     }
 
     void Time::setTimeContext(FwTimeContextStoreType context) {
-        this->m_val.settimeContext(context);
+        this->m_val.set_timeContext(context);
     }
 
 #ifdef BUILD_UT

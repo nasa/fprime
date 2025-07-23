@@ -142,7 +142,7 @@ void DpTestTester::productRecvIn_Container2_SUCCESS() {
         ASSERT_EQ(id, expectedId);
         status = deserializer.deserialize(elt);
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
-        ASSERT_EQ(elt.getu16Field(), this->component.dataRecordData);
+        ASSERT_EQ(elt.get_u16Field(), this->component.dataRecordData);
     }
 }
 

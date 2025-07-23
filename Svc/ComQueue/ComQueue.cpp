@@ -201,7 +201,7 @@ void ComQueue ::dataReturnIn_handler(FwIndexType portNum,
     // the first COM_PORT_COUNT queues are for ComBuffer. So we have for buffer queues:
     // queueNum = portNum + COM_PORT_COUNT
     // Since queueNum is used as APID, we can retrieve the original portNum like such:
-    FwIndexType bufferReturnPortNum = static_cast<FwIndexType>(context.getcomQueueIndex() - ComQueue::COM_PORT_COUNT);
+    FwIndexType bufferReturnPortNum = static_cast<FwIndexType>(context.get_comQueueIndex() - ComQueue::COM_PORT_COUNT);
     // Failing this assert means that context.apid was modified since ComQueue set it, which should not happen
     FW_ASSERT(bufferReturnPortNum < BUFFER_PORT_COUNT, static_cast<FwAssertArgType>(bufferReturnPortNum));
     if (bufferReturnPortNum >= 0) {
@@ -264,8 +264,8 @@ void ComQueue::sendComBuffer(Fw::ComBuffer& comBuffer, FwIndexType queueIndex) {
     FwPacketDescriptorType descriptor;
     Fw::SerializeStatus status = comBuffer.deserialize(descriptor);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
-    context.setapid(static_cast<ComCfg::APID::T>(descriptor));
-    context.setcomQueueIndex(queueIndex);
+    context.set_apid(static_cast<ComCfg::APID::T>(descriptor));
+    context.set_comQueueIndex(queueIndex);
 
     this->dataOut_out(0, outBuffer, context);
     // Set state to WAITING for the status to come back
@@ -281,8 +281,8 @@ void ComQueue::sendBuffer(Fw::Buffer& buffer, FwIndexType queueIndex) {
     FwPacketDescriptorType descriptor;
     Fw::SerializeStatus status = buffer.getDeserializer().deserialize(descriptor);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
-    context.setapid(static_cast<ComCfg::APID::T>(descriptor));
-    context.setcomQueueIndex(queueIndex);
+    context.set_apid(static_cast<ComCfg::APID::T>(descriptor));
+    context.set_comQueueIndex(queueIndex);
     
     this->dataOut_out(0, buffer, context);
     // Set state to WAITING for the status to come back
