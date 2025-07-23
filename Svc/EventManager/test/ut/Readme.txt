@@ -1,6 +1,6 @@
 This test can be run by executing the following:
 
-From Svc/ActiveLogger:
+From Svc/EventManager:
 
 "make ut run_ut"
 
