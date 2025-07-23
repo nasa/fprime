@@ -107,7 +107,8 @@ function integration_test_run {
             then
                 TIMEOUT="gtimeout" # macOS homebrew "coreutils"
             fi
-            ${TIMEOUT} --kill-after=10s 180s pytest ${DICTIONARY_ARGS}
+            TOP_CONFIG_ARGS="--deployment-config ${WORKDIR}/config.json"
+            ${TIMEOUT} --kill-after=10s 180s pytest ${DICTIONARY_ARGS} ${TOP_CONFIG_ARGS}
         )
         RET_PYTEST=$?
         pkill -P $GDS_PID

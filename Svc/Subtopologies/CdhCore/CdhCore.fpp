@@ -7,7 +7,7 @@ module CdhCore {
         stack size CdhCoreConfig.StackSizes.cmdDisp \
         priority CdhCoreConfig.Priorities.cmdDisp
 
-    instance events: Svc.ActiveLogger base id CdhCoreConfig.BASE_ID + 0x0200 \
+    instance events: Svc.EventManager base id CdhCoreConfig.BASE_ID + 0x0200 \
         queue size CdhCoreConfig.QueueSizes.events \
         stack size CdhCoreConfig.StackSizes.events \
         priority CdhCoreConfig.Priorities.events
