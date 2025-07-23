@@ -33,7 +33,7 @@ UNIT_TESTS = [
     "Fw_Types_ut_exe",
     "Os_ut_exe",
     "Ref_SignalGen_ut_exe",
-    "Svc_ActiveLogger_ut_exe",
+    "Svc_EventManager_ut_exe",
     "Svc_ActiveRateGroup_ut_exe",
     "Svc_ActiveTextLogger_ut_exe",
     "Svc_AssertFatalAdapter_ut_exe",

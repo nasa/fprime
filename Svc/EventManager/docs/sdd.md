@@ -1,21 +1,21 @@
-# Svc::ActiveLogger Component
+# Svc::EventManager Component
 
 ## 1. Introduction
 
-The `Svc::ActiveLogger` component processes events from other components. The events are put in packets and sent to an
+The `Svc::EventManager` component processes events from other components. The events are put in packets and sent to an
 external component like the ground interface. The component provides event filtering capability such that events may
 be turned off via ID or severity.
 
 ## 2. Requirements
 
-The requirements for `Svc::ActiveLogger` are as follows:
+The requirements for `Svc::EventManager` are as follows:
 
 Requirement | Description | Verification Method
 ----------- | ----------- | -------------------
-AL-001 | The `Svc::ActiveLogger` component shall receive events and compose them into downlink packets. | Inspection; Unit Test
-AL-002 | The `Svc::ActiveLogger` component shall have commands to filter events based on event severity. | Unit Test
-AL-003 | The `Svc::ActiveLogger` component shall have commands to filter events based on the event ID. | Unit Test 
-AL-004 | The `Svc::ActiveLogger` component shall call fatalOut port when FATAL is received | Inspection; Unit Test
+AL-001 | The `Svc::EventManager` component shall receive events and compose them into downlink packets. | Inspection; Unit Test
+AL-002 | The `Svc::EventManager` component shall have commands to filter events based on event severity. | Unit Test
+AL-003 | The `Svc::EventManager` component shall have commands to filter events based on the event ID. | Unit Test 
+AL-004 | The `Svc::EventManager` component shall call fatalOut port when FATAL is received | Inspection; Unit Test
 
 ## 3. Design
 
@@ -23,13 +23,13 @@ AL-004 | The `Svc::ActiveLogger` component shall call fatalOut port when FATAL i
 
 #### 3.1.1 Component Diagram
 
-The `Svc::ActiveLogger` component has the following component diagram:
+The `Svc::EventManager` component has the following component diagram:
 
-![`Svc::ActiveLogger` Diagram](img/ActiveLoggerBDD.jpg "Svc::ActiveLogger")
+![`Svc::EventManager` Diagram](img/EventManagerBDD.jpg "Svc::EventManager")
 
 #### 3.1.2 Ports
 
-The `Svc::ActiveLogger` component uses the following port types:
+The `Svc::EventManager` component uses the following port types:
 
 Port Data Type | Name | Direction | Kind | Usage
 -------------- | ---- | --------- | ---- | -----
@@ -39,10 +39,10 @@ Port Data Type | Name | Direction | Kind | Usage
 
 ### 3.2 Functional Description
 
-The `Svc::ActiveLogger` component provides an event logging function for the software. The framework autocoder allows
+The `Svc::EventManager` component provides an event logging function for the software. The framework autocoder allows
 developers to specify a set of events in the component FPP.
 (see [Events](../../../docs/user-manual/overview/04-cmd-evt-chn-prm.md). For these components, the
-autocoder will add an `Fw::Log` output port to send events in serialized form. The ActiveLogger receives these port
+autocoder will add an `Fw::Log` output port to send events in serialized form. The EventManager receives these port
 calls and provides commands to filter these events. The filtered events are sent to other components such as the ground
 interface. 
  
@@ -53,9 +53,9 @@ event is seen.
 
 #### 3.2.1 Filtering
 
-The `Svc::ActiveLogger` `LogRecv` input port handler filters events to lessen the load on the downstream components. The
+The `Svc::EventManager` `LogRecv` input port handler filters events to lessen the load on the downstream components. The
 filters can be set by severity and ID. By default, the DIAGNOSTIC events are filtered out since the number of DIAGNOSTIC
-events can be quite high.  All defaults can be globally configured in `config/ActiveLoggerImplCfg.hpp`. Filters are
+events can be quite high.  All defaults can be globally configured in `config/EventManagerCfg.hpp`. Filters are
 modified at runtime by the `SET_EVENT_FILTER` command.
 
 The component also allows filtering events by event ID. There is a configuration parameter that sets the number of IDs
@@ -69,7 +69,7 @@ the F´ ground format and sent out using the `PktSend` port.
 
 #### 3.2.2 Fatal Announce
 
-When the `ActiveLogger` component receives a FATAL event, it calls the FatalAnnounce port. Another component that
+When the `EventManager` component receives a FATAL event, it calls the FatalAnnounce port. Another component that
 handles the system response to FATALs (such as resetting the system) can connect to this port to be informed when a
 FATAL has occurred.
 
@@ -77,33 +77,25 @@ FATAL has occurred.
 
 #### 3.3.1 Receive Events
 
-The `Svc::ActiveLogger` component accepts events from other components.
+The `Svc::EventManager` component accepts events from other components.
 
 ### 3.4 State
 
-`Svc::ActiveLogger` has no state machines, but stores the state of the event severity and event ID filters.
+`Svc::EventManager` has no state machines, but stores the state of the event severity and event ID filters.
 
 ### 3.5 Algorithms
 
-`Svc::ActiveLogger` has no significant algorithms.
+`Svc::EventManager` has no significant algorithms.
 
 ## 4. Dictionaries
 
 TBD
 
-## 5. Module Checklists
-
-Checklist |
--------- |
-[Design](Checklist_Design.xlsx) |
-[Code](Checklist_Code.xlsx) |
-[Unit Test](Checklist_Unit_Test.xls) |
-
-## 6. Unit Testing
+## 5. Unit Testing
 
 To see unit test coverage run fprime-util check --coverage
 
-## 7. Change Log
+## 6. Change Log
 
 Date | Description
 ---- | -----------
