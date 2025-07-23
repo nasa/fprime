@@ -48,7 +48,7 @@ jobs:
           fprime-util generate -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
           fprime-util build --all --jobs "$(nproc || printf '%s\n' 1)"
 
-          # Since our subtopologes have EXCLUDE_FROM_ALL, we need to explicitly build them
+          # Since our subtopologies have EXCLUDE_FROM_ALL, we need to explicitly build them
           fprime-util build --target Svc_Subtopologies --jobs "$(nproc || printf '%s\n' 1)"
           echo CPPCHECK_OPTS=--project="$GITHUB_WORKSPACE/build-fprime-automatic-native/compile_commands.json" >> $GITHUB_ENV
 

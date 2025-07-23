@@ -5,13 +5,13 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FileHandling/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/DataProducts/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ComLoggerTee/")
 
-register_fprime_library(
-    SOURCES 
-        "${CMAKE_CURRENT_LIST_DIR}/empty.cpp"
+add_custom_target(
+    Svc_Subtopologies
     DEPENDS
         Svc_Subtopologies_CdhCore
         Svc_Subtopologies_ComCcsds
         Svc_Subtopologies_ComFprime
         Svc_Subtopologies_FileHandling
         Svc_Subtopologies_DataProducts
+        Svc_Subtopologies_ComLoggerTee
 )
