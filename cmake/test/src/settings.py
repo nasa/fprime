@@ -38,13 +38,13 @@ STANDARD_MODULES = [
 ]
 
 REF_MODULES = [
-    "Svc_ActiveLogger",
     "Svc_ActiveRateGroup",
     "Svc_AssertFatalAdapter",
     "Svc_BufferManager",
     "Svc_CmdDispatcher",
     "Svc_CmdSequencer",
     "Svc_Cycle",
+    "Svc_EventManager",
     "Svc_Fatal",
     "Svc_FatalHandler",
     "Svc_FileDownlink",

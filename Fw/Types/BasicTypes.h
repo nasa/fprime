@@ -24,9 +24,6 @@
 // - FW_RELATIVE_PATH_ASSERT: constant for assertions reported as a relative path within
 //       FPrime and line number
 //
-// - STATIC: overridable "static" for unit testing
-// - PROTECTED: overridable "protected" for unit testing
-// - PRIVATE: overridable "private" for unit testing
 //
 // This header is intended to be C-compatible.
 //
@@ -102,17 +99,7 @@ typedef double F64;  //!< 64-bit floating point (double). Required for compiler-
     4  //!< Uses a relative file path (within fprime/fprime library) for assert. - requires -DASSERT_RELATIVE_PATH=path
        //!< to be set on the compile command line
 
-#ifndef STATIC
-#define STATIC static  //!< static for non unit-test code
-#endif
 
-#ifndef PROTECTED
-#define PROTECTED protected  //!< overridable protected for unit testing
-#endif
-
-#ifndef PRIVATE
-#define PRIVATE private  //!< overridable private for unit testing
-#endif
 
 #ifdef  __cplusplus
 }

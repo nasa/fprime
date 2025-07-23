@@ -1,3 +1,5 @@
+restrict_platforms(Posix SOCKETS)
+
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ComFprimeConfig/")
 
 register_fprime_module(
