@@ -1,11 +1,11 @@
 // ======================================================================
-// \title  Sequence.hpp
+// \title  SequenceTester.hpp
 // \author bocchino
-// \brief  hpp file for Sequence component implementation class
+// \brief  hpp file for SequenceTester component implementation class
 // ======================================================================
 
-#ifndef FppTest_SmInstanceChoice_Sequence_HPP
-#define FppTest_SmInstanceChoice_Sequence_HPP
+#ifndef FppTest_SmInstanceChoice_SequenceTester_HPP
+#define FppTest_SmInstanceChoice_SequenceTester_HPP
 
 #include "FppTest/state_machine/internal/harness/Harness.hpp"
 #include "FppTest/state_machine/internal_instance/choice/SequenceComponentAc.hpp"
@@ -14,7 +14,7 @@ namespace FppTest {
 
 namespace SmInstanceChoice {
 
-class Sequence : public SequenceComponentBase {
+class SequenceTester : public SequenceComponentBase {
   private:
     // ----------------------------------------------------------------------
     // Constants
@@ -43,11 +43,11 @@ class Sequence : public SequenceComponentBase {
     // ----------------------------------------------------------------------
 
     //! Construct Sequence object
-    Sequence(const char* const compName  //!< The component name
+    SequenceTester(const char* const compName  //!< The component name
     );
 
     //! Destroy Sequence object
-    ~Sequence();
+    ~SequenceTester();
 
   private:
     // ----------------------------------------------------------------------
