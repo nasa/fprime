@@ -9,9 +9,14 @@ add_custom_target(
     Svc_Subtopologies
     DEPENDS
         Svc_Subtopologies_CdhCore
+        Svc_Subtopologies_CdhCore_CdhCoreConfig
         Svc_Subtopologies_ComCcsds
+        Svc_Subtopologies_ComCcsds_ComCcsdsConfig
         Svc_Subtopologies_ComFprime
+        Svc_Subtopologies_ComFprime_ComFprimeConfig
         Svc_Subtopologies_FileHandling
+        Svc_Subtopologies_FileHandling_FileHandlingConfig
         Svc_Subtopologies_DataProducts
+        Svc_Subtopologies_DataProducts_DataProductsConfig
         Svc_Subtopologies_ComLoggerTee
 )
