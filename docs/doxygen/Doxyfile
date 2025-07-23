@@ -908,7 +908,7 @@ RECURSIVE              = YES
 # ./docs need to be excluded individually because ./docs/doxygen/mainpage.md needs to be included
 EXCLUDE                = ./docs/how-to ./docs/reference ./docs/tutorials ./docs/user-manual \
                          ./docs/events ./docs/getting-started ./docs/overview ./docs/support \
-                         *CMakeFiles/* ./Autocoders ./cmake ./gtest ./Ref ./RPI ./FppTest \
+                         *CMakeFiles/* ./cmake ./gtest ./Ref ./FppTestProject \
                          STest ./mk ./README.md ./CONTRIBUTORS.md ./CONTRIBUTING.md ./SECURITY.md \
                          ./googletest/ ./CODE_OF_CONDUCT.md ./LICENSE.md ./docs/INSTALL.md
 

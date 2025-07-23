@@ -1,11 +1,11 @@
 // ======================================================================
-// \title  SequenceU32.hpp
+// \title  SequenceU32Tester.hpp
 // \author bocchino
-// \brief  hpp file for SequenceU32 component implementation class
+// \brief  hpp file for SequenceU32Tester component implementation class
 // ======================================================================
 
-#ifndef FppTest_SmInstanceChoice_SequenceU32_HPP
-#define FppTest_SmInstanceChoice_SequenceU32_HPP
+#ifndef FppTest_SmInstanceChoice_SequenceU32Tester_HPP
+#define FppTest_SmInstanceChoice_SequenceU32Tester_HPP
 
 #include "FppTest/state_machine/internal/harness/Harness.hpp"
 #include "FppTest/state_machine/internal_instance/choice/SequenceU32ComponentAc.hpp"
@@ -14,7 +14,7 @@ namespace FppTest {
 
 namespace SmInstanceChoice {
 
-class SequenceU32 : public SequenceU32ComponentBase {
+class SequenceU32Tester : public SequenceU32ComponentBase {
   private:
     // ----------------------------------------------------------------------
     // Constants
@@ -43,11 +43,11 @@ class SequenceU32 : public SequenceU32ComponentBase {
     // ----------------------------------------------------------------------
 
     //! Construct SequenceU32 object
-    SequenceU32(const char* const compName  //!< The component name
+    SequenceU32Tester(const char* const compName  //!< The component name
     );
 
     //! Destroy SequenceU32 object
-    ~SequenceU32();
+    ~SequenceU32Tester();
 
   private:
     // ----------------------------------------------------------------------

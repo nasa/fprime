@@ -127,7 +127,7 @@ void InputPairU16U32Tester::testS2False() {
     ASSERT_EQ(this->m_smChoiceInputPairU16U32_action_a_history.getSize(), 0);
     const U32 value = STest::Pick::any();
     this->smChoiceInputPairU16U32_sendSignal_s2(value);
-    const auto status = this->doDispatch();
+    this->doDispatch();
     ASSERT_EQ(this->m_smChoiceInputPairU16U32_guard_g.getCallHistory().getSize(), 1);
     ASSERT_EQ(this->m_smChoiceInputPairU16U32_guard_g.getCallHistory().getSignals().getItemAt(0),
               SmChoice_InputPairU16U32::Signal::s2);
