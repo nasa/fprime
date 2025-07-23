@@ -32,10 +32,10 @@ protected:
     }
 
     void assertStructMembers(const Primitive& s) {
-        ASSERT_EQ(s.getmBool(), testBool);
-        ASSERT_EQ(s.getmU32(), testU32);
-        ASSERT_EQ(s.getmI16(), testI16);
-        ASSERT_EQ(s.getmF64(), testF64);
+        ASSERT_EQ(s.get_mBool(), testBool);
+        ASSERT_EQ(s.get_mU32(), testU32);
+        ASSERT_EQ(s.get_mI16(), testI16);
+        ASSERT_EQ(s.get_mF64(), testF64);
     }
 
     void assertUnsuccessfulSerialization(Primitive& s, U32 bufSize) {
@@ -73,10 +73,10 @@ TEST_F(PrimitiveStructTest, Default) {
     );
 
     // Default constructor
-    ASSERT_EQ(s.getmBool(), false);
-    ASSERT_EQ(s.getmU32(), 0);
-    ASSERT_EQ(s.getmI16(), 0);
-    ASSERT_EQ(s.getmF64(), 0.0);
+    ASSERT_EQ(s.get_mBool(), false);
+    ASSERT_EQ(s.get_mU32(), 0);
+    ASSERT_EQ(s.get_mI16(), 0);
+    ASSERT_EQ(s.get_mF64(), 0.0);
 }
 
 // Test struct constructors
@@ -111,30 +111,30 @@ TEST_F(PrimitiveStructTest, EqualityOp) {
     ASSERT_TRUE(s1 == s2);
     ASSERT_FALSE(s1 != s2);
 
-    s1.setmBool(testBool);
+    s1.set_mBool(testBool);
 
     ASSERT_FALSE(s1 == s2);
     ASSERT_TRUE(s1 != s2);
 
-    s2.setmBool(testBool);
-    s1.setmU32(testU32);
+    s2.set_mBool(testBool);
+    s1.set_mU32(testU32);
 
     ASSERT_FALSE(s1 == s2);
     ASSERT_TRUE(s1 != s2);
 
-    s2.setmU32(testU32);
-    s1.setmI16(testI16);
+    s2.set_mU32(testU32);
+    s1.set_mI16(testI16);
 
     ASSERT_FALSE(s1 == s2);
     ASSERT_TRUE(s1 != s2);
 
-    s2.setmI16(testI16);
-    s1.setmF64(testF64);
+    s2.set_mI16(testI16);
+    s1.set_mF64(testF64);
 
     ASSERT_FALSE(s1 == s2);
     ASSERT_TRUE(s1 != s2);
 
-    s2.setmF64(testF64);
+    s2.set_mF64(testF64);
 
     ASSERT_TRUE(s1 == s2);
     ASSERT_FALSE(s1 != s2);
@@ -149,17 +149,17 @@ TEST_F(PrimitiveStructTest, GetterSetterFunctions) {
     assertStructMembers(s1);
 
     // Set individual members
-    s2.setmBool(testBool);
-    ASSERT_EQ(s2.getmBool(), testBool);
+    s2.set_mBool(testBool);
+    ASSERT_EQ(s2.get_mBool(), testBool);
 
-    s2.setmU32(testU32);
-    ASSERT_EQ(s2.getmU32(), testU32);
+    s2.set_mU32(testU32);
+    ASSERT_EQ(s2.get_mU32(), testU32);
 
-    s2.setmI16(testI16);
-    ASSERT_EQ(s2.getmI16(), testI16);
+    s2.set_mI16(testI16);
+    ASSERT_EQ(s2.get_mI16(), testI16);
 
-    s2.setmF64(testF64);
-    ASSERT_EQ(s2.getmF64(), testF64);
+    s2.set_mF64(testF64);
+    ASSERT_EQ(s2.get_mF64(), testF64);
 }
 
 // Test struct serialization and deserialization

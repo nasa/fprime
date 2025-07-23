@@ -44,7 +44,7 @@ void SpacePacketFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, c
     // PVN is always 0 per Standard - Packet Type is 0 for Telemetry (downlink) - SecHdr flag is 0 for no secondary
     // header
     U16 packetIdentification = 0;
-    ComCfg::APID::T apid = context.getapid();
+    ComCfg::APID::T apid = context.get_apid();
     FW_ASSERT((apid >> SpacePacketSubfields::ApidWidth) == 0,
               static_cast<FwAssertArgType>(apid));  // apid must fit in 11 bits
     packetIdentification |= static_cast<U16>(apid) & static_cast<U16>(SpacePacketSubfields::ApidMask);  // 11 bit APID
@@ -60,9 +60,9 @@ void SpacePacketFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, c
     U16 packetDataLength =
         static_cast<U16>(data.getSize() - 1);  // Standard specifies length is number of bytes minus 1
 
-    header.setpacketIdentification(packetIdentification);
-    header.setpacketSequenceControl(packetSequenceControl);
-    header.setpacketDataLength(packetDataLength);
+    header.set_packetIdentification(packetIdentification);
+    header.set_packetSequenceControl(packetSequenceControl);
+    header.set_packetDataLength(packetDataLength);
 
     // -----------------------------------------------
     // Serialize the packet
