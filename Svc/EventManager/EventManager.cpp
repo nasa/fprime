@@ -7,17 +7,17 @@
 
 #include <cstdio>
 
-#include <Svc/ActiveLogger/ActiveLoggerImpl.hpp>
+#include <Svc/EventManager/EventManager.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Os/File.hpp>
 
 namespace Svc {
     static_assert(std::numeric_limits<FwSizeType>::max() >= TELEM_ID_FILTER_SIZE, "TELEM_ID_FILTER_SIZE must fit within range of FwSizeType");
-    typedef ActiveLogger_Enabled Enabled;
-    typedef ActiveLogger_FilterSeverity FilterSeverity;
+    typedef EventManager_Enabled Enabled;
+    typedef EventManager_FilterSeverity FilterSeverity;
 
-    ActiveLoggerImpl::ActiveLoggerImpl(const char* name) : 
-        ActiveLoggerComponentBase(name)
+    EventManager::EventManager(const char* name) : 
+        EventManagerComponentBase(name)
     {
         // set filter defaults
         this->m_filterState[FilterSeverity::WARNING_HI].enabled =
@@ -37,10 +37,10 @@ namespace Svc {
 
     }
 
-    ActiveLoggerImpl::~ActiveLoggerImpl() {
+    EventManager::~EventManager() {
     }
 
-    void ActiveLoggerImpl::LogRecv_handler(FwIndexType portNum, FwEventIdType id, Fw::Time &timeTag, const Fw::LogSeverity& severity, Fw::LogBuffer &args) {
+    void EventManager::LogRecv_handler(FwIndexType portNum, FwEventIdType id, Fw::Time &timeTag, const Fw::LogSeverity& severity, Fw::LogBuffer &args) {
 
         // make sure ID is not zero. Zero is reserved for ID filter.
         FW_ASSERT(id != 0);
@@ -104,7 +104,7 @@ namespace Svc {
         }
     }
 
-    void ActiveLoggerImpl::loqQueue_internalInterfaceHandler(FwEventIdType id, const Fw::Time &timeTag, const Fw::LogSeverity& severity, const Fw::LogBuffer &args) {
+    void EventManager::loqQueue_internalInterfaceHandler(FwEventIdType id, const Fw::Time &timeTag, const Fw::LogSeverity& severity, const Fw::LogBuffer &args) {
 
         // Serialize event
         this->m_logPacket.setId(id);
@@ -119,12 +119,12 @@ namespace Svc {
         }
     }
 
-    void ActiveLoggerImpl::SET_EVENT_FILTER_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FilterSeverity filterLevel, Enabled filterEnable) {
+    void EventManager::SET_EVENT_FILTER_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FilterSeverity filterLevel, Enabled filterEnable) {
         this->m_filterState[filterLevel.e].enabled = filterEnable;
         this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
     }
 
-    void ActiveLoggerImpl::SET_ID_FILTER_cmdHandler(
+    void EventManager::SET_ID_FILTER_cmdHandler(
             FwOpcodeType opCode, //!< The opcode
             U32 cmdSeq, //!< The command sequence number
             FwEventIdType ID,
@@ -169,7 +169,7 @@ namespace Svc {
 
     }
 
-    void ActiveLoggerImpl::DUMP_FILTER_STATE_cmdHandler(
+    void EventManager::DUMP_FILTER_STATE_cmdHandler(
             FwOpcodeType opCode, //!< The opcode
             U32 cmdSeq //!< The command sequence number
         ) {
@@ -193,7 +193,7 @@ namespace Svc {
         this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
     }
 
-    void ActiveLoggerImpl::pingIn_handler(
+    void EventManager::pingIn_handler(
           const FwIndexType portNum,
           U32 key
       )

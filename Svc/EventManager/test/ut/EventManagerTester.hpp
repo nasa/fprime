@@ -1,23 +1,23 @@
 /*
- * ActiveLoggerTester.hpp
+ * EventManagerTester.hpp
  *
  *  Created on: Mar 18, 2015
  *      Author: tcanham
  */
 
-#ifndef ACTIVELOGGER_TEST_UT_ACTIVELOGGER_TESTER_HPP_
-#define ACTIVELOGGER_TEST_UT_ACTIVELOGGER_TESTER_HPP_
+#ifndef EventManager_TEST_UT_EventManager_TESTER_HPP_
+#define EventManager_TEST_UT_EventManager_TESTER_HPP_
 
-#include <ActiveLoggerGTestBase.hpp>
-#include <Svc/ActiveLogger/ActiveLoggerImpl.hpp>
+#include <EventManagerGTestBase.hpp>
+#include <Svc/EventManager/EventManager.hpp>
 #include <Os/File.hpp>
 
 namespace Svc {
 
-    class ActiveLoggerTester: public Svc::ActiveLoggerGTestBase {
+    class EventManagerTester: public Svc::EventManagerGTestBase {
         public:
-            explicit ActiveLoggerTester(Svc::ActiveLoggerImpl& inst);
-            virtual ~ActiveLoggerTester();
+            explicit EventManagerTester(Svc::EventManager& inst);
+            virtual ~EventManagerTester();
 
             void runEventNominal();
             void runFilterEventNominal();
@@ -40,7 +40,7 @@ namespace Svc {
                       FwEventIdType Id //!< The ID of the FATAL event
                   ) override;
 
-            Svc::ActiveLoggerImpl& m_impl;
+            Svc::EventManager& m_impl;
 
             bool m_receivedPacket;
             Fw::ComBuffer m_sentPacket;
@@ -77,4 +77,4 @@ namespace Svc {
 
 } /* namespace Svc */
 
-#endif /* ACTIVELOGGER_TEST_UT_ACTIVELOGGER_TESTER_HPP_ */
+#endif /* EventManager_TEST_UT_EventManager_TESTER_HPP_ */

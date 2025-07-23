@@ -1,23 +1,23 @@
 /*
- * ActiveLoggerImpl.hpp
+ * EventManager.hpp
  *
  *  Created on: Mar 28, 2014
  *      Author: tcanham
  */
 
-#ifndef ACTIVELOGGERIMPL_HPP_
-#define ACTIVELOGGERIMPL_HPP_
+#ifndef Svc_EventManager_HPP_
+#define Svc_EventManager_HPP_
 
-#include <Svc/ActiveLogger/ActiveLoggerComponentAc.hpp>
+#include <Svc/EventManager/EventManagerComponentAc.hpp>
 #include <Fw/Log/LogPacket.hpp>
-#include <config/ActiveLoggerImplCfg.hpp>
+#include <config/EventManagerCfg.hpp>
 
 namespace Svc {
 
-    class ActiveLoggerImpl final : public ActiveLoggerComponentBase {
+    class EventManager final : public EventManagerComponentBase {
         public:
-            ActiveLoggerImpl(const char* compName); //!< constructor
-            virtual ~ActiveLoggerImpl(); //!< destructor
+            EventManager(const char* compName); //!< constructor
+            virtual ~EventManager(); //!< destructor
         protected:
         private:
             void LogRecv_handler(FwIndexType portNum, FwEventIdType id, Fw::Time &timeTag, const Fw::LogSeverity& severity, Fw::LogBuffer &args);
@@ -26,14 +26,14 @@ namespace Svc {
             void SET_EVENT_FILTER_cmdHandler(
                     FwOpcodeType opCode,
                     U32 cmdSeq,
-                    ActiveLogger_FilterSeverity filterLevel,
-                    ActiveLogger_Enabled filterEnabled);
+                    EventManager_FilterSeverity filterLevel,
+                    EventManager_Enabled filterEnabled);
 
             void SET_ID_FILTER_cmdHandler(
                     FwOpcodeType opCode, //!< The opcode
                     U32 cmdSeq, //!< The command sequence number
                     FwEventIdType ID,
-                    ActiveLogger_Enabled idFilterEnabled //!< ID filter state
+                    EventManager_Enabled idFilterEnabled //!< ID filter state
                 );
 
             void DUMP_FILTER_STATE_cmdHandler(
@@ -50,8 +50,8 @@ namespace Svc {
 
             // Filter state
             struct t_filterState {
-                ActiveLogger_Enabled enabled; //<! filter is enabled
-            } m_filterState[ActiveLogger_FilterSeverity::NUM_CONSTANTS];
+                EventManager_Enabled enabled; //<! filter is enabled
+            } m_filterState[EventManager_FilterSeverity::NUM_CONSTANTS];
 
             // Working members
             Fw::LogPacket m_logPacket; //!< packet buffer for assembling log packets
@@ -64,4 +64,4 @@ namespace Svc {
     };
 
 }
-#endif /* ACTIVELOGGERIMPL_HPP_ */
+#endif /* Svc_EventManager_HPP_ */

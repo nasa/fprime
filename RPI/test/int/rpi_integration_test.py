@@ -8,7 +8,7 @@ from fprime_gds.common.utils.event_severity import EventSeverity
 
 
 """
-This enum is includes the values of EventSeverity that can be filtered by the ActiveLogger Component
+This enum is includes the values of EventSeverity that can be filtered by the EventManager Component
 """
 FilterSeverity = Enum(
     "FilterSeverity",
@@ -18,7 +18,7 @@ FilterSeverity = Enum(
 
 def set_event_filter(fprime_test_api, severity, enabled):
     """
-    This helper will send a command that updates the given severity filter on the ActiveLogger
+    This helper will send a command that updates the given severity filter on the EventManager
     Component in the Ref App.
     Args:
         severity: A valid FilterSeverity Enum Value (str) or an instance of FilterSeverity
@@ -43,7 +43,7 @@ def set_event_filter(fprime_test_api, severity, enabled):
 
 def set_default_filters(fprime_test_api):
     """
-    Sets the default send filters on the ref aps ActiveLogger
+    Sets the default send filters on the ref aps EventManager
     """
     set_event_filter(fprime_test_api, "COMMAND", True)
     set_event_filter(fprime_test_api, "ACTIVITY_LO", True)

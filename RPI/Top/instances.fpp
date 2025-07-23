@@ -112,7 +112,7 @@ module RPI {
 
   }
 
-  instance eventLogger: Svc.ActiveLogger base id 1400 \
+  instance eventLogger: Svc.EventManager base id 1400 \
     queue size Default.queueSize \
     stack size Default.stackSize \
     priority 25

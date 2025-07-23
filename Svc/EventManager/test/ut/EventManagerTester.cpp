@@ -1,11 +1,11 @@
 /*
- * ActiveLoggerTester.cpp
+ * EventManagerTester.cpp
  *
  *  Created on: Mar 18, 2015
  *      Author: tcanham
  */
 
-#include <Svc/ActiveLogger/test/ut/ActiveLoggerTester.hpp>
+#include <Svc/EventManager/test/ut/EventManagerTester.hpp>
 #include <Fw/Com/ComBuffer.hpp>
 #include <Fw/Com/ComPacket.hpp>
 #include <Os/IntervalTimer.hpp>
@@ -16,20 +16,20 @@
 
 namespace Svc {
 
-    typedef ActiveLogger_Enabled Enabled;
-    typedef ActiveLogger_FilterSeverity FilterSeverity;
+    typedef EventManager_Enabled Enabled;
+    typedef EventManager_FilterSeverity FilterSeverity;
 
-    ActiveLoggerTester::ActiveLoggerTester(Svc::ActiveLoggerImpl& inst) :
-            Svc::ActiveLoggerGTestBase("testerbase",100),
+    EventManagerTester::EventManagerTester(Svc::EventManager& inst) :
+            Svc::EventManagerGTestBase("testerbase",100),
             m_impl(inst),
             m_receivedPacket(false),
             m_receivedFatalEvent(false) {
     }
 
-    ActiveLoggerTester::~ActiveLoggerTester() {
+    EventManagerTester::~EventManagerTester() {
     }
 
-    void ActiveLoggerTester::from_PktSend_handler(
+    void EventManagerTester::from_PktSend_handler(
             const FwIndexType portNum, //!< The port number
             Fw::ComBuffer &data, //!< Buffer containing packet data
             U32 context //!< context; not used
@@ -38,7 +38,7 @@ namespace Svc {
         this->m_receivedPacket = true;
     }
 
-    void ActiveLoggerTester::from_FatalAnnounce_handler(
+    void EventManagerTester::from_FatalAnnounce_handler(
                           const FwIndexType portNum, //!< The port number
                           FwEventIdType Id //!< The ID of the FATAL event
                       ) {
@@ -46,13 +46,13 @@ namespace Svc {
         this->m_fatalID = Id;
     }
 
-    void ActiveLoggerTester::runEventNominal() {
+    void EventManagerTester::runEventNominal() {
         REQUIREMENT("AL-001");
 
         this->writeEvent(29,Fw::LogSeverity::WARNING_HI,10);
     }
 
-    void ActiveLoggerTester::runWithFilters(Fw::LogSeverity filter) {
+    void EventManagerTester::runWithFilters(Fw::LogSeverity filter) {
 
         REQUIREMENT("AL-002");
 
@@ -98,7 +98,7 @@ namespace Svc {
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
                 0,
-                ActiveLoggerImpl::OPCODE_SET_EVENT_FILTER,
+                EventManager::OPCODE_SET_EVENT_FILTER,
                 cmdSeq,
                 Fw::CmdResponse::OK
                 );
@@ -143,7 +143,7 @@ namespace Svc {
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
                 0,
-                ActiveLoggerImpl::OPCODE_SET_EVENT_FILTER,
+                EventManager::OPCODE_SET_EVENT_FILTER,
                 cmdSeq,
                 Fw::CmdResponse::OK
                 );
@@ -156,7 +156,7 @@ namespace Svc {
         ASSERT_FALSE(this->m_receivedPacket);
     }
 
-    void ActiveLoggerTester::runFilterInvalidCommands() {
+    void EventManagerTester::runFilterInvalidCommands() {
 
         U32 cmdSeq = 21;
         this->clearHistory();
@@ -166,7 +166,7 @@ namespace Svc {
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
                 0,
-                ActiveLoggerImpl::OPCODE_SET_EVENT_FILTER,
+                EventManager::OPCODE_SET_EVENT_FILTER,
                 cmdSeq,
                 Fw::CmdResponse::FORMAT_ERROR
                 );
@@ -177,7 +177,7 @@ namespace Svc {
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
                 0,
-                ActiveLoggerImpl::OPCODE_SET_EVENT_FILTER,
+                EventManager::OPCODE_SET_EVENT_FILTER,
                 cmdSeq,
                 Fw::CmdResponse::FORMAT_ERROR
                 );
@@ -189,7 +189,7 @@ namespace Svc {
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
                 0,
-                ActiveLoggerImpl::OPCODE_SET_EVENT_FILTER,
+                EventManager::OPCODE_SET_EVENT_FILTER,
                 cmdSeq,
                 Fw::CmdResponse::FORMAT_ERROR
                 );
@@ -202,14 +202,14 @@ namespace Svc {
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
                 0,
-                ActiveLoggerImpl::OPCODE_SET_EVENT_FILTER,
+                EventManager::OPCODE_SET_EVENT_FILTER,
                 cmdSeq,
                 Fw::CmdResponse::FORMAT_ERROR
                 );
 
     }
 
-    void ActiveLoggerTester::runFilterEventNominal() {
+    void EventManagerTester::runFilterEventNominal() {
 
         for (Fw::LogSeverity::t sev = Fw::LogSeverity::WARNING_HI; sev <= Fw::LogSeverity::DIAGNOSTIC; sev = static_cast<Fw::LogSeverity::t>(sev + 1)) {
             this->runWithFilters(sev);
@@ -217,7 +217,7 @@ namespace Svc {
 
     }
 
-    void ActiveLoggerTester::runFilterIdNominal() {
+    void EventManagerTester::runFilterIdNominal() {
 
         U32 cmdSeq = 21;
 
@@ -234,7 +234,7 @@ namespace Svc {
             ASSERT_CMD_RESPONSE_SIZE(1);
             ASSERT_CMD_RESPONSE(
                     0,
-                    ActiveLoggerImpl::OPCODE_SET_ID_FILTER,
+                    EventManager::OPCODE_SET_ID_FILTER,
                     cmdSeq,
                     Fw::CmdResponse::OK
                     );
@@ -250,7 +250,7 @@ namespace Svc {
             ASSERT_CMD_RESPONSE_SIZE(1);
             ASSERT_CMD_RESPONSE(
                     0,
-                    ActiveLoggerImpl::OPCODE_SET_ID_FILTER,
+                    EventManager::OPCODE_SET_ID_FILTER,
                     cmdSeq,
                     Fw::CmdResponse::OK
                     );
@@ -311,7 +311,7 @@ namespace Svc {
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
                 0,
-                ActiveLoggerImpl::OPCODE_SET_ID_FILTER,
+                EventManager::OPCODE_SET_ID_FILTER,
                 cmdSeq,
                 Fw::CmdResponse::EXECUTION_ERROR
                 );
@@ -330,7 +330,7 @@ namespace Svc {
             ASSERT_CMD_RESPONSE_SIZE(1);
             ASSERT_CMD_RESPONSE(
                     0,
-                    ActiveLoggerImpl::OPCODE_SET_ID_FILTER,
+                    EventManager::OPCODE_SET_ID_FILTER,
                     cmdSeq,
                     Fw::CmdResponse::OK
                     );
@@ -349,7 +349,7 @@ namespace Svc {
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
                 0,
-                ActiveLoggerImpl::OPCODE_SET_ID_FILTER,
+                EventManager::OPCODE_SET_ID_FILTER,
                 cmdSeq,
                 Fw::CmdResponse::EXECUTION_ERROR
                 );
@@ -367,7 +367,7 @@ namespace Svc {
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
                 0,
-                ActiveLoggerImpl::OPCODE_SET_ID_FILTER,
+                EventManager::OPCODE_SET_ID_FILTER,
                 cmdSeq,
                 Fw::CmdResponse::FORMAT_ERROR
                 );
@@ -375,7 +375,7 @@ namespace Svc {
 
     }
 
-    void ActiveLoggerTester::runFilterDump() {
+    void EventManagerTester::runFilterDump() {
         U32 cmdSeq = 21;
         // set random set of filters
 
@@ -408,7 +408,7 @@ namespace Svc {
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
                 0,
-                ActiveLoggerImpl::OPCODE_DUMP_FILTER_STATE,
+                EventManager::OPCODE_DUMP_FILTER_STATE,
                 cmdSeq,
                 Fw::CmdResponse::OK
                 );
@@ -422,7 +422,7 @@ namespace Svc {
         ASSERT_EVENTS_SEVERITY_FILTER_STATE(5,FilterSeverity::DIAGNOSTIC,true);
     }
 
-    void ActiveLoggerTester::runEventFatal() {
+    void EventManagerTester::runEventFatal() {
         Fw::LogBuffer buff;
         U32 val = 10;
         FwEventIdType id = 29;
@@ -477,7 +477,7 @@ namespace Svc {
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
                 0,
-                ActiveLoggerImpl::OPCODE_SET_EVENT_FILTER,
+                EventManager::OPCODE_SET_EVENT_FILTER,
                 cmdSeq,
                 Fw::CmdResponse::OK
                 );
@@ -530,7 +530,7 @@ namespace Svc {
 
     }
 
-    void ActiveLoggerTester::writeEvent(FwEventIdType id, Fw::LogSeverity severity, U32 value) {
+    void EventManagerTester::writeEvent(FwEventIdType id, Fw::LogSeverity severity, U32 value) {
         Fw::LogBuffer buff;
 
         Fw::SerializeStatus stat = buff.serialize(value);
@@ -573,7 +573,7 @@ namespace Svc {
 
     }
 
-    void ActiveLoggerTester::readEvent(FwEventIdType id, Fw::LogSeverity severity, U32 value, Os::File& file) {
+    void EventManagerTester::readEvent(FwEventIdType id, Fw::LogSeverity severity, U32 value, Os::File& file) {
         static const BYTE delimiter = 0xA5;
 
         // first read should be delimiter
@@ -605,7 +605,7 @@ namespace Svc {
 
     }
 
-    void ActiveLoggerTester::textLogIn(const FwEventIdType id, //!< The event ID
+    void EventManagerTester::textLogIn(const FwEventIdType id, //!< The event ID
             const Fw::Time& timeTag, //!< The time
             const Fw::LogSeverity severity, //!< The severity
             const Fw::TextLogString& text //!< The event string
@@ -614,7 +614,7 @@ namespace Svc {
 
         printTextLogHistoryEntry(e, stdout);
     }
-    void ActiveLoggerTester ::
+    void EventManagerTester ::
       from_pingOut_handler(
           const FwIndexType portNum,
           U32 key

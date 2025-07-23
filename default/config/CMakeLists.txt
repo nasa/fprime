@@ -13,7 +13,7 @@ register_fprime_config(
         "${CMAKE_CURRENT_LIST_DIR}/PolyDbCfg.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/VersionCfg.fpp"
     HEADERS
-        "${CMAKE_CURRENT_LIST_DIR}/ActiveLoggerImplCfg.hpp"
+        "${CMAKE_CURRENT_LIST_DIR}/EventManagerCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/ActiveRateGroupCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/BufferManagerComponentImplCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/CommandDispatcherImplCfg.hpp"

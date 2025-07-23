@@ -1,7 +1,7 @@
 module Svc {
 
   @ A component for logging events
-  active component ActiveLogger {
+  active component EventManager {
 
     # ----------------------------------------------------------------------
     # Types

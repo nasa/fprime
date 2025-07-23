@@ -1,12 +1,12 @@
 /*
- * ActiveLoggerTesterMain.cpp
+ * EventManagerTesterMain.cpp
  *
  *  Created on: Mar 18, 2015
  *      Author: tcanham
  */
 
-#include <Svc/ActiveLogger/test/ut/ActiveLoggerTester.hpp>
-#include <Svc/ActiveLogger/ActiveLoggerImpl.hpp>
+#include <Svc/EventManager/test/ut/EventManagerTester.hpp>
+#include <Svc/EventManager/EventManager.hpp>
 #include <Fw/Obj/SimpleObjRegistry.hpp>
 #include <Fw/Test/UnitTest.hpp>
 
@@ -16,7 +16,7 @@
 static Fw::SimpleObjRegistry simpleReg;
 #endif
 
-void connectPorts(Svc::ActiveLoggerImpl& impl, Svc::ActiveLoggerTester& tester) {
+void connectPorts(Svc::EventManager& impl, Svc::EventManagerTester& tester) {
 
     tester.connect_to_CmdDisp(0,impl.get_CmdDisp_InputPort(0));
     impl.set_CmdStatus_OutputPort(0,tester.get_from_CmdStatus(0));
@@ -36,15 +36,15 @@ void connectPorts(Svc::ActiveLoggerImpl& impl, Svc::ActiveLoggerTester& tester) 
     // simpleReg.dump();
 }
 
-TEST(ActiveLoggerTest,NominalEventSend) {
+TEST(EventManagerTest,NominalEventSend) {
 
     TEST_CASE(100.1.1,"Nominal Event Logging");
 
-    Svc::ActiveLoggerImpl impl("ActiveLoggerImpl");
+    Svc::EventManager impl("EventManager");
 
     impl.init(10,0);
 
-    Svc::ActiveLoggerTester tester(impl);
+    Svc::EventManagerTester tester(impl);
 
     tester.init();
 
@@ -55,15 +55,15 @@ TEST(ActiveLoggerTest,NominalEventSend) {
 
 }
 
-TEST(ActiveLoggerTest,FilteredEventSend) {
+TEST(EventManagerTest,FilteredEventSend) {
 
     TEST_CASE(100.1.2,"Nominal Event Filtering");
 
-    Svc::ActiveLoggerImpl impl("ActiveLoggerImpl");
+    Svc::EventManager impl("EventManager");
 
     impl.init(10,0);
 
-    Svc::ActiveLoggerTester tester(impl);
+    Svc::EventManagerTester tester(impl);
 
     tester.init();
 
@@ -74,15 +74,15 @@ TEST(ActiveLoggerTest,FilteredEventSend) {
 
 }
 
-TEST(ActiveLoggerTest,FilterIdTest) {
+TEST(EventManagerTest,FilterIdTest) {
 
     TEST_CASE(100.1.3,"Filter events by ID");
 
-    Svc::ActiveLoggerImpl impl("ActiveLoggerImpl");
+    Svc::EventManager impl("EventManager");
 
     impl.init(10,0);
 
-    Svc::ActiveLoggerTester tester(impl);
+    Svc::EventManagerTester tester(impl);
 
     tester.init();
 
@@ -93,15 +93,15 @@ TEST(ActiveLoggerTest,FilterIdTest) {
 
 }
 
-TEST(ActiveLoggerTest,FilterDumpTest) {
+TEST(EventManagerTest,FilterDumpTest) {
 
     TEST_CASE(100.1.3,"Dump filter values");
 
-    Svc::ActiveLoggerImpl impl("ActiveLoggerImpl");
+    Svc::EventManager impl("EventManager");
 
     impl.init(10,0);
 
-    Svc::ActiveLoggerTester tester(impl);
+    Svc::EventManagerTester tester(impl);
 
     tester.init();
 
@@ -112,15 +112,15 @@ TEST(ActiveLoggerTest,FilterDumpTest) {
 
 }
 
-TEST(ActiveLoggerTest,InvalidCommands) {
+TEST(EventManagerTest,InvalidCommands) {
 
     TEST_CASE(100.2.1,"Off-Nominal Invalid Commands");
 
-    Svc::ActiveLoggerImpl impl("ActiveLoggerImpl");
+    Svc::EventManager impl("EventManager");
 
     impl.init(10,0);
 
-    Svc::ActiveLoggerTester tester(impl);
+    Svc::EventManagerTester tester(impl);
 
     tester.init();
 
@@ -131,15 +131,15 @@ TEST(ActiveLoggerTest,InvalidCommands) {
 
 }
 
-TEST(ActiveLoggerTest,FatalTesting) {
+TEST(EventManagerTest,FatalTesting) {
 
     TEST_CASE(100.2.2,"Off-Nominal FATAL processing");
 
-    Svc::ActiveLoggerImpl impl("ActiveLoggerImpl");
+    Svc::EventManager impl("EventManager");
 
     impl.init(10,0);
 
-    Svc::ActiveLoggerTester tester(impl);
+    Svc::EventManagerTester tester(impl);
 
     tester.init();
 

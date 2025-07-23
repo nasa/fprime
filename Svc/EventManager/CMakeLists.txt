@@ -8,16 +8,16 @@
 ####
 
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/ActiveLogger.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/ActiveLoggerImpl.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/EventManager.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/EventManager.cpp"
 )
 
 register_fprime_module()
 ### UTs ###
 set(UT_SOURCE_FILES
-  "${FPRIME_FRAMEWORK_PATH}/Svc/ActiveLogger/ActiveLogger.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/ActiveLoggerTestMain.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/ActiveLoggerTester.cpp"
+  "${FPRIME_FRAMEWORK_PATH}/Svc/EventManager/EventManager.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/EventManagerTestMain.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/EventManagerTester.cpp"
 )
 register_fprime_ut()
 set (UT_TARGET_NAME "${FPRIME_CURRENT_MODULE}_ut_exe")
