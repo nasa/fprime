@@ -63,7 +63,7 @@ namespace Svc {
     {
       for (U32 i = 0; i < numCommands; ++i) {
         // Set the time to after time of command
-        Fw::Time testTime(TB_WORKSTATION_TIME, 2 * i + 3, 0);
+        Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 2 * i + 3, 0);
         this->setTestTime(testTime);
         // Run a cycle. Should dispatch timed command
         this->invoke_to_schedIn(0, 0);

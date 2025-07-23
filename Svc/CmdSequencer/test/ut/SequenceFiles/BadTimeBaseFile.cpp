@@ -37,9 +37,11 @@ namespace Svc {
         (this->n-1) * FPrime::Records::STANDARD_SIZE +
         FPrime::Records::RECORD_DESCRIPTOR_SIZE;
       const U32 dataSize = recordDataSize + FPrime::CRCs::SIZE;
-      const TimeBase headerTimeBase = TB_PROC_TIME;
-      const TimeBase recordTimeBase =
-        static_cast<TimeBase>(static_cast<U32>(headerTimeBase) + 1);
+      const TimeBase headerTimeBase = TimeBase::TB_PROC_TIME;
+      // Create an invalid time base by adding 1 to the stored value
+      const FwTimeBaseStoreType headerTimeBaseStore = static_cast<FwTimeBaseStoreType>(headerTimeBase) + 1;
+      // First cast to the raw enum type TimeBase::T, then create a TimeBase from that
+      const TimeBase recordTimeBase(static_cast<TimeBase::T>(headerTimeBaseStore));
       const U32 timeContext = 0;
       FPrime::Headers::serialize(
           dataSize,

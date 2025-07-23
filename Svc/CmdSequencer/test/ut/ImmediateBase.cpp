@@ -43,7 +43,7 @@ namespace Svc {
       REQUIREMENT("ISF-CMDS-003");
 
       // Set the time
-      Fw::Time testTime(TB_WORKSTATION_TIME, 1, 1);
+      Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 1, 1);
       this->setTestTime(testTime);
       // Write the file
       const char *const fileName = file.getName().toChar();
@@ -83,7 +83,7 @@ namespace Svc {
       )
     {
       // Set the time
-      Fw::Time testTime(TB_WORKSTATION_TIME, 1, 1);
+      Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 1, 1);
       this->setTestTime(testTime);
       // Write the file
       const char *const fileName = file.getName().toChar();
@@ -108,7 +108,7 @@ namespace Svc {
       parameterizedInvalidManualCommands(SequenceFiles::File& file)
     {
       // Set the time
-      Fw::Time testTime(TB_WORKSTATION_TIME, 1, 1);
+      Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 1, 1);
       this->setTestTime(testTime);
       // Write the file
       const char *const fileName = file.getName().toChar();
@@ -201,7 +201,7 @@ namespace Svc {
       )
     {
       // Set the time
-      Fw::Time testTime(TB_WORKSTATION_TIME, 1, 1);
+      Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 1, 1);
       this->setTestTime(testTime);
       // Write the file
       const char *const fileName = file.getName().toChar();
@@ -230,7 +230,7 @@ namespace Svc {
     {
 
       // Set the time
-      Fw::Time testTime(TB_WORKSTATION_TIME, 1, 1);
+      Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 1, 1);
       this->setTestTime(testTime);
       // Write the file
       const char *const fileName = file.getName().toChar();
@@ -289,7 +289,7 @@ namespace Svc {
       )
     {
       // Set the time
-      Fw::Time testTime(TB_WORKSTATION_TIME, 1, 1);
+      Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 1, 1);
       this->setTestTime(testTime);
       // Write the file
       const char *const fileName = file.getName().toChar();
@@ -328,7 +328,7 @@ namespace Svc {
       )
     {
       // Set the time
-      Fw::Time testTime(TB_WORKSTATION_TIME, 1, 1);
+      Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 1, 1);
       this->setTestTime(testTime);
       // Write the file
       const char *const fileName = file.getName().toChar();

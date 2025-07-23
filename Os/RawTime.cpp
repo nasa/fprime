@@ -77,4 +77,13 @@ RawTime::Status RawTime::getDiffUsec(const RawTime& other, U32& result) const {
     return status;
 }
 
+bool RawTime::operator==(const RawTime& other) const {
+    Fw::TimeInterval interval;
+    Status status = this->getTimeInterval(other, interval);
+    // If we error out, then the values are either:
+    //    1) impossible to compare, in which case it's perfectly reasonable to consider them different, or
+    //    2) too far apart to fit in a TimeInterval, in which case they are definitely different
+    return status == Status::OP_OK && interval.getSeconds() == 0 && interval.getUSeconds() == 0;
+}
+
 }  // namespace Os
