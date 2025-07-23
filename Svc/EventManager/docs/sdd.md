@@ -91,19 +91,11 @@ The `Svc::EventManager` component accepts events from other components.
 
 TBD
 
-## 5. Module Checklists
-
-Checklist |
--------- |
-[Design](Checklist_Design.xlsx) |
-[Code](Checklist_Code.xlsx) |
-[Unit Test](Checklist_Unit_Test.xls) |
-
-## 6. Unit Testing
+## 5. Unit Testing
 
 To see unit test coverage run fprime-util check --coverage
 
-## 7. Change Log
+## 6. Change Log
 
 Date | Description
 ---- | -----------

@@ -34,4 +34,4 @@ namespace Svc {
 
 } /* namespace Svc */
 
-#endif /* RATEGROUPDRIVER_TEST_UT_ACTIVELOGGERIMPLTESTER_HPP_ */
+#endif
