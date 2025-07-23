@@ -6,6 +6,7 @@
     namespace FileHandling_fileManager    {enum { WARN = 3, FATAL = 5 };}
     namespace FileHandling_fileUplink     {enum { WARN = 3, FATAL = 5 };}
     namespace FileHandling_prmDb          {enum { WARN = 3, FATAL = 5 };}
+    namespace FileHandling_cmdSeq         {enum { WARN = 3, FATAL = 5 };}
   }
 
 #endif

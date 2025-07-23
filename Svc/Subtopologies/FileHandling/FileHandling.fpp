@@ -45,12 +45,27 @@ module FileHandling {
         """
     }
 
+    instance cmdSeq: Svc.CmdSequencer base id FileHandlingConfig.BASE_ID + 0x0500 \
+        queue size FileHandlingConfig.QueueSizes.cmdSeq \
+        stack size FileHandlingConfig.StackSizes.cmdSeq \
+        priority FileHandlingConfig.Priorities.cmdSeq \
+    {
+        phase Fpp.ToCpp.Phases.configComponents """
+        FileHandling::cmdSeq.allocateBuffer(0, FileHandling::Allocation::memAllocator, FileHandlingConfig::BuffMgr::cmdSeqBuffSize);
+        """
+
+        phase Fpp.ToCpp.Phases.tearDownComponents """
+        FileHandling::cmdSeq.deallocateBuffer(FileHandling::Allocation::memAllocator);
+        """
+    }
+
     topology Subtopology {
         #Active Components
         instance fileUplink
         instance fileDownlink
         instance fileManager
         instance prmDb
+        instance cmdSeq
 
     } # end topology
 } # end FileHandling Subtopology

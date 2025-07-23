@@ -1,6 +1,11 @@
 register_fprime_config(
     EXCLUDE_FROM_ALL
+    SOURCES
+        "${CMAKE_CURRENT_LIST_DIR}/FileHandlingSubtopologyConfig.cpp"
+    HEADERS
+        "${CMAKE_CURRENT_LIST_DIR}/FileHandlingSubtopologyConfig.hpp"
     AUTOCODER_INPUTS
         "${CMAKE_CURRENT_LIST_DIR}/FileHandlingConfig.fpp"
-    INTERFACE
+    DEPENDS
+        Fw_Types
 )

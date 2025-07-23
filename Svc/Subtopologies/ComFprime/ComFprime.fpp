@@ -40,20 +40,6 @@ module ComFprime {
         """
     }
 
-    instance cmdSeq: Svc.CmdSequencer base id ComFprimeConfig.BASE_ID + 0x0200 \
-        queue size ComFprimeConfig.QueueSizes.cmdSeq \
-        stack size ComFprimeConfig.StackSizes.cmdSeq \
-        priority ComFprimeConfig.Priorities.cmdSeq \
-    {
-        phase Fpp.ToCpp.Phases.configComponents """
-        ComFprime::cmdSeq.allocateBuffer(0, ComFprime::Allocation::memAllocator, ComFprimeConfig::BuffMgr::cmdSeqBuffSize);
-        """
-
-        phase Fpp.ToCpp.Phases.tearDownComponents """
-        ComFprime::cmdSeq.deallocateBuffer(ComFprime::Allocation::memAllocator);
-        """
-    }
-
     # ----------------------------------------------------------------------
     # Passive Components
     # ----------------------------------------------------------------------
@@ -113,7 +99,6 @@ module ComFprime {
     topology Subtopology {
         # Active Components
         instance comQueue
-        instance cmdSeq
 
         # Passive Components
         instance commsBufferManager

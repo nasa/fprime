@@ -45,20 +45,6 @@ module ComCcsds {
         """
     }
 
-    instance cmdSeq: Svc.CmdSequencer base id ComCcsdsConfig.BASE_ID + 0x0200 \
-        queue size ComCcsdsConfig.QueueSizes.cmdSeq \
-        stack size ComCcsdsConfig.StackSizes.cmdSeq \
-        priority ComCcsdsConfig.Priorities.cmdSeq \
-    {
-        phase Fpp.ToCpp.Phases.configComponents """
-        ComCcsds::cmdSeq.allocateBuffer(0, ComCcsds::Allocation::memAllocator, ComCcsdsConfig::BuffMgr::cmdSeqBuffSize);
-        """
-
-        phase Fpp.ToCpp.Phases.tearDownComponents """
-        ComCcsds::cmdSeq.deallocateBuffer(ComCcsds::Allocation::memAllocator);
-        """
-    }
-
     # ----------------------------------------------------------------------
     # Passive Components
     # ----------------------------------------------------------------------
@@ -124,7 +110,6 @@ module ComCcsds {
     topology Subtopology {
         # Active Components
         instance comQueue
-        instance cmdSeq
 
         # Passive Components
         instance commsBufferManager

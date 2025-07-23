@@ -4,17 +4,14 @@ module ComCcsdsConfig {
     
     module QueueSizes {
         constant comQueue    = 50
-        constant cmdSeq      = 10
     }
     
     module StackSizes {
         constant comQueue   = 64 * 1024
-        constant cmdSeq    = 64 * 1024
     }
 
     module Priorities {
         constant comQueue   = 101
-        constant cmdSeq     = 100
     }
 
     # Queue configuration constants
@@ -32,7 +29,6 @@ module ComCcsdsConfig {
 
     # Buffer management constants
     module BuffMgr {
-        constant cmdSeqBuffSize        = 5 * 1024 
         constant frameAccumulatorSize  = 2048     
         constant commsBuffSize         = 2048      
         constant commsFileBuffSize     = 3000      
