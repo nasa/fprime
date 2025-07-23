@@ -6,7 +6,12 @@
 
 namespace FileHandling {
     // State for topology construction
+    struct SubtopologyState {
+        // Empty - no external state needed for FileHandling subtopology
+    };
+
     struct TopologyState {
+        SubtopologyState fileHandling;
     };
 }
 
