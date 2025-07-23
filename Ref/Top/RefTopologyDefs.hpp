@@ -12,9 +12,7 @@
 #define REF_REFTOPOLOGYDEFS_HPP
 
 #include "Ref/BlockDriver/BlockDriver.hpp"
-#include "Fw/Types/MallocAllocator.hpp"
 #include "Ref/Top/FppConstantsAc.hpp"
-#include "Svc/Health/Health.hpp"
 
 // Subtopology PingEntries includes
 #include "Svc/Subtopologies/CdhCore/PingEntries.hpp"
@@ -27,13 +25,6 @@
 #include "Svc/Subtopologies/DataProducts/SubtopologyTopologyDefs.hpp"
 #include "Svc/Subtopologies/FileHandling/SubtopologyTopologyDefs.hpp"
 
-namespace PingEntries {
-    namespace Ref_blockDrv       {enum { WARN = 3, FATAL = 5 };}
-    namespace Ref_pingRcvr       {enum { WARN = 3, FATAL = 5 };}
-    namespace Ref_rateGroup1Comp {enum { WARN = 3, FATAL = 5 };}
-    namespace Ref_rateGroup2Comp {enum { WARN = 3, FATAL = 5 };}
-    namespace Ref_rateGroup3Comp {enum { WARN = 3, FATAL = 5 };}
-}  // namespace PingEntries
 /**
  * \brief required ping constants
  *
@@ -53,6 +44,13 @@ namespace PingEntries {
  * }
  * ```
  */
+namespace PingEntries {
+    namespace Ref_blockDrv       {enum { WARN = 3, FATAL = 5 };}
+    namespace Ref_pingRcvr       {enum { WARN = 3, FATAL = 5 };}
+    namespace Ref_rateGroup1Comp {enum { WARN = 3, FATAL = 5 };}
+    namespace Ref_rateGroup2Comp {enum { WARN = 3, FATAL = 5 };}
+    namespace Ref_rateGroup3Comp {enum { WARN = 3, FATAL = 5 };}
+}  // namespace PingEntries
 
 // Definitions are placed within a namespace named after the deployment
 namespace Ref {

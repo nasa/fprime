@@ -14,7 +14,7 @@ _ = cmake.get_build(
     "UT_BUILD",
     settings.REF_APP_PATH,
     cmake_arguments={"BUILD_TESTING": "ON"},
-    make_targets=["Ref", "ut_exe"],
+    make_targets=["all", "Ref", "Ref_ut_exe"],
     install_directory=tempfile.mkdtemp(),
 )
 MODULES = settings.FRAMEWORK_MODULES + settings.STANDARD_MODULES
@@ -33,7 +33,7 @@ UNIT_TESTS = [
     "Fw_Types_ut_exe",
     "Os_ut_exe",
     "Ref_SignalGen_ut_exe",
-    "Svc_ActiveLogger_ut_exe",
+    "Svc_EventManager_ut_exe",
     "Svc_ActiveRateGroup_ut_exe",
     "Svc_ActiveTextLogger_ut_exe",
     "Svc_AssertFatalAdapter_ut_exe",

@@ -9,7 +9,7 @@ TEST(FwTlmTest,TlmPacketSerializeSingle) {
     Fw::TlmPacket pktIn;
     Fw::TlmBuffer buffIn;
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,buffIn.serialize(static_cast<U32>(12)));
-    Fw::Time timeIn(TB_WORKSTATION_TIME,10,11);
+    Fw::Time timeIn(TimeBase::TB_WORKSTATION_TIME,10,11);
     FwChanIdType id = 10;
 
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,pktIn.resetPktSer());
@@ -20,7 +20,7 @@ TEST(FwTlmTest,TlmPacketSerializeSingle) {
     // Deserialize data
     Fw::TlmPacket pktOut;
     Fw::TlmBuffer buffOut;
-    Fw::Time timeOut(TB_WORKSTATION_TIME,10,11);
+    Fw::Time timeOut(TimeBase::TB_WORKSTATION_TIME,10,11);
 
     pktOut.setBuffer(comBuff);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,pktOut.resetPktDeser());
@@ -57,7 +57,7 @@ TEST(FwTlmTest,TlmPacketSerializeFill) {
 
         Fw::TlmBuffer buffIn;
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,buffIn.serialize(static_cast<U32>(entry)));
-        Fw::Time timeIn(TB_WORKSTATION_TIME,entry+1,entry+2);
+        Fw::Time timeIn(TimeBase::TB_WORKSTATION_TIME,entry+1,entry+2);
         FwChanIdType id = static_cast<FwChanIdType>(NUM_ENTRIES-entry);
 
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,pktIn.addValue(id,timeIn,buffIn));
@@ -67,7 +67,7 @@ TEST(FwTlmTest,TlmPacketSerializeFill) {
     {
         Fw::TlmBuffer buffIn;
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,buffIn.serialize(static_cast<U32>(12)));
-        Fw::Time timeIn(TB_WORKSTATION_TIME,10,11);
+        Fw::Time timeIn(TimeBase::TB_WORKSTATION_TIME,10,11);
         FwChanIdType id = 10;
 
         ASSERT_EQ(Fw::FW_SERIALIZE_NO_ROOM_LEFT,pktIn.addValue(id,timeIn,buffIn));
@@ -88,7 +88,7 @@ TEST(FwTlmTest,TlmPacketSerializeFill) {
         FwChanIdType id = 0;
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,pktOut.extractValue(id,timeOut,buffOut,sizeof(U32)));
         ASSERT_EQ(NUM_ENTRIES-entry,id);
-        Fw::Time expTime(TB_WORKSTATION_TIME,entry+1,entry+2);
+        Fw::Time expTime(TimeBase::TB_WORKSTATION_TIME,entry+1,entry+2);
         ASSERT_EQ(expTime,timeOut);
         U32 val = 0;
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,buffOut.deserialize(val));

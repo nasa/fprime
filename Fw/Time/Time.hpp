@@ -4,6 +4,8 @@
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/Serializable.hpp>
+#include <config/TimeBaseEnumAc.hpp>
+#include <Fw/Time/TimeValueSerializableAc.hpp>
 
 namespace Fw {
     class Time: public Serializable {
@@ -53,7 +55,7 @@ namespace Fw {
             } Comparison;
 
             //! \return time zero
-            static Time zero(TimeBase timeBase=TB_NONE);
+            static Time zero(TimeBase timeBase=TimeBase::TB_NONE);
 
             //! Compare two times
             //! \return The result
@@ -83,10 +85,7 @@ namespace Fw {
             friend std::ostream& operator<<(std::ostream& os,  const Time& val);
 #endif
         private:
-            U32 m_seconds; // !< seconds portion
-            U32 m_useconds; // !< microseconds portion
-            TimeBase m_timeBase; // !< basis of time (defined by system)
-            FwTimeContextStoreType m_timeContext; // !< user settable value. Could be reboot count, node, etc
+            TimeValue m_val; // !< Time value
     };
     extern const Time ZERO_TIME;
 

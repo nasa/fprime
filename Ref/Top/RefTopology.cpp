@@ -12,7 +12,6 @@
 #include <Ref/Top/RefTopologyAc.hpp>
 
 // Necessary project-specified types
-#include <Fw/Types/MallocAllocator.hpp>
 #include <Os/Console.hpp>
 
 // Used for 1Hz synthetic cycling

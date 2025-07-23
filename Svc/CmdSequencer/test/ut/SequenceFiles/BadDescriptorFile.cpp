@@ -34,7 +34,7 @@ namespace Svc {
       serializeFPrime(Fw::SerializeBufferBase& buffer)
     {
       // Header
-      const TimeBase timeBase = TB_WORKSTATION_TIME;
+      const TimeBase timeBase = TimeBase::TB_WORKSTATION_TIME;
       const U32 timeContext = 0;
       const U32 recordDataSize =
         this->n * SequenceFiles::FPrime::Records::STANDARD_SIZE;
@@ -48,7 +48,7 @@ namespace Svc {
       );
       // Records
       for (U32 record = 0; record < this->n; record++) {
-        Fw::Time t(TB_WORKSTATION_TIME, 0, 0);
+        Fw::Time t(TimeBase::TB_WORKSTATION_TIME, 0, 0);
         // Force an invalid record descriptor
         FPrime::Records::Descriptor descriptor =
           static_cast<FPrime::Records::Descriptor>(10);
