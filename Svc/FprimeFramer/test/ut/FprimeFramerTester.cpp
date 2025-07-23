@@ -70,8 +70,8 @@ void FprimeFramerTester ::testNominalFraming() {
     FprimeProtocol::FrameHeader defaultHeader;
     FprimeProtocol::FrameHeader outputHeader;
     outputBuffer.getDeserializer().deserialize(outputHeader);
-    ASSERT_EQ(outputHeader.getstartWord(), defaultHeader.getstartWord());
-    ASSERT_EQ(outputHeader.getlengthField(), sizeof(bufferData));
+    ASSERT_EQ(outputHeader.get_startWord(), defaultHeader.get_startWord());
+    ASSERT_EQ(outputHeader.get_lengthField(), sizeof(bufferData));
     // Check data
     for (U32 i = 0; i < sizeof(bufferData); ++i) {
         ASSERT_EQ(outputBuffer.getData()[i + FprimeProtocol::FrameHeader::SERIALIZED_SIZE], bufferData[i]);
@@ -82,7 +82,7 @@ void FprimeFramerTester ::testNominalFraming() {
 // Test Harness: Handler implementations for output ports
 // ----------------------------------------------------------------------
 
-Fw::Buffer FprimeFramerTester::from_bufferAllocate_handler(FwIndexType portNum, U32 size){
+Fw::Buffer FprimeFramerTester::from_bufferAllocate_handler(FwIndexType portNum, FwSizeType size){
     this->pushFromPortEntry_bufferAllocate(size);
     this->m_buffer.setData(this->m_buffer_slot);
     this->m_buffer.setSize(size);

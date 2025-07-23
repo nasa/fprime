@@ -87,7 +87,7 @@ namespace Svc {
                 // final request should indicate empty
                 ASSERT_TRUE(res == nullptr);
                 break;
-            } else if (output[entry].record.getstate() == Fw::DpState::TRANSMITTED) {
+            } else if (output[entry].record.get_state() == Fw::DpState::TRANSMITTED) {
                 // if transmitted, should not be returned
                 ASSERT_TRUE(res == nullptr);
                 // continue to next entry
@@ -284,14 +284,14 @@ namespace Svc {
     // ----------------------------------------------------------------------
 
     bool DpCatalogTester :: EntryCompare(const Svc::DpCatalog::DpStateEntry& a, const Svc::DpCatalog::DpStateEntry& b) {
-            if (a.record.getpriority() == b.record.getpriority()) { // check priority first - lower value = higher priority
-                if (a.record.gettSec() == b.record.gettSec()) { // check time next - older = higher priority
-                    return a.record.getid() < b.record.getid(); // finally check ID - lower = higher priority
+            if (a.record.get_priority() == b.record.get_priority()) { // check priority first - lower value = higher priority
+                if (a.record.get_tSec() == b.record.get_tSec()) { // check time next - older = higher priority
+                    return a.record.get_id() < b.record.get_id(); // finally check ID - lower = higher priority
                 } else {
-                    return a.record.gettSec() < b.record.gettSec();
+                    return a.record.get_tSec() < b.record.get_tSec();
                 }
             } else {
-                return a.record.getpriority() < b.record.getpriority();
+                return a.record.get_priority() < b.record.get_priority();
             }
     }
 
@@ -316,21 +316,21 @@ namespace Svc {
                 // fill the input entries with random priorities
                 for (FwIndexType entry = 0; entry < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(inputs)); entry++) {
                     U32 randVal = rand()%NUM_ENTRIES;
-                    inputs[entry].record.setpriority(randVal);
+                    inputs[entry].record.set_priority(randVal);
                     randVal = rand()%NUM_ENTRIES;
-                    inputs[entry].record.setid(randVal);
+                    inputs[entry].record.set_id(randVal);
                     randVal = rand()%NUM_ENTRIES;
-                    inputs[entry].record.settSec(randVal);
-                    inputs[entry].record.settSub(1500);
-                    inputs[entry].record.setsize(100);
+                    inputs[entry].record.set_tSec(randVal);
+                    inputs[entry].record.set_tSub(1500);
+                    inputs[entry].record.set_size(100);
                     // randomly set if it is transmitted or not
                     randVal = rand()%2;
                     if (randVal == 0) {
-                        inputs[entry].record.setstate(Fw::DpState::UNTRANSMITTED);
+                        inputs[entry].record.set_state(Fw::DpState::UNTRANSMITTED);
                         // only put untransmitted products in list, since the catalog algorithm only returns untransmitted product IDs
                         entryList.push_back(inputs[entry]);
                     } else {
-                        inputs[entry].record.setstate(Fw::DpState::TRANSMITTED);
+                        inputs[entry].record.set_state(Fw::DpState::TRANSMITTED);
                     }
 
                 }
@@ -340,12 +340,12 @@ namespace Svc {
                 FwIndexType entryIndex = 0;
 
                 for (const auto& entry: entryList) {
-                    outputs[entryIndex].record.setpriority(entry.record.getpriority());
-                    outputs[entryIndex].record.setid(entry.record.getid());
-                    outputs[entryIndex].record.setstate(entry.record.getstate());
-                    outputs[entryIndex].record.settSec(entry.record.gettSec());
-                    outputs[entryIndex].record.settSub(1500);
-                    outputs[entryIndex].record.setsize(100);
+                    outputs[entryIndex].record.set_priority(entry.record.get_priority());
+                    outputs[entryIndex].record.set_id(entry.record.get_id());
+                    outputs[entryIndex].record.set_state(entry.record.get_state());
+                    outputs[entryIndex].record.set_tSec(entry.record.get_tSec());
+                    outputs[entryIndex].record.set_tSub(1500);
+                    outputs[entryIndex].record.set_size(100);
                     entryIndex++;
                 }
 
@@ -365,19 +365,19 @@ namespace Svc {
             Svc::DpCatalog::DpStateEntry inputs[1];
             Svc::DpCatalog::DpStateEntry outputs[1];
 
-            inputs[0].record.setid(1);
-            inputs[0].record.setpriority(2);
-            inputs[0].record.setstate(Fw::DpState::UNTRANSMITTED);
-            inputs[0].record.settSec(1000);
-            inputs[0].record.settSub(1500);
-            inputs[0].record.setsize(100);
+            inputs[0].record.set_id(1);
+            inputs[0].record.set_priority(2);
+            inputs[0].record.set_state(Fw::DpState::UNTRANSMITTED);
+            inputs[0].record.set_tSec(1000);
+            inputs[0].record.set_tSub(1500);
+            inputs[0].record.set_size(100);
 
-            outputs[0].record.setid(1);
-            outputs[0].record.setpriority(2);
-            outputs[0].record.setstate(Fw::DpState::UNTRANSMITTED);
-            outputs[0].record.settSec(1000);
-            outputs[0].record.settSub(1500);
-            outputs[0].record.setsize(100);
+            outputs[0].record.set_id(1);
+            outputs[0].record.set_priority(2);
+            outputs[0].record.set_state(Fw::DpState::UNTRANSMITTED);
+            outputs[0].record.set_tSec(1000);
+            outputs[0].record.set_tSub(1500);
+            outputs[0].record.set_size(100);
 
             testTree(
                 inputs,
@@ -395,19 +395,19 @@ namespace Svc {
             Svc::DpCatalog::DpStateEntry inputs[2];
             Svc::DpCatalog::DpStateEntry outputs[2];
 
-            inputs[0].record.setid(1);
-            inputs[0].record.setpriority(2);
-            inputs[0].record.setstate(Fw::DpState::UNTRANSMITTED);
-            inputs[0].record.settSec(1000);
-            inputs[0].record.settSub(1500);
-            inputs[0].record.setsize(100);
+            inputs[0].record.set_id(1);
+            inputs[0].record.set_priority(2);
+            inputs[0].record.set_state(Fw::DpState::UNTRANSMITTED);
+            inputs[0].record.set_tSec(1000);
+            inputs[0].record.set_tSub(1500);
+            inputs[0].record.set_size(100);
 
-            inputs[1].record.setid(2);
-            inputs[1].record.setpriority(1);
-            inputs[1].record.setstate(Fw::DpState::UNTRANSMITTED);
-            inputs[1].record.settSec(1000);
-            inputs[1].record.settSub(1500);
-            inputs[1].record.setsize(100);
+            inputs[1].record.set_id(2);
+            inputs[1].record.set_priority(1);
+            inputs[1].record.set_state(Fw::DpState::UNTRANSMITTED);
+            inputs[1].record.set_tSec(1000);
+            inputs[1].record.set_tSub(1500);
+            inputs[1].record.set_size(100);
 
 
             outputs[0].record = inputs[1].record;
@@ -431,26 +431,26 @@ namespace Svc {
             Svc::DpCatalog::DpStateEntry inputs[3];
             Svc::DpCatalog::DpStateEntry outputs[3];
 
-            inputs[0].record.setid(1);
-            inputs[0].record.setpriority(2);
-            inputs[0].record.setstate(Fw::DpState::UNTRANSMITTED);
-            inputs[0].record.settSec(1000);
-            inputs[0].record.settSub(1500);
-            inputs[0].record.setsize(100);
+            inputs[0].record.set_id(1);
+            inputs[0].record.set_priority(2);
+            inputs[0].record.set_state(Fw::DpState::UNTRANSMITTED);
+            inputs[0].record.set_tSec(1000);
+            inputs[0].record.set_tSub(1500);
+            inputs[0].record.set_size(100);
 
-            inputs[1].record.setid(2);
-            inputs[1].record.setpriority(1);
-            inputs[1].record.setstate(Fw::DpState::UNTRANSMITTED);
-            inputs[1].record.settSec(1000);
-            inputs[1].record.settSub(1500);
-            inputs[1].record.setsize(100);
+            inputs[1].record.set_id(2);
+            inputs[1].record.set_priority(1);
+            inputs[1].record.set_state(Fw::DpState::UNTRANSMITTED);
+            inputs[1].record.set_tSec(1000);
+            inputs[1].record.set_tSub(1500);
+            inputs[1].record.set_size(100);
 
-            inputs[2].record.setid(3);
-            inputs[2].record.setpriority(3);
-            inputs[2].record.setstate(Fw::DpState::UNTRANSMITTED);
-            inputs[2].record.settSec(1000);
-            inputs[2].record.settSub(1500);
-            inputs[2].record.setsize(100);
+            inputs[2].record.set_id(3);
+            inputs[2].record.set_priority(3);
+            inputs[2].record.set_state(Fw::DpState::UNTRANSMITTED);
+            inputs[2].record.set_tSec(1000);
+            inputs[2].record.set_tSub(1500);
+            inputs[2].record.set_size(100);
 
             outputs[0].record = inputs[1].record;
             outputs[1].record = inputs[0].record;
@@ -470,40 +470,40 @@ namespace Svc {
             Svc::DpCatalog::DpStateEntry inputs[5];
             Svc::DpCatalog::DpStateEntry outputs[5];
 
-            inputs[0].record.setid(1);
-            inputs[0].record.setpriority(2);
-            inputs[0].record.setstate(Fw::DpState::UNTRANSMITTED);
-            inputs[0].record.settSec(1000);
-            inputs[0].record.settSub(1500);
-            inputs[0].record.setsize(100);
+            inputs[0].record.set_id(1);
+            inputs[0].record.set_priority(2);
+            inputs[0].record.set_state(Fw::DpState::UNTRANSMITTED);
+            inputs[0].record.set_tSec(1000);
+            inputs[0].record.set_tSub(1500);
+            inputs[0].record.set_size(100);
 
-            inputs[1].record.setid(2);
-            inputs[1].record.setpriority(1);
-            inputs[1].record.setstate(Fw::DpState::UNTRANSMITTED);
-            inputs[1].record.settSec(1000);
-            inputs[1].record.settSub(1500);
-            inputs[1].record.setsize(100);
+            inputs[1].record.set_id(2);
+            inputs[1].record.set_priority(1);
+            inputs[1].record.set_state(Fw::DpState::UNTRANSMITTED);
+            inputs[1].record.set_tSec(1000);
+            inputs[1].record.set_tSub(1500);
+            inputs[1].record.set_size(100);
 
-            inputs[2].record.setid(3);
-            inputs[2].record.setpriority(3);
-            inputs[2].record.setstate(Fw::DpState::UNTRANSMITTED);
-            inputs[2].record.settSec(1000);
-            inputs[2].record.settSub(1500);
-            inputs[2].record.setsize(100);
+            inputs[2].record.set_id(3);
+            inputs[2].record.set_priority(3);
+            inputs[2].record.set_state(Fw::DpState::UNTRANSMITTED);
+            inputs[2].record.set_tSec(1000);
+            inputs[2].record.set_tSub(1500);
+            inputs[2].record.set_size(100);
 
-            inputs[3].record.setid(4);
-            inputs[3].record.setpriority(5);
-            inputs[3].record.setstate(Fw::DpState::UNTRANSMITTED);
-            inputs[3].record.settSec(1000);
-            inputs[3].record.settSub(1500);
-            inputs[3].record.setsize(100);
+            inputs[3].record.set_id(4);
+            inputs[3].record.set_priority(5);
+            inputs[3].record.set_state(Fw::DpState::UNTRANSMITTED);
+            inputs[3].record.set_tSec(1000);
+            inputs[3].record.set_tSub(1500);
+            inputs[3].record.set_size(100);
 
-            inputs[4].record.setid(5);
-            inputs[4].record.setpriority(4);
-            inputs[4].record.setstate(Fw::DpState::UNTRANSMITTED);
-            inputs[4].record.settSec(1000);
-            inputs[4].record.settSub(1500);
-            inputs[4].record.setsize(100);
+            inputs[4].record.set_id(5);
+            inputs[4].record.set_priority(4);
+            inputs[4].record.set_state(Fw::DpState::UNTRANSMITTED);
+            inputs[4].record.set_tSec(1000);
+            inputs[4].record.set_tSub(1500);
+            inputs[4].record.set_size(100);
 
             outputs[0].record = inputs[1].record;
             outputs[1].record = inputs[0].record;
@@ -528,14 +528,14 @@ namespace Svc {
             Svc::DpCatalog::DpStateEntry inputs[1];
             Svc::DpCatalog::DpStateEntry outputs[1];
 
-            inputs[0].record.setid(1);
-            inputs[0].record.setpriority(2);
-            inputs[0].record.setstate(Fw::DpState::TRANSMITTED);
-            inputs[0].record.settSec(1000);
-            inputs[0].record.settSub(1500);
-            inputs[0].record.setsize(100);
+            inputs[0].record.set_id(1);
+            inputs[0].record.set_priority(2);
+            inputs[0].record.set_state(Fw::DpState::TRANSMITTED);
+            inputs[0].record.set_tSec(1000);
+            inputs[0].record.set_tSub(1500);
+            inputs[0].record.set_size(100);
 
-            outputs[0].record.setstate(Fw::DpState::TRANSMITTED);
+            outputs[0].record.set_state(Fw::DpState::TRANSMITTED);
 
             testTree(
                 inputs,
@@ -552,46 +552,46 @@ namespace Svc {
             Svc::DpCatalog::DpStateEntry inputs[5];
             Svc::DpCatalog::DpStateEntry outputs[5];
 
-            inputs[0].record.setid(1);
-            inputs[0].record.setpriority(2);
-            inputs[0].record.setstate(Fw::DpState::TRANSMITTED);
-            inputs[0].record.settSec(1000);
-            inputs[0].record.settSub(1500);
-            inputs[0].record.setsize(100);
+            inputs[0].record.set_id(1);
+            inputs[0].record.set_priority(2);
+            inputs[0].record.set_state(Fw::DpState::TRANSMITTED);
+            inputs[0].record.set_tSec(1000);
+            inputs[0].record.set_tSub(1500);
+            inputs[0].record.set_size(100);
 
-            inputs[1].record.setid(2);
-            inputs[1].record.setpriority(1);
-            inputs[1].record.setstate(Fw::DpState::TRANSMITTED);
-            inputs[1].record.settSec(1000);
-            inputs[1].record.settSub(1500);
-            inputs[1].record.setsize(100);
+            inputs[1].record.set_id(2);
+            inputs[1].record.set_priority(1);
+            inputs[1].record.set_state(Fw::DpState::TRANSMITTED);
+            inputs[1].record.set_tSec(1000);
+            inputs[1].record.set_tSub(1500);
+            inputs[1].record.set_size(100);
 
-            inputs[2].record.setid(3);
-            inputs[2].record.setpriority(3);
-            inputs[2].record.setstate(Fw::DpState::TRANSMITTED);
-            inputs[2].record.settSec(1000);
-            inputs[2].record.settSub(1500);
-            inputs[2].record.setsize(100);
+            inputs[2].record.set_id(3);
+            inputs[2].record.set_priority(3);
+            inputs[2].record.set_state(Fw::DpState::TRANSMITTED);
+            inputs[2].record.set_tSec(1000);
+            inputs[2].record.set_tSub(1500);
+            inputs[2].record.set_size(100);
 
-            inputs[3].record.setid(4);
-            inputs[3].record.setpriority(5);
-            inputs[3].record.setstate(Fw::DpState::TRANSMITTED);
-            inputs[3].record.settSec(1000);
-            inputs[3].record.settSub(1500);
-            inputs[3].record.setsize(100);
+            inputs[3].record.set_id(4);
+            inputs[3].record.set_priority(5);
+            inputs[3].record.set_state(Fw::DpState::TRANSMITTED);
+            inputs[3].record.set_tSec(1000);
+            inputs[3].record.set_tSub(1500);
+            inputs[3].record.set_size(100);
 
-            inputs[4].record.setid(5);
-            inputs[4].record.setpriority(4);
-            inputs[4].record.setstate(Fw::DpState::TRANSMITTED);
-            inputs[4].record.settSec(1000);
-            inputs[4].record.settSub(1500);
-            inputs[4].record.setsize(100);
+            inputs[4].record.set_id(5);
+            inputs[4].record.set_priority(4);
+            inputs[4].record.set_state(Fw::DpState::TRANSMITTED);
+            inputs[4].record.set_tSec(1000);
+            inputs[4].record.set_tSub(1500);
+            inputs[4].record.set_size(100);
 
-            outputs[0].record.setstate(Fw::DpState::TRANSMITTED);
-            outputs[1].record.setstate(Fw::DpState::TRANSMITTED);
-            outputs[2].record.setstate(Fw::DpState::TRANSMITTED);
-            outputs[3].record.setstate(Fw::DpState::TRANSMITTED);
-            outputs[4].record.setstate(Fw::DpState::TRANSMITTED);
+            outputs[0].record.set_state(Fw::DpState::TRANSMITTED);
+            outputs[1].record.set_state(Fw::DpState::TRANSMITTED);
+            outputs[2].record.set_state(Fw::DpState::TRANSMITTED);
+            outputs[3].record.set_state(Fw::DpState::TRANSMITTED);
+            outputs[4].record.set_state(Fw::DpState::TRANSMITTED);
 
 
             testTree(
@@ -623,12 +623,12 @@ namespace Svc {
                 // fill the input entries with random priorities
                 for (FwIndexType entry = 0; entry < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(inputs)); entry++) {
                     U32 randVal = rand()%NUM_ENTRIES;
-                    inputs[entry].record.setpriority(randVal);
-                    inputs[entry].record.setid(entry);
-                    inputs[entry].record.setstate(Fw::DpState::UNTRANSMITTED);
-                    inputs[entry].record.settSec(1000);
-                    inputs[entry].record.settSub(1500);
-                    inputs[entry].record.setsize(100);
+                    inputs[entry].record.set_priority(randVal);
+                    inputs[entry].record.set_id(entry);
+                    inputs[entry].record.set_state(Fw::DpState::UNTRANSMITTED);
+                    inputs[entry].record.set_tSec(1000);
+                    inputs[entry].record.set_tSub(1500);
+                    inputs[entry].record.set_size(100);
                     entryList.push_back(inputs[entry]);
 
                 }
@@ -638,12 +638,12 @@ namespace Svc {
                 FwIndexType entryIndex = 0;
 
                 for (const auto& entry: entryList) {
-                    outputs[entryIndex].record.setpriority(entry.record.getpriority());
-                    outputs[entryIndex].record.setid(entry.record.getid());
-                    outputs[entryIndex].record.setstate(entry.record.getstate());
-                    outputs[entryIndex].record.settSec(1000);
-                    outputs[entryIndex].record.settSub(1500);
-                    outputs[entryIndex].record.setsize(100);
+                    outputs[entryIndex].record.set_priority(entry.record.get_priority());
+                    outputs[entryIndex].record.set_id(entry.record.get_id());
+                    outputs[entryIndex].record.set_state(entry.record.get_state());
+                    outputs[entryIndex].record.set_tSec(1000);
+                    outputs[entryIndex].record.set_tSub(1500);
+                    outputs[entryIndex].record.set_size(100);
                     entryIndex++;
                 }
 
@@ -676,12 +676,12 @@ namespace Svc {
                 // fill the input entries with random priorities
                 for (FwIndexType entry = 0; entry < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(inputs)); entry++) {
                     U32 randVal = rand()%NUM_ENTRIES;
-                    inputs[entry].record.setpriority(100);
-                    inputs[entry].record.setid(entry);
-                    inputs[entry].record.setstate(Fw::DpState::UNTRANSMITTED);
-                    inputs[entry].record.settSec(randVal);
-                    inputs[entry].record.settSub(1500);
-                    inputs[entry].record.setsize(100);
+                    inputs[entry].record.set_priority(100);
+                    inputs[entry].record.set_id(entry);
+                    inputs[entry].record.set_state(Fw::DpState::UNTRANSMITTED);
+                    inputs[entry].record.set_tSec(randVal);
+                    inputs[entry].record.set_tSub(1500);
+                    inputs[entry].record.set_size(100);
                     entryList.push_back(inputs[entry]);
 
                 }
@@ -691,12 +691,12 @@ namespace Svc {
                 FwIndexType entryIndex = 0;
 
                 for (const auto& entry: entryList) {
-                    outputs[entryIndex].record.setpriority(entry.record.getpriority());
-                    outputs[entryIndex].record.setid(entry.record.getid());
-                    outputs[entryIndex].record.setstate(entry.record.getstate());
-                    outputs[entryIndex].record.settSec(entry.record.gettSec());
-                    outputs[entryIndex].record.settSub(1500);
-                    outputs[entryIndex].record.setsize(100);
+                    outputs[entryIndex].record.set_priority(entry.record.get_priority());
+                    outputs[entryIndex].record.set_id(entry.record.get_id());
+                    outputs[entryIndex].record.set_state(entry.record.get_state());
+                    outputs[entryIndex].record.set_tSec(entry.record.get_tSec());
+                    outputs[entryIndex].record.set_tSub(1500);
+                    outputs[entryIndex].record.set_size(100);
                     entryIndex++;
                 }
 
@@ -731,12 +731,12 @@ namespace Svc {
                 // fill the input entries with random priorities
                 for (FwIndexType entry = 0; entry < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(inputs)); entry++) {
                     U32 randVal = rand()%NUM_ENTRIES;
-                    inputs[entry].record.setpriority(100);
-                    inputs[entry].record.setid(randVal);
-                    inputs[entry].record.setstate(Fw::DpState::UNTRANSMITTED);
-                    inputs[entry].record.settSec(1000);
-                    inputs[entry].record.settSub(1500);
-                    inputs[entry].record.setsize(100);
+                    inputs[entry].record.set_priority(100);
+                    inputs[entry].record.set_id(randVal);
+                    inputs[entry].record.set_state(Fw::DpState::UNTRANSMITTED);
+                    inputs[entry].record.set_tSec(1000);
+                    inputs[entry].record.set_tSub(1500);
+                    inputs[entry].record.set_size(100);
                     entryList.push_back(inputs[entry]);
 
                 }
@@ -746,12 +746,12 @@ namespace Svc {
                 FwIndexType entryIndex = 0;
 
                 for (const auto& entry: entryList) {
-                    outputs[entryIndex].record.setpriority(entry.record.getpriority());
-                    outputs[entryIndex].record.setid(entry.record.getid());
-                    outputs[entryIndex].record.setstate(entry.record.getstate());
-                    outputs[entryIndex].record.settSec(entry.record.gettSec());
-                    outputs[entryIndex].record.settSub(1500);
-                    outputs[entryIndex].record.setsize(100);
+                    outputs[entryIndex].record.set_priority(entry.record.get_priority());
+                    outputs[entryIndex].record.set_id(entry.record.get_id());
+                    outputs[entryIndex].record.set_state(entry.record.get_state());
+                    outputs[entryIndex].record.set_tSec(entry.record.get_tSec());
+                    outputs[entryIndex].record.set_tSub(1500);
+                    outputs[entryIndex].record.set_size(100);
                     entryIndex++;
                 }
 
@@ -784,14 +784,14 @@ namespace Svc {
                 // fill the input entries with random priorities
                 for (FwIndexType entry = 0; entry < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(inputs)); entry++) {
                     U32 randVal = rand()%NUM_ENTRIES;
-                    inputs[entry].record.setpriority(randVal);
+                    inputs[entry].record.set_priority(randVal);
                     randVal = rand()%NUM_ENTRIES;
-                    inputs[entry].record.setid(randVal);
-                    inputs[entry].record.setstate(Fw::DpState::UNTRANSMITTED);
+                    inputs[entry].record.set_id(randVal);
+                    inputs[entry].record.set_state(Fw::DpState::UNTRANSMITTED);
                     randVal = rand()%NUM_ENTRIES;
-                    inputs[entry].record.settSec(randVal);
-                    inputs[entry].record.settSub(1500);
-                    inputs[entry].record.setsize(100);
+                    inputs[entry].record.set_tSec(randVal);
+                    inputs[entry].record.set_tSub(1500);
+                    inputs[entry].record.set_size(100);
                     entryList.push_back(inputs[entry]);
 
                 }
@@ -801,12 +801,12 @@ namespace Svc {
                 FwIndexType entryIndex = 0;
 
                 for (const auto& entry: entryList) {
-                    outputs[entryIndex].record.setpriority(entry.record.getpriority());
-                    outputs[entryIndex].record.setid(entry.record.getid());
-                    outputs[entryIndex].record.setstate(entry.record.getstate());
-                    outputs[entryIndex].record.settSec(entry.record.gettSec());
-                    outputs[entryIndex].record.settSub(1500);
-                    outputs[entryIndex].record.setsize(100);
+                    outputs[entryIndex].record.set_priority(entry.record.get_priority());
+                    outputs[entryIndex].record.set_id(entry.record.get_id());
+                    outputs[entryIndex].record.set_state(entry.record.get_state());
+                    outputs[entryIndex].record.set_tSec(entry.record.get_tSec());
+                    outputs[entryIndex].record.set_tSub(1500);
+                    outputs[entryIndex].record.set_size(100);
                     entryIndex++;
                 }
 

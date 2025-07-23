@@ -35,7 +35,7 @@ namespace Svc {
     Fw::CmdStringArg crcFileName(fileName);
     crcFileName += ".CRC32";
 
-    this->m_header.m_timeBase = TB_DONT_CARE;
+    this->m_header.m_timeBase = TimeBase::TB_DONT_CARE;
     this->m_header.m_timeContext = FW_CONTEXT_DONT_CARE;
 
     const bool status = this->readCRCFile(crcFileName)
@@ -450,7 +450,7 @@ namespace Svc {
     U8 *const addr = comBuffer.getBuffAddr();
     FW_ASSERT(addr != nullptr);
     // true means "don't serialize the length"
-    status = buffer.deserialize(&addr[fixedBuffLen], size, true);
+    status = buffer.deserialize(&addr[fixedBuffLen], size, Fw::Serialization::OMIT_LENGTH);
     return status;
   }
 

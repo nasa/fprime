@@ -83,7 +83,7 @@ class FprimeRouterTester : public FprimeRouterGTestBase {
     // Port handler overrides
     // ----------------------------------------------------------------------
     //! Overriding bufferAllocate handler to be able to request a buffer in component tests
-    Fw::Buffer from_bufferAllocate_handler(FwIndexType portNum, U32 size) override;
+    Fw::Buffer from_bufferAllocate_handler(FwIndexType portNum, FwSizeType size) override;
 
   private:
     // ----------------------------------------------------------------------

@@ -19,19 +19,19 @@ When integrating a library into your F´ project, there are considerations based
     - **Local or Remote**: _If you have the source code_, is it available in a subfolder of your project (e.g., a git submodule), or is it at a remote location?
 - **CMake integration**: Does the library provide CMake configuration files such as `<libName>Config.cmake`? (refer to the [CMake documentation](https://cmake.org/cmake/help/latest/guide/using-dependencies/index.html) for more information)
 
-The following flowchart summarizes recommendations on which approach to use based on these considerations.
+The following flowchart summarizes recommendations on which approach to use based on the above considerations.
 
 ```mermaid
 flowchart TD  
-    Library-->Source{Source?}  
-    Source-->|Yes| CMakeSourceSupport{Builds with CMake?}  
+    Library-->Source{Is source code available?}  
+    Source-->|Yes| CMakeSourceSupport{Library builds<br>with CMake?}  
         CMakeSourceSupport-->|Yes|IsSubmodule{Is local folder?}  
             IsSubmodule-->|Yes| AddSubdirectory[<a href='#add_subdirectory'>Approach 1: add_subdirectory</a>]  
             IsSubmodule-->|No| FetchContent[<a href='#fetchcontent'>Approach 2: FetchContent</a>]  
         CMakeSourceSupport-->|No|ExternalProject_Add[<a href='#externalproject_add'>Approach 5: ExternalProject_Add</a>]  
-    Source-->|No| CMakePackageSupport{CMake integration?}  
+    Source-->|No| CMakePackageSupport{Library provides <br>CMake integrations?}  
         CMakePackageSupport-->|Yes| find_package[<a href='#find_package'>Approach 4: find_package</a>]  
-        CMakePackageSupport-->|No| MOD_DEPS[<a href='#mod_deps'>Approach 3: MOD_DEPS</a>]  
+        CMakePackageSupport-->|No| DEPENDS[<a href='#DEPENDS'>Approach 3: DEPENDS</a>]  
 ```
 
 
@@ -44,10 +44,10 @@ Note that these are mere recommendations, and you may choose to use a different 
 |     |     |
 | --- | --- |
 | **Benefits** | Very easy to set up; portable |
-| **Drawbacks** |  |
+| **Drawbacks** | None |
 | **Considerations** | Recommended approach if available |
 
-Many popular libraries use CMake as their build system and should likely be able to be added to your build with a [add_subdirectory()](https://cmake.org/cmake/help/v3.24/command/add_subdirectory.html) call. This requires the library to be available in your project source tree, for example through a git submodule.
+Many popular libraries use CMake as their build system and should likely be able to be added to your build with a [add_subdirectory()](https://cmake.org/cmake/help/v3.24/command/add_subdirectory.html) call. This requires the library to be available in your project source tree, for example through a git submodule. This is the preferred method if available because it allows you to build the library alongside your project, ensuring that the library is built for the same architecture and with the same compiler settings as your project.
 
 > [!NOTE]
 > Some libraries may not build properly with this method. OpenCV, for example, [does not support it](https://github.com/opencv/opencv/issues/26955#issuecomment-2690702771) due to the complexity of its CMake set up (as of April 2025). In such cases, you will need to use `find_package()` or `ExternalProject_Add` as described in the sections below.
@@ -69,18 +69,18 @@ If the library is only needed by a single component, it is also acceptable to pl
 
 ##### Step 2: Set the library as a dependency of the module
 
-Any component or module that depends on ETL can now link against it by adding the following entry to its `MOD_DEPS`:
+Any component or module that depends on ETL can now link against it by adding the following entry to its `DEPENDS`:
 
 ```cmake
 # In MyComponent/CMakeLists.txt 
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/MyComponent.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/MyComponent.cpp"
+register_fprime_module(
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/MyComponent.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/MyComponent.fpp"
+  DEPENDS
+    etl::etl   # This is the target name for the ETL library
 )
-set(MOD_DEPS
-  etl::etl   # This is the target name for the ETL library
-)
-register_fprime_module()
 ```
 
 ---
@@ -90,7 +90,7 @@ register_fprime_module()
 |     |     |
 | --- | --- |
 | **Benefits** | Very easy to set up; portable |
-| **Drawbacks** | |
+| **Drawbacks** | None |
 | **Considerations** | Recommended approach if available |
 
 This method is very similar to the previous one, only it applies if the source code for the library is not available in your source tree, but rather at some remote location (git repository, web archive, etc.). In this case, you can use the [FetchContent module](https://cmake.org/cmake/help/v3.24/module/FetchContent.html) to download the library source code and add it to your project. In many cases, this approach will perform a clone and then a `add_subdirectory()` call ([reference](https://cmake.org/cmake/help/latest/module/FetchContent.html#command:fetchcontent_makeavailable)). For this reason, the same considerations and details apply. 
@@ -115,24 +115,24 @@ The same considerations as [Approach 1 (add_subdirectory)](#add_subdirectory) ap
 
 ##### Step 2: Set the library as a dependency of the module
 
-Any component or module that depends on ETL can now link against it by adding the following entry to its `MOD_DEPS`:
+Any component or module that depends on ETL can now link against it by adding the following entry to its `DEPENDS`:
 
 ```cmake
 # In MyComponent/CMakeLists.txt 
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/MyComponent.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/MyComponent.cpp"
+register_fprime_module(
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/MyComponent.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/MyComponent.fpp"
+  DEPENDS
+    etl::etl   # This is the target name for the ETL library
 )
-set(MOD_DEPS
-  etl::etl   # This is the target name for the ETL library
-)
-register_fprime_module()
 ```
 
 
 ---
 
-## <a id="mod_deps"></a>Approach 3: MOD_DEPS and pre-compiled library files
+## <a id="DEPENDS"></a>Approach 3: DEPENDS - Depending on pre-compiled library files
 
 |     |     |
 | --- | --- |
@@ -142,17 +142,17 @@ register_fprime_module()
 
 A pre-compiled library file is a library that has already been compiled and is ready to be used, often named `lib<libName>.a` or `lib<libName>.so`. There are many ways to obtain pre-compiled libraries, such as downloading them from a vendor repository or building them from source yourself.
 
-To integrate a pre-compiled library, you need to add the path of that library file to `MOD_DEPS` of the module(s) that depend on it (MOD_DEPS: module dependencies). The following example demonstrates how to integrate the OpenSSL `libcrypto` library into an F´ wrapper component:
+To integrate a pre-compiled library, you need to add the path of that library file to the `DEPENDS` list of the module(s) that depend on it (DEPENDS = module dependencies). The following example demonstrates how to integrate the OpenSSL `libcrypto` library into an F´ wrapper component:
 
 ```cmake
-set(SOURCE_FILES
-    "${CMAKE_CURRENT_LIST_DIR}/OpenSslWrapper.fpp"
+register_fprime_module(
+  SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/OpenSslWrapper.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/OpenSslWrapper.fpp"
+  DEPENDS
+    ${FPRIME_PROJECT_ROOT}/lib/openssl/libcrypto.a # Full path to the pre-compiled library file - do not use relative paths here
 )
-set(MOD_DEPS
-    ${FPRIME_PROJECT_ROOT}/lib/openssl/libcrypto.a
-)
-register_fprime_module()
 target_include_directories(${FPRIME_CURRENT_MODULE} PUBLIC "${FPRIME_PROJECT_ROOT}/lib/openssl/include")
 ```
 
@@ -186,10 +186,14 @@ The [ImageProcessor component](https://github.com/nasa/fprime-examples/tree/deve
 ```cmake
 # The following requires that OpenCV is installed on the system and may need to be added to CMAKE_MODULE_PATH
 find_package(OpenCV REQUIRED)
-set(MOD_DEPS
-  ${OpenCV_LIBS} # You may only need a subset of the libraries
+register_fprime_module(
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/MyComponent.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/MyComponent.fpp"
+  DEPENDS
+    ${OpenCV_LIBS} # You may only need a subset of the libraries
 )
-register_fprime_module()
 ```
 
 The `find_package()` command searches for the OpenCV library and sets the `OpenCV_LIBS` variable to the appropriate libraries. You may refer to your own library's documentation to find the correct variable or direct library names to use.  
@@ -266,18 +270,18 @@ add_dependencies(OpenSSL::Crypto OpenSSL)
 
 #### Step 3: Set the library as a dependency of the module/component
 
-Any component or module that depends on OpenSSL can now link against it by adding the following entry to its `MOD_DEPS`:
+Any component or module that depends on OpenSSL can now link against it by adding the following entry to its `DEPENDS`:
 
 ```cmake
 # OpenSslWrapper component
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/OpenSslWrapper.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/OpenSslWrapper.cpp"
+register_fprime_module(
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/OpenSslWrapper.cpp"
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/OpenSslWrapper.fpp"
+  DEPENDS
+    OpenSSL::Crypto   # Target name we just registered for the OpenSSL crypto library
 )
-set(MOD_DEPS
-  OpenSSL::Crypto   # Target name we just registered for the OpenSSL crypto library
-)
-register_fprime_module()
 ```
 
 > [!NOTE]
@@ -295,8 +299,15 @@ A wrapper component is a component that encapsulates the library's functionality
 
 ### 2. Global library usage
 
-You may wish to use library code in multiple places, without wrapping it in a component. This can be the case for libraries that provide utilities that are not tied to a specific component or unit of behavior. This can for example be the case for the [ETL library](https://github.com/ETLCPP/etl) – used in both `OpenSslWrapper`  and `OpenCvWrapper` – which provides a set of utilities for working with C++ containers and algorithms in embedded systems. In this case, each component that needs to use the library can define it in their `MOD_DEPS` for direct usage.
+You may wish to use library code in multiple places, without wrapping it in a component. This can be the case for libraries that provide utilities that are not tied to a specific component or unit of behavior. This can for example be the case for the [ETL library](https://github.com/ETLCPP/etl) – used in both `OpenSslWrapper`  and `OpenCvWrapper` – which provides a set of utilities for working with C++ containers and algorithms in embedded systems. In this case, each component that needs to use the library can define it in their `DEPENDS` for direct usage.
 
 ### 3. Others
 
 It is ultimately up to the project to determine how to best use a library within the F´ architecture. The above patterns are common, but you may find that your project requires a different approach based on the library's functionality and how it fits into your system's architecture.
+
+
+---
+
+## Common Issues
+
+- `The dependency target "libfoo.a" of target "XYZ" does not exist.` this error can occur when a library file (`libfoo.a`) is specified using a relative path in the `DEPENDS` list of a module. The F´ build system requires absolute paths for library files in the `DEPENDS` list. To fix this, use the full path to the library file, such as `${FPRIME_PROJECT_ROOT}/lib/foo/libfoo.a`.

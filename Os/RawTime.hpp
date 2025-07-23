@@ -178,6 +178,8 @@ class RawTime final : public RawTimeInterface {
     //! \return Status indicating the result of the operation.
     Status getDiffUsec(const RawTime& other, U32& result) const;
 
+    //! \brief Compare whether two RawTime objects are the same (i.e. refer to the same microsecond)
+    bool operator==(const RawTime& other) const;
 
   private:
     // This section is used to store the implementation-defined RawTime handle. To Os::RawTime and fprime, this type is

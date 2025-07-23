@@ -233,7 +233,7 @@ namespace Svc {
       return false;
     }
     // Time base
-    FwTimeBaseStoreType tbase;
+    TimeBase tbase;
     serializeStatus = buffer.deserialize(tbase);
     if (serializeStatus != Fw::FW_SERIALIZE_OK) {
       this->m_events.fileInvalid(
@@ -242,7 +242,7 @@ namespace Svc {
       );
       return false;
     }
-    header.m_timeBase = static_cast<TimeBase>(tbase);
+    header.m_timeBase = (tbase);
     // Time context
     serializeStatus = buffer.deserialize(header.m_timeContext);
     if (serializeStatus != Fw::FW_SERIALIZE_OK) {
@@ -411,7 +411,7 @@ namespace Svc {
     FwSizeType size = recordSize;
     Fw::SerializeStatus status = comBuffer.setBuffLen(recordSize);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
-    status = buffer.deserialize(comBuffer.getBuffAddr(), size, true);
+    status = buffer.deserialize(comBuffer.getBuffAddr(), size, Fw::Serialization::OMIT_LENGTH);
     return status;
   }
 

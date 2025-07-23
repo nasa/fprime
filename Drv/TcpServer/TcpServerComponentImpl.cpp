@@ -125,7 +125,8 @@ void TcpServerComponentImpl::readLoop() {
 // ----------------------------------------------------------------------
 
 void TcpServerComponentImpl::send_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
-    Drv::SocketIpStatus status = this->send(fwBuffer.getData(), fwBuffer.getSize());
+    FW_ASSERT_NO_OVERFLOW(fwBuffer.getSize(), U32);
+    Drv::SocketIpStatus status = this->send(fwBuffer.getData(), static_cast<U32>(fwBuffer.getSize()));
     Drv::ByteStreamStatus returnStatus;
     switch (status) {
         case SOCK_INTERRUPTED_TRY_AGAIN:

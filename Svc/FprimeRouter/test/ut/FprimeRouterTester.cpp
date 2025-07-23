@@ -90,7 +90,7 @@ void FprimeRouterTester::mockReceivePacketType(Fw::ComPacketType packetType) {
     U8 data[sizeof descriptorType];
     Fw::Buffer buffer(data, sizeof(data));
     ComCfg::FrameContext context;
-    context.setapid(static_cast<ComCfg::APID::T>(descriptorType));
+    context.set_apid(static_cast<ComCfg::APID::T>(descriptorType));
     this->invoke_to_dataIn(0, buffer, context);
 }
 
@@ -114,7 +114,7 @@ void FprimeRouterTester::connectPortsExceptUnknownData() {
 // ----------------------------------------------------------------------
 // Port handler overrides
 // ----------------------------------------------------------------------
-Fw::Buffer FprimeRouterTester::from_bufferAllocate_handler(FwIndexType portNum, U32 size) {
+Fw::Buffer FprimeRouterTester::from_bufferAllocate_handler(FwIndexType portNum, FwSizeType size) {
     this->pushFromPortEntry_bufferAllocate(size);
     this->m_buffer.setData(this->m_buffer_slot);
     this->m_buffer.setSize(size);

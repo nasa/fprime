@@ -1,2 +1,6 @@
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/CDHCore/")
-
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/CdhCore/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ComCcsds/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ComFprime/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FileHandling/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/DataProducts/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ComLoggerTee/")

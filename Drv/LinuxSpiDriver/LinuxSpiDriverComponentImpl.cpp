@@ -45,7 +45,8 @@ namespace Drv {
         memset(&tr, 0, sizeof(tr));
         tr.tx_buf = reinterpret_cast<__u64>(writeBuffer.getData());
         tr.rx_buf = reinterpret_cast<__u64>(readBuffer.getData());
-        tr.len = writeBuffer.getSize();
+        FW_ASSERT_NO_OVERFLOW(writeBuffer.getSize(), __u32);
+        tr.len = static_cast<__u32>(writeBuffer.getSize());
 /*
             .speed_hz = 0,
             .delay_usecs = 0,

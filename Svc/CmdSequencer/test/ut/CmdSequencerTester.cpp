@@ -140,7 +140,7 @@ namespace Svc {
     REQUIREMENT("ISF-CMDS-005");
 
     // Set the time
-    Fw::Time testTime(TB_WORKSTATION_TIME, 1, 1);
+    Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 1, 1);
     this->setTestTime(testTime);
     // Write the file
     const char *const  fileName = file.getName().toChar();
@@ -170,7 +170,7 @@ namespace Svc {
     REQUIREMENT("ISF-CMDS-004");
 
     // Set the time
-    Fw::Time testTime(TB_WORKSTATION_TIME, 1, 1);
+    Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 1, 1);
     this->setTestTime(testTime);
     // Write the file
     const char *const fileName = file.getName().toChar();
@@ -204,7 +204,7 @@ namespace Svc {
     parameterizedFileOpenErrors(SequenceFiles::File& file)
   {
     // Set the time
-    Fw::Time testTime(TB_WORKSTATION_TIME, 1, 1);
+    Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 1, 1);
     this->setTestTime(testTime);
     // Write the file
     file.write();
@@ -253,7 +253,7 @@ namespace Svc {
     parameterizedHeaderReadErrors(SequenceFiles::File& file)
   {
     // Set the time
-    Fw::Time testTime(TB_WORKSTATION_TIME, 1, 1);
+    Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 1, 1);
     this->setTestTime(testTime);
     // Write the file
     file.write();
@@ -299,7 +299,7 @@ namespace Svc {
     parameterizedDataReadErrors(SequenceFiles::File& file)
   {
     // Set the time
-    Fw::Time testTime(TB_WORKSTATION_TIME, 1, 1);
+    Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 1, 1);
     this->setTestTime(testTime);
     // Write the file
     file.write();
@@ -396,7 +396,7 @@ namespace Svc {
     REQUIREMENT("ISF-CMDS-006");
 
     // Set the time
-    Fw::Time testTime(TB_WORKSTATION_TIME, 1, 1);
+    Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 1, 1);
     this->setTestTime(testTime);
     // Write the file
     const char *const fileName = file.getName().toChar();
@@ -421,7 +421,7 @@ namespace Svc {
         this->component.m_cmdTimeoutTimer.m_state
     );
     // Set the test time to be after the timeout
-    testTime.set(TB_WORKSTATION_TIME, 2 * TIMEOUT, 1);
+    testTime.set(TimeBase::TB_WORKSTATION_TIME, 2 * TIMEOUT, 1);
     this->setTestTime(testTime);
     // Call the schedule port
     this->invoke_to_schedIn(0, 0);
@@ -471,7 +471,7 @@ namespace Svc {
     parameterizedValidate(SequenceFiles::File& file)
   {
     // Set the time
-    Fw::Time testTime(TB_WORKSTATION_TIME, 1, 1);
+    Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 1, 1);
     this->setTestTime(testTime);
     // Write the file
     const char *const fileName = file.getName().toChar();

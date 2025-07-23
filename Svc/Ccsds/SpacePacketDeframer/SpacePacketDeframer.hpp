@@ -14,9 +14,9 @@ namespace Svc {
 namespace Ccsds {
 
 class SpacePacketDeframer final : public SpacePacketDeframerComponentBase {
-  friend class SpacePacketDeframerTester;
+    friend class SpacePacketDeframerTester;
 
-    public:
+  public:
     // ----------------------------------------------------------------------
     // Component construction and destruction
     // ----------------------------------------------------------------------
@@ -46,7 +46,6 @@ class SpacePacketDeframer final : public SpacePacketDeframerComponentBase {
     void dataReturnIn_handler(FwIndexType portNum,  //!< The port number
                               Fw::Buffer& data,
                               const ComCfg::FrameContext& context) override;
-
 };
 
 }  // namespace Ccsds

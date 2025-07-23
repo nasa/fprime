@@ -4,6 +4,7 @@
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/Serializable.hpp>
+#include <Fw/Time/TimeIntervalValueSerializableAc.hpp>
 
 //!
 //! @class TimeInterval
@@ -81,8 +82,7 @@ namespace Fw {
             friend std::ostream& operator<<(std::ostream& os,  const TimeInterval& val);
 #endif
         private:
-            U32 m_seconds; // !< seconds portion of TimeInterval
-            U32 m_useconds; // !< microseconds portion of TimeInterval
+            TimeIntervalValue m_val; // !< TimeInterval value
     };
 
 }

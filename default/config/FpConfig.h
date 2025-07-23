@@ -21,18 +21,6 @@ extern "C" {
 // ----------------------------------------------------------------------
 // Type aliases
 // ----------------------------------------------------------------------
-
-
-
-// Define enumeration for Time base types
-// Note: maintaining C-style
-typedef enum {
-    TB_NONE,              //!< No time base has been established
-    TB_PROC_TIME,         //!< Indicates time is processor cycle time. Not tied to external time
-    TB_WORKSTATION_TIME,  //!< Time as reported on workstation where software is running. For testing.
-    TB_DONT_CARE =
-        0xFFFF  //!< Don't care value for sequences. If FwTimeBaseStoreType is changed, value should be changed
-} TimeBase;
 #define FW_CONTEXT_DONT_CARE 0xFF  //!< Don't care value for time contexts in sequences
 
 // ----------------------------------------------------------------------
@@ -276,19 +264,7 @@ typedef enum {
 #define FW_AMPCS_COMPATIBLE 0  //!< Whether or not JPL AMPCS ground system support is enabled.
 #endif
 
-// These settings configure whether or not the timebase and context values for the Fw::Time
-// class are used. Some systems may not use or need those fields
-
-#ifndef FW_USE_TIME_BASE
-#define FW_USE_TIME_BASE 1  //!< Whether or not to use the time base
-#endif
-
-#ifndef FW_USE_TIME_CONTEXT
-#define FW_USE_TIME_CONTEXT 1  //!< Whether or not to serialize the time context
-#endif
-
 // Configuration for Fw::String
-
 #ifndef FW_FIXED_LENGTH_STRING_SIZE
 #define FW_FIXED_LENGTH_STRING_SIZE 256  //!< Character array size for Fw::String
 #endif
@@ -323,7 +299,7 @@ typedef enum {
 #endif
 
 #ifndef FW_RAW_TIME_HANDLE_MAX_SIZE
-#define FW_RAW_TIME_HANDLE_MAX_SIZE 32  //!< Maximum size of a handle for OS::RawTime objects
+#define FW_RAW_TIME_HANDLE_MAX_SIZE 56  //!< Maximum size of a handle for OS::RawTime objects
 #endif
 
 #ifndef FW_RAW_TIME_SERIALIZATION_MAX_SIZE

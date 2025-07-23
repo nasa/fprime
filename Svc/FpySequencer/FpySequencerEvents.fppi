@@ -1,6 +1,6 @@
 event InvalidCommand($state: I32) \
     severity warning high \
-    format "Cannot run command in state {}"
+    format "Cannot execute command in state {}"
 
 event InvalidSeqRunCall($state: I32) \
     severity warning high \
@@ -14,26 +14,29 @@ event FileOpenError(
     format "File open error encountered while opening {}: {}"
 
 event FileReadError(
+    readStage: FileReadStage
     filePath: string
     errorCode: I32
 ) \
     severity warning high \
-    format "File read error encountered while reading {}: {}"
+    format "File read error encountered while reading {} of file {}: {}"
 
 event EndOfFileError(
+    readStage: FileReadStage
     filePath: string
 ) \
     severity warning high \
-    format "End of file encountered unexpectedly while reading {}"
+    format "End of file encountered unexpectedly while reading {} of file {}"
 
 event FileReadDeserializeError(
+    readStage: FileReadStage
     filePath: string
     errorCode: I32
     buffLeft: U64
     buffLength: U64
 ) \
     severity warning high \
-    format "Deserialize error encountered while reading {}: {} ({} bytes left out of {})"
+    format "Deserialize error encountered while reading {} of file {}: {} ({} bytes left out of {})"
 
 event WrongSchemaVersion(
     expected: U8
@@ -64,15 +67,14 @@ event InsufficientBufferSpace(
 
 # runtime
 
-event StatementFailed(
-    stmtType: Fpy.StatementType
-    stmtOpcode: FwOpcodeType
+event CommandFailed(
+    opCode: FwOpcodeType
     stmtIdx: U32
     filePath: string
     response: Fw.CmdResponse
 ) \
     severity warning high \
-    format "Failed to execute statement type {} opcode {} index {} in sequence file {}: response was {}"
+    format "Failed to execute command opcode {} index {} in sequence file {}: response was {}"
 
 event SequenceDone(
     filePath: string
@@ -87,23 +89,12 @@ event SequenceCancelled(
     format "Cancelled sequence file {}"
 
 event UnknownSequencerDirective(
-    $opcode: FwOpcodeType
+    $opcode: U8
     stmtIdx: U32
     filePath: string
 ) \
     severity warning high \
     format "Unknown sequencer directive id {} at index {} in file {}"
-
-event CommandSerializeError(
-    cmdOpcode: FwOpcodeType
-    bufCapacity: U64
-    curPos: U64
-    writeSize: U64
-    errorCode: U8
-    stmtIdx: U32
-) \
-    severity warning high \
-    format "Failure while serializing cmd opcode {}: buf capacity {}, cur write pos {}, write size {}, error code {}, current statement index {}"
 
 event CmdResponseWhileNotRunningSequence(
     $state: I32
@@ -129,6 +120,14 @@ event CmdResponseWhileNotAwaiting(
     severity warning high \
     format "Received a response from cmd opcode {} (response {}) from this sequence, but was not awaiting a response"
 
+event CmdResponseWhileAwaitingDirective(
+    $opcode: FwOpcodeType
+    response: Fw.CmdResponse
+    expectedDirectiveOpcode: U8
+) \
+    severity warning high \
+    format "Received a response from cmd opcode {} (response {}) from this sequence, but was awaiting directive opcode {}"
+
 event WrongCmdResponseOpcode(
     $opcode: FwOpcodeType
     response: Fw.CmdResponse
@@ -148,7 +147,7 @@ event WrongCmdResponseIndex(
 
 # TODO make sure to call this with appropriate stmt idx when directive is dynamically constructed
 event DirectiveDeserializeError(
-    $opcode: FwOpcodeType
+    $opcode: U8
     stmtIdx: U32
     errorCode: I32
     buffLeft: U64
@@ -171,14 +170,21 @@ event MismatchedTimeContext(
     severity warning high \
     format "getTime() time context was {}, but tried to operate on it with time context {}"
 
-event StatementTimedOut(
-    stmtType: Fpy.StatementType
-    stmtOpcode: FwOpcodeType
+event CommandTimedOut(
+    opCode: FwOpcodeType
     stmtIdx: U32
     filePath: string
 ) \
     severity warning high \
-    format "A statement type {} opcode {} at index {} timed out in sequence {}, causing the sequence to fail"
+    format "A command opcode {} at index {} timed out in sequence {}, causing the sequence to fail"
+
+event DirectiveTimedOut(
+    opCode: U8
+    stmtIdx: U32
+    filePath: string
+) \
+    severity warning high \
+    format "A directive opcode {} at index {} timed out in sequence {}, causing the sequence to fail"
 
 event TooManySequenceArgs(
     count: U8

@@ -74,8 +74,7 @@ struct DpContainerHeader {
         // Deserialize the user data
         DpContainerHeader::moveDeserToOffset(file, line, deserializer, DpContainer::Header::USER_DATA_OFFSET);
         FwSizeType size = sizeof this->m_userData;
-        const bool omitLength = true;
-        status = deserializer.deserialize(this->m_userData, size, omitLength);
+        status = deserializer.deserialize(this->m_userData, size, Fw::Serialization::OMIT_LENGTH);
         DP_CONTAINER_HEADER_ASSERT_EQ(status, FW_SERIALIZE_OK);
         DP_CONTAINER_HEADER_ASSERT_EQ(size, sizeof this->m_userData);
         // Deserialize the data product state

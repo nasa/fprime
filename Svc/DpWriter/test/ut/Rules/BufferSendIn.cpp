@@ -57,7 +57,7 @@ void TestState ::action__BufferSendIn__OK() {
     ASSERT_EVENTS_FileWritten_SIZE(1);
     Fw::FileNameString fileName;
     this->constructDpFileName(container.getId(), container.getTimeTag(), fileName);
-    ASSERT_EVENTS_FileWritten(0, buffer.getSize(), fileName.toChar());
+    ASSERT_EVENTS_FileWritten(0, static_cast<U32>(buffer.getSize()), fileName.toChar());
     // Check processing types
     this->checkProcTypes(container);
     // Check DP notification

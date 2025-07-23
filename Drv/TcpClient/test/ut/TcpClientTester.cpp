@@ -214,7 +214,7 @@ void TcpClientTester ::test_buffer_deallocation() {
 Fw::Buffer TcpClientTester ::
     from_allocate_handler(
         const FwIndexType portNum,
-        U32 size
+        FwSizeType size
     )
   {
     this->pushFromPortEntry_allocate(size);

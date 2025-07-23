@@ -13,7 +13,9 @@ set(SOURCE_FILES
 register_fprime_module()
 ### UTs ###
 set(UT_SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/TimeTest.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/TimeTestMain.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/TimeTester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/TimeIntervalTester.cpp"
 )
 set(UT_MOD_DEPS
   "${FPRIME_FRAMEWORK_PATH}/Fw/Time"
