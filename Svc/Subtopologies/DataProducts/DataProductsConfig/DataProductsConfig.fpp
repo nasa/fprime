@@ -1,6 +1,6 @@
 module DataProductsConfig {
     #Base ID for the DataProducts Subtopology, all components are offsets from this base ID
-    constant BASE_ID = 0x9000
+    constant BASE_ID = 0x10400000
     
     module QueueSizes {
         constant dpCat    = 10

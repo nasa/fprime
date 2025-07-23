@@ -196,8 +196,8 @@ void TlmChanTester::checkBuff(FwChanIdType chanNum, FwChanIdType totalChan, FwCh
             ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat);
 
             // next piece is time tag
-            Fw::Time recTimeTag(TB_NONE, 0, 0);
-            stat = this->m_rcvdBuffer[packet].deserializeTo(recTimeTag);
+            Fw::Time recTimeTag(TimeBase::TB_NONE, 0, 0);
+            stat = this->m_rcvdBuffer[packet].deserialize(recTimeTag);
             ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat);
             ASSERT_TRUE(timeTag == recTimeTag);
             // next piece is event argument

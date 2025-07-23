@@ -32,7 +32,7 @@ namespace Svc {
       Header() :
         m_fileSize(0),
         m_numRecords(0),
-        m_timeBase(TB_DONT_CARE),
+        m_timeBase(TimeBase::TB_DONT_CARE),
         m_timeContext(FW_CONTEXT_DONT_CARE)
     {
 
@@ -47,7 +47,7 @@ namespace Svc {
         const TimeBase validTimeBase = validTime.getTimeBase();
         if (
             (this->m_timeBase != validTimeBase) and
-            (this->m_timeBase != TB_DONT_CARE)
+            (this->m_timeBase != TimeBase::TB_DONT_CARE)
         ) {
             events.timeBaseMismatch(
                 validTimeBase,

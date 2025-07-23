@@ -31,7 +31,7 @@ namespace Svc {
       // Header
       const U8 data = 1;
       const U32 numRecords = 1;
-      const TimeBase timeBase = TB_WORKSTATION_TIME;
+      const TimeBase timeBase = TimeBase::TB_WORKSTATION_TIME;
       const U32 timeContext = 0;
       FPrime::Headers::serialize(
           sizeof data,

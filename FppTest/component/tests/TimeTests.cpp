@@ -20,7 +20,7 @@
 
 void Tester ::testTime() {
     Fw::Time random_time(STest::Pick::any(), STest::Pick::any());
-    Fw::Time zero_time(TB_NONE, 0, 0);
+    Fw::Time zero_time(TimeBase::TB_NONE, 0, 0);
     Fw::Time result;
 
     this->setTestTime(random_time);

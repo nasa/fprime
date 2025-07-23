@@ -7,7 +7,6 @@ ACTIVELOGGERIMPLTESTER
 ACTIVERATEGROUP
 ACTIVERATEGROUPCFG
 ACTIVERATEGROUPTESTER
-ACTIVERATEGROUPIMPLTESTER
 ACTIVETEXTLOGGERIMPL
 ADDRSTRLEN
 adminlist
@@ -90,7 +89,6 @@ CMDPACKET
 cmdresponse
 cmdseq
 cmdsequencer
-cmps
 cntx
 CODEFILE
 COLORSTYLE
@@ -101,6 +99,7 @@ COMCCSDSSUBTOPOLOGY
 COMFPRIME
 COMFPRIMESUBTOPOLOGY
 comlogger
+COMLOGGERTEE
 COMMANDDISPATCHERIMPL
 COMMANDDISPATCHERIMPLCFG
 COMPACKET
@@ -230,7 +229,6 @@ FILEOPENERROR
 FILEWRITEERROR
 fio
 fle
-flhs
 FNDELAY
 fne
 FONTPATH
@@ -242,6 +240,8 @@ fpp
 fppi
 fpptest
 fprime
+fptosi
+fptoui
 fptr
 fptrunc
 fputil
@@ -249,7 +249,7 @@ fpy
 FPYSEQUENCER
 freeram
 Fregoso
-frhs
+fres
 frsize
 fsblkcnt
 fsrc
@@ -261,10 +261,8 @@ gcov
 gdiplus
 GENHUB
 getfooter
-getseconds
 getstatements
 gettime
-getuseconds
 getty
 ghprb
 gitmodules
@@ -380,7 +378,6 @@ LOCALSTATEDIR
 LOGGERRULES
 LOGPACKET
 lseek
-lvar
 LVL
 lxml
 MACROFILE
@@ -423,7 +420,6 @@ mycompany
 nasafprime
 nbits
 ncsl
-netinet
 newtio
 nmsgs
 NOBLOCK
@@ -501,10 +497,9 @@ PRIORITYQUEUE
 prm
 PRMDB
 PRMDBIMPL
-PRMDBTESTER
-PRMDBIMPLTESTER
 PRMDBIMPLTESTERCFG
 PRMDBLIMPLCFG
+PRMDBTESTER
 PRMLEDINITSTATE
 PROCBUFFERSENDOUT
 PRODUCTGETIN
@@ -579,13 +574,12 @@ seqgen
 serializables
 setaffinity
 setinheritsched
-setlocalvar
 SETLOGGING
 setprotocol
 setschedparam
 setschedpolicy
-setstacksize
 setser
+setstacksize
 settime
 sev
 sfregoso
@@ -599,6 +593,7 @@ sideeffect
 sighandler
 Signedness
 Silveira
+sitofp
 sle
 sloc
 socio
@@ -696,7 +691,7 @@ typedef
 uart
 UDPSOCKET
 uge
-ulhs
+uitofp
 UML
 UNEXP
 unistd
@@ -704,7 +699,6 @@ UNITTESTASSERT
 unittests
 useconds
 usecs
-urhs
 valgrind
 vbai
 VCA

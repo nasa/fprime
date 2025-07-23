@@ -10,7 +10,7 @@ TEST(FwLogTest,LogPacketSerialize) {
     Fw::LogPacket pktIn;
     Fw::LogBuffer buffIn;
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,buffIn.serialize(static_cast<U32>(12)));
-    Fw::Time timeIn(TB_WORKSTATION_TIME,10,11);
+    Fw::Time timeIn(TimeBase::TB_WORKSTATION_TIME,10,11);
 
     pktIn.setId(10);
     pktIn.setTimeTag(timeIn);
@@ -22,7 +22,7 @@ TEST(FwLogTest,LogPacketSerialize) {
     // Deserialize data
     Fw::LogPacket pktOut;
     Fw::LogBuffer buffOut;
-    Fw::Time timeOut(TB_WORKSTATION_TIME,10,11);
+    Fw::Time timeOut(TimeBase::TB_WORKSTATION_TIME,10,11);
 
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,comBuff.deserialize(pktOut));
     ASSERT_EQ(pktOut.getId(),10u);
