@@ -24,13 +24,13 @@ class ComPacket : public Serializable {
     ComPacket();
     virtual ~ComPacket();
 
-    // New serialization interface with default implementation for backward compatibility
-    virtual SerializeStatus serializeTo(SerializeBufferBase& buffer) const override;
-    virtual SerializeStatus deserializeFrom(SerializeBufferBase& buffer) override;
+    // New serialization interface
+    SerializeStatus serializeTo(SerializeBufferBase& buffer) const override;
+    SerializeStatus deserializeFrom(SerializeBufferBase& buffer) override;
 
-    // Deprecated methods for backward compatibility - these call the new interface
-    virtual SerializeStatus serialize(SerializeBufferBase& buffer) const override;
-    virtual SerializeStatus deserialize(SerializeBufferBase& buffer) override;
+    // Deprecated methods for backward compatibility 
+    SerializeStatus serialize(SerializeBufferBase& buffer) const override;
+    SerializeStatus deserialize(SerializeBufferBase& buffer) override;
 
   protected:
     ComPacketType m_type;
