@@ -112,7 +112,7 @@ TEST(ExternalArray, SetStorageTyped) {
     ASSERT_EQ(a.getSize(), size);
 }
 
-TEST(ExternalArray, SetStorageUnypedOK) {
+TEST(ExternalArray, SetStorageUntypedOK) {
     constexpr FwSizeType size = 10;
     constexpr U8 alignment = ExternalArray<U32>::getByteArrayAlignment();
     constexpr FwSizeType byteArraySize = ExternalArray<U32>::getByteArraySize(size);
@@ -123,7 +123,7 @@ TEST(ExternalArray, SetStorageUnypedOK) {
     ASSERT_EQ(a.getSize(), size);
 }
 
-TEST(ExternalArray, SetStorageUnypedBadSize) {
+TEST(ExternalArray, SetStorageUntypedBadSize) {
     constexpr FwSizeType size = 10;
     constexpr U8 alignment = ExternalArray<U32>::getByteArrayAlignment();
     constexpr FwSizeType byteArraySize = ExternalArray<U32>::getByteArraySize(size);
@@ -132,7 +132,7 @@ TEST(ExternalArray, SetStorageUnypedBadSize) {
     ASSERT_DEATH(a.setStorage(ByteArray(&bytes[0], sizeof bytes), size + 1), "Assert");
 }
 
-TEST(ExternalArray, SetStorageUnypedBadAlignment) {
+TEST(ExternalArray, SetStorageUntypedBadAlignment) {
     constexpr FwSizeType size = 10;
     constexpr U8 alignment = ExternalArray<U32>::getByteArrayAlignment();
     constexpr FwSizeType byteArraySize = ExternalArray<U32>::getByteArraySize(size);
