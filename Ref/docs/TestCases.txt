@@ -27,7 +27,7 @@ The following test case IDs are assigned:
 
 Svc:
 
-100 - ActiveLogger
+100 - EventManager
 101 - ActiveRateGroup
 102 - CmdDispatcher
 103 - CmdSequencer

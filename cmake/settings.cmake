@@ -26,5 +26,5 @@ endif()
  
 # fprime unit testing methodology requires the following flags
 if (BUILD_TESTING)
-    add_compile_options(-g -DBUILD_UT -DPROTECTED=protected -DPRIVATE=private -DSTATIC=static)
+    add_compile_options(-g -DBUILD_UT)
 endif()
