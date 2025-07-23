@@ -338,8 +338,8 @@ namespace Svc {
     Fw::String destFileArg(destFileName);
     Svc::SendFileResponse resp = this->invoke_to_SendFile(0, srcFileArg, destFileArg, 0, 0);
 
-    ASSERT_EQ(resp.getstatus(), SendFileStatus::STATUS_OK);
-    ASSERT_EQ(resp.getcontext(), 0);
+    ASSERT_EQ(resp.get_status(), SendFileStatus::STATUS_OK);
+    ASSERT_EQ(resp.get_context(), 0);
 
     this->component.Run_handler(0,0); // Dequeue file downlink request
     while (this->component.m_mode.get() != FileDownlink::Mode::IDLE) {

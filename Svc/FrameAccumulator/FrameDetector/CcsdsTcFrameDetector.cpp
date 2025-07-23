@@ -38,12 +38,12 @@ FrameDetector::Status CcsdsTcFrameDetector::detect(const Types::CircularBuffer& 
     status = header.deserialize(header_ser_buffer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
-    if (header.getflagsAndScId() != this->m_expectedFlagsAndScIdToken) {
+    if (header.get_flagsAndScId() != this->m_expectedFlagsAndScIdToken) {
         // If the flags and SC ID do not match the expected token, we don't have a valid frame
         return Status::NO_FRAME_DETECTED;
     }
     // TC protocol defines the Frame Length as number of bytes minus 1, so we add 1 back to get length in bytes
-    const FwSizeType expected_frame_length = static_cast<FwSizeType>((header.getvcIdAndLength() & Ccsds::TCSubfields::FrameLengthMask) + 1);
+    const FwSizeType expected_frame_length = static_cast<FwSizeType>((header.get_vcIdAndLength() & Ccsds::TCSubfields::FrameLengthMask) + 1);
     const U16 data_to_crc_length = static_cast<U16>(expected_frame_length - Ccsds::TCTrailer::SERIALIZED_SIZE);
 
     if (data.get_allocated_size() < expected_frame_length) {
@@ -74,7 +74,7 @@ FrameDetector::Status CcsdsTcFrameDetector::detect(const Types::CircularBuffer& 
     Ccsds::TCTrailer trailer;
     status = trailer.deserialize(trailer_ser_buffer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
-    U16 transmitted_fecf = trailer.getfecf();
+    U16 transmitted_fecf = trailer.get_fecf();
     if (transmitted_fecf != computed_fecf) {
         // If the computed CRC does not match the transmitted CRC, we don't have a valid frame
         return Status::NO_FRAME_DETECTED;

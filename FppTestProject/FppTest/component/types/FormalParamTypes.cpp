@@ -211,7 +211,7 @@ void getRandomFormalStringArray(FormalAliasStringArray& a) {
 FormalParamStruct getRandomFormalParamStruct() {
     FormalParamStruct s;
 
-    char buf[s.gety().getCapacity()];
+    char buf[s.get_y().getCapacity()];
     Utils::setString(buf, sizeof(buf));
 
     Fw::StringTemplate<80> str(buf);

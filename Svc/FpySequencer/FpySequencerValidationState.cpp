@@ -62,7 +62,7 @@ Fw::Success FpySequencer::validate() {
     }
 
     readStatus =
-        readBytes(sequenceFile, this->m_sequenceObj.getheader().getbodySize(), FpySequencer_FileReadStage::BODY);
+        readBytes(sequenceFile, this->m_sequenceObj.get_header().get_bodySize(), FpySequencer_FileReadStage::BODY);
 
     if (readStatus != Fw::Success::SUCCESS) {
         return Fw::Success::FAILURE;
@@ -104,7 +104,7 @@ Fw::Success FpySequencer::validate() {
 
 Fw::Success FpySequencer::readHeader() {
     // deser header
-    Fw::SerializeStatus deserStatus = this->m_sequenceBuffer.deserialize(this->m_sequenceObj.getheader());
+    Fw::SerializeStatus deserStatus = this->m_sequenceBuffer.deserialize(this->m_sequenceObj.get_header());
     if (deserStatus != Fw::SerializeStatus::FW_SERIALIZE_OK) {
         this->log_WARNING_HI_FileReadDeserializeError(
             FpySequencer_FileReadStage::HEADER, this->m_sequenceFilePath, static_cast<I32>(deserStatus),
@@ -113,20 +113,20 @@ Fw::Success FpySequencer::readHeader() {
     }
 
     // check matching schema version
-    if (this->m_sequenceObj.getheader().getschemaVersion() != Fpy::SCHEMA_VERSION) {
+    if (this->m_sequenceObj.get_header().get_schemaVersion() != Fpy::SCHEMA_VERSION) {
         this->log_WARNING_HI_WrongSchemaVersion(Fpy::SCHEMA_VERSION,
-                                                this->m_sequenceObj.getheader().getschemaVersion());
+                                                this->m_sequenceObj.get_header().get_schemaVersion());
         return Fw::Success::FAILURE;
     }
 
-    if (this->m_sequenceObj.getheader().getargumentCount() > Fpy::MAX_SEQUENCE_ARG_COUNT) {
-        this->log_WARNING_HI_TooManySequenceArgs(m_sequenceObj.getheader().getargumentCount(),
+    if (this->m_sequenceObj.get_header().get_argumentCount() > Fpy::MAX_SEQUENCE_ARG_COUNT) {
+        this->log_WARNING_HI_TooManySequenceArgs(m_sequenceObj.get_header().get_argumentCount(),
                                                  Fpy::MAX_SEQUENCE_ARG_COUNT);
         return Fw::Success::FAILURE;
     }
 
-    if (this->m_sequenceObj.getheader().getstatementCount() > Fpy::MAX_SEQUENCE_STATEMENT_COUNT) {
-        this->log_WARNING_HI_TooManySequenceStatements(this->m_sequenceObj.getheader().getstatementCount(),
+    if (this->m_sequenceObj.get_header().get_statementCount() > Fpy::MAX_SEQUENCE_STATEMENT_COUNT) {
+        this->log_WARNING_HI_TooManySequenceStatements(this->m_sequenceObj.get_header().get_statementCount(),
                                                        Fpy::MAX_SEQUENCE_STATEMENT_COUNT);
         return Fw::Success::FAILURE;
     }
@@ -137,10 +137,10 @@ Fw::Success FpySequencer::readBody() {
     Fw::SerializeStatus deserStatus;
     // deser body:
     // deser arg mappings
-    for (U8 argMappingIdx = 0; argMappingIdx < this->m_sequenceObj.getheader().getargumentCount(); argMappingIdx++) {
+    for (U8 argMappingIdx = 0; argMappingIdx < this->m_sequenceObj.get_header().get_argumentCount(); argMappingIdx++) {
         // serializable register index of arg $argMappingIdx
         // TODO should probably check that this serReg is inside range
-        deserStatus = this->m_sequenceBuffer.deserialize(this->m_sequenceObj.getargs()[argMappingIdx]);
+        deserStatus = this->m_sequenceBuffer.deserialize(this->m_sequenceObj.get_args()[argMappingIdx]);
         if (deserStatus != Fw::FW_SERIALIZE_OK) {
             this->log_WARNING_HI_FileReadDeserializeError(
                 FpySequencer_FileReadStage::BODY, this->m_sequenceFilePath, static_cast<I32>(deserStatus),
@@ -150,9 +150,9 @@ Fw::Success FpySequencer::readBody() {
     }
 
     // deser statements
-    for (U16 statementIdx = 0; statementIdx < this->m_sequenceObj.getheader().getstatementCount(); statementIdx++) {
+    for (U16 statementIdx = 0; statementIdx < this->m_sequenceObj.get_header().get_statementCount(); statementIdx++) {
         // deser statement
-        deserStatus = this->m_sequenceBuffer.deserialize(this->m_sequenceObj.getstatements()[statementIdx]);
+        deserStatus = this->m_sequenceBuffer.deserialize(this->m_sequenceObj.get_statements()[statementIdx]);
         if (deserStatus != Fw::FW_SERIALIZE_OK) {
             this->log_WARNING_HI_FileReadDeserializeError(
                 FpySequencer_FileReadStage::BODY, this->m_sequenceFilePath, static_cast<I32>(deserStatus),
@@ -164,7 +164,7 @@ Fw::Success FpySequencer::readBody() {
 }
 
 Fw::Success FpySequencer::readFooter() {
-    Fw::SerializeStatus deserStatus = this->m_sequenceBuffer.deserialize(this->m_sequenceObj.getfooter());
+    Fw::SerializeStatus deserStatus = this->m_sequenceBuffer.deserialize(this->m_sequenceObj.get_footer());
     if (deserStatus != Fw::FW_SERIALIZE_OK) {
         this->log_WARNING_HI_FileReadDeserializeError(
             FpySequencer_FileReadStage::FOOTER, this->m_sequenceFilePath, static_cast<I32>(deserStatus),
@@ -175,8 +175,8 @@ Fw::Success FpySequencer::readFooter() {
     // need this for some reason to "finalize" the crc TODO get an explanation on this
     this->m_computedCRC = ~this->m_computedCRC;
 
-    if (this->m_computedCRC != this->m_sequenceObj.getfooter().getcrc()) {
-        this->log_WARNING_HI_WrongCRC(this->m_sequenceObj.getfooter().getcrc(), this->m_computedCRC);
+    if (this->m_computedCRC != this->m_sequenceObj.get_footer().get_crc()) {
+        this->log_WARNING_HI_WrongCRC(this->m_sequenceObj.get_footer().get_crc(), this->m_computedCRC);
         return Fw::Success::FAILURE;
     }
 

@@ -330,7 +330,7 @@ void ComQueueTester ::testContextData() {
         // Currently, the APID is set to the queue index, which is the same as the port number for COM ports
         FwIndexType expectedApid = portNum;
         auto emittedContext = this->fromPortHistory_dataOut->at(portNum).context;
-        ASSERT_EQ(expectedApid, emittedContext.getcomQueueIndex());
+        ASSERT_EQ(expectedApid, emittedContext.get_comQueueIndex());
     }
     clearFromPortHistory();
 
@@ -340,7 +340,7 @@ void ComQueueTester ::testContextData() {
         // APID is queue index, which is COM_PORT_COUNT + portNum for BUFFER ports
         FwIndexType expectedApid = portNum + ComQueue::COM_PORT_COUNT;
         auto emittedContext = this->fromPortHistory_dataOut->at(portNum).context;
-        ASSERT_EQ(expectedApid, emittedContext.getcomQueueIndex());
+        ASSERT_EQ(expectedApid, emittedContext.get_comQueueIndex());
     }
     clearFromPortHistory();
     component.cleanup();
@@ -354,7 +354,7 @@ void ComQueueTester ::testBufferQueueReturn() {
 
     for(FwIndexType portNum = 0; portNum < ComQueue::TOTAL_PORT_COUNT; portNum++){
         clearFromPortHistory();
-        context.setcomQueueIndex(portNum);
+        context.set_comQueueIndex(portNum);
         invoke_to_dataReturnIn(0, buffer, context);
         // APIDs that correspond to an buffer originating from a Fw.Com port
         // do no get deallocated – APIDs that correspond to a Fw.Buffer do

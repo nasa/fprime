@@ -36,7 +36,7 @@ void TmFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
     TMHeader header;
 
     // GVCID (Global Virtual Channel ID) (Standard 4.1.2.2 and 4.1.2.3)
-    U16 globalVcId = static_cast<U16>(context.getvcId() << TMSubfields::virtualChannelIdOffset);
+    U16 globalVcId = static_cast<U16>(context.get_vcId() << TMSubfields::virtualChannelIdOffset);
     globalVcId |= static_cast<U16>(ComCfg::SpacecraftId << TMSubfields::spacecraftIdOffset);
     globalVcId |= 0x0;  // Operational Control Field: Flag set to 0 (Standard 4.1.2.4)
 
@@ -46,10 +46,10 @@ void TmFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
     U16 dataFieldStatus = 0;
     dataFieldStatus |= 0x3 << TMSubfields::segLengthOffset;  // Seg Length Id '11' (0x3) per Standard (4.1.2.7.5)
 
-    header.setglobalVcId(globalVcId);
-    header.setmasterFrameCount(this->m_masterFrameCount);
-    header.setvirtualFrameCount(this->m_virtualFrameCount);
-    header.setdataFieldStatus(dataFieldStatus);
+    header.set_globalVcId(globalVcId);
+    header.set_masterFrameCount(this->m_masterFrameCount);
+    header.set_virtualFrameCount(this->m_virtualFrameCount);
+    header.set_dataFieldStatus(dataFieldStatus);
 
     // We use only a single Virtual Channel for now, so master and virtual frame counts are the same
     this->m_masterFrameCount++;   // U8 intended to wrap around (modulo 256)
@@ -79,7 +79,7 @@ void TmFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
     U16 crc =
         Ccsds::Utils::CRC16::compute(frameBuffer.getData(), sizeof(this->m_frameBuffer) - TMTrailer::SERIALIZED_SIZE);
     // Set the Frame Error Control Field (FECF)
-    trailer.setfecf(crc);
+    trailer.set_fecf(crc);
     // Move the serializer pointer to the end of the location where the trailer will be serialized
     frameSerializer.moveSerToOffset(ComCfg::TmFrameFixedSize - TMTrailer::SERIALIZED_SIZE);
     status = frameSerializer.serialize(trailer);
@@ -117,10 +117,10 @@ void TmFramer ::fill_with_idle_packet(Fw::SerializeBufferBase& serializer) {
     FW_ASSERT(idlePacketSize <= ComCfg::TmFrameFixedSize, static_cast<FwAssertArgType>(idlePacketSize));
 
     SpacePacketHeader header;
-    header.setpacketIdentification(idleApid);
-    header.setpacketSequenceControl(
+    header.set_packetIdentification(idleApid);
+    header.set_packetSequenceControl(
         0x3 << SpacePacketSubfields::SeqFlagsOffset);  // Sequence Flags = 0b11 (unsegmented) & unused Seq count
-    header.setpacketDataLength(lengthToken);
+    header.set_packetDataLength(lengthToken);
     // Serialize header and idle data into the frame
     serializer.serialize(header);
     for (U16 i = static_cast<U16>(startIndex + SpacePacketHeader::SERIALIZED_SIZE); i < endIndex; i++) {

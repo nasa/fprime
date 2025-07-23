@@ -343,23 +343,23 @@ void FpySequencer::tlmWrite_handler(FwIndexType portNum,  //!< The port number
 FpySequencer_DebugTelemetry FpySequencer::getDebugTelemetry() {
     // only send debug tlm when we are paused in debug break
     if (this->sequencer_getState() == State::RUNNING_DEBUG_BROKEN) {
-        if (this->m_runtime.nextStatementIndex >= this->m_sequenceObj.getheader().getstatementCount()) {
+        if (this->m_runtime.nextStatementIndex >= this->m_sequenceObj.get_header().get_statementCount()) {
             // reached end of file, turn on EOF flag and otherwise send some default tlm
             return FpySequencer_DebugTelemetry(true, false, 0, 0);
         }
 
-        const Fpy::Statement& nextStmt = this->m_sequenceObj.getstatements()[this->m_runtime.nextStatementIndex];
+        const Fpy::Statement& nextStmt = this->m_sequenceObj.get_statements()[this->m_runtime.nextStatementIndex];
         DirectiveUnion directiveUnion;
         Fw::Success status = this->deserializeDirective(nextStmt, directiveUnion);
         if (status != Fw::Success::SUCCESS) {
-            return FpySequencer_DebugTelemetry(false, false, nextStmt.getopCode(), 0);
+            return FpySequencer_DebugTelemetry(false, false, nextStmt.get_opCode(), 0);
         }
-        if (nextStmt.getopCode() == Fpy::DirectiveId::CMD) {
+        if (nextStmt.get_opCode() == Fpy::DirectiveId::CMD) {
             // send opcode of the cmd to the ground
-            return FpySequencer_DebugTelemetry(false, true, nextStmt.getopCode(), directiveUnion.cmd.getopCode());
+            return FpySequencer_DebugTelemetry(false, true, nextStmt.get_opCode(), directiveUnion.cmd.get_opCode());
         }
 
-        return FpySequencer_DebugTelemetry(false, true, nextStmt.getopCode(), 0);
+        return FpySequencer_DebugTelemetry(false, true, nextStmt.get_opCode(), 0);
     }
     // send some default tlm when we aren't in debug break
     return FpySequencer_DebugTelemetry(false, false, 0, 0);
