@@ -62,16 +62,16 @@ protected:
     }
 
     void assertStructMembers(const NonPrimitive& s) {
-        ASSERT_EQ(s.getmString(), testString);
-        ASSERT_EQ(s.getmEnum(), testEnum);
-        ASSERT_EQ(s.getmArray(), testArray);
-        ASSERT_EQ(s.getmStruct(), testStruct);
+        ASSERT_EQ(s.get_mString(), testString);
+        ASSERT_EQ(s.get_mEnum(), testEnum);
+        ASSERT_EQ(s.get_mArray(), testArray);
+        ASSERT_EQ(s.get_mStruct(), testStruct);
 
         for (U32 i = 0; i < 3; i++) {
-            ASSERT_EQ(s.getmU32Arr()[i], testU32Arr[i]);
+            ASSERT_EQ(s.get_mU32Arr()[i], testU32Arr[i]);
         }
         for (U32 i = 0; i < 3; i++) {
-            ASSERT_EQ(s.getmStructArr()[i], testStructArr[i]);
+            ASSERT_EQ(s.get_mStructArr()[i], testStructArr[i]);
         }
     }
 
@@ -119,16 +119,16 @@ TEST_F(NonPrimitiveStructTest, Default) {
     );
 
     // Default constructor
-    ASSERT_EQ(s.getmString(), "");
-    ASSERT_EQ(s.getmEnum(), StructEnum::C);
-    ASSERT_EQ(s.getmArray(), defaultArray);
-    ASSERT_EQ(s.getmStruct(), defaultStruct1);
+    ASSERT_EQ(s.get_mString(), "");
+    ASSERT_EQ(s.get_mEnum(), StructEnum::C);
+    ASSERT_EQ(s.get_mArray(), defaultArray);
+    ASSERT_EQ(s.get_mStruct(), defaultStruct1);
 
     for (U32 i = 0; i < 3; i++) {
-        ASSERT_EQ(s.getmU32Arr()[i], 0);
+        ASSERT_EQ(s.get_mU32Arr()[i], 0);
     }
     for (U32 i = 0; i < 3; i++) {
-        ASSERT_EQ(s.getmStructArr()[i], defaultStruct2);
+        ASSERT_EQ(s.get_mStructArr()[i], defaultStruct2);
     }
 }
 
@@ -147,16 +147,16 @@ TEST_F(NonPrimitiveStructTest, Constructors) {
                     testStruct, testStruct,
                     testU32Arr[0], testStructArr[0]);
 
-    ASSERT_EQ(s2.getmString(), testString);
-    ASSERT_EQ(s2.getmEnum(), testEnum);
-    ASSERT_EQ(s2.getmArray(), testArray);
-    ASSERT_EQ(s2.getmStruct(), testStruct);
+    ASSERT_EQ(s2.get_mString(), testString);
+    ASSERT_EQ(s2.get_mEnum(), testEnum);
+    ASSERT_EQ(s2.get_mArray(), testArray);
+    ASSERT_EQ(s2.get_mStruct(), testStruct);
 
     for (U32 i = 0; i < 3; i++) {
-        ASSERT_EQ(s2.getmU32Arr()[i], testU32Arr[0]);
+        ASSERT_EQ(s2.get_mU32Arr()[i], testU32Arr[0]);
     }
     for (U32 i = 0; i < 3; i++) {
-        ASSERT_EQ(s2.getmStructArr()[i], testStructArr[0]);
+        ASSERT_EQ(s2.get_mStructArr()[i], testStructArr[0]);
     }
 
     // Copy constructor
@@ -188,43 +188,43 @@ TEST_F(NonPrimitiveStructTest, EqualityOp) {
     ASSERT_TRUE(s1 == s2);
     ASSERT_FALSE(s1 != s2);
 
-    s1.setmString(testString);
+    s1.set_mString(testString);
 
     ASSERT_FALSE(s1 == s2);
     ASSERT_TRUE(s1 != s2);
 
-    s2.setmString(testString);
-    s1.setmEnum(testEnum);
+    s2.set_mString(testString);
+    s1.set_mEnum(testEnum);
 
     ASSERT_NE(s1, s2);
     ASSERT_FALSE(s1 == s2);
     ASSERT_TRUE(s1 != s2);
 
-    s2.setmEnum(testEnum);
-    s1.setmArray(testArray);
+    s2.set_mEnum(testEnum);
+    s1.set_mArray(testArray);
 
     ASSERT_FALSE(s1 == s2);
     ASSERT_TRUE(s1 != s2);
 
-    s2.setmArray(testArray);
-    s1.setmStruct(testStruct);
+    s2.set_mArray(testArray);
+    s1.set_mStruct(testStruct);
 
     ASSERT_FALSE(s1 == s2);
     ASSERT_TRUE(s1 != s2);
 
-    s2.setmStruct(testStruct);
-    s1.setmU32Arr(testU32Arr);
+    s2.set_mStruct(testStruct);
+    s1.set_mU32Arr(testU32Arr);
 
     ASSERT_FALSE(s1 == s2);
     ASSERT_TRUE(s1 != s2);
 
-    s2.setmU32Arr(testU32Arr);
-    s1.setmStructArr(testStructArr);
+    s2.set_mU32Arr(testU32Arr);
+    s1.set_mStructArr(testStructArr);
 
     ASSERT_FALSE(s1 == s2);
     ASSERT_TRUE(s1 != s2);
 
-    s2.setmStructArr(testStructArr);
+    s2.set_mStructArr(testStructArr);
 
     ASSERT_TRUE(s1 == s2);
     ASSERT_FALSE(s1 != s2);
@@ -240,31 +240,31 @@ TEST_F(NonPrimitiveStructTest, GetterSetterFunctions) {
     assertStructMembers(s1);
 
     // Set individual members
-    s2.setmString(testString);
-    ASSERT_EQ(s2.getmString(), testString);
+    s2.set_mString(testString);
+    ASSERT_EQ(s2.get_mString(), testString);
 
-    s2.setmEnum(testEnum);
-    ASSERT_EQ(s2.getmEnum(), testEnum);
+    s2.set_mEnum(testEnum);
+    ASSERT_EQ(s2.get_mEnum(), testEnum);
 
-    s2.setmArray(testArray);
-    ASSERT_EQ(s2.getmArray(), testArray);
+    s2.set_mArray(testArray);
+    ASSERT_EQ(s2.get_mArray(), testArray);
 
-    s2.setmStruct(testStruct);
-    ASSERT_EQ(s2.getmStruct(), testStruct);
+    s2.set_mStruct(testStruct);
+    ASSERT_EQ(s2.get_mStruct(), testStruct);
 
-    s2.setmU32Arr(testU32Arr);
+    s2.set_mU32Arr(testU32Arr);
     for (U32 i = 0; i < 3; i++) {
-        ASSERT_EQ(s2.getmU32Arr()[i], testU32Arr[i]);
+        ASSERT_EQ(s2.get_mU32Arr()[i], testU32Arr[i]);
     }
 
-    s2.setmStructArr(testStructArr);
+    s2.set_mStructArr(testStructArr);
     for (U32 i = 0; i < 3; i++) {
-        ASSERT_EQ(s2.getmStructArr()[i], testStructArr[i]);
+        ASSERT_EQ(s2.get_mStructArr()[i], testStructArr[i]);
     }
 
     // Check non-const getter
-    s2.getmStruct().setmU32(testU32Arr[0]);
-    ASSERT_EQ(s2.getmStruct().getmU32(), testU32Arr[0]);
+    s2.get_mStruct().set_mU32(testU32Arr[0]);
+    ASSERT_EQ(s2.get_mStruct().get_mU32(), testU32Arr[0]);
 }
 
 // Test struct serialization and deserialization
