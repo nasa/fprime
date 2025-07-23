@@ -26,4 +26,23 @@ SerializeStatus ComPacket::deserializeBase(SerializeBufferBase& buffer) {
     return stat;
 }
 
+SerializeStatus ComPacket::serializeTo(SerializeBufferBase& buffer) const {
+    // Default implementation for base class - derived classes should override this method
+    return FW_SERIALIZE_FORMAT_ERROR;
+}
+
+SerializeStatus ComPacket::deserializeFrom(SerializeBufferBase& buffer) {
+    // Default implementation for base class - derived classes should override this method
+    return FW_DESERIALIZE_FORMAT_ERROR;
+}
+
+// Deprecated methods for backward compatibility
+SerializeStatus ComPacket::serialize(SerializeBufferBase& buffer) const {
+    return this->serializeTo(buffer);
+}
+
+SerializeStatus ComPacket::deserialize(SerializeBufferBase& buffer) {
+    return this->deserializeFrom(buffer);
+}
+
 } /* namespace Fw */

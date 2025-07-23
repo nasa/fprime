@@ -22,6 +22,16 @@ namespace Fw {
     }
 
     SerializeStatus AmpcsEvrLogPacket::serialize(SerializeBufferBase& buffer) const {
+        // Deprecated method - calls new interface for backward compatibility
+        return this->serializeTo(buffer);
+    }
+
+    SerializeStatus AmpcsEvrLogPacket::deserialize(SerializeBufferBase& buffer) {
+        // Deprecated method - calls new interface for backward compatibility
+        return this->deserializeFrom(buffer);
+    }
+
+    SerializeStatus AmpcsEvrLogPacket::serializeTo(SerializeBufferBase& buffer) const {
 
         SerializeStatus stat;
 
@@ -49,7 +59,7 @@ namespace Fw {
 
     }
 
-    SerializeStatus AmpcsEvrLogPacket::deserialize(SerializeBufferBase& buffer) {
+    SerializeStatus AmpcsEvrLogPacket::deserializeFrom(SerializeBufferBase& buffer) {
         FwSizeType len;
 
         SerializeStatus stat;

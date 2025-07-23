@@ -76,7 +76,7 @@ namespace Fw {
         return ((LT == c) or (EQ == c));
     }
 
-    SerializeStatus Time::serialize(SerializeBufferBase& buffer) const {
+    SerializeStatus Time::serializeTo(SerializeBufferBase& buffer) const {
         // serialize members
         SerializeStatus stat = Fw::FW_SERIALIZE_OK;
 #if FW_USE_TIME_BASE
@@ -101,7 +101,7 @@ namespace Fw {
         return buffer.serialize(this->m_useconds);
     }
 
-    SerializeStatus Time::deserialize(SerializeBufferBase& buffer) {
+    SerializeStatus Time::deserializeFrom(SerializeBufferBase& buffer) {
 
         SerializeStatus stat = Fw::FW_SERIALIZE_OK;
 #if FW_USE_TIME_BASE
@@ -130,6 +130,16 @@ namespace Fw {
         }
 
         return buffer.deserialize(this->m_useconds);
+    }
+
+    SerializeStatus Time::serialize(SerializeBufferBase& buffer) const {
+        // Deprecated method - calls new interface for backward compatibility
+        return this->serializeTo(buffer);
+    }
+
+    SerializeStatus Time::deserialize(SerializeBufferBase& buffer) {
+        // Deprecated method - calls new interface for backward compatibility
+        return this->deserializeFrom(buffer);
     }
 
     U32 Time::getSeconds() const {
