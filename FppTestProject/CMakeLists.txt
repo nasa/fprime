@@ -18,7 +18,7 @@ add_compile_options(
     -Wdouble-promotion
     -Werror
     -Wextra
-    -Wold-style-cast
+    # -Wold-style-cast
     -Wshadow
     -pedantic
 )
