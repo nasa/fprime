@@ -80,6 +80,13 @@ TEST(ArraySetOrMapImpl, CopyAssignmentOperator) {
     ASSERT_EQ(impl2.getSize(), 1);
 }
 
+TEST(ArraySetOrMapImpl, IteratorComparison) {
+  // Test comparison in default case
+  State::Impl::ConstIterator it1;
+  State::Impl::ConstIterator it2;
+  ASSERT_TRUE(it1.compareEqual(it2));
+}
+
 TEST(ArraySetOrMapImplScenarios, Clear) {
     State::Entry entries[State::capacity];
     State::Impl impl(entries, State::capacity);
