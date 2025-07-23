@@ -63,7 +63,7 @@ def test_send_health_command(fprime_test_api):
     # Get mnemonic of PingReceiver => Ref.pingRcvr (replace . to _ )
     # Notes:
     # After send cmd Ref.pingRcvr.PR_StopPings command the channel Ref.pingRcvr.PR_NumPIngs will stop increment
-    #  command health_enable or htlh_ping_enable (enable option) still not restart this channel ???
+    #  command health_enable or hlth_ping_enable (enable option) still not restart this channel ???
     #
     # Try append_file 1MiB.txt multi time trigger
     # Ref.health.HLTH_PING_WARN   WARNING_HI   Ping entry Ref_fileManager late warning

@@ -74,7 +74,7 @@ def test_send_systemResources_command(fprime_test_api):
     CPU_resources1A = fprime_test_api.await_telemetry(fprime_test_api.get_mnemonic('Svc.SystemResources') + "." + "CPU", start="NOW")
     CPU_percent1A = fprime_test_api.get_telemetry_pred(fprime_test_api.get_mnemonic('Svc.SystemResources') + "." + "CPU", CPU_resources1A)
     
-    ##### Command Disabled SystemResource.ENABLE command (DISABLED)
+    ##### Command Disabled SystemResources.ENABLE command (DISABLED)
     fprime_test_api.send_and_assert_command(fprime_test_api.get_mnemonic('Svc.SystemResources') + '.' + 'ENABLE',["DISABLED"])
 
     time.sleep(3)
@@ -86,11 +86,5 @@ def test_send_systemResources_command(fprime_test_api):
     CPU_resources2B = fprime_test_api.await_telemetry(fprime_test_api.get_mnemonic('Svc.SystemResources') + "." + "CPU", start="NOW")
     CPU_percent2B = fprime_test_api.get_telemetry_pred(fprime_test_api.get_mnemonic('Svc.SystemResources') + "." + "CPU", CPU_resources2B)
 
-    ##### Command Disabled SystemResource.ENABLE command (ENABLED)    
+    ##### Command Disabled SystemResources.ENABLE command (ENABLED)    
     fprime_test_api.send_and_assert_command(fprime_test_api.get_mnemonic('Svc.SystemResources') + '.' + 'ENABLE',["ENABLED"])
-
-    
-
-
-
-
