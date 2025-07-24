@@ -603,6 +603,7 @@ sourcing
 spdx
 spi
 spidev
+spsc
 srandom
 SRCS
 sreddy
