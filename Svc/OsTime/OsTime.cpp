@@ -38,12 +38,16 @@ void OsTime::SetCurrentTime_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U32 seco
     Os::RawTime::Status stat = time_now.now();
     if (stat != Os::RawTime::OP_OK) {
         this->log_WARNING_HI_SetCurrentTimeError(stat);
+        // Send error response due to RawTime failure
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
     Os::ScopeLock lock(m_epoch_lock);
     m_epoch_fw_time = Fw::Time(seconds_now, 0);
     m_epoch_os_time = time_now;
     m_epoch_valid = true;
+    // Send success response after setting epoch
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK); 
 }
 
 // ----------------------------------------------------------------------
