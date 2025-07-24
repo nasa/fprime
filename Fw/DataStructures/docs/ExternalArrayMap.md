@@ -28,7 +28,7 @@ as the map implementation.
 |Name|Definition|
 |----|----------|
 |`ConstIterator`|Alias of [`MapConstIterator<K, V>`](MapConstIterator.md)|
-|`Entry`|Alias of [`SetOrMapEntry<K, V>`](SetOrMapEntry.md)|
+|`Entry`|Alias of [`SetOrMapImplEntry<K, V>`](SetOrMapImplEntry.md)|
 
 ## 4. Private Member Variables
 
