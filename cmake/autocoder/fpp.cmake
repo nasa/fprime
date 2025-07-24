@@ -220,6 +220,11 @@ function(fpp_setup_autocode MODULE_NAME AC_INPUT_FILES)
     file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/fpp-import-list" "${FPP_IMPORTS}")
     file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/fpp-source-list" "${AC_INPUT_FILES}")
 
+    # Mark included files (.fppi) as regenerators like their .fpp parents
+    foreach (INCLUDED_FILE IN LISTS FILE_DEPENDENCIES)
+        requires_regeneration("${INCLUDED_FILE}")
+    endforeach()
+
     # Add in steps for CPP generation
     if (GENERATED_CPP)
         add_custom_command(
