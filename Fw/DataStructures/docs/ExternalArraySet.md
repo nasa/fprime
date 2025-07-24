@@ -29,7 +29,7 @@ as the set implementation.
 |`ConstIterator`|Alias of [`MapConstIterator<K, V>`](MapConstIterator.md)|
 |`Entry`|Alias of [`SetOrMapImplEntry<T, Nil>`](SetOrMapImplEntry.md)|
 
-The type `Nil` is defined [here](Nil.md).
+The type `Nil` is defined [in this file](Nil.md).
 
 ## 4. Private Member Variables
 
@@ -39,7 +39,7 @@ The type `Nil` is defined [here](Nil.md).
 |----|----|-------|-------------|
 |`m_impl`|[`ArraySetOrMapImpl<T, Nil>`](ArraySetOrMapImpl.md)|The set implementation|C++ default initialization|
 
-The type `Nil` is defined [here](Nil.md).
+The type `Nil` is defined [in this file](Nil.md).
 
 ```mermaid
 classDiagram
@@ -69,7 +69,7 @@ ExternalArraySet(Entry* entries, FwSizeType capacity)
 
 `entries` must point to a primitive array of at least `capacity`
 elements of type `Entry`.
-The type `Entry` is defined [here](ExternalArraySet.md#Public-Types).
+The type `Entry` is defined [in this section](ExternalArraySet.md#Public-Types).
 
 Call `setStorage(entries, capacity)`.
 
@@ -363,7 +363,7 @@ void setStorage(Entry* entries, FwSizeType capacity)
 
 `entries` must point to a primitive array of at least `capacity`
 elements of type `Entry`.
-The type `Entry` is defined [here](ExternalArraySet.md#Public-Types).
+The type `Entry` is defined [in this section](ExternalArraySet.md#Public-Types).
 
 Call `m_impl.setStorage(entries, capacity)`.
 

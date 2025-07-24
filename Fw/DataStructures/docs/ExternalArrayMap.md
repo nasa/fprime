@@ -370,7 +370,7 @@ void setStorage(Entry* entries, FwSizeType capacity)
 
 `entries` must point to a primitive array of at least `capacity`
 elements of type `Entry`.
-The type `Entry` is defined [here](ExternalArrayMap.md#Public-Types).
+The type `Entry` is defined [in this section](ExternalArrayMap.md#Public-Types).
 
 Call `m_impl.setStorage(entries, capacity)`.
 
