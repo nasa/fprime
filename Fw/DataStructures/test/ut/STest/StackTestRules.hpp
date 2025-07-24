@@ -47,7 +47,7 @@ struct Peek : public Rule {
     void action(State& state) {
         const auto size = state.stack.getSize();
         const auto index = STest::Pick::startLength(0, static_cast<U32>(size));
-        State::ItemType item;
+        State::ItemType item = 0;
         const auto status = state.stack.peek(item, index);
         ASSERT_EQ(status, Success::SUCCESS);
         ASSERT_EQ(item, state.modelStack.at(size - 1 - index));
