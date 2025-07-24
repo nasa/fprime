@@ -18,7 +18,16 @@ namespace Fw {
     }
 
     SerializeStatus LogPacket::serialize(SerializeBufferBase& buffer) const {
+        // Deprecated method - calls new interface for backward compatibility
+        return this->serializeTo(buffer);
+    }
 
+    SerializeStatus LogPacket::deserialize(SerializeBufferBase& buffer) {
+        // Deprecated method - calls new interface for backward compatibility
+        return this->deserializeFrom(buffer);
+    }
+
+    SerializeStatus LogPacket::serializeTo(SerializeBufferBase& buffer) const {
         SerializeStatus stat = ComPacket::serializeBase(buffer);
         if (stat != FW_SERIALIZE_OK) {
             return stat;
@@ -36,10 +45,9 @@ namespace Fw {
 
         // We want to add data but not size for the ground software
         return buffer.serialize(this->m_logBuffer.getBuffAddr(),m_logBuffer.getBuffLength(),Fw::Serialization::OMIT_LENGTH);
-
     }
 
-    SerializeStatus LogPacket::deserialize(SerializeBufferBase& buffer) {
+    SerializeStatus LogPacket::deserializeFrom(SerializeBufferBase& buffer) {
         SerializeStatus stat = deserializeBase(buffer);
         if (stat != FW_SERIALIZE_OK) {
             return stat;
