@@ -1,12 +1,12 @@
-# F' Generative AI Usage Guidelines
+# F´ Generative AI Usage Guidelines
 
-The F Prime Project recognizes generative AI as a valuable tool that can enhance development productivity, code quality, and learning. We do not discourage the use of generative AI in F Prime development and encourage contributors to leverage these tools responsibly where appropriate.
+We're excited about the potential of generative AI to help make [F´] (https://github.com/nasa/fprime)development more productive, enjoyable, and accessible! Whether you're using AI to write code, improve documentation, or learn about complex systems, we welcome and encourage the thoughtful use of these powerful tools in your F´ contributions.
 
-This document outlines our approach to generative AI usage within the F Prime ecosystem and provides guidance for contributors on best practices, disclosure requirements, and quality considerations.
+This guide shares our community's approach to using generative AI effectively and responsibly. You'll find practical tips, best practices, and simple guidelines to help you get the most out of AI tools while maintaining the quality standards that make F´ great.
 
 ## Our Position on Generative AI
 
-F Prime embraces technological advancement and innovation. Generative AI tools can assist with:
+F´ embraces technological advancement and innovation. Generative AI tools can assist with:
 
 - Code generation and refactoring
 - Documentation creation and improvement  
@@ -38,7 +38,7 @@ Include information about:
 ### Example Disclosure
 
 ```
-## AI Usage
+- [x] **Generative AI was used in this contribution**
 Used GitHub Copilot for:
 - Generated unit test templates for TestFlightController.cpp (modified for F Prime conventions)
 - Documentation improvements in README.md (reviewed and edited for accuracy)
@@ -73,7 +73,7 @@ When working with generative AI, provide clear rules and context to improve code
 
 ### Security
 
-- **F' is open source friendly**: Since F Prime is an open source framework, developing F' components with generative AI is appropriate and encouraged
+- **F' is open source friendly**, thus, developing F' components with generative AI is appropriate and encouraged
 - **Avoid sharing sensitive information** with AI tools (proprietary project designs, mission-specific details, etc.)
 - **Be cautious with external dependencies** suggested by AI tools
 - **Validate security implications** of AI-generated code, especially for flight software

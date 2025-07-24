@@ -36,6 +36,8 @@ First, contributors should build some understanding of F´. Read through the doc
 reference application. Contributors can find information in our [documentation](https://fprime.jpl.nasa.gov/latest/docs). Keep
 track of inconsistencies or bugs as these should be reported!
 
+**Using Generative AI?** Check out our [Generative AI Usage Guidelines](GENERATIVE_AI.md) to learn about our community's approach to using AI tools effectively and responsibly in F´ development.
+
 When you are ready to join discussions and submit bug reports use one of the above links!
 
 To contribute to the F´ framework directly, consider writing
