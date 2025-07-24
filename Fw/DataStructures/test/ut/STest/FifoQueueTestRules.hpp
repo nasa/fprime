@@ -90,7 +90,7 @@ struct Peek : public Rule {
     bool precondition(const State& state) { return state.queue.getSize() > 0; }
     void action(State& state) {
         const auto index = STest::Pick::startLength(0, static_cast<U32>(state.queue.getSize()));
-        State::ItemType item;
+        State::ItemType item = 0;
         const auto status = state.queue.peek(item, index);
         ASSERT_EQ(status, Success::SUCCESS);
         ASSERT_EQ(item, state.modelQueue.at(index));
