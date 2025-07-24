@@ -112,7 +112,7 @@ class MapConstIterator {
         return *this;
     }
 
-    //! Prefix increment
+    //! Postfix increment
     MapConstIterator operator++(int) {
         MapConstIterator tmp = *this;
         ++(*this);
