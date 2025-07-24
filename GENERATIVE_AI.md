@@ -23,7 +23,7 @@ To maintain transparency and enable effective code review, contributors must dis
 
 ### Pull Request Submission: Contributors
 
-1. **Check the "AI Used (y/n)" checkbox** in the pull request template
+1. **Check the "AI Used" checkbox** in the pull request template
 2. **(Optionally) Provide details in the "AI Usage" section** describing how generative AI was utilized
 
 ### What to Disclose
