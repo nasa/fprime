@@ -28,7 +28,7 @@ class ComPacket : public Serializable {
     SerializeStatus serializeTo(SerializeBufferBase& buffer) const override;
     SerializeStatus deserializeFrom(SerializeBufferBase& buffer) override;
 
-    // Deprecated methods for backward compatibility 
+    // Deprecated methods for backward compatibility
     SerializeStatus serialize(SerializeBufferBase& buffer) const override;
     SerializeStatus deserialize(SerializeBufferBase& buffer) override;
 
