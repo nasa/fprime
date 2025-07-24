@@ -19,7 +19,7 @@ CmdPacket::~CmdPacket() {}
 
 // New serialization interface methods
 SerializeStatus CmdPacket::serializeTo(SerializeBufferBase& buffer) const {
-    // CmdPacket serialization is not implemented - this is an abstract base class
+    // Shouldn't be called
     FW_ASSERT(0);
     return FW_SERIALIZE_OK;  // for compiler
 }

@@ -95,9 +95,6 @@ class SerializeBufferBase {
         const void* val);  //!< serialize pointer (careful, only pointer value, not contents are serialized)
 
     //! serialize data buffer
-    SerializeStatus serializeFrom(const U8* buff, FwSizeType length, bool noLength);
-
-    //! serialize data buffer
     SerializeStatus serializeFrom(const U8* buff, FwSizeType length);
 
     //! \brief serialize a byte buffer of a given length
@@ -180,7 +177,7 @@ class SerializeBufferBase {
     SerializeStatus serialize(F64 val);
     SerializeStatus serialize(bool val);
     SerializeStatus serialize(const void* val);
-    SerializeStatus serialize(const U8* buff, FwSizeType length, bool noLength);
+    DEPRECATED(SerializeStatus serialize(const U8* buff, FwSizeType length, bool noLength), "Use serialize(const U8* buff, FwSizeType length, Serialization::t mode) instead");
     SerializeStatus serialize(const U8* buff, FwSizeType length);
     SerializeStatus serialize(const U8* buff, FwSizeType length, Serialization::t mode);
     SerializeStatus serialize(const Serializable& val);
@@ -204,7 +201,7 @@ class SerializeBufferBase {
     SerializeStatus deserialize(F64& val);
     SerializeStatus deserialize(bool& val);
     SerializeStatus deserialize(void*& val);
-    SerializeStatus deserialize(U8* buff, FwSizeType& length, bool noLength);
+    DEPRECATED(SerializeStatus deserialize(U8* buff, FwSizeType& length, bool noLength), "Use deserialize(U8* buff, FwSizeType& length, Serialization::t mode) instead");
     SerializeStatus deserialize(U8* buff, FwSizeType& length);
     SerializeStatus deserialize(U8* buff, FwSizeType& length, Serialization::t mode);
     SerializeStatus deserialize(Serializable& val);

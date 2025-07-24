@@ -75,24 +75,23 @@ namespace Fw {
         return ((LT == c) or (EQ == c));
     }
 
-    SerializeStatus Time::serialize(SerializeBufferBase& buffer) const {
+    SerializeStatus Time::serializeTo(SerializeBufferBase& buffer) const {
         // Use TimeValue's built-in serialization
         return this->m_val.serialize(buffer);
     }
 
-    SerializeStatus Time::deserialize(SerializeBufferBase& buffer) {
+    SerializeStatus Time::deserializeFrom(SerializeBufferBase& buffer) {
         // Use TimeValue's built-in deserialization
         return this->m_val.deserialize(buffer);
     }
 
-    SerializeStatus Time::serializeTo(SerializeBufferBase& buffer) const {
-        // Deprecated method - calls new interface for backward compatibility
-        return this->serialize(buffer);
+    // Deprecated methods for backward compatibility - these call the new interface
+    SerializeStatus Time::serialize(SerializeBufferBase& buffer) const {
+        return this->serializeTo(buffer);
     }
 
-    SerializeStatus Time::deserializeFrom(SerializeBufferBase& buffer) {
-        // Deprecated method - calls new interface for backward compatibility
-        return this->deserialize(buffer);
+    SerializeStatus Time::deserialize(SerializeBufferBase& buffer) {
+        return this->deserializeFrom(buffer);
     }
 
     U32 Time::getSeconds() const {

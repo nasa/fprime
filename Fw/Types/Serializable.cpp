@@ -243,11 +243,6 @@ SerializeStatus SerializeBufferBase::serializeFrom(const U8* buff, Serializable:
     return this->serializeFrom(buff, static_cast<FwSizeType>(length), Serialization::INCLUDE_LENGTH);
 }
 
-SerializeStatus SerializeBufferBase::serializeFrom(const U8* buff, Serializable::SizeType length, bool noLength) {
-    return this->serializeFrom(buff, static_cast<FwSizeType>(length),
-                            noLength ? Serialization::OMIT_LENGTH : Serialization::INCLUDE_LENGTH);
-}
-
 SerializeStatus SerializeBufferBase::serializeFrom(const U8* buff, FwSizeType length, Fw::Serialization::t mode) {
     // First serialize length
     SerializeStatus stat;
@@ -838,7 +833,13 @@ SerializeStatus SerializeBufferBase::serialize(F32 val) { return this->serialize
 SerializeStatus SerializeBufferBase::serialize(F64 val) { return this->serializeFrom(val); }
 SerializeStatus SerializeBufferBase::serialize(bool val) { return this->serializeFrom(val); }
 SerializeStatus SerializeBufferBase::serialize(const void* val) { return this->serializeFrom(val); }
-SerializeStatus SerializeBufferBase::serialize(const U8* buff, FwSizeType length, bool noLength) { return this->serializeFrom(buff, length, noLength); }
+
+// Deprecated method for backward compatibility
+SerializeStatus SerializeBufferBase::serialize(const U8* buff, FwSizeType length, bool noLength) { 
+    const Serialization::t mode = noLength ? Serialization::OMIT_LENGTH : Serialization::INCLUDE_LENGTH;
+    return this->serializeFrom(buff, length, mode); 
+}
+
 SerializeStatus SerializeBufferBase::serialize(const U8* buff, FwSizeType length) { return this->serializeFrom(buff, length); }
 SerializeStatus SerializeBufferBase::serialize(const U8* buff, FwSizeType length, Serialization::t mode) { return this->serializeFrom(buff, length, mode); }
 SerializeStatus SerializeBufferBase::serialize(const Serializable& val) { return this->serializeFrom(val); }
@@ -862,6 +863,8 @@ SerializeStatus SerializeBufferBase::deserialize(F32& val) { return this->deseri
 SerializeStatus SerializeBufferBase::deserialize(F64& val) { return this->deserializeTo(val); }
 SerializeStatus SerializeBufferBase::deserialize(bool& val) { return this->deserializeTo(val); }
 SerializeStatus SerializeBufferBase::deserialize(void*& val) { return this->deserializeTo(val); }
+
+// Deprecated method for backward compatibility
 SerializeStatus SerializeBufferBase::deserialize(U8* buff, FwSizeType& length, bool noLength) { 
     const Serialization::t mode = noLength ? Serialization::OMIT_LENGTH : Serialization::INCLUDE_LENGTH;
     return this->deserializeTo(buff, length, mode); 
