@@ -280,7 +280,6 @@ gtest
 gtimeout
 Guire
 GVCID
-Gpt
 GPT
 HACKSM
 Handcoded
