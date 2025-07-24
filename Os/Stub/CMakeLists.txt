@@ -23,6 +23,19 @@ register_fprime_implementation(
   INTERFACE
 )
 
+register_fprime_implementation(
+    StubStandardAtomic
+  IMPLEMENTS
+    StandardAtomic
+  INTERFACE
+)
+target_include_directories(
+  StubStandardAtomic
+  BEFORE INTERFACE SYSTEM
+    "${CMAKE_CURRENT_LIST_DIR}/atomic"
+)
+
+
 # Remainder of file is specific to UTs
 if (NOT BUILD_TESTING)
     return()
