@@ -14,7 +14,6 @@ ANamespace
 apid
 APIDOCS
 APPENDFILE
-aps
 arduino
 ARef
 argcomplete
@@ -122,7 +121,6 @@ crckermit
 CRCs
 crcstat
 CREATEDIRECTORY
-Crosscompiling
 crsmith
 crt
 CRTSCTS
@@ -256,8 +254,6 @@ gcgandhi
 gcov
 gdiplus
 GENHUB
-getfooter
-getstatements
 gettime
 getty
 ghprb
@@ -402,7 +398,7 @@ mman
 MMAPALLOCATOR
 MML
 modbus
-MOSI
+moisesmata
 MOVEFILE
 msc
 mscfile
@@ -498,7 +494,6 @@ PRMDBIMPL
 PRMDBIMPLTESTERCFG
 PRMDBLIMPLCFG
 PRMDBTESTER
-PRMLEDINITSTATE
 PROCBUFFERSENDOUT
 PRODUCTGETIN
 PRODUCTREQUESTIN
@@ -513,6 +508,7 @@ projectnumber
 propget
 propput
 protothreading
+psutil
 ptbool
 ptf
 pthread
@@ -553,10 +549,7 @@ RHH
 Rizvi
 ROOTDIR
 rpi
-RPIDEMO
-RPIDEMOCOMPONENTIMPLCFG
 rptr
-RXD
 SAlias
 sanitizers
 sats
@@ -588,7 +581,6 @@ SHAREDSTATEDIR
 SHELLCOMMAND
 showinitializer
 sideeffect
-sighandler
 Signedness
 Silveira
 sitofp
@@ -684,7 +676,6 @@ tparam
 TPP
 trinomials
 tts
-TXD
 typedef'ed
 typedef
 uart
@@ -696,7 +687,6 @@ UNEXP
 unistd
 UNITTESTASSERT
 unittests
-urhs
 useconds
 usecs
 valgrind
