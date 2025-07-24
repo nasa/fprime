@@ -60,7 +60,7 @@ Used GitHub Copilot for:
 When working with generative AI, provide clear rules and context to improve code quality and consistency. For Example:
 
 - **Reference F' Style Guidelines**: Include the [F' Style Guidelines](https://github.com/nasa/fprime/wiki/F%C2%B4-Style-Guidelines) in your prompts
-- **Specify API documentation**: Direct AI to use the [F' C++ API documentation](https://nasa.github.io/fprime/v1.5/UsersGuide/api/c++/html/) for code generation
+- **Specify API documentation**: Direct AI to use the [F' C++ API documentation](https://nasa.github.io/fprime/v3.4.1/UsersGuide/api/c++/html/md_docs_2doc-index.html) for code generation
 - **Enforce coding standards**: Instruct AI to avoid "magic numbers" and use descriptive variable names or comments
 - **Provide project context**: Share relevant F' architectural patterns and component structures
 
@@ -118,7 +118,6 @@ As generative AI technology evolves, this policy will be updated to reflect:
 If you have questions about appropriate AI usage or need guidance on disclosure:
 
 - Open a [Discussion](https://github.com/nasa/fprime/discussions) for community input
-- Review existing [Issues](https://github.com/nasa/fprime/issues) for similar questions
 - Contact the Community Managers for specific guidance
 
 ## Conclusion
