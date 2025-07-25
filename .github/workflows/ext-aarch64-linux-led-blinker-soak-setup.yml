@@ -1,4 +1,4 @@
-# Cross-compile https://github.com/fprime-community/fprime-workshop-led-blinker as system service on AArch64 Linux
+# Cross-compile https://github.com/moisesmata/fprime-workshop-led-blinker as system service on AArch64 Linux
 # Builds on release publication, stops old service, starts new service
 name: "Soak Test Setup AArch64 Linux: External Repo LedBlinker"
 
@@ -25,7 +25,7 @@ jobs:
     name: "Get target branch"
     uses: ./.github/workflows/reusable-get-pr-branch.yml
     with:
-      target_repository: fprime-community/fprime-workshop-led-blinker
+      target_repository: moisesmata/fprime-workshop-led-blinker
 
   cross-compilation:
     name: "Cross Compilation"
@@ -36,7 +36,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: false
-          repository: fprime-community/fprime-workshop-led-blinker
+          repository: moisesmata/fprime-workshop-led-blinker
           ref: ${{ needs.get-branch.outputs.target-branch }}
       - name: "Overlay current F´ revision"
         uses: actions/checkout@v4
@@ -64,6 +64,10 @@ jobs:
           mkdir -p aarch64-linux-artifacts-soak
           cp -r ./build-artifacts aarch64-linux-artifacts-soak
           cp -r Components/Led/test/int aarch64-linux-artifacts-soak
+          # Copy monitoring script from F' repo
+          if [ -f "./fprime/soak_log_processor.py" ]; then
+            cp ./fprime/soak_log_processor.py aarch64-linux-artifacts-soak/soak_monitor.py
+          fi
       - name: 'Archive Build Artifacts'
         uses: actions/upload-artifact@v4
         with:
@@ -101,6 +105,9 @@ jobs:
           # Activate virtual environment and install F´ requirements
           sudo ${INSTALL_DIR}/venv/bin/pip install --upgrade pip
           sudo ${INSTALL_DIR}/venv/bin/pip install -r requirements.txt
+          
+          # Install additional packages needed for soak testing
+          sudo ${INSTALL_DIR}/venv/bin/pip install psutil
 
       - name: "Artifacts Download"
         uses: actions/download-artifact@v4
@@ -114,11 +121,18 @@ jobs:
           sudo mkdir -p ${INSTALL_DIR}/dict
           sudo mkdir -p ${INSTALL_DIR}/test
           sudo mkdir -p ${INSTALL_DIR}/logs
+          sudo mkdir -p ${INSTALL_DIR}/monitoring
           
           # Copy binary, dict, and test files
           sudo cp ./build-artifacts/aarch64-linux/LedBlinker/bin/LedBlinker ${INSTALL_DIR}/bin/
           sudo cp -r ./build-artifacts/aarch64-linux/LedBlinker/dict/* ${INSTALL_DIR}/dict/
           sudo cp -r ./int/* ${INSTALL_DIR}/test/
+
+          # Copy monitoring script if it exists
+          if [ -f "./soak_monitor.py" ]; then
+            sudo cp ./soak_monitor.py ${INSTALL_DIR}/monitoring/
+            sudo chmod +x ${INSTALL_DIR}/monitoring/soak_monitor.py
+          fi
 
           # Make binary executable
           sudo chmod +x ${INSTALL_DIR}/bin/LedBlinker
