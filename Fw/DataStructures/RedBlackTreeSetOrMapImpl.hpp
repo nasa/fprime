@@ -139,7 +139,7 @@ class RedBlackTreeSetOrMapImpl final {
     //! Constructor providing untyped backing storage.
     //! data must be aligned according to getByteArrayAlignment().
     //! data must contain at least getByteArraySize(capacity) bytes.
-    RedBlackTreeSetOrMapImpl(ByteArray data,      //!< The data,
+    RedBlackTreeSetOrMapImpl(ByteArray data,      //!< The data
                              FwSizeType capacity  //!< The capacity
     ) {
         this->setStorage(data, capacity);
