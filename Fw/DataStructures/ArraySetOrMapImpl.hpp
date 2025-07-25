@@ -133,7 +133,7 @@ class ArraySetOrMapImpl final {
     //! Constructor providing untyped backing storage.
     //! data must be aligned according to getByteArrayAlignment().
     //! data must contain at least getByteArraySize(capacity) bytes.
-    ArraySetOrMapImpl(ByteArray data,      //!< The data,
+    ArraySetOrMapImpl(ByteArray data,      //!< The data
                       FwSizeType capacity  //!< The capacity
     ) {
         this->setStorage(data, capacity);
