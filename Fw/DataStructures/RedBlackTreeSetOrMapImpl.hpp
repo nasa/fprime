@@ -364,10 +364,10 @@ class RedBlackTreeSetOrMapImpl final {
     //!    c. Otherwise node stores the index of the node N containing the NONE
     //!       child where ke should be inserted, and direction stores the direction
     //!       of the child in N (left or right).
-    Success findNode(const KE& keyOrElement,  //!< The key or element
-                     Index& node,             //!< The node index
-                     Direction direction      //!< The direction
-    ) {
+    Success findNode(const KE& keyOrElement,  //!< The key or element (input)
+                     Index& node,             //!< The node index (output)
+                     Direction& direction     //!< The direction (output)
+    ) const {
         auto result = Success::FAILURE;
         // TODO
         return result;
