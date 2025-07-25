@@ -306,10 +306,10 @@ class RedBlackTreeSetOrMapImpl final {
             const auto parent = node;
             status = this->m_freeNodes.pop(node);
             if (status == Success::SUCCESS) {
-              this->m_nodes[node] = Node();
-              this->m_nodes[node].entry.setKey(keyOrElement);
-              this->m_nodes[node].entry.setValue(valueOrNil);
-              this->insertNode(node, parent, direction);
+                this->m_nodes[node] = Node();
+                this->m_nodes[node].entry.setKey(keyOrElement);
+                this->m_nodes[node].entry.setValue(valueOrNil);
+                this->insertNode(node, parent, direction);
             }
         }
         return status;
@@ -320,8 +320,16 @@ class RedBlackTreeSetOrMapImpl final {
     Success remove(const KE& keyOrElement,  //!< The key or element
                    VN& valueOrNil           //!< The value or Nil
     ) {
-        auto status = Success::FAILURE;
-        // TODO
+        auto node = Node::NONE;
+        auto direction = Direction::LEFT;
+        const auto status = findNode(keyOrElement, node, direction);
+        if (status == Success::SUCCESS) {
+            valueOrNil = this->m_nodes[node].entry.getValue();
+            auto removedNode = Node::NONE;
+            this->removeNode(node, removedNode);
+            const auto pushStatus = this->m_freeNodes.push(removedNode);
+            FW_ASSERT(pushStatus == Success::SUCCESS, static_cast<FwAssertArgType>(pushStatus));
+        }
         return status;
     }
 
@@ -398,6 +406,15 @@ class RedBlackTreeSetOrMapImpl final {
     void insertNode(Index node,    //!< The node to insert
                     Index parent,  //!< The new parent
                     Direction      //!< The direction under the new parent
+    ) {
+        // TODO
+    }
+
+    //! This function removes a node of the tree. On entry, node stores the key
+    //! and value to be removed. It must not be NONE. On return, removedNode
+    //! stores the node that was actually removed.
+    void removeNode(Index node,         //!< The node to remove (input)
+                    Index& removedNode  //!< The node actually removed (output)
     ) {
         // TODO
     }
