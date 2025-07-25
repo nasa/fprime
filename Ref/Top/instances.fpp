@@ -76,29 +76,6 @@ module Ref {
 
   instance linuxTimer: Svc.LinuxTimer base id 0x01150000
 
-  instance comDriver: Drv.TcpClient base id 0x01200000 \
-  {
-      phase Fpp.ToCpp.Phases.configComponents """
-      if (state.hostname != nullptr && state.port != 0) {
-          Ref::comDriver.configure(state.hostname, state.port);
-      }
-      """
-
-      phase Fpp.ToCpp.Phases.startTasks """
-      // Initialize socket client communication if and only if there is a valid specification
-      if (state.hostname != nullptr && state.port != 0) {
-          Os::TaskString name("ReceiveTask");
-          Ref::comDriver.start(name, 100, Default.STACK_SIZE);
-      }
-      """
-
-      phase Fpp.ToCpp.Phases.stopTasks """
-      Ref::comDriver.stop();
-      """
-
-      phase Fpp.ToCpp.Phases.freeThreads """
-      (void)Ref::comDriver.join();
-      """
-  }
+  instance comDriver: Drv.TcpClient base id 0x01200000 
 
 }

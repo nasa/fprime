@@ -69,6 +69,17 @@ void setupTopology(const TopologyState& state) {
     loadParameters();
     // Autocoded task kick-off (active components). Function provided by autocoder.
     startTasks(state);
+
+    //Configuration of the comDriver component
+    if (state.hostname != nullptr && state.port != 0) {
+        comDriver.configure(state.hostname, state.port);
+    }
+
+    //Initialize socket client communication if and only if there is a valid specification
+    if (state.hostname != nullptr && state.port != 0) {
+        Os::TaskString name("ReceiveTask");
+        comDriver.start(name, 100, Default.STACK_SIZE);
+    }
 }
 
 void startRateGroups(Fw::TimeInterval interval) {
@@ -88,5 +99,9 @@ void teardownTopology(const TopologyState& state) {
     stopTasks(state);
     freeThreads(state);
     tearDownComponents(state);
+
+    //Stop the comDriver component, free thread
+    comDriver.stop();
+    (void)comDriver.join();
 }
 }  // namespace Ref
