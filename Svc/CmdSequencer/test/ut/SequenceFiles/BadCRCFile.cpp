@@ -43,7 +43,7 @@ namespace Svc {
           buffer
       );
       // Records
-      ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffer.serialize(recordData));
+      ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffer.serializeFrom(recordData));
       // CRC
       const U8 *const addr = buffer.getBuffAddr();
       const U32 size = buffer.getBuffLength();
@@ -53,7 +53,7 @@ namespace Svc {
       crc.m_stored = this->crc.m_computed + 1;
       ASSERT_EQ(
           Fw::FW_SERIALIZE_OK,
-          buffer.serialize(this->crc.m_stored)
+          buffer.serializeFrom(this->crc.m_stored)
       );
     }
 
@@ -64,7 +64,7 @@ namespace Svc {
       AMPCS::Headers::serialize(buffer);
       // Records
       const U32 recordData = 0x10;
-      ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffer.serialize(recordData));
+      ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffer.serializeFrom(recordData));
       // CRC
       AMPCS::CRCs::computeCRC(buffer, this->crc);
       this->crc.m_stored = this->crc.m_computed + 1;

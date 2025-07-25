@@ -35,8 +35,10 @@ namespace Fw {
             U32 getUSeconds() const; // !< Gets microseconds part of time
             TimeBase getTimeBase() const; // !< Time base of time. This is project specific and is meant for indicating different sources of time
             FwTimeContextStoreType getContext() const; // !< get the context value
-            SerializeStatus serialize(SerializeBufferBase& buffer) const; // !< Serialize method
-            SerializeStatus deserialize(SerializeBufferBase& buffer); // !< Deserialize method
+            SerializeStatus serializeTo(SerializeBufferBase& buffer) const override; // !< Serialize method
+            SerializeStatus deserializeFrom(SerializeBufferBase& buffer) override; // !< Deserialize method
+            SerializeStatus serialize(SerializeBufferBase& buffer) const override; // !< Serialize method (deprecated)
+            SerializeStatus deserialize(SerializeBufferBase& buffer) override; // !< Deserialize method (deprecated)
             bool operator==(const Time& other) const;
             bool operator!=(const Time& other) const;
             bool operator>(const Time& other) const;

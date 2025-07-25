@@ -113,36 +113,36 @@ Fw::ExternalSerializeBufferWithMemberCopy Buffer::getDeserializer() {
     }
 }
 
-Fw::SerializeStatus Buffer::serialize(Fw::SerializeBufferBase& buffer) const {
+Fw::SerializeStatus Buffer::serializeTo(Fw::SerializeBufferBase& buffer) const {
     Fw::SerializeStatus stat;
 #if FW_SERIALIZATION_TYPE_ID
-    stat = buffer.serialize(static_cast<U32>(Buffer::TYPE_ID));
+    stat = buffer.serializeFrom(static_cast<U32>(Buffer::TYPE_ID));
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;
     }
 #endif
-    stat = buffer.serialize(reinterpret_cast<PlatformPointerCastType>(this->m_bufferData));
+    stat = buffer.serializeFrom(reinterpret_cast<PlatformPointerCastType>(this->m_bufferData));
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;
     }
-    stat = buffer.serialize(this->m_size);
+    stat = buffer.serializeFrom(this->m_size);
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;
     }
-    stat = buffer.serialize(this->m_context);
+    stat = buffer.serializeFrom(this->m_context);
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;
     }
     return stat;
 }
 
-Fw::SerializeStatus Buffer::deserialize(Fw::SerializeBufferBase& buffer) {
+Fw::SerializeStatus Buffer::deserializeFrom(Fw::SerializeBufferBase& buffer) {
     Fw::SerializeStatus stat;
 
 #if FW_SERIALIZATION_TYPE_ID
     U32 typeId;
 
-    stat = buffer.deserialize(typeId);
+    stat = buffer.deserializeTo(typeId);
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;
     }
@@ -152,17 +152,17 @@ Fw::SerializeStatus Buffer::deserialize(Fw::SerializeBufferBase& buffer) {
     }
 #endif
     PlatformPointerCastType pointer;
-    stat = buffer.deserialize(pointer);
+    stat = buffer.deserializeTo(pointer);
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;
     }
     this->m_bufferData = reinterpret_cast<U8*>(pointer);
 
-    stat = buffer.deserialize(this->m_size);
+    stat = buffer.deserializeTo(this->m_size);
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;
     }
-    stat = buffer.deserialize(this->m_context);
+    stat = buffer.deserializeTo(this->m_context);
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;
     }
@@ -188,4 +188,13 @@ std::ostream& operator<<(std::ostream& os, const Buffer& obj) {
     return os;
 }
 #endif
+
+Fw::SerializeStatus Buffer::serialize(Fw::SerializeBufferBase& serialBuffer) const {
+    return this->serializeTo(serialBuffer);
+}
+
+Fw::SerializeStatus Buffer::deserialize(Fw::SerializeBufferBase& buffer) {
+    return this->deserializeFrom(buffer);
+}
+
 }  // end namespace Fw

@@ -185,14 +185,14 @@ void TlmChanTester::checkBuff(FwChanIdType chanNum, FwChanIdType totalChan, FwCh
         this->m_rcvdBuffer[packet].resetDeser();
         // first piece should be tlm packet descriptor
         FwPacketDescriptorType desc;
-        stat = this->m_rcvdBuffer[packet].deserialize(desc);
+        stat = this->m_rcvdBuffer[packet].deserializeTo(desc);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat);
         ASSERT_EQ(desc, static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_TELEM));
 
         for (FwChanIdType chan = 0; chan < CHANS_PER_COMBUFFER; chan++) {
             // decode channel ID
             FwEventIdType sentId;
-            stat = this->m_rcvdBuffer[packet].deserialize(sentId);
+            stat = this->m_rcvdBuffer[packet].deserializeTo(sentId);
             ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat);
 
             // next piece is time tag
@@ -202,7 +202,7 @@ void TlmChanTester::checkBuff(FwChanIdType chanNum, FwChanIdType totalChan, FwCh
             ASSERT_TRUE(timeTag == recTimeTag);
             // next piece is event argument
             U32 readVal;
-            stat = this->m_rcvdBuffer[packet].deserialize(readVal);
+            stat = this->m_rcvdBuffer[packet].deserializeTo(readVal);
             ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat);
 
             if (chanNum == currentChan) {
@@ -254,7 +254,7 @@ void TlmChanTester::sendBuff(FwChanIdType id, U32 val) {
     Fw::TlmValid valid = this->invoke_to_TlmGet(0, id, timeTag, readBack);
     // deserialize value
     retestVal = 0;
-    readBack.deserialize(retestVal);
+    readBack.deserializeTo(retestVal);
     ASSERT_EQ(retestVal, val);
     ASSERT_EQ(valid, Fw::TlmValid::VALID);
 }
