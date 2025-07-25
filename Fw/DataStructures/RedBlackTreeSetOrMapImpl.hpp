@@ -132,7 +132,9 @@ class RedBlackTreeSetOrMapImpl final {
 
         //! Constructor providing the implementation
         ConstIterator(const RedBlackTreeSetOrMapImpl<KE, VN>& impl)
-            : SetOrMapImplConstIterator<KE, VN>(), m_impl(&impl) {}
+            : SetOrMapImplConstIterator<KE, VN>(), m_impl(&impl) {
+            // TODO: Set m_node to point to the initial node
+        }
 
         //! Copy constructor
         ConstIterator(const ConstIterator& it)
@@ -281,8 +283,11 @@ class RedBlackTreeSetOrMapImpl final {
     //! Get the size (number of entries)
     //! \return The size
     FwSizeType getSize() const {
-        // TODO
-        return 0;
+        const auto capacity = this->getCapacity();
+        const auto freeNodesSize = this->m_freeNodes.getSize();
+        FW_ASSERT(freeNodesSize <= capacity, static_cast<FwAssertArgType>(freeNodesSize),
+                  static_cast<FwAssertArgType>(capacity));
+        return capacity - freeNodesSize;
     }
 
     //! Insert an element in the set or a (key, value) pair in the map
@@ -290,8 +295,23 @@ class RedBlackTreeSetOrMapImpl final {
     Success insert(const KE& keyOrElement,  //!< The key or element
                    const VN& valueOrNil     //!< The value or Nil
     ) {
+        auto node = Node::NONE;
+        auto direction = Direction::LEFT;
         auto status = Success::FAILURE;
-        // TODO
+        const auto findStatus = this->findNode(keyOrElement, node, direction);
+        if (findStatus == Success::SUCCESS) {
+            this->m_nodes[node].setValue(valueOrNil);
+            status = Success::SUCCESS;
+        } else {
+            const auto parent = node;
+            status = this->m_freeNodes.pop(node);
+            if (status == Success::SUCCESS) {
+              this->m_nodes[node] = Node();
+              this->m_nodes[node].entry.setKey(keyOrElement);
+              this->m_nodes[node].entry.setValue(valueOrNil);
+              this->insertNode(node, parent, direction);
+            }
+        }
         return status;
     }
 
@@ -365,6 +385,21 @@ class RedBlackTreeSetOrMapImpl final {
         auto result = Success::FAILURE;
         // TODO
         return result;
+    }
+
+    //! This function inserts node into the tree as a left or right child of parent,
+    //! according to direction. It rebalances the tree as needed to maintain the
+    //! red-black invariant.
+    //!
+    //! It is permissible for parent to be NONE. In this case we are inserting
+    //! at the root of the tree, and direction is ignored.
+    //!
+    //! It is not permissible for node to be NONE.
+    void insertNode(Index node,    //!< The node to insert
+                    Index parent,  //!< The new parent
+                    Direction      //!< The direction under the new parent
+    ) {
+        // TODO
     }
 
   private:

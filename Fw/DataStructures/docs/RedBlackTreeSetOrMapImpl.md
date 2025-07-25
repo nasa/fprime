@@ -602,9 +602,9 @@ Success insert(const KE& keyOrElement, const VN& valueOrNil)
 
 1. Otherwise
 
-   1. Set `parent = node`.
+   1. Let `parent = node`.
 
-   1. Set `status = m_freeNodes.pop(node)`.
+   1. Let `status = m_freeNodes.pop(node)`.
 
    1. If `status == SUCCESS`
 
@@ -864,7 +864,7 @@ child is `NONE`.
 ### 8.5. insertNode
 
 ```c++
-void insertNode(Node::Index node, Node::index parent, Direction direction)
+void insertNode(Node::Index node, Node::Index parent, Direction direction)
 ```
 
 **Overview:**
