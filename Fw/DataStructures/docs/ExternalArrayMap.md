@@ -28,7 +28,7 @@ as the map implementation.
 |Name|Definition|
 |----|----------|
 |`ConstIterator`|Alias of [`MapConstIterator<K, V>`](MapConstIterator.md)|
-|`Entry`|Alias of [`SetOrMapEntry<K, V>`](SetOrMapEntry.md)|
+|`Entry`|Alias of [`SetOrMapImplEntry<K, V>`](SetOrMapImplEntry.md)|
 
 ## 4. Private Member Variables
 
@@ -370,7 +370,7 @@ void setStorage(Entry* entries, FwSizeType capacity)
 
 `entries` must point to a primitive array of at least `capacity`
 elements of type `Entry`.
-The type `Entry` is defined [here](ExternalArrayMap.md#Public-Types).
+The type `Entry` is defined [in this section](ExternalArrayMap.md#Public-Types).
 
 Call `m_impl.setStorage(entries, capacity)`.
 

@@ -111,7 +111,7 @@ class SetConstIterator {
         return *this;
     }
 
-    //! Prefix increment
+    //! Postfix increment
     SetConstIterator operator++(int) {
         SetConstIterator tmp = *this;
         ++(*this);

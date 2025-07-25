@@ -30,7 +30,7 @@ It represents an array-based set with internal storage.
 |`ConstIterator`|Alias of [`SetConstIterator<T>`](SetConstIterator.md)|
 |`Entry`|Alias of [`SetOrMapImplEntry<T, Nil>`](SetOrMapImplEntry.md)|
 
-The type `Nil` is defined [here](Nil.md).
+The type `Nil` is defined [in this file](Nil.md).
 
 ## 4. Private Member Variables
 
@@ -41,7 +41,7 @@ The type `Nil` is defined [here](Nil.md).
 |`m_extSet`|[`ExternalArraySet<T>`](ExternalArraySet.md)|The external set implementation|C++ default initialization|
 |`m_entries`|`Entry[C]`|The array providing the backing memory for `m_extSet`|C++ default initialization|
 
-The type `Entry` is defined [here](ArraySet.md#Public-Types).
+The type `Entry` is defined [in this section](ArraySet.md#Public-Types).
 
 ```mermaid
 classDiagram

@@ -78,7 +78,7 @@ class SetBase {
         }
     }
 
-    //! Find the an element in a set
+    //! Find an element in a set
     //! SUCCESS if the item was found
     virtual Success find(const T& element  //!< The element
     ) const = 0;
