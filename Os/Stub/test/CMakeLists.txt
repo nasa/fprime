@@ -174,13 +174,3 @@ register_fprime_ut(
     Fw_Time
     STest
 )
-
-#### Atomic Stub Testing ####
-register_fprime_ut(
-    StubAtomicTest
-  SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/ut/StubStdAtomicTests.cpp"
-  DEPENDS
-    Fw_Types
-    STest
-)
