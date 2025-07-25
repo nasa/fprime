@@ -376,6 +376,14 @@ Sets the child of `this` in direction `direction`.
 static Direction oppositeDirection(Direction direction)
 ```
 
+##### 3.2.5.2. getNodeColor
+
+```c++
+static Node::Color getNodeColor(Index index)
+```
+
+return `index == NONE ? BLACK : m_nodes[index].color`.
+
 **Overview:**
 Returns the opposite direction.
 
@@ -718,14 +726,6 @@ static constexpr FwSizeType getByteArraySize(FwSizeType capacity)
 1. Let `freeNodesSize = FreeStack::getByteArraySize(capacity)`.
 
 1. Return `nodesSize + freeNodesAlignment + freeNodesSize`.
-
-##### 7.2.0.1. getNodeColor
-
-```c++
-static Color getColor(Index index)
-```
-
-return `index == NONE ? BLACK : m_nodes[index].color`.
 
 ## 8. Private Helper Functions
 
