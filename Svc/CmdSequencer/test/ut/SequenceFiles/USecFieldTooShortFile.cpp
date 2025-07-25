@@ -48,11 +48,11 @@ namespace Svc {
         CmdSequencerComponentImpl::Sequence::Record::RELATIVE;
       ASSERT_EQ(
           Fw::FW_SERIALIZE_OK,
-          buffer.serialize(static_cast<U8>(descriptor))
+          buffer.serializeFrom(static_cast<U8>(descriptor))
       );
       ASSERT_EQ(
           Fw::FW_SERIALIZE_OK, 
-          buffer.serialize(static_cast<U16>(0))
+          buffer.serializeFrom(static_cast<U16>(0))
       );
       // CRC
       FPrime::CRCs::serialize(buffer);

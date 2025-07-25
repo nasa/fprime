@@ -113,7 +113,7 @@ as a value. The autocoder will generate a class with accessor methods for the fi
 
 When interacting only in the software and not within the F´ design layer, nor with the ground system the user may use
 arbitrary C++ `class`/`struct` types. If these types are to be passed through a port invocation as an argument, they
-should be defined as subclasses of the `Fw::Serializable` and define `serialize` and `deserialize` methods to be called
+should be defined as subclasses of the `Fw::Serializable` and define `serializeTo` and `deserializeFrom` methods to be called
 to perform the serialization.
 
 ## Conclusion

@@ -124,9 +124,9 @@ class MyFrameProtocol : public Svc::FramingProtocol {
     void frame(const U8 *const data, const U32 size, Fw::ComPacketType packet_type) {
         Fw::Buffer my_framed_data = m_interface.allocate(size);
         auto serializer = my_framed_data.getSerializer();
-        serializer.serialize(0xdeadbeef); // Some start word
-        serializer.serialize(size);       // Write size
-        serializer.serialize(data, size, Fw::Serialization::OMIT_LENGTH); // Data copied to buffer no length included
+        serializer.serializeFrom(0xdeadbeef); // Some start word
+        serializer.serializeFrom(size);       // Write size
+        serializer.serializeFrom(data, size, Fw::Serialization::OMIT_LENGTH); // Data copied to buffer no length included
         m_interface.send(my_framed_data);
     }
 };

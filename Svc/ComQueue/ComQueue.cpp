@@ -262,7 +262,7 @@ void ComQueue::sendComBuffer(Fw::ComBuffer& comBuffer, FwIndexType queueIndex) {
     // Context value is used to determine what to do when the buffer returns on the dataReturnIn port
     ComCfg::FrameContext context;
     FwPacketDescriptorType descriptor;
-    Fw::SerializeStatus status = comBuffer.deserialize(descriptor);
+    Fw::SerializeStatus status = comBuffer.deserializeTo(descriptor);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     context.set_apid(static_cast<ComCfg::APID::T>(descriptor));
     context.set_comQueueIndex(queueIndex);
@@ -279,7 +279,7 @@ void ComQueue::sendBuffer(Fw::Buffer& buffer, FwIndexType queueIndex) {
     // Context value is used to determine what to do when the buffer returns on the dataReturnIn port
     ComCfg::FrameContext context;
     FwPacketDescriptorType descriptor;
-    Fw::SerializeStatus status = buffer.getDeserializer().deserialize(descriptor);
+    Fw::SerializeStatus status = buffer.getDeserializer().deserializeTo(descriptor);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     context.set_apid(static_cast<ComCfg::APID::T>(descriptor));
     context.set_comQueueIndex(queueIndex);
