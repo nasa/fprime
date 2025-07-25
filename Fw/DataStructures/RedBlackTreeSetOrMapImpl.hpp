@@ -34,14 +34,14 @@ class RedBlackTreeSetOrMapImpl final {
 
   private:
     // ----------------------------------------------------------------------
-    // The node type 
+    // The node type
     // ----------------------------------------------------------------------
 
     // TODO
 
   public:
     // ----------------------------------------------------------------------
-    // The const iterator type 
+    // The const iterator type
     // ----------------------------------------------------------------------
 
     //! Const iterator
@@ -54,7 +54,8 @@ class RedBlackTreeSetOrMapImpl final {
         ConstIterator() {}
 
         //! Constructor providing the implementation
-        ConstIterator(const RedBlackTreeSetOrMapImpl<KE, VN>& impl) : SetOrMapImplConstIterator<KE, VN>(), m_impl(&impl) {
+        ConstIterator(const RedBlackTreeSetOrMapImpl<KE, VN>& impl)
+            : SetOrMapImplConstIterator<KE, VN>(), m_impl(&impl) {
             (void)m_impl;
             // TODO
         }
@@ -80,7 +81,7 @@ class RedBlackTreeSetOrMapImpl final {
             if ((this->m_impl == nullptr) && (it.m_impl == nullptr)) {
                 result = true;
             } else if (this->m_impl == it.m_impl) {
-                result |= (this->m_index == it.m_index);
+                // TODO
                 result |= (!this->isInRange() and !it.isInRange());
             }
             return result;
@@ -117,10 +118,8 @@ class RedBlackTreeSetOrMapImpl final {
       private:
         //! The implementation over which to iterate
         const RedBlackTreeSetOrMapImpl<KE, VN>* m_impl = nullptr;
-
     };
 
-#if 0
   public:
     // ----------------------------------------------------------------------
     // Public constructors and destructors
@@ -132,7 +131,7 @@ class RedBlackTreeSetOrMapImpl final {
     //! Constructor providing typed backing storage.
     //! entries must point to at least capacity elements of type Entry.
     RedBlackTreeSetOrMapImpl(Entry* entries,      //!< The entries
-                      FwSizeType capacity  //!< The capacity
+                             FwSizeType capacity  //!< The capacity
     ) {
         this->setStorage(entries, capacity);
     }
@@ -141,7 +140,7 @@ class RedBlackTreeSetOrMapImpl final {
     //! data must be aligned according to getByteArrayAlignment().
     //! data must contain at least getByteArraySize(capacity) bytes.
     RedBlackTreeSetOrMapImpl(ByteArray data,      //!< The data,
-                      FwSizeType capacity  //!< The capacity
+                             FwSizeType capacity  //!< The capacity
     ) {
         this->setStorage(data, capacity);
     }
@@ -161,7 +160,7 @@ class RedBlackTreeSetOrMapImpl final {
     RedBlackTreeSetOrMapImpl<KE, VN>& operator=(const RedBlackTreeSetOrMapImpl<KE, VN>& impl) {
         if (&impl != this) {
             m_entries = impl.m_entries;
-            m_size = impl.m_size;
+            // TODO
         }
         return *this;
     }
@@ -170,7 +169,8 @@ class RedBlackTreeSetOrMapImpl final {
     ConstIterator begin() const { return ConstIterator(*this); }
 
     //! Clear the set or map
-    void clear() { this->m_size = 0; }
+    void clear() {  // TODO
+    }
 
     //! Get the end iterator
     ConstIterator end() const {
@@ -185,14 +185,7 @@ class RedBlackTreeSetOrMapImpl final {
                  VN& valueOrNil           //!< The value or Nil
     ) const {
         auto status = Success::FAILURE;
-        for (FwSizeType i = 0; i < this->m_size; i++) {
-            const auto& e = this->m_entries[i];
-            if (e.getKey() == keyOrElement) {
-                valueOrNil = e.getValue();
-                status = Success::SUCCESS;
-                break;
-            }
-        }
+        // TODO
         return status;
     }
 
@@ -202,7 +195,10 @@ class RedBlackTreeSetOrMapImpl final {
 
     //! Get the size (number of entries)
     //! \return The size
-    FwSizeType getSize() const { return this->m_size; }
+    FwSizeType getSize() const {
+        // TODO
+        return 0;
+    }
 
     //! Insert an element in the set or a (key, value) pair in the map
     //! \return SUCCESS if there is room in the set or map
@@ -210,19 +206,7 @@ class RedBlackTreeSetOrMapImpl final {
                    const VN& valueOrNil     //!< The value or Nil
     ) {
         auto status = Success::FAILURE;
-        for (FwSizeType i = 0; i < this->m_size; i++) {
-            auto& e = this->m_entries[i];
-            if (e.getKey() == keyOrElement) {
-                e.setValueOrNil(valueOrNil);
-                status = Success::SUCCESS;
-                break;
-            }
-        }
-        if ((status == Success::FAILURE) && (this->m_size < this->getCapacity())) {
-            this->m_entries[this->m_size] = Entry(keyOrElement, valueOrNil);
-            this->m_size++;
-            status = Success::SUCCESS;
-        }
+        // TODO
         return status;
     }
 
@@ -232,17 +216,7 @@ class RedBlackTreeSetOrMapImpl final {
                    VN& valueOrNil           //!< The value or Nil
     ) {
         auto status = Success::FAILURE;
-        for (FwSizeType i = 0; i < this->m_size; i++) {
-            if (this->m_entries[i].getKey() == keyOrElement) {
-                valueOrNil = this->m_entries[i].getValue();
-                if (i < this->m_size - 1) {
-                    this->m_entries[i] = this->m_entries[this->m_size - 1];
-                }
-                this->m_size--;
-                status = Success::SUCCESS;
-                break;
-            }
-        }
+        // TODO
         return status;
     }
 
@@ -281,7 +255,6 @@ class RedBlackTreeSetOrMapImpl final {
     ) {
         return ExternalArray<Entry>::getByteArraySize(capacity);
     }
-#endif
 
   private:
     // ----------------------------------------------------------------------
@@ -290,7 +263,6 @@ class RedBlackTreeSetOrMapImpl final {
 
     //! The array for storing the set or map entries
     ExternalArray<Entry> m_entries = {};
-
 };
 
 }  // namespace Fw
