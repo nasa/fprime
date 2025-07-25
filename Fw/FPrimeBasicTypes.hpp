@@ -46,13 +46,13 @@ static_assert(FW_FIXED_LENGTH_STRING_SIZE >= FW_PARAM_STRING_MAX_SIZE,
 
 // Check that command/telemetry strings are not larger than an argument buffer
 
-static_assert(FW_CMD_STRING_MAX_SIZE <= FW_CMD_ARG_BUFFER_MAX_SIZE,
+static_assert(FW_CMD_STRING_MAX_SIZE + sizeof(FwSizeStoreType) <= FW_CMD_ARG_BUFFER_MAX_SIZE,
     "FW_CMD_STRING_MAX_SIZE cannot be larger than FW_CMD_ARG_BUFFER_MAX_SIZE");
-static_assert(FW_LOG_STRING_MAX_SIZE <= FW_LOG_BUFFER_MAX_SIZE,
+static_assert(FW_LOG_STRING_MAX_SIZE + sizeof(FwSizeStoreType) <= FW_LOG_BUFFER_MAX_SIZE,
     "FW_LOG_STRING_MAX_SIZE cannot be larger than FW_LOG_BUFFER_MAX_SIZE");
-static_assert(FW_TLM_STRING_MAX_SIZE <= FW_TLM_BUFFER_MAX_SIZE,
+static_assert(FW_TLM_STRING_MAX_SIZE + sizeof(FwSizeStoreType) <= FW_TLM_BUFFER_MAX_SIZE,
     "FW_TLM_STRING_MAX_SIZE cannot be larger than FW_TLM_BUFFER_MAX_SIZE");
-static_assert(FW_PARAM_STRING_MAX_SIZE <= FW_PARAM_BUFFER_MAX_SIZE,
+static_assert(FW_PARAM_STRING_MAX_SIZE + sizeof(FwSizeStoreType) <= FW_PARAM_BUFFER_MAX_SIZE,
     "FW_PARAM_STRING_MAX_SIZE cannot be larger than FW_PARAM_BUFFER_MAX_SIZE");
 
 // Text logging needs the code generator for serializables to generate a stringified version of the
@@ -79,7 +79,7 @@ static_assert(sizeof(PlatformPointerCastType) == sizeof(void*), "PlatformPointer
 static_assert(std::numeric_limits<PlatformSizeType>::max() >= std::numeric_limits<unsigned int>::max(),
       "PlatformSizeType must be at least as large as unsigned int");
 static_assert(std::numeric_limits<PlatformSignedSizeType>::max() >= std::numeric_limits<int>::max(),
-      "PlatformSignedSizeType must be at least as large as int"); 
+      "PlatformSignedSizeType must be at least as large as int");
 static_assert(std::numeric_limits<PlatformSignedSizeType>::min() <= std::numeric_limits<int>::min(),
       "PlatformSignedSizeType must be at least as small as int");
 static_assert(std::numeric_limits<PlatformIndexType>::is_signed, "PlatformIndexType must be signed");
@@ -92,7 +92,7 @@ static_assert(sizeof(PlatformSizeType) == sizeof(PlatformSignedSizeType), "Platf
 static_assert(std::numeric_limits<FwSizeType>::max() >= std::numeric_limits<unsigned int>::max(),
       "FwSizeType must be at least as large as unsigned int");
 static_assert(std::numeric_limits<FwSignedSizeType>::max() >= std::numeric_limits<int>::max(),
-      "FwSignedSizeType must be at least as large as int"); 
+      "FwSignedSizeType must be at least as large as int");
 static_assert(std::numeric_limits<FwSignedSizeType>::min() <= std::numeric_limits<int>::min(),
       "FwSignedSizeType must be at least as large as int");
 static_assert(std::numeric_limits<FwIndexType>::is_signed, "FwIndexType must be signed");
