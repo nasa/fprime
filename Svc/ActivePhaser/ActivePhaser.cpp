@@ -113,6 +113,7 @@ void ActivePhaser ::Tick_internalInterfaceHandler() {
     }
     // Finish active children and run the next child if it is not a short cycle
     // Shaokai: Finish active "children" or "child"?
+    // FIXME: This is really strange. Usually it is if a child is finished, then start a new child.
     if (!finishChild(full_ticks)) {
         startChild(full_ticks);
     }
@@ -120,6 +121,8 @@ void ActivePhaser ::Tick_internalInterfaceHandler() {
 
 bool ActivePhaser ::finishChild(U32 full_ticks) {
     // Guard against finishing improperly
+    // FIXME: This is confusing. false actually means we will start a child.
+    // But what does it mean to start a child when current >= used??
     if ((m_state.current >= m_state.used) || (not m_state.entries[m_state.current].started)) {
         return false;
     }
