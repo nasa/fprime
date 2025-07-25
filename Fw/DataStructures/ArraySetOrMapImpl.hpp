@@ -42,14 +42,11 @@ class ArraySetOrMapImpl final {
         ConstIterator() {}
 
         //! Constructor providing the implementation
-        ConstIterator(const ArraySetOrMapImpl<KE, VN>& impl) : SetOrMapImplConstIterator<KE, VN>(), m_impl(&impl) {
-            this->m_index = 0;
-        }
+        ConstIterator(const ArraySetOrMapImpl<KE, VN>& impl) : SetOrMapImplConstIterator<KE, VN>(), m_impl(&impl) {}
 
         //! Copy constructor
-        ConstIterator(const ConstIterator& it) : SetOrMapImplConstIterator<KE, VN>(), m_impl(it.m_impl) {
-            this->m_index = 0;
-        }
+        ConstIterator(const ConstIterator& it)
+            : SetOrMapImplConstIterator<KE, VN>(), m_impl(it.m_impl), m_index(it.m_index) {}
 
         //! Destructor
         ~ConstIterator() override = default;
