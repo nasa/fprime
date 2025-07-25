@@ -133,13 +133,12 @@ class RedBlackTreeSetOrMapImpl final {
         //! Constructor providing the implementation
         ConstIterator(const RedBlackTreeSetOrMapImpl<KE, VN>& impl)
             : SetOrMapImplConstIterator<KE, VN>(), m_impl(&impl) {
-            (void)m_impl;
-            // TODO
+            this->m_node = Index::NONE;
         }
 
         //! Copy constructor
         ConstIterator(const ConstIterator& it) : SetOrMapImplConstIterator<KE, VN>(), m_impl(it.m_impl) {
-            // TODO
+            this->m_node = Index::NONE;
         }
 
         //! Destructor
@@ -148,7 +147,8 @@ class RedBlackTreeSetOrMapImpl final {
       public:
         //! Copy assignment operator
         ConstIterator& operator=(const ConstIterator& it) {
-            // TODO
+            this->m_impl = it.m_impl;
+            this->m_node = it.m_node;
             return *this;
         }
 
@@ -158,7 +158,7 @@ class RedBlackTreeSetOrMapImpl final {
             if ((this->m_impl == nullptr) && (it.m_impl == nullptr)) {
                 result = true;
             } else if (this->m_impl == it.m_impl) {
-                // TODO
+                result |= (this->m_node == it.m_node);
                 result |= (!this->isInRange() and !it.isInRange());
             }
             return result;
@@ -171,8 +171,7 @@ class RedBlackTreeSetOrMapImpl final {
         //! Get the set or map impl entry pointed to by this iterator
         //! \return The set or map impl entry
         const Entry& getEntry() const override {
-            // TODO
-            return this->m_impl->m_nodes[0].m_entry;
+            return this->m_impl->m_nodes[this->m_node].m_entry;
         }
 
         //! Increment operator
@@ -183,18 +182,20 @@ class RedBlackTreeSetOrMapImpl final {
         //! Check whether the iterator is in range
         bool isInRange() const override {
             FW_ASSERT(this->m_impl != nullptr);
-            // TODO
-            return false;
+            return this->m_node < this->m_impl->getCapacity();
         }
 
         //! Set the iterator to the end value
         void setToEnd() {
-            // TODO
+            this->m_node = Index::NONE;
         }
 
       private:
         //! The implementation over which to iterate
         const RedBlackTreeSetOrMapImpl<KE, VN>* m_impl = nullptr;
+
+        //! The current node
+        Index m_node;
     };
 
   public:
