@@ -550,15 +550,11 @@ Success find(const KE& keyOrElement, VN& valueOrNil) const
 
 1. Set `direction = LEFT`.
 
-1. Set `status = FAILURE`.
+1. Let `status = findNode(keyOrElement, node, direction)`.
 
-1. Let `findStatus = findNode(keyOrElement, node, direction)`.
-
-1. If `findStatus == SUCCESS`
+1. If `status == SUCCESS`
 
     1. Set `valueOrNil = m_nodes[node].entry.getValue()`.
-
-    1. Set `status = SUCCESS`.
 
 1. Return `status`.
 

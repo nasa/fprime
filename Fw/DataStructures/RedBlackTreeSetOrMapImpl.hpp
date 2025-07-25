@@ -107,6 +107,9 @@ class RedBlackTreeSetOrMapImpl final {
     //! The node index type
     using Index = typename Node::Index;
 
+    //! The direction type
+    using Direction = typename Node::Direction;
+
     //! The type of the array for storing the tree nodes
     using Nodes = ExternalArray<Node>;
 
@@ -235,10 +238,9 @@ class RedBlackTreeSetOrMapImpl final {
     //! operator=
     RedBlackTreeSetOrMapImpl<KE, VN>& operator=(const RedBlackTreeSetOrMapImpl<KE, VN>& impl) {
         if (&impl != this) {
-            m_nodes = impl.m_nodes;
-            (void)m_freeNodes;
-            (void)m_root;
-            // TODO
+            this->m_nodes = impl.m_nodes;
+            this->m_freeNodes = impl.m_freeNodes;
+            this->m_root = impl.m_root;
         }
         return *this;
     }
@@ -247,7 +249,14 @@ class RedBlackTreeSetOrMapImpl final {
     ConstIterator begin() const { return ConstIterator(*this); }
 
     //! Clear the set or map
-    void clear() {  // TODO
+    void clear() {
+        // Clear the free node stack
+        this->m_freeNodes.clear();
+        // Push all the nodes on the free node stack
+        for (FwSizeType i = 0; i < this->getCapacity(); i++) {
+            const auto status = this->m_freeNodes.push(i);
+            FW_ASSERT(status == Success::SUCCESS, static_cast<FwAssertArgType>(status));
+        }
     }
 
     //! Get the end iterator
@@ -262,8 +271,12 @@ class RedBlackTreeSetOrMapImpl final {
     Success find(const KE& keyOrElement,  //!< The key or element
                  VN& valueOrNil           //!< The value or Nil
     ) const {
-        auto status = Success::FAILURE;
-        // TODO
+        auto node = Node::NONE;
+        auto direction = Node::LEFT;
+        const auto status = this->findNode(keyOrElement, node, direction);
+        if (status == Success::SUCCESS) {
+            valueOrNil = this->m_nodes[node].entry.getValue();
+        }
         return status;
     }
 
@@ -334,6 +347,30 @@ class RedBlackTreeSetOrMapImpl final {
     static constexpr FwSizeType getByteArraySize(FwSizeType capacity  //!< The capacity
     ) {
         return ExternalArray<Entry>::getByteArraySize(capacity);
+    }
+
+  private:
+    // ----------------------------------------------------------------------
+    // Private helper functions
+    // ----------------------------------------------------------------------
+
+    //! This function tries to find a node whose key or element ke matches keyOrElement.
+    //! On return from the function:
+    //! 1. If such a node exists, then the return value is SUCCESS,
+    //!    and node stores the index of N.
+    //! 2. Otherwise
+    //!    a. The return value is FAILURE.
+    //!    b. If the tree is empty, then node holds NONE.
+    //!    c. Otherwise node stores the index of the node N containing the NONE
+    //!       child where ke should be inserted, and direction stores the direction
+    //!       of the child in N (left or right).
+    Success findNode(const KE& keyOrElement,  //!< The key or element
+                     Index& node,             //!< The node index
+                     Direction direction      //!< The direction
+    ) {
+        auto result = Success::FAILURE;
+        // TODO
+        return result;
     }
 
   private:
