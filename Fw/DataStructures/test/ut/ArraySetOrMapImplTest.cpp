@@ -17,8 +17,6 @@ namespace Fw {
 
 namespace ArraySetOrMapImplTest {
 
-State::Impl impl_;
-State::Impl::ConstIterator it(impl_);
 TEST(ArraySetOrMapImpl, ZeroArgConstructor) {
     State::Impl impl;
     ASSERT_EQ(impl.getCapacity(), 0);
@@ -78,6 +76,11 @@ TEST(ArraySetOrMapImpl, CopyAssignmentOperator) {
     // Call the copy assignment operator
     impl2 = impl1;
     ASSERT_EQ(impl2.getSize(), 1);
+}
+
+TEST(ArraySetOrMapImpl, IteratorConstruction) {
+    State::Impl impl;
+    State::Impl::ConstIterator it(impl);
 }
 
 TEST(ArraySetOrMapImpl, IteratorComparison) {
