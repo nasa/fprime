@@ -475,10 +475,10 @@ Call [`setStorage(data, capacity)`](#setStorageUntyped).
 ### 5.4. Copy Constructor
 
 ```c++
-RedBlackTreeSetOrMapImpl(const RedBlackTreeSetOrMapImpl<KE, VN>& map)
+RedBlackTreeSetOrMapImpl(const RedBlackTreeSetOrMapImpl<KE, VN>& impl)
 ```
 
-Set `*this = map`.
+Set `*this = impl`.
 
 ### 5.5. Destructor
 

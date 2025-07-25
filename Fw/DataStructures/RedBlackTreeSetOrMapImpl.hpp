@@ -10,6 +10,7 @@
 #include <limits>
 
 #include "Fw/DataStructures/ExternalArray.hpp"
+#include "Fw/DataStructures/ExternalStack.hpp"
 #include "Fw/DataStructures/SetOrMapImplConstIterator.hpp"
 #include "Fw/DataStructures/SetOrMapImplEntry.hpp"
 #include "Fw/Types/Assert.hpp"
@@ -98,6 +99,20 @@ class RedBlackTreeSetOrMapImpl final {
         }
     };
 
+  private:
+    // ----------------------------------------------------------------------
+    // The Nodes and FreeNodes types
+    // ----------------------------------------------------------------------
+
+    //! The node index type
+    using Index = typename Node::Index;
+
+    //! The type of the array for storing the tree nodes
+    using Nodes = ExternalArray<Node>;
+
+    //! The type of the stack of indices of free nodes
+    using FreeNodes = ExternalStack<Index>;
+
   public:
     // ----------------------------------------------------------------------
     // The ConstIterator type
@@ -154,7 +169,7 @@ class RedBlackTreeSetOrMapImpl final {
         //! \return The set or map impl entry
         const Entry& getEntry() const override {
             // TODO
-            return this->m_impl->m_entries[0];
+            return this->m_impl->m_nodes[0].m_entry;
         }
 
         //! Increment operator
@@ -188,11 +203,13 @@ class RedBlackTreeSetOrMapImpl final {
     RedBlackTreeSetOrMapImpl() = default;
 
     //! Constructor providing typed backing storage.
-    //! entries must point to at least capacity elements of type Entry.
-    RedBlackTreeSetOrMapImpl(Entry* entries,      //!< The entries
-                             FwSizeType capacity  //!< The capacity
+    //! nodes must point to at least capacity elements of type Node.
+    //! freeNodes must point to at least capacity elements of type FwSizeType.
+    RedBlackTreeSetOrMapImpl(Node* nodes,            //!< The nodes
+                             FwSizeType* freeNodes,  //!< The free nodes
+                             FwSizeType capacity     //!< The capacity
     ) {
-        this->setStorage(entries, capacity);
+        this->setStorage(nodes, freeNodes, capacity);
     }
 
     //! Constructor providing untyped backing storage.
@@ -218,7 +235,9 @@ class RedBlackTreeSetOrMapImpl final {
     //! operator=
     RedBlackTreeSetOrMapImpl<KE, VN>& operator=(const RedBlackTreeSetOrMapImpl<KE, VN>& impl) {
         if (&impl != this) {
-            m_entries = impl.m_entries;
+            m_nodes = impl.m_nodes;
+            (void)m_freeNodes;
+            (void)m_root;
             // TODO
         }
         return *this;
@@ -250,7 +269,7 @@ class RedBlackTreeSetOrMapImpl final {
 
     //! Get the capacity of the set or map (max number of entries)
     //! \return The capacity
-    FwSizeType getCapacity() const { return this->m_entries.getSize(); }
+    FwSizeType getCapacity() const { return this->m_nodes.getSize(); }
 
     //! Get the size (number of entries)
     //! \return The size
@@ -280,11 +299,13 @@ class RedBlackTreeSetOrMapImpl final {
     }
 
     //! Set the backing storage (typed data)
-    //! entries must point to at least capacity elements of type Entry.
-    void setStorage(Entry* entries,      //!< The entries
-                    FwSizeType capacity  //!< The capacity
+    //! nodes must point to at least capacity elements of type Node.
+    //! freeNodes must point to at least capacity elements of type FwSizeType.
+    void setStorage(Node* nodes,            //!< The nodes
+                    FwSizeType* freeNodes,  //!< The free nodes
+                    FwSizeType capacity     //!< The capacity
     ) {
-        this->m_entries.setStorage(entries, capacity);
+        // TODO
         this->clear();
     }
 
@@ -294,7 +315,7 @@ class RedBlackTreeSetOrMapImpl final {
     void setStorage(ByteArray data,      //!< The data
                     FwSizeType capacity  //!< The capacity
     ) {
-        this->m_entries.setStorage(data, capacity);
+        // TODO
         this->clear();
     }
 
@@ -320,8 +341,14 @@ class RedBlackTreeSetOrMapImpl final {
     // Private member variables
     // ----------------------------------------------------------------------
 
-    //! The array for storing the set or map entries
-    ExternalArray<Entry> m_entries = {};
+    //! The array for storing the tree nodes
+    Nodes m_nodes = {};
+
+    //! The stack of indices of free nodes. The indices point into m_nodes.
+    FreeNodes m_freeNodes = {};
+
+    //! The index of the root node
+    Index m_root = Node::NONE;
 };
 
 }  // namespace Fw
