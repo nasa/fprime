@@ -132,14 +132,11 @@ class RedBlackTreeSetOrMapImpl final {
 
         //! Constructor providing the implementation
         ConstIterator(const RedBlackTreeSetOrMapImpl<KE, VN>& impl)
-            : SetOrMapImplConstIterator<KE, VN>(), m_impl(&impl) {
-            this->m_node = Index::NONE;
-        }
+            : SetOrMapImplConstIterator<KE, VN>(), m_impl(&impl) {}
 
         //! Copy constructor
-        ConstIterator(const ConstIterator& it) : SetOrMapImplConstIterator<KE, VN>(), m_impl(it.m_impl) {
-            this->m_node = Index::NONE;
-        }
+        ConstIterator(const ConstIterator& it)
+            : SetOrMapImplConstIterator<KE, VN>(), m_impl(it.m_impl), m_node(it.m_node) {}
 
         //! Destructor
         ~ConstIterator() override = default;
@@ -170,9 +167,7 @@ class RedBlackTreeSetOrMapImpl final {
 
         //! Get the set or map impl entry pointed to by this iterator
         //! \return The set or map impl entry
-        const Entry& getEntry() const override {
-            return this->m_impl->m_nodes[this->m_node].m_entry;
-        }
+        const Entry& getEntry() const override { return this->m_impl->m_nodes[this->m_node].m_entry; }
 
         //! Increment operator
         void increment() override {
@@ -186,16 +181,14 @@ class RedBlackTreeSetOrMapImpl final {
         }
 
         //! Set the iterator to the end value
-        void setToEnd() {
-            this->m_node = Index::NONE;
-        }
+        void setToEnd() { this->m_node = Index::NONE; }
 
       private:
         //! The implementation over which to iterate
         const RedBlackTreeSetOrMapImpl<KE, VN>* m_impl = nullptr;
 
         //! The current node
-        Index m_node;
+        Index m_node = Index::NONE;
     };
 
   public:
