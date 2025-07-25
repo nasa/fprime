@@ -7,6 +7,8 @@
 #ifndef Fw_RedBlackTreeSetOrMapImpl_HPP
 #define Fw_RedBlackTreeSetOrMapImpl_HPP
 
+#include <limits>
+
 #include "Fw/DataStructures/ExternalArray.hpp"
 #include "Fw/DataStructures/SetOrMapImplConstIterator.hpp"
 #include "Fw/DataStructures/SetOrMapImplEntry.hpp"
@@ -26,7 +28,7 @@ class RedBlackTreeSetOrMapImpl final {
 
   public:
     // ----------------------------------------------------------------------
-    // Public type aliases
+    // The Entry type
     // ----------------------------------------------------------------------
 
     //! The type of an entry in the set or map
@@ -34,14 +36,71 @@ class RedBlackTreeSetOrMapImpl final {
 
   private:
     // ----------------------------------------------------------------------
-    // The node type
+    // The Node type
     // ----------------------------------------------------------------------
 
-    // TODO
+    //! Node
+    class Node {
+      public:
+        //! Color
+        enum class Color : U8 { BLACK, RED };
+
+        //! Direction
+        enum class Direction : U8 { LEFT, RIGHT };
+
+        //! The type of a node index
+        using Index = FwSizeType;
+
+      public:
+        //! Constant value representing no node
+        static constexpr Index NONE = std::numeric_limits<Index>::max();
+
+      public:
+        //! The index of the parent of this node
+        Index m_parent = NONE;
+
+        //! The index of the left child of this node
+        Index m_left = NONE;
+
+        //! The index of the right child of this node
+        Index m_right = NONE;
+
+        //! The color of this node
+        Color m_color = Color::BLACK;
+
+        //! The set or map entry stored in this node
+        Entry m_entry = {};
+
+      public:
+        //! Get the child of this node in the specified direction
+        //! \return The child
+        Index getChild(Direction direction  //!< The direction
+        ) {
+            return (direction == Direction::LEFT) ? this->m_left : this->m_right;
+        }
+
+        //! Set the child of this node in the specified direction
+        void setChild(Direction direction,  //!< The direction
+                      Index node            //!< The node index
+        ) {
+            if (direction == Direction::LEFT) {
+                this->m_left = node;
+            } else {
+                this->m_right = node;
+            }
+        }
+
+      public:
+        // Get the opposite direction
+        static Direction getOppositeDirection(Direction direction  //!< The direction
+        ) {
+            return (direction == Direction::LEFT) ? Direction::RIGHT : Direction::LEFT;
+        }
+    };
 
   public:
     // ----------------------------------------------------------------------
-    // The const iterator type
+    // The ConstIterator type
     // ----------------------------------------------------------------------
 
     //! Const iterator

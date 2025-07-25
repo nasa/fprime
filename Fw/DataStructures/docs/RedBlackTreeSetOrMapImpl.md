@@ -326,11 +326,11 @@ It represents a node of the red-black tree.
 
 |Name|Type|Purpose|Value|
 |----|----|-------|-------------|
-|`NONE`|`Index`|An out-of-bounds index value corresponding to no node|`std::numeric_limits<FwSizeType>::max()`|
+|`NONE`|`Index`|An out-of-bounds index value corresponding to no node|`std::numeric_limits<Index>::max()`|
 
 #### 3.2.3. Public Member Variables
 
-`Node` has the following private member variables.
+`Node` has the following public member variables.
 
 |Name|Type|Purpose|Default Value|
 |----|----|-------|-------------|
@@ -366,8 +366,6 @@ Sets the child of `this` in direction `direction`.
 **Algorithm:**
 `(direction == LEFT) ? (this.left = node) : (this.right = node)`.
 
-**Overview:**
-
 #### 3.2.5. Public Static Methods
 
 ##### 3.2.5.1. getOppositeDirection
@@ -375,14 +373,6 @@ Sets the child of `this` in direction `direction`.
 ```c+++
 static Direction oppositeDirection(Direction direction)
 ```
-
-##### 3.2.5.2. getNodeColor
-
-```c++
-static Node::Color getNodeColor(Index index)
-```
-
-return `index == NONE ? BLACK : m_nodes[index].color`.
 
 **Overview:**
 Returns the opposite direction.
@@ -726,6 +716,14 @@ static constexpr FwSizeType getByteArraySize(FwSizeType capacity)
 1. Let `freeNodesSize = FreeStack::getByteArraySize(capacity)`.
 
 1. Return `nodesSize + freeNodesAlignment + freeNodesSize`.
+
+##### 7.2.0.1. getNodeColor
+
+```c++
+static Node::Color getNodeColor(Index index)
+```
+
+Return `index == NONE ? BLACK : m_nodes[index].color`.
 
 ## 8. Private Helper Functions
 
