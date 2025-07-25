@@ -24,9 +24,12 @@ namespace Fw {
             virtual ~TlmPacket();
 
             //! Serialize the packet before sending. For use internally in software. To send to the ground, use getBuffer() below.
-            SerializeStatus serialize(SerializeBufferBase& buffer) const; //!< serialize contents
+            SerializeStatus serialize(SerializeBufferBase& buffer) const override; //!< serialize contents
             //! Deserialize the packet. For use internally in software. To extract channels, use setBuffer() and extractValue() below. This is NOT typically used.
-            SerializeStatus deserialize(SerializeBufferBase& buffer);
+            SerializeStatus deserialize(SerializeBufferBase& buffer) override;
+
+            SerializeStatus serializeTo(SerializeBufferBase& buffer) const override; //!< serialize contents
+            SerializeStatus deserializeFrom(SerializeBufferBase& buffer) override;
             //! Add telemetry value to buffer.
             SerializeStatus addValue(FwChanIdType id, Time& timeTag, TlmBuffer& buffer);
             //! extract telemetry value - since there are potentially multiple channel values in the packet,

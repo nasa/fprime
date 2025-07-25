@@ -480,7 +480,7 @@ bool PolyType::operator<=(const PolyType& other) const {
     return (this->operator<(other)) || (this->operator==(other));
 }
 
-SerializeStatus PolyType::serialize(SerializeBufferBase& buffer) const {
+SerializeStatus PolyType::serializeTo(SerializeBufferBase& buffer) const {
     // store type
     SerializeStatus stat = buffer.serialize(static_cast<FwEnumStoreType>(this->m_dataType));
     if (stat != FW_SERIALIZE_OK) {
@@ -539,7 +539,12 @@ SerializeStatus PolyType::serialize(SerializeBufferBase& buffer) const {
     return stat;
 }
 
-SerializeStatus PolyType::deserialize(SerializeBufferBase& buffer) {
+SerializeStatus PolyType::serialize(SerializeBufferBase& buffer) const {
+    // Deprecated method - calls new interface for backward compatibility
+    return this->serializeTo(buffer);
+}
+
+SerializeStatus PolyType::deserializeFrom(SerializeBufferBase& buffer) {
     // get type
     FwEnumStoreType des;
     SerializeStatus stat = buffer.deserialize(des);
@@ -584,6 +589,11 @@ SerializeStatus PolyType::deserialize(SerializeBufferBase& buffer) {
                 return FW_DESERIALIZE_FORMAT_ERROR;
         }
     }
+}
+
+SerializeStatus PolyType::deserialize(SerializeBufferBase& buffer) {
+    // Deprecated method - calls new interface for backward compatibility
+    return this->deserializeFrom(buffer);
 }
 
 #if FW_SERIALIZABLE_TO_STRING || BUILD_UT

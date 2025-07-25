@@ -30,16 +30,16 @@ namespace Ref {
         buff.resetDeser();
         // deserialize packet ID
         U32 id = 0;
-        Fw::SerializeStatus stat = buff.deserialize(id);
+        Fw::SerializeStatus stat = buff.deserializeTo(id);
         FW_ASSERT(stat == Fw::FW_SERIALIZE_OK,static_cast<FwAssertArgType>(stat));
         // deserialize data
         U8 testData[24] = {0};
         FwSizeType size = sizeof(testData);
-        stat = buff.deserialize(testData,size);
+        stat = buff.deserializeTo(testData,size);
         FW_ASSERT(stat == Fw::FW_SERIALIZE_OK,static_cast<FwAssertArgType>(stat));
         // deserialize checksum
         U32 csum = 0;
-        stat = buff.deserialize(csum);
+        stat = buff.deserializeTo(csum);
         FW_ASSERT(stat == Fw::FW_SERIALIZE_OK,static_cast<FwAssertArgType>(stat));
         // if first packet, send event
         if (not this->m_firstBuffReceived) {

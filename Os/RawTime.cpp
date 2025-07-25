@@ -43,14 +43,14 @@ RawTime::Status RawTime::getTimeInterval(const Os::RawTime& other, Fw::TimeInter
     return this->m_delegate.getTimeInterval(other, result);
 }
 
-Fw::SerializeStatus RawTime::serialize(Fw::SerializeBufferBase& buffer) const {
+Fw::SerializeStatus RawTime::serializeTo(Fw::SerializeBufferBase& buffer) const {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<const RawTimeInterface*>(&this->m_handle_storage[0]));
-    return this->m_delegate.serialize(buffer);
+    return this->m_delegate.serializeTo(buffer);
 }
 
-Fw::SerializeStatus RawTime::deserialize(Fw::SerializeBufferBase& buffer) {
+Fw::SerializeStatus RawTime::deserializeFrom(Fw::SerializeBufferBase& buffer) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<const RawTimeInterface*>(&this->m_handle_storage[0]));
-    return this->m_delegate.deserialize(buffer);
+    return this->m_delegate.deserializeFrom(buffer);
 }
 
 RawTime::Status RawTime::getDiffUsec(const RawTime& other, U32& result) const {
@@ -75,6 +75,14 @@ RawTime::Status RawTime::getDiffUsec(const RawTime& other, U32& result) const {
     // No overflow, we can safely add values to get total microseconds
     result = secToUsec + useconds;
     return status;
+}
+
+Fw::SerializeStatus RawTime::serialize(Fw::SerializeBufferBase& buffer) const {
+    return this->serializeTo(buffer);
+}
+
+Fw::SerializeStatus RawTime::deserialize(Fw::SerializeBufferBase& buffer) {
+    return this->deserializeFrom(buffer);
 }
 
 bool RawTime::operator==(const RawTime& other) const {

@@ -130,6 +130,16 @@ namespace Fw {
     }
 
     SerializeStatus TlmPacket::serialize(SerializeBufferBase& buffer) const {
+        // Deprecated method - calls new interface for backward compatibility
+        return this->serializeTo(buffer);
+    }
+
+    SerializeStatus TlmPacket::deserialize(SerializeBufferBase& buffer) {
+        // Deprecated method - calls new interface for backward compatibility
+        return this->deserializeFrom(buffer);
+    }
+
+    SerializeStatus TlmPacket::serializeTo(SerializeBufferBase& buffer) const {
         // serialize the number of packets
         SerializeStatus stat = buffer.serialize(this->m_numEntries);
         if (stat != Fw::FW_SERIALIZE_OK) {
@@ -139,7 +149,7 @@ namespace Fw {
         return buffer.serialize(this->m_tlmBuffer.getBuffAddr(),m_tlmBuffer.getBuffLength(),Fw::Serialization::OMIT_LENGTH);
     }
 
-    SerializeStatus TlmPacket::deserialize(SerializeBufferBase& buffer) {
+    SerializeStatus TlmPacket::deserializeFrom(SerializeBufferBase& buffer) {
 
         // deserialize the number of packets
         SerializeStatus stat = buffer.deserialize(this->m_numEntries);

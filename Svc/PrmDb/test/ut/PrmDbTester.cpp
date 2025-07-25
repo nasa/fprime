@@ -62,7 +62,7 @@ namespace Svc {
 
         this->invoke_to_getPrm(0,id,pBuff);
         // deserialize it
-        stat = pBuff.deserialize(testVal);
+        stat = pBuff.deserializeTo(testVal);
         EXPECT_EQ(Fw::FW_SERIALIZE_OK,stat);
         EXPECT_EQ(testVal,val);
 
@@ -85,7 +85,7 @@ namespace Svc {
         testVal = 0;
         this->invoke_to_getPrm(0,id,pBuff);
         // deserialize it
-        stat = pBuff.deserialize(testVal);
+        stat = pBuff.deserializeTo(testVal);
         EXPECT_EQ(Fw::FW_SERIALIZE_OK,stat);
         EXPECT_EQ(testVal,val);
 
@@ -168,7 +168,7 @@ namespace Svc {
         U32 testVal;
         this->invoke_to_getPrm(0,0x21,pBuff);
         // deserialize it
-        Fw::SerializeStatus stat = pBuff.deserialize(testVal);
+        Fw::SerializeStatus stat = pBuff.deserializeTo(testVal);
         EXPECT_EQ(Fw::FW_SERIALIZE_OK,stat);
         EXPECT_EQ(testVal,0x15u);
 
@@ -176,7 +176,7 @@ namespace Svc {
         pBuff.resetSer();
         this->invoke_to_getPrm(0,0x25,pBuff);
         // deserialize it
-        stat = pBuff.deserialize(testVal);
+        stat = pBuff.deserializeTo(testVal);
         EXPECT_EQ(Fw::FW_SERIALIZE_OK,stat);
         EXPECT_EQ(testVal,0x30u);
 
@@ -240,7 +240,7 @@ namespace Svc {
             U32 testVal;
             this->invoke_to_getPrm(0,id,pBuff);
             // deserialize it
-            stat = pBuff.deserialize(testVal);
+            stat = pBuff.deserializeTo(testVal);
             EXPECT_EQ(Fw::FW_SERIALIZE_OK,stat);
             EXPECT_EQ(testVal,val);
         }
@@ -270,7 +270,7 @@ namespace Svc {
             I16 testVal;
             this->invoke_to_getPrm(0,id,pBuff);
             // deserialize it
-            stat = pBuff.deserialize(testVal);
+            stat = pBuff.deserializeTo(testVal);
             EXPECT_EQ(Fw::FW_SERIALIZE_OK,stat);
             EXPECT_EQ(testVal,val);
         }
@@ -300,7 +300,7 @@ namespace Svc {
             U8 testVal;
             this->invoke_to_getPrm(0,id,pBuff);
             // deserialize it
-            stat = pBuff.deserialize(testVal);
+            stat = pBuff.deserializeTo(testVal);
             EXPECT_EQ(Fw::FW_SERIALIZE_OK,stat);
             EXPECT_EQ(testVal,val);
         }
@@ -330,7 +330,7 @@ namespace Svc {
             F32 testVal;
             this->invoke_to_getPrm(0,id,pBuff);
             // deserialize it
-            stat = pBuff.deserialize(testVal);
+            stat = pBuff.deserializeTo(testVal);
             EXPECT_EQ(Fw::FW_SERIALIZE_OK,stat);
             EXPECT_EQ(testVal,val);
         }
