@@ -225,7 +225,7 @@ of a path, a node, a tree, or a forest of trees.
    Otherwise the black height of _N_ is not defined.
 
 1. **Trees:** Let _T_ be a red-black tree.
-   Let _T'_ be the corresponding <a href="#leaf-augmented-trees">leaf-augmented 
+   Let _T'_ be the corresponding <a href="#leaf-augmented-trees">leaf-augmented
    tree</a>.
    If the root of _T'_ has a defined black height _n_, then the black height of
    _T_ is defined and is equal to _n_.
@@ -259,7 +259,7 @@ section <a href="#red-black-colorings">**Red-Black Colorings**</a> as follows:
 </div>
 </center>
 
-Similarly, we may represent the tree shown in the section <a 
+Similarly, we may represent the tree shown in the section <a
 href="#valid-colorings">**Valid Colorings**</a> as follows:
 
 <center>
@@ -877,9 +877,9 @@ It is not permissible for `node` to be `NONE`.
 
 **Algorithm:**
 
-1. _We assume that the tree is a red-black tree, that the
-   child of `parent` in the direction `direction` is `NONE`,
-   and that both children of `node` are `NONE`._
+1. _We assume (1) that the tree is a red-black tree, (2) that
+   `parent` is none or the child of `parent` in the direction `direction` is
+   `NONE`, and (3) that both children of `node` are `NONE`._
 
 1. Let `oppositeDirection = Node::getOppositeDirection(direction)`.
 

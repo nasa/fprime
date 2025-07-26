@@ -483,9 +483,9 @@ class RedBlackTreeSetOrMapImpl final {
                     Index parent,        //!< The new parent
                     Direction direction  //!< The direction under the new parent
     ) {
-        // We assume that the tree is a red-black tree, that the child of
-        // parent in the direction direction is NONE, and that both children of
-        // node are NONE.
+        // We assume (1) that the tree is a red-black tree, (2) that parent is NONE or
+        // the child of parent in the direction direction is NONE, and (3) that
+        // both children of node are NONE.
         const auto oppositeDirection = Node::getOppositeDirection(direction);
         this->m_nodes[node].color = Color::RED;
         this->m_nodes[node].parent = parent;
