@@ -66,8 +66,8 @@ class RedBlackTreeSetOrMapImplTester {
         ASSERT_EQ(size, this->m_impl.getSize());
     }
 
-    // Check the black height property of the tree. Return the height.
-    FwSizeType checkBlackHeights() const {
+    // Check the red-black tree property of the tree. Return the black height.
+    FwSizeType checkRbtProperty() const {
         auto node = this->m_impl.getOuterNodeUnder(this->m_impl.m_root, Direction::LEFT);
         const auto capacity = this->m_impl.getCapacity();
         for (FwSizeType i = 0; i < capacity; i++) {
@@ -82,6 +82,7 @@ class RedBlackTreeSetOrMapImplTester {
                 // There is no right child. Go upwards until we pass through a left child
                 // or we hit the root.
                 for (FwSizeType j = 0; j < capacity; j++) {
+                    this->checkForRedViolation(node);
                     this->updateBlackHeight(node);
                     const auto previousNode = node;
                     node = this->m_impl.m_nodes[node].parent;
@@ -97,7 +98,23 @@ class RedBlackTreeSetOrMapImplTester {
     // Get the black height of a node
     FwSizeType getBlackHeight(Index node) const { return (node == Node::NONE) ? 1 : this->blackHeights[node]; }
 
-    // Update the black height of a node, after visiting all its descendants
+    // Check for a red violation at a node
+    void checkForRedViolation(Index node) const {
+        if (RedBlackTreeSetOrMapImpl<KE, VN>::getNodeColor(node) == Color::RED) {
+            const auto& nodes = this->m_impl.m_nodes;
+            const auto leftChild = nodes[node].getChild(Direction::LEFT);
+            ASSERT_NE(nodes[leftChild].color, Color::RED)
+              << "node index is " << leftChild << "\n"
+              << "key is " << nodes[leftChild].entry.getKeyOrElement() << "\n";
+            const auto rightChild = nodes[node].getChild(Direction::RIGHT);
+            ASSERT_NE(nodes[rightChild].color, Color::RED)
+              << "node index is " << rightChild << "\n"
+              << "key is " << nodes[rightChild].entry.getKeyOrElement() << "\n";
+        }
+    }
+
+    // Update the black height of a node, after visiting all its descendants.
+    // Check for a black height violation.
     void updateBlackHeight(Index node) {
         const auto& nodes = this->m_impl.m_nodes;
         if (node != Node::NONE) {
