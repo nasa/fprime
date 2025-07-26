@@ -529,17 +529,17 @@ class RedBlackTreeSetOrMapImpl final {
                         //                   B                    B
                         //                    BBBBBBBBBBBBBBBBBBBB
                         //                        /          \
-                      //                       /            \
-                      //                      V              V
+                        //                       /            \
+                        //                      V              V
                         //         BBBBBBBBBBBBBB              RRRRRRRRRRRRRRR
                         //        B              B            R               R
                         //        B  K1 (uncle)  B            R  K4 (parent)  R
                         //        B              B            R               R
                         //         BBBBBBBBBBBBBB              RRRRRRRRRRRRRRR
                         //             |     |                   /         \
-                      //             |     |                  /           \
-                      //             V     V                 V             \
-                      //        ------------------      RRRRRRRRRRRRR      |
+                        //             |     |                  /           \
+                        //             V     V                 V             \
+                        //        ------------------      RRRRRRRRRRRRR      |
                         //        |                |     R             R     |
                         //        | black height n |     R  K3 (node)  R     |
                         //        |                |     R             R     |
