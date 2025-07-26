@@ -136,7 +136,7 @@ class RedBlackTreeSetOrMapImpl final {
         //! Constructor providing the implementation
         ConstIterator(const RedBlackTreeSetOrMapImpl<KE, VN>& impl)
             : SetOrMapImplConstIterator<KE, VN>(), m_impl(&impl) {
-            // TODO: Set m_node to point to the initial node
+            this->m_node = this->m_impl->getOuterNodeUnder(this->m_impl->m_root, Direction::LEFT);
         }
 
         //! Copy constructor
@@ -176,7 +176,28 @@ class RedBlackTreeSetOrMapImpl final {
 
         //! Increment operator
         void increment() override {
-            // TODO
+            FW_ASSERT(this->m_impl != nullptr);
+            if (this->m_node != Node::NONE) {
+                const auto rightChild = this->m_nodes[this->m_node].getChild(Direction::RIGHT);
+                if (rightChild != Node::NONE) {
+                    // There is a right child. Go to the leftmost node under that child.
+                    this->m_node = this->m_impl->getOuterNodeUnder(rightChild, Direction::LEFT);
+                } else {
+                    // There is no right child. Go upwards until we pass through a left child
+                    // or we hit the root.
+                    const auto capacity = this->m_impl->getCapacity();
+                    bool done = false;
+                    for (FwSizeType i = 0; i < capacity; i++) {
+                        const auto previousNode = this->m_node;
+                        this->m_node = this->m_nodes[this->m_node].parent;
+                        if ((this->m_node == Node::NONE) or (this->m_node.getChild(Direction::LEFT) == previousNode)) {
+                            done = true;
+                            break;
+                        }
+                    }
+                    FW_ASSERT(done == true);
+                }
+            }
         }
 
         //! Check whether the iterator is in range
@@ -252,7 +273,8 @@ class RedBlackTreeSetOrMapImpl final {
         // Clear the free node stack
         this->m_freeNodes.clear();
         // Push all the nodes on the free node stack
-        for (FwSizeType i = 0; i < this->getCapacity(); i++) {
+        const auto capacity = this->getCapacity();
+        for (FwSizeType i = 0; i < capacity; i++) {
             const auto status = this->m_freeNodes.push(i);
             FW_ASSERT(status == Success::SUCCESS, static_cast<FwAssertArgType>(status));
         }
@@ -417,6 +439,26 @@ class RedBlackTreeSetOrMapImpl final {
     Color getNodeColor(Index index  //!< The node index
     ) {
         return (index == Color::NONE) ? Color::BLACK : this->m_nodes[index].color;
+    }
+
+    //! Get the outer node under node in the specified direction. If node has
+    //! no child in that direction, then the result is node.
+    Index getOuterNodeUnder(Index node,          //!< The node index
+                            Direction direction  //!< The direction
+    ) {
+        auto child = (node != Node::NONE) ? this->m_nodes[node].getChild(direction) : Node::NONE;
+        bool done = false;
+        const auto capacity = this->getCapacity();
+        for (FwSizeType i = 0; i < capacity; i++) {
+            if (child == Node::NODE) {
+                done = true;
+                break;
+            }
+            node = child;
+            child = this->m_nodes[child].getChild(direction);
+        }
+        FW_ASSERT(done == true);
+        return node;
     }
 
     //! This function inserts node into the tree as a left or right child of parent,
