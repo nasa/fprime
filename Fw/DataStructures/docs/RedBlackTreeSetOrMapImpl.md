@@ -892,9 +892,9 @@ It is not permissible for `node` to be `NONE`.
 
 1. Otherwise
 
-    1. Set `done = false`.
-
     1. Call `m_nodes[parent].setChild(direction, node)`.
+
+    1. Set `done = false`.
 
     1. In a for loop bounded by `getCapacity()`:
 

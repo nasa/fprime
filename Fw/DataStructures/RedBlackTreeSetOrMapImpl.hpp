@@ -494,8 +494,8 @@ class RedBlackTreeSetOrMapImpl final {
             // The tree was empty, and now it consists of a single red node.
         } else {
             // Set the parent
-            bool done = false;
             this->m_nodes[parent].setChild(direction, node);
+            bool done = false;
             const auto capacity = this->getCapacity();
             for (FwSizeType i = 0; i < capacity; i++) {
                 // The following invariants hold: (1) node is colored red; (2)
