@@ -47,6 +47,12 @@ class RedBlackTreeSetOrMapImplTester {
 
     Index getRoot() const { return this->m_impl.m_root; }
 
+    // Check properties of the tree
+    void checkProperties() const {
+      this->checkBstProperty();
+      (void) this->checkRbtProperties();
+    }
+
     // Check the BST property of the tree
     void checkBstProperty() const {
         const auto capacity = this->m_impl.getCapacity();
@@ -68,8 +74,8 @@ class RedBlackTreeSetOrMapImplTester {
         ASSERT_EQ(size, this->m_impl.getSize());
     }
 
-    // Check the red-black tree property of the tree. Return the black height.
-    FwSizeType checkRbtProperty() const {
+    // Check the red-black tree properties of the tree. Return the black height.
+    FwSizeType checkRbtProperties() const {
         auto node = this->m_impl.getOuterNodeUnder(this->m_impl.m_root, Direction::LEFT);
         const auto capacity = this->m_impl.getCapacity();
         for (FwSizeType i = 0; i < capacity; i++) {
@@ -106,12 +112,18 @@ class RedBlackTreeSetOrMapImplTester {
             const auto& nodes = this->m_impl.m_nodes;
             const auto leftChild = nodes[node].getChild(Direction::LEFT);
             ASSERT_NE(nodes[leftChild].color, Color::RED)
-              << "node index is " << leftChild << "\n"
-              << "key is " << nodes[leftChild].entry.getKeyOrElement() << "\n";
+              << "Red child violation at left child\n"
+              << "  node index is " << node << "\n"
+              << "  node key is " << nodes[node].entry.getKeyOrElement() << "\n"
+              << "  left child index is " << leftChild << "\n"
+              << "  left child key is " << nodes[leftChild].entry.getKeyOrElement() << "\n";
             const auto rightChild = nodes[node].getChild(Direction::RIGHT);
             ASSERT_NE(nodes[rightChild].color, Color::RED)
-              << "node index is " << rightChild << "\n"
-              << "key is " << nodes[rightChild].entry.getKeyOrElement() << "\n";
+              << "Red child violation at right child\n"
+              << "  node index is " << node << "\n"
+              << "  node key is " << nodes[node].entry.getKeyOrElement() << "\n"
+              << "  right child index is " << rightChild << "\n"
+              << "  right child key is " << nodes[rightChild].entry.getKeyOrElement() << "\n";
         }
     }
 
@@ -125,10 +137,11 @@ class RedBlackTreeSetOrMapImplTester {
             const auto rightChild = nodes[node].getChild(Direction::RIGHT);
             const auto rightHeight = getBlackHeight(rightChild);
             ASSERT_EQ(leftHeight, rightHeight)
-              << "left child index is " << leftChild << "\n"
-              << "left child key is " << nodes[leftChild].entry.getKeyOrElement() << "\n"
-              << "right child index is " << rightChild << "\n"
-              << "right child key is " << nodes[rightChild].entry.getKeyOrElement() << "\n";
+              << "Black height violation\n"
+              << "  left child index is " << leftChild << "\n"
+              << "  left child key is " << nodes[leftChild].entry.getKeyOrElement() << "\n"
+              << "  right child index is " << rightChild << "\n"
+              << "  right child key is " << nodes[rightChild].entry.getKeyOrElement() << "\n";
             const FwSizeType nodeHeight =
                 (Impl::getNodeColor(node) == Color::BLACK) ? 1 : 0;
             this->blackHeights[node] = leftHeight + rightHeight + nodeHeight;
