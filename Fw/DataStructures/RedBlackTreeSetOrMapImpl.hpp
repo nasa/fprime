@@ -178,7 +178,7 @@ class RedBlackTreeSetOrMapImpl final {
         void increment() override {
             FW_ASSERT(this->m_impl != nullptr);
             if (this->m_node != Node::NONE) {
-                const auto rightChild = this->m_nodes[this->m_node].getChild(Direction::RIGHT);
+                const auto rightChild = this->m_impl->m_nodes[this->m_node].getChild(Direction::RIGHT);
                 if (rightChild != Node::NONE) {
                     // There is a right child. Go to the leftmost node under that child.
                     this->m_node = this->m_impl->getOuterNodeUnder(rightChild, Direction::LEFT);
@@ -189,7 +189,7 @@ class RedBlackTreeSetOrMapImpl final {
                     bool done = false;
                     for (FwSizeType i = 0; i < capacity; i++) {
                         const auto previousNode = this->m_node;
-                        this->m_node = this->m_nodes[this->m_node].parent;
+                        this->m_node = this->m_impl->m_nodes[this->m_node].parent;
                         if ((this->m_node == Node::NONE) or (this->m_node.getChild(Direction::LEFT) == previousNode)) {
                             done = true;
                             break;
@@ -207,14 +207,14 @@ class RedBlackTreeSetOrMapImpl final {
         }
 
         //! Set the iterator to the end value
-        void setToEnd() { this->m_node = Index::NONE; }
+        void setToEnd() { this->m_node = Node::NONE; }
 
       private:
         //! The implementation over which to iterate
         const RedBlackTreeSetOrMapImpl<KE, VN>* m_impl = nullptr;
 
         //! The current node
-        Index m_node = Index::NONE;
+        Index m_node = Node::NONE;
     };
 
   public:
@@ -438,7 +438,7 @@ class RedBlackTreeSetOrMapImpl final {
     //! \return The color
     Color getNodeColor(Index index  //!< The node index
     ) {
-        return (index == Color::NONE) ? Color::BLACK : this->m_nodes[index].color;
+        return (index == Node::NONE) ? Color::BLACK : this->m_nodes[index].color;
     }
 
     //! Get the outer node under node in the specified direction. If node has

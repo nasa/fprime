@@ -7,6 +7,8 @@
 #ifndef RedBlackTreeSetOrMapImplTester_HPP
 #define RedBlackTreeSetOrMapImplTester_HPP
 
+#include <gtest/gtest.h>
+
 #include "Fw/DataStructures/RedBlackTreeSetOrMapImpl.hpp"
 #include "STest/STest/Pick/Pick.hpp"
 
@@ -15,13 +17,27 @@ namespace Fw {
 template <typename KE, typename VN>
 class RedBlackTreeSetOrMapImplTester {
   public:
-    using Node = typename RedBlackTreeSetOrMapImpl<KE, VN>::Node;
+    using Color = typename RedBlackTreeSetOrMapImpl<KE, VN>::Color;
+
+    using Direction = typename RedBlackTreeSetOrMapImpl<KE, VN>::Direction;
 
     using FreeNode = typename RedBlackTreeSetOrMapImpl<KE, VN>::FreeNode;
 
     using Index = typename RedBlackTreeSetOrMapImpl<KE, VN>::Index;
 
-    RedBlackTreeSetOrMapImplTester<KE, VN>(const RedBlackTreeSetOrMapImpl<KE, VN>& impl) : m_impl(impl) {}
+    using Node = typename RedBlackTreeSetOrMapImpl<KE, VN>::Node;
+
+    RedBlackTreeSetOrMapImplTester<KE, VN>(const RedBlackTreeSetOrMapImpl<KE, VN>& impl) : m_impl(impl) {
+        const auto capacity = this->m_impl.getCapacity();
+        this->blackHeights.setStorage(new FwSizeType[capacity], capacity);
+    }
+
+    ~RedBlackTreeSetOrMapImplTester<KE, VN>() {
+        auto* const elements = this->blackHeights.getElements();
+        if (elements != nullptr) {
+            delete[] elements;
+        }
+    }
 
     const ExternalArray<Node>& getNodes() const { return this->m_impl.m_nodes; }
 
@@ -29,8 +45,81 @@ class RedBlackTreeSetOrMapImplTester {
 
     Index getRoot() const { return this->m_impl.m_root; }
 
+    // Check the BST property of the tree
+    void checkBstProperty() const {
+        const auto capacity = this->m_impl.getCapacity();
+        auto it = this->m_impl.begin();
+        FwSizeType size = 0;
+        for (FwSizeType i = 0; i < capacity; i++) {
+            if (!it.isInRange()) {
+                break;
+            }
+            const KE key1 = it->getKey();
+            size++;
+            it++;
+            if (!it.isInRange()) {
+                break;
+            }
+            const KE key2 = it->getKey();
+            ASSERT_LT(key1, key2);
+        }
+        ASSERT_EQ(size, this->m_impl.getSize());
+    }
+
+    // Check the black height property of the tree. Return the height.
+    FwSizeType checkBlackHeights() const {
+        auto node = this->m_impl.getOuterNodeUnder(this->m_impl.m_root, Direction::LEFT);
+        const auto capacity = this->m_impl.getCapacity();
+        for (FwSizeType i = 0; i < capacity; i++) {
+            if (node == Node::NONE) {
+                break;
+            }
+            const auto rightChild = this->m_impl.m_nodes[node].getChild(Direction::RIGHT);
+            if (rightChild != Node::NONE) {
+                // There is a right child. Go to the leftmost node under that child.
+                node = this->m_impl.getOuterNodeUnder(rightChild, Direction::LEFT);
+            } else {
+                // There is no right child. Go upwards until we pass through a left child
+                // or we hit the root.
+                for (FwSizeType j = 0; j < capacity; j++) {
+                    this->updateBlackHeight(node);
+                    const auto previousNode = node;
+                    node = this->m_impl.m_nodes[node].parent;
+                    if ((node == Node::NONE) or (node.getChild(Direction::LEFT) == previousNode)) {
+                        break;
+                    }
+                }
+            }
+        }
+        return getBlackHeight(this->m_impl.m_root);
+    }
+
+    // Get the black height of a node
+    FwSizeType getBlackHeight(Index node) const { return (node == Node::NONE) ? 1 : this->blackHeights[node]; }
+
+    // Update the black height of a node, after visiting all its descendants
+    void updateBlackHeight(Index node) {
+        const auto& nodes = this->m_impl.m_nodes;
+        if (node != Node::NONE) {
+            const auto leftChild = nodes[node].getChild(Direction::LEFT);
+            const auto leftHeight = getBlackHeight(leftChild);
+            const auto rightChild = nodes[node].getChild(Direction::RIGHT);
+            const auto rightHeight = getBlackHeight(rightChild);
+            ASSERT_EQ(leftHeight, rightHeight)
+              << "left child index is " << leftChild << "\n"
+              << "left child key is " << nodes[leftChild].entry.getKeyOrElement() << "\n"
+              << "right child index is " << rightChild << "\n"
+              << "right child key is " << nodes[rightChild].entry.getKeyOrElement() << "\n";
+            const FwSizeType nodeHeight =
+                (RedBlackTreeSetOrMapImpl<KE, VN>::getNodeColor(node) == Color::BLACK) ? 1 : 0;
+            this->blackHeights[node] = leftHeight + rightHeight + nodeHeight;
+        }
+    }
+
   private:
     const RedBlackTreeSetOrMapImpl<KE, VN>& m_impl;
+    // Array for storing black heights
+    ExternalArray<FwSizeType> blackHeights = {};
 };
 
 }  // namespace Fw
