@@ -657,8 +657,6 @@ Each of `nodes` and `freeNodes` must point to at least `capacity` items.
 
 1. Call `m_freeNodes.setStorage(freeNodes, capacity)`.
 
-1. Call `clear()`.
-
 <a name="setStorageUntyped"></a>
 ### 6.11. setStorage (Untyped Data)
 
@@ -677,15 +675,13 @@ contain at least [`getByteArraySize(size)`](#getByteArraySize) bytes.
 1. Let `freeNodesOffset` be the smallest integer greater than or equal to `nodesSize`
 that is aligned for `FreeNodes::getByteArrayAlignment()`.
 
-1. Let `freeNodesSize = Nodes::getByteArraySize(capacity)`.
+1. Let `freeNodesSize = FreeNodes::getByteArraySize(capacity)`.
 
 1. Assert that `freeNodesOffset + freeNodesSize <= data.size`.
 
 1. Let `freeNodesData = ByteArray(&data.bytes[freeNodesOffset], freeNodesSize)`.
 
 1. Call `m_freeNodes.setStorage(freeNodesData, capacity)`.
-
-1. Call `clear()`.
 
 ## 7. Public Static Functions
 
@@ -707,13 +703,13 @@ static constexpr FwSizeType getByteArraySize(FwSizeType capacity)
 
 1. Let `nodesSize = Nodes::getByteArraySize(capacity)`.
 
-1. Let `freeNodesAlignment = FreeStack::getByteArrayAlignment()`.
+1. Let `freeNodesAlignment = FreeNodes::getByteArrayAlignment()`.
 
-1. Let `freeNodesSize = FreeStack::getByteArraySize(capacity)`.
+1. Let `freeNodesSize = FreeNodes::getByteArraySize(capacity)`.
 
 1. Return `nodesSize + freeNodesAlignment + freeNodesSize`.
 
-##### 7.2.0.1. getNodeColor
+### 7.3. getNodeColor
 
 ```c++
 static Node::Color getNodeColor(Index index)

@@ -342,7 +342,6 @@ class RedBlackTreeSetOrMapImpl final {
     ) {
         this->m_nodes.setStorage(nodes, capacity);
         this->m_freeNodes.setStorage(freeNodes, capacity);
-        this->clear();
     }
 
     //! Set the backing storage (untyped data)
@@ -354,17 +353,18 @@ class RedBlackTreeSetOrMapImpl final {
         this->m_nodes.setStorage(data, capacity);
         const auto nodesSize = Nodes::getByteArraySize();
         // Compute the nearest offset at or after nodesSize that is aligned for FreeNodes
-        const auto freeNodesAlignment = Nodes::getByteArrayAlignment();
+        const auto freeNodesAlignment = FreeNodes::getByteArrayAlignment();
         const U8 modulus = nodesSize % freeNodesAlignment;
         const auto freeNodesOffset = (modulus == 0) ? 0 : freeNodesAlignment - modulus;
         FW_ASSERT(freeNodesOffset % freeNodesAlignment == 0, static_cast<FwSizeType>(freeNodesOffset),
                   static_cast<FwSizeType>(freeNodesAlignment));
-        const auto freeNodesSize = Nodes::getByteArraySize(capacity);
+        const auto freeNodesSize = FreeNodes::getByteArraySize(capacity);
+        // Make sure that data has enough room
         FW_ASSERT(freeNodesOffset + freeNodesSize <= data.size, static_cast<FwSizeType>(freeNodesOffset),
                   static_cast<FwSizeType>(freeNodesSize), static_cast<FwSizeType>(data.size));
         ByteArray freeNodesData(&data.bytes[freeNodesOffset], freeNodesSize);
+        // Set the storage and clear freeNodes
         this->m_freeNodes.setStorage(freeNodesData, capacity);
-        this->clear();
     }
 
   public:
@@ -381,7 +381,8 @@ class RedBlackTreeSetOrMapImpl final {
     //! \return The byte array size
     static constexpr FwSizeType getByteArraySize(FwSizeType capacity  //!< The capacity
     ) {
-        return ExternalArray<Entry>::getByteArraySize(capacity);
+        return Nodes::getByteArraySize(capacity) + FreeNodes::getByteArrayAlignment() +
+               FreeNodes::getByteArraySize(capacity);
     }
 
   private:
