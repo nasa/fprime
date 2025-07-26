@@ -104,11 +104,14 @@ class RedBlackTreeSetOrMapImpl final {
     // The Nodes and FreeNodes types
     // ----------------------------------------------------------------------
 
-    //! The node index type
-    using Index = typename Node::Index;
+    //! The color type
+    using Color = typename Node::Color;
 
     //! The direction type
     using Direction = typename Node::Direction;
+
+    //! The node index type
+    using Index = typename Node::Index;
 
     //! The type of the array for storing the tree nodes
     using Nodes = ExternalArray<Node>;
@@ -407,6 +410,13 @@ class RedBlackTreeSetOrMapImpl final {
         auto result = Success::FAILURE;
         // TODO
         return result;
+    }
+
+    //! Get the color of a node
+    //! \return The color
+    Color getNodeColor(Index index  //!< The node index
+    ) {
+        return (index == Color::NONE) ? Color::BLACK : this->m_nodes[index].color;
     }
 
     //! This function inserts node into the tree as a left or right child of parent,

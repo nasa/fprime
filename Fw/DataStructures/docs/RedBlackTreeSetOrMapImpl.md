@@ -709,14 +709,6 @@ static constexpr FwSizeType getByteArraySize(FwSizeType capacity)
 
 1. Return `nodesSize + freeNodesAlignment + freeNodesSize`.
 
-### 7.3. getNodeColor
-
-```c++
-static Node::Color getNodeColor(Index index)
-```
-
-Return `index == NONE ? BLACK : m_nodes[index].color`.
-
 ## 8. Private Helper Functions
 
 <a name="findNode"></a>
@@ -775,8 +767,16 @@ and `node` stores the index of _N_.
 
 1. Return `result`.
 
+### 8.2. getNodeColor
+
+```c++
+static Node::Color getNodeColor(Index index)
+```
+
+Return `index == NONE ? BLACK : m_nodes[index].color`.
+
 <a name="getOuterNodeUnder"></a>
-### 8.2. getOuterNodeUnder
+### 8.3. getOuterNodeUnder
 
 ```c++
 Node::Index getOuterNodeUnder(Node::Index node, Direction direction) const
@@ -805,7 +805,7 @@ If `node` has no child in that direction, then the result is `node`.
 1. Return `node`.
 
 
-### 8.3. getParentDirection
+### 8.4. getParentDirection
 
 ```c++
 Direction getParentDirection(Node::Index node) const
@@ -825,7 +825,7 @@ The parent of `node` must not be `NONE`.
 
 1. Return `node == parentRight ? RIGHT : LEFT`.
 
-### 8.4. getPredecessorOfNone
+### 8.5. getPredecessorOfNone
 
 ```c++
 Node::Index getPredecessorOfNone(Node::Index node, Direction direction) const
@@ -857,7 +857,7 @@ child is `NONE`.
 
 1. Return `result`.
 
-### 8.5. insertNode
+### 8.6. insertNode
 
 ```c++
 void insertNode(Node::Index node, Node::Index parent, Direction direction)
@@ -1004,7 +1004,7 @@ It is not permissible for `node` to be `NONE`.
 
 1. _Here the tree is a red-black tree._
 
-### 8.6. removeNode
+### 8.7. removeNode
 
 ```c++
 void removeNode(Node::Index node, Node::Index& removedNode)
@@ -1027,7 +1027,7 @@ On return, `removedNode` stores the node that was actually removed.
 
    1. Set `removedNode = node`.
 
-### 8.7. removeBlackLeafNode
+### 8.8. removeBlackLeafNode
 
 ```c++
 void removeBlackLeafNode(Node::Index node)
@@ -1340,7 +1340,7 @@ It must not be `NONE`.
 
 1. _The tree is a valid red-black tree._
 
-### 8.8. removeBlackLeafNodeHelper1
+### 8.9. removeBlackLeafNodeHelper1
 
 ```c++
 void removeBlackLeafNodeHelper1(
@@ -1368,7 +1368,7 @@ written).
 
 1. Set `sibling = closeNephew`.
 
-### 8.9. removeBlackLeafNodeHelper2
+### 8.10. removeBlackLeafNodeHelper2
 
 ```c++
 void removeBlackLeafNodeHelper2(
@@ -1392,7 +1392,7 @@ This is a helper function for `removeBlackLeafNode`.
 
 1. Set `m_nodes[distantNephew].color = Color::BLACK`.
 
-### 8.10. removeNodeWithAtMostOneChild
+### 8.11. removeNodeWithAtMostOneChild
 
 ```c++
 void removeNodeWithAtMostOneChild(Node::Index node)
@@ -1418,7 +1418,7 @@ It must not be `NONE`.
 
 1. Otherwise call `removeBlackLeafNode(node)`.
 
-### 8.11. removeNodeWithOneChild
+### 8.12. removeNodeWithOneChild
 
 ```c++
 void removeNodeWithOneChild(Node::Index node, Direction, direction)
@@ -1451,7 +1451,7 @@ It must not be `NONE`.
 
 1. Set `m_nodes[node].color = BLACK`.
 
-### 8.12. removeNodeWithTwoChildren
+### 8.13. removeNodeWithTwoChildren
 
 ```c++
 void removeNodeWithTwoChildren(Node::Index node, Node::Index& removedNode)
@@ -1475,7 +1475,7 @@ On return, `removedNode` stores the node that was actually removed.
 
 1. Call `removeNodeWithAtMostOneChild(successor)`.
 
-### 8.13. removeRedLeafNode
+### 8.14. removeRedLeafNode
 
 ```c++
 void removeRedLeafNode(Node::Index node)
@@ -1499,7 +1499,7 @@ It must not be `NONE`.
 
 1. Call `m_nodes[parent].setChild(direction, NONE)`.
 
-### 8.14. rotateSubtree
+### 8.15. rotateSubtree
 
 ```c++
 void rotateSubtree(Node::Index node, Direction direction)
