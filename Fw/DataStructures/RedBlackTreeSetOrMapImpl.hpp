@@ -521,7 +521,7 @@ class RedBlackTreeSetOrMapImpl final {
                     if (this->m_nodes[parent].getChild(parentOppositeDirection) == node) {
                         // The subtree rooted at grandparent has the following
                         // shape, assuming that parentDirection is RIGHT.
-                        // There is a red violation at parent.
+                        // There is a red child violation at parent.
                         //
                         //                    BBBBBBBBBBBBBBBBBBBB
                         //                   B                    B
@@ -556,11 +556,169 @@ class RedBlackTreeSetOrMapImpl final {
                         this->rotateSubtree(parent, parentDirection);
                         parent = this->m_nodes[grandparent].getChild(parentDirection);
                     }
-                    // TODO
+                    // The subtree rooted at grandparent has the following
+                    // shape, assuming that parentDirection is RIGHT.
+                    // There is a red child violation at parent.
+                    //
+                    //                    BBBBBBBBBBBBBBBBBBBB
+                    //                   B                    B
+                    //                   B  K2 (grandparent)  B
+                    //                   B                    B
+                    //                    BBBBBBBBBBBBBBBBBBBB
+                    //                        /          \
+                    //                       /            \
+                    //                      V              V
+                    //         BBBBBBBBBBBBBB              RRRRRRRRRRRRRRR
+                    //        B              B            R               R
+                    //        B  K1 (uncle)  B            R  K3 (parent)  R
+                    //        B              B            R               R
+                    //         BBBBBBBBBBBBBB              RRRRRRRRRRRRRRR
+                    //             |     |                    /        \
+                    //             |     |                   /          \
+                    //             V     V                  |            V
+                    //        ------------------            |         RRRRRRRRRRRRRR
+                    //        |                |            |        R              R
+                    //        | black height n |            |        R      K4      R
+                    //        |                |            |        R              R
+                    //        ------------------            |         RRRRRRRRRRRRRR
+                    //                                      \             |    |
+                    //                                       \            |    |
+                    //                                        V           V    V
+                    //                                      ----------------------
+                    //                                      |                    |
+                    //                                      | black height n + 1 |
+                    //                                      |                    |
+                    //                                      ----------------------
+                    //
+                    this->rotateSubtree(grandparent, parentOppositeDirection);
+                    this->m_nodes[parent].color = Color::BLACK;
+                    this->m_nodes[grandparent].color = Color::RED;
+                    // The subtree has the following shape.
+                    //
+                    //                               BBBBBBBBBBBBBBBBBBB
+                    //                              B                   B
+                    //                              B    K3 (parent)    B
+                    //                              B                   B
+                    //                               BBBBBBBBBBBBBBBBBBB
+                    //                                   /          \
+                    //                                  /            \
+                    //                                 V              V
+                    //              RRRRRRRRRRRRRRRRRRRR              RRRRRRRRRRRRRRRR
+                    //             R                    R            R                R
+                    //             R  K2 (grandparent)  R            R       K4       R
+                    //             R                    R            R                R
+                    //              RRRRRRRRRRRRRRRRRRRR             RRRRRRRRRRRRRRRRR
+                    //                   /             \                   |    |
+                    //                  /               \                  |    |
+                    //                 /                 \                 |    |
+                    //                V                   V                V    V
+                    //     BBBBBBBBBBBBBBBBBB           ----------------------------
+                    //    B                  B          |                          |
+                    //    B    K1 (uncle)    B          |    black height n + 1    |
+                    //    B                  B          |                          |
+                    //     BBBBBBBBBBBBBBBBBB           ----------------------------
+                    //           |     |
+                    //           |     |
+                    //           V     V
+                    //      ------------------
+                    //      |                |
+                    //      | black height n |
+                    //      |                |
+                    //      ------------------
+                    //
                     done = true;
                     break;
+                } else {
+                    // The subtree rooted at grandparent has one of four
+                    // shapes, one of which is shown below. Each of the arrows
+                    // to red nodes may point the other way.
+                    // There is a red child violation at parent.
+                    //
+                    //                    BBBBBBBBBBBBBBBBBBBB
+                    //                   B                    B
+                    //                   B  K2 (grandparent)  B
+                    //                   B                    B
+                    //                    BBBBBBBBBBBBBBBBBBBB
+                    //                        /          \
+                    //                       /            \
+                    //                      V              V
+                    //         RRRRRRRRRRRRRR              RRRRRRRRRRRRRRR
+                    //        R              R            R               R
+                    //        R  K1 (uncle)  R            R  K3 (parent)  R
+                    //        R              R            R               R
+                    //         RRRRRRRRRRRRRR              RRRRRRRRRRRRRRR
+                    //             \     \                     /     \
+                    //              \     \                   /       \
+                    //               \     \                 /         V
+                    //                \     \               /       RRRRRRRRRRRRRR
+                    //                 \     \             /       R              R
+                    //                  \     \           /        R      K4      R
+                    //                   \     \          |        R              R
+                    //                    \     \         |         RRRRRRRRRRRRRR
+                    //                     \     \        |           /   /
+                    //                      \     \       |          /   /
+                    //                       V     V      V         V   V
+                    //                   ----------------------------------
+                    //                   |                                |
+                    //                   |         black height n         |
+                    //                   |                                |
+                    //                   ----------------------------------
+                    //
+                    this->m_nodes[parent].color = Color::BLACK;
+                    this->m_nodes[uncle].color = Color::BLACK;
+                    this->m_nodes[grandparent].color = Color::RED;
+                    node = grandparent;
+                    parent = this->m_nodes[node].parent;
+                    // The tree shown above now has the following shape.
+                    //
+                    //                    ???????????????????
+                    //                   ?                   ?
+                    //                   ?       parent      ?
+                    //                   ?                   ?
+                    //                    ???????????????????
+                    //                             ^
+                    //                             |
+                    //                             |
+                    //                             |
+                    //                    RRRRRRRRRRRRRRRRRRR
+                    //                   R                   R
+                    //                   R     K2 (node)     R
+                    //                   R                   R
+                    //                    RRRRRRRRRRRRRRRRRRR
+                    //                        /          \
+                    //                       /            \
+                    //                      V              V
+                    //         BBBBBBBBBBBBBB              BBBBBBBBBBBBBBB
+                    //        B              B            B               B
+                    //        B  K1 (uncle)  B            B       K3      B
+                    //        B              B            B               B
+                    //         BBBBBBBBBBBBBB              BBBBBBBBBBBBBBB
+                    //             \     \                     /     \
+                    //              \     \                   /       \
+                    //               \     \                 /         V
+                    //                \     \               /       RRRRRRRRRRRRRR
+                    //                 \     \             /       R              R
+                    //                  \     \           /        R      K4      R
+                    //                   \     \          |        R              R
+                    //                    \     \         |         RRRRRRRRRRRRRR
+                    //                     \     \        |           /   /
+                    //                      \     \       |          /   /
+                    //                       V     V      V         V   V
+                    //                   ----------------------------------
+                    //                   |                                |
+                    //                   |         black height n         |
+                    //                   |                                |
+                    //                   ----------------------------------
+                    //
+                    if (parent == Node::NONE) {
+                        // We have reached the root of the tree.
+                        // Break out of the loop.
+                        done = true;
+                        break;
+                    }
+                    // The invariant at the top of the loop is satisfied.
+                    // Continue to the next iteration.
                 }
-                // TODO
             }
             FW_ASSERT(done);
         }
