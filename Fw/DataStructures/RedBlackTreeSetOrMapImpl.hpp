@@ -521,7 +521,8 @@ class RedBlackTreeSetOrMapImpl final {
                     if (this->m_nodes[parent].getChild(parentOppositeDirection) == node) {
                         // The subtree rooted at grandparent has the following
                         // shape, assuming that parentDirection is RIGHT.
-                        // There is a red child violation at parent.
+                        // There is a red child violation from parent to node.
+                        // There are no other violations at any nodes.
                         //
                         //                    BBBBBBBBBBBBBBBBBBBB
                         //                   B                    B
@@ -558,7 +559,8 @@ class RedBlackTreeSetOrMapImpl final {
                     }
                     // The subtree rooted at grandparent has the following
                     // shape, assuming that parentDirection is RIGHT.
-                    // There is a red child violation at parent.
+                    // There is a red child violation from parent to K4.
+                    // There are no other violations at any nodes.
                     //
                     //                    BBBBBBBBBBBBBBBBBBBB
                     //                   B                    B
@@ -631,7 +633,8 @@ class RedBlackTreeSetOrMapImpl final {
                     // The subtree rooted at grandparent has one of four
                     // shapes, one of which is shown below. Each of the arrows
                     // to red nodes may point the other way.
-                    // There is a red child violation at parent.
+                    // There is a red child violation from parent to K4.
+                    // There are no other violations at any nodes.
                     //
                     //                    BBBBBBBBBBBBBBBBBBBB
                     //                   B                    B

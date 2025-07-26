@@ -929,7 +929,9 @@ It is not permissible for `node` to be `NONE`.
                 1. If `m_nodes[parent].getChild(parentOppositeDirection) == node`
 
                     1. _The subtree rooted at `grandparent` has the following
-                       shape, assuming that `parentDirection` is `RIGHT`:_
+                       shape, assuming that `parentDirection` is `RIGHT`.
+                        There is a red child violation from `parent` to `node`.
+                        There are no other violations at any nodes._
 
                        <center>
                        <div>
@@ -942,7 +944,10 @@ It is not permissible for `node` to be `NONE`.
                     1. Set `parent = m_nodes[grandparent].getChild(parentDirection)`.
 
                 1. _The subtree rooted at `grandparent` has
-                   the following shape, assuming that `parentDirection` is `RIGHT`:_
+                   the following shape, assuming that `parentDirection` is `RIGHT`.
+                   There is a red child violation from `parent` to K4.
+                   There are no other violations at any nodes._
+
 
                    <center>
                    <div>
@@ -970,7 +975,10 @@ It is not permissible for `node` to be `NONE`.
 
                 1. _The subtree rooted at `grandparent` has one of four shapes,
                     one of which is shown below.
-                    Each of the arrows to red nodes may point the other way._
+                    Each of the arrows to red nodes may point the other way.
+                    There is a red child violation from `parent` to K4.
+                    There are no other violations at any nodes._
+
 
                     <center>
                     <div>
