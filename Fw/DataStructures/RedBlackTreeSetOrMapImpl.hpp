@@ -608,10 +608,9 @@ class RedBlackTreeSetOrMapImpl final {
                     //             R  K2 (grandparent)  R            R       K4       R
                     //             R                    R            R                R
                     //              RRRRRRRRRRRRRRRRRRRR             RRRRRRRRRRRRRRRRR
-                    //                   /             \                   |    |
-                    //                  /               \                  |    |
-                    //                 /                 \                 |    |
-                    //                V                   V                V    V
+                    //                   /            \                    |    |
+                    //                  /              \                   |    |
+                    //                 V                V                  V    V
                     //     BBBBBBBBBBBBBBBBBB           ----------------------------
                     //    B                  B          |                          |
                     //    B    K1 (uncle)    B          |    black height n + 1    |
@@ -677,7 +676,6 @@ class RedBlackTreeSetOrMapImpl final {
                     //                   ?                   ?
                     //                    ???????????????????
                     //                             ^
-                    //                             |
                     //                             |
                     //                             |
                     //                    RRRRRRRRRRRRRRRRRRR
