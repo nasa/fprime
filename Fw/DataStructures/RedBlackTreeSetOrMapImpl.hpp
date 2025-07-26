@@ -499,8 +499,8 @@ class RedBlackTreeSetOrMapImpl final {
             const auto capacity = this->getCapacity();
             for (FwSizeType i = 0; i < capacity; i++) {
                 // The following invariants hold: (1) node is colored red; (2)
-                // there may be a red child violation at parent; and (3) there
-                // are no other violations at any nodes.
+                // there may be a red child violation from parent to node; and
+                // (3) there are no other violations at any nodes.
                 if (this->getNodeColor(parent) == Color::BLACK) {
                     // There is no red child violation at parent, because parent is black.
                     done = true;

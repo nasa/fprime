@@ -279,8 +279,8 @@ To describe the algorithms, it will be useful to have a precise way to state
 where a constraint violation occurs in an invalid red-black tree.
 Therefore we make the following definitions for a red-black tree _T_:
 
-1. If any node _N_ is red and has at least one red child, then we say that _T_ has a
-   **red child violation** at _N_.
+1. If any node _N_ is red and has a red child _C_, then we say that _T_ has a
+   **red child violation** from _N_ to _C_.
 
 1. If the subtree rooted at any node _N_ does not have a defined black height,
    then we say that _T_ has a **black height violation** at _N_.
@@ -899,8 +899,8 @@ It is not permissible for `node` to be `NONE`.
     1. In a for loop bounded by `getCapacity()`:
 
         1. _The following invariants hold: (1) `node` is colored red; (2) there
-           may be a red child violation at `parent`; and (3) there are no other
-           violations at any nodes._
+           may be a red child violation from `parent` to `node`; and (3) there 
+           are no other violations at any nodes._
 
         1. If `getNodeColor(parent) == BLACK` then set `done = true` and break
            out of the loop.
