@@ -17,17 +17,19 @@ namespace Fw {
 template <typename KE, typename VN>
 class RedBlackTreeSetOrMapImplTester {
   public:
-    using Color = typename RedBlackTreeSetOrMapImpl<KE, VN>::Color;
+    using Impl = RedBlackTreeSetOrMapImpl<KE, VN>;
 
-    using Direction = typename RedBlackTreeSetOrMapImpl<KE, VN>::Direction;
+    using Color = typename Impl::Color;
 
-    using FreeNode = typename RedBlackTreeSetOrMapImpl<KE, VN>::FreeNode;
+    using Direction = typename Impl::Direction;
 
-    using Index = typename RedBlackTreeSetOrMapImpl<KE, VN>::Index;
+    using FreeNode = typename Impl::FreeNode;
 
-    using Node = typename RedBlackTreeSetOrMapImpl<KE, VN>::Node;
+    using Index = typename Impl::Index;
 
-    RedBlackTreeSetOrMapImplTester<KE, VN>(const RedBlackTreeSetOrMapImpl<KE, VN>& impl) : m_impl(impl) {
+    using Node = typename Impl::Node;
+
+    RedBlackTreeSetOrMapImplTester<KE, VN>(const Impl& impl) : m_impl(impl) {
         const auto capacity = this->m_impl.getCapacity();
         this->blackHeights.setStorage(new FwSizeType[capacity], capacity);
     }
@@ -100,7 +102,7 @@ class RedBlackTreeSetOrMapImplTester {
 
     // Check for a red violation at a node
     void checkForRedViolation(Index node) const {
-        if (RedBlackTreeSetOrMapImpl<KE, VN>::getNodeColor(node) == Color::RED) {
+        if (Impl::getNodeColor(node) == Color::RED) {
             const auto& nodes = this->m_impl.m_nodes;
             const auto leftChild = nodes[node].getChild(Direction::LEFT);
             ASSERT_NE(nodes[leftChild].color, Color::RED)
@@ -128,13 +130,13 @@ class RedBlackTreeSetOrMapImplTester {
               << "right child index is " << rightChild << "\n"
               << "right child key is " << nodes[rightChild].entry.getKeyOrElement() << "\n";
             const FwSizeType nodeHeight =
-                (RedBlackTreeSetOrMapImpl<KE, VN>::getNodeColor(node) == Color::BLACK) ? 1 : 0;
+                (Impl::getNodeColor(node) == Color::BLACK) ? 1 : 0;
             this->blackHeights[node] = leftHeight + rightHeight + nodeHeight;
         }
     }
 
   private:
-    const RedBlackTreeSetOrMapImpl<KE, VN>& m_impl;
+    const Impl& m_impl;
     // Array for storing black heights
     ExternalArray<FwSizeType> blackHeights = {};
 };
