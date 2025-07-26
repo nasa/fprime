@@ -819,9 +819,9 @@ The parent of `node` must not be `NONE`.
 
 **Algorithm:**
 
-1. Set `parent = m_nodes[node].parent`.
+1. Let `parent = m_nodes[node].parent`.
 
-1. Set `parentRight = m_nodes[parent].right`.
+1. Let `parentRight = m_nodes[parent].right`.
 
 1. Return `node == parentRight ? RIGHT : LEFT`.
 
@@ -902,8 +902,8 @@ It is not permissible for `node` to be `NONE`.
            may be a red child violation at `parent`; and (3) there are no other
            violations at any nodes._
 
-        1. If `m_nodes[parent].color == BLACK` then set `done = true`
-           and break out of the loop.
+        1. If `getNodeColor(parent) == BLACK` then set `done = true` and break
+           out of the loop.
            _There is no red child violation at `parent`, because `parent` is black._
 
         1. Set `grandparent = m_nodes[parent].parent`.
@@ -926,7 +926,7 @@ It is not permissible for `node` to be `NONE`.
 
             1. If `getNodeColor(uncle) == BLACK` then
 
-                1. If `parent.getChild(parentOppositeDirection) == node`
+                1. If `m_nodes[parent].getChild(parentOppositeDirection) == node`
 
                     1. _The subtree rooted at `grandparent` has the following
                        shape, assuming that `parentDirection` is `RIGHT`:_
@@ -1524,9 +1524,9 @@ or an assertion failure will occur:
 
 1. Let `oppositeDirection = Node::getOppositeDirection(direction)`.
 
-1. Let `newChild = m_nodes[newRoot].getChild(direction)`.
-
 1. Let `newRoot = m_nodes[node].getChild(oppositeDirection))`.
+
+1. Let `newChild = m_nodes[newRoot].getChild(direction)`.
 
 1. Call `m_nodes[node].setChild(oppositeDirection, newChild)`.
 

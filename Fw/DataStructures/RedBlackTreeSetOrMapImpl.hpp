@@ -461,6 +461,16 @@ class RedBlackTreeSetOrMapImpl final {
         return node;
     }
 
+    //! Get the parent direction for a node, i.e., the direction (left or
+    //! right) to follow from the parent of node to get to node. node must not be
+    //! NONE. The parent of node must not be NONE.
+    Direction getParentDirection(Index node  //!< The node index
+    ) const {
+        const auto parent = this->m_nodes[node].parent;
+        const auto parentRight = m_nodes[parent].right;
+        return (node == parentRight) ? Color::RIGHT : Color::LEFT;
+    }
+
     //! This function inserts node into the tree as a left or right child of parent,
     //! according to direction. It rebalances the tree as needed to maintain the
     //! red-black invariant.
@@ -469,11 +479,92 @@ class RedBlackTreeSetOrMapImpl final {
     //! at the root of the tree, and direction is ignored.
     //!
     //! It is not permissible for node to be NONE.
-    void insertNode(Index node,    //!< The node to insert
-                    Index parent,  //!< The new parent
-                    Direction      //!< The direction under the new parent
+    void insertNode(Index node,          //!< The node to insert
+                    Index parent,        //!< The new parent
+                    Direction direction  //!< The direction under the new parent
     ) {
-        // TODO
+        // We assume that the tree is a red-black tree, that the child of
+        // parent in the direction direction is NONE, and that both children of
+        // node are NONE.
+        const auto oppositeDirection = Node::getOppositeDirection(direction);
+        this->m_nodes[node].color = Color::RED;
+        this->m_nodes[node].parent = parent;
+        if (parent == Index::NONE) {
+            this->m_root = node;
+            // The tree was empty, and now it consists of a single red node.
+        } else {
+            // Set the parent
+            bool done = false;
+            this->m_nodes[parent].setChild(direction, node);
+            const auto capacity = this->getCapacity();
+            for (FwSizeType i = 0; i < capacity; i++) {
+                // The following invariants hold: (1) node is colored red; (2)
+                // there may be a red child violation at parent; and (3) there
+                // are no other violations at any nodes.
+                if (this->getNodeColor(parent) == Color::BLACK) {
+                    // There is no red child violation at parent, because parent is black.
+                    done = true;
+                    break;
+                }
+                const auto grandparent = this->m_nodes[parent].parent;
+                if (grandparent == Node::NONE) {
+                    this->m_nodes[parent].color = Color::BLACK;
+                    // This step removes the red child violation at parent.
+                    // It preserves all other invariants.
+                    done = true;
+                    break;
+                }
+                const auto parentDirection = this->getParentDirection(parent);
+                const auto parentOppositeDirection = Node::getOppositeDirection(parentDirection);
+                const auto uncle = this->m_nodes[grandparent].getChild(parentOppositeDirection);
+                if (this->getNodeColor(uncle) == Color::BLACK) {
+                    if (this->m_nodes[parent].getChild(parentOppositeDirection) == node) {
+                        // The subtree rooted at grandparent has the following
+                        // shape, assuming that parentDirection is RIGHT.
+                        // There is a red violation at parent.
+                        //
+                        //                    BBBBBBBBBBBBBBBBBBBB
+                        //                   B                    B
+                        //                   B  K2 (grandparent)  B
+                        //                   B                    B
+                        //                    BBBBBBBBBBBBBBBBBBBB
+                        //                        /          \
+                      //                       /            \
+                      //                      V              V
+                        //         BBBBBBBBBBBBBB              RRRRRRRRRRRRRRR
+                        //        B              B            R               R
+                        //        B  K1 (uncle)  B            R  K4 (parent)  R
+                        //        B              B            R               R
+                        //         BBBBBBBBBBBBBB              RRRRRRRRRRRRRRR
+                        //             |     |                   /         \
+                      //             |     |                  /           \
+                      //             V     V                 V             \
+                      //        ------------------      RRRRRRRRRRRRR      |
+                        //        |                |     R             R     |
+                        //        | black height n |     R  K3 (node)  R     |
+                        //        |                |     R             R     |
+                        //        ------------------      RRRRRRRRRRRRR      /
+                        //                                   |     |        /
+                        //                                   |     |       /
+                        //                                   V     V      V
+                        //                              ----------------------
+                        //                              |                    |
+                        //                              | black height n + 1 |
+                        //                              |                    |
+                        //                              ----------------------
+                        //
+                        this->rotateSubtree(parent, parentDirection);
+                        parent = this->m_nodes[grandparent].getChild(parentDirection);
+                    }
+                    // TODO
+                    done = true;
+                    break;
+                }
+                // TODO
+            }
+            FW_ASSERT(done);
+        }
+        // The tree is a red-black tree.
     }
 
     //! This function removes a node of the tree. On entry, node stores the key
@@ -483,6 +574,38 @@ class RedBlackTreeSetOrMapImpl final {
                     Index& removedNode  //!< The node actually removed (output)
     ) {
         // TODO
+    }
+
+    //! This function performs a left or right rotation on the subtree whose
+    //! root is node. The following invariants must hold on entry to this
+    //! function, or an assertion failure will occur:
+    //!
+    //! 1. node must not be NONE.
+    //!
+    //! 2. The child of node in the direction opposite direction must not be
+    //!    NONE.
+    void rotateSubtree(Index node,          //!< The node index
+                       Direction direction  //!< The direction
+    ) {
+        // We assume that the tree is a binary search tree (BST).
+        const auto parent = this->m_nodes[node].parent;
+        const auto oppositeDirection = Node::getOppositeDirection(direction);
+        const auto newRoot = this->m_nodes[node].getChild(oppositeDirection);
+        const auto newChild = this->m_nodes[newRoot].getChild(direction);
+        this->m_nodes[node].setChild(oppositeDirection, newChild);
+        if (newChild != Node::NONE) {
+            this->m_nodes[newChild].parent = node;
+        }
+        this->m_nodes[newRoot].setChild(direction, node);
+        this->m_nodes[newRoot].parent = parent;
+        this->m_nodes[node].parent = newRoot;
+        if (parent != Node::NONE) {
+            const auto parentDirection = getParentDirection(node);
+            this->m_nodes[parent].setChild(parentDirection, newRoot);
+        } else {
+            this->m_root = newRoot;
+        }
+        // The tree is a BST.
     }
 
   private:
