@@ -340,7 +340,8 @@ class RedBlackTreeSetOrMapImpl final {
                     FwSizeType* freeNodes,  //!< The free nodes
                     FwSizeType capacity     //!< The capacity
     ) {
-        // TODO
+        this->m_nodes.setStorage(nodes, capacity);
+        this->m_freeNodes.setStorage(freeNodes, capacity);
         this->clear();
     }
 
@@ -350,7 +351,19 @@ class RedBlackTreeSetOrMapImpl final {
     void setStorage(ByteArray data,      //!< The data
                     FwSizeType capacity  //!< The capacity
     ) {
-        // TODO
+        this->m_nodes.setStorage(data, capacity);
+        const auto nodesSize = Nodes::getByteArraySize();
+        // Compute the nearest offset at or after nodesSize that is aligned for FreeNodes
+        const auto freeNodesAlignment = Nodes::getByteArrayAlignment();
+        const U8 modulus = nodesSize % freeNodesAlignment;
+        const auto freeNodesOffset = (modulus == 0) ? 0 : freeNodesAlignment - modulus;
+        FW_ASSERT(freeNodesOffset % freeNodesAlignment == 0, static_cast<FwSizeType>(freeNodesOffset),
+                  static_cast<FwSizeType>(freeNodesAlignment));
+        const auto freeNodesSize = Nodes::getByteArraySize(capacity);
+        FW_ASSERT(freeNodesOffset + freeNodesSize <= data.size, static_cast<FwSizeType>(freeNodesOffset),
+                  static_cast<FwSizeType>(freeNodesSize), static_cast<FwSizeType>(data.size));
+        ByteArray freeNodesData(&data.bytes[freeNodesOffset], freeNodesSize);
+        this->m_freeNodes.setStorage(freeNodesData, capacity);
         this->clear();
     }
 

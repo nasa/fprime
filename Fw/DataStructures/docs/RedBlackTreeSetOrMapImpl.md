@@ -672,12 +672,12 @@ contain at least [`getByteArraySize(size)`](#getByteArraySize) bytes.
 
 1. Call `m_nodes.setStorage(data, capacity)`.
 
-1. Let `nodesSize = ExternalArray<Node>::getByteArraySize`.
+1. Let `nodesSize = Nodes::getByteArraySize()`.
 
 1. Let `freeNodesOffset` be the smallest integer greater than or equal to `nodesSize`
-that is aligned for `ExternalStack<FwSizeType>::getByteArrayAlignment()`.
+that is aligned for `FreeNodes::getByteArrayAlignment()`.
 
-1. Let `freeNodesSize = ExternalArray<Node>::getByteArraySize(capacity)`.
+1. Let `freeNodesSize = Nodes::getByteArraySize(capacity)`.
 
 1. Assert that `freeNodesOffset + freeNodesSize <= data.size`.
 
