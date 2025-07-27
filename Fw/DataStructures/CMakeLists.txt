@@ -24,6 +24,7 @@ set(UT_SOURCE_FILES
 #  "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/FifoQueueTestScenarios.cpp"
 #  "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/MapTestRules.cpp"
 #  "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/MapTestScenarios.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/RedBlackTreeSetOrMapImplTestRules.cpp"
 #  "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/SetTestRules.cpp"
 #  "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/SetTestScenarios.cpp"
 #  "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/StackTestRules.cpp"

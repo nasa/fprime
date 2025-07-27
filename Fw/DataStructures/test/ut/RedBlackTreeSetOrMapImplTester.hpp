@@ -24,11 +24,13 @@ class RedBlackTreeSetOrMapImplTester {
 
     using Direction = typename Impl::Direction;
 
-    using FreeNode = typename Impl::FreeNode;
+    using FreeNodes = typename Impl::FreeNodes;
 
     using Index = typename Impl::Index;
 
     using Node = typename Impl::Node;
+
+    using Nodes = typename Impl::Nodes;
 
     RedBlackTreeSetOrMapImplTester<KE, VN>(const Impl& impl) : m_impl(impl) {
         const auto capacity = this->m_impl.getCapacity();
@@ -42,9 +44,9 @@ class RedBlackTreeSetOrMapImplTester {
         }
     }
 
-    const ExternalArray<Node>& getNodes() const { return this->m_impl.m_nodes; }
+    const Nodes& getNodes() const { return this->m_impl.m_nodes; }
 
-    const ExternalArray<FreeNode>& getFreeNodes() const { return this->m_impl.m_freeNodes; }
+    const FreeNodes& getFreeNodes() const { return this->m_impl.m_freeNodes; }
 
     Index getRoot() const { return this->m_impl.m_root; }
 

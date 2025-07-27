@@ -10,8 +10,8 @@
 #include "STest/STest/Pick/Pick.hpp"
 
 #include "Fw/DataStructures/test/ut/RedBlackTreeSetOrMapImplTester.hpp"
-#if 0
 #include "Fw/DataStructures/test/ut/STest/RedBlackTreeSetOrMapImplTestRules.hpp"
+#if 0
 #include "Fw/DataStructures/test/ut/STest/RedBlackTreeSetOrMapImplTestScenarios.hpp"
 #endif
 
