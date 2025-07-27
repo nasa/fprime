@@ -29,14 +29,6 @@ class RedBlackTreeSetOrMapImpl final {
 
   public:
     // ----------------------------------------------------------------------
-    // The Entry type
-    // ----------------------------------------------------------------------
-
-    //! The type of an entry in the set or map
-    using Entry = SetOrMapImplEntry<KE, VN>;
-
-  private:
-    // ----------------------------------------------------------------------
     // The Node type
     // ----------------------------------------------------------------------
 
@@ -51,6 +43,9 @@ class RedBlackTreeSetOrMapImpl final {
 
         //! The type of a node index
         using Index = FwSizeType;
+
+        //! The type of an entry in the set or map
+        using Entry = SetOrMapImplEntry<KE, VN>;
 
       public:
         //! Constant value representing no node
@@ -99,9 +94,9 @@ class RedBlackTreeSetOrMapImpl final {
         }
     };
 
-  private:
+  public:
     // ----------------------------------------------------------------------
-    // The Nodes and FreeNodes types
+    // Type aliases
     // ----------------------------------------------------------------------
 
     //! The color type
@@ -109,6 +104,9 @@ class RedBlackTreeSetOrMapImpl final {
 
     //! The direction type
     using Direction = typename Node::Direction;
+
+    //! The entry type
+    using Entry = typename Node::Entry;
 
     //! The node index type
     using Index = typename Node::Index;
@@ -191,8 +189,7 @@ class RedBlackTreeSetOrMapImpl final {
                         const auto previousNode = this->m_node;
                         this->m_node = this->m_impl->m_nodes[this->m_node].m_parent;
                         const auto& nodeObject = this->m_impl->m_nodes[this->m_node];
-                        if ((this->m_node == Node::NONE) or
-                            (nodeObject.getChild(Direction::LEFT) == previousNode)) {
+                        if ((this->m_node == Node::NONE) or (nodeObject.getChild(Direction::LEFT) == previousNode)) {
                             done = true;
                             break;
                         }
@@ -230,9 +227,9 @@ class RedBlackTreeSetOrMapImpl final {
     //! Constructor providing typed backing storage.
     //! nodes must point to at least capacity elements of type Node.
     //! freeNodes must point to at least capacity elements of type FwSizeType.
-    RedBlackTreeSetOrMapImpl(Node* nodes,            //!< The nodes
-                             FwSizeType* freeNodes,  //!< The free nodes
-                             FwSizeType capacity     //!< The capacity
+    RedBlackTreeSetOrMapImpl(Node* nodes,         //!< The nodes
+                             Index* freeNodes,    //!< The free nodes
+                             FwSizeType capacity  //!< The capacity
     ) {
         this->setStorage(nodes, freeNodes, capacity);
     }
@@ -363,12 +360,13 @@ class RedBlackTreeSetOrMapImpl final {
     //! Set the backing storage (typed data)
     //! nodes must point to at least capacity elements of type Node.
     //! freeNodes must point to at least capacity elements of type FwSizeType.
-    void setStorage(Node* nodes,            //!< The nodes
-                    FwSizeType* freeNodes,  //!< The free nodes
-                    FwSizeType capacity     //!< The capacity
+    void setStorage(Node* nodes,         //!< The nodes
+                    Index* freeNodes,    //!< The free nodes
+                    FwSizeType capacity  //!< The capacity
     ) {
         this->m_nodes.setStorage(nodes, capacity);
         this->m_freeNodes.setStorage(freeNodes, capacity);
+        this->clear();
     }
 
     //! Set the backing storage (untyped data)
@@ -378,20 +376,21 @@ class RedBlackTreeSetOrMapImpl final {
                     FwSizeType capacity  //!< The capacity
     ) {
         this->m_nodes.setStorage(data, capacity);
-        const auto nodesSize = Nodes::getByteArraySize();
+        const auto nodesSize = Nodes::getByteArraySize(capacity);
         // Compute the nearest offset at or after nodesSize that is aligned for FreeNodes
         const auto freeNodesAlignment = FreeNodes::getByteArrayAlignment();
         const U8 modulus = nodesSize % freeNodesAlignment;
-        const auto freeNodesOffset = (modulus == 0) ? 0 : freeNodesAlignment - modulus;
-        FW_ASSERT(freeNodesOffset % freeNodesAlignment == 0, static_cast<FwSizeType>(freeNodesOffset),
-                  static_cast<FwSizeType>(freeNodesAlignment));
+        const FwSizeType freeNodesOffset = (modulus == 0) ? 0 : freeNodesAlignment - modulus;
+        FW_ASSERT(freeNodesOffset % freeNodesAlignment == 0, static_cast<FwAssertArgType>(freeNodesOffset),
+                  static_cast<FwAssertArgType>(freeNodesAlignment));
         const auto freeNodesSize = FreeNodes::getByteArraySize(capacity);
         // Make sure that data has enough room
-        FW_ASSERT(freeNodesOffset + freeNodesSize <= data.size, static_cast<FwSizeType>(freeNodesOffset),
-                  static_cast<FwSizeType>(freeNodesSize), static_cast<FwSizeType>(data.size));
+        FW_ASSERT(freeNodesOffset + freeNodesSize <= data.size, static_cast<FwAssertArgType>(freeNodesOffset),
+                  static_cast<FwAssertArgType>(freeNodesSize), static_cast<FwAssertArgType>(data.size));
         ByteArray freeNodesData(&data.bytes[freeNodesOffset], freeNodesSize);
         // Set the storage and clear freeNodes
         this->m_freeNodes.setStorage(freeNodesData, capacity);
+        this->clear();
     }
 
   public:
@@ -449,8 +448,8 @@ class RedBlackTreeSetOrMapImpl final {
                             Direction direction  //!< The direction
     ) const {
         auto child = (node != Node::NONE) ? this->m_nodes[node].getChild(direction) : Node::NONE;
-        bool done = false;
         const auto capacity = this->getCapacity();
+        bool done = (capacity == 0);
         for (FwSizeType i = 0; i < capacity; i++) {
             if (child == Node::NONE) {
                 done = true;

@@ -17,13 +17,20 @@
 
 namespace Fw {
 
+template <typename T>
+class ExternalStackTester {
+  public:
+    ExternalStackTester<T>(const ExternalStack<T>& stack) : m_stack(stack) {}
+
+    const ExternalArray<T> getItems() const { return this->m_stack.m_items; }
+
+  private:
+    const ExternalStack<T>& m_stack;
+};
+
 namespace RedBlackTreeSetOrMapImplTest {
 
-RedBlackTreeSetOrMapImpl<U16, U32> impl;
-
-#if 0
-State::Impl impl_;
-State::Impl::ConstIterator it(impl_);
+using ImplTester = RedBlackTreeSetOrMapImplTester<State::KeyType, State::ValueType>;
 
 TEST(RedBlackTreeSetOrMapImpl, ZeroArgConstructor) {
     State::Impl impl;
@@ -32,10 +39,13 @@ TEST(RedBlackTreeSetOrMapImpl, ZeroArgConstructor) {
 }
 
 TEST(RedBlackTreeSetOrMapImpl, TypedStorageConstructor) {
-    State::Entry entries[State::capacity];
-    State::Impl impl(entries, State::capacity);
+    ImplTester::Node nodes[State::capacity];
+    ImplTester::Index freeNodes[State::capacity];
+    State::Impl impl(nodes, freeNodes, State::capacity);
     State::Tester tester(impl);
-    ASSERT_EQ(tester.getEntries().getElements(), entries);
+    ASSERT_EQ(tester.getNodes().getElements(), nodes);
+    ExternalStackTester<ImplTester::Index> stackTester(tester.getFreeNodes());
+    ASSERT_EQ(stackTester.getItems().getElements(), freeNodes);
     ASSERT_EQ(impl.getCapacity(), FwSizeType(State::capacity));
     ASSERT_EQ(impl.getSize(), 0);
 }
@@ -46,11 +56,12 @@ TEST(RedBlackTreeSetOrMapImpl, UntypedStorageConstructor) {
     alignas(alignment) U8 bytes[byteArraySize];
     State::Impl impl(ByteArray(&bytes[0], sizeof bytes), State::capacity);
     State::Tester tester(impl);
-    ASSERT_EQ(tester.getEntries().getElements(), reinterpret_cast<State::Entry*>(bytes));
+    ASSERT_EQ(tester.getNodes().getElements(), reinterpret_cast<ImplTester::Node*>(bytes));
     ASSERT_EQ(impl.getCapacity(), FwSizeType(State::capacity));
     ASSERT_EQ(impl.getSize(), 0);
 }
 
+#if 0
 TEST(RedBlackTreeSetOrMapImpl, CopyConstructor) {
     State::Entry entries[State::capacity];
     // Call the constructor providing backing storage
@@ -85,7 +96,14 @@ TEST(RedBlackTreeSetOrMapImpl, CopyAssignmentOperator) {
     impl2 = impl1;
     ASSERT_EQ(impl2.getSize(), 1);
 }
+#endif
 
+TEST(ArraySetOrMapImpl, IteratorConstruction) {
+    State::Impl impl;
+    State::Impl::ConstIterator it(impl);
+}
+
+#if 0
 TEST(RedBlackTreeSetOrMapImpl, IteratorComparison) {
   // Test comparison in default case
   State::Impl::ConstIterator it1;

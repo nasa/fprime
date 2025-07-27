@@ -300,17 +300,12 @@ it has no violation at any node.
 <a name="Types"></a>
 ## 3. Types
 
-### 3.1. Entry
+### 3.1. Node
 
-`Entry` is a public member of `RedBlackTreeSetOrMapImpl`.
-It is an alias for [`SetOrMapImplEntry<KE, VN>`](SetOrMapImplEntry.md).
-
-### 3.2. Node
-
-`Node` is a struct defined as a private member of `RedBlackTreeSetOrMapImpl`.
+`Node` is a struct defined as a public member of `RedBlackTreeSetOrMapImpl`.
 It represents a node of the red-black tree.
 
-#### 3.2.1. Public Types
+#### 3.1.1. Public Types
 
 `Node` defines the following public types.
 
@@ -318,9 +313,10 @@ It represents a node of the red-black tree.
 |----|----------|-------|
 |`Color`|An enumeration with values `BLACK` and `RED`|A node color|
 |`Direction`|An enumeration with values `LEFT` and `RIGHT`|A tree direction|
+|`Entry`|An alias for [`SetOrMapImplEntry<KE, VN>`](SetOrMapImplEntry.md)|A set or map entry in a tree node.|
 |`Index`|`FwSizeType`|An array index representing a tree node|
 
-#### 3.2.2. Public Constants
+#### 3.1.2. Public Constants
 
 `Node` defines the following constants.
 
@@ -328,7 +324,7 @@ It represents a node of the red-black tree.
 |----|----|-------|-------------|
 |`NONE`|`Index`|An out-of-bounds index value corresponding to no node|`std::numeric_limits<Index>::max()`|
 
-#### 3.2.3. Public Member Variables
+#### 3.1.3. Public Member Variables
 
 `Node` has the following public member variables.
 
@@ -340,9 +336,9 @@ It represents a node of the red-black tree.
 |`color`|`Color`|The color of this node|`Color::BLACK`|
 |`entry`|`Entry`|The set or map entry stored in this node|C++ default initialization|
 
-#### 3.2.4. Public Member Functions
+#### 3.1.4. Public Member Functions
 
-##### 3.2.4.1. getChild
+##### 3.1.4.1. getChild
 
 ```c+++
 Node::Index getChild(Direction direction) const
@@ -354,7 +350,7 @@ Gets the child of `this` in direction `direction`.
 **Algorithm:**
 Return `(direction == LEFT) ? left : right`.
 
-##### 3.2.4.2. setChild
+##### 3.1.4.2. setChild
 
 ```c++
 void setChild(Direction direction, Index node)
@@ -366,9 +362,9 @@ Sets the child of `this` in direction `direction`.
 **Algorithm:**
 `(direction == LEFT) ? (this.left = node) : (this.right = node)`.
 
-#### 3.2.5. Public Static Methods
+#### 3.1.5. Public Static Methods
 
-##### 3.2.5.1. getOppositeDirection
+##### 3.1.5.1. getOppositeDirection
 
 ```c+++
 static Direction oppositeDirection(Direction direction)
@@ -380,16 +376,16 @@ Returns the opposite direction.
 **Algorithm:**
 Return `(direction == LEFT) ? RIGHT : LEFT`.
 
-### 3.3. Nodes and FreeNodes
+### 3.2. Nodes and FreeNodes
 
-`RedBlackTreeSetOrMapImpl` defines the following private type aliases.
+`RedBlackTreeSetOrMapImpl` defines the following public type aliases.
 
 |Name|Definition|Purpose|
 |----|----------|-------|
 |`Nodes`|Alias for [`ExernalArray<Node>`](ExternalArray.md)|The type of the array for storing the tree nodes|
 |`FreeNodes`|Alias for [`ExernalStack<Node::Index>`](ExternalStack.md)|The type of the stack of indices of free nodes.|
 
-### 3.4. ConstIterator
+### 3.3. ConstIterator
 
 `ConstIterator` is a public inner class of `RedBlackTreeSetOrMapImpl`.
 It provides non-modifying iteration over the elements of a `RedBlackTreeSetOrMapImpl`
@@ -657,6 +653,8 @@ Each of `nodes` and `freeNodes` must point to at least `capacity` items.
 
 1. Call `m_freeNodes.setStorage(freeNodes, capacity)`.
 
+1. Call `this->clear()`.
+
 <a name="setStorageUntyped"></a>
 ### 6.11. setStorage (Untyped Data)
 
@@ -682,6 +680,8 @@ that is aligned for `FreeNodes::getByteArrayAlignment()`.
 1. Let `freeNodesData = ByteArray(&data.bytes[freeNodesOffset], freeNodesSize)`.
 
 1. Call `m_freeNodes.setStorage(freeNodesData, capacity)`.
+
+1. Call `this->clear()`.
 
 ## 7. Public Static Functions
 
@@ -790,7 +790,7 @@ If `node` has no child in that direction, then the result is `node`.
 
 1. Set `child = (node != NONE) ? m_nodes[node].getChild(direction) : NONE`.
 
-1. Set `done = false`.
+1. Set `done = (node == NONE)`.
 
 1. In a for loop bounded by `getCapacity()`
 
@@ -892,9 +892,11 @@ It is not permissible for `node` to be `NONE`.
 
     1. Call `m_nodes[parent].setChild(direction, node)`.
 
-    1. Set `done = false`.
+    1. Let `capacity = getCapacity()`.
 
-    1. In a for loop bounded by `getCapacity()`:
+    1. Set `done = (capacity == 0)`.
+
+    1. In a for loop bounded by `capacity`:
 
         1. _The following invariants hold: (1) `node` is colored red; (2) there
            may be a red child violation from `parent` to `node`; and (3) there 
