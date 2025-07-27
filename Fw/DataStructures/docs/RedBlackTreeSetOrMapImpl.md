@@ -881,8 +881,6 @@ It is not permissible for `node` to be `NONE`.
    `parent` is none or the child of `parent` in the direction `direction` is
    `NONE`, and (3) that both children of `node` are `NONE`._
 
-1. Let `oppositeDirection = Node::getOppositeDirection(direction)`.
-
 1. Set `m_nodes[node].color = RED`.
 
 1. Set `m_nodes[node].parent = parent`.

@@ -109,7 +109,6 @@ struct InsertNotFull : public Rule {
     InsertNotFull() : Rule("InsertNotFull") {}
     bool precondition(const State& state) { return static_cast<FwSizeType>(state.impl.getSize()) < State::capacity; }
     void action(State& state) {
-#if 0
         const auto key = state.getKey();
         const auto value = state.getValue();
         const auto size = state.impl.getSize();
@@ -118,7 +117,6 @@ struct InsertNotFull : public Rule {
         ASSERT_EQ(status, Success::SUCCESS);
         ASSERT_EQ(state.impl.getSize(), expectedSize);
         state.modelMap[key] = value;
-#endif
     }
 };
 

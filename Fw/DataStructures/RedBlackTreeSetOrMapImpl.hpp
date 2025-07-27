@@ -189,7 +189,7 @@ class RedBlackTreeSetOrMapImpl final {
                     bool done = false;
                     for (FwSizeType i = 0; i < capacity; i++) {
                         const auto previousNode = this->m_node;
-                        this->m_node = this->m_impl->m_nodes[this->m_node].parent;
+                        this->m_node = this->m_impl->m_nodes[this->m_node].m_parent;
                         if ((this->m_node == Node::NONE) or (this->m_node.getChild(Direction::LEFT) == previousNode)) {
                             done = true;
                             break;
@@ -296,7 +296,7 @@ class RedBlackTreeSetOrMapImpl final {
         auto direction = Node::LEFT;
         const auto status = this->findNode(keyOrElement, node, direction);
         if (status == Success::SUCCESS) {
-            valueOrNil = this->m_nodes[node].entry.getValue();
+            valueOrNil = this->m_nodes[node].m_entry.getValueOrNil();
         }
         return status;
     }
@@ -325,15 +325,15 @@ class RedBlackTreeSetOrMapImpl final {
         auto status = Success::FAILURE;
         const auto findStatus = this->findNode(keyOrElement, node, direction);
         if (findStatus == Success::SUCCESS) {
-            this->m_nodes[node].setValue(valueOrNil);
+            this->m_nodes[node].m_entry.setValueOrNil(valueOrNil);
             status = Success::SUCCESS;
         } else {
             const auto parent = node;
             status = this->m_freeNodes.pop(node);
             if (status == Success::SUCCESS) {
                 this->m_nodes[node] = Node();
-                this->m_nodes[node].entry.setKey(keyOrElement);
-                this->m_nodes[node].entry.setValue(valueOrNil);
+                this->m_nodes[node].m_entry.setKeyOrElement(keyOrElement);
+                this->m_nodes[node].m_entry.setValueOrNil(valueOrNil);
                 this->insertNode(node, parent, direction);
             }
         }
@@ -349,7 +349,7 @@ class RedBlackTreeSetOrMapImpl final {
         auto direction = Direction::LEFT;
         const auto status = findNode(keyOrElement, node, direction);
         if (status == Success::SUCCESS) {
-            valueOrNil = this->m_nodes[node].entry.getValue();
+            valueOrNil = this->m_nodes[node].m_entry.getValue();
             auto removedNode = Node::NONE;
             this->removeNode(node, removedNode);
             const auto pushStatus = this->m_freeNodes.push(removedNode);
@@ -438,7 +438,7 @@ class RedBlackTreeSetOrMapImpl final {
     //! \return The color
     Color getNodeColor(Index index  //!< The node index
     ) {
-        return (index == Node::NONE) ? Color::BLACK : this->m_nodes[index].color;
+        return (index == Node::NONE) ? Color::BLACK : this->m_nodes[index].m_color;
     }
 
     //! Get the outer node under node in the specified direction. If node has
@@ -466,9 +466,9 @@ class RedBlackTreeSetOrMapImpl final {
     //! NONE. The parent of node must not be NONE.
     Direction getParentDirection(Index node  //!< The node index
     ) const {
-        const auto parent = this->m_nodes[node].parent;
-        const auto parentRight = m_nodes[parent].right;
-        return (node == parentRight) ? Color::RIGHT : Color::LEFT;
+        const auto parent = this->m_nodes[node].m_parent;
+        const auto parentRight = m_nodes[parent].m_right;
+        return (node == parentRight) ? Direction::RIGHT : Direction::LEFT;
     }
 
     //! This function inserts node into the tree as a left or right child of parent,
@@ -486,10 +486,9 @@ class RedBlackTreeSetOrMapImpl final {
         // We assume (1) that the tree is a red-black tree, (2) that parent is NONE or
         // the child of parent in the direction direction is NONE, and (3) that
         // both children of node are NONE.
-        const auto oppositeDirection = Node::getOppositeDirection(direction);
-        this->m_nodes[node].color = Color::RED;
-        this->m_nodes[node].parent = parent;
-        if (parent == Index::NONE) {
+        this->m_nodes[node].m_color = Color::RED;
+        this->m_nodes[node].m_parent = parent;
+        if (parent == Node::NONE) {
             this->m_root = node;
             // The tree was empty, and now it consists of a single red node.
         } else {
@@ -506,9 +505,9 @@ class RedBlackTreeSetOrMapImpl final {
                     done = true;
                     break;
                 }
-                const auto grandparent = this->m_nodes[parent].parent;
+                const auto grandparent = this->m_nodes[parent].m_parent;
                 if (grandparent == Node::NONE) {
-                    this->m_nodes[parent].color = Color::BLACK;
+                    this->m_nodes[parent].m_color = Color::BLACK;
                     // This step removes the red child violation at parent.
                     // It preserves all other invariants.
                     done = true;
@@ -593,8 +592,8 @@ class RedBlackTreeSetOrMapImpl final {
                     //                                      ----------------------
                     //
                     this->rotateSubtree(grandparent, parentOppositeDirection);
-                    this->m_nodes[parent].color = Color::BLACK;
-                    this->m_nodes[grandparent].color = Color::RED;
+                    this->m_nodes[parent].m_color = Color::BLACK;
+                    this->m_nodes[grandparent].m_color = Color::RED;
                     // The subtree has the following shape.
                     //
                     //                               BBBBBBBBBBBBBBBBBBB
@@ -666,11 +665,11 @@ class RedBlackTreeSetOrMapImpl final {
                     //                   |                                |
                     //                   ----------------------------------
                     //
-                    this->m_nodes[parent].color = Color::BLACK;
-                    this->m_nodes[uncle].color = Color::BLACK;
-                    this->m_nodes[grandparent].color = Color::RED;
+                    this->m_nodes[parent].m_color = Color::BLACK;
+                    this->m_nodes[uncle].m_color = Color::BLACK;
+                    this->m_nodes[grandparent].m_color = Color::RED;
                     node = grandparent;
-                    parent = this->m_nodes[node].parent;
+                    parent = this->m_nodes[node].m_parent;
                     // The tree shown above now has the following shape.
                     //
                     //                    ???????????????????
@@ -747,17 +746,17 @@ class RedBlackTreeSetOrMapImpl final {
                        Direction direction  //!< The direction
     ) {
         // We assume that the tree is a binary search tree (BST).
-        const auto parent = this->m_nodes[node].parent;
+        const auto parent = this->m_nodes[node].m_parent;
         const auto oppositeDirection = Node::getOppositeDirection(direction);
         const auto newRoot = this->m_nodes[node].getChild(oppositeDirection);
         const auto newChild = this->m_nodes[newRoot].getChild(direction);
         this->m_nodes[node].setChild(oppositeDirection, newChild);
         if (newChild != Node::NONE) {
-            this->m_nodes[newChild].parent = node;
+            this->m_nodes[newChild].m_parent = node;
         }
         this->m_nodes[newRoot].setChild(direction, node);
-        this->m_nodes[newRoot].parent = parent;
-        this->m_nodes[node].parent = newRoot;
+        this->m_nodes[newRoot].m_parent = parent;
+        this->m_nodes[node].m_parent = newRoot;
         if (parent != Node::NONE) {
             const auto parentDirection = getParentDirection(node);
             this->m_nodes[parent].setChild(parentDirection, newRoot);
