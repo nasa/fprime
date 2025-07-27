@@ -345,7 +345,7 @@ It represents a node of the red-black tree.
 ##### 3.2.4.1. getChild
 
 ```c+++
-Node::Index getChild(Direction direction)
+Node::Index getChild(Direction direction) const
 ```
 
 **Overview:**
@@ -770,7 +770,7 @@ and `node` stores the index of _N_.
 ### 8.2. getNodeColor
 
 ```c++
-static Node::Color getNodeColor(Index index)
+Node::Color getNodeColor(Index index) const
 ```
 
 Return `index == NONE ? BLACK : m_nodes[index].color`.

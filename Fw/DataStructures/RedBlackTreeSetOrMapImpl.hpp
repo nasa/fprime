@@ -76,7 +76,7 @@ class RedBlackTreeSetOrMapImpl final {
         //! Get the child of this node in the specified direction
         //! \return The child
         Index getChild(Direction direction  //!< The direction
-        ) {
+        ) const {
             return (direction == Direction::LEFT) ? this->m_left : this->m_right;
         }
 
@@ -190,7 +190,9 @@ class RedBlackTreeSetOrMapImpl final {
                     for (FwSizeType i = 0; i < capacity; i++) {
                         const auto previousNode = this->m_node;
                         this->m_node = this->m_impl->m_nodes[this->m_node].m_parent;
-                        if ((this->m_node == Node::NONE) or (this->m_node.getChild(Direction::LEFT) == previousNode)) {
+                        const auto& nodeObject = this->m_impl->m_nodes[this->m_node];
+                        if ((this->m_node == Node::NONE) or
+                            (nodeObject.getChild(Direction::LEFT) == previousNode)) {
                             done = true;
                             break;
                         }
@@ -437,7 +439,7 @@ class RedBlackTreeSetOrMapImpl final {
     //! Get the color of a node
     //! \return The color
     Color getNodeColor(Index index  //!< The node index
-    ) {
+    ) const {
         return (index == Node::NONE) ? Color::BLACK : this->m_nodes[index].m_color;
     }
 
@@ -445,12 +447,12 @@ class RedBlackTreeSetOrMapImpl final {
     //! no child in that direction, then the result is node.
     Index getOuterNodeUnder(Index node,          //!< The node index
                             Direction direction  //!< The direction
-    ) {
+    ) const {
         auto child = (node != Node::NONE) ? this->m_nodes[node].getChild(direction) : Node::NONE;
         bool done = false;
         const auto capacity = this->getCapacity();
         for (FwSizeType i = 0; i < capacity; i++) {
-            if (child == Node::NODE) {
+            if (child == Node::NONE) {
                 done = true;
                 break;
             }
