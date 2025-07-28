@@ -175,8 +175,9 @@ class RedBlackTreeSetOrMapImpl final {
         //! Increment operator
         void increment() override {
             FW_ASSERT(this->m_impl != nullptr);
+            const auto& nodes = this->m_impl->m_nodes;
             if (this->m_node != Node::NONE) {
-                const auto rightChild = this->m_impl->m_nodes[this->m_node].getChild(Direction::RIGHT);
+                const auto rightChild = nodes[this->m_node].getChild(Direction::RIGHT);
                 if (rightChild != Node::NONE) {
                     // There is a right child. Go to the leftmost node under that child.
                     this->m_node = this->m_impl->getOuterNodeUnder(rightChild, Direction::LEFT);
@@ -187,9 +188,8 @@ class RedBlackTreeSetOrMapImpl final {
                     bool done = false;
                     for (FwSizeType i = 0; i < capacity; i++) {
                         const auto previousNode = this->m_node;
-                        this->m_node = this->m_impl->m_nodes[this->m_node].m_parent;
-                        const auto& nodeObject = this->m_impl->m_nodes[this->m_node];
-                        if ((this->m_node == Node::NONE) or (nodeObject.getChild(Direction::LEFT) == previousNode)) {
+                        this->m_node = nodes[this->m_node].m_parent;
+                        if ((this->m_node == Node::NONE) or (nodes[this->m_node].getChild(Direction::LEFT) == previousNode)) {
                             done = true;
                             break;
                         }

@@ -159,14 +159,21 @@ TEST(RedBlackTreeSetOrMapImplScenarios, InsertFull) {
     state.useStoredKey = false;
     Rules::insertFull.apply(state);
 }
+#endif
 
 TEST(RedBlackTreeSetOrMapImplScenarios, InsertNotFull) {
-    State::Entry entries[State::capacity];
-    State::Impl impl(entries, State::capacity);
+    State::Tester::Node nodes[State::capacity];
+    State::Tester::Index freeNodes[State::capacity];
+    State::Impl impl(nodes, freeNodes, State::capacity);
+    State::Tester tester(impl);
     State state(impl);
+    state.useStoredKey = true;
+    state.useStoredValue = true;
     Rules::insertNotFull.apply(state);
+    tester.printTree();
 }
 
+#if 0
 TEST(RedBlackTreeSetOrMapImplScenarios, Remove) {
     State::Entry entries[State::capacity];
     State::Impl impl(entries, State::capacity);

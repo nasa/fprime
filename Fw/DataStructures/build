@@ -1,5 +1,7 @@
 #!/bin/sh -e
 
+cd `dirname $0`
+
 include_paths="
 -I$FPRIME
 -I$FPRIME/STest
@@ -49,6 +51,7 @@ cpp_flags="
     -Werror
     -Wno-unused-parameter
     -Wno-vla
+    -g
 "
 
 c_flags="
@@ -62,6 +65,7 @@ c_flags="
     -Werror
     -Wno-unused-parameter
     -Wno-vla
+    -g
 "
 
 for file in $cpp_files
@@ -84,4 +88,4 @@ get_o_files()
   done
 }
 
-g++ `get_o_files` -o run
+g++ `get_o_files` -o exe

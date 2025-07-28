@@ -79,13 +79,14 @@ class RedBlackTreeSetOrMapImplTester {
 
     // Check the red-black tree properties of the tree. Return the black height.
     FwSizeType checkRbtProperties() {
+        const auto& nodes = this->m_impl.m_nodes;
         auto node = this->m_impl.getOuterNodeUnder(this->m_impl.m_root, Direction::LEFT);
         const auto capacity = this->m_impl.getCapacity();
         for (FwSizeType i = 0; i < capacity; i++) {
             if (node == Node::NONE) {
                 break;
             }
-            const auto rightChild = this->m_impl.m_nodes[node].getChild(Direction::RIGHT);
+            const auto rightChild = nodes[node].getChild(Direction::RIGHT);
             if (rightChild != Node::NONE) {
                 // There is a right child. Go to the leftmost node under that child.
                 node = this->m_impl.getOuterNodeUnder(rightChild, Direction::LEFT);
@@ -96,9 +97,8 @@ class RedBlackTreeSetOrMapImplTester {
                     this->checkForRedViolation(node);
                     this->updateBlackHeight(node);
                     const auto previousNode = node;
-                    node = this->m_impl.m_nodes[node].m_parent;
-                    const auto& nodeObject = this->m_impl.m_nodes[node];
-                    if ((node == Node::NONE) or (nodeObject.getChild(Direction::LEFT) == previousNode)) {
+                    node = nodes[node].m_parent;
+                    if ((node == Node::NONE) or (nodes[node].getChild(Direction::LEFT) == previousNode)) {
                         break;
                     }
                 }
@@ -115,14 +115,14 @@ class RedBlackTreeSetOrMapImplTester {
         if (this->m_impl.getNodeColor(node) == Color::RED) {
             const auto& nodes = this->m_impl.m_nodes;
             const auto leftChild = nodes[node].getChild(Direction::LEFT);
-            ASSERT_NE(nodes[leftChild].m_color, Color::RED)
+            ASSERT_NE(this->m_impl.getNodeColor(leftChild), Color::RED)
                 << "Red child violation at left child\n"
                 << "  node index is " << node << "\n"
                 << "  node key is " << nodes[node].m_entry.getKeyOrElement() << "\n"
                 << "  left child index is " << leftChild << "\n"
                 << "  left child key is " << nodes[leftChild].m_entry.getKeyOrElement() << "\n";
             const auto rightChild = nodes[node].getChild(Direction::RIGHT);
-            ASSERT_NE(nodes[rightChild].m_color, Color::RED)
+            ASSERT_NE(this->m_impl.getNodeColor(rightChild), Color::RED)
                 << "Red child violation at right child\n"
                 << "  node index is " << node << "\n"
                 << "  node key is " << nodes[node].m_entry.getKeyOrElement() << "\n"
@@ -158,16 +158,16 @@ class RedBlackTreeSetOrMapImplTester {
         const auto capacity = this->m_impl.getCapacity();
         I32 indent = 0;
         constexpr I32 indentIncrement = 2;
-        const  FwSizeType loopBound = 3 * capacity;
+        const FwSizeType loopBound = 3 * capacity;
         for (FwSizeType i = 0; i < loopBound; i++) {
             if (node == Node::NONE) {
                 break;
             }
             const auto& nodeObject = this->m_impl.m_nodes[node];
-            const auto leftChild = nodeObject.m_nodes[node].m_left;
-            const auto rightChild = this->m_impl.m_nodes[node].m_right;
+            const auto leftChild = nodeObject.m_left;
+            const auto rightChild = nodeObject.m_right;
             if (child == Node::NONE) {
-                this->printNode(indent, nodeObject);
+                this->printNode(indent, node);
                 if (leftChild != Node::NONE) {
                     indent += indentIncrement;
                     node = leftChild;
@@ -192,13 +192,28 @@ class RedBlackTreeSetOrMapImplTester {
     }
 
     // Print a node
-    void printNode(I32 indent, const Node& node) {
-        for (FwSizeType i = 0; i < indent; i++) {
+    void printNode(I32 indent, Index node) {
+        const auto& nodeObject = this->m_impl.m_nodes[node];
+        for (I32 i = 0; i < indent; i++) {
             std::cout << " ";
         }
-        std::cout << "Node { " << node.m_parent << "key=" << node.m_entry.getKeyOrElement()
-                  << ", value=" << node.m_entry.getValueOrNil() << ", color=" << node.m_color << "\n";
+        Fw::String parent;
+        indexToString(nodeObject.m_parent, parent);
+        std::cout << "Node " << node << " { parent=" << parent.toChar() << ", key=" << nodeObject.m_entry.getKeyOrElement()
+                  << ", value=" << nodeObject.m_entry.getValueOrNil() << ", color=" << colorToString(nodeObject.m_color) << " }\n";
     }
+
+    // Convert an index to a string
+    void indexToString(Index node, Fw::StringBase& str) {
+        if (node == Node::NONE) {
+            str = "NONE";
+        } else {
+            str.format(PRI_FwSizeType, node);
+        }
+    }
+
+    // Convert a color to a string
+    static const char* colorToString(Color color) { return (color == Color::RED) ? "RED" : "BLACK"; }
 
   private:
     const Impl& m_impl;
