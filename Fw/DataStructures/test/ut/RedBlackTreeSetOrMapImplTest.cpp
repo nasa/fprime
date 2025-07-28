@@ -34,8 +34,8 @@ using ImplTester = RedBlackTreeSetOrMapImplTester<State::KeyType, State::ValueTy
 
 TEST(RedBlackTreeSetOrMapImpl, ZeroArgConstructor) {
     State::Impl impl;
-    ASSERT_EQ(impl.getCapacity(), 0);
-    ASSERT_EQ(impl.getSize(), 0);
+    ASSERT_EQ(impl.getCapacity(), 0U);
+    ASSERT_EQ(impl.getSize(), 0U);
 }
 
 TEST(RedBlackTreeSetOrMapImpl, TypedStorageConstructor) {
@@ -47,7 +47,7 @@ TEST(RedBlackTreeSetOrMapImpl, TypedStorageConstructor) {
     ExternalStackTester<ImplTester::Index> stackTester(tester.getFreeNodes());
     ASSERT_EQ(stackTester.getItems().getElements(), freeNodes);
     ASSERT_EQ(impl.getCapacity(), FwSizeType(State::capacity));
-    ASSERT_EQ(impl.getSize(), 0);
+    ASSERT_EQ(impl.getSize(), 0U);
 }
 
 TEST(RedBlackTreeSetOrMapImpl, UntypedStorageConstructor) {
@@ -58,7 +58,7 @@ TEST(RedBlackTreeSetOrMapImpl, UntypedStorageConstructor) {
     State::Tester tester(impl);
     ASSERT_EQ(tester.getNodes().getElements(), reinterpret_cast<ImplTester::Node*>(bytes));
     ASSERT_EQ(impl.getCapacity(), FwSizeType(State::capacity));
-    ASSERT_EQ(impl.getSize(), 0);
+    ASSERT_EQ(impl.getSize(), 0U);
 }
 
 #if 0

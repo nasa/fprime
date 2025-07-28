@@ -37,16 +37,43 @@ c_files="
 $FPRIME/STest/STest/Random/bsd_random.c
 "
 
+cpp_flags="
+    --std=c++11
+    -Wold-style-cast
+    -pedantic
+    -Wall
+    -Wextra
+    -Wconversion
+    -Wdouble-promotion
+    -Wshadow
+    -Werror
+    -Wno-unused-parameter
+    -Wno-vla
+"
+
+c_flags="
+    --std=c99
+    -pedantic
+    -Wall
+    -Wextra
+    -Wconversion
+    -Wdouble-promotion
+    -Wshadow
+    -Werror
+    -Wno-unused-parameter
+    -Wno-vla
+"
+
 for file in $cpp_files
 do
   base=`basename $file`
-  g++ -c $include_paths $file -o $base.o
+  g++ -c $cpp_flags $include_paths $file -o $base.o
 done
 
 for file in $c_files
 do
   base=`basename $file`
-  gcc -c $include_paths $file -o $base.o
+  gcc -c $c_flags $include_paths $file -o $base.o
 done
 
 get_o_files()
