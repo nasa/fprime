@@ -53,7 +53,7 @@ class RedBlackTreeSetOrMapImplTester {
     // Check properties of the tree
     void checkProperties() {
         this->checkBstProperty();
-        //(void)this->checkRbtProperties();
+        (void)this->checkRbtProperties();
     }
 
     // Check the BST property of the tree
@@ -141,13 +141,11 @@ class RedBlackTreeSetOrMapImplTester {
             const auto rightChild = nodes[node].getChild(Direction::RIGHT);
             const auto rightHeight = getBlackHeight(rightChild);
             ASSERT_EQ(leftHeight, rightHeight)
-                << "Black height violation\n"
+                << "Black height violation at node " << node << "\n"
                 << "  left child index is " << leftChild << "\n"
-                << "  left child key is " << nodes[leftChild].m_entry.getKeyOrElement() << "\n"
-                << "  right child index is " << rightChild << "\n"
-                << "  right child key is " << nodes[rightChild].m_entry.getKeyOrElement() << "\n";
+                << "  right child index is " << rightChild << "\n";
             const FwSizeType nodeHeight = (this->m_impl.getNodeColor(node) == Color::BLACK) ? 1 : 0;
-            this->blackHeights[node] = leftHeight + rightHeight + nodeHeight;
+            this->blackHeights[node] = leftHeight + nodeHeight;
         }
     }
 
