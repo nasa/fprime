@@ -85,7 +85,7 @@ void setupTopology(const TopologyState& state) {
     //Initialize socket client communication if and only if there is a valid specification
     if (state.hostname != nullptr && state.port != 0) {
         Os::TaskString name("ReceiveTask");
-        comDriver.start(name, 100, Default.STACK_SIZE);
+        comDriver.start(name, 100, Default::STACK_SIZE);
     }
 }
 
