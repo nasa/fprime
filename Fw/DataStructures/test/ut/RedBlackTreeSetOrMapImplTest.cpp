@@ -171,6 +171,10 @@ TEST(RedBlackTreeSetOrMapImplScenarios, InsertNotFull) {
     state.useStoredValue = true;
     Rules::insertNotFull.apply(state);
     tester.printTree();
+    state.storedKey = 1;
+    state.storedValue = 1;
+    Rules::insertNotFull.apply(state);
+    tester.printTree();
 }
 
 #if 0

@@ -109,11 +109,13 @@ struct InsertNotFull : public Rule {
     InsertNotFull() : Rule("InsertNotFull") {}
     bool precondition(const State& state) { return static_cast<FwSizeType>(state.impl.getSize()) < State::capacity; }
     void action(State& state) {
+        printf("InsertNotFull::action\n");
         state.tester.checkProperties();
         const auto key = state.getKey();
         const auto value = state.getValue();
         const auto size = state.impl.getSize();
         const auto expectedSize = state.modelMapContains(key) ? size : size + 1;
+        printf("  inserting key=%" PRI_U16 ", value=%" PRI_U32 "\n", key, value);
         const auto status = state.impl.insert(key, value);
         ASSERT_EQ(status, Success::SUCCESS);
         ASSERT_EQ(state.impl.getSize(), expectedSize);

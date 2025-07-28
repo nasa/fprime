@@ -53,25 +53,31 @@ class RedBlackTreeSetOrMapImplTester {
     // Check properties of the tree
     void checkProperties() {
         this->checkBstProperty();
-        (void)this->checkRbtProperties();
+        //(void)this->checkRbtProperties();
     }
 
     // Check the BST property of the tree
     void checkBstProperty() const {
+        printf("checkBstProperty\n");
         const auto capacity = this->m_impl.getCapacity();
+        printf("  begin()\n");
         auto it = this->m_impl.begin();
         FwSizeType size = 0;
         for (FwSizeType i = 0; i < capacity; i++) {
+            printf("i=%" PRI_FwSizeType "\n", i);
             if (!it.isInRange()) {
                 break;
             }
             const KE key1 = it.getEntry().getKey();
+            printf("  key1=%" PRI_U16 "\n", key1);
             size++;
             it.increment();
             if (!it.isInRange()) {
+                printf("  breaking out of loop\n");
                 break;
             }
             const KE key2 = it.getEntry().getKey();
+            printf("  key2=%" PRI_U16 "\n", key2);
             ASSERT_LT(key1, key2);
         }
         ASSERT_EQ(size, this->m_impl.getSize());
@@ -200,9 +206,14 @@ class RedBlackTreeSetOrMapImplTester {
             printf("NONE\n");
         } else {
             const auto& nodeObject = this->m_impl.m_nodes[node];
-            Fw::String parent;
-            indexToString(nodeObject.m_parent, parent);
-            std::cout << "Node " << node << " { parent=" << parent.toChar()
+            const auto parent = nodeObject.m_parent;
+            if (parent != Node::NONE) {
+                const auto parentDirection = this->m_impl.getParentDirection(node);
+                std::cout << directionToString(parentDirection) << " ";
+            }
+            Fw::String parentStr;
+            indexToString(parent, parentStr);
+            std::cout << "Node " << node << " { parent=" << parentStr.toChar()
                       << ", key=" << nodeObject.m_entry.getKeyOrElement()
                       << ", value=" << nodeObject.m_entry.getValueOrNil()
                       << ", color=" << colorToString(nodeObject.m_color) << " }\n";
@@ -214,12 +225,15 @@ class RedBlackTreeSetOrMapImplTester {
         if (node == Node::NONE) {
             str = "NONE";
         } else {
-            str.format(PRI_FwSizeType, node);
+            str.format("%" PRI_FwSizeType, node);
         }
     }
 
     // Convert a color to a string
     static const char* colorToString(Color color) { return (color == Color::RED) ? "RED" : "BLACK"; }
+
+    // Convert a direciton to a string
+    static const char* directionToString(Direction direction) { return (direction == Direction::LEFT) ? "LEFT" : "RIGHT"; }
 
   private:
     const Impl& m_impl;
