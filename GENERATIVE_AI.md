@@ -1,6 +1,6 @@
 # F´ Generative AI Usage Guidelines
 
-We're excited about the potential of generative AI to help make [F´] (https://github.com/nasa/fprime)development more productive, enjoyable, and accessible! Whether you're using AI to write code, improve documentation, or learn about complex systems, we welcome and encourage the thoughtful use of these powerful tools in your F´ contributions.
+We're excited about the potential of generative AI to help make [F´](https://github.com/nasa/fprime) development more productive, enjoyable, and accessible! Whether you're using AI to write code, improve documentation, or learn about complex systems, we welcome and encourage the thoughtful use of these powerful tools in your F´ contributions.
 
 This guide shares our community's approach to using generative AI effectively and responsibly. You'll find practical tips, best practices, and simple guidelines to help you get the most out of AI tools while maintaining the quality standards that make F´ great.
 
