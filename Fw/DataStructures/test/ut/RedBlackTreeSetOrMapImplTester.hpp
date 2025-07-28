@@ -58,26 +58,20 @@ class RedBlackTreeSetOrMapImplTester {
 
     // Check the BST property of the tree
     void checkBstProperty() const {
-        printf("checkBstProperty\n");
         const auto capacity = this->m_impl.getCapacity();
-        printf("  begin()\n");
         auto it = this->m_impl.begin();
         FwSizeType size = 0;
         for (FwSizeType i = 0; i < capacity; i++) {
-            printf("i=%" PRI_FwSizeType "\n", i);
             if (!it.isInRange()) {
                 break;
             }
             const KE key1 = it.getEntry().getKey();
-            printf("  key1=%" PRI_U16 "\n", key1);
             size++;
             it.increment();
             if (!it.isInRange()) {
-                printf("  breaking out of loop\n");
                 break;
             }
             const KE key2 = it.getEntry().getKey();
-            printf("  key2=%" PRI_U16 "\n", key2);
             ASSERT_LT(key1, key2);
         }
         ASSERT_EQ(size, this->m_impl.getSize());
@@ -203,7 +197,7 @@ class RedBlackTreeSetOrMapImplTester {
             std::cout << " ";
         }
         if (node == Node::NONE) {
-            printf("NONE\n");
+            std::cout << "NONE\n";
         } else {
             const auto& nodeObject = this->m_impl.m_nodes[node];
             const auto parent = nodeObject.m_parent;

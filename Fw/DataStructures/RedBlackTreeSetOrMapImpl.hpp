@@ -134,8 +134,6 @@ class RedBlackTreeSetOrMapImpl final {
         //! Constructor providing the implementation
         ConstIterator(const RedBlackTreeSetOrMapImpl<KE, VN>& impl)
             : SetOrMapImplConstIterator<KE, VN>(), m_impl(&impl) {
-            printf("ConstIterator\n");
-            printf("  root=%" PRI_FwSizeType "\n", this->m_impl->m_root);
             this->m_node = this->m_impl->getOuterNodeUnder(this->m_impl->m_root, Direction::LEFT);
         }
 
@@ -322,24 +320,16 @@ class RedBlackTreeSetOrMapImpl final {
     Success insert(const KE& keyOrElement,  //!< The key or element
                    const VN& valueOrNil     //!< The value or Nil
     ) {
-        printf("insert\n");
-        std::cout << "  key=" << keyOrElement << "\n";
-        std::cout << "  value=" << valueOrNil << "\n";
-        printf("  root=%" PRI_FwSizeType "\n", this->m_root);
         auto node = Node::NONE;
         auto direction = Direction::LEFT;
         auto status = Success::FAILURE;
         const auto findStatus = this->findNode(keyOrElement, node, direction);
         if (findStatus == Success::SUCCESS) {
-            printf("  findStatus == SUCCESS\n");
             this->m_nodes[node].m_entry.setValueOrNil(valueOrNil);
             status = Success::SUCCESS;
         } else {
-            printf("  findStatus == FAILURE\n");
             const auto parent = node;
-            std::cout << "  parent=" << parent << "\n";
             status = this->m_freeNodes.pop(node);
-            std::cout << "  node=" << node << "\n";
             if (status == Success::SUCCESS) {
                 this->m_nodes[node] = Node();
                 this->m_nodes[node].m_entry.setKeyOrElement(keyOrElement);
@@ -441,24 +431,19 @@ class RedBlackTreeSetOrMapImpl final {
                      Index& node,             //!< The node index (output)
                      Direction& direction     //!< The direction (output)
     ) const {
-        std::cout << "findNode\n";
         auto result = Success::FAILURE;
         auto parent = Node::NONE;
         auto child = this->m_root;
-        std::cout << "  parent=" << parent << "\n";
-        std::cout << "  child=" << child << "\n";
         bool done = false;
         const auto capacity = this->getCapacity();
         for (FwSizeType i = 0; i < capacity; i++) {
             if (child == Node::NONE) {
-                std::cout << "  child == NONE; breaking out of loop\n";
                 node = parent;
                 done = true;
                 break;
             }
             const auto& entryKey = this->m_nodes[child].m_entry.getKeyOrElement();
             if (keyOrElement == entryKey) {
-                std::cout << "  found a match; breaking out of loop\n";
                 result = Success::SUCCESS;
                 node = child;
                 done = true;
@@ -467,12 +452,10 @@ class RedBlackTreeSetOrMapImpl final {
                 direction = Direction::LEFT;
                 parent = child;
                 child = this->m_nodes[parent].m_left;
-                std::cout << "  going left\n";
             } else {
                 direction = Direction::RIGHT;
                 parent = child;
                 child = this->m_nodes[parent].m_right;
-                std::cout << "  going right\n";
             }
         }
         FW_ASSERT(done);
@@ -491,9 +474,6 @@ class RedBlackTreeSetOrMapImpl final {
     Index getOuterNodeUnder(Index node,          //!< The node index
                             Direction direction  //!< The direction
     ) const {
-        printf("getOuterNodeUnder\n");
-        printf("  node=%" PRI_FwSizeType "\n", node);
-        printf("  direction=%d\n", static_cast<I32>(direction));
         auto child = (node != Node::NONE) ? this->m_nodes[node].getChild(direction) : Node::NONE;
         const auto capacity = this->getCapacity();
         bool done = (capacity == 0);
@@ -506,7 +486,6 @@ class RedBlackTreeSetOrMapImpl final {
             child = this->m_nodes[child].getChild(direction);
         }
         FW_ASSERT(done == true);
-        printf("  node=%" PRI_FwSizeType "\n", node);
         return node;
     }
 
@@ -532,10 +511,6 @@ class RedBlackTreeSetOrMapImpl final {
                     Index parent,        //!< The new parent
                     Direction direction  //!< The direction under the new parent
     ) {
-        std::cout << "insertNode\n";
-        std::cout << "  node= " << node << "\n";
-        std::cout << "  parent= " << parent << "\n";
-        std::cout << "  direction= " << static_cast<I32>(direction) << "\n";
         // We assume (1) that the tree is a red-black tree, (2) that parent is NONE or
         // the child of parent in the direction direction is NONE, and (3) that
         // both children of node are NONE.
