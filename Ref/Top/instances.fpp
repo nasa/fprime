@@ -1,6 +1,19 @@
 module Ref {
 
   # ----------------------------------------------------------------------
+  # Base ID Convention
+  # ----------------------------------------------------------------------
+  # 
+  # All Base IDs follow the 8-digit hex format: 0xDSSCCxxx
+  #
+  # Where:
+  #   D   = Deployment digit (1 for Ref deployment)
+  #   SS  = Subtopology digits (00 for main topology, 01-05 for subtopologies)
+  #   CC  = Component digits (00, 01, 02, etc.)
+  #   xxx = Reserved for internal component items (events, commands, telemetry)
+  #
+
+  # ----------------------------------------------------------------------
   # Defaults
   # ----------------------------------------------------------------------
 
