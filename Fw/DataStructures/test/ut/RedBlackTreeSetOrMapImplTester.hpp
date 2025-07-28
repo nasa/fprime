@@ -193,14 +193,20 @@ class RedBlackTreeSetOrMapImplTester {
 
     // Print a node
     void printNode(I32 indent, Index node) {
-        const auto& nodeObject = this->m_impl.m_nodes[node];
         for (I32 i = 0; i < indent; i++) {
             std::cout << " ";
         }
-        Fw::String parent;
-        indexToString(nodeObject.m_parent, parent);
-        std::cout << "Node " << node << " { parent=" << parent.toChar() << ", key=" << nodeObject.m_entry.getKeyOrElement()
-                  << ", value=" << nodeObject.m_entry.getValueOrNil() << ", color=" << colorToString(nodeObject.m_color) << " }\n";
+        if (node == Node::NONE) {
+            printf("NONE\n");
+        } else {
+            const auto& nodeObject = this->m_impl.m_nodes[node];
+            Fw::String parent;
+            indexToString(nodeObject.m_parent, parent);
+            std::cout << "Node " << node << " { parent=" << parent.toChar()
+                      << ", key=" << nodeObject.m_entry.getKeyOrElement()
+                      << ", value=" << nodeObject.m_entry.getValueOrNil()
+                      << ", color=" << colorToString(nodeObject.m_color) << " }\n";
+        }
     }
 
     // Convert an index to a string
