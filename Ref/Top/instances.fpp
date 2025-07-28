@@ -40,26 +40,31 @@ module Ref {
 
   instance typeDemo: Ref.TypeDemo base id 0x01050000
 
+  instance cmdSeq: Svc.CmdSequencer base id 0x01060000 \
+    queue size Default.QUEUE_SIZE \
+    stack size Default.STACK_SIZE \
+    priority 97
+
   # ----------------------------------------------------------------------
   # Queued component instances
   # ----------------------------------------------------------------------
 
-  instance sendBuffComp: Ref.SendBuff base id 0x01060000 \
+  instance sendBuffComp: Ref.SendBuff base id 0x01070000 \
     queue size Default.QUEUE_SIZE
 
-  instance SG1: Ref.SignalGen base id 0x01070000 \
+  instance SG1: Ref.SignalGen base id 0x01080000 \
     queue size Default.QUEUE_SIZE
 
-  instance SG2: Ref.SignalGen base id 0x01080000 \
+  instance SG2: Ref.SignalGen base id 0x01090000 \
     queue size Default.QUEUE_SIZE
 
-  instance SG3: Ref.SignalGen base id 0x01090000 \
+  instance SG3: Ref.SignalGen base id 0x010A0000 \
     queue size Default.QUEUE_SIZE
 
-  instance SG4: Ref.SignalGen base id 0x010A0000 \
+  instance SG4: Ref.SignalGen base id 0x010B0000 \
     queue size Default.QUEUE_SIZE
 
-  instance SG5: Ref.SignalGen base id 0x010B0000 \
+  instance SG5: Ref.SignalGen base id 0x010C0000 \
     queue size Default.QUEUE_SIZE
 
   # ----------------------------------------------------------------------

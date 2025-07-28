@@ -43,6 +43,7 @@ module Ref {
     instance systemResources
     instance linuxTimer
     instance comDriver
+    instance cmdSeq
 
     # ----------------------------------------------------------------------
     # Pattern graph specifiers
@@ -88,7 +89,7 @@ module Ref {
 
       # Rate group 2
       rateGroupDriverComp.CycleOut[Ports_RateGroups.rateGroup2] -> rateGroup2Comp.CycleIn
-      rateGroup2Comp.RateGroupMemberOut[0] -> FileHandling.cmdSeq.schedIn
+      rateGroup2Comp.RateGroupMemberOut[0] -> cmdSeq.schedIn
       rateGroup2Comp.RateGroupMemberOut[1] -> sendBuffComp.SchedIn
       rateGroup2Comp.RateGroupMemberOut[2] -> SG3.schedIn
       rateGroup2Comp.RateGroupMemberOut[3] -> SG4.schedIn
@@ -142,8 +143,8 @@ module Ref {
       # Router <-> CmdDispatcher
       ComCcsds.fprimeRouter.commandOut  -> CdhCore.cmdDisp.seqCmdBuff
       CdhCore.cmdDisp.seqCmdStatus     -> ComCcsds.fprimeRouter.cmdResponseIn
-      FileHandling.cmdSeq.comCmdOut -> CdhCore.cmdDisp.seqCmdBuff
-      CdhCore.cmdDisp.seqCmdStatus -> FileHandling.cmdSeq.cmdResponseIn
+      cmdSeq.comCmdOut -> CdhCore.cmdDisp.seqCmdBuff
+      CdhCore.cmdDisp.seqCmdStatus -> cmdSeq.cmdResponseIn
     }
 
     connections ComCcsds_FileHandling {

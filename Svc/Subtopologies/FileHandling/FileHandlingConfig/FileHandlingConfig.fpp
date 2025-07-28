@@ -7,7 +7,6 @@ module FileHandlingConfig {
         constant fileDownlink  = 10
         constant fileManager   = 10
         constant prmDb         = 10
-        constant cmdSeq        = 10
     }
     
     module StackSizes {
@@ -15,7 +14,6 @@ module FileHandlingConfig {
         constant fileDownlink  = 64 * 1024
         constant fileManager   = 64 * 1024
         constant prmDb         = 64 * 1024
-        constant cmdSeq        = 64 * 1024
     }
 
     module Priorities {
@@ -23,7 +21,6 @@ module FileHandlingConfig {
         constant fileDownlink  = 100
         constant fileManager   = 99
         constant prmDb         = 98
-        constant cmdSeq        = 97
     }
 
     # File downlink configuration constants
@@ -32,10 +29,5 @@ module FileHandlingConfig {
         constant cooldown       = 1000         # File downlink cooldown in ms  
         constant cycleTime      = 1000         # File downlink cycle time in ms
         constant fileQueueDepth = 10           # File downlink queue depth
-    }
-
-    # Buffer management constants
-    module BuffMgr {
-        constant cmdSeqBuffSize = 5 * 1024     # Command sequencer buffer size
     }
 }

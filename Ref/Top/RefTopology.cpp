@@ -13,6 +13,7 @@
 
 // Necessary project-specified types
 #include <Os/Console.hpp>
+#include <Fw/Types/MallocAllocator.hpp>
 
 // Used for 1Hz synthetic cycling
 #include <Os/Mutex.hpp>
@@ -22,6 +23,9 @@ using namespace Ref;
 
 // Instantiate a system logger that will handle Fw::Logger::log calls
 Os::Console logger;
+
+// Instantiate a malloc allocator for cmdSeq buffer allocation
+Fw::MallocAllocator mallocator;
 
 // The reference topology divides the incoming clock signal (1Hz) into sub-signals: 1Hz, 1/2Hz, and 1/4Hz and
 // zero offset for all the dividers
@@ -48,6 +52,9 @@ void configureTopology() {
     rateGroup1Comp.configure(rateGroup1Context, FW_NUM_ARRAY_ELEMENTS(rateGroup1Context));
     rateGroup2Comp.configure(rateGroup2Context, FW_NUM_ARRAY_ELEMENTS(rateGroup2Context));
     rateGroup3Comp.configure(rateGroup3Context, FW_NUM_ARRAY_ELEMENTS(rateGroup3Context));
+
+    // Command sequencer needs to allocate memory to hold contents of command sequences
+    cmdSeq.allocateBuffer(0, mallocator, 5 * 1024);
 }
 
 // Public functions for use in main program are namespaced with deployment name Ref
@@ -103,5 +110,8 @@ void teardownTopology(const TopologyState& state) {
     //Stop the comDriver component, free thread
     comDriver.stop();
     (void)comDriver.join();
+
+    // Resource deallocation
+    cmdSeq.deallocateBuffer(mallocator);
 }
 }  // namespace Ref
