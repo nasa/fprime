@@ -1,6 +1,6 @@
 module ComFprimeConfig {
     #Base ID for the ComFprime Subtopology, all components are offsets from this base ID
-    constant BASE_ID = 0x10200000
+    constant BASE_ID = 0x03000000
     
     module QueueSizes {
         constant comQueue    = 50
