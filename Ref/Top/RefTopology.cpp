@@ -12,17 +12,10 @@
 #include <Ref/Top/RefTopologyAc.hpp>
 
 // Necessary project-specified types
-#include <Os/Console.hpp>
 #include <Fw/Types/MallocAllocator.hpp>
-
-// Used for 1Hz synthetic cycling
-#include <Os/Mutex.hpp>
 
 // Allows easy reference to objects in FPP/autocoder required namespaces
 using namespace Ref;
-
-// Instantiate a system logger that will handle Fw::Logger::log calls
-Os::Console logger;
 
 // Instantiate a malloc allocator for cmdSeq buffer allocation
 Fw::MallocAllocator mallocator;
