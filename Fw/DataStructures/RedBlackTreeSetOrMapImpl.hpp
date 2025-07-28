@@ -275,7 +275,7 @@ class RedBlackTreeSetOrMapImpl final {
         // Push all the nodes on the free node stack
         const auto capacity = this->getCapacity();
         for (FwSizeType i = 0; i < capacity; i++) {
-            const auto status = this->m_freeNodes.push(i);
+            const auto status = this->m_freeNodes.push(capacity - i - 1);
             FW_ASSERT(status == Success::SUCCESS, static_cast<FwAssertArgType>(status));
         }
     }
