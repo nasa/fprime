@@ -518,9 +518,11 @@ void clear()
 
 1. Call `m_freeNodes.clear()`.
 
-1. For each `i` in the range `[0, getCapacity())`
+1. Let `capacity = getCapacity()`.
 
-    1. Let `status = m_freeNodes.push(i)`.
+1. For each `i` in the range `[0, capacity)`
+
+    1. Let `status = m_freeNodes.push(capacity - i - 1)`.
 
     1. Assert `status == SUCCESS`.
 
