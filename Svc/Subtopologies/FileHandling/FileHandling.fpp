@@ -3,12 +3,12 @@ module FileHandling {
     # ----------------------------------------------------------------------
     # Active Components
     # ----------------------------------------------------------------------
-    instance fileUplink: Svc.FileUplink base id FileHandlingConfig.BASE_ID + 0x000000 \
+    instance fileUplink: Svc.FileUplink base id FileHandlingConfig.BASE_ID + 0x00000 \
         queue size FileHandlingConfig.QueueSizes.fileUplink \
         stack size FileHandlingConfig.StackSizes.fileUplink \
         priority FileHandlingConfig.Priorities.fileUplink 
 
-    instance fileDownlink: Svc.FileDownlink base id FileHandlingConfig.BASE_ID + 0x001000 \
+    instance fileDownlink: Svc.FileDownlink base id FileHandlingConfig.BASE_ID + 0x01000 \
         queue size FileHandlingConfig.QueueSizes.fileDownlink \
         stack size FileHandlingConfig.StackSizes.fileDownlink \
         priority FileHandlingConfig.Priorities.fileDownlink \
@@ -23,12 +23,12 @@ module FileHandling {
         """
     }
 
-    instance fileManager: Svc.FileManager base id FileHandlingConfig.BASE_ID + 0x002000 \
+    instance fileManager: Svc.FileManager base id FileHandlingConfig.BASE_ID + 0x02000 \
         queue size FileHandlingConfig.QueueSizes.fileManager \
         stack size FileHandlingConfig.StackSizes.fileManager \
         priority FileHandlingConfig.Priorities.fileManager
 
-    instance prmDb: Svc.PrmDb base id FileHandlingConfig.BASE_ID + 0x003000 \
+    instance prmDb: Svc.PrmDb base id FileHandlingConfig.BASE_ID + 0x03000 \
         queue size FileHandlingConfig.QueueSizes.prmDb \
         stack size FileHandlingConfig.StackSizes.prmDb \
         priority FileHandlingConfig.Priorities.prmDb \

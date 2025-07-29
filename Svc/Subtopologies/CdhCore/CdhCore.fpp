@@ -2,7 +2,7 @@ module CdhCore {
     # ----------------------------------------------------------------------
     # Active Components
     # ----------------------------------------------------------------------
-    instance cmdDisp: Svc.CommandDispatcher base id CdhCoreConfig.BASE_ID + 0x000000 \
+    instance cmdDisp: Svc.CommandDispatcher base id CdhCoreConfig.BASE_ID + 0x00000 \
         queue size CdhCoreConfig.QueueSizes.cmdDisp \
         stack size CdhCoreConfig.StackSizes.cmdDisp \
         priority CdhCoreConfig.Priorities.cmdDisp

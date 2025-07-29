@@ -7,9 +7,9 @@ module Ref {
   # All Base IDs follow the 8-digit hex format: 0xDSSCCxxx
   #
   # Where:
-  #   D   = Deployment digit (1 for Ref deployment)
-  #   SS  = Subtopology digits (00 for main topology, 01-05 for subtopologies)
-  #   CC  = Component digits (00, 01, 02, etc.)
+  #   D   = Deployment digit (1-F)
+  #   SS  = Subtopology digits (00 for main topology, 01-FF)
+  #   CC  = Component digits (00-FF)
   #   xxx = Reserved for internal component items (events, commands, telemetry)
   #
 
@@ -62,38 +62,38 @@ module Ref {
   # Queued component instances
   # ----------------------------------------------------------------------
 
-  instance sendBuffComp: Ref.SendBuff base id 0x10007000 \
+  instance sendBuffComp: Ref.SendBuff base id 0x10010000 \
     queue size Default.QUEUE_SIZE
 
-  instance SG1: Ref.SignalGen base id 0x10008000 \
+  instance SG1: Ref.SignalGen base id 0x10011000 \
     queue size Default.QUEUE_SIZE
 
-  instance SG2: Ref.SignalGen base id 0x10009000 \
+  instance SG2: Ref.SignalGen base id 0x10012000 \
     queue size Default.QUEUE_SIZE
 
-  instance SG3: Ref.SignalGen base id 0x1000A000 \
+  instance SG3: Ref.SignalGen base id 0x10013000 \
     queue size Default.QUEUE_SIZE
 
-  instance SG4: Ref.SignalGen base id 0x1000B000 \
+  instance SG4: Ref.SignalGen base id 0x10014000 \
     queue size Default.QUEUE_SIZE
 
-  instance SG5: Ref.SignalGen base id 0x1000C000 \
+  instance SG5: Ref.SignalGen base id 0x10015000 \
     queue size Default.QUEUE_SIZE
 
   # ----------------------------------------------------------------------
   # Passive component instances
   # ----------------------------------------------------------------------
 
-  instance posixTime: Svc.PosixTime base id 0x1000D000
+  instance posixTime: Svc.PosixTime base id 0x10020000
 
-  instance rateGroupDriverComp: Svc.RateGroupDriver base id 0x1000E000
+  instance rateGroupDriverComp: Svc.RateGroupDriver base id 0x10021000
 
-  instance recvBuffComp: Ref.RecvBuff base id 0x1000F000
+  instance recvBuffComp: Ref.RecvBuff base id 0x10022000
 
-  instance systemResources: Svc.SystemResources base id 0x10010000
+  instance systemResources: Svc.SystemResources base id 0x10023000
 
-  instance linuxTimer: Svc.LinuxTimer base id 0x10011000
+  instance linuxTimer: Svc.LinuxTimer base id 0x10024000
 
-  instance comDriver: Drv.TcpClient base id 0x10012000 
+  instance comDriver: Drv.TcpClient base id 0x10025000 
 
 }

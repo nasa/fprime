@@ -13,7 +13,7 @@ module ComCcsds {
     # ----------------------------------------------------------------------
     # Active Components
     # ----------------------------------------------------------------------
-    instance comQueue: Svc.ComQueue base id ComCcsdsConfig.BASE_ID + 0x000000 \
+    instance comQueue: Svc.ComQueue base id ComCcsdsConfig.BASE_ID + 0x00000 \
         queue size ComCcsdsConfig.QueueSizes.comQueue \
         stack size ComCcsdsConfig.StackSizes.comQueue \
         priority ComCcsdsConfig.Priorities.comQueue \
@@ -45,7 +45,7 @@ module ComCcsds {
     # ----------------------------------------------------------------------
     # Passive Components
     # ----------------------------------------------------------------------
-    instance frameAccumulator: Svc.FrameAccumulator base id ComCcsdsConfig.BASE_ID + 0x001000 \ 
+    instance frameAccumulator: Svc.FrameAccumulator base id ComCcsdsConfig.BASE_ID + 0x01000 \ 
     {
 
         phase Fpp.ToCpp.Phases.configObjects """
@@ -65,7 +65,7 @@ module ComCcsds {
         """
     }
 
-    instance commsBufferManager: Svc.BufferManager base id ComCcsdsConfig.BASE_ID + 0x002000 \
+    instance commsBufferManager: Svc.BufferManager base id ComCcsdsConfig.BASE_ID + 0x02000 \
     {
         phase Fpp.ToCpp.Phases.configObjects """
         Svc::BufferManager::BufferBins bins;
@@ -90,19 +90,19 @@ module ComCcsds {
         """
     }
 
-    instance fprimeRouter: Svc.FprimeRouter base id ComCcsdsConfig.BASE_ID + 0x003000 \
+    instance fprimeRouter: Svc.FprimeRouter base id ComCcsdsConfig.BASE_ID + 0x03000 \
     
-    instance comStub: Svc.ComStub base id ComCcsdsConfig.BASE_ID + 0x004000 \
+    instance comStub: Svc.ComStub base id ComCcsdsConfig.BASE_ID + 0x04000 \
 
-    instance tcDeframer: Svc.Ccsds.TcDeframer base id ComCcsdsConfig.BASE_ID + 0x005000 \
+    instance tcDeframer: Svc.Ccsds.TcDeframer base id ComCcsdsConfig.BASE_ID + 0x05000 \
 
-    instance spacePacketDeframer: Svc.Ccsds.SpacePacketDeframer base id ComCcsdsConfig.BASE_ID + 0x006000 \
+    instance spacePacketDeframer: Svc.Ccsds.SpacePacketDeframer base id ComCcsdsConfig.BASE_ID + 0x06000 \
 
-    instance tmFramer: Svc.Ccsds.TmFramer base id ComCcsdsConfig.BASE_ID + 0x007000 \
+    instance tmFramer: Svc.Ccsds.TmFramer base id ComCcsdsConfig.BASE_ID + 0x07000 \
 
-    instance spacePacketFramer: Svc.Ccsds.SpacePacketFramer base id ComCcsdsConfig.BASE_ID + 0x008000 \
+    instance spacePacketFramer: Svc.Ccsds.SpacePacketFramer base id ComCcsdsConfig.BASE_ID + 0x08000 \
 
-    instance apidManager: Svc.Ccsds.ApidManager base id ComCcsdsConfig.BASE_ID + 0x009000 \
+    instance apidManager: Svc.Ccsds.ApidManager base id ComCcsdsConfig.BASE_ID + 0x09000 \
 
     topology Subtopology {
         # Active Components

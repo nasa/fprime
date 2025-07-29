@@ -12,7 +12,7 @@ module ComFprime {
     # ----------------------------------------------------------------------
     # Active Components
     # ----------------------------------------------------------------------
-    instance comQueue: Svc.ComQueue base id ComFprimeConfig.BASE_ID + 0x000000 \
+    instance comQueue: Svc.ComQueue base id ComFprimeConfig.BASE_ID + 0x00000 \
         queue size ComFprimeConfig.QueueSizes.comQueue \
         stack size ComFprimeConfig.StackSizes.comQueue \
         priority ComFprimeConfig.Priorities.comQueue \
@@ -41,7 +41,7 @@ module ComFprime {
     # ----------------------------------------------------------------------
     # Passive Components
     # ----------------------------------------------------------------------
-    instance frameAccumulator: Svc.FrameAccumulator base id ComFprimeConfig.BASE_ID + 0x001000 \ 
+    instance frameAccumulator: Svc.FrameAccumulator base id ComFprimeConfig.BASE_ID + 0x01000 \ 
     {
         phase Fpp.ToCpp.Phases.configObjects """
         Svc::FrameDetectors::FprimeFrameDetector frameDetector;
@@ -61,7 +61,7 @@ module ComFprime {
         """
     }
 
-    instance commsBufferManager: Svc.BufferManager base id ComFprimeConfig.BASE_ID + 0x002000 \
+    instance commsBufferManager: Svc.BufferManager base id ComFprimeConfig.BASE_ID + 0x02000 \
     {
         phase Fpp.ToCpp.Phases.configObjects """
         Svc::BufferManager::BufferBins bins;
@@ -86,13 +86,13 @@ module ComFprime {
         """
     }
 
-    instance deframer: Svc.FprimeDeframer base id ComFprimeConfig.BASE_ID + 0x003000 \
+    instance deframer: Svc.FprimeDeframer base id ComFprimeConfig.BASE_ID + 0x03000 \
 
-    instance fprimeFramer: Svc.FprimeFramer base id ComFprimeConfig.BASE_ID + 0x004000 \
+    instance fprimeFramer: Svc.FprimeFramer base id ComFprimeConfig.BASE_ID + 0x04000 \
 
-    instance fprimeRouter: Svc.FprimeRouter base id ComFprimeConfig.BASE_ID + 0x005000 \
+    instance fprimeRouter: Svc.FprimeRouter base id ComFprimeConfig.BASE_ID + 0x05000 \
     
-    instance comStub: Svc.ComStub base id ComFprimeConfig.BASE_ID + 0x006000 \
+    instance comStub: Svc.ComStub base id ComFprimeConfig.BASE_ID + 0x06000 \
 
     topology Subtopology {
         # Active Components
