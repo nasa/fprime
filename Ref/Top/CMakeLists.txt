@@ -15,7 +15,6 @@ set(SOURCE_FILES
 set(MOD_DEPS
   Fw/Logger
   Svc/PosixTime
-  Svc/Subtopologies/ComCcsds
 )
 
 register_fprime_module()
