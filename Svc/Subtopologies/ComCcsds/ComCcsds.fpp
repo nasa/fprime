@@ -19,8 +19,6 @@ module ComCcsds {
         priority ComCcsdsConfig.Priorities.comQueue \
     {
         phase Fpp.ToCpp.Phases.configComponents """
-        #include "Svc/Subtopologies/ComCcsds/Ports_ComPacketQueueEnumAc.hpp"
-        #include "Svc/Subtopologies/ComCcsds/Ports_ComBufferQueueEnumAc.hpp"
         Svc::ComQueue::QueueConfigurationTable configurationTable;
 
         // Events (highest-priority)

@@ -9,10 +9,6 @@
 // acknowledged.
 // ======================================================================
 
-// Include generated enum headers for subtopologies  
-#include <Svc/Subtopologies/ComCcsds/Ports_ComPacketQueueEnumAc.hpp>
-#include <Svc/Subtopologies/ComCcsds/Ports_ComBufferQueueEnumAc.hpp>
-
 // Provides access to autocoded functions
 #include <Ref/Top/RefTopologyAc.hpp>
 
