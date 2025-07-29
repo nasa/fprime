@@ -746,9 +746,11 @@ and `node` stores the index of _N_.
 
 1. Set `child = m_root`.
 
-1. Set `done = false`.
+1. Let `capacity = getCapacity()`.
 
-1. In a for loop bounded by `getCapacity()`:
+1. Set `done = (capacity == 0)`.
+
+1. In a for loop bounded by `capacity`:
 
     1. If `child == NONE` then set `node = parent`, set `done = true`, and break
        out of the loop.
@@ -1075,8 +1077,6 @@ It must not be `NONE`.
 1. Call `m_nodes[parent].setChild(direction, NONE)`.
    _This step performs the deletion._
 
-1. Set `done = false`.
-
 1. _The leaf-augmented subtree rooted at `parent`
    looks like this, assuming `direction == RIGHT`:_
 
@@ -1092,7 +1092,11 @@ It must not be `NONE`.
     at every node in the path from the root to `parent`.
     To comply with RBT2, we must perform rebalancing._
 
-1. For each `i` in the range `[0, getCapacity())`
+1. Let `capacity = getCapacity()`.
+
+1. Set `done = (capacity == 0)`.
+
+1. For each `i` in the range `[0, capacity)`
 
     1. _Constraint RBT1 is satisfied. Constraint RBT2 is violated because
        the leaf-augmented subtree rooted at `parent` has this shape,
@@ -1445,7 +1449,7 @@ It must not be `NONE`.
 
 1. Assert `m_nodes[node].color == BLACK`.
 
-1. Let `parent = m_nodes[node]`.
+1. Let `parent = m_nodes[node].parent`.
 
 1. Let `child = m_nodes[node].getChild(direction)`.
 
@@ -1459,7 +1463,9 @@ It must not be `NONE`.
 
     1. Call `m_nodes[parent].setChild(direction, child)`.
 
-1. Set `m_nodes[node].color = BLACK`.
+1. Set `m_nodes[child].parent = parent`.
+
+1. Set `m_nodes[child].color = BLACK`.
 
 ### 8.13. removeNodeWithTwoChildren
 

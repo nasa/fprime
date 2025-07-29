@@ -186,7 +186,7 @@ class RedBlackTreeSetOrMapImpl final {
                     // There is no right child. Go upwards until we pass through a left child
                     // or we hit the root.
                     const auto capacity = this->m_impl->getCapacity();
-                    bool done = false;
+                    bool done = (capacity == 0);
                     for (FwSizeType i = 0; i < capacity; i++) {
                         const auto previousNode = this->m_node;
                         this->m_node = nodes[this->m_node].m_parent;
@@ -435,8 +435,8 @@ class RedBlackTreeSetOrMapImpl final {
         auto result = Success::FAILURE;
         auto parent = Node::NONE;
         auto child = this->m_root;
-        bool done = false;
         const auto capacity = this->getCapacity();
+        bool done = (capacity == 0);
         for (FwSizeType i = 0; i < capacity; i++) {
             if (child == Node::NONE) {
                 node = parent;
@@ -523,8 +523,8 @@ class RedBlackTreeSetOrMapImpl final {
         } else {
             // Set the parent
             this->m_nodes[parent].setChild(direction, node);
-            bool done = false;
             const auto capacity = this->getCapacity();
+            bool done = (capacity == 0);
             for (FwSizeType i = 0; i < capacity; i++) {
                 // The following invariants hold: (1) node is colored red; (2)
                 // there may be a red child violation from parent to node; and
@@ -800,8 +800,20 @@ class RedBlackTreeSetOrMapImpl final {
     void removeNodeWithOneChild(Index node,          //!< The node
                                 Direction direction  //!< The direction of the child
     ) {
-        // TODO
-        FW_ASSERT(0);
+        FW_ASSERT(this->m_nodes[node].m_color == Color::BLACK,
+                  static_cast<FwAssertArgType>(this->m_nodes[node].m_color));
+        const auto parent = this->m_nodes[node].m_parent;
+        const auto child = this->m_nodes[node].getChild(direction);
+        FW_ASSERT(this->m_nodes[child].m_color == Color::RED,
+                  static_cast<FwAssertArgType>(this->m_nodes[node].m_color));
+        if (parent == Node::NONE) {
+            this->m_root = child;
+        } else {
+            const auto parentDirection = this->getParentDirection(node);
+            this->m_nodes[parent].setChild(parentDirection, child);
+        }
+        this->m_nodes[child].m_parent = parent;
+        this->m_nodes[child].m_color = Color::BLACK;
     }
 
     //! This function removes a node of the tree that has two children. On

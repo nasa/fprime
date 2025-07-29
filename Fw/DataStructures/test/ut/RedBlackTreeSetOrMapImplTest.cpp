@@ -210,6 +210,25 @@ TEST(RedBlackTreeSetOrMapImplScenarios, RemoveRedLeaf) {
     std::cout << "size is " << impl.getSize() << "\n";
 }
 
+TEST(RedBlackTreeSetOrMapImplScenarios, RemoveNodeWithOneChild) {
+    State::Tester::Node nodes[State::capacity];
+    State::Tester::Index freeNodes[State::capacity];
+    State::Impl impl(nodes, freeNodes, State::capacity);
+    State state(impl);
+    state.useStoredKey = true;
+    Rules::insertNotFull.apply(state);
+    state.storedKey = 1;
+    Rules::insertNotFull.apply(state);
+    std::cout << "Before:\n";
+    state.tester.printTree();
+    std::cout << "size is " << impl.getSize() << "\n";
+    state.storedKey = 0;
+    Rules::remove.apply(state);
+    std::cout << "After:\n";
+    state.tester.printTree();
+    std::cout << "size is " << impl.getSize() << "\n";
+}
+
 #if 0
 TEST(RedBlackTreeSetOrMapImplScenarios, RemoveExisting) {
     State::Entry entries[State::capacity];
