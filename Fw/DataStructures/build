@@ -39,9 +39,7 @@ c_files="
 $FPRIME/STest/STest/Random/bsd_random.c
 "
 
-cpp_flags="
-    --std=c++11
-    -Wold-style-cast
+common_flags="
     -pedantic
     -Wall
     -Wextra
@@ -54,18 +52,15 @@ cpp_flags="
     -g
 "
 
+cpp_flags="
+    --std=c++11
+    -Wold-style-cast
+    $common_flags
+"
+
 c_flags="
     --std=c99
-    -pedantic
-    -Wall
-    -Wextra
-    -Wconversion
-    -Wdouble-promotion
-    -Wshadow
-    -Werror
-    -Wno-unused-parameter
-    -Wno-vla
-    -g
+    $common_flags
 "
 
 for file in $cpp_files
