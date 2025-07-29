@@ -817,13 +817,16 @@ class RedBlackTreeSetOrMapImpl final {
     }
 
     //! This function removes a node of the tree that has two children. On
-    //! entry, node stores the key and value to be removed. It must not be NONE.
-    //! On return, removedNode stores the node that was actually removed.
+    //! entry, node stores the key and value to be removed. It must not be NONE,
+    //! and it must have two children. On return, removedNode stores the node
+    //! that was actually removed.
     void removeNodeWithTwoChildren(Index node,         //!< The node to remove (input)
                                    Index& removedNode  //!< The node actually removed (output)
     ) {
-        // TODO
-        FW_ASSERT(0);
+        const auto rightChild = this->m_nodes[node].m_right;
+        removedNode = this->getOuterNodeUnder(rightChild, Direction::LEFT);
+        this->m_nodes[node].m_entry = this->m_nodes[removedNode].m_entry;
+        this->removeNodeWithAtMostOneChild(removedNode);
     }
 
     //! This function removes a node that is colored red and is a leaf node

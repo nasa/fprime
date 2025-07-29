@@ -1476,20 +1476,18 @@ void removeNodeWithTwoChildren(Node::Index node, Node::Index& removedNode)
 **Overview:**
 This function removes a node of the tree that has two children.
 On entry, `node` stores the key and value to be removed.
-It must not be `NONE`.
+It must not be `NONE`, and it must have two children.
 On return, `removedNode` stores the node that was actually removed.
 
 **Algorithm:**
 
-1. Let `successor` be the successor of `node`.
+1. Set `removedNode` to the successor of `node`.
    This is the leftmost node under the right child of `node`.
    Use [`getOuterNodeUnder`](#getOuterNodeUnder) to compute it.
 
-1. Call `m_nodes[node].setKeyOrElement(m_nodes[successor].getKey())`.
+1. Set `m_nodes[node].entry = m_nodes[removedNode].entry`.
 
-1. Call `m_nodes[node].setValueOrNil(m_nodes[successor].getValue())`.
-
-1. Call `removeNodeWithAtMostOneChild(successor)`.
+1. Call `removeNodeWithAtMostOneChild(removedNode)`.
 
 ### 8.14. removeRedLeafNode
 
