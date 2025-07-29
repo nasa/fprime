@@ -72,6 +72,7 @@ struct InsertExisting : public Rule {
     InsertExisting() : Rule("InsertExisting") {}
     bool precondition(const State& state) { return static_cast<FwSizeType>(state.impl.getSize()) > 0; }
     void action(State& state) {
+        state.tester.checkProperties();
         const auto size = state.impl.getSize();
         const auto index = STest::Pick::startLength(0, static_cast<U32>(size));
         auto it = state.impl.begin();
@@ -86,6 +87,7 @@ struct InsertExisting : public Rule {
         ASSERT_EQ(status, Success::SUCCESS);
         state.modelMap[key] = value;
         ASSERT_EQ(state.impl.getSize(), size);
+        state.tester.checkProperties();
     }
 };
 
@@ -93,6 +95,7 @@ struct InsertFull : public Rule {
     InsertFull() : Rule("InsertFull") {}
     bool precondition(const State& state) { return static_cast<FwSizeType>(state.impl.getSize()) >= State::capacity; }
     void action(State& state) {
+        state.tester.checkProperties();
         const auto key = state.getKey();
         const auto value = state.getValue();
         const auto size = state.impl.getSize();
@@ -100,6 +103,7 @@ struct InsertFull : public Rule {
         const auto status = state.impl.insert(key, value);
         ASSERT_EQ(status, expectedStatus);
         ASSERT_EQ(state.impl.getSize(), size);
+        state.tester.checkProperties();
     }
 };
 
@@ -124,6 +128,7 @@ struct Remove : public Rule {
     Remove() : Rule("Remove") {}
     bool precondition(const State& state) { return true; }
     void action(State& state) {
+        state.tester.checkProperties();
         const auto size = state.impl.getSize();
         ASSERT_EQ(size, state.modelMap.size());
         const auto key = state.getKey();
@@ -139,6 +144,7 @@ struct Remove : public Rule {
         }
         (void)state.modelMap.erase(key);
         ASSERT_EQ(state.impl.getSize(), state.modelMap.size());
+        state.tester.checkProperties();
     }
 };
 
