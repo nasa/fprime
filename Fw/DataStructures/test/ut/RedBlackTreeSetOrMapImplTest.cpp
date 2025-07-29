@@ -59,11 +59,11 @@ TEST(RedBlackTreeSetOrMapImpl, UntypedStorageConstructor) {
     ASSERT_EQ(impl.getSize(), 0U);
 }
 
-#if 0
 TEST(RedBlackTreeSetOrMapImpl, CopyConstructor) {
-    State::Entry entries[State::capacity];
+    ImplTester::Node nodes[State::capacity];
+    ImplTester::Index freeNodes[State::capacity];
     // Call the constructor providing backing storage
-    State::Impl impl1(entries, State::capacity);
+    State::Impl impl1(nodes, freeNodes, State::capacity);
     // Insert an item
     const State::KeyType key = 0;
     const State::ValueType value = 42;
@@ -73,11 +73,14 @@ TEST(RedBlackTreeSetOrMapImpl, CopyConstructor) {
     State::Impl impl2(impl1);
     State::Tester tester1(impl1);
     State::Tester tester2(impl2);
-    ASSERT_EQ(tester2.getEntries().getElements(), entries);
-    ASSERT_EQ(tester2.getEntries().getSize(), FwSizeType(State::capacity));
-    ASSERT_EQ(impl2.getSize(), 1);
+    ASSERT_EQ(tester2.getNodes().getElements(), nodes);
+    ASSERT_EQ(tester2.getNodes().getSize(), FwSizeType(State::capacity));
+    ExternalStackTester<ImplTester::Index> stackTester(tester2.getFreeNodes());
+    ASSERT_EQ(stackTester.getItems().getElements(), freeNodes);
+    ASSERT_EQ(impl2.getSize(), 1U);
 }
 
+#if 0
 TEST(RedBlackTreeSetOrMapImpl, CopyAssignmentOperator) {
     State::Entry entries[State::capacity];
     // Call the constructor providing backing storage
