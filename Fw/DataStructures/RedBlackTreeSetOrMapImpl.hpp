@@ -1,3 +1,4 @@
+//
 // ======================================================================
 // \title  RedBlackTreeSetOrMapImpl
 // \author bocchino
@@ -753,13 +754,64 @@ class RedBlackTreeSetOrMapImpl final {
         // The tree is a red-black tree.
     }
 
+    //! This function removes a node that is colored black and is a leaf node
+    //! (i.e., it has no children) and is not the root. node stores the node to
+    //! remove. It must not be NONE.
+    void removeBlackLeafNode(Index node  //!< The node to remove
+    ) {
+        // TODO
+        FW_ASSERT(0);
+    }
+
     //! This function removes a node of the tree. On entry, node stores the key
     //! and value to be removed. It must not be NONE. On return, removedNode
     //! stores the node that was actually removed.
     void removeNode(Index node,         //!< The node to remove (input)
                     Index& removedNode  //!< The node actually removed (output)
     ) {
+        if ((this->m_nodes[node].m_left) != Node::NONE && (this->m_nodes[node].m_right != Node::NONE)) {
+            this->removeNodeWithTwoChildren(node, removedNode);
+        } else {
+            this->removeNodeWithAtMostOneChild(node);
+            removedNode = node;
+        }
+    }
+
+    //! This function removes a node of the tree with at most one child. On
+    //! entry, node stores the node to be removed. It must not be NONE.
+    void removeNodeWithAtMostOneChild(Index node  //!< The node to remove
+    ) {
         // TODO
+        FW_ASSERT(0);
+    }
+
+    //! This function removes a node of the tree with exactly one child. node
+    //! stores the node to remove. It must not be NONE. direction stores the
+    //! direction of the child.
+    void removeNodeWithOneChild(Index node,          //!< The node
+                                Direction direction  //!< The direction of the child
+    ) {
+        // TODO
+        FW_ASSERT(0);
+    }
+
+    //! This function removes a node of the tree that has two children. On
+    //! entry, node stores the key and value to be removed. It must not be NONE.
+    //! On return, removedNode stores the node that was actually removed.
+    void removeNodeWithTwoChildren(Index node,         //!< The node to remove (input)
+                                   Index& removedNode  //!< The node actually removed (output)
+    ) {
+        // TODO
+        FW_ASSERT(0);
+    }
+
+    //! This function removes a node that is colored red and is a leaf node
+    //! (i.e., it has no children) and is not the root. node stores the node to
+    //! remove. It must not be NONE.
+    void removeRedLeafNode(Index node  //!< The node to remove
+    ) {
+        // TODO
+        FW_ASSERT(0);
     }
 
     //! This function performs a left or right rotation on the subtree whose

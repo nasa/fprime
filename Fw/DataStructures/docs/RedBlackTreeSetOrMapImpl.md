@@ -1431,7 +1431,7 @@ It must not be `NONE`.
 ### 8.12. removeNodeWithOneChild
 
 ```c++
-void removeNodeWithOneChild(Node::Index node, Direction, direction)
+void removeNodeWithOneChild(Node::Index node, Direction direction)
 ```
 
 **Overview:**
