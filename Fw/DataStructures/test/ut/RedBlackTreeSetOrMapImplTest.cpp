@@ -101,7 +101,6 @@ TEST(ArraySetOrMapImpl, IteratorConstruction) {
     State::Impl::ConstIterator it(impl);
 }
 
-#if 0
 TEST(RedBlackTreeSetOrMapImpl, IteratorComparison) {
   // Test comparison in default case
   State::Impl::ConstIterator it1;
@@ -110,15 +109,15 @@ TEST(RedBlackTreeSetOrMapImpl, IteratorComparison) {
 }
 
 TEST(RedBlackTreeSetOrMapImplScenarios, Clear) {
-    State::Entry entries[State::capacity];
-    State::Impl impl(entries, State::capacity);
+    State::Tester::Node nodes[State::capacity];
+    State::Tester::Index freeNodes[State::capacity];
+    State::Impl impl(nodes, freeNodes, State::capacity);
     State state(impl);
     Rules::insertNotFull.apply(state);
-    ASSERT_EQ(state.impl.getSize(), 1);
+    ASSERT_EQ(state.impl.getSize(), 1U);
     Rules::clear.apply(state);
-    ASSERT_EQ(state.impl.getSize(), 0);
+    ASSERT_EQ(state.impl.getSize(), 0U);
 }
-#endif
 
 TEST(RedBlackTreeSetOrMapImplScenarios, Find) {
     State::Tester::Node nodes[State::capacity];
@@ -149,10 +148,10 @@ TEST(RedBlackTreeSetOrMapImplScenarios, InsertExisting) {
     Rules::insertExisting.apply(state);
 }
 
-#if 0
 TEST(RedBlackTreeSetOrMapImplScenarios, InsertFull) {
-    State::Entry entries[State::capacity];
-    State::Impl impl(entries, State::capacity);
+    State::Tester::Node nodes[State::capacity];
+    State::Tester::Index freeNodes[State::capacity];
+    State::Impl impl(nodes, freeNodes, State::capacity);
     State state(impl);
     state.useStoredKey = true;
     for (FwSizeType i = 0; i < State::capacity; i++) {
@@ -162,7 +161,6 @@ TEST(RedBlackTreeSetOrMapImplScenarios, InsertFull) {
     state.useStoredKey = false;
     Rules::insertFull.apply(state);
 }
-#endif
 
 TEST(RedBlackTreeSetOrMapImplScenarios, InsertNotFull) {
     State::Tester::Node nodes[State::capacity];

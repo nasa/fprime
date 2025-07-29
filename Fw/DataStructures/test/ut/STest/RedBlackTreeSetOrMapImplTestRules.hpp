@@ -21,17 +21,15 @@ using Rule = STest::Rule<State>;
 
 namespace Rules {
 
-#if 0
 struct Clear : public Rule {
     Clear() : Rule("Clear") {}
     bool precondition(const State& state) { return state.impl.getSize() > 0; }
     void action(State& state) {
         state.impl.clear();
-        ASSERT_EQ(state.impl.getSize(), 0);
+        ASSERT_EQ(state.impl.getSize(), 0U);
         state.modelMap.clear();
     }
 };
-#endif
 
 struct Find : public Rule {
     Find() : Rule("Find") {}
@@ -91,7 +89,6 @@ struct InsertExisting : public Rule {
     }
 };
 
-#if 0
 struct InsertFull : public Rule {
     InsertFull() : Rule("InsertFull") {}
     bool precondition(const State& state) { return static_cast<FwSizeType>(state.impl.getSize()) >= State::capacity; }
@@ -105,7 +102,6 @@ struct InsertFull : public Rule {
         ASSERT_EQ(state.impl.getSize(), size);
     }
 };
-#endif
 
 struct InsertNotFull : public Rule {
     InsertNotFull() : Rule("InsertNotFull") {}
@@ -172,9 +168,7 @@ struct RemoveExisting : public Rule {
 };
 #endif
 
-#if 0
 extern Clear clear;
-#endif
 
 extern Find find;
 
@@ -182,9 +176,7 @@ extern FindExisting findExisting;
 
 extern InsertExisting insertExisting;
 
-#if 0
 extern InsertFull insertFull;
-#endif
 
 extern InsertNotFull insertNotFull;
 

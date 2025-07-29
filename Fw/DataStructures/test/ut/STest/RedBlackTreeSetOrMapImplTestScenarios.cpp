@@ -21,7 +21,7 @@ void random(const Fw::StringBase& name, State& state, U32 maxNumSteps) {
       &Rules::find,
       &Rules::findExisting,
       &Rules::insertExisting,
-      //&Rules::insertFull,
+      &Rules::insertFull,
       &Rules::insertNotFull
       //&Rules::remove,
       //&Rules::removeExisting

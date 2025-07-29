@@ -12,9 +12,7 @@ namespace RedBlackTreeSetOrMapImplTest {
 
 namespace Rules {
 
-#if 0
 Clear clear;
-#endif
 
 Find find;
 
@@ -22,9 +20,7 @@ FindExisting findExisting;
 
 InsertExisting insertExisting;
 
-#if 0
 InsertFull insertFull;
-#endif
 
 InsertNotFull insertNotFull;
 
