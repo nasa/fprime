@@ -80,11 +80,11 @@ TEST(RedBlackTreeSetOrMapImpl, CopyConstructor) {
     ASSERT_EQ(impl2.getSize(), 1U);
 }
 
-#if 0
 TEST(RedBlackTreeSetOrMapImpl, CopyAssignmentOperator) {
-    State::Entry entries[State::capacity];
+    ImplTester::Node nodes[State::capacity];
+    ImplTester::Index freeNodes[State::capacity];
     // Call the constructor providing backing storage
-    State::Impl impl1(entries, State::capacity);
+    State::Impl impl1(nodes, freeNodes, State::capacity);
     // Insert an item
     const State::KeyType key = 0;
     const State::ValueType value = 42;
@@ -92,12 +92,11 @@ TEST(RedBlackTreeSetOrMapImpl, CopyAssignmentOperator) {
     ASSERT_EQ(status, Success::SUCCESS);
     // Call the default constructor
     State::Impl impl2;
-    ASSERT_EQ(impl2.getSize(), 0);
+    ASSERT_EQ(impl2.getSize(), 0U);
     // Call the copy assignment operator
     impl2 = impl1;
-    ASSERT_EQ(impl2.getSize(), 1);
+    ASSERT_EQ(impl2.getSize(), 1U);
 }
-#endif
 
 TEST(ArraySetOrMapImpl, IteratorConstruction) {
     State::Impl impl;
