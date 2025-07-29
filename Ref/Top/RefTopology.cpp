@@ -8,11 +8,17 @@
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
 // ======================================================================
+
+// Include generated enum headers for subtopologies  
+#include <Svc/Subtopologies/ComCcsds/Ports_ComPacketQueueEnumAc.hpp>
+#include <Svc/Subtopologies/ComCcsds/Ports_ComBufferQueueEnumAc.hpp>
+
 // Provides access to autocoded functions
 #include <Ref/Top/RefTopologyAc.hpp>
 
 // Necessary project-specified types
 #include <Fw/Types/MallocAllocator.hpp>
+
 
 // Allows easy reference to objects in FPP/autocoder required namespaces
 using namespace Ref;

@@ -3,8 +3,11 @@ module ComCcsds {
     # ComPacket Queue enum for queue types
     enum Ports_ComPacketQueue {
         EVENTS,
-        TELEMETRY,
-        FILE_QUEUE 
+        TELEMETRY 
+    }
+
+    enum Ports_ComBufferQueue {
+        FILE_DOWNLINK
     }
 
     # ----------------------------------------------------------------------
@@ -15,27 +18,22 @@ module ComCcsds {
         stack size ComCcsdsConfig.StackSizes.comQueue \
         priority ComCcsdsConfig.Priorities.comQueue \
     {
-        phase Fpp.ToCpp.Phases.configConstants """
-        enum {
-            EVENTS,
-            TELEMETRY,
-            FILE_QUEUE
-        };
-        """
         phase Fpp.ToCpp.Phases.configComponents """
+        #include "Svc/Subtopologies/ComCcsds/Ports_ComPacketQueueEnumAc.hpp"
+        #include "Svc/Subtopologies/ComCcsds/Ports_ComBufferQueueEnumAc.hpp"
         Svc::ComQueue::QueueConfigurationTable configurationTable;
 
         // Events (highest-priority)
-        configurationTable.entries[ConfigConstants::ComCcsds_comQueue::EVENTS].depth = ComCcsdsConfig::QueueDepths::events;
-        configurationTable.entries[ConfigConstants::ComCcsds_comQueue::EVENTS].priority = ComCcsdsConfig::QueuePriorities::events;
+        configurationTable.entries[ComCcsds::Ports_ComPacketQueue::EVENTS].depth = ComCcsdsConfig::QueueDepths::events;
+        configurationTable.entries[ComCcsds::Ports_ComPacketQueue::EVENTS].priority = ComCcsdsConfig::QueuePriorities::events;
 
         // Telemetry
-        configurationTable.entries[ConfigConstants::ComCcsds_comQueue::TELEMETRY].depth = ComCcsdsConfig::QueueDepths::tlm;
-        configurationTable.entries[ConfigConstants::ComCcsds_comQueue::TELEMETRY].priority = ComCcsdsConfig::QueuePriorities::tlm;
+        configurationTable.entries[ComCcsds::Ports_ComPacketQueue::TELEMETRY].depth = ComCcsdsConfig::QueueDepths::tlm;
+        configurationTable.entries[ComCcsds::Ports_ComPacketQueue::TELEMETRY].priority = ComCcsdsConfig::QueuePriorities::tlm;
 
-        // File Downlink Queue
-        configurationTable.entries[ConfigConstants::ComCcsds_comQueue::FILE_QUEUE].depth = ComCcsdsConfig::QueueDepths::file;
-        configurationTable.entries[ConfigConstants::ComCcsds_comQueue::FILE_QUEUE].priority = ComCcsdsConfig::QueuePriorities::file;
+        // File Downlink Queue (buffer queue using NUM_CONSTANTS offset)
+        configurationTable.entries[ComCcsds::Ports_ComPacketQueue::NUM_CONSTANTS + ComCcsds::Ports_ComBufferQueue::FILE_DOWNLINK].depth = ComCcsdsConfig::QueueDepths::file;
+        configurationTable.entries[ComCcsds::Ports_ComPacketQueue::NUM_CONSTANTS + ComCcsds::Ports_ComBufferQueue::FILE_DOWNLINK].priority = ComCcsdsConfig::QueuePriorities::file;
 
         // Allocation identifier is 0 as the MallocAllocator discards it
         ComCcsds::comQueue.configure(configurationTable, 0, ComCcsds::Allocation::memAllocator);
