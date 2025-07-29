@@ -149,8 +149,8 @@ module Ref {
 
     connections ComCcsds_FileHandling {
       # File Downlink <-> ComQueue
-      FileHandling.fileDownlink.bufferSendOut -> ComCcsds.comQueue.bufferQueueIn[ComCcsds.Ports_ComBufferQueue.FILE_DOWNLINK]
-      ComCcsds.comQueue.bufferReturnOut[ComCcsds.Ports_ComBufferQueue.FILE_DOWNLINK] -> FileHandling.fileDownlink.bufferReturn
+      FileHandling.fileDownlink.bufferSendOut -> ComCcsds.comQueue.bufferQueueIn[ComCcsds.Ports_ComBufferQueue.FILE]
+      ComCcsds.comQueue.bufferReturnOut[ComCcsds.Ports_ComBufferQueue.FILE] -> FileHandling.fileDownlink.bufferReturn
 
       # Router <-> FileUplink
       ComCcsds.fprimeRouter.fileOut     -> FileHandling.fileUplink.bufferSendIn

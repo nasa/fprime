@@ -6,7 +6,7 @@ module ComFprime {
     };
 
     enum Ports_ComBufferQueue {
-        FILE_DOWNLINK
+        FILE
     };
 
     # ----------------------------------------------------------------------
@@ -18,16 +18,18 @@ module ComFprime {
         priority ComFprimeConfig.Priorities.comQueue \
     {
         phase Fpp.ToCpp.Phases.configComponents """
+        using namespace ComFprime;
         Svc::ComQueue::QueueConfigurationTable configurationTable;
+        
         // Events (highest-priority)
-        configurationTable.entries[ComFprime::Ports_ComPacketQueue::EVENTS].depth = ComFprimeConfig::QueueDepths::events;
-        configurationTable.entries[ComFprime::Ports_ComPacketQueue::EVENTS].priority = ComFprimeConfig::QueuePriorities::events;
+        configurationTable.entries[Ports_ComPacketQueue::EVENTS].depth = ComFprimeConfig::QueueDepths::events;
+        configurationTable.entries[Ports_ComPacketQueue::EVENTS].priority = ComFprimeConfig::QueuePriorities::events;
         // Telemetry
-        configurationTable.entries[ComFprime::Ports_ComPacketQueue::TELEMETRY].depth = ComFprimeConfig::QueueDepths::tlm;
-        configurationTable.entries[ComFprime::Ports_ComPacketQueue::TELEMETRY].priority = ComFprimeConfig::QueuePriorities::tlm;
+        configurationTable.entries[Ports_ComPacketQueue::TELEMETRY].depth = ComFprimeConfig::QueueDepths::tlm;
+        configurationTable.entries[Ports_ComPacketQueue::TELEMETRY].priority = ComFprimeConfig::QueuePriorities::tlm;
         // File Downlink Queue
-        configurationTable.entries[ComFprime::Ports_ComPacketQueue::NUM_CONSTANTS + ComFprime::Ports_ComBufferQueue::FILE_DOWNLINK].depth = ComFprimeConfig::QueueDepths::file;
-        configurationTable.entries[ComFprime::Ports_ComPacketQueue::NUM_CONSTANTS + ComFprime::Ports_ComBufferQueue::FILE_DOWNLINK].priority = ComFprimeConfig::QueuePriorities::file;
+        configurationTable.entries[Ports_ComPacketQueue::NUM_CONSTANTS + Ports_ComBufferQueue::FILE].depth = ComFprimeConfig::QueueDepths::file;
+        configurationTable.entries[Ports_ComPacketQueue::NUM_CONSTANTS + Ports_ComBufferQueue::FILE].priority = ComFprimeConfig::QueuePriorities::file;
         // Allocation identifier is 0 as the MallocAllocator discards it
         ComFprime::comQueue.configure(configurationTable, 0, ComFprime::Allocation::memAllocator);
         """
