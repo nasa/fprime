@@ -68,6 +68,7 @@ struct FindExisting : public Rule {
         ASSERT_EQ(value, expectedValue);
     }
 };
+#endif
 
 struct InsertExisting : public Rule {
     InsertExisting() : Rule("InsertExisting") {}
@@ -90,6 +91,7 @@ struct InsertExisting : public Rule {
     }
 };
 
+#if 0
 struct InsertFull : public Rule {
     InsertFull() : Rule("InsertFull") {}
     bool precondition(const State& state) { return static_cast<FwSizeType>(state.impl.getSize()) >= State::capacity; }
@@ -176,9 +178,11 @@ extern Clear clear;
 extern Find find;
 
 extern FindExisting findExisting;
+#endif
 
 extern InsertExisting insertExisting;
 
+#if 0
 extern InsertFull insertFull;
 #endif
 

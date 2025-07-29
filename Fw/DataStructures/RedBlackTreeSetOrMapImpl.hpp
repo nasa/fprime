@@ -636,7 +636,7 @@ class RedBlackTreeSetOrMapImpl final {
                     //             R                    R            R                R
                     //             R  K2 (grandparent)  R            R       K4       R
                     //             R                    R            R                R
-                    //              RRRRRRRRRRRRRRRRRRRR             RRRRRRRRRRRRRRRRR
+                    //              RRRRRRRRRRRRRRRRRRRR              RRRRRRRRRRRRRRRR
                     //                   /            \                    |    |
                     //                  /              \                   |    |
                     //                 V                V                  V    V
@@ -784,13 +784,13 @@ class RedBlackTreeSetOrMapImpl final {
         }
         this->m_nodes[newRoot].setChild(direction, node);
         this->m_nodes[newRoot].m_parent = parent;
-        this->m_nodes[node].m_parent = newRoot;
         if (parent != Node::NONE) {
             const auto parentDirection = getParentDirection(node);
             this->m_nodes[parent].setChild(parentDirection, newRoot);
         } else {
             this->m_root = newRoot;
         }
+        this->m_nodes[node].m_parent = newRoot;
         // The tree is a BST.
     }
 

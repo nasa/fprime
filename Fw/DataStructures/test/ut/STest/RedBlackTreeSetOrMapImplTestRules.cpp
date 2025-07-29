@@ -18,9 +18,11 @@ Clear clear;
 Find find;
 
 FindExisting findExisting;
+#endif
 
 InsertExisting insertExisting;
 
+#if 0
 InsertFull insertFull;
 #endif
 

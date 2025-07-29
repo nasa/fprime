@@ -1546,8 +1546,6 @@ or an assertion failure will occur:
 
 1. Set `m_nodes[newRoot].parent = parent`.
 
-1. Set `m_nodes[node].parent = newRoot`.
-
 1. If `parent != NONE` then
 
     1. Let `parentDirection = getParentDirection(node)`.
@@ -1555,6 +1553,8 @@ or an assertion failure will occur:
     1. Call `m_nodes[parent].setChild(parentDirection, newRoot)`.
 
 1. Otherwise set `m_root = newRoot`.
+
+1. Set `m_nodes[node].parent = newRoot`.
 
 1. _The tree is a BST._
 

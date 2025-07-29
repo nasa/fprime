@@ -138,15 +138,19 @@ TEST(RedBlackTreeSetOrMapImplScenarios, FindExisting) {
     Rules::insertNotFull.apply(state);
     Rules::findExisting.apply(state);
 }
+#endif
 
 TEST(RedBlackTreeSetOrMapImplScenarios, InsertExisting) {
-    State::Entry entries[State::capacity];
-    State::Impl impl(entries, State::capacity);
+    State::Tester::Node nodes[State::capacity];
+    State::Tester::Index freeNodes[State::capacity];
+    State::Impl impl(nodes, freeNodes, State::capacity);
+    State::Tester tester(impl);
     State state(impl);
     Rules::insertNotFull.apply(state);
     Rules::insertExisting.apply(state);
 }
 
+#if 0
 TEST(RedBlackTreeSetOrMapImplScenarios, InsertFull) {
     State::Entry entries[State::capacity];
     State::Impl impl(entries, State::capacity);
@@ -170,9 +174,18 @@ TEST(RedBlackTreeSetOrMapImplScenarios, InsertNotFull) {
     state.useStoredKey = true;
     state.useStoredValue = true;
     Rules::insertNotFull.apply(state);
-    tester.printTree();
     state.storedKey = 1;
     state.storedValue = 1;
+    Rules::insertNotFull.apply(state);
+    state.storedKey = 2;
+    state.storedValue = 2;
+    Rules::insertNotFull.apply(state);
+    state.storedKey = 3;
+    state.storedValue = 3;
+    Rules::insertNotFull.apply(state);
+    tester.printTree();
+    state.storedKey = 4;
+    state.storedValue = 4;
     Rules::insertNotFull.apply(state);
     tester.printTree();
 }
