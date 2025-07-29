@@ -32,6 +32,10 @@ U32 rateGroup1Context[Svc::ActiveRateGroup::CONNECTION_COUNT_MAX] = {};
 U32 rateGroup2Context[Svc::ActiveRateGroup::CONNECTION_COUNT_MAX] = {};
 U32 rateGroup3Context[Svc::ActiveRateGroup::CONNECTION_COUNT_MAX] = {};
 
+enum TopologyConstants {
+    COMM_PRIORITY = 100,
+};
+
 /**
  * \brief configure/setup components in project-specific way
  *
@@ -50,6 +54,11 @@ void configureTopology() {
 
     // Command sequencer needs to allocate memory to hold contents of command sequences
     cmdSeq.allocateBuffer(0, mallocator, 5 * 1024);
+
+    // Configure communication driver
+    if (state.hostname != nullptr && state.port != 0) {
+        comDriver.configure(state.hostname, state.port);
+    }
 }
 
 // Public functions for use in main program are namespaced with deployment name Ref
@@ -65,9 +74,6 @@ void setupTopology(const TopologyState& state) {
     regCommands();
     // Autocoded configuration. Function provided by autocoder.
     configComponents(state);
-    if (state.hostname != nullptr && state.port != 0) {
-        comDriver.configure(state.hostname, state.port);
-    }
     // Project-specific component configuration. Function provided above. May be inlined, if desired.
     configureTopology();
     // Autocoded parameter loading. Function provided by autocoder.
@@ -77,7 +83,7 @@ void setupTopology(const TopologyState& state) {
     //Initialize socket client communication if and only if there is a valid specification
     if (state.hostname != nullptr && state.port != 0) {
         Os::TaskString name("ReceiveTask");
-        comDriver.start(name, 100, Default::STACK_SIZE);
+        comDriver.start(name, COMM_PRIORITY, Default::STACK_SIZE);
     }
 }
 
