@@ -28,7 +28,7 @@ namespace Drv {
 // ----------------------------------------------------------------------
 
 LinuxUartDriver ::LinuxUartDriver(const char* const compName)
-    : LinuxUartDriverComponentBase(compName), m_fd(-1), m_allocationSize(0),  m_device("NOT_EXIST"), m_quitReadThread(false) {
+    : LinuxUartDriverComponentBase(compName), m_fd(-1), m_allocationSize(0), m_device("NOT_EXIST"), m_bytesSent(0), m_quitReadThread(false) {
 }
 
 bool LinuxUartDriver::open(const char* const device,
@@ -307,6 +307,9 @@ void LinuxUartDriver ::send_handler(const FwIndexType portNum, Fw::Buffer& serBu
           Fw::LogStringArg _arg = this->m_device;
           this->log_WARNING_HI_WriteError(_arg, static_cast<I32>(stat));
           status = Drv::ByteStreamStatus::OTHER_ERROR;
+        } else {
+          this->m_bytesSent += stat;
+          this->tlmWrite_BytesSent(this->m_bytesSent);
         }
     }
     // Return the buffer back to the caller

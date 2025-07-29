@@ -111,8 +111,7 @@ class LinuxUartDriver final : public LinuxUartDriverComponentBase {
     static void serialReadTaskEntry(void* ptr);
 
     Os::Task m_readTask;  //!< task instance for thread to read serial port
-
-
+    FwSizeType m_bytesSent;  //!< number of bytes sent
     bool m_quitReadThread;  //!< flag to quit thread
 };
 
