@@ -8,22 +8,20 @@
 ---
 ## Change Description
 
-A description of the changes contained in the PR.
+<!-- A description of the changes contained in the PR. -->
 
 ## Rationale
 
-A rationale for this change. e.g. fixes bug, or most projects need XYZ feature.
+<!-- A rationale for this change. e.g. fixes bug, or most projects need XYZ feature. -->
 
 ## Testing/Review Recommendations
 
-Fill in testing procedures, specific items to focus on for review, or other info to help the team verify these changes are flight-quality.
+<!-- Fill in testing procedures, specific items to focus on for review, or other info to help the team verify these changes are flight-quality. -->
 
 ## Future Work
 
-Note any additional work that will be done relating to this issue.
+<!-- Note any additional work that will be done relating to this issue. -->
 
-## [AI Usage](GENERATIVE_AI.md)
+## AI Usage ([policy](../GENERATIVE_AI.md))
 
-_(optional)_ If AI was used, please describe how it was utilized:
-- Type of assistance (e.g., code generation, documentation, testing, debugging assistance, etc.)
-
+<!-- If AI was used, please describe how it was utilized (e.g., code generation, documentation, testing, debugging assistance, etc.). -->
