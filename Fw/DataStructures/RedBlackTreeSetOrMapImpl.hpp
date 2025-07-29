@@ -744,7 +744,7 @@ class RedBlackTreeSetOrMapImpl final {
                         done = true;
                         break;
                     }
-                    // The invariant at the top of the loop is satisfied.
+                    // The invariants at the top of the loop are satisfied.
                     // Continue to the next iteration.
                 }
             }

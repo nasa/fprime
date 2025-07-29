@@ -11,9 +11,7 @@
 
 #include "Fw/DataStructures/test/ut/RedBlackTreeSetOrMapImplTester.hpp"
 #include "Fw/DataStructures/test/ut/STest/RedBlackTreeSetOrMapImplTestRules.hpp"
-#if 0
 #include "Fw/DataStructures/test/ut/STest/RedBlackTreeSetOrMapImplTestScenarios.hpp"
-#endif
 
 namespace Fw {
 
@@ -197,14 +195,15 @@ TEST(RedBlackTreeSetOrMapImplScenarios, RemoveExisting) {
     Rules::insertNotFull.apply(state);
     Rules::removeExisting.apply(state);
 }
+#endif
 
 TEST(RedBlackTreeSetOrMapImplScenarios, Random) {
-    State::Entry entries[State::capacity];
-    State::Impl impl(entries, State::capacity);
+    State::Tester::Node nodes[State::capacity];
+    State::Tester::Index freeNodes[State::capacity];
+    State::Impl impl(nodes, freeNodes, State::capacity);
     State state(impl);
     Scenarios::random(Fw::String("RedBlackTreeSetOrMapImplRandom"), state, 1000);
 }
-#endif
 
 }  // namespace RedBlackTreeSetOrMapImplTest
 }  // namespace Fw
