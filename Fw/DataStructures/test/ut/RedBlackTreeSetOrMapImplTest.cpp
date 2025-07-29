@@ -42,9 +42,9 @@ TEST(RedBlackTreeSetOrMapImpl, TypedStorageConstructor) {
     ImplTester::Node nodes[State::capacity];
     ImplTester::Index freeNodes[State::capacity];
     State::Impl impl(nodes, freeNodes, State::capacity);
-    State::Tester tester(impl);
-    ASSERT_EQ(tester.getNodes().getElements(), nodes);
-    ExternalStackTester<ImplTester::Index> stackTester(tester.getFreeNodes());
+    State state(impl);
+    ASSERT_EQ(state.tester.getNodes().getElements(), nodes);
+    ExternalStackTester<ImplTester::Index> stackTester(state.tester.getFreeNodes());
     ASSERT_EQ(stackTester.getItems().getElements(), freeNodes);
     ASSERT_EQ(impl.getCapacity(), FwSizeType(State::capacity));
     ASSERT_EQ(impl.getSize(), 0U);
@@ -169,33 +169,14 @@ TEST(RedBlackTreeSetOrMapImplScenarios, InsertNotFull) {
     State::Tester::Node nodes[State::capacity];
     State::Tester::Index freeNodes[State::capacity];
     State::Impl impl(nodes, freeNodes, State::capacity);
-    State::Tester tester(impl);
     State state(impl);
-    state.useStoredKey = true;
-    state.useStoredValue = true;
-    state.storedKey = 10;
-    state.storedValue = 10;
-    Rules::insertNotFull.apply(state);
-    state.storedKey = 20;
-    state.storedValue = 20;
-    Rules::insertNotFull.apply(state);
-    state.storedKey = 30;
-    state.storedValue = 30;
-    Rules::insertNotFull.apply(state);
-    state.storedKey = 40;
-    state.storedValue = 40;
-    Rules::insertNotFull.apply(state);
-    tester.printTree();
-    state.storedKey = 50;
-    state.storedValue = 50;
-    Rules::insertNotFull.apply(state);
-    state.storedKey = 5;
-    state.storedValue = 5;
-    Rules::insertNotFull.apply(state);
-    state.storedKey = 6;
-    state.storedValue = 6;
-    Rules::insertNotFull.apply(state);
-    tester.printTree();
+    const FwSizeType n = 30;
+    for (FwSizeType i = 0; i < n; i++) {
+        Rules::insertNotFull.apply(state);
+    }
+    state.tester.printTree();
+    std::cout << "size is " << impl.getSize() << "\n";
+    state.tester.printBlackHeight();
 }
 
 #if 0

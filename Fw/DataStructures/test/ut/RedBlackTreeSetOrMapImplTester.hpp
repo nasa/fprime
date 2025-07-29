@@ -53,7 +53,7 @@ class RedBlackTreeSetOrMapImplTester {
     // Check properties of the tree
     void checkProperties() {
         this->checkBstProperty();
-        (void)this->checkRbtProperties();
+        this->checkRbtProperties();
     }
 
     // Check the BST property of the tree
@@ -78,12 +78,14 @@ class RedBlackTreeSetOrMapImplTester {
     }
 
     // Check the red-black tree properties of the tree. Return the black height.
-    FwSizeType checkRbtProperties() {
+    void checkRbtProperties() {
         const auto& nodes = this->m_impl.m_nodes;
         auto node = this->m_impl.getOuterNodeUnder(this->m_impl.m_root, Direction::LEFT);
         const auto capacity = this->m_impl.getCapacity();
+        bool done = (capacity > 0);
         for (FwSizeType i = 0; i < capacity; i++) {
             if (node == Node::NONE) {
+                done = true;
                 break;
             }
             const auto rightChild = nodes[node].getChild(Direction::RIGHT);
@@ -104,7 +106,7 @@ class RedBlackTreeSetOrMapImplTester {
                 }
             }
         }
-        return getBlackHeight(this->m_impl.m_root);
+        ASSERT_TRUE(done);
     }
 
     // Get the black height of a node
@@ -145,8 +147,14 @@ class RedBlackTreeSetOrMapImplTester {
                 << "  left child index is " << leftChild << "\n"
                 << "  right child index is " << rightChild << "\n";
             const FwSizeType nodeHeight = (this->m_impl.getNodeColor(node) == Color::BLACK) ? 1 : 0;
-            this->blackHeights[node] = leftHeight + nodeHeight;
+            const FwSizeType blackHeight = leftHeight + nodeHeight;
+            this->blackHeights[node] = blackHeight;
         }
+    }
+
+    // Print the black height
+    void printBlackHeight() {
+      std::cout << "black height is " << getBlackHeight(this->m_impl.m_root) << "\n";
     }
 
     // Print the tree
