@@ -131,6 +131,7 @@ ctest
 ctu
 culates
 cuz
+Cxxx
 CYCLEOUT
 DATAPRODUCTS
 DATAPRODUCTSSUBTOPOLOGY
@@ -177,6 +178,7 @@ DRAINBUFFERS
 drv
 drvtcpserversocket
 dspal
+DSSC
 Dstate
 DVI
 DWN
