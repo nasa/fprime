@@ -781,8 +781,17 @@ class RedBlackTreeSetOrMapImpl final {
     //! entry, node stores the node to be removed. It must not be NONE.
     void removeNodeWithAtMostOneChild(Index node  //!< The node to remove
     ) {
-        // TODO
-        FW_ASSERT(0);
+        if (this->m_nodes[node].m_left != Node::NONE) {
+            this->removeNodeWithOneChild(node, Direction::LEFT);
+        } else if (this->m_nodes[node].m_right != Node::NONE) {
+            this->removeNodeWithOneChild(node, Direction::RIGHT);
+        } else if (node == this->m_root) {
+            this->m_root = Node::NONE;
+        } else if (this->m_nodes[node].m_color == Color::RED) {
+            this->removeRedLeafNode(node);
+        } else {
+            this->removeBlackLeafNode(node);
+        }
     }
 
     //! This function removes a node of the tree with exactly one child. node
@@ -810,8 +819,14 @@ class RedBlackTreeSetOrMapImpl final {
     //! remove. It must not be NONE.
     void removeRedLeafNode(Index node  //!< The node to remove
     ) {
-        // TODO
-        FW_ASSERT(0);
+        FW_ASSERT(node != this->m_root);
+        const auto& nodeObj = this->m_nodes[node];
+        FW_ASSERT(nodeObj.color == Color::RED);
+        FW_ASSERT(nodeObj.m_left != Node::NONE);
+        FW_ASSERT(nodeObj.m_right != Node::NONE);
+        const auto parent = nodeObj.m_parent;
+        const auto direction = this->getParentDirection(node);
+        this->m_nodes[parent].setChild(direction, Node::NONE);
     }
 
     //! This function performs a left or right rotation on the subtree whose
