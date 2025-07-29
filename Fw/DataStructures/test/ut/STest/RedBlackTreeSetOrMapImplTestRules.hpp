@@ -49,7 +49,6 @@ struct Find : public Rule {
     }
 };
 
-#if 0
 struct FindExisting : public Rule {
     FindExisting() : Rule("FindExisting") {}
     bool precondition(const State& state) { return static_cast<FwSizeType>(state.impl.getSize()) > 0; }
@@ -70,7 +69,6 @@ struct FindExisting : public Rule {
         ASSERT_EQ(value, expectedValue);
     }
 };
-#endif
 
 struct InsertExisting : public Rule {
     InsertExisting() : Rule("InsertExisting") {}
@@ -180,9 +178,7 @@ extern Clear clear;
 
 extern Find find;
 
-#if 0
 extern FindExisting findExisting;
-#endif
 
 extern InsertExisting insertExisting;
 

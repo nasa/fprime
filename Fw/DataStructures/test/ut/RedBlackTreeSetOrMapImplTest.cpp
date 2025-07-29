@@ -131,15 +131,14 @@ TEST(RedBlackTreeSetOrMapImplScenarios, Find) {
     Rules::find.apply(state);
 }
 
-#if 0
 TEST(RedBlackTreeSetOrMapImplScenarios, FindExisting) {
-    State::Entry entries[State::capacity];
-    State::Impl impl(entries, State::capacity);
+    State::Tester::Node nodes[State::capacity];
+    State::Tester::Index freeNodes[State::capacity];
+    State::Impl impl(nodes, freeNodes, State::capacity);
     State state(impl);
     Rules::insertNotFull.apply(state);
     Rules::findExisting.apply(state);
 }
-#endif
 
 TEST(RedBlackTreeSetOrMapImplScenarios, InsertExisting) {
     State::Tester::Node nodes[State::capacity];

@@ -18,9 +18,7 @@ Clear clear;
 
 Find find;
 
-#if 0
 FindExisting findExisting;
-#endif
 
 InsertExisting insertExisting;
 
