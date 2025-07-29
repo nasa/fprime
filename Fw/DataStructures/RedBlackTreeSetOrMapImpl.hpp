@@ -821,7 +821,7 @@ class RedBlackTreeSetOrMapImpl final {
     ) {
         FW_ASSERT(node != this->m_root);
         const auto& nodeObj = this->m_nodes[node];
-        FW_ASSERT(nodeObj.color == Color::RED);
+        FW_ASSERT(nodeObj.m_color == Color::RED);
         FW_ASSERT(nodeObj.m_left != Node::NONE);
         FW_ASSERT(nodeObj.m_right != Node::NONE);
         const auto parent = nodeObj.m_parent;

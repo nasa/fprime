@@ -120,7 +120,6 @@ struct InsertNotFull : public Rule {
     }
 };
 
-#if 0
 struct Remove : public Rule {
     Remove() : Rule("Remove") {}
     bool precondition(const State& state) { return true; }
@@ -143,6 +142,7 @@ struct Remove : public Rule {
     }
 };
 
+#if 0
 struct RemoveExisting : public Rule {
     RemoveExisting() : Rule("RemoveExisting") {}
     bool precondition(const State& state) { return static_cast<FwSizeType>(state.impl.getSize()) > 0; }
@@ -180,9 +180,9 @@ extern InsertFull insertFull;
 
 extern InsertNotFull insertNotFull;
 
-#if 0
 extern Remove remove;
 
+#if 0
 extern RemoveExisting removeExisting;
 #endif
 
