@@ -14,9 +14,11 @@ namespace Rules {
 
 #if 0
 Clear clear;
+#endif
 
 Find find;
 
+#if 0
 FindExisting findExisting;
 #endif
 

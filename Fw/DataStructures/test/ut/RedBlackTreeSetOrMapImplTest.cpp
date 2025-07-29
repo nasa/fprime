@@ -118,10 +118,12 @@ TEST(RedBlackTreeSetOrMapImplScenarios, Clear) {
     Rules::clear.apply(state);
     ASSERT_EQ(state.impl.getSize(), 0);
 }
+#endif
 
 TEST(RedBlackTreeSetOrMapImplScenarios, Find) {
-    State::Entry entries[State::capacity];
-    State::Impl impl(entries, State::capacity);
+    State::Tester::Node nodes[State::capacity];
+    State::Tester::Index freeNodes[State::capacity];
+    State::Impl impl(nodes, freeNodes, State::capacity);
     State state(impl);
     Rules::find.apply(state);
     state.useStoredKey = true;
@@ -129,6 +131,7 @@ TEST(RedBlackTreeSetOrMapImplScenarios, Find) {
     Rules::find.apply(state);
 }
 
+#if 0
 TEST(RedBlackTreeSetOrMapImplScenarios, FindExisting) {
     State::Entry entries[State::capacity];
     State::Impl impl(entries, State::capacity);
@@ -142,7 +145,6 @@ TEST(RedBlackTreeSetOrMapImplScenarios, InsertExisting) {
     State::Tester::Node nodes[State::capacity];
     State::Tester::Index freeNodes[State::capacity];
     State::Impl impl(nodes, freeNodes, State::capacity);
-    State::Tester tester(impl);
     State state(impl);
     Rules::insertNotFull.apply(state);
     Rules::insertExisting.apply(state);

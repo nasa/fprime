@@ -31,6 +31,7 @@ struct Clear : public Rule {
         state.modelMap.clear();
     }
 };
+#endif
 
 struct Find : public Rule {
     Find() : Rule("Find") {}
@@ -48,6 +49,7 @@ struct Find : public Rule {
     }
 };
 
+#if 0
 struct FindExisting : public Rule {
     FindExisting() : Rule("FindExisting") {}
     bool precondition(const State& state) { return static_cast<FwSizeType>(state.impl.getSize()) > 0; }
@@ -174,9 +176,11 @@ struct RemoveExisting : public Rule {
 
 #if 0
 extern Clear clear;
+#endif
 
 extern Find find;
 
+#if 0
 extern FindExisting findExisting;
 #endif
 

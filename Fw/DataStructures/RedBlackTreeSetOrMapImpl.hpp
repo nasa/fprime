@@ -293,7 +293,7 @@ class RedBlackTreeSetOrMapImpl final {
                  VN& valueOrNil           //!< The value or Nil
     ) const {
         auto node = Node::NONE;
-        auto direction = Node::LEFT;
+        auto direction = Direction::LEFT;
         const auto status = this->findNode(keyOrElement, node, direction);
         if (status == Success::SUCCESS) {
             valueOrNil = this->m_nodes[node].m_entry.getValueOrNil();
