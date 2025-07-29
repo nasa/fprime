@@ -1,6 +1,6 @@
 # F´ Generative AI Usage Guidelines
 
-We're excited about the potential of generative AI to help make [F´](https://github.com/nasa/fprime) development more productive, enjoyable, and accessible! Whether you're using AI to write code, improve documentation, or learn about complex systems, we welcome and encourage the thoughtful use of these powerful tools in your F´ contributions.
+We're excited about the potential of generative AI to help make [F´] (https://github.com/nasa/fprime)development more productive, enjoyable, and accessible! Whether you're using AI to write code, improve documentation, or learn about complex systems, we welcome the thoughtful use of these powerful tools in your F´ contributions.
 
 This guide shares our community's approach to using generative AI effectively and responsibly. You'll find practical tips, best practices, and simple guidelines to help you get the most out of AI tools while maintaining the quality standards that make F´ great.
 
@@ -67,13 +67,14 @@ When working with generative AI, provide clear rules and context to improve code
 ### Quality and Responsibility
 
 - **Review all AI-generated code** thoroughly before submission
+- **Verify necessity and relevance** - Remove verbose or unnecessary AI-generated content
+- **Be concise** - Edit AI output to be clear and to-the-point
 - **Ensure compliance** with F Prime coding standards and style guidelines
 - **Verify correctness** and test all AI-assisted implementations
 - **Maintain authorship responsibility** - you are accountable for all submitted code regardless of its origin
 
 ### Security
 
-- **F' is open source friendly**, thus, developing F' components with generative AI is appropriate and encouraged
 - **Avoid sharing sensitive information** with AI tools (proprietary project designs, mission-specific details, etc.)
 - **Be cautious with external dependencies** suggested by AI tools
 - **Validate security implications** of AI-generated code, especially for flight software
