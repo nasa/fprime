@@ -64,9 +64,9 @@ jobs:
           mkdir -p aarch64-linux-artifacts-soak
           cp -r ./build-artifacts aarch64-linux-artifacts-soak
           cp -r Components/Led/test/int aarch64-linux-artifacts-soak
-          # Copy monitoring script from F' repo
-          if [ -f "./fprime/soak_log_processor.py" ]; then
-            cp ./fprime/soak_log_processor.py aarch64-linux-artifacts-soak/soak_monitor.py
+          # Copy monitoring script from F' repo workflows
+          if [ -f "./fprime/.github/workflows/soak_monitor.py" ]; then
+            cp ./fprime/.github/workflows/soak_monitor.py aarch64-linux-artifacts-soak/soak_monitor.py
           fi
       - name: 'Archive Build Artifacts'
         uses: actions/upload-artifact@v4
