@@ -88,7 +88,7 @@ jobs:
           
           python3 soak_monitor.py \
             --dictionary ${INSTALL_DIR}/dict/LedBlinkerTopologyDictionary.json \
-            --logs ${INSTALL_DIR}/logs \
+            --logs ${INSTALL_DIR}/ComLoggerFiles \
             --state-file ${INSTALL_DIR}/monitoring/soak_monitor_state.json \
             --report-file ${INSTALL_DIR}/monitoring/soak_report_${TEST_TIMESTAMP}.json
           
@@ -148,6 +148,7 @@ jobs:
           name: ledblinker-results-${{ github.run_number }}-${{ github.run_attempt }}
           path: |
             ${{ env.INSTALL_DIR }}/logs
+            ${{ env.INSTALL_DIR }}/ComLoggerFiles
             ${{ env.INSTALL_DIR }}/monitoring
           retention-days: 30
 

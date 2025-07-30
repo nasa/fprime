@@ -121,6 +121,7 @@ jobs:
           sudo mkdir -p ${INSTALL_DIR}/dict
           sudo mkdir -p ${INSTALL_DIR}/test
           sudo mkdir -p ${INSTALL_DIR}/logs
+          sudo mkdir -p ${INSTALL_DIR}/ComLoggerFiles
           sudo mkdir -p ${INSTALL_DIR}/monitoring
           
           # Copy binary, dict, and test files
