@@ -64,6 +64,7 @@ ccsds
 ccsparc
 cdh
 CDHCORE
+CDHCORESUBTOPOLOGY
 cerrno
 CFDP
 cff
@@ -130,6 +131,7 @@ ctest
 ctu
 culates
 cuz
+Cxxx
 CYCLEOUT
 DATAPRODUCTS
 DATAPRODUCTSSUBTOPOLOGY
@@ -176,6 +178,7 @@ DRAINBUFFERS
 drv
 drvtcpserversocket
 dspal
+DSSC
 Dstate
 DVI
 DWN

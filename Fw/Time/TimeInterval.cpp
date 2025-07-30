@@ -48,13 +48,23 @@ namespace Fw {
     }
 
     SerializeStatus TimeInterval::serialize(SerializeBufferBase& buffer) const {
-        // Use TimeIntervalValue's built-in serialization
-        return this->m_val.serialize(buffer);
+        // Deprecated method - calls new interface for backward compatibility
+        return this->serializeTo(buffer);
     }
 
     SerializeStatus TimeInterval::deserialize(SerializeBufferBase& buffer) {
+        // Deprecated method - calls new interface for backward compatibility
+        return this->deserializeFrom(buffer);
+    }
+
+    SerializeStatus TimeInterval::serializeTo(SerializeBufferBase& buffer) const {
+        // Use TimeIntervalValue's built-in serialization
+        return this->m_val.serializeTo(buffer);
+    }
+
+    SerializeStatus TimeInterval::deserializeFrom(SerializeBufferBase& buffer) {
         // Use TimeIntervalValue's built-in deserialization
-        return this->m_val.deserialize(buffer);
+        return this->m_val.deserializeFrom(buffer);
     }
 
     U32 TimeInterval::getSeconds() const {

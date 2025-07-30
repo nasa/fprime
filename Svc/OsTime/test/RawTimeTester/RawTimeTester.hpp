@@ -50,14 +50,20 @@ class RawTimeTester : public Os::RawTimeInterface {
         return OP_OK;
     }
 
+    Fw::SerializeStatus serializeTo(Fw::SerializeBufferBase& buffer) const override {
+        return buffer.serializeFrom(m_handle.t);
+    }
+
+    Fw::SerializeStatus deserializeFrom(Fw::SerializeBufferBase& buffer) override {
+        return buffer.deserializeTo(m_handle.t);
+    }
+
     Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const override {
-        buffer.serialize(m_handle.t);
-        return Fw::FW_SERIALIZE_OK;
+        return this->serializeTo(buffer);
     }
 
     Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer) override {
-        buffer.deserialize(m_handle.t);
-        return Fw::FW_SERIALIZE_OK;
+        return this->deserializeFrom(buffer);
     }
 
     static void setNowTime(const Fw::Time&& t) {

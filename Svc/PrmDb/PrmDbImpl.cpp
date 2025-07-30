@@ -318,7 +318,7 @@ namespace Svc {
             // reset deserialization
             buff.resetDeser();
             // deserialize, since record size is serialized in file
-            desStat = buff.deserialize(recordSize);
+            desStat = buff.deserializeTo(recordSize);
             FW_ASSERT(Fw::FW_SERIALIZE_OK == desStat);
 
             // sanity check value. It can't be larger than the maximum parameter buffer size + id
@@ -349,7 +349,7 @@ namespace Svc {
             // reset deserialization
             buff.resetDeser();
             // deserialize, since parameter ID is serialized in file
-            desStat = buff.deserialize(parameterId);
+            desStat = buff.deserializeTo(parameterId);
             FW_ASSERT(Fw::FW_SERIALIZE_OK == desStat);
 
             // copy parameter
