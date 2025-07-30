@@ -1162,7 +1162,7 @@ It must not be `NONE`.
            </div>
            </center>
 
-        1. If `getColor(distantNephew) == RED`
+        1. If `getNodeColor(distantNephew) == RED`
 
             1. _The subtree has this shape:_
 
@@ -1182,7 +1182,7 @@ It must not be `NONE`.
                </div>
                </center>
 
-        1. Otherwise if `getColor(closeNephew) == RED`
+        1. Otherwise if `getNodeColor(closeNephew) == RED`
 
             1. _The subtree has this shape:_
 
@@ -1228,7 +1228,7 @@ It must not be `NONE`.
 
         1. Set `done = true`.
 
-    1. Otherwise if `getColor(distantNephew) == RED`
+    1. Otherwise if `getNodeColor(distantNephew) == RED`
 
         1. _The subtree has this shape:_
 
@@ -1250,7 +1250,7 @@ It must not be `NONE`.
 
         1. Set `done = true`.
 
-    1. Otherwise if `getColor(closeNephew) == RED`
+    1. Otherwise if `getNodeColor(closeNephew) == RED`
 
         1. _The subtree has this shape:_
 
@@ -1282,7 +1282,7 @@ It must not be `NONE`.
 
         1. Set `done = true`.
 
-    1. Otherwise if `getColor(parent) == RED`
+    1. Otherwise if `getNodeColor(parent) == RED`
 
         1. Set `m_nodes[sibling].color = RED`.
 
@@ -1359,9 +1359,9 @@ It must not be `NONE`.
 ```c++
 void removeBlackLeafNodeHelper1(
     Node::Index closeNephew,
-    Direction oppositeDirection
+    Direction oppositeDirection,
     Node::Index& sibling,
-    Node::Index& distantNephew,
+    Node::Index& distantNephew
 )
 ```
 
