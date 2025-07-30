@@ -2,7 +2,7 @@
 #define COMFPRIME_PINGENTRIES_HPP
 
   namespace PingEntries {
-    namespace ComFprime_cmdSeq         {enum { WARN = 3, FATAL = 5 };}
+    // No ping-enabled components in ComFprime subtopology
   }
 
 #endif

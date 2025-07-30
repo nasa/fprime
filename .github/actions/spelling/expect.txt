@@ -14,7 +14,6 @@ ANamespace
 apid
 APIDOCS
 APPENDFILE
-aps
 arduino
 ARef
 argcomplete
@@ -65,6 +64,7 @@ ccsds
 ccsparc
 cdh
 CDHCORE
+CDHCORESUBTOPOLOGY
 cerrno
 CFDP
 cff
@@ -122,7 +122,6 @@ crckermit
 CRCs
 crcstat
 CREATEDIRECTORY
-Crosscompiling
 crsmith
 crt
 CRTSCTS
@@ -132,6 +131,7 @@ ctest
 ctu
 culates
 cuz
+Cxxx
 CYCLEOUT
 DATAPRODUCTS
 DATAPRODUCTSSUBTOPOLOGY
@@ -178,6 +178,7 @@ DRAINBUFFERS
 drv
 drvtcpserversocket
 dspal
+DSSC
 Dstate
 DVI
 DWN
@@ -256,8 +257,6 @@ gcgandhi
 gcov
 gdiplus
 GENHUB
-getfooter
-getstatements
 gettime
 getty
 ghprb
@@ -400,7 +399,6 @@ mman
 MMAPALLOCATOR
 MML
 modbus
-MOSI
 MOVEFILE
 msc
 mscfile
@@ -496,7 +494,6 @@ PRMDBIMPL
 PRMDBIMPLTESTERCFG
 PRMDBLIMPLCFG
 PRMDBTESTER
-PRMLEDINITSTATE
 PROCBUFFERSENDOUT
 PRODUCTGETIN
 PRODUCTREQUESTIN
@@ -551,10 +548,7 @@ RHH
 Rizvi
 ROOTDIR
 rpi
-RPIDEMO
-RPIDEMOCOMPONENTIMPLCFG
 rptr
-RXD
 SAlias
 sanitizers
 sats
@@ -586,7 +580,6 @@ SHAREDSTATEDIR
 SHELLCOMMAND
 showinitializer
 sideeffect
-sighandler
 Signedness
 Silveira
 sitofp
@@ -682,7 +675,6 @@ tparam
 TPP
 trinomials
 tts
-TXD
 typedef'ed
 typedef
 uart

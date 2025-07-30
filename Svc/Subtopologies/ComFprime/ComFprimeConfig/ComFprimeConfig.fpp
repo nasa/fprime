@@ -1,22 +1,17 @@
 module ComFprimeConfig {
     #Base ID for the ComFprime Subtopology, all components are offsets from this base ID
-    constant BASE_ID = 0x10200000
+    constant BASE_ID = 0x03000000
     
     module QueueSizes {
         constant comQueue    = 50
-        constant cmdSeq      = 10
     }
     
     module StackSizes {
         constant comQueue   = 64 * 1024
-        constant cmdSeq    = 64 * 1024
-        constant comDriver = 100
     }
 
     module Priorities {
         constant comQueue   = 101
-        constant cmdSeq     = 100
-        constant comDriver  = 100
     }
 
     # Queue configuration constants
@@ -34,7 +29,6 @@ module ComFprimeConfig {
 
     # Buffer management constants
     module BuffMgr {
-        constant cmdSeqBuffSize        = 5 * 1024  
         constant frameAccumulatorSize  = 2048     
         constant commsBuffSize         = 2048      
         constant commsFileBuffSize     = 3000      
