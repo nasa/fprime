@@ -82,24 +82,52 @@ jobs:
           
           echo "=== Soak monitoring started at $(date) (${TEST_TIMESTAMP}) ==="
           
-          # Debug: Check both log types
-          echo "=== DEBUG: Checking log directories ==="
-          echo "1. GDS logs (text-based logs from fprime-gds):"
-          ls -la ${INSTALL_DIR}/logs/ || echo "GDS logs directory doesn't exist"
-          find ${INSTALL_DIR}/logs/ -type f 2>/dev/null || echo "No GDS log files found"
-          
-          echo "2. ComLogger files (binary .com files from ComLogger component):"
+          # Debug: Check ComLogger files only
+          echo "=== DEBUG: Checking ComLogger file creation ==="
+          echo "ComLogger directory status:"
           ls -la ${INSTALL_DIR}/ComLoggerFiles/ || echo "ComLoggerFiles directory doesn't exist"
           echo "Looking for .com files:"
-          find ${INSTALL_DIR}/ComLoggerFiles/ -name "*.com" -ls 2>/dev/null || echo "No .com files found or directory doesn't exist"
-          echo "All files in ComLoggerFiles:"
-          find ${INSTALL_DIR}/ComLoggerFiles/ -type f 2>/dev/null || echo "No files found or directory doesn't exist"
+          find ${INSTALL_DIR}/ComLoggerFiles/ -name "*.com" -ls 2>/dev/null || echo "No .com files found"
           
-          # Check service status to ensure logs are being generated
-          echo "=== DEBUG: Checking service status ==="
-          sudo systemctl status ${FSW_SERVICE_NAME} --no-pager -l -n 10
-          echo "Recent FSW logs:"
-          sudo journalctl -u ${FSW_SERVICE_NAME} --no-pager -n 10 --since "5 minutes ago"
+          # Check if the LED Blinker is running and working directory
+          echo "=== DEBUG: Application status ==="
+          if sudo systemctl is-active --quiet ${FSW_SERVICE_NAME}; then
+            echo "✅ LED Blinker service is running"
+            echo "Working directory from systemd: $(sudo systemctl show ${FSW_SERVICE_NAME} --property=WorkingDirectory --value)"
+            echo "Checking if ComLoggerFiles exists from working directory:"
+            sudo -u fprime test -d ${INSTALL_DIR}/ComLoggerFiles && echo "✅ ComLoggerFiles directory accessible to fprime user" || echo "❌ ComLoggerFiles not accessible to fprime user"
+            echo "Testing file creation permissions:"
+            sudo -u fprime touch ${INSTALL_DIR}/ComLoggerFiles/test_file 2>/dev/null && sudo -u fprime rm ${INSTALL_DIR}/ComLoggerFiles/test_file && echo "✅ File creation permissions OK" || echo "❌ Cannot create files in ComLoggerFiles"
+          else
+            echo "❌ LED Blinker service is not running"
+          fi
+          
+          # Check if ComLogger components need to be triggered via commands
+          echo "=== DEBUG: Triggering activity to test ComLogger ==="
+          echo "Sending commands to LED Blinker to generate activity..."
+          
+          # Use fprime-cli to send some commands to generate telemetry/events
+          # This should trigger the ComLogger to create files
+          echo "Testing if we can connect to LED Blinker and send commands..."
+          # Try to send a command via fprime-cli to trigger activity
+          echo 'led.BLINKING_ON_OFF OFF' | timeout 10s ${INSTALL_DIR}/venv/bin/fprime-cli --dictionary ${INSTALL_DIR}/dict/LedBlinkerTopologyDictionary.json --ip-address 127.0.0.1 --ip-port 50000 2>/dev/null || echo "Could not send command (timeout or connection issue)"
+          
+          echo "Waiting 5 seconds for any ComLogger files to be created..."
+          sleep 5
+          
+          # Check again for .com files after triggering activity
+          echo "Checking for .com files after activity:"
+          find ${INSTALL_DIR}/ComLoggerFiles/ -name "*.com" -ls 2>/dev/null || echo "Still no .com files found"
+          
+          # Also check what's in those fprime-downlink/uplink directories
+          echo "Checking fprime-downlink directory:"
+          ls -la ${INSTALL_DIR}/ComLoggerFiles/fprime-downlink/ 2>/dev/null || echo "fprime-downlink directory empty or doesn't exist"
+          echo "Checking fprime-uplink directory:"
+          ls -la ${INSTALL_DIR}/ComLoggerFiles/fprime-uplink/ 2>/dev/null || echo "fprime-uplink directory empty or doesn't exist"
+          
+          # Check if ComLogger is trying to create files but failing
+          echo "=== DEBUG: Checking system logs for ComLogger errors ==="
+          sudo journalctl -u ${FSW_SERVICE_NAME} --no-pager -n 20 --since "2 minutes ago" | grep -i "comlog\|file\|error" || echo "No ComLogger-related messages found"
           
           # Restore previous state if available
           if [ -f "./previous-state/soak_monitor_state.json" ]; then
