@@ -758,9 +758,98 @@ class RedBlackTreeSetOrMapImpl final {
     //! (i.e., it has no children) and is not the root. node stores the node to
     //! remove. It must not be NONE.
     void removeBlackLeafNode(Index node  //!< The node to remove
-    ) {
-        // TODO
-        FW_ASSERT(0);
+        ) {
+        // We assume that the tree is a red-black tree, that node is colored 
+        // black, that node is a leaf node, and that node is not the root.
+        auto parent = m_nodes[node].m_parent;
+        // Since node is not the root, parent is not NONE.
+        auto direction = this->getParentDirection(node);
+        auto oppositeDirection = Node::getOppositeDirection(direction);
+        // The leaf-augmented subtree rooted at parent has this shape, assuming 
+        // direction == RIGHT. We use ? to represent the unknown color (red or 
+        // black) of parent. The black heights are the black heights of the 
+        // original tree.
+        //
+        //                      ????????????????
+        //                     ?                ?
+        //                     ?     parent     ?
+        //                     ?                ?
+        //                      ????????????????
+        //                        /          \
+        //                       /            \
+        //                      V              V
+        //        ------------------           BBBBBBBBBBBB
+        //        |                |          B            B
+        //        | black height 2 |          B    node    B
+        //        |                |          B            B
+        //        ------------------           BBBBBBBBBBBB
+        //                                      /        \
+        //                                     /          \
+        //                                    V            V
+        //                             BBBBBBBBBB        BBBBBBBBBB
+        //                            B          B      B          B
+        //                            B          B      B          B
+        //                            B          B      B          B
+        //                             BBBBBBBBBB        BBBBBBBBBB      
+        //
+        this->m_nodes[parent].setChild(direction, Node::NONE);
+        // The previous step performs the deletion.
+        // The remaining steps are for rebalancing.
+        // 
+        // The leaf-augmented subtree rooted at parent looks like this, 
+        // assuming direction == RIGHT:
+        //
+        //                      ????????????????
+        //                     ?                ?
+        //                     ?     parent     ?
+        //                     ?                ?
+        //                      ????????????????
+        //                        /          \
+        //                       /            \
+        //                      V              V
+        //        ------------------           BBBBBBBBBBBB
+        //        |                |          B            B
+        //        | black height 2 |          B            B
+        //        |                |          B            B
+        //        ------------------           BBBBBBBBBBBB
+        //
+        // The black height invariant is violated, because the left subtree of 
+        // parent has black height 2, and the right subtree has black height 1.  
+        // Therefore there is a black height violation at parent and at every 
+        // node in the path from the root to parent. To restore the black 
+        // height invariant, we must perform rebalancing.
+        bool done = false;
+        const auto capacity = this->getCapacity();
+        for (FwSizeType i = 0; i < capacity; i++) {
+            // The red child constraint is satisfied. The black height 
+            // constraint is violated because the leaf-augmented subtree rooted 
+            // at parent has this shape, assuming direction == RIGHT. i is the 
+            // loop index. Note that this diagram agrees with the previous one 
+            // when i = 0.
+            //
+            //                          ????????????????
+            //                         ?                ?
+            //                         ?     parent     ?
+            //                         ?                ?
+            //                          ????????????????
+            //                            /          \
+            //                           /            \
+            //                          V              V
+            //        ----------------------        ----------------------      
+            //        |                    |        |                    |       
+            //        | black height i + 2 |        | black height i + 1 |      
+            //        |                    |        |                    |     
+            //        ----------------------        ----------------------
+            //
+            // The black height constraint would be satisfied if the child of 
+            // parent in the direction direction were replaced with a red-black 
+            // tree of black height i + 2.
+            // TODO
+            FW_ASSERT(0);
+            (void)oppositeDirection;
+        }
+        FW_ASSERT(done);
+        // The tree is a valid red-black tree.
     }
 
     //! This function removes a node of the tree. On entry, node stores the key
