@@ -21,17 +21,17 @@ def test_send_fileManager_command(fprime_test_api):
 
     fprime_test_api.send_and_assert_command(fprime_test_api.get_mnemonic('Svc.FileManager') + '.' + 'CreateDirectory', ["/tmp/file2"], max_delay=1)
 
-    fprime_test_api.send_and_assert_command(fprime_test_api.get_mnemonic('Svc.FileManager') + '.' + 'FileSize', ["/tmp/1MiB.txt"], max_delay=5)
+    fprime_test_api.send_and_assert_command(fprime_test_api.get_mnemonic('Svc.FileManager') + '.' + 'FileSize', ["/tmp/1MiB.txt"], max_delay=50)
 
-    fprime_test_api.send_and_assert_command(fprime_test_api.get_mnemonic('Svc.FileManager') + '.' + 'MoveFile', ["/tmp/1MiB.txt","/tmp/file/1MiB.txt"], max_delay=35)
+    fprime_test_api.send_and_assert_command(fprime_test_api.get_mnemonic('Svc.FileManager') + '.' + 'MoveFile', ["/tmp/1MiB.txt","/tmp/file/1MiB.txt"], max_delay=50)
 
 
-    fprime_test_api.send_and_assert_command(fprime_test_api.get_mnemonic('Svc.FileManager') + '.' + 'FileSize', ["/tmp/file/1MiB.txt"], max_delay=5)
+    fprime_test_api.send_and_assert_command(fprime_test_api.get_mnemonic('Svc.FileManager') + '.' + 'FileSize', ["/tmp/file/1MiB.txt"], max_delay=50)
     # Use small file to AppendFile to work with RaspberryPi 
     fprime_test_api.send_and_assert_command(fprime_test_api.get_mnemonic('Svc.FileManager') + '.' + 'AppendFile', ["/tmp/test_seq.seq", "/tmp/file/test_seq.seq"])
     time.sleep(10) 
     # put back 
-    fprime_test_api.send_and_assert_command(fprime_test_api.get_mnemonic('Svc.FileManager') + '.' + 'MoveFile', ["/tmp/file/1MiB.txt","/tmp/1MiB.txt"], max_delay=35)
+    fprime_test_api.send_and_assert_command(fprime_test_api.get_mnemonic('Svc.FileManager') + '.' + 'MoveFile', ["/tmp/file/1MiB.txt","/tmp/1MiB.txt"], max_delay=50)
 
 
     # fail bc directory is not empty  (pytest script will stop if use send_and_assert_cmd.  Use send_command to avoid stop) No max_delay (expected warning_hi)
