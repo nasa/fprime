@@ -1,5 +1,13 @@
 # Scheduled testing of LED blinker system service every 30 minutes
 # Connects to running service via GDS and runs integration tests
+#
+# This workflow analyzes two types of logs:
+# 1. GDS logs: Text-based logs from fprime-gds (archived but not analyzed by soak monitor)
+# 2. ComLogger logs: Binary .com files from ComLogger component (analyzed by soak monitor)
+#
+# Note: The "Artifact not found: ledblinker-monitoring-state" error is expected on the first run
+# and is handled gracefully with continue-on-error: true
+#
 name: "Soak Test AArch64 Linux: External Repo LedBlinker"
 
 on:
@@ -63,6 +71,7 @@ jobs:
         with:
           name: ledblinker-monitoring-state
           path: ./previous-state
+        # This step will fail on the first run - that's expected and OK
 
       - name: "Run soak monitoring"
         run: |
@@ -73,17 +82,37 @@ jobs:
           
           echo "=== Soak monitoring started at $(date) (${TEST_TIMESTAMP}) ==="
           
+          # Debug: Check both log types
+          echo "=== DEBUG: Checking log directories ==="
+          echo "1. GDS logs (text-based logs from fprime-gds):"
+          ls -la ${INSTALL_DIR}/logs/ || echo "GDS logs directory doesn't exist"
+          find ${INSTALL_DIR}/logs/ -type f 2>/dev/null || echo "No GDS log files found"
+          
+          echo "2. ComLogger files (binary .com files from ComLogger component):"
+          ls -la ${INSTALL_DIR}/ComLoggerFiles/ || echo "ComLoggerFiles directory doesn't exist"
+          echo "Looking for .com files:"
+          find ${INSTALL_DIR}/ComLoggerFiles/ -name "*.com" -ls 2>/dev/null || echo "No .com files found or directory doesn't exist"
+          echo "All files in ComLoggerFiles:"
+          find ${INSTALL_DIR}/ComLoggerFiles/ -type f 2>/dev/null || echo "No files found or directory doesn't exist"
+          
+          # Check service status to ensure logs are being generated
+          echo "=== DEBUG: Checking service status ==="
+          sudo systemctl status ${FSW_SERVICE_NAME} --no-pager -l -n 10
+          echo "Recent FSW logs:"
+          sudo journalctl -u ${FSW_SERVICE_NAME} --no-pager -n 10 --since "5 minutes ago"
+          
           # Restore previous state if available
           if [ -f "./previous-state/soak_monitor_state.json" ]; then
-            echo "Restoring previous monitoring state..."
+            echo "✅ Restoring previous monitoring state..."
             sudo cp ./previous-state/soak_monitor_state.json ${INSTALL_DIR}/monitoring/
             sudo chown fprime:fprime ${INSTALL_DIR}/monitoring/soak_monitor_state.json
           else
-            echo "No previous monitoring state found - starting fresh"
+            echo "ℹ️  No previous monitoring state found - this is normal for the first run"
+            echo "   Starting fresh monitoring session..."
           fi
           
-          # Run the soak monitor
-          echo "Running soak monitoring..."
+          # Run the soak monitor (analyzing ComLogger .com files)
+          echo "Running soak monitoring on ComLogger files..."
           cd ${INSTALL_DIR}/monitoring
           
           python3 soak_monitor.py \
@@ -150,6 +179,15 @@ jobs:
             ${{ env.INSTALL_DIR }}/logs
             ${{ env.INSTALL_DIR }}/ComLoggerFiles
             ${{ env.INSTALL_DIR }}/monitoring
+          retention-days: 30
+        
+      # Archive just the GDS logs separately for easy access (like simpler workflows)  
+      - name: 'Archive GDS Logs'
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ledblinker-gds-logs-${{ github.run_number }}-${{ github.run_attempt }}
+          path: ${{ env.INSTALL_DIR }}/logs
           retention-days: 30
 
       - name: 'Archive Monitoring State'

@@ -196,8 +196,20 @@ def process_logs(dictionary_path, logs_path, monitor):
     # Find and process log files
     log_files = []
     logs_dir = Path(logs_path)
+    
+    print(f"Looking for log files in: {logs_dir}")
+    print(f"Directory exists: {logs_dir.exists()}")
+    print(f"Is directory: {logs_dir.is_dir()}")
+    
     if logs_dir.is_dir():
-        log_files = list(logs_dir.glob('*.com'))
+        # Look for .com files recursively
+        log_files = list(logs_dir.glob('**/*.com'))
+        print(f"Found .com files: {[str(f) for f in log_files]}")
+        
+        # Also show all files for debugging
+        all_files = list(logs_dir.glob('**/*'))
+        print(f"All files in directory: {[str(f) for f in all_files if f.is_file()]}")
+        
     elif logs_dir.is_file() and logs_dir.suffix == '.com':
         log_files = [logs_dir]
     
@@ -205,8 +217,13 @@ def process_logs(dictionary_path, logs_path, monitor):
     
     for log_file in log_files:
         print(f"Processing: {log_file}")
-        with open(log_file, 'rb') as f:
-            standard.distributor.on_recv(f.read())
+        try:
+            with open(log_file, 'rb') as f:
+                data = f.read()
+                print(f"File size: {len(data)} bytes")
+                standard.distributor.on_recv(data)
+        except Exception as e:
+            print(f"Error processing {log_file}: {e}")
     
     # Update last processed timestamps
     current_time = int(datetime.now().timestamp())
@@ -233,8 +250,11 @@ def main():
     print("="*50)
     print("F' SOAK TEST MONITOR")
     print("="*50)
+    print("Analyzes ComLogger .com files (binary F' packets)")
+    print("Note: This does NOT analyze GDS text logs")
+    print("-"*50)
     print(f"Dictionary: {args.dictionary}")
-    print(f"Logs: {args.logs}")
+    print(f"ComLogger files directory: {args.logs}")
     print(f"State file: {args.state_file}")
     print(f"Last run: {monitor.state.get('last_run_timestamp', 'Never')}")
     print("-"*50)
