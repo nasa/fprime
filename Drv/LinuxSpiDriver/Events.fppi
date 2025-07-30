@@ -29,6 +29,18 @@ event SPI_WriteError(
   format "Error writing/reading SPI device {}.{}: {}" \
   throttle 5
 
+@ SPI configuration mismatch
+event SPI_ConfigMismatch(
+                     device: I32 @< The device
+                     select: I32 @< The chip select
+                     parameter: string @< The parameter being configured
+                     write_value: U32 @< The value written
+                     read_value: U32 @< The value read
+                   ) \
+  severity warning low \
+  id 3 \
+  format "SPI device {}.{} configuration mismatch for {}: wrote {}, read {}"
+
 @ SPI open notification
 event SPI_PortOpened(
                       device: I32 @< The device

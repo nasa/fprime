@@ -112,20 +112,25 @@ namespace Drv {
                 break;
             default:
                 //Assert if the device SPI Mode is not in the correct range
-                FW_ASSERT(0, spiMode);                
+                FW_ASSERT(0, spiMode);
                 break;
         }
 
         ret = ioctl(fd, SPI_IOC_WR_MODE, &mode);
         if (ret == -1) {
-            this->log_WARNING_HI_SPI_ConfigError(device,select,ret);
+            this->log_WARNING_HI_SPI_ConfigError(device, select, ret);
             return false;
         }
 
-        ret = ioctl(fd, SPI_IOC_RD_MODE, &mode);
+        U8 read_mode = 0;
+        ret = ioctl(fd, SPI_IOC_RD_MODE, &read_mode);
         if (ret == -1) {
-            this->log_WARNING_HI_SPI_ConfigError(device,select,ret);
+            this->log_WARNING_HI_SPI_ConfigError(device, select, ret);
             return false;
+        }
+
+        if (mode != read_mode) {
+            this->log_WARNING_LOW_SPI_ConfigMismatch(device, select, "MODE", mode, read_mode);
         }
 
         /*
@@ -134,33 +139,43 @@ namespace Drv {
         U8 bits = 8;
         ret = ioctl(fd, SPI_IOC_WR_BITS_PER_WORD, &bits);
         if (ret == -1) {
-            this->log_WARNING_HI_SPI_ConfigError(device,select,ret);
+            this->log_WARNING_HI_SPI_ConfigError(device, select, ret);
             return false;
         }
 
-        ret = ioctl(fd, SPI_IOC_RD_BITS_PER_WORD, &bits);
+        U8 read_bits = 0;
+        ret = ioctl(fd, SPI_IOC_RD_BITS_PER_WORD, &read_bits);
         if (ret == -1) {
-            this->log_WARNING_HI_SPI_ConfigError(device,select,ret);
+            this->log_WARNING_HI_SPI_ConfigError(device, select, ret);
             return false;
+        }
+
+        if (bits != read_bits) {
+            this->log_WARNING_LOW_SPI_ConfigMismatch(device, select, "BITS_PER_WORD", bits, read_bits);
         }
 
         /*
          * Max speed in Hz
          */
-        ret = ioctl(fd, SPI_IOC_WR_MAX_SPEED_HZ, &clock);
+        SpiFrequency write_clock = clock;
+        ret = ioctl(fd, SPI_IOC_WR_MAX_SPEED_HZ, &write_clock);
         if (ret == -1) {
-            this->log_WARNING_HI_SPI_ConfigError(device,select,ret);
+            this->log_WARNING_HI_SPI_ConfigError(device, select, ret);
             return false;
         }
 
-        ret = ioctl(fd, SPI_IOC_RD_MAX_SPEED_HZ, &clock);
+        SpiFrequency read_clock = 0;
+        ret = ioctl(fd, SPI_IOC_RD_MAX_SPEED_HZ, &read_clock);
         if (ret == -1) {
-           this->log_WARNING_HI_SPI_ConfigError(device,select,ret);
-           return false;
+            this->log_WARNING_HI_SPI_ConfigError(device, select, ret);
+            return false;
+        }
+
+        if (clock != read_clock) {
+            this->log_WARNING_LOW_SPI_ConfigMismatch(device, select, "MAX_SPEED_HZ", clock, read_clock);
         }
 
         return true;
-
     }
 
     LinuxSpiDriverComponentImpl::~LinuxSpiDriverComponentImpl() {
