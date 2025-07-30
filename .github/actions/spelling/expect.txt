@@ -414,6 +414,7 @@ multitool
 mutexattr
 Mutexed
 mycompany
+MYSUBTOPOLOGYINSTANCE
 nasafprime
 nbits
 ncsl
@@ -690,6 +691,7 @@ UNEXP
 unistd
 UNITTESTASSERT
 unittests
+uplinker
 useconds
 usecs
 valgrind
