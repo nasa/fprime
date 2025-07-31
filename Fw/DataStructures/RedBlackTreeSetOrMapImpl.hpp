@@ -925,17 +925,174 @@ class RedBlackTreeSetOrMapImpl final {
                 sibling = closeNephew;
                 closeNephew = this->m_nodes[sibling].getChild(direction);
                 distantNephew = this->m_nodes[sibling].getChild(oppositeDirection);
-                // TODO: Add diagram
+                // The subtree has this shape:
+                //
+                //                           BBBBBBBBBBBBBBBB
+                //                          B                B
+                //                          B       K2       B
+                //                          B                B
+                //                           BBBBBBBBBBBBBBBB
+                //                             /          \
+                //                            /            \
+                //                           /              \
+                //                          V                V
+                //             BBBBBBBBBBBBBB                RRRRRRRRRRRRRRRRRRR
+                //            B              B              R                   R
+                //            B      K1      B              R    K6 (parent)    R
+                //            B              B              R                   R
+                //             BBBBBBBBBBBBBB                RRRRRRRRRRRRRRRRRRR
+                //                 |    |                        /         \
+                //                 |    |                       /           \
+                //                 V    V                      V             V
+                //   ------------------------      BBBBBBBBBBBBBBBBBB      ------------------------
+                //   |                      |     B                  B     |                      |
+                //   |  black height i + 1  |     B   K4 (sibling)   B     |  black height i + 1  |
+                //   |                      |     B                  B     |                      |
+                //   ------------------------      BBBBBBBBBBBBBBBBBB      ------------------------
+                //                                      /      \
+                //                                     /        \
+                //                                    V          V
+                //       --------------------------------      --------------------------------
+                //       |                              |      |                              |
+                //       |      black height i + 1      |      |      black height i + 1      |
+                //       | with root K3 (distantNephew) |      |  with root K5 (closeNephew)  |
+                //       |                              |      |                              |
+                //       --------------------------------      --------------------------------
+                //
                 if (this->getNodeColor(distantNephew) == Color::RED) {
+                    // The subtree has this shape:
+                    //
+                    //                           BBBBBBBBBBBBBBBB
+                    //                          B                B
+                    //                          B       K2       B
+                    //                          B                B
+                    //                           BBBBBBBBBBBBBBBB
+                    //                             /          \
+                    //                            /            \
+                    //                           /              \
+                    //                          V                V
+                    //             BBBBBBBBBBBBBB                RRRRRRRRRRRRRRRRRRR
+                    //            B              B              R                   R
+                    //            B      K1      B              R    K6 (parent)    R
+                    //            B              B              R                   R
+                    //             BBBBBBBBBBBBBB                RRRRRRRRRRRRRRRRRRR
+                    //                 |    |                        /         \
+                    //                 |    |                       /           \
+                    //                 V    V                      V             V
+                    //   ------------------------      BBBBBBBBBBBBBBBBBB      ------------------------
+                    //   |                      |     B                  B     |                      |
+                    //   |  black height i + 1  |     B   K4 (sibling)   B     |  black height i + 1  |
+                    //   |                      |     B                  B     |                      |
+                    //   ------------------------      BBBBBBBBBBBBBBBBBB      ------------------------
+                    //                                      /      \
+                    //                                     /        \
+                    //                                    V          V
+                    //            RRRRRRRRRRRRRRRRRRRRRRRRRR       ------------------------
+                    //           R                          R      |                      |
+                    //           R    K3 (distantNephew)    R      |  black height i + 1  |
+                    //           R                          R      |                      |
+                    //            RRRRRRRRRRRRRRRRRRRRRRRRRR       ------------------------
+                    //                     |      |
+                    //                     |      |
+                    //                     V      V
+                    //             ------------------------
+                    //             |                      |
+                    //             |  black height i + 1  |
+                    //             |                      |
+                    //             ------------------------
+                    //
                     // TODO
                     FW_ASSERT(0);
                 } else if (this->getNodeColor(closeNephew) == Color::RED) {
+                    // The subtree has this shape:
+                    //
+                    //                           BBBBBBBBBBBBBBBB
+                    //                          B                B
+                    //                          B       K2       B
+                    //                          B                B
+                    //                           BBBBBBBBBBBBBBBB
+                    //                             /          \
+                    //                            /            \
+                    //                           /              \
+                    //                          V                V
+                    //             BBBBBBBBBBBBBB                RRRRRRRRRRRRRRRRRRR
+                    //            B              B              R                   R
+                    //            B      K1      B              R    K6 (parent)    R
+                    //            B              B              R                   R
+                    //             BBBBBBBBBBBBBB                RRRRRRRRRRRRRRRRRRR
+                    //                 |    |                        /         \
+                    //                 |    |                       /           \
+                    //                 V    V                      V             V
+                    //   ------------------------      BBBBBBBBBBBBBBBBBB      ------------------------
+                    //   |                      |     B                  B     |                      |
+                    //   |  black height i + 1  |     B   K4 (sibling)   B     |  black height i + 1  |
+                    //   |                      |     B                  B     |                      |
+                    //   ------------------------      BBBBBBBBBBBBBBBBBB      ------------------------
+                    //                                      /      \
+                    //                                     /        \
+                    //                                    V          V
+                    //              ------------------------        RRRRRRRRRRRRRRRRRRRRRRRRRR       
+                    //              |                      |       R                          R     
+                    //              |  black height i + 1  |       R     K5 (closeNephew)     R    
+                    //              |                      |       R                          R     
+                    //              ------------------------        RRRRRRRRRRRRRRRRRRRRRRRRRR       
+                    //                                                       |      |
+                    //                                                       |      |
+                    //                                                       V      V
+                    //                                               ------------------------
+                    //                                               |                      |
+                    //                                               |  black height i + 1  |
+                    //                                               |                      |
+                    //                                               ------------------------
+                    //  
                     // TODO
                     FW_ASSERT(0);
                 } else {
-                    // TODO
-                    FW_ASSERT(0);
+                    this->m_nodes[sibling].m_color = Color::RED;
+                    this->m_nodes[parent].m_color = Color::BLACK;
+                    // The subtree has this shape. The entire tree is a vaild red-black tree.
+                    // 
+                    //                           BBBBBBBBBBBBBBBB
+                    //                          B                B
+                    //                          B       K2       B
+                    //                          B                B
+                    //                           BBBBBBBBBBBBBBBB
+                    //                             /          \
+                    //                            /            \
+                    //                           /              \
+                    //                          V                V
+                    //             BBBBBBBBBBBBBB                BBBBBBBBBBBBBBBBBBB
+                    //            B              B              B                   B
+                    //            B      K1      B              B    K6 (parent)    B
+                    //            B              B              B                   B
+                    //             BBBBBBBBBBBBBB                BBBBBBBBBBBBBBBBBBB
+                    //                 |    |                        /         \
+                    //                 |    |                       /           \
+                    //                 V    V                      V             V
+                    //   ------------------------      RRRRRRRRRRRRRRRRRR      ------------------------
+                    //   |                      |     R                  R     |                      |
+                    //   |  black height i + 1  |     R   K4 (sibling)   R     |  black height i + 1  |
+                    //   |                      |     R                  R     |                      |
+                    //   ------------------------      RRRRRRRRRRRRRRRRRR      ------------------------
+                    //                                      /      \
+                    //                                     /        \
+                    //                                    V          V
+                    //            BBBBBBBBBBBBBBBBBBBBBBBBBB        BBBBBBBBBBBBBBBBBBBBBBBB
+                    //           B                          B      B                        B
+                    //           B    K3 (distantNephew)    B      B    K5 (closeNephew)    B
+                    //           B                          B      B                        B
+                    //            BBBBBBBBBBBBBBBBBBBBBBBBBB        BBBBBBBBBBBBBBBBBBBBBBBB
+                    //                     |      |                         |      |
+                    //                     |      |                         |      |
+                    //                     V      V                         V      V
+                    //             ------------------------         ------------------------
+                    //             |                      |         |                      |
+                    //             |    black height i    |         |    black height i    |
+                    //             |                      |         |                      |
+                    //             ------------------------         ------------------------
+                    //
                 }
+                done = true;
             } else if (this->getNodeColor(distantNephew) == Color::RED) {
                 // The leaf-augmented subtree rooted at parent has this shape.
                 // There is a black height violation at parent.
