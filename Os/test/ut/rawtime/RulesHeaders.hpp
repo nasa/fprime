@@ -88,10 +88,7 @@ struct Tester {
             << "Difference between results: " << result_diff << " microseconds";
     }
 
-    FwIndexType pick_random_index() const {
-        return STest::Pick::lowerUpper(0, TEST_TIME_COUNT - 1);
-        ;
-    }
+    FwIndexType pick_random_index() const { return STest::Pick::lowerUpper(0, TEST_TIME_COUNT - 1); }
 
 // Do NOT alter, adds rules to Tester as inner classes
 #include "RawTimeRules.hpp"

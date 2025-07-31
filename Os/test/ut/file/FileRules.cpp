@@ -1057,7 +1057,6 @@ bool Os::Test::FileTest::Tester::IncrementalCrcInvalidModes::precondition(
     const Os::Test::FileTest::Tester& state  //!< The test state
 ) {
     return Os::File::Mode::OPEN_READ != state.m_mode;
-    ;
 }
 
 void Os::Test::FileTest::Tester::IncrementalCrcInvalidModes::action(
