@@ -887,6 +887,7 @@ class RedBlackTreeSetOrMapImpl final {
             //
             if (this->getNodeColor(sibling) == Color::RED) {
                 // The leaf-augmented subtree rooted at parent has this shape.
+                // There is a black height violation at parent.
                 //
                 //                                 BBBBBBBBBBBBBBBBBBB
                 //                                B                   B
