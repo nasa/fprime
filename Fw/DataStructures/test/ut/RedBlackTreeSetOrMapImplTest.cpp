@@ -104,10 +104,10 @@ TEST(ArraySetOrMapImpl, IteratorConstruction) {
 }
 
 TEST(RedBlackTreeSetOrMapImpl, IteratorComparison) {
-  // Test comparison in default case
-  State::Impl::ConstIterator it1;
-  State::Impl::ConstIterator it2;
-  ASSERT_TRUE(it1.compareEqual(it2));
+    // Test comparison in default case
+    State::Impl::ConstIterator it1;
+    State::Impl::ConstIterator it2;
+    ASSERT_TRUE(it1.compareEqual(it2));
 }
 
 TEST(RedBlackTreeSetOrMapImplScenarios, Clear) {
@@ -286,6 +286,31 @@ TEST(RedBlackTreeSetOrMapImplScenarios, RemoveBlackLeafWithRedDistantNephew) {
     state.tester.printTree();
     std::cout << "size is " << impl.getSize() << "\n";
     state.storedKey = 6;
+    Rules::remove.apply(state);
+    std::cout << "After:\n";
+    state.tester.printTree();
+    std::cout << "size is " << impl.getSize() << "\n";
+}
+
+TEST(RedBlackTreeSetOrMapImplScenaris, RemoveBlackLeafWithRedCloseNephew) {
+    State::Tester::Node nodes[State::capacity];
+    State::Tester::Index freeNodes[State::capacity];
+    State::Impl impl(nodes, freeNodes, State::capacity);
+    State state(impl);
+    state.useStoredKey = true;
+    const State::KeyType keys[] = {10313, 13047, 30597, 41133, 11108, 44775, 25209, 12493, 9954,  37137,
+                                   55775, 43881, 45994, 34609, 58674, 16217, 20766, 37020, 26979, 42589,
+                                   34189, 54346, 32929, 41537, 14284, 54076, 19044, 61246, 63806, 14754};
+
+    const FwSizeType numKeys = FW_NUM_ARRAY_ELEMENTS(keys);
+    for (FwSizeType i = 0; i < numKeys; i++) {
+        state.storedKey = keys[i];
+        Rules::insertNotFull.apply(state);
+    }
+    std::cout << "Before:\n";
+    state.tester.printTree();
+    std::cout << "size is " << impl.getSize() << "\n";
+    state.storedKey = 19044;
     Rules::remove.apply(state);
     std::cout << "After:\n";
     state.tester.printTree();

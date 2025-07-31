@@ -997,8 +997,98 @@ class RedBlackTreeSetOrMapImpl final {
                 //
                 done = true;
             } else if (this->getNodeColor(closeNephew) == Color::RED) {
-                // TODO
-                FW_ASSERT(0);
+                // The leaf-augmented subtree rooted at parent has this shape.
+                // There is a black height violation at parent.
+                //
+                //                                 ???????????????????
+                //                                ?                   ?
+                //                                ?    K6 (parent)    ?
+                //                                ?                   ?
+                //                                 ???????????????????
+                //                                    /           \
+                //                                   /             \
+                //                                  V               V
+                //                     BBBBBBBBBBBBBBBBB          ----------------------
+                //                    B                 B         |                    |
+                //                    B   K2 (sibling)  B         | black height i + 1 |
+                //                    B                 B         |                    |
+                //                     BBBBBBBBBBBBBBBBB          ----------------------
+                //                         /       \
+                //                        /         \
+                //                       V           V
+                //  ------------------------        RRRRRRRRRRRRRRRRRRRR
+                //  |                      |       R                    R
+                //  |  black height i + 1  |       R  K4 (closeNephew)  R
+                //  |                      |       R                    R
+                //  ------------------------        RRRRRRRRRRRRRRRRRRRR
+                //                                        |      |
+                //                                        |      |
+                //                                        V      V
+                //                                ------------------------
+                //                                |                      |
+                //                                |  black height i + 1  |
+                //                                |                      |
+                //                                ------------------------
+                //
+                this->removeBlackLeafNodeHelper1(closeNephew, oppositeDirection, sibling, distantNephew);
+                // The sutree has this shape:
+                //
+                //                                 ???????????????????
+                //                                ?                   ?
+                //                                ?    K6 (parent)    ?
+                //                                ?                   ?
+                //                                 ???????????????????
+                //                                    /           \
+                //                                   /             \
+                //                                  V               V
+                //                     BBBBBBBBBBBBBBBBB          ----------------------
+                //                    B                 B         |                    |
+                //                    B   K4 (sibling)  B         | black height i + 1 |
+                //                    B                 B         |                    |
+                //                     BBBBBBBBBBBBBBBBB          ----------------------
+                //                         /       \
+                //                        /         \
+                //                       V           V
+                //     RRRRRRRRRRRRRRRRRRRR       ------------------------
+                //    R                    R      |                      |
+                //    R K2 (distantNephew) R      |  black height i + 1  |
+                //    R                    R      |                      |
+                //     RRRRRRRRRRRRRRRRRRRR       ------------------------
+                //           |      |
+                //           |      |
+                //           V      V
+                //   ------------------------
+                //   |                      |
+                //   |  black height i + 1  |
+                //   |                      |
+                //   ------------------------
+                //
+                this->removeBlackLeafNodeHelper2(parent, sibling, distantNephew, direction);
+                // The subtree has this shape. The entire tree is a valid red-black tree.
+                //
+                //                     BBBBBBBBBBBBBBBBB
+                //                    B                 B
+                //                    B   K4 (sibling)  B
+                //                    B                 B
+                //                     BBBBBBBBBBBBBBBBB
+                //                         /       \
+                //                        /         \
+                //                       V           V
+                //     BBBBBBBBBBBBBBBBBBBB         BBBBBBBBBBBBBBBBB
+                //    B                    B       B                 B
+                //    B K2 (distantNephew) B       B   K6 (parent)   B
+                //    B                    B       B                 B
+                //     RRRRRRRRRRRRRRRRRRRR         BBBBBBBBBBBBBBBBB
+                //           |      |                    |     |
+                //           |      |                    |     |
+                //           V      V                    V     V
+                //   ------------------------   ------------------------
+                //   |                      |   |                      |
+                //   |  black height i + 1  |   |  black height i + 1  |
+                //   |                      |   |                      |
+                //   ------------------------   ------------------------
+                //
+                done = true;
             } else if (this->getNodeColor(parent) == Color::RED) {
                 this->m_nodes[sibling].m_color = Color::RED;
                 this->m_nodes[parent].m_color = Color::BLACK;
