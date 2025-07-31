@@ -77,7 +77,7 @@ namespace Fw {
 
     SerializeStatus Time::serializeTo(SerializeBufferBase& buffer) const {
         // Fallback approach for backward compatibility:
-        // Try new interface first, but if it returns FORMAT_ERROR (indicating default implementation),
+        // Try new interface first, but if it returns UNIMPLEMENTED (indicating default implementation),
         // fall back to old interface. This bridges auto-generated enums/structs (old interface only) 
         // with new serialization infrastructure.
         SerializeStatus status = this->m_val.serializeTo(buffer);
@@ -90,7 +90,7 @@ namespace Fw {
 
     SerializeStatus Time::deserializeFrom(SerializeBufferBase& buffer) {
         // Fallback approach for backward compatibility:
-        // Try new interface first, but if it returns FORMAT_ERROR (indicating default implementation),
+        // Try new interface first, but if it returns UNIMPLEMENTED (indicating default implementation),
         // fall back to old interface.
         SerializeStatus status = this->m_val.deserializeFrom(buffer);
         if (status == FW_DESERIALIZE_UNIMPLEMENTED) {
