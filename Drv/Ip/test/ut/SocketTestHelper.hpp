@@ -2,7 +2,7 @@
 // Created by mstarch on 12/10/20.
 //
 #include <Drv/Ip/IpSocket.hpp>
-#include <Fw  //Buffer/Buffer.hpp>
+#include <Fw/Buffer/Buffer.hpp>
 #include <Fw/FPrimeBasicTypes.hpp>
 
 #ifndef DRV_TEST_SOCKETHELPER_HPP
