@@ -141,8 +141,10 @@ class Buffer : public Fw::Serializable {
     // Deprecated methods
     // ----------------------------------------------------------------------
 
+    __attribute__((deprecated))
     Fw::SerializeStatus serialize(Fw::SerializeBufferBase& serialBuffer) const;
 
+    __attribute__((deprecated))
     Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer);
 
     // ----------------------------------------------------------------------
