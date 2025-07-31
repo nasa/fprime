@@ -33,6 +33,7 @@ jobs:
             Fw/Buffer
             Fw/Cmd
             Fw/Com
+            Os
             Svc/Ccsds
             Svc/EventManager
         run: |
