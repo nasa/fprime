@@ -10,161 +10,158 @@
 //
 // ======================================================================
 
+#include <fcntl.h>
+#include <linux/spi/spidev.h>
+#include <linux/types.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
 #include <Drv/LinuxSpiDriver/LinuxSpiDriverComponentImpl.hpp>
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/FileNameString.hpp>
+#include <cerrno>
 #include <cstdint>
-#include <unistd.h>
 #include <cstdio>
 #include <cstdlib>
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <linux/types.h>
-#include <linux/spi/spidev.h>
-#include <cerrno>
 
-static_assert(FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING, "Cannot use SPI driver without full string formatting");
+static_assert(FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING,
+              "Cannot use SPI driver without full string formatting");
 
 namespace Drv {
 
-    // ----------------------------------------------------------------------
-    // Handler implementations for user-defined typed input ports
-    // ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+// Handler implementations for user-defined typed input ports
+// ----------------------------------------------------------------------
 
-    void LinuxSpiDriverComponentImpl::SpiReadWrite_handler(
-            const FwIndexType portNum, Fw::Buffer &writeBuffer,
-            Fw::Buffer &readBuffer) {
-
-        if (this->m_fd == -1) {
-            return;
-        }
-
-        spi_ioc_transfer tr;
-        // Zero for unused fields:
-        memset(&tr, 0, sizeof(tr));
-        tr.tx_buf = reinterpret_cast<__u64>(writeBuffer.getData());
-        tr.rx_buf = reinterpret_cast<__u64>(readBuffer.getData());
-        FW_ASSERT_NO_OVERFLOW(writeBuffer.getSize(), __u32);
-        tr.len = static_cast<__u32>(writeBuffer.getSize());
-/*
-            .speed_hz = 0,
-            .delay_usecs = 0,
-            .bits_per_word = 0,
-            .cs_change = 0,
-            .tx_nbits = 0, // on more-recent kernel versions;
-            .rx_nbits = 0, // on more-recent kernel versions;
-            .pad = 0
-*/
-
-        int stat = ioctl(this->m_fd, SPI_IOC_MESSAGE(1), &tr);
-
-        if (stat < 1) {
-            this->log_WARNING_HI_SPI_WriteError(this->m_device,this->m_select,stat);
-        }
-        this->m_bytes += readBuffer.getSize();
-        this->tlmWrite_SPI_Bytes(this->m_bytes);
+void LinuxSpiDriverComponentImpl::SpiReadWrite_handler(const FwIndexType portNum,
+                                                       Fw::Buffer& writeBuffer,
+                                                       Fw::Buffer& readBuffer) {
+    if (this->m_fd == -1) {
+        return;
     }
 
-    bool LinuxSpiDriverComponentImpl::open(FwIndexType device,
-                                           FwIndexType select,
-                                           SpiFrequency clock,
-                                           SpiMode spiMode) {
-        FW_ASSERT(device >= 0, static_cast<FwAssertArgType>(device));
-        FW_ASSERT(select >= 0, static_cast<FwAssertArgType>(select));
+    spi_ioc_transfer tr;
+    // Zero for unused fields:
+    memset(&tr, 0, sizeof(tr));
+    tr.tx_buf = reinterpret_cast<__u64>(writeBuffer.getData());
+    tr.rx_buf = reinterpret_cast<__u64>(readBuffer.getData());
+    FW_ASSERT_NO_OVERFLOW(writeBuffer.getSize(), __u32);
+    tr.len = static_cast<__u32>(writeBuffer.getSize());
+    /*
+                .speed_hz = 0,
+                .delay_usecs = 0,
+                .bits_per_word = 0,
+                .cs_change = 0,
+                .tx_nbits = 0, // on more-recent kernel versions;
+                .rx_nbits = 0, // on more-recent kernel versions;
+                .pad = 0
+    */
 
-        this->m_device = device;
-        this->m_select = select;
-        int fd;
-        int ret;
+    int stat = ioctl(this->m_fd, SPI_IOC_MESSAGE(1), &tr);
 
-        // Open:
-        Fw::FileNameString devString;
-        Fw::FormatStatus formatStatus = devString.format("/dev/spidev%" PRI_FwIndexType ".%" PRI_FwIndexType, device, select);
-        FW_ASSERT(formatStatus == Fw::FormatStatus::SUCCESS);
+    if (stat < 1) {
+        this->log_WARNING_HI_SPI_WriteError(this->m_device, this->m_select, stat);
+    }
+    this->m_bytes += readBuffer.getSize();
+    this->tlmWrite_SPI_Bytes(this->m_bytes);
+}
 
-        fd = ::open(devString.toChar(), O_RDWR);
-        if (fd == -1) {
-            this->log_WARNING_HI_SPI_OpenError(device,select,fd);
-            return false;
-        }
+bool LinuxSpiDriverComponentImpl::open(FwIndexType device, FwIndexType select, SpiFrequency clock, SpiMode spiMode) {
+    FW_ASSERT(device >= 0, static_cast<FwAssertArgType>(device));
+    FW_ASSERT(select >= 0, static_cast<FwAssertArgType>(select));
 
-        this->m_fd = fd;
+    this->m_device = device;
+    this->m_select = select;
+    int fd;
+    int ret;
 
-        // Configure:
-        /*
-         * SPI Mode 0, 1, 2, 3
-         */
+    // Open:
+    Fw::FileNameString devString;
+    Fw::FormatStatus formatStatus =
+        devString.format("/dev/spidev%" PRI_FwIndexType ".%" PRI_FwIndexType, device, select);
+    FW_ASSERT(formatStatus == Fw::FormatStatus::SUCCESS);
 
-        U8 mode; // Mode Select (CPOL = 0/1, CPHA = 0/1)
-        switch(spiMode) {
-            case SpiMode::SPI_MODE_CPOL_LOW_CPHA_LOW:
-                mode = SPI_MODE_0;
-                break;
-            case SpiMode::SPI_MODE_CPOL_LOW_CPHA_HIGH:
-                mode = SPI_MODE_1;
-                break;
-            case SpiMode::SPI_MODE_CPOL_HIGH_CPHA_LOW:
-                mode = SPI_MODE_2;
-                break;
-            case SpiMode::SPI_MODE_CPOL_HIGH_CPHA_HIGH:
-                mode = SPI_MODE_3;
-                break;
-            default:
-                //Assert if the device SPI Mode is not in the correct range
-                FW_ASSERT(0, spiMode);                
-                break;
-        }
-
-        ret = ioctl(fd, SPI_IOC_WR_MODE, &mode);
-        if (ret == -1) {
-            this->log_WARNING_HI_SPI_ConfigError(device,select,ret);
-            return false;
-        }
-
-        ret = ioctl(fd, SPI_IOC_RD_MODE, &mode);
-        if (ret == -1) {
-            this->log_WARNING_HI_SPI_ConfigError(device,select,ret);
-            return false;
-        }
-
-        /*
-         * 8 bits per word
-         */
-        U8 bits = 8;
-        ret = ioctl(fd, SPI_IOC_WR_BITS_PER_WORD, &bits);
-        if (ret == -1) {
-            this->log_WARNING_HI_SPI_ConfigError(device,select,ret);
-            return false;
-        }
-
-        ret = ioctl(fd, SPI_IOC_RD_BITS_PER_WORD, &bits);
-        if (ret == -1) {
-            this->log_WARNING_HI_SPI_ConfigError(device,select,ret);
-            return false;
-        }
-
-        /*
-         * Max speed in Hz
-         */
-        ret = ioctl(fd, SPI_IOC_WR_MAX_SPEED_HZ, &clock);
-        if (ret == -1) {
-            this->log_WARNING_HI_SPI_ConfigError(device,select,ret);
-            return false;
-        }
-
-        ret = ioctl(fd, SPI_IOC_RD_MAX_SPEED_HZ, &clock);
-        if (ret == -1) {
-           this->log_WARNING_HI_SPI_ConfigError(device,select,ret);
-           return false;
-        }
-
-        return true;
-
+    fd = ::open(devString.toChar(), O_RDWR);
+    if (fd == -1) {
+        this->log_WARNING_HI_SPI_OpenError(device, select, fd);
+        return false;
     }
 
-    LinuxSpiDriverComponentImpl::~LinuxSpiDriverComponentImpl() {
-        (void) close(this->m_fd);
+    this->m_fd = fd;
+
+    // Configure:
+    /*
+     * SPI Mode 0, 1, 2, 3
+     */
+
+    U8 mode;  // Mode Select (CPOL = 0/1, CPHA = 0/1)
+    switch (spiMode) {
+        case SpiMode::SPI_MODE_CPOL_LOW_CPHA_LOW:
+            mode = SPI_MODE_0;
+            break;
+        case SpiMode::SPI_MODE_CPOL_LOW_CPHA_HIGH:
+            mode = SPI_MODE_1;
+            break;
+        case SpiMode::SPI_MODE_CPOL_HIGH_CPHA_LOW:
+            mode = SPI_MODE_2;
+            break;
+        case SpiMode::SPI_MODE_CPOL_HIGH_CPHA_HIGH:
+            mode = SPI_MODE_3;
+            break;
+        default:
+            // Assert if the device SPI Mode is not in the correct range
+            FW_ASSERT(0, spiMode);
+            break;
     }
 
-} // end namespace Drv
+    ret = ioctl(fd, SPI_IOC_WR_MODE, &mode);
+    if (ret == -1) {
+        this->log_WARNING_HI_SPI_ConfigError(device, select, ret);
+        return false;
+    }
+
+    ret = ioctl(fd, SPI_IOC_RD_MODE, &mode);
+    if (ret == -1) {
+        this->log_WARNING_HI_SPI_ConfigError(device, select, ret);
+        return false;
+    }
+
+    /*
+     * 8 bits per word
+     */
+    U8 bits = 8;
+    ret = ioctl(fd, SPI_IOC_WR_BITS_PER_WORD, &bits);
+    if (ret == -1) {
+        this->log_WARNING_HI_SPI_ConfigError(device, select, ret);
+        return false;
+    }
+
+    ret = ioctl(fd, SPI_IOC_RD_BITS_PER_WORD, &bits);
+    if (ret == -1) {
+        this->log_WARNING_HI_SPI_ConfigError(device, select, ret);
+        return false;
+    }
+
+    /*
+     * Max speed in Hz
+     */
+    ret = ioctl(fd, SPI_IOC_WR_MAX_SPEED_HZ, &clock);
+    if (ret == -1) {
+        this->log_WARNING_HI_SPI_ConfigError(device, select, ret);
+        return false;
+    }
+
+    ret = ioctl(fd, SPI_IOC_RD_MAX_SPEED_HZ, &clock);
+    if (ret == -1) {
+        this->log_WARNING_HI_SPI_ConfigError(device, select, ret);
+        return false;
+    }
+
+    return true;
+}
+
+LinuxSpiDriverComponentImpl::~LinuxSpiDriverComponentImpl() {
+    (void)close(this->m_fd);
+}
+
+}  // end namespace Drv

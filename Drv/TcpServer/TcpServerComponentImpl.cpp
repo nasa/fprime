@@ -10,11 +10,11 @@
 //
 // ======================================================================
 
-#include <limits>
 #include <Drv/TcpServer/TcpServerComponentImpl.hpp>
 #include <Fw/FPrimeBasicTypes.hpp>
-#include "Fw/Types/Assert.hpp"
+#include <limits>
 #include "Fw/Logger/Logger.hpp"
+#include "Fw/Types/Assert.hpp"
 
 namespace Drv {
 
@@ -22,20 +22,18 @@ namespace Drv {
 // Construction, initialization, and destruction
 // ----------------------------------------------------------------------
 
-TcpServerComponentImpl::TcpServerComponentImpl(const char* const compName)
-    : TcpServerComponentBase(compName) {}
+TcpServerComponentImpl::TcpServerComponentImpl(const char* const compName) : TcpServerComponentBase(compName) {}
 
 SocketIpStatus TcpServerComponentImpl::configure(const char* hostname,
                                                  const U16 port,
                                                  const U32 send_timeout_seconds,
                                                  const U32 send_timeout_microseconds,
-	                                         FwSizeType buffer_size) {
-
+                                                 FwSizeType buffer_size) {
     // Check that ensures the configured buffer size fits within the limits fixed-width type, U32
 
     FW_ASSERT(buffer_size <= std::numeric_limits<U32>::max(), static_cast<FwAssertArgType>(buffer_size));
-    m_allocation_size = buffer_size; // Store the buffer size
-				     //
+    m_allocation_size = buffer_size;  // Store the buffer size
+                                      //
     (void)m_socket.configure(hostname, port, send_timeout_seconds, send_timeout_microseconds);
     return startup();
 }
@@ -62,11 +60,9 @@ void TcpServerComponentImpl::sendBuffer(Fw::Buffer buffer, SocketIpStatus status
     Drv::ByteStreamStatus recvStatus = ByteStreamStatus::OTHER_ERROR;
     if (status == SOCK_SUCCESS) {
         recvStatus = ByteStreamStatus::OP_OK;
-    }
-    else if (status == SOCK_NO_DATA_AVAILABLE) {
+    } else if (status == SOCK_NO_DATA_AVAILABLE) {
         recvStatus = ByteStreamStatus::RECV_NO_DATA;
-    }
-    else {
+    } else {
         recvStatus = ByteStreamStatus::OTHER_ERROR;
     }
     this->recv_out(0, buffer, recvStatus);
@@ -103,14 +99,13 @@ void TcpServerComponentImpl::readLoop() {
     Drv::SocketIpStatus status = Drv::SocketIpStatus::SOCK_NOT_STARTED;
     // Keep trying to reconnect until the status is good, told to stop, or reconnection is turned off
     do {
-         status = this->startup();
-         if (status != SOCK_SUCCESS) {
-             Fw::Logger::log("[WARNING] Failed to listen on port %hu with status %d\n", this->getListenPort(), status);
-             (void)Os::Task::delay(SOCKET_RETRY_INTERVAL);
-             continue;
-         }
-    }
-    while (this->running() && status != SOCK_SUCCESS && this->m_reopen);
+        status = this->startup();
+        if (status != SOCK_SUCCESS) {
+            Fw::Logger::log("[WARNING] Failed to listen on port %hu with status %d\n", this->getListenPort(), status);
+            (void)Os::Task::delay(SOCKET_RETRY_INTERVAL);
+            continue;
+        }
+    } while (this->running() && status != SOCK_SUCCESS && this->m_reopen);
     // If start up was successful then perform normal operations
     if (this->running() && status == SOCK_SUCCESS) {
         // Perform the nominal read loop

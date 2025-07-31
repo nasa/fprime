@@ -12,17 +12,17 @@
 #ifndef DRV_IP_UDPSOCKET_HPP_
 #define DRV_IP_UDPSOCKET_HPP_
 
-#include <Fw/FPrimeBasicTypes.hpp>
 #include <Drv/Ip/IpSocket.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <config/IpCfg.hpp>
 
 // Include system headers for sockaddr_in
 #ifdef TGT_OS_TYPE_VXWORKS
-    #include <socket.h>
-    #include <inetLib.h>
+#include <inetLib.h>
+#include <socket.h>
 #else
-    #include <sys/socket.h>
-    #include <arpa/inet.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
 #endif
 
 namespace Drv {
@@ -49,7 +49,9 @@ class UdpSocket : public IpSocket {
      *
      * \warning configure is disabled for UdpSocket. Use configureSend and configureRecv instead.
      */
-    SocketIpStatus configure(const char* hostname, const U16 port, const U32 send_timeout_seconds,
+    SocketIpStatus configure(const char* hostname,
+                             const U16 port,
+                             const U32 send_timeout_seconds,
                              const U32 send_timeout_microseconds) override;
 
     /**
@@ -70,7 +72,9 @@ class UdpSocket : public IpSocket {
      * \param send_timeout_microseconds: send timeout microseconds portion. Must be less than 1000000
      * \return status of configure
      */
-    SocketIpStatus configureSend(const char* hostname, const U16 port, const U32 send_timeout_seconds,
+    SocketIpStatus configureSend(const char* hostname,
+                                 const U16 port,
+                                 const U32 send_timeout_seconds,
                                  const U32 send_timeout_microseconds);
 
     /**
@@ -149,7 +153,7 @@ class UdpSocket : public IpSocket {
   private:
     struct sockaddr_in m_addr_send;  //!< UDP server address for sending
     struct sockaddr_in m_addr_recv;  //!< UDP server address for receiving
-    bool m_recv_configured; //!< True if configureRecv was called
+    bool m_recv_configured;          //!< True if configureRecv was called
 };
 }  // namespace Drv
 
