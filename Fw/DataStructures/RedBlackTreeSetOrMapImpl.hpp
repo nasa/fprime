@@ -1005,6 +1005,9 @@ class RedBlackTreeSetOrMapImpl final {
                 // TODO
                 FW_ASSERT(0);
             }
+            if (done) {
+                break;
+            }
         }
         FW_ASSERT(done);
         // The tree is a valid red-black tree.
