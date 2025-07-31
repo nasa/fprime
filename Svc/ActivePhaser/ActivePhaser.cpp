@@ -59,8 +59,8 @@ void ActivePhaser ::register_phased(FwIndexType port, U32 length, U32 start, U32
     PhaserStateEntry& entry = m_state.entries[m_state.used];
 
     // Check assertions on the ports
-    FW_ASSERT(port < getNum_RateGroupMemberOut_OutputPorts(), static_cast<FwAssertArgType>(port));
-    FW_ASSERT(isConnected_RateGroupMemberOut_OutputPort(port), static_cast<FwAssertArgType>(port));
+    FW_ASSERT(port < getNum_PhaserMemberOut_OutputPorts(), static_cast<FwAssertArgType>(port));
+    FW_ASSERT(isConnected_PhaserMemberOut_OutputPort(port), static_cast<FwAssertArgType>(port));
     FW_ASSERT((start + length) <= m_cycle, static_cast<FwAssertArgType>(start), static_cast<FwAssertArgType>(length),
               static_cast<FwAssertArgType>(m_cycle));
     FW_ASSERT(context > m_cycle, static_cast<FwAssertArgType>(context), static_cast<FwAssertArgType>(m_cycle));
@@ -167,7 +167,7 @@ void ActivePhaser ::startChild(U32 full_ticks) {
     U32 context = (entry.contextType == SEQUENTIAL) ? entry.context : m_cycle_count % entry.context;
     entry.started = true;
     m_last_start_ticks = full_ticks;
-    this->RateGroupMemberOut_out(entry.port, context);
+    this->PhaserMemberOut_out(entry.port, context);
 }
 
 U32 ActivePhaser ::getNextContext(FwIndexType port) {
