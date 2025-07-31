@@ -81,7 +81,7 @@ namespace Fw {
         // fall back to old interface. This bridges auto-generated enums/structs (old interface only) 
         // with new serialization infrastructure.
         SerializeStatus status = this->m_val.serializeTo(buffer);
-        if (status == FW_SERIALIZE_FORMAT_ERROR) {
+        if (status == FW_SERIALIZE_UNIMPLEMENTED) {
             // Fallback to old interface for backward compatibility
             status = this->m_val.serialize(buffer);
         }
@@ -93,7 +93,7 @@ namespace Fw {
         // Try new interface first, but if it returns FORMAT_ERROR (indicating default implementation),
         // fall back to old interface.
         SerializeStatus status = this->m_val.deserializeFrom(buffer);
-        if (status == FW_DESERIALIZE_FORMAT_ERROR) {
+        if (status == FW_SERIALIZE_UNIMPLEMENTED) {
             // Fallback to old interface for backward compatibility
             status = this->m_val.deserialize(buffer);
         }
