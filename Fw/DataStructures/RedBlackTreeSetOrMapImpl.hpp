@@ -999,8 +999,42 @@ class RedBlackTreeSetOrMapImpl final {
                 // TODO
                 FW_ASSERT(0);
             } else if (this->getNodeColor(parent) == Color::RED) {
-                // TODO
-                FW_ASSERT(0);
+                this->m_nodes[sibling].m_color = Color::RED;
+                this->m_nodes[parent].m_color = Color::BLACK;
+                // The leaf-augmented tree rooted at parent has this shape.
+                // The entire tree is a valid red-black tree.
+                //
+                //                                 BBBBBBBBBBBBBBBBBBB
+                //                                B                   B
+                //                                B    K6 (parent)    B
+                //                                B                   B
+                //                                 BBBBBBBBBBBBBBBBBBB
+                //                                    /           \
+                //                                   /             \
+                //                                  V               V
+                //                     RRRRRRRRRRRRRRRRR          ----------------------
+                //                    R                 R         |                    |
+                //                    R   K2 (sibling)  R         | black height i + 1 |
+                //                    R                 R         |                    |
+                //                     RRRRRRRRRRRRRRRRR          ----------------------
+                //                         /       \
+                //                        /         \
+                //                       V           V
+                //     BBBBBBBBBBBBBBBBBBBB         BBBBBBBBBBBBBBBBBBBB
+                //    B                    B       B                    B
+                //    B K1 (distantNephew) B       B  K4 (closeNephew)  B
+                //    B                    B       B                    B
+                //     BBBBBBBBBBBBBBBBBBBB         BBBBBBBBBBBBBBBBBBBB
+                //           |      |                     |      |
+                //           |      |                     |      |
+                //           V      V                     V      V
+                //   ------------------------     ------------------------
+                //   |                      |     |                      |
+                //   |    black height i    |     |    black height i    |
+                //   |                      |     |                      |
+                //   ------------------------     ------------------------
+                //
+                done = true;
             } else {
                 // TODO
                 FW_ASSERT(0);
