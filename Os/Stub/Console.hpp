@@ -2,8 +2,8 @@
 // \title Os/Stub/Console.hpp
 // \brief stub implementation for Os::Console, header and test definitions
 // ======================================================================
-#include <cstdio>
 #include <Os/Console.hpp>
+#include <cstdio>
 #ifndef OS_Stub_Console_HPP
 #define OS_Stub_Console_HPP
 
@@ -13,8 +13,7 @@ namespace Console {
 
 //! ConsoleHandle class definition for stub implementations.
 //!
-struct StubConsoleHandle : public ConsoleHandle {
-};
+struct StubConsoleHandle : public ConsoleHandle {};
 
 //! \brief stub implementation of Os::ConsoleInterface
 //!
@@ -47,7 +46,7 @@ class StubConsole : public ConsoleInterface {
     //!
     //! \param message: raw message to write
     //! \param size: size of the message to write to the console
-    void writeMessage(const CHAR *message, const FwSizeType size) override;
+    void writeMessage(const CHAR* message, const FwSizeType size) override;
 
     //! \brief returns the raw console handle
     //!
@@ -56,13 +55,14 @@ class StubConsole : public ConsoleInterface {
     //!
     //! \return raw console handle
     //!
-    ConsoleHandle *getHandle() override;
+    ConsoleHandle* getHandle() override;
+
   private:
     //! File handle for PosixFile
     StubConsoleHandle m_handle;
 };
-} // namespace Console
-} // namespace Stub
-} // namespace Os
+}  // namespace Console
+}  // namespace Stub
+}  // namespace Os
 
-#endif // OS_Stub_Console_HPP
+#endif  // OS_Stub_Console_HPP

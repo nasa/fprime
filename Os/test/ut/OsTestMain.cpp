@@ -1,9 +1,9 @@
 #include "gtest/gtest.h"
 
 extern "C" {
-  void intervalTimerTest();
-  void validateFileTest(const char* filename);
-  void mutexBasicLockableTest();
+void intervalTimerTest();
+void validateFileTest(const char* filename);
+void mutexBasicLockableTest();
 }
 const char* filename;
 // The interval timer unit test is timed off a 1 sec thread delay. Mac OS allows a large amount of
@@ -12,14 +12,14 @@ const char* filename;
 // be rewritten to not directly utilize the OS clock, but in the mean time disabling this test on
 // Mac OS prevents intermittent unit test failures.
 TEST(Nominal, IntervalTimerTest) {
-   intervalTimerTest();
+    intervalTimerTest();
 }
 TEST(Nominal, ValidateFileTest) {
-   validateFileTest(filename);
+    validateFileTest(filename);
 }
 
 TEST(Nominal, MutexBasicLockableTest) {
-  mutexBasicLockableTest();
+    mutexBasicLockableTest();
 }
 
 int main(int argc, char* argv[]) {

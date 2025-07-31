@@ -75,7 +75,6 @@ RawTimeHandle* PosixRawTime::getHandle() {
     return &this->m_handle;
 }
 
-
 Fw::SerializeStatus PosixRawTime::serialize(Fw::SerializeBufferBase& buffer) const {
     return this->serializeTo(buffer);
 }

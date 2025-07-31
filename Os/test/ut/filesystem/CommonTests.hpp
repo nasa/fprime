@@ -5,10 +5,9 @@
 #ifndef OS_TEST_UT_COMMON_FILESYSTEM_TESTS_HPP
 #define OS_TEST_UT_COMMON_FILESYSTEM_TESTS_HPP
 
-#include <Os/FileSystem.hpp>
 #include <gtest/gtest.h>
+#include <Os/FileSystem.hpp>
 #include <Os/test/ut/filesystem/RulesHeaders.hpp>
-
 
 class Functionality : public ::testing::Test {
   public:

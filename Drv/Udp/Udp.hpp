@@ -10,7 +10,7 @@
 
 namespace Drv {
 
-  typedef UdpComponentImpl Udp;
+typedef UdpComponentImpl Udp;
 
 }
 

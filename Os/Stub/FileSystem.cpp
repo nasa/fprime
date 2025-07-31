@@ -40,6 +40,6 @@ StubFileSystem::Status StubFileSystem::_getPathType(const char* path, PathType& 
     return Status::NOT_SUPPORTED;
 }
 
-} // namespace FileSystem
-} // namespace Stub
-} // namespace Os
+}  // namespace FileSystem
+}  // namespace Stub
+}  // namespace Os

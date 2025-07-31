@@ -21,11 +21,12 @@ SocketComponentHelper::SocketComponentHelper() {}
 
 SocketComponentHelper::~SocketComponentHelper() {}
 
-void SocketComponentHelper::start(const Fw::StringBase &name,
+void SocketComponentHelper::start(const Fw::StringBase& name,
                                   const FwTaskPriorityType priority,
                                   const Os::Task::ParamType stack,
                                   const Os::Task::ParamType cpuAffinity) {
-    FW_ASSERT(m_task.getState() == Os::Task::State::NOT_STARTED);  // It is a coding error to start this task multiple times
+    FW_ASSERT(m_task.getState() ==
+              Os::Task::State::NOT_STARTED);  // It is a coding error to start this task multiple times
     this->m_stop = false;
     // Note: the first step is for the IP socket to open the port
     Os::Task::Arguments arguments(name, SocketComponentHelper::readTask, this, priority, stack, cpuAffinity);
@@ -45,7 +46,6 @@ SocketIpStatus SocketComponentHelper::open() {
         } else {
             local_open = OpenState::SKIP;
         }
-
     }
     if (local_open == OpenState::OPENING) {
         FW_ASSERT(this->m_descriptor.fd == -1);  // Ensure we are not opening an opened socket
@@ -111,7 +111,7 @@ SocketIpStatus SocketComponentHelper::send(const U8* const data, const U32 size)
     if (descriptor.fd == -1) {
         status = this->reopen();
         // if reopen wasn't successful, pass the that up to the caller
-        if(status != SOCK_SUCCESS) {
+        if (status != SOCK_SUCCESS) {
             return status;
         }
         // Refresh local copy after reopen
@@ -157,7 +157,7 @@ bool SocketComponentHelper::running() {
     return running;
 }
 
-SocketIpStatus SocketComponentHelper::recv(U8* data, U32 &size) {
+SocketIpStatus SocketComponentHelper::recv(U8* data, U32& size) {
     SocketIpStatus status = SOCK_SUCCESS;
     // Check for previously disconnected socket
     this->m_lock.lock();
@@ -199,10 +199,9 @@ void SocketComponentHelper::readLoop() {
             U32 size = static_cast<U32>(buffer.getSize());
             // recv blocks, so it may have been a while since its done an isOpened check
             status = this->recv(data, size);
-            if ((status != SOCK_SUCCESS) && (status != SOCK_INTERRUPTED_TRY_AGAIN) && (status != SOCK_NO_DATA_AVAILABLE)) {
-                Fw::Logger::log("[WARNING] Failed to recv from port with status %d and errno %d\n",
-                                status,
-                                errno);
+            if ((status != SOCK_SUCCESS) && (status != SOCK_INTERRUPTED_TRY_AGAIN) &&
+                (status != SOCK_NO_DATA_AVAILABLE)) {
+                Fw::Logger::log("[WARNING] Failed to recv from port with status %d and errno %d\n", status, errno);
                 this->close();
                 buffer.setSize(0);
             } else {
@@ -215,7 +214,7 @@ void SocketComponentHelper::readLoop() {
     // This will loop until stopped. If auto-open is disabled, this will break when reopen returns disabled status
     while (this->running());
     // Close the socket
-    this->close(); // Close the port entirely
+    this->close();  // Close the port entirely
 }
 
 void SocketComponentHelper::readTask(void* pointer) {

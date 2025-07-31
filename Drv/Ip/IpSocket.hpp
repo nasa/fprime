@@ -13,14 +13,14 @@
 #define DRV_IP_IPHELPER_HPP_
 
 #include <Fw/FPrimeBasicTypes.hpp>
-#include <config/IpCfg.hpp>
 #include <Os/Mutex.hpp>
+#include <config/IpCfg.hpp>
 
 namespace Drv {
 
 struct SocketDescriptor final {
-    int fd = -1; //!< Used for all sockets to track the communication file descriptor
-    int serverFd = -1; //!< Used for server sockets to track the listening file descriptor
+    int fd = -1;        //!< Used for all sockets to track the communication file descriptor
+    int serverFd = -1;  //!< Used for server sockets to track the listening file descriptor
 };
 
 /**
@@ -57,7 +57,7 @@ enum SocketIpStatus {
 class IpSocket {
   public:
     IpSocket();
-    virtual ~IpSocket(){};
+    virtual ~IpSocket() {};
     /**
      * \brief configure the ip socket with host and transmission timeouts
      *
@@ -76,7 +76,9 @@ class IpSocket {
      * \param send_timeout_microseconds: send timeout microseconds portion. Must be less than 1000000
      * \return status of configure
      */
-    virtual SocketIpStatus configure(const char* hostname, const U16 port, const U32 send_timeout_seconds,
+    virtual SocketIpStatus configure(const char* hostname,
+                                     const U16 port,
+                                     const U32 send_timeout_seconds,
                                      const U32 send_timeout_microseconds);
 
     /**
@@ -173,7 +175,7 @@ class IpSocket {
      * \brief setup the socket timeout properties of the opened outgoing socket
      * \param socketDescriptor: socket descriptor to setup
      * \return status of timeout setup
-    */
+     */
     SocketIpStatus setupTimeouts(int socketFd);
 
     /**
@@ -220,7 +222,7 @@ class IpSocket {
 
     U32 m_timeoutSeconds;
     U32 m_timeoutMicroseconds;
-    U16 m_port;  //!< IP address port used
+    U16 m_port;                                 //!< IP address port used
     char m_hostname[SOCKET_MAX_HOSTNAME_SIZE];  //!< Hostname to supply
 };
 }  // namespace Drv

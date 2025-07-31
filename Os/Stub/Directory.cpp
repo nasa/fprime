@@ -16,7 +16,7 @@ StubDirectory::Status StubDirectory::rewind() {
     return Status::NOT_SUPPORTED;
 }
 
-StubDirectory::Status StubDirectory::read(char * fileNameBuffer, FwSizeType bufSize) {
+StubDirectory::Status StubDirectory::read(char* fileNameBuffer, FwSizeType bufSize) {
     return Status::NOT_SUPPORTED;
 }
 
@@ -28,6 +28,6 @@ DirectoryHandle* StubDirectory::getHandle() {
     return &this->m_handle;
 }
 
-} // namespace Directory
-} // namespace Stub
-} // namespace Os
+}  // namespace Directory
+}  // namespace Stub
+}  // namespace Os

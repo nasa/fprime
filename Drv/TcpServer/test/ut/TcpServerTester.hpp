@@ -13,124 +13,112 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
-#include "TcpServerGTestBase.hpp"
-#include "Drv/TcpServer/TcpServerComponentImpl.hpp"
 #include "Drv/Ip/TcpClientSocket.hpp"
+#include "Drv/TcpServer/TcpServerComponentImpl.hpp"
+#include "TcpServerGTestBase.hpp"
 
 #define SEND_DATA_BUFFER_SIZE 1024
 
 namespace Drv {
 
-  class TcpServerTester :
-    public TcpServerGTestBase
-  {
-      // Maximum size of histories storing events, telemetry, and port outputs
-      static const U32 MAX_HISTORY_SIZE = 1000;
-      // Instance ID supplied to the component instance under test
-      static const FwEnumStoreType TEST_INSTANCE_ID = 0;
-      // Queue depth supplied to component instance under test
-      static const FwSizeType TEST_INSTANCE_QUEUE_DEPTH = 100;
+class TcpServerTester : public TcpServerGTestBase {
+    // Maximum size of histories storing events, telemetry, and port outputs
+    static const U32 MAX_HISTORY_SIZE = 1000;
+    // Instance ID supplied to the component instance under test
+    static const FwEnumStoreType TEST_INSTANCE_ID = 0;
+    // Queue depth supplied to component instance under test
+    static const FwSizeType TEST_INSTANCE_QUEUE_DEPTH = 100;
 
-      // ----------------------------------------------------------------------
-      // Construction and destruction
-      // ----------------------------------------------------------------------
+    // ----------------------------------------------------------------------
+    // Construction and destruction
+    // ----------------------------------------------------------------------
 
-    public:
+  public:
+    //! Construct object TcpServerTester
+    //!
+    TcpServerTester();
 
-      //! Construct object TcpServerTester
-      //!
-      TcpServerTester();
+    //! Destroy object TcpServerTester
+    //!
+    ~TcpServerTester();
 
-      //! Destroy object TcpServerTester
-      //!
-      ~TcpServerTester();
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-    public:
+    void setup_helper(bool recv_thread, bool reconnect, bool expect_started = true);
 
-      // ----------------------------------------------------------------------
-      // Tests
-      // ----------------------------------------------------------------------
+    //! Test basic messaging
+    //!
+    void test_basic_messaging();
 
-      void setup_helper(bool recv_thread, bool reconnect, bool expect_started = true);
+    //! Test basic reconnection behavior
+    //!
+    void test_multiple_messaging();
 
-      //! Test basic messaging
-      //!
-      void test_basic_messaging();
+    //! Test receive via thread
+    //!
+    void test_receive_thread();
 
-      //! Test basic reconnection behavior
-      //!
-      void test_multiple_messaging();
+    //! Test advanced (duration) reconnect
+    //!
+    void test_advanced_reconnect();
 
-      //! Test receive via thread
-      //!
-      void test_receive_thread();
+    // Helpers
+    void test_with_loop(U32 iterations, bool recv_thread = false);
 
-      //! Test advanced (duration) reconnect
-      //!
-      void test_advanced_reconnect();
+    void test_no_automatic_send_connection();
 
-      // Helpers
-      void test_with_loop(U32 iterations, bool recv_thread=false);
- 
-      void test_no_automatic_send_connection();
+    void test_no_automatic_recv_connection();
 
-      void test_no_automatic_recv_connection();
-      
-      void test_buffer_deallocation();
+    void test_buffer_deallocation();
 
-      bool wait_on_change(bool open, U32 iterations);
-      bool wait_on_started(bool open, U32 iterations);
+    bool wait_on_change(bool open, U32 iterations);
+    bool wait_on_started(bool open, U32 iterations);
 
-    private:
+  private:
+    // ----------------------------------------------------------------------
+    // Handlers overrides for typed from ports
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Handlers overrides for typed from ports
-      // ----------------------------------------------------------------------
+    //! Handler for from_recv
+    //!
+    void from_recv_handler(const FwIndexType portNum, /*!< The port number*/
+                           Fw::Buffer& recvBuffer,
+                           const ByteStreamStatus& recvStatus) override;
 
-      //! Handler for from_recv
-      //!
-      void from_recv_handler(
-          const FwIndexType portNum, /*!< The port number*/
-          Fw::Buffer &recvBuffer,
-          const ByteStreamStatus &recvStatus
-      ) override;
+    //! Handler for from_allocate
+    //!
+    Fw::Buffer from_allocate_handler(const FwIndexType portNum, /*!< The port number*/
+                                     FwSizeType size) override;
 
-      //! Handler for from_allocate
-      //!
-      Fw::Buffer from_allocate_handler(
-          const FwIndexType portNum, /*!< The port number*/
-          FwSizeType size
-      ) override;
+  private:
+    // ----------------------------------------------------------------------
+    // Helper methods
+    // ----------------------------------------------------------------------
 
-    private:
+    //! Connect ports
+    //!
+    void connectPorts();
 
-      // ----------------------------------------------------------------------
-      // Helper methods
-      // ----------------------------------------------------------------------
+    //! Initialize components
+    //!
+    void initComponents();
 
-      //! Connect ports
-      //!
-      void connectPorts();
+  private:
+    // ----------------------------------------------------------------------
+    // Variables
+    // ----------------------------------------------------------------------
 
-      //! Initialize components
-      //!
-      void initComponents();
+    //! The component under test
+    //!
+    TcpServerComponentImpl component;
+    Fw::Buffer m_data_buffer;
+    U8 m_data_storage[SEND_DATA_BUFFER_SIZE];
+    std::atomic<bool> m_spinner;
+};
 
-    private:
-
-      // ----------------------------------------------------------------------
-      // Variables
-      // ----------------------------------------------------------------------
-
-      //! The component under test
-      //!
-      TcpServerComponentImpl component;
-      Fw::Buffer m_data_buffer;
-      U8 m_data_storage[SEND_DATA_BUFFER_SIZE];
-      std::atomic<bool> m_spinner;
-
-  };
-
-} // end namespace Drv
+}  // end namespace Drv
 
 #endif
