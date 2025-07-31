@@ -31,7 +31,7 @@ SerializeStatus Serializable::serializeTo(SerializeBufferBase& buffer) const {
 
 SerializeStatus Serializable::deserializeFrom(SerializeBufferBase& buffer) {
     // Default implementation for base class - derived classes should override this method
-    return FW_SERIALIZE_UNIMPLEMENTED;
+    return FW_DESERIALIZE_UNIMPLEMENTED;
 }
 
 // ----------------------------------------------------------------------
@@ -564,7 +564,7 @@ SerializeStatus SerializeBufferBase::deserializeTo(Serializable& val) {
     // fall back to old interface. This bridges auto-generated enums (old interface only) 
     // with new serialization infrastructure.
     SerializeStatus status = val.deserializeFrom(*this);
-    if (status == FW_SERIALIZE_UNIMPLEMENTED) {
+    if (status == FW_DESERIALIZE_UNIMPLEMENTED) {
         // Fallback to old interface for backward compatibility
         status = val.deserialize(*this);
     }

@@ -93,7 +93,7 @@ namespace Fw {
         // Try new interface first, but if it returns FORMAT_ERROR (indicating default implementation),
         // fall back to old interface.
         SerializeStatus status = this->m_val.deserializeFrom(buffer);
-        if (status == FW_SERIALIZE_UNIMPLEMENTED) {
+        if (status == FW_DESERIALIZE_UNIMPLEMENTED) {
             // Fallback to old interface for backward compatibility
             status = this->m_val.deserialize(buffer);
         }

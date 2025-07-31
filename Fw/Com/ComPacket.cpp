@@ -33,7 +33,7 @@ SerializeStatus ComPacket::serializeTo(SerializeBufferBase& buffer) const {
 
 SerializeStatus ComPacket::deserializeFrom(SerializeBufferBase& buffer) {
     // Default implementation for base class - derived classes should override this method
-    return FW_SERIALIZE_UNIMPLEMENTED;
+    return FW_DESERIALIZE_UNIMPLEMENTED;
 }
 
 // Deprecated methods for backward compatibility
