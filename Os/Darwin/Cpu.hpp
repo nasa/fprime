@@ -12,8 +12,7 @@ namespace Cpu {
 
 //! CpuHandle class definition for stub implementations.
 //!
-struct DarwinCpuHandle : public CpuHandle {
-};
+struct DarwinCpuHandle : public CpuHandle {};
 
 //! \brief stub implementation of Os::CpuInterface
 //!
@@ -39,7 +38,6 @@ class DarwinCpu : public CpuInterface {
     // Functions overrides
     // ------------------------------------
   public:
-
     //! \brief Request the count of the CPUs detected by the system
     //!
     //! This method wraps delegates to the underlying implementation.
@@ -69,13 +67,14 @@ class DarwinCpu : public CpuInterface {
     //!
     //! \return raw console handle
     //!
-    CpuHandle *getHandle() override;
+    CpuHandle* getHandle() override;
+
   private:
     //! File handle for PosixFile
     DarwinCpuHandle m_handle;
 };
-} // namespace Cpu
-} // namespace Darwin
-} // namespace Os
+}  // namespace Cpu
+}  // namespace Darwin
+}  // namespace Os
 
-#endif // OS_Darwin_Cpu_HPP
+#endif  // OS_Darwin_Cpu_HPP

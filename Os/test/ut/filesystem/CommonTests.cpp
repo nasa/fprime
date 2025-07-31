@@ -6,8 +6,6 @@
 
 #include <STest/Pick/Pick.hpp>
 
-
-
 std::unique_ptr<Os::Test::FileSystem::Tester> get_tester_implementation() {
     return std::unique_ptr<Os::Test::FileSystem::Tester>(new Os::Test::FileSystem::Tester());
 }
@@ -38,11 +36,8 @@ void Functionality::SetUp() {
 
     // Set up test state - create a directory structure with files
     std::string root_dir = "filesystem_test_directory";
-    tester->m_test_dirs = {
-        TestDirectory(root_dir),
-        TestDirectory(root_dir + "/sub_dir_1"),
-        TestDirectory(root_dir + "/sub_dir_2")
-    };
+    tester->m_test_dirs = {TestDirectory(root_dir), TestDirectory(root_dir + "/sub_dir_1"),
+                           TestDirectory(root_dir + "/sub_dir_2")};
 
     for (FwSizeType i = 0; i < NUMBER_TEST_FILES; ++i) {
         std::string path = root_dir + "/test_file_" + std::to_string(i);
@@ -96,43 +91,43 @@ TEST_F(Functionality, CreateDirectory) {
     create_dir_rule.apply(*tester);
 }
 
-// MoveFile 
+// MoveFile
 TEST_F(Functionality, MoveFile) {
     Os::Test::FileSystem::Tester::MoveFile move_rule;
     move_rule.apply(*tester);
 }
 
-// RenameFile 
+// RenameFile
 TEST_F(Functionality, RenameFile) {
     Os::Test::FileSystem::Tester::RenameFile rename_rule;
     rename_rule.apply(*tester);
 }
 
-// CopyFile 
+// CopyFile
 TEST_F(Functionality, CopyFile) {
     Os::Test::FileSystem::Tester::CopyFile move_rule;
     move_rule.apply(*tester);
 }
 
-// AppendFile 
+// AppendFile
 TEST_F(Functionality, AppendFile) {
     Os::Test::FileSystem::Tester::AppendFile append_rule;
     append_rule.apply(*tester);
 }
 
-// AppendToNewFile 
+// AppendToNewFile
 TEST_F(Functionality, AppendToNewFile) {
     Os::Test::FileSystem::Tester::AppendToNewFile append_new_rule;
     append_new_rule.apply(*tester);
 }
 
-// GetFileSize 
+// GetFileSize
 TEST_F(Functionality, GetFileSize) {
     Os::Test::FileSystem::Tester::GetFileSize get_size_rule;
     get_size_rule.apply(*tester);
 }
 
-// GetFreeSpace 
+// GetFreeSpace
 TEST_F(Functionality, GetFreeSpace) {
     Os::Test::FileSystem::Tester::GetFreeSpace free_space_rule;
     free_space_rule.apply(*tester);
@@ -147,7 +142,7 @@ TEST_F(Functionality, GetSetWorkingDirectory) {
 // Randomized testing
 TEST_F(Functionality, RandomizedTesting) {
     // Enumerate all rules and construct an instance of each
-    
+
     Os::Test::FileSystem::Tester::DirectoryExists directory_exists_rule;
     Os::Test::FileSystem::Tester::FileExists file_exists_rule;
     Os::Test::FileSystem::Tester::PathNotExists not_exists_rule;
@@ -165,39 +160,28 @@ TEST_F(Functionality, RandomizedTesting) {
     Os::Test::FileSystem::Tester::GetSetWorkingDirectory cwd_rule;
 
     // Place these rules into a list of rules
-    STest::Rule<Os::Test::FileSystem::Tester>* rules[] = {
-            &directory_exists_rule,
-            &file_exists_rule,
-            &not_exists_rule,
-            &remove_rule,
-            &remove_directory_rule,
-            &touch_rule,
-            &create_directory_rule,
-            &move_rule,
-            &rename_rule,
-            &copyfile_rule,
-            &append_rule,
-            &append_new_rule,
-            &file_size_rule,
-            &free_space_rule,
-            &cwd_rule
-    };
+    STest::Rule<Os::Test::FileSystem::Tester>* rules[] = {&directory_exists_rule,
+                                                          &file_exists_rule,
+                                                          &not_exists_rule,
+                                                          &remove_rule,
+                                                          &remove_directory_rule,
+                                                          &touch_rule,
+                                                          &create_directory_rule,
+                                                          &move_rule,
+                                                          &rename_rule,
+                                                          &copyfile_rule,
+                                                          &append_rule,
+                                                          &append_new_rule,
+                                                          &file_size_rule,
+                                                          &free_space_rule,
+                                                          &cwd_rule};
 
     // Take the rules and place them into a random scenario
-    STest::RandomScenario<Os::Test::FileSystem::Tester> random(
-            "Random Rules",
-            rules,
-            FW_NUM_ARRAY_ELEMENTS(rules)
-    );
+    STest::RandomScenario<Os::Test::FileSystem::Tester> random("Random Rules", rules, FW_NUM_ARRAY_ELEMENTS(rules));
 
     // Create a bounded scenario wrapping the random scenario
-    STest::BoundedScenario<Os::Test::FileSystem::Tester> bounded(
-            "Bounded Random Rules Scenario",
-            random,
-            1000
-    );
+    STest::BoundedScenario<Os::Test::FileSystem::Tester> bounded("Bounded Random Rules Scenario", random, 1000);
     // Run!
     const U32 numSteps = bounded.run(*tester);
     printf("Ran %u steps.\n", numSteps);
-
 }

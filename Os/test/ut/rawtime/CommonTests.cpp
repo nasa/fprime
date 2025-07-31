@@ -14,7 +14,6 @@ std::unique_ptr<Os::Test::RawTime::Tester> get_tester_implementation() {
 }
 
 Functionality::Functionality() : tester(get_tester_implementation()) {
-
     tester->m_times.reserve(tester->TEST_TIME_COUNT);
     tester->m_shadow_times.reserve(tester->TEST_TIME_COUNT);
 
@@ -86,30 +85,15 @@ TEST_F(Functionality, RandomizedTesting) {
 
     // Place these rules into a list of rules
     STest::Rule<Os::Test::RawTime::Tester>* rules[] = {
-            &get_time_rule,
-            &diff_zero_rule,
-            &get_diff_rule,
-            &get_interval_rule,
-            &serialization_rule,
-            &overflow_rule,
+        &get_time_rule, &diff_zero_rule, &get_diff_rule, &get_interval_rule, &serialization_rule, &overflow_rule,
     };
 
     // Take the rules and place them into a random scenario
-    STest::RandomScenario<Os::Test::RawTime::Tester> random(
-            "Random Rules",
-            rules,
-            FW_NUM_ARRAY_ELEMENTS(rules)
-    );
+    STest::RandomScenario<Os::Test::RawTime::Tester> random("Random Rules", rules, FW_NUM_ARRAY_ELEMENTS(rules));
 
     // Create a bounded scenario wrapping the random scenario
-    STest::BoundedScenario<Os::Test::RawTime::Tester> bounded(
-            "Bounded Random Rules Scenario",
-            random,
-            5000
-    );
+    STest::BoundedScenario<Os::Test::RawTime::Tester> bounded("Bounded Random Rules Scenario", random, 5000);
     // Run!
     const U32 numSteps = bounded.run(*tester);
     printf("Ran %u steps for RawTime.\n", numSteps);
-
 }
-

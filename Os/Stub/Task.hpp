@@ -82,7 +82,7 @@ class StubTask : public TaskInterface {
     Status start(const Arguments& arguments) override;
 };
 
-}
-}
-}
-#endif // End OS_STUB_TASK_HPP
+}  // namespace Task
+}  // namespace Stub
+}  // namespace Os
+#endif  // End OS_STUB_TASK_HPP

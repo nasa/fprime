@@ -28,18 +28,18 @@ class QueueInterface {
   public:
     //! \brief status returned from the queue send function
     enum Status {
-        OP_OK,             //!<  message sent/received okay
-        ALREADY_CREATED,   //!<  creating an already created queue
-        EMPTY,             //!<  If non-blocking, all the messages have been drained.
-        UNINITIALIZED,     //!<  Queue wasn't initialized successfully
-        SIZE_MISMATCH,     //!<  attempted to send or receive with buffer too large, too small
-        SEND_ERROR,        //!<  message send error
-        RECEIVE_ERROR,     //!<  message receive error
-        INVALID_PRIORITY,  //!<  invalid priority requested
-        FULL,              //!<  Queue was full when attempting to send a message
-        NOT_SUPPORTED,     //!<  Queue feature is not supported
-        ALLOCATION_FAILED, //!<  required memory could not be allocated
-        UNKNOWN_ERROR      //!<  Unexpected error; can't match with returns
+        OP_OK,              //!<  message sent/received okay
+        ALREADY_CREATED,    //!<  creating an already created queue
+        EMPTY,              //!<  If non-blocking, all the messages have been drained.
+        UNINITIALIZED,      //!<  Queue wasn't initialized successfully
+        SIZE_MISMATCH,      //!<  attempted to send or receive with buffer too large, too small
+        SEND_ERROR,         //!<  message send error
+        RECEIVE_ERROR,      //!<  message receive error
+        INVALID_PRIORITY,   //!<  invalid priority requested
+        FULL,               //!<  Queue was full when attempting to send a message
+        NOT_SUPPORTED,      //!<  Queue feature is not supported
+        ALLOCATION_FAILED,  //!<  required memory could not be allocated
+        UNKNOWN_ERROR       //!<  Unexpected error; can't match with returns
     };
 
     //! \brief message type

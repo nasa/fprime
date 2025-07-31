@@ -2,8 +2,8 @@
 // \title Os/Posix/Console.hpp
 // \brief posix implementation for Os::Console, header and test definitions
 // ======================================================================
-#include <cstdio>
 #include <Os/Console.hpp>
+#include <cstdio>
 #ifndef OS_POSIX_Console_HPP
 #define OS_POSIX_Console_HPP
 
@@ -28,8 +28,8 @@ class PosixConsole : public ConsoleInterface {
   public:
     //! Stream selection enumeration
     enum Stream {
-        STANDARD_OUT = 0, //!< Use standard output stream
-        STANDARD_ERROR = 1 //!< Use standard error stream
+        STANDARD_OUT = 0,   //!< Use standard output stream
+        STANDARD_ERROR = 1  //!< Use standard error stream
     };
     //! \brief constructor
     //!
@@ -56,8 +56,7 @@ class PosixConsole : public ConsoleInterface {
     //!
     //! \param message: raw message to write
     //! \param size: size of the message to write to the console
-    void writeMessage(const CHAR *message, const FwSizeType size) override;
-
+    void writeMessage(const CHAR* message, const FwSizeType size) override;
 
     //! \brief returns the raw console handle
     //!
@@ -66,7 +65,7 @@ class PosixConsole : public ConsoleInterface {
     //!
     //! \return raw console handle
     //!
-    ConsoleHandle *getHandle() override;
+    ConsoleHandle* getHandle() override;
 
     //! \brief select the output stream
     //!
@@ -78,8 +77,8 @@ class PosixConsole : public ConsoleInterface {
     //! File handle for PosixFile
     PosixConsoleHandle m_handle;
 };
-} // namespace Console
-} // namespace Posix
-} // namespace Os
+}  // namespace Console
+}  // namespace Posix
+}  // namespace Os
 
-#endif // OS_POSIX_Console_HPP
+#endif  // OS_POSIX_Console_HPP

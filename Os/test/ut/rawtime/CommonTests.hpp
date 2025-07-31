@@ -5,16 +5,13 @@
 #ifndef OS_TEST_UT_COMMON_RAWTIME_TESTS_HPP
 #define OS_TEST_UT_COMMON_RAWTIME_TESTS_HPP
 
-#include <Os/RawTime.hpp>
 #include <gtest/gtest.h>
+#include <Os/RawTime.hpp>
 #include <Os/test/ut/rawtime/RulesHeaders.hpp>
 
 namespace Os {
 namespace Test {
-namespace RawTime {
-
-
-}  // namespace RawTime
+namespace RawTime {}  // namespace RawTime
 }  // namespace Test
 }  // namespace Os
 
