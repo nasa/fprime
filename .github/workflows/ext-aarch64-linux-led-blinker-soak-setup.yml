@@ -1,4 +1,4 @@
-# Cross-compile https://github.com/moisesmata/fprime-workshop-led-blinker as system service on AArch64 Linux
+# Cross-compile https://github.com/moisesmata/fprime-workshop-led-blinker (add/comLogger-instance branch) as system service on AArch64 Linux
 # Builds on release publication, stops old service, starts new service
 # 
 # This workflow sets up two types of logging:
@@ -26,23 +26,16 @@ env:
   INSTALL_DIR: /opt/ledblinker-soak
 
 jobs:
-  get-branch:
-    name: "Get target branch"
-    uses: ./.github/workflows/reusable-get-pr-branch.yml
-    with:
-      target_repository: moisesmata/fprime-workshop-led-blinker
-
   cross-compilation:
     name: "Cross Compilation"
     runs-on: ubuntu-22.04
-    needs: get-branch
     steps:
       - name: "Checkout target repository"
         uses: actions/checkout@v4
         with:
           submodules: false
           repository: moisesmata/fprime-workshop-led-blinker
-          ref: ${{ needs.get-branch.outputs.target-branch }}
+          ref: add/comLogger-instance
       - name: "Overlay current F´ revision"
         uses: actions/checkout@v4
         with:
