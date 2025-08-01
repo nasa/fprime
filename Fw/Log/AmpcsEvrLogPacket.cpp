@@ -55,28 +55,28 @@ namespace Fw {
         SerializeStatus stat;
 
         len = AMPCS_EVR_TASK_NAME_LEN;
-        stat = buffer.deserialize(this->m_taskName, len, true);
+        stat = buffer.deserializeTo(this->m_taskName, len, true);
         if (stat != FW_SERIALIZE_OK) {
             return stat;
         }
 
-        stat = buffer.deserialize(this->m_eventID);
+        stat = buffer.deserializeTo(this->m_eventID);
         if (stat != FW_SERIALIZE_OK) {
             return stat;
         }
 
-        stat = buffer.deserialize(this->m_overSeqNum);
+        stat = buffer.deserializeTo(this->m_overSeqNum);
         if (stat != FW_SERIALIZE_OK) {
             return stat;
         }
 
-        stat = buffer.deserialize(this->m_catSeqNum);
+        stat = buffer.deserializeTo(this->m_catSeqNum);
         if (stat != FW_SERIALIZE_OK) {
             return stat;
         }
 
         FwSizeType size = buffer.getBuffLeft();
-        stat = buffer.deserialize(this->m_logBuffer.getBuffAddr(),size,true);
+        stat = buffer.deserializeTo(this->m_logBuffer.getBuffAddr(),size,true);
         if (stat == FW_SERIALIZE_OK) {
             // Shouldn't fail
             stat = this->m_logBuffer.setBuffLen(size);
