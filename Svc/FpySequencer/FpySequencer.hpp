@@ -52,12 +52,12 @@ class FpySequencer : public FpySequencerComponentBase {
         FpySequencer_GotoDirective gotoDirective;
         FpySequencer_IfDirective ifDirective;
         FpySequencer_NoOpDirective noOp;
-        FpySequencer_GetTlmDirective getTlm;
-        FpySequencer_GetPrmDirective getPrm;
-        FpySequencer_CmdDirective cmd;
+        FpySequencer_StoreTlmValDirective getTlm;
+        FpySequencer_StorePrmDirective storePrm;
+        FpySequencer_ConstCmdDirective cmd;
         FpySequencer_DeserSerRegDirective deserSerReg;
         FpySequencer_SetRegDirective setReg;
-        FpySequencer_BinaryRegOpDirective binaryRegOp;
+        FpySequencer_StackOpDirective binaryRegOp;
         FpySequencer_UnaryRegOpDirective unaryRegOp;
         FpySequencer_ExitDirective exit;
 
@@ -404,9 +404,6 @@ class FpySequencer : public FpySequencerComponentBase {
     //! Internal interface handler for directive_waitRel
     void directive_waitRel_internalInterfaceHandler(const FpySequencer_WaitRelDirective& directive) override;
 
-    //! Internal interface handler for directive_setSerReg
-    void directive_setSerReg_internalInterfaceHandler(const FpySequencer_SetSerRegDirective& directive) override;
-
     //! Internal interface handler for directive_goto
     void directive_goto_internalInterfaceHandler(const Svc::FpySequencer_GotoDirective& directive) override;
 
@@ -416,26 +413,17 @@ class FpySequencer : public FpySequencerComponentBase {
     //! Internal interface handler for directive_noOp
     void directive_noOp_internalInterfaceHandler(const Svc::FpySequencer_NoOpDirective& directive) override;
 
-    //! Internal interface handler for directive_getTlm
-    void directive_getTlm_internalInterfaceHandler(const Svc::FpySequencer_GetTlmDirective& directive) override;
+    //! Internal interface handler for directive_storeTlmVal
+    void directive_storeTlmVal_internalInterfaceHandler(const Svc::FpySequencer_StoreTlmValDirective& directive) override;
 
-    //! Internal interface handler for directive_getPrm
-    void directive_getPrm_internalInterfaceHandler(const Svc::FpySequencer_GetPrmDirective& directive) override;
+    //! Internal interface handler for directive_storePrm
+    void directive_storePrm_internalInterfaceHandler(const Svc::FpySequencer_StorePrmDirective& directive) override;
 
-    //! Internal interface handler for directive_cmd
-    void directive_cmd_internalInterfaceHandler(const Svc::FpySequencer_CmdDirective& directive) override;
+    //! Internal interface handler for directive_constCmd
+    void directive_constCmd_internalInterfaceHandler(const Svc::FpySequencer_ConstCmdDirective& directive) override;
 
-    //! Internal interface handler for directive_deserSerReg
-    void directive_deserSerReg_internalInterfaceHandler(const Svc::FpySequencer_DeserSerRegDirective& directive) override;
-
-    //! Internal interface handler for directive_setReg
-    void directive_setReg_internalInterfaceHandler(const Svc::FpySequencer_SetRegDirective& directive) override;
-
-    //! Internal interface handler for directive_binaryRegOp
-    void directive_binaryRegOp_internalInterfaceHandler(const Svc::FpySequencer_BinaryRegOpDirective& directive) override;
-
-    //! Internal interface handler for directive_unaryRegOp
-    void directive_unaryRegOp_internalInterfaceHandler(const Svc::FpySequencer_UnaryRegOpDirective& directive) override;
+    //! Internal interface handler for directive_stackOp
+    void directive_stackOp_internalInterfaceHandler(const Svc::FpySequencer_StackOpDirective& directive) override;
 
     //! Internal interface handler for directive_exit
     void directive_exit_internalInterfaceHandler(const Svc::FpySequencer_ExitDirective& directive) override;
@@ -447,9 +435,9 @@ class FpySequencer : public FpySequencerComponentBase {
     void allocateBuffer(FwEnumStoreType identifier, Fw::MemAllocator& allocator, FwSizeType bytes);
 
     void deallocateBuffer(Fw::MemAllocator& allocator);
-    private :
 
-        static constexpr U32 CRC_INITIAL_VALUE = 0xFFFFFFFFU;
+  private:
+    static constexpr U32 CRC_INITIAL_VALUE = 0xFFFFFFFFU;
 
     // allocated at startup
     Fw::ExternalSerializeBuffer m_sequenceBuffer;
@@ -502,18 +490,8 @@ class FpySequencer : public FpySequencerComponentBase {
         // a statement response
         Fw::Time wakeupTime = Fw::Time();
 
-        // all the serializable registers in the sequence
-        struct SerializableReg {
-            // the value buffer of the serReg
-            U8 value[Fpy::MAX_SERIALIZABLE_REGISTER_SIZE] = {};
-            // the size of the data in the serReg buf
-            FwSizeType valueSize = 0;
-        } serRegs[Fpy::NUM_SERIALIZABLE_REGISTERS] = {};
-
-        // all the regs in the sequence. regs are 8 byte
-        // values of unspecified type
-        I64 regs[Fpy::NUM_REGISTERS] = {0};
-
+        U8 stack[Fpy::MAX_STACK_SIZE] = {0};
+        U64 stackSize = 0;
     } m_runtime;
 
     // the state of the debugger. debugger is separate from runtime
@@ -606,48 +584,53 @@ class FpySequencer : public FpySequencerComponentBase {
     // sends a signal based on a signal id
     void sendSignal(Signal signal);
 
-    // helper function to get a reference to a register from an index
-    // saves a bunch of typing
-    I64& reg(U8 idx);
+    template <typename T>
+    T pop();
+
+    void pop(U8* dest, U16 size);
+
+    template <typename T>
+    void push(T val);
+
+    void push(U8* src, U16 size);
+
+    U8* top();
+    U8* lvars();
 
     // we split these functions up into the internalInterfaceInvoke and these custom member funcs
     // so that we can unit test them easier
     Signal waitRel_directiveHandler(const FpySequencer_WaitRelDirective& directive, DirectiveError& error);
     Signal waitAbs_directiveHandler(const FpySequencer_WaitAbsDirective& directive, DirectiveError& error);
-    Signal setSerReg_directiveHandler(const FpySequencer_SetSerRegDirective& directive, DirectiveError& error);
     Signal goto_directiveHandler(const FpySequencer_GotoDirective& directive, DirectiveError& error);
     Signal if_directiveHandler(const FpySequencer_IfDirective& directive, DirectiveError& error);
     Signal noOp_directiveHandler(const FpySequencer_NoOpDirective& directive, DirectiveError& error);
-    Signal getTlm_directiveHandler(const FpySequencer_GetTlmDirective& directive, DirectiveError& error);
-    Signal getPrm_directiveHandler(const FpySequencer_GetPrmDirective& directive, DirectiveError& error);
-    Signal cmd_directiveHandler(const FpySequencer_CmdDirective& directive, DirectiveError& error);
-    Signal deserSerReg_directiveHandler(const FpySequencer_DeserSerRegDirective& directive, DirectiveError& error);
-    Signal setReg_directiveHandler(const FpySequencer_SetRegDirective& directive, DirectiveError& error);
+    Signal storeTlmVal_directiveHandler(const FpySequencer_StoreTlmValDirective& directive, DirectiveError& error);
+    Signal storePrm_directiveHandler(const FpySequencer_StorePrmDirective& directive, DirectiveError& error);
+    Signal constCmd_directiveHandler(const FpySequencer_ConstCmdDirective& directive, DirectiveError& error);
+    Signal stackOp_directiveHandler(const FpySequencer_StackOpDirective& directive, DirectiveError& error);
 
-    Signal binaryRegOp_directiveHandler(const FpySequencer_BinaryRegOpDirective& directive, DirectiveError& error);
-    I64 binaryRegOp_or(I64 lhs, I64 rhs);
-    I64 binaryRegOp_and(I64 lhs, I64 rhs);
-    I64 binaryRegOp_ieq(I64 lhs, I64 rhs);
-    I64 binaryRegOp_ine(I64 lhs, I64 rhs);
-    I64 binaryRegOp_ult(I64 lhs, I64 rhs);
-    I64 binaryRegOp_ule(I64 lhs, I64 rhs);
-    I64 binaryRegOp_ugt(I64 lhs, I64 rhs);
-    I64 binaryRegOp_uge(I64 lhs, I64 rhs);
-    I64 binaryRegOp_slt(I64 lhs, I64 rhs);
-    I64 binaryRegOp_sle(I64 lhs, I64 rhs);
-    I64 binaryRegOp_sgt(I64 lhs, I64 rhs);
-    I64 binaryRegOp_sge(I64 lhs, I64 rhs);
-    I64 binaryRegOp_feq(I64 lhs, I64 rhs);
-    I64 binaryRegOp_fne(I64 lhs, I64 rhs);
-    I64 binaryRegOp_flt(I64 lhs, I64 rhs);
-    I64 binaryRegOp_fle(I64 lhs, I64 rhs);
-    I64 binaryRegOp_fgt(I64 lhs, I64 rhs);
-    I64 binaryRegOp_fge(I64 lhs, I64 rhs);
 
-    Signal unaryRegOp_directiveHandler(const FpySequencer_UnaryRegOpDirective& directive, DirectiveError& error);
-    I64 unaryRegOp_not(I64 src);
-    I64 unaryRegOp_fpext(I64 src);
-    I64 unaryRegOp_fptrunc(I64 src);
+    DirectiveError op_or();
+    DirectiveError op_and();
+    DirectiveError op_ieq();
+    DirectiveError op_ine();
+    DirectiveError op_ult();
+    DirectiveError op_ule();
+    DirectiveError op_ugt();
+    DirectiveError op_uge();
+    DirectiveError op_slt();
+    DirectiveError op_sle();
+    DirectiveError op_sgt();
+    DirectiveError op_sge();
+    DirectiveError op_feq();
+    DirectiveError op_fne();
+    DirectiveError op_flt();
+    DirectiveError op_fle();
+    DirectiveError op_fgt();
+    DirectiveError op_fge();
+    DirectiveError op_not();
+    DirectiveError op_fpext();
+    DirectiveError op_fptrunc();
 
     Signal exit_directiveHandler(const FpySequencer_ExitDirective& directive, DirectiveError& error);
 };

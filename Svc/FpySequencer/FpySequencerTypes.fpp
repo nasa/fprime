@@ -20,7 +20,7 @@ module Svc {
             DESER_SER_REG_2 = 13
             DESER_SER_REG_1 = 14
             # binary reg op directives
-            # all of these are handled at the CPP level by one BinaryRegOpDirective
+            # all of these are handled at the CPP level by one StackOpDirective
             # boolean ops
             OR = 15
             AND = 16

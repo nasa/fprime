@@ -144,13 +144,13 @@ TEST_F(FpySequencerTester, noOp) {
 }
 
 TEST_F(FpySequencerTester, getTlm) {
-    FpySequencer_GetTlmDirective directive(0, 1, 456);
+    FpySequencer_StoreTlmValDirective directive(0, 1, 456);
     nextTlmId = 456;
     nextTlmValue.setBuffLen(1);
     nextTlmValue.getBuffAddr()[0] = 200;
     nextTlmTime.set(888, 777);
     DirectiveError err = DirectiveError::NO_ERROR;
-    Signal result = tester_getTlm_directiveHandler(directive, err);
+    Signal result = tester_storeTlmVal_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_from_getTlmChan_SIZE(1);
@@ -167,7 +167,7 @@ TEST_F(FpySequencerTester, getTlm) {
 
     // try getting a nonexistent chan
     directive.setchanId(111);
-    result = tester_getTlm_directiveHandler(directive, err);
+    result = tester_storeTlmVal_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::TLM_CHAN_NOT_FOUND);
     err = DirectiveError::NO_ERROR;
@@ -175,7 +175,7 @@ TEST_F(FpySequencerTester, getTlm) {
 
     // try setting bad value serReg
     directive.setvalueDestSerReg(Fpy::NUM_SERIALIZABLE_REGISTERS);
-    result = tester_getTlm_directiveHandler(directive, err);
+    result = tester_storeTlmVal_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::SER_REG_OUT_OF_BOUNDS);
     err = DirectiveError::NO_ERROR;
@@ -183,20 +183,20 @@ TEST_F(FpySequencerTester, getTlm) {
 
     // try setting bad time serReg
     directive.settimeDestSerReg(Fpy::NUM_SERIALIZABLE_REGISTERS);
-    result = tester_getTlm_directiveHandler(directive, err);
+    result = tester_storeTlmVal_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::SER_REG_OUT_OF_BOUNDS);
     err = DirectiveError::NO_ERROR;
     directive.settimeDestSerReg(0);
 }
 
-TEST_F(FpySequencerTester, getPrm) {
-    FpySequencer_GetPrmDirective directive(0, 456);
+TEST_F(FpySequencerTester, storePrm) {
+    FpySequencer_StorePrmDirective directive(0, 456);
     nextPrmId = 456;
     nextPrmValue.setBuffLen(1);
     nextPrmValue.getBuffAddr()[0] = 200;
     DirectiveError err = DirectiveError::NO_ERROR;
-    Signal result = tester_getPrm_directiveHandler(directive, err);
+    Signal result = tester_storePrm_directiveHandler(directive, err);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_from_getParam_SIZE(1);
@@ -207,7 +207,7 @@ TEST_F(FpySequencerTester, getPrm) {
 
     // try getting a nonexistent param
     directive.setprmId(111);
-    result = tester_getPrm_directiveHandler(directive, err);
+    result = tester_storePrm_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::PRM_NOT_FOUND);
     err = DirectiveError::NO_ERROR;
@@ -215,7 +215,7 @@ TEST_F(FpySequencerTester, getPrm) {
 
     // try setting bad serReg
     directive.setdestSerRegIndex(Fpy::NUM_SERIALIZABLE_REGISTERS);
-    result = tester_getPrm_directiveHandler(directive, err);
+    result = tester_storePrm_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::SER_REG_OUT_OF_BOUNDS);
     err = DirectiveError::NO_ERROR;
@@ -224,10 +224,10 @@ TEST_F(FpySequencerTester, getPrm) {
 
 TEST_F(FpySequencerTester, cmd) {
     U8 data[4] = {0x12, 0x23, 0x34, 0x45};
-    FpySequencer_CmdDirective directive(123, 0, sizeof(data));
+    FpySequencer_ConstCmdDirective directive(123, 0, sizeof(data));
     memcpy(directive.getargBuf(), data, sizeof(data));
     DirectiveError err = DirectiveError::NO_ERROR;
-    Signal result = tester_cmd_directiveHandler(directive, err);
+    Signal result = tester_constCmd_directiveHandler(directive, err);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(result, Signal::stmtResponse_keepWaiting);
 
@@ -241,7 +241,7 @@ TEST_F(FpySequencerTester, cmd) {
 
     // try dispatching again, make sure cmd uid is right
     tester_set_m_statementsDispatched(123);
-    result = tester_cmd_directiveHandler(directive, err);
+    result = tester_constCmd_directiveHandler(directive, err);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(result, Signal::stmtResponse_keepWaiting);
     ASSERT_from_cmdOut(0, expected, tester_get_m_statementsDispatched());
@@ -249,7 +249,7 @@ TEST_F(FpySequencerTester, cmd) {
 
     // modify sequences started, make sure correct
     tester_set_m_sequencesStarted(456);
-    result = tester_cmd_directiveHandler(directive, err);
+    result = tester_constCmd_directiveHandler(directive, err);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(result, Signal::stmtResponse_keepWaiting);
     ASSERT_from_cmdOut(
@@ -321,219 +321,219 @@ TEST_F(FpySequencerTester, deserSerReg) {
 
 TEST_F(FpySequencerTester, binaryRegOp) {
     // Test EQ (equal)
-    FpySequencer_BinaryRegOpDirective directiveEQ(0, 1, 2, Fpy::DirectiveId::IEQ);
+    FpySequencer_StackOpDirective directiveEQ(0, 1, 2, Fpy::DirectiveId::IEQ);
     tester_get_m_runtime_ptr()->regs[0] = 10;
     tester_get_m_runtime_ptr()->regs[1] = 10;
     DirectiveError err = DirectiveError::NO_ERROR;
-    Signal result = tester_binaryRegOp_directiveHandler(directiveEQ, err);
+    Signal result = tester_stackOp_directiveHandler(directiveEQ, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(tester_get_m_runtime_ptr()->regs[2], 1);
 
     // Test NE (not equal)
-    FpySequencer_BinaryRegOpDirective directiveNE(0, 1, 2, Fpy::DirectiveId::INE);
+    FpySequencer_StackOpDirective directiveNE(0, 1, 2, Fpy::DirectiveId::INE);
     tester_get_m_runtime_ptr()->regs[1] = 20;
-    result = tester_binaryRegOp_directiveHandler(directiveNE, err);
+    result = tester_stackOp_directiveHandler(directiveNE, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(tester_get_m_runtime_ptr()->regs[2], 1);
 
     // Test OR (bitwise OR)
-    FpySequencer_BinaryRegOpDirective directiveOR(0, 1, 2, Fpy::DirectiveId::OR);
+    FpySequencer_StackOpDirective directiveOR(0, 1, 2, Fpy::DirectiveId::OR);
     tester_get_m_runtime_ptr()->regs[0] = 10;  // 0b1010;
     tester_get_m_runtime_ptr()->regs[1] = 5;   // 0b0101;
-    result = tester_binaryRegOp_directiveHandler(directiveOR, err);
+    result = tester_stackOp_directiveHandler(directiveOR, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(tester_get_m_runtime_ptr()->regs[2], 15);  // 0b1111
 
     // Test AND (bitwise AND)
-    FpySequencer_BinaryRegOpDirective directiveAND(0, 1, 2, Fpy::DirectiveId::AND);
+    FpySequencer_StackOpDirective directiveAND(0, 1, 2, Fpy::DirectiveId::AND);
     tester_get_m_runtime_ptr()->regs[0] = 10;  // 0b1010;
     tester_get_m_runtime_ptr()->regs[1] = 12;  // 0b1100;
-    result = tester_binaryRegOp_directiveHandler(directiveAND, err);
+    result = tester_stackOp_directiveHandler(directiveAND, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(tester_get_m_runtime_ptr()->regs[2], 8);  // 0b1000
 
     // Test signed comparison (SLT - signed less than)
-    FpySequencer_BinaryRegOpDirective directiveSLT(0, 1, 2, Fpy::DirectiveId::SLT);
+    FpySequencer_StackOpDirective directiveSLT(0, 1, 2, Fpy::DirectiveId::SLT);
     tester_get_m_runtime_ptr()->regs[0] = -5;
     tester_get_m_runtime_ptr()->regs[1] = 10;
-    result = tester_binaryRegOp_directiveHandler(directiveSLT, err);
+    result = tester_stackOp_directiveHandler(directiveSLT, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(tester_get_m_runtime_ptr()->regs[2], 1);
 
     // Test unsigned comparison (ULT - unsigned less than)
-    FpySequencer_BinaryRegOpDirective directiveULT(0, 1, 2, Fpy::DirectiveId::ULT);
+    FpySequencer_StackOpDirective directiveULT(0, 1, 2, Fpy::DirectiveId::ULT);
     tester_get_m_runtime_ptr()->regs[0] = 5;
     tester_get_m_runtime_ptr()->regs[1] = 10;
-    result = tester_binaryRegOp_directiveHandler(directiveULT, err);
+    result = tester_stackOp_directiveHandler(directiveULT, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(tester_get_m_runtime_ptr()->regs[2], 1);
 
     // Test unsigned comparison (UGT - unsigned greater than)
-    FpySequencer_BinaryRegOpDirective directiveUGT(0, 1, 2, Fpy::DirectiveId::UGT);
+    FpySequencer_StackOpDirective directiveUGT(0, 1, 2, Fpy::DirectiveId::UGT);
     tester_get_m_runtime_ptr()->regs[0] = 10;
     tester_get_m_runtime_ptr()->regs[1] = 5;
-    result = tester_binaryRegOp_directiveHandler(directiveUGT, err);
+    result = tester_stackOp_directiveHandler(directiveUGT, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(tester_get_m_runtime_ptr()->regs[2], 1);
 
     // Test floating-point comparison (FLT - floating-point less than)
-    FpySequencer_BinaryRegOpDirective directiveFLT(0, 1, 2, Fpy::DirectiveId::FLT);
+    FpySequencer_StackOpDirective directiveFLT(0, 1, 2, Fpy::DirectiveId::FLT);
     double lhsValueFLT = 5.5;
     double rhsValueFLT = 10.1;
     tester_get_m_runtime_ptr()->regs[0] = *reinterpret_cast<I64*>(&lhsValueFLT);
     tester_get_m_runtime_ptr()->regs[1] = *reinterpret_cast<I64*>(&rhsValueFLT);
-    result = tester_binaryRegOp_directiveHandler(directiveFLT, err);
+    result = tester_stackOp_directiveHandler(directiveFLT, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(tester_get_m_runtime_ptr()->regs[2], 1);
 
     // Test floating-point comparison (FGE - floating-point greater or equal)
-    FpySequencer_BinaryRegOpDirective directiveFGE(0, 1, 2, Fpy::DirectiveId::FGE);
+    FpySequencer_StackOpDirective directiveFGE(0, 1, 2, Fpy::DirectiveId::FGE);
     double lhsValueFGE = 10.1;
     double rhsValueFGE = 10.1;
     tester_get_m_runtime_ptr()->regs[0] = *reinterpret_cast<I64*>(&lhsValueFGE);
     tester_get_m_runtime_ptr()->regs[1] = *reinterpret_cast<I64*>(&rhsValueFGE);
-    result = tester_binaryRegOp_directiveHandler(directiveFGE, err);
+    result = tester_stackOp_directiveHandler(directiveFGE, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(tester_get_m_runtime_ptr()->regs[2], 1);
 
     // Test out-of-bounds register index
-    FpySequencer_BinaryRegOpDirective directiveOOB(Fpy::NUM_REGISTERS, 1, 2, Fpy::DirectiveId::IEQ);
-    result = tester_binaryRegOp_directiveHandler(directiveOOB, err);
+    FpySequencer_StackOpDirective directiveOOB(Fpy::NUM_REGISTERS, 1, 2, Fpy::DirectiveId::IEQ);
+    result = tester_stackOp_directiveHandler(directiveOOB, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::REGISTER_OUT_OF_BOUNDS);
 
     // Test invalid operation
-    FpySequencer_BinaryRegOpDirective directiveInvalid(0, 1, 2, Fpy::DirectiveId::NO_OP);
-    ASSERT_DEATH_IF_SUPPORTED(tester_binaryRegOp_directiveHandler(directiveInvalid, err), "Assert: ");
+    FpySequencer_StackOpDirective directiveInvalid(0, 1, 2, Fpy::DirectiveId::NO_OP);
+    ASSERT_DEATH_IF_SUPPORTED(tester_stackOp_directiveHandler(directiveInvalid, err), "Assert: ");
 }
 
 TEST_F(FpySequencerTester, ieq) {
     I64 lhs = -1;
     I64 rhs = -1;
-    ASSERT_EQ(tester_binaryRegOp_ieq(lhs, rhs), true);
+    ASSERT_EQ(tester_op_ieq(lhs, rhs), true);
     rhs = 1;
-    ASSERT_EQ(tester_binaryRegOp_ieq(lhs, rhs), false);
+    ASSERT_EQ(tester_op_ieq(lhs, rhs), false);
 }
 
 TEST_F(FpySequencerTester, ine) {
     I64 lhs = -1;
     I64 rhs = -1;
-    ASSERT_EQ(tester_binaryRegOp_ine(lhs, rhs), false);
+    ASSERT_EQ(tester_op_ine(lhs, rhs), false);
     rhs = 1;
-    ASSERT_EQ(tester_binaryRegOp_ine(lhs, rhs), true);
+    ASSERT_EQ(tester_op_ine(lhs, rhs), true);
 }
 
 TEST_F(FpySequencerTester, or) {
     I64 lhs = static_cast<I64>(true);
     I64 rhs = static_cast<I64>(true);
-    ASSERT_EQ(tester_binaryRegOp_or(lhs, rhs), true);
+    ASSERT_EQ(tester_op_or(lhs, rhs), true);
     rhs = static_cast<I64>(false);
-    ASSERT_EQ(tester_binaryRegOp_or(lhs, rhs), true);
+    ASSERT_EQ(tester_op_or(lhs, rhs), true);
     lhs = static_cast<I64>(false);
-    ASSERT_EQ(tester_binaryRegOp_or(lhs, rhs), false);
+    ASSERT_EQ(tester_op_or(lhs, rhs), false);
 }
 
 TEST_F(FpySequencerTester, and) {
     I64 lhs = static_cast<I64>(false);
     I64 rhs = static_cast<I64>(false);
-    ASSERT_EQ(tester_binaryRegOp_and(lhs, rhs), false);
+    ASSERT_EQ(tester_op_and(lhs, rhs), false);
     rhs = static_cast<I64>(true);
-    ASSERT_EQ(tester_binaryRegOp_and(lhs, rhs), false);
+    ASSERT_EQ(tester_op_and(lhs, rhs), false);
     lhs = static_cast<I64>(true);
-    ASSERT_EQ(tester_binaryRegOp_and(lhs, rhs), true);
+    ASSERT_EQ(tester_op_and(lhs, rhs), true);
 }
 
 TEST_F(FpySequencerTester, ult) {
     U64 lhs = 0;
     U64 rhs = std::numeric_limits<U64>::max();
-    ASSERT_EQ(tester_binaryRegOp_ult(static_cast<I64>(lhs), static_cast<I64>(rhs)), true);
+    ASSERT_EQ(tester_op_ult(static_cast<I64>(lhs), static_cast<I64>(rhs)), true);
     rhs = 0;
-    ASSERT_EQ(tester_binaryRegOp_ult(static_cast<I64>(lhs), static_cast<I64>(rhs)), false);
+    ASSERT_EQ(tester_op_ult(static_cast<I64>(lhs), static_cast<I64>(rhs)), false);
     rhs = 1;
-    ASSERT_EQ(tester_binaryRegOp_ult(static_cast<I64>(lhs), static_cast<I64>(rhs)), true);
+    ASSERT_EQ(tester_op_ult(static_cast<I64>(lhs), static_cast<I64>(rhs)), true);
 }
 
 TEST_F(FpySequencerTester, ule) {
     U64 lhs = 0;
     U64 rhs = std::numeric_limits<U64>::max();
-    ASSERT_EQ(tester_binaryRegOp_ule(static_cast<I64>(lhs), static_cast<I64>(rhs)), true);
+    ASSERT_EQ(tester_op_ule(static_cast<I64>(lhs), static_cast<I64>(rhs)), true);
     rhs = 0;
-    ASSERT_EQ(tester_binaryRegOp_ule(static_cast<I64>(lhs), static_cast<I64>(rhs)), true);
+    ASSERT_EQ(tester_op_ule(static_cast<I64>(lhs), static_cast<I64>(rhs)), true);
     rhs = 1;
-    ASSERT_EQ(tester_binaryRegOp_ule(static_cast<I64>(lhs), static_cast<I64>(rhs)), true);
+    ASSERT_EQ(tester_op_ule(static_cast<I64>(lhs), static_cast<I64>(rhs)), true);
     lhs = 2;
-    ASSERT_EQ(tester_binaryRegOp_ule(static_cast<I64>(lhs), static_cast<I64>(rhs)), false);
+    ASSERT_EQ(tester_op_ule(static_cast<I64>(lhs), static_cast<I64>(rhs)), false);
 }
 
 TEST_F(FpySequencerTester, ugt) {
     U64 rhs = 0;
     U64 lhs = std::numeric_limits<U64>::max();
-    ASSERT_EQ(tester_binaryRegOp_ugt(static_cast<I64>(lhs), static_cast<I64>(rhs)), true);
+    ASSERT_EQ(tester_op_ugt(static_cast<I64>(lhs), static_cast<I64>(rhs)), true);
     lhs = 0;
-    ASSERT_EQ(tester_binaryRegOp_ugt(static_cast<I64>(lhs), static_cast<I64>(rhs)), false);
+    ASSERT_EQ(tester_op_ugt(static_cast<I64>(lhs), static_cast<I64>(rhs)), false);
     lhs = 1;
-    ASSERT_EQ(tester_binaryRegOp_ugt(static_cast<I64>(lhs), static_cast<I64>(rhs)), true);
+    ASSERT_EQ(tester_op_ugt(static_cast<I64>(lhs), static_cast<I64>(rhs)), true);
 }
 
 TEST_F(FpySequencerTester, uge) {
     U64 rhs = 0;
     U64 lhs = std::numeric_limits<U64>::max();
-    ASSERT_EQ(tester_binaryRegOp_uge(static_cast<I64>(lhs), static_cast<I64>(rhs)), true);
+    ASSERT_EQ(tester_op_uge(static_cast<I64>(lhs), static_cast<I64>(rhs)), true);
     lhs = 0;
-    ASSERT_EQ(tester_binaryRegOp_uge(static_cast<I64>(lhs), static_cast<I64>(rhs)), true);
+    ASSERT_EQ(tester_op_uge(static_cast<I64>(lhs), static_cast<I64>(rhs)), true);
     lhs = 1;
-    ASSERT_EQ(tester_binaryRegOp_uge(static_cast<I64>(lhs), static_cast<I64>(rhs)), true);
+    ASSERT_EQ(tester_op_uge(static_cast<I64>(lhs), static_cast<I64>(rhs)), true);
     rhs = 2;
-    ASSERT_EQ(tester_binaryRegOp_uge(static_cast<I64>(lhs), static_cast<I64>(rhs)), false);
+    ASSERT_EQ(tester_op_uge(static_cast<I64>(lhs), static_cast<I64>(rhs)), false);
 }
 
 TEST_F(FpySequencerTester, slt) {
     I64 lhs = 0;
     I64 rhs = std::numeric_limits<I64>::max();
-    ASSERT_EQ(tester_binaryRegOp_slt(lhs, rhs), true);
+    ASSERT_EQ(tester_op_slt(lhs, rhs), true);
     rhs = 0;
-    ASSERT_EQ(tester_binaryRegOp_slt(lhs, rhs), false);
+    ASSERT_EQ(tester_op_slt(lhs, rhs), false);
     rhs = 1;
-    ASSERT_EQ(tester_binaryRegOp_slt(lhs, rhs), true);
+    ASSERT_EQ(tester_op_slt(lhs, rhs), true);
 }
 
 TEST_F(FpySequencerTester, sle) {
     I64 lhs = 0;
     I64 rhs = std::numeric_limits<I64>::max();
-    ASSERT_EQ(tester_binaryRegOp_sle(lhs, rhs), true);
+    ASSERT_EQ(tester_op_sle(lhs, rhs), true);
     rhs = 0;
-    ASSERT_EQ(tester_binaryRegOp_sle(lhs, rhs), true);
+    ASSERT_EQ(tester_op_sle(lhs, rhs), true);
     rhs = -1;
-    ASSERT_EQ(tester_binaryRegOp_sle(lhs, rhs), false);
+    ASSERT_EQ(tester_op_sle(lhs, rhs), false);
 }
 
 TEST_F(FpySequencerTester, sgt) {
     I64 lhs = 0;
     I64 rhs = std::numeric_limits<I64>::max();
-    ASSERT_EQ(tester_binaryRegOp_sgt(lhs, rhs), false);
+    ASSERT_EQ(tester_op_sgt(lhs, rhs), false);
     rhs = 0;
-    ASSERT_EQ(tester_binaryRegOp_sgt(lhs, rhs), false);
+    ASSERT_EQ(tester_op_sgt(lhs, rhs), false);
     rhs = -1;
-    ASSERT_EQ(tester_binaryRegOp_sgt(lhs, rhs), true);
+    ASSERT_EQ(tester_op_sgt(lhs, rhs), true);
 }
 
 TEST_F(FpySequencerTester, sge) {
     I64 lhs = 0;
     I64 rhs = std::numeric_limits<I64>::max();
-    ASSERT_EQ(tester_binaryRegOp_sge(lhs, rhs), false);
+    ASSERT_EQ(tester_op_sge(lhs, rhs), false);
     rhs = 0;
-    ASSERT_EQ(tester_binaryRegOp_sge(lhs, rhs), true);
+    ASSERT_EQ(tester_op_sge(lhs, rhs), true);
     rhs = -1;
-    ASSERT_EQ(tester_binaryRegOp_sge(lhs, rhs), true);
+    ASSERT_EQ(tester_op_sge(lhs, rhs), true);
 }
 
 TEST_F(FpySequencerTester, flt) {
@@ -544,19 +544,19 @@ TEST_F(FpySequencerTester, flt) {
     memcpy(&ilhs, &lhs, sizeof(ilhs));
     I64 irhs;
     memcpy(&irhs, &rhs, sizeof(irhs));
-    ASSERT_EQ(tester_binaryRegOp_flt(ilhs, irhs), true);
+    ASSERT_EQ(tester_op_flt(ilhs, irhs), true);
 
     rhs = 0;
     memcpy(&irhs, &rhs, sizeof(irhs));
-    ASSERT_EQ(tester_binaryRegOp_flt(ilhs, irhs), false);
+    ASSERT_EQ(tester_op_flt(ilhs, irhs), false);
 
     rhs = -1;
     memcpy(&irhs, &rhs, sizeof(irhs));
-    ASSERT_EQ(tester_binaryRegOp_flt(ilhs, irhs), false);
+    ASSERT_EQ(tester_op_flt(ilhs, irhs), false);
 
     rhs = std::numeric_limits<F64>::quiet_NaN();
     memcpy(&irhs, &rhs, sizeof(irhs));
-    ASSERT_EQ(tester_binaryRegOp_flt(ilhs, irhs), false);
+    ASSERT_EQ(tester_op_flt(ilhs, irhs), false);
 }
 
 TEST_F(FpySequencerTester, fle) {
@@ -567,19 +567,19 @@ TEST_F(FpySequencerTester, fle) {
     memcpy(&ilhs, &lhs, sizeof(ilhs));
     I64 irhs;
     memcpy(&irhs, &rhs, sizeof(irhs));
-    ASSERT_EQ(tester_binaryRegOp_fle(ilhs, irhs), true);
+    ASSERT_EQ(tester_op_fle(ilhs, irhs), true);
 
     rhs = 0;
     memcpy(&irhs, &rhs, sizeof(irhs));
-    ASSERT_EQ(tester_binaryRegOp_fle(ilhs, irhs), true);
+    ASSERT_EQ(tester_op_fle(ilhs, irhs), true);
 
     rhs = -1;
     memcpy(&irhs, &rhs, sizeof(irhs));
-    ASSERT_EQ(tester_binaryRegOp_fle(ilhs, irhs), false);
+    ASSERT_EQ(tester_op_fle(ilhs, irhs), false);
 
     rhs = std::numeric_limits<F64>::quiet_NaN();
     memcpy(&irhs, &rhs, sizeof(irhs));
-    ASSERT_EQ(tester_binaryRegOp_fle(ilhs, irhs), false);
+    ASSERT_EQ(tester_op_fle(ilhs, irhs), false);
 }
 
 TEST_F(FpySequencerTester, fgt) {
@@ -590,19 +590,19 @@ TEST_F(FpySequencerTester, fgt) {
     memcpy(&ilhs, &lhs, sizeof(ilhs));
     I64 irhs;
     memcpy(&irhs, &rhs, sizeof(irhs));
-    ASSERT_EQ(tester_binaryRegOp_fgt(ilhs, irhs), false);
+    ASSERT_EQ(tester_op_fgt(ilhs, irhs), false);
 
     rhs = 0;
     memcpy(&irhs, &rhs, sizeof(irhs));
-    ASSERT_EQ(tester_binaryRegOp_fgt(ilhs, irhs), false);
+    ASSERT_EQ(tester_op_fgt(ilhs, irhs), false);
 
     rhs = -1;
     memcpy(&irhs, &rhs, sizeof(irhs));
-    ASSERT_EQ(tester_binaryRegOp_fgt(ilhs, irhs), true);
+    ASSERT_EQ(tester_op_fgt(ilhs, irhs), true);
 
     rhs = std::numeric_limits<F64>::quiet_NaN();
     memcpy(&irhs, &rhs, sizeof(irhs));
-    ASSERT_EQ(tester_binaryRegOp_fgt(ilhs, irhs), false);
+    ASSERT_EQ(tester_op_fgt(ilhs, irhs), false);
 }
 
 TEST_F(FpySequencerTester, fge) {
@@ -613,19 +613,19 @@ TEST_F(FpySequencerTester, fge) {
     memcpy(&ilhs, &lhs, sizeof(ilhs));
     I64 irhs;
     memcpy(&irhs, &rhs, sizeof(irhs));
-    ASSERT_EQ(tester_binaryRegOp_fge(ilhs, irhs), false);
+    ASSERT_EQ(tester_op_fge(ilhs, irhs), false);
 
     rhs = 0;
     memcpy(&irhs, &rhs, sizeof(irhs));
-    ASSERT_EQ(tester_binaryRegOp_fge(ilhs, irhs), true);
+    ASSERT_EQ(tester_op_fge(ilhs, irhs), true);
 
     rhs = -1;
     memcpy(&irhs, &rhs, sizeof(irhs));
-    ASSERT_EQ(tester_binaryRegOp_fge(ilhs, irhs), true);
+    ASSERT_EQ(tester_op_fge(ilhs, irhs), true);
 
     rhs = std::numeric_limits<F64>::quiet_NaN();
     memcpy(&irhs, &rhs, sizeof(irhs));
-    ASSERT_EQ(tester_binaryRegOp_fge(ilhs, irhs), false);
+    ASSERT_EQ(tester_op_fge(ilhs, irhs), false);
 }
 
 TEST_F(FpySequencerTester, feq) {
@@ -636,19 +636,19 @@ TEST_F(FpySequencerTester, feq) {
     memcpy(&ilhs, &lhs, sizeof(ilhs));
     I64 irhs;
     memcpy(&irhs, &rhs, sizeof(irhs));
-    ASSERT_EQ(tester_binaryRegOp_feq(ilhs, irhs), false);
+    ASSERT_EQ(tester_op_feq(ilhs, irhs), false);
 
     rhs = 0;
     memcpy(&irhs, &rhs, sizeof(irhs));
-    ASSERT_EQ(tester_binaryRegOp_feq(ilhs, irhs), true);
+    ASSERT_EQ(tester_op_feq(ilhs, irhs), true);
 
     rhs = -1;
     memcpy(&irhs, &rhs, sizeof(irhs));
-    ASSERT_EQ(tester_binaryRegOp_feq(ilhs, irhs), false);
+    ASSERT_EQ(tester_op_feq(ilhs, irhs), false);
 
     rhs = std::numeric_limits<F64>::quiet_NaN();
     memcpy(&irhs, &rhs, sizeof(irhs));
-    ASSERT_EQ(tester_binaryRegOp_feq(ilhs, irhs), false);
+    ASSERT_EQ(tester_op_feq(ilhs, irhs), false);
 }
 
 TEST_F(FpySequencerTester, fne) {
@@ -659,19 +659,19 @@ TEST_F(FpySequencerTester, fne) {
     memcpy(&ilhs, &lhs, sizeof(ilhs));
     I64 irhs;
     memcpy(&irhs, &rhs, sizeof(irhs));
-    ASSERT_EQ(tester_binaryRegOp_fne(ilhs, irhs), true);
+    ASSERT_EQ(tester_op_fne(ilhs, irhs), true);
 
     rhs = 0;
     memcpy(&irhs, &rhs, sizeof(irhs));
-    ASSERT_EQ(tester_binaryRegOp_fne(ilhs, irhs), false);
+    ASSERT_EQ(tester_op_fne(ilhs, irhs), false);
 
     rhs = -1;
     memcpy(&irhs, &rhs, sizeof(irhs));
-    ASSERT_EQ(tester_binaryRegOp_fne(ilhs, irhs), true);
+    ASSERT_EQ(tester_op_fne(ilhs, irhs), true);
 
     rhs = std::numeric_limits<F64>::quiet_NaN();
     memcpy(&irhs, &rhs, sizeof(irhs));
-    ASSERT_EQ(tester_binaryRegOp_fne(ilhs, irhs), false);
+    ASSERT_EQ(tester_op_fne(ilhs, irhs), false);
 }
 
 TEST_F(FpySequencerTester, setReg) {
@@ -1464,7 +1464,7 @@ TEST_F(FpySequencerTester, deserialize_noOp) {
 
 TEST_F(FpySequencerTester, deserialize_getTlm) {
     FpySequencer::DirectiveUnion actual;
-    FpySequencer_GetTlmDirective dir(123, 234, 456);
+    FpySequencer_StoreTlmValDirective dir(123, 234, 456);
     add_GET_TLM(dir);
     Fw::Success result = tester_deserializeDirective(seq.getstatements()[0], actual);
     ASSERT_EQ(result, Fw::Success::SUCCESS);
@@ -1482,13 +1482,13 @@ TEST_F(FpySequencerTester, deserialize_getTlm) {
     ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
 }
 
-TEST_F(FpySequencerTester, deserialize_getPrm) {
+TEST_F(FpySequencerTester, deserialize_storePrm) {
     FpySequencer::DirectiveUnion actual;
-    FpySequencer_GetPrmDirective dir(123, 456);
+    FpySequencer_StorePrmDirective dir(123, 456);
     add_GET_PRM(dir);
     Fw::Success result = tester_deserializeDirective(seq.getstatements()[0], actual);
     ASSERT_EQ(result, Fw::Success::SUCCESS);
-    ASSERT_EQ(actual.getPrm, dir);
+    ASSERT_EQ(actual.storePrm, dir);
     // write some junk after buf, make sure it fails
     seq.getstatements()[0].getargBuf().serialize(123);
     result = tester_deserializeDirective(seq.getstatements()[0], actual);
@@ -1504,7 +1504,7 @@ TEST_F(FpySequencerTester, deserialize_getPrm) {
 
 TEST_F(FpySequencerTester, deserialize_binaryRegOp) {
     FpySequencer::DirectiveUnion actual;
-    FpySequencer_BinaryRegOpDirective dir(0, 1, 2, Fpy::DirectiveId::AND);
+    FpySequencer_StackOpDirective dir(0, 1, 2, Fpy::DirectiveId::AND);
     add_BINARY_REG_OP(dir);
     Fw::Success result = tester_deserializeDirective(seq.getstatements()[0], actual);
     ASSERT_EQ(result, Fw::Success::SUCCESS);

@@ -176,30 +176,30 @@ void FpySequencerTester::add_NO_OP() {
 }
 
 void FpySequencerTester::add_GET_TLM(U8 valueDestSerReg, U8 timeDestSerReg, FwChanIdType id) {
-    add_GET_TLM(FpySequencer_GetTlmDirective(valueDestSerReg, timeDestSerReg, id));
+    add_GET_TLM(FpySequencer_StoreTlmValDirective(valueDestSerReg, timeDestSerReg, id));
 }
 
-void FpySequencerTester::add_GET_TLM(FpySequencer_GetTlmDirective dir) {
+void FpySequencerTester::add_GET_TLM(FpySequencer_StoreTlmValDirective dir) {
     Fw::StatementArgBuffer buf;
     FW_ASSERT(buf.serialize(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     addDirective(Fpy::DirectiveId::GET_TLM, buf);
 }
 
 void FpySequencerTester::add_GET_PRM(U8 serRegIdx, FwPrmIdType id) {
-    add_GET_PRM(FpySequencer_GetPrmDirective(serRegIdx, id));
+    add_GET_PRM(FpySequencer_StorePrmDirective(serRegIdx, id));
 }
 
-void FpySequencerTester::add_GET_PRM(FpySequencer_GetPrmDirective dir) {
+void FpySequencerTester::add_GET_PRM(FpySequencer_StorePrmDirective dir) {
     Fw::StatementArgBuffer buf;
     FW_ASSERT(buf.serialize(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     addDirective(Fpy::DirectiveId::GET_PRM, buf);
 }
 
 void FpySequencerTester::add_CMD(FwOpcodeType opcode) {
-    add_CMD(FpySequencer_CmdDirective(opcode, 0, 0));
+    add_CMD(FpySequencer_ConstCmdDirective(opcode, 0, 0));
 }
 
-void FpySequencerTester::add_CMD(FpySequencer_CmdDirective dir) {
+void FpySequencerTester::add_CMD(FpySequencer_ConstCmdDirective dir) {
     Fw::StatementArgBuffer buf;
     FW_ASSERT(buf.serialize(dir.getopCode()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     FW_ASSERT(buf.serialize(dir.getargBuf(), dir.get_argBufSize(), Fw::Serialization::OMIT_LENGTH) == Fw::SerializeStatus::FW_SERIALIZE_OK);
@@ -242,10 +242,10 @@ void FpySequencerTester::add_SET_REG(FpySequencer_SetRegDirective dir) {
 }
 
 void FpySequencerTester::add_BINARY_REG_OP(U8 lhs, U8 rhs, U8 res, Fpy::DirectiveId op) {
-    add_BINARY_REG_OP(FpySequencer_BinaryRegOpDirective(lhs, rhs, res, op));
+    add_BINARY_REG_OP(FpySequencer_StackOpDirective(lhs, rhs, res, op));
 }
 
-void FpySequencerTester::add_BINARY_REG_OP(FpySequencer_BinaryRegOpDirective dir) {
+void FpySequencerTester::add_BINARY_REG_OP(FpySequencer_StackOpDirective dir) {
     Fw::StatementArgBuffer buf;
     FW_ASSERT(buf.serialize(dir.getlhs()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     FW_ASSERT(buf.serialize(dir.getrhs()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
@@ -357,14 +357,14 @@ Signal FpySequencerTester::tester_if_directiveHandler(const FpySequencer_IfDirec
     return this->cmp.if_directiveHandler(directive, err);
 }
 
-Signal FpySequencerTester::tester_getPrm_directiveHandler(const FpySequencer_GetPrmDirective& directive,
+Signal FpySequencerTester::tester_storePrm_directiveHandler(const FpySequencer_StorePrmDirective& directive,
                                                           DirectiveError& err) {
-    return this->cmp.getPrm_directiveHandler(directive, err);
+    return this->cmp.storePrm_directiveHandler(directive, err);
 }
 
-Signal FpySequencerTester::tester_getTlm_directiveHandler(const FpySequencer_GetTlmDirective& directive,
+Signal FpySequencerTester::tester_storeTlmVal_directiveHandler(const FpySequencer_StoreTlmValDirective& directive,
                                                           DirectiveError& err) {
-    return this->cmp.getTlm_directiveHandler(directive, err);
+    return this->cmp.storeTlmVal_directiveHandler(directive, err);
 }
 
 Signal FpySequencerTester::tester_exit_directiveHandler(const FpySequencer_ExitDirective& directive,
@@ -372,9 +372,9 @@ Signal FpySequencerTester::tester_exit_directiveHandler(const FpySequencer_ExitD
     return this->cmp.exit_directiveHandler(directive, err);
 }
 
-Signal FpySequencerTester::tester_cmd_directiveHandler(const FpySequencer_CmdDirective& directive,
+Signal FpySequencerTester::tester_constCmd_directiveHandler(const FpySequencer_ConstCmdDirective& directive,
                                                        DirectiveError& err) {
-    return this->cmp.cmd_directiveHandler(directive, err);
+    return this->cmp.constCmd_directiveHandler(directive, err);
 }
 
 Signal FpySequencerTester::tester_deserSerReg_directiveHandler(const FpySequencer_DeserSerRegDirective& directive,
@@ -382,9 +382,9 @@ Signal FpySequencerTester::tester_deserSerReg_directiveHandler(const FpySequence
     return this->cmp.deserSerReg_directiveHandler(directive, err);
 }
 
-Signal FpySequencerTester::tester_binaryRegOp_directiveHandler(const FpySequencer_BinaryRegOpDirective& directive,
+Signal FpySequencerTester::tester_stackOp_directiveHandler(const FpySequencer_StackOpDirective& directive,
                                                              DirectiveError& err) {
-    return this->cmp.binaryRegOp_directiveHandler(directive, err);
+    return this->cmp.stackOp_directiveHandler(directive, err);
 }
 
 Signal FpySequencerTester::tester_unaryRegOp_directiveHandler(const FpySequencer_UnaryRegOpDirective& directive,
@@ -482,59 +482,59 @@ Fw::ExternalSerializeBuffer* FpySequencerTester::tester_get_m_sequenceBuffer_ptr
 Svc::FpySequencer::Debug* FpySequencerTester::tester_get_m_debug_ptr() {
     return &(this->cmp.m_debug);
 }
-I64 FpySequencerTester::tester_binaryRegOp_or(I64 lhs, I64 rhs) {
-    return this->cmp.binaryRegOp_or(lhs, rhs);
+I64 FpySequencerTester::tester_op_or(I64 lhs, I64 rhs) {
+    return this->cmp.op_or(lhs, rhs);
 }
-I64 FpySequencerTester::tester_binaryRegOp_and(I64 lhs, I64 rhs) {
-    return this->cmp.binaryRegOp_and(lhs, rhs);
+I64 FpySequencerTester::tester_op_and(I64 lhs, I64 rhs) {
+    return this->cmp.op_and(lhs, rhs);
 }
-I64 FpySequencerTester::tester_binaryRegOp_ieq(I64 lhs, I64 rhs) {
-    return this->cmp.binaryRegOp_ieq(lhs, rhs);
+I64 FpySequencerTester::tester_op_ieq(I64 lhs, I64 rhs) {
+    return this->cmp.op_ieq(lhs, rhs);
 }
-I64 FpySequencerTester::tester_binaryRegOp_ine(I64 lhs, I64 rhs) {
-    return this->cmp.binaryRegOp_ine(lhs, rhs);
+I64 FpySequencerTester::tester_op_ine(I64 lhs, I64 rhs) {
+    return this->cmp.op_ine(lhs, rhs);
 }
-I64 FpySequencerTester::tester_binaryRegOp_ult(I64 lhs, I64 rhs) {
-    return this->cmp.binaryRegOp_ult(lhs, rhs);
+I64 FpySequencerTester::tester_op_ult(I64 lhs, I64 rhs) {
+    return this->cmp.op_ult(lhs, rhs);
 }
-I64 FpySequencerTester::tester_binaryRegOp_ule(I64 lhs, I64 rhs) {
-    return this->cmp.binaryRegOp_ule(lhs, rhs);
+I64 FpySequencerTester::tester_op_ule(I64 lhs, I64 rhs) {
+    return this->cmp.op_ule(lhs, rhs);
 }
-I64 FpySequencerTester::tester_binaryRegOp_ugt(I64 lhs, I64 rhs) {
-    return this->cmp.binaryRegOp_ugt(lhs, rhs);
+I64 FpySequencerTester::tester_op_ugt(I64 lhs, I64 rhs) {
+    return this->cmp.op_ugt(lhs, rhs);
 }
-I64 FpySequencerTester::tester_binaryRegOp_uge(I64 lhs, I64 rhs) {
-    return this->cmp.binaryRegOp_uge(lhs, rhs);
+I64 FpySequencerTester::tester_op_uge(I64 lhs, I64 rhs) {
+    return this->cmp.op_uge(lhs, rhs);
 }
-I64 FpySequencerTester::tester_binaryRegOp_slt(I64 lhs, I64 rhs) {
-    return this->cmp.binaryRegOp_slt(lhs, rhs);
+I64 FpySequencerTester::tester_op_slt(I64 lhs, I64 rhs) {
+    return this->cmp.op_slt(lhs, rhs);
 }
-I64 FpySequencerTester::tester_binaryRegOp_sle(I64 lhs, I64 rhs) {
-    return this->cmp.binaryRegOp_sle(lhs, rhs);
+I64 FpySequencerTester::tester_op_sle(I64 lhs, I64 rhs) {
+    return this->cmp.op_sle(lhs, rhs);
 }
-I64 FpySequencerTester::tester_binaryRegOp_sgt(I64 lhs, I64 rhs) {
-    return this->cmp.binaryRegOp_sgt(lhs, rhs);
+I64 FpySequencerTester::tester_op_sgt(I64 lhs, I64 rhs) {
+    return this->cmp.op_sgt(lhs, rhs);
 }
-I64 FpySequencerTester::tester_binaryRegOp_sge(I64 lhs, I64 rhs) {
-    return this->cmp.binaryRegOp_sge(lhs, rhs);
+I64 FpySequencerTester::tester_op_sge(I64 lhs, I64 rhs) {
+    return this->cmp.op_sge(lhs, rhs);
 }
-I64 FpySequencerTester::tester_binaryRegOp_feq(I64 lhs, I64 rhs) {
-    return this->cmp.binaryRegOp_feq(lhs, rhs);
+I64 FpySequencerTester::tester_op_feq(I64 lhs, I64 rhs) {
+    return this->cmp.op_feq(lhs, rhs);
 }
-I64 FpySequencerTester::tester_binaryRegOp_fne(I64 lhs, I64 rhs) {
-    return this->cmp.binaryRegOp_fne(lhs, rhs);
+I64 FpySequencerTester::tester_op_fne(I64 lhs, I64 rhs) {
+    return this->cmp.op_fne(lhs, rhs);
 }
-I64 FpySequencerTester::tester_binaryRegOp_flt(I64 lhs, I64 rhs) {
-    return this->cmp.binaryRegOp_flt(lhs, rhs);
+I64 FpySequencerTester::tester_op_flt(I64 lhs, I64 rhs) {
+    return this->cmp.op_flt(lhs, rhs);
 }
-I64 FpySequencerTester::tester_binaryRegOp_fle(I64 lhs, I64 rhs) {
-    return this->cmp.binaryRegOp_fle(lhs, rhs);
+I64 FpySequencerTester::tester_op_fle(I64 lhs, I64 rhs) {
+    return this->cmp.op_fle(lhs, rhs);
 }
-I64 FpySequencerTester::tester_binaryRegOp_fgt(I64 lhs, I64 rhs) {
-    return this->cmp.binaryRegOp_fgt(lhs, rhs);
+I64 FpySequencerTester::tester_op_fgt(I64 lhs, I64 rhs) {
+    return this->cmp.op_fgt(lhs, rhs);
 }
-I64 FpySequencerTester::tester_binaryRegOp_fge(I64 lhs, I64 rhs) {
-    return this->cmp.binaryRegOp_fge(lhs, rhs);
+I64 FpySequencerTester::tester_op_fge(I64 lhs, I64 rhs) {
+    return this->cmp.op_fge(lhs, rhs);
 }
 I64 FpySequencerTester::tester_unaryRegOp_not(I64 src) {
     return this->cmp.unaryRegOp_not(src);

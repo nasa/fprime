@@ -157,7 +157,7 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
             break;
         }
         case Fpy::DirectiveId::GET_TLM: {
-            new (&deserializedDirective.getTlm) FpySequencer_GetTlmDirective();
+            new (&deserializedDirective.getTlm) FpySequencer_StoreTlmValDirective();
             status = argBuf.deserialize(deserializedDirective.getTlm);
             if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || argBuf.getBuffLeft() != 0) {
                 this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), this->m_runtime.nextStatementIndex - 1,
@@ -167,8 +167,8 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
             break;
         }
         case Fpy::DirectiveId::GET_PRM: {
-            new (&deserializedDirective.getPrm) FpySequencer_GetPrmDirective();
-            status = argBuf.deserialize(deserializedDirective.getPrm);
+            new (&deserializedDirective.storePrm) FpySequencer_StorePrmDirective();
+            status = argBuf.deserialize(deserializedDirective.storePrm);
             if (status != Fw::SerializeStatus::FW_SERIALIZE_OK || argBuf.getBuffLeft() != 0) {
                 this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), this->m_runtime.nextStatementIndex - 1,
                                                                status, argBuf.getBuffLeft(), argBuf.getBuffLength());
@@ -177,7 +177,7 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
             break;
         }
         case Fpy::DirectiveId::CMD: {
-            new (&deserializedDirective.cmd) FpySequencer_CmdDirective();
+            new (&deserializedDirective.cmd) FpySequencer_ConstCmdDirective();
             // same deserialization behavior as SET_SER_REG
 
             // first deserialize the opcode
@@ -193,7 +193,7 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
             //  how many bytes are left?
             FwSizeType cmdArgBufSize = argBuf.getBuffLeft();
 
-            // check to make sure the value will fit in the FpySequencer_CmdDirective::argBuf
+            // check to make sure the value will fit in the FpySequencer_ConstCmdDirective::argBuf
             if (cmdArgBufSize > Fpy::MAX_SERIALIZABLE_REGISTER_SIZE) {
                 this->log_WARNING_HI_DirectiveDeserializeError(stmt.getopCode(), this->m_runtime.nextStatementIndex - 1,
                                                                Fw::SerializeStatus::FW_DESERIALIZE_FORMAT_ERROR,
@@ -299,7 +299,7 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
         case Fpy::DirectiveId::FGT:
         case Fpy::DirectiveId::FGE:
         {
-            new (&deserializedDirective.binaryRegOp) FpySequencer_BinaryRegOpDirective();
+            new (&deserializedDirective.binaryRegOp) FpySequencer_StackOpDirective();
             
             U8 lhs;
             status = argBuf.deserialize(lhs);
@@ -408,15 +408,15 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
             return;
         }
         case Fpy::DirectiveId::GET_TLM: {
-            this->directive_getTlm_internalInterfaceInvoke(directive.getTlm);
+            this->directive_storeTlmVal_internalInterfaceInvoke(directive.getTlm);
             return;
         }
         case Fpy::DirectiveId::GET_PRM: {
-            this->directive_getPrm_internalInterfaceInvoke(directive.getPrm);
+            this->directive_storePrm_internalInterfaceInvoke(directive.storePrm);
             return;
         }
         case Fpy::DirectiveId::CMD: {
-            this->directive_cmd_internalInterfaceInvoke(directive.cmd);
+            this->directive_constCmd_internalInterfaceInvoke(directive.cmd);
             return;
         }
         // fallthrough on purpose
@@ -450,7 +450,7 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
         case Fpy::DirectiveId::FLE:
         case Fpy::DirectiveId::FGT:
         case Fpy::DirectiveId::FGE: {
-            this->directive_binaryRegOp_internalInterfaceInvoke(directive.binaryRegOp);
+            this->directive_stackOp_internalInterfaceInvoke(directive.binaryRegOp);
             return;
         }
         // fallthrough on purpose
