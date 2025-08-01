@@ -18,20 +18,15 @@ Serializable::Serializable() {}
 Serializable::~Serializable() {}
 
 // ----------------------------------------------------------------------
-// Default implementations for new serialization methods
-//
-// These are provided for backward compatibility specifically for autocoding that
-// does not yet support the new serialization methods.
+// Default implementations for legacy (DEPRECATED) serialization methods
 // ----------------------------------------------------------------------
 
-SerializeStatus Serializable::serializeTo(SerializeBufferBase& buffer) const {
-    // Default implementation for base class - derived classes should override this method
-    return FW_SERIALIZE_FORMAT_ERROR;
+SerializeStatus Serializable::serialize(SerializeBufferBase& buffer) const {
+    return this->serializeTo(buffer);
 }
 
-SerializeStatus Serializable::deserializeFrom(SerializeBufferBase& buffer) {
-    // Default implementation for base class - derived classes should override this method
-    return FW_DESERIALIZE_FORMAT_ERROR;
+SerializeStatus Serializable::deserialize(SerializeBufferBase& buffer) {
+    return this->deserializeFrom(buffer);
 }
 
 // ----------------------------------------------------------------------
@@ -267,16 +262,7 @@ SerializeStatus SerializeBufferBase::serializeFrom(const U8* buff, FwSizeType le
 }
 
 SerializeStatus SerializeBufferBase::serializeFrom(const Serializable& val) {
-    // Smart fallback approach for backward compatibility:
-    // Try new interface first, but if it returns FORMAT_ERROR (indicating default implementation),
-    // fall back to old interface. This bridges auto-generated enums (old interface only) 
-    // with new serialization infrastructure.
-    SerializeStatus status = val.serializeTo(*this);
-    if (status == FW_SERIALIZE_FORMAT_ERROR) {
-        // Fallback to old interface for backward compatibility
-        status = val.serialize(*this);
-    }
-    return status;
+    return val.serializeTo(*this);
 }
 
 SerializeStatus SerializeBufferBase::serializeFrom(const SerializeBufferBase& val) {
@@ -560,15 +546,7 @@ SerializeStatus SerializeBufferBase::deserializeTo(U8* buff, Serializable::SizeT
 }
 
 SerializeStatus SerializeBufferBase::deserializeTo(Serializable& val) {
-    // Try new interface first, but if it returns FORMAT_ERROR (indicating default implementation),
-    // fall back to old interface. This bridges auto-generated enums (old interface only) 
-    // with new serialization infrastructure.
-    SerializeStatus status = val.deserializeFrom(*this);
-    if (status == FW_DESERIALIZE_FORMAT_ERROR) {
-        // Fallback to old interface for backward compatibility
-        status = val.deserialize(*this);
-    }
-    return status;
+    return val.deserializeFrom(*this);
 }
 
 SerializeStatus SerializeBufferBase::deserializeTo(SerializeBufferBase& val) {
@@ -717,7 +695,7 @@ SerializeStatus SerializeBufferBase::copyRawOffset(SerializeBufferBase& dest, Se
     }
 
     // otherwise, serialize bytes to destination without writing length
-    SerializeStatus stat = dest.serialize(&this->getBuffAddr()[this->m_deserLoc], size, Fw::Serialization::OMIT_LENGTH);
+    SerializeStatus stat = dest.serializeFrom(&this->getBuffAddr()[this->m_deserLoc], size, Fw::Serialization::OMIT_LENGTH);
     if (stat == FW_SERIALIZE_OK) {
         this->m_deserLoc += size;
     }

@@ -57,7 +57,7 @@ TEST_F(Interface, GetTimeInterval) {
 }
 
 // Ensure that Os::RawTime properly calls the following delegate function
-TEST_F(Interface, SerializeTo) {
+TEST_F(Interface, Serialize) {
     Os::RawTime rawtime;
     Fw::Buffer buffer;
     auto esb = buffer.getSerializer();
@@ -66,7 +66,7 @@ TEST_F(Interface, SerializeTo) {
 }
 
 // Ensure that Os::RawTime properly calls the following delegate function
-TEST_F(Interface, DeserializeFrom) {
+TEST_F(Interface, Deserialize) {
     Os::RawTime rawtime;
     Fw::Buffer buffer;
     auto esb = buffer.getDeserializer();

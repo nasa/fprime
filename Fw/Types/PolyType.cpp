@@ -482,7 +482,7 @@ bool PolyType::operator<=(const PolyType& other) const {
 
 SerializeStatus PolyType::serializeTo(SerializeBufferBase& buffer) const {
     // store type
-    SerializeStatus stat = buffer.serialize(static_cast<FwEnumStoreType>(this->m_dataType));
+    SerializeStatus stat = buffer.serializeFrom(static_cast<FwEnumStoreType>(this->m_dataType));
     if (stat != FW_SERIALIZE_OK) {
         return stat;
     }
@@ -490,46 +490,46 @@ SerializeStatus PolyType::serializeTo(SerializeBufferBase& buffer) const {
     // switch on type
     switch (this->m_dataType) {
         case TYPE_U8:
-            stat = buffer.serialize(this->m_val.u8Val);
+            stat = buffer.serializeFrom(this->m_val.u8Val);
             break;
         case TYPE_I8:
-            stat = buffer.serialize(this->m_val.i8Val);
+            stat = buffer.serializeFrom(this->m_val.i8Val);
             break;
 #if FW_HAS_16_BIT
         case TYPE_U16:
-            stat = buffer.serialize(this->m_val.u16Val);
+            stat = buffer.serializeFrom(this->m_val.u16Val);
             break;
         case TYPE_I16:
-            stat = buffer.serialize(this->m_val.i16Val);
+            stat = buffer.serializeFrom(this->m_val.i16Val);
             break;
 #endif
 #if FW_HAS_32_BIT
         case TYPE_U32:
-            stat = buffer.serialize(this->m_val.u32Val);
+            stat = buffer.serializeFrom(this->m_val.u32Val);
             break;
         case TYPE_I32:
-            stat = buffer.serialize(this->m_val.i32Val);
+            stat = buffer.serializeFrom(this->m_val.i32Val);
             break;
 #endif
 #if FW_HAS_64_BIT
         case TYPE_U64:
-            stat = buffer.serialize(this->m_val.u64Val);
+            stat = buffer.serializeFrom(this->m_val.u64Val);
             break;
         case TYPE_I64:
-            stat = buffer.serialize(this->m_val.i64Val);
+            stat = buffer.serializeFrom(this->m_val.i64Val);
             break;
 #endif
         case TYPE_F64:
-            stat = buffer.serialize(this->m_val.f64Val);
+            stat = buffer.serializeFrom(this->m_val.f64Val);
             break;
         case TYPE_F32:
-            stat = buffer.serialize(this->m_val.f32Val);
+            stat = buffer.serializeFrom(this->m_val.f32Val);
             break;
         case TYPE_BOOL:
-            stat = buffer.serialize(this->m_val.boolVal);
+            stat = buffer.serializeFrom(this->m_val.boolVal);
             break;
         case TYPE_PTR:
-            stat = buffer.serialize(this->m_val.ptrVal);
+            stat = buffer.serializeFrom(this->m_val.ptrVal);
             break;
         default:
             stat = FW_SERIALIZE_FORMAT_ERROR;
@@ -539,15 +539,10 @@ SerializeStatus PolyType::serializeTo(SerializeBufferBase& buffer) const {
     return stat;
 }
 
-SerializeStatus PolyType::serialize(SerializeBufferBase& buffer) const {
-    // Deprecated method - calls new interface for backward compatibility
-    return this->serializeTo(buffer);
-}
-
 SerializeStatus PolyType::deserializeFrom(SerializeBufferBase& buffer) {
     // get type
     FwEnumStoreType des;
-    SerializeStatus stat = buffer.deserialize(des);
+    SerializeStatus stat = buffer.deserializeTo(des);
 
     if (stat != FW_SERIALIZE_OK) {
         return stat;
@@ -556,44 +551,39 @@ SerializeStatus PolyType::deserializeFrom(SerializeBufferBase& buffer) {
         // switch on type
         switch (this->m_dataType) {
             case TYPE_U8:
-                return buffer.deserialize(this->m_val.u8Val);
+                return buffer.deserializeTo(this->m_val.u8Val);
             case TYPE_I8:
-                return buffer.deserialize(this->m_val.i8Val);
+                return buffer.deserializeTo(this->m_val.i8Val);
 #if FW_HAS_16_BIT
             case TYPE_U16:
-                return buffer.deserialize(this->m_val.u16Val);
+                return buffer.deserializeTo(this->m_val.u16Val);
             case TYPE_I16:
-                return buffer.deserialize(this->m_val.i16Val);
+                return buffer.deserializeTo(this->m_val.i16Val);
 #endif
 #if FW_HAS_32_BIT
             case TYPE_U32:
-                return buffer.deserialize(this->m_val.u32Val);
+                return buffer.deserializeTo(this->m_val.u32Val);
             case TYPE_I32:
-                return buffer.deserialize(this->m_val.i32Val);
+                return buffer.deserializeTo(this->m_val.i32Val);
 #endif
 #if FW_HAS_64_BIT
             case TYPE_U64:
-                return buffer.deserialize(this->m_val.u64Val);
+                return buffer.deserializeTo(this->m_val.u64Val);
             case TYPE_I64:
-                return buffer.deserialize(this->m_val.i64Val);
+                return buffer.deserializeTo(this->m_val.i64Val);
 #endif
             case TYPE_F64:
-                return buffer.deserialize(this->m_val.f64Val);
+                return buffer.deserializeTo(this->m_val.f64Val);
             case TYPE_F32:
-                return buffer.deserialize(this->m_val.f32Val);
+                return buffer.deserializeTo(this->m_val.f32Val);
             case TYPE_BOOL:
-                return buffer.deserialize(this->m_val.boolVal);
+                return buffer.deserializeTo(this->m_val.boolVal);
             case TYPE_PTR:
-                return buffer.deserialize(this->m_val.ptrVal);
+                return buffer.deserializeTo(this->m_val.ptrVal);
             default:
                 return FW_DESERIALIZE_FORMAT_ERROR;
         }
     }
-}
-
-SerializeStatus PolyType::deserialize(SerializeBufferBase& buffer) {
-    // Deprecated method - calls new interface for backward compatibility
-    return this->deserializeFrom(buffer);
 }
 
 #if FW_SERIALIZABLE_TO_STRING || BUILD_UT

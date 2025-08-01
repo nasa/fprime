@@ -76,37 +76,11 @@ namespace Fw {
     }
 
     SerializeStatus Time::serializeTo(SerializeBufferBase& buffer) const {
-        // Fallback approach for backward compatibility:
-        // Try new interface first, but if it returns FORMAT_ERROR (indicating default implementation),
-        // fall back to old interface. This bridges auto-generated enums/structs (old interface only) 
-        // with new serialization infrastructure.
-        SerializeStatus status = this->m_val.serializeTo(buffer);
-        if (status == FW_SERIALIZE_FORMAT_ERROR) {
-            // Fallback to old interface for backward compatibility
-            status = this->m_val.serialize(buffer);
-        }
-        return status;
+        return this->m_val.serializeTo(buffer);
     }
 
     SerializeStatus Time::deserializeFrom(SerializeBufferBase& buffer) {
-        // Fallback approach for backward compatibility:
-        // Try new interface first, but if it returns FORMAT_ERROR (indicating default implementation),
-        // fall back to old interface.
-        SerializeStatus status = this->m_val.deserializeFrom(buffer);
-        if (status == FW_DESERIALIZE_FORMAT_ERROR) {
-            // Fallback to old interface for backward compatibility
-            status = this->m_val.deserialize(buffer);
-        }
-        return status;
-    }
-
-    // Deprecated methods for backward compatibility - these call the new interface
-    SerializeStatus Time::serialize(SerializeBufferBase& buffer) const {
-        return this->serializeTo(buffer);
-    }
-
-    SerializeStatus Time::deserialize(SerializeBufferBase& buffer) {
-        return this->deserializeFrom(buffer);
+        return this->m_val.deserializeTo(buffer);
     }
 
     U32 Time::getSeconds() const {
