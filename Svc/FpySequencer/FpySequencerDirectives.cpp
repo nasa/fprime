@@ -570,6 +570,34 @@ DirectiveError FpySequencer::op_fptrunc() {
     this->push(static_cast<F32>(this->pop<F64>()));
     return DirectiveError::NO_ERROR;
 }
+DirectiveError FpySequencer::op_fptosi() {
+    if (this->m_runtime.stackSize < 8) {
+        return DirectiveError::STACK_UNDERFLOW;
+    }
+    this->push(static_cast<I64>(this->pop<F64>()));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_sitofp() {
+    if (this->m_runtime.stackSize < 8) {
+        return DirectiveError::STACK_UNDERFLOW;
+    }
+    this->push(static_cast<F64>(this->pop<I64>()));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_fptoui() {
+    if (this->m_runtime.stackSize < 8) {
+        return DirectiveError::STACK_UNDERFLOW;
+    }
+    this->push(static_cast<U64>(this->pop<F64>()));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_uitofp() {
+    if (this->m_runtime.stackSize < 8) {
+        return DirectiveError::STACK_UNDERFLOW;
+    }
+    this->push(static_cast<F64>(this->pop<U64>()));
+    return DirectiveError::NO_ERROR;
+}
 Signal FpySequencer::stackOp_directiveHandler(const FpySequencer_StackOpDirective& directive,
                                               DirectiveError& error) {
     // coding error, should not have gotten to this binary reg op handler
