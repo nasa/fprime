@@ -1390,8 +1390,127 @@ class RedBlackTreeSetOrMapImpl final {
                 //
                 done = true;
             } else {
-                // TODO
-                FW_ASSERT(0);
+                // The leaf-augmented subtree rooted at parent has this shape.
+                //
+                //                                 BBBBBBBBBBBBBBBBBBB
+                //                                B                   B
+                //                                B    K6 (parent)    B
+                //                                B                   B
+                //                                 BBBBBBBBBBBBBBBBBBB
+                //                                    /           \
+                //                                   /             \
+                //                                  V               V
+                //                     BBBBBBBBBBBBBBBBB          ----------------------
+                //                    B                 B         |                    |
+                //                    B   K2 (sibling)  B         | black height i + 1 |
+                //                    B                 B         |                    |
+                //                     BBBBBBBBBBBBBBBBB          ----------------------
+                //                         /       \
+                //                        /         \
+                //                       V           V
+                //     BBBBBBBBBBBBBBBBBBBB         BBBBBBBBBBBBBBBBBBBB
+                //    B                    B       B                    B
+                //    B K1 (distantNephew) B       B  K4 (closeNephew)  B
+                //    B                    B       B                    B
+                //     BBBBBBBBBBBBBBBBBBBB         BBBBBBBBBBBBBBBBBBBB
+                //           |      |                     |      |
+                //           |      |                     |      |
+                //           V      V                     V      V
+                //   ------------------------     ------------------------
+                //   |                      |     |                      |
+                //   |    black height i    |     |    black height i    |
+                //   |                      |     |                      |
+                //   ------------------------     ------------------------
+                //
+                this->m_nodes[sibling].m_color = Color::RED;
+                node = parent;
+                parent = this->m_nodes[node].m_parent;
+                if (parent == Node::NONE) {
+                    // The entire leaf-augmented tree has this shape.
+                    // The entire tree is a valid red-black tree.
+                    //
+                    //                                 BBBBBBBBBBBBBBBBBBB
+                    //                                B                   B
+                    //                                B     K6 (node)     B
+                    //                                B                   B
+                    //                                 BBBBBBBBBBBBBBBBBBB
+                    //                                    /           \
+                    //                                   /             \
+                    //                                  V               V
+                    //                     RRRRRRRRRRRRRRRRR          ----------------------
+                    //                    R                 R         |                    |
+                    //                    R   K2 (sibling)  R         | black height i + 1 |
+                    //                    R                 R         |                    |
+                    //                     RRRRRRRRRRRRRRRRR          ----------------------
+                    //                         /       \
+                    //                        /         \
+                    //                       V           V
+                    //     BBBBBBBBBBBBBBBBBBBB         BBBBBBBBBBBBBBBBBBBB
+                    //    B                    B       B                    B
+                    //    B K1 (distantNephew) B       B  K4 (closeNephew)  B
+                    //    B                    B       B                    B
+                    //     BBBBBBBBBBBBBBBBBBBB         BBBBBBBBBBBBBBBBBBBB
+                    //           |      |                     |      |
+                    //           |      |                     |      |
+                    //           V      V                     V      V
+                    //   ------------------------     ------------------------
+                    //   |                      |     |                      |
+                    //   |    black height i    |     |    black height i    |
+                    //   |                      |     |                      |
+                    //   ------------------------     ------------------------
+                    //
+                    done = true;
+                }
+                else {
+                    direction = getParentDirection(node);
+                    oppositeDirection = Node::getOppositeDirection(direction);
+                    // The leaf-augmented subtree rooted at parent has this 
+                    // shape, assuming that direction == RIGHT:
+                    //
+                    //                         ??????????????
+                    //                        ?              ?
+                    //                        ?    parent    ?
+                    //                        ?              ?
+                    //                         ??????????????
+                    //                            /      \
+                    //                           /        \
+                    //                          V          V
+                    //       ------------------------     BBBBBBBBBBBBBBBBBBB
+                    //       |                      |    B                   B
+                    //       |  black height i + 3  |    B     K6 (node)     B
+                    //       |                      |    B                   B
+                    //       ------------------------     BBBBBBBBBBBBBBBBBBB
+                    //                                       /           \
+                    //                                      /             \
+                    //                                     V               V
+                    //                        RRRRRRRRRRRRRRRRR          ----------------------
+                    //                       R                 R         |                    |
+                    //                       R   K2 (sibling)  R         | black height i + 1 |
+                    //                       R                 R         |                    |
+                    //                        RRRRRRRRRRRRRRRRR          ----------------------
+                    //                            /       \
+                    //                           /         \
+                    //                          V           V
+                    //        BBBBBBBBBBBBBBBBBBBB         BBBBBBBBBBBBBBBBBBBB
+                    //       B                    B       B                    B
+                    //       B K1 (distantNephew) B       B  K4 (closeNephew)  B
+                    //       B                    B       B                    B
+                    //        BBBBBBBBBBBBBBBBBBBB         BBBBBBBBBBBBBBBBBBBB
+                    //              |      |                     |      |
+                    //              |      |                     |      |
+                    //              V      V                     V      V
+                    //      ------------------------     ------------------------
+                    //      |                      |     |                      |
+                    //      |    black height i    |     |    black height i    |
+                    //      |                      |     |                      |
+                    //      ------------------------     ------------------------
+                    //
+                    // There is a black height violation at parent because the 
+                    // left subtree of parent has black height i + 3, and the 
+                    // right subtree has black height i + 2. So we need at 
+                    // least one more loop iteration. After incrementing i, the 
+                    // invariant at the top of the loop is satisfied.
+                }
             }
             if (done) {
                 break;
