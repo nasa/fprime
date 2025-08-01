@@ -264,12 +264,18 @@ class SoakMonitorArgumentParser(ParserBase):
 
     def handle_arguments(self, args, **kwargs):
         """Handle arguments as parsed"""
-        # Validate logs directory exists
-        if args.logs is None or not args.logs.exists():
-            raise ValueError(f"ComLogger logs directory must exist: {args.logs}")
-        
-        if not args.logs.is_dir():
-            raise ValueError(f"ComLogger logs path must be a directory: {args.logs}")
+        # Convert to Path object explicitly (even though type=Path is specified, it might still be a string)
+        if hasattr(args, 'logs') and args.logs is not None:
+            args.logs = Path(args.logs)
+            
+            # Validate logs directory exists
+            if not args.logs.exists():
+                raise ValueError(f"ComLogger logs directory must exist: {args.logs}")
+            
+            if not args.logs.is_dir():
+                raise ValueError(f"ComLogger logs path must be a directory: {args.logs}")
+        else:
+            raise ValueError("ComLogger logs argument is required")
         
         return args
 
