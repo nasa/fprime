@@ -207,18 +207,18 @@ def process_logs(pipeline, dictionary_path, logs_path, results):
         print("No ComLogger .com files found!")
         return
     
-    # Use the modern pipeline from StandardPipelineParser (no manual config!)
+    # Use the modern pipeline from StandardPipelineParser 
     # But create old-style DataHandler consumers
     event_consumer = EventCollector(results)
     channel_consumer = ChannelCollector(results)
     
-    # Register consumers using the standard coders approach (like old log_processor)
+    # Register consumers using the standard coders approach
     pipeline.coders.register_event_consumer(event_consumer)
     pipeline.coders.register_channel_consumer(channel_consumer)
     
     print("Consumers registered, processing ComLogger files...")
     
-    # Process each ComLogger file by reading binary data (exactly like old log_processor)
+    # Process each ComLogger file by reading binary data
     for log_file in log_files:
         try:
             with open(log_file, 'rb') as file_handle:
