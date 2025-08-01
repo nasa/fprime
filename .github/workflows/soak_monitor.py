@@ -1,65 +1,100 @@
 #!/usr/bin/env python3
 '''
 Soak Test Monitor - Simplified monitoring for F' soak testing
-Checks for health warnings, buffer allocation trends, and system resource trends
+Analyzes ComLogger .com files for health warnings and resource issues
 '''
 
 import os
 import re
 import json
-import argparse
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 from typing import Dict, Tuple, Any
 from fprime_gds.executables.cli import ParserBase, StandardPipelineParser
 from fprime_gds.common.handlers import DataHandler
-from fprime_gds.common.pipeline.standard import StandardPipeline
-from fprime_gds.common.utils.config_manager import ConfigManager
 
 
-class SoakMonitor:
-    def __init__(self, state_file="soak_monitor_state.json"):
-        self.state_file = state_file
-        self.state = self.load_state()
-        self.current_run_data = {
-            'timestamp': datetime.now().isoformat(),
-            'health_issues': [],
-            'buffer_stats': {},
-            'system_resources': {},
-            'alerts': []
-        }
+class SoakAnalysisResults:
+    """Container for soak test analysis results"""
+    def __init__(self):
+        self.health_issues = []
+        self.buffer_metrics = {}
+        self.system_resources = {}
+        self.alerts = []
+        self.timestamp = datetime.now().isoformat()
+    
+    def add_alert(self, alert_message):
+        """Add an alert to the results"""
+        self.alerts.append(alert_message)
         
-    def load_state(self):
-        """Load previous monitoring state"""
-        if os.path.exists(self.state_file):
-            with open(self.state_file, 'r') as f:
-                return json.load(f)
-        return {
-            'last_run_timestamp': None,
-            'last_processed_times': {},
-            'buffer_history': [],
-            'resource_history': [],
-            'health_history': []
-        }
+    def has_critical_issues(self):
+        """Check if there are any critical issues that should fail the test"""
+        return bool(self.alerts) or any('FATAL' in issue.get('severity', '') for issue in self.health_issues)
     
-    def save_state(self):
-        """Save current monitoring state"""
-        with open(self.state_file, 'w') as f:
-            json.dump(self.state, f, indent=2)
+    def analyze_trends(self):
+        """Analyze trends over time within the ComLogger data"""
+        print("\n📊 ANALYZING TRENDS ACROSS MULTIPLE RUNS:")
+        
+        # Analyze buffer trends
+        for metric_name, readings in self.buffer_metrics.items():
+            if len(readings) > 10:  # Need sufficient data points
+                self._print_data_range(metric_name, readings, "Buffer")
+                trend_alert = self._detect_upward_trend(metric_name, readings, "Buffer")
+                if trend_alert:
+                    self.add_alert(trend_alert)
+        
+        # Analyze resource trends  
+        for metric_name, readings in self.system_resources.items():
+            if len(readings) > 10:  # Need sufficient data points
+                self._print_data_range(metric_name, readings, "Resource")
+                trend_alert = self._detect_upward_trend(metric_name, readings, "Resource")
+                if trend_alert:
+                    self.add_alert(trend_alert)
     
-    def get_unix_time_from_raw_time(self, raw_time):
-        """Extract unix timestamp from raw_time format (d(d)-timestamp:microsec)"""
-        match = re.search(r'\d+\(0\)-(\d+):\d+', raw_time)
-        if match:
-            return int(match.group(1))
+    def _print_data_range(self, metric_name, readings, metric_type):
+        """Print the time range of data for this metric"""
+        if not readings:
+            return
+        sorted_readings = sorted(readings, key=lambda x: x['timestamp'])
+        earliest = sorted_readings[0]['timestamp']
+        latest = sorted_readings[-1]['timestamp']
+        print(f"  {metric_type} {metric_name}: {len(readings)} readings from {earliest} to {latest}")
+    
+    def _detect_upward_trend(self, metric_name, readings, metric_type):
+        """Detect if a metric is trending upward over time"""
+        if len(readings) < 10:
+            return None
+            
+        # Sort by timestamp to ensure chronological order
+        sorted_readings = sorted(readings, key=lambda x: x['timestamp'])
+        
+        # Compare first 20% vs last 20% of data
+        early_count = max(2, len(sorted_readings) // 5)
+        late_count = max(2, len(sorted_readings) // 5)
+        
+        early_values = [r['value'] for r in sorted_readings[:early_count]]
+        late_values = [r['value'] for r in sorted_readings[-late_count:]]
+        
+        early_avg = sum(early_values) / len(early_values)
+        late_avg = sum(late_values) / len(late_values)
+        
+        # Check for significant upward trend
+        if early_avg > 0 and late_avg > early_avg:
+            growth_rate = ((late_avg - early_avg) / early_avg) * 100
+            
+            # Alert thresholds
+            if metric_type == "Buffer" and growth_rate > 15:  # 15% buffer growth
+                return f"{metric_type} trending up: {metric_name} increased {growth_rate:.1f}% over session"
+            elif metric_type == "Resource" and growth_rate > 25:  # 25% resource growth  
+                return f"{metric_type} trending up: {metric_name} increased {growth_rate:.1f}% over session"
+                
         return None
 
 
 class HealthMonitor(DataHandler):
     """Monitor for health warnings and fatals"""
-    def __init__(self, monitor):
-        self.monitor = monitor
-        self.last_processed_time = monitor.state.get('last_processed_times', {}).get('events', 0)
+    def __init__(self, results):
+        self.results = results
         
     def data_callback(self, data, sender=None):
         """Process event data for health issues"""
@@ -71,11 +106,6 @@ class HealthMonitor(DataHandler):
         event_name = item[4]
         severity = item[5]
         description = item[6] if len(item) > 6 else ""
-        
-        # Get timestamp
-        timestamp = self.monitor.get_unix_time_from_raw_time(raw_time)
-        if not timestamp or timestamp <= self.last_processed_time:
-            return
             
         # Check for health issues
         if 'FATAL' in severity or 'WARNING' in severity or 'HLTH_' in event_name:
@@ -85,21 +115,19 @@ class HealthMonitor(DataHandler):
                 'severity': severity,
                 'description': description
             }
-            self.monitor.current_run_data['health_issues'].append(issue)
+            self.results.health_issues.append(issue)
             
             # Add to alerts if critical
             if 'FATAL' in severity:
-                self.monitor.current_run_data['alerts'].append(f"FATAL: {event_name} - {description}")
+                self.results.add_alert(f"FATAL: {event_name} - {description}")
             elif 'WARNING' in severity:
-                self.monitor.current_run_data['alerts'].append(f"WARNING: {event_name} - {description}")
+                self.results.add_alert(f"WARNING: {event_name} - {description}")
 
 
 class ResourceMonitor(DataHandler):
     """Monitor for buffer and system resource telemetry"""
-    def __init__(self, monitor):
-        self.monitor = monitor
-        self.last_processed_time = monitor.state.get('last_processed_times', {}).get('telemetry', 0)
-        self.latest_values = {}
+    def __init__(self, results):
+        self.results = results
         
     def data_callback(self, data, sender=None):
         """Process telemetry data for resources and buffers"""
@@ -110,84 +138,60 @@ class ResourceMonitor(DataHandler):
         raw_time = item[0]
         ch_name = item[3]
         ch_val = item[4]
-        
-        # Get timestamp
-        timestamp = self.monitor.get_unix_time_from_raw_time(raw_time)
-        if not timestamp or timestamp <= self.last_processed_time:
-            return
             
         # Track buffer manager stats
         if 'BufferManager' in ch_name or 'bufferManager' in ch_name:
-            if ch_name not in self.monitor.current_run_data['buffer_stats']:
-                self.monitor.current_run_data['buffer_stats'][ch_name] = []
+            if ch_name not in self.results.buffer_metrics:
+                self.results.buffer_metrics[ch_name] = []
             
             # Parse numeric value
             try:
                 value = int(ch_val.split()[0]) if ch_val.split() else 0
-                self.monitor.current_run_data['buffer_stats'][ch_name].append({
+                self.results.buffer_metrics[ch_name].append({
                     'timestamp': raw_time,
                     'value': value
                 })
-                self.latest_values[ch_name] = value
+                
+                # Check for concerning buffer levels
+                if value == 0:
+                    self.results.add_alert(f"Buffer exhaustion detected: {ch_name} = 0")
+                    
             except (ValueError, IndexError):
                 pass
                 
         # Track system resources
         elif 'systemResources' in ch_name:
-            if ch_name not in self.monitor.current_run_data['system_resources']:
-                self.monitor.current_run_data['system_resources'][ch_name] = []
+            if ch_name not in self.results.system_resources:
+                self.results.system_resources[ch_name] = []
                 
             # Parse numeric value
             try:
                 value_str = ch_val.split()[0]
                 value = float(value_str.replace(',', ''))
-                self.monitor.current_run_data['system_resources'][ch_name].append({
+                self.results.system_resources[ch_name].append({
                     'timestamp': raw_time,
                     'value': value
                 })
-                self.latest_values[ch_name] = value
+                
+                # Check for concerning resource levels (example thresholds)
+                if 'cpu' in ch_name.lower() and value > 90.0:
+                    self.results.add_alert(f"High CPU usage detected: {ch_name} = {value}%")
+                elif 'memory' in ch_name.lower() and value > 90.0:
+                    self.results.add_alert(f"High memory usage detected: {ch_name} = {value}%")
+                    
             except (ValueError, IndexError):
                 pass
 
 
-def analyze_trends(current_data, history, metric_name):
-    """Analyze if metrics are trending upward"""
-    alerts = []
-    
-    if len(history) < 2:
-        return alerts
-        
-    # Get latest values from current run
-    latest_values = {}
-    for metric, readings in current_data.items():
-        if readings:
-            latest_values[metric] = readings[-1]['value']
-    
-    # Compare with previous runs
-    if len(history) >= 3:  # Need at least 3 data points for trend
-        for metric, current_value in latest_values.items():
-            if metric in history[-1] and metric in history[-2]:
-                prev_value = history[-1].get(metric, 0)
-                prev_prev_value = history[-2].get(metric, 0)
-                
-                # Check for consistent upward trend
-                if current_value > prev_value > prev_prev_value:
-                    increase_rate = ((current_value - prev_prev_value) / prev_prev_value * 100) if prev_prev_value > 0 else 0
-                    if increase_rate > 10:  # More than 10% increase over 3 runs
-                        alerts.append(f"{metric_name} trending up: {metric} increased {increase_rate:.1f}% over last 3 runs")
-    
-    return alerts
-
-
-def process_logs(pipeline, dictionary_path, logs_path, monitor):
+def process_logs(pipeline, dictionary_path, logs_path, results):
     """Process log files for monitoring data"""
     # Setup GDS pipeline
     pipeline.config.set('framing', 'use_key', 'False')
     pipeline.config.set('types', 'msg_len', 'U16')
     
     # Register monitors
-    health_monitor = HealthMonitor(monitor)
-    resource_monitor = ResourceMonitor(monitor)
+    health_monitor = HealthMonitor(results)
+    resource_monitor = ResourceMonitor(results)
     
     pipeline.coders.register_event_consumer(health_monitor)
     pipeline.coders.register_channel_consumer(resource_monitor)
@@ -213,11 +217,6 @@ def process_logs(pipeline, dictionary_path, logs_path, monitor):
         except Exception as e:
             print(f"Error processing {log_file}: {e}")
     
-    # Update last processed timestamps
-    current_time = int(datetime.now().timestamp())
-    monitor.state['last_processed_times']['events'] = current_time
-    monitor.state['last_processed_times']['telemetry'] = current_time
-    
     # Cleanup
     if hasattr(pipeline.files, 'uplinker') and pipeline.files.uplinker:
         pipeline.files.uplinker.exit()
@@ -227,7 +226,7 @@ class SoakMonitorArgumentParser(ParserBase):
     """ Parser for F' Soak Monitor additional arguments
     
     This class provides functionality to parse command line arguments for soak monitoring
-    functionality including ComLogger files location, state file, and report output.
+    functionality including ComLogger files location.
 
     Parsers should:
     1. Set a DESCRIPTION for string used in help text,
@@ -235,7 +234,7 @@ class SoakMonitorArgumentParser(ParserBase):
     3. Implement handle_arguments() to handle the arguments as parsed
     """
 
-    DESCRIPTION = "F' Soak Test Monitor - Analyzes ComLogger files for health, buffer, and resource trends"
+    DESCRIPTION = "F' Soak Test Monitor - Analyzes ComLogger files for health, buffer, and resource issues"
 
     def get_arguments(self) -> Dict[Tuple[str, ...], Dict[str, Any]]:
         """Arguments for soak monitoring"""
@@ -245,19 +244,6 @@ class SoakMonitorArgumentParser(ParserBase):
                 "required": True,
                 "type": Path,
                 "help": "Path to directory containing ComLogger .com files to analyze.",
-            },
-            ("--state-file",): {
-                "action": "store",
-                "default": "soak_monitor_state.json",
-                "type": Path,
-                "help": "Path to monitoring state file for tracking trends over time.",
-            },
-            ("--report-file",): {
-                "action": "store",
-                "default": None,
-                "required": False,
-                "type": Path,
-                "help": "Path to save JSON monitoring report file (optional).",
             }
         }
 
@@ -269,15 +255,6 @@ class SoakMonitorArgumentParser(ParserBase):
         
         if not args.logs.is_dir():
             raise ValueError(f"ComLogger logs path must be a directory: {args.logs}")
-        
-        # Ensure state file directory exists
-        args.state_file.parent.mkdir(parents=True, exist_ok=True)
-        
-        # Ensure report file directory exists if specified
-        if args.report_file:
-            if args.report_file.suffix != ".json":
-                raise ValueError("Report file must have .json extension")
-            args.report_file.parent.mkdir(parents=True, exist_ok=True)
         
         return args
 
@@ -294,90 +271,74 @@ def main():
     if not dictionary_path.exists():
         raise ValueError(f"Dictionary file does not exist: {args.dictionary}")
     
-    # Initialize monitor
-    monitor = SoakMonitor(args.state_file)
+    # Initialize results container
+    results = SoakAnalysisResults()
     
     print("="*50)
     print("F' SOAK TEST MONITOR")
     print("="*50)
-    print("Analyzes ComLogger .com files (binary F' packets)")
+    print("Analyzes ComLogger .com files for health and resource issues")
     print("Note: This does NOT analyze GDS text logs")
     print("-"*50)
     print(f"Dictionary: {args.dictionary}")
     print(f"ComLogger files directory: {args.logs}")
-    print(f"State file: {args.state_file}")
-    print(f"Last run: {monitor.state.get('last_run_timestamp', 'Never')}")
+    print(f"Analysis timestamp: {results.timestamp}")
     print("-"*50)
     
     # Process logs
-    process_logs(pipeline, args.dictionary, args.logs, monitor)
+    process_logs(pipeline, args.dictionary, args.logs, results)
     
-    # Analyze trends
-    buffer_alerts = analyze_trends(
-        monitor.current_run_data['buffer_stats'],
-        monitor.state['buffer_history'],
-        "Buffer allocation"
-    )
-    
-    resource_alerts = analyze_trends(
-        monitor.current_run_data['system_resources'],
-        monitor.state['resource_history'],
-        "System resource"
-    )
-    
-    monitor.current_run_data['alerts'].extend(buffer_alerts)
-    monitor.current_run_data['alerts'].extend(resource_alerts)
-    
-    # Update history
-    if monitor.current_run_data['buffer_stats']:
-        buffer_summary = {k: v[-1]['value'] if v else 0 for k, v in monitor.current_run_data['buffer_stats'].items()}
-        monitor.state['buffer_history'].append(buffer_summary)
-        
-    if monitor.current_run_data['system_resources']:
-        resource_summary = {k: v[-1]['value'] if v else 0 for k, v in monitor.current_run_data['system_resources'].items()}
-        monitor.state['resource_history'].append(resource_summary)
-    
-    if monitor.current_run_data['health_issues']:
-        monitor.state['health_history'].extend(monitor.current_run_data['health_issues'])
-    
-    # Keep only last 10 runs in history
-    monitor.state['buffer_history'] = monitor.state['buffer_history'][-10:]
-    monitor.state['resource_history'] = monitor.state['resource_history'][-10:]
-    monitor.state['health_history'] = monitor.state['health_history'][-100:]  # Keep more health history
-    
-    monitor.state['last_run_timestamp'] = monitor.current_run_data['timestamp']
+    # Analyze trends within the ComLogger data
+    results.analyze_trends()
     
     # Print results
     print("\nMONITORING RESULTS:")
     print("-"*50)
-    print(f"Health Issues Found: {len(monitor.current_run_data['health_issues'])}")
-    print(f"Buffer Metrics Tracked: {len(monitor.current_run_data['buffer_stats'])}")
-    print(f"System Resources Tracked: {len(monitor.current_run_data['system_resources'])}")
-    print(f"Alerts Generated: {len(monitor.current_run_data['alerts'])}")
+    print(f"Health Issues Found: {len(results.health_issues)}")
+    print(f"Buffer Metrics Tracked: {len(results.buffer_metrics)}")
+    print(f"System Resources Tracked: {len(results.system_resources)}")
+    print(f"Alerts Generated: {len(results.alerts)}")
     
-    if monitor.current_run_data['alerts']:
+    # Show data ranges for trend analysis
+    total_readings = sum(len(readings) for readings in results.buffer_metrics.values())
+    total_readings += sum(len(readings) for readings in results.system_resources.values())
+    if total_readings > 0:
+        print(f"Total Data Points Analyzed: {total_readings}")
+    
+    if results.alerts:
         print("\nALERTS:")
-        for alert in monitor.current_run_data['alerts']:
-            print(f"  ⚠️  {alert}")
+        for alert in results.alerts:
+            if "trending up" in alert:
+                print(f"  📈 {alert}")
+            else:
+                print(f"  ⚠️  {alert}")
     
-    if monitor.current_run_data['health_issues']:
+    if results.health_issues:
         print("\nHEALTH ISSUES:")
-        for issue in monitor.current_run_data['health_issues']:
+        for issue in results.health_issues:
             print(f"  🔥 {issue['severity']}: {issue['event_name']}")
     
-    # Save state and report
-    monitor.save_state()
+    # Show buffer status summary
+    if results.buffer_metrics:
+        print("\nBUFFER STATUS:")
+        for metric_name, readings in results.buffer_metrics.items():
+            if readings:
+                latest_value = readings[-1]['value']
+                print(f"  📊 {metric_name}: {latest_value}")
     
-    if args.report_file:
-        with open(args.report_file, 'w') as f:
-            json.dump(monitor.current_run_data, f, indent=2)
-        print(f"\nReport saved to: {args.report_file}")
+    # Show resource status summary  
+    if results.system_resources:
+        print("\nSYSTEM RESOURCES:")
+        for metric_name, readings in results.system_resources.items():
+            if readings:
+                latest_value = readings[-1]['value']
+                print(f"  📊 {metric_name}: {latest_value}")
     
     print("="*50)
     
-    # Exit with error code if there are alerts
-    if monitor.current_run_data['alerts'] or any('FATAL' in issue['severity'] for issue in monitor.current_run_data['health_issues']):
-        print("⚠️  EXITING WITH ERROR DUE TO ALERTS/FATALS")
+    # Exit with error code if there are critical issues
+    if results.has_critical_issues():
+        print("⚠️  EXITING WITH ERROR DUE TO CRITICAL ISSUES")
         exit(1)
     
     print("MONITORING COMPLETED SUCCESSFULLY")

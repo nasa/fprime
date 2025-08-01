@@ -133,8 +133,9 @@ jobs:
             sudo chmod +x ${INSTALL_DIR}/monitoring/soak_monitor.py
           fi
 
-          # Create initial empty monitoring state file to avoid first-run artifact errors
-          echo '{"last_run_timestamp": null, "last_processed_times": {}, "buffer_history": [], "resource_history": [], "health_history": []}' | sudo tee ${INSTALL_DIR}/monitoring/soak_monitor_state.json > /dev/null
+          # Clean ComLogger files directory to start fresh monitoring
+          echo "Cleaning ComLogger files directory for fresh monitoring session..."
+          sudo rm -rf ${INSTALL_DIR}/ComLoggerFiles/*
 
           # Make binary executable
           sudo chmod +x ${INSTALL_DIR}/bin/LedBlinker
@@ -200,11 +201,3 @@ jobs:
           echo "Checking final service status..."
           sudo systemctl status ${FSW_SERVICE_NAME} --no-pager -l -n 50
           sudo systemctl status ${GDS_SERVICE_NAME} --no-pager -l -n 150
-
-      - name: 'Upload Initial Monitoring State'
-        uses: actions/upload-artifact@v4
-        with:
-          name: ledblinker-monitoring-state
-          path: ${{ env.INSTALL_DIR }}/monitoring/soak_monitor_state.json
-          retention-days: 90
-          

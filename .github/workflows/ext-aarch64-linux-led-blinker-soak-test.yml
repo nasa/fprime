@@ -27,14 +27,6 @@ jobs:
     runs-on: [self-hosted, ARM64]
     steps:
       
-      - name: "Restore previous monitoring state"
-        uses: actions/download-artifact@v4
-        continue-on-error: true
-        with:
-          name: ledblinker-monitoring-state
-          path: ./previous-state
-        # This step will fail on the first run - that's expected and OK
-
       - name: "Run soak monitoring"
         run: |
           # Use the virtual environment created during setup
@@ -43,50 +35,18 @@ jobs:
           TEST_TIMESTAMP=$(date +%Y%m%d_%H%M%S)
           
           echo "=== Soak monitoring started at $(date) (${TEST_TIMESTAMP}) ==="
-          
-          # Restore previous state if available
-          if [ -f "./previous-state/soak_monitor_state.json" ]; then
-            echo "✅ Restoring previous monitoring state..."
-            sudo cp ./previous-state/soak_monitor_state.json ${INSTALL_DIR}/monitoring/
-            sudo chown fprime:fprime ${INSTALL_DIR}/monitoring/soak_monitor_state.json
-          else
-            echo "ℹ️  No previous monitoring state found - this is normal for the first run"
-            echo "   Starting fresh monitoring session..."
-          fi
+          echo "Analyzing all ComLogger .com files for health and resource issues..."
           
           # Run the soak monitor (analyzing ComLogger .com files)
-          echo "Running soak monitoring on ComLogger files..."
           cd ${INSTALL_DIR}/monitoring
           
           python3 soak_monitor.py \
             --dictionary ${INSTALL_DIR}/dict/LedBlinkerTopologyDictionary.json \
-            --logs ${INSTALL_DIR}/ComLoggerFiles \
-            --state-file ${INSTALL_DIR}/monitoring/soak_monitor_state.json \
-            --report-file ${INSTALL_DIR}/monitoring/soak_report_${TEST_TIMESTAMP}.json
+            --logs ${INSTALL_DIR}/ComLoggerFiles
           
           MONITOR_EXIT_CODE=$?
           
           echo "=== Soak monitoring completed at $(date) (${TEST_TIMESTAMP}) with exit code ${MONITOR_EXIT_CODE} ==="
-          
-          # Output monitoring results for job summary
-          if [ -f "${INSTALL_DIR}/monitoring/soak_report_${TEST_TIMESTAMP}.json" ]; then
-            echo "=== MONITORING RESULTS ==="
-            # Check if there are alerts in the JSON report
-            if grep -q '"alerts":' "${INSTALL_DIR}/monitoring/soak_report_${TEST_TIMESTAMP}.json" && ! grep -q '"alerts": \[\]' "${INSTALL_DIR}/monitoring/soak_report_${TEST_TIMESTAMP}.json"; then
-              echo "⚠️  MONITORING ALERTS DETECTED"
-              exit 1
-            else
-              echo "✅ No monitoring alerts detected"
-            fi
-          fi
-      
-      - name: 'Archive Monitoring State'
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: ledblinker-monitoring-state
-          path: ${{ env.INSTALL_DIR }}/monitoring/soak_monitor_state.json
-          retention-days: 90
 
   integration-test:
     name: "Integration Test"
