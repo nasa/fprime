@@ -10,7 +10,7 @@
 
 namespace Drv {
 
-  typedef TcpServerComponentImpl TcpServer;
+typedef TcpServerComponentImpl TcpServer;
 
 }
 

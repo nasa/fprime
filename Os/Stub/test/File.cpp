@@ -1,6 +1,6 @@
 #include "Os/Stub/test/File.hpp"
-#include "Os/File.hpp"
 #include <new>
+#include "Os/File.hpp"
 namespace Os {
 namespace Stub {
 namespace File {
@@ -27,7 +27,7 @@ void StaticData::setPositionResult(FwSizeType position) {
     StaticData::data.positionResult = position;
 }
 
-void StaticData::setReadResult(U8 *buffer, FwSizeType size) {
+void StaticData::setReadResult(U8* buffer, FwSizeType size) {
     StaticData::data.readResult = buffer;
     StaticData::data.readResultSize = size;
 }
@@ -36,7 +36,7 @@ void StaticData::setReadSize(FwSizeType size) {
     StaticData::data.readSizeResult = size;
 }
 
-void StaticData::setWriteResult(U8 *buffer, FwSizeType size) {
+void StaticData::setWriteResult(U8* buffer, FwSizeType size) {
     StaticData::data.writeResult = buffer;
     StaticData::data.writeResultSize = size;
 }
@@ -53,7 +53,7 @@ TestFile::~TestFile() {
     StaticData::data.lastCalled = StaticData::DESTRUCT_FN;
 }
 
-FileInterface::Status TestFile::open(const char *filepath, Mode open_mode, OverwriteType overwrite) {
+FileInterface::Status TestFile::open(const char* filepath, Mode open_mode, OverwriteType overwrite) {
     StaticData::data.openPath = filepath;
     StaticData::data.openMode = open_mode;
     StaticData::data.openOverwrite = overwrite;
@@ -97,7 +97,7 @@ FileInterface::Status TestFile::flush() {
     return StaticData::data.flushStatus;
 }
 
-FileInterface::Status TestFile::read(U8 *buffer, FwSizeType &size, WaitType wait) {
+FileInterface::Status TestFile::read(U8* buffer, FwSizeType& size, WaitType wait) {
     StaticData::data.readBuffer = buffer;
     StaticData::data.readSize = size;
     StaticData::data.readWait = wait;
@@ -105,7 +105,7 @@ FileInterface::Status TestFile::read(U8 *buffer, FwSizeType &size, WaitType wait
     // Copy read data if set
     if (nullptr != StaticData::data.readResult) {
         size = FW_MIN(size, StaticData::data.readResultSize - StaticData::data.pointer);
-        (void) ::memcpy(buffer, StaticData::data.readResult + StaticData::data.pointer, static_cast<size_t>(size));
+        (void)::memcpy(buffer, StaticData::data.readResult + StaticData::data.pointer, static_cast<size_t>(size));
         StaticData::data.pointer += size;
     } else {
         size = StaticData::data.readSizeResult;
@@ -113,7 +113,7 @@ FileInterface::Status TestFile::read(U8 *buffer, FwSizeType &size, WaitType wait
     return StaticData::data.readStatus;
 }
 
-FileInterface::Status TestFile::write(const U8* buffer, FwSizeType &size, WaitType wait) {
+FileInterface::Status TestFile::write(const U8* buffer, FwSizeType& size, WaitType wait) {
     StaticData::data.writeBuffer = buffer;
     StaticData::data.writeSize = size;
     StaticData::data.writeWait = wait;
@@ -121,7 +121,7 @@ FileInterface::Status TestFile::write(const U8* buffer, FwSizeType &size, WaitTy
     // Copy read data if set
     if (nullptr != StaticData::data.writeResult) {
         size = FW_MIN(size, StaticData::data.writeResultSize - StaticData::data.pointer);
-        (void) ::memcpy(StaticData::data.writeResult + StaticData::data.pointer, buffer, static_cast<size_t>(size));
+        (void)::memcpy(StaticData::data.writeResult + StaticData::data.pointer, buffer, static_cast<size_t>(size));
         StaticData::data.pointer += size;
     } else {
         size = StaticData::data.writeSizeResult;
@@ -133,7 +133,7 @@ FileHandle* TestFile::getHandle() {
     return &this->m_handle;
 }
 
-} // namespace Test
-} // namespace File
-} // namespace Stub
-} // namespace Os
+}  // namespace Test
+}  // namespace File
+}  // namespace Stub
+}  // namespace Os

@@ -88,7 +88,7 @@ FwSizeType Queue::getMessageHighWaterMark() const {
     return this->m_delegate.getMessageHighWaterMark();
 }
 
-QueueHandle* Queue::getHandle(){
+QueueHandle* Queue::getHandle() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<const QueueInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate.getHandle();
 }

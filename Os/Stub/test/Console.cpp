@@ -35,7 +35,7 @@ ConsoleHandle* TestConsole::getHandle() {
     return &this->m_handle;
 }
 
-} // namespace Test
-} // namespace Console
-} // namespace Stub
-} // namespace Os
+}  // namespace Test
+}  // namespace Console
+}  // namespace Stub
+}  // namespace Os

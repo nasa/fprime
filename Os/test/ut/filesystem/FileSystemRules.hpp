@@ -21,11 +21,11 @@ struct DirectoryExists : public STest::Rule<Os::Test::FileSystem::Tester> {
     // ----------------------------------------------------------------------
 
     //! Precondition
-    bool precondition(const Os::Test::FileSystem::Tester &state  //!< The test state
+    bool precondition(const Os::Test::FileSystem::Tester& state  //!< The test state
     );
 
     //! Action
-    void action(Os::Test::FileSystem::Tester &state  //!< The test state
+    void action(Os::Test::FileSystem::Tester& state  //!< The test state
     );
 };
 
@@ -34,8 +34,8 @@ struct DirectoryExists : public STest::Rule<Os::Test::FileSystem::Tester> {
 // ------------------------------------------------------------------------------------------------------
 struct FileExists : public STest::Rule<Os::Test::FileSystem::Tester> {
     FileExists();
-    bool precondition(const Os::Test::FileSystem::Tester &state);
-    void action(Os::Test::FileSystem::Tester &state);
+    bool precondition(const Os::Test::FileSystem::Tester& state);
+    void action(Os::Test::FileSystem::Tester& state);
 };
 
 // ------------------------------------------------------------------------------------------------------
@@ -43,8 +43,8 @@ struct FileExists : public STest::Rule<Os::Test::FileSystem::Tester> {
 // ------------------------------------------------------------------------------------------------------
 struct PathNotExists : public STest::Rule<Os::Test::FileSystem::Tester> {
     PathNotExists();
-    bool precondition(const Os::Test::FileSystem::Tester &state);
-    void action(Os::Test::FileSystem::Tester &state);
+    bool precondition(const Os::Test::FileSystem::Tester& state);
+    void action(Os::Test::FileSystem::Tester& state);
 };
 
 // ------------------------------------------------------------------------------------------------------
@@ -52,8 +52,8 @@ struct PathNotExists : public STest::Rule<Os::Test::FileSystem::Tester> {
 // ------------------------------------------------------------------------------------------------------
 struct RemoveFile : public STest::Rule<Os::Test::FileSystem::Tester> {
     RemoveFile();
-    bool precondition(const Os::Test::FileSystem::Tester &state);
-    void action(Os::Test::FileSystem::Tester &state);
+    bool precondition(const Os::Test::FileSystem::Tester& state);
+    void action(Os::Test::FileSystem::Tester& state);
 };
 
 // ------------------------------------------------------------------------------------------------------
@@ -61,8 +61,8 @@ struct RemoveFile : public STest::Rule<Os::Test::FileSystem::Tester> {
 // ------------------------------------------------------------------------------------------------------
 struct TouchFile : public STest::Rule<Os::Test::FileSystem::Tester> {
     TouchFile();
-    bool precondition(const Os::Test::FileSystem::Tester &state);
-    void action(Os::Test::FileSystem::Tester &state);
+    bool precondition(const Os::Test::FileSystem::Tester& state);
+    void action(Os::Test::FileSystem::Tester& state);
 };
 
 // ------------------------------------------------------------------------------------------------------
@@ -70,8 +70,8 @@ struct TouchFile : public STest::Rule<Os::Test::FileSystem::Tester> {
 // ------------------------------------------------------------------------------------------------------
 struct RemoveDirectory : public STest::Rule<Os::Test::FileSystem::Tester> {
     RemoveDirectory();
-    bool precondition(const Os::Test::FileSystem::Tester &state);
-    void action(Os::Test::FileSystem::Tester &state);
+    bool precondition(const Os::Test::FileSystem::Tester& state);
+    void action(Os::Test::FileSystem::Tester& state);
 };
 
 // ------------------------------------------------------------------------------------------------------
@@ -79,8 +79,8 @@ struct RemoveDirectory : public STest::Rule<Os::Test::FileSystem::Tester> {
 // ------------------------------------------------------------------------------------------------------
 struct CreateDirectory : public STest::Rule<Os::Test::FileSystem::Tester> {
     CreateDirectory();
-    bool precondition(const Os::Test::FileSystem::Tester &state);
-    void action(Os::Test::FileSystem::Tester &state);
+    bool precondition(const Os::Test::FileSystem::Tester& state);
+    void action(Os::Test::FileSystem::Tester& state);
 };
 
 // ------------------------------------------------------------------------------------------------------
@@ -88,8 +88,8 @@ struct CreateDirectory : public STest::Rule<Os::Test::FileSystem::Tester> {
 // ------------------------------------------------------------------------------------------------------
 struct RenameFile : public STest::Rule<Os::Test::FileSystem::Tester> {
     RenameFile();
-    bool precondition(const Os::Test::FileSystem::Tester &state);
-    void action(Os::Test::FileSystem::Tester &state);
+    bool precondition(const Os::Test::FileSystem::Tester& state);
+    void action(Os::Test::FileSystem::Tester& state);
 };
 
 // ------------------------------------------------------------------------------------------------------
@@ -97,8 +97,8 @@ struct RenameFile : public STest::Rule<Os::Test::FileSystem::Tester> {
 // ------------------------------------------------------------------------------------------------------
 struct MoveFile : public STest::Rule<Os::Test::FileSystem::Tester> {
     MoveFile();
-    bool precondition(const Os::Test::FileSystem::Tester &state);
-    void action(Os::Test::FileSystem::Tester &state);
+    bool precondition(const Os::Test::FileSystem::Tester& state);
+    void action(Os::Test::FileSystem::Tester& state);
 };
 
 // ------------------------------------------------------------------------------------------------------
@@ -106,8 +106,8 @@ struct MoveFile : public STest::Rule<Os::Test::FileSystem::Tester> {
 // ------------------------------------------------------------------------------------------------------
 struct CopyFile : public STest::Rule<Os::Test::FileSystem::Tester> {
     CopyFile();
-    bool precondition(const Os::Test::FileSystem::Tester &state);
-    void action(Os::Test::FileSystem::Tester &state);
+    bool precondition(const Os::Test::FileSystem::Tester& state);
+    void action(Os::Test::FileSystem::Tester& state);
 };
 
 // ------------------------------------------------------------------------------------------------------
@@ -115,8 +115,8 @@ struct CopyFile : public STest::Rule<Os::Test::FileSystem::Tester> {
 // ------------------------------------------------------------------------------------------------------
 struct AppendFile : public STest::Rule<Os::Test::FileSystem::Tester> {
     AppendFile();
-    bool precondition(const Os::Test::FileSystem::Tester &state);
-    void action(Os::Test::FileSystem::Tester &state);
+    bool precondition(const Os::Test::FileSystem::Tester& state);
+    void action(Os::Test::FileSystem::Tester& state);
 };
 
 // ------------------------------------------------------------------------------------------------------
@@ -124,8 +124,8 @@ struct AppendFile : public STest::Rule<Os::Test::FileSystem::Tester> {
 // ------------------------------------------------------------------------------------------------------
 struct AppendToNewFile : public STest::Rule<Os::Test::FileSystem::Tester> {
     AppendToNewFile();
-    bool precondition(const Os::Test::FileSystem::Tester &state);
-    void action(Os::Test::FileSystem::Tester &state);
+    bool precondition(const Os::Test::FileSystem::Tester& state);
+    void action(Os::Test::FileSystem::Tester& state);
 };
 
 // ------------------------------------------------------------------------------------------------------
@@ -133,8 +133,8 @@ struct AppendToNewFile : public STest::Rule<Os::Test::FileSystem::Tester> {
 // ------------------------------------------------------------------------------------------------------
 struct GetFileSize : public STest::Rule<Os::Test::FileSystem::Tester> {
     GetFileSize();
-    bool precondition(const Os::Test::FileSystem::Tester &state);
-    void action(Os::Test::FileSystem::Tester &state);
+    bool precondition(const Os::Test::FileSystem::Tester& state);
+    void action(Os::Test::FileSystem::Tester& state);
 };
 
 // ------------------------------------------------------------------------------------------------------
@@ -142,8 +142,8 @@ struct GetFileSize : public STest::Rule<Os::Test::FileSystem::Tester> {
 // ------------------------------------------------------------------------------------------------------
 struct GetFreeSpace : public STest::Rule<Os::Test::FileSystem::Tester> {
     GetFreeSpace();
-    bool precondition(const Os::Test::FileSystem::Tester &state);
-    void action(Os::Test::FileSystem::Tester &state);
+    bool precondition(const Os::Test::FileSystem::Tester& state);
+    void action(Os::Test::FileSystem::Tester& state);
 };
 
 // ------------------------------------------------------------------------------------------------------
@@ -151,6 +151,6 @@ struct GetFreeSpace : public STest::Rule<Os::Test::FileSystem::Tester> {
 // ------------------------------------------------------------------------------------------------------
 struct GetSetWorkingDirectory : public STest::Rule<Os::Test::FileSystem::Tester> {
     GetSetWorkingDirectory();
-    bool precondition(const Os::Test::FileSystem::Tester &state);
-    void action(Os::Test::FileSystem::Tester &state);
+    bool precondition(const Os::Test::FileSystem::Tester& state);
+    void action(Os::Test::FileSystem::Tester& state);
 };

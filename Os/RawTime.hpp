@@ -68,18 +68,16 @@ class RawTimeInterface : public Fw::Serializable {
     //! \brief Serialize the contents of the RawTimeInterface object into a buffer.
     //!
     //! This function serializes the contents of the RawTimeInterface object into the provided
-    //! buffer. 
+    //! buffer.
     //!
     //! \note The serialization must fit within `FW_RAW_TIME_SERIALIZATION_MAX_SIZE` bytes. This value is
     //! defined in FpConfig.h. For example, Posix systems use a pair of U32 (sec, nanosec) and can therefore
-    //! serialize in 8 bytes. Should an OSAL implementation require more than this, the project must increase 
+    //! serialize in 8 bytes. Should an OSAL implementation require more than this, the project must increase
     //! that value in its config/ folder.
     //!
     //! \param buffer The buffer to serialize the contents into.
     //! \return Fw::SerializeStatus indicating the result of the serialization.
-    virtual Fw::SerializeStatus serializeTo(Fw::SerializeBufferBase& buffer) const {
-        return this->serialize(buffer);
-    }
+    virtual Fw::SerializeStatus serializeTo(Fw::SerializeBufferBase& buffer) const { return this->serialize(buffer); }
 
     //! \brief Deserialize the contents of the RawTimeInterface object from a buffer.
     //!
@@ -88,22 +86,19 @@ class RawTimeInterface : public Fw::Serializable {
     //!
     //! \note The serialization must fit within `FW_RAW_TIME_SERIALIZATION_MAX_SIZE` bytes. This value is
     //! defined in FpConfig.h. For example, Posix systems use a pair of U32 (sec, nanosec) and can therefore
-    //! serialize in 8 bytes. Should an OSAL implementation require more than this, the project must increase 
+    //! serialize in 8 bytes. Should an OSAL implementation require more than this, the project must increase
     //! that value in its config/ folder.
     //!
     //! \param buffer The buffer to deserialize the contents from.
     //! \return Fw::SerializeStatus indicating the result of the deserialization.
-    virtual Fw::SerializeStatus deserializeFrom(Fw::SerializeBufferBase& buffer) {
-        return this->deserialize(buffer);
-    }
-
+    virtual Fw::SerializeStatus deserializeFrom(Fw::SerializeBufferBase& buffer) { return this->deserialize(buffer); }
 };
 
 class RawTime final : public RawTimeInterface {
   public:
     RawTime();         //!<  Constructor
     ~RawTime() final;  //!<  Destructor
-    
+
     //! \brief copy constructor that copies the internal representation
     RawTime(const RawTime& other);
 
@@ -139,11 +134,11 @@ class RawTime final : public RawTimeInterface {
     //! \brief Serialize the contents of the RawTimeInterface object into a buffer.
     //!
     //! This function serializes the contents of the RawTimeInterface object into the provided
-    //! buffer. 
+    //! buffer.
     //!
     //! \note The serialization must fit within `FW_RAW_TIME_SERIALIZATION_MAX_SIZE` bytes. This value is
     //! defined in FpConfig.h. For example, Posix systems use a pair of U32 (sec, nanosec) and can therefore
-    //! serialize in 8 bytes. Should an OSAL implementation require more than this, the project must increase 
+    //! serialize in 8 bytes. Should an OSAL implementation require more than this, the project must increase
     //! that value in its config/ folder.
     //!
     //! \param buffer The buffer to serialize the contents into.
@@ -157,7 +152,7 @@ class RawTime final : public RawTimeInterface {
     //!
     //! \note The serialization must fit within `FW_RAW_TIME_SERIALIZATION_MAX_SIZE` bytes. This value is
     //! defined in FpConfig.h. For example, Posix systems use a pair of U32 (sec, nanosec) and can therefore
-    //! serialize in 8 bytes. Should an OSAL implementation require more than this, the project must increase 
+    //! serialize in 8 bytes. Should an OSAL implementation require more than this, the project must increase
     //! that value in its config/ folder.
     //!
     //! \param buffer The buffer to deserialize the contents from.
@@ -199,7 +194,7 @@ class RawTime final : public RawTimeInterface {
     // the byte-array here and set `m_handle_storage` to that address for storage.
     //
     alignas(FW_HANDLE_ALIGNMENT) RawTimeHandleStorage m_handle_storage;  //!< RawTime handle storage
-    RawTimeInterface& m_delegate;                                   //!< Delegate for the real implementation
+    RawTimeInterface& m_delegate;                                        //!< Delegate for the real implementation
 };
 }  // namespace Os
 

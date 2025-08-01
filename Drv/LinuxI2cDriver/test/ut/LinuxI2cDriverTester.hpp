@@ -18,62 +18,54 @@
 
 namespace Drv {
 
-  class LinuxI2cDriverTester :
-    public LinuxI2cDriverGTestBase
-  {
+class LinuxI2cDriverTester : public LinuxI2cDriverGTestBase {
+    // ----------------------------------------------------------------------
+    // Construction and destruction
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Construction and destruction
-      // ----------------------------------------------------------------------
+  public:
+    //! Construct object LinuxI2cDriverTester
+    //!
+    LinuxI2cDriverTester();
 
-    public:
+    //! Destroy object LinuxI2cDriverTester
+    //!
+    ~LinuxI2cDriverTester();
 
-      //! Construct object LinuxI2cDriverTester
-      //!
-      LinuxI2cDriverTester();
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-      //! Destroy object LinuxI2cDriverTester
-      //!
-      ~LinuxI2cDriverTester();
+    //! To do
+    //!
+    void sendData(U32 addr, U8* data, Fw::Buffer::SizeType size);
 
-    public:
+    void open(const char* device);
 
-      // ----------------------------------------------------------------------
-      // Tests
-      // ----------------------------------------------------------------------
+  private:
+    // ----------------------------------------------------------------------
+    // Helper methods
+    // ----------------------------------------------------------------------
 
-      //! To do
-      //!
-      void sendData(U32 addr, U8* data, Fw::Buffer::SizeType size);
+    //! Connect ports
+    //!
+    void connectPorts();
 
-      void open(const char* device);
+    //! Initialize components
+    //!
+    void initComponents();
 
-    private:
+  private:
+    // ----------------------------------------------------------------------
+    // Variables
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Helper methods
-      // ----------------------------------------------------------------------
+    //! The component under test
+    //!
+    LinuxI2cDriver component;
+};
 
-      //! Connect ports
-      //!
-      void connectPorts();
-
-      //! Initialize components
-      //!
-      void initComponents();
-
-    private:
-
-      // ----------------------------------------------------------------------
-      // Variables
-      // ----------------------------------------------------------------------
-
-      //! The component under test
-      //!
-      LinuxI2cDriver component;
-
-  };
-
-} // end namespace Drv
+}  // end namespace Drv
 
 #endif

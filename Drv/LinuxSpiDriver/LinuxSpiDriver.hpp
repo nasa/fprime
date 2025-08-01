@@ -10,7 +10,7 @@
 
 namespace Drv {
 
-  using LinuxSpiDriver = LinuxSpiDriverComponentImpl;
+using LinuxSpiDriver = LinuxSpiDriverComponentImpl;
 
 }
 

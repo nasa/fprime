@@ -34,7 +34,7 @@ class CpuInterface {
     //! \param cpu_count: (output) filled with CPU count on system
     //! \return: OP_OK with valid CPU count, ERROR when error occurs
     //!
-    virtual Status _getCount(FwSizeType & cpu_count) = 0;
+    virtual Status _getCount(FwSizeType& cpu_count) = 0;
 
     //! \brief Get the CPU tick information for a given CPU
     //!
@@ -125,7 +125,7 @@ class Cpu final : public CpuInterface {
     //! \param cpu_count: (output) filled with CPU count on system
     //! \return: OP_OK with valid CPU count, ERROR when error occurs
     //!
-    static  Status getCount(FwSizeType& cpu_count);
+    static Status getCount(FwSizeType& cpu_count);
 
     //! \brief Get the CPU tick information for a given CPU
     //!
@@ -141,12 +141,11 @@ class Cpu final : public CpuInterface {
     static Status getTicks(Ticks& ticks, FwSizeType cpu_index);
 
   private:
-
     // This section is used to store the implementation-defined file handle. To Os::File and fprime, this type is
     // opaque and thus normal allocation cannot be done. Instead, we allow the implementor to store then handle in
     // the byte-array here and set `handle` to that address for storage.
-    alignas(FW_HANDLE_ALIGNMENT) CpuHandleStorage m_handle_storage; //!< Storage for aligned data
-    CpuInterface& m_delegate;                                       //!< Delegate for the real implementation
+    alignas(FW_HANDLE_ALIGNMENT) CpuHandleStorage m_handle_storage;  //!< Storage for aligned data
+    CpuInterface& m_delegate;                                        //!< Delegate for the real implementation
 };
-}
-#endif //OS_CONDITION_HPP_
+}  // namespace Os
+#endif  // OS_CONDITION_HPP_
