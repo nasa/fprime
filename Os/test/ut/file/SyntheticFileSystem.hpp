@@ -3,11 +3,11 @@
 // \brief standard template library driven synthetic file system definitions
 // ======================================================================
 #include <Fw/FPrimeBasicTypes.hpp>
-#include "Os/File.hpp"
 #include <map>
 #include <memory>
-#include <vector>
 #include <string>
+#include <vector>
+#include "Os/File.hpp"
 
 #ifndef OS_TEST_UT_FILE_SYNTHETIC_FILE_SYSTEM
 #define OS_TEST_UT_FILE_SYNTHETIC_FILE_SYSTEM
@@ -58,7 +58,7 @@ class SyntheticFile : public FileInterface {
     //! \param overwrite: overwrite if exists
     //! \return (status, synthetic file object)
     //!
-    Status open(const CHAR *path, const Os::File::Mode mode, const OverwriteType overwrite) override;
+    Status open(const CHAR* path, const Os::File::Mode mode, const OverwriteType overwrite) override;
 
     //! \brief close the file
     //!
@@ -73,7 +73,7 @@ class SyntheticFile : public FileInterface {
     //! \param wait: wait, unused
     //! \return status of the read
     //!
-    Os::File::Status read(U8 *buffer, FwSizeType &size, File::WaitType wait) override;
+    Os::File::Status read(U8* buffer, FwSizeType& size, File::WaitType wait) override;
 
     //! \brief write data to the file
     //!
@@ -84,7 +84,7 @@ class SyntheticFile : public FileInterface {
     //! \param bool: wait, unused
     //! \return status of the write
     //!
-    Os::File::Status write(const U8 *buffer, FwSizeType &size, File::WaitType wait) override;
+    Os::File::Status write(const U8* buffer, FwSizeType& size, File::WaitType wait) override;
 
     //! \brief seek pointer within file
     //!
@@ -124,11 +124,10 @@ class SyntheticFile : public FileInterface {
     static std::unique_ptr<SyntheticFileSystem> s_file_system;
 };
 
-
 //! \brief Synthetic file system implementation
 //!
-//! A synthetic standard template library based in-memory file system for use with testing. It is composed of a map of string paths to a
-//! synthetic file data packet that tracks data and file pointer
+//! A synthetic standard template library based in-memory file system for use with testing. It is composed of a map of
+//! string paths to a synthetic file data packet that tracks data and file pointer
 //!
 class SyntheticFileSystem {
   public:
@@ -152,7 +151,7 @@ class SyntheticFileSystem {
     //!
     //! \return: true if exists, false otherwise
     //!
-    bool exists(const CHAR *path);
+    bool exists(const CHAR* path);
 
     //! \brief remove file
     void remove(const CHAR* path);
@@ -168,12 +167,12 @@ class SyntheticFileSystem {
     //! \param overwrite: overwrite if exists
     //! \return (status, synthetic file object)
     //!
-    OpenData open(const CHAR *path, const Os::File::Mode mode, const File::OverwriteType overwrite);
+    OpenData open(const CHAR* path, const Os::File::Mode mode, const File::OverwriteType overwrite);
     //! Shadow file state: file system
     std::map<std::string, std::shared_ptr<SyntheticFileData>> m_filesystem;
 };
 
-} // namespace Test
-} // namespace Os
+}  // namespace Test
+}  // namespace Os
 
-#endif // OS_TEST_UT_FILE_SYNTHETIC_FILE_SYSTEM
+#endif  // OS_TEST_UT_FILE_SYNTHETIC_FILE_SYSTEM

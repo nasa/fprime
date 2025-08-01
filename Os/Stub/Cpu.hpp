@@ -2,8 +2,8 @@
 // \title Os/Stub/Cpu.hpp
 // \brief stub implementation for Os::Cpu, header and test definitions
 // ======================================================================
-#include <cstdio>
 #include <Os/Cpu.hpp>
+#include <cstdio>
 #ifndef OS_Stub_Cpu_HPP
 #define OS_Stub_Cpu_HPP
 
@@ -13,8 +13,7 @@ namespace Cpu {
 
 //! CpuHandle class definition for stub implementations.
 //!
-struct StubCpuHandle : public CpuHandle {
-};
+struct StubCpuHandle : public CpuHandle {};
 
 //! \brief stub implementation of Os::CpuInterface
 //!
@@ -40,7 +39,6 @@ class StubCpu : public CpuInterface {
     // Functions overrides
     // ------------------------------------
   public:
-
     //! \brief Request the count of the CPUs detected by the system
     //!
     //! This method wraps delegates to the underlying implementation.
@@ -70,13 +68,14 @@ class StubCpu : public CpuInterface {
     //!
     //! \return raw console handle
     //!
-    CpuHandle *getHandle() override;
+    CpuHandle* getHandle() override;
+
   private:
     //! File handle for PosixFile
     StubCpuHandle m_handle;
 };
-} // namespace Cpu
-} // namespace Stub
-} // namespace Os
+}  // namespace Cpu
+}  // namespace Stub
+}  // namespace Os
 
-#endif // OS_Stub_Cpu_HPP
+#endif  // OS_Stub_Cpu_HPP

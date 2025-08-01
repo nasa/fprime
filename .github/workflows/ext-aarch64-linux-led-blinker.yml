@@ -99,7 +99,7 @@ jobs:
           . venv/bin/activate
           mkdir -p ci-logs
           chmod +x ./build-artifacts/aarch64-linux/LedBlinker/bin/LedBlinker
-          fprime-gds --ip-client -d ./build-artifacts/aarch64-linux/LedBlinker --logs ./ci-logs &
+          fprime-gds --ip-client --framing-selection fprime -d ./build-artifacts/aarch64-linux/LedBlinker --logs ./ci-logs &
           sleep 10
           pytest --dictionary ./build-artifacts/aarch64-linux/LedBlinker/dict/LedBlinkerTopologyDictionary.json ./int/led_integration_tests.py
       - name: 'Archive logs'

@@ -4,27 +4,21 @@
 // This ensures the delegation of function calls happens properly
 // ======================================================================
 #include <gtest/gtest.h>
+#include "Os/Stub/test/FileSystem.hpp"
 #include "Os/test/ut/filesystem/CommonTests.hpp"
 #include "Os/test/ut/filesystem/RulesHeaders.hpp"
-#include "Os/Stub/test/FileSystem.hpp"
 
 using namespace Os::Stub::FileSystem::Test;
 
-
 // Basic file tests
 class Interface : public ::testing::Test {
-public:
+  public:
     //! Setup function delegating to UT setUp function
-    void SetUp() override {
-        StaticData::data = StaticData();
-    }
+    void SetUp() override { StaticData::data = StaticData(); }
 
     //! Setup function delegating to UT tearDown function
-    void TearDown() override {
-        StaticData::data = StaticData();
-    }
+    void TearDown() override { StaticData::data = StaticData(); }
 };
-
 
 // Ensure that Os::FileSystem properly calls the implementation removeDirectory()
 TEST_F(Interface, RemoveDirectory) {
@@ -84,7 +78,7 @@ TEST_F(Interface, GetPathType) {
     ASSERT_EQ(pathType, Os::FileSystem::PathType::NOT_EXIST);
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     STest::Random::seed();
     return RUN_ALL_TESTS();

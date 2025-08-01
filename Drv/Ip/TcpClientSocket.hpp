@@ -12,8 +12,8 @@
 #ifndef DRV_TCPCLIENT_TCPHELPER_HPP_
 #define DRV_TCPCLIENT_TCPHELPER_HPP_
 
-#include <Fw/FPrimeBasicTypes.hpp>
 #include <Drv/Ip/IpSocket.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <config/IpCfg.hpp>
 
 namespace Drv {
@@ -29,6 +29,7 @@ class TcpClientSocket : public IpSocket {
      * \brief Constructor for client socket tcp implementation
      */
     TcpClientSocket();
+
   protected:
     /**
      * \brief Check if the given port is valid for the socket

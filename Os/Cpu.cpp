@@ -14,7 +14,7 @@ Cpu::~Cpu() {
 }
 
 void Cpu::init() {
-    (void) Cpu::getSingleton();
+    (void)Cpu::getSingleton();
 }
 
 Cpu& Cpu::getSingleton() {
@@ -44,4 +44,4 @@ Cpu::Status Cpu::getCount(FwSizeType& cpu_count) {
 Cpu::Status Cpu::getTicks(Ticks& ticks, FwSizeType cpu_index) {
     return Cpu::getSingleton()._getTicks(ticks, cpu_index);
 }
-}
+}  // namespace Os

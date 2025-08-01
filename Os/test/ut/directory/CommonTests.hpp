@@ -5,8 +5,8 @@
 #ifndef OS_TEST_UT_COMMON_DIRECTORY_TESTS_HPP
 #define OS_TEST_UT_COMMON_DIRECTORY_TESTS_HPP
 
-#include <Os/Directory.hpp>
 #include <gtest/gtest.h>
+#include <Os/Directory.hpp>
 #include <Os/test/ut/directory/RulesHeaders.hpp>
 
 // ----------------------------------------------------------------------
@@ -26,7 +26,7 @@
 namespace Os {
 namespace Test {
 namespace Directory {
-  
+
 //! Set up function as defined by the unit test implementor
 void setUp(Os::Test::Directory::Tester* tester);
 

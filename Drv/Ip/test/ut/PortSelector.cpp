@@ -3,10 +3,10 @@
 //
 
 #include "PortSelector.hpp"
+#include <arpa/inet.h>
 #include <sys/socket.h>
 #include <unistd.h>
 #include <cerrno>
-#include <arpa/inet.h>
 
 namespace Drv {
 namespace Test {
@@ -29,19 +29,18 @@ U16 get_free_port(bool udp) {
     };
 
     // When we are setting up for receiving as well, then we must bind to a port
-    if (::bind(socketFd, reinterpret_cast<struct sockaddr *>(&address), sizeof(address)) == -1) {
+    if (::bind(socketFd, reinterpret_cast<struct sockaddr*>(&address), sizeof(address)) == -1) {
         ::close(socketFd);
         return 0;
     }
     socklen_t size = sizeof(address);
-    if (::getsockname(socketFd, reinterpret_cast<struct sockaddr *>(&address), &size) == -1) {
+    if (::getsockname(socketFd, reinterpret_cast<struct sockaddr*>(&address), &size) == -1) {
         ::close(socketFd);
         return 0;
     }
     U16 port = ntohs(address.sin_port);
-    ::close(socketFd); // Close this recursion's port again, such that we don't infinitely loop
+    ::close(socketFd);  // Close this recursion's port again, such that we don't infinitely loop
     return port;
-
 }
-}
-}
+}  // namespace Test
+}  // namespace Drv
