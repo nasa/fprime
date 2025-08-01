@@ -159,14 +159,6 @@ class RawTime final : public RawTimeInterface {
     //! \return Fw::SerializeStatus indicating the result of the deserialization.
     Fw::SerializeStatus deserializeFrom(Fw::SerializeBufferBase& buffer) override;
 
-    // ----------------------------------------------------------------------
-    // Methods
-    // ----------------------------------------------------------------------
-
-    DEPRECATED(Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const override, "Use serializeTo instead");
-
-    DEPRECATED(Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer) override, "Use deserializeFrom instead");
-
     // ------------------------------------------------------------
     // Common functions built on top of OS-specific functions
     // ------------------------------------------------------------
