@@ -91,112 +91,106 @@ class SoakAnalysisResults:
         return None
 
 
-class HealthMonitor(DataHandler):
-    """Monitor for health warnings and fatals"""
+
+
+
+class EventCollector(DataHandler):
+    """Event consumer that inherits from DataHandler"""
     def __init__(self, results):
         self.results = results
         
-    def data_callback(self, data, sender=None):
-        """Process event data for health issues"""
-        item = data.get_str(verbose=True, csv=True).split(',')
-        if len(item) < 6:
-            return
+    def data_callback(self, event_data, sender=None):
+        """Handle decoded event data"""
+        try:
+            # Extract event information
+            event_name = event_data.template.name if hasattr(event_data, 'template') else str(event_data)
+            severity = event_data.template.severity if hasattr(event_data, 'template') else "UNKNOWN"
+            description = str(event_data.args) if hasattr(event_data, 'args') else ""
+            timestamp = str(event_data.time) if hasattr(event_data, 'time') else ""
             
-        raw_time = item[1]
-        event_name = item[4]
-        severity = item[5]
-        description = item[6] if len(item) > 6 else ""
-            
-        # Check for health issues
-        if 'FATAL' in severity or 'WARNING' in severity or 'HLTH_' in event_name:
-            issue = {
-                'timestamp': raw_time,
-                'event_name': event_name,
-                'severity': severity,
-                'description': description
-            }
-            self.results.health_issues.append(issue)
-            
-            # Add to alerts if critical
-            if 'FATAL' in severity:
-                self.results.add_alert(f"FATAL: {event_name} - {description}")
-            elif 'WARNING' in severity:
-                self.results.add_alert(f"WARNING: {event_name} - {description}")
+            # Check for health issues
+            if 'FATAL' in severity or 'WARNING' in severity or 'HLTH_' in event_name:
+                issue = {
+                    'timestamp': timestamp,
+                    'event_name': event_name,
+                    'severity': severity,
+                    'description': description
+                }
+                self.results.health_issues.append(issue)
+                
+                # Add to alerts if critical
+                if 'FATAL' in severity:
+                    self.results.add_alert(f"FATAL: {event_name} - {description}")
+                elif 'WARNING' in severity:
+                    self.results.add_alert(f"WARNING: {event_name} - {description}")
+                    
+        except Exception as e:
+            # Silently ignore parsing errors to be robust
+            pass
 
 
-class ResourceMonitor(DataHandler):
-    """Monitor for buffer and system resource telemetry"""
+class ChannelCollector(DataHandler):
+    """Channel consumer that inherits from DataHandler - similar to old log_processor pattern"""
     def __init__(self, results):
         self.results = results
         
-    def data_callback(self, data, sender=None):
-        """Process telemetry data for resources and buffers"""
-        item = data.get_str(verbose=True, csv=True).split(',')
-        if len(item) < 5:
-            return
+    def data_callback(self, channel_data, sender=None):
+        """Handle decoded channel data"""
+        try:
+            # Extract channel information
+            ch_name = channel_data.template.name if hasattr(channel_data, 'template') else str(channel_data)
+            ch_val = channel_data.val if hasattr(channel_data, 'val') else 0
+            timestamp = str(channel_data.time) if hasattr(channel_data, 'time') else ""
             
-        raw_time = item[0]
-        ch_name = item[3]
-        ch_val = item[4]
-            
-        # Track buffer manager stats
-        if 'BufferManager' in ch_name or 'bufferManager' in ch_name:
-            if ch_name not in self.results.buffer_metrics:
-                self.results.buffer_metrics[ch_name] = []
-            
-            # Parse numeric value
-            try:
-                value = int(ch_val.split()[0]) if ch_val.split() else 0
-                self.results.buffer_metrics[ch_name].append({
-                    'timestamp': raw_time,
-                    'value': value
-                })
+            # Track buffer manager stats
+            if 'BufferManager' in ch_name or 'bufferManager' in ch_name:
+                if ch_name not in self.results.buffer_metrics:
+                    self.results.buffer_metrics[ch_name] = []
                 
-                # Check for concerning buffer levels
-                if value == 0:
-                    self.results.add_alert(f"Buffer exhaustion detected: {ch_name} = 0")
+                try:
+                    value = int(ch_val) if isinstance(ch_val, (int, float)) else int(str(ch_val).split()[0])
+                    self.results.buffer_metrics[ch_name].append({
+                        'timestamp': timestamp,
+                        'value': value
+                    })
                     
-            except (ValueError, IndexError):
-                pass
-                
-        # Track system resources
-        elif 'systemResources' in ch_name:
-            if ch_name not in self.results.system_resources:
-                self.results.system_resources[ch_name] = []
-                
-            # Parse numeric value
-            try:
-                value_str = ch_val.split()[0]
-                value = float(value_str.replace(',', ''))
-                self.results.system_resources[ch_name].append({
-                    'timestamp': raw_time,
-                    'value': value
-                })
-                
-                # Check for concerning resource levels (example thresholds)
-                if 'cpu' in ch_name.lower() and value > 90.0:
-                    self.results.add_alert(f"High CPU usage detected: {ch_name} = {value}%")
-                elif 'memory' in ch_name.lower() and value > 90.0:
-                    self.results.add_alert(f"High memory usage detected: {ch_name} = {value}%")
+                    # Check for concerning buffer levels
+                    if value == 0:
+                        self.results.add_alert(f"Buffer exhaustion detected: {ch_name} = 0")
+                        
+                except (ValueError, IndexError, TypeError):
+                    pass
                     
-            except (ValueError, IndexError):
-                pass
+            # Track system resources
+            elif 'systemResources' in ch_name:
+                if ch_name not in self.results.system_resources:
+                    self.results.system_resources[ch_name] = []
+                    
+                try:
+                    value = float(ch_val) if isinstance(ch_val, (int, float)) else float(str(ch_val).replace(',', ''))
+                    self.results.system_resources[ch_name].append({
+                        'timestamp': timestamp,
+                        'value': value
+                    })
+                    
+                    # Check for concerning resource levels
+                    if 'cpu' in ch_name.lower() and value > 90.0:
+                        self.results.add_alert(f"High CPU usage detected: {ch_name} = {value}%")
+                    elif 'memory' in ch_name.lower() and value > 90.0:
+                        self.results.add_alert(f"High memory usage detected: {ch_name} = {value}%")
+                        
+                except (ValueError, TypeError):
+                    pass
+                    
+        except Exception as e:
+            # Silently ignore parsing errors to be robust
+            pass
 
 
 def process_logs(pipeline, dictionary_path, logs_path, results):
     """Process log files for monitoring data"""
-    # Setup GDS pipeline
-    pipeline.config.set('framing', 'use_key', 'False')
-    pipeline.config.set('types', 'msg_len', 'U16')
     
-    # Register monitors
-    health_monitor = HealthMonitor(results)
-    resource_monitor = ResourceMonitor(results)
-    
-    pipeline.coders.register_event_consumer(health_monitor)
-    pipeline.coders.register_channel_consumer(resource_monitor)
-    
-    # Find and process log files
+    # Find log files
     log_files = []
     logs_dir = Path(logs_path)
     
@@ -209,17 +203,38 @@ def process_logs(pipeline, dictionary_path, logs_path, results):
     
     print(f"Processing {len(log_files)} ComLogger .com files...")
     
+    if not log_files:
+        print("No ComLogger .com files found!")
+        return
+    
+    # Use the modern pipeline from StandardPipelineParser (no manual config!)
+    # But create old-style DataHandler consumers
+    event_consumer = EventCollector(results)
+    channel_consumer = ChannelCollector(results)
+    
+    # Register consumers using the standard coders approach (like old log_processor)
+    pipeline.coders.register_event_consumer(event_consumer)
+    pipeline.coders.register_channel_consumer(channel_consumer)
+    
+    print("Consumers registered, processing ComLogger files...")
+    
+    # Process each ComLogger file by reading binary data (exactly like old log_processor)
     for log_file in log_files:
         try:
-            with open(log_file, 'rb') as f:
-                data = f.read()
-                pipeline.distributor.on_recv(data)
+            with open(log_file, 'rb') as file_handle:
+                data = file_handle.read()
+                if len(data) > 0:
+                    # Send raw binary data to distributor (same as old approach)
+                    pipeline.distributor.on_recv(data)
+                    
         except Exception as e:
             print(f"Error processing {log_file}: {e}")
     
-    # Cleanup
-    if hasattr(pipeline.files, 'uplinker') and pipeline.files.uplinker:
-        pipeline.files.uplinker.exit()
+    # Let the modern pipeline handle its own cleanup
+    print(f"Processed {len(results.health_issues)} health events and {len(results.buffer_metrics) + len(results.system_resources)} telemetry metrics")
+
+
+
 
 
 class SoakMonitorArgumentParser(ParserBase):
@@ -311,7 +326,7 @@ def main():
             if "trending up" in alert:
                 print(f"  📈 {alert}")
             else:
-                print(f"  ⚠️  {alert}")
+            print(f"  ⚠️  {alert}")
     
     if results.health_issues:
         print("\nHEALTH ISSUES:")
