@@ -1001,8 +1001,40 @@ class RedBlackTreeSetOrMapImpl final {
                     //             |                      |
                     //             ------------------------
                     //
-                    // TODO
-                    FW_ASSERT(0);
+                    this->removeBlackLeafNodeHelper2(parent, sibling, distantNephew, direction);
+                    // The subtree has this shape. The entire tree is a valid red-black tree.
+                    //
+                    //                           BBBBBBBBBBBBBBBB
+                    //                          B                B
+                    //                          B       K2       B
+                    //                          B                B
+                    //                           BBBBBBBBBBBBBBBB
+                    //                             /          \
+                    //                            /            \
+                    //                           /              \
+                    //                          V                V
+                    //             BBBBBBBBBBBBBB                RRRRRRRRRRRRRRRRRRR
+                    //            B              B              R                   R
+                    //            B      K1      B              R    K4 (sibling)   R
+                    //            B              B              R                   R
+                    //             BBBBBBBBBBBBBB                RRRRRRRRRRRRRRRRRRR
+                    //                 |    |                        /         \
+                    //                 |    |                       /           \
+                    //                 V    V                      V             V
+                    //   ------------------------    BBBBBBBBBBBBBBBBBBBB      BBBBBBBBBBBBBBB
+                    //   |                      |   B                    B    B               B
+                    //   |  black height i + 1  |   B K3 (distantNephew) B    B  K6 (parent)  B
+                    //   |                      |   B                    B    B               B
+                    //   ------------------------    BBBBBBBBBBBBBBBBBBBB      BBBBBBBBBBBBBBB
+                    //                                      |      |               |     |
+                    //                                      |      |               |     |
+                    //                                      V      V               V     V
+                    //                             ------------------------  ------------------------
+                    //                             |                      |  |                      |
+                    //                             |  black height i + 1  |  |  black height i + 1  |
+                    //                             |                      |  |                      |
+                    //                             ------------------------  ------------------------
+                    // 
                 } else if (this->getNodeColor(closeNephew) == Color::RED) {
                     // The subtree has this shape:
                     //
@@ -1045,8 +1077,82 @@ class RedBlackTreeSetOrMapImpl final {
                     //                                               |                      |
                     //                                               ------------------------
                     //  
-                    // TODO
-                    FW_ASSERT(0);
+                    this->removeBlackLeafNodeHelper1(closeNephew, oppositeDirection, sibling, distantNephew);
+                    // The subtree has this shape:
+                    //
+                    //                           BBBBBBBBBBBBBBBB
+                    //                          B                B
+                    //                          B       K2       B
+                    //                          B                B
+                    //                           BBBBBBBBBBBBBBBB
+                    //                             /          \
+                    //                            /            \
+                    //                           /              \
+                    //                          V                V
+                    //             BBBBBBBBBBBBBB                RRRRRRRRRRRRRRRRRRR
+                    //            B              B              R                   R
+                    //            B      K1      B              R    K6 (parent)    R
+                    //            B              B              R                   R
+                    //             BBBBBBBBBBBBBB                RRRRRRRRRRRRRRRRRRR
+                    //                 |    |                        /         \
+                    //                 |    |                       /           \
+                    //                 V    V                      V             V
+                    //   ------------------------      BBBBBBBBBBBBBBBBBB      ------------------------
+                    //   |                      |     B                  B     |                      |
+                    //   |  black height i + 1  |     B   K5 (sibling)   B     |  black height i + 1  |
+                    //   |                      |     B                  B     |                      |
+                    //   ------------------------      BBBBBBBBBBBBBBBBBB      ------------------------
+                    //                                      /      \
+                    //                                     /        \
+                    //                                    V          V
+                    //              RRRRRRRRRRRRRRRRRRRRRRRRRR     ------------------------
+                    //             R                          R    |                      |
+                    //             R    K4 (distantNephew)    R    |  black height i + 1  |
+                    //             R                          R    |                      |
+                    //              RRRRRRRRRRRRRRRRRRRRRRRRRR     ------------------------
+                    //                       |      |
+                    //                       |      |
+                    //                       V      V
+                    //               ------------------------
+                    //               |                      |
+                    //               |  black height i + 1  |
+                    //               |                      |
+                    //               -----------------------
+                    //
+                    this->removeBlackLeafNodeHelper2(parent, sibling, distantNephew, direction);
+                    // The subtree has this shape. The entire tree is a valid red-black tree.
+                    //
+                    //                           BBBBBBBBBBBBBBBB
+                    //                          B                B
+                    //                          B       K2       B
+                    //                          B                B
+                    //                           BBBBBBBBBBBBBBBB
+                    //                             /          \
+                    //                            /            \
+                    //                           /              \
+                    //                          V                V
+                    //             BBBBBBBBBBBBBB                RRRRRRRRRRRRRRRRRRRR
+                    //            B              B              R                    R
+                    //            B      K1      B              R    K5 (sibling)    R
+                    //            B              B              R                    R
+                    //             BBBBBBBBBBBBBB                RRRRRRRRRRRRRRRRRRRR
+                    //                 |    |                         /        \
+                    //                 |    |                        /          \
+                    //                 V    V                       V            V
+                    //   ------------------------      BBBBBBBBBBBBBBBBBBBB     BBBBBBBBBBBBBBB
+                    //   |                      |     B                    B   B               B
+                    //   |  black height i + 1  |     B K4 (distantNephew) B   B  K6 (parent)  B
+                    //   |                      |     B                    B   B               B
+                    //   ------------------------      BBBBBBBBBBBBBBBBBBBB     BBBBBBBBBBBBBBB
+                    //                                         |   |                 |   |
+                    //                                         |   |                 |   |
+                    //                                         V   V                 V   V
+                    //                              ------------------------  ------------------------
+                    //                              |                      |  |                      |
+                    //                              |  black height i + 1  |  |  black height i + 1  |
+                    //                              |                      |  |                      |
+                    //                              ------------------------  ------------------------
+                    //
                 } else {
                     this->m_nodes[sibling].m_color = Color::RED;
                     this->m_nodes[parent].m_color = Color::BLACK;
