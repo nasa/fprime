@@ -19,8 +19,6 @@ typedef enum {
     FW_DESERIALIZE_FORMAT_ERROR,   //!< Deserialization data had incorrect values (unexpected data types)
     FW_DESERIALIZE_SIZE_MISMATCH,  //!< Data was left in the buffer, but not enough to deserialize
     FW_DESERIALIZE_TYPE_MISMATCH,  //!< Deserialized type ID didn't match
-    FW_SERIALIZE_UNIMPLEMENTED,    //!< Serialization function called is not implemented
-    FW_DESERIALIZE_UNIMPLEMENTED,  //!< Deserialization function called is not implemented
 } SerializeStatus;
 class SerializeBufferBase;  //!< forward declaration
 
