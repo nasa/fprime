@@ -363,7 +363,69 @@ def main():
         exit(1)
     
     print("MONITORING COMPLETED SUCCESSFULLY")
-    sys.exit(0)
+    
+    # Properly shutdown the pipeline to clean up background threads
+    try:
+        print("Cleaning up pipeline resources...")
+        
+        # Stop the distributor if it has threads
+        if hasattr(pipeline, 'distributor') and hasattr(pipeline.distributor, 'stop'):
+            pipeline.distributor.stop()
+            print("  - Stopped distributor")
+        
+        # Stop any background tasks/threads in the pipeline
+        if hasattr(pipeline, 'stop'):
+            pipeline.stop()
+            print("  - Stopped pipeline")
+            
+        # Wait for threads to complete if join method exists
+        if hasattr(pipeline, 'join'):
+            pipeline.join()
+            print("  - Joined pipeline threads")
+            
+        # Close any remaining resources
+        if hasattr(pipeline, 'close'):
+            pipeline.close()
+            print("  - Closed pipeline")
+            
+        # Force cleanup of any remaining resources
+        if hasattr(pipeline, 'distributor') and hasattr(pipeline.distributor, 'close'):
+            pipeline.distributor.close()
+            print("  - Closed distributor")
+            
+        # Additional cleanup for potential socket connections
+        if hasattr(pipeline, 'distributor') and hasattr(pipeline.distributor, 'shutdown'):
+            pipeline.distributor.shutdown()
+            print("  - Shutdown distributor")
+            
+        # Clean up any coders/decoders that might have threads
+        if hasattr(pipeline, 'coders'):
+            if hasattr(pipeline.coders, 'stop'):
+                pipeline.coders.stop()
+                print("  - Stopped coders")
+            if hasattr(pipeline.coders, 'join'):
+                pipeline.coders.join()
+                print("  - Joined coders")
+                
+        # Force cleanup of any remaining threads
+        import threading
+        active_threads = threading.enumerate()
+        if len(active_threads) > 1:  # More than just main thread
+            print(f"  - Found {len(active_threads)} active threads, attempting cleanup")
+            
+    except Exception as e:
+        # Log but don't fail on cleanup errors
+        print(f"Warning: Error during pipeline cleanup: {e}")
+    
+    print("Pipeline cleanup completed")
+    
+    # Final fallback: force exit after a brief delay to ensure cleanup completes
+    import time
+    time.sleep(0.5)  # Give cleanup a moment to complete
+    
+    # Exit with appropriate code
+    exit_code = 1 if results.has_critical_issues() else 0
+    sys.exit(exit_code)
 
 
 if __name__ == '__main__':
