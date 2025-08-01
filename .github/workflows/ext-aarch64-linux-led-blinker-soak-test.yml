@@ -1,12 +1,11 @@
 # Scheduled testing of LED blinker system service every 30 minutes
-# Connects to running service via GDS and runs integration tests
+# Analyzes ComLogger logs and runs integration tests
 #
-# This workflow analyzes two types of logs:
-# 1. GDS logs: Text-based logs from fprime-gds (archived but not analyzed by soak monitor)
-# 2. ComLogger logs: Binary .com files from ComLogger component (analyzed by soak monitor)
+# This workflow analyzes ComLogger logs: Binary .com files from ComLogger component
+# and runs integration tests
 #
 # Note: The "Artifact not found: ledblinker-monitoring-state" error is expected on the first run
-# and is handled gracefully with continue-on-error: true
+# and is handled with continue-on-error: true
 #
 name: "Soak Test AArch64 Linux: External Repo LedBlinker"
 
@@ -23,48 +22,11 @@ env:
   INSTALL_DIR: /opt/ledblinker-soak
 
 jobs:
-  scheduled-test:
-    name: "Scheduled Integration Test"
+  soak-monitoring:
+    name: "Soak Log Analysis"
     runs-on: [self-hosted, ARM64]
     steps:
       
-      - name: "Check service status"
-        run: |
-          echo "Checking if ${FSW_SERVICE_NAME} service is running..."
-          if sudo systemctl is-active --quiet ${FSW_SERVICE_NAME}; then
-            echo "Service ${FSW_SERVICE_NAME} is running"
-          else
-            echo "Service ${FSW_SERVICE_NAME} is not running"
-            sudo systemctl status ${FSW_SERVICE_NAME} --no-pager -l
-            echo "Recent FSW service logs:"
-            sudo journalctl -u ${FSW_SERVICE_NAME} --no-pager -n 20
-
-            # Check that the GDS is running in the case that FSW crashed
-            echo "Checking if ${GDS_SERVICE_NAME} service is running..."
-            if sudo systemctl is-active --quiet ${GDS_SERVICE_NAME}; then
-              echo "Service ${GDS_SERVICE_NAME} is running"
-            else
-              echo "Service ${GDS_SERVICE_NAME} is not running"
-              sudo systemctl status ${GDS_SERVICE_NAME} --no-pager -l
-              echo "Recent GDS service logs:"
-              sudo journalctl -u ${GDS_SERVICE_NAME} --no-pager -n 20
-              exit 1
-            fi
-
-            exit 1
-          fi
-          
-          echo "Checking if ${GDS_SERVICE_NAME} service is running..."
-          if sudo systemctl is-active --quiet ${GDS_SERVICE_NAME}; then
-            echo "Service ${GDS_SERVICE_NAME} is running"
-          else
-            echo "Service ${GDS_SERVICE_NAME} is not running"
-            sudo systemctl status ${GDS_SERVICE_NAME} --no-pager -l
-            echo "Recent GDS service logs:"
-            sudo journalctl -u ${GDS_SERVICE_NAME} --no-pager -n 20
-            exit 1
-          fi
-          
       - name: "Restore previous monitoring state"
         uses: actions/download-artifact@v4
         continue-on-error: true
@@ -81,53 +43,6 @@ jobs:
           TEST_TIMESTAMP=$(date +%Y%m%d_%H%M%S)
           
           echo "=== Soak monitoring started at $(date) (${TEST_TIMESTAMP}) ==="
-          
-          # Debug: Check ComLogger files only
-          echo "=== DEBUG: Checking ComLogger file creation ==="
-          echo "ComLogger directory status:"
-          ls -la ${INSTALL_DIR}/ComLoggerFiles/ || echo "ComLoggerFiles directory doesn't exist"
-          echo "Looking for .com files:"
-          find ${INSTALL_DIR}/ComLoggerFiles/ -name "*.com" -ls 2>/dev/null || echo "No .com files found"
-          
-          # Check if the LED Blinker is running and working directory
-          echo "=== DEBUG: Application status ==="
-          if sudo systemctl is-active --quiet ${FSW_SERVICE_NAME}; then
-            echo "✅ LED Blinker service is running"
-            echo "Working directory from systemd: $(sudo systemctl show ${FSW_SERVICE_NAME} --property=WorkingDirectory --value)"
-            echo "Checking if ComLoggerFiles exists from working directory:"
-            sudo -u fprime test -d ${INSTALL_DIR}/ComLoggerFiles && echo "✅ ComLoggerFiles directory accessible to fprime user" || echo "❌ ComLoggerFiles not accessible to fprime user"
-            echo "Testing file creation permissions:"
-            sudo -u fprime touch ${INSTALL_DIR}/ComLoggerFiles/test_file 2>/dev/null && sudo -u fprime rm ${INSTALL_DIR}/ComLoggerFiles/test_file && echo "✅ File creation permissions OK" || echo "❌ Cannot create files in ComLoggerFiles"
-          else
-            echo "❌ LED Blinker service is not running"
-          fi
-          
-          # Check if ComLogger components need to be triggered via commands
-          echo "=== DEBUG: Triggering activity to test ComLogger ==="
-          echo "Sending commands to LED Blinker to generate activity..."
-          
-          # Use fprime-cli to send some commands to generate telemetry/events
-          # This should trigger the ComLogger to create files
-          echo "Testing if we can connect to LED Blinker and send commands..."
-          # Try to send a command via fprime-cli to trigger activity
-          echo 'led.BLINKING_ON_OFF OFF' | timeout 10s ${INSTALL_DIR}/venv/bin/fprime-cli --dictionary ${INSTALL_DIR}/dict/LedBlinkerTopologyDictionary.json --ip-address 127.0.0.1 --ip-port 50000 2>/dev/null || echo "Could not send command (timeout or connection issue)"
-          
-          echo "Waiting 5 seconds for any ComLogger files to be created..."
-          sleep 5
-          
-          # Check again for .com files after triggering activity
-          echo "Checking for .com files after activity:"
-          find ${INSTALL_DIR}/ComLoggerFiles/ -name "*.com" -ls 2>/dev/null || echo "Still no .com files found"
-          
-          # Also check what's in those fprime-downlink/uplink directories
-          echo "Checking fprime-downlink directory:"
-          ls -la ${INSTALL_DIR}/ComLoggerFiles/fprime-downlink/ 2>/dev/null || echo "fprime-downlink directory empty or doesn't exist"
-          echo "Checking fprime-uplink directory:"
-          ls -la ${INSTALL_DIR}/ComLoggerFiles/fprime-uplink/ 2>/dev/null || echo "fprime-uplink directory empty or doesn't exist"
-          
-          # Check if ComLogger is trying to create files but failing
-          echo "=== DEBUG: Checking system logs for ComLogger errors ==="
-          sudo journalctl -u ${FSW_SERVICE_NAME} --no-pager -n 20 --since "2 minutes ago" | grep -i "comlog\|file\|error" || echo "No ComLogger-related messages found"
           
           # Restore previous state if available
           if [ -f "./previous-state/soak_monitor_state.json" ]; then
@@ -153,9 +68,58 @@ jobs:
           
           echo "=== Soak monitoring completed at $(date) (${TEST_TIMESTAMP}) with exit code ${MONITOR_EXIT_CODE} ==="
           
-          # Continue to integration tests even if monitoring finds issues
-          # We'll check the exit code after integration tests
+          # Output monitoring results for job summary
+          if [ -f "${INSTALL_DIR}/monitoring/soak_report_${TEST_TIMESTAMP}.json" ]; then
+            echo "=== MONITORING RESULTS ==="
+            # Check if there are alerts in the JSON report
+            if grep -q '"alerts":' "${INSTALL_DIR}/monitoring/soak_report_${TEST_TIMESTAMP}.json" && ! grep -q '"alerts": \[\]' "${INSTALL_DIR}/monitoring/soak_report_${TEST_TIMESTAMP}.json"; then
+              echo "⚠️  MONITORING ALERTS DETECTED"
+              exit 1
+            else
+              echo "✅ No monitoring alerts detected"
+            fi
+          fi
+      
+      - name: 'Archive Monitoring State'
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ledblinker-monitoring-state
+          path: ${{ env.INSTALL_DIR }}/monitoring/soak_monitor_state.json
+          retention-days: 90
+
+  integration-test:
+    name: "Integration Test"
+    runs-on: [self-hosted, ARM64]
+    needs: soak-monitoring  
+    if: always()  # Run even if soak-monitoring fails
+    steps:
+      
+      - name: "Check service status"
+        run: |
+          echo "=== CHECKING SERVICES FOR INTEGRATION TEST ==="
+          echo "Checking if ${FSW_SERVICE_NAME} service is running..."
+          if sudo systemctl is-active --quiet ${FSW_SERVICE_NAME}; then
+            echo "✅ Service ${FSW_SERVICE_NAME} is running"
+          else
+            echo "❌ Service ${FSW_SERVICE_NAME} is not running"
+            sudo systemctl status ${FSW_SERVICE_NAME} --no-pager -l
+            echo "Recent FSW service logs:"
+            sudo journalctl -u ${FSW_SERVICE_NAME} --no-pager -n 20
+            exit 1
+          fi
           
+          echo "Checking if ${GDS_SERVICE_NAME} service is running..."
+          if sudo systemctl is-active --quiet ${GDS_SERVICE_NAME}; then
+            echo "✅ Service ${GDS_SERVICE_NAME} is running"
+          else
+            echo "❌ Service ${GDS_SERVICE_NAME} is not running"
+            sudo systemctl status ${GDS_SERVICE_NAME} --no-pager -l
+            echo "Recent GDS service logs:"
+            sudo journalctl -u ${GDS_SERVICE_NAME} --no-pager -n 20
+            exit 1
+          fi
+
       - name: "Run integration tests"
         run: |
           # Use the virtual environment created during setup
@@ -169,59 +133,4 @@ jobs:
           echo "Running integration tests..."
           pytest --dictionary ${INSTALL_DIR}/dict/LedBlinkerTopologyDictionary.json ${INSTALL_DIR}/test/led_integration_tests.py
           
-          PYTEST_EXIT_CODE=$?
-          
-          echo "=== Integration test completed at $(date) (${TEST_TIMESTAMP}) with exit code ${PYTEST_EXIT_CODE} ==="
-          
-          # Check monitoring results and display service logs if there were issues
-          if [ -f "${INSTALL_DIR}/monitoring/soak_report_*.json" ]; then
-            LATEST_REPORT=$(ls -t ${INSTALL_DIR}/monitoring/soak_report_*.json 2>/dev/null | head -1)
-            if [ -f "$LATEST_REPORT" ]; then
-              echo "=== SOAK MONITORING SUMMARY ==="
-              # Check if there are alerts in the JSON report
-              if grep -q '"alerts":' "$LATEST_REPORT" && ! grep -q '"alerts": \[\]' "$LATEST_REPORT"; then
-                echo "⚠️  MONITORING ALERTS DETECTED - Showing recent service logs"
-                echo "Recent FSW logs:"
-                sudo journalctl -u ${FSW_SERVICE_NAME} --no-pager -n 50 --since "30 minutes ago"
-                echo "Recent GDS logs:"
-                sudo journalctl -u ${GDS_SERVICE_NAME} --no-pager -n 50 --since "30 minutes ago"
-                
-                # Exit with error if pytest passed but monitoring found critical issues
-                if [ ${PYTEST_EXIT_CODE} -eq 0 ]; then
-                  echo "⚠️  Integration tests passed but monitoring detected issues"
-                  exit 1
-                fi
-              fi
-            fi
-          fi
-          
-          # Exit with pytest result
-          exit ${PYTEST_EXIT_CODE}
-          
-      - name: 'Archive Monitoring and Test Results'
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: ledblinker-results-${{ github.run_number }}-${{ github.run_attempt }}
-          path: |
-            ${{ env.INSTALL_DIR }}/logs
-            ${{ env.INSTALL_DIR }}/ComLoggerFiles
-            ${{ env.INSTALL_DIR }}/monitoring
-          retention-days: 30
-        
-      # Archive just the GDS logs separately for easy access (like simpler workflows)  
-      - name: 'Archive GDS Logs'
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: ledblinker-gds-logs-${{ github.run_number }}-${{ github.run_attempt }}
-          path: ${{ env.INSTALL_DIR }}/logs
-          retention-days: 30
-
-      - name: 'Archive Monitoring State'
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: ledblinker-monitoring-state
-          path: ${{ env.INSTALL_DIR }}/monitoring/soak_monitor_state.json
-          retention-days: 90
+          echo "=== Integration test completed at $(date) (${TEST_TIMESTAMP}) ==="
