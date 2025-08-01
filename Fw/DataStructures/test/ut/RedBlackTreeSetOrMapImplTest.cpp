@@ -339,16 +339,24 @@ TEST(RedBlackTreeSetOrMapImplScenarios, RemoveBlackLeafWithRedParent) {
     std::cout << "size is " << impl.getSize() << "\n";
 }
 
-TEST(RedBlackTreeSetOrMapImplScenarios, RemoveBlackLeafWithRedSiblingAndBlackNephews) {
+TEST(RedBlackTreeSetOrMapImplScenarios, RemoveBlackLeafWithRedSibling) {
     State::Tester::Node nodes[State::capacity];
     State::Tester::Index freeNodes[State::capacity];
     State::Impl impl(nodes, freeNodes, State::capacity);
     State state(impl);
-    for (FwSizeType i = 0; i < 10; i++) {
-        state.storedKey = static_cast<State::KeyType>(i + (i % 2));
+    state.useStoredKey = true;
+    for (FwSizeType i = 0; i < 6; i++) {
+        state.storedKey = static_cast<State::KeyType>(i);
         Rules::insertNotFull.apply(state);
     }
+    state.storedKey = 4;
+    Rules::remove.apply(state);
     std::cout << "Before:\n";
+    state.tester.printTree();
+    std::cout << "size is " << impl.getSize() << "\n";
+    state.storedKey = 0;
+    Rules::remove.apply(state);
+    std::cout << "After:\n";
     state.tester.printTree();
     std::cout << "size is " << impl.getSize() << "\n";
 }
