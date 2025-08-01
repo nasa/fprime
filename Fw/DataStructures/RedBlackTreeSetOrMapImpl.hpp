@@ -19,6 +19,22 @@
 
 namespace Fw {
 
+//! This class template implements a red-black tree that can be used as a
+//! set or map. A red-black tree is a binary search tree (BST) such that
+//! each node is colored red or black. A red-black tree is valid if
+//!
+//! 1. It satisfies the red child invariant: No red node has a red child.
+//!
+//! 2. It satisfies the black height invariant (described below).
+//!
+//! The black height invariant of a red-black tree T is checked with respect to the
+//! leaf-augmented tree T'. T' is constructed from T by replacing every "missing"
+//! node in T (i.e., every place where there could be a child but is not) with
+//! a new black node. The black height invariant says that for every node N in T',
+//! every path from N to a leaf in T' goes through the same number of black nodes.
+//!
+//! A valid red-black tree is balanced, in the sense that the find operation
+//! takes O(log n) steps.
 template <typename KE, typename VN>
 class RedBlackTreeSetOrMapImpl final {
     // ----------------------------------------------------------------------
@@ -551,6 +567,7 @@ class RedBlackTreeSetOrMapImpl final {
                         // shape, assuming that parentDirection is RIGHT.
                         // There is a red child violation from parent to node.
                         // There are no other violations at any nodes.
+                        // K1, K2, K3, and K4 are arbitrary keys with K1 < K2 < K3 < K4.
                         //
                         //                    BBBBBBBBBBBBBBBBBBBB
                         //                   B                    B
@@ -767,8 +784,7 @@ class RedBlackTreeSetOrMapImpl final {
         auto oppositeDirection = Node::getOppositeDirection(direction);
         // The leaf-augmented subtree rooted at parent has this shape, assuming
         // direction == RIGHT. We use ? to represent the unknown color (red or
-        // black) of parent. The black heights are the black heights of the
-        // original tree.
+        // black) of parent.
         //
         //                      ????????????????
         //                     ?                ?
@@ -1034,7 +1050,7 @@ class RedBlackTreeSetOrMapImpl final {
                     //                             |  black height i + 1  |  |  black height i + 1  |
                     //                             |                      |  |                      |
                     //                             ------------------------  ------------------------
-                    // 
+                    //
                 } else if (this->getNodeColor(closeNephew) == Color::RED) {
                     // The subtree has this shape:
                     //
@@ -1063,11 +1079,11 @@ class RedBlackTreeSetOrMapImpl final {
                     //                                      /      \
                     //                                     /        \
                     //                                    V          V
-                    //              ------------------------        RRRRRRRRRRRRRRRRRRRRRRRRRR       
-                    //              |                      |       R                          R     
-                    //              |  black height i + 1  |       R     K5 (closeNephew)     R    
-                    //              |                      |       R                          R     
-                    //              ------------------------        RRRRRRRRRRRRRRRRRRRRRRRRRR       
+                    //              ------------------------        RRRRRRRRRRRRRRRRRRRRRRRRRR
+                    //              |                      |       R                          R
+                    //              |  black height i + 1  |       R     K5 (closeNephew)     R
+                    //              |                      |       R                          R
+                    //              ------------------------        RRRRRRRRRRRRRRRRRRRRRRRRRR
                     //                                                       |      |
                     //                                                       |      |
                     //                                                       V      V
@@ -1076,7 +1092,7 @@ class RedBlackTreeSetOrMapImpl final {
                     //                                               |  black height i + 1  |
                     //                                               |                      |
                     //                                               ------------------------
-                    //  
+                    //
                     this->removeBlackLeafNodeHelper1(closeNephew, oppositeDirection, sibling, distantNephew);
                     // The subtree has this shape:
                     //
@@ -1157,7 +1173,7 @@ class RedBlackTreeSetOrMapImpl final {
                     this->m_nodes[sibling].m_color = Color::RED;
                     this->m_nodes[parent].m_color = Color::BLACK;
                     // The subtree has this shape. The entire tree is a vaild red-black tree.
-                    // 
+                    //
                     //                           BBBBBBBBBBBBBBBB
                     //                          B                B
                     //                          B       K2       B
@@ -1464,7 +1480,7 @@ class RedBlackTreeSetOrMapImpl final {
                 else {
                     direction = getParentDirection(node);
                     oppositeDirection = Node::getOppositeDirection(direction);
-                    // The leaf-augmented subtree rooted at parent has this 
+                    // The leaf-augmented subtree rooted at parent has this
                     // shape, assuming that direction == RIGHT:
                     //
                     //                         ??????????????
@@ -1505,10 +1521,10 @@ class RedBlackTreeSetOrMapImpl final {
                     //      |                      |     |                      |
                     //      ------------------------     ------------------------
                     //
-                    // There is a black height violation at parent because the 
-                    // left subtree of parent has black height i + 3, and the 
-                    // right subtree has black height i + 2. So we need at 
-                    // least one more loop iteration. After incrementing i, the 
+                    // There is a black height violation at parent because the
+                    // left subtree of parent has black height i + 3, and the
+                    // right subtree has black height i + 2. So we need at
+                    // least one more loop iteration. After incrementing i, the
                     // invariant at the top of the loop is satisfied.
                 }
             }
