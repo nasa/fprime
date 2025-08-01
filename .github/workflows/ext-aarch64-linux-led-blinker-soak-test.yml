@@ -42,7 +42,7 @@ jobs:
           
           python3 soak_monitor.py \
             --dictionary ${INSTALL_DIR}/dict/LedBlinkerTopologyDictionary.json \
-            --logs ${INSTALL_DIR}/ComLoggerFiles
+            --com-logs ${INSTALL_DIR}/ComLoggerFiles
           
           MONITOR_EXIT_CODE=$?
           

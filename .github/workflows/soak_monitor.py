@@ -254,7 +254,7 @@ class SoakMonitorArgumentParser(ParserBase):
     def get_arguments(self) -> Dict[Tuple[str, ...], Dict[str, Any]]:
         """Arguments for soak monitoring"""
         return {
-            ("--logs",): {
+            ("--com-logs",): {
                 "action": "store",
                 "required": True,
                 "type": Path,
@@ -265,15 +265,15 @@ class SoakMonitorArgumentParser(ParserBase):
     def handle_arguments(self, args, **kwargs):
         """Handle arguments as parsed"""
         # Convert to Path object explicitly (even though type=Path is specified, it might still be a string)
-        if hasattr(args, 'logs') and args.logs is not None:
-            args.logs = Path(args.logs)
+        if hasattr(args, 'com_logs') and args.com_logs is not None:
+            args.com_logs = Path(args.com_logs)
             
             # Validate logs directory exists
-            if not args.logs.exists():
-                raise ValueError(f"ComLogger logs directory must exist: {args.logs}")
+            if not args.com_logs.exists():
+                raise ValueError(f"ComLogger logs directory must exist: {args.com_logs}")
             
-            if not args.logs.is_dir():
-                raise ValueError(f"ComLogger logs path must be a directory: {args.logs}")
+            if not args.com_logs.is_dir():
+                raise ValueError(f"ComLogger logs path must be a directory: {args.com_logs}")
         else:
             raise ValueError("ComLogger logs argument is required")
         
@@ -302,12 +302,12 @@ def main():
     print("Note: This does NOT analyze GDS text logs")
     print("-"*50)
     print(f"Dictionary: {args.dictionary}")
-    print(f"ComLogger files directory: {args.logs}")
+    print(f"ComLogger files directory: {args.com_logs}")
     print(f"Analysis timestamp: {results.timestamp}")
     print("-"*50)
     
     # Process logs
-    process_logs(pipeline, args.dictionary, args.logs, results)
+    process_logs(pipeline, args.dictionary, args.com_logs, results)
     
     # Analyze trends within the ComLogger data
     results.analyze_trends()
