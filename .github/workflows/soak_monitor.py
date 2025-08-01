@@ -326,7 +326,7 @@ def main():
             if "trending up" in alert:
                 print(f"  📈 {alert}")
             else:
-            print(f"  ⚠️  {alert}")
+                print(f"  ⚠️  {alert}")
     
     if results.health_issues:
         print("\nHEALTH ISSUES:")
