@@ -48,6 +48,7 @@ jobs:
   integration-test:
     name: "Integration Test"
     runs-on: [self-hosted, ARM64]
+    needs: soak-monitoring
     steps:
       
       - name: "Check service status"

@@ -6,6 +6,7 @@ Analyzes ComLogger .com files for health warnings and resource issues
 
 import os
 import re
+import sys
 import json
 from datetime import datetime
 from pathlib import Path
@@ -362,6 +363,7 @@ def main():
         exit(1)
     
     print("MONITORING COMPLETED SUCCESSFULLY")
+    sys.exit(0)
 
 
 if __name__ == '__main__':
