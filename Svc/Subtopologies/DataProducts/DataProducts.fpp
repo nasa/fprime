@@ -4,7 +4,7 @@ module DataProducts{
     # Active Components
     # ----------------------------------------------------------------------
     
-    instance dpCat: Svc.DpCatalog base id DataProductsConfig.BASE_ID + 0x0100 \
+    instance dpCat: Svc.DpCatalog base id DataProductsConfig.BASE_ID + 0x00000 \
         queue size DataProductsConfig.QueueSizes.dpCat \
         stack size DataProductsConfig.StackSizes.dpCat \
         priority DataProductsConfig.Priorities.dpCat \
@@ -17,12 +17,12 @@ module DataProducts{
         """
     }
 
-    instance dpMgr: Svc.DpManager base id DataProductsConfig.BASE_ID + 0x0200 \
+    instance dpMgr: Svc.DpManager base id DataProductsConfig.BASE_ID + 0x01000 \
         queue size DataProductsConfig.QueueSizes.dpMgr \
         stack size DataProductsConfig.StackSizes.dpMgr \
         priority DataProductsConfig.Priorities.dpMgr
 
-    instance dpWriter: Svc.DpWriter base id DataProductsConfig.BASE_ID + 0x0300 \
+    instance dpWriter: Svc.DpWriter base id DataProductsConfig.BASE_ID + 0x02000 \
         queue size DataProductsConfig.QueueSizes.dpWriter \
         stack size DataProductsConfig.StackSizes.dpWriter \
         priority DataProductsConfig.Priorities.dpWriter \
@@ -36,7 +36,7 @@ module DataProducts{
     # Passive Components
     # ----------------------------------------------------------------------
     
-    instance dpBufferManager: Svc.BufferManager base id DataProductsConfig.BASE_ID + 0x0400 \ 
+    instance dpBufferManager: Svc.BufferManager base id DataProductsConfig.BASE_ID + 0x03000 \ 
     {
         phase Fpp.ToCpp.Phases.configObjects """
         Svc::BufferManager::BufferBins bins;

@@ -16,14 +16,7 @@ namespace Test {
 struct StaticData {
     //! Enumeration of last function called
     //!
-    enum LastFn {
-        NONE_FN,
-        CONSTRUCT_FN,
-        DESTRUCT_FN,
-        TAKE_FN,
-        RELEASE_FN,
-        GET_HANDLE_FN
-    };
+    enum LastFn { NONE_FN, CONSTRUCT_FN, DESTRUCT_FN, TAKE_FN, RELEASE_FN, GET_HANDLE_FN };
     StaticData() = default;
     ~StaticData() = default;
 
@@ -58,11 +51,10 @@ class TestMutex : public MutexInterface {
     //! \brief return the underlying mutex handle (implementation specific)
     //! \return internal task handle representation
     MutexHandle* getHandle() override;
-
 };
 
-}
-}
-}
-}
-#endif // End OS_STUB_MUTEX_TEST_HPP
+}  // namespace Test
+}  // namespace Mutex
+}  // namespace Stub
+}  // namespace Os
+#endif  // End OS_STUB_MUTEX_TEST_HPP

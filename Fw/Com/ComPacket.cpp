@@ -28,12 +28,12 @@ SerializeStatus ComPacket::deserializeBase(SerializeBufferBase& buffer) {
 
 SerializeStatus ComPacket::serializeTo(SerializeBufferBase& buffer) const {
     // Default implementation for base class - derived classes should override this method
-    return FW_SERIALIZE_FORMAT_ERROR;
+    return FW_SERIALIZE_UNIMPLEMENTED;
 }
 
 SerializeStatus ComPacket::deserializeFrom(SerializeBufferBase& buffer) {
     // Default implementation for base class - derived classes should override this method
-    return FW_DESERIALIZE_FORMAT_ERROR;
+    return FW_DESERIALIZE_UNIMPLEMENTED;
 }
 
 // Deprecated methods for backward compatibility

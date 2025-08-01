@@ -44,7 +44,7 @@ struct Tester {
     };
 
     struct QueueMessageComparer {
-        bool operator()(const QueueMessage& a, const QueueMessage& b){
+        bool operator()(const QueueMessage& a, const QueueMessage& b) {
             // Compare priority for unequal priority
             if (a.priority != b.priority) {
                 return HELPER(a.priority, b.priority);

@@ -21,15 +21,15 @@ struct Tester {
     //!
     enum MutexState {
         UNINITIALIZED,  //!< Mutex is uninitialized
-        LOCKED,   //!< Mutex is locked
-        UNLOCKED  //!< Mutex is unlocked
+        LOCKED,         //!< Mutex is locked
+        UNLOCKED        //!< Mutex is unlocked
     };
 
     //! Assert in Mutex.cpp for searching death text
     static constexpr const char* ASSERT_IN_MUTEX_CPP = "Assert: \".*/Os/.*/Mutex\\.cpp:[0-9]+\"";
 
     // Constructors that ensures the mutex is always valid
-    Tester(): m_mutex(), m_state(UNLOCKED) {}
+    Tester() : m_mutex(), m_state(UNLOCKED) {}
 
     // Destructor must be virtual
     virtual ~Tester() = default;

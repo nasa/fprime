@@ -285,5 +285,5 @@ def test_seqgen(fprime_test_api):
         == 0
     ), "Failed to run fprime-seqgen"
     fprime_test_api.send_and_assert_command(
-        "ComCcsds.cmdSeq.CS_RUN", args=["/tmp/ref_test_int.bin", "BLOCK"], max_delay=5
+        "Ref.cmdSeq.CS_RUN", args=["/tmp/ref_test_int.bin", "BLOCK"], max_delay=5
     )

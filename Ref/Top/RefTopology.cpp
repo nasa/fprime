@@ -8,20 +8,19 @@
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
 // ======================================================================
+
 // Provides access to autocoded functions
 #include <Ref/Top/RefTopologyAc.hpp>
 
 // Necessary project-specified types
-#include <Os/Console.hpp>
+#include <Fw/Types/MallocAllocator.hpp>
 
-// Used for 1Hz synthetic cycling
-#include <Os/Mutex.hpp>
 
 // Allows easy reference to objects in FPP/autocoder required namespaces
 using namespace Ref;
 
-// Instantiate a system logger that will handle Fw::Logger::log calls
-Os::Console logger;
+// Instantiate a malloc allocator for cmdSeq buffer allocation
+Fw::MallocAllocator mallocator;
 
 // The reference topology divides the incoming clock signal (1Hz) into sub-signals: 1Hz, 1/2Hz, and 1/4Hz and
 // zero offset for all the dividers
@@ -32,6 +31,10 @@ Svc::RateGroupDriver::DividerSet rateGroupDivisorsSet{{{1, 0}, {2, 0}, {4, 0}}};
 U32 rateGroup1Context[Svc::ActiveRateGroup::CONNECTION_COUNT_MAX] = {};
 U32 rateGroup2Context[Svc::ActiveRateGroup::CONNECTION_COUNT_MAX] = {};
 U32 rateGroup3Context[Svc::ActiveRateGroup::CONNECTION_COUNT_MAX] = {};
+
+enum TopologyConstants {
+    COMM_PRIORITY = 100,
+};
 
 /**
  * \brief configure/setup components in project-specific way
@@ -48,6 +51,9 @@ void configureTopology() {
     rateGroup1Comp.configure(rateGroup1Context, FW_NUM_ARRAY_ELEMENTS(rateGroup1Context));
     rateGroup2Comp.configure(rateGroup2Context, FW_NUM_ARRAY_ELEMENTS(rateGroup2Context));
     rateGroup3Comp.configure(rateGroup3Context, FW_NUM_ARRAY_ELEMENTS(rateGroup3Context));
+
+    // Command sequencer needs to allocate memory to hold contents of command sequences
+    cmdSeq.allocateBuffer(0, mallocator, 5 * 1024);
 }
 
 // Public functions for use in main program are namespaced with deployment name Ref
@@ -63,12 +69,20 @@ void setupTopology(const TopologyState& state) {
     regCommands();
     // Autocoded configuration. Function provided by autocoder.
     configComponents(state);
+    if (state.hostname != nullptr && state.port != 0) {
+        comDriver.configure(state.hostname, state.port);
+    }
     // Project-specific component configuration. Function provided above. May be inlined, if desired.
     configureTopology();
     // Autocoded parameter loading. Function provided by autocoder.
     loadParameters();
     // Autocoded task kick-off (active components). Function provided by autocoder.
     startTasks(state);
+    //Initialize socket client communication if and only if there is a valid specification
+    if (state.hostname != nullptr && state.port != 0) {
+        Os::TaskString name("ReceiveTask");
+        comDriver.start(name, COMM_PRIORITY, Default::STACK_SIZE);
+    }
 }
 
 void startRateGroups(Fw::TimeInterval interval) {
@@ -88,5 +102,12 @@ void teardownTopology(const TopologyState& state) {
     stopTasks(state);
     freeThreads(state);
     tearDownComponents(state);
+
+    //Stop the comDriver component, free thread
+    comDriver.stop();
+    (void)comDriver.join();
+
+    // Resource deallocation
+    cmdSeq.deallocateBuffer(mallocator);
 }
 }  // namespace Ref

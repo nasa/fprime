@@ -11,28 +11,28 @@
 // ======================================================================
 
 #include <Drv/Ip/TcpClientSocket.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Logger/Logger.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <Fw/FPrimeBasicTypes.hpp>
 
 #ifdef TGT_OS_TYPE_VXWORKS
-    #include <socket.h>
-    #include <inetLib.h>
-    #include <fioLib.h>
-    #include <hostLib.h>
-    #include <ioLib.h>
-    #include <vxWorks.h>
-    #include <sockLib.h>
-    #include <taskLib.h>
-    #include <sysLib.h>
-    #include <errnoLib.h>
-    #include <cstring>
+#include <errnoLib.h>
+#include <fioLib.h>
+#include <hostLib.h>
+#include <inetLib.h>
+#include <ioLib.h>
+#include <sockLib.h>
+#include <socket.h>
+#include <sysLib.h>
+#include <taskLib.h>
+#include <vxWorks.h>
+#include <cstring>
 #elif defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
-    #include <sys/socket.h>
-    #include <unistd.h>
-    #include <arpa/inet.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <unistd.h>
 #else
-    #error OS not supported for IP Socket Communications
+#error OS not supported for IP Socket Communications
 #endif
 
 #include <cstdio>
@@ -45,7 +45,6 @@ TcpClientSocket::TcpClientSocket() : IpSocket() {}
 bool TcpClientSocket::isValidPort(U16 port) {
     return port != 0;
 }
-
 
 SocketIpStatus TcpClientSocket::openProtocol(SocketDescriptor& socketDescriptor) {
     int socketFd = -1;
