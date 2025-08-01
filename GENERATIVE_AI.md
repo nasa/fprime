@@ -1,6 +1,6 @@
 # F´ Generative AI Usage Guidelines
 
-We're excited about the potential of generative AI to help make [F´] (https://github.com/nasa/fprime)development more productive, enjoyable, and accessible! Whether you're using AI to write code, improve documentation, or learn about complex systems, we welcome the thoughtful use of these powerful tools in your F´ contributions.
+We're excited about the potential of generative AI to help make [F´](https://github.com/nasa/fprime) development more productive, enjoyable, and accessible! Whether you're using AI to write code, improve documentation, or learn about complex systems, we welcome the thoughtful use of these powerful tools in your F´ contributions.
 
 This guide shares our community's approach to using generative AI effectively and responsibly. You'll find practical tips, best practices, and simple guidelines to help you get the most out of AI tools while maintaining the quality standards that make F´ great.
 
@@ -13,7 +13,7 @@ F´ embraces technological advancement and innovation. Generative AI tools can a
 - Test case development
 - Debugging assistance
 - Design pattern suggestions
-- Learning and understanding complex codebases
+- Learning and understanding our codebases
 
 However, the use of generative AI must align with our commitment to high technical standards, quality, and the collaborative nature of open source development.
 
@@ -23,8 +23,8 @@ To maintain transparency and enable effective code review, contributors must dis
 
 ### Pull Request Submission: Contributors
 
-1. **Check the "AI Used (y/n)" checkbox** in the pull request template
-2. **(Optionally) Provide details in the "AI Usage" section** describing how generative AI was utilized
+1. **Fill-In 'y' to the "AI Used (y/n)" table entry** in the pull request template
+2. **Provide details in the "AI Usage" section** describing how generative AI was utilized
 
 ### What to Disclose
 
@@ -38,7 +38,6 @@ Include information about:
 ### Example Disclosure
 
 ```
-- [x] **Generative AI was used in this contribution**
 Used GitHub Copilot for:
 - Generated unit test templates for TestFlightController.cpp (modified for F Prime conventions)
 - Documentation improvements in README.md (reviewed and edited for accuracy)
@@ -59,10 +58,10 @@ Used GitHub Copilot for:
 
 When working with generative AI, provide clear rules and context to improve code quality and consistency. For Example:
 
-- **Reference F' Style Guidelines**: Include the [F' Style Guidelines](https://github.com/nasa/fprime/wiki/F%C2%B4-Style-Guidelines) in your prompts
-- **Specify API documentation**: Direct AI to use the [F' C++ API documentation](https://nasa.github.io/fprime/v3.4.1/UsersGuide/api/c++/html/md_docs_2doc-index.html) for code generation
+- **Reference F´ Style Guidelines**: Include the [F´ Style Guidelines](https://github.com/nasa/fprime/wiki/F%C2%B4-Style-Guidelines) in your prompts
+- **Specify API documentation**: Direct AI to use the [F´ C++ API documentation](https://nasa.github.io/fprime/v3.4.1/UsersGuide/api/c++/html/md_docs_2doc-index.html) for code generation
 - **Enforce coding standards**: Instruct AI to avoid "magic numbers" and use descriptive variable names or comments
-- **Provide project context**: Share relevant F' architectural patterns and component structures
+- **Provide project context**: Share relevant F´ architectural patterns and component structures
 
 ### Quality and Responsibility
 
