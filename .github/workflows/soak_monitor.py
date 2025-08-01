@@ -299,7 +299,6 @@ def main():
     print("F' SOAK TEST MONITOR")
     print("="*50)
     print("Analyzes ComLogger .com files for health and resource issues")
-    print("Note: This does NOT analyze GDS text logs")
     print("-"*50)
     print(f"Dictionary: {args.dictionary}")
     print(f"ComLogger files directory: {args.com_logs}")
