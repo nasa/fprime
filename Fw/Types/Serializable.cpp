@@ -18,7 +18,7 @@ Serializable::Serializable() {}
 Serializable::~Serializable() {}
 
 // ----------------------------------------------------------------------
-// Default implementations for legacy (DEPRECATED) serialization methods
+// Default implementations for legacy serialization methods
 // ----------------------------------------------------------------------
 
 SerializeStatus Serializable::serialize(SerializeBufferBase& buffer) const {
