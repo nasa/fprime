@@ -22,9 +22,9 @@ void random(const Fw::StringBase& name, State& state, U32 maxNumSteps) {
       &Rules::findExisting,
       &Rules::insertExisting,
       &Rules::insertFull,
-      &Rules::insertNotFull
-      //&Rules::remove,
-      //&Rules::removeExisting
+      &Rules::insertNotFull,
+      &Rules::remove,
+      &Rules::removeExisting
     };
     STest::RandomScenario<State> scenario("RandomScenario", rules,
                                           sizeof(rules) / sizeof(STest::RandomScenario<State>*));

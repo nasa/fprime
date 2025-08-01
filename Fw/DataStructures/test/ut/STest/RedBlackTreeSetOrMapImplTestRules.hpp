@@ -148,7 +148,6 @@ struct Remove : public Rule {
     }
 };
 
-#if 0
 struct RemoveExisting : public Rule {
     RemoveExisting() : Rule("RemoveExisting") {}
     bool precondition(const State& state) { return static_cast<FwSizeType>(state.impl.getSize()) > 0; }
@@ -168,11 +167,10 @@ struct RemoveExisting : public Rule {
         ASSERT_EQ(status, Success::SUCCESS);
         ASSERT_EQ(value, expectedValue);
         const auto n = state.modelMap.erase(key);
-        ASSERT_EQ(n, 1);
+        ASSERT_EQ(n, 1U);
         ASSERT_EQ(state.impl.getSize(), state.modelMap.size());
     }
 };
-#endif
 
 extern Clear clear;
 
@@ -188,9 +186,7 @@ extern InsertNotFull insertNotFull;
 
 extern Remove remove;
 
-#if 0
 extern RemoveExisting removeExisting;
-#endif
 
 }  // namespace Rules
 
