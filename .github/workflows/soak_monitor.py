@@ -289,7 +289,9 @@ def main():
     # Validate required arguments
     if not hasattr(args, 'dictionary') or not args.dictionary:
         raise ValueError("Dictionary argument is required from StandardPipelineParser")
-    if not args.dictionary.exists():
+    
+    dictionary_path = Path(args.dictionary)
+    if not dictionary_path.exists():
         raise ValueError(f"Dictionary file does not exist: {args.dictionary}")
     
     # Initialize monitor
