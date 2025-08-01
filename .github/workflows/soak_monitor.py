@@ -10,6 +10,8 @@ import json
 import argparse
 from datetime import datetime, timedelta
 from pathlib import Path
+from typing import Dict, Tuple, Any
+from fprime_gds.executables.cli import ParserBase, StandardPipelineParser
 from fprime_gds.common.handlers import DataHandler
 from fprime_gds.common.pipeline.standard import StandardPipeline
 from fprime_gds.common.utils.config_manager import ConfigManager
@@ -177,51 +179,37 @@ def analyze_trends(current_data, history, metric_name):
     return alerts
 
 
-def process_logs(dictionary_path, logs_path, monitor):
+def process_logs(pipeline, dictionary_path, logs_path, monitor):
     """Process log files for monitoring data"""
     # Setup GDS pipeline
-    standard = StandardPipeline()
-    config = ConfigManager()
-    config.set('framing', 'use_key', 'False')
-    config.set('types', 'msg_len', 'U16')
-    standard.setup(config, dictionary_path, logs_path)
+    pipeline.config.set('framing', 'use_key', 'False')
+    pipeline.config.set('types', 'msg_len', 'U16')
     
     # Register monitors
     health_monitor = HealthMonitor(monitor)
     resource_monitor = ResourceMonitor(monitor)
     
-    standard.coders.register_event_consumer(health_monitor)
-    standard.coders.register_channel_consumer(resource_monitor)
+    pipeline.coders.register_event_consumer(health_monitor)
+    pipeline.coders.register_channel_consumer(resource_monitor)
     
     # Find and process log files
     log_files = []
     logs_dir = Path(logs_path)
     
-    print(f"Looking for log files in: {logs_dir}")
-    print(f"Directory exists: {logs_dir.exists()}")
-    print(f"Is directory: {logs_dir.is_dir()}")
-    
     if logs_dir.is_dir():
         # Look for .com files recursively
         log_files = list(logs_dir.glob('**/*.com'))
-        print(f"Found .com files: {[str(f) for f in log_files]}")
-        
-        # Also show all files for debugging
-        all_files = list(logs_dir.glob('**/*'))
-        print(f"All files in directory: {[str(f) for f in all_files if f.is_file()]}")
         
     elif logs_dir.is_file() and logs_dir.suffix == '.com':
         log_files = [logs_dir]
     
-    print(f"Processing {len(log_files)} log files...")
+    print(f"Processing {len(log_files)} ComLogger .com files...")
     
     for log_file in log_files:
-        print(f"Processing: {log_file}")
         try:
             with open(log_file, 'rb') as f:
                 data = f.read()
-                print(f"File size: {len(data)} bytes")
-                standard.distributor.on_recv(data)
+                pipeline.distributor.on_recv(data)
         except Exception as e:
             print(f"Error processing {log_file}: {e}")
     
@@ -231,18 +219,78 @@ def process_logs(dictionary_path, logs_path, monitor):
     monitor.state['last_processed_times']['telemetry'] = current_time
     
     # Cleanup
-    if hasattr(standard.files, 'uplinker') and standard.files.uplinker:
-        standard.files.uplinker.exit()
+    if hasattr(pipeline.files, 'uplinker') and pipeline.files.uplinker:
+        pipeline.files.uplinker.exit()
+
+
+class SoakMonitorArgumentParser(ParserBase):
+    """ Parser for F' Soak Monitor additional arguments
+    
+    This class provides functionality to parse command line arguments for soak monitoring
+    functionality including ComLogger files location, state file, and report output.
+
+    Parsers should:
+    1. Set a DESCRIPTION for string used in help text,
+    2. Implement get_arguments() to return a dictionary of argument definitions (argparse parameter format)
+    3. Implement handle_arguments() to handle the arguments as parsed
+    """
+
+    DESCRIPTION = "F' Soak Test Monitor - Analyzes ComLogger files for health, buffer, and resource trends"
+
+    def get_arguments(self) -> Dict[Tuple[str, ...], Dict[str, Any]]:
+        """Arguments for soak monitoring"""
+        return {
+            ("--logs",): {
+                "action": "store",
+                "required": True,
+                "type": Path,
+                "help": "Path to directory containing ComLogger .com files to analyze.",
+            },
+            ("--state-file",): {
+                "action": "store",
+                "default": "soak_monitor_state.json",
+                "type": Path,
+                "help": "Path to monitoring state file for tracking trends over time.",
+            },
+            ("--report-file",): {
+                "action": "store",
+                "default": None,
+                "required": False,
+                "type": Path,
+                "help": "Path to save JSON monitoring report file (optional).",
+            }
+        }
+
+    def handle_arguments(self, args, **kwargs):
+        """Handle arguments as parsed"""
+        # Validate logs directory exists
+        if args.logs is None or not args.logs.exists():
+            raise ValueError(f"ComLogger logs directory must exist: {args.logs}")
+        
+        if not args.logs.is_dir():
+            raise ValueError(f"ComLogger logs path must be a directory: {args.logs}")
+        
+        # Ensure state file directory exists
+        args.state_file.parent.mkdir(parents=True, exist_ok=True)
+        
+        # Ensure report file directory exists if specified
+        if args.report_file:
+            if args.report_file.suffix != ".json":
+                raise ValueError("Report file must have .json extension")
+            args.report_file.parent.mkdir(parents=True, exist_ok=True)
+        
+        return args
 
 
 def main():
-    parser = argparse.ArgumentParser(description='F\' Soak Test Monitor')
-    parser.add_argument('-d', '--dictionary', required=True, help='Path to dictionary')
-    parser.add_argument('-l', '--logs', required=True, help='Path to log files or directory')
-    parser.add_argument('-s', '--state-file', default='soak_monitor_state.json', help='State file path')
-    parser.add_argument('--report-file', help='Output report file (JSON)')
-    
-    args = parser.parse_args()
+    args, _ = ParserBase.parse_args([StandardPipelineParser, SoakMonitorArgumentParser])
+    pipeline = StandardPipelineParser.pipeline_factory(args)
+   
+    # Validate required arguments
+    if not hasattr(args, 'dictionary') or not args.dictionary:
+        raise ValueError("Dictionary argument is required from StandardPipelineParser")
+    if not args.dictionary.exists():
+        raise ValueError(f"Dictionary file does not exist: {args.dictionary}")
     
     # Initialize monitor
     monitor = SoakMonitor(args.state_file)
@@ -260,7 +308,7 @@ def main():
     print("-"*50)
     
     # Process logs
-    process_logs(args.dictionary, args.logs, monitor)
+    process_logs(pipeline, args.dictionary, args.logs, monitor)
     
     # Analyze trends
     buffer_alerts = analyze_trends(
@@ -330,7 +378,7 @@ def main():
         print("⚠️  EXITING WITH ERROR DUE TO ALERTS/FATALS")
         exit(1)
     
-    print("✅ MONITORING COMPLETED SUCCESSFULLY")
+    print("MONITORING COMPLETED SUCCESSFULLY")
 
 
 if __name__ == '__main__':
