@@ -39,7 +39,7 @@ namespace Svc {
       REQUIREMENT("ISF-CMDS-002");
 
       // Set the time
-      Fw::Time testTime(TB_WORKSTATION_TIME, 0, 0);
+      Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 0, 0);
       this->setTestTime(testTime);
       // Write the file
       SequenceFiles::BadCRCFile file(this->format);
@@ -74,7 +74,7 @@ namespace Svc {
       BadRecordDescriptor()
     {
       // Set the time
-      Fw::Time testTime(TB_WORKSTATION_TIME, 1, 1);
+      Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 1, 1);
       this->setTestTime(testTime);
       // Write the file
       FwSizeType numRecords = 1;
@@ -124,7 +124,7 @@ namespace Svc {
       BadTimeBase()
     {
       // Set the time
-      Fw::Time testTime(TB_WORKSTATION_TIME, 1, 1);
+      Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 1, 1);
       this->setTestTime(testTime);
       // Write the file
       const FwSizeType numRecords = 5;
@@ -147,8 +147,8 @@ namespace Svc {
       ASSERT_EVENTS_CS_TimeBaseMismatch(
           0,
           file.getName().toChar(),
-          TB_WORKSTATION_TIME,
-          TB_PROC_TIME
+          TimeBase::TB_WORKSTATION_TIME,
+          TimeBase::TB_PROC_TIME
       );
     }
 
@@ -156,7 +156,7 @@ namespace Svc {
       BadTimeContext()
     {
       // Set the time
-      Fw::Time testTime(TB_WORKSTATION_TIME, 0, 1, 1);
+      Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 0, 1, 1);
       this->setTestTime(testTime);
       // Write the file
       const U32 numRecords = 5;
@@ -216,7 +216,7 @@ namespace Svc {
       REQUIREMENT("ISF-CMDS-001");
 
       // Set the time
-      Fw::Time testTime(TB_WORKSTATION_TIME, 1, 1);
+      Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 1, 1);
       this->setTestTime(testTime);
       // Write the file
       const U32 numRecords = 5;
@@ -247,7 +247,7 @@ namespace Svc {
       SequenceFiles::TooLargeFile file(BUFFER_SIZE, this->format);
       file.write();
       // Set the time
-      Fw::Time testTime(TB_WORKSTATION_TIME, 0, 0);
+      Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 0, 0);
       this->setTestTime(testTime);
       // Run the sequence
       this->sendCmd_CS_RUN(0, 0, file.getName(), Svc::CmdSequencer_BlockState::NO_BLOCK);
@@ -372,7 +372,7 @@ namespace Svc {
       SizeFieldTooLarge()
     {
       // Set the time
-      Fw::Time testTime(TB_WORKSTATION_TIME, 1, 1);
+      Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 1, 1);
       this->setTestTime(testTime);
       // Write the file
       SequenceFiles::SizeFieldTooLargeFile file(BUFFER_SIZE, this->format);
@@ -421,7 +421,7 @@ namespace Svc {
       SizeFieldTooSmall()
     {
       // Set the time
-      Fw::Time testTime(TB_WORKSTATION_TIME, 1, 1);
+      Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 1, 1);
       this->setTestTime(testTime);
       // Write the file
       SequenceFiles::SizeFieldTooSmallFile file(this->format);
@@ -472,7 +472,7 @@ namespace Svc {
       USecFieldTooShort()
     {
       // Set the time
-      Fw::Time testTime(TB_WORKSTATION_TIME, 1, 1);
+      Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 1, 1);
       this->setTestTime(testTime);
       // Write the file
       SequenceFiles::USecFieldTooShortFile file(this->format);

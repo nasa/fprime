@@ -130,9 +130,13 @@ U8* FpySequencer::top() {
 }
 
 U8* FpySequencer::lvars() {
+    return this->m_runtime.stack + this->lvarOffset();
+}
+
+U16 FpySequencer::lvarOffset() {
     // at the moment, because we only have one stack frame,
     // lvars always start at 0
-    return this->m_runtime.stack;
+    return 0;
 }
 
 //! Internal interface handler for directive_waitRel
@@ -199,7 +203,8 @@ void FpySequencer::directive_stackOp_internalInterfaceHandler(const Svc::FpySequ
 }
 
 //! Internal interface handler for directive_unaryRegOp
-void FpySequencer::directive_unaryRegOp_internalInterfaceHandler(const Svc::FpySequencer_UnaryRegOpDirective& directive) {
+void FpySequencer::directive_unaryRegOp_internalInterfaceHandler(
+    const Svc::FpySequencer_UnaryRegOpDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->unaryRegOp_directiveHandler(directive, error));
     this->m_tlm.lastDirectiveError = error;
@@ -250,11 +255,11 @@ Signal FpySequencer::waitAbs_directiveHandler(const FpySequencer_WaitAbsDirectiv
 //! Internal interface handler for directive_goto
 Signal FpySequencer::goto_directiveHandler(const FpySequencer_GotoDirective& directive, DirectiveError& error) {
     // check within sequence bounds, or at EOF (we allow == case cuz this just ends the sequence)
-    if (directive.getstatementIndex() > m_sequenceObj.getheader().getstatementCount()) {
+    if (directive.get_statementIndex() > m_sequenceObj.get_header().get_statementCount()) {
         error = DirectiveError::STMT_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
-    m_runtime.nextStatementIndex = directive.getstatementIndex();
+    m_runtime.nextStatementIndex = directive.get_statementIndex();
     return Signal::stmtResponse_success;
 }
 
@@ -265,7 +270,7 @@ Signal FpySequencer::if_directiveHandler(const FpySequencer_IfDirective& directi
         return Signal::stmtResponse_failure;
     }
     // check within sequence bounds, or at EOF (we allow == case cuz this just ends the sequence)
-    if (directive.getfalseGotoStmtIndex() > m_sequenceObj.getheader().getstatementCount()) {
+    if (directive.get_falseGotoStmtIndex() > m_sequenceObj.get_header().get_statementCount()) {
         error = DirectiveError::STMT_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
@@ -276,7 +281,7 @@ Signal FpySequencer::if_directiveHandler(const FpySequencer_IfDirective& directi
     }
 
     // conditional false case
-    this->m_runtime.nextStatementIndex = directive.getfalseGotoStmtIndex();
+    this->m_runtime.nextStatementIndex = directive.get_falseGotoStmtIndex();
     return Signal::stmtResponse_success;
 }
 
@@ -289,9 +294,14 @@ Signal FpySequencer::storeTlmVal_directiveHandler(const FpySequencer_StoreTlmVal
         error = DirectiveError::TLM_GET_NOT_CONNECTED;
         return Signal::stmtResponse_failure;
     }
+    U16 stackOffset = this->lvarOffset() + directive.get_lvarOffset();
+    if (stackOffset >= this->m_runtime.stackSize) {
+        error = DirectiveError::STACK_OVERFLOW;
+        return Signal::stmtResponse_failure;
+    }
     Fw::Time tlmTime;
     Fw::TlmBuffer tlmValue;
-    Fw::TlmValid valid = this->getTlmChan_out(0, directive.getchanId(), tlmTime, tlmValue);
+    Fw::TlmValid valid = this->getTlmChan_out(0, directive.get_chanId(), tlmTime, tlmValue);
 
     if (valid != Fw::TlmValid::VALID) {
         // could not find this tlm chan
@@ -299,18 +309,27 @@ Signal FpySequencer::storeTlmVal_directiveHandler(const FpySequencer_StoreTlmVal
         return Signal::stmtResponse_failure;
     }
 
-    if (this->m_runtime.stackSize + tlmValue.getBuffLength() > Fpy::MAX_STACK_SIZE) {
+    // if we were to write this buf at this offset
+    // would it overflow the current size of the stack (NOT the max size b/c
+    // we aren't supposed to add anything to the stack when we store)
+
+    if (stackOffset + tlmValue.getBuffLength() > this->m_runtime.stackSize) {
         error = DirectiveError::STACK_OVERFLOW;
         return Signal::stmtResponse_failure;
     }
 
-    memcpy(this->lvars() + directive.getlvarOffset(), tlmValue.getBuffAddr(), tlmValue.getBuffLength());
+    memcpy(this->m_runtime.stack + stackOffset, tlmValue.getBuffAddr(), tlmValue.getBuffLength());
     return Signal::stmtResponse_success;
 }
 
 Signal FpySequencer::storePrm_directiveHandler(const FpySequencer_StorePrmDirective& directive, DirectiveError& error) {
     if (!this->isConnected_prmGet_OutputPort(0)) {
         error = DirectiveError::PRM_GET_NOT_CONNECTED;
+        return Signal::stmtResponse_failure;
+    }
+    U16 stackOffset = this->lvarOffset() + directive.get_lvarOffset();
+    if (stackOffset >= this->m_runtime.stackSize) {
+        error = DirectiveError::STACK_OVERFLOW;
         return Signal::stmtResponse_failure;
     }
     Fw::ParamBuffer prmValue;
@@ -322,12 +341,16 @@ Signal FpySequencer::storePrm_directiveHandler(const FpySequencer_StorePrmDirect
         return Signal::stmtResponse_failure;
     }
 
-    if (this->m_runtime.stackSize + prmValue.getBuffLength() > Fpy::MAX_STACK_SIZE) {
+    // if we were to write this buf at this offset
+    // would it overflow the current size of the stack (NOT the max size b/c
+    // we aren't supposed to add anything to the stack when we store)
+
+    if (stackOffset + prmValue.getBuffLength() > this->m_runtime.stackSize) {
         error = DirectiveError::STACK_OVERFLOW;
         return Signal::stmtResponse_failure;
     }
 
-    memcpy(this->lvars() + directive.getlvarOffset(), prmValue.getBuffAddr(), prmValue.getBuffLength());
+    memcpy(this->m_runtime.stack + stackOffset, prmValue.getBuffAddr(), prmValue.getBuffLength());
     return Signal::stmtResponse_success;
 }
 
@@ -340,12 +363,12 @@ Signal FpySequencer::constCmd_directiveHandler(const FpySequencer_ConstCmdDirect
         error = DirectiveError::CMD_SERIALIZE_FAILURE;
         return Signal::stmtResponse_failure;
     }
-    stat = cmdBuf.serialize(directive.getopCode());
+    stat = cmdBuf.serialize(directive.get_opCode());
     if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
         error = DirectiveError::CMD_SERIALIZE_FAILURE;
         return Signal::stmtResponse_failure;
     }
-    stat = cmdBuf.serialize(directive.getargBuf(), directive.get_argBufSize(), Fw::Serialization::OMIT_LENGTH);
+    stat = cmdBuf.serialize(directive.get_argBuf(), directive.get__argBufSize(), Fw::Serialization::OMIT_LENGTH);
     if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
         error = DirectiveError::CMD_SERIALIZE_FAILURE;
         return Signal::stmtResponse_failure;
@@ -550,8 +573,8 @@ DirectiveError FpySequencer::op_fptrunc() {
 Signal FpySequencer::stackOp_directiveHandler(const FpySequencer_StackOpDirective& directive,
                                               DirectiveError& error) {
     // coding error, should not have gotten to this binary reg op handler
-    FW_ASSERT(directive.get_op() >= Fpy::DirectiveId::OR && directive.get_op() <= Fpy::DirectiveId::FGE,
-              static_cast<FwAssertArgType>(directive.get_op()));
+    FW_ASSERT(directive.get__op() >= Fpy::DirectiveId::OR && directive.get__op() <= Fpy::DirectiveId::UITOFP,
+              static_cast<FwAssertArgType>(directive.get__op()));
 
     switch (directive.get_op()) {
         case Fpy::DirectiveId::OR:
@@ -608,47 +631,38 @@ Signal FpySequencer::stackOp_directiveHandler(const FpySequencer_StackOpDirectiv
         case Fpy::DirectiveId::FGE:
             error = this->op_fge();
             break;
-        default:
-            FW_ASSERT(0, directive.get_op());
-            break;
-    }
-    return Signal::stmtResponse_success;
-}
-
-Signal FpySequencer::unaryRegOp_directiveHandler(const FpySequencer_UnaryRegOpDirective& directive, DirectiveError& error) {
-    // coding error, should not have gotten to this unary reg op handler
-    FW_ASSERT(directive.get_op() >= Fpy::DirectiveId::NOT && directive.get_op() <= Fpy::DirectiveId::FPTRUNC,
-              static_cast<FwAssertArgType>(directive.get_op()));
-
-    if (directive.getsrc() >= Fpy::NUM_REGISTERS || directive.getres() >= Fpy::NUM_REGISTERS) {
-        error = DirectiveError::REGISTER_OUT_OF_BOUNDS;
-        return Signal::stmtResponse_failure;
-    }
-
-    I64 src = reg(directive.getsrc());
-    I64& res = reg(directive.getres());
-    
-    switch (directive.get_op()) {
         case Fpy::DirectiveId::NOT:
-            res = this->unaryRegOp_not(src);
+            error = this->op_not();
             break;
         case Fpy::DirectiveId::FPEXT:
-            res = this->unaryRegOp_fpext(src);
+            error = this->op_fpext();
             break;
         case Fpy::DirectiveId::FPTRUNC:
-            res = this->unaryRegOp_fptrunc(src);
+            error = this->op_fptrunc();
+            break;
+        case Fpy::DirectiveId::FPTOSI:
+            error = this->op_fptosi();
+            break;
+        case Fpy::DirectiveId::FPTOUI:
+            error = this->op_fptoui();
+            break;
+        case Fpy::DirectiveId::SITOFP:
+            error = this->op_sitofp();
+            break;
+        case Fpy::DirectiveId::UITOFP:
+            error = this->op_uitofp();
             break;
         default:
-            FW_ASSERT(0, directive.get_op());
+            FW_ASSERT(0, directive.get__op());
             break;
     }
     return Signal::stmtResponse_success;
 }
 
 Signal FpySequencer::exit_directiveHandler(const FpySequencer_ExitDirective& directive, DirectiveError& error) {
-    if (directive.getsuccess()) {
+    if (directive.get_success()) {
         // just goto the end of the sequence
-        this->m_runtime.nextStatementIndex = this->m_sequenceObj.getheader().getstatementCount();
+        this->m_runtime.nextStatementIndex = this->m_sequenceObj.get_header().get_statementCount();
         return Signal::stmtResponse_success;
     }
     // otherwise, kill the sequence here

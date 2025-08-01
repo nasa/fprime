@@ -2,19 +2,19 @@
 // \title Os/Posix/test/ut/PosixMutexTests.cpp
 // \brief tests for posix implementation for Os::Mutex
 // ======================================================================
-#include "Os/test/ut/mutex/RulesHeaders.hpp"
-#include "Os/test/ut/mutex/CommonTests.hpp"
-#include "Os/Posix/Task.hpp"
 #include <gtest/gtest.h>
-#include "STest/Scenario/Scenario.hpp"
-#include "STest/Pick/Pick.hpp"
 #include "Fw/Types/String.hpp"
+#include "Os/Posix/Task.hpp"
+#include "Os/test/ut/mutex/CommonTests.hpp"
+#include "Os/test/ut/mutex/RulesHeaders.hpp"
+#include "STest/Pick/Pick.hpp"
+#include "STest/Scenario/Scenario.hpp"
 
 // A routine that modifies the internal state of the MutexTester to test that the mutex
 // protects the shared variable successfully when ran in parallel with the main task
 static void testTaskRoutine(void* pointer) {
     Os::Test::Mutex::Tester* tester = reinterpret_cast<Os::Test::Mutex::Tester*>(pointer);
-    
+
     for (FwSizeType i = 0; i < 100000; i++) {
         tester->m_mutex.lock();
         tester->m_state = Os::Test::Mutex::Tester::MutexState::LOCKED;
@@ -26,7 +26,6 @@ static void testTaskRoutine(void* pointer) {
         tester->m_state = Os::Test::Mutex::Tester::MutexState::UNLOCKED;
         tester->m_mutex.unLock();
     }
-
 }
 
 // ----------------------------------------------------------------------
@@ -57,7 +56,6 @@ TEST_F(FunctionalityTester, PosixMutexDataProtection) {
 
     test_task.join();
 }
-
 
 int main(int argc, char** argv) {
     STest::Random::seed();

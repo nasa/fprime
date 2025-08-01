@@ -173,8 +173,8 @@ namespace Ref {
             this->sigHistory[i] = 0.0f;
         }
         for (U32 i = 0; i < SignalPairSet::SIZE; i++) {
-            this->sigPairHistory[i].settime(0.0f);
-            this->sigPairHistory[i].setvalue(0.0f);
+            this->sigPairHistory[i].set_time(0.0f);
+            this->sigPairHistory[i].set_value(0.0f);
         }
         this->log_ACTIVITY_LO_SettingsChanged(this->signalFrequency, this->signalAmplitude, this->signalPhase, this->sigType);
         this->tlmWrite_Type(SigType);

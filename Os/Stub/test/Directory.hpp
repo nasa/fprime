@@ -48,23 +48,21 @@ class TestDirectory : public DirectoryInterface {
     //! Destructor
     ~TestDirectory() override;
 
-
     // ------------------------------------------------------------
     // Implementation-specific Directory member functions
     // ------------------------------------------------------------
     Status open(const char* path, OpenMode mode) override;
     Status rewind() override;
-    Status read(char * fileNameBuffer, FwSizeType bufSize) override;
+    Status read(char* fileNameBuffer, FwSizeType bufSize) override;
     void close() override;
 
     //! \brief return the underlying Directory handle (implementation specific)
     //! \return internal task handle representation
     DirectoryHandle* getHandle() override;
-
 };
 
-}
-}
-}
-}
-#endif // End OS_STUB_MUTEX_TEST_HPP
+}  // namespace Test
+}  // namespace Directory
+}  // namespace Stub
+}  // namespace Os
+#endif  // End OS_STUB_MUTEX_TEST_HPP

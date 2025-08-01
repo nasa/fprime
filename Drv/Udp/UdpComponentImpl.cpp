@@ -10,12 +10,11 @@
 //
 // ======================================================================
 
-#include <limits>
 #include <Drv/Udp/UdpComponentImpl.hpp>
-#include <config/IpCfg.hpp>
 #include <Fw/FPrimeBasicTypes.hpp>
+#include <config/IpCfg.hpp>
+#include <limits>
 #include "Fw/Types/Assert.hpp"
-
 
 namespace Drv {
 
@@ -23,19 +22,18 @@ namespace Drv {
 // Construction, initialization, and destruction
 // ----------------------------------------------------------------------
 
-UdpComponentImpl::UdpComponentImpl(const char* const compName)
-    : UdpComponentBase(compName) {}
+UdpComponentImpl::UdpComponentImpl(const char* const compName) : UdpComponentBase(compName) {}
 
 SocketIpStatus UdpComponentImpl::configureSend(const char* hostname,
-                                                 const U16 port,
-                                                 const U32 send_timeout_seconds,
-                                                 const U32 send_timeout_microseconds) {
+                                               const U16 port,
+                                               const U32 send_timeout_seconds,
+                                               const U32 send_timeout_microseconds) {
     return m_socket.configureSend(hostname, port, send_timeout_seconds, send_timeout_microseconds);
 }
 
 SocketIpStatus UdpComponentImpl::configureRecv(const char* hostname, const U16 port, FwSizeType buffer_size) {
     FW_ASSERT(buffer_size <= std::numeric_limits<U32>::max(), static_cast<FwAssertArgType>(buffer_size));
-    m_allocation_size = buffer_size; // Store the buffer size
+    m_allocation_size = buffer_size;  // Store the buffer size
 
     return m_socket.configureRecv(hostname, port);
 }
@@ -62,11 +60,9 @@ void UdpComponentImpl::sendBuffer(Fw::Buffer buffer, SocketIpStatus status) {
     Drv::ByteStreamStatus recvStatus = ByteStreamStatus::OTHER_ERROR;
     if (status == SOCK_SUCCESS) {
         recvStatus = ByteStreamStatus::OP_OK;
-    }
-    else if (status == SOCK_NO_DATA_AVAILABLE) {
+    } else if (status == SOCK_NO_DATA_AVAILABLE) {
         recvStatus = ByteStreamStatus::RECV_NO_DATA;
-    }
-    else {
+    } else {
         recvStatus = ByteStreamStatus::OTHER_ERROR;
     }
     this->recv_out(0, buffer, recvStatus);

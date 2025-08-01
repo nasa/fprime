@@ -52,7 +52,7 @@ specified as a starting pointer and a size in bytes.
 ### Adding Data
 
 ```c++
-Fw::SerializeStatus serialize(const U8* const buffer, const FwSizeType size);
+Fw::SerializeStatus serializeTo(const U8* const buffer, const FwSizeType size);
 ```
 
 If the current logical store size plus `size` exceeds

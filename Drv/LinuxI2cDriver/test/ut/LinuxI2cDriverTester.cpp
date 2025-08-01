@@ -17,69 +17,45 @@
 
 namespace Drv {
 
-  // ----------------------------------------------------------------------
-  // Construction and destruction
-  // ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+// Construction and destruction
+// ----------------------------------------------------------------------
 
-  LinuxI2cDriverTester ::
-    LinuxI2cDriverTester() :
-      LinuxI2cDriverGTestBase("Tester", MAX_HISTORY_SIZE),
-      component("LinuxI2cDriver")
-  {
+LinuxI2cDriverTester ::LinuxI2cDriverTester()
+    : LinuxI2cDriverGTestBase("Tester", MAX_HISTORY_SIZE), component("LinuxI2cDriver") {
     this->initComponents();
     this->connectPorts();
-  }
+}
 
-  LinuxI2cDriverTester ::
-    ~LinuxI2cDriverTester()
-  {
+LinuxI2cDriverTester ::~LinuxI2cDriverTester() {}
 
-  }
+// ----------------------------------------------------------------------
+// Tests
+// ----------------------------------------------------------------------
 
-  // ----------------------------------------------------------------------
-  // Tests
-  // ----------------------------------------------------------------------
+void LinuxI2cDriverTester ::sendData(U32 addr, U8* data, Fw::Buffer::SizeType size) {
+    Fw::Buffer dataBuff;
+    dataBuff.setdata(static_cast<PlatformPointerCastType>(data));
+    dataBuff.setsize(size);
+    this->invoke_to_write(0, addr, dataBuff);
+}
 
-  void LinuxI2cDriverTester ::
-    sendData(U32 addr, U8* data, Fw::Buffer::SizeType size)
-  {
-      Fw::Buffer dataBuff;
-      dataBuff.setdata(static_cast<PlatformPointerCastType>(data));
-      dataBuff.setsize(size);
-      this->invoke_to_write(0,addr,dataBuff);
-  }
+void LinuxI2cDriverTester::open(const char* device) {
+    this->component.open(device);
+}
 
-  void LinuxI2cDriverTester::open(const char* device) {
-	  this->component.open(device);
-  }
+// ----------------------------------------------------------------------
+// Helper methods
+// ----------------------------------------------------------------------
 
-
-  // ----------------------------------------------------------------------
-  // Helper methods
-  // ----------------------------------------------------------------------
-
-  void LinuxI2cDriverTester ::
-    connectPorts()
-  {
-
+void LinuxI2cDriverTester ::connectPorts() {
     // write
-    this->connect_to_write(
-        0,
-        this->component.get_write_InputPort(0)
-    );
+    this->connect_to_write(0, this->component.get_write_InputPort(0));
+}
 
-
-
-
-  }
-
-  void LinuxI2cDriverTester ::
-    initComponents()
-  {
+void LinuxI2cDriverTester ::initComponents() {
     this->init();
-    this->component.init(
-        INSTANCE
-    );
-  }
+    this->component.init(INSTANCE);
+}
 
-} // end namespace Drv
+}  // end namespace Drv

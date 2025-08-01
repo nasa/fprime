@@ -140,16 +140,28 @@ StringBase::SizeType StringBase::serializedTruncatedSize(FwSizeType maxLength) c
 }
 
 SerializeStatus StringBase::serialize(SerializeBufferBase& buffer) const {
-    return buffer.serialize(reinterpret_cast<const U8*>(this->toChar()), this->length());
+    return buffer.serializeFrom(reinterpret_cast<const U8*>(this->toChar()), this->length());
+}
+
+SerializeStatus StringBase::serializeTo(SerializeBufferBase& buffer) const {
+    return buffer.serializeFrom(reinterpret_cast<const U8*>(this->toChar()), this->length());
+}
+
+SerializeStatus StringBase::serializeTo(SerializeBufferBase& buffer, SizeType maxLength) const {
+    const FwSizeType len = FW_MIN(maxLength, this->length());
+    // Serialize length and then bytes
+    return buffer.serializeFrom(reinterpret_cast<const U8*>(this->toChar()), len, Serialization::INCLUDE_LENGTH);
 }
 
 SerializeStatus StringBase::serialize(SerializeBufferBase& buffer, SizeType maxLength) const {
-    const FwSizeType len = FW_MIN(maxLength, this->length());
-    // Serialize length and then bytes
-    return buffer.serialize(reinterpret_cast<const U8*>(this->toChar()), len, Serialization::INCLUDE_LENGTH);
+    return this->serializeTo(buffer, maxLength);
 }
 
 SerializeStatus StringBase::deserialize(SerializeBufferBase& buffer) {
+    return this->deserializeFrom(buffer);
+}
+
+SerializeStatus StringBase::deserializeFrom(SerializeBufferBase& buffer) {
     // Get the max size of the deserialized string
     const SizeType maxSize = this->maxLength();
     // Initial estimate of actual size is max size
@@ -161,7 +173,7 @@ SerializeStatus StringBase::deserialize(SerializeBufferBase& buffer) {
     // Deserialize length
     // Fail if length exceeds max size (the initial value of actualSize)
     // Otherwise deserialize length bytes and set actualSize to length
-    SerializeStatus stat = buffer.deserialize(reinterpret_cast<U8*>(raw), actualSize, Serialization::INCLUDE_LENGTH);
+    SerializeStatus stat = buffer.deserializeTo(reinterpret_cast<U8*>(raw), actualSize, Serialization::INCLUDE_LENGTH);
     if (stat == FW_SERIALIZE_OK) {
         // Deserialization succeeded: null-terminate string at actual size
         FW_ASSERT(actualSize <= maxSize, static_cast<FwAssertArgType>(actualSize),
@@ -174,4 +186,5 @@ SerializeStatus StringBase::deserialize(SerializeBufferBase& buffer) {
     }
     return stat;
 }
+
 }  // namespace Fw

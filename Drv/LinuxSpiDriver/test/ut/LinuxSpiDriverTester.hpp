@@ -13,72 +13,63 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
-#include "LinuxSpiDriverGTestBase.hpp"
 #include "Drv/LinuxSpiDriver/LinuxSpiDriverComponentImpl.hpp"
+#include "LinuxSpiDriverGTestBase.hpp"
 
 namespace Drv {
 
-  class LinuxSpiDriverTester :
-    public LinuxSpiDriverTesterBase
-  {
+class LinuxSpiDriverTester : public LinuxSpiDriverTesterBase {
+    // ----------------------------------------------------------------------
+    // Construction and destruction
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Construction and destruction
-      // ----------------------------------------------------------------------
+  public:
+    //! Construct object LinuxSpiDriverTester
+    //!
+    LinuxSpiDriverTester();
 
-    public:
+    //! Destroy object LinuxSpiDriverTester
+    //!
+    ~LinuxSpiDriverTester();
 
-      //! Construct object LinuxSpiDriverTester
-      //!
-      LinuxSpiDriverTester();
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-      //! Destroy object LinuxSpiDriverTester
-      //!
-      ~LinuxSpiDriverTester();
+    //! To do
+    //!
+    void sendBuffer(U8* buffer, FwSizeType size);
 
-    public:
+  private:
+    // ----------------------------------------------------------------------
+    // Helper methods
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Tests
-      // ----------------------------------------------------------------------
+    //! Connect ports
+    //!
+    void connectPorts();
 
-      //! To do
-      //!
-      void sendBuffer(U8* buffer, FwSizeType size);
+    //! Initialize components
+    //!
+    void initComponents();
 
-    private:
+    void textLogIn(const FwEventIdType id,              //!< The event ID
+                   Fw::Time& timeTag,                   //!< The time
+                   const Fw::TextLogSeverity severity,  //!< The severity
+                   const Fw::TextLogString& text        //!< The event string
+    );
 
-      // ----------------------------------------------------------------------
-      // Helper methods
-      // ----------------------------------------------------------------------
+  private:
+    // ----------------------------------------------------------------------
+    // Variables
+    // ----------------------------------------------------------------------
 
-      //! Connect ports
-      //!
-      void connectPorts();
+    //! The component under test
+    //!
+    LinuxSpiDriverComponentImpl component;
+};
 
-      //! Initialize components
-      //!
-      void initComponents();
-
-      void textLogIn(const FwEventIdType id, //!< The event ID
-                Fw::Time& timeTag, //!< The time
-                const Fw::TextLogSeverity severity, //!< The severity
-                const Fw::TextLogString& text //!< The event string
-                );
-
-
-    private:
-
-      // ----------------------------------------------------------------------
-      // Variables
-      // ----------------------------------------------------------------------
-
-      //! The component under test
-      //!
-      LinuxSpiDriverComponentImpl component;
-
-  };
-
-} // end namespace Drv
+}  // end namespace Drv
 
 #endif

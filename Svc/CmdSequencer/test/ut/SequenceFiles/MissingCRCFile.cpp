@@ -31,7 +31,7 @@ namespace Svc {
       // Header
       const U8 data = 1;
       const U32 numRecords = 1;
-      const TimeBase timeBase = TB_WORKSTATION_TIME;
+      const TimeBase timeBase = TimeBase::TB_WORKSTATION_TIME;
       const U32 timeContext = 0;
       FPrime::Headers::serialize(
           sizeof data,
@@ -43,7 +43,7 @@ namespace Svc {
       // Records + CRC
       ASSERT_EQ(
           Fw::FW_SERIALIZE_OK,
-          buffer.serialize(data)
+          buffer.serializeFrom(data)
       );
     }
 
@@ -56,7 +56,7 @@ namespace Svc {
       const U8 data = 1;
       ASSERT_EQ(
           Fw::FW_SERIALIZE_OK,
-          buffer.serialize(data)
+          buffer.serializeFrom(data)
       );
       // CRC
       AMPCS::CRCs::removeFile(this->getName().toChar());

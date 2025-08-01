@@ -1,6 +1,6 @@
 event InvalidCommand($state: I32) \
     severity warning high \
-    format "Cannot run command in state {}"
+    format "Cannot execute command in state {}"
 
 event InvalidSeqRunCall($state: I32) \
     severity warning high \
@@ -14,26 +14,29 @@ event FileOpenError(
     format "File open error encountered while opening {}: {}"
 
 event FileReadError(
+    readStage: FileReadStage
     filePath: string
     errorCode: I32
 ) \
     severity warning high \
-    format "File read error encountered while reading {}: {}"
+    format "File read error encountered while reading {} of file {}: {}"
 
 event EndOfFileError(
+    readStage: FileReadStage
     filePath: string
 ) \
     severity warning high \
-    format "End of file encountered unexpectedly while reading {}"
+    format "End of file encountered unexpectedly while reading {} of file {}"
 
 event FileReadDeserializeError(
+    readStage: FileReadStage
     filePath: string
     errorCode: I32
     buffLeft: U64
     buffLength: U64
 ) \
     severity warning high \
-    format "Deserialize error encountered while reading {}: {} ({} bytes left out of {})"
+    format "Deserialize error encountered while reading {} of file {}: {} ({} bytes left out of {})"
 
 event WrongSchemaVersion(
     expected: U8

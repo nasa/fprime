@@ -65,7 +65,6 @@ class Memory final : public MemoryInterface {
     // Interface methods
     //-----------------------------------------------------------------------------
   public:
-
     //! \brief initialize the singleton
     static void init();
 
@@ -84,7 +83,6 @@ class Memory final : public MemoryInterface {
     //! \return:  ERROR when error occurs, OK otherwise.
     Status _getUsage(Usage& memory_usage) override;
 
-
     //! \brief return the underlying memory handle (implementation specific).
     //! \return internal task handle representation
     MemoryHandle* getHandle() override;
@@ -102,12 +100,11 @@ class Memory final : public MemoryInterface {
     static Status getUsage(Usage& memory);
 
   private:
-
     // This section is used to store the implementation-defined file handle. To Os::File and fprime, this type is
     // opaque and thus normal allocation cannot be done. Instead, we allow the implementor to store then handle in
     // the byte-array here and set `handle` to that address for storage.
-    alignas(FW_HANDLE_ALIGNMENT) MemoryHandleStorage m_handle_storage; //!< Storage for aligned data
-    MemoryInterface& m_delegate;                                       //!< Delegate for the real implementation
+    alignas(FW_HANDLE_ALIGNMENT) MemoryHandleStorage m_handle_storage;  //!< Storage for aligned data
+    MemoryInterface& m_delegate;                                        //!< Delegate for the real implementation
 };
-}
-#endif //OS_CONDITION_HPP_
+}  // namespace Os
+#endif  // OS_CONDITION_HPP_

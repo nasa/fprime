@@ -30,7 +30,7 @@ void CmdSplitter ::configure(const FwOpcodeType remoteBaseOpcode) {
 
 void CmdSplitter ::CmdBuff_handler(const FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
     Fw::CmdPacket cmdPkt;
-    Fw::SerializeStatus stat = cmdPkt.deserialize(data);
+    Fw::SerializeStatus stat = cmdPkt.deserializeFrom(data);
 
     FW_ASSERT(portNum < CmdSplitterPorts);
     if (stat != Fw::FW_SERIALIZE_OK) {

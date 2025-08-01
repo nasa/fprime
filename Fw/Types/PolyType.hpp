@@ -92,7 +92,7 @@ class PolyType : public Serializable {
 
 #if FW_SERIALIZABLE_TO_STRING || BUILD_UT
     void toString(StringBase& dest, bool append) const;  //!< get string representation
-    void toString(StringBase& dest) const;               //!< get string representation
+    void toString(StringBase& dest) const override;      //!< get string representation
 #endif
 
     PolyType& operator=(const PolyType& src);                      //!< PolyType operator=
@@ -102,8 +102,14 @@ class PolyType : public Serializable {
     bool operator<=(const PolyType& other) const;                  //!< PolyType operator<=
     bool operator==(const PolyType& other) const;                  //!< PolyType operator==
     bool operator!=(const PolyType& other) const;                  //!< PolyType operator!=
-    SerializeStatus serialize(SerializeBufferBase& buffer) const;  //!< Serialize function
-    SerializeStatus deserialize(SerializeBufferBase& buffer);      //!< Deserialize function
+    
+    // New serialization interface
+    SerializeStatus serializeTo(SerializeBufferBase& buffer) const override;   //!< Serialize function
+    SerializeStatus deserializeFrom(SerializeBufferBase& buffer) override;     //!< Deserialize function
+    
+    // Deprecated methods for backward compatibility - these call the new interface
+    SerializeStatus serialize(SerializeBufferBase& buffer) const override;     //!< Serialize function (deprecated)
+    SerializeStatus deserialize(SerializeBufferBase& buffer) override;         //!< Deserialize function (deprecated)
 
   private:
     typedef enum {

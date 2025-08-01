@@ -12,8 +12,8 @@
 #ifndef DRV_TCPSERVER_TCPHELPER_HPP_
 #define DRV_TCPSERVER_TCPHELPER_HPP_
 
-#include <Fw/FPrimeBasicTypes.hpp>
 #include <Drv/Ip/IpSocket.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <config/IpCfg.hpp>
 
 namespace Drv {
@@ -85,9 +85,6 @@ class TcpServerSocket : public IpSocket {
      * \return: size of data received, or -1 on error.
      */
     I32 recvProtocol(const SocketDescriptor& socketDescriptor, U8* const data, const U32 size) override;
-
-
-
 };
 }  // namespace Drv
 

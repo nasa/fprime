@@ -19,7 +19,7 @@ module Svc {
             DESER_SER_REG_4 = 12
             DESER_SER_REG_2 = 13
             DESER_SER_REG_1 = 14
-            # binary reg op directives
+            # stack op directives
             # all of these are handled at the CPP level by one StackOpDirective
             # boolean ops
             OR = 15
@@ -45,15 +45,19 @@ module Svc {
             FLE = 30
             FGT = 31
             FGE = 32
-            # end binary reg op directives
-            
-            # unary reg op dirs
             NOT = 33
+            # floating point extension and truncation
             FPEXT = 34
             FPTRUNC = 35
-            # end unary reg op dirs
+            # floating point conversion to signed/unsigned integer,
+            # and vice versa
+            FPTOSI = 36
+            FPTOUI = 37
+            SITOFP = 38
+            UITOFP = 39
+            # end stack op dirs
 
-            EXIT = 36
+            EXIT = 40
         }
 
         struct Header {

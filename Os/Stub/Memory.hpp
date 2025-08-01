@@ -2,8 +2,8 @@
 // \title Os/Stub/Memory.hpp
 // \brief stub implementation for Os::Memory, header and test definitions
 // ======================================================================
-#include <cstdio>
 #include <Os/Memory.hpp>
+#include <cstdio>
 #ifndef OS_Stub_Memory_HPP
 #define OS_Stub_Memory_HPP
 
@@ -13,8 +13,7 @@ namespace Memory {
 
 //! MemoryHandle class definition for stub implementations.
 //!
-struct StubMemoryHandle : public MemoryHandle {
-};
+struct StubMemoryHandle : public MemoryHandle {};
 
 //! \brief stub implementation of Os::MemoryInterface
 //!
@@ -55,13 +54,14 @@ class StubMemory : public MemoryInterface {
     //!
     //! \return raw console handle
     //!
-    MemoryHandle *getHandle() override;
+    MemoryHandle* getHandle() override;
+
   private:
     //! File handle for PosixFile
     StubMemoryHandle m_handle;
 };
-} // namespace Memory
-} // namespace Stub
-} // namespace Os
+}  // namespace Memory
+}  // namespace Stub
+}  // namespace Os
 
-#endif // OS_Stub_Memory_HPP
+#endif  // OS_Stub_Memory_HPP

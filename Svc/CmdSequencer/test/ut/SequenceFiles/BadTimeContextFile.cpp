@@ -38,7 +38,7 @@ namespace Svc {
         (this->n-1) * FPrime::Records::STANDARD_SIZE +
         FPrime::Records::EOS_SIZE;
       const U32 dataSize = recordDataSize + FPrime::CRCs::SIZE;
-      const TimeBase timeBase = TB_WORKSTATION_TIME;
+      const TimeBase timeBase = TimeBase::TB_WORKSTATION_TIME;
       const U32 headerTimeContext = 1;
       FPrime::Headers::serialize(
           dataSize,
@@ -48,7 +48,7 @@ namespace Svc {
           buffer
       );
       // Standard records
-      Fw::Time t(TB_WORKSTATION_TIME, 0, 0);
+      Fw::Time t(TimeBase::TB_WORKSTATION_TIME, 0, 0);
       for (U32 i = 0; i < this->n - 1; ++i) {
         const FwOpcodeType opcode = i;
         const U32 argument = i + 1;

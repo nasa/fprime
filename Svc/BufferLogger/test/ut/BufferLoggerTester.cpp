@@ -207,7 +207,7 @@ namespace Svc {
   Fw::Time BufferLoggerTester ::
     generateTestTime(const U32 seconds)
   {
-    Fw::Time time(TB_DONT_CARE, FW_CONTEXT_DONT_CARE, 234567, seconds);
+    Fw::Time time(TimeBase::TB_DONT_CARE, FW_CONTEXT_DONT_CARE, 234567, seconds);
     return time;
   }
 

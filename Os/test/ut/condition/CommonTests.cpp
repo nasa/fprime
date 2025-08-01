@@ -8,7 +8,6 @@
 #include "Os/test/ConcurrentRule.hpp"
 #include "Os/test/ut/condition/RulesHeaders.hpp"
 
-
 TEST(Blocking, WaitSingle) {
     Os::Test::Condition::Tester tester;
     AggregatedConcurrentRule<Os::Test::Condition::Tester> aggregator;

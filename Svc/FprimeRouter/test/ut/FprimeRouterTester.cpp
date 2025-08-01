@@ -90,7 +90,7 @@ void FprimeRouterTester::mockReceivePacketType(Fw::ComPacketType packetType) {
     U8 data[sizeof descriptorType];
     Fw::Buffer buffer(data, sizeof(data));
     ComCfg::FrameContext context;
-    context.setapid(static_cast<ComCfg::APID::T>(descriptorType));
+    context.set_apid(static_cast<ComCfg::APID::T>(descriptorType));
     this->invoke_to_dataIn(0, buffer, context);
 }
 

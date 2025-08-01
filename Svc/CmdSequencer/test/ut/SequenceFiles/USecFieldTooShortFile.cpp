@@ -28,7 +28,7 @@ namespace Svc {
       serializeFPrime(Fw::SerializeBufferBase& buffer)
     {
       // Header
-      const TimeBase timeBase = TB_WORKSTATION_TIME;
+      const TimeBase timeBase = TimeBase::TB_WORKSTATION_TIME;
       const U32 timeContext = 0;
       const U32 numRecords = 1;
       const U32 recordSize =
@@ -48,11 +48,11 @@ namespace Svc {
         CmdSequencerComponentImpl::Sequence::Record::RELATIVE;
       ASSERT_EQ(
           Fw::FW_SERIALIZE_OK,
-          buffer.serialize(static_cast<U8>(descriptor))
+          buffer.serializeFrom(static_cast<U8>(descriptor))
       );
       ASSERT_EQ(
           Fw::FW_SERIALIZE_OK, 
-          buffer.serialize(static_cast<U16>(0))
+          buffer.serializeFrom(static_cast<U16>(0))
       );
       // CRC
       FPrime::CRCs::serialize(buffer);
