@@ -200,17 +200,48 @@ class ChannelCollector(DataHandler):
     """Channel consumer that inherits from DataHandler - similar to old log_processor pattern"""
     def __init__(self, results):
         self.results = results
+        self.channel_count = 0
         
     def data_callback(self, channel_data, sender=None):
         """Handle decoded channel data"""
+        self.channel_count += 1
+        print(f"\n📊 === CHANNEL #{self.channel_count} DECODED === (Sender: {sender})")
+        
         try:
+            # Print ALL attributes of the channel_data object
+            print(f"Channel object type: {type(channel_data)}")
+            print(f"Channel object attributes: {[attr for attr in dir(channel_data) if not attr.startswith('_')]}")
+            
             # Extract channel information
-            ch_name = channel_data.template.name if hasattr(channel_data, 'template') else str(channel_data)
-            ch_val = channel_data.val if hasattr(channel_data, 'val') else 0
-            timestamp = str(channel_data.time) if hasattr(channel_data, 'time') else ""
+            if hasattr(channel_data, 'template'):
+                ch_name = channel_data.template.name
+                print(f"✅ Channel name: {ch_name}")
+            else:
+                ch_name = str(channel_data)
+                print(f"❌ No template, using str: {ch_name}")
+                
+            if hasattr(channel_data, 'val'):
+                ch_val = channel_data.val
+                print(f"✅ Channel value: {ch_val} (type: {type(ch_val)})")
+            else:
+                ch_val = 0
+                print(f"❌ No val attribute")
+                
+            if hasattr(channel_data, 'time'):
+                timestamp = str(channel_data.time)
+                print(f"✅ Timestamp: {timestamp}")
+            else:
+                timestamp = ""
+                print(f"❌ No time attribute")
+            
+            print(f"📋 CHANNEL EXTRACTED VALUES:")
+            print(f"  NAME: {ch_name}")
+            print(f"  VALUE: {ch_val}")
+            print(f"  TIMESTAMP: {timestamp}")
             
             # Track buffer manager stats
             if 'BufferManager' in ch_name or 'bufferManager' in ch_name:
+                print(f"🔧 Processing BufferManager channel: {ch_name}")
                 if ch_name not in self.results.buffer_metrics:
                     self.results.buffer_metrics[ch_name] = []
                 
@@ -220,16 +251,19 @@ class ChannelCollector(DataHandler):
                         'timestamp': timestamp,
                         'value': value
                     })
+                    print(f"✅ Added buffer metric: {ch_name} = {value}")
                     
                     # Check for concerning buffer levels
                     if value == 0:
                         self.results.add_alert(f"Buffer exhaustion detected: {ch_name} = 0")
+                        print(f"🚨 BUFFER ALERT: {ch_name} = 0")
                         
-                except (ValueError, IndexError, TypeError):
-                    pass
+                except (ValueError, IndexError, TypeError) as e:
+                    print(f"❌ Error parsing buffer value: {e}")
                     
             # Track system resources
             elif 'systemResources' in ch_name:
+                print(f"💻 Processing systemResources channel: {ch_name}")
                 if ch_name not in self.results.system_resources:
                     self.results.system_resources[ch_name] = []
                     
@@ -239,72 +273,141 @@ class ChannelCollector(DataHandler):
                         'timestamp': timestamp,
                         'value': value
                     })
+                    print(f"✅ Added system resource: {ch_name} = {value}")
                     
                     # Check for concerning resource levels
                     if 'cpu' in ch_name.lower() and value > 90.0:
                         self.results.add_alert(f"High CPU usage detected: {ch_name} = {value}%")
+                        print(f"🚨 CPU ALERT: {ch_name} = {value}%")
                     elif 'memory' in ch_name.lower() and value > 90.0:
                         self.results.add_alert(f"High memory usage detected: {ch_name} = {value}%")
+                        print(f"🚨 MEMORY ALERT: {ch_name} = {value}%")
                         
-                except (ValueError, TypeError):
-                    pass
+                except (ValueError, TypeError) as e:
+                    print(f"❌ Error parsing resource value: {e}")
+            else:
+                print(f"ℹ️ Channel not tracked (not BufferManager or systemResources)")
                     
         except Exception as e:
-            # Silently ignore parsing errors to be robust
-            pass
+            print(f"💥 ERROR parsing channel: {e}")
+            import traceback
+            traceback.print_exc()
+            
+        print(f"=== END CHANNEL #{self.channel_count} ===\n")
 
 
 def process_logs(pipeline, dictionary_path, logs_path, results):
     """Process log files for monitoring data"""
     
+    print(f"\n🚀 === STARTING LOG PROCESSING ===")
+    print(f"Pipeline type: {type(pipeline)}")
+    print(f"Pipeline attributes: {[attr for attr in dir(pipeline) if not attr.startswith('_')]}")
+    print(f"Dictionary path: {dictionary_path}")
+    print(f"Logs path: {logs_path}")
+    
     # Find log files
     log_files = []
     logs_dir = Path(logs_path)
     
+    print(f"\n📁 === FINDING LOG FILES ===")
+    print(f"Logs directory: {logs_dir}")
+    print(f"Directory exists: {logs_dir.exists()}")
+    print(f"Is directory: {logs_dir.is_dir()}")
+    
     if logs_dir.is_dir():
         # Look for .com files recursively
         log_files = list(logs_dir.glob('**/*.com'))
+        print(f"Found .com files: {log_files}")
         
     elif logs_dir.is_file() and logs_dir.suffix == '.com':
         log_files = [logs_dir]
+        print(f"Single .com file: {log_files}")
     
     print(f"Processing {len(log_files)} ComLogger .com files...")
     
     if not log_files:
-        print("No ComLogger .com files found!")
+        print("❌ No ComLogger .com files found!")
         return
     
     # Use the modern pipeline from StandardPipelineParser 
     # But create old-style DataHandler consumers
+    print(f"\n👥 === CREATING CONSUMERS ===")
     event_consumer = EventCollector(results)
     channel_consumer = ChannelCollector(results)
+    print(f"Created EventCollector: {event_consumer}")
+    print(f"Created ChannelCollector: {channel_consumer}")
     
     # Register consumers using the standard coders approach
+    print(f"\n📋 === REGISTERING CONSUMERS ===")
+    print(f"Pipeline.coders type: {type(pipeline.coders)}")
+    print(f"Pipeline.coders attributes: {[attr for attr in dir(pipeline.coders) if not attr.startswith('_')]}")
+    
     pipeline.coders.register_event_consumer(event_consumer)
+    print("✅ Registered event consumer")
+    
     pipeline.coders.register_channel_consumer(channel_consumer)
+    print("✅ Registered channel consumer")
     
     print("Consumers registered, processing ComLogger files...")
     
     # Process each ComLogger file by reading binary data
-    for log_file in log_files:
+    print(f"\n📄 === PROCESSING FILES ===")
+    for i, log_file in enumerate(log_files, 1):
         try:
-            print(f"Processing file: {log_file} (size: {log_file.stat().st_size} bytes)")
+            file_size = log_file.stat().st_size
+            print(f"\n🔍 Processing file {i}/{len(log_files)}: {log_file}")
+            print(f"File size: {file_size:,} bytes")
+            
+            if file_size == 0:
+                print("⚠️ File is empty, skipping")
+                continue
+                
             with open(log_file, 'rb') as file_handle:
                 data = file_handle.read()
+                print(f"✅ Read {len(data):,} bytes from file")
+                
                 if len(data) > 0:
-                    print(f"Sending {len(data)} bytes to distributor")
+                    print(f"📤 Sending {len(data):,} bytes to distributor...")
+                    print(f"Distributor type: {type(pipeline.distributor)}")
+                    print(f"Distributor attributes: {[attr for attr in dir(pipeline.distributor) if not attr.startswith('_')]}")
+                    
+                    # Check first few bytes of data
+                    preview = data[:50]
+                    print(f"Data preview (first 50 bytes): {preview}")
+                    print(f"Data hex preview: {preview.hex()}")
+                    
                     # Send raw binary data to distributor (same as old approach)
+                    print("🔄 Calling distributor.on_recv()...")
                     pipeline.distributor.on_recv(data)
+                    print("✅ Data sent to distributor successfully")
                 else:
-                    print(f"File {log_file} is empty")
+                    print(f"❌ File {log_file} read as empty")
                     
         except Exception as e:
-            print(f"Error processing {log_file}: {e}")
+            print(f"💥 Error processing {log_file}: {e}")
             import traceback
             traceback.print_exc()
     
-    # Let the modern pipeline handle its own cleanup
-    print(f"Processed {len(results.health_issues)} health events and {len(results.buffer_metrics) + len(results.system_resources)} telemetry metrics")
+    print(f"\n📊 === PROCESSING SUMMARY ===")
+    print(f"Events processed by EventCollector: {event_consumer.event_count}")
+    print(f"Channels processed by ChannelCollector: {channel_consumer.channel_count}")
+    print(f"Health issues found: {len(results.health_issues)}")
+    print(f"Buffer metrics tracked: {len(results.buffer_metrics)}")
+    print(f"System resources tracked: {len(results.system_resources)}")
+    print(f"Alerts generated: {len(results.alerts)}")
+    
+    # Show details of what was found
+    if results.health_issues:
+        print(f"\n🔥 HEALTH ISSUES FOUND:")
+        for issue in results.health_issues:
+            print(f"  - {issue['severity']}: {issue['event_name']} | {issue['description']}")
+    
+    if results.alerts:
+        print(f"\n🚨 ALERTS GENERATED:")
+        for alert in results.alerts:
+            print(f"  - {alert}")
+    
+    print("=== END PROCESSING SUMMARY ===\n")
 
 
 
