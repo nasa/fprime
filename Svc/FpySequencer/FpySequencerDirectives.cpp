@@ -40,22 +40,25 @@ T FpySequencer::pop() {
 
     // now do appropriate byteswap on byte array
     if (sizeof(T) == 8) {
-        return (static_cast<T>(valBytes[7]) << 0)  |
+        return static_cast<T>(
+               (static_cast<T>(valBytes[7]) << 0)  |
                (static_cast<T>(valBytes[6]) << 8)  |
                (static_cast<T>(valBytes[5]) << 16) |
                (static_cast<T>(valBytes[4]) << 24) |
                (static_cast<T>(valBytes[3]) << 32) |
                (static_cast<T>(valBytes[2]) << 40) |
                (static_cast<T>(valBytes[1]) << 48) |
-               (static_cast<T>(valBytes[0]) << 56);
+               (static_cast<T>(valBytes[0]) << 56));
     } else if (sizeof(T) == 4) {
-        return (static_cast<T>(valBytes[3]) << 0) |
+        return static_cast<T>(
+               (static_cast<T>(valBytes[3]) << 0) |
                (static_cast<T>(valBytes[2]) << 8) |
                (static_cast<T>(valBytes[1]) << 16) |
-               (static_cast<T>(valBytes[0]) << 24);
+               (static_cast<T>(valBytes[0]) << 24));
     } else if (sizeof(T) == 2) {
-        return (static_cast<T>(valBytes[1]) << 0) |
-               (static_cast<T>(valBytes[0]) << 8);
+        return static_cast<T>(
+               (static_cast<T>(valBytes[1]) << 0) |
+               (static_cast<T>(valBytes[0]) << 8));
     } else {
         return static_cast<T>(valBytes[0]);
     }
