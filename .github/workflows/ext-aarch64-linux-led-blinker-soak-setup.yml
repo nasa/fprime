@@ -168,13 +168,12 @@ jobs:
           [Unit]
           Description=F' GDS for LED Blinker soak testing
           After=network.target ${FSW_SERVICE_NAME}.service
-          Requires=${FSW_SERVICE_NAME}.service
 
           [Service]
           Type=simple
           User=fprime
           WorkingDirectory=${INSTALL_DIR}
-          ExecStart=${INSTALL_DIR}/venv/bin/fprime-gds --ip-client --ip-address 127.0.0.1 --ip-port 50000 -d ${INSTALL_DIR} --logs ${INSTALL_DIR}/logs  --framing-selection fprime
+          ExecStart=${INSTALL_DIR}/venv/bin/fprime-gds --ip-client --ip-address 127.0.0.1 --ip-port 50000 -d ${INSTALL_DIR} -n --logs ${INSTALL_DIR}/logs  --framing-selection fprime
           StandardOutput=journal
           StandardError=journal
 
