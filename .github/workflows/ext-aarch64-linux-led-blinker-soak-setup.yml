@@ -174,7 +174,7 @@ jobs:
           Type=simple
           User=fprime
           WorkingDirectory=${INSTALL_DIR}
-          ExecStart=${INSTALL_DIR}/venv/bin/fprime-gds --ip-client --ip-address 127.0.0.1 --ip-port 50000 -d ${INSTALL_DIR} --logs ${INSTALL_DIR}/logs 
+          ExecStart=${INSTALL_DIR}/venv/bin/fprime-gds --ip-client --ip-address 127.0.0.1 --ip-port 50000 -d ${INSTALL_DIR} --logs ${INSTALL_DIR}/logs  --framing-selection fprime
           StandardOutput=journal
           StandardError=journal
 

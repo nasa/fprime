@@ -43,7 +43,6 @@ jobs:
           python3 soak_monitor.py \
             --dictionary ${INSTALL_DIR}/dict/LedBlinkerTopologyDictionary.json \
             --com-logs ${INSTALL_DIR}/ComLoggerFiles \
-            --framing-selection fprime
 
           
 
