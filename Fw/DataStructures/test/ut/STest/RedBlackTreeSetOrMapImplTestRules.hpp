@@ -152,6 +152,7 @@ struct RemoveExisting : public Rule {
     RemoveExisting() : Rule("RemoveExisting") {}
     bool precondition(const State& state) { return static_cast<FwSizeType>(state.impl.getSize()) > 0; }
     void action(State& state) {
+        state.tester.checkProperties();
         const auto size = state.impl.getSize();
         const auto index = STest::Pick::startLength(0, static_cast<U32>(size));
         auto it = state.impl.begin();
@@ -169,6 +170,7 @@ struct RemoveExisting : public Rule {
         const auto n = state.modelMap.erase(key);
         ASSERT_EQ(n, 1U);
         ASSERT_EQ(state.impl.getSize(), state.modelMap.size());
+        state.tester.checkProperties();
     }
 };
 
