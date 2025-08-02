@@ -7,6 +7,7 @@ Analyzes ComLogger .com files for health warnings and resource issues
 import os
 import re
 import json
+import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, Tuple, Any
@@ -102,7 +103,6 @@ class EventCollector(DataHandler):
         
     def data_callback(self, event_data, sender=None):
         """Handle decoded event data"""
-        print(f"Event: {event_data}")
         try:
             # Extract event information
             event_name = event_data.template.name if hasattr(event_data, 'template') else str(event_data)
@@ -111,7 +111,7 @@ class EventCollector(DataHandler):
             timestamp = str(event_data.time) if hasattr(event_data, 'time') else ""
             
             # Check for health issues
-            if 'FATAL' in severity or 'WARNING' in severity or 'HLTH_' in event_name:
+            if str(severity) == "EventSeverity.FATAL" or str(severity) == "EventSeverity.WARNING_HI":
                 issue = {
                     'timestamp': timestamp,
                     'event_name': event_name,
@@ -138,7 +138,6 @@ class ChannelCollector(DataHandler):
         
     def data_callback(self, channel_data, sender=None):
         """Handle decoded channel data"""
-        print(f"Channel: {channel_data}")
         try:
             # Extract channel information
             ch_name = channel_data.template.name if hasattr(channel_data, 'template') else str(channel_data)
@@ -266,7 +265,7 @@ class SoakMonitorArgumentParser(ParserBase):
         return args
 
 
-def pipeline_factory(args_ns, pipeline=None, config) -> StandardPipeline:
+def pipeline_factory(args_ns, config) -> StandardPipeline:
         """A factory of the standard pipeline given the handled arguments"""
         pipeline_arguments = {
             "config": config,
@@ -280,7 +279,8 @@ def pipeline_factory(args_ns, pipeline=None, config) -> StandardPipeline:
         pipeline.transport_implementation = args_ns.connection_transport
         try:
             pipeline.setup(**pipeline_arguments)
-            pipeline.connect(args_ns.connection_uri)
+            #Call disconnect to turn off the receiving thread, we are feeding the data manually here
+            pipeline.disconnect()
         except Exception:
             # In all error cases, pipeline should be shutdown before continuing with exception handling
             try:
@@ -293,8 +293,7 @@ def pipeline_factory(args_ns, pipeline=None, config) -> StandardPipeline:
 def main():
     args, _ = ParserBase.parse_args([StandardPipelineParser, SoakMonitorArgumentParser])
     config = ConfigManager()
-    config.set('framing', 'use_key', 'True')
-    config.set('framing', 'key_value', '0x30FC')
+    config.set('framing', 'use_key', 'False')
     config.set('types', 'msg_len', 'U16')
     pipeline = pipeline_factory(args, config)
     
@@ -316,7 +315,7 @@ def main():
     
     # Analyze trends within the ComLogger data
     results.analyze_trends()
-    
+    return_code = 0 
     # Print results
     print("\nMONITORING RESULTS:")
     print("-"*50)
@@ -343,6 +342,7 @@ def main():
         print("\nHEALTH ISSUES:")
         for issue in results.health_issues:
             print(f"{issue['severity']}: {issue['event_name']}")
+            return_code = 1
     
     # Show buffer status summary
     if results.buffer_metrics:
@@ -363,6 +363,7 @@ def main():
     print("="*50)
     
     print("MONITORING COMPLETED SUCCESSFULLY")
+    sys.exit(return_code)
 
 if __name__ == '__main__':
     main() 
