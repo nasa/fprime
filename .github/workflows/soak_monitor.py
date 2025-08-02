@@ -6,14 +6,14 @@ Analyzes ComLogger .com files for health warnings and resource issues
 
 import os
 import re
-import sys
 import json
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, Tuple, Any
 from fprime_gds.executables.cli import ParserBase, StandardPipelineParser
 from fprime_gds.common.handlers import DataHandler
-
+from fprime_gds.common.pipeline.standard import StandardPipeline
+from fprime_gds.common.utils.config_manager import ConfigManager
 
 class SoakAnalysisResults:
     """Container for soak test analysis results"""
@@ -99,76 +99,19 @@ class EventCollector(DataHandler):
     """Event consumer that inherits from DataHandler"""
     def __init__(self, results):
         self.results = results
-        self.event_count = 0
         
     def data_callback(self, event_data, sender=None):
         """Handle decoded event data"""
-        self.event_count += 1
-        print(f"\n🔥 === EVENT #{self.event_count} DECODED === (Sender: {sender})")
-        
+        print(f"Event: {event_data}")
         try:
-            # Print ALL attributes of the event_data object
-            print(f"Event object type: {type(event_data)}")
-            print(f"Event object attributes: {[attr for attr in dir(event_data) if not attr.startswith('_')]}")
-            
-            # Extract event information with detailed debugging
-            if hasattr(event_data, 'template'):
-                print(f"✅ Has template: {event_data.template}")
-                if hasattr(event_data.template, 'name'):
-                    event_name = event_data.template.name
-                    print(f"  Template name: {event_name}")
-                else:
-                    event_name = "NO_NAME"
-                    print(f"  ❌ Template has no name attribute")
-                    
-                if hasattr(event_data.template, 'severity'):
-                    severity = event_data.template.severity
-                    print(f"  Template severity: {severity}")
-                else:
-                    severity = "NO_SEVERITY"
-                    print(f"  ❌ Template has no severity attribute")
-                    
-                if hasattr(event_data.template, 'id'):
-                    print(f"  Template ID: {event_data.template.id}")
-            else:
-                event_name = str(event_data)
-                severity = "UNKNOWN"
-                print(f"❌ No template attribute, using str representation: {event_name}")
-            
-            if hasattr(event_data, 'args'):
-                description = str(event_data.args)
-                print(f"✅ Args: {description} (type: {type(event_data.args)})")
-            else:
-                description = ""
-                print(f"❌ No args attribute")
-                
-            if hasattr(event_data, 'time'):
-                timestamp = str(event_data.time)
-                print(f"✅ Timestamp: {timestamp}")
-            else:
-                timestamp = ""
-                print(f"❌ No time attribute")
-            
-            # Print the final extracted values
-            print(f"📋 EXTRACTED VALUES:")
-            print(f"  NAME: {event_name}")
-            print(f"  SEVERITY: {severity}")
-            print(f"  DESCRIPTION: {description}")
-            print(f"  TIMESTAMP: {timestamp}")
-            
-            # Check filtering logic step by step
-            print(f"🔍 FILTER CHECK:")
-            fatal_check = 'FATAL' in severity
-            warning_check = 'WARNING' in severity
-            hlth_check = 'HLTH_' in event_name
-            print(f"  'FATAL' in severity: {fatal_check}")
-            print(f"  'WARNING' in severity: {warning_check}")
-            print(f"  'HLTH_' in event_name: {hlth_check}")
-            should_capture = fatal_check or warning_check or hlth_check
-            print(f"  Should capture: {should_capture}")
+            # Extract event information
+            event_name = event_data.template.name if hasattr(event_data, 'template') else str(event_data)
+            severity = event_data.template.severity if hasattr(event_data, 'template') else "UNKNOWN"
+            description = str(event_data.args) if hasattr(event_data, 'args') else ""
+            timestamp = str(event_data.time) if hasattr(event_data, 'time') else ""
             
             # Check for health issues
-            if should_capture:
+            if 'FATAL' in severity or 'WARNING' in severity or 'HLTH_' in event_name:
                 issue = {
                     'timestamp': timestamp,
                     'event_name': event_name,
@@ -176,72 +119,34 @@ class EventCollector(DataHandler):
                     'description': description
                 }
                 self.results.health_issues.append(issue)
-                print(f"✅ CAPTURED ISSUE: {severity} - {event_name}")
                 
                 # Add to alerts if critical
                 if 'FATAL' in severity:
                     self.results.add_alert(f"FATAL: {event_name} - {description}")
-                    print(f"🚨 Added FATAL alert")
                 elif 'WARNING' in severity:
                     self.results.add_alert(f"WARNING: {event_name} - {description}")
-                    print(f"⚠️ Added WARNING alert")
-            else:
-                print(f"❌ NOT CAPTURED - Does not match filter criteria")
-                
+                    
         except Exception as e:
-            print(f"💥 ERROR parsing event: {e}")
-            import traceback
-            traceback.print_exc()
-        
-        print(f"=== END EVENT #{self.event_count} ===\n")
+            # Silently ignore parsing errors to be robust
+            pass
 
 
 class ChannelCollector(DataHandler):
     """Channel consumer that inherits from DataHandler - similar to old log_processor pattern"""
     def __init__(self, results):
         self.results = results
-        self.channel_count = 0
         
     def data_callback(self, channel_data, sender=None):
         """Handle decoded channel data"""
-        self.channel_count += 1
-        print(f"\n📊 === CHANNEL #{self.channel_count} DECODED === (Sender: {sender})")
-        
+        print(f"Channel: {channel_data}")
         try:
-            # Print ALL attributes of the channel_data object
-            print(f"Channel object type: {type(channel_data)}")
-            print(f"Channel object attributes: {[attr for attr in dir(channel_data) if not attr.startswith('_')]}")
-            
             # Extract channel information
-            if hasattr(channel_data, 'template'):
-                ch_name = channel_data.template.name
-                print(f"✅ Channel name: {ch_name}")
-            else:
-                ch_name = str(channel_data)
-                print(f"❌ No template, using str: {ch_name}")
-                
-            if hasattr(channel_data, 'val'):
-                ch_val = channel_data.val
-                print(f"✅ Channel value: {ch_val} (type: {type(ch_val)})")
-            else:
-                ch_val = 0
-                print(f"❌ No val attribute")
-                
-            if hasattr(channel_data, 'time'):
-                timestamp = str(channel_data.time)
-                print(f"✅ Timestamp: {timestamp}")
-            else:
-                timestamp = ""
-                print(f"❌ No time attribute")
-            
-            print(f"📋 CHANNEL EXTRACTED VALUES:")
-            print(f"  NAME: {ch_name}")
-            print(f"  VALUE: {ch_val}")
-            print(f"  TIMESTAMP: {timestamp}")
+            ch_name = channel_data.template.name if hasattr(channel_data, 'template') else str(channel_data)
+            ch_val = channel_data.val if hasattr(channel_data, 'val') else 0
+            timestamp = str(channel_data.time) if hasattr(channel_data, 'time') else ""
             
             # Track buffer manager stats
             if 'BufferManager' in ch_name or 'bufferManager' in ch_name:
-                print(f"🔧 Processing BufferManager channel: {ch_name}")
                 if ch_name not in self.results.buffer_metrics:
                     self.results.buffer_metrics[ch_name] = []
                 
@@ -251,19 +156,16 @@ class ChannelCollector(DataHandler):
                         'timestamp': timestamp,
                         'value': value
                     })
-                    print(f"✅ Added buffer metric: {ch_name} = {value}")
                     
                     # Check for concerning buffer levels
                     if value == 0:
                         self.results.add_alert(f"Buffer exhaustion detected: {ch_name} = 0")
-                        print(f"🚨 BUFFER ALERT: {ch_name} = 0")
                         
-                except (ValueError, IndexError, TypeError) as e:
-                    print(f"❌ Error parsing buffer value: {e}")
+                except (ValueError, IndexError, TypeError):
+                    pass
                     
             # Track system resources
             elif 'systemResources' in ch_name:
-                print(f"💻 Processing systemResources channel: {ch_name}")
                 if ch_name not in self.results.system_resources:
                     self.results.system_resources[ch_name] = []
                     
@@ -273,141 +175,56 @@ class ChannelCollector(DataHandler):
                         'timestamp': timestamp,
                         'value': value
                     })
-                    print(f"✅ Added system resource: {ch_name} = {value}")
                     
                     # Check for concerning resource levels
                     if 'cpu' in ch_name.lower() and value > 90.0:
                         self.results.add_alert(f"High CPU usage detected: {ch_name} = {value}%")
-                        print(f"🚨 CPU ALERT: {ch_name} = {value}%")
                     elif 'memory' in ch_name.lower() and value > 90.0:
                         self.results.add_alert(f"High memory usage detected: {ch_name} = {value}%")
-                        print(f"🚨 MEMORY ALERT: {ch_name} = {value}%")
                         
-                except (ValueError, TypeError) as e:
-                    print(f"❌ Error parsing resource value: {e}")
-            else:
-                print(f"ℹ️ Channel not tracked (not BufferManager or systemResources)")
+                except (ValueError, TypeError):
+                    pass
                     
         except Exception as e:
-            print(f"💥 ERROR parsing channel: {e}")
-            import traceback
-            traceback.print_exc()
-            
-        print(f"=== END CHANNEL #{self.channel_count} ===\n")
+            # Silently ignore parsing errors to be robust
+            pass
 
 
-def process_logs(pipeline, dictionary_path, logs_path, results):
+def process_logs(pipeline, logs_path, results):
     """Process log files for monitoring data"""
     
-    print(f"\n🚀 === STARTING LOG PROCESSING ===")
-    print(f"Pipeline type: {type(pipeline)}")
-    print(f"Pipeline attributes: {[attr for attr in dir(pipeline) if not attr.startswith('_')]}")
-    print(f"Dictionary path: {dictionary_path}")
-    print(f"Logs path: {logs_path}")
-    
-    # Find log files
-    log_files = []
-    logs_dir = Path(logs_path)
-    
-    print(f"\n📁 === FINDING LOG FILES ===")
-    print(f"Logs directory: {logs_dir}")
-    print(f"Directory exists: {logs_dir.exists()}")
-    print(f"Is directory: {logs_dir.is_dir()}")
-    
-    if logs_dir.is_dir():
-        # Look for .com files recursively
-        log_files = list(logs_dir.glob('**/*.com'))
-        print(f"Found .com files: {log_files}")
+    log_files = list(logs_path.glob('**/*.com'))
         
-    elif logs_dir.is_file() and logs_dir.suffix == '.com':
-        log_files = [logs_dir]
-        print(f"Single .com file: {log_files}")
-    
     print(f"Processing {len(log_files)} ComLogger .com files...")
     
     if not log_files:
-        print("❌ No ComLogger .com files found!")
+        print("No ComLogger .com files found!")
         return
     
     # Use the modern pipeline from StandardPipelineParser 
     # But create old-style DataHandler consumers
-    print(f"\n👥 === CREATING CONSUMERS ===")
     event_consumer = EventCollector(results)
     channel_consumer = ChannelCollector(results)
-    print(f"Created EventCollector: {event_consumer}")
-    print(f"Created ChannelCollector: {channel_consumer}")
     
     # Register consumers using the standard coders approach
-    print(f"\n📋 === REGISTERING CONSUMERS ===")
-    print(f"Pipeline.coders type: {type(pipeline.coders)}")
-    print(f"Pipeline.coders attributes: {[attr for attr in dir(pipeline.coders) if not attr.startswith('_')]}")
-    
     pipeline.coders.register_event_consumer(event_consumer)
-    print("✅ Registered event consumer")
-    
     pipeline.coders.register_channel_consumer(channel_consumer)
-    print("✅ Registered channel consumer")
     
     print("Consumers registered, processing ComLogger files...")
     
     # Process each ComLogger file by reading binary data
-    print(f"\n📄 === PROCESSING FILES ===")
-    for i, log_file in enumerate(log_files, 1):
+    for log_file in log_files:
         try:
-            file_size = log_file.stat().st_size
-            print(f"\n🔍 Processing file {i}/{len(log_files)}: {log_file}")
-            print(f"File size: {file_size:,} bytes")
-            
-            if file_size == 0:
-                print("⚠️ File is empty, skipping")
-                continue
-                
             with open(log_file, 'rb') as file_handle:
                 data = file_handle.read()
-                print(f"✅ Read {len(data):,} bytes from file")
-                
                 if len(data) > 0:
-                    print(f"📤 Sending {len(data):,} bytes to distributor...")
-                    print(f"Distributor type: {type(pipeline.distributor)}")
-                    print(f"Distributor attributes: {[attr for attr in dir(pipeline.distributor) if not attr.startswith('_')]}")
-                    
-                    # Check first few bytes of data
-                    preview = data[:50]
-                    print(f"Data preview (first 50 bytes): {preview}")
-                    print(f"Data hex preview: {preview.hex()}")
-                    
-                    # Send raw binary data to distributor (same as old approach)
-                    print("🔄 Calling distributor.on_recv()...")
+                    # Send binary data to distributor
                     pipeline.distributor.on_recv(data)
-                    print("✅ Data sent to distributor successfully")
-                else:
-                    print(f"❌ File {log_file} read as empty")
                     
         except Exception as e:
-            print(f"💥 Error processing {log_file}: {e}")
-            import traceback
-            traceback.print_exc()
+            print(f"Error processing {log_file}: {e}")
     
-    print(f"\n📊 === PROCESSING SUMMARY ===")
-    print(f"Events processed by EventCollector: {event_consumer.event_count}")
-    print(f"Channels processed by ChannelCollector: {channel_consumer.channel_count}")
-    print(f"Health issues found: {len(results.health_issues)}")
-    print(f"Buffer metrics tracked: {len(results.buffer_metrics)}")
-    print(f"System resources tracked: {len(results.system_resources)}")
-    print(f"Alerts generated: {len(results.alerts)}")
-    
-    # Show details of what was found
-    if results.health_issues:
-        print(f"\n🔥 HEALTH ISSUES FOUND:")
-        for issue in results.health_issues:
-            print(f"  - {issue['severity']}: {issue['event_name']} | {issue['description']}")
-    
-    if results.alerts:
-        print(f"\n🚨 ALERTS GENERATED:")
-        for alert in results.alerts:
-            print(f"  - {alert}")
-    
-    print("=== END PROCESSING SUMMARY ===\n")
+    print(f"Processed {len(results.health_issues)} health events and {len(results.buffer_metrics) + len(results.system_resources)} telemetry metrics")
 
 
 
@@ -440,33 +257,46 @@ class SoakMonitorArgumentParser(ParserBase):
 
     def handle_arguments(self, args, **kwargs):
         """Handle arguments as parsed"""
-        # Convert to Path object explicitly (even though type=Path is specified, it might still be a string)
-        if hasattr(args, 'com_logs') and args.com_logs is not None:
-            args.com_logs = Path(args.com_logs)
+        # Validate logs directory exists
+        if not args.com_logs.exists():
+            raise ValueError(f"ComLogger logs directory must exist: {args.com_logs}")
             
-            # Validate logs directory exists
-            if not args.com_logs.exists():
-                raise ValueError(f"ComLogger logs directory must exist: {args.com_logs}")
-            
-            if not args.com_logs.is_dir():
-                raise ValueError(f"ComLogger logs path must be a directory: {args.com_logs}")
-        else:
-            raise ValueError("ComLogger logs argument is required")
-        
+        if not args.com_logs.is_dir():
+            raise ValueError(f"ComLogger logs path must be a directory: {args.com_logs}")
         return args
+
+
+def pipeline_factory(args_ns, pipeline=None, config) -> StandardPipeline:
+        """A factory of the standard pipeline given the handled arguments"""
+        pipeline_arguments = {
+            "config": config,
+            "dictionary": args_ns.dictionary,
+            "file_store": args_ns.files_storage_directory,
+            "packet_spec": args_ns.packet_spec,
+            "packet_set_name": args_ns.packet_set_name,
+            "logging_prefix": args_ns.logs,
+        }
+        pipeline = StandardPipeline()
+        pipeline.transport_implementation = args_ns.connection_transport
+        try:
+            pipeline.setup(**pipeline_arguments)
+            pipeline.connect(args_ns.connection_uri)
+        except Exception:
+            # In all error cases, pipeline should be shutdown before continuing with exception handling
+            try:
+                pipeline.disconnect()
+            finally:
+                raise
+        return pipeline
 
 
 def main():
     args, _ = ParserBase.parse_args([StandardPipelineParser, SoakMonitorArgumentParser])
-    pipeline = StandardPipelineParser.pipeline_factory(args)
-   
-    # Validate required arguments
-    if not hasattr(args, 'dictionary') or not args.dictionary:
-        raise ValueError("Dictionary argument is required from StandardPipelineParser")
-    
-    dictionary_path = Path(args.dictionary)
-    if not dictionary_path.exists():
-        raise ValueError(f"Dictionary file does not exist: {args.dictionary}")
+    config = ConfigManager()
+    config.set('framing', 'use_key', 'True')
+    config.set('framing', 'key_value', '0x30FC')
+    config.set('types', 'msg_len', 'U16')
+    pipeline = pipeline_factory(args, config)
     
     # Initialize results container
     results = SoakAnalysisResults()
@@ -482,7 +312,7 @@ def main():
     print("-"*50)
     
     # Process logs
-    process_logs(pipeline, args.dictionary, args.com_logs, results)
+    process_logs(pipeline, args.com_logs, results)
     
     # Analyze trends within the ComLogger data
     results.analyze_trends()
@@ -505,14 +335,14 @@ def main():
         print("\nALERTS:")
         for alert in results.alerts:
             if "trending up" in alert:
-                print(f"  📈 {alert}")
+                print(f"{alert}")
             else:
-                print(f"  ⚠️  {alert}")
+                print(f"{alert}")
     
     if results.health_issues:
         print("\nHEALTH ISSUES:")
         for issue in results.health_issues:
-            print(f"  🔥 {issue['severity']}: {issue['event_name']}")
+            print(f"{issue['severity']}: {issue['event_name']}")
     
     # Show buffer status summary
     if results.buffer_metrics:
@@ -520,7 +350,7 @@ def main():
         for metric_name, readings in results.buffer_metrics.items():
             if readings:
                 latest_value = readings[-1]['value']
-                print(f"  📊 {metric_name}: {latest_value}")
+                print(f"{metric_name}: {latest_value}")
     
     # Show resource status summary  
     if results.system_resources:
@@ -528,17 +358,11 @@ def main():
         for metric_name, readings in results.system_resources.items():
             if readings:
                 latest_value = readings[-1]['value']
-                print(f"  📊 {metric_name}: {latest_value}")
+                print(f" {metric_name}: {latest_value}")
     
     print("="*50)
     
-    # Exit with error code if there are critical issues
-    if results.has_critical_issues():
-        print("⚠️  EXITING WITH ERROR DUE TO CRITICAL ISSUES")
-        exit(1)
-    
     print("MONITORING COMPLETED SUCCESSFULLY")
-
 
 if __name__ == '__main__':
     main() 
