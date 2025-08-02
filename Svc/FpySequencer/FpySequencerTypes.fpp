@@ -7,18 +7,12 @@ module Svc {
             INVALID = 0
             WAIT_REL = 1
             WAIT_ABS = 2
-            SET_SER_REG = 3
             GOTO = 4
             IF = 5
             NO_OP = 6
-            GET_TLM = 7
-            GET_PRM = 8
-            CMD = 9
-            SET_REG = 10
-            DESER_SER_REG_8 = 11
-            DESER_SER_REG_4 = 12
-            DESER_SER_REG_2 = 13
-            DESER_SER_REG_1 = 14
+            STORE_TLM_VAL = 7
+            STORE_PRM = 8
+            CONST_CMD = 9
             # stack op directives
             # all of these are handled at the CPP level by one StackOpDirective
             # boolean ops

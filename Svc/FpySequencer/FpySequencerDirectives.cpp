@@ -30,7 +30,7 @@ void FpySequencer::sendSignal(Signal signal) {
 
 template <typename T>
 T FpySequencer::pop() {
-    static_assert(sizeof(T) == 8 || sizeof(T) == 4 || sizeof(T) == 2 || sizeof(T) == 1);
+    static_assert(sizeof(T) == 8 || sizeof(T) == 4 || sizeof(T) == 2 || sizeof(T) == 1, "size must be 1, 2, 4, 8");
     FW_ASSERT(this->m_runtime.stackSize >= sizeof(T), static_cast<FwAssertArgType>(this->m_runtime.stackSize), static_cast<FwAssertArgType>(sizeof(T)));
     // first make a byte array which can definitely store our val
     U8 valBytes[8] = {0};
@@ -69,8 +69,20 @@ template I8 FpySequencer::pop();
 template I16 FpySequencer::pop();
 template I32 FpySequencer::pop();
 template I64 FpySequencer::pop();
-template F32 FpySequencer::pop();
-template F64 FpySequencer::pop();
+
+template <> F32 FpySequencer::pop<F32>() {
+    U32 endianness = this->pop<U32>();
+    F32 val;
+    memcpy(&val, &endianness, sizeof(val));
+    return val;
+}
+
+template <> F64 FpySequencer::pop<F64>() {
+    U64 endianness = this->pop<U64>();
+    F64 val;
+    memcpy(&val, &endianness, sizeof(val));
+    return val;
+}
 
 void FpySequencer::pop(U8* dest, U16 size) {
     FW_ASSERT(this->m_runtime.stackSize >= size, static_cast<FwAssertArgType>(this->m_runtime.stackSize), static_cast<FwAssertArgType>(size));
@@ -80,7 +92,7 @@ void FpySequencer::pop(U8* dest, U16 size) {
 
 template <typename T>
 void FpySequencer::push(T val) {
-    static_assert(sizeof(T) == 8 || sizeof(T) == 4 || sizeof(T) == 2 || sizeof(T) == 1);
+    static_assert(sizeof(T) == 8 || sizeof(T) == 4 || sizeof(T) == 2 || sizeof(T) == 1, "size must be 1, 2, 4, 8");
     FW_ASSERT(this->m_runtime.stackSize + sizeof(val) < Fpy::MAX_STACK_SIZE, static_cast<FwAssertArgType>(this->m_runtime.stackSize), static_cast<FwAssertArgType>(sizeof(T)));
     // first make a byte array which can definitely store our val
     U8 valBytes[8] = {0};
@@ -122,8 +134,18 @@ template void FpySequencer::push(I8);
 template void FpySequencer::push(I16);
 template void FpySequencer::push(I32);
 template void FpySequencer::push(I64);
-template void FpySequencer::push(F32);
-template void FpySequencer::push(F64);
+
+template <> void FpySequencer::push<F32>(F32 val) {
+    U32 endianness;
+    memcpy(&endianness, &val, sizeof(val));
+    this->push(endianness);
+}
+
+template <> void FpySequencer::push<F64>(F64 val) {
+    U64 endianness;
+    memcpy(&endianness, &val, sizeof(val));
+    this->push(endianness);
+}
 
 U8* FpySequencer::top() {
     return &this->m_runtime.stack[this->m_runtime.stackSize];
@@ -202,14 +224,6 @@ void FpySequencer::directive_stackOp_internalInterfaceHandler(const Svc::FpySequ
     this->m_tlm.lastDirectiveError = error;
 }
 
-//! Internal interface handler for directive_unaryRegOp
-void FpySequencer::directive_unaryRegOp_internalInterfaceHandler(
-    const Svc::FpySequencer_UnaryRegOpDirective& directive) {
-    DirectiveError error = DirectiveError::NO_ERROR;
-    this->sendSignal(this->unaryRegOp_directiveHandler(directive, error));
-    this->m_tlm.lastDirectiveError = error;
-}
-
 //! Internal interface handler for directive_exit
 void FpySequencer::directive_exit_internalInterfaceHandler(const Svc::FpySequencer_ExitDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
@@ -248,7 +262,7 @@ Signal FpySequencer::waitAbs_directiveHandler(const FpySequencer_WaitAbsDirectiv
     FwTimeContextStoreType ctx = this->pop<FwTimeContextStoreType>();
     U16 base = this->pop<U16>();
 
-    this->m_runtime.wakeupTime = Fw::Time(static_cast<TimeBase>(base), ctx, seconds, uSeconds);
+    this->m_runtime.wakeupTime = Fw::Time(static_cast<TimeBase::T>(base), ctx, seconds, uSeconds);
     return Signal::stmtResponse_beginSleep;
 }
 
@@ -333,7 +347,7 @@ Signal FpySequencer::storePrm_directiveHandler(const FpySequencer_StorePrmDirect
         return Signal::stmtResponse_failure;
     }
     Fw::ParamBuffer prmValue;
-    Fw::ParamValid valid = this->getParam_out(0, directive.getprmId(), prmValue);
+    Fw::ParamValid valid = this->getParam_out(0, directive.get_prmId(), prmValue);
 
     if (valid != Fw::ParamValid::VALID) {
         // could not find this prm in the DB
@@ -604,7 +618,7 @@ Signal FpySequencer::stackOp_directiveHandler(const FpySequencer_StackOpDirectiv
     FW_ASSERT(directive.get__op() >= Fpy::DirectiveId::OR && directive.get__op() <= Fpy::DirectiveId::UITOFP,
               static_cast<FwAssertArgType>(directive.get__op()));
 
-    switch (directive.get_op()) {
+    switch (directive.get__op()) {
         case Fpy::DirectiveId::OR:
             error = this->op_or();
             break;

@@ -1,9 +1,11 @@
 struct WaitRelDirective {
     # pops U32, U32 off stack
+    _empty: U8
 }
 
 struct WaitAbsDirective {
     # pops U32, U32, U8, U16 off stack
+    _empty: U8
 }
 
 struct GotoDirective {
@@ -80,17 +82,12 @@ internal port directive_exit(directive: ExitDirective) priority 6 assert
 
 enum DirectiveErrorCode {
     NO_ERROR
-    SER_REG_OUT_OF_BOUNDS
     STMT_OUT_OF_BOUNDS
-    SER_REG_DESERIALIZE_FAILURE
-    SER_REG_SERIALIZE_FAILURE
     TLM_GET_NOT_CONNECTED
     TLM_CHAN_NOT_FOUND
     PRM_GET_NOT_CONNECTED
     PRM_NOT_FOUND
     CMD_SERIALIZE_FAILURE
-    REGISTER_OUT_OF_BOUNDS
-    SER_REG_ACCESS_OUT_OF_BOUNDS
     DELIBERATE_FAILURE
     STACK_UNDERFLOW
     STACK_OVERFLOW

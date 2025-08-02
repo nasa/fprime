@@ -1363,7 +1363,7 @@ TEST_F(FpySequencerTester, dispatchStatement) {
     tester_get_m_runtime_ptr()->nextStatementIndex = 0;
     result = tester_dispatchStatement();
     ASSERT_EQ(result, Signal::result_dispatchStatement_success);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->currentStatementOpcode, Fpy::DirectiveId::CMD);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->currentStatementOpcode, Fpy::DirectiveId::CONST_CMD);
     ASSERT_EQ(tester_get_m_runtime_ptr()->currentCmdOpcode, 123);
     ASSERT_EQ(tester_get_m_runtime_ptr()->currentStatementDispatchTime, time);
 
@@ -1507,7 +1507,7 @@ TEST_F(FpySequencerTester, deserialize_noOp) {
 TEST_F(FpySequencerTester, deserialize_getTlm) {
     FpySequencer::DirectiveUnion actual;
     FpySequencer_StoreTlmValDirective dir(123, 234, 456);
-    add_GET_TLM(dir);
+    add_STORE_TLM_VAL(dir);
     Fw::Success result = tester_deserializeDirective(seq.get_statements()[0], actual);
     ASSERT_EQ(result, Fw::Success::SUCCESS);
     ASSERT_EQ(actual.getTlm, dir);
@@ -1527,7 +1527,7 @@ TEST_F(FpySequencerTester, deserialize_getTlm) {
 TEST_F(FpySequencerTester, deserialize_storePrm) {
     FpySequencer::DirectiveUnion actual;
     FpySequencer_StorePrmDirective dir(123, 456);
-    add_GET_PRM(dir);
+    add_STORE_PRM(dir);
     Fw::Success result = tester_deserializeDirective(seq.get_statements()[0], actual);
     ASSERT_EQ(result, Fw::Success::SUCCESS);
     ASSERT_EQ(actual.storePrm, dir);

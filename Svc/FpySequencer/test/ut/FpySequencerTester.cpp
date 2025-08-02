@@ -175,24 +175,24 @@ void FpySequencerTester::add_NO_OP() {
     addDirective(Fpy::DirectiveId::NO_OP, buf);
 }
 
-void FpySequencerTester::add_GET_TLM(U8 valueDestSerReg, U8 timeDestSerReg, FwChanIdType id) {
-    add_GET_TLM(FpySequencer_StoreTlmValDirective(valueDestSerReg, timeDestSerReg, id));
+void FpySequencerTester::add_STORE_TLM_VAL(U8 valueDestSerReg, U8 timeDestSerReg, FwChanIdType id) {
+    add_STORE_TLM_VAL(FpySequencer_StoreTlmValDirective(valueDestSerReg, timeDestSerReg, id));
 }
 
-void FpySequencerTester::add_GET_TLM(FpySequencer_StoreTlmValDirective dir) {
+void FpySequencerTester::add_STORE_TLM_VAL(FpySequencer_StoreTlmValDirective dir) {
     Fw::StatementArgBuffer buf;
     FW_ASSERT(buf.serialize(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    addDirective(Fpy::DirectiveId::GET_TLM, buf);
+    addDirective(Fpy::DirectiveId::STORE_TLM_VAL, buf);
 }
 
-void FpySequencerTester::add_GET_PRM(U8 serRegIdx, FwPrmIdType id) {
-    add_GET_PRM(FpySequencer_StorePrmDirective(serRegIdx, id));
+void FpySequencerTester::add_STORE_PRM(U8 serRegIdx, FwPrmIdType id) {
+    add_STORE_PRM(FpySequencer_StorePrmDirective(serRegIdx, id));
 }
 
-void FpySequencerTester::add_GET_PRM(FpySequencer_StorePrmDirective dir) {
+void FpySequencerTester::add_STORE_PRM(FpySequencer_StorePrmDirective dir) {
     Fw::StatementArgBuffer buf;
     FW_ASSERT(buf.serialize(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    addDirective(Fpy::DirectiveId::GET_PRM, buf);
+    addDirective(Fpy::DirectiveId::STORE_PRM, buf);
 }
 
 void FpySequencerTester::add_CMD(FwOpcodeType opcode) {
@@ -203,7 +203,7 @@ void FpySequencerTester::add_CMD(FpySequencer_ConstCmdDirective dir) {
     Fw::StatementArgBuffer buf;
     FW_ASSERT(buf.serialize(dir.get_opCode()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     FW_ASSERT(buf.serialize(dir.get_argBuf(), dir.get__argBufSize(), Fw::Serialization::OMIT_LENGTH) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    addDirective(Fpy::DirectiveId::CMD, buf);
+    addDirective(Fpy::DirectiveId::CONST_CMD, buf);
 }
 
 void FpySequencerTester::add_DESER_SER_REG(U8 srcSerRegIdx, FwSizeType srcOffset, U8 destReg, U8 deserSize) {

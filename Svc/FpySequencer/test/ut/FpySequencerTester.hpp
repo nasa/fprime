@@ -91,10 +91,10 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     void add_IF(U8 serRegIdx, U32 gotoIfFalse);
     void add_IF(FpySequencer_IfDirective dir);
     void add_NO_OP();
-    void add_GET_TLM(U8 valueDestSerReg, U8 timeDestSerReg, FwChanIdType id);
-    void add_GET_TLM(FpySequencer_StoreTlmValDirective dir);
-    void add_GET_PRM(U8 serRegIdx, FwPrmIdType id);
-    void add_GET_PRM(FpySequencer_StorePrmDirective dir);
+    void add_STORE_TLM_VAL(U8 valueDestSerReg, U8 timeDestSerReg, FwChanIdType id);
+    void add_STORE_TLM_VAL(FpySequencer_StoreTlmValDirective dir);
+    void add_STORE_PRM(U8 serRegIdx, FwPrmIdType id);
+    void add_STORE_PRM(FpySequencer_StorePrmDirective dir);
     void add_CMD(FwOpcodeType opcode);
     void add_CMD(FpySequencer_ConstCmdDirective dir);
     void add_DESER_SER_REG(U8 srcSerRegIdx, FwSizeType srcOffset, U8 destReg, U8 deserSize);

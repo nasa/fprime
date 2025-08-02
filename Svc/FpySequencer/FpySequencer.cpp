@@ -261,7 +261,7 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
         return;
     }
 
-    if (this->m_runtime.currentStatementOpcode != Fpy::DirectiveId::CMD) {
+    if (this->m_runtime.currentStatementOpcode != Fpy::DirectiveId::CONST_CMD) {
         // we were not awaiting a cmd response, we were waiting for a directive
         this->log_WARNING_HI_CmdResponseWhileAwaitingDirective(opCode, response, this->m_runtime.currentStatementOpcode);
         this->sequencer_sendSignal_stmtResponse_unexpected();
@@ -354,9 +354,9 @@ FpySequencer_DebugTelemetry FpySequencer::getDebugTelemetry() {
         if (status != Fw::Success::SUCCESS) {
             return FpySequencer_DebugTelemetry(false, false, nextStmt.get_opCode(), 0);
         }
-        if (nextStmt.get_opCode() == Fpy::DirectiveId::CMD) {
+        if (nextStmt.get_opCode() == Fpy::DirectiveId::CONST_CMD) {
             // send opcode of the cmd to the ground
-            return FpySequencer_DebugTelemetry(false, true, nextStmt.get_opCode(), directiveUnion.cmd.get_opCode());
+            return FpySequencer_DebugTelemetry(false, true, nextStmt.get_opCode(), directiveUnion.constCmd.get_opCode());
         }
 
         return FpySequencer_DebugTelemetry(false, true, nextStmt.get_opCode(), 0);

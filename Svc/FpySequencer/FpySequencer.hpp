@@ -23,15 +23,14 @@
 
 static_assert(Svc::Fpy::MAX_SEQUENCE_ARG_COUNT <= std::numeric_limits<U8>::max(),
               "Sequence arg count must be below U8 max");
-static_assert(Svc::Fpy::NUM_REGISTERS <= std::numeric_limits<U8>::max(), "Register count must be below U8 max");
 static_assert(Svc::Fpy::MAX_SEQUENCE_STATEMENT_COUNT <= std::numeric_limits<U16>::max(),
               "Sequence statement count must be below U16 max");
-static_assert(Svc::Fpy::MAX_SERIALIZABLE_REGISTER_SIZE <= std::numeric_limits<FwSizeType>::max(),
-              "Local variable buffer size must be below FwSizeType max");
-static_assert(Svc::Fpy::MAX_SERIALIZABLE_REGISTER_SIZE >= FW_TLM_BUFFER_MAX_SIZE,
-              "Local variable buffer size must be greater than FW_TLM_BUFFER_MAX_SIZE");
-static_assert(Svc::Fpy::MAX_SERIALIZABLE_REGISTER_SIZE >= FW_PARAM_BUFFER_MAX_SIZE,
-              "Local variable buffer size must be greater than FW_PARAM_BUFFER_MAX_SIZE");
+static_assert(Svc::Fpy::MAX_STACK_SIZE <= std::numeric_limits<U16>::max(),
+              "Max stack size must be below U16 max");
+static_assert(Svc::Fpy::MAX_STACK_SIZE >= FW_TLM_BUFFER_MAX_SIZE,
+              "Max stack size must be greater than max tlm buffer size");
+static_assert(Svc::Fpy::MAX_STACK_SIZE >= FW_PARAM_BUFFER_MAX_SIZE,
+              "Max stack size must be greater than max prm buffer size");
 
 namespace Svc {
 
@@ -46,17 +45,13 @@ class FpySequencer : public FpySequencerComponentBase {
     union DirectiveUnion {
         FpySequencer_WaitRelDirective waitRel;
         FpySequencer_WaitAbsDirective waitAbs;
-        FpySequencer_SetSerRegDirective setSerReg;
         FpySequencer_GotoDirective gotoDirective;
         FpySequencer_IfDirective ifDirective;
         FpySequencer_NoOpDirective noOp;
-        FpySequencer_StoreTlmValDirective getTlm;
+        FpySequencer_StoreTlmValDirective storeTlmVal;
         FpySequencer_StorePrmDirective storePrm;
-        FpySequencer_ConstCmdDirective cmd;
-        FpySequencer_DeserSerRegDirective deserSerReg;
-        FpySequencer_SetRegDirective setReg;
-        FpySequencer_StackOpDirective binaryRegOp;
-        FpySequencer_UnaryRegOpDirective unaryRegOp;
+        FpySequencer_ConstCmdDirective constCmd;
+        FpySequencer_StackOpDirective stackOp;
         FpySequencer_ExitDirective exit;
 
         DirectiveUnion() {}
