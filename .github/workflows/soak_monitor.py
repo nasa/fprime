@@ -99,21 +99,76 @@ class EventCollector(DataHandler):
     """Event consumer that inherits from DataHandler"""
     def __init__(self, results):
         self.results = results
+        self.event_count = 0
         
     def data_callback(self, event_data, sender=None):
         """Handle decoded event data"""
+        self.event_count += 1
+        print(f"\n🔥 === EVENT #{self.event_count} DECODED === (Sender: {sender})")
+        
         try:
-            # Extract event information
-            event_name = event_data.template.name if hasattr(event_data, 'template') else str(event_data)
-            severity = event_data.template.severity if hasattr(event_data, 'template') else "UNKNOWN"
-            description = str(event_data.args) if hasattr(event_data, 'args') else ""
-            timestamp = str(event_data.time) if hasattr(event_data, 'time') else ""
+            # Print ALL attributes of the event_data object
+            print(f"Event object type: {type(event_data)}")
+            print(f"Event object attributes: {[attr for attr in dir(event_data) if not attr.startswith('_')]}")
             
-            # DEBUG: Print all events to see what we're getting
-            print(f"DEBUG EVENT: {event_name} | {severity} | {description}")
+            # Extract event information with detailed debugging
+            if hasattr(event_data, 'template'):
+                print(f"✅ Has template: {event_data.template}")
+                if hasattr(event_data.template, 'name'):
+                    event_name = event_data.template.name
+                    print(f"  Template name: {event_name}")
+                else:
+                    event_name = "NO_NAME"
+                    print(f"  ❌ Template has no name attribute")
+                    
+                if hasattr(event_data.template, 'severity'):
+                    severity = event_data.template.severity
+                    print(f"  Template severity: {severity}")
+                else:
+                    severity = "NO_SEVERITY"
+                    print(f"  ❌ Template has no severity attribute")
+                    
+                if hasattr(event_data.template, 'id'):
+                    print(f"  Template ID: {event_data.template.id}")
+            else:
+                event_name = str(event_data)
+                severity = "UNKNOWN"
+                print(f"❌ No template attribute, using str representation: {event_name}")
+            
+            if hasattr(event_data, 'args'):
+                description = str(event_data.args)
+                print(f"✅ Args: {description} (type: {type(event_data.args)})")
+            else:
+                description = ""
+                print(f"❌ No args attribute")
+                
+            if hasattr(event_data, 'time'):
+                timestamp = str(event_data.time)
+                print(f"✅ Timestamp: {timestamp}")
+            else:
+                timestamp = ""
+                print(f"❌ No time attribute")
+            
+            # Print the final extracted values
+            print(f"📋 EXTRACTED VALUES:")
+            print(f"  NAME: {event_name}")
+            print(f"  SEVERITY: {severity}")
+            print(f"  DESCRIPTION: {description}")
+            print(f"  TIMESTAMP: {timestamp}")
+            
+            # Check filtering logic step by step
+            print(f"🔍 FILTER CHECK:")
+            fatal_check = 'FATAL' in severity
+            warning_check = 'WARNING' in severity
+            hlth_check = 'HLTH_' in event_name
+            print(f"  'FATAL' in severity: {fatal_check}")
+            print(f"  'WARNING' in severity: {warning_check}")
+            print(f"  'HLTH_' in event_name: {hlth_check}")
+            should_capture = fatal_check or warning_check or hlth_check
+            print(f"  Should capture: {should_capture}")
             
             # Check for health issues
-            if 'FATAL' in severity or 'WARNING' in severity or 'HLTH_' in event_name:
+            if should_capture:
                 issue = {
                     'timestamp': timestamp,
                     'event_name': event_name,
@@ -121,19 +176,24 @@ class EventCollector(DataHandler):
                     'description': description
                 }
                 self.results.health_issues.append(issue)
-                print(f"CAPTURED ISSUE: {severity} - {event_name}")
+                print(f"✅ CAPTURED ISSUE: {severity} - {event_name}")
                 
                 # Add to alerts if critical
                 if 'FATAL' in severity:
                     self.results.add_alert(f"FATAL: {event_name} - {description}")
+                    print(f"🚨 Added FATAL alert")
                 elif 'WARNING' in severity:
                     self.results.add_alert(f"WARNING: {event_name} - {description}")
-                    
+                    print(f"⚠️ Added WARNING alert")
+            else:
+                print(f"❌ NOT CAPTURED - Does not match filter criteria")
+                
         except Exception as e:
-            # Don't silently ignore - log the error for debugging
-            print(f"ERROR parsing event: {e}")
+            print(f"💥 ERROR parsing event: {e}")
             import traceback
             traceback.print_exc()
+        
+        print(f"=== END EVENT #{self.event_count} ===\n")
 
 
 class ChannelCollector(DataHandler):
