@@ -22,7 +22,7 @@ fprime-fpl-layout==1.0.3
 fprime-fpl-write-pic==1.0.3
 fprime-fpp==3.0.0a16
 fprime-gds==4.0.0a9
-fprime-tools==4.0.0a8
+fprime-tools==4.0.0a9
 fprime-visual==1.0.2
 gcovr==8.2
 idna==3.10
