@@ -109,6 +109,9 @@ class EventCollector(DataHandler):
             description = str(event_data.args) if hasattr(event_data, 'args') else ""
             timestamp = str(event_data.time) if hasattr(event_data, 'time') else ""
             
+            # DEBUG: Print all events to see what we're getting
+            print(f"DEBUG EVENT: {event_name} | {severity} | {description}")
+            
             # Check for health issues
             if 'FATAL' in severity or 'WARNING' in severity or 'HLTH_' in event_name:
                 issue = {
@@ -118,6 +121,7 @@ class EventCollector(DataHandler):
                     'description': description
                 }
                 self.results.health_issues.append(issue)
+                print(f"CAPTURED ISSUE: {severity} - {event_name}")
                 
                 # Add to alerts if critical
                 if 'FATAL' in severity:
@@ -126,8 +130,10 @@ class EventCollector(DataHandler):
                     self.results.add_alert(f"WARNING: {event_name} - {description}")
                     
         except Exception as e:
-            # Silently ignore parsing errors to be robust
-            pass
+            # Don't silently ignore - log the error for debugging
+            print(f"ERROR parsing event: {e}")
+            import traceback
+            traceback.print_exc()
 
 
 class ChannelCollector(DataHandler):
@@ -222,14 +228,20 @@ def process_logs(pipeline, dictionary_path, logs_path, results):
     # Process each ComLogger file by reading binary data
     for log_file in log_files:
         try:
+            print(f"Processing file: {log_file} (size: {log_file.stat().st_size} bytes)")
             with open(log_file, 'rb') as file_handle:
                 data = file_handle.read()
                 if len(data) > 0:
+                    print(f"Sending {len(data)} bytes to distributor")
                     # Send raw binary data to distributor (same as old approach)
                     pipeline.distributor.on_recv(data)
+                else:
+                    print(f"File {log_file} is empty")
                     
         except Exception as e:
             print(f"Error processing {log_file}: {e}")
+            import traceback
+            traceback.print_exc()
     
     # Let the modern pipeline handle its own cleanup
     print(f"Processed {len(results.health_issues)} health events and {len(results.buffer_metrics) + len(results.system_resources)} telemetry metrics")
@@ -363,69 +375,6 @@ def main():
         exit(1)
     
     print("MONITORING COMPLETED SUCCESSFULLY")
-    
-    # Properly shutdown the pipeline to clean up background threads
-    try:
-        print("Cleaning up pipeline resources...")
-        
-        # Stop the distributor if it has threads
-        if hasattr(pipeline, 'distributor') and hasattr(pipeline.distributor, 'stop'):
-            pipeline.distributor.stop()
-            print("  - Stopped distributor")
-        
-        # Stop any background tasks/threads in the pipeline
-        if hasattr(pipeline, 'stop'):
-            pipeline.stop()
-            print("  - Stopped pipeline")
-            
-        # Wait for threads to complete if join method exists
-        if hasattr(pipeline, 'join'):
-            pipeline.join()
-            print("  - Joined pipeline threads")
-            
-        # Close any remaining resources
-        if hasattr(pipeline, 'close'):
-            pipeline.close()
-            print("  - Closed pipeline")
-            
-        # Force cleanup of any remaining resources
-        if hasattr(pipeline, 'distributor') and hasattr(pipeline.distributor, 'close'):
-            pipeline.distributor.close()
-            print("  - Closed distributor")
-            
-        # Additional cleanup for potential socket connections
-        if hasattr(pipeline, 'distributor') and hasattr(pipeline.distributor, 'shutdown'):
-            pipeline.distributor.shutdown()
-            print("  - Shutdown distributor")
-            
-        # Clean up any coders/decoders that might have threads
-        if hasattr(pipeline, 'coders'):
-            if hasattr(pipeline.coders, 'stop'):
-                pipeline.coders.stop()
-                print("  - Stopped coders")
-            if hasattr(pipeline.coders, 'join'):
-                pipeline.coders.join()
-                print("  - Joined coders")
-                
-        # Force cleanup of any remaining threads
-        import threading
-        active_threads = threading.enumerate()
-        if len(active_threads) > 1:  # More than just main thread
-            print(f"  - Found {len(active_threads)} active threads, attempting cleanup")
-            
-    except Exception as e:
-        # Log but don't fail on cleanup errors
-        print(f"Warning: Error during pipeline cleanup: {e}")
-    
-    print("Pipeline cleanup completed")
-    
-    # Final fallback: force exit after a brief delay to ensure cleanup completes
-    import time
-    time.sleep(0.5)  # Give cleanup a moment to complete
-    
-    # Exit with appropriate code
-    exit_code = 1 if results.has_critical_issues() else 0
-    sys.exit(exit_code)
 
 
 if __name__ == '__main__':
