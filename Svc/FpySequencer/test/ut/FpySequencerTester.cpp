@@ -287,11 +287,6 @@ Signal FpySequencerTester::tester_goto_directiveHandler(const Svc::FpySequencer_
     return this->cmp.goto_directiveHandler(directive, err);
 }
 
-Signal FpySequencerTester::tester_setSerReg_directiveHandler(const FpySequencer_SetSerRegDirective& directive,
-                                                               DirectiveError& err) {
-    return this->cmp.setSerReg_directiveHandler(directive, err);
-}
-
 Signal FpySequencerTester::tester_if_directiveHandler(const FpySequencer_IfDirective& directive, DirectiveError& err) {
     return this->cmp.if_directiveHandler(directive, err);
 }
@@ -316,23 +311,9 @@ Signal FpySequencerTester::tester_constCmd_directiveHandler(const FpySequencer_C
     return this->cmp.constCmd_directiveHandler(directive, err);
 }
 
-Signal FpySequencerTester::tester_deserSerReg_directiveHandler(const FpySequencer_DeserSerRegDirective& directive,
-                                                                 DirectiveError& err) {
-    return this->cmp.deserSerReg_directiveHandler(directive, err);
-}
-
 Signal FpySequencerTester::tester_stackOp_directiveHandler(const FpySequencer_StackOpDirective& directive,
                                                              DirectiveError& err) {
     return this->cmp.stackOp_directiveHandler(directive, err);
-}
-
-Signal FpySequencerTester::tester_op_directiveHandler(const FpySequencer_UnaryRegOpDirective& directive,
-                                                             DirectiveError& err) {
-    return this->cmp.op_directiveHandler(directive, err);
-}
-Signal FpySequencerTester::tester_setReg_directiveHandler(const FpySequencer_SetRegDirective& directive,
-                                                          DirectiveError& err) {
-    return this->cmp.setReg_directiveHandler(directive, err);
 }
 
 Fw::Success FpySequencerTester::tester_deserializeDirective(const Fpy::Statement& stmt,
@@ -510,6 +491,13 @@ void FpySequencerTester::tester_setState(Svc::FpySequencer_SequencerStateMachine
 
 void FpySequencerTester::tester_dispatchDirective(const FpySequencer::DirectiveUnion& directive, const Fpy::DirectiveId& id) {
     this->cmp.dispatchDirective(directive, id);
+}
+
+template <typename T> void FpySequencerTester::tester_push(T val) {
+    cmp.push<T>(val);
+}
+template <typename T> T FpySequencerTester::tester_pop() {
+    return cmp.pop<T>();
 }
 
 // End UT private/protected access

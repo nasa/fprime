@@ -26,8 +26,8 @@ TEST_F(FpySequencerTester, ComplexControlFlow) {
 
     nextTlmId = 123;
     ASSERT_EQ(nextTlmValue.serialize(true), Fw::SerializeStatus::FW_SERIALIZE_OK);
-    add_STORE_TLM_VAL(0, 1, 123);
-    add_DESER_SER_REG(0, 0, 0, 1);
+    add_ALLOCATE_STACK()
+    add_STORE_TLM_VAL(123, 0);
     add_IF(0, 5);
     // if true
     add_NO_OP();

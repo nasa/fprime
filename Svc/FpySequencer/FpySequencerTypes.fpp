@@ -52,6 +52,9 @@ module Svc {
             # end stack op dirs
 
             EXIT = 40
+            ALLOCATE_STACK = 41
+            STORE = 42
+            LOAD = 43
         }
 
         struct Header {

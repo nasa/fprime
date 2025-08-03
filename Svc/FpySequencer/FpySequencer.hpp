@@ -53,6 +53,9 @@ class FpySequencer : public FpySequencerComponentBase {
         FpySequencer_ConstCmdDirective constCmd;
         FpySequencer_StackOpDirective stackOp;
         FpySequencer_ExitDirective exit;
+        FpySequencer_AllocateDirective allocate;
+        FpySequencer_StoreDirective store;
+        FpySequencer_LoadDirective load;
 
         DirectiveUnion() {}
         ~DirectiveUnion() {}
@@ -415,6 +418,15 @@ class FpySequencer : public FpySequencerComponentBase {
     //! Internal interface handler for directive_exit
     void directive_exit_internalInterfaceHandler(const Svc::FpySequencer_ExitDirective& directive) override;
 
+    //! Internal interface handler for directive_allocate
+    void directive_allocate_internalInterfaceHandler(const Svc::FpySequencer_AllocateDirective& directive) override;
+
+    //! Internal interface handler for directive_store
+    void directive_store_internalInterfaceHandler(const Svc::FpySequencer_StoreDirective& directive) override;
+
+    //! Internal interface handler for directive_load
+    void directive_load_internalInterfaceHandler(const Svc::FpySequencer_LoadDirective& directive) override;
+
     void parametersLoaded() override;
     void parameterUpdated(FwPrmIdType id) override;
 
@@ -600,7 +612,6 @@ class FpySequencer : public FpySequencerComponentBase {
     Signal constCmd_directiveHandler(const FpySequencer_ConstCmdDirective& directive, DirectiveError& error);
     Signal stackOp_directiveHandler(const FpySequencer_StackOpDirective& directive, DirectiveError& error);
 
-
     DirectiveError op_or();
     DirectiveError op_and();
     DirectiveError op_ieq();
@@ -628,6 +639,9 @@ class FpySequencer : public FpySequencerComponentBase {
     DirectiveError op_uitofp();
 
     Signal exit_directiveHandler(const FpySequencer_ExitDirective& directive, DirectiveError& error);
+    Signal allocate_directiveHandler(const FpySequencer_AllocateDirective& directive, DirectiveError& error);
+    Signal store_directiveHandler(const FpySequencer_StoreDirective& directive, DirectiveError& error);
+    Signal load_directiveHandler(const FpySequencer_LoadDirective& directive, DirectiveError& error);
 };
 
 }  // namespace Svc

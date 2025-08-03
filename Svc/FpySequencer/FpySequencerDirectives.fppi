@@ -60,6 +60,23 @@ struct ExitDirective {
     success: bool
 }
 
+@ pushes some empty bytes to the stack
+struct AllocateDirective {
+    $size: U16
+}
+
+@ pops some bytes off the stack and puts them in lvar array
+struct StoreDirective {
+    lvarOffset: U16
+    $size: U16
+}
+
+@ gets bytes from lvar array and pushes them to stack
+struct LoadDirective {
+    lvarOffset: U16
+    $size: U16
+}
+
 internal port directive_waitRel(directive: WaitRelDirective) priority 6 assert
 
 internal port directive_waitAbs(directive: WaitAbsDirective) priority 6 assert
@@ -80,6 +97,12 @@ internal port directive_stackOp(directive: StackOpDirective) priority 6 assert
 
 internal port directive_exit(directive: ExitDirective) priority 6 assert
 
+internal port directive_allocate(directive: AllocateDirective) priority 6 assert
+
+internal port directive_store(directive: StoreDirective) priority 6 assert
+
+internal port directive_load(directive: LoadDirective) priority 6 assert
+
 enum DirectiveErrorCode {
     NO_ERROR
     STMT_OUT_OF_BOUNDS
@@ -89,6 +112,6 @@ enum DirectiveErrorCode {
     PRM_NOT_FOUND
     CMD_SERIALIZE_FAILURE
     DELIBERATE_FAILURE
-    STACK_UNDERFLOW
+    STACK_ACCESS_OUT_OF_BOUNDS
     STACK_OVERFLOW
 }

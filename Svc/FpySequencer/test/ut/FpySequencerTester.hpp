@@ -184,6 +184,8 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     void tester_setState(Svc::FpySequencer_SequencerStateMachineStateMachineBase::State state);
     Svc::FpySequencer_SequencerStateMachineStateMachineBase::State tester_getState();
     void tester_dispatchDirective(const FpySequencer::DirectiveUnion& directive, const Fpy::DirectiveId& id);
+    template <typename T> void tester_push(T val);
+    template <typename T> T tester_pop();
 
   public:
     // ----------------------------------------------------------------------
