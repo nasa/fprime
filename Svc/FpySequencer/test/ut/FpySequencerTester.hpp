@@ -96,9 +96,15 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     void add_CONST_CMD(FwOpcodeType opcode);
     void add_CONST_CMD(FpySequencer_ConstCmdDirective dir);
     void add_STACK_OP(Fpy::DirectiveId op);
-    void add_STACK_OP(FpySequencer_StackOpDirective dir);
     void add_EXIT(bool success);
     void add_EXIT(FpySequencer_ExitDirective dir);
+    void add_ALLOCATE(U16 size);
+    void add_ALLOCATE(FpySequencer_AllocateDirective dir);
+    void add_STORE(U16 lvarOffset, U16 size);
+    void add_STORE(FpySequencer_StoreDirective dir);
+    void add_LOAD(U16 lvarOffset, U16 size);
+    void add_LOAD(FpySequencer_LoadDirective dir);
+    template <typename T> void add_PUSH_VAL(T val);
     //! Handle a text event
     void textLogIn(FwEventIdType id,                //!< The event ID
                    const Fw::Time& timeTag,         //!< The time

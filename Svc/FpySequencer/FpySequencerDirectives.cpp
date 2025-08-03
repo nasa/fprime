@@ -87,12 +87,6 @@ template <> F64 FpySequencer::pop<F64>() {
     return val;
 }
 
-void FpySequencer::pop(U8* dest, U16 size) {
-    FW_ASSERT(this->m_runtime.stackSize >= size, static_cast<FwAssertArgType>(this->m_runtime.stackSize), static_cast<FwAssertArgType>(size));
-    memcpy(dest, this->top() - size, size);
-    this->m_runtime.stackSize -= size;
-}
-
 template <typename T>
 void FpySequencer::push(T val) {
     static_assert(sizeof(T) == 8 || sizeof(T) == 4 || sizeof(T) == 2 || sizeof(T) == 1, "size must be 1, 2, 4, 8");
@@ -121,12 +115,6 @@ void FpySequencer::push(T val) {
     }
     memcpy(valBytes, this->top(), sizeof(T));
     this->m_runtime.stackSize += sizeof(T);
-}
-
-void FpySequencer::push(U8* src, U16 size) {
-    FW_ASSERT(this->m_runtime.stackSize + size <= Fpy::MAX_STACK_SIZE, static_cast<FwAssertArgType>(this->m_runtime.stackSize), static_cast<FwAssertArgType>(size));
-    memcpy(this->top(), src, size);
-    this->m_runtime.stackSize += size;
 }
 
 template void FpySequencer::push(U8);
@@ -245,6 +233,13 @@ void FpySequencer::directive_allocate_internalInterfaceHandler(const Svc::FpySeq
 void FpySequencer::directive_store_internalInterfaceHandler(const Svc::FpySequencer_StoreDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->store_directiveHandler(directive, error));
+    this->m_tlm.lastDirectiveError = error;
+}
+
+//! Internal interface handler for directive_pushVal
+void FpySequencer::directive_pushVal_internalInterfaceHandler(const Svc::FpySequencer_PushValDirective& directive) {
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->pushVal_directiveHandler(directive, error));
     this->m_tlm.lastDirectiveError = error;
 }
 
@@ -767,14 +762,28 @@ Signal FpySequencer::store_directiveHandler(const FpySequencer_StoreDirective& d
 }
 
 Signal FpySequencer::load_directiveHandler(const FpySequencer_LoadDirective& directive, DirectiveError& error) {
+    if (this->m_runtime.stackSize + directive.get_size() > Fpy::MAX_STACK_SIZE) {
+        error = DirectiveError::STACK_OVERFLOW;
+        return Signal::stmtResponse_failure;
+    }
     U16 stackOffset = this->lvarOffset() + directive.get_lvarOffset();
     // if we accessed these bytes, would we go out of bounds
     if (stackOffset + directive.get_size() > this->m_runtime.stackSize) {
         error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
-    memmove(this->m_runtime.stack + stackOffset, this->top() - directive.get_size(), directive.get_size());
-    this->m_runtime.stackSize -= directive.get_size();
+    memcpy(this->top(), this->m_runtime.stack + stackOffset, directive.get_size());
+    this->m_runtime.stackSize += directive.get_size();
+    return Signal::stmtResponse_success;
+}
+
+Signal FpySequencer::pushVal_directiveHandler(const FpySequencer_PushValDirective& directive, DirectiveError& error) {
+    if (this->m_runtime.stackSize + directive.get__valSize() > Fpy::MAX_STACK_SIZE) {
+        error = DirectiveError::STACK_OVERFLOW;
+        return Signal::stmtResponse_failure;
+    }
+    memcpy(this->top(), directive.get_val(), directive.get__valSize());
+    this->m_runtime.stackSize += directive.get__valSize();
     return Signal::stmtResponse_success;
 }
 }  // namespace Svc

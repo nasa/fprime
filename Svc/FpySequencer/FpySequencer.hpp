@@ -56,6 +56,7 @@ class FpySequencer : public FpySequencerComponentBase {
         FpySequencer_AllocateDirective allocate;
         FpySequencer_StoreDirective store;
         FpySequencer_LoadDirective load;
+        FpySequencer_PushValDirective pushVal;
 
         DirectiveUnion() {}
         ~DirectiveUnion() {}
@@ -427,6 +428,9 @@ class FpySequencer : public FpySequencerComponentBase {
     //! Internal interface handler for directive_load
     void directive_load_internalInterfaceHandler(const Svc::FpySequencer_LoadDirective& directive) override;
 
+    //! Internal interface handler for directive_pushVal
+    void directive_pushVal_internalInterfaceHandler(const Svc::FpySequencer_PushValDirective& directive) override;
+
     void parametersLoaded() override;
     void parameterUpdated(FwPrmIdType id) override;
 
@@ -589,12 +593,8 @@ class FpySequencer : public FpySequencerComponentBase {
     template <typename T>
     T pop();
 
-    void pop(U8* dest, U16 size);
-
     template <typename T>
     void push(T val);
-
-    void push(U8* src, U16 size);
 
     U8* top();
     U8* lvars();
@@ -642,6 +642,7 @@ class FpySequencer : public FpySequencerComponentBase {
     Signal allocate_directiveHandler(const FpySequencer_AllocateDirective& directive, DirectiveError& error);
     Signal store_directiveHandler(const FpySequencer_StoreDirective& directive, DirectiveError& error);
     Signal load_directiveHandler(const FpySequencer_LoadDirective& directive, DirectiveError& error);
+    Signal pushVal_directiveHandler(const FpySequencer_PushValDirective& directive, DirectiveError& error);
 };
 
 }  // namespace Svc

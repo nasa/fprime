@@ -6,7 +6,7 @@ module Svc {
         constant MAX_SEQUENCE_STATEMENT_COUNT = 1024
         @ the maximum number of bytes in a stack
         constant MAX_STACK_SIZE = 65535
-        @ the maximum number of bytes in a constant command directive
-        constant MAX_CONST_CMD_SIZE = 2048
+        @ the maximum number of bytes in a directive
+        constant MAX_DIRECTIVE_SIZE = 2048
     }
 }

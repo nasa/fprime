@@ -194,12 +194,8 @@ void FpySequencerTester::add_CONST_CMD(FpySequencer_ConstCmdDirective dir) {
 }
 
 void FpySequencerTester::add_STACK_OP(Fpy::DirectiveId op) {
-    add_STACK_OP(FpySequencer_StackOpDirective(op));
-}
-
-void FpySequencerTester::add_STACK_OP(FpySequencer_StackOpDirective dir) {
     Fw::StatementArgBuffer buf;
-    addDirective(dir.get__op(), buf);
+    addDirective(op, buf);
 }
 
 void FpySequencerTester::add_EXIT(bool success) {
@@ -211,6 +207,44 @@ void FpySequencerTester::add_EXIT(FpySequencer_ExitDirective dir) {
     FW_ASSERT(buf.serialize(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     addDirective(Fpy::DirectiveId::EXIT, buf);
 }
+void FpySequencerTester::add_ALLOCATE(U16 size) {
+    add_ALLOCATE(FpySequencer_AllocateDirective(size));
+}
+void FpySequencerTester::add_ALLOCATE(FpySequencer_AllocateDirective dir) {
+    Fw::StatementArgBuffer buf;
+    FW_ASSERT(buf.serialize(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    addDirective(Fpy::DirectiveId::ALLOCATE, buf);
+}
+void FpySequencerTester::add_STORE(U16 lvarOffset, U16 size) {
+    add_STORE(FpySequencer_StoreDirective(lvarOffset, size));
+}
+void FpySequencerTester::add_STORE(FpySequencer_StoreDirective dir) {
+    Fw::StatementArgBuffer buf;
+    FW_ASSERT(buf.serialize(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    addDirective(Fpy::DirectiveId::STORE, buf);
+}
+void FpySequencerTester::add_LOAD(U16 lvarOffset, U16 size) {
+    add_LOAD(FpySequencer_LoadDirective(lvarOffset, size));
+}
+void FpySequencerTester::add_LOAD(FpySequencer_LoadDirective dir) {
+    Fw::StatementArgBuffer buf;
+    FW_ASSERT(buf.serialize(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    addDirective(Fpy::DirectiveId::LOAD, buf);
+}
+template <typename T> void add_PUSH_VAL(T val) {
+    Fw::StatementArgBuffer buf;
+    FW_ASSERT(buf.serializeFrom(val) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    addDirective(Fpy::DirectiveId::PUSH_VAL, buf);
+}
+
+template void FpySequencerTester::add_PUSH_VAL(U8);
+template void FpySequencerTester::add_PUSH_VAL(U16);
+template void FpySequencerTester::add_PUSH_VAL(U32);
+template void FpySequencerTester::add_PUSH_VAL(U64);
+template void FpySequencerTester::add_PUSH_VAL(I8);
+template void FpySequencerTester::add_PUSH_VAL(I16);
+template void FpySequencerTester::add_PUSH_VAL(I32);
+template void FpySequencerTester::add_PUSH_VAL(I64);
 
 //! Handle a text event
 void FpySequencerTester::textLogIn(FwEventIdType id,                //!< The event ID

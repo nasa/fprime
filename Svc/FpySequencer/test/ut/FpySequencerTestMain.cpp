@@ -14,10 +14,12 @@ using State = FpySequencer_SequencerStateMachineStateMachineBase::State;
 using DirectiveError = FpySequencer_DirectiveErrorCode;
 
 TEST_F(FpySequencerTester, waitRel) {
-    FpySequencer_WaitRelDirective directive(5, 123);
+    FpySequencer_WaitRelDirective directive{};
     Fw::Time testTime(100, 100);
     setTestTime(testTime);
 
+    tester_push<U32>(5);
+    tester_push<U32>(123);
     DirectiveError err = DirectiveError::NO_ERROR;
     Signal result = tester_waitRel_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_beginSleep);
@@ -26,8 +28,12 @@ TEST_F(FpySequencerTester, waitRel) {
 }
 
 TEST_F(FpySequencerTester, waitAbs) {
-    FpySequencer_WaitAbsDirective directive(Fw::Time(5, 123));
+    FpySequencer_WaitAbsDirective directive{};
 
+    tester_push<U16>(0);
+    tester_push<U8>(0);
+    tester_push<U32>(5);
+    tester_push<U32>(123);
     DirectiveError err = DirectiveError::NO_ERROR;
     Signal result = tester_waitAbs_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_beginSleep);
@@ -62,34 +68,11 @@ TEST_F(FpySequencerTester, goto) {
     ASSERT_EQ(tester_get_m_runtime_ptr()->nextStatementIndex, 456);
 }
 
-TEST_F(FpySequencerTester, setSerReg) {
-    U8 buf[Fpy::MAX_SERIALIZABLE_REGISTER_SIZE];
-    memset(buf, 1, sizeof(buf));
-    FpySequencer_SetSerRegDirective directive(static_cast<U8>(0), 1, static_cast<FwSizeType>(sizeof(buf)));
-    DirectiveError err = DirectiveError::NO_ERROR;
-    Signal result = tester_setSerReg_directiveHandler(directive, err);
-    ASSERT_EQ(result, Signal::stmtResponse_success);
-    ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->serRegs[0].valueSize, sizeof(buf));
-    ASSERT_EQ(memcmp(buf, tester_get_m_runtime_ptr()->serRegs[0].value, sizeof(buf)), 0);
-
-    // outside of serReg range
-    directive.set_index(Fpy::NUM_SERIALIZABLE_REGISTERS);
-    result = tester_setSerReg_directiveHandler(directive, err);
-    ASSERT_EQ(result, Signal::stmtResponse_failure);
-    ASSERT_EQ(err, DirectiveError::SER_REG_OUT_OF_BOUNDS);
-
-    // check what happens if buf too big
-    directive = FpySequencer_SetSerRegDirective(static_cast<U8>(0), 1, Fpy::MAX_SERIALIZABLE_REGISTER_SIZE + 1);
-
-    ASSERT_DEATH_IF_SUPPORTED(tester_setSerReg_directiveHandler(directive, err), "Assert: ");
-}
-
 TEST_F(FpySequencerTester, if) {
     tester_get_m_runtime_ptr()->nextStatementIndex = 100;
     tester_get_m_sequenceObj_ptr()->get_header().set_statementCount(123);
-    tester_get_m_runtime_ptr()->regs[0] = 1;
-    FpySequencer_IfDirective directive(0, 111);
+    tester_push<U8>(1);
+    FpySequencer_IfDirective directive(111);
     DirectiveError err = DirectiveError::NO_ERROR;
     Signal result = tester_if_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
@@ -97,7 +80,7 @@ TEST_F(FpySequencerTester, if) {
     // should not have changed stmtidx
     ASSERT_EQ(tester_get_m_runtime_ptr()->nextStatementIndex, 100);
 
-    tester_get_m_runtime_ptr()->regs[0] = 0;  // set it to false
+    tester_push<U8>(0);  // set it to false
     result = tester_if_directiveHandler(directive, err);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(result, Signal::stmtResponse_success);
@@ -107,6 +90,7 @@ TEST_F(FpySequencerTester, if) {
     tester_get_m_runtime_ptr()->nextStatementIndex = 100;
 
     directive.set_falseGotoStmtIndex(tester_get_m_sequenceObj_ptr()->get_header().get_statementCount());
+    tester_push<U8>(0);
     result = tester_if_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
@@ -116,16 +100,15 @@ TEST_F(FpySequencerTester, if) {
 
     tester_get_m_runtime_ptr()->nextStatementIndex = 100;
 
-    // check reg out of bounds
-    directive.set_conditionalReg(Fpy::NUM_REGISTERS);
+    // check underflow
     result = tester_if_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
-    ASSERT_EQ(err, DirectiveError::REGISTER_OUT_OF_BOUNDS);
+    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
     err = DirectiveError::NO_ERROR;
     // should not have changed stmtidx
     ASSERT_NE(tester_get_m_runtime_ptr()->nextStatementIndex, 111);
 
-    directive.set_conditionalReg(0);
+    tester_push<U8>(1);
     directive.set_falseGotoStmtIndex(tester_get_m_sequenceObj_ptr()->get_header().get_statementCount() + 1);
     result = tester_if_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
@@ -143,8 +126,8 @@ TEST_F(FpySequencerTester, noOp) {
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
 }
 
-TEST_F(FpySequencerTester, getTlm) {
-    FpySequencer_StoreTlmValDirective directive(0, 1, 456);
+TEST_F(FpySequencerTester, storeTlmVal) {
+    FpySequencer_StoreTlmValDirective directive(456, 0);
     nextTlmId = 456;
     nextTlmValue.setBuffLen(1);
     nextTlmValue.getBuffAddr()[0] = 200;

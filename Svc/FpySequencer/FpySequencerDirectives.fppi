@@ -42,8 +42,7 @@ struct StorePrmDirective {
 struct ConstCmdDirective {
     opCode: FwOpcodeType
     @ the arg buf of the cmd
-    # TODO please don't let me merge this. need to find a better const here
-    argBuf: [Fpy.MAX_CONST_CMD_SIZE] U8
+    argBuf: [Fpy.MAX_DIRECTIVE_SIZE] U8
 
     @ the length of the arg buf byte array
     _argBufSize: FwSizeType
@@ -77,6 +76,15 @@ struct LoadDirective {
     $size: U16
 }
 
+@ pushes a const byte array onto stack
+struct PushValDirective {
+    @ the byte array to push
+    val: [Fpy.MAX_DIRECTIVE_SIZE] U8
+
+    @ the length of the val buf
+    _valSize: FwSizeType
+}
+
 internal port directive_waitRel(directive: WaitRelDirective) priority 6 assert
 
 internal port directive_waitAbs(directive: WaitAbsDirective) priority 6 assert
@@ -102,6 +110,8 @@ internal port directive_allocate(directive: AllocateDirective) priority 6 assert
 internal port directive_store(directive: StoreDirective) priority 6 assert
 
 internal port directive_load(directive: LoadDirective) priority 6 assert
+
+internal port directive_pushVal(directive: PushValDirective) priority 6 assert
 
 enum DirectiveErrorCode {
     NO_ERROR
