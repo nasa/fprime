@@ -8,10 +8,14 @@
 name: "Soak Test Setup AArch64 Linux: External Repo LedBlinker"
 
 on:
-  release: 
+  release:
     types: [published]
   workflow_dispatch:
-    #parameters needed to specify which release?
+    inputs:
+      service_user:
+        description: "Linux user to run services as (default: fprime)"
+        required: false
+        default: fprime
 
 # New releases cancel running deployments
 concurrency:
@@ -24,6 +28,7 @@ env:
   FSW_SERVICE_NAME: ledblinker-soak-fsw
   GDS_SERVICE_NAME: ledblinker-soak-gds
   INSTALL_DIR: /opt/ledblinker-soak
+  SERVICE_USER: ${{ github.event.inputs.service_user || 'fprime' }}
 
 jobs:
   cross-compilation:
@@ -141,7 +146,7 @@ jobs:
           sudo chmod +x ${INSTALL_DIR}/bin/LedBlinker
 
           # Set ownership, so service can access files
-          sudo chown -R fprime:fprime ${INSTALL_DIR}
+          sudo chown -R ${SERVICE_USER}:${SERVICE_USER} ${INSTALL_DIR}
           
       - name: "Create systemd service file"
         run: |
@@ -153,7 +158,7 @@ jobs:
 
           [Service]
           Type=simple
-          User=fprime
+          User=${SERVICE_USER}
           WorkingDirectory=${INSTALL_DIR}
           ExecStart=${INSTALL_DIR}/bin/LedBlinker -a 0.0.0.0 -p 50000
           StandardOutput=journal
@@ -171,7 +176,7 @@ jobs:
 
           [Service]
           Type=simple
-          User=fprime
+          User=${SERVICE_USER}
           WorkingDirectory=${INSTALL_DIR}
           ExecStart=${INSTALL_DIR}/venv/bin/fprime-gds --ip-client --ip-address 127.0.0.1 --ip-port 50000 -d ${INSTALL_DIR} -n --logs ${INSTALL_DIR}/logs  --framing-selection fprime
           StandardOutput=journal
