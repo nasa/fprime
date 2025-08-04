@@ -15,16 +15,14 @@ namespace Svc {
 // Component construction and destruction
 // ----------------------------------------------------------------------
 
-OsTime ::OsTime(const char* const compName) :
-    OsTimeComponentBase(compName),
-    m_epoch_fw_time(Fw::ZERO_TIME),
-    m_epoch_os_time(),
-    m_epoch_valid(false),
-    m_epoch_lock()
-{}
+OsTime ::OsTime(const char* const compName)
+    : OsTimeComponentBase(compName),
+      m_epoch_fw_time(Fw::ZERO_TIME),
+      m_epoch_os_time(),
+      m_epoch_valid(false),
+      m_epoch_lock() {}
 
-OsTime ::~OsTime()
-{}
+OsTime ::~OsTime() {}
 
 void OsTime::set_epoch(const Fw::Time& fw_time, const Os::RawTime& os_time) {
     Os::ScopeLock lock(m_epoch_lock);
@@ -38,14 +36,14 @@ void OsTime::SetCurrentTime_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U32 seco
     Os::RawTime::Status stat = time_now.now();
     if (stat != Os::RawTime::OP_OK) {
         this->log_WARNING_HI_SetCurrentTimeError(stat);
-        this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
     Os::ScopeLock lock(m_epoch_lock);
     m_epoch_fw_time = Fw::Time(seconds_now, 0);
     m_epoch_os_time = time_now;
     m_epoch_valid = true;
-    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
 // ----------------------------------------------------------------------

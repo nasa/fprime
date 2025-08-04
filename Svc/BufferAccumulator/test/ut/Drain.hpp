@@ -20,16 +20,16 @@ namespace Svc {
 namespace Drain {
 
 class BufferAccumulatorTester : public Svc::BufferAccumulatorTester {
- public:
-  // ----------------------------------------------------------------------
-  // Tests
-  // ----------------------------------------------------------------------
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-  //! Send some buffers
-  void OK(void);
+    //! Send some buffers
+    void OK(void);
 
-  //! Run PartialDrain command in nominal way
-  void PartialDrainOK(void);
+    //! Run PartialDrain command in nominal way
+    void PartialDrainOK(void);
 };
 
 }  // namespace Drain

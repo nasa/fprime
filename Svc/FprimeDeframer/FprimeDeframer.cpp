@@ -29,7 +29,7 @@ void FprimeDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, cons
     if (data.getSize() < FprimeProtocol::FrameHeader::SERIALIZED_SIZE + FprimeProtocol::FrameTrailer::SERIALIZED_SIZE) {
         // Incoming buffer is not long enough to contain a valid frame (header+trailer)
         this->log_WARNING_HI_InvalidBufferReceived();
-        this->dataReturnOut_out(0, data, context); // drop the frame
+        this->dataReturnOut_out(0, data, context);  // drop the frame
         return;
     }
 
@@ -46,7 +46,7 @@ void FprimeDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, cons
     const FprimeProtocol::FrameHeader defaultValue;
     if (header.get_startWord() != defaultValue.get_startWord()) {
         this->log_WARNING_HI_InvalidStartWord();
-        this->dataReturnOut_out(0, data, context); // drop the frame
+        this->dataReturnOut_out(0, data, context);  // drop the frame
         return;
     }
     // We expect the frame size to be size of header + body (of size specified in header) + trailer
@@ -54,7 +54,7 @@ void FprimeDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, cons
                                          FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
     if (data.getSize() < expectedFrameSize) {
         this->log_WARNING_HI_InvalidLengthReceived();
-        this->dataReturnOut_out(0, data, context); // drop the frame
+        this->dataReturnOut_out(0, data, context);  // drop the frame
         return;
     }
     // -------- Attempt to extract APID from Payload --------
@@ -88,7 +88,7 @@ void FprimeDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, cons
     // Check that the CRC in the trailer of the frame matches the computed CRC
     if (trailer.get_crcField() != computedCrc.asBigEndianU32()) {
         this->log_WARNING_HI_InvalidChecksum();
-        this->dataReturnOut_out(0, data, context); // drop the frame
+        this->dataReturnOut_out(0, data, context);  // drop the frame
         return;
     }
 
@@ -102,9 +102,10 @@ void FprimeDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, cons
     this->dataOut_out(0, data, contextCopy);
 }
 
-void FprimeDeframer ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer, const ComCfg::FrameContext& context) {
+void FprimeDeframer ::dataReturnIn_handler(FwIndexType portNum,
+                                           Fw::Buffer& fwBuffer,
+                                           const ComCfg::FrameContext& context) {
     this->dataReturnOut_out(0, fwBuffer, context);
 }
-
 
 }  // namespace Svc

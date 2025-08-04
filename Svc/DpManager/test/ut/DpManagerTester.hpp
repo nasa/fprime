@@ -39,19 +39,19 @@ class DpManagerTester : public DpManagerGTestBase {
 
     //! Handler for from_bufferGetOut
     Fw::Buffer from_bufferGetOut_handler(const FwIndexType portNum,  //!< The port number
-                                         FwSizeType size                        //!< The size
+                                         FwSizeType size             //!< The size
     );
 
     //! Handler for from_productResponseOut
     void from_productResponseOut_handler(const FwIndexType portNum,  //!< The port number
-                                         FwDpIdType id,                  //!< The container ID
-                                         const Fw::Buffer& buffer,       //!< The buffer
-                                         const Fw::Success& status       //!< The status
+                                         FwDpIdType id,              //!< The container ID
+                                         const Fw::Buffer& buffer,   //!< The buffer
+                                         const Fw::Success& status   //!< The status
     );
 
     //! Handler for from_productSendOut
     void from_productSendOut_handler(const FwIndexType portNum,  //!< The port number
-                                     Fw::Buffer& fwBuffer            //!< The buffer
+                                     Fw::Buffer& fwBuffer        //!< The buffer
     );
 
   protected:
@@ -83,27 +83,24 @@ class DpManagerTester : public DpManagerGTestBase {
     //! The component under test
     DpManager component;
 
-    public:
-      // ----------------------------------------------------------------------
-      // Accessor methods for protected/private members
-      // ----------------------------------------------------------------------
+  public:
+    // ----------------------------------------------------------------------
+    // Accessor methods for protected/private members
+    // ----------------------------------------------------------------------
 
-      //! Dispatch
-      void doDispatch();
+    //! Dispatch
+    void doDispatch();
 
-      //! Get the m_BufferAllocationFailedThrottle value
-      FwIndexType getBufferAllocationFailedThrottleCount();
+    //! Get the m_BufferAllocationFailedThrottle value
+    FwIndexType getBufferAllocationFailedThrottleCount();
 
-      //! Get the OPCODE_CLEAR_EVENT_THROTTLE value
-      static FwOpcodeType getClearEventThrottleOpcode() {
-        return DpManagerComponentBase::OPCODE_CLEAR_EVENT_THROTTLE;
-      }
+    //! Get the OPCODE_CLEAR_EVENT_THROTTLE value
+    static FwOpcodeType getClearEventThrottleOpcode() { return DpManagerComponentBase::OPCODE_CLEAR_EVENT_THROTTLE; }
 
-      //! Get the EVENTID_BUFFERALLOCATIONFAILED_THROTTLE value
-      static FwSizeType getBufferAllocationFailedThrottle() {
+    //! Get the EVENTID_BUFFERALLOCATIONFAILED_THROTTLE value
+    static FwSizeType getBufferAllocationFailedThrottle() {
         return DpManagerComponentBase::EVENTID_BUFFERALLOCATIONFAILED_THROTTLE;
-      }
-
+    }
 };
 
 }  // end namespace Svc

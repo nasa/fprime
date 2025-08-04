@@ -14,23 +14,19 @@
 
 namespace Svc {
 
-  namespace Health {
+namespace Health {
 
-    void BufferLoggerTester ::
-      Ping()
-    {
+void BufferLoggerTester ::Ping() {
+    U32 key = 42;
 
-      U32 key = 42;
+    this->invoke_to_pingIn(0, key);
+    this->dispatchAll();
 
-      this->invoke_to_pingIn(0, key);
-      this->dispatchAll();
-
-      ASSERT_EVENTS_SIZE(0);
-      ASSERT_from_pingOut_SIZE(1);
-      ASSERT_from_pingOut(0, key);
-
-    }
-
-  }
-
+    ASSERT_EVENTS_SIZE(0);
+    ASSERT_from_pingOut_SIZE(1);
+    ASSERT_from_pingOut(0, key);
 }
+
+}  // namespace Health
+
+}  // namespace Svc

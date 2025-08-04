@@ -5,24 +5,22 @@
 // ======================================================================
 
 #include "STest/Random/Random.hpp"
-#include "Svc/FrameAccumulator/FrameDetector/CcsdsTcFrameDetector.hpp"
-#include "Svc/Ccsds/Utils/CRC16.hpp"
 #include "Svc/Ccsds/Types/TCHeaderSerializableAc.hpp"
 #include "Svc/Ccsds/Types/TCTrailerSerializableAc.hpp"
 #include "Svc/Ccsds/Utils/CRC16.hpp"
+#include "Svc/FrameAccumulator/FrameDetector/CcsdsTcFrameDetector.hpp"
 #include "Utils/Types/test/ut/CircularBuffer/CircularBufferTester.hpp"
 #include "gtest/gtest.h"
 
 using namespace Svc::Ccsds;
 
 constexpr U32 CIRCULAR_BUFFER_TEST_SIZE = 2048;
-constexpr U16 EXPECTED_START_TOKEN = 0x1 << TCSubfields::BypassFlagOffset | (ComCfg::FppConstant_SpacecraftId::SpacecraftId);
-
+constexpr U16 EXPECTED_START_TOKEN =
+    0x1 << TCSubfields::BypassFlagOffset | (ComCfg::FppConstant_SpacecraftId::SpacecraftId);
 
 // Test fixture to set up the detector under test and circular buffer
 class CcsdsFrameDetectorTest : public ::testing::Test {
   protected:
-
     void SetUp() override {
         ::memset(this->m_buffer, 0, CIRCULAR_BUFFER_TEST_SIZE);
         this->circular_buffer = Types::CircularBuffer(this->m_buffer, CIRCULAR_BUFFER_TEST_SIZE);
@@ -31,7 +29,6 @@ class CcsdsFrameDetectorTest : public ::testing::Test {
     U8 m_buffer[CIRCULAR_BUFFER_TEST_SIZE];
     Svc::FrameDetectors::CcsdsTcFrameDetector detector;
     Types::CircularBuffer circular_buffer;
-
 };
 
 //! \brief Create an F´ frame and serialize it into the supplied circular buffer
@@ -50,10 +47,9 @@ FwSizeType generate_random_tc_frame(Types::CircularBuffer& circular_buffer) {
     for (FwSizeType i = 0; i < packet_size; i++) {
         packet_data[i] = static_cast<U8>(STest::Random::lowerUpper(0, 255));
     }
-    TCHeader tcHeader(
-        EXPECTED_START_TOKEN,  // Use a predefined token for flags and SC ID
-        static_cast<U16>(total_frame_size - 1),  // Length (and unused VcId)
-        static_cast<U8>(STest::Random::lowerUpper(0, 255))  // Random frame sequence number
+    TCHeader tcHeader(EXPECTED_START_TOKEN,                               // Use a predefined token for flags and SC ID
+                      static_cast<U16>(total_frame_size - 1),             // Length (and unused VcId)
+                      static_cast<U8>(STest::Random::lowerUpper(0, 255))  // Random frame sequence number
     );
 
     U8 frame_header[TCHeader::SERIALIZED_SIZE];
@@ -83,7 +79,6 @@ FwSizeType generate_random_tc_frame(Types::CircularBuffer& circular_buffer) {
 }
 
 TEST_F(CcsdsFrameDetectorTest, TestBufferTooSmall) {
-
     // Anything smaller than the size of header + trailer is invalid
     U32 minimum_valid_size = TCHeader::SERIALIZED_SIZE + TCTrailer::SERIALIZED_SIZE;
     U32 invalid_size = STest::Random::lowerUpper(1, minimum_valid_size - 1);
@@ -123,7 +118,7 @@ TEST_F(CcsdsFrameDetectorTest, TestManyFrameDetected) {
 }
 
 TEST_F(CcsdsFrameDetectorTest, TestNoFrameDetected) {
-    (void) generate_random_tc_frame(this->circular_buffer);
+    (void)generate_random_tc_frame(this->circular_buffer);
     // Remove 1 byte from the beginning of the frame, making it invalid
     this->circular_buffer.rotate(1);
     Svc::FrameDetector::Status status;

@@ -14,7 +14,6 @@ TEST(Nominal, BasicIo) {
     tester.test_basic();
 }
 
-
 TEST(Nominal, Fail) {
     Svc::ComStubTester tester;
     tester.test_fail();
@@ -35,7 +34,7 @@ TEST(OffNominal, RetryReset) {
     tester.test_retry_reset();
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

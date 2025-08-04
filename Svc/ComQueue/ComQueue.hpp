@@ -11,9 +11,9 @@
 #include <Fw/Com/ComBuffer.hpp>
 #include <Svc/ComQueue/ComQueueComponentAc.hpp>
 #include <Utils/Types/Queue.hpp>
+#include <limits>
 #include "Fw/Types/MemAllocator.hpp"
 #include "Os/Mutex.hpp"
-#include <limits>
 
 namespace Svc {
 
@@ -111,7 +111,7 @@ class ComQueue final : public ComQueueComponentBase {
     //! Takes in the queue depth and priority per-port in order from Fw::Com through Fw::Buffer ports. Calculates the
     //! queue metadata stored `m_prioritizedList` and then sorts that list by priority.
     void configure(QueueConfigurationTable queueConfig,  //!< Table of the configuration properties for the component
-                   FwEnumStoreType allocationId,        //!< Identifier used  when dealing with the Fw::MemAllocator
+                   FwEnumStoreType allocationId,         //!< Identifier used  when dealing with the Fw::MemAllocator
                    Fw::MemAllocator& allocator           //!< Fw::MemAllocator used to acquire memory
     );
 
@@ -127,34 +127,33 @@ class ComQueue final : public ComQueueComponentBase {
     //! Receive and queue a Fw::Buffer
     //!
     void bufferQueueIn_handler(const FwIndexType portNum, /*!< The port number*/
-                             Fw::Buffer& fwBuffer /*!< Buffer containing packet data*/) override;
+                               Fw::Buffer& fwBuffer /*!< Buffer containing packet data*/) override;
 
     //! Receive and queue a Fw::ComBuffer
     //!
     void comPacketQueueIn_handler(const FwIndexType portNum, /*!< The port number*/
-                            Fw::ComBuffer& data,           /*!< Buffer containing packet data*/
-                            U32 context                    /*!< Call context value; meaning chosen by user*/
-    ) override;
+                                  Fw::ComBuffer& data,       /*!< Buffer containing packet data*/
+                                  U32 context                /*!< Call context value; meaning chosen by user*/
+                                  ) override;
 
     //! Handle the status of the last sent message
     //!
     void comStatusIn_handler(const FwIndexType portNum, /*!< The port number*/
-                             Fw::Success& condition         /*!<Status of communication state*/
-    ) override;
+                             Fw::Success& condition     /*!<Status of communication state*/
+                             ) override;
 
     //! Schedules the transmission of telemetry
     //!
     void run_handler(const FwIndexType portNum, /*!< The port number*/
-                     U32 context                    /*!<The call order*/
-    ) override;
+                     U32 context                /*!<The call order*/
+                     ) override;
 
     //! Handler implementation for dataReturnIn
     //!
     //! Port for returning ownership of Fw::Buffer to its sender
     void dataReturnIn_handler(FwIndexType portNum,  //!< The port number
-      Fw::Buffer& data,
-      const ComCfg::FrameContext& context) override;
-
+                              Fw::Buffer& data,
+                              const ComCfg::FrameContext& context) override;
 
     // ----------------------------------------------------------------------
     // Hook implementations for typed async input ports
@@ -162,9 +161,9 @@ class ComQueue final : public ComQueueComponentBase {
 
     //! Queue overflow hook method that deallocates the fwBuffer
     //!
-    void bufferQueueIn_overflowHook(FwIndexType portNum, //!< The port number
-                                  Fw::Buffer& fwBuffer //!< The buffer
-    ) override;
+    void bufferQueueIn_overflowHook(FwIndexType portNum,  //!< The port number
+                                    Fw::Buffer& fwBuffer  //!< The buffer
+                                    ) override;
 
     // ----------------------------------------------------------------------
     // Helper Functions
@@ -194,21 +193,19 @@ class ComQueue final : public ComQueueComponentBase {
     //!
     void processQueue();
 
-
   private:
     // ----------------------------------------------------------------------
     // Member variables
     // ----------------------------------------------------------------------
-    Types::Queue m_queues[TOTAL_PORT_COUNT];  //!< Stores queued data waiting for transmission
+    Types::Queue m_queues[TOTAL_PORT_COUNT];            //!< Stores queued data waiting for transmission
     QueueMetadata m_prioritizedList[TOTAL_PORT_COUNT];  //!< Priority sorted list of queue metadata
-    bool m_throttle[TOTAL_PORT_COUNT];  //!< Per-queue EVR throttles
-    SendState m_state;  //!< State of the component
+    bool m_throttle[TOTAL_PORT_COUNT];                  //!< Per-queue EVR throttles
+    SendState m_state;                                  //!< State of the component
 
     // Storage for Fw::MemAllocator properties
     FwEnumStoreType m_allocationId;  //!< Component's allocation ID
-    Fw::MemAllocator* m_allocator;    //!< Pointer to Fw::MemAllocator instance for deallocation
-    void* m_allocation;               //!< Pointer to allocated memory
-
+    Fw::MemAllocator* m_allocator;   //!< Pointer to Fw::MemAllocator instance for deallocation
+    void* m_allocation;              //!< Pointer to allocated memory
 };
 
 }  // end namespace Svc

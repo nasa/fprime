@@ -17,80 +17,51 @@
 
 namespace Svc {
 
-  // ----------------------------------------------------------------------
-  // Construction and destruction
-  // ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+// Construction and destruction
+// ----------------------------------------------------------------------
 
-  LinuxTimerTester ::
-    LinuxTimerTester() :
-      LinuxTimerGTestBase("Tester", MAX_HISTORY_SIZE),
-      component("LinuxTimer")
-      ,m_numCalls(0)
-  {
+LinuxTimerTester ::LinuxTimerTester()
+    : LinuxTimerGTestBase("Tester", MAX_HISTORY_SIZE), component("LinuxTimer"), m_numCalls(0) {
     this->initComponents();
     this->connectPorts();
-  }
+}
 
-  LinuxTimerTester ::
-    ~LinuxTimerTester()
-  {
+LinuxTimerTester ::~LinuxTimerTester() {}
 
-  }
+// ----------------------------------------------------------------------
+// Tests
+// ----------------------------------------------------------------------
 
-  // ----------------------------------------------------------------------
-  // Tests
-  // ----------------------------------------------------------------------
-
-  void LinuxTimerTester ::
-      runCycles()
-  {
+void LinuxTimerTester ::runCycles() {
     this->m_numCalls = 5;
     this->component.startTimer(1000);
-  }
+}
 
-  // ----------------------------------------------------------------------
-  // Handlers for typed from ports
-  // ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+// Handlers for typed from ports
+// ----------------------------------------------------------------------
 
-  void LinuxTimerTester ::
-    from_CycleOut_handler(
-        const FwIndexType portNum,
-        Os::RawTime &cycleStart
-    )
-  {
-      printf("TICK\n");
+void LinuxTimerTester ::from_CycleOut_handler(const FwIndexType portNum, Os::RawTime& cycleStart) {
+    printf("TICK\n");
 
-      if (--this->m_numCalls == 0) {
-          this->component.quit();
-      }
-  }
+    if (--this->m_numCalls == 0) {
+        this->component.quit();
+    }
+}
 
-  // ----------------------------------------------------------------------
-  // Helper methods
-  // ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+// Helper methods
+// ----------------------------------------------------------------------
 
-  void LinuxTimerTester ::
-    connectPorts()
-  {
-
+void LinuxTimerTester ::connectPorts() {
     // CycleOut
-    this->component.set_CycleOut_OutputPort(
-        0,
-        this->get_from_CycleOut(0)
-    );
+    this->component.set_CycleOut_OutputPort(0, this->get_from_CycleOut(0));
+}
 
-
-
-
-  }
-
-  void LinuxTimerTester ::
-    initComponents()
-  {
+void LinuxTimerTester ::initComponents() {
     this->init();
-    this->component.init(
-        INSTANCE
-    );
-  }
+    this->component.init(INSTANCE);
+}
 
-} // end namespace Svc
+}  // end namespace Svc
