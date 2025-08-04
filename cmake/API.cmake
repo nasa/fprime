@@ -122,7 +122,8 @@ function(add_fprime_subdirectory FP_SOURCE_DIR)
     foreach (VARIABLE IN ITEMS SOURCE_FILES MOD_DEPS UT_SOURCE_FILES UT_MOD_DEPS EXECUTABLE_NAME)
         set(${VARIABLE} PARENT_SCOPE)
     endforeach()
-    file(RELATIVE_PATH NEW_BIN_DIR "${CMAKE_CURRENT_SOURCE_DIR}" "${FP_SOURCE_DIR}")
+    get_filename_component(ABSOLUTE_SOURCE_PATH "${FP_SOURCE_DIR}" ABSOLUTE)
+    file(RELATIVE_PATH NEW_BIN_DIR "${CMAKE_CURRENT_SOURCE_DIR}" "${ABSOLUTE_SOURCE_PATH}")
 
     # Check if the binary and source directory are in agreement. If they agree, then normally add
     # the directory, as no adjustments need be made.
