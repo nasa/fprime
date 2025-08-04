@@ -30,9 +30,9 @@ class Serializable {
     using SizeType = FwSizeType;
 
   public:
-    virtual SerializeStatus serializeTo(SerializeBufferBase& buffer) const; //!< serialize contents to buffer
-    
-    virtual SerializeStatus deserializeFrom(SerializeBufferBase& buffer); //!< deserialize contents from buffer
+    virtual SerializeStatus serializeTo(SerializeBufferBase& buffer) const;  //!< serialize contents to buffer
+
+    virtual SerializeStatus deserializeFrom(SerializeBufferBase& buffer);  //!< deserialize contents from buffer
 
     // ----------------------------------------------------------------------
     // Methods
@@ -63,8 +63,7 @@ class Serialization {
 };
 
 class SerializeBufferBase {
-
-  friend class SerializeBufferBaseTester;
+    friend class SerializeBufferBaseTester;
 
   protected:
     SerializeBufferBase& operator=(const SerializeBufferBase& src);  //!< copy assignment operator
@@ -89,8 +88,8 @@ class SerializeBufferBase {
     SerializeStatus serializeFrom(U64 val);  //!< serialize 64-bit unsigned int
     SerializeStatus serializeFrom(I64 val);  //!< serialize 64-bit signed int
 #endif
-    SerializeStatus serializeFrom(F32 val);  //!< serialize 32-bit floating point
-    SerializeStatus serializeFrom(F64 val);  //!< serialize 64-bit floating point
+    SerializeStatus serializeFrom(F32 val);   //!< serialize 32-bit floating point
+    SerializeStatus serializeFrom(F64 val);   //!< serialize 64-bit floating point
     SerializeStatus serializeFrom(bool val);  //!< serialize boolean
 
     SerializeStatus serializeFrom(
@@ -112,7 +111,8 @@ class SerializeBufferBase {
 
     SerializeStatus serializeFrom(const SerializeBufferBase& val);  //!< serialize a serialized buffer
 
-    SerializeStatus serializeFrom(const Serializable& val);  //!< serialize an object derived from serializable base class
+    SerializeStatus serializeFrom(
+        const Serializable& val);  //!< serialize an object derived from serializable base class
 
     SerializeStatus serializeSize(const FwSizeType size);  //!< serialize a size value
 
@@ -134,8 +134,8 @@ class SerializeBufferBase {
     SerializeStatus deserializeTo(U64& val);  //!< deserialize 64-bit unsigned int
     SerializeStatus deserializeTo(I64& val);  //!< deserialize 64-bit signed int
 #endif
-    SerializeStatus deserializeTo(F32& val);  //!< deserialize 32-bit floating point
-    SerializeStatus deserializeTo(F64& val);  //!< deserialize 64-bit floating point
+    SerializeStatus deserializeTo(F32& val);   //!< deserialize 32-bit floating point
+    SerializeStatus deserializeTo(F64& val);   //!< deserialize 64-bit floating point
     SerializeStatus deserializeTo(bool& val);  //!< deserialize boolean
 
     SerializeStatus deserializeTo(void*& val);  //!< deserialize point value (careful, pointer value only, not contents)
@@ -143,7 +143,7 @@ class SerializeBufferBase {
     SerializeStatus deserializeTo(U8* buff, FwSizeType& length);  //!< deserialize data buffer
 
     //! \brief deserialize a byte buffer of a given length
-    //! 
+    //!
     //! The `mode` parameter specifies whether the serialized length should be read from the buffer.
     //! \param buff: buffer to deserialize into
     //! \param length: length of the buffer, updated with the actual deserialized length
@@ -179,7 +179,8 @@ class SerializeBufferBase {
     SerializeStatus serialize(F64 val);
     SerializeStatus serialize(bool val);
     SerializeStatus serialize(const void* val);
-    DEPRECATED(SerializeStatus serialize(const U8* buff, FwSizeType length, bool noLength), "Use serialize(const U8* buff, FwSizeType length, Serialization::t mode) instead");
+    DEPRECATED(SerializeStatus serialize(const U8* buff, FwSizeType length, bool noLength),
+               "Use serialize(const U8* buff, FwSizeType length, Serialization::t mode) instead");
     SerializeStatus serialize(const U8* buff, FwSizeType length);
     SerializeStatus serialize(const U8* buff, FwSizeType length, Serialization::t mode);
     SerializeStatus serialize(const Serializable& val);
@@ -203,7 +204,8 @@ class SerializeBufferBase {
     SerializeStatus deserialize(F64& val);
     SerializeStatus deserialize(bool& val);
     SerializeStatus deserialize(void*& val);
-    DEPRECATED(SerializeStatus deserialize(U8* buff, FwSizeType& length, bool noLength), "Use deserialize(U8* buff, FwSizeType& length, Serialization::t mode) instead");
+    DEPRECATED(SerializeStatus deserialize(U8* buff, FwSizeType& length, bool noLength),
+               "Use deserialize(U8* buff, FwSizeType& length, Serialization::t mode) instead");
     SerializeStatus deserialize(U8* buff, FwSizeType& length);
     SerializeStatus deserialize(U8* buff, FwSizeType& length, Serialization::t mode);
     SerializeStatus deserialize(Serializable& val);
@@ -244,9 +246,9 @@ class SerializeBufferBase {
 #endif
 
   protected:
-    SerializeBufferBase();  //!< default constructor
-    Serializable::SizeType m_serLoc;                //!< current offset in buffer of serialized data
-    Serializable::SizeType m_deserLoc;              //!< current offset for deserialization
+    SerializeBufferBase();              //!< default constructor
+    Serializable::SizeType m_serLoc;    //!< current offset in buffer of serialized data
+    Serializable::SizeType m_deserLoc;  //!< current offset for deserialization
 
   private:
     // Copy constructor can be used only by the implementation

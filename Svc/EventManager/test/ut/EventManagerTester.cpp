@@ -145,12 +145,14 @@ void EventManagerTester::runFilterInvalidCommands() {
     U32 cmdSeq = 21;
     this->clearHistory();
     FilterSeverity reportFilterLevel = FilterSeverity::WARNING_HI;
+    // NOLINTNEXTLINE(clang-analyzer-optin.core.EnumCastOutOfRange) intentional invalid test
     Enabled filterEnabled(static_cast<Enabled::t>(10));
     this->sendCmd_SET_EVENT_FILTER(0, cmdSeq, reportFilterLevel, filterEnabled);
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, EventManager::OPCODE_SET_EVENT_FILTER, cmdSeq, Fw::CmdResponse::FORMAT_ERROR);
     this->clearHistory();
     reportFilterLevel = FilterSeverity::WARNING_HI;
+    // NOLINTNEXTLINE(clang-analyzer-optin.core.EnumCastOutOfRange) intentional invalid test
     filterEnabled.e = static_cast<Enabled::t>(-2);
     this->sendCmd_SET_EVENT_FILTER(0, cmdSeq, reportFilterLevel, filterEnabled);
     ASSERT_CMD_RESPONSE_SIZE(1);
@@ -158,6 +160,7 @@ void EventManagerTester::runFilterInvalidCommands() {
     FilterSeverity eventLevel;
     this->clearHistory();
     Enabled reportEnable = Enabled::ENABLED;
+    // NOLINTNEXTLINE(clang-analyzer-optin.core.EnumCastOutOfRange) intentional invalid test
     eventLevel.e = static_cast<FilterSeverity::t>(-1);
     this->sendCmd_SET_EVENT_FILTER(0, cmdSeq, eventLevel, reportEnable);
     ASSERT_CMD_RESPONSE_SIZE(1);
@@ -166,6 +169,7 @@ void EventManagerTester::runFilterInvalidCommands() {
     this->clearHistory();
 
     reportEnable = Enabled::ENABLED;
+    // NOLINTNEXTLINE(clang-analyzer-optin.core.EnumCastOutOfRange) intentional invalid test
     eventLevel.e = static_cast<FilterSeverity::t>(100);
     this->sendCmd_SET_EVENT_FILTER(0, cmdSeq, eventLevel, reportEnable);
     ASSERT_CMD_RESPONSE_SIZE(1);

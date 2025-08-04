@@ -14,31 +14,30 @@
 
 namespace Fw {
 
-    class LogPacket : public ComPacket {
-        public:
+class LogPacket : public ComPacket {
+  public:
+    LogPacket();
+    virtual ~LogPacket();
 
-            LogPacket();
-            virtual ~LogPacket();
+    SerializeStatus serialize(SerializeBufferBase& buffer) const override;  //!< serialize contents
+    SerializeStatus deserialize(SerializeBufferBase& buffer) override;
 
-            SerializeStatus serialize(SerializeBufferBase& buffer) const override; //!< serialize contents
-            SerializeStatus deserialize(SerializeBufferBase& buffer) override;
+    SerializeStatus serializeTo(SerializeBufferBase& buffer) const override;  //!< serialize contents
+    SerializeStatus deserializeFrom(SerializeBufferBase& buffer) override;
 
-            SerializeStatus serializeTo(SerializeBufferBase& buffer) const override; //!< serialize contents
-            SerializeStatus deserializeFrom(SerializeBufferBase& buffer) override;
+    void setId(FwEventIdType id);
+    void setLogBuffer(const LogBuffer& buffer);
+    void setTimeTag(const Fw::Time& timeTag);
 
-            void setId(FwEventIdType id);
-            void setLogBuffer(const LogBuffer& buffer);
-            void setTimeTag(const Fw::Time& timeTag);
+    FwEventIdType getId();
+    Fw::Time& getTimeTag();
+    LogBuffer& getLogBuffer();
 
-            FwEventIdType getId();
-            Fw::Time& getTimeTag();
-            LogBuffer& getLogBuffer();
-
-        protected:
-            FwEventIdType m_id; // !< Channel id
-            Fw::Time m_timeTag; // !< time tag
-            LogBuffer m_logBuffer; // !< serialized argument data
-    };
+  protected:
+    FwEventIdType m_id;     // !< Channel id
+    Fw::Time m_timeTag;     // !< time tag
+    LogBuffer m_logBuffer;  // !< serialized argument data
+};
 
 } /* namespace Fw */
 

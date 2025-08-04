@@ -1,6 +1,6 @@
 #include <Fw/Types/Assert.hpp>
-#include <Fw/Types/PolyType.hpp>
 #include <Fw/Types/ExternalString.hpp>
+#include <Fw/Types/PolyType.hpp>
 
 namespace Fw {
 
@@ -603,7 +603,7 @@ void PolyType::toString(StringBase& dest) const {
 }
 
 void PolyType::toString(StringBase& dest, bool append) const {
-    char format[21]; // U64 max fits into 20 decimal digits + 1 null terminator
+    char format[21];  // U64 max fits into 20 decimal digits + 1 null terminator
     Fw::ExternalString external(format, sizeof format);
     switch (this->m_dataType) {
         case TYPE_U8:

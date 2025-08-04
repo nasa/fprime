@@ -1,53 +1,53 @@
-#include <Fw/FPrimeBasicTypes.hpp>
 #include <gtest/gtest.h>
+#include <Fw/FPrimeBasicTypes.hpp>
 
 #include "Fw/Types/Serializable.hpp"
 
 namespace ExternalSerializeBufferTest {
 
-  using SizeType = Fw::Serializable::SizeType;
+using SizeType = Fw::Serializable::SizeType;
 
-  constexpr SizeType BUFFER_SIZE = 10;
+constexpr SizeType BUFFER_SIZE = 10;
 
-  U8 buffer[BUFFER_SIZE];
+U8 buffer[BUFFER_SIZE];
 
-  void serializeOK(Fw::ExternalSerializeBuffer& esb) {
+void serializeOK(Fw::ExternalSerializeBuffer& esb) {
     const SizeType buffCapacity = esb.getBuffCapacity();
     ASSERT_EQ(esb.getBuffLength(), 0);
     for (SizeType i = 0; i < buffCapacity; i++) {
-      const U8 value = static_cast<U8>(i);
-      const Fw::SerializeStatus status = esb.serialize(value);
-      ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+        const U8 value = static_cast<U8>(i);
+        const Fw::SerializeStatus status = esb.serialize(value);
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
     }
     ASSERT_EQ(esb.getBuffLength(), buffCapacity);
-  }
+}
 
-  void serializeFail(Fw::ExternalSerializeBuffer& esb) {
+void serializeFail(Fw::ExternalSerializeBuffer& esb) {
     ASSERT_EQ(esb.getBuffLength(), esb.getBuffCapacity());
     const Fw::SerializeStatus status = esb.serialize(static_cast<U8>(0));
     ASSERT_EQ(status, Fw::FW_SERIALIZE_NO_ROOM_LEFT);
-  }
+}
 
-  void deserializeOK(Fw::ExternalSerializeBuffer& esb) {
+void deserializeOK(Fw::ExternalSerializeBuffer& esb) {
     const SizeType buffCapacity = esb.getBuffCapacity();
     ASSERT_EQ(esb.getBuffLeft(), buffCapacity);
     for (SizeType i = 0; i < buffCapacity; i++) {
-      U8 value = 0;
-      const Fw::SerializeStatus status = esb.deserialize(value);
-      ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
-      ASSERT_EQ(value, static_cast<U8>(i));
+        U8 value = 0;
+        const Fw::SerializeStatus status = esb.deserialize(value);
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+        ASSERT_EQ(value, static_cast<U8>(i));
     }
     ASSERT_EQ(esb.getBuffLeft(), 0);
-  }
+}
 
-  void deserializeFail(Fw::ExternalSerializeBuffer& esb) {
+void deserializeFail(Fw::ExternalSerializeBuffer& esb) {
     U8 value = 0;
     ASSERT_EQ(esb.getBuffLeft(), 0);
     const Fw::SerializeStatus status = esb.deserialize(value);
     ASSERT_EQ(status, Fw::FW_DESERIALIZE_BUFFER_EMPTY);
-  }
+}
 
-  TEST(ExternalSerializeBuffer, Basic) {
+TEST(ExternalSerializeBuffer, Basic) {
     Fw::ExternalSerializeBuffer esb(buffer, BUFFER_SIZE);
     // Serialization should succeed
     serializeOK(esb);
@@ -57,9 +57,9 @@ namespace ExternalSerializeBufferTest {
     deserializeOK(esb);
     // Deserialization should fail
     deserializeFail(esb);
-  }
+}
 
-  TEST(ExternalSerializeBuffer, Clear) {
+TEST(ExternalSerializeBuffer, Clear) {
     Fw::ExternalSerializeBuffer esb(buffer, BUFFER_SIZE);
     // Serialization should succeed
     serializeOK(esb);
@@ -69,9 +69,9 @@ namespace ExternalSerializeBufferTest {
     serializeFail(esb);
     // Deserialization should fail
     deserializeFail(esb);
-  }
+}
 
-  TEST(ExternalSerializeBuffer, SetExtBuffer) {
+TEST(ExternalSerializeBuffer, SetExtBuffer) {
     Fw::ExternalSerializeBuffer esb(buffer, BUFFER_SIZE);
     // Serialization should succeed
     serializeOK(esb);
@@ -82,9 +82,9 @@ namespace ExternalSerializeBufferTest {
     serializeOK(esb);
     // Deserialization should succeed
     deserializeOK(esb);
-  }
+}
 
-  TEST(ExternalSerializeBufferWithMemberCopy, Assign) {
+TEST(ExternalSerializeBufferWithMemberCopy, Assign) {
     Fw::ExternalSerializeBufferWithMemberCopy esb1(buffer, BUFFER_SIZE);
     Fw::ExternalSerializeBufferWithMemberCopy esb2(buffer, BUFFER_SIZE);
     // Serialization should succeed
@@ -95,6 +95,6 @@ namespace ExternalSerializeBufferTest {
     deserializeFail(esb1);
     // Serialization should succeed
     serializeOK(esb1);
-  }
-
 }
+
+}  // namespace ExternalSerializeBufferTest

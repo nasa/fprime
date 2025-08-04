@@ -9,6 +9,7 @@
 
 #include "Svc/DpCatalog/DpCatalogGTestBase.hpp"
 #include "Svc/DpCatalog/DpCatalog.hpp"
+#include <STest/Pick/Pick.hpp>
 
 namespace Svc {
 
@@ -146,6 +147,8 @@ namespace Svc {
 
         //! The component under test
         DpCatalog component;
+
+
 
     public:
         // ----------------------------------------------------------------------

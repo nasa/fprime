@@ -1,8 +1,8 @@
 #include "StringUtils.hpp"
 #include <Fw/Types/Assert.hpp>
+#include <Fw/Types/ExternalString.hpp>
 #include <cstring>
 #include <limits>
-#include <Fw/Types/ExternalString.hpp>
 
 char* Fw::StringUtils::string_copy(char* destination, const char* source, FwSizeType num) {
     // Handle self-copy and 0 bytes copy
