@@ -80,7 +80,7 @@ namespace Fw {
     }
 
     SerializeStatus Time::deserializeFrom(SerializeBufferBase& buffer) {
-        return this->m_val.deserializeTo(buffer);
+        return this->m_val.deserializeFrom(buffer);
     }
 
     U32 Time::getSeconds() const {

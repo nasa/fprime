@@ -150,6 +150,11 @@ SerializeStatus StringBase::serializeTo(SerializeBufferBase& buffer, SizeType ma
 }
 
 // Deprecated method for backward compatibility
+SerializeStatus StringBase::serialize(SerializeBufferBase& buffer) const {
+    return this->serializeTo(buffer);
+}
+
+// Deprecated method for backward compatibility
 SerializeStatus StringBase::serialize(SerializeBufferBase& buffer, SizeType maxLength) const {
     return this->serializeTo(buffer, maxLength);
 }

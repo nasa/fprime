@@ -785,14 +785,6 @@ const U8* ExternalSerializeBuffer::getBuffAddr() const {
 // Deprecated method implementations for backward compatibility
 // ----------------------------------------------------------------------
 
-SerializeStatus Serializable::serialize(SerializeBufferBase& buffer) const {
-    return this->serializeTo(buffer);
-}
-
-SerializeStatus Serializable::deserialize(SerializeBufferBase& buffer) {
-    return this->deserializeFrom(buffer);
-}
-
 SerializeStatus SerializeBufferBase::serialize(U8 val) { return this->serializeFrom(val); }
 SerializeStatus SerializeBufferBase::serialize(I8 val) { return this->serializeFrom(val); }
 #if FW_HAS_16_BIT == 1
