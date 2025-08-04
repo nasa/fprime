@@ -7,6 +7,7 @@
 #ifndef FifoQueueTestState_HPP
 #define FifoQueueTestState_HPP
 
+#include <gtest/gtest.h>
 #include <deque>
 
 #include "Fw/DataStructures/FifoQueue.hpp"

@@ -4,8 +4,8 @@
 // \brief  FifoQueue test scenarios
 // ======================================================================
 
-#include "Fw/DataStructures/test/ut/STest/FifoQueueTestRules.hpp"
 #include "Fw/DataStructures/test/ut/STest/FifoQueueTestScenarios.hpp"
+#include "Fw/DataStructures/test/ut/STest/FifoQueueTestRules.hpp"
 #include "STest/Scenario/BoundedScenario.hpp"
 #include "STest/Scenario/RandomScenario.hpp"
 
@@ -52,15 +52,8 @@ void peek(State& state) {
 }
 
 void random(const Fw::StringBase& name, State& state, U32 maxNumSteps) {
-    Rule* rules[] = {
-      &Rules::at,
-      &Rules::clear,
-      &Rules::dequeueEmpty,
-      &Rules::dequeueOK,
-      &Rules::enqueueFull,
-      &Rules::enqueueOK,
-      &Rules::peek
-    };
+    Rule* rules[] = {&Rules::at,          &Rules::clear,     &Rules::dequeueEmpty, &Rules::dequeueOK,
+                     &Rules::enqueueFull, &Rules::enqueueOK, &Rules::peek};
     STest::RandomScenario<State> scenario("RandomScenario", rules,
                                           sizeof(rules) / sizeof(STest::RandomScenario<State>*));
     STest::BoundedScenario<State> boundedScenario(name.toChar(), scenario, maxNumSteps);

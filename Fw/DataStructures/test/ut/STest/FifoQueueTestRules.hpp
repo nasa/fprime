@@ -7,8 +7,6 @@
 #ifndef FifoQueueTestRules_HPP
 #define FifoQueueTestRules_HPP
 
-#include <gtest/gtest.h>
-
 #include "Fw/DataStructures/test/ut/STest/FifoQueueTestState.hpp"
 #include "STest/STest/Pick/Pick.hpp"
 #include "STest/STest/Rule/Rule.hpp"

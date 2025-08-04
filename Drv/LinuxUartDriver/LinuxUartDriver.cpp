@@ -31,6 +31,8 @@ LinuxUartDriver ::LinuxUartDriver(const char* const compName)
       m_fd(-1),
       m_allocationSize(0),
       m_device("NOT_EXIST"),
+      m_bytesSent(0),
+      m_bytesReceived(0),
       m_quitReadThread(false) {}
 
 bool LinuxUartDriver::open(const char* const device,
@@ -308,6 +310,9 @@ void LinuxUartDriver ::send_handler(const FwIndexType portNum, Fw::Buffer& serBu
             Fw::LogStringArg _arg = this->m_device;
             this->log_WARNING_HI_WriteError(_arg, static_cast<I32>(stat));
             status = Drv::ByteStreamStatus::OTHER_ERROR;
+        } else {
+            this->m_bytesSent += static_cast<FwSizeType>(stat);
+            this->tlmWrite_BytesSent(this->m_bytesSent);
         }
     }
     // Return the buffer back to the caller
@@ -356,9 +361,12 @@ void LinuxUartDriver ::serialReadTaskEntry(void* ptr) {
         } else if (stat > 0) {
             buff.setSize(static_cast<U32>(stat));
             status = ByteStreamStatus::OP_OK;  // added by m.chase 03.06.2017
+            comp->m_bytesReceived += static_cast<FwSizeType>(stat);
+            comp->tlmWrite_BytesRecv(comp->m_bytesReceived);
         } else {
             status = ByteStreamStatus::OTHER_ERROR;  // Simply to return the buffer
         }
+
         comp->recv_out(0, buff, status);  // added by m.chase 03.06.2017
     }
 }

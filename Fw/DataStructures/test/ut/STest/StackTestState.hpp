@@ -7,6 +7,7 @@
 #ifndef StackTestState_HPP
 #define StackTestState_HPP
 
+#include <gtest/gtest.h>
 #include <vector>
 
 #include "Fw/DataStructures/StackBase.hpp"

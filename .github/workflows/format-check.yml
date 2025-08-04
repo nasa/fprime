@@ -31,9 +31,7 @@ jobs:
         env:
           CHECKED_DIRS: >-
             Drv
-            Fw/Buffer
-            Fw/Cmd
-            Fw/Com
+            Fw
             Os
             Svc/Ccsds
             Svc/EventManager

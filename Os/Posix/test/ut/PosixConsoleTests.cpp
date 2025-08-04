@@ -19,8 +19,9 @@ TEST(Nominal, SwitchStream) {
 }
 TEST(OffNominal, SwitchStream) {
     Os::Posix::Console::PosixConsole posix_console;
-    ASSERT_DEATH(posix_console.setOutputStream(static_cast<Os::Posix::Console::PosixConsole::Stream>(3)),
-                 "Posix/|\\Console.cpp:33");
+    ASSERT_DEATH(
+        posix_console.setOutputStream(static_cast<Os::Posix::Console::PosixConsole::Stream>(3)),
+        "Posix/|\\Console.cpp:33");  // NOLINT(clang-analyzer-optin.core.EnumCastOutOfRange) intentional death test
 }
 
 int main(int argc, char** argv) {

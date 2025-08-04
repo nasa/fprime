@@ -9,9 +9,9 @@
 
 #include "gtest/gtest.h"
 
-#include "Fw/FPrimeBasicTypes.hpp"
 #include "Fw/Com/ComPacket.hpp"
 #include "Fw/Dp/DpContainer.hpp"
+#include "Fw/FPrimeBasicTypes.hpp"
 
 #define DP_CONTAINER_HEADER_ASSERT_MSG(actual, expected) \
     << file << ":" << line << "\n"                       \
@@ -30,10 +30,10 @@ struct DpContainerHeader {
     DpContainerHeader() : m_id(0), m_priority(0), m_timeTag(), m_procTypes(0), m_dpState(), m_dataSize(0) {}
 
     //! Move the buffer deserialization to the specified offset
-    static void moveDeserToOffset(const char* const file,  //!< The call site file name
-                                  const U32 line,          //!< The call site line number
-                                  ExternalSerializeBufferWithMemberCopy &deserializer,          //!< The buffer
-                                  FwSizeType offset        //!< The offset
+    static void moveDeserToOffset(const char* const file,                               //!< The call site file name
+                                  const U32 line,                                       //!< The call site line number
+                                  ExternalSerializeBufferWithMemberCopy& deserializer,  //!< The buffer
+                                  FwSizeType offset                                     //!< The offset
     ) {
         // Reset deserialization
         deserializer.resetDeser();

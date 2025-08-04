@@ -84,10 +84,10 @@ TEST(ArraySetOrMapImpl, IteratorConstruction) {
 }
 
 TEST(ArraySetOrMapImpl, IteratorComparison) {
-  // Test comparison in default case
-  State::Impl::ConstIterator it1;
-  State::Impl::ConstIterator it2;
-  ASSERT_TRUE(it1.compareEqual(it2));
+    // Test comparison in default case
+    State::Impl::ConstIterator it1;
+    State::Impl::ConstIterator it2;
+    ASSERT_TRUE(it1.compareEqual(it2));
 }
 
 TEST(ArraySetOrMapImplScenarios, Clear) {

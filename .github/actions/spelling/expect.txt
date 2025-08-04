@@ -417,6 +417,8 @@ ncsl
 newtio
 nmsgs
 NOBLOCK
+NOLINT
+NOLINTNEXTLINE
 noparent
 norecords
 NOSPEC
@@ -439,6 +441,7 @@ openmct
 openpyxl
 openssldir
 optarg
+optin
 optind
 orgslist
 ortega
