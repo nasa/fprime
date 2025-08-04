@@ -1476,8 +1476,7 @@ class RedBlackTreeSetOrMapImpl final {
                     //   ------------------------     ------------------------
                     //
                     done = true;
-                }
-                else {
+                } else {
                     direction = getParentDirection(node);
                     oppositeDirection = Node::getOppositeDirection(direction);
                     // The leaf-augmented subtree rooted at parent has this

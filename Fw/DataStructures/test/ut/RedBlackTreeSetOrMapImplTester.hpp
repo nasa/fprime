@@ -142,10 +142,9 @@ class RedBlackTreeSetOrMapImplTester {
             const auto leftHeight = getBlackHeight(leftChild);
             const auto rightChild = nodes[node].getChild(Direction::RIGHT);
             const auto rightHeight = getBlackHeight(rightChild);
-            ASSERT_EQ(leftHeight, rightHeight)
-                << "Black height violation at node " << node << "\n"
-                << "  left child index is " << leftChild << "\n"
-                << "  right child index is " << rightChild << "\n";
+            ASSERT_EQ(leftHeight, rightHeight) << "Black height violation at node " << node << "\n"
+                                               << "  left child index is " << leftChild << "\n"
+                                               << "  right child index is " << rightChild << "\n";
             const FwSizeType nodeHeight = (this->m_impl.getNodeColor(node) == Color::BLACK) ? 1 : 0;
             const FwSizeType blackHeight = leftHeight + nodeHeight;
             this->blackHeights[node] = blackHeight;
@@ -153,9 +152,7 @@ class RedBlackTreeSetOrMapImplTester {
     }
 
     // Print the black height
-    void printBlackHeight() {
-      std::cout << "black height is " << getBlackHeight(this->m_impl.m_root) << "\n";
-    }
+    void printBlackHeight() { std::cout << "black height is " << getBlackHeight(this->m_impl.m_root) << "\n"; }
 
     // Print the tree
     void printTree() {
@@ -233,7 +230,9 @@ class RedBlackTreeSetOrMapImplTester {
     static const char* colorToString(Color color) { return (color == Color::RED) ? "RED" : "BLACK"; }
 
     // Convert a direciton to a string
-    static const char* directionToString(Direction direction) { return (direction == Direction::LEFT) ? "LEFT" : "RIGHT"; }
+    static const char* directionToString(Direction direction) {
+        return (direction == Direction::LEFT) ? "LEFT" : "RIGHT";
+    }
 
   private:
     const Impl& m_impl;
