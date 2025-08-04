@@ -235,15 +235,12 @@ namespace Svc {
       REQUIREMENT("FPRIME-BM-006");
 
       // randomly return buffers
-      time_t t;
-      srand(static_cast<unsigned>(time(&t)));
-
       bool returned[BIN1_NUM_BUFFERS] = {false};
 
       for (U16 b=0; b<BIN1_NUM_BUFFERS; b++) {
           U16 entry;
           while (true) {
-              entry = rand() % BIN1_NUM_BUFFERS;
+              entry = STest::Pick::lowerUpper(0, BIN1_NUM_BUFFERS - 1);
               if (not returned[entry]) {
                   returned[entry] = true;
                   break;
