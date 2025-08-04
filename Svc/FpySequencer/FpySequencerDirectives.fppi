@@ -1,18 +1,22 @@
+@ sleeps for a relative duration from the current time
 struct WaitRelDirective {
     # pops U32, U32 off stack
     _empty: U8
 }
 
+@ sleeps until an absolute time
 struct WaitAbsDirective {
     # pops U32, U32, U8, U16 off stack
     _empty: U8
 }
 
+@ sets the index of the next directive to execute
 struct GotoDirective {
     @ the statement index to execute next
     statementIndex: U32
 }
 
+@ branches based off of the top byte of the stack
 struct IfDirective {
     # pops U8 off stack
     @ the statement index to go to if the top of the stack is false
@@ -20,11 +24,13 @@ struct IfDirective {
     # this directive will not goto anywhere if the variable is true
 }
 
+@ does nothing
 struct NoOpDirective {
     # fpp requires we have something in a struct
     _empty: U8
 }
 
+@ stores a tlm buffer in the lvar array
 struct StoreTlmValDirective {
     @ the tlm channel id to get the time of
     chanId: FwChanIdType
@@ -32,6 +38,7 @@ struct StoreTlmValDirective {
     lvarOffset: U16
 }
 
+@ stores a prm buffer in the lvar array
 struct StorePrmDirective {
     @ the param id to get the value of
     prmId: FwPrmIdType
@@ -39,6 +46,7 @@ struct StorePrmDirective {
     lvarOffset: U16
 }
 
+@ executes a cmd with const args
 struct ConstCmdDirective {
     opCode: FwOpcodeType
     @ the arg buf of the cmd
@@ -54,6 +62,7 @@ struct StackOpDirective {
     _op: Fpy.DirectiveId
 }
 
+@ ends the sequence
 struct ExitDirective {
     # pops U8 off the stack
     _empty: U8

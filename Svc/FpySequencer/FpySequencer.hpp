@@ -590,14 +590,21 @@ class FpySequencer : public FpySequencerComponentBase {
     // sends a signal based on a signal id
     void sendSignal(Signal signal);
 
+    // pops a value off of the top of the stack
+    // converts it from big endian
     template <typename T>
     T pop();
 
+    // pushes a value onto the top of the stack
+    // converts it to big endian
     template <typename T>
     void push(T val);
 
+    // returns a pointer to the next unused byte at the top of the stack
     U8* top();
+    // returns a pointer to the first byte of the lvars array
     U8* lvars();
+    // returns the stack height at which the lvar array begins
     U16 lvarOffset();
 
     // we split these functions up into the internalInterfaceInvoke and these custom member funcs
