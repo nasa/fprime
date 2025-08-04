@@ -10,7 +10,7 @@ module Svc {
         async input port CycleIn: Svc.Cycle drop
 
         @ Scheduler output port to rate group members
-        output port PhaserMemberOut: [ActiveRateGroupOutputPorts*2] Sched
+        output port PhaserMemberOut: [ActiveRateGroupOutputPorts] Sched
 
         @ An internal port for sending data of type T
         internal port Tick drop

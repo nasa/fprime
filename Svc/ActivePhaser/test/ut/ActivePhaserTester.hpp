@@ -124,10 +124,10 @@ class ActivePhaserTester final : public ActivePhaserGTestBase {
     // Handlers for typed from ports
     // ----------------------------------------------------------------------
 
-    //! Handler for from_RateGroupMemberOut
+    //! Handler for from_PhaserMemberOut
     //!
-    void from_RateGroupMemberOut_handler(const FwIndexType portNum, /*!< The port number*/
-                                         U32 context                /*!< The call order*/
+    void from_PhaserMemberOut_handler(const FwIndexType portNum, /*!< The port number*/
+                                         U32 context             /*!< The call order*/
     );
 
   private:

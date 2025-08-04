@@ -74,7 +74,7 @@ void ActivePhaser ::register_phased(FwIndexType port, U32 length, U32 start, U32
     // entry.context represents the ratio between the user-configured context and the phaser cycle.
     // The user-configured context must be greater than the phaser cycle.
     // Example: If context == 2000 and m_cycle == 100, then entry.context == 20 while contextType == COUNT.
-    // Shaokai: This is a point of confusion because entry.context and context are
+    // FIXME: This is a point of confusion because entry.context and context are
     // very different things, yet they have the same name.
     entry.context = (context != DONT_CARE) ? context / m_cycle : getNextContext(port);
     entry.contextType = (context != DONT_CARE) ? PhaserContextType::COUNT : PhaserContextType::SEQUENTIAL;
@@ -107,13 +107,17 @@ void ActivePhaser ::Tick_internalInterfaceHandler() {
     // If the cycle is over, wait for the cycle to end before restarting
     if ((this->timeInCycle(full_ticks) >= m_cycle) && (m_state.current == m_state.used)) {
         m_last_cycle_ticks = full_ticks;
-        // FIXME: Risk of overflow? If a tick occurs every microsecond, an overflow happens every 71.6 minutes.
+        // FIXME: Risk of overflow? If a tick occurs every millisecond, an overflow happens every 49.7 days.
+        // And when it happens, it could misalign this line below when contextType == COUNT:
+        // U32 context = (entry.contextType == SEQUENTIAL) ? entry.context : m_cycle_count % entry.context;
         m_cycle_count++;
         m_state.current = 0;  // Back to processing the first task.
     }
+    // FIXME: For the comment below, should it be "finish active child"?
     // Finish active children and run the next child if it is not a short cycle
-    // Shaokai: Finish active "children" or "child"?
-    // FIXME: This is really strange. Usually it is if a child is finished, then start a new child.
+    // FIXME: The below if statement reads "if the previous child is not finished, start a new child",
+    // which is a little strange. Usually it is "if a child is finished, then start a new child."
+    // Perhaps we should flip the return values in finishChild() and remove the ! here.
     if (!finishChild(full_ticks)) {
         startChild(full_ticks);
     }
@@ -121,8 +125,6 @@ void ActivePhaser ::Tick_internalInterfaceHandler() {
 
 bool ActivePhaser ::finishChild(U32 full_ticks) {
     // Guard against finishing improperly
-    // FIXME: This is confusing. false actually means we will start a child.
-    // But what does it mean to start a child when current >= used??
     if ((m_state.current >= m_state.used) || (not m_state.entries[m_state.current].started)) {
         return false;
     }
@@ -140,9 +142,7 @@ bool ActivePhaser ::finishChild(U32 full_ticks) {
     m_state.current = (m_state.current == m_state.used) ? m_state.used : (m_state.current + 1);
     // Check for overrun in timing. If a deadline violation is detected,
     // return true to prevent the next child task from launching.
-    // Shaokai: It is unclear what the intended behavior of deadline handling here.
-    // Returning true here only stalls scheduling the child for one tick only,
-    // because in the next tick, not entries[current].started = true and gets launched.
+    // FIXME: Is the above comment accurate?
     if (execution_time > expected_time) {
         this->log_WARNING_HI_MissedDeadline(entry.port, entry.start, entry.length, (execution_time - expected_time));
         return true;

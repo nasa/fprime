@@ -288,7 +288,7 @@ void ActivePhaserTester ::test_rollover() {
 /**
  * Invoked when the active phaser component writes to its output ports
  */
-void ActivePhaserTester ::from_RateGroupMemberOut_handler(const FwIndexType portNum, U32 context) {
+void ActivePhaserTester ::from_PhaserMemberOut_handler(const FwIndexType portNum, U32 context) {
     active = mock.active();
     EXPECT_NE(active, nullptr) << "Component run when none should be active";
     if (!active) {
