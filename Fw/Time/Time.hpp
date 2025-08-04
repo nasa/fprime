@@ -4,6 +4,8 @@
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/Serializable.hpp>
+#include <config/TimeBaseEnumAc.hpp>
+#include <Fw/Time/TimeValueSerializableAc.hpp>
 
 namespace Fw {
     class Time: public Serializable {
@@ -33,8 +35,10 @@ namespace Fw {
             U32 getUSeconds() const; // !< Gets microseconds part of time
             TimeBase getTimeBase() const; // !< Time base of time. This is project specific and is meant for indicating different sources of time
             FwTimeContextStoreType getContext() const; // !< get the context value
-            SerializeStatus serialize(SerializeBufferBase& buffer) const; // !< Serialize method
-            SerializeStatus deserialize(SerializeBufferBase& buffer); // !< Deserialize method
+            SerializeStatus serializeTo(SerializeBufferBase& buffer) const override; // !< Serialize method
+            SerializeStatus deserializeFrom(SerializeBufferBase& buffer) override; // !< Deserialize method
+            SerializeStatus serialize(SerializeBufferBase& buffer) const override; // !< Serialize method (deprecated)
+            SerializeStatus deserialize(SerializeBufferBase& buffer) override; // !< Deserialize method (deprecated)
             bool operator==(const Time& other) const;
             bool operator!=(const Time& other) const;
             bool operator>(const Time& other) const;
@@ -53,7 +57,7 @@ namespace Fw {
             } Comparison;
 
             //! \return time zero
-            static Time zero(TimeBase timeBase=TB_NONE);
+            static Time zero(TimeBase timeBase=TimeBase::TB_NONE);
 
             //! Compare two times
             //! \return The result
@@ -83,10 +87,7 @@ namespace Fw {
             friend std::ostream& operator<<(std::ostream& os,  const Time& val);
 #endif
         private:
-            U32 m_seconds; // !< seconds portion
-            U32 m_useconds; // !< microseconds portion
-            TimeBase m_timeBase; // !< basis of time (defined by system)
-            FwTimeContextStoreType m_timeContext; // !< user settable value. Could be reboot count, node, etc
+            TimeValue m_val; // !< Time value
     };
     extern const Time ZERO_TIME;
 

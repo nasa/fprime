@@ -25,7 +25,7 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_setSequenceFile
     Svc_FpySequencer_SequencerStateMachine::Signal signal,  //!< The signal
     const Svc::FpySequencer_SequenceExecutionArgs& value    //!< The value
 ) {
-    this->m_sequenceFilePath = value.getfilePath();
+    this->m_sequenceFilePath = value.get_filePath();
 }
 
 //! Implementation for action setSequenceBlockState of state machine
@@ -37,7 +37,7 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_setSequenceBloc
     Svc_FpySequencer_SequencerStateMachine::Signal signal,  //!< The signal
     const Svc::FpySequencer_SequenceExecutionArgs& value    //!< The value
 ) {
-    this->m_sequenceBlockState = value.getblock();
+    this->m_sequenceBlockState = value.get_block();
 }
 
 //! Implementation for action report_seqSucceeded of state machine
@@ -295,10 +295,10 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_setDebugBreakpo
     Svc_FpySequencer_SequencerStateMachine::Signal signal,  //!< The signal
     const Svc::FpySequencer_DebugBreakpointArgs& value      //!< The value
 ) {
-    this->m_debug.breakOnBreakpoint = value.getbreakOnBreakpoint();
-    this->m_debug.breakOnlyOnceOnBreakpoint = value.getbreakOnlyOnceOnBreakpoint();
-    this->m_debug.breakpointIndex = value.getbreakpointIndex();
-    this->log_ACTIVITY_HI_DebugBreakpointSet(value.getbreakpointIndex(), value.getbreakOnlyOnceOnBreakpoint());
+    this->m_debug.breakOnBreakpoint = value.get_breakOnBreakpoint();
+    this->m_debug.breakOnlyOnceOnBreakpoint = value.get_breakOnlyOnceOnBreakpoint();
+    this->m_debug.breakpointIndex = value.get_breakpointIndex();
+    this->log_ACTIVITY_HI_DebugBreakpointSet(value.get_breakpointIndex(), value.get_breakOnlyOnceOnBreakpoint());
 }
 
 //! Implementation for action report_seqFailed of state machine Svc_FpySequencer_SequencerStateMachine

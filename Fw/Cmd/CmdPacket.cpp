@@ -17,13 +17,14 @@ CmdPacket::CmdPacket() : m_opcode(0) {
 
 CmdPacket::~CmdPacket() {}
 
-SerializeStatus CmdPacket::serialize(SerializeBufferBase& buffer) const {
-    // Shouldn't be called
+// New serialization interface methods
+SerializeStatus CmdPacket::serializeTo(SerializeBufferBase& buffer) const {
+    // Shouldn't be called, no use case for serializing CmdPackets in FSW (currently)
     FW_ASSERT(0);
     return FW_SERIALIZE_OK;  // for compiler
 }
 
-SerializeStatus CmdPacket::deserialize(SerializeBufferBase& buffer) {
+SerializeStatus CmdPacket::deserializeFrom(SerializeBufferBase& buffer) {
     SerializeStatus stat = ComPacket::deserializeBase(buffer);
     if (stat != FW_SERIALIZE_OK) {
         return stat;
@@ -46,6 +47,15 @@ SerializeStatus CmdPacket::deserialize(SerializeBufferBase& buffer) {
     }
 
     return stat;
+}
+
+// Deprecated methods for backward compatibility - these call the new interface
+SerializeStatus CmdPacket::serialize(SerializeBufferBase& buffer) const {
+    return this->serializeTo(buffer);
+}
+
+SerializeStatus CmdPacket::deserialize(SerializeBufferBase& buffer) {
+    return this->deserializeFrom(buffer);
 }
 
 FwOpcodeType CmdPacket::getOpCode() const {

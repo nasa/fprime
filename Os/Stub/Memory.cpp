@@ -14,11 +14,10 @@ MemoryInterface::Status StubMemory::_getUsage(Os::Memory::Usage& memory_usage) {
     return Status::ERROR;
 }
 
-
 MemoryHandle* StubMemory::getHandle() {
     return &this->m_handle;
 }
 
-} // namespace Memory
-} // namespace Stub
-} // namespace Os
+}  // namespace Memory
+}  // namespace Stub
+}  // namespace Os

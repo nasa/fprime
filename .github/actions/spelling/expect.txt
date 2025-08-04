@@ -1,13 +1,8 @@
 Aadil
 AClass
-ACTIVELOGGER
-ACTIVELOGGERIMPL
-ACTIVELOGGERIMPLCFG
-ACTIVELOGGERIMPLTESTER
 ACTIVERATEGROUP
 ACTIVERATEGROUPCFG
 ACTIVERATEGROUPTESTER
-ACTIVERATEGROUPIMPLTESTER
 ACTIVETEXTLOGGERIMPL
 ADDRSTRLEN
 adminlist
@@ -19,7 +14,6 @@ ANamespace
 apid
 APIDOCS
 APPENDFILE
-aps
 arduino
 ARef
 argcomplete
@@ -70,6 +64,7 @@ ccsds
 ccsparc
 cdh
 CDHCORE
+CDHCORESUBTOPOLOGY
 cerrno
 CFDP
 cff
@@ -90,7 +85,6 @@ CMDPACKET
 cmdresponse
 cmdseq
 cmdsequencer
-cmps
 cntx
 CODEFILE
 COLORSTYLE
@@ -101,6 +95,7 @@ COMCCSDSSUBTOPOLOGY
 COMFPRIME
 COMFPRIMESUBTOPOLOGY
 comlogger
+COMLOGGERTEE
 COMMANDDISPATCHERIMPL
 COMMANDDISPATCHERIMPLCFG
 COMPACKET
@@ -127,7 +122,6 @@ crckermit
 CRCs
 crcstat
 CREATEDIRECTORY
-Crosscompiling
 crsmith
 crt
 CRTSCTS
@@ -137,6 +131,7 @@ ctest
 ctu
 culates
 cuz
+Cxxx
 CYCLEOUT
 DATAPRODUCTS
 DATAPRODUCTSSUBTOPOLOGY
@@ -183,6 +178,7 @@ DRAINBUFFERS
 drv
 drvtcpserversocket
 dspal
+DSSC
 Dstate
 DVI
 DWN
@@ -230,7 +226,6 @@ FILEOPENERROR
 FILEWRITEERROR
 fio
 fle
-flhs
 FNDELAY
 fne
 FONTPATH
@@ -242,6 +237,8 @@ fpp
 fppi
 fpptest
 fprime
+fptosi
+fptoui
 fptr
 fptrunc
 fputil
@@ -249,7 +246,7 @@ fpy
 FPYSEQUENCER
 freeram
 Fregoso
-frhs
+fres
 frsize
 fsblkcnt
 fsrc
@@ -260,11 +257,7 @@ gcgandhi
 gcov
 gdiplus
 GENHUB
-getfooter
-getseconds
-getstatements
 gettime
-getuseconds
 getty
 ghprb
 gitmodules
@@ -380,7 +373,6 @@ LOCALSTATEDIR
 LOGGERRULES
 LOGPACKET
 lseek
-lvar
 LVL
 lxml
 MACROFILE
@@ -407,7 +399,6 @@ mman
 MMAPALLOCATOR
 MML
 modbus
-MOSI
 MOVEFILE
 msc
 mscfile
@@ -423,10 +414,11 @@ mycompany
 nasafprime
 nbits
 ncsl
-netinet
 newtio
 nmsgs
 NOBLOCK
+NOLINT
+NOLINTNEXTLINE
 noparent
 norecords
 NOSPEC
@@ -449,6 +441,7 @@ openmct
 openpyxl
 openssldir
 optarg
+optin
 optind
 orgslist
 ortega
@@ -501,11 +494,9 @@ PRIORITYQUEUE
 prm
 PRMDB
 PRMDBIMPL
-PRMDBTESTER
-PRMDBIMPLTESTER
 PRMDBIMPLTESTERCFG
 PRMDBLIMPLCFG
-PRMLEDINITSTATE
+PRMDBTESTER
 PROCBUFFERSENDOUT
 PRODUCTGETIN
 PRODUCTREQUESTIN
@@ -560,10 +551,7 @@ RHH
 Rizvi
 ROOTDIR
 rpi
-RPIDEMO
-RPIDEMOCOMPONENTIMPLCFG
 rptr
-RXD
 SAlias
 sanitizers
 sats
@@ -579,13 +567,12 @@ seqgen
 serializables
 setaffinity
 setinheritsched
-setlocalvar
 SETLOGGING
 setprotocol
 setschedparam
 setschedpolicy
-setstacksize
 setser
+setstacksize
 settime
 sev
 sfregoso
@@ -596,9 +583,9 @@ SHAREDSTATEDIR
 SHELLCOMMAND
 showinitializer
 sideeffect
-sighandler
 Signedness
 Silveira
+sitofp
 sle
 sloc
 socio
@@ -612,6 +599,7 @@ sourcing
 spdx
 spi
 spidev
+spsc
 srandom
 SRCS
 sreddy
@@ -690,13 +678,12 @@ tparam
 TPP
 trinomials
 tts
-TXD
 typedef'ed
 typedef
 uart
 UDPSOCKET
 uge
-ulhs
+uitofp
 UML
 UNEXP
 unistd
@@ -704,7 +691,6 @@ UNITTESTASSERT
 unittests
 useconds
 usecs
-urhs
 valgrind
 vbai
 VCA

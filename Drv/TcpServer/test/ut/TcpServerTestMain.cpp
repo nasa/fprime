@@ -39,7 +39,6 @@ TEST(AutoConnect, AutoConnectOnRecvOff) {
     tester.test_no_automatic_recv_connection();
 }
 
-
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

@@ -34,7 +34,7 @@ namespace Svc {
         sizeof(U32) + // subseconds (CRC should land here)
         sizeof(U16); // short size
       const U32 numRecs = 1;
-      const TimeBase timeBase = TB_WORKSTATION_TIME;
+      const TimeBase timeBase = TimeBase::TB_WORKSTATION_TIME;
       const U32 timeContext = 0;
       FPrime::Headers::serialize(
           dataSize,
@@ -48,15 +48,15 @@ namespace Svc {
           CmdSequencerComponentImpl::Sequence::Record::RELATIVE;
       ASSERT_EQ(
           Fw::FW_SERIALIZE_OK,
-          buffer.serialize(static_cast<U8>(descriptor))
+          buffer.serializeFrom(static_cast<U8>(descriptor))
       );
       ASSERT_EQ(
           Fw::FW_SERIALIZE_OK, 
-          buffer.serialize(static_cast<U32>(0))
+          buffer.serializeFrom(static_cast<U32>(0))
       );
       ASSERT_EQ(
           Fw::FW_SERIALIZE_OK,
-          buffer.serialize(static_cast<U16>(0))
+          buffer.serializeFrom(static_cast<U16>(0))
       );
       // CRC
       FPrime::CRCs::serialize(buffer);

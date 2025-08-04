@@ -30,9 +30,20 @@ endfunction(dictionary_add_global_target)
 # - **FULL_DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
 ####
 function(dictionary_add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPENDENCIES)
+    run_ac_set("${MODULE}" "autocoder/fpp")
+
     # Create deployment level target and remove the module from the list of dependencies
-    add_custom_target("${MODULE}_${TARGET}")
+    add_custom_target("${MODULE}_${TARGET}" DEPENDS ${AUTOCODER_GENERATED_OTHER})
     list(REMOVE_ITEM DEPENDENCIES "${MODULE}")
+
+    # Create a custom target with _dictionary suffix that depends on the generated files
+    if(AUTOCODER_GENERATED_OTHER)
+        # Install the files as a component. This is done here so it is output to the deployment directory
+        install(FILES ${AUTOCODER_GENERATED_OTHER} DESTINATION ${TOOLCHAIN_NAME}/${MODULE}/dict COMPONENT "${MODULE}_${TARGET}")
+        add_custom_command(TARGET "${MODULE}_${TARGET}" POST_BUILD COMMAND "${CMAKE_COMMAND}"
+            -DCMAKE_INSTALL_COMPONENT=${MODULE}_${TARGET} -P ${CMAKE_BINARY_DIR}/cmake_install.cmake)
+    endif()
+
     # Loop through all recursive dependencies and find dictionary targets
     foreach(DEPENDENCY IN LISTS DEPENDENCIES)
         if (TARGET "${DEPENDENCY}_${TARGET}")

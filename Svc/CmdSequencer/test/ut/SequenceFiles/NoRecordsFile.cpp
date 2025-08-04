@@ -29,7 +29,7 @@ namespace Svc {
             const FwSizeType numRecs = 0;
             const U32 recordDataSize = numRecs * FPrime::Records::STANDARD_SIZE;
             const U32 dataSize = recordDataSize + FPrime::CRCs::SIZE;
-            const TimeBase timeBase = TB_WORKSTATION_TIME;
+            const TimeBase timeBase = TimeBase::TB_WORKSTATION_TIME;
             const U32 timeContext = 0;
             FPrime::Headers::serialize(dataSize, numRecs, timeBase, timeContext, buffer);
 

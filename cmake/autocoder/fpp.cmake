@@ -18,6 +18,7 @@ autocoder_setup_for_multiple_sources()
 ####
 function(locate_fpp_tools)
     # Loop through each tool, looking if it was found and check the version
+    get_expected_tool_version("fprime-fpp" FPP_VERSION)
     foreach(TOOL FPP_DEPEND FPP_TO_CPP FPP_LOCATE_DEFS FPP_TO_DICT)
         # Skipped already defined tools
         if (${TOOL})
@@ -25,7 +26,6 @@ function(locate_fpp_tools)
         endif ()
         string(TOLOWER ${TOOL} PROGRAM)
         string(REPLACE "_" "-" PROGRAM "${PROGRAM}")
-        get_expected_tool_version("fprime-${PROGRAM}" FPP_VERSION)
 
         # Clear any previous version of this find and search in this order: install dir, system path
         unset(${TOOL} CACHE)
@@ -219,6 +219,11 @@ function(fpp_setup_autocode MODULE_NAME AC_INPUT_FILES)
     endforeach()
     file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/fpp-import-list" "${FPP_IMPORTS}")
     file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/fpp-source-list" "${AC_INPUT_FILES}")
+
+    # Mark included files (.fppi) as regenerators like their .fpp parents
+    foreach (INCLUDED_FILE IN LISTS FILE_DEPENDENCIES)
+        requires_regeneration("${INCLUDED_FILE}")
+    endforeach()
 
     # Add in steps for CPP generation
     if (GENERATED_CPP)

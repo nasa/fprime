@@ -12,9 +12,7 @@
 #define REF_REFTOPOLOGYDEFS_HPP
 
 #include "Ref/BlockDriver/BlockDriver.hpp"
-#include "Fw/Types/MallocAllocator.hpp"
 #include "Ref/Top/FppConstantsAc.hpp"
-#include "Svc/Health/Health.hpp"
 
 // Subtopology PingEntries includes
 #include "Svc/Subtopologies/CdhCore/PingEntries.hpp"
@@ -23,17 +21,15 @@
 #include "Svc/Subtopologies/FileHandling/PingEntries.hpp"
 
 // SubtopologyTopologyDefs includes
+#include "Svc/Subtopologies/CdhCore/SubtopologyTopologyDefs.hpp"
 #include "Svc/Subtopologies/ComCcsds/SubtopologyTopologyDefs.hpp"
 #include "Svc/Subtopologies/DataProducts/SubtopologyTopologyDefs.hpp"
 #include "Svc/Subtopologies/FileHandling/SubtopologyTopologyDefs.hpp"
 
-namespace PingEntries {
-    namespace Ref_blockDrv       {enum { WARN = 3, FATAL = 5 };}
-    namespace Ref_pingRcvr       {enum { WARN = 3, FATAL = 5 };}
-    namespace Ref_rateGroup1Comp {enum { WARN = 3, FATAL = 5 };}
-    namespace Ref_rateGroup2Comp {enum { WARN = 3, FATAL = 5 };}
-    namespace Ref_rateGroup3Comp {enum { WARN = 3, FATAL = 5 };}
-}  // namespace PingEntries
+//ComCcsds Enum Includes
+#include "Svc/Subtopologies/ComCcsds/Ports_ComPacketQueueEnumAc.hpp"
+#include "Svc/Subtopologies/ComCcsds/Ports_ComBufferQueueEnumAc.hpp"
+
 /**
  * \brief required ping constants
  *
@@ -53,6 +49,14 @@ namespace PingEntries {
  * }
  * ```
  */
+namespace PingEntries {
+    namespace Ref_blockDrv       {enum { WARN = 3, FATAL = 5 };}
+    namespace Ref_pingRcvr       {enum { WARN = 3, FATAL = 5 };}
+    namespace Ref_rateGroup1Comp {enum { WARN = 3, FATAL = 5 };}
+    namespace Ref_rateGroup2Comp {enum { WARN = 3, FATAL = 5 };}
+    namespace Ref_rateGroup3Comp {enum { WARN = 3, FATAL = 5 };}
+    namespace Ref_cmdSeq         {enum { WARN = 3, FATAL = 5 };}
+}  // namespace PingEntries
 
 // Definitions are placed within a namespace named after the deployment
 namespace Ref {
@@ -66,7 +70,12 @@ namespace Ref {
      * fields, which are derived by command line inputs.
      */
     struct TopologyState {
-        ComCcsds::SubtopologyState comCcsds;  //!< Subtopology state for ComCcsds 
+        const char* hostname;   //!< Hostname for TCP communication
+        U16 port;              //!< Port for TCP communication
+        CdhCore::SubtopologyState cdhCore;           //!< Subtopology state for CdhCore
+        ComCcsds::SubtopologyState comCcsds;         //!< Subtopology state for ComCcsds 
+        DataProducts::SubtopologyState dataProducts; //!< Subtopology state for DataProducts
+        FileHandling::SubtopologyState fileHandling; //!< Subtopology state for FileHandling
     };
 
     namespace PingEntries = ::PingEntries;

@@ -26,7 +26,7 @@ FprimeRouter ::~FprimeRouter() {}
 
 void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer, const ComCfg::FrameContext& context) {
     Fw::SerializeStatus status;
-    Fw::ComPacketType packetType = context.getapid();
+    Fw::ComPacketType packetType = context.get_apid();
     // Route based on received APID (packet type)
     switch (packetType) {
         // Handle a command packet

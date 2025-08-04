@@ -21,8 +21,7 @@
 namespace Drv {
 
 class TcpClientComponentImpl final : public TcpClientComponentBase, public SocketComponentHelper {
-
-  friend class TcpClientTester;
+    friend class TcpClientTester;
 
   public:
     // ----------------------------------------------------------------------
@@ -103,12 +102,10 @@ class TcpClientComponentImpl final : public TcpClientComponentBase, public Socke
 
     /**
      * \brief called when the IPv4 system has been connected
-    */
+     */
     void connected() override;
 
-
   private:
-
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
@@ -133,11 +130,10 @@ class TcpClientComponentImpl final : public TcpClientComponentBase, public Socke
     //!
     //! Port receiving back ownership of data sent out on $recv port
     void recvReturnIn_handler(FwIndexType portNum,  //!< The port number
-                                Fw::Buffer& fwBuffer  //!< The buffer
-                                ) override;
+                              Fw::Buffer& fwBuffer  //!< The buffer
+                              ) override;
 
-
-    Drv::TcpClientSocket m_socket; //!< Socket implementation
+    Drv::TcpClientSocket m_socket;  //!< Socket implementation
 
     // Member variable to store the buffer size
     FwSizeType m_allocation_size;
@@ -145,4 +141,4 @@ class TcpClientComponentImpl final : public TcpClientComponentBase, public Socke
 
 }  // end namespace Drv
 
-#endif // end TcpClientComponentImpl
+#endif  // end TcpClientComponentImpl

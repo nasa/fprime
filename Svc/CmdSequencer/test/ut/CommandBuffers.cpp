@@ -23,9 +23,9 @@ namespace Svc {
     ) {
       comBuff.resetSer();
       const FwPacketDescriptorType descriptor = Fw::ComPacketType::FW_PACKET_COMMAND;
-      ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(descriptor));
-      ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(opcode));
-      ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serialize(argument));
+      ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(descriptor));
+      ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(opcode));
+      ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(argument));
     }
 
   }

@@ -65,8 +65,8 @@ void SpacePacketDeframerTester ::testNominalDeframing() {
     }
     // Check output context (header info)
     ComCfg::FrameContext context = this->fromPortHistory_dataOut->at(0).context;
-    ASSERT_EQ(context.getapid(), apid);
-    ASSERT_EQ(context.getsequenceCount(), seqCount);
+    ASSERT_EQ(context.get_apid(), apid);
+    ASSERT_EQ(context.get_sequenceCount(), seqCount);
 
     ASSERT_EVENTS_SIZE(0);  // No events should be generated in the nominal case
 }
@@ -110,9 +110,9 @@ Fw::Buffer SpacePacketDeframerTester ::assemblePacket(U16 apid,
                                                       U8* packetData,
                                                       U16 packetDataLen) {
     SpacePacketHeader header;
-    header.setpacketIdentification(apid);
-    header.setpacketSequenceControl(seqCount);  // Sequence Flags = 0b11 (unsegmented) & unused Seq count
-    header.setpacketDataLength(lengthToken);
+    header.set_packetIdentification(apid);
+    header.set_packetSequenceControl(seqCount);  // Sequence Flags = 0b11 (unsegmented) & unused Seq count
+    header.set_packetDataLength(lengthToken);
 
     Fw::ExternalSerializeBuffer serializer(static_cast<U8*>(this->m_packetBuffer), sizeof(this->m_packetBuffer));
     serializer.serialize(header);

@@ -9,7 +9,12 @@
 
 namespace DataProducts {
     // State for topology construction
+    struct SubtopologyState {
+        // Empty - no external state needed for DataProducts subtopology
+    };
+
     struct TopologyState {
+        SubtopologyState dataProducts;
     };
 }
 

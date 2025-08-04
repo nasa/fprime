@@ -13,7 +13,7 @@ from fprime_gds.common.utils.event_severity import EventSeverity
 
 
 """
-This enum is includes the values of EventSeverity that can be filtered by the ActiveLogger Component
+This enum is includes the values of EventSeverity that can be filtered by the EventManager Component
 """
 FilterSeverity = Enum(
     "FilterSeverity",
@@ -39,7 +39,7 @@ def test_is_streaming(fprime_test_api):
 def set_event_filter(fprime_test_api, severity, enabled):
     """Send command to set event filter
 
-    This helper will send a command that updates the given severity filter on the ActiveLogger
+    This helper will send a command that updates the given severity filter on the EventManager
     Component in the Ref App.
 
     Args:
@@ -285,5 +285,5 @@ def test_seqgen(fprime_test_api):
         == 0
     ), "Failed to run fprime-seqgen"
     fprime_test_api.send_and_assert_command(
-        "ComCcsds.cmdSeq.CS_RUN", args=["/tmp/ref_test_int.bin", "BLOCK"], max_delay=5
+        "Ref.cmdSeq.CS_RUN", args=["/tmp/ref_test_int.bin", "BLOCK"], max_delay=5
     )

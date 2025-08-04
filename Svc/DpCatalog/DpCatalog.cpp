@@ -245,14 +245,14 @@ namespace Svc {
             // check for a match
             if (                
                 (this->m_stateFileData[line].entry.dir == entry.dir) and
-                (this->m_stateFileData[line].entry.record.getid() == entry.record.getid()) and
-                (this->m_stateFileData[line].entry.record.gettSec() == entry.record.gettSec()) and
-                (this->m_stateFileData[line].entry.record.gettSub() == entry.record.gettSub()) and
-                (this->m_stateFileData[line].entry.record.getpriority() == entry.record.getpriority())
+                (this->m_stateFileData[line].entry.record.get_id() == entry.record.get_id()) and
+                (this->m_stateFileData[line].entry.record.get_tSec() == entry.record.get_tSec()) and
+                (this->m_stateFileData[line].entry.record.get_tSub() == entry.record.get_tSub()) and
+                (this->m_stateFileData[line].entry.record.get_priority() == entry.record.get_priority())
                 ) {
                 // update the transmitted state
-                entry.record.setstate(this->m_stateFileData[line].entry.record.getstate());
-                entry.record.setblocks(this->m_stateFileData[line].entry.record.getblocks());
+                entry.record.set_state(this->m_stateFileData[line].entry.record.get_state());
+                entry.record.set_blocks(this->m_stateFileData[line].entry.record.get_blocks());
                 // mark it as visited for later pruning if necessary
                 this->m_stateFileData[line].visited = true;
                 return;
@@ -525,12 +525,12 @@ namespace Svc {
                 // add entry to catalog.
                 DpStateEntry entry;
                 entry.dir = static_cast<FwIndexType>(dir);
-                entry.record.setid(container.getId());
-                entry.record.setpriority(container.getPriority());
-                entry.record.setstate(container.getState());
-                entry.record.settSec(container.getTimeTag().getSeconds());
-                entry.record.settSub(container.getTimeTag().getUSeconds());
-                entry.record.setsize(static_cast<U64>(fileSize));
+                entry.record.set_id(container.getId());
+                entry.record.set_priority(container.getPriority());
+                entry.record.set_state(container.getState());
+                entry.record.set_tSec(container.getTimeTag().getSeconds());
+                entry.record.set_tSub(container.getTimeTag().getUSeconds());
+                entry.record.set_size(static_cast<U64>(fileSize));
 
                 // check the state file to see if there is transmit state
                 this->getFileState(entry);
@@ -545,9 +545,9 @@ namespace Svc {
                     break;
                 }
 
-                if (entry.record.getstate() == Fw::DpState::UNTRANSMITTED) {
+                if (entry.record.get_state() == Fw::DpState::UNTRANSMITTED) {
                     pendingFiles++;
-                    pendingDpBytes += entry.record.getsize();
+                    pendingDpBytes += entry.record.get_size();
                 }
 
                 // make sure we haven't exceeded the limit
@@ -604,25 +604,25 @@ namespace Svc {
             for (FwSizeType record = 0; record < this->m_numDpSlots; record++) {
                 CheckStat stat = CheckStat::CHECK_CONT;
                 // check priority. Lower is higher priority 
-                if (entry.record.getpriority() == node->entry.record.getpriority()) {
+                if (entry.record.get_priority() == node->entry.record.get_priority()) {
                     // check time. Older is higher priority
-                    if (entry.record.gettSec() == node->entry.record.gettSec()) {
+                    if (entry.record.get_tSec() == node->entry.record.get_tSec()) {
                         // check ID. Lower is higher priority
                         stat = this->checkLeftRight(
-                            entry.record.getid() < node->entry.record.getid(),
+                            entry.record.get_id() < node->entry.record.get_id(),
                             node,
                             entry
                         );
                     } else { // if seconds are not equal. Older is higher priority
                         stat = this->checkLeftRight(
-                            entry.record.gettSec() < node->entry.record.gettSec(),
+                            entry.record.get_tSec() < node->entry.record.get_tSec(),
                             node,
                             entry
                         );
                     }
                 } else { // if priority is not equal. Lower is higher priority.
                     stat = this->checkLeftRight(
-                        entry.record.getpriority() < node->entry.record.getpriority(),
+                        entry.record.get_priority() < node->entry.record.get_priority(),
                         node,
                         entry
                     );
@@ -723,20 +723,20 @@ namespace Svc {
             // build file name based on the found entry
             this->m_currXmitFileName.format(DP_FILENAME_FORMAT,
                 this->m_directories[this->m_currentXmitNode->entry.dir].toChar(),
-                this->m_currentXmitNode->entry.record.getid(),
-                this->m_currentXmitNode->entry.record.gettSec(),
-                this->m_currentXmitNode->entry.record.gettSub()
+                this->m_currentXmitNode->entry.record.get_id(),
+                this->m_currentXmitNode->entry.record.get_tSec(),
+                this->m_currentXmitNode->entry.record.get_tSub()
             );
             this->log_ACTIVITY_LO_SendingProduct(
                 this->m_currXmitFileName,
-                static_cast<U32>(this->m_currentXmitNode->entry.record.getsize()),
-                this->m_currentXmitNode->entry.record.getpriority()
+                static_cast<U32>(this->m_currentXmitNode->entry.record.get_size()),
+                this->m_currentXmitNode->entry.record.get_priority()
                 );
             Svc::SendFileResponse resp = this->fileOut_out(0, this->m_currXmitFileName, this->m_currXmitFileName, 0, 0);
-            if (resp.getstatus() != Svc::SendFileStatus::STATUS_OK) {
+            if (resp.get_status() != Svc::SendFileStatus::STATUS_OK) {
                 // warn, but keep going since it may be an issue with this file but others could
                 // make it
-                this->log_WARNING_HI_DpFileSendError(this->m_currXmitFileName,resp.getstatus());
+                this->log_WARNING_HI_DpFileSendError(this->m_currXmitFileName,resp.get_status());
             }
 
         }
@@ -766,7 +766,7 @@ namespace Svc {
                 } else {
                     // Step 4 - if the current node is null, pop back up the stack
                     this->m_currentNode = this->m_traverseStack[this->m_currStackEntry--];
-                    if (this->m_currentNode->entry.record.getstate() != Fw::DpState::TRANSMITTED) {
+                    if (this->m_currentNode->entry.record.get_state() != Fw::DpState::TRANSMITTED) {
                         found = this->m_currentNode;
                     }// check if transmitted
                     this->m_currentNode = this->m_currentNode->right;
@@ -782,7 +782,7 @@ namespace Svc {
                     this->m_currentNode = this->m_currentNode->left;
                 } else {
                     // Step 4 - check to see if this node has already been transmitted, if so, pop back up the stack
-                    if (this->m_currentNode->entry.record.getstate() != Fw::DpState::TRANSMITTED) {
+                    if (this->m_currentNode->entry.record.get_state() != Fw::DpState::TRANSMITTED) {
                         // we found an entry, so set the return to the current node
                         found = this->m_currentNode;
                     } // check if transmitted
@@ -838,8 +838,8 @@ namespace Svc {
         FW_ASSERT(this->m_traverseStack);
 
         // check file status
-        if (resp.getstatus() != Svc::SendFileStatus::STATUS_OK) {
-            this->log_WARNING_HI_DpFileXmitError(this->m_currXmitFileName,resp.getstatus());
+        if (resp.get_status() != Svc::SendFileStatus::STATUS_OK) {
+            this->log_WARNING_HI_DpFileXmitError(this->m_currXmitFileName,resp.get_status());
             this->m_xmitInProgress = false;
             this->cmdResponse_out(this->m_xmitOpCode,this->m_xmitCmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
         }
@@ -847,11 +847,11 @@ namespace Svc {
         this->log_ACTIVITY_LO_ProductComplete(this->m_currXmitFileName);
 
         // mark the entry as transmitted
-        this->m_currentXmitNode->entry.record.setstate(Fw::DpState::TRANSMITTED);
+        this->m_currentXmitNode->entry.record.set_state(Fw::DpState::TRANSMITTED);
         // update the transmitted state in the state file
         this->appendFileState(this->m_currentXmitNode->entry);
         // add the size
-        this->m_xmitBytes += this->m_currentXmitNode->entry.record.getsize();
+        this->m_xmitBytes += this->m_currentXmitNode->entry.record.get_size();
         // send the next entry, if it exists
         this->sendNextEntry();
     }

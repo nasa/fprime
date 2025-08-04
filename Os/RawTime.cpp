@@ -43,14 +43,14 @@ RawTime::Status RawTime::getTimeInterval(const Os::RawTime& other, Fw::TimeInter
     return this->m_delegate.getTimeInterval(other, result);
 }
 
-Fw::SerializeStatus RawTime::serialize(Fw::SerializeBufferBase& buffer) const {
+Fw::SerializeStatus RawTime::serializeTo(Fw::SerializeBufferBase& buffer) const {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<const RawTimeInterface*>(&this->m_handle_storage[0]));
-    return this->m_delegate.serialize(buffer);
+    return this->m_delegate.serializeTo(buffer);
 }
 
-Fw::SerializeStatus RawTime::deserialize(Fw::SerializeBufferBase& buffer) {
+Fw::SerializeStatus RawTime::deserializeFrom(Fw::SerializeBufferBase& buffer) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<const RawTimeInterface*>(&this->m_handle_storage[0]));
-    return this->m_delegate.deserialize(buffer);
+    return this->m_delegate.deserializeFrom(buffer);
 }
 
 RawTime::Status RawTime::getDiffUsec(const RawTime& other, U32& result) const {
@@ -75,6 +75,23 @@ RawTime::Status RawTime::getDiffUsec(const RawTime& other, U32& result) const {
     // No overflow, we can safely add values to get total microseconds
     result = secToUsec + useconds;
     return status;
+}
+
+Fw::SerializeStatus RawTime::serialize(Fw::SerializeBufferBase& buffer) const {
+    return this->serializeTo(buffer);
+}
+
+Fw::SerializeStatus RawTime::deserialize(Fw::SerializeBufferBase& buffer) {
+    return this->deserializeFrom(buffer);
+}
+
+bool RawTime::operator==(const RawTime& other) const {
+    Fw::TimeInterval interval;
+    Status status = this->getTimeInterval(other, interval);
+    // If we error out, then the values are either:
+    //    1) impossible to compare, in which case it's perfectly reasonable to consider them different, or
+    //    2) too far apart to fit in a TimeInterval, in which case they are definitely different
+    return status == Status::OP_OK && interval.getSeconds() == 0 && interval.getUSeconds() == 0;
 }
 
 }  // namespace Os
