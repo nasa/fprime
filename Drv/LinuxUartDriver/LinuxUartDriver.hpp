@@ -95,6 +95,13 @@ class LinuxUartDriver final : public LinuxUartDriverComponentBase {
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
 
+    //! Handler implementation for run
+    //!
+    //! The rate group input for sending telemetry
+    void run_handler(FwIndexType portNum,  //!< The port number
+                     U32 context           //!< The call order
+    ) override;
+
     //! Handler implementation for serialSend
     //!
     void send_handler(FwIndexType portNum, /*!< The port number*/
