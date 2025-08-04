@@ -711,76 +711,65 @@ TEST_F(FpySequencerTester, fne) {
 }
 
 
-// TEST_F(FpySequencerTester, not) {
-//     ASSERT_EQ(tester_op_not(true), false);
-// }
+TEST_F(FpySequencerTester, not) {
+    tester_push<U8>(true);
+    ASSERT_EQ(tester_op_not(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 0);
+}
 
-// TEST_F(FpySequencerTester, fptrunc) {
-//     F64 src = 123.123;
-//     F32 expected = static_cast<F32>(src);
+TEST_F(FpySequencerTester, fptrunc) {
+    F64 src = 123.123;
+    F32 expected = static_cast<F32>(src);
 
-//     I64 res = tester_op_fptrunc(*reinterpret_cast<I64*>(&src));
-//     I32 res_trunc = static_cast<I32>(res);
-//     F32 res_f;
-//     memcpy(&res_f, &res_trunc, sizeof(res_f));
-//     ASSERT_EQ(res_f, expected);
-// }
+    tester_push<F64>(src);
+    ASSERT_EQ(tester_op_fptrunc(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(expected, tester_pop<F32>());
+}
 
-// TEST_F(FpySequencerTester, fpext) {
-//     F32 src = 123.123f;
-//     F64 expected = static_cast<F64>(src);
+TEST_F(FpySequencerTester, fpext) {
+    F32 src = 123.123f;
+    F64 expected = static_cast<F64>(src);
 
-//     I32 isrc;
-//     memcpy(&isrc, &src, sizeof(isrc));
-//     I64 isrc_ext = static_cast<I64>(isrc);
+    tester_push<F32>(src);
+    ASSERT_EQ(tester_op_fpext(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(expected, tester_pop<F64>());
+}
 
-//     I64 res = tester_op_fpext(isrc_ext);
-//     F64 res_f;
-//     memcpy(&res_f, &res, sizeof(res_f));
-//     ASSERT_EQ(res_f, expected);
-// }
+TEST_F(FpySequencerTester, fptosi) {
+    F64 src = 123.123;
+    I64 expected = static_cast<I64>(src);
 
-// TEST_F(FpySequencerTester, fptosi) {
-//     F64 src = 123.123;
-//     I64 expected = static_cast<I64>(src);
+    tester_push<F64>(src);
+    ASSERT_EQ(tester_op_fptosi(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(expected, tester_pop<I64>());
+}
 
-//     I64 isrc;
-//     memcpy(&isrc, &src, sizeof(isrc));
+TEST_F(FpySequencerTester, sitofp) {
+    I64 src = 123;
+    F64 expected = static_cast<F64>(src);
 
-//     I64 res = tester_op_fptosi(isrc);
-//     ASSERT_EQ(res, expected);
-// }
+    tester_push<I64>(src);
+    ASSERT_EQ(tester_op_sitofp(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(expected, tester_pop<F64>());
+}
 
-// TEST_F(FpySequencerTester, sitofp) {
-//     I64 src = 123;
-//     F64 expected = static_cast<F64>(src);
+TEST_F(FpySequencerTester, fptoui) {
+    F64 src = 123.123;
+    U64 expected = static_cast<U64>(src);
 
-//     I64 res = tester_op_sitofp(src);
-//     F64 fres;
-//     memcpy(&fres, &res, sizeof(res));
-//     ASSERT_EQ(fres, expected);
-// }
+    tester_push<F64>(src);
+    ASSERT_EQ(tester_op_fptosi(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(expected, tester_pop<U64>());
+}
 
-// TEST_F(FpySequencerTester, fptoui) {
-//     F64 src = 123.123;
-//     U64 expected = static_cast<U64>(src);
+TEST_F(FpySequencerTester, uitofp) {
+    U64 src = 123;
+    F64 expected = static_cast<F64>(src);
 
-//     I64 isrc;
-//     memcpy(&isrc, &src, sizeof(isrc));
-
-//     I64 res = tester_op_fptoui(isrc);
-//     ASSERT_EQ(static_cast<U64>(res), expected);
-// }
-
-// TEST_F(FpySequencerTester, uitofp) {
-//     U64 src = std::numeric_limits<U64>::max();
-//     F64 expected = static_cast<F64>(src);
-
-//     I64 res = tester_op_uitofp(static_cast<I64>(src));
-//     F64 fres;
-//     memcpy(&fres, &res, sizeof(res));
-//     ASSERT_EQ(fres, expected);
-// }
+    tester_push<U64>(src);
+    ASSERT_EQ(tester_op_sitofp(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(expected, tester_pop<F64>());
+}
 
 TEST_F(FpySequencerTester, exit) {
     FpySequencer_ExitDirective directive;

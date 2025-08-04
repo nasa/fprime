@@ -598,7 +598,7 @@ DirectiveError FpySequencer::op_not() {
     if (this->m_runtime.stackSize < 1) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
-    this->push(static_cast<U8>(~this->pop<U8>()));
+    this->push(this->pop<U8>() == 0);
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_fpext() {
