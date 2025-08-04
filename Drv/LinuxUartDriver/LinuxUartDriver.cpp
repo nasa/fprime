@@ -28,7 +28,7 @@ namespace Drv {
 // ----------------------------------------------------------------------
 
 LinuxUartDriver ::LinuxUartDriver(const char* const compName)
-    : LinuxUartDriverComponentBase(compName), m_fd(-1), m_allocationSize(0), m_device("NOT_EXIST"), m_bytesSent(0), m_bytesReceived(0), quitReadThread(false) {
+    : LinuxUartDriverComponentBase(compName), m_fd(-1), m_allocationSize(0), m_device("NOT_EXIST"), m_bytesSent(0), m_bytesReceived(0), m_quitReadThread(false) {
 }
 
 bool LinuxUartDriver::open(const char* const device,
