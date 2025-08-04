@@ -43,7 +43,6 @@ void ConsoleTextLoggerImpl::TextLogger_handler(FwIndexType portNum,
     }
     Fw::Logger::log("EVENT: (%" PRI_FwEventIdType ") (%" PRI_FwTimeBaseStoreType ":%" PRIu32 ",%" PRIu32 ") %s: %s\n",
                     id, static_cast<FwTimeBaseStoreType>(timeTag.getTimeBase()), timeTag.getSeconds(),
-                    timeTag.getUSeconds(), severityString,
-                    text.toChar());
+                    timeTag.getUSeconds(), severityString, text.toChar());
 }
 }  // namespace Svc

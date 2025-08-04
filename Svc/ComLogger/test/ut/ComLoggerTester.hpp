@@ -7,8 +7,8 @@
 
 #include <Fw/Comp/ActiveComponentBase.hpp>
 #include <cstdio>
-#include "Svc/ComLogger/ComLogger.hpp"
 #include "ComLoggerGTestBase.hpp"
+#include "Svc/ComLogger/ComLogger.hpp"
 
 #define QUEUE_DEPTH 10
 #define FILE_STR "test"
