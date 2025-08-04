@@ -17,14 +17,14 @@ namespace Svc {
 namespace Health {
 
 void BufferAccumulatorTester ::Ping() {
-  U32 key = 42;
+    U32 key = 42;
 
-  this->invoke_to_pingIn(0, key);
-  this->doDispatch();
+    this->invoke_to_pingIn(0, key);
+    this->doDispatch();
 
-  ASSERT_EVENTS_SIZE(0);
-  ASSERT_from_pingOut_SIZE(1);
-  ASSERT_from_pingOut(0, key);
+    ASSERT_EVENTS_SIZE(0);
+    ASSERT_from_pingOut_SIZE(1);
+    ASSERT_from_pingOut(0, key);
 }
 
 }  // namespace Health

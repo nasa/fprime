@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  SequenceFiles.hpp
 // \author Rob Bocchino
 // \brief  Interface for F Prime sequence files

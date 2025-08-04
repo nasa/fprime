@@ -15,16 +15,14 @@ namespace Svc {
 // Component construction and destruction
 // ----------------------------------------------------------------------
 
-OsTime ::OsTime(const char* const compName) :
-    OsTimeComponentBase(compName),
-    m_epoch_fw_time(Fw::ZERO_TIME),
-    m_epoch_os_time(),
-    m_epoch_valid(false),
-    m_epoch_lock()
-{}
+OsTime ::OsTime(const char* const compName)
+    : OsTimeComponentBase(compName),
+      m_epoch_fw_time(Fw::ZERO_TIME),
+      m_epoch_os_time(),
+      m_epoch_valid(false),
+      m_epoch_lock() {}
 
-OsTime ::~OsTime()
-{}
+OsTime ::~OsTime() {}
 
 void OsTime::set_epoch(const Fw::Time& fw_time, const Os::RawTime& os_time) {
     Os::ScopeLock lock(m_epoch_lock);

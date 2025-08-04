@@ -82,7 +82,7 @@ void ComStubTester ::test_fail() {
 
     // Uplink
     invoke_to_drvReceiveIn(0, buffer, Drv::ByteStreamStatus::OTHER_ERROR);
-    ASSERT_from_dataOut_SIZE(0); // receiving failure should not send anything
+    ASSERT_from_dataOut_SIZE(0);  // receiving failure should not send anything
 }
 
 void ComStubTester ::test_retry() {
@@ -90,7 +90,7 @@ void ComStubTester ::test_retry() {
     FwIndexType MAX_ITERS = static_cast<FwIndexType>(this->component.RETRY_LIMIT + 1);
 
     // Make small individual buffers for testing
-    U8 storage[MAX_ITERS][8]; 
+    U8 storage[MAX_ITERS][8];
     Fw::Buffer buffers[MAX_ITERS];
     for (FwIndexType i = 0; i < MAX_ITERS; i++) {
         buffers[i].setData(storage[i]);
@@ -109,8 +109,8 @@ void ComStubTester ::test_retry() {
     ASSERT_EQ(this->component.m_retry_count, this->component.RETRY_LIMIT);
     // Retry one more time should block from retrying and reset retry count
     invoke_to_drvSendReturnIn(0, buffers[MAX_ITERS - 1], Drv::ByteStreamStatus::SEND_RETRY);
-    ASSERT_from_drvSendOut_SIZE(static_cast<U32>(this->component.RETRY_LIMIT)); // no drvSendOut sent when SEND_RETRY
-    ASSERT_from_dataReturnOut_SIZE(1); // buffer ownership was returned
+    ASSERT_from_drvSendOut_SIZE(static_cast<U32>(this->component.RETRY_LIMIT));  // no drvSendOut sent when SEND_RETRY
+    ASSERT_from_dataReturnOut_SIZE(1);                                           // buffer ownership was returned
     ASSERT_EQ(this->component.m_retry_count, 0);
 }
 
@@ -120,7 +120,7 @@ void ComStubTester ::test_retry_reset() {
     U32 expected_drvSendOut_count = 0;
 
     // Make small individual buffers for testing
-    U8 storage[MAX_ITERS][8]; 
+    U8 storage[MAX_ITERS][8];
     Fw::Buffer buffers[MAX_ITERS];
     for (FwIndexType i = 0; i < MAX_ITERS; i++) {
         buffers[i].setData(storage[i]);
@@ -133,21 +133,21 @@ void ComStubTester ::test_retry_reset() {
     for (FwIndexType i = 0; i < this->component.RETRY_LIMIT; i++) {
         invoke_to_drvSendReturnIn(0, buffers[i], Drv::ByteStreamStatus::SEND_RETRY);
         ASSERT_from_drvSendOut(expected_drvSendOut_count, buffers[i]);
-        expected_drvSendOut_count++; // trick: increment now to use as index prior and size after
+        expected_drvSendOut_count++;  // trick: increment now to use as index prior and size after
         ASSERT_from_drvSendOut_SIZE(expected_drvSendOut_count);
     }
     // Now, we receive a OP_OK, which should not retry (drvSendOut should not be called) and reset the retry count
-    ASSERT_from_drvSendOut_SIZE(expected_drvSendOut_count); // no drvSendOut sent when OP_OK
+    ASSERT_from_drvSendOut_SIZE(expected_drvSendOut_count);  // no drvSendOut sent when OP_OK
     invoke_to_drvSendReturnIn(0, buffers[0], Drv::ByteStreamStatus::OP_OK);
-    ASSERT_from_drvSendOut_SIZE(expected_drvSendOut_count); // no drvSendOut sent when OP_OK
+    ASSERT_from_drvSendOut_SIZE(expected_drvSendOut_count);  // no drvSendOut sent when OP_OK
     // Now that retry count is reset, we can retry again without a problem
     for (FwIndexType i = 0; i < this->component.RETRY_LIMIT; i++) {
         invoke_to_drvSendReturnIn(0, buffers[i], Drv::ByteStreamStatus::SEND_RETRY);
         ASSERT_from_drvSendOut(expected_drvSendOut_count, buffers[i]);
-        expected_drvSendOut_count++; // trick: increment now to use as index prior and size after
+        expected_drvSendOut_count++;  // trick: increment now to use as index prior and size after
         ASSERT_from_drvSendOut_SIZE(expected_drvSendOut_count);
     }
-    ASSERT_from_drvSendOut_SIZE(expected_drvSendOut_count); // no drvSendOut sent when OP_OK
+    ASSERT_from_drvSendOut_SIZE(expected_drvSendOut_count);  // no drvSendOut sent when OP_OK
 }
 
 void ComStubTester ::test_buffer_return() {
@@ -155,7 +155,7 @@ void ComStubTester ::test_buffer_return() {
     Fw::Buffer buffer(data, sizeof(data));
     ComCfg::FrameContext context;
     this->invoke_to_dataReturnIn(0, buffer, context);
-    ASSERT_from_drvReceiveReturnOut_SIZE(1);     // incoming buffer should be returned
+    ASSERT_from_drvReceiveReturnOut_SIZE(1);  // incoming buffer should be returned
     ASSERT_EQ(this->fromPortHistory_drvReceiveReturnOut->at(0).fwBuffer.getData(), data);
     ASSERT_EQ(this->fromPortHistory_drvReceiveReturnOut->at(0).fwBuffer.getSize(), sizeof(data));
 }
@@ -165,8 +165,8 @@ void ComStubTester ::test_buffer_return() {
 // ----------------------------------------------------------------------
 
 void ComStubTester ::from_dataOut_handler(const FwIndexType portNum,
-                                      Fw::Buffer& recvBuffer,
-                                      const ComCfg::FrameContext& context) {
+                                          Fw::Buffer& recvBuffer,
+                                          const ComCfg::FrameContext& context) {
     this->pushFromPortEntry_dataOut(recvBuffer, context);
 }
 
@@ -177,6 +177,5 @@ void ComStubTester ::from_comStatusOut_handler(const FwIndexType portNum, Fw::Su
 void ComStubTester ::from_drvSendOut_handler(const FwIndexType portNum, Fw::Buffer& sendBuffer) {
     this->pushFromPortEntry_drvSendOut(sendBuffer);
 }
-
 
 }  // end namespace Svc

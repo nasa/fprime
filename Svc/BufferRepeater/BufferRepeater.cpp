@@ -60,7 +60,7 @@ bool BufferRepeater ::check_allocation(FwIndexType index,
 // ----------------------------------------------------------------------
 
 void BufferRepeater ::portIn_handler(FwIndexType portNum, /*!< The port number*/
-                                     Fw::Buffer& buffer       /*!< The serialization buffer*/
+                                     Fw::Buffer& buffer   /*!< The serialization buffer*/
 ) {
     FW_ASSERT(this->m_allocation_failure_response < NUM_BUFFER_REPEATER_FAILURE_OPTIONS);
     for (FwIndexType i = 0; i < NUM_PORTOUT_OUTPUT_PORTS; i++) {

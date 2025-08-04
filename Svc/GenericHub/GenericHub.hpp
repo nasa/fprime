@@ -10,7 +10,7 @@
 
 namespace Svc {
 
-  using GenericHub = GenericHubComponentImpl;
+using GenericHub = GenericHubComponentImpl;
 
 }
 

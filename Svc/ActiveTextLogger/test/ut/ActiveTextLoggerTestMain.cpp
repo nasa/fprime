@@ -6,7 +6,6 @@
 
 #include "ActiveTextLoggerTester.hpp"
 
-
 TEST(Nominal, Logging) {
     Svc::ActiveTextLoggerTester tester;
     tester.runNominalTest();
@@ -23,6 +22,6 @@ TEST(OffNominal, FileHandling) {
 }
 
 int main(int argc, char** argv) {
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }
