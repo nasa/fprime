@@ -18,6 +18,7 @@
 #include <Os/Task.hpp>
 
 #include <termios.h>
+#include <atomic>
 
 namespace Drv {
 
@@ -123,9 +124,9 @@ class LinuxUartDriver final : public LinuxUartDriverComponentBase {
 
     Os::Task m_readTask;  //!< task instance for thread to read serial port
 
-    FwSizeType m_bytesSent;      //!< number of bytes sent
-    FwSizeType m_bytesReceived;  //!< number of bytes received
-    bool m_quitReadThread;       //!< flag to quit thread
+    std::atomic<FwSizeType> m_bytesSent;      //!< number of bytes sent
+    std::atomic<FwSizeType> m_bytesReceived;  //!< number of bytes received
+    bool m_quitReadThread;                    //!< flag to quit thread
 };
 
 }  // end namespace Drv
