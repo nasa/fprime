@@ -100,7 +100,7 @@ class LinuxUartDriver final : public LinuxUartDriverComponentBase {
     //! The rate group input for sending telemetry
     void run_handler(FwIndexType portNum,  //!< The port number
                      U32 context           //!< The call order
-    ) override;
+                     ) override;
 
     //! Handler implementation for serialSend
     //!
