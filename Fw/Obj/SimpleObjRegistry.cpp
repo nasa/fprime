@@ -28,13 +28,13 @@ void SimpleObjRegistry::dump() {
 #if FW_OBJECT_TO_STRING == 1
         char objDump[FW_OBJ_SIMPLE_REG_BUFF_SIZE];
         this->m_objPtrArray[obj]->toString(objDump, sizeof(objDump));
-        Fw::Logger::log("Entry: %d Ptr: %p Str: %s\n", obj, this->m_objPtrArray[obj], objDump);
+        Fw::Logger::log("Entry: %" PRI_FwSizeType " Ptr: %p Str: %s\n", obj, this->m_objPtrArray[obj], objDump);
 #else
-        Fw::Logger::log("Entry: %d Ptr: %p Name: %s\n", obj, this->m_objPtrArray[obj],
+        Fw::Logger::log("Entry: %" PRI_FwSizeType " Ptr: %p Name: %s\n", obj, this->m_objPtrArray[obj],
                         this->m_objPtrArray[obj]->getObjName());
 #endif  // FW_OBJECT_TO_STRING
 #else
-        Fw::Logger::log("Entry: %d Ptr: %p\n", obj, this->m_objPtrArray[obj]);
+        Fw::Logger::log("Entry: %" PRI_FwSizeType " Ptr: %p\n", obj, this->m_objPtrArray[obj]);
 #endif
     }
 }
@@ -46,9 +46,9 @@ void SimpleObjRegistry::dump(const char* objName) {
         if (strncmp(objName, this->m_objPtrArray[obj]->getObjName(), sizeof(objDump)) == 0) {
 #if FW_OBJECT_TO_STRING == 1
             this->m_objPtrArray[obj]->toString(objDump, sizeof(objDump));
-            Fw::Logger::log("Entry: %d Ptr: %p Str: %s\n", obj, this->m_objPtrArray[obj], objDump);
+            Fw::Logger::log("Entry: %" PRI_FwSizeType " Ptr: %p Str: %s\n", obj, this->m_objPtrArray[obj], objDump);
 #else
-            Fw::Logger::log("Entry: %d Ptr: %p Name: %s\n", obj, this->m_objPtrArray[obj],
+            Fw::Logger::log("Entry: %" PRI_FwSizeType " Ptr: %p Name: %s\n", obj, this->m_objPtrArray[obj],
                             this->m_objPtrArray[obj]->getObjName());
 #endif
         }
