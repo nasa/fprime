@@ -358,7 +358,7 @@ Signal FpySequencer::storePrm_directiveHandler(const FpySequencer_StorePrmDirect
         error = DirectiveError::PRM_GET_NOT_CONNECTED;
         return Signal::stmtResponse_failure;
     }
-    U16 stackOffset = this->lvarOffset() + directive.get_lvarOffset();
+    U32 stackOffset = this->lvarOffset() + directive.get_lvarOffset();
     if (stackOffset >= this->m_runtime.stackSize) {
         error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
