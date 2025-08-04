@@ -252,8 +252,8 @@ TEST_F(FpySequencerTester, stackOp) {
 
     // Test OR (bitwise OR)
     FpySequencer_StackOpDirective directiveOR(Fpy::DirectiveId::OR);
-    tester_push<I64>(5);   // 0b0101;
-    tester_push<I64>(10);  // 0b1010;
+    tester_push<U8>(5);   // 0b0101;
+    tester_push<U8>(10);  // 0b1010;
     result = tester_stackOp_directiveHandler(directiveOR, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
@@ -263,8 +263,8 @@ TEST_F(FpySequencerTester, stackOp) {
 
     // Test AND (bitwise AND)
     FpySequencer_StackOpDirective directiveAND(Fpy::DirectiveId::AND);
-    tester_push<I64>(12);  // 0b1100;
-    tester_push<I64>(10);  // 0b1010;
+    tester_push<U8>(12);  // 0b1100;
+    tester_push<U8>(10);  // 0b1010;
     result = tester_stackOp_directiveHandler(directiveAND, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
@@ -343,6 +343,7 @@ TEST_F(FpySequencerTester, ieq) {
     tester_push<I64>(-1);
     ASSERT_EQ(tester_op_ieq(), DirectiveError::NO_ERROR);
     ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 1);
+    tester_get_m_runtime_ptr()->stackSize = 0;
     tester_push<I64>(-1);
     tester_push<I64>(1);
     ASSERT_EQ(tester_op_ieq(), DirectiveError::NO_ERROR);
@@ -1262,6 +1263,7 @@ TEST_F(FpySequencerTester, dispatchStatement) {
     ASSERT_DEATH_IF_SUPPORTED(tester_dispatchStatement(), "Assert: ");
 }
 
+// caught one bug
 TEST_F(FpySequencerTester, deserialize_waitRel) {
     FpySequencer::DirectiveUnion actual;
     FpySequencer_WaitRelDirective waitRel;
@@ -1275,11 +1277,11 @@ TEST_F(FpySequencerTester, deserialize_waitRel) {
     ASSERT_EQ(result, Fw::Success::FAILURE);
     ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
     this->clearHistory();
-    // clear args, make sure it fails
+    // clear args, make sure it succeeds
     seq.get_statements()[0].get_argBuf().resetSer();
     result = tester_deserializeDirective(seq.get_statements()[0], actual);
-    ASSERT_EQ(result, Fw::Success::FAILURE);
-    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+    ASSERT_EQ(result, Fw::Success::SUCCESS);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(0);
 }
 TEST_F(FpySequencerTester, deserialize_waitAbs) {
     FpySequencer::DirectiveUnion actual;
@@ -1297,8 +1299,8 @@ TEST_F(FpySequencerTester, deserialize_waitAbs) {
     // clear args, make sure it fails
     seq.get_statements()[0].get_argBuf().resetSer();
     result = tester_deserializeDirective(seq.get_statements()[0], actual);
-    ASSERT_EQ(result, Fw::Success::FAILURE);
-    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+    ASSERT_EQ(result, Fw::Success::SUCCESS);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(0);
 }
 
 TEST_F(FpySequencerTester, deserialize_goto) {
@@ -1414,11 +1416,11 @@ TEST_F(FpySequencerTester, deserialize_stackOp) {
     ASSERT_EQ(result, Fw::Success::FAILURE);
     ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
     this->clearHistory();
-    // clear args, make sure it fails
+    // clear args, make sure it succeeds
     seq.get_statements()[0].get_argBuf().resetSer();
     result = tester_deserializeDirective(seq.get_statements()[0], actual);
-    ASSERT_EQ(result, Fw::Success::FAILURE);
-    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+    ASSERT_EQ(result, Fw::Success::SUCCESS);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(0);
 }
 
 TEST_F(FpySequencerTester, deserialize_exit) {

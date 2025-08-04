@@ -32,7 +32,7 @@ TEST_F(FpySequencerTester, ComplexControlFlow) {
     add_IF(6);
     // if true
     add_NO_OP();
-    add_GOTO(8); // goto end
+    add_GOTO(9); // goto end
     // else
     add_NO_OP();
     add_NO_OP();
@@ -59,7 +59,7 @@ TEST_F(FpySequencerTester, OrOfTlmAndReg) {
     add_ALLOCATE(1);
     add_STORE_TLM_VAL(123, 0);
     add_LOAD(0, 1);
-    add_PUSH_VAL(0);
+    add_PUSH_VAL<U8>(0);
     // or between the stored const and the tlm val
     add_STACK_OP(Fpy::DirectiveId::OR);
     add_IF(8);
@@ -97,7 +97,7 @@ TEST_F(FpySequencerTester, CmpIntTlm) {
     add_IF(8);
     // if true
     add_NO_OP();
-    add_GOTO(10); // goto end
+    add_GOTO(11); // goto end
     // else
     add_NO_OP();
     add_NO_OP();
