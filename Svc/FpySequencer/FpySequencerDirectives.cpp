@@ -113,7 +113,7 @@ void FpySequencer::push(T val) {
     } else {
         valBytes[0] = static_cast<U8>(val);
     }
-    memcpy(valBytes, this->top(), sizeof(T));
+    memcpy(this->top(), valBytes, sizeof(T));
     this->m_runtime.stackSize += sizeof(T);
 }
 
@@ -259,12 +259,10 @@ Signal FpySequencer::waitRel_directiveHandler(const FpySequencer_WaitRelDirectiv
 
     Fw::Time wakeupTime = this->getTime();
 
-    F64 secondsFloat = this->pop<F64>();
-    // convert float number of seconds into integer seconds and integer microseconds
-    U32 secondsInt = static_cast<U32>(secondsFloat);
-    U32 uSecondsInt = static_cast<U32>((secondsFloat - secondsInt) * 1000000);
+    U32 uSeconds = this->pop<U32>();
+    U32 seconds = this->pop<U32>();
 
-    wakeupTime.add(secondsInt, uSecondsInt);
+    wakeupTime.add(seconds, uSeconds);
     this->m_runtime.wakeupTime = wakeupTime;
     return Signal::stmtResponse_beginSleep;
 }

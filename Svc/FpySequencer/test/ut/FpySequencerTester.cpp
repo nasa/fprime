@@ -231,7 +231,7 @@ void FpySequencerTester::add_LOAD(FpySequencer_LoadDirective dir) {
     FW_ASSERT(buf.serialize(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     addDirective(Fpy::DirectiveId::LOAD, buf);
 }
-template <typename T> void add_PUSH_VAL(T val) {
+template <typename T> void FpySequencerTester::add_PUSH_VAL(T val) {
     Fw::StatementArgBuffer buf;
     FW_ASSERT(buf.serializeFrom(val) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     addDirective(Fpy::DirectiveId::PUSH_VAL, buf);
@@ -530,10 +530,29 @@ void FpySequencerTester::tester_dispatchDirective(const FpySequencer::DirectiveU
 template <typename T> void FpySequencerTester::tester_push(T val) {
     cmp.push<T>(val);
 }
+template void FpySequencerTester::tester_push(U8);
+template void FpySequencerTester::tester_push(U16);
+template void FpySequencerTester::tester_push(U32);
+template void FpySequencerTester::tester_push(U64);
+template void FpySequencerTester::tester_push(I8);
+template void FpySequencerTester::tester_push(I16);
+template void FpySequencerTester::tester_push(I32);
+template void FpySequencerTester::tester_push(I64);
+template void FpySequencerTester::tester_push(F32);
+template void FpySequencerTester::tester_push(F64);
 template <typename T> T FpySequencerTester::tester_pop() {
     return cmp.pop<T>();
 }
-
+template U8 FpySequencerTester::tester_pop();
+template U16 FpySequencerTester::tester_pop();
+template U32 FpySequencerTester::tester_pop();
+template U64 FpySequencerTester::tester_pop();
+template I8 FpySequencerTester::tester_pop();
+template I16 FpySequencerTester::tester_pop();
+template I32 FpySequencerTester::tester_pop();
+template I64 FpySequencerTester::tester_pop();
+template F32 FpySequencerTester::tester_pop();
+template F64 FpySequencerTester::tester_pop();
 // End UT private/protected access
 
 }  // namespace Svc
