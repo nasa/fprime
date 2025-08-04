@@ -7,8 +7,6 @@
 #ifndef StackTestRules_HPP
 #define StackTestRules_HPP
 
-#include <gtest/gtest.h>
-
 #include "Fw/DataStructures/test/ut/STest/StackTestState.hpp"
 #include "STest/STest/Pick/Pick.hpp"
 #include "STest/STest/Rule/Rule.hpp"

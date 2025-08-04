@@ -7,6 +7,7 @@
 #ifndef MapTestState_HPP
 #define MapTestState_HPP
 
+#include <gtest/gtest.h>
 #include <map>
 
 #include "Fw/DataStructures/MapBase.hpp"

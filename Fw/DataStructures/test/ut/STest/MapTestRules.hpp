@@ -7,8 +7,6 @@
 #ifndef MapTestRules_HPP
 #define MapTestRules_HPP
 
-#include <gtest/gtest.h>
-
 #include "Fw/DataStructures/test/ut/STest/MapTestState.hpp"
 #include "STest/STest/Pick/Pick.hpp"
 #include "STest/STest/Rule/Rule.hpp"

@@ -4,8 +4,8 @@
 // \brief  Map test scenarios
 // ======================================================================
 
-#include "Fw/DataStructures/test/ut/STest/MapTestRules.hpp"
 #include "Fw/DataStructures/test/ut/STest/MapTestScenarios.hpp"
+#include "Fw/DataStructures/test/ut/STest/MapTestRules.hpp"
 #include "STest/Scenario/BoundedScenario.hpp"
 #include "STest/Scenario/RandomScenario.hpp"
 
@@ -66,16 +66,8 @@ void removeExisting(State& state) {
 }
 
 void random(const Fw::StringBase& name, State& state, U32 maxNumSteps) {
-    Rule* rules[] = {
-      &Rules::clear,
-      &Rules::find,
-      &Rules::findExisting,
-      &Rules::insertExisting,
-      &Rules::insertFull,
-      &Rules::insertNotFull,
-      &Rules::remove,
-      &Rules::removeExisting
-    };
+    Rule* rules[] = {&Rules::clear,      &Rules::find,          &Rules::findExisting, &Rules::insertExisting,
+                     &Rules::insertFull, &Rules::insertNotFull, &Rules::remove,       &Rules::removeExisting};
     STest::RandomScenario<State> scenario("RandomScenario", rules,
                                           sizeof(rules) / sizeof(STest::RandomScenario<State>*));
     STest::BoundedScenario<State> boundedScenario(name.toChar(), scenario, maxNumSteps);
