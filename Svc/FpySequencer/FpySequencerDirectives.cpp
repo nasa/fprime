@@ -769,7 +769,7 @@ Signal FpySequencer::store_directiveHandler(const FpySequencer_StoreDirective& d
         error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
-    U16 stackOffset = this->lvarOffset() + directive.get_lvarOffset();
+    U32 stackOffset = this->lvarOffset() + directive.get_lvarOffset();
     // if we popped these bytes off, and put them in lvar array, would we go out of bounds
     if (stackOffset + directive.get_size() > this->m_runtime.stackSize - directive.get_size()) {
         // write into lvar array would go out of bounds
