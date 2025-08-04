@@ -2,12 +2,12 @@ module CdhCore {
     # ----------------------------------------------------------------------
     # Active Components
     # ----------------------------------------------------------------------
-    instance cmdDisp: Svc.CommandDispatcher base id CdhCoreConfig.BASE_ID + 0x0100 \
+    instance cmdDisp: Svc.CommandDispatcher base id CdhCoreConfig.BASE_ID + 0x00000 \
         queue size CdhCoreConfig.QueueSizes.cmdDisp \
         stack size CdhCoreConfig.StackSizes.cmdDisp \
         priority CdhCoreConfig.Priorities.cmdDisp
 
-    instance events: Svc.EventManager base id CdhCoreConfig.BASE_ID + 0x0200 \
+    instance events: Svc.EventManager base id CdhCoreConfig.BASE_ID + 0x001000 \
         queue size CdhCoreConfig.QueueSizes.events \
         stack size CdhCoreConfig.StackSizes.events \
         priority CdhCoreConfig.Priorities.events
@@ -15,7 +15,7 @@ module CdhCore {
     # ----------------------------------------------------------------------
     # Queued Components
     # ----------------------------------------------------------------------
-    instance $health: Svc.Health base id CdhCoreConfig.BASE_ID + 0x0300 \
+    instance $health: Svc.Health base id CdhCoreConfig.BASE_ID + 0x002000 \
         queue size CdhCoreConfig.QueueSizes.$health \
     {
         phase Fpp.ToCpp.Phases.configConstants """
@@ -36,7 +36,7 @@ module CdhCore {
     # ----------------------------------------------------------------------
     # Passive Components
     # ----------------------------------------------------------------------
-    instance version: Svc.Version base id CdhCoreConfig.BASE_ID + 0x0400 \
+    instance version: Svc.Version base id CdhCoreConfig.BASE_ID + 0x003000 \
     {
         phase Fpp.ToCpp.Phases.configComponents """
         // Startup TLM and Config verbosity for Versions
@@ -44,9 +44,9 @@ module CdhCore {
         """
     }
 
-    instance textLogger: Svc.PassiveTextLogger base id CdhCoreConfig.BASE_ID + 0x0500
+    instance textLogger: Svc.PassiveTextLogger base id CdhCoreConfig.BASE_ID + 0x004000
 
-    instance fatalAdapter: Svc.AssertFatalAdapter base id CdhCoreConfig.BASE_ID + 0x0600
+    instance fatalAdapter: Svc.AssertFatalAdapter base id CdhCoreConfig.BASE_ID + 0x005000
 
     topology Subtopology {
         #Active Components

@@ -1,16 +1,15 @@
 #include <gtest/gtest.h>
-#include <Os/File.hpp>
-#include <Os/Task.hpp>
-#include <Os/Queue.hpp>
-#include <Os/Mutex.hpp>
 #include <Os/Condition.hpp>
 #include <Os/Console.hpp>
-#include <Os/FileSystem.hpp>
-#include <Os/Directory.hpp>
 #include <Os/Cpu.hpp>
+#include <Os/Directory.hpp>
+#include <Os/File.hpp>
+#include <Os/FileSystem.hpp>
 #include <Os/Memory.hpp>
+#include <Os/Mutex.hpp>
+#include <Os/Queue.hpp>
 #include <Os/RawTime.hpp>
-
+#include <Os/Task.hpp>
 
 TEST(Stub, File) {
     Os::File _;

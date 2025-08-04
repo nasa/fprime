@@ -55,11 +55,11 @@ class StubRawTime : public RawTimeInterface {
     //! \brief Serialize the contents of the RawTimeInterface object into a buffer.
     //!
     //! This function serializes the contents of the RawTimeInterface object into the provided
-    //! buffer. 
+    //! buffer.
     //!
     //! \note The serialization must fit within `FW_RAW_TIME_SERIALIZATION_MAX_SIZE` bytes. This value is
     //! defined in FpConfig.h. For example, Posix systems use a pair of U32 (sec, nanosec) and can therefore
-    //! serialize in 8 bytes. Should an OSAL implementation require more than this, the project must increase 
+    //! serialize in 8 bytes. Should an OSAL implementation require more than this, the project must increase
     //! that value in its config/ folder.
     //!
     //! \param buffer The buffer to serialize the contents into.
@@ -73,7 +73,7 @@ class StubRawTime : public RawTimeInterface {
     //!
     //! \note The serialization must fit within `FW_RAW_TIME_SERIALIZATION_MAX_SIZE` bytes. This value is
     //! defined in FpConfig.h. For example, Posix systems use a pair of U32 (sec, nanosec) and can therefore
-    //! serialize in 8 bytes. Should an OSAL implementation require more than this, the project must increase 
+    //! serialize in 8 bytes. Should an OSAL implementation require more than this, the project must increase
     //! that value in its config/ folder.
     //!
     //! \param buffer The buffer to deserialize the contents from.
@@ -93,7 +93,7 @@ class StubRawTime : public RawTimeInterface {
     StubRawTimeHandle m_handle;
 };
 
-} // namespace RawTime
-} // namespace Stub
-} // namespace Os
-#endif // OS_STUB_RAWTIME_HPP
+}  // namespace RawTime
+}  // namespace Stub
+}  // namespace Os
+#endif  // OS_STUB_RAWTIME_HPP

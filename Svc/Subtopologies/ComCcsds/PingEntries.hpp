@@ -3,7 +3,7 @@
 #define COMCCSDS_PINGENTRIES_HPP
 
   namespace PingEntries {
-    namespace ComCcsds_cmdSeq         {enum { WARN = 3, FATAL = 5 };}
+    // No ping-enabled components in ComCcsds subtopology
   }
 
 #endif

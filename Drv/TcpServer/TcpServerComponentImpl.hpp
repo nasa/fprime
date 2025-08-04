@@ -13,17 +13,16 @@
 #ifndef TcpServerComponentImpl_HPP
 #define TcpServerComponentImpl_HPP
 
-#include <config/IpCfg.hpp>
 #include <Drv/Ip/IpSocket.hpp>
 #include <Drv/Ip/SocketComponentHelper.hpp>
 #include <Drv/Ip/TcpServerSocket.hpp>
+#include <config/IpCfg.hpp>
 #include "Drv/TcpServer/TcpServerComponentAc.hpp"
 
 namespace Drv {
 
 class TcpServerComponentImpl final : public TcpServerComponentBase, public SocketComponentHelper {
-
-  friend class TcpServerTester;
+    friend class TcpServerTester;
 
   public:
     // ----------------------------------------------------------------------
@@ -70,7 +69,7 @@ class TcpServerComponentImpl final : public TcpServerComponentBase, public Socke
     /**
      * \brief is started
      */
-     bool isStarted();
+    bool isStarted();
 
     /**
      * \brief startup the server socket for communications
@@ -134,7 +133,7 @@ class TcpServerComponentImpl final : public TcpServerComponentBase, public Socke
 
     /**
      * \brief called when the IPv4 system has been connected
-    */
+     */
     void connected() override;
 
     /**
@@ -143,7 +142,6 @@ class TcpServerComponentImpl final : public TcpServerComponentBase, public Socke
     void readLoop() override;
 
   private:
-
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
@@ -168,14 +166,14 @@ class TcpServerComponentImpl final : public TcpServerComponentBase, public Socke
     //!
     //! Port receiving back ownership of data sent out on $recv port
     void recvReturnIn_handler(FwIndexType portNum,  //!< The port number
-                                Fw::Buffer& fwBuffer  //!< The buffer
-                                ) override;
+                              Fw::Buffer& fwBuffer  //!< The buffer
+                              ) override;
 
-    Drv::TcpServerSocket m_socket; //!< Socket implementation
+    Drv::TcpServerSocket m_socket;  //!< Socket implementation
 
-    FwSizeType m_allocation_size; //!< Member variable to store the buffer size
+    FwSizeType m_allocation_size;  //!< Member variable to store the buffer size
 };
 
 }  // end namespace Drv
 
-#endif // end TcpServerComponentImpl
+#endif  // end TcpServerComponentImpl

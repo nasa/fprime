@@ -5,9 +5,8 @@
 #ifndef OS_POSIX_RAWTIME_HPP
 #define OS_POSIX_RAWTIME_HPP
 
-#include <ctime>
 #include <Os/RawTime.hpp>
-
+#include <ctime>
 
 namespace Os {
 namespace Posix {
@@ -23,7 +22,6 @@ struct PosixRawTimeHandle : public RawTimeHandle {
 //!
 class PosixRawTime : public RawTimeInterface {
   public:
-
     //! \brief constructor
     PosixRawTime() = default;
 
@@ -58,11 +56,11 @@ class PosixRawTime : public RawTimeInterface {
     //! \brief Serialize the contents of the RawTimeInterface object into a buffer.
     //!
     //! This function serializes the contents of the RawTimeInterface object into the provided
-    //! buffer. 
+    //! buffer.
     //!
     //! \note The serialization must fit within `FW_RAW_TIME_SERIALIZATION_MAX_SIZE` bytes. This value is
     //! defined in FpConfig.h. For example, Posix systems use a pair of U32 (sec, nanosec) and can therefore
-    //! serialize in 8 bytes. Should an OSAL implementation require more than this, the project must increase 
+    //! serialize in 8 bytes. Should an OSAL implementation require more than this, the project must increase
     //! that value in its config/ folder.
     //!
     //! \param buffer The buffer to serialize the contents into.
@@ -76,7 +74,7 @@ class PosixRawTime : public RawTimeInterface {
     //!
     //! \note The serialization must fit within `FW_RAW_TIME_SERIALIZATION_MAX_SIZE` bytes. This value is
     //! defined in FpConfig.h. For example, Posix systems use a pair of U32 (sec, nanosec) and can therefore
-    //! serialize in 8 bytes. Should an OSAL implementation require more than this, the project must increase 
+    //! serialize in 8 bytes. Should an OSAL implementation require more than this, the project must increase
     //! that value in its config/ folder.
     //!
     //! \param buffer The buffer to deserialize the contents from.
@@ -90,7 +88,6 @@ class PosixRawTime : public RawTimeInterface {
     Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const override;
 
     Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer) override;
-
 
   private:
     //! Handle for PosixRawTime

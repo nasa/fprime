@@ -2,20 +2,20 @@
 // \title Os/Posix/test/ut/PosixDirectoryTests.cpp
 // \brief tests for posix implementation for Os::Directory
 // ======================================================================
-#include "Os/test/ut/directory/RulesHeaders.hpp"
-#include "Os/test/ut/directory/CommonTests.hpp"
-#include "Os/Posix/Task.hpp"
 #include <gtest/gtest.h>
-#include "STest/Scenario/Scenario.hpp"
-#include "STest/Pick/Pick.hpp"
 #include "Fw/Types/String.hpp"
+#include "Os/Posix/Task.hpp"
+#include "Os/test/ut/directory/CommonTests.hpp"
+#include "Os/test/ut/directory/RulesHeaders.hpp"
+#include "STest/Pick/Pick.hpp"
+#include "STest/Scenario/Scenario.hpp"
 
-#include <fcntl.h> // for ::open()
+#include <fcntl.h>   // for ::open()
+#include <unistd.h>  // for ::close()
 
 namespace Os {
 namespace Test {
 namespace Directory {
-
 
 //! Maximum number of files per test directory
 //! Intentionally low to have a decent probability of having an empty directory
@@ -35,7 +35,10 @@ void setUp(Os::Test::Directory::Tester* tester) {
         tester->m_filenames.push_back(FILENAME_PREFIX + std::to_string(i));
     }
     for (auto filename : tester->m_filenames) {
-        ::open((tester->m_path + "/" + filename).c_str(), O_CREAT);
+        int fd = ::open((tester->m_path + "/" + filename).c_str(), O_CREAT | O_WRONLY, 0644);
+        if (fd >= 0) {
+            ::close(fd);
+        }
     }
 }
 
@@ -47,12 +50,9 @@ void tearDown(Os::Test::Directory::Tester* tester) {
     ::rmdir(tester->m_path.c_str());
 }
 
+}  // namespace Directory
 }  // namespace Test
-}  // namespace FileSystem
 }  // namespace Os
-
-
-
 
 // ----------------------------------------------------------------------
 // Posix Test Cases:

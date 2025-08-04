@@ -4,28 +4,22 @@
 // This ensures the delegation of function calls happens properly
 // ======================================================================
 #include <gtest/gtest.h>
+#include "Os/FileSystem.hpp"
+#include "Os/Stub/test/Directory.hpp"
 #include "Os/test/ut/directory/CommonTests.hpp"
 #include "Os/test/ut/directory/RulesHeaders.hpp"
-#include "Os/Stub/test/Directory.hpp"
-#include "Os/FileSystem.hpp"
 
 using namespace Os::Stub::Directory::Test;
 
-
 // Basic file tests
 class Interface : public ::testing::Test {
-public:
+  public:
     //! Setup function delegating to UT setUp function
-    void SetUp() override {
-        StaticData::data = StaticData();
-    }
+    void SetUp() override { StaticData::data = StaticData(); }
 
     //! Setup function delegating to UT tearDown function
-    void TearDown() override {
-        StaticData::data = StaticData();
-    }
+    void TearDown() override { StaticData::data = StaticData(); }
 };
-
 
 // Ensure that Os::Directory properly calls the implementation constructor
 TEST_F(Interface, Construction) {
@@ -70,8 +64,7 @@ TEST_F(Interface, Close) {
     ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::CLOSE_FN);
 }
 
-
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     STest::Random::seed();
     return RUN_ALL_TESTS();

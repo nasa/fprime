@@ -3,15 +3,21 @@
 // \brief queue rule implementations
 // ======================================================================
 
+#include <memory>
 #include "CommonTests.hpp"
 #include "Fw/Types/String.hpp"
-
 
 struct PickedMessage {
     FwSizeType size;
     FwQueuePriorityType priority;
-    U8* sent;
+    std::unique_ptr<U8[]> sent;
     U8 received[QUEUE_MESSAGE_SIZE_UPPER_BOUND];
+
+    // Constructor
+    PickedMessage() : size(0), priority(0), sent(nullptr) {}
+
+    // Get raw pointer for API compatibility
+    U8* get_sent() const { return sent.get(); }
 };
 
 PickedMessage pick_message(FwSizeType max_size) {
@@ -21,7 +27,7 @@ PickedMessage pick_message(FwSizeType max_size) {
     // Force priority to be in a smaller range to produce more same-priority messages
     message.priority = STest::Random::lowerUpper(0, std::numeric_limits<I8>::max());
 
-    message.sent = new U8[message.size];
+    message.sent.reset(new U8[message.size]);
     for (FwSizeType i = 0; i < message.size; i++) {
         message.sent[i] = STest::Random::lowerUpper(0, std::numeric_limits<U8>::max());
     }
@@ -66,9 +72,8 @@ void Os::Test::Queue::Tester::Create::action(Os::Test::Queue::Tester& state  //!
 //
 // ------------------------------------------------------------------------------------------------------
 
-Os::Test::Queue::Tester::SendNotFull::SendNotFull(bool end_check) : STest::Rule<Os::Test::Queue::Tester>("SendNotFull"),
-    m_end_check(end_check)
-{}
+Os::Test::Queue::Tester::SendNotFull::SendNotFull(bool end_check)
+    : STest::Rule<Os::Test::Queue::Tester>("SendNotFull"), m_end_check(end_check) {}
 
 bool Os::Test::Queue::Tester::SendNotFull::precondition(const Os::Test::Queue::Tester& state  //!< The test state
 ) {
@@ -83,9 +88,8 @@ void Os::Test::Queue::Tester::SendNotFull::action(Os::Test::Queue::Tester& state
     // Prevent lock-up
     ASSERT_LT(state.queue.getMessagesAvailable(), state.queue.getDepth());
     ASSERT_FALSE(state.is_shadow_full());
-    QueueInterface::Status status = state.shadow_send(pick.sent, pick.size, pick.priority, blocking);
-    QueueInterface::Status test_status = state.queue.send(pick.sent, pick.size, pick.priority, blocking);
-    delete[] pick.sent;  // Clean-up
+    QueueInterface::Status status = state.shadow_send(pick.get_sent(), pick.size, pick.priority, blocking);
+    QueueInterface::Status test_status = state.queue.send(pick.get_sent(), pick.size, pick.priority, blocking);
     ASSERT_EQ(status, QueueInterface::Status::OP_OK);
     ASSERT_EQ(test_status, status);
     if (this->m_end_check) {
@@ -108,10 +112,10 @@ bool Os::Test::Queue::Tester::SendFullNoBlock::precondition(const Os::Test::Queu
 void Os::Test::Queue::Tester::SendFullNoBlock::action(Os::Test::Queue::Tester& state  //!< The test state
 ) {
     PickedMessage pick = pick_message(state.shadow.messageSize);
-    QueueInterface::Status status = state.shadow_send(pick.sent, pick.size, pick.priority, QueueInterface::NONBLOCKING);
+    QueueInterface::Status status =
+        state.shadow_send(pick.get_sent(), pick.size, pick.priority, QueueInterface::NONBLOCKING);
     QueueInterface::Status test_status =
-        state.queue.send(pick.sent, pick.size, pick.priority, QueueInterface::NONBLOCKING);
-    delete[] pick.sent;
+        state.queue.send(pick.get_sent(), pick.size, pick.priority, QueueInterface::NONBLOCKING);
 
     ASSERT_EQ(status, QueueInterface::Status::FULL);
     ASSERT_EQ(test_status, status);
@@ -123,8 +127,8 @@ void Os::Test::Queue::Tester::SendFullNoBlock::action(Os::Test::Queue::Tester& s
 //
 // ------------------------------------------------------------------------------------------------------
 
-Os::Test::Queue::Tester::ReceiveNotEmpty::ReceiveNotEmpty(bool end_check) : STest::Rule<Os::Test::Queue::Tester>("ReceiveNotEmpty"),
-      m_end_check(end_check) {}
+Os::Test::Queue::Tester::ReceiveNotEmpty::ReceiveNotEmpty(bool end_check)
+    : STest::Rule<Os::Test::Queue::Tester>("ReceiveNotEmpty"), m_end_check(end_check) {}
 
 bool Os::Test::Queue::Tester::ReceiveNotEmpty::precondition(const Os::Test::Queue::Tester& state  //!< The test state
 ) {
@@ -201,19 +205,17 @@ void Os::Test::Queue::Tester::Overflow::action(Os::Test::Queue::Tester& state  /
     while (not state.is_shadow_full()) {
         PickedMessage pick = pick_message(state.shadow.messageSize);
         QueueInterface::Status status =
-            state.shadow_send(pick.sent, pick.size, pick.priority, QueueInterface::BlockingType::NONBLOCKING);
+            state.shadow_send(pick.get_sent(), pick.size, pick.priority, QueueInterface::BlockingType::NONBLOCKING);
         QueueInterface::Status test_status =
-            state.queue.send(pick.sent, pick.size, pick.priority, QueueInterface::BlockingType::NONBLOCKING);
-        delete[] pick.sent;
+            state.queue.send(pick.get_sent(), pick.size, pick.priority, QueueInterface::BlockingType::NONBLOCKING);
         ASSERT_EQ(status, QueueInterface::Status::OP_OK);
         ASSERT_EQ(status, test_status);
     }
     PickedMessage pick = pick_message(state.shadow.messageSize);
     QueueInterface::Status status =
-        state.shadow_send(pick.sent, pick.size, pick.priority, QueueInterface::BlockingType::NONBLOCKING);
+        state.shadow_send(pick.get_sent(), pick.size, pick.priority, QueueInterface::BlockingType::NONBLOCKING);
     QueueInterface::Status test_status =
-        state.queue.send(pick.sent, pick.size, pick.priority, QueueInterface::BlockingType::NONBLOCKING);
-    delete[] pick.sent;
+        state.queue.send(pick.get_sent(), pick.size, pick.priority, QueueInterface::BlockingType::NONBLOCKING);
     ASSERT_EQ(status, QueueInterface::Status::FULL);
     ASSERT_EQ(status, test_status);
     state.shadow_check();
@@ -282,16 +284,15 @@ void Os::Test::Queue::Tester::SendBlock::action(Os::Test::Queue::Tester& state  
     PickedMessage pick = pick_message(state.shadow.messageSize);
     this->notify_other("SendUnblock");
     QueueInterface::Status status =
-        state.shadow_send(pick.sent, pick.size, pick.priority, QueueInterface::BlockingType::BLOCKING);
+        state.shadow_send(pick.get_sent(), pick.size, pick.priority, QueueInterface::BlockingType::BLOCKING);
     getLock().unlock();
     QueueInterface::Status test_status =
-        state.queue.send(pick.sent, pick.size, pick.priority, QueueInterface::BlockingType::BLOCKING);
+        state.queue.send(pick.get_sent(), pick.size, pick.priority, QueueInterface::BlockingType::BLOCKING);
     getLock().lock();
     // Condition should be set after block
     ASSERT_TRUE(this->getCondition());
     // Unblock the shadow queue send
     state.shadow_send_unblock();
-    delete[] pick.sent;
 
     ASSERT_EQ(status, QueueInterface::Status::OP_OK);
     ASSERT_EQ(test_status, status);

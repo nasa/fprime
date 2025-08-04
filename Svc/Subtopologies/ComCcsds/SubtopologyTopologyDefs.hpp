@@ -9,8 +9,7 @@
 
 namespace ComCcsds {
     struct SubtopologyState {
-        const char* hostname;
-        U16 port;         
+        // Empty - no external state needed for ComCcsds subtopology
     };
 
     struct TopologyState {

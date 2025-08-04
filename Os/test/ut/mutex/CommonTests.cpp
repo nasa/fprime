@@ -56,28 +56,19 @@ TEST_F(FunctionalityTester, RandomizedInterfaceTesting) {
 
     // Place these rules into a list of rules
     STest::Rule<Os::Test::Mutex::Tester>* rules[] = {
-            &take_rule,
-            &release_rule,
-            &lock_rule,
-            &unlock_rule,
+        &take_rule,
+        &release_rule,
+        &lock_rule,
+        &unlock_rule,
     };
 
     // Take the rules and place them into a random scenario
-    STest::RandomScenario<Os::Test::Mutex::Tester> random(
-            "Random Rules",
-            rules,
-            FW_NUM_ARRAY_ELEMENTS(rules)
-    );
+    STest::RandomScenario<Os::Test::Mutex::Tester> random("Random Rules", rules, FW_NUM_ARRAY_ELEMENTS(rules));
 
     // Create a bounded scenario wrapping the random scenario
-    STest::BoundedScenario<Os::Test::Mutex::Tester> bounded(
-            "Bounded Random Rules Scenario",
-            random,
-            100
-    );
+    STest::BoundedScenario<Os::Test::Mutex::Tester> bounded("Bounded Random Rules Scenario", random, 100);
     // Run!
     const U32 numSteps = bounded.run(*tester);
     printf("Ran %u steps.\n", numSteps);
     // add one run of unlock for safe destruction
 }
-
