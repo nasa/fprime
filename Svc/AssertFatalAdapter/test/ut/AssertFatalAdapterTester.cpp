@@ -63,7 +63,7 @@ void AssertFatalAdapterTester::testAsserts() {
     // FW_ASSERT_0
 
     FW_ASSERT(0);
-    lineNo = __LINE__;
+    lineNo = __LINE__ - 1;  // __LINE__ - 1 retrieves the line number of assert above
     ASSERT_EVENTS_AF_ASSERT_0_SIZE(expectedSize);
     if (expectedSize > 0) {
         ASSERT_EVENTS_AF_ASSERT_0(0, file, lineNo);
@@ -72,7 +72,7 @@ void AssertFatalAdapterTester::testAsserts() {
     // FW_ASSERT_1
 
     FW_ASSERT(0, 1);
-    lineNo = __LINE__;
+    lineNo = __LINE__ - 1;  // __LINE__ - 1 retrieves the line number of assert above
     ASSERT_EVENTS_AF_ASSERT_1_SIZE(expectedSize);
     if (expectedSize > 0) {
         ASSERT_EVENTS_AF_ASSERT_1(0, file, lineNo, 1);
@@ -81,7 +81,7 @@ void AssertFatalAdapterTester::testAsserts() {
     // FW_ASSERT_2
 
     FW_ASSERT(0, 1, 2);
-    lineNo = __LINE__;
+    lineNo = __LINE__ - 1;  // __LINE__ - 1 retrieves the line number of assert above
     ASSERT_EVENTS_AF_ASSERT_2_SIZE(expectedSize);
     if (expectedSize > 0) {
         ASSERT_EVENTS_AF_ASSERT_2(0, file, lineNo, 1, 2);
@@ -90,7 +90,7 @@ void AssertFatalAdapterTester::testAsserts() {
     // FW_ASSERT_3
 
     FW_ASSERT(0, 1, 2, 3);
-    lineNo = __LINE__;
+    lineNo = __LINE__ - 1;  // __LINE__ - 1 retrieves the line number of assert above
     ASSERT_EVENTS_AF_ASSERT_3_SIZE(expectedSize);
     if (expectedSize > 0) {
         ASSERT_EVENTS_AF_ASSERT_3(0, file, lineNo, 1, 2, 3);
@@ -99,7 +99,7 @@ void AssertFatalAdapterTester::testAsserts() {
     // FW_ASSERT_4
 
     FW_ASSERT(0, 1, 2, 3, 4);
-    lineNo = __LINE__;
+    lineNo = __LINE__ - 1;  // __LINE__ - 1 retrieves the line number of assert above
     ASSERT_EVENTS_AF_ASSERT_4_SIZE(expectedSize);
     if (expectedSize > 0) {
         ASSERT_EVENTS_AF_ASSERT_4(0, file, lineNo, 1, 2, 3, 4);
@@ -108,7 +108,7 @@ void AssertFatalAdapterTester::testAsserts() {
     // FW_ASSERT_5
 
     FW_ASSERT(0, 1, 2, 3, 4, 5);
-    lineNo = __LINE__;
+    lineNo = __LINE__ - 1;  // __LINE__ - 1 retrieves the line number of assert above
     ASSERT_EVENTS_AF_ASSERT_5_SIZE(expectedSize);
     if (expectedSize > 0) {
         ASSERT_EVENTS_AF_ASSERT_5(0, file, lineNo, 1, 2, 3, 4, 5);
@@ -117,7 +117,7 @@ void AssertFatalAdapterTester::testAsserts() {
     // FW_ASSERT_6
 
     FW_ASSERT(0, 1, 2, 3, 4, 5, 6);
-    lineNo = __LINE__;
+    lineNo = __LINE__ - 1;  // __LINE__ - 1 retrieves the line number of assert above
     ASSERT_EVENTS_AF_ASSERT_6_SIZE(expectedSize);
     if (expectedSize > 0) {
         ASSERT_EVENTS_AF_ASSERT_6(0, file, lineNo, 1, 2, 3, 4, 5, 6);
