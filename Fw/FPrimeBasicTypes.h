@@ -21,9 +21,9 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+#include <Fw/Types/BasicTypes.h>
 #include <Platform/PlatformTypes.h>
 #include <config/FpConfig.h>
-#include <Fw/Types/BasicTypes.hpp>
 
 // ----------------------------------------------------------------------
 // Type aliases defined by FPP
