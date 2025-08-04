@@ -12,7 +12,7 @@
 // ======================================================================
 
 #include "RateLimiterTester.hpp"
-#include <ctime>
+
 
 namespace Utils {
 
@@ -94,9 +94,8 @@ namespace Utils {
       const U32 numIter = 100000;
       Fw::Time curTime(0, 0);
       Fw::Time nextTriggerTime(0, 0);
-      srand(0x30931842);
       for (U32 iter = 0; iter < numIter; iter++) {
-        curTime.add(0, (rand() % 5 + 1) * 100000);
+        curTime.add(0, STest::Pick::lowerUpper(1, 5) * 100000);
         bool shouldTrigger = (cycles == 0) || (curTime >= nextTriggerTime);
         bool triggered = limiter.trigger(curTime);
         ASSERT_EQ(shouldTrigger, triggered) << " for cycles " << cycles << " at " << curTime.getSeconds() << "." << curTime.getUSeconds();
@@ -127,9 +126,8 @@ namespace Utils {
       Fw::Time curTime(0, 0);
       U32 lastTriggerIter = 0;
       Fw::Time nextTriggerTime(0, 0);
-      srand(0x28E1ACC2);
       for (U32 iter = 0; iter < numIter; iter++) {
-        curTime.add(0, (rand() % 5 + 1) * 100000);
+        curTime.add(0, STest::Pick::lowerUpper(1, 5) * 100000);
         bool shouldTrigger = ((iter-lastTriggerIter) % counterCycles == 0) || (curTime >= nextTriggerTime);
         bool triggered = limiter.trigger(curTime);
         ASSERT_EQ(shouldTrigger, triggered) << " for cycles " << counterCycles << "/" << timeCycles << " at " << iter << "/" << curTime.getSeconds() << "." << curTime.getUSeconds();
