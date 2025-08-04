@@ -66,7 +66,7 @@ TEST(SerializationTest, Serialization1) {
     Fw::SerializeBufferBaseTester::assertResetState(buff);
 
     Fw::SerializeBufferBaseTester::verifyU8Serialization(buff, u8t1);
-    ASSERT_EQ(0xAB, ptr[0]); // Verify the actual byte value in the buffer
+    ASSERT_EQ(0xAB, ptr[0]);  // Verify the actual byte value in the buffer
 
     Fw::SerializeBufferBaseTester::verifyU8Deserialization(buff, u8t2, u8t1);
 
@@ -85,7 +85,7 @@ TEST(SerializationTest, Serialization1) {
 
     // Use the tester to verify I8 serialization
     Fw::SerializeBufferBaseTester::verifyI8Serialization(buff, i8t1);
-    ASSERT_EQ(0xFF, ptr[0]); // Verify the actual byte value in the buffer
+    ASSERT_EQ(0xFF, ptr[0]);  // Verify the actual byte value in the buffer
 
     // Use the tester to verify I8 deserialization
     Fw::SerializeBufferBaseTester::verifyI8Deserialization(buff, i8t2, i8t1);
@@ -1151,7 +1151,6 @@ TEST(TypesTest, StringTest) {
 
     ASSERT_EQ(es, es2);
     ASSERT_EQ(es2, "ExternalString");
-
 }
 
 TEST(TypesTest, ObjectNameTest) {
@@ -1201,7 +1200,7 @@ TEST(TypesTest, FormatSpecifierTest) {
     str.format("I8: %" PRI_I8, numI8);
     ASSERT_STREQ(str.toChar(), "I8: -10");
 
-    #if FW_HAS_16_BIT
+#if FW_HAS_16_BIT
     U16 numU16 = 10;
     str.format("U16: %" PRI_U16, numU16);
     ASSERT_STREQ(str.toChar(), "U16: 10");
@@ -1209,9 +1208,9 @@ TEST(TypesTest, FormatSpecifierTest) {
     I16 numI16 = -10;
     str.format("I16: %" PRI_I16, numI16);
     ASSERT_STREQ(str.toChar(), "I16: -10");
-    #endif
+#endif
 
-    #if FW_HAS_32_BIT
+#if FW_HAS_32_BIT
     U32 numU32 = 10;
     str.format("U32: %" PRI_U32, numU32);
     ASSERT_STREQ(str.toChar(), "U32: 10");
@@ -1219,9 +1218,9 @@ TEST(TypesTest, FormatSpecifierTest) {
     I32 numI32 = -10;
     str.format("I32: %" PRI_I32, numI32);
     ASSERT_STREQ(str.toChar(), "I32: -10");
-    #endif
+#endif
 
-    #if FW_HAS_64_BIT
+#if FW_HAS_64_BIT
     U64 numU64 = 10;
     str.format("U64: %" PRI_U64, numU64);
     ASSERT_STREQ(str.toChar(), "U64: 10");
@@ -1229,17 +1228,17 @@ TEST(TypesTest, FormatSpecifierTest) {
     I64 numI64 = -10;
     str.format("I64: %" PRI_I64, numI64);
     ASSERT_STREQ(str.toChar(), "I64: -10");
-    #endif
+#endif
 
     F32 numF32 = 12.3456789;
     str.format("F32: %" PRI_F64, static_cast<double>(numF32));
     ASSERT_STREQ(str.toChar(), "F32: 12.345679");
 
-    #if FW_HAS_F64
+#if FW_HAS_F64
     F64 numF64 = 12.3456789;
     str.format("F64: %" PRI_F64, numF64);
     ASSERT_STREQ(str.toChar(), "F64: 12.345679");
-    #endif
+#endif
 
     char c = 'A';
     str.format("CHAR: %" PRI_CHAR, c);
@@ -1293,7 +1292,8 @@ TEST(Nominal, string_copy) {
     char buffer_out_truth[10];
 
     char* out_truth = ::strncpy(buffer_out_truth, copy_string, static_cast<FwSizeType>(sizeof(buffer_out_truth)));
-    char* out_test = Fw::StringUtils::string_copy(buffer_out_test, copy_string, static_cast<FwSizeType>(sizeof(buffer_out_test)));
+    char* out_test =
+        Fw::StringUtils::string_copy(buffer_out_test, copy_string, static_cast<FwSizeType>(sizeof(buffer_out_test)));
 
     ASSERT_EQ(sizeof(buffer_out_truth), sizeof(buffer_out_test)) << "Buffer size mismatch";
 
@@ -1319,7 +1319,8 @@ TEST(OffNominal, string_copy) {
     char buffer_out_truth[sizeof(copy_string) - 1];
 
     char* out_truth = ::strncpy(buffer_out_truth, copy_string, static_cast<FwSizeType>(sizeof(buffer_out_truth)));
-    char* out_test = Fw::StringUtils::string_copy(buffer_out_test, copy_string, static_cast<FwSizeType>(sizeof(buffer_out_test)));
+    char* out_test =
+        Fw::StringUtils::string_copy(buffer_out_test, copy_string, static_cast<FwSizeType>(sizeof(buffer_out_test)));
 
     ASSERT_EQ(sizeof(buffer_out_truth), sizeof(buffer_out_test)) << "Buffer size mismatch";
 
@@ -1351,63 +1352,62 @@ TEST(OffNominal, string_len_zero) {
 TEST(OffNominal, sub_string_no_match) {
     const char* source_string = "abc123";
     const char* sub_string = "456";
-    ASSERT_EQ(Fw::StringUtils::substring_find(source_string,6,sub_string,3),-1);
+    ASSERT_EQ(Fw::StringUtils::substring_find(source_string, 6, sub_string, 3), -1);
 }
 
 TEST(Nominal, sub_string_match_begin) {
     const char* source_string = "abc123";
     const char* sub_string = "abc";
-    ASSERT_EQ(Fw::StringUtils::substring_find(source_string,6,sub_string,3),0);
+    ASSERT_EQ(Fw::StringUtils::substring_find(source_string, 6, sub_string, 3), 0);
 }
 
 TEST(Nominal, sub_string_match_end) {
     const char* source_string = "abc123";
     const char* sub_string = "123";
-    ASSERT_EQ(Fw::StringUtils::substring_find(source_string,6,sub_string,3),3);
+    ASSERT_EQ(Fw::StringUtils::substring_find(source_string, 6, sub_string, 3), 3);
 }
 
 TEST(Nominal, sub_string_match_partway_1) {
     const char* source_string = "abc123";
     const char* sub_string = "c12";
-    ASSERT_EQ(Fw::StringUtils::substring_find(source_string,6,sub_string,3),2);
+    ASSERT_EQ(Fw::StringUtils::substring_find(source_string, 6, sub_string, 3), 2);
 }
 
 TEST(OffNominal, sub_string_partial_match_begin) {
     const char* source_string = "abc123";
     const char* sub_string = "ab1";
-    ASSERT_EQ(Fw::StringUtils::substring_find(source_string,6,sub_string,3),-1);
+    ASSERT_EQ(Fw::StringUtils::substring_find(source_string, 6, sub_string, 3), -1);
 }
 
 TEST(OffNominal, sub_string_partial_match_middle) {
     const char* source_string = "abc123";
     const char* sub_string = "c13";
-    ASSERT_EQ(Fw::StringUtils::substring_find(source_string,6,sub_string,3),-1);
+    ASSERT_EQ(Fw::StringUtils::substring_find(source_string, 6, sub_string, 3), -1);
 }
 
 TEST(OffNominal, sub_string_partial_match_end) {
     const char* source_string = "abc123";
     const char* sub_string = "234";
-    ASSERT_EQ(Fw::StringUtils::substring_find(source_string,6,sub_string,3),-1);
+    ASSERT_EQ(Fw::StringUtils::substring_find(source_string, 6, sub_string, 3), -1);
 }
 
 TEST(Nominal, sub_string_exact_match) {
     const char* source_string = "abc123";
     const char* sub_string = "abc123";
-    ASSERT_EQ(Fw::StringUtils::substring_find(source_string,6,sub_string,3),0);
+    ASSERT_EQ(Fw::StringUtils::substring_find(source_string, 6, sub_string, 3), 0);
 }
 
 TEST(OffNominal, sub_string_source_zero_size) {
     const char* source_string = "";
     const char* sub_string = "234";
-    ASSERT_EQ(Fw::StringUtils::substring_find(source_string,0,sub_string,3),-1);
+    ASSERT_EQ(Fw::StringUtils::substring_find(source_string, 0, sub_string, 3), -1);
 }
 
 TEST(OffNominal, sub_string_substring_zero_size) {
     const char* source_string = "abc123";
     const char* sub_string = "";
-    ASSERT_EQ(Fw::StringUtils::substring_find(source_string,6,sub_string,0),0);
+    ASSERT_EQ(Fw::StringUtils::substring_find(source_string, 6, sub_string, 0), 0);
 }
-
 
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);

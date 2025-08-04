@@ -194,4 +194,3 @@ class Buffer : public Fw::Serializable {
 };
 }  // end namespace Fw
 #endif /* BUFFER_HPP_ */
-
