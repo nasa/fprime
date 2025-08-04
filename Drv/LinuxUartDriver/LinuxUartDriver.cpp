@@ -366,7 +366,7 @@ void LinuxUartDriver ::serialReadTaskEntry(void* ptr) {
         } else {
             status = ByteStreamStatus::OTHER_ERROR;  // Simply to return the buffer
         }
-      
+
         comp->recv_out(0, buff, status);  // added by m.chase 03.06.2017
     }
 }
