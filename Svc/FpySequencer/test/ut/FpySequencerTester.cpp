@@ -198,13 +198,8 @@ void FpySequencerTester::add_STACK_OP(Fpy::DirectiveId op) {
     addDirective(op, buf);
 }
 
-void FpySequencerTester::add_EXIT(bool success) {
-    add_EXIT(FpySequencer_ExitDirective(success));
-}
-
-void FpySequencerTester::add_EXIT(FpySequencer_ExitDirective dir) {
+void FpySequencerTester::add_EXIT() {
     Fw::StatementArgBuffer buf;
-    FW_ASSERT(buf.serialize(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     addDirective(Fpy::DirectiveId::EXIT, buf);
 }
 void FpySequencerTester::add_ALLOCATE(U16 size) {

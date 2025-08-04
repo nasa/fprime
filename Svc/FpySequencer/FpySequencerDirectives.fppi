@@ -55,8 +55,8 @@ struct StackOpDirective {
 }
 
 struct ExitDirective {
-    @ whether or not to consider the sequence successful
-    success: bool
+    # pops U8 off the stack
+    _empty: U8
 }
 
 @ pushes some empty bytes to the stack

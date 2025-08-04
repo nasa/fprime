@@ -96,8 +96,7 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     void add_CONST_CMD(FwOpcodeType opcode);
     void add_CONST_CMD(FpySequencer_ConstCmdDirective dir);
     void add_STACK_OP(Fpy::DirectiveId op);
-    void add_EXIT(bool success);
-    void add_EXIT(FpySequencer_ExitDirective dir);
+    void add_EXIT();
     void add_ALLOCATE(U16 size);
     void add_ALLOCATE(FpySequencer_AllocateDirective dir);
     void add_STORE(U16 lvarOffset, U16 size);

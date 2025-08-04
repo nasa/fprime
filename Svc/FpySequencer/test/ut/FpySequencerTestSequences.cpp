@@ -122,10 +122,12 @@ TEST_F(FpySequencerTester, NotTrueSeq) {
 
     add_PUSH_VAL(static_cast<U8>(255));
     add_STACK_OP(Fpy::DirectiveId::NOT);
-    add_IF(4);
+    add_IF(5);
     // should not get here
-    add_EXIT(false);
-    add_EXIT(true);
+    add_PUSH_VAL<U8>(false);
+    add_EXIT();
+    add_PUSH_VAL<U8>(true);
+    add_EXIT();
 
     writeAndRun();
     dispatchUntilState(State::IDLE);

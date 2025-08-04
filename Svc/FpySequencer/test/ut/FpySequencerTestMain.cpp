@@ -673,15 +673,16 @@ TEST_F(FpySequencerTester, ieq) {
 // }
 
 TEST_F(FpySequencerTester, exit) {
-    FpySequencer_ExitDirective directive(true);
+    FpySequencer_ExitDirective directive;
     DirectiveError err = DirectiveError::NO_ERROR;
     tester_get_m_sequenceObj_ptr()->get_header().set_statementCount(123);
+    tester_push<U8>(true);
     Signal result = tester_exit_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(tester_get_m_sequenceObj_ptr()->get_header().get_statementCount(), 123);
 
-    directive.set_success(false);
+    tester_push<U8>(false);
     result = tester_exit_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::DELIBERATE_FAILURE);
@@ -1425,8 +1426,8 @@ TEST_F(FpySequencerTester, deserialize_stackOp) {
 
 TEST_F(FpySequencerTester, deserialize_exit) {
     FpySequencer::DirectiveUnion actual;
-    FpySequencer_ExitDirective dir(false);
-    add_EXIT(dir);
+    FpySequencer_ExitDirective dir;
+    add_EXIT();
     Fw::Success result = tester_deserializeDirective(seq.get_statements()[0], actual);
     ASSERT_EQ(result, Fw::Success::SUCCESS);
     ASSERT_EQ(actual.exit, dir);
@@ -1436,11 +1437,11 @@ TEST_F(FpySequencerTester, deserialize_exit) {
     ASSERT_EQ(result, Fw::Success::FAILURE);
     ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
     this->clearHistory();
-    // clear args, make sure it fails
+    // clear args, make sure it succeeds
     seq.get_statements()[0].get_argBuf().resetSer();
     result = tester_deserializeDirective(seq.get_statements()[0], actual);
-    ASSERT_EQ(result, Fw::Success::FAILURE);
-    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+    ASSERT_EQ(result, Fw::Success::SUCCESS);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(0);
 }
 
 // caught a bug

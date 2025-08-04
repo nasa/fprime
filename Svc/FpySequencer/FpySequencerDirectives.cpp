@@ -738,7 +738,11 @@ Signal FpySequencer::stackOp_directiveHandler(const FpySequencer_StackOpDirectiv
 }
 
 Signal FpySequencer::exit_directiveHandler(const FpySequencer_ExitDirective& directive, DirectiveError& error) {
-    if (directive.get_success()) {
+    if (this->m_runtime.stackSize < 1) {
+        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return Signal::stmtResponse_failure;
+    }
+    if (this->pop<U8>() != 0) {
         // just goto the end of the sequence
         this->m_runtime.nextStatementIndex = this->m_sequenceObj.get_header().get_statementCount();
         return Signal::stmtResponse_success;
