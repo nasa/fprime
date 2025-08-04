@@ -7,9 +7,8 @@
 #ifndef FW_SerializeBufferBaseTester_HPP
 #define FW_SerializeBufferBaseTester_HPP
 
-#include <Fw/Types/Serializable.hpp>
 #include <gtest/gtest.h>
-
+#include <Fw/Types/Serializable.hpp>
 
 namespace Fw {
 
@@ -90,6 +89,6 @@ class SerializeBufferBaseTester {
     }
 };
 
-}
+}  // namespace Fw
 
-#endif // FW_SerializeBufferBaseTester_HPP
+#endif  // FW_SerializeBufferBaseTester_HPP

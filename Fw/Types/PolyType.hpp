@@ -95,21 +95,21 @@ class PolyType : public Serializable {
     void toString(StringBase& dest) const override;      //!< get string representation
 #endif
 
-    PolyType& operator=(const PolyType& src);                      //!< PolyType operator=
-    bool operator<(const PolyType& other) const;                   //!< PolyType operator<
-    bool operator>(const PolyType& other) const;                   //!< PolyType operator>
-    bool operator>=(const PolyType& other) const;                  //!< PolyType operator>=
-    bool operator<=(const PolyType& other) const;                  //!< PolyType operator<=
-    bool operator==(const PolyType& other) const;                  //!< PolyType operator==
-    bool operator!=(const PolyType& other) const;                  //!< PolyType operator!=
-    
+    PolyType& operator=(const PolyType& src);      //!< PolyType operator=
+    bool operator<(const PolyType& other) const;   //!< PolyType operator<
+    bool operator>(const PolyType& other) const;   //!< PolyType operator>
+    bool operator>=(const PolyType& other) const;  //!< PolyType operator>=
+    bool operator<=(const PolyType& other) const;  //!< PolyType operator<=
+    bool operator==(const PolyType& other) const;  //!< PolyType operator==
+    bool operator!=(const PolyType& other) const;  //!< PolyType operator!=
+
     // New serialization interface
-    SerializeStatus serializeTo(SerializeBufferBase& buffer) const override;   //!< Serialize function
-    SerializeStatus deserializeFrom(SerializeBufferBase& buffer) override;     //!< Deserialize function
-    
+    SerializeStatus serializeTo(SerializeBufferBase& buffer) const override;  //!< Serialize function
+    SerializeStatus deserializeFrom(SerializeBufferBase& buffer) override;    //!< Deserialize function
+
     // Deprecated methods for backward compatibility - these call the new interface
-    SerializeStatus serialize(SerializeBufferBase& buffer) const override;     //!< Serialize function (deprecated)
-    SerializeStatus deserialize(SerializeBufferBase& buffer) override;         //!< Deserialize function (deprecated)
+    SerializeStatus serialize(SerializeBufferBase& buffer) const override;  //!< Serialize function (deprecated)
+    SerializeStatus deserialize(SerializeBufferBase& buffer) override;      //!< Deserialize function (deprecated)
 
   private:
     typedef enum {
@@ -128,8 +128,8 @@ class PolyType : public Serializable {
         TYPE_U64,  // !< U64 type stored
         TYPE_I64,  // !< I64 type stored
 #endif
-        TYPE_F32,  // !< F32 type stored
-        TYPE_F64,  // !< F64 type stored
+        TYPE_F32,   // !< F32 type stored
+        TYPE_F64,   // !< F64 type stored
         TYPE_BOOL,  // !< bool type stored
         TYPE_PTR    // !< pointer type stored
     } Type;
@@ -151,7 +151,7 @@ class PolyType : public Serializable {
         U64 u64Val;  //!< U64 data storage
         I64 i64Val;  //!< I64 data storage
 #endif
-        F64 f64Val;  //!< F64 data storage
+        F64 f64Val;    //!< F64 data storage
         F32 f32Val;    // !< F32 data storage
         void* ptrVal;  // !< pointer data storage
         bool boolVal;  // !< bool data storage
