@@ -246,10 +246,8 @@ fpy
 FPYSEQUENCER
 freeram
 Fregoso
-fres
 frsize
 fsblkcnt
-fsrc
 fsw
 FWCASSERT
 gcda
@@ -303,10 +301,8 @@ HTMLHELP
 ibd
 ieeetr
 ieq
-iext
 iflag
 ifstr
-ilhs
 imple
 inbool
 INCLUDEDIR
@@ -325,16 +321,13 @@ ioctl
 ipas
 IPCFG
 IPHELPER
-irhs
 isf
 isgreater
 isless
 isr
-isrc
 isunordered
 itimerspec
 itr
-itrunc
 itval
 janamian
 Jax
@@ -373,6 +366,7 @@ LOCALSTATEDIR
 LOGGERRULES
 LOGPACKET
 lseek
+lvar
 LVL
 lxml
 MACROFILE
@@ -568,7 +562,6 @@ SETLOGGING
 setprotocol
 setschedparam
 setschedpolicy
-setser
 setstacksize
 settime
 sev
