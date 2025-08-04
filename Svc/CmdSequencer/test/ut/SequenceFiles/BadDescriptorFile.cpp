@@ -51,7 +51,7 @@ namespace Svc {
         Fw::Time t(TimeBase::TB_WORKSTATION_TIME, 0, 0);
         // Force an invalid record descriptor
         FPrime::Records::Descriptor descriptor =
-          static_cast<FPrime::Records::Descriptor>(10);
+          static_cast<FPrime::Records::Descriptor>(10);  // NOLINT(clang-analyzer-optin.core.EnumCastOutOfRange) intentional test
         FPrime::Records::serialize(
             descriptor,
             t,
@@ -73,7 +73,7 @@ namespace Svc {
       for (U32 i = 0; i < this->n; ++i) {
         // Force an invalid time flag
         const AMPCSSequence::Record::TimeFlag::t timeFlag =
-          static_cast<AMPCSSequence::Record::TimeFlag::t>(10);
+          static_cast<AMPCSSequence::Record::TimeFlag::t>(10);  // NOLINT(clang-analyzer-optin.core.EnumCastOutOfRange) intentional test
         const AMPCSSequence::Record::Time::t time = 0;
         const AMPCSSequence::Record::Opcode::t opcode = i;
         const U32 argument = i + 1;

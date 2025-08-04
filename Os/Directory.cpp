@@ -7,7 +7,8 @@
 
 namespace Os {
 
-Directory::Directory() : m_is_open(false), m_handle_storage(), m_delegate(*DirectoryInterface::getDelegate(m_handle_storage)) {
+Directory::Directory()
+    : m_is_open(false), m_handle_storage(), m_delegate(*DirectoryInterface::getDelegate(m_handle_storage)) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<DirectoryInterface*>(&this->m_handle_storage[0]));
 }
 
@@ -50,14 +51,14 @@ Directory::Status Directory::rewind() {
     return this->m_delegate.rewind();
 }
 
-Directory::Status Directory::read(char * fileNameBuffer, FwSizeType bufSize) {
+Directory::Status Directory::read(char* fileNameBuffer, FwSizeType bufSize) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<DirectoryInterface*>(&this->m_handle_storage[0]));
     if (not this->m_is_open) {
         return Status::NOT_OPENED;
     }
     FW_ASSERT(fileNameBuffer != nullptr);
     Status status = this->m_delegate.read(fileNameBuffer, bufSize);
-    fileNameBuffer[bufSize - 1] = '\0'; // Guarantee null-termination
+    fileNameBuffer[bufSize - 1] = '\0';  // Guarantee null-termination
     return status;
 }
 
@@ -89,7 +90,7 @@ Directory::Status Directory::getFileCount(FwSizeType& fileCount) {
     }
     const FwSizeType loopLimit = std::numeric_limits<FwSizeType>::max();
     FwSizeType count = 0;
-    char unusedBuffer[1]; // buffer must have size but is unused
+    char unusedBuffer[1];  // buffer must have size but is unused
     Status readStatus = Status::OP_OK;
     fileCount = 0;
     // Count files by reading each file entry until there is NO_MORE_FILES
@@ -109,8 +110,9 @@ Directory::Status Directory::getFileCount(FwSizeType& fileCount) {
     return Status::OP_OK;
 }
 
-
-Directory::Status Directory::readDirectory(Fw::String filenameArray[], const FwSizeType filenameArraySize, FwSizeType& filenameCount) {
+Directory::Status Directory::readDirectory(Fw::String filenameArray[],
+                                           const FwSizeType filenameArraySize,
+                                           FwSizeType& filenameCount) {
     FW_ASSERT(filenameArray != nullptr);
     FW_ASSERT(filenameArraySize > 0);
     if (not this->m_is_open) {
@@ -141,8 +143,6 @@ Directory::Status Directory::readDirectory(Fw::String filenameArray[], const FwS
     }
 
     return returnStatus;
-
 }
-
 
 }  // namespace Os

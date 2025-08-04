@@ -13,7 +13,6 @@
 #include "STest/Scenario/RandomScenario.hpp"
 #include "STest/Scenario/Scenario.hpp"
 
-
 namespace Os {
 namespace Test {
 namespace Condition {
@@ -32,7 +31,7 @@ struct Tester {
 #include "ConditionRules.hpp"
 };
 
-}  // namespace Queue
+}  // namespace Condition
 }  // namespace Test
 }  // namespace Os
 

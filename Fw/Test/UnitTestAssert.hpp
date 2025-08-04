@@ -15,66 +15,61 @@
 
 namespace Test {
 
-    class UnitTestAssert: public Fw::AssertHook {
-        public:
+class UnitTestAssert : public Fw::AssertHook {
+  public:
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
-            typedef U32 File;
+    typedef U32 File;
 #else
-            typedef String File;
+    typedef String File;
 #endif
-            // initial value for File
-            static const File fileInit;
+    // initial value for File
+    static const File fileInit;
 
-        public:
-            UnitTestAssert();
-            virtual ~UnitTestAssert();
-            // function for hook
-            void doAssert();
-            void reportAssert(
-                    FILE_NAME_ARG file,
-                    FwSizeType lineNo,
-                    FwSizeType numArgs,
-                    FwAssertArgType arg1,
-                    FwAssertArgType arg2,
-                    FwAssertArgType arg3,
-                    FwAssertArgType arg4,
-                    FwAssertArgType arg5,
-                    FwAssertArgType arg6
-                    );
-            // retrieves assertion failure values
-            void retrieveAssert(
-                File& file,
-                FwSizeType& lineNo,
-                FwSizeType& numArgs,
-                FwAssertArgType& arg1,
-                FwAssertArgType& arg2,
-                FwAssertArgType& arg3,
-                FwAssertArgType& arg4,
-                FwAssertArgType& arg5,
-                FwAssertArgType& arg6
-                ) const;
+  public:
+    UnitTestAssert();
+    virtual ~UnitTestAssert();
+    // function for hook
+    void doAssert();
+    void reportAssert(FILE_NAME_ARG file,
+                      FwSizeType lineNo,
+                      FwSizeType numArgs,
+                      FwAssertArgType arg1,
+                      FwAssertArgType arg2,
+                      FwAssertArgType arg3,
+                      FwAssertArgType arg4,
+                      FwAssertArgType arg5,
+                      FwAssertArgType arg6);
+    // retrieves assertion failure values
+    void retrieveAssert(File& file,
+                        FwSizeType& lineNo,
+                        FwSizeType& numArgs,
+                        FwAssertArgType& arg1,
+                        FwAssertArgType& arg2,
+                        FwAssertArgType& arg3,
+                        FwAssertArgType& arg4,
+                        FwAssertArgType& arg5,
+                        FwAssertArgType& arg6) const;
 
-            // check whether assertion failure occurred
-            bool assertFailed() const;
+    // check whether assertion failure occurred
+    bool assertFailed() const;
 
-            // clear assertion failure
-            void clearAssertFailure();
+    // clear assertion failure
+    void clearAssertFailure();
 
-        private:
-            File m_file;
-            FwSizeType m_lineNo;
-            FwSizeType m_numArgs;
-            FwAssertArgType m_arg1;
-            FwAssertArgType m_arg2;
-            FwAssertArgType m_arg3;
-            FwAssertArgType m_arg4;
-            FwAssertArgType m_arg5;
-            FwAssertArgType m_arg6;
+  private:
+    File m_file;
+    FwSizeType m_lineNo;
+    FwSizeType m_numArgs;
+    FwAssertArgType m_arg1;
+    FwAssertArgType m_arg2;
+    FwAssertArgType m_arg3;
+    FwAssertArgType m_arg4;
+    FwAssertArgType m_arg5;
+    FwAssertArgType m_arg6;
 
-            // Whether an assertion failed
-            bool m_assertFailed;
-
-    };
+    // Whether an assertion failed
+    bool m_assertFailed;
+};
 
 } /* namespace Test */
 

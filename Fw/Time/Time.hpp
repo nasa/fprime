@@ -2,95 +2,88 @@
 #define FW_TIME_HPP
 
 #include <Fw/FPrimeBasicTypes.hpp>
+#include <Fw/Time/TimeValueSerializableAc.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <config/TimeBaseEnumAc.hpp>
-#include <Fw/Time/TimeValueSerializableAc.hpp>
 
 namespace Fw {
-    class Time: public Serializable {
+class Time : public Serializable {
+    friend class TimeTester;
 
-        friend class TimeTester;
+  public:
+    enum { SERIALIZED_SIZE = sizeof(FwTimeBaseStoreType) + sizeof(FwTimeContextStoreType) + sizeof(U32) + sizeof(U32) };
 
-        public:
+    Time();                                              // !< Default constructor
+    Time(const Time& other);                             // !< Copy constructor
+    Time(U32 seconds, U32 useconds);                     // !< Constructor with member values as arguments
+    Time(TimeBase timeBase, U32 seconds, U32 useconds);  // !< Constructor with member values as arguments
+    Time(TimeBase timeBase,
+         FwTimeContextStoreType context,
+         U32 seconds,
+         U32 useconds);                                      // !< Constructor with member values as arguments
+    virtual ~Time();                                         // !< Destructor
+    void set(U32 seconds, U32 useconds);                     // !< Sets value of time stored
+    void set(TimeBase timeBase, U32 seconds, U32 useconds);  // !< Sets value of time stored
+    void set(TimeBase timeBase,
+             FwTimeContextStoreType context,
+             U32 seconds,
+             U32 useconds);  // !< Sets value of time stored
+    void setTimeBase(TimeBase timeBase);
+    void setTimeContext(FwTimeContextStoreType context);
+    U32 getSeconds() const;   // !< Gets seconds part of time
+    U32 getUSeconds() const;  // !< Gets microseconds part of time
+    TimeBase getTimeBase()
+        const;  // !< Time base of time. This is project specific and is meant for indicating different sources of time
+    FwTimeContextStoreType getContext() const;                                // !< get the context value
+    SerializeStatus serializeTo(SerializeBufferBase& buffer) const override;  // !< Serialize method
+    SerializeStatus deserializeFrom(SerializeBufferBase& buffer) override;    // !< Deserialize method
+    SerializeStatus serialize(SerializeBufferBase& buffer) const override;    // !< Serialize method (deprecated)
+    SerializeStatus deserialize(SerializeBufferBase& buffer) override;        // !< Deserialize method (deprecated)
+    bool operator==(const Time& other) const;
+    bool operator!=(const Time& other) const;
+    bool operator>(const Time& other) const;
+    bool operator<(const Time& other) const;
+    bool operator>=(const Time& other) const;
+    bool operator<=(const Time& other) const;
+    Time& operator=(const Time& other);
 
-            enum {
-                SERIALIZED_SIZE = sizeof(FwTimeBaseStoreType)
-                    + sizeof(FwTimeContextStoreType)
-                    + sizeof(U32) + sizeof(U32)
-            };
+    // Static methods:
+    //! The type of a comparison result
+    typedef enum { LT = -1, EQ = 0, GT = 1, INCOMPARABLE = 2 } Comparison;
 
-            Time(); // !< Default constructor
-            Time(const Time& other); // !< Copy constructor
-            Time(U32 seconds, U32 useconds); // !< Constructor with member values as arguments
-            Time(TimeBase timeBase, U32 seconds, U32 useconds); // !< Constructor with member values as arguments
-            Time(TimeBase timeBase, FwTimeContextStoreType context, U32 seconds, U32 useconds); // !< Constructor with member values as arguments
-            virtual ~Time(); // !< Destructor
-            void set(U32 seconds, U32 useconds); // !< Sets value of time stored
-            void set(TimeBase timeBase, U32 seconds, U32 useconds); // !< Sets value of time stored
-            void set(TimeBase timeBase, FwTimeContextStoreType context, U32 seconds, U32 useconds); // !< Sets value of time stored
-            void setTimeBase(TimeBase timeBase);
-            void setTimeContext(FwTimeContextStoreType context);
-            U32 getSeconds() const; // !< Gets seconds part of time
-            U32 getUSeconds() const; // !< Gets microseconds part of time
-            TimeBase getTimeBase() const; // !< Time base of time. This is project specific and is meant for indicating different sources of time
-            FwTimeContextStoreType getContext() const; // !< get the context value
-            SerializeStatus serializeTo(SerializeBufferBase& buffer) const override; // !< Serialize method
-            SerializeStatus deserializeFrom(SerializeBufferBase& buffer) override; // !< Deserialize method
-            SerializeStatus serialize(SerializeBufferBase& buffer) const override; // !< Serialize method (deprecated)
-            SerializeStatus deserialize(SerializeBufferBase& buffer) override; // !< Deserialize method (deprecated)
-            bool operator==(const Time& other) const;
-            bool operator!=(const Time& other) const;
-            bool operator>(const Time& other) const;
-            bool operator<(const Time& other) const;
-            bool operator>=(const Time& other) const;
-            bool operator<=(const Time& other) const;
-            Time& operator=(const Time& other);
+    //! \return time zero
+    static Time zero(TimeBase timeBase = TimeBase::TB_NONE);
 
-            // Static methods:
-            //! The type of a comparison result
-            typedef enum {
-              LT = -1,
-              EQ = 0,
-              GT = 1,
-              INCOMPARABLE = 2
-            } Comparison;
+    //! Compare two times
+    //! \return The result
+    static Comparison compare(const Time& time1,  //!< Time 1
+                              const Time& time2   //!< Time 2
+    );
 
-            //! \return time zero
-            static Time zero(TimeBase timeBase=TimeBase::TB_NONE);
+    //! Add two times
+    //! \return The result
+    static Time add(const Time& a,  //!< Time a
+                    const Time& b   //!< Time b
+    );
 
-            //! Compare two times
-            //! \return The result
-            static Comparison compare(
-                const Time &time1, //!< Time 1
-                const Time &time2 //!< Time 2
-            );
+    //! Subtract subtrahend from minuend
+    //! \return The result
+    static Time sub(const Time& minuend,    //!< Value being subtracted from
+                    const Time& subtrahend  //!< Value being subtracted
+    );
 
-            //! Add two times
-            //! \return The result
-            static Time add(
-                const Time& a, //!< Time a
-                const Time& b //!< Time b
-            );
+    // add seconds and microseconds to existing time
+    void add(U32 seconds, U32 mseconds);
 
-            //! Subtract subtrahend from minuend
-            //! \return The result
-            static Time sub(
-                const Time& minuend, //!< Value being subtracted from
-                const Time& subtrahend //!< Value being subtracted
-            );
-
-            // add seconds and microseconds to existing time
-            void add(U32 seconds, U32 mseconds);
-
-#ifdef BUILD_UT // Stream operators to support Googletest
-            friend std::ostream& operator<<(std::ostream& os,  const Time& val);
+#ifdef BUILD_UT  // Stream operators to support Googletest
+    friend std::ostream& operator<<(std::ostream& os, const Time& val);
 #endif
-        private:
-            TimeValue m_val; // !< Time value
-    };
-    extern const Time ZERO_TIME;
+  private:
+    TimeValue m_val;  // !< Time value
+};
+extern const Time ZERO_TIME;
 
-}
+}  // namespace Fw
 
 #endif

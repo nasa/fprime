@@ -4,27 +4,21 @@
 // This ensures the delegation of function calls happens properly
 // ======================================================================
 #include <gtest/gtest.h>
+#include "Os/Stub/test/Mutex.hpp"
 #include "Os/test/ut/mutex/CommonTests.hpp"
 #include "Os/test/ut/mutex/RulesHeaders.hpp"
-#include "Os/Stub/test/Mutex.hpp"
 
 using namespace Os::Stub::Mutex::Test;
 
-
 // Basic file tests
 class Interface : public ::testing::Test {
-public:
+  public:
     //! Setup function delegating to UT setUp function
-    void SetUp() override {
-        StaticData::data = StaticData();
-    }
+    void SetUp() override { StaticData::data = StaticData(); }
 
     //! Setup function delegating to UT tearDown function
-    void TearDown() override {
-        StaticData::data = StaticData();
-    }
+    void TearDown() override { StaticData::data = StaticData(); }
 };
-
 
 // Ensure that Os::Mutex properly calls the implementation constructor
 TEST_F(Interface, Construction) {
@@ -59,7 +53,6 @@ TEST_F(Interface, Lock) {
     Os::Mutex mutex;
     mutex.lock();
     ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::TAKE_FN);
-
 }
 
 // Ensure that Os::Mutex properly calls the implementation unLock()
@@ -83,7 +76,7 @@ TEST_F(Interface, GetHandle) {
     ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::GET_HANDLE_FN);
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     STest::Random::seed();
     return RUN_ALL_TESTS();

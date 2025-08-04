@@ -12,10 +12,10 @@
 #ifndef DRV_SocketComponentHelper_HPP
 #define DRV_SocketComponentHelper_HPP
 
-#include <Fw/Buffer/Buffer.hpp>
 #include <Drv/Ip/IpSocket.hpp>
-#include <Os/Task.hpp>
+#include <Fw/Buffer/Buffer.hpp>
 #include <Os/Mutex.hpp>
+#include <Os/Task.hpp>
 
 namespace Drv {
 /**
@@ -27,12 +27,7 @@ namespace Drv {
  */
 class SocketComponentHelper {
   public:
-    enum OpenState{
-        NOT_OPEN,
-        OPENING,
-        OPEN,
-        SKIP
-    };
+    enum OpenState { NOT_OPEN, OPENING, OPEN, SKIP };
     /**
      * \brief constructs the socket read task
      */
@@ -52,11 +47,12 @@ class SocketComponentHelper {
      *        default behavior is to automatically open connections.
      *
      * \param name: name of the task
-     * \param priority: priority of the started task. See: Os::Task::start. Default: TASK_PRIORITY_DEFAULT, not prioritized
+     * \param priority: priority of the started task. See: Os::Task::start. Default: TASK_PRIORITY_DEFAULT, not
+     * prioritized
      * \param stack: stack size provided to the task. See: Os::Task::start. Default: TASK_DEFAULT, posix threads default
      * \param cpuAffinity: cpu affinity provided to task. See: Os::Task::start. Default: TASK_DEFAULT, don't care
      */
-    void start(const Fw::StringBase &name,
+    void start(const Fw::StringBase& name,
                const FwTaskPriorityType priority = Os::Task::TASK_PRIORITY_DEFAULT,
                const Os::Task::ParamType stack = Os::Task::TASK_DEFAULT,
                const Os::Task::ParamType cpuAffinity = Os::Task::TASK_DEFAULT);
@@ -73,7 +69,7 @@ class SocketComponentHelper {
      */
     SocketIpStatus open();
 
-     /**
+    /**
      * \brief check if IP socket has previously been opened
      *
      * Check if this IpSocket has previously been opened. In the case of Udp this will check for outgoing transmissions
@@ -87,8 +83,9 @@ class SocketComponentHelper {
     /**
      * \brief set socket to automatically open connections when true, or not when false
      *
-     * When passed `true`, this instructs the socket to automatically open a socket and reopen socket failed connections. When passed `false`
-     * the user must explicitly call the `open` method to open the socket initially and when a socket fails.
+     * When passed `true`, this instructs the socket to automatically open a socket and reopen socket failed
+     * connections. When passed `false` the user must explicitly call the `open` method to open the socket initially and
+     * when a socket fails.
      *
      * \param auto_open: true to automatically open and reopen sockets, false otherwise
      */
@@ -112,7 +109,7 @@ class SocketComponentHelper {
      * \param size: maximum size of data buffer to fill
      * \return status of the send, SOCK_DISCONNECTED to reopen, SOCK_SUCCESS on success, something else on error
      */
-    SocketIpStatus recv(U8* data, U32 &size);
+    SocketIpStatus recv(U8* data, U32& size);
 
     /**
      * \brief close the socket communications
@@ -202,7 +199,6 @@ class SocketComponentHelper {
      */
     virtual void connected() = 0;
 
-
     /**
      * \brief a task designed to read from the socket and output incoming data
      *
@@ -214,9 +210,9 @@ class SocketComponentHelper {
     /**
      * \brief Re-open port if it has been disconnected
      *
-     * This function is a helper to handle the situations where this code needs to safely reopen a socket. User code should
-     * connect using the `open` call. This is for opening/reopening in situations where automatic open is performed
-     * within this socket helper.
+     * This function is a helper to handle the situations where this code needs to safely reopen a socket. User code
+     * should connect using the `open` call. This is for opening/reopening in situations where automatic open is
+     * performed within this socket helper.
      *
      * \return status of reconnect, SOCK_SUCCESS for success, something else on error
      */
@@ -226,9 +222,9 @@ class SocketComponentHelper {
     Os::Task m_task;
     Os::Mutex m_lock;
     SocketDescriptor m_descriptor;
-    bool m_reopen = true; //!< Force reopen on disconnect
-    bool m_stop = true; //!< Stops the task when set to true
-    OpenState m_open = OpenState::NOT_OPEN; //!< Have we successfully opened
+    bool m_reopen = true;                    //!< Force reopen on disconnect
+    bool m_stop = true;                      //!< Stops the task when set to true
+    OpenState m_open = OpenState::NOT_OPEN;  //!< Have we successfully opened
 };
-}
+}  // namespace Drv
 #endif  // DRV_SocketComponentHelper_HPP

@@ -6,7 +6,6 @@
 #include "Os/Console.hpp"
 #include "Os/Stub/test/Console.hpp"
 
-
 TEST(Interface, Construction) {
     Os::Console console;
     ASSERT_EQ(Os::Stub::Console::Test::StaticData::data.lastCalled, Os::Stub::Console::Test::StaticData::CONSTRUCT_FN);
@@ -15,20 +14,22 @@ TEST(Interface, ConstructionCopy) {
     Os::Console console;
     ASSERT_EQ(Os::Stub::Console::Test::StaticData::data.lastCalled, Os::Stub::Console::Test::StaticData::CONSTRUCT_FN);
     Os::Console console2(console);
-    ASSERT_EQ(const_cast<Os::Stub::Console::Test::TestConsole*>(Os::Stub::Console::Test::StaticData::data.copyObject)->getHandle(),
+    ASSERT_EQ(const_cast<Os::Stub::Console::Test::TestConsole*>(Os::Stub::Console::Test::StaticData::data.copyObject)
+                  ->getHandle(),
               console.getHandle());
-    ASSERT_EQ(Os::Stub::Console::Test::StaticData::data.lastCalled, Os::Stub::Console::Test::StaticData::CONSTRUCT_COPY_FN);
-
-
+    ASSERT_EQ(Os::Stub::Console::Test::StaticData::data.lastCalled,
+              Os::Stub::Console::Test::StaticData::CONSTRUCT_COPY_FN);
 }
 TEST(Interface, Copy) {
     Os::Console console;
     Os::Console console2;
     ASSERT_EQ(Os::Stub::Console::Test::StaticData::data.lastCalled, Os::Stub::Console::Test::StaticData::CONSTRUCT_FN);
     console2 = console;
-    ASSERT_EQ(const_cast<Os::Stub::Console::Test::TestConsole*>(Os::Stub::Console::Test::StaticData::data.copyObject)->getHandle(),
+    ASSERT_EQ(const_cast<Os::Stub::Console::Test::TestConsole*>(Os::Stub::Console::Test::StaticData::data.copyObject)
+                  ->getHandle(),
               console.getHandle());
-    ASSERT_EQ(Os::Stub::Console::Test::StaticData::data.lastCalled, Os::Stub::Console::Test::StaticData::CONSTRUCT_COPY_FN);
+    ASSERT_EQ(Os::Stub::Console::Test::StaticData::data.lastCalled,
+              Os::Stub::Console::Test::StaticData::CONSTRUCT_COPY_FN);
 }
 
 TEST(Interface, Destruction) {
@@ -44,10 +45,9 @@ TEST(Interface, Write) {
     ASSERT_EQ(Os::Stub::Console::Test::StaticData::data.lastCalled, Os::Stub::Console::Test::StaticData::WRITE_FN);
     ASSERT_EQ(Os::Stub::Console::Test::StaticData::data.message, message);
     ASSERT_EQ(Os::Stub::Console::Test::StaticData::data.size, 6);
-
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

@@ -30,9 +30,9 @@ jobs:
       - name: "Check C++ Formatting"
         env:
           CHECKED_DIRS: >-
-            Fw/Buffer
-            Fw/Cmd
-            Fw/Com
+            Drv
+            Fw
+            Os
             Svc/Ccsds
             Svc/EventManager
         run: |

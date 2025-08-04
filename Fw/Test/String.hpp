@@ -51,6 +51,6 @@ class String : public Fw::StringBase {
   private:
     char m_buf[BUFFER_SIZE(STRING_SIZE)];
 };
-}  // namespace Fw
+}  // namespace Test
 
 #endif

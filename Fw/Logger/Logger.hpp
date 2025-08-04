@@ -8,8 +8,8 @@
  */
 #ifndef Fw_Logger_hpp_
 #define Fw_Logger_hpp_
-#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Deprecate.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/StringBase.hpp>
 
 // Unit testing predeclaration hook

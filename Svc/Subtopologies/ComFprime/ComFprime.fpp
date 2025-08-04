@@ -3,35 +3,33 @@ module ComFprime {
     enum Ports_ComPacketQueue {
         EVENTS,
         TELEMETRY,
-        FILE_QUEUE 
+    };
+
+    enum Ports_ComBufferQueue {
+        FILE
     };
 
     # ----------------------------------------------------------------------
     # Active Components
     # ----------------------------------------------------------------------
-    instance comQueue: Svc.ComQueue base id ComFprimeConfig.BASE_ID + 0x0100 \
+    instance comQueue: Svc.ComQueue base id ComFprimeConfig.BASE_ID + 0x00000 \
         queue size ComFprimeConfig.QueueSizes.comQueue \
         stack size ComFprimeConfig.StackSizes.comQueue \
         priority ComFprimeConfig.Priorities.comQueue \
     {
-        phase Fpp.ToCpp.Phases.configConstants """
-        enum{
-            EVENTS,
-            TELEMETRY,
-            FILE_QUEUE
-        };
-        """
         phase Fpp.ToCpp.Phases.configComponents """
+        using namespace ComFprime;
         Svc::ComQueue::QueueConfigurationTable configurationTable;
+        
         // Events (highest-priority)
-        configurationTable.entries[ConfigConstants::ComFprime_comQueue::EVENTS].depth = ComFprimeConfig::QueueDepths::events;
-        configurationTable.entries[ConfigConstants::ComFprime_comQueue::EVENTS].priority = ComFprimeConfig::QueuePriorities::events;
+        configurationTable.entries[Ports_ComPacketQueue::EVENTS].depth = ComFprimeConfig::QueueDepths::events;
+        configurationTable.entries[Ports_ComPacketQueue::EVENTS].priority = ComFprimeConfig::QueuePriorities::events;
         // Telemetry
-        configurationTable.entries[ConfigConstants::ComFprime_comQueue::TELEMETRY].depth = ComFprimeConfig::QueueDepths::tlm;
-        configurationTable.entries[ConfigConstants::ComFprime_comQueue::TELEMETRY].priority = ComFprimeConfig::QueuePriorities::tlm;
+        configurationTable.entries[Ports_ComPacketQueue::TELEMETRY].depth = ComFprimeConfig::QueueDepths::tlm;
+        configurationTable.entries[Ports_ComPacketQueue::TELEMETRY].priority = ComFprimeConfig::QueuePriorities::tlm;
         // File Downlink Queue
-        configurationTable.entries[ConfigConstants::ComFprime_comQueue::FILE_QUEUE].depth = ComFprimeConfig::QueueDepths::file;
-        configurationTable.entries[ConfigConstants::ComFprime_comQueue::FILE_QUEUE].priority = ComFprimeConfig::QueuePriorities::file;
+        configurationTable.entries[Ports_ComPacketQueue::NUM_CONSTANTS + Ports_ComBufferQueue::FILE].depth = ComFprimeConfig::QueueDepths::file;
+        configurationTable.entries[Ports_ComPacketQueue::NUM_CONSTANTS + Ports_ComBufferQueue::FILE].priority = ComFprimeConfig::QueuePriorities::file;
         // Allocation identifier is 0 as the MallocAllocator discards it
         ComFprime::comQueue.configure(configurationTable, 0, ComFprime::Allocation::memAllocator);
         """
@@ -40,24 +38,10 @@ module ComFprime {
         """
     }
 
-    instance cmdSeq: Svc.CmdSequencer base id ComFprimeConfig.BASE_ID + 0x0200 \
-        queue size ComFprimeConfig.QueueSizes.cmdSeq \
-        stack size ComFprimeConfig.StackSizes.cmdSeq \
-        priority ComFprimeConfig.Priorities.cmdSeq \
-    {
-        phase Fpp.ToCpp.Phases.configComponents """
-        ComFprime::cmdSeq.allocateBuffer(0, ComFprime::Allocation::memAllocator, ComFprimeConfig::BuffMgr::cmdSeqBuffSize);
-        """
-
-        phase Fpp.ToCpp.Phases.tearDownComponents """
-        ComFprime::cmdSeq.deallocateBuffer(ComFprime::Allocation::memAllocator);
-        """
-    }
-
     # ----------------------------------------------------------------------
     # Passive Components
     # ----------------------------------------------------------------------
-    instance frameAccumulator: Svc.FrameAccumulator base id ComFprimeConfig.BASE_ID + 0x0500 \ 
+    instance frameAccumulator: Svc.FrameAccumulator base id ComFprimeConfig.BASE_ID + 0x01000 \ 
     {
         phase Fpp.ToCpp.Phases.configObjects """
         Svc::FrameDetectors::FprimeFrameDetector frameDetector;
@@ -77,7 +61,7 @@ module ComFprime {
         """
     }
 
-    instance commsBufferManager: Svc.BufferManager base id ComFprimeConfig.BASE_ID + 0x0600 \
+    instance commsBufferManager: Svc.BufferManager base id ComFprimeConfig.BASE_ID + 0x02000 \
     {
         phase Fpp.ToCpp.Phases.configObjects """
         Svc::BufferManager::BufferBins bins;
@@ -102,18 +86,17 @@ module ComFprime {
         """
     }
 
-    instance deframer: Svc.FprimeDeframer base id ComFprimeConfig.BASE_ID + 0x0700 \
+    instance deframer: Svc.FprimeDeframer base id ComFprimeConfig.BASE_ID + 0x03000 \
 
-    instance fprimeFramer: Svc.FprimeFramer base id ComFprimeConfig.BASE_ID + 0x0800 \
+    instance fprimeFramer: Svc.FprimeFramer base id ComFprimeConfig.BASE_ID + 0x04000 \
 
-    instance fprimeRouter: Svc.FprimeRouter base id ComFprimeConfig.BASE_ID + 0x0900 \
+    instance fprimeRouter: Svc.FprimeRouter base id ComFprimeConfig.BASE_ID + 0x05000 \
     
-    instance comStub: Svc.ComStub base id ComFprimeConfig.BASE_ID + 0x0A00 \
+    instance comStub: Svc.ComStub base id ComFprimeConfig.BASE_ID + 0x06000 \
 
     topology Subtopology {
         # Active Components
         instance comQueue
-        instance cmdSeq
 
         # Passive Components
         instance commsBufferManager
@@ -122,7 +105,6 @@ module ComFprime {
         instance fprimeFramer
         instance fprimeRouter
         instance comStub
-        instance comDriver
 
 
         connections Downlink {
@@ -136,22 +118,12 @@ module ComFprime {
             # Framer <-> ComStub
             fprimeFramer.dataOut  -> comStub.dataIn
             comStub.dataReturnOut -> fprimeFramer.dataReturnIn
-            # ComStub <-> ComDriver
-            comStub.drvSendOut      -> comDriver.$send
-            comDriver.sendReturnOut -> comStub.drvSendReturnIn
-            comDriver.ready         -> comStub.drvConnected
             # ComStatus
             comStub.comStatusOut       -> fprimeFramer.comStatusIn
             fprimeFramer.comStatusOut  -> comQueue.comStatusIn
         }
 
         connections Uplink {
-            # ComDriver buffer allocations
-            comDriver.allocate      -> commsBufferManager.bufferGetCallee
-            comDriver.deallocate    -> commsBufferManager.bufferSendIn
-            # ComDriver <-> ComStub
-            comDriver.$recv             -> comStub.drvReceiveIn
-            comStub.drvReceiveReturnOut -> comDriver.recvReturnIn
             # ComStub <-> FrameAccumulator
             comStub.dataOut                -> frameAccumulator.dataIn
             frameAccumulator.dataReturnOut -> comStub.dataReturnIn

@@ -48,8 +48,7 @@ Fw::SerializeStatus TestRawTime::deserializeFrom(Fw::SerializeBufferBase& buffer
     return Fw::FW_SERIALIZE_OK;
 }
 
-
-} // namespace Test
-} // namespace RawTime
-} // namespace Stub
-} // namespace Os
+}  // namespace Test
+}  // namespace RawTime
+}  // namespace Stub
+}  // namespace Os

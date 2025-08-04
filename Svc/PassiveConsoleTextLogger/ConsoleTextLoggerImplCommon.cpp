@@ -12,7 +12,7 @@ namespace Svc {
     ConsoleTextLoggerImpl::~ConsoleTextLoggerImpl() {}
 
     void ConsoleTextLoggerImpl::TextLogger_handler(FwIndexType portNum, FwEventIdType id, Fw::Time &timeTag, const Fw::LogSeverity& severity, Fw::TextLogString &text) {
-        const char *severityString = "UNKNOWN";
+        const char *severityString = nullptr;
         switch (severity.e) {
             case Fw::LogSeverity::FATAL:
                 severityString = "FATAL";

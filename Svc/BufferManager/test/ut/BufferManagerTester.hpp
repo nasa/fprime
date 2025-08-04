@@ -15,6 +15,7 @@
 
 #include "BufferManagerGTestBase.hpp"
 #include "Svc/BufferManager/BufferManagerComponentImpl.hpp"
+#include <STest/Pick/Pick.hpp>
 
 namespace Svc {
 
@@ -75,6 +76,8 @@ namespace Svc {
       //! The component under test
       //!
       BufferManagerComponentImpl component;
+
+
 
       void textLogIn(
           const FwEventIdType id, //!< The event ID
