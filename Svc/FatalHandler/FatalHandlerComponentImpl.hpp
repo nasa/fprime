@@ -17,42 +17,33 @@
 
 namespace Svc {
 
-  class FatalHandlerComponentImpl final :
-    public FatalHandlerComponentBase
-  {
+class FatalHandlerComponentImpl final : public FatalHandlerComponentBase {
+  public:
+    // ----------------------------------------------------------------------
+    // Construction, initialization, and destruction
+    // ----------------------------------------------------------------------
 
-    public:
+    //! Construct object FatalHandler
+    //!
+    FatalHandlerComponentImpl(const char* const compName /*!< The component name*/
+    );
 
-      // ----------------------------------------------------------------------
-      // Construction, initialization, and destruction
-      // ----------------------------------------------------------------------
+    //! Destroy object FatalHandler
+    //!
+    ~FatalHandlerComponentImpl();
 
-      //! Construct object FatalHandler
-      //!
-      FatalHandlerComponentImpl(
-          const char *const compName /*!< The component name*/
-      );
+  private:
+    // ----------------------------------------------------------------------
+    // Handler implementations for user-defined typed input ports
+    // ----------------------------------------------------------------------
 
-      //! Destroy object FatalHandler
-      //!
-      ~FatalHandlerComponentImpl();
+    //! Handler implementation for FatalReceive
+    //!
+    void FatalReceive_handler(const FwIndexType portNum, /*!< The port number*/
+                              FwEventIdType Id           /*!< The ID of the FATAL event*/
+    );
+};
 
-    private:
-
-      // ----------------------------------------------------------------------
-      // Handler implementations for user-defined typed input ports
-      // ----------------------------------------------------------------------
-
-      //! Handler implementation for FatalReceive
-      //!
-      void FatalReceive_handler(
-          const FwIndexType portNum, /*!< The port number*/
-          FwEventIdType Id /*!< The ID of the FATAL event*/
-      );
-
-
-    };
-
-} // end namespace Svc
+}  // end namespace Svc
 
 #endif

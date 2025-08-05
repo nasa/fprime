@@ -8,19 +8,17 @@
 #define TESTER_HPP
 
 #include "ComQueueGTestBase.hpp"
-#include "Svc/ComQueue/ComQueue.hpp"
 #include "Fw/Com/ComPacket.hpp"
+#include "Svc/ComQueue/ComQueue.hpp"
 
 #define BUFFER_LENGTH 7u
-#define BUFFER_DATA {0x00, 0x00, 0x00, 0x01, 0xad, 0xbe, 0xde} // First 4 bytes are the ComPacketType
+#define BUFFER_DATA {0x00, 0x00, 0x00, 0x01, 0xad, 0xbe, 0xde}  // First 4 bytes are the ComPacketType
 #define BUFFER_DATA_OFFSET sizeof(Fw::ComPacketType)
 
 namespace Svc {
 
 class ComQueueTester : public ComQueueGTestBase {
-
   public:
-
     // ----------------------------------------------------------------------
     // Constants
     // ----------------------------------------------------------------------
@@ -55,16 +53,11 @@ class ComQueueTester : public ComQueueGTestBase {
     // ----------------------------------------------------------------------
     void configure();
 
-    void sendByQueueNumber(Fw::Buffer& buffer,
-                           FwIndexType queueNumber,
-                           FwIndexType& portNum,
-                           QueueType& queueType);
+    void sendByQueueNumber(Fw::Buffer& buffer, FwIndexType queueNumber, FwIndexType& portNum, QueueType& queueType);
 
     void emitOne();
 
-    void emitOneAndCheck(FwIndexType expectedIndex,
-                         U8* expectedData,
-                         FwSizeType expectedDataSize);
+    void emitOneAndCheck(FwIndexType expectedIndex, U8* expectedData, FwSizeType expectedDataSize);
 
     // ----------------------------------------------------------------------
     // Tests
@@ -107,7 +100,6 @@ class ComQueueTester : public ComQueueGTestBase {
     //! The component under test
     //!
     ComQueue component;
-
 };
 
 }  // end namespace Svc

@@ -18,75 +18,65 @@
 
 namespace Svc {
 
-  class LinuxTimerTester :
-    public LinuxTimerGTestBase
-  {
+class LinuxTimerTester : public LinuxTimerGTestBase {
+    // ----------------------------------------------------------------------
+    // Construction and destruction
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Construction and destruction
-      // ----------------------------------------------------------------------
+  public:
+    //! Construct object LinuxTimerTester
+    //!
+    LinuxTimerTester();
 
-    public:
+    //! Destroy object LinuxTimerTester
+    //!
+    ~LinuxTimerTester();
 
-      //! Construct object LinuxTimerTester
-      //!
-      LinuxTimerTester();
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-      //! Destroy object LinuxTimerTester
-      //!
-      ~LinuxTimerTester();
+    //! To do
+    //!
+    void runCycles();
 
-    public:
+  private:
+    // ----------------------------------------------------------------------
+    // Handlers for typed from ports
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Tests
-      // ----------------------------------------------------------------------
+    //! Handler for from_CycleOut
+    //!
+    void from_CycleOut_handler(const FwIndexType portNum, /*!< The port number*/
+                               Os::RawTime& cycleStart    /*!< Cycle start timer value*/
+    );
 
-      //! To do
-      //!
-      void runCycles();
+  private:
+    // ----------------------------------------------------------------------
+    // Helper methods
+    // ----------------------------------------------------------------------
 
-    private:
+    //! Connect ports
+    //!
+    void connectPorts();
 
-      // ----------------------------------------------------------------------
-      // Handlers for typed from ports
-      // ----------------------------------------------------------------------
+    //! Initialize components
+    //!
+    void initComponents();
 
-      //! Handler for from_CycleOut
-      //!
-      void from_CycleOut_handler(
-          const FwIndexType portNum, /*!< The port number*/
-          Os::RawTime &cycleStart /*!< Cycle start timer value*/
-      );
+  private:
+    // ----------------------------------------------------------------------
+    // Variables
+    // ----------------------------------------------------------------------
 
-    private:
+    //! The component under test
+    //!
+    LinuxTimer component;
 
-      // ----------------------------------------------------------------------
-      // Helper methods
-      // ----------------------------------------------------------------------
+    U32 m_numCalls;
+};
 
-      //! Connect ports
-      //!
-      void connectPorts();
-
-      //! Initialize components
-      //!
-      void initComponents();
-
-    private:
-
-      // ----------------------------------------------------------------------
-      // Variables
-      // ----------------------------------------------------------------------
-
-      //! The component under test
-      //!
-      LinuxTimer component;
-
-      U32 m_numCalls;
-
-  };
-
-} // end namespace Svc
+}  // end namespace Svc
 
 #endif

@@ -19,43 +19,35 @@
 
 namespace Svc {
 
-  class LinuxTimer final :
-    public LinuxTimerComponentBase
-  {
+class LinuxTimer final : public LinuxTimerComponentBase {
+  public:
+    // ----------------------------------------------------------------------
+    // Construction, initialization, and destruction
+    // ----------------------------------------------------------------------
 
-    public:
+    //! Construct object LinuxTimer
+    //!
+    LinuxTimer(const char* const compName /*!< The component name*/
+    );
 
-      // ----------------------------------------------------------------------
-      // Construction, initialization, and destruction
-      // ----------------------------------------------------------------------
+    //! Destroy object LinuxTimer
+    //!
+    ~LinuxTimer();
 
-      //! Construct object LinuxTimer
-      //!
-      LinuxTimer(
-          const char *const compName /*!< The component name*/
-      );
+    //! Start timer
+    void startTimer(FwSizeType interval);  //!< interval in milliseconds
 
-      //! Destroy object LinuxTimer
-      //!
-      ~LinuxTimer();
+    //! Quit timer
+    void quit();
 
-      //! Start timer
-      void startTimer(FwSizeType interval); //!< interval in milliseconds
+  private:
+    Os::Mutex m_mutex;  //!< mutex for quit flag
 
-      //! Quit timer
-      void quit();
+    volatile bool m_quit;  //!< flag to quit
 
-    private:
+    Os::RawTime m_rawTime;  //!< timestamp to pass to CycleOut port calls
+};
 
-      Os::Mutex m_mutex; //!< mutex for quit flag
-
-      volatile bool m_quit; //!< flag to quit
-
-      Os::RawTime m_rawTime; //!< timestamp to pass to CycleOut port calls
-
-
-    };
-
-} // end namespace Svc
+}  // end namespace Svc
 
 #endif

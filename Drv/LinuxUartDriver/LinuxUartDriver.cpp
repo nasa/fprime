@@ -295,6 +295,11 @@ LinuxUartDriver ::~LinuxUartDriver() {
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
+void LinuxUartDriver ::run_handler(FwIndexType portNum, U32 context) {
+    this->tlmWrite_BytesSent(this->m_bytesSent);
+    this->tlmWrite_BytesRecv(this->m_bytesReceived);
+}
+
 void LinuxUartDriver ::send_handler(const FwIndexType portNum, Fw::Buffer& serBuffer) {
     Drv::ByteStreamStatus status = Drv::ByteStreamStatus::OP_OK;
     if (this->m_fd == -1 || serBuffer.getData() == nullptr || serBuffer.getSize() == 0) {
@@ -312,7 +317,6 @@ void LinuxUartDriver ::send_handler(const FwIndexType portNum, Fw::Buffer& serBu
             status = Drv::ByteStreamStatus::OTHER_ERROR;
         } else {
             this->m_bytesSent += static_cast<FwSizeType>(stat);
-            this->tlmWrite_BytesSent(this->m_bytesSent);
         }
     }
     // Return the buffer back to the caller
@@ -362,7 +366,6 @@ void LinuxUartDriver ::serialReadTaskEntry(void* ptr) {
             buff.setSize(static_cast<U32>(stat));
             status = ByteStreamStatus::OP_OK;  // added by m.chase 03.06.2017
             comp->m_bytesReceived += static_cast<FwSizeType>(stat);
-            comp->tlmWrite_BytesRecv(comp->m_bytesReceived);
         } else {
             status = ByteStreamStatus::OTHER_ERROR;  // Simply to return the buffer
         }

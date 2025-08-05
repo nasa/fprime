@@ -17,47 +17,42 @@
 
 namespace Svc {
 
-  namespace BufferGetStatus {
+namespace BufferGetStatus {
 
-    class Tester {
+class Tester {
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-      public:
+    //! Valid
+    void Valid();
 
-        // ----------------------------------------------------------------------
-        // Tests
-        // ----------------------------------------------------------------------
+    //! Invalid
+    void Invalid();
 
-        //! Valid
-        void Valid();
+  public:
+    // ----------------------------------------------------------------------
+    // Rules
+    // ----------------------------------------------------------------------
 
-        //! Invalid
-        void Invalid();
+    //! Rule BufferGetStatus::Valid
+    Rules::BufferGetStatus::Valid ruleValid;
 
-      public:
+    //! Rule BufferGetStatus::Invalid
+    Rules::BufferGetStatus::Invalid ruleInvalid;
 
-        // ----------------------------------------------------------------------
-        // Rules
-        // ----------------------------------------------------------------------
+  private:
+    // ----------------------------------------------------------------------
+    // Public member variables
+    // ----------------------------------------------------------------------
 
-        //! Rule BufferGetStatus::Valid
-        Rules::BufferGetStatus::Valid ruleValid;
+    //! Test state
+    TestState testState;
+};
 
-        //! Rule BufferGetStatus::Invalid
-        Rules::BufferGetStatus::Invalid ruleInvalid;
+}  // namespace BufferGetStatus
 
-      private:
-
-        // ----------------------------------------------------------------------
-        // Public member variables
-        // ----------------------------------------------------------------------
-
-        //! Test state
-        TestState testState;
-
-    };
-
-  }
-
-}
+}  // namespace Svc
 
 #endif

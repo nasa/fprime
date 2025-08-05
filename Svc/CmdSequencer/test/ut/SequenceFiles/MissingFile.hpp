@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  MissingFile.hpp
 // \author Rob Bocchino
 // \brief  MissingFile interface
@@ -11,36 +11,28 @@
 #ifndef Svc_SequenceFiles_MissingFile_HPP
 #define Svc_SequenceFiles_MissingFile_HPP
 
-#include "Svc/CmdSequencer/test/ut/SequenceFiles/File.hpp"
 #include "Svc/CmdSequencer/CmdSequencerImpl.hpp"
+#include "Svc/CmdSequencer/test/ut/SequenceFiles/File.hpp"
 
 namespace Svc {
 
-  namespace SequenceFiles {
+namespace SequenceFiles {
 
-    //! A missing file
-    class MissingFile :
-      public File
-    {
+//! A missing file
+class MissingFile : public File {
+  public:
+    //! Construct a MissingFile
+    MissingFile(const Format::t a_format  //!< The file format
+    );
 
-      public:
+  public:
+    //! Serialize the file in AMPCS format
+    void serializeAMPCS(Fw::SerializeBufferBase& buffer  //!< The buffer
+    );
+};
 
-        //! Construct a MissingFile
-        MissingFile(
-            const Format::t a_format //!< The file format
-        );
+}  // namespace SequenceFiles
 
-      public:
-
-        //! Serialize the file in AMPCS format
-        void serializeAMPCS(
-            Fw::SerializeBufferBase& buffer //!< The buffer
-        );
-
-    };
-
-  }
-
-}
+}  // namespace Svc
 
 #endif

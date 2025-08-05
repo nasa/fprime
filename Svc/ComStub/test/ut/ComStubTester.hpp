@@ -13,12 +13,11 @@
 namespace Svc {
 
 class ComStubTester : public ComStubGTestBase {
+    // Maximum size of histories storing events, telemetry, and port outputs
+    static const FwSizeType MAX_HISTORY_SIZE = 30;
 
-  // Maximum size of histories storing events, telemetry, and port outputs
-  static const FwSizeType MAX_HISTORY_SIZE = 30;
-
-  // Instance ID supplied to the component instance under test
-  static const FwEnumStoreType TEST_INSTANCE_ID = 0;
+    // Instance ID supplied to the component instance under test
+    static const FwEnumStoreType TEST_INSTANCE_ID = 0;
     // ----------------------------------------------------------------------
     // Construction and destruction
     // ----------------------------------------------------------------------
@@ -63,6 +62,7 @@ class ComStubTester : public ComStubGTestBase {
     //! Tests buffer is returned
     //!
     void test_buffer_return();
+
   private:
     // ----------------------------------------------------------------------
     // Handlers for typed from ports
@@ -70,21 +70,21 @@ class ComStubTester : public ComStubGTestBase {
 
     //! Handler for from_dataOut
     //!
-    void from_dataOut_handler(const FwIndexType portNum, //!< The port number
-                                 Fw::Buffer& recvBuffer,
-                                 const ComCfg::FrameContext& context //!< The context
-                                 );
+    void from_dataOut_handler(const FwIndexType portNum,  //!< The port number
+                              Fw::Buffer& recvBuffer,
+                              const ComCfg::FrameContext& context  //!< The context
+    );
 
     //! Handler for from_comStatusOut
     //!
-    void from_comStatusOut_handler(const FwIndexType portNum, //!< The port number
-                                Fw::Success& condition         //!< Status of communication state
+    void from_comStatusOut_handler(const FwIndexType portNum,  //!< The port number
+                                   Fw::Success& condition      //!< Status of communication state
     );
 
     //! Handler for from_drvSendOut
     //!
-    void from_drvSendOut_handler(const FwIndexType portNum, //!< The port number
-                                Fw::Buffer& sendBuffer);
+    void from_drvSendOut_handler(const FwIndexType portNum,  //!< The port number
+                                 Fw::Buffer& sendBuffer);
 
   private:
     // ----------------------------------------------------------------------
@@ -108,7 +108,7 @@ class ComStubTester : public ComStubGTestBase {
     //!
     ComStub component;
     Drv::ByteStreamStatus m_send_mode;  //! Send mode
-    U32 m_retries; //! Number of retries to test
+    U32 m_retries;                      //! Number of retries to test
 };
 
 }  // end namespace Svc

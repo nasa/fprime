@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  MissingCRCFile.hpp
 // \author Rob Bocchino
 // \brief  MissingCRCFile interface
@@ -11,40 +11,31 @@
 #ifndef Svc_SequenceFiles_MissingCRCFile_HPP
 #define Svc_SequenceFiles_MissingCRCFile_HPP
 
-#include "Svc/CmdSequencer/test/ut/SequenceFiles/File.hpp"
 #include "Svc/CmdSequencer/CmdSequencerImpl.hpp"
+#include "Svc/CmdSequencer/test/ut/SequenceFiles/File.hpp"
 
 namespace Svc {
 
-  namespace SequenceFiles {
+namespace SequenceFiles {
 
-    class MissingCRCFile :
-      public File
-    {
+class MissingCRCFile : public File {
+  public:
+    //! Construct a MissingCRCFile
+    MissingCRCFile(const Format::t a_format  //!< The file format
+    );
 
-      public:
+  public:
+    //! Serialize the file in F Prime format
+    void serializeFPrime(Fw::SerializeBufferBase& buffer  //!< The buffer
+    );
 
-        //! Construct a MissingCRCFile
-        MissingCRCFile(
-            const Format::t a_format //!< The file format
-        );
+    //! Serialize the file in AMPCS format
+    void serializeAMPCS(Fw::SerializeBufferBase& buffer  //!< The buffer
+    );
+};
 
-      public:
+}  // namespace SequenceFiles
 
-        //! Serialize the file in F Prime format
-        void serializeFPrime(
-            Fw::SerializeBufferBase& buffer //!< The buffer
-        );
-
-        //! Serialize the file in AMPCS format
-        void serializeAMPCS(
-            Fw::SerializeBufferBase& buffer //!< The buffer
-        );
-
-    };
-
-  }
-
-}
+}  // namespace Svc
 
 #endif

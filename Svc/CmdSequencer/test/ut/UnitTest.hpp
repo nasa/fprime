@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  UnitTester.hpp
 // \author Rob Bocchino
 // \brief  Unit test macros
@@ -15,9 +15,9 @@
 
 #if VERBOSE
 #include "Fw/Test/UnitTest.hpp"
-#define PRINT(s,...) printf(s, __VA_ARGS__)
+#define PRINT(s, ...) printf(s, __VA_ARGS__)
 #else
-#define PRINT(s,...)
+#define PRINT(s, ...)
 #define REQUIREMENT(x)
 #define TEST_CASE(a, b)
 #endif

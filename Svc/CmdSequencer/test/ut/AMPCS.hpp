@@ -16,38 +16,32 @@
 
 namespace Svc {
 
-  namespace AMPCS {
+namespace AMPCS {
 
-    //! Test sequencer behavior with no input files
-    class CmdSequencerTester :
-      public Svc::CmdSequencerTester
-    {
+//! Test sequencer behavior with no input files
+class CmdSequencerTester : public Svc::CmdSequencerTester {
+  public:
+    // ----------------------------------------------------------------------
+    // Constructors
+    // ----------------------------------------------------------------------
 
-      public:
+    //! Construct object CmdSequencerTester
+    CmdSequencerTester();
 
-        // ----------------------------------------------------------------------
-        // Constructors
-        // ----------------------------------------------------------------------
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-        //! Construct object CmdSequencerTester
-        CmdSequencerTester();
+    //! Missing CRC
+    void MissingCRC();
 
-      public:
+    //! Missing file
+    void MissingFile();
+};
 
-        // ----------------------------------------------------------------------
-        // Tests
-        // ----------------------------------------------------------------------
+}  // namespace AMPCS
 
-        //! Missing CRC
-        void MissingCRC();
-
-        //! Missing file
-        void MissingFile();
-
-    };
-
-  }
-
-}
+}  // namespace Svc
 
 #endif
