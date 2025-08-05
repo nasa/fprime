@@ -18,10 +18,6 @@ class LogPacket : public ComPacket {
   public:
     LogPacket();
     virtual ~LogPacket();
-class LogPacket : public ComPacket {
-  public:
-    LogPacket();
-    virtual ~LogPacket();
 
     SerializeStatus serializeTo(SerializeBufferBase& buffer) const override;  //!< serialize contents
     SerializeStatus deserializeFrom(SerializeBufferBase& buffer) override;
@@ -29,22 +25,11 @@ class LogPacket : public ComPacket {
     void setId(FwEventIdType id);
     void setLogBuffer(const LogBuffer& buffer);
     void setTimeTag(const Fw::Time& timeTag);
-    void setId(FwEventIdType id);
-    void setLogBuffer(const LogBuffer& buffer);
-    void setTimeTag(const Fw::Time& timeTag);
 
     FwEventIdType getId();
     Fw::Time& getTimeTag();
     LogBuffer& getLogBuffer();
-    FwEventIdType getId();
-    Fw::Time& getTimeTag();
-    LogBuffer& getLogBuffer();
 
-  protected:
-    FwEventIdType m_id;     // !< Channel id
-    Fw::Time m_timeTag;     // !< time tag
-    LogBuffer m_logBuffer;  // !< serialized argument data
-};
   protected:
     FwEventIdType m_id;     // !< Channel id
     Fw::Time m_timeTag;     // !< time tag
