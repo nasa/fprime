@@ -17,47 +17,42 @@
 
 namespace Svc {
 
-  namespace ProductRequestIn {
+namespace ProductRequestIn {
 
-    class Tester {
+class Tester {
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-      public:
+    //! BufferValid
+    void BufferValid();
 
-        // ----------------------------------------------------------------------
-        // Tests
-        // ----------------------------------------------------------------------
+    //! BufferInvalid
+    void BufferInvalid();
 
-        //! BufferValid
-        void BufferValid();
+  public:
+    // ----------------------------------------------------------------------
+    // Rules
+    // ----------------------------------------------------------------------
 
-        //! BufferInvalid
-        void BufferInvalid();
+    //! Rule ProductRequestIn::BufferValid
+    Rules::ProductRequestIn::BufferValid ruleBufferValid;
 
-      public:
+    //! Rule ProductRequestIn::BufferInvalid
+    Rules::ProductRequestIn::BufferInvalid ruleBufferInvalid;
 
-        // ----------------------------------------------------------------------
-        // Rules
-        // ----------------------------------------------------------------------
+  public:
+    // ----------------------------------------------------------------------
+    // Public member variables
+    // ----------------------------------------------------------------------
 
-        //! Rule ProductRequestIn::BufferValid
-        Rules::ProductRequestIn::BufferValid ruleBufferValid;
+    //! Test state
+    TestState testState;
+};
 
-        //! Rule ProductRequestIn::BufferInvalid
-        Rules::ProductRequestIn::BufferInvalid ruleBufferInvalid;
+}  // namespace ProductRequestIn
 
-      public:
-
-        // ----------------------------------------------------------------------
-        // Public member variables
-        // ----------------------------------------------------------------------
-
-        //! Test state
-        TestState testState;
-
-    };
-
-  }
-
-}
+}  // namespace Svc
 
 #endif

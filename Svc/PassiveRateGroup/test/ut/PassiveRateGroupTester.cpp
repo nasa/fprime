@@ -16,9 +16,9 @@
 #include <Fw/Test/UnitTest.hpp>
 #include <Svc/PassiveRateGroup/test/ut/PassiveRateGroupTester.hpp>
 
+#include <unistd.h>
 #include <cstdio>
 #include <cstring>
-#include <unistd.h>
 
 namespace Svc {
 
@@ -43,9 +43,7 @@ void PassiveRateGroupTester::from_RateGroupMemberOut_handler(FwIndexType portNum
     usleep(1);
 }
 
-void PassiveRateGroupTester::runNominal(U32 contexts[],
-                                            FwIndexType numContexts,
-                                            FwEnumStoreType instance) {
+void PassiveRateGroupTester::runNominal(U32 contexts[], FwIndexType numContexts, FwEnumStoreType instance) {
     TEST_CASE(101.1.1, "Run nominal rate group execution");
 
     // clear events
@@ -61,11 +59,11 @@ void PassiveRateGroupTester::runNominal(U32 contexts[],
     // call active rate group with timestamp val
     this->invoke_to_CycleIn(0, timestamp);
 
-
     // check calls
     REQUIREMENT("FPRIME-PRG-002");
     for (FwIndexType portNum = 0;
-         portNum < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_RateGroupMemberOut_OutputPort)); portNum++) {
+         portNum < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_RateGroupMemberOut_OutputPort));
+         portNum++) {
         ASSERT_TRUE(this->m_callLog[portNum].portCalled);
         ASSERT_EQ(this->m_callLog[portNum].contextVal, contexts[portNum]);
         ASSERT_EQ(this->m_callLog[portNum].order, portNum);

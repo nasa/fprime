@@ -14,7 +14,8 @@ namespace Svc {
 // ----------------------------------------------------------------------
 
 FprimeDeframerTester ::FprimeDeframerTester()
-    : FprimeDeframerGTestBase("FprimeDeframerTester", FprimeDeframerTester::MAX_HISTORY_SIZE), component("FprimeDeframer") {
+    : FprimeDeframerGTestBase("FprimeDeframerTester", FprimeDeframerTester::MAX_HISTORY_SIZE),
+      component("FprimeDeframer") {
     this->initComponents();
     this->connectPorts();
 }
@@ -29,33 +30,34 @@ void FprimeDeframerTester ::testNominalFrame() {
     // Get random byte of data
     U8 randomByte = static_cast<U8>(STest::Random::lowerUpper(1, 255));
     //           |  F´ start word        |     Length (= 1)      |   Data     |   Checksum (4 bytes)   |
-    U8 data[13] = {0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0x00, 0x00, 0x01,  randomByte,  0x00, 0x00, 0x00, 0x00};
+    U8 data[13] = {0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0x00, 0x00, 0x01, randomByte, 0x00, 0x00, 0x00, 0x00};
     // Inject the checksum into the data and send it to the component under test
     this->injectChecksum(data, sizeof(data));
     this->mockReceiveData(data, sizeof(data));
 
-    ASSERT_from_dataOut_SIZE(1); // something emitted on dataOut
-    ASSERT_from_dataReturnOut_SIZE(0); // nothing emitted on dataReturnOut
+    ASSERT_from_dataOut_SIZE(1);        // something emitted on dataOut
+    ASSERT_from_dataReturnOut_SIZE(0);  // nothing emitted on dataReturnOut
     // Assert that the data that was emitted on dataOut is equal to Data field above (randomByte)
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getData()[0], randomByte);
     // Not enough data to read a valid APID -> should default to FW_PACKET_UNKNOWN
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_apid(), ComCfg::APID::FW_PACKET_UNKNOWN);
-    ASSERT_EVENTS_SIZE(0); // no events emitted
+    ASSERT_EVENTS_SIZE(0);  // no events emitted
 }
 
 void FprimeDeframerTester ::testNominalFrameApid() {
     // Get random byte of data which represents the APID (PacketDescriptor)
     U8 randomByte = static_cast<U8>(STest::Random::lowerUpper(0, 255));
-    //           |  F´ start word        |     Length (= 4)      |   PacketDescriptor (APID)   |   Checksum (4 bytes)   |
-    U8 data[16] = {0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, randomByte,  0x00, 0x00, 0x00, 0x00};
+    //           |  F´ start word        |     Length (= 4)      |   PacketDescriptor (APID)   |   Checksum (4 bytes) |
+    U8 data[16] = {0xDE, 0xAD, 0xBE, 0xEF,       0x00, 0x00, 0x00, 0x04,
+                   0x00, 0x00, 0x00, randomByte, 0x00, 0x00, 0x00, 0x00};
     // Inject the checksum into the data and send it to the component under test
     this->injectChecksum(data, sizeof(data));
     this->mockReceiveData(data, sizeof(data));
 
-    ASSERT_from_dataOut_SIZE(1); // something emitted on dataOut
-    ASSERT_from_dataReturnOut_SIZE(0); // nothing emitted on dataReturnOut
-    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_apid(), randomByte); // APID should be set in context
-    ASSERT_EVENTS_SIZE(0); // no events emitted
+    ASSERT_from_dataOut_SIZE(1);                                                     // something emitted on dataOut
+    ASSERT_from_dataReturnOut_SIZE(0);                                               // nothing emitted on dataReturnOut
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_apid(), randomByte);  // APID should be set in context
+    ASSERT_EVENTS_SIZE(0);                                                           // no events emitted
 }
 
 void FprimeDeframerTester ::testIncorrectLengthToken() {
@@ -65,11 +67,11 @@ void FprimeDeframerTester ::testIncorrectLengthToken() {
     this->injectChecksum(data, sizeof(data));
     this->mockReceiveData(data, sizeof(data));
 
-    ASSERT_from_dataOut_SIZE(0); // nothing emitted on dataOut
-    ASSERT_from_dataReturnOut_SIZE(1); // invalid buffer was deallocated
+    ASSERT_from_dataOut_SIZE(0);        // nothing emitted on dataOut
+    ASSERT_from_dataReturnOut_SIZE(1);  // invalid buffer was deallocated
     // Check which event was emitted
-    ASSERT_EVENTS_SIZE(1); // exactly 1 event emitted
-    ASSERT_EVENTS_InvalidLengthReceived_SIZE(1); // event was emitted for invalid length
+    ASSERT_EVENTS_SIZE(1);                        // exactly 1 event emitted
+    ASSERT_EVENTS_InvalidLengthReceived_SIZE(1);  // event was emitted for invalid length
 }
 
 void FprimeDeframerTester ::testIncorrectStartWord() {
@@ -79,43 +81,43 @@ void FprimeDeframerTester ::testIncorrectStartWord() {
     this->injectChecksum(data, sizeof(data));
     this->mockReceiveData(data, sizeof(data));
 
-    ASSERT_from_dataOut_SIZE(0); // nothing emitted on dataOut
-    ASSERT_from_dataReturnOut_SIZE(1); // invalid buffer was deallocated
+    ASSERT_from_dataOut_SIZE(0);        // nothing emitted on dataOut
+    ASSERT_from_dataReturnOut_SIZE(1);  // invalid buffer was deallocated
     // Check which event was emitted
-    ASSERT_EVENTS_SIZE(1); // exactly 1 event emitted
-    ASSERT_EVENTS_InvalidStartWord_SIZE(1); // event was emitted for invalid start word
+    ASSERT_EVENTS_SIZE(1);                   // exactly 1 event emitted
+    ASSERT_EVENTS_InvalidStartWord_SIZE(1);  // event was emitted for invalid start word
 }
 
 void FprimeDeframerTester ::testIncorrectCrc() {
     // Frame:     |   F´ start word      |      Length = 1       | Data |  INCORRECT Checksum  |
     U8 data[13] = {0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00};
     this->mockReceiveData(data, sizeof(data));
-    ASSERT_from_dataOut_SIZE(0); // nothing emitted on dataOut
-    ASSERT_from_dataReturnOut_SIZE(1); // invalid buffer was deallocated
+    ASSERT_from_dataOut_SIZE(0);        // nothing emitted on dataOut
+    ASSERT_from_dataReturnOut_SIZE(1);  // invalid buffer was deallocated
     // Check which event was emitted
-    ASSERT_EVENTS_SIZE(1); // exactly 1 event emitted
-    ASSERT_EVENTS_InvalidChecksum_SIZE(1); // event was emitted for invalid checksum
+    ASSERT_EVENTS_SIZE(1);                  // exactly 1 event emitted
+    ASSERT_EVENTS_InvalidChecksum_SIZE(1);  // event was emitted for invalid checksum
 }
 
 void FprimeDeframerTester::testTruncatedFrame() {
     // Send a truncated frame, too short to be valid
     U8 data[11] = {0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
     this->mockReceiveData(data, sizeof(data));
-    ASSERT_from_dataOut_SIZE(0); // nothing emitted on dataOut
-    ASSERT_from_dataReturnOut_SIZE(1); // invalid buffer was deallocated
+    ASSERT_from_dataOut_SIZE(0);        // nothing emitted on dataOut
+    ASSERT_from_dataReturnOut_SIZE(1);  // invalid buffer was deallocated
     // Check which event was emitted
-    ASSERT_EVENTS_SIZE(1); // exactly 1 event emitted
-    ASSERT_EVENTS_InvalidBufferReceived_SIZE(1); // event was emitted for invalid buffer
+    ASSERT_EVENTS_SIZE(1);                        // exactly 1 event emitted
+    ASSERT_EVENTS_InvalidBufferReceived_SIZE(1);  // event was emitted for invalid buffer
 }
 
 void FprimeDeframerTester::testZeroSizeFrame() {
     // Send an empty frame, too short to be valid
     this->mockReceiveData(nullptr, 0);
-    ASSERT_from_dataOut_SIZE(0); // nothing emitted on dataOut
-    ASSERT_from_dataReturnOut_SIZE(1); // invalid buffer was deallocated
+    ASSERT_from_dataOut_SIZE(0);        // nothing emitted on dataOut
+    ASSERT_from_dataReturnOut_SIZE(1);  // invalid buffer was deallocated
     // Check which event was emitted
-    ASSERT_EVENTS_SIZE(1); // exactly 1 event emitted
-    ASSERT_EVENTS_InvalidBufferReceived_SIZE(1); // event was emitted for invalid buffer
+    ASSERT_EVENTS_SIZE(1);                        // exactly 1 event emitted
+    ASSERT_EVENTS_InvalidBufferReceived_SIZE(1);  // event was emitted for invalid buffer
 }
 
 void FprimeDeframerTester::testDataReturn() {
@@ -123,7 +125,7 @@ void FprimeDeframerTester::testDataReturn() {
     Fw::Buffer buffer(data, sizeof(data));
     ComCfg::FrameContext nullContext;
     this->invoke_to_dataReturnIn(0, buffer, nullContext);
-    ASSERT_from_dataReturnOut_SIZE(1); // incoming buffer should be deallocated
+    ASSERT_from_dataReturnOut_SIZE(1);  // incoming buffer should be deallocated
     ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(0).data.getData(), data);
     ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(0).data.getSize(), sizeof(data));
 }

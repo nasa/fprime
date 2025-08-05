@@ -10,20 +10,19 @@
 //
 // ======================================================================
 
-#include <Svc/Health/HealthComponentImpl.hpp>
 #include <Fw/FPrimeBasicTypes.hpp>
-#include <cstdio>
 #include <Fw/Types/Assert.hpp>
+#include <Svc/Health/HealthComponentImpl.hpp>
+#include <cstdio>
 
 namespace Svc {
 
-    // ----------------------------------------------------------------------
-    // Construction, initialization, and destruction
-    // ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+// Construction, initialization, and destruction
+// ----------------------------------------------------------------------
 
-    void HealthImpl::doOtherChecks() {
-        // empty
-    }
+void HealthImpl::doOtherChecks() {
+    // empty
+}
 
-
-} // end namespace Svc
+}  // end namespace Svc

@@ -5,19 +5,18 @@
 // ======================================================================
 
 #include "Svc/FrameAccumulator/FrameDetector/CcsdsTcFrameDetector.hpp"
-#include "Svc/Ccsds/Types/FppConstantsAc.hpp"
 #include <cstdio>
-#include "config/FppConstantsAc.hpp"
+#include "Svc/Ccsds/Types/FppConstantsAc.hpp"
 #include "Svc/Ccsds/Types/TCHeaderSerializableAc.hpp"
 #include "Svc/Ccsds/Types/TCTrailerSerializableAc.hpp"
 #include "Svc/Ccsds/Utils/CRC16.hpp"
 #include "Utils/Hash/Hash.hpp"
+#include "config/FppConstantsAc.hpp"
 
 namespace Svc {
 namespace FrameDetectors {
 
 FrameDetector::Status CcsdsTcFrameDetector::detect(const Types::CircularBuffer& data, FwSizeType& size_out) const {
-
     if (data.get_allocated_size() < Ccsds::TCHeader::SERIALIZED_SIZE + Ccsds::TCTrailer::SERIALIZED_SIZE) {
         size_out = Ccsds::TCHeader::SERIALIZED_SIZE + Ccsds::TCTrailer::SERIALIZED_SIZE;
         return Status::MORE_DATA_NEEDED;
@@ -43,7 +42,8 @@ FrameDetector::Status CcsdsTcFrameDetector::detect(const Types::CircularBuffer& 
         return Status::NO_FRAME_DETECTED;
     }
     // TC protocol defines the Frame Length as number of bytes minus 1, so we add 1 back to get length in bytes
-    const FwSizeType expected_frame_length = static_cast<FwSizeType>((header.get_vcIdAndLength() & Ccsds::TCSubfields::FrameLengthMask) + 1);
+    const FwSizeType expected_frame_length =
+        static_cast<FwSizeType>((header.get_vcIdAndLength() & Ccsds::TCSubfields::FrameLengthMask) + 1);
     const U16 data_to_crc_length = static_cast<U16>(expected_frame_length - Ccsds::TCTrailer::SERIALIZED_SIZE);
 
     if (data.get_allocated_size() < expected_frame_length) {
@@ -83,7 +83,6 @@ FrameDetector::Status CcsdsTcFrameDetector::detect(const Types::CircularBuffer& 
     size_out = expected_frame_length;
     return Status::FRAME_DETECTED;
 }
-
 
 }  // namespace FrameDetectors
 }  // namespace Svc

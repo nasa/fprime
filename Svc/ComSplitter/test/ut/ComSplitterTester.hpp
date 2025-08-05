@@ -17,78 +17,64 @@
 
 namespace Svc {
 
-  class ComSplitterTester :
-    public ComSplitterGTestBase
-  {
+class ComSplitterTester : public ComSplitterGTestBase {
+    // ----------------------------------------------------------------------
+    // Construction and destruction
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Construction and destruction
-      // ----------------------------------------------------------------------
+  public:
+    //! Construct object ComSplitterTester
+    //!
+    ComSplitterTester();
 
-    public:
+    //! Destroy object ComSplitterTester
+    //!
+    ~ComSplitterTester();
 
-      //! Construct object ComSplitterTester
-      //!
-      ComSplitterTester();
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-      //! Destroy object ComSplitterTester
-      //!
-      ~ComSplitterTester();
+    void test_nominal();
 
-    public:
+  private:
+    // ----------------------------------------------------------------------
+    // Handlers for typed from ports
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Tests
-      // ----------------------------------------------------------------------
+    //! Handler for from_comOut
+    //!
+    void from_comOut_handler(const FwIndexType portNum, /*!< The port number*/
+                             Fw::ComBuffer& data,       /*!< Buffer containing packet data*/
+                             U32 context                /*!< Call context value; meaning chosen by user*/
+    );
 
+    void assert_comOut(const U32 index, const Fw::ComBuffer& data) const;
 
-      void test_nominal();
+  private:
+    // ----------------------------------------------------------------------
+    // Helper methods
+    // ----------------------------------------------------------------------
 
-    private:
+    //! Connect ports
+    //!
+    void connectPorts();
 
-      // ----------------------------------------------------------------------
-      // Handlers for typed from ports
-      // ----------------------------------------------------------------------
+    //! Initialize components
+    //!
+    void initComponents();
 
-      //! Handler for from_comOut
-      //!
-      void from_comOut_handler(
-          const FwIndexType portNum, /*!< The port number*/
-          Fw::ComBuffer &data, /*!< Buffer containing packet data*/
-          U32 context /*!< Call context value; meaning chosen by user*/
-      );
+  private:
+    // ----------------------------------------------------------------------
+    // Variables
+    // ----------------------------------------------------------------------
 
-      void assert_comOut(
-        const U32 index,
-        const Fw::ComBuffer &data
-      ) const;
+    //! The component under test
+    //!
+    ComSplitter component;
+};
 
-    private:
-
-      // ----------------------------------------------------------------------
-      // Helper methods
-      // ----------------------------------------------------------------------
-
-      //! Connect ports
-      //!
-      void connectPorts();
-
-      //! Initialize components
-      //!
-      void initComponents();
-
-    private:
-
-      // ----------------------------------------------------------------------
-      // Variables
-      // ----------------------------------------------------------------------
-
-      //! The component under test
-      //!
-      ComSplitter component;
-
-  };
-
-} // end namespace Svc
+}  // end namespace Svc
 
 #endif

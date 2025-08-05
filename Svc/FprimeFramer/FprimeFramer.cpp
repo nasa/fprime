@@ -30,7 +30,8 @@ void FprimeFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const 
     // Full size of the frame will be size of header + data + trailer
     FwSizeType frameSize =
         FprimeProtocol::FrameHeader::SERIALIZED_SIZE + data.getSize() + FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
-    FW_ASSERT(data.getSize() <= std::numeric_limits<FprimeProtocol::TokenType>::max(), static_cast<FwAssertArgType>(frameSize));
+    FW_ASSERT(data.getSize() <= std::numeric_limits<FprimeProtocol::TokenType>::max(),
+              static_cast<FwAssertArgType>(frameSize));
     FW_ASSERT(frameSize <= std::numeric_limits<Fw::Buffer::SizeType>::max(), static_cast<FwAssertArgType>(frameSize));
 
     // Allocate frame buffer
@@ -67,7 +68,9 @@ void FprimeFramer ::comStatusIn_handler(FwIndexType portNum, Fw::Success& condit
     }
 }
 
-void FprimeFramer ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& frameBuffer, const ComCfg::FrameContext& context) {
+void FprimeFramer ::dataReturnIn_handler(FwIndexType portNum,
+                                         Fw::Buffer& frameBuffer,
+                                         const ComCfg::FrameContext& context) {
     // dataReturnIn is the allocated buffer coming back from the ComManager (e.g. ComStub) component
     this->bufferDeallocate_out(0, frameBuffer);
 }

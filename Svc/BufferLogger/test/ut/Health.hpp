@@ -17,25 +17,20 @@
 
 namespace Svc {
 
-  namespace Health {
+namespace Health {
 
-    class BufferLoggerTester :
-      public Svc::BufferLoggerTester
-    {
+class BufferLoggerTester : public Svc::BufferLoggerTester {
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-      public:
+    //! Health ping test
+    void Ping();
+};
 
-        // ----------------------------------------------------------------------
-        // Tests
-        // ----------------------------------------------------------------------
+}  // namespace Health
 
-        //! Health ping test
-        void Ping();
-
-    };
-
-  }
-
-}
+}  // namespace Svc
 
 #endif

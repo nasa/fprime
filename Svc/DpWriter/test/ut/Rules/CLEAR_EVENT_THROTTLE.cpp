@@ -9,8 +9,8 @@
 // acknowledged.
 // ======================================================================
 
-#include "STest/Pick/Pick.hpp"
 #include "Svc/DpWriter/test/ut/Rules/CLEAR_EVENT_THROTTLE.hpp"
+#include "STest/Pick/Pick.hpp"
 #include "Svc/DpWriter/test/ut/Rules/Testers.hpp"
 
 namespace Svc {

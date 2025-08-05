@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  SizeFieldTooSmallFile.hpp
 // \author Rob Bocchino
 // \brief  SizeFieldTooSmallFile interface
@@ -11,36 +11,28 @@
 #ifndef Svc_SequenceFiles_SizeFieldTooSmallFile_HPP
 #define Svc_SequenceFiles_SizeFieldTooSmallFile_HPP
 
-#include "Svc/CmdSequencer/test/ut/SequenceFiles/File.hpp"
 #include "Svc/CmdSequencer/CmdSequencerImpl.hpp"
+#include "Svc/CmdSequencer/test/ut/SequenceFiles/File.hpp"
 
 namespace Svc {
 
-  namespace SequenceFiles {
+namespace SequenceFiles {
 
-    //! A file with a size field that is too small
-    class SizeFieldTooSmallFile :
-      public File
-    {
+//! A file with a size field that is too small
+class SizeFieldTooSmallFile : public File {
+  public:
+    //! Construct a SizeFieldTooSmallFile
+    SizeFieldTooSmallFile(const Format::t m_format  //!< The file format
+    );
 
-      public:
+  public:
+    //! Serialize the file in F Prime format
+    void serializeFPrime(Fw::SerializeBufferBase& buffer  //!< The buffer
+    );
+};
 
-        //! Construct a SizeFieldTooSmallFile
-        SizeFieldTooSmallFile(
-            const Format::t m_format //!< The file format
-        );
+}  // namespace SequenceFiles
 
-      public:
-
-        //! Serialize the file in F Prime format
-        void serializeFPrime(
-            Fw::SerializeBufferBase& buffer //!< The buffer
-        );
-
-    };
-
-  }
-
-}
+}  // namespace Svc
 
 #endif

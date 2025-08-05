@@ -9,74 +9,54 @@
 // acknowledged.
 // ======================================================================
 
-#include "Svc/CmdSequencer/test/ut/SequenceFiles/AMPCS/AMPCS.hpp"
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/BadCRCFile.hpp"
+#include "Svc/CmdSequencer/test/ut/SequenceFiles/AMPCS/AMPCS.hpp"
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/Buffers.hpp"
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/FPrime/FPrime.hpp"
 #include "gtest/gtest.h"
 
 namespace Svc {
 
-  namespace SequenceFiles {
+namespace SequenceFiles {
 
-    BadCRCFile ::
-      BadCRCFile(const Format::t a_format) :
-        File("bad_crc", a_format)
-    {
+BadCRCFile ::BadCRCFile(const Format::t a_format) : File("bad_crc", a_format) {}
 
-    }
-
-    void BadCRCFile ::
-      serializeFPrime(Fw::SerializeBufferBase& buffer)
-    {
-      // Header
-      const U32 recordData = 0x10;
-      const U32 dataSize = sizeof recordData + FPrime::CRCs::SIZE;
-      const U32 numRecords = 1;
-      const TimeBase timeBase = TimeBase::TB_WORKSTATION_TIME;
-      const U32 timeContext = 0;
-      FPrime::Headers::serialize(
-          dataSize,
-          numRecords,
-          timeBase,
-          timeContext,
-          buffer
-      );
-      // Records
-      ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffer.serializeFrom(recordData));
-      // CRC
-      const U8 *const addr = buffer.getBuffAddr();
-      const U32 size = buffer.getBuffLength();
-      this->crc.init();
-      this->crc.update(addr, size);
-      this->crc.finalize();
-      crc.m_stored = this->crc.m_computed + 1;
-      ASSERT_EQ(
-          Fw::FW_SERIALIZE_OK,
-          buffer.serializeFrom(this->crc.m_stored)
-      );
-    }
-
-    void BadCRCFile ::
-      serializeAMPCS(Fw::SerializeBufferBase& buffer)
-    {
-      // Header
-      AMPCS::Headers::serialize(buffer);
-      // Records
-      const U32 recordData = 0x10;
-      ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffer.serializeFrom(recordData));
-      // CRC
-      AMPCS::CRCs::computeCRC(buffer, this->crc);
-      this->crc.m_stored = this->crc.m_computed + 1;
-      AMPCS::CRCs::writeCRC(this->crc.m_stored, this->getName().toChar());
-    }
-
-    const CmdSequencerComponentImpl::FPrimeSequence::CRC& BadCRCFile ::
-      getCRC() const
-    {
-      return this->crc;
-    }
-
-  }
-
+void BadCRCFile ::serializeFPrime(Fw::SerializeBufferBase& buffer) {
+    // Header
+    const U32 recordData = 0x10;
+    const U32 dataSize = sizeof recordData + FPrime::CRCs::SIZE;
+    const U32 numRecords = 1;
+    const TimeBase timeBase = TimeBase::TB_WORKSTATION_TIME;
+    const U32 timeContext = 0;
+    FPrime::Headers::serialize(dataSize, numRecords, timeBase, timeContext, buffer);
+    // Records
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffer.serializeFrom(recordData));
+    // CRC
+    const U8* const addr = buffer.getBuffAddr();
+    const U32 size = buffer.getBuffLength();
+    this->crc.init();
+    this->crc.update(addr, size);
+    this->crc.finalize();
+    crc.m_stored = this->crc.m_computed + 1;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffer.serializeFrom(this->crc.m_stored));
 }
+
+void BadCRCFile ::serializeAMPCS(Fw::SerializeBufferBase& buffer) {
+    // Header
+    AMPCS::Headers::serialize(buffer);
+    // Records
+    const U32 recordData = 0x10;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffer.serializeFrom(recordData));
+    // CRC
+    AMPCS::CRCs::computeCRC(buffer, this->crc);
+    this->crc.m_stored = this->crc.m_computed + 1;
+    AMPCS::CRCs::writeCRC(this->crc.m_stored, this->getName().toChar());
+}
+
+const CmdSequencerComponentImpl::FPrimeSequence::CRC& BadCRCFile ::getCRC() const {
+    return this->crc;
+}
+
+}  // namespace SequenceFiles
+
+}  // namespace Svc
