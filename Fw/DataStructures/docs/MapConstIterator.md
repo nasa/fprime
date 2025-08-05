@@ -1,6 +1,7 @@
 # MapConstIterator
 
 `MapConstIterator` is a class for performing immutable iteration over a map.
+The iteration order is arbitrary.
 
 ## 1. Template Parameters
 
@@ -74,6 +75,9 @@ bool isInRange() const
 ```
 
 Check whether the iterator is in range.
+It is a runtime error to attempt to access a map entry through an iterator
+for which `isInRange` evaluates to `false`.
+In this case an assertion failure will occur.
 
 ### 4.6. operator*
 
@@ -83,6 +87,9 @@ const EntryBase& operator*() const
 
 Return a `const` reference to the `EntryBase` object
 pointed to by the iterator.
+If the iterator is not in range for the map, an assertion failure will occur.
+It is not recommended to use this operation
+after updating the map that the iterator points to.
 
 ### 4.7. operator->
 
@@ -92,3 +99,6 @@ const EntryBase* operator->() const
 
 Return a pointer to the `const EntryBase` object
 pointed to by the iterator.
+If the iterator is not in range for the map, an assertion failure will occur.
+It is not recommended to use this operation
+after updating the map that the iterator points to.
