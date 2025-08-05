@@ -5,21 +5,11 @@
 // ======================================================================
 
 #include "Fw/DataStructures/ExternalStack.hpp"
+#include "Fw/DataStructures/test/ut/ExternalStackTester.hpp"
 #include "Fw/DataStructures/test/ut/STest/StackTestRules.hpp"
 #include "Fw/DataStructures/test/ut/STest/StackTestScenarios.hpp"
 
 namespace Fw {
-
-template <typename T>
-class ExternalStackTester {
-  public:
-    ExternalStackTester<T>(const ExternalStack<T>& stack) : m_stack(stack) {}
-
-    const ExternalArray<T> getItems() const { return this->m_stack.m_items; }
-
-  private:
-    const ExternalStack<T>& m_stack;
-};
 
 namespace StackTest {
 

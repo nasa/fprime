@@ -9,22 +9,12 @@
 #include "Fw/DataStructures/RedBlackTreeSetOrMapImpl.hpp"
 #include "STest/STest/Pick/Pick.hpp"
 
+#include "Fw/DataStructures/test/ut/ExternalStackTester.hpp"
 #include "Fw/DataStructures/test/ut/RedBlackTreeSetOrMapImplTester.hpp"
 #include "Fw/DataStructures/test/ut/STest/RedBlackTreeSetOrMapImplTestRules.hpp"
 #include "Fw/DataStructures/test/ut/STest/RedBlackTreeSetOrMapImplTestScenarios.hpp"
 
 namespace Fw {
-
-template <typename T>
-class ExternalStackTester {
-  public:
-    ExternalStackTester<T>(const ExternalStack<T>& stack) : m_stack(stack) {}
-
-    const ExternalArray<T> getItems() const { return this->m_stack.m_items; }
-
-  private:
-    const ExternalStack<T>& m_stack;
-};
 
 namespace RedBlackTreeSetOrMapImplTest {
 

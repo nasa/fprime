@@ -4,8 +4,8 @@
 // \brief  Class template for access to RedBlackTreeSetOrMapImpl members
 // ======================================================================
 
-#ifndef RedBlackTreeSetOrMapImplTester_HPP
-#define RedBlackTreeSetOrMapImplTester_HPP
+#ifndef Fw_RedBlackTreeSetOrMapImplTester_HPP
+#define Fw_RedBlackTreeSetOrMapImplTester_HPP
 
 #include <gtest/gtest.h>
 #include <ostream>
