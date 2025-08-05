@@ -13,6 +13,13 @@ It represents an iterator for a set or a map implementation.
 |`typename`|`KE`|The type of a key in a map or the element of a set|
 |`typename`|`VN`|The type of a value in a map or [`Nil`](Nil.md) in a set|
 
+`SetOrMapImplEntry` statically asserts the following:
+
+* `KE` is default constructible.
+* `KE` is assignable to `KE&`.
+* `VN` is default constructible.
+* `VN` is assignable to `VN&`.
+
 ## 2. Base Class
 
 `SetOrMapImplEntry<KE, VN>` is publicly derived from the following

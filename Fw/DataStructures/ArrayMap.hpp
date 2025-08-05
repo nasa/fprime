@@ -14,6 +14,12 @@ namespace Fw {
 template <typename K, typename V, FwSizeType C>
 class ArrayMap final : public MapBase<K, V> {
     // ----------------------------------------------------------------------
+    // Static assertions
+    // ----------------------------------------------------------------------
+
+    static_assert(C > 0, "capacity must be greater than zero");
+
+    // ----------------------------------------------------------------------
     // Friend class for testing
     // ----------------------------------------------------------------------
 
