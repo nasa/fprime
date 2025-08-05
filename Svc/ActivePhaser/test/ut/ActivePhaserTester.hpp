@@ -127,7 +127,7 @@ class ActivePhaserTester final : public ActivePhaserGTestBase {
     //! Handler for from_PhaserMemberOut
     //!
     void from_PhaserMemberOut_handler(const FwIndexType portNum, /*!< The port number*/
-                                         U32 context             /*!< The call order*/
+                                      U32 context                /*!< The call order*/
     );
 
   private:

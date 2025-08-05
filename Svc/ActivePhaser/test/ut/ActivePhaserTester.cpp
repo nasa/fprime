@@ -88,13 +88,12 @@ void ActivePhaserTester ::create_child(FwIndexType port, U32 length, U32 start, 
     child.port = port;
     child.length = length;
     child.start = start;
-    // Shaokai: It is quite confusing because child.actual_start is not affected by the previous task's child.actual_length.
-    // m_start_counter only increments the expected child.length. Is this correct?
-    // It seems like actual_start is not, in fact, actual, because if it is,
-    // m_start_counter = child.actual_start + child.actual_length, which further influences actual_start.
-    // But since child.actual_start is only affected by expected length, I suggest renaming it to expected_start,
-    // then checking EXPECT_LE(current.expected_start, m_ticks % m_cycle) below would make more sense,
-    // since m_ticks contains lethargy and makes it a real actual_start.
+    // Shaokai: It is quite confusing because child.actual_start is not affected by the previous task's
+    // child.actual_length. m_start_counter only increments the expected child.length. Is this correct? It seems like
+    // actual_start is not, in fact, actual, because if it is, m_start_counter = child.actual_start +
+    // child.actual_length, which further influences actual_start. But since child.actual_start is only affected by
+    // expected length, I suggest renaming it to expected_start, then checking EXPECT_LE(current.expected_start, m_ticks
+    // % m_cycle) below would make more sense, since m_ticks contains lethargy and makes it a real actual_start.
     child.actual_start = (start != ActivePhaser::DONT_CARE) ? start : m_start_counter;
     child.context = context;
     child.actual_length = length + lethargy;
