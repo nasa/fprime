@@ -62,12 +62,12 @@ class ComStub final : public ComStubComponentBase {
                               Fw::Buffer& fwBuffer,  //!< The buffer
                               const ComCfg::FrameContext& context) override;
 
-    //! Handler implementation for drvSendReturnIn
+    //! Handler implementation for drvAsyncSendReturnIn
     //!
     //! Buffer ownership and status returning from a Driver "send" operation
-    void drvSendReturnIn_handler(FwIndexType portNum,   //!< The port number
-                                 Fw::Buffer& fwBuffer,  //!< The buffer
-                                 const Drv::ByteStreamStatus& recvStatus) override;
+    void drvAsyncSendReturnIn_handler(FwIndexType portNum,   //!< The port number
+                                      Fw::Buffer& fwBuffer,  //!< The buffer
+                                      const Drv::ByteStreamStatus& recvStatus) override;
 
     bool m_reinitialize;                   //!< Stores if a ready signal is needed on connection
     ComCfg::FrameContext m_storedContext;  //!< Stores the context of the current message

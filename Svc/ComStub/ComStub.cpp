@@ -27,7 +27,30 @@ void ComStub::dataIn_handler(const FwIndexType portNum, Fw::Buffer& sendBuffer, 
     FW_ASSERT(!this->m_reinitialize || !this->isConnected_comStatusOut_OutputPort(
                                            0));  // A message should never get here if we need to reinitialize is needed
     this->m_storedContext = context;             // Store the context of the current message
-    this->drvSendOut_out(0, sendBuffer);
+    Drv::ByteStreamStatus sendStatus = Drv::ByteStreamStatus::SEND_RETRY;
+    // If the synchronous send port is connected, send the data synchronously
+    if (this->isConnected_drvSendOut_OutputPort(0)) {
+        for (FwIndexType i = 0; sendStatus == Drv::ByteStreamStatus::SEND_RETRY && i < RETRY_LIMIT; i++) {
+            sendStatus = this->drvSendOut_out(0, sendBuffer);
+        }
+        if (sendStatus != Drv::ByteStreamStatus::SEND_RETRY) {
+            // Not retrying - return buffer ownership and send status
+            this->dataReturnOut_out(0, sendBuffer, this->m_storedContext);
+            this->m_reinitialize = sendStatus.e != Drv::ByteStreamStatus::OP_OK;
+            this->m_retry_count = 0;  // Reset the retry count
+            Fw::Success comSuccess =
+                (sendStatus.e == Drv::ByteStreamStatus::OP_OK) ? Fw::Success::SUCCESS : Fw::Success::FAILURE;
+            this->comStatusOut_out(0, comSuccess);
+        } else {
+            this->dataReturnOut_out(0, sendBuffer, this->m_storedContext);
+            Fw::Logger::log("ComStub RETRY_LIMIT exceeded, skipped sending data");
+            this->m_retry_count = 0;  // Reset the retry count
+        }
+    } else if (this->isConnected_drvAsyncSendOut_OutputPort(0)) {
+        this->drvAsyncSendOut_out(0, sendBuffer);
+    } else {
+        FW_ASSERT(0);  // Neither send port is connected, this should never happen
+    }
 }
 
 void ComStub::drvConnected_handler(const FwIndexType portNum) {
@@ -49,9 +72,11 @@ void ComStub::drvReceiveIn_handler(const FwIndexType portNum,
     }
 }
 
-void ComStub ::drvSendReturnIn_handler(FwIndexType portNum,   //!< The port number
-                                       Fw::Buffer& fwBuffer,  //!< The buffer
-                                       const Drv::ByteStreamStatus& sendStatus) {
+void ComStub ::drvAsyncSendReturnIn_handler(FwIndexType portNum,   //!< The port number
+                                            Fw::Buffer& fwBuffer,  //!< The buffer
+                                            const Drv::ByteStreamStatus& sendStatus) {
+    // This should never be called if the drvAsyncSendOut port is not connected
+    FW_ASSERT(this->isConnected_drvAsyncSendOut_OutputPort(0));
     if (sendStatus != Drv::ByteStreamStatus::SEND_RETRY) {
         // Not retrying - return buffer ownership and send status
         this->dataReturnOut_out(0, fwBuffer, this->m_storedContext);
