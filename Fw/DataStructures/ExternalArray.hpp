@@ -8,6 +8,7 @@
 #define Fw_ExternalArray_HPP
 
 #include <cstdint>
+#include <type_traits>
 
 #include "Fw/FPrimeBasicTypes.hpp"
 #include "Fw/Types/Assert.hpp"
@@ -17,6 +18,12 @@ namespace Fw {
 
 template <typename T>
 class ExternalArray final {
+    // ----------------------------------------------------------------------
+    // Static assertions
+    // ----------------------------------------------------------------------
+
+    static_assert(std::is_assignable<T&, T>::value, "T must be assignable to T&");
+
   public:
     // ----------------------------------------------------------------------
     // Public constructors and destructors

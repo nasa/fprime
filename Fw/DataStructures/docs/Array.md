@@ -14,7 +14,10 @@ It maintains the backing memory _M_ as a member variable.
 |`typename`|`T`|The type of an array element|
 |`FwSizeType`|`S`|The array size in elements|
 
-`Array` statically asserts that `S > 0`.
+`Array` statically asserts the following:
+
+* `T` is default constructible.
+* `S > 0`.
 
 ## 2. Types
 

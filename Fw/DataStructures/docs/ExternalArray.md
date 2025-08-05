@@ -14,6 +14,8 @@ It stores a pointer to the backing memory _M_.
 |----|----|-------|
 |`typename`|`T`|The type of an array element|
 
+`Array` statically asserts that `T` is assignable to `T&`.
+
 ## 2. Private Member Variables
 
 `ExternalArray` has the following private member variables.
