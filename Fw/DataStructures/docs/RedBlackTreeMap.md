@@ -29,8 +29,10 @@ It represents a map based on a red-black tree with internal storage.
 |Name|Definition|
 |----|----------|
 |`ConstIterator`|Alias of [`MapConstIterator<K, V>`](MapConstIterator.md)|
-|`Entry`|Alias of [`SetOrMapImplEntry<K, V>`](SetOrMapImplEntry.md)|
-|`Entries`|Alias of `Entry[C]`|
+|`Node`|Alias of [`RedBlackTreeSetOrMapImpl<K, V>::Node`](SetOrMapImplEntry.md)|
+|`Nodes`|Alias of [`Node[C]`|
+|`Index`|Alias of [`RedBlackTreeSetOrMapImpl<K, V>::Index`](SetOrMapImplEntry.md)|
+|`FreeNodes`|Alias of [`Index[C]`|
 
 ## 4. Private Member Variables
 
@@ -39,7 +41,8 @@ It represents a map based on a red-black tree with internal storage.
 |Name|Type|Purpose|Default Value|
 |----|----|-------|-------------|
 |`m_extMap`|[`ExternalRedBlackTreeMap<K, V>`](ExternalRedBlackTreeMap.md)|The external map implementation|C++ default initialization|
-|`m_entries`|`Entries`|The array providing the backing memory for `m_extMap`|C++ default initialization|
+|`m_nodes`|`Nodes`|The array for storing the tree nodes|
+|`m_freeNodes`|`FreeNodes`|The array for storing the free node indices.|
 
 ```mermaid
 classDiagram
@@ -54,7 +57,7 @@ classDiagram
 RedBlackTreeMap()
 ```
 
-Initialize `m_extMap` with `ExternalRedBlackTreeMap<K, V>(m_entries, C)`.
+Initialize `m_extMap` with `ExternalRedBlackTreeMap<K, V>(m_nodes, m_freeNodes, C)`.
 
 _Example:_
 ```c++
@@ -67,7 +70,7 @@ RedBlackTreeMap<U16, U32, 10> map;
 RedBlackTreeMap(const RedBlackTreeMap<K, V, C>& map)
 ```
 
-1. Initialize `m_extMap` with `ExternalRedBlackTreeMap<K, V>(m_entries, C)`.
+1. Initialize `m_extMap` with `ExternalRedBlackTreeMap<K, V>(m_nodes, m_freeNodes, C)`.
 
 1. Set `*this = map`.
 
