@@ -12,7 +12,7 @@ module Drv {
 
         @ Invoke this port to send data out the driver (asynchronous)
         @ Status and ownership of the buffer are returned through the sendReturnOut callback
-        guarded input port $send: Fw.BufferSend
+        async input port $send: Fw.BufferSend
 
         @ Port returning ownership of data received on $send port
         output port sendReturnOut: Drv.ByteStreamData
