@@ -2,7 +2,7 @@
 
 `ExternalRedBlackTreeSet` is a `final` class template
 defined in [`Fw/DataStructures`](sdd.md).
-It represents an array-based set with external storage.
+It represents a set based on a red-black tree with external storage.
 Internally it maintains an [`RedBlackTreeSetOrMapImpl`](RedBlackTreeSetOrMapImpl.md)
 as the set implementation.
 
