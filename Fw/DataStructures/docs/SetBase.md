@@ -18,7 +18,7 @@ The following elements are private and are defined `= delete`:
 
 1. The copy constructor.
     ```c++
-    SetBase(const SetBase<K, V>& map)
+    SetBase(const SetBase<T>& map)
     ```
 
 1. The assignment operator.
@@ -64,7 +64,7 @@ Return the begin value of the iterator for the implementation.
 
 _Example:_
 ```c++
-void f(SetBase<U16, U32>& set) {
+void f(SetBase<U32>& set) {
     set.clear();
     // Insert an element in the set
     const auto status = set.insert(42);
@@ -139,7 +139,7 @@ Return the end value of the iterator for the implementation.
 
 _Example:_
 ```c++
-void f(SetBase<U16, U32>& set) {
+void f(SetBase<U32>& set) {
     set.clear();
     // Insert an element in the set
     auto status = set.insert(42);
@@ -224,7 +224,7 @@ virtual Success insert(const T& element) = 0
 
 _Example:_
 ```c++
-void f(SetBase<U16, U32>& set) {
+void f(SetBase<U32>& set) {
     set.clear();
     auto size = set.getSize();
     ASSERT_EQ(size, 0);

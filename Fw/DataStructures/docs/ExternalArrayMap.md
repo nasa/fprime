@@ -85,7 +85,7 @@ ExternalArrayMap(ByteArray data, FwSizeType capacity)
 
 `data` must be aligned according to 
 [`getByteArrayAlignment()`](#getByteArrayAlignment) and must
-contain at least [`getByteArraySize(size)`](#getByteArraySize) bytes.
+contain at least [`getByteArraySize(capacity)`](#getByteArraySize) bytes.
 
 Call `setStorage(data, capacity)`.
 
@@ -391,7 +391,7 @@ void setStorage(ByteArray data, FwSizeType capacity)
 
 `data` must be aligned according to 
 [`getByteArrayAlignment()`](#getByteArrayAlignment) and must
-contain at least [`getByteArraySize(size)`](#getByteArraySize) bytes.
+contain at least [`getByteArraySize(capacity)`](#getByteArraySize) bytes.
 
 1. Call `m_entries.setStorage(data, capacity)`.
 

@@ -1,7 +1,7 @@
 # MapConstIterator
 
 `MapConstIterator` is a class for performing immutable iteration over a map.
-The iteration order is arbitrary.
+The iteration order is not specified.
 
 ## 1. Template Parameters
 

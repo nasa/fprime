@@ -1,7 +1,7 @@
 # SetConstIterator
 
 `SetConstIterator` is a class for performing immutable iteration over a set.
-The iteration order is arbitrary.
+The iteration order is not specified.
 
 ## 1. Template Parameters
 

@@ -26,7 +26,7 @@ as the set implementation.
 
 |Name|Definition|
 |----|----------|
-|`ConstIterator`|Alias of [`MapConstIterator<K, V>`](MapConstIterator.md)|
+|`ConstIterator`|Alias of [`MapConstIterator<T>`](MapConstIterator.md)|
 |`Entry`|Alias of [`SetOrMapImplEntry<T, Nil>`](SetOrMapImplEntry.md)|
 
 The type `Nil` is defined [in this file](Nil.md).
@@ -89,7 +89,7 @@ ExternalArraySet(ByteArray data, FwSizeType capacity)
 
 `data` must be aligned according to 
 [`getByteArrayAlignment()`](#getByteArrayAlignment) and must
-contain at least [`getByteArraySize(size)`](#getByteArraySize) bytes.
+contain at least [`getByteArraySize(capacity)`](#getByteArraySize) bytes.
 
 Call `setStorage(data, capacity)`.
 
@@ -176,7 +176,7 @@ Return `m_impl.begin()`.
 
 _Example:_
 ```c++
-using Set = ExternalArraySet<U16, U32>;
+using Set = ExternalArraySet<U32>;
 constexpr FwSizeType capacity = 10;
 Set::Entry entries[capacity];
 // Call the constructor providing backing storage
@@ -220,7 +220,7 @@ Return `m_impl.end()`.
 
 _Example:_
 ```c++
-using Set = ExternalArraySet<U16, U32>;
+using Set = ExternalArraySet<U32>;
 constexpr FwSizeType capacity = 10;
 Set::Entry entries[capacity];
 // Call the constructor providing backing storage
@@ -384,7 +384,7 @@ void setStorage(ByteArray data, FwSizeType capacity)
 
 `data` must be aligned according to 
 [`getByteArrayAlignment()`](#getByteArrayAlignment) and must
-contain at least [`getByteArraySize(size)`](#getByteArraySize) bytes.
+contain at least [`getByteArraySize(capacity)`](#getByteArraySize) bytes.
 
 1. Call `m_entries.setStorage(data, capacity)`.
 
