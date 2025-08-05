@@ -87,7 +87,7 @@ class ActivePhaserTester final : public ActivePhaserGTestBase {
     // Tests
     // ----------------------------------------------------------------------
 
-    //! \breif wrapper to create child and integrate it into the test harness
+    //! \brief wrapper to create child and integrate it into the test harness
     //!
     void create_child(FwIndexType port,
                       U32 length,
@@ -103,7 +103,7 @@ class ActivePhaserTester final : public ActivePhaserGTestBase {
     //!
     void test_nominal_children(void);
 
-    //! \brief A test for children that do things in a less-than sequential manner unrulely
+    //! \brief A test for children that do things in a less-than sequential manner unruly
     //!
     void test_unruly_children(void);
 
@@ -111,7 +111,7 @@ class ActivePhaserTester final : public ActivePhaserGTestBase {
     //!
     void test_lethargic_child(void);
 
-    //! \brief A test that tests many lathargic children
+    //! \brief A test that tests many lethargic children
     //!
     void test_lethargic_children(bool adjust_initial = false, U64 cycles = MAX_CYCLES, U32 tick_start = 0xFFFFFFFF);
 

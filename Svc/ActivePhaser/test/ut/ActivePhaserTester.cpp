@@ -28,7 +28,7 @@ FauxPhaser::State FauxPhaser::run(U32 tick_of_cycle, U32 cycle_length) {
         current->runtime = 0;
         state = FauxPhaser::END_OF_CYCLE;
     }
-    // Current child reaches the end of childern, or end of cycle hasn't been reached yet
+    // Current child reaches the end of children, or end of cycle hasn't been reached yet
     else if (current == children.end() || tick_of_cycle < current->actual_start) {
         state = FauxPhaser::IDLE;
     }
