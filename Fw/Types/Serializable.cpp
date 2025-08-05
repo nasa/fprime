@@ -17,7 +17,7 @@ Serializable::Serializable() {}
 
 Serializable::~Serializable() {}
 
-// Default implementations for legacy serialization methods for backwards 
+// Default implementations for legacy serialization methods for backwards
 // compatibility.
 SerializeStatus Serializable::serialize(SerializeBufferBase& buffer) const {
     return this->serializeTo(buffer);
