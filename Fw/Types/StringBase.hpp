@@ -66,11 +66,11 @@ class StringBase : public Serializable {
     FormatStatus format(const CHAR* formatString, ...);            //!< write formatted string to buffer
     FormatStatus vformat(const CHAR* formatString, va_list args);  //!< write formatted string to buffer using va_list
 
-    virtual SerializeStatus serializeTo(SerializeBufferBase& buffer) const override;
+    SerializeStatus serializeTo(SerializeBufferBase& buffer) const override;
     virtual SerializeStatus serializeTo(SerializeBufferBase& buffer, SizeType maxLen) const;
-    virtual SerializeStatus deserializeFrom(SerializeBufferBase& buffer) override;
+    SerializeStatus deserializeFrom(SerializeBufferBase& buffer) override;
 
-    virtual SerializeStatus serialize(SerializeBufferBase& buffer) const override;
+    SerializeStatus serialize(SerializeBufferBase& buffer) const override;
     virtual SerializeStatus serialize(SerializeBufferBase& buffer, SizeType maxLen) const;
 
 #ifdef BUILD_UT
