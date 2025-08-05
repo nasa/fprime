@@ -516,6 +516,8 @@ Return `ConstIterator(*this)`.
 void clear()
 ```
 
+1. Set `m_root = NONE`.
+
 1. Call `m_freeNodes.clear()`.
 
 1. Let `capacity = getCapacity()`.

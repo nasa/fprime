@@ -287,6 +287,8 @@ class RedBlackTreeSetOrMapImpl final {
 
     //! Clear the set or map
     void clear() {
+        // Set the root to NONE
+        this->m_root = Node::NONE;
         // Clear the free node stack
         this->m_freeNodes.clear();
         // Push all the nodes on the free node stack
