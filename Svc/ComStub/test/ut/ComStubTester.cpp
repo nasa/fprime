@@ -137,7 +137,7 @@ void ComStubTester ::test_retry_sync() {
     ComCfg::FrameContext context;
 
     this->m_sync_send_status = Drv::ByteStreamStatus::SEND_RETRY;
-    this->m_retry_fail = false;
+    this->m_retry_fail = true;
     invoke_to_dataIn(0, buffer, context);
     ASSERT_from_drvSendOut_SIZE(static_cast<U32>(this->component.RETRY_LIMIT));
     ASSERT_from_dataReturnOut_SIZE(1);
@@ -249,8 +249,9 @@ void ComStubTester ::connectPortsWithTestMode(TestMode mode) {
 Drv::ByteStreamStatus ComStubTester ::from_drvSendOut_handler(const FwIndexType portNum, Fw::Buffer& sendBuffer) {
     this->pushFromPortEntry_drvSendOut(sendBuffer);
     // return m_sync_send_status by default, unless number of retries is exceeded
-    this->m_retries =
-        (m_sync_send_status == Drv::ByteStreamStatus::SEND_RETRY) ? (this->m_retries + 1) : this->m_retries;
+    if (this->m_sync_send_status == Drv::ByteStreamStatus::SEND_RETRY) {
+        this->m_retries++;
+    }
     if (this->m_retries >= this->component.RETRY_LIMIT and !this->m_retry_fail) {
         return Drv::ByteStreamStatus::OP_OK;  // if limit exceeded and no retry fail, return success
     }
