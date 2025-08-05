@@ -86,8 +86,6 @@ void AmpcsEvrLogPacket::setTaskName(U8* taskName, U8 len) {
 
     memcpy(this->m_taskName, (const void*)taskName, len);
 }
-    memcpy(this->m_taskName, (const void*)taskName, len);
-}
 
 void AmpcsEvrLogPacket::setId(U32 eventID) {
     this->m_eventID = eventID;
