@@ -19,7 +19,7 @@ module Svc {
         output port drvReceiveReturnOut: Fw.BufferSend
 
         # ----------------------------------------------------------------------
-        # Byte stream model (synchronuous)
+        # Byte stream model (synchronous)
         # ----------------------------------------------------------------------
 
         @ Send (write) data to the driver. This gets invoked on dataIn invocation
