@@ -13,9 +13,17 @@ namespace Fw {
 LogPacket::LogPacket() : m_id(0) {
     this->m_type = ComPacketType::FW_PACKET_LOG;
 }
+LogPacket::LogPacket() : m_id(0) {
+    this->m_type = ComPacketType::FW_PACKET_LOG;
+}
 
 LogPacket::~LogPacket() {}
 
+SerializeStatus LogPacket::serializeTo(SerializeBufferBase& buffer) const {
+    SerializeStatus stat = ComPacket::serializeBase(buffer);
+    if (stat != FW_SERIALIZE_OK) {
+        return stat;
+    }
 SerializeStatus LogPacket::serializeTo(SerializeBufferBase& buffer) const {
     SerializeStatus stat = ComPacket::serializeBase(buffer);
     if (stat != FW_SERIALIZE_OK) {
@@ -37,6 +45,11 @@ SerializeStatus LogPacket::serializeTo(SerializeBufferBase& buffer) const {
                                 Fw::Serialization::OMIT_LENGTH);
 }
 
+SerializeStatus LogPacket::deserializeFrom(SerializeBufferBase& buffer) {
+    SerializeStatus stat = deserializeBase(buffer);
+    if (stat != FW_SERIALIZE_OK) {
+        return stat;
+    }
 SerializeStatus LogPacket::deserializeFrom(SerializeBufferBase& buffer) {
     SerializeStatus stat = deserializeBase(buffer);
     if (stat != FW_SERIALIZE_OK) {
@@ -67,7 +80,13 @@ SerializeStatus LogPacket::deserializeFrom(SerializeBufferBase& buffer) {
 void LogPacket::setId(FwEventIdType id) {
     this->m_id = id;
 }
+void LogPacket::setId(FwEventIdType id) {
+    this->m_id = id;
+}
 
+void LogPacket::setLogBuffer(const LogBuffer& buffer) {
+    this->m_logBuffer = buffer;
+}
 void LogPacket::setLogBuffer(const LogBuffer& buffer) {
     this->m_logBuffer = buffer;
 }
@@ -75,7 +94,13 @@ void LogPacket::setLogBuffer(const LogBuffer& buffer) {
 void LogPacket::setTimeTag(const Fw::Time& timeTag) {
     this->m_timeTag = timeTag;
 }
+void LogPacket::setTimeTag(const Fw::Time& timeTag) {
+    this->m_timeTag = timeTag;
+}
 
+FwEventIdType LogPacket::getId() {
+    return this->m_id;
+}
 FwEventIdType LogPacket::getId() {
     return this->m_id;
 }
@@ -83,7 +108,13 @@ FwEventIdType LogPacket::getId() {
 Fw::Time& LogPacket::getTimeTag() {
     return this->m_timeTag;
 }
+Fw::Time& LogPacket::getTimeTag() {
+    return this->m_timeTag;
+}
 
+LogBuffer& LogPacket::getLogBuffer() {
+    return this->m_logBuffer;
+}
 LogBuffer& LogPacket::getLogBuffer() {
     return this->m_logBuffer;
 }

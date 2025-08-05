@@ -22,6 +22,10 @@ class AmpcsEvrLogPacket : public ComPacket {
   public:
     AmpcsEvrLogPacket();
     virtual ~AmpcsEvrLogPacket();
+class AmpcsEvrLogPacket : public ComPacket {
+  public:
+    AmpcsEvrLogPacket();
+    virtual ~AmpcsEvrLogPacket();
 
     SerializeStatus serializeTo(SerializeBufferBase& buffer) const;  //!< serialize contents
     SerializeStatus deserializeFrom(SerializeBufferBase& buffer);
@@ -37,7 +41,19 @@ class AmpcsEvrLogPacket : public ComPacket {
     U32 getOverSeqNum() const;
     U32 getCatSeqNum() const;
     LogBuffer& getLogBuffer();
+    const U8* getTaskName() const;
+    U32 getId() const;
+    U32 getOverSeqNum() const;
+    U32 getCatSeqNum() const;
+    LogBuffer& getLogBuffer();
 
+  protected:
+    U8 m_taskName[AMPCS_EVR_TASK_NAME_LEN];
+    U32 m_eventID;
+    U32 m_overSeqNum;
+    U32 m_catSeqNum;
+    LogBuffer m_logBuffer;  // !< serialized argument data
+};
   protected:
     U8 m_taskName[AMPCS_EVR_TASK_NAME_LEN];
     U32 m_eventID;

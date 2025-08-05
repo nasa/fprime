@@ -14,9 +14,14 @@ namespace Fw {
 AmpcsEvrLogPacket::AmpcsEvrLogPacket() : m_eventID(0), m_overSeqNum(0), m_catSeqNum(0) {
     this->m_type = FW_PACKET_LOG;
 }
+AmpcsEvrLogPacket::AmpcsEvrLogPacket() : m_eventID(0), m_overSeqNum(0), m_catSeqNum(0) {
+    this->m_type = FW_PACKET_LOG;
+}
 
 AmpcsEvrLogPacket::~AmpcsEvrLogPacket() {}
 
+SerializeStatus AmpcsEvrLogPacket::serializeTo(SerializeBufferBase& buffer) const {
+    SerializeStatus stat;
 SerializeStatus AmpcsEvrLogPacket::serializeTo(SerializeBufferBase& buffer) const {
     SerializeStatus stat;
 
@@ -46,7 +51,10 @@ SerializeStatus AmpcsEvrLogPacket::serializeTo(SerializeBufferBase& buffer) cons
 
 SerializeStatus AmpcsEvrLogPacket::deserializeFrom(SerializeBufferBase& buffer) {
     FwSizeType len;
+SerializeStatus AmpcsEvrLogPacket::deserializeFrom(SerializeBufferBase& buffer) {
+    FwSizeType len;
 
+    SerializeStatus stat;
     SerializeStatus stat;
 
     len = AMPCS_EVR_TASK_NAME_LEN;
@@ -83,10 +91,18 @@ SerializeStatus AmpcsEvrLogPacket::deserializeFrom(SerializeBufferBase& buffer) 
 void AmpcsEvrLogPacket::setTaskName(U8* taskName, U8 len) {
     FW_ASSERT(taskName != nullptr);
     FW_ASSERT(len == AMPCS_EVR_TASK_NAME_LEN);
+void AmpcsEvrLogPacket::setTaskName(U8* taskName, U8 len) {
+    FW_ASSERT(taskName != nullptr);
+    FW_ASSERT(len == AMPCS_EVR_TASK_NAME_LEN);
 
     memcpy(this->m_taskName, (const void*)taskName, len);
 }
+    memcpy(this->m_taskName, (const void*)taskName, len);
+}
 
+void AmpcsEvrLogPacket::setId(U32 eventID) {
+    this->m_eventID = eventID;
+}
 void AmpcsEvrLogPacket::setId(U32 eventID) {
     this->m_eventID = eventID;
 }
@@ -94,7 +110,13 @@ void AmpcsEvrLogPacket::setId(U32 eventID) {
 void AmpcsEvrLogPacket::setOverSeqNum(U32 overSeqNum) {
     this->m_overSeqNum = overSeqNum;
 }
+void AmpcsEvrLogPacket::setOverSeqNum(U32 overSeqNum) {
+    this->m_overSeqNum = overSeqNum;
+}
 
+void AmpcsEvrLogPacket::setCatSeqNum(U32 catSeqNum) {
+    this->m_catSeqNum = catSeqNum;
+}
 void AmpcsEvrLogPacket::setCatSeqNum(U32 catSeqNum) {
     this->m_catSeqNum = catSeqNum;
 }
@@ -102,7 +124,13 @@ void AmpcsEvrLogPacket::setCatSeqNum(U32 catSeqNum) {
 void AmpcsEvrLogPacket::setLogBuffer(LogBuffer& buffer) {
     this->m_logBuffer = buffer;
 }
+void AmpcsEvrLogPacket::setLogBuffer(LogBuffer& buffer) {
+    this->m_logBuffer = buffer;
+}
 
+const U8* AmpcsEvrLogPacket::getTaskName() const {
+    return this->m_taskName;
+}
 const U8* AmpcsEvrLogPacket::getTaskName() const {
     return this->m_taskName;
 }
@@ -110,7 +138,13 @@ const U8* AmpcsEvrLogPacket::getTaskName() const {
 U32 AmpcsEvrLogPacket::getId() const {
     return this->m_eventID;
 }
+U32 AmpcsEvrLogPacket::getId() const {
+    return this->m_eventID;
+}
 
+U32 AmpcsEvrLogPacket::getOverSeqNum() const {
+    return this->m_overSeqNum;
+}
 U32 AmpcsEvrLogPacket::getOverSeqNum() const {
     return this->m_overSeqNum;
 }
@@ -118,7 +152,13 @@ U32 AmpcsEvrLogPacket::getOverSeqNum() const {
 U32 AmpcsEvrLogPacket::getCatSeqNum() const {
     return this->m_catSeqNum;
 }
+U32 AmpcsEvrLogPacket::getCatSeqNum() const {
+    return this->m_catSeqNum;
+}
 
+LogBuffer& AmpcsEvrLogPacket::getLogBuffer() {
+    return this->m_logBuffer;
+}
 LogBuffer& AmpcsEvrLogPacket::getLogBuffer() {
     return this->m_logBuffer;
 }
