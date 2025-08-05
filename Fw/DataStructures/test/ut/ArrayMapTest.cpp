@@ -92,7 +92,6 @@ TEST(ArrayMap, CopyDataFrom) {
     }
 }
 
-#if 0
 TEST(ArrayMapScenarios, Clear) {
     Map map;
     State state(map);
@@ -104,7 +103,6 @@ TEST(ArrayMapScenarios, Find) {
     State state(map);
     Scenarios::find(state);
 }
-#endif
 
 TEST(ArrayMapScenarios, FindExisting) {
     Map map;
