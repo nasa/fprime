@@ -41,6 +41,7 @@ module Ref {
     instance sendBuffComp
     instance typeDemo
     instance systemResources
+    instance dpDemo
     instance linuxTimer
     instance comDriver
     instance cmdSeq
@@ -93,6 +94,7 @@ module Ref {
       rateGroup2Comp.RateGroupMemberOut[1] -> sendBuffComp.SchedIn
       rateGroup2Comp.RateGroupMemberOut[2] -> SG3.schedIn
       rateGroup2Comp.RateGroupMemberOut[3] -> SG4.schedIn
+      rateGroup2Comp.RateGroupMemberOut[4] -> dpDemo.run
 
       # Rate group 3
       rateGroupDriverComp.CycleOut[Ports_RateGroups.rateGroup3] -> rateGroup3Comp.CycleIn
@@ -132,7 +134,13 @@ module Ref {
       DataProducts.dpMgr.productResponseOut -> SG1.productRecvIn
       # Send filled DP
       SG1.productSendOut -> DataProducts.dpMgr.productSendIn
-
+      # Synchronous request
+      dpDemo.productGetOut -> DataProducts.dpMgr.productGetIn
+      # Send filled DP
+      dpDemo.productSendOut -> DataProducts.dpMgr.productSendIn
+      # Asynchronous request
+      dpDemo.productRequestOut -> DataProducts.dpMgr.productRequestIn
+      DataProducts.dpMgr.productResponseOut -> dpDemo.productRecvIn
     }
 
     connections ComCcsds_CdhCore{
@@ -151,7 +159,7 @@ module Ref {
       # File Downlink <-> ComQueue
       FileHandling.fileDownlink.bufferSendOut -> ComCcsds.comQueue.bufferQueueIn[ComCcsds.Ports_ComBufferQueue.FILE]
       ComCcsds.comQueue.bufferReturnOut[ComCcsds.Ports_ComBufferQueue.FILE] -> FileHandling.fileDownlink.bufferReturn
-
+      
       # Router <-> FileUplink
       ComCcsds.fprimeRouter.fileOut     -> FileHandling.fileUplink.bufferSendIn
       FileHandling.fileUplink.bufferSendOut -> ComCcsds.fprimeRouter.fileBufferReturnIn
