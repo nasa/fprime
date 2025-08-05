@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  ActivePhaserTestMain.cpp
-// \author shaokail
+// \author lestarch
 // \brief  cpp file for ActivePhaser component test main function
 // ======================================================================
 
