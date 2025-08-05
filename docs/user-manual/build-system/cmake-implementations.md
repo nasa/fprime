@@ -9,7 +9,7 @@ These packages must be fully specified. Thus, every platform must specify a spec
 Modules that require an implementation should use the directive `REQUIRES_IMPLEMENTATIONS` in the `register_fprime_module` call.
 
 > [!NOTE]
-> `REQUIRES_IMPLEMENTATIONS` is only needed for modules that have a direct dependency on the implementation, not on their dependants.
+> `REQUIRES_IMPLEMENTATIONS` is only needed for modules that have a direct dependency on the implementation, not on their dependents.
 
 ## Choosing an Implementation
 
