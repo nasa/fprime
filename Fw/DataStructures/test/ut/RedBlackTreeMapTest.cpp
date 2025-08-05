@@ -29,7 +29,6 @@ class RedBlackTreeMapTester {
 
 namespace MapTest {
 
-#if 0
 using Entry = SetOrMapImplEntry<State::KeyType, State::ValueType>;
 using Map = RedBlackTreeMap<State::KeyType, State::ValueType, State::capacity>;
 using MapTester = RedBlackTreeMapTester<State::KeyType, State::ValueType, State::capacity>;
@@ -146,7 +145,6 @@ TEST(RedBlackTreeMapScenarios, Random) {
     State state(map);
     Scenarios::random(Fw::String("RedBlackTreeMapRandom"), state, 1000);
 }
-#endif
 
 }  // namespace MapTest
 }  // namespace Fw
