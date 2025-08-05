@@ -14,6 +14,12 @@ namespace Fw {
 template <typename T, FwSizeType C>
 class ArraySet final : public SetBase<T> {
     // ----------------------------------------------------------------------
+    // Static assertions
+    // ----------------------------------------------------------------------
+
+    static_assert(C > 0, "capacity must be greater than zero");
+
+    // ----------------------------------------------------------------------
     // Friend class for testing
     // ----------------------------------------------------------------------
 

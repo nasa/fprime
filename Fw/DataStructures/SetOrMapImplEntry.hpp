@@ -14,6 +14,15 @@ namespace Fw {
 
 template <typename KE, typename VN>
 class SetOrMapImplEntry final : public MapEntryBase<KE, VN> {
+    // ----------------------------------------------------------------------
+    // Static assertions
+    // ----------------------------------------------------------------------
+
+    static_assert(std::is_default_constructible<KE>::value, "key must be default constructible");
+    static_assert(std::is_assignable<KE&, KE>::value, "key or element must be assignable");
+    static_assert(std::is_default_constructible<VN>::value, "value must be default constructible");
+    static_assert(std::is_assignable<VN&, VN>::value, "value must be assignable");
+
   public:
     // ----------------------------------------------------------------------
     // Public constructors and destructors
