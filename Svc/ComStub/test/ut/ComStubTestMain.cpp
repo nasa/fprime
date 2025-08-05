@@ -4,34 +4,53 @@
 
 #include "ComStubTester.hpp"
 
-TEST(Nominal, Initial) {
-    Svc::ComStubTester tester;
+TEST(Common, Initial) {
+    Svc::ComStubTester tester(Svc::ComStubTester::TestMode::UNSPECIFIED);
     tester.test_initial();
 }
 
-TEST(Nominal, BasicIo) {
-    Svc::ComStubTester tester;
+TEST(Sync, BasicIo) {
+    Svc::ComStubTester tester(Svc::ComStubTester::TestMode::SYNC);
     tester.test_basic();
 }
 
-TEST(Nominal, Fail) {
-    Svc::ComStubTester tester;
+TEST(Async, BasicIo) {
+    Svc::ComStubTester tester(Svc::ComStubTester::TestMode::ASYNC);
+    tester.test_basic();
+}
+
+TEST(Sync, Fail) {
+    Svc::ComStubTester tester(Svc::ComStubTester::TestMode::SYNC);
+    tester.test_fail();
+}
+TEST(Async, Fail) {
+    Svc::ComStubTester tester(Svc::ComStubTester::TestMode::ASYNC);
     tester.test_fail();
 }
 
 TEST(Nominal, BufferReturn) {
-    Svc::ComStubTester tester;
+    Svc::ComStubTester tester(Svc::ComStubTester::TestMode::UNSPECIFIED);
     tester.test_buffer_return();
 }
 
-TEST(OffNominal, Retry) {
-    Svc::ComStubTester tester;
-    tester.test_retry();
+TEST(Sync, Retry) {
+    Svc::ComStubTester tester(Svc::ComStubTester::TestMode::SYNC);
+    tester.test_retry_sync();
 }
 
-TEST(OffNominal, RetryReset) {
-    Svc::ComStubTester tester;
-    tester.test_retry_reset();
+TEST(Sync, RetryReset) {
+    Svc::ComStubTester tester(Svc::ComStubTester::TestMode::SYNC);
+    tester.test_retry_reset_sync();
+}
+
+TEST(Async, Retry) {
+    Svc::ComStubTester tester(Svc::ComStubTester::TestMode::ASYNC);
+    tester.test_retry_async();
+}
+
+TEST(Async, RetryReset) {
+    Svc::ComStubTester tester(Svc::ComStubTester::TestMode::ASYNC);
+    tester.test_retry_reset_async();
 }
 
 int main(int argc, char** argv) {

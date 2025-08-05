@@ -90,10 +90,14 @@ void ComStub ::drvAsyncSendReturnIn_handler(FwIndexType portNum,   //!< The port
         if (this->m_retry_count < this->RETRY_LIMIT) {
             // If we have not yet retried more than the retry limit, attempt to retry
             this->m_retry_count++;
-            this->drvSendOut_out(0, fwBuffer);
+            this->drvAsyncSendOut_out(0, fwBuffer);
         } else {
             // If retried too many times, return buffer and log failure
             this->dataReturnOut_out(0, fwBuffer, this->m_storedContext);
+            // REVIEW NOTE: this will log the failure but as far as I understand it,
+            // this will be a silent failure w.r.t. the ground, and the ComStub/ComQueue
+            // pipeline will be halted? Maybe assert instead?
+            // Or send ComStatusOut with a failure ?
             Fw::Logger::log("ComStub RETRY_LIMIT exceeded, skipped sending data");
             this->m_retry_count = 0;  // Reset the retry count
         }
