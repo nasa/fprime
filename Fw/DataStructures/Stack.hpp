@@ -15,6 +15,13 @@ namespace Fw {
 template <typename T, FwSizeType C>
 class Stack final : public StackBase<T> {
     // ----------------------------------------------------------------------
+    // Static assertions
+    // ----------------------------------------------------------------------
+
+    static_assert(std::is_default_constructible<T>::value, "T must be default constructible");
+    static_assert(C > 0, "capacity must be greater than zero");
+
+    // ----------------------------------------------------------------------
     // Friend class for testing
     // ----------------------------------------------------------------------
 
