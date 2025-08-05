@@ -17,6 +17,8 @@ Platform developers *must* specify an implementation of every package used in th
 
 Choosing an implementation is done with the `CHOOSES_IMPLEMENTATIONS` directive available to `register_fprime_config`. Platform developers should choose implementations as part of the platform definition.
 
+https://github.com/nasa/fprime/blob/dfaf496263bdfff04461179eb99fb3f906a10009/cmake/platform/Linux.cmake#L15-L17
+
 ## Overriding an Implementation Choice
 
 Executables, unit tests, and deployments may wish to use a different implementation than that specified by the platform. This can be done by using `CHOOSES_IMPLEMENTATIONS` directive call in the deployment, executable, or unit test's registration. For example, a unit test may wish to choose `Os_File_Stub` as an implementation of `Os_File` to disable platform file system support for the given unit test:
