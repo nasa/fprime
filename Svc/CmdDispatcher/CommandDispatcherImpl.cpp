@@ -33,12 +33,16 @@ void CommandDispatcherImpl::compCmdReg_handler(FwIndexType portNum, FwOpcodeType
             this->m_entryTable[slot].opcode = opCode;
             this->m_entryTable[slot].port = portNum;
             this->m_entryTable[slot].used = true;
+            #if CMD_DISPATCHER_ENABLE_OPCODE_REGISTER_EVENTS
             this->log_DIAGNOSTIC_OpCodeRegistered(opCode, portNum, static_cast<I32>(slot));
+            #endif
             slotFound = true;
         } else if ((this->m_entryTable[slot].used) && (this->m_entryTable[slot].opcode == opCode) &&
                    (this->m_entryTable[slot].port == portNum) && (not slotFound)) {
             slotFound = true;
+            #if CMD_DISPATCHER_ENABLE_OPCODE_REGISTER_EVENTS
             this->log_DIAGNOSTIC_OpCodeReregistered(opCode, portNum);
+            #endif
         } else if (this->m_entryTable[slot].used) {  // make sure no duplicates
             FW_ASSERT(this->m_entryTable[slot].opcode != opCode, static_cast<FwAssertArgType>(opCode));
         }
