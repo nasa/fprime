@@ -13,7 +13,10 @@ It represents a stack with internal storage.
 |`typename`|`T`|The type of a stack item|
 |`FwSizeType`|`C`|The stack capacity in items|
 
-`Stack` statically asserts that `C > 0`.
+`Stack` statically asserts the following:
+
+* `T` is default constructible.
+* `C > 0`.
 
 ## 2. Base Class
 

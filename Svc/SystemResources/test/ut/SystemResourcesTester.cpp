@@ -20,7 +20,8 @@ namespace Svc {
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-SystemResourcesTester ::SystemResourcesTester() : SystemResourcesGTestBase("Tester", MAX_HISTORY_SIZE), component("SystemResources") {
+SystemResourcesTester ::SystemResourcesTester()
+    : SystemResourcesGTestBase("Tester", MAX_HISTORY_SIZE), component("SystemResources") {
     this->initComponents();
     this->connectPorts();
 }
@@ -40,52 +41,52 @@ void SystemResourcesTester ::test_tlm(bool enabled) {
         switch (count) {
             case 16:
                 ASSERT_TLM_CPU_15_SIZE((enabled) ? 1 : 0);
-            // Cascade expected 
+            // Cascade expected
             case 15:
                 ASSERT_TLM_CPU_14_SIZE((enabled) ? 1 : 0);
-            // Cascade expected 
+            // Cascade expected
             case 14:
                 ASSERT_TLM_CPU_13_SIZE((enabled) ? 1 : 0);
-            // Cascade expected 
+            // Cascade expected
             case 13:
                 ASSERT_TLM_CPU_12_SIZE((enabled) ? 1 : 0);
-            // Cascade expected 
+            // Cascade expected
             case 12:
                 ASSERT_TLM_CPU_11_SIZE((enabled) ? 1 : 0);
-            // Cascade expected 
+            // Cascade expected
             case 11:
                 ASSERT_TLM_CPU_10_SIZE((enabled) ? 1 : 0);
-            // Cascade expected 
+            // Cascade expected
             case 10:
                 ASSERT_TLM_CPU_09_SIZE((enabled) ? 1 : 0);
-            // Cascade expected 
+            // Cascade expected
             case 9:
                 ASSERT_TLM_CPU_08_SIZE((enabled) ? 1 : 0);
-            // Cascade expected 
+            // Cascade expected
             case 8:
                 ASSERT_TLM_CPU_07_SIZE((enabled) ? 1 : 0);
-            // Cascade expected 
+            // Cascade expected
             case 7:
                 ASSERT_TLM_CPU_06_SIZE((enabled) ? 1 : 0);
-            // Cascade expected 
+            // Cascade expected
             case 6:
                 ASSERT_TLM_CPU_05_SIZE((enabled) ? 1 : 0);
-            // Cascade expected 
+            // Cascade expected
             case 5:
                 ASSERT_TLM_CPU_04_SIZE((enabled) ? 1 : 0);
-            // Cascade expected 
+            // Cascade expected
             case 4:
                 ASSERT_TLM_CPU_03_SIZE((enabled) ? 1 : 0);
-            // Cascade expected 
+            // Cascade expected
             case 3:
                 ASSERT_TLM_CPU_02_SIZE((enabled) ? 1 : 0);
-            // Cascade expected 
+            // Cascade expected
             case 2:
                 ASSERT_TLM_CPU_01_SIZE((enabled) ? 1 : 0);
-            // Cascade expected 
+            // Cascade expected
             case 1:
                 ASSERT_TLM_CPU_00_SIZE((enabled) ? 1 : 0);
-            // Cascade expected 
+            // Cascade expected
             default:
                 FwSizeType free = 0;
                 FwSizeType total = 0;
@@ -102,7 +103,7 @@ void SystemResourcesTester ::test_tlm(bool enabled) {
                     ASSERT_TLM_MEMORY_TOTAL_SIZE(0);
                 }
                 // Check that the filesystem reads well before asserting telemetry
-                if (enabled && Os::FileSystem::getFreeSpace("/", free, total ) == Os::FileSystem::OP_OK) {
+                if (enabled && Os::FileSystem::getFreeSpace("/", free, total) == Os::FileSystem::OP_OK) {
                     ASSERT_TLM_NON_VOLATILE_FREE_SIZE(1);
                     ASSERT_TLM_NON_VOLATILE_TOTAL_SIZE(1);
                     count += 2;
@@ -110,7 +111,7 @@ void SystemResourcesTester ::test_tlm(bool enabled) {
                     ASSERT_TLM_NON_VOLATILE_FREE_SIZE(0);
                     ASSERT_TLM_NON_VOLATILE_TOTAL_SIZE(0);
                 }
-                ASSERT_TLM_SIZE((enabled) ? (count + 1) : 0); // CPU count channels + avg + 2 ver
+                ASSERT_TLM_SIZE((enabled) ? (count + 1) : 0);  // CPU count channels + avg + 2 ver
                 break;
         }
     }

@@ -10,8 +10,8 @@
 #include "Svc/OsTime/OsTimeComponentAc.hpp"
 
 #include <Fw/Time/Time.hpp>
-#include <Os/RawTime.hpp>
 #include <Os/Mutex.hpp>
+#include <Os/RawTime.hpp>
 
 namespace Svc {
 
@@ -45,14 +45,11 @@ class OsTime final : public OsTimeComponentBase {
                              ) override;
 
     //! Handler implementation for setEpoch
-    void setEpoch_handler(FwIndexType portNum,
-                          const Fw::Time& fw_time,
-                          const Os::RawTime& os_time) override;
-
+    void setEpoch_handler(FwIndexType portNum, const Fw::Time& fw_time, const Os::RawTime& os_time) override;
 
     //! Handler implementation for command SetCurrentTime
-    void SetCurrentTime_cmdHandler(FwOpcodeType opCode, //!< The opcode
-                                   U32 cmdSeq, //!< The command sequence number
+    void SetCurrentTime_cmdHandler(FwOpcodeType opCode,  //!< The opcode
+                                   U32 cmdSeq,           //!< The command sequence number
                                    U32 seconds_now) override;
 
     Fw::Time m_epoch_fw_time;

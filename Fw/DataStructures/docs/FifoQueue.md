@@ -13,7 +13,10 @@ It represents a FIFO queue with internal storage.
 |`typename`|`T`|The type of a queue item|
 |`FwSizeType`|`C`|The queue capacity in items|
 
-`FifoQueue` statically asserts that `C > 0`.
+`FifoQueue` statically asserts the following:
+
+* `T` is default constructible.
+* `C > 0`.
 
 ## 2. Base Class
 

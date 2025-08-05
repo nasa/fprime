@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  USecFieldTooShortFile.hpp
 // \author Rob Bocchino
 // \brief  USecFieldTooShortFile interface
@@ -11,36 +11,28 @@
 #ifndef Svc_SequenceFiles_USecFieldTooShortFile_HPP
 #define Svc_SequenceFiles_USecFieldTooShortFile_HPP
 
-#include "Svc/CmdSequencer/test/ut/SequenceFiles/File.hpp"
 #include "Svc/CmdSequencer/CmdSequencerImpl.hpp"
+#include "Svc/CmdSequencer/test/ut/SequenceFiles/File.hpp"
 
 namespace Svc {
 
-  namespace SequenceFiles {
+namespace SequenceFiles {
 
-    //! A file with a microseconds field that is too short
-    class USecFieldTooShortFile :
-      public File
-    {
+//! A file with a microseconds field that is too short
+class USecFieldTooShortFile : public File {
+  public:
+    //! Construct a USecFieldTooShortFile
+    USecFieldTooShortFile(const Format::t a_format  //!< The file format
+    );
 
-      public:
+  public:
+    //! Serialize the file in F Prime format
+    void serializeFPrime(Fw::SerializeBufferBase& buffer  //!< The buffer
+    );
+};
 
-        //! Construct a USecFieldTooShortFile
-        USecFieldTooShortFile(
-            const Format::t a_format //!< The file format
-        );
+}  // namespace SequenceFiles
 
-      public:
-
-        //! Serialize the file in F Prime format
-        void serializeFPrime(
-            Fw::SerializeBufferBase& buffer //!< The buffer
-        );
-
-    };
-
-  }
-
-}
+}  // namespace Svc
 
 #endif

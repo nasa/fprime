@@ -17,6 +17,11 @@ namespace Fw {
 
 template <typename T, FwSizeType S>
 class Array final {
+    // ----------------------------------------------------------------------
+    // Static assertions
+    // ----------------------------------------------------------------------
+
+    static_assert(std::is_default_constructible<T>::value, "T must be default constructible");
     static_assert(S > 0, "array size must be greater than zero");
 
   public:

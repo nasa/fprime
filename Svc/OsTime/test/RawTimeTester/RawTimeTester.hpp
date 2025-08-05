@@ -5,8 +5,8 @@
 #ifndef SVC_OSTIME_TEST_UT_RAWTIMETESTER_HPP
 #define SVC_OSTIME_TEST_UT_RAWTIMETESTER_HPP
 
-#include "Os/RawTime.hpp"
 #include "Fw/Time/Time.hpp"
+#include "Os/RawTime.hpp"
 
 namespace Svc {
 
@@ -30,9 +30,7 @@ class RawTimeTester : public Os::RawTimeInterface {
 
     //! \brief return the underlying RawTime handle (implementation specific)
     //! \return internal RawTime handle representation
-    Os::RawTimeHandle* getHandle() override {
-        return reinterpret_cast<Os::RawTimeHandle*>(&m_handle);
-    }
+    Os::RawTimeHandle* getHandle() override { return reinterpret_cast<Os::RawTimeHandle*>(&m_handle); }
 
     Status now() override {
         m_handle.t = s_now_time;
@@ -40,8 +38,8 @@ class RawTimeTester : public Os::RawTimeInterface {
     }
 
     Status getTimeInterval(const Os::RawTime& other, Fw::TimeInterval& interval) const override {
-
-        const RawTimeTesterHandle* other_handle = reinterpret_cast<const RawTimeTesterHandle*>(const_cast<Os::RawTime&>(other).getHandle());
+        const RawTimeTesterHandle* other_handle =
+            reinterpret_cast<const RawTimeTesterHandle*>(const_cast<Os::RawTime&>(other).getHandle());
 
         Fw::TimeInterval t_start = Fw::TimeInterval(other_handle->t.getSeconds(), other_handle->t.getUSeconds());
         Fw::TimeInterval t_end = Fw::TimeInterval(m_handle.t.getSeconds(), m_handle.t.getUSeconds());
@@ -58,28 +56,19 @@ class RawTimeTester : public Os::RawTimeInterface {
         return buffer.deserializeTo(m_handle.t);
     }
 
-    Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const override {
-        return this->serializeTo(buffer);
-    }
+    Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const override { return this->serializeTo(buffer); }
 
-    Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer) override {
-        return this->deserializeFrom(buffer);
-    }
+    Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer) override { return this->deserializeFrom(buffer); }
 
-    static void setNowTime(const Fw::Time&& t) {
-        s_now_time = t;
-    }
+    static void setNowTime(const Fw::Time&& t) { s_now_time = t; }
 
   private:
-
     static Fw::Time s_now_time;
 
     //! Handle for RawTimeTester
     RawTimeTesterHandle m_handle;
 };
 
-} // namespace Svc
+}  // namespace Svc
 
-#endif // SVC_OSTIME_TEST_UT_RAWTIMETESTER_HPP
-
-
+#endif  // SVC_OSTIME_TEST_UT_RAWTIMETESTER_HPP

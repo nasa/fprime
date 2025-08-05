@@ -4,9 +4,9 @@
 // \brief  cpp file for FrameAccumulator component implementation class
 // ======================================================================
 
+#include "Svc/FrameAccumulator/FrameAccumulator.hpp"
 #include "Fw/FPrimeBasicTypes.hpp"
 #include "Fw/Types/Assert.hpp"
-#include "Svc/FrameAccumulator/FrameAccumulator.hpp"
 
 namespace Svc {
 
@@ -165,7 +165,9 @@ void FrameAccumulator ::processRing() {
     }
 }
 
-void FrameAccumulator ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer, const ComCfg::FrameContext& context) {
+void FrameAccumulator ::dataReturnIn_handler(FwIndexType portNum,
+                                             Fw::Buffer& fwBuffer,
+                                             const ComCfg::FrameContext& context) {
     // Frame buffer ownership is returned to the component. Component had allocated with a buffer manager,
     // so we return it to the buffer manager for deallocation
     this->bufferDeallocate_out(0, fwBuffer);

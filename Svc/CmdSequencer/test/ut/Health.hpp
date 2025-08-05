@@ -16,25 +16,20 @@
 
 namespace Svc {
 
-  namespace Health {
+namespace Health {
 
-    class CmdSequencerTester :
-      public Svc::CmdSequencerTester
-    {
+class CmdSequencerTester : public Svc::CmdSequencerTester {
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-      public:
+    //! Test health pings
+    void Ping();
+};
 
-        // ----------------------------------------------------------------------
-        // Tests
-        // ----------------------------------------------------------------------
+}  // namespace Health
 
-        //! Test health pings
-        void Ping();
-
-    };
-
-  }
-
-}
+}  // namespace Svc
 
 #endif

@@ -132,7 +132,7 @@ Return `m_extSet.begin()`.
 
 _Example:_
 ```c++
-using Set = ArraySet<U16, U32, 10>;
+using Set = ArraySet<U32, 10>;
 Set set;
 // Insert an element in the set
 const auto status = map.insert(42);

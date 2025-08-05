@@ -18,113 +18,98 @@
 
 namespace Svc {
 
-  class HealthTester :
-    public HealthGTestBase
-  {
+class HealthTester : public HealthGTestBase {
+    // ----------------------------------------------------------------------
+    // Construction and destruction
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Construction and destruction
-      // ----------------------------------------------------------------------
+  public:
+    //! Construct object HealthTester
+    //!
+    HealthTester();
 
-    public:
+    //! Destroy object HealthTester
+    //!
+    ~HealthTester();
 
-      //! Construct object HealthTester
-      //!
-      HealthTester();
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-      //! Destroy object HealthTester
-      //!
-      ~HealthTester();
+    void nominalTlm();
+    void warningTlm();
+    void faultTlm();
+    void disableAllMonitoring();
+    void disableOneMonitoring();
+    void updatePingTimeout();
+    void watchdogCheck();
+    void nominalCmd();
+    void nominal2CmdsDuringTlm();
+    void miscellaneous();
 
-    public:
+  private:
+    // ----------------------------------------------------------------------
+    // Handlers for typed from ports
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Tests
-      // ----------------------------------------------------------------------
+    //! Handler for from_PingSend
+    //!
+    void from_PingSend_handler(const FwIndexType portNum,  //!< The port number
+                               U32 key                     //!< Value to return to pinger
+                               ) override;
 
-      void nominalTlm();
-      void warningTlm();
-      void faultTlm();
-      void disableAllMonitoring();
-      void disableOneMonitoring();
-      void updatePingTimeout();
-      void watchdogCheck();
-      void nominalCmd();
-      void nominal2CmdsDuringTlm();
-      void miscellaneous();
+    //! Handler for from_WdogStroke
+    //!
+    void from_WdogStroke_handler(const FwIndexType portNum,  //!< The port number
+                                 U32 code                    //!< Watchdog stroke code
+                                 ) override;
 
-    private:
+  private:
+    // ----------------------------------------------------------------------
+    // Helper methods
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Handlers for typed from ports
-      // ----------------------------------------------------------------------
+    //! Connect ports
+    //!
+    void connectPorts();
 
-      //! Handler for from_PingSend
-      //!
-      void from_PingSend_handler(
-          const FwIndexType portNum, //!< The port number
-          U32 key //!< Value to return to pinger
-      ) override;
+    //! Initialize components
+    //!
+    void initComponents();
 
-      //! Handler for from_WdogStroke
-      //!
-      void from_WdogStroke_handler(
-          const FwIndexType portNum, //!< The port number
-          U32 code //!< Watchdog stroke code
-      ) override;
+    void dispatchAll();
 
-    private:
+  private:
+    // ----------------------------------------------------------------------
+    // Variables
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Helper methods
-      // ----------------------------------------------------------------------
+    FwIndexType numPingEntries;
+    HealthImpl::PingEntry pingEntries[Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS];
+    U32 watchDogCode;
+    U32 keys[Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS];
+    bool override;
+    U32 override_key;
 
-      //! Connect ports
-      //!
-      void connectPorts();
+    //! The component under test
+    //!
+    HealthImpl component;
 
-      //! Initialize components
-      //!
-      void initComponents();
+    void textLogIn(const FwEventIdType id,          //!< The event ID
+                   const Fw::Time& timeTag,         //!< The time
+                   const Fw::LogSeverity severity,  //!< The severity
+                   const Fw::TextLogString& text    //!< The event string
+                   ) override;
 
-      void dispatchAll();
+  public:
+    // ----------------------------------------------------------------------
+    // Accessor methods for protected/private members
+    // ----------------------------------------------------------------------
+    //! Get the NUM_PINGSEND_OUTPUT_PORTS value
+    static constexpr FwSizeType getNumPingSendOutputPorts() { return HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; }
+};
 
-    private:
-
-      // ----------------------------------------------------------------------
-      // Variables
-      // ----------------------------------------------------------------------
-
-      FwIndexType numPingEntries;
-      HealthImpl::PingEntry pingEntries[Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS];
-      U32 watchDogCode;
-      U32 keys[Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS];
-      bool override;
-      U32 override_key;
-
-      //! The component under test
-      //!
-      HealthImpl component;
-
-      void textLogIn(const FwEventIdType id, //!< The event ID
-                const Fw::Time& timeTag, //!< The time
-                const Fw::LogSeverity severity, //!< The severity
-                const Fw::TextLogString& text //!< The event string
-                ) override;
-
-
-    public:
-
-      // ----------------------------------------------------------------------
-      // Accessor methods for protected/private members
-      // ----------------------------------------------------------------------
-      //! Get the NUM_PINGSEND_OUTPUT_PORTS value
-      static constexpr FwSizeType getNumPingSendOutputPorts() {
-          return HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS;
-      }
-
-  };
-
-} // end namespace Svc
+}  // end namespace Svc
 
 #endif

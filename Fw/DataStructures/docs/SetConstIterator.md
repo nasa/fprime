@@ -1,6 +1,7 @@
 # SetConstIterator
 
 `SetConstIterator` is a class for performing immutable iteration over a set.
+The iteration order is not specified.
 
 ## 1. Template Parameters
 
@@ -65,6 +66,9 @@ bool isInRange() const
 ```
 
 Check whether the iterator is in range.
+It is a runtime error to attempt to access a set element through an iterator
+for which `isInRange` evaluates to `false`.
+In this case an assertion failure will occur.
 
 ### 3.6. operator*
 
@@ -74,6 +78,9 @@ const EntryBase& operator*() const
 
 Return a `const` reference to the `T` element
 pointed to by the iterator.
+If the iterator is not in range for the map, an assertion failure will occur.
+It is not recommended to use this operation
+after updating the set that the iterator points to.
 
 ### 3.7. operator->
 
@@ -83,3 +90,6 @@ const EntryBase* operator->() const
 
 Return a pointer to the `const T` element
 pointed to by the iterator.
+If the iterator is not in range for the map, an assertion failure will occur.
+It is not recommended to use this operation
+after updating the set that the iterator points to.

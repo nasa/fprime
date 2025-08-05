@@ -75,8 +75,8 @@ ExternalStack(ByteArray data, FwSizeType capacity)
 ```
 
 `data` must be aligned according to 
-[`getByteArrayAlignment()`](#61-getbytearrayalignment) and must
-contain at least [`getByteArraySize(size)`](#62-getbytearraysize) bytes.
+[`getByteArrayAlignment()`](#getByteArrayAlignment) and must
+contain at least [`getByteArraySize(capacity)`](#getByteArraySize) bytes.
 
 1. Call `setStorage(data, capacity)`.
 
@@ -201,8 +201,8 @@ void setStorage(ByteArray data, FwSizeType capacity)
 ```
 
 `data` must be aligned according to 
-[`getByteArrayAlignment()`](#61-getbytearrayalignment) and must
-contain at least [`getByteArraySize(size)`](#62-getbytearraysize) bytes.
+[`getByteArrayAlignment()`](#getByteArrayAlignment) and must
+contain at least [`getByteArraySize(capacity)`](#getByteArraySize) bytes.
 
 1. Call `m_items.setStorage(data, capacity)`.
 
@@ -336,6 +336,7 @@ ASSERT_EQ(stack.getSize(), 1);
 
 ## 6. Public Static Functions
 
+<a name="getByteArrayAlignment"></a>
 ### 6.1. getByteArrayAlignment
 
 ```c++
@@ -344,6 +345,7 @@ static constexpr U8 getByteArrayAlignment()
 
 Return `ExternalArray<T>::getByteArrayAlignment()`.
 
+<a name="getByteArraySize"></a>
 ### 6.2. getByteArraySize
 
 ```c++
