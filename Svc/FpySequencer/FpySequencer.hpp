@@ -25,8 +25,7 @@ static_assert(Svc::Fpy::MAX_SEQUENCE_ARG_COUNT <= std::numeric_limits<U8>::max()
               "Sequence arg count must be below U8 max");
 static_assert(Svc::Fpy::MAX_SEQUENCE_STATEMENT_COUNT <= std::numeric_limits<U16>::max(),
               "Sequence statement count must be below U16 max");
-static_assert(Svc::Fpy::MAX_STACK_SIZE <= std::numeric_limits<U16>::max(),
-              "Max stack size must be below U16 max");
+static_assert(Svc::Fpy::MAX_STACK_SIZE <= std::numeric_limits<U16>::max(), "Max stack size must be below U16 max");
 static_assert(Svc::Fpy::MAX_STACK_SIZE >= FW_TLM_BUFFER_MAX_SIZE,
               "Max stack size must be greater than max tlm buffer size");
 static_assert(Svc::Fpy::MAX_STACK_SIZE >= FW_PARAM_BUFFER_MAX_SIZE,
@@ -405,7 +404,8 @@ class FpySequencer : public FpySequencerComponentBase {
     void directive_noOp_internalInterfaceHandler(const Svc::FpySequencer_NoOpDirective& directive) override;
 
     //! Internal interface handler for directive_storeTlmVal
-    void directive_storeTlmVal_internalInterfaceHandler(const Svc::FpySequencer_StoreTlmValDirective& directive) override;
+    void directive_storeTlmVal_internalInterfaceHandler(
+        const Svc::FpySequencer_StoreTlmValDirective& directive) override;
 
     //! Internal interface handler for directive_storePrm
     void directive_storePrm_internalInterfaceHandler(const Svc::FpySequencer_StorePrmDirective& directive) override;

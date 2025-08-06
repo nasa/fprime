@@ -103,7 +103,8 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     void add_STORE(FpySequencer_StoreDirective dir);
     void add_LOAD(U16 lvarOffset, U16 size);
     void add_LOAD(FpySequencer_LoadDirective dir);
-    template <typename T> void add_PUSH_VAL(T val);
+    template <typename T>
+    void add_PUSH_VAL(T val);
     //! Handle a text event
     void textLogIn(FwEventIdType id,                //!< The event ID
                    const Fw::Time& timeTag,         //!< The time
@@ -132,7 +133,7 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     Signal tester_noOp_directiveHandler(const FpySequencer_NoOpDirective& directive, DirectiveError& err);
     Signal tester_waitRel_directiveHandler(const FpySequencer_WaitRelDirective& directive, DirectiveError& err);
     Signal tester_waitAbs_directiveHandler(const FpySequencer_WaitAbsDirective& directive, DirectiveError& err);
-    Signal tester_goto_directiveHandler(const Svc::FpySequencer_GotoDirective &directive, DirectiveError& err);
+    Signal tester_goto_directiveHandler(const Svc::FpySequencer_GotoDirective& directive, DirectiveError& err);
     Signal tester_if_directiveHandler(const FpySequencer_IfDirective& directive, DirectiveError& err);
     Signal tester_storePrm_directiveHandler(const FpySequencer_StorePrmDirective& directive, DirectiveError& err);
     Signal tester_storeTlmVal_directiveHandler(const FpySequencer_StoreTlmValDirective& directive, DirectiveError& err);
@@ -170,13 +171,17 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     void tester_set_m_statementsDispatched(U64 val);
     U64 tester_get_m_sequencesStarted();
     U64 tester_get_m_statementsDispatched();
-    Fw::Success tester_deserializeDirective(const Fpy::Statement& stmt, Svc::FpySequencer::DirectiveUnion& deserializedDirective);
+    Fw::Success tester_deserializeDirective(const Fpy::Statement& stmt,
+                                            Svc::FpySequencer::DirectiveUnion& deserializedDirective);
     Fpy::Sequence* tester_get_m_sequenceObj_ptr();
     Svc::Signal tester_dispatchStatement();
     Fw::Success tester_validate();
     Fw::String tester_get_m_sequenceFilePath();
     void tester_set_m_sequenceFilePath(Fw::String str);
-    Fw::Success tester_readBytes(Os::File& file, FwSizeType readLen, FpySequencer_FileReadStage readStage, bool updateCrc = true);
+    Fw::Success tester_readBytes(Os::File& file,
+                                 FwSizeType readLen,
+                                 FpySequencer_FileReadStage readStage,
+                                 bool updateCrc = true);
     Fw::Success tester_readFooter();
     Fw::Success tester_readBody();
     Fw::Success tester_readHeader();
@@ -189,8 +194,10 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     void tester_setState(Svc::FpySequencer_SequencerStateMachineStateMachineBase::State state);
     Svc::FpySequencer_SequencerStateMachineStateMachineBase::State tester_getState();
     void tester_dispatchDirective(const FpySequencer::DirectiveUnion& directive, const Fpy::DirectiveId& id);
-    template <typename T> void tester_push(T val);
-    template <typename T> T tester_pop();
+    template <typename T>
+    void tester_push(T val);
+    template <typename T>
+    T tester_pop();
 
   public:
     // ----------------------------------------------------------------------
@@ -198,24 +205,16 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     // ----------------------------------------------------------------------
 
     //! Get the OPCODE_RUN value
-    static FwOpcodeType get_OPCODE_RUN() {
-        return FpySequencerComponentBase::OPCODE_RUN;
-    }
+    static FwOpcodeType get_OPCODE_RUN() { return FpySequencerComponentBase::OPCODE_RUN; }
 
     //! Get the OPCODE_VALIDATE value
-    static FwOpcodeType get_OPCODE_VALIDATE() {
-        return FpySequencerComponentBase::OPCODE_VALIDATE;
-    }
+    static FwOpcodeType get_OPCODE_VALIDATE() { return FpySequencerComponentBase::OPCODE_VALIDATE; }
 
     //! Get the OPCODE_RUN_VALIDATED value
-    static FwOpcodeType get_OPCODE_RUN_VALIDATED() {
-        return FpySequencerComponentBase::OPCODE_RUN_VALIDATED;
-    }
+    static FwOpcodeType get_OPCODE_RUN_VALIDATED() { return FpySequencerComponentBase::OPCODE_RUN_VALIDATED; }
 
     //! Get the OPCODE_CANCEL value
-    static FwOpcodeType get_OPCODE_CANCEL() {
-        return FpySequencerComponentBase::OPCODE_CANCEL;
-    }
+    static FwOpcodeType get_OPCODE_CANCEL() { return FpySequencerComponentBase::OPCODE_CANCEL; }
 
     //! Get the OPCODE_DEBUG_CLEAR_BREAKPOINT value
     static FwOpcodeType get_OPCODE_DEBUG_CLEAR_BREAKPOINT() {
@@ -228,16 +227,10 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     }
 
     //! Get the OPCODE_DEBUG_BREAK value
-    static FwOpcodeType get_OPCODE_DEBUG_BREAK() {
-        return FpySequencerComponentBase::OPCODE_DEBUG_BREAK;
-    }
+    static FwOpcodeType get_OPCODE_DEBUG_BREAK() { return FpySequencerComponentBase::OPCODE_DEBUG_BREAK; }
 
     //! Get the OPCODE_DEBUG_CONTINUE value
-    static FwOpcodeType get_OPCODE_DEBUG_CONTINUE() {
-        return FpySequencerComponentBase::OPCODE_DEBUG_CONTINUE;
-    }
-
-
+    static FwOpcodeType get_OPCODE_DEBUG_CONTINUE() { return FpySequencerComponentBase::OPCODE_DEBUG_CONTINUE; }
 };
 
 class FpySequencer_SequencerStateMachineTester {
@@ -257,10 +250,7 @@ class FpySequencer_SequencerStateMachineTester {
     // ----------------------------------------------------------------------
     // Test access to private and protected methods and members
     // ----------------------------------------------------------------------
-    static void setState(FpySequencer_SequencerStateMachineStateMachineBase& sm, State s){
-        sm.m_state = s;
-    }
-
+    static void setState(FpySequencer_SequencerStateMachineStateMachineBase& sm, State s) { sm.m_state = s; }
 };
 
 }  // namespace Svc

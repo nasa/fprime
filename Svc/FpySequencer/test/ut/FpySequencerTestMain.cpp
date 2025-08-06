@@ -203,7 +203,8 @@ TEST_F(FpySequencerTester, cmd) {
     Fw::ComBuffer expected;
     ASSERT_EQ(expected.serialize(Fw::ComPacketType::FW_PACKET_COMMAND), Fw::SerializeStatus::FW_SERIALIZE_OK);
     ASSERT_EQ(expected.serialize(directive.get_opCode()), Fw::SerializeStatus::FW_SERIALIZE_OK);
-    ASSERT_EQ(expected.serialize(data, sizeof(data), Fw::Serialization::OMIT_LENGTH), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    ASSERT_EQ(expected.serialize(data, sizeof(data), Fw::Serialization::OMIT_LENGTH),
+              Fw::SerializeStatus::FW_SERIALIZE_OK);
     ASSERT_from_cmdOut_SIZE(1);
     ASSERT_from_cmdOut(0, expected, 0);
     this->clearHistory();
@@ -268,7 +269,7 @@ TEST_F(FpySequencerTester, stackOp) {
     result = tester_stackOp_directiveHandler(directiveAND, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 8);  // 0b1111
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 8);   // 0b1111
     ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, 1);  // 0b1111
     tester_get_m_runtime_ptr()->stackSize = 0;
 
@@ -709,7 +710,6 @@ TEST_F(FpySequencerTester, fne) {
     ASSERT_EQ(tester_op_fne(), DirectiveError::NO_ERROR);
     ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 0);
 }
-
 
 TEST_F(FpySequencerTester, not) {
     tester_push<U8>(true);
@@ -1226,28 +1226,32 @@ TEST_F(FpySequencerTester, readBytes) {
     tester_get_m_sequenceBuffer_ptr()->setExtBuffer(data, sizeof(data));
     Os::File seqFile;
     ASSERT_EQ(seqFile.open("test.bin", Os::File::OPEN_READ), Os::File::OP_OK);
-    ASSERT_EQ(tester_readBytes(seqFile, Fpy::Header::SERIALIZED_SIZE, FpySequencer_FileReadStage::HEADER, true), Fw::Success::SUCCESS);
+    ASSERT_EQ(tester_readBytes(seqFile, Fpy::Header::SERIALIZED_SIZE, FpySequencer_FileReadStage::HEADER, true),
+              Fw::Success::SUCCESS);
     seqFile.close();
 
     // check capacity too low
     tester_get_m_sequenceBuffer_ptr()->setExtBuffer(data, Fpy::Header::SERIALIZED_SIZE - 1);
     ASSERT_EQ(seqFile.open("test.bin", Os::File::OPEN_READ), Os::File::OP_OK);
-    ASSERT_EQ(tester_readBytes(seqFile, Fpy::Header::SERIALIZED_SIZE, FpySequencer_FileReadStage::HEADER, true), Fw::Success::FAILURE);
+    ASSERT_EQ(tester_readBytes(seqFile, Fpy::Header::SERIALIZED_SIZE, FpySequencer_FileReadStage::HEADER, true),
+              Fw::Success::FAILURE);
     seqFile.close();
 
     // check not enough bytes
     tester_get_m_sequenceBuffer_ptr()->setExtBuffer(data,
                                                     Fpy::Header::SERIALIZED_SIZE + Fpy::Footer::SERIALIZED_SIZE + 1);
     ASSERT_EQ(seqFile.open("test.bin", Os::File::OPEN_READ), Os::File::OP_OK);
-    ASSERT_EQ(tester_readBytes(seqFile, Fpy::Header::SERIALIZED_SIZE + Fpy::Footer::SERIALIZED_SIZE + 1, FpySequencer_FileReadStage::HEADER, true),
+    ASSERT_EQ(tester_readBytes(seqFile, Fpy::Header::SERIALIZED_SIZE + Fpy::Footer::SERIALIZED_SIZE + 1,
+                               FpySequencer_FileReadStage::HEADER, true),
               Fw::Success::FAILURE);
 
     seqFile.close();
     removeFile("test.bin");
 
     // read after close
-    ASSERT_DEATH_IF_SUPPORTED(
-        tester_readBytes(seqFile, Fpy::Header::SERIALIZED_SIZE + Fpy::Footer::SERIALIZED_SIZE, FpySequencer_FileReadStage::HEADER, true), "Assert: ");
+    ASSERT_DEATH_IF_SUPPORTED(tester_readBytes(seqFile, Fpy::Header::SERIALIZED_SIZE + Fpy::Footer::SERIALIZED_SIZE,
+                                               FpySequencer_FileReadStage::HEADER, true),
+                              "Assert: ");
 }
 
 TEST_F(FpySequencerTester, validate) {

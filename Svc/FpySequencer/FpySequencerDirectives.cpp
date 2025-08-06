@@ -31,7 +31,8 @@ void FpySequencer::sendSignal(Signal signal) {
 template <typename T>
 T FpySequencer::pop() {
     static_assert(sizeof(T) == 8 || sizeof(T) == 4 || sizeof(T) == 2 || sizeof(T) == 1, "size must be 1, 2, 4, 8");
-    FW_ASSERT(this->m_runtime.stackSize >= sizeof(T), static_cast<FwAssertArgType>(this->m_runtime.stackSize), static_cast<FwAssertArgType>(sizeof(T)));
+    FW_ASSERT(this->m_runtime.stackSize >= sizeof(T), static_cast<FwAssertArgType>(this->m_runtime.stackSize),
+              static_cast<FwAssertArgType>(sizeof(T)));
     // first make a byte array which can definitely store our val
     U8 valBytes[8] = {0};
     // now move top of stack into byte array and shrink stack
@@ -40,25 +41,15 @@ T FpySequencer::pop() {
 
     // now do appropriate byteswap on byte array
     if (sizeof(T) == 8) {
-        return static_cast<T>(
-               (static_cast<T>(valBytes[7]) << 0)  |
-               (static_cast<T>(valBytes[6]) << 8)  |
-               (static_cast<T>(valBytes[5]) << 16) |
-               (static_cast<T>(valBytes[4]) << 24) |
-               (static_cast<T>(valBytes[3]) << 32) |
-               (static_cast<T>(valBytes[2]) << 40) |
-               (static_cast<T>(valBytes[1]) << 48) |
-               (static_cast<T>(valBytes[0]) << 56));
+        return static_cast<T>((static_cast<T>(valBytes[7]) << 0) | (static_cast<T>(valBytes[6]) << 8) |
+                              (static_cast<T>(valBytes[5]) << 16) | (static_cast<T>(valBytes[4]) << 24) |
+                              (static_cast<T>(valBytes[3]) << 32) | (static_cast<T>(valBytes[2]) << 40) |
+                              (static_cast<T>(valBytes[1]) << 48) | (static_cast<T>(valBytes[0]) << 56));
     } else if (sizeof(T) == 4) {
-        return static_cast<T>(
-               (static_cast<T>(valBytes[3]) << 0) |
-               (static_cast<T>(valBytes[2]) << 8) |
-               (static_cast<T>(valBytes[1]) << 16) |
-               (static_cast<T>(valBytes[0]) << 24));
+        return static_cast<T>((static_cast<T>(valBytes[3]) << 0) | (static_cast<T>(valBytes[2]) << 8) |
+                              (static_cast<T>(valBytes[1]) << 16) | (static_cast<T>(valBytes[0]) << 24));
     } else if (sizeof(T) == 2) {
-        return static_cast<T>(
-               (static_cast<T>(valBytes[1]) << 0) |
-               (static_cast<T>(valBytes[0]) << 8));
+        return static_cast<T>((static_cast<T>(valBytes[1]) << 0) | (static_cast<T>(valBytes[0]) << 8));
     } else {
         return static_cast<T>(valBytes[0]);
     }
@@ -73,14 +64,16 @@ template I16 FpySequencer::pop();
 template I32 FpySequencer::pop();
 template I64 FpySequencer::pop();
 
-template <> F32 FpySequencer::pop<F32>() {
+template <>
+F32 FpySequencer::pop<F32>() {
     U32 endianness = this->pop<U32>();
     F32 val;
     memcpy(&val, &endianness, sizeof(val));
     return val;
 }
 
-template <> F64 FpySequencer::pop<F64>() {
+template <>
+F64 FpySequencer::pop<F64>() {
     U64 endianness = this->pop<U64>();
     F64 val;
     memcpy(&val, &endianness, sizeof(val));
@@ -90,7 +83,8 @@ template <> F64 FpySequencer::pop<F64>() {
 template <typename T>
 void FpySequencer::push(T val) {
     static_assert(sizeof(T) == 8 || sizeof(T) == 4 || sizeof(T) == 2 || sizeof(T) == 1, "size must be 1, 2, 4, 8");
-    FW_ASSERT(this->m_runtime.stackSize + sizeof(val) < Fpy::MAX_STACK_SIZE, static_cast<FwAssertArgType>(this->m_runtime.stackSize), static_cast<FwAssertArgType>(sizeof(T)));
+    FW_ASSERT(this->m_runtime.stackSize + sizeof(val) < Fpy::MAX_STACK_SIZE,
+              static_cast<FwAssertArgType>(this->m_runtime.stackSize), static_cast<FwAssertArgType>(sizeof(T)));
     // first make a byte array which can definitely store our val
     U8 valBytes[8] = {0};
     if (sizeof(T) == 8) {
@@ -126,13 +120,15 @@ template void FpySequencer::push(I16);
 template void FpySequencer::push(I32);
 template void FpySequencer::push(I64);
 
-template <> void FpySequencer::push<F32>(F32 val) {
+template <>
+void FpySequencer::push<F32>(F32 val) {
     U32 endianness;
     memcpy(&endianness, &val, sizeof(val));
     this->push(endianness);
 }
 
-template <> void FpySequencer::push<F64>(F64 val) {
+template <>
+void FpySequencer::push<F64>(F64 val) {
     U64 endianness;
     memcpy(&endianness, &val, sizeof(val));
     this->push(endianness);
@@ -188,7 +184,8 @@ void FpySequencer::directive_noOp_internalInterfaceHandler(const Svc::FpySequenc
 }
 
 //! Internal interface handler for directive_storeTlmVal
-void FpySequencer::directive_storeTlmVal_internalInterfaceHandler(const Svc::FpySequencer_StoreTlmValDirective& directive) {
+void FpySequencer::directive_storeTlmVal_internalInterfaceHandler(
+    const Svc::FpySequencer_StoreTlmValDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->storeTlmVal_directiveHandler(directive, error));
     this->m_tlm.lastDirectiveError = error;
@@ -320,7 +317,8 @@ Signal FpySequencer::noOp_directiveHandler(const FpySequencer_NoOpDirective& dir
     return Signal::stmtResponse_success;
 }
 
-Signal FpySequencer::storeTlmVal_directiveHandler(const FpySequencer_StoreTlmValDirective& directive, DirectiveError& error) {
+Signal FpySequencer::storeTlmVal_directiveHandler(const FpySequencer_StoreTlmValDirective& directive,
+                                                  DirectiveError& error) {
     if (!this->isConnected_getTlmChan_OutputPort(0)) {
         error = DirectiveError::TLM_GET_NOT_CONNECTED;
         return Signal::stmtResponse_failure;
@@ -645,8 +643,7 @@ DirectiveError FpySequencer::op_uitofp() {
     this->push(static_cast<F64>(this->pop<U64>()));
     return DirectiveError::NO_ERROR;
 }
-Signal FpySequencer::stackOp_directiveHandler(const FpySequencer_StackOpDirective& directive,
-                                              DirectiveError& error) {
+Signal FpySequencer::stackOp_directiveHandler(const FpySequencer_StackOpDirective& directive, DirectiveError& error) {
     // coding error, should not have gotten to this binary reg op handler
     FW_ASSERT(directive.get__op() >= Fpy::DirectiveId::OR && directive.get__op() <= Fpy::DirectiveId::UITOFP,
               static_cast<FwAssertArgType>(directive.get__op()));

@@ -189,7 +189,8 @@ void FpySequencerTester::add_CONST_CMD(FwOpcodeType opcode) {
 void FpySequencerTester::add_CONST_CMD(FpySequencer_ConstCmdDirective dir) {
     Fw::StatementArgBuffer buf;
     FW_ASSERT(buf.serialize(dir.get_opCode()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    FW_ASSERT(buf.serialize(dir.get_argBuf(), dir.get__argBufSize(), Fw::Serialization::OMIT_LENGTH) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    FW_ASSERT(buf.serialize(dir.get_argBuf(), dir.get__argBufSize(), Fw::Serialization::OMIT_LENGTH) ==
+              Fw::SerializeStatus::FW_SERIALIZE_OK);
     addDirective(Fpy::DirectiveId::CONST_CMD, buf);
 }
 
@@ -226,7 +227,8 @@ void FpySequencerTester::add_LOAD(FpySequencer_LoadDirective dir) {
     FW_ASSERT(buf.serialize(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     addDirective(Fpy::DirectiveId::LOAD, buf);
 }
-template <typename T> void FpySequencerTester::add_PUSH_VAL(T val) {
+template <typename T>
+void FpySequencerTester::add_PUSH_VAL(T val) {
     Fw::StatementArgBuffer buf;
     FW_ASSERT(buf.serializeFrom(val) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     addDirective(Fpy::DirectiveId::PUSH_VAL, buf);
@@ -321,12 +323,12 @@ Signal FpySequencerTester::tester_if_directiveHandler(const FpySequencer_IfDirec
 }
 
 Signal FpySequencerTester::tester_storePrm_directiveHandler(const FpySequencer_StorePrmDirective& directive,
-                                                          DirectiveError& err) {
+                                                            DirectiveError& err) {
     return this->cmp.storePrm_directiveHandler(directive, err);
 }
 
 Signal FpySequencerTester::tester_storeTlmVal_directiveHandler(const FpySequencer_StoreTlmValDirective& directive,
-                                                          DirectiveError& err) {
+                                                               DirectiveError& err) {
     return this->cmp.storeTlmVal_directiveHandler(directive, err);
 }
 
@@ -336,12 +338,12 @@ Signal FpySequencerTester::tester_exit_directiveHandler(const FpySequencer_ExitD
 }
 
 Signal FpySequencerTester::tester_constCmd_directiveHandler(const FpySequencer_ConstCmdDirective& directive,
-                                                       DirectiveError& err) {
+                                                            DirectiveError& err) {
     return this->cmp.constCmd_directiveHandler(directive, err);
 }
 
 Signal FpySequencerTester::tester_stackOp_directiveHandler(const FpySequencer_StackOpDirective& directive,
-                                                             DirectiveError& err) {
+                                                           DirectiveError& err) {
     return this->cmp.stackOp_directiveHandler(directive, err);
 }
 
@@ -370,7 +372,10 @@ Svc::FpySequencer::Telemetry* FpySequencerTester::tester_get_m_tlm_ptr() {
     return &this->cmp.m_tlm;
 }
 
-Fw::Success FpySequencerTester::tester_readBytes(Os::File& file, FwSizeType readLen, FpySequencer_FileReadStage readStage, bool updateCrc) {
+Fw::Success FpySequencerTester::tester_readBytes(Os::File& file,
+                                                 FwSizeType readLen,
+                                                 FpySequencer_FileReadStage readStage,
+                                                 bool updateCrc) {
     return this->cmp.readBytes(file, readLen, readStage, updateCrc);
 }
 
@@ -518,11 +523,13 @@ void FpySequencerTester::tester_setState(Svc::FpySequencer_SequencerStateMachine
     FpySequencer_SequencerStateMachineTester::setState(this->cmp.m_stateMachine_sequencer, state);
 }
 
-void FpySequencerTester::tester_dispatchDirective(const FpySequencer::DirectiveUnion& directive, const Fpy::DirectiveId& id) {
+void FpySequencerTester::tester_dispatchDirective(const FpySequencer::DirectiveUnion& directive,
+                                                  const Fpy::DirectiveId& id) {
     this->cmp.dispatchDirective(directive, id);
 }
 
-template <typename T> void FpySequencerTester::tester_push(T val) {
+template <typename T>
+void FpySequencerTester::tester_push(T val) {
     cmp.push<T>(val);
 }
 template void FpySequencerTester::tester_push(U8);
@@ -535,7 +542,8 @@ template void FpySequencerTester::tester_push(I32);
 template void FpySequencerTester::tester_push(I64);
 template void FpySequencerTester::tester_push(F32);
 template void FpySequencerTester::tester_push(F64);
-template <typename T> T FpySequencerTester::tester_pop() {
+template <typename T>
+T FpySequencerTester::tester_pop() {
     return cmp.pop<T>();
 }
 template U8 FpySequencerTester::tester_pop();
