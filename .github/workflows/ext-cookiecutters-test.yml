@@ -98,16 +98,18 @@ jobs:
 
       - name: "Test New Deployment and Build"
         run: |
-             cd my-project/MyProject
+             cd my-project
              . fprime-venv/bin/activate
+             cd MyProject
              expect ./lib/fprime/.github/actions/cookiecutter-check/deployment.expect
              cd MyDeployment
              fprime-util build -j4
 
       - name: "Test New Component and Build"
         run: |
-             cd my-project/MyProject
+             cd my-project
              . fprime-venv/bin/activate
+             cd MyProject
              expect ./lib/fprime/.github/actions/cookiecutter-check/component.expect
              cd MyComponent
              fprime-util build -j4
