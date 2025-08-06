@@ -768,7 +768,7 @@ DirectiveError FpySequencer::op_siext_8_64() {
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_siext_16_64() {
-    if (this->m_runtime.stackSize < 8) {
+    if (this->m_runtime.stackSize < 2) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     I16 src = this->pop<I16>();
@@ -776,7 +776,7 @@ DirectiveError FpySequencer::op_siext_16_64() {
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_siext_32_64() {
-    if (this->m_runtime.stackSize < 8) {
+    if (this->m_runtime.stackSize < 4) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     I32 src = this->pop<I32>();
@@ -784,7 +784,7 @@ DirectiveError FpySequencer::op_siext_32_64() {
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_ziext_8_64() {
-    if (this->m_runtime.stackSize < 8) {
+    if (this->m_runtime.stackSize < 1) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     U8 src = this->pop<U8>();
@@ -792,7 +792,7 @@ DirectiveError FpySequencer::op_ziext_8_64() {
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_ziext_16_64() {
-    if (this->m_runtime.stackSize < 8) {
+    if (this->m_runtime.stackSize < 2) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     U16 src = this->pop<U16>();
@@ -800,7 +800,7 @@ DirectiveError FpySequencer::op_ziext_16_64() {
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_ziext_32_64() {
-    if (this->m_runtime.stackSize < 8) {
+    if (this->m_runtime.stackSize < 4) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     U32 src = this->pop<U32>();
