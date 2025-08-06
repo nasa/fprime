@@ -19,7 +19,7 @@ However, the use of generative AI must align with our commitment to high technic
 
 ## Disclosure
 
-To maintain transparency and enable effective code review, contributors must disclose generative AI usage in pull requests:
+To maintain transparency and enable effective code review, contributors **must disclose all generative AI usage.** 
 
 ### Pull Request Submission: Contributors
 
@@ -35,14 +35,6 @@ Include information about:
 - **Tool(s) used**: Name of the AI system(s) employed (e.g., GitHub Copilot, ChatGPT, etc.)
 - **Level of modification**: Whether AI-generated content was used as-is, modified, or used as inspiration
 
-### Example Disclosure
-
-```
-Used GitHub Copilot for:
-- Generated unit test templates for TestFlightController.cpp (modified for F Prime conventions)
-- Documentation improvements in README.md (reviewed and edited for accuracy)
-```
-## Limitations and Considerations
 
 ### What AI Cannot Replace
 
