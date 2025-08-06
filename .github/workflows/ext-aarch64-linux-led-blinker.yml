@@ -23,6 +23,7 @@ env:
   AARCH64_TOOLCHAIN_DIR: /tmp/aarch64-toolchain
   AARCH64_TOOLCHAIN_URL: https://developer.arm.com/-/media/Files/downloads/gnu-a/10.2-2020.11/binrel/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu.tar.xz
   ARM_TOOLS_PATH: /tmp/aarch64-toolchain
+  FPRIME_LOCATION: ./lib/fprime
 
 jobs:
   get-branch:
@@ -46,11 +47,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: true
-          path: ./fprime
+          path: ${{ env.FPRIME_LOCATION }}
           fetch-depth: 0
-      - uses: ./fprime/.github/actions/setup
+      - uses: ./lib/fprime/.github/actions/setup
         with:
-          location: ./fprime
+          location: ${{ env.FPRIME_LOCATION }}
       - name: "Download and Setup AArch64 Linux Toolchain"
         run: |
           mkdir -p ${AARCH64_TOOLCHAIN_DIR}
@@ -99,7 +100,7 @@ jobs:
           . venv/bin/activate
           mkdir -p ci-logs
           chmod +x ./build-artifacts/aarch64-linux/LedBlinker/bin/LedBlinker
-          fprime-gds --ip-client --framing-selection fprime -d ./build-artifacts/aarch64-linux/LedBlinker --logs ./ci-logs &
+          fprime-gds --ip-client -d ./build-artifacts/aarch64-linux/LedBlinker --logs ./ci-logs &
           sleep 10
           pytest --dictionary ./build-artifacts/aarch64-linux/LedBlinker/dict/LedBlinkerTopologyDictionary.json ./int/led_integration_tests.py
       - name: 'Archive logs'
