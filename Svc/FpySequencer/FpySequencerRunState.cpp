@@ -212,7 +212,16 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
         case Fpy::DirectiveId::FDIV:
         case Fpy::DirectiveId::FLOAT_FLOOR_DIV:
         case Fpy::DirectiveId::FPOW:
-        case Fpy::DirectiveId::FLOG: {
+        case Fpy::DirectiveId::FLOG:
+        case Fpy::DirectiveId::SIEXT_8_64:
+        case Fpy::DirectiveId::SIEXT_16_64:
+        case Fpy::DirectiveId::SIEXT_32_64:
+        case Fpy::DirectiveId::ZIEXT_8_64:
+        case Fpy::DirectiveId::ZIEXT_16_64:
+        case Fpy::DirectiveId::ZIEXT_32_64:
+        case Fpy::DirectiveId::ITRUNC_64_8:
+        case Fpy::DirectiveId::ITRUNC_64_16:
+        case Fpy::DirectiveId::ITRUNC_64_32: {
             new (&deserializedDirective.stackOp) FpySequencer_StackOpDirective();
             if (argBuf.getBuffLeft() != 0) {
                 this->log_WARNING_HI_DirectiveDeserializeError(
@@ -386,7 +395,16 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
         case Fpy::DirectiveId::FDIV:
         case Fpy::DirectiveId::FLOAT_FLOOR_DIV:
         case Fpy::DirectiveId::FPOW:
-        case Fpy::DirectiveId::FLOG: {
+        case Fpy::DirectiveId::FLOG:
+        case Fpy::DirectiveId::SIEXT_8_64:
+        case Fpy::DirectiveId::SIEXT_16_64:
+        case Fpy::DirectiveId::SIEXT_32_64:
+        case Fpy::DirectiveId::ZIEXT_8_64:
+        case Fpy::DirectiveId::ZIEXT_16_64:
+        case Fpy::DirectiveId::ZIEXT_32_64:
+        case Fpy::DirectiveId::ITRUNC_64_8:
+        case Fpy::DirectiveId::ITRUNC_64_16:
+        case Fpy::DirectiveId::ITRUNC_64_32: {
             this->directive_stackOp_internalInterfaceInvoke(directive.stackOp);
             return;
         }

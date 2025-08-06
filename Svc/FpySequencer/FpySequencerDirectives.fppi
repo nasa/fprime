@@ -94,6 +94,11 @@ struct PushValDirective {
     _valSize: FwSizeType
 }
 
+struct StackSizeOpDirective {
+    fromSize: U8
+    toSize: U8
+}
+
 internal port directive_waitRel(directive: WaitRelDirective) priority 6 assert
 
 internal port directive_waitAbs(directive: WaitAbsDirective) priority 6 assert

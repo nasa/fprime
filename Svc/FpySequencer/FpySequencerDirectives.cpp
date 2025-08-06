@@ -759,9 +759,81 @@ DirectiveError FpySequencer::op_flog() {
     this->push(static_cast<F64>(log(val)));
     return DirectiveError::NO_ERROR;
 }
+DirectiveError FpySequencer::op_siext_8_64() {
+    if (this->m_runtime.stackSize < 1) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    I8 src = this->pop<I8>();
+    this->push(static_cast<I64>(src));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_siext_16_64() {
+    if (this->m_runtime.stackSize < 8) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    I16 src = this->pop<I16>();
+    this->push(static_cast<I64>(src));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_siext_32_64() {
+    if (this->m_runtime.stackSize < 8) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    I32 src = this->pop<I32>();
+    this->push(static_cast<I64>(src));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_ziext_8_64() {
+    if (this->m_runtime.stackSize < 8) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    U8 src = this->pop<U8>();
+    this->push(static_cast<U64>(src));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_ziext_16_64() {
+    if (this->m_runtime.stackSize < 8) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    U16 src = this->pop<U16>();
+    this->push(static_cast<U64>(src));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_ziext_32_64() {
+    if (this->m_runtime.stackSize < 8) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    U32 src = this->pop<U32>();
+    this->push(static_cast<U64>(src));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_itrunc_64_8() {
+    if (this->m_runtime.stackSize < 8) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    U64 src = this->pop<U64>();
+    this->push(static_cast<U8>(src));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_itrunc_64_16() {
+    if (this->m_runtime.stackSize < 8) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    U64 src = this->pop<U64>();
+    this->push(static_cast<U16>(src));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_itrunc_64_32() {
+    if (this->m_runtime.stackSize < 8) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    U64 src = this->pop<U64>();
+    this->push(static_cast<U32>(src));
+    return DirectiveError::NO_ERROR;
+}
 Signal FpySequencer::stackOp_directiveHandler(const FpySequencer_StackOpDirective& directive, DirectiveError& error) {
     // coding error, should not have gotten to this binary reg op handler
-    FW_ASSERT(directive.get__op() >= Fpy::DirectiveId::OR && directive.get__op() <= Fpy::DirectiveId::FLOG,
+    FW_ASSERT(directive.get__op() >= Fpy::DirectiveId::OR && directive.get__op() <= Fpy::DirectiveId::ITRUNC_64_32,
               static_cast<FwAssertArgType>(directive.get__op()));
 
     switch (directive.get__op()) {
@@ -878,6 +950,33 @@ Signal FpySequencer::stackOp_directiveHandler(const FpySequencer_StackOpDirectiv
             break;
         case Fpy::DirectiveId::FLOG:
             error = this->op_flog();
+            break;
+        case Fpy::DirectiveId::SIEXT_8_64:
+            error = this->op_siext_8_64();
+            break;
+        case Fpy::DirectiveId::SIEXT_16_64:
+            error = this->op_siext_16_64();
+            break;
+        case Fpy::DirectiveId::SIEXT_32_64:
+            error = this->op_siext_32_64();
+            break;
+        case Fpy::DirectiveId::ZIEXT_8_64:
+            error = this->op_ziext_8_64();
+            break;
+        case Fpy::DirectiveId::ZIEXT_16_64:
+            error = this->op_ziext_16_64();
+            break;
+        case Fpy::DirectiveId::ZIEXT_32_64:
+            error = this->op_ziext_32_64();
+            break;
+        case Fpy::DirectiveId::ITRUNC_64_8:
+            error = this->op_itrunc_64_8();
+            break;
+        case Fpy::DirectiveId::ITRUNC_64_16:
+            error = this->op_itrunc_64_16();
+            break;
+        case Fpy::DirectiveId::ITRUNC_64_32:
+            error = this->op_itrunc_64_32();
             break;
         default:
             FW_ASSERT(0, directive.get__op());

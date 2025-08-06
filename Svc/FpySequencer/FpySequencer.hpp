@@ -657,6 +657,15 @@ class FpySequencer : public FpySequencerComponentBase {
     DirectiveError op_float_floor_div();
     DirectiveError op_fpow();
     DirectiveError op_flog();
+    DirectiveError op_siext_8_64();
+    DirectiveError op_siext_16_64();
+    DirectiveError op_siext_32_64();
+    DirectiveError op_ziext_8_64();
+    DirectiveError op_ziext_16_64();
+    DirectiveError op_ziext_32_64();
+    DirectiveError op_itrunc_64_8();
+    DirectiveError op_itrunc_64_16();
+    DirectiveError op_itrunc_64_32();
 
     Signal exit_directiveHandler(const FpySequencer_ExitDirective& directive, DirectiveError& error);
     Signal allocate_directiveHandler(const FpySequencer_AllocateDirective& directive, DirectiveError& error);
