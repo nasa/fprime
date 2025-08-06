@@ -149,7 +149,6 @@ class TcpServerComponentImpl final : public TcpServerComponentBase, public Socke
     /**
      * \brief Send data out of the TcpServer
      *
-     * TODO: update docs
      * Passing data to this port will send data from the TcpServer to whatever TCP client this component has connected
      * to. Should the socket not be opened or was disconnected, then this port call will return SEND_RETRY and critical
      * transmissions should be retried. OTHER_ERROR indicates an unresolvable error. OP_OK is returned when the data

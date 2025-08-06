@@ -63,7 +63,7 @@ class ComStub final : public ComStubComponentBase {
 
     //! Handler implementation for drvAsyncSendReturnIn
     //!
-    //! Buffer ownership and status returning from a Driver "send" operation
+    //! Buffer ownership and status returning from an async driver "send" operation (async callback)
     void drvAsyncSendReturnIn_handler(FwIndexType portNum,   //!< The port number
                                       Fw::Buffer& fwBuffer,  //!< The buffer
                                       const Drv::ByteStreamStatus& recvStatus) override;
