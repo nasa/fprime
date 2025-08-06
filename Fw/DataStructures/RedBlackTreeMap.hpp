@@ -121,14 +121,15 @@ class RedBlackTreeMap final : public MapBase<K, V> {
     // Private member variables
     // ----------------------------------------------------------------------
 
-    //! The external map implementation
-    ExternalRedBlackTreeMap<K, V> m_extMap = {};
-
     //! The array for storing the tree nodes
     Nodes m_nodes = {};
 
     //! The array for storing the free node indices
     FreeNodes m_freeNodes = {};
+
+    //! The external map implementation
+    ExternalRedBlackTreeMap<K, V> m_extMap = {};
+
 };
 
 }  // namespace Fw

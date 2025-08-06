@@ -282,7 +282,7 @@ TEST(RedBlackTreeSetOrMapImplScenarios, RemoveBlackLeafWithRedDistantNephew) {
     std::cout << "size is " << impl.getSize() << "\n";
 }
 
-TEST(RedBlackTreeSetOrMapImplScenaris, RemoveBlackLeafWithRedCloseNephew) {
+TEST(RedBlackTreeSetOrMapImplScenarios, RemoveBlackLeafWithRedCloseNephew) {
     State::Tester::Node nodes[State::capacity];
     State::Tester::Index freeNodes[State::capacity];
     State::Impl impl(nodes, freeNodes, State::capacity);

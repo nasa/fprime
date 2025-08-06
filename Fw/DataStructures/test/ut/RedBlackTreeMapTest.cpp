@@ -8,7 +8,7 @@
 #include "STest/STest/Pick/Pick.hpp"
 
 #include "Fw/DataStructures/RedBlackTreeMap.hpp"
-#include "Fw/DataStructures/test/ut/ArraySetOrMapImplTester.hpp"
+#include "Fw/DataStructures/test/ut/RedBlackTreeSetOrMapImplTester.hpp"
 #include "Fw/DataStructures/test/ut/STest/MapTestRules.hpp"
 #include "Fw/DataStructures/test/ut/STest/MapTestScenarios.hpp"
 
@@ -17,22 +17,30 @@ namespace Fw {
 template <typename K, typename V, FwSizeType C>
 class RedBlackTreeMapTester {
   public:
-    RedBlackTreeMapTester<K, V, C>(const RedBlackTreeMap<K, V, C>& map) : m_map(map) {}
+    using Nodes = typename RedBlackTreeMap<K, V, C>::Node;
 
-    const ExternalRedBlackTreeMap<K, V> getExtMap() const { return this->m_map.extMap; }
+    using FreeNodes = typename RedBlackTreeMap<K, V, C>::FreeNodes;
 
-    const typename RedBlackTreeMap<K, V, C>::Entries& getEntries() const { return this->m_map.m_entries; }
+    RedBlackTreeMapTester<K, V, C>(RedBlackTreeMap<K, V, C>& map) : m_map(map) {}
+
+    const ExternalRedBlackTreeMap<K, V>& getExtMap() const { return this->m_map.m_extMap; }
+
+    ExternalRedBlackTreeMap<K, V>& getExtMap() { return this->m_map.m_extMap; }
+
+    const Nodes& getNodes() const { return this->m_map.m_nodes; }
+
+    const FreeNodes& getFreeNodes() const { return this->m_map.m_freeNodes; }
 
   private:
-    const RedBlackTreeMap<K, V, C>& m_map;
+    RedBlackTreeMap<K, V, C>& m_map;
 };
 
 namespace MapTest {
 
 using Entry = SetOrMapImplEntry<State::KeyType, State::ValueType>;
+using ImplTester = RedBlackTreeSetOrMapImplTester<State::KeyType, State::ValueType>;
 using Map = RedBlackTreeMap<State::KeyType, State::ValueType, State::capacity>;
 using MapTester = RedBlackTreeMapTester<State::KeyType, State::ValueType, State::capacity>;
-using ImplTester = ArraySetOrMapImplTester<State::KeyType, State::ValueType>;
 
 TEST(RedBlackTreeMap, ZeroArgConstructor) {
     Map map;
