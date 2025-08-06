@@ -643,9 +643,125 @@ DirectiveError FpySequencer::op_uitofp() {
     this->push(static_cast<F64>(this->pop<U64>()));
     return DirectiveError::NO_ERROR;
 }
+DirectiveError FpySequencer::op_iadd() {
+    if (this->m_runtime.stackSize < 16) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    I64 rhs = this->pop<I64>();
+    I64 lhs = this->pop<I64>();
+    this->push(static_cast<I64>(lhs + rhs));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_isub() {
+    if (this->m_runtime.stackSize < 16) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    I64 rhs = this->pop<I64>();
+    I64 lhs = this->pop<I64>();
+    this->push(static_cast<I64>(lhs - rhs));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_imul() {
+    if (this->m_runtime.stackSize < 16) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    I64 rhs = this->pop<I64>();
+    I64 lhs = this->pop<I64>();
+    this->push(static_cast<I64>(lhs * rhs));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_udiv() {
+    if (this->m_runtime.stackSize < 16) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    U64 rhs = this->pop<U64>();
+    U64 lhs = this->pop<U64>();
+    this->push(static_cast<U64>(lhs / rhs));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_sdiv() {
+    if (this->m_runtime.stackSize < 16) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    I64 rhs = this->pop<I64>();
+    I64 lhs = this->pop<I64>();
+    this->push(static_cast<I64>(lhs / rhs));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_imod() {
+    if (this->m_runtime.stackSize < 16) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    I64 rhs = this->pop<I64>();
+    I64 lhs = this->pop<I64>();
+    this->push(static_cast<I64>(lhs % rhs));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_fadd() {
+    if (this->m_runtime.stackSize < 16) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    F64 rhs = this->pop<F64>();
+    F64 lhs = this->pop<F64>();
+    this->push(static_cast<F64>(lhs + rhs));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_fsub() {
+    if (this->m_runtime.stackSize < 16) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    F64 rhs = this->pop<F64>();
+    F64 lhs = this->pop<F64>();
+    this->push(static_cast<F64>(lhs - rhs));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_fmul() {
+    if (this->m_runtime.stackSize < 16) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    F64 rhs = this->pop<F64>();
+    F64 lhs = this->pop<F64>();
+    this->push(static_cast<F64>(lhs * rhs));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_fdiv() {
+    if (this->m_runtime.stackSize < 16) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    F64 rhs = this->pop<F64>();
+    F64 lhs = this->pop<F64>();
+    this->push(static_cast<F64>(lhs / rhs));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_float_floor_div() {
+    if (this->m_runtime.stackSize < 16) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    F64 rhs = this->pop<F64>();
+    F64 lhs = this->pop<F64>();
+    this->push(static_cast<F64>(floor(lhs / rhs)));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_fpow() {
+    if (this->m_runtime.stackSize < 16) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    F64 rhs = this->pop<F64>();
+    F64 lhs = this->pop<F64>();
+    this->push(static_cast<F64>(pow(lhs, rhs)));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_flog() {
+    if (this->m_runtime.stackSize < 8) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    F64 val = this->pop<F64>();
+    this->push(static_cast<F64>(log(val)));
+    return DirectiveError::NO_ERROR;
+}
 Signal FpySequencer::stackOp_directiveHandler(const FpySequencer_StackOpDirective& directive, DirectiveError& error) {
     // coding error, should not have gotten to this binary reg op handler
-    FW_ASSERT(directive.get__op() >= Fpy::DirectiveId::OR && directive.get__op() <= Fpy::DirectiveId::UITOFP,
+    FW_ASSERT(directive.get__op() >= Fpy::DirectiveId::OR && directive.get__op() <= Fpy::DirectiveId::FLOG,
               static_cast<FwAssertArgType>(directive.get__op()));
 
     switch (directive.get__op()) {
@@ -723,6 +839,45 @@ Signal FpySequencer::stackOp_directiveHandler(const FpySequencer_StackOpDirectiv
             break;
         case Fpy::DirectiveId::UITOFP:
             error = this->op_uitofp();
+            break;
+        case Fpy::DirectiveId::IADD:
+            error = this->op_iadd();
+            break;
+        case Fpy::DirectiveId::ISUB:
+            error = this->op_isub();
+            break;
+        case Fpy::DirectiveId::IMUL:
+            error = this->op_imul();
+            break;
+        case Fpy::DirectiveId::UDIV:
+            error = this->op_udiv();
+            break;
+        case Fpy::DirectiveId::SDIV:
+            error = this->op_sdiv();
+            break;
+        case Fpy::DirectiveId::IMOD:
+            error = this->op_imod();
+            break;
+        case Fpy::DirectiveId::FADD:
+            error = this->op_fadd();
+            break;
+        case Fpy::DirectiveId::FSUB:
+            error = this->op_fsub();
+            break;
+        case Fpy::DirectiveId::FMUL:
+            error = this->op_fmul();
+            break;
+        case Fpy::DirectiveId::FDIV:
+            error = this->op_fdiv();
+            break;
+        case Fpy::DirectiveId::FLOAT_FLOOR_DIV:
+            error = this->op_float_floor_div();
+            break;
+        case Fpy::DirectiveId::FPOW:
+            error = this->op_fpow();
+            break;
+        case Fpy::DirectiveId::FLOG:
+            error = this->op_flog();
             break;
         default:
             FW_ASSERT(0, directive.get__op());

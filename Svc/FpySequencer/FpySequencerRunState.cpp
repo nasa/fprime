@@ -199,7 +199,20 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
         case Fpy::DirectiveId::FPTOSI:
         case Fpy::DirectiveId::FPTOUI:
         case Fpy::DirectiveId::SITOFP:
-        case Fpy::DirectiveId::UITOFP: {
+        case Fpy::DirectiveId::UITOFP:
+        case Fpy::DirectiveId::IADD:
+        case Fpy::DirectiveId::ISUB:
+        case Fpy::DirectiveId::IMUL:
+        case Fpy::DirectiveId::UDIV:
+        case Fpy::DirectiveId::SDIV:
+        case Fpy::DirectiveId::IMOD:
+        case Fpy::DirectiveId::FADD:
+        case Fpy::DirectiveId::FSUB:
+        case Fpy::DirectiveId::FMUL:
+        case Fpy::DirectiveId::FDIV:
+        case Fpy::DirectiveId::FLOAT_FLOOR_DIV:
+        case Fpy::DirectiveId::FPOW:
+        case Fpy::DirectiveId::FLOG: {
             new (&deserializedDirective.stackOp) FpySequencer_StackOpDirective();
             if (argBuf.getBuffLeft() != 0) {
                 this->log_WARNING_HI_DirectiveDeserializeError(
@@ -360,7 +373,20 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
         case Fpy::DirectiveId::FPTOSI:
         case Fpy::DirectiveId::FPTOUI:
         case Fpy::DirectiveId::SITOFP:
-        case Fpy::DirectiveId::UITOFP: {
+        case Fpy::DirectiveId::UITOFP:
+        case Fpy::DirectiveId::IADD:
+        case Fpy::DirectiveId::ISUB:
+        case Fpy::DirectiveId::IMUL:
+        case Fpy::DirectiveId::UDIV:
+        case Fpy::DirectiveId::SDIV:
+        case Fpy::DirectiveId::IMOD:
+        case Fpy::DirectiveId::FADD:
+        case Fpy::DirectiveId::FSUB:
+        case Fpy::DirectiveId::FMUL:
+        case Fpy::DirectiveId::FDIV:
+        case Fpy::DirectiveId::FLOAT_FLOOR_DIV:
+        case Fpy::DirectiveId::FPOW:
+        case Fpy::DirectiveId::FLOG: {
             this->directive_stackOp_internalInterfaceInvoke(directive.stackOp);
             return;
         }

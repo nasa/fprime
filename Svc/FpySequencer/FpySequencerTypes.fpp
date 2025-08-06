@@ -49,13 +49,28 @@ module Svc {
             FPTOUI = 37
             SITOFP = 38
             UITOFP = 39
+            # integer arithmetic
+            IADD = 40
+            ISUB = 41
+            IMUL = 42
+            UDIV = 43
+            SDIV = 44
+            IMOD = 45
+            # float arithmetic
+            FADD = 46
+            FSUB = 47
+            FMUL = 48
+            FDIV = 49
+            FLOAT_FLOOR_DIV = 50
+            FPOW = 51
+            FLOG = 52
             # end stack op dirs
 
-            EXIT = 40
-            ALLOCATE = 41
-            STORE = 42
-            LOAD = 43
-            PUSH_VAL = 44
+            EXIT = 53
+            ALLOCATE = 54
+            STORE = 55
+            LOAD = 56
+            PUSH_VAL = 57
         }
 
         struct Header {
