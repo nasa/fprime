@@ -43,8 +43,7 @@ void OsTime::SetCurrentTime_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U32 seco
     m_epoch_fw_time = Fw::Time(seconds_now, 0);
     m_epoch_os_time = time_now;
     m_epoch_valid = true;
-    // Send success response after setting epoch
-    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK); 
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
 // ----------------------------------------------------------------------
