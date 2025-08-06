@@ -128,7 +128,7 @@ class SocketComponentHelper {
      *
      * Note: this just delegates to the handler
      */
-    void shutdown();
+    virtual void shutdown();
 
     /**
      * \brief is the read loop running

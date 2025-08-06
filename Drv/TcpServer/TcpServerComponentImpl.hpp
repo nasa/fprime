@@ -80,6 +80,11 @@ class TcpServerComponentImpl final : public TcpServerComponentBase, public Socke
     SocketIpStatus startup();
 
     /**
+     * \brief terminate the server socket before the clients
+     */
+    void shutdown() override;
+
+    /**
      * \brief terminate the server socket
      *
      * Close the server socket. Should be done after all clients are shutdown and closed.

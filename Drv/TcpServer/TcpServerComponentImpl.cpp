@@ -89,6 +89,11 @@ SocketIpStatus TcpServerComponentImpl::startup() {
     return status;
 }
 
+void TcpServerComponentImpl::shutdown() {
+    this->terminate();
+    SocketComponentHelper::shutdown();
+}
+
 void TcpServerComponentImpl::terminate() {
     Os::ScopeLock scopedLock(this->m_lock);
     this->m_socket.terminate(this->m_descriptor);
