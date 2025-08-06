@@ -70,8 +70,8 @@ class ComStub final : public ComStubComponentBase {
                                       const Drv::ByteStreamStatus& recvStatus) override;
 
     bool m_reinitialize;                   //!< Stores if a ready signal is needed on connection
-    ComCfg::FrameContext m_storedContext;  //!< Stores the context of the current message
-    FwIndexType m_retry_count;             //!< Counts the number of retries of the current message
+    ComCfg::FrameContext m_storedContext;  //!< Keep context of the last message sent in the asynchronous case
+    FwIndexType m_retry_count;             //!< Keep track of retry count in the asynchronous case
 };
 
 }  // end namespace Svc

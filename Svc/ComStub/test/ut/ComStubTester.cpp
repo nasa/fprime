@@ -142,7 +142,8 @@ void ComStubTester ::test_retry_sync() {
     ASSERT_from_drvSendOut_SIZE(static_cast<U32>(this->component.RETRY_LIMIT));
     ASSERT_from_dataReturnOut_SIZE(1);
     ASSERT_from_dataReturnOut(0, buffer, context);
-    ASSERT_from_comStatusOut_SIZE(0);
+    ASSERT_from_comStatusOut_SIZE(1);
+    ASSERT_from_comStatusOut(0, Fw::Success::FAILURE);
 }
 
 void ComStubTester ::test_retry_reset_sync() {

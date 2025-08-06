@@ -24,29 +24,28 @@ ComStub::~ComStub() {}
 // ----------------------------------------------------------------------
 
 void ComStub::dataIn_handler(const FwIndexType portNum, Fw::Buffer& sendBuffer, const ComCfg::FrameContext& context) {
-    FW_ASSERT(!this->m_reinitialize || !this->isConnected_comStatusOut_OutputPort(
-                                           0));  // A message should never get here if we need to reinitialize is needed
-    this->m_storedContext = context;             // Store the context of the current message
-    Drv::ByteStreamStatus sendStatus = Drv::ByteStreamStatus::SEND_RETRY;
+    // A message should never get here if we need to reinitialize
+    FW_ASSERT(!this->m_reinitialize || !this->isConnected_comStatusOut_OutputPort(0));
     // If the synchronous send port is connected, send the data synchronously
     if (this->isConnected_drvSendOut_OutputPort(0)) {
+        Drv::ByteStreamStatus sendStatus = Drv::ByteStreamStatus::SEND_RETRY;
+        Fw::Success comSuccess = Fw::Success::FAILURE;
+
         for (FwIndexType i = 0; sendStatus == Drv::ByteStreamStatus::SEND_RETRY && i < RETRY_LIMIT; i++) {
             sendStatus = this->drvSendOut_out(0, sendBuffer);
         }
-        if (sendStatus != Drv::ByteStreamStatus::SEND_RETRY) {
-            // Not retrying - return buffer ownership and send status
-            this->dataReturnOut_out(0, sendBuffer, this->m_storedContext);
-            this->m_reinitialize = sendStatus.e != Drv::ByteStreamStatus::OP_OK;
-            this->m_retry_count = 0;  // Reset the retry count
-            Fw::Success comSuccess =
-                (sendStatus.e == Drv::ByteStreamStatus::OP_OK) ? Fw::Success::SUCCESS : Fw::Success::FAILURE;
-            this->comStatusOut_out(0, comSuccess);
-        } else {
-            this->dataReturnOut_out(0, sendBuffer, this->m_storedContext);
+        if (sendStatus == Drv::ByteStreamStatus::SEND_RETRY) {
             Fw::Logger::log("ComStub RETRY_LIMIT exceeded, skipped sending data");
-            this->m_retry_count = 0;  // Reset the retry count
+        } else if (sendStatus == Drv::ByteStreamStatus::OP_OK) {
+            comSuccess = Fw::Success::SUCCESS;  // If send was successful, set success
+        } else {
+            this->m_reinitialize = true;
         }
+        this->dataReturnOut_out(0, sendBuffer, context);
+        this->comStatusOut_out(0, comSuccess);
     } else if (this->isConnected_drvAsyncSendOut_OutputPort(0)) {
+        // If the asynchronous send port is connected, send the data asynchronously
+        this->m_storedContext = context;  // Store the context of the current message for async callback
         this->drvAsyncSendOut_out(0, sendBuffer);
     } else {
         FW_ASSERT(0);  // Neither send port is connected, this should never happen
@@ -72,9 +71,9 @@ void ComStub::drvReceiveIn_handler(const FwIndexType portNum,
     }
 }
 
-void ComStub ::drvAsyncSendReturnIn_handler(FwIndexType portNum,   //!< The port number
-                                            Fw::Buffer& fwBuffer,  //!< The buffer
-                                            const Drv::ByteStreamStatus& sendStatus) {
+void ComStub::drvAsyncSendReturnIn_handler(FwIndexType portNum,   //!< The port number
+                                           Fw::Buffer& fwBuffer,  //!< The buffer
+                                           const Drv::ByteStreamStatus& sendStatus) {
     // This should never be called if the drvAsyncSendOut port is not connected
     FW_ASSERT(this->isConnected_drvAsyncSendOut_OutputPort(0));
     if (sendStatus != Drv::ByteStreamStatus::SEND_RETRY) {
@@ -94,10 +93,8 @@ void ComStub ::drvAsyncSendReturnIn_handler(FwIndexType portNum,   //!< The port
         } else {
             // If retried too many times, return buffer and log failure
             this->dataReturnOut_out(0, fwBuffer, this->m_storedContext);
-            // REVIEW NOTE: this will log the failure but as far as I understand it,
-            // this will be a silent failure w.r.t. the ground, and the ComStub/ComQueue
-            // pipeline will be halted? Maybe assert instead?
-            // Or send ComStatusOut with a failure ?
+            Fw::Success comStatus = Fw::Success::FAILURE;
+            this->comStatusOut_out(0, comStatus);
             Fw::Logger::log("ComStub RETRY_LIMIT exceeded, skipped sending data");
             this->m_retry_count = 0;  // Reset the retry count
         }
