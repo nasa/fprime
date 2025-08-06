@@ -17,16 +17,6 @@ Serializable::Serializable() {}
 
 Serializable::~Serializable() {}
 
-// Default implementations for legacy serialization methods for backwards
-// compatibility.
-SerializeStatus Serializable::serialize(SerializeBufferBase& buffer) const {
-    return this->serializeTo(buffer);
-}
-
-SerializeStatus Serializable::deserialize(SerializeBufferBase& buffer) {
-    return this->deserializeFrom(buffer);
-}
-
 // ----------------------------------------------------------------------
 #if FW_SERIALIZABLE_TO_STRING || FW_ENABLE_TEXT_LOGGING || BUILD_UT
 

@@ -70,7 +70,7 @@ class StringBase : public Serializable {
     virtual SerializeStatus serializeTo(SerializeBufferBase& buffer, SizeType maxLen) const;
     SerializeStatus deserializeFrom(SerializeBufferBase& buffer) override;
 
-    SerializeStatus serialize(SerializeBufferBase& buffer) const override;
+    SerializeStatus serialize(SerializeBufferBase& buffer) const;
     virtual SerializeStatus serialize(SerializeBufferBase& buffer, SizeType maxLen) const;
 
 #ifdef BUILD_UT

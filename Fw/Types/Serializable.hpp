@@ -33,12 +33,17 @@ class Serializable {
     virtual SerializeStatus deserializeFrom(SerializeBufferBase& buffer) = 0;  //!< deserialize contents from buffer
 
     // ----------------------------------------------------------------------
-    // Methods
+    // Legacy methods for backward compatibility
     // ----------------------------------------------------------------------
 
-    virtual SerializeStatus serialize(SerializeBufferBase& buffer) const;
+    SerializeStatus serialize(SerializeBufferBase& buffer) const {
+        return this->serializeTo(buffer);
+    }
 
-    virtual SerializeStatus deserialize(SerializeBufferBase& buffer);
+    SerializeStatus deserialize(SerializeBufferBase& buffer) {
+        return this->deserializeFrom(buffer);
+    }
+
 #if FW_SERIALIZABLE_TO_STRING || FW_ENABLE_TEXT_LOGGING || BUILD_UT
     virtual void toString(StringBase& text) const;  //!< generate text from serializable
 #endif
