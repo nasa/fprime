@@ -19,11 +19,12 @@ However, the use of generative AI must align with our commitment to high technic
 
 ## Disclosure
 
-To maintain transparency and enable effective code review, contributors **must disclose all generative AI usage.** 
+To maintain transparency and enable effective code review, contributors **must disclose all generative AI usage**.   
+This includes contributions in the forms of **Pull Requests**, **Issues** or **Discussions**. 
 
-### Pull Request Submission: Contributors
+### Pull Request Submissions for Contributors
 
-1. **Fill-In 'y' to the "AI Used (y/n)" table entry** in the pull request template
+1. **Fill-In the "AI Used (y/n)" table entry** in the pull request template disclosing whether Gen AI was used in the pull request
 2. **Provide details in the "AI Usage" section** describing how generative AI was utilized
 
 ### What to Disclose
@@ -51,7 +52,6 @@ Include information about:
 When working with generative AI, provide clear rules and context to improve code quality and consistency. For Example:
 
 - **Reference F´ Style Guidelines**: Include the [F´ Style Guidelines](https://github.com/nasa/fprime/wiki/F%C2%B4-Style-Guidelines) in your prompts
-- **Specify API documentation**: Direct AI to use the [F´ C++ API documentation](https://nasa.github.io/fprime/v3.4.1/UsersGuide/api/c++/html/md_docs_2doc-index.html) for code generation
 - **Enforce coding standards**: Instruct AI to avoid "magic numbers" and use descriptive variable names or comments
 - **Provide project context**: Share relevant F´ architectural patterns and component structures
 
@@ -66,7 +66,6 @@ When working with generative AI, provide clear rules and context to improve code
 
 ### Security
 
-- **Avoid sharing sensitive information** with AI tools (proprietary project designs, mission-specific details, etc.)
 - **Be cautious with external dependencies** suggested by AI tools
 - **Validate security implications** of AI-generated code, especially for flight software
 
@@ -77,43 +76,9 @@ When working with generative AI, provide clear rules and context to improve code
 - **Accept feedback gracefully** - AI-generated code is not exempt from revision requests
 - **Document complex AI-assisted algorithms** clearly for future maintainers
 
-## Reviewer Guidelines
-
-When reviewing pull requests with disclosed AI usage:
-
-### Focus Areas
-
-- **Logic correctness** - Verify AI-generated algorithms work as intended
-- **Code quality** - Ensure adherence to F Prime standards regardless of origin
-- **Integration** - Check that AI-generated code integrates properly with existing systems
-- **Documentation** - Verify that AI-assisted documentation is accurate and complete
-- **Testing** - Ensure adequate test coverage for AI-generated functionality
-
-### Evaluation Approach
-
-- **No bias against AI usage** - Evaluate code on its merits, not its origin
-- **Enhanced scrutiny where appropriate** - Complex AI-generated logic may warrant additional review
-- **Educational opportunity** - Help contributors improve their use of AI tools through feedback
-
-
-### Ongoing Evaluation
-
-As generative AI technology evolves, this policy will be updated to reflect:
-
-- New capabilities and tools
-- Lessons learned from community usage
-- Industry best practices
-- Community feedback and needs
-
 ## Getting Help
 
 If you have questions about appropriate AI usage or need guidance on disclosure:
 
 - Open a [Discussion](https://github.com/nasa/fprime/discussions) for community input
 - Contact the Community Managers for specific guidance
-
-## Conclusion
-
-F Prime's approach to generative AI balances innovation with responsibility. By encouraging transparent usage and maintaining our quality standards, we can harness the benefits of AI tools while preserving the collaborative, high-quality nature of our open source project.
-
-Remember: AI is a tool to enhance human capability, not replace human responsibility. All contributors remain fully accountable for their contributions to F Prime, regardless of the tools used to create them.
