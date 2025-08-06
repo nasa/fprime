@@ -37,6 +37,7 @@ jobs:
             Os
             Svc/Ccsds
             Svc/EventManager
+            Svc/FpySequencer
         run: |
           fprime-util format --check --dirs $CHECKED_DIRS
         shell: bash
