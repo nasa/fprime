@@ -113,17 +113,6 @@ void ComStub::handleAsynchronousSend(Fw::Buffer& sendBuffer, const ComCfg::Frame
     this->drvAsyncSendOut_out(0, sendBuffer);
 }
 
-void ComStub::handleAsyncSendCompletion(Fw::Buffer& fwBuffer, const Drv::ByteStreamStatus& sendStatus) {
-    // Return buffer ownership and send status
-    this->dataReturnOut_out(0, fwBuffer, this->m_storedContext);
-    this->m_reinitialize = (sendStatus.e != Drv::ByteStreamStatus::OP_OK);
-    this->m_retry_count = 0;  // Reset retry count
-
-    Fw::Success comSuccess =
-        (sendStatus.e == Drv::ByteStreamStatus::OP_OK) ? Fw::Success::SUCCESS : Fw::Success::FAILURE;
-    this->comStatusOut_out(0, comSuccess);
-}
-
 void ComStub::handleAsyncRetry(Fw::Buffer& fwBuffer) {
     if (this->m_retry_count < this->RETRY_LIMIT) {
         // Attempt retry if under the limit

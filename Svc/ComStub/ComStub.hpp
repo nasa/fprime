@@ -81,9 +81,6 @@ class ComStub final : public ComStubComponentBase {
     //! Handle retry logic for asynchronous sends
     void handleAsyncRetry(Fw::Buffer& fwBuffer);
 
-    //! Handle successful or failed asynchronous send completion
-    void handleAsyncSendCompletion(Fw::Buffer& fwBuffer, const Drv::ByteStreamStatus& sendStatus);
-
     // ----------------------------------------------------------------------
     // Member variables
     // ----------------------------------------------------------------------
