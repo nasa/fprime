@@ -16,6 +16,7 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/ExternalArrayTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/ExternalFifoQueueTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/ExternalRedBlackTreeMapTest.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/ExternalRedBlackTreeSetTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/ExternalStackTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/FifoQueueTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/RedBlackTreeMapTest.cpp"
