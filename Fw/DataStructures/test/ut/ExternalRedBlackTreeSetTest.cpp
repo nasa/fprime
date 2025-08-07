@@ -157,42 +157,45 @@ TEST(ExternalRedBlackTreeSetScenarios, InsertExisting) {
     Scenarios::insertExisting(state);
 }
 
-#if 0
 TEST(ExternalRedBlackTreeSetScenarios, InsertFull) {
-    Entry entries[State::capacity];
-    Set set(entries, State::capacity);
+    ImplTester::Node nodes[State::capacity];
+    ImplTester::Index freeNodes[State::capacity];
+    Set set(nodes, freeNodes, State::capacity);
     State state(set);
     Scenarios::insertFull(state);
 }
 
 TEST(ExternalRedBlackTreeSetScenarios, InsertNotFull) {
-    Entry entries[State::capacity];
-    Set set(entries, State::capacity);
+    ImplTester::Node nodes[State::capacity];
+    ImplTester::Index freeNodes[State::capacity];
+    Set set(nodes, freeNodes, State::capacity);
     State state(set);
     Scenarios::insertNotFull(state);
 }
 
 TEST(ExternalRedBlackTreeSetScenarios, Remove) {
-    Entry entries[State::capacity];
-    Set set(entries, State::capacity);
+    ImplTester::Node nodes[State::capacity];
+    ImplTester::Index freeNodes[State::capacity];
+    Set set(nodes, freeNodes, State::capacity);
     State state(set);
     Scenarios::remove(state);
 }
 
 TEST(ExternalRedBlackTreeSetScenarios, RemoveExisting) {
-    Entry entries[State::capacity];
-    Set set(entries, State::capacity);
+    ImplTester::Node nodes[State::capacity];
+    ImplTester::Index freeNodes[State::capacity];
+    Set set(nodes, freeNodes, State::capacity);
     State state(set);
     Scenarios::removeExisting(state);
 }
 
 TEST(ExternalRedBlackTreeSetScenarios, Random) {
-    Entry entries[State::capacity];
-    Set set(entries, State::capacity);
+    ImplTester::Node nodes[State::capacity];
+    ImplTester::Index freeNodes[State::capacity];
+    Set set(nodes, freeNodes, State::capacity);
     State state(set);
     Scenarios::random(Fw::String("ExternalRedBlackTreeSetRandom"), state, 1000);
 }
 
-#endif
 }  // namespace SetTest
 }  // namespace Fw
