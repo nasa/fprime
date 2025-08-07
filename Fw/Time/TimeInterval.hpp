@@ -27,8 +27,6 @@ class TimeInterval : public Serializable {
     void set(U32 seconds, U32 useconds);      // !< Sets value of time stored
     U32 getSeconds() const;                   // !< Gets seconds part of time
     U32 getUSeconds() const;                  // !< Gets microseconds part of time
-    SerializeStatus serialize(SerializeBufferBase& buffer) const override;  // !< Serialize method
-    SerializeStatus deserialize(SerializeBufferBase& buffer) override;      // !< Deserialize method
 
     SerializeStatus serializeTo(SerializeBufferBase& buffer) const override;  // !< Serialize method
     SerializeStatus deserializeFrom(SerializeBufferBase& buffer) override;    // !< Deserialize method

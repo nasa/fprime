@@ -29,14 +29,6 @@ Fw::SerializeStatus StubRawTime::deserializeFrom(Fw::SerializeBufferBase& buffer
     return Fw::FW_SERIALIZE_OK;
 }
 
-Fw::SerializeStatus StubRawTime::serialize(Fw::SerializeBufferBase& buffer) const {
-    return this->serializeTo(buffer);
-}
-
-Fw::SerializeStatus StubRawTime::deserialize(Fw::SerializeBufferBase& buffer) {
-    return this->deserializeFrom(buffer);
-}
-
 }  // namespace RawTime
 }  // namespace Stub
 }  // namespace Os

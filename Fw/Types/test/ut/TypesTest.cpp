@@ -625,7 +625,7 @@ struct TestStruct {
 
 class MySerializable : public Fw::Serializable {
   public:
-    Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const {
+    Fw::SerializeStatus serializeTo(Fw::SerializeBufferBase& buffer) const override {
         buffer.serialize(m_testStruct.m_u32);
         buffer.serialize(m_testStruct.m_u16);
         buffer.serialize(m_testStruct.m_u8);
@@ -634,7 +634,7 @@ class MySerializable : public Fw::Serializable {
         return Fw::FW_SERIALIZE_OK;
     }
 
-    Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer) {
+    Fw::SerializeStatus deserializeFrom(Fw::SerializeBufferBase& buffer) override {
         buffer.serialize(m_testStruct.m_buff, sizeof(m_testStruct.m_buff));
         buffer.serialize(m_testStruct.m_f32);
         buffer.serialize(m_testStruct.m_u8);
@@ -658,8 +658,8 @@ TEST(PerformanceTest, SerPerfTest) {
 
     I32 iterations = 1000000;
     for (I32 iter = 0; iter < iterations; iter++) {
-        in.serialize(buff);
-        out.deserialize(buff);
+        in.serializeTo(buff);
+        out.deserializeFrom(buff);
     }
 
     timer.stop();

@@ -80,14 +80,6 @@ class StubRawTime : public RawTimeInterface {
     //! \return Fw::SerializeStatus indicating the result of the deserialization.
     Fw::SerializeStatus deserializeFrom(Fw::SerializeBufferBase& buffer) override;
 
-    // ----------------------------------------------------------------------
-    // Methods
-    // ----------------------------------------------------------------------
-
-    Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const override;
-
-    Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer) override;
-
   private:
     //! Handle for StubRawTime
     StubRawTimeHandle m_handle;

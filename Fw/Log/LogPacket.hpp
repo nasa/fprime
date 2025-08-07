@@ -19,9 +19,6 @@ class LogPacket : public ComPacket {
     LogPacket();
     virtual ~LogPacket();
 
-    SerializeStatus serialize(SerializeBufferBase& buffer) const override;  //!< serialize contents
-    SerializeStatus deserialize(SerializeBufferBase& buffer) override;
-
     SerializeStatus serializeTo(SerializeBufferBase& buffer) const override;  //!< serialize contents
     SerializeStatus deserializeFrom(SerializeBufferBase& buffer) override;
 

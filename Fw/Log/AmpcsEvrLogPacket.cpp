@@ -14,74 +14,64 @@ namespace Fw {
 AmpcsEvrLogPacket::AmpcsEvrLogPacket() : m_eventID(0), m_overSeqNum(0), m_catSeqNum(0) {
     this->m_type = FW_PACKET_LOG;
 }
-
 AmpcsEvrLogPacket::~AmpcsEvrLogPacket() {}
-
-SerializeStatus AmpcsEvrLogPacket::serialize(SerializeBufferBase& buffer) const {
-    // Deprecated method - calls new interface for backward compatibility
-    return this->serializeTo(buffer);
-}
-
-SerializeStatus AmpcsEvrLogPacket::deserialize(SerializeBufferBase& buffer) {
-    // Deprecated method - calls new interface for backward compatibility
-    return this->deserializeFrom(buffer);
-}
 
 SerializeStatus AmpcsEvrLogPacket::serializeTo(SerializeBufferBase& buffer) const {
     SerializeStatus stat;
 
-    stat = buffer.serialize(this->m_taskName, AMPCS_EVR_TASK_NAME_LEN, Fw::Serialization::OMIT_LENGTH);
+    stat = buffer.serializeFrom(this->m_taskName, AMPCS_EVR_TASK_NAME_LEN, Fw::Serialization::OMIT_LENGTH);
     if (stat != FW_SERIALIZE_OK) {
         return stat;
     }
 
-    stat = buffer.serialize(this->m_eventID);
+    stat = buffer.serializeFrom(this->m_eventID);
     if (stat != FW_SERIALIZE_OK) {
         return stat;
     }
 
-    stat = buffer.serialize(this->m_overSeqNum);
+    stat = buffer.serializeFrom(this->m_overSeqNum);
     if (stat != FW_SERIALIZE_OK) {
         return stat;
     }
 
-    stat = buffer.serialize(this->m_catSeqNum);
+    stat = buffer.serializeFrom(this->m_catSeqNum);
     if (stat != FW_SERIALIZE_OK) {
         return stat;
     }
 
-    return buffer.serialize(this->m_logBuffer.getBuffAddr(), m_logBuffer.getBuffLength(),
-                            Fw::Serialization::OMIT_LENGTH);
+    return buffer.serializeFrom(this->m_logBuffer.getBuffAddr(), m_logBuffer.getBuffLength(),
+                                Fw::Serialization::OMIT_LENGTH);
 }
 
 SerializeStatus AmpcsEvrLogPacket::deserializeFrom(SerializeBufferBase& buffer) {
     FwSizeType len;
 
     SerializeStatus stat;
+    SerializeStatus stat;
 
     len = AMPCS_EVR_TASK_NAME_LEN;
-    stat = buffer.deserialize(this->m_taskName, len, true);
+    stat = buffer.deserializeTo(this->m_taskName, len, true);
     if (stat != FW_SERIALIZE_OK) {
         return stat;
     }
 
-    stat = buffer.deserialize(this->m_eventID);
+    stat = buffer.deserializeTo(this->m_eventID);
     if (stat != FW_SERIALIZE_OK) {
         return stat;
     }
 
-    stat = buffer.deserialize(this->m_overSeqNum);
+    stat = buffer.deserializeTo(this->m_overSeqNum);
     if (stat != FW_SERIALIZE_OK) {
         return stat;
     }
 
-    stat = buffer.deserialize(this->m_catSeqNum);
+    stat = buffer.deserializeTo(this->m_catSeqNum);
     if (stat != FW_SERIALIZE_OK) {
         return stat;
     }
 
     FwSizeType size = buffer.getBuffLeft();
-    stat = buffer.deserialize(this->m_logBuffer.getBuffAddr(), size, true);
+    stat = buffer.deserializeTo(this->m_logBuffer.getBuffAddr(), size, true);
     if (stat == FW_SERIALIZE_OK) {
         // Shouldn't fail
         stat = this->m_logBuffer.setBuffLen(size);

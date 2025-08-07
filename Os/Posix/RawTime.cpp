@@ -75,14 +75,6 @@ RawTimeHandle* PosixRawTime::getHandle() {
     return &this->m_handle;
 }
 
-Fw::SerializeStatus PosixRawTime::serialize(Fw::SerializeBufferBase& buffer) const {
-    return this->serializeTo(buffer);
-}
-
-Fw::SerializeStatus PosixRawTime::deserialize(Fw::SerializeBufferBase& buffer) {
-    return this->deserializeFrom(buffer);
-}
-
 }  // namespace RawTime
 }  // namespace Posix
 }  // namespace Os

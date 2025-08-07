@@ -70,10 +70,6 @@ class TestRawTime : public RawTimeInterface {
     Fw::SerializeStatus serializeTo(Fw::SerializeBufferBase& buffer) const override;
     Fw::SerializeStatus deserializeFrom(Fw::SerializeBufferBase& buffer) override;
 
-    // Backward-compatibility wrappers
-    Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const override { return this->serializeTo(buffer); }
-    Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer) override { return this->deserializeFrom(buffer); }
-
   private:
     //! Handle for TestRawTime
     TestRawTimeHandle m_handle;

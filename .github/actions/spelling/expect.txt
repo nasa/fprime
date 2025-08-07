@@ -279,6 +279,7 @@ gtest
 gtimeout
 Guire
 GVCID
+GPT
 HACKSM
 Handcoded
 handleflags

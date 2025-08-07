@@ -300,7 +300,7 @@ void LinuxUartDriver ::run_handler(FwIndexType portNum, U32 context) {
     this->tlmWrite_BytesRecv(this->m_bytesReceived);
 }
 
-void LinuxUartDriver ::send_handler(const FwIndexType portNum, Fw::Buffer& serBuffer) {
+Drv::ByteStreamStatus LinuxUartDriver ::send_handler(const FwIndexType portNum, Fw::Buffer& serBuffer) {
     Drv::ByteStreamStatus status = Drv::ByteStreamStatus::OP_OK;
     if (this->m_fd == -1 || serBuffer.getData() == nullptr || serBuffer.getSize() == 0) {
         status = Drv::ByteStreamStatus::OTHER_ERROR;
@@ -319,8 +319,7 @@ void LinuxUartDriver ::send_handler(const FwIndexType portNum, Fw::Buffer& serBu
             this->m_bytesSent += static_cast<FwSizeType>(stat);
         }
     }
-    // Return the buffer back to the caller
-    sendReturnOut_out(0, serBuffer, status);
+    return status;
 }
 
 void LinuxUartDriver::recvReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
