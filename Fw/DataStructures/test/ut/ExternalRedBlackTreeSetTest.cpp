@@ -123,35 +123,41 @@ TEST(ExternalRedBlackTreeSet, CopyDataFrom) {
         State::testCopyDataFrom(m1, maxSize, m2);
     }
 }
+#endif
 
 TEST(ExternalRedBlackTreeSetScenarios, Clear) {
-    Entry entries[State::capacity];
-    Set set(entries, State::capacity);
+    ImplTester::Node nodes[State::capacity];
+    ImplTester::Index freeNodes[State::capacity];
+    Set set(nodes, freeNodes, State::capacity);
     State state(set);
     Scenarios::clear(state);
 }
 
 TEST(ExternalRedBlackTreeSetScenarios, Find) {
-    Entry entries[State::capacity];
-    Set set(entries, State::capacity);
+    ImplTester::Node nodes[State::capacity];
+    ImplTester::Index freeNodes[State::capacity];
+    Set set(nodes, freeNodes, State::capacity);
     State state(set);
     Scenarios::find(state);
 }
 
 TEST(ExternalRedBlackTreeSetScenarios, FindExisting) {
-    Entry entries[State::capacity];
-    Set set(entries, State::capacity);
+    ImplTester::Node nodes[State::capacity];
+    ImplTester::Index freeNodes[State::capacity];
+    Set set(nodes, freeNodes, State::capacity);
     State state(set);
     Scenarios::findExisting(state);
 }
 
 TEST(ExternalRedBlackTreeSetScenarios, InsertExisting) {
-    Entry entries[State::capacity];
-    Set set(entries, State::capacity);
+    ImplTester::Node nodes[State::capacity];
+    ImplTester::Index freeNodes[State::capacity];
+    Set set(nodes, freeNodes, State::capacity);
     State state(set);
     Scenarios::insertExisting(state);
 }
 
+#if 0
 TEST(ExternalRedBlackTreeSetScenarios, InsertFull) {
     Entry entries[State::capacity];
     Set set(entries, State::capacity);
