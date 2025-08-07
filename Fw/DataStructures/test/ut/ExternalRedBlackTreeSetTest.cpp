@@ -28,10 +28,10 @@ class ExternalRedBlackTreeSetTester {
 
 namespace SetTest {
 
-using Set = ExternalRedBlackTreeSet<State::ElementType>;
-using SetTester = ExternalRedBlackTreeSetTester<State::ElementType>;
 using Impl = RedBlackTreeSetOrMapImpl<State::ElementType, Nil>;
 using ImplTester = RedBlackTreeSetOrMapImplTester<State::ElementType, Nil>;
+using Set = ExternalRedBlackTreeSet<State::ElementType>;
+using SetTester = ExternalRedBlackTreeSetTester<State::ElementType>;
 using StackTester = ExternalStackTester<ImplTester::Index>;
 
 TEST(ExternalRedBlackTreeSet, ZeroArgConstructor) {

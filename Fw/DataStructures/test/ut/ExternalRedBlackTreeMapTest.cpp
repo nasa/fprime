@@ -26,10 +26,11 @@ class ExternalRedBlackTreeMapTester {
 
 namespace MapTest {
 
+using Impl = RedBlackTreeSetOrMapImpl<State::KeyType, State::ValueType>;
+using ImplTester = RedBlackTreeSetOrMapImplTester<State::KeyType, State::ValueType>;
 using Map = ExternalRedBlackTreeMap<State::KeyType, State::ValueType>;
 using MapTester = ExternalRedBlackTreeMapTester<State::KeyType, State::ValueType>;
-using ImplTester = RedBlackTreeSetOrMapImplTester<State::KeyType, State::ValueType>;
-using Impl = RedBlackTreeSetOrMapImpl<State::KeyType, State::ValueType>;
+using StackTester = ExternalStackTester<ImplTester::Index>;
 
 TEST(ExternalRedBlackTreeMap, ZeroArgConstructor) {
     Map map;
@@ -44,7 +45,7 @@ TEST(ExternalRedBlackTreeMap, TypedStorageConstructor) {
     MapTester mapTester(map);
     ImplTester implTester(mapTester.getImpl());
     ASSERT_EQ(implTester.getNodes().getElements(), nodes);
-    ExternalStackTester<ImplTester::Index> stackTester(implTester.getFreeNodes());
+    StackTester stackTester(implTester.getFreeNodes());
     ASSERT_EQ(stackTester.getItems().getElements(), freeNodes);
     ASSERT_EQ(map.getCapacity(), FwSizeType(State::capacity));
     ASSERT_EQ(map.getSize(), 0);
@@ -80,7 +81,7 @@ TEST(ExternalRedBlackTreeMap, CopyConstructor) {
     ImplTester implTester2(mapTester2.getImpl());
     ASSERT_EQ(implTester2.getNodes().getElements(), nodes);
     ASSERT_EQ(implTester2.getNodes().getSize(), FwSizeType(State::capacity));
-    ExternalStackTester<ImplTester::Index> stackTester(implTester2.getFreeNodes());
+    StackTester stackTester(implTester2.getFreeNodes());
     ASSERT_EQ(stackTester.getItems().getElements(), freeNodes);
     ASSERT_EQ(map2.getSize(), 1);
 }
