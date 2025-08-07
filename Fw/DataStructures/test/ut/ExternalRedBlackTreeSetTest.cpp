@@ -8,6 +8,7 @@
 #include "STest/STest/Pick/Pick.hpp"
 
 #include "Fw/DataStructures/ExternalRedBlackTreeSet.hpp"
+#include "Fw/DataStructures/test/ut/ExternalStackTester.hpp"
 #include "Fw/DataStructures/test/ut/RedBlackTreeSetOrMapImplTester.hpp"
 #include "Fw/DataStructures/test/ut/STest/SetTestRules.hpp"
 #include "Fw/DataStructures/test/ut/STest/SetTestScenarios.hpp"
@@ -27,10 +28,11 @@ class ExternalRedBlackTreeSetTester {
 
 namespace SetTest {
 
-using Entry = SetOrMapImplEntry<State::ElementType, Nil>;
 using Set = ExternalRedBlackTreeSet<State::ElementType>;
 using SetTester = ExternalRedBlackTreeSetTester<State::ElementType>;
+using Impl = RedBlackTreeSetOrMapImpl<State::ElementType, Nil>;
 using ImplTester = RedBlackTreeSetOrMapImplTester<State::ElementType, Nil>;
+using StackTester = ExternalStackTester<ImplTester::Index>;
 
 TEST(ExternalRedBlackTreeSet, ZeroArgConstructor) {
     Set set;
@@ -38,13 +40,15 @@ TEST(ExternalRedBlackTreeSet, ZeroArgConstructor) {
     ASSERT_EQ(set.getSize(), 0);
 }
 
-#if 0
 TEST(ExternalRedBlackTreeSet, TypedStorageConstructor) {
-    Entry entries[State::capacity];
-    Set set(entries, State::capacity);
+    ImplTester::Node nodes[State::capacity];
+    ImplTester::Index freeNodes[State::capacity];
+    Set set(nodes, freeNodes, State::capacity);
     SetTester setTester(set);
     ImplTester implTester(setTester.getImpl());
-    ASSERT_EQ(implTester.getEntries().getElements(), entries);
+    ASSERT_EQ(implTester.getNodes().getElements(), nodes);
+    StackTester stackTester(implTester.getFreeNodes());
+    ASSERT_EQ(stackTester.getItems().getElements(), freeNodes);
     ASSERT_EQ(set.getCapacity(), FwSizeType(State::capacity));
     ASSERT_EQ(set.getSize(), 0);
 }
@@ -56,11 +60,12 @@ TEST(ExternalRedBlackTreeSet, UntypedStorageConstructor) {
     Set set(ByteArray(&bytes[0], sizeof bytes), State::capacity);
     SetTester setTester(set);
     ImplTester implTester(setTester.getImpl());
-    ASSERT_EQ(implTester.getEntries().getElements(), reinterpret_cast<Entry*>(bytes));
+    ASSERT_EQ(implTester.getNodes().getElements(), reinterpret_cast<Impl::Node*>(bytes));
     ASSERT_EQ(set.getCapacity(), FwSizeType(State::capacity));
     ASSERT_EQ(set.getSize(), 0);
 }
 
+#if 0
 TEST(ExternalRedBlackTreeSet, CopyConstructor) {
     Entry entries[State::capacity];
     // Call the constructor providing backing storage
