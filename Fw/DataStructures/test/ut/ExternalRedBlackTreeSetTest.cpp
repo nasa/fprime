@@ -32,13 +32,13 @@ using Set = ExternalRedBlackTreeSet<State::ElementType>;
 using SetTester = ExternalRedBlackTreeSetTester<State::ElementType>;
 using ImplTester = RedBlackTreeSetOrMapImplTester<State::ElementType, Nil>;
 
-#if 0
 TEST(ExternalRedBlackTreeSet, ZeroArgConstructor) {
     Set set;
     ASSERT_EQ(set.getCapacity(), 0);
     ASSERT_EQ(set.getSize(), 0);
 }
 
+#if 0
 TEST(ExternalRedBlackTreeSet, TypedStorageConstructor) {
     Entry entries[State::capacity];
     Set set(entries, State::capacity);
