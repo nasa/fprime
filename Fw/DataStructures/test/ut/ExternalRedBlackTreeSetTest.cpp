@@ -87,11 +87,11 @@ TEST(ExternalRedBlackTreeSet, CopyConstructor) {
     ASSERT_EQ(set2.getSize(), 1);
 }
 
-#if 0
 TEST(ExternalRedBlackTreeSet, CopyAssignmentOperator) {
-    Entry entries[State::capacity];
+    ImplTester::Node nodes[State::capacity];
+    ImplTester::Index freeNodes[State::capacity];
     // Call the constructor providing backing storage
-    Set set1(entries, State::capacity);
+    Set set1(nodes, freeNodes, State::capacity);
     // Insert an item
     const State::ElementType e = 42;
     const auto status = set1.insert(e);
@@ -107,26 +107,27 @@ TEST(ExternalRedBlackTreeSet, CopyAssignmentOperator) {
 TEST(ExternalRedBlackTreeSet, CopyDataFrom) {
     constexpr FwSizeType maxSize = 10;
     constexpr FwSizeType smallSize = maxSize / 2;
-    Entry entries1[maxSize];
-    Entry entries2[maxSize];
-    Set m1(entries1, maxSize);
+    ImplTester::Node nodes1[maxSize];
+    ImplTester::Node nodes2[maxSize];
+    ImplTester::Index freeNodes1[maxSize];
+    ImplTester::Index freeNodes2[maxSize];
+    Set s1(nodes1, freeNodes1, maxSize);
     // size1 < capacity2
     {
-        Set m2(entries2, maxSize);
-        State::testCopyDataFrom(m1, smallSize, m2);
+        Set s2(nodes2, freeNodes2, maxSize);
+        State::testCopyDataFrom(s1, smallSize, s2);
     }
     // size1 == size2
     {
-        Set m2(entries2, maxSize);
-        State::testCopyDataFrom(m1, maxSize, m2);
+        Set s2(nodes2, freeNodes2, maxSize);
+        State::testCopyDataFrom(s1, maxSize, s2);
     }
     // size1 > size2
     {
-        Set m2(entries2, smallSize);
-        State::testCopyDataFrom(m1, maxSize, m2);
+        Set s2(nodes2, freeNodes2, smallSize);
+        State::testCopyDataFrom(s1, maxSize, s2);
     }
 }
-#endif
 
 TEST(ExternalRedBlackTreeSetScenarios, Clear) {
     ImplTester::Node nodes[State::capacity];
