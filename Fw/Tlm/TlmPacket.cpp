@@ -70,19 +70,20 @@ SerializeStatus TlmPacket::addValue(FwChanIdType id, Time& timeTag, TlmBuffer& b
     // serialize items into buffer
 
     // id
-    SerializeStatus stat = this->m_tlmBuffer.serialize(id);
+    SerializeStatus stat = this->m_tlmBuffer.serializeFrom(id);
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;
     }
 
     // time tag
-    stat = this->m_tlmBuffer.serialize(timeTag);
+    stat = this->m_tlmBuffer.serializeFrom(timeTag);
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;
     }
 
     // telemetry buffer
-    stat = this->m_tlmBuffer.serialize(buffer.getBuffAddr(), buffer.getBuffLength(), Fw::Serialization::OMIT_LENGTH);
+    stat =
+        this->m_tlmBuffer.serializeFrom(buffer.getBuffAddr(), buffer.getBuffLength(), Fw::Serialization::OMIT_LENGTH);
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;
     }
@@ -98,19 +99,19 @@ SerializeStatus TlmPacket::extractValue(FwChanIdType& id, Time& timeTag, TlmBuff
     // deserialize items out of buffer
 
     // id
-    SerializeStatus stat = this->m_tlmBuffer.deserialize(id);
+    SerializeStatus stat = this->m_tlmBuffer.deserializeTo(id);
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;
     }
 
     // time tag
-    stat = this->m_tlmBuffer.deserialize(timeTag);
+    stat = this->m_tlmBuffer.deserializeTo(timeTag);
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;
     }
 
     // telemetry buffer
-    stat = this->m_tlmBuffer.deserialize(buffer.getBuffAddr(), bufferSize, Fw::Serialization::OMIT_LENGTH);
+    stat = this->m_tlmBuffer.deserializeTo(buffer.getBuffAddr(), bufferSize, Fw::Serialization::OMIT_LENGTH);
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;
     }
@@ -124,36 +125,26 @@ SerializeStatus TlmPacket::extractValue(FwChanIdType& id, Time& timeTag, TlmBuff
     return Fw::FW_SERIALIZE_OK;
 }
 
-SerializeStatus TlmPacket::serialize(SerializeBufferBase& buffer) const {
-    // Deprecated method - calls new interface for backward compatibility
-    return this->serializeTo(buffer);
-}
-
-SerializeStatus TlmPacket::deserialize(SerializeBufferBase& buffer) {
-    // Deprecated method - calls new interface for backward compatibility
-    return this->deserializeFrom(buffer);
-}
-
 SerializeStatus TlmPacket::serializeTo(SerializeBufferBase& buffer) const {
     // serialize the number of packets
-    SerializeStatus stat = buffer.serialize(this->m_numEntries);
+    SerializeStatus stat = buffer.serializeFrom(this->m_numEntries);
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;
     }
     // Serialize the ComBuffer
-    return buffer.serialize(this->m_tlmBuffer.getBuffAddr(), m_tlmBuffer.getBuffLength(),
-                            Fw::Serialization::OMIT_LENGTH);
+    return buffer.serializeFrom(this->m_tlmBuffer.getBuffAddr(), m_tlmBuffer.getBuffLength(),
+                                Fw::Serialization::OMIT_LENGTH);
 }
 
 SerializeStatus TlmPacket::deserializeFrom(SerializeBufferBase& buffer) {
     // deserialize the number of packets
-    SerializeStatus stat = buffer.deserialize(this->m_numEntries);
+    SerializeStatus stat = buffer.deserializeTo(this->m_numEntries);
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;
     }
     // deserialize the channel value entry buffers
     FwSizeType size = buffer.getBuffLeft();
-    stat = buffer.deserialize(this->m_tlmBuffer.getBuffAddr(), size, Fw::Serialization::OMIT_LENGTH);
+    stat = buffer.deserializeTo(this->m_tlmBuffer.getBuffAddr(), size, Fw::Serialization::OMIT_LENGTH);
     if (stat == FW_SERIALIZE_OK) {
         // Shouldn't fail
         stat = this->m_tlmBuffer.setBuffLen(size);

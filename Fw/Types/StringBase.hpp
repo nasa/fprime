@@ -67,12 +67,11 @@ class StringBase : public Serializable {
     FormatStatus vformat(const CHAR* formatString, va_list args);  //!< write formatted string to buffer using va_list
 
     SerializeStatus serializeTo(SerializeBufferBase& buffer) const override;
-    SerializeStatus serializeTo(SerializeBufferBase& buffer, SizeType maxLen) const;
+    virtual SerializeStatus serializeTo(SerializeBufferBase& buffer, SizeType maxLen) const;
     SerializeStatus deserializeFrom(SerializeBufferBase& buffer) override;
 
-    SerializeStatus serialize(SerializeBufferBase& buffer) const override;
-    SerializeStatus serialize(SerializeBufferBase& buffer, SizeType maxLen) const;
-    SerializeStatus deserialize(SerializeBufferBase& buffer) override;
+    SerializeStatus serialize(SerializeBufferBase& buffer) const;
+    virtual SerializeStatus serialize(SerializeBufferBase& buffer, SizeType maxLen) const;
 
 #ifdef BUILD_UT
     // to support GoogleTest framework in unit tests

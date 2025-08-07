@@ -10,11 +10,16 @@ module Drv {
 
     @ Port to exchange buffer and status with the ByteStreamDriver model
     @ This port is used for receiving data from the driver as well as on
-    @ callback of a send call
+    @ callback of an asynchronous send call
     port ByteStreamData(
         ref buffer: Fw.Buffer,
         status: ByteStreamStatus
     )
+
+    @ Synchronous only - Send data out through the byte stream
+    port ByteStreamSend(
+        ref sendBuffer: Fw.Buffer @< Data to send
+    ) -> ByteStreamStatus
 
     @ Signal indicating the driver is ready to send and received data
     port ByteStreamReady()

@@ -30,11 +30,10 @@ class ComStub final : public ComStubComponentBase {
     //!
     ~ComStub() override;
 
-  private:
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
-
+  private:
     //! Handler implementation for dataIn
     //!
     //! Comms data is coming in meaning there is a request for ComStub to send data on the wire
@@ -62,16 +61,33 @@ class ComStub final : public ComStubComponentBase {
                               Fw::Buffer& fwBuffer,  //!< The buffer
                               const ComCfg::FrameContext& context) override;
 
-    //! Handler implementation for drvSendReturnIn
+    //! Handler implementation for drvAsyncSendReturnIn
     //!
-    //! Buffer ownership and status returning from a Driver "send" operation
-    void drvSendReturnIn_handler(FwIndexType portNum,   //!< The port number
-                                 Fw::Buffer& fwBuffer,  //!< The buffer
-                                 const Drv::ByteStreamStatus& recvStatus) override;
+    //! Buffer ownership and status returning from an async driver "send" operation (async callback)
+    void drvAsyncSendReturnIn_handler(FwIndexType portNum,   //!< The port number
+                                      Fw::Buffer& fwBuffer,  //!< The buffer
+                                      const Drv::ByteStreamStatus& recvStatus) override;
 
+    // ----------------------------------------------------------------------
+    // Helper methods
+    // ----------------------------------------------------------------------
+  private:
+    //! Handle synchronous sending of data
+    void handleSynchronousSend(Fw::Buffer& sendBuffer, const ComCfg::FrameContext& context);
+
+    //! Handle asynchronous sending of data
+    void handleAsynchronousSend(Fw::Buffer& sendBuffer, const ComCfg::FrameContext& context);
+
+    //! Handle retry logic for asynchronous sends
+    void handleAsyncRetry(Fw::Buffer& fwBuffer);
+
+    // ----------------------------------------------------------------------
+    // Member variables
+    // ----------------------------------------------------------------------
+  private:
     bool m_reinitialize;                   //!< Stores if a ready signal is needed on connection
-    ComCfg::FrameContext m_storedContext;  //!< Stores the context of the current message
-    FwIndexType m_retry_count;             //!< Counts the number of retries of the current message
+    ComCfg::FrameContext m_storedContext;  //!< Keep context of the last message sent in the asynchronous case
+    FwIndexType m_retry_count;             //!< Keep track of retry count in the asynchronous case
 };
 
 }  // end namespace Svc

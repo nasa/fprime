@@ -47,16 +47,6 @@ bool TimeInterval::operator<=(const TimeInterval& other) const {
     return ((LT == c) or (EQ == c));
 }
 
-SerializeStatus TimeInterval::serialize(SerializeBufferBase& buffer) const {
-    // Deprecated method - calls new interface for backward compatibility
-    return this->serializeTo(buffer);
-}
-
-SerializeStatus TimeInterval::deserialize(SerializeBufferBase& buffer) {
-    // Deprecated method - calls new interface for backward compatibility
-    return this->deserializeFrom(buffer);
-}
-
 SerializeStatus TimeInterval::serializeTo(SerializeBufferBase& buffer) const {
     // Use TimeIntervalValue's built-in serialization
     return this->m_val.serializeTo(buffer);

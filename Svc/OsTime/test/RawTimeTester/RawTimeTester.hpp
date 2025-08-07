@@ -56,10 +56,6 @@ class RawTimeTester : public Os::RawTimeInterface {
         return buffer.deserializeTo(m_handle.t);
     }
 
-    Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const override { return this->serializeTo(buffer); }
-
-    Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer) override { return this->deserializeFrom(buffer); }
-
     static void setNowTime(const Fw::Time&& t) { s_now_time = t; }
 
   private:
