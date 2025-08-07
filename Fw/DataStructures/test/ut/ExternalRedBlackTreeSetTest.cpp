@@ -65,11 +65,11 @@ TEST(ExternalRedBlackTreeSet, UntypedStorageConstructor) {
     ASSERT_EQ(set.getSize(), 0);
 }
 
-#if 0
 TEST(ExternalRedBlackTreeSet, CopyConstructor) {
-    Entry entries[State::capacity];
+    ImplTester::Node nodes[State::capacity];
+    ImplTester::Index freeNodes[State::capacity];
     // Call the constructor providing backing storage
-    Set set1(entries, State::capacity);
+    Set set1(nodes, freeNodes, State::capacity);
     // Insert an item
     const State::ElementType e = 42;
     const auto status = set1.insert(e);
@@ -77,14 +77,17 @@ TEST(ExternalRedBlackTreeSet, CopyConstructor) {
     // Call the copy constructor
     Set set2(set1);
     SetTester setTester1(set1);
-    ImplTester implTester1(setTester1.getImpl());
     SetTester setTester2(set2);
+    ImplTester implTester1(setTester1.getImpl());
     ImplTester implTester2(setTester2.getImpl());
-    ASSERT_EQ(implTester2.getEntries().getElements(), entries);
-    ASSERT_EQ(implTester2.getEntries().getSize(), FwSizeType(State::capacity));
+    ASSERT_EQ(implTester2.getNodes().getElements(), nodes);
+    ASSERT_EQ(implTester2.getNodes().getSize(), FwSizeType(State::capacity));
+    StackTester stackTester(implTester2.getFreeNodes());
+    ASSERT_EQ(stackTester.getItems().getElements(), freeNodes);
     ASSERT_EQ(set2.getSize(), 1);
 }
 
+#if 0
 TEST(ExternalRedBlackTreeSet, CopyAssignmentOperator) {
     Entry entries[State::capacity];
     // Call the constructor providing backing storage
