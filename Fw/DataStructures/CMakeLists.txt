@@ -21,6 +21,7 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/FifoQueueTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/RedBlackTreeMapTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/RedBlackTreeSetOrMapImplTest.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/RedBlackTreeSetTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/ArraySetOrMapImplTestRules.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/ArraySetOrMapImplTestScenarios.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/FifoQueueTestRules.cpp"
