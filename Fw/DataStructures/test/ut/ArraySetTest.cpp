@@ -41,50 +41,50 @@ TEST(ArraySet, ZeroArgConstructor) {
 }
 
 TEST(ArraySet, CopyConstructor) {
-    Set m1;
+    Set s1;
     // Insert an item
     const State::ElementType e = 42;
-    const auto status = m1.insert(e);
+    const auto status = s1.insert(e);
     ASSERT_EQ(status, Success::SUCCESS);
     // Call the copy constructor
-    Set m2(m1);
-    ASSERT_EQ(m2.getSize(), 1);
+    Set s2(s1);
+    ASSERT_EQ(s2.getSize(), 1);
 }
 
 TEST(ArraySet, CopyAssignmentOperator) {
-    Set m1;
+    Set s1;
     // Insert an item
     const State::ElementType e = 42;
-    auto status = m1.insert(e);
+    auto status = s1.insert(e);
     ASSERT_EQ(status, Success::SUCCESS);
     // Call the default constructor
-    Set m2;
-    ASSERT_EQ(m2.getSize(), 0);
+    Set s2;
+    ASSERT_EQ(s2.getSize(), 0);
     // Call the copy assignment operator
-    m2 = m1;
-    ASSERT_EQ(m2.getSize(), 1);
-    status = m2.find(e);
+    s2 = s1;
+    ASSERT_EQ(s2.getSize(), 1);
+    status = s2.find(e);
     ASSERT_EQ(status, Success::SUCCESS);
 }
 
 TEST(ArraySet, CopyDataFrom) {
     constexpr FwSizeType maxSize = State::capacity;
     constexpr FwSizeType smallSize = maxSize / 2;
-    Set m1;
+    Set s1;
     // size1 < capacity2
     {
-        Set m2;
-        State::testCopyDataFrom(m1, smallSize, m2);
+        Set s2;
+        State::testCopyDataFrom(s1, smallSize, s2);
     }
     // size1 == capacity2
     {
-        Set m2;
-        State::testCopyDataFrom(m1, maxSize, m2);
+        Set s2;
+        State::testCopyDataFrom(s1, maxSize, s2);
     }
     // size1 > capacity2
     {
-        ArraySet<State::ElementType, smallSize> m2;
-        State::testCopyDataFrom(m1, maxSize, m2);
+        ArraySet<State::ElementType, smallSize> s2;
+        State::testCopyDataFrom(s1, maxSize, s2);
     }
 }
 
