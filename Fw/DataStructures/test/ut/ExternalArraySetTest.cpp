@@ -100,21 +100,21 @@ TEST(ExternalArraySet, CopyDataFrom) {
     constexpr FwSizeType smallSize = maxSize / 2;
     Entry entries1[maxSize];
     Entry entries2[maxSize];
-    Set m1(entries1, maxSize);
+    Set s1(entries1, maxSize);
     // size1 < capacity2
     {
-        Set m2(entries2, maxSize);
-        State::testCopyDataFrom(m1, smallSize, m2);
+        Set s2(entries2, maxSize);
+        State::testCopyDataFrom(s1, smallSize, s2);
     }
     // size1 == size2
     {
-        Set m2(entries2, maxSize);
-        State::testCopyDataFrom(m1, maxSize, m2);
+        Set s2(entries2, maxSize);
+        State::testCopyDataFrom(s1, maxSize, s2);
     }
     // size1 > size2
     {
-        Set m2(entries2, smallSize);
-        State::testCopyDataFrom(m1, maxSize, m2);
+        Set s2(entries2, smallSize);
+        State::testCopyDataFrom(s1, maxSize, s2);
     }
 }
 
