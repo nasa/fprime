@@ -186,7 +186,8 @@ satisfies the following constraints:
 
 For example, the tree shown at the beginning of
 this section is a valid red-black tree.
-Notice that **RBT2** is satisfied because each path from the root to a leaf
+Notice that **RBT2** is satisfied at each node.
+For example, at the root, each path from the root to a leaf
 in the leaf-augmented tree passes through two black nodes.
 
 This tree is not a valid red-black tree because **RBT2** is not satisfied:
