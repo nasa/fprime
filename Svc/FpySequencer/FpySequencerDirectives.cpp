@@ -289,7 +289,7 @@ Signal FpySequencer::getPrm_directiveHandler(const FpySequencer_GetPrmDirective&
 
 Signal FpySequencer::cmd_directiveHandler(const FpySequencer_CmdDirective& directive, DirectiveError& error) {
     Fw::ComBuffer cmdBuf;
-    Fw::SerializeStatus stat = cmdBuf.serialize(Fw::ComPacketType::FW_PACKET_COMMAND);
+    Fw::SerializeStatus stat = cmdBuf.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_COMMAND));
     // TODO should I assert here? this really shouldn't fail, I should just add a static assert
     // on com buf size and then assert here
     if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
