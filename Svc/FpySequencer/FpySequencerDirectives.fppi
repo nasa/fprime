@@ -94,9 +94,16 @@ struct PushValDirective {
     _valSize: FwSizeType
 }
 
-struct StackSizeOpDirective {
-    fromSize: U8
-    toSize: U8
+struct DiscardDirective {
+    $size: U16
+}
+
+struct MemCmpDirective {
+    $size: U16
+}
+
+struct StackCmdDirective {
+    argsSize: U16
 }
 
 internal port directive_waitRel(directive: WaitRelDirective) priority 6 assert
@@ -126,6 +133,12 @@ internal port directive_store(directive: StoreDirective) priority 6 assert
 internal port directive_load(directive: LoadDirective) priority 6 assert
 
 internal port directive_pushVal(directive: PushValDirective) priority 6 assert
+
+internal port directive_discard(directive: DiscardDirective) priority 6 assert
+
+internal port directive_memCmp(directive: MemCmpDirective) priority 6 assert
+
+internal port directive_stackCmd(directive: StackCmdDirective) priority 6 assert
 
 enum DirectiveErrorCode {
     NO_ERROR

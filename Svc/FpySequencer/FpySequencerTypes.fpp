@@ -84,6 +84,9 @@ module Svc {
             STORE = 59
             LOAD = 60
             PUSH_VAL = 61
+            DISCARD = 62
+            MEMCMP = 63
+            STACK_CMD = 64
         }
 
         struct Header {

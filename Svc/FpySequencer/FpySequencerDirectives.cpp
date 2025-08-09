@@ -28,6 +28,38 @@ void FpySequencer::sendSignal(Signal signal) {
     }
 }
 
+Fw::Success FpySequencer::sendCmd(FwOpcodeType opcode, const U8* argBuf, FwSizeType argBufSize) {
+    Fw::ComBuffer cmdBuf;
+    Fw::SerializeStatus stat = cmdBuf.serialize(Fw::ComPacketType::FW_PACKET_COMMAND);
+    // TODO should I assert here? this really shouldn't fail, I should just add a static assert
+    // on com buf size and then assert here
+    if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
+        return Fw::Success::FAILURE;
+    }
+    stat = cmdBuf.serialize(opcode);
+    if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
+        return Fw::Success::FAILURE;
+    }
+    stat = cmdBuf.serialize(argBuf, argBufSize, Fw::Serialization::OMIT_LENGTH);
+    if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
+        return Fw::Success::FAILURE;
+    }
+
+    // calculate the unique command identifier:
+    // cmd UID is formatted like XXYY, where XX are the first two bytes of the m_sequencesStarted counter
+    // and YY are the first two bytes of the m_statementsDispatched counter.
+    // this way, we know when we get a cmd back A) whether or not it's from this sequence (modulo 2^16) and B)
+    // whether or not it's this specific instance of the cmd in the sequence, and not another one with the same opcode
+    // somewhere else in the file.
+    // if we put this uid in the context we send to the cmdDisp, we will get it back when the cmd returns
+    U32 cmdUid =
+        static_cast<U32>(((this->m_sequencesStarted & 0xFFFF) << 16) | (this->m_statementsDispatched & 0xFFFF));
+
+    this->cmdOut_out(0, cmdBuf, cmdUid);
+
+    return Fw::Success::SUCCESS;
+}
+
 template <typename T>
 T FpySequencer::pop() {
     static_assert(sizeof(T) == 8 || sizeof(T) == 4 || sizeof(T) == 2 || sizeof(T) == 1, "size must be 1, 2, 4, 8");
@@ -247,6 +279,27 @@ void FpySequencer::directive_load_internalInterfaceHandler(const Svc::FpySequenc
     this->m_tlm.lastDirectiveError = error;
 }
 
+//! Internal interface handler for directive_discard
+void FpySequencer::directive_discard_internalInterfaceHandler(const Svc::FpySequencer_DiscardDirective& directive) {
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->discard_directiveHandler(directive, error));
+    this->m_tlm.lastDirectiveError = error;
+}
+
+//! Internal interface handler for directive_memCmp
+void FpySequencer::directive_memCmp_internalInterfaceHandler(const Svc::FpySequencer_MemCmpDirective& directive) {
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->memCmp_directiveHandler(directive, error));
+    this->m_tlm.lastDirectiveError = error;
+}
+
+//! Internal interface handler for directive_stackCmd
+void FpySequencer::directive_stackCmd_internalInterfaceHandler(const Svc::FpySequencer_StackCmdDirective& directive) {
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->stackCmd_directiveHandler(directive, error));
+    this->m_tlm.lastDirectiveError = error;
+}
+
 //! Internal interface handler for directive_waitRel
 Signal FpySequencer::waitRel_directiveHandler(const FpySequencer_WaitRelDirective& directive, DirectiveError& error) {
     if (this->m_runtime.stackSize < 8) {
@@ -384,40 +437,13 @@ Signal FpySequencer::storePrm_directiveHandler(const FpySequencer_StorePrmDirect
 }
 
 Signal FpySequencer::constCmd_directiveHandler(const FpySequencer_ConstCmdDirective& directive, DirectiveError& error) {
-    Fw::ComBuffer cmdBuf;
-    Fw::SerializeStatus stat = cmdBuf.serialize(Fw::ComPacketType::FW_PACKET_COMMAND);
-    // TODO should I assert here? this really shouldn't fail, I should just add a static assert
-    // on com buf size and then assert here
-    if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
-        error = DirectiveError::CMD_SERIALIZE_FAILURE;
+    if (this->sendCmd(directive.get_opCode(), directive.get_argBuf(), directive.get__argBufSize()) == Fw::Success::FAILURE) {
         return Signal::stmtResponse_failure;
+    } else {
+        // now tell the SM to wait some more until we get the cmd response back
+        // if we've already got the response back this should be harmless
+        return Signal::stmtResponse_keepWaiting;
     }
-    stat = cmdBuf.serialize(directive.get_opCode());
-    if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
-        error = DirectiveError::CMD_SERIALIZE_FAILURE;
-        return Signal::stmtResponse_failure;
-    }
-    stat = cmdBuf.serialize(directive.get_argBuf(), directive.get__argBufSize(), Fw::Serialization::OMIT_LENGTH);
-    if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
-        error = DirectiveError::CMD_SERIALIZE_FAILURE;
-        return Signal::stmtResponse_failure;
-    }
-
-    // calculate the unique command identifier:
-    // cmd UID is formatted like XXYY, where XX are the first two bytes of the m_sequencesStarted counter
-    // and YY are the first two bytes of the m_statementsDispatched counter.
-    // this way, we know when we get a cmd back A) whether or not it's from this sequence (modulo 2^16) and B)
-    // whether or not it's this specific instance of the cmd in the sequence, and not another one with the same opcode
-    // somewhere else in the file.
-    // if we put this uid in the context we send to the cmdDisp, we will get it back when the cmd returns
-    U32 cmdUid =
-        static_cast<U32>(((this->m_sequencesStarted & 0xFFFF) << 16) | (this->m_statementsDispatched & 0xFFFF));
-
-    this->cmdOut_out(0, cmdBuf, cmdUid);
-
-    // now tell the SM to wait some more until we get the cmd response back
-    // if we've already got the response back this should be harmless
-    return Signal::stmtResponse_keepWaiting;
 }
 
 I8 floatCmp(F64 lhs, F64 rhs) {
@@ -1056,6 +1082,53 @@ Signal FpySequencer::pushVal_directiveHandler(const FpySequencer_PushValDirectiv
     }
     memcpy(this->top(), directive.get_val(), directive.get__valSize());
     this->m_runtime.stackSize += directive.get__valSize();
+    return Signal::stmtResponse_success;
+}
+
+Signal FpySequencer::discard_directiveHandler(const FpySequencer_DiscardDirective& directive, DirectiveError& error) {
+    if (this->m_runtime.stackSize < directive.get_size()) {
+        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return Signal::stmtResponse_failure;
+    }
+    this->m_runtime.stackSize -= directive.get_size();
+    return Signal::stmtResponse_success;
+}
+
+Signal FpySequencer::memCmp_directiveHandler(const FpySequencer_MemCmpDirective& directive, DirectiveError& error) {
+    if (this->m_runtime.stackSize < directive.get_size() * 2) {
+        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return Signal::stmtResponse_failure;
+    }
+
+    U64 lhsOffset = this->m_runtime.stackSize - directive.get_size() * 2;
+    U64 rhsOffset = this->m_runtime.stackSize - directive.get_size();
+    this->m_runtime.stackSize -= directive.get_size() * 2;
+
+    if (memcmp(this->m_runtime.stack + lhsOffset, this->m_runtime.stack + rhsOffset, directive.get_size()) == 0) {
+        this->push<U8>(1);
+    } else {
+        this->push<U8>(0);
+    }
+    return Signal::stmtResponse_success;
+}
+
+Signal FpySequencer::stackCmd_directiveHandler(const FpySequencer_StackCmdDirective& directive, DirectiveError& error) {
+    if (this->m_runtime.stackSize < static_cast<U64>(directive.get_argsSize() + 4)) {
+        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return Signal::stmtResponse_failure;
+    }
+
+    FwOpcodeType opcode = this->pop<FwOpcodeType>();
+    U64 argBufOffset = this->m_runtime.stackSize - directive.get_argsSize();
+
+    if (this->sendCmd(opcode, this->m_runtime.stack + argBufOffset, directive.get_argsSize()) == Fw::Success::FAILURE) {
+        return Signal::stmtResponse_failure;
+    } else {
+        // now tell the SM to wait some more until we get the cmd response back
+        // if we've already got the response back this should be harmless
+        return Signal::stmtResponse_keepWaiting;
+    }
+
     return Signal::stmtResponse_success;
 }
 }  // namespace Svc

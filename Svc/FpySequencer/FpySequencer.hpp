@@ -56,6 +56,9 @@ class FpySequencer : public FpySequencerComponentBase {
         FpySequencer_StoreDirective store;
         FpySequencer_LoadDirective load;
         FpySequencer_PushValDirective pushVal;
+        FpySequencer_DiscardDirective discard;
+        FpySequencer_MemCmpDirective memCmp;
+        FpySequencer_StackCmdDirective stackCmd;
 
         DirectiveUnion() {}
         ~DirectiveUnion() {}
@@ -431,6 +434,15 @@ class FpySequencer : public FpySequencerComponentBase {
     //! Internal interface handler for directive_pushVal
     void directive_pushVal_internalInterfaceHandler(const Svc::FpySequencer_PushValDirective& directive) override;
 
+    //! Internal interface handler for directive_discard
+    void directive_discard_internalInterfaceHandler(const Svc::FpySequencer_DiscardDirective& directive) override;
+
+    //! Internal interface handler for directive_memCmp
+    void directive_memCmp_internalInterfaceHandler(const Svc::FpySequencer_MemCmpDirective& directive) override;
+
+    //! Internal interface handler for directive_stackCmd
+    void directive_stackCmd_internalInterfaceHandler(const Svc::FpySequencer_StackCmdDirective& directive) override;
+
     void parametersLoaded() override;
     void parameterUpdated(FwPrmIdType id) override;
 
@@ -589,6 +601,7 @@ class FpySequencer : public FpySequencerComponentBase {
 
     // sends a signal based on a signal id
     void sendSignal(Signal signal);
+    Fw::Success sendCmd(FwOpcodeType opcode, const U8* argBuf, FwSizeType argBufSize);
 
     // pops a value off of the top of the stack
     // converts it from big endian
@@ -672,6 +685,9 @@ class FpySequencer : public FpySequencerComponentBase {
     Signal store_directiveHandler(const FpySequencer_StoreDirective& directive, DirectiveError& error);
     Signal load_directiveHandler(const FpySequencer_LoadDirective& directive, DirectiveError& error);
     Signal pushVal_directiveHandler(const FpySequencer_PushValDirective& directive, DirectiveError& error);
+    Signal discard_directiveHandler(const FpySequencer_DiscardDirective& directive, DirectiveError& error);
+    Signal memCmp_directiveHandler(const FpySequencer_MemCmpDirective& directive, DirectiveError& error);
+    Signal stackCmd_directiveHandler(const FpySequencer_StackCmdDirective& directive, DirectiveError& error);
 };
 
 }  // namespace Svc
