@@ -1121,6 +1121,9 @@ Signal FpySequencer::stackCmd_directiveHandler(const FpySequencer_StackCmdDirect
     FwOpcodeType opcode = this->pop<FwOpcodeType>();
     U64 argBufOffset = this->m_runtime.stackSize - directive.get_argsSize();
 
+    // update the opcode of the cmd we will await
+    this->m_runtime.currentCmdOpcode = opcode;
+
     if (this->sendCmd(opcode, this->m_runtime.stack + argBufOffset, directive.get_argsSize()) == Fw::Success::FAILURE) {
         return Signal::stmtResponse_failure;
     } else {

@@ -27,7 +27,7 @@ Signal FpySequencer::dispatchStatement() {
         return Signal::result_dispatchStatement_failure;
     }
 
-    if (this->m_runtime.currentStatementOpcode == Fpy::DirectiveId::CONST_CMD || this->m_runtime.currentStatementOpcode == Fpy::DirectiveId::STACK_CMD) {
+    if (this->m_runtime.currentStatementOpcode == Fpy::DirectiveId::CONST_CMD) {
         // update the opcode of the cmd we will await
         this->m_runtime.currentCmdOpcode = directiveUnion.constCmd.get_opCode();
     }
