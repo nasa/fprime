@@ -261,7 +261,7 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
         return;
     }
 
-    if (this->m_runtime.currentStatementOpcode != Fpy::DirectiveId::CONST_CMD && this->m_runtime.currentCmdOpcode != Fpy::DirectiveId::STACK_CMD) {
+    if (this->m_runtime.currentStatementOpcode != Fpy::DirectiveId::CONST_CMD && this->m_runtime.currentStatementOpcode != Fpy::DirectiveId::STACK_CMD) {
         // we were not awaiting a cmd response, we were waiting for a directive
         this->log_WARNING_HI_CmdResponseWhileAwaitingDirective(opCode, response,
                                                                this->m_runtime.currentStatementOpcode);
