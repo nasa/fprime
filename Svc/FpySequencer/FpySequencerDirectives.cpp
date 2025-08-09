@@ -832,7 +832,7 @@ DirectiveError FpySequencer::op_itrunc_64_32() {
     return DirectiveError::NO_ERROR;
 }
 Signal FpySequencer::stackOp_directiveHandler(const FpySequencer_StackOpDirective& directive, DirectiveError& error) {
-    // coding error, should not have gotten to this binary reg op handler
+    // coding error, should not have gotten to this stack op handler
     FW_ASSERT(directive.get__op() >= Fpy::DirectiveId::OR && directive.get__op() <= Fpy::DirectiveId::ITRUNC_64_32,
               static_cast<FwAssertArgType>(directive.get__op()));
 
