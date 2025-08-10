@@ -70,7 +70,7 @@ void TcpClientComponentImpl::connected() {
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void TcpClientComponentImpl::send_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
+Drv::ByteStreamStatus TcpClientComponentImpl::send_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
     FW_ASSERT_NO_OVERFLOW(fwBuffer.getSize(), U32);
     Drv::SocketIpStatus status = send(fwBuffer.getData(), static_cast<U32>(fwBuffer.getSize()));
     Drv::ByteStreamStatus returnStatus;
@@ -85,8 +85,7 @@ void TcpClientComponentImpl::send_handler(const FwIndexType portNum, Fw::Buffer&
             returnStatus = ByteStreamStatus::OTHER_ERROR;
             break;
     }
-    // Return the buffer and status to the caller
-    this->sendReturnOut_out(0, fwBuffer, returnStatus);
+    return returnStatus;
 }
 
 void TcpClientComponentImpl::recvReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {

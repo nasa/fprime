@@ -4,14 +4,14 @@
 // \brief  cpp file for DpWriter component implementation class
 // ======================================================================
 
+#include "Svc/DpWriter/DpWriter.hpp"
 #include "Fw/Com/ComPacket.hpp"
+#include "Fw/FPrimeBasicTypes.hpp"
 #include "Fw/Types/FileNameString.hpp"
 #include "Fw/Types/Serializable.hpp"
 #include "Os/File.hpp"
-#include "Svc/DpWriter/DpWriter.hpp"
 #include "Utils/Hash/Hash.hpp"
 #include "config/DpCfg.hpp"
-#include "Fw/FPrimeBasicTypes.hpp"
 
 namespace Svc {
 
@@ -46,9 +46,8 @@ void DpWriter::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& buffe
     const FwSizeType bufferSize = buffer.getSize();
     if (status == Fw::Success::SUCCESS) {
         if (bufferSize < Fw::DpContainer::MIN_PACKET_SIZE) {
-            this->log_WARNING_HI_BufferTooSmallForPacket(
-                static_cast<U32>(bufferSize),
-                Fw::DpContainer::MIN_PACKET_SIZE);
+            this->log_WARNING_HI_BufferTooSmallForPacket(static_cast<U32>(bufferSize),
+                                                         Fw::DpContainer::MIN_PACKET_SIZE);
 
             status = Fw::Success::FAILURE;
         }
@@ -61,10 +60,8 @@ void DpWriter::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& buffe
         Utils::HashBuffer computedHash;
         status = container.checkHeaderHash(storedHash, computedHash);
         if (status != Fw::Success::SUCCESS) {
-            this->log_WARNING_HI_InvalidHeaderHash(
-                static_cast<U32>(bufferSize),
-                storedHash.asBigEndianU32(),
-                computedHash.asBigEndianU32());
+            this->log_WARNING_HI_InvalidHeaderHash(static_cast<U32>(bufferSize), storedHash.asBigEndianU32(),
+                                                   computedHash.asBigEndianU32());
         }
     }
     // Deserialize the packet header
@@ -75,9 +72,7 @@ void DpWriter::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& buffe
     if (status == Fw::Success::SUCCESS) {
         const FwSizeType packetSize = container.getPacketSize();
         if (bufferSize < packetSize) {
-            this->log_WARNING_HI_BufferTooSmallForData(
-                static_cast<U32>(bufferSize),
-                static_cast<U32>(packetSize));
+            this->log_WARNING_HI_BufferTooSmallForData(static_cast<U32>(bufferSize), static_cast<U32>(packetSize));
             status = Fw::Success::FAILURE;
         }
     }
@@ -201,9 +196,7 @@ Fw::Success::T DpWriter::writeFile(const Fw::DpContainer& container,
         if ((fileStatus == Os::File::OP_OK) and (writeSize == static_cast<FwSizeType>(fileSize))) {
             // If the write status is success, and the number of bytes written
             // is the expected number, then record the success
-            this->log_ACTIVITY_LO_FileWritten(
-                static_cast<U32>(writeSize),
-                fileName);
+            this->log_ACTIVITY_LO_FileWritten(static_cast<U32>(writeSize), fileName);
         } else {
             // Otherwise record the failure
             this->log_WARNING_HI_FileWriteError(static_cast<U32>(fileStatus), static_cast<U32>(writeSize),

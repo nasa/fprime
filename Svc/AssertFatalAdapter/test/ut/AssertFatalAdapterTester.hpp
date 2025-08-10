@@ -18,68 +18,58 @@
 
 namespace Svc {
 
-  class AssertFatalAdapterTester :
-    public AssertFatalAdapterGTestBase
-  {
+class AssertFatalAdapterTester : public AssertFatalAdapterGTestBase {
+    // ----------------------------------------------------------------------
+    // Construction and destruction
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Construction and destruction
-      // ----------------------------------------------------------------------
+  public:
+    //! Construct object AssertFatalAdapterTester
+    //!
+    AssertFatalAdapterTester();
 
-    public:
+    //! Destroy object AssertFatalAdapterTester
+    //!
+    ~AssertFatalAdapterTester();
 
-      //! Construct object AssertFatalAdapterTester
-      //!
-      AssertFatalAdapterTester();
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-      //! Destroy object AssertFatalAdapterTester
-      //!
-      ~AssertFatalAdapterTester();
+    //! To do
+    //!
+    void testAsserts();
 
-    public:
+  private:
+    // ----------------------------------------------------------------------
+    // Helper methods
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Tests
-      // ----------------------------------------------------------------------
+    //! Connect ports
+    //!
+    void connectPorts();
 
-      //! To do
-      //!
-      void testAsserts();
+    //! Initialize components
+    //!
+    void initComponents();
 
-    private:
+  private:
+    // ----------------------------------------------------------------------
+    // Variables
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Helper methods
-      // ----------------------------------------------------------------------
+    //! The component under test
+    //!
+    AssertFatalAdapterComponentImpl component;
 
-      //! Connect ports
-      //!
-      void connectPorts();
+    void textLogIn(const FwEventIdType id,          //!< The event ID
+                   const Fw::Time& timeTag,         //!< The time
+                   const Fw::LogSeverity severity,  //!< The severity
+                   const Fw::TextLogString& text    //!< The event string
+                   ) override;
+};
 
-      //! Initialize components
-      //!
-      void initComponents();
-
-    private:
-
-      // ----------------------------------------------------------------------
-      // Variables
-      // ----------------------------------------------------------------------
-
-      //! The component under test
-      //!
-      AssertFatalAdapterComponentImpl component;
-
-      void textLogIn(
-                const FwEventIdType id, //!< The event ID
-                const Fw::Time& timeTag, //!< The time
-                const Fw::LogSeverity severity, //!< The severity
-                const Fw::TextLogString& text //!< The event string
-            ) override;
-
-
-  };
-
-} // end namespace Svc
+}  // end namespace Svc
 
 #endif

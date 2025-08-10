@@ -13,24 +13,22 @@
 
 namespace Svc {
 
-    class RateGroupDriverImplTester: public RateGroupDriverGTestBase {
-        public:
-            RateGroupDriverImplTester(Svc::RateGroupDriver& inst);
-            virtual ~RateGroupDriverImplTester();
+class RateGroupDriverImplTester : public RateGroupDriverGTestBase {
+  public:
+    RateGroupDriverImplTester(Svc::RateGroupDriver& inst);
+    virtual ~RateGroupDriverImplTester();
 
-            void runSchedNominal(Svc::RateGroupDriver::DividerSet dividersSet, FwIndexType numDividers);
+    void runSchedNominal(Svc::RateGroupDriver::DividerSet dividersSet, FwIndexType numDividers);
 
-        private:
+  private:
+    void from_CycleOut_handler(FwIndexType portNum, Os::RawTime& cycleStart);
 
-            void from_CycleOut_handler(FwIndexType portNum, Os::RawTime& cycleStart);
+    Svc::RateGroupDriver& m_impl;
 
-            Svc::RateGroupDriver& m_impl;
+    void clearPortCalls();
 
-            void clearPortCalls();
-
-            bool m_portCalls[Svc::RateGroupDriver::DIVIDER_SIZE];
-
-    };
+    bool m_portCalls[Svc::RateGroupDriver::DIVIDER_SIZE];
+};
 
 } /* namespace Svc */
 

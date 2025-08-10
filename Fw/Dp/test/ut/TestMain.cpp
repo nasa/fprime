@@ -8,11 +8,11 @@
 #include "gtest/gtest.h"
 
 #include "Fw/Dp/DpContainer.hpp"
+#include "Fw/Dp/test/ut/DpContainerTester.hpp"
 #include "Fw/Dp/test/util/DpContainerHeader.hpp"
 #include "Fw/Test/UnitTest.hpp"
 #include "STest/Pick/Pick.hpp"
 #include "STest/Random/Random.hpp"
-#include "Fw/Dp/test/ut/DpContainerTester.hpp"
 
 using namespace Fw;
 
@@ -35,8 +35,7 @@ void checkHeader(FwDpIdType id, Fw::Buffer& buffer, DpContainer& container) {
     container.setTimeTag(timeTag);
     // Set the processing types
     const FwSizeType numProcTypeStates = 1 << DpCfg::ProcType::NUM_CONSTANTS;
-    const auto procTypes =
-      static_cast<DpCfg::ProcType::SerialType>(STest::Pick::startLength(0, numProcTypeStates));
+    const auto procTypes = static_cast<DpCfg::ProcType::SerialType>(STest::Pick::startLength(0, numProcTypeStates));
     container.setProcTypes(procTypes);
     // Set the user data
     for (U8& data : userData) {
@@ -108,7 +107,8 @@ TEST(Header, BufferInConstructor) {
     // Fill with data
     fillWithData(buffer);
     // Use the buffer to create a container
-    const FwDpIdType id = static_cast<FwDpIdType>(STest::Pick::lowerUpper(0, static_cast<U32>(std::numeric_limits<FwDpIdType>::max())));
+    const FwDpIdType id =
+        static_cast<FwDpIdType>(STest::Pick::lowerUpper(0, static_cast<U32>(std::numeric_limits<FwDpIdType>::max())));
     DpContainer container(id, buffer);
     // Check the header
     checkHeader(id, buffer, container);
@@ -145,7 +145,8 @@ TEST(Header, BufferSet) {
     // Fill with data
     fillWithData(buffer);
     // Use the buffer to create a container
-    const FwDpIdType id = static_cast<FwDpIdType>(STest::Pick::lowerUpper(0, static_cast<U32>(std::numeric_limits<FwDpIdType>::max())));
+    const FwDpIdType id =
+        static_cast<FwDpIdType>(STest::Pick::lowerUpper(0, static_cast<U32>(std::numeric_limits<FwDpIdType>::max())));
     DpContainer container;
     container.setId(id);
     container.setBuffer(buffer);

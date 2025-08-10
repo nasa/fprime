@@ -10,18 +10,16 @@
 //
 // ======================================================================
 
-#include <Svc/FatalHandler/FatalHandlerComponentImpl.hpp>
-#include <Fw/FPrimeBasicTypes.hpp>
 #include <taskLib.h>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Logger/Logger.hpp>
+#include <Svc/FatalHandler/FatalHandlerComponentImpl.hpp>
 
 namespace Svc {
 
-    void FatalHandlerComponentImpl::FatalReceive_handler(
-            const FwIndexType portNum,
-            FwEventIdType Id) {
-        Fw::Logger::log("FATAL %d handled.\n",Id,0,0,0,0,0);
-        taskSuspend(0);
-    }
+void FatalHandlerComponentImpl::FatalReceive_handler(const FwIndexType portNum, FwEventIdType Id) {
+    Fw::Logger::log("FATAL %d handled.\n", Id, 0, 0, 0, 0, 0);
+    taskSuspend(0);
+}
 
-} // end namespace Svc
+}  // end namespace Svc

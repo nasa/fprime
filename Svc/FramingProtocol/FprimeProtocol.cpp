@@ -15,9 +15,9 @@
 
 namespace Svc {
 
-FprimeFraming::FprimeFraming(): FramingProtocol() {}
+FprimeFraming::FprimeFraming() : FramingProtocol() {}
 
-FprimeDeframing::FprimeDeframing(): DeframingProtocol() {}
+FprimeDeframing::FprimeDeframing() : DeframingProtocol() {}
 
 void FprimeFraming::frame(const U8* const data, const U32 size, Fw::ComPacketType packet_type) {
     // NOTE: packet_type is not used in this implementation
@@ -128,4 +128,4 @@ DeframingProtocol::DeframingStatus FprimeDeframing::deframe(Types::CircularBuffe
     m_interface->route(buffer);
     return DeframingProtocol::DEFRAMING_STATUS_SUCCESS;
 }
-}
+}  // namespace Svc

@@ -21,22 +21,22 @@
 
 namespace Svc {
 
-  namespace Testers {
+namespace Testers {
 
-    extern BufferGetStatus::Tester bufferGetStatus;
+extern BufferGetStatus::Tester bufferGetStatus;
 
-    extern CLEAR_EVENT_THROTTLE::Tester clearEventThrottle;
+extern CLEAR_EVENT_THROTTLE::Tester clearEventThrottle;
 
-    extern ProductGetIn::Tester productGetIn;
+extern ProductGetIn::Tester productGetIn;
 
-    extern ProductRequestIn::Tester productRequestIn;
+extern ProductRequestIn::Tester productRequestIn;
 
-    extern ProductSendIn::Tester productSendIn;
+extern ProductSendIn::Tester productSendIn;
 
-    extern SchedIn::Tester schedIn;
+extern SchedIn::Tester schedIn;
 
-  }
+}  // namespace Testers
 
-}
+}  // namespace Svc
 
 #endif

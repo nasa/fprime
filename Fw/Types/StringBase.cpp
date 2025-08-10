@@ -139,10 +139,6 @@ StringBase::SizeType StringBase::serializedTruncatedSize(FwSizeType maxLength) c
     return static_cast<SizeType>(sizeof(FwSizeStoreType)) + static_cast<SizeType>(FW_MIN(this->length(), maxLength));
 }
 
-SerializeStatus StringBase::serialize(SerializeBufferBase& buffer) const {
-    return buffer.serializeFrom(reinterpret_cast<const U8*>(this->toChar()), this->length());
-}
-
 SerializeStatus StringBase::serializeTo(SerializeBufferBase& buffer) const {
     return buffer.serializeFrom(reinterpret_cast<const U8*>(this->toChar()), this->length());
 }
@@ -153,12 +149,14 @@ SerializeStatus StringBase::serializeTo(SerializeBufferBase& buffer, SizeType ma
     return buffer.serializeFrom(reinterpret_cast<const U8*>(this->toChar()), len, Serialization::INCLUDE_LENGTH);
 }
 
-SerializeStatus StringBase::serialize(SerializeBufferBase& buffer, SizeType maxLength) const {
-    return this->serializeTo(buffer, maxLength);
+// Deprecated method for backward compatibility
+SerializeStatus StringBase::serialize(SerializeBufferBase& buffer) const {
+    return this->serializeTo(buffer);
 }
 
-SerializeStatus StringBase::deserialize(SerializeBufferBase& buffer) {
-    return this->deserializeFrom(buffer);
+// Deprecated method for backward compatibility
+SerializeStatus StringBase::serialize(SerializeBufferBase& buffer, SizeType maxLength) const {
+    return this->serializeTo(buffer, maxLength);
 }
 
 SerializeStatus StringBase::deserializeFrom(SerializeBufferBase& buffer) {

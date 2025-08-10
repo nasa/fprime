@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  CommandBuffers.cpp
 // \author Canham/Bocchino
 // \brief  Command buffers for testing sequences
@@ -8,26 +8,22 @@
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
 
-#include "Fw/Com/ComPacket.hpp"
 #include "Svc/CmdSequencer/test/ut/CommandBuffers.hpp"
+#include "Fw/Com/ComPacket.hpp"
 #include "gtest/gtest.h"
 
 namespace Svc {
 
-  namespace CommandBuffers {
+namespace CommandBuffers {
 
-    void create(
-        Fw::ComBuffer& comBuff,
-        const FwOpcodeType opcode,
-        const U32 argument
-    ) {
-      comBuff.resetSer();
-      const FwPacketDescriptorType descriptor = Fw::ComPacketType::FW_PACKET_COMMAND;
-      ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(descriptor));
-      ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(opcode));
-      ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(argument));
-    }
-
-  }
-
+void create(Fw::ComBuffer& comBuff, const FwOpcodeType opcode, const U32 argument) {
+    comBuff.resetSer();
+    const FwPacketDescriptorType descriptor = Fw::ComPacketType::FW_PACKET_COMMAND;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(descriptor));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(opcode));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(argument));
 }
+
+}  // namespace CommandBuffers
+
+}  // namespace Svc

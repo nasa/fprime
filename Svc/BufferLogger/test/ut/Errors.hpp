@@ -17,31 +17,26 @@
 
 namespace Svc {
 
-  namespace Errors {
+namespace Errors {
 
-    class BufferLoggerTester :
-      public Svc::BufferLoggerTester
-    {
+class BufferLoggerTester : public Svc::BufferLoggerTester {
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-      public:
+    //! Log file open error
+    void LogFileOpen();
 
-        // ----------------------------------------------------------------------
-        // Tests
-        // ----------------------------------------------------------------------
+    //! Log file write error
+    void LogFileWrite();
 
-        //! Log file open error
-        void LogFileOpen();
+    //! Log file validation error
+    void LogFileValidation();
+};
 
-        //! Log file write error
-        void LogFileWrite();
+}  // namespace Errors
 
-        //! Log file validation error
-        void LogFileValidation();
-
-    };
-
-  }
-
-}
+}  // namespace Svc
 
 #endif

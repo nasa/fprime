@@ -4,10 +4,10 @@
 // \brief  cpp file for CmdSplitter component implementation class
 // ======================================================================
 
-#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Cmd/CmdPacket.hpp>
-#include <Svc/CmdSplitter/CmdSplitter.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
+#include <Svc/CmdSplitter/CmdSplitter.hpp>
 #include <config/FppConstantsAc.hpp>
 
 namespace Svc {

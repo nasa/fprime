@@ -15,40 +15,27 @@
 
 namespace Fw {
 
-  void FilePacket::CancelPacket ::
-    initialize(const U32 sequenceIndex)
-  {
+void FilePacket::CancelPacket ::initialize(const U32 sequenceIndex) {
     this->m_header.initialize(FilePacket::T_CANCEL, sequenceIndex);
-  }
+}
 
-  U32 FilePacket::CancelPacket ::
-    bufferSize() const
-  {
+U32 FilePacket::CancelPacket ::bufferSize() const {
     return this->m_header.bufferSize();
-  }
+}
 
-  SerializeStatus FilePacket::CancelPacket ::
-    toBuffer(Buffer& buffer) const
-  {
-    SerialBuffer serialBuffer(
-        buffer.getData(),
-        buffer.getSize()
-    );
+SerializeStatus FilePacket::CancelPacket ::toBuffer(Buffer& buffer) const {
+    SerialBuffer serialBuffer(buffer.getData(), buffer.getSize());
     return this->m_header.toSerialBuffer(serialBuffer);
-  }
+}
 
-  SerializeStatus FilePacket::CancelPacket ::
-    fromSerialBuffer(SerialBuffer& serialBuffer)
-  {
-
+SerializeStatus FilePacket::CancelPacket ::fromSerialBuffer(SerialBuffer& serialBuffer) {
     FW_ASSERT(this->m_header.m_type == T_CANCEL);
 
     if (serialBuffer.getBuffLeft() != 0) {
-      return FW_DESERIALIZE_SIZE_MISMATCH;
+        return FW_DESERIALIZE_SIZE_MISMATCH;
     }
 
     return FW_SERIALIZE_OK;
-
-  }
-
 }
+
+}  // namespace Fw

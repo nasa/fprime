@@ -18,6 +18,7 @@
 #include <Os/Task.hpp>
 
 #include <termios.h>
+#include <atomic>
 
 namespace Drv {
 
@@ -95,10 +96,17 @@ class LinuxUartDriver final : public LinuxUartDriverComponentBase {
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
 
+    //! Handler implementation for run
+    //!
+    //! The rate group input for sending telemetry
+    void run_handler(FwIndexType portNum,  //!< The port number
+                     U32 context           //!< The call order
+                     ) override;
+
     //! Handler implementation for serialSend
     //!
-    void send_handler(FwIndexType portNum, /*!< The port number*/
-                      Fw::Buffer& serBuffer) override;
+    Drv::ByteStreamStatus send_handler(FwIndexType portNum, /*!< The port number*/
+                                       Fw::Buffer& serBuffer) override;
 
     //! Handler implementation for recvReturnIn
     //!
@@ -116,7 +124,9 @@ class LinuxUartDriver final : public LinuxUartDriverComponentBase {
 
     Os::Task m_readTask;  //!< task instance for thread to read serial port
 
-    bool m_quitReadThread;  //!< flag to quit thread
+    std::atomic<FwSizeType> m_bytesSent;      //!< number of bytes sent
+    std::atomic<FwSizeType> m_bytesReceived;  //!< number of bytes received
+    bool m_quitReadThread;                    //!< flag to quit thread
 };
 
 }  // end namespace Drv

@@ -10,28 +10,23 @@
 //
 // ======================================================================
 
-#include <Fw/FilePacket/GTest/FilePackets.hpp>
 #include <CFDP/Checksum/GTest/Checksums.hpp>
+#include <Fw/FilePacket/GTest/FilePackets.hpp>
 #include <Fw/Types/GTest/Bytes.hpp>
 
 namespace Fw {
 
-  namespace GTest {
+namespace GTest {
 
-    void FilePackets::EndPacket ::
-      compare(
-          const FilePacket::EndPacket& expected,
-          const FilePacket::EndPacket& actual
-      )
-    {
-      FilePackets::Header::compare(expected.asHeader(), actual.asHeader());
-      CFDP::Checksum expectedChecksum;
-      CFDP::Checksum actualChecksum;
-      expected.getChecksum(expectedChecksum);
-      actual.getChecksum(actualChecksum);
-      CFDP::GTest::Checksums::compare(expectedChecksum, actualChecksum);
-    }
-
-  }
-
+void FilePackets::EndPacket ::compare(const FilePacket::EndPacket& expected, const FilePacket::EndPacket& actual) {
+    FilePackets::Header::compare(expected.asHeader(), actual.asHeader());
+    CFDP::Checksum expectedChecksum;
+    CFDP::Checksum actualChecksum;
+    expected.getChecksum(expectedChecksum);
+    actual.getChecksum(actualChecksum);
+    CFDP::GTest::Checksums::compare(expectedChecksum, actualChecksum);
 }
+
+}  // namespace GTest
+
+}  // namespace Fw

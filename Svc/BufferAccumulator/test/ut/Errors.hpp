@@ -20,16 +20,16 @@ namespace Svc {
 namespace Errors {
 
 class BufferAccumulatorTester : public Svc::BufferAccumulatorTester {
- public:
-  // ----------------------------------------------------------------------
-  // Tests
-  // ----------------------------------------------------------------------
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-  //! Queue full
-  void QueueFull(void);
+    //! Queue full
+    void QueueFull(void);
 
-  //! Run PartialDrain command in off-nominal ways
-  void PartialDrain(void);
+    //! Run PartialDrain command in off-nominal ways
+    void PartialDrain(void);
 };
 
 }  // namespace Errors

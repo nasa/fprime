@@ -31,6 +31,8 @@ LinuxUartDriver ::LinuxUartDriver(const char* const compName)
       m_fd(-1),
       m_allocationSize(0),
       m_device("NOT_EXIST"),
+      m_bytesSent(0),
+      m_bytesReceived(0),
       m_quitReadThread(false) {}
 
 bool LinuxUartDriver::open(const char* const device,
@@ -293,7 +295,12 @@ LinuxUartDriver ::~LinuxUartDriver() {
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void LinuxUartDriver ::send_handler(const FwIndexType portNum, Fw::Buffer& serBuffer) {
+void LinuxUartDriver ::run_handler(FwIndexType portNum, U32 context) {
+    this->tlmWrite_BytesSent(this->m_bytesSent);
+    this->tlmWrite_BytesRecv(this->m_bytesReceived);
+}
+
+Drv::ByteStreamStatus LinuxUartDriver ::send_handler(const FwIndexType portNum, Fw::Buffer& serBuffer) {
     Drv::ByteStreamStatus status = Drv::ByteStreamStatus::OP_OK;
     if (this->m_fd == -1 || serBuffer.getData() == nullptr || serBuffer.getSize() == 0) {
         status = Drv::ByteStreamStatus::OTHER_ERROR;
@@ -308,10 +315,11 @@ void LinuxUartDriver ::send_handler(const FwIndexType portNum, Fw::Buffer& serBu
             Fw::LogStringArg _arg = this->m_device;
             this->log_WARNING_HI_WriteError(_arg, static_cast<I32>(stat));
             status = Drv::ByteStreamStatus::OTHER_ERROR;
+        } else {
+            this->m_bytesSent += static_cast<FwSizeType>(stat);
         }
     }
-    // Return the buffer back to the caller
-    sendReturnOut_out(0, serBuffer, status);
+    return status;
 }
 
 void LinuxUartDriver::recvReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
@@ -356,9 +364,11 @@ void LinuxUartDriver ::serialReadTaskEntry(void* ptr) {
         } else if (stat > 0) {
             buff.setSize(static_cast<U32>(stat));
             status = ByteStreamStatus::OP_OK;  // added by m.chase 03.06.2017
+            comp->m_bytesReceived += static_cast<FwSizeType>(stat);
         } else {
             status = ByteStreamStatus::OTHER_ERROR;  // Simply to return the buffer
         }
+
         comp->recv_out(0, buff, status);  // added by m.chase 03.06.2017
     }
 }

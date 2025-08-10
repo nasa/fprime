@@ -21,455 +21,378 @@
 
 // Forward declaration for UTs
 namespace Svc {
-  class FileUplinkTester;
-  class FileDownlinkTester;
-}
+class FileUplinkTester;
+class FileDownlinkTester;
+}  // namespace Svc
 
 namespace Fw {
 
-  //! \class FilePacket
-  //! \brief A file packet
-  //!
-  union FilePacket {
+//! \class FilePacket
+//! \brief A file packet
+//!
+union FilePacket {
+  public:
+    // ----------------------------------------------------------------------
+    // Types
+    // ----------------------------------------------------------------------
 
-    public:
+    //! Packet type
+    typedef enum { T_START = 0, T_DATA = 1, T_END = 2, T_CANCEL = 3, T_NONE = 255 } Type;
 
-      // ----------------------------------------------------------------------
-      // Types
-      // ----------------------------------------------------------------------
-
-      //! Packet type
-      typedef enum {
-        T_START = 0,
-        T_DATA = 1,
-        T_END = 2,
-        T_CANCEL = 3,
-        T_NONE = 255
-      } Type;
-
-      //! The type of a path name
-      class PathName {
-
+    //! The type of a path name
+    class PathName {
         friend union FilePacket;
         friend class Svc::FileDownlinkTester;
         friend class Svc::FileUplinkTester;
 
-        public:
+      public:
+        //! The maximum length of a path name
+        enum { MAX_LENGTH = 255 };
 
-          //! The maximum length of a path name
-          enum { MAX_LENGTH = 255 };
+      private:
+        //! The length
+        U8 m_length;
 
-        private:
+        //! Pointer to the path value
+        const char* m_value;
 
-          //! The length
-          U8 m_length;
+      public:
+        //! Initialize a PathName
+        void initialize(const char* const value  //! The path value
+        );
 
-          //! Pointer to the path value
-          const char *m_value;
+        //! Compute the buffer size needed to hold this PathName
+        U32 bufferSize() const;
 
-        public:
+        //! Get the length of the path name value
+        U32 getLength(void) const { return this->m_length; };
 
-          //! Initialize a PathName
-          void initialize(
-              const char *const value //! The path value
-          );
+        //! Get the path name value
+        const char* getValue(void) const { return this->m_value; };
 
-          //! Compute the buffer size needed to hold this PathName
-          U32 bufferSize() const;
+      private:
+        //! Initialize this PathName from a SerialBuffer
+        SerializeStatus fromSerialBuffer(SerialBuffer& serialBuffer);
 
-          //! Get the length of the path name value
-          U32 getLength(void) const {
-              return this->m_length;
-          };
+        //! Write this PathName to a SerialBuffer
+        SerializeStatus toSerialBuffer(SerialBuffer& serialBuffer) const;
+    };
 
-          //! Get the path name value
-          const char* getValue(void) const {
-              return this->m_value;
-          };
+    //! The type of a packet header
+    class Header {
+        friend union FilePacket;
+        friend class FilePacketTester;
+        friend class Svc::FileDownlinkTester;
+        friend class Svc::FileUplinkTester;
 
-        private:
+      private:
+        //! The packet type
+        Type m_type;
 
-          //! Initialize this PathName from a SerialBuffer
-          SerializeStatus fromSerialBuffer(SerialBuffer& serialBuffer);
+        //! The sequence index
+        U32 m_sequenceIndex;
 
-          //! Write this PathName to a SerialBuffer
-          SerializeStatus toSerialBuffer(SerialBuffer& serialBuffer) const;
+      public:
+        //! Header size
+        enum { HEADERSIZE = sizeof(U8) + sizeof(U32) };
 
-      };
+      private:
+        //! Initialize a file packet header
+        void initialize(const Type type,         //!< The packet type
+                        const U32 sequenceIndex  //!< The sequence index
+        );
 
-      //! The type of a packet header
-      class Header {
+        //! Compute the buffer size needed to hold this Header
+        U32 bufferSize() const;
 
-          friend union FilePacket;
-          friend class FilePacketTester;
-          friend class Svc::FileDownlinkTester;
-          friend class Svc::FileUplinkTester;
+        //! Initialize this Header from a SerialBuffer
+        SerializeStatus fromSerialBuffer(SerialBuffer& serialBuffer);
 
-        private:
+        //! Write this Header to a SerialBuffer
+        SerializeStatus toSerialBuffer(SerialBuffer& serialBuffer) const;
 
-          //! The packet type
-          Type m_type;
+      public:
+        Type getType(void) const { return this->m_type; };
 
-          //! The sequence index
-          U32 m_sequenceIndex;
+        U32 getSequenceIndex(void) const { return this->m_sequenceIndex; };
+    };
 
-        public:
+    //! The type of a start packet
+    struct StartPacket {
+        friend union FilePacket;
 
-          //! Header size
-          enum { HEADERSIZE = sizeof(U8) + sizeof(U32) };
+      private:
+        //! The packet header
+        Header m_header;
 
-        private:
+        //! The file size
+        U32 m_fileSize;
 
-          //! Initialize a file packet header
-          void initialize(
-              const Type type, //!< The packet type
-              const U32 sequenceIndex //!< The sequence index
-          );
+        //! The source path
+        PathName m_sourcePath;
 
-          //! Compute the buffer size needed to hold this Header
-          U32 bufferSize() const;
+        //! The destination path
+        PathName m_destinationPath;
 
-          //! Initialize this Header from a SerialBuffer
-          SerializeStatus fromSerialBuffer(SerialBuffer& serialBuffer);
+      public:
+        //! Initialize a StartPacket with sequence number 0
+        void initialize(const U32 fileSize,                //!< The file size
+                        const char* const sourcePath,      //!< The source path
+                        const char* const destinationPath  //!< The destination path
+        );
 
-          //! Write this Header to a SerialBuffer
-          SerializeStatus toSerialBuffer(SerialBuffer& serialBuffer) const;
+        //! Compute the buffer size needed to hold this StartPacket
+        U32 bufferSize() const;
 
-        public:
-          Type getType(void) const {
-              return this->m_type;
-          };
+        //! Convert this StartPacket to a Buffer
+        SerializeStatus toBuffer(Buffer& buffer) const;
 
-          U32 getSequenceIndex(void) const {
-              return this->m_sequenceIndex;
-          };
+        //! Get this as a Header
+        const FilePacket::Header& asHeader() const { return this->m_header; };
 
-      };
+        //! Get the destination path
+        const PathName& getDestinationPath() const { return this->m_destinationPath; };
 
-      //! The type of a start packet
-      struct StartPacket {
+        //! Get the source path
+        const PathName& getSourcePath() const { return this->m_sourcePath; };
 
-          friend union FilePacket;
+        //! Get the file size
+        U32 getFileSize() const { return this->m_fileSize; };
 
-        private:
+      private:
+        //! Initialize this StartPacket from a SerialBuffer
+        SerializeStatus fromSerialBuffer(SerialBuffer& serialBuffer);
 
-          //! The packet header
-          Header m_header;
+        //! Write this StartPacket to a SerialBuffer
+        SerializeStatus toSerialBuffer(SerialBuffer& serialBuffer) const;
+    };
 
-          //! The file size
-          U32 m_fileSize;
+    //! The type of a data packet
+    class DataPacket {
+        friend union FilePacket;
+        friend class Svc::FileDownlinkTester;
+        friend class Svc::FileUplinkTester;
 
-          //! The source path
-          PathName m_sourcePath;
+      private:
+        //! The packet header
+        Header m_header;
 
-          //! The destination path
-          PathName m_destinationPath;
+        //! The byte offset of the packet data into the destination file
+        U32 m_byteOffset;
 
-        public:
+        //! The size of the file data in the packet
+        U16 m_dataSize;
 
-          //! Initialize a StartPacket with sequence number 0
-          void initialize(
-              const U32 fileSize, //!< The file size
-              const char *const sourcePath, //!< The source path
-              const char *const destinationPath //!< The destination path
-          );
+        //! Pointer to the file data
+        const U8* m_data;
 
-          //! Compute the buffer size needed to hold this StartPacket
-          U32 bufferSize() const;
+      public:
+        //! header size
+        enum { HEADERSIZE = Header::HEADERSIZE + sizeof(U32) + sizeof(U16) };
 
-          //! Convert this StartPacket to a Buffer
-          SerializeStatus toBuffer(Buffer& buffer) const;
+        //! Initialize a data packet
+        void initialize(const U32 sequenceIndex,  //!< The sequence index
+                        const U32 byteOffset,     //!< The byte offset
+                        const U16 dataSize,       //!< The data size
+                        const U8* const data      //!< The file data
+        );
 
-          //! Get this as a Header
-          const FilePacket::Header& asHeader() const {
-              return this->m_header;
-          };
+        //! Compute the buffer size needed to hold this DataPacket
+        U32 bufferSize() const;
 
-          //! Get the destination path
-          const PathName& getDestinationPath() const {
-              return this->m_destinationPath;
-          };
+        //! Convert this DataPacket to a Buffer
+        SerializeStatus toBuffer(Buffer& buffer) const;
 
-          //! Get the source path
-          const PathName& getSourcePath() const {
-              return this->m_sourcePath;
-          };
+        //! Get this as a Header
+        const FilePacket::Header& asHeader() const { return this->m_header; };
 
-          //! Get the file size
-          U32 getFileSize() const {
-              return this->m_fileSize;
-          };
-        private:
+        //! Get the byte offset
+        U32 getByteOffset() const { return this->m_byteOffset; };
 
-          //! Initialize this StartPacket from a SerialBuffer
-          SerializeStatus fromSerialBuffer(SerialBuffer& serialBuffer);
+        //! Get the data size
+        U32 getDataSize() const { return this->m_dataSize; };
 
-          //! Write this StartPacket to a SerialBuffer
-          SerializeStatus toSerialBuffer(SerialBuffer& serialBuffer) const;
+        //! Get the data
+        const U8* getData() const { return this->m_data; };
 
-      };
+      private:
+        //! Initialize this DataPacket from a SerialBuffer
+        SerializeStatus fromSerialBuffer(SerialBuffer& serialBuffer);
 
-      //! The type of a data packet
-      class DataPacket {
+        //! Compute the fixed-length data size of a StartPacket
+        U32 fixedLengthSize() const;
 
-          friend union FilePacket;
-          friend class Svc::FileDownlinkTester;
-          friend class Svc::FileUplinkTester;
+        //! Write this DataPacket to a SerialBuffer
+        SerializeStatus toSerialBuffer(SerialBuffer& serialBuffer) const;
+    };
 
-        private:
+    //! The type of an end packet
+    class EndPacket {
+        friend union FilePacket;
+        friend class Svc::FileDownlinkTester;
+        friend class Svc::FileUplinkTester;
 
-          //! The packet header
-          Header m_header;
+      private:
+        //! The packet header
+        Header m_header;
 
-          //! The byte offset of the packet data into the destination file
-          U32 m_byteOffset;
+      public:
+        //! Set the checksum
+        void setChecksum(const CFDP::Checksum& checksum);
 
-          //! The size of the file data in the packet
-          U16 m_dataSize;
+        //! Get the checksum
+        void getChecksum(CFDP::Checksum& checksum) const;
 
-          //! Pointer to the file data
-          const U8 *m_data;
+        //! Compute the buffer size needed to hold this EndPacket
+        U32 bufferSize() const;
 
-        public:
+        //! Convert this EndPacket to a Buffer
+        SerializeStatus toBuffer(Buffer& buffer) const;
 
-          //! header size
-          enum { HEADERSIZE = Header::HEADERSIZE +
-              sizeof(U32) +
-              sizeof(U16) };
+        //! Get this as a Header
+        const FilePacket::Header& asHeader() const { return this->m_header; };
 
-          //! Initialize a data packet
-          void initialize(
-              const U32 sequenceIndex, //!< The sequence index
-              const U32 byteOffset, //!< The byte offset
-              const U16 dataSize, //!< The data size
-              const U8 *const data //!< The file data
-          );
+      public:
+        //! Initialize an end packet
+        void initialize(const U32 sequenceIndex,        //!< The sequence index
+                        const CFDP::Checksum& checksum  //!< The checksum
+        );
 
-          //! Compute the buffer size needed to hold this DataPacket
-          U32 bufferSize() const;
+      private:
+        //! The checksum
+        U32 m_checksumValue;
 
-          //! Convert this DataPacket to a Buffer
-          SerializeStatus toBuffer(Buffer& buffer) const;
+        //! Initialize this EndPacket from a SerialBuffer
+        SerializeStatus fromSerialBuffer(SerialBuffer& serialBuffer);
 
-          //! Get this as a Header
-          const FilePacket::Header& asHeader() const {
-              return this->m_header;
-          };
+        //! Write this EndPacket to a SerialBuffer
+        SerializeStatus toSerialBuffer(SerialBuffer& serialBuffer) const;
+    };
 
-          //! Get the byte offset
-          U32 getByteOffset() const {
-              return this->m_byteOffset;
-          };
+    //! The type of a cancel packet
+    class CancelPacket {
+        friend union FilePacket;
+        friend class Svc::FileDownlinkTester;
+        friend class Svc::FileUplinkTester;
 
-          //! Get the data size
-          U32 getDataSize() const {
-              return this->m_dataSize;
-          };
+      private:
+        //! The packet header
+        Header m_header;
 
-          //! Get the data
-          const U8* getData() const {
-              return this->m_data;
-          };
-        private:
+      public:
+        //! Initialize a cancel packet
+        void initialize(const U32 sequenceIndex  //!< The sequence index
+        );
 
-          //! Initialize this DataPacket from a SerialBuffer
-          SerializeStatus fromSerialBuffer(SerialBuffer& serialBuffer);
+        //! Compute the buffer size needed to hold this CancelPacket
+        U32 bufferSize() const;
 
-          //! Compute the fixed-length data size of a StartPacket
-          U32 fixedLengthSize() const;
+        //! Convert this CancelPacket to a Buffer
+        SerializeStatus toBuffer(Buffer& buffer) const;
 
-          //! Write this DataPacket to a SerialBuffer
-          SerializeStatus toSerialBuffer(SerialBuffer& serialBuffer) const;
+        //! Get this as a Header
+        const FilePacket::Header& asHeader() const { return this->m_header; };
 
-      };
+      private:
+        //! Initialize this CancelPacket from a SerialBuffer
+        SerializeStatus fromSerialBuffer(SerialBuffer& serialBuffer);
+    };
 
-      //! The type of an end packet
-      class EndPacket {
+  public:
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
 
-          friend union FilePacket;
-          friend class Svc::FileDownlinkTester;
-          friend class Svc::FileUplinkTester;
+    FilePacket() { this->m_header.m_type = T_NONE; }
 
-        private:
+  public:
+    // ----------------------------------------------------------------------
+    // Public instance methods
+    // ----------------------------------------------------------------------
 
-          //! The packet header
-          Header m_header;
+    //! Initialize this from a Buffer
+    //!
+    SerializeStatus fromBuffer(const Buffer& buffer);
 
-        public:
+    //! Get this as a Header
+    //!
+    const Header& asHeader() const;
 
-          //! Set the checksum
-          void setChecksum(const CFDP::Checksum& checksum);
+    //! Get this as a StartPacket
+    //!
+    const StartPacket& asStartPacket() const;
 
-          //! Get the checksum
-          void getChecksum(CFDP::Checksum& checksum) const;
+    //! Get this as a DataPacket
+    //!
+    const DataPacket& asDataPacket() const;
 
-          //! Compute the buffer size needed to hold this EndPacket
-          U32 bufferSize() const;
+    //! Get this as an EndPacket
+    //!
+    const EndPacket& asEndPacket() const;
 
-          //! Convert this EndPacket to a Buffer
-          SerializeStatus toBuffer(Buffer& buffer) const;
+    //! Get this as a CancelPacket
+    //!
+    const CancelPacket& asCancelPacket() const;
 
-          //! Get this as a Header
-          const FilePacket::Header& asHeader() const {
-              return this->m_header;
-          };
-        public:
+    //! Initialize this with a StartPacket
+    //!
+    void fromStartPacket(const StartPacket& startPacket);
 
-          //! Initialize an end packet
-          void initialize(
-              const U32 sequenceIndex, //!< The sequence index
-              const CFDP::Checksum& checksum //!< The checksum
-          );
+    //! Initialize this with a DataPacket
+    //!
+    void fromDataPacket(const DataPacket& dataPacket);
 
-        private:
+    //! Initialize this with an EndPacket
+    //!
+    void fromEndPacket(const EndPacket& endPacket);
 
-          //! The checksum
-          U32 m_checksumValue;
+    //! Initialize this with a CancelPacket
+    //!
+    void fromCancelPacket(const CancelPacket& cancelPacket);
 
-          //! Initialize this EndPacket from a SerialBuffer
-          SerializeStatus fromSerialBuffer(SerialBuffer& serialBuffer);
+    //! Get the buffer size needed to hold this FilePacket
+    //!
+    U32 bufferSize() const;
 
-          //! Write this EndPacket to a SerialBuffer
-          SerializeStatus toSerialBuffer(SerialBuffer& serialBuffer) const;
+    //! Convert this FilePacket to a Buffer
+    //!
+    SerializeStatus toBuffer(Buffer& buffer) const;
 
-      };
+  private:
+    // ----------------------------------------------------------------------
+    // Private methods
+    // ----------------------------------------------------------------------
 
-      //! The type of a cancel packet
-      class CancelPacket {
+    //! Initialize this from a SerialBuffer
+    //!
+    SerializeStatus fromSerialBuffer(SerialBuffer& serialBuffer);
 
-          friend union FilePacket;
-          friend class Svc::FileDownlinkTester;
-          friend class Svc::FileUplinkTester;
+  private:
+    // ----------------------------------------------------------------------
+    // Private data
+    // ----------------------------------------------------------------------
 
-        private:
+    //! this, seen as a header
+    //!
+    Header m_header;
 
-          //! The packet header
-          Header m_header;
+    //! this, seen as a Start packet
+    //!
+    StartPacket m_startPacket;
 
-        public:
+    //! this, seen as a Data packet
+    //!
+    DataPacket m_dataPacket;
 
-          //! Initialize a cancel packet
-          void initialize(
-              const U32 sequenceIndex //!< The sequence index
-          );
+    //! this, seen as an End packet
+    //!
+    EndPacket m_endPacket;
 
-          //! Compute the buffer size needed to hold this CancelPacket
-          U32 bufferSize() const;
+    //! this, seen as a Cancel packet
+    //!
+    CancelPacket m_cancelPacket;
+};
 
-          //! Convert this CancelPacket to a Buffer
-          SerializeStatus toBuffer(Buffer& buffer) const;
-
-          //! Get this as a Header
-          const FilePacket::Header& asHeader() const {
-              return this->m_header;
-          };
-        private:
-
-          //! Initialize this CancelPacket from a SerialBuffer
-          SerializeStatus fromSerialBuffer(SerialBuffer& serialBuffer);
-
-      };
-
-    public:
-
-      // ----------------------------------------------------------------------
-      // Constructor
-      // ----------------------------------------------------------------------
-
-      FilePacket() { this->m_header.m_type = T_NONE; }
-
-    public:
-
-      // ----------------------------------------------------------------------
-      // Public instance methods
-      // ----------------------------------------------------------------------
-
-      //! Initialize this from a Buffer
-      //!
-      SerializeStatus fromBuffer(const Buffer& buffer);
-
-      //! Get this as a Header
-      //!
-      const Header& asHeader() const;
-
-      //! Get this as a StartPacket
-      //!
-      const StartPacket& asStartPacket() const;
-
-      //! Get this as a DataPacket
-      //!
-      const DataPacket& asDataPacket() const;
-
-      //! Get this as an EndPacket
-      //!
-      const EndPacket& asEndPacket() const;
-
-      //! Get this as a CancelPacket
-      //!
-      const CancelPacket& asCancelPacket() const;
-
-      //! Initialize this with a StartPacket
-      //!
-      void fromStartPacket(const StartPacket& startPacket);
-
-      //! Initialize this with a DataPacket
-      //!
-      void fromDataPacket(const DataPacket& dataPacket);
-
-      //! Initialize this with an EndPacket
-      //!
-      void fromEndPacket(const EndPacket& endPacket);
-
-      //! Initialize this with a CancelPacket
-      //!
-      void fromCancelPacket(const CancelPacket& cancelPacket);
-
-      //! Get the buffer size needed to hold this FilePacket
-      //!
-      U32 bufferSize() const;
-
-      //! Convert this FilePacket to a Buffer
-      //!
-      SerializeStatus toBuffer(Buffer& buffer) const;
-
-    private:
-
-      // ----------------------------------------------------------------------
-      // Private methods
-      // ----------------------------------------------------------------------
-
-      //! Initialize this from a SerialBuffer
-      //!
-      SerializeStatus fromSerialBuffer(SerialBuffer& serialBuffer);
-
-    private:
-
-      // ----------------------------------------------------------------------
-      // Private data
-      // ----------------------------------------------------------------------
-
-      //! this, seen as a header
-      //!
-      Header m_header;
-
-      //! this, seen as a Start packet
-      //!
-      StartPacket m_startPacket;
-
-      //! this, seen as a Data packet
-      //!
-      DataPacket m_dataPacket;
-
-      //! this, seen as an End packet
-      //!
-      EndPacket m_endPacket;
-
-      //! this, seen as a Cancel packet
-      //!
-      CancelPacket m_cancelPacket;
-
-  };
-
-}
+}  // namespace Fw
 
 #endif
