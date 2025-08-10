@@ -30,17 +30,6 @@ module Svc {
           id 0 \
           format "Port {} schedule at {} for {} ticks was long by {} ticks" \
           throttle 5
-        
-        # ----------------------------------------------------------------------
-        # Telemetry channels
-        # ----------------------------------------------------------------------
-
-        @ Max execution time rate group
-        telemetry RgMaxTime: U32 id 0 update on change \
-        format "{} us"
-
-        @ Cycle slips for rate group
-        telemetry RgCycleSlips: U32 id 1 update on change
 
         # ----------------------------------------------------------------------
         # Special ports
