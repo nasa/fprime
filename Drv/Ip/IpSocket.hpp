@@ -116,7 +116,7 @@ class IpSocket {
      * \param size: size of data to send
      * \return status of the send, SOCK_DISCONNECTED to reopen, SOCK_SUCCESS on success, something else on error
      */
-    virtual SocketIpStatus send(const SocketDescriptor& socketDescriptor, const U8* const data, const U32 size);
+    virtual SocketIpStatus send(const SocketDescriptor& socketDescriptor, const U8* const data, const FwSizeType size);
     /**
      * \brief receive data from the IP socket from the given buffer
      *
@@ -133,7 +133,7 @@ class IpSocket {
      * \param size: maximum size of data buffer to fill
      * \return status of the send, SOCK_DISCONNECTED to reopen, SOCK_SUCCESS on success, something else on error
      */
-    SocketIpStatus recv(const SocketDescriptor& fd, U8* const data, U32& size);
+    SocketIpStatus recv(const SocketDescriptor& fd, U8* const data, FwSizeType& size);
 
     /**
      * \brief closes the socket
@@ -198,7 +198,9 @@ class IpSocket {
      * \param size: size of data to send
      * \return: size of data sent, or -1 on error.
      */
-    virtual I32 sendProtocol(const SocketDescriptor& socketDescriptor, const U8* const data, const U32 size) = 0;
+    virtual FwSignedSizeType sendProtocol(const SocketDescriptor& socketDescriptor,
+                                          const U8* const data,
+                                          const FwSizeType size) = 0;
 
     /**
      * \brief Protocol specific implementation of recv.  Called directly with error handling from recv.
@@ -207,7 +209,9 @@ class IpSocket {
      * \param size: size of data buffer
      * \return: size of data received, or -1 on error.
      */
-    virtual I32 recvProtocol(const SocketDescriptor& socketDescriptor, U8* const data, const U32 size) = 0;
+    virtual FwSignedSizeType recvProtocol(const SocketDescriptor& socketDescriptor,
+                                          U8* const data,
+                                          const FwSizeType size) = 0;
 
     /**
      * \brief Handle zero return from recvProtocol
