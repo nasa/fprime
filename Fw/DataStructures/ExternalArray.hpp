@@ -130,8 +130,12 @@ class ExternalArray final {
         // Initialize the array members
         this->m_elements = reinterpret_cast<T*>(data.bytes);
         // Construct the array members in place
+        // This step ensures that each array element holds a valid object
+        // into which we can assign data
         for (FwSizeType i = 0; i < size; i++) {
-            (void)new (&this->m_elements[i]) T();
+            // This code trips an alignment check in clang-tidy
+            // However the alignment has been checked by FW_ASSERT above
+            (void)new (&this->m_elements[i]) T();  // NOLINT
         }
         // Set the size
         this->m_size = size;
