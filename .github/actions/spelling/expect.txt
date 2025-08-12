@@ -243,6 +243,7 @@ fptr
 fptrunc
 fputil
 fpy
+fpyc
 FPYSEQUENCER
 freeram
 Fregoso
