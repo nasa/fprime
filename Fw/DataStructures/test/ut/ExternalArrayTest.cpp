@@ -6,6 +6,7 @@
 
 #include <gtest/gtest.h>
 
+#include "Fw/Buffer/Buffer.hpp"
 #include "Fw/DataStructures/ExternalArray.hpp"
 
 namespace Fw {
@@ -26,12 +27,13 @@ TEST(ExternalArray, StorageConstructorTyped) {
 
 TEST(ExternalArray, StorageConstructorUntyped) {
     constexpr FwSizeType size = 3;
-    constexpr U8 alignment = ExternalArray<U32>::getByteArrayAlignment();
-    constexpr FwSizeType byteArraySize = ExternalArray<U32>::getByteArraySize(size);
+    constexpr U8 alignment = ExternalArray<Fw::Buffer>::getByteArrayAlignment();
+    constexpr FwSizeType byteArraySize = ExternalArray<Fw::Buffer>::getByteArraySize(size);
     alignas(alignment) U8 bytes[byteArraySize];
-    ExternalArray<U32> a(ByteArray(&bytes[0], sizeof bytes), size);
-    ASSERT_EQ(a.getElements(), reinterpret_cast<U32*>(&bytes[0]));
+    ExternalArray<Fw::Buffer> a(ByteArray(&bytes[0], sizeof bytes), size);
+    ASSERT_EQ(a.getElements(), reinterpret_cast<Fw::Buffer*>(&bytes[0]));
     ASSERT_EQ(a.getSize(), size);
+    a[0] = Fw::Buffer();
 }
 
 TEST(ExternalArray, CopyConstructor) {
