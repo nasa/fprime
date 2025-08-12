@@ -258,6 +258,8 @@ and must contain at least [`getByteArraySize(size)`](#52-getbytearraysize) bytes
 
 1. Initialize `m_elements` with `data.bytes`.
 
+1. Construct the objects pointed to by `m_elements` in place.
+
 1. Initialize `m_size` with `size`.
 
 _Example:_

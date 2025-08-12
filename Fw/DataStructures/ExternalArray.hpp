@@ -8,6 +8,7 @@
 #define Fw_ExternalArray_HPP
 
 #include <cstdint>
+#include <new>
 #include <type_traits>
 
 #include "Fw/FPrimeBasicTypes.hpp"
@@ -128,6 +129,11 @@ class ExternalArray final {
         FW_ASSERT(size * sizeof(T) <= data.size);
         // Initialize the array members
         this->m_elements = reinterpret_cast<T*>(data.bytes);
+        // Construct the array members in place
+        for (FwSizeType i = 0; i < size; i++) {
+            (void)new (&this->m_elements[i]) T();
+        }
+        // Set the size
         this->m_size = size;
     }
 
