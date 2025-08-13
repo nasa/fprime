@@ -12,9 +12,9 @@
 
 #ifndef FW_STRING_BASE_HPP
 #define FW_STRING_BASE_HPP
-#include <Fw/Types/format.hpp>
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Serializable.hpp>
+#include <Fw/Types/format.hpp>
 #include <cstdarg>
 #ifdef BUILD_UT
 #include <iostream>
@@ -63,16 +63,15 @@ class StringBase : public Serializable {
     StringBase& operator=(const CHAR* src);               //!< Assign CHAR*
     StringBase& operator=(const StringBase& src);         //!< Assign another StringBase
 
-    FormatStatus format(const CHAR* formatString, ...);  //!< write formatted string to buffer
+    FormatStatus format(const CHAR* formatString, ...);            //!< write formatted string to buffer
     FormatStatus vformat(const CHAR* formatString, va_list args);  //!< write formatted string to buffer using va_list
 
     SerializeStatus serializeTo(SerializeBufferBase& buffer) const override;
-    SerializeStatus serializeTo(SerializeBufferBase& buffer, SizeType maxLen) const;
+    virtual SerializeStatus serializeTo(SerializeBufferBase& buffer, SizeType maxLen) const;
     SerializeStatus deserializeFrom(SerializeBufferBase& buffer) override;
 
-    SerializeStatus serialize(SerializeBufferBase& buffer) const override;
-    SerializeStatus serialize(SerializeBufferBase& buffer, SizeType maxLen) const;
-    SerializeStatus deserialize(SerializeBufferBase& buffer) override;
+    SerializeStatus serialize(SerializeBufferBase& buffer) const;
+    virtual SerializeStatus serialize(SerializeBufferBase& buffer, SizeType maxLen) const;
 
 #ifdef BUILD_UT
     // to support GoogleTest framework in unit tests

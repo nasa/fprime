@@ -25,10 +25,10 @@ class GenericHubComponentImpl final : public GenericHubComponentBase {
      * Type of serialized data on the wire. Allows for expanding them on the opposing end.
      */
     enum HubType {
-        HUB_TYPE_PORT,    //!< Port type transmission
-        HUB_TYPE_BUFFER,  //!< Buffer type transmission
-        HUB_TYPE_EVENT,   //!< Event transmission
-        HUB_TYPE_CHANNEL, //!< Telemetry channel type
+        HUB_TYPE_PORT,     //!< Port type transmission
+        HUB_TYPE_BUFFER,   //!< Buffer type transmission
+        HUB_TYPE_EVENT,    //!< Event transmission
+        HUB_TYPE_CHANNEL,  //!< Telemetry channel type
         HUB_TYPE_MAX
     };
 
@@ -63,7 +63,7 @@ class GenericHubComponentImpl final : public GenericHubComponentBase {
 
     //! Handler implementation for LogRecv
     //!
-    void LogRecv_handler(const FwIndexType portNum,   /*!< The port number*/
+    void LogRecv_handler(const FwIndexType portNum,       /*!< The port number*/
                          FwEventIdType id,                /*!< Log ID */
                          Fw::Time& timeTag,               /*!< Time Tag */
                          const Fw::LogSeverity& severity, /*!< The severity argument */
@@ -73,9 +73,9 @@ class GenericHubComponentImpl final : public GenericHubComponentBase {
     //! Handler implementation for TlmRecv
     //!
     void TlmRecv_handler(const FwIndexType portNum, /*!< The port number*/
-                         FwChanIdType id,               /*!< Telemetry Channel ID */
-                         Fw::Time& timeTag,             /*!< Time Tag */
-                         Fw::TlmBuffer& val             /*!< Buffer containing serialized telemetry value */
+                         FwChanIdType id,           /*!< Telemetry Channel ID */
+                         Fw::Time& timeTag,         /*!< Time Tag */
+                         Fw::TlmBuffer& val         /*!< Buffer containing serialized telemetry value */
     );
 
     // ----------------------------------------------------------------------
@@ -84,7 +84,7 @@ class GenericHubComponentImpl final : public GenericHubComponentBase {
 
     //! Handler implementation for portIn
     //!
-    void portIn_handler(FwIndexType portNum,        /*!< The port number*/
+    void portIn_handler(FwIndexType portNum,            /*!< The port number*/
                         Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
     );
 

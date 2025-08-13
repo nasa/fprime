@@ -10,70 +10,69 @@
 #include "SeqDispatcherGTestBase.hpp"
 #include "Svc/SeqDispatcher/SeqDispatcher.hpp"
 
-namespace Svc{
+namespace Svc {
 
 class SeqDispatcherTester : public SeqDispatcherGTestBase {
-  // ----------------------------------------------------------------------
-  // Construction and destruction
-  // ----------------------------------------------------------------------
+    // ----------------------------------------------------------------------
+    // Construction and destruction
+    // ----------------------------------------------------------------------
 
- public:
-  // Maximum size of histories storing events, telemetry, and port outputs
-  static const U32 MAX_HISTORY_SIZE = 10;
-  // Instance ID supplied to the component instance under test
-  static const FwEnumStoreType TEST_INSTANCE_ID = 0;
-  // Queue depth supplied to component instance under test
-  static const FwSizeType TEST_INSTANCE_QUEUE_DEPTH = 10;
+  public:
+    // Maximum size of histories storing events, telemetry, and port outputs
+    static const U32 MAX_HISTORY_SIZE = 10;
+    // Instance ID supplied to the component instance under test
+    static const FwEnumStoreType TEST_INSTANCE_ID = 0;
+    // Queue depth supplied to component instance under test
+    static const FwSizeType TEST_INSTANCE_QUEUE_DEPTH = 10;
 
-  //! Construct object SeqDispatcherTester
-  //!
-  SeqDispatcherTester();
+    //! Construct object SeqDispatcherTester
+    //!
+    SeqDispatcherTester();
 
-  //! Destroy object SeqDispatcherTester
-  //!
-  ~SeqDispatcherTester();
+    //! Destroy object SeqDispatcherTester
+    //!
+    ~SeqDispatcherTester();
 
- public:
-  // ----------------------------------------------------------------------
-  // Tests
-  // ----------------------------------------------------------------------
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-  void testDispatch();
-  void testLogStatus();
+    void testDispatch();
+    void testLogStatus();
 
- private:
-  // ----------------------------------------------------------------------
-  // Handlers for typed from ports
-  // ----------------------------------------------------------------------
+  private:
+    // ----------------------------------------------------------------------
+    // Handlers for typed from ports
+    // ----------------------------------------------------------------------
 
-  void seqRunOut_handler(
-        FwIndexType portNum, //!< The port number
-        const Fw::StringBase& filename //!< The sequence file
-  );
+    void seqRunOut_handler(FwIndexType portNum,            //!< The port number
+                           const Fw::StringBase& filename  //!< The sequence file
+    );
 
- private:
-  // ----------------------------------------------------------------------
-  // Helper methods
-  // ----------------------------------------------------------------------
+  private:
+    // ----------------------------------------------------------------------
+    // Helper methods
+    // ----------------------------------------------------------------------
 
-  //! Connect ports
-  //!
-  void connectPorts();
+    //! Connect ports
+    //!
+    void connectPorts();
 
-  //! Initialize components
-  //!
-  void initComponents();
+    //! Initialize components
+    //!
+    void initComponents();
 
- private:
-  // ----------------------------------------------------------------------
-  // Variables
-  // ----------------------------------------------------------------------
+  private:
+    // ----------------------------------------------------------------------
+    // Variables
+    // ----------------------------------------------------------------------
 
-  //! The component under test
-  //!
-  SeqDispatcher component;
+    //! The component under test
+    //!
+    SeqDispatcher component;
 };
 
-}  // end namespace components
+}  // namespace Svc
 
 #endif

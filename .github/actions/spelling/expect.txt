@@ -278,6 +278,7 @@ gtest
 gtimeout
 Guire
 GVCID
+GPT
 HACKSM
 Handcoded
 handleflags
@@ -331,6 +332,7 @@ itimerspec
 itr
 itval
 janamian
+jawest
 Jax
 jdk
 jdperez

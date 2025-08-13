@@ -9,33 +9,35 @@
 
 namespace Fw {
 
-    class InputSerializePort final : public InputPortBase {
-        public:
-            InputSerializePort();
-            virtual ~InputSerializePort();
+class InputSerializePort final : public InputPortBase {
+  public:
+    InputSerializePort();
+    virtual ~InputSerializePort();
 
-            void init() override;
+    void init() override;
 
-            SerializeStatus invokeSerial(SerializeBufferBase &buffer) override; // !< invoke the port with a serialized version of the call
+    SerializeStatus invokeSerial(
+        SerializeBufferBase& buffer) override;  // !< invoke the port with a serialized version of the call
 
-            typedef void (*CompFuncPtr)(Fw::PassiveComponentBase* callComp, FwIndexType portNum, SerializeBufferBase &arg); //!< port callback definition
-            void addCallComp(Fw::PassiveComponentBase* callComp, CompFuncPtr funcPtr); //!< call to register a component
+    typedef void (*CompFuncPtr)(Fw::PassiveComponentBase* callComp,
+                                FwIndexType portNum,
+                                SerializeBufferBase& arg);                      //!< port callback definition
+    void addCallComp(Fw::PassiveComponentBase* callComp, CompFuncPtr funcPtr);  //!< call to register a component
 
-        protected:
-
+  protected:
 #if FW_OBJECT_TO_STRING == 1
-            const char* getToStringFormatString() override; //!< Get format string for toString call
+    const char* getToStringFormatString() override;  //!< Get format string for toString call
 #endif
 
-        private:
-            CompFuncPtr m_func; //!< pointer to port callback function
-            InputSerializePort(InputSerializePort*);
-            InputSerializePort(InputSerializePort&);
-            InputSerializePort& operator=(InputSerializePort&);
-    };
+  private:
+    CompFuncPtr m_func;  //!< pointer to port callback function
+    InputSerializePort(InputSerializePort*);
+    InputSerializePort(InputSerializePort&);
+    InputSerializePort& operator=(InputSerializePort&);
+};
 
-}
+}  // namespace Fw
 
-#endif // FW_INPUT_SERIALIZE_PORT_HPP
+#endif  // FW_INPUT_SERIALIZE_PORT_HPP
 
 #endif

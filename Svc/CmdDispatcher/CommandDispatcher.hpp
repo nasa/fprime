@@ -10,7 +10,7 @@
 
 namespace Svc {
 
-  typedef CommandDispatcherImpl CommandDispatcher;
+typedef CommandDispatcherImpl CommandDispatcher;
 
 }
 

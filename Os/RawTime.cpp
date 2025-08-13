@@ -77,14 +77,6 @@ RawTime::Status RawTime::getDiffUsec(const RawTime& other, U32& result) const {
     return status;
 }
 
-Fw::SerializeStatus RawTime::serialize(Fw::SerializeBufferBase& buffer) const {
-    return this->serializeTo(buffer);
-}
-
-Fw::SerializeStatus RawTime::deserialize(Fw::SerializeBufferBase& buffer) {
-    return this->deserializeFrom(buffer);
-}
-
 bool RawTime::operator==(const RawTime& other) const {
     Fw::TimeInterval interval;
     Status status = this->getTimeInterval(other, interval);

@@ -9,47 +9,37 @@
 // acknowledged.
 // ======================================================================
 
-#include "Svc/CmdSequencer/test/ut/CommandBuffers.hpp"
 #include "Svc/CmdSequencer/test/ut/NoFiles.hpp"
+#include "Svc/CmdSequencer/test/ut/CommandBuffers.hpp"
 
 namespace Svc {
 
-  namespace NoFiles {
+namespace NoFiles {
 
-    // ----------------------------------------------------------------------
-    // Constructors
-    // ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+// Constructors
+// ----------------------------------------------------------------------
 
-    CmdSequencerTester ::
-      CmdSequencerTester(const SequenceFiles::File::Format::t a_format) :
-        Svc::CmdSequencerTester(a_format)
-    {
+CmdSequencerTester ::CmdSequencerTester(const SequenceFiles::File::Format::t a_format)
+    : Svc::CmdSequencerTester(a_format) {}
 
-    }
+// ----------------------------------------------------------------------
+// Tests
+// ----------------------------------------------------------------------
 
-    // ----------------------------------------------------------------------
-    // Tests
-    // ----------------------------------------------------------------------
-
-    void CmdSequencerTester ::
-      Init()
-    {
-      // Nothing to do
-    }
-
-    void CmdSequencerTester ::
-      NoSequenceActive()
-    {
-
-      // Send cancel command
-      this->sendCmd_CS_CANCEL(0, 0);
-      this->clearAndDispatch();
-      // Assert events
-      ASSERT_EVENTS_SIZE(1);
-      ASSERT_EVENTS_CS_NoSequenceActive_SIZE(1);
-
-    }
-
-  }
-
+void CmdSequencerTester ::Init() {
+    // Nothing to do
 }
+
+void CmdSequencerTester ::NoSequenceActive() {
+    // Send cancel command
+    this->sendCmd_CS_CANCEL(0, 0);
+    this->clearAndDispatch();
+    // Assert events
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_CS_NoSequenceActive_SIZE(1);
+}
+
+}  // namespace NoFiles
+
+}  // namespace Svc

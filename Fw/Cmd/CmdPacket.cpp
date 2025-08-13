@@ -35,7 +35,7 @@ SerializeStatus CmdPacket::deserializeFrom(SerializeBufferBase& buffer) {
         return FW_DESERIALIZE_TYPE_MISMATCH;
     }
 
-    stat = buffer.deserialize(this->m_opcode);
+    stat = buffer.deserializeTo(this->m_opcode);
     if (stat != FW_SERIALIZE_OK) {
         return stat;
     }
@@ -47,15 +47,6 @@ SerializeStatus CmdPacket::deserializeFrom(SerializeBufferBase& buffer) {
     }
 
     return stat;
-}
-
-// Deprecated methods for backward compatibility - these call the new interface
-SerializeStatus CmdPacket::serialize(SerializeBufferBase& buffer) const {
-    return this->serializeTo(buffer);
-}
-
-SerializeStatus CmdPacket::deserialize(SerializeBufferBase& buffer) {
-    return this->deserializeFrom(buffer);
 }
 
 FwOpcodeType CmdPacket::getOpCode() const {

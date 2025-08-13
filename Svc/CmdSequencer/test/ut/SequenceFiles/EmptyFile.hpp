@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  EmptyFile.hpp
 // \author Rob Bocchino
 // \brief  EmptyFile interface
@@ -11,41 +11,32 @@
 #ifndef Svc_SequenceFiles_EmptyFile_HPP
 #define Svc_SequenceFiles_EmptyFile_HPP
 
-#include "Svc/CmdSequencer/test/ut/SequenceFiles/File.hpp"
 #include "Svc/CmdSequencer/CmdSequencerImpl.hpp"
+#include "Svc/CmdSequencer/test/ut/SequenceFiles/File.hpp"
 
 namespace Svc {
 
-  namespace SequenceFiles {
+namespace SequenceFiles {
 
-    //! An empty file
-    class EmptyFile :
-      public File
-    {
+//! An empty file
+class EmptyFile : public File {
+  public:
+    //! Construct an empty file
+    EmptyFile(const Format::t a_format  //!< The file format
+    );
 
-      public:
+  public:
+    //! Serialize an empty file in F Prime format
+    void serializeFPrime(Fw::SerializeBufferBase& buffer  //!< The buffer
+    );
 
-        //! Construct an empty file
-        EmptyFile(
-            const Format::t a_format //!< The file format
-        );
+    //! Serialize an empty file in AMPCS format
+    void serializeAMPCS(Fw::SerializeBufferBase& buffer  //!< The buffer
+    );
+};
 
-      public:
+}  // namespace SequenceFiles
 
-        //! Serialize an empty file in F Prime format
-        void serializeFPrime(
-            Fw::SerializeBufferBase& buffer //!< The buffer
-        );
-
-        //! Serialize an empty file in AMPCS format
-        void serializeAMPCS(
-            Fw::SerializeBufferBase& buffer //!< The buffer
-        );
-
-    };
-
-  }
-
-}
+}  // namespace Svc
 
 #endif

@@ -12,9 +12,9 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
-#include <Svc/FileDownlink/FileDownlink.hpp>
-#include <Fw/Types/Assert.hpp>
 #include <Fw/Test/UnitTest.hpp>
+#include <Fw/Types/Assert.hpp>
+#include <Svc/FileDownlink/FileDownlink.hpp>
 #include "FileDownlinkGTestBase.hpp"
 
 #define MAX_HISTORY_SIZE 10
@@ -22,269 +22,223 @@
 
 namespace Svc {
 
-  class FileDownlinkTester :
-    public FileDownlinkGTestBase
-  {
+class FileDownlinkTester : public FileDownlinkGTestBase {
+  private:
+    // ----------------------------------------------------------------------
+    // Types
+    // ----------------------------------------------------------------------
 
-    private:
+    // A buffer for assembling files
+    class FileBuffer {
+      public:
+        //! Construct a FileBuffer from raw data
+        FileBuffer(const U8* const data, const size_t size);
 
-      // ----------------------------------------------------------------------
-      // Types
-      // ----------------------------------------------------------------------
+        //! Construct a FileBuffer from a history of data packets
+        FileBuffer(const History<Fw::FilePacket::DataPacket>& dataPackets);
 
-      // A buffer for assembling files
-      class FileBuffer {
+      public:
+        //! Write the buffer to file
+        void write(const char* const fileName);
 
-        public:
+        //! Get the checksum for the file
+        void getChecksum(CFDP::Checksum& checksum);
 
-          //! Construct a FileBuffer from raw data
-          FileBuffer(
-              const U8 *const data,
-              const size_t size
-          );
+      public:
+        //! Compare two file buffers
+        static bool compare(const FileBuffer& fb1, const FileBuffer& fb2);
 
-          //! Construct a FileBuffer from a history of data packets
-          FileBuffer(
-              const History<Fw::FilePacket::DataPacket>& dataPackets
-          );
+      private:
+        //! Push data onto the buffer
+        void push(const U8* const data, const size_t size);
 
-        public:
+      private:
+        //! The data
+        U8 m_data[FILE_BUFFER_CAPACITY];
 
-          //! Write the buffer to file
-          void write(const char *const fileName);
+        //! The index into the buffer
+        size_t m_index;
+    };
 
-          //! Get the checksum for the file
-          void getChecksum(CFDP::Checksum& checksum);
+    // ----------------------------------------------------------------------
+    // Construction and destruction
+    // ----------------------------------------------------------------------
 
-        public:
+  public:
+    //! Construct object FileDownlinkTester
+    //!
+    FileDownlinkTester();
 
-          //! Compare two file buffers
-          static bool compare(
-              const FileBuffer& fb1,
-              const FileBuffer& fb2
-          );
+    //! Destroy object FileDownlinkTester
+    //!
+    ~FileDownlinkTester();
 
-        private:
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-          //! Push data onto the buffer
-          void push(
-              const U8 *const data,
-              const size_t size
-          );
+    //! Create a file F
+    //! Downlink F
+    //! Verify that the downlinked file matches F
+    //!
+    void downlink();
 
-        private:
+    //! Cause a file open error
+    //!
+    void fileOpenError();
 
-          //! The data
-          U8 m_data[FILE_BUFFER_CAPACITY];
+    //! Start and then cancel a downlink
+    //!
+    void cancelDownlink();
 
-          //! The index into the buffer
-          size_t m_index;
+    //! Send a cancel command in idle mode
+    //!
+    void cancelInIdleMode();
 
-      };
+    //! Create a file F
+    //! Downlink partial F
+    //! Verify that the downlinked file matches F
+    //!
+    void downlinkPartial();
 
-      // ----------------------------------------------------------------------
-      // Construction and destruction
-      // ----------------------------------------------------------------------
+    //! Timeout
+    //!
+    void timeout();
 
-    public:
+    //! sendFilePort
+    //! Test downlinking a file via a port
+    //!
+    void sendFilePort();
 
-      //! Construct object FileDownlinkTester
-      //!
-      FileDownlinkTester();
+  private:
+    // ----------------------------------------------------------------------
+    // Handlers for from ports
+    // ----------------------------------------------------------------------
 
-      //! Destroy object FileDownlinkTester
-      //!
-      ~FileDownlinkTester();
+    //! Handler for from_bufferSendOut
+    //!
+    void from_bufferSendOut_handler(const FwIndexType portNum,  //!< The port number
+                                    Fw::Buffer& buffer);
 
-    public:
+    //! Handler for from_bufferSendOut
+    //!
+    void from_pingOut_handler(const FwIndexType portNum, U32 key);
 
-      // ----------------------------------------------------------------------
-      // Tests
-      // ----------------------------------------------------------------------
+    //! Handler for from_FileComplete
+    //!
+    void from_FileComplete_handler(const FwIndexType portNum, const Svc::SendFileResponse& resp);
 
-      //! Create a file F
-      //! Downlink F
-      //! Verify that the downlinked file matches F
-      //!
-      void downlink();
+  private:
+    // ----------------------------------------------------------------------
+    // Private instance methods
+    // ----------------------------------------------------------------------
 
-      //! Cause a file open error
-      //!
-      void fileOpenError();
+    //! Connect ports
+    //!
+    void connectPorts();
 
-      //! Start and then cancel a downlink
-      //!
-      void cancelDownlink();
+    //! Initialize components
+    //!
+    void initComponents();
 
-      //! Send a cancel command in idle mode
-      //!
-      void cancelInIdleMode();
+    //! Command the FileDownlink component to send a file
+    //! Assert a command response
+    //!
+    void sendFile(const char* const sourceFileName,  //!< The source file name
+                  const char* const destFileName,    //!< The destination file name
+                  const Fw::CmdResponse response     //!< The expected command response
+    );
 
-      //! Create a file F
-      //! Downlink partial F
-      //! Verify that the downlinked file matches F
-      //!
-      void downlinkPartial();
+    //! Command the FileDownlink component to send a file
+    //! Assert a command response
+    //!
+    void sendFilePartial(const char* const sourceFileName,  //!< The source file name
+                         const char* const destFileName,    //!< The destination file name
+                         const Fw::CmdResponse response,    //!< The expected command response
+                         U32 startIndex,                    //!< The starting index
+                         U32 length                         //!< The amount of bytes to downlink
+    );
 
-      //! Timeout
-      //!
-      void timeout();
+    //! Command the FileDownlink component to cancel a file downlink
+    //! Assert a command response
+    //!
+    void cancel(const Fw::CmdResponse response  //!< The expected command response
+    );
 
-      //! sendFilePort
-      //! Test downlinking a file via a port
-      //!
-      void sendFilePort();
+    //! Remove a file
+    //!
+    void removeFile(const char* const name  //!< The file name
+    );
 
-    private:
+    // ----------------------------------------------------------------------
+    // Private static methods
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Handlers for from ports
-      // ----------------------------------------------------------------------
+    //! Validate a packet history and accumulate the data packets
+    //!
+    static void validatePacketHistory(const History<FromPortEntry_bufferSendOut>& historyIn,  //!< The incoming history
+                                      History<Fw::FilePacket::DataPacket>& historyOut,        //!< The outgoing history
+                                      const Fw::FilePacket::Type endPacketType,  //!< The expected ending packet type
+                                      const size_t numPackets,                   //!< The expected number of packets
+                                      const CFDP::Checksum& checksum,            //!< The expected checksum,
+                                      U32 startOffset                            //!< Starting byte offset
+    );
 
-      //! Handler for from_bufferSendOut
-      //!
-      void from_bufferSendOut_handler(
-          const FwIndexType portNum, //!< The port number
-          Fw::Buffer& buffer
-      );
+    //! Validate a file packet buffer and convert it to a file packet
+    //!
+    static void validateFilePacket(const Fw::Buffer& buffer,   //!< The buffer
+                                   Fw::FilePacket& filePacket  //!< The buffer as a FilePacket
+    );
 
-      //! Handler for from_bufferSendOut
-      //!
-      void from_pingOut_handler(
-          const FwIndexType portNum,
-          U32 key
-      );
+    //! Validate a start packet buffer
+    //!
+    static void validateStartPacket(const Fw::Buffer& buffer  //!< The buffer
+    );
 
-      //! Handler for from_FileComplete
-      //!
-      void from_FileComplete_handler(
-          const FwIndexType portNum,
-          const Svc::SendFileResponse& resp
-      );
+    //! Validate a data packet buffer, convert it to a data packet,
+    //! and update the byte offset
+    //!
+    static void validateDataPacket(const Fw::Buffer& buffer,                //!< The buffer
+                                   Fw::FilePacket::DataPacket& dataPacket,  //!< The buffer as a data packet
+                                   const U32 sequenceIndex,                 //!< The expected sequence index
+                                   U32& byteOffset                          //!< The expected byte offset
+    );
 
-    private:
+    //! Validate an end data packet buffer
+    //!
+    static void validateEndPacket(const Fw::Buffer& buffer,       //!< The buffer
+                                  const U32 sequenceIndex,        //!< The expected sequence index
+                                  const CFDP::Checksum& checksum  //!< The expected checksum
+    );
 
-      // ----------------------------------------------------------------------
-      // Private instance methods
-      // ----------------------------------------------------------------------
+    //! Validate a cancel packet buffer
+    //!
+    static void validateCancelPacket(const Fw::Buffer& buffer,  //!< The buffer
+                                     const U32 sequenceIndex    //!< The expected sequence index
+    );
 
-      //! Connect ports
-      //!
-      void connectPorts();
+  private:
+    // ----------------------------------------------------------------------
+    // Variables
+    // ----------------------------------------------------------------------
 
-      //! Initialize components
-      //!
-      void initComponents();
+    //! The component under test
+    //!
+    FileDownlink component;
 
-      //! Command the FileDownlink component to send a file
-      //! Assert a command response
-      //!
-      void sendFile(
-          const char *const sourceFileName, //!< The source file name
-          const char *const destFileName, //!< The destination file name
-          const Fw::CmdResponse response //!< The expected command response
-      );
+    // Allocated buffers storage
+    U8* buffers[1000];
 
-      //! Command the FileDownlink component to send a file
-      //! Assert a command response
-      //!
-      void sendFilePartial(
-          const char *const sourceFileName, //!< The source file name
-          const char *const destFileName, //!< The destination file name
-          const Fw::CmdResponse response, //!< The expected command response
-          U32 startIndex, //!< The starting index
-          U32 length //!< The amount of bytes to downlink
-      );
+    //! Buffers index
+    //!
+    U32 buffers_index;
 
-      //! Command the FileDownlink component to cancel a file downlink
-      //! Assert a command response
-      //!
-      void cancel(
-          const Fw::CmdResponse response //!< The expected command response
-      );
+    //! The current sequence index
+    //!
+    U32 sequenceIndex;
+};
 
-      //! Remove a file
-      //!
-      void removeFile(
-          const char *const name //!< The file name
-      );
-
-      // ----------------------------------------------------------------------
-      // Private static methods
-      // ----------------------------------------------------------------------
-
-      //! Validate a packet history and accumulate the data packets
-      //!
-      static void validatePacketHistory(
-        const History<FromPortEntry_bufferSendOut>& historyIn, //!< The incoming history
-        History<Fw::FilePacket::DataPacket>& historyOut, //!< The outgoing history
-        const Fw::FilePacket::Type endPacketType, //!< The expected ending packet type
-        const size_t numPackets, //!< The expected number of packets
-        const CFDP::Checksum& checksum, //!< The expected checksum,
-        U32 startOffset //!< Starting byte offset
-      );
-
-      //! Validate a file packet buffer and convert it to a file packet
-      //!
-      static void validateFilePacket(
-          const Fw::Buffer& buffer, //!< The buffer
-          Fw::FilePacket& filePacket //!< The buffer as a FilePacket
-      );
-
-      //! Validate a start packet buffer
-      //!
-      static void validateStartPacket(
-          const Fw::Buffer& buffer //!< The buffer
-      );
-
-      //! Validate a data packet buffer, convert it to a data packet,
-      //! and update the byte offset
-      //!
-      static void validateDataPacket(
-          const Fw::Buffer& buffer, //!< The buffer
-          Fw::FilePacket::DataPacket& dataPacket, //!< The buffer as a data packet
-          const U32 sequenceIndex, //!< The expected sequence index
-          U32& byteOffset //!< The expected byte offset
-      );
-
-      //! Validate an end data packet buffer
-      //!
-      static void validateEndPacket(
-          const Fw::Buffer& buffer, //!< The buffer
-          const U32 sequenceIndex, //!< The expected sequence index
-          const CFDP::Checksum& checksum //!< The expected checksum
-      );
-
-      //! Validate a cancel packet buffer
-      //!
-      static void validateCancelPacket(
-          const Fw::Buffer& buffer, //!< The buffer
-          const U32 sequenceIndex //!< The expected sequence index
-      );
-
-    private:
-
-      // ----------------------------------------------------------------------
-      // Variables
-      // ----------------------------------------------------------------------
-
-      //! The component under test
-      //!
-      FileDownlink component;
-
-      // Allocated buffers storage
-      U8* buffers[1000];
-
-
-      //! Buffers index
-      //!
-      U32 buffers_index;
-
-      //! The current sequence index
-      //!
-      U32 sequenceIndex;
-  };
-
-} // end namespace Svc
+}  // end namespace Svc
 
 #endif

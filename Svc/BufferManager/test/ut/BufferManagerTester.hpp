@@ -13,82 +13,70 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
+#include <STest/Pick/Pick.hpp>
 #include "BufferManagerGTestBase.hpp"
 #include "Svc/BufferManager/BufferManagerComponentImpl.hpp"
-#include <STest/Pick/Pick.hpp>
 
 namespace Svc {
 
-  class BufferManagerTester :
-    public BufferManagerGTestBase
-  {
+class BufferManagerTester : public BufferManagerGTestBase {
+    // ----------------------------------------------------------------------
+    // Construction and destruction
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Construction and destruction
-      // ----------------------------------------------------------------------
+  public:
+    //! Construct object BufferManagerTester
+    //!
+    BufferManagerTester();
 
-    public:
+    //! Destroy object BufferManagerTester
+    //!
+    ~BufferManagerTester();
 
-      //! Construct object BufferManagerTester
-      //!
-      BufferManagerTester();
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-      //! Destroy object BufferManagerTester
-      //!
-      ~BufferManagerTester();
+    //! Test Setup
+    //!
+    void testSetup();
 
-    public:
+    //! One buffer size
+    void oneBufferSize();
 
-      // ----------------------------------------------------------------------
-      // Tests
-      // ----------------------------------------------------------------------
+    //! Multiple buffer sizes
+    void multBuffSize();
 
-      //! Test Setup
-      //!
-      void testSetup();
+  private:
+    // ----------------------------------------------------------------------
+    // Helper methods
+    // ----------------------------------------------------------------------
 
-      //! One buffer size
-      void oneBufferSize();
+    //! Connect ports
+    //!
+    void connectPorts();
 
-      //! Multiple buffer sizes
-      void multBuffSize();
+    //! Initialize components
+    //!
+    void initComponents();
 
-    private:
+  private:
+    // ----------------------------------------------------------------------
+    // Variables
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Helper methods
-      // ----------------------------------------------------------------------
+    //! The component under test
+    //!
+    BufferManagerComponentImpl component;
 
-      //! Connect ports
-      //!
-      void connectPorts();
+    void textLogIn(const FwEventIdType id,          //!< The event ID
+                   const Fw::Time& timeTag,         //!< The time
+                   const Fw::LogSeverity severity,  //!< The severity
+                   const Fw::TextLogString& text    //!< The event string
+                   ) override;
+};
 
-      //! Initialize components
-      //!
-      void initComponents();
-
-    private:
-
-      // ----------------------------------------------------------------------
-      // Variables
-      // ----------------------------------------------------------------------
-
-      //! The component under test
-      //!
-      BufferManagerComponentImpl component;
-
-
-
-      void textLogIn(
-          const FwEventIdType id, //!< The event ID
-          const Fw::Time& timeTag, //!< The time
-          const Fw::LogSeverity severity, //!< The severity
-          const Fw::TextLogString& text //!< The event string
-      ) override;
-
-
-  };
-
-} // end namespace Svc
+}  // end namespace Svc
 
 #endif

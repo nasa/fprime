@@ -10,15 +10,13 @@
 //
 // ======================================================================
 
-#include <Svc/FileUplink/FileUplink.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/StringUtils.hpp>
+#include <Svc/FileUplink/FileUplink.hpp>
 
 namespace Svc {
 
-  Os::File::Status FileUplink::File ::
-    open(const Fw::FilePacket::StartPacket& startPacket)
-  {
+Os::File::Status FileUplink::File ::open(const Fw::FilePacket::StartPacket& startPacket) {
     const U32 length = startPacket.getDestinationPath().getLength();
     char path[Fw::FilePacket::PathName::MAX_LENGTH + 1];
     memcpy(path, startPacket.getDestinationPath().getValue(), length);
@@ -29,16 +27,9 @@ namespace Svc {
     CFDP::Checksum checksum;
     this->m_checksum = checksum;
     return this->osFile.open(path, Os::File::OPEN_WRITE);
-  }
+}
 
-  Os::File::Status FileUplink::File ::
-    write(
-        const U8 *const data,
-        const U32 byteOffset,
-        const U32 length
-    )
-  {
-
+Os::File::Status FileUplink::File ::write(const U8* const data, const U32 byteOffset, const U32 length) {
     Os::File::Status status;
     status = this->osFile.seek(byteOffset, Os::File::SeekType::ABSOLUTE);
     if (status != Os::File::OP_OK) {
@@ -46,7 +37,7 @@ namespace Svc {
     }
 
     FwSizeType intLength = length;
-    //Note: not waiting for the file write to finish
+    // Note: not waiting for the file write to finish
     status = this->osFile.write(data, intLength, Os::File::WaitType::NO_WAIT);
     if (status != Os::File::OP_OK) {
         return status;
@@ -55,7 +46,6 @@ namespace Svc {
     FW_ASSERT(static_cast<U32>(intLength) == length, static_cast<FwAssertArgType>(intLength));
     this->m_checksum.update(data, byteOffset, length);
     return Os::File::OP_OK;
-
-  }
-
 }
+
+}  // namespace Svc

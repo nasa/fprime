@@ -88,9 +88,7 @@ void UdpTester::test_with_loop(U32 iterations, bool recv_thread) {
             Drv::Test::force_recv_timeout(udp2_fd.fd, udp2);
             m_data_buffer.setSize(sizeof(m_data_storage));
             size = Drv::Test::fill_random_buffer(m_data_buffer);
-            invoke_to_send(0, m_data_buffer);
-            ASSERT_from_sendReturnOut_SIZE(i + 1);
-            Drv::ByteStreamStatus status = this->fromPortHistory_sendReturnOut->at(i).status;
+            Drv::ByteStreamStatus status = invoke_to_send(0, m_data_buffer);
             EXPECT_EQ(status, ByteStreamStatus::OP_OK);
             Drv::Test::receive_all(udp2, udp2_fd, buffer, size);
             Drv::Test::validate_random_buffer(m_data_buffer, buffer);

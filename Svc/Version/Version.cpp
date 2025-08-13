@@ -16,7 +16,7 @@ namespace Svc {
 // ----------------------------------------------------------------------
 
 Version ::Version(const char* const compName)
-    : VersionComponentBase(compName), m_enable(false), m_num_custom_elements(0)  {
+    : VersionComponentBase(compName), m_enable(false), m_num_custom_elements(0) {
     Fw::String version_string = "no_ver";
     // initialize all custom entries
     for (FwIndexType id = 0; id < Svc::VersionCfg::VersionEnum::NUM_CONSTANTS; id++) {
@@ -43,7 +43,7 @@ void Version::config(bool enable) {
 
 void Version ::getVersion_handler(FwIndexType portNum,
                                   const Svc::VersionCfg::VersionEnum& version_id,
-                                  Fw::StringBase& version_string, 
+                                  Fw::StringBase& version_string,
                                   Svc::VersionStatus& status) {
     FW_ASSERT(version_id.isValid(), version_id.e);
     U8 version_slot = VersionSlot(version_id.e);
@@ -76,8 +76,7 @@ void Version ::ENABLE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Svc::VersionEn
 
 // Command handler to event versions
 void Version ::VERSION_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Svc::VersionType version_type) {
-    
-    FW_ASSERT(version_type.isValid(),version_type.e);
+    FW_ASSERT(version_type.isValid(), version_type.e);
 
     switch (version_type) {
         case (Svc::VersionType::PROJECT):
@@ -130,7 +129,6 @@ void Version ::projectVersion_tlm() {
 
 // Send both events and tlm for library versions
 void Version ::libraryVersion_tlm() {
-
     // Process libraries array
     for (U8 i = 0; i < Project::Version::LIBRARY_VERSIONS_COUNT; i++) {
         // Emit Event/TLM on library versions
@@ -177,8 +175,8 @@ void Version ::libraryVersion_tlm() {
 
 // Send all events and tlm (if verbosity is enabled) for custom versions
 void Version ::customVersion_tlm_all() {
-    for (U8 i = 0; (m_enable == true) && (m_num_custom_elements != 0) && (i < Svc::VersionCfg::VersionEnum::NUM_CONSTANTS);
-         i++) {
+    for (U8 i = 0;
+         (m_enable == true) && (m_num_custom_elements != 0) && (i < Svc::VersionCfg::VersionEnum::NUM_CONSTANTS); i++) {
         Version::customVersion_tlm(VersionSlot(i));
     }
 }
@@ -187,15 +185,15 @@ void Version ::customVersion_tlm_all() {
 void Version ::customVersion_tlm(VersionSlot custom_slot) {
     // Process custom version TLM only if verbosity is enabled and there are any valid writes to it;
     //  it doesn't necessarily have to be consecutive
-    if ((this->verId_db[custom_slot].get_version_value() != "no_ver") && 
+    if ((this->verId_db[custom_slot].get_version_value() != "no_ver") &&
         (this->m_num_custom_elements > 0)) {  // Write TLM for valid writes
 
         // Emit Events/TLM on custom versions
         this->log_ACTIVITY_LO_CustomVersions(this->verId_db[custom_slot].get_version_enum(),
                                              this->verId_db[custom_slot].get_version_value());
 
-        if (m_enable == true) { //Send TLM only if verbosity is enabled
-        // Write to TLM
+        if (m_enable == true) {  // Send TLM only if verbosity is enabled
+            // Write to TLM
             switch (custom_slot) {
                 case VER_SLOT_00:
                     this->tlmWrite_CustomVersion01(verId_db[custom_slot]);
