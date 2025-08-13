@@ -1,3 +1,4 @@
+#include <type_traits>
 #include <cmath>
 #include "Fw/Com/ComPacket.hpp"
 #include "Svc/FpySequencer/FpySequencer.hpp"
@@ -93,25 +94,28 @@ void FpySequencer::push(T val) {
     FW_ASSERT(this->m_runtime.stackSize + sizeof(val) < Fpy::MAX_STACK_SIZE, static_cast<FwAssertArgType>(this->m_runtime.stackSize), static_cast<FwAssertArgType>(sizeof(T)));
     // first make a byte array which can definitely store our val
     U8 valBytes[8] = {0};
+    // convert val to unsigned to avoid undefined behavior for bitshifts of signed types
+    using UnsignedT = typename std::make_unsigned<T>::type;
+    UnsignedT valUnsigned = static_cast<UnsignedT>(val);
     if (sizeof(T) == 8) {
-        valBytes[0] = static_cast<U8>(val >> 56);
-        valBytes[1] = static_cast<U8>(val >> 48);
-        valBytes[2] = static_cast<U8>(val >> 40);
-        valBytes[3] = static_cast<U8>(val >> 32);
-        valBytes[4] = static_cast<U8>(val >> 24);
-        valBytes[5] = static_cast<U8>(val >> 16);
-        valBytes[6] = static_cast<U8>(val >> 8);
-        valBytes[7] = static_cast<U8>(val >> 0);
+        valBytes[0] = static_cast<U8>(valUnsigned >> 56);
+        valBytes[1] = static_cast<U8>(valUnsigned >> 48);
+        valBytes[2] = static_cast<U8>(valUnsigned >> 40);
+        valBytes[3] = static_cast<U8>(valUnsigned >> 32);
+        valBytes[4] = static_cast<U8>(valUnsigned >> 24);
+        valBytes[5] = static_cast<U8>(valUnsigned >> 16);
+        valBytes[6] = static_cast<U8>(valUnsigned >> 8);
+        valBytes[7] = static_cast<U8>(valUnsigned >> 0);
     } else if (sizeof(T) == 4) {
-        valBytes[0] = static_cast<U8>(val >> 24);
-        valBytes[1] = static_cast<U8>(val >> 16);
-        valBytes[2] = static_cast<U8>(val >> 8);
-        valBytes[3] = static_cast<U8>(val >> 0);
+        valBytes[0] = static_cast<U8>(valUnsigned >> 24);
+        valBytes[1] = static_cast<U8>(valUnsigned >> 16);
+        valBytes[2] = static_cast<U8>(valUnsigned >> 8);
+        valBytes[3] = static_cast<U8>(valUnsigned >> 0);
     } else if (sizeof(T) == 2) {
-        valBytes[0] = static_cast<U8>(val >> 8);
-        valBytes[1] = static_cast<U8>(val >> 0);
+        valBytes[0] = static_cast<U8>(valUnsigned >> 8);
+        valBytes[1] = static_cast<U8>(valUnsigned >> 0);
     } else {
-        valBytes[0] = static_cast<U8>(val);
+        valBytes[0] = static_cast<U8>(valUnsigned);
     }
     memcpy(this->top(), valBytes, sizeof(T));
     this->m_runtime.stackSize += sizeof(T);
@@ -598,7 +602,7 @@ DirectiveError FpySequencer::op_not() {
     if (this->m_runtime.stackSize < 1) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
-    this->push(this->pop<U8>() == 0);
+    this->push(static_cast<U8>(this->pop<U8>() == 0));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_fpext() {
