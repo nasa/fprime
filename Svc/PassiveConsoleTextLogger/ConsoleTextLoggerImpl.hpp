@@ -25,7 +25,7 @@ class ConsoleTextLoggerImpl final : public PassiveTextLoggerComponentBase {
 
     // Event ID filters
     FwSizeType m_numFilteredIDs;
-    FwEventIdType m_filteredIDs[TEXT_LOGGER_ID_FILTER_SIZE];
+    FwEventIdType m_filteredIDs[PASSIVE_TEXT_LOGGER_ID_FILTER_SIZE];
 };
 
 }  // namespace Svc

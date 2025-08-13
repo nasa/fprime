@@ -4,15 +4,15 @@
 #include <Svc/PassiveConsoleTextLogger/ConsoleTextLoggerImpl.hpp>
 
 namespace Svc {
-static_assert(std::numeric_limits<FwSizeType>::max() >= TEXT_LOGGER_ID_FILTER_SIZE,
-              "TEXT_LOGGER_ID_FILTER_SIZE must fit within range of FwSizeType");
+static_assert(std::numeric_limits<FwSizeType>::max() >= PASSIVE_TEXT_LOGGER_ID_FILTER_SIZE,
+              "PASSIVE_TEXT_LOGGER_ID_FILTER_SIZE must fit within range of FwSizeType");
 
 ConsoleTextLoggerImpl::ConsoleTextLoggerImpl(const char* compName) : PassiveTextLoggerComponentBase(compName), m_numFilteredIDs(0) {}
 
 ConsoleTextLoggerImpl::~ConsoleTextLoggerImpl() {}
 
 void ConsoleTextLoggerImpl::configure(FwEventIdType* filteredIds, FwSizeType count) {
-    FW_ASSERT(count < TEXT_LOGGER_ID_FILTER_SIZE, count, TEXT_LOGGER_ID_FILTER_SIZE);
+    FW_ASSERT(count < PASSIVE_TEXT_LOGGER_ID_FILTER_SIZE, count, PASSIVE_TEXT_LOGGER_ID_FILTER_SIZE);
 
     this->m_numFilteredIDs = count;
     for (FwSizeType entry = 0; entry < count; entry++) {
