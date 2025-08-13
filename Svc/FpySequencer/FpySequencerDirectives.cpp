@@ -1,3 +1,4 @@
+#include <type_traits>
 #include <cmath>
 #include "Fw/Com/ComPacket.hpp"
 #include "Svc/FpySequencer/FpySequencer.hpp"
@@ -28,8 +29,131 @@ void FpySequencer::sendSignal(Signal signal) {
     }
 }
 
-I64& FpySequencer::reg(U8 idx) {
-    return this->m_runtime.regs[idx];
+template <typename T>
+T FpySequencer::pop() {
+    static_assert(sizeof(T) == 8 || sizeof(T) == 4 || sizeof(T) == 2 || sizeof(T) == 1, "size must be 1, 2, 4, 8");
+    FW_ASSERT(this->m_runtime.stackSize >= sizeof(T), static_cast<FwAssertArgType>(this->m_runtime.stackSize), static_cast<FwAssertArgType>(sizeof(T)));
+    // first make a byte array which can definitely store our val
+    U8 valBytes[8] = {0};
+    // now move top of stack into byte array and shrink stack
+    memcpy(valBytes, this->top() - sizeof(T), sizeof(T));
+    this->m_runtime.stackSize -= sizeof(T);
+
+    // now do appropriate byteswap on byte array
+    if (sizeof(T) == 8) {
+        return static_cast<T>(
+               (static_cast<T>(valBytes[7]) << 0)  |
+               (static_cast<T>(valBytes[6]) << 8)  |
+               (static_cast<T>(valBytes[5]) << 16) |
+               (static_cast<T>(valBytes[4]) << 24) |
+               (static_cast<T>(valBytes[3]) << 32) |
+               (static_cast<T>(valBytes[2]) << 40) |
+               (static_cast<T>(valBytes[1]) << 48) |
+               (static_cast<T>(valBytes[0]) << 56));
+    } else if (sizeof(T) == 4) {
+        return static_cast<T>(
+               (static_cast<T>(valBytes[3]) << 0) |
+               (static_cast<T>(valBytes[2]) << 8) |
+               (static_cast<T>(valBytes[1]) << 16) |
+               (static_cast<T>(valBytes[0]) << 24));
+    } else if (sizeof(T) == 2) {
+        return static_cast<T>(
+               (static_cast<T>(valBytes[1]) << 0) |
+               (static_cast<T>(valBytes[0]) << 8));
+    } else {
+        return static_cast<T>(valBytes[0]);
+    }
+}
+
+template U8 FpySequencer::pop();
+template U16 FpySequencer::pop();
+template U32 FpySequencer::pop();
+template U64 FpySequencer::pop();
+template I8 FpySequencer::pop();
+template I16 FpySequencer::pop();
+template I32 FpySequencer::pop();
+template I64 FpySequencer::pop();
+
+template <> F32 FpySequencer::pop<F32>() {
+    U32 endianness = this->pop<U32>();
+    F32 val;
+    memcpy(&val, &endianness, sizeof(val));
+    return val;
+}
+
+template <> F64 FpySequencer::pop<F64>() {
+    U64 endianness = this->pop<U64>();
+    F64 val;
+    memcpy(&val, &endianness, sizeof(val));
+    return val;
+}
+
+template <typename T>
+void FpySequencer::push(T val) {
+    static_assert(sizeof(T) == 8 || sizeof(T) == 4 || sizeof(T) == 2 || sizeof(T) == 1, "size must be 1, 2, 4, 8");
+    FW_ASSERT(this->m_runtime.stackSize + sizeof(val) < Fpy::MAX_STACK_SIZE, static_cast<FwAssertArgType>(this->m_runtime.stackSize), static_cast<FwAssertArgType>(sizeof(T)));
+    // first make a byte array which can definitely store our val
+    U8 valBytes[8] = {0};
+    // convert val to unsigned to avoid undefined behavior for bitshifts of signed types
+    using UnsignedT = typename std::make_unsigned<T>::type;
+    UnsignedT valUnsigned = static_cast<UnsignedT>(val);
+    if (sizeof(T) == 8) {
+        valBytes[0] = static_cast<U8>(valUnsigned >> 56);
+        valBytes[1] = static_cast<U8>(valUnsigned >> 48);
+        valBytes[2] = static_cast<U8>(valUnsigned >> 40);
+        valBytes[3] = static_cast<U8>(valUnsigned >> 32);
+        valBytes[4] = static_cast<U8>(valUnsigned >> 24);
+        valBytes[5] = static_cast<U8>(valUnsigned >> 16);
+        valBytes[6] = static_cast<U8>(valUnsigned >> 8);
+        valBytes[7] = static_cast<U8>(valUnsigned >> 0);
+    } else if (sizeof(T) == 4) {
+        valBytes[0] = static_cast<U8>(valUnsigned >> 24);
+        valBytes[1] = static_cast<U8>(valUnsigned >> 16);
+        valBytes[2] = static_cast<U8>(valUnsigned >> 8);
+        valBytes[3] = static_cast<U8>(valUnsigned >> 0);
+    } else if (sizeof(T) == 2) {
+        valBytes[0] = static_cast<U8>(valUnsigned >> 8);
+        valBytes[1] = static_cast<U8>(valUnsigned >> 0);
+    } else {
+        valBytes[0] = static_cast<U8>(valUnsigned);
+    }
+    memcpy(this->top(), valBytes, sizeof(T));
+    this->m_runtime.stackSize += sizeof(T);
+}
+
+template void FpySequencer::push(U8);
+template void FpySequencer::push(U16);
+template void FpySequencer::push(U32);
+template void FpySequencer::push(U64);
+template void FpySequencer::push(I8);
+template void FpySequencer::push(I16);
+template void FpySequencer::push(I32);
+template void FpySequencer::push(I64);
+
+template <> void FpySequencer::push<F32>(F32 val) {
+    U32 endianness;
+    memcpy(&endianness, &val, sizeof(val));
+    this->push(endianness);
+}
+
+template <> void FpySequencer::push<F64>(F64 val) {
+    U64 endianness;
+    memcpy(&endianness, &val, sizeof(val));
+    this->push(endianness);
+}
+
+U8* FpySequencer::top() {
+    return &this->m_runtime.stack[this->m_runtime.stackSize];
+}
+
+U8* FpySequencer::lvars() {
+    return this->m_runtime.stack + this->lvarOffset();
+}
+
+U16 FpySequencer::lvarOffset() {
+    // at the moment, because we only have one stack frame,
+    // lvars always start at 0
+    return 0;
 }
 
 //! Internal interface handler for directive_waitRel
@@ -43,13 +167,6 @@ void FpySequencer::directive_waitRel_internalInterfaceHandler(const FpySequencer
 void FpySequencer::directive_waitAbs_internalInterfaceHandler(const FpySequencer_WaitAbsDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->waitAbs_directiveHandler(directive, error));
-    this->m_tlm.lastDirectiveError = error;
-}
-
-//! Internal interface handler for directive_setSerReg
-void FpySequencer::directive_setSerReg_internalInterfaceHandler(const Svc::FpySequencer_SetSerRegDirective& directive) {
-    DirectiveError error = DirectiveError::NO_ERROR;
-    this->sendSignal(this->setSerReg_directiveHandler(directive, error));
     this->m_tlm.lastDirectiveError = error;
 }
 
@@ -74,55 +191,31 @@ void FpySequencer::directive_noOp_internalInterfaceHandler(const Svc::FpySequenc
     this->m_tlm.lastDirectiveError = error;
 }
 
-//! Internal interface handler for directive_getTlm
-void FpySequencer::directive_getTlm_internalInterfaceHandler(const Svc::FpySequencer_GetTlmDirective& directive) {
+//! Internal interface handler for directive_storeTlmVal
+void FpySequencer::directive_storeTlmVal_internalInterfaceHandler(const Svc::FpySequencer_StoreTlmValDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
-    this->sendSignal(this->getTlm_directiveHandler(directive, error));
+    this->sendSignal(this->storeTlmVal_directiveHandler(directive, error));
     this->m_tlm.lastDirectiveError = error;
 }
 
-//! Internal interface handler for directive_getPrm
-void FpySequencer::directive_getPrm_internalInterfaceHandler(const Svc::FpySequencer_GetPrmDirective& directive) {
+//! Internal interface handler for directive_storePrm
+void FpySequencer::directive_storePrm_internalInterfaceHandler(const Svc::FpySequencer_StorePrmDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
-    this->sendSignal(this->getPrm_directiveHandler(directive, error));
+    this->sendSignal(this->storePrm_directiveHandler(directive, error));
     this->m_tlm.lastDirectiveError = error;
 }
 
-//! Internal interface handler for directive_cmd
-void FpySequencer::directive_cmd_internalInterfaceHandler(const Svc::FpySequencer_CmdDirective& directive) {
+//! Internal interface handler for directive_constCmd
+void FpySequencer::directive_constCmd_internalInterfaceHandler(const Svc::FpySequencer_ConstCmdDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
-    this->sendSignal(this->cmd_directiveHandler(directive, error));
+    this->sendSignal(this->constCmd_directiveHandler(directive, error));
     this->m_tlm.lastDirectiveError = error;
 }
 
-//! Internal interface handler for directive_deserSerReg
-void FpySequencer::directive_deserSerReg_internalInterfaceHandler(
-    const Svc::FpySequencer_DeserSerRegDirective& directive) {
+//! Internal interface handler for directive_stackOp
+void FpySequencer::directive_stackOp_internalInterfaceHandler(const Svc::FpySequencer_StackOpDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
-    this->sendSignal(this->deserSerReg_directiveHandler(directive, error));
-    this->m_tlm.lastDirectiveError = error;
-}
-
-//! Internal interface handler for directive_setReg
-void FpySequencer::directive_setReg_internalInterfaceHandler(const Svc::FpySequencer_SetRegDirective& directive) {
-    DirectiveError error = DirectiveError::NO_ERROR;
-    this->sendSignal(this->setReg_directiveHandler(directive, error));
-    this->m_tlm.lastDirectiveError = error;
-}
-
-//! Internal interface handler for directive_binaryRegOp
-void FpySequencer::directive_binaryRegOp_internalInterfaceHandler(
-    const Svc::FpySequencer_BinaryRegOpDirective& directive) {
-    DirectiveError error = DirectiveError::NO_ERROR;
-    this->sendSignal(this->binaryRegOp_directiveHandler(directive, error));
-    this->m_tlm.lastDirectiveError = error;
-}
-
-//! Internal interface handler for directive_unaryRegOp
-void FpySequencer::directive_unaryRegOp_internalInterfaceHandler(
-    const Svc::FpySequencer_UnaryRegOpDirective& directive) {
-    DirectiveError error = DirectiveError::NO_ERROR;
-    this->sendSignal(this->unaryRegOp_directiveHandler(directive, error));
+    this->sendSignal(this->stackOp_directiveHandler(directive, error));
     this->m_tlm.lastDirectiveError = error;
 }
 
@@ -133,40 +226,65 @@ void FpySequencer::directive_exit_internalInterfaceHandler(const Svc::FpySequenc
     this->m_tlm.lastDirectiveError = error;
 }
 
+//! Internal interface handler for directive_allocate
+void FpySequencer::directive_allocate_internalInterfaceHandler(const Svc::FpySequencer_AllocateDirective& directive) {
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->allocate_directiveHandler(directive, error));
+    this->m_tlm.lastDirectiveError = error;
+}
+
+//! Internal interface handler for directive_store
+void FpySequencer::directive_store_internalInterfaceHandler(const Svc::FpySequencer_StoreDirective& directive) {
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->store_directiveHandler(directive, error));
+    this->m_tlm.lastDirectiveError = error;
+}
+
+//! Internal interface handler for directive_pushVal
+void FpySequencer::directive_pushVal_internalInterfaceHandler(const Svc::FpySequencer_PushValDirective& directive) {
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->pushVal_directiveHandler(directive, error));
+    this->m_tlm.lastDirectiveError = error;
+}
+
+//! Internal interface handler for directive_load
+void FpySequencer::directive_load_internalInterfaceHandler(const Svc::FpySequencer_LoadDirective& directive) {
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->load_directiveHandler(directive, error));
+    this->m_tlm.lastDirectiveError = error;
+}
+
 //! Internal interface handler for directive_waitRel
 Signal FpySequencer::waitRel_directiveHandler(const FpySequencer_WaitRelDirective& directive, DirectiveError& error) {
+    if (this->m_runtime.stackSize < 8) {
+        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return Signal::stmtResponse_failure;
+    }
+
     Fw::Time wakeupTime = this->getTime();
 
-    wakeupTime.add(directive.get_seconds(), directive.get_uSeconds());
+    U32 uSeconds = this->pop<U32>();
+    U32 seconds = this->pop<U32>();
+
+    wakeupTime.add(seconds, uSeconds);
     this->m_runtime.wakeupTime = wakeupTime;
     return Signal::stmtResponse_beginSleep;
 }
 
 //! Internal interface handler for directive_waitAbs
 Signal FpySequencer::waitAbs_directiveHandler(const FpySequencer_WaitAbsDirective& directive, DirectiveError& error) {
-    this->m_runtime.wakeupTime = directive.get_wakeupTime();
-    return Signal::stmtResponse_beginSleep;
-}
-
-//! Internal interface handler for directive_setSerReg
-Signal FpySequencer::setSerReg_directiveHandler(const FpySequencer_SetSerRegDirective& directive,
-                                                DirectiveError& error) {
-    if (directive.get_index() >= Fpy::NUM_SERIALIZABLE_REGISTERS) {
-        error = DirectiveError::SER_REG_OUT_OF_BOUNDS;
+    if (this->m_runtime.stackSize < 10 + sizeof(FwTimeContextStoreType)) {
+        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
-    // coding error. should have checked this when we were deserializing the directive. prefer to crash
-    // rather than just fail the sequence
-    FW_ASSERT(directive.get__valueSize() <= Fpy::MAX_SERIALIZABLE_REGISTER_SIZE,
-              static_cast<FwAssertArgType>(directive.get__valueSize()),
-              static_cast<FwAssertArgType>(Fpy::MAX_SERIALIZABLE_REGISTER_SIZE));
 
-    this->m_runtime.serRegs[directive.get_index()].valueSize = directive.get__valueSize();
+    U32 uSeconds = this->pop<U32>();
+    U32 seconds = this->pop<U32>();
+    FwTimeContextStoreType ctx = this->pop<FwTimeContextStoreType>();
+    U16 base = this->pop<U16>();
 
-    (void)memcpy(this->m_runtime.serRegs[directive.get_index()].value, directive.get_value(),
-                 static_cast<size_t>(directive.get__valueSize()));
-
-    return Signal::stmtResponse_success;
+    this->m_runtime.wakeupTime = Fw::Time(static_cast<TimeBase::T>(base), ctx, seconds, uSeconds);
+    return Signal::stmtResponse_beginSleep;
 }
 
 //! Internal interface handler for directive_goto
@@ -182,8 +300,8 @@ Signal FpySequencer::goto_directiveHandler(const FpySequencer_GotoDirective& dir
 
 //! Internal interface handler for directive_if
 Signal FpySequencer::if_directiveHandler(const FpySequencer_IfDirective& directive, DirectiveError& error) {
-    if (directive.get_conditionalReg() >= Fpy::NUM_REGISTERS) {
-        error = DirectiveError::REGISTER_OUT_OF_BOUNDS;
+    if (this->m_runtime.stackSize < 1) {
+        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
     // check within sequence bounds, or at EOF (we allow == case cuz this just ends the sequence)
@@ -192,7 +310,7 @@ Signal FpySequencer::if_directiveHandler(const FpySequencer_IfDirective& directi
         return Signal::stmtResponse_failure;
     }
 
-    if (reg(directive.get_conditionalReg())) {
+    if (this->pop<U8>() != 0) {
         // proceed to next instruction
         return Signal::stmtResponse_success;
     }
@@ -206,17 +324,14 @@ Signal FpySequencer::noOp_directiveHandler(const FpySequencer_NoOpDirective& dir
     return Signal::stmtResponse_success;
 }
 
-Signal FpySequencer::getTlm_directiveHandler(const FpySequencer_GetTlmDirective& directive, DirectiveError& error) {
-    if (directive.get_valueDestSerReg() >= Fpy::NUM_SERIALIZABLE_REGISTERS) {
-        error = DirectiveError::SER_REG_OUT_OF_BOUNDS;
-        return Signal::stmtResponse_failure;
-    }
-    if (directive.get_timeDestSerReg() >= Fpy::NUM_SERIALIZABLE_REGISTERS) {
-        error = DirectiveError::SER_REG_OUT_OF_BOUNDS;
-        return Signal::stmtResponse_failure;
-    }
+Signal FpySequencer::storeTlmVal_directiveHandler(const FpySequencer_StoreTlmValDirective& directive, DirectiveError& error) {
     if (!this->isConnected_getTlmChan_OutputPort(0)) {
         error = DirectiveError::TLM_GET_NOT_CONNECTED;
+        return Signal::stmtResponse_failure;
+    }
+    U32 stackOffset = this->lvarOffset() + directive.get_lvarOffset();
+    if (stackOffset >= this->m_runtime.stackSize) {
+        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
     Fw::Time tlmTime;
@@ -229,44 +344,30 @@ Signal FpySequencer::getTlm_directiveHandler(const FpySequencer_GetTlmDirective&
         return Signal::stmtResponse_failure;
     }
 
-    // this is an assert in the hpp, the buf should never be bigger than TLM_BUF_MAX
-    FW_ASSERT(tlmValue.getBuffLength() <= Fpy::MAX_SERIALIZABLE_REGISTER_SIZE,
-              static_cast<FwAssertArgType>(tlmValue.getBuffLength()));
+    // if we were to write this buf at this offset
+    // would it go over the current size of the stack (NOT the max size b/c
+    // we aren't supposed to add anything to the stack when we store)
 
-    // copy value into serReg
-    Runtime::SerializableReg& valueSerReg = this->m_runtime.serRegs[directive.get_valueDestSerReg()];
-    memcpy(valueSerReg.value, tlmValue.getBuffAddr(), static_cast<size_t>(tlmValue.getBuffLength()));
-    valueSerReg.valueSize = tlmValue.getBuffLength();
-
-    // serialize time into serReg
-    Runtime::SerializableReg& timeSerReg = this->m_runtime.serRegs[directive.get_timeDestSerReg()];
-    // clear the serReg in case of early return
-    timeSerReg.valueSize = 0;
-    Fw::ExternalSerializeBuffer esb(timeSerReg.value, Fpy::MAX_SERIALIZABLE_REGISTER_SIZE);
-    Fw::SerializeStatus stat = esb.serialize(tlmTime);
-
-    if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
-        // failed to serialize Fw::Time into the serReg
-        error = DirectiveError::SER_REG_SERIALIZE_FAILURE;
+    if (stackOffset + tlmValue.getBuffLength() > this->m_runtime.stackSize) {
+        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
 
-    timeSerReg.valueSize = esb.getBuffLength();
+    memcpy(this->m_runtime.stack + stackOffset, tlmValue.getBuffAddr(), tlmValue.getBuffLength());
     return Signal::stmtResponse_success;
 }
 
-Signal FpySequencer::getPrm_directiveHandler(const FpySequencer_GetPrmDirective& directive, DirectiveError& error) {
-    if (directive.get_destSerRegIndex() >= Fpy::NUM_SERIALIZABLE_REGISTERS) {
-        error = DirectiveError::SER_REG_OUT_OF_BOUNDS;
-        return Signal::stmtResponse_failure;
-    }
+Signal FpySequencer::storePrm_directiveHandler(const FpySequencer_StorePrmDirective& directive, DirectiveError& error) {
     if (!this->isConnected_prmGet_OutputPort(0)) {
         error = DirectiveError::PRM_GET_NOT_CONNECTED;
         return Signal::stmtResponse_failure;
     }
+    U32 stackOffset = this->lvarOffset() + directive.get_lvarOffset();
+    if (stackOffset >= this->m_runtime.stackSize) {
+        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return Signal::stmtResponse_failure;
+    }
     Fw::ParamBuffer prmValue;
-    // set buff len to 0 before call so we can detect if we failed to get it
-    prmValue.setBuffLen(0);
     Fw::ParamValid valid = this->getParam_out(0, directive.get_prmId(), prmValue);
 
     if (valid != Fw::ParamValid::VALID) {
@@ -275,19 +376,20 @@ Signal FpySequencer::getPrm_directiveHandler(const FpySequencer_GetPrmDirective&
         return Signal::stmtResponse_failure;
     }
 
-    if (prmValue.getBuffLength() > Fpy::MAX_SERIALIZABLE_REGISTER_SIZE) {
-        // cannot setReg the prm value in the serReg
-        error = DirectiveError::SER_REG_SERIALIZE_FAILURE;
+    // if we were to write this buf at this offset
+    // would it overflow the current size of the stack (NOT the max size b/c
+    // we aren't supposed to add anything to the stack when we store)
+
+    if (stackOffset + prmValue.getBuffLength() > this->m_runtime.stackSize) {
+        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
-    // copy value into serReg
-    Runtime::SerializableReg& serReg = this->m_runtime.serRegs[directive.get_destSerRegIndex()];
-    memcpy(serReg.value, prmValue.getBuffAddr(), static_cast<size_t>(prmValue.getBuffLength()));
-    serReg.valueSize = prmValue.getBuffLength();
+
+    memcpy(this->m_runtime.stack + stackOffset, prmValue.getBuffAddr(), prmValue.getBuffLength());
     return Signal::stmtResponse_success;
 }
 
-Signal FpySequencer::cmd_directiveHandler(const FpySequencer_CmdDirective& directive, DirectiveError& error) {
+Signal FpySequencer::constCmd_directiveHandler(const FpySequencer_ConstCmdDirective& directive, DirectiveError& error) {
     Fw::ComBuffer cmdBuf;
     Fw::SerializeStatus stat = cmdBuf.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_COMMAND));
     // TODO should I assert here? this really shouldn't fail, I should just add a static assert
@@ -317,79 +419,11 @@ Signal FpySequencer::cmd_directiveHandler(const FpySequencer_CmdDirective& direc
     U32 cmdUid =
         static_cast<U32>(((this->m_sequencesStarted & 0xFFFF) << 16) | (this->m_statementsDispatched & 0xFFFF));
 
-    // little note--theoretically this could produce a cmdResponse before we send the
-    // dispatchSuccess signal. however b/c of priorities the dispatchSuccess signal will
-    // always get processed first, leaving us in the right state for the cmdresponse
     this->cmdOut_out(0, cmdBuf, cmdUid);
 
     // now tell the SM to wait some more until we get the cmd response back
+    // if we've already got the response back this should be harmless
     return Signal::stmtResponse_keepWaiting;
-}
-
-Signal FpySequencer::deserSerReg_directiveHandler(const FpySequencer_DeserSerRegDirective& directive,
-                                                  DirectiveError& error) {
-    if (directive.get_srcSerRegIdx() >= Fpy::NUM_SERIALIZABLE_REGISTERS) {
-        error = DirectiveError::SER_REG_OUT_OF_BOUNDS;
-        return Signal::stmtResponse_failure;
-    }
-    if (directive.get_destReg() >= Fpy::NUM_REGISTERS) {
-        error = DirectiveError::REGISTER_OUT_OF_BOUNDS;
-        return Signal::stmtResponse_failure;
-    }
-    Runtime::SerializableReg& serReg = this->m_runtime.serRegs[directive.get_srcSerRegIdx()];
-    if (directive.get_srcOffset() + directive.get__deserSize() > serReg.valueSize) {
-        error = DirectiveError::SER_REG_ACCESS_OUT_OF_BOUNDS;
-        return Signal::stmtResponse_failure;
-    }
-
-    // TODO can I use htons/htonl? this code could be way simpler
-    Fw::ExternalSerializeBuffer esb(serReg.value, serReg.valueSize);
-    esb.setBuffLen(serReg.valueSize);
-    FW_ASSERT(esb.deserializeSkip(directive.get_srcOffset()) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-
-    I8 oneByte;
-    I16 twoBytes;
-    I32 fourBytes;
-    I64 eightBytes;
-
-    switch (directive.get__deserSize()) {
-        case 1: {
-            // all these desers should succeed as we've already checked the size above
-            FW_ASSERT(esb.deserialize(oneByte) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-            reg(directive.get_destReg()) = oneByte;
-            break;
-        }
-        case 2: {
-            FW_ASSERT(esb.deserialize(twoBytes) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-            reg(directive.get_destReg()) = twoBytes;
-            break;
-        }
-        case 4: {
-            FW_ASSERT(esb.deserialize(fourBytes) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-            reg(directive.get_destReg()) = fourBytes;
-            break;
-        }
-        case 8: {
-            FW_ASSERT(esb.deserialize(eightBytes) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-            reg(directive.get_destReg()) = eightBytes;
-            break;
-        }
-        default: {
-            FW_ASSERT(0, static_cast<FwAssertArgType>(directive.get__deserSize()));
-            return Signal::stmtResponse_failure;
-        }
-    }
-
-    return Signal::stmtResponse_success;
-}
-
-Signal FpySequencer::setReg_directiveHandler(const FpySequencer_SetRegDirective& directive, DirectiveError& error) {
-    if (directive.get_dest() >= Fpy::NUM_REGISTERS) {
-        error = DirectiveError::REGISTER_OUT_OF_BOUNDS;
-        return Signal::stmtResponse_failure;
-    }
-    reg(directive.get_dest()) = directive.get_value();
-    return Signal::stmtResponse_success;
 }
 
 I8 floatCmp(F64 lhs, F64 rhs) {
@@ -405,275 +439,314 @@ I8 floatCmp(F64 lhs, F64 rhs) {
     return 0;
 }
 
-I64 FpySequencer::binaryRegOp_or(I64 lhs, I64 rhs) {
-    return lhs | rhs;
-}
-I64 FpySequencer::binaryRegOp_and(I64 lhs, I64 rhs) {
-    return lhs & rhs;
-}
-I64 FpySequencer::binaryRegOp_ieq(I64 lhs, I64 rhs) {
-    return lhs == rhs;
-}
-I64 FpySequencer::binaryRegOp_ine(I64 lhs, I64 rhs) {
-    return lhs != rhs;
-}
-I64 FpySequencer::binaryRegOp_ult(I64 lhs, I64 rhs) {
-    return static_cast<U64>(lhs) < static_cast<U64>(rhs);
-}
-I64 FpySequencer::binaryRegOp_ule(I64 lhs, I64 rhs) {
-    return static_cast<U64>(lhs) <= static_cast<U64>(rhs);
-}
-I64 FpySequencer::binaryRegOp_ugt(I64 lhs, I64 rhs) {
-    return static_cast<U64>(lhs) > static_cast<U64>(rhs);
-}
-I64 FpySequencer::binaryRegOp_uge(I64 lhs, I64 rhs) {
-    return static_cast<U64>(lhs) >= static_cast<U64>(rhs);
-}
-I64 FpySequencer::binaryRegOp_slt(I64 lhs, I64 rhs) {
-    return lhs < rhs;
-}
-I64 FpySequencer::binaryRegOp_sle(I64 lhs, I64 rhs) {
-    return lhs <= rhs;
-}
-I64 FpySequencer::binaryRegOp_sgt(I64 lhs, I64 rhs) {
-    return lhs > rhs;
-}
-I64 FpySequencer::binaryRegOp_sge(I64 lhs, I64 rhs) {
-    return lhs >= rhs;
-}
-I64 FpySequencer::binaryRegOp_feq(I64 lhs, I64 rhs) {
-    F64 left;
-    memcpy(&left, &lhs, sizeof(left));
-    F64 right;
-    memcpy(&right, &rhs, sizeof(right));
-    return floatCmp(left, right) == 0;
-}
-I64 FpySequencer::binaryRegOp_fne(I64 lhs, I64 rhs) {
-    F64 left;
-    memcpy(&left, &lhs, sizeof(left));
-    F64 right;
-    memcpy(&right, &rhs, sizeof(right));
-    I8 cmp = floatCmp(left, right);
-    // ne is true if they are not equal and neither is nan
-    return cmp != 0 && cmp != -2;
-}
-I64 FpySequencer::binaryRegOp_flt(I64 lhs, I64 rhs) {
-    F64 left;
-    memcpy(&left, &lhs, sizeof(left));
-    F64 right;
-    memcpy(&right, &rhs, sizeof(right));
-    return floatCmp(left, right) == -1;
-}
-I64 FpySequencer::binaryRegOp_fle(I64 lhs, I64 rhs) {
-    F64 left;
-    memcpy(&left, &lhs, sizeof(left));
-    F64 right;
-    memcpy(&right, &rhs, sizeof(right));
-    I8 cmp = floatCmp(left, right);
-    return cmp == 0 || cmp == -1;
-}
-I64 FpySequencer::binaryRegOp_fgt(I64 lhs, I64 rhs) {
-    F64 left;
-    memcpy(&left, &lhs, sizeof(left));
-    F64 right;
-    memcpy(&right, &rhs, sizeof(right));
-    return floatCmp(left, right) == 1;
-}
-I64 FpySequencer::binaryRegOp_fge(I64 lhs, I64 rhs) {
-    F64 left;
-    memcpy(&left, &lhs, sizeof(left));
-    F64 right;
-    memcpy(&right, &rhs, sizeof(right));
-    I8 cmp = floatCmp(left, right);
-    return cmp == 0 || cmp == 1;
-}
-
-Signal FpySequencer::binaryRegOp_directiveHandler(const FpySequencer_BinaryRegOpDirective& directive,
-                                                  DirectiveError& error) {
-    // coding error, should not have gotten to this binary reg op handler
-    FW_ASSERT(directive.get__op() >= Fpy::DirectiveId::OR && directive.get__op() <= Fpy::DirectiveId::FGE,
-              static_cast<FwAssertArgType>(directive.get__op()));
-
-    if (directive.get_lhs() >= Fpy::NUM_REGISTERS || directive.get_rhs() >= Fpy::NUM_REGISTERS ||
-        directive.get_res() >= Fpy::NUM_REGISTERS) {
-        error = DirectiveError::REGISTER_OUT_OF_BOUNDS;
-        return Signal::stmtResponse_failure;
+DirectiveError FpySequencer::op_or() {
+    if (this->m_runtime.stackSize < 2) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
-
-    I64 lhs = reg(directive.get_lhs());
-    I64 rhs = reg(directive.get_rhs());
-    I64& res = reg(directive.get_res());
+    this->push(static_cast<U8>(this->pop<U8>() | this->pop<U8>()));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_and() {
+    if (this->m_runtime.stackSize < 2) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    this->push(static_cast<U8>(this->pop<U8>() & this->pop<U8>()));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_ieq() {
+    if (this->m_runtime.stackSize < 16) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    this->push(static_cast<U8>(this->pop<I64>() == this->pop<I64>()));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_ine() {
+    if (this->m_runtime.stackSize < 16) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    this->push(static_cast<U8>(this->pop<I64>() != this->pop<I64>()));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_ult() {
+    if (this->m_runtime.stackSize < 16) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    U64 rhs = this->pop<U64>();
+    U64 lhs = this->pop<U64>();
+    this->push(static_cast<U8>(lhs < rhs));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_ule() {
+    if (this->m_runtime.stackSize < 16) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    U64 rhs = this->pop<U64>();
+    U64 lhs = this->pop<U64>();
+    this->push(static_cast<U8>(lhs <= rhs));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_ugt() {
+    if (this->m_runtime.stackSize < 16) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    U64 rhs = this->pop<U64>();
+    U64 lhs = this->pop<U64>();
+    this->push(static_cast<U8>(lhs > rhs));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_uge() {
+    if (this->m_runtime.stackSize < 16) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    U64 rhs = this->pop<U64>();
+    U64 lhs = this->pop<U64>();
+    this->push(static_cast<U8>(lhs >= rhs));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_slt() {
+    if (this->m_runtime.stackSize < 16) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    I64 rhs = this->pop<I64>();
+    I64 lhs = this->pop<I64>();
+    this->push(static_cast<U8>(lhs < rhs));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_sle() {
+    if (this->m_runtime.stackSize < 16) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    I64 rhs = this->pop<I64>();
+    I64 lhs = this->pop<I64>();
+    this->push(static_cast<U8>(lhs <= rhs));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_sgt() {
+    if (this->m_runtime.stackSize < 16) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    I64 rhs = this->pop<I64>();
+    I64 lhs = this->pop<I64>();
+    this->push(static_cast<U8>(lhs > rhs));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_sge() {
+    if (this->m_runtime.stackSize < 16) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    I64 rhs = this->pop<I64>();
+    I64 lhs = this->pop<I64>();
+    this->push(static_cast<U8>(lhs >= rhs));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_feq() {
+    if (this->m_runtime.stackSize < 16) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    F64 rhs = this->pop<F64>();
+    F64 lhs = this->pop<F64>();
+    // eq is true if they are equal and neither is nan
+    this->push(static_cast<U8>(floatCmp(lhs, rhs) == 0));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_fne() {
+    if (this->m_runtime.stackSize < 16) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    F64 rhs = this->pop<F64>();
+    F64 lhs = this->pop<F64>();
+    I8 cmp = floatCmp(lhs, rhs);
+    // ne is true if they are not equal and neither is nan
+    this->push(static_cast<U8>(cmp != 0 && cmp != -2));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_flt() {
+    if (this->m_runtime.stackSize < 16) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    F64 rhs = this->pop<F64>();
+    F64 lhs = this->pop<F64>();
+    this->push(static_cast<U8>(floatCmp(lhs, rhs) == -1));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_fle() {
+    if (this->m_runtime.stackSize < 16) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    F64 rhs = this->pop<F64>();
+    F64 lhs = this->pop<F64>();
+    I8 cmp = floatCmp(lhs, rhs);
+    this->push(static_cast<U8>(cmp == 0 || cmp == -1));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_fgt() {
+    if (this->m_runtime.stackSize < 16) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    F64 rhs = this->pop<F64>();
+    F64 lhs = this->pop<F64>();
+    this->push(static_cast<U8>(floatCmp(lhs, rhs) == 1));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_fge() {
+    if (this->m_runtime.stackSize < 16) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    F64 rhs = this->pop<F64>();
+    F64 lhs = this->pop<F64>();
+    I8 cmp = floatCmp(lhs, rhs);
+    this->push(static_cast<U8>(cmp == 0 || cmp == 1));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_not() {
+    if (this->m_runtime.stackSize < 1) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    this->push(static_cast<U8>(this->pop<U8>() == 0));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_fpext() {
+    // convert F32 to F64
+    if (this->m_runtime.stackSize < 4) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    this->push(static_cast<F64>(this->pop<F32>()));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_fptrunc() {
+    // convert F64 to F32
+    if (this->m_runtime.stackSize < 8) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    this->push(static_cast<F32>(this->pop<F64>()));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_fptosi() {
+    if (this->m_runtime.stackSize < 8) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    this->push(static_cast<I64>(this->pop<F64>()));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_sitofp() {
+    if (this->m_runtime.stackSize < 8) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    this->push(static_cast<F64>(this->pop<I64>()));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_fptoui() {
+    if (this->m_runtime.stackSize < 8) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    this->push(static_cast<U64>(this->pop<F64>()));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_uitofp() {
+    if (this->m_runtime.stackSize < 8) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    this->push(static_cast<F64>(this->pop<U64>()));
+    return DirectiveError::NO_ERROR;
+}
+Signal FpySequencer::stackOp_directiveHandler(const FpySequencer_StackOpDirective& directive,
+                                              DirectiveError& error) {
+    // coding error, should not have gotten to this binary reg op handler
+    FW_ASSERT(directive.get__op() >= Fpy::DirectiveId::OR && directive.get__op() <= Fpy::DirectiveId::UITOFP,
+              static_cast<FwAssertArgType>(directive.get__op()));
 
     switch (directive.get__op()) {
         case Fpy::DirectiveId::OR:
-            res = this->binaryRegOp_or(lhs, rhs);
+            error = this->op_or();
             break;
         case Fpy::DirectiveId::AND:
-            res = this->binaryRegOp_and(lhs, rhs);
+            error = this->op_and();
             break;
         case Fpy::DirectiveId::IEQ:
-            res = this->binaryRegOp_ieq(lhs, rhs);
+            error = this->op_ieq();
             break;
         case Fpy::DirectiveId::INE:
-            res = this->binaryRegOp_ine(lhs, rhs);
+            error = this->op_ine();
             break;
         case Fpy::DirectiveId::ULT:
-            res = this->binaryRegOp_ult(lhs, rhs);
+            error = this->op_ult();
             break;
         case Fpy::DirectiveId::ULE:
-            res = this->binaryRegOp_ule(lhs, rhs);
+            error = this->op_ule();
             break;
         case Fpy::DirectiveId::UGT:
-            res = this->binaryRegOp_ugt(lhs, rhs);
+            error = this->op_ugt();
             break;
         case Fpy::DirectiveId::UGE:
-            res = this->binaryRegOp_uge(lhs, rhs);
+            error = this->op_uge();
             break;
         case Fpy::DirectiveId::SLT:
-            res = this->binaryRegOp_slt(lhs, rhs);
+            error = this->op_slt();
             break;
         case Fpy::DirectiveId::SLE:
-            res = this->binaryRegOp_sle(lhs, rhs);
+            error = this->op_sle();
             break;
         case Fpy::DirectiveId::SGT:
-            res = this->binaryRegOp_sgt(lhs, rhs);
+            error = this->op_sgt();
             break;
         case Fpy::DirectiveId::SGE:
-            res = this->binaryRegOp_sge(lhs, rhs);
+            error = this->op_sge();
             break;
         case Fpy::DirectiveId::FEQ:
-            res = this->binaryRegOp_feq(lhs, rhs);
+            error = this->op_feq();
             break;
         case Fpy::DirectiveId::FNE:
-            res = this->binaryRegOp_fne(lhs, rhs);
+            error = this->op_fne();
             break;
         case Fpy::DirectiveId::FLT:
-            res = this->binaryRegOp_flt(lhs, rhs);
+            error = this->op_flt();
             break;
         case Fpy::DirectiveId::FLE:
-            res = this->binaryRegOp_fle(lhs, rhs);
+            error = this->op_fle();
             break;
         case Fpy::DirectiveId::FGT:
-            res = this->binaryRegOp_fgt(lhs, rhs);
+            error = this->op_fgt();
             break;
         case Fpy::DirectiveId::FGE:
-            res = this->binaryRegOp_fge(lhs, rhs);
+            error = this->op_fge();
             break;
-        default:
-            FW_ASSERT(0, directive.get__op());
-            break;
-    }
-    return Signal::stmtResponse_success;
-}
-I64 FpySequencer::unaryRegOp_not(I64 src) {
-    if (src) {
-        return static_cast<I64>(false);
-    }
-    return static_cast<I64>(true);
-}
-I64 FpySequencer::unaryRegOp_fpext(I64 src) {
-    // convert F32 to F64
-    // first get the first 32 bits of src
-    I32 trunc = static_cast<I32>(src);
-    // then interpret as float
-    F32 fsrc;
-    memcpy(&fsrc, &trunc, sizeof(fsrc));
-    // then cast to F64
-    F64 ext = static_cast<F64>(fsrc);
-    // then return bits as I64
-    I64 iext;
-    memcpy(&iext, &ext, sizeof(iext));
-    return iext;
-}
-I64 FpySequencer::unaryRegOp_fptrunc(I64 src) {
-    // convert F64 to F32
-    // first interpret as F64
-    F64 fsrc;
-    memcpy(&fsrc, &src, sizeof(fsrc));
-    // then cast to F32
-    F32 trunc = static_cast<F32>(fsrc);
-    // then interpret bits as I32
-    I32 itrunc;
-    memcpy(&itrunc, &trunc, sizeof(itrunc));
-    // then extend to I64
-    return static_cast<I64>(itrunc);
-}
-I64 FpySequencer::unaryRegOp_fptosi(I64 src) {
-    // first interpret as F64
-    F64 fsrc;
-    memcpy(&fsrc, &src, sizeof(fsrc));
-    // then static cast to int
-    return static_cast<I64>(fsrc);
-}
-I64 FpySequencer::unaryRegOp_sitofp(I64 src) {
-    // first static cast to float
-    F64 fsrc = static_cast<F64>(src);
-    // then return bits as I64
-    I64 res;
-    memcpy(&res, &fsrc, sizeof(res));
-    return res;
-}
-I64 FpySequencer::unaryRegOp_fptoui(I64 src) {
-    // first interpret as F64
-    F64 fsrc;
-    memcpy(&fsrc, &src, sizeof(fsrc));
-    // then static cast to unsigned int
-    // then return as a signed int
-    return static_cast<I64>(static_cast<U64>(fsrc));
-}
-I64 FpySequencer::unaryRegOp_uitofp(I64 src) {
-    // first static cast to unsigned, then to float
-    F64 fsrc = static_cast<F64>(static_cast<U64>(src));
-    // then return bits as I64
-    I64 res;
-    memcpy(&res, &fsrc, sizeof(res));
-    return res;
-}
-Signal FpySequencer::unaryRegOp_directiveHandler(const FpySequencer_UnaryRegOpDirective& directive,
-                                                 DirectiveError& error) {
-    // coding error, should not have gotten to this unary reg op handler
-    FW_ASSERT(directive.get__op() >= Fpy::DirectiveId::NOT && directive.get__op() <= Fpy::DirectiveId::UITOFP,
-              static_cast<FwAssertArgType>(directive.get__op()));
-
-    if (directive.get_src() >= Fpy::NUM_REGISTERS || directive.get_res() >= Fpy::NUM_REGISTERS) {
-        error = DirectiveError::REGISTER_OUT_OF_BOUNDS;
-        return Signal::stmtResponse_failure;
-    }
-
-    I64 src = reg(directive.get_src());
-    I64& res = reg(directive.get_res());
-
-    switch (directive.get__op()) {
         case Fpy::DirectiveId::NOT:
-            res = this->unaryRegOp_not(src);
+            error = this->op_not();
             break;
         case Fpy::DirectiveId::FPEXT:
-            res = this->unaryRegOp_fpext(src);
+            error = this->op_fpext();
             break;
         case Fpy::DirectiveId::FPTRUNC:
-            res = this->unaryRegOp_fptrunc(src);
+            error = this->op_fptrunc();
             break;
         case Fpy::DirectiveId::FPTOSI:
-            res = this->unaryRegOp_fptosi(src);
+            error = this->op_fptosi();
             break;
         case Fpy::DirectiveId::FPTOUI:
-            res = this->unaryRegOp_fptoui(src);
+            error = this->op_fptoui();
             break;
         case Fpy::DirectiveId::SITOFP:
-            res = this->unaryRegOp_sitofp(src);
+            error = this->op_sitofp();
             break;
         case Fpy::DirectiveId::UITOFP:
-            res = this->unaryRegOp_uitofp(src);
+            error = this->op_uitofp();
             break;
         default:
             FW_ASSERT(0, directive.get__op());
             break;
+    }
+    if (error != DirectiveError::NO_ERROR) {
+        return Signal::stmtResponse_failure;
     }
     return Signal::stmtResponse_success;
 }
 
 Signal FpySequencer::exit_directiveHandler(const FpySequencer_ExitDirective& directive, DirectiveError& error) {
-    if (directive.get_success()) {
+    if (this->m_runtime.stackSize < 1) {
+        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return Signal::stmtResponse_failure;
+    }
+    if (this->pop<U8>() != 0) {
         // just goto the end of the sequence
         this->m_runtime.nextStatementIndex = this->m_sequenceObj.get_header().get_statementCount();
         return Signal::stmtResponse_success;
@@ -681,5 +754,61 @@ Signal FpySequencer::exit_directiveHandler(const FpySequencer_ExitDirective& dir
     // otherwise, kill the sequence here
     error = DirectiveError::DELIBERATE_FAILURE;
     return Signal::stmtResponse_failure;
+}
+
+Signal FpySequencer::allocate_directiveHandler(const FpySequencer_AllocateDirective& directive, DirectiveError& error) {
+    if (this->m_runtime.stackSize + directive.get_size() > Fpy::MAX_STACK_SIZE) {
+        error = DirectiveError::STACK_OVERFLOW;
+        return Signal::stmtResponse_failure;
+    }
+    // starting from the top, set n bytes to 0
+    memset(this->top(), 0, directive.get_size());
+    this->m_runtime.stackSize += directive.get_size();
+    return Signal::stmtResponse_success;
+}
+
+Signal FpySequencer::store_directiveHandler(const FpySequencer_StoreDirective& directive, DirectiveError& error) {
+    if (this->m_runtime.stackSize < directive.get_size()) {
+        // not enough bytes to pop
+        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return Signal::stmtResponse_failure;
+    }
+    U32 stackOffset = this->lvarOffset() + directive.get_lvarOffset();
+    // if we popped these bytes off, and put them in lvar array, would we go out of bounds
+    if (stackOffset + directive.get_size() > this->m_runtime.stackSize - directive.get_size()) {
+        // write into lvar array would go out of bounds
+        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return Signal::stmtResponse_failure;
+    }
+    // i believe we can be sure the regions are not overlapping, due to the above check
+    memcpy(this->m_runtime.stack + stackOffset, this->top() - directive.get_size(), directive.get_size());
+    this->m_runtime.stackSize -= directive.get_size();
+    return Signal::stmtResponse_success;
+}
+
+Signal FpySequencer::load_directiveHandler(const FpySequencer_LoadDirective& directive, DirectiveError& error) {
+    if (this->m_runtime.stackSize + directive.get_size() > Fpy::MAX_STACK_SIZE) {
+        error = DirectiveError::STACK_OVERFLOW;
+        return Signal::stmtResponse_failure;
+    }
+    U32 stackOffset = this->lvarOffset() + directive.get_lvarOffset();
+    // if we accessed these bytes, would we go out of bounds
+    if (stackOffset + directive.get_size() > this->m_runtime.stackSize) {
+        error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+        return Signal::stmtResponse_failure;
+    }
+    memcpy(this->top(), this->m_runtime.stack + stackOffset, directive.get_size());
+    this->m_runtime.stackSize += directive.get_size();
+    return Signal::stmtResponse_success;
+}
+
+Signal FpySequencer::pushVal_directiveHandler(const FpySequencer_PushValDirective& directive, DirectiveError& error) {
+    if (this->m_runtime.stackSize + directive.get__valSize() > Fpy::MAX_STACK_SIZE) {
+        error = DirectiveError::STACK_OVERFLOW;
+        return Signal::stmtResponse_failure;
+    }
+    memcpy(this->top(), directive.get_val(), directive.get__valSize());
+    this->m_runtime.stackSize += directive.get__valSize();
+    return Signal::stmtResponse_success;
 }
 }  // namespace Svc
