@@ -36,6 +36,7 @@ bibtex
 Bies
 BINDIR
 bitmaps
+bitshifts
 bocchino
 boolt
 bsd
