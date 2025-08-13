@@ -4,14 +4,14 @@
 #include "Svc/Subtopologies/CdhCore/CdhCoreConfig/FppConstantsAc.hpp"
 
 namespace CdhCore {
-    // State for topology construction
-    struct SubtopologyState {
-        // Empty - no external state needed for CdhCore subtopology
-    };
+// State for topology construction
+struct SubtopologyState {
+    // Empty - no external state needed for CdhCore subtopology
+};
 
-    struct TopologyState {
-        SubtopologyState cdhCore;
-    };
-}
+struct TopologyState {
+    SubtopologyState cdhCore;
+};
+}  // namespace CdhCore
 
-#endif 
+#endif

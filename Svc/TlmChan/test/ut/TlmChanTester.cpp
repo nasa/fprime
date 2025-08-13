@@ -15,7 +15,7 @@ static const FwChanIdType TEST_CHAN_SIZE = sizeof(FwChanIdType) + Fw::Time::SERI
 static const FwChanIdType CHANS_PER_COMBUFFER =
     (FW_COM_BUFFER_MAX_SIZE - sizeof(FwPacketDescriptorType)) / TEST_CHAN_SIZE;
 static constexpr FwSizeType INTEGER_DIVISION_ROUNDED_UP(FwSizeType a, FwSizeType b) {
-  return ((a % b) == 0) ? (a / b) : (a / b) + 1;
+    return ((a % b) == 0) ? (a / b) : (a / b) + 1;
 }
 
 namespace Svc {
@@ -131,7 +131,6 @@ void TlmChanTester::runOffNominal() {
     Fw::TlmValid valid = this->invoke_to_TlmGet(0, 10, timeTag, buff);
     ASSERT_EQ(0u, buff.getBuffLength());
     ASSERT_EQ(valid, Fw::TlmValid::INVALID);
-
 }
 
 // ----------------------------------------------------------------------
@@ -270,11 +269,8 @@ void TlmChanTester::dumpTlmEntry(TlmChan::TlmEntry* entry) {
     printf(
         "Entry "
         " Ptr: %p"
-        " id: 0x%" PRI_FwChanIdType
-        " bucket: %" PRI_FwChanIdType
-        " next: %p\n",
+        " id: 0x%" PRI_FwChanIdType " bucket: %" PRI_FwChanIdType " next: %p\n",
         static_cast<void*>(entry), entry->id, entry->bucketNo, static_cast<void*>(entry->next));
-    
 }
 
 void TlmChanTester::dumpHash() {

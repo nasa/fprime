@@ -11,8 +11,8 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
-#include "TlmPacketizerGTestBase.hpp"
 #include "Svc/TlmPacketizer/TlmPacketizer.hpp"
+#include "TlmPacketizerGTestBase.hpp"
 
 namespace Svc {
 
@@ -87,21 +87,21 @@ class TlmPacketizerTester : public TlmPacketizerGTestBase {
     //! Handler for from_PktSend
     //!
     void from_PktSend_handler(const FwIndexType portNum, /*!< The port number*/
-                              Fw::ComBuffer& data,           /*!< Buffer containing packet data*/
-                              U32 context                    /*!< Call context value; meaning chosen by user*/
-    ) override;
+                              Fw::ComBuffer& data,       /*!< Buffer containing packet data*/
+                              U32 context                /*!< Call context value; meaning chosen by user*/
+                              ) override;
 
     //! Handler for from_pingOut
     //!
     void from_pingOut_handler(const FwIndexType portNum, /*!< The port number*/
-                              U32 key                        /*!< Value to return to pinger*/
-    ) override;
+                              U32 key                    /*!< Value to return to pinger*/
+                              ) override;
 
     virtual void textLogIn(const FwEventIdType id,         /*!< The event ID*/
                            const Fw::Time& timeTag,        /*!< The time*/
                            const Fw::LogSeverity severity, /*!< The severity*/
                            const Fw::TextLogString& text   /*!< The event string*/
-    ) override;
+                           ) override;
 
   private:
     // ----------------------------------------------------------------------

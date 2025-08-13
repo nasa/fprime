@@ -27,7 +27,7 @@ namespace Svc {
  */
 class FramingProtocolInterface {
   public:
-    virtual ~FramingProtocolInterface(){};
+    virtual ~FramingProtocolInterface() {};
     //! \brief allocation callback to allocate memory when framing
     //! \param size: size of the allocation request
     //! \return buffer wrapping allocated memory
@@ -36,9 +36,7 @@ class FramingProtocolInterface {
     //! \brief send framed data out of the framer
     //! \param outgoing: framed data wrapped in an Fw::Buffer
     virtual void send(Fw::Buffer& outgoing) = 0;
-
 };
 
-}
+}  // namespace Svc
 #endif  // SVC_FRAMING_PROTOCOL_INTERFACE_HPP
-

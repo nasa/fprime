@@ -13,16 +13,16 @@
 
 namespace Svc {
 
-  namespace Testers {
+namespace Testers {
 
-    BufferSendIn::Tester bufferSendIn;
+BufferSendIn::Tester bufferSendIn;
 
-    FileOpenStatus::Tester fileOpenStatus;
+FileOpenStatus::Tester fileOpenStatus;
 
-    FileWriteStatus::Tester fileWriteStatus;
+FileWriteStatus::Tester fileWriteStatus;
 
-    SchedIn::Tester schedIn;
+SchedIn::Tester schedIn;
 
-  }
+}  // namespace Testers
 
-}
+}  // namespace Svc

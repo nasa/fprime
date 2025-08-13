@@ -21,6 +21,7 @@ concurrency:
 
 env:
   RPI_TOOLCHAIN_DIR: /tmp/rpi-toolchain
+  FPRIME_LOCATION: ./lib/fprime
 
 jobs:
   get-branch:
@@ -44,11 +45,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: true
-          path: ./fprime
+          path: ${{ env.FPRIME_LOCATION }}
           fetch-depth: 0
-      - uses: ./fprime/.github/actions/setup
+      - uses: ./lib/fprime/.github/actions/setup
         with:
-          location: ./fprime
+          location: ${{ env.FPRIME_LOCATION }}
       - name: "Setup RPI Toolchain"
         uses: fprime-community/setup-rpi-sysroot@main
       - name: "Generate RPI Build Cache"
@@ -93,7 +94,7 @@ jobs:
           . venv/bin/activate
           mkdir -p ci-logs
           chmod +x ./build-artifacts/raspberrypi/LedBlinker/bin/LedBlinker
-          fprime-gds --ip-client --framing-selection fprime -d ./build-artifacts/raspberrypi/LedBlinker --logs ./ci-logs &
+          fprime-gds --ip-client -d ./build-artifacts/raspberrypi/LedBlinker --logs ./ci-logs &
           sleep 10
           pytest --dictionary ./build-artifacts/raspberrypi/LedBlinker/dict/LedBlinkerTopologyDictionary.json ./int/led_integration_tests.py
       - name: 'Archive logs'

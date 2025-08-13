@@ -20,8 +20,7 @@
 namespace Svc {
 
 class TlmChan final : public TlmChanComponentBase {
-
-  friend class TlmChanTester;
+    friend class TlmChanTester;
 
   public:
     TlmChan(const char* compName);
@@ -39,16 +38,16 @@ class TlmChan final : public TlmChanComponentBase {
     //! Handler implementation for pingIn
     //!
     void pingIn_handler(const FwIndexType portNum, /*!< The port number*/
-                        U32 key                        /*!< Value to return to pinger*/
+                        U32 key                    /*!< Value to return to pinger*/
     );
 
     typedef struct tlmEntry {
         FwChanIdType id;  //!< telemetry id stored in slot
         bool updated;     //!< set whenever a value has been written. Used to skip if writing out values for downlinking
-        Fw::Time lastUpdate;        //!< last updated time
-        Fw::TlmBuffer buffer;       //!< buffer to store serialized telemetry
-        tlmEntry* next;             //!< pointer to next bucket in table
-        bool used;                  //!< if entry has been used
+        Fw::Time lastUpdate;    //!< last updated time
+        Fw::TlmBuffer buffer;   //!< buffer to store serialized telemetry
+        tlmEntry* next;         //!< pointer to next bucket in table
+        bool used;              //!< if entry has been used
         FwChanIdType bucketNo;  //!< for testing
     } TlmEntry;
 

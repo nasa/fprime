@@ -4,14 +4,14 @@
 #include "Svc/Subtopologies/FileHandling/FileHandlingConfig/FppConstantsAc.hpp"
 
 namespace FileHandling {
-    // State for topology construction
-    struct SubtopologyState {
-        // Empty - no external state needed for FileHandling subtopology
-    };
+// State for topology construction
+struct SubtopologyState {
+    // Empty - no external state needed for FileHandling subtopology
+};
 
-    struct TopologyState {
-        SubtopologyState fileHandling;
-    };
-}
+struct TopologyState {
+    SubtopologyState fileHandling;
+};
+}  // namespace FileHandling
 
 #endif

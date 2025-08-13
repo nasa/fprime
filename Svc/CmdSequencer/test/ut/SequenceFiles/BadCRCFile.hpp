@@ -12,49 +12,39 @@
 #ifndef Svc_SequenceFiles_BadCRCFile_HPP
 #define Svc_SequenceFiles_BadCRCFile_HPP
 
-#include "Svc/CmdSequencer/test/ut/SequenceFiles/File.hpp"
 #include "Svc/CmdSequencer/CmdSequencerImpl.hpp"
+#include "Svc/CmdSequencer/test/ut/SequenceFiles/File.hpp"
 
 namespace Svc {
 
-  namespace SequenceFiles {
+namespace SequenceFiles {
 
-    //! A file with a bad CRC
-    class BadCRCFile :
-      public File
-    {
+//! A file with a bad CRC
+class BadCRCFile : public File {
+  public:
+    //! Construct a BadCRCFile
+    BadCRCFile(const Format::t a_format  //!< The file format
+    );
 
-      public:
+  public:
+    //! Serialize the file in F Prime format
+    void serializeFPrime(Fw::SerializeBufferBase& buffer  //!< The buffer
+    );
 
-        //! Construct a BadCRCFile
-        BadCRCFile(
-            const Format::t a_format //!< The file format
-        );
+    //! Serialize the file in AMPCS format
+    void serializeAMPCS(Fw::SerializeBufferBase& buffer  //!< The buffer
+    );
 
-      public:
+    //! Get the CRC
+    const CmdSequencerComponentImpl::FPrimeSequence::CRC& getCRC() const;
 
-        //! Serialize the file in F Prime format
-        void serializeFPrime(
-            Fw::SerializeBufferBase& buffer //!< The buffer
-        );
+  private:
+    //! The CRC
+    CmdSequencerComponentImpl::FPrimeSequence::CRC crc;
+};
 
-        //! Serialize the file in AMPCS format
-        void serializeAMPCS(
-            Fw::SerializeBufferBase& buffer //!< The buffer
-        );
+}  // namespace SequenceFiles
 
-        //! Get the CRC
-        const CmdSequencerComponentImpl::FPrimeSequence::CRC& getCRC() const;
-
-      private:
-
-        //! The CRC
-        CmdSequencerComponentImpl::FPrimeSequence::CRC crc;
-
-    };
-
-  }
-
-}
+}  // namespace Svc
 
 #endif

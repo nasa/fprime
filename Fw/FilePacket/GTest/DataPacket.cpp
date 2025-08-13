@@ -15,21 +15,16 @@
 
 namespace Fw {
 
-  namespace GTest {
+namespace GTest {
 
-    void FilePackets::DataPacket ::
-      compare(
-          const FilePacket::DataPacket& expected,
-          const FilePacket::DataPacket& actual
-      )
-    {
-      FilePackets::Header::compare(expected.asHeader(), actual.asHeader());
-      ASSERT_EQ(expected.getByteOffset(), actual.getByteOffset());
-      Bytes expectedData(expected.getData(), expected.getDataSize());
-      Bytes actualData(actual.getData(), actual.getDataSize());
-      Bytes::compare(expectedData, actualData);
-    }
-
-  }
-
+void FilePackets::DataPacket ::compare(const FilePacket::DataPacket& expected, const FilePacket::DataPacket& actual) {
+    FilePackets::Header::compare(expected.asHeader(), actual.asHeader());
+    ASSERT_EQ(expected.getByteOffset(), actual.getByteOffset());
+    Bytes expectedData(expected.getData(), expected.getDataSize());
+    Bytes actualData(actual.getData(), actual.getDataSize());
+    Bytes::compare(expectedData, actualData);
 }
+
+}  // namespace GTest
+
+}  // namespace Fw

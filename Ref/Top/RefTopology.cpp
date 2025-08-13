@@ -101,7 +101,6 @@ void teardownTopology(const TopologyState& state) {
     // Autocoded (active component) task clean-up. Functions provided by topology autocoder.
     stopTasks(state);
     freeThreads(state);
-    tearDownComponents(state);
 
     //Stop the comDriver component, free thread
     comDriver.stop();
@@ -109,5 +108,6 @@ void teardownTopology(const TopologyState& state) {
 
     // Resource deallocation
     cmdSeq.deallocateBuffer(mallocator);
+    tearDownComponents(state);
 }
 }  // namespace Ref

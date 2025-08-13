@@ -15,26 +15,15 @@
 
 namespace Fw {
 
-  namespace GTest {
+namespace GTest {
 
-    void FilePackets::PathName ::
-      compare(
-          const FilePacket::PathName& expected,
-          const FilePacket::PathName& actual
-      )
-    {
-      ASSERT_EQ(expected.getLength(), actual.getLength());
-      Bytes expectedPath(
-          reinterpret_cast<const U8*>(expected.getValue()),
-          expected.getLength()
-      );
-      Bytes actualPath(
-          reinterpret_cast<const U8*>(actual.getValue()),
-          actual.getLength()
-      );
-      Bytes::compare(expectedPath, actualPath);
-    }
-
-  }
-
+void FilePackets::PathName ::compare(const FilePacket::PathName& expected, const FilePacket::PathName& actual) {
+    ASSERT_EQ(expected.getLength(), actual.getLength());
+    Bytes expectedPath(reinterpret_cast<const U8*>(expected.getValue()), expected.getLength());
+    Bytes actualPath(reinterpret_cast<const U8*>(actual.getValue()), actual.getLength());
+    Bytes::compare(expectedPath, actualPath);
 }
+
+}  // namespace GTest
+
+}  // namespace Fw

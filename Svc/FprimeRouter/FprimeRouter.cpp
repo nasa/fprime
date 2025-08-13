@@ -5,8 +5,8 @@
 // ======================================================================
 
 #include "Svc/FprimeRouter/FprimeRouter.hpp"
-#include "Fw/FPrimeBasicTypes.hpp"
 #include "Fw/Com/ComPacket.hpp"
+#include "Fw/FPrimeBasicTypes.hpp"
 #include "Fw/Logger/Logger.hpp"
 #include "config/APIDEnumAc.hpp"
 
@@ -52,7 +52,8 @@ void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer
                 // and FprimeRouter can handle the deallocation of the file buffer when it returns on fileBufferReturnIn
                 Fw::Buffer packetBufferCopy = this->bufferAllocate_out(0, packetBuffer.getSize());
                 auto copySerializer = packetBufferCopy.getSerializer();
-                status = copySerializer.serialize(packetBuffer.getData(), packetBuffer.getSize(), Fw::Serialization::OMIT_LENGTH);
+                status = copySerializer.serialize(packetBuffer.getData(), packetBuffer.getSize(),
+                                                  Fw::Serialization::OMIT_LENGTH);
                 FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
                 // Send the copied buffer out. It will come back on fileBufferReturnIn once the receiver is done with it
                 this->fileOut_out(0, packetBufferCopy);
@@ -67,7 +68,8 @@ void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer
                 // and FprimeRouter can handle the deallocation of the unknown buffer when it returns on bufferReturnIn
                 Fw::Buffer packetBufferCopy = this->bufferAllocate_out(0, packetBuffer.getSize());
                 auto copySerializer = packetBufferCopy.getSerializer();
-                status = copySerializer.serialize(packetBuffer.getData(), packetBuffer.getSize(), Fw::Serialization::OMIT_LENGTH);
+                status = copySerializer.serialize(packetBuffer.getData(), packetBuffer.getSize(),
+                                                  Fw::Serialization::OMIT_LENGTH);
                 FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
                 // Send the copied buffer out. It will come back on fileBufferReturnIn once the receiver is done with it
                 this->unknownDataOut_out(0, packetBufferCopy, context);
