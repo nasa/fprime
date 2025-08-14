@@ -59,13 +59,26 @@ Array(const std::initializer_list<T>& il)
 
 _Examples:_
 ```c++
-// Explicit call to constructor
 Array<U32, 3> a({ 1, 2, 3 });
-// Implicit call to constructor via initialization
-Array<U32, 3> b = { 1, 2, 3 };
 ```
 
-### 4.3. Single-Element Constructor
+### 4.3. Raw Array Constructor
+
+```c++
+Array(const Elements& elements)
+```
+
+1. Statically assert that `S1 == S`.
+
+1. Set `*this = elements`.
+
+_Example:_
+```c++
+U32 elements[3] = { 1, 2, 3 };
+Array<U32, 3> a(elements);
+```
+
+### 4.4. Single-Element Constructor
 
 ```c++
 explicit Array(const T& element)
@@ -81,7 +94,7 @@ Array<U32, 3> a(1);
 a = Array<U32, 3>(2);
 ```
 
-### 4.4. Copy Constructor
+### 4.5. Copy Constructor
 
 ```c++
 Array(const Array<T, S>& a)
@@ -98,7 +111,7 @@ Array<U32, 3> a1(3);
 Array<U32, 3> a2(a1);
 ```
 
-### 4.5. Destructor
+### 4.6. Destructor
 
 ```c++
 ~Array()
@@ -132,7 +145,42 @@ ASSERT_EQ(a[0], 1);
 ASSERT_DEATH(a[size], "Assert");
 ```
 
-### 5.2. operator=
+### 5.2. operator= (Initializer List)
+
+```c++
+Array<T, S>& operator=(const std::initializer_list<T>& il)
+```
+
+1. Assert that `il.size() == S`.
+
+1. Copy each element of `il` into `m_elements`.
+
+1. Return `*this`.
+
+_Example:_
+```c++
+Array<U32, 3> a;
+a = { 1, 2, 3 };
+```
+
+### 5.3. operator= (Raw Array)
+
+```c++
+Array<T, S>& operator=(const Elements& elements)
+```
+
+1. Copy each element of `elements` into `m_elements`.
+
+1. Return `*this`.
+
+_Example:_
+```c++
+U32 elements[3] = { 1, 2, 3 };
+Array<U32, 3> a;
+a = elements;
+```
+
+### 5.4. operator= (Copy Assignment)
 
 ```c++
 Array<T, S>& operator=(const Array<T, S>& a)
@@ -141,6 +189,8 @@ Array<T, S>& operator=(const Array<T, S>& a)
 1. If `&a != this`, overwrite each element of `m_elements` with the 
 corresponding element of `a`.
 
+1. Return `*this`.
+
 _Example:_
 ```c++
 Array<U32, 3> a1(1);
@@ -148,7 +198,7 @@ Array<U32, 3> a2(2);
 a1 = a2;
 ```
 
-### 5.3. getElements
+### 5.5. getElements
 
 ```c++
 Elements& getElements()
@@ -170,7 +220,7 @@ const auto& elements2 = a.getElements();
 ASSERT_EQ(elements2[0], 1);
 ```
 
-### 5.4. asExternalArray
+### 5.6. asExternalArray
 
 ```c++
 ExternalArray<T> asExternalArray()

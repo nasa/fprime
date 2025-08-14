@@ -47,12 +47,8 @@ class Array final {
     }
 
     //! Raw array constructor
-    //! We use a template to force the array size to match S
-    //! Without the template, C++ may accept a smaller size
-    template <FwSizeType S1>
-    Array(const T (&elements)[S1]  //!< The array
+    Array(const Elements& elements  //!< The array elements
     ) {
-        static_assert(S1 == S, "array size must match");
         *this = elements;
     }
 
@@ -94,7 +90,7 @@ class Array final {
         return this->m_elements[i];
     }
 
-    //! operator= (initializer list)
+    //! operator= (Initializer List)
     //! \return *this
     Array<T, S>& operator=(const std::initializer_list<T>& il  //!< The initializer list
     ) {
@@ -110,20 +106,17 @@ class Array final {
         return *this;
     }
 
-    //! operator= (raw array)
-    //! We use a template to force the array size to match S
-    //! Without the template, C++ may accept a smaller size
+    //! operator= (Raw Array)
     //! \return *this
-    template <FwSizeType S1>
-    Array<T, S>& operator=(const T (&elements)[S1]) {
-        static_assert(S1 == S, "array size must match");
+    Array<T, S>& operator=(const Elements& elements  //!< The array elements
+    ) {
         for (FwSizeType i = 0; i < S; i++) {
             this->m_elements[i] = elements[i];
         }
         return *this;
     }
 
-    //! Copy assignment operator
+    //! operator= (Copy Assignment)
     //! \return *this
     Array<T, S>& operator=(const Array<T, S>& a) {
         if (&a != this) {
