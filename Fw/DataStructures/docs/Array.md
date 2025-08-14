@@ -47,22 +47,30 @@ _Example:_
 Array<U32, 3> a;
 ```
 
-### 4.2. Initializer List Constructor
+### 4.2. Array Constructor
 
 ```c++
-Array(const std::initializer_list<T>& il)
+template <FwSizeType S1> Array(const T (&elements)[S1])
 ```
 
-1. Assert that `il.size() == S`.
+1. Statically assert that `S1 == S`.
 
-1. Initialize `m_elements` from `il`.
+1. Set `*this = elements`.
 
-_Examples:_
+_Example:_
 ```c++
-// Explicit call to constructor
 Array<U32, 3> a({ 1, 2, 3 });
-// Implicit call to constructor via initialization
-Array<U32, 3> b = { 1, 2, 3 };
+```
+
+Note that the template and the static assertion ensure that this code
+will not compile:
+```c++
+Array<U32, 3> a({ 1, 2 });
+```
+Without the template and static assertion, C++ would interpret
+that code as if it were equivalent to this:
+```c++
+Array<U32, 3> a({ 1, 2, 0 });
 ```
 
 ### 4.3. Single-Element Constructor
@@ -132,14 +140,16 @@ ASSERT_EQ(a[0], 1);
 ASSERT_DEATH(a[size], "Assert");
 ```
 
-### 5.2. operator=
+### 5.2. operator= (Copy Assignment)
 
 ```c++
 Array<T, S>& operator=(const Array<T, S>& a)
 ```
 
-1. If `&a != this`, overwrite each element of `m_elements` with the 
+1. If `&a != this`, overwrite each element of `m_elements` with the
 corresponding element of `a`.
+
+1. Return `*this`.
 
 _Example:_
 ```c++
@@ -148,7 +158,30 @@ Array<U32, 3> a2(2);
 a1 = a2;
 ```
 
-### 5.3. getElements
+### 5.3. operator= (Raw Array)
+
+```c++
+Array<T, S>& operator=(const Elements& elements)
+```
+
+1. Statically assert that `S1 == S`.
+
+1. Copy each element of `elements` into the corresponding element of
+   `m_elements`.
+
+1. Return `*this`.
+
+_Example:_
+```c++
+U32 elements[3] = {};
+Array<U32, 3> a = elements;
+```
+
+Note that without the template and the static assertion, C++ may
+allow a shorter array as the argument to the operation.
+See the note on the array constructor above.
+
+### 5.4. getElements
 
 ```c++
 Elements& getElements()
@@ -170,7 +203,7 @@ const auto& elements2 = a.getElements();
 ASSERT_EQ(elements2[0], 1);
 ```
 
-### 5.4. asExternalArray
+### 5.5. asExternalArray
 
 ```c++
 ExternalArray<T> asExternalArray()

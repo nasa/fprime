@@ -100,13 +100,9 @@ class Array final {
     }
 
     //! Array assignment operator
-    //! Use a template to enforce exact array size
-    //! Otherwise C++ may implicitly convert a smaller array to an array of size S
     //! \return *this
-    template <FwSizeType S1>
-    Array<T, S>& operator=(const T (&elements)[S1]  //!< The elements
+    Array<T, S>& operator=(const Elements& elements  //!< The elements
     ) {
-        static_assert(S1 == S, "array size must match");
         for (FwSizeType i = 0; i < S; i++) {
             this->m_elements[i] = elements[i];
         }
