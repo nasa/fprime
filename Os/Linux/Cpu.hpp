@@ -39,7 +39,6 @@ class LinuxCpu : public CpuInterface {
     // Functions overrides
     // ------------------------------------
   public:
-
     //! \brief Request the count of the CPUs detected by the system
     //!
     //! This method wraps delegates to the underlying implementation.
@@ -69,13 +68,14 @@ class LinuxCpu : public CpuInterface {
     //!
     //! \return raw console handle
     //!
-    CpuHandle *getHandle() override;
+    CpuHandle* getHandle() override;
+
   private:
     //! File handle for PosixFile
     LinuxCpuHandle m_handle;
 };
-} // namespace Cpu
-} // namespace Linux
-} // namespace Os
+}  // namespace Cpu
+}  // namespace Linux
+}  // namespace Os
 
-#endif // OS_Linux_Cpu_HPP
+#endif  // OS_Linux_Cpu_HPP

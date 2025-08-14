@@ -9,7 +9,6 @@ TEST(Nominal, TestIo) {
     tester.test_in_out();
 }
 
-
 TEST(Nominal, TestBufferIo) {
     Svc::GenericHubTester tester;
     tester.test_buffer_io();
@@ -30,7 +29,7 @@ TEST(Nominal, TestTelemetry) {
     tester.test_telemetry();
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

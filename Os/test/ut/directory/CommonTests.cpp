@@ -4,16 +4,14 @@
 // ======================================================================
 #include "Os/test/ut/directory/CommonTests.hpp"
 
-#include <Os/FileSystem.hpp> // for setup
+#include <Os/FileSystem.hpp>  // for setup
 #include "STest/Pick/Pick.hpp"
-
 
 std::unique_ptr<Os::Test::Directory::Tester> get_tester_implementation() {
     return std::unique_ptr<Os::Test::Directory::Tester>(new Os::Test::Directory::Tester());
 }
 
 Functionality::Functionality() : tester(get_tester_implementation()) {}
-
 
 //! Create a directory with a number of files in it
 void Functionality::SetUp() {
@@ -27,7 +25,6 @@ void Functionality::TearDown() {
 // ----------------------------------------------------------------------
 // Test Cases
 // ----------------------------------------------------------------------
-
 
 // Open directory and check it is open
 TEST_F(Functionality, OpenIsOpen) {
@@ -153,34 +150,15 @@ TEST_F(Functionality, RandomizedTesting) {
 
     // Place these rules into a list of rules
     STest::Rule<Os::Test::Directory::Tester>* rules[] = {
-            &open_rule,
-            &close_rule,
-            &is_open_rule,
-            &is_not_open_rule,
-            &read_rule,
-            &read_str_rule,
-            &rewind_rule,
-            &read_all_rule,
-            &file_count_rule,
-            &read_closed_rule,
-            &rewind_closed_rule
-    };
+        &open_rule,   &close_rule,    &is_open_rule,    &is_not_open_rule, &read_rule,         &read_str_rule,
+        &rewind_rule, &read_all_rule, &file_count_rule, &read_closed_rule, &rewind_closed_rule};
 
     // Take the rules and place them into a random scenario
-    STest::RandomScenario<Os::Test::Directory::Tester> random(
-            "Random Rules",
-            rules,
-            FW_NUM_ARRAY_ELEMENTS(rules)
-    );
+    STest::RandomScenario<Os::Test::Directory::Tester> random("Random Rules", rules, FW_NUM_ARRAY_ELEMENTS(rules));
 
     // Create a bounded scenario wrapping the random scenario
-    STest::BoundedScenario<Os::Test::Directory::Tester> bounded(
-            "Bounded Random Rules Scenario",
-            random,
-            1000
-    );
+    STest::BoundedScenario<Os::Test::Directory::Tester> bounded("Bounded Random Rules Scenario", random, 1000);
     // Run!
     const U32 numSteps = bounded.run(*tester);
     printf("Ran %u steps with %zu files in test directory.\n", numSteps, tester->m_filenames.size());
-
 }

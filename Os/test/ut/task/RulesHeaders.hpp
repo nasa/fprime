@@ -3,39 +3,36 @@
 #ifndef __RULES_HEADERS__
 #define __RULES_HEADERS__
 
+#include <vector>
+#include "Os/Mutex.hpp"
+#include "Os/Task.hpp"
 #include "STest/Rule/Rule.hpp"
 #include "STest/Scenario/BoundedScenario.hpp"
 #include "STest/Scenario/RandomScenario.hpp"
 #include "STest/Scenario/Scenario.hpp"
-#include "Os/Task.hpp"
-#include "Os/Mutex.hpp"
-#include <vector>
 
 namespace Os {
 namespace Test {
 namespace Task {
 
-
-
 struct TestTaskInfo {
     //! Test task life-cycle stages
     enum Lifecycle {
-        BEGINNING = 0, //!< The initial stage of the task
-        MIDDLE = 1, //!< The task function has taken hold
-        END = 2, //!< The task has been asked to exit
+        BEGINNING = 0,  //!< The initial stage of the task
+        MIDDLE = 1,     //!< The task function has taken hold
+        END = 2,        //!< The task has been asked to exit
         UNSET = -1,
     };
     static FwSizeType s_task_count;
 
     Lifecycle m_stage = Lifecycle::UNSET;
     Os::Mutex m_lock;
-    Os::Task::State m_state = Os::Task::State::NOT_STARTED; //!< Shadow state of the task
-    Os::Task m_task; //!< Task under test
+    Os::Task::State m_state = Os::Task::State::NOT_STARTED;  //!< Shadow state of the task
+    Os::Task m_task;                                         //!< Task under test
     std::shared_ptr<TestTaskInfo> m_other = nullptr;
     bool m_signal = false;
 
     ~TestTaskInfo();
-
 
     //! Atomically step through lifecycle stages
     void step();
@@ -90,17 +87,13 @@ struct Tester : public Os::TaskRegistry {
     static Tester* s_current_registry;
 
   public:
-
-    static void resetNumTasks(){
-      Os::Task::s_numTasks = 0;
-    }
+    static void resetNumTasks() { Os::Task::s_numTasks = 0; }
 
 #include "TaskRules.hpp"
 };
 
-}
-}
-}
-
+}  // namespace Task
+}  // namespace Test
+}  // namespace Os
 
 #endif

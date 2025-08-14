@@ -16,7 +16,8 @@ namespace Svc {
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-CmdSplitterTester ::CmdSplitterTester() : CmdSplitterGTestBase("Tester", CmdSplitterTester::MAX_HISTORY_SIZE), component("CmdSplitter") {
+CmdSplitterTester ::CmdSplitterTester()
+    : CmdSplitterGTestBase("Tester", CmdSplitterTester::MAX_HISTORY_SIZE), component("CmdSplitter") {
     this->initComponents();
     this->connectPorts();
 }
@@ -29,7 +30,8 @@ CmdSplitterTester ::~CmdSplitterTester() {}
 
 Fw::ComBuffer CmdSplitterTester ::build_command_around_opcode(FwOpcodeType opcode) {
     Fw::ComBuffer comBuffer;
-    EXPECT_EQ(comBuffer.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_COMMAND)), Fw::FW_SERIALIZE_OK);
+    EXPECT_EQ(comBuffer.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_COMMAND)),
+              Fw::FW_SERIALIZE_OK);
     EXPECT_EQ(comBuffer.serialize(opcode), Fw::FW_SERIALIZE_OK);
 
     Fw::CmdArgBuffer args;
@@ -49,9 +51,7 @@ FwOpcodeType CmdSplitterTester ::setup_and_pick_valid_opcode(bool for_local) {
         FwOpcodeType base = static_cast<FwOpcodeType>(STest::Pick::lowerUpper(1, MAX_OPCODE));
         component.configure(base);
         EXPECT_GT(base, 0);  // Must leave some room for local commands
-        return static_cast<FwOpcodeType>(
-            STest::Pick::lowerUpper(0, FW_MIN(static_cast<U32>(base)- 1, MAX_OPCODE))
-        );
+        return static_cast<FwOpcodeType>(STest::Pick::lowerUpper(0, FW_MIN(static_cast<U32>(base) - 1, MAX_OPCODE)));
     }
     FwOpcodeType base = static_cast<FwOpcodeType>(STest::Pick::lowerUpper(0, MAX_OPCODE));
     component.configure(base);
@@ -67,8 +67,7 @@ void CmdSplitterTester ::test_local_routing() {
     Fw::ComBuffer testBuffer = this->build_command_around_opcode(local_opcode);
 
     U32 context = static_cast<U32>(STest::Pick::any());
-    this->active_command_source = static_cast<FwIndexType>(STest::Pick::lowerUpper(
-        0, CmdSplitterPorts));
+    this->active_command_source = static_cast<FwIndexType>(STest::Pick::lowerUpper(0, CmdSplitterPorts));
     this->invoke_to_CmdBuff(this->active_command_source, testBuffer, context);
     ASSERT_from_RemoteCmd_SIZE(0);
     ASSERT_from_LocalCmd_SIZE(1);
@@ -84,8 +83,7 @@ void CmdSplitterTester ::test_remote_routing() {
     Fw::ComBuffer testBuffer = this->build_command_around_opcode(remote_opcode);
 
     U32 context = static_cast<U32>(STest::Pick::any());
-    this->active_command_source = static_cast<FwIndexType>(STest::Pick::lowerUpper(
-        0, CmdSplitterPorts));
+    this->active_command_source = static_cast<FwIndexType>(STest::Pick::lowerUpper(0, CmdSplitterPorts));
     this->invoke_to_CmdBuff(this->active_command_source, testBuffer, context);
     ASSERT_from_LocalCmd_SIZE(0);
     ASSERT_from_RemoteCmd_SIZE(1);
@@ -98,8 +96,7 @@ void CmdSplitterTester ::test_error_routing() {
     REQUIREMENT("SVC-CMD-SPLITTER-004");
     Fw::ComBuffer testBuffer;  // Intentionally left empty
     U32 context = static_cast<U32>(STest::Pick::any());
-    this->active_command_source = static_cast<FwIndexType>(STest::Pick::lowerUpper(
-        0, CmdDispatcherSequencePorts));
+    this->active_command_source = static_cast<FwIndexType>(STest::Pick::lowerUpper(0, CmdDispatcherSequencePorts));
     this->invoke_to_CmdBuff(this->active_command_source, testBuffer, context);
     ASSERT_from_RemoteCmd_SIZE(0);
     ASSERT_from_LocalCmd_SIZE(1);
@@ -111,13 +108,12 @@ void CmdSplitterTester ::test_response_forwarding() {
     REQUIREMENT("SVC-CMD-SPLITTER-001");
     REQUIREMENT("SVC-CMD-SPLITTER-005");
 
-    FwOpcodeType opcode =
-        static_cast<FwOpcodeType>(STest::Pick::lowerUpper(0, static_cast<U32>(std::numeric_limits<FwOpcodeType>::max())));
+    FwOpcodeType opcode = static_cast<FwOpcodeType>(
+        STest::Pick::lowerUpper(0, static_cast<U32>(std::numeric_limits<FwOpcodeType>::max())));
     Fw::CmdResponse response;
     response.e = static_cast<Fw::CmdResponse::T>(STest::Pick::lowerUpper(0, Fw::CmdResponse::NUM_CONSTANTS));
     U32 cmdSeq = static_cast<U32>(STest::Pick::any());
-    this->active_command_source = static_cast<FwIndexType>(STest::Pick::startLength(
-        0, CmdDispatcherSequencePorts));
+    this->active_command_source = static_cast<FwIndexType>(STest::Pick::startLength(0, CmdDispatcherSequencePorts));
 
     this->invoke_to_seqCmdStatus(this->active_command_source, opcode, cmdSeq, response);
     ASSERT_from_forwardSeqCmdStatus_SIZE(1);
@@ -139,9 +135,9 @@ void CmdSplitterTester ::from_RemoteCmd_handler(const FwIndexType portNum, Fw::C
 }
 
 void CmdSplitterTester ::from_forwardSeqCmdStatus_handler(const FwIndexType portNum,
-                                               FwOpcodeType opCode,
-                                               U32 cmdSeq,
-                                               const Fw::CmdResponse& response) {
+                                                          FwOpcodeType opCode,
+                                                          U32 cmdSeq,
+                                                          const Fw::CmdResponse& response) {
     EXPECT_EQ(this->active_command_source, portNum) << "Command source not respected";
     this->pushFromPortEntry_forwardSeqCmdStatus(opCode, cmdSeq, response);
 }

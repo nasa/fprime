@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Fw/FilePacket/GTest/FilePackets.hpp
 // \author bocchino
 // \brief  hpp file for File Packet testing utilities
@@ -7,8 +7,8 @@
 // Copyright (C) 2016 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #ifndef Fw_GTest_FilePackets_HPP
 #define Fw_GTest_FilePackets_HPP
@@ -19,76 +19,58 @@
 
 namespace Fw {
 
-  namespace GTest {
+namespace GTest {
 
-    //! Utilities for testing File Packet operations
-    //!
-    namespace FilePackets {
+//! Utilities for testing File Packet operations
+//!
+namespace FilePackets {
 
-      namespace PathName {
+namespace PathName {
 
-        //! Compare two path names
-        void compare(
-            const FilePacket::PathName& expected,
-            const FilePacket::PathName& actual
-        );
+//! Compare two path names
+void compare(const FilePacket::PathName& expected, const FilePacket::PathName& actual);
 
-      }
+}  // namespace PathName
 
-      namespace Header {
+namespace Header {
 
-        //! Compare two file packet headers
-        void compare(
-            const FilePacket::Header& expected,
-            const FilePacket::Header& actual
-        );
+//! Compare two file packet headers
+void compare(const FilePacket::Header& expected, const FilePacket::Header& actual);
 
-      }
+}  // namespace Header
 
-      namespace StartPacket {
+namespace StartPacket {
 
-        //! Compare two start packets
-        void compare(
-            const FilePacket::StartPacket& expected,
-            const FilePacket::StartPacket& actual
-        );
+//! Compare two start packets
+void compare(const FilePacket::StartPacket& expected, const FilePacket::StartPacket& actual);
 
-      }
+}  // namespace StartPacket
 
-      namespace DataPacket {
+namespace DataPacket {
 
-        //! Compare two data packets
-        void compare(
-            const FilePacket::DataPacket& expected,
-            const FilePacket::DataPacket& actual
-        );
+//! Compare two data packets
+void compare(const FilePacket::DataPacket& expected, const FilePacket::DataPacket& actual);
 
-      }
+}  // namespace DataPacket
 
-      namespace EndPacket {
+namespace EndPacket {
 
-        //! Compare two end packets
-        void compare(
-            const FilePacket::EndPacket& expected,
-            const FilePacket::EndPacket& actual
-        );
+//! Compare two end packets
+void compare(const FilePacket::EndPacket& expected, const FilePacket::EndPacket& actual);
 
-      }
+}  // namespace EndPacket
 
-      namespace CancelPacket {
+namespace CancelPacket {
 
-        //! Compare two cancel packets
-        void compare(
-            const FilePacket::CancelPacket& expected,
-            const FilePacket::CancelPacket& actual
-        );
+//! Compare two cancel packets
+void compare(const FilePacket::CancelPacket& expected, const FilePacket::CancelPacket& actual);
 
-      }
+}  // namespace CancelPacket
 
-    }
+}  // namespace FilePackets
 
-  }
+}  // namespace GTest
 
-}
+}  // namespace Fw
 
 #endif

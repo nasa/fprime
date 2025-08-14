@@ -21,8 +21,7 @@
 namespace Drv {
 
 class UdpComponentImpl : public UdpComponentBase, public SocketComponentHelper {
-
-  friend class UdpTester;
+    friend class UdpTester;
 
   public:
     // ----------------------------------------------------------------------
@@ -88,8 +87,7 @@ class UdpComponentImpl : public UdpComponentBase, public SocketComponentHelper {
      */
     U16 getRecvPort();
 
-
-protected:
+  protected:
     // ----------------------------------------------------------------------
     // Implementations for socket read task virtual methods
     // ----------------------------------------------------------------------
@@ -126,11 +124,10 @@ protected:
 
     /**
      * \brief called when the IPv4 system has been connected
-    */
+     */
     void connected() override;
 
   private:
-
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
@@ -149,21 +146,20 @@ protected:
      * \param portNum: fprime port number of the incoming port call
      * \param fwBuffer: buffer containing data to be sent
      */
-    void send_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) override;
-
+    Drv::ByteStreamStatus send_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) override;
 
     //! Handler implementation for recvReturnIn
     //!
     //! Port receiving back ownership of data sent out on $recv port
     void recvReturnIn_handler(FwIndexType portNum,  //!< The port number
-                                Fw::Buffer& fwBuffer  //!< The buffer
-                                ) override;
+                              Fw::Buffer& fwBuffer  //!< The buffer
+                              ) override;
 
-    Drv::UdpSocket m_socket; //!< Socket implementation
+    Drv::UdpSocket m_socket;  //!< Socket implementation
 
-    FwSizeType m_allocation_size; //!< Member variable to store the buffer size
+    FwSizeType m_allocation_size;  //!< Member variable to store the buffer size
 };
 
 }  // end namespace Drv
 
-#endif // end UdpComponentImpl
+#endif  // end UdpComponentImpl

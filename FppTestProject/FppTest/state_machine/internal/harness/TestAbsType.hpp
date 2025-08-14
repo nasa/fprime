@@ -48,16 +48,16 @@ struct TestAbsType final : public Fw::Serializable {
 
     //! Serialize function
     //! \return Status
-    Fw::SerializeStatus serialize(Fw::SerializeBufferBase& sbb  //!< The serialize buffer base
+    Fw::SerializeStatus serializeTo(Fw::SerializeBufferBase& sbb  //!< The serialize buffer base
     ) const final {
-        return sbb.serialize(this->m_data);
+        return sbb.serializeFrom(this->m_data);
     }
 
     //! Deserialize method
     //! \return status
-    Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& sbb  //!< The serialize buffer base
-                                    ) final {
-        return sbb.deserialize(this->m_data);
+    Fw::SerializeStatus deserializeFrom(Fw::SerializeBufferBase& sbb  //!< The serialize buffer base
+                                        ) final {
+        return sbb.deserializeTo(this->m_data);
     }
 
 #if FW_SERIALIZABLE_TO_STRING

@@ -35,19 +35,19 @@ class Version final : public VersionComponentBase {
     //! Handler implementation for getVersion
     //!
     //! Mutexed Port to get values
-    void getVersion_handler(FwIndexType portNum,                                    //!< The port number
-                            const Svc::VersionCfg::VersionEnum& version_id,         //!< The entry to access
-                            Fw::StringBase& version_string,                         //!< The value to be passed
-                            Svc::VersionStatus& status                              //!< The command response argument
+    void getVersion_handler(FwIndexType portNum,                             //!< The port number
+                            const Svc::VersionCfg::VersionEnum& version_id,  //!< The entry to access
+                            Fw::StringBase& version_string,                  //!< The value to be passed
+                            Svc::VersionStatus& status                       //!< The command response argument
                             ) override;
 
     //! Handler implementation for setVersion
     //!
     //! Mutexed Port to set values
-    void setVersion_handler(FwIndexType portNum,                                    //!< The port number
-                            const Svc::VersionCfg::VersionEnum& version_id,         //!< The entry to access
-                            Fw::StringBase& version_string,                         //!< The value to be passed
-                            Svc::VersionStatus& status                              //!< The command response argument
+    void setVersion_handler(FwIndexType portNum,                             //!< The port number
+                            const Svc::VersionCfg::VersionEnum& version_id,  //!< The entry to access
+                            Fw::StringBase& version_string,                  //!< The value to be passed
+                            Svc::VersionStatus& status                       //!< The command response argument
                             ) override;
 
     //! \struct verId_db
@@ -80,7 +80,7 @@ class Version final : public VersionComponentBase {
                             ) override;
 
   private:
-            // An enumeration for TLM slot access
+    // An enumeration for TLM slot access
     enum VersionSlot {
         VER_SLOT_00 = 0,
         VER_SLOT_01 = 1,
@@ -103,7 +103,7 @@ class Version final : public VersionComponentBase {
     // function to log custom version events and channels
     void customVersion_tlm(VersionSlot custom_slot);
     void customVersion_tlm_all();
-    bool m_enable; /*!<Send TLM when true>*/
+    bool m_enable;             /*!<Send TLM when true>*/
     U8 m_num_custom_elements;  // number of custom versions
 };
 

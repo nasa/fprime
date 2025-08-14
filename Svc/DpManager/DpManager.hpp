@@ -20,30 +20,18 @@ class DpManager final : public DpManagerComponentBase {
     // Static assertions against the assumptions about the model
     // ----------------------------------------------------------------------
 
-    static_assert(
-        DpManager::NUM_PRODUCTGETIN_INPUT_PORTS == static_cast<FwSizeType>(DpManagerNumPorts),
-        "Number of product get in ports must equal DpManagerNumPorts"
-    );
-    static_assert(
-        DpManager::NUM_PRODUCTREQUESTIN_INPUT_PORTS == static_cast<FwSizeType>(DpManagerNumPorts),
-        "Number of product request in ports must equal DpManagerNumPorts"
-    );
-    static_assert(
-        DpManager::NUM_PRODUCTRESPONSEOUT_OUTPUT_PORTS == static_cast<FwSizeType>(DpManagerNumPorts),
-        "Number of product response out ports must equal DpManagerNumPorts"
-    );
-    static_assert(
-        DpManager::NUM_BUFFERGETOUT_OUTPUT_PORTS == static_cast<FwSizeType>(DpManagerNumPorts),
-        "Number of buffer get out ports must equal DpManagerNumPorts"
-    );
-    static_assert(
-        DpManager::NUM_PRODUCTSENDIN_INPUT_PORTS == static_cast<FwSizeType>(DpManagerNumPorts),
-        "Number of product send in ports must equal DpManagerNumPorts"
-    );
-    static_assert(
-        DpManager::NUM_PRODUCTSENDOUT_OUTPUT_PORTS == static_cast<FwSizeType>(DpManagerNumPorts),
-        "Number of product send out ports must equal DpManagerNumPorts"
-    );
+    static_assert(DpManager::NUM_PRODUCTGETIN_INPUT_PORTS == static_cast<FwSizeType>(DpManagerNumPorts),
+                  "Number of product get in ports must equal DpManagerNumPorts");
+    static_assert(DpManager::NUM_PRODUCTREQUESTIN_INPUT_PORTS == static_cast<FwSizeType>(DpManagerNumPorts),
+                  "Number of product request in ports must equal DpManagerNumPorts");
+    static_assert(DpManager::NUM_PRODUCTRESPONSEOUT_OUTPUT_PORTS == static_cast<FwSizeType>(DpManagerNumPorts),
+                  "Number of product response out ports must equal DpManagerNumPorts");
+    static_assert(DpManager::NUM_BUFFERGETOUT_OUTPUT_PORTS == static_cast<FwSizeType>(DpManagerNumPorts),
+                  "Number of buffer get out ports must equal DpManagerNumPorts");
+    static_assert(DpManager::NUM_PRODUCTSENDIN_INPUT_PORTS == static_cast<FwSizeType>(DpManagerNumPorts),
+                  "Number of product send in ports must equal DpManagerNumPorts");
+    static_assert(DpManager::NUM_PRODUCTSENDOUT_OUTPUT_PORTS == static_cast<FwSizeType>(DpManagerNumPorts),
+                  "Number of product send out ports must equal DpManagerNumPorts");
 
   public:
     // ----------------------------------------------------------------------
@@ -64,26 +52,26 @@ class DpManager final : public DpManagerComponentBase {
 
     //! Handler implementation for productGetIn
     Fw::Success productGetIn_handler(const FwIndexType portNum,  //!< The port number
-                                     FwDpIdType id,                  //!< The container ID
-                                     FwSizeType size,                //!< The size of the requested buffer
-                                     Fw::Buffer& buffer              //!< The buffer
+                                     FwDpIdType id,              //!< The container ID
+                                     FwSizeType size,            //!< The size of the requested buffer
+                                     Fw::Buffer& buffer          //!< The buffer
                                      ) final;
 
     //! Handler implementation for productRequestIn
     void productRequestIn_handler(const FwIndexType portNum,  //!< The port number
-                                  FwDpIdType id,                  //!< The container ID
-                                  FwSizeType size                 //!< The size of the requested buffer
+                                  FwDpIdType id,              //!< The container ID
+                                  FwSizeType size             //!< The size of the requested buffer
                                   ) final;
 
     //! Handler implementation for productSendIn
     void productSendIn_handler(const FwIndexType portNum,  //!< The port number
-                               FwDpIdType id,                  //!< The container ID
-                               const Fw::Buffer& buffer        //!< The buffer
+                               FwDpIdType id,              //!< The container ID
+                               const Fw::Buffer& buffer    //!< The buffer
                                ) final;
 
     //! Handler implementation for schedIn
     void schedIn_handler(const FwIndexType portNum,  //!< The port number
-                         U32 context                     //!< The call order
+                         U32 context                 //!< The call order
                          ) final;
 
   private:

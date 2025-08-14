@@ -18,34 +18,33 @@
 
 namespace Fw {
 
-    class AmpcsEvrLogPacket : public ComPacket {
-        public:
+class AmpcsEvrLogPacket : public ComPacket {
+  public:
+    AmpcsEvrLogPacket();
+    virtual ~AmpcsEvrLogPacket();
 
-            AmpcsEvrLogPacket();
-            virtual ~AmpcsEvrLogPacket();
+    SerializeStatus serializeTo(SerializeBufferBase& buffer) const;  //!< serialize contents
+    SerializeStatus deserializeFrom(SerializeBufferBase& buffer);
 
-            SerializeStatus serialize(SerializeBufferBase& buffer) const; //!< serialize contents
-            SerializeStatus deserialize(SerializeBufferBase& buffer);
+    void setTaskName(U8* taskName, U8 len);
+    void setId(U32 eventID);
+    void setOverSeqNum(U32 overSeqNum);
+    void setCatSeqNum(U32 catSeqNum);
+    void setLogBuffer(LogBuffer& buffer);
 
-            void setTaskName(U8 *taskName, U8 len);
-            void setId(U32 eventID);
-            void setOverSeqNum(U32 overSeqNum);
-            void setCatSeqNum(U32 catSeqNum);
-            void setLogBuffer(LogBuffer& buffer);
+    const U8* getTaskName() const;
+    U32 getId() const;
+    U32 getOverSeqNum() const;
+    U32 getCatSeqNum() const;
+    LogBuffer& getLogBuffer();
 
-            const U8* getTaskName() const;
-            U32 getId() const;
-            U32 getOverSeqNum() const;
-            U32 getCatSeqNum() const;
-            LogBuffer& getLogBuffer();
-
-        protected:
-            U8 m_taskName[AMPCS_EVR_TASK_NAME_LEN];
-            U32 m_eventID;
-            U32 m_overSeqNum;
-            U32 m_catSeqNum;
-            LogBuffer m_logBuffer; // !< serialized argument data
-    };
+  protected:
+    U8 m_taskName[AMPCS_EVR_TASK_NAME_LEN];
+    U32 m_eventID;
+    U32 m_overSeqNum;
+    U32 m_catSeqNum;
+    LogBuffer m_logBuffer;  // !< serialized argument data
+};
 
 } /* namespace Fw */
 

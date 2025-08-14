@@ -24,10 +24,7 @@ TEST(Error, BadCommands) {
     tester.test_error_routing();
 }
 
-
-
-
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

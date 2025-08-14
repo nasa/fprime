@@ -2,24 +2,20 @@
 // Created by mstarch on 12/7/20.
 //
 #include <gtest/gtest.h>
-#include <cstring>
 #include <cerrno>
+#include <cstring>
 #include <string>
 
-#include <Drv/Ip/UdpSocket.hpp>
 #include <Drv/Ip/IpSocket.hpp>
-#include <Os/Console.hpp>
-#include <Fw/Logger/Logger.hpp>
+#include <Drv/Ip/UdpSocket.hpp>
 #include <Drv/Ip/test/ut/PortSelector.hpp>
 #include <Drv/Ip/test/ut/SocketTestHelper.hpp>
+#include <Fw/Logger/Logger.hpp>
+#include <Os/Console.hpp>
 
 Os::Console logger;
 
-enum UdpMode {
-    DUPLEX,
-    SEND,
-    RECEIVE
-};
+enum UdpMode { DUPLEX, SEND, RECEIVE };
 
 void test_with_loop(U32 iterations, UdpMode udp_mode) {
     Drv::SocketIpStatus status1 = Drv::SOCK_SUCCESS;
@@ -106,21 +102,21 @@ TEST(UdpZeroLength, TestZeroLengthUdpDatagram) {
     Drv::SocketDescriptor recv_fd;
     U16 port = Drv::Test::get_free_port(true);
     ASSERT_NE(0, port);
-    
+
     // Configure receiver and sender
     ASSERT_EQ(receiver.configureRecv("127.0.0.1", port), Drv::SOCK_SUCCESS);
     ASSERT_EQ(receiver.open(recv_fd), Drv::SOCK_SUCCESS);
- 
+
     ASSERT_EQ(sender.configureSend("127.0.0.1", port, 1, 0), Drv::SOCK_SUCCESS);
     ASSERT_EQ(sender.open(send_fd), Drv::SOCK_SUCCESS);
 
     // Send a zero-length datagram using the F' socket wrapper
-    U8 empty_data[1] = {0}; // Buffer is required, but size is 0
-    ASSERT_EQ(sender.send(send_fd, empty_data, 0), Drv::SOCK_SUCCESS) 
+    U8 empty_data[1] = {0};  // Buffer is required, but size is 0
+    ASSERT_EQ(sender.send(send_fd, empty_data, 0), Drv::SOCK_SUCCESS)
         << "Failed to send zero-length datagram using F' socket wrapper";
 
     // Add a small delay to ensure the packet has time to be processed by the OS
-    usleep(10000); // 10ms delay
+    usleep(10000);  // 10ms delay
 
     // Receive the zero-length datagram using the F' socket wrapper
     U8 recv_buf[1] = {0xFF};
@@ -128,12 +124,12 @@ TEST(UdpZeroLength, TestZeroLengthUdpDatagram) {
     I32 recv_status = receiver.recv(recv_fd, recv_buf, recv_buf_len);
 
     // Expect 0 (success) for a zero-length datagram.
-    ASSERT_EQ(recv_status, 0)
-        << "Expected recv_status 0 for zero-length datagram, but got " << recv_status << " with errno=" << errno;
-    
+    ASSERT_EQ(recv_status, 0) << "Expected recv_status 0 for zero-length datagram, but got " << recv_status
+                              << " with errno=" << errno;
+
     // Check that the received length is reported as 0
     ASSERT_EQ(recv_buf_len, 0) << "Expected received length 0, but got " << recv_buf_len;
-    
+
     // Check that the received buffer is unchanged meaning no data was received
     ASSERT_EQ(recv_buf[0], 0xFF) << "Expected unchanged buffer (0xFF), but got " << recv_buf[0];
 

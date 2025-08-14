@@ -14,7 +14,7 @@ Memory::~Memory() {
 }
 
 void Memory::init() {
-    (void) Memory::getSingleton();
+    (void)Memory::getSingleton();
 }
 
 Memory& Memory::getSingleton() {
@@ -35,4 +35,4 @@ MemoryHandle* Memory::getHandle() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<MemoryInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate.getHandle();
 }
-}
+}  // namespace Os

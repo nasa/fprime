@@ -23,6 +23,6 @@ namespace Test {
  * \return 0 on error, or a free port on success
  */
 U16 get_free_port(bool is_udp = false);
-}
-}
+}  // namespace Test
+}  // namespace Drv
 #endif  // DRV_TEST_PORTSELECTOR_HPP

@@ -41,7 +41,10 @@ module Ref {
     instance sendBuffComp
     instance typeDemo
     instance systemResources
+    instance dpDemo
     instance linuxTimer
+    instance comDriver
+    instance cmdSeq
 
     # ----------------------------------------------------------------------
     # Pattern graph specifiers
@@ -87,10 +90,11 @@ module Ref {
 
       # Rate group 2
       rateGroupDriverComp.CycleOut[Ports_RateGroups.rateGroup2] -> rateGroup2Comp.CycleIn
-      rateGroup2Comp.RateGroupMemberOut[0] -> ComCcsds.cmdSeq.schedIn
+      rateGroup2Comp.RateGroupMemberOut[0] -> cmdSeq.schedIn
       rateGroup2Comp.RateGroupMemberOut[1] -> sendBuffComp.SchedIn
       rateGroup2Comp.RateGroupMemberOut[2] -> SG3.schedIn
       rateGroup2Comp.RateGroupMemberOut[3] -> SG4.schedIn
+      rateGroup2Comp.RateGroupMemberOut[4] -> dpDemo.run
 
       # Rate group 3
       rateGroupDriverComp.CycleOut[Ports_RateGroups.rateGroup3] -> rateGroup3Comp.CycleIn
@@ -101,6 +105,20 @@ module Ref {
       rateGroup3Comp.RateGroupMemberOut[4] -> DataProducts.dpBufferManager.schedIn
       rateGroup3Comp.RateGroupMemberOut[5] -> DataProducts.dpWriter.schedIn
       rateGroup3Comp.RateGroupMemberOut[6] -> DataProducts.dpMgr.schedIn
+    }
+
+    connections Communications {
+      # ComDriver buffer allocations
+      comDriver.allocate      -> ComCcsds.commsBufferManager.bufferGetCallee
+      comDriver.deallocate    -> ComCcsds.commsBufferManager.bufferSendIn
+      
+      # ComDriver <-> ComStub (Uplink)
+      comDriver.$recv                     -> ComCcsds.comStub.drvReceiveIn
+      ComCcsds.comStub.drvReceiveReturnOut -> comDriver.recvReturnIn
+      
+      # ComStub <-> ComDriver (Downlink)
+      ComCcsds.comStub.drvSendOut      -> comDriver.$send
+      comDriver.ready         -> ComCcsds.comStub.drvConnected
     }
 
     connections Ref {
@@ -115,7 +133,13 @@ module Ref {
       DataProducts.dpMgr.productResponseOut -> SG1.productRecvIn
       # Send filled DP
       SG1.productSendOut -> DataProducts.dpMgr.productSendIn
-
+      # Synchronous request
+      dpDemo.productGetOut -> DataProducts.dpMgr.productGetIn
+      # Send filled DP
+      dpDemo.productSendOut -> DataProducts.dpMgr.productSendIn
+      # Asynchronous request
+      dpDemo.productRequestOut -> DataProducts.dpMgr.productRequestIn
+      DataProducts.dpMgr.productResponseOut -> dpDemo.productRecvIn
     }
 
     connections ComCcsds_CdhCore{
@@ -126,15 +150,15 @@ module Ref {
       # Router <-> CmdDispatcher
       ComCcsds.fprimeRouter.commandOut  -> CdhCore.cmdDisp.seqCmdBuff
       CdhCore.cmdDisp.seqCmdStatus     -> ComCcsds.fprimeRouter.cmdResponseIn
-      ComCcsds.cmdSeq.comCmdOut -> CdhCore.cmdDisp.seqCmdBuff
-      CdhCore.cmdDisp.seqCmdStatus -> ComCcsds.cmdSeq.cmdResponseIn
+      cmdSeq.comCmdOut -> CdhCore.cmdDisp.seqCmdBuff
+      CdhCore.cmdDisp.seqCmdStatus -> cmdSeq.cmdResponseIn
     }
 
     connections ComCcsds_FileHandling {
       # File Downlink <-> ComQueue
-      FileHandling.fileDownlink.bufferSendOut -> ComCcsds.comQueue.bufferQueueIn[FileHandling.Ports_ComBufferQueue.FILE_DOWNLINK]
-      ComCcsds.comQueue.bufferReturnOut[FileHandling.Ports_ComBufferQueue.FILE_DOWNLINK] -> FileHandling.fileDownlink.bufferReturn
-
+      FileHandling.fileDownlink.bufferSendOut -> ComCcsds.comQueue.bufferQueueIn[ComCcsds.Ports_ComBufferQueue.FILE]
+      ComCcsds.comQueue.bufferReturnOut[ComCcsds.Ports_ComBufferQueue.FILE] -> FileHandling.fileDownlink.bufferReturn
+      
       # Router <-> FileUplink
       ComCcsds.fprimeRouter.fileOut     -> FileHandling.fileUplink.bufferSendIn
       FileHandling.fileUplink.bufferSendOut -> ComCcsds.fprimeRouter.fileBufferReturnIn

@@ -3,23 +3,22 @@
 // \brief rule implementations for common testing of RawTime
 // ======================================================================
 
-#include "RulesHeaders.hpp"
 #include "RawTimeRules.hpp"
-#include "STest/Pick/Pick.hpp"
 #include "Fw/Buffer/Buffer.hpp"
-
+#include "RulesHeaders.hpp"
+#include "STest/Pick/Pick.hpp"
 
 // ------------------------------------------------------------------------------------------------------
 // Rule SelfDiffIsZero
 // ------------------------------------------------------------------------------------------------------
-Os::Test::RawTime::Tester::SelfDiffIsZero::SelfDiffIsZero() :
-    STest::Rule<Os::Test::RawTime::Tester>("SelfDiffIsZero") {}
+Os::Test::RawTime::Tester::SelfDiffIsZero::SelfDiffIsZero()
+    : STest::Rule<Os::Test::RawTime::Tester>("SelfDiffIsZero") {}
 
-bool Os::Test::RawTime::Tester::SelfDiffIsZero::precondition(const Os::Test::RawTime::Tester &state) {
+bool Os::Test::RawTime::Tester::SelfDiffIsZero::precondition(const Os::Test::RawTime::Tester& state) {
     return true;
 }
 
-void Os::Test::RawTime::Tester::SelfDiffIsZero::action(Os::Test::RawTime::Tester &state) {
+void Os::Test::RawTime::Tester::SelfDiffIsZero::action(Os::Test::RawTime::Tester& state) {
     U32 result;
     FwIndexType index = state.pick_random_index();
     Os::RawTime& raw_time = state.m_times[index];
@@ -31,14 +30,13 @@ void Os::Test::RawTime::Tester::SelfDiffIsZero::action(Os::Test::RawTime::Tester
 // ------------------------------------------------------------------------------------------------------
 // Rule Now
 // ------------------------------------------------------------------------------------------------------
-Os::Test::RawTime::Tester::Now::Now() :
-    STest::Rule<Os::Test::RawTime::Tester>("Now") {}
+Os::Test::RawTime::Tester::Now::Now() : STest::Rule<Os::Test::RawTime::Tester>("Now") {}
 
-bool Os::Test::RawTime::Tester::Now::precondition(const Os::Test::RawTime::Tester &state) {
+bool Os::Test::RawTime::Tester::Now::precondition(const Os::Test::RawTime::Tester& state) {
     return true;
 }
 
-void Os::Test::RawTime::Tester::Now::action(Os::Test::RawTime::Tester &state) {
+void Os::Test::RawTime::Tester::Now::action(Os::Test::RawTime::Tester& state) {
     FwIndexType index = state.pick_random_index();
 
     Os::RawTime::Status status = state.m_times[index].now();
@@ -49,14 +47,14 @@ void Os::Test::RawTime::Tester::Now::action(Os::Test::RawTime::Tester &state) {
 // ------------------------------------------------------------------------------------------------------
 // Rule GetTimeDiffU32
 // ------------------------------------------------------------------------------------------------------
-Os::Test::RawTime::Tester::GetTimeDiffU32::GetTimeDiffU32() :
-    STest::Rule<Os::Test::RawTime::Tester>("GetTimeDiffU32") {}
+Os::Test::RawTime::Tester::GetTimeDiffU32::GetTimeDiffU32()
+    : STest::Rule<Os::Test::RawTime::Tester>("GetTimeDiffU32") {}
 
-bool Os::Test::RawTime::Tester::GetTimeDiffU32::precondition(const Os::Test::RawTime::Tester &state) {
+bool Os::Test::RawTime::Tester::GetTimeDiffU32::precondition(const Os::Test::RawTime::Tester& state) {
     return true;
 }
 
-void Os::Test::RawTime::Tester::GetTimeDiffU32::action(Os::Test::RawTime::Tester &state) {
+void Os::Test::RawTime::Tester::GetTimeDiffU32::action(Os::Test::RawTime::Tester& state) {
     U32 result;
     FwIndexType index1 = state.pick_random_index();
     FwIndexType index2 = state.pick_random_index();
@@ -71,14 +69,14 @@ void Os::Test::RawTime::Tester::GetTimeDiffU32::action(Os::Test::RawTime::Tester
 // ------------------------------------------------------------------------------------------------------
 // Rule GetTimeInterval
 // ------------------------------------------------------------------------------------------------------
-Os::Test::RawTime::Tester::GetTimeInterval::GetTimeInterval() :
-    STest::Rule<Os::Test::RawTime::Tester>("GetTimeInterval") {}
+Os::Test::RawTime::Tester::GetTimeInterval::GetTimeInterval()
+    : STest::Rule<Os::Test::RawTime::Tester>("GetTimeInterval") {}
 
-bool Os::Test::RawTime::Tester::GetTimeInterval::precondition(const Os::Test::RawTime::Tester &state) {
+bool Os::Test::RawTime::Tester::GetTimeInterval::precondition(const Os::Test::RawTime::Tester& state) {
     return true;
 }
 
-void Os::Test::RawTime::Tester::GetTimeInterval::action(Os::Test::RawTime::Tester &state) {
+void Os::Test::RawTime::Tester::GetTimeInterval::action(Os::Test::RawTime::Tester& state) {
     Fw::TimeInterval interval;
     FwIndexType index1 = state.pick_random_index();
     FwIndexType index2 = state.pick_random_index();
@@ -92,14 +90,13 @@ void Os::Test::RawTime::Tester::GetTimeInterval::action(Os::Test::RawTime::Teste
 // ------------------------------------------------------------------------------------------------------
 // Rule Serialization
 // ------------------------------------------------------------------------------------------------------
-Os::Test::RawTime::Tester::Serialization::Serialization() :
-    STest::Rule<Os::Test::RawTime::Tester>("Serialization") {}
+Os::Test::RawTime::Tester::Serialization::Serialization() : STest::Rule<Os::Test::RawTime::Tester>("Serialization") {}
 
-bool Os::Test::RawTime::Tester::Serialization::precondition(const Os::Test::RawTime::Tester &state) {
+bool Os::Test::RawTime::Tester::Serialization::precondition(const Os::Test::RawTime::Tester& state) {
     return true;
 }
 
-void Os::Test::RawTime::Tester::Serialization::action(Os::Test::RawTime::Tester &state) {
+void Os::Test::RawTime::Tester::Serialization::action(Os::Test::RawTime::Tester& state) {
     // In this test, we:
     //    1. Serialize a RawTime object in a buffer
     //    2. Deserialize the buffer into a new (stack-allocated) RawTime object
@@ -121,7 +118,7 @@ void Os::Test::RawTime::Tester::Serialization::action(Os::Test::RawTime::Tester 
     // We make sure that serialization and deserialization are successful by deserializing
     // into a new Os::RawTime object and comparing the difference between the original RawTime
     // test and the deserialized RawTime
-    U32 result = 1; // initialize to non-zero value to ensure result is set by getDiffUsec
+    U32 result = 1;  // initialize to non-zero value to ensure result is set by getDiffUsec
     Os::RawTime::Status status = state.m_times[index].getDiffUsec(raw_time, result);
     ASSERT_EQ(status, Os::RawTime::Status::OP_OK);
     // We expect the result to be 0 since the deserialized RawTime should be the same as the original
@@ -131,16 +128,16 @@ void Os::Test::RawTime::Tester::Serialization::action(Os::Test::RawTime::Tester 
 // ------------------------------------------------------------------------------------------------------
 // Rule DiffU32Overflow
 // ------------------------------------------------------------------------------------------------------
-Os::Test::RawTime::Tester::DiffU32Overflow::DiffU32Overflow() :
-    STest::Rule<Os::Test::RawTime::Tester>("DiffU32Overflow") {}
+Os::Test::RawTime::Tester::DiffU32Overflow::DiffU32Overflow()
+    : STest::Rule<Os::Test::RawTime::Tester>("DiffU32Overflow") {}
 
-bool Os::Test::RawTime::Tester::DiffU32Overflow::precondition(const Os::Test::RawTime::Tester &state) {
+bool Os::Test::RawTime::Tester::DiffU32Overflow::precondition(const Os::Test::RawTime::Tester& state) {
     return true;
 }
 
-void Os::Test::RawTime::Tester::DiffU32Overflow::action(Os::Test::RawTime::Tester &state) {
+void Os::Test::RawTime::Tester::DiffU32Overflow::action(Os::Test::RawTime::Tester& state) {
     U32 result;
-    Os::RawTime zero_time; // uninitialized time object is zero
+    Os::RawTime zero_time;  // uninitialized time object is zero
 
     FwIndexType index = state.pick_random_index();
     Os::RawTime& now_time = state.m_times[index];

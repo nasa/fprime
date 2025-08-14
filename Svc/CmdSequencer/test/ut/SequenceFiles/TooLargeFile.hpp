@@ -12,50 +12,40 @@
 #ifndef Svc_SequenceFiles_TooLargeFile_HPP
 #define Svc_SequenceFiles_TooLargeFile_HPP
 
-#include "Svc/CmdSequencer/test/ut/SequenceFiles/File.hpp"
 #include "Svc/CmdSequencer/CmdSequencerImpl.hpp"
+#include "Svc/CmdSequencer/test/ut/SequenceFiles/File.hpp"
 
 namespace Svc {
 
-  namespace SequenceFiles {
+namespace SequenceFiles {
 
-    //! A file that is too large for the sequence buffer
-    class TooLargeFile :
-      public File
-    {
+//! A file that is too large for the sequence buffer
+class TooLargeFile : public File {
+  public:
+    //! Construct a TooLargeFile
+    TooLargeFile(const U32 a_bufferSize,   //!< The sequence buffer size
+                 const Format::t a_format  //!< The file format
+    );
 
-      public:
+  public:
+    //! Serialize the file in F Prime format
+    void serializeFPrime(Fw::SerializeBufferBase& buffer  //!< The buffer
+    );
 
-        //! Construct a TooLargeFile
-        TooLargeFile(
-            const U32 a_bufferSize, //!< The sequence buffer size
-            const Format::t a_format //!< The file format
-        );
+    //! Serialize the file in AMPCS format
+    void serializeAMPCS(Fw::SerializeBufferBase& buffer  //!< The buffer
+    );
 
-      public:
+    //! Get the data size
+    U32 getDataSize() const;
 
-        //! Serialize the file in F Prime format
-        void serializeFPrime(
-            Fw::SerializeBufferBase& buffer //!< The buffer
-        );
+  public:
+    //! The sequence buffer size
+    const U32 bufferSize;
+};
 
-        //! Serialize the file in AMPCS format
-        void serializeAMPCS(
-            Fw::SerializeBufferBase& buffer //!< The buffer
-        );
+}  // namespace SequenceFiles
 
-        //! Get the data size
-        U32 getDataSize() const;
-
-      public:
-
-        //! The sequence buffer size
-        const U32 bufferSize;
-
-    };
-
-  }
-
-}
+}  // namespace Svc
 
 #endif
