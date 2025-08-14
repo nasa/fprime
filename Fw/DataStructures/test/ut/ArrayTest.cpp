@@ -23,7 +23,7 @@ TEST(Array, InitializerListConstructor) {
     for (FwSizeType i = 0; i < 3; i++) {
         ASSERT_EQ(a[i], i + 1);
     }
-    // Explicit call to constructor in assignment
+    // Implicit call to constructor in assignment
     Array<U32, 3> b = {1, 2, 3};
     for (FwSizeType i = 0; i < 3; i++) {
         ASSERT_EQ(b[i], i + 1);
@@ -37,7 +37,7 @@ TEST(Array, RawArrayConstructor) {
     for (FwSizeType i = 0; i < 3; i++) {
         ASSERT_EQ(a[i], i + 1);
     }
-    // Explicit call to constructor in assignment
+    // Implicit call to constructor in assignment
     Array<U32, 3> b = elements;
     for (FwSizeType i = 0; i < 3; i++) {
         ASSERT_EQ(b[i], i + 1);

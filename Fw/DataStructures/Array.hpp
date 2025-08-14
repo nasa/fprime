@@ -59,7 +59,9 @@ class Array final {
     //! Single-element constructor
     explicit Array(const T& element  //!< The element
     ) {
-        *this = element;
+        for (FwSizeType i = 0; i < S; i++) {
+            this->m_elements[i] = element;
+        }
     }
 
     //! Copy constructor
@@ -117,16 +119,6 @@ class Array final {
         static_assert(S1 == S, "array size must match");
         for (FwSizeType i = 0; i < S; i++) {
             this->m_elements[i] = elements[i];
-        }
-        return *this;
-    }
-
-    //! operator= (single element)
-    //! \return *this
-    Array<T, S>& operator=(const T& element  //!< The element
-    ) {
-        for (FwSizeType i = 0; i < S; i++) {
-            this->m_elements[i] = element;
         }
         return *this;
     }
