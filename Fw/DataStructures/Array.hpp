@@ -43,29 +43,29 @@ class Array final {
     //! Initializer list constructor
     Array(const std::initializer_list<T>& il  //!< The initializer list
     ) {
-        FW_ASSERT(il.size() == S, static_cast<FwAssertArgType>(il.size()), static_cast<FwAssertArgType>(S));
-        FwSizeType i = 0;
-        for (const auto& e : il) {
-            FW_ASSERT(i < S);
-            this->m_elements[i] = e;
-            i++;
-        }
+        *this = il;
+    }
+
+    //! Raw array constructor
+    //! We use a template to force the array size to match S
+    //! Without the template, C++ may accept a smaller size
+    template <FwSizeType S1>
+    Array(const T (&elements)[S1]  //!< The array
+    ) {
+        static_assert(S1 == S, "array size must match");
+        *this = elements;
     }
 
     //! Single-element constructor
     explicit Array(const T& element  //!< The element
     ) {
-        for (FwSizeType i = 0; i < S; i++) {
-            this->m_elements[i] = element;
-        }
+        *this = element;
     }
 
     //! Copy constructor
     Array(const Array<T, S>& a  //!< The array to copy
     ) {
-        for (FwSizeType i = 0; i < S; i++) {
-            this->m_elements[i] = a.m_elements[i];
-        }
+        *this = a;
     }
 
     //! Destructor
@@ -90,6 +90,45 @@ class Array final {
     ) const {
         FW_ASSERT(i < S, static_cast<FwAssertArgType>(i));
         return this->m_elements[i];
+    }
+
+    //! operator= (initializer list)
+    //! \return *this
+    Array<T, S>& operator=(const std::initializer_list<T>& il  //!< The initializer list
+    ) {
+        // Since we are required to use C++11, this has to be a runtime check
+        // In C++14, it can be a static check
+        FW_ASSERT(il.size() == S, static_cast<FwAssertArgType>(il.size()), static_cast<FwAssertArgType>(S));
+        FwSizeType i = 0;
+        for (const auto& e : il) {
+            FW_ASSERT(i < S);
+            this->m_elements[i] = e;
+            i++;
+        }
+        return *this;
+    }
+
+    //! operator= (raw array)
+    //! We use a template to force the array size to match S
+    //! Without the template, C++ may accept a smaller size
+    //! \return *this
+    template <FwSizeType S1>
+    Array<T, S>& operator=(const T (&elements)[S1]) {
+        static_assert(S1 == S, "array size must match");
+        for (FwSizeType i = 0; i < S; i++) {
+            this->m_elements[i] = elements[i];
+        }
+        return *this;
+    }
+
+    //! operator= (single element)
+    //! \return *this
+    Array<T, S>& operator=(const T& element  //!< The element
+    ) {
+        for (FwSizeType i = 0; i < S; i++) {
+            this->m_elements[i] = element;
+        }
+        return *this;
     }
 
     //! Copy assignment operator
