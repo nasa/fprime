@@ -7,6 +7,8 @@
 #ifndef Fw_Array_HPP
 #define Fw_Array_HPP
 
+#include <initializer_list>
+
 #include "Fw/DataStructures/ExternalArray.hpp"
 #include "Fw/FPrimeBasicTypes.hpp"
 #include "Fw/Types/Assert.hpp"
@@ -38,14 +40,16 @@ class Array final {
     //! Zero-argument constructor
     Array() {}
 
-    //! Array constructor
-    //! Use a template to enforce exact array size
-    //! Otherwise C++ may implicitly convert a smaller array to an array of size S
-    template <FwSizeType S1>
-    Array(const T (&elements)[S1]  //!< The array
+    //! Initializer list constructor
+    Array(const std::initializer_list<T>& il  //!< The initializer list
     ) {
-        static_assert(S1 == S, "array size must match");
-        *this = elements;
+        FW_ASSERT(il.size() == S, static_cast<FwAssertArgType>(il.size()), static_cast<FwAssertArgType>(S));
+        FwSizeType i = 0;
+        for (const auto& e : il) {
+            FW_ASSERT(i < S);
+            this->m_elements[i] = e;
+            i++;
+        }
     }
 
     //! Single-element constructor
@@ -95,16 +99,6 @@ class Array final {
             for (FwSizeType i = 0; i < S; i++) {
                 this->m_elements[i] = a.m_elements[i];
             }
-        }
-        return *this;
-    }
-
-    //! Array assignment operator
-    //! \return *this
-    Array<T, S>& operator=(const Elements& elements  //!< The elements
-    ) {
-        for (FwSizeType i = 0; i < S; i++) {
-            this->m_elements[i] = elements[i];
         }
         return *this;
     }
