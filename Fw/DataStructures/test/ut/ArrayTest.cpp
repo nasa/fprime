@@ -17,16 +17,10 @@ TEST(Array, ZeroArgConstructor) {
     }
 }
 
-TEST(Array, InitializerListConstructor) {
-    // Explicit call to constructor
+TEST(Array, ArrayConstructor) {
     Array<U32, 3> a({1, 2, 3});
     for (FwSizeType i = 0; i < 3; i++) {
         ASSERT_EQ(a[i], i + 1);
-    }
-    // Implicit call to constructor via initialization
-    Array<U32, 3> b = {1, 2, 3};
-    for (FwSizeType i = 0; i < 3; i++) {
-        ASSERT_EQ(b[i], i + 1);
     }
 }
 
@@ -54,7 +48,7 @@ TEST(Array, CopyConstructor) {
 }
 
 TEST(Array, Subscript) {
-    Array<U32, 3> a = {0, 1, 2};
+    Array<U32, 3> a({0, 1, 2});
     // Constant access
     ASSERT_EQ(a[1], 1);
     // Mutable access
@@ -89,7 +83,7 @@ TEST(Array, GetElements) {
 }
 
 TEST(Array, AsExternalArray) {
-    Array<U32, 3> a = {1, 2, 3};
+    Array<U32, 3> a({1, 2, 3});
     ExternalArray<U32> ea = a.asExternalArray();
     ASSERT_EQ(ea[0], 1);
 }
