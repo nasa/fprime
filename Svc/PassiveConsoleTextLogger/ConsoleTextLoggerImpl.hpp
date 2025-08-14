@@ -13,7 +13,7 @@ class ConsoleTextLoggerImpl final : public PassiveTextLoggerComponentBase {
     ~ConsoleTextLoggerImpl();
 
     //! Configure component with event ID filters
-    void configure(FwEventIdType* filteredIds, FwSizeType count);
+    void configure(const FwEventIdType* filteredIds, FwSizeType count);
 
   private:
     // downcalls for input ports

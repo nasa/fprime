@@ -51,7 +51,7 @@ class ActiveTextLogger final : public ActiveTextLoggerComponentBase {
     bool set_log_file(const char* fileName, const U32 maxSize, const U32 maxBackups = 10);
 
     //! Configure component with event ID filters
-    void configure(FwEventIdType* filteredIds, FwSizeType count);
+    void configure(const FwEventIdType* filteredIds, FwSizeType count);
 
   private:
     // ----------------------------------------------------------------------

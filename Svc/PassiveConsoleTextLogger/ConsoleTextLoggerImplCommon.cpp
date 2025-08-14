@@ -11,7 +11,7 @@ ConsoleTextLoggerImpl::ConsoleTextLoggerImpl(const char* compName) : PassiveText
 
 ConsoleTextLoggerImpl::~ConsoleTextLoggerImpl() {}
 
-void ConsoleTextLoggerImpl::configure(FwEventIdType* filteredIds, FwSizeType count) {
+void ConsoleTextLoggerImpl::configure(const FwEventIdType* filteredIds, FwSizeType count) {
     FW_ASSERT(count < PASSIVE_TEXT_LOGGER_ID_FILTER_SIZE, count, PASSIVE_TEXT_LOGGER_ID_FILTER_SIZE);
 
     this->m_numFilteredIDs = count;
