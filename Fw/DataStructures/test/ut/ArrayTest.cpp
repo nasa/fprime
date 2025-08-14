@@ -32,7 +32,7 @@ TEST(Array, InitializerListConstructor) {
 
 TEST(Array, RawArrayConstructor) {
     // Explicit call to constructor
-    U32 elements[3] = { 1, 2, 3 };
+    U32 elements[3] = {1, 2, 3};
     Array<U32, 3> a(elements);
     for (FwSizeType i = 0; i < 3; i++) {
         ASSERT_EQ(a[i], i + 1);
