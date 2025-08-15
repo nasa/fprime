@@ -511,6 +511,72 @@ DirectiveError FpySequencerTester::tester_op_sitofp() {
 DirectiveError FpySequencerTester::tester_op_uitofp() {
     return this->cmp.op_uitofp();
 }
+DirectiveError FpySequencerTester::tester_op_iadd() {
+    return this->cmp.op_iadd();
+}
+DirectiveError FpySequencerTester::tester_op_isub() {
+    return this->cmp.op_isub();
+}
+DirectiveError FpySequencerTester::tester_op_imul() {
+    return this->cmp.op_imul();
+}
+DirectiveError FpySequencerTester::tester_op_udiv() {
+    return this->cmp.op_udiv();
+}
+DirectiveError FpySequencerTester::tester_op_sdiv() {
+    return this->cmp.op_sdiv();
+}
+DirectiveError FpySequencerTester::tester_op_imod() {
+    return this->cmp.op_imod();
+}
+DirectiveError FpySequencerTester::tester_op_fadd() {
+    return this->cmp.op_fadd();
+}
+DirectiveError FpySequencerTester::tester_op_fsub() {
+    return this->cmp.op_fsub();
+}
+DirectiveError FpySequencerTester::tester_op_fmul() {
+    return this->cmp.op_fmul();
+}
+DirectiveError FpySequencerTester::tester_op_fdiv() {
+    return this->cmp.op_fdiv();
+}
+DirectiveError FpySequencerTester::tester_op_float_floor_div() {
+    return this->cmp.op_float_floor_div();
+}
+DirectiveError FpySequencerTester::tester_op_fpow() {
+    return this->cmp.op_fpow();
+}
+DirectiveError FpySequencerTester::tester_op_flog() {
+    return this->cmp.op_flog();
+}
+DirectiveError FpySequencerTester::tester_op_siext_8_64() {
+    return this->cmp.op_siext_8_64();
+}
+DirectiveError FpySequencerTester::tester_op_siext_16_64() {
+    return this->cmp.op_siext_16_64();
+}
+DirectiveError FpySequencerTester::tester_op_siext_32_64() {
+    return this->cmp.op_siext_32_64();
+}
+DirectiveError FpySequencerTester::tester_op_ziext_8_64() {
+    return this->cmp.op_ziext_8_64();
+}
+DirectiveError FpySequencerTester::tester_op_ziext_16_64() {
+    return this->cmp.op_ziext_16_64();
+}
+DirectiveError FpySequencerTester::tester_op_ziext_32_64() {
+    return this->cmp.op_ziext_32_64();
+}
+DirectiveError FpySequencerTester::tester_op_itrunc_64_8() {
+    return this->cmp.op_itrunc_64_8();
+}
+DirectiveError FpySequencerTester::tester_op_itrunc_64_16() {
+    return this->cmp.op_itrunc_64_16();
+}
+DirectiveError FpySequencerTester::tester_op_itrunc_64_32() {
+    return this->cmp.op_itrunc_64_32();
+}
 void FpySequencerTester::tester_doDispatch() {
     this->cmp.doDispatch();
 }

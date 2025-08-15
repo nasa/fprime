@@ -771,6 +771,96 @@ TEST_F(FpySequencerTester, uitofp) {
     ASSERT_EQ(expected, tester_pop<F64>());
 }
 
+TEST_F(FpySequencerTester, iadd) {
+    tester_push<I64>(100);
+    tester_push<I64>(23);
+    ASSERT_EQ(tester_op_iadd(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), 123);
+}
+
+TEST_F(FpySequencerTester, isub) {
+    tester_push<I64>(150);
+    tester_push<I64>(27);
+    ASSERT_EQ(tester_op_isub(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), 123);
+}
+
+TEST_F(FpySequencerTester, imul) {
+    tester_push<I64>(41);
+    tester_push<I64>(3);
+    ASSERT_EQ(tester_op_imul(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), 123);
+}
+
+TEST_F(FpySequencerTester, udiv) {
+    tester_push<U64>(246);
+    tester_push<U64>(2);
+    ASSERT_EQ(tester_op_udiv(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<U64>(), 123);
+}
+
+TEST_F(FpySequencerTester, sdiv) {
+    tester_push<I64>(-246);
+    tester_push<I64>(-2);
+    ASSERT_EQ(tester_op_sdiv(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), 123);
+}
+
+TEST_F(FpySequencerTester, imod) {
+    tester_push<I64>(123);
+    tester_push<I64>(10);
+    ASSERT_EQ(tester_op_imod(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), 3);
+}
+
+TEST_F(FpySequencerTester, fadd) {
+    tester_push<F64>(100.5);
+    tester_push<F64>(22.5);
+    ASSERT_EQ(tester_op_fadd(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<F64>(), 123.0);
+}
+
+TEST_F(FpySequencerTester, fsub) {
+    tester_push<F64>(150.5);
+    tester_push<F64>(27.5);
+    ASSERT_EQ(tester_op_fsub(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<F64>(), 123.0);
+}
+
+TEST_F(FpySequencerTester, fmul) {
+    tester_push<F64>(41.0);
+    tester_push<F64>(3.0);
+    ASSERT_EQ(tester_op_fmul(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<F64>(), 123.0);
+}
+
+TEST_F(FpySequencerTester, fdiv) {
+    tester_push<F64>(246.0);
+    tester_push<F64>(2.0);
+    ASSERT_EQ(tester_op_fdiv(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<F64>(), 123.0);
+}
+
+TEST_F(FpySequencerTester, float_floor_div) {
+    tester_push<F64>(246.8);
+    tester_push<F64>(2.0);
+    ASSERT_EQ(tester_op_float_floor_div(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<F64>(), 123.0);
+}
+
+TEST_F(FpySequencerTester, fpow) {
+    tester_push<F64>(3.0);
+    tester_push<F64>(2.0);
+    ASSERT_EQ(tester_op_fpow(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<F64>(), 9.0);
+}
+
+TEST_F(FpySequencerTester, flog) {
+    tester_push<F64>(2.718281828459045);  // e
+    ASSERT_EQ(tester_op_flog(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<F64>(), 1.0);
+}
+
 TEST_F(FpySequencerTester, exit) {
     FpySequencer_ExitDirective directive;
     DirectiveError err = DirectiveError::NO_ERROR;
