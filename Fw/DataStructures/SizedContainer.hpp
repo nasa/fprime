@@ -59,9 +59,11 @@ class SizedContainer {
     virtual FwSizeType getCapacity() const = 0;
 
     //! Check whether the container is empty
+    //! \return True if the container is empty
     bool isEmpty() const { return this->getSize() == 0; }
 
     //! Check whether the container is full
+    //! \return True if the container is full
     bool isFull() const { return this->getSize() >= this->getCapacity(); }
 };
 
