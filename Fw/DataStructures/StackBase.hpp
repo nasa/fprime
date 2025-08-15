@@ -7,14 +7,14 @@
 #ifndef Fw_StackBase_HPP
 #define Fw_StackBase_HPP
 
-#include "Fw/FPrimeBasicTypes.hpp"
+#include "Fw/DataStructures/SizedContainer.hpp"
 #include "Fw/Types/Assert.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
 
 namespace Fw {
 
 template <typename T>
-class StackBase {
+class StackBase : public SizedContainer {
   private:
     // ----------------------------------------------------------------------
     // Private constructors
@@ -30,7 +30,7 @@ class StackBase {
     // ----------------------------------------------------------------------
 
     //! Zero-argument constructor
-    StackBase() {}
+    StackBase() : SizedContainer() {}
 
     //! Destructor
     virtual ~StackBase() = default;
@@ -49,9 +49,6 @@ class StackBase {
     // ----------------------------------------------------------------------
     // Public member functions
     // ----------------------------------------------------------------------
-
-    //! Clear the stack
-    virtual void clear() = 0;
 
     //! Get an item at an index.
     //! Index 0 is the rightmost (latest) element in the stack.
@@ -98,14 +95,6 @@ class StackBase {
     //! \return SUCCESS if item popped
     virtual Success pop(T& e  //!< The item (output)
                         ) = 0;
-
-    //! Get the size (number of items stored in the stack)
-    //! \return The size
-    virtual FwSizeType getSize() const = 0;
-
-    //! Get the capacity (maximum number of items stored in the stack)
-    //! \return The capacity
-    virtual FwSizeType getCapacity() const = 0;
 };
 
 }  // namespace Fw
