@@ -19,19 +19,28 @@ from fprime_gds.common.utils.config_manager import ConfigManager
 class SoakAnalysisResults:
     """Container for soak test analysis results"""
     def __init__(self):
-        self.health_issues = []
         self.buffer_metrics = {}
         self.system_resources = {}
         self.alerts = []
         self.timestamp = datetime.now().isoformat()
     
-    def add_alert(self, alert_message):
-        """Add an alert to the results"""
-        self.alerts.append(alert_message)
+    def add_alert(self, severity, message, **details):
+        """Add an alert with severity level
         
-    def has_critical_issues(self):
-        """Check if there are any critical issues that should fail the test"""
-        return bool(self.alerts) or any('FATAL' in issue.get('severity', '') for issue in self.health_issues)
+        Args:
+            severity: 'FATAL' or 'WARNING'
+            message: Alert message
+            **details: Additional context (timestamp, channel_name, value, etc.)
+        """
+        alert = {
+            'severity': severity,
+            'message': message,
+            'timestamp': details.get('timestamp', ''),
+            **details
+        }
+        self.alerts.append(alert)
+        
+
     
     def analyze_trends(self):
         """Analyze trends over time within the ComLogger data"""
@@ -39,17 +48,13 @@ class SoakAnalysisResults:
         for metric_name, readings in self.buffer_metrics.items():
             if len(readings) > 10:  # Need sufficient data points
                 self._print_data_range(metric_name, readings, "Buffer")
-                trend_alert = self._detect_upward_trend(metric_name, readings, "Buffer")
-                if trend_alert:
-                    self.add_alert(trend_alert)
+                self._detect_upward_trend(metric_name, readings, "Buffer")
         
         # Analyze resource trends  
         for metric_name, readings in self.system_resources.items():
             if len(readings) > 10:  # Need sufficient data points
                 self._print_data_range(metric_name, readings, "Resource")
-                trend_alert = self._detect_upward_trend(metric_name, readings, "Resource")
-                if trend_alert:
-                    self.add_alert(trend_alert)
+                self._detect_upward_trend(metric_name, readings, "Resource")
     
     def _print_data_range(self, metric_name, readings, metric_type):
         """Print the time range of data for this metric"""
@@ -63,7 +68,7 @@ class SoakAnalysisResults:
     def _detect_upward_trend(self, metric_name, readings, metric_type):
         """Detect if a metric is trending upward over time"""
         if len(readings) < 10:
-            return None
+            return
             
         # Sort by timestamp to ensure chronological order
         sorted_readings = sorted(readings, key=lambda x: x['timestamp'])
@@ -84,11 +89,9 @@ class SoakAnalysisResults:
             
             # Alert thresholds
             if metric_type == "Buffer" and growth_rate > 15:  # 15% buffer growth
-                return f"{metric_type} trending up: {metric_name} increased {growth_rate:.1f}% over session"
+                self.add_alert('WARNING', f"{metric_type} trending up: {metric_name} increased {growth_rate:.1f}% over session")
             elif metric_type == "Resource" and growth_rate > 25:  # 25% resource growth  
-                return f"{metric_type} trending up: {metric_name} increased {growth_rate:.1f}% over session"
-                
-        return None
+                self.add_alert('WARNING', f"{metric_type} trending up: {metric_name} increased {growth_rate:.1f}% over session")
 
 
 
@@ -108,21 +111,18 @@ class EventCollector(DataHandler):
             description = str(event_data.args) if hasattr(event_data, 'args') else ""
             timestamp = str(event_data.time) if hasattr(event_data, 'time') else ""
             
-            # Check for health issues
+            # Check for health issues and add alerts
+            # Map events with 'Fatal' in the message to FATAL severity, all others to WARNING
             if str(severity) == "EventSeverity.FATAL" or str(severity) == "EventSeverity.WARNING_HI":
-                issue = {
-                    'timestamp': timestamp,
-                    'event_name': event_name,
-                    'severity': severity,
-                    'description': description
-                }
-                self.results.health_issues.append(issue)
-                
-                # Add to alerts if critical
-                if 'FATAL' in severity:
-                    self.results.add_alert(f"FATAL: {event_name} - {description}")
-                elif 'WARNING' in severity:
-                    self.results.add_alert(f"WARNING: {event_name} - {description}")
+                message = f"{event_name} - {description}"
+                # Check if the message contains "Fatal" for FATAL severity
+                if "Fatal" in message or "FATAL" in message or str(severity) == "EventSeverity.FATAL":
+                    alert_severity = 'FATAL'
+                else:
+                    alert_severity = 'WARNING'
+                    
+                self.results.add_alert(alert_severity, message, 
+                                     timestamp=timestamp, event_name=event_name)
                     
         except Exception as e:
             # Silently ignore parsing errors to be robust
@@ -150,11 +150,11 @@ class ChannelCollector(DataHandler):
             }
             
             # Handle buffer metrics
-            if 'BufferManager' in ch_name or 'bufferManager' in ch_name:
+            if 'BufferManager' in ch_name:
                 if ch_name not in self.results.buffer_metrics:
                     self.results.buffer_metrics[ch_name] = []
                 
-                value = int(ch_val) if isinstance(ch_val, (int, float)) else int(str(ch_val).split()[0])
+                value = int(ch_val)  
                 self.results.buffer_metrics[ch_name].append({
                     'timestamp': timestamp,
                     'value': value
@@ -162,14 +162,8 @@ class ChannelCollector(DataHandler):
                 
                 # Check for buffer issues
                 if value == 0:
-                    issue = {
-                        'timestamp': timestamp,
-                        'channel_name': ch_name,
-                        'value': value,
-                        'description': 'Buffer exhaustion detected'
-                    }
-                    self.results.health_issues.append(issue)
-                    self.results.add_alert(f"CRITICAL: Buffer exhaustion detected: {ch_name} = 0")
+                    self.results.add_alert('WARNING', f"Buffer exhaustion detected: {ch_name} = 0", 
+                                         timestamp=timestamp, channel_name=ch_name, value=value)
             
             # Handle system resources
             elif 'systemResources' in ch_name:
@@ -184,23 +178,11 @@ class ChannelCollector(DataHandler):
                 
                 # Check for resource issues
                 if 'cpu' in ch_name.lower() and value > 90.0:
-                    issue = {
-                        'timestamp': timestamp,
-                        'channel_name': ch_name,
-                        'value': value,
-                        'description': 'High CPU usage detected'
-                    }
-                    self.results.health_issues.append(issue)
-                    self.results.add_alert(f"WARNING: High CPU usage detected: {ch_name} = {value}%")
+                    self.results.add_alert('WARNING', f"High CPU usage detected: {ch_name} = {value}%", 
+                                         timestamp=timestamp, channel_name=ch_name, value=value)
                 elif 'memory' in ch_name.lower() and value > 90.0:
-                    issue = {
-                        'timestamp': timestamp,
-                        'channel_name': ch_name,
-                        'value': value,
-                        'description': 'High memory usage detected'
-                    }
-                    self.results.health_issues.append(issue)
-                    self.results.add_alert(f"WARNING: High memory usage detected: {ch_name} = {value}%")
+                    self.results.add_alert('WARNING', f"High memory usage detected: {ch_name} = {value}%", 
+                                         timestamp=timestamp, channel_name=ch_name, value=value)
                     
         except Exception as e:
             # Silently ignore parsing errors to be robust
@@ -323,7 +305,6 @@ def main():
     # Print results
     print("\nMONITORING RESULTS:")
     print("-"*50)
-    print(f"Health Issues Found: {len(results.health_issues)}")
     print(f"Buffer Metrics Tracked: {len(results.buffer_metrics)}")
     print(f"System Resources Tracked: {len(results.system_resources)}")
     print(f"Alerts Generated: {len(results.alerts)}")
@@ -334,19 +315,16 @@ def main():
     if total_readings > 0:
         print(f"Total Data Points Analyzed: {total_readings}")
     
+    # Set return code to 1 if there are any fatal alerts
+    if any(alert['severity'] == 'FATAL' for alert in results.alerts):
+        return_code = 1
+    
     if results.alerts:
         print("\nALERTS:")
         for alert in results.alerts:
-            if "trending up" in alert:
-                print(f"{alert}")
-            else:
-                print(f"{alert}")
-    
-    if results.health_issues:
-        print("\nHEALTH ISSUES:")
-        for issue in results.health_issues:
-            print(f"{issue['severity']}: {issue['event_name']}")
-            return_code = 1
+            severity = alert['severity']
+            message = alert['message']
+            print(f"{severity}: {message}")
     
     # Show buffer status summary
     if results.buffer_metrics:
