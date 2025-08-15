@@ -14,7 +14,7 @@ It represents an abstract base class for a stack.
 
 ## 2. Base Class
 
-`Stackbase<T>` is publicly derived from [`SizedContainer`](SizedContainer.md).
+`StackBase<T>` is publicly derived from [`SizedContainer`](SizedContainer.md).
 
 ## 3. Private Constructors
 

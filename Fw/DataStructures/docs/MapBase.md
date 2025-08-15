@@ -13,7 +13,11 @@ It represents an abstract base class for a map.
 |`typename`|`K`|The type of a key in the map|
 |`typename`|`V`|The type of a value in the map|
 
-## 2. Deleted Elements
+## 2. Base Class
+
+`MapBase<K, V>` is publicly derived from [`SizedContainer`](SizedContainer.md).
+
+## 3. Deleted Elements
 
 The following elements are private and are defined `= delete`:
 
@@ -27,7 +31,7 @@ The following elements are private and are defined `= delete`:
    MapBase& operator=(const MapBase&)
    ```
 
-## 3. Public Types
+## 4. Public Types
 
 `MapBase` defines the following public types:
 
@@ -35,9 +39,9 @@ The following elements are private and are defined `= delete`:
 |----|----------|
 |`ConstIterator`|Alias of [`MapConstIterator<K, V>`](MapConstIterator.md)|
 
-## 4. Protected Constructors and Destructors
+## 5. Protected Constructors and Destructors
 
-### 4.1. Zero-Argument Constructor
+### 5.1. Zero-Argument Constructor
 
 ```c++
 MapBase()
@@ -45,7 +49,7 @@ MapBase()
 
 Use default initialization of members.
 
-### 4.2. Destructor
+### 5.2. Destructor
 
 ```c++
 virtual ~MapBase()
@@ -53,9 +57,9 @@ virtual ~MapBase()
 
 Defined as `= default`.
 
-## 5. Public Member Functions
+## 6. Public Member Functions
 
-### 5.1. begin
+### 6.1. begin
 
 ```c++
 virtual ConstIterator begin() const = 0.
@@ -80,23 +84,7 @@ void f(MapBase<U16, U32>& map) {
 }
 ```
 
-### 5.2. clear
-
-```c++
-virtual void clear() = 0
-```
-
-Clear the map.
-
-_Example:_
-```c++
-void f(MapBase<U16, U32>& map) {
-    map.clear();
-    ASSERT_EQ(map.getSize(), 0);
-}
-```
-
-### 5.3. copyDataFrom
+### 6.2. copyDataFrom
 
 ```c++
 void copyDataFrom(const MapBase<K, V>& map)
@@ -134,7 +122,7 @@ void f(MapBase<U16, U32>& m1, MapBase<U16, U32>& m2) {
 }
 ```
 
-### 5.4. end
+### 6.3. end
 
 ```c++
 virtual ConstIterator end() const = 0
@@ -160,7 +148,7 @@ void f(MapBase<U16, U32>& map) {
 }
 ```
 
-### 5.5. find
+### 6.4. find
 
 ```c++
 virtual Success find(const K& key, V& value) const = 0
@@ -186,36 +174,7 @@ void f(const MapBase<U16, U32>& map) {
 }
 ```
 
-<a name="getCapacity"></a>
-### 5.6. getCapacity
-
-```c++
-virtual FwSizeType getCapacity() const = 0
-```
-
-Return the current capacity.
-
-_Example:_
-```c++
-void f(const MapBase<U16, U32>& map) {
-    const auto size = map.getSize();
-    const auto capacity = map.getCapacity();
-    ASSERT_LE(size, capacity);
-}
-```
-
-### 5.7. getSize
-
-```c++
-virtual FwSizeType getSize() const = 0
-```
-
-Return the current size.
-
-_Example:_
-See [**getCapacity**](MapBase.md#getCapacity).
-
-### 5.8. insert
+### 6.5. insert
 
 ```c++
 virtual Success insert(const K& key, const V& value) = 0
@@ -242,7 +201,7 @@ void f(MapBase<U16, U32>& map) {
 }
 ```
 
-### 5.9. remove
+### 6.6. remove
 
 ```c++
 virtual Success remove(const K& key, V& value) = 0

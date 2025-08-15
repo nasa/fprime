@@ -12,7 +12,11 @@ It represents an abstract base class for a set.
 |----|----|-------|
 |`typename`|`T`|The type of an element in the set|
 
-## 2. Deleted Elements
+## 2. Base Class
+
+`SetBase<T>` is publicly derived from [`SizedContainer`](SizedContainer.md).
+
+## 3. Deleted Elements
 
 The following elements are private and are defined `= delete`:
 
@@ -26,7 +30,7 @@ The following elements are private and are defined `= delete`:
    SetBase& operator=(const SetBase&)
    ```
 
-## 3. Public Types
+## 4. Public Types
 
 `SetBase` defines the following public types:
 
@@ -34,9 +38,9 @@ The following elements are private and are defined `= delete`:
 |----|----------|
 |`ConstIterator`|Alias of [`SetConstIterator<T>`](SetConstIterator.md)|
 
-## 4. Protected Constructors and Destructors
+## 5. Protected Constructors and Destructors
 
-### 4.1. Zero-Argument Constructor
+### 5.1. Zero-Argument Constructor
 
 ```c++
 SetBase()
@@ -44,7 +48,7 @@ SetBase()
 
 Use default initialization of members.
 
-### 4.2. Destructor
+### 5.2. Destructor
 
 ```c++
 virtual ~SetBase()
@@ -52,9 +56,9 @@ virtual ~SetBase()
 
 Defined as `= default`.
 
-## 5. Public Member Functions
+## 6. Public Member Functions
 
-### 5.1. begin
+### 6.1. begin
 
 ```c++
 virtual ConstIterator begin() const = 0.
@@ -76,23 +80,7 @@ void f(SetBase<U32>& set) {
 }
 ```
 
-### 5.2. clear
-
-```c++
-virtual void clear() = 0
-```
-
-Call `m_setImpl.clear()`.
-
-_Example:_
-```c++
-void f(SetBase<U32>& set) {
-    set.clear();
-    ASSERT_EQ(set.getSize(), 0);
-}
-```
-
-### 5.3. copyDataFrom
+### 6.2. copyDataFrom
 
 ```c++
 void copyDataFrom(const SetBase<T>& set)
@@ -129,7 +117,7 @@ void f(SetBase<U32>& s1, SetBase<U32>& s2) {
 }
 ```
 
-### 5.4. end
+### 6.3. end
 
 ```c++
 virtual ConstIterator end() const = 0
@@ -155,7 +143,7 @@ void f(SetBase<U32>& set) {
 }
 ```
 
-### 5.5. find
+### 6.4. find
 
 ```c++
 virtual Success find(const T& element) = 0
@@ -180,36 +168,7 @@ void f(const SetBase<U32>& set) {
 }
 ```
 
-<a name="getCapacity"></a>
-### 5.6. getCapacity
-
-```c++
-virtual FwSizeType getCapacity() const = 0
-```
-
-Return the current capacity.
-
-_Example:_
-```c++
-void f(const SetBase<U32>& set) {
-    const auto size = set.getSize();
-    const auto capacity = set.getCapacity();
-    ASSERT_LE(size, capacity);
-}
-```
-
-### 5.7. getSize
-
-```c++
-virtual FwSizeType getSize() const = 0
-```
-
-Return the current size.
-
-_Example:_
-See [**getCapacity**](#getCapacity).
-
-### 5.8. insert
+### 6.5. insert
 
 ```c++
 virtual Success insert(const T& element) = 0
@@ -235,7 +194,7 @@ void f(SetBase<U32>& set) {
 }
 ```
 
-### 5.9. remove
+### 6.6. remove
 
 ```c++
 virtual Success remove(const T& element) = 0
