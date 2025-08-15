@@ -879,7 +879,7 @@ TEST_F(FpySequencerTester, exit) {
 
 TEST_F(FpySequencerTester, discard) {
     // Test discarding 4 bytes
-    tester_push<U32>(0x12345678); 
+    tester_push<U32>(0x12345678);
     FpySequencer_DiscardDirective directive(4);
     DirectiveError err = DirectiveError::NO_ERROR;
     Signal result = tester_discard_directiveHandler(directive, err);
@@ -897,17 +897,17 @@ TEST_F(FpySequencerTester, discard) {
 
 TEST_F(FpySequencerTester, stackCmd) {
     // Test valid command
-    tester_push<U32>(0x12345678);  // Args
-    tester_push<FwOpcodeType>(123); // Opcode
+    tester_push<U32>(0x12345678);    // Args
+    tester_push<FwOpcodeType>(123);  // Opcode
 
-    FpySequencer_StackCmdDirective directive(4); // 4 bytes of args
+    FpySequencer_StackCmdDirective directive(4);  // 4 bytes of args
     DirectiveError err = DirectiveError::NO_ERROR;
     Signal result = tester_stackCmd_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_keepWaiting);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_from_cmdOut_SIZE(1);
     ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, 0);
-    
+
     // Test error case - not enough bytes on stack
     tester_push<U8>(0x12);
     result = tester_stackCmd_directiveHandler(directive, err);
@@ -919,7 +919,7 @@ TEST_F(FpySequencerTester, memCmp) {
     // Test equal memory blocks
     tester_push<U32>(0x12345678);
     tester_push<U32>(0x12345678);
-    
+
     FpySequencer_MemCmpDirective directive(4);
     DirectiveError err = DirectiveError::NO_ERROR;
     Signal result = tester_memCmp_directiveHandler(directive, err);

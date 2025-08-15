@@ -370,15 +370,18 @@ Signal FpySequencerTester::tester_stackOp_directiveHandler(const FpySequencer_St
     return this->cmp.stackOp_directiveHandler(directive, err);
 }
 
-Signal FpySequencerTester::tester_discard_directiveHandler(const FpySequencer_DiscardDirective& directive, DirectiveError& err) {
+Signal FpySequencerTester::tester_discard_directiveHandler(const FpySequencer_DiscardDirective& directive,
+                                                           DirectiveError& err) {
     return this->cmp.discard_directiveHandler(directive, err);
 }
 
-Signal FpySequencerTester::tester_stackCmd_directiveHandler(const FpySequencer_StackCmdDirective& directive, DirectiveError& err) {
+Signal FpySequencerTester::tester_stackCmd_directiveHandler(const FpySequencer_StackCmdDirective& directive,
+                                                            DirectiveError& err) {
     return this->cmp.stackCmd_directiveHandler(directive, err);
 }
 
-Signal FpySequencerTester::tester_memCmp_directiveHandler(const FpySequencer_MemCmpDirective& directive, DirectiveError& err) {
+Signal FpySequencerTester::tester_memCmp_directiveHandler(const FpySequencer_MemCmpDirective& directive,
+                                                          DirectiveError& err) {
     return this->cmp.memCmp_directiveHandler(directive, err);
 }
 

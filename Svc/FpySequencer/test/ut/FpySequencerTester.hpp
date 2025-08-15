@@ -175,7 +175,7 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     DirectiveError tester_op_sitofp();
     DirectiveError tester_op_uitofp();
     DirectiveError tester_op_iadd();
-    DirectiveError tester_op_isub(); 
+    DirectiveError tester_op_isub();
     DirectiveError tester_op_imul();
     DirectiveError tester_op_udiv();
     DirectiveError tester_op_sdiv();
