@@ -1704,6 +1704,65 @@ TEST_F(FpySequencerTester, deserialize_exit) {
     ASSERT_EVENTS_DirectiveDeserializeError_SIZE(0);
 }
 
+TEST_F(FpySequencerTester, deserialize_discard) {
+    FpySequencer::DirectiveUnion actual;
+    FpySequencer_DiscardDirective dir(123);
+    add_DISCARD(dir);
+    Fw::Success result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::SUCCESS);
+    ASSERT_EQ(actual.discard, dir);
+    // write some junk after buf, make sure it fails
+    seq.get_statements()[0].get_argBuf().serialize(123);
+    result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::FAILURE);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+    this->clearHistory();
+    // clear args, make sure it fails
+    seq.get_statements()[0].get_argBuf().resetSer();
+    result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::FAILURE);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+}
+
+TEST_F(FpySequencerTester, deserialize_stackCmd) {
+    FpySequencer::DirectiveUnion actual;
+    FpySequencer_StackCmdDirective dir(123);
+    add_STACK_CMD(dir);
+    Fw::Success result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::SUCCESS);
+    ASSERT_EQ(actual.stackCmd, dir);
+    // write some junk after buf, make sure it fails
+    seq.get_statements()[0].get_argBuf().serialize(123);
+    result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::FAILURE);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+    this->clearHistory();
+    // clear args, make sure it fails
+    seq.get_statements()[0].get_argBuf().resetSer();
+    result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::FAILURE);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+}
+
+TEST_F(FpySequencerTester, deserialize_memCmp) {
+    FpySequencer::DirectiveUnion actual;
+    FpySequencer_MemCmpDirective dir(123);
+    add_MEMCMP(dir);
+    Fw::Success result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::SUCCESS);
+    ASSERT_EQ(actual.memCmp, dir);
+    // write some junk after buf, make sure it fails
+    seq.get_statements()[0].get_argBuf().serialize(123);
+    result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::FAILURE);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+    this->clearHistory();
+    // clear args, make sure it fails
+    seq.get_statements()[0].get_argBuf().resetSer();
+    result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::FAILURE);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+}
 // caught a bug
 TEST_F(FpySequencerTester, checkTimers) {
     allocMem();
