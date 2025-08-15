@@ -2,7 +2,7 @@
     "Drv.BlockDriver" : "Ref.blockDrv",
     "Svc.ActiveRateGroup" : "Ref.rateGroup1Comp",
     "Svc.CommandDispatcher" : "CdhCore.cmdDisp",
-    "Svc.CmdSequencer" : "ComCcsds.cmdSeq",
+    "Svc.CmdSequencer" : "Ref.cmdSeq",
     "Svc.FileDownlink" : "FileHandling.fileDownlink",
     "Svc.FileManager" : "FileHandling.fileManager",
     "Svc.FileUplink" : "Ref.fileUplink",

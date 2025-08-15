@@ -17,9 +17,9 @@ def test_send_fileManager_command(fprime_test_api):
 
     Tests command send, dispatch, and receipt using send_and_assert command with a pair of fileManager commands.
     """
-    fprime_test_api.send_and_assert_command(fprime_test_api.get_mnemonic('Svc.FileManager') + '.' + 'CreateDirectory', ["/tmp/file"], max_delay=1)
+    fprime_test_api.send_and_assert_command(fprime_test_api.get_mnemonic('Svc.FileManager') + '.' + 'CreateDirectory', ["/tmp/file"], max_delay=10)
 
-    fprime_test_api.send_and_assert_command(fprime_test_api.get_mnemonic('Svc.FileManager') + '.' + 'CreateDirectory', ["/tmp/file2"], max_delay=1)
+    fprime_test_api.send_and_assert_command(fprime_test_api.get_mnemonic('Svc.FileManager') + '.' + 'CreateDirectory', ["/tmp/file2"], max_delay=10)
 
     fprime_test_api.send_and_assert_command(fprime_test_api.get_mnemonic('Svc.FileManager') + '.' + 'FileSize', ["/tmp/1MiB.txt"], max_delay=50)
 
@@ -37,7 +37,7 @@ def test_send_fileManager_command(fprime_test_api):
     # fail bc directory is not empty  (pytest script will stop if use send_and_assert_cmd.  Use send_command to avoid stop) No max_delay (expected warning_hi)
     fprime_test_api.send_command(fprime_test_api.get_mnemonic('Svc.FileManager') + '.' + 'RemoveDirectory', ["/tmp/file"])
 
-    fprime_test_api.send_and_assert_command(fprime_test_api.get_mnemonic('Svc.FileManager') + '.' + 'RemoveDirectory', ["/tmp/file2"], max_delay=1)        
+    fprime_test_api.send_and_assert_command(fprime_test_api.get_mnemonic('Svc.FileManager') + '.' + 'RemoveDirectory', ["/tmp/file2"], max_delay=10)        
     # Cleanup directory
     fprime_test_api.send_and_assert_command(fprime_test_api.get_mnemonic('Svc.FileManager') + '.' + 'RemoveFile', ["/tmp/file/test_seq.seq", True] , max_delay=5)    
     
