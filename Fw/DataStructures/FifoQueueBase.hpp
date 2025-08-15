@@ -7,14 +7,14 @@
 #ifndef Fw_FifoQueueBase_HPP
 #define Fw_FifoQueueBase_HPP
 
-#include "Fw/FPrimeBasicTypes.hpp"
+#include "Fw/DataStructures/SizedContainer.hpp"
 #include "Fw/Types/Assert.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
 
 namespace Fw {
 
 template <typename T>
-class FifoQueueBase {
+class FifoQueueBase : public SizedContainer {
   private:
     // ----------------------------------------------------------------------
     // Private constructors
@@ -30,7 +30,7 @@ class FifoQueueBase {
     // ----------------------------------------------------------------------
 
     //! Zero-argument constructor
-    FifoQueueBase() {}
+    FifoQueueBase() : SizedContainer() {}
 
     //! Destructor
     virtual ~FifoQueueBase() = default;
@@ -49,9 +49,6 @@ class FifoQueueBase {
     // ----------------------------------------------------------------------
     // Public member functions
     // ----------------------------------------------------------------------
-
-    //! Clear the queue
-    virtual void clear() = 0;
 
     //! Get an item at an index.
     //! Indices go from left to right in the queue.
@@ -97,14 +94,6 @@ class FifoQueueBase {
     //! \return SUCCESS if item dequeued
     virtual Success dequeue(T& e  //!< The item (output)
                             ) = 0;
-
-    //! Get the size (number of items stored in the queue)
-    //! \return The size
-    virtual FwSizeType getSize() const = 0;
-
-    //! Get the capacity (maximum number of items stored in the queue)
-    //! \return The capacity
-    virtual FwSizeType getCapacity() const = 0;
 };
 
 }  // namespace Fw

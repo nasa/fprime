@@ -8,13 +8,14 @@
 #define Fw_MapBase_HPP
 
 #include "Fw/DataStructures/MapConstIterator.hpp"
+#include "Fw/DataStructures/SizedContainer.hpp"
 #include "Fw/Types/Assert.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
 
 namespace Fw {
 
 template <typename K, typename V>
-class MapBase {
+class MapBase : public SizedContainer {
   private:
     // ----------------------------------------------------------------------
     // Deleted elements
@@ -43,7 +44,7 @@ class MapBase {
     // ----------------------------------------------------------------------
 
     //! Zero-argument constructor
-    MapBase() {}
+    MapBase() : SizedContainer() {}
 
     //! Destructor
     virtual ~MapBase() = default;
@@ -56,9 +57,6 @@ class MapBase {
     //! Get the begin value of the iterator
     //! \return The iterator
     virtual ConstIterator begin() const = 0;
-
-    //! Clear the map
-    virtual void clear() = 0;
 
     //! Copy data from another map
     void copyDataFrom(const MapBase<K, V>& map) {
@@ -83,14 +81,6 @@ class MapBase {
     virtual Success find(const K& key,  //!< The key (input)
                          V& value       //!< The value (output)
     ) const = 0;
-
-    //! Get the capacity (maximum number of items stored in the map)
-    //! \return The capacity
-    virtual FwSizeType getCapacity() const = 0;
-
-    //! Get the size (number of items stored in the map)
-    //! \return The size
-    virtual FwSizeType getSize() const = 0;
 
     //! Insert a (key, value) pair in the map
     //! \return SUCCESS if there is room in the map

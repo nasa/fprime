@@ -12,9 +12,13 @@ It represents an abstract base class for a FIFO queue.
 |----|----|-------|
 |`typename`|`T`|The type of an item on the queue|
 
-## 2. Private Constructors
+## 2. Base Class
 
-### 2.1. Copy Constructor
+`Stackbase<T>` is publicly derived from [`SizedContainer`](SizedContainer.md).
+
+## 3. Private Constructors
+
+### 3.1. Copy Constructor
 
 ```c++
 FifoQueueBase(const FifoQueueBase<T>& queue)
@@ -22,9 +26,9 @@ FifoQueueBase(const FifoQueueBase<T>& queue)
 
 Defined as `= delete`.
 
-## 3. Protected Constructors and Destructors
+## 4. Protected Constructors and Destructors
 
-### 3.1. Zero-Argument Constructor
+### 4.1. Zero-Argument Constructor
 
 ```c++
 FifoQueueBase()
@@ -32,7 +36,7 @@ FifoQueueBase()
 
 Use default initialization of members.
 
-### 3.2. Destructor
+### 4.2. Destructor
 
 ```c++
 virtual ~FifoQueueBase()
@@ -40,9 +44,9 @@ virtual ~FifoQueueBase()
 
 Defined as `= default`.
 
-## 4. Private Member Functions
+## 5. Private Member Functions
 
-### 4.1. operator=
+### 5.1. operator=
 
 ```c++
 FifoQueueBase& operator=(const FifoQueueBase&)
@@ -50,9 +54,9 @@ FifoQueueBase& operator=(const FifoQueueBase&)
 
 Defined as `= delete`.
 
-## 5. Public Member Functions
+## 6. Public Member Functions
 
-### 5.1. at
+### 6.1. at
 
 ```c++
 virtual const T& at(FwSizeType index) const = 0
@@ -77,23 +81,7 @@ void f(FifoQueueBase<U32>& queue) {
 }
 ```
 
-### 5.2. clear
-
-```c++
-virtual void clear() = 0
-```
-
-Clear the queue.
-
-_Example:_
-```c++
-void f(FifoQueueBase<U32>& queue) {
-    queue.clear();
-    ASSERT_EQ(queue.getSize(), 0);
-}
-```
-
-### 5.3. copyDataFrom
+### 6.2. copyDataFrom
 
 ```c++
 void copyDataFrom(const FifoQueueBase<T>& queue)
@@ -128,7 +116,7 @@ void f(FifoQueueBase<U32>& q1, FifoQueueBase<U32>& q2) {
 }
 ```
 
-### 5.4. dequeue
+### 6.3. dequeue
 
 ```c++
 virtual Success dequeue(T& e) = 0
@@ -159,7 +147,7 @@ void f(FifoQueueBase<U32>& queue) {
 }
 ```
 
-### 5.5. enqueue
+### 6.4. enqueue
 
 ```c++
 virtual Success enqueue(const T& e) = 0
@@ -184,45 +172,7 @@ void f(FifoQueueBase<U32>& queue) {
 }
 ```
 
-### 5.6. getCapacity
-
-```c++
-virtual FwSizeType getCapacity() const = 0
-```
-
-Return the current capacity.
-
-_Example:_
-```c++
-void f(const FifoQueueBase<U32>& queue) {
-    const auto size = queue.getSize();
-    const auto capacity = queue.getCapacity();
-    ASSERT_LE(size, capacity);
-}
-```
-
-### 5.7. getSize
-
-```c++
-virtual FwSizeType getSize() const = 0
-```
-
-Return the current size.
-
-_Example:_
-```c++
-void f(const FifoQueueBase<U32>& queue) {
-    queue.clear();
-    auto size = queue.getSize();
-    ASSERT_EQ(size, 0);
-    const auto status = queue.enqueue(3);
-    ASSERT_EQ(status, Success::SUCCESS);
-    size = queue.getSize();
-    ASSERT_EQ(size, 1);
-}
-```
-
-### 5.8. peek
+### 6.5. peek
 
 ```c++
 Success peek(T& e, FwSizeType index = 0) const

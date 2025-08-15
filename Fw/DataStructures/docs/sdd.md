@@ -58,9 +58,13 @@ operations in last-in-first-out (LIFO) order.
 
 ```mermaid
 classDiagram
+    SizedContainer <|-- StackBase
     StackBase <|-- ExternalStack
     StackBase <|-- Stack
 ```
+
+`StackBase` is a derived class of [`SizedContainer`](SizedContainer.md),
+which represents a generic container with a capacity and a size.
 
 ## 3. FIFO Queues
 
@@ -88,9 +92,13 @@ You can use this template to represent any circular index.
 
 ```mermaid
 classDiagram
+    SizedContainer <|-- FifoQueueBase
     FifoQueueBase <|-- ExternalFifoQueue
     FifoQueueBase <|-- FifoQueue
 ```
+
+`FifoQueueBase` is a derived class of [`SizedContainer`](SizedContainer.md),
+which represents a generic container with a capacity and a size.
 
 ## 4. Maps
 
@@ -113,11 +121,15 @@ It provides insert, remove, and find operations.
 
 ```mermaid
 classDiagram
+    SizedContainer <|-- MapBase
     MapBase <|-- ArrayMap
     MapBase <|-- ExternalArrayMap
     MapBase <|-- ExternalRedBlackTreeMap
     MapBase <|-- RedBlackTreeMap
 ```
+
+`MapBase` is a derived class of [`SizedContainer`](SizedContainer.md),
+which represents a generic container with a capacity and a size.
 
 ## 5. Sets
 
@@ -138,8 +150,12 @@ It provides insert, remove, and find operations.
 
 ```mermaid
 classDiagram
+    SizedContainer <|-- SetBase
     SetBase <|-- ArraySet
     SetBase <|-- ExternalArraySet
     SetBase <|-- ExternalRedBlackTreeSet
     SetBase <|-- RedBlackTreeSet
 ```
+
+`SetBase` is a derived class of [`SizedContainer`](SizedContainer.md),
+which represents a generic container with a capacity and a size.

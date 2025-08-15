@@ -21,7 +21,7 @@ namespace Rules {
 
 struct At : public Rule {
     At() : Rule("At") {}
-    bool precondition(const State& state) { return state.stack.getSize() > 0; }
+    bool precondition(const State& state) { return !state.stack.isEmpty(); }
     void action(State& state) {
         const auto size = state.stack.getSize();
         const auto index = STest::Pick::startLength(0, static_cast<U32>(size));
@@ -31,7 +31,7 @@ struct At : public Rule {
 
 struct Clear : public Rule {
     Clear() : Rule("Clear") {}
-    bool precondition(const State& state) { return state.stack.getSize() > 0; }
+    bool precondition(const State& state) { return !state.stack.isEmpty(); }
     void action(State& state) {
         state.stack.clear();
         ASSERT_EQ(state.stack.getSize(), 0);
@@ -41,7 +41,7 @@ struct Clear : public Rule {
 
 struct Peek : public Rule {
     Peek() : Rule("Peek") {}
-    bool precondition(const State& state) { return state.stack.getSize() > 0; }
+    bool precondition(const State& state) { return !state.stack.isEmpty(); }
     void action(State& state) {
         const auto size = state.stack.getSize();
         const auto index = STest::Pick::startLength(0, static_cast<U32>(size));
@@ -54,7 +54,7 @@ struct Peek : public Rule {
 
 struct PopEmpty : public Rule {
     PopEmpty() : Rule("PopEmpty") {}
-    bool precondition(const State& state) { return static_cast<FwSizeType>(state.stack.getSize()) == 0; }
+    bool precondition(const State& state) { return state.stack.isEmpty(); }
     void action(State& state) {
         U32 value = 0;
         const auto status = state.stack.pop(value);
@@ -64,7 +64,7 @@ struct PopEmpty : public Rule {
 
 struct PopOK : public Rule {
     PopOK() : Rule("PopOK") {}
-    bool precondition(const State& state) { return static_cast<FwSizeType>(state.stack.getSize()) > 0; }
+    bool precondition(const State& state) { return !state.stack.isEmpty(); }
     void action(State& state) {
         const auto size = state.stack.getSize();
         U32 value = 0;
@@ -79,7 +79,7 @@ struct PopOK : public Rule {
 
 struct PushFull : public Rule {
     PushFull() : Rule("PushFull") {}
-    bool precondition(const State& state) { return static_cast<FwSizeType>(state.stack.getSize()) >= State::capacity; }
+    bool precondition(const State& state) { return state.stack.isFull(); }
     void action(State& state) {
         const auto item = State::getRandomItem();
         const auto status = state.stack.push(item);
@@ -89,7 +89,7 @@ struct PushFull : public Rule {
 
 struct PushOK : public Rule {
     PushOK() : Rule("PushOK") {}
-    bool precondition(const State& state) { return static_cast<FwSizeType>(state.stack.getSize()) < State::capacity; }
+    bool precondition(const State& state) { return !state.stack.isFull(); }
     void action(State& state) {
         const U32 value = STest::Pick::any();
         const auto status = state.stack.push(value);

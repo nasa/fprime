@@ -8,13 +8,14 @@
 #define Fw_SetBase_HPP
 
 #include "Fw/DataStructures/SetConstIterator.hpp"
+#include "Fw/DataStructures/SizedContainer.hpp"
 #include "Fw/Types/Assert.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
 
 namespace Fw {
 
 template <typename T>
-class SetBase {
+class SetBase : public SizedContainer {
   private:
     // ----------------------------------------------------------------------
     // Deleted elements
@@ -43,7 +44,7 @@ class SetBase {
     // ----------------------------------------------------------------------
 
     //! Zero-argument constructor
-    SetBase() {}
+    SetBase() : SizedContainer() {}
 
     //! Destructor
     virtual ~SetBase() = default;
@@ -56,9 +57,6 @@ class SetBase {
     //! Get the begin iterator
     //! \return The iterator
     virtual ConstIterator begin() const = 0;
-
-    //! Clear the set
-    virtual void clear() = 0;
 
     //! Get the end iterator
     //! \return The iterator
@@ -82,14 +80,6 @@ class SetBase {
     //! SUCCESS if the item was found
     virtual Success find(const T& element  //!< The element
     ) const = 0;
-
-    //! Get the capacity (maximum number of items stored in the set)
-    //! \return The capacity
-    virtual FwSizeType getCapacity() const = 0;
-
-    //! Get the size (number of items stored in the set)
-    //! \return The size
-    virtual FwSizeType getSize() const = 0;
 
     //! Insert an element in the set
     //! \return SUCCESS if there is room in the set

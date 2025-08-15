@@ -43,13 +43,13 @@ class Array final {
     //! Initializer list constructor
     Array(const std::initializer_list<T>& il  //!< The initializer list
     ) {
-        FW_ASSERT(il.size() == S, static_cast<FwAssertArgType>(il.size()), static_cast<FwAssertArgType>(S));
-        FwSizeType i = 0;
-        for (const auto& e : il) {
-            FW_ASSERT(i < S);
-            this->m_elements[i] = e;
-            i++;
-        }
+        *this = il;
+    }
+
+    //! Raw array constructor
+    Array(const Elements& elements  //!< The array elements
+    ) {
+        *this = elements;
     }
 
     //! Single-element constructor
@@ -63,9 +63,7 @@ class Array final {
     //! Copy constructor
     Array(const Array<T, S>& a  //!< The array to copy
     ) {
-        for (FwSizeType i = 0; i < S; i++) {
-            this->m_elements[i] = a.m_elements[i];
-        }
+        *this = a;
     }
 
     //! Destructor
@@ -92,7 +90,33 @@ class Array final {
         return this->m_elements[i];
     }
 
-    //! Copy assignment operator
+    //! operator= (Initializer List)
+    //! \return *this
+    Array<T, S>& operator=(const std::initializer_list<T>& il  //!< The initializer list
+    ) {
+        // Since we are required to use C++11, this has to be a runtime check
+        // In C++14, it can be a static check
+        FW_ASSERT(il.size() == S, static_cast<FwAssertArgType>(il.size()), static_cast<FwAssertArgType>(S));
+        FwSizeType i = 0;
+        for (const auto& e : il) {
+            FW_ASSERT(i < S);
+            this->m_elements[i] = e;
+            i++;
+        }
+        return *this;
+    }
+
+    //! operator= (Raw Array)
+    //! \return *this
+    Array<T, S>& operator=(const Elements& elements  //!< The array elements
+    ) {
+        for (FwSizeType i = 0; i < S; i++) {
+            this->m_elements[i] = elements[i];
+        }
+        return *this;
+    }
+
+    //! operator= (Copy Assignment)
     //! \return *this
     Array<T, S>& operator=(const Array<T, S>& a) {
         if (&a != this) {
