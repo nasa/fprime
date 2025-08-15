@@ -12,9 +12,13 @@ It represents an abstract base class for a stack.
 |----|----|-------|
 |`typename`|`T`|The type of an item on the stack|
 
-## 2. Private Constructors
+## 2. Base Class
 
-### 2.1. Copy Constructor
+`Stackbase<T>` is publicly derived from [`SizedContainer`](SizedContainer.md).
+
+## 3. Private Constructors
+
+### 3.1. Copy Constructor
 
 ```c++
 StackBase(const StackBase<T>& stack)
@@ -22,9 +26,9 @@ StackBase(const StackBase<T>& stack)
 
 Defined as `= delete`.
 
-## 3. Protected Constructors and Destructors
+## 4. Protected Constructors and Destructors
 
-### 3.1. Zero-Argument Constructor
+### 4.1. Zero-Argument Constructor
 
 ```c++
 StackBase()
@@ -32,7 +36,7 @@ StackBase()
 
 Use default initialization of members.
 
-### 3.2. Destructor
+### 4.2. Destructor
 
 ```c++
 virtual ~StackBase()
@@ -40,9 +44,9 @@ virtual ~StackBase()
 
 Defined as `= default`.
 
-## 4. Private Member Functions
+## 5. Private Member Functions
 
-### 4.1. operator=
+### 5.1. operator=
 
 ```c++
 StackBase& operator=(const StackBase&)
@@ -50,9 +54,9 @@ StackBase& operator=(const StackBase&)
 
 Defined as `= delete`.
 
-## 5. Public Member Functions
+## 6. Public Member Functions
 
-### 5.1. at
+### 6.1. at
 
 ```c++
 virtual const T& at(FwSizeType index) const = 0
@@ -77,23 +81,7 @@ void f(StackBase<U32>& stack) {
 }
 ```
 
-### 5.2. clear
-
-```c++
-virtual void clear() = 0
-```
-
-Clear the stack.
-
-_Example:_
-```c++
-void f(StackBase<U32>& stack) {
-    stack.clear();
-    ASSERT_EQ(stack.getSize(), 0);
-}
-```
-
-### 5.3. copyDataFrom
+### 6.2. copyDataFrom
 
 ```c++
 void copyDataFrom(const StackBase<T>& stack)
@@ -128,45 +116,7 @@ void f(StackBase<U32>& q1, StackBase<U32>& q2) {
 }
 ```
 
-### 5.4. getCapacity
-
-```c++
-virtual FwSizeType getCapacity() const = 0
-```
-
-Return the current capacity.
-
-_Example:_
-```c++
-void f(const StackBase<U32>& stack) {
-    const auto size = stack.getSize();
-    const auto capacity = stack.getCapacity();
-    ASSERT_LE(size, capacity);
-}
-```
-
-### 5.5. getSize
-
-```c++
-virtual FwSizeType getSize() const = 0
-```
-
-Return the current size.
-
-_Example:_
-```c++
-void f(const StackBase<U32>& stack) {
-    stack.clear();
-    auto size = stack.getSize();
-    ASSERT_EQ(size, 0);
-    const auto status = stack.push(3);
-    ASSERT_EQ(status, Success::SUCCESS);
-    size = stack.getSize();
-    ASSERT_EQ(size, 1);
-}
-```
-
-### 5.6. peek
+### 6.3. peek
 
 ```c++
 Success peek(T& e, FwSizeType index = 0) const
@@ -205,7 +155,7 @@ void f(StackBase<U32>& stack) {
 }
 ```
 
-### 5.7. pop
+### 6.4. pop
 
 ```c++
 virtual Success pop(T& e) = 0
@@ -236,7 +186,7 @@ void f(StackBase<U32>& stack) {
 }
 ```
 
-### 5.8. push
+### 6.5. push
 
 ```c++
 virtual Success push(const T& e) = 0
