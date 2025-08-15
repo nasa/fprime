@@ -8,7 +8,7 @@
 
 #include <Svc/ActiveTextLogger/ActiveTextLoggerComponentAc.hpp>
 #include <Svc/ActiveTextLogger/LogFile.hpp>
-#include <config/PassiveTextLoggerCfg.hpp>
+#include <config/ActiveTextLoggerCfg.hpp>
 
 namespace Svc {
 
