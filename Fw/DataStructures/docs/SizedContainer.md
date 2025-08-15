@@ -1,8 +1,8 @@
 # SizedContainer
 
-`SizedContainer` is a class template
+`SizedContainer` is a class
 defined in [`Fw/DataStructures`](sdd.md).
-It is an abstract base class representing as sized container.
+It is an abstract class representing a sized container.
 
 ## 1. Private Constructors
 
