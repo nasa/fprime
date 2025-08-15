@@ -242,7 +242,30 @@ template void FpySequencerTester::add_PUSH_VAL(I8);
 template void FpySequencerTester::add_PUSH_VAL(I16);
 template void FpySequencerTester::add_PUSH_VAL(I32);
 template void FpySequencerTester::add_PUSH_VAL(I64);
-
+void FpySequencerTester::add_DISCARD(U16 size) {
+    add_DISCARD(FpySequencer_DiscardDirective(size));
+}
+void FpySequencerTester::add_DISCARD(FpySequencer_DiscardDirective dir) {
+    Fw::StatementArgBuffer buf;
+    FW_ASSERT(buf.serialize(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    addDirective(Fpy::DirectiveId::DISCARD, buf);
+}
+void FpySequencerTester::add_STACK_CMD(U16 size) {
+    add_STACK_CMD(FpySequencer_StackCmdDirective(size));
+}
+void FpySequencerTester::add_STACK_CMD(FpySequencer_StackCmdDirective dir) {
+    Fw::StatementArgBuffer buf;
+    FW_ASSERT(buf.serialize(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    addDirective(Fpy::DirectiveId::STACK_CMD, buf);
+}
+void FpySequencerTester::add_MEMCMP(U16 size) {
+    add_MEMCMP(FpySequencer_MemCmpDirective(size));
+}
+void FpySequencerTester::add_MEMCMP(FpySequencer_MemCmpDirective dir) {
+    Fw::StatementArgBuffer buf;
+    FW_ASSERT(buf.serialize(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    addDirective(Fpy::DirectiveId::MEMCMP, buf);
+}
 //! Handle a text event
 void FpySequencerTester::textLogIn(FwEventIdType id,                //!< The event ID
                                    const Fw::Time& timeTag,         //!< The time
@@ -345,6 +368,18 @@ Signal FpySequencerTester::tester_constCmd_directiveHandler(const FpySequencer_C
 Signal FpySequencerTester::tester_stackOp_directiveHandler(const FpySequencer_StackOpDirective& directive,
                                                            DirectiveError& err) {
     return this->cmp.stackOp_directiveHandler(directive, err);
+}
+
+Signal FpySequencerTester::tester_discard_directiveHandler(const FpySequencer_DiscardDirective& directive, DirectiveError& err) {
+    return this->cmp.discard_directiveHandler(directive, err);
+}
+
+Signal FpySequencerTester::tester_stackCmd_directiveHandler(const FpySequencer_StackCmdDirective& directive, DirectiveError& err) {
+    return this->cmp.stackCmd_directiveHandler(directive, err);
+}
+
+Signal FpySequencerTester::tester_memCmp_directiveHandler(const FpySequencer_MemCmpDirective& directive, DirectiveError& err) {
+    return this->cmp.memCmp_directiveHandler(directive, err);
 }
 
 Fw::Success FpySequencerTester::tester_deserializeDirective(const Fpy::Statement& stmt,

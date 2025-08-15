@@ -1119,7 +1119,7 @@ Signal FpySequencer::memCmp_directiveHandler(const FpySequencer_MemCmpDirective&
 }
 
 Signal FpySequencer::stackCmd_directiveHandler(const FpySequencer_StackCmdDirective& directive, DirectiveError& error) {
-    if (this->m_runtime.stackSize < static_cast<U64>(directive.get_argsSize() + 4)) {
+    if (this->m_runtime.stackSize < static_cast<U64>(directive.get_argsSize() + sizeof(FwOpcodeType))) {
         error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
@@ -1129,6 +1129,9 @@ Signal FpySequencer::stackCmd_directiveHandler(const FpySequencer_StackCmdDirect
 
     // update the opcode of the cmd we will await
     this->m_runtime.currentCmdOpcode = opcode;
+
+    // also pop the args off the stack
+    this->m_runtime.stackSize -= directive.get_argsSize();
 
     if (this->sendCmd(opcode, this->m_runtime.stack + argBufOffset, directive.get_argsSize()) == Fw::Success::FAILURE) {
         return Signal::stmtResponse_failure;

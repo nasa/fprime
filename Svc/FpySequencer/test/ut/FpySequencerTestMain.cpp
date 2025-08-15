@@ -877,6 +877,73 @@ TEST_F(FpySequencerTester, exit) {
     ASSERT_EQ(err, DirectiveError::DELIBERATE_FAILURE);
 }
 
+TEST_F(FpySequencerTester, discard) {
+    // Test discarding 4 bytes
+    tester_push<U32>(0x12345678); 
+    FpySequencer_DiscardDirective directive(4);
+    DirectiveError err = DirectiveError::NO_ERROR;
+    Signal result = tester_discard_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, 0);
+
+    // Test error case - try to discard more bytes than available
+    tester_push<U8>(0x12);
+    directive.set_size(2);
+    result = tester_discard_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+}
+
+TEST_F(FpySequencerTester, stackCmd) {
+    // Test valid command
+    tester_push<U32>(0x12345678);  // Args
+    tester_push<FwOpcodeType>(123); // Opcode
+
+    FpySequencer_StackCmdDirective directive(4); // 4 bytes of args
+    DirectiveError err = DirectiveError::NO_ERROR;
+    Signal result = tester_stackCmd_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_keepWaiting);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+    ASSERT_from_cmdOut_SIZE(1);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, 0);
+    
+    // Test error case - not enough bytes on stack
+    tester_push<U8>(0x12);
+    result = tester_stackCmd_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+}
+
+TEST_F(FpySequencerTester, memCmp) {
+    // Test equal memory blocks
+    tester_push<U32>(0x12345678);
+    tester_push<U32>(0x12345678);
+    
+    FpySequencer_MemCmpDirective directive(4);
+    DirectiveError err = DirectiveError::NO_ERROR;
+    Signal result = tester_memCmp_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<U8>(), 1);  // Should be true
+
+    // Test unequal memory blocks
+    tester_push<U32>(0x12345678);
+    tester_push<U32>(0x87654321);
+    result = tester_memCmp_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<U8>(), 0);  // Should be false
+
+    // test not enough bytes on stack
+    tester_push<U32>(0x12345678);
+    tester_push<U8>(0x11);
+    directive.set_size(3);
+    result = tester_memCmp_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+}
+
 TEST_F(FpySequencerTester, checkShouldWakeMismatchBase) {
     Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 0, 100, 100);
     setTestTime(testTime);

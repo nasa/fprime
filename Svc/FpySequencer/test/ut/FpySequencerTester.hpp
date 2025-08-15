@@ -103,6 +103,12 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     void add_STORE(FpySequencer_StoreDirective dir);
     void add_LOAD(U16 lvarOffset, U16 size);
     void add_LOAD(FpySequencer_LoadDirective dir);
+    void add_DISCARD(U16 size);
+    void add_DISCARD(FpySequencer_DiscardDirective dir);
+    void add_STACK_CMD(U16 size);
+    void add_STACK_CMD(FpySequencer_StackCmdDirective dir);
+    void add_MEMCMP(U16 size);
+    void add_MEMCMP(FpySequencer_MemCmpDirective dir);
     template <typename T>
     void add_PUSH_VAL(T val);
     //! Handle a text event
@@ -140,6 +146,9 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     Signal tester_exit_directiveHandler(const FpySequencer_ExitDirective& directive, DirectiveError& err);
     Signal tester_constCmd_directiveHandler(const FpySequencer_ConstCmdDirective& directive, DirectiveError& err);
     Signal tester_stackOp_directiveHandler(const FpySequencer_StackOpDirective& directive, DirectiveError& err);
+    Signal tester_discard_directiveHandler(const FpySequencer_DiscardDirective& directive, DirectiveError& err);
+    Signal tester_stackCmd_directiveHandler(const FpySequencer_StackCmdDirective& directive, DirectiveError& err);
+    Signal tester_memCmp_directiveHandler(const FpySequencer_MemCmpDirective& directive, DirectiveError& err);
     DirectiveError tester_op_or();
     DirectiveError tester_op_and();
     DirectiveError tester_op_ieq();
