@@ -159,4 +159,3 @@ classDiagram
 
 `SetBase` is a derived class of [`SizedContainer`](SizedContainer.md),
 which represents a generic container with a capacity and a size.
-
