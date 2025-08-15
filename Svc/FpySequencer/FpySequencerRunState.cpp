@@ -543,7 +543,8 @@ Signal FpySequencer::checkStatementTimeout() {
     }
 
     // we timed out
-    if (this->m_runtime.currentStatementOpcode == Fpy::DirectiveId::CONST_CMD || this->m_runtime.currentStatementOpcode == Fpy::DirectiveId::STACK_CMD) {
+    if (this->m_runtime.currentStatementOpcode == Fpy::DirectiveId::CONST_CMD ||
+        this->m_runtime.currentStatementOpcode == Fpy::DirectiveId::STACK_CMD) {
         // if we were executing a command, warn that the cmd timed out with its opcode
         this->log_WARNING_HI_CommandTimedOut(this->m_runtime.currentCmdOpcode, this->m_runtime.nextStatementIndex - 1,
                                              this->m_sequenceFilePath);

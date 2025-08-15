@@ -1,5 +1,5 @@
-#include <type_traits>
 #include <cmath>
+#include <type_traits>
 #include "Fw/Com/ComPacket.hpp"
 #include "Svc/FpySequencer/FpySequencer.hpp"
 
@@ -31,7 +31,8 @@ void FpySequencer::sendSignal(Signal signal) {
 
 Fw::Success FpySequencer::sendCmd(FwOpcodeType opcode, const U8* argBuf, FwSizeType argBufSize) {
     Fw::ComBuffer cmdBuf;
-    Fw::SerializeStatus stat = cmdBuf.serialize(Fw::ComPacketType::FW_PACKET_COMMAND);
+    Fw::SerializeStatus stat =
+        cmdBuf.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_COMMAND));
     // TODO should I assert here? this really shouldn't fail, I should just add a static assert
     // on com buf size and then assert here
     if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
@@ -441,7 +442,8 @@ Signal FpySequencer::storePrm_directiveHandler(const FpySequencer_StorePrmDirect
 }
 
 Signal FpySequencer::constCmd_directiveHandler(const FpySequencer_ConstCmdDirective& directive, DirectiveError& error) {
-    if (this->sendCmd(directive.get_opCode(), directive.get_argBuf(), directive.get__argBufSize()) == Fw::Success::FAILURE) {
+    if (this->sendCmd(directive.get_opCode(), directive.get_argBuf(), directive.get__argBufSize()) ==
+        Fw::Success::FAILURE) {
         return Signal::stmtResponse_failure;
     } else {
         // now tell the SM to wait some more until we get the cmd response back
