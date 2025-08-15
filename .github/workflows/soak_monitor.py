@@ -35,8 +35,6 @@ class SoakAnalysisResults:
     
     def analyze_trends(self):
         """Analyze trends over time within the ComLogger data"""
-        print("\n📊 ANALYZING TRENDS ACROSS MULTIPLE RUNS:")
-        
         # Analyze buffer trends
         for metric_name, readings in self.buffer_metrics.items():
             if len(readings) > 10:  # Need sufficient data points
@@ -132,7 +130,7 @@ class EventCollector(DataHandler):
 
 
 class ChannelCollector(DataHandler):
-    """Channel consumer that inherits from DataHandler - similar to old log_processor pattern"""
+    """Channel consumer that inherits from DataHandler"""
     def __init__(self, results):
         self.results = results
         
@@ -144,45 +142,65 @@ class ChannelCollector(DataHandler):
             ch_val = channel_data.val if hasattr(channel_data, 'val') else 0
             timestamp = str(channel_data.time) if hasattr(channel_data, 'time') else ""
             
-            # Track buffer manager stats
+            # Process channel data and check for issues
+            channel_info = {
+                'timestamp': timestamp,
+                'channel_name': ch_name,
+                'value': ch_val
+            }
+            
+            # Handle buffer metrics
             if 'BufferManager' in ch_name or 'bufferManager' in ch_name:
                 if ch_name not in self.results.buffer_metrics:
                     self.results.buffer_metrics[ch_name] = []
                 
-                try:
-                    value = int(ch_val) if isinstance(ch_val, (int, float)) else int(str(ch_val).split()[0])
-                    self.results.buffer_metrics[ch_name].append({
+                value = int(ch_val) if isinstance(ch_val, (int, float)) else int(str(ch_val).split()[0])
+                self.results.buffer_metrics[ch_name].append({
+                    'timestamp': timestamp,
+                    'value': value
+                })
+                
+                # Check for buffer issues
+                if value == 0:
+                    issue = {
                         'timestamp': timestamp,
-                        'value': value
-                    })
-                    
-                    # Check for concerning buffer levels
-                    if value == 0:
-                        self.results.add_alert(f"Buffer exhaustion detected: {ch_name} = 0")
-                        
-                except (ValueError, IndexError, TypeError):
-                    pass
-                    
-            # Track system resources
+                        'channel_name': ch_name,
+                        'value': value,
+                        'description': 'Buffer exhaustion detected'
+                    }
+                    self.results.health_issues.append(issue)
+                    self.results.add_alert(f"CRITICAL: Buffer exhaustion detected: {ch_name} = 0")
+            
+            # Handle system resources
             elif 'systemResources' in ch_name:
                 if ch_name not in self.results.system_resources:
                     self.results.system_resources[ch_name] = []
-                    
-                try:
-                    value = float(ch_val) if isinstance(ch_val, (int, float)) else float(str(ch_val).replace(',', ''))
-                    self.results.system_resources[ch_name].append({
+                
+                value = float(ch_val) if isinstance(ch_val, (int, float)) else float(str(ch_val).replace(',', ''))
+                self.results.system_resources[ch_name].append({
+                    'timestamp': timestamp,
+                    'value': value
+                })
+                
+                # Check for resource issues
+                if 'cpu' in ch_name.lower() and value > 90.0:
+                    issue = {
                         'timestamp': timestamp,
-                        'value': value
-                    })
-                    
-                    # Check for concerning resource levels
-                    if 'cpu' in ch_name.lower() and value > 90.0:
-                        self.results.add_alert(f"High CPU usage detected: {ch_name} = {value}%")
-                    elif 'memory' in ch_name.lower() and value > 90.0:
-                        self.results.add_alert(f"High memory usage detected: {ch_name} = {value}%")
-                        
-                except (ValueError, TypeError):
-                    pass
+                        'channel_name': ch_name,
+                        'value': value,
+                        'description': 'High CPU usage detected'
+                    }
+                    self.results.health_issues.append(issue)
+                    self.results.add_alert(f"WARNING: High CPU usage detected: {ch_name} = {value}%")
+                elif 'memory' in ch_name.lower() and value > 90.0:
+                    issue = {
+                        'timestamp': timestamp,
+                        'channel_name': ch_name,
+                        'value': value,
+                        'description': 'High memory usage detected'
+                    }
+                    self.results.health_issues.append(issue)
+                    self.results.add_alert(f"WARNING: High memory usage detected: {ch_name} = {value}%")
                     
         except Exception as e:
             # Silently ignore parsing errors to be robust
@@ -209,8 +227,6 @@ def process_logs(pipeline, logs_path, results):
     pipeline.coders.register_event_consumer(event_consumer)
     pipeline.coders.register_channel_consumer(channel_consumer)
     
-    print("Consumers registered, processing ComLogger files...")
-    
     # Process each ComLogger file by reading binary data
     for log_file in log_files:
         try:
@@ -222,12 +238,6 @@ def process_logs(pipeline, logs_path, results):
                     
         except Exception as e:
             print(f"Error processing {log_file}: {e}")
-    
-    print(f"Processed {len(results.health_issues)} health events and {len(results.buffer_metrics) + len(results.system_resources)} telemetry metrics")
-
-
-
-
 
 class SoakMonitorArgumentParser(ParserBase):
     """ Parser for F' Soak Monitor additional arguments
@@ -303,12 +313,6 @@ def main():
     print("="*50)
     print("F' SOAK TEST MONITOR")
     print("="*50)
-    print("Analyzes ComLogger .com files for health and resource issues")
-    print("-"*50)
-    print(f"Dictionary: {args.dictionary}")
-    print(f"ComLogger files directory: {args.com_logs}")
-    print(f"Analysis timestamp: {results.timestamp}")
-    print("-"*50)
     
     # Process logs
     process_logs(pipeline, args.com_logs, results)

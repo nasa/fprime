@@ -35,11 +35,9 @@ jobs:
           TEST_TIMESTAMP=$(date +%Y%m%d_%H%M%S)
           
           echo "=== Soak monitoring started at $(date) (${TEST_TIMESTAMP}) ==="
-          echo "Analyzing all ComLogger .com files for health and resource issues..."
-          
-          # Run the soak monitor (analyzing ComLogger .com files)
+
+          # Run the soak monitor
           cd ${INSTALL_DIR}/monitoring
-          
           python3 soak_monitor.py \
             --dictionary ${INSTALL_DIR}/dict/LedBlinkerTopologyDictionary.json \
             --com-logs ${INSTALL_DIR}/ComLoggerFiles \
