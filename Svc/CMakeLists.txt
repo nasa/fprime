@@ -42,7 +42,6 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FprimeProtocol/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FprimeRouter/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FrameAccumulator/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FramingProtocol/")
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/GenericHub/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Health/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/OsTime/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PassiveRateGroup")
@@ -57,6 +56,12 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SystemResources/")
 
 # Subtopologies
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Subtopologies/")
+
+# Serial hub component included by default,
+# but can be disabled if FW_PORT_SERIALIZATION=0 is desired.
+if (FPRIME_ENABLE_SERIAL_HUBS)
+	add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/GenericHub/")
+endif()
 
 # Text logger components included by default, 
 # but can be disabled if FW_ENABLE_TEXT_LOGGING=0 is desired.

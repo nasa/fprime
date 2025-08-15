@@ -133,6 +133,21 @@ option(FPRIME_ENABLE_AUTOCODER_UTS "Enable autocoder UT generation" OFF)
 option(FPRIME_ENABLE_UT_COVERAGE "Calculate unit test coverage" ON)
 
 ####
+# `FPRIME_ENABLE_SERIAL_HUBS:`
+#
+# When FPRIME_ENABLE_SERIAL_HUBS is set, the Svc/GenericHub component is included in
+# the build. When unset, those components are excluded, allowing FpConfig.hpp:FW_PORT_SERIALIZATION to be unset as
+# well, to save space. Svc/GenericHub will fail to build if FW_PORT_SERIALIZATION=0.
+#
+# **Values:**
+# - ON: (default) retains the Svc/GenericHub component in the target list
+# - OFF: removes Svc/GenericHub component from the target list
+#
+# e.g. `-DFPRIME_ENABLE_SERIAL_HUBS=OFF`
+####
+option(FPRIME_ENABLE_SERIAL_HUBS "Enable serial hubs in build" ON)
+
+####
 # `FPRIME_ENABLE_TEXT_LOGGERS:`
 #
 # When FPRIME_ENABLE_TEXT_LOGGERS is set, the ActiveTextLogger and PassiveConsoleTextLogger 
