@@ -68,6 +68,7 @@ class AssertFatalAdapterComponentImpl final : public AssertFatalAdapterComponent
     };
 
     AssertFatalAdapter m_adapter;
+    bool m_inAssert;
 };
 
 }  // end namespace Svc
