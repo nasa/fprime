@@ -720,7 +720,16 @@ DirectiveError FpySequencer::op_sdiv() {
     this->push(static_cast<I64>(lhs / rhs));
     return DirectiveError::NO_ERROR;
 }
-DirectiveError FpySequencer::op_imod() {
+DirectiveError FpySequencer::op_umod() {
+    if (this->m_runtime.stackSize < sizeof(U64) * 2) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    U64 rhs = this->pop<U64>();
+    U64 lhs = this->pop<U64>();
+    this->push(static_cast<U64>(lhs % rhs));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_smod() {
     if (this->m_runtime.stackSize < sizeof(I64) * 2) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
@@ -959,8 +968,11 @@ Signal FpySequencer::stackOp_directiveHandler(const FpySequencer_StackOpDirectiv
         case Fpy::DirectiveId::SDIV:
             error = this->op_sdiv();
             break;
-        case Fpy::DirectiveId::IMOD:
-            error = this->op_imod();
+        case Fpy::DirectiveId::UMOD:
+            error = this->op_umod();
+            break;
+        case Fpy::DirectiveId::SMOD:
+            error = this->op_smod();
             break;
         case Fpy::DirectiveId::FADD:
             error = this->op_fadd();

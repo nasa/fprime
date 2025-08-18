@@ -564,8 +564,11 @@ DirectiveError FpySequencerTester::tester_op_udiv() {
 DirectiveError FpySequencerTester::tester_op_sdiv() {
     return this->cmp.op_sdiv();
 }
-DirectiveError FpySequencerTester::tester_op_imod() {
-    return this->cmp.op_imod();
+DirectiveError FpySequencerTester::tester_op_umod() {
+    return this->cmp.op_umod();
+}
+DirectiveError FpySequencerTester::tester_op_smod() {
+    return this->cmp.op_smod();
 }
 DirectiveError FpySequencerTester::tester_op_fadd() {
     return this->cmp.op_fadd();

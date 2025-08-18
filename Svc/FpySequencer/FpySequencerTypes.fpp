@@ -52,41 +52,42 @@ module Svc {
             IMUL = 35
             UDIV = 36
             SDIV = 37
-            IMOD = 38
+            UMOD = 38
+            SMOD = 39
             # float arithmetic
-            FADD = 39
-            FSUB = 40
-            FMUL = 41
-            FDIV = 42
-            FLOAT_FLOOR_DIV = 43
-            FPOW = 44
-            FLOG = 45
+            FADD = 40
+            FSUB = 41
+            FMUL = 42
+            FDIV = 43
+            FLOAT_FLOOR_DIV = 44
+            FPOW = 45
+            FLOG = 46
             # floating point bitwidth conversions
-            FPEXT = 46
-            FPTRUNC = 47
+            FPEXT = 47
+            FPTRUNC = 48
             # integer bitwidth conversions
             # signed integer extend
-            SIEXT_8_64 = 48
-            SIEXT_16_64 = 49
-            SIEXT_32_64 = 50
+            SIEXT_8_64 = 49
+            SIEXT_16_64 = 50
+            SIEXT_32_64 = 51
             # zero (unsigned) integer extend
-            ZIEXT_8_64 = 51
-            ZIEXT_16_64 = 52
-            ZIEXT_32_64 = 53
+            ZIEXT_8_64 = 52
+            ZIEXT_16_64 = 53
+            ZIEXT_32_64 = 54
             # integer truncate
-            ITRUNC_64_8 = 54
-            ITRUNC_64_16 = 55
-            ITRUNC_64_32 = 56
+            ITRUNC_64_8 = 55
+            ITRUNC_64_16 = 56
+            ITRUNC_64_32 = 57
             # end stack op dirs
 
-            EXIT = 57
-            ALLOCATE = 58
-            STORE = 59
-            LOAD = 60
-            PUSH_VAL = 61
-            DISCARD = 62
-            MEMCMP = 63
-            STACK_CMD = 64
+            EXIT = 58
+            ALLOCATE = 59
+            STORE = 60
+            LOAD = 61
+            PUSH_VAL = 62
+            DISCARD = 63
+            MEMCMP = 64
+            STACK_CMD = 65
         }
 
         struct Header {

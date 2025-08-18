@@ -806,11 +806,18 @@ TEST_F(FpySequencerTester, sdiv) {
     ASSERT_EQ(tester_pop<I64>(), 123);
 }
 
-TEST_F(FpySequencerTester, imod) {
-    tester_push<I64>(123);
+TEST_F(FpySequencerTester, umod) {
+    tester_push<U64>(123);
+    tester_push<U64>(10);
+    ASSERT_EQ(tester_op_umod(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<U64>(), 3);
+}
+
+TEST_F(FpySequencerTester, smod) {
+    tester_push<I64>(-123);
     tester_push<I64>(10);
-    ASSERT_EQ(tester_op_imod(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_pop<I64>(), 3);
+    ASSERT_EQ(tester_op_smod(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), -3);
 }
 
 TEST_F(FpySequencerTester, fadd) {

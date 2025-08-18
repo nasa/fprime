@@ -664,7 +664,8 @@ class FpySequencer : public FpySequencerComponentBase {
     DirectiveError op_imul();
     DirectiveError op_udiv();
     DirectiveError op_sdiv();
-    DirectiveError op_imod();
+    DirectiveError op_umod();
+    DirectiveError op_smod();
     DirectiveError op_fadd();
     DirectiveError op_fsub();
     DirectiveError op_fmul();
