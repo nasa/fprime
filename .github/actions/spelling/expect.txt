@@ -590,6 +590,7 @@ Silveira
 sitofp
 sle
 sloc
+smod
 socio
 SOCKETHELPER
 SOCKETIPDRIVER
@@ -688,6 +689,7 @@ UDPSOCKET
 uge
 uitofp
 UML
+umod
 UNEXP
 unistd
 UNITTESTASSERT
