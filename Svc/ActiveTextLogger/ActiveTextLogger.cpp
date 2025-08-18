@@ -16,7 +16,8 @@ static_assert(std::numeric_limits<FwSizeType>::max() >= ACTIVE_TEXT_LOGGER_ID_FI
 // Initialization/Exiting
 // ----------------------------------------------------------------------
 
-ActiveTextLogger::ActiveTextLogger(const char* name) : ActiveTextLoggerComponentBase(name), m_log_file() {}
+ActiveTextLogger::ActiveTextLogger(const char* name)
+    : ActiveTextLoggerComponentBase(name), m_log_file(), m_numFilteredIDs(0) {}
 
 ActiveTextLogger::~ActiveTextLogger() {}
 
