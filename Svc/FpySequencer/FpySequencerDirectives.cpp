@@ -466,35 +466,35 @@ I8 floatCmp(F64 lhs, F64 rhs) {
 }
 
 DirectiveError FpySequencer::op_or() {
-    if (this->m_runtime.stackSize < 2) {
+    if (this->m_runtime.stackSize < sizeof(U8) * 2) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     this->push(static_cast<U8>(this->pop<U8>() | this->pop<U8>()));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_and() {
-    if (this->m_runtime.stackSize < 2) {
+    if (this->m_runtime.stackSize < sizeof(U8) * 2) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     this->push(static_cast<U8>(this->pop<U8>() & this->pop<U8>()));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_ieq() {
-    if (this->m_runtime.stackSize < 16) {
+    if (this->m_runtime.stackSize < sizeof(I64) * 2) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     this->push(static_cast<U8>(this->pop<I64>() == this->pop<I64>()));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_ine() {
-    if (this->m_runtime.stackSize < 16) {
+    if (this->m_runtime.stackSize < sizeof(I64) * 2) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     this->push(static_cast<U8>(this->pop<I64>() != this->pop<I64>()));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_ult() {
-    if (this->m_runtime.stackSize < 16) {
+    if (this->m_runtime.stackSize < sizeof(U64) * 2) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     U64 rhs = this->pop<U64>();
@@ -503,7 +503,7 @@ DirectiveError FpySequencer::op_ult() {
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_ule() {
-    if (this->m_runtime.stackSize < 16) {
+    if (this->m_runtime.stackSize < sizeof(U64) * 2) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     U64 rhs = this->pop<U64>();
@@ -512,7 +512,7 @@ DirectiveError FpySequencer::op_ule() {
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_ugt() {
-    if (this->m_runtime.stackSize < 16) {
+    if (this->m_runtime.stackSize < sizeof(U64) * 2) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     U64 rhs = this->pop<U64>();
@@ -521,7 +521,7 @@ DirectiveError FpySequencer::op_ugt() {
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_uge() {
-    if (this->m_runtime.stackSize < 16) {
+    if (this->m_runtime.stackSize < sizeof(U64) * 2) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     U64 rhs = this->pop<U64>();
@@ -530,7 +530,7 @@ DirectiveError FpySequencer::op_uge() {
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_slt() {
-    if (this->m_runtime.stackSize < 16) {
+    if (this->m_runtime.stackSize < sizeof(I64) * 2) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     I64 rhs = this->pop<I64>();
@@ -539,7 +539,7 @@ DirectiveError FpySequencer::op_slt() {
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_sle() {
-    if (this->m_runtime.stackSize < 16) {
+    if (this->m_runtime.stackSize < sizeof(I64) * 2) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     I64 rhs = this->pop<I64>();
@@ -548,7 +548,7 @@ DirectiveError FpySequencer::op_sle() {
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_sgt() {
-    if (this->m_runtime.stackSize < 16) {
+    if (this->m_runtime.stackSize < sizeof(I64) * 2) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     I64 rhs = this->pop<I64>();
@@ -557,7 +557,7 @@ DirectiveError FpySequencer::op_sgt() {
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_sge() {
-    if (this->m_runtime.stackSize < 16) {
+    if (this->m_runtime.stackSize < sizeof(I64) * 2) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     I64 rhs = this->pop<I64>();
@@ -566,7 +566,7 @@ DirectiveError FpySequencer::op_sge() {
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_feq() {
-    if (this->m_runtime.stackSize < 16) {
+    if (this->m_runtime.stackSize < sizeof(F64) * 2) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     F64 rhs = this->pop<F64>();
@@ -576,7 +576,7 @@ DirectiveError FpySequencer::op_feq() {
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_fne() {
-    if (this->m_runtime.stackSize < 16) {
+    if (this->m_runtime.stackSize < sizeof(F64) * 2) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     F64 rhs = this->pop<F64>();
@@ -587,7 +587,7 @@ DirectiveError FpySequencer::op_fne() {
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_flt() {
-    if (this->m_runtime.stackSize < 16) {
+    if (this->m_runtime.stackSize < sizeof(F64) * 2) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     F64 rhs = this->pop<F64>();
@@ -596,7 +596,7 @@ DirectiveError FpySequencer::op_flt() {
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_fle() {
-    if (this->m_runtime.stackSize < 16) {
+    if (this->m_runtime.stackSize < sizeof(F64) * 2) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     F64 rhs = this->pop<F64>();
@@ -606,7 +606,7 @@ DirectiveError FpySequencer::op_fle() {
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_fgt() {
-    if (this->m_runtime.stackSize < 16) {
+    if (this->m_runtime.stackSize < sizeof(F64) * 2) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     F64 rhs = this->pop<F64>();
@@ -615,7 +615,7 @@ DirectiveError FpySequencer::op_fgt() {
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_fge() {
-    if (this->m_runtime.stackSize < 16) {
+    if (this->m_runtime.stackSize < sizeof(F64) * 2) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     F64 rhs = this->pop<F64>();
@@ -625,7 +625,7 @@ DirectiveError FpySequencer::op_fge() {
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_not() {
-    if (this->m_runtime.stackSize < 1) {
+    if (this->m_runtime.stackSize < sizeof(U8)) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     this->push(static_cast<U8>(this->pop<U8>() == 0));
@@ -633,7 +633,7 @@ DirectiveError FpySequencer::op_not() {
 }
 DirectiveError FpySequencer::op_fpext() {
     // convert F32 to F64
-    if (this->m_runtime.stackSize < 4) {
+    if (this->m_runtime.stackSize < sizeof(F32)) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     this->push(static_cast<F64>(this->pop<F32>()));
@@ -641,42 +641,42 @@ DirectiveError FpySequencer::op_fpext() {
 }
 DirectiveError FpySequencer::op_fptrunc() {
     // convert F64 to F32
-    if (this->m_runtime.stackSize < 8) {
+    if (this->m_runtime.stackSize < sizeof(F64)) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     this->push(static_cast<F32>(this->pop<F64>()));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_fptosi() {
-    if (this->m_runtime.stackSize < 8) {
+    if (this->m_runtime.stackSize < sizeof(F64)) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     this->push(static_cast<I64>(this->pop<F64>()));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_sitofp() {
-    if (this->m_runtime.stackSize < 8) {
+    if (this->m_runtime.stackSize < sizeof(I64)) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     this->push(static_cast<F64>(this->pop<I64>()));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_fptoui() {
-    if (this->m_runtime.stackSize < 8) {
+    if (this->m_runtime.stackSize < sizeof(F64)) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     this->push(static_cast<U64>(this->pop<F64>()));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_uitofp() {
-    if (this->m_runtime.stackSize < 8) {
+    if (this->m_runtime.stackSize < sizeof(U64)) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     this->push(static_cast<F64>(this->pop<U64>()));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_iadd() {
-    if (this->m_runtime.stackSize < 16) {
+    if (this->m_runtime.stackSize < sizeof(I64) * 2) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     I64 rhs = this->pop<I64>();
@@ -685,7 +685,7 @@ DirectiveError FpySequencer::op_iadd() {
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_isub() {
-    if (this->m_runtime.stackSize < 16) {
+    if (this->m_runtime.stackSize < sizeof(I64) * 2) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     I64 rhs = this->pop<I64>();
@@ -694,7 +694,7 @@ DirectiveError FpySequencer::op_isub() {
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_imul() {
-    if (this->m_runtime.stackSize < 16) {
+    if (this->m_runtime.stackSize < sizeof(I64) * 2) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     I64 rhs = this->pop<I64>();
@@ -703,7 +703,7 @@ DirectiveError FpySequencer::op_imul() {
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_udiv() {
-    if (this->m_runtime.stackSize < 16) {
+    if (this->m_runtime.stackSize < sizeof(U64) * 2) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     U64 rhs = this->pop<U64>();
@@ -712,7 +712,7 @@ DirectiveError FpySequencer::op_udiv() {
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_sdiv() {
-    if (this->m_runtime.stackSize < 16) {
+    if (this->m_runtime.stackSize < sizeof(I64) * 2) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     I64 rhs = this->pop<I64>();
@@ -721,7 +721,7 @@ DirectiveError FpySequencer::op_sdiv() {
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_imod() {
-    if (this->m_runtime.stackSize < 16) {
+    if (this->m_runtime.stackSize < sizeof(I64) * 2) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     I64 rhs = this->pop<I64>();
@@ -730,7 +730,7 @@ DirectiveError FpySequencer::op_imod() {
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_fadd() {
-    if (this->m_runtime.stackSize < 16) {
+    if (this->m_runtime.stackSize < sizeof(F64) * 2) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     F64 rhs = this->pop<F64>();
@@ -739,7 +739,7 @@ DirectiveError FpySequencer::op_fadd() {
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_fsub() {
-    if (this->m_runtime.stackSize < 16) {
+    if (this->m_runtime.stackSize < sizeof(F64) * 2) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     F64 rhs = this->pop<F64>();
@@ -748,7 +748,7 @@ DirectiveError FpySequencer::op_fsub() {
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_fmul() {
-    if (this->m_runtime.stackSize < 16) {
+    if (this->m_runtime.stackSize < sizeof(F64) * 2) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     F64 rhs = this->pop<F64>();
@@ -757,7 +757,7 @@ DirectiveError FpySequencer::op_fmul() {
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_fdiv() {
-    if (this->m_runtime.stackSize < 16) {
+    if (this->m_runtime.stackSize < sizeof(F64) * 2) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     F64 rhs = this->pop<F64>();
@@ -766,7 +766,7 @@ DirectiveError FpySequencer::op_fdiv() {
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_float_floor_div() {
-    if (this->m_runtime.stackSize < 16) {
+    if (this->m_runtime.stackSize < sizeof(F64) * 2) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     F64 rhs = this->pop<F64>();
@@ -775,7 +775,7 @@ DirectiveError FpySequencer::op_float_floor_div() {
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_fpow() {
-    if (this->m_runtime.stackSize < 16) {
+    if (this->m_runtime.stackSize < sizeof(F64) * 2) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     F64 rhs = this->pop<F64>();
@@ -784,7 +784,7 @@ DirectiveError FpySequencer::op_fpow() {
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_flog() {
-    if (this->m_runtime.stackSize < 8) {
+    if (this->m_runtime.stackSize < sizeof(F64)) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     F64 val = this->pop<F64>();
@@ -792,7 +792,7 @@ DirectiveError FpySequencer::op_flog() {
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_siext_8_64() {
-    if (this->m_runtime.stackSize < 1) {
+    if (this->m_runtime.stackSize < sizeof(I8)) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     I8 src = this->pop<I8>();
@@ -800,7 +800,7 @@ DirectiveError FpySequencer::op_siext_8_64() {
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_siext_16_64() {
-    if (this->m_runtime.stackSize < 2) {
+    if (this->m_runtime.stackSize < sizeof(I16)) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     I16 src = this->pop<I16>();
@@ -808,7 +808,7 @@ DirectiveError FpySequencer::op_siext_16_64() {
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_siext_32_64() {
-    if (this->m_runtime.stackSize < 4) {
+    if (this->m_runtime.stackSize < sizeof(I32)) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     I32 src = this->pop<I32>();
@@ -816,7 +816,7 @@ DirectiveError FpySequencer::op_siext_32_64() {
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_ziext_8_64() {
-    if (this->m_runtime.stackSize < 1) {
+    if (this->m_runtime.stackSize < sizeof(U8)) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     U8 src = this->pop<U8>();
@@ -824,7 +824,7 @@ DirectiveError FpySequencer::op_ziext_8_64() {
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_ziext_16_64() {
-    if (this->m_runtime.stackSize < 2) {
+    if (this->m_runtime.stackSize < sizeof(U16)) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     U16 src = this->pop<U16>();
@@ -832,7 +832,7 @@ DirectiveError FpySequencer::op_ziext_16_64() {
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_ziext_32_64() {
-    if (this->m_runtime.stackSize < 4) {
+    if (this->m_runtime.stackSize < sizeof(U32)) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     U32 src = this->pop<U32>();
@@ -840,7 +840,7 @@ DirectiveError FpySequencer::op_ziext_32_64() {
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_itrunc_64_8() {
-    if (this->m_runtime.stackSize < 8) {
+    if (this->m_runtime.stackSize < sizeof(U64)) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     U64 src = this->pop<U64>();
@@ -848,7 +848,7 @@ DirectiveError FpySequencer::op_itrunc_64_8() {
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_itrunc_64_16() {
-    if (this->m_runtime.stackSize < 8) {
+    if (this->m_runtime.stackSize < sizeof(U64)) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     U64 src = this->pop<U64>();
@@ -856,7 +856,7 @@ DirectiveError FpySequencer::op_itrunc_64_16() {
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_itrunc_64_32() {
-    if (this->m_runtime.stackSize < 8) {
+    if (this->m_runtime.stackSize < sizeof(U64)) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     U64 src = this->pop<U64>();
