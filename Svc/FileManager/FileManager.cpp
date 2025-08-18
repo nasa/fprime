@@ -156,13 +156,127 @@ void FileManager ::FileSize_cmdHandler(const FwOpcodeType opCode, const U32 cmdS
     this->sendCommandResponse(opCode, cmdSeq, status);
 }
 
+void FileManager ::ListDirectory_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, const Fw::CmdStringArg& dirName) {
+    Fw::LogStringArg logStringDirName(dirName.toChar());
+    this->log_ACTIVITY_HI_ListDirectoryStarted(logStringDirName);
+
+    // Open the directory
+    Os::Directory dir;
+    Os::Directory::Status status = dir.open(dirName.toChar(), Os::Directory::OpenMode::READ);
+    
+    if (status != Os::Directory::OP_OK) {
+        this->log_WARNING_HI_ListDirectoryError(logStringDirName, static_cast<U32>(status));
+        this->emitTelemetry(Os::FileSystem::OTHER_ERROR);
+        this->sendCommandResponse(opCode, cmdSeq, Os::FileSystem::OTHER_ERROR);
+        return;
+    }
+
+    // Count files first to report in success event
+    FwSizeType fileCount = 0;
+    status = dir.getFileCount(fileCount);
+    
+    if (status != Os::Directory::OP_OK) {
+        this->log_WARNING_HI_ListDirectoryError(logStringDirName, static_cast<U32>(status));
+        dir.close();
+        this->emitTelemetry(Os::FileSystem::OTHER_ERROR);
+        this->sendCommandResponse(opCode, cmdSeq, Os::FileSystem::OTHER_ERROR);
+        return;
+    }
+
+    // Read and emit each file name
+    U32 index = 0;
+    Fw::String filename;
+    dir.rewind(); //start from beginning
+    
+    while (true) {
+        status = dir.read(filename);
+        if (status == Os::Directory::NO_MORE_FILES) {
+            break; // Normal end of directory
+        } else if (status != Os::Directory::OP_OK) {
+            this->log_WARNING_HI_ListDirectoryError(logStringDirName, static_cast<U32>(status));
+            dir.close();
+            this->emitTelemetry(Os::FileSystem::OTHER_ERROR);
+            this->sendCommandResponse(opCode, cmdSeq, Os::FileSystem::OTHER_ERROR);
+            return;
+        }
+        
+        // Check entry type and emit appropriate event
+        Fw::LogStringArg logStringFileName(filename.toChar());
+        
+        // Construct full path for type checking
+        Fw::String fullPath;
+        fullPath.format("%s/%s", dirName.toChar(), filename.toChar());
+        
+        // Determine entry type
+        Os::FileSystem::PathType pathType = Os::FileSystem::getPathType(fullPath.toChar());
+        
+        if (pathType == Os::FileSystem::FILE) {
+            // Regular file: get size and emit file event
+            FwSizeType fileSize;
+            Os::FileSystem::Status sizeStatus = Os::FileSystem::getFileSize(fullPath.toChar(), fileSize);
+            U64 displaySize = (sizeStatus == Os::FileSystem::OP_OK) ? static_cast<U64>(fileSize) : 0;
+            this->log_ACTIVITY_HI_DirectoryListing(logStringDirName, logStringFileName, index, displaySize);
+        } else if (pathType == Os::FileSystem::DIRECTORY) {
+            // Subdirectory: count files and emit subdirectory event
+            U32 subdirFileCount = this->countFilesInDirectory(fullPath.toChar());
+            this->log_ACTIVITY_HI_DirectoryListingSubdir(logStringDirName, logStringFileName, index, subdirFileCount);
+        } else {
+            // Special file or inaccessible: treat as file with 0 size
+            this->log_ACTIVITY_HI_DirectoryListing(logStringDirName, logStringFileName, index, 0);
+        }
+        index++;
+    }
+
+    dir.close();
+    
+    // Emit success event with file count
+    this->log_ACTIVITY_HI_ListDirectorySucceeded(logStringDirName, static_cast<U32>(fileCount));
+    this->emitTelemetry(Os::FileSystem::OP_OK);
+    this->sendCommandResponse(opCode, cmdSeq, Os::FileSystem::OP_OK);
+}
+
 void FileManager ::pingIn_handler(const FwIndexType portNum, U32 key) {
     // return key
     this->pingOut_out(0, key);
 }
+
 // ----------------------------------------------------------------------
 // Helper methods
 // ----------------------------------------------------------------------
+
+U32 FileManager::countFilesInDirectory(const char* dirPath) {
+    Os::Directory dir;
+    Os::Directory::Status status = dir.open(dirPath, Os::Directory::OpenMode::READ);
+    
+    if (status != Os::Directory::OP_OK) {
+        return 0;
+    }
+    
+    U32 fileCount = 0;
+    Fw::String filename;
+    dir.rewind();
+    
+    while (true) {
+        status = dir.read(filename);
+        if (status == Os::Directory::NO_MORE_FILES) {
+            break;
+        } else if (status != Os::Directory::OP_OK) {
+            break;
+        }
+        
+        // Check if entry is a regular file
+        Fw::String fullPath;
+        fullPath.format("%s/%s", dirPath, filename.toChar());
+        
+        Os::FileSystem::PathType pathType = Os::FileSystem::getPathType(fullPath.toChar());
+        if (pathType == Os::FileSystem::FILE) {
+            fileCount++;
+        }
+    }
+    
+    dir.close();
+    return fileCount;
+}
 
 int FileManager ::systemCall(const Fw::CmdStringArg& command, const Fw::CmdStringArg& logFileName) const {
     // Create a buffer of at least enough size for storing the eval string less the 2 %s tokens, two command strings,

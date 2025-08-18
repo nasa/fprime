@@ -14,6 +14,7 @@
 #define Svc_FileManager_HPP
 
 #include "Os/FileSystem.hpp"
+#include "Os/Directory.hpp"
 #include "Svc/FileManager/FileManagerComponentAc.hpp"
 
 namespace Svc {
@@ -91,6 +92,13 @@ class FileManager final : public FileManagerComponentBase {
                              const Fw::CmdStringArg& fileName  //!< The file to get the size of
     );
 
+    //! Implementation for ListDirectory command handler
+    //!
+    void ListDirectory_cmdHandler(const FwOpcodeType opCode,       //!< The opcode
+                                  const U32 cmdSeq,                //!< The command sequence number
+                                  const Fw::CmdStringArg& dirName  //!< The directory to list
+    );
+
     //! Handler implementation for pingIn
     //!
     void pingIn_handler(const FwIndexType portNum, /*!< The port number*/
@@ -118,6 +126,11 @@ class FileManager final : public FileManagerComponentBase {
     void sendCommandResponse(const FwOpcodeType opCode,           //!< The opcode
                              const U32 cmdSeq,                    //!< The command sequence value
                              const Os::FileSystem::Status status  //!< The status
+    );
+
+    //! Count files in a directory
+    //!
+    U32 countFilesInDirectory(const char* dirPath  //!< The directory path
     );
 
   private:

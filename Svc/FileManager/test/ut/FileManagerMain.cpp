@@ -79,6 +79,21 @@ TEST(Test, fileSizeFail) {
     tester.fileSizeFail();
 }
 
+TEST(Test, listDirectorySucceed) {
+    Svc::FileManagerTester tester;
+    tester.listDirectorySucceed();
+}
+
+TEST(Test, listDirectoryFail) {
+    Svc::FileManagerTester tester;
+    tester.listDirectoryFail();
+}
+
+TEST(Test, listDirectoryWithSubdirs) {
+    Svc::FileManagerTester tester;
+    tester.listDirectoryWithSubdirs();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

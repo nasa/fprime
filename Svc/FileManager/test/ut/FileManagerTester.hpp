@@ -97,6 +97,18 @@ class FileManagerTester : public FileManagerGTestBase {
     //!
     void fileSizeFail();
 
+    //! List directory (succeed)
+    //!
+    void listDirectorySucceed();
+
+    //! List directory (fail)
+    //!
+    void listDirectoryFail();
+    
+    //! List directory with subdirectories (enhanced listing)
+    //!
+    void listDirectoryWithSubdirs();
+
   private:
     // ----------------------------------------------------------------------
     // Helper methods
@@ -131,6 +143,9 @@ class FileManagerTester : public FileManagerGTestBase {
 
     //! Append 2 files together
     void appendFile(const char* const source, const char* const target);
+
+    //! List the contents of a directory
+    void listDirectory(const char* const dirName);
 
     //! Assert successful command execution
     void assertSuccess(const FwOpcodeType opcode,

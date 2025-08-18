@@ -42,3 +42,9 @@ async command FileSize(
                         fileName: string size 256 @< The file to get the size of
                       ) \
   opcode 0x06
+
+@ List the contents of a directory
+async command ListDirectory(
+                              dirName: string size 256 @< The directory to list
+                            ) \
+  opcode 0x07

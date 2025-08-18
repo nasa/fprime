@@ -179,3 +179,51 @@ event FileSizeStarted(
   severity activity high \
   id 0x14 \
   format "Checking size of file {}..."
+
+@ Starting directory listing
+event ListDirectoryStarted(
+                            dirName: string size 256 @< The name of the directory
+                          ) \
+  severity activity high \
+  id 0x15 \
+  format "Listing contents of directory {}..."
+
+@ Directory listing completed successfully  
+event ListDirectorySucceeded(
+                              dirName: string size 256 @< The name of the directory
+                              fileCount: U32 @< The number of files found
+                            ) \
+  severity activity high \
+  id 0x16 \
+  format "Listed {} files in directory {}"
+
+@ Failed to list directory
+event ListDirectoryError(
+                          dirName: string size 256 @< The name of the directory
+                          status: U32 @< The error status
+                        ) \
+  severity warning high \
+  id 0x17 \
+  format "Failed to list directory {}, returned status {}"
+
+@ Directory listing file entry
+event DirectoryListing(
+                        dirName: string size 256 @< The name of the directory
+                        fileName: string size 256 @< The name of the file
+                        index: U32 @< The index of this file in the listing
+                        fileSize: U64 @< The size of the file in bytes
+                      ) \
+  severity activity high \
+  id 0x18 \
+  format "Directory {} [{}]: {} ({} bytes)"
+
+@ Directory listing subdirectory entry
+event DirectoryListingSubdir(
+                        dirName: string size 256 @< The name of the directory
+                        subdirName: string size 256 @< The name of the subdirectory
+                        index: U32 @< The index of this entry in the listing
+                        fileCount: U32 @< The number of files in the subdirectory
+                      ) \
+  severity activity high \
+  id 0x19 \
+  format "Directory {} [{}]: {} ({} files)"
