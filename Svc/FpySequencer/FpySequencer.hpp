@@ -619,6 +619,8 @@ class FpySequencer : public FpySequencerComponentBase {
     U8* lvars();
     // returns the stack height at which the lvar array begins
     U16 lvarOffset();
+    // returns the index of the current statement
+    U32 currentStatementIdx();
 
     // we split these functions up into the internalInterfaceInvoke and these custom member funcs
     // so that we can unit test them easier

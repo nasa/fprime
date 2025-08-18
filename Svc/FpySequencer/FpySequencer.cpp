@@ -305,7 +305,7 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
     if (response == Fw::CmdResponse::OK) {
         this->sequencer_sendSignal_stmtResponse_success();
     } else {
-        this->log_WARNING_HI_CommandFailed(opCode, this->m_runtime.nextStatementIndex - 1, this->m_sequenceFilePath,
+        this->log_WARNING_HI_CommandFailed(opCode, this->currentStatementIdx(), this->m_sequenceFilePath,
                                            response);
         this->sequencer_sendSignal_stmtResponse_failure();
     }
