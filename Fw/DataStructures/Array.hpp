@@ -38,7 +38,7 @@ class Array final {
     // ----------------------------------------------------------------------
 
     //! Zero-argument constructor
-    Array() {}
+    Array() = default;
 
     //! Initializer list constructor
     Array(const std::initializer_list<T>& il  //!< The initializer list

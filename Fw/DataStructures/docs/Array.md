@@ -40,7 +40,7 @@ It is an alias of `T[S]`.
 Array()
 ```
 
-Initialize each element of `m_elements` with the default value for `T`.
+Defined as `= default`.
 
 _Example:_
 ```c++
