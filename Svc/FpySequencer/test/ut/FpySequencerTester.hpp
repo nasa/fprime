@@ -188,6 +188,7 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     DirectiveError tester_op_float_floor_div();
     DirectiveError tester_op_fpow();
     DirectiveError tester_op_flog();
+    DirectiveError tester_op_fmod();
     DirectiveError tester_op_siext_8_64();
     DirectiveError tester_op_siext_16_64();
     DirectiveError tester_op_siext_32_64();

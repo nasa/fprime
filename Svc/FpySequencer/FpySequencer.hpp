@@ -673,6 +673,7 @@ class FpySequencer : public FpySequencerComponentBase {
     DirectiveError op_float_floor_div();
     DirectiveError op_fpow();
     DirectiveError op_flog();
+    DirectiveError op_fmod();
     DirectiveError op_siext_8_64();
     DirectiveError op_siext_16_64();
     DirectiveError op_siext_32_64();

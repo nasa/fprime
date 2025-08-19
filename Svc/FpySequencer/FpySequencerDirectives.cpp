@@ -725,6 +725,9 @@ DirectiveError FpySequencer::op_umod() {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     U64 rhs = this->pop<U64>();
+    if (rhs == 0) {
+        return DirectiveError::DOMAIN_ERROR;
+    }
     U64 lhs = this->pop<U64>();
     this->push(static_cast<U64>(lhs % rhs));
     return DirectiveError::NO_ERROR;
@@ -734,8 +737,19 @@ DirectiveError FpySequencer::op_smod() {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     I64 rhs = this->pop<I64>();
+    if (rhs == 0) {
+        return DirectiveError::DOMAIN_ERROR;
+    }
     I64 lhs = this->pop<I64>();
-    this->push(static_cast<I64>(lhs % rhs));
+    I64 res = static_cast<I64>(lhs % rhs);
+    // in order to match Python's behavior,
+    // if the signs of the remainder and divisor differ, adjust the result.
+    // this happens when the result should be positive but is negative, or vice-versa.
+    // credit Gemini 2.5 pro
+    if ((res > 0 && rhs < 0) || (res < 0 && rhs > 0)) {
+        res += rhs;
+    }
+    this->push(res);
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_fadd() {
@@ -798,6 +812,18 @@ DirectiveError FpySequencer::op_flog() {
     }
     F64 val = this->pop<F64>();
     this->push(static_cast<F64>(log(val)));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_fmod() {
+    if (this->m_runtime.stackSize < sizeof(F64) * 2) {
+        return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
+    }
+    F64 rhs = this->pop<F64>();
+    if (rhs == 0.0) {
+        return DirectiveError::DOMAIN_ERROR;
+    }
+    F64 lhs = this->pop<F64>();
+    this->push(static_cast<F64>(lhs - rhs * std::floor(lhs / rhs)));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_siext_8_64() {
@@ -994,6 +1020,9 @@ Signal FpySequencer::stackOp_directiveHandler(const FpySequencer_StackOpDirectiv
             break;
         case Fpy::DirectiveId::FLOG:
             error = this->op_flog();
+            break;
+        case Fpy::DirectiveId::FMOD:
+            error = this->op_fmod();
             break;
         case Fpy::DirectiveId::SIEXT_8_64:
             error = this->op_siext_8_64();

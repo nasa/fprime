@@ -591,6 +591,9 @@ DirectiveError FpySequencerTester::tester_op_fpow() {
 DirectiveError FpySequencerTester::tester_op_flog() {
     return this->cmp.op_flog();
 }
+DirectiveError FpySequencerTester::tester_op_fmod() {
+    return this->cmp.op_fmod();
+}
 DirectiveError FpySequencerTester::tester_op_siext_8_64() {
     return this->cmp.op_siext_8_64();
 }

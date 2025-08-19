@@ -217,6 +217,7 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
         case Fpy::DirectiveId::FLOAT_FLOOR_DIV:
         case Fpy::DirectiveId::FPOW:
         case Fpy::DirectiveId::FLOG:
+        case Fpy::DirectiveId::FMOD:
         case Fpy::DirectiveId::SIEXT_8_64:
         case Fpy::DirectiveId::SIEXT_16_64:
         case Fpy::DirectiveId::SIEXT_32_64:
@@ -427,6 +428,7 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
         case Fpy::DirectiveId::FLOAT_FLOOR_DIV:
         case Fpy::DirectiveId::FPOW:
         case Fpy::DirectiveId::FLOG:
+        case Fpy::DirectiveId::FMOD:
         case Fpy::DirectiveId::SIEXT_8_64:
         case Fpy::DirectiveId::SIEXT_16_64:
         case Fpy::DirectiveId::SIEXT_32_64:
