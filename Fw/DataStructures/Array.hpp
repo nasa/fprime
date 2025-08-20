@@ -46,7 +46,7 @@ class Array final {
         *this = il;
     }
 
-    //! Raw array constructor
+    //! Primitive array constructor
     Array(const Elements& elements  //!< The array elements
     ) {
         *this = elements;
@@ -55,9 +55,7 @@ class Array final {
     //! Single-element constructor
     explicit Array(const T& element  //!< The element
     ) {
-        for (FwSizeType i = 0; i < S; i++) {
-            this->m_elements[i] = element;
-        }
+        *this = element;
     }
 
     //! Copy constructor
@@ -90,7 +88,7 @@ class Array final {
         return this->m_elements[i];
     }
 
-    //! operator= (Initializer List)
+    //! operator= (initializer list)
     //! \return *this
     Array<T, S>& operator=(const std::initializer_list<T>& il  //!< The initializer list
     ) {
@@ -106,7 +104,7 @@ class Array final {
         return *this;
     }
 
-    //! operator= (Raw Array)
+    //! operator= (primitive array)
     //! \return *this
     Array<T, S>& operator=(const Elements& elements  //!< The array elements
     ) {
@@ -116,7 +114,16 @@ class Array final {
         return *this;
     }
 
-    //! operator= (Copy Assignment)
+    //! operator= (single element)
+    Array<T, S>& operator=(const T& element  //!< The element
+    ) {
+        for (FwSizeType i = 0; i < S; i++) {
+            this->m_elements[i] = element;
+        }
+        return *this;
+    }
+
+    //! operator= (copy assignment)
     //! \return *this
     Array<T, S>& operator=(const Array<T, S>& a) {
         if (&a != this) {

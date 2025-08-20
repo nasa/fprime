@@ -62,7 +62,7 @@ _Examples:_
 Array<U32, 3> a({ 1, 2, 3 });
 ```
 
-### 4.3. Raw Array Constructor
+### 4.3. Primitive Array Constructor
 
 ```c++
 Array(const Elements& elements)
@@ -163,7 +163,7 @@ Array<U32, 3> a;
 a = { 1, 2, 3 };
 ```
 
-### 5.3. operator= (Raw Array)
+### 5.3. operator= (Primitive Array)
 
 ```c++
 Array<T, S>& operator=(const Elements& elements)
@@ -180,7 +180,23 @@ Array<U32, 3> a;
 a = elements;
 ```
 
-### 5.4. operator= (Copy Assignment)
+### 5.4. operator= (Single Element)
+
+```c++
+Array<T, S>& operator=(const T& element)
+```
+
+1. Copy `element` into each element of `m_elements`.
+
+1. Return `*this`.
+
+_Example:_
+```c++
+Array<U32, 3> a;
+a = 5;
+```
+
+### 5.5. operator= (Copy Assignment)
 
 ```c++
 Array<T, S>& operator=(const Array<T, S>& a)
@@ -198,7 +214,7 @@ Array<U32, 3> a2(2);
 a1 = a2;
 ```
 
-### 5.5. getElements
+### 5.6. getElements
 
 ```c++
 Elements& getElements()
@@ -220,7 +236,7 @@ const auto& elements2 = a.getElements();
 ASSERT_EQ(elements2[0], 1);
 ```
 
-### 5.6. asExternalArray
+### 5.7. asExternalArray
 
 ```c++
 ExternalArray<T> asExternalArray()
