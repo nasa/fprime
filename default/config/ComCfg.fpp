@@ -6,6 +6,9 @@
 # defined
 # ======================================================================
 
+@ The width of packet descriptors when they are serialized by the framework
+type FwPacketDescriptorType = U16
+
 module ComCfg {
 
     # Needed in dictionary:
@@ -16,7 +19,7 @@ module ComCfg {
     constant TmFrameFixedSize = 1024  # Needs to be at least COM_BUFFER_MAX_SIZE + (2 * SpacePacketHeaderSize) + 1
 
     @ APIDs are 11 bits in the Space Packet protocol, so we use U16. Max value 7FF
-    enum APID : U16 {
+    enum APID : FwPacketDescriptorType {
         # APIDs prefixed with FW are reserved for F Prime and need to be present
         # in the enumeration. Their values can be changed
         FW_PACKET_COMMAND        = 0x0000  @< Command packet type - incoming
