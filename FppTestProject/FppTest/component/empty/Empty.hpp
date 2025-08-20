@@ -9,24 +9,18 @@
 
 #include "FppTest/component/empty/EmptyComponentAc.hpp"
 
-class Empty :
-  public EmptyComponentBase
-{
-
+class Empty : public EmptyComponentBase {
   public:
-
     // ----------------------------------------------------------------------
     // Component construction, initialization, and destruction
     // ----------------------------------------------------------------------
 
     //! Construct Empty object
-    Empty(
-        const char* const compName //!< The component name
+    Empty(const char* const compName  //!< The component name
     );
 
     //! Destroy Empty object
     ~Empty();
-
 };
 
 #endif
