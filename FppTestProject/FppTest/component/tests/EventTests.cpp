@@ -34,8 +34,8 @@ void Tester ::testEventHelper(FwIndexType portNum, FppTest::Types::PrimitivePara
 
     ASSERT_EVENTS_SIZE(static_cast<U32>(size));
     ASSERT_EVENTS_EventPrimitive_SIZE(static_cast<U32>(size));
-    ASSERT_EVENTS_EventPrimitive(static_cast<U32>(portNum), data.args.val1, data.args.val2, data.args.val3, data.args.val4,
-                                 data.args.val5, data.args.val6);
+    ASSERT_EVENTS_EventPrimitive(static_cast<U32>(portNum), data.args.val1, data.args.val2, data.args.val3,
+                                 data.args.val4, data.args.val5, data.args.val6);
 }
 
 void Tester ::testEvent(FwIndexType portNum, FppTest::Types::PrimitiveParams& data) {

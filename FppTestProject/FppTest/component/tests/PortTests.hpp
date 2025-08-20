@@ -21,19 +21,19 @@
 #define PORT_TEST_INVOKE_DECL(PORT_KIND, TYPE) \
     void test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::TYPE& port);
 
-#define PORT_TEST_INVOKE_DECLS(PORT_KIND)              \
-    PORT_TEST_INVOKE_DECL(PORT_KIND, NoParams)         \
-    PORT_TEST_INVOKE_DECL(PORT_KIND, PrimitiveParams)  \
-    PORT_TEST_INVOKE_DECL(PORT_KIND, PortStringParams) \
-    PORT_TEST_INVOKE_DECL(PORT_KIND, EnumParams)       \
-    PORT_TEST_INVOKE_DECL(PORT_KIND, ArrayParams)      \
-    PORT_TEST_INVOKE_DECL(PORT_KIND, StructParams)     \
-    PORT_TEST_INVOKE_DECL(PORT_KIND, NoParamReturn)    \
-    PORT_TEST_INVOKE_DECL(PORT_KIND, PrimitiveReturn)  \
-    PORT_TEST_INVOKE_DECL(PORT_KIND, EnumReturn)       \
-    PORT_TEST_INVOKE_DECL(PORT_KIND, StringReturn)     \
-    PORT_TEST_INVOKE_DECL(PORT_KIND, StringAliasReturn) \
-    PORT_TEST_INVOKE_DECL(PORT_KIND, ArrayReturn)      \
+#define PORT_TEST_INVOKE_DECLS(PORT_KIND)                    \
+    PORT_TEST_INVOKE_DECL(PORT_KIND, NoParams)               \
+    PORT_TEST_INVOKE_DECL(PORT_KIND, PrimitiveParams)        \
+    PORT_TEST_INVOKE_DECL(PORT_KIND, PortStringParams)       \
+    PORT_TEST_INVOKE_DECL(PORT_KIND, EnumParams)             \
+    PORT_TEST_INVOKE_DECL(PORT_KIND, ArrayParams)            \
+    PORT_TEST_INVOKE_DECL(PORT_KIND, StructParams)           \
+    PORT_TEST_INVOKE_DECL(PORT_KIND, NoParamReturn)          \
+    PORT_TEST_INVOKE_DECL(PORT_KIND, PrimitiveReturn)        \
+    PORT_TEST_INVOKE_DECL(PORT_KIND, EnumReturn)             \
+    PORT_TEST_INVOKE_DECL(PORT_KIND, StringReturn)           \
+    PORT_TEST_INVOKE_DECL(PORT_KIND, StringAliasReturn)      \
+    PORT_TEST_INVOKE_DECL(PORT_KIND, ArrayReturn)            \
     PORT_TEST_INVOKE_DECL(PORT_KIND, ArrayStringAliasReturn) \
     PORT_TEST_INVOKE_DECL(PORT_KIND, StructReturn)
 
@@ -53,19 +53,19 @@
 
 #define PORT_TEST_CHECK_DECL(PORT_KIND, TYPE) void test##PORT_KIND##PortCheck(FppTest::Types::TYPE& port);
 
-#define PORT_TEST_CHECK_DECLS(PORT_KIND)              \
-    PORT_TEST_CHECK_DECL(PORT_KIND, NoParams)         \
-    PORT_TEST_CHECK_DECL(PORT_KIND, PrimitiveParams)  \
-    PORT_TEST_CHECK_DECL(PORT_KIND, PortStringParams) \
-    PORT_TEST_CHECK_DECL(PORT_KIND, EnumParams)       \
-    PORT_TEST_CHECK_DECL(PORT_KIND, ArrayParams)      \
-    PORT_TEST_CHECK_DECL(PORT_KIND, StructParams)     \
-    PORT_TEST_CHECK_DECL(PORT_KIND, NoParamReturn)    \
-    PORT_TEST_CHECK_DECL(PORT_KIND, PrimitiveReturn)  \
-    PORT_TEST_CHECK_DECL(PORT_KIND, EnumReturn)       \
-    PORT_TEST_CHECK_DECL(PORT_KIND, StringReturn)     \
-    PORT_TEST_CHECK_DECL(PORT_KIND, StringAliasReturn) \
-    PORT_TEST_CHECK_DECL(PORT_KIND, ArrayReturn)      \
+#define PORT_TEST_CHECK_DECLS(PORT_KIND)                    \
+    PORT_TEST_CHECK_DECL(PORT_KIND, NoParams)               \
+    PORT_TEST_CHECK_DECL(PORT_KIND, PrimitiveParams)        \
+    PORT_TEST_CHECK_DECL(PORT_KIND, PortStringParams)       \
+    PORT_TEST_CHECK_DECL(PORT_KIND, EnumParams)             \
+    PORT_TEST_CHECK_DECL(PORT_KIND, ArrayParams)            \
+    PORT_TEST_CHECK_DECL(PORT_KIND, StructParams)           \
+    PORT_TEST_CHECK_DECL(PORT_KIND, NoParamReturn)          \
+    PORT_TEST_CHECK_DECL(PORT_KIND, PrimitiveReturn)        \
+    PORT_TEST_CHECK_DECL(PORT_KIND, EnumReturn)             \
+    PORT_TEST_CHECK_DECL(PORT_KIND, StringReturn)           \
+    PORT_TEST_CHECK_DECL(PORT_KIND, StringAliasReturn)      \
+    PORT_TEST_CHECK_DECL(PORT_KIND, ArrayReturn)            \
     PORT_TEST_CHECK_DECL(PORT_KIND, ArrayStringAliasReturn) \
     PORT_TEST_CHECK_DECL(PORT_KIND, StructReturn)
 
@@ -96,55 +96,54 @@
 // Invoke typed input ports
 // ----------------------------------------------------------------------
 
-#define PORT_TEST_INVOKE_DEFS(PORT_KIND)                                                                         \
-    void Tester ::test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::NoParams& port) {         \
-        ASSERT_TRUE(component.isConnected_noArgsOut_OutputPort(portNum));                                        \
-        ASSERT_TRUE(this->isConnected_to_noArgs##PORT_KIND(portNum));                                            \
-                                                                                                                 \
-        this->invoke_to_noArgs##PORT_KIND(portNum);                                                              \
-    }                                                                                                            \
-                                                                                                                 \
-    void Tester ::test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::PrimitiveParams& port) {  \
-        ASSERT_TRUE(component.isConnected_primitiveArgsOut_OutputPort(portNum));                                 \
-        ASSERT_TRUE(this->isConnected_to_primitiveArgs##PORT_KIND(portNum));                                     \
-                                                                                                                 \
-        this->invoke_to_primitiveArgs##PORT_KIND(portNum, port.args.val1, port.args.val2, port.args.val3,        \
-                                                 port.args.val4, port.args.val5, port.args.val6);                \
-    }                                                                                                            \
-                                                                                                                 \
-    void Tester ::test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::PortStringParams& port) { \
-        ASSERT_TRUE(component.isConnected_stringArgsOut_OutputPort(portNum));                                    \
-        ASSERT_TRUE(this->isConnected_to_stringArgs##PORT_KIND(portNum));                                        \
-                                                                                                                 \
-        this->invoke_to_stringArgs##PORT_KIND(portNum, port.args.val1, port.args.val2, port.args.val3,           \
-                                              port.args.val4);                                                   \
-    }                                                                                                            \
-                                                                                                                 \
-    void Tester ::test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::EnumParams& port) {       \
-        ASSERT_TRUE(component.isConnected_enumArgsOut_OutputPort(portNum));                                      \
-        ASSERT_TRUE(this->isConnected_to_enumArgs##PORT_KIND(portNum));                                          \
-                                                                                                                 \
-        this->invoke_to_enumArgs##PORT_KIND(portNum, port.args.val1, port.args.val2,                             \
-                                            port.args.val3, port.args.val4);                                     \
-    }                                                                                                            \
-                                                                                                                 \
-    void Tester ::test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::ArrayParams& port) {      \
-        ASSERT_TRUE(component.isConnected_arrayArgsOut_OutputPort(portNum));                                     \
-        ASSERT_TRUE(this->isConnected_to_arrayArgs##PORT_KIND(portNum));                                         \
-                                                                                                                 \
-        this->invoke_to_arrayArgs##PORT_KIND(portNum, port.args.val1, port.args.val2, port.args.val3,            \
-                                             port.args.val4, port.args.val5, port.args.val6);                    \
-    }                                                                                                            \
-                                                                                                                 \
-    void Tester ::test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::StructParams& port) {     \
-        ASSERT_TRUE(component.isConnected_structArgsOut_OutputPort(portNum));                                    \
-        ASSERT_TRUE(this->isConnected_to_structArgs##PORT_KIND(portNum));                                        \
-                                                                                                                 \
-        this->invoke_to_structArgs##PORT_KIND(portNum, port.args.val1, port.args.val2);                          \
+#define PORT_TEST_INVOKE_DEFS(PORT_KIND)                                                                              \
+    void Tester ::test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::NoParams& port) {                  \
+        ASSERT_TRUE(component.isConnected_noArgsOut_OutputPort(portNum));                                             \
+        ASSERT_TRUE(this->isConnected_to_noArgs##PORT_KIND(portNum));                                                 \
+                                                                                                                      \
+        this->invoke_to_noArgs##PORT_KIND(portNum);                                                                   \
+    }                                                                                                                 \
+                                                                                                                      \
+    void Tester ::test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::PrimitiveParams& port) {           \
+        ASSERT_TRUE(component.isConnected_primitiveArgsOut_OutputPort(portNum));                                      \
+        ASSERT_TRUE(this->isConnected_to_primitiveArgs##PORT_KIND(portNum));                                          \
+                                                                                                                      \
+        this->invoke_to_primitiveArgs##PORT_KIND(portNum, port.args.val1, port.args.val2, port.args.val3,             \
+                                                 port.args.val4, port.args.val5, port.args.val6);                     \
+    }                                                                                                                 \
+                                                                                                                      \
+    void Tester ::test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::PortStringParams& port) {          \
+        ASSERT_TRUE(component.isConnected_stringArgsOut_OutputPort(portNum));                                         \
+        ASSERT_TRUE(this->isConnected_to_stringArgs##PORT_KIND(portNum));                                             \
+                                                                                                                      \
+        this->invoke_to_stringArgs##PORT_KIND(portNum, port.args.val1, port.args.val2, port.args.val3,                \
+                                              port.args.val4);                                                        \
+    }                                                                                                                 \
+                                                                                                                      \
+    void Tester ::test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::EnumParams& port) {                \
+        ASSERT_TRUE(component.isConnected_enumArgsOut_OutputPort(portNum));                                           \
+        ASSERT_TRUE(this->isConnected_to_enumArgs##PORT_KIND(portNum));                                               \
+                                                                                                                      \
+        this->invoke_to_enumArgs##PORT_KIND(portNum, port.args.val1, port.args.val2, port.args.val3, port.args.val4); \
+    }                                                                                                                 \
+                                                                                                                      \
+    void Tester ::test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::ArrayParams& port) {               \
+        ASSERT_TRUE(component.isConnected_arrayArgsOut_OutputPort(portNum));                                          \
+        ASSERT_TRUE(this->isConnected_to_arrayArgs##PORT_KIND(portNum));                                              \
+                                                                                                                      \
+        this->invoke_to_arrayArgs##PORT_KIND(portNum, port.args.val1, port.args.val2, port.args.val3, port.args.val4, \
+                                             port.args.val5, port.args.val6);                                         \
+    }                                                                                                                 \
+                                                                                                                      \
+    void Tester ::test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::StructParams& port) {              \
+        ASSERT_TRUE(component.isConnected_structArgsOut_OutputPort(portNum));                                         \
+        ASSERT_TRUE(this->isConnected_to_structArgs##PORT_KIND(portNum));                                             \
+                                                                                                                      \
+        this->invoke_to_structArgs##PORT_KIND(portNum, port.args.val1, port.args.val2);                               \
     }
 
 #define PORT_TEST_INVOKE_RETURN_DEFS(PORT_KIND)                                                                       \
-    void Tester ::test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::NoParamReturn& port) {         \
+    void Tester ::test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::NoParamReturn& port) {             \
         ASSERT_TRUE(component.isConnected_noArgsReturnOut_OutputPort(portNum));                                       \
         ASSERT_TRUE(this->isConnected_to_noArgsReturn##PORT_KIND(portNum));                                           \
                                                                                                                       \
@@ -153,7 +152,7 @@
         ASSERT_EQ(returnVal, this->noParamReturnVal.val);                                                             \
     }                                                                                                                 \
                                                                                                                       \
-    void Tester ::test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::PrimitiveReturn& port) {       \
+    void Tester ::test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::PrimitiveReturn& port) {           \
         ASSERT_TRUE(component.isConnected_primitiveReturnOut_OutputPort(portNum));                                    \
         ASSERT_TRUE(this->isConnected_to_primitiveReturn##PORT_KIND(portNum));                                        \
                                                                                                                       \
@@ -163,7 +162,7 @@
         ASSERT_EQ(returnVal, this->primitiveReturnVal.val);                                                           \
     }                                                                                                                 \
                                                                                                                       \
-    void Tester ::test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::EnumReturn& port) {            \
+    void Tester ::test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::EnumReturn& port) {                \
         ASSERT_TRUE(component.isConnected_enumReturnOut_OutputPort(portNum));                                         \
         ASSERT_TRUE(this->isConnected_to_enumReturn##PORT_KIND(portNum));                                             \
                                                                                                                       \
@@ -172,7 +171,7 @@
         ASSERT_EQ(returnVal, this->enumReturnVal.val);                                                                \
     }                                                                                                                 \
                                                                                                                       \
-    void Tester ::test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::StringReturn& port) {          \
+    void Tester ::test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::StringReturn& port) {              \
         ASSERT_TRUE(component.isConnected_stringReturnOut_OutputPort(portNum));                                       \
         ASSERT_TRUE(this->isConnected_to_stringReturn##PORT_KIND(portNum));                                           \
                                                                                                                       \
@@ -182,16 +181,16 @@
         ASSERT_EQ(returnVal, this->stringReturnVal.val);                                                              \
     }                                                                                                                 \
     void Tester ::test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::StringAliasReturn& port) {         \
-            ASSERT_TRUE(component.isConnected_stringAliasReturnOut_OutputPort(portNum));                              \
-            ASSERT_TRUE(this->isConnected_to_stringAliasReturn##PORT_KIND(portNum));                                  \
+        ASSERT_TRUE(component.isConnected_stringAliasReturnOut_OutputPort(portNum));                                  \
+        ASSERT_TRUE(this->isConnected_to_stringAliasReturn##PORT_KIND(portNum));                                      \
                                                                                                                       \
-            decltype(this->stringReturnVal.val) returnVal =                                                      \
-                this->invoke_to_stringAliasReturn##PORT_KIND(portNum, port.args.val1, port.args.val2);                \
+        decltype(this->stringReturnVal.val) returnVal =                                                               \
+            this->invoke_to_stringAliasReturn##PORT_KIND(portNum, port.args.val1, port.args.val2);                    \
                                                                                                                       \
-            ASSERT_EQ(returnVal, this->stringReturnVal.val);                                                          \
+        ASSERT_EQ(returnVal, this->stringReturnVal.val);                                                              \
     }                                                                                                                 \
                                                                                                                       \
-    void Tester ::test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::ArrayReturn& port) {           \
+    void Tester ::test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::ArrayReturn& port) {               \
         ASSERT_TRUE(component.isConnected_arrayReturnOut_OutputPort(portNum));                                        \
         ASSERT_TRUE(this->isConnected_to_arrayReturn##PORT_KIND(portNum));                                            \
                                                                                                                       \
@@ -203,13 +202,13 @@
         ASSERT_TRUE(component.isConnected_arrayStringAliasReturnOut_OutputPort(portNum));                             \
         ASSERT_TRUE(this->isConnected_to_arrayStringAliasReturn##PORT_KIND(portNum));                                 \
                                                                                                                       \
-        FormalAliasStringArray returnVal = this->invoke_to_arrayStringAliasReturn##PORT_KIND(                         \
-            portNum, port.args.val1, port.args.val2);                                                                 \
+        FormalAliasStringArray returnVal =                                                                            \
+            this->invoke_to_arrayStringAliasReturn##PORT_KIND(portNum, port.args.val1, port.args.val2);               \
                                                                                                                       \
         ASSERT_EQ(returnVal, this->arrayStringAliasReturnVal.val);                                                    \
     }                                                                                                                 \
                                                                                                                       \
-    void Tester ::test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::StructReturn& port) {          \
+    void Tester ::test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::StructReturn& port) {              \
         ASSERT_TRUE(component.isConnected_structReturnOut_OutputPort(portNum));                                       \
         ASSERT_TRUE(this->isConnected_to_structReturn##PORT_KIND(portNum));                                           \
                                                                                                                       \
@@ -223,429 +222,429 @@
 // Invoke serial input ports
 // ----------------------------------------------------------------------
 
-#define PORT_TEST_INVOKE_SERIAL_HELPER_DEF(PORT_KIND)                                             \
+#define PORT_TEST_INVOKE_SERIAL_HELPER_DEF(PORT_KIND)                                         \
     void Tester ::invoke##PORT_KIND##SerialPort(FwIndexType portNum, Fw::SerialBuffer& buf) { \
-        ASSERT_TRUE(this->isConnected_to_serial##PORT_KIND(portNum));                             \
-        this->invoke_to_serial##PORT_KIND(portNum, buf);                                          \
+        ASSERT_TRUE(this->isConnected_to_serial##PORT_KIND(portNum));                         \
+        this->invoke_to_serial##PORT_KIND(portNum, buf);                                      \
     }
 
-#define PORT_TEST_INVOKE_SERIAL_HELPER_DEF_ASYNC                                          \
-    void Tester ::invokeAsyncSerialPort(FwIndexType portNum, Fw::SerialBuffer& buf) { \
-        Fw::QueuedComponentBase::MsgDispatchStatus status;                                \
-                                                                                          \
-        switch (portNum) {                                                                \
-            case SerialPortIndex::NO_ARGS:                                                \
-            case SerialPortIndex::PRIMITIVE:                                              \
-            case SerialPortIndex::STRING:                                                 \
-                ASSERT_TRUE(this->isConnected_to_serialAsync(portNum));                   \
-                this->invoke_to_serialAsync(portNum, buf);                                \
-                break;                                                                    \
-                                                                                          \
-            case SerialPortIndex::ENUM:                                                   \
-                ASSERT_TRUE(this->isConnected_to_serialAsyncAssert(0));                   \
-                this->invoke_to_serialAsyncAssert(0, buf);                                \
-                break;                                                                    \
-                                                                                          \
-            case SerialPortIndex::ARRAY:                                                  \
-                ASSERT_TRUE(this->isConnected_to_serialAsyncBlockPriority(0));            \
-                this->invoke_to_serialAsyncBlockPriority(0, buf);                         \
-                break;                                                                    \
-                                                                                          \
-            case SerialPortIndex::STRUCT:                                                 \
-                ASSERT_TRUE(this->isConnected_to_serialAsyncDropPriority(0));             \
-                this->invoke_to_serialAsyncDropPriority(0, buf);                          \
-                break;                                                                    \
-        }                                                                                 \
-                                                                                          \
-        status = this->doDispatch();                                                      \
-                                                                                          \
-        ASSERT_EQ(status, Fw::QueuedComponentBase::MsgDispatchStatus::MSG_DISPATCH_OK);   \
+#define PORT_TEST_INVOKE_SERIAL_HELPER_DEF_ASYNC                                        \
+    void Tester ::invokeAsyncSerialPort(FwIndexType portNum, Fw::SerialBuffer& buf) {   \
+        Fw::QueuedComponentBase::MsgDispatchStatus status;                              \
+                                                                                        \
+        switch (portNum) {                                                              \
+            case SerialPortIndex::NO_ARGS:                                              \
+            case SerialPortIndex::PRIMITIVE:                                            \
+            case SerialPortIndex::STRING:                                               \
+                ASSERT_TRUE(this->isConnected_to_serialAsync(portNum));                 \
+                this->invoke_to_serialAsync(portNum, buf);                              \
+                break;                                                                  \
+                                                                                        \
+            case SerialPortIndex::ENUM:                                                 \
+                ASSERT_TRUE(this->isConnected_to_serialAsyncAssert(0));                 \
+                this->invoke_to_serialAsyncAssert(0, buf);                              \
+                break;                                                                  \
+                                                                                        \
+            case SerialPortIndex::ARRAY:                                                \
+                ASSERT_TRUE(this->isConnected_to_serialAsyncBlockPriority(0));          \
+                this->invoke_to_serialAsyncBlockPriority(0, buf);                       \
+                break;                                                                  \
+                                                                                        \
+            case SerialPortIndex::STRUCT:                                               \
+                ASSERT_TRUE(this->isConnected_to_serialAsyncDropPriority(0));           \
+                this->invoke_to_serialAsyncDropPriority(0, buf);                        \
+                break;                                                                  \
+        }                                                                               \
+                                                                                        \
+        status = this->doDispatch();                                                    \
+                                                                                        \
+        ASSERT_EQ(status, Fw::QueuedComponentBase::MsgDispatchStatus::MSG_DISPATCH_OK); \
     }
 
-#define PORT_TEST_INVOKE_SERIAL_DEFS(PORT_KIND)                                                                        \
-    void Tester ::test##PORT_KIND##PortInvokeSerial(FwIndexType portNum, FppTest::Types::NoParams& port) {         \
-        ASSERT_TRUE(component.isConnected_serialOut_OutputPort(portNum));                                              \
-                                                                                                                       \
-        U8 data[1];                                                                                                    \
-        Fw::SerialBuffer buf(data, sizeof(data));                                                                      \
-                                                                                                                       \
-        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::NO_ARGS, buf);                                            \
-    }                                                                                                                  \
-                                                                                                                       \
-    void Tester ::test##PORT_KIND##PortInvokeSerial(FwIndexType portNum, FppTest::Types::PrimitiveParams& port) {  \
-        ASSERT_TRUE(component.isConnected_serialOut_OutputPort(portNum));                                              \
-                                                                                                                       \
-        Fw::SerializeStatus status;                                                                                    \
-                                                                                                                       \
-        /* Check unsuccessful deserialization of first parameter */                                                    \
-        U8 invalidData1[1];                                                                                            \
-        Fw::SerialBuffer invalidBuf1(invalidData1, sizeof(invalidData1));                                              \
-                                                                                                                       \
-        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::PRIMITIVE, invalidBuf1);                                  \
-                                                                                                                       \
-        this->checkSerializeStatusBufferEmpty();                                                                       \
-                                                                                                                       \
-        /* Check unsuccessful deserialization of second parameter */                                                   \
-        U8 invalidData2[sizeof(U32)];                                                                                  \
-        Fw::SerialBuffer invalidBuf2(invalidData2, sizeof(invalidData2));                                              \
-                                                                                                                       \
-        status = invalidBuf2.serialize(port.args.val1);                                                                \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::PRIMITIVE, invalidBuf2);                                  \
-                                                                                                                       \
-        this->checkSerializeStatusBufferEmpty();                                                                       \
-                                                                                                                       \
-        /* Check unsuccessful deserialization of third parameter */                                                    \
-        U8 invalidData3[sizeof(U32) * 2];                                                                              \
-        Fw::SerialBuffer invalidBuf3(invalidData3, sizeof(invalidData3));                                              \
-                                                                                                                       \
-        status = invalidBuf3.serialize(port.args.val1);                                                                \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        status = invalidBuf3.serialize(port.args.val2);                                                                \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::PRIMITIVE, invalidBuf3);                                  \
-                                                                                                                       \
-        this->checkSerializeStatusBufferEmpty();                                                                       \
-                                                                                                                       \
-        /* Check unsuccessful deserialization of fourth parameter */                                                   \
-        U8 invalidData4[(sizeof(U32) * 2) + sizeof(F32)];                                                              \
-        Fw::SerialBuffer invalidBuf4(invalidData4, sizeof(invalidData4));                                              \
-                                                                                                                       \
-        status = invalidBuf4.serialize(port.args.val1);                                                                \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        status = invalidBuf4.serialize(port.args.val2);                                                                \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        status = invalidBuf4.serialize(port.args.val3);                                                                \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::PRIMITIVE, invalidBuf4);                                  \
-                                                                                                                       \
-        this->checkSerializeStatusBufferEmpty();                                                                       \
-                                                                                                                       \
-        /* Check unsuccessful deserialization of fifth parameter */                                                    \
-        U8 invalidData5[(sizeof(U32) * 2) + (sizeof(F32) * 2)];                                                        \
-        Fw::SerialBuffer invalidBuf5(invalidData5, sizeof(invalidData5));                                              \
-                                                                                                                       \
-        status = invalidBuf5.serialize(port.args.val1);                                                                \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        status = invalidBuf5.serialize(port.args.val2);                                                                \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        status = invalidBuf5.serialize(port.args.val3);                                                                \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        status = invalidBuf5.serialize(port.args.val4);                                                                \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::PRIMITIVE, invalidBuf5);                                  \
-                                                                                                                       \
-        this->checkSerializeStatusBufferEmpty();                                                                       \
-                                                                                                                       \
-        /* Check unsuccessful deserialization of sixth parameter */                                                    \
-        U8 invalidData6[(sizeof(U32) * 2) + (sizeof(F32) * 2) + sizeof(U8)];                                           \
-        Fw::SerialBuffer invalidBuf6(invalidData6, sizeof(invalidData6));                                              \
-                                                                                                                       \
-        status = invalidBuf6.serialize(port.args.val1);                                                                \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        status = invalidBuf6.serialize(port.args.val2);                                                                \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        status = invalidBuf6.serialize(port.args.val3);                                                                \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        status = invalidBuf6.serialize(port.args.val4);                                                                \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        status = invalidBuf6.serialize(port.args.val5);                                                                \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::PRIMITIVE, invalidBuf6);                                  \
-                                                                                                                       \
-        this->checkSerializeStatusBufferEmpty();                                                                       \
-                                                                                                                       \
-        /* Check successful serialization */                                                                           \
-        U8 data[InputPrimitiveArgsPort::SERIALIZED_SIZE];                                                              \
-        Fw::SerialBuffer buf(data, sizeof(data));                                                                      \
-                                                                                                                       \
-        status = buf.serialize(port.args.val1);                                                                        \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        status = buf.serialize(port.args.val2);                                                                        \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        status = buf.serialize(port.args.val3);                                                                        \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        status = buf.serialize(port.args.val4);                                                                        \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        status = buf.serialize(port.args.val5);                                                                        \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        status = buf.serialize(port.args.val6);                                                                        \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::PRIMITIVE, buf);                                          \
-                                                                                                                       \
-        this->checkSerializeStatusSuccess();                                                                           \
-    }                                                                                                                  \
-                                                                                                                       \
-    void Tester ::test##PORT_KIND##PortInvokeSerial(FwIndexType portNum, FppTest::Types::PortStringParams& port) { \
-        ASSERT_TRUE(component.isConnected_serialOut_OutputPort(portNum));                                              \
-                                                                                                                       \
-        Fw::SerializeStatus status;                                                                                    \
-                                                                                                                       \
-        /* Check unsuccessful deserialization of first parameter */                                                    \
-        U8 invalidData1[1];                                                                                            \
-        Fw::SerialBuffer invalidBuf1(invalidData1, sizeof(invalidData1));                                              \
-                                                                                                                       \
-        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::STRING, invalidBuf1);                                     \
-                                                                                                                       \
-        this->checkSerializeStatusBufferEmpty();                                                                       \
-                                                                                                                       \
-        /* Check unsuccessful deserialization of second parameter */                                                   \
-        U8 invalidData2[FppTest::Types::String1::SERIALIZED_SIZE];                                                     \
-        Fw::SerialBuffer invalidBuf2(invalidData2, sizeof(invalidData2));                                              \
-                                                                                                                       \
-        status = invalidBuf2.serialize(port.args.val1);                                                                \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::STRING, invalidBuf2);                                     \
-                                                                                                                       \
-        this->checkSerializeStatusBufferEmpty();                                                                       \
-                                                                                                                       \
-        /* Check unsuccessful deserialization of third parameter */                                                    \
-        U8 invalidData3[FppTest::Types::String1::SERIALIZED_SIZE * 2];                                                 \
-        Fw::SerialBuffer invalidBuf3(invalidData3, sizeof(invalidData3));                                              \
-                                                                                                                       \
-        status = invalidBuf3.serialize(port.args.val1);                                                                \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        status = invalidBuf3.serialize(port.args.val2);                                                                \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::STRING, invalidBuf3);                                     \
-                                                                                                                       \
-        this->checkSerializeStatusBufferEmpty();                                                                       \
-                                                                                                                       \
-        /* Check unsuccessful deserialization of fourth parameter */                                                   \
-        U8 invalidData4[(FppTest::Types::String1::SERIALIZED_SIZE * 2) + FppTest::Types::String2::SERIALIZED_SIZE];    \
-        Fw::SerialBuffer invalidBuf4(invalidData4, sizeof(invalidData4));                                              \
-                                                                                                                       \
-        status = invalidBuf4.serialize(port.args.val1);                                                                \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        status = invalidBuf4.serialize(port.args.val2);                                                                \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        status = invalidBuf4.serialize(port.args.val3);                                                                \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::STRING, invalidBuf4);                                     \
-                                                                                                                       \
-        this->checkSerializeStatusBufferEmpty();                                                                       \
-                                                                                                                       \
-        /* Check successful serialization */                                                                           \
-        U8 data[InputStringArgsPort::SERIALIZED_SIZE];                                                                 \
-        Fw::SerialBuffer buf(data, sizeof(data));                                                                      \
-                                                                                                                       \
-        status = buf.serialize(port.args.val1);                                                                        \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        status = buf.serialize(port.args.val2);                                                                        \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        status = buf.serialize(port.args.val3);                                                                        \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        status = buf.serialize(port.args.val4);                                                                        \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::STRING, buf);                                             \
-                                                                                                                       \
-        this->checkSerializeStatusSuccess();                                                                           \
-    }                                                                                                                  \
-                                                                                                                       \
-    void Tester ::test##PORT_KIND##PortInvokeSerial(FwIndexType portNum, FppTest::Types::EnumParams& port) {       \
-        ASSERT_TRUE(component.isConnected_serialOut_OutputPort(portNum));                                              \
-                                                                                                                       \
-        Fw::SerializeStatus status;                                                                                    \
-                                                                                                                       \
-        /* Check unsuccessful deserialization of first parameter */                                                    \
-        U8 invalidData1[1];                                                                                            \
-        Fw::SerialBuffer invalidBuf1(invalidData1, sizeof(invalidData1));                                              \
-                                                                                                                       \
-        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::ENUM, invalidBuf1);                                       \
-                                                                                                                       \
-        this->checkSerializeStatusBufferEmpty();                                                                       \
-                                                                                                                       \
-        /* Check unsuccessful deserialization of second parameter */                                                   \
-        U8 invalidData2[FormalParamEnum::SERIALIZED_SIZE];                                                             \
-        Fw::SerialBuffer invalidBuf2(invalidData2, sizeof(invalidData2));                                              \
-                                                                                                                       \
-        status = invalidBuf2.serialize(port.args.val1);                                                                \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::ENUM, invalidBuf2);                                       \
-                                                                                                                       \
-        this->checkSerializeStatusBufferEmpty();                                                                       \
-                                                                                                                       \
-        /* Check successful serialization */                                                                           \
-        U8 data[InputEnumArgsPort::SERIALIZED_SIZE];                                                                   \
-        Fw::SerialBuffer buf(data, sizeof(data));                                                                      \
-                                                                                                                       \
-        status = buf.serialize(port.args.val1);                                                                        \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        status = buf.serialize(port.args.val2);                                                                        \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        status = buf.serialize(port.args.val3);                                                                        \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        status = buf.serialize(port.args.val4);                                                                        \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::ENUM, buf);                                               \
-                                                                                                                       \
-        this->checkSerializeStatusSuccess();                                                                           \
-    }                                                                                                                  \
-                                                                                                                       \
-    void Tester ::test##PORT_KIND##PortInvokeSerial(FwIndexType portNum, FppTest::Types::ArrayParams& port) {      \
-        ASSERT_TRUE(component.isConnected_serialOut_OutputPort(portNum));                                              \
-                                                                                                                       \
-        Fw::SerializeStatus status;                                                                                    \
-                                                                                                                       \
-        /* Check unsuccessful deserialization of first parameter */                                                    \
-        U8 invalidData1[1];                                                                                            \
-        Fw::SerialBuffer invalidBuf1(invalidData1, sizeof(invalidData1));                                              \
-                                                                                                                       \
-        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::ARRAY, invalidBuf1);                                      \
-                                                                                                                       \
-        this->checkSerializeStatusBufferEmpty();                                                                       \
-                                                                                                                       \
-        /* Check unsuccessful deserialization of second parameter */                                                   \
-        U8 invalidData2[FormalParamArray::SERIALIZED_SIZE];                                                            \
-        Fw::SerialBuffer invalidBuf2(invalidData2, sizeof(invalidData2));                                              \
-                                                                                                                       \
-        status = invalidBuf2.serialize(port.args.val1);                                                                \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::ARRAY, invalidBuf2);                                      \
-                                                                                                                       \
-        this->checkSerializeStatusBufferEmpty();                                                                       \
-                                                                                                                       \
-        U8 data[InputArrayArgsPort::SERIALIZED_SIZE];                                                                  \
-        Fw::SerialBuffer buf(data, sizeof(data));                                                                      \
-                                                                                                                       \
-        status = buf.serialize(port.args.val1);                                                                        \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        status = buf.serialize(port.args.val2);                                                                        \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        status = buf.serialize(port.args.val3);                                                                        \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        status = buf.serialize(port.args.val4);                                                                        \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        status = buf.serialize(port.args.val5);                                                                        \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        status = buf.serialize(port.args.val6);                                                                        \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::ARRAY, buf);                                              \
-                                                                                                                       \
-        this->checkSerializeStatusSuccess();                                                                           \
-    }                                                                                                                  \
-                                                                                                                       \
-    void Tester ::test##PORT_KIND##PortInvokeSerial(FwIndexType portNum, FppTest::Types::StructParams& port) {     \
-        ASSERT_TRUE(component.isConnected_serialOut_OutputPort(portNum));                                              \
-                                                                                                                       \
-        Fw::SerializeStatus status;                                                                                    \
-                                                                                                                       \
-        /* Check unsuccessful deserialization of first parameter */                                                    \
-        U8 invalidData1[1];                                                                                            \
-        Fw::SerialBuffer invalidBuf1(invalidData1, sizeof(invalidData1));                                              \
-                                                                                                                       \
-        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::STRUCT, invalidBuf1);                                     \
-                                                                                                                       \
-        this->checkSerializeStatusBufferEmpty();                                                                       \
-                                                                                                                       \
-        /* Check unsuccessful deserialization of second parameter */                                                   \
-        U8 invalidData2[FormalParamStruct::SERIALIZED_SIZE];                                                           \
-        Fw::SerialBuffer invalidBuf2(invalidData2, sizeof(invalidData2));                                              \
-                                                                                                                       \
-        status = invalidBuf2.serialize(port.args.val1);                                                                \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::STRUCT, invalidBuf2);                                     \
-                                                                                                                       \
-        this->checkSerializeStatusBufferEmpty();                                                                       \
-                                                                                                                       \
-        U8 data[InputStructArgsPort::SERIALIZED_SIZE];                                                                 \
-        Fw::SerialBuffer buf(data, sizeof(data));                                                                      \
-                                                                                                                       \
-        status = buf.serialize(port.args.val1);                                                                        \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        status = buf.serialize(port.args.val2);                                                                        \
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                        \
-                                                                                                                       \
-        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::STRUCT, buf);                                             \
-                                                                                                                       \
-        this->checkSerializeStatusSuccess();                                                                           \
+#define PORT_TEST_INVOKE_SERIAL_DEFS(PORT_KIND)                                                                     \
+    void Tester ::test##PORT_KIND##PortInvokeSerial(FwIndexType portNum, FppTest::Types::NoParams& port) {          \
+        ASSERT_TRUE(component.isConnected_serialOut_OutputPort(portNum));                                           \
+                                                                                                                    \
+        U8 data[1];                                                                                                 \
+        Fw::SerialBuffer buf(data, sizeof(data));                                                                   \
+                                                                                                                    \
+        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::NO_ARGS, buf);                                         \
+    }                                                                                                               \
+                                                                                                                    \
+    void Tester ::test##PORT_KIND##PortInvokeSerial(FwIndexType portNum, FppTest::Types::PrimitiveParams& port) {   \
+        ASSERT_TRUE(component.isConnected_serialOut_OutputPort(portNum));                                           \
+                                                                                                                    \
+        Fw::SerializeStatus status;                                                                                 \
+                                                                                                                    \
+        /* Check unsuccessful deserialization of first parameter */                                                 \
+        U8 invalidData1[1];                                                                                         \
+        Fw::SerialBuffer invalidBuf1(invalidData1, sizeof(invalidData1));                                           \
+                                                                                                                    \
+        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::PRIMITIVE, invalidBuf1);                               \
+                                                                                                                    \
+        this->checkSerializeStatusBufferEmpty();                                                                    \
+                                                                                                                    \
+        /* Check unsuccessful deserialization of second parameter */                                                \
+        U8 invalidData2[sizeof(U32)];                                                                               \
+        Fw::SerialBuffer invalidBuf2(invalidData2, sizeof(invalidData2));                                           \
+                                                                                                                    \
+        status = invalidBuf2.serialize(port.args.val1);                                                             \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::PRIMITIVE, invalidBuf2);                               \
+                                                                                                                    \
+        this->checkSerializeStatusBufferEmpty();                                                                    \
+                                                                                                                    \
+        /* Check unsuccessful deserialization of third parameter */                                                 \
+        U8 invalidData3[sizeof(U32) * 2];                                                                           \
+        Fw::SerialBuffer invalidBuf3(invalidData3, sizeof(invalidData3));                                           \
+                                                                                                                    \
+        status = invalidBuf3.serialize(port.args.val1);                                                             \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        status = invalidBuf3.serialize(port.args.val2);                                                             \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::PRIMITIVE, invalidBuf3);                               \
+                                                                                                                    \
+        this->checkSerializeStatusBufferEmpty();                                                                    \
+                                                                                                                    \
+        /* Check unsuccessful deserialization of fourth parameter */                                                \
+        U8 invalidData4[(sizeof(U32) * 2) + sizeof(F32)];                                                           \
+        Fw::SerialBuffer invalidBuf4(invalidData4, sizeof(invalidData4));                                           \
+                                                                                                                    \
+        status = invalidBuf4.serialize(port.args.val1);                                                             \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        status = invalidBuf4.serialize(port.args.val2);                                                             \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        status = invalidBuf4.serialize(port.args.val3);                                                             \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::PRIMITIVE, invalidBuf4);                               \
+                                                                                                                    \
+        this->checkSerializeStatusBufferEmpty();                                                                    \
+                                                                                                                    \
+        /* Check unsuccessful deserialization of fifth parameter */                                                 \
+        U8 invalidData5[(sizeof(U32) * 2) + (sizeof(F32) * 2)];                                                     \
+        Fw::SerialBuffer invalidBuf5(invalidData5, sizeof(invalidData5));                                           \
+                                                                                                                    \
+        status = invalidBuf5.serialize(port.args.val1);                                                             \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        status = invalidBuf5.serialize(port.args.val2);                                                             \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        status = invalidBuf5.serialize(port.args.val3);                                                             \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        status = invalidBuf5.serialize(port.args.val4);                                                             \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::PRIMITIVE, invalidBuf5);                               \
+                                                                                                                    \
+        this->checkSerializeStatusBufferEmpty();                                                                    \
+                                                                                                                    \
+        /* Check unsuccessful deserialization of sixth parameter */                                                 \
+        U8 invalidData6[(sizeof(U32) * 2) + (sizeof(F32) * 2) + sizeof(U8)];                                        \
+        Fw::SerialBuffer invalidBuf6(invalidData6, sizeof(invalidData6));                                           \
+                                                                                                                    \
+        status = invalidBuf6.serialize(port.args.val1);                                                             \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        status = invalidBuf6.serialize(port.args.val2);                                                             \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        status = invalidBuf6.serialize(port.args.val3);                                                             \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        status = invalidBuf6.serialize(port.args.val4);                                                             \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        status = invalidBuf6.serialize(port.args.val5);                                                             \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::PRIMITIVE, invalidBuf6);                               \
+                                                                                                                    \
+        this->checkSerializeStatusBufferEmpty();                                                                    \
+                                                                                                                    \
+        /* Check successful serialization */                                                                        \
+        U8 data[InputPrimitiveArgsPort::SERIALIZED_SIZE];                                                           \
+        Fw::SerialBuffer buf(data, sizeof(data));                                                                   \
+                                                                                                                    \
+        status = buf.serialize(port.args.val1);                                                                     \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        status = buf.serialize(port.args.val2);                                                                     \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        status = buf.serialize(port.args.val3);                                                                     \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        status = buf.serialize(port.args.val4);                                                                     \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        status = buf.serialize(port.args.val5);                                                                     \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        status = buf.serialize(port.args.val6);                                                                     \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::PRIMITIVE, buf);                                       \
+                                                                                                                    \
+        this->checkSerializeStatusSuccess();                                                                        \
+    }                                                                                                               \
+                                                                                                                    \
+    void Tester ::test##PORT_KIND##PortInvokeSerial(FwIndexType portNum, FppTest::Types::PortStringParams& port) {  \
+        ASSERT_TRUE(component.isConnected_serialOut_OutputPort(portNum));                                           \
+                                                                                                                    \
+        Fw::SerializeStatus status;                                                                                 \
+                                                                                                                    \
+        /* Check unsuccessful deserialization of first parameter */                                                 \
+        U8 invalidData1[1];                                                                                         \
+        Fw::SerialBuffer invalidBuf1(invalidData1, sizeof(invalidData1));                                           \
+                                                                                                                    \
+        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::STRING, invalidBuf1);                                  \
+                                                                                                                    \
+        this->checkSerializeStatusBufferEmpty();                                                                    \
+                                                                                                                    \
+        /* Check unsuccessful deserialization of second parameter */                                                \
+        U8 invalidData2[FppTest::Types::String1::SERIALIZED_SIZE];                                                  \
+        Fw::SerialBuffer invalidBuf2(invalidData2, sizeof(invalidData2));                                           \
+                                                                                                                    \
+        status = invalidBuf2.serialize(port.args.val1);                                                             \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::STRING, invalidBuf2);                                  \
+                                                                                                                    \
+        this->checkSerializeStatusBufferEmpty();                                                                    \
+                                                                                                                    \
+        /* Check unsuccessful deserialization of third parameter */                                                 \
+        U8 invalidData3[FppTest::Types::String1::SERIALIZED_SIZE * 2];                                              \
+        Fw::SerialBuffer invalidBuf3(invalidData3, sizeof(invalidData3));                                           \
+                                                                                                                    \
+        status = invalidBuf3.serialize(port.args.val1);                                                             \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        status = invalidBuf3.serialize(port.args.val2);                                                             \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::STRING, invalidBuf3);                                  \
+                                                                                                                    \
+        this->checkSerializeStatusBufferEmpty();                                                                    \
+                                                                                                                    \
+        /* Check unsuccessful deserialization of fourth parameter */                                                \
+        U8 invalidData4[(FppTest::Types::String1::SERIALIZED_SIZE * 2) + FppTest::Types::String2::SERIALIZED_SIZE]; \
+        Fw::SerialBuffer invalidBuf4(invalidData4, sizeof(invalidData4));                                           \
+                                                                                                                    \
+        status = invalidBuf4.serialize(port.args.val1);                                                             \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        status = invalidBuf4.serialize(port.args.val2);                                                             \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        status = invalidBuf4.serialize(port.args.val3);                                                             \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::STRING, invalidBuf4);                                  \
+                                                                                                                    \
+        this->checkSerializeStatusBufferEmpty();                                                                    \
+                                                                                                                    \
+        /* Check successful serialization */                                                                        \
+        U8 data[InputStringArgsPort::SERIALIZED_SIZE];                                                              \
+        Fw::SerialBuffer buf(data, sizeof(data));                                                                   \
+                                                                                                                    \
+        status = buf.serialize(port.args.val1);                                                                     \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        status = buf.serialize(port.args.val2);                                                                     \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        status = buf.serialize(port.args.val3);                                                                     \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        status = buf.serialize(port.args.val4);                                                                     \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::STRING, buf);                                          \
+                                                                                                                    \
+        this->checkSerializeStatusSuccess();                                                                        \
+    }                                                                                                               \
+                                                                                                                    \
+    void Tester ::test##PORT_KIND##PortInvokeSerial(FwIndexType portNum, FppTest::Types::EnumParams& port) {        \
+        ASSERT_TRUE(component.isConnected_serialOut_OutputPort(portNum));                                           \
+                                                                                                                    \
+        Fw::SerializeStatus status;                                                                                 \
+                                                                                                                    \
+        /* Check unsuccessful deserialization of first parameter */                                                 \
+        U8 invalidData1[1];                                                                                         \
+        Fw::SerialBuffer invalidBuf1(invalidData1, sizeof(invalidData1));                                           \
+                                                                                                                    \
+        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::ENUM, invalidBuf1);                                    \
+                                                                                                                    \
+        this->checkSerializeStatusBufferEmpty();                                                                    \
+                                                                                                                    \
+        /* Check unsuccessful deserialization of second parameter */                                                \
+        U8 invalidData2[FormalParamEnum::SERIALIZED_SIZE];                                                          \
+        Fw::SerialBuffer invalidBuf2(invalidData2, sizeof(invalidData2));                                           \
+                                                                                                                    \
+        status = invalidBuf2.serialize(port.args.val1);                                                             \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::ENUM, invalidBuf2);                                    \
+                                                                                                                    \
+        this->checkSerializeStatusBufferEmpty();                                                                    \
+                                                                                                                    \
+        /* Check successful serialization */                                                                        \
+        U8 data[InputEnumArgsPort::SERIALIZED_SIZE];                                                                \
+        Fw::SerialBuffer buf(data, sizeof(data));                                                                   \
+                                                                                                                    \
+        status = buf.serialize(port.args.val1);                                                                     \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        status = buf.serialize(port.args.val2);                                                                     \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        status = buf.serialize(port.args.val3);                                                                     \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        status = buf.serialize(port.args.val4);                                                                     \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::ENUM, buf);                                            \
+                                                                                                                    \
+        this->checkSerializeStatusSuccess();                                                                        \
+    }                                                                                                               \
+                                                                                                                    \
+    void Tester ::test##PORT_KIND##PortInvokeSerial(FwIndexType portNum, FppTest::Types::ArrayParams& port) {       \
+        ASSERT_TRUE(component.isConnected_serialOut_OutputPort(portNum));                                           \
+                                                                                                                    \
+        Fw::SerializeStatus status;                                                                                 \
+                                                                                                                    \
+        /* Check unsuccessful deserialization of first parameter */                                                 \
+        U8 invalidData1[1];                                                                                         \
+        Fw::SerialBuffer invalidBuf1(invalidData1, sizeof(invalidData1));                                           \
+                                                                                                                    \
+        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::ARRAY, invalidBuf1);                                   \
+                                                                                                                    \
+        this->checkSerializeStatusBufferEmpty();                                                                    \
+                                                                                                                    \
+        /* Check unsuccessful deserialization of second parameter */                                                \
+        U8 invalidData2[FormalParamArray::SERIALIZED_SIZE];                                                         \
+        Fw::SerialBuffer invalidBuf2(invalidData2, sizeof(invalidData2));                                           \
+                                                                                                                    \
+        status = invalidBuf2.serialize(port.args.val1);                                                             \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::ARRAY, invalidBuf2);                                   \
+                                                                                                                    \
+        this->checkSerializeStatusBufferEmpty();                                                                    \
+                                                                                                                    \
+        U8 data[InputArrayArgsPort::SERIALIZED_SIZE];                                                               \
+        Fw::SerialBuffer buf(data, sizeof(data));                                                                   \
+                                                                                                                    \
+        status = buf.serialize(port.args.val1);                                                                     \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        status = buf.serialize(port.args.val2);                                                                     \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        status = buf.serialize(port.args.val3);                                                                     \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        status = buf.serialize(port.args.val4);                                                                     \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        status = buf.serialize(port.args.val5);                                                                     \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        status = buf.serialize(port.args.val6);                                                                     \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::ARRAY, buf);                                           \
+                                                                                                                    \
+        this->checkSerializeStatusSuccess();                                                                        \
+    }                                                                                                               \
+                                                                                                                    \
+    void Tester ::test##PORT_KIND##PortInvokeSerial(FwIndexType portNum, FppTest::Types::StructParams& port) {      \
+        ASSERT_TRUE(component.isConnected_serialOut_OutputPort(portNum));                                           \
+                                                                                                                    \
+        Fw::SerializeStatus status;                                                                                 \
+                                                                                                                    \
+        /* Check unsuccessful deserialization of first parameter */                                                 \
+        U8 invalidData1[1];                                                                                         \
+        Fw::SerialBuffer invalidBuf1(invalidData1, sizeof(invalidData1));                                           \
+                                                                                                                    \
+        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::STRUCT, invalidBuf1);                                  \
+                                                                                                                    \
+        this->checkSerializeStatusBufferEmpty();                                                                    \
+                                                                                                                    \
+        /* Check unsuccessful deserialization of second parameter */                                                \
+        U8 invalidData2[FormalParamStruct::SERIALIZED_SIZE];                                                        \
+        Fw::SerialBuffer invalidBuf2(invalidData2, sizeof(invalidData2));                                           \
+                                                                                                                    \
+        status = invalidBuf2.serialize(port.args.val1);                                                             \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::STRUCT, invalidBuf2);                                  \
+                                                                                                                    \
+        this->checkSerializeStatusBufferEmpty();                                                                    \
+                                                                                                                    \
+        U8 data[InputStructArgsPort::SERIALIZED_SIZE];                                                              \
+        Fw::SerialBuffer buf(data, sizeof(data));                                                                   \
+                                                                                                                    \
+        status = buf.serialize(port.args.val1);                                                                     \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        status = buf.serialize(port.args.val2);                                                                     \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        this->invoke##PORT_KIND##SerialPort(SerialPortIndex::STRUCT, buf);                                          \
+                                                                                                                    \
+        this->checkSerializeStatusSuccess();                                                                        \
     }
 
 // ----------------------------------------------------------------------
 // Check history of typed output ports
 // ----------------------------------------------------------------------
 
-#define PORT_TEST_CHECK_DEFS(PORT_KIND)                                                                 \
-    void Tester ::test##PORT_KIND##PortCheck(FppTest::Types::NoParams& port) {                          \
-        ASSERT_FROM_PORT_HISTORY_SIZE(1);                                                               \
-        ASSERT_from_noArgsOut_SIZE(1);                                                                  \
-    }                                                                                                   \
-                                                                                                        \
-    void Tester ::test##PORT_KIND##PortCheck(FppTest::Types::PrimitiveParams& port) {                   \
-        ASSERT_FROM_PORT_HISTORY_SIZE(1);                                                               \
-        ASSERT_from_primitiveArgsOut_SIZE(1);                                                           \
-        ASSERT_from_primitiveArgsOut(0, port.args.val1, port.args.val2, port.args.val3, port.args.val4, \
-                                     port.args.val5, port.args.val6);                                   \
-    }                                                                                                   \
-                                                                                                        \
-    void Tester ::test##PORT_KIND##PortCheck(FppTest::Types::PortStringParams& port) {                  \
-        ASSERT_FROM_PORT_HISTORY_SIZE(1);                                                               \
-        ASSERT_from_stringArgsOut_SIZE(1);                                                              \
-        ASSERT_from_stringArgsOut(0, port.args.val1, port.args.val2, port.args.val3, port.args.val4);   \
-    }                                                                                                   \
-                                                                                                        \
-    void Tester ::test##PORT_KIND##PortCheck(FppTest::Types::EnumParams& port) {                        \
-        ASSERT_FROM_PORT_HISTORY_SIZE(1);                                                               \
-        ASSERT_from_enumArgsOut_SIZE(1);                                                                \
-        ASSERT_from_enumArgsOut(0, port.args.val1, port.args.val2, port.args.val3, port.args.val4);     \
-    }                                                                                                   \
-                                                                                                        \
-    void Tester ::test##PORT_KIND##PortCheck(FppTest::Types::ArrayParams& port) {                       \
-        ASSERT_FROM_PORT_HISTORY_SIZE(1);                                                               \
-        ASSERT_from_arrayArgsOut_SIZE(1);                                                               \
-        ASSERT_from_arrayArgsOut(0, port.args.val1, port.args.val2, port.args.val3, port.args.val4,     \
-                                 port.args.val5, port.args.val6);                                       \
-    }                                                                                                   \
-                                                                                                        \
-    void Tester ::test##PORT_KIND##PortCheck(FppTest::Types::StructParams& port) {                      \
-        ASSERT_FROM_PORT_HISTORY_SIZE(1);                                                               \
-        ASSERT_from_structArgsOut_SIZE(1);                                                              \
-        ASSERT_from_structArgsOut(0, port.args.val1, port.args.val2);                                   \
+#define PORT_TEST_CHECK_DEFS(PORT_KIND)                                                                             \
+    void Tester ::test##PORT_KIND##PortCheck(FppTest::Types::NoParams& port) {                                      \
+        ASSERT_FROM_PORT_HISTORY_SIZE(1);                                                                           \
+        ASSERT_from_noArgsOut_SIZE(1);                                                                              \
+    }                                                                                                               \
+                                                                                                                    \
+    void Tester ::test##PORT_KIND##PortCheck(FppTest::Types::PrimitiveParams& port) {                               \
+        ASSERT_FROM_PORT_HISTORY_SIZE(1);                                                                           \
+        ASSERT_from_primitiveArgsOut_SIZE(1);                                                                       \
+        ASSERT_from_primitiveArgsOut(0, port.args.val1, port.args.val2, port.args.val3, port.args.val4,             \
+                                     port.args.val5, port.args.val6);                                               \
+    }                                                                                                               \
+                                                                                                                    \
+    void Tester ::test##PORT_KIND##PortCheck(FppTest::Types::PortStringParams& port) {                              \
+        ASSERT_FROM_PORT_HISTORY_SIZE(1);                                                                           \
+        ASSERT_from_stringArgsOut_SIZE(1);                                                                          \
+        ASSERT_from_stringArgsOut(0, port.args.val1, port.args.val2, port.args.val3, port.args.val4);               \
+    }                                                                                                               \
+                                                                                                                    \
+    void Tester ::test##PORT_KIND##PortCheck(FppTest::Types::EnumParams& port) {                                    \
+        ASSERT_FROM_PORT_HISTORY_SIZE(1);                                                                           \
+        ASSERT_from_enumArgsOut_SIZE(1);                                                                            \
+        ASSERT_from_enumArgsOut(0, port.args.val1, port.args.val2, port.args.val3, port.args.val4);                 \
+    }                                                                                                               \
+                                                                                                                    \
+    void Tester ::test##PORT_KIND##PortCheck(FppTest::Types::ArrayParams& port) {                                   \
+        ASSERT_FROM_PORT_HISTORY_SIZE(1);                                                                           \
+        ASSERT_from_arrayArgsOut_SIZE(1);                                                                           \
+        ASSERT_from_arrayArgsOut(0, port.args.val1, port.args.val2, port.args.val3, port.args.val4, port.args.val5, \
+                                 port.args.val6);                                                                   \
+    }                                                                                                               \
+                                                                                                                    \
+    void Tester ::test##PORT_KIND##PortCheck(FppTest::Types::StructParams& port) {                                  \
+        ASSERT_FROM_PORT_HISTORY_SIZE(1);                                                                           \
+        ASSERT_from_structArgsOut_SIZE(1);                                                                          \
+        ASSERT_from_structArgsOut(0, port.args.val1, port.args.val2);                                               \
     }
 
 #define PORT_TEST_CHECK_RETURN_DEFS(PORT_KIND)                                                            \

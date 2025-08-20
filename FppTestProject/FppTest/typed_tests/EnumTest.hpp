@@ -22,58 +22,46 @@
 
 namespace FppTest {
 
-    namespace Enum {
+namespace Enum {
 
-        // Get the default value of an enum
-        template <typename EnumType>
-        typename EnumType::T getDefaultValue() {
-            return static_cast<typename EnumType::T>(0);
-        }
+// Get the default value of an enum
+template <typename EnumType>
+typename EnumType::T getDefaultValue() {
+    return static_cast<typename EnumType::T>(0);
+}
 
-        // Get a valid value of an enum
-        template <typename EnumType>
-        typename EnumType::T getValidValue() {
-            U32 val = STest::Pick::startLength(
-                0, 
-                EnumType::NUM_CONSTANTS
-            );
+// Get a valid value of an enum
+template <typename EnumType>
+typename EnumType::T getValidValue() {
+    U32 val = STest::Pick::startLength(0, EnumType::NUM_CONSTANTS);
 
-            return static_cast<typename EnumType::T>(val);
-        }
+    return static_cast<typename EnumType::T>(val);
+}
 
-        // Get an invalid value of an enum
-        template <typename EnumType>
-        typename EnumType::T getInvalidValue() {
-            U8 sign = 0;
-            if (std::numeric_limits<typename EnumType::SerialType>::min() < 0) {
-                sign = static_cast<U8>(STest::Pick::lowerUpper(0, 1));
-            }
+// Get an invalid value of an enum
+template <typename EnumType>
+typename EnumType::T getInvalidValue() {
+    U8 sign = 0;
+    if (std::numeric_limits<typename EnumType::SerialType>::min() < 0) {
+        sign = static_cast<U8>(STest::Pick::lowerUpper(0, 1));
+    }
 
-            switch (sign) {
-                case 0:
-                    return static_cast<typename EnumType::T>(STest::Pick::lowerUpper(
-                        EnumType::NUM_CONSTANTS,
-                        static_cast<U32>(
-                            std::numeric_limits<typename EnumType::SerialType>::max()
-                        )
-                    ));
-                default:
-                    return static_cast<typename EnumType::T>(
-                        static_cast<I32>(
-                          STest::Pick::lowerUpper(
-                            1,
-                            static_cast<U32>((-1) *
-                                static_cast<I32>(std::numeric_limits<typename EnumType::SerialType>::min() + 1)
-                            )
-                          )
-                      ) * (-1)
-                    );
-            }
-        }
+    switch (sign) {
+        case 0:
+            return static_cast<typename EnumType::T>(STest::Pick::lowerUpper(
+                EnumType::NUM_CONSTANTS, static_cast<U32>(std::numeric_limits<typename EnumType::SerialType>::max())));
+        default:
+            return static_cast<typename EnumType::T>(
+                static_cast<I32>(STest::Pick::lowerUpper(
+                    1, static_cast<U32>(
+                           (-1) * static_cast<I32>(std::numeric_limits<typename EnumType::SerialType>::min() + 1)))) *
+                (-1));
+    }
+}
 
-    } // namespace Enum
+}  // namespace Enum
 
-} // namespace FppTest
+}  // namespace FppTest
 
 // Test core enum interface
 template <typename EnumType>
@@ -86,10 +74,7 @@ TYPED_TEST_P(EnumTest, Default) {
     TypeParam e;
 
     // Constants
-    ASSERT_EQ(
-        TypeParam::SERIALIZED_SIZE, 
-        sizeof(typename TypeParam::SerialType)
-    );
+    ASSERT_EQ(TypeParam::SERIALIZED_SIZE, sizeof(typename TypeParam::SerialType));
 
     // Default constructor
     ASSERT_EQ(e.e, FppTest::Enum::getDefaultValue<TypeParam>());
@@ -118,7 +103,7 @@ TYPED_TEST_P(EnumTest, AssignmentOp) {
     // Raw enum value assignment
     e1 = validVal;
     ASSERT_EQ(e1.e, validVal);
-    
+
     // Object assignment
     e2 = e1;
     ASSERT_EQ(e2.e, validVal);
@@ -202,13 +187,6 @@ TYPED_TEST_P(EnumTest, Serialization) {
 }
 
 // Register all test patterns
-REGISTER_TYPED_TEST_SUITE_P(EnumTest,
-    Default,
-    Constructors,
-    AssignmentOp,
-    EqualityOp,
-    IsValidFunction,
-    Serialization
-);
+REGISTER_TYPED_TEST_SUITE_P(EnumTest, Default, Constructors, AssignmentOp, EqualityOp, IsValidFunction, Serialization);
 
 #endif
