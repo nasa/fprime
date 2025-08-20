@@ -27,12 +27,12 @@
 #include <taskLib.h>
 #include <vxWorks.h>
 #include <cstring>
-#else defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+#elif defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <unistd.h>
-// #else
-// #error OS not supported for IP Socket Communications
+#else
+#error OS not supported for IP Socket Communications
 #endif
 
 #include <cstdio>
