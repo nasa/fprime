@@ -19,7 +19,7 @@
 
 template <typename FormalParamType>
 class ComponentCommandTest : public ::testing::Test {
-protected:
+  protected:
     Tester tester;
     FormalParamType data;
 };
@@ -30,13 +30,11 @@ TYPED_TEST_P(ComponentCommandTest, CommandTest) {
     this->tester.testCommand(0, this->data);
 }
 
-REGISTER_TYPED_TEST_SUITE_P(ComponentCommandTest,
-    CommandTest
-);
+REGISTER_TYPED_TEST_SUITE_P(ComponentCommandTest, CommandTest);
 
 template <typename FormalParamType>
 class ComponentAsyncCommandTest : public ::testing::Test {
-protected:
+  protected:
     Tester tester;
     FormalParamType data;
 };
@@ -47,13 +45,11 @@ TYPED_TEST_P(ComponentAsyncCommandTest, AsyncCommandTest) {
     this->tester.testAsyncCommand(0, this->data);
 }
 
-REGISTER_TYPED_TEST_SUITE_P(ComponentAsyncCommandTest,
-    AsyncCommandTest
-);
+REGISTER_TYPED_TEST_SUITE_P(ComponentAsyncCommandTest, AsyncCommandTest);
 
 template <typename FormalParamType>
 class ComponentEventTest : public ::testing::Test {
-protected:
+  protected:
     Tester tester;
     FormalParamType data;
 };
@@ -65,13 +61,11 @@ TYPED_TEST_P(ComponentEventTest, EventTest) {
     this->tester.testEvent(0, this->data);
 }
 
-REGISTER_TYPED_TEST_SUITE_P(ComponentEventTest,
-    EventTest
-);
+REGISTER_TYPED_TEST_SUITE_P(ComponentEventTest, EventTest);
 
 template <typename FormalParamType>
 class ComponentTelemetryTest : public ::testing::Test {
-protected:
+  protected:
     Tester tester;
     FormalParamType data;
 };
@@ -83,13 +77,11 @@ TYPED_TEST_P(ComponentTelemetryTest, TelemetryTest) {
     this->tester.testTelemetry(0, this->data);
 }
 
-REGISTER_TYPED_TEST_SUITE_P(ComponentTelemetryTest,
-    TelemetryTest
-);
+REGISTER_TYPED_TEST_SUITE_P(ComponentTelemetryTest, TelemetryTest);
 
 template <typename FormalParamType>
 class ComponentParamCommandTest : public ::testing::Test {
-protected:
+  protected:
     Tester tester;
     FormalParamType data;
 };
@@ -100,13 +92,11 @@ TYPED_TEST_P(ComponentParamCommandTest, ParamTest) {
     this->tester.testParamCommand(0, this->data);
 }
 
-REGISTER_TYPED_TEST_SUITE_P(ComponentParamCommandTest,
-    ParamTest
-);
+REGISTER_TYPED_TEST_SUITE_P(ComponentParamCommandTest, ParamTest);
 
 template <typename FormalParamType>
 class ComponentExternalParamCommandTest : public ::testing::Test {
-protected:
+  protected:
     Tester tester;
     FormalParamType data;
 };
@@ -117,13 +107,11 @@ TYPED_TEST_P(ComponentExternalParamCommandTest, ExternalParamTest) {
     this->tester.testExternalParamCommand(0, this->data);
 }
 
-REGISTER_TYPED_TEST_SUITE_P(ComponentExternalParamCommandTest,
-    ExternalParamTest
-);
+REGISTER_TYPED_TEST_SUITE_P(ComponentExternalParamCommandTest, ExternalParamTest);
 
 template <typename FormalParamType>
 class ComponentInternalInterfaceTest : public ::testing::Test {
-protected:
+  protected:
     Tester tester;
     FormalParamType data;
 };
@@ -134,7 +122,6 @@ TYPED_TEST_P(ComponentInternalInterfaceTest, InternalInterfaceTest) {
     this->tester.testInternalInterface(this->data);
 }
 
-REGISTER_TYPED_TEST_SUITE_P(ComponentInternalInterfaceTest,
-    InternalInterfaceTest);
+REGISTER_TYPED_TEST_SUITE_P(ComponentInternalInterfaceTest, InternalInterfaceTest);
 
 #endif

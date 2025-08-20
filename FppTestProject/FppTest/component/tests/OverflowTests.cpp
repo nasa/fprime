@@ -61,7 +61,6 @@ void Tester ::testOverflowHook() {
     ASSERT_from_enumArgsHookOverflowed_SIZE(2);
     ASSERT_from_enumArgsHookOverflowed(0, y, z, y, z);
     ASSERT_from_enumArgsHookOverflowed(1, z, x, z, x);
-
 }
 
 // ----------------------------------------------------------------------
