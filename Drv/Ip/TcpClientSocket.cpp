@@ -27,12 +27,12 @@
 #include <taskLib.h>
 #include <vxWorks.h>
 #include <cstring>
-#elif defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+#else defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <unistd.h>
-#else
-#error OS not supported for IP Socket Communications
+// #else
+// #error OS not supported for IP Socket Communications
 #endif
 
 #include <cstdio>
@@ -88,13 +88,15 @@ SocketIpStatus TcpClientSocket::openProtocol(SocketDescriptor& socketDescriptor)
 FwSignedSizeType TcpClientSocket::sendProtocol(const SocketDescriptor& socketDescriptor,
                                                const U8* const data,
                                                const FwSizeType size) {
-    return static_cast<FwSignedSizeType>(::send(socketDescriptor.fd, data, size, SOCKET_IP_SEND_FLAGS));
+    return static_cast<FwSignedSizeType>(
+        ::send(socketDescriptor.fd, data, static_cast<size_t>(size), SOCKET_IP_SEND_FLAGS));
 }
 
 FwSignedSizeType TcpClientSocket::recvProtocol(const SocketDescriptor& socketDescriptor,
                                                U8* const data,
                                                const FwSizeType size) {
-    return static_cast<FwSignedSizeType>(::recv(socketDescriptor.fd, data, size, SOCKET_IP_RECV_FLAGS));
+    return static_cast<FwSignedSizeType>(
+        ::recv(socketDescriptor.fd, data, static_cast<size_t>(size), SOCKET_IP_RECV_FLAGS));
 }
 
 }  // namespace Drv

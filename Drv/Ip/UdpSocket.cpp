@@ -199,9 +199,9 @@ FwSignedSizeType UdpSocket::sendProtocol(const SocketDescriptor& socketDescripto
     FW_ASSERT(socketDescriptor.fd >= 0);           // File descriptor should be valid
     FW_ASSERT(data != nullptr);                    // Data pointer should not be null
 
-    return static_cast<FwSignedSizeType>(::sendto(socketDescriptor.fd, data, size, SOCKET_IP_SEND_FLAGS,
-                                                  reinterpret_cast<struct sockaddr*>(&this->m_addr_send),
-                                                  sizeof(this->m_addr_send)));
+    return static_cast<FwSignedSizeType>(
+        ::sendto(socketDescriptor.fd, data, static_cast<size_t>(size), SOCKET_IP_SEND_FLAGS,
+                 reinterpret_cast<struct sockaddr*>(&this->m_addr_send), sizeof(this->m_addr_send)));
 }
 
 FwSignedSizeType UdpSocket::recvProtocol(const SocketDescriptor& socketDescriptor,
@@ -216,9 +216,9 @@ FwSignedSizeType UdpSocket::recvProtocol(const SocketDescriptor& socketDescripto
     (void)::memset(&sender_addr, 0, sizeof(sender_addr));
 
     socklen_t sender_addr_len = sizeof(sender_addr);
-    FwSignedSizeType received =
-        static_cast<FwSignedSizeType>(::recvfrom(socketDescriptor.fd, data, size, SOCKET_IP_RECV_FLAGS,
-                                                 reinterpret_cast<struct sockaddr*>(&sender_addr), &sender_addr_len));
+    FwSignedSizeType received = static_cast<FwSignedSizeType>(
+        ::recvfrom(socketDescriptor.fd, data, static_cast<size_t>(size), SOCKET_IP_RECV_FLAGS,
+                   reinterpret_cast<struct sockaddr*>(&sender_addr), &sender_addr_len));
     // If we have not configured a send port, set it to the source of the last received packet
     if (received >= 0 && this->m_addr_send.sin_port == 0) {
         this->m_addr_send = sender_addr;
