@@ -14,7 +14,6 @@ TEST(schedIn, OK) {
     tester.schedIn_OK();
 }
 
-
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     STest::Random::seed();

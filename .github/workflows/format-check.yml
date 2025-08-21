@@ -32,6 +32,7 @@ jobs:
           # Svc is currently listing all but Svc/FpySequencer
           CHECKED_DIRS: >-
             Drv
+            FppTestProject
             Fw
             Os
             Svc/ActiveRateGroup

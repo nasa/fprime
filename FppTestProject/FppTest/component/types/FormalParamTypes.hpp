@@ -21,14 +21,14 @@
 #include "Fw/Types/SerialBuffer.hpp"
 #include "Fw/Types/StringTemplate.hpp"
 
-#include "FppTest/component/active/FormalParamArrayArrayAc.hpp"
-#include "FppTest/component/active/FormalParamEnumEnumAc.hpp"
-#include "FppTest/component/active/FormalParamStructSerializableAc.hpp"
-#include "FppTest/component/active/StringArgsPortAc.hpp"
 #include "FppTest/component/active/FormalAliasArrayAliasAc.hpp"
 #include "FppTest/component/active/FormalAliasEnumAliasAc.hpp"
 #include "FppTest/component/active/FormalAliasStringAliasAc.hpp"
 #include "FppTest/component/active/FormalAliasStringArrayArrayAc.hpp"
+#include "FppTest/component/active/FormalParamArrayArrayAc.hpp"
+#include "FppTest/component/active/FormalParamEnumEnumAc.hpp"
+#include "FppTest/component/active/FormalParamStructSerializableAc.hpp"
+#include "FppTest/component/active/StringArgsPortAc.hpp"
 #include "FppTest/utils/Utils.hpp"
 
 #define SERIAL_ARGS_BUFFER_CAPACITY 256
