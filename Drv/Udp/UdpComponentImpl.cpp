@@ -32,9 +32,7 @@ SocketIpStatus UdpComponentImpl::configureSend(const char* hostname,
 }
 
 SocketIpStatus UdpComponentImpl::configureRecv(const char* hostname, const U16 port, FwSizeType buffer_size) {
-    FW_ASSERT(buffer_size <= std::numeric_limits<U32>::max(), static_cast<FwAssertArgType>(buffer_size));
     m_allocation_size = buffer_size;  // Store the buffer size
-
     return m_socket.configureRecv(hostname, port);
 }
 
@@ -53,7 +51,7 @@ IpSocket& UdpComponentImpl::getSocketHandler() {
 }
 
 Fw::Buffer UdpComponentImpl::getBuffer() {
-    return allocate_out(0, static_cast<U32>(m_allocation_size));
+    return allocate_out(0, m_allocation_size);
 }
 
 void UdpComponentImpl::sendBuffer(Fw::Buffer buffer, SocketIpStatus status) {
@@ -79,8 +77,7 @@ void UdpComponentImpl::connected() {
 // ----------------------------------------------------------------------
 
 Drv::ByteStreamStatus UdpComponentImpl::send_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
-    FW_ASSERT_NO_OVERFLOW(fwBuffer.getSize(), U32);
-    Drv::SocketIpStatus status = send(fwBuffer.getData(), static_cast<U32>(fwBuffer.getSize()));
+    Drv::SocketIpStatus status = send(fwBuffer.getData(), fwBuffer.getSize());
     Drv::ByteStreamStatus returnStatus;
     switch (status) {
         case SOCK_INTERRUPTED_TRY_AGAIN:

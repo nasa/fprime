@@ -15,7 +15,7 @@
 namespace Drv {
 namespace Test {
 
-const U32 MAX_DRV_TEST_MESSAGE_SIZE = 1024;
+const FwSizeType MAX_DRV_TEST_MESSAGE_SIZE = 1024;
 
 void force_recv_timeout(int fd, Drv::IpSocket& socket) {
     // Set timeout socket option
@@ -43,10 +43,10 @@ void validate_random_buffer(Fw::Buffer& buffer, U8* data) {
     buffer.setSize(0);
 }
 
-U32 fill_random_buffer(Fw::Buffer& buffer) {
+FwSizeType fill_random_buffer(Fw::Buffer& buffer) {
     buffer.setSize(static_cast<FwSizeType>(STest::Pick::lowerUpper(1, static_cast<U32>(buffer.getSize()))));
     fill_random_data(buffer.getData(), buffer.getSize());
-    return static_cast<U32>(buffer.getSize());
+    return buffer.getSize();
 }
 
 void drain(Drv::IpSocket& receiver, Drv::SocketDescriptor& receiver_fd) {
@@ -54,18 +54,18 @@ void drain(Drv::IpSocket& receiver, Drv::SocketDescriptor& receiver_fd) {
     // Drain the server in preparation for close
     while (status == Drv::SOCK_SUCCESS || status == Drv::SOCK_NO_DATA_AVAILABLE) {
         U8 buffer[1];
-        U32 size = sizeof buffer;
+        FwSizeType size = sizeof buffer;
         status = receiver.recv(receiver_fd, buffer, size);
     }
     ASSERT_EQ(status, Drv::SocketIpStatus::SOCK_DISCONNECTED) << "Socket did not disconnect as expected";
 }
 
-void receive_all(Drv::IpSocket& receiver, Drv::SocketDescriptor& receiver_fd, U8* buffer, U32 size) {
+void receive_all(Drv::IpSocket& receiver, Drv::SocketDescriptor& receiver_fd, U8* buffer, FwSizeType size) {
     ASSERT_NE(buffer, nullptr);
-    U32 received_size = 0;
+    FwSizeType received_size = 0;
     Drv::SocketIpStatus status;
     do {
-        U32 size_in_out = size - received_size;
+        FwSizeType size_in_out = size - received_size;
         status = receiver.recv(receiver_fd, buffer + received_size, size_in_out);
         ASSERT_TRUE((status == Drv::SOCK_NO_DATA_AVAILABLE || status == Drv::SOCK_SUCCESS));
         received_size += size_in_out;
@@ -77,7 +77,7 @@ void send_recv(Drv::IpSocket& sender,
                Drv::IpSocket& receiver,
                Drv::SocketDescriptor& sender_fd,
                Drv::SocketDescriptor& receiver_fd) {
-    U32 size = MAX_DRV_TEST_MESSAGE_SIZE;
+    FwSizeType size = MAX_DRV_TEST_MESSAGE_SIZE;
 
     U8 buffer_out[MAX_DRV_TEST_MESSAGE_SIZE] = {0};
     U8 buffer_in[MAX_DRV_TEST_MESSAGE_SIZE] = {0};
