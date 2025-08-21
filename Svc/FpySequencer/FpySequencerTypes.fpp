@@ -16,46 +16,79 @@ module Svc {
             # stack op directives
             # all of these are handled at the CPP level by one StackOpDirective
             # boolean ops
-            OR = 15
-            AND = 16
+            OR = 10
+            AND = 11
             # integer equalities
-            IEQ = 17
-            INE = 18
+            IEQ = 12
+            INE = 13
             # unsigned integer inequalities
-            ULT = 19
-            ULE = 20
-            UGT = 21
-            UGE = 22
+            ULT = 14
+            ULE = 15
+            UGT = 16
+            UGE = 17
             # signed integer inequalities
-            SLT = 23
-            SLE = 24
-            SGT = 25
-            SGE = 26
+            SLT = 18
+            SLE = 19
+            SGT = 20
+            SGE = 21
             # floating point equalities
-            FEQ = 27
-            FNE = 28
+            FEQ = 22
+            FNE = 23
             # floating point inequalities
-            FLT = 29
-            FLE = 30
-            FGT = 31
-            FGE = 32
-            NOT = 33
-            # floating point extension and truncation
-            FPEXT = 34
-            FPTRUNC = 35
+            FLT = 24
+            FLE = 25
+            FGT = 26
+            FGE = 27
+            NOT = 28
             # floating point conversion to signed/unsigned integer,
             # and vice versa
-            FPTOSI = 36
-            FPTOUI = 37
-            SITOFP = 38
-            UITOFP = 39
+            FPTOSI = 29
+            FPTOUI = 30
+            SITOFP = 31
+            UITOFP = 32
+            # integer arithmetic
+            IADD = 33
+            ISUB = 34
+            IMUL = 35
+            UDIV = 36
+            SDIV = 37
+            UMOD = 38
+            SMOD = 39
+            # float arithmetic
+            FADD = 40
+            FSUB = 41
+            FMUL = 42
+            FDIV = 43
+            FLOAT_FLOOR_DIV = 44
+            FPOW = 45
+            FLOG = 46
+            FMOD = 47
+            # floating point bitwidth conversions
+            FPEXT = 48
+            FPTRUNC = 49
+            # integer bitwidth conversions
+            # signed integer extend
+            SIEXT_8_64 = 50
+            SIEXT_16_64 = 51
+            SIEXT_32_64 = 52
+            # zero (unsigned) integer extend
+            ZIEXT_8_64 = 53
+            ZIEXT_16_64 = 54
+            ZIEXT_32_64 = 55
+            # integer truncate
+            ITRUNC_64_8 = 56
+            ITRUNC_64_16 = 57
+            ITRUNC_64_32 = 58
             # end stack op dirs
 
-            EXIT = 40
-            ALLOCATE = 41
-            STORE = 42
-            LOAD = 43
-            PUSH_VAL = 44
+            EXIT = 59
+            ALLOCATE = 60
+            STORE = 61
+            LOAD = 62
+            PUSH_VAL = 63
+            DISCARD = 64
+            MEMCMP = 65
+            STACK_CMD = 66
         }
 
         struct Header {

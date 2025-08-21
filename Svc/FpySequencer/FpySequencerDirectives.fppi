@@ -94,6 +94,18 @@ struct PushValDirective {
     _valSize: FwSizeType
 }
 
+struct DiscardDirective {
+    $size: U16
+}
+
+struct MemCmpDirective {
+    $size: U16
+}
+
+struct StackCmdDirective {
+    argsSize: U16
+}
+
 internal port directive_waitRel(directive: WaitRelDirective) priority 6 assert
 
 internal port directive_waitAbs(directive: WaitAbsDirective) priority 6 assert
@@ -122,6 +134,12 @@ internal port directive_load(directive: LoadDirective) priority 6 assert
 
 internal port directive_pushVal(directive: PushValDirective) priority 6 assert
 
+internal port directive_discard(directive: DiscardDirective) priority 6 assert
+
+internal port directive_memCmp(directive: MemCmpDirective) priority 6 assert
+
+internal port directive_stackCmd(directive: StackCmdDirective) priority 6 assert
+
 enum DirectiveErrorCode {
     NO_ERROR
     STMT_OUT_OF_BOUNDS
@@ -133,4 +151,5 @@ enum DirectiveErrorCode {
     DELIBERATE_FAILURE
     STACK_ACCESS_OUT_OF_BOUNDS
     STACK_OVERFLOW
+    DOMAIN_ERROR
 }

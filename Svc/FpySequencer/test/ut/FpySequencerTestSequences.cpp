@@ -32,12 +32,11 @@ TEST_F(FpySequencerTester, ComplexControlFlow) {
     add_IF(6);
     // if true
     add_NO_OP();
-    add_GOTO(9); // goto end
+    add_GOTO(9);  // goto end
     // else
     add_NO_OP();
     add_NO_OP();
     add_NO_OP();
-
 
     writeAndRun();
     dispatchUntilState(State::IDLE);
@@ -65,7 +64,7 @@ TEST_F(FpySequencerTester, OrOfTlmAndReg) {
     add_IF(8);
     // if true
     add_NO_OP();
-    add_GOTO(11); // goto end
+    add_GOTO(11);  // goto end
     // else
     add_NO_OP();
     add_NO_OP();
@@ -97,7 +96,7 @@ TEST_F(FpySequencerTester, CmpIntTlm) {
     add_IF(8);
     // if true
     add_NO_OP();
-    add_GOTO(11); // goto end
+    add_GOTO(11);  // goto end
     // else
     add_NO_OP();
     add_NO_OP();
@@ -135,4 +134,4 @@ TEST_F(FpySequencerTester, NotTrueSeq) {
     ASSERT_EQ(tester_get_m_tlm_ptr()->lastDirectiveError, DirectiveError::NO_ERROR);
 }
 
-}
+}  // namespace Svc
