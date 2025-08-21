@@ -102,7 +102,7 @@ SocketIpStatus SocketComponentHelper::reopen() {
     return status;
 }
 
-SocketIpStatus SocketComponentHelper::send(const U8* const data, const U32 size) {
+SocketIpStatus SocketComponentHelper::send(const U8* const data, const FwSizeType size) {
     SocketIpStatus status = SOCK_SUCCESS;
     this->m_lock.lock();
     SocketDescriptor descriptor = this->m_descriptor;
@@ -157,7 +157,7 @@ bool SocketComponentHelper::running() {
     return running;
 }
 
-SocketIpStatus SocketComponentHelper::recv(U8* data, U32& size) {
+SocketIpStatus SocketComponentHelper::recv(U8* data, FwSizeType& size) {
     SocketIpStatus status = SOCK_SUCCESS;
     // Check for previously disconnected socket
     this->m_lock.lock();
@@ -195,8 +195,7 @@ void SocketComponentHelper::readLoop() {
             Fw::Buffer buffer = this->getBuffer();
             U8* data = buffer.getData();
             FW_ASSERT(data);
-            FW_ASSERT_NO_OVERFLOW(buffer.getSize(), U32);
-            U32 size = static_cast<U32>(buffer.getSize());
+            FwSizeType size = buffer.getSize();
             // recv blocks, so it may have been a while since its done an isOpened check
             status = this->recv(data, size);
             if ((status != SOCK_SUCCESS) && (status != SOCK_INTERRUPTED_TRY_AGAIN) &&

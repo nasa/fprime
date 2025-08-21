@@ -85,12 +85,18 @@ SocketIpStatus TcpClientSocket::openProtocol(SocketDescriptor& socketDescriptor)
     return SOCK_SUCCESS;
 }
 
-I32 TcpClientSocket::sendProtocol(const SocketDescriptor& socketDescriptor, const U8* const data, const U32 size) {
-    return static_cast<I32>(::send(socketDescriptor.fd, data, size, SOCKET_IP_SEND_FLAGS));
+FwSignedSizeType TcpClientSocket::sendProtocol(const SocketDescriptor& socketDescriptor,
+                                               const U8* const data,
+                                               const FwSizeType size) {
+    return static_cast<FwSignedSizeType>(
+        ::send(socketDescriptor.fd, data, static_cast<size_t>(size), SOCKET_IP_SEND_FLAGS));
 }
 
-I32 TcpClientSocket::recvProtocol(const SocketDescriptor& socketDescriptor, U8* const data, const U32 size) {
-    return static_cast<I32>(::recv(socketDescriptor.fd, data, size, SOCKET_IP_RECV_FLAGS));
+FwSignedSizeType TcpClientSocket::recvProtocol(const SocketDescriptor& socketDescriptor,
+                                               U8* const data,
+                                               const FwSizeType size) {
+    return static_cast<FwSignedSizeType>(
+        ::recv(socketDescriptor.fd, data, static_cast<size_t>(size), SOCKET_IP_RECV_FLAGS));
 }
 
 }  // namespace Drv

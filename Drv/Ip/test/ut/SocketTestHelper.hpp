@@ -47,7 +47,7 @@ void validate_random_buffer(Fw::Buffer& buffer, U8* data);
  * Fill random data into the buffer (using a random length).
  * @param buffer: buffer to fill.
  */
-U32 fill_random_buffer(Fw::Buffer& buffer);
+FwSizeType fill_random_buffer(Fw::Buffer& buffer);
 
 /**
  * Send/receive pair.
@@ -75,7 +75,7 @@ void drain(Drv::IpSocket& receiver, Drv::SocketDescriptor& drain_fd);
  * @param buffer: buffer
  * @param size: size to receive
  */
-void receive_all(Drv::IpSocket& receiver, Drv::SocketDescriptor& receiver_fd, U8* buffer, U32 size);
+void receive_all(Drv::IpSocket& receiver, Drv::SocketDescriptor& receiver_fd, U8* buffer, FwSizeType size);
 
 /**
  * Wait on socket change.

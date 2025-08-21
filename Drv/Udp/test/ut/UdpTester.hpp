@@ -23,7 +23,7 @@ namespace Drv {
 
 class UdpTester : public UdpGTestBase {
     // Maximum size of histories storing events, telemetry, and port outputs
-    static const U32 MAX_HISTORY_SIZE = 1000;
+    static const FwSizeType MAX_HISTORY_SIZE = 1000;
     // Instance ID supplied to the component instance under test
     static const FwEnumStoreType TEST_INSTANCE_ID = 0;
     // Queue depth supplied to component instance under test

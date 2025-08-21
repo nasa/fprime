@@ -120,8 +120,8 @@ TEST(UdpZeroLength, TestZeroLengthUdpDatagram) {
 
     // Receive the zero-length datagram using the F' socket wrapper
     U8 recv_buf[1] = {0xFF};
-    U32 recv_buf_len = 1;
-    I32 recv_status = receiver.recv(recv_fd, recv_buf, recv_buf_len);
+    FwSizeType recv_buf_len = 1;
+    FwSignedSizeType recv_status = receiver.recv(recv_fd, recv_buf, recv_buf_len);
 
     // Expect 0 (success) for a zero-length datagram.
     ASSERT_EQ(recv_status, 0) << "Expected recv_status 0 for zero-length datagram, but got " << recv_status
@@ -159,23 +159,23 @@ TEST(Ephemeral, TestEphemeralPorts) {
 
     // Send a test message
     const char* msg = "hello from ephemeral sender";
-    U32 msg_len = static_cast<U32>(strlen(msg) + 1);
+    FwSizeType msg_len = static_cast<FwSizeType>(strlen(msg) + 1);
     ASSERT_EQ(sender.send(send_fd, reinterpret_cast<const U8*>(msg), msg_len), Drv::SOCK_SUCCESS);
 
     // Receive the message and capture sender's port
     char recv_buf[64] = {0};
-    U32 recv_buf_len = sizeof(recv_buf);
+    FwSizeType recv_buf_len = sizeof(recv_buf);
     ASSERT_EQ(receiver.recv(recv_fd, reinterpret_cast<U8*>(recv_buf), recv_buf_len), Drv::SOCK_SUCCESS);
     ASSERT_STREQ(msg, recv_buf);
 
     // Receiver sends a response back to sender
     const char* reply = "reply from receiver";
-    U32 reply_len = static_cast<U32>(strlen(reply) + 1);
+    FwSizeType reply_len = static_cast<FwSizeType>(strlen(reply) + 1);
     ASSERT_EQ(receiver.send(recv_fd, reinterpret_cast<const U8*>(reply), reply_len), Drv::SOCK_SUCCESS);
 
     // Sender receives the response
     char reply_buf[64] = {0};
-    U32 reply_buf_len = sizeof(reply_buf);
+    FwSizeType reply_buf_len = sizeof(reply_buf);
     ASSERT_EQ(sender.recv(send_fd, reinterpret_cast<U8*>(reply_buf), reply_buf_len), Drv::SOCK_SUCCESS);
     ASSERT_STREQ(reply, reply_buf);
 

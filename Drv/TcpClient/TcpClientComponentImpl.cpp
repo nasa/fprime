@@ -28,8 +28,6 @@ SocketIpStatus TcpClientComponentImpl::configure(const char* hostname,
                                                  const U32 send_timeout_seconds,
                                                  const U32 send_timeout_microseconds,
                                                  FwSizeType buffer_size) {
-    // Check that ensures the configured buffer size fits within the limits fixed-width type, U32
-    FW_ASSERT(buffer_size <= std::numeric_limits<U32>::max(), static_cast<FwAssertArgType>(buffer_size));
     m_allocation_size = buffer_size;  // Store the buffer size
     return m_socket.configure(hostname, port, send_timeout_seconds, send_timeout_microseconds);
 }
@@ -45,7 +43,7 @@ IpSocket& TcpClientComponentImpl::getSocketHandler() {
 }
 
 Fw::Buffer TcpClientComponentImpl::getBuffer() {
-    return allocate_out(0, static_cast<U32>(m_allocation_size));
+    return allocate_out(0, m_allocation_size);
 }
 
 void TcpClientComponentImpl::sendBuffer(Fw::Buffer buffer, SocketIpStatus status) {
@@ -71,8 +69,7 @@ void TcpClientComponentImpl::connected() {
 // ----------------------------------------------------------------------
 
 Drv::ByteStreamStatus TcpClientComponentImpl::send_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
-    FW_ASSERT_NO_OVERFLOW(fwBuffer.getSize(), U32);
-    Drv::SocketIpStatus status = send(fwBuffer.getData(), static_cast<U32>(fwBuffer.getSize()));
+    Drv::SocketIpStatus status = send(fwBuffer.getData(), fwBuffer.getSize());
     Drv::ByteStreamStatus returnStatus;
     switch (status) {
         case SOCK_INTERRUPTED_TRY_AGAIN:

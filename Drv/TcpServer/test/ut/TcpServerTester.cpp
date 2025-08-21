@@ -58,7 +58,7 @@ void TcpServerTester ::test_with_loop(U32 iterations, bool recv_thread) {
         client.configure("127.0.0.1", this->component.getListenPort(), 0, 100);
         status2 = client.open(client_fd);
         EXPECT_EQ(status2, Drv::SocketIpStatus::SOCK_SUCCESS) << "Failed to connect client";
-        U32 size = sizeof(m_data_storage);
+        FwSizeType size = sizeof(m_data_storage);
 
         // Not testing with reconnect thread, we will need to open ourselves
         if (not recv_thread) {
