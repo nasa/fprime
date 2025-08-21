@@ -48,8 +48,7 @@ using SerialPortTestImplementations = ::testing::Types<FppTest::Types::NoParams,
 INSTANTIATE_TYPED_TEST_SUITE_P(FppTest, SerialPortTest, SerialPortTestImplementations);
 
 // String tests
-using StringTestImplementations =
-    ::testing::Types<FppTest::Types::String1, FppTest::Types::String2>;
+using StringTestImplementations = ::testing::Types<FppTest::Types::String1, FppTest::Types::String2>;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(Array, StringTest, StringTestImplementations);
 
@@ -120,8 +119,7 @@ using ExternalParamCommandTestImplementations = ::testing::Types<FppTest::Types:
                                                                  FppTest::Types::ArrayParam,
                                                                  FppTest::Types::StructParam>;
 
-INSTANTIATE_TYPED_TEST_SUITE_P(FppTest, ComponentExternalParamCommandTest,
-                               ExternalParamCommandTestImplementations);
+INSTANTIATE_TYPED_TEST_SUITE_P(FppTest, ComponentExternalParamCommandTest, ExternalParamCommandTestImplementations);
 
 // Time tests
 TEST(ComponentTimeTest, TimeTest) {

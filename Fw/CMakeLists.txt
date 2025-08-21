@@ -4,6 +4,7 @@ set(FPRIME_FRAMEWORK_MODULES Fw_Prm Fw_Cmd Fw_Log Fw_Tlm Fw_Fpy Fw_Com Fw_Time F
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Buffer/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Cmd/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Com/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/DataStructures/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Dp/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Fpy/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Interfaces/")

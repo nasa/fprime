@@ -119,15 +119,19 @@ SocketIpStatus TcpServerSocket::openProtocol(SocketDescriptor& socketDescriptor)
     return SOCK_SUCCESS;
 }
 
-I32 TcpServerSocket::sendProtocol(const SocketDescriptor& socketDescriptor, const U8* const data, const U32 size) {
-    return static_cast<I32>(::send(socketDescriptor.fd, data, size, SOCKET_IP_SEND_FLAGS));
+FwSignedSizeType TcpServerSocket::sendProtocol(const SocketDescriptor& socketDescriptor,
+                                               const U8* const data,
+                                               const FwSizeType size) {
+    return static_cast<FwSignedSizeType>(
+        ::send(socketDescriptor.fd, data, static_cast<size_t>(size), SOCKET_IP_SEND_FLAGS));
 }
 
-I32 TcpServerSocket::recvProtocol(const SocketDescriptor& socketDescriptor, U8* const data, const U32 size) {
-    I32 size_buf;
+FwSignedSizeType TcpServerSocket::recvProtocol(const SocketDescriptor& socketDescriptor,
+                                               U8* const data,
+                                               const FwSizeType size) {
     // recv will return 0 if the client has done an orderly shutdown
-    size_buf = static_cast<I32>(::recv(socketDescriptor.fd, data, size, SOCKET_IP_RECV_FLAGS));
-    return size_buf;
+    return static_cast<FwSignedSizeType>(
+        ::recv(socketDescriptor.fd, data, static_cast<size_t>(size), SOCKET_IP_RECV_FLAGS));
 }
 
 }  // namespace Drv

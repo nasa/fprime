@@ -28,15 +28,13 @@
 
 #include "gtest/gtest.h"
 
-#include <sstream>
 #include <limits>
+#include <sstream>
 
 // Tests FPP format strings
 class FormatTest : public ::testing::Test {
-protected:
-    void SetUp() override {
-        buf2 << "[ ";
-    }
+  protected:
+    void SetUp() override { buf2 << "[ "; }
 
     std::stringstream buf1, buf2;
 };
@@ -54,10 +52,7 @@ TEST_F(FormatTest, Bool) {
     }
     buf2 << " ]";
 
-    ASSERT_STREQ(
-        buf1.str().c_str(),
-        buf2.str().c_str()
-    );
+    ASSERT_STREQ(buf1.str().c_str(), buf2.str().c_str());
 }
 
 TEST_F(FormatTest, U8) {
@@ -73,16 +68,13 @@ TEST_F(FormatTest, U8) {
     }
     buf2 << " ]";
 
-    ASSERT_STREQ(
-        buf1.str().c_str(),
-        buf2.str().c_str()
-    );
+    ASSERT_STREQ(buf1.str().c_str(), buf2.str().c_str());
 }
 
 TEST_F(FormatTest, U16Dec) {
     U16 testVals[FormatU16Dec::SIZE] = {0, 100, std::numeric_limits<U16>::max()};
     FormatU16Dec a(testVals);
-    
+
     buf1 << a;
     for (U32 i = 0; i < FormatU16Dec::SIZE; i++) {
         if (i > 0) {
@@ -92,16 +84,13 @@ TEST_F(FormatTest, U16Dec) {
     }
     buf2 << " ]";
 
-    ASSERT_STREQ(
-        buf1.str().c_str(),
-        buf2.str().c_str()
-    );
+    ASSERT_STREQ(buf1.str().c_str(), buf2.str().c_str());
 }
 
 TEST_F(FormatTest, U32Oct) {
     U32 testVals[FormatU32Oct::SIZE] = {0, 100, std::numeric_limits<U32>::max()};
     FormatU32Oct a(testVals);
-    
+
     buf1 << a;
     for (U32 i = 0; i < FormatU32Oct::SIZE; i++) {
         if (i > 0) {
@@ -111,17 +100,13 @@ TEST_F(FormatTest, U32Oct) {
     }
     buf2 << " ]";
 
-    ASSERT_STREQ(
-        buf1.str().c_str(),
-        buf2.str().c_str()
-    );
+    ASSERT_STREQ(buf1.str().c_str(), buf2.str().c_str());
 }
 
 TEST_F(FormatTest, U64Hex) {
-    U64 testVals[FormatU64Hex::SIZE] = 
-        {0, 100, std::numeric_limits<U64>::max()};
+    U64 testVals[FormatU64Hex::SIZE] = {0, 100, std::numeric_limits<U64>::max()};
     FormatU64Hex a(testVals);
-    
+
     buf1 << a;
     for (U32 i = 0; i < FormatU64Hex::SIZE; i++) {
         if (i > 0) {
@@ -131,15 +116,11 @@ TEST_F(FormatTest, U64Hex) {
     }
     buf2 << " ]";
 
-    ASSERT_STREQ(
-        buf1.str().c_str(),
-        buf2.str().c_str()
-    );
+    ASSERT_STREQ(buf1.str().c_str(), buf2.str().c_str());
 }
 
 TEST_F(FormatTest, I8) {
-    I8 testVals[FormatI8::SIZE] = 
-        {std::numeric_limits<I8>::min(), 0, std::numeric_limits<I8>::max()};
+    I8 testVals[FormatI8::SIZE] = {std::numeric_limits<I8>::min(), 0, std::numeric_limits<I8>::max()};
     FormatI8 a(testVals);
 
     buf1 << a;
@@ -151,15 +132,11 @@ TEST_F(FormatTest, I8) {
     }
     buf2 << " ]";
 
-    ASSERT_STREQ(
-        buf1.str().c_str(),
-        buf2.str().c_str()
-    );
+    ASSERT_STREQ(buf1.str().c_str(), buf2.str().c_str());
 }
 
 TEST_F(FormatTest, I16Dec) {
-    I16 testVals[FormatI16Dec::SIZE] = 
-        {std::numeric_limits<I16>::min(), 0, std::numeric_limits<I16>::max()};
+    I16 testVals[FormatI16Dec::SIZE] = {std::numeric_limits<I16>::min(), 0, std::numeric_limits<I16>::max()};
     FormatI16Dec a(testVals);
 
     buf1 << a;
@@ -171,15 +148,11 @@ TEST_F(FormatTest, I16Dec) {
     }
     buf2 << " ]";
 
-    ASSERT_STREQ(
-        buf1.str().c_str(),
-        buf2.str().c_str()
-    );
+    ASSERT_STREQ(buf1.str().c_str(), buf2.str().c_str());
 }
 
 TEST_F(FormatTest, I32Oct) {
-    I32 testVals[FormatI32Oct::SIZE] = 
-        {std::numeric_limits<I32>::min(), 0, std::numeric_limits<I32>::max()};
+    I32 testVals[FormatI32Oct::SIZE] = {std::numeric_limits<I32>::min(), 0, std::numeric_limits<I32>::max()};
     FormatI32Oct a(testVals);
 
     buf1 << a;
@@ -191,16 +164,11 @@ TEST_F(FormatTest, I32Oct) {
     }
     buf2 << " ]";
 
-    ASSERT_STREQ(
-        buf1.str().c_str(),
-        buf2.str().c_str()
-    );
-    
+    ASSERT_STREQ(buf1.str().c_str(), buf2.str().c_str());
 }
 
 TEST_F(FormatTest, I64Hex) {
-    I64 testVals[FormatI64Hex::SIZE] = 
-        {std::numeric_limits<I64>::min(), 0, std::numeric_limits<I64>::max()};
+    I64 testVals[FormatI64Hex::SIZE] = {std::numeric_limits<I64>::min(), 0, std::numeric_limits<I64>::max()};
     FormatI64Hex a(testVals);
 
     buf1 << a;
@@ -212,15 +180,11 @@ TEST_F(FormatTest, I64Hex) {
     }
     buf2 << " ]";
 
-    ASSERT_STREQ(
-        buf1.str().c_str(),
-        buf2.str().c_str()
-    );
+    ASSERT_STREQ(buf1.str().c_str(), buf2.str().c_str());
 }
 
 TEST_F(FormatTest, F32E) {
-    F32 testVals[FormatF32e::SIZE] = 
-        {std::numeric_limits<F32>::min(), 0.0, std::numeric_limits<F32>::max()};
+    F32 testVals[FormatF32e::SIZE] = {std::numeric_limits<F32>::min(), 0.0, std::numeric_limits<F32>::max()};
     FormatF32e a(testVals);
 
     buf1 << a;
@@ -232,15 +196,11 @@ TEST_F(FormatTest, F32E) {
     }
     buf2 << " ]";
 
-    ASSERT_STREQ(
-        buf1.str().c_str(),
-        buf2.str().c_str()
-    );
+    ASSERT_STREQ(buf1.str().c_str(), buf2.str().c_str());
 }
 
 TEST_F(FormatTest, F32F) {
-    F32 testVals[FormatF32f::SIZE] = 
-        {std::numeric_limits<F32>::min(), 0.0, std::numeric_limits<F32>::max()};
+    F32 testVals[FormatF32f::SIZE] = {std::numeric_limits<F32>::min(), 0.0, std::numeric_limits<F32>::max()};
     FormatF32f a(testVals);
 
     buf1 << a;
@@ -252,15 +212,11 @@ TEST_F(FormatTest, F32F) {
     }
     buf2 << " ]";
 
-    ASSERT_STREQ(
-        buf1.str().c_str(),
-        buf2.str().c_str()
-    );
+    ASSERT_STREQ(buf1.str().c_str(), buf2.str().c_str());
 }
 
 TEST_F(FormatTest, F64G) {
-    F64 testVals[FormatF64g::SIZE] = 
-        {std::numeric_limits<F64>::min(), 0.0, std::numeric_limits<F64>::max()};
+    F64 testVals[FormatF64g::SIZE] = {std::numeric_limits<F64>::min(), 0.0, std::numeric_limits<F64>::max()};
     FormatF64g a(testVals);
 
     buf1 << a;
@@ -272,10 +228,7 @@ TEST_F(FormatTest, F64G) {
     }
     buf2 << " ]";
 
-    ASSERT_STREQ(
-        buf1.str().c_str(),
-        buf2.str().c_str()
-    );
+    ASSERT_STREQ(buf1.str().c_str(), buf2.str().c_str());
 }
 
 TEST_F(FormatTest, String) {
@@ -297,15 +250,12 @@ TEST_F(FormatTest, String) {
     }
     buf2 << " ]";
 
-    ASSERT_STREQ(
-        buf1.str().c_str(),
-        buf2.str().c_str()
-    );
+    ASSERT_STREQ(buf1.str().c_str(), buf2.str().c_str());
 }
 
 TEST_F(FormatTest, Char) {
-    U8 testVals[FormatChar::SIZE] = 
-        {FppTest::Utils::getNonzeroU8(), FppTest::Utils::getNonzeroU8(), FppTest::Utils::getNonzeroU8()};
+    U8 testVals[FormatChar::SIZE] = {FppTest::Utils::getNonzeroU8(), FppTest::Utils::getNonzeroU8(),
+                                     FppTest::Utils::getNonzeroU8()};
     FormatChar a(testVals);
 
     buf1 << a;
@@ -317,8 +267,5 @@ TEST_F(FormatTest, Char) {
     }
     buf2 << " ]";
 
-    ASSERT_STREQ(
-        buf1.str().c_str(),
-        buf2.str().c_str()
-    );
+    ASSERT_STREQ(buf1.str().c_str(), buf2.str().c_str());
 }

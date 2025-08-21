@@ -10,12 +10,12 @@
 //
 // ======================================================================
 
+#include "FppTest/array/AliasOfArrayAliasAc.hpp"
+#include "FppTest/array/AliasStringArrayAc.hpp"
 #include "FppTest/array/EnumArrayAc.hpp"
 #include "FppTest/array/StringArrayAc.hpp"
 #include "FppTest/array/StructArrayAc.hpp"
 #include "FppTest/array/Uint32ArrayArrayAc.hpp"
-#include "FppTest/array/AliasOfArrayAliasAc.hpp"
-#include "FppTest/array/AliasStringArrayAc.hpp"
 
 #include "FppTest/typed_tests/ArrayTest.hpp"
 
@@ -26,22 +26,13 @@
 // Test array string functions
 template <typename ArrayType>
 class ArrayToStringTest : public ::testing::Test {
-protected:
-    void SetUp() override {
-        FppTest::Array::setTestVals<ArrayType>(testVals);
-    }
+  protected:
+    void SetUp() override { FppTest::Array::setTestVals<ArrayType>(testVals); }
 
     typename ArrayType::ElementType testVals[ArrayType::SIZE];
 };
 
-using ArrayTypes = ::testing::Types<
-    Enum,
-    String,
-    Struct,
-    Uint32Array,
-    AliasString,
-    AliasOfArray
->;
+using ArrayTypes = ::testing::Types<Enum, String, Struct, Uint32Array, AliasString, AliasOfArray>;
 TYPED_TEST_SUITE(ArrayToStringTest, ArrayTypes);
 
 // Test array toString() and ostream operator functions
@@ -60,8 +51,5 @@ TYPED_TEST(ArrayToStringTest, ToString) {
     }
     buf2 << " ]";
 
-    ASSERT_STREQ(
-        buf1.str().c_str(),
-        buf2.str().c_str()
-    );
+    ASSERT_STREQ(buf1.str().c_str(), buf2.str().c_str());
 }
