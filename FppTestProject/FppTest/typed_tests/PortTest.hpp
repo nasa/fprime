@@ -13,15 +13,15 @@
 #ifndef FPP_TEST_PORT_TEST_HPP
 #define FPP_TEST_PORT_TEST_HPP
 
-#include "Tester.hpp"
 #include "FppTest/component/active/TypedPortIndexEnumAc.hpp"
+#include "Tester.hpp"
 
 #include "gtest/gtest.h"
 
 // Typed port tests (sync and guarded)
 template <typename PortType>
 class TypedPortTest : public ::testing::Test {
-protected:
+  protected:
     Tester tester;
     PortType port;
 };
@@ -38,15 +38,12 @@ TYPED_TEST_P(TypedPortTest, GuardedPort) {
     this->tester.testGuardedPortCheck(this->port);
 }
 
-REGISTER_TYPED_TEST_SUITE_P(TypedPortTest,
-    SyncPort,
-    GuardedPort
-);
+REGISTER_TYPED_TEST_SUITE_P(TypedPortTest, SyncPort, GuardedPort);
 
 // Typed async port tests
 template <typename PortType>
 class TypedAsyncPortTest : public ::testing::Test {
-protected:
+  protected:
     Tester tester;
     PortType port;
 };
@@ -59,14 +56,12 @@ TYPED_TEST_P(TypedAsyncPortTest, AsyncPort) {
     this->tester.testAsyncPortCheck(this->port);
 }
 
-REGISTER_TYPED_TEST_SUITE_P(TypedAsyncPortTest,
-    AsyncPort
-);
+REGISTER_TYPED_TEST_SUITE_P(TypedAsyncPortTest, AsyncPort);
 
 // Serial port tests (sync and guarded)
 template <typename PortType>
 class SerialPortTest : public ::testing::Test {
-protected:
+  protected:
     Tester tester;
     PortType port;
 };
@@ -93,17 +88,12 @@ TYPED_TEST_P(SerialPortTest, FromSerialGuarded) {
     this->tester.testGuardedPortCheck(this->port);
 }
 
-REGISTER_TYPED_TEST_SUITE_P(SerialPortTest,
-    ToSerialSync,
-    FromSerialSync,
-    ToSerialGuarded,
-    FromSerialGuarded
-);
+REGISTER_TYPED_TEST_SUITE_P(SerialPortTest, ToSerialSync, FromSerialSync, ToSerialGuarded, FromSerialGuarded);
 
 // Serial async port tests
 template <typename PortType>
 class SerialAsyncPortTest : public ::testing::Test {
-protected:
+  protected:
     Tester tester;
     PortType port;
 };
@@ -121,9 +111,6 @@ TYPED_TEST_P(SerialAsyncPortTest, FromSerialAsync) {
     this->tester.testAsyncPortCheck(this->port);
 }
 
-REGISTER_TYPED_TEST_SUITE_P(SerialAsyncPortTest,
-    ToSerialAsync,
-    FromSerialAsync
-);
+REGISTER_TYPED_TEST_SUITE_P(SerialAsyncPortTest, ToSerialAsync, FromSerialAsync);
 
 #endif

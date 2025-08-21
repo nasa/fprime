@@ -31,8 +31,8 @@ SequenceU32Tester::~SequenceU32Tester() {}
 // ----------------------------------------------------------------------
 
 void SequenceU32Tester::FppTest_SmChoice_SequenceU32_action_a(SmId smId,
-                                                        FppTest_SmChoice_SequenceU32::Signal signal,
-                                                        U32 value) {
+                                                              FppTest_SmChoice_SequenceU32::Signal signal,
+                                                              U32 value) {
     ASSERT_EQ(smId, SmId::smChoiceSequenceU32);
     this->m_smChoiceSequenceU32_action_a_history.push(signal, value);
 }
@@ -46,14 +46,15 @@ void SequenceU32Tester::FppTest_SmChoice_SequenceU32_action_b(SmId smId, FppTest
 // Implementations for internal state machine guards
 // ----------------------------------------------------------------------
 
-bool SequenceU32Tester::FppTest_SmChoice_SequenceU32_guard_g1(SmId smId, FppTest_SmChoice_SequenceU32::Signal signal) const {
+bool SequenceU32Tester::FppTest_SmChoice_SequenceU32_guard_g1(SmId smId,
+                                                              FppTest_SmChoice_SequenceU32::Signal signal) const {
     FW_ASSERT(smId == SmId::smChoiceSequenceU32, static_cast<FwAssertArgType>(smId));
     return this->m_smChoiceSequenceU32_guard_g1.call(signal);
 }
 
 bool SequenceU32Tester::FppTest_SmChoice_SequenceU32_guard_g2(SmId smId,
-                                                        FppTest_SmChoice_SequenceU32::Signal signal,
-                                                        U32 value) const {
+                                                              FppTest_SmChoice_SequenceU32::Signal signal,
+                                                              U32 value) const {
     FW_ASSERT(smId == SmId::smChoiceSequenceU32, static_cast<FwAssertArgType>(smId));
     return this->m_smChoiceSequenceU32_guard_g2.call(signal, value);
 }

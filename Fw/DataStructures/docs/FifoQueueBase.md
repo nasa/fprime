@@ -14,7 +14,7 @@ It represents an abstract base class for a FIFO queue.
 
 ## 2. Base Class
 
-`Stackbase<T>` is publicly derived from [`SizedContainer`](SizedContainer.md).
+`FifoQueueBase<T>` is publicly derived from [`SizedContainer`](SizedContainer.md).
 
 ## 3. Private Constructors
 
