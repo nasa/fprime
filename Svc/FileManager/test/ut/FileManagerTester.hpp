@@ -147,6 +147,12 @@ class FileManagerTester : public FileManagerGTestBase {
     //! List the contents of a directory
     void listDirectory(const char* const dirName);
 
+    //! Simulate rate group execution for asynchronous directory listing
+    //! This method simulates Rate Group 2 (0.5Hz) execution by repeatedly
+    //! calling the schedule handler until the directory listing completes.
+    //! Each cycle processes one directory entry to test the bounded execution.
+    void runRateGroupCycles(const U32 cycles);
+
     //! Assert successful command execution
     void assertSuccess(const FwOpcodeType opcode,
                        const U32 eventSize = 2  // Starting event + Error or Success msg

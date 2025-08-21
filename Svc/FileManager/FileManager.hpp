@@ -14,7 +14,6 @@
 #define Svc_FileManager_HPP
 
 #include "Os/FileSystem.hpp"
-#include "Os/Directory.hpp"
 #include "Svc/FileManager/FileManagerComponentAc.hpp"
 
 namespace Svc {
@@ -105,6 +104,40 @@ class FileManager final : public FileManagerComponentBase {
                         U32 key                    /*!< Value to return to pinger*/
     );
 
+    //! Handler implementation for schedIn
+    //! This handler is called by Rate Group 2 (0.5Hz) to process
+    //! directory listing operations asynchronously. It processes
+    //! one directory entry per rate tick to prevent event flooding
+    //! and ensure bounded execution time.
+    //!
+    void schedIn_handler(const FwIndexType portNum, /*!< The port number*/
+                         U32 context                /*!< The call order*/
+    );
+
+  public:
+    // ----------------------------------------------------------------------
+    // Test interface methods
+    // ----------------------------------------------------------------------
+
+    //! Allow tests to simulate rate group execution
+    //! This method provides test access to the schedule handler for
+    //! simulating asynchronous directory listing operations
+    //!
+    //! \param portNum The port number (unused for testing)
+    //! \param context The call context (unused for testing)
+    void testScheduleHandler(const FwIndexType portNum, U32 context) {
+        this->schedIn_handler(portNum, context);
+    }
+    
+    //! Allow tests to check if directory listing is in progress
+    //! This method enables tests to determine when asynchronous
+    //! directory listing operations have completed
+    //!
+    //! \return true if directory listing is in progress, false otherwise
+    bool isListingInProgress() const {
+        return (m_listState == LISTING_IN_PROGRESS);
+    }
+
   private:
     // ----------------------------------------------------------------------
     // Helper methods
@@ -128,11 +161,6 @@ class FileManager final : public FileManagerComponentBase {
                              const Os::FileSystem::Status status  //!< The status
     );
 
-    //! Count files in a directory
-    //!
-    U32 countFilesInDirectory(const char* dirPath  //!< The directory path
-    );
-
   private:
     // ----------------------------------------------------------------------
     // Variables
@@ -145,6 +173,41 @@ class FileManager final : public FileManagerComponentBase {
     //! The total number of errors
     //!
     U32 errorCount;
+
+    // ----------------------------------------------------------------------
+    // Directory listing state machine variables
+    // ----------------------------------------------------------------------
+    // The FileManager uses an asynchronous state machine to process
+    // directory listings through Rate Group 2. This prevents event
+    // flooding and ensures bounded execution time by processing one
+    // directory entry per rate tick (0.5Hz).
+
+    //! Directory listing state enumeration
+    enum ListDirectoryState {
+        IDLE,                    //!< Not currently listing a directory
+        LISTING_IN_PROGRESS     //!< Currently processing directory entries via rate group
+    };
+
+    //! Current state of directory listing operation
+    ListDirectoryState m_listState;
+
+    //! Directory handle being currently processed
+    Os::Directory m_currentDir;
+
+    //! Name of directory being listed (stored for event reporting)
+    Fw::String m_currentDirName;
+
+    //! Current index in directory listing (for event reporting)
+    U32 m_currentIndex;
+
+    //! Total entries processed (for completion event)
+    U32 m_totalEntries;
+
+    //! Command opcode stored for final response
+    FwOpcodeType m_currentOpCode;
+
+    //! Command sequence number stored for final response
+    U32 m_currentCmdSeq;
 };
 
 }  // end namespace Svc

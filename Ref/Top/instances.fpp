@@ -63,6 +63,11 @@ module Ref {
     stack size Default.STACK_SIZE \
     priority 96
 
+  instance fileManager: Svc.FileManager base id 0x10007000 \
+    queue size Default.QUEUE_SIZE \
+    stack size Default.STACK_SIZE \
+    priority 95
+
   # ----------------------------------------------------------------------
   # Queued component instances
   # ----------------------------------------------------------------------

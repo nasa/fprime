@@ -378,6 +378,17 @@ void FileManagerTester ::listDirectorySucceed() {
     // List the directory
     this->listDirectory("test_dir");
 
+    // At this point, only the "Starting" event should be present
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_ListDirectoryStarted_SIZE(1);
+    
+    // No command response yet (still in progress)
+    ASSERT_CMD_RESPONSE_SIZE(0);
+    
+    // Run rate group cycles to process the directory listing asynchronously
+    // We need enough cycles to process all files (3) plus completion
+    this->runRateGroupCycles(10);  // Give it plenty of cycles to complete
+
     // Assert success - 5 events: Starting + 3 DirectoryListing + Success
     this->assertSuccess(FileManager::OPCODE_LISTDIRECTORY, 5);
 
@@ -422,6 +433,17 @@ void FileManagerTester ::listDirectoryWithSubdirs() {
     // List the directory
     this->listDirectory("test_dir");
     
+    // At this point, only the "Starting" event should be present
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_ListDirectoryStarted_SIZE(1);
+    
+    // No command response yet (still in progress)
+    ASSERT_CMD_RESPONSE_SIZE(0);
+    
+    // Run rate group cycles to process the directory listing asynchronously
+    // This directory has many files and subdirectories, so give it more cycles
+    this->runRateGroupCycles(20);  // Give it plenty of cycles to complete
+
     // Check command response
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_LISTDIRECTORY, 0, Fw::CmdResponse::OK);
@@ -606,6 +628,23 @@ void FileManagerTester ::listDirectory(const char* const dirName) {
     Fw::CmdStringArg cmdStringDir(dirName);
     this->sendCmd_ListDirectory(INSTANCE, CMD_SEQ, cmdStringDir);
     this->component.doDispatch();
+}
+
+void FileManagerTester ::runRateGroupCycles(const U32 cycles) {
+    // Simulate rate group execution for asynchronous directory listing operations.
+    // This method mimics the behavior of Rate Group 2 (0.5Hz) by calling the
+    // schedule handler repeatedly until the directory listing operation completes.
+    // Each cycle processes one directory entry, ensuring bounded execution time.
+    for (U32 i = 0; i < cycles; i++) {
+        // Call the schedule handler to process one directory entry per cycle
+        this->component.testScheduleHandler(0, 0);
+        
+        // Check if directory listing operation has completed
+        if (!this->component.isListingInProgress()) {
+            // Operation finished, no need to continue cycling
+            break;
+        }
+    }
 }
 
 void FileManagerTester ::assertSuccess(const FwOpcodeType opcode, const U32 eventSize) const {

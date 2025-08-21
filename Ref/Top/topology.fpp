@@ -45,6 +45,7 @@ module Ref {
     instance linuxTimer
     instance comDriver
     instance cmdSeq
+    instance fileManager
 
     # ----------------------------------------------------------------------
     # Pattern graph specifiers
@@ -95,6 +96,8 @@ module Ref {
       rateGroup2Comp.RateGroupMemberOut[2] -> SG3.schedIn
       rateGroup2Comp.RateGroupMemberOut[3] -> SG4.schedIn
       rateGroup2Comp.RateGroupMemberOut[4] -> dpDemo.run
+      #connection to FileManager listing feature command for sequencing
+      rateGroup2Comp.RateGroupMemberOut[5] -> fileManager.schedIn
 
       # Rate group 3
       rateGroupDriverComp.CycleOut[Ports_RateGroups.rateGroup3] -> rateGroup3Comp.CycleIn
