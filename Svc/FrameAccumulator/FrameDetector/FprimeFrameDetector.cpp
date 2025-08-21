@@ -46,11 +46,11 @@ FrameDetector::Status FprimeFrameDetector::detect(const Types::CircularBuffer& d
     }
     // Check that deserialized start_word token matches expected value (default start_word value in the FPP object)
     FprimeProtocol::FrameHeader default_value;
-    if (header.getstartWord() != default_value.getstartWord()) {
+    if (header.get_startWord() != default_value.get_startWord()) {
         return Status::NO_FRAME_DETECTED;
     }
     // We expect the frame size to be size of header + body (of size specified in header) + trailer
-    const FwSizeType expected_frame_size = FprimeProtocol::FrameHeader::SERIALIZED_SIZE + header.getlengthField() +
+    const FwSizeType expected_frame_size = FprimeProtocol::FrameHeader::SERIALIZED_SIZE + header.get_lengthField() +
                                            FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
     // If the current allocated size can't hold the expected_frame_size -> MORE_DATA_NEEDED
     if (data.get_allocated_size() < expected_frame_size) {
@@ -62,7 +62,7 @@ FrameDetector::Status FprimeFrameDetector::detect(const Types::CircularBuffer& d
     U8 trailer_data[FprimeProtocol::FrameTrailer::SERIALIZED_SIZE];
     Fw::ExternalSerializeBuffer trailer_ser_buffer(trailer_data, FprimeProtocol::FrameTrailer::SERIALIZED_SIZE);
     status = data.peek(trailer_data, FprimeProtocol::FrameTrailer::SERIALIZED_SIZE,
-                       FprimeProtocol::FrameHeader::SERIALIZED_SIZE + header.getlengthField());
+                       FprimeProtocol::FrameHeader::SERIALIZED_SIZE + header.get_lengthField());
     if (status != Fw::FW_SERIALIZE_OK) {
         return Status::NO_FRAME_DETECTED;
     }
@@ -77,7 +77,7 @@ FrameDetector::Status FprimeFrameDetector::detect(const Types::CircularBuffer& d
     Utils::Hash hash;
     Utils::HashBuffer hashBuffer;
     // Compute CRC over the transmitted data (header + body)
-    FwSizeType hash_field_size = header.getlengthField() + FprimeProtocol::FrameHeader::SERIALIZED_SIZE;
+    FwSizeType hash_field_size = header.get_lengthField() + FprimeProtocol::FrameHeader::SERIALIZED_SIZE;
     hash.init();
     for (U32 i = 0; i < hash_field_size; i++) {
         U8 byte = 0;
@@ -88,7 +88,7 @@ FrameDetector::Status FprimeFrameDetector::detect(const Types::CircularBuffer& d
     hash.final(hashBuffer);
 
     // Compare the transmitted CRC with the computed one
-    if (trailer.getcrcField() != hashBuffer.asBigEndianU32()) {
+    if (trailer.get_crcField() != hashBuffer.asBigEndianU32()) {
         // CRC mismatch - there likely was data corruption. The F Prime protocol
         // being very simple, we don't have a way to recover from this.
         // So we report NO_FRAME_DETECTED and drop the frame

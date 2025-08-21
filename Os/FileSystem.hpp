@@ -7,9 +7,9 @@
 #define _OS_FILESYSTEM_HPP_
 
 #include <Fw/FPrimeBasicTypes.hpp>
-#include <Os/Os.hpp>
 #include <Os/Directory.hpp>
 #include <Os/File.hpp>
+#include <Os/Os.hpp>
 
 namespace Os {
 
@@ -17,35 +17,34 @@ struct FileSystemHandle {};
 
 class FileSystemInterface {
   public:
-
     // Size of file chunks to use for file system operations (e.g. copyFile)
-    static constexpr FwSizeType FILE_SYSTEM_FILE_CHUNK_SIZE = FW_FILE_CHUNK_SIZE; //!< Size of file system chunk
+    static constexpr FwSizeType FILE_SYSTEM_FILE_CHUNK_SIZE = FW_FILE_CHUNK_SIZE;  //!< Size of file system chunk
 
     enum Status {
-        OP_OK, //!<  Operation was successful
-        ALREADY_EXISTS, //!<  File already exists
-        NO_SPACE, //!<  No space left
-        NO_PERMISSION, //!<  No permission to write
-        NOT_DIR, //!<  Path is not a directory
-        IS_DIR, //!< Path is a directory
-        NOT_EMPTY, //!<  directory is not empty
-        INVALID_PATH, //!< Path is too long, too many sym links, etc.
-        DOESNT_EXIST, //!<  Path doesn't exist
-        FILE_LIMIT, //!< Too many files or links
-        BUSY, //!< Operand is in use by the system or by a process
-        NO_MORE_FILES, //!<  Directory stream has no more files
-        BUFFER_TOO_SMALL, //!<  Buffer size is too small to hold full path (for getWorkingDirectory)
-        EXDEV_ERROR, // Operation not supported across devices (e.g. rename)
-        OVERFLOW_ERROR, // Operation failed due to overflow in calculation of the result
-        NOT_SUPPORTED, //!<  Operation is not supported by the current implementation
-        OTHER_ERROR, //!<  other OS-specific error
+        OP_OK,             //!<  Operation was successful
+        ALREADY_EXISTS,    //!<  File already exists
+        NO_SPACE,          //!<  No space left
+        NO_PERMISSION,     //!<  No permission to write
+        NOT_DIR,           //!<  Path is not a directory
+        IS_DIR,            //!< Path is a directory
+        NOT_EMPTY,         //!<  directory is not empty
+        INVALID_PATH,      //!< Path is too long, too many sym links, etc.
+        DOESNT_EXIST,      //!<  Path doesn't exist
+        FILE_LIMIT,        //!< Too many files or links
+        BUSY,              //!< Operand is in use by the system or by a process
+        NO_MORE_FILES,     //!<  Directory stream has no more files
+        BUFFER_TOO_SMALL,  //!<  Buffer size is too small to hold full path (for getWorkingDirectory)
+        EXDEV_ERROR,       // Operation not supported across devices (e.g. rename)
+        OVERFLOW_ERROR,    // Operation failed due to overflow in calculation of the result
+        NOT_SUPPORTED,     //!<  Operation is not supported by the current implementation
+        OTHER_ERROR,       //!<  other OS-specific error
     };
 
     enum PathType {
-        FILE,      //!< Path is a file
-        DIRECTORY, //!< Path is a directory
-        OTHER,     //!< Path is not a file or directory, e.g. a socket
-        NOT_EXIST, //!< Path does not exist
+        FILE,       //!< Path is a file
+        DIRECTORY,  //!< Path is a directory
+        OTHER,      //!< Path is not a file or directory, e.g. a socket
+        NOT_EXIST,  //!< Path does not exist
     };
 
     //! \brief default constructor
@@ -66,7 +65,6 @@ class FileSystemInterface {
 
     //! \brief provide a pointer to a FileSystem delegate object
     static FileSystemInterface* getDelegate(FileSystemHandleStorage& aligned_new_memory);
-
 
     // ------------------------------------------------------------------
     // FileSystem operations to be implemented by an OSAL implementation
@@ -116,7 +114,6 @@ class FileSystemInterface {
     //! \param path The path of the new working directory
     //! \return Status of the operation
     virtual Status _changeWorkingDirectory(const char* path) = 0;
-
 };
 
 //! \brief FileSystem class
@@ -126,14 +123,13 @@ class FileSystemInterface {
 //! its static functions, for example using `Os::FileSystem::removeFile(path)`.
 class FileSystem final : public FileSystemInterface {
   private:
-    FileSystem();         //!<  Constructor (private because singleton pattern)
+    FileSystem();  //!<  Constructor (private because singleton pattern)
   public:
     ~FileSystem() final;  //!<  Destructor
 
     //! \brief return the underlying FileSystem handle (implementation specific)
     //! \return internal FileSystem handle representation
     FileSystemHandle* getHandle() override;
-
 
     // ------------------------------------------------------------
     // Implementation-specific FileSystem member functions
@@ -156,7 +152,7 @@ class FileSystem final : public FileSystemInterface {
     Status _removeFile(const char* path) override;
 
     //! \brief Rename a file from source to destination
-    //! 
+    //!
     //! If the rename fails due to a cross-device operation, this function should return EXDEV_ERROR
     //! and moveFile can be used instead to force a copy-and-remove.
     //!
@@ -207,7 +203,6 @@ class FileSystem final : public FileSystemInterface {
     //! \return Status of the operation
     Status _getPathType(const char* path, PathType& pathType) override;
 
-
     // ------------------------------------------------------------
     // Implementation-specific FileSystem static functions
     // ------------------------------------------------------------
@@ -230,7 +225,7 @@ class FileSystem final : public FileSystemInterface {
     static Status removeFile(const char* path);
 
     //! \brief Rename a file from source to destination
-    //! 
+    //!
     //! If the rename fails due to a cross-device operation, this function should return EXDEV_ERROR
     //! and moveFile can be used instead to force a copy-and-remove.
     //!
@@ -272,7 +267,6 @@ class FileSystem final : public FileSystemInterface {
     //! \return Status of the operation
     static Status changeWorkingDirectory(const char* path);
 
-
     // ------------------------------------------------------------
     // Additional functions built on top of OS-specific operations
     // ------------------------------------------------------------
@@ -292,7 +286,7 @@ class FileSystem final : public FileSystemInterface {
     //! \param path The path to check for existence
     //! \return PathType enum representing the type of the path (FILE, DIRECTORY, NOT_EXIST)
     static PathType getPathType(const char* path);
-    
+
     //! \brief Touch a file at the specified path, creating it if it doesn't exist
     //!
     //! It is invalid to pass `nullptr` as the path.
@@ -300,10 +294,10 @@ class FileSystem final : public FileSystemInterface {
     //! \param path The path of the file to touch
     //! \return Status of the operation
     static Status touch(const char* path);
-    
+
     //! \brief Create a new directory at the specified path.
     //!
-    //! The optional errorIfAlreadyExists (default=false) parameter can be set to true 
+    //! The optional errorIfAlreadyExists (default=false) parameter can be set to true
     //! to return an error status if the directory already exists.
     //!
     //! It is invalid to pass `nullptr` as the path.
@@ -311,8 +305,8 @@ class FileSystem final : public FileSystemInterface {
     //! \param path The path where the new directory will be created
     //! \param errorIfAlreadyExists If true, returns an error if the directory already exists
     //! \return Status of the operation
-    static Status createDirectory(const char* path, bool errorIfAlreadyExists=false);
-    
+    static Status createDirectory(const char* path, bool errorIfAlreadyExists = false);
+
     //! \brief Append the source file to the destination file
     //!
     //! This function opens both files, and iteratively reads the source by chunks and writes
@@ -325,8 +319,8 @@ class FileSystem final : public FileSystemInterface {
     //! \param destPath The path of the destination file
     //! \param createMissingDest If true, creates a new file if the destination doesn't exist
     //! \return Status of the operation
-    static Status appendFile(const char* sourcePath, const char* destPath, bool createMissingDest=false);
-    
+    static Status appendFile(const char* sourcePath, const char* destPath, bool createMissingDest = false);
+
     //! \brief Copy a file from the source path to the destination path
     //!
     //! This function opens both files, and iteratively reads the source by chunks and writes
@@ -338,7 +332,7 @@ class FileSystem final : public FileSystemInterface {
     //! \param destPath The path of the destination file
     //! \return Status of the operation
     static Status copyFile(const char* sourcePath, const char* destPath);
-    
+
     //! \brief Move a file from sourcePath to destPath
     //!
     //! This is done by first trying to rename, and if renaming fails,
@@ -350,7 +344,7 @@ class FileSystem final : public FileSystemInterface {
     //! \param destPath The path of the destination file
     //! \return Status of the operation
     static Status moveFile(const char* sourcePath, const char* destPath);
-    
+
     //! \brief Get the size of the file (in bytes) at the specified path
     //!
     //! It is invalid to pass `nullptr` as the path.
@@ -359,7 +353,6 @@ class FileSystem final : public FileSystemInterface {
     //! \param size Reference to store the size of the file
     //! \return Status of the operation
     static Status getFileSize(const char* path, FwSizeType& size);
-
 
   public:
     //! \brief initialize singleton
@@ -393,16 +386,14 @@ class FileSystem final : public FileSystemInterface {
     static Status copyFileData(File& source, File& destination, FwSizeType size);
 
   private:
-    // This section is used to store the implementation-defined FileSystem handle. To Os::FileSystem and fprime, this type is
-    // opaque and thus normal allocation cannot be done. Instead, we allow the implementor to store then handle in
-    // the byte-array here and set `handle` to that address for storage.
+    // This section is used to store the implementation-defined FileSystem handle. To Os::FileSystem and fprime, this
+    // type is opaque and thus normal allocation cannot be done. Instead, we allow the implementor to store then handle
+    // in the byte-array here and set `handle` to that address for storage.
 
     alignas(FW_HANDLE_ALIGNMENT) FileSystemHandleStorage m_handle_storage;  //!< FileSystem handle storage
-    FileSystemInterface& m_delegate;          
+    FileSystemInterface& m_delegate;
 };
 
-
-
-}
+}  // namespace Os
 
 #endif

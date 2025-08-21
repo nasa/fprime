@@ -9,12 +9,12 @@
 // acknowledged.
 //
 // ======================================================================
-#include <cstring>
-#include <Drv/Ip/IpSocket.hpp>
-#include <Fw/Types/Assert.hpp>
-#include <Fw/FPrimeBasicTypes.hpp>
-#include <Fw/Types/StringUtils.hpp>
 #include <sys/time.h>
+#include <Drv/Ip/IpSocket.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
+#include <Fw/Types/Assert.hpp>
+#include <Fw/Types/StringUtils.hpp>
+#include <cstring>
 
 // This implementation has primarily implemented to isolate
 // the socket interface from the F' Fw::Buffer class.
@@ -22,27 +22,25 @@
 // the m_data member in Fw::Buffer.
 
 #ifdef TGT_OS_TYPE_VXWORKS
-#include <socket.h>
-#include <inetLib.h>
+#include <errnoLib.h>
 #include <fioLib.h>
 #include <hostLib.h>
+#include <inetLib.h>
 #include <ioLib.h>
-#include <vxWorks.h>
 #include <sockLib.h>
-#include <fioLib.h>
-#include <taskLib.h>
+#include <socket.h>
 #include <sysLib.h>
-#include <errnoLib.h>
+#include <taskLib.h>
+#include <vxWorks.h>
 #include <cstring>
 #elif defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+#include <arpa/inet.h>
 #include <sys/socket.h>
 #include <unistd.h>
 #include <cerrno>
-#include <arpa/inet.h>
 #else
 #error OS not supported for IP Socket Communications
 #endif
-
 
 namespace Drv {
 
@@ -50,14 +48,17 @@ IpSocket::IpSocket() : m_timeoutSeconds(0), m_timeoutMicroseconds(0), m_port(0) 
     ::memset(m_hostname, 0, sizeof(m_hostname));
 }
 
-SocketIpStatus IpSocket::configure(const char* const hostname, const U16 port, const U32 timeout_seconds, const U32 timeout_microseconds) {
+SocketIpStatus IpSocket::configure(const char* const hostname,
+                                   const U16 port,
+                                   const U32 timeout_seconds,
+                                   const U32 timeout_microseconds) {
     FW_ASSERT(timeout_microseconds < 1000000, static_cast<FwAssertArgType>(timeout_microseconds));
     FW_ASSERT(this->isValidPort(port), static_cast<FwAssertArgType>(port));
     FW_ASSERT(hostname != nullptr);
     this->m_timeoutSeconds = timeout_seconds;
     this->m_timeoutMicroseconds = timeout_microseconds;
     this->m_port = port;
-    (void) Fw::StringUtils::string_copy(this->m_hostname, hostname, static_cast<FwSizeType>(SOCKET_MAX_HOSTNAME_SIZE));
+    (void)Fw::StringUtils::string_copy(this->m_hostname, hostname, static_cast<FwSizeType>(SOCKET_MAX_HOSTNAME_SIZE));
     return SOCK_SUCCESS;
 }
 
@@ -75,7 +76,7 @@ SocketIpStatus IpSocket::setupTimeouts(int socketFd) {
     timeout.tv_sec = static_cast<time_t>(this->m_timeoutSeconds);
     timeout.tv_usec = static_cast<suseconds_t>(this->m_timeoutMicroseconds);
     // set socket write to timeout after 1 sec
-    if (setsockopt(socketFd, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<char *>(&timeout), sizeof(timeout)) < 0) {
+    if (setsockopt(socketFd, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<char*>(&timeout), sizeof(timeout)) < 0) {
         return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
     }
 #endif
@@ -128,15 +129,14 @@ SocketIpStatus IpSocket::open(SocketDescriptor& socketDescriptor) {
     return status;
 }
 
-SocketIpStatus IpSocket::send(const SocketDescriptor& socketDescriptor, const U8* const data, const U32 size) {
-    FW_ASSERT(socketDescriptor.fd != -1, static_cast<FwAssertArgType>(socketDescriptor.fd));
+SocketIpStatus IpSocket::send(const SocketDescriptor& socketDescriptor, const U8* const data, const FwSizeType size) {
     FW_ASSERT(data != nullptr);
     FW_ASSERT(size > 0);
-    
-    U32 total = 0;
-    I32 sent  = 0;
+
+    FwSizeType total = 0;
+    FwSignedSizeType sent = 0;
     // Attempt to send out data and retry as necessary
-    for (U32 i = 0; (i < SOCKET_MAX_ITERATIONS) && (total < size); i++) {
+    for (FwSizeType i = 0; (i < SOCKET_MAX_ITERATIONS) && (total < size); i++) {
         errno = 0;
         // Send using my specific protocol
         sent = this->sendProtocol(socketDescriptor, data + total, size - total);
@@ -153,7 +153,7 @@ SocketIpStatus IpSocket::send(const SocketDescriptor& socketDescriptor, const U8
             return SOCK_SEND_ERROR;
         }
         FW_ASSERT(sent > 0, static_cast<FwAssertArgType>(sent));
-        total += static_cast<U32>(sent);
+        total += static_cast<FwSizeType>(sent);
     }
     // Failed to retry enough to send all data
     if (total < size) {
@@ -164,16 +164,16 @@ SocketIpStatus IpSocket::send(const SocketDescriptor& socketDescriptor, const U8
     return SOCK_SUCCESS;
 }
 
-SocketIpStatus IpSocket::recv(const SocketDescriptor& socketDescriptor, U8* data, U32& req_read) {
-    //TODO: Uncomment FW_ASSERT for socketDescriptor.fd once we fix TcpClientTester to not pass in uninitialized socketDescriptor
-    // FW_ASSERT(socketDescriptor.fd != -1, static_cast<FwAssertArgType>(socketDescriptor.fd));
+SocketIpStatus IpSocket::recv(const SocketDescriptor& socketDescriptor, U8* data, FwSizeType& req_read) {
+    // TODO: Uncomment FW_ASSERT for socketDescriptor.fd once we fix TcpClientTester to not pass in uninitialized
+    // socketDescriptor
+    //  FW_ASSERT(socketDescriptor.fd != -1, static_cast<FwAssertArgType>(socketDescriptor.fd));
     FW_ASSERT(data != nullptr);
 
-    
-    I32 bytes_received_or_status; // Stores the return value from recvProtocol
+    FwSignedSizeType bytes_received_or_status;  // Stores the return value from recvProtocol
 
     // Loop primarily for EINTR. Other conditions should lead to an earlier exit.
-    for (U32 i = 0; i < SOCKET_MAX_ITERATIONS; i++) {
+    for (FwSizeType i = 0; i < SOCKET_MAX_ITERATIONS; i++) {
         errno = 0;
         // Pass the current value of req_read (max buffer size) to recvProtocol.
         // recvProtocol returns bytes read or -1 on error.
@@ -181,13 +181,13 @@ SocketIpStatus IpSocket::recv(const SocketDescriptor& socketDescriptor, U8* data
 
         if (bytes_received_or_status > 0) {
             // Successfully read data
-            req_read = static_cast<U32>(bytes_received_or_status);
+            req_read = static_cast<FwSizeType>(bytes_received_or_status);
             return SOCK_SUCCESS;
         } else if (bytes_received_or_status == 0) {
             // Handle zero return based on protocol-specific behavior
             req_read = 0;
             return this->handleZeroReturn();
-        } else { // bytes_received_or_status == -1, an error occurred
+        } else {  // bytes_received_or_status == -1, an error occurred
             if ((errno == EAGAIN) || (errno == EWOULDBLOCK)) {
                 // Non-blocking socket would block, or SO_RCVTIMEO timeout occurred.
                 req_read = 0;
@@ -195,7 +195,7 @@ SocketIpStatus IpSocket::recv(const SocketDescriptor& socketDescriptor, U8* data
             } else if ((errno == ECONNRESET) || (errno == EBADF)) {
                 // Connection reset or bad file descriptor.
                 req_read = 0;
-                return SOCK_DISCONNECTED; // Or a more specific error like SOCK_READ_ERROR
+                return SOCK_DISCONNECTED;  // Or a more specific error like SOCK_READ_ERROR
             } else {
                 // Other socket read error.
                 req_read = 0;

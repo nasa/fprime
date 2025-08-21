@@ -18,60 +18,52 @@
 
 namespace Svc {
 
-  class StaticMemoryTester :
-    public StaticMemoryGTestBase
-  {
+class StaticMemoryTester : public StaticMemoryGTestBase {
+    // ----------------------------------------------------------------------
+    // Construction and destruction
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Construction and destruction
-      // ----------------------------------------------------------------------
+  public:
+    //! Construct object StaticMemoryTester
+    //!
+    StaticMemoryTester();
 
-    public:
+    //! Destroy object StaticMemoryTester
+    //!
+    ~StaticMemoryTester();
 
-      //! Construct object StaticMemoryTester
-      //!
-      StaticMemoryTester();
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-      //! Destroy object StaticMemoryTester
-      //!
-      ~StaticMemoryTester();
+    //! Basic allocation and deallocation
+    //!
+    void test_allocate();
 
-    public:
+  private:
+    // ----------------------------------------------------------------------
+    // Helper methods
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Tests
-      // ----------------------------------------------------------------------
+    //! Connect ports
+    //!
+    void connectPorts();
 
-      //! Basic allocation and deallocation
-      //!
-      void test_allocate();
+    //! Initialize components
+    //!
+    void initComponents();
 
-    private:
+  private:
+    // ----------------------------------------------------------------------
+    // Variables
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Helper methods
-      // ----------------------------------------------------------------------
+    //! The component under test
+    //!
+    StaticMemoryComponentImpl component;
+};
 
-      //! Connect ports
-      //!
-      void connectPorts();
-
-      //! Initialize components
-      //!
-      void initComponents();
-
-    private:
-
-      // ----------------------------------------------------------------------
-      // Variables
-      // ----------------------------------------------------------------------
-
-      //! The component under test
-      //!
-      StaticMemoryComponentImpl component;
-
-  };
-
-} // end namespace Svc
+}  // end namespace Svc
 
 #endif

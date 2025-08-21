@@ -7,8 +7,8 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
-#include "TlmChanGTestBase.hpp"
 #include "Svc/TlmChan/TlmChan.hpp"
+#include "TlmChanGTestBase.hpp"
 
 namespace Svc {
 
@@ -42,15 +42,15 @@ class TlmChanTester : public TlmChanGTestBase {
 
     //! Handler for from_PktSend
     //!
-    void from_PktSend_handler(const FwIndexType portNum, //!< The port number
-                              Fw::ComBuffer& data,           //!< Buffer containing packet data
-                              U32 context                    //!< Call context value; meaning chosen by user
+    void from_PktSend_handler(const FwIndexType portNum,  //!< The port number
+                              Fw::ComBuffer& data,        //!< Buffer containing packet data
+                              U32 context                 //!< Call context value; meaning chosen by user
     );
 
     //! Handler for from_pingOut
     //!
-    void from_pingOut_handler(const FwIndexType portNum, //!< The port number
-                              U32 key                        //!< Value to return to pinger
+    void from_pingOut_handler(const FwIndexType portNum,  //!< The port number
+                              U32 key                     //!< Value to return to pinger
     );
 
   private:

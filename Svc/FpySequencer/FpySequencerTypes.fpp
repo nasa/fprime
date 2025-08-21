@@ -7,20 +7,14 @@ module Svc {
             INVALID = 0
             WAIT_REL = 1
             WAIT_ABS = 2
-            SET_SER_REG = 3
             GOTO = 4
             IF = 5
             NO_OP = 6
-            GET_TLM = 7
-            GET_PRM = 8
-            CMD = 9
-            SET_REG = 10
-            DESER_SER_REG_8 = 11
-            DESER_SER_REG_4 = 12
-            DESER_SER_REG_2 = 13
-            DESER_SER_REG_1 = 14
-            # binary reg op directives
-            # all of these are handled at the CPP level by one BinaryRegOpDirective
+            STORE_TLM_VAL = 7
+            STORE_PRM = 8
+            CONST_CMD = 9
+            # stack op directives
+            # all of these are handled at the CPP level by one StackOpDirective
             # boolean ops
             OR = 15
             AND = 16
@@ -45,9 +39,6 @@ module Svc {
             FLE = 30
             FGT = 31
             FGE = 32
-            # end binary reg op directives
-            
-            # unary reg op dirs
             NOT = 33
             # floating point extension and truncation
             FPEXT = 34
@@ -58,9 +49,13 @@ module Svc {
             FPTOUI = 37
             SITOFP = 38
             UITOFP = 39
-            # end unary reg op dirs
+            # end stack op dirs
 
             EXIT = 40
+            ALLOCATE = 41
+            STORE = 42
+            LOAD = 43
+            PUSH_VAL = 44
         }
 
         struct Header {

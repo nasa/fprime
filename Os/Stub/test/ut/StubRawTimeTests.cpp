@@ -4,29 +4,23 @@
 // This ensures the delegation of function calls happens properly
 // ======================================================================
 #include <gtest/gtest.h>
-#include "Os/test/ut/rawtime/CommonTests.hpp"
-#include "Os/test/ut/rawtime/RulesHeaders.hpp"
-#include "Os/Stub/test/RawTime.hpp"
 #include "Fw/Buffer/Buffer.hpp"
 #include "Fw/Types/Serializable.hpp"
+#include "Os/Stub/test/RawTime.hpp"
+#include "Os/test/ut/rawtime/CommonTests.hpp"
+#include "Os/test/ut/rawtime/RulesHeaders.hpp"
 
 using namespace Os::Stub::RawTime::Test;
 
-
 // Basic file tests
 class Interface : public ::testing::Test {
-public:
+  public:
     //! Setup function delegating to UT setUp function
-    void SetUp() override {
-        StaticData::data = StaticData();
-    }
+    void SetUp() override { StaticData::data = StaticData(); }
 
     //! Setup function delegating to UT tearDown function
-    void TearDown() override {
-        StaticData::data = StaticData();
-    }
+    void TearDown() override { StaticData::data = StaticData(); }
 };
-
 
 // Ensure that Os::RawTime properly calls the implementation constructor
 TEST_F(Interface, Construction) {
@@ -67,7 +61,7 @@ TEST_F(Interface, Serialize) {
     Os::RawTime rawtime;
     Fw::Buffer buffer;
     auto esb = buffer.getSerializer();
-    ASSERT_EQ(rawtime.serialize(esb), Fw::FW_SERIALIZE_OK);
+    ASSERT_EQ(rawtime.serializeTo(esb), Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::SERIALIZE_FN);
 }
 
@@ -76,7 +70,7 @@ TEST_F(Interface, Deserialize) {
     Os::RawTime rawtime;
     Fw::Buffer buffer;
     auto esb = buffer.getDeserializer();
-    ASSERT_EQ(rawtime.deserialize(esb), Fw::FW_SERIALIZE_OK);
+    ASSERT_EQ(rawtime.deserializeFrom(esb), Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::DESERIALIZE_FN);
 }
 
@@ -87,7 +81,7 @@ TEST_F(Interface, GetHandle) {
     ASSERT_EQ(StaticData::data.lastCalled, StaticData::LastFn::GET_HANDLE_FN);
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     STest::Random::seed();
     return RUN_ALL_TESTS();

@@ -10,8 +10,8 @@
 //
 // ======================================================================
 
-#include "Fw/Types/Assert.hpp"
 #include "Fw/Types/SerialBuffer.hpp"
+#include "Fw/Types/Assert.hpp"
 
 namespace Fw {
 

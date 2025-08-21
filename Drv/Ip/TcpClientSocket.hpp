@@ -12,8 +12,8 @@
 #ifndef DRV_TCPCLIENT_TCPHELPER_HPP_
 #define DRV_TCPCLIENT_TCPHELPER_HPP_
 
-#include <Fw/FPrimeBasicTypes.hpp>
 #include <Drv/Ip/IpSocket.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <config/IpCfg.hpp>
 
 namespace Drv {
@@ -29,6 +29,7 @@ class TcpClientSocket : public IpSocket {
      * \brief Constructor for client socket tcp implementation
      */
     TcpClientSocket();
+
   protected:
     /**
      * \brief Check if the given port is valid for the socket
@@ -55,7 +56,9 @@ class TcpClientSocket : public IpSocket {
      * \param size: size of data to send
      * \return: size of data sent, or -1 on error.
      */
-    I32 sendProtocol(const SocketDescriptor& socketDescriptor, const U8* const data, const U32 size) override;
+    FwSignedSizeType sendProtocol(const SocketDescriptor& socketDescriptor,
+                                  const U8* const data,
+                                  const FwSizeType size) override;
     /**
      * \brief Protocol specific implementation of recv.  Called directly with error handling from recv.
      * \param socketDescriptor: descriptor to recv from
@@ -63,7 +66,9 @@ class TcpClientSocket : public IpSocket {
      * \param size: size of data buffer
      * \return: size of data received, or -1 on error.
      */
-    I32 recvProtocol(const SocketDescriptor& socketDescriptor, U8* const data, const U32 size) override;
+    FwSignedSizeType recvProtocol(const SocketDescriptor& socketDescriptor,
+                                  U8* const data,
+                                  const FwSizeType size) override;
 };
 }  // namespace Drv
 

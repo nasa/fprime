@@ -16,91 +16,82 @@
 
 namespace Svc {
 
-  namespace Immediate {
+namespace Immediate {
 
-    //! Test sequences with immediate commands followed by a marker
-    class CmdSequencerTester :
-      public ImmediateBase::CmdSequencerTester
-    {
+//! Test sequences with immediate commands followed by a marker
+class CmdSequencerTester : public ImmediateBase::CmdSequencerTester {
+  public:
+    // ----------------------------------------------------------------------
+    // Constructors
+    // ----------------------------------------------------------------------
 
-      public:
+    //! Construct object CmdSequencerTester
+    CmdSequencerTester(const SequenceFiles::File::Format::t a_format =
+                           SequenceFiles::File::Format::F_PRIME  //!< The file format to use
+    );
 
-        // ----------------------------------------------------------------------
-        // Constructors
-        // ----------------------------------------------------------------------
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-        //! Construct object CmdSequencerTester
-        CmdSequencerTester(
-            const SequenceFiles::File::Format::t a_format =
-            SequenceFiles::File::Format::F_PRIME //!< The file format to use
-        );
+    //! Don't load any sequence, then try to run a sequence
+    void NeverLoaded();
 
-      public:
+    //! Inject file errors
+    void FileErrors();
 
-        // ----------------------------------------------------------------------
-        // Tests
-        // ----------------------------------------------------------------------
+    //! Load a sequence, then run a sequence, then try to run a pre-loaded
+    //! sequence
+    void LoadRunRun();
 
-        //! Don't load any sequence, then try to run a sequence
-        void NeverLoaded();
+    //! Run a complete sequence and then issue a command response
+    void UnexpectedCommandResponse();
 
-        //! Inject file errors
-        void FileErrors();
+    //! Run a sequence and, while it is running, start a new sequence
+    //! The new sequence should cause an error
+    void NewSequence();
 
-        //! Load a sequence, then run a sequence, then try to run a pre-loaded
-        //! sequence
-        void LoadRunRun();
+    //! Run a sequence manually
+    void Manual();
 
-        //! Run a complete sequence and then issue a command response
-        void UnexpectedCommandResponse();
+    //! Run a sequence with failed commands
+    void FailedCommands();
 
-        //! Run a sequence and, while it is running, start a new sequence
-        //! The new sequence should cause an error
-        void NewSequence();
+    //! Run an automatic sequence by command
+    void AutoByCommand();
 
-        //! Run a sequence manually
-        void Manual();
+    //! Run an automatic sequence through a port call
+    void AutoByPort();
 
-        //! Run a sequence with failed commands
-        void FailedCommands();
+    //! Send invalid manual commands while a sequence is running
+    void InvalidManualCommands();
 
-        //! Run an automatic sequence by command
-        void AutoByCommand();
+    //! Load a sequence on initialization and then run it
+    void LoadOnInit();
 
-        //! Run an automatic sequence through a port call
-        void AutoByPort();
+    //! Sequence timeout
+    void SequenceTimeout();
 
-        //! Send invalid manual commands while a sequence is running
-        void InvalidManualCommands();
+    //! Start and cancel a sequence
+    void Cancel();
 
-        //! Load a sequence on initialization and then run it
-        void LoadOnInit();
+    //! Validate a sequence file
+    void Validate();
 
-        //! Sequence timeout
-        void SequenceTimeout();
+  private:
+    // ----------------------------------------------------------------------
+    // Private helper methods
+    // ----------------------------------------------------------------------
 
-        //! Start and cancel a sequence
-        void Cancel();
+    //! Execute commands for a manual sequence
+    void executeCommandsManual(const char* const fileName,  //!< The file name
+                               const U32 numCommands        //!< The number of commands in the sequence
+    );
+};
 
-        //! Validate a sequence file
-        void Validate();
+}  // namespace Immediate
 
-      private:
-
-        // ----------------------------------------------------------------------
-        // Private helper methods
-        // ----------------------------------------------------------------------
-
-        //! Execute commands for a manual sequence
-        void executeCommandsManual(
-            const char *const fileName, //!< The file name
-            const U32 numCommands //!< The number of commands in the sequence
-        );
-
-    };
-
-  }
-
-}
+}  // namespace Svc
 
 #endif

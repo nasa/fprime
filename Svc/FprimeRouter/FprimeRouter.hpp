@@ -31,15 +31,15 @@ class FprimeRouter final : public FprimeRouterComponentBase {
 
     //! Handler implementation for bufferIn
     //! Receiving Fw::Buffer from Deframer
-    void dataIn_handler(FwIndexType portNum,  //!< The port number
-                          Fw::Buffer& packetBuffer, //!< The packet buffer
-                          const ComCfg::FrameContext& context //!< The context object
-                          ) override;
+    void dataIn_handler(FwIndexType portNum,                 //!< The port number
+                        Fw::Buffer& packetBuffer,            //!< The packet buffer
+                        const ComCfg::FrameContext& context  //!< The context object
+                        ) override;
 
     // ! Handler for input port cmdResponseIn
     // ! This is a no-op because FprimeRouter does not need to handle command responses
     // ! but the port must be connected
-    void cmdResponseIn_handler(FwIndexType portNum,         //!< The port number
+    void cmdResponseIn_handler(FwIndexType portNum,             //!< The port number
                                FwOpcodeType opcode,             //!< The command opcode
                                U32 cmdSeq,                      //!< The command sequence number
                                const Fw::CmdResponse& response  //!< The command response
@@ -51,7 +51,6 @@ class FprimeRouter final : public FprimeRouterComponentBase {
     void fileBufferReturnIn_handler(FwIndexType portNum,  //!< The port number
                                     Fw::Buffer& fwBuffer  //!< The buffer
                                     ) override;
-
 };
 }  // namespace Svc
 

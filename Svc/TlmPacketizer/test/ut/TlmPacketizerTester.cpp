@@ -22,7 +22,8 @@ namespace Svc {
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-TlmPacketizerTester ::TlmPacketizerTester() : TlmPacketizerGTestBase("Tester", MAX_HISTORY_SIZE), component("TlmPacketizer") {
+TlmPacketizerTester ::TlmPacketizerTester()
+    : TlmPacketizerGTestBase("Tester", MAX_HISTORY_SIZE), component("TlmPacketizer") {
     this->initComponents();
     this->connectPorts();
 }
@@ -922,7 +923,6 @@ void TlmPacketizerTester ::getChannelValueTest() {
     ASSERT_EQ(time, timeIn);
     ASSERT_EQ(valid, Fw::TlmValid::VALID);
 
-
     // grab an ignored chan
     valid = this->invoke_to_TlmGet(0, 25, time, val);
     // should not have a value
@@ -996,9 +996,9 @@ void TlmPacketizerTester ::connectPorts() {
 }
 
 void TlmPacketizerTester::textLogIn(const FwEventIdType id,          //!< The event ID
-                       const Fw::Time& timeTag,         //!< The time
-                       const Fw::LogSeverity severity,  //!< The severity
-                       const Fw::TextLogString& text    //!< The event string
+                                    const Fw::Time& timeTag,         //!< The time
+                                    const Fw::LogSeverity severity,  //!< The severity
+                                    const Fw::TextLogString& text    //!< The event string
 ) {
     TextLogEntry e = {id, timeTag, severity, text};
 

@@ -8,14 +8,15 @@
  * ALL RIGHTS RESERVED.  United States Government Sponsorship
  * acknowledged.
  */
+
+#ifndef FW_BASIC_TYPES_HPP
+#define FW_BASIC_TYPES_HPP
+
 #include <limits>
 // Use C linkage for the basic items
 extern "C" {
 #include "Fw/Types/BasicTypes.h"
 }
-
-#ifndef FW_BASIC_TYPES_HPP
-#define FW_BASIC_TYPES_HPP
 
 // IEEE compliance checks must occur in C++ code
 #if !defined(SKIP_FLOAT_IEEE_754_COMPLIANCE) || !SKIP_FLOAT_IEEE_754_COMPLIANCE

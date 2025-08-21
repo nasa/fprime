@@ -14,18 +14,13 @@
 
 namespace Fw {
 
-  namespace GTest {
+namespace GTest {
 
-    void FilePackets::Header ::
-      compare(
-          const FilePacket::Header& expected,
-          const FilePacket::Header& actual
-      )
-    {
-      ASSERT_EQ(expected.getType(), actual.getType());
-      ASSERT_EQ(expected.getSequenceIndex(), actual.getSequenceIndex());
-    }
-
-  }
-
+void FilePackets::Header ::compare(const FilePacket::Header& expected, const FilePacket::Header& actual) {
+    ASSERT_EQ(expected.getType(), actual.getType());
+    ASSERT_EQ(expected.getSequenceIndex(), actual.getSequenceIndex());
 }
+
+}  // namespace GTest
+
+}  // namespace Fw

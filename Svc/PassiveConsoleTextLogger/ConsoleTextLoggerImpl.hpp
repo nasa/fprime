@@ -5,20 +5,21 @@
 
 namespace Svc {
 
-	class ConsoleTextLoggerImpl final : public PassiveTextLoggerComponentBase  {
+class ConsoleTextLoggerImpl final : public PassiveTextLoggerComponentBase {
+  public:
+    // Only called by derived class
+    ConsoleTextLoggerImpl(const char* compName);
+    ~ConsoleTextLoggerImpl();
 
-	public:
+  private:
+    // downcalls for input ports
+    void TextLogger_handler(FwIndexType portNum,
+                            FwEventIdType id,
+                            Fw::Time& timeTag,
+                            const Fw::LogSeverity& severity,
+                            Fw::TextLogString& text);
+};
 
-		// Only called by derived class
-		ConsoleTextLoggerImpl(const char* compName);
-		~ConsoleTextLoggerImpl();
-
-	private:
-
-		// downcalls for input ports
-		void TextLogger_handler(FwIndexType portNum, FwEventIdType id, Fw::Time &timeTag, const Fw::LogSeverity& severity, Fw::TextLogString &text);
-	};
-
-}
+}  // namespace Svc
 
 #endif

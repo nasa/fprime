@@ -37,6 +37,29 @@ available on all processor architectures. The types that are available
 is a configurable feature of the architecture and is typically set by
 compiler arguments.
 
+## C Assertion Macros
+
+For C code, the framework provides `FW_CASSERT` macros in Fw/Types/CAssert.h:
+
+- `FW_CASSERT(cond)` - Basic assertion with condition only
+- `FW_CASSERT_1(cond, arg1)` - Assertion with condition and one argument for reporting
+
+The C assertion macros support the same argument types as the C++ version and integrate with the same assertion hook system.
+
+### Example C Assertion Usage
+
+```c
+#include <Fw/Types/CAssert.h>
+
+void example_function(int value) {
+    // Basic assertion
+    FW_CASSERT(value > 0);
+
+    // Assertion with argument reporting
+    FW_CASSERT_1(value <= 1000, value);
+}
+```
+
 The assert can be configured in the following ways:
 
   - FW\_ASSERT\_LEVEL Sets the level or reporting for the asserts.

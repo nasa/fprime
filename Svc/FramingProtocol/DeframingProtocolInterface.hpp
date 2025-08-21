@@ -10,7 +10,6 @@
 //
 // ======================================================================
 
-
 #ifndef SVC_DEFRAMING_PROTOCOL_INTERFACE_HPP
 #define SVC_DEFRAMING_PROTOCOL_INTERFACE_HPP
 
@@ -28,7 +27,7 @@ namespace Svc {
  */
 class DeframingProtocolInterface {
   public:
-    virtual ~DeframingProtocolInterface(){};
+    virtual ~DeframingProtocolInterface() {};
     /**
      * \brief called to allocate memory, typically delegating to an allocate port call
      * \param size: size of the allocation request
@@ -41,8 +40,7 @@ class DeframingProtocolInterface {
      * \param data: deframed buffer
      */
     virtual void route(Fw::Buffer& data) = 0;
-
 };
 
-}
+}  // namespace Svc
 #endif  // SVC_DEFRAMING_PROTOCOL_INTERFACE_HPP

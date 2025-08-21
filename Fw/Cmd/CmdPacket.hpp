@@ -18,8 +18,10 @@ class CmdPacket : public ComPacket {
     CmdPacket();
     virtual ~CmdPacket();
 
-    SerializeStatus serialize(SerializeBufferBase& buffer) const;  //!< serialize contents
-    SerializeStatus deserialize(SerializeBufferBase& buffer);
+    // New serialization interface methods
+    SerializeStatus serializeTo(SerializeBufferBase& buffer) const;
+    SerializeStatus deserializeFrom(SerializeBufferBase& buffer);
+
     FwOpcodeType getOpCode() const;
     CmdArgBuffer& getArgBuffer();
 

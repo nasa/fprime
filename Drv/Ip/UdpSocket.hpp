@@ -12,17 +12,17 @@
 #ifndef DRV_IP_UDPSOCKET_HPP_
 #define DRV_IP_UDPSOCKET_HPP_
 
-#include <Fw/FPrimeBasicTypes.hpp>
 #include <Drv/Ip/IpSocket.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
 #include <config/IpCfg.hpp>
 
 // Include system headers for sockaddr_in
 #ifdef TGT_OS_TYPE_VXWORKS
-    #include <socket.h>
-    #include <inetLib.h>
+#include <inetLib.h>
+#include <socket.h>
 #else
-    #include <sys/socket.h>
-    #include <arpa/inet.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
 #endif
 
 namespace Drv {
@@ -49,7 +49,9 @@ class UdpSocket : public IpSocket {
      *
      * \warning configure is disabled for UdpSocket. Use configureSend and configureRecv instead.
      */
-    SocketIpStatus configure(const char* hostname, const U16 port, const U32 send_timeout_seconds,
+    SocketIpStatus configure(const char* hostname,
+                             const U16 port,
+                             const U32 send_timeout_seconds,
                              const U32 send_timeout_microseconds) override;
 
     /**
@@ -70,7 +72,9 @@ class UdpSocket : public IpSocket {
      * \param send_timeout_microseconds: send timeout microseconds portion. Must be less than 1000000
      * \return status of configure
      */
-    SocketIpStatus configureSend(const char* hostname, const U16 port, const U32 send_timeout_seconds,
+    SocketIpStatus configureSend(const char* hostname,
+                                 const U16 port,
+                                 const U32 send_timeout_seconds,
                                  const U32 send_timeout_microseconds);
 
     /**
@@ -105,7 +109,7 @@ class UdpSocket : public IpSocket {
      * \param size: size of data to send
      * \return: status of the send operation
      */
-    SocketIpStatus send(const SocketDescriptor& socketDescriptor, const U8* const data, const U32 size) override;
+    SocketIpStatus send(const SocketDescriptor& socketDescriptor, const U8* const data, const FwSizeType size) override;
 
   protected:
     /**
@@ -127,7 +131,9 @@ class UdpSocket : public IpSocket {
      * \param size: size of data to send
      * \return: size of data sent, or -1 on error.
      */
-    I32 sendProtocol(const SocketDescriptor& socketDescriptor, const U8* const data, const U32 size) override;
+    FwSignedSizeType sendProtocol(const SocketDescriptor& socketDescriptor,
+                                  const U8* const data,
+                                  const FwSizeType size) override;
     /**
      * \brief Protocol specific implementation of recv.  Called directly with error handling from recv.
      * \param socketDescriptor: descriptor to recv from
@@ -135,7 +141,9 @@ class UdpSocket : public IpSocket {
      * \param size: size of data buffer
      * \return: size of data received, or -1 on error.
      */
-    I32 recvProtocol(const SocketDescriptor& socketDescriptor, U8* const data, const U32 size) override;
+    FwSignedSizeType recvProtocol(const SocketDescriptor& socketDescriptor,
+                                  U8* const data,
+                                  const FwSizeType size) override;
     /**
      * \brief Handle zero return from recvProtocol for UDP
      *
@@ -149,7 +157,7 @@ class UdpSocket : public IpSocket {
   private:
     struct sockaddr_in m_addr_send;  //!< UDP server address for sending
     struct sockaddr_in m_addr_recv;  //!< UDP server address for receiving
-    bool m_recv_configured; //!< True if configureRecv was called
+    bool m_recv_configured;          //!< True if configureRecv was called
 };
 }  // namespace Drv
 

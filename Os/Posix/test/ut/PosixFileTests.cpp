@@ -4,13 +4,13 @@
 // ======================================================================
 #include <gtest/gtest.h>
 #include <unistd.h>
+#include <csignal>
+#include <cstdio>
 #include <list>
 #include "Os/File.hpp"
 #include "Os/Posix/File.hpp"
 #include "Os/test/ut/file/CommonTests.hpp"
 #include "STest/Pick/Pick.hpp"
-#include <cstdio>
-#include <csignal>
 namespace Os {
 namespace Test {
 namespace FileTest {
@@ -45,9 +45,9 @@ std::shared_ptr<std::string> get_test_filename(bool random) {
                 (selected_character == '/') ? static_cast<char>(selected_character + 1) : selected_character;
             buffer[i] = selected_character;
         }
-        buffer[i] = 0; // Terminate random string
+        buffer[i] = 0;  // Terminate random string
     }
-    (void) snprintf(full_buffer, _POSIX_PATH_MAX, "%s/%s", BASE_PATH, filename);
+    (void)snprintf(full_buffer, _POSIX_PATH_MAX, "%s/%s", BASE_PATH, filename);
     // Create a shared pointer wrapping our filename buffer
     std::shared_ptr<std::string> pointer(new std::string(full_buffer), std::default_delete<std::string>());
     return pointer;
@@ -102,7 +102,7 @@ class PosixTester : public Tester {
     //! \return true if it exists, false otherwise.
     //!
     bool exists(const std::string& filename) const override {
-        bool exits =  check_permissions(filename.c_str(), F_OK);
+        bool exits = check_permissions(filename.c_str(), F_OK);
         return exits;
     }
 
@@ -123,17 +123,14 @@ class PosixTester : public Tester {
     //! Posix tester is fully functional
     //! \return true
     //!
-    bool functional() const override{
-        return true;
-    }
-
+    bool functional() const override { return true; }
 };
 
 std::unique_ptr<Os::Test::FileTest::Tester> get_tester_implementation() {
     return std::unique_ptr<Os::Test::FileTest::Tester>(new Os::Test::FileTest::PosixTester());
 }
 
-}  // namespace File
+}  // namespace FileTest
 }  // namespace Test
 }  // namespace Os
 

@@ -9,8 +9,8 @@
 // acknowledged.
 // ======================================================================
 
-#include "Os/Stub/test/File.hpp"
 #include "Svc/DpWriter/test/ut/Rules/FileOpenStatus.hpp"
+#include "Os/Stub/test/File.hpp"
 #include "Svc/DpWriter/test/ut/Rules/Testers.hpp"
 
 namespace Svc {

@@ -16,41 +16,34 @@
 
 namespace Svc {
 
-  namespace NoFiles {
+namespace NoFiles {
 
-    //! Test sequencer behavior with no input files
-    class CmdSequencerTester :
-      public Svc::CmdSequencerTester
-    {
+//! Test sequencer behavior with no input files
+class CmdSequencerTester : public Svc::CmdSequencerTester {
+  public:
+    // ----------------------------------------------------------------------
+    // Constructors
+    // ----------------------------------------------------------------------
 
-      public:
+    //! Construct object CmdSequencerTester
+    CmdSequencerTester(const SequenceFiles::File::Format::t a_format =
+                           SequenceFiles::File::Format::F_PRIME  //!< The file format to use
+    );
 
-        // ----------------------------------------------------------------------
-        // Constructors
-        // ----------------------------------------------------------------------
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-        //! Construct object CmdSequencerTester
-        CmdSequencerTester(
-            const SequenceFiles::File::Format::t a_format =
-            SequenceFiles::File::Format::F_PRIME //!< The file format to use
-        );
+    //! Initialization
+    void Init();
 
-      public:
+    //! Issue a cancel command with no sequence active
+    void NoSequenceActive();
+};
 
-        // ----------------------------------------------------------------------
-        // Tests
-        // ----------------------------------------------------------------------
+}  // namespace NoFiles
 
-        //! Initialization
-        void Init();
-
-        //! Issue a cancel command with no sequence active
-        void NoSequenceActive();
-
-    };
-
-  }
-
-}
+}  // namespace Svc
 
 #endif

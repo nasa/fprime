@@ -107,7 +107,7 @@ void DpContainer::serializeHeader() {
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     // Serialize the user data
     status = serializer.serialize(this->m_userData, static_cast<FwSizeType>(sizeof this->m_userData),
-                                     Fw::Serialization::OMIT_LENGTH);
+                                  Fw::Serialization::OMIT_LENGTH);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     // Serialize the data product state
     status = serializer.serialize(this->m_dpState);
