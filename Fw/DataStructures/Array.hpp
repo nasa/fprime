@@ -97,7 +97,7 @@ class Array final {
         FW_ASSERT(il.size() == S, static_cast<FwAssertArgType>(il.size()), static_cast<FwAssertArgType>(S));
         FwSizeType i = 0;
         for (const auto& e : il) {
-            FW_ASSERT(i < S);
+            FW_ASSERT(i < S, static_cast<FwAssertArgType>(i), static_cast<FwAssertArgType>(S));
             this->m_elements[i] = e;
             i++;
         }
