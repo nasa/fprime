@@ -1,7 +1,0 @@
-#!/bin/sh -e
-
-for file in `find . -name '*.o' -or -name '*~'`
-do
-  echo "rm $file"
-done
-rm -f exe
