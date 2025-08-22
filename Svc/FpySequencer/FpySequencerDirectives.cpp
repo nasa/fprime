@@ -707,6 +707,9 @@ DirectiveError FpySequencer::op_udiv() {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     U64 rhs = this->pop<U64>();
+    if (rhs == 0) {
+        return DirectiveError::DOMAIN_ERROR;
+    }
     U64 lhs = this->pop<U64>();
     this->push(static_cast<U64>(lhs / rhs));
     return DirectiveError::NO_ERROR;
@@ -716,6 +719,9 @@ DirectiveError FpySequencer::op_sdiv() {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     I64 rhs = this->pop<I64>();
+    if (rhs == 0) {
+        return DirectiveError::DOMAIN_ERROR;
+    }
     I64 lhs = this->pop<I64>();
     this->push(static_cast<I64>(lhs / rhs));
     return DirectiveError::NO_ERROR;
@@ -784,6 +790,9 @@ DirectiveError FpySequencer::op_fdiv() {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     F64 rhs = this->pop<F64>();
+    if (rhs == 0.0) {
+        return DirectiveError::DOMAIN_ERROR;
+    }
     F64 lhs = this->pop<F64>();
     this->push(static_cast<F64>(lhs / rhs));
     return DirectiveError::NO_ERROR;
@@ -793,6 +802,9 @@ DirectiveError FpySequencer::op_float_floor_div() {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     F64 rhs = this->pop<F64>();
+    if (rhs == 0.0) {
+        return DirectiveError::DOMAIN_ERROR;
+    }
     F64 lhs = this->pop<F64>();
     this->push(static_cast<F64>(floor(lhs / rhs)));
     return DirectiveError::NO_ERROR;
@@ -801,9 +813,25 @@ DirectiveError FpySequencer::op_fpow() {
     if (this->m_runtime.stackSize < sizeof(F64) * 2) {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
-    F64 rhs = this->pop<F64>();
-    F64 lhs = this->pop<F64>();
-    this->push(static_cast<F64>(pow(lhs, rhs)));
+    F64 exponent = this->pop<F64>();
+    F64 base = this->pop<F64>();
+
+    // fractional power of a negative number (needs complex numbers)
+    if (base < 0.0 && std::floor(exponent) != exponent) {
+        return DirectiveError::DOMAIN_ERROR;
+    }
+
+    // 0^0 is undefined
+    if (base == 0.0 && exponent == 0.0) {
+        return DirectiveError::DOMAIN_ERROR;
+    }
+
+    // division by zero (0 to a negative power)
+    if (base == 0.0 && exponent < 0.0) {
+        return DirectiveError::DOMAIN_ERROR;
+    }
+
+    this->push(static_cast<F64>(pow(base, exponent)));
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_flog() {
@@ -811,6 +839,9 @@ DirectiveError FpySequencer::op_flog() {
         return DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
     }
     F64 val = this->pop<F64>();
+    if (val < 0.0) {
+        return DirectiveError::DOMAIN_ERROR;
+    }
     this->push(static_cast<F64>(log(val)));
     return DirectiveError::NO_ERROR;
 }
