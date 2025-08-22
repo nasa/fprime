@@ -565,13 +565,12 @@ class RedBlackTreeSetOrMapImpl final {
                 const auto uncle = this->m_nodes[grandparent].getChild(parentOppositeDirection);
                 if (this->getNodeColor(uncle) == Color::BLACK) {
                     if (this->m_nodes[parent].getChild(parentOppositeDirection) == node) {
-                        /*
                         // The subtree rooted at grandparent has the following
                         // shape, assuming that parentDirection is RIGHT.
                         // There is a red child violation from parent to node.
                         // There are no other violations at any nodes.
                         // K1, K2, K3, and K4 are arbitrary keys with K1 < K2 < K3 < K4.
-                        //
+                        /*
                         //                    BBBBBBBBBBBBBBBBBBBB
                         //                   B                    B
                         //                   B  K2 (grandparent)  B
@@ -605,12 +604,11 @@ class RedBlackTreeSetOrMapImpl final {
                         this->rotateSubtree(parent, parentDirection);
                         parent = this->m_nodes[grandparent].getChild(parentDirection);
                     }
-                    /*
                     // The subtree rooted at grandparent has the following
                     // shape, assuming that parentDirection is RIGHT.
                     // There is a red child violation from parent to K4.
                     // There are no other violations at any nodes.
-                    //
+                    /*
                     //                    BBBBBBBBBBBBBBBBBBBB
                     //                   B                    B
                     //                   B  K2 (grandparent)  B
@@ -644,9 +642,8 @@ class RedBlackTreeSetOrMapImpl final {
                     this->rotateSubtree(grandparent, parentOppositeDirection);
                     this->m_nodes[parent].m_color = Color::BLACK;
                     this->m_nodes[grandparent].m_color = Color::RED;
-                    /*
                     // The subtree has the following shape.
-                    //
+                    /*
                     //                               BBBBBBBBBBBBBBBBBBB
                     //                              B                   B
                     //                              B    K3 (parent)    B
@@ -680,13 +677,12 @@ class RedBlackTreeSetOrMapImpl final {
                     done = true;
                     break;
                 } else {
-                    /*
                     // The subtree rooted at grandparent has one of four
                     // shapes, one of which is shown below. Each of the arrows
                     // to red nodes may point the other way.
                     // There is a red child violation from parent to K4.
                     // There are no other violations at any nodes.
-                    //
+                    /*
                     //                    BBBBBBBBBBBBBBBBBBBB
                     //                   B                    B
                     //                   B  K2 (grandparent)  B
@@ -722,9 +718,8 @@ class RedBlackTreeSetOrMapImpl final {
                     this->m_nodes[grandparent].m_color = Color::RED;
                     node = grandparent;
                     parent = this->m_nodes[node].m_parent;
-                    /*
                     // The tree shown above now has the following shape.
-                    //
+                    /*
                     //                    ???????????????????
                     //                   ?                   ?
                     //                   ?       parent      ?
@@ -789,11 +784,10 @@ class RedBlackTreeSetOrMapImpl final {
         // Since node is not the root, parent is not NONE.
         auto direction = this->getParentDirection(node);
         auto oppositeDirection = Node::getOppositeDirection(direction);
-        /*
         // The leaf-augmented subtree rooted at parent has this shape, assuming
         // direction == RIGHT. We use ? to represent the unknown color (red or
         // black) of parent.
-        //
+        /*
         //                      ????????????????
         //                     ?                ?
         //                     ?     parent     ?
@@ -817,10 +811,9 @@ class RedBlackTreeSetOrMapImpl final {
         //                             BBBBBBBBBB        BBBBBBBBBB
         */
         this->m_nodes[parent].setChild(direction, Node::NONE);
-        /*
         // The previous step performs the deletion.
         // The remaining steps are for rebalancing.
-        //
+        /*
         // The leaf-augmented subtree rooted at parent looks like this,
         // assuming direction == RIGHT:
         //
@@ -847,13 +840,12 @@ class RedBlackTreeSetOrMapImpl final {
         bool done = false;
         const auto capacity = this->getCapacity();
         for (FwSizeType i = 0; i < capacity; i++) {
-            /*
             // The red child constraint is satisfied. The black height
             // constraint is violated because the leaf-augmented subtree rooted
             // at parent has this shape, assuming direction == RIGHT. i is the
             // loop index. Note that this diagram agrees with the previous one
             // when i = 0.
-            //
+            /*
             //                          ????????????????
             //                         ?                ?
             //                         ?     parent     ?
@@ -875,13 +867,12 @@ class RedBlackTreeSetOrMapImpl final {
             auto sibling = this->m_nodes[parent].getChild(oppositeDirection);
             auto closeNephew = this->m_nodes[sibling].getChild(direction);
             auto distantNephew = this->m_nodes[sibling].getChild(oppositeDirection);
-            /*
             // The leaf-augmented subtree rooted at parent has this shape
             // (direction == RIGHT). If distantNephew or closeNephew are leaves
             // in the leaf-augmented tree, then K1 and K4 are names for the
             // nodes; they are not keys in the original tree.
             // There is a black height violation at parent.
-            //
+            /*
             //                                 ???????????????????
             //                                ?                   ?
             //                                ?    K6 (parent)    ?
@@ -915,10 +906,9 @@ class RedBlackTreeSetOrMapImpl final {
             //  -------------------------     -------------------------
             */
             if (this->getNodeColor(sibling) == Color::RED) {
-                /*
                 // The leaf-augmented subtree rooted at parent has this shape.
                 // There is a black height violation at parent.
-                //
+                /*
                 //                                 BBBBBBBBBBBBBBBBBBB
                 //                                B                   B
                 //                                B    K6 (parent)    B
@@ -955,9 +945,8 @@ class RedBlackTreeSetOrMapImpl final {
                 sibling = closeNephew;
                 closeNephew = this->m_nodes[sibling].getChild(direction);
                 distantNephew = this->m_nodes[sibling].getChild(oppositeDirection);
-                /*
                 // The subtree has this shape:
-                //
+                /*
                 //                           BBBBBBBBBBBBBBBB
                 //                          B                B
                 //                          B       K2       B
@@ -991,9 +980,8 @@ class RedBlackTreeSetOrMapImpl final {
                 //       --------------------------------      --------------------------------
                 */
                 if (this->getNodeColor(distantNephew) == Color::RED) {
-                    /*
                     // The subtree has this shape:
-                    //
+                    /*
                     //                           BBBBBBBBBBBBBBBB
                     //                          B                B
                     //                          B       K2       B
@@ -1034,9 +1022,8 @@ class RedBlackTreeSetOrMapImpl final {
                     //             ------------------------
                     */
                     this->removeBlackLeafNodeHelper2(parent, sibling, distantNephew, direction);
-                    /*
                     // The subtree has this shape. The entire tree is a valid red-black tree.
-                    //
+                    /*
                     //                           BBBBBBBBBBBBBBBB
                     //                          B                B
                     //                          B       K2       B
@@ -1069,9 +1056,8 @@ class RedBlackTreeSetOrMapImpl final {
                     //                             ------------------------  ------------------------
                     */
                 } else if (this->getNodeColor(closeNephew) == Color::RED) {
-                    /*
                     // The subtree has this shape:
-                    //
+                    /*
                     //                           BBBBBBBBBBBBBBBB
                     //                          B                B
                     //                          B       K2       B
@@ -1112,9 +1098,8 @@ class RedBlackTreeSetOrMapImpl final {
                     //                                               ------------------------
                     */
                     this->removeBlackLeafNodeHelper1(closeNephew, oppositeDirection, sibling, distantNephew);
-                    /*
                     // The subtree has this shape:
-                    //
+                    /*
                     //                           BBBBBBBBBBBBBBBB
                     //                          B                B
                     //                          B       K2       B
@@ -1155,9 +1140,8 @@ class RedBlackTreeSetOrMapImpl final {
                     //               -----------------------
                     */
                     this->removeBlackLeafNodeHelper2(parent, sibling, distantNephew, direction);
-                    /*
                     // The subtree has this shape. The entire tree is a valid red-black tree.
-                    //
+                    /*
                     //                           BBBBBBBBBBBBBBBB
                     //                          B                B
                     //                          B       K2       B
@@ -1192,9 +1176,8 @@ class RedBlackTreeSetOrMapImpl final {
                 } else {
                     this->m_nodes[sibling].m_color = Color::RED;
                     this->m_nodes[parent].m_color = Color::BLACK;
-                    /*
                     // The subtree has this shape. The entire tree is a valid red-black tree.
-                    //
+                    /*
                     //                           BBBBBBBBBBBBBBBB
                     //                          B                B
                     //                          B       K2       B
@@ -1237,10 +1220,9 @@ class RedBlackTreeSetOrMapImpl final {
                 }
                 done = true;
             } else if (this->getNodeColor(distantNephew) == Color::RED) {
-                /*
                 // The leaf-augmented subtree rooted at parent has this shape.
                 // There is a black height violation at parent.
-                //
+                /*
                 //                                 ???????????????????
                 //                                ?                   ?
                 //                                ?    K6 (parent)    ?
@@ -1272,9 +1254,8 @@ class RedBlackTreeSetOrMapImpl final {
                 //   ------------------------
                 */
                 this->removeBlackLeafNodeHelper2(parent, sibling, distantNephew, direction);
-                /*
                 // The subtree has this shape. The entire tree is a valid red-black tree.
-                //
+                /*
                 //                     BBBBBBBBBBBBBBBBB
                 //                    B                 B
                 //                    B   K2 (sibling)  B
@@ -1299,10 +1280,9 @@ class RedBlackTreeSetOrMapImpl final {
                 */
                 done = true;
             } else if (this->getNodeColor(closeNephew) == Color::RED) {
-                /*
                 // The leaf-augmented subtree rooted at parent has this shape.
                 // There is a black height violation at parent.
-                //
+                /*
                 //                                 ???????????????????
                 //                                ?                   ?
                 //                                ?    K6 (parent)    ?
@@ -1334,9 +1314,8 @@ class RedBlackTreeSetOrMapImpl final {
                 //                                ------------------------
                 */
                 this->removeBlackLeafNodeHelper1(closeNephew, oppositeDirection, sibling, distantNephew);
-                /*
                 // The subtree has this shape:
-                //
+                /*
                 //                                 ???????????????????
                 //                                ?                   ?
                 //                                ?    K6 (parent)    ?
@@ -1368,9 +1347,8 @@ class RedBlackTreeSetOrMapImpl final {
                 //   ------------------------
                 */
                 this->removeBlackLeafNodeHelper2(parent, sibling, distantNephew, direction);
-                /*
                 // The subtree has this shape. The entire tree is a valid red-black tree.
-                //
+                /*
                 //                     BBBBBBBBBBBBBBBBB
                 //                    B                 B
                 //                    B   K4 (sibling)  B
@@ -1397,10 +1375,9 @@ class RedBlackTreeSetOrMapImpl final {
             } else if (this->getNodeColor(parent) == Color::RED) {
                 this->m_nodes[sibling].m_color = Color::RED;
                 this->m_nodes[parent].m_color = Color::BLACK;
-                /*
                 // The leaf-augmented tree rooted at parent has this shape.
                 // The entire tree is a valid red-black tree.
-                //
+                /*
                 //                                 BBBBBBBBBBBBBBBBBBB
                 //                                B                   B
                 //                                B    K6 (parent)    B
@@ -1433,9 +1410,8 @@ class RedBlackTreeSetOrMapImpl final {
                 */
                 done = true;
             } else {
-                /*
                 // The leaf-augmented subtree rooted at parent has this shape.
-                //
+                /*
                 //                                 BBBBBBBBBBBBBBBBBBB
                 //                                B                   B
                 //                                B    K6 (parent)    B
@@ -1470,10 +1446,9 @@ class RedBlackTreeSetOrMapImpl final {
                 node = parent;
                 parent = this->m_nodes[node].m_parent;
                 if (parent == Node::NONE) {
-                    /*
                     // The entire leaf-augmented tree has this shape.
                     // The entire tree is a valid red-black tree.
-                    //
+                    /*
                     //                                 BBBBBBBBBBBBBBBBBBB
                     //                                B                   B
                     //                                B     K6 (node)     B
@@ -1508,10 +1483,9 @@ class RedBlackTreeSetOrMapImpl final {
                 } else {
                     direction = getParentDirection(node);
                     oppositeDirection = Node::getOppositeDirection(direction);
-                    /*
                     // The leaf-augmented subtree rooted at parent has this
                     // shape, assuming that direction == RIGHT:
-                    //
+                    /*
                     //                         ??????????????
                     //                        ?              ?
                     //                        ?    parent    ?
