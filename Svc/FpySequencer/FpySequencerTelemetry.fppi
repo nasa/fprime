@@ -1,5 +1,5 @@
 @ the current state of the sequencer
-telemetry State: I32 update on change
+telemetry State: FwEnumStoreType update on change
 
 @ the number of sequences successfully completed
 telemetry SequencesSucceeded: U64 update on change
