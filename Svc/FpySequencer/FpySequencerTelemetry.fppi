@@ -21,6 +21,12 @@ telemetry StatementsFailed: U64 update on change
 @ the error code of the last directive that ran
 telemetry LastDirectiveError: DirectiveErrorCode update on change
 
+@ the index of the last directive to error
+telemetry DirectiveErrorIndex: U64 update on change
+
+@ the id of the last directive to error
+telemetry DirectiveErrorId: Fpy.DirectiveId update on change
+
 @ the currently running sequence
 telemetry SeqPath: string size FileNameStringSize update on change
 

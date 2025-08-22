@@ -335,6 +335,8 @@ void FpySequencer::tlmWrite_handler(FwIndexType portNum,  //!< The port number
     this->tlmWrite_SequencesSucceeded(this->m_tlm.sequencesSucceeded);
     this->tlmWrite_SequencesFailed(this->m_tlm.sequencesFailed);
     this->tlmWrite_LastDirectiveError(this->m_tlm.lastDirectiveError);
+    this->tlmWrite_DirectiveErrorIndex(this->m_tlm.directiveErrorIndex);
+    this->tlmWrite_DirectiveErrorId(this->m_tlm.directiveErrorId);
     this->tlmWrite_SeqPath(this->m_sequenceFilePath);
     this->tlmWrite_DebugBreakpointIdx(this->m_debug.breakpointIndex);
     this->tlmWrite_Debug(this->getDebugTelemetry());

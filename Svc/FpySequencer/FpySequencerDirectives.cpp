@@ -29,6 +29,15 @@ void FpySequencer::sendSignal(Signal signal) {
     }
 }
 
+// utility method for updating telemetry based on a directive error code
+void FpySequencer::handleDirectiveErrorCode(Fpy::DirectiveId id, DirectiveError err) {
+    this->m_tlm.lastDirectiveError = err;
+    if (err != DirectiveError::NO_ERROR) {
+        this->m_tlm.directiveErrorIndex = this->currentStatementIdx();
+        this->m_tlm.directiveErrorId = id;
+    }
+}
+
 Fw::Success FpySequencer::sendCmd(FwOpcodeType opcode, const U8* argBuf, FwSizeType argBufSize) {
     Fw::ComBuffer cmdBuf;
     Fw::SerializeStatus stat =
@@ -189,35 +198,35 @@ U32 FpySequencer::lvarOffset() {
 void FpySequencer::directive_waitRel_internalInterfaceHandler(const FpySequencer_WaitRelDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->waitRel_directiveHandler(directive, error));
-    this->m_tlm.lastDirectiveError = error;
+    handleDirectiveErrorCode(Fpy::DirectiveId::WAIT_REL, error);
 }
 
 //! Internal interface handler for directive_waitAbs
 void FpySequencer::directive_waitAbs_internalInterfaceHandler(const FpySequencer_WaitAbsDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->waitAbs_directiveHandler(directive, error));
-    this->m_tlm.lastDirectiveError = error;
+    handleDirectiveErrorCode(Fpy::DirectiveId::WAIT_ABS, error);
 }
 
 //! Internal interface handler for directive_goto
 void FpySequencer::directive_goto_internalInterfaceHandler(const Svc::FpySequencer_GotoDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->goto_directiveHandler(directive, error));
-    this->m_tlm.lastDirectiveError = error;
+    handleDirectiveErrorCode(Fpy::DirectiveId::GOTO, error);
 }
 
 //! Internal interface handler for directive_if
 void FpySequencer::directive_if_internalInterfaceHandler(const Svc::FpySequencer_IfDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->if_directiveHandler(directive, error));
-    this->m_tlm.lastDirectiveError = error;
+    handleDirectiveErrorCode(Fpy::DirectiveId::IF, error);
 }
 
 //! Internal interface handler for directive_noOp
 void FpySequencer::directive_noOp_internalInterfaceHandler(const Svc::FpySequencer_NoOpDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->noOp_directiveHandler(directive, error));
-    this->m_tlm.lastDirectiveError = error;
+    handleDirectiveErrorCode(Fpy::DirectiveId::NO_OP, error);
 }
 
 //! Internal interface handler for directive_storeTlmVal
@@ -225,84 +234,84 @@ void FpySequencer::directive_storeTlmVal_internalInterfaceHandler(
     const Svc::FpySequencer_StoreTlmValDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->storeTlmVal_directiveHandler(directive, error));
-    this->m_tlm.lastDirectiveError = error;
+    handleDirectiveErrorCode(Fpy::DirectiveId::STORE_TLM_VAL, error);
 }
 
 //! Internal interface handler for directive_storePrm
 void FpySequencer::directive_storePrm_internalInterfaceHandler(const Svc::FpySequencer_StorePrmDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->storePrm_directiveHandler(directive, error));
-    this->m_tlm.lastDirectiveError = error;
+    handleDirectiveErrorCode(Fpy::DirectiveId::STORE_PRM, error);
 }
 
 //! Internal interface handler for directive_constCmd
 void FpySequencer::directive_constCmd_internalInterfaceHandler(const Svc::FpySequencer_ConstCmdDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->constCmd_directiveHandler(directive, error));
-    this->m_tlm.lastDirectiveError = error;
+    handleDirectiveErrorCode(Fpy::DirectiveId::CONST_CMD, error);
 }
 
 //! Internal interface handler for directive_stackOp
 void FpySequencer::directive_stackOp_internalInterfaceHandler(const Svc::FpySequencer_StackOpDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->stackOp_directiveHandler(directive, error));
-    this->m_tlm.lastDirectiveError = error;
+    handleDirectiveErrorCode(directive.get__op(), error);
 }
 
 //! Internal interface handler for directive_exit
 void FpySequencer::directive_exit_internalInterfaceHandler(const Svc::FpySequencer_ExitDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->exit_directiveHandler(directive, error));
-    this->m_tlm.lastDirectiveError = error;
+    handleDirectiveErrorCode(Fpy::DirectiveId::EXIT, error);
 }
 
 //! Internal interface handler for directive_allocate
 void FpySequencer::directive_allocate_internalInterfaceHandler(const Svc::FpySequencer_AllocateDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->allocate_directiveHandler(directive, error));
-    this->m_tlm.lastDirectiveError = error;
+    handleDirectiveErrorCode(Fpy::DirectiveId::ALLOCATE, error);
 }
 
 //! Internal interface handler for directive_store
 void FpySequencer::directive_store_internalInterfaceHandler(const Svc::FpySequencer_StoreDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->store_directiveHandler(directive, error));
-    this->m_tlm.lastDirectiveError = error;
+    handleDirectiveErrorCode(Fpy::DirectiveId::STORE, error);
 }
 
 //! Internal interface handler for directive_pushVal
 void FpySequencer::directive_pushVal_internalInterfaceHandler(const Svc::FpySequencer_PushValDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->pushVal_directiveHandler(directive, error));
-    this->m_tlm.lastDirectiveError = error;
+    handleDirectiveErrorCode(Fpy::DirectiveId::PUSH_VAL, error);
 }
 
 //! Internal interface handler for directive_load
 void FpySequencer::directive_load_internalInterfaceHandler(const Svc::FpySequencer_LoadDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->load_directiveHandler(directive, error));
-    this->m_tlm.lastDirectiveError = error;
+    handleDirectiveErrorCode(Fpy::DirectiveId::LOAD, error);
 }
 
 //! Internal interface handler for directive_discard
 void FpySequencer::directive_discard_internalInterfaceHandler(const Svc::FpySequencer_DiscardDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->discard_directiveHandler(directive, error));
-    this->m_tlm.lastDirectiveError = error;
+    handleDirectiveErrorCode(Fpy::DirectiveId::DISCARD, error);
 }
 
 //! Internal interface handler for directive_memCmp
 void FpySequencer::directive_memCmp_internalInterfaceHandler(const Svc::FpySequencer_MemCmpDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->memCmp_directiveHandler(directive, error));
-    this->m_tlm.lastDirectiveError = error;
+    handleDirectiveErrorCode(Fpy::DirectiveId::MEMCMP, error);
 }
 
 //! Internal interface handler for directive_stackCmd
 void FpySequencer::directive_stackCmd_internalInterfaceHandler(const Svc::FpySequencer_StackCmdDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->stackCmd_directiveHandler(directive, error));
-    this->m_tlm.lastDirectiveError = error;
+    handleDirectiveErrorCode(Fpy::DirectiveId::STACK_CMD, error);
 }
 
 //! Internal interface handler for directive_waitRel

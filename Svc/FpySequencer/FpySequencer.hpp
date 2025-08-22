@@ -535,6 +535,12 @@ class FpySequencer : public FpySequencerComponentBase {
 
         // the error code of the last directive that ran
         DirectiveError lastDirectiveError = DirectiveError::NO_ERROR;
+
+        // the index of the last directive that errored
+        U64 directiveErrorIndex = 0;
+
+        // the opcode of the last directive that errored
+        Fpy::DirectiveId directiveErrorId = Fpy::DirectiveId::INVALID;
     } m_tlm;
 
     // ----------------------------------------------------------------------
@@ -571,6 +577,9 @@ class FpySequencer : public FpySequencerComponentBase {
     // ----------------------------------------------------------------------
     // Run state
     // ----------------------------------------------------------------------
+
+    // utility method for updating telemetry based on a directive error code
+    void handleDirectiveErrorCode(Fpy::DirectiveId id, DirectiveError err);
 
     // dispatches the next statement
     Signal dispatchStatement();
