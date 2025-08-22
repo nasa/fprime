@@ -1,8 +1,3 @@
-# TODO: Fix the comments and remove this option
-add_compile_options(
-  -Wno-comment
-)
-
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/DataStructures.cpp"
 )
