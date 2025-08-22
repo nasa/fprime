@@ -16,7 +16,7 @@ digraph {
 
   K1 [label="K1"]
   K2 [label="K2"]
-  K3 [label="K3 (distant nephew)"]
+  K3 [label="K3 (distantNephew)"]
   K4 [label="K4 (sibling)",color="red",fontcolor="red"]
   K6 [label="K6 (parent)"]
 
