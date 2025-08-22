@@ -229,7 +229,7 @@ class RedBlackTreeSetOrMapImplTester {
     // Convert a color to a string
     static const char* colorToString(Color color) { return (color == Color::RED) ? "RED" : "BLACK"; }
 
-    // Convert a direciton to a string
+    // Convert a direction to a string
     static const char* directionToString(Direction direction) {
         return (direction == Direction::LEFT) ? "LEFT" : "RIGHT";
     }

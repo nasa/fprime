@@ -1174,7 +1174,7 @@ class RedBlackTreeSetOrMapImpl final {
                 } else {
                     this->m_nodes[sibling].m_color = Color::RED;
                     this->m_nodes[parent].m_color = Color::BLACK;
-                    // The subtree has this shape. The entire tree is a vaild red-black tree.
+                    // The subtree has this shape. The entire tree is a valid red-black tree.
                     //
                     //                           BBBBBBBBBBBBBBBB
                     //                          B                B
@@ -1312,7 +1312,7 @@ class RedBlackTreeSetOrMapImpl final {
                 //                                ------------------------
                 //
                 this->removeBlackLeafNodeHelper1(closeNephew, oppositeDirection, sibling, distantNephew);
-                // The sutree has this shape:
+                // The subtree has this shape:
                 //
                 //                                 ???????????????????
                 //                                ?                   ?

@@ -383,8 +383,8 @@ Return `(direction == LEFT) ? RIGHT : LEFT`.
 
 |Name|Definition|Purpose|
 |----|----------|-------|
-|`Nodes`|Alias for [`ExernalArray<Node>`](ExternalArray.md)|The type of the array for storing the tree nodes|
-|`FreeNodes`|Alias for [`ExernalStack<Node::Index>`](ExternalStack.md)|The type of the stack of indices of free nodes.|
+|`Nodes`|Alias for [`ExternalArray<Node>`](ExternalArray.md)|The type of the array for storing the tree nodes|
+|`FreeNodes`|Alias for [`ExternalStack<Node::Index>`](ExternalStack.md)|The type of the stack of indices of free nodes.|
 
 ### 3.3. ConstIterator
 
