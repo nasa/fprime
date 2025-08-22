@@ -531,7 +531,7 @@ class RedBlackTreeSetOrMapImpl final {
                     Direction direction  //!< The direction under the new parent
     ) {
         // We assume (1) that the tree is a red-black tree, (2) that parent is NONE or
-        // the child of parent in the direction direction is NONE, and (3) that
+        // the child of parent in the direction `direction` is NONE, and (3) that
         // both children of node are NONE.
         this->m_nodes[node].m_color = Color::RED;
         this->m_nodes[node].m_parent = parent;
@@ -860,7 +860,7 @@ class RedBlackTreeSetOrMapImpl final {
             //        ----------------------        ----------------------
             //
             // The black height constraint would be satisfied if the child of
-            // parent in the direction direction were replaced with a red-black
+            // parent in the direction `direction` were replaced with a red-black
             // tree of black height i + 2.
             auto sibling = this->m_nodes[parent].getChild(oppositeDirection);
             auto closeNephew = this->m_nodes[sibling].getChild(direction);

@@ -764,7 +764,7 @@ and `node` stores the index of _N_.
     1. If the comparison result is equality, then set `done = true`, set
        `result = SUCCESS`, set `node = child`, and break out of the loop.
 
-    1. Otherwise if the comparison result is less then set `direction = LEFT`,
+    1. Otherwise if the comparison result is less than set `direction = LEFT`,
        set `parent = child`, and set `child = m_nodes[parent].left`.
 
     1. Otherwise set `direction = RIGHT`, set `parent = child`, and
