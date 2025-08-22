@@ -22,6 +22,6 @@ class ExternalStackTester {
     const ExternalStack<T>& m_stack;
 };
 
-}
+}  // namespace Fw
 
 #endif

@@ -35,7 +35,6 @@ class RedBlackTreeSetTester {
     RedBlackTreeSet<T, C>& m_map;
 };
 
-
 namespace SetTest {
 
 using Entry = SetOrMapImplEntry<State::ElementType, Nil>;

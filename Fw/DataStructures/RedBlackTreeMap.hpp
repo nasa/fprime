@@ -129,7 +129,6 @@ class RedBlackTreeMap final : public MapBase<K, V> {
 
     //! The external map implementation
     ExternalRedBlackTreeMap<K, V> m_extMap = {};
-
 };
 
 }  // namespace Fw
