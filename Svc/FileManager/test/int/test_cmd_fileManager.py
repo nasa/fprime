@@ -20,14 +20,14 @@ def test_send_fileManager_command(fprime_test_api):
     fprime_test_api.send_and_assert_command(fprime_test_api.get_mnemonic('Svc.FileManager') + '.' + 'CreateDirectory', ["/tmp/file"], max_delay=10)
 
     fprime_test_api.send_and_assert_command(fprime_test_api.get_mnemonic('Svc.FileManager') + '.' + 'CreateDirectory', ["/tmp/file2"], max_delay=10)
-    # Need /tmmp/1MiB.txt file 
+
     fprime_test_api.send_and_assert_command(fprime_test_api.get_mnemonic('Svc.FileManager') + '.' + 'FileSize', ["/tmp/1MiB.txt"], max_delay=50)
 
     fprime_test_api.send_and_assert_command(fprime_test_api.get_mnemonic('Svc.FileManager') + '.' + 'MoveFile', ["/tmp/1MiB.txt","/tmp/file/1MiB.txt"], max_delay=50)
 
 
     fprime_test_api.send_and_assert_command(fprime_test_api.get_mnemonic('Svc.FileManager') + '.' + 'FileSize', ["/tmp/file/1MiB.txt"], max_delay=50)
-    # Need /tmp/test_seq.seq file   Use small file to AppendFile to work with RaspberryPi 
+    # Use small file to AppendFile to work with RaspberryPi 
     fprime_test_api.send_and_assert_command(fprime_test_api.get_mnemonic('Svc.FileManager') + '.' + 'AppendFile', ["/tmp/test_seq.seq", "/tmp/file/test_seq.seq"])
     time.sleep(10) 
     # put back 

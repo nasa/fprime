@@ -91,17 +91,14 @@ def test_send_health_command(fprime_test_api):
     fprime_test_api.send_command(fprime_test_api.get_mnemonic('Svc.FileManager') + '.' + 'AppendFile', ["/tmp/2MiB.txt", "/tmp/2MiB.txt"])
     time.sleep(10)
     fprime_test_api.send_command(fprime_test_api.get_mnemonic('Svc.FileManager') + '.' + 'AppendFile', ["/tmp/2MiB.txt", "/tmp/2MiB.txt"])
-    time.sleep(10)
-    fprime_test_api.send_command(fprime_test_api.get_mnemonic('Svc.FileManager') + '.' + 'AppendFile', ["/tmp/2MiB.txt", "/tmp/2MiB.txt"])
-    time.sleep(10)
-    fprime_test_api.send_command(fprime_test_api.get_mnemonic('Svc.FileManager') + '.' + 'AppendFile', ["/tmp/2MiB.txt", "/tmp/2MiB.txt"])    
     time.sleep(120)
     
     # If no constraints are specified on the channels, the predicate will always return true        # confirm PingLateWarnings 
     WarnHi_error = fprime_test_api.get_telemetry_pred(fprime_test_api.get_mnemonic('Svc.Health') + "." + "PingLateWarnings", 1)
     fprime_test_api.assert_telemetry(WarnHi_error, timeout=5)    
         
-    
+    # Cleanup directory
+    fprime_test_api.send_command(fprime_test_api.get_mnemonic('Svc.FileManager') + '.' + 'RemoveFile', ["/tmp/2MiB.txt", True] )     
 
 
 
