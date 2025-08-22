@@ -565,7 +565,7 @@ class RedBlackTreeSetOrMapImpl final {
                 const auto uncle = this->m_nodes[grandparent].getChild(parentOppositeDirection);
                 if (this->getNodeColor(uncle) == Color::BLACK) {
                     if (this->m_nodes[parent].getChild(parentOppositeDirection) == node) {
-			/*
+                        /*
                         // The subtree rooted at grandparent has the following
                         // shape, assuming that parentDirection is RIGHT.
                         // There is a red child violation from parent to node.
@@ -605,7 +605,7 @@ class RedBlackTreeSetOrMapImpl final {
                         this->rotateSubtree(parent, parentDirection);
                         parent = this->m_nodes[grandparent].getChild(parentDirection);
                     }
-		    /*
+                    /*
                     // The subtree rooted at grandparent has the following
                     // shape, assuming that parentDirection is RIGHT.
                     // There is a red child violation from parent to K4.
@@ -644,7 +644,7 @@ class RedBlackTreeSetOrMapImpl final {
                     this->rotateSubtree(grandparent, parentOppositeDirection);
                     this->m_nodes[parent].m_color = Color::BLACK;
                     this->m_nodes[grandparent].m_color = Color::RED;
-		    /*
+                    /*
                     // The subtree has the following shape.
                     //
                     //                               BBBBBBBBBBBBBBBBBBB
@@ -680,7 +680,7 @@ class RedBlackTreeSetOrMapImpl final {
                     done = true;
                     break;
                 } else {
-	            /*
+                    /*
                     // The subtree rooted at grandparent has one of four
                     // shapes, one of which is shown below. Each of the arrows
                     // to red nodes may point the other way.
