@@ -25,7 +25,7 @@ static_assert(Svc::Fpy::MAX_SEQUENCE_ARG_COUNT <= std::numeric_limits<U8>::max()
               "Sequence arg count must be below U8 max");
 static_assert(Svc::Fpy::MAX_SEQUENCE_STATEMENT_COUNT <= std::numeric_limits<U16>::max(),
               "Sequence statement count must be below U16 max");
-static_assert(Svc::Fpy::MAX_STACK_SIZE <= std::numeric_limits<U16>::max(), "Max stack size must be below U16 max");
+static_assert(Svc::Fpy::MAX_STACK_SIZE <= std::numeric_limits<U32>::max(), "Max stack size must be below U32 max");
 static_assert(Svc::Fpy::MAX_STACK_SIZE >= FW_TLM_BUFFER_MAX_SIZE,
               "Max stack size must be greater than max tlm buffer size");
 static_assert(Svc::Fpy::MAX_STACK_SIZE >= FW_PARAM_BUFFER_MAX_SIZE,
@@ -618,7 +618,7 @@ class FpySequencer : public FpySequencerComponentBase {
     // returns a pointer to the first byte of the lvars array
     U8* lvars();
     // returns the stack height at which the lvar array begins
-    U16 lvarOffset();
+    U32 lvarOffset();
     // returns the index of the current statement
     U32 currentStatementIdx();
 

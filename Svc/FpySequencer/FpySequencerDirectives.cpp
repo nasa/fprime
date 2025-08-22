@@ -179,7 +179,7 @@ U8* FpySequencer::lvars() {
     return this->m_runtime.stack + this->lvarOffset();
 }
 
-U16 FpySequencer::lvarOffset() {
+U32 FpySequencer::lvarOffset() {
     // at the moment, because we only have one stack frame,
     // lvars always start at 0
     return 0;
