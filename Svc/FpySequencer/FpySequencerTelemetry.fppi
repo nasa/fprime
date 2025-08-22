@@ -22,7 +22,7 @@ telemetry StatementsFailed: U64 update on change
 telemetry LastDirectiveError: DirectiveErrorCode update on change
 
 @ the index of the last directive to error
-telemetry DirectiveErrorIndex: U64 update on change
+telemetry DirectiveErrorIdx: U64 update on change
 
 @ the id of the last directive to error
 telemetry DirectiveErrorId: Fpy.DirectiveId update on change
