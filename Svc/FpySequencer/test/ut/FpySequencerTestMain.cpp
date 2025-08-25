@@ -203,7 +203,8 @@ TEST_F(FpySequencerTester, cmd) {
     Fw::ComBuffer expected;
     ASSERT_EQ(expected.serialize(Fw::ComPacketType::FW_PACKET_COMMAND), Fw::SerializeStatus::FW_SERIALIZE_OK);
     ASSERT_EQ(expected.serialize(directive.get_opCode()), Fw::SerializeStatus::FW_SERIALIZE_OK);
-    ASSERT_EQ(expected.serialize(data, sizeof(data), Fw::Serialization::OMIT_LENGTH), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    ASSERT_EQ(expected.serialize(data, sizeof(data), Fw::Serialization::OMIT_LENGTH),
+              Fw::SerializeStatus::FW_SERIALIZE_OK);
     ASSERT_from_cmdOut_SIZE(1);
     ASSERT_from_cmdOut(0, expected, 0);
     this->clearHistory();
@@ -268,7 +269,7 @@ TEST_F(FpySequencerTester, stackOp) {
     result = tester_stackOp_directiveHandler(directiveAND, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 8);  // 0b1111
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 8);   // 0b1111
     ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, 1);  // 0b1111
     tester_get_m_runtime_ptr()->stackSize = 0;
 
@@ -710,7 +711,6 @@ TEST_F(FpySequencerTester, fne) {
     ASSERT_EQ(tester_get_m_runtime_ptr()->stack[0], 0);
 }
 
-
 TEST_F(FpySequencerTester, not) {
     tester_push<U8>(true);
     ASSERT_EQ(tester_op_not(), DirectiveError::NO_ERROR);
@@ -771,6 +771,108 @@ TEST_F(FpySequencerTester, uitofp) {
     ASSERT_EQ(expected, tester_pop<F64>());
 }
 
+TEST_F(FpySequencerTester, iadd) {
+    tester_push<I64>(100);
+    tester_push<I64>(23);
+    ASSERT_EQ(tester_op_iadd(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), 123);
+}
+
+TEST_F(FpySequencerTester, isub) {
+    tester_push<I64>(150);
+    tester_push<I64>(27);
+    ASSERT_EQ(tester_op_isub(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), 123);
+}
+
+TEST_F(FpySequencerTester, imul) {
+    tester_push<I64>(41);
+    tester_push<I64>(3);
+    ASSERT_EQ(tester_op_imul(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), 123);
+}
+
+TEST_F(FpySequencerTester, udiv) {
+    tester_push<U64>(246);
+    tester_push<U64>(2);
+    ASSERT_EQ(tester_op_udiv(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<U64>(), 123);
+}
+
+TEST_F(FpySequencerTester, sdiv) {
+    tester_push<I64>(-246);
+    tester_push<I64>(-2);
+    ASSERT_EQ(tester_op_sdiv(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), 123);
+}
+
+TEST_F(FpySequencerTester, umod) {
+    tester_push<U64>(123);
+    tester_push<U64>(10);
+    ASSERT_EQ(tester_op_umod(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<U64>(), 3);
+}
+
+TEST_F(FpySequencerTester, smod) {
+    tester_push<I64>(-7);
+    tester_push<I64>(-3);
+    ASSERT_EQ(tester_op_smod(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), -1);
+}
+
+TEST_F(FpySequencerTester, fadd) {
+    tester_push<F64>(100.5);
+    tester_push<F64>(22.5);
+    ASSERT_EQ(tester_op_fadd(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<F64>(), 123.0);
+}
+
+TEST_F(FpySequencerTester, fsub) {
+    tester_push<F64>(150.5);
+    tester_push<F64>(27.5);
+    ASSERT_EQ(tester_op_fsub(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<F64>(), 123.0);
+}
+
+TEST_F(FpySequencerTester, fmul) {
+    tester_push<F64>(41.0);
+    tester_push<F64>(3.0);
+    ASSERT_EQ(tester_op_fmul(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<F64>(), 123.0);
+}
+
+TEST_F(FpySequencerTester, fdiv) {
+    tester_push<F64>(246.0);
+    tester_push<F64>(2.0);
+    ASSERT_EQ(tester_op_fdiv(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<F64>(), 123.0);
+}
+
+TEST_F(FpySequencerTester, float_floor_div) {
+    tester_push<F64>(246.8);
+    tester_push<F64>(2.0);
+    ASSERT_EQ(tester_op_float_floor_div(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<F64>(), 123.0);
+}
+
+TEST_F(FpySequencerTester, fpow) {
+    tester_push<F64>(3.0);
+    tester_push<F64>(2.0);
+    ASSERT_EQ(tester_op_fpow(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<F64>(), 9.0);
+}
+
+TEST_F(FpySequencerTester, flog) {
+    tester_push<F64>(2.718281828459045);  // e
+    ASSERT_EQ(tester_op_flog(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<F64>(), 1.0);
+}
+TEST_F(FpySequencerTester, fmod) {
+    tester_push<F64>(-8.5);
+    tester_push<F64>(-2.5);
+    ASSERT_EQ(tester_op_fmod(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<F64>(), -1.0);
+}
 TEST_F(FpySequencerTester, exit) {
     FpySequencer_ExitDirective directive;
     DirectiveError err = DirectiveError::NO_ERROR;
@@ -785,6 +887,73 @@ TEST_F(FpySequencerTester, exit) {
     result = tester_exit_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::DELIBERATE_FAILURE);
+}
+
+TEST_F(FpySequencerTester, discard) {
+    // Test discarding 4 bytes
+    tester_push<U32>(0x12345678);
+    FpySequencer_DiscardDirective directive(4);
+    DirectiveError err = DirectiveError::NO_ERROR;
+    Signal result = tester_discard_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, 0);
+
+    // Test error case - try to discard more bytes than available
+    tester_push<U8>(0x12);
+    directive.set_size(2);
+    result = tester_discard_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+}
+
+TEST_F(FpySequencerTester, stackCmd) {
+    // Test valid command
+    tester_push<U32>(0x12345678);    // Args
+    tester_push<FwOpcodeType>(123);  // Opcode
+
+    FpySequencer_StackCmdDirective directive(4);  // 4 bytes of args
+    DirectiveError err = DirectiveError::NO_ERROR;
+    Signal result = tester_stackCmd_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_keepWaiting);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+    ASSERT_from_cmdOut_SIZE(1);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stackSize, 0);
+
+    // Test error case - not enough bytes on stack
+    tester_push<U8>(0x12);
+    result = tester_stackCmd_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+}
+
+TEST_F(FpySequencerTester, memCmp) {
+    // Test equal memory blocks
+    tester_push<U32>(0x12345678);
+    tester_push<U32>(0x12345678);
+
+    FpySequencer_MemCmpDirective directive(4);
+    DirectiveError err = DirectiveError::NO_ERROR;
+    Signal result = tester_memCmp_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<U8>(), 1);  // Should be true
+
+    // Test unequal memory blocks
+    tester_push<U32>(0x12345678);
+    tester_push<U32>(0x87654321);
+    result = tester_memCmp_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<U8>(), 0);  // Should be false
+
+    // test not enough bytes on stack
+    tester_push<U32>(0x12345678);
+    tester_push<U8>(0x11);
+    directive.set_size(3);
+    result = tester_memCmp_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
 }
 
 TEST_F(FpySequencerTester, checkShouldWakeMismatchBase) {
@@ -1226,28 +1395,32 @@ TEST_F(FpySequencerTester, readBytes) {
     tester_get_m_sequenceBuffer_ptr()->setExtBuffer(data, sizeof(data));
     Os::File seqFile;
     ASSERT_EQ(seqFile.open("test.bin", Os::File::OPEN_READ), Os::File::OP_OK);
-    ASSERT_EQ(tester_readBytes(seqFile, Fpy::Header::SERIALIZED_SIZE, FpySequencer_FileReadStage::HEADER, true), Fw::Success::SUCCESS);
+    ASSERT_EQ(tester_readBytes(seqFile, Fpy::Header::SERIALIZED_SIZE, FpySequencer_FileReadStage::HEADER, true),
+              Fw::Success::SUCCESS);
     seqFile.close();
 
     // check capacity too low
     tester_get_m_sequenceBuffer_ptr()->setExtBuffer(data, Fpy::Header::SERIALIZED_SIZE - 1);
     ASSERT_EQ(seqFile.open("test.bin", Os::File::OPEN_READ), Os::File::OP_OK);
-    ASSERT_EQ(tester_readBytes(seqFile, Fpy::Header::SERIALIZED_SIZE, FpySequencer_FileReadStage::HEADER, true), Fw::Success::FAILURE);
+    ASSERT_EQ(tester_readBytes(seqFile, Fpy::Header::SERIALIZED_SIZE, FpySequencer_FileReadStage::HEADER, true),
+              Fw::Success::FAILURE);
     seqFile.close();
 
     // check not enough bytes
     tester_get_m_sequenceBuffer_ptr()->setExtBuffer(data,
                                                     Fpy::Header::SERIALIZED_SIZE + Fpy::Footer::SERIALIZED_SIZE + 1);
     ASSERT_EQ(seqFile.open("test.bin", Os::File::OPEN_READ), Os::File::OP_OK);
-    ASSERT_EQ(tester_readBytes(seqFile, Fpy::Header::SERIALIZED_SIZE + Fpy::Footer::SERIALIZED_SIZE + 1, FpySequencer_FileReadStage::HEADER, true),
+    ASSERT_EQ(tester_readBytes(seqFile, Fpy::Header::SERIALIZED_SIZE + Fpy::Footer::SERIALIZED_SIZE + 1,
+                               FpySequencer_FileReadStage::HEADER, true),
               Fw::Success::FAILURE);
 
     seqFile.close();
     removeFile("test.bin");
 
     // read after close
-    ASSERT_DEATH_IF_SUPPORTED(
-        tester_readBytes(seqFile, Fpy::Header::SERIALIZED_SIZE + Fpy::Footer::SERIALIZED_SIZE, FpySequencer_FileReadStage::HEADER, true), "Assert: ");
+    ASSERT_DEATH_IF_SUPPORTED(tester_readBytes(seqFile, Fpy::Header::SERIALIZED_SIZE + Fpy::Footer::SERIALIZED_SIZE,
+                                               FpySequencer_FileReadStage::HEADER, true),
+                              "Assert: ");
 }
 
 TEST_F(FpySequencerTester, validate) {
@@ -1543,6 +1716,65 @@ TEST_F(FpySequencerTester, deserialize_exit) {
     ASSERT_EVENTS_DirectiveDeserializeError_SIZE(0);
 }
 
+TEST_F(FpySequencerTester, deserialize_discard) {
+    FpySequencer::DirectiveUnion actual;
+    FpySequencer_DiscardDirective dir(123);
+    add_DISCARD(dir);
+    Fw::Success result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::SUCCESS);
+    ASSERT_EQ(actual.discard, dir);
+    // write some junk after buf, make sure it fails
+    seq.get_statements()[0].get_argBuf().serialize(123);
+    result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::FAILURE);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+    this->clearHistory();
+    // clear args, make sure it fails
+    seq.get_statements()[0].get_argBuf().resetSer();
+    result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::FAILURE);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+}
+
+TEST_F(FpySequencerTester, deserialize_stackCmd) {
+    FpySequencer::DirectiveUnion actual;
+    FpySequencer_StackCmdDirective dir(123);
+    add_STACK_CMD(dir);
+    Fw::Success result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::SUCCESS);
+    ASSERT_EQ(actual.stackCmd, dir);
+    // write some junk after buf, make sure it fails
+    seq.get_statements()[0].get_argBuf().serialize(123);
+    result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::FAILURE);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+    this->clearHistory();
+    // clear args, make sure it fails
+    seq.get_statements()[0].get_argBuf().resetSer();
+    result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::FAILURE);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+}
+
+TEST_F(FpySequencerTester, deserialize_memCmp) {
+    FpySequencer::DirectiveUnion actual;
+    FpySequencer_MemCmpDirective dir(123);
+    add_MEMCMP(dir);
+    Fw::Success result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::SUCCESS);
+    ASSERT_EQ(actual.memCmp, dir);
+    // write some junk after buf, make sure it fails
+    seq.get_statements()[0].get_argBuf().serialize(123);
+    result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::FAILURE);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+    this->clearHistory();
+    // clear args, make sure it fails
+    seq.get_statements()[0].get_argBuf().resetSer();
+    result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::FAILURE);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+}
 // caught a bug
 TEST_F(FpySequencerTester, checkTimers) {
     allocMem();

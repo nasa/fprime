@@ -261,9 +261,11 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
         return;
     }
 
-    if (this->m_runtime.currentStatementOpcode != Fpy::DirectiveId::CONST_CMD) {
+    if (this->m_runtime.currentStatementOpcode != Fpy::DirectiveId::CONST_CMD &&
+        this->m_runtime.currentStatementOpcode != Fpy::DirectiveId::STACK_CMD) {
         // we were not awaiting a cmd response, we were waiting for a directive
-        this->log_WARNING_HI_CmdResponseWhileAwaitingDirective(opCode, response, this->m_runtime.currentStatementOpcode);
+        this->log_WARNING_HI_CmdResponseWhileAwaitingDirective(opCode, response,
+                                                               this->m_runtime.currentStatementOpcode);
         this->sequencer_sendSignal_stmtResponse_unexpected();
         return;
     }
@@ -303,17 +305,15 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
     if (response == Fw::CmdResponse::OK) {
         this->sequencer_sendSignal_stmtResponse_success();
     } else {
-        this->log_WARNING_HI_CommandFailed(opCode,
-                                           this->m_runtime.nextStatementIndex - 1, this->m_sequenceFilePath,
-                                           response);
+        this->log_WARNING_HI_CommandFailed(opCode, this->currentStatementIdx(), this->m_sequenceFilePath, response);
         this->sequencer_sendSignal_stmtResponse_failure();
     }
+    // push the cmd response to the stack so we can branch off of it
+    this->push(static_cast<I32>(response.e));
 }
 
 //! Handler for input port seqRunIn
-void FpySequencer::seqRunIn_handler(FwIndexType portNum,
-                                    const Fw::StringBase& filename
-) {
+void FpySequencer::seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& filename) {
     // can only run a seq while in idle
     if (sequencer_getState() != State::IDLE) {
         this->log_WARNING_HI_InvalidSeqRunCall(static_cast<I32>(sequencer_getState()));
@@ -356,7 +356,8 @@ FpySequencer_DebugTelemetry FpySequencer::getDebugTelemetry() {
         }
         if (nextStmt.get_opCode() == Fpy::DirectiveId::CONST_CMD) {
             // send opcode of the cmd to the ground
-            return FpySequencer_DebugTelemetry(false, true, nextStmt.get_opCode(), directiveUnion.constCmd.get_opCode());
+            return FpySequencer_DebugTelemetry(false, true, nextStmt.get_opCode(),
+                                               directiveUnion.constCmd.get_opCode());
         }
 
         return FpySequencer_DebugTelemetry(false, true, nextStmt.get_opCode(), 0);

@@ -305,8 +305,8 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_setDebugBreakpo
 //!
 //! called when a sequence failed to execute successfully
 void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_report_seqFailed(
-    SmId smId, //!< The state machine id
-    Svc_FpySequencer_SequencerStateMachine::Signal signal //!< The signal
+    SmId smId,                                             //!< The state machine id
+    Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) {
     if (this->isConnected_seqDoneOut_OutputPort(0)) {
         // report that the sequence failed to internal callers
@@ -318,8 +318,8 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_report_seqFaile
 //!
 //! reports that a sequence was started
 void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_report_seqStarted(
-    SmId smId, //!< The state machine id
-    Svc_FpySequencer_SequencerStateMachine::Signal signal //!< The signal
+    SmId smId,                                             //!< The state machine id
+    Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) {
     if (this->isConnected_seqDoneOut_OutputPort(0)) {
         // report that the sequence started to internal callers
