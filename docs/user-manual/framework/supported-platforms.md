@@ -18,17 +18,17 @@ These are platforms that the F Prime community or core team is actively working 
 
 | Hardware | OS        | Architecture | Status              | Reference Project             | Delivery Date |
 | -------- | --------- | ------------ | ------------------- | ---------------- |----------------|
-| PyCubed  | Baremetal | RISC-V | In development |[`fprime-baremetal-reference`](https://github.com/fprime-community/fprime-baremetal-reference) | 9/30/2025 |
 | 3PySquared | Baremetal  | ARM | In development |[`fprime-baremetal-reference`](https://github.com/fprime-community/fprime-baremetal-reference) | 9/30/2025 |
 | 3PySquared | Zephyr  | ARM | In development | |TBD|
-| Pi Pico 2| Baremetal | RISC-V | In development |[`fprime-baremetal-reference`](https://github.com/fprime-community/fprime-baremetal-reference) | 9/30/2025 |
-| Pi Pico  | Baremetal  | ARM | In development |[`fprime-baremetal-reference`](https://github.com/fprime-community/fprime-baremetal-reference) | 9/30/2025 |
-| Feather M4 | FreeRTOS  | ARM | In development  | | 9/30/2025 |
-| HPSC | VxWorks 7 | RISC-V | In development | | 9/30/2025 |
-| HPSC | Linux | RISC-V | In development | | 9/30/2025 |
-| PolarFire SoC  | Linux | RISC-V | Not started | |TBD|
+| Feather M4 | FreeRTOS  | ARM | In development  |[`fprime-featherm4-freertos-reference`](https://github.com/fprime-community/fprime-featherm4-freertos-reference) | 9/30/2025 |
 | GR712RC | VxWorks 7 | SPARC V8 | Not started | |TBD|
 | GR740 | VxWorks 7 | SPARC V8 | Not started | |TBD|
+| HPSC | Linux | RISC-V | In development | | 9/30/2025 |
+| HPSC | VxWorks 7 | RISC-V | In development | | 9/30/2025 |
+| Pi Pico  | Baremetal  | ARM | In development |[`fprime-baremetal-reference`](https://github.com/fprime-community/fprime-baremetal-reference) | 9/30/2025 |
+| Pi Pico 2| Baremetal | RISC-V | In development |[`fprime-baremetal-reference`](https://github.com/fprime-community/fprime-baremetal-reference) | 9/30/2025 |
+| PolarFire SoC  | Linux | RISC-V | Not started | |TBD|
+| PyCubed  | Baremetal | RISC-V | In development |[`fprime-baremetal-reference`](https://github.com/fprime-community/fprime-baremetal-reference) | 9/30/2025 |
 | Snapdragon CoProcessor | Linux | ARM | Not started | |TBD|
 | Vorago | Baremetal | ARM | In development | |TBD|
 | VOXL2 | Linux | ARM64 | In development | | 9/30/2025 |
