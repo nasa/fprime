@@ -87,6 +87,9 @@ instance events: Svc.EventManager base id CdhCoreConfig.BASE_ID + 0x001000 # not
 
 To override the configuration of a subtopology, you need to create a configuration module in your project overriding the configuration files of the topology. The steps are detailed below.
 
+>[!TIP]
+> A reference implementation of the below steps can be found here: [ExampleCdhCoreConfig](https://github.com/nasa/fprime-examples/tree/0e66d4eb3acb7eccf54257847a9e5e1f18df9370/FlightExamples/ExamplesDeployment/ExampleCdhCoreConfig). This configures CdhCore to use TlmPacketizer instead of TlmChan.
+
 #### Step 1: Create a Configuration Directory
 Create a directory in your deployment to hold your custom configuration module:
 ```bash
@@ -117,7 +120,7 @@ In your config module `CMakeLists.txt`, register a config module with `register_
 register_fprime_config(
     "MyCdhCoreConfig"
     CONFIGURATION_OVERRIDES 
-        "${CMAKE_CURRENT_LIST_DIR}/CdhCoreTlmConfig.fpp"
+        "${CMAKE_CURRENT_LIST_DIR}/CdhCoreConfig.fpp"
     EXCLUDE_FROM_ALL
     INTERFACE
 )
