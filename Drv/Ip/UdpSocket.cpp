@@ -192,17 +192,21 @@ SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
     return status;
 }
 
-I32 UdpSocket::sendProtocol(const SocketDescriptor& socketDescriptor, const U8* const data, const U32 size) {
+FwSignedSizeType UdpSocket::sendProtocol(const SocketDescriptor& socketDescriptor,
+                                         const U8* const data,
+                                         const FwSizeType size) {
     FW_ASSERT(this->m_addr_send.sin_family != 0);  // Make sure the address was previously setup
     FW_ASSERT(socketDescriptor.fd >= 0);           // File descriptor should be valid
     FW_ASSERT(data != nullptr);                    // Data pointer should not be null
 
-    return static_cast<I32>(::sendto(socketDescriptor.fd, data, size, SOCKET_IP_SEND_FLAGS,
-                                     reinterpret_cast<struct sockaddr*>(&this->m_addr_send),
-                                     sizeof(this->m_addr_send)));
+    return static_cast<FwSignedSizeType>(
+        ::sendto(socketDescriptor.fd, data, static_cast<size_t>(size), SOCKET_IP_SEND_FLAGS,
+                 reinterpret_cast<struct sockaddr*>(&this->m_addr_send), sizeof(this->m_addr_send)));
 }
 
-I32 UdpSocket::recvProtocol(const SocketDescriptor& socketDescriptor, U8* const data, const U32 size) {
+FwSignedSizeType UdpSocket::recvProtocol(const SocketDescriptor& socketDescriptor,
+                                         U8* const data,
+                                         const FwSizeType size) {
     FW_ASSERT(this->m_addr_recv.sin_family != 0);  // Make sure the address was previously setup
     FW_ASSERT(socketDescriptor.fd >= 0);           // File descriptor should be valid
     FW_ASSERT(data != nullptr);                    // Data pointer should not be null
@@ -212,8 +216,9 @@ I32 UdpSocket::recvProtocol(const SocketDescriptor& socketDescriptor, U8* const 
     (void)::memset(&sender_addr, 0, sizeof(sender_addr));
 
     socklen_t sender_addr_len = sizeof(sender_addr);
-    I32 received = static_cast<I32>(::recvfrom(socketDescriptor.fd, data, size, SOCKET_IP_RECV_FLAGS,
-                                               reinterpret_cast<struct sockaddr*>(&sender_addr), &sender_addr_len));
+    FwSignedSizeType received = static_cast<FwSignedSizeType>(
+        ::recvfrom(socketDescriptor.fd, data, static_cast<size_t>(size), SOCKET_IP_RECV_FLAGS,
+                   reinterpret_cast<struct sockaddr*>(&sender_addr), &sender_addr_len));
     // If we have not configured a send port, set it to the source of the last received packet
     if (received >= 0 && this->m_addr_send.sin_port == 0) {
         this->m_addr_send = sender_addr;
@@ -223,14 +228,14 @@ I32 UdpSocket::recvProtocol(const SocketDescriptor& socketDescriptor, U8* const 
     return received;
 }
 
-SocketIpStatus UdpSocket::send(const SocketDescriptor& socketDescriptor, const U8* const data, const U32 size) {
+SocketIpStatus UdpSocket::send(const SocketDescriptor& socketDescriptor, const U8* const data, const FwSizeType size) {
     // Note: socketDescriptor.fd can be -1 in some test cases
     FW_ASSERT((size == 0) || (data != nullptr));
 
     // Special case for zero-length datagrams in UDP
     if (size == 0) {
         errno = 0;
-        I32 sent = this->sendProtocol(socketDescriptor, data, 0);
+        FwSignedSizeType sent = this->sendProtocol(socketDescriptor, data, 0);
         if (sent == -1) {
             if (errno == EINTR) {
                 // For zero-length datagrams, we'll just try once more if interrupted

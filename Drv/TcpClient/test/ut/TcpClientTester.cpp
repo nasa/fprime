@@ -57,7 +57,7 @@ void TcpClientTester ::test_with_loop(U32 iterations, bool recv_thread) {
 
     // Loop through a bunch of client disconnects
     for (U32 i = 0; i < iterations; i++) {
-        U32 size = sizeof(m_data_storage);
+        FwSizeType size = sizeof(m_data_storage);
 
         // Not testing with reconnect thread, we will need to open ourselves
         if (not recv_thread) {
