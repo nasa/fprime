@@ -131,7 +131,7 @@ Now that you have a plugin structure and dictionary, it is time to derive the ch
         # Operate on the channel's `val` field
         new_value = data.val - 7
         # Publish the new channel.
-        self.publishChannel("Examples(Ground).CommandCountMinus7", new_value, data.time)
+        self.publish_channel("Examples(Ground).CommandCountMinus7", new_value, data.time)
 ```
 
 First this code filters out unwanted channels. Then it performs a translation on the data's value.  Then it publishes the new channel supplying name, value, and time.  In this case, we have reused the original time.
