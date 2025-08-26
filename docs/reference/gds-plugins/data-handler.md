@@ -37,6 +37,7 @@ To create a Data Handler plugin, subclass the [`DataHandlerPlugin`](https://gith
 | "FW_PACKET_TELEM" | F Prime channels     |
 | "FW_PACKET_LOG"   | F Prime events       |
 | "FW_PACKET_FILE"  | F Prime file packets |
+| "FW_PACKET_PACKETIZED_TLM" | F Prime packets |
 
 
 - `data_callback(data, source)`:  
@@ -62,3 +63,13 @@ This plugin will be called for every decoded event received by the system.
 
 > [!NOTE]
 > The decoded data passed to data_callback() is an instance of the decoded object — for example, a ChannelTelemetry, Event, or CustomType depending on the descriptor.
+
+## Helpers
+
+The data handler plugin also supports some helper functionality.
+
+```
+self.publisher.publish_channel(name: str, value: Any, time: TimeType)
+```
+
+This call allows users to publish telemetry values by name. It is used in ground-processed channels.
