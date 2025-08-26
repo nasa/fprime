@@ -506,7 +506,7 @@ class FpySequencer : public FpySequencerComponentBase {
         Fw::Time wakeupTime = Fw::Time();
 
         U8 stack[Fpy::MAX_STACK_SIZE] = {0};
-        U64 stackSize = 0;
+        Fpy::StackSizeType stackSize = 0;
     } m_runtime;
 
     // the state of the debugger. debugger is separate from runtime
@@ -627,7 +627,7 @@ class FpySequencer : public FpySequencerComponentBase {
     // returns a pointer to the first byte of the lvars array
     U8* lvars();
     // returns the stack height at which the lvar array begins
-    U32 lvarOffset();
+    Fpy::StackSizeType lvarOffset();
     // returns the index of the current statement
     U32 currentStatementIdx();
 

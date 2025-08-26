@@ -3,6 +3,8 @@ module Svc {
         @ the current schema version (must be representable in U8)
         constant SCHEMA_VERSION = 1;
 
+        type StackSizeType = U32
+
         enum DirectiveId : U8 {
             INVALID = 0
             WAIT_REL = 1

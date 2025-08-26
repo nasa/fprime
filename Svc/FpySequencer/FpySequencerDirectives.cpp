@@ -80,7 +80,7 @@ T FpySequencer::pop() {
     U8 valBytes[8] = {0};
     // now move top of stack into byte array and shrink stack
     memcpy(valBytes, this->top() - sizeof(T), sizeof(T));
-    this->m_runtime.stackSize -= sizeof(T);
+    this->m_runtime.stackSize -= static_cast<Fpy::StackSizeType>(sizeof(T));
 
     // now do appropriate byteswap on byte array
     if (sizeof(T) == 8) {
@@ -188,7 +188,7 @@ U8* FpySequencer::lvars() {
     return this->m_runtime.stack + this->lvarOffset();
 }
 
-U32 FpySequencer::lvarOffset() {
+Fpy::StackSizeType FpySequencer::lvarOffset() {
     // at the moment, because we only have one stack frame,
     // lvars always start at 0
     return 0;
@@ -390,7 +390,7 @@ Signal FpySequencer::storeTlmVal_directiveHandler(const FpySequencer_StoreTlmVal
         error = DirectiveError::TLM_GET_NOT_CONNECTED;
         return Signal::stmtResponse_failure;
     }
-    U32 stackOffset = this->lvarOffset() + directive.get_lvarOffset();
+    Fpy::StackSizeType stackOffset = this->lvarOffset() + directive.get_lvarOffset();
     if (stackOffset >= this->m_runtime.stackSize) {
         error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
@@ -423,7 +423,7 @@ Signal FpySequencer::storePrm_directiveHandler(const FpySequencer_StorePrmDirect
         error = DirectiveError::PRM_GET_NOT_CONNECTED;
         return Signal::stmtResponse_failure;
     }
-    U32 stackOffset = this->lvarOffset() + directive.get_lvarOffset();
+    Fpy::StackSizeType stackOffset = this->lvarOffset() + directive.get_lvarOffset();
     if (stackOffset >= this->m_runtime.stackSize) {
         error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
@@ -1102,7 +1102,7 @@ Signal FpySequencer::store_directiveHandler(const FpySequencer_StoreDirective& d
         error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
         return Signal::stmtResponse_failure;
     }
-    U32 stackOffset = this->lvarOffset() + directive.get_lvarOffset();
+    Fpy::StackSizeType stackOffset = this->lvarOffset() + directive.get_lvarOffset();
     // if we popped these bytes off, and put them in lvar array, would we go out of bounds
     if (stackOffset + directive.get_size() > this->m_runtime.stackSize - directive.get_size()) {
         // write into lvar array would go out of bounds
@@ -1120,7 +1120,7 @@ Signal FpySequencer::load_directiveHandler(const FpySequencer_LoadDirective& dir
         error = DirectiveError::STACK_OVERFLOW;
         return Signal::stmtResponse_failure;
     }
-    U32 stackOffset = this->lvarOffset() + directive.get_lvarOffset();
+    Fpy::StackSizeType stackOffset = this->lvarOffset() + directive.get_lvarOffset();
     // if we accessed these bytes, would we go out of bounds
     if (stackOffset + directive.get_size() > this->m_runtime.stackSize) {
         error = DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS;
@@ -1137,7 +1137,7 @@ Signal FpySequencer::pushVal_directiveHandler(const FpySequencer_PushValDirectiv
         return Signal::stmtResponse_failure;
     }
     memcpy(this->top(), directive.get_val(), directive.get__valSize());
-    this->m_runtime.stackSize += directive.get__valSize();
+    this->m_runtime.stackSize += static_cast<Fpy::StackSizeType>(directive.get__valSize());
     return Signal::stmtResponse_success;
 }
 
