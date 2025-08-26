@@ -3,6 +3,8 @@ module Svc {
         @ the current schema version (must be representable in U8)
         constant SCHEMA_VERSION = 1;
 
+        @ the type which everything referencing a size or offset on the stack is represented in
+        # we use a U32 because U16 is too small (would only allow up to 65 kB max stack size)
         type StackSizeType = U32
 
         enum DirectiveId : U8 {
