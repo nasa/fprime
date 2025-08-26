@@ -42,7 +42,7 @@ namespace Ref {
             const Fw::StringBase* strings[3] = { &str0, &str1, &str2 };
             this->dpContainer.serializeRecord_StringArrayRecord(strings, 3);
             // Array record of arrays
-            const DpDemo_StringArray arrayArray[1] = { 
+            const DpDemo_StringArray arrayArray[1] = {
                 DpDemo_StringArray({
                     Fw::String("0 - String array record element 0"),
                     Fw::String("0 - String array record element 1")
@@ -50,7 +50,7 @@ namespace Ref {
             };
             this->dpContainer.serializeRecord_ArrayArrayRecord(arrayArray, 1);
             // Array record of structs
-            const DpDemo_StructWithStringMembers structArray[2] = { 
+            const DpDemo_StructWithStringMembers structArray[2] = {
                 DpDemo_StructWithStringMembers(
                     Fw::String("0 - String member"),
                     DpDemo_StringArray({
@@ -115,8 +115,8 @@ namespace Ref {
                 Fw::String("String Member"),
                 false,
                 this->selectedColor,
-                { 
-                    DpDemo_U32Array({1, 2, 3, 4, 5}), 
+                {
+                    DpDemo_U32Array({1, 2, 3, 4, 5}),
                     DpDemo_U32Array({6, 7, 8, 9, 10})
                 },
                 DpDemo_F32Array({4.4f, 5.5f, 6.6f}),
@@ -183,7 +183,7 @@ namespace Ref {
                             DpDemo_BooleanArray::SERIALIZED_SIZE +
                             DpDemo_EnumArray::SERIALIZED_SIZE +
                             DpDemo_StringArray::SERIALIZED_SIZE +
-                            DpDemo_StructWithEverything::SERIALIZED_SIZE + 
+                            DpDemo_StructWithEverything::SERIALIZED_SIZE +
                             DpDemo_StructWithStringMembers::SERIALIZED_SIZE +
                             (DpDemo_StringArray::SERIALIZED_SIZE * 3) +
                             (DpDemo_StringArray::SERIALIZED_SIZE * 1) +
