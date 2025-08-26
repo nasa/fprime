@@ -40,7 +40,7 @@ void FprimeDeframerTester ::testNominalFrame() {
     // Assert that the data that was emitted on dataOut is equal to Data field above (randomByte)
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getData()[0], randomByte);
     // Not enough data to read a valid APID -> should default to FW_PACKET_UNKNOWN
-    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_apid(), ComCfg::APID::FW_PACKET_UNKNOWN);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_apid(), ComCfg::Apid::FW_PACKET_UNKNOWN);
     ASSERT_EVENTS_SIZE(0);  // no events emitted
 }
 

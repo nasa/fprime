@@ -8,7 +8,7 @@
 #include "Fw/Com/ComPacket.hpp"
 #include "Fw/FPrimeBasicTypes.hpp"
 #include "Fw/Logger/Logger.hpp"
-#include "config/APIDEnumAc.hpp"
+#include "config/ApidEnumAc.hpp"
 
 namespace Svc {
 

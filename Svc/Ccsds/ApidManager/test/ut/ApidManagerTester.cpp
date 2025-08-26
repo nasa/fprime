@@ -12,9 +12,9 @@ namespace Svc {
 
 namespace Ccsds {
 
-static constexpr ComCfg::APID::T TEST_REGISTERED_APIDS[] = {ComCfg::APID::FW_PACKET_COMMAND,
-                                                            ComCfg::APID::FW_PACKET_TELEM, ComCfg::APID::FW_PACKET_LOG,
-                                                            ComCfg::APID::FW_PACKET_FILE};
+static constexpr ComCfg::Apid::T TEST_REGISTERED_APIDS[] = {ComCfg::Apid::FW_PACKET_COMMAND,
+                                                            ComCfg::Apid::FW_PACKET_TELEM, ComCfg::Apid::FW_PACKET_LOG,
+                                                            ComCfg::Apid::FW_PACKET_FILE};
 
 // ----------------------------------------------------------------------
 // Construction and destruction
@@ -43,7 +43,7 @@ bool ApidManagerTester::GetExistingSeqCount::precondition(const ApidManagerTeste
 
 void ApidManagerTester::GetExistingSeqCount::action(ApidManagerTester& testerState) {
     testerState.clearHistory();
-    ComCfg::APID::T apid = testerState.shadow_getRandomTrackedApid();
+    ComCfg::Apid::T apid = testerState.shadow_getRandomTrackedApid();
     U16 seqCount = testerState.invoke_to_getApidSeqCountIn(0, apid, 0);
     U16 shadowSeqCount = testerState.shadow_getAndIncrementSeqCount(apid);
     ASSERT_EQ(seqCount, shadowSeqCount) << "Sequence count for APID " << static_cast<U16>(apid)
@@ -65,7 +65,7 @@ void ApidManagerTester::GetNewSeqCountOk::action(ApidManagerTester& testerState)
         return;  // Cannot get new sequence count if table is full - skip action
     }
 
-    ComCfg::APID::T apid = testerState.shadow_getRandomUntrackedApid();
+    ComCfg::Apid::T apid = testerState.shadow_getRandomUntrackedApid();
     U16 seqCount = testerState.invoke_to_getApidSeqCountIn(0, apid, 0);
     U16 shadowSeqCount = testerState.shadow_getAndIncrementSeqCount(apid);
     ASSERT_EQ(seqCount, shadowSeqCount) << "Sequence count for APID " << static_cast<U16>(apid)
@@ -79,7 +79,7 @@ bool ApidManagerTester::GetNewSeqCountTableFull::precondition(const ApidManagerT
 
 void ApidManagerTester::GetNewSeqCountTableFull::action(ApidManagerTester& testerState) {
     testerState.clearHistory();
-    ComCfg::APID::T apid = testerState.shadow_getRandomUntrackedApid();
+    ComCfg::Apid::T apid = testerState.shadow_getRandomUntrackedApid();
     U16 seqCount = testerState.invoke_to_getApidSeqCountIn(0, apid, 0);
     // Use local constexpr to potentially avoid ODR-use of ApidManager::SEQUENCE_COUNT_ERROR
     constexpr U16 sequenceCountErrorVal = ApidManager::SEQUENCE_COUNT_ERROR;
@@ -95,7 +95,7 @@ bool ApidManagerTester::ValidateSeqCountOk::precondition(const ApidManagerTester
 
 void ApidManagerTester::ValidateSeqCountOk::action(ApidManagerTester& testerState) {
     testerState.clearHistory();
-    ComCfg::APID::T apid = testerState.shadow_getRandomTrackedApid();
+    ComCfg::Apid::T apid = testerState.shadow_getRandomTrackedApid();
     U16 shadow_expectedSeqCount = testerState.shadow_seqCounts[apid];
     testerState.invoke_to_validateApidSeqCountIn(0, apid, shadow_expectedSeqCount);
     testerState.shadow_validateApidSeqCount(apid, shadow_expectedSeqCount);  // keep shadow state in sync
@@ -109,7 +109,7 @@ bool ApidManagerTester::ValidateSeqCountFailure::precondition(const ApidManagerT
 
 void ApidManagerTester::ValidateSeqCountFailure::action(ApidManagerTester& testerState) {
     testerState.clearHistory();
-    ComCfg::APID::T apid = testerState.shadow_getRandomTrackedApid();
+    ComCfg::Apid::T apid = testerState.shadow_getRandomTrackedApid();
     U16 shadow_expectedSeqCount = testerState.shadow_seqCounts.at(apid);
     U16 invalidSeqCount = static_cast<U16>(
         (shadow_expectedSeqCount + 1) %
@@ -128,7 +128,7 @@ void ApidManagerTester::ValidateSeqCountFailure::action(ApidManagerTester& teste
 // Helpers
 // ----------------------------------------------------------------------
 
-U16 ApidManagerTester::shadow_getAndIncrementSeqCount(ComCfg::APID::T apid) {
+U16 ApidManagerTester::shadow_getAndIncrementSeqCount(ComCfg::Apid::T apid) {
     // This is a shadow function to simulate the getAndIncrementSeqCount behavior
     // without modifying the actual component state.
     auto found = this->shadow_seqCounts.find(apid);
@@ -147,7 +147,7 @@ U16 ApidManagerTester::shadow_getAndIncrementSeqCount(ComCfg::APID::T apid) {
     return this->component.SEQUENCE_COUNT_ERROR;  // Return error if APID not found
 }
 
-void ApidManagerTester::shadow_validateApidSeqCount(ComCfg::APID::T apid, U16 expectedSeqCount) {
+void ApidManagerTester::shadow_validateApidSeqCount(ComCfg::Apid::T apid, U16 expectedSeqCount) {
     // This simply updates the shadow state to the next expected sequence count
     auto found = this->shadow_seqCounts.find(apid);
     if (found != this->shadow_seqCounts.end()) {
@@ -155,19 +155,19 @@ void ApidManagerTester::shadow_validateApidSeqCount(ComCfg::APID::T apid, U16 ex
     }
 }
 
-ComCfg::APID::T ApidManagerTester::shadow_getRandomTrackedApid() {
+ComCfg::Apid::T ApidManagerTester::shadow_getRandomTrackedApid() {
     // Select a random APID from the sequence counts map
     U32 mapSize = static_cast<U32>(this->shadow_seqCounts.size());
     U32 randomIndex = STest::Random::lowerUpper(0, mapSize - 1);
-    ComCfg::APID apid = std::next(this->shadow_seqCounts.begin(), randomIndex)->first;
+    ComCfg::Apid apid = std::next(this->shadow_seqCounts.begin(), randomIndex)->first;
     return apid;
 }
 
-ComCfg::APID::T ApidManagerTester::shadow_getRandomUntrackedApid() {
+ComCfg::Apid::T ApidManagerTester::shadow_getRandomUntrackedApid() {
     // Select a random APID that is not currently tracked
-    ComCfg::APID::T apid;
+    ComCfg::Apid::T apid;
     do {
-        apid = static_cast<ComCfg::APID::T>(STest::Random::lowerUpper(10, ComCfg::APID::SPP_IDLE_PACKET));
+        apid = static_cast<ComCfg::Apid::T>(STest::Random::lowerUpper(10, ComCfg::Apid::SPP_IDLE_PACKET));
     } while (this->shadow_seqCounts.find(apid) != this->shadow_seqCounts.end());
     return apid;
 }
