@@ -211,6 +211,7 @@ externalproject
 FAKELOGGER
 fbuild
 fdp
+featherm
 fecf
 FEEDNAME
 feq
