@@ -150,6 +150,6 @@ fprime-gds --dictionary ./MergedDictionary.json --no-zmq
 
 ## See Also
 
-- [DataHandlerPlugin Reference](../reference/data-handler-plugin.md)
+- [DataHandlerPlugin Reference](../reference/gds-plugins/data-handler.md)
 - [Plugin System Overview](../how-to/develop-gds-plugins.md)
 - [Cosine Example](https://github.com/nasa/fprime-examples/tree/devel/GdsExamples/gds-plugins/src/ground_channels)
