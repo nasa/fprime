@@ -2,7 +2,7 @@
 
 | Hardware         | OS | Architecture   | Reference Project |
 | ---------------- | -------------------- | -------------- | ---------------------------------- |
-| Apple M*         | Darwin    | ARM  | [`F Prime Ref`](https://github.com/nasa/fprime) |
+| Apple Silicon    | Darwin    | ARM  | [`F Prime Ref`](https://github.com/nasa/fprime) |
 | BeagleBone Black | VxWorks 7 | ARMv7 | [`fprime-vxworks-reference`](https://github.com/fprime-community/fprime-vxworks-reference) |
 | Pi Pico          | Zephyr    | ARMv6-M | [`fprime-zephyr-reference`](https://github.com/fprime-community/fprime-zephyr-reference) |
 | Pi Pico 2        | Zephyr    | RISC-V | [`fprime-zephyr-reference`](https://github.com/fprime-community/fprime-zephyr-reference) |
