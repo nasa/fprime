@@ -69,7 +69,7 @@ This plugin will be called for every decoded event received by the system.
 The data handler plugin also supports some helper functionality.
 
 ```
-self.publisher.publishChannel(name: str, value: Any, time: TimeType)
+self.publisher.publish_channel(name: str, value: Any, time: TimeType)
 ```
 
 This call allows users to publish telemetry values by name. It is used in ground-processed channels.
