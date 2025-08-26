@@ -37,6 +37,7 @@ Bies
 BINDIR
 bitmaps
 bitshifts
+bitwidth
 bocchino
 boolt
 bsd
@@ -210,6 +211,7 @@ externalproject
 FAKELOGGER
 fbuild
 fdp
+featherm
 fecf
 FEEDNAME
 feq
@@ -234,6 +236,7 @@ foodoodie
 foodoodiehoo
 FPCONFIG
 fpext
+fpow
 fpp
 fppi
 fpptest
@@ -331,6 +334,7 @@ isr
 isunordered
 itimerspec
 itr
+itrunc
 itval
 janamian
 jawest
@@ -559,6 +563,7 @@ sbom
 scid
 scm
 sdd
+sdiv
 searchdata
 SENDPARTIAL
 seqgen
@@ -580,11 +585,13 @@ SHAREDSTATEDIR
 SHELLCOMMAND
 showinitializer
 sideeffect
+siext
 Signedness
 Silveira
 sitofp
 sle
 sloc
+smod
 socio
 SOCKETHELPER
 SOCKETIPDRIVER
@@ -678,10 +685,12 @@ tts
 typedef'ed
 typedef
 uart
+udiv
 UDPSOCKET
 uge
 uitofp
 UML
+umod
 UNEXP
 unistd
 UNITTESTASSERT
@@ -713,4 +722,5 @@ xdffe
 xsltproc
 xxxx
 XXYY
+ziext
 zimri
