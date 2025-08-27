@@ -38,7 +38,7 @@ def test_dp_decode(fprime_test_api):
     # Assumes that we are running the test from the Ref directory
     assert os.path.isfile(dp_file_path)
     # Decode DP with fprime-dp-writer tool
-    json_dict = fprime_test_api.pipeline.dictionary_path
+    json_dict = fprime_test_api.dictionaries.dictionary_path
     decoded_file_name = os.path.basename(dp_file_path).replace(".fdp", ".json")
     DataProductWriter(json_dict, dp_file_path).process()
     assert os.path.isfile(decoded_file_name)
