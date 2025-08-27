@@ -154,7 +154,7 @@ void FpySequencer::push(T val) {
         valBytes[0] = static_cast<U8>(valUnsigned);
     }
     memcpy(this->top(), valBytes, sizeof(T));
-    this->m_runtime.stackSize += sizeof(T);
+    this->m_runtime.stackSize += static_cast<Fpy::StackSizeType>(sizeof(T));
 }
 
 template void FpySequencer::push(U8);
