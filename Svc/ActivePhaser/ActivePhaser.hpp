@@ -18,6 +18,7 @@
 namespace Svc {
 
 class ActivePhaser final : public ActivePhaserComponentBase {
+    friend class ActivePhaserTester;
   public:
     static const U32 MAX_CHILDREN = 100;
     static const U32 DONT_CARE = 0xFFFFFFFFlu;
