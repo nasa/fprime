@@ -147,11 +147,24 @@ The automatic checking system will run all our unit tests and integration tests 
 process will take time. Try to run the unit tests locally during development before submitting a PR and use the
 automatic checks as a safety net.
 
+Building and running the tests has the same Python virtual environment requirements as developing an F´ project, which
+is usually set up by fprime-bootstrap. Steps to set up the environment outside a project are included below.
+
 The tests can be run using the following commands:
 
 ```bash
 # Go into the fprime directory
-cp MY_FPRIME_DIRECTORY
+cd MY_FPRIME_DIRECTORY
+
+# Set up and activate a Python virtual environment, if none already:
+python3 -m venv .venv
+source .venv/bin/activate
+
+# Make sure Python packages from ./requirements.txt are installed and up-to-date:
+pip install -Ur requirements.txt
+
+# Initialize googletest submodule:
+git submodule update --init --recursive
 
 # Run CI tests on fprime
 ./ci/tests/Framework.bash
