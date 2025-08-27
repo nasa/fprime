@@ -43,6 +43,9 @@ module Svc {
     @ File Downlink send complete port
     async input port fileDone: SendFileComplete
 
+    @ DP Writer Add File to Cat
+    async input port addToCat: DpWritten
+
     # ----------------------------------------------------------------------
     # F Prime infrastructure ports
     # ----------------------------------------------------------------------

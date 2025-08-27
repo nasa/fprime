@@ -32,14 +32,14 @@ TEST(NominalManual, TreeTestRandom) {
 
 TEST(NominalManual, DISABLED_TreeTestRandomTransmitted) {
     Svc::DpCatalogTester tester;
-    tester.test_NominalManual_DISABLED_TreeTestRandomTransmitted();
+    tester.test_NominalManual_TreeTestRandomTransmitted();
 }
 
-TEST(NominalManual, DISABLED_OneDp) {
+TEST(NominalManual, OneDp) {
     Svc::DpCatalogTester tester;
     Fw::FileNameString dir;
     dir = "./DpTest";
-    Fw::FileNameString stateFile("./DpState");
+    Fw::FileNameString stateFile("./DpTest/dpState.dat");
 
     Svc::DpCatalogTester::DpSet dpSet;
     dpSet.id = 0x123;
@@ -52,12 +52,12 @@ TEST(NominalManual, DISABLED_OneDp) {
     tester.readDps(&dir, 1, stateFile, &dpSet, 1);
 }
 
-TEST(NominalManual, DISABLED_FiveDp) {
+TEST(NominalManual, FiveDp) {
     Svc::DpCatalogTester tester;
     Fw::FileNameString dirs[2];
     dirs[0] = "./DpTest1";
     dirs[1] = "./DpTest2";
-    Fw::FileNameString stateFile("./DpState");
+    Fw::FileNameString stateFile("./DpTest/dpState.dat");
 
     Svc::DpCatalogTester::DpSet dpSet[5];
 

@@ -128,7 +128,7 @@ class DpCatalogTester : public DpCatalogGTestBase {
     // Moved Tests due to private/protected access
     // ----------------------------------------------------------------------
     static bool EntryCompare(const Svc::DpCatalog::DpStateEntry& a, const Svc::DpCatalog::DpStateEntry& b);
-    void test_NominalManual_DISABLED_TreeTestRandomTransmitted();
+    void test_NominalManual_TreeTestRandomTransmitted();
     void test_TreeTestManual1();
     void test_TreeTestManual2();
     void test_TreeTestManual3();

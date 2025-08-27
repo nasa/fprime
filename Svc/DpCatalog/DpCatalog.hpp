@@ -70,6 +70,15 @@ class DpCatalog final : public DpCatalogComponentBase {
                         U32 key               //!< Value to return to pinger
                         ) override;
 
+    //! Handler implementation for addToCat
+    //!
+    //! DP Writer Add File to Cat
+    void addToCat_handler(FwIndexType portNum,             //!< The port number
+                          const Fw::StringBase& fileName,  //!< The file name
+                          FwDpPriorityType priority,       //!< The priority
+                          FwSizeType size                  //!< The file size
+                          ) override;
+
   private:
     // ----------------------------------------------------------------------
     // Handler implementations for commands
@@ -132,6 +141,12 @@ class DpCatalog final : public DpCatalogComponentBase {
     // ----------------------------------
     // Private helpers
     // ----------------------------------
+
+    /// @brief add entry to sorted list and state file; called on each file in it & upon addToCat
+    /// @param fullFile full path to file to be processed
+    /// @param dir directory index in m_directories; DP_MAX_DIRECTORIES if func should search for directory
+    /// @return -1 for quit, 0 for failure but continue, 1 for success
+    int processFile(Fw::String fullFile, FwSizeType dir);
 
     /// @brief insert an entry into the sorted list; if it exists, update the metadata
     /// @param entry new entry
@@ -238,6 +253,9 @@ class DpCatalog final : public DpCatalogComponentBase {
     U64 m_xmitBytes;                        //!< bytes transmitted for downlink session
     FwOpcodeType m_xmitOpCode;              //!< stored xmit command opcode
     U32 m_xmitCmdSeq;                       //!< stored command sequence id
+
+    U32 m_pendingFiles;
+    U64 m_pendingDpBytes;
 };
 
 }  // namespace Svc

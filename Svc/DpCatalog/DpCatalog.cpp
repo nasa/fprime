@@ -42,7 +42,9 @@ DpCatalog ::DpCatalog(const char* const compName)
       m_xmitCmdWait(false),
       m_xmitBytes(0),
       m_xmitOpCode(0),
-      m_xmitCmdSeq(0) {}
+      m_xmitCmdSeq(0),
+      m_pendingFiles(0),
+      m_pendingDpBytes(0) {}
 
 DpCatalog ::~DpCatalog() {}
 
@@ -386,20 +388,13 @@ Fw::CmdResponse DpCatalog::fillBinaryTree() {
     // keep cumulative number of files
     FwSizeType totalFiles = 0;
 
-    // file class instance for processing files
-    Os::File dpFile;
-    // Working buffer for DP headers
-    U8 dpBuff[Fw::DpContainer::MIN_PACKET_SIZE];  // Header buffer
-    Fw::Buffer hdrBuff(dpBuff, sizeof(dpBuff));   // buffer for container header decoding
-    Fw::DpContainer container;                    // container object for extracting header fields
-
     // get file listings from file system
     for (FwSizeType dir = 0; dir < this->m_numDirectories; dir++) {
         // read in each directory and keep track of total
         this->log_ACTIVITY_LO_ProcessingDirectory(this->m_directories[dir]);
         FwSizeType filesRead = 0;
-        U32 pendingFiles = 0;
-        U64 pendingDpBytes = 0;
+        m_pendingFiles = 0;
+        m_pendingDpBytes = 0;
         U32 filesProcessed = 0;
 
         Os::Directory dpDir;
@@ -434,93 +429,19 @@ Fw::CmdResponse DpCatalog::fillBinaryTree() {
             Fw::String fullFile;
             fullFile.format("%s/%s", this->m_directories[dir].toChar(), this->m_fileList[file].toChar());
 
-            this->log_ACTIVITY_LO_ProcessingFile(fullFile);
-
-            // get file size
-            FwSizeType fileSize = 0;
-            Os::FileSystem::Status sizeStat = Os::FileSystem::getFileSize(fullFile.toChar(), fileSize);
-            if (sizeStat != Os::FileSystem::OP_OK) {
-                this->log_WARNING_HI_FileSizeError(fullFile, sizeStat);
-                continue;
-            }
-
-            Os::File::Status stat = dpFile.open(fullFile.toChar(), Os::File::OPEN_READ);
-            if (stat != Os::File::OP_OK) {
-                this->log_WARNING_HI_FileOpenError(fullFile, stat);
-                continue;
-            }
-
-            // Read DP header
-            FwSizeType size = Fw::DpContainer::Header::SIZE;
-
-            stat = dpFile.read(dpBuff, size);
-            if (stat != Os::File::OP_OK) {
-                this->log_WARNING_HI_FileReadError(fullFile, stat);
-                dpFile.close();
-                continue;  // maybe next file is fine
-            }
-
-            // if full header isn't read, something's wrong with the file, so skip
-            if (size != Fw::DpContainer::Header::SIZE) {
-                this->log_WARNING_HI_FileReadError(fullFile, Os::File::BAD_SIZE);
-                dpFile.close();
-                continue;  // maybe next file is fine
-            }
-
-            // if all is well, don't need the file any more
-            dpFile.close();
-
-            // give buffer to container instance
-            container.setBuffer(hdrBuff);
-
-            // reset header deserialization in the container
-            Fw::SerializeStatus desStat = container.deserializeHeader();
-            if (desStat != Fw::FW_SERIALIZE_OK) {
-                this->log_WARNING_HI_FileHdrDesError(fullFile, desStat);
-            }
-
-            // add entry to catalog.
-            DpStateEntry entry;
-            entry.dir = static_cast<FwIndexType>(dir);
-            entry.record.set_id(container.getId());
-            entry.record.set_priority(container.getPriority());
-            entry.record.set_state(container.getState());
-            entry.record.set_tSec(container.getTimeTag().getSeconds());
-            entry.record.set_tSub(container.getTimeTag().getUSeconds());
-            entry.record.set_size(static_cast<U64>(fileSize));
-
-            // check the state file to see if there is transmit state
-            this->getFileState(entry);
-
-            // insert entry into sorted list. if can't insert, quit
-            bool insertedOk = this->insertEntry(entry);
-            if (not insertedOk) {
-                this->log_WARNING_HI_DpInsertError(entry.record);
-                // clean up and return
-                this->resetBinaryTree();
-                this->resetStateFileData();
+            int ret = processFile(fullFile, dir);
+            if (ret < 0) {
                 break;
             }
 
-            if (entry.record.get_state() == Fw::DpState::UNTRANSMITTED) {
-                pendingFiles++;
-                pendingDpBytes += entry.record.get_size();
-            }
-
-            // make sure we haven't exceeded the limit
-            if (this->m_numDpRecords > this->m_numDpSlots) {
-                this->log_WARNING_HI_DpCatalogFull(entry.record);
-                break;
-            }
-
-            filesProcessed++;
+            filesProcessed += static_cast<U32>(ret);
 
         }  // end for each file in a directory
 
         totalFiles += filesProcessed;
 
         this->log_ACTIVITY_HI_ProcessingDirectoryComplete(this->m_directories[dir], static_cast<U32>(totalFiles),
-                                                          pendingFiles, pendingDpBytes);
+                                                          m_pendingFiles, m_pendingDpBytes);
 
         // check to see if catalog is full
         // that means generated products exceed the catalog size
@@ -533,6 +454,105 @@ Fw::CmdResponse DpCatalog::fillBinaryTree() {
     return Fw::CmdResponse::OK;
 
 }  // end fillBinaryTree()
+
+int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir = DP_MAX_DIRECTORIES) {
+    // file class instance for processing files
+    Os::File dpFile;
+
+    // Working buffer for DP headers
+    U8 dpBuff[Fw::DpContainer::MIN_PACKET_SIZE];  // Header buffer
+    Fw::Buffer hdrBuff(dpBuff, sizeof(dpBuff));   // buffer for container header decoding
+    Fw::DpContainer container;                    // container object for extracting header fields
+
+    this->log_ACTIVITY_LO_ProcessingFile(fullFile);
+
+    // Check if file is in one of our directories
+    if (dir >= DP_MAX_DIRECTORIES) {
+        // TODO: Figure out if this DIR is within m_directories
+        // Currently Skips file
+        this->log_WARNING_HI_FileOpenError(fullFile, Os::FileSystem::Status::OTHER_ERROR);
+        return 0;
+    }
+
+    // get file size
+    FwSizeType fileSize = 0;
+    Os::FileSystem::Status sizeStat = Os::FileSystem::getFileSize(fullFile.toChar(), fileSize);
+    if (sizeStat != Os::FileSystem::OP_OK) {
+        this->log_WARNING_HI_FileSizeError(fullFile, sizeStat);
+        return 0;
+    }
+
+    Os::File::Status stat = dpFile.open(fullFile.toChar(), Os::File::OPEN_READ);
+    if (stat != Os::File::OP_OK) {
+        this->log_WARNING_HI_FileOpenError(fullFile, stat);
+        return 0;
+    }
+
+    // Read DP header
+    FwSizeType size = Fw::DpContainer::Header::SIZE;
+
+    stat = dpFile.read(dpBuff, size);
+    if (stat != Os::File::OP_OK) {
+        this->log_WARNING_HI_FileReadError(fullFile, stat);
+        dpFile.close();
+        return 0;
+    }
+
+    // if full header isn't read, something's wrong with the file, so skip
+    if (size != Fw::DpContainer::Header::SIZE) {
+        this->log_WARNING_HI_FileReadError(fullFile, Os::File::BAD_SIZE);
+        dpFile.close();
+        return 0;
+    }
+
+    // if all is well, don't need the file any more
+    dpFile.close();
+
+    // give buffer to container instance
+    container.setBuffer(hdrBuff);
+
+    // reset header deserialization in the container
+    Fw::SerializeStatus desStat = container.deserializeHeader();
+    if (desStat != Fw::FW_SERIALIZE_OK) {
+        this->log_WARNING_HI_FileHdrDesError(fullFile, desStat);
+    }
+
+    // add entry to catalog.
+    DpStateEntry entry;
+    entry.dir = static_cast<FwIndexType>(dir);
+    entry.record.set_id(container.getId());
+    entry.record.set_priority(container.getPriority());
+    entry.record.set_state(container.getState());
+    entry.record.set_tSec(container.getTimeTag().getSeconds());
+    entry.record.set_tSub(container.getTimeTag().getUSeconds());
+    entry.record.set_size(static_cast<U64>(fileSize));
+
+    // check the state file to see if there is transmit state
+    this->getFileState(entry);
+
+    // insert entry into sorted list. if can't insert, quit
+    bool insertedOk = this->insertEntry(entry);
+    if (not insertedOk) {
+        this->log_WARNING_HI_DpInsertError(entry.record);
+        // clean up and return
+        this->resetBinaryTree();
+        this->resetStateFileData();
+        return -1;
+    }
+
+    if (entry.record.get_state() == Fw::DpState::UNTRANSMITTED) {
+        m_pendingFiles++;
+        m_pendingDpBytes += entry.record.get_size();
+    }
+
+    // make sure we haven't exceeded the limit
+    if (this->m_numDpRecords > this->m_numDpSlots) {
+        this->log_WARNING_HI_DpCatalogFull(entry.record);
+        return -1;
+    }
+
+    return 1;
+}
 
 bool DpCatalog::insertEntry(DpStateEntry& entry) {
     // the tree is filled in the following priority order:
@@ -777,6 +797,13 @@ void DpCatalog ::fileDone_handler(FwIndexType portNum, const Svc::SendFileRespon
 void DpCatalog ::pingIn_handler(FwIndexType portNum, U32 key) {
     // return code for health ping
     this->pingOut_out(0, key);
+}
+
+void DpCatalog ::addToCat_handler(FwIndexType portNum,
+                                  const Fw::StringBase& fileName,
+                                  FwDpPriorityType priority,
+                                  FwSizeType size) {
+    // TODO
 }
 
 // ----------------------------------------------------------------------

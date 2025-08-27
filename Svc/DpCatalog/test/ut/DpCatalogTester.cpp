@@ -38,7 +38,7 @@ void DpCatalogTester ::doInit() {
     Fw::FileNameString dirs[2];
     dirs[0] = "dir0";
     dirs[1] = "dir1";
-    Fw::FileNameString stateFile("dpState.dat");
+    Fw::FileNameString stateFile("./DpTest/dpState.dat");
     this->component.configure(dirs, FW_NUM_ARRAY_ELEMENTS(dirs), stateFile, 100, alloc);
     this->component.shutdown();
 }
@@ -54,7 +54,7 @@ void DpCatalogTester::testTree(DpCatalog::DpStateEntry* input,
 
     Fw::FileNameString dirs[1];
     dirs[0] = "dir0";
-    Fw::FileNameString stateFile("dpState.dat");
+    Fw::FileNameString stateFile("./DpTest/dpState.dat");
     this->component.configure(dirs, FW_NUM_ARRAY_ELEMENTS(dirs), stateFile, 100, alloc);
 
     // reset tree
@@ -123,7 +123,7 @@ void DpCatalogTester::readDps(Fw::FileNameString* dpDirs,
 
     // dispatch messages
     for (FwSizeType msg = 0; msg < numDps; msg++) {
-        // dispatch file done port call
+        // dispatch file done port call that is sent on fileOut_handler
         this->component.doDispatch();
     }
 
@@ -246,7 +246,7 @@ bool DpCatalogTester ::EntryCompare(const Svc::DpCatalog::DpStateEntry& a, const
     }
 }
 
-void DpCatalogTester ::test_NominalManual_DISABLED_TreeTestRandomTransmitted() {
+void DpCatalogTester ::test_NominalManual_TreeTestRandomTransmitted() {
     static const FwIndexType NUM_ENTRIES = 10;
     static const FwIndexType NUM_ITERS = 1;
 

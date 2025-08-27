@@ -71,6 +71,8 @@ module DataProducts{
             dpMgr.bufferGetOut[0] -> dpBufferManager.bufferGetCallee
             dpMgr.productSendOut[0] -> dpWriter.bufferSendIn
             dpWriter.deallocBufferSendOut -> dpBufferManager.bufferSendIn
+
+            dpWriter.dpWrittenOut -> dpCat.addToCat
         }
     } # end topology
 } # end DataProducts Subtopology
