@@ -58,7 +58,7 @@ The diagram below shows the `Svc::ComQueue` component.
 `Svc::ComQueue` maintains the following state:
 1. `m_queues`: An array of `Types::Queue` used to queue per-port messages.
 2. `m_prioritizedList`: An instance of `Svc::ComQueue::QueueMetadata` storing the priority-order queue metadata.
-3. `m_state`: Instance of `Svc::ComQueue::SendState` representing the state of the component. See: 4.3.1 State Machine
+3. `m_state`: Instance of `Svc::ComQueue::SendState` representing the state of the component. See: 4.2.1 State Machine
 4. `m_throttle`: An array of flags that throttle the per-port queue overflow messages.
 
 ### 4.2.1 State Machine

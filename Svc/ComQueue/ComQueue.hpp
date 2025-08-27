@@ -92,6 +92,16 @@ class ComQueue final : public ComQueueComponentBase {
         WAITING  //!< Component is waiting for status of the last sent message
     };
 
+    /**
+     * Storage for the last sent message. Required in case an attempt is made to resend the message on receiving
+     * Fw::Success::FAILURE.
+     */
+#if FW_COM_BUFFER_RETRY_ON_FAILURE
+    ComCfg::FrameContext m_context; //!< Keep context of the last message sent
+    Fw::Buffer m_outBuffer;         //!< Keep last message sent
+    bool m_hasRetried;              //!< Check if retry has been done
+#endif
+
   public:
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction
