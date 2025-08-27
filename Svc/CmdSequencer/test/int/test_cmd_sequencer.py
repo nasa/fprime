@@ -98,7 +98,7 @@ def test_seqgen(fprime_test_api):
         fprime_test_api.get_mnemonic('Svc.CmdSequencer') + '.' + 'CS_RUN', args=["/tmp/ref_test_seq.bin", "BLOCK"], max_delay=5
     )
 
-    ######    ###### remove newfile1   ######
+    ######    ###### remove new file 1   ######
 #    print(f" file1:",sequence)
 #    print(f" file2:",sequence2)
     os.remove(sequence)

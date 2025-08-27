@@ -1,5 +1,4 @@
 {
-    "Drv.BlockDriver" : "Ref.blockDrv",
     "Svc.ActiveRateGroup" : "Ref.rateGroup1Comp",
     "Svc.CommandDispatcher" : "CdhCore.cmdDisp",
     "Svc.CmdSequencer" : "Ref.cmdSeq",
