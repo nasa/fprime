@@ -71,7 +71,7 @@ class ActivePhaser final : public ActivePhaserComponentBase {
     //! Destroy ActivePhaser object
     ~ActivePhaser();
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Handler implementations for typed input ports
     // ----------------------------------------------------------------------
