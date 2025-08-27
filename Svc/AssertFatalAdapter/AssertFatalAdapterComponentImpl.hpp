@@ -68,6 +68,7 @@ class AssertFatalAdapterComponentImpl final : public AssertFatalAdapterComponent
     };
 
     AssertFatalAdapter m_adapter;
+    FwSizeType m_assertCount;
 };
 
 }  // end namespace Svc

@@ -9,14 +9,27 @@
 #include <ctime>
 
 namespace Svc {
+static_assert(std::numeric_limits<FwSizeType>::max() >= ACTIVE_TEXT_LOGGER_ID_FILTER_SIZE,
+              "ACTIVE_TEXT_LOGGER_ID_FILTER_SIZE must fit within range of FwSizeType");
 
 // ----------------------------------------------------------------------
 // Initialization/Exiting
 // ----------------------------------------------------------------------
 
-ActiveTextLogger::ActiveTextLogger(const char* name) : ActiveTextLoggerComponentBase(name), m_log_file() {}
+ActiveTextLogger::ActiveTextLogger(const char* name)
+    : ActiveTextLoggerComponentBase(name), m_log_file(), m_numFilteredIDs(0) {}
 
 ActiveTextLogger::~ActiveTextLogger() {}
+
+void ActiveTextLogger::configure(const FwEventIdType* filteredIds, FwSizeType count) {
+    FW_ASSERT(count < ACTIVE_TEXT_LOGGER_ID_FILTER_SIZE, static_cast<FwAssertArgType>(count),
+              ACTIVE_TEXT_LOGGER_ID_FILTER_SIZE);
+
+    this->m_numFilteredIDs = count;
+    for (FwSizeType entry = 0; entry < count; entry++) {
+        this->m_filteredIDs[entry] = filteredIds[entry];
+    }
+}
 
 // ----------------------------------------------------------------------
 // Handlers to implement for typed input ports
@@ -31,6 +44,12 @@ void ActiveTextLogger::TextLogger_handler(FwIndexType portNum,
     // TKC - 5/3/2018 - remove diagnostic
     if (Fw::LogSeverity::DIAGNOSTIC == severity.e) {
         return;
+    }
+    // Check event ID filters
+    for (FwSizeType i = 0; i < this->m_numFilteredIDs; i++) {
+        if (this->m_filteredIDs[i] == id) {
+            return;
+        }
     }
 
     // Format the string here, so that it is done in the task context
