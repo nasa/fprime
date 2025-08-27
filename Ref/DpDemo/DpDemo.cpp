@@ -31,9 +31,9 @@ namespace Ref {
             this->dpContainer.serializeRecord_BooleanRecord(true);
             this->dpContainer.serializeRecord_I32Record(-100);
             this->dpContainer.serializeRecord_F64Record(1.25);
-            this->dpContainer.serializeRecord_U32ArrayRecord(DpDemo_U32Array(1, 2, 3, 4, 5));
-            this->dpContainer.serializeRecord_F32ArrayRecord(DpDemo_F32Array(1.1f, 2.2f, 3.3f));
-            this->dpContainer.serializeRecord_BooleanArrayRecord(DpDemo_BooleanArray(true, false));
+            this->dpContainer.serializeRecord_U32ArrayRecord(DpDemo_U32Array({1, 2, 3, 4, 5}));
+            this->dpContainer.serializeRecord_F32ArrayRecord(DpDemo_F32Array({1.1f, 2.2f, 3.3f}));
+            this->dpContainer.serializeRecord_BooleanArrayRecord(DpDemo_BooleanArray({true, false}));
             // Array Records
             // Array record of strings
             Fw::String str0("String array element 0");
@@ -42,112 +42,112 @@ namespace Ref {
             const Fw::StringBase* strings[3] = { &str0, &str1, &str2 };
             this->dpContainer.serializeRecord_StringArrayRecord(strings, 3);
             // Array record of arrays
-            const DpDemo_StringArray arrayArray[1] = { 
-                DpDemo_StringArray(
+            const DpDemo_StringArray arrayArray[1] = {
+                DpDemo_StringArray({
                     Fw::String("0 - String array record element 0"),
                     Fw::String("0 - String array record element 1")
-                )
+                })
             };
             this->dpContainer.serializeRecord_ArrayArrayRecord(arrayArray, 1);
             // Array record of structs
-            const DpDemo_StructWithStringMembers structArray[2] = { 
+            const DpDemo_StructWithStringMembers structArray[2] = {
                 DpDemo_StructWithStringMembers(
                     Fw::String("0 - String member"),
-                    DpDemo_StringArray(
+                    DpDemo_StringArray({
                         Fw::String("0 - String array element 0"),
                         Fw::String("0 - String array element 1")
-                    )
+                    })
                 ),
                 DpDemo_StructWithStringMembers(
                     Fw::String("1 - String member"),
-                    DpDemo_StringArray(
+                    DpDemo_StringArray({
                         Fw::String("1 - String array element 0"),
                         Fw::String("1 - String array element 1")
-                    )
+                    })
                 )
             };
             this->dpContainer.serializeRecord_StructArrayRecord(structArray, 2);
             this->dpContainer.serializeRecord_ArrayOfStringArrayRecord(
-                DpDemo_ArrayOfStringArray(
-                    DpDemo_StringArray(
+                DpDemo_ArrayOfStringArray({
+                    DpDemo_StringArray({
                         Fw::String("0 - String array element 0"),
                         Fw::String("0 - String array element 1")
-                    ),
-                    DpDemo_StringArray(
+                    }),
+                    DpDemo_StringArray({
                         Fw::String("1 - String array element 0"),
                         Fw::String("1 - String array element 1")
-                    ),
-                    DpDemo_StringArray(
+                    }),
+                    DpDemo_StringArray({
                         Fw::String("2 - String array element 0"),
                         Fw::String("2 - String array element 1")
-                    )
-                )
+                    })
+                })
             );
             this->dpContainer.serializeRecord_ArrayOfStructsRecord(
-                DpDemo_ArrayOfStructs(
+                DpDemo_ArrayOfStructs({
                     DpDemo_StructWithStringMembers(
                         Fw::String("0 - String member"),
-                        DpDemo_StringArray(
+                        DpDemo_StringArray({
                             Fw::String("0 - String array element 0"),
                             Fw::String("0 - String array element 1")
-                        )
+                        })
                     ),
                     DpDemo_StructWithStringMembers(
                         Fw::String("1 - String member"),
-                        DpDemo_StringArray(
+                        DpDemo_StringArray({
                             Fw::String("1 - String array element 0"),
                             Fw::String("1 - String array element 1")
-                        )
+                        })
                     ),
                     DpDemo_StructWithStringMembers(
                         Fw::String("2 - String member"),
-                        DpDemo_StringArray(
+                        DpDemo_StringArray({
                             Fw::String("2 - String array element 0"),
                             Fw::String("2 - String array element 1")
-                        )
+                        })
                     )
-                )
+                })
             );
-            this->dpContainer.serializeRecord_EnumArrayRecord(DpDemo_EnumArray(DpDemo_ColorEnum::RED, DpDemo_ColorEnum::GREEN, DpDemo_ColorEnum::BLUE));
+            this->dpContainer.serializeRecord_EnumArrayRecord(DpDemo_EnumArray({DpDemo_ColorEnum::RED, DpDemo_ColorEnum::GREEN, DpDemo_ColorEnum::BLUE}));
             this->dpContainer.serializeRecord_StructWithEverythingRecord(DpDemo_StructWithEverything(
                 -1,
                 2.5,
                 Fw::String("String Member"),
                 false,
                 this->selectedColor,
-                { 
-                    DpDemo_U32Array(1, 2, 3, 4, 5), 
-                    DpDemo_U32Array(6, 7, 8, 9, 10)
+                {
+                    DpDemo_U32Array({1, 2, 3, 4, 5}),
+                    DpDemo_U32Array({6, 7, 8, 9, 10})
                 },
-                DpDemo_F32Array(4.4f, 5.5f, 6.6f),
-                DpDemo_U32Array(6, 7, 8, 9, 10),
-                DpDemo_EnumArray(DpDemo_ColorEnum::RED, DpDemo_ColorEnum::GREEN, DpDemo_ColorEnum::BLUE),
-                DpDemo_StringArray(
+                DpDemo_F32Array({4.4f, 5.5f, 6.6f}),
+                DpDemo_U32Array({6, 7, 8, 9, 10}),
+                DpDemo_EnumArray({DpDemo_ColorEnum::RED, DpDemo_ColorEnum::GREEN, DpDemo_ColorEnum::BLUE}),
+                DpDemo_StringArray({
                     Fw::String("String array element 0"),
                     Fw::String("String array element 1")
-                ),
-                DpDemo_BooleanArray(true, false),
+                }),
+                DpDemo_BooleanArray({true, false}),
                 DpDemo_StructWithStringMembers(
                     Fw::String("String member"),
-                    DpDemo_StringArray(
+                    DpDemo_StringArray({
                         Fw::String("String array element 0"),
                         Fw::String("String array element 1")
-                    )
+                    })
                 ),
-                DpDemo_ArrayOfStringArray(
-                    DpDemo_StringArray(
+                DpDemo_ArrayOfStringArray({
+                    DpDemo_StringArray({
                         Fw::String("0 - String array element 0"),
                         Fw::String("0 - String array element 1")
-                    ),
-                    DpDemo_StringArray(
+                    }),
+                    DpDemo_StringArray({
                         Fw::String("1 - String array element 0"),
                         Fw::String("1 - String array element 1")
-                    ),
-                    DpDemo_StringArray(
+                    }),
+                    DpDemo_StringArray({
                         Fw::String("2 - String array element 0"),
                         Fw::String("2 - String array element 1")
-                    )
-                )
+                    })
+                })
             ));
             this->log_ACTIVITY_LO_DpComplete(this->numRecords);
             this->cleanupAndSendDp();
@@ -183,7 +183,7 @@ namespace Ref {
                             DpDemo_BooleanArray::SERIALIZED_SIZE +
                             DpDemo_EnumArray::SERIALIZED_SIZE +
                             DpDemo_StringArray::SERIALIZED_SIZE +
-                            DpDemo_StructWithEverything::SERIALIZED_SIZE + 
+                            DpDemo_StructWithEverything::SERIALIZED_SIZE +
                             DpDemo_StructWithStringMembers::SERIALIZED_SIZE +
                             (DpDemo_StringArray::SERIALIZED_SIZE * 3) +
                             (DpDemo_StringArray::SERIALIZED_SIZE * 1) +
