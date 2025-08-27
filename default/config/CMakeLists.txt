@@ -15,6 +15,7 @@ register_fprime_config(
     HEADERS
         "${CMAKE_CURRENT_LIST_DIR}/EventManagerCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/ActiveRateGroupCfg.hpp"
+        "${CMAKE_CURRENT_LIST_DIR}/ActiveTextLoggerCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/BufferManagerComponentImplCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/CommandDispatcherImplCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/DpCatalogCfg.hpp"
@@ -24,6 +25,7 @@ register_fprime_config(
         "${CMAKE_CURRENT_LIST_DIR}/FpConfig.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/FPrimeNumericalConfig.h"
         "${CMAKE_CURRENT_LIST_DIR}/IpCfg.hpp"
+        "${CMAKE_CURRENT_LIST_DIR}/PassiveTextLoggerCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/PrmDbImplCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/PrmDbImplTesterCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/StaticMemoryConfig.hpp"
