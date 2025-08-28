@@ -16,6 +16,8 @@
 #include <config/DpCatalogCfg.hpp>
 #include <config/DpCfg.hpp>
 
+#define DIRECTORY_DELIMITER "/"
+
 namespace Svc {
 
 class DpCatalog final : public DpCatalogComponentBase {

@@ -468,10 +468,33 @@ int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir = DP_MAX_DIRECTOR
 
     // Check if file is in one of our directories
     if (dir >= DP_MAX_DIRECTORIES) {
-        // TODO: Figure out if this DIR is within m_directories
-        // Currently Skips file
-        this->log_WARNING_HI_FileOpenError(fullFile, Os::FileSystem::Status::OTHER_ERROR);
-        return 0;
+        // Grab the directory string (up until the final slash)
+        // Could be found directly w/ a dirname func or regex
+        FwSignedSizeType loc = Fw::StringUtils::substring_find_last(
+            fullFile.toChar(), fullFile.length(), DIRECTORY_DELIMITER,
+            Fw::StringUtils::string_length(DIRECTORY_DELIMITER, sizeof(DIRECTORY_DELIMITER)));
+
+        // TODO: What happens w/ relative paths and root dir files
+        if (-1 == loc) {
+            this->log_WARNING_HI_DirectoryOpenError(fullFile, Os::FileSystem::Status::OTHER_ERROR);
+            return 0;
+        }
+
+        for (dir = 0; dir < this->m_numDirectories; dir++) {
+            const char* const dir_string = this->m_directories[dir].toChar();
+
+            // Compare both strings up to location of final slash
+            // memsafe since both are fixed width strings
+            // and loc is before the fixed width
+            if (strncmp(dir_string, fullFile.toChar(), static_cast<FwSizeType>(loc)) == 0) {
+                break;
+            }
+        }
+
+        if (dir == this->m_numDirectories) {
+            this->log_WARNING_HI_DirectoryOpenError(fullFile, Os::FileSystem::Status::OTHER_ERROR);
+            return 0;
+        }
     }
 
     // get file size
@@ -550,6 +573,12 @@ int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir = DP_MAX_DIRECTOR
         this->log_WARNING_HI_DpCatalogFull(entry.record);
         return -1;
     }
+
+    Fw::FileNameString addedFileName;
+    addedFileName.format(DP_FILENAME_FORMAT, this->m_directories[dir].toChar(), entry.record.get_id(),
+                         entry.record.get_tSec(), entry.record.get_tSub());
+
+    this->log_ACTIVITY_HI_DpFileAdded(addedFileName);
 
     return 1;
 }
@@ -659,6 +688,11 @@ void DpCatalog::sendNextEntry() {
     FW_ASSERT(this->m_dpTree);
     FW_ASSERT(this->m_xmitInProgress);
     FW_ASSERT(this->m_traverseStack);
+
+    // Use xmit flag to break upon STOP_XMIT_CATALOG
+    if (this->m_xmitInProgress != true) {
+        return;
+    }
 
     // look in the tree for the next entry to send
     this->m_currentXmitNode = this->findNextTreeNode();
@@ -790,6 +824,7 @@ void DpCatalog ::fileDone_handler(FwIndexType portNum, const Svc::SendFileRespon
     this->appendFileState(this->m_currentXmitNode->entry);
     // add the size
     this->m_xmitBytes += this->m_currentXmitNode->entry.record.get_size();
+    // Reduce pending
     // send the next entry, if it exists
     this->sendNextEntry();
 }
@@ -803,7 +838,41 @@ void DpCatalog ::addToCat_handler(FwIndexType portNum,
                                   const Fw::StringBase& fileName,
                                   FwDpPriorityType priority,
                                   FwSizeType size) {
-    // TODO
+    // check some asserts
+    FW_ASSERT(this->m_dpTree);
+    FW_ASSERT(this->m_traverseStack);
+
+    // check initialization
+    if (not this->checkInit()) {
+        this->log_WARNING_HI_NotInitialized();
+        return;
+    }
+
+    // check that initialization got memory
+    if (0 == this->m_numDpSlots) {
+        this->log_WARNING_HI_NoDpMemory();
+        return;
+    }
+
+    // make sure a downlink is not in progress
+    if (this->m_xmitInProgress) {
+        this->log_WARNING_LO_DpXmitInProgress();
+        return;
+    }
+
+    // Both of these are grabbed from the header
+    (void)priority;
+    (void)size;
+
+    int ret = processFile(fileName);
+
+    if (ret > 0) {
+        // TODO: Handle adding a node to a catalog that has finished sending
+        // or one that has already moved past the inserted node's priority
+
+        // prune and rewrite the state file
+        this->pruneAndWriteStateFile();
+    }
 }
 
 // ----------------------------------------------------------------------
@@ -884,12 +953,18 @@ void DpCatalog ::STOP_XMIT_CATALOG_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
         // benign error, so don't fail the command
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     } else {
+        // Disarm the flag so next sendNextEntry stops transmission
+        this->m_xmitInProgress = false;
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
 }
 
 void DpCatalog ::CLEAR_CATALOG_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
-    // TODO
+    // TODO: Is this sufficient for clearing catalog?
+    this->resetBinaryTree();
+    this->resetTreeStack();
+    this->resetStateFileData();
+
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 

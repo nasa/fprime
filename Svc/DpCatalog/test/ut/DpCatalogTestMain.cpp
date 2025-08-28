@@ -99,6 +99,23 @@ TEST(NominalManual, FiveDp) {
     tester.readDps(dirs, 2, stateFile, dpSet, 5);
 }
 
+TEST(NominalManual, OneDp_OneNotify) {
+    Svc::DpCatalogTester tester;
+    Fw::FileNameString dir;
+    dir = "./DpTest";
+    Fw::FileNameString stateFile("./DpTest/dpState.dat");
+
+    Svc::DpCatalogTester::DpSet dpSet;
+    dpSet.id = 0x123;
+    dpSet.prio = 10;
+    dpSet.state = Fw::DpState::UNTRANSMITTED;
+    dpSet.time.set(1000, 100);
+    dpSet.dataSize = 100;
+    dpSet.dir = dir.toChar();
+
+    tester.readDps(&dir, 1, stateFile, &dpSet, 1);
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

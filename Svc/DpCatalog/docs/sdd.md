@@ -113,7 +113,7 @@ During initialization, the configuration function takes a set of parameters:
 |`BUILD_CATALOG`|none|Builds the in-RAM catalog by scanning the directories provided during initialization. Downlink state file will be read in to set downlink state for products|Prerequisite for executing `START_XMIT_CATALOG` command
 |`START_XMIT_CATALOG`| |Start transmitting the catalog to the ground in priority order
 | |wait|Wait for the transmission to complete before sending command completion status. Used when a sequence wishes to wait for completion before issuing subsequent commands.
-|`STOP_XMIT_CATALOG`|none|Stop existing catalog transmission. Will be completed when the current file is done transmitting. __NOT IMPLEMENTED YET__|
+|`STOP_XMIT_CATALOG`|none|Stop existing catalog transmission. Will be completed when the current file is done transmitting.
 |`CLEAR_CATALOG`|none|Clears existing RAM catalog and resets downlink state. Should be followed by `BUILD_CATALOG`. Used for recovery if state file gets corrupted or out of sync with file system contents. __NOT IMPLEMENTED YET__ |
 
 #### Sequence of Commands

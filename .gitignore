@@ -4,6 +4,7 @@ build-artifacts/
 gtest/
 docs-cache/
 CMakePresets.json
+/DpTest*/
 
 AutoXML/
 test_harness/src/test_harness-C/application.out

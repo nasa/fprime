@@ -82,7 +82,7 @@ module Svc {
     @ Start transmitting catalog
     async command START_XMIT_CATALOG (
                                     wait: Fw.Wait @< have START_XMIT command complete wait for catalog to complete transmitting
-                                  ) \    
+                                  ) \
       opcode 1
 
     @ Stop transmitting catalog
@@ -108,7 +108,7 @@ module Svc {
 
     @ Processing directory
     event ProcessingDirectory (
-                            directory: string size 80 @< The directory 
+                            directory: string size 80 @< The directory
                           ) \
       severity activity low \
       id 1 \
@@ -116,7 +116,7 @@ module Svc {
 
     @ Processing directory
     event ProcessingFile (
-                            file: string size 80 @< The file 
+                            file: string size 80 @< The file
                           ) \
       severity activity low \
       id 2 \
@@ -125,7 +125,7 @@ module Svc {
 
     @ Directory Processing complete
     event ProcessingDirectoryComplete (
-                            loc: string size 80 @< The directory 
+                            loc: string size 80 @< The directory
                             total: U32 @< total data products
                             pending: U32 @< pending data products
                             pending_bytes: U64 @< pending data product volume
@@ -164,7 +164,7 @@ module Svc {
 
     @ Sending product
     event SendingProduct (
-                            file: string size 80 @< The file 
+                            file: string size 80 @< The file
                             bytes: U32 @< file size
                             prio: U32 @< DP priority
                           ) \
@@ -174,7 +174,7 @@ module Svc {
 
     @ Product send complete
     event ProductComplete (
-                            file: string size 80 @< The file 
+                            file: string size 80 @< The file
                           ) \
       severity activity low \
       id 14 \
@@ -196,7 +196,7 @@ module Svc {
 
     @ Catalog is full
     event CatalogFull (
-                            dir: string size 80 @< last directory read 
+                            dir: string size 80 @< last directory read
                           ) \
       severity warning high \
       id 22 \
@@ -311,7 +311,7 @@ module Svc {
       severity warning high \
       id 35 \
       format "Error opening state file {}, stat: {}"
-    
+
     event StateFileReadError(
                             file: string size 80 @< The file
                             stat: I32
@@ -368,6 +368,14 @@ module Svc {
       format "Error sending DP file {}, stat {}. Halting xmit." \
       throttle 10
 
+    @ Catalog processing complete
+    event DpFileAdded(
+                          file: string size 80 @< The file
+      ) \
+      severity activity high \
+      id 43 \
+      format "DP file {} added at runtime"
+
 
 
     # ----------------------------------------------------------------------
@@ -375,7 +383,7 @@ module Svc {
     # ----------------------------------------------------------------------
 
     @ Number of data products in catalog
-    telemetry CatalogDps: U32 id 0 
+    telemetry CatalogDps: U32 id 0
 
     @ Number of data products sent
     telemetry DpsSent: U32 id 1
