@@ -1,6 +1,6 @@
-# How-To: Test-Driven Development (TDD) in F´ (F Prime)
+# How-To: Test-Driven Development in F Prime (F´)
 
-This guide shows a practical, repeatable TDD loop for building an F´ component. You’ll model behavior first in FPP, stub the implementation, write tests that fail, then implement the component until the tests pass—iterating as needed.
+This guide shows a practical, repeatable test-driven development loop for building an F´ component. You’ll model behavior first in FPP, stub the implementation, write tests that fail, then implement the component until the tests pass—iterating as needed.
 
 ---
 
@@ -10,7 +10,7 @@ Before starting, you should have:
 
 * Completed the [Hello World](https://fprime.jpl.nasa.gov/latest/tutorials-hello-world/docs/hello-world/) tutorial (so you’ve built at least one component and ran `fprime-util`).
 Completed the [LED Blinker](https://fprime.jpl.nasa.gov/latest/tutorials-led-blinker/docs/led-blinker/) tutorial for F´ (so you’ve seen F´ unit-testing).
-* A **general understanding of TDD** (write a failing test first, make it pass, then refactor).
+* A **general understanding of test-driven development** (write a failing test first, make it pass, then refactor).
 * A working knowledge of [FPP component modeling](https://nasa.github.io/fpp/fpp-users-guide.html) (ports, commands, events, telemetry, parameters).
 
 > [!TIP]
@@ -22,19 +22,19 @@ Completed the [LED Blinker](https://fprime.jpl.nasa.gov/latest/tutorials-led-bli
 
 To keep things concrete, we’ll walk through a tiny example: a `Counter` component that:
 
-* Accepts an input port call `increment()`.
+* Accepts an input port call `increment`.
 * Emits telemetry `Count` with the current count.
 
-You can swap this for your real component; the TDD process stays the same.
+You can swap this for your real component; the test-driven development process stays the same.
 
 > [!TIP]
 > You can create a new component with `fprime-util new --component`
 
 ---
 
-## The Test Driven Development Process for F´
+## The Test-Driven Development Process for F´
 
-In short, the test driven development process in F´ is: design, test, and implement to the test. This places testing before component implementation as opposed to the traditional process: design, implement, and test the implementation.
+In short, the test-driven development process in F´ is: design, test, and implement to the test. This places testing before component implementation as opposed to the traditional process: design, implement, and test the implementation.
 
 ### Step 1 — Design the Component
 
@@ -49,7 +49,7 @@ module Demo {
     telemetry Count: FwSizeType
 
     @ A no-argument port triggering implementation
-    async input port increment: Fw.Signal
+    guarded input port increment: Fw.Signal
   }
 
 }
@@ -63,7 +63,7 @@ In F´ the FPP model is the source of truth that drives code generation. Modelin
 ### Step 2 — Generate Blank Implementation Classes
 
 
-Ensure your component exists under a module (e.g., `Demo/Counter/`) and is included in your `CMakeLists.txt`.  Then generate the implementation files for your component using: `fprime-util impl`. If this is your first iteration of the test driven process, then copy or rename the template into their correct place (i.e. `Counter.cpp` and `Counter.hpp`).
+Ensure your component exists under a module (e.g., `Demo/Counter/`) and is included in your `CMakeLists.txt`.  Then generate the implementation files for your component using: `fprime-util impl`. If this is your first iteration of the test-driven process, then copy or rename the template into their correct place (i.e. `Counter.cpp` and `Counter.hpp`).
 
 If you are iterating on the design, copy over the new blank handlers, and leave them blank.
 
@@ -105,7 +105,7 @@ Add your test(s) and ensure they fail when running `fprime-util check`.
 
 **Why do the tests fail?**
 
-The art of test driven development is to focus on writing correct tests that ensure correct behavior, then implementing the code to pass the tests. Since implementation has not happened, our test will fail.
+The art of test-driven development is to focus on writing correct tests that ensure correct behavior, then implementing the code to pass the tests. Since implementation has not happened, our test will fail.
 
 ---
 
@@ -121,6 +121,9 @@ void Counter::increment_handler(FwIndexType portNum) {
     this->tlmWrite_Count(m_count);
   }
 ```
+
+> [!TIP]
+> Remember to define `m_count` and initialize it in the `.hpp`.
 
 Re-run the tests:
 
@@ -139,7 +142,7 @@ You can now repeat the process by tuning the design (FPP), adding more tests, an
 
 ---
 
-## Tips, Gotchas, and Good Practices
+## Tips, and Good Practices
 
 * **Model to Drive Tests**: Treat the FPP model as your interface; tests assert that the implementation correctly supports the interface.
 * **One Behavior per Test**: Small, focused tests are easier to debug and help pinpoint where the implementation needs improvement.
@@ -147,7 +150,7 @@ You can now repeat the process by tuning the design (FPP), adding more tests, an
 
 ---
 
-## Recap (TDD in F´)
+## Recap (Test-Driven Development in F´)
 
 1. **Model in FPP**: design first
 2. **Write Tests**: write tests that verify the design and interface
