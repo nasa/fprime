@@ -13,10 +13,10 @@
 #ifndef LinuxTimer_HPP
 #define LinuxTimer_HPP
 
+#include "Fw/Time/TimeInterval.hpp"
 #include "Os/Mutex.hpp"
 #include "Os/RawTime.hpp"
 #include "Svc/LinuxTimer/LinuxTimerComponentAc.hpp"
-#include "Fw/Time/TimeInterval.hpp"
 
 namespace Svc {
 
