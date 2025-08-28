@@ -16,6 +16,7 @@
 #include "Os/Mutex.hpp"
 #include "Os/RawTime.hpp"
 #include "Svc/LinuxTimer/LinuxTimerComponentAc.hpp"
+#include "Fw/Time/TimeInterval.hpp"
 
 namespace Svc {
 
@@ -35,7 +36,7 @@ class LinuxTimer final : public LinuxTimerComponentBase {
     ~LinuxTimer();
 
     //! Start timer
-    void startTimer(FwSizeType interval);  //!< interval in milliseconds
+    void startTimer(const Fw::TimeInterval& interval);  //!< interval in milliseconds
 
     //! Quit timer
     void quit();
