@@ -59,6 +59,7 @@ class FpySequencer : public FpySequencerComponentBase {
         FpySequencer_DiscardDirective discard;
         FpySequencer_MemCmpDirective memCmp;
         FpySequencer_StackCmdDirective stackCmd;
+        FpySequencer_SetFlagDirective setFlag;
 
         DirectiveUnion() {}
         ~DirectiveUnion() {}
@@ -443,6 +444,9 @@ class FpySequencer : public FpySequencerComponentBase {
     //! Internal interface handler for directive_stackCmd
     void directive_stackCmd_internalInterfaceHandler(const Svc::FpySequencer_StackCmdDirective& directive) override;
 
+    //! Internal interface handler for directive_setFlag
+    void directive_setFlag_internalInterfaceHandler(const Svc::FpySequencer_SetFlagDirective& directive) override;
+
     void parametersLoaded() override;
     void parameterUpdated(FwPrmIdType id) override;
 
@@ -505,8 +509,15 @@ class FpySequencer : public FpySequencerComponentBase {
         // a statement response
         Fw::Time wakeupTime = Fw::Time();
 
+        // the byte array of the program stack, storing lvars, operands and function calls
         U8 stack[Fpy::MAX_STACK_SIZE] = {0};
+        // how many bytes high the stack is
         U64 stackSize = 0;
+
+        // the sequencer runtime flags. these are modifiable by the sequence and control
+        // various aspects of the sequencer.
+        // 1 byte per 8 flags, rounding up.
+        U8 flags[(Fpy::FLAG_COUNT + 7) / 8] = {0};
     } m_runtime;
 
     // the state of the debugger. debugger is separate from runtime
@@ -547,16 +558,16 @@ class FpySequencer : public FpySequencerComponentBase {
     );
 
     // loads the sequence in memory, and does header/crc/integrity checks.
-    // return success if sequence is valid
+    // return SUCCESS if sequence is valid, FAILURE otherwise
     Fw::Success validate();
     // reads and validates the header from the m_sequenceBuffer
-    // return success if header is valid
+    // return SUCCESS if sequence is valid, FAILURE otherwise
     Fw::Success readHeader();
     // reads and validates the body from the m_sequenceBuffer
-    // return success if body is valid
+    // return SUCCESS if sequence is valid, FAILURE otherwise
     Fw::Success readBody();
     // reads and validates the footer from the m_sequenceBuffer
-    // return success if footer is valid
+    // return SUCCESS if sequence is valid, FAILURE otherwise
     Fw::Success readFooter();
 
     // reads some bytes from the open file into the m_sequenceBuffer.
@@ -692,6 +703,7 @@ class FpySequencer : public FpySequencerComponentBase {
     Signal discard_directiveHandler(const FpySequencer_DiscardDirective& directive, DirectiveError& error);
     Signal memCmp_directiveHandler(const FpySequencer_MemCmpDirective& directive, DirectiveError& error);
     Signal stackCmd_directiveHandler(const FpySequencer_StackCmdDirective& directive, DirectiveError& error);
+    Signal setFlag_directiveHandler(const FpySequencer_SetFlagDirective& directive, DirectiveError& error);
 };
 
 }  // namespace Svc

@@ -266,6 +266,14 @@ void FpySequencerTester::add_MEMCMP(FpySequencer_MemCmpDirective dir) {
     FW_ASSERT(buf.serialize(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     addDirective(Fpy::DirectiveId::MEMCMP, buf);
 }
+void FpySequencerTester::add_SET_FLAG(U8 flagIdx) {
+    add_SET_FLAG(FpySequencer_SetFlagDirective(flagIdx));
+}
+void FpySequencerTester::add_SET_FLAG(FpySequencer_SetFlagDirective dir) {
+    Fw::StatementArgBuffer buf;
+    FW_ASSERT(buf.serialize(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    addDirective(Fpy::DirectiveId::SET_FLAG, buf);
+}
 //! Handle a text event
 void FpySequencerTester::textLogIn(FwEventIdType id,                //!< The event ID
                                    const Fw::Time& timeTag,         //!< The time

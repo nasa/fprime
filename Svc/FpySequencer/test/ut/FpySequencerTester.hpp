@@ -109,6 +109,8 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     void add_STACK_CMD(FpySequencer_StackCmdDirective dir);
     void add_MEMCMP(U16 size);
     void add_MEMCMP(FpySequencer_MemCmpDirective dir);
+    void add_SET_FLAG(U8 flagIdx);
+    void add_SET_FLAG(FpySequencer_SetFlagDirective dir);
     template <typename T>
     void add_PUSH_VAL(T val);
     //! Handle a text event
