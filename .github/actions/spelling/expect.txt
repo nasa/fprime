@@ -18,6 +18,7 @@ arduino
 ARef
 argcomplete
 ARGN
+binaryfile
 ARINC
 arpa
 ASize
@@ -190,6 +191,7 @@ ECLIPSEHELP
 EHAs
 eip
 Elts
+emptydir
 endcond
 endfunction
 endmacro
@@ -364,6 +366,7 @@ LINEEVENT
 LINEHANDLE
 linelength
 lineoffset
+LISTDIRECTORY
 lld
 llu
 LOCALSTATEDIR

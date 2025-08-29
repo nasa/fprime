@@ -157,7 +157,7 @@ event RemoveFileStarted(
 @ File size response
 event FileSizeSucceeded(
                          fileName: string size 256 @< The name of the file
-                         $size: U64 @< The size of the file in bytes
+                         $size: FwSizeType @< The size of the file in bytes
                        ) \
   severity activity high \
   id 0x12 \
@@ -182,7 +182,7 @@ event FileSizeStarted(
 
 @ Starting directory listing
 event ListDirectoryStarted(
-                            dirName: string size 256 @< The name of the directory
+                            dirName: string size FileNameStringSize @< The name of the directory
                           ) \
   severity activity high \
   id 0x15 \
@@ -190,7 +190,7 @@ event ListDirectoryStarted(
 
 @ Directory listing completed successfully  
 event ListDirectorySucceeded(
-                              dirName: string size 256 @< The name of the directory
+                              dirName: string size FileNameStringSize @< The name of the directory
                               fileCount: U32 @< The number of files found
                             ) \
   severity activity high \
@@ -199,7 +199,7 @@ event ListDirectorySucceeded(
 
 @ Failed to list directory
 event ListDirectoryError(
-                          dirName: string size 256 @< The name of the directory
+                          dirName: string size FileNameStringSize @< The name of the directory
                           status: U32 @< The error status
                         ) \
   severity warning high \
@@ -208,22 +208,20 @@ event ListDirectoryError(
 
 @ Directory listing file entry
 event DirectoryListing(
-                        dirName: string size 256 @< The name of the directory
-                        fileName: string size 256 @< The name of the file
-                        index: U32 @< The index of this file in the listing
-                        fileSize: U64 @< The size of the file in bytes
+                        dirName: string size FileNameStringSize @< The name of the directory
+                        fileName: string size FileNameStringSize @< The name of the file
+                        fileSize: FwSizeType @< The size of the file in bytes
                       ) \
   severity activity high \
   id 0x18 \
-  format "Directory {} [{}]: {} ({} bytes)"
+  format "Directory {}: {} ({} bytes)"
 
 @ Directory listing subdirectory entry
 event DirectoryListingSubdir(
-                        dirName: string size 256 @< The name of the directory
-                        subdirName: string size 256 @< The name of the subdirectory
-                        index: U32 @< The index of this entry in the listing
+                        dirName: string size FileNameStringSize @< The name of the directory
+                        subdirName: string size FileNameStringSize @< The name of the subdirectory
                         fileCount: U32 @< The number of files in the subdirectory
                       ) \
   severity activity high \
   id 0x19 \
-  format "Directory {} [{}]: {} ({} files)"
+  format "Directory {}: {} ({} files)"

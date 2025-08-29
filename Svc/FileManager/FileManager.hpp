@@ -197,9 +197,6 @@ class FileManager final : public FileManagerComponentBase {
     //! Name of directory being listed (stored for event reporting)
     Fw::String m_currentDirName;
 
-    //! Current index in directory listing (for event reporting)
-    U32 m_currentIndex;
-
     //! Total entries processed (for completion event)
     U32 m_totalEntries;
 
