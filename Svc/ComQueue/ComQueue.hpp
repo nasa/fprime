@@ -92,16 +92,6 @@ class ComQueue final : public ComQueueComponentBase {
         WAITING  //!< Component is waiting for status of the last sent message
     };
 
-    /**
-     * Storage for the last sent message. Required in case an attempt is made to resend the message on receiving
-     * Fw::Success::FAILURE.
-     */
-#if FW_COM_BUFFER_RETRY_ON_FAILURE
-    ComCfg::FrameContext m_context; //!< Keep context of the last message sent
-    Fw::Buffer m_outBuffer;         //!< Keep last message sent
-    bool m_hasRetried;              //!< Check if retry has been done
-#endif
-
   public:
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction
@@ -122,7 +112,8 @@ class ComQueue final : public ComQueueComponentBase {
     //! queue metadata stored `m_prioritizedList` and then sorts that list by priority.
     void configure(QueueConfigurationTable queueConfig,  //!< Table of the configuration properties for the component
                    FwEnumStoreType allocationId,         //!< Identifier used  when dealing with the Fw::MemAllocator
-                   Fw::MemAllocator& allocator           //!< Fw::MemAllocator used to acquire memory
+                   Fw::MemAllocator& allocator,          //!< Fw::MemAllocator used to acquire memory
+                   bool retryOnFailure                   //!< Enable ComQueue to resend the last message on failure
     );
 
     //! Deallocate resources and cleanup ComQueue
@@ -216,6 +207,15 @@ class ComQueue final : public ComQueueComponentBase {
     FwEnumStoreType m_allocationId;  //!< Component's allocation ID
     Fw::MemAllocator* m_allocator;   //!< Pointer to Fw::MemAllocator instance for deallocation
     void* m_allocation;              //!< Pointer to allocated memory
+
+    /**
+     * Storage for the last sent message. Required in case an attempt is made to resend the message on receiving
+     * Fw::Success::FAILURE.
+     */
+    ComCfg::FrameContext m_context; //!< Keep context of the last sent message
+    Fw::Buffer m_outBuffer;         //!< Store last sent message
+    bool m_tryBufferResend = false; //!< Mark whether a message needs to be resent
+    bool m_retryOnFailure = false;  //!< Flag to enable resend on failure
 };
 
 }  // end namespace Svc

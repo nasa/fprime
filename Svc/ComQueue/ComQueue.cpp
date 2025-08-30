@@ -33,12 +33,7 @@ ComQueue ::ComQueue(const char* const compName)
       m_state(WAITING),
       m_allocationId(static_cast<FwEnumStoreType>(-1)),
       m_allocator(nullptr),
-      m_allocation(nullptr)
-#if FW_COM_BUFFER_RETRY_ON_FAILURE
-      ,
-      m_hasRetried(true)
-#endif
-{
+      m_allocation(nullptr) {
     // Initialize throttles to "off"
     for (FwIndexType i = 0; i < TOTAL_PORT_COUNT; i++) {
         this->m_throttle[i] = false;
@@ -56,7 +51,8 @@ void ComQueue ::cleanup() {
 
 void ComQueue::configure(QueueConfigurationTable queueConfig,
                          FwEnumStoreType allocationId,
-                         Fw::MemAllocator& allocator) {
+                         Fw::MemAllocator& allocator,
+                         bool retryOnFailure) {
     FwIndexType currentPriorityIndex = 0;
     FwSizeType totalAllocation = 0;
 
@@ -130,6 +126,8 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
     // Safety check that all memory was used as expected
     FW_ASSERT(allocationOffset == totalAllocation, static_cast<FwAssertArgType>(allocationOffset),
               static_cast<FwAssertArgType>(totalAllocation));
+    
+    this->m_retryOnFailure = retryOnFailure;
 }
 // ----------------------------------------------------------------------
 // Handler implementations for user-defined typed input ports
@@ -159,21 +157,20 @@ void ComQueue::comStatusIn_handler(const FwIndexType portNum, Fw::Success& condi
         // On success, the queue should be processed. On failure, the component should still wait.
         case WAITING:
             if (condition.e == Fw::Success::SUCCESS) {
-#if FW_COM_BUFFER_RETRY_ON_FAILURE
-                this->m_hasRetried = false;
-#endif
                 this->m_state = READY;
-                this->processQueue();
+                // The last buffer will not be resent if retry is not configured.
+                if (this->m_tryBufferResend) {
+                    this->m_tryBufferResend = false;
+                    this->dataOut_out(0, this->m_outBuffer, this->m_context);
+                } else {
+                    this->processQueue();
+                }
                 // A message may or may not be sent. Thus, READY or WAITING are acceptable final states.
                 FW_ASSERT((this->m_state == WAITING || this->m_state == READY),
                           static_cast<FwAssertArgType>(this->m_state));
             } else {
-#if FW_COM_BUFFER_RETRY_ON_FAILURE
-                if (!this->m_hasRetried) {
-                    this->m_hasRetried = true;
-                    this->dataOut_out(0, this->m_outBuffer, this->m_context);
-                }
-#endif
+                // Buffer will never be resent if retry has not been configured.
+                this->m_tryBufferResend = this->m_retryOnFailure;
                 this->m_state = WAITING;
             }
             break;
@@ -277,11 +274,8 @@ void ComQueue::sendComBuffer(Fw::ComBuffer& comBuffer, FwIndexType queueIndex) {
     this->dataOut_out(0, outBuffer, context);
     // Set state to WAITING for the status to come back
     this->m_state = WAITING;
-
-#if FW_COM_BUFFER_RETRY_ON_FAILURE
     this->m_context = context;
-    this->m_outBuffer = buffer;
-#endif
+    this->m_outBuffer = outBuffer;
 }
 
 void ComQueue::sendBuffer(Fw::Buffer& buffer, FwIndexType queueIndex) {
@@ -299,11 +293,8 @@ void ComQueue::sendBuffer(Fw::Buffer& buffer, FwIndexType queueIndex) {
     this->dataOut_out(0, buffer, context);
     // Set state to WAITING for the status to come back
     this->m_state = WAITING;
-
-#if FW_COM_BUFFER_RETRY_ON_FAILURE
     this->m_context = context;
     this->m_outBuffer = buffer;
-#endif
 }
 
 void ComQueue::processQueue() {

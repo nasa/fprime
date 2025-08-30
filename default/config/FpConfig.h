@@ -170,11 +170,6 @@ extern "C" {
 #define FW_COM_BUFFER_MAX_SIZE 512
 #endif
 
-// Try resending the last message on failure.
-#ifndef FW_COM_BUFFER_RETRY_ON_FAILURE
-#define FW_COM_BUFFER_RETRY_ON_FAILURE 0  //!< Disable resend on failure
-#endif
-
 // Specifies the size of the buffer attached to state machine signals.
 #ifndef FW_SM_SIGNAL_BUFFER_MAX_SIZE
 #define FW_SM_SIGNAL_BUFFER_MAX_SIZE 128  // Not to exceed max value of FwSizeType
