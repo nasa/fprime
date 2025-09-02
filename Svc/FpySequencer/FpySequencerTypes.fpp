@@ -1,10 +1,14 @@
 module Svc {
     module Fpy {
         @ the current schema version (must be representable in U8)
-        constant SCHEMA_VERSION = 1;
+        constant SCHEMA_VERSION = 1
 
         @ the number of runtime configurable flags. flags modify the sequencer behavior and can be set by the sequence
-        constant FLAG_COUNT = 1;
+        constant FLAG_COUNT = 1
+
+        enum FlagId {
+            EXIT_ON_CMD_FAIL = 0
+        }
 
         enum DirectiveId : U8 {
             INVALID = 0

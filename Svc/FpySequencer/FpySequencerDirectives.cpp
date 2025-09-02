@@ -5,6 +5,26 @@
 
 namespace Svc {
 
+bool FpySequencer::getFlag(const Fpy::FlagId& id) {
+    FW_ASSERT(id.e < Fpy::FLAG_COUNT, static_cast<FwAssertArgType>(id.e));
+
+    // find which flag byte this flag idx corresponds to
+    U64 flagByteIdx = id.e / 8;
+
+    // now get the byte itself
+    U8 flagByte = this->m_runtime.flags[flagByteIdx];
+
+    // find out which bit in the byte the flag idx corresponds to
+    U64 flagBitIdx = id.e - (flagByteIdx * 8);
+
+    // create a bitmask that's 1 at the flag position, 0 elsewhere
+    U8 flagByteMask = 1 << flagBitIdx;
+
+    // get the flag value from the flag byte and shift it back to 0th pos
+    U8 flagValue = (flagByte & flagByteMask) >> flagBitIdx;
+    return flagValue == 1;
+}
+
 void FpySequencer::sendSignal(Signal signal) {
     switch (signal) {
         case Signal::stmtResponse_beginSleep: {
@@ -1223,19 +1243,19 @@ Signal FpySequencer::setFlag_directiveHandler(const FpySequencer_SetFlagDirectiv
     U64 flagByteIdx = directive.get_flagIdx() / 8;
 
     // find out which bit in the byte the flag idx corresponds to
-    U64 flagBit = directive.get_flagIdx() - (flagByteIdx * 8);
+    U64 flagBitIdx = directive.get_flagIdx() - (flagByteIdx * 8);
 
     if (flagVal == 1) {
         // if we're setting it to 1, we want to `or` with the bitfield. rest of
         // bitfield can be zeroes
-        this->m_runtime.flags[flagByteIdx] |= 1 << flagBit;
+        this->m_runtime.flags[flagByteIdx] |= 1 << flagBitIdx;
     } else {
         // if we're setting it to 0, we want to `and` with the bitfield. rest of
         // bitfield must be 1s
         // we will accomplish this by making the bitfield with 0s and inverting it
         // with bitwise not.
 
-        this->m_runtime.flags[flagByteIdx] |= ~(() << flagBit);
+        this->m_runtime.flags[flagByteIdx] &= ~(1 << flagBitIdx);
     }
 
     return Signal::stmtResponse_success;

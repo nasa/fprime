@@ -583,6 +583,8 @@ class FpySequencer : public FpySequencerComponentBase {
     // Run state
     // ----------------------------------------------------------------------
 
+    bool getFlag(const Fpy::FlagId& id);
+
     // dispatches the next statement
     Signal dispatchStatement();
 
