@@ -26,11 +26,11 @@ void LinuxTimer::startTimer(const Fw::TimeInterval& interval) {
 
     /* Create the timer */
     fd = timerfd_create(CLOCK_MONOTONIC, 0);
-    FW_ASSERT(static_cast<U32>(std::numeric_limits<I32>::max()) >= interval.getSeconds());
-    itval.it_interval.tv_sec = static_cast<I32>(interval.getSeconds());
-    itval.it_interval.tv_nsec = static_cast<I32>(interval.getUSeconds() * 1000);
-    itval.it_value.tv_sec = static_cast<I32>(interval.getSeconds());
-    itval.it_value.tv_nsec = static_cast<I32>(interval.getUSeconds() * 1000);
+    FW_ASSERT_NO_OVERFLOW(interval.getSeconds(), time_t);
+    itval.it_interval.tv_sec = static_cast<time_t>(interval.getSeconds());
+    itval.it_interval.tv_nsec = static_cast<long>(interval.getUSeconds() * 1000);
+    itval.it_value.tv_sec = static_cast<time_t>(interval.getSeconds());
+    itval.it_value.tv_nsec = static_cast<long>(interval.getUSeconds() * 1000);
 
     timerfd_settime(fd, 0, &itval, nullptr);
 
