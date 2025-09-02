@@ -18,7 +18,7 @@ Before starting, you should have:
 
 ## When to Use State Machines
 
-State machines are useful when your component has distinct **modes** or **operational states** with different behavior in specific states and rules for transitioning between states. Examples include:
+State machines are useful when your component has distinct **modes** or **operational states** with different behavior in specific states and rules for the transitions between states. Examples include:
 
 * A radio with `OFF`, `IDLE`, and `TRANSMITTING` states.
 * A sensor with a series of start-up states
