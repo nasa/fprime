@@ -45,15 +45,25 @@ stateDiagram-v2
     [*] --> RESET
 
     %% State definitions with annotations
-    state "RESET\n\ntick / doReset" as RESET
+    state "RESET
 
-    state "WAIT_RESET\n\ntick / checkReset" as WAIT_RESET
+    tick / doReset" as RESET
 
-    state "ENABLE\n\ntick / doEnable" as ENABLE
+    state "WAIT_RESET
 
-    state "CONFIGURE\n\ntick / doConfigure" as CONFIGURE
+    tick / checkReset" as WAIT_RESET
 
-    state "RUN\n\ntick / doRead" as RUN
+    state "ENABLE
+
+    tick / doEnable" as ENABLE
+
+    state "CONFIGURE
+
+    tick / doConfigure" as CONFIGURE
+
+    state "RUN
+
+    tick / doRead" as RUN
 
     RESET --> WAIT_RESET : success
     WAIT_RESET --> ENABLE : success
