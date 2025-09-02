@@ -47,9 +47,8 @@ void FprimeDeframerTester ::testNominalFrame() {
 void FprimeDeframerTester ::testNominalFrameApid() {
     // Get random byte of data which represents the APID (PacketDescriptor)
     U8 randomByte = static_cast<U8>(STest::Random::lowerUpper(0, 255));
-    //           |  F´ start word        |     Length (= 4)      |   PacketDescriptor (APID)   |   Checksum (4 bytes) |
-    U8 data[16] = {0xDE, 0xAD, 0xBE, 0xEF,       0x00, 0x00, 0x00, 0x04,
-                   0x00, 0x00, 0x00, randomByte, 0x00, 0x00, 0x00, 0x00};
+    //           |  F´ start word        |     Length (= 2)      | Data (APID)     | Checksum (4 bytes)    |
+    U8 data[14] = {0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0x00, 0x00, 0x02, 0x00, randomByte, 0x00, 0x00, 0x00, 0x00};
     // Inject the checksum into the data and send it to the component under test
     this->injectChecksum(data, sizeof(data));
     this->mockReceiveData(data, sizeof(data));
