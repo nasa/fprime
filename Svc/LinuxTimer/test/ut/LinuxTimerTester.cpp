@@ -35,7 +35,7 @@ LinuxTimerTester ::~LinuxTimerTester() {}
 
 void LinuxTimerTester ::runCycles() {
     this->m_numCalls = 5;
-    this->component.startTimer(1000);
+    this->component.startTimer(Fw::TimeInterval(1, 0));
 }
 
 // ----------------------------------------------------------------------

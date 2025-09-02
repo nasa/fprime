@@ -20,7 +20,7 @@ QueuedTestTester ::QueuedTestTester()
       arrayBuf(arrayData, sizeof(arrayData)),
       structBuf(structData, sizeof(structData)),
       serialBuf(serialData, sizeof(serialData)),
-      time(STest::Pick::any(), STest::Pick::any()) {
+      time(STest::Pick::any(), STest::Pick::lowerUpper(0, 999999)) {
     this->initComponents();
     this->connectPorts();
     this->connectAsyncPorts();
