@@ -32,6 +32,8 @@ static_assert(Svc::Fpy::MAX_STACK_SIZE >= FW_TLM_BUFFER_MAX_SIZE,
               "Max stack size must be greater than max tlm buffer size");
 static_assert(Svc::Fpy::MAX_STACK_SIZE >= FW_PARAM_BUFFER_MAX_SIZE,
               "Max stack size must be greater than max prm buffer size");
+static_assert(Svc::Fpy::FLAG_COUNT < std::numeric_limits<U8>::max(),
+              "Flag count must be less than U8 max");
 
 namespace Svc {
 
@@ -519,6 +521,7 @@ class FpySequencer : public FpySequencerComponentBase {
         // the sequencer runtime flags. these are modifiable by the sequence and control
         // various aspects of the sequencer.
         // 1 byte per 8 flags, rounding up.
+        // these get set to a default value from FpySequencerCfg
         U8 flags[(Fpy::FLAG_COUNT + 7) / 8] = {0};
     } m_runtime;
 
@@ -585,7 +588,10 @@ class FpySequencer : public FpySequencerComponentBase {
     // Run state
     // ----------------------------------------------------------------------
 
+    // gets the value of a runtime flag
     bool getFlag(const Fpy::FlagId& id);
+    // sets the value of a runtime flag. will change the runtime behavior of the sequencer
+    void setFlag(const Fpy::FlagId& id, bool value);
 
     // dispatches the next statement
     Signal dispatchStatement();

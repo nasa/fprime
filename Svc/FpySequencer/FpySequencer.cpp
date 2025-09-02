@@ -302,12 +302,18 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
     // 3) the response is from the correct opcode
     // 4) the response is from the correct instance of that opcode in the sequence
 
-    if (response == Fw::CmdResponse::OK) {
+    // if we aren't supposed to exit on fail, succeed unconditionally
+    if (!this->getFlag(Fpy::FlagId::EXIT_ON_CMD_FAIL)) {
+        this->sequencer_sendSignal_stmtResponse_success();
+    } else if (response == Fw::CmdResponse::OK) {
+        // if we didn't fail, succeed!
         this->sequencer_sendSignal_stmtResponse_success();
     } else {
+        // cmd failed and we want to exit. raise a statement failure
         this->log_WARNING_HI_CommandFailed(opCode, this->currentStatementIdx(), this->m_sequenceFilePath, response);
         this->sequencer_sendSignal_stmtResponse_failure();
     }
+
     // push the cmd response to the stack so we can branch off of it
     this->push(static_cast<I32>(response.e));
 }

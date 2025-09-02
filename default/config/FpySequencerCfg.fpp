@@ -8,5 +8,7 @@ module Svc {
         constant MAX_STACK_SIZE = 65535
         @ the maximum number of bytes in a directive
         constant MAX_DIRECTIVE_SIZE = 2048
+        @ the default flag values of the sequence, in order. see FpySequencerTypes::FlagId
+        constant EXIT_ON_CMD_FAIL_DEFAULT = true
     }
 }
