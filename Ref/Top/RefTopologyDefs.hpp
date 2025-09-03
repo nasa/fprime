@@ -16,19 +16,19 @@
 
 // Subtopology PingEntries includes
 #include "Svc/Subtopologies/CdhCore/PingEntries.hpp"
+#include "Svc/Subtopologies/ComCcsds/PingEntries.hpp"
 #include "Svc/Subtopologies/DataProducts/PingEntries.hpp"
 #include "Svc/Subtopologies/FileHandling/PingEntries.hpp"
-#include "Svc/Subtopologies/FramingCcsds/PingEntries.hpp"
 
 // SubtopologyTopologyDefs includes
 #include "Svc/Subtopologies/CdhCore/SubtopologyTopologyDefs.hpp"
+#include "Svc/Subtopologies/ComCcsds/SubtopologyTopologyDefs.hpp"
 #include "Svc/Subtopologies/DataProducts/SubtopologyTopologyDefs.hpp"
 #include "Svc/Subtopologies/FileHandling/SubtopologyTopologyDefs.hpp"
-#include "Svc/Subtopologies/FramingCcsds/SubtopologyTopologyDefs.hpp"
 
 // ComCcsds Enum Includes
-#include "Svc/Subtopologies/FramingCcsds/Ports_ComBufferQueueEnumAc.hpp"
-#include "Svc/Subtopologies/FramingCcsds/Ports_ComPacketQueueEnumAc.hpp"
+#include "Svc/Subtopologies/ComCcsds/Ports_ComBufferQueueEnumAc.hpp"
+#include "Svc/Subtopologies/ComCcsds/Ports_ComPacketQueueEnumAc.hpp"
 
 /**
  * \brief required ping constants
@@ -85,7 +85,7 @@ struct TopologyState {
     const char* hostname;                         //!< Hostname for TCP communication
     U16 port;                                     //!< Port for TCP communication
     CdhCore::SubtopologyState cdhCore;            //!< Subtopology state for CdhCore
-    FramingCcsds::SubtopologyState comCcsds;      //!< Subtopology state for ComCcsds
+    ComCcsds::SubtopologyState comCcsds;          //!< Subtopology state for ComCcsds
     DataProducts::SubtopologyState dataProducts;  //!< Subtopology state for DataProducts
     FileHandling::SubtopologyState fileHandling;  //!< Subtopology state for FileHandling
 };
