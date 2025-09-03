@@ -24,7 +24,7 @@ class FileManagerTester : public FileManagerGTestBase {
     // ----------------------------------------------------------------------
 
   public:
-      // Instance ID supplied to the component instance under test
+    // Instance ID supplied to the component instance under test
     static const FwEnumStoreType TEST_INSTANCE_ID = 0;
 
     // Queue depth supplied to the component instance under test
@@ -109,7 +109,7 @@ class FileManagerTester : public FileManagerGTestBase {
     //! List directory (fail)
     //!
     void listDirectoryFail();
-    
+
     //! List directory with subdirectories (enhanced listing)
     //!
     void listDirectoryWithSubdirs();

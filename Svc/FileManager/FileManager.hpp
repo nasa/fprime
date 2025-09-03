@@ -20,6 +20,7 @@ namespace Svc {
 
 class FileManager final : public FileManagerComponentBase {
     friend class FileManagerTester;
+
   public:
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction
@@ -161,8 +162,8 @@ class FileManager final : public FileManagerComponentBase {
 
     //! Directory listing state enumeration
     enum ListDirectoryState {
-        IDLE,                    //!< Not currently listing a directory
-        LISTING_IN_PROGRESS     //!< Currently processing directory entries via rate group
+        IDLE,                //!< Not currently listing a directory
+        LISTING_IN_PROGRESS  //!< Currently processing directory entries via rate group
     };
 
     //! Current state of directory listing operation

@@ -381,10 +381,10 @@ void FileManagerTester ::listDirectorySucceed() {
     // At this point, only the "Starting" event should be present
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_ListDirectoryStarted_SIZE(1);
-    
+
     // No command response yet (still in progress)
     ASSERT_CMD_RESPONSE_SIZE(0);
-    
+
     // Run rate group cycles to process the directory listing asynchronously
     // We need enough cycles to process all files (3) plus completion
     this->runRateGroupCycles(10);  // Give it plenty of cycles to complete
@@ -404,26 +404,26 @@ void FileManagerTester ::listDirectoryWithSubdirs() {
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Remove test_dir and create a more complex directory structure with files and subdirectories
     this->system("rm -rf test_dir");
-    
+
     // Create main directory structure with multiple levels of subdirectories
     this->system("mkdir -p test_dir/subdir1/nested1");
     this->system("mkdir -p test_dir/subdir2/nested2");
     this->system("mkdir -p test_dir/subdir3/nested3/deep1");
     this->system("mkdir -p test_dir/emptydir");  // An empty directory
-    
+
     // Create various files with different sizes in root directory
     this->system("echo 'Small file content' > test_dir/file1.txt");
     this->system("echo 'Medium sized file with more content than the first one' > test_dir/file2.txt");
     this->system("dd if=/dev/zero bs=1K count=4 of=test_dir/binaryfile.dat 2>/dev/null");  // 4KB binary file
-    
+
     // Create files in subdirectories
     this->system("echo 'Subdir1 file 1' > test_dir/subdir1/sub1_file1.txt");
     this->system("echo 'Subdir1 file 2' > test_dir/subdir1/sub1_file2.txt");
     this->system("echo 'Nested1 file' > test_dir/subdir1/nested1/nested_file.txt");
-    
+
     this->system("echo 'Subdir2 file 1' > test_dir/subdir2/sub2_file1.txt");
     this->system("echo 'Nested2 file' > test_dir/subdir2/nested2/nested_file.txt");
-    
+
     this->system("echo 'Subdir3 file 1' > test_dir/subdir3/sub3_file1.txt");
     this->system("echo 'Deep1 file' > test_dir/subdir3/nested3/deep1/deep_file.txt");
 #else
@@ -432,14 +432,14 @@ void FileManagerTester ::listDirectoryWithSubdirs() {
 
     // List the directory
     this->listDirectory("test_dir");
-    
+
     // At this point, only the "Starting" event should be present
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_ListDirectoryStarted_SIZE(1);
-    
+
     // No command response yet (still in progress)
     ASSERT_CMD_RESPONSE_SIZE(0);
-    
+
     // Run rate group cycles to process the directory listing asynchronously
     // This directory has many files and subdirectories, so give it more cycles
     this->runRateGroupCycles(20);  // Give it plenty of cycles to complete
@@ -451,7 +451,7 @@ void FileManagerTester ::listDirectoryWithSubdirs() {
     // For this test, we'll just verify that events were emitted
     ASSERT_GT(this->eventHistory_DirectoryListing->size(), 0U);
     ASSERT_GT(this->eventHistory_DirectoryListingSubdir->size(), 0U);
-    
+
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Clean up
     this->system("rm -rf test_dir");
@@ -538,7 +538,7 @@ void FileManagerTester ::runRateGroupCycles(const U32 cycles) {
         // Call the schedule handler to process one directory entry per cycle
         this->invoke_to_schedIn(0, 0);
         this->component.doDispatch();
-        
+
         // Check if directory listing operation has completed
         if (this->component.m_listState != FileManager::LISTING_IN_PROGRESS) {
             // Operation finished, no need to continue cycling
