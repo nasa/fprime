@@ -479,34 +479,6 @@ void FileManagerTester ::listDirectoryFail() {
 // Helper methods
 // ----------------------------------------------------------------------
 
-void FileManagerTester ::connectPorts() {
-    // cmdIn
-    this->connect_to_cmdIn(0, this->component.get_cmdIn_InputPort(0));
-
-    // timeCaller
-    this->component.set_timeCaller_OutputPort(0, this->get_from_timeCaller(0));
-
-    // tlmOut
-    this->component.set_tlmOut_OutputPort(0, this->get_from_tlmOut(0));
-
-    // cmdResponseOut
-    this->component.set_cmdResponseOut_OutputPort(0, this->get_from_cmdResponseOut(0));
-
-    // eventOut
-    this->component.set_eventOut_OutputPort(0, this->get_from_eventOut(0));
-
-    // cmdRegOut
-    this->component.set_cmdRegOut_OutputPort(0, this->get_from_cmdRegOut(0));
-
-    // LogText
-    this->component.set_LogText_OutputPort(0, this->get_from_LogText(0));
-}
-
-void FileManagerTester ::initComponents() {
-    this->init();
-    this->component.init(QUEUE_DEPTH, INSTANCE);
-}
-
 void FileManagerTester ::system(const char* const cmd) {
     const int status = ::system(cmd);
     ASSERT_EQ(static_cast<int>(0), status);
@@ -564,10 +536,11 @@ void FileManagerTester ::runRateGroupCycles(const U32 cycles) {
     // Each cycle processes one directory entry, ensuring bounded execution time.
     for (U32 i = 0; i < cycles; i++) {
         // Call the schedule handler to process one directory entry per cycle
-        this->component.testScheduleHandler(0, 0);
+        this->invoke_to_schedIn(0, 0);
+        this->component.doDispatch();
         
         // Check if directory listing operation has completed
-        if (!this->component.isListingInProgress()) {
+        if (this->component.m_listState != FileManager::LISTING_IN_PROGRESS) {
             // Operation finished, no need to continue cycling
             break;
         }

@@ -220,9 +220,6 @@ void FileManager ::schedIn_handler(const FwIndexType portNum, U32 context) {
                 break; // Exit the loop since we're done
                 
             } else if (status == Os::Directory::OP_OK) {
-                // Successfully read a file - emit event for this file
-                Fw::LogStringArg logStringFileName(filename.toChar());
-                
                 // Construct full path for type checking
                 Fw::String fullPath;
                 fullPath.format("%s/%s", m_currentDirName.toChar(), filename.toChar());
@@ -234,14 +231,14 @@ void FileManager ::schedIn_handler(const FwIndexType portNum, U32 context) {
                     // Regular file: get size and emit file event
                     FwSizeType fileSize;
                     Os::FileSystem::Status sizeStatus = Os::FileSystem::getFileSize(fullPath.toChar(), fileSize);
-                    this->log_ACTIVITY_HI_DirectoryListing(m_currentDirName, logStringFileName, 
+                    this->log_ACTIVITY_HI_DirectoryListing(m_currentDirName, filename, 
                                                           (sizeStatus == Os::FileSystem::OP_OK) ? fileSize : static_cast<FwSizeType>(0));
                 } else if (pathType == Os::FileSystem::DIRECTORY) {
                     // Subdirectory: emit subdirectory event with file count 0 (simplified)
-                    this->log_ACTIVITY_HI_DirectoryListingSubdir(m_currentDirName, logStringFileName, 0);
+                    this->log_ACTIVITY_HI_DirectoryListingSubdir(m_currentDirName, filename, 0);
                 } else {
                     // Special file or inaccessible: treat as file with 0 size
-                    this->log_ACTIVITY_HI_DirectoryListing(m_currentDirName, logStringFileName, static_cast<FwSizeType>(0));
+                    this->log_ACTIVITY_HI_DirectoryListing(m_currentDirName, filename, static_cast<FwSizeType>(0));
                 }
                 
                 m_totalEntries++;

@@ -24,6 +24,11 @@ class FileManagerTester : public FileManagerGTestBase {
     // ----------------------------------------------------------------------
 
   public:
+      // Instance ID supplied to the component instance under test
+    static const FwEnumStoreType TEST_INSTANCE_ID = 0;
+
+    // Queue depth supplied to the component instance under test
+    static const FwSizeType TEST_INSTANCE_QUEUE_DEPTH = 10;
     //! Construct object FileManagerTester
     //!
     FileManagerTester();

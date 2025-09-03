@@ -19,6 +19,7 @@
 namespace Svc {
 
 class FileManager final : public FileManagerComponentBase {
+    friend class FileManagerTester;
   public:
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction
@@ -113,30 +114,6 @@ class FileManager final : public FileManagerComponentBase {
     void schedIn_handler(const FwIndexType portNum, /*!< The port number*/
                          U32 context                /*!< The call order*/
     );
-
-  public:
-    // ----------------------------------------------------------------------
-    // Test interface methods
-    // ----------------------------------------------------------------------
-
-    //! Allow tests to simulate rate group execution
-    //! This method provides test access to the schedule handler for
-    //! simulating asynchronous directory listing operations
-    //!
-    //! \param portNum The port number (unused for testing)
-    //! \param context The call context (unused for testing)
-    void testScheduleHandler(const FwIndexType portNum, U32 context) {
-        this->schedIn_handler(portNum, context);
-    }
-    
-    //! Allow tests to check if directory listing is in progress
-    //! This method enables tests to determine when asynchronous
-    //! directory listing operations have completed
-    //!
-    //! \return true if directory listing is in progress, false otherwise
-    bool isListingInProgress() const {
-        return (m_listState == LISTING_IN_PROGRESS);
-    }
 
   private:
     // ----------------------------------------------------------------------
