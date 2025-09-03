@@ -121,7 +121,6 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
                    ) override;
 
     void writeAndRun();
-    bool tester_getFlag(Fpy::FlagId::T flagId);
 
     //! Default handler implementation for from_getTlmChan
     Fw::TlmValid from_getTlmChan_handler(FwIndexType portNum,  //!< The port number

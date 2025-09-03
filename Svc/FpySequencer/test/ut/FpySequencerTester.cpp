@@ -403,10 +403,6 @@ Fw::Success FpySequencerTester::tester_deserializeDirective(const Fpy::Statement
     return this->cmp.deserializeDirective(stmt, deserializedDirective);
 }
 
-bool FpySequencerTester::tester_getFlag(Fpy::FlagId::T flagId) {
-    return this->cmp.getFlag(flagId);
-}
-
 Svc::Signal FpySequencerTester::tester_dispatchStatement() {
     return this->cmp.dispatchStatement();
 }

@@ -520,9 +520,8 @@ class FpySequencer : public FpySequencerComponentBase {
 
         // the sequencer runtime flags. these are modifiable by the sequence and control
         // various aspects of the sequencer.
-        // 1 byte per 8 flags, rounding up.
         // these get set to a default value from FpySequencerCfg
-        U8 flags[(Fpy::FLAG_COUNT + 7) / 8] = {0};
+        bool flags[Fpy::FLAG_COUNT] = {0};
     } m_runtime;
 
     // the state of the debugger. debugger is separate from runtime
@@ -587,11 +586,6 @@ class FpySequencer : public FpySequencerComponentBase {
     // ----------------------------------------------------------------------
     // Run state
     // ----------------------------------------------------------------------
-
-    // gets the value of a runtime flag
-    bool getFlag(const Fpy::FlagId& id);
-    // sets the value of a runtime flag. will change the runtime behavior of the sequencer
-    void setFlag(const Fpy::FlagId& id, bool value);
 
     // dispatches the next statement
     Signal dispatchStatement();

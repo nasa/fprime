@@ -1220,7 +1220,7 @@ Signal FpySequencer::setFlag_directiveHandler(const FpySequencer_SetFlagDirectiv
     // 1 if the stack bool is nonzero, 0 otherwise
     U8 flagVal = this->pop<U8>() != 0;
 
-    this->setFlag(static_cast<Fpy::FlagId::T>(directive.get_flagIdx()), flagVal == 1);
+    this->m_runtime.flags[directive.get_flagIdx()] = flagVal == 1;
     return Signal::stmtResponse_success;
 }
 }  // namespace Svc

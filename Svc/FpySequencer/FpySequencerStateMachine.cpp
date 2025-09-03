@@ -172,7 +172,7 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_resetRuntime(
     // explicitly call dtor
     this->m_runtime.~Runtime();
     new (&this->m_runtime) Runtime();
-    this->setFlag(Fpy::FlagId::EXIT_ON_CMD_FAIL, Fpy::EXIT_ON_CMD_FAIL_DEFAULT);
+    this->m_runtime.flags[Fpy::FlagId::EXIT_ON_CMD_FAIL] = Fpy::EXIT_ON_CMD_FAIL_DEFAULT;
 }
 
 //! Implementation for action validate of state machine

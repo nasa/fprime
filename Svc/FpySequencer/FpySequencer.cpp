@@ -303,7 +303,7 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
     // 4) the response is from the correct instance of that opcode in the sequence
 
     // if we aren't supposed to exit on fail, succeed unconditionally
-    if (!this->getFlag(Fpy::FlagId::EXIT_ON_CMD_FAIL)) {
+    if (!this->m_runtime.flags[Fpy::FlagId::EXIT_ON_CMD_FAIL]) {
         this->sequencer_sendSignal_stmtResponse_success();
     } else if (response == Fw::CmdResponse::OK) {
         // if we didn't fail, succeed!

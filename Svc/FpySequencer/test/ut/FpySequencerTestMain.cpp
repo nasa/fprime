@@ -963,14 +963,14 @@ TEST_F(FpySequencerTester, setFlag) {
     Signal result = tester_setFlag_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_TRUE(tester_getFlag(static_cast<Fpy::FlagId::T>(0)));
+    ASSERT_TRUE(tester_get_m_runtime_ptr()->flags[static_cast<Fpy::FlagId::T>(0)]);
 
     // Test setting flag to false
     tester_push<U8>(0);
     result = tester_setFlag_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
-    ASSERT_FALSE(tester_getFlag(static_cast<Fpy::FlagId::T>(0)));
+    ASSERT_FALSE(tester_get_m_runtime_ptr()->flags[static_cast<Fpy::FlagId::T>(0)]);
 
     // Test invalid flag index
     directive.set_flagIdx(Fpy::FLAG_COUNT);
