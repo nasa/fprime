@@ -124,7 +124,6 @@ module ComCcsds {
         instance commsBufferManager
         instance frameAccumulator
         instance fprimeRouter
-        # instance comStub
         instance tcDeframer
         instance spacePacketDeframer
         instance framer
@@ -132,7 +131,6 @@ module ComCcsds {
         instance apidManager
 
         connections Downlink {
-
             # ComQueue <-> SpacePacketFramer
             comQueue.dataOut                -> spacePacketFramer.dataIn
             spacePacketFramer.dataReturnOut -> comQueue.dataReturnIn
@@ -140,28 +138,23 @@ module ComCcsds {
             spacePacketFramer.bufferAllocate   -> commsBufferManager.bufferGetCallee
             spacePacketFramer.bufferDeallocate -> commsBufferManager.bufferSendIn
             spacePacketFramer.getApidSeqCount  -> apidManager.getApidSeqCountIn
-            # SpacePacketFramer <-> framer
+            # SpacePacketFramer <-> TmFramer
             spacePacketFramer.dataOut -> framer.dataIn
-            framer.dataReturnOut    -> spacePacketFramer.dataReturnIn
-            # TmFramer <-> ComStub
-            # framer.dataOut      -> comStub.dataIn
-            # comStub.dataReturnOut -> framer.dataReturnIn
+            framer.dataReturnOut      -> spacePacketFramer.dataReturnIn
             # ComStatus
-            # comStub.comStatusOut            -> framer.comStatusIn
-            framer.comStatusOut           -> spacePacketFramer.comStatusIn
-            spacePacketFramer.comStatusOut  -> comQueue.comStatusIn
+            framer.comStatusOut            -> spacePacketFramer.comStatusIn
+            spacePacketFramer.comStatusOut -> comQueue.comStatusIn
+            # (Outgoing) Framer <-> ComInterface connections shall be established by the user
         }
 
         connections Uplink {
-            # ComStub <-> FrameAccumulator
-            # comStub.dataOut                -> frameAccumulator.dataIn
-            # frameAccumulator.dataReturnOut -> comStub.dataReturnIn
+            # (Incoming) ComInterface <-> FrameAccumulator connections shall be established by the user
             # FrameAccumulator buffer allocations
             frameAccumulator.bufferDeallocate -> commsBufferManager.bufferSendIn
             frameAccumulator.bufferAllocate   -> commsBufferManager.bufferGetCallee
             # FrameAccumulator <-> TcDeframer
-            frameAccumulator.dataOut          -> tcDeframer.dataIn
-            tcDeframer.dataReturnOut          -> frameAccumulator.dataReturnIn
+            frameAccumulator.dataOut -> tcDeframer.dataIn
+            tcDeframer.dataReturnOut -> frameAccumulator.dataReturnIn
             # TcDeframer <-> SpacePacketDeframer
             tcDeframer.dataOut                -> spacePacketDeframer.dataIn
             spacePacketDeframer.dataReturnOut -> tcDeframer.dataReturnIn
@@ -173,7 +166,6 @@ module ComCcsds {
             # Router buffer allocations
             fprimeRouter.bufferAllocate   -> commsBufferManager.bufferGetCallee
             fprimeRouter.bufferDeallocate -> commsBufferManager.bufferSendIn
-         
         }
 
     } # end topology

@@ -117,21 +117,19 @@ module ComFprime {
         instance fprimeRouter
 
         connections Downlink {
-            # Inputs to ComQueue (events, telemetry)
             # ComQueue <-> Framer
-            comQueue.dataOut           -> framer.dataIn
+            comQueue.dataOut     -> framer.dataIn
             framer.dataReturnOut -> comQueue.dataReturnIn
             # Buffer Management for Framer
             framer.bufferAllocate   -> commsBufferManager.bufferGetCallee
             framer.bufferDeallocate -> commsBufferManager.bufferSendIn
             # ComStatus passback
             framer.comStatusOut  -> comQueue.comStatusIn
+            # (Outgoing) Framer <-> ComInterface connections shall be established by the user
         }
 
         connections Uplink {
-            # # ComStub <-> FrameAccumulator
-            # comStub.dataOut                -> frameAccumulator.dataIn
-            # frameAccumulator.dataReturnOut -> comStub.dataReturnIn
+            # (Incoming) ComInterface <-> FrameAccumulator connections shall be established by the user
             # FrameAccumulator buffer allocations
             frameAccumulator.bufferDeallocate -> commsBufferManager.bufferSendIn
             frameAccumulator.bufferAllocate   -> commsBufferManager.bufferGetCallee
