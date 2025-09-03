@@ -35,7 +35,7 @@ struct StoreTlmValDirective {
     @ the tlm channel id to get the time of
     chanId: FwChanIdType
     @ the offset in the lvar array to store the tlm in
-    lvarOffset: U16
+    lvarOffset: Fpy.StackSizeType
 }
 
 @ stores a prm buffer in the lvar array
@@ -43,7 +43,7 @@ struct StorePrmDirective {
     @ the param id to get the value of
     prmId: FwPrmIdType
     @ the offset in the lvar array to store the prm in
-    lvarOffset: U16
+    lvarOffset: Fpy.StackSizeType
 }
 
 @ executes a cmd with const args
@@ -70,19 +70,19 @@ struct ExitDirective {
 
 @ pushes some empty bytes to the stack
 struct AllocateDirective {
-    $size: U16
+    $size: Fpy.StackSizeType
 }
 
 @ pops some bytes off the stack and puts them in lvar array
 struct StoreDirective {
-    lvarOffset: U16
-    $size: U16
+    lvarOffset: Fpy.StackSizeType
+    $size: Fpy.StackSizeType
 }
 
 @ gets bytes from lvar array and pushes them to stack
 struct LoadDirective {
-    lvarOffset: U16
-    $size: U16
+    lvarOffset: Fpy.StackSizeType
+    $size: Fpy.StackSizeType
 }
 
 @ pushes a const byte array onto stack
@@ -95,15 +95,15 @@ struct PushValDirective {
 }
 
 struct DiscardDirective {
-    $size: U16
+    $size: Fpy.StackSizeType
 }
 
 struct MemCmpDirective {
-    $size: U16
+    $size: Fpy.StackSizeType
 }
 
 struct StackCmdDirective {
-    argsSize: U16
+    argsSize: Fpy.StackSizeType
 }
 
 internal port directive_waitRel(directive: WaitRelDirective) priority 6 assert

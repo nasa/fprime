@@ -328,13 +328,15 @@ void FpySequencer::seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& f
 void FpySequencer::tlmWrite_handler(FwIndexType portNum,  //!< The port number
                                     U32 context           //!< The call order
 ) {
-    this->tlmWrite_State(static_cast<I32>(this->sequencer_getState()));
+    this->tlmWrite_State(static_cast<FwEnumStoreType>(this->sequencer_getState()));
     this->tlmWrite_StatementsDispatched(this->m_statementsDispatched);
     this->tlmWrite_StatementsFailed(this->m_tlm.statementsFailed);
     this->tlmWrite_SequencesCancelled(this->m_tlm.sequencesCancelled);
     this->tlmWrite_SequencesSucceeded(this->m_tlm.sequencesSucceeded);
     this->tlmWrite_SequencesFailed(this->m_tlm.sequencesFailed);
     this->tlmWrite_LastDirectiveError(this->m_tlm.lastDirectiveError);
+    this->tlmWrite_DirectiveErrorIdx(this->m_tlm.directiveErrorIndex);
+    this->tlmWrite_DirectiveErrorId(this->m_tlm.directiveErrorId);
     this->tlmWrite_SeqPath(this->m_sequenceFilePath);
     this->tlmWrite_DebugBreakpointIdx(this->m_debug.breakpointIndex);
     this->tlmWrite_Debug(this->getDebugTelemetry());
