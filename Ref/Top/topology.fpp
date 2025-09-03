@@ -44,6 +44,7 @@ module Ref {
     instance dpDemo
     instance linuxTimer
     instance comDriver
+    instance comStub
     instance cmdSeq
 
     # ----------------------------------------------------------------------
@@ -68,7 +69,7 @@ module Ref {
     # Telemetry packets
     # ----------------------------------------------------------------------
 
-    include "RefPackets.fppi"
+    # include "RefPackets.fppi"
 
     # ----------------------------------------------------------------------
     # Direct graph specifiers
@@ -113,12 +114,21 @@ module Ref {
       comDriver.deallocate    -> ComCcsds.commsBufferManager.bufferSendIn
       
       # ComDriver <-> ComStub (Uplink)
-      comDriver.$recv                     -> ComCcsds.comStub.drvReceiveIn
-      ComCcsds.comStub.drvReceiveReturnOut -> comDriver.recvReturnIn
+      comDriver.$recv                     -> comStub.drvReceiveIn
+      comStub.drvReceiveReturnOut -> comDriver.recvReturnIn
       
       # ComStub <-> ComDriver (Downlink)
-      ComCcsds.comStub.drvSendOut      -> comDriver.$send
-      comDriver.ready         -> ComCcsds.comStub.drvConnected
+      comStub.drvSendOut      -> comDriver.$send
+      comDriver.ready         -> comStub.drvConnected
+
+      # Framer <-> ComStub (Downlink)
+      ComCcsds.framer.dataOut  -> comStub.dataIn
+      comStub.dataReturnOut -> ComCcsds.framer.dataReturnIn
+      comStub.comStatusOut       -> ComCcsds.framer.comStatusIn
+
+      # ComStub <-> FrameAccumulator (Uplink)
+      comStub.dataOut                -> ComCcsds.frameAccumulator.dataIn
+      ComCcsds.frameAccumulator.dataReturnOut -> comStub.dataReturnIn
     }
 
     connections Ref {
