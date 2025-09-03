@@ -393,9 +393,18 @@ Signal FpySequencerTester::tester_memCmp_directiveHandler(const FpySequencer_Mem
     return this->cmp.memCmp_directiveHandler(directive, err);
 }
 
+Signal FpySequencerTester::tester_setFlag_directiveHandler(const FpySequencer_SetFlagDirective& directive,
+                                                          DirectiveError& err) {
+    return this->cmp.setFlag_directiveHandler(directive, err);
+}
+
 Fw::Success FpySequencerTester::tester_deserializeDirective(const Fpy::Statement& stmt,
                                                             Svc::FpySequencer::DirectiveUnion& deserializedDirective) {
     return this->cmp.deserializeDirective(stmt, deserializedDirective);
+}
+
+bool FpySequencerTester::tester_getFlag(Fpy::FlagId::T flagId) {
+    return this->cmp.getFlag(flagId);
 }
 
 Svc::Signal FpySequencerTester::tester_dispatchStatement() {

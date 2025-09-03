@@ -956,6 +956,37 @@ TEST_F(FpySequencerTester, memCmp) {
     ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
 }
 
+TEST_F(FpySequencerTester, setFlag) {
+    FpySequencer_SetFlagDirective directive(0);
+    tester_push<U8>(1);
+    DirectiveError err = DirectiveError::NO_ERROR;
+    Signal result = tester_setFlag_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+    ASSERT_TRUE(tester_getFlag(static_cast<Fpy::FlagId::T>(0)));
+
+    // Test setting flag to false
+    tester_push<U8>(0);
+    result = tester_setFlag_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+    ASSERT_FALSE(tester_getFlag(static_cast<Fpy::FlagId::T>(0)));
+
+    // Test invalid flag index
+    directive.set_flagIdx(Fpy::FLAG_COUNT);
+    tester_push<U8>(1);
+    result = tester_setFlag_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::FLAG_IDX_OUT_OF_BOUNDS);
+    tester_get_m_runtime_ptr()->stackSize = 0;
+
+    // Test stack underflow
+    directive.set_flagIdx(0);
+    result = tester_setFlag_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::STACK_ACCESS_OUT_OF_BOUNDS);
+}
+
 TEST_F(FpySequencerTester, checkShouldWakeMismatchBase) {
     Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 0, 100, 100);
     setTestTime(testTime);
@@ -1775,6 +1806,27 @@ TEST_F(FpySequencerTester, deserialize_memCmp) {
     ASSERT_EQ(result, Fw::Success::FAILURE);
     ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
 }
+
+TEST_F(FpySequencerTester, deserialize_setFlag) {
+    FpySequencer::DirectiveUnion actual;
+    FpySequencer_SetFlagDirective dir(123);
+    add_SET_FLAG(dir);
+    Fw::Success result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::SUCCESS);
+    ASSERT_EQ(actual.setFlag, dir);
+    // write some junk after buf, make sure it fails
+    seq.get_statements()[0].get_argBuf().serialize(123);
+    result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::FAILURE);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+    this->clearHistory();
+    // clear args, make sure it fails
+    seq.get_statements()[0].get_argBuf().resetSer();
+    result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::FAILURE);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+}
+
 // caught a bug
 TEST_F(FpySequencerTester, checkTimers) {
     allocMem();

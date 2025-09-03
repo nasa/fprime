@@ -121,6 +121,7 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
                    ) override;
 
     void writeAndRun();
+    bool tester_getFlag(Fpy::FlagId::T flagId);
 
     //! Default handler implementation for from_getTlmChan
     Fw::TlmValid from_getTlmChan_handler(FwIndexType portNum,  //!< The port number
@@ -151,6 +152,7 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     Signal tester_discard_directiveHandler(const FpySequencer_DiscardDirective& directive, DirectiveError& err);
     Signal tester_stackCmd_directiveHandler(const FpySequencer_StackCmdDirective& directive, DirectiveError& err);
     Signal tester_memCmp_directiveHandler(const FpySequencer_MemCmpDirective& directive, DirectiveError& err);
+    Signal tester_setFlag_directiveHandler(const FpySequencer_SetFlagDirective& directive, DirectiveError& err);
     DirectiveError tester_op_or();
     DirectiveError tester_op_and();
     DirectiveError tester_op_ieq();
