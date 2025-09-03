@@ -1,18 +1,5 @@
 module ComFprime {
 
-# Usage Note:
-#
-# When importing this subtopology, users shall establish 5 port connections with a component implementing
-# the Svc.Com (Svc/Interfaces/Com.fpp) interface. They are as follows:
-#
-# 1) Outputs:
-#     - ComFprime.framer.dataOut                 -> [Svc.Com].dataIn
-#     - ComFprime.frameAccumulator.dataReturnOut -> [Svc.Com].dataReturnIn
-# 2) Inputs:
-#     - [Svc.Com].dataReturnOut -> ComFprime.framer.dataReturnIn
-#     - [Svc.Com].comStatusOut  -> ComFprime.framer.comStatusIn
-#     - [Svc.Com].dataOut       -> ComFprime.frameAccumulator.dataIn
-
     enum Ports_ComPacketQueue {
         EVENTS,
         TELEMETRY,
@@ -105,7 +92,22 @@ module ComFprime {
 
     instance fprimeRouter: Svc.FprimeRouter base id ComFprimeConfig.BASE_ID + 0x05000
 
-    topology Subtopology {
+    instance comStub: Svc.ComStub base id ComFprimeConfig.BASE_ID + 0x06000
+
+    topology FramingSubtopology {
+        # Usage Note:
+        #
+        # When importing this subtopology, users shall establish 5 port connections with a component implementing
+        # the Svc.Com (Svc/Interfaces/Com.fpp) interface. They are as follows:
+        #
+        # 1) Outputs:
+        #     - ComFprime.framer.dataOut                 -> [Svc.Com].dataIn
+        #     - ComFprime.frameAccumulator.dataReturnOut -> [Svc.Com].dataReturnIn
+        # 2) Inputs:
+        #     - [Svc.Com].dataReturnOut -> ComFprime.framer.dataReturnIn
+        #     - [Svc.Com].comStatusOut  -> ComFprime.framer.comStatusIn
+        #     - [Svc.Com].dataOut       -> ComFprime.frameAccumulator.dataIn
+
         # Active Components
         instance comQueue
 
@@ -145,5 +147,24 @@ module ComFprime {
         }
 
 
-    } # end topology
+    } # end FramingSubtopology
+
+        # This subtopology uses FramingSubtopology with a ComStub component for Com Interface
+    topology Subtopology {
+        import FramingSubtopology
+
+        instance comStub
+
+        connections ComStub {
+            # Framer <-> ComStub (Downlink)
+            ComFprime.framer.dataOut  -> comStub.dataIn
+            comStub.dataReturnOut -> ComFprime.framer.dataReturnIn
+            comStub.comStatusOut       -> ComFprime.framer.comStatusIn
+
+            # ComStub <-> FrameAccumulator (Uplink)
+            comStub.dataOut                -> ComFprime.frameAccumulator.dataIn
+            ComFprime.frameAccumulator.dataReturnOut -> comStub.dataReturnIn
+        }
+
+    } # end Subtopology
 } # end ComFprime Subtopology

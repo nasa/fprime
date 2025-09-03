@@ -1,18 +1,5 @@
 module ComCcsds {
 
-# Usage Note:
-#
-# When importing this subtopology, users shall establish 5 port connections with a component implementing
-# the Svc.Com (Svc/Interfaces/Com.fpp) interface. They are as follows:
-#
-# 1) Outputs:
-#     - ComCcsds.framer.dataOut                 -> [Svc.Com].dataIn
-#     - ComCcsds.frameAccumulator.dataReturnOut -> [Svc.Com].dataReturnIn
-# 2) Inputs:
-#     - [Svc.Com].dataReturnOut -> ComCcsds.framer.dataReturnIn
-#     - [Svc.Com].comStatusOut  -> ComCcsds.framer.comStatusIn
-#     - [Svc.Com].dataOut       -> ComCcsds.frameAccumulator.dataIn
-
     # ComPacket Queue enum for queue types
     enum Ports_ComPacketQueue {
         EVENTS,
@@ -117,10 +104,23 @@ module ComCcsds {
 
     instance apidManager: Svc.Ccsds.ApidManager base id ComCcsdsConfig.BASE_ID + 0x08000
 
-    instance comStub: Svc.ComStub base id 0x10020000
-
+    instance comStub: Svc.ComStub base id ComCcsdsConfig.BASE_ID + 0x09000
 
     topology FramingSubtopology {
+        # Usage Note:
+        #
+        # When importing this subtopology, users shall establish 5 port connections with a component implementing
+        # the Svc.Com (Svc/Interfaces/Com.fpp) interface. They are as follows:
+        #
+        # 1) Outputs:
+        #     - ComCcsds.framer.dataOut                 -> [Svc.Com].dataIn
+        #     - ComCcsds.frameAccumulator.dataReturnOut -> [Svc.Com].dataReturnIn
+        # 2) Inputs:
+        #     - [Svc.Com].dataReturnOut -> ComCcsds.framer.dataReturnIn
+        #     - [Svc.Com].comStatusOut  -> ComCcsds.framer.comStatusIn
+        #     - [Svc.Com].dataOut       -> ComCcsds.frameAccumulator.dataIn
+
+
         # Active Components
         instance comQueue
 
@@ -172,8 +172,9 @@ module ComCcsds {
             fprimeRouter.bufferDeallocate -> commsBufferManager.bufferSendIn
         }
 
-    } # end topology
+    } # end FramingSubtopology
 
+    # This subtopology uses FramingSubtopology with a ComStub component for Com Interface
     topology Subtopology {
         import FramingSubtopology
 
@@ -190,5 +191,6 @@ module ComCcsds {
             ComCcsds.frameAccumulator.dataReturnOut -> comStub.dataReturnIn
         }
 
-    } # end topology
-} # end ComCcsds Subtopology
+    } # end Subtopology
+
+} # end ComCcsds
