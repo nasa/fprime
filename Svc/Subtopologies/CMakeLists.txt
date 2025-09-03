@@ -4,6 +4,8 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ComFprime/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FileHandling/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/DataProducts/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ComLoggerTee/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FramingCcsds/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FramingFprime/")
 
 add_custom_target(
     Svc_Subtopologies
@@ -19,4 +21,8 @@ add_custom_target(
         Svc_Subtopologies_DataProducts
         Svc_Subtopologies_DataProducts_DataProductsConfig
         Svc_Subtopologies_ComLoggerTee
+        Svc_Subtopologies_FramingCcsds
+        Svc_Subtopologies_FramingCcsds_FramingCcsdsConfig
+        Svc_Subtopologies_FramingFprime
+        Svc_Subtopologies_FramingFprime_FramingFprimeConfig
 )
