@@ -76,9 +76,9 @@ void ComLoggerTester ::testLogging() {
 
     for (int j = 0; j < 3; j++) {
         // Test times for the different iterations:
-        Fw::Time testTime(TimeBase::TB_NONE, j, 9876543);
-        Fw::Time testTimePrev(TimeBase::TB_NONE, j - 1, 9876543);
-        Fw::Time testTimeNext(TimeBase::TB_NONE, j + 1, 9876543);
+        Fw::Time testTime(TimeBase::TB_NONE, j, 987654);
+        Fw::Time testTimePrev(TimeBase::TB_NONE, j - 1, 987654);
+        Fw::Time testTimeNext(TimeBase::TB_NONE, j + 1, 987654);
 
         // File names for the different iterations:
         memset(fileName, 0, sizeof(fileName));
@@ -312,7 +312,7 @@ void ComLoggerTester ::openError() {
     const U8 data[COM_BUFFER_LENGTH] = {0xde, 0xad, 0xbe, 0xef};
     Fw::ComBuffer buffer(data, sizeof(data));
 
-    Fw::Time testTime(TimeBase::TB_NONE, 4, 9876543);
+    Fw::Time testTime(TimeBase::TB_NONE, 4, 987654);
     setTestTime(testTime);
 
     snprintf(fileName, sizeof(fileName), "%s_%d_%d_%06d.com", filePrefix, static_cast<U32>(testTime.getTimeBase()),
@@ -384,7 +384,7 @@ void ComLoggerTester ::writeError() {
     const U8 data[4] = {0xde, 0xad, 0xbe, 0xef};
     Fw::ComBuffer buffer(data, sizeof(data));
 
-    Fw::Time testTime(TimeBase::TB_NONE, 5, 9876543);
+    Fw::Time testTime(TimeBase::TB_NONE, 5, 987654);
     setTestTime(testTime);
 
     for (int i = 0; i < 3; i++) {
@@ -457,7 +457,7 @@ void ComLoggerTester ::closeFileCommand() {
     Os::File::Status ret;
 
     // Form filenames:
-    Fw::Time testTime(TimeBase::TB_NONE, 6, 9876543);
+    Fw::Time testTime(TimeBase::TB_NONE, 6, 987654);
     setTestTime(testTime);
     memset(fileName, 0, sizeof(fileName));
     snprintf(fileName, sizeof(fileName), "%s_%d_%d_%06d.com", FILE_STR,
@@ -541,9 +541,9 @@ void ComLoggerTester ::testLoggingWithInit() {
 
     for (int j = 0; j < 3; j++) {
         // Test times for the different iterations:
-        Fw::Time testTime(TimeBase::TB_NONE, j, 9876543);
-        Fw::Time testTimePrev(TimeBase::TB_NONE, j - 1, 9876543);
-        Fw::Time testTimeNext(TimeBase::TB_NONE, j + 1, 9876543);
+        Fw::Time testTime(TimeBase::TB_NONE, j, 987654);
+        Fw::Time testTimePrev(TimeBase::TB_NONE, j - 1, 987654);
+        Fw::Time testTimeNext(TimeBase::TB_NONE, j + 1, 987654);
 
         // File names for the different iterations:
         memset(fileName, 0, sizeof(fileName));
