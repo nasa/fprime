@@ -68,7 +68,7 @@ module Ref {
     # Telemetry packets
     # ----------------------------------------------------------------------
 
-    # include "RefPackets.fppi"
+    include "RefPackets.fppi"
 
     # ----------------------------------------------------------------------
     # Direct graph specifiers
@@ -116,7 +116,7 @@ module Ref {
       comDriver.$recv                     -> ComCcsds.comStub.drvReceiveIn
       ComCcsds.comStub.drvReceiveReturnOut -> comDriver.recvReturnIn
       
-      # ComCcsds.ComStub <-> ComDriver (Downlink)
+      # ComStub <-> ComDriver (Downlink)
       ComCcsds.comStub.drvSendOut      -> comDriver.$send
       comDriver.ready         -> ComCcsds.comStub.drvConnected
     }
