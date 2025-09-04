@@ -24,8 +24,8 @@ def test_send_health_command(fprime_test_api):
 
     pred = predicates.greater_than(0)
     zero = predicates.equal_to(0)
-    oneplus = predicates.greater_than(1)
-    
+    one_plus = predicates.greater_than_or_equal_to(1)
+
     # Expect number still increment after clear_history
     fprime_test_api.clear_histories()  # will clear all history (can read telemetry channel again with latest value.  otherwise still have old value)
     time.sleep(5)
@@ -139,11 +139,21 @@ def test_send_health_command(fprime_test_api):
         fprime_test_api.get_mnemonic("Svc.FileManager") + "." + "AppendFile",
         ["/tmp/2MiB.txt", "/tmp/2MiB.txt"],
     )
+    time.sleep(10)
+    fprime_test_api.send_command(
+        fprime_test_api.get_mnemonic("Svc.FileManager") + "." + "AppendFile",
+        ["/tmp/2MiB.txt", "/tmp/2MiB.txt"],
+    )
+    time.sleep(10)
+    fprime_test_api.send_command(
+        fprime_test_api.get_mnemonic("Svc.FileManager") + "." + "AppendFile",
+        ["/tmp/2MiB.txt", "/tmp/2MiB.txt"],
+    )
     time.sleep(120)
 
     # If no constraints are specified on the channels, the predicate will always return true        # confirm PingLateWarnings
     WarnHi_error = fprime_test_api.get_telemetry_pred(
-        fprime_test_api.get_mnemonic("Svc.Health") + "." + "PingLateWarnings", oneplus
+        fprime_test_api.get_mnemonic("Svc.Health") + "." + "PingLateWarnings", one_plus
     )
     fprime_test_api.assert_telemetry(WarnHi_error, timeout=5)
 
