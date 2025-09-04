@@ -1,4 +1,3 @@
-
 # How-To: Define State Machines in F Prime
 
 This guide shows how to define and use state machines in F Prime using the F Prime Modeling Language (FPP). State machines help capture component behavior by modeling modes (states) and transitions explicitly, making complex logic easier to implement, test, and maintain. FPP provides autocoding capabilities to allow users to quickly implement state-defined behavior.
@@ -83,7 +82,7 @@ This state machine is implemented in the [MpuImu](TODO) component. This componen
 
 ## Designing a State Machine in FPP
 
-We will model the Imu state machine in FPP.  Typically users would define state machines in a new file.  We should use `ImuStateMachine.fpp` defined in the same folder (i.e. module) as the `ImuManager` this will support.  Define the basic module and state machine with:
+We will model the Imu state machine in FPP.  In this guide, we will use a separate file `ImuStateMachine.fpp` defined in the same folder (i.e. module) as the `ImuManager`, but you may also inline the state machine directly in the component itself.  We define the basic module and state machine with:
 
 ```
 module MpuImu {
@@ -135,24 +134,19 @@ module MpuImu {
         signal error
 
         @ Reset the Imu
-        state RESET {
-        }
+        state RESET
 
         @ Wait for the Imu to reset
-        state WAIT_RESET {
-        }
+        state WAIT_RESET
 
         @ Enable Imu data flows
-        state ENABLE {
-        }
+        state ENABLE
 
         @ Configure Imu
-        state CONFIGURE {
-        }
+        state CONFIGURE
 
         @ Run the Imu
-        state RUN {
-        }
+        state RUN
     }
 }
 ```
@@ -301,7 +295,7 @@ Every state machine can be used multiple times. To define a single instance atta
 ```
 queued component ImuManager {
     @ Use the ImuStateMachine
-    state machine instances imuStateMachine: ImuStateMachine
+    state machine instance imuStateMachine: ImuStateMachine
 }
 ```
 
