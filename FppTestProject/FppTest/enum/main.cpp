@@ -10,12 +10,12 @@
 //
 // ======================================================================
 
-#include "FppTest/enum/ImplicitEnumAc.hpp"
-#include "FppTest/enum/ExplicitEnumAc.hpp"
 #include "FppTest/enum/DefaultEnumAc.hpp"
+#include "FppTest/enum/ExplicitEnumAc.hpp"
+#include "FppTest/enum/ImplicitEnumAc.hpp"
 #include "FppTest/enum/IntervalEnumAc.hpp"
-#include "FppTest/enum/SerializeTypeU8EnumAc.hpp"
 #include "FppTest/enum/SerializeTypeU64EnumAc.hpp"
+#include "FppTest/enum/SerializeTypeU8EnumAc.hpp"
 
 #include "FppTest/typed_tests/EnumTest.hpp"
 
@@ -23,53 +23,55 @@
 #include "gtest/gtest.h"
 
 // Instantiate enum tests
-using EnumTestImplementations = ::testing::Types<
-    Implicit, 
-    Explicit, 
-    Default,
-    Interval, 
-    SerializeTypeU8,
-    SerializeTypeU64
->;
-INSTANTIATE_TYPED_TEST_SUITE_P(FppTest, 
-                               EnumTest, 
-                               EnumTestImplementations);
+using EnumTestImplementations =
+    ::testing::Types<Implicit, Explicit, Default, Interval, SerializeTypeU8, SerializeTypeU64>;
+INSTANTIATE_TYPED_TEST_SUITE_P(FppTest, EnumTest, EnumTestImplementations);
 
 // Specializations for default value
-template<>
+template <>
 Explicit::T FppTest::Enum::getDefaultValue<Explicit>() {
     return Explicit::A;
 }
 
-template<>
+template <>
 Default::T FppTest::Enum::getDefaultValue<Default>() {
     return Default::C;
 }
 
 // Specializations for valid value
-template<>
+template <>
 Explicit::T FppTest::Enum::getValidValue<Explicit>() {
     U32 val = STest::Pick::startLength(0, Explicit::NUM_CONSTANTS);
 
     switch (val) {
-        case 0: return Explicit::A;
-        case 1: return Explicit::B;
-        default: return Explicit::C;
+        case 0:
+            return Explicit::A;
+        case 1:
+            return Explicit::B;
+        default:
+            return Explicit::C;
     }
 }
 
-template<>
+template <>
 Interval::T FppTest::Enum::getValidValue<Interval>() {
     U32 val = STest::Pick::startLength(0, Interval::NUM_CONSTANTS);
 
     switch (val) {
-        case 0: return Interval::A;
-        case 1: return Interval::B;
-        case 2: return Interval::C;
-        case 3: return Interval::D;
-        case 4: return Interval::E;
-        case 5: return Interval::F;
-        default: return Interval::G;
+        case 0:
+            return Interval::A;
+        case 1:
+            return Interval::B;
+        case 2:
+            return Interval::C;
+        case 3:
+            return Interval::D;
+        case 4:
+            return Interval::E;
+        case 5:
+            return Interval::F;
+        default:
+            return Interval::G;
     }
 }
 
@@ -80,28 +82,20 @@ Explicit::T FppTest::Enum::getInvalidValue<Explicit>() {
 
     switch (sign) {
         case 0:
-            return static_cast<Explicit::T>(STest::Pick::lowerUpper(
-                Explicit::C + 1,
-                std::numeric_limits<Explicit::SerialType>::max()
-            ));
+            return static_cast<Explicit::T>(
+                STest::Pick::lowerUpper(Explicit::C + 1, std::numeric_limits<Explicit::SerialType>::max()));
         default:
             return static_cast<Explicit::T>(
-                static_cast<I32>(
-                    STest::Pick::lowerUpper(
-                        (Explicit::A - 1) * (-1),
-                        std::numeric_limits<Explicit::SerialType>::max()
-                    )
-                ) * (-1)
-            );
+                static_cast<I32>(STest::Pick::lowerUpper((Explicit::A - 1) * (-1),
+                                                         std::numeric_limits<Explicit::SerialType>::max())) *
+                (-1));
     }
 }
 
-template<>
+template <>
 Interval::T FppTest::Enum::getInvalidValue<Interval>() {
-    return static_cast<Interval::T>(STest::Pick::lowerUpper(
-        Interval::G + 1,
-        std::numeric_limits<Interval::SerialType>::max()
-    ));
+    return static_cast<Interval::T>(
+        STest::Pick::lowerUpper(Interval::G + 1, std::numeric_limits<Interval::SerialType>::max()));
 }
 
 int main(int argc, char* argv[]) {

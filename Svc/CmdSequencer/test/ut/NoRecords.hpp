@@ -12,43 +12,37 @@
 
 namespace Svc {
 
-    namespace NoRecords {
+namespace NoRecords {
 
-        //! Test sequencer behavior with no input files
-        class CmdSequencerTester :
-            public Svc::CmdSequencerTester
-        {
+//! Test sequencer behavior with no input files
+class CmdSequencerTester : public Svc::CmdSequencerTester {
+  public:
+    // ----------------------------------------------------------------------
+    // Constructors
+    // ----------------------------------------------------------------------
 
-        public:
+    //! Construct object CmdSequencerTester
+    CmdSequencerTester(const SequenceFiles::File::Format::t a_format =
+                           SequenceFiles::File::Format::F_PRIME  //!< The file format to use
+    );
 
-            // ----------------------------------------------------------------------
-            // Constructors
-            // ----------------------------------------------------------------------
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-            //! Construct object CmdSequencerTester
-            CmdSequencerTester(
-                const SequenceFiles::File::Format::t a_format =
-                SequenceFiles::File::Format::F_PRIME //!< The file format to use
-            );
+    //! Initialization
+    void Init();
 
-        public:
+    //! Issue a validate command on an empty sequence
+    void ValidateNoRecords();
 
-            // ----------------------------------------------------------------------
-            // Tests
-            // ----------------------------------------------------------------------
+    //! Issue a run command on an empty sequence
+    void RunNoRecords();
+};
 
-            //! Initialization
-            void Init();
+}  // namespace NoRecords
 
-            //! Issue a validate command on an empty sequence
-            void ValidateNoRecords();
-
-            //! Issue a run command on an empty sequence
-            void RunNoRecords();
-        };
-
-    }
-
-}
+}  // namespace Svc
 
 #endif

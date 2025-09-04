@@ -48,8 +48,8 @@ class FprimeFramer final : public FprimeFramerComponentBase {
     //!
     //! Buffer coming from a deallocate call in a ComDriver component
     void dataReturnIn_handler(FwIndexType portNum,  //!< The port number
-                                Fw::Buffer& data,
-                                const ComCfg::FrameContext& context) override;
+                              Fw::Buffer& data,
+                              const ComCfg::FrameContext& context) override;
 
     // ----------------------------------------------------------------------
     // Helpers
@@ -57,8 +57,7 @@ class FprimeFramer final : public FprimeFramerComponentBase {
 
     //! Helper function to send the framed data out of the component
     //! This sequentially calls both frameDataOut and frameStreamOut ports if connected
-    void framedOut_helper(Fw::Buffer& frameBuffer,
-                          const ComCfg::FrameContext& context);
+    void framedOut_helper(Fw::Buffer& frameBuffer, const ComCfg::FrameContext& context);
 };
 
 }  // namespace Svc

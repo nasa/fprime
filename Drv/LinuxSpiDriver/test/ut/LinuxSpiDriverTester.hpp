@@ -13,55 +13,49 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
-#include "LinuxSpiDriverGTestBase.hpp"
 #include "Drv/LinuxSpiDriver/LinuxSpiDriverComponentImpl.hpp"
+#include "LinuxSpiDriverGTestBase.hpp"
 
 namespace Drv {
 
-  class LinuxSpiDriverTester :
-    public LinuxSpiDriverTesterBase
-  {
+class LinuxSpiDriverTester : public LinuxSpiDriverTesterBase {
+    // ----------------------------------------------------------------------
+    // Construction and destruction
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Construction and destruction
-      // ----------------------------------------------------------------------
+  public:
+    //! Construct object LinuxSpiDriverTester
+    //!
+    LinuxSpiDriverTester();
 
-    public:
+    //! Destroy object LinuxSpiDriverTester
+    //!
+    ~LinuxSpiDriverTester();
 
-      //! Construct object LinuxSpiDriverTester
-      //!
-      LinuxSpiDriverTester();
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-      //! Destroy object LinuxSpiDriverTester
-      //!
-      ~LinuxSpiDriverTester();
-
-    public:
-
-      // ----------------------------------------------------------------------
-      // Tests
-      // ----------------------------------------------------------------------
-
-      //! To do
-      //!
-      void sendBuffer(U8* buffer, FwSizeType size);
+    //! To do
+    //!
+    void sendBuffer(U8* buffer, FwSizeType size);
 
       //! Test a configuration mismatch
       void testConfigMismatch();
 
-    private:
+  private:
+    // ----------------------------------------------------------------------
+    // Helper methods
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Helper methods
-      // ----------------------------------------------------------------------
+    //! Connect ports
+    //!
+    void connectPorts();
 
-      //! Connect ports
-      //!
-      void connectPorts();
-
-      //! Initialize components
-      //!
-      void initComponents();
+    //! Initialize components
+    //!
+    void initComponents();
 
 
     protected:
@@ -85,12 +79,11 @@ namespace Drv {
       // Variables
       // ----------------------------------------------------------------------
 
-      //! The component under test
-      //!
-      LinuxSpiDriverComponentImpl component;
+    //! The component under test
+    //!
+    LinuxSpiDriverComponentImpl component;
+};
 
-  };
-
-} // end namespace Drv
+}  // end namespace Drv
 
 #endif

@@ -18,175 +18,146 @@
 
 namespace Svc {
 
-  class FileManagerTester :
-    public FileManagerGTestBase
-  {
+class FileManagerTester : public FileManagerGTestBase {
+    // ----------------------------------------------------------------------
+    // Construction and destruction
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Construction and destruction
-      // ----------------------------------------------------------------------
+  public:
+    //! Construct object FileManagerTester
+    //!
+    FileManagerTester();
 
-    public:
+    //! Destroy object FileManagerTester
+    //!
+    ~FileManagerTester();
 
-      //! Construct object FileManagerTester
-      //!
-      FileManagerTester();
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-      //! Destroy object FileManagerTester
-      //!
-      ~FileManagerTester();
+    //! Create directory (succeed)
+    //!
+    void createDirectorySucceed();
 
-    public:
+    //! Create directory (fail)
+    //!
+    void createDirectoryFail();
 
-      // ----------------------------------------------------------------------
-      // Tests
-      // ----------------------------------------------------------------------
+    //! Move file (succeed)
+    //!
+    void moveFileSucceed();
 
-      //! Create directory (succeed)
-      //!
-      void createDirectorySucceed();
+    //! Move file (fail)
+    //!
+    void moveFileFail();
 
-      //! Create directory (fail)
-      //!
-      void createDirectoryFail();
+    //! Remove directory (succeed)
+    //!
+    void removeDirectorySucceed();
 
-      //! Move file (succeed)
-      //!
-      void moveFileSucceed();
+    //! Remove directory (fail)
+    //!
+    void removeDirectoryFail();
 
-      //! Move file (fail)
-      //!
-      void moveFileFail();
+    //! Remove file (succeed)
+    //!
+    void removeFileSucceed();
 
-      //! Remove directory (succeed)
-      //!
-      void removeDirectorySucceed();
+    //! Remove file (fail)
+    //!
+    void removeFileFail();
 
-      //! Remove directory (fail)
-      //!
-      void removeDirectoryFail();
+    //! Shell command (succeed)
+    //!
+    void shellCommandSucceed();
 
-      //! Remove file (succeed)
-      //!
-      void removeFileSucceed();
+    //! Shell command (fail)
+    //!
+    void shellCommandFail();
 
-      //! Remove file (fail)
-      //!
-      void removeFileFail();
+    //! Append file (succeed, append to new file)
+    //!
+    void appendFileSucceed_newFile();
 
-      //! Shell command (succeed)
-      //!
-      void shellCommandSucceed();
+    //! Append file (succeed, append to existing file)
+    //!
+    void appendFileSucceed_existingFile();
 
-      //! Shell command (fail)
-      //!
-      void shellCommandFail();
+    //! Append file (fail)
+    //!
+    void appendFileFail();
 
-      //! Append file (succeed, append to new file)
-      //!
-      void appendFileSucceed_newFile();
+    //! File size (succeed)
+    //!
+    void fileSizeSucceed();
 
-      //! Append file (succeed, append to existing file)
-      //!
-      void appendFileSucceed_existingFile();
+    //! File size (fail)
+    //!
+    void fileSizeFail();
 
-      //! Append file (fail)
-      //!
-      void appendFileFail();
+  private:
+    // ----------------------------------------------------------------------
+    // Helper methods
+    // ----------------------------------------------------------------------
 
-      //! File size (succeed)
-      //!
-      void fileSizeSucceed();
+    //! Connect ports
+    //!
+    void connectPorts();
 
-      //! File size (fail)
-      //!
-      void fileSizeFail();
+    //! Initialize components
+    //!
+    void initComponents();
 
-    private:
+    //! Perform a system call and assert success
+    //!
+    static void system(const char* const cmd);
 
-      // ----------------------------------------------------------------------
-      // Helper methods
-      // ----------------------------------------------------------------------
+    //! Create a directory
+    void createDirectory(const char* const dirName);
 
-      //! Connect ports
-      //!
-      void connectPorts();
+    //! Move a file
+    void moveFile(const char* const sourceFileName, const char* const destFileName);
 
-      //! Initialize components
-      //!
-      void initComponents();
+    //! Remove a directory
+    void removeDirectory(const char* const dirName);
 
-      //! Perform a system call and assert success
-      //!
-      static void system(const char *const cmd);
+    //! Remove a file
+    void removeFile(const char* const fileName, bool ignoreErrors);
 
-      //! Create a directory
-      void createDirectory(
-          const char *const dirName
-      );
+    //! Perform a shell command
+    void shellCommand(const char* const command, const char* const logFileName);
 
-      //! Move a file
-      void moveFile(
-          const char *const sourceFileName,
-          const char *const destFileName
-      );
+    //! Append 2 files together
+    void appendFile(const char* const source, const char* const target);
 
-      //! Remove a directory
-      void removeDirectory(
-          const char *const dirName
-      );
+    //! Assert successful command execution
+    void assertSuccess(const FwOpcodeType opcode,
+                       const U32 eventSize = 2  // Starting event + Error or Success msg
+    ) const;
 
-      //! Remove a file
-      void removeFile(
-          const char *const fileName,
-          bool ignoreErrors
-      );
+    //! Assert file content matches the expected string (up to the given size)
+    void assertFileContent(const char* const fileName, const char* const expectedString, const U32 length) const;
 
-      //! Perform a shell command
-      void shellCommand(
-          const char *const command,
-          const char *const logFileName
-      );
+    //! Assert failed command execution
+    void assertFailure(const FwOpcodeType opcode) const;
+    //! Handler for from_pingOut
+    //!
+    void from_pingOut_handler(const FwIndexType portNum, /*!< The port number*/
+                              U32 key                    /*!< Value to return to pinger*/
+    );
 
-      //! Append 2 files together
-      void appendFile(
-          const char *const source,
-          const char *const target
-      );
+  private:
+    // ----------------------------------------------------------------------
+    // Variables
+    // ----------------------------------------------------------------------
 
-      //! Assert successful command execution
-      void assertSuccess(
-          const FwOpcodeType opcode,
-          const U32 eventSize = 2 // Starting event + Error or Success msg
-      ) const;
+    //! The component under test
+    //!
+    FileManager component;
+};
 
-      //! Assert file content matches the expected string (up to the given size)
-      void assertFileContent(
-          const char *const fileName,
-          const char *const expectedString,
-          const U32 length
-      ) const;
-
-      //! Assert failed command execution
-      void assertFailure(const FwOpcodeType opcode) const;
-      //! Handler for from_pingOut
-      //!
-      void from_pingOut_handler(
-          const FwIndexType portNum, /*!< The port number*/
-          U32 key /*!< Value to return to pinger*/
-      );
-    private:
-
-      // ----------------------------------------------------------------------
-      // Variables
-      // ----------------------------------------------------------------------
-
-      //! The component under test
-      //!
-      FileManager component;
-
-  };
-
-} // end namespace Svc
+}  // end namespace Svc
 
 #endif

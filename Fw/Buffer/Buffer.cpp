@@ -189,12 +189,4 @@ std::ostream& operator<<(std::ostream& os, const Buffer& obj) {
 }
 #endif
 
-Fw::SerializeStatus Buffer::serialize(Fw::SerializeBufferBase& serialBuffer) const {
-    return this->serializeTo(serialBuffer);
-}
-
-Fw::SerializeStatus Buffer::deserialize(Fw::SerializeBufferBase& buffer) {
-    return this->deserializeFrom(buffer);
-}
-
 }  // end namespace Fw

@@ -68,4 +68,3 @@ TEST(ComponentOverflow, OverflowAssert) {
     Tester tester;
     tester.testOverflowAssert();
 }
-

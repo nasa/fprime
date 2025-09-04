@@ -122,13 +122,15 @@ function(add_fprime_subdirectory FP_SOURCE_DIR)
     foreach (VARIABLE IN ITEMS SOURCE_FILES MOD_DEPS UT_SOURCE_FILES UT_MOD_DEPS EXECUTABLE_NAME)
         set(${VARIABLE} PARENT_SCOPE)
     endforeach()
+    get_filename_component(ABSOLUTE_SOURCE_PATH "${FP_SOURCE_DIR}" ABSOLUTE)
+    file(RELATIVE_PATH NEW_BIN_DIR "${CMAKE_CURRENT_SOURCE_DIR}" "${ABSOLUTE_SOURCE_PATH}")
 
     # Check if the binary and source directory are in agreement. If they agree, then normally add
     # the directory, as no adjustments need be made.
     get_filename_component(CBD_NAME "${CMAKE_CURRENT_BINARY_DIR}" NAME)
     get_filename_component(CSD_NAME "${CMAKE_CURRENT_SOURCE_DIR}" NAME)
     if ("${CBD_NAME}" STREQUAL "${CSD_NAME}")
-        fprime_util_metadata_add_subdirectory("${FP_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/${CSD_NAME}")
+        fprime_util_metadata_add_subdirectory("${FP_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/${NEW_BIN_DIR}")
         add_subdirectory(${ARGV}) # List of all args, not just extras
         return()
     endif()
@@ -185,7 +187,7 @@ endfunction()
 # )
 # ```
 #
-# > [!NOTE]  
+# > [!NOTE]
 # > This delegates to CMake's `add_library` call. The library argument EXCLUDE_FROM_ALL is supported.
 #
 # **MODULE_NAME**: (optional) module name. Default: ${FPRIME_CURRENT_MODULE}
@@ -203,9 +205,9 @@ endfunction(register_fprime_library)
 # Function `register_fprime_module`:
 #
 # See `register_fprime_library`. This provides the same capability as `register_fprime_library` using the
-# backwards-compatible name. 
+# backwards-compatible name.
 #
-# > [!NOTE]  
+# > [!NOTE]
 # > Variables SOURCE_FILES, MOD_DEPS, etc. are still supported but are no longer recommended.  Users are
 # > encouraged to update at their convenience.
 #
@@ -223,7 +225,7 @@ endfunction(register_fprime_module)
 # Registers a library using the fprime build system without setting up autocoding or target
 # support. See `register_fprime_library`.
 #
-# > [!NOTE]  
+# > [!NOTE]
 # > Users may set up custom target and autocoder support by calling `fprime_attach_custom_targets`.
 #
 # This function sets "INTERNAL_MODULE_NAME" in PARENT_SCOPE to pass-back module name for target
@@ -262,7 +264,7 @@ endfunction()
 # )
 # ```
 #
-# > [!NOTE]  
+# > [!NOTE]
 # > This delegates to CMake's `add_executable` call. The argument EXCLUDE_FROM_ALL is supported.
 #
 # **MODULE_NAME**: (optional) module name. Default: ${FPRIME_CURRENT_MODULE}
@@ -285,7 +287,7 @@ endfunction(register_fprime_executable)
 # Registers a executable using the fprime build system without setting up autocoding or target
 # support. See `register_fprime_executable`.
 #
-# > [!NOTE]  
+# > [!NOTE]
 # > Users may set up custom target and autocoder support by calling `fprime_attach_custom_targets`.
 #
 # This function sets "INTERNAL_MODULE_NAME" in PARENT_SCOPE to pass-back module name for target
@@ -326,7 +328,7 @@ endfunction()
 # )
 # ```
 #
-# > [!NOTE]  
+# > [!NOTE]
 # > This delegates to CMake's `add_executable` call. The argument EXCLUDE_FROM_ALL is supported.
 #
 # **MODULE_NAME**: (optional) module name. Default: ${FPRIME_CURRENT_MODULE}
@@ -350,7 +352,7 @@ endfunction(register_fprime_deployment)
 # Registers a deployment using the fprime build system without setting up autocoding or target
 # support. See `register_fprime_deployment`.
 #
-# > [!NOTE]  
+# > [!NOTE]
 # > Users may set up custom target and autocoder support by calling `fprime_attach_custom_targets`.
 #
 # This function sets "INTERNAL_MODULE_NAME" in PARENT_SCOPE to pass-back module name for target
@@ -380,7 +382,7 @@ endfunction()
 # module set up. Overrides only work in order of detection within the CMakeList.txt tree:
 #
 #    platform -> fprime config -> library -> project.
-# 
+#
 #
 # > [!WARNING]
 # > Specifying headers in this command is crucial to providing as configuration.
@@ -417,7 +419,7 @@ endfunction()
 # Registers config using the fprime build system without setting up autocoding or target
 # support. See `register_fprime_config`.
 #
-# > [!NOTE]  
+# > [!NOTE]
 # > Users may set up custom target and autocoder support by calling `fprime_attach_custom_targets`.
 #
 # This function sets "INTERNAL_MODULE_NAME" in PARENT_SCOPE to pass-back module name for target
@@ -509,7 +511,7 @@ endfunction()
 # )
 # ```
 #
-# > [!NOTE]  
+# > [!NOTE]
 # > This delegates to CMake's `add_executable` call. The argument EXCLUDE_FROM_ALL is supported.
 #
 # **MODULE_NAME**: (optional) module name. Default: ${FPRIME_CURRENT_MODULE}
@@ -533,7 +535,7 @@ endfunction(register_fprime_ut)
 # Registers a unit test using the fprime build system without setting up autocoding or target
 # support. See `register_fprime_ut`.
 #
-# > [!NOTE]  
+# > [!NOTE]
 # > Users may set up custom target and autocoder support by calling `fprime_attach_custom_targets`.
 #
 # This function sets "INTERNAL_MODULE_NAME" in PARENT_SCOPE to pass-back module name for target
@@ -617,12 +619,12 @@ endmacro(register_fprime_list_helper)
 
 ####
 # Macro `register_fprime_build_autocoder`:
-# 
+#
 # This function allows users to register custom autocoders into the build system. These autocoders will execute during
 # the build process. An autocoder is defined in a CMake file and must do three things:
 # 1. Call one of `autocoder_setup_for_individual_sources()` or `autocoder_setup_for_multiple_sources()` from file scope
-# 2. Implement `<autocoder name>_is_supported(AC_POSSIBLE_INPUT_FILE)` returning true the autocoder processes given source 
-# 3. Implement `<autocoder name>_setup_autocode AC_INPUT_FILE)` to run the autocoder on files filter by item 2. 
+# 2. Implement `<autocoder name>_is_supported(AC_POSSIBLE_INPUT_FILE)` returning true the autocoder processes given source
+# 3. Implement `<autocoder name>_setup_autocode AC_INPUT_FILE)` to run the autocoder on files filter by item 2.
 #
 # This function takes in either a file path to a CMake file defining an autocoder target, or an short include path that accomplishes
 # the same thing. Note: make sure the directory is on the CMake include path to use the second form.
@@ -657,9 +659,9 @@ endfunction()
 # Designates that the given implementor implements the required implementation and registers it as a library. This
 # library will always be of type OBJECT to ensure that it will override at link time as expected. The call format is
 # identical to `register_fprime_library`, but requires the IMPLEMENTS <implementation interface> directive to indicate
-# which implementation is being implemented. 
+# which implementation is being implemented.
 #
-# > [!WARNING]  
+# > [!WARNING]
 # > The result of this call will always be an OBJECT library.
 #
 # **Example:**

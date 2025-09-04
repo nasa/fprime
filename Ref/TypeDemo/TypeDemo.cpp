@@ -107,7 +107,7 @@ void TypeDemo ::DUMP_TYPED_PARAMETERS_cmdHandler(const FwOpcodeType opCode, cons
     Ref::ManyChoices choices = this->paramGet_CHOICES_PRM(validity);
     this->log_ACTIVITY_HI_ChoicesPrmEv(choices, validity);
 
-    Ref::TooManyChoices tooManyChoices = this->paramGet_EXTRA_CHOICES_PRM(validity);
+    Ref::TooManyChoices tooManyChoices = Ref::TooManyChoices(this->paramGet_EXTRA_CHOICES_PRM(validity));
     this->log_ACTIVITY_HI_ExtraChoicesPrmEv(tooManyChoices, validity);
 
     Ref::ChoicePair choicePair = this->paramGet_CHOICE_PAIR_PRM(validity);

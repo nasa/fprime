@@ -56,22 +56,8 @@ struct TestAbsType final : public Fw::Serializable {
     //! Deserialize method
     //! \return status
     Fw::SerializeStatus deserializeFrom(Fw::SerializeBufferBase& sbb  //!< The serialize buffer base
-                                    ) final {
+                                        ) final {
         return sbb.deserializeTo(this->m_data);
-    }
-
-    // ----------------------------------------------------------------------
-    // Methods
-    // ----------------------------------------------------------------------
-
-    Fw::SerializeStatus serialize(Fw::SerializeBufferBase& sbb) const final
-    {
-        return this->serializeTo(sbb);
-    }
-
-    Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& sbb) final
-    {
-        return this->deserializeFrom(sbb);
     }
 
 #if FW_SERIALIZABLE_TO_STRING

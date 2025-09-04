@@ -13,7 +13,8 @@
 
 namespace Fw {
 
-template<Fw::StringBase::SizeType size> class StringTemplate final : public StringBase {
+template <Fw::StringBase::SizeType size>
+class StringTemplate final : public StringBase {
   public:
     enum {
         STRING_SIZE = size,

@@ -19,6 +19,7 @@ set(UT_SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/TokenBucketTester.cpp"
         )
 set(UT_MOD_DEPS
+        STest
         Fw/Types
         Fw/Time
         Os

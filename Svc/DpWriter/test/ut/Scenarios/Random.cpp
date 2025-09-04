@@ -9,10 +9,10 @@
 // acknowledged.
 // ======================================================================
 
+#include "Svc/DpWriter/test/ut/Scenarios/Random.hpp"
 #include "STest/Scenario/BoundedScenario.hpp"
 #include "STest/Scenario/RandomScenario.hpp"
 #include "Svc/DpWriter/test/ut/Rules/Rules.hpp"
-#include "Svc/DpWriter/test/ut/Scenarios/Random.hpp"
 
 namespace Svc {
 

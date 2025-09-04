@@ -23,9 +23,8 @@
 // Test a string type
 template <class StringType>
 class StringTest : public ::testing::Test {
-protected:
+  protected:
     void SetUp() override {
-
         FppTest::Utils::setString(this->src, sizeof this->src);
 
         char fwStrBuf1[Fw::StringBase::BUFFER_SIZE(Fw::String::STRING_SIZE)];
@@ -57,10 +56,7 @@ TYPED_TEST_P(StringTest, Default) {
     ASSERT_EQ(str.getCapacity(), bufferSizeObject);
 
     // Serialized size
-    ASSERT_EQ(
-        TypeParam::SERIALIZED_SIZE, 
-        Fw::StringBase::STATIC_SERIALIZED_SIZE(this->size)
-    );
+    ASSERT_EQ(TypeParam::SERIALIZED_SIZE, Fw::StringBase::STATIC_SERIALIZED_SIZE(this->size));
 
     // Default constructors
     ASSERT_STREQ(str.toChar(), "");
@@ -95,7 +91,7 @@ TYPED_TEST_P(StringTest, AssignmentOp) {
     TypeParam& strRef = str1;
     str1 = strRef;
     ASSERT_EQ(&str1, &strRef);
-    
+
     str2 = str1;
     ASSERT_STREQ(str1.toChar(), str1.toChar());
 
@@ -109,10 +105,6 @@ TYPED_TEST_P(StringTest, AssignmentOp) {
 }
 
 // Register all test patterns
-REGISTER_TYPED_TEST_SUITE_P(StringTest,
-    Default,
-    Constructors,
-    AssignmentOp
-);
+REGISTER_TYPED_TEST_SUITE_P(StringTest, Default, Constructors, AssignmentOp);
 
 #endif

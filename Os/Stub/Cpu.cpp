@@ -23,6 +23,6 @@ CpuHandle* StubCpu::getHandle() {
     return &this->m_handle;
 }
 
-} // namespace Cpu
-} // namespace Stub
-} // namespace Os
+}  // namespace Cpu
+}  // namespace Stub
+}  // namespace Os

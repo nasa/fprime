@@ -13,20 +13,20 @@
 
 namespace Svc {
 
-  namespace Testers {
+namespace Testers {
 
-    BufferGetStatus::Tester bufferGetStatus;
+BufferGetStatus::Tester bufferGetStatus;
 
-    CLEAR_EVENT_THROTTLE::Tester clearEventThrottle;
+CLEAR_EVENT_THROTTLE::Tester clearEventThrottle;
 
-    ProductGetIn::Tester productGetIn;
+ProductGetIn::Tester productGetIn;
 
-    ProductRequestIn::Tester productRequestIn;
+ProductRequestIn::Tester productRequestIn;
 
-    ProductSendIn::Tester productSendIn;
+ProductSendIn::Tester productSendIn;
 
-    SchedIn::Tester schedIn;
+SchedIn::Tester schedIn;
 
-  }
+}  // namespace Testers
 
-}
+}  // namespace Svc

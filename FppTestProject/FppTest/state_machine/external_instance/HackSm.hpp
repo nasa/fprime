@@ -5,59 +5,50 @@
 // \brief  header file for state machine HackSm
 //
 // ======================================================================
-           
+
 #ifndef HACKSM_H_
 #define HACKSM_H_
-                                
-#include <Fw/Sm/SmSignalBuffer.hpp>
+
 #include <Fw/FPrimeBasicTypes.hpp>
-                                 
+#include <Fw/Sm/SmSignalBuffer.hpp>
+
 namespace FppTest {
 
 class HackSm_Interface {
   public:
     enum HackSm_Signals {
-      RTI_SIG,
-      CHECK_SIG,
+        RTI_SIG,
+        CHECK_SIG,
     };
 
-                                 
     virtual void HackSm_turnOff(const FwEnumStoreType stateMachineId) = 0;
-                                 
-                                 
+
     virtual void HackSm_turnOn(const FwEnumStoreType stateMachineId) = 0;
-                                 
-                                 
+
     virtual void HackSm_doDiag(const FwEnumStoreType stateMachineId) = 0;
-                                 
-                                                                  
 };
 
 class HackSm {
-                                 
   private:
-    HackSm_Interface *parent;
-                                 
+    HackSm_Interface* parent;
+
   public:
-                                 
     HackSm(HackSm_Interface* a_parent) : parent(a_parent) {}
-  
+
     enum HackSm_States {
-      OFF,
-      ON,
-      DIAG,
+        OFF,
+        ON,
+        DIAG,
     };
-    
+
     enum HackSm_States state;
 
     void init(const FwEnumStoreType stateMachineId);
-    void update(
-        const FwEnumStoreType stateMachineId, 
-        const HackSm_Interface::HackSm_Signals signal, 
-        const Fw::SmSignalBuffer &data
-    );
+    void update(const FwEnumStoreType stateMachineId,
+                const HackSm_Interface::HackSm_Signals signal,
+                const Fw::SmSignalBuffer& data);
 };
 
-}
+}  // namespace FppTest
 
 #endif

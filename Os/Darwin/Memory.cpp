@@ -2,12 +2,12 @@
 // \title Os/Darwin/Memory.cpp
 // \brief Darwin implementation for Os::Memory
 // ======================================================================
-#include <Os/Darwin/Memory.hpp>
 #include <mach/mach_error.h>
 #include <mach/mach_host.h>
 #include <mach/mach_init.h>
 #include <mach/mach_types.h>
 #include <mach/message.h>
+#include <Os/Darwin/Memory.hpp>
 
 namespace Os {
 namespace Darwin {
@@ -30,7 +30,8 @@ kern_return_t vm_stat_helper(FwSizeType& used, FwSizeType& total) {
     vm_statistics_data_t vmstat;
     vm_size_t vmsize;
 
-    kern_return_t status1 = host_statistics(mach_host_self(), HOST_VM_INFO, reinterpret_cast<host_info_t>(&vmstat), &count);
+    kern_return_t status1 =
+        host_statistics(mach_host_self(), HOST_VM_INFO, reinterpret_cast<host_info_t>(&vmstat), &count);
     kern_return_t status2 = host_page_size(mach_host_self(), &vmsize);
 
     if (KERN_SUCCESS == status1 and KERN_SUCCESS == status2) {
@@ -44,7 +45,6 @@ kern_return_t vm_stat_helper(FwSizeType& used, FwSizeType& total) {
     }
     return (status1 == KERN_SUCCESS) ? status2 : status1;
 }
-
 
 MemoryInterface::Status DarwinMemory::_getUsage(Os::Memory::Usage& memory_usage) {
     // Call out VM helper
@@ -61,6 +61,6 @@ MemoryHandle* DarwinMemory::getHandle() {
     return &this->m_handle;
 }
 
-} // namespace Memory
-} // namespace Darwin
-} // namespace Os
+}  // namespace Memory
+}  // namespace Darwin
+}  // namespace Os
