@@ -29,6 +29,13 @@ class ActivePhaser final : public ActivePhaserComponentBase {
         COUNT        // Context stores the number of phaser cycles elapsed within a user-specified time window.
     };
 
+    //! Finish status
+    enum FinishStatus {
+        UNKNOWN, //!< Improper finish call: child not running, no child, etc.
+        ON_TIME, //!< Child finished on time
+        LATE     //!< Child finished late
+    };
+
     /**
      * \brief configuration for phasing
      */
@@ -93,7 +100,7 @@ class ActivePhaser final : public ActivePhaserComponentBase {
 
     //! Handle a finishing task
     //!
-    bool finishChild(U32 current_ticks);
+    FinishStatus finishChild(U32 current_ticks);
 
     //! Handle a starting task
     //!
@@ -110,6 +117,7 @@ class ActivePhaser final : public ActivePhaserComponentBase {
     Os::Mutex m_lock;
     U32 m_cycle;  // The number of ticks that makes up a phaser cycle
     U32 m_ticks;  // The current tick count
+    U32 m_ticks_rollover; // Roll-over value for ticks
     U32 m_last_start_ticks;
     U32 m_last_cycle_ticks;
     U32 m_cycle_count;

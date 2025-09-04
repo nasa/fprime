@@ -22,6 +22,7 @@ ActivePhaser ::ActivePhaser(const char* const compName)
     : ActivePhaserComponentBase(compName),
       m_cycle(0),
       m_ticks(0xFFFFFFFF),
+      m_ticks_rollover(1), // Start at 1. Will be multiplied by each context to find some common multiple.
       m_last_start_ticks(0),
       m_last_cycle_ticks(0),
       m_cycle_count(0) {
@@ -31,7 +32,7 @@ ActivePhaser ::ActivePhaser(const char* const compName)
 void ActivePhaser ::init(const FwSizeType queueDepth, const FwIndexType instance) {
     FW_ASSERT(queueDepth == 1, static_cast<FwAssertArgType>(
                                    queueDepth));  // Dependent on queue-depth of one to prevent a rush to catch up
-    ActivePhaserComponentBase::init(queueDepth, instance);
+    ActivePhaserComponentBase::init(1, instance);
 }
 
 void ActivePhaser ::configure(U32 cycle_ticks) {
@@ -51,6 +52,7 @@ void ActivePhaser ::register_phased(FwIndexType port, U32 length, U32 start, U32
         FW_ASSERT(previous.start < start, static_cast<FwAssertArgType>(m_state.used),
                   static_cast<FwAssertArgType>(previous.start),
                   static_cast<FwAssertArgType>(start));  // Must start after previous entry
+        // Calculate the next start position when DONT_CARE is specified.
         start = (start == DONT_CARE) ? previous.start + previous.length : start;
     }
     // If start is DONT_CARE and does not inherit from the end of the previous task,
@@ -77,6 +79,13 @@ void ActivePhaser ::register_phased(FwIndexType port, U32 length, U32 start, U32
     // FIXME: This is a point of confusion because entry.context and context are
     // very different things, yet they have the same name.
     entry.context = (context != DONT_CARE) ? context / m_cycle : getNextContext(port);
+    // Update some common multiple of all contexts
+    if (context != DONT_CARE) {
+        // Check for overflow before multiply
+        FW_ASSERT(std::numeric_limits<U32>::max() / m_ticks_rollover >= entry.context);
+        m_ticks_rollover *= entry.context;
+    }
+
     entry.contextType = (context != DONT_CARE) ? PhaserContextType::COUNT : PhaserContextType::SEQUENTIAL;
     entry.started = false;
     m_state.used += 1;
@@ -107,26 +116,20 @@ void ActivePhaser ::Tick_internalInterfaceHandler() {
     // If the cycle is over, wait for the cycle to end before restarting
     if ((this->timeInCycle(full_ticks) >= m_cycle) && (m_state.current == m_state.used)) {
         m_last_cycle_ticks = full_ticks;
-        // FIXME: Risk of overflow? If a tick occurs every millisecond, an overflow happens every 49.7 days.
-        // And when it happens, it could misalign this line below when contextType == COUNT:
-        // U32 context = (entry.contextType == SEQUENTIAL) ? entry.context : m_cycle_count % entry.context;
-        m_cycle_count++;
+        // Increment cycle count modulo some common factor of all contexts
+        m_cycle_count = (m_cycle_count + 1) % m_ticks_rollover;
         m_state.current = 0;  // Back to processing the first task.
     }
-    // FIXME: For the comment below, should it be "finish active child"?
-    // Finish active children and run the next child if it is not a short cycle
-    // FIXME: The below if statement reads "if the previous child is not finished, start a new child",
-    // which is a little strange. Usually it is "if a child is finished, then start a new child."
-    // Perhaps we should flip the return values in finishChild() and remove the ! here.
-    if (!finishChild(full_ticks)) {
+    // Run the next child if the finishing child wast not late
+    if (finishChild(full_ticks) != ActivePhaser::FinishStatus::LATE) {
         startChild(full_ticks);
     }
 }
 
-bool ActivePhaser ::finishChild(U32 full_ticks) {
+ActivePhaser::FinishStatus ActivePhaser ::finishChild(U32 full_ticks) {
     // Guard against finishing improperly
     if ((m_state.current >= m_state.used) || (not m_state.entries[m_state.current].started)) {
-        return false;
+        return ActivePhaser::FinishStatus::UNKNOWN;
     }
     // Only reachable here when current has not reached used
     // and the current task was previously marked started.
@@ -140,15 +143,13 @@ bool ActivePhaser ::finishChild(U32 full_ticks) {
     entry.started = false;
     // Increment the current task index if it has not reached used, i.e., the max index registered.
     m_state.current = (m_state.current == m_state.used) ? m_state.used : (m_state.current + 1);
-    // Check for overrun in timing. If a deadline violation is detected,
-    // return true to prevent the next child task from launching.
-    // FIXME: Is the above comment accurate?
+    // Check for overrun in timing. If a deadline violation is detected report this child as LATE
     if (execution_time > expected_time) {
         this->log_WARNING_HI_MissedDeadline(entry.port, entry.start, entry.length, (execution_time - expected_time));
-        return true;
+        return ActivePhaser::FinishStatus::LATE;
     }
     // If no overrun, proceed with the next child task.
-    return false;
+    return ActivePhaser::FinishStatus::ON_TIME;
 }
 
 void ActivePhaser ::startChild(U32 full_ticks) {

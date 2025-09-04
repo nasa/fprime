@@ -113,9 +113,8 @@ void ActivePhaserTester ::create_child(FwIndexType port, U32 length, U32 start, 
 bool ActivePhaserTester ::new_cycle(U64 cycle_number) {
     Os::RawTime nope;
     FauxPhaser::State response = mock.run(m_ticks, m_cycle);
-    // FIXME: CycleIn_handler sends a message to the internal every cycle,
-    // but does not dispatch every cycle. Is this correct modeling?
-    // Does it have an overflow issue?
+    // Calling the handler directly bypasses the need for doing dispatch.
+    // FIXME: update this to use invoke + doDispatch
     component.CycleIn_handler(0, nope);
 
     switch (response) {

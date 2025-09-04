@@ -62,8 +62,3 @@ Port Data Type | Name | Direction | Kind | Usage
 ## Unit Tests
 
 To see unit test coverage run fprime-util check --coverage
-
-## Change Log
-| Date | Description |
-|---|---|
-| 8/10/2025 | Initial Draft |
