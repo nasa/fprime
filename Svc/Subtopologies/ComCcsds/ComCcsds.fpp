@@ -169,7 +169,6 @@ module ComCcsds {
             fprimeRouter.bufferAllocate   -> commsBufferManager.bufferGetCallee
             fprimeRouter.bufferDeallocate -> commsBufferManager.bufferSendIn
         }
-
     } # end FramingSubtopology
 
     # This subtopology uses FramingSubtopology with a ComStub component for Com Interface
@@ -180,15 +179,14 @@ module ComCcsds {
 
         connections ComStub {
             # Framer <-> ComStub (Downlink)
-            ComCcsds.framer.dataOut  -> comStub.dataIn
-            comStub.dataReturnOut -> ComCcsds.framer.dataReturnIn
-            comStub.comStatusOut       -> ComCcsds.framer.comStatusIn
+            ComCcsds.framer.dataOut -> comStub.dataIn
+            comStub.dataReturnOut   -> ComCcsds.framer.dataReturnIn
+            comStub.comStatusOut    -> ComCcsds.framer.comStatusIn
 
             # ComStub <-> FrameAccumulator (Uplink)
-            comStub.dataOut                -> ComCcsds.frameAccumulator.dataIn
+            comStub.dataOut -> ComCcsds.frameAccumulator.dataIn
             ComCcsds.frameAccumulator.dataReturnOut -> comStub.dataReturnIn
         }
-
     } # end Subtopology
 
 } # end ComCcsds

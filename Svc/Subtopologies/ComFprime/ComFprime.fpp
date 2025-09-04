@@ -145,11 +145,10 @@ module ComFprime {
             fprimeRouter.bufferAllocate   -> commsBufferManager.bufferGetCallee
             fprimeRouter.bufferDeallocate -> commsBufferManager.bufferSendIn
         }
-
-
     } # end FramingSubtopology
 
-        # This subtopology uses FramingSubtopology with a ComStub component for Com Interface
+
+    # This subtopology uses FramingSubtopology with a ComStub component for Com Interface
     topology Subtopology {
         import FramingSubtopology
 
@@ -157,14 +156,14 @@ module ComFprime {
 
         connections ComStub {
             # Framer <-> ComStub (Downlink)
-            ComFprime.framer.dataOut  -> comStub.dataIn
-            comStub.dataReturnOut -> ComFprime.framer.dataReturnIn
-            comStub.comStatusOut       -> ComFprime.framer.comStatusIn
+            ComFprime.framer.dataOut -> comStub.dataIn
+            comStub.dataReturnOut    -> ComFprime.framer.dataReturnIn
+            comStub.comStatusOut     -> ComFprime.framer.comStatusIn
 
             # ComStub <-> FrameAccumulator (Uplink)
-            comStub.dataOut                -> ComFprime.frameAccumulator.dataIn
+            comStub.dataOut -> ComFprime.frameAccumulator.dataIn
             ComFprime.frameAccumulator.dataReturnOut -> comStub.dataReturnIn
         }
-
     } # end Subtopology
-} # end ComFprime Subtopology
+
+} # end ComFprime
