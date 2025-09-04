@@ -95,6 +95,9 @@ class MyPlugin(FramerDeframer):
         pass
 ```
 
+> [!TIP]
+> While plugins can be placed anywhere, a typical structure would see plugins placed in a directory like `plugins/src` to keep plugins separated from F´ C++ code.
+
 ### Implementing Virtual Functions
 
 Each plugin implementation base class (e.g. `FramerDeframer`) has a set of virtual methods that plugin implementors
@@ -318,9 +321,9 @@ setup.py for backwards compatibility.
 
 The project structure should look like:
 ```
-    src/my_plugin.py
-    pyproject.toml
-    setup.py
+    plugins/src/my_plugin.py
+    plugins/pyproject.toml
+    plugins/setup.py
 ```
 
 A sample pyproject.toml file would look like:
