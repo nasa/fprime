@@ -15,6 +15,7 @@
 
 #include "Svc/ActivePhaser/ActivePhaser.hpp"
 #include "Svc/ActivePhaser/ActivePhaserGTestBase.hpp"
+#include <deque>
 
 namespace Svc {
 
