@@ -22,7 +22,7 @@ ActivePhaser ::ActivePhaser(const char* const compName)
     : ActivePhaserComponentBase(compName),
       m_cycle(0),
       m_ticks(0xFFFFFFFF),
-      m_ticks_rollover(1), // Start at 1. Will be multiplied by each context to find some common multiple.
+      m_ticks_rollover(1),  // Start at 1. Will be multiplied by each context to find some common multiple.
       m_last_start_ticks(0),
       m_last_cycle_ticks(0),
       m_cycle_count(0) {

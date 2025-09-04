@@ -19,6 +19,7 @@ namespace Svc {
 
 class ActivePhaser final : public ActivePhaserComponentBase {
     friend class ActivePhaserTester;
+
   public:
     static const U32 MAX_CHILDREN = 100;
     static const U32 DONT_CARE = 0xFFFFFFFFlu;
@@ -31,9 +32,9 @@ class ActivePhaser final : public ActivePhaserComponentBase {
 
     //! Finish status
     enum FinishStatus {
-        UNKNOWN, //!< Improper finish call: child not running, no child, etc.
-        ON_TIME, //!< Child finished on time
-        LATE     //!< Child finished late
+        UNKNOWN,  //!< Improper finish call: child not running, no child, etc.
+        ON_TIME,  //!< Child finished on time
+        LATE      //!< Child finished late
     };
 
     /**
@@ -115,9 +116,9 @@ class ActivePhaser final : public ActivePhaserComponentBase {
     U32 timeInCycle(U32 full_ticks);
 
     Os::Mutex m_lock;
-    U32 m_cycle;  // The number of ticks that makes up a phaser cycle
-    U32 m_ticks;  // The current tick count
-    U32 m_ticks_rollover; // Roll-over value for ticks
+    U32 m_cycle;           // The number of ticks that makes up a phaser cycle
+    U32 m_ticks;           // The current tick count
+    U32 m_ticks_rollover;  // Roll-over value for ticks
     U32 m_last_start_ticks;
     U32 m_last_cycle_ticks;
     U32 m_cycle_count;

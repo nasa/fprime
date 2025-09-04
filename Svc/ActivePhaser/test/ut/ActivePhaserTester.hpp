@@ -13,9 +13,9 @@
 #ifndef Svc_ActivePhaserTester_HPP
 #define Svc_ActivePhaserTester_HPP
 
+#include <deque>
 #include "Svc/ActivePhaser/ActivePhaser.hpp"
 #include "Svc/ActivePhaser/ActivePhaserGTestBase.hpp"
-#include <deque>
 
 namespace Svc {
 
