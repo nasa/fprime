@@ -12,6 +12,8 @@ This guide walks through the process of creating a basic plugin that listens to 
 > Before following this guide, you should first complete the [Develop GDS Plugins](../how-to/develop-gds-plugins.md) guide.  
 > It explains the plugin system, registration process, and runtime behavior essential to this example.
 
+A [Cosine Example](https://github.com/nasa/fprime-examples/tree/devel/GdsExamples/gds-plugins/src/ground_channels) is provided to help users follow along.
+
 ---
 
 ## When to Use This
@@ -26,7 +28,7 @@ Use a ground-derived channel when you need additional channels on the ground, bu
 
 ## Plugin Architecture
 
-Ground-derived channels are implemented using a `DataHandlerPlugin`, one of the built-in plugin types in the F Prime GDS.
+Ground-derived channels are implemented using a `DataHandlerPlugin`, one of the built-in plugin types in the F Prime GDS. This plugin type is a `FEATURE` plugin that runs automatically via the `fprime-gds` invocation.
 
 Our plugin will:
 
@@ -72,6 +74,9 @@ class ExampleGroundDerivedChannel(DataHandlerPlugin):
         """
         pass
 ```
+
+> [!TIP]
+> While plugins can be placed anywhere, a typical structure would see this file placed in a directory like `plugins/src` to keep plugins separated from F´ C++ code.
 
 The two critical functions are: `get_handled_descriptors`, and `data_callback`. `get_handled_descriptors` returns a list of descriptors to listen to, and `data_callback` will give a place to perform our calculations. In our case, we only want to subscribe to telemetry channels (i.e. `FW_PACKET_TELEM`).  When using the telemetry packetizer, users may alternatively subscribe to `FW_PACKET_PACKETIZED_TLM`.
 
@@ -129,21 +134,26 @@ Now that you have a plugin structure and dictionary, it is time to derive the ch
         if not data.template.get_full_name().endswith("CommandsDispatched"):
             return
         # Operate on the channel's `val` field
-        new_value = data.val - 7
+        new_value = data.get_val_obj().val - 7
         # Publish the new channel.
-        self.publish_channel("Examples(Ground).CommandCountMinus7", new_value, data.time)
+        self.publisher.publish_channel("Examples(Ground).CommandCountMinus7", new_value, data.time)
 ```
 
 First this code filters out unwanted channels. Then it performs a translation on the data's value.  Then it publishes the new channel supplying name, value, and time.  In this case, we have reused the original time.
 
 ## Running It
 
-Install the plugin as directed in the plugin development How-To.  Next we need to merge our dictionaries and run it.  This is accomplished by running the merge dictionary command, and then supplying the output to the `--dictionary` flag of the GDS.
+Install the plugin as directed in the plugin development How-To section [packaging and testing plugins ](./develop-gds-plugins.md#packaging-and-testing-plugins).  Next we need to merge our dictionaries and run it.  This is accomplished by running the merge dictionary command, and then supplying the output to the `--dictionary` flag of the GDS.
 
-```
+**Merging Dictionaries**
+```bash
 fprime-merge-dictionary --permissive --output MergedDictionary.json \
     /path/to/flight/dictionary \
     ./MyGroundChannelsDictionary.json
+```
+
+**Running With The Merged Dictionary**
+```
 fprime-gds --dictionary ./MergedDictionary.json --no-zmq
 ```
 ---

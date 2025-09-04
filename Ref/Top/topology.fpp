@@ -20,7 +20,7 @@ module Ref {
     import ComCcsds.Subtopology
     import FileHandling.Subtopology
     import DataProducts.Subtopology
-    
+
     # ----------------------------------------------------------------------
     # Instances used in the topology
     # ----------------------------------------------------------------------

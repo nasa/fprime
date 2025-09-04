@@ -162,7 +162,7 @@ void FpySequencerTester::add_NO_OP() {
     addDirective(Fpy::DirectiveId::NO_OP, buf);
 }
 
-void FpySequencerTester::add_STORE_TLM_VAL(FwChanIdType id, U16 lvarOffset) {
+void FpySequencerTester::add_STORE_TLM_VAL(FwChanIdType id, Fpy::StackSizeType lvarOffset) {
     add_STORE_TLM_VAL(FpySequencer_StoreTlmValDirective(id, lvarOffset));
 }
 
@@ -172,7 +172,7 @@ void FpySequencerTester::add_STORE_TLM_VAL(FpySequencer_StoreTlmValDirective dir
     addDirective(Fpy::DirectiveId::STORE_TLM_VAL, buf);
 }
 
-void FpySequencerTester::add_STORE_PRM(FwPrmIdType id, U16 lvarOffset) {
+void FpySequencerTester::add_STORE_PRM(FwPrmIdType id, Fpy::StackSizeType lvarOffset) {
     add_STORE_PRM(FpySequencer_StorePrmDirective(id, lvarOffset));
 }
 
@@ -203,7 +203,7 @@ void FpySequencerTester::add_EXIT() {
     Fw::StatementArgBuffer buf;
     addDirective(Fpy::DirectiveId::EXIT, buf);
 }
-void FpySequencerTester::add_ALLOCATE(U16 size) {
+void FpySequencerTester::add_ALLOCATE(Fpy::StackSizeType size) {
     add_ALLOCATE(FpySequencer_AllocateDirective(size));
 }
 void FpySequencerTester::add_ALLOCATE(FpySequencer_AllocateDirective dir) {
@@ -211,7 +211,7 @@ void FpySequencerTester::add_ALLOCATE(FpySequencer_AllocateDirective dir) {
     FW_ASSERT(buf.serialize(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     addDirective(Fpy::DirectiveId::ALLOCATE, buf);
 }
-void FpySequencerTester::add_STORE(U16 lvarOffset, U16 size) {
+void FpySequencerTester::add_STORE(Fpy::StackSizeType lvarOffset, Fpy::StackSizeType size) {
     add_STORE(FpySequencer_StoreDirective(lvarOffset, size));
 }
 void FpySequencerTester::add_STORE(FpySequencer_StoreDirective dir) {
@@ -219,7 +219,7 @@ void FpySequencerTester::add_STORE(FpySequencer_StoreDirective dir) {
     FW_ASSERT(buf.serialize(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     addDirective(Fpy::DirectiveId::STORE, buf);
 }
-void FpySequencerTester::add_LOAD(U16 lvarOffset, U16 size) {
+void FpySequencerTester::add_LOAD(Fpy::StackSizeType lvarOffset, Fpy::StackSizeType size) {
     add_LOAD(FpySequencer_LoadDirective(lvarOffset, size));
 }
 void FpySequencerTester::add_LOAD(FpySequencer_LoadDirective dir) {
@@ -242,7 +242,7 @@ template void FpySequencerTester::add_PUSH_VAL(I8);
 template void FpySequencerTester::add_PUSH_VAL(I16);
 template void FpySequencerTester::add_PUSH_VAL(I32);
 template void FpySequencerTester::add_PUSH_VAL(I64);
-void FpySequencerTester::add_DISCARD(U16 size) {
+void FpySequencerTester::add_DISCARD(Fpy::StackSizeType size) {
     add_DISCARD(FpySequencer_DiscardDirective(size));
 }
 void FpySequencerTester::add_DISCARD(FpySequencer_DiscardDirective dir) {
@@ -250,7 +250,7 @@ void FpySequencerTester::add_DISCARD(FpySequencer_DiscardDirective dir) {
     FW_ASSERT(buf.serialize(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     addDirective(Fpy::DirectiveId::DISCARD, buf);
 }
-void FpySequencerTester::add_STACK_CMD(U16 size) {
+void FpySequencerTester::add_STACK_CMD(Fpy::StackSizeType size) {
     add_STACK_CMD(FpySequencer_StackCmdDirective(size));
 }
 void FpySequencerTester::add_STACK_CMD(FpySequencer_StackCmdDirective dir) {
@@ -258,7 +258,7 @@ void FpySequencerTester::add_STACK_CMD(FpySequencer_StackCmdDirective dir) {
     FW_ASSERT(buf.serialize(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     addDirective(Fpy::DirectiveId::STACK_CMD, buf);
 }
-void FpySequencerTester::add_MEMCMP(U16 size) {
+void FpySequencerTester::add_MEMCMP(Fpy::StackSizeType size) {
     add_MEMCMP(FpySequencer_MemCmpDirective(size));
 }
 void FpySequencerTester::add_MEMCMP(FpySequencer_MemCmpDirective dir) {

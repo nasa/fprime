@@ -39,6 +39,8 @@ Time::Time(TimeBase timeBase, FwTimeContextStoreType context, U32 seconds, U32 u
 }
 
 void Time::set(TimeBase timeBase, FwTimeContextStoreType context, U32 seconds, U32 useconds) {
+    // Assert microseconds portion is less than 10^6
+    FW_ASSERT(useconds < 1000000, static_cast<FwAssertArgType>(useconds));
     this->m_val.set(timeBase, context, seconds, useconds);
 }
 
