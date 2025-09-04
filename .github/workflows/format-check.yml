@@ -32,66 +32,10 @@ jobs:
           # Svc is currently listing all but Svc/FpySequencer
           CHECKED_DIRS: >-
             Drv
+            FppTestProject
             Fw
             Os
-            Svc/ActiveRateGroup
-            Svc/ActiveTextLogger
-            Svc/AssertFatalAdapter
-            Svc/BufferAccumulator
-            Svc/BufferLogger
-            Svc/BufferManager
-            Svc/BufferRepeater
-            Svc/Ccsds
-            Svc/ChronoTime
-            Svc/CmdDispatcher
-            Svc/CmdSequencer
-            Svc/CmdSplitter
-            Svc/ComLogger
-            Svc/ComQueue
-            Svc/ComSplitter
-            Svc/ComStub
-            Svc/Cycle
-            Svc/DpCatalog
-            Svc/DpManager
-            Svc/DpPorts
-            Svc/DpWriter
-            Svc/EventManager
-            Svc/Fatal
-            Svc/FatalHandler
-            Svc/FileDownlink
-            Svc/FileDownlinkPorts
-            Svc/FileManager
-            Svc/FileUplink
-            Svc/FprimeDeframer
-            Svc/FprimeFramer
-            Svc/FprimeProtocol
-            Svc/FprimeRouter
-            Svc/FrameAccumulator
-            Svc/FramingProtocol
-            Svc/GenericHub
-            Svc/Health
-            Svc/Interfaces
-            Svc/LinuxTimer
-            Svc/OsTime
-            Svc/PassiveConsoleTextLogger
-            Svc/PassiveRateGroup
-            Svc/Ping
-            Svc/PolyDb
-            Svc/PolyIf
-            Svc/Ports
-            Svc/PosixTime
-            Svc/PrmDb
-            Svc/RateGroupDriver
-            Svc/Sched
-            Svc/Seq
-            Svc/SeqDispatcher
-            Svc/StaticMemory
-            Svc/Subtopologies
-            Svc/SystemResources
-            Svc/TlmChan
-            Svc/TlmPacketizer
-            Svc/Version
-            Svc/WatchDog
+            Svc
 
         run: |
           fprime-util format --check --dirs $CHECKED_DIRS

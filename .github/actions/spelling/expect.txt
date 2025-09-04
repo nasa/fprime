@@ -36,6 +36,8 @@ bibtex
 Bies
 BINDIR
 bitmaps
+bitshifts
+bitwidth
 bocchino
 boolt
 bsd
@@ -110,6 +112,7 @@ coravy
 coreutils
 Coverity
 CPHA
+CPIU
 cplusplus
 CPOL
 cppcheck
@@ -209,6 +212,7 @@ externalproject
 FAKELOGGER
 fbuild
 fdp
+featherm
 fecf
 FEEDNAME
 feq
@@ -233,6 +237,7 @@ foodoodie
 foodoodiehoo
 FPCONFIG
 fpext
+fpow
 fpp
 fppi
 fpptest
@@ -243,13 +248,12 @@ fptr
 fptrunc
 fputil
 fpy
+fpyc
 FPYSEQUENCER
 freeram
 Fregoso
-fres
 frsize
 fsblkcnt
-fsrc
 fsw
 FWCASSERT
 gcda
@@ -304,10 +308,8 @@ HTMLHELP
 ibd
 ieeetr
 ieq
-iext
 iflag
 ifstr
-ilhs
 imple
 inbool
 INCLUDEDIR
@@ -326,12 +328,10 @@ ioctl
 ipas
 IPCFG
 IPHELPER
-irhs
 isf
 isgreater
 isless
 isr
-isrc
 isunordered
 itimerspec
 itr
@@ -375,6 +375,7 @@ LOCALSTATEDIR
 LOGGERRULES
 LOGPACKET
 lseek
+lvar
 LVL
 lxml
 MACROFILE
@@ -564,6 +565,7 @@ sbom
 scid
 scm
 sdd
+sdiv
 searchdata
 SENDPARTIAL
 seqgen
@@ -574,7 +576,6 @@ SETLOGGING
 setprotocol
 setschedparam
 setschedpolicy
-setser
 setstacksize
 settime
 sev
@@ -586,11 +587,13 @@ SHAREDSTATEDIR
 SHELLCOMMAND
 showinitializer
 sideeffect
+siext
 Signedness
 Silveira
 sitofp
 sle
 sloc
+smod
 socio
 SOCKETHELPER
 SOCKETIPDRIVER
@@ -684,10 +687,12 @@ tts
 typedef'ed
 typedef
 uart
+udiv
 UDPSOCKET
 uge
 uitofp
 UML
+umod
 UNEXP
 unistd
 UNITTESTASSERT
@@ -719,4 +724,5 @@ xdffe
 xsltproc
 xxxx
 XXYY
+ziext
 zimri

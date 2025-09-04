@@ -23,7 +23,7 @@
 
 // Test Primitive struct class
 class PrimitiveStructTest : public ::testing::Test {
-protected:
+  protected:
     void SetUp() override {
         testBool = true;
         testU32 = FppTest::Utils::getNonzeroU32();
@@ -64,13 +64,7 @@ TEST_F(PrimitiveStructTest, Default) {
     Primitive s;
 
     // Constants
-    ASSERT_EQ(
-        Primitive::SERIALIZED_SIZE,
-        sizeof(U8) 
-            + sizeof(U32) 
-            + sizeof(I16) 
-            + sizeof(F64) 
-    );
+    ASSERT_EQ(Primitive::SERIALIZED_SIZE, sizeof(U8) + sizeof(U32) + sizeof(I16) + sizeof(F64));
 
     // Default constructor
     ASSERT_EQ(s.get_mBool(), false);
@@ -188,8 +182,7 @@ TEST_F(PrimitiveStructTest, Serialization) {
     // Test unsuccessful serialization
     assertUnsuccessfulSerialization(s, sizeof(U8) - 1);
     assertUnsuccessfulSerialization(s, sizeof(U8) + sizeof(U32) - 1);
-    assertUnsuccessfulSerialization(s, sizeof(U8) + sizeof(U32) 
-                                       + sizeof(I16) - 1);
+    assertUnsuccessfulSerialization(s, sizeof(U8) + sizeof(U32) + sizeof(I16) - 1);
     assertUnsuccessfulSerialization(s, Primitive::SERIALIZED_SIZE - 1);
 }
 
@@ -201,11 +194,10 @@ TEST_F(PrimitiveStructTest, ToString) {
     buf1 << s;
 
     buf2 << "( "
-         << "mBool = " << testBool << ", "       
+         << "mBool = " << testBool << ", "
          << "mU32 = " << testU32 << ", "
-         << "mI16 = " << testI16 << ", "        
-         << "mF64 = " << std::fixed << testF64        
-         << " )";
+         << "mI16 = " << testI16 << ", "
+         << "mF64 = " << std::fixed << testF64 << " )";
 
     ASSERT_STREQ(buf1.str().c_str(), buf2.str().c_str());
 }

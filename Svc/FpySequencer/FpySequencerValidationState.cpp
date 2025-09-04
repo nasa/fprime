@@ -95,7 +95,7 @@ Fw::Success FpySequencer::validate() {
     FW_ASSERT(sequenceFile.position(sequenceFilePosition) == Os::File::Status::OP_OK);
 
     if (sequenceFileSize != sequenceFilePosition) {
-        this->log_WARNING_HI_ExtraBytesInSequence(static_cast<U32>(sequenceFileSize - sequenceFilePosition));
+        this->log_WARNING_HI_ExtraBytesInSequence(static_cast<FwSizeType>(sequenceFileSize - sequenceFilePosition));
         return Fw::Success::FAILURE;
     }
 

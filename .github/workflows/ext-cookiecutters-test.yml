@@ -73,41 +73,43 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: true
-          path: ./MyProject/lib/fprime
+          path: ./my-project/lib/fprime
           fetch-depth: 0
 
       - name: "Update dependencies and install fprime-tools"
         run: |
-             cd MyProject
+             cd my-project
              . fprime-venv/bin/activate
-             pip install -U -r ./lib/fprime/requirements.txt
+             pip install -U -r ./requirements.txt
              pip install git+https://github.com/nasa/fprime-tools@${{ needs.get-tools-branch.outputs.target-branch }}
 
       - name: "Version Check"
         run: |
-             cd MyProject
+             cd my-project
              . fprime-venv/bin/activate
              fprime-util version-check
 
       - name: "Test Generate and Build Project"
         run: |  
-             cd MyProject
+             cd my-project
              . fprime-venv/bin/activate
              fprime-util generate
              fprime-util build -j4
 
       - name: "Test New Deployment and Build"
         run: |
-             cd MyProject
+             cd my-project
              . fprime-venv/bin/activate
-             expect ./lib/fprime/.github/actions/cookiecutter-check/deployment.expect
+             cd MyProject
+             expect ../lib/fprime/.github/actions/cookiecutter-check/deployment.expect
              cd MyDeployment
              fprime-util build -j4
 
       - name: "Test New Component and Build"
         run: |
-             cd MyProject
+             cd my-project
              . fprime-venv/bin/activate
-             expect ./lib/fprime/.github/actions/cookiecutter-check/component.expect
+             cd MyProject
+             expect ../lib/fprime/.github/actions/cookiecutter-check/component.expect
              cd MyComponent
              fprime-util build -j4

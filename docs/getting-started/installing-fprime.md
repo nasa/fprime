@@ -107,10 +107,13 @@ This section will add some known hints to trouble-shooting with the installation
 * [Recommended PIP Versions](#recommended-pip-versions)
 * [fprime-util: command not found](#fprime-util-command-not-found)
 * [Helper script fpp-redirect-helper exited with reason: Permission denied](#helper-script-fpp-redirect-helper-exited-with-reason-permission-denied)
+### Windows
+* [Windows Subsystem for Linux (WSL) Version 1: Bad CPIU Error](#windows-subsystem-for-linux-wsl-version-1-bad-cpiu-error)
 ### Linux
 * [Ubuntu, Debian, Java and Python PIP](#ubuntu-debian-java-and-python-pip)
 ### macOS
 * [SSL Error with Python 3.8+](#ssl-error-with-python-38-on-macos)
+* [Apple Silicon: Bad CPIU Error](#apple-silicon-bad-cpiu-error)
 
 ### Recommended PIP Versions
 Some of the F´ Python packages are built in a way that it is recommended to install them with modern versions of PIP. Systems not recommended or pip versions less than recommended will require Java and run slower versions of FPP tools. The recommended versions are described below:
@@ -142,6 +145,10 @@ If it is not executable, add the permission back.
 
 `chmod 700 fpp-redirect-helper`
 
+### Windows Subsystem for Linux (WSL) Version 1: Bad CPIU Error
+
+WSL 1 is no longer supported. Users running WSL1 will experience very slow generation and builds.  Often a `Bad CPIU Error` will occur. Users who must use WSL1 will need to [install FPP directly](https://github.com/nasa/fpp/tree/main/compiler).
+
 ### Ubuntu, Debian, Java and Python PIP
 Ubuntu and possibly other Debian variants don’t include the pip packages in the default Python 3 installation. To get fully functional, use these commands on Ubuntu and Debian based systems:
 ```
@@ -162,3 +169,6 @@ cd /Applications/Python\ 3.X/
 ```
 After running above command, re-try installing `fprime-bootstrap`.
 
+### Apple Silicon: Bad CPIU Error
+
+Macintosh users who have not installed Rosetta software will experience a "Bad CPIU Error".  Users should [install Rosetta](https://support.apple.com/en-us/102527) or [install FPP directly](https://github.com/nasa/fpp/tree/main/compiler).

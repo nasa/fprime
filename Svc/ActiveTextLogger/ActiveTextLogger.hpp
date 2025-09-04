@@ -8,6 +8,7 @@
 
 #include <Svc/ActiveTextLogger/ActiveTextLoggerComponentAc.hpp>
 #include <Svc/ActiveTextLogger/LogFile.hpp>
+#include <config/ActiveTextLoggerCfg.hpp>
 
 namespace Svc {
 
@@ -48,6 +49,9 @@ class ActiveTextLogger final : public ActiveTextLoggerComponentBase {
     //!
     //!  \return true if creating the file was successful, false otherwise
     bool set_log_file(const char* fileName, const U32 maxSize, const U32 maxBackups = 10);
+
+    //! Configure component with event ID filters
+    void configure(const FwEventIdType* filteredIds, FwSizeType count);
 
   private:
     // ----------------------------------------------------------------------
@@ -100,6 +104,10 @@ class ActiveTextLogger final : public ActiveTextLoggerComponentBase {
 
     // The optional file to text logs to:
     LogFile m_log_file;
+
+    // Event ID filters
+    FwSizeType m_numFilteredIDs;
+    FwEventIdType m_filteredIDs[ACTIVE_TEXT_LOGGER_ID_FILTER_SIZE];
 };
 
 }  // namespace Svc

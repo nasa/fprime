@@ -99,7 +99,7 @@ class SocketComponentHelper {
      * \param size: size of data to send
      * \return status of send, SOCK_SUCCESS for success, something else on error
      */
-    SocketIpStatus send(const U8* const data, const U32 size);
+    SocketIpStatus send(const U8* const data, const FwSizeType size);
 
     /**
      * \brief receive data from the IP socket from the given buffer
@@ -109,7 +109,7 @@ class SocketComponentHelper {
      * \param size: maximum size of data buffer to fill
      * \return status of the send, SOCK_DISCONNECTED to reopen, SOCK_SUCCESS on success, something else on error
      */
-    SocketIpStatus recv(U8* data, U32& size);
+    SocketIpStatus recv(U8* data, FwSizeType& size);
 
     /**
      * \brief close the socket communications

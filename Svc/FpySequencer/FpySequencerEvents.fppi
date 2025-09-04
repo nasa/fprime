@@ -53,7 +53,7 @@ event WrongCRC(
     format "Expected CRC {}, actual was {}"
 
 event ExtraBytesInSequence(
-    remaining: U32
+    remaining: FwSizeType
 ) \
     severity warning high \
     format "File had {} extra bytes at the end"

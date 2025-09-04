@@ -22,6 +22,6 @@
 
 <!-- Note any additional work that will be done relating to this issue. -->
 
-## AI Usage ([policy](../AI_POLICY.md))
+## AI Usage (see [policy](https://github.com/nasa/fprime/blob/devel/AI_POLICY.md))
 
 <!-- If AI was used, please describe how it was utilized (e.g., code generation, documentation, testing, debugging assistance, etc.). -->

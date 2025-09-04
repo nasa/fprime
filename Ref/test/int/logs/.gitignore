@@ -1,5 +1,0 @@
-# output files from pytest and test API.
-*.xlsx
-*.xlsx#
-assets
-*.html

@@ -129,14 +129,14 @@ SocketIpStatus IpSocket::open(SocketDescriptor& socketDescriptor) {
     return status;
 }
 
-SocketIpStatus IpSocket::send(const SocketDescriptor& socketDescriptor, const U8* const data, const U32 size) {
+SocketIpStatus IpSocket::send(const SocketDescriptor& socketDescriptor, const U8* const data, const FwSizeType size) {
     FW_ASSERT(data != nullptr);
     FW_ASSERT(size > 0);
 
-    U32 total = 0;
-    I32 sent = 0;
+    FwSizeType total = 0;
+    FwSignedSizeType sent = 0;
     // Attempt to send out data and retry as necessary
-    for (U32 i = 0; (i < SOCKET_MAX_ITERATIONS) && (total < size); i++) {
+    for (FwSizeType i = 0; (i < SOCKET_MAX_ITERATIONS) && (total < size); i++) {
         errno = 0;
         // Send using my specific protocol
         sent = this->sendProtocol(socketDescriptor, data + total, size - total);
@@ -153,7 +153,7 @@ SocketIpStatus IpSocket::send(const SocketDescriptor& socketDescriptor, const U8
             return SOCK_SEND_ERROR;
         }
         FW_ASSERT(sent > 0, static_cast<FwAssertArgType>(sent));
-        total += static_cast<U32>(sent);
+        total += static_cast<FwSizeType>(sent);
     }
     // Failed to retry enough to send all data
     if (total < size) {
@@ -164,16 +164,16 @@ SocketIpStatus IpSocket::send(const SocketDescriptor& socketDescriptor, const U8
     return SOCK_SUCCESS;
 }
 
-SocketIpStatus IpSocket::recv(const SocketDescriptor& socketDescriptor, U8* data, U32& req_read) {
+SocketIpStatus IpSocket::recv(const SocketDescriptor& socketDescriptor, U8* data, FwSizeType& req_read) {
     // TODO: Uncomment FW_ASSERT for socketDescriptor.fd once we fix TcpClientTester to not pass in uninitialized
     // socketDescriptor
     //  FW_ASSERT(socketDescriptor.fd != -1, static_cast<FwAssertArgType>(socketDescriptor.fd));
     FW_ASSERT(data != nullptr);
 
-    I32 bytes_received_or_status;  // Stores the return value from recvProtocol
+    FwSignedSizeType bytes_received_or_status;  // Stores the return value from recvProtocol
 
     // Loop primarily for EINTR. Other conditions should lead to an earlier exit.
-    for (U32 i = 0; i < SOCKET_MAX_ITERATIONS; i++) {
+    for (FwSizeType i = 0; i < SOCKET_MAX_ITERATIONS; i++) {
         errno = 0;
         // Pass the current value of req_read (max buffer size) to recvProtocol.
         // recvProtocol returns bytes read or -1 on error.
@@ -181,7 +181,7 @@ SocketIpStatus IpSocket::recv(const SocketDescriptor& socketDescriptor, U8* data
 
         if (bytes_received_or_status > 0) {
             // Successfully read data
-            req_read = static_cast<U32>(bytes_received_or_status);
+            req_read = static_cast<FwSizeType>(bytes_received_or_status);
             return SOCK_SUCCESS;
         } else if (bytes_received_or_status == 0) {
             // Handle zero return based on protocol-specific behavior
