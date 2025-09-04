@@ -31,7 +31,7 @@ sequenceDiagram
     Component->>-Health: Ping Response
 ```
 
-`Svc.Health` tracks how long it takes for the component to respond to the ping message placed on its queue.  `Svc.Health`  produces two events corresponding to two configigurable timeouts:
+`Svc.Health` tracks how long it takes for the component to respond to the ping message placed on its queue.  `Svc.Health`  produces two events corresponding to two configurable timeouts:
    1. A `WARNING_HI` is emitted when the first timeout is passed
    2. A `FATAL` is emitted when the second timeout is passed.
 Thus the system will issue a `WARNING_HI` event if a component does not respond, and escalate to a `FATAL` event should the component remains unresponsive.
