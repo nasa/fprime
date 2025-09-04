@@ -91,7 +91,7 @@ void ActivePhaser ::register_phased(FwIndexType port, U32 length, U32 start, U32
     m_state.used += 1;
 }
 
-ActivePhaser ::~ActivePhaser(void) {}
+ActivePhaser ::~ActivePhaser() {}
 
 // ----------------------------------------------------------------------
 // Handler implementations for typed input ports
