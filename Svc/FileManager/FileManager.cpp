@@ -18,7 +18,7 @@
 #include "Fw/Types/ExternalString.hpp"
 #include "Os/Directory.hpp"
 #include "Svc/FileManager/FileManager.hpp"
-#include "default/config/FileManagerConfig.hpp"
+#include "config/FileManagerConfig.hpp"
 
 namespace Svc {
 
@@ -207,7 +207,7 @@ void FileManager ::schedIn_handler(const FwIndexType portNum, U32 context) {
     // Only process if we're in the middle of a directory listing
     if (m_listState == LISTING_IN_PROGRESS) {
         // Process multiple files per rate tick based on configuration
-        for (U32 fileCount = 0; fileCount < Default::Config::FILES_PER_RATE_TICK; fileCount++) {
+        for (U32 fileCount = 0; fileCount < Svc::FileManagerConfig::FILES_PER_RATE_TICK; fileCount++) {
             Fw::String filename;
             Os::Directory::Status status = m_currentDir.read(filename);
 
@@ -237,8 +237,8 @@ void FileManager ::schedIn_handler(const FwIndexType portNum, U32 context) {
                         m_currentDirName, filename,
                         (sizeStatus == Os::FileSystem::OP_OK) ? fileSize : static_cast<FwSizeType>(0));
                 } else if (pathType == Os::FileSystem::DIRECTORY) {
-                    // Subdirectory: emit subdirectory event with file count 0 (simplified)
-                    this->log_ACTIVITY_HI_DirectoryListingSubdir(m_currentDirName, filename, 0);
+                    // Subdirectory: emit subdirectory event
+                    this->log_ACTIVITY_HI_DirectoryListingSubdir(m_currentDirName, filename);
                 } else {
                     // Special file or inaccessible: treat as file with 0 size
                     this->log_ACTIVITY_HI_DirectoryListing(m_currentDirName, filename, static_cast<FwSizeType>(0));

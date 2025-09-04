@@ -3,8 +3,8 @@
 
 #include <config/FpConfig.hpp>
 
-namespace Default {
-    namespace Config {
+namespace Svc {
+    namespace FileManagerConfig {
         //! Number of directory entries to process per rate group tick
         //! Higher values = faster directory listing but more events per tick
         //! Lower values = slower directory listing but bounded event rate

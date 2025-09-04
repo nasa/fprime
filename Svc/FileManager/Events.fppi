@@ -195,7 +195,7 @@ event ListDirectorySucceeded(
                             ) \
   severity activity high \
   id 0x16 \
-  format "Listed {} files in directory {}"
+  format "Directory {} contains {} files"
 
 @ Failed to list directory
 event ListDirectoryError(
@@ -220,8 +220,7 @@ event DirectoryListing(
 event DirectoryListingSubdir(
                         dirName: string size FileNameStringSize @< The name of the directory
                         subdirName: string size FileNameStringSize @< The name of the subdirectory
-                        fileCount: U32 @< The number of files in the subdirectory
                       ) \
   severity activity high \
   id 0x19 \
-  format "Directory {}: {} ({} files)"
+  format "Directory {}: {}"

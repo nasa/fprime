@@ -107,10 +107,9 @@ class FileManager final : public FileManagerComponentBase {
     );
 
     //! Handler implementation for schedIn
-    //! This handler is called by Rate Group 2 (0.5Hz) to process
-    //! directory listing operations asynchronously. It processes
-    //! one directory entry per rate tick to prevent event flooding
-    //! and ensure bounded execution time.
+    //! This handler is called by a Rate Group. It processes
+    //! a configurable number of directory entries per rate tick to prevent
+    //! event flooding and ensure bounded execution time.
     //!
     void schedIn_handler(const FwIndexType portNum, /*!< The port number*/
                          U32 context                /*!< The call order*/
