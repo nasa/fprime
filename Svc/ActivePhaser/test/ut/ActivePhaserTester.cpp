@@ -129,6 +129,7 @@ bool ActivePhaserTester ::new_cycle(U64 cycle_number) {
         case FauxPhaser::STARTING:
             component.doDispatch();
         // Cascade intended, increment ticks as long as cycle is not finished
+	// fall through
         case FauxPhaser::RUNNING:
         default:
             m_ticks++;
@@ -172,8 +173,7 @@ void ActivePhaserTester ::test_nominal_child() {
     create_child(0, 5);
 
     for (U64 i = 0; i < MAX_CYCLES; i++) {
-        while (!this->new_cycle(i))
-            ;
+        while (!this->new_cycle(i)) {}
         ASSERT_EVENTS_MissedDeadline_SIZE(0);
     }
 }
@@ -188,8 +188,7 @@ void ActivePhaserTester ::test_nominal_children() {
     create_child(1, 5);
 
     for (U64 i = 0; i < MAX_CYCLES; i++) {
-        while (!this->new_cycle(i))
-            ;
+        while (!this->new_cycle(i)) {}
         ASSERT_EVENTS_MissedDeadline_SIZE(0);
     }
 }
@@ -207,8 +206,7 @@ void ActivePhaserTester ::test_unruly_children() {
     create_child(5, 30, 25, 2000);
 
     for (U64 i = 0; i < MAX_CYCLES; i++) {
-        while (!this->new_cycle(i))
-            ;
+        while (!this->new_cycle(i)) {}
         ASSERT_EVENTS_MissedDeadline_SIZE(0);
     }
 }
@@ -222,8 +220,7 @@ void ActivePhaserTester ::test_lethargic_child() {
     create_child(0, 5, ActivePhaser::DONT_CARE, ActivePhaser::DONT_CARE, 5);
 
     for (U64 i = 0; i < MAX_CYCLES; i++) {
-        while (!this->new_cycle(i))
-            ;
+        while (!this->new_cycle(i)) {}
         // Check as long as throttle
         if (throttle > 0) {
             ASSERT_EVENTS_MissedDeadline_SIZE(1);
@@ -258,8 +255,7 @@ void ActivePhaserTester ::test_lethargic_children(bool adjust_initial, U64 cycle
         component.m_cycle_count -= 1;
     }
     for (U64 i = 0; i < MAX_CYCLES; i++) {
-        while (!this->new_cycle(i))
-            ;
+        while (!this->new_cycle(i)) {}
         // this->new_cycle(); // Kick start next cycle for the evrs
         //  Check as long as throttle
         if (throttle > 0) {
