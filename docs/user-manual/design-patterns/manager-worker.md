@@ -10,7 +10,7 @@ Often a component needs to perform some long-running work while still remaining 
 
   - File Operations. For example, the worker could read a large file from disk without blocking the requesting component.
   - Algorithms with Long Compute Time.  For example, image processing could be done while the camera component responds to other requests.
-  - Machine Learning. For example, learning algorithms could be dispatched and respond only when conplete.
+  - Machine Learning. For example, learning algorithms could be dispatched and respond only when complete.
 
 Any work that is long enough to lock-up a component when it should be responsive to the larger system can be considered for this pattern.
 
@@ -43,7 +43,7 @@ The worker must be asynchronous in order to free up the manager's execution cont
 
 ### Conventions
 
-The manager/worker pattern has some common converions:
+The manager/worker pattern has some common conventions:
 
 1. The worker is designed with a dedicated purpose (e.g. file operations)
 2. The worker supports and offloads work from a specific Manager component
