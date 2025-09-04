@@ -90,21 +90,35 @@ module ComCcsds {
         """
     }
 
-    instance fprimeRouter: Svc.FprimeRouter base id ComCcsdsConfig.BASE_ID + 0x03000 \
-    
-    instance comStub: Svc.ComStub base id ComCcsdsConfig.BASE_ID + 0x04000 \
+    instance fprimeRouter: Svc.FprimeRouter base id ComCcsdsConfig.BASE_ID + 0x03000
 
-    instance tcDeframer: Svc.Ccsds.TcDeframer base id ComCcsdsConfig.BASE_ID + 0x05000 \
+    instance tcDeframer: Svc.Ccsds.TcDeframer base id ComCcsdsConfig.BASE_ID + 0x04000
 
-    instance spacePacketDeframer: Svc.Ccsds.SpacePacketDeframer base id ComCcsdsConfig.BASE_ID + 0x06000 \
+    instance spacePacketDeframer: Svc.Ccsds.SpacePacketDeframer base id ComCcsdsConfig.BASE_ID + 0x05000
+    # NOTE: name 'framer' is used for the framer that connects to the Com Adapter Interface for better subtopology interoperability
+    instance framer: Svc.Ccsds.TmFramer base id ComCcsdsConfig.BASE_ID + 0x06000
 
-    instance tmFramer: Svc.Ccsds.TmFramer base id ComCcsdsConfig.BASE_ID + 0x07000 \
+    instance spacePacketFramer: Svc.Ccsds.SpacePacketFramer base id ComCcsdsConfig.BASE_ID + 0x07000
 
-    instance spacePacketFramer: Svc.Ccsds.SpacePacketFramer base id ComCcsdsConfig.BASE_ID + 0x08000 \
+    instance apidManager: Svc.Ccsds.ApidManager base id ComCcsdsConfig.BASE_ID + 0x08000
 
-    instance apidManager: Svc.Ccsds.ApidManager base id ComCcsdsConfig.BASE_ID + 0x09000 \
+    instance comStub: Svc.ComStub base id ComCcsdsConfig.BASE_ID + 0x09000
 
-    topology Subtopology {
+    topology FramingSubtopology {
+        # Usage Note:
+        #
+        # When importing this subtopology, users shall establish 5 port connections with a component implementing
+        # the Svc.Com (Svc/Interfaces/Com.fpp) interface. They are as follows:
+        #
+        # 1) Outputs:
+        #     - ComCcsds.framer.dataOut                 -> [Svc.Com].dataIn
+        #     - ComCcsds.frameAccumulator.dataReturnOut -> [Svc.Com].dataReturnIn
+        # 2) Inputs:
+        #     - [Svc.Com].dataReturnOut -> ComCcsds.framer.dataReturnIn
+        #     - [Svc.Com].comStatusOut  -> ComCcsds.framer.comStatusIn
+        #     - [Svc.Com].dataOut       -> ComCcsds.frameAccumulator.dataIn
+
+
         # Active Components
         instance comQueue
 
@@ -112,16 +126,13 @@ module ComCcsds {
         instance commsBufferManager
         instance frameAccumulator
         instance fprimeRouter
-        instance comStub
         instance tcDeframer
         instance spacePacketDeframer
-        instance tmFramer
+        instance framer
         instance spacePacketFramer
         instance apidManager
 
         connections Downlink {
-
-
             # ComQueue <-> SpacePacketFramer
             comQueue.dataOut                -> spacePacketFramer.dataIn
             spacePacketFramer.dataReturnOut -> comQueue.dataReturnIn
@@ -130,27 +141,22 @@ module ComCcsds {
             spacePacketFramer.bufferDeallocate -> commsBufferManager.bufferSendIn
             spacePacketFramer.getApidSeqCount  -> apidManager.getApidSeqCountIn
             # SpacePacketFramer <-> TmFramer
-            spacePacketFramer.dataOut -> tmFramer.dataIn
-            tmFramer.dataReturnOut    -> spacePacketFramer.dataReturnIn
-            # Framer <-> ComStub
-            tmFramer.dataOut      -> comStub.dataIn
-            comStub.dataReturnOut -> tmFramer.dataReturnIn
+            spacePacketFramer.dataOut -> framer.dataIn
+            framer.dataReturnOut      -> spacePacketFramer.dataReturnIn
             # ComStatus
-            comStub.comStatusOut            -> tmFramer.comStatusIn
-            tmFramer.comStatusOut           -> spacePacketFramer.comStatusIn
-            spacePacketFramer.comStatusOut  -> comQueue.comStatusIn
+            framer.comStatusOut            -> spacePacketFramer.comStatusIn
+            spacePacketFramer.comStatusOut -> comQueue.comStatusIn
+            # (Outgoing) Framer <-> ComInterface connections shall be established by the user
         }
 
         connections Uplink {
-            # ComStub <-> FrameAccumulator
-            comStub.dataOut                -> frameAccumulator.dataIn
-            frameAccumulator.dataReturnOut -> comStub.dataReturnIn
+            # (Incoming) ComInterface <-> FrameAccumulator connections shall be established by the user
             # FrameAccumulator buffer allocations
             frameAccumulator.bufferDeallocate -> commsBufferManager.bufferSendIn
             frameAccumulator.bufferAllocate   -> commsBufferManager.bufferGetCallee
-            # FrameAccumulator <-> Deframer
-            frameAccumulator.dataOut          -> tcDeframer.dataIn
-            tcDeframer.dataReturnOut          -> frameAccumulator.dataReturnIn
+            # FrameAccumulator <-> TcDeframer
+            frameAccumulator.dataOut -> tcDeframer.dataIn
+            tcDeframer.dataReturnOut -> frameAccumulator.dataReturnIn
             # TcDeframer <-> SpacePacketDeframer
             tcDeframer.dataOut                -> spacePacketDeframer.dataIn
             spacePacketDeframer.dataReturnOut -> tcDeframer.dataReturnIn
@@ -162,8 +168,25 @@ module ComCcsds {
             # Router buffer allocations
             fprimeRouter.bufferAllocate   -> commsBufferManager.bufferGetCallee
             fprimeRouter.bufferDeallocate -> commsBufferManager.bufferSendIn
-         
         }
+    } # end FramingSubtopology
 
-    } # end topology
-} # end ComCcsds Subtopology
+    # This subtopology uses FramingSubtopology with a ComStub component for Com Interface
+    topology Subtopology {
+        import FramingSubtopology
+
+        instance comStub
+
+        connections ComStub {
+            # Framer <-> ComStub (Downlink)
+            ComCcsds.framer.dataOut -> comStub.dataIn
+            comStub.dataReturnOut   -> ComCcsds.framer.dataReturnIn
+            comStub.comStatusOut    -> ComCcsds.framer.comStatusIn
+
+            # ComStub <-> FrameAccumulator (Uplink)
+            comStub.dataOut -> ComCcsds.frameAccumulator.dataIn
+            ComCcsds.frameAccumulator.dataReturnOut -> comStub.dataReturnIn
+        }
+    } # end Subtopology
+
+} # end ComCcsds
