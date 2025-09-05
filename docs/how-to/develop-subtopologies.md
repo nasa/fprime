@@ -288,8 +288,82 @@ Now go ahead and run and build your deployment, and you should see that you have
 
 ## Adding Subtopology Configuration
 
-TODO
+Adding subtopology configuration is done by adding a new module to the subtopology directory. Typically the name appends `Config` (e.g. `MySubtopologyConfig`).  This directory contains, at minumum, a `CMakeLists.txt` and configurable files.
 
+In our case, there are two peices that should be configured:
+
+1. The subtopology base ID
+2. Component properties: queue depth, stack size, and priority.
+
+This can be done in `MySubtopologyConfig.fpp` as shown below.
+
+```
+module MySubtopologyConfig {
+    #Base ID for the CdhCore Subtopology, all components are offsets from this base ID
+    constant BASE_ID = 0xA0000000
+    
+    module QueueSizes {
+        constant rng         = 10
+        constant rateGroup   = 10
+    }
+    
+
+    module StackSizes {
+        constant rng       = 64 * 1024
+        constant rateGroup = 64 * 1024
+    }
+
+    module Priorities {
+        constant rng       = 89
+        constant rateGroup = 90
+    }
+}
+```
+
+`MySubtopology.fpp` must be updated to use this configuration:
+
+```
+    instance rng: MyLibrary.RNG base id MySubtopologyConfig.BASE_ID + 0x1000 \
+        queue size MySubtopologyConfig.QueueSizes.rng \
+        stack size MySubtopologyConfig.StackSizes.rng \
+        priority MySubtopologyConfig.Priorities.rng
+
+    instance rateGroup: Svc.ActiveRateGroup base id MySubtopologyConfig.BASE_ID + 0x2000 \
+        queue size MySubtopologyConfig.QueueSizes.rateGroup \
+        stack size MySubtopologyConfig.StackSizes.rateGroup \
+        priority MySubtopologyConfig.Priorities.rateGroup
+```
+
+> [!IMPORTANT]
+> Configuration values should be set per-instance of a component.
+
+Next, add a `CMakeList.txt` to your subtopology configuration module.
+
+```
+register_fprime_config(
+    EXCLUDE_FROM_ALL
+    AUTOCODER_INPUTS
+        "${CMAKE_CURRENT_LIST_DIR}/MySubtopologyConfig.fpp"
+    INTERFACE
+)
+```
+
+Update the subtopology to depend on config:
+
+```
+register_fprime_module(
+    EXCLUDE_FROM_ALL
+    AUTOCODER_INPUTS
+        "${CMAKE_CURRENT_LIST_DIR}/RNGTopology.fpp"
+    HEADERS
+        "${CMAKE_CURRENT_LIST_DIR}/MySubtopologyTopologyDefs.hpp"
+    DEPENDS
+        MySubtopology_MySubtopologyConfig
+    INTERFACE
+)
+```
+
+Users may now configure your subtopology!
 
 
 # Conclusion
