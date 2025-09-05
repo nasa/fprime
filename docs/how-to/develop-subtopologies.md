@@ -290,7 +290,7 @@ Now go ahead and run and build your deployment, and you should see that you have
 
 Adding subtopology configuration is done by adding a new module to the subtopology directory. Typically the name appends `Config` (e.g. `MySubtopologyConfig`).  This directory contains, at minumum, a `CMakeLists.txt` and configurable files.
 
-In our case, there are two peices that should be configured:
+In our case, there are two pieces that should be configured:
 
 1. The subtopology base ID
 2. Component properties: queue depth, stack size, and priority.
