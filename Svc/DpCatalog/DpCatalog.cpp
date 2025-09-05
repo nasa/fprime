@@ -393,8 +393,8 @@ Fw::CmdResponse DpCatalog::fillBinaryTree() {
         // read in each directory and keep track of total
         this->log_ACTIVITY_LO_ProcessingDirectory(this->m_directories[dir]);
         FwSizeType filesRead = 0;
-        m_pendingFiles = 0;
-        m_pendingDpBytes = 0;
+        this->m_pendingFiles = 0;
+        this->m_pendingDpBytes = 0;
         U32 filesProcessed = 0;
 
         Os::Directory dpDir;
@@ -441,7 +441,7 @@ Fw::CmdResponse DpCatalog::fillBinaryTree() {
         totalFiles += filesProcessed;
 
         this->log_ACTIVITY_HI_ProcessingDirectoryComplete(this->m_directories[dir], static_cast<U32>(totalFiles),
-                                                          m_pendingFiles, m_pendingDpBytes);
+                                                          this->m_pendingFiles, this->m_pendingDpBytes);
 
         // check to see if catalog is full
         // that means generated products exceed the catalog size
@@ -476,7 +476,7 @@ int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir = DP_MAX_DIRECTOR
 
         // TODO: What happens w/ relative paths and root dir files
         if (-1 == loc) {
-            this->log_WARNING_HI_DirectoryOpenError(fullFile, Os::FileSystem::Status::OTHER_ERROR);
+            this->log_WARNING_HI_DirectoryNotManaged(fullFile);
             return 0;
         }
 
@@ -492,7 +492,7 @@ int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir = DP_MAX_DIRECTOR
         }
 
         if (dir == this->m_numDirectories) {
-            this->log_WARNING_HI_DirectoryOpenError(fullFile, Os::FileSystem::Status::OTHER_ERROR);
+            this->log_WARNING_HI_DirectoryNotManaged(fullFile);
             return 0;
         }
     }
@@ -564,8 +564,8 @@ int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir = DP_MAX_DIRECTOR
     }
 
     if (entry.record.get_state() == Fw::DpState::UNTRANSMITTED) {
-        m_pendingFiles++;
-        m_pendingDpBytes += entry.record.get_size();
+        this->m_pendingFiles++;
+        this->m_pendingDpBytes += entry.record.get_size();
     }
 
     // make sure we haven't exceeded the limit
@@ -854,9 +854,9 @@ void DpCatalog ::addToCat_handler(FwIndexType portNum,
         return;
     }
 
-    // make sure a downlink is not in progress
-    if (this->m_xmitInProgress) {
-        this->log_WARNING_LO_DpXmitInProgress();
+    // check that the tree is loaded
+    if (this->m_dpTree == nullptr) {
+        this->log_WARNING_LO_NotLoaded(fileName);
         return;
     }
 

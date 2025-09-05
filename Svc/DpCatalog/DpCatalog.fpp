@@ -140,6 +140,14 @@ module Svc {
       id 4 \
       format "Catalog build complete"
 
+    @ Error opening directory
+    event DirectoryNotManaged(
+                            file: string size 80 @< The file
+                          ) \
+      severity warning high \
+      id 5 \
+      format "Unable to add file {}; directory not managed"
+
     @ Catalog transmission started
     event CatalogXmitStarted \
       severity activity high \
@@ -377,6 +385,12 @@ module Svc {
       format "DP file {} added at runtime"
 
 
+    event NotLoaded(
+                            file: string size 80 @< The file
+    ) \
+      severity warning low \
+      id 44 \
+      format "Not adding file {} now; Catalog not yet loaded"
 
     # ----------------------------------------------------------------------
     # Telemetry
