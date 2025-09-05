@@ -33,7 +33,7 @@ MySubtopology/
 ├─ CMakeLists.txt
 ├─ MySubtopology.fpp
 └─ MySubtopologyTopologyDefs.hpp
-
+```
 
 All files will be discussed in more detail in later sections of this guide. Additionally, note that there are optional files that can be included in your subtopology to extend its capability.
 
