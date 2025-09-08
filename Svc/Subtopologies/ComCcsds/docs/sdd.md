@@ -47,7 +47,7 @@ Both variants provide the standard **router + ComQueue + CCSDS framers/deframers
 
 ### 2.2 Required Inputs for Operation
 
-* **Rate Groups:** Connect a scheduler output to **`comQueue.run`**.
+* **Rate Groups:** Connect a rate group to **`comQueue.run`**. This is not required for the subtopology to function, but defines the rate at which ComQueue will send telemetry.
 * **Transport Endpoint:**
 
   * **Variant A:** Wire **ByteStream send/recv** between your **`Drv::ByteStreamDriverModel`** and the subtopology’s **`ComStub`**.
