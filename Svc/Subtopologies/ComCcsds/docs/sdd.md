@@ -105,7 +105,7 @@ topology Flight {
   # (B3) Wire your ComInterface between the driver and the ComCcsds framer/deframer
   connections Link {
     # Downlink: TM framer -> your ComInterface
-    ComCcsds.tmFramer.dataOut         -> radio.dataIn
+    ComCcsds.framer.dataOut         -> radio.dataIn
     radio.dataReturnOut               -> ComCcsds.framer.dataReturnIn
     radio.comStatusOut                -> ComCcsds.framer.comStatusIn
 
