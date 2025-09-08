@@ -5,6 +5,7 @@
 // ======================================================================
 
 #include <Svc/DpCatalog/DpCatalog.hpp>
+#include <cstdio>
 #include <list>
 #include "DpCatalogTester.hpp"
 
@@ -50,6 +51,8 @@ TEST(NominalManual, OneDp) {
     dpSet.dir = dir.toChar();
 
     tester.readDps(&dir, 1, stateFile, &dpSet, 1);
+
+    ASSERT_TRUE(std::remove(stateFile.toChar()) == 0);
 }
 
 TEST(NominalManual, FiveDp) {
@@ -97,6 +100,8 @@ TEST(NominalManual, FiveDp) {
     dpSet[4].dir = dirs[0].toChar();
 
     tester.readDps(dirs, 2, stateFile, dpSet, 5);
+
+    ASSERT_TRUE(std::remove(stateFile.toChar()) == 0);
 }
 
 TEST(NominalManual, OneDp_OneNotify) {
@@ -114,6 +119,8 @@ TEST(NominalManual, OneDp_OneNotify) {
     dpSet.dir = dir.toChar();
 
     tester.readDps(&dir, 1, stateFile, &dpSet, 1);
+
+    ASSERT_TRUE(std::remove(stateFile.toChar()) == 0);
 }
 
 int main(int argc, char** argv) {
