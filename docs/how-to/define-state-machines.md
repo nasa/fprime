@@ -75,10 +75,10 @@ stateDiagram-v2
     RUN --> RESET : error
 ```
 
-This state machine is implemented in the [MpuImu](TODO) component. This component drives the "next" signal from a rate group handler.
+This state machine is implemented in the [MpuImu](https://github.com/fprime-community/fprime-sensors/blob/devel/fprime-sensors/MpuImu/Components/ImuManager/ImuStateMachine.fpp) component. This component drives the `tick` signal from a rate group handler.
 
 > [!NOTE]
-> The [MpuImu](TODO) component implements a further `reconfigure` signal allowing the machine to return to reconfigure state.
+> The [MpuImu](https://github.com/fprime-community/fprime-sensors/blob/devel/fprime-sensors/MpuImu/Components/ImuManager/ImuStateMachine.fpp) component implements a further `reconfigure` signal allowing the machine to return to reconfigure state.
 
 ## Designing a State Machine in FPP
 
@@ -345,7 +345,7 @@ void ImuManager ::MpuImu_ImuStateMachine_action_doReset(SmId smId, MpuImu_ImuSta
 ```
 
 > [!WARNING]
-> You must implement all action methods in the component. This guide shows just `doReset` for brevity and the full implementation is available in the [`ImuManager`](TODO)
+> You must implement all action methods in the component. This guide shows just `doReset` for brevity and the full implementation is available in the [`ImuManager`](https://github.com/fprime-community/fprime-sensors/blob/devel/fprime-sensors/MpuImu/Components/ImuManager/ImuManager.cpp)
 
 ### Implementing Signaling in C++
 
@@ -407,13 +407,13 @@ That's all! The state machine should run at this point.
 
 ## Conclusion
 
-State machines in FPP let you capture operational modes explicitly, enforce valid transitions, and ensure components behave predictably. They are especially useful for reducing the code written to handle state changes, reduce state variables, and model high-level behavior.  You can explore the full [`ImuStateMachine`](TODO) for an understanding of how to handle new transitions (like `reconfigure`) as well as see the fully integrated state machine.
+State machines in FPP let you capture operational modes explicitly, enforce valid transitions, and ensure components behave predictably. They are especially useful for reducing the code written to handle state changes, reduce state variables, and model high-level behavior.  You can explore the full [`ImuStateMachine`](https://github.com/fprime-community/fprime-sensors/blob/devel/fprime-sensors/MpuImu/Components/ImuManager/ImuStateMachine.fpp) for an understanding of how to handle new transitions (like `reconfigure`) as well as see the fully integrated state machine.
 
 ---
 
 ## References
 
-* [`ImuManager` Component](TODO)
+* [`ImuManager` Component](https://github.com/fprime-community/fprime-sensors/tree/devel/fprime-sensors/MpuImu/Components/ImuManager)
 * [FPP User’s Guide on State Machines](https://nasa.github.io/fpp/fpp-users-guide.html#Defining-State-Machines)
 * [F Prime Hello World Tutorial](https://fprime.jpl.nasa.gov/latest/tutorials-hello-world/docs/hello-world/)
 * [Example Components in fprime-examples](https://github.com/nasa/fprime-examples)
