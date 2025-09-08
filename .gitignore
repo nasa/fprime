@@ -5,6 +5,7 @@ gtest/
 docs-cache/
 CMakePresets.json
 /DpTest*/
+/Testing/
 
 AutoXML/
 test_harness/src/test_harness-C/application.out
@@ -27,6 +28,7 @@ RemoteSystemsTempFiles
 *.stackdump
 Dict
 *.core
+*.swp
 
 **/coverage/
 *.gcov
