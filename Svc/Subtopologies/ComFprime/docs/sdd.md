@@ -45,12 +45,12 @@ Both variants provide the standard **F´ framer/deframer + router + ComQueue** p
 * **Transport Endpoint:**
 
   * **Variant A:** Wire **ByteStream send/recv** between your **`Drv::ByteStreamDriverModel`** and the subtopology’s **`ComStub`**.
-  * **Variant B:** Provide your own **`Svc::ComInteface`** and wire it to the **framer/deframer ports** in the subtopology.
+  * **Variant B:** Provide your own **`Svc::ComInterface`** and wire it to the **framer/deframer ports** in the subtopology.
 * **Flight-side hookups:** Wire the **router** outputs (commands/files) into your CDH stack (e.g., command dispatcher, file uplink), and feed **packet sources** (telemetry/events/file downlink) into the **ComQueue**.
 
 ### 2.3 Limitations
 
-These subtopologies focus on the **F´ communications protocol**. They do **not** provide CCSDS framing/deframing nor CDH capabilites.
+These subtopologies focus on the **F´ communications protocol**. They do **not** provide CCSDS framing/deframing nor CDH capabilities.
 
 ---
 
@@ -117,7 +117,7 @@ topology Flight {
 
 ### 4.1 Component properties (`ComFprimeConfig.fpp`)
 
-* **Base ID** — Base identifier for the subtopology(ies); instance IDs are offset from this base.
+* **Base ID** — Base identifier for the subtopologies; instance IDs are offset from this base.
 * **Queue sizes** — Depths for **`ComQueue`** and any other active/queued elements defined by the subtopology.
 * **Stack sizes** — Task stack allocations for active components (if any beyond `ComQueue`).
 * **Priorities** — RTOS priorities for active/queued components as applicable.
