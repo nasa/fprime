@@ -70,7 +70,9 @@ Below are **two usage patterns**, one for each variant. Replace identifiers/port
 topology Flight {
   import ComCcsds.Subtopology
 
-  # (A1) Schedule ComQueue
+instance comDriver: <ByteStreamDriverInterface>
+
+# (A1) Schedule ComQueue telemetry downlink (optional)
   connections RateGroups {
     rg.RateGroupMemberOut[0] -> ComCcsds.comQueue.run
   }
