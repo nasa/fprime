@@ -15,6 +15,7 @@ The **CdhCore subtopology** provides a reusable bundle of the core flight-softwa
 | SVC-CDHCORE-007 | The subtopology shall provide **fatal-event routing functionality** to forward fatal announcements to a configurable handler. | Inspection |
 | SVC-CDHCORE-008 | The subtopology shall provide **telemetry sending functionality** through a configurable telemetry interface.                 | Inspection |
 | SVC-CDHCORE-009 | The subtopology shall support **configurable instance properties** for IDs, queue sizes, stack sizes, and priorities.         | Inspection |
+| SVC-CDHCORE-010 | The subtopology shall expose rate-group connection points for any rate-drive components it contains.                          | Inspection |
 
 ## 2. Design & Core Functions
 
@@ -42,15 +43,13 @@ The **CdhCore subtopology** provides a reusable bundle of the core flight-softwa
 
 All other services are registered in the calling topology.
 
-Perfect — let’s add the **Design (what the subtopology needs to function)** and **Usage (how to integrate it)** sections. I’ll keep them aligned with the structure we’ve been building.
-
 ### 2.4 Required Inputs for Operation
 
 The `CdhCore` subtopology is not a stand-alone application. It requires specific connections from the including deployment topology to operate correctly:
 
 * **Rate Groups**
 
-  * The active components instances (`tlmSend`, and `$health`) require scheduling via rate group ports.
+  * The active components instances (`$health` and possibly `tlmSend` depending on configuration) require scheduling via rate group ports.
   * The including topology must connect them to rate group driver outputs or equivalent schedulers.
 
 * **Configurable Instances**
@@ -82,6 +81,7 @@ Example of integrating `CdhCore` in a deployment topology:
 ```fpp
 topology Flight {
   import CdhCore.Subtopology
+  import ComCcsds.Subtopology  # Used as an example communication subtopology
 
   # Use CdhCore handler components
   command connections instance CdhCore.cmdDisp
@@ -122,7 +122,7 @@ topology Flight {
 
 ## 4. Configuration
 
-> This section summarizes the **knobs defined in the CdhCore configuration module**. Users are expected to know how to override defaults in their project config layer.
+> This section summarizes the **knobs defined in the CdhCore configuration module**.
 
 ### 4.1 Where it lives
 
@@ -163,3 +163,4 @@ Defines a component instance called `tlmSend` to handle telemetry.
 | SVC-CDHCORE-007 | `fatalHandler` — configurable instance                             |
 | SVC-CDHCORE-008 | `tlmSend` — configurable instance                                  |
 | SVC-CDHCORE-009 | `CdhCoreConfig` / `CdhCoreFatalHandlerConfig` / `CdhCoreTlmConfig` |
+| SVC-CDHCORE-010 | $health.Run |
