@@ -21,8 +21,7 @@ Both variants provide the standard **router + ComQueue + CCSDS framers/deframers
 | SVC-COMCCSDS-003 | Provide an F´ **router** to route deframed packets (e.g., commands/files) into the flight software.            | Inspection |
 | SVC-COMCCSDS-004 | Provide a **subtopology variant that supplies `Svc::ComStub`** designed to connect to a ByteStream driver.     | Inspection |
 | SVC-COMCCSDS-005 | Provide a **subtopology variant that expects an external `Svc::ComInterface`** supplied by the deployment.     | Inspection |
-| SVC-COMCCSDS-006 | Provide a **ComQueue** and expose **rate-group connection points** (e.g., `ComQueue.run`) for scheduling.      | Inspection |
-| SVC-COMCCSDS-007 | Support **configurable instance properties** (IDs, queue sizes, stack sizes, priorities) via `ComCcsdsConfig`. | Inspection |
+| SVC-COMCCSDS-006 | Support **configurable instance properties** (IDs, queue sizes, stack sizes, priorities) via `ComCcsdsConfig`. | Inspection |
 
 ---
 
@@ -56,7 +55,7 @@ Both variants provide the standard **router + ComQueue + CCSDS framers/deframers
 
 ### 2.3 Limitations
 
-These subtopologies focus on the **CCSDS communications path** and does not provide wider CCSDS.
+These subtopologies focus on the **CCSDS framing and deframing setup** and does not provide wider CDH.
 
 ---
 
@@ -147,7 +146,5 @@ topology Flight {
 | SVC-COMCCSDS-003 | `fprimeRouter` — `Svc.FprimeRouter`                                                    |
 | SVC-COMCCSDS-004 | `Subtopology` (variant including `Svc.ComStub`)                                        |
 | SVC-COMCCSDS-005 | `FramingSubtopology` (variant expecting external `Svc.ComInterface`)                   |
-| SVC-COMCCSDS-006 | `comQueue` — `Svc.ComQueue` (`run` scheduling port)                                    |
-| SVC-COMCCSDS-007 | `ComCcsdsConfig`                                                                       |
+| SVC-COMCCSDS-006 | `ComCcsdsConfig` module                                                                |
 
-If you’d like, I can swap in any **additional instance names** (e.g., specific CCSDS encoders/decoders) exactly as they appear in your repo once you confirm the identifiers you prefer to expose in this doc.
