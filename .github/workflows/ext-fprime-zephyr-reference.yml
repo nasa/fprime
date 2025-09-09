@@ -26,13 +26,10 @@ jobs:
 
   build:
     name: "Zephyr Build"
-    runs-on: ubuntu-22.04
     needs: get-branch
-    steps:
-      - name: "Checkout target repository"
-        uses: ./.github/workflows/reusable-get-pr-branch.yml
-        with:
-          target_repository: fprime-community/fprime-zephyr-reference
-          target_ref: ${{ needs.get-branch.outputs.target-branch }}
+    uses: ./.github/workflows/reusable-project-ci.yml
+    with:
+        target_repository: fprime-community/fprime-zephyr-reference
+        target_ref: ${{ needs.get-branch.outputs.target-branch }}
 
       
