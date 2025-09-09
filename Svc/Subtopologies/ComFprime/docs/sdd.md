@@ -26,13 +26,15 @@ Both variants provide the standard **F´ framer/deframer + router + ComQueue** p
 
 ### 2.1 Instance Summary (common building blocks)
 
-| Instance name | Type (Svc/Drv)              | Kind    | Purpose (core function)                                                                |
-| ------------- | --------------------------- | ------- | -------------------------------------------------------------------------------------- |
-| `framer`      | `Svc.FprimeFramer`          | Passive | Frames fprime data into packets for transport.                                         |
-| `deframer`    | `Svc.FprimeDeframer`        | Passive | Deframes fprime data from incoming packets.                                            |
-| `router`      | `Svc.FprimeRouter`          | Passive | Routes deframed packets (e.g., commands/files) into the flight software.               |
-| `comQueue`    | `Svc.ComQueue`              | Active  | Queues data for framing (telemetry, events, file, etc.); has `Run`.                    |
-| `comStub`     | `Svc.ComStub`               | Passive | (Variant A only) Adapts  a `Drv::ByteStreamDriverModel` driver for use as downlink.    |
+| Instance name  | Type (Svc/Drv)               | Kind    | Purpose (core function)                                                                |
+| -------------- | ---------------------------- | ------- | -------------------------------------------------------------------------------------- |
+| `framer`       | `Svc.FprimeFramer`           | Passive | Frames fprime data into packets for transport.                                         |
+| `deframer`     | `Svc.FprimeDeframer`         | Passive | Deframes fprime data from incoming packets.                                            |
+| `fprimeRouter` | `Svc.FprimeRouter`           | Passive | Routes deframed packets (e.g., commands/files) into the flight software.               |
+| `comQueue`     | `Svc.ComQueue`               | Active  | Queues data for framing (telemetry, events, file, etc.); has `Run`.                    |
+| `commsBufferManager` | `Svc.BufferManager`    | Active  | Provides memory allocation to the subtopology.                                         |
+| `frameAccumulator`   | `Svc.FrameAccumulator` | Passive | Accumulates whole frames before deframing.                                             |
+| `comStub`      | `Svc.ComStub`                | Passive | (Variant A only) Adapts  a `Drv::ByteStreamDriverModel` driver for use as downlink.    |
 
 > **Two variants:**
 > **A. “With ComStub”:** Subtopology **includes** `Svc::ComStub` and exposes **ByteStream** ports to your driver.
