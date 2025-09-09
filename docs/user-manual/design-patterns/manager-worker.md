@@ -8,9 +8,9 @@ The fprime-examples repository provides an example of the [Manager/Worker Patter
 
 Often a component needs to perform some long-running work while still remaining responsive to commands and port dispatches coming in from the rest of the system. A few examples of such work are:
 
-  - File Operations 
-  - Algorithms with Long Compute Time
-  - Machine Learning
+  - File Operations. For example, the worker could read a large file from disk without blocking the requesting component.
+  - Algorithms with Long Compute Time.  For example, image processing could be done while the camera component responds to other requests.
+  - Machine Learning. For example, learning algorithms could be dispatched and respond only when complete.
 
 Any work that is long enough to lock-up a component when it should be responsive to the larger system can be considered for this pattern.
 
@@ -36,9 +36,20 @@ sequenceDiagram
     Worker->>-Manager:  Work Done
 ```
 
-All interactions with the worker should be through the Manager in order to ensure that the worker need not be responsive while working.
+> [!IMPORTANT]
+> All interactions with the worker must be through the Manager. The worker should not have independent commands nor ports attach to components other than the manager.
 
 The worker must be asynchronous in order to free up the manager's execution context.  Typically the worker is set to a lower priority in the system topology to ensure that its background work does not disrupt higher-priority work in a real-time operating system.
+
+### Conventions
+
+The manager/worker pattern has some common conventions:
+
+1. The worker is designed with a dedicated purpose (e.g. file operations)
+2. The worker supports and offloads work from a specific Manager component
+3. The Manager handles all interaction with the worker.
+
+While these conventions are not absolute, following them yields good results.
 
 ## Implementation
 
@@ -64,8 +75,8 @@ active component Manager {
     ...
 }
 ```
-> [!NOTE]
-> Any port types can be used to start work and signal completion as long as the worker component matches.
+> [!TIP]
+> Any port types can be used to start work and signal completion as long as the worker component matches. This implies that these ports may also carry request data like filenames, or algorithm parameters
 
 > [!NOTE]
 > The manager component typically has commands, port calls, and other design elements. This above snippet just represents the interaction with the worker.

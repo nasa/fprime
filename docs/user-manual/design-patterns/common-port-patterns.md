@@ -51,7 +51,7 @@ component MyComponent {
 }
 ```
 
-Finally, the port handler should be minimal often returning just returning the value of a member variable previously set.
+Finally, the port handler should be minimal often returning just the value of a member variable previously set.
 
 ```c++
 F32 getTemperature_handler() {
@@ -68,7 +68,7 @@ Synchronous get ports are used to return values from one component in the F Prim
 
 ## Callback Ports
 
-The callback port patten is used to separate a request port invocation from a following response port invocation allowing the requestor to return to other work while the request is completed. The ports used may be of any type and may contain port arguments to communicate results.
+The callback port pattern is used to separate a request port invocation from a following response port invocation allowing the requestor to return to other work while the request is completed. The ports used may be of any type and may contain port arguments to communicate results.
 
 An example of this pattern can be found as part of the [Manager/Worker](https://github.com/nasa/fprime-examples/tree/devel/FlightExamples/ManagerWorker) interaction seen in F Prime examples.
 
@@ -128,7 +128,11 @@ The callback port patten is used to separate a request from the response allowin
 
 ## Parallel Ports
 
-Parallel ports are can be used to manage a set of [callback ports](#callback-ports) and other sets of ports that attach to a set of external components. The advantage of the parallel port pattern is that it makes managing the call-response across this set of components easier by ensuring that ports are treated as parallel arrays. FPP modeling provides checks for parallel ports as well.
+Parallel ports can be used to manage a sets of ports (e.g. [callback ports](#callback-ports)) that connect to external component(s) in parallel order. For example, a component who performs dispatches and receives responses to/from multiple components must have a paired relationship between the dispatch and response ports connected to each remote component. Parallel ports manage these kinds of inter-port relationships ensuring that they act as a single unit i.e. dispatch and response ports are attached to the same remote component.
+
+The advantage of the parallel ports is that these relationships are treated like parallel arrays. FPP modeling provides checks for parallel ports connections to help validate these relationships.
+
+By using parallel ports, topology connection errors are deduced. FPP validation detects errors in wiring components together, rather than relying on the topology engineer to spot errors across potentially hundreds of connections.
 
 An example of parallel ports is the [Command Dispatcher](https://github.com/nasa/fprime/blob/875fa11f07480bd966bb9fd209c75534306f7572/Svc/CmdDispatcher/CmdDispatcher.fpp#L36) where `compCmdSend` is parallel to `compCmdReg` allowing correlation between command sending and registration.
 
@@ -141,6 +145,8 @@ sequenceDiagram
 ```
 
 By connecting a given component from the set of external component using the same index across ports the source component implementations can correlate the messages by port index.
+
+Another place parallel ports were used is in the [Manager/Worker Pattern](http://github.com/nasa/fprime-examples/tree/devel/FlightExamples/ManagerWorker). Here we matched the `start` and `done` ports to ensure the `done` call comes from the same worker the manager sent `start` to.
 
 ### Implementation
 
