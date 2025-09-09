@@ -64,16 +64,17 @@ class DpCatalogTester : public DpCatalogGTestBase {
                  FwSizeType numDirs,
                  Fw::FileNameString& stateFile,
                  const DpSet* dpSet,
-                 FwSizeType numDps);
+                 FwSizeType numDps,
+                 FwSizeType numRuntime = 0);
 
     //! Generate some data product files
-    void genDP(FwDpIdType id,
-               FwDpPriorityType prio,
-               const Fw::Time& time,
-               FwSizeType dataSize,
-               Fw::DpState dpState,
-               bool hdrHashError,
-               const char* dir);
+    Fw::String genDP(FwDpIdType id,
+                     FwDpPriorityType prio,
+                     const Fw::Time& time,
+                     FwSizeType dataSize,
+                     Fw::DpState dpState,
+                     bool hdrHashError,
+                     const char* dir);
 
     void delDp(FwDpIdType id, const Fw::Time& time, const char* dir);
 

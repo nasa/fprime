@@ -44,7 +44,8 @@ DpCatalog ::DpCatalog(const char* const compName)
       m_xmitOpCode(0),
       m_xmitCmdSeq(0),
       m_pendingFiles(0),
-      m_pendingDpBytes(0) {}
+      m_pendingDpBytes(0),
+      m_remainActive(false) {}
 
 DpCatalog ::~DpCatalog() {}
 
@@ -867,8 +868,19 @@ void DpCatalog ::addToCat_handler(FwIndexType portNum,
     int ret = processFile(fileName);
 
     if (ret > 0) {
-        // TODO: Handle adding a node to a catalog that has finished sending
-        // or one that has already moved past the inserted node's priority
+        // TODO: Handle adding a node to a catalog that has
+        // already moved past the inserted node's priority
+        // Lazy solution is to re-init the current tx-node to the root of the b-tree
+        // This wipes the traversal stack
+        this->resetTreeStack();
+
+        // If we already finished, sendNext only if remainingActive
+        if (!this->m_xmitInProgress && this->m_remainActive) {
+            this->m_xmitInProgress = true;
+            this->sendNextEntry();
+        }
+        // Otherwise, Current File finishing will invoke sendNextFile & find the right file
+        // Or will be tx-ed at next command
 
         // prune and rewrite the state file
         this->pruneAndWriteStateFile();
@@ -884,8 +896,9 @@ void DpCatalog ::BUILD_CATALOG_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     this->cmdResponse_out(opCode, cmdSeq, this->doCatalogBuild());
 }
 
-void DpCatalog ::START_XMIT_CATALOG_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Fw::Wait wait) {
+void DpCatalog ::START_XMIT_CATALOG_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Fw::Wait wait, bool remainActive) {
     Fw::CmdResponse resp = this->doCatalogXmit();
+    this->m_remainActive = remainActive;
 
     if (resp != Fw::CmdResponse::OK) {
         this->cmdResponse_out(opCode, cmdSeq, resp);

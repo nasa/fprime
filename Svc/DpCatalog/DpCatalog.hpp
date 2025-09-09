@@ -99,7 +99,8 @@ class DpCatalog final : public DpCatalogComponentBase {
     void START_XMIT_CATALOG_cmdHandler(
         FwOpcodeType opCode,  //!< The opcode
         U32 cmdSeq,           //!< The command sequence number
-        Fw::Wait wait         //!< have START_XMIT command wait for catalog to complete transmitting
+        Fw::Wait wait,        //!< have START_XMIT command wait for catalog to complete transmitting
+        bool remainActive     //!< should the catalog resume transmission when Dps are added at runtime
         ) override;
 
     //! Handler implementation for command STOP_XMIT_CATALOG
@@ -256,8 +257,11 @@ class DpCatalog final : public DpCatalogComponentBase {
     FwOpcodeType m_xmitOpCode;              //!< stored xmit command opcode
     U32 m_xmitCmdSeq;                       //!< stored command sequence id
 
-    U32 m_pendingFiles;
-    U64 m_pendingDpBytes;
+    U32 m_pendingFiles;    //!< Pending Files to Transmit
+    U64 m_pendingDpBytes;  //!< Pending Bytes to Transmit
+
+    bool m_remainActive;  //!< Does the DpCat resume transmission when a runtime Dp is received after the full catalog
+                          //!< is sent
 };
 
 }  // namespace Svc

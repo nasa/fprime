@@ -81,7 +81,8 @@ module Svc {
 
     @ Start transmitting catalog
     async command START_XMIT_CATALOG (
-                                    wait: Fw.Wait @< have START_XMIT command complete wait for catalog to complete transmitting
+                                    wait: Fw.Wait, @< have START_XMIT command complete wait for catalog to complete transmitting
+                                    remainActive: bool @< should the catalog resume transmission when Dps are added at runtime
                                   ) \
       opcode 1
 

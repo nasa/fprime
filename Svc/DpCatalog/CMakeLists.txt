@@ -18,10 +18,10 @@ register_fprime_ut(
     "${CMAKE_CURRENT_LIST_DIR}/DpCatalog.fpp"
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/DpCatalogTester.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/test/ut/DpCatalogTesterHelpers.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/DpCatalogTestMain.cpp"
   DEPENDS
     STest
+  UT_AUTO_HELPERS
 )
 
 set (UT_TARGET_NAME "${FPRIME_CURRENT_MODULE}_ut_exe")

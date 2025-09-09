@@ -98,18 +98,22 @@ void DpCatalogTester::readDps(Fw::FileNameString* dpDirs,
                               FwSizeType numDirs,
                               Fw::FileNameString& stateFile,
                               const DpSet* dpSet,
-                              FwSizeType numDps) {
+                              FwSizeType numDps,
+                              FwSizeType numRuntime) {
     // make a directory for the files
     for (FwSizeType dir = 0; dir < numDirs; dir++) {
         this->makeDpDir(dpDirs[dir].toChar());
     }
 
-    // clean up last DP
+    // clean old Dps
     for (FwSizeType dp = 0; dp < numDps; dp++) {
         this->delDp(dpSet[dp].id, dpSet[dp].time, dpSet[dp].dir);
 
-        this->genDP(dpSet[dp].id, dpSet[dp].prio, dpSet[dp].time, dpSet[dp].dataSize, dpSet[dp].state, false,
-                    dpSet[dp].dir);
+        // Only make non runtime added Dps at this point
+        if (dp + numRuntime < numDps) {
+            this->genDP(dpSet[dp].id, dpSet[dp].prio, dpSet[dp].time, dpSet[dp].dataSize, dpSet[dp].state, false,
+                        dpSet[dp].dir);
+        }
     }
 
     Fw::MallocAllocator alloc;
@@ -118,25 +122,40 @@ void DpCatalogTester::readDps(Fw::FileNameString* dpDirs,
 
     this->sendCmd_BUILD_CATALOG(0, 10);
     this->component.doDispatch();
-    this->sendCmd_START_XMIT_CATALOG(0, 0, Fw::Wait::NO_WAIT);
+    this->sendCmd_START_XMIT_CATALOG(0, 0, Fw::Wait::NO_WAIT, true);
     this->component.doDispatch();
 
     // dispatch messages
-    for (FwSizeType msg = 0; msg < numDps; msg++) {
+    for (FwSizeType dp = 0; dp < numDps; dp++) {
+        // Create a runtime added Dp if we've exhausted all startup Dps
+        if (dp + numRuntime >= numDps) {
+            Fw::String dpPath = this->genDP(dpSet[dp].id, dpSet[dp].prio, dpSet[dp].time, dpSet[dp].dataSize,
+                                            dpSet[dp].state, false, dpSet[dp].dir);
+            ASSERT_STRNE(dpPath.toChar(), "");
+
+            // Add the runtime Dp to the catalog
+            this->invoke_to_addToCat(0, dpPath, 0, 0);
+            this->component.doDispatch();
+        }
+
         // dispatch file done port call that is sent on fileOut_handler
         this->component.doDispatch();
     }
 
+    ASSERT_from_fileOut_SIZE(numDps);
+
     this->component.shutdown();
+
+    ASSERT_TRUE(std::remove(stateFile.toChar()) == 0);
 }
 
-void DpCatalogTester::genDP(FwDpIdType id,
-                            FwDpPriorityType prio,
-                            const Fw::Time& time,
-                            FwSizeType dataSize,
-                            Fw::DpState dpState,
-                            bool hdrHashError,
-                            const char* dir) {
+Fw::String DpCatalogTester::genDP(FwDpIdType id,
+                                  FwDpPriorityType prio,
+                                  const Fw::Time& time,
+                                  FwSizeType dataSize,
+                                  Fw::DpState dpState,
+                                  bool hdrHashError,
+                                  const char* dir) {
     // Fill DP container
     U8 hdrData[Fw::DpContainer::MIN_PACKET_SIZE];
     Fw::Buffer hdrBuffer(hdrData, Fw::DpContainer::MIN_PACKET_SIZE);
@@ -160,32 +179,34 @@ void DpCatalogTester::genDP(FwDpIdType id,
     Os::File::Status stat = dpFile.open(fileName.toChar(), Os::File::Mode::OPEN_CREATE);
     if (stat != Os::File::Status::OP_OK) {
         printf("Error opening file %s: status: %d\n", fileName.toChar(), stat);
-        return;
+        return "";
     }
     FwSizeType size = Fw::DpContainer::Header::SIZE;
     stat = dpFile.write(hdrData, size);
     if (stat != Os::File::Status::OP_OK) {
         printf("Error writing DP file header %s: status: %d\n", fileName.toChar(), stat);
-        return;
+        return "";
     }
     if (static_cast<FwSizeType>(size) != Fw::DpContainer::Header::SIZE) {
         printf("Dp file header %s write size didn't match. Req: %" PRI_FwSizeType "Act: %" PRI_FwSizeType "\n",
                fileName.toChar(), Fw::DpContainer::Header::SIZE, size);
-        return;
+        return "";
     }
     size = dataSize;
     stat = dpFile.write(dpData, size);
     if (stat != Os::File::Status::OP_OK) {
         printf("Error writing DP file data %s: status: %" PRI_FwEnumStoreType "\n", fileName.toChar(),
                static_cast<FwEnumStoreType>(stat));
-        return;
+        return "";
     }
     if (static_cast<FwSizeType>(size) != dataSize) {
         printf("Dp file header %s write size didn't match. Req: %" PRI_FwSizeType " Act: %" PRI_FwSizeType "\n",
                fileName.toChar(), dataSize, size);
-        return;
+        return "";
     }
     dpFile.close();
+
+    return fileName;
 }
 
 void DpCatalogTester::delDp(FwDpIdType id, const Fw::Time& time, const char* dir) {
@@ -221,6 +242,7 @@ Svc::SendFileResponse DpCatalogTester ::from_fileOut_handler(FwIndexType portNum
                                                              const Fw::StringBase& destFileName,
                                                              U32 offset,
                                                              U32 length) {
+    this->pushFromPortEntry_fileOut(sourceFileName, destFileName, offset, length);
     this->invoke_to_fileDone(0, Svc::SendFileResponse());
 
     return Svc::SendFileResponse();
