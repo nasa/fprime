@@ -1,6 +1,6 @@
 # FileHandling Subtopology — Software Design Document (SDD)
 
-The **FileHandling subtopology** packages the core file-transfer services commonly needed in F´ deployments: **file uplink** (ground → flight), **file downlink** (flight → ground), and **on-board file management**. By providing these as a pre-wired subgraph, integration engineers avoid repetitive wiring and get a consistent, reusable baseline for file operations.
+The **FileHandling subtopology** packages the core file-transfer services commonly needed in F´ deployments: **file uplink** (ground → flight), **file downlink** (flight → ground), **on-board file management**, and parameter managment via filesystem. By providing these as a pre-wired subgraph, integration engineers avoid repetitive wiring and get a consistent, reusable baseline for file operations.
 
 ## 1. Requirements
 
@@ -9,8 +9,9 @@ The **FileHandling subtopology** packages the core file-transfer services common
 | SVC-FILEHANDLING-001 | The subtopology shall provide **file uplink functionality** to receive and reconstruct files from ground.       | Inspection |
 | SVC-FILEHANDLING-002 | The subtopology shall provide **file downlink functionality** to segment and transmit files to ground.          | Inspection |
 | SVC-FILEHANDLING-003 | The subtopology shall provide **on-board file management functionality** (e.g., list, remove, hash, mkdir).     | Inspection |
-| SVC-FILEHANDLING-004 | The subtopology shall support **configurable instance properties** (IDs, queue sizes, stack sizes, priorities). | Inspection |
-| SVC-FILEHANDLING-005 | The subtopology shall expose **rate-group connection points** for any rate-drive components it contains.        | Inspection |
+| SVC-FILEHANDLING-004 | The subtopology shall provide **parameter management** via the filesystem.                                      | Inspection |
+| SVC-FILEHANDLING-005 | The subtopology shall support **configurable instance properties** (IDs, queue sizes, stack sizes, priorities). | Inspection |
+| SVC-FILEHANDLING-006 | The subtopology shall expose **rate-group connection points** for any rate-drive components it contains.        | Inspection |
 
 
 ## 2. Design & Core Functions
@@ -21,7 +22,8 @@ The **FileHandling subtopology** packages the core file-transfer services common
 | -------------- | -------------- | ------ | ------------------------------------------------------- |
 | `fileUplink`   | `FileUplink`   | Active | Ingest deframed file packets; reconstruct files.        |
 | `fileDownlink` | `FileDownlink` | Active | Read files; segment into packets for downlink.          |
-| `fileManager`  | `FileManager`  | Queued | Local file operations.                                  |
+| `fileManager`  | `FileManager`  | Active | Local file operations.                                  |
+| `prmDb`        | `PrmDb`        | Active | Filesystem based parameter management.                  |
 
 ### 2.2 Configuration Hooks inside the Subtopology
 
@@ -43,6 +45,8 @@ Focused on **file transfer and on-board file ops** only. It does **not** provide
 ```fpp
 topology Flight {
   import FileHandling.Subtopology
+
+  param connections instance FileHandling.prmDb
 
   # Schedule the active/queued file components (example)
   connections RateGroups {
@@ -83,5 +87,6 @@ topology Flight {
 | SVC-FILEHANDLING-001 | `fileUplink` — `Svc.FileUplink`            |
 | SVC-FILEHANDLING-002 | `fileDownlink` — `Svc.FileDownlink`        |
 | SVC-FILEHANDLING-003 | `fileManager` — `Svc.FileManager`          |
-| SVC-FILEHANDLING-004 | `FileHandlingConfig` (instance properties) |
-| SVC-FILEHANDLING-005 | Run/scheduling connection specifiers       |
+| SVC-FILEHANDLING-004 | `prmDb` — `Svc.PrmDb`                      |
+| SVC-FILEHANDLING-005 | `FileHandlingConfig` (instance properties) |
+| SVC-FILEHANDLING-006 | Run/scheduling connection specifiers       |
