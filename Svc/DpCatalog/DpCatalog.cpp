@@ -559,9 +559,7 @@ int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir = DP_MAX_DIRECTOR
     bool insertedOk = this->insertEntry(entry);
     if (not insertedOk) {
         this->log_WARNING_HI_DpInsertError(entry.record);
-        // clean up and return
-        this->resetBinaryTree();
-        this->resetStateFileData();
+        // return and hope new slots open up later
         return -1;
     }
 
