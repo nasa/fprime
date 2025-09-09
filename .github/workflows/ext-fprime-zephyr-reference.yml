@@ -4,7 +4,7 @@ name: "External Repo: Zephyr Reference (Teensy 41)"
 
 on:
   push:
-    branches: [ devel, release/** ]
+    branches: [ devel, release/**, ci-zephyr ]
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ devel, release/** ]
