@@ -152,6 +152,12 @@ class DpCatalog final : public DpCatalogComponentBase {
     int processFile(Fw::String fullFile, FwSizeType dir);
 
     /// @brief insert an entry into the sorted list; if it exists, update the metadata
+    /// @param left an entry to compare
+    /// @param right other entry to compare
+    /// @return 1 if left is higher priority, 0 if equal, and -1 if right is higher priority
+    int compareNodes(DpStateEntry& left, DpStateEntry& right);
+
+    /// @brief insert an entry into the sorted list; if it exists, update the metadata
     /// @param entry new entry
     /// @return failed if couldn't find a slot FIXME: Should we just assert? We should never run out.
     bool insertEntry(DpStateEntry& entry);
@@ -260,8 +266,8 @@ class DpCatalog final : public DpCatalogComponentBase {
     U32 m_pendingFiles;    //!< Pending Files to Transmit
     U64 m_pendingDpBytes;  //!< Pending Bytes to Transmit
 
-    bool m_remainActive;  //!< Does the DpCat resume transmission when a runtime Dp is received after the full catalog
-                          //!< is sent
+    bool m_remainActive;  //!< Does the DpCat resume transmission when a runtime Dp is received after the full
+                          //!< catalog is sent
 };
 
 }  // namespace Svc

@@ -476,6 +476,7 @@ int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir = DP_MAX_DIRECTOR
             Fw::StringUtils::string_length(DIRECTORY_DELIMITER, sizeof(DIRECTORY_DELIMITER)));
 
         // TODO: What happens w/ relative paths and root dir files
+        // Seems like the logic works so long as the path styles match
         if (-1 == loc) {
             this->log_WARNING_HI_DirectoryNotManaged(fullFile);
             return 0;
@@ -485,7 +486,7 @@ int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir = DP_MAX_DIRECTOR
             const char* const dir_string = this->m_directories[dir].toChar();
 
             // Compare both strings up to location of final slash
-            // memsafe since both are fixed width strings
+            // memory safe since both are fixed width strings
             // and loc is before the fixed width
             if (strncmp(dir_string, fullFile.toChar(), static_cast<FwSizeType>(loc)) == 0) {
                 break;
@@ -581,7 +582,27 @@ int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir = DP_MAX_DIRECTOR
 
     this->log_ACTIVITY_HI_DpFileAdded(addedFileName);
 
+    // Compute relative priority to current xmit if we are
+    if (this->m_xmitInProgress && this->m_currentXmitNode != nullptr) {
+        return 16 + this->compareNodes(entry, this->m_currentXmitNode->entry);
+    }
+
     return 1;
+}
+
+int DpCatalog::compareNodes(DpStateEntry& left, DpStateEntry& right) {
+    // check priority. Lower is higher priority
+    if (left.record.get_priority() == right.record.get_priority()) {
+        // check time. Older is higher priority
+        if (left.record.get_tSec() == right.record.get_tSec()) {
+            // check ID. Lower is higher priority
+            return left.record.get_id() < right.record.get_id();
+        } else {  // if seconds are not equal. Older is higher priority
+            return left.record.get_tSec() < right.record.get_tSec();
+        }
+    } else {  // if priority is not equal. Lower is higher priority.
+        return left.record.get_priority() < right.record.get_priority();
+    }  // end checking for left/right insertion
 }
 
 bool DpCatalog::insertEntry(DpStateEntry& entry) {
@@ -865,17 +886,22 @@ void DpCatalog ::addToCat_handler(FwIndexType portNum,
     (void)priority;
     (void)size;
 
+    // ret > 0 := success
+    // ret > 16 := higher priority addition
     int ret = processFile(fileName);
 
     if (ret > 0) {
-        // TODO: Handle adding a node to a catalog that has
+        // Handle adding a node to a catalog that has
         // already moved past the inserted node's priority
-        // Lazy solution is to re-init the current tx-node to the root of the b-tree
-        // This wipes the traversal stack
-        this->resetTreeStack();
+        // Lazy solution is to wipe the traversal stack
+        // Only wipe traversal if the new node is higher priority than current xmit
+        if (ret >= 16) {
+            this->resetTreeStack();
+        }
 
         // If we already finished, sendNext only if remainingActive
         if (!this->m_xmitInProgress && this->m_remainActive) {
+            this->resetTreeStack();
             this->m_xmitInProgress = true;
             this->sendNextEntry();
         }
