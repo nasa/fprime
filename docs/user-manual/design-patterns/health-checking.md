@@ -107,4 +107,4 @@ The health checking pattern can be used to test any active component, not just c
 
 ## Conclusion
 
-The health checking pattern can be used to ensure critical services within the system remain responsive over the course of the software's execution. Should the component fail to respond for a pair of configurable durations, a `WARNING_HI` and `FATAL` event will respectively result.
+The health-checking pattern can be used to ensure critical services within the system remain responsive over the course of the software's execution. Should the component fail to respond for a pair of configurable durations, a `WARNING_HI` and `FATAL` event will respectively result.
