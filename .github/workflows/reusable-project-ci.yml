@@ -49,7 +49,7 @@ jobs:
     name: "Build"
     steps:
       - name: "Set up target repository"
-        uses: nasa/fprime/external-repository-setup@devel
+        uses: nasa/fprime-actions/external-repository-setup@devel
         with:
           target_repository: ${{ inputs.target_repository }}
           target_ref: ${{ inputs.target_ref }}
