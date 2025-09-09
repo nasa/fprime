@@ -660,6 +660,7 @@ DpCatalog::CheckStat DpCatalog::checkLeftRight(bool condition, DpBtreeNode*& nod
             if (not allocated) {
                 return CheckStat::CHECK_ERROR;
             }
+            node->left->parent = node;
             return CheckStat::CHECK_OK;
         } else {
             node = node->left;
@@ -671,6 +672,7 @@ DpCatalog::CheckStat DpCatalog::checkLeftRight(bool condition, DpBtreeNode*& nod
             if (not allocated) {
                 return CheckStat::CHECK_ERROR;
             }
+            node->right->parent = node;
             return CheckStat::CHECK_OK;
         } else {
             node = node->right;
@@ -702,14 +704,33 @@ bool DpCatalog::allocateNode(DpBtreeNode*& newNode, const DpStateEntry& newEntry
 }
 
 void DpCatalog::deallocateNode(DpBtreeNode* node) {
-    // node should only every be deallocated if its a leaf
-    FW_ASSERT(node->left == nullptr);
-    FW_ASSERT(node->right == nullptr);
+    // since nodes are deallocated after xmit, left should be gone
+    if (node->left == nullptr) {
+        return;
+    }
+
+    DpBtreeNode* parent = node->parent;
+    // root node has no parent, but needs the root pointer to shift
+    if (parent == nullptr) {
+        this->m_dpTree = node->right;
+    } else {
+        // shift then deallocate if right is not null
+        // or remove this node from its parent if our right is null
+        if (parent->left == node) {
+            parent->left = node->right;
+        } else {
+            parent->right = node->right;
+        }
+    }
+
+    // if we just shifted the right branch, null our right pointer
+    node->right = nullptr;
 
     // clear out the entry
     node->entry = {};
     // point this node @ the old head of the free list
     node->left = m_freeListHead;
+    node->parent = nullptr;
 
     // make this node the new head of the free list
     this->m_freeListHead = node;
@@ -717,7 +738,9 @@ void DpCatalog::deallocateNode(DpBtreeNode* node) {
 
 void DpCatalog::sendNextEntry() {
     // check some asserts
-    FW_ASSERT(this->m_dpTree);
+    if (this->m_dpTree == nullptr) {
+        return;
+    }
     FW_ASSERT(this->m_xmitInProgress);
     FW_ASSERT(this->m_traverseStack);
 
@@ -859,6 +882,8 @@ void DpCatalog ::fileDone_handler(FwIndexType portNum, const Svc::SendFileRespon
     // Reduce pending
     this->m_pendingDpBytes -= this->m_currentXmitNode->entry.record.get_size();
     this->m_pendingFiles--;
+    // deallocate this node
+    this->deallocateNode(this->m_currentXmitNode);
     // send the next entry, if it exists
     this->sendNextEntry();
 }

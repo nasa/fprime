@@ -139,6 +139,7 @@ class DpCatalog final : public DpCatalogComponentBase {
         DpStateEntry entry;  //!< pointer to DP record
         DpBtreeNode* left;   //!< left child. Also used for free list
         DpBtreeNode* right;  //!< right child
+        DpBtreeNode* parent;  //!< parent node
     };
 
     // ----------------------------------

@@ -61,6 +61,7 @@ test_harness/.autotools
 core
 
 *.swp4
+*dpState.dat
 
 *AppDictionary.xml
 *TopologyAppID.csv
