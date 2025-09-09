@@ -162,10 +162,6 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @return failed if couldn't find a slot FIXME: Should we just assert? We should never run out.
     bool insertEntry(DpStateEntry& entry);
 
-    /// @brief delete an entry from the sorted list
-    /// @param entry new entry
-    void deleteEntry(DpStateEntry& entry);
-
     /// @brief enumeration for check and insert function
     enum CheckStat {
         CHECK_OK,     //!< check passed and inserted. Can break loop
@@ -203,9 +199,14 @@ class DpCatalog final : public DpCatalogComponentBase {
     void appendFileState(const DpStateEntry& entry);
 
     /// @brief add an entry to the tree
-    /// @param entry entry to add
+    /// @param newNode pointer to newly allocated node
+    /// @param newEntry entry to add
     /// @return true if a node could be allocated
     bool allocateNode(DpBtreeNode*& newNode, const DpStateEntry& newEntry);
+
+    /// @brief free an entry from the tree
+    /// @param node entry to deallocate
+    void deallocateNode(DpBtreeNode* node);
 
     /// @brief send the next entry to file downlink
     void sendNextEntry();

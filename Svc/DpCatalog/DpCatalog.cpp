@@ -475,8 +475,8 @@ int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir = DP_MAX_DIRECTOR
             fullFile.toChar(), fullFile.length(), DIRECTORY_DELIMITER,
             Fw::StringUtils::string_length(DIRECTORY_DELIMITER, sizeof(DIRECTORY_DELIMITER)));
 
-        // TODO: What happens w/ relative paths and root dir files
-        // Seems like the logic works so long as the path styles match
+        // Seems like the logic works so long as the path styles match (i.e. relative vs absolute)
+        // Full path resolution might be a worthwhile add
         if (-1 == loc) {
             this->log_WARNING_HI_DirectoryNotManaged(fullFile);
             return 0;
@@ -701,7 +701,19 @@ bool DpCatalog::allocateNode(DpBtreeNode*& newNode, const DpStateEntry& newEntry
     return true;
 }
 
-void DpCatalog::deleteEntry(DpStateEntry& entry) {}
+void DpCatalog::deallocateNode(DpBtreeNode* node) {
+    // node should only every be deallocated if its a leaf
+    FW_ASSERT(node->left == nullptr);
+    FW_ASSERT(node->right == nullptr);
+
+    // clear out the entry
+    node->entry = {};
+    // point this node @ the old head of the free list
+    node->left = m_freeListHead;
+
+    // make this node the new head of the free list
+    this->m_freeListHead = node;
+}
 
 void DpCatalog::sendNextEntry() {
     // check some asserts
@@ -845,6 +857,8 @@ void DpCatalog ::fileDone_handler(FwIndexType portNum, const Svc::SendFileRespon
     // add the size
     this->m_xmitBytes += this->m_currentXmitNode->entry.record.get_size();
     // Reduce pending
+    this->m_pendingDpBytes -= this->m_currentXmitNode->entry.record.get_size();
+    this->m_pendingFiles--;
     // send the next entry, if it exists
     this->sendNextEntry();
 }
