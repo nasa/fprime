@@ -19,10 +19,10 @@ on:
         required: false
         type: string
         default: "devel"
-      build_location:
-        description: "Path to F´ module to build. E.g. MyDeployment/"
-        required: true
-        type: string
+#      build_location:
+#        description: "Path to F´ module to build. E.g. MyDeployment/"
+#        required: true
+#        type: string
       run_unit_tests:
         description: "Run an additional job in parallel to run unit tests."
         required: false
