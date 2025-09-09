@@ -1,6 +1,6 @@
 # FileHandling Subtopology — Software Design Document (SDD)
 
-The **FileHandling subtopology** packages the core file-transfer services commonly needed in F´ deployments: **file uplink** (ground → flight), **file downlink** (flight → ground), **on-board file management**, and parameter managment via filesystem. By providing these as a pre-wired subgraph, integration engineers avoid repetitive wiring and get a consistent, reusable baseline for file operations.
+The **FileHandling subtopology** packages the core file-transfer services commonly needed in F´ deployments: **file uplink** (ground → flight), **file downlink** (flight → ground), **on-board file management**, and parameter management via filesystem. By providing these as a pre-wired subgraph, integration engineers avoid repetitive wiring and get a consistent, reusable baseline for file operations.
 
 ## 1. Requirements
 

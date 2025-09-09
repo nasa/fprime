@@ -18,8 +18,7 @@ Both variants provide the standard **F´ framer/deframer + router + ComQueue** p
 | SVC-COMFPRIME-003 | Provide an F´ **router** to route deframed packets (e.g., commands/files) into the flight software.             | Inspection |
 | SVC-COMFPRIME-004 | Provide a **subtopology variant that supplies `Svc::ComStub`** designed to connect to a ByteStream driver.      | Inspection |
 | SVC-COMFPRIME-005 | Provide a **subtopology variant that expects an external `Svc::ComInterface`** supplied by the deployment.      | Inspection |
-| SVC-COMFPRIME-006 | Provide a **ComQueue** and expose **rate-group connection points** (e.g., `ComQueue.run`) for scheduling.       | Inspection |
-| SVC-COMFPRIME-007 | Support **configurable instance properties** (IDs, queue sizes, stack sizes, priorities) via `ComFprimeConfig`. | Inspection |
+| SVC-COMFPRIME-006 | Support **configurable instance properties** (IDs, queue sizes, stack sizes, priorities) via `ComFprimeConfig`. | Inspection |
 
 ---
 
@@ -63,12 +62,16 @@ Below are **two usage patterns**, one for each variant. Replace identifiers/port
 ```fpp
 topology Flight {
   import ComFprime.Subtopology
-  # (A1) Schedule ComQueue
+
+  # (A1) Provide a ByteStreamDriver interface (e.g. Drv.TcpClient)
+  instance comDriver: ...
+
+  # (A2) Schedule ComQueue
   connections RateGroups {
     rg.RateGroupMemberOut[0] -> ComFprime.comQueue.run
   }
 
-  # (A2) Wire ByteStream driver <-> ComStub supplied by the subtopology
+  # (A3) Wire ByteStream driver <-> ComStub supplied by the subtopology
       comDriver.$recv                     -> ComFprime.comStub.drvReceiveIn
       ComFprime.comStub.drvReceiveReturnOut -> comDriver.recvReturnIn
       ComFprime.comStub.drvSendOut      -> comDriver.$send
