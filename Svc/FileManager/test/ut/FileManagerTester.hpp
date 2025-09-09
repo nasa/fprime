@@ -24,6 +24,11 @@ class FileManagerTester : public FileManagerGTestBase {
     // ----------------------------------------------------------------------
 
   public:
+    // Instance ID supplied to the component instance under test
+    static const FwEnumStoreType TEST_INSTANCE_ID = 0;
+
+    // Queue depth supplied to the component instance under test
+    static const FwSizeType TEST_INSTANCE_QUEUE_DEPTH = 10;
     //! Construct object FileManagerTester
     //!
     FileManagerTester();
@@ -97,6 +102,18 @@ class FileManagerTester : public FileManagerGTestBase {
     //!
     void fileSizeFail();
 
+    //! List directory (succeed)
+    //!
+    void listDirectorySucceed();
+
+    //! List directory (fail)
+    //!
+    void listDirectoryFail();
+
+    //! List directory with subdirectories (enhanced listing)
+    //!
+    void listDirectoryWithSubdirs();
+
   private:
     // ----------------------------------------------------------------------
     // Helper methods
@@ -131,6 +148,15 @@ class FileManagerTester : public FileManagerGTestBase {
 
     //! Append 2 files together
     void appendFile(const char* const source, const char* const target);
+
+    //! List the contents of a directory
+    void listDirectory(const char* const dirName);
+
+    //! Simulate rate group execution for asynchronous directory listing
+    //! This method simulates Rate Group 2 (0.5Hz) execution by repeatedly
+    //! calling the schedule handler until the directory listing completes.
+    //! Each cycle processes one directory entry to test the bounded execution.
+    void runRateGroupCycles(const U32 cycles);
 
     //! Assert successful command execution
     void assertSuccess(const FwOpcodeType opcode,
