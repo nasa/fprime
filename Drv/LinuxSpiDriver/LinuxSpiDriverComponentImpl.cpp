@@ -130,7 +130,7 @@ bool LinuxSpiDriverComponentImpl::open(FwIndexType device, FwIndexType select, S
     }
 
         if (mode != read_mode) {
-            this->log_WARNING_LOW_SPI_ConfigMismatch(device, select, "MODE", mode, read_mode);
+            this->log_WARNING_LO_SPI_ConfigMismatch(device, select, "MODE", mode, read_mode);
         }
 
     /*
@@ -151,7 +151,7 @@ bool LinuxSpiDriverComponentImpl::open(FwIndexType device, FwIndexType select, S
     }
 
         if (bits != read_bits) {
-            this->log_WARNING_LOW_SPI_ConfigMismatch(device, select, "BITS_PER_WORD", bits, read_bits);
+            this->log_WARNING_LO_SPI_ConfigMismatch(device, select, "BITS_PER_WORD", bits, read_bits);
         }
 
     /*
@@ -172,7 +172,7 @@ bool LinuxSpiDriverComponentImpl::open(FwIndexType device, FwIndexType select, S
     }
 
         if (clock != read_clock) {
-            this->log_WARNING_LOW_SPI_ConfigMismatch(device, select, "MAX_SPEED_HZ", clock, read_clock);
+            this->log_WARNING_LO_SPI_ConfigMismatch(device, select, "MAX_SPEED_HZ", clock, read_clock);
         }
 
     return true;
