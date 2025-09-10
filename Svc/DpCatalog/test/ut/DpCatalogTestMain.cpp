@@ -31,7 +31,7 @@ TEST(NominalManual, TreeTestRandom) {
     tester.test_TreeTestRandomPrioIdTime();
 }
 
-TEST(NominalManual, DISABLED_TreeTestRandomTransmitted) {
+TEST(NominalManual, TreeTestRandomTransmitted) {
     Svc::DpCatalogTester tester;
     tester.test_NominalManual_TreeTestRandomTransmitted();
 }

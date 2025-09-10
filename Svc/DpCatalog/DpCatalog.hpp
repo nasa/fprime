@@ -125,6 +125,35 @@ class DpCatalog final : public DpCatalogComponentBase {
         friend class DpCatalogTester;
         FwIndexType dir;  //!< index to m_directories entry that has directory name where DP exists
         DpRecord record;  //!< data product metadata
+
+        /// @brief insert an entry into the sorted list; if it exists, update the metadata
+        /// @param left an entry to compare
+        /// @param right other entry to compare
+        /// @return -1 if left is higher priority, 0 if equal, and 1 if right is higher priority
+        static int CompareEntries(const DpStateEntry& left, const DpStateEntry& right) {
+            // check priority. Lower is higher priority
+            if (left.record.get_priority() == right.record.get_priority()) {
+                // check time. Older is higher priority
+                if (left.record.get_tSec() == right.record.get_tSec()) {
+                    // check ID. Lower is higher priority
+                    if (left.record.get_id() == right.record.get_id()) {
+                        return 0;
+                    }
+
+                    return left.record.get_id() < right.record.get_id() ? -1 : 1;
+                } else {  // if seconds are not equal. Older is higher priority
+                    return left.record.get_tSec() < right.record.get_tSec() ? -1 : 1;
+                }
+            } else {  // if priority is not equal. Lower is higher priority.
+                return left.record.get_priority() < right.record.get_priority() ? -1 : 1;
+            }  // end checking for left/right insertion
+        }
+
+        bool operator==(const DpStateEntry& other) { return CompareEntries(*this, other) == 0; }
+        bool operator!=(const DpStateEntry& other) { return CompareEntries(*this, other) != 0; }
+
+        bool operator>(const DpStateEntry& other) { return CompareEntries(*this, other) > 0; }
+        bool operator<(const DpStateEntry& other) { return CompareEntries(*this, other) < 0; }
     };
 
     struct DpDstateFileEntry {
@@ -141,12 +170,6 @@ class DpCatalog final : public DpCatalogComponentBase {
         DpBtreeNode* right;  //!< right child
         DpBtreeNode* parent;  //!< parent node
     };
-
-    /// @brief insert an entry into the sorted list; if it exists, update the metadata
-    /// @param left an entry to compare
-    /// @param right other entry to compare
-    /// @return 1 if left is higher priority, 0 if equal, and -1 if right is higher priority
-    static int CompareEntries(const DpStateEntry& left, const DpStateEntry& right);
 
     // ----------------------------------
     // Private helpers

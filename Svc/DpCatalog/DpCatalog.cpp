@@ -590,25 +590,10 @@ int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir = DP_MAX_DIRECTOR
 
     // Compute relative priority to current xmit if we are
     if (this->m_xmitInProgress && this->m_currentXmitNode != nullptr) {
-        return 16 + CompareEntries(entry, this->m_currentXmitNode->entry);
+        return 16 + DpStateEntry::CompareEntries(entry, this->m_currentXmitNode->entry);
     }
 
     return 1;
-}
-
-int DpCatalog::CompareEntries(const DpStateEntry& left, const DpStateEntry& right) {
-    // check priority. Lower is higher priority
-    if (left.record.get_priority() == right.record.get_priority()) {
-        // check time. Older is higher priority
-        if (left.record.get_tSec() == right.record.get_tSec()) {
-            // check ID. Lower is higher priority
-            return left.record.get_id() < right.record.get_id();
-        } else {  // if seconds are not equal. Older is higher priority
-            return left.record.get_tSec() < right.record.get_tSec();
-        }
-    } else {  // if priority is not equal. Lower is higher priority.
-        return left.record.get_priority() < right.record.get_priority();
-    }  // end checking for left/right insertion
 }
 
 bool DpCatalog::insertEntry(DpStateEntry& entry) {

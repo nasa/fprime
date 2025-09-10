@@ -5,6 +5,7 @@
 // ======================================================================
 
 #include "DpCatalogTester.hpp"
+#include <algorithm>
 #include <list>
 #include "Fw/Dp/DpContainer.hpp"
 #include "Fw/Test/UnitTest.hpp"
@@ -72,22 +73,19 @@ void DpCatalogTester::testTree(DpCatalog::DpStateEntry* input,
 
     // retrieve entries - they should match expected output
     for (FwIndexType entry = 0; entry < numEntries + 1; entry++) {
-        DpCatalog::DpBtreeNode* res = this->component.findNextTreeNode();
         if (entry == numEntries) {
             // final request should indicate empty
-            ASSERT_TRUE(res == nullptr);
-            break;
-        } else if (output[entry].record.get_state() == Fw::DpState::TRANSMITTED) {
-            // if transmitted, should not be returned
-            ASSERT_TRUE(res == nullptr);
-            // continue to next entry
-            continue;
-        } else {
-            ASSERT_TRUE(res != nullptr);
+            ASSERT_TRUE(this->component.findNextTreeNode() == nullptr);
+        } else if (output[entry].record.get_state() != Fw::DpState::TRANSMITTED) {
+            // Outputs is only composed of the UNTRANSMITTED data products
+            DpCatalog::DpBtreeNode* res = this->component.findNextTreeNode();
+            ASSERT_TRUE(res != nullptr) << "nullptr findNextTreeNode() at " << entry << " out of " << numEntries;
+
+            //  should match expected entry
+            if (res != nullptr) {
+                ASSERT_EQ(res->entry.record, output[entry].record) << "entry mismatch at " << entry;
+            }
         }
-        // printf("CE: %u\n",entry);
-        //  should match expected entry
-        ASSERT_EQ(res->entry.record, output[entry].record);
     }
 
     this->component.shutdown();
@@ -267,8 +265,6 @@ void DpCatalogTester ::test_NominalManual_TreeTestRandomTransmitted() {
         Svc::DpCatalogTester tester;
         Fw::FileNameString dir;
 
-        std::list<Svc::DpCatalog::DpStateEntry> entryList;
-
         // fill the input entries with random priorities
         for (FwIndexType entry = 0; entry < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(inputs)); entry++) {
             U32 randVal = STest::Pick::lowerUpper(0, NUM_ENTRIES - 1);
@@ -279,31 +275,17 @@ void DpCatalogTester ::test_NominalManual_TreeTestRandomTransmitted() {
             inputs[entry].record.set_tSec(randVal);
             inputs[entry].record.set_tSub(1500);
             inputs[entry].record.set_size(100);
-            // randomly set if it is transmitted or not
+            // randomly set if it is untransmitted or partial
+            // Transmited Dps are skipped in processFile
             randVal = STest::Pick::lowerUpper(0, 1);
             if (randVal == 0) {
                 inputs[entry].record.set_state(Fw::DpState::UNTRANSMITTED);
-                // only put untransmitted products in list, since the catalog algorithm only returns untransmitted
-                // product IDs
-                entryList.push_back(inputs[entry]);
             } else {
-                inputs[entry].record.set_state(Fw::DpState::TRANSMITTED);
+                inputs[entry].record.set_state(Fw::DpState::PARTIAL);
             }
         }
 
-        entryList.sort(DpCatalog::CompareEntries);
-
-        FwIndexType entryIndex = 0;
-
-        for (const auto& entry : entryList) {
-            outputs[entryIndex].record.set_priority(entry.record.get_priority());
-            outputs[entryIndex].record.set_id(entry.record.get_id());
-            outputs[entryIndex].record.set_state(entry.record.get_state());
-            outputs[entryIndex].record.set_tSec(entry.record.get_tSec());
-            outputs[entryIndex].record.set_tSub(1500);
-            outputs[entryIndex].record.set_size(100);
-            entryIndex++;
-        }
+        std::partial_sort_copy(std::begin(inputs), std::end(inputs), std::begin(outputs), std::end(outputs));
 
         this->testTree(inputs, outputs, FW_NUM_ARRAY_ELEMENTS(inputs));
     }
@@ -532,7 +514,7 @@ void DpCatalogTester ::test_TreeTestRandomPriority() {
             entryList.push_back(inputs[entry]);
         }
 
-        entryList.sort(DpCatalog::CompareEntries);
+        entryList.sort();
 
         FwIndexType entryIndex = 0;
 
@@ -575,7 +557,7 @@ void DpCatalogTester ::test_TreeTestRandomTime() {
             entryList.push_back(inputs[entry]);
         }
 
-        entryList.sort(DpCatalog::CompareEntries);
+        entryList.sort();
 
         FwIndexType entryIndex = 0;
 
@@ -618,7 +600,7 @@ void DpCatalogTester ::test_TreeTestRandomId() {
             entryList.push_back(inputs[entry]);
         }
 
-        entryList.sort(DpCatalog::CompareEntries);
+        entryList.sort();
 
         FwIndexType entryIndex = 0;
 
@@ -663,7 +645,7 @@ void DpCatalogTester ::test_TreeTestRandomPrioIdTime() {
             entryList.push_back(inputs[entry]);
         }
 
-        entryList.sort(DpCatalog::CompareEntries);
+        entryList.sort();
 
         FwIndexType entryIndex = 0;
 
