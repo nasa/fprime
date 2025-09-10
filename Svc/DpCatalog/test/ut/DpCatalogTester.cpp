@@ -6,7 +6,6 @@
 
 #include "DpCatalogTester.hpp"
 #include <algorithm>
-#include <list>
 #include "Fw/Dp/DpContainer.hpp"
 #include "Fw/Test/UnitTest.hpp"
 #include "Fw/Types/FileNameString.hpp"
@@ -255,8 +254,8 @@ void DpCatalogTester ::from_pingOut_handler(FwIndexType portNum, U32 key) {
 // ----------------------------------------------------------------------
 
 void DpCatalogTester ::test_NominalManual_TreeTestRandomTransmitted() {
-    static const FwIndexType NUM_ENTRIES = 10;
-    static const FwIndexType NUM_ITERS = 1;
+    static const FwIndexType NUM_ENTRIES = 100;
+    static const FwIndexType NUM_ITERS = 100;
 
     for (FwIndexType iter = 0; iter < NUM_ITERS; iter++) {
         Svc::DpCatalog::DpStateEntry inputs[NUM_ENTRIES];
@@ -280,7 +279,7 @@ void DpCatalogTester ::test_NominalManual_TreeTestRandomTransmitted() {
             randVal = STest::Pick::lowerUpper(0, 1);
             if (randVal == 0) {
                 inputs[entry].record.set_state(Fw::DpState::UNTRANSMITTED);
-            } else {
+            } else if (randVal == 1) {
                 inputs[entry].record.set_state(Fw::DpState::PARTIAL);
             }
         }
@@ -500,8 +499,6 @@ void DpCatalogTester ::test_TreeTestRandomPriority() {
         Svc::DpCatalogTester tester;
         Fw::FileNameString dir;
 
-        std::list<Svc::DpCatalog::DpStateEntry> entryList;
-
         // fill the input entries with random priorities
         for (FwIndexType entry = 0; entry < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(inputs)); entry++) {
             U32 randVal = STest::Pick::lowerUpper(0, NUM_ENTRIES - 1);
@@ -511,22 +508,9 @@ void DpCatalogTester ::test_TreeTestRandomPriority() {
             inputs[entry].record.set_tSec(1000);
             inputs[entry].record.set_tSub(1500);
             inputs[entry].record.set_size(100);
-            entryList.push_back(inputs[entry]);
         }
 
-        entryList.sort();
-
-        FwIndexType entryIndex = 0;
-
-        for (const auto& entry : entryList) {
-            outputs[entryIndex].record.set_priority(entry.record.get_priority());
-            outputs[entryIndex].record.set_id(entry.record.get_id());
-            outputs[entryIndex].record.set_state(entry.record.get_state());
-            outputs[entryIndex].record.set_tSec(1000);
-            outputs[entryIndex].record.set_tSub(1500);
-            outputs[entryIndex].record.set_size(100);
-            entryIndex++;
-        }
+        std::partial_sort_copy(std::begin(inputs), std::end(inputs), std::begin(outputs), std::end(outputs));
 
         tester.testTree(inputs, outputs, FW_NUM_ARRAY_ELEMENTS(inputs));
     }
@@ -543,8 +527,6 @@ void DpCatalogTester ::test_TreeTestRandomTime() {
         Svc::DpCatalogTester tester;
         Fw::FileNameString dir;
 
-        std::list<Svc::DpCatalog::DpStateEntry> entryList;
-
         // fill the input entries with random priorities
         for (FwIndexType entry = 0; entry < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(inputs)); entry++) {
             U32 randVal = STest::Pick::lowerUpper(0, NUM_ENTRIES - 1);
@@ -554,22 +536,9 @@ void DpCatalogTester ::test_TreeTestRandomTime() {
             inputs[entry].record.set_tSec(randVal);
             inputs[entry].record.set_tSub(1500);
             inputs[entry].record.set_size(100);
-            entryList.push_back(inputs[entry]);
         }
 
-        entryList.sort();
-
-        FwIndexType entryIndex = 0;
-
-        for (const auto& entry : entryList) {
-            outputs[entryIndex].record.set_priority(entry.record.get_priority());
-            outputs[entryIndex].record.set_id(entry.record.get_id());
-            outputs[entryIndex].record.set_state(entry.record.get_state());
-            outputs[entryIndex].record.set_tSec(entry.record.get_tSec());
-            outputs[entryIndex].record.set_tSub(1500);
-            outputs[entryIndex].record.set_size(100);
-            entryIndex++;
-        }
+        std::partial_sort_copy(std::begin(inputs), std::end(inputs), std::begin(outputs), std::end(outputs));
 
         testTree(inputs, outputs, FW_NUM_ARRAY_ELEMENTS(inputs));
     }
@@ -586,8 +555,6 @@ void DpCatalogTester ::test_TreeTestRandomId() {
         Svc::DpCatalogTester tester;
         Fw::FileNameString dir;
 
-        std::list<Svc::DpCatalog::DpStateEntry> entryList;
-
         // fill the input entries with random priorities
         for (FwIndexType entry = 0; entry < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(inputs)); entry++) {
             U32 randVal = STest::Pick::lowerUpper(0, NUM_ENTRIES - 1);
@@ -597,22 +564,9 @@ void DpCatalogTester ::test_TreeTestRandomId() {
             inputs[entry].record.set_tSec(1000);
             inputs[entry].record.set_tSub(1500);
             inputs[entry].record.set_size(100);
-            entryList.push_back(inputs[entry]);
         }
 
-        entryList.sort();
-
-        FwIndexType entryIndex = 0;
-
-        for (const auto& entry : entryList) {
-            outputs[entryIndex].record.set_priority(entry.record.get_priority());
-            outputs[entryIndex].record.set_id(entry.record.get_id());
-            outputs[entryIndex].record.set_state(entry.record.get_state());
-            outputs[entryIndex].record.set_tSec(entry.record.get_tSec());
-            outputs[entryIndex].record.set_tSub(1500);
-            outputs[entryIndex].record.set_size(100);
-            entryIndex++;
-        }
+        std::partial_sort_copy(std::begin(inputs), std::end(inputs), std::begin(outputs), std::end(outputs));
 
         testTree(inputs, outputs, FW_NUM_ARRAY_ELEMENTS(inputs));
     }
@@ -629,8 +583,6 @@ void DpCatalogTester ::test_TreeTestRandomPrioIdTime() {
         Svc::DpCatalogTester tester;
         Fw::FileNameString dir;
 
-        std::list<Svc::DpCatalog::DpStateEntry> entryList;
-
         // fill the input entries with random priorities
         for (FwIndexType entry = 0; entry < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(inputs)); entry++) {
             U32 randVal = STest::Pick::lowerUpper(0, NUM_ENTRIES - 1);
@@ -642,22 +594,9 @@ void DpCatalogTester ::test_TreeTestRandomPrioIdTime() {
             inputs[entry].record.set_tSec(randVal);
             inputs[entry].record.set_tSub(1500);
             inputs[entry].record.set_size(100);
-            entryList.push_back(inputs[entry]);
         }
 
-        entryList.sort();
-
-        FwIndexType entryIndex = 0;
-
-        for (const auto& entry : entryList) {
-            outputs[entryIndex].record.set_priority(entry.record.get_priority());
-            outputs[entryIndex].record.set_id(entry.record.get_id());
-            outputs[entryIndex].record.set_state(entry.record.get_state());
-            outputs[entryIndex].record.set_tSec(entry.record.get_tSec());
-            outputs[entryIndex].record.set_tSub(1500);
-            outputs[entryIndex].record.set_size(100);
-            entryIndex++;
-        }
+        std::partial_sort_copy(std::begin(inputs), std::end(inputs), std::begin(outputs), std::end(outputs));
 
         tester.testTree(inputs, outputs, FW_NUM_ARRAY_ELEMENTS(inputs));
     }
