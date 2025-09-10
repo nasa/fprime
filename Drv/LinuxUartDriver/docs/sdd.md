@@ -1,6 +1,6 @@
 # 1. Drv::LinuxUartDriver Linux UART Driver Component
 
-The LinuxUartDriver component provides a Linux-specific implementation of a UART (Universal Asynchronous Receiver-Transmitter) serial communication driver. It implements the byte stream driver model interface to enable serial communication with external devices through UART ports on Linux systems.
+The LinuxUartDriver component provides a Linux-specific implementation of a UART (Universal Asynchronous Receiver-Transmitter) serial communication driver. It implements the byte stream driver model interface (see [`Drv.ByteStreamDriver`](../../Interfaces/ByteStreamDriver.fpp)) to enable serial communication with external devices through UART ports on Linux systems.
 
 The component wraps Linux termios API functionality to provide configurable serial communication with support for various baud rates, flow control options, and parity settings. It implements bidirectional communication using a dedicated receive thread and synchronous send operations.
 
@@ -10,7 +10,7 @@ For more information on the ByteStreamDriverModel see: [`Drv::ByteStreamDriverMo
 
 | Name | Description | Validation |
 |---|---|---|
-| LINUX-UART-COMP-001 | The LinuxUartDriver component shall implement the ByteStreamDriverModel | inspection |
+| LINUX-UART-COMP-001 | The LinuxUartDriver component shall implement the Drv.ByteStreamDriver interface | inspection |
 | LINUX-UART-COMP-002 | The LinuxUartDriver component shall provide configurable baud rates from 9600 to 4MHz | inspection |
 | LINUX-UART-COMP-003 | The LinuxUartDriver component shall provide configurable flow control (none/hardware) | inspection |
 | LINUX-UART-COMP-004 | The LinuxUartDriver component shall provide configurable parity (none/odd/even) | inspection |
@@ -21,14 +21,14 @@ For more information on the ByteStreamDriverModel see: [`Drv::ByteStreamDriverMo
 
 ## 1.2 Design
 
-The LinuxUartDriver component implements the design specified by the [`Drv::ByteStreamDriverModel`](../../ByteStreamDriverModel/docs/sdd.md).
+The LinuxUartDriver component implements the design specified by the [`Drv.ByteStreamDriver`](../../Interfaces/ByteStreamDriver.fpp) interface.
 
 ### 1.2.1 Architecture
 
 The component consists of the following key elements:
 
 - **UART Configuration**: Handles device opening, baud rate, flow control, and parity settings using Linux termios API
-- **Send Handler**: Synchronous transmission of data via the `send` port
+- **Send Handler**: Synchronous transmission of data via the `send` port (guarded input port)
 - **Receive Thread**: Asynchronous reception of data via a dedicated thread that calls the `recv` output port
 - **Buffer Management**: Integration with F´ buffer allocation system for memory management
 - **Telemetry Reporting**: Tracks and reports bytes sent and received statistics
@@ -74,29 +74,28 @@ The LinuxUartDriver should be instantiated in the FPP topology and configured us
 
 ```cpp
 // Configuration function - called during topology setup
-void configureUart() {
+void configureTopology() {
     // Open UART device with configuration
     bool success = uart.open("/dev/ttyUSB0",                    // Device path
                              Drv::LinuxUartDriver::BAUD_115K,   // 115200 baud
                              Drv::LinuxUartDriver::NO_FLOW,     // No flow control
                              Drv::LinuxUartDriver::PARITY_NONE, // No parity
                              1024);                             // Buffer size
-    
     if (!success) {
         // Handle configuration error
-        FW_ASSERT(0, success);
     }
+    ...
 }
 
 // Startup function - called when starting tasks
-void startUart() {
+void setupTopology() {
     // Start receive thread
     Os::TaskString name("UartReceiveTask");
     uart.start(name, UART_PRIORITY, Default::STACK_SIZE);
 }
 
 // Shutdown function - called during teardown
-void shutdownUart() {
+void teardownTopology() {
     uart.quitReadThread();
     uart.join();
 }
