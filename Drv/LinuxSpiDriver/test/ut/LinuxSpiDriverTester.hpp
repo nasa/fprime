@@ -41,9 +41,6 @@ class LinuxSpiDriverTester : public LinuxSpiDriverTesterBase {
     //!
     void sendBuffer(U8* buffer, FwSizeType size);
 
-      //! Test a configuration mismatch
-      void testConfigMismatch();
-
   private:
     // ----------------------------------------------------------------------
     // Helper methods
@@ -57,27 +54,16 @@ class LinuxSpiDriverTester : public LinuxSpiDriverTesterBase {
     //!
     void initComponents();
 
+    void textLogIn(const FwEventIdType id,              //!< The event ID
+                   Fw::Time& timeTag,                   //!< The time
+                   const Fw::TextLogSeverity severity,  //!< The severity
+                   const Fw::TextLogString& text        //!< The event string
+    );
 
-    protected:
-
-      // ----------------------------------------------------------------------
-      // Handlers for typed from ports
-      // ----------------------------------------------------------------------
-
-      //! Handler for from_LogText
-      //!
-      void textLogIn(
-          const FwEventIdType id, //!< The event ID
-          Fw::Time& timeTag, //!< The time
-          const Fw::LogSeverity severity, //!< The severity
-          const Fw::TextLogString& text //!< The event string
-      );
-
-    private:
-
-      // ----------------------------------------------------------------------
-      // Variables
-      // ----------------------------------------------------------------------
+  private:
+    // ----------------------------------------------------------------------
+    // Variables
+    // ----------------------------------------------------------------------
 
     //! The component under test
     //!
