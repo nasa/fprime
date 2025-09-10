@@ -635,7 +635,14 @@ void DpCatalogTester ::test_RandomDp() {
             dpSet[entry].dataSize = STest::Pick::startLength(0, MAX_SIZE);
             dpSet[entry].dir = dirs[STest::Pick::startLength(0, NUM_DIRS)].toChar();
 
-            dpSet[entry].state = Fw::DpState::UNTRANSMITTED;
+            // randomly set if it is untransmitted or partial
+            // Transmitted Dps are skipped in processFile
+            U32 randVal = STest::Pick::lowerUpper(0, 1);
+            if (randVal == 0) {
+                dpSet[entry].state = Fw::DpState::UNTRANSMITTED;
+            } else if (randVal == 1) {
+                dpSet[entry].state = Fw::DpState::PARTIAL;
+            }
         }
 
         this->readDps(dirs, NUM_DIRS, stateFile, dpSet, entries, runtimeEntries);
