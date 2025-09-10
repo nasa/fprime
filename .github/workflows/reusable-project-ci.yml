@@ -19,10 +19,6 @@ on:
         required: false
         type: string
         default: "devel"
-      plugin_packages:
-        required: false
-        type: string
-        default: ""
       ci_config_file:
         required: true
         type: string
@@ -62,11 +58,8 @@ jobs:
           fprime_location: ${{ inputs.fprime_location }}
           target_ref: ${{ inputs.target_ref }}
           plugin_packages: ${{ inputs.plugin_packages }}
-      - name: "West"
-        run: |
-          cd ./lib/zephyr-workspace
-          west update
-          west sdk install
+      - name: "Custom repository setup"
+        uses: ./.github/actions/setup
       - name: "Build Binary"
         run: |
           CCACHE_DISABLE=1 fprime-ci -c ${{ inputs.ci_config_file }} --add-stage build
