@@ -744,12 +744,22 @@ void DpCatalog::deallocateNode(DpBtreeNode* node) {
             } else {
                 parent->right = rightmostNode;
             }
-            rightmostNode->parent = parent;
         }
+
+        // Point at actual parent or nullptr so future us knows this is root
+        rightmostNode->parent = parent;
 
         // Now connect this node's children onto rightmostNode
         rightmostNode->left = node->left;
         rightmostNode->right = node->right;
+
+        // Make sure all children point at their new parent node
+        node->left->parent = rightmostNode;
+
+        if (node->right != nullptr) {
+            node->right->parent = rightmostNode;
+        }
+
     } else {
         // cut out this segment and shift the right branch up
         // root node has no parent, but needs the root pointer to shift
@@ -764,21 +774,43 @@ void DpCatalog::deallocateNode(DpBtreeNode* node) {
             }
         }
 
-            if (node->right != nullptr) {
-                FW_ASSERT(node->right->parent != nullptr);
-                node->right->parent = parent;
-            }
+        if (node->right != nullptr) {
+            FW_ASSERT(node->right->parent != nullptr);
+            node->right->parent = parent;
+        }
+    }
+
+    // Left node doesn't point at us
+    if (node->left != nullptr) {
+        FW_ASSERT(node->left->parent != node);
     }
 
     // clear out the entry
     node->entry = {};
     // point this node @ the old head of the free list
     node->left = m_freeListHead;
-    node->right = nullptr;
-    node->parent = nullptr;
 
+    // Right node doesn't point at us
+    if (node->right != nullptr) {
+        FW_ASSERT(node->right->parent != node);
+    }
+
+    // clear out our right reference
+    node->right = nullptr;
+
+    DpBtreeNode* oldFreeListHead = this->m_freeListHead;
     // make this node the new head of the free list
     this->m_freeListHead = node;
+
+    // Node is the head of the free list
+    FW_ASSERT(this->m_freeListHead == node);
+
+    node->parent = nullptr;
+
+    // Node only points at next in free list
+    FW_ASSERT(node->left == oldFreeListHead);
+    FW_ASSERT(node->right == nullptr);
+    FW_ASSERT(node->parent == nullptr);
 }
 
 void DpCatalog::sendNextEntry() {
