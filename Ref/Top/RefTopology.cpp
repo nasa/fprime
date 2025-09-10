@@ -15,7 +15,6 @@
 // Necessary project-specified types
 #include <Fw/Types/MallocAllocator.hpp>
 
-
 // Allows easy reference to objects in FPP/autocoder required namespaces
 using namespace Ref;
 
@@ -78,7 +77,7 @@ void setupTopology(const TopologyState& state) {
     loadParameters();
     // Autocoded task kick-off (active components). Function provided by autocoder.
     startTasks(state);
-    //Initialize socket client communication if and only if there is a valid specification
+    // Initialize socket client communication if and only if there is a valid specification
     if (state.hostname != nullptr && state.port != 0) {
         Os::TaskString name("ReceiveTask");
         comDriver.start(name, COMM_PRIORITY, Default::STACK_SIZE);
@@ -102,7 +101,7 @@ void teardownTopology(const TopologyState& state) {
     stopTasks(state);
     freeThreads(state);
 
-    //Stop the comDriver component, free thread
+    // Stop the comDriver component, free thread
     comDriver.stop();
     (void)comDriver.join();
 

@@ -17,9 +17,13 @@ Any `active` component that must remain responsive for the system's continued fu
 
 Additionally, if a component is at-risk for losing responsiveness (e.g. potentially long-running operations, unbounded file i/o, etc.), the health checking pattern can be applied to ensure it remains alive.
 
+Some active components may be deemed non-critical. For example, a [worker](./manager-worker.md) component taking to long to respond is likely not a system critical function. Likewise are idle tasks. These types of components are typically omitted from health checking.
+
 ## Design
 
 An `active` component needing periodic health-checking should implement a set of [callback ports](./common-port-patterns.md#callback-ports) of type `Svc.Ping` and should be connected to the `Svc.Health` component.  The input `Svc.Ping` port must be asynchronous to ensure the test is run on the component's thread.  Upon receiving a ping, the component responds immediately back with the same message.
+
+In typical F´ deployments, there is a single `Svc.Health` component that performs all health checking.  It is provided by the `CdhCore` subtopology.
 
 ```mermaid
 sequenceDiagram
@@ -27,7 +31,15 @@ sequenceDiagram
     Component->>-Health: Ping Response
 ```
 
-`Svc.Health` tracks how long it takes for the component to respond to the ping message placed on its queue.  `Svc.Health` will produce a `WARNING_HI` event after a configurable amount of time followed by `FATAL` event after a longer configured time. Thus the system will issue a WARNING_HI event if a component does not respond, and escalate to a FATAL event (triggering a reset or other FATAL handling) if the component remains unresponsive.
+`Svc.Health` tracks how long it takes for the component to respond to the ping message placed on its queue.  `Svc.Health`  produces two events corresponding to two configurable timeouts:
+   1. A `WARNING_HI` is emitted when the first timeout is passed
+   2. A `FATAL` is emitted when the second timeout is passed.
+Thus the system will issue a `WARNING_HI` event if a component does not respond, and escalate to a `FATAL` event should the component remains unresponsive.
+
+> [!IMPORTANT]
+> Most `FATAL` events result in a reset/reboot of the system. This is chosen by the chose of `FatalHandler` component used on the project. The default `FATAL` handler aborts the software.
+
+These timeouts are configured in counts of [Rate Group](./rate-group.md) ticks. The actual time of each timeout is the configured value multiplied by the period of the rate group `Svc.Health` is connected to.
 
 ## Implementation
 
@@ -95,4 +107,4 @@ The health checking pattern can be used to test any active component, not just c
 
 ## Conclusion
 
-The health checking pattern can be used to ensure critical services within the system remain responsive over the course of the software's execution. Should the component fail to respond for a pair of configurable durations, a WARNING_HI and FATAL event will respectively result.
+The health-checking pattern can be used to ensure critical services within the system remain responsive over the course of the software's execution. Should the component fail to respond for a pair of configurable durations, a `WARNING_HI` and `FATAL` event will respectively result.

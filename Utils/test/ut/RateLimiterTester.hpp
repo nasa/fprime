@@ -14,60 +14,51 @@
 #ifndef RATELIMITERTESTER_HPP
 #define RATELIMITERTESTER_HPP
 
-#include "Utils/RateLimiter.hpp"
 #include <Fw/FPrimeBasicTypes.hpp>
-#include "gtest/gtest.h"
 #include <STest/Pick/Pick.hpp>
+#include "Utils/RateLimiter.hpp"
+#include "gtest/gtest.h"
 
 namespace Utils {
 
-  class RateLimiterTester
-  {
+class RateLimiterTester {
+    // ----------------------------------------------------------------------
+    // Construction and destruction
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Construction and destruction
-      // ----------------------------------------------------------------------
+  public:
+    //! Construct object RateLimiterTester
+    //!
+    RateLimiterTester();
 
-    public:
+    //! Destroy object RateLimiterTester
+    //!
+    ~RateLimiterTester();
 
-      //! Construct object RateLimiterTester
-      //!
-      RateLimiterTester();
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-      //! Destroy object RateLimiterTester
-      //!
-      ~RateLimiterTester();
+    void testCounterTriggering();
+    void testTimeTriggering();
+    void testCounterAndTimeTriggering();
 
-    public:
+  private:
+    // ----------------------------------------------------------------------
+    // Helper methods
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Tests
-      // ----------------------------------------------------------------------
+    //! Initialize components
+    //!
+    void initComponents();
 
-      void testCounterTriggering();
-      void testTimeTriggering();
-      void testCounterAndTimeTriggering();
+  private:
+    // ----------------------------------------------------------------------
+    // Variables
+    // ----------------------------------------------------------------------
+};
 
-    private:
-
-      // ----------------------------------------------------------------------
-      // Helper methods
-      // ----------------------------------------------------------------------
-
-      //! Initialize components
-      //!
-      void initComponents();
-
-    private:
-
-      // ----------------------------------------------------------------------
-      // Variables
-      // ----------------------------------------------------------------------
-
-
-
-  };
-
-} // end namespace Utils
+}  // end namespace Utils
 
 #endif

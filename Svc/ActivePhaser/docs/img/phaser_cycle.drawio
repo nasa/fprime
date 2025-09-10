@@ -1,0 +1,46 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/26.1.1 Chrome/132.0.6834.210 Electron/34.3.3 Safari/537.36" version="26.1.1">
+  <diagram name="Page-1" id="vPd64lIvbsAJPx8IE0Dr">
+    <mxGraphModel dx="866" dy="642" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="4ZyxmVANniScELrK8BCl-4" value="A" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+          <mxGeometry x="200" y="160" width="20" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="4ZyxmVANniScELrK8BCl-5" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+          <mxGeometry x="220" y="160" width="20" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="4ZyxmVANniScELrK8BCl-6" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1">
+          <mxGeometry x="240" y="160" width="20" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="4ZyxmVANniScELrK8BCl-7" value="B" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1">
+          <mxGeometry x="260" y="160" width="20" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="4ZyxmVANniScELrK8BCl-8" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1">
+          <mxGeometry x="280" y="160" width="20" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="4ZyxmVANniScELrK8BCl-9" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;" parent="1" vertex="1">
+          <mxGeometry x="300" y="160" width="20" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="4ZyxmVANniScELrK8BCl-10" value="C" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+          <mxGeometry x="320" y="160" width="20" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="4ZyxmVANniScELrK8BCl-11" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="340" y="160" width="20" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="4ZyxmVANniScELrK8BCl-12" value="C" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+          <mxGeometry x="360" y="160" width="20" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="4ZyxmVANniScELrK8BCl-13" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;" parent="1" vertex="1">
+          <mxGeometry x="380" y="160" width="20" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="4ZyxmVANniScELrK8BCl-14" value="" style="shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;labelPosition=left;verticalLabelPosition=middle;align=right;verticalAlign=middle;rotation=-90;" parent="1" vertex="1">
+          <mxGeometry x="290" y="120" width="20" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="4ZyxmVANniScELrK8BCl-15" value="A cycle of 10 ticks" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+          <mxGeometry x="240" y="230" width="120" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

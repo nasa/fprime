@@ -2,10 +2,6 @@
 
 Subtopologies are topologies for smaller chunks of behavior in F Prime. It allows for grouping bits of topology architecture that fit together, to then be imported into a base deployment's topology. The use case for this is seen when working with shareable components, specifically in the form of [libraries](./develop-fprime-libraries.md).
 
-There are two ways that subtopologies can be created in F Prime. The first (native) way to do so is by hand-writing subtopologies. This method is less complex, but more tedious and restrictive on the capabilities of subtopologies. **This document covers hand-written subtopologies**. 
-
-The second method of creating subtopologies is through the [Subtopology Autocoder](https://github.com/fprime-community/fprime-subtopology-tool) (also described in [a later section of this document](#the-subtopology-autocoder)). This method is more complex, however expands upon the feature set and capabilities of subtopologies. A document that details the process for creating a subtopology with it is available [at the repo for the tool](https://github.com/fprime-community/fprime-subtopology-tool/blob/main/docs/Example.md).
-
 *Contents*
 1. [Subtopology Structure](#subtopology-structure)
 2. [Individual File Contents](#individual-file-contents)
@@ -23,8 +19,18 @@ Thus, the required structure for your subtopology should be:
 ```bash
 MySubtopology/
 ├─ CMakeLists.txt
-├─ intentionally-empty.cpp
-├─ MySubtopology.cmake
+├─ MySubtopology.fpp
+└─ MySubtopologyTopologyDefs.hpp
+```
+
+Subtopologies often ship with configuration modules as well expanding the format to look like this:
+
+```bash
+MySubtopology/
+├─ MySubtopologyConfig/
+|  ├─ CMakeLists.txt
+|  └─ MySubtopologyConfig.fpp
+├─ CMakeLists.txt
 ├─ MySubtopology.fpp
 └─ MySubtopologyTopologyDefs.hpp
 ```
@@ -32,15 +38,10 @@ MySubtopology/
 All files will be discussed in more detail in later sections of this guide. Additionally, note that there are optional files that can be included in your subtopology to extend its capability.
 
 - It is highly recommended to include a `docs` folder to document your subtopology. Simple markdown files (`sdd` for subtopology design document) work well in this case.
-- Other `.fpp` files can also be included in your subtopology. For example, a `config.fpp` may prove to be quite useful.
+- Other `.fpp` files can also be included in your subtopology.
 - Unit tests can also be added to your subtopology, using a similar structure to unit tests for components.
-- Subtopology configuration behavior for components are written with [phases](https://nasa.github.io/fpp/fpp-users-guide.html#Defining-Component-Instances_Init-Specifiers_Execution-Phases).
-- `intentionally-empty.cpp` is a necessary file to include. It will be discussed why this is included [later](#cmake-and-buildstep-files).
 
 > Note that with the latest release of `fprime-tools`, you can run `fprime-util new --subtopology` to generate the subtopology structure.
-
-> [!NOTE]
-> Remember, this document covers hand-written subtopologies. See [a later section](#the-subtopology-autocoder) for information about the Subtopology Autocoder tool, the other way of creating subtopologies.
 
 ## Individual File Contents
 
@@ -71,7 +72,7 @@ instance rng: MyLibrary.RNG base id 0xFF2FF \
 
 instance rateGroup: Svc.ActiveRateGroup base id 0xFF4FF \
     queue size Defaults.QUEUE_SIZE \
-    stack size DEFAULTS.STACK_SIZE \
+    stack size Defaults.STACK_SIZE \
     priority 150
 ```
 
@@ -191,24 +192,17 @@ The last step is to include our CMake-specific files. This includes `CMakeLists.
 In `CMakeLists.txt`: 
 
 ```cmake
-set(SOURCE_FILES
-    "${CMAKE_CURRENT_LIST_DIR}/RNGTopology.fpp"
-    "${CMAKE_CURRENT_LIST_DIR}/intentionally-empty.cpp"
-)
-
-register_fprime_module()
-
-set_target_properties(
-    ${FPRIME_CURRENT_MODULE}
-    PROPERTIES
-    SOURCES "${CMAKE_CURRENT_LIST_DIR}/intentionally-empty.cpp"
+register_fprime_module(
+    EXCLUDE_FROM_ALL
+    AUTOCODER_INPUTS
+        "${CMAKE_CURRENT_LIST_DIR}/RNGTopology.fpp"
+    HEADERS
+        "${CMAKE_CURRENT_LIST_DIR}/MySubtopologyTopologyDefs.hpp"
+    INTERFACE
 )
 ```
 
-As you can see, we have reached the point where we need to use `intentionally-empty.cpp`. Remember the syntax renaming from earlier, where `MySubtopology -> rateGroup` becomes `MySubtopology_rateGroup...`? Well, if we run `fprime-util build`, the *main* deployment that uses our subtopology as well as our subtopology will build and create that syntax. In this case, we get a namespace error, where we try to use `MySubtopology_rateGroup` in a place where it's "not defined". The empty file tells CMake that when our subtopology is built, return the empty file, so there is only a single place where the syntax is defined.
-
-
-# Integration into a "Main" Deployment
+## Integration into a "Main" Deployment
 
 At this point, we're ready to integrate our subtopology into the topology of our main deployment (you can think of this being our deliverable, with `MySubtopology` being a portion of it). We will assume, given our example, that you have the RNG component developed alongside the topology. Additionally, we assume that you have created an F Prime project and an associated deployment for it. Let's call this deployment "MainDeployment", and the project "MainProject".
 
@@ -219,14 +213,6 @@ First step is to ensure that our subtopology is linked to our project; within `p
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/MySubtopology/")
 ```
 
-Then, let's `cd` into `MainDeployment/Top/`. We have some files here we need to configure to use our subtopology. Before anything let's go to `CMakeLists.txt` to include your own subtopology's CMake file:
-
-```cmake
-...
-include("${CMAKE_CURRENT_LIST_DIR}/../../MySubtopology/MySubtopology.cmake")
-register_fprime_module()
-...
-```
 
 Head over to `MainDeploymentTopologyDefs.hpp`. We want to not only include our subtopology's definitions header, but also modify `PingEntires` to use `GlobalDefs::PingEntries`. At the end of `namespace MainDeployment`, include:
 
@@ -255,7 +241,7 @@ topology MainDeployment {
 
     connections RateGroups{
         ...
-        rateGroupDriver.CycleOut[3] -> MySubtopology.rateGroup.CycleIn // you'll notice that the syntax here is <Namespace>.<instance>
+        rateGroupDriver.CycleOut[3] -> MySubtopology.rateGroup.CycleIn # you'll notice that the syntax here is <Namespace>.<instance>
         ...
     }
 }
@@ -300,16 +286,85 @@ Lastly, since our RNG component has some telemetry, we need to include (or ignor
 
 Now go ahead and run and build your deployment, and you should see that you have a built deployment that uses a subtopology.
 
-# The Subtopology Autocoder
+## Adding Subtopology Configuration
 
-As you may notice, the current implementation of subtopologies lacks in a few areas of simplicity and especially reusability. A couple of these issues are tabulated here:
+Adding subtopology configuration is done by adding a new module to the subtopology directory. Typically the name appends `Config` (e.g. `MySubtopologyConfig`).  This directory contains, at minimum, a `CMakeLists.txt` and configurable files.
 
-1. It may be the case that I would like to have multiple uses of a subtopology `st` within a main topology `main`. For example, `st` could define the topology for managing a single temperature sensor, but I would like to implement $n$ number of those sensors. At the moment, to do this one would need to duplicate the entire subtopology and make proper modifications to instances, the TopologyDefs file, and more.
-2. Let's maintain our example of `st` being the topology for managing a single temperature sensor. It may be the case that `st` only implements the software behavior, as is reasonable: the developer of the subtopology probably cannot write hardware interface drivers for every platform possible. So, the user would provide the proper driver to `st`, which is again reasonable. However, to accomplish this one would need to modify the contents of a subtopology, changing instance definitions and possibly the connection graphs as well. Such a task could become monstrous if, say `st` now implements the [hub pattern](../user-manual/design-patterns/hub-pattern.md).
+In our case, there are two pieces that should be configured:
 
-Thus, an autocoder [tool](https://github.com/fprime-community/fprime-subtopology-tool) dubbed the "Subtopology AC Tool" has been developed to be able to provide features like instantiation, local components, and formal subtopology interfaces. The tool itself provides examples of the syntax required to use these features, as well as a design methodology and a worked example with diagrams using a similar context to the one [in this document](#example-scenario).
+1. The subtopology base ID
+2. Component properties: queue depth, stack size, and priority.
 
-We recommend that subtopologies are built around the syntax of this tool, as it is on the road map to introduce the patterns in this tool into native FPP syntax.
+This can be done in `MySubtopologyConfig.fpp` as shown below.
+
+```
+module MySubtopologyConfig {
+    #Base ID for the CdhCore Subtopology, all components are offsets from this base ID
+    constant BASE_ID = 0xA0000000
+    
+    module QueueSizes {
+        constant rng         = 10
+        constant rateGroup   = 10
+    }
+    
+
+    module StackSizes {
+        constant rng       = 64 * 1024
+        constant rateGroup = 64 * 1024
+    }
+
+    module Priorities {
+        constant rng       = 89
+        constant rateGroup = 90
+    }
+}
+```
+
+`MySubtopology.fpp` must be updated to use this configuration:
+
+```
+    instance rng: MyLibrary.RNG base id MySubtopologyConfig.BASE_ID + 0x1000 \
+        queue size MySubtopologyConfig.QueueSizes.rng \
+        stack size MySubtopologyConfig.StackSizes.rng \
+        priority MySubtopologyConfig.Priorities.rng
+
+    instance rateGroup: Svc.ActiveRateGroup base id MySubtopologyConfig.BASE_ID + 0x2000 \
+        queue size MySubtopologyConfig.QueueSizes.rateGroup \
+        stack size MySubtopologyConfig.StackSizes.rateGroup \
+        priority MySubtopologyConfig.Priorities.rateGroup
+```
+
+> [!IMPORTANT]
+> Configuration values should be set per-instance of a component.
+
+Next, add a `CMakeList.txt` to your subtopology configuration module.
+
+```
+register_fprime_config(
+    EXCLUDE_FROM_ALL
+    AUTOCODER_INPUTS
+        "${CMAKE_CURRENT_LIST_DIR}/MySubtopologyConfig.fpp"
+    INTERFACE
+)
+```
+
+Update the subtopology to depend on config:
+
+```
+register_fprime_module(
+    EXCLUDE_FROM_ALL
+    AUTOCODER_INPUTS
+        "${CMAKE_CURRENT_LIST_DIR}/RNGTopology.fpp"
+    HEADERS
+        "${CMAKE_CURRENT_LIST_DIR}/MySubtopologyTopologyDefs.hpp"
+    DEPENDS
+        MySubtopology_MySubtopologyConfig
+    INTERFACE
+)
+```
+
+Users may now configure your subtopology!
+
 
 # Conclusion
 
