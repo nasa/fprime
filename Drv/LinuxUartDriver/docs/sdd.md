@@ -6,7 +6,7 @@ The component wraps Linux termios API functionality to provide configurable seri
 
 For more information on the ByteStreamDriverModel see: [`Drv::ByteStreamDriverModel`](../../ByteStreamDriverModel/docs/sdd.md).
 
-## 1.1 Requirements
+## 2 Requirements
 
 | Name | Description | Validation |
 |---|---|---|
@@ -19,11 +19,11 @@ For more information on the ByteStreamDriverModel see: [`Drv::ByteStreamDriverMo
 | LINUX-UART-COMP-007 | The LinuxUartDriver component shall handle UART errors and report them via events | inspection |
 | LINUX-UART-COMP-008 | The LinuxUartDriver component shall support buffer allocation for receive operations | inspection |
 
-## 1.2 Design
+## 3 Design
 
 The LinuxUartDriver component implements the design specified by the [`Drv.ByteStreamDriver`](../../Interfaces/ByteStreamDriver.fpp) interface.
 
-### 1.2.1 Architecture
+### 3.1 Architecture
 
 The component consists of the following key elements:
 
@@ -34,7 +34,7 @@ The component consists of the following key elements:
 - **Telemetry Reporting**: Tracks and reports bytes sent and received statistics
 - **Error Handling**: Comprehensive error detection and event reporting
 
-### 1.2.2 Send Operation
+### 3.2 Send Operation
 
 When data is sent via the `send` input port:
 1. The component validates the file descriptor and buffer
@@ -42,7 +42,7 @@ When data is sent via the `send` input port:
 3. Bytes sent counter is updated for telemetry
 4. Status is returned indicating success or failure
 
-### 1.2.3 Receive Operation
+### 3.3 Receive Operation
 
 The receive operation runs in a separate thread:
 1. A buffer is allocated from the buffer manager
@@ -51,7 +51,7 @@ The receive operation runs in a separate thread:
 4. Bytes received counter is updated for telemetry
 5. Errors are logged and reported via events
 
-### 1.2.4 Threading Model
+### 3.4 Threading Model
 
 The component uses a single dedicated thread for receive operations (`serialReadTaskEntry`). This thread:
 - Runs continuously until `quitReadThread()` is called
@@ -59,7 +59,7 @@ The component uses a single dedicated thread for receive operations (`serialRead
 - Handles timeouts and errors gracefully
 - Can be started with configurable priority and stack size
 
-## 1.3 Usage
+## 4 Usage
 
 The LinuxUartDriver must be configured with device parameters before use. The typical usage pattern is:
 
@@ -68,7 +68,7 @@ The LinuxUartDriver must be configured with device parameters before use. The ty
 3. **Send/Receive Data**: Use the ByteStreamDriverModel ports for communication
 4. **Shutdown**: Stop the receive thread and close the device
 
-### 1.3.1 Configuration Example
+### 4.1 Configuration Example
 
 The LinuxUartDriver should be instantiated in the FPP topology and configured using separate functions following F´ patterns:
 
@@ -101,7 +101,7 @@ void teardownTopology() {
 }
 ```
 
-### 1.3.2 Integration with Rate Groups
+### 4.2 Integration with Rate Groups
 
 The component includes a `run` input port for telemetry reporting that should be connected to a rate group in the FPP topology:
 
@@ -113,9 +113,9 @@ connections RateGroups {
 }
 ```
 
-## 1.4 Configuration
+## 5 Configuration
 
-### 1.4.1 Device Parameters
+### 5.1 Device Parameters
 
 | Parameter | Type | Description | Valid Values |
 |-----------|------|-------------|--------------|
@@ -125,7 +125,7 @@ connections RateGroups {
 | parity | UartParity | Parity setting | PARITY_NONE, PARITY_ODD, PARITY_EVEN |
 | allocationSize | FwSizeType | Receive buffer size | Positive integer (bytes) |
 
-### 1.4.2 Baud Rate Options
+### 5.2 Baud Rate Options
 
 The component supports the following baud rates:
 
@@ -148,7 +148,7 @@ The component supports the following baud rates:
 | BAUD_3500K | 3500000 | Linux only (if supported) |
 | BAUD_4000K | 4000000 | Linux only (if supported) |
 
-### 1.4.3 Thread Configuration
+### 5.3 Thread Configuration
 
 The receive thread can be configured with:
 
@@ -158,7 +158,7 @@ The receive thread can be configured with:
 | stackSize | Os::Task::ParamType | TASK_DEFAULT | Thread stack size |
 | cpuAffinity | Os::Task::ParamType | TASK_DEFAULT | CPU affinity mask |
 
-### 1.4.4 Events and Telemetry
+### 5.4 Events and Telemetry
 
 The component generates the following events:
 - **OpenError**: UART device open failures
