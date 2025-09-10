@@ -1,4 +1,6 @@
-# 1. Drv::LinuxUartDriver Linux UART Driver Component
+# Drv::LinuxUartDriver
+
+## 1. Introduction
 
 The LinuxUartDriver component provides a Linux-specific implementation of a UART (Universal Asynchronous Receiver-Transmitter) serial communication driver. It implements the byte stream driver model interface (see [`Drv.ByteStreamDriver`](../../Interfaces/ByteStreamDriver.fpp)) to enable serial communication with external devices through UART ports on Linux systems.
 
@@ -6,7 +8,7 @@ The component wraps Linux termios API functionality to provide configurable seri
 
 For more information on the ByteStreamDriverModel see: [`Drv::ByteStreamDriverModel`](../../ByteStreamDriverModel/docs/sdd.md).
 
-## 2 Requirements
+## 2. Requirements
 
 | Name | Description | Validation |
 |---|---|---|
@@ -19,7 +21,7 @@ For more information on the ByteStreamDriverModel see: [`Drv::ByteStreamDriverMo
 | LINUX-UART-COMP-007 | The LinuxUartDriver component shall handle UART errors and report them via events | inspection |
 | LINUX-UART-COMP-008 | The LinuxUartDriver component shall support buffer allocation for receive operations | inspection |
 
-## 3 Design
+## 3. Design
 
 The LinuxUartDriver component implements the design specified by the [`Drv.ByteStreamDriver`](../../Interfaces/ByteStreamDriver.fpp) interface.
 
@@ -59,7 +61,7 @@ The component uses a single dedicated thread for receive operations (`serialRead
 - Handles timeouts and errors gracefully
 - Can be started with configurable priority and stack size
 
-## 4 Usage
+## 4. Usage
 
 The LinuxUartDriver must be configured with device parameters before use. The typical usage pattern is:
 
@@ -113,7 +115,7 @@ connections RateGroups {
 }
 ```
 
-## 5 Configuration
+## 5. Configuration
 
 ### 5.1 Device Parameters
 
