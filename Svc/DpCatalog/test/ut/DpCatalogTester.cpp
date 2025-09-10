@@ -275,7 +275,7 @@ void DpCatalogTester ::test_NominalManual_TreeTestRandomTransmitted() {
             inputs[entry].record.set_tSub(1500);
             inputs[entry].record.set_size(100);
             // randomly set if it is untransmitted or partial
-            // Transmited Dps are skipped in processFile
+            // Transmitted Dps are skipped in processFile
             randVal = STest::Pick::lowerUpper(0, 1);
             if (randVal == 0) {
                 inputs[entry].record.set_state(Fw::DpState::UNTRANSMITTED);
