@@ -36,6 +36,8 @@ namespace Drv {
 void LinuxSpiDriverComponentImpl::SpiReadWrite_handler(const FwIndexType portNum,
                                                        Fw::Buffer& writeBuffer,
                                                        Fw::Buffer& readBuffer) {
+    FW_ASSERT(writeBuffer.getSize() == readBuffer.getSize());
+
     if (this->m_fd == -1) {
         return;
     }
