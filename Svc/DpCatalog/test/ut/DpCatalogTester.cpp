@@ -253,7 +253,7 @@ void DpCatalogTester ::from_pingOut_handler(FwIndexType portNum, U32 key) {
 // Moved Tests due to private/protected access
 // ----------------------------------------------------------------------
 
-void DpCatalogTester ::test_NominalManual_TreeTestRandomTransmitted() {
+void DpCatalogTester ::test_TreeTestRandomTransmitted() {
     static const FwIndexType NUM_ENTRIES = 100;
     static const FwIndexType NUM_ITERS = 100;
 
@@ -599,6 +599,46 @@ void DpCatalogTester ::test_TreeTestRandomPrioIdTime() {
         std::partial_sort_copy(std::begin(inputs), std::end(inputs), std::begin(outputs), std::end(outputs));
 
         tester.testTree(inputs, outputs, FW_NUM_ARRAY_ELEMENTS(inputs));
+    }
+}
+
+void DpCatalogTester ::test_RandomDp() {
+    static constexpr FwIndexType NUM_ENTRIES = DP_MAX_FILES;
+    static constexpr FwIndexType NUM_ITERS = 1;
+    static constexpr FwIndexType NUM_DIRS = DP_MAX_DIRECTORIES;
+
+    static constexpr FwSizeStoreType MAX_SIZE = 1000;
+
+    for (FwIndexType iter = 0; iter < NUM_ITERS; iter++) {
+        Fw::FileNameString dirs[NUM_DIRS];
+
+        for (FwIndexType ind = 0; ind < NUM_DIRS; ind++) {
+            char tmp[256];
+            sprintf(tmp, "./DpTest_Random_%03d", ind);
+            dirs[ind] = tmp;
+            std::cout << dirs[ind] << std::endl;
+        }
+
+        Fw::FileNameString stateFile("./dpState.dat");
+        Svc::DpCatalogTester::DpSet dpSet[NUM_ENTRIES];
+
+        FwIndexType entries = STest::Pick::startLength(0, NUM_ENTRIES);
+        FwIndexType runtimeEntries = STest::Pick::startLength(0, entries);
+
+        // fill the input entries with random priorities
+        for (FwIndexType entry = 0; entry < entries; entry++) {
+            dpSet[entry].id = STest::Pick::startLength(0, NUM_ENTRIES);
+            dpSet[entry].prio = STest::Pick::startLength(0, NUM_ENTRIES);
+
+            dpSet[entry].time.set(STest::Pick::startLength(0, 10000), STest::Pick::startLength(0, 10000));
+
+            dpSet[entry].dataSize = STest::Pick::startLength(0, MAX_SIZE);
+            dpSet[entry].dir = dirs[STest::Pick::startLength(0, NUM_DIRS)].toChar();
+
+            dpSet[entry].state = Fw::DpState::UNTRANSMITTED;
+        }
+
+        this->readDps(dirs, NUM_DIRS, stateFile, dpSet, entries, runtimeEntries);
     }
 }
 

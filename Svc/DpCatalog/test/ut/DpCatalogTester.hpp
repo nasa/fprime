@@ -20,7 +20,7 @@ class DpCatalogTester : public DpCatalogGTestBase {
     // ----------------------------------------------------------------------
 
     // Maximum size of histories storing events, telemetry, and port outputs
-    static const U32 MAX_HISTORY_SIZE = 100;
+    static const U32 MAX_HISTORY_SIZE = 1000;
 
     // Instance ID supplied to the component instance under test
     static const FwEnumStoreType TEST_INSTANCE_ID = 0;
@@ -128,7 +128,7 @@ class DpCatalogTester : public DpCatalogGTestBase {
     // ----------------------------------------------------------------------
     // Moved Tests due to private/protected access
     // ----------------------------------------------------------------------
-    void test_NominalManual_TreeTestRandomTransmitted();
+    void test_TreeTestRandomTransmitted();
     void test_TreeTestManual1();
     void test_TreeTestManual2();
     void test_TreeTestManual3();
@@ -139,6 +139,7 @@ class DpCatalogTester : public DpCatalogGTestBase {
     void test_TreeTestRandomTime();
     void test_TreeTestRandomId();
     void test_TreeTestRandomPrioIdTime();
+    void test_RandomDp();
 };
 
 }  // namespace Svc

@@ -571,7 +571,7 @@ int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir = DP_MAX_DIRECTOR
         return -1;
     }
 
-    if (entry.record.get_state() == Fw::DpState::UNTRANSMITTED) {
+    if (entry.record.get_state() != Fw::DpState::TRANSMITTED) {
         this->m_pendingFiles++;
         this->m_pendingDpBytes += entry.record.get_size();
     }

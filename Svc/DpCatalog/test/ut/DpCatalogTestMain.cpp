@@ -33,7 +33,7 @@ TEST(NominalManual, TreeTestRandom) {
 
 TEST(NominalManual, TreeTestRandomTransmitted) {
     Svc::DpCatalogTester tester;
-    tester.test_NominalManual_TreeTestRandomTransmitted();
+    tester.test_TreeTestRandomTransmitted();
 }
 
 TEST(NominalManual, OneDp) {
@@ -177,6 +177,11 @@ TEST(NominalManual, SixDp_ThreeNotify) {
     dpSet[5].dir = dirs[1].toChar();
 
     tester.readDps(dirs, 2, stateFile, dpSet, 6, 3);
+}
+
+TEST(NominalManual, RandomDp) {
+    Svc::DpCatalogTester tester;
+    tester.test_RandomDp();
 }
 
 int main(int argc, char** argv) {
