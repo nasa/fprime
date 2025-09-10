@@ -616,19 +616,7 @@ bool DpCatalog::insertEntry(DpStateEntry& entry) {
         DpBtreeNode* node = this->m_dpTree;
         for (FwSizeType record = 0; record < this->m_numDpSlots; record++) {
             CheckStat stat = CheckStat::CHECK_CONT;
-            // check priority. Lower is higher priority
-            if (entry.record.get_priority() == node->entry.record.get_priority()) {
-                // check time. Older is higher priority
-                if (entry.record.get_tSec() == node->entry.record.get_tSec()) {
-                    // check ID. Lower is higher priority
-                    stat = this->checkLeftRight(entry.record.get_id() < node->entry.record.get_id(), node, entry);
-                } else {  // if seconds are not equal. Older is higher priority
-                    stat = this->checkLeftRight(entry.record.get_tSec() < node->entry.record.get_tSec(), node, entry);
-                }
-            } else {  // if priority is not equal. Lower is higher priority.
-                stat =
-                    this->checkLeftRight(entry.record.get_priority() < node->entry.record.get_priority(), node, entry);
-            }  // end checking for left/right insertion
+            stat = this->checkLeftRight(entry < node->entry, node, entry);
 
             // act on status
             if (stat == CheckStat::CHECK_ERROR) {
