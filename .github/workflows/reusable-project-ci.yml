@@ -54,7 +54,6 @@ jobs:
   build:
     runs-on: ${{ inputs.runs_on }}
     name: "Build"
-    container: ""
     steps:
       - name: "Set up target repository"
         uses: nasa/fprime-actions/external-repository-setup@devel
@@ -63,6 +62,11 @@ jobs:
           fprime_location: ${{ inputs.fprime_location }}
           target_ref: ${{ inputs.target_ref }}
           plugin_packages: ${{ inputs.plugin_packages }}
+      - name: "West"
+        run: |
+          cd ./lib/zephyr-workspace
+          west update
+          west sdk install
       - name: "Build Binary"
         run: |
           CCACHE_DISABLE=1 fprime-ci -c ${{ inputs.ci_config_file }} --add-stage build
