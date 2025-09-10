@@ -648,7 +648,9 @@ void CommandDispatcherTester::runInvalidCommand() {
     FwOpcodeType testOpCode = 0x50;
     this->clearEvents();
     Fw::ComBuffer buff;
-    ASSERT_EQ(buff.serializeFrom(static_cast<FwOpcodeType>(100)), Fw::FW_SERIALIZE_OK);
+    // Serialize a log packet type instead of command packet type to cause flawed command
+    ASSERT_EQ(buff.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_LOG)),
+              Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(buff.serializeFrom(testOpCode), Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(buff.serializeFrom(testCmdArg), Fw::FW_SERIALIZE_OK);
 

@@ -201,7 +201,8 @@ TEST_F(FpySequencerTester, cmd) {
     ASSERT_EQ(result, Signal::stmtResponse_keepWaiting);
 
     Fw::ComBuffer expected;
-    ASSERT_EQ(expected.serialize(Fw::ComPacketType::FW_PACKET_COMMAND), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    ASSERT_EQ(expected.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_COMMAND)),
+              Fw::SerializeStatus::FW_SERIALIZE_OK);
     ASSERT_EQ(expected.serialize(directive.get_opCode()), Fw::SerializeStatus::FW_SERIALIZE_OK);
     ASSERT_EQ(expected.serialize(data, sizeof(data), Fw::Serialization::OMIT_LENGTH),
               Fw::SerializeStatus::FW_SERIALIZE_OK);
