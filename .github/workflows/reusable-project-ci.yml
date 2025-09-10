@@ -54,7 +54,7 @@ jobs:
   build:
     runs-on: ${{ inputs.runs_on }}
     name: "Build"
-    container: ./lib/fprime-zephyr/ci/docker/Dockerfile
+    container: ""
     steps:
       - name: "Set up target repository"
         uses: nasa/fprime-actions/external-repository-setup@devel
