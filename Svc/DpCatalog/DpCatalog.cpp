@@ -544,6 +544,12 @@ int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir = DP_MAX_DIRECTOR
         this->log_WARNING_HI_FileHdrDesError(fullFile, desStat);
     }
 
+    // skip adding an already transmitted file
+    if (container.getState() == Fw::DpState::TRANSMITTED) {
+        this->log_ACTIVITY_HI_DpFileSkipped(fullFile);
+        return 0;
+    }
+
     // add entry to catalog.
     DpStateEntry entry;
     entry.dir = static_cast<FwIndexType>(dir);
@@ -584,13 +590,13 @@ int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir = DP_MAX_DIRECTOR
 
     // Compute relative priority to current xmit if we are
     if (this->m_xmitInProgress && this->m_currentXmitNode != nullptr) {
-        return 16 + this->compareNodes(entry, this->m_currentXmitNode->entry);
+        return 16 + CompareEntries(entry, this->m_currentXmitNode->entry);
     }
 
     return 1;
 }
 
-int DpCatalog::compareNodes(DpStateEntry& left, DpStateEntry& right) {
+int DpCatalog::CompareEntries(const DpStateEntry& left, const DpStateEntry& right) {
     // check priority. Lower is higher priority
     if (left.record.get_priority() == right.record.get_priority()) {
         // check time. Older is higher priority

@@ -256,18 +256,6 @@ void DpCatalogTester ::from_pingOut_handler(FwIndexType portNum, U32 key) {
 // Moved Tests due to private/protected access
 // ----------------------------------------------------------------------
 
-bool DpCatalogTester ::EntryCompare(const Svc::DpCatalog::DpStateEntry& a, const Svc::DpCatalog::DpStateEntry& b) {
-    if (a.record.get_priority() == b.record.get_priority()) {  // check priority first - lower value = higher priority
-        if (a.record.get_tSec() == b.record.get_tSec()) {      // check time next - older = higher priority
-            return a.record.get_id() < b.record.get_id();      // finally check ID - lower = higher priority
-        } else {
-            return a.record.get_tSec() < b.record.get_tSec();
-        }
-    } else {
-        return a.record.get_priority() < b.record.get_priority();
-    }
-}
-
 void DpCatalogTester ::test_NominalManual_TreeTestRandomTransmitted() {
     static const FwIndexType NUM_ENTRIES = 10;
     static const FwIndexType NUM_ITERS = 1;
@@ -303,7 +291,7 @@ void DpCatalogTester ::test_NominalManual_TreeTestRandomTransmitted() {
             }
         }
 
-        entryList.sort(EntryCompare);
+        entryList.sort(DpCatalog::CompareEntries);
 
         FwIndexType entryIndex = 0;
 
@@ -544,7 +532,7 @@ void DpCatalogTester ::test_TreeTestRandomPriority() {
             entryList.push_back(inputs[entry]);
         }
 
-        entryList.sort(EntryCompare);
+        entryList.sort(DpCatalog::CompareEntries);
 
         FwIndexType entryIndex = 0;
 
@@ -587,7 +575,7 @@ void DpCatalogTester ::test_TreeTestRandomTime() {
             entryList.push_back(inputs[entry]);
         }
 
-        entryList.sort(EntryCompare);
+        entryList.sort(DpCatalog::CompareEntries);
 
         FwIndexType entryIndex = 0;
 
@@ -630,7 +618,7 @@ void DpCatalogTester ::test_TreeTestRandomId() {
             entryList.push_back(inputs[entry]);
         }
 
-        entryList.sort(EntryCompare);
+        entryList.sort(DpCatalog::CompareEntries);
 
         FwIndexType entryIndex = 0;
 
@@ -675,7 +663,7 @@ void DpCatalogTester ::test_TreeTestRandomPrioIdTime() {
             entryList.push_back(inputs[entry]);
         }
 
-        entryList.sort(EntryCompare);
+        entryList.sort(DpCatalog::CompareEntries);
 
         FwIndexType entryIndex = 0;
 

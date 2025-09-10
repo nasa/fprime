@@ -379,7 +379,7 @@ module Svc {
       format "Error sending DP file {}, stat {}. Halting xmit." \
       throttle 10
 
-    @ Catalog processing complete
+    @ File added
     event DpFileAdded(
                           file: string size 80 @< The file
       ) \
@@ -387,13 +387,20 @@ module Svc {
       id 43 \
       format "DP file {} added at runtime"
 
-
     event NotLoaded(
                             file: string size 80 @< The file
     ) \
       severity warning low \
       id 44 \
       format "Not adding file {} now; Catalog not yet loaded"
+
+    @ Skipped a transmitted file
+    event DpFileSkipped(
+                          file: string size 80 @< The file
+      ) \
+      severity activity high \
+      id 45 \
+      format "Already Transmitted DP file {} not added"
 
     # ----------------------------------------------------------------------
     # Telemetry

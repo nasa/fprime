@@ -142,6 +142,12 @@ class DpCatalog final : public DpCatalogComponentBase {
         DpBtreeNode* parent;  //!< parent node
     };
 
+    /// @brief insert an entry into the sorted list; if it exists, update the metadata
+    /// @param left an entry to compare
+    /// @param right other entry to compare
+    /// @return 1 if left is higher priority, 0 if equal, and -1 if right is higher priority
+    static int CompareEntries(const DpStateEntry& left, const DpStateEntry& right);
+
     // ----------------------------------
     // Private helpers
     // ----------------------------------
@@ -151,12 +157,6 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @param dir directory index in m_directories; DP_MAX_DIRECTORIES if func should search for directory
     /// @return -1 for quit, 0 for failure but continue, 1 for success
     int processFile(Fw::String fullFile, FwSizeType dir);
-
-    /// @brief insert an entry into the sorted list; if it exists, update the metadata
-    /// @param left an entry to compare
-    /// @param right other entry to compare
-    /// @return 1 if left is higher priority, 0 if equal, and -1 if right is higher priority
-    int compareNodes(DpStateEntry& left, DpStateEntry& right);
 
     /// @brief insert an entry into the sorted list; if it exists, update the metadata
     /// @param entry new entry
