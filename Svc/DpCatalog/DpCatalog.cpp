@@ -704,22 +704,58 @@ bool DpCatalog::allocateNode(DpBtreeNode*& newNode, const DpStateEntry& newEntry
 }
 
 void DpCatalog::deallocateNode(DpBtreeNode* node) {
-    // since nodes are deallocated after xmit, left should be gone
-    if (node->left == nullptr) {
-        return;
-    }
-
     DpBtreeNode* parent = node->parent;
-    // root node has no parent, but needs the root pointer to shift
-    if (parent == nullptr) {
-        this->m_dpTree = node->right;
-    } else {
-        // shift then deallocate if right is not null
-        // or remove this node from its parent if our right is null
-        if (parent->left == node) {
-            parent->left = node->right;
+
+    // since nodes are deallocated after xmit, left should be gone
+    // However, left node could be added during xmit
+    if (node->left != nullptr) {
+        // To try to only deallocate nodes at fileDone,
+        // finished nodes w/ children are trimmed out
+        // Simple shifts only work with branches that don't branch
+
+        // Since we aren't limited to adding just 1 node during file transfer
+        // left might not be a leaf
+        // Instead, find the lowest priority node on the left branch
+        DpBtreeNode* rightmostNode = node->left;
+
+        // (i.e. node->right->right ... ->right until we hit null)
+        while (rightmostNode->right != nullptr) {
+            rightmostNode = rightmostNode->right;
+        }
+
+        // We can stich its left branch onto its parent in its place
+        rightmostNode->parent->right = rightmostNode->left;
+
+        // We can then swap the node to be deallocated w/ the rightmost
+        // (since it is the next lowest priority node after us)
+
+        // this is the root node: has no parent, but needs the root pointer to shift
+        if (parent == nullptr) {
+            this->m_dpTree = rightmostNode;
         } else {
-            parent->right = node->right;
+            // patch onto the appropriate parent branch
+            if (parent->left == node) {
+                parent->left = rightmostNode;
+            } else {
+                parent->right = rightmostNode;
+            }
+        }
+
+        // Now connect this node's children onto rightmostNode
+        rightmostNode->left = node->left;
+        rightmostNode->right = node->right;
+    } else {
+        // cut out this segment and shift the right branch up
+        // root node has no parent, but needs the root pointer to shift
+        if (parent == nullptr) {
+            this->m_dpTree = node->right;
+        } else {
+            // patch onto the appropriate parent branch
+            if (parent->left == node) {
+                parent->left = node->right;
+            } else {
+                parent->right = node->right;
+            }
         }
     }
 
@@ -739,6 +775,7 @@ void DpCatalog::deallocateNode(DpBtreeNode* node) {
 void DpCatalog::sendNextEntry() {
     // check some asserts
     if (this->m_dpTree == nullptr) {
+        // We've run out of entries
         return;
     }
     FW_ASSERT(this->m_xmitInProgress);
@@ -898,7 +935,6 @@ void DpCatalog ::addToCat_handler(FwIndexType portNum,
                                   FwDpPriorityType priority,
                                   FwSizeType size) {
     // check some asserts
-    FW_ASSERT(this->m_dpTree);
     FW_ASSERT(this->m_traverseStack);
 
     // check initialization
@@ -910,12 +946,6 @@ void DpCatalog ::addToCat_handler(FwIndexType portNum,
     // check that initialization got memory
     if (0 == this->m_numDpSlots) {
         this->log_WARNING_HI_NoDpMemory();
-        return;
-    }
-
-    // check that the tree is loaded
-    if (this->m_dpTree == nullptr) {
-        this->log_WARNING_LO_NotLoaded(fileName);
         return;
     }
 
