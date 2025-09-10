@@ -4,6 +4,7 @@
 | ---------------- | -------------------- | -------------- | ---------------------------------- |
 | Apple Silicon    | Darwin    | ARM  | [`F Prime Ref`](https://github.com/nasa/fprime) |
 | BeagleBone Black | VxWorks 7 | ARMv7 | [`fprime-vxworks-reference`](https://github.com/fprime-community/fprime-vxworks-reference) |
+| Feather M4 	   | FreeRTOS  | ARM | [`fprime-featherm4-freertos-reference`](https://github.com/fprime-community/fprime-featherm4-freertos-reference) |
 | Pi Pico          | Zephyr    | ARMv6-M | [`fprime-zephyr-reference`](https://github.com/fprime-community/fprime-zephyr-reference) |
 | Pi Pico 2        | Zephyr    | RISC-V | [`fprime-zephyr-reference`](https://github.com/fprime-community/fprime-zephyr-reference) |
 | PolarFire SoC    | VxWorks 7 | RISC-V | TBD |
@@ -20,7 +21,6 @@ These are platforms that the F Prime community or core team is actively working 
 | -------- | --------- | ------------ | ------------------- | ---------------- |----------------|
 | 3PySquared | Baremetal  | ARM | In development |[`fprime-baremetal-reference`](https://github.com/fprime-community/fprime-baremetal-reference) | 9/30/2025 |
 | 3PySquared | Zephyr  | ARM | In development | |TBD|
-| Feather M4 | FreeRTOS  | ARM | In development  |[`fprime-featherm4-freertos-reference`](https://github.com/fprime-community/fprime-featherm4-freertos-reference) | 9/30/2025 |
 | GR712RC | VxWorks 7 | SPARC V8 | Not started | |TBD|
 | GR740 | VxWorks 7 | SPARC V8 | Not started | |TBD|
 | HPSC | Linux | RISC-V | In development | | 9/30/2025 |
