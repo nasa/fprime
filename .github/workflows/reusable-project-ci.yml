@@ -23,6 +23,9 @@ on:
         required: false
         type: string
         default: ""
+      ci_config_file:
+        required: true
+        type: string
 #      build_location:
 #        description: "Path to F´ module to build. E.g. MyDeployment/"
 #        required: true
@@ -59,3 +62,8 @@ jobs:
           fprime_location: ${{ inputs.fprime_location }}
           target_ref: ${{ inputs.target_ref }}
           plugin_packages: ${{ inputs.plugin_packages }}
+      - name: "Build Binary"
+        using: "docker"
+        image: ./lib/fprime-zephyr/ci/docker/Dockerfile
+        run: |
+          CCACHE_DISABLE=1 fprime-ci -c ${{ inputs.ci_config_file }} --add-stage build
