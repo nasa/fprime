@@ -724,6 +724,8 @@ void DpCatalog::deallocateNode(DpBtreeNode* node) {
         }
 
         // We can stich its left branch onto its parent in its place
+        FW_ASSERT(rightmostNode != nullptr);
+        FW_ASSERT(rightmostNode->parent != nullptr);
         rightmostNode->parent->right = rightmostNode->left;
 
         // We can then swap the node to be deallocated w/ the rightmost
@@ -739,6 +741,7 @@ void DpCatalog::deallocateNode(DpBtreeNode* node) {
             } else {
                 parent->right = rightmostNode;
             }
+            rightmostNode->parent = parent;
         }
 
         // Now connect this node's children onto rightmostNode
@@ -755,6 +758,12 @@ void DpCatalog::deallocateNode(DpBtreeNode* node) {
                 parent->left = node->right;
             } else {
                 parent->right = node->right;
+            }
+
+            if (node->right != nullptr) {
+                FW_ASSERT(node->right->parent != nullptr);
+                FW_ASSERT(parent != nullptr);
+                node->right->parent = parent;
             }
         }
     }
