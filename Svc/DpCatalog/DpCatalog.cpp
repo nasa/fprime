@@ -389,13 +389,15 @@ Fw::CmdResponse DpCatalog::fillBinaryTree() {
     // keep cumulative number of files
     FwSizeType totalFiles = 0;
 
+    // zero out our pending counters
+    this->m_pendingFiles = 0;
+    this->m_pendingDpBytes = 0;
+
     // get file listings from file system
     for (FwSizeType dir = 0; dir < this->m_numDirectories; dir++) {
         // read in each directory and keep track of total
         this->log_ACTIVITY_LO_ProcessingDirectory(this->m_directories[dir]);
         FwSizeType filesRead = 0;
-        this->m_pendingFiles = 0;
-        this->m_pendingDpBytes = 0;
         U32 filesProcessed = 0;
 
         Os::Directory dpDir;
@@ -697,6 +699,7 @@ bool DpCatalog::allocateNode(DpBtreeNode*& newNode, const DpStateEntry& newEntry
     // initialize the new node
     newNode->left = nullptr;
     newNode->right = nullptr;
+    newNode->parent = nullptr;
     newNode->entry = newEntry;
 
     // we got one, so return success
@@ -759,22 +762,19 @@ void DpCatalog::deallocateNode(DpBtreeNode* node) {
             } else {
                 parent->right = node->right;
             }
+        }
 
             if (node->right != nullptr) {
                 FW_ASSERT(node->right->parent != nullptr);
-                FW_ASSERT(parent != nullptr);
                 node->right->parent = parent;
             }
-        }
     }
-
-    // if we just shifted the right branch, null our right pointer
-    node->right = nullptr;
 
     // clear out the entry
     node->entry = {};
     // point this node @ the old head of the free list
     node->left = m_freeListHead;
+    node->right = nullptr;
     node->parent = nullptr;
 
     // make this node the new head of the free list
@@ -784,7 +784,8 @@ void DpCatalog::deallocateNode(DpBtreeNode* node) {
 void DpCatalog::sendNextEntry() {
     // check some asserts
     if (this->m_dpTree == nullptr) {
-        // We've run out of entries
+        // We've run out of entries, we are done
+        this->m_xmitInProgress = false;
         return;
     }
     FW_ASSERT(this->m_xmitInProgress);
@@ -917,7 +918,11 @@ void DpCatalog ::fileDone_handler(FwIndexType portNum, const Svc::SendFileRespon
         this->cmdResponse_out(this->m_xmitOpCode, this->m_xmitCmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
     }
 
-    this->log_ACTIVITY_LO_ProductComplete(this->m_currXmitFileName);
+    // Reduce pending
+    this->m_pendingDpBytes -= this->m_currentXmitNode->entry.record.get_size();
+    this->m_pendingFiles--;
+    // Log File Complete & pending
+    this->log_ACTIVITY_LO_ProductComplete(this->m_currXmitFileName, this->m_pendingFiles, this->m_pendingDpBytes);
 
     // mark the entry as transmitted
     this->m_currentXmitNode->entry.record.set_state(Fw::DpState::TRANSMITTED);
@@ -925,9 +930,6 @@ void DpCatalog ::fileDone_handler(FwIndexType portNum, const Svc::SendFileRespon
     this->appendFileState(this->m_currentXmitNode->entry);
     // add the size
     this->m_xmitBytes += this->m_currentXmitNode->entry.record.get_size();
-    // Reduce pending
-    this->m_pendingDpBytes -= this->m_currentXmitNode->entry.record.get_size();
-    this->m_pendingFiles--;
     // deallocate this node
     this->deallocateNode(this->m_currentXmitNode);
     // send the next entry, if it exists

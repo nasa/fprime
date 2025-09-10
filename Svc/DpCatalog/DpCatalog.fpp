@@ -184,10 +184,12 @@ module Svc {
     @ Product send complete
     event ProductComplete (
                             file: string size 80 @< The file
+                            pending: U32 @< pending data products
+                            pending_bytes: U64 @< pending data product volume
                           ) \
       severity activity low \
       id 14 \
-      format "Product {} complete"
+      format "Product {} complete. Pending products: {} Pending bytes: {}"
 
     @ Component not initialized error
     event ComponentNotInitialized \
