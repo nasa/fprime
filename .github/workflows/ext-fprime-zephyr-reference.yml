@@ -31,5 +31,6 @@ jobs:
     with:
         target_repository: fprime-community/fprime-zephyr-reference
         target_ref: ${{ needs.get-branch.outputs.target-branch }}
+        plugin_packages: "./lib/fprime-zephyr/ci"
 
       

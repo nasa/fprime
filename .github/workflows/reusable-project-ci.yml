@@ -19,6 +19,10 @@ on:
         required: false
         type: string
         default: "devel"
+      plugin_packages:
+        required: false
+        type: string
+        default: ""
 #      build_location:
 #        description: "Path to F´ module to build. E.g. MyDeployment/"
 #        required: true
@@ -52,4 +56,6 @@ jobs:
         uses: nasa/fprime-actions/external-repository-setup@devel
         with:
           target_repository: ${{ inputs.target_repository }}
+          fprime_location: ${{ inputs.fprime_location }}
           target_ref: ${{ inputs.target_ref }}
+          plugin_packages: ${{ inputs.plugin_packages }}
