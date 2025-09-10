@@ -19,7 +19,6 @@
 // Used to get the Os::Console
 #include <Os/Os.hpp>
 
-
 /**
  * \brief print commandline help message
  *

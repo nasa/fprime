@@ -10,7 +10,7 @@
 
 namespace Ref {
 
-  typedef PingReceiverComponentImpl PingReceiver;
+typedef PingReceiverComponentImpl PingReceiver;
 
 }
 
