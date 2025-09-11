@@ -135,18 +135,23 @@ class DpCatalog final : public DpCatalogComponentBase {
             if (left.record.get_priority() == right.record.get_priority()) {
                 // check time. Older is higher priority
                 if (left.record.get_tSec() == right.record.get_tSec()) {
-                    // check ID. Lower is higher priority
-                    if (left.record.get_id() == right.record.get_id()) {
-                        return 0;
+                    // check subsecond time. Older is higher priority
+                    if (left.record.get_tSub() == right.record.get_tSub()) {
+                        // check ID. Lower is higher priority
+                        if (left.record.get_id() == right.record.get_id()) {
+                            return 0;
+                        } else {  // if ids are not equal. smaller is higher priority
+                            return left.record.get_id() < right.record.get_id() ? -1 : 1;
+                        }
+                    } else {  // if subseconds are not equal. Older is higher priority
+                        return left.record.get_tSub() < right.record.get_tSub() ? -1 : 1;
                     }
-
-                    return left.record.get_id() < right.record.get_id() ? -1 : 1;
                 } else {  // if seconds are not equal. Older is higher priority
                     return left.record.get_tSec() < right.record.get_tSec() ? -1 : 1;
                 }
             } else {  // if priority is not equal. Lower is higher priority.
                 return left.record.get_priority() < right.record.get_priority() ? -1 : 1;
-            }  // end checking for left/right insertion
+            }  // end checking entry comparison
         }
 
         bool operator==(const DpStateEntry& other) { return CompareEntries(*this, other) == 0; }
@@ -183,8 +188,8 @@ class DpCatalog final : public DpCatalogComponentBase {
 
     /// @brief insert an entry into the sorted list; if it exists, update the metadata
     /// @param entry new entry
-    /// @return failed if couldn't find a slot FIXME: Should we just assert? We should never run out.
-    bool insertEntry(DpStateEntry& entry);
+    /// @return failed if couldn't find a slot
+    DpCatalog::DpBtreeNode* insertEntry(DpStateEntry& entry);
 
     /// @brief enumeration for check and insert function
     enum CheckStat {
@@ -201,9 +206,6 @@ class DpCatalog final : public DpCatalogComponentBase {
 
     /// #brief fill  the binary tree from DP files
     Fw::CmdResponse fillBinaryTree();
-
-    /// @brief reset the tree stack
-    void resetTreeStack();
 
     /// @brief reset the state file data
     void resetStateFileData();
@@ -260,7 +262,6 @@ class DpCatalog final : public DpCatalogComponentBase {
     DpBtreeNode* m_dpTree;           //!< The head of the binary tree
     DpBtreeNode* m_freeListHead;     //!< The head of the free list
     DpBtreeNode* m_freeListFoot;     //!< The foot of the free list
-    DpBtreeNode** m_traverseStack;   //!< pointer to memory for stack for traversing tree
     DpBtreeNode* m_currentNode;      //!< current node for traversing tree
     DpBtreeNode* m_currentXmitNode;  //!< node being currently transmitted
 
@@ -281,7 +282,6 @@ class DpCatalog final : public DpCatalogComponentBase {
     Fw::MemAllocator* m_allocator;  //!< stored for shutdown
 
     bool m_xmitInProgress;                  //!< set if DP files are in the process of being sent
-    FwIndexType m_currStackEntry;           //!< current stack entry for traversing tree
     Fw::FileNameString m_currXmitFileName;  //!< current file being transmitted
     bool m_xmitCmdWait;                     //!< true if waiting for transmission complete to complete xmit command
     U64 m_xmitBytes;                        //!< bytes transmitted for downlink session

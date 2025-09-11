@@ -65,8 +65,6 @@ void DpCatalogTester::testTree(DpCatalog::DpStateEntry* input,
         ASSERT_TRUE(this->component.insertEntry(input[entry]));
     }
 
-    // reset stack to read tree
-    this->component.resetTreeStack();
     // hot wire in progress
     this->component.m_xmitInProgress = true;
 
@@ -84,6 +82,8 @@ void DpCatalogTester::testTree(DpCatalog::DpStateEntry* input,
             if (res != nullptr) {
                 ASSERT_EQ(res->entry.record, output[entry].record) << "entry mismatch at " << entry;
             }
+            // Deallocate the "sent" node
+            this->component.deallocateNode(res);
         }
     }
 
@@ -418,72 +418,6 @@ void DpCatalogTester ::test_TreeTestManual5() {
     outputs[2].record = inputs[2].record;
     outputs[3].record = inputs[4].record;
     outputs[4].record = inputs[3].record;
-
-    testTree(inputs, outputs, FW_NUM_ARRAY_ELEMENTS(inputs));
-}
-
-void DpCatalogTester ::test_TreeTestManual1_Transmitted() {
-    Fw::FileNameString dir;
-
-    Svc::DpCatalog::DpStateEntry inputs[1];
-    Svc::DpCatalog::DpStateEntry outputs[1];
-
-    inputs[0].record.set_id(1);
-    inputs[0].record.set_priority(2);
-    inputs[0].record.set_state(Fw::DpState::TRANSMITTED);
-    inputs[0].record.set_tSec(1000);
-    inputs[0].record.set_tSub(1500);
-    inputs[0].record.set_size(100);
-
-    outputs[0].record.set_state(Fw::DpState::TRANSMITTED);
-
-    testTree(inputs, outputs, 1);
-}
-
-void DpCatalogTester ::test_TreeTestManual_All_Transmitted() {
-    Svc::DpCatalog::DpStateEntry inputs[5];
-    Svc::DpCatalog::DpStateEntry outputs[5];
-
-    inputs[0].record.set_id(1);
-    inputs[0].record.set_priority(2);
-    inputs[0].record.set_state(Fw::DpState::TRANSMITTED);
-    inputs[0].record.set_tSec(1000);
-    inputs[0].record.set_tSub(1500);
-    inputs[0].record.set_size(100);
-
-    inputs[1].record.set_id(2);
-    inputs[1].record.set_priority(1);
-    inputs[1].record.set_state(Fw::DpState::TRANSMITTED);
-    inputs[1].record.set_tSec(1000);
-    inputs[1].record.set_tSub(1500);
-    inputs[1].record.set_size(100);
-
-    inputs[2].record.set_id(3);
-    inputs[2].record.set_priority(3);
-    inputs[2].record.set_state(Fw::DpState::TRANSMITTED);
-    inputs[2].record.set_tSec(1000);
-    inputs[2].record.set_tSub(1500);
-    inputs[2].record.set_size(100);
-
-    inputs[3].record.set_id(4);
-    inputs[3].record.set_priority(5);
-    inputs[3].record.set_state(Fw::DpState::TRANSMITTED);
-    inputs[3].record.set_tSec(1000);
-    inputs[3].record.set_tSub(1500);
-    inputs[3].record.set_size(100);
-
-    inputs[4].record.set_id(5);
-    inputs[4].record.set_priority(4);
-    inputs[4].record.set_state(Fw::DpState::TRANSMITTED);
-    inputs[4].record.set_tSec(1000);
-    inputs[4].record.set_tSub(1500);
-    inputs[4].record.set_size(100);
-
-    outputs[0].record.set_state(Fw::DpState::TRANSMITTED);
-    outputs[1].record.set_state(Fw::DpState::TRANSMITTED);
-    outputs[2].record.set_state(Fw::DpState::TRANSMITTED);
-    outputs[3].record.set_state(Fw::DpState::TRANSMITTED);
-    outputs[4].record.set_state(Fw::DpState::TRANSMITTED);
 
     testTree(inputs, outputs, FW_NUM_ARRAY_ELEMENTS(inputs));
 }

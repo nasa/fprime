@@ -14,15 +14,26 @@ TEST(NominalManual, initTest) {
     tester.doInit();
 }
 
-TEST(NominalManual, TreeTestManual) {
+TEST(NominalManual, TreeTestManual1) {
     Svc::DpCatalogTester tester;
     tester.test_TreeTestManual1();
-    tester.test_TreeTestManual2();
-    tester.test_TreeTestManual3();
-    tester.test_TreeTestManual5();
-    tester.test_TreeTestManual1_Transmitted();
-    tester.test_TreeTestManual_All_Transmitted();
 }
+
+TEST(NominalManual, TreeTestManual2) {
+    Svc::DpCatalogTester tester;
+    tester.test_TreeTestManual2();
+}
+
+TEST(NominalManual, TreeTestManual3) {
+    Svc::DpCatalogTester tester;
+    tester.test_TreeTestManual3();
+}
+
+TEST(NominalManual, TreeTestManual5) {
+    Svc::DpCatalogTester tester;
+    tester.test_TreeTestManual5();
+}
+
 TEST(NominalManual, TreeTestRandom) {
     Svc::DpCatalogTester tester;
     tester.test_TreeTestRandomPriority();
