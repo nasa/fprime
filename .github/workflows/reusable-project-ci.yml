@@ -22,10 +22,6 @@ on:
       ci_config_file:
         required: true
         type: string
-#      build_location:
-#        description: "Path to F´ module to build. E.g. MyDeployment/"
-#        required: true
-#        type: string
       run_unit_tests:
         description: "Run an additional job in parallel to run unit tests."
         required: false
@@ -41,11 +37,6 @@ on:
         required: false
         type: string
         default: "ubuntu-22.04"
-      target_platform:
-        description: "Target platform to pass to fprime-util"
-        required: false
-        type: string
-        default: ""
 jobs:
   build:
     runs-on: ${{ inputs.runs_on }}
@@ -63,3 +54,9 @@ jobs:
       - name: "Build Binary"
         run: |
           CCACHE_DISABLE=1 fprime-ci -c ${{ inputs.ci_config_file }} --add-stage build
+      - name: Archive Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: archive.tar.gz
+          path: ./archive.tar.gz
+
