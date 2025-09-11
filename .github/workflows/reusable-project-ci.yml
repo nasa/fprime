@@ -32,6 +32,11 @@ on:
         required: false
         type: string
         default: "ubuntu-22.04"
+        runs_on_int:
+        description: "Platform to run integration tests on. Defaults to: apple-ci"
+        required: false
+        type: string
+        default: "apple-ci"
       runs_on_ut:
         description: "Platform to run UTs on. Defaults to ubuntu-22.04"
         required: false
@@ -48,9 +53,7 @@ jobs:
           target_repository: ${{ inputs.target_repository }}
           fprime_location: ${{ inputs.fprime_location }}
           target_ref: ${{ inputs.target_ref }}
-          plugin_packages: ${{ inputs.plugin_packages }}
-      - name: "Custom repository setup"
-        uses: ./.github/actions/setup
+          stage: build
       - name: "Build Binary"
         run: |
           CCACHE_DISABLE=1 fprime-ci -c ${{ inputs.ci_config_file }} --add-stage build
@@ -59,4 +62,22 @@ jobs:
         with:
           name: archive.tar.gz
           path: ./archive.tar.gz
+  integration-tests:
+    needs: build
+    name: "Integration Tests"
+    runs-on: ${{ inputs.runs_on_int }}
+    steps:
+      - name: Archive Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: archive.tar.gz
+          path: ./archive.tar.gz
+      - name: "Set up target repository"
+        uses: nasa/fprime-actions/external-repository-setup@devel
+        with:
+          target_repository: ${{ inputs.target_repository }}
+          fprime_location: ${{ inputs.fprime_location }}
+          target_ref: ${{ inputs.target_ref }}
+          plugin_packages: ${{ inputs.plugin_packages }}
+          stage: int
 
