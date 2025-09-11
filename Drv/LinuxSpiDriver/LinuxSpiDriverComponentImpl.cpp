@@ -158,8 +158,7 @@ bool LinuxSpiDriverComponentImpl::open(FwIndexType device, FwIndexType select, S
     /*
      * Max speed in Hz
      */
-    SpiFrequency write_clock = clock;
-    ret = ioctl(fd, SPI_IOC_WR_MAX_SPEED_HZ, &write_clock);
+    ret = ioctl(fd, SPI_IOC_WR_MAX_SPEED_HZ, &clock);
     if (ret == -1) {
         this->log_WARNING_HI_SPI_ConfigError(device, select, ret);
         return false;
