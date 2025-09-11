@@ -32,7 +32,7 @@ on:
         required: false
         type: string
         default: "ubuntu-22.04"
-        runs_on_int:
+      runs_on_int:
         description: "Platform to run integration tests on. Defaults to: apple-ci"
         required: false
         type: string
