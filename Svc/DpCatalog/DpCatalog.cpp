@@ -125,8 +125,8 @@ void DpCatalog::resetBinaryTree() {
             this->m_freeListHead[slot - 1].left = &this->m_freeListHead[slot];
         }
     }
-    // set the foot of the free list
-    this->m_freeListFoot = &this->m_freeListHead[this->m_numDpSlots - 1];
+    // set the foot of the free list (one past what we can use)
+    this->m_freeListFoot = &this->m_freeListHead[this->m_numDpSlots];
     // clear binary tree
     this->m_dpTree = nullptr;
     // reset number of records
@@ -660,10 +660,11 @@ bool DpCatalog::allocateNode(DpBtreeNode*& newNode, const DpStateEntry& newEntry
     // should always be null since we are allocating an empty slot
     FW_ASSERT(newNode == nullptr);
     // make sure there is an entry from the free list
-    if (this->m_freeListHead == nullptr) {
+    if (this->m_freeListHead == nullptr || this->m_freeListHead == this->m_freeListFoot) {
         this->log_WARNING_HI_DpCatalogFull(newEntry.record);
         return false;
     }
+
     // get a new node from the free list
     newNode = this->m_freeListHead;
     // move the head of the free list to the next node
@@ -695,8 +696,14 @@ void DpCatalog::deallocateNode(DpBtreeNode* node) {
         DpBtreeNode* rightmostNode = node->left;
 
         // (i.e. node->right->right ... ->right until we hit null)
-        while (rightmostNode->right != nullptr) {
+
+        // bounded while loop (in case we're linked onto the free list somehow)
+        for (FwSizeType record = 0; record < this->m_numDpSlots && rightmostNode->right != nullptr; record++) {
             rightmostNode = rightmostNode->right;
+
+            // I really hope these never fire
+            FW_ASSERT(rightmostNode != this->m_freeListHead);
+            FW_ASSERT(rightmostNode != this->m_freeListFoot);
         }
 
         // We can stich its left branch onto its parent in its place
@@ -842,8 +849,13 @@ DpCatalog::DpBtreeNode* DpCatalog::findNextTreeNode() {
 
     // Nav left until nullptr
     // Leads to highest priority node
-    while (this->m_currentNode->left != nullptr) {
+    // bounded while loop (in case we're linked onto the free list somehow)
+    for (FwSizeType record = 0; record < this->m_numDpSlots && this->m_currentNode->left != nullptr; record++) {
         this->m_currentNode = this->m_currentNode->left;
+
+        // I really hope these never fire
+        FW_ASSERT(this->m_currentNode != this->m_freeListHead);
+        FW_ASSERT(this->m_currentNode != this->m_freeListFoot);
     }
 
     // save the high prio & find next best
