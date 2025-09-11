@@ -80,4 +80,6 @@ jobs:
           target_ref: ${{ inputs.target_ref }}
           plugin_packages: ${{ inputs.plugin_packages }}
           stage: int
-
+      - name: "Integration tests"
+        run: |
+          fprime-ci -c ${{ inputs.ci_config_file }} --skip-stage build
