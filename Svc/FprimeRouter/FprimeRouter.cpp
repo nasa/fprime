@@ -53,7 +53,7 @@ void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer
                 Fw::Buffer packetBufferCopy = this->bufferAllocate_out(0, packetBuffer.getSize());
                 auto copySerializer = packetBufferCopy.getSerializer();
                 status = copySerializer.serializeFrom(packetBuffer.getData(), packetBuffer.getSize(),
-                                                  Fw::Serialization::OMIT_LENGTH);
+                                                      Fw::Serialization::OMIT_LENGTH);
                 FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
                 // Send the copied buffer out. It will come back on fileBufferReturnIn once the receiver is done with it
                 this->fileOut_out(0, packetBufferCopy);
@@ -69,7 +69,7 @@ void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer
                 Fw::Buffer packetBufferCopy = this->bufferAllocate_out(0, packetBuffer.getSize());
                 auto copySerializer = packetBufferCopy.getSerializer();
                 status = copySerializer.serializeFrom(packetBuffer.getData(), packetBuffer.getSize(),
-                                                  Fw::Serialization::OMIT_LENGTH);
+                                                      Fw::Serialization::OMIT_LENGTH);
                 FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
                 // Send the copied buffer out. It will come back on fileBufferReturnIn once the receiver is done with it
                 this->unknownDataOut_out(0, packetBufferCopy, context);

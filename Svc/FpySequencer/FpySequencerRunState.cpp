@@ -162,7 +162,7 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
 
             // okay, it will fit. put it in
             status = argBuf.deserializeTo(deserializedDirective.constCmd.get_argBuf(), cmdArgBufSize,
-                                        Fw::Serialization::OMIT_LENGTH);
+                                          Fw::Serialization::OMIT_LENGTH);
 
             if (status != Fw::SerializeStatus::FW_SERIALIZE_OK) {
                 this->log_WARNING_HI_DirectiveDeserializeError(stmt.get_opCode(), this->currentStatementIdx(), status,

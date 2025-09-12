@@ -71,14 +71,12 @@ class StringBase : public Serializable {
     SerializeStatus deserializeFrom(SerializeBufferBase& buffer) override;
 
     DEPRECATED(SerializeStatus serialize(SerializeBufferBase& buffer) const,
-               "Use serializeTo(SerializeBufferBase& buffer) instead")
-    {
+               "Use serializeTo(SerializeBufferBase& buffer) instead") {
         return this->serializeTo(buffer);
     }
 
     DEPRECATED(SerializeStatus serialize(SerializeBufferBase& buffer, SizeType maxLen) const,
-               "Use serializeTo(SerializeBufferBase& buffer, SizeType maxLen) instead")
-    {
+               "Use serializeTo(SerializeBufferBase& buffer, SizeType maxLen) instead") {
         return this->serializeTo(buffer, maxLen);
     }
 
