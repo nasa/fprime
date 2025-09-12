@@ -16,11 +16,9 @@
 
 namespace Svc {
 
-void LinuxTimer::startTimer(FwSizeType interval) {
-    FW_ASSERT(std::numeric_limits<U32>::max() / 1000 >= interval);  // Overflow
+void LinuxTimer::startTimer(const Fw::TimeInterval& interval) {
     while (true) {
-        Os::Task::delay(
-            Fw::TimeInterval(static_cast<U32>(interval / 1000), static_cast<U32>((interval % 1000) * 1000)));
+        Os::Task::delay(interval);
         this->m_mutex.lock();
         bool quit = this->m_quit;
         this->m_mutex.unLock();

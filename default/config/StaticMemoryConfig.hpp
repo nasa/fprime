@@ -8,10 +8,7 @@
 #define SVC_STATIC_MEMORY_CFG_HPP_
 
 namespace Svc {
-    enum StaticMemoryConfig {
-        STATIC_MEMORY_ALLOCATION_SIZE = 2048
-    };
+enum StaticMemoryConfig { STATIC_MEMORY_ALLOCATION_SIZE = 2048 };
 }
 
 #endif
-

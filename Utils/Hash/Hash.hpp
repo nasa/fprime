@@ -13,113 +13,96 @@
 #ifndef UTILS_HASH_HPP
 #define UTILS_HASH_HPP
 
-#include "Fw/Types/StringType.hpp"
 #include <Utils/Hash/HashBuffer.hpp>
+#include "Fw/Types/StringType.hpp"
 
 namespace Utils {
 
-  //! \class Hash
-  //! \brief A generic interface for creating and comparing hash values
-  //!
-  class Hash {
+//! \class Hash
+//! \brief A generic interface for creating and comparing hash values
+//!
+class Hash {
+  public:
+    // ----------------------------------------------------------------------
+    // Types
+    // ----------------------------------------------------------------------
+  public:
+    // ----------------------------------------------------------------------
+    // Construction and destruction
+    // ----------------------------------------------------------------------
 
-    public:
+    //! Construct a Hash object
+    //!
+    Hash();
 
-      // ----------------------------------------------------------------------
-      // Types
-      // ----------------------------------------------------------------------
-    public:
+    //! Destroy a Hash object
+    //!
+    ~Hash();
 
-      // ----------------------------------------------------------------------
-      // Construction and destruction
-      // ----------------------------------------------------------------------
+  public:
+    // ----------------------------------------------------------------------
+    // Public static methods
+    // ----------------------------------------------------------------------
 
-      //! Construct a Hash object
-      //!
-      Hash();
+    //! Create a hash value all at once from raw data
+    //! \param data: pointer to start of data
+    //! \param len: length of the data
+    //! \param buffer: filled with resulting hash value
+    static void hash(const void* data, const FwSizeType len, HashBuffer& buffer);
 
-      //! Destroy a Hash object
-      //!
-      ~Hash();
+  public:
+    // ----------------------------------------------------------------------
+    // Public instance methods
+    // ----------------------------------------------------------------------
 
-    public:
+    //! Initialize a Hash object for incremental hash computation
+    //!
+    void init();
 
-      // ----------------------------------------------------------------------
-      // Public static methods
-      // ----------------------------------------------------------------------
+    //! Set hash value to specified value
+    //!
+    void setHashValue(HashBuffer& value  //! Hash value
+    );
 
-      //! Create a hash value all at once from raw data
-      //! \param data: pointer to start of data
-      //! \param len: length of the data
-      //! \param buffer: filled with resulting hash value
-      static void hash(
-          const void *data,
-          const FwSizeType len,
-          HashBuffer& buffer
-      );
+    //! Update an incremental computation with new data
+    //! \param data: pointer to start of data to add to hash calculation
+    //! \param len: length of data to add to hash calculation
+    void update(const void* const data, const FwSizeType len);
 
-    public:
+    //! Finalize an incremental computation and return the result
+    //!
+    void final(HashBuffer& buffer  //! The result
+    );
 
-      // ----------------------------------------------------------------------
-      // Public instance methods
-      // ----------------------------------------------------------------------
+    //! Finalize an incremental computation and return the result
+    //!
+    void final(U32& hashvalue);
 
-      //! Initialize a Hash object for incremental hash computation
-      //!
-      void init();
+    //! Get the file extension for the supported hash type
+    //! E.g., could return "SHA256"
+    //!
+    static const char* getFileExtensionString();
 
-      //! Set hash value to specified value
-      //!
-      void setHashValue(
-          HashBuffer &value //! Hash value
-      );
+    //! Add the extension for the supported hash type
+    //!
+    static void addFileExtension(const Fw::StringBase& baseName,  //!< The base name
+                                 Fw::StringBase& extendedName     //!< The extended name
+    );
 
-      //! Update an incremental computation with new data
-      //! \param data: pointer to start of data to add to hash calculation
-      //! \param len: length of data to add to hash calculation
-      void update(
-          const void *const data,
-          const FwSizeType len
-      );
+    //! Get the length of the file extension string
+    //!
+    static FwSizeType getFileExtensionLength();
 
-      //! Finalize an incremental computation and return the result
-      //!
-      void final(
-          HashBuffer& buffer //! The result
-      );
+  private:
+    // ----------------------------------------------------------------------
+    // Private member variables
+    // ----------------------------------------------------------------------
 
-      //! Finalize an incremental computation and return the result
-      //!
-      void final(U32 &hashvalue);
+    //! The hash handle
+    //!
+    HASH_HANDLE_TYPE hash_handle;
+};
 
-      //! Get the file extension for the supported hash type
-      //! E.g., could return "SHA256"
-      //!
-      static const char* getFileExtensionString();
-
-      //! Add the extension for the supported hash type
-      //!
-      static void addFileExtension(
-          const Fw::StringBase& baseName, //!< The base name
-          Fw::StringBase& extendedName //!< The extended name
-      );
-
-      //! Get the length of the file extension string
-      //!
-      static FwSizeType getFileExtensionLength();
-
-    private:
-
-      // ----------------------------------------------------------------------
-      // Private member variables
-      // ----------------------------------------------------------------------
-
-      //! The hash handle
-      //!
-      HASH_HANDLE_TYPE hash_handle;
-
-  };
-
-}
+}  // namespace Utils
 
 #endif

@@ -1924,7 +1924,7 @@ TEST_F(FpySequencerTester, tlmWrite) {
     invoke_to_tlmWrite(0, 0);
     this->tester_doDispatch();
     // make sure that all tlm is written every call
-    ASSERT_TLM_SIZE(10);
+    ASSERT_TLM_SIZE(12);
 }
 
 TEST_F(FpySequencerTester, seqRunIn) {

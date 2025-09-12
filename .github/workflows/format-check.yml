@@ -31,11 +31,16 @@ jobs:
         env:
           # Svc is currently listing all but Svc/FpySequencer
           CHECKED_DIRS: >-
+            CFDP
+            default
             Drv
             FppTestProject
             Fw
             Os
+            Ref
             Svc
+            TestUtils
+            Utils
 
         run: |
           fprime-util format --check --dirs $CHECKED_DIRS

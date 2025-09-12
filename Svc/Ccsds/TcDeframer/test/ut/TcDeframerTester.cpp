@@ -140,8 +140,8 @@ void TcDeframerTester::testInvalidCrc() {
     U8 data[dataLength];
 
     Fw::Buffer buffer = this->assembleFrameBuffer(data, dataLength);
-    // Override CRC to invalid value
-    buffer.getData()[TCHeader::SERIALIZED_SIZE + dataLength + 1] = 0x00;
+    // Increment CRC to corrupt its value
+    buffer.getData()[TCHeader::SERIALIZED_SIZE + dataLength + 1]++;
     ComCfg::FrameContext nullContext;
 
     this->setComponentState();

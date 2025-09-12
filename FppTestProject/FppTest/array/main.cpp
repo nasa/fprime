@@ -118,22 +118,22 @@ void FppTest::Array::setTestVals<AliasOfArray>(EA (&a)[AliasOfArray::SIZE]) {
 // Specializations for multi element constructor
 template <>
 Enum FppTest::Array::getMultiElementConstructedArray<Enum>(E (&a)[Enum::SIZE]) {
-    return Enum(a[0], a[1], a[2]);
+    return Enum({a[0], a[1], a[2]});
 }
 
 template <>
 ::String FppTest::Array::getMultiElementConstructedArray<::String>(Fw::ExternalString (&a)[::String::SIZE]) {
-    return ::String(a[0], a[1], a[2]);
+    return ::String({Fw::String(a[0]), Fw::String(a[1]), Fw::String(a[2])});
 }
 
 template <>
 Struct FppTest::Array::getMultiElementConstructedArray<Struct>(S (&a)[Struct::SIZE]) {
-    return Struct(a[0], a[1], a[2]);
+    return Struct({a[0], a[1], a[2]});
 }
 
 template <>
 Uint32Array FppTest::Array::getMultiElementConstructedArray<Uint32Array>(Uint32 (&a)[Uint32Array::SIZE]) {
-    return Uint32Array(a[0], a[1], a[2]);
+    return Uint32Array({a[0], a[1], a[2]});
 }
 
 // Specializations for serialized size

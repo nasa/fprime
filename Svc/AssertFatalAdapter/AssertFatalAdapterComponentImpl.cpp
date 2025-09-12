@@ -44,6 +44,8 @@ AssertFatalAdapterComponentImpl ::AssertFatalAdapterComponentImpl(const char* co
     this->m_adapter.regAssertReporter(this);
     // register adapter
     this->m_adapter.registerHook();
+    // Initialize the assert counter
+    this->m_assertCount = 0;
 }
 
 AssertFatalAdapterComponentImpl ::~AssertFatalAdapterComponentImpl() {}
@@ -99,8 +101,11 @@ void AssertFatalAdapterComponentImpl::reportAssert(FILE_NAME_ARG file,
                             sizeof(msg));
     Fw::Logger::log("%s\n", msg);
 
-    // Handle the case where the ports aren't connected yet
-    if (not this->isConnected_Log_OutputPort(0)) {
+    // Increment active assert counter
+    this->m_assertCount++;
+
+    // Handle the case where the ports aren't connected yet or we've surpassed the maximum cascading FW_ASSERT failures
+    if (not this->isConnected_Log_OutputPort(0) || this->m_assertCount > FW_ASSERT_COUNT_MAX) {
         assert(0);
         return;
     }
@@ -138,5 +143,7 @@ void AssertFatalAdapterComponentImpl::reportAssert(FILE_NAME_ARG file,
             this->log_FATAL_AF_UNEXPECTED_ASSERT(fileArg, static_cast<U32>(lineNo), static_cast<U32>(numArgs));
             break;
     }
+    // Assert processing complete, decrement active assert counter
+    this->m_assertCount--;
 }
 }  // end namespace Svc
