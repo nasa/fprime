@@ -81,3 +81,7 @@ jobs:
       - name: "Integration tests"
         run: |
             fprime-ci -c ${{ inputs.ci_config_file }} --skip-stage build
+      - name: "Cleanup"
+      if: ${{ always() }}
+      run: |
+          rm -rf $GITHUB_WORKSPACE
