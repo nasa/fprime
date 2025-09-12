@@ -315,7 +315,7 @@ ASSERT_EQ(byteArraySize, 10 * sizeof(U32));
 ### 6.1. destroyElements
 
 ```c++
-destroyElements()
+void destroyElements()
 ```
 
 If `m_destroyElements` then

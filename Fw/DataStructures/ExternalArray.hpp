@@ -53,7 +53,7 @@ class ExternalArray final {
     ExternalArray(const ExternalArray<T>& a) : m_elements(a.m_elements), m_size(a.m_size) {}
 
     //! Destructor
-    ~ExternalArray() = default;
+    ~ExternalArray() { this->destroyElements(); }
 
   public:
     // ----------------------------------------------------------------------
@@ -112,8 +112,10 @@ class ExternalArray final {
     void setStorage(T* elements,     //!< The array elements
                     FwSizeType size  //!< The size
     ) {
+        this->destroyElements();
         this->m_elements = elements;
         this->m_size = size;
+        this->m_destroyElements = false;
     }
 
     //! Set the backing storage (untyped data)
@@ -127,6 +129,8 @@ class ExternalArray final {
         FW_ASSERT(reinterpret_cast<uintptr_t>(data.bytes) % alignof(T) == 0);
         // Check that data.size is large enough to hold the array
         FW_ASSERT(size * sizeof(T) <= data.size);
+        // Destroy the elements if required
+        this->destroyElements();
         // Initialize the array members
         this->m_elements = reinterpret_cast<T*>(data.bytes);
         // Construct the array members in place
@@ -139,6 +143,8 @@ class ExternalArray final {
         }
         // Set the size
         this->m_size = size;
+        // Destroy elements on release of memory
+        this->m_destroyElements = true;
     }
 
   public:
@@ -160,6 +166,21 @@ class ExternalArray final {
 
   private:
     // ----------------------------------------------------------------------
+    // Private member functions
+    // ----------------------------------------------------------------------
+
+    //! Destroy the array elements if required
+    void destroyElements() {
+        if (this->m_destroyElements) {
+            for (FwSizeType i = 0; i < this->m_size; i++) {
+                this->m_elements[i].~T();
+            }
+            this->m_destroyElements = false;
+        }
+    }
+
+  private:
+    // ----------------------------------------------------------------------
     // Private member variables
     // ----------------------------------------------------------------------
 
@@ -168,6 +189,9 @@ class ExternalArray final {
 
     //! The size
     FwSizeType m_size = 0;
+
+    //! Whether to destroy the array elements when the external memory is released
+    bool m_destroyElements = false;
 };
 
 }  // namespace Fw
