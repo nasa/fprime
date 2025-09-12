@@ -24,7 +24,7 @@ It stores a pointer to the backing memory _M_.
 |----|----|-------|-------------|
 |`m_elements`|`T*`|Pointer to backing memory or `nullptr`|`nullptr`|
 |`m_size`|`FwSizeType`|Stores the size (number of elements) of the array|0|
-|`m_destroyElements`|`bool`|Whether to destroy the array elements when the external memory is released|`false`|
+|`m_destroyElementsOnRelease`|`bool`|Whether to destroy the array elements when the external memory is released|`false`|
 
 <a name="Public-Constructors-and-Destructors"></a>
 ## 3. Public Constructors and Destructors
@@ -105,7 +105,7 @@ ExternalArray<U32> a2(a1);
 ~ExternalArray()
 ```
 
-Call `destroyElements()`.
+Call `releaseElements()`.
 
 ## 4. Public Member Functions
 
@@ -232,9 +232,9 @@ void setStorage(T* elements, FwSizeType size)
 `elements` must point to a primitive array of at least `size`
 elements of type `T`.
 
-1. Call `destroyElements()`.
+1. Call `releaseElements()`.
 
-1. Set `m_elements = elements` and `m_size = size` and `m_destroyElements = true`.
+1. Set `m_elements = elements` and `m_size = size` and `m_destroyElementsOnRelease = true`.
 
 _Example:_
 ```c++
@@ -259,7 +259,7 @@ and must contain at least [`getByteArraySize(size)`](#52-getbytearraysize) bytes
 
 1. Assert that `size * sizeof(T) <= data.size`.
 
-1. Call `destroyElements()`.
+1. Call `releaseElements()`.
 
 1. Initialize `m_elements` with `data.bytes`.
 
@@ -267,7 +267,7 @@ and must contain at least [`getByteArraySize(size)`](#52-getbytearraysize) bytes
 
 1. Initialize `m_size` with `size`.
 
-1. Set `m_destroyElements = true`.
+1. Set `m_destroyElementsOnRelease = true`.
 
 _Example:_
 ```c++
@@ -315,11 +315,11 @@ ASSERT_EQ(byteArraySize, 10 * sizeof(U32));
 ### 6.1. destroyElements
 
 ```c++
-void destroyElements()
+void releaseElements()
 ```
 
-If `m_destroyElements` then
+If `m_destroyElementsOnRelease` then
 
 1. Call the destructor on each element of `m_elements`.
 
-2. Set `m_destroyElements = false`.
+2. Set `m_destroyElementsOnRelease = false`.

@@ -53,7 +53,7 @@ class ExternalArray final {
     ExternalArray(const ExternalArray<T>& a) : m_elements(a.m_elements), m_size(a.m_size) {}
 
     //! Destructor
-    ~ExternalArray() { this->destroyElements(); }
+    ~ExternalArray() { this->releaseElements(); }
 
   public:
     // ----------------------------------------------------------------------
@@ -112,10 +112,10 @@ class ExternalArray final {
     void setStorage(T* elements,     //!< The array elements
                     FwSizeType size  //!< The size
     ) {
-        this->destroyElements();
+        this->releaseElements();
         this->m_elements = elements;
         this->m_size = size;
-        this->m_destroyElements = false;
+        this->m_destroyElementsOnRelease = false;
     }
 
     //! Set the backing storage (untyped data)
@@ -130,7 +130,7 @@ class ExternalArray final {
         // Check that data.size is large enough to hold the array
         FW_ASSERT(size * sizeof(T) <= data.size);
         // Destroy the elements if required
-        this->destroyElements();
+        this->releaseElements();
         // Initialize the array members
         this->m_elements = reinterpret_cast<T*>(data.bytes);
         // Construct the array members in place
@@ -144,7 +144,7 @@ class ExternalArray final {
         // Set the size
         this->m_size = size;
         // Destroy elements on release of memory
-        this->m_destroyElements = true;
+        this->m_destroyElementsOnRelease = true;
     }
 
   public:
@@ -170,12 +170,12 @@ class ExternalArray final {
     // ----------------------------------------------------------------------
 
     //! Destroy the array elements if required
-    void destroyElements() {
-        if (this->m_destroyElements) {
+    void releaseElements() {
+        if (this->m_destroyElementsOnRelease) {
             for (FwSizeType i = 0; i < this->m_size; i++) {
                 this->m_elements[i].~T();
             }
-            this->m_destroyElements = false;
+            this->m_destroyElementsOnRelease = false;
         }
     }
 
@@ -191,7 +191,7 @@ class ExternalArray final {
     FwSizeType m_size = 0;
 
     //! Whether to destroy the array elements when the external memory is released
-    bool m_destroyElements = false;
+    bool m_destroyElementsOnRelease = false;
 };
 
 }  // namespace Fw
