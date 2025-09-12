@@ -129,7 +129,7 @@ class ExternalArray final {
         FW_ASSERT(reinterpret_cast<uintptr_t>(data.bytes) % alignof(T) == 0);
         // Check that data.size is large enough to hold the array
         FW_ASSERT(size * sizeof(T) <= data.size);
-        // Destroy the elements if required
+        // Release the backing storage
         this->releaseStorage();
         // Initialize the array members
         this->m_elements = reinterpret_cast<T*>(data.bytes);
