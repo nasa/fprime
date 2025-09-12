@@ -17,130 +17,120 @@
 
 namespace CFDP {
 
-  //! \class Checksum
-  //! \brief Class representing a 32-bit checksum as mandated by the CCSDS File
-  //!        Delivery Protocol.
-  //!
-  //!        This checksum is calculated by update of an existing 32-bit value
-  //!        with the "next" 32-bit string drawn from the file data. Beginning
-  //!        at the start of the file, a 4-byte window moves up the file by four
-  //!        bytes per update. The update itself replaces the existing checksum
-  //!        with the byte-wise sum of the existing checksum and the file data
-  //!        contained in the window. Overflows in the addition are permitted
-  //!        and the carry discarded.
-  //!
-  //!        If an update is to be made beginning at an offset into the file
-  //!        which is not aligned to a 4-byte boundary, the window is treated
-  //!        as beginning at the last 4-byte boundary, but is left-zero-padded.
-  //!        Similarly, where the file data for an update ends on an unaligned
-  //!        byte, the window extends up to the next boundary and is
-  //!        right-zero-padded.
-  //!
-  //!        ## Example
-  //!
-  //!        For buffer 0xDE 0xAD 0xBE 0xEF 0xCA 0xFE and initial zero checksum:
-  //!
-  //!        ------------------------------------ Update 1
-  //!        Window     0xDE 0xAD 0xBE 0xEF
-  //!        Checksum   0xDEADBEEF
-  //!
-  //!        ------------------------------------ Update 2
-  //!        Window     0xCA 0xFE
-  //!        Checksum   0xDEADBEEF+
-  //!                   0xCAFE0000
-  //!                   ----------
-  //!                   0xA8ABBEEF <- Final value
-  class Checksum {
+//! \class Checksum
+//! \brief Class representing a 32-bit checksum as mandated by the CCSDS File
+//!        Delivery Protocol.
+//!
+//!        This checksum is calculated by update of an existing 32-bit value
+//!        with the "next" 32-bit string drawn from the file data. Beginning
+//!        at the start of the file, a 4-byte window moves up the file by four
+//!        bytes per update. The update itself replaces the existing checksum
+//!        with the byte-wise sum of the existing checksum and the file data
+//!        contained in the window. Overflows in the addition are permitted
+//!        and the carry discarded.
+//!
+//!        If an update is to be made beginning at an offset into the file
+//!        which is not aligned to a 4-byte boundary, the window is treated
+//!        as beginning at the last 4-byte boundary, but is left-zero-padded.
+//!        Similarly, where the file data for an update ends on an unaligned
+//!        byte, the window extends up to the next boundary and is
+//!        right-zero-padded.
+//!
+//!        ## Example
+//!
+//!        For buffer 0xDE 0xAD 0xBE 0xEF 0xCA 0xFE and initial zero checksum:
+//!
+//!        ------------------------------------ Update 1
+//!        Window     0xDE 0xAD 0xBE 0xEF
+//!        Checksum   0xDEADBEEF
+//!
+//!        ------------------------------------ Update 2
+//!        Window     0xCA 0xFE
+//!        Checksum   0xDEADBEEF+
+//!                   0xCAFE0000
+//!                   ----------
+//!                   0xA8ABBEEF <- Final value
+class Checksum {
+  public:
+    // ----------------------------------------------------------------------
+    // Types
+    // ----------------------------------------------------------------------
 
-    public:
+  public:
+    // ----------------------------------------------------------------------
+    // Construction and destruction
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Types
-      // ----------------------------------------------------------------------
+    //! Construct a fresh Checksum object.
+    Checksum();
 
-    public:
+    //! Construct a Checksum object and initialize it with a value.
+    Checksum(const U32 value);
 
-      // ----------------------------------------------------------------------
-      // Construction and destruction
-      // ----------------------------------------------------------------------
+    //! Copy a Checksum object.
+    Checksum(const Checksum& original);
 
-      //! Construct a fresh Checksum object.
-      Checksum();
+    //! Destroy a Checksum object.
+    ~Checksum();
 
-      //! Construct a Checksum object and initialize it with a value.
-      Checksum(const U32 value);
+  public:
+    // ----------------------------------------------------------------------
+    // Public instance methods
+    // ----------------------------------------------------------------------
 
-      //! Copy a Checksum object.
-      Checksum(const Checksum &original);
+    //! Assign checksum to this.
+    Checksum& operator=(const Checksum& checksum);
 
-      //! Destroy a Checksum object.
-      ~Checksum();
+    //! Compare checksum and this for equality.
+    bool operator==(const Checksum& checksum) const;
 
-    public:
+    //! Compare checksum and this for inequality.
+    bool operator!=(const Checksum& checksum) const;
 
-      // ----------------------------------------------------------------------
-      // Public instance methods
-      // ----------------------------------------------------------------------
+    //! Update the checksum value by accumulating words in the given data.
+    //!
+    //! \important The data and data-length passed to this method are specifically
+    //!            those over which the update is made, rather than the entire
+    //!            file. Typically, therefore, `data` will be a pointer to the
+    //!            byte given by the offset, e.g. `&file_buffer[offset]`.
+    //!
+    void update(const U8* const data,  //!< Beginning of the data over which to update.
+                const U32 offset,      //!< Offset into the file at which the data begins.
+                const U32 length       //!< Length of the update data in bytes.
+    );
 
-      //! Assign checksum to this.
-      Checksum& operator=(const Checksum& checksum);
+    //! Get the checksum value
+    U32 getValue() const;
 
-      //! Compare checksum and this for equality.
-      bool operator==(const Checksum& checksum) const;
+  private:
+    // ----------------------------------------------------------------------
+    // Private instance methods
+    // ----------------------------------------------------------------------
 
-      //! Compare checksum and this for inequality.
-      bool operator!=(const Checksum& checksum) const;
+    //! Add a four-byte aligned word to the checksum value
+    void addWordAligned(const U8* const word  //! The word
+    );
 
-      //! Update the checksum value by accumulating words in the given data.
-      //!
-      //! \important The data and data-length passed to this method are specifically
-      //!            those over which the update is made, rather than the entire
-      //!            file. Typically, therefore, `data` will be a pointer to the
-      //!            byte given by the offset, e.g. `&file_buffer[offset]`.
-      //!
-      void update(const U8* const data,  //!< Beginning of the data over which to update.
-                  const U32 offset,      //!< Offset into the file at which the data begins.
-                  const U32 length       //!< Length of the update data in bytes.
-      );
+    //! Add a four-byte unaligned word to the checksum value
+    void addWordUnaligned(const U8* const word,  //! The word
+                          const U8 position,     //! The position of the word relative to the start of the file
+                          const U8 length        //! The number of valid bytes in the word
+    );
 
-      //! Get the checksum value
-      U32 getValue() const;
+    //! Add byte to value at offset in word
+    void addByteAtOffset(const U8 byte,   //! The byte
+                         const U8 offset  //! The offset
+    );
 
-    private:
+  private:
+    // ----------------------------------------------------------------------
+    // Private member variables
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Private instance methods
-      // ----------------------------------------------------------------------
+    //! The accumulated checksum value
+    U32 m_value;
+};
 
-      //! Add a four-byte aligned word to the checksum value
-      void addWordAligned(
-          const U8 *const word //! The word
-      );
-
-      //! Add a four-byte unaligned word to the checksum value
-      void addWordUnaligned(
-          const U8 *const word, //! The word
-          const U8 position, //! The position of the word relative to the start of the file
-          const U8 length //! The number of valid bytes in the word
-      );
-
-      //! Add byte to value at offset in word
-      void addByteAtOffset(
-          const U8 byte, //! The byte
-          const U8 offset //! The offset
-      );
-
-    private:
-
-      // ----------------------------------------------------------------------
-      // Private member variables
-      // ----------------------------------------------------------------------
-
-      //! The accumulated checksum value
-      U32 m_value;
-
-    };
-
-}
+}  // namespace CFDP
 
 #endif

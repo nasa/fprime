@@ -19,6 +19,7 @@
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/FileNameString.hpp>
+#include <Fw/Types/String.hpp>
 #include <cerrno>
 #include <cstdint>
 #include <cstdio>
@@ -36,6 +37,8 @@ namespace Drv {
 void LinuxSpiDriverComponentImpl::SpiReadWrite_handler(const FwIndexType portNum,
                                                        Fw::Buffer& writeBuffer,
                                                        Fw::Buffer& readBuffer) {
+    FW_ASSERT(writeBuffer.getSize() == readBuffer.getSize());
+
     if (this->m_fd == -1) {
         return;
     }
@@ -120,10 +123,15 @@ bool LinuxSpiDriverComponentImpl::open(FwIndexType device, FwIndexType select, S
         return false;
     }
 
-    ret = ioctl(fd, SPI_IOC_RD_MODE, &mode);
+    U8 read_mode = 0;
+    ret = ioctl(fd, SPI_IOC_RD_MODE, &read_mode);
     if (ret == -1) {
         this->log_WARNING_HI_SPI_ConfigError(device, select, ret);
         return false;
+    }
+
+    if (mode != read_mode) {
+        this->log_WARNING_LO_SPI_ConfigMismatch(device, select, Fw::String("MODE"), mode, read_mode);
     }
 
     /*
@@ -136,10 +144,15 @@ bool LinuxSpiDriverComponentImpl::open(FwIndexType device, FwIndexType select, S
         return false;
     }
 
-    ret = ioctl(fd, SPI_IOC_RD_BITS_PER_WORD, &bits);
+    U8 read_bits = 0;
+    ret = ioctl(fd, SPI_IOC_RD_BITS_PER_WORD, &read_bits);
     if (ret == -1) {
         this->log_WARNING_HI_SPI_ConfigError(device, select, ret);
         return false;
+    }
+
+    if (bits != read_bits) {
+        this->log_WARNING_LO_SPI_ConfigMismatch(device, select, Fw::String("BITS_PER_WORD"), bits, read_bits);
     }
 
     /*
@@ -151,10 +164,15 @@ bool LinuxSpiDriverComponentImpl::open(FwIndexType device, FwIndexType select, S
         return false;
     }
 
-    ret = ioctl(fd, SPI_IOC_RD_MAX_SPEED_HZ, &clock);
+    SpiFrequency read_clock;
+    ret = ioctl(fd, SPI_IOC_RD_MAX_SPEED_HZ, &read_clock);
     if (ret == -1) {
         this->log_WARNING_HI_SPI_ConfigError(device, select, ret);
         return false;
+    }
+
+    if (clock != read_clock) {
+        this->log_WARNING_LO_SPI_ConfigMismatch(device, select, Fw::String("MAX_SPEED_HZ"), clock, read_clock);
     }
 
     return true;

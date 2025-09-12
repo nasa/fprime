@@ -11,12 +11,11 @@
 #ifndef FPCONFIG_H_
 #define FPCONFIG_H_
 
-#ifdef  __cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
-#include <Platform/PlatformTypes.h>
 #include <Fw/Types/BasicTypes.h>
-
+#include <Platform/PlatformTypes.h>
 
 // ----------------------------------------------------------------------
 // Type aliases
@@ -90,8 +89,8 @@ extern "C" {
 // This generates code to connect to serialized ports
 #ifndef FW_PORT_SERIALIZATION
 #define FW_PORT_SERIALIZATION \
-    1  //!< Indicates whether there is code in ports to serialize the call (more code, but ability to serialize calls
-       //!< for multi-note systems)
+    1  //!< Indicates whether there is code in ports to serialize the call (more code, but ability to serialize
+       //!< calls for multi-note systems)
 #endif
 
 // Component Facilities
@@ -333,7 +332,7 @@ extern "C" {
 
 // *** NOTE configuration checks are in Fw/Cfg/ConfigCheck.cpp in order to have
 // the type definitions in Fw/Types/BasicTypes available.
-#ifdef  __cplusplus
+#ifdef __cplusplus
 }
 #endif
 
