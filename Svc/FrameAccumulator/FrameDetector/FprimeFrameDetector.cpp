@@ -40,7 +40,7 @@ FrameDetector::Status FprimeFrameDetector::detect(const Types::CircularBuffer& d
     status = header_ser_buffer.setBuffLen(FprimeProtocol::FrameHeader::SERIALIZED_SIZE);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     // Attempt to deserialize data into the FrameHeader object
-    status = header.deserialize(header_ser_buffer);
+    status = header.deserializeFrom(header_ser_buffer);
     if (status != Fw::FW_SERIALIZE_OK) {
         return Status::NO_FRAME_DETECTED;
     }
@@ -69,7 +69,7 @@ FrameDetector::Status FprimeFrameDetector::detect(const Types::CircularBuffer& d
     status = trailer_ser_buffer.setBuffLen(FprimeProtocol::FrameTrailer::SERIALIZED_SIZE);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     // Deserialize trailer from circular buffer (peeked data) into trailer object
-    status = trailer.deserialize(trailer_ser_buffer);
+    status = trailer.deserializeFrom(trailer_ser_buffer);
     if (status != Fw::FW_SERIALIZE_OK) {
         return Status::NO_FRAME_DETECTED;
     }

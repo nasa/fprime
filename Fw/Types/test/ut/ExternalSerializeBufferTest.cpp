@@ -16,7 +16,7 @@ void serializeOK(Fw::ExternalSerializeBuffer& esb) {
     ASSERT_EQ(esb.getBuffLength(), 0);
     for (SizeType i = 0; i < buffCapacity; i++) {
         const U8 value = static_cast<U8>(i);
-        const Fw::SerializeStatus status = esb.serialize(value);
+        const Fw::SerializeStatus status = esb.serializeFrom(value);
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
     }
     ASSERT_EQ(esb.getBuffLength(), buffCapacity);
@@ -24,7 +24,7 @@ void serializeOK(Fw::ExternalSerializeBuffer& esb) {
 
 void serializeFail(Fw::ExternalSerializeBuffer& esb) {
     ASSERT_EQ(esb.getBuffLength(), esb.getBuffCapacity());
-    const Fw::SerializeStatus status = esb.serialize(static_cast<U8>(0));
+    const Fw::SerializeStatus status = esb.serializeFrom(static_cast<U8>(0));
     ASSERT_EQ(status, Fw::FW_SERIALIZE_NO_ROOM_LEFT);
 }
 
@@ -33,7 +33,7 @@ void deserializeOK(Fw::ExternalSerializeBuffer& esb) {
     ASSERT_EQ(esb.getBuffLeft(), buffCapacity);
     for (SizeType i = 0; i < buffCapacity; i++) {
         U8 value = 0;
-        const Fw::SerializeStatus status = esb.deserialize(value);
+        const Fw::SerializeStatus status = esb.deserializeTo(value);
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(value, static_cast<U8>(i));
     }
@@ -43,7 +43,7 @@ void deserializeOK(Fw::ExternalSerializeBuffer& esb) {
 void deserializeFail(Fw::ExternalSerializeBuffer& esb) {
     U8 value = 0;
     ASSERT_EQ(esb.getBuffLeft(), 0);
-    const Fw::SerializeStatus status = esb.deserialize(value);
+    const Fw::SerializeStatus status = esb.deserializeTo(value);
     ASSERT_EQ(status, Fw::FW_DESERIALIZE_BUFFER_EMPTY);
 }
 

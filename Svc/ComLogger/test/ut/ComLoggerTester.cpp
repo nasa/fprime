@@ -149,7 +149,7 @@ void ComLoggerTester ::testLogging() {
             ASSERT_EQ(length, static_cast<FwSizeType>(sizeof(U16)));
             Fw::SerialBuffer comBuffLength(buf, length);
             comBuffLength.fill();
-            stat = comBuffLength.deserialize(bufferSize);
+            stat = comBuffLength.deserializeTo(bufferSize);
             ASSERT_EQ(stat, Fw::FW_SERIALIZE_OK);
             ASSERT_EQ(COM_BUFFER_LENGTH, bufferSize);
 
@@ -614,7 +614,7 @@ void ComLoggerTester ::testLoggingWithInit() {
             ASSERT_EQ(length, static_cast<FwSizeType>(sizeof(U16)));
             Fw::SerialBuffer comBuffLength(buf, length);
             comBuffLength.fill();
-            stat = comBuffLength.deserialize(bufferSize);
+            stat = comBuffLength.deserializeTo(bufferSize);
             ASSERT_EQ(stat, Fw::FW_SERIALIZE_OK);
             ASSERT_EQ(COM_BUFFER_LENGTH, bufferSize);
 

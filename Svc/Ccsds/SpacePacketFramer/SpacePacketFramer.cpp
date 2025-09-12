@@ -67,9 +67,9 @@ void SpacePacketFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, c
     // -----------------------------------------------
     // Serialize the packet
     // -----------------------------------------------
-    status = frameSerializer.serialize(header);
+    status = frameSerializer.serializeFrom(header);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
-    status = frameSerializer.serialize(data.getData(), data.getSize(), Fw::Serialization::OMIT_LENGTH);
+    status = frameSerializer.serializeFrom(data.getData(), data.getSize(), Fw::Serialization::OMIT_LENGTH);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     this->dataOut_out(0, frameBuffer, context);

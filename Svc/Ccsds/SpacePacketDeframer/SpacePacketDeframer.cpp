@@ -43,7 +43,7 @@ void SpacePacketDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data,
     FW_ASSERT(data.getSize() > SpacePacketHeader::SERIALIZED_SIZE, static_cast<FwAssertArgType>(data.getSize()));
 
     SpacePacketHeader header;
-    Fw::SerializeStatus status = data.getDeserializer().deserialize(header);
+    Fw::SerializeStatus status = data.getDeserializer().deserializeTo(header);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     // Space Packet protocol defines the Data Length as number of bytes minus 1

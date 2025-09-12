@@ -7,7 +7,7 @@ TEST(FwTlmTest, TlmPacketSerializeSingle) {
 
     Fw::TlmPacket pktIn;
     Fw::TlmBuffer buffIn;
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffIn.serialize(static_cast<U32>(12)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffIn.serializeFrom(static_cast<U32>(12)));
     Fw::Time timeIn(TimeBase::TB_WORKSTATION_TIME, 10, 11);
     FwChanIdType id = 10;
 
@@ -30,7 +30,7 @@ TEST(FwTlmTest, TlmPacketSerializeSingle) {
     ASSERT_EQ(10u, id);
     U32 valOut = 0;
     buffOut.resetDeser();
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffOut.deserialize(valOut));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffOut.deserializeTo(valOut));
     ASSERT_EQ(valOut, 12u);
 }
 
@@ -52,7 +52,7 @@ TEST(FwTlmTest, TlmPacketSerializeFill) {
         // Serialize data
 
         Fw::TlmBuffer buffIn;
-        ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffIn.serialize(static_cast<U32>(entry)));
+        ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffIn.serializeFrom(static_cast<U32>(entry)));
         Fw::Time timeIn(TimeBase::TB_WORKSTATION_TIME, entry + 1, entry + 2);
         FwChanIdType id = static_cast<FwChanIdType>(NUM_ENTRIES - entry);
 
@@ -62,7 +62,7 @@ TEST(FwTlmTest, TlmPacketSerializeFill) {
     // Next one should fail because it's full
     {
         Fw::TlmBuffer buffIn;
-        ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffIn.serialize(static_cast<U32>(12)));
+        ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffIn.serializeFrom(static_cast<U32>(12)));
         Fw::Time timeIn(TimeBase::TB_WORKSTATION_TIME, 10, 11);
         FwChanIdType id = 10;
 
@@ -87,7 +87,7 @@ TEST(FwTlmTest, TlmPacketSerializeFill) {
         Fw::Time expTime(TimeBase::TB_WORKSTATION_TIME, entry + 1, entry + 2);
         ASSERT_EQ(expTime, timeOut);
         U32 val = 0;
-        ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffOut.deserialize(val));
+        ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffOut.deserializeTo(val));
         ASSERT_EQ(entry, val);
     }
 

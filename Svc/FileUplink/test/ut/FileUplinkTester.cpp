@@ -434,7 +434,7 @@ void FileUplinkTester ::sendFilePacket(const Fw::FilePacket& filePacket) {
 
     // Serialize the packet descriptor FW_PACKET_FILE to the buffer
     Fw::SerializeStatus status =
-        buffer.getSerializer().serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_FILE));
+        buffer.getSerializer().serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_FILE));
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
     // Serialize the filePacket content into the buffer after the packet descriptor token
     Fw::Buffer offsetBuffer(buffer.getData() + sizeof(FwPacketDescriptorType),
