@@ -45,32 +45,32 @@ Fw::ParamValid PassiveTestTester ::from_prmGetIn_handler(const FwIndexType portN
 
     switch (id - id_base) {
         case PassiveTestComponentBase::PARAMID_PARAMBOOL:
-            status = val.serialize(boolPrm.args.val);
+            status = val.serializeFrom(boolPrm.args.val);
             FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
             break;
 
         case PassiveTestComponentBase::PARAMID_PARAMU32:
-            status = val.serialize(u32Prm.args.val);
+            status = val.serializeFrom(u32Prm.args.val);
             FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
             break;
 
         case PassiveTestComponentBase::PARAMID_PARAMSTRING:
-            status = val.serialize(stringPrm.args.val);
+            status = val.serializeFrom(stringPrm.args.val);
             FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
             break;
 
         case PassiveTestComponentBase::PARAMID_PARAMENUM:
-            status = val.serialize(enumPrm.args.val);
+            status = val.serializeFrom(enumPrm.args.val);
             FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
             break;
 
         case PassiveTestComponentBase::PARAMID_PARAMARRAY:
-            status = val.serialize(arrayPrm.args.val);
+            status = val.serializeFrom(arrayPrm.args.val);
             FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
             break;
 
         case PassiveTestComponentBase::PARAMID_PARAMSTRUCT:
-            status = val.serialize(structPrm.args.val);
+            status = val.serializeFrom(structPrm.args.val);
             FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
             break;
     }
@@ -88,32 +88,32 @@ void PassiveTestTester ::from_prmSetIn_handler(const FwIndexType portNum, FwPrmI
 
     switch (id - id_base) {
         case PassiveTestComponentBase::PARAMID_PARAMBOOL:
-            status = val.deserialize(boolPrm.args.val);
+            status = val.deserializeTo(boolPrm.args.val);
             FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
             break;
 
         case PassiveTestComponentBase::PARAMID_PARAMU32:
-            status = val.deserialize(u32Prm.args.val);
+            status = val.deserializeTo(u32Prm.args.val);
             FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
             break;
 
         case PassiveTestComponentBase::PARAMID_PARAMSTRING:
-            status = val.deserialize(stringPrm.args.val);
+            status = val.deserializeTo(stringPrm.args.val);
             FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
             break;
 
         case PassiveTestComponentBase::PARAMID_PARAMENUM:
-            status = val.deserialize(enumPrm.args.val);
+            status = val.deserializeTo(enumPrm.args.val);
             FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
             break;
 
         case PassiveTestComponentBase::PARAMID_PARAMARRAY:
-            status = val.deserialize(arrayPrm.args.val);
+            status = val.deserializeTo(arrayPrm.args.val);
             FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
             break;
 
         case PassiveTestComponentBase::PARAMID_PARAMSTRUCT:
-            status = val.deserialize(structPrm.args.val);
+            status = val.deserializeTo(structPrm.args.val);
             FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
             break;
     }
@@ -137,27 +137,27 @@ Fw::SerializeStatus PassiveTestTester::PassiveTestComponentBaseParamExternalDele
     switch (local_id) {
         // ParamBoolExternal
         case PassiveTestComponentBase::PARAMID_PARAMBOOLEXTERNAL:
-            stat = buff.deserialize(this->m_param_ParamBoolExternal);
+            stat = buff.deserializeTo(this->m_param_ParamBoolExternal);
             break;
         // ParamI32External
         case PassiveTestComponentBase::PARAMID_PARAMI32EXTERNAL:
-            stat = buff.deserialize(this->m_param_ParamI32External);
+            stat = buff.deserializeTo(this->m_param_ParamI32External);
             break;
         // ParamStringExternal
         case PassiveTestComponentBase::PARAMID_PARAMSTRINGEXTERNAL:
-            stat = buff.deserialize(this->m_param_ParamStringExternal);
+            stat = buff.deserializeTo(this->m_param_ParamStringExternal);
             break;
         // ParamEnumExternal
         case PassiveTestComponentBase::PARAMID_PARAMENUMEXTERNAL:
-            stat = buff.deserialize(this->m_param_ParamEnumExternal);
+            stat = buff.deserializeTo(this->m_param_ParamEnumExternal);
             break;
         // ParamArrayExternal
         case PassiveTestComponentBase::PARAMID_PARAMARRAYEXTERNAL:
-            stat = buff.deserialize(this->m_param_ParamArrayExternal);
+            stat = buff.deserializeTo(this->m_param_ParamArrayExternal);
             break;
         // ParamStructExternal
         case PassiveTestComponentBase::PARAMID_PARAMSTRUCTEXTERNAL:
-            stat = buff.deserialize(this->m_param_ParamStructExternal);
+            stat = buff.deserializeTo(this->m_param_ParamStructExternal);
             break;
         default:
             // Unknown ID should not have gotten here
@@ -178,27 +178,27 @@ Fw::SerializeStatus PassiveTestTester::PassiveTestComponentBaseParamExternalDele
     switch (local_id) {
         // ParamBoolExternal
         case PassiveTestComponentBase::PARAMID_PARAMBOOLEXTERNAL:
-            stat = buff.serialize(this->m_param_ParamBoolExternal);
+            stat = buff.serializeFrom(this->m_param_ParamBoolExternal);
             break;
         // ParamI32External
         case PassiveTestComponentBase::PARAMID_PARAMI32EXTERNAL:
-            stat = buff.serialize(this->m_param_ParamI32External);
+            stat = buff.serializeFrom(this->m_param_ParamI32External);
             break;
         // ParamStringExternal
         case PassiveTestComponentBase::PARAMID_PARAMSTRINGEXTERNAL:
-            stat = buff.serialize(this->m_param_ParamStringExternal);
+            stat = buff.serializeFrom(this->m_param_ParamStringExternal);
             break;
         // ParamEnumExternal
         case PassiveTestComponentBase::PARAMID_PARAMENUMEXTERNAL:
-            stat = buff.serialize(this->m_param_ParamEnumExternal);
+            stat = buff.serializeFrom(this->m_param_ParamEnumExternal);
             break;
         // ParamArrayExternal
         case PassiveTestComponentBase::PARAMID_PARAMARRAYEXTERNAL:
-            stat = buff.serialize(this->m_param_ParamArrayExternal);
+            stat = buff.serializeFrom(this->m_param_ParamArrayExternal);
             break;
         // ParamStructExternal
         case PassiveTestComponentBase::PARAMID_PARAMSTRUCTEXTERNAL:
-            stat = buff.serialize(this->m_param_ParamStructExternal);
+            stat = buff.serializeFrom(this->m_param_ParamStructExternal);
             break;
         default:
             // Unknown ID should not have gotten here
