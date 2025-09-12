@@ -67,11 +67,6 @@ jobs:
     name: "Integration Tests"
     runs-on: ${{ inputs.runs_on_int }}
     steps:
-      - name: Archive Results
-        uses: actions/download-artifact@v4
-        with:
-          name: archive.tar.gz
-          path: ./archive.tar.gz
       - name: "Set up target repository"
         uses: nasa/fprime-actions/external-repository-setup@devel
         with:
@@ -79,8 +74,11 @@ jobs:
           fprime_location: ${{ inputs.fprime_location }}
           target_ref: ${{ inputs.target_ref }}
           stage: int
+      - name: Pull Archive Results
+        uses: actions/download-artifact@v4
+        with:
+          name: archive.tar.gz
+          path: ./archive.tar.gz
       - name: "Integration tests"
         run: |
-            pwd
-            ls -l 
             fprime-ci -c ${{ inputs.ci_config_file }} --skip-stage build
