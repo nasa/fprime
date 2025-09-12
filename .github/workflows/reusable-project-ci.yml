@@ -80,4 +80,7 @@ jobs:
           target_ref: ${{ inputs.target_ref }}
           stage: int
       - name: "Integration tests"
-        run: fprime-ci -c ${{ inputs.ci_config_file }} --skip-stage build
+        run: |
+            pwd
+            ls -l 
+            fprime-ci -c ${{ inputs.ci_config_file }} --skip-stage build
