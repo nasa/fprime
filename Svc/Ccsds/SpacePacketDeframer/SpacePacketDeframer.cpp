@@ -57,7 +57,7 @@ void SpacePacketDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data,
     }
 
     U16 apidValue = header.get_packetIdentification() & SpacePacketSubfields::ApidMask;
-    ComCfg::APID::T apid = static_cast<ComCfg::APID::T>(apidValue);
+    ComCfg::Apid::T apid = static_cast<ComCfg::Apid::T>(apidValue);
     ComCfg::FrameContext contextCopy = context;
     contextCopy.set_apid(apid);
 

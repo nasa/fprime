@@ -257,7 +257,7 @@ void ComQueue::sendComBuffer(Fw::ComBuffer& comBuffer, FwIndexType queueIndex) {
     FwPacketDescriptorType descriptor;
     Fw::SerializeStatus status = comBuffer.deserializeTo(descriptor);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
-    context.set_apid(static_cast<ComCfg::APID::T>(descriptor));
+    context.set_apid(static_cast<ComCfg::Apid::T>(descriptor));
     context.set_comQueueIndex(queueIndex);
 
     this->dataOut_out(0, outBuffer, context);
@@ -274,7 +274,7 @@ void ComQueue::sendBuffer(Fw::Buffer& buffer, FwIndexType queueIndex) {
     FwPacketDescriptorType descriptor;
     Fw::SerializeStatus status = buffer.getDeserializer().deserializeTo(descriptor);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
-    context.set_apid(static_cast<ComCfg::APID::T>(descriptor));
+    context.set_apid(static_cast<ComCfg::Apid::T>(descriptor));
     context.set_comQueueIndex(queueIndex);
 
     this->dataOut_out(0, buffer, context);
