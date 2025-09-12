@@ -143,7 +143,7 @@ class ExternalArray final {
         }
         // Set the size
         this->m_size = size;
-        // Destroy elements on release of memory
+        // Destroy elements on release of storage
         this->m_destroyElementsOnRelease = true;
     }
 
