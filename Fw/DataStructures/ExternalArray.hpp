@@ -53,7 +53,7 @@ class ExternalArray final {
     ExternalArray(const ExternalArray<T>& a) : m_elements(a.m_elements), m_size(a.m_size) {}
 
     //! Destructor
-    ~ExternalArray() { this->releaseElements(); }
+    ~ExternalArray() { this->releaseStorage(); }
 
   public:
     // ----------------------------------------------------------------------
@@ -112,7 +112,7 @@ class ExternalArray final {
     void setStorage(T* elements,     //!< The array elements
                     FwSizeType size  //!< The size
     ) {
-        this->releaseElements();
+        this->releaseStorage();
         this->m_elements = elements;
         this->m_size = size;
         this->m_destroyElementsOnRelease = false;
@@ -130,7 +130,7 @@ class ExternalArray final {
         // Check that data.size is large enough to hold the array
         FW_ASSERT(size * sizeof(T) <= data.size);
         // Destroy the elements if required
-        this->releaseElements();
+        this->releaseStorage();
         // Initialize the array members
         this->m_elements = reinterpret_cast<T*>(data.bytes);
         // Construct the array members in place
@@ -169,9 +169,9 @@ class ExternalArray final {
     // Private member functions
     // ----------------------------------------------------------------------
 
-    //! Destroy the array elements if required
-    void releaseElements() {
-        if (this->m_destroyElementsOnRelease) {
+    //! Release the backing storage
+    void releaseStorage() {
+        if ((this->m_elements != nullptr) && this->m_destroyElementsOnRelease) {
             for (FwSizeType i = 0; i < this->m_size; i++) {
                 this->m_elements[i].~T();
             }
@@ -190,7 +190,7 @@ class ExternalArray final {
     //! The size
     FwSizeType m_size = 0;
 
-    //! Whether to destroy the array elements when the external memory is released
+    //! Whether to destroy the array elements when the backing storage is released
     bool m_destroyElementsOnRelease = false;
 };
 
