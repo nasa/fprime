@@ -28,7 +28,7 @@ class QueuedComponentBase : public PassiveComponentBase {
     } MsgDispatchStatus;
 
   protected:
-    QueuedComponentBase(const char* name);  //!< Constructor
+    explicit QueuedComponentBase(const char* name);  //!< Constructor
     virtual ~QueuedComponentBase();         //!< Destructor
     void init(FwEnumStoreType instance);    //!< initialization function
     Os::Queue m_queue;                      //!< queue object for active component
